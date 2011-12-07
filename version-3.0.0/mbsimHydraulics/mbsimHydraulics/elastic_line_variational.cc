@@ -189,7 +189,7 @@ namespace MBSimHydraulics {
           relPlot(i, j)=sin(i*M_PI*relPlotPoints(j));
     }
     else if (stage==MBSim::plot) {
-      updatePlotFeatures(parent);
+      updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
         plotColumns.push_back("QIn [l/min]");
@@ -218,13 +218,13 @@ namespace MBSimHydraulics {
       y(i)=cu(i)*u(i);
   }
 
-  void ElasticLineVariational::updateh(double t) {
-    HLine::updateh(t);
-    h=hp0.copy();
+  void ElasticLineVariational::updateh(double t, int j) {
+    HLine::updateh(t,j);
+    h[j]=hp0.copy();
     for (int i=1; i<n; i++)
-      h(i)+=hq(i-1)*q(i-1);
+      h[j](i)+=hq(i-1)*q(i-1);
     for (int i=0; i<n; i++)
-      h(i)+=hu(i)*u(i);
+      h[j](i)+=hu(i)*u(i);
   }
 
   void ElasticLineVariational::plot(double t, double dt) {

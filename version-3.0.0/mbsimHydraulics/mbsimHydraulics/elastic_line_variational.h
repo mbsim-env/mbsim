@@ -73,9 +73,9 @@ namespace MBSimHydraulics {
       void calcuSize(int j) {uSize[j]=n; }
 
       void updateStateDependentVariables(double t);
-      void updateh(double t);
+      void updateh(double t, int j=0);
       void updateT(double t) {T=Tlocal; }
-      void updateM(double t) {M=Mlocal; }
+      void updateM(double t, int j=0) {M[j]=Mlocal; }
 
       void plot(double t, double dt);
       void plotParameters();

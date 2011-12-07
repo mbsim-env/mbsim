@@ -45,7 +45,7 @@ namespace MBSimHydraulics {
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateStateDependentVariables(double t) {};
-      virtual void updateJacobians(double t) {};
+      virtual void updateJacobians(double t, int j=0) {};
       virtual void updateInverseKineticsJacobians(double t) {};
 #ifdef HAVE_OPENMBVCPPINTERFACE
       virtual OpenMBV::Group* getOpenMBVGrp() { return 0; }
@@ -67,7 +67,7 @@ namespace MBSimHydraulics {
       virtual fmatvec::Vec getOutflowFactor() = 0;
       virtual fmatvec::Mat& getJacobian() {return Jacobian; }
       
-      void updateM(double t) {M=Mlocal; }
+      void updateM(double t) {M[0]=Mlocal; }
 
       void init(MBSim::InitStage stage);
       void initializeUsingXML(TiXmlElement *element);

@@ -53,7 +53,7 @@ namespace MBSimHydraulics {
       bool isSetValued() const {return (unilateral || bilateral); }
       void calcgdSize() {gdSize=1; }
       void calcsvSize() {svSize=isSetValued()?1:0; }
-      void updatehRef(const fmatvec::Vec& hRef, const fmatvec::Vec& hLinkRef, int i=0);
+      void updatehRef(const fmatvec::Vec& hRef, int i=0);
       void updaterRef(const fmatvec::Vec& rRef, int i=0);
       void updatedhdqRef(const fmatvec::Mat& dhdqRef, int i=0) {};
       void updatedhduRef(const fmatvec::SqrMat& dhduRef, int i=0);
@@ -77,9 +77,8 @@ namespace MBSimHydraulics {
       void calcrFactorSize() {rFactorSize=1; }
       void updategd(double t); /* zdotStandard */
       void updateStopVector(double t); // event-driven
-      void updateh(double t); /* zdotStandard */
-      void updateW(double t); /* zdotStandard */
-      void updatedhdz(double t);
+      void updateh(double t, int i=0); /* zdotStandard */
+      void updateW(double t, int i=0); /* zdotStandard */
       // ==== END Methods for update-Process ===
 
       // ================================

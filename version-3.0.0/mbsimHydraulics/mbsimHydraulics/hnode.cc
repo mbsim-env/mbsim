@@ -136,18 +136,14 @@ namespace MBSimHydraulics {
            connectedLines[i].line->getInflowFactor() :
            connectedLines[i].line->getOutflowFactor());
         const int rows=connectedLines[i].sign.size();
-        W.push_back(Mat(rows, laSize));
-        V.push_back(Mat(rows, laSize));
-        h.push_back(Vec(rows));
-        hLink.push_back(Vec(rows));
-        dhdq.push_back(Mat(rows, 0));
-        dhdu.push_back(SqrMat(rows));
-        dhdt.push_back(Vec(rows));
-        r.push_back(Vec(rows));
+        W[0].push_back(Mat(rows, laSize));
+        V[0].push_back(Mat(rows, laSize));
+        h[0].push_back(Vec(rows));
+        r[0].push_back(Vec(rows));
       }
     }
     else if (stage==MBSim::plot) {
-      updatePlotFeatures(parent);
+      updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
         plotColumns.push_back("Node pressure [bar]");
         if(getPlotFeature(debug)==enabled) {
@@ -181,9 +177,9 @@ namespace MBSimHydraulics {
     for (unsigned int i=0; i<nLines; i++) {
       const int laI=laInd;
       const int laJ=laInd;
-      const int hI=connectedLines[i].line->gethInd(parent,j);
+      const int hI=connectedLines[i].line->gethInd(j);
       const int hJ=hI+connectedLines[i].line->getJacobian().cols()-1;
-      W[i].resize()>>WParent(Index(hI, hJ), Index(laI, laJ));
+      W[j][i].resize()>>WParent(Index(hI, hJ), Index(laI, laJ));
     }
   }
 
@@ -191,51 +187,26 @@ namespace MBSimHydraulics {
     for (unsigned int i=0; i<nLines; i++) {
       const int laI=laInd;
       const int laJ=laInd;
-      const int hI=connectedLines[i].line->gethInd(parent,j);
+      const int hI=connectedLines[i].line->gethInd(j);
       const int hJ=hI+connectedLines[i].line->getJacobian().cols()-1;
-      V[i].resize()>>VParent(Index(hI, hJ), Index(laI, laJ));
+      V[j][i].resize()>>VParent(Index(hI, hJ), Index(laI, laJ));
     }
   }
 
 
-  void HNode::updatehRef(const Vec& hParent, const Vec& hLinkParent, int j) {
+  void HNode::updatehRef(const Vec& hParent, int j) {
     for (unsigned int i=0; i<nLines; i++) {
-      const int hInd=connectedLines[i].line->gethInd(parent, j);
+      const int hInd=connectedLines[i].line->gethInd(j);
       const Index I(hInd, hInd+connectedLines[i].line->getJacobian().cols()-1);
-      h[i].resize() >> hParent(I);
-      hLink[i].resize() >> hLinkParent(I);
+      h[j][i].resize() >> hParent(I);
     }
   }
 
   void HNode::updaterRef(const Vec& rParent, int j) {
     for (unsigned int i=0; i<nLines; i++) {
-      const int hInd=connectedLines[i].line->gethInd(parent, j);
+      const int hInd=connectedLines[i].line->gethInd(j);
       const Index I(hInd, hInd+connectedLines[i].line->getJacobian().cols()-1);
-      r[i].resize() >> rParent(I);
-    }
-  }
-
-  void HNode::updatedhdqRef(const Mat& dhdqParent, int j) {
-    for (unsigned int i=0; i<nLines; i++) {
-      const int hInd = connectedLines[i].line->gethInd(parent, j);
-      const Index I=Index(hInd, hInd+connectedLines[i].sign.size()-1);
-      dhdq[i].resize()>>dhdqParent(I);
-    }
-  }
-
-  void HNode::updatedhduRef(const SqrMat& dhduParent, int j) {
-    for (unsigned int i=0; i<nLines; i++) {
-      const int hInd = connectedLines[i].line->gethInd(parent, j);
-      const Index I=Index(hInd, hInd+connectedLines[i].sign.size()-1);
-      dhdu[i].resize()>>dhduParent(I);
-    }
-  }
-
-  void HNode::updatedhdtRef(const Vec& dhdtParent, int j) {
-    for (unsigned int i=0; i<nLines; i++) {
-      const int hInd = connectedLines[i].line->gethInd(parent, j);
-      const Index I=Index(hInd, hInd+connectedLines[i].sign.size()-1);
-      dhdt[i].resize()>>dhdtParent(I);
+      r[j][i].resize() >> rParent(I);
     }
   }
 
@@ -252,105 +223,13 @@ namespace MBSimHydraulics {
     gd(0)=-QHyd;
   }
 
-  void HNode::updateh(double t) {
+  void HNode::updateh(double t, int j) {
     for (unsigned int i=0; i<nLines; i++) {
-      h[i] += trans(connectedLines[i].line->getJacobian()) * connectedLines[i].sign * la(0);
-      hLink[i] += trans(connectedLines[i].line->getJacobian()) * connectedLines[i].sign * la(0);
+      h[j][i] += trans(connectedLines[i].line->getJacobian()) * connectedLines[i].sign * la(0);
     }
   }
 
-  void HNode::updatedhdz(double t) {
-    vector<Vec> hLink0, h0;
-
-    for(unsigned int i=0; i<nLines; i++) { // save old values
-      hLink0.push_back(hLink[i].copy());
-      h0.push_back(h[i].copy());
-    }
-    if(nLines)
-      updateh(t); 
-    vector<Vec> hLinkEnd, hEnd;
-    for(unsigned int i=0; i<nLines; i++) { // save with correct state
-      hLinkEnd.push_back(hLink[i].copy());
-      hEnd.push_back(h[i].copy());
-    }
-
-    /****************** velocity dependent calculations ***********************/
-    for(unsigned int i=0; i<nLines; i++) 
-      for(unsigned int l=0; l<nLines; l++) {
-        for(int j=0; j<connectedLines[i].sign.cols(); j++) {
-          hLink[i] = hLink0[i].copy(); // set to old values
-          h[i] = h0[i].copy();
-
-          double uParentj = connectedLines[l].line->getu()(j); // save correct position
-
-          connectedLines[l].line->getu()(j) += epsroot(); // update with disturbed positions assuming same active links
-          connectedLines[l].line->updateStateDependentVariables(t); 
-          updategd(t);
-          updateh(t);
-
-          dhdu[i*nLines+l].col(j) += (hLink[i]-hLinkEnd[i])/epsroot();
-          connectedLines[l].line->getu()(j) = uParentj;
-          connectedLines[l].line->updateStateDependentVariables(t); 
-        }
-      }
-
-    /****************** position dependent calculations ***********************/
-    for(unsigned int i=0; i<nLines; i++) 
-      for(unsigned int l=0; l<nLines; l++) {
-        for(int j=0; j<connectedLines[l].line->getq().size(); j++) {
-          hLink[i] = hLink0[i].copy(); // set to old values
-          h[i] = h0[i].copy();
-
-          double qParentj = connectedLines[l].line->getq()(j); // save correct position
-
-          connectedLines[l].line->getq()(j) += epsroot(); // update with disturbed positions assuming same active links
-          connectedLines[l].line->updateStateDependentVariables(t); 
-          updateg(t);
-          updategd(t);
-          connectedLines[l].line->updateT(t); 
-          updateJacobians(t);
-          updateh(t);
-
-          dhdq[i*nLines+l].col(j) += (hLink[i]-hLinkEnd[i])/epsroot();
-          connectedLines[l].line->getq()(j) = qParentj;
-          connectedLines[l].line->updateStateDependentVariables(t); 
-          connectedLines[l].line->updateT(t); 
-        }
-      }
-
-    /******************** time dependent calculations ***************************/
-    // for(unsigned int i=0; i<nLines; i++) 
-    //   for(unsigned int l=0; l<nLines; l++) {
-    //     hLink[i] = hLink0[i].copy(); // set to old values
-    //     h[i] = h0[i].copy();
-
-    //     double t0 = t; // save correct position
-
-    //     t += epsroot(); // update with disturbed positions assuming same active links
-    //     connectedLines[l].line->updateStateDependentVariables(t); 
-    //     updateg(t);
-    //     updategd(t);
-    //     connectedLines[l].line->updateT(t); 
-    //     updateJacobians(t);
-    //     updateh(t);
-
-    //     dhdt[i] += (hLink[i]-hLinkEnd[i])/epsroot();
-    //     t = t0;
-    //   }
-
-    /************************ back to initial state ******************************/
-    for(unsigned int i=0; i<nLines; i++) {
-      connectedLines[i].line->updateStateDependentVariables(t); 
-      updateg(t);
-      updategd(t);
-      connectedLines[i].line->updateT(t); 
-      updateJacobians(t);
-      hLink[i] = hLinkEnd[i].copy();
-      h[i] = hEnd[i].copy();
-    }
-  }
-
-  void HNode::updater(double t) {
+  void HNode::updater(double t, int j) {
     cout << "HNode \"" << name << "\": updater()" << endl; 
   }
 
@@ -420,7 +299,7 @@ namespace MBSimHydraulics {
 
   void ElasticNode::init(InitStage stage) {
     if (stage==MBSim::plot) {
-      updatePlotFeatures(parent);
+      updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
         plotColumns.push_back("Node bulk modulus [N/mm^2]");
         HNode::init(stage);
@@ -501,10 +380,10 @@ namespace MBSimHydraulics {
     }
   }
 
-  void RigidNode::updateW(double t) {
+  void RigidNode::updateW(double t, int j) {
     for (unsigned int i=0; i<nLines; i++) {
       const int hJ=connectedLines[i].line->getJacobian().cols()-1;
-      W[i](Index(0,hJ), Index(0, 0))+=trans(connectedLines[i].line->getJacobian()) * connectedLines[i].sign;
+      W[j][i](Index(0,hJ), Index(0, 0))+=trans(connectedLines[i].line->getJacobian()) * connectedLines[i].sign;
     }
   }
 
@@ -693,7 +572,7 @@ namespace MBSimHydraulics {
       x0=Vec(1, INIT, 0);
     }
     else if (stage==MBSim::plot) {
-      updatePlotFeatures(parent);
+      updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
         plotColumns.push_back("active");
         HNode::init(stage);
@@ -752,10 +631,10 @@ namespace MBSimHydraulics {
     sv(0) = isActive() ? (la(0)-pCav)*1e-5 : -x(0)*6e4;
   }
 
-  void RigidCavitationNode::updateW(double t) {
+  void RigidCavitationNode::updateW(double t, int j) {
     for (unsigned int i=0; i<nLines; i++) {
       const int hJ=connectedLines[i].sign.size()-1;
-      W[i](Index(0,hJ), Index(0, 0))=connectedLines[i].sign;
+      W[j][i](Index(0,hJ), Index(0, 0))=connectedLines[i].sign;
     }
   }
 
