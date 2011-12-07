@@ -13,7 +13,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: mfoerg@users.berlios.de
+ * Contact: martin.o.foerg@googlemail.com
  */
 
 #include "config.h"
@@ -42,7 +42,6 @@ namespace MBSim {
       for(unsigned int i=0; i<applyForceAlsoTo.size(); i++)
         applyForceAlsoTo[i].ref->geth()(applyForceAlsoTo[i].index)+=applyForceAlsoTo[i].factor*la(0);
     }
-   
   }
 
   void ExternGeneralizedIO::updateg(double) {
