@@ -14,7 +14,6 @@
 #include <mbsim/utils/nonsmooth_algebra.h>
 #include <mbsim/utils/nonlinear_algebra.h>
 #include <mbsim/utils/eps.h>
-#include <mbsim/object_interface.h>
 #include <mbsim/utils/rotarymatrices.h>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -224,8 +223,7 @@ namespace MBSim {
           }
           WF[potentialContact][0] = -WF[potentialContact][1];
           for (size_t i = 0; i < 2; i++) { //add forces to h-vector of both contours of the current contact point
-            h[2 * potentialContact + i] += cpData[potentialContact][i].getFrameOfReference().getJacobianOfTranslation().T() * WF[potentialContact][i];
-            hLink[2 * potentialContact + i] += cpData[potentialContact][i].getFrameOfReference().getJacobianOfTranslation().T() * WF[potentialContact][i];
+            h[0][2 * potentialContact + i] += cpData[potentialContact][i].getFrameOfReference().getJacobianOfTranslation().T() * WF[potentialContact][i];
           }
 
           //increase for next active contacts
@@ -286,10 +284,9 @@ namespace MBSim {
    */
   void MaxwellContact::updatehRef(const Vec& hParent, const Vec& hLinkParent, int j) {
     for (size_t i = 0; i < contour.size(); i++) {
-      int hInd = contour[i]->getParent()->gethInd(parent, j);
+      int hInd = contour[i]->gethInd(j);
       Index I = Index(hInd, hInd + contour[i]->gethSize(j) - 1);
-      h[i].resize() >> hParent(I);
-      hLink[i].resize() >> hLinkParent(I);
+      h[0][i].resize() >> hParent(I);
     }
   }
 
@@ -336,7 +333,7 @@ namespace MBSim {
 
     }
     else if (stage == MBSim::plot) {
-      updatePlotFeatures(parent);
+      updatePlotFeatures();
       if (getPlotFeature(plotRecursive) == enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if (getPlotFeature(openMBV) == enabled && (openMBVContactFrameSize > epsroot() || normalForceArrow || frictionForceArrow)) {
@@ -406,16 +403,6 @@ namespace MBSim {
   void MaxwellContact::checkActiveg() {
     for (unsigned i = 0; i < contactKinematics.size(); i++) {
       gActive[i] = gk[i](0) < gTol ? true : false;
-    }
-  }
-
-  void MaxwellContact::resizeJacobians(int j) {
-    checkActiveg(); //TODO do it at another place!!!
-    for (size_t k = 0; k < contactKinematics.size(); k++) {
-      if (gActive[k]) {
-        for (size_t i = 0; i < 2; i++)
-          cpData[k][i].getFrameOfReference().resizeJacobians(j);
-      }
     }
   }
 
