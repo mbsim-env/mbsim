@@ -46,13 +46,6 @@ namespace MBSim {
       child[i]->updateJacobians(t);
   }
 
-  void Node::updateInverseKineticsJacobians(double t) {
-    for(unsigned int i=0; i<child.size(); i++)
-      child[i]->getObject()->updateInverseKineticsJacobians(t);
-    for(unsigned int i=0; i<child.size(); i++)
-      child[i]->updateInverseKineticsJacobians(t);
-  }
-
   void Node::calcqSize(int &qSize) {
     for(unsigned int i=0; i<child.size(); i++) {
       child[i]->getObject()->calcqSize();
@@ -146,14 +139,6 @@ namespace MBSim {
     root->getObject()->setuInd(uSize[j],j);
     uSize[j] += root->getObject()->getuSize(j);
     root->calcuSize(uSize[j],j);
-  }
-
-  void Tree::updateInverseKineticsJacobians(double t) {
-    root->getObject()->updateInverseKineticsJacobians(t);
-    root->updateInverseKineticsJacobians(t);
-
-    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
-      (*i)->updateJacobians(t);
   }
 
   void Tree::facLLM() {
