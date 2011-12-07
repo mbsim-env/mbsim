@@ -475,6 +475,10 @@ namespace MBSim {
 
       void setInverseKinetics(bool inverseKinetics_) {inverseKinetics = inverseKinetics_;}
 
+       fmatvec::Mat getdhdq() const { throw; return fmatvec::Mat(); }
+       fmatvec::SqrMat getdhdu() const { throw; return fmatvec::SqrMat(); }
+       fmatvec::Vec getdhdt() const { throw; return fmatvec::Vec(); }
+
     protected:
       /**
        * \brief mass matrix

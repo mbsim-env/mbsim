@@ -148,24 +148,6 @@ namespace MBSim {
       (**i).updateStateDerivativeDependentVariables(t);
   }
 
-  void DynamicSystem::updatedhdz(double t) {
-    for(int i=0; i<(int)dynamicsystem.size(); i++) {
-      try { dynamicsystem[i]->updatedhdz(t); }
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
-
-    for(int i=0; i<(int)object.size(); i++) {
-      try { object[i]->updatedhdz(t); }
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
-
-    for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i) 
-      (**i).updatedhdz(t);
-
-    for(vector<Link*>::iterator i = linkSetValuedNotActiveWithSmoothPart.begin(); i != linkSetValuedNotActiveWithSmoothPart.end(); ++i) 
-      (**i).updatedhdz(t);
-  }
-
   void DynamicSystem::updateM(double t, int j) {
     for(int i=0; i<(int)dynamicsystem.size(); i++) {
       try { dynamicsystem[i]->updateM(t,j); }

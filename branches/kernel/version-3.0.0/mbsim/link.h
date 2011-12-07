@@ -49,7 +49,7 @@ namespace MBSim {
    * \date 2010-07-06 added LinkStatus and LinearImpactEstimation for timestepper ssc (Robert Huber)
     */
   //class Link : public Element, public LinkInterface, public ExtraDynamicInterface {
-  class Link : public Element, public ExtraDynamicInterface {
+  class Link : public Element {
     public:
       /**
        * \brief constructor
@@ -69,7 +69,6 @@ namespace MBSim {
       virtual void updateW(double t, int i=0) {};
       virtual void updateV(double t, int i=0) {};
       virtual void updateh(double t, int i=0) {};
-      virtual void updatedhdz(double t) {};
       virtual void updateStopVector(double t) {}
       virtual void updateLinkStatus(double t) {}
       virtual void updateJacobians(double t, int j=0) {}
@@ -114,27 +113,6 @@ namespace MBSim {
        * \brief references to complete and link smooth force vector of dynamic system parent
        */
       virtual void updatehRef(const fmatvec::Vec &hRef, int i=0) = 0;
-
-      /**
-       * \brief references to link Jacobian for implicit integration of dynamic system parent regarding positions
-       * \param matrix concerning links to be referenced
-       * \param index of normal usage and inverse kinetics
-       */
-      virtual void updatedhdqRef(const fmatvec::Mat& ref, int i=0) = 0;
-      
-      /**
-       * \brief references to link Jacobian for implicit integration of dynamic system parent regarding velocities
-       * \param matrix concerning links to be referenced
-       * \param index of normal usage and inverse kinetics
-       */
-      virtual void updatedhduRef(const fmatvec::SqrMat& ref, int i=0) = 0;
-      
-      /**
-       * \brief references to link Jacobian for implicit integration of dynamic system parent regarding time
-       * \param vector concerning links to be referenced
-       * \param index of normal usage and inverse kinetics
-       */
-      virtual void updatedhdtRef(const fmatvec::Vec& ref, int i=0) = 0;
 
       /**
        * \brief references to nonsmooth force vector of dynamic system parent

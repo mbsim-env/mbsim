@@ -54,7 +54,7 @@ namespace MBSim {
    * \todo OpenMP only static scheduling with intelligent reordering of vectors by dynamic test runs
    */
   //class DynamicSystem : public Element, public ObjectInterface, public LinkInterface, public ExtraDynamicInterface {
-  class DynamicSystem : public Element, public LinkInterface, public ExtraDynamicInterface {
+  class DynamicSystem : public Element {
     public:
       /** 
        * \brief constructor
@@ -74,7 +74,6 @@ namespace MBSim {
       virtual void updateV0FromV1(double t); 
       virtual void updateStateDependentVariables(double t) = 0;
       virtual void updateStateDerivativeDependentVariables(double t);
-      virtual void updatedhdz(double t);
       virtual void updateM(double t, int i=0);
       virtual void updateJacobians(double t, int j=0) = 0;
       virtual void updatedq(double t, double dt); 
@@ -245,9 +244,6 @@ namespace MBSim {
       const fmatvec::Vec& geth(int j=0) const { return h[j]; };
       const fmatvec::Vec& getf() const { return f; };
       fmatvec::Vec& getf() { return f; };
-      fmatvec::Mat getdhdq() const { return dhdqObject + dhdqLink; }
-      fmatvec::SqrMat getdhdu() const { return dhduObject + dhduLink; }
-      fmatvec::Vec getdhdt() const { return dhdtObject + dhdtLink; }
 
       const fmatvec::Mat& getW(int i=0) const { return W[i]; }
       fmatvec::Mat& getW(int i=0) { return W[i]; }
@@ -837,13 +833,6 @@ namespace MBSim {
        * \brief smooth, smooth with respect to objects, smooth with respect to links, nonsmooth and order one right hand side
        */
       fmatvec::Vec h[2], r[2], f;
-
-      /**
-       * \brief matrices for implicit integration
-       */
-      fmatvec::Mat    dhdqObject, dhdqLink;
-      fmatvec::SqrMat dhduObject, dhduLink;
-      fmatvec::Vec    dhdtObject, dhdtLink;
 
       /**
        * \brief 
