@@ -179,9 +179,6 @@ namespace MBSim {
     bi = bi_;
   }
 
-  JointConstraint::JointConstraint(const string &name) : Constraint(name), bi(0), frame1(0), frame2(0) {
-  }
-
   void JointConstraint::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       if(saved_ref1!="" && saved_ref2!="")
