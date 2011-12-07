@@ -213,6 +213,8 @@ namespace MBSim {
       return new RigidBody(element->Attribute("name"));
     else if(element->ValueStr()==MBSIMNS"JointConstraint")
       return new JointConstraint(element->Attribute("name"));
+    else if(element->ValueStr()==MBSIMNS"GearConstraint")
+      return new GearConstraint(element->Attribute("name"));
     return 0;
   }
 
@@ -364,6 +366,8 @@ namespace MBSim {
       return new ConstantFunction1<double,double>;
     if(element->ValueStr()==MBSIMNS"Function1_SS_from_VS")
       return new Function1_SS_from_VS();
+    if(element->ValueStr()==MBSIMNS"Polynom1_SS")
+      return new Polynom1_SS();
     return 0;
   }
 
