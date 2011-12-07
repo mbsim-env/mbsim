@@ -77,7 +77,7 @@ namespace MBSim {
       virtual void updateM(double t, int i=0);
       virtual void updateJacobians(double t, int j=0) = 0;
       virtual void updatedq(double t, double dt); 
-      virtual void updateud(double t, int i=0) { throw MBSimError("ERROR (DynamicSystem::updateud): Not implemented!"); }
+      virtual void updateud(double t, int i=0) { throw MBSimError("ERROR in "+getName()+" (DynamicSystem::updateud): Not implemented!"); }
       virtual void updatezd(double t) = 0;
       virtual void updatedu(double t, double dt) = 0;
       virtual void updateqd(double t);
