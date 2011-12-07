@@ -47,17 +47,7 @@ namespace MBSim {
    * \author Martin Foerg
    */
   class GearConstraint : public Constraint {
-    private:
-      std::vector<RigidBody*> bi;
-      RigidBody *bd;
-      std::vector<double> ratio[2];
-      Frame* frame;
 
-//      std::vector<Function2<fmatvec::Vec, fmatvec::Vec, double>*> fd;
-//      std::vector<Function2<fmatvec::Mat, fmatvec::Vec, double>*> fdJ;
-//      std::vector<Function1<fmatvec::Vec,double>*> fdj;
-//      std::vector<Function3<fmatvec::Mat, fmatvec::Vec, fmatvec::Vec, double>*> fdJd;
-//      std::vector<Function1<fmatvec::Vec,double>*> fdjd;
     public:
       GearConstraint(const std::string &name, RigidBody* body);
       GearConstraint(const std::string &name);
@@ -78,7 +68,8 @@ namespace MBSim {
     private:
       std::vector<RigidBody*> bi;
       RigidBody *bd;
-      std::vector<double> ratio;
+      std::vector<double> ratio[2];
+      Frame* frame;
       
       std::string saved_ReferenceBody;
       std::vector<std::string> saved_DependencyBodies;
