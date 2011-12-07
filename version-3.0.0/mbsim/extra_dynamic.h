@@ -21,7 +21,6 @@
 #define _EXTRA_DYNAMIC_H_
 
 #include "mbsim/element.h"
-#include "mbsim/extradynamic_interface.h"
 
 namespace MBSim {
 
@@ -34,7 +33,7 @@ namespace MBSim {
    * \date 2009-04-06 interface extracted (Thorsten Schindler)
    * \date 2009-07-28 splitted interfaces (Thorsten Schindler)
    */
-  class ExtraDynamic : public Element, ExtraDynamicInterface {
+  class ExtraDynamic : public Element {
     public:
       /**
        * \brief constructor
@@ -42,9 +41,18 @@ namespace MBSim {
        */
       ExtraDynamic(const std::string &name);
 
-      /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
-      using ExtraDynamicInterface::updatedx;
-      using ExtraDynamicInterface::updatexd;
+      /*!
+       * \brief update order one parameter increment
+       * \param simulation time
+       * \param simulation step size
+       */
+      virtual void updatedx(double t, double dt) = 0;
+
+      /*!
+       * \brief update differentiated order one parameter
+       * \param simulation time
+       */
+      virtual void updatexd(double t) = 0;
       virtual void calcxSize() {};
       virtual const fmatvec::Vec& getx() const { return x; }
       virtual fmatvec::Vec& getx() { return x; }

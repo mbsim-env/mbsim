@@ -666,14 +666,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updatedhdz(double t) {
-    h[0].init(0);
-    dhdqObject.init(0);
-    dhdqLink.init(0);
-    dhduObject.init(0);
-    dhduLink.init(0);
-    dhdtObject.init(0);
-    dhdtLink.init(0);
-    Group::updatedhdz(t);
+    throw;
   }
 
   void DynamicSystemSolver::updateM(double t, int i) {
