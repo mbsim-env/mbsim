@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2006  Martin Förg
+/* Copyright (C) 2004-2011 MBSim Development Team
 
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -13,11 +13,8 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *
+ * Contact: martin.o.foerg@googlemail.com
  */
 
 #ifndef _INTEGRATORS_H_
@@ -33,6 +30,7 @@
 #include "radau5_integrator.h"
 #include "time_stepping_integrator.h"
 #include "time_stepping_ssc_integrator.h"
+#include "time_stepping_d1minuslinear_integrator.h"
 #include "theta_time_stepping_integrator.h"
 #include "euler_explicit_integrator.h"
 //#include "daspk_integrator.h"

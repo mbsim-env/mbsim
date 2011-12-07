@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2011 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -14,12 +14,12 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: martin.o.foerg@googlemail.com
+ * Contact: thschindler@users.berlios.de
  */
 
-#include <config.h>
-#include <mbsim/dynamic_system_solver.h>
-#include "euler_explicit_integrator.h"
+#include<config.h>
+#include<mbsim/dynamic_system_solver.h>
+#include "time_stepping_d1minuslinear_integrator.h"
 
 #include <time.h>
 
@@ -31,15 +31,15 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  EulerExplicitIntegrator::EulerExplicitIntegrator() : dt(1e-3) {
-  }
+  TimeSteppingD1MinusLinearIntegrator::TimeSteppingD1MinusLinearIntegrator() : dt(1e-3), t(0.), tPlot(0.), iter(0), step(0), integrationSteps(0), maxIter(0), sumIter(0), s0(0.), time(0.), stepPlot(0) {}
 
-  void EulerExplicitIntegrator::preIntegrate(DynamicSystemSolver& system) {
+  void TimeSteppingD1MinusLinearIntegrator::preIntegrate(DynamicSystemSolver& system) {
+    // initialisation
     assert(dtPlot >= dt);
 
     t = tStart;
 
-    int nq = system.getqSize();
+    int nq = system.getqSize(); // size of positions, velocities, state
     int nu = system.getuSize();
     int nx = system.getxSize();
     int n = nq + nu + nx;
@@ -55,62 +55,68 @@ namespace MBSim {
     if(z0.size()) z = z0; // define initial state
     else system.initz(z);
 
-    tPlot = 0.;
     integPlot.open((name + ".plt").c_str());
     cout.setf(ios::scientific, ios::floatfield);
-    
+
     stepPlot =(int) (dtPlot/dt + 0.5);
     assert(fabs(stepPlot*dt - dtPlot) < dt*dt);
-    
-    
-    step = 0;
-    integrationSteps = 0;
-    
-    s0 = clock();
-    time = 0;
 
+    s0 = clock();
   }
 
-  void EulerExplicitIntegrator::subIntegrate(DynamicSystemSolver& system, double tStop) { 
+  void TimeSteppingD1MinusLinearIntegrator::subIntegrate(DynamicSystemSolver& system, double tStop) {
     while(t<tStop) { // time loop
       integrationSteps++;
       if((step*stepPlot - integrationSteps) < 0) {
         step++;
-        
-        system.plot(z,t);
+        system.plot(z,t,dt);
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
-        s0 = s1;
-        integPlot<< t << " " << dt << " " << time << endl;
-        if(output) cout << "   t = " <<  t << ",\tdt = "<< dt << "\r"<<flush;
+        s0 = s1; 
+        integPlot<< t << " " << dt << " " <<  iter << " " << time << " "<<system.getlaSize() <<endl;
+        if(output) cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = "<<setw(5)<<setiosflags(ios::left) << iter <<  "\r"<<flush;
         tPlot += dtPlot;
       }
 
-      z += system.zdot(z,t)*dt; 
-      
+      q += system.deltaq(z,t,dt);
+
       t += dt;
+
+      system.update(z,t); 
+
+      system.getb().resize() = system.getgd() + system.getW().T()*slvLLFac(system.getLLM(),system.geth())*dt;
+      iter = system.solveImpacts(dt);
+
+      if(iter>maxIter) maxIter = iter;
+      sumIter += iter;
+
+      u += system.deltau(z,t,dt);
+      x += system.deltax(z,t,dt);
     }
   }
 
-  void EulerExplicitIntegrator::postIntegrate(DynamicSystemSolver& system) {
+  void TimeSteppingD1MinusLinearIntegrator::postIntegrate(DynamicSystemSolver& system) {
     integPlot.close();
 
     ofstream integSum((name + ".sum").c_str());
     integSum << "Integration time: " << time << endl;
     integSum << "Integration steps: " << integrationSteps << endl;
+    integSum << "Maximum number of iterations: " << maxIter << endl;
+    integSum << "Average number of iterations: " << double(sumIter)/integrationSteps << endl;
     integSum.close();
 
     cout.unsetf(ios::scientific);
     cout << endl;
   }
 
-  void EulerExplicitIntegrator::integrate(DynamicSystemSolver& system) {
+
+  void TimeSteppingD1MinusLinearIntegrator::integrate(DynamicSystemSolver& system) {
     preIntegrate(system);
     subIntegrate(system, tEnd);
     postIntegrate(system);
   }
 
-  void EulerExplicitIntegrator::initializeUsingXML(TiXmlElement *element) {
+  void TimeSteppingD1MinusLinearIntegrator::initializeUsingXML(TiXmlElement *element) {
     Integrator::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMINTNS"stepSize");
@@ -118,3 +124,4 @@ namespace MBSim {
   }
 
 }
+

@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2010 MBSim Development Team
+/* Copyright (C) 2004-2011 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -14,11 +14,11 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: martin.o.foerg@googlemail.com
+ * Contact: thschindler@users.berlios.de
  */
 
-#ifndef _TIME_STEPPING_INTEGRATOR_H_ 
-#define _TIME_STEPPING_INTEGRATOR_H_
+#ifndef _D1MINUSLINEAR_H_ 
+#define _D1MINUSLINEAR_H_
 
 #include<fmatvec.h>
 #include "integrator.h"
@@ -26,21 +26,25 @@
 namespace MBSim {
 
   /** 
-   * brief half-explicit time-stepping integrator of first order
-   * \author Martin Foerg
-   * \date 2009-07-13 some comments (Thorsten Schindler)
+   * \brief time-integrator for dynamical systems using D1MinusLinear ansatz
+   * \author Thorsten Schindler
+   * \date 2011-10-11 initial commit (Thorsten Schindler)
+   *
+   * Discontinuous Galerkin method with piecewise linear ansatz functions for velocity based on
+   * T. Schindler, V. Acary : Timestepping Schemes for Nonsmooth Dynamics Based
+   * on Discontinuous Galerkin Methods: Definition and Outlook
    */
-  class TimeSteppingIntegrator : public Integrator { 
+  class TimeSteppingD1MinusLinearIntegrator : public Integrator { 
     public:
       /**
        * \brief constructor
        */
-      TimeSteppingIntegrator();
+      TimeSteppingD1MinusLinearIntegrator();
       
       /**
        * \brief destructor
        */
-      virtual ~TimeSteppingIntegrator() {}
+      virtual ~TimeSteppingD1MinusLinearIntegrator() {}
 
       void preIntegrate(DynamicSystemSolver& system);
       void subIntegrate(DynamicSystemSolver& system, double tStop);
@@ -53,7 +57,6 @@ namespace MBSim {
 
       /* GETTER / SETTER */
       void setStepSize(double dt_) { dt = dt_; }
-      void setDriftCompensation(bool dc) { driftCompensation = dc; }
       /***************************************************/
     
     private:
@@ -70,7 +73,7 @@ namespace MBSim {
       /**
        * \brief iteration counter for constraints, plots, integration, maximum constraints, cummulation constraint
        */
-      int iter,step, integrationSteps, maxIter, sumIter;
+      int iter, step, integrationSteps, maxIter, sumIter;
 
       /**
        * \brief computing time counter
@@ -92,10 +95,8 @@ namespace MBSim {
        */
       std::ofstream integPlot;
 
-      /**
-       * \brief flag for drift compensation
-       */
-      bool driftCompensation;
+      TimeSteppingD1MinusLinearIntegrator(const TimeSteppingD1MinusLinearIntegrator&); // copy constructor
+      TimeSteppingD1MinusLinearIntegrator& operator=(const TimeSteppingD1MinusLinearIntegrator&); // assignment operator
   };
 
 }
