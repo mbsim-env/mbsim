@@ -235,11 +235,11 @@ namespace MBSim {
 
     sysT1->plot(zi,t,1.);
 
+    tPlot = t;
   }
 
   void TimeSteppingSSCIntegrator::subIntegrate(DynamicSystemSolver& system, double tStop) { // system: only dummy!
     Timer.start();
-    tPlot = t;
     if (outputInterpolation) {
       getAllSetValuedla(la,laSizes,SetValuedLinkListT1);
       la.init(0.0);
