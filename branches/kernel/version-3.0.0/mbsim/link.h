@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: mfoerg@users.berlios.de
+ * Contact: martin.o.foerg@googlemail.com
  */
 
 #ifndef _LINK_H_
@@ -247,57 +247,57 @@ namespace MBSim {
       /**
        * solve contact equations of motion with single step fixed point scheme on velocity level
        */
-      virtual void solveImpactsFixpointSingle(double dt) { throw MBSimError("ERROR (Link::solveImpactsFixpointSingle): Not implemented."); }
+      virtual void solveImpactsFixpointSingle(double dt) { throw MBSimError("ERROR in "+getName()+" (Link::solveImpactsFixpointSingle): Not implemented."); }
 
       /**
        * solve contact equations of motion with single step fixed point scheme on acceleration level
        */
-      virtual void solveConstraintsFixpointSingle() { throw MBSimError("ERROR (Link::solveConstraintsFixpointSingle): Not implemented."); }
+      virtual void solveConstraintsFixpointSingle() { throw MBSimError("ERROR in "+getName()+" (Link::solveConstraintsFixpointSingle): Not implemented."); }
 
       /**
        * solve contact equations of motion with Gauss-Seidel scheme on velocity level
        */
-      virtual void solveImpactsGaussSeidel(double dt) { throw MBSimError("ERROR (Link::solveImpactsGaussSeidel): Not implemented."); }
+      virtual void solveImpactsGaussSeidel(double dt) { throw MBSimError("ERROR in "+getName()+" (Link::solveImpactsGaussSeidel): Not implemented."); }
 
       /**
        * solve contact equations of motion with Gauss-Seidel scheme on acceleration level
        */
-      virtual void solveConstraintsGaussSeidel() { throw MBSimError("ERROR (Link::solveConstraintsGaussSeidel): Not implemented."); }
+      virtual void solveConstraintsGaussSeidel() { throw MBSimError("ERROR in "+getName()+" (Link::solveConstraintsGaussSeidel): Not implemented."); }
 
       /**
        * solve contact equations of motion with Newton scheme on velocity level
        */
-      virtual void solveImpactsRootFinding(double dt) { throw MBSimError("ERROR (Link::solveImpactsRootFinding): Not implemented."); }
+      virtual void solveImpactsRootFinding(double dt) { throw MBSimError("ERROR in "+getName()+" (Link::solveImpactsRootFinding): Not implemented."); }
 
       /**
        * solve contact equations of motion with Newton scheme on acceleration level
        */
-      virtual void solveConstraintsRootFinding() { throw MBSimError("ERROR (Link::solveConstraintsRootFinding): Not implemented."); }
+      virtual void solveConstraintsRootFinding() { throw MBSimError("ERROR in "+getName()+" (Link::solveConstraintsRootFinding): Not implemented."); }
 
       /**
        * \brief computes JACOBIAN and mass action matrix of nonlinear contact equations on acceleration level
        */
-      virtual void jacobianConstraints() { throw MBSimError("ERROR (Link::jacobianConstraints): Not implemented."); }
+      virtual void jacobianConstraints() { throw MBSimError("ERROR in "+getName()+" (Link::jacobianConstraints): Not implemented."); }
 
       /**
        * \brief computes JACOBIAN and mass action matrix of nonlinear contact equations on velocity level
        */
-      virtual void jacobianImpacts() { throw MBSimError("ERROR (Link::jacobianImpacts): Not implemented."); }
+      virtual void jacobianImpacts() { throw MBSimError("ERROR in "+getName()+" (Link::jacobianImpacts): Not implemented."); }
 
       /**
        * \brief updates rfactor relaxation for contact equations
        */
-      virtual void updaterFactors() { throw MBSimError("ERROR (Link::updaterFactors): Not implemented."); }
+      virtual void updaterFactors() { throw MBSimError("ERROR in "+getName()+" (Link::updaterFactors): Not implemented."); }
 
       /**
        * \brief verify underlying force laws on velocity level concerning given tolerances
        */
-      virtual void checkImpactsForTermination(double dt) { throw MBSimError("ERROR (Link::checkImpactsForTermination): Not implemented."); }
+      virtual void checkImpactsForTermination(double dt) { throw MBSimError("ERROR in "+getName()+" (Link::checkImpactsForTermination): Not implemented."); }
       
       /**
        * \brief verify underlying force laws on acceleration level concerning given tolerances
        */
-      virtual void checkConstraintsForTermination() { throw MBSimError("ERROR (Link::checkConstraintsForTermination): Not implemented."); }
+      virtual void checkConstraintsForTermination() { throw MBSimError("ERROR in "+getName()+" (Link::checkConstraintsForTermination): Not implemented."); }
 
       /**
        * \brief set possible attribute for active relative distance in derived classes 
