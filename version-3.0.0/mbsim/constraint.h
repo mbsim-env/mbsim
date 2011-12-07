@@ -13,7 +13,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: mfoerg@users.berlios.de
+ * Contact: martin.o.foerg@googlemail.com
  */
 
 #ifndef _CONSTRAINT_H
@@ -60,15 +60,29 @@ namespace MBSim {
 //      std::vector<Function1<fmatvec::Vec,double>*> fdjd;
     public:
       GearConstraint(const std::string &name, RigidBody* body);
+      GearConstraint(const std::string &name);
 
       void addDependency(RigidBody* body_, double ratio1, double ratio2=0);
       void setFrame(Frame* frame_) {frame = frame_;}
 
       void init(InitStage stage);
 
+      void setReferenceBody(RigidBody* body_) {bd=body_; }
+
       void updateStateDependentVariables(double t);
       void updateJacobians(double t, int j=0);
       void setUpInverseKinetics();
+
+      void initializeUsingXML(TiXmlElement * element);
+    
+    private:
+      std::vector<RigidBody*> bi;
+      RigidBody *bd;
+      std::vector<double> ratio;
+      
+      std::string saved_ReferenceBody;
+      std::vector<std::string> saved_DependencyBodies;
+      std::vector<double> saved_ratio;
   };
 
   /** 
@@ -91,38 +105,9 @@ namespace MBSim {
    * \brief example 5 for contraint 
    * \todo generalization of this class
    * \author Martin Foerg
+   * 2011-08-04 XML Interface added (Markus Schneider)
    */
   class JointConstraint : public Constraint {
-    protected:
-      class Residuum : public Function1<fmatvec::Vec,fmatvec::Vec> {
-	std::vector<RigidBody*> body1, body2;
-	fmatvec::Mat dT, dR;
-	Frame *frame1, *frame2;
-	double t;
-	std::vector<int> i1,i2;
-	public:
-	Residuum(std::vector<RigidBody*> body1_, std::vector<RigidBody*> body2_, const fmatvec::Mat &dT_, const fmatvec::Mat &dR_,Frame *frame1_, Frame *frame2_,double t_,std::vector<int> i1_, std::vector<int> i2_);
-	fmatvec::Vec operator()(const fmatvec::Vec &x, const void * =NULL);
-      };
-      std::vector<RigidBody*> bd1;
-      std::vector<RigidBody*> bd2;
-      RigidBody *bi;
-      std::vector<int> if1;
-      std::vector<int> if2;
-
-      Frame *frame1,*frame2;
-
-      fmatvec::Mat dT;
-      fmatvec::Mat dR;
-
-      std::vector<fmatvec::Index> Iq1, Iq2, Iu1, Iu2, Ih1, Ih2;
-      int nq, nu, nh;
-      fmatvec::Vec q, u;
-      fmatvec::Mat J;
-      fmatvec::Vec j;
-      fmatvec::Mat JT, JR;
-      fmatvec::Vec q0;
-
     public:
       JointConstraint(const std::string &name);
 
@@ -145,7 +130,39 @@ namespace MBSim {
       virtual void initializeUsingXML(TiXmlElement *element);
 
     private:
+      class Residuum : public Function1<fmatvec::Vec,fmatvec::Vec> {
+        private:
+          std::vector<RigidBody*> body1, body2;
+          fmatvec::Mat dT, dR;
+          Frame *frame1, *frame2;
+          double t;
+          std::vector<int> i1,i2;
+        public:
+          Residuum(std::vector<RigidBody*> body1_, std::vector<RigidBody*> body2_, const fmatvec::Mat &dT_, const fmatvec::Mat &dR_,Frame *frame1_, Frame *frame2_,double t_,std::vector<int> i1_, std::vector<int> i2_);
+          fmatvec::Vec operator()(const fmatvec::Vec &x, const void * =NULL);
+      };
+      std::vector<RigidBody*> bd1;
+      std::vector<RigidBody*> bd2;
+      RigidBody *bi;
+      std::vector<int> if1;
+      std::vector<int> if2;
+
+      Frame *frame1,*frame2;
+
+      fmatvec::Mat dT;
+      fmatvec::Mat dR;
+
+      std::vector<fmatvec::Index> Iq1, Iq2, Iu1, Iu2, Ih1, Ih2;
+      int nq, nu, nh;
+      fmatvec::Vec q, u;
+      fmatvec::Mat J;
+      fmatvec::Vec j;
+      fmatvec::Mat JT, JR;
+      fmatvec::Vec q0;
+
       std::string saved_ref1, saved_ref2;
+      std::vector<std::string> saved_RigidBodyFirstSide, saved_RigidBodySecondSide;
+      std::string saved_IndependentBody;
   };
 
 }
