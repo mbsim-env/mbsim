@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: mfoerg@users.berlios.de
+ * Contact: martin.o.foerg@googlemail.com
  *          rzander@users.berlios.de
  */
 
@@ -31,13 +31,6 @@
 #include "dirent.h"
 #include <mbsim/environment.h>
 #include <mbsim/objectfactory.h>
-
-#ifndef MINGW
-#  include<sys/stat.h>
-#else
-#  include<io.h>
-#  define mkdir(a,b) mkdir(a)
-#endif
 
 #include <H5Cpp.h>
 #include <hdf5serie/fileserie.h>
