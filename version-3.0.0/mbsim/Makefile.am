@@ -52,7 +52,6 @@ dynamic_system.h\
 dynamic_system_solver.h\
 element.h\
 environment.h\
-extradynamic_interface.h\
 frame.h\
 functions_contact.h\
 group.h\
@@ -64,7 +63,6 @@ spring_damper.h\
 rotational_spring_damper.h\
 extern_generalized_io.h\
 link.h\
-link_interface.h\
 link_mechanics.h\
 kinetic_excitation.h\
 mbsim_event.h\
