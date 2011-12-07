@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: mfoerg@users.berlios.de
+ * Contact: martin.o.foerg@googlemail.com
  *          rzander@users.berlios.de
  */
 
@@ -109,7 +109,14 @@ namespace MBSim {
        * \return curvature of contour in contour point
        * \param contour position
        */
-      virtual double computeCurvature(ContourPointData &cp) { throw MBSimError("ERROR (Contour::computeCurvature): Not implemented."); return 0; } 
+      virtual double computeCurvature(ContourPointData &cp) { throw MBSimError("ERROR in "+getName()+"(Contour::computeCurvature): Not implemented."); return 0; } 
+
+      /**
+       * \brief projects the point on the contour to compute the Lagrange parameter
+       * \param WrPoint point in world coordinates
+       * \return Vec of lagrange parameters
+       */
+      virtual fmatvec::Vec computeLagrangeParameter(const fmatvec::Vec &WrPoint) {throw MBSimError("ERROR computeLagrangeParameter(const fmatvec::Vec &WrPoint): Not implemented for this contour: \"" + this->getType() + "\"."); return 0; }
 
       /**
        * \param position of contour in inertial frame
