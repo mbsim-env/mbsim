@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: mfoerg@users.berlios.de
+ * Contact: martin.o.foerg@googlemail.com
  */
 
 #ifndef FUNCTION_H_
@@ -22,6 +22,8 @@
 
 #include <mbsimtinyxml/tinyxml-src/tinyxml.h>
 #include <mbsim/element.h>
+#include <mbsim/utils/eps.h>
+
 #include <fmatvec.h>
 
 namespace MBSim {
@@ -582,6 +584,83 @@ namespace MBSim {
       double gdLim;
   };
 
+  /**
+   * \brief function describing the influence between the deformations on a  Maxwell-body
+   */
+  class InfluenceFunction : public Function2<double, fmatvec::Vec,  fmatvec::Vec > {
+    public:
+      InfluenceFunction(const std::string& firstContourName_, const std::string& secondContourName_) :
+          firstContourName(firstContourName_), secondContourName(secondContourName_) {
+      }
+      /* INHERITED INTERFACE OF FUNCTION2 */
+      virtual double operator()(const fmatvec::Vec& firstContourLagrangeParameter, const fmatvec::Vec& secondContourLagrangeParameter, const void * = NULL)=0;
+      virtual void initializeUsingXML(TiXmlElement *element) {
+        throw MBSimError("InfluenceFuntion::initializeUsingXML : Method not implemented");
+      }
+      /***************************************************/
+
+      /* GETTER / SETTER */
+      std::string getFirstContourName() {
+        return firstContourName;
+      }
+      std::string getSecondContourName() {
+        return secondContourName;
+      }
+      /***************************************************/
+
+    protected:
+      /**
+       * \brief name of the first contour (to assign the lagrange parameter to the contour)
+       */
+      std::string firstContourName;
+
+      /**
+       * \brief name of the second contour (to assign the lagrange parameter to the contour)
+       */
+      std::string secondContourName;
+
+  };
+
+  /*
+   * \brief Influence function for stiffness of contour with no influence to other contours (or contour points)
+   */
+  class StiffnessInfluenceFunction : public InfluenceFunction {
+    public:
+      StiffnessInfluenceFunction(const std::string& ContourName_, const double & couplingValue_) :
+          InfluenceFunction(ContourName_, ContourName_), couplingValue(couplingValue_) {
+      }
+      virtual ~StiffnessInfluenceFunction() {}
+      /* INHERITED INTERFACE OF FUNCTION2 */
+      virtual double operator()(const fmatvec::Vec& firstContourLagrangeParameter, const fmatvec::Vec& secondContourLagrangeParameter, const void * = NULL) {
+        if(nrm2(firstContourLagrangeParameter - secondContourLagrangeParameter) < macheps())
+          return couplingValue;
+        else
+          return 0;
+      }
+      /***************************************************/
+
+    protected:
+      double couplingValue;
+  };
+
+  /*
+   * \brief a class for Influence-Functions with constant coupling
+   */
+  class ConstantInfluenceFunction : public InfluenceFunction {
+    public:
+      ConstantInfluenceFunction(const std::string& firstContourName_, const std::string& secondContourName_, const double & couplingValue_) :
+          InfluenceFunction(firstContourName_, secondContourName_), couplingValue(couplingValue_) {
+      }
+      virtual ~ConstantInfluenceFunction() {}
+      /* INHERITED INTERFACE OF FUNCTION2 */
+      virtual double operator()(const fmatvec::Vec& firstContourLagrangeParameter, const fmatvec::Vec& secondContourLagrangeParameter, const void * = NULL) {
+        return couplingValue;
+      }
+      /***************************************************/
+
+    protected:
+      double couplingValue;
+  };
 }
 
 #endif /* FUNCTION_H_ */

@@ -29,7 +29,3 @@ utilsinclude_HEADERS = eps.h\
                        stopwatch.h\
                        ansatz_functions.h\
                        contour_functions.h
-
-
-
-bin_SCRIPTS = mbsimxmlinit.sh mbsimxmlinit.csh mbsimxmlinit.ksh mbsimxmlinit.bat

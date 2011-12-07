@@ -16,7 +16,7 @@
 
  *
  * Contact:
- *   mfoerg@users.berlios.de
+ *   martin.o.foerg@googlemail.com
  *
  */
 #ifndef NONSMOOTH_ALGEBRA_H_
