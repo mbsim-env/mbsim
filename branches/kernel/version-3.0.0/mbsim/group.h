@@ -56,7 +56,6 @@ namespace MBSim {
       virtual void updatedu(double t, double dt);
       virtual void updatezd(double t);
       virtual void updateud(double t, int i=0);
-      //virtual void updateInverseKineticsJacobians(double t);
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */

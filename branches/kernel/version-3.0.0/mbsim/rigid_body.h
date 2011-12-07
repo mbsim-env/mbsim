@@ -126,11 +126,6 @@ namespace MBSim {
        */
       virtual void updateJacobiansForRemainingFramesAndContours(double t, int j=0);
       virtual void updateJacobiansForRemainingFramesAndContours1(double t);
-      /**
-       * \brief updates JACOBIAN for kinematics with involved inverse kinetics starting from reference Frame
-       */
-      //virtual void updateInverseKineticsJacobiansForSelectedFrame(double t);
-      /*****************************************************/
 
       /* GETTER / SETTER */
       /*!

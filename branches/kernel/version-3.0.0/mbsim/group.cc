@@ -108,20 +108,6 @@ namespace MBSim {
       (*i)->updatexd(t);
   }
 
- // void Group::updateInverseKineticsJacobians(double t) {
- //   for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
- //     (*i)->updateInverseKineticsJacobians(t);
-
- //   for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
- //     (*i)->updateInverseKineticsJacobians(t);
-
- //   for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
- //     (*i)->updateJacobians(t);
-
- //   for(vector<Link*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) 
- //     (*i)->updateJacobians(t);
- // }
-
   void Group::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     Element::initializeUsingXML(element);

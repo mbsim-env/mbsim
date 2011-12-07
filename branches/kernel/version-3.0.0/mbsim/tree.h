@@ -64,12 +64,6 @@ namespace MBSim {
       void updateJacobians(double t);
 
       /**
-       * \brief recursive JACOBIAN for inverse kinetics update
-       * \param time
-       */
-      void updateInverseKineticsJacobians(double t);
-
-      /**
        * \brief recursive calculation of position size
        * \param position size
        */
@@ -128,7 +122,6 @@ namespace MBSim {
       virtual void sethSize(int h, int j=0);
       virtual void calcqSize();
       virtual void calcuSize(int j=0);
-      virtual void updateInverseKineticsJacobians(double t);
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */

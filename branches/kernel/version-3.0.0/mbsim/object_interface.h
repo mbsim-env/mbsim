@@ -233,12 +233,6 @@ namespace MBSim {
       virtual fmatvec::Vec& getu() = 0; 
       
       /**
-       * \brief update JACOBIAN for inverse kinetics
-       * \param t simulation time
-       */
-//      virtual void updateInverseKineticsJacobians(double t) = 0;
-
-      /**
        * \return associated plot group
        */
       virtual H5::Group *getPlotGroup() = 0;

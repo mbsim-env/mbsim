@@ -36,7 +36,6 @@ namespace MBSim {
 
     public:
       Constraint(const std::string &name);
-      void updateInverseKineticsJacobians(double t) {}
 #ifdef HAVE_OPENMBVCPPINTERFACE
       virtual OpenMBV::Group* getOpenMBVGrp() {return 0;}
 #endif

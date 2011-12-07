@@ -59,10 +59,6 @@ namespace MBSim {
       virtual void setuInd(int uInd, int j=0) {(this->*setuInd_[j])(uInd);}
       virtual void sethInd(int hInd, int j=0) {(this->*sethInd_[j])(hInd);}
 
-
-      //virtual void updateInverseKineticsJacobians(double t);
-      /***************************************************/
-
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const { return "Graph"; }
       /***************************************************/
