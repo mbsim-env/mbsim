@@ -551,14 +551,7 @@ namespace MBSim {
       /**
        * \brief smooth, smooth with respect to objects, smooth with respect to links right hand side
        */
-      fmatvec::Vec hParent[2], hObjectParent, hLinkParent;
-
-      /**
-       * \brief matrices for implicit integration
-       */
-      fmatvec::Mat    dhdqObjectParent, dhdqLinkParent;
-      fmatvec::SqrMat dhduObjectParent, dhduLinkParent;
-      fmatvec::Vec    dhdtObjectParent, dhdtLinkParent;
+      fmatvec::Vec hParent[2];
 
       /**
        * \brief nonsmooth right hand side
