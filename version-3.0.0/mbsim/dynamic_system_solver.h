@@ -149,7 +149,6 @@ namespace MBSim {
       virtual void updateh0Fromh1(double t);
       virtual void updateW0FromW1(double t);
       virtual void updateV0FromV1(double t);
-      virtual void updatedhdz(double t);
       virtual void updateM(double t, int i=0);
       virtual void updateStateDependentVariables(double t); // this function is called once every time step by every integrator
       /***************************************************/
@@ -476,9 +475,10 @@ namespace MBSim {
 
       void setInverseKinetics(bool inverseKinetics_) {inverseKinetics = inverseKinetics_;}
 
-       fmatvec::Mat getdhdq() const { throw; return fmatvec::Mat(); }
-       fmatvec::SqrMat getdhdu() const { throw; return fmatvec::SqrMat(); }
-       fmatvec::Vec getdhdt() const { throw; return fmatvec::Vec(); }
+       fmatvec::Mat dhdq(double t);
+       fmatvec::Mat dhdu(double t);
+       fmatvec::Mat dhdx(double t);
+       fmatvec::Vec dhdt(double t);
 
     protected:
       /**

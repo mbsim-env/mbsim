@@ -61,7 +61,6 @@ namespace MBSim {
 
     system.updateT(t); 
     system.updateJacobians(t);
-    system.updatedhdz(t);
     system.updateM(t);
     system.updateW(t); 
     system.updateV(t);
@@ -122,8 +121,8 @@ namespace MBSim {
       Vec h = system.geth().copy();
       Mat W = system.getW().copy();
       Mat V = system.getV().copy();
-      Mat dhdq = system.getdhdq();
-      Mat dhdu = system.getdhdu();
+      Mat dhdq = system.dhdq(t);
+      Mat dhdu = system.dhdu(t);
 
       Vector<int> ipiv(M.size());
       SqrMat luMeff = SqrMat(facLU(M - theta*dt*dhdu - theta*theta*dt*dt*dhdq*T,ipiv));
