@@ -652,7 +652,63 @@ namespace MBSim {
     Group::updateV0FromV1(t);
   }
 
-  void DynamicSystemSolver::updatedhdz(double t) {
+  Mat DynamicSystemSolver::dhdq(double t) {
+    double delta = epsroot();
+    Mat J(hSize[0],qSize,NONINIT);
+    updateStateDependentVariables(t);
+    updateg(t);
+    updategd(t);
+    updateT(t); 
+    updateJacobians(t);
+    updateh(t); 
+    Vec hOld = h[0].copy();
+    for(int i=0; i<qSize; i++) {
+      double qtmp = q(i);
+      q(i) += delta;
+      updateStateDependentVariables(t);
+      updateg(t);
+      updategd(t);
+      updateT(t); 
+      updateJacobians(t);
+      updateh(t); 
+      J.col(i) = (h[0] - hOld)/delta;
+      q(i) = qtmp;
+    }
+    h[0] = hOld;
+    return J;
+  }
+
+  Mat DynamicSystemSolver::dhdu(double t) {
+    double delta = epsroot();
+    Mat J(hSize[0],uSize[0],NONINIT);
+    updateStateDependentVariables(t);
+    updateg(t);
+    updategd(t);
+    updateT(t); 
+    updateJacobians(t);
+    updateh(t); 
+    Vec hOld = h[0].copy();
+    for(int i=0; i<uSize[0]; i++) {
+      double utmp = u(i);
+      u(i) += delta;
+      updateStateDependentVariables(t);
+      updateg(t);
+      updategd(t);
+      updateT(t); 
+      updateJacobians(t);
+      updateh(t); 
+      J.col(i) = (h[0] - hOld)/delta;
+      u(i) = utmp;
+    }
+    h[0] = hOld;
+    return J;
+  }
+
+  Mat DynamicSystemSolver::dhdx(double t) {
+    throw;
+  }
+
+  Vec DynamicSystemSolver::dhdt(double t) {
     throw;
   }
 
