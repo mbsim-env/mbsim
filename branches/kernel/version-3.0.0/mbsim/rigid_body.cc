@@ -111,29 +111,26 @@ namespace MBSim {
   void RigidBody::calcqSize() {
     Body::calcqSize();
     int nqT=0, nqR=0;
-    if(dynamic_cast<LinearTranslation*>(fPrPK)) {
-      nqT += dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors().cols();
-      nqR = nqT;
-    }
+    nq = 0;
+    if(dynamic_cast<LinearTranslation*>(fPrPK))
+      nqT = dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors().cols();
     else if(fPrPK)
-      nqT = fPrPK->getqSize();
+      nq = fPrPK->getqSize();
     if(dynamic_cast<RotationAboutOneAxis*>(fAPK)) {
-      nqR += 1; 
-      nqT = nqR;
+      nqR = 1; 
     }
     else if(dynamic_cast<RotationAboutTwoAxes*>(fAPK)) {
-      nqR += 2; 
-      nqT = nqR;
+      nqR = 2; 
     }
     else if(dynamic_cast<RotationAboutThreeAxes*>(fAPK)) {
-      nqR += 3; 
-      nqT = nqR;
+      nqR = 3; 
     }
-    else if(fAPK)
-      nqR = fAPK->getqSize();
-    // TODO: besseres Konzept überlegen
-    assert(nqT == nqR);
-    nq = nqT;
+    else if(fAPK) {
+      int nqtmp = fAPK->getqSize();
+      if(nq) assert(nq==nqtmp);
+      nq = nqtmp;
+    }
+    nq += nqT + nqR;
     qSize = constraint ? 0 : nq;
   }
 
@@ -141,31 +138,29 @@ namespace MBSim {
     Body::calcuSize(j);
     int nuT=0, nuR=0;
     if(j==0) {
+      nu[0] = 0;
       if(fPJT==0) {
-	if(dynamic_cast<LinearTranslation*>(fPrPK)) {
-	  nuT += dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors().cols();
-	  nuR = nuT;
-	} else
-	  nuT = 0;
-      } 
+        if(dynamic_cast<LinearTranslation*>(fPrPK)) 
+          nuT = dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors().cols();
+      } else 
+        nu[0] = fPJT->getuSize();
 
       if(fPJR==0) {
 	if(dynamic_cast<RotationAboutOneAxis*>(fAPK)) {
-	  nuR += 1; 
-	  nuT = nuR;
+	  nuR = 1; 
 	} 
 	else if(dynamic_cast<RotationAboutTwoAxes*>(fAPK)) {
-	  nuR += 2; 
-	  nuT = nuR;
+	  nuR = 2; 
 	} 
 	else if(dynamic_cast<RotationAboutThreeAxes*>(fAPK)) {
-	  nuR += 3; 
-	  nuT = nuR;
+	  nuR = 3; 
 	} 
-      } else
-        nuR = fPJR->getuSize();
-      assert(nuT == nuR);
-      nu[j] = nuT;
+      } else {
+        int nutmp = fPJR->getuSize();
+        if(nu[0]) assert(nu[0]==nutmp);
+        nu[0] = nutmp;
+      }
+      nu[0] += nuT + nuR;
       uSize[j] = constraint ? 0 : nu[j];
     } else {
       nu[j] = 6;
