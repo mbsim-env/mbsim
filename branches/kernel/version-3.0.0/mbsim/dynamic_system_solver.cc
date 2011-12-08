@@ -279,12 +279,6 @@ namespace MBSim {
       udParent1.resize(getuSize(1));
       hParent[0].resize(getuSize(0));
       hParent[1].resize(getuSize(1));
-      dhdqObjectParent.resize(getuSize(1),getqSize());
-      dhdqLinkParent.resize(getuSize(1),getqSize());
-      dhduObjectParent.resize(getuSize(1));
-      dhduLinkParent.resize(getuSize(1));
-      dhdtObjectParent.resize(getuSize(1));
-      dhdtLinkParent.resize(getuSize(1));
       rParent[0].resize(getuSize(0));
       rParent[1].resize(getuSize(1));
       fParent.resize(getxSize());
