@@ -31,11 +31,12 @@ namespace MBSim {
   /* MaxwellContact   ***************************************************************************************************************************/
 
   MaxwellContact::MaxwellContact(const string &name) :
-      LinkMechanics(name), contactKinematics(0), fdf(0), cpData(0), gActive(0), gActive0(0), gk(0), gdk(0), lak(0), WF(0), Vk(0), Wk(0), laSizek(0), laIndk(0), gSizek(0), gIndk(0), gdSizek(0), gdIndk(0), svSizek(0), svIndk(0), rFactorSizek(0), rFactorIndk(0), possibleContactPoints(0), plotContactPoints(0), matConst(1.), matConstSetted(false), gTol(1.), INFO(false)
+      LinkMechanics(name), contactKinematics(0), fdf(0), cpData(0), gActive(0), gActive0(0), gk(0), gdk(0), lak(0), WF(0), Vk(0), Wk(0), laSizek(0), laIndk(0), gSizek(0), gIndk(0), gdSizek(0), gdIndk(0), svSizek(0), svIndk(0), rFactorSizek(0), rFactorIndk(0), possibleContactPoints(0), plotContactPoints(0), matConst(1.), matConstSetted(false), INFO(false)
 #ifdef HAVE_OPENMBVCPPINTERFACE
           , openMBVContactGrp(0), openMBVContactFrame(0), openMBVNormalForceArrow(0), openMBVFrictionForceArrow(0), openMBVContactFrameSize(0), openMBVContactFrameEnabled(true), normalForceArrow(false), frictionForceArrow(false)
 #endif
   {
+    gTol = 1;
   }
 
   MaxwellContact::~MaxwellContact() {

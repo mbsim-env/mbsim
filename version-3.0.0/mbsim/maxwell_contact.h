@@ -409,11 +409,6 @@ namespace MBSim {
       bool matConstSetted;
 
       /**
-       * \brief tolerance value for active contact or not
-       */
-      double gTol;
-
-      /**
        * \brief print INFO output?
        *
        * \todo wouldn't a logger for MBSim be nice
