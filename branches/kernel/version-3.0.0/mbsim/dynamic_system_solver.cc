@@ -1307,9 +1307,6 @@ namespace MBSim {
       updatezRef(zParent);
     }
     jsv = jsv_;
-//    cout <<endl<< "shift at t = " << t << endl;
-//    cout << jsv << endl;
-//    cout << sv << endl;
 
     if(jsv(sv.size()-1)) { // projection
       driftCount++;
@@ -1347,13 +1344,13 @@ namespace MBSim {
     updateW(t); 
     //updateG(t); // TODO necessary?
     projectGeneralizedPositions(t);
-updategd(t);
-updateT(t); 
-updateJacobians(t);
-updateM(t); 
-facLLM(); 
-updateW(t); 
-projectGeneralizedVelocities(t);
+    updategd(t);
+    updateT(t); 
+    updateJacobians(t);
+    updateM(t); 
+    facLLM(); 
+    updateW(t); 
+    projectGeneralizedVelocities(t);
     // end of projection
 
     updateCondition(); // decide which constraints should be added and deleted
@@ -1497,7 +1494,6 @@ projectGeneralizedVelocities(t);
     updateW(t); 
     //updateG(t); TODO
 
-    //cout <<"gd = " << gd << endl;
     projectGeneralizedPositions(t);
     updategd(t);
     updateT(t); 
@@ -1507,11 +1503,9 @@ projectGeneralizedVelocities(t);
     facLLM(); 
     updateW(t); 
     projectGeneralizedVelocities(t);
-    //checkState();
   }
 
   void DynamicSystemSolver::getsv(const Vec& zParent, Vec& svExt, double t) { 
-//    cout <<endl<< "getsv at t = " << t << endl;
     if(sv()!=svExt()) {
       updatesvRef(svExt);
     }
@@ -1525,7 +1519,6 @@ projectGeneralizedVelocities(t);
     updateStateDependentVariables(t);
     updateg(t);
     updategd(t);
- //   cout << "gd = "<< gd << endl;
     updateT(t); 
     updateJacobians(t);
     updateh(t); 
@@ -1539,17 +1532,12 @@ projectGeneralizedVelocities(t);
       b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
       int iter;
       iter = solveConstraints();
-   //computeConstraintForces(t); 
     }
     updateStopVector(t);
-  //  cout<< "sv = "<< sv << endl;
     sv(sv.size()-1) = driftCount*1e-0-t; 
-    sv(sv.size()-1) = 1;
   }
 
  Vec DynamicSystemSolver::zdot(const Vec &zParent, double t) {
-//    cout <<endl<< "zdot at t = " << t << endl;
-//    cout << "laSize = " << laSize << endl;
     if(q()!=zParent()) {
       updatezRef(zParent);
     }
@@ -1566,10 +1554,7 @@ projectGeneralizedVelocities(t);
       updateV(t); 
       updateG(t); 
       updatewb(t); 
-  //   b.resize() = W.T()*slvLLFac(LLM,h) + wb;
-  //    int iter;
-  //    iter = solveConstraints();
-   computeConstraintForces(t); 
+      computeConstraintForces(t); 
     }
     updater(t); 
     updatezd(t);
@@ -1578,7 +1563,6 @@ projectGeneralizedVelocities(t);
   }
 
   void DynamicSystemSolver::plot(const fmatvec::Vec& zParent, double t, double dt) {
-    //cout << "plot at t = " << endl;
     if(q()!=zParent()) {
       updatezRef(zParent);
     }
@@ -1606,9 +1590,6 @@ projectGeneralizedVelocities(t);
       updateV0FromV1(t);
       updateG(t); 
       updatewb(t); 
-//      b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
-//      int iter;
-//      iter = solveConstraints();
       computeConstraintForces(t); 
     }
 
@@ -1645,8 +1626,7 @@ projectGeneralizedVelocities(t);
 
   // TODO: Momentan für TimeStepping benötigt
   void DynamicSystemSolver::plot2(const fmatvec::Vec& zParent, double t, double dt) {
-    //cout << "plot2 at t = " << endl;
-  if(q()!=zParent()) {
+    if(q()!=zParent()) {
       updatezRef(zParent);
     }
 
