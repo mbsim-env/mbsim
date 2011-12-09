@@ -56,6 +56,8 @@
           <dd>Zustandsvektor plotten (x, q, u) [+]</dd>
           <dt>stateDerivative</dt>
           <dd>Ableitung des Zustandsvektors plotten (xd, qd, ud) [-]</dd>
+          <dt>notMinimalState</dt>
+          <dd>TODO</dd>
           <dt>rightHandSide</dt>
           <dd>Glatte und nicht glatte rechte Seite plotten (h, r=W*l) [-]</dd>
           <dt>globalPosition</dt>
@@ -68,7 +70,9 @@
           <dt>linkKinematics</dt>
           <dd>Kinematic der Links plotten (g, gd) [+]</dd>
           <dt>stopVector</dt>
-          <dd>Stopvektor der Schaltpunktsuche plotten [+]</dd>
+          <dd>Stopvektor der Schaltpunktsuche ausgeben [-]</dd>
+          <dt>debug</dt>
+          <dd>interne Größen ausgeben [-]</dd>
         </dl>
     </xs:documentation></xs:annotation>
     <xs:restriction base="xs:token">
@@ -80,6 +84,8 @@
       <xs:enumeration value="-state"/>
       <xs:enumeration value="+stateDerivative"/>
       <xs:enumeration value="-stateDerivative"/>
+      <xs:enumeration value="+notMinimalState"/>
+      <xs:enumeration value="-notMinimalState"/>
       <xs:enumeration value="+rightHandSide"/>
       <xs:enumeration value="-rightHandSide"/>
       <xs:enumeration value="+globalPosition"/>
@@ -96,6 +102,8 @@
       <xs:enumeration value="-linkKinematics"/>
       <xs:enumeration value="+stopVector"/>
       <xs:enumeration value="-stopVector"/>
+      <xs:enumeration value="+debug"/>
+      <xs:enumeration value="-debug"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -1155,6 +1163,163 @@
                   </xs:annotation>
                 </xs:element>
               </xs:sequence>
+            </xs:complexType> 
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+  
+  <xs:element name="Constraint" abstract="true" substitutionGroup="Object" type="ConstraintType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Kinematische Zwangsbedingungen.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ConstraintType">
+    <xs:complexContent>
+      <xs:extension base="ObjectType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="Constraint2" substitutionGroup="Constraint" type="Constraint2Type">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        TODO <br/>
+        Kinematische Zwangsbedingung durch Angabe eines Übersetzungsverhältnisses.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="Constraint2Type">
+    <xs:complexContent>
+      <xs:extension base="ConstraintType">
+        <xs:sequence>
+          <xs:element name="referenceRigidBody">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Starrkörper, dessen Bewegungsfreiheitsgrad als Referenz dient.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="dependentRigidBodies">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Liste der abhängigen Starrkörper, deren Bewegungszustand aus dem Zustand des Referenzkörpers direkt bestimmt werden kann.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="dependentRigidBody">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element name="transmissionRatio" type="pv:unknownScalar">
+                        <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                          Übersetzungsverhältnis
+                        </xs:documentation></xs:annotation>
+                      </xs:element>
+                    </xs:sequence>
+                    <xs:attribute name="ref" type="ObjectReferenceType" use="required">
+                      <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                        Angabe des Körpers 
+                      </xs:documentation></xs:annotation>
+                    </xs:attribute>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="JointConstraint" substitutionGroup="Constraint" type="JointConstraintType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        TODO <br/>
+        Kinematische Zwangsbedingung durch geschlossene Schleifen. Die  Auflösung der kinematischen Schleife erfolgt durch die Lösung eines Gleichungssystems. Durch die inertiale generalisierte Lage kann ein Startvektor für den Lösungsalgorithmus vorgegeben werden.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="JointConstraintType">
+    <xs:complexContent>
+      <xs:extension base="ConstraintType">
+        <xs:sequence>
+          <xs:element name="dependentRigidBodiesFirstSide">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Liste der Körper auf Seite A des Lagers.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence maxOccurs="unbounded">
+                <xs:element name="dependentRigidBody">
+                  <xs:complexType>
+                    <xs:attribute name="ref" type="ObjectReferenceType" use="required">
+                      <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                        Angabe des Körpers 
+                      </xs:documentation></xs:annotation>
+                    </xs:attribute>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="dependentRigidBodiesSecondSide">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Liste der Körper auf Seite B des Lagers.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence maxOccurs="unbounded">
+                <xs:element name="dependentRigidBody">
+                  <xs:complexType>
+                    <xs:attribute name="ref" type="ObjectReferenceType" use="required">
+                      <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                        Angabe des Körpers 
+                      </xs:documentation></xs:annotation>
+                    </xs:attribute>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="independentRigidBody">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Angabe des Körpers, dessen Freiheitsgrad erhalten bleibt. Die Lagen und Geschwindigkeiten aller anderen Körper in der kinematischen Schleife können aus der generalisierten Koordinate dieses Körpers bestimmt werden.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:choice>
+            <xs:element name="forceDirection" type="pv:nounitMatrix">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Angabe der Richtungen, für die eine Übereinstimmung im Gelenk für translatorische Freiheitsgrade erzeugt werden soll.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="momentDirection" type="pv:nounitMatrix">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Angabe der Richtungen, für die eine Übereinstimmung im Gelenk für rotatorische Freiheitsgrade erzeugt werden soll.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:choice>
+          <xs:element name="connect">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Angabe der beiden Koordinatensysteme, welche in Übereinstimmung gebracht werden sollen.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref1" type="FrameReferenceType" use="required"/>
+              <xs:attribute name="ref2" type="FrameReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
         </xs:sequence> 
@@ -2585,6 +2750,53 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
+
+  <xs:element name="DifferentiableFunction1_SS" substitutionGroup="Function1_SS" type="DifferentiableFunction1_SSType" abstract="true">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrakte Klasse von stetig differenzierbaren Funktionen.<br/>
+        Durch die Angabe des Ableitungsgrads n liefert der Funktionswert die n-te Ableitung der angegebenen Funktion zurück.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="DifferentiableFunction1_SSType">
+    <xs:complexContent>
+      <xs:extension base="Function1_SSType">
+        <xs:sequence>
+          <xs:element name="orderOfDerivative" type="xs:nonNegativeInteger" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Grad der Ableitung
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="Polynom1_SS" substitutionGroup="DifferentiableFunction1_SS" type="Polynom1_SSType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Polynomfunktion <object class="inlineeqn">y=\sum_{i=0}^n a_i \, x^i</object>.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="Polynom1_SSType">
+    <xs:complexContent>
+      <xs:extension base="DifferentiableFunction1_SSType">
+     <xs:sequence>
+       <xs:element name="coefficients" type="pv:unknownVector">
+         <xs:annotation>
+           <xs:documentation xmlns="http://www.w3.org/1999/xhtml" xml:lang="de">
+                Vektor der Koeffizienten des Polynoms <object class="inlineeqn">\left[ a_0; a_1; \ldots; a_n \right]</object>
+              </xs:documentation>
+         </xs:annotation>
+       </xs:element>
+     </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
   <xs:element name="Function1_VS" abstract="true" type="Function1_VSType">
     <xs:annotation>
