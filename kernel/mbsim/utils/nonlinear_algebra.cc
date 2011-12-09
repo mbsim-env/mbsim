@@ -87,6 +87,16 @@ namespace MBSim {
         return currentGuess;
       }
 
+      if(fabs(norms[norms.size() - 2] - norms[norms.size() - 1])  < macheps()) {
+        info = 1; //no more convergence possible --> stop
+        return currentGuess;
+    }
+
+//      if(norms[norms.size() - 2] - norms[norms.size() - 1]  < 0) {
+//        info = -1; //divergence --> stop
+//        return lastGuess;
+//      }
+
     }
 
     info = 1; //convergence (needs to be true for all steps)
@@ -216,6 +226,12 @@ namespace MBSim {
         info = 0;
         return x;
       }
+
+      if(fabs(norms[norms.size() - 2] - norms[norms.size() - 1]) < macheps()) {
+        info = -1; //divergence --> stop
+        return x;
+      }
+
     }
 
     info = 1; //convergence (needs to be true for all steps)
@@ -229,7 +245,7 @@ namespace MBSim {
     return x;
   }
 
-  Vec LemkeAlgorithm::solve() {
+  Vec LemkeAlgorithm::solve(uint maxloops) {
     /*REMARK:
      * This algorithm is taken from:
      * Das lineare Komplementaritätsproblem: Eine Einführung  (Uwe Schäfer) pages 7 ff
@@ -253,8 +269,9 @@ namespace MBSim {
     for (size_t i = 0; i < dim; i++)
       basis.push_back(i);
 
-    int pivotRowIndex = minIndex(q);     // first row is that with lowest q-value
-    int pivotColIndex = 2 * dim;         //first col is that of z0
+    size_t pivotRowIndex = minIndex(q_);     // first row is that with lowest q-value
+    size_t z0Row = pivotRowIndex;           // remember the col of z0 for ending algorithm afterwards
+    size_t pivotColIndex = 2 * dim;         // first col is that of z0
 
     if (INFO) {
       cout << "A: " << A << endl;
@@ -267,11 +284,13 @@ namespace MBSim {
     }
 
     if(!greaterZero(q_)) {
-      int i=0;
-      for(; i < ::pow(2,dim); i++ ) {
 
-        if (i>0 and validBasis(basis))
-          break;
+      if (maxloops == 0 )
+        maxloops = pow(2, dim);
+
+      /*start looping*/
+      uint step = 0;
+      for(; step < maxloops; step++) {
 
         GaussJordanEliminationStep(A, pivotRowIndex, pivotColIndex, basis);
 
@@ -299,14 +318,26 @@ namespace MBSim {
 
         pivotRowIndex = findLexicographicMinimum(A, pivotColIndex);
 
-      }
-      if(INFO) {
-        cout << "Number of loops: " << i << endl;
-        cout << "Number of maximal loops: " << ::pow(2,dim) << endl;
+        if(z0Row == pivotRowIndex) { //if z0 leaves the basis the solution is found --> one last elimination step is necessary
+          GaussJordanEliminationStep(A, pivotRowIndex, pivotColIndex, basis);
+          basis[pivotRowIndex] = pivotColIndex; //update basis
+          break;
       }
 
-      if(!validBasis(basis))
-        throw MBSimError("LemkeAlgorithm::solve: Solution process ended with ray termination!");
+      }
+      if(INFO) {
+        cout << "Number of loops: " << step << endl;
+        cout << "Number of maximal loops: " << maxloops << endl;
+      }
+
+      if(!validBasis(basis)) {
+        info = -1;
+        if(INFO)
+          cout << "Lemke-Algorithm ended with Ray-Termination (no valid solution." << endl;
+
+        return solutionVector;
+      }
+
     }
 
     if (INFO) {
@@ -317,6 +348,8 @@ namespace MBSim {
 
     for (size_t i = 0; i < basis.size(); i++)
       solutionVector(basis[i]) = q_(i);
+
+    info = 0;
 
     return solutionVector;
   }
@@ -366,7 +399,7 @@ namespace MBSim {
     if (INFO)
       cout << "v " << v << endl;
 
-    while (fabs(v(i)) < macheps() and i < v.size())
+    while(i < v.size()-1 and fabs(v(i)) < macheps())
       i++;
     if (v(i) > 0)
       return true;

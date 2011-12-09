@@ -2,7 +2,7 @@
 Target = main
 
 # Defining Sources
-sources = main.cc system.cc
+sources = main.cc system.cc systemBeam.cc
 
 # Do Not Edit the Following Lines
 CXX = g++
