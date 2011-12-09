@@ -9,6 +9,7 @@
 #endif
 
 #include <mbsim/environment.h>
+#include <mbsim/contour_pairing.h>
 #include <mbsim/maxwell_contact.h>
 #include <mbsim/rigid_body.h>
 #include <mbsim/contours/frustum.h>
@@ -39,7 +40,7 @@ class CountourCouplingPyramid : public InfluenceFunction {
     double operator()(const fmatvec::Vec &Arg1, const fmatvec::Vec &Arg2, const void * = NULL) {
       if (fabs(Arg1(1) - Arg2(1)) < M_PI_2
       )
-        return 1e-5 * pow(cos(Arg1(1) - Arg2(1)),2);
+        return 1e-5 * cos(Arg1(1) - Arg2(1));
       else
         return 0;
     }
@@ -48,6 +49,8 @@ class CountourCouplingPyramid : public InfluenceFunction {
 System::System(const string &projectName, int contactType, int circleNums) :
     DynamicSystemSolver(projectName) {
   srand((unsigned) time(0));
+
+  MaxwellContact *maxwellContact = new MaxwellContact("MaxwellContact");
 
   /*Lemke Test*/
 //  SqrMat M("[1,2,0; 0,1,2; 2,0,1]"); // matrix for a cycling problem
@@ -69,13 +72,14 @@ System::System(const string &projectName, int contactType, int circleNums) :
 //  grav(1) = -9.81;
 //  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
   /*General-Parameters*/
-  MaxwellContact *maxwellContact = new MaxwellContact("MaxwellContact");
+
 
   /*Print arrows for contacts*/
   OpenMBV::Arrow *normalArrow = new OpenMBV::Arrow();
   normalArrow->setScaleLength(0.001);
   OpenMBV::Arrow *frArrow = new OpenMBV::Arrow();
   frArrow->setScaleLength(0.001);
+  frArrow->setStaticColor(0.75);
 
   /*Parameters for the "Pyramid"*/
   double massPyr = 1;
@@ -128,7 +132,7 @@ System::System(const string &projectName, int contactType, int circleNums) :
     Vec CircInitialTranslation(3, INIT, 0.);
     double circRadiusPosition = radiiPyr(0) + 0.5 * (radiiPyr(1) - radiiPyr(0));
 //    double circAzimuthalPosition = (rand() % (int)(2*M_PI*1000)) / 1000.0; //
-    double circAzimuthalPosition = circIter/100.;// circIter * M_PI / 60 + floor(circIter / 2) * M_PI / 100.;
+    double circAzimuthalPosition = circIter*circIter/100.;// circIter * M_PI / 60 + floor(circIter / 2) * M_PI / 100.;
 
     CircInitialTranslation(0) = circRadiusPosition * cos(circAzimuthalPosition);
     CircInitialTranslation(1) = radiusCirc + heightPyr / 2 + 0.06;// + 0.0001 * circIter;
@@ -183,29 +187,31 @@ System::System(const string &projectName, int contactType, int circleNums) :
   switch (contactType) {
     case 0: //maxwell Contact
       //plotting features
-      maxwellContact->setINFO(false);
-      maxwellContact->enableOpenMBVContactPoints(1.,false);
-      maxwellContact->enableOpenMBVNormalForceArrow(normalArrow);
-      maxwellContact->enableOpenMBVFrictionForceArrow(frArrow);
+      maxwellContact->setDebuglevel(1);
 
       if (1) {
         CountourCouplingPyramid* couplingPyr = new CountourCouplingPyramid(PyramidContour->getName());
         maxwellContact->addContourCoupling(PyramidContour, PyramidContour, couplingPyr);
       }
       else {
-        StiffnessInfluenceFunction* couplingPyr = new StiffnessInfluenceFunction(PyramidContour->getName(), 1e-5);
+        FlexibilityInfluenceFunction* couplingPyr = new FlexibilityInfluenceFunction(PyramidContour->getName(), 1e-5);
         maxwellContact->addContourCoupling(PyramidContour, PyramidContour, couplingPyr);
       }
 
       for (size_t contactIter = 0; contactIter < circles.size(); contactIter++) {
-        maxwellContact->add(PyramidContour, circleContours[contactIter]);
+        stringstream contactname;
+        contactname << "Contact_Pyr-" << circleContours[contactIter]->getName();
 
-        if (contactIter % 2 < 2) {
-          maxwellContact->setPlotContactPoint(contactIter, true);
-        }
+        ContourPairing* contourPairing = new ContourPairing(contactname.str(), PyramidContour, circleContours[contactIter]);
+        contourPairing->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+        maxwellContact->addContourPairing(contourPairing);
+
+        contourPairing->enableOpenMBVContactPoints(1.,true);
+        contourPairing->enableOpenMBVNormalForceArrow(normalArrow);
+        contourPairing->enableOpenMBVFrictionForceArrow(frArrow);
       }
 
-      maxwellContact->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+
 
       this->addLink(maxwellContact);
     break;

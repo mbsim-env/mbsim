@@ -1,11 +1,13 @@
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/integrators/time_stepping_integrator.h>
 
+#include "systemBeam.h"
 #include "system.h"
 
 #include <boost/timer.hpp>
 
 using namespace MBSim;
+using namespace fmatvec;
 using namespace std;
 
 int main(int argc, char *argv[]) {
@@ -13,11 +15,11 @@ int main(int argc, char *argv[]) {
   DynamicSystemSolver *sys;
   TimeSteppingIntegrator *integrator;
   double stepSize = 1e-5;
-  double plotStepSize = 1e-4;//1000 * stepSize;
+  double plotStepSize = 1 * stepSize;
   double endTime = 5e-2;
 
-  for (int contactType = 0; contactType <= 0; contactType++) {
-    for (int circleNums = 7; circleNums <= 7; circleNums+=5) {
+  for (int contactType =0; contactType <= 0; contactType++) {
+    for (int contactNums = 2; contactNums <= 2; contactNums+=20) {
       stringstream MBSName;
       MBSName << "MBS_";
 
@@ -35,12 +37,12 @@ int main(int argc, char *argv[]) {
           throw MBSimError("No valid contactType chosen");
       }
 
-      MBSName << "_CircNo=" << circleNums;
+      MBSName << "_CircNo=" << contactNums;
 
       //stream output to a file
-      //freopen((MBSName.str()+"_Output.txt").c_str(), "w+", stdout);
+//      freopen((MBSName.str()+"_Output.txt").c_str(), "w+", stdout);
 
-      sys = new System(MBSName.str(), contactType, circleNums);
+      sys = new SystemBeam(MBSName.str(), contactType, 0, contactNums, Vec("[0;0;0]"));
 
       sys->setLinAlg(PseudoInverse);
       sys->initialize();
@@ -53,9 +55,11 @@ int main(int argc, char *argv[]) {
 
       boost::timer timer;
 
-      timer.restart();
       integrator->integrate(*sys);
+
       double elapsedIntegrationTime = timer.elapsed();
+
+      sys->closePlot();
 
       delete sys;
       delete integrator;
@@ -64,8 +68,8 @@ int main(int argc, char *argv[]) {
       cout << "*  Time elapsed: " << elapsedIntegrationTime << endl;
       cout << "**********************************************" << endl;
 
-      if(circleNums == 1)
-        circleNums--;
+      if(contactNums == 1)
+        contactNums--;
     }
   }
 
