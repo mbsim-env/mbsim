@@ -133,8 +133,6 @@ namespace MBSim {
   }
 
   void Contact::updateg(double t) {
-    //cout << name << endl;
-    //cout << t << endl;
     contactKinematics->updateg(gk.begin(),cpData.begin());
   }
 
@@ -167,10 +165,8 @@ namespace MBSim {
       if(gActive[k]!=gdActive[k][0])
 	throw;
       if(gActive[k]) { 
-        //svk[k](0) = lak[k](0);
         svk[k](0) = gddk[k](0)>gddTol ? -1 : 1;
         if(gdActive[k][1]) {
-          //svk[k](1) = nrm2(lak[k](1,getFrictionDirections())) - fdf->getFrictionCoefficient(nrm2(gdk[k](1,getFrictionDirections())))*lak[k](0);
           svk[k](1) = nrm2(gddk[k](1,getFrictionDirections()))>gddTol ? -1 : 1;
         } 
         else {
@@ -182,25 +178,7 @@ namespace MBSim {
         }
       }
       else {
-	//if(watchg)
-	  svk[k](0) = gk[k](0);
-	//else {
-	//  if(gk[k](0)>0)
-	//    watchg = true;
-
-	//  if(watchgd)
-	//    svk[k](0) = gdk[k](0);
-	//  else {
-	//    if(gdk[k](0)>0)
-	//      watchgd= true;
-	//    cout << name << endl;
-	//    cout << gk[k] << endl;
-	//    cout << gdk[k] << endl;
-	//    cout << gddk[k] << endl;
-	//    throw;
-	//  }
-	//}
-        //sv(1,getFrictionDirections()).init(1);
+        svk[k](0) = gk[k](0);
         if(getFrictionDirections())
           svk[k](1) = 1;
       }
@@ -297,20 +275,13 @@ namespace MBSim {
   }
 
   void Contact::calclaSize() {
-//    cout << "calclaSize" << endl;
-    //cout << name << endl;
-    //cout << contactKinematics->getNumberOfPotentialContactPoints() << endl;
-//    cout<< gdActive[0][0] << endl;
-//    cout<< gdActive[0][1] << endl;
     LinkMechanics::calclaSize();
     laSize = 0;
     for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
       laIndk[i] = laSize;
       laSizek[i] = gdActive[i][0]+gdActive[i][1]*getFrictionDirections();
       laSize += laSizek[i];
-    //cout << laSizek[i] << endl;
     }
-  //  cout<< laSize << endl;
   }
 
   void Contact::calclaSizeForActiveg() {
@@ -537,9 +508,7 @@ namespace MBSim {
                 openMBVContactFrame[i][k]->setSize(openMBVContactFrameSize);
                 openMBVContactFrame[i][k]->setName("ContactPoint_"+numtostr((int)i)+(k==0?"A":"B"));
                 openMBVContactFrame[i][k]->setEnable(openMBVContactFrameEnabled);
-cout<<"MFMF2 "<<openMBVContactFrame[i][k]->getName()<<endl;
                 openMBVContactGrp->addObject(openMBVContactFrame[i][k]);
-cout<<"MFMF3 "<<openMBVContactFrame[i][k]->getName()<<endl;
               }
             }
             // arrows
@@ -1145,9 +1114,6 @@ cout<<"MFMF3 "<<openMBVContactFrame[i][k]->getName()<<endl;
   }
 
   void Contact::checkActivegdn() { 
-    //cout << "checkActivegdn of "<< name << endl;
-    //cout << gdnk[0] << endl;
-    //cout << lak[0] << endl;
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) {
         if(gdnk[k](0) <= gdTol) {
@@ -1172,9 +1138,6 @@ cout<<"MFMF3 "<<openMBVContactFrame[i][k]->getName()<<endl;
   }
 
   void Contact::checkActivegdd() { 
-    //cout << "checkActivegdd of " << name << endl;
-    //cout << gddk[0] << endl;
-    //cout << lak[0] << endl;
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gdActive[k][0]) {
         if(gddk[k](0) <= gddTol) {
@@ -1212,14 +1175,10 @@ cout<<"MFMF3 "<<openMBVContactFrame[i][k]->getName()<<endl;
   // überprüfen, was der Root Finder beobachten soll
   void Contact::checkState() {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
-	 // cout << "checkState of " << name << endl;
-	 // cout << gk[k] << endl;
-	 // cout << gdk[k] << endl;
-	  if(!gActive[k] && gk[k](0) < 0)
-	    gLim = abs(gk[k](0))+1e-15;
-	  else
-	    gLim = 0;
-	 // cout << gLim << endl;
+      if(!gActive[k] && gk[k](0) < 0)
+        gLim = abs(gk[k](0))+1e-15;
+      else
+        gLim = 0;
       if(gk[k](0) > 0) {
 	watchg = true;
 	watchgd = true;
@@ -1231,8 +1190,6 @@ cout<<"MFMF3 "<<openMBVContactFrame[i][k]->getName()<<endl;
 	  watchgd = false;
 	}
       }
-      //cout << "watchg = " << watchg << endl;
-      //cout << "watchgd = " << watchgd << endl;
     }
   }
 
