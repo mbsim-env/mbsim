@@ -78,20 +78,20 @@ namespace MBSim {
       /*
        * solve the LCP (compute the elastic distances and the contact forces)
        */
-      virtual void updateh(double t);
+      virtual void updateh(double t, int k=0);
       /*
        * \brief compute the rigid-body distance between the contact pairings
        */
       virtual void updateg(double t);
       virtual void updategd(double t);
       //      virtual void updateStopVector(double t);
-      virtual void updateJacobians(double t);
+      virtual void updateJacobians(double t, int j=0);
       //      /***************************************************/
       //
       //      /* INHERITED INTERFACE OF LINK */
       //      virtual void updateWRef(const fmatvec::Mat &ref, int j=0);
       //      virtual void updateVRef(const fmatvec::Mat &ref, int j=0);
-      virtual void updatehRef(const fmatvec::Vec &hRef, const fmatvec::Vec &hLinkRef, int j = 0);
+      virtual void updatehRef(const fmatvec::Vec &hRef, int k=0);
       //      virtual void updatewbRef(const fmatvec::Vec &ref);
       //      virtual void updatelaRef(const fmatvec::Vec& ref);
       //      virtual void updategRef(const fmatvec::Vec& ref);
