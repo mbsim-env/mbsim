@@ -50,9 +50,10 @@ namespace MBSim {
   /**
    * \brief solves the LCP to compute contact forces as well as distances
    */
-  void MaxwellContact::updateh(double t) {
+  void MaxwellContact::updateh(double t, int k) {
 
     updatePossibleContactPoints();
+    updateJacobians(t,k);
 
     if (possibleContactPoints.size() > 0) {
 
@@ -223,7 +224,7 @@ namespace MBSim {
           }
           WF[potentialContact][0] = -WF[potentialContact][1];
           for (size_t i = 0; i < 2; i++) { //add forces to h-vector of both contours of the current contact point
-            h[0][2 * potentialContact + i] += cpData[potentialContact][i].getFrameOfReference().getJacobianOfTranslation().T() * WF[potentialContact][i];
+            h[k][2 * potentialContact + i] += cpData[potentialContact][i].getFrameOfReference().getJacobianOfTranslation(k).T() * WF[potentialContact][i];
           }
 
           //increase for next active contacts
@@ -272,21 +273,21 @@ namespace MBSim {
     }
   }
 
-  void MaxwellContact::updateJacobians(double t) {
+  void MaxwellContact::updateJacobians(double t, int j) {
     for (size_t k = 0; k < contactKinematics.size(); k++)
       if (gActive[k])
         for (int i = 0; i < 2; i++)
-          contour[2 * k + i]->updateJacobiansForFrame(cpData[k][i]);
+          contour[2 * k + i]->updateJacobiansForFrame(cpData[k][i],j);
   }
 
   /**
    * \brief references the h and hLink vectors of the single contour-pairings to the global vector
    */
-  void MaxwellContact::updatehRef(const Vec& hParent, const Vec& hLinkParent, int j) {
+  void MaxwellContact::updatehRef(const Vec& hParent, int j) {
     for (size_t i = 0; i < contour.size(); i++) {
       int hInd = contour[i]->gethInd(j);
       Index I = Index(hInd, hInd + contour[i]->gethSize(j) - 1);
-      h[0][i].resize() >> hParent(I);
+      h[j][i].resize() >> hParent(I);
     }
   }
 
@@ -316,10 +317,14 @@ namespace MBSim {
         //TODO: seems to be more complicated as it has to be ...
         cpData[i][0].getFrameOfReference().setName("0");
         cpData[i][1].getFrameOfReference().setName("1");
-        cpData[i][0].getFrameOfReference().getJacobianOfTranslation().resize();
-        cpData[i][0].getFrameOfReference().getJacobianOfRotation().resize();
-        cpData[i][1].getFrameOfReference().getJacobianOfTranslation().resize();
-        cpData[i][1].getFrameOfReference().getJacobianOfRotation().resize();
+        cpData[i][0].getFrameOfReference().getJacobianOfTranslation(0).resize();
+        cpData[i][0].getFrameOfReference().getJacobianOfRotation(0).resize();
+        cpData[i][1].getFrameOfReference().getJacobianOfTranslation(0).resize();
+        cpData[i][1].getFrameOfReference().getJacobianOfRotation(0).resize();
+        cpData[i][0].getFrameOfReference().getJacobianOfTranslation(1).resize();
+        cpData[i][0].getFrameOfReference().getJacobianOfRotation(1).resize();
+        cpData[i][1].getFrameOfReference().getJacobianOfTranslation(1).resize();
+        cpData[i][1].getFrameOfReference().getJacobianOfRotation(1).resize();
 
         cpData[i][0].getFrameOfReference().sethSize(contour[0]->gethSize(0), 0);
         cpData[i][0].getFrameOfReference().sethSize(contour[0]->gethSize(1), 1);
