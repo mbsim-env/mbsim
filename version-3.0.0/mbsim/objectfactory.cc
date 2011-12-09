@@ -2,7 +2,7 @@
 #include "mbsim/objectfactory.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/group.h"
-#include "mbsim/tree.h"
+//#include "mbsim/tree.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/kinetic_excitation.h"
 #include "mbsim/spring_damper.h"

@@ -20,9 +20,9 @@
 #define _DYNAMIC_SYSTEM_H_
 
 #include "mbsim/element.h"
-#include "mbsim/link_interface.h"
+//#include "mbsim/link_interface.h"
 //#include "mbsim/object_interface.h"
-#include "mbsim/extradynamic_interface.h"
+//#include "mbsim/extradynamic_interface.h"
 #include "mbsim/mbsim_event.h"
 
 namespace H5 {
