@@ -54,6 +54,7 @@ namespace MBSim {
   void MaxwellContact::updateh(double t, int k) {
 
     updatePossibleContactPoints();
+    updategd(t);
     updateJacobians(t,k);
 
     if (possibleContactPoints.size() > 0) {
