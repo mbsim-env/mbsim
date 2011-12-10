@@ -585,7 +585,7 @@ namespace MBSim {
   };
 
   /**
-   * \brief function describing the influence between the deformations on a  Maxwell-body
+   * \brief function describing the influence between the deformations on a body
    */
   class InfluenceFunction : public Function2<double, fmatvec::Vec,  fmatvec::Vec > {
     public:
@@ -610,37 +610,37 @@ namespace MBSim {
 
     protected:
       /**
-       * \brief name of the first contour (to assign the lagrange parameter to the contour)
+       * \brief name of the first contour (to assign the Lagrange parameter, i.e. the contour parameter, to the contour)
        */
       std::string firstContourName;
 
       /**
-       * \brief name of the second contour (to assign the lagrange parameter to the contour)
+       * \brief name of the second contour (to assign the Lagrange parameter, i.e. the contour parameter, to the contour)
        */
       std::string secondContourName;
 
   };
 
   /*
-   * \brief Influence function for stiffness of contour with no influence to other contours (or contour points)
+   * \brief Influence function for flexibility of contour with no influence to other contours (or contour points)
    */
-  class StiffnessInfluenceFunction : public InfluenceFunction {
+  class FlexibilityInfluenceFunction : public InfluenceFunction {
     public:
-      StiffnessInfluenceFunction(const std::string& ContourName_, const double & couplingValue_) :
-          InfluenceFunction(ContourName_, ContourName_), couplingValue(couplingValue_) {
+      FlexibilityInfluenceFunction(const std::string& ContourName_, const double & flexibility_) :
+          InfluenceFunction(ContourName_, ContourName_), flexibility(flexibility_) {
       }
-      virtual ~StiffnessInfluenceFunction() {}
+      virtual ~FlexibilityInfluenceFunction() {}
       /* INHERITED INTERFACE OF FUNCTION2 */
       virtual double operator()(const fmatvec::Vec& firstContourLagrangeParameter, const fmatvec::Vec& secondContourLagrangeParameter, const void * = NULL) {
         if(nrm2(firstContourLagrangeParameter - secondContourLagrangeParameter) < macheps())
-          return couplingValue;
+          return flexibility;
         else
           return 0;
       }
       /***************************************************/
 
     protected:
-      double couplingValue;
+      double flexibility;
   };
 
   /*

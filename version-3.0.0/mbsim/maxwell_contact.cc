@@ -31,27 +31,20 @@ namespace MBSim {
   /* MaxwellContact   ***************************************************************************************************************************/
 
   MaxwellContact::MaxwellContact(const string &name) :
-      LinkMechanics(name), contactKinematics(0), fdf(0), cpData(0), gActive(0), gActive0(0), gk(0), gdk(0), lak(0), WF(0), Vk(0), Wk(0), laSizek(0), laIndk(0), gSizek(0), gIndk(0), gdSizek(0), gdIndk(0), svSizek(0), svIndk(0), rFactorSizek(0), rFactorIndk(0), possibleContactPoints(0), plotContactPoints(0), matConst(1.), matConstSetted(false), INFO(false)
-#ifdef HAVE_OPENMBVCPPINTERFACE
-          , openMBVContactGrp(0), openMBVContactFrame(0), openMBVNormalForceArrow(0), openMBVFrictionForceArrow(0), openMBVContactFrameSize(0), openMBVContactFrameEnabled(true), normalForceArrow(false), frictionForceArrow(false)
-#endif
+      LinkMechanics(name), contourPairing(0), possibleContactPoints(0), C(SymMat(0,NONINIT)), matConst(1.), matConstSetted(false), DEBUGLEVEL(0)
   {
     gTol = 1;
   }
 
-  MaxwellContact::~MaxwellContact() {
-    for (vector<ContourPointData*>::iterator i = cpData.begin(); i != cpData.end(); ++i)
-      delete[] *i;
-    for (vector<ContactKinematics *>::iterator i = contactKinematics.begin(); i != contactKinematics.end(); ++i)
-      delete *i;
-    for (vector<Vec*>::iterator i = WF.begin(); i != WF.end(); ++i)
-      delete[] *i;
-  }
-
   /**
-   * \brief solves the LCP to compute contact forces as well as distances
+   * \brief Sets up the MFL and solves it to compute the entries for the h-vectors of all contours
    */
   void MaxwellContact::updateh(double t, int k) {
+
+      if (DEBUGLEVEL >= 3) {
+        cout << name << endl;
+        cout << __func__ << endl;
+      }
 
     updatePossibleContactPoints();
     updategd(t);
@@ -60,150 +53,24 @@ namespace MBSim {
     if (possibleContactPoints.size() > 0) {
 
       /*compute Influence Matrix*/
-      updateC(t);
+      updateInfluenceMatrix(t);
 
       computeMaterialConstant(t);
 
       /*save rigidBodyGaps in vector*/
       Vec rigidBodyGap(possibleContactPoints.size(), INIT, 0.);
       for (size_t i = 0; i < possibleContactPoints.size(); i++) {
-        rigidBodyGap(i) = gk[possibleContactPoints[i]](0);
+        rigidBodyGap(i) = contourPairing[possibleContactPoints[i]]->getRelativeDistance()(0);
       }
 
-      if (INFO)
+      if (DEBUGLEVEL >= 5)
         cout << "rigidBodyGap: " << rigidBodyGap << endl;
 
-      /*create the Maxwell Function*/
+      /*solve Linear Complementary Problem*/
+      Vec lambda = solveLCP(C, rigidBodyGap);
 
-      MaxwellFunction func = MaxwellFunction(rigidBodyGap, C);
-
-      /*Initialize gapLamba*/
-      Vec gapLambda0(rigidBodyGap.size() * 2, INIT, 0.);
-      for (int i = 0; i < rigidBodyGap.size(); i++) {
-        if (rigidBodyGap(i) > 0)
-          gapLambda0(i) = rigidBodyGap(i);
-        else
-          gapLambda0(i) = 0;
-      }
-      for (int i = rigidBodyGap.size(); i < rigidBodyGap.size() * 2; i++) {
-        if (rigidBodyGap(i - rigidBodyGap.size()) > 0)
-          gapLambda0(i) = 0;
-        else
-          gapLambda0(i) = -rigidBodyGap(i - rigidBodyGap.size()) / matConst;
-      }
-
-      if (INFO)
-        cout << "gapLambda0: " << gapLambda0 << endl;
-
-      //TODO_grundl build Jacobian, if it is possible at all --> if it is computed numerically it gets more unstable?
-      MaxwellJacobian jac;
-
-      /* solve the LCP */
-
-      //Use Newton Solver
-      MultiDimNewtonMethod NewtonSolver(&func);
-      MultiDimFixPointIteration FixpointIterator(&func);
-
-      //NOTE: Fortran-NewtonSolver seems to work worse than the "native" NewtonSolver of the utils in mbsim
-      //      MultiDimNewtonMethodFortran NewtonSolverFortran;
-      //      NewtonSolverFortran.setRootFunction(&func);
-      //      Vec gapLambdaFortran = NewtonSolverFortran.solve(gapLambda0);
-
-      bool converged = false;
-      int loop = 0;
-      int maxloops = 2;
-
-      //use Lemke-Solver for small systems
-      if(possibleContactPoints.size() < 10) //TODO: add paramter for this option
-        maxloops = 0;
-
-      Vec gapLambda(gapLambda0.copy());
-
-      Vec lambda;
-      lambda >> gapLambda(rigidBodyGap.size(), rigidBodyGap.size() * 2 - 1);
-
-      while (loop++ < maxloops and converged == false) {
-        if (loop == maxloops)
-          NewtonSolver.setTolerance(1.e-6);
-        func.setSolverType(NewtonMethodSolver);
-        gapLambda = NewtonSolver.solve(gapLambda);  //use gap Lambda of Fixpoint Solver as it probably is a better starting value
-
-        if (INFO) { //Newton-Sovler Info
-          cout << "Timestep: t=" << t << endl;
-          cout << "Info about NewtonSolver" << endl;
-          cout << "gapLambda0: " << gapLambda0 << endl;
-          cout << "gapLambda: " << gapLambda << endl;
-          cout << "nrm2(f(gapLambda)): " << nrm2(func(gapLambda)) << endl;
-          cout << "nrm2(f(gapLambda0)): " << nrm2(func(gapLambda0)) << endl;
-        }
-
-        switch (NewtonSolver.getInfo()) {
-          case 0:
-            converged = true;
-          break;
-          case 1: //convergence is active, but not enough steps
-            if (INFO) {
-              cout << "MaxwellContact::updateh(double t): Newton scheme seems to converge but has'nt finished in loop No:" << loop << endl;
-              cout << "Increasing number of maximal iterations ... " << endl;
-            }
-            NewtonSolver.setMaximumNumberOfIterations(NewtonSolver.getNumberOfMaximalIterations() * 10);  //raise number of iterations (if there is convergence ...)
-            if (maxloops == loop)
-              maxloops++;
-          break;
-          case -1:
-            if (INFO) {
-              cout << "MaxwellContact::updateh(double t): No convergence of Newton scheme during calculation of contact forces in loop No:" << loop << endl;
-              cout << "Trying a fixpoint-solver (at least for a good starting value for the newton scheme) ..." << endl;
-            }
-
-            if(loop < maxloops) {
-
-              func.setSolverType(FixPointIterationSolver);
-              gapLambda = FixpointIterator.solve(gapLambda);
-
-              if (INFO) {
-                cout << "Timestep: t=" << t << endl;
-                cout << "Info about FixpointSolver" << endl;
-                cout << "gapLambda0: " << gapLambda0 << endl;
-                cout << "gapLambda: " << gapLambda << endl;
-                func.setSolverType(NewtonMethodSolver);
-                cout << "f(gapLambda): " << nrm2(func(gapLambda)) << endl;
-                cout << "f(gapLambda0): " << nrm2(func(gapLambda0)) << endl;
-              }
-
-              if (FixpointIterator.getInfo() == 0) {
-                if (INFO)
-                  cout << "Maxwell Contact converged with Fixpoint-Iterator in loop " << loop << endl;
-                converged = true;
-              }
-            }
-
-          break;
-          default:
-            throw MBSimError("ERROR MaxwellContact::updateh(double t): No convergence during calculation of contact forces with Newton scheme!");
-          break;
-        }
-      }
-
-      if (!converged) {
-        if (INFO) {
-          cout << "WARNING MaxwellContact::updateh(double t): No convergence during calculation of contact forces with Newton scheme!" << endl;
-          cout << "                                           Now using Lemke Algorithm..." << endl;
-        }
-
-        SqrMat C_(C.size(),NONINIT);
-        for(int i=0; i < C.size(); i++)
-          for(int j=0; j < C.size(); j++)
-            C_(i,j) = C(i,j);
-
-        LemkeAlgorithm Lemke(C_, rigidBodyGap);
-        gapLambda = Lemke.solve();
-      }
-      else {
-        if (INFO) {
-          cout << "The result of the NewtonSolver (steps=" << NewtonSolver.getNorms().size() << ") is: " << gapLambda << endl;
-          cout << "with lambda: " << lambda << endl;
-        }
+      if (DEBUGLEVEL >= 3) {
+        cout << "lambda = " << lambda << endl;
       }
 
       //index for active contact (to assign possible contact to active contact)
@@ -211,22 +78,23 @@ namespace MBSim {
 
       /*create h - vector(s)*/
       //loop over all contacts
-      for (size_t potentialContact = 0; potentialContact < contactKinematics.size(); potentialContact++) {
-        if (gActive[potentialContact]) { //if contact is active
+      for (size_t potentialContact = 0; potentialContact < contourPairing.size(); potentialContact++) {
+        ContourPairing* pair = contourPairing[potentialContact];
+        if (pair->isActive()) { //if contact is active
           /*compute forces with directions for contact*/
-          lak[potentialContact](0) = lambda(activeContact); //normal force
-          WF[potentialContact][1] = cpData[potentialContact][0].getFrameOfReference().getOrientation().col(0) * lak[potentialContact](0);
-          if (fdf) { //if friction is activated
-            int frictionDirections = fdf->getFrictionDirections();
-            lak[potentialContact](1, frictionDirections) = (*fdf)(gdk[potentialContact](1, frictionDirections), fabs(lak[potentialContact](0)));
+          pair->getContactForce()(0) = lambda(activeContact); //normal force
+          pair->getForce(1) = pair->getContourPointData()[0].getFrameOfReference().getOrientation().col(0) * pair->getContactForce()(0);
+          if (pair->getFrictionForceLaw()) { //if friction is activated
+            int frictionDirections = pair->getFrictionDirections();
+            pair->getContactForce()(1, frictionDirections) = (*pair->getFrictionForceLaw())(pair->getRelativeVelocity()(1, frictionDirections), fabs(pair->getContactForce()(0)));
 
-            WF[potentialContact][1] += cpData[potentialContact][0].getFrameOfReference().getOrientation().col(1) * lak[potentialContact](1);
+            pair->getForce(1) += pair->getContourPointData()[0].getFrameOfReference().getOrientation().col(1) * pair->getContactForce()(1);
             if (frictionDirections > 1)
-              WF[potentialContact][1] += cpData[potentialContact][0].getFrameOfReference().getOrientation().col(2) * lak[potentialContact](2);
+              pair->getForce(1) += pair->getContourPointData()[0].getFrameOfReference().getOrientation().col(2) * pair->getContactForce()(2);
           }
-          WF[potentialContact][0] = -WF[potentialContact][1];
+          pair->getForce(0) = -pair->getForce(1);
           for (size_t i = 0; i < 2; i++) { //add forces to h-vector of both contours of the current contact point
-            h[k][2 * potentialContact + i] += cpData[potentialContact][i].getFrameOfReference().getJacobianOfTranslation(k).T() * WF[potentialContact][i];
+            h[k][2 * potentialContact + i] += pair->getContourPointData()[i].getFrameOfReference().getJacobianOfTranslation(k).T() * pair->getForce(i);
           }
 
           //increase for next active contacts
@@ -240,8 +108,8 @@ namespace MBSim {
    * \brief updates the rigid-body distances for all contact-points
    */
   void MaxwellContact::updateg(double t) {
-    for (size_t i = 0; i < contactKinematics.size(); i++) {
-      contactKinematics[i]->updateg(gk[i], cpData[i]);
+    for (vector<ContourPairing*>::iterator iter = contourPairing.begin(); iter != contourPairing.end(); iter++) {
+      (*iter)->updateg(t);
     }
   }
 
@@ -249,41 +117,19 @@ namespace MBSim {
    * \brief updates the velocities on active contact points
    */
   void MaxwellContact::updategd(double t) {
-    for (size_t k = 0; k < contactKinematics.size(); k++) {
-      if (gActive[k]) {
-        //update velocities on contour-points
-        for (int i = 0; i < 2; i++)
-          contour[2 * k + i]->updateKinematicsForFrame(cpData[k][i], velocities); // angular velocity necessary e.g. see ContactKinematicsSpherePlane::updatewb
-
-        Vec Wn = cpData[k][0].getFrameOfReference().getOrientation().col(0);
-
-        Vec WvD = cpData[k][1].getFrameOfReference().getVelocity() - cpData[k][0].getFrameOfReference().getVelocity();
-
-        //write normal-velocity in vector
-        gdk[k](0) = Wn.T() * WvD;
-
-        if (gdk[k].size() > 1) { //are there more velocity-directions needed?
-          Mat Wt(3, gdk[k].size() - 1);
-          Wt.col(0) = cpData[k][0].getFrameOfReference().getOrientation().col(1);
-          if (gdk[k].size() > 2)
-            Wt.col(1) = cpData[k][0].getFrameOfReference().getOrientation().col(2);
-
-          //write second (and third for 3D-contact) velocity into vector
-          gdk[k](1, gdk[k].size() - 1) = Wt.T() * WvD;
-        }
-      }
+    for (vector<ContourPairing*>::iterator iter = contourPairing.begin(); iter != contourPairing.end(); iter++) {
+      (*iter)->updategd(t);
     }
   }
 
   void MaxwellContact::updateJacobians(double t, int j) {
-    for (size_t k = 0; k < contactKinematics.size(); k++)
-      if (gActive[k])
-        for (int i = 0; i < 2; i++)
-          contour[2 * k + i]->updateJacobiansForFrame(cpData[k][i],j);
+    for (vector<ContourPairing*>::iterator iter = contourPairing.begin(); iter != contourPairing.end(); ++iter) {
+      (*iter)->updateJacobians(t,j);
+    }
   }
 
   /**
-   * \brief references the h and hLink vectors of the single contour-pairings to the global vector
+   * \brief references the h and hLink vectors of the single contours to the global vector
    */
   void MaxwellContact::updatehRef(const Vec& hParent, int j) {
     for (size_t i = 0; i < contour.size(); i++) {
@@ -296,111 +142,46 @@ namespace MBSim {
   void MaxwellContact::init(InitStage stage) {
     //    LinkMechanics::init(stage); //TODO: Ist Reihenfolge wichtig, wenn ja, wo ist das dokumentiert --> Kommentar in extradynamic-interface !
     if (stage == MBSim::preInit) {
-      //Create Vector for every possible contact point
-      for (size_t k = 0; k < contactKinematics.size(); k++) {
-        gk.push_back(Vec());
-        gdk.push_back(Vec());
-        lak.push_back(Vec());
+      //initialise each contour-pairing
+      for (vector<ContourPairing*>::iterator iter = contourPairing.begin(); iter != contourPairing.end(); ++iter) {
+        (*iter)->init(stage);
+        //(*iter)->setFrictionForceLaw(fdf);
       }
     }
     else if (stage == resize) {
-      int maxNumberOfContacts = contactKinematics.size();
-
-      g.resize(maxNumberOfContacts);
-      gActive.resize(maxNumberOfContacts);
-      gd.resize(maxNumberOfContacts * (1 + getFrictionDirections()));
-      la.resize(maxNumberOfContacts * (1 + getFrictionDirections()));
-
-      for (vector<ContourPointData*>::iterator i = cpData.begin(); i != cpData.end(); ++i)
-        delete[] *i; //the cpData has to be cleared, as the resize-stage is executed twice at the initialisation
-      cpData.clear();
-      for (int i = 0; i < maxNumberOfContacts; i++) {
-        cpData.push_back(new ContourPointData[2]);
-        //TODO: seems to be more complicated as it has to be ...
-        cpData[i][0].getFrameOfReference().setName("0");
-        cpData[i][1].getFrameOfReference().setName("1");
-        cpData[i][0].getFrameOfReference().getJacobianOfTranslation(0).resize();
-        cpData[i][0].getFrameOfReference().getJacobianOfRotation(0).resize();
-        cpData[i][1].getFrameOfReference().getJacobianOfTranslation(0).resize();
-        cpData[i][1].getFrameOfReference().getJacobianOfRotation(0).resize();
-        cpData[i][0].getFrameOfReference().getJacobianOfTranslation(1).resize();
-        cpData[i][0].getFrameOfReference().getJacobianOfRotation(1).resize();
-        cpData[i][1].getFrameOfReference().getJacobianOfTranslation(1).resize();
-        cpData[i][1].getFrameOfReference().getJacobianOfRotation(1).resize();
-
-        cpData[i][0].getFrameOfReference().sethSize(contour[0]->gethSize(0), 0);
-        cpData[i][0].getFrameOfReference().sethSize(contour[0]->gethSize(1), 1);
-        cpData[i][1].getFrameOfReference().sethSize(contour[1]->gethSize(0), 0);
-        cpData[i][1].getFrameOfReference().sethSize(contour[1]->gethSize(1), 1);
-
-        WF.push_back(new Vec[2]);
-        WF[i][0].resize(3);
-        WF[i][1].resize(3);
+      gdSize = 0;
+      for (vector<ContourPairing*>::iterator iter = contourPairing.begin(); iter != contourPairing.end(); iter++) {
+        gdSize  += 1 + (*iter)->getFrictionDirections();
       }
 
+      g.resize(contourPairing.size());
+      gd.resize(gdSize);
+      la.resize(gdSize);
+
+      for (vector<ContourPairing*>::iterator iter = contourPairing.begin(); iter != contourPairing.end(); ++iter) {
+        (*iter)->init(stage);
+      }
     }
     else if (stage == MBSim::plot) {
       updatePlotFeatures();
+      for (vector<ContourPairing*>::iterator iter = contourPairing.begin(); iter != contourPairing.end(); iter++) {
+        (*iter)->setParent(parent);
+      }
       if (getPlotFeature(plotRecursive) == enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-        if (getPlotFeature(openMBV) == enabled && (openMBVContactFrameSize > epsroot() || normalForceArrow || frictionForceArrow)) {
-          openMBVContactGrp = new OpenMBV::Group();
-          openMBVContactGrp->setName(name + "_ContactGroup");
-          openMBVContactGrp->setExpand(false);
-          parent->getOpenMBVGrp()->addObject(openMBVContactGrp);
-
-          for (size_t iterPlotContactPoint = 0; iterPlotContactPoint < plotContactPoints.size(); iterPlotContactPoint++) {
-            if (openMBVContactFrameSize > epsroot()) {
-              vector<OpenMBV::Frame*> temp;
-              temp.push_back(new OpenMBV::Frame);
-              temp.push_back(new OpenMBV::Frame);
-              openMBVContactFrame.push_back(temp);
-              for (unsigned int k = 0; k < 2; k++) { // frames
-                openMBVContactFrame[iterPlotContactPoint][k]->setOffset(1.);
-                openMBVContactFrame[iterPlotContactPoint][k]->setSize(openMBVContactFrameSize);
-                openMBVContactFrame[iterPlotContactPoint][k]->setName("ContactPoint_" + numtostr((int) plotContactPoints[iterPlotContactPoint]) + (k == 0 ? "A" : "B"));
-                openMBVContactFrame[iterPlotContactPoint][k]->setEnable(openMBVContactFrameEnabled);
-                openMBVContactGrp->addObject(openMBVContactFrame[iterPlotContactPoint][k]);
-              }
-              // arrows
-              OpenMBV::Arrow *arrow;
-              if (normalForceArrow) {
-                arrow = new OpenMBV::Arrow(*normalForceArrow);
-                arrow->setName("NormalForce_" + numtostr((int) plotContactPoints[iterPlotContactPoint]));
-                openMBVNormalForceArrow.push_back(arrow); // normal force
-                openMBVContactGrp->addObject(arrow);
-              }
-
-              if (frictionForceArrow && getFrictionDirections() > 0) { // friction force
-                arrow = new OpenMBV::Arrow(*frictionForceArrow);
-                arrow->setName("FrictionForce_" + numtostr((int) plotContactPoints[iterPlotContactPoint]));
-                openMBVFrictionForceArrow.push_back(arrow);
-                openMBVContactGrp->addObject(arrow);
-              }
-            }
-          }
-        }
-#endif
-        for (size_t iterPlotContactPoint = 0; iterPlotContactPoint < plotContactPoints.size(); iterPlotContactPoint++) {
-          if (getPlotFeature(generalizedLinkForce) == enabled) {
-            for (int j = 0; j < 1 + getFrictionDirections(); ++j)
-              plotColumns.push_back("la[" + numtostr((int) plotContactPoints[iterPlotContactPoint]) + "](" + numtostr(j) + ")");
-          }
-          if (getPlotFeature(linkKinematics) == enabled) {
-            plotColumns.push_back("g[" + numtostr((int) plotContactPoints[iterPlotContactPoint]) + "](" + numtostr(0) + ")");
-            for (int j = 0; j < 1 + getFrictionDirections(); ++j)
-              plotColumns.push_back("gd[" + numtostr((int) plotContactPoints[iterPlotContactPoint]) + "](" + numtostr(j) + ")");
-          }
-        }
+        for (vector<ContourPairing*>::iterator iter = contourPairing.begin(); iter != contourPairing.end(); iter++)
+          (*iter)->init(stage);
       }
     }
     else if (stage == MBSim::unknownStage) {
 
       // reference to the positions of (full) vectors of link-class
-      for (size_t k = 0; k < contactKinematics.size(); k++) {
-        gk[k].resize() >> g(k, k);
-        gdk[k].resize() >> gd(k * (1 + getFrictionDirections()), (k + 1) * (1 + getFrictionDirections()) - 1);
-        lak[k].resize() >> la(k * (1 + getFrictionDirections()), (k + 1) * (1 + getFrictionDirections()) - 1);
+      int forceIndex = 0; //index that adds all force directions together
+      for (size_t k = 0; k < contourPairing.size(); k++) {
+        contourPairing[k]->getRelativeDistance().resize() >> g(k, k);
+        contourPairing[k]->getRelativeVelocity().resize() >> gd(forceIndex, forceIndex + 1 + contourPairing[k]->getFrictionDirections() - 1);
+        contourPairing[k]->getContactForce().resize() >> la(forceIndex, forceIndex + 1 + contourPairing[k]->getFrictionDirections() - 1);
+
+        forceIndex += 1 + contourPairing[k]->getFrictionDirections();
       }
     }
     //As last step: do init-step of LinkMechanics
@@ -408,8 +189,15 @@ namespace MBSim {
   }
 
   void MaxwellContact::checkActiveg() {
-    for (unsigned i = 0; i < contactKinematics.size(); i++) {
-      gActive[i] = gk[i](0) < gTol ? true : false;
+    for (vector<ContourPairing*>::iterator iter = contourPairing.begin(); iter != contourPairing.end(); iter++) {
+      (*iter)->checkActiveg();
+    }
+  }
+
+  void MaxwellContact::setParent(DynamicSystem* sys) {
+    Link::setParent(sys);
+    for (vector<ContourPairing*>::iterator iter = contourPairing.begin(); iter != contourPairing.end(); iter++) {
+      (*iter)->setParent(sys);
     }
   }
 
@@ -418,144 +206,30 @@ namespace MBSim {
    */
   void MaxwellContact::plot(double t, double dt) {
     if (getPlotFeature(plotRecursive) == enabled) {
-      for (size_t iterPlotContactPoint = 0; iterPlotContactPoint < plotContactPoints.size(); iterPlotContactPoint++) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-        if (getPlotFeature(openMBV) == enabled && (openMBVContactFrameSize > epsroot() || normalForceArrow || frictionForceArrow)) {
-          // frames
-          if (openMBVContactFrameSize > epsroot()) {
-            for (int k = 0; k < 2; k++) {
-              vector<double> data;
-              data.push_back(t);
-              data.push_back(cpData[plotContactPoints[iterPlotContactPoint]][k].getFrameOfReference().getPosition()(0));
-              data.push_back(cpData[plotContactPoints[iterPlotContactPoint]][k].getFrameOfReference().getPosition()(1));
-              data.push_back(cpData[plotContactPoints[iterPlotContactPoint]][k].getFrameOfReference().getPosition()(2));
-              Vec cardan = AIK2Cardan(cpData[plotContactPoints[iterPlotContactPoint]][k].getFrameOfReference().getOrientation());
-              data.push_back(cardan(0));
-              data.push_back(cardan(1));
-              data.push_back(cardan(2));
-              data.push_back(0);
-              openMBVContactFrame[iterPlotContactPoint][k]->append(data);
-            }
-          }
-
-          // arrows
-          // normal force
-          vector<double> data;
-          if (normalForceArrow) {
-            data.push_back(t);
-            data.push_back(cpData[plotContactPoints[iterPlotContactPoint]][1].getFrameOfReference().getPosition()(0));
-            data.push_back(cpData[plotContactPoints[iterPlotContactPoint]][1].getFrameOfReference().getPosition()(1));
-            data.push_back(cpData[plotContactPoints[iterPlotContactPoint]][1].getFrameOfReference().getPosition()(2));
-            Vec F(3, INIT, 0);
-            F = cpData[plotContactPoints[iterPlotContactPoint]][0].getFrameOfReference().getOrientation().col(0) * lak[plotContactPoints[iterPlotContactPoint]](0);
-            data.push_back(F(0));
-            data.push_back(F(1));
-            data.push_back(F(2));
-            data.push_back(nrm2(F));
-            openMBVNormalForceArrow[iterPlotContactPoint]->append(data);
-          }
-          if (frictionForceArrow && getFrictionDirections() > 0) { // friction force
-            data.clear();
-            data.push_back(t);
-            data.push_back(cpData[plotContactPoints[iterPlotContactPoint]][1].getFrameOfReference().getPosition()(0));
-            data.push_back(cpData[plotContactPoints[iterPlotContactPoint]][1].getFrameOfReference().getPosition()(1));
-            data.push_back(cpData[plotContactPoints[iterPlotContactPoint]][1].getFrameOfReference().getPosition()(2));
-            Vec F(3, INIT, 0);
-            F = cpData[plotContactPoints[iterPlotContactPoint]][0].getFrameOfReference().getOrientation().col(1) * lak[plotContactPoints[iterPlotContactPoint]](1);
-            if (getFrictionDirections() > 1)
-              F += cpData[plotContactPoints[iterPlotContactPoint]][0].getFrameOfReference().getOrientation().col(2) * lak[plotContactPoints[iterPlotContactPoint]](2);
-            data.push_back(F(0));
-            data.push_back(F(1));
-            data.push_back(F(2));
-            data.push_back((isSetValued() && lak[plotContactPoints[iterPlotContactPoint]].size() > 1) ? 1:0.5); // draw in green if slipping and draw in red if sticking
-            openMBVFrictionForceArrow
-            [iterPlotContactPoint]->append(data);
-          }
-          //        }
-        }
-#endif
-        if (getPlotFeature(generalizedLinkForce) == enabled) {
-          if (gActive[plotContactPoints[iterPlotContactPoint]]) {
-            plotVector.push_back(lak[plotContactPoints[iterPlotContactPoint]](0));
-            if (fdf) {
-              for (int j = 1; j < 1 + getFrictionDirections(); j++)
-                plotVector.push_back(lak[plotContactPoints[iterPlotContactPoint]](j));
-            }
-          }
-          else {
-            for (int j = 0; j < 1 + getFrictionDirections(); j++)
-              plotVector.push_back(0);
-          }
-        }
-        if (getPlotFeature(linkKinematics) == enabled) {
-          plotVector.push_back(gk[plotContactPoints[iterPlotContactPoint]](0)); //gN
-          for (int j = 0; j < 1 + getFrictionDirections(); j++)
-            plotVector.push_back(gdk[plotContactPoints[iterPlotContactPoint]](j)); //gd
-        }
+      for (vector<ContourPairing*>::iterator iter = contourPairing.begin(); iter != contourPairing.end(); iter++) {
+        (*iter)->plot(t, dt);
       }
     }
-    LinkMechanics::plot(t, dt);
-  }
+  LinkMechanics::plot(t, dt);
+}
 
   void MaxwellContact::closePlot() {
     if (getPlotFeature(plotRecursive) == enabled) {
+      for (vector<ContourPairing*>::iterator iter = contourPairing.begin(); iter != contourPairing.end(); iter++) {
+        (*iter)->closePlot();
+      }
       LinkMechanics::closePlot();
     }
   }
 
-  void MaxwellContact::setPlotContactPoint(const int & contactNumber, bool enable) {
-    assert(contactNumber >= 0);
-    assert(contactNumber < (int)contactKinematics.size());
-
-    if (!enable) { //delete item, if it is in List already ...
-      for (std::vector<int>::iterator iter = plotContactPoints.begin(); iter != plotContactPoints.end(); ++iter) {
-        if (*iter == contactNumber) {
-          plotContactPoints.erase(iter);
-          return;
-        }
-      }
-    }
-    else { //enable plot of contactNumber
-      for (std::vector<int>::iterator iter = plotContactPoints.begin(); iter != plotContactPoints.end(); iter++) {
-        if (*iter == contactNumber) {
-          return; //if contactNumber is already in List --> return out of the function
-        }
-      }
-      //append contactNumber to list, if it is not in the list
-      plotContactPoints.push_back(contactNumber);
-    }
-  }
-
-  int MaxwellContact::getFrictionDirections() {
-    if (fdf)
-      return fdf->getFrictionDirections();
-    else
-      return 0;
-  }
-
-  void MaxwellContact::add(Contour *contour1, Contour *contour2, bool plotContact /*= true*/, ContactKinematics * contactKinematics_ /* = 0*/) {
-    if (contactKinematics_ == 0)
-      contactKinematics_ = contour1->findContactPairingWith(contour1->getType(), contour2->getType());
-    if (contactKinematics_ == 0)
-      contactKinematics_ = contour1->findContactPairingWith(contour2->getType(), contour1->getType());
-    if (contactKinematics_ == 0)
-      contactKinematics_ = contour2->findContactPairingWith(contour2->getType(), contour1->getType());
-    if (contactKinematics_ == 0)
-      contactKinematics_ = contour2->findContactPairingWith(contour1->getType(), contour2->getType());
-    if (contactKinematics_ == 0)
-      throw MBSimError("Unknown contact pairing between Contour \"" + contour1->getType() + "\" and Contour\"" + contour2->getType() + "\"!");
-
+  void MaxwellContact::addContourPairing(ContourPairing* contourPairing_) { //(Contour *contour1, Contour *contour2, string name_, bool plotContact /*= true*/, ContactKinematics * contactKinematics_ /* = 0*/) {
     //append contactKinematics to vector
-    contactKinematics_->assignContours(contour1, contour2);
-    contactKinematics.push_back(contactKinematics_);
-
-    if (plotContact)
-      plotContactPoints.push_back(contactKinematics.size() - 1);
+    contourPairing.push_back(contourPairing_);
 
     //append contours 1 and 2 to list
     //TODO: optimization may be possible by adding one contour just once --> Problem: referencing to the contour gets harder
-    LinkMechanics::connect(contour1);
-    LinkMechanics::connect(contour2);
+    LinkMechanics::connect(contourPairing_->getContour(0));
+    LinkMechanics::connect(contourPairing_->getContour(1));
   }
 
   void MaxwellContact::addContourCoupling(Contour *contour1, Contour *contour2, InfluenceFunction *fct) {
@@ -573,38 +247,40 @@ namespace MBSim {
   }
 
   void MaxwellContact::updatePossibleContactPoints() {
-    checkActiveg(); //TODO_grundl maybe is another location more reasonable. checkActiveg is normally called "global" in the dynamic_system_solver-class for all SetValued-Force laws. This is not ideal for the MaxwellContact so it calls this function on its own. why shouldn't call each link its own update-routine and the dynamic-system-solve is not forced to do it?
+    checkActiveg(); //TODO: maybe is another location more reasonable. checkActiveg is normally called "global" in the dynamic_system_solver-class for all SetValued-Force laws. This is not ideal for the MaxwellContact so it calls this function on its own. why shouldn't call each link its own update-routine and the dynamic-system-solve is not forced to do it?
     possibleContactPoints.clear();
-    for (size_t i = 0; i < gActive.size(); i++)
-      if (gActive[i])
+    for (size_t i =0; i < contourPairing.size(); i++) {
+      if (contourPairing[i]->isActive()) {
         possibleContactPoints.push_back(i);
+      }
+    }
   }
 
-  void MaxwellContact::updateC(const double t) {
+  void MaxwellContact::updateInfluenceMatrix(const double t) {
     C.resize(possibleContactPoints.size());
 
     for (size_t i = 0; i < possibleContactPoints.size(); i++) {
       //get contours of current possible contactPoint
       int currentContactNumber = possibleContactPoints[i];
 
-      C(i, i) = computeFactorC(currentContactNumber);
+      C(i, i) = computeInfluenceCoefficient(currentContactNumber);
 
       for (size_t j = i + 1; j < possibleContactPoints.size(); j++) {
         //get coupled contours
         int coupledContactNumber = possibleContactPoints[j];
 
         /*coupling of first current contour*/
-        C(i, j) = computeFactorC(currentContactNumber, coupledContactNumber);
+        C(i, j) = computeInfluenceCoefficient(currentContactNumber, coupledContactNumber);
       }
     }
 
-    if (INFO) {
+    if (DEBUGLEVEL >= 5) {
       cout << "The InfluenceMatrix is: " << C << endl;
       cout << "With eigenvalues: " << eigval(C) << endl;
     }
   }
 
-  double MaxwellContact::computeFactorC(const int &currentContactNumber) {
+  double MaxwellContact::computeInfluenceCoefficient(const int &currentContactNumber) {
     double FactorC = 0.;
 
     int currentContourNumber = 2 * currentContactNumber;
@@ -628,13 +304,13 @@ namespace MBSim {
         Vec firstLagrangeParameter;
         Vec secondLagrangeParameter;
         if (contour1->getShortName() == (*fct).getFirstContourName() and contour2->getShortName() == (*fct).getSecondContourName()) {
-          firstLagrangeParameter.resize() = contour1->computeLagrangeParameter(cpData[currentContactNumber][i].getFrameOfReference().getPosition());
-          secondLagrangeParameter.resize() = contour2->computeLagrangeParameter(cpData[currentContactNumber][i].getFrameOfReference().getPosition());
+          firstLagrangeParameter.resize() = contour1->computeLagrangeParameter(contourPairing[currentContactNumber]->getContourPointData()[i].getFrameOfReference().getPosition());
+          secondLagrangeParameter.resize() = contour2->computeLagrangeParameter(contourPairing[currentContactNumber]->getContourPointData()[i].getFrameOfReference().getPosition());
         }
         else
           throw MBSimError("MaxwellContact::computeFactorC: The contours \"" + contour1->getShortName() + "\" and \"" + contour2->getShortName() + " don't fit with the function's contour names: \"" + (*fct).getFirstContourName() + "\" and \"" + (*fct).getSecondContourName() + "\"");
 
-        if (INFO) {
+        if (DEBUGLEVEL >= 3) {
           cout << "First LagrangeParameter of contour \"" << contour1->getShortName() << "\" is:" << firstLagrangeParameter << endl;
           cout << "Second LagrangeParameter contour \"" << contour2->getShortName() << "\" is:" << secondLagrangeParameter << endl;
         }
@@ -643,14 +319,14 @@ namespace MBSim {
       }
     }
 
-    if (fabs(FactorC) <= epsroot()) {
+    if (fabs(FactorC) <= macheps()) {
       throw MBSimError("No elasticity is given for one of the following contours:\n  -" + contour[currentContourNumber]->getShortName() + "\n  -" + contour[currentContourNumber + 1]->getShortName() + "\nThat is not an option!");
     }
 
     return FactorC;
   }
 
-  double MaxwellContact::computeFactorC(const int &affectedContactNumber, const int &coupledContactNumber) {
+  double MaxwellContact::computeInfluenceCoefficient(const int &affectedContactNumber, const int &coupledContactNumber) {
     double FactorC = 0;
 
     int affectedContourNumber = 2 * affectedContactNumber;
@@ -676,17 +352,17 @@ namespace MBSim {
           Vec firstLagrangeParameter = Vec(2, NONINIT);
           Vec secondLagrangeParameter = Vec(2, NONINIT);
           if (contour1->getShortName() == (*fct).getFirstContourName() and contour2->getShortName() == (*fct).getSecondContourName()) {
-            firstLagrangeParameter = contour1->computeLagrangeParameter(cpData[affectedContactNumber][affectedContourIterator].getFrameOfReference().getPosition());
-            secondLagrangeParameter = contour2->computeLagrangeParameter(cpData[coupledContactNumber][coupledContourIterator].getFrameOfReference().getPosition());
+            firstLagrangeParameter = contour1->computeLagrangeParameter(contourPairing[affectedContactNumber]->getContourPointData()[affectedContourIterator].getFrameOfReference().getPosition());
+            secondLagrangeParameter = contour2->computeLagrangeParameter(contourPairing[coupledContactNumber]->getContourPointData()[coupledContourIterator].getFrameOfReference().getPosition());
           }
           else if (contour2->getShortName() == (*fct).getFirstContourName() and contour1->getShortName() == (*fct).getSecondContourName()) {
-            secondLagrangeParameter = contour1->computeLagrangeParameter(cpData[affectedContactNumber][affectedContourIterator].getFrameOfReference().getPosition());
-            firstLagrangeParameter = contour2->computeLagrangeParameter(cpData[coupledContactNumber][coupledContourIterator].getFrameOfReference().getPosition());
+            secondLagrangeParameter = contour1->computeLagrangeParameter(contourPairing[affectedContactNumber]->getContourPointData()[affectedContourIterator].getFrameOfReference().getPosition());
+            firstLagrangeParameter = contour2->computeLagrangeParameter(contourPairing[coupledContactNumber]->getContourPointData()[coupledContourIterator].getFrameOfReference().getPosition());
           }
           else
             throw MBSimError("MaxwellContact::computeFactorC: The contours \"" + contour1->getShortName() + "\" and \"" + contour2->getShortName() + " don't fit with the function's contour names: \"" + (*fct).getFirstContourName() + "\" and \"" + (*fct).getSecondContourName() + "\"");
 
-          if (INFO) {
+          if (DEBUGLEVEL >= 3) {
             cout << "First LagrangeParameter of contour \"" << contour1->getShortName() << "\" is:" << firstLagrangeParameter << endl;
             cout << "Second LagrangeParameter contour \"" << contour2->getShortName() << "\" is:" << secondLagrangeParameter << endl;
           }
@@ -710,6 +386,246 @@ namespace MBSim {
 
       matConstSetted = true;
     }
+  }
+
+  Vec MaxwellContact::solveLCP(const SymMat & M, const Vec & q, const uint & LemkeSteps /* = 10000 */) {
+
+    clock_t t_start = clock();
+    /*dimension of the system*/
+    size_t dimension = q.size();
+
+	  if(DEBUGLEVEL >= 1) {
+		  cout << "*****" << name << ":" << __func__ << "*****" << endl;
+		  if(DEBUGLEVEL >= 2) {
+		    cout << "Systemdimension is: " << dimension << endl;
+		  }
+	  }
+
+    /*create the Maxwell Function*/
+    MaxwellFunction func = MaxwellFunction(q, M);
+    func.setSolverType(NewtonMethodSolver);
+
+    //Define different solvers
+    MultiDimNewtonMethod NewtonSolver(&func);
+    NewtonSolver.setMaximumNumberOfIterations(1e4);
+    MultiDimFixPointIteration FixpointIterator(&func);
+    FixpointIterator.setNumberOfMaximalIterations(1e6);
+    FixpointIterator.setTolerance(1e-4);
+    LemkeAlgorithm LemkeSolver;
+
+    /*Initialize gapLamba*/
+    Vec solution0(dimension * 2, INIT, 0.);
+    for (size_t i = 0; i < dimension; i++) {
+      if (q(i) > 0)
+        solution0(i) = q(i);
+      else
+        solution0(i) = 0;
+    }
+
+    for (size_t i = dimension; i < 2 * dimension; i++) {
+      if (q(i - dimension) > 0)
+        solution0(i) = 0;
+      else
+        solution0(i) = -q(i - dimension) / matConst;
+    }
+
+    if (DEBUGLEVEL >= 5) {
+      cout << "solution0: " << solution0 << endl;
+      cout << "nrm2(f(solution0)): " << nrm2(func(solution0)) << endl;
+    }
+
+    /*create vector for solution*/
+    Vec solution(solution0.copy());
+
+    //TODO_grundl build Jacobian, if it is possible at all --> if it is computed numerically it gets more unstable?
+    MaxwellJacobian jac;
+
+    //NOTE: Fortran-NewtonSolver seems to work worse than the "native" NewtonSolver of the utils in mbsim
+    //      MultiDimNewtonMethodFortran NewtonSolverFortran;
+    //      NewtonSolverFortran.setRootFunction(&func);
+    //      Vec gapLambdaFortran = NewtonSolverFortran.solve(gapLambda0);
+
+    /* solve the LCP */
+    bool converged = false;
+    bool stop = false;
+
+    //use Lemke-Solver for small systems
+
+    LemkeSolver.setSystem(M, q);
+
+    clock_t t_start_Lemke1 = clock();
+    solution = LemkeSolver.solve(LemkeSteps);
+
+
+    if (LemkeSolver.getInfo() == 0) {
+      converged = true;
+      if (DEBUGLEVEL >= 1) {
+        cout << "LemkerSolver found solution" << endl;
+        if (DEBUGLEVEL >= 2) {
+          double cpuTime = double(clock()-t_start_Lemke1)/CLOCKS_PER_SEC;
+          cout << "... in: " << cpuTime << "s = " << cpuTime/3600 << "h" << endl;
+          if (DEBUGLEVEL >= 4) { //Lemke-Solver Info
+            cout << "solution: " << solution << endl;
+            cout << "gaps       forces   " << endl;
+            for (int i = 0; i < solution.size() / 2; i++) {
+              cout << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
+            }
+          }
+        }
+      }
+    }
+    else {
+      solution = solution0;
+      if (DEBUGLEVEL >= 1) {
+        cout << "No Solution for Lemke-Algorithm. Now Trying combination of Newton + FixpointIteration" << endl;
+      }
+    }
+
+    Vec lambda;
+    lambda >> solution(dimension, 2 * dimension - 1);
+
+    clock_t t_start_Iterative = clock();
+
+    while (!stop and !converged) {
+
+      //use Fixpoint-Iteration only once
+      if (func.getSolverType() == FixPointIterationSolver) {
+        stop = true;
+        func.setSolverType(NewtonMethodSolver);
+        NewtonSolver.setTolerance(1e-4);
+      }
+
+      solution = NewtonSolver.solve(solution);
+
+      if (DEBUGLEVEL >= 3) {
+        cout << "Info about NewtonSolver" << endl;
+        cout << "nrm2(f(solution)):  " << nrm2(func(solution)) << endl;
+        if (DEBUGLEVEL >= 4) { //Newton-Solver Info
+          cout << "solution: " << solution << endl;
+          cout << "gaps       forces   " << endl;
+          for (int i = 0; i < solution.size() / 2; i++) {
+            cout << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
+          }
+        }
+      }
+
+      switch (NewtonSolver.getInfo()) {
+        case 0:
+          converged = true;
+          if (DEBUGLEVEL >= 1) {
+            cout << "Newton-Solver found solution" << endl;
+            if (DEBUGLEVEL >= 2) {
+              double cpuTime = double(clock()-t_start_Iterative)/CLOCKS_PER_SEC;
+              cout << "... in: " << cpuTime << "s = " << cpuTime/3600 << "h" << endl;
+              if (DEBUGLEVEL >= 4) { //Newton-Solver Info
+                cout << "solution: " << solution << endl;
+                cout << "gaps       forces   " << endl;
+                for (int i = 0; i < solution.size() / 2; i++) {
+                  cout << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
+                }
+              }
+            }
+          }
+        break;
+        case 1: //convergence is active, but not enough steps
+          if (DEBUGLEVEL >= 3) {
+            cout << "Newton scheme seems to converge but has'nt finished" << endl;
+            cout << "Increasing number of maximal iterations ... " << endl;
+            vector<double> norms = NewtonSolver.getNorms();
+            cout << "Current Norm is: " << norms[norms.size() - 1] << endl;
+          }
+          NewtonSolver.setMaximumNumberOfIterations(10 * NewtonSolver.getNumberOfMaximalIterations()); //raise number of iterations (if there is convergence ...)
+        break;
+        case -1:
+          if (!stop) {
+            if (DEBUGLEVEL >= 3) {
+              cout << "MaxwellContact::solveLCP(double t): No convergence of Newton scheme during calculation of contact forces" << endl;
+              cout << "Trying a Fixpoint-solver (at least for a good starting value for the Newton scheme) ..." << endl;
+            }
+
+            func.setSolverType(FixPointIterationSolver);
+            solution = FixpointIterator.solve(solution);
+
+            if (DEBUGLEVEL >= 3) {
+              cout << "Info about FixpointSolver" << endl;
+              func.setSolverType(NewtonMethodSolver);
+              cout << "nrm2(f(solution)):  " << nrm2(func(solution)) << endl;
+              if (DEBUGLEVEL >= 4) {
+                cout << "solution: " << solution << endl;
+                cout << "gaps       forces   " << endl;
+                for (int i = 0; i < solution.size() / 2; i++) {
+                  cout << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
+                }
+              }
+              func.setSolverType(FixPointIterationSolver);
+            }
+
+            if (FixpointIterator.getInfo() == 0) {
+              converged = true;
+              if (DEBUGLEVEL >= 1) {
+                cout << "Fixpoint-Iterator found solution" << endl;
+                if (DEBUGLEVEL >= 2) {
+                  double cpuTime = double(clock()-t_start_Iterative)/CLOCKS_PER_SEC;
+                  cout << "... in: " << cpuTime << "s = " << cpuTime/3600 << "h" << endl;
+                  if (DEBUGLEVEL >= 4) {
+                    cout << "solution: " << solution << endl;
+                    cout << "gaps       forces   " << endl;
+                    for (int i = 0; i < solution.size() / 2; i++) {
+                      cout << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+        break;
+        default:
+          throw MBSimError("ERROR MaxwellContact::solveLCP(double t): No convergence during calculation of contact forces with Newton scheme!");
+        break;
+      }
+    }
+
+    if (!converged) {
+      if (DEBUGLEVEL >= 1) {
+        cout << "No convergence during calculation of contact forces with Newton scheme!" << endl;
+        cout << "Now using Lemke Algorithm..." << endl;
+      }
+
+      clock_t t_start_Lemke1 = clock();
+      solution = LemkeSolver.solve();
+
+      if (LemkeSolver.getInfo() == 0) {
+        converged = true;
+        if (DEBUGLEVEL >= 1) {
+          cout << "LemkerSolver found solution with the second try ..." << endl;
+          if (DEBUGLEVEL >= 2) {
+            double cpuTime = double(clock()-t_start_Lemke1)/CLOCKS_PER_SEC;
+            cout << "... in: " << cpuTime << "s = " << cpuTime/3600 << "h" << endl;
+            if (DEBUGLEVEL >= 4) { //Newton-Solver Info
+              cout << "solution: " << solution << endl;
+              cout << "gaps       forces   " << endl;
+              for (int i = 0; i < solution.size() / 2; i++) {
+                cout << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
+              }
+            }
+          }
+        }
+      }
+
+    }
+
+    if (!converged) {
+      throw MBSimError("ERROR MaxwellContact::solveLCP(): No Solution found for this LCP");
+    }
+
+    if (DEBUGLEVEL >= 1) {
+      double cpuTime = double(clock()-t_start)/CLOCKS_PER_SEC;
+      cout << "Solution found in: " << cpuTime << "s = " << cpuTime/3600 << "h" << endl;
+    }
+
+
+    return lambda;
   }
 
   /* END - MaxwellContact   ***************************************************************************************************************************/
