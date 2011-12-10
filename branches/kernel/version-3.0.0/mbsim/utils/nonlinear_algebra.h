@@ -267,18 +267,57 @@ namespace MBSim {
 
   class LemkeAlgorithm {
     public:
-      LemkeAlgorithm(const fmatvec::SqrMat & M_, const fmatvec::Vec & q_, const bool & INFO_ = false) : M(M_), q(q_), INFO(INFO_) {
+      LemkeAlgorithm(const bool & INFO_ = false): INFO(INFO_) {
+      }
+
+      LemkeAlgorithm(const fmatvec::SqrMat & M_, const fmatvec::Vec & q_, const bool & INFO_ = false) :
+          M(M_), q(q_), INFO(INFO_) {
         assert(M_.rows() == q.size());
         assert(M_.cols() == q.size());
-      };
+      }
+
+      LemkeAlgorithm(const fmatvec::SymMat & M_, const fmatvec::Vec & q_, const bool & INFO_ = false) {
+        setSystem(M_, q_);
+      }
+
+      /* GETTER / SETTER */
+      /**
+       * \brief return info of solution process
+       */
+      int getInfo() {
+        return info;
+      }
+
+      /**
+       * \brief set system with Matrix M and vector q
+       */
+      void setSystem(const fmatvec::SqrMat & M_, const fmatvec::Vec & q_) {
+        assert(M_.rows() == q.size());
+        assert(M_.cols() == q.size());
+        M = M_;
+        q = q_;
+      }
+
+      /**
+       * \brief set system with Matrix M and vector q
+       */
+      void setSystem(const fmatvec::SymMat & M_, const fmatvec::Vec & q_) {
+        M = fmatvec::SqrMat(M_.size(), M_.size(), fmatvec::NONINIT);
+        for(int i = 0; i < M.size(); i++)
+          for(int j = 0; j < M.size(); j++)
+            M(i, j) = M_(i, j);
+        q = q_;
+      }
+      /***************************************************/
 
       /**
        * \brief solve algorithm adapted from : Fast Implementation of Lemke’s Algorithm for Rigid Body Contact Simulation (John E. Lloyd)
-       *
        */
-      fmatvec::Vec solve() ;
+      fmatvec::Vec solve(uint maxloops = 0);
 
-      virtual ~LemkeAlgorithm() {};
+      virtual ~LemkeAlgorithm() {
+      }
+
     protected:
       int findLexicographicMinimum(const fmatvec::Mat &A, const int & pivotColIndex);
       bool LexicographicPositive(const fmatvec::Vec & v);
@@ -289,7 +328,18 @@ namespace MBSim {
       fmatvec::SqrMat M;
       fmatvec::Vec q;
 
+      /**
+       * \brief print debug output
+       */
       bool INFO;
+
+      /**
+       * \brief did the algorithm find a solution
+       *
+       * -1 : not successful
+       *  0 : successful
+       */
+      int info;
   };
 }
 
