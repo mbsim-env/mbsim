@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DynamicSystemSolver name="TS" xmlns="http://mbsim.berlios.de/MBSim"
+    xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
+  <position>[0;0;0]</position><!-- dummy -->
+  <orientation>[1,0,0;0,1,0;0,0,1]</orientation><!-- dummy -->
+  <frames/>
+  <contours>
+    <contour>
+      <Plane name="Plane"/>
+      <position>[0;0;0]</position>
+      <orientation>[0,-1,0;1,0,0;0,0,1]</orientation>
+    </contour>
+  </contours>
+  <groups/>
+  <objects>
+    <RigidBody name="Body">
+      <initialGeneralizedPosition>[0;1.2015e-2;0;0.1;0;0]</initialGeneralizedPosition>
+      <initialGeneralizedVelocity>[0;0;0;0;180;0]</initialGeneralizedVelocity>
+      <frameOfReference ref="../Frame[I]"/>
+      <frameForKinematics ref="Frame[C]"/>
+      <mass>6e-3</mass>
+      <inertiaTensor>[8e-7,0,0 ; 0,7e-7,0 ; 0,0,8e-7]</inertiaTensor>
+      <translation>
+        <LinearTranslation>
+          <translationVectors>[1,0,0;0,1,0;0,0,1]</translationVectors>
+        </LinearTranslation>
+      </translation>
+      <rotation>
+        <CardanAngles/>
+      </rotation>
+      <frames/>
+      <contours>
+        <contour>
+          <Sphere name="Sphere1">
+            <radius>1.5e-2</radius>
+            <enableOpenMBV/>
+          </Sphere>
+          <position>[0;0.3e-2;0]</position>
+          <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
+        </contour>
+        <contour>
+          <Sphere name="Sphere2">
+            <radius>0.5e-2</radius>
+            <enableOpenMBV/>
+          </Sphere>
+          <position>[0;1.6e-2;0]</position>
+          <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
+        </contour>
+      </contours>
+      <enableOpenMBVFrameC>
+        <size>0.036</size>
+        <offset>0</offset>
+      </enableOpenMBVFrameC>
+    </RigidBody>
+  </objects>
+  <links>
+    <Contact name="Contact1">
+      <contactForceLaw>
+        <UnilateralConstraint/>
+      </contactForceLaw>
+      <contactImpactLaw>
+        <UnilateralNewtonImpact>
+          <restitutionCoefficient>0.0</restitutionCoefficient>
+        </UnilateralNewtonImpact>
+      </contactImpactLaw>
+      <frictionForceLaw>
+        <SpatialCoulombFriction>
+          <frictionCoefficient>0.2</frictionCoefficient>
+        </SpatialCoulombFriction>
+      </frictionForceLaw>
+      <frictionImpactLaw>
+        <SpatialCoulombImpact>
+          <frictionCoefficient>0.2</frictionCoefficient>
+        </SpatialCoulombImpact>
+      </frictionImpactLaw>
+      <connect ref1="../Contour[Plane]" ref2="../Object[Body]/Contour[Sphere1]"/>
+      <enableOpenMBVContactPoints>.0025</enableOpenMBVContactPoints>
+      <openMBVNormalForceArrow>
+        <ombv:Arrow name="dummy">
+          <ombv:diameter>0.001</ombv:diameter>
+          <ombv:headDiameter>0.002</ombv:headDiameter>
+          <ombv:headLength>0.004</ombv:headLength>
+          <ombv:type>"toHead"</ombv:type>
+          <ombv:scaleLength>0.4</ombv:scaleLength>
+        </ombv:Arrow>
+      </openMBVNormalForceArrow>
+      <openMBVFrictionArrow>
+        <ombv:Arrow name="dummy">
+          <ombv:diameter>0.001</ombv:diameter>
+          <ombv:headDiameter>0.002</ombv:headDiameter>
+          <ombv:headLength>0.004</ombv:headLength>
+          <ombv:type>"toHead"</ombv:type>
+          <ombv:scaleLength>0.4</ombv:scaleLength>
+        </ombv:Arrow>
+      </openMBVFrictionArrow>
+    </Contact>
+    <Contact name="Contact2">
+      <contactForceLaw>
+        <UnilateralConstraint/>
+      </contactForceLaw>
+      <contactImpactLaw>
+        <UnilateralNewtonImpact>
+          <restitutionCoefficient>0.0</restitutionCoefficient>
+        </UnilateralNewtonImpact>
+      </contactImpactLaw>
+      <frictionForceLaw>
+        <SpatialCoulombFriction>
+          <frictionCoefficient>0.2</frictionCoefficient>
+        </SpatialCoulombFriction>
+      </frictionForceLaw>
+      <frictionImpactLaw>
+        <SpatialCoulombImpact>
+          <frictionCoefficient>0.2</frictionCoefficient>
+        </SpatialCoulombImpact>
+      </frictionImpactLaw>
+      <connect ref1="../Contour[Plane]" ref2="../Object[Body]/Contour[Sphere2]"/>
+      <enableOpenMBVContactPoints>.0025</enableOpenMBVContactPoints>
+      <openMBVNormalForceArrow>
+        <ombv:Arrow name="dummy">
+          <ombv:diameter>0.001</ombv:diameter>
+          <ombv:headDiameter>0.002</ombv:headDiameter>
+          <ombv:headLength>0.004</ombv:headLength>
+          <ombv:type>"toHead"</ombv:type>
+          <ombv:scaleLength>0.4</ombv:scaleLength>
+        </ombv:Arrow>
+      </openMBVNormalForceArrow>
+      <openMBVFrictionArrow>
+        <ombv:Arrow name="dummy">
+          <ombv:diameter>0.001</ombv:diameter>
+          <ombv:headDiameter>0.002</ombv:headDiameter>
+          <ombv:headLength>0.004</ombv:headLength>
+          <ombv:type>"toHead"</ombv:type>
+          <ombv:scaleLength>0.4</ombv:scaleLength>
+        </ombv:Arrow>
+      </openMBVFrictionArrow>
+    </Contact>
+  </links>
+  <environments>
+    <MBSimEnvironment>
+      <accelerationOfGravity>[0;-9.81;0]</accelerationOfGravity>
+    </MBSimEnvironment>
+  </environments>
+</DynamicSystemSolver>
