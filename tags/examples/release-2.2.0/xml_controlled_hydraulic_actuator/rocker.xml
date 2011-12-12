@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Group name="Rocker" xmlns="http://mbsim.berlios.de/MBSim">
+  <frameOfReference ref="../Frame[FRocker]"/>
+  <frames/>
+  <contours/>
+  <groups/>
+  <objects>
+    <RigidBody name="Rocker">
+      <frameOfReference ref="../Frame[I]"/>
+      <frameForKinematics ref="Frame[Mount]"/>
+      <mass>800*pi*.025^2*.5</mass>
+      <inertiaTensor>800*.025^2*.5*(0.25^2/4+.5^2/12)*eye(3)</inertiaTensor>
+      <translation/>
+      <rotation>
+        <RotationAboutFixedAxis>
+          <axisOfRotation>
+            [0; 0; 1]
+          </axisOfRotation>
+        </RotationAboutFixedAxis>
+      </rotation>
+      <frames>
+        <frame>
+          <Frame name="Mount"/>
+          <position>[-.15; 0; 0]</position>
+          <orientation>eye(3)</orientation>
+        </frame>
+        <frame>
+          <Frame name="LeftPin"/>
+          <frameOfReference ref="Frame[Mount]"/>
+          <position>[-.1; 0; 0]</position>
+          <orientation>eye(3)</orientation>
+        </frame>
+        <frame>
+          <Frame name="RightPin"/>
+          <frameOfReference ref="Frame[Mount]"/>
+          <position>[.4; 0; 0]</position>
+          <orientation>eye(3)</orientation>
+        </frame>
+      </frames>
+      <contours/>
+      <openMBVRigidBody>
+        <Frustum name="x" xmlns="http://openmbv.berlios.de/OpenMBV">
+          <staticColor>.5</staticColor>
+          <initialTranslation>[.25; 0; 0]</initialTranslation>
+          <initialRotation>[0; pi/2; 0]</initialRotation>
+          <scaleFactor>1</scaleFactor>
+          <baseRadius>.025</baseRadius>
+          <topRadius>.025</topRadius>
+          <height>.5</height>
+          <innerBaseRadius>0</innerBaseRadius>
+          <innerTopRadius>0</innerTopRadius>
+        </Frustum>
+        <frameOfReference ref="Frame[C]"/>
+      </openMBVRigidBody>
+    </RigidBody>
+    <RigidBody name="LeftPin">
+      <frameOfReference ref="../Object[Rocker]/Frame[LeftPin]"/>
+      <frameForKinematics ref="Frame[C]"/>
+      <mass>800*.005^2*.06</mass>
+      <inertiaTensor>800*pi*.005^2*.06*(0.005^2/4+.06^2/12)*eye(3)</inertiaTensor>
+      <translation/>
+      <rotation/>
+      <frames>
+      </frames>
+      <contours>
+      </contours>
+      <openMBVRigidBody>
+        <Frustum name="x" xmlns="http://openmbv.berlios.de/OpenMBV">
+          <staticColor>.2</staticColor>
+          <initialTranslation>[0; 0; 0.03]</initialTranslation>
+          <initialRotation>[0; 0; 0]</initialRotation>
+          <scaleFactor>1</scaleFactor>
+          <baseRadius>.005</baseRadius>
+          <topRadius>.005</topRadius>
+          <height>.06</height>
+          <innerBaseRadius>0</innerBaseRadius>
+          <innerTopRadius>0</innerTopRadius>
+        </Frustum>
+      </openMBVRigidBody>
+    </RigidBody>
+    <RigidBody name="RightPin">
+      <frameOfReference ref="../Object[Rocker]/Frame[RightPin]"/>
+      <frameForKinematics ref="Frame[C]"/>
+      <mass>800*pi*.005^2*.06</mass>
+      <inertiaTensor>800*.005^2*.06*(0.005^2/4+.06^2/12)*eye(3)</inertiaTensor>
+      <translation>
+        <LinearTranslation>
+          <translationVectors>[1; 0; 0]</translationVectors>
+        </LinearTranslation>
+      </translation>
+      <rotation/>
+      <frames>
+      </frames>
+      <contours>
+      </contours>
+      <openMBVRigidBody>
+        <Frustum name="x" xmlns="http://openmbv.berlios.de/OpenMBV">
+          <staticColor>.7</staticColor>
+          <initialTranslation>[0; 0; 0.03]</initialTranslation>
+          <initialRotation>[0; 0; 0]</initialRotation>
+          <scaleFactor>1</scaleFactor>
+          <baseRadius>.005</baseRadius>
+          <topRadius>.005</topRadius>
+          <height>.06</height>
+          <innerBaseRadius>0</innerBaseRadius>
+          <innerTopRadius>0</innerTopRadius>
+        </Frustum>
+      </openMBVRigidBody>
+    </RigidBody>
+    <RigidBody name="Mass">
+      <frameOfReference ref="../../Frame[FMass]"/>
+      <frameForKinematics ref="Frame[C]"/>
+      <mass>800*pi*.1^2*.1</mass>
+      <inertiaTensor>800*.1^2*.1*(.1^2/4+.1^2/12)*eye(3)</inertiaTensor>
+      <translation>
+        <LinearTranslation>
+          <translationVectors>[0; 1; 0]</translationVectors>
+        </LinearTranslation>
+      </translation>
+      <rotation/>
+      <frames>
+      </frames>
+      <contours>
+      </contours>
+      <openMBVRigidBody>
+        <Frustum name="x" xmlns="http://openmbv.berlios.de/OpenMBV">
+          <staticColor>1</staticColor>
+          <initialTranslation>[0; 0; 0.03]</initialTranslation>
+          <initialRotation>[pi/2; 0; 0]</initialRotation>
+          <scaleFactor>1</scaleFactor>
+          <baseRadius>.1</baseRadius>
+          <topRadius>.1</topRadius>
+          <height>.1</height>
+          <innerBaseRadius>0</innerBaseRadius>
+          <innerTopRadius>0</innerTopRadius>
+        </Frustum>
+      </openMBVRigidBody>
+    </RigidBody>
+  </objects>
+  <links>
+    <Joint name="MassJoint">
+      <force>
+        <direction>[1,0;0,1;0,0]</direction>
+        <generalizedForceLaw>
+          <BilateralConstraint/>
+        </generalizedForceLaw>
+        <generalizedImpactLaw>
+          <BilateralImpact/>
+        </generalizedImpactLaw>
+      </force>
+      <connect ref1="../Object[Mass]/Frame[C]" ref2="../Object[RightPin]/Frame[C]"/>
+    </Joint>
+  </links>
+</Group>

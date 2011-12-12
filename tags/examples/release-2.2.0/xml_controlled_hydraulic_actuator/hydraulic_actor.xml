@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Group name="HydraulicActor" xmlns="http://mbsim.berlios.de/MBSim">
+  <frameOfReference ref="../Frame[FJack]"/>
+  <frames>
+  </frames>
+  <contours/>
+  <groups/>
+  <objects>
+    <RigidBody name="HydraulicActor">
+      <frameOfReference ref="../../Frame[FJack]"/>
+      <frameForKinematics ref="Frame[FMount]"/>
+      <mass>1.</mass>
+      <inertiaTensor>1e-4*eye(3)</inertiaTensor>
+      <translation/>
+      <rotation>
+        <RotationAboutFixedAxis>
+          <axisOfRotation>[0; 0; 1]</axisOfRotation>
+        </RotationAboutFixedAxis>
+      </rotation>
+      <frames>
+        <frame>
+          <Frame name="FMount">
+            <enableOpenMBV>
+              <size>.02</size>
+              <offset>1</offset>
+            </enableOpenMBV>
+          </Frame>
+          <frameOfReference ref="Frame[C]"/>
+          <position>[0; -.11; 0]</position>
+          <orientation>eye(3)</orientation>
+        </frame>
+        <frame>
+          <Frame name="FBottom"/>
+          <frameOfReference ref="Frame[FMount]"/>
+          <position>[0; .01; 0]</position>
+          <orientation>eye(3)</orientation>
+        </frame>
+        <frame>
+          <Frame name="FPlunger"/>
+          <frameOfReference ref="Frame[FBottom]"/>
+          <position>[0; .05+.01; 0]</position>
+          <orientation>eye(3)</orientation>
+        </frame>
+        <frame>
+          <Frame name="FTop"/>
+          <frameOfReference ref="Frame[FPlunger]"/>
+          <position>[0; .01+.05; 0]</position>
+          <orientation>eye(3)</orientation>
+        </frame>
+      </frames>
+      <contours/>
+      <openMBVRigidBody>
+        <CompoundRigidBody name="x" xmlns="http://openmbv.berlios.de/OpenMBV">
+          <staticColor>.4</staticColor>
+          <initialTranslation>[0; 0; 0]</initialTranslation>
+          <initialRotation>[0; 0; 0]</initialRotation>
+          <scaleFactor>1</scaleFactor>
+          <Frustum name="x">
+            <staticColor>.4</staticColor>
+            <initialTranslation>[0; 0; 0]</initialTranslation>
+            <initialRotation>[pi/2; 0; 0]</initialRotation>
+            <scaleFactor>1</scaleFactor>
+            <baseRadius>.03</baseRadius>
+            <topRadius>.03</topRadius>
+            <height>.01</height>
+            <innerBaseRadius>0</innerBaseRadius>
+            <innerTopRadius>0</innerTopRadius>
+          </Frustum>
+          <Frustum name="x">
+            <staticColor>.4</staticColor>
+            <initialTranslation>[0; .13; 0]</initialTranslation>
+            <initialRotation>[pi/2; 0; 0]</initialRotation>
+            <scaleFactor>1</scaleFactor>
+            <baseRadius>.03</baseRadius>
+            <topRadius>.03</topRadius>
+            <height>.01</height>
+            <innerBaseRadius>.01</innerBaseRadius>
+            <innerTopRadius>.01</innerTopRadius>
+          </Frustum>
+        </CompoundRigidBody>
+        <frameOfReference ref="Frame[FMount]"/>
+      </openMBVRigidBody>
+    </RigidBody>
+    <RigidBody name="Plunger">
+      <frameOfReference ref="../Object[HydraulicActor]/Frame[FPlunger]"/>
+      <frameForKinematics ref="Frame[C]"/>
+      <mass>1.</mass>
+      <inertiaTensor>1e-4*eye(3)</inertiaTensor>
+      <translation>
+        <LinearTranslation>
+          <translationVectors>[0;1;0]</translationVectors>
+        </LinearTranslation>
+      </translation>
+      <rotation/>
+      <frames>
+        <frame>
+          <Frame name="FTop"/>
+          <position>[0; .01; 0]</position>
+          <orientation>eye(3)</orientation>
+        </frame>
+        <frame>
+          <Frame name="FBottom"/>
+          <position>[0; -.01; 0]</position>
+          <orientation>eye(3)</orientation>
+        </frame>
+        <frame>
+          <Frame name="Top">
+            <enableOpenMBV>
+              <size>.05</size>
+              <offset>1</offset>
+            </enableOpenMBV>
+          </Frame>
+          <position>[0; .13; 0]</position>
+          <orientation>eye(3)</orientation>
+        </frame>
+      </frames>
+      <contours/>
+      <openMBVRigidBody>
+        <CompoundRigidBody name="x" xmlns="http://openmbv.berlios.de/OpenMBV">
+          <staticColor>.1</staticColor>
+          <initialTranslation>[0; 0; 0]</initialTranslation>
+          <initialRotation>[0; 0; 0]</initialRotation>
+          <scaleFactor>1</scaleFactor>
+          <Frustum name="x">
+            <staticColor>.1</staticColor>
+            <initialTranslation>[0; -.01; 0]</initialTranslation>
+            <initialRotation>[pi/2; 0; 0]</initialRotation>
+            <scaleFactor>1</scaleFactor>
+            <baseRadius>.03</baseRadius>
+            <topRadius>.03</topRadius>
+            <height>.02</height>
+            <innerBaseRadius>0</innerBaseRadius>
+            <innerTopRadius>0</innerTopRadius>
+          </Frustum>
+          <Frustum name="x">
+            <staticColor>.1</staticColor>
+            <initialTranslation>[0; .01; 0]</initialTranslation>
+            <initialRotation>[pi/2; 0; 0]</initialRotation>
+            <scaleFactor>1</scaleFactor>
+            <baseRadius>.01</baseRadius>
+            <topRadius>.01</topRadius>
+            <height>.12</height>
+            <innerBaseRadius>0</innerBaseRadius>
+            <innerTopRadius>0</innerTopRadius>
+          </Frustum>
+        </CompoundRigidBody>
+      </openMBVRigidBody>
+    </RigidBody>
+    <!--
+    <CircularLeakageLine name="Leckage" xmlns="http://openmbv.berlios.de/MBSimHydraulics">
+      <frameOfReference ref="../Object[HydraulicActor]/Frame[FPlunger]"/>
+      <direction>[0;0;0]</direction>
+      <length>.5</length>
+      <innerRadius>.03</innerRadius>
+      <height>50e-6</height>
+      <circularLeakagePressureLoss>
+        <RealCircularLeakagePressureLoss/>
+      </circularLeakagePressureLoss>
+    </CircularLeakageLine>
+    -->
+  </objects>
+  <links>
+    <RigidNodeMec name="nA" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
+      <!--
+      <outflow ref="../HLine[Leckage]"/>
+      -->
+      <inflow ref="../../Group[HydraulicSystem]/HLine[lineA]"/>
+      <enableOpenMBVSphere>
+        <size>.02</size>
+        <minimalPressure unit="bar">10</minimalPressure>
+        <maximalPressure unit="bar">50</maximalPressure>
+      </enableOpenMBVSphere>
+      <initialVolume>pi*(.03^2-.01^2)*.05</initialVolume>
+      <translatorialBoundarySourface>
+        <frameOfReference ref="../Object[HydraulicActor]/Frame[FTop]"/>
+        <normal>[0; 1; 0]</normal>
+        <area>pi*(.03^2-.01^2)</area>
+      </translatorialBoundarySourface>
+      <translatorialBoundarySourface>
+        <frameOfReference ref="../Object[Plunger]/Frame[FTop]"/>
+        <normal>[0; -1; 0]</normal>
+        <area>pi*(.03^2-.01^2)</area>
+      </translatorialBoundarySourface>
+      <enableOpenMBVArrows> <!-- optional -->
+        <size>.01</size>
+      </enableOpenMBVArrows>
+      <!--
+      <initialPressure unit="bar">2</initialPressure>
+      <fracAir>.05</fracAir>
+      -->
+    </RigidNodeMec>
+    <RigidNodeMec name="nB" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
+      <!--
+      <inflow ref="../HLine[Leckage]"/>
+      -->
+      <inflow ref="../../Group[HydraulicSystem]/HLine[lineB]"/>
+      <enableOpenMBVSphere>
+        <size>.02</size>
+        <minimalPressure unit="bar">10</minimalPressure>
+        <maximalPressure unit="bar">50</maximalPressure>
+      </enableOpenMBVSphere>
+      <initialVolume>pi*.03^2*.05</initialVolume>
+      <translatorialBoundarySourface>
+        <frameOfReference ref="../Object[HydraulicActor]/Frame[FBottom]"/>
+        <normal>[0;-1 ; 0]</normal>
+        <area>pi*.03^2</area>
+      </translatorialBoundarySourface>
+      <translatorialBoundarySourface>
+        <frameOfReference ref="../Object[Plunger]/Frame[FBottom]"/>
+        <normal>[0; 1; 0]</normal>
+        <area>pi*.03^2</area>
+      </translatorialBoundarySourface>
+      <enableOpenMBVArrows>
+        <size>.01</size>
+      </enableOpenMBVArrows>
+      <!--
+      <initialPressure unit="bar">2</initialPressure>
+      <fracAir>.05</fracAir>
+      -->
+    </RigidNodeMec>
+    <EnvironmentNodeMec name="nPlungerEnvironment" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
+      <initialVolume>0</initialVolume>
+      <translatorialBoundarySourface>
+        <frameOfReference ref="../Object[Plunger]/Frame[FTop]"/>
+        <normal>[0; -1; 0]</normal>
+        <area>pi*.01^2</area>
+      </translatorialBoundarySourface>
+      <enableOpenMBVArrows>
+        <size>.01</size>
+      </enableOpenMBVArrows>
+    </EnvironmentNodeMec>
+  </links>
+</Group>
