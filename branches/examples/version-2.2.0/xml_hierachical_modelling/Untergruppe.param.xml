@@ -1,4 +1,0 @@
-<parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/parameter">
-  <scalarParameter name="h1">0.5</scalarParameter>
-  <scalarParameter name="h2">h1</scalarParameter>
-</parameter>

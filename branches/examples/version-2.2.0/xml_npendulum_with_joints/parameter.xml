@@ -1,5 +1,0 @@
-<parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/parameter">
-  <scalarParameter name="N">9</scalarParameter>
-  <scalarParameter name="lO">0.2</scalarParameter>
-  <scalarParameter name="lU">0.45</scalarParameter>
-</parameter>
