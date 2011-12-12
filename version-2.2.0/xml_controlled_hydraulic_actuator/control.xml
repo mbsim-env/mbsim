@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Group name="Control" xmlns="http://mbsim.berlios.de/MBSim">
+  <frameOfReference ref="../Frame[I]"/>
+  <frames/>
+  <contours/>
+  <groups/>
+  <objects/>
+  <extraDynamics>
+    <LinearTransferSystem name="LTI" xmlns="http://mbsim.berlios.de/MBSimControl">
+      <inputSignal ref="../Signal[DifferencePosition]"/>
+      <pidType>
+        <P>1000</P>
+        <I>100</I>
+        <D>10</D>
+      </pidType>
+    </LinearTransferSystem>
+    <LinearTransferSystem name="PT1Controlvalve" xmlns="http://mbsim.berlios.de/MBSimControl">
+      <inputSignal ref="../Signal[ControlOutputLimitted]"/>
+      <pt1Type>
+        <P>1</P>
+        <T>1/25</T>
+      </pt1Type>
+    </LinearTransferSystem>
+  </extraDynamics>
+  <links>
+    <RelativePositionSensor name="MassPosition" xmlns="http://mbsim.berlios.de/MBSimControl">
+      <frame ref="../../Frame[FMass]" rel="../../Group[Rocker]/Object[Mass]/Frame[C]"/>
+      <direction>[0;1;0]</direction>
+    </RelativePositionSensor>
+    <RelativeVelocitySensor name="MassVelocity" xmlns="http://mbsim.berlios.de/MBSimControl">
+      <frame ref="../../Frame[FMass]" rel="../../Group[Rocker]/Object[Mass]/Frame[C]"/>
+      <direction>[0;1;0]</direction>
+    </RelativeVelocitySensor>
+    <FunctionSensor name="DesiredPosition" xmlns="http://mbsim.berlios.de/MBSimControl">
+      <function>
+        <!--
+        <SinusFunction1_VS xmlns="http://mbsim.berlios.de/MBSim">
+          <amplitude>.1</amplitude>
+          <frequency>1</frequency>
+          <phase>0</phase>
+        </SinusFunction1_VS>
+        -->
+        <TabularFunction1_VS xmlns="http://mbsim.berlios.de/MBSim">
+          <x>[0; .49; .51; .99; 1.01; 1.49; 1.51; 2]/2</x>
+          <y>[0;   0;   1;   1;   -1;   -1;    0; 0]*.05</y>
+        </TabularFunction1_VS>
+      </function>
+    </FunctionSensor>
+    <SignalAddition name="DifferencePosition" xmlns="http://mbsim.berlios.de/MBSimControl">
+      <inputSignal ref="../Signal[DesiredPosition]">
+        <factor>-1.</factor>
+      </inputSignal>
+      <inputSignal ref="../Signal[MassPosition]">
+        <factor>1.</factor>
+      </inputSignal>
+    </SignalAddition>
+    <SignalProcessingSystemSensor name="ControlOutput" xmlns="http://mbsim.berlios.de/MBSimControl">
+      <signalProcessingSystem ref="../ExtraDynamic[LTI]"/>
+    </SignalProcessingSystemSensor>
+    <SignalLimitation name="ControlOutputLimitted" xmlns="http://mbsim.berlios.de/MBSimControl">
+      <inputSignal ref="../Signal[ControlOutput]"/>
+      <minimalValue>0-5</minimalValue>
+      <maximalValue>1+5</maximalValue>
+    </SignalLimitation>
+    <SignalProcessingSystemSensor name="PT1ControlvalveOutput" xmlns="http://mbsim.berlios.de/MBSimControl">
+      <signalProcessingSystem ref="../ExtraDynamic[PT1Controlvalve]"/>
+    </SignalProcessingSystemSensor>
+    <SignalLimitation name="PT1ControlvalveOutputLimitted" xmlns="http://mbsim.berlios.de/MBSimControl">
+      <inputSignal ref="../Signal[PT1ControlvalveOutput]"/>
+      <minimalValue>0</minimalValue>
+      <maximalValue>1</maximalValue>
+    </SignalLimitation>
+  </links>
+</Group>
