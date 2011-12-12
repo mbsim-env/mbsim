@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Group name="ChainTensioner"
+  xmlns="http://mbsim.berlios.de/MBSim"
+  xmlns:ombv="http://openmbv.berlios.de/OpenMBV"
+  xmlns:v="http://mbsim.berlios.de/MBSimValvetrain"
+  xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
+  xmlns:h="http://mbsim.berlios.de/MBSimHydraulics"
+  xmlns:c="http://mbsim.berlios.de/MBSimControl">
+  <position>[0;0;0]</position>
+  <orientation>eye(3)</orientation>
+  <frames/>
+  <contours/>
+  <groups>
+    <h:BallCheckvalve name="Checkvalve">
+      <plotFeature feature="+rightHandSide"/>
+      <h:basisFrame ref="../Object[Housing]/Frame[CVMount]"/>
+      <h:RigidLine>
+        <h:length unit="mm">1.5</h:length>
+        <h:diameter unit="mm">1.4</h:diameter>
+        <h:checkvalvePressureLoss>
+          <h:GammaCheckvalveClosablePressureLoss>
+            <h:ballRadius unit="mm">3</h:ballRadius>
+            <h:alpha>.2</h:alpha>
+            <h:gamma unit="degree">45</h:gamma>
+          </h:GammaCheckvalveClosablePressureLoss>
+          <h:minimalXOpen unit="mum">2.5</h:minimalXOpen>
+          <h:setValued/>
+        </h:checkvalvePressureLoss>
+      </h:RigidLine>
+      <h:Ball>
+        <h:mass unit="g">0.5</h:mass>
+        <h:initialPosition unit="mm">.5</h:initialPosition>
+      </h:Ball>
+      <h:Spring>
+        <h:forceFunction>
+          <LinearSpringDamperForce>
+            <stiffnessCoefficient>75</stiffnessCoefficient>
+            <dampingCoefficient>.5</dampingCoefficient>
+            <unloadedLength unit="mm">2</unloadedLength>
+          </LinearSpringDamperForce>
+        </h:forceFunction>
+      </h:Spring>
+      <h:SeatContact>
+        <h:contactForceLaw>
+          <UnilateralConstraint/>
+        </h:contactForceLaw>
+        <h:contactImpactLaw>
+          <UnilateralNewtonImpact>
+            <restitutionCoefficient>0</restitutionCoefficient>
+          </UnilateralNewtonImpact>
+        </h:contactImpactLaw>
+      </h:SeatContact>
+      <h:maximalOpening unit="mm">1</h:maximalOpening>
+      <h:MaximalOpeningContact>
+        <h:contactForceLaw>
+          <UnilateralConstraint/>
+        </h:contactForceLaw>
+        <h:contactImpactLaw>
+          <UnilateralNewtonImpact>
+            <restitutionCoefficient>0</restitutionCoefficient>
+          </UnilateralNewtonImpact>
+        </h:contactImpactLaw>
+      </h:MaximalOpeningContact>
+      <h:enableOpenMBVBodies/>
+      <h:enableOpenMBVFrames/>
+      <h:enableOpenMBVArrows/>
+    </h:BallCheckvalve>
+  </groups>
+  <objects>
+    <RigidBody name="Housing">
+      <frameOfReference ref="../Frame[I]"/>
+      <frameForKinematics ref="Frame[C]"/>
+      <mass>1.</mass>
+      <inertiaTensor>eye(3)</inertiaTensor>
+      <translation/>
+      <rotation/>
+      <frames>
+        <frame>
+          <Frame name="Bottom">
+            <enableOpenMBV>
+              <size>3e-3</size>
+              <offset>1</offset>
+            </enableOpenMBV>
+          </Frame>
+          <frameOfReference ref="Frame[C]"/>
+          <position>zeros(3, 1)</position>
+          <orientation>eye(3)</orientation>
+        </frame>
+        <frame>
+          <Frame name="CVMount">
+            <enableOpenMBV>
+              <size>3e-3</size>
+              <offset>1</offset>
+            </enableOpenMBV>
+          </Frame>
+          <frameOfReference ref="Frame[Bottom]"/>
+          <position>[0; 0.0105; 0]</position>
+          <orientation>[0,1,0; -1,0,0; 0,0,1]'</orientation>
+        </frame>
+        <frame>
+          <Frame name="PistonSpringMount"/>
+          <frameOfReference ref="Frame[CVMount]"/>
+          <position>[0.0011; 0; 0]</position>
+          <orientation>[0,1,0; -1,0,0; 0,0,1]</orientation>
+        </frame>
+        <frame>
+          <Frame name="Piston">
+            <enableOpenMBV>
+              <size>3e-3</size>
+              <offset>1</offset>
+            </enableOpenMBV>
+          </Frame>
+          <frameOfReference ref="Frame[CVMount]"/>
+          <position>[.01; 0; 0]</position>
+          <orientation>[0,1,0; -1,0,0; 0,0,1]</orientation>
+        </frame>
+        <frame>
+          <Frame name="PistonInitialTopFrame"/>
+          <frameOfReference ref="Frame[Piston]"/>
+          <position>[0; 0.03; 0]</position>
+          <orientation>eye(3)</orientation>
+        </frame>
+      </frames>
+      <contours/>
+      <openMBVRigidBody>
+        <ombv:IvBody name="xxx">
+          <ombv:staticColor>.5</ombv:staticColor>
+          <ombv:initialTranslation>[0; -0.0245113; 0]</ombv:initialTranslation>
+          <ombv:initialRotation>[-pi/2; 0; 0]</ombv:initialRotation>
+          <ombv:scaleFactor>1.</ombv:scaleFactor>
+          <ombv:ivFileName>"inventor/housing.iv"</ombv:ivFileName>
+        </ombv:IvBody>
+        <frameOfReference ref="Frame[Bottom]"/>
+      </openMBVRigidBody>
+      <enableOpenMBVFrameC>
+        <size>3e-3</size>
+        <offset>1</offset>
+      </enableOpenMBVFrameC>
+    </RigidBody>
+    <RigidBody name="Piston">
+      <frameOfReference ref="../Object[Housing]/Frame[Piston]"/>
+      <frameForKinematics ref="Frame[Bottom]"/>
+      <mass>33e-3</mass>
+      <inertiaTensor>eye(3)</inertiaTensor>
+      <translation>
+        <LinearTranslation>
+          <translationVectors>[0;1;0]</translationVectors>
+        </LinearTranslation>
+      </translation>
+      <rotation/>
+      <frames>
+        <frame>
+          <Frame name="Bottom">
+          </Frame>
+          <frameOfReference ref="Frame[C]"/>
+          <position>[0; -1.5e-2; 0]</position>
+          <orientation>eye(3)</orientation>
+        </frame>
+        <frame>
+          <Frame name="PistonSpringMount"/>
+          <frameOfReference ref="Frame[C]"/>
+          <position>[0; 0.0104; 0]</position>
+          <orientation>eye(3)</orientation>
+        </frame>
+        <frame>
+          <Frame name="Top">
+            <enableOpenMBV>
+              <size>3e-3</size>
+              <offset>1</offset>
+            </enableOpenMBV>
+          </Frame>
+          <frameOfReference ref="Frame[PistonSpringMount]"/>
+          <position>[0; 0.0046; 0]</position>
+          <orientation>eye(3)</orientation>
+        </frame>
+      </frames>
+      <contours/>
+      <openMBVRigidBody>
+        <ombv:IvBody name="xxx">
+          <ombv:staticColor>.5</ombv:staticColor>
+          <ombv:initialTranslation>[0; -0.0404966; 0]</ombv:initialTranslation>
+          <ombv:initialRotation>[-pi/2; 0; 0]</ombv:initialRotation>
+          <ombv:scaleFactor>1.</ombv:scaleFactor>
+          <ombv:ivFileName>"inventor/piston.iv"</ombv:ivFileName>
+        </ombv:IvBody>
+        <frameOfReference ref="Frame[Bottom]"/>
+      </openMBVRigidBody>
+      <enableOpenMBVFrameC>
+        <size>3e-3</size>
+        <offset>1</offset>
+      </enableOpenMBVFrameC>
+    </RigidBody>
+    <h:CircularLeakage0DOF name="LeackageGap">
+      <h:frameOfReference ref="../Object[Housing]/Frame[Bottom]"/>
+      <h:direction>[0;1;0]</h:direction>
+      <h:length unit="mm">7</h:length>
+      <h:firstSurfaceVelocity ref="../Signal[PistonVelocity]"/>
+      <h:innerRadius unit="mm">8</h:innerRadius>
+      <h:height unit="mum">50</h:height>
+      <h:circularLeakagePressureLoss>
+        <h:EccentricCircularLeakagePressureLoss>
+          <h:eccentricity>.9</h:eccentricity>
+        </h:EccentricCircularLeakagePressureLoss>
+      </h:circularLeakagePressureLoss>
+    </h:CircularLeakage0DOF>
+  </objects>
+  <links>
+    <SpringDamper name="PistonSpring">
+      <plotFeature feature="+linkKinematics"/>
+      <forceFunction>
+        <LinearSpringDamperForce>
+          <stiffnessCoefficient>3500</stiffnessCoefficient>
+          <dampingCoefficient>1</dampingCoefficient>
+          <unloadedLength unit="cm">6</unloadedLength>
+        </LinearSpringDamperForce>
+      </forceFunction>
+      <connect ref1="../Object[Housing]/Frame[PistonSpringMount]" ref2="../Object[Piston]/Frame[PistonSpringMount]"/>
+      <ombv:CoilSpring name="xxx">
+        <ombv:minimalColorValue>-88</ombv:minimalColorValue>
+        <ombv:maximalColorValue>-92</ombv:maximalColorValue>
+        <ombv:numberOfCoils>11</ombv:numberOfCoils>
+        <ombv:springRadius>.00525</ombv:springRadius>
+        <ombv:crossSectionRadius>.0006</ombv:crossSectionRadius>
+        <ombv:scaleFactor>1.</ombv:scaleFactor>
+      </ombv:CoilSpring>
+    </SpringDamper>
+    <h:EnvironmentNodeMec name="EnvironmentPressure">
+      <h:inflow ref="../HLine[LeackageGap]"/>
+      <h:initialVolume>0</h:initialVolume>
+      <h:translatorialBoundarySourface>
+        <h:frameOfReference ref="../Object[Piston]/Frame[Top]"/>
+        <h:normal>[0;-1;0]</h:normal>
+        <h:area unit="mm^2">pi*8^2</h:area>
+      </h:translatorialBoundarySourface>
+      <h:enableOpenMBVArrows>
+        <h:size>.001</h:size>
+      </h:enableOpenMBVArrows>
+    </h:EnvironmentNodeMec>
+    <h:ConstrainedNodeMec name="SupplyChamber">
+      <h:outflow ref="../Group[Checkvalve]/HLine[Line]"/>
+      <h:initialVolume>0</h:initialVolume>
+      <h:enableOpenMBVArrows>
+        <h:size>.001</h:size>
+      </h:enableOpenMBVArrows>
+      <h:function>
+        <ConstantFunction1_SS>
+          <value convertUnit="value*1e5">3.0</value>
+        </ConstantFunction1_SS>
+      </h:function>
+    </h:ConstrainedNodeMec>
+    <h:ElasticNodeMec name="HighPressureChamber">
+      <h:inflow ref="../Group[Checkvalve]/HLine[Line]"/>
+      <h:outflow ref="../HLine[LeackageGap]"/>
+      <h:initialVolume unit="mm^3">1000</h:initialVolume>
+      <h:translatorialBoundarySourface>
+        <h:frameOfReference ref="../Object[Piston]/Frame[Bottom]"/>
+        <h:normal>[0;1;0]</h:normal>
+        <h:area unit="mm^2">pi*8^2</h:area>
+      </h:translatorialBoundarySourface>
+      <h:enableOpenMBVArrows>
+        <h:size>.001</h:size>
+      </h:enableOpenMBVArrows>
+      <h:initialPressure>1e5</h:initialPressure>
+      <h:fracAir>.01</h:fracAir>
+    </h:ElasticNodeMec>
+    <c:AbsoluteVelocitySensor name="PistonVelocity">
+      <c:frame ref="../Object[Piston]/Frame[C]"/>
+      <c:direction>[0;1;0]</c:direction>
+    </c:AbsoluteVelocitySensor>
+  </links>
+</Group>
