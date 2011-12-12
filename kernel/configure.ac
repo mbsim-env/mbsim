@@ -17,7 +17,7 @@ AC_C_CONST
 LDFLAGS="$LDFLAGS -Wl,--no-undefined"
 
 requires="fmatvec hdf5serie"
-PKG_CHECK_MODULES(DEPS, fmatvec >= 0.9.1  hdf5serie)
+PKG_CHECK_MODULES(DEPS, fmatvec >= 1.0.1 hdf5serie)
 
 AC_SUBST([requires])
 
