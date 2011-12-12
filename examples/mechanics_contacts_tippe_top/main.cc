@@ -27,7 +27,7 @@ int main (int argc, char* argv[]) {
   is.close();
 
   System *sys = new System("TS");
-
+  sys->setStopIfNoConvergence(true);
   sys->initialize();
 
   Integrator* integrator;
@@ -36,9 +36,15 @@ int main (int argc, char* argv[]) {
     integrator = new RADAU5Integrator;
   } 
   else if(eventDriven) { // Event driven time integration
+    sys->setProjectionTolerance(1e-15);
+    sys->setgTol(1e-6);
+    sys->setgdTol(1e-6);
+    sys->setLaTol(1e-6);
+    sys->setlaTol(1e-8);
+    sys->setgddTol(1e-8);
     integrator = new LSODARIntegrator;
     static_cast<LSODARIntegrator*>(integrator)->setPlotOnRoot(false);
-    static_cast<LSODARIntegrator*>(integrator)->setInitialStepSize(1e-13);
+    static_cast<LSODARIntegrator*>(integrator)->setInitialStepSize(1e-8);
   } 
   else { // time stepping integration
     sys->setLaTol(1e-2*dt);
