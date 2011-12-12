@@ -1,0 +1,36 @@
+Electronics - Electronics for MBSim, Lehrstuhl für Angewandte Mechanik
+==============================
+
+Benötigt:
+=========
+	- mbsim
+
+Installation:
+=============
+	1. aclocal, autoconf, libtoolize und automake ausführen
+		
+                aclocal
+                autoheader
+                autoconf
+                libtoolize -c --force
+                automake -a -c --force
+			                
+	2. configure Skript ausführen.
+
+		./configure
+
+	   Hier sind folgende Optionen wichtig:
+
+  		--prefix=PREFIX (Dorthin werden die Bibliotheken installiert)
+          	­-help (Weitere Optionen)
+    
+  	3. make ausfuehren, um shared libraries zu erzeugen.
+                  
+                  make
+
+	4. make install ausfuehren, um libmbsimelectronics.so zu installieren.
+
+                  make install 
+				  
+Anmerkungen:
+============
