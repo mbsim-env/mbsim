@@ -7,6 +7,7 @@ using namespace MBSim;
 int main (int argc, char* argv[])
 {
   DynamicSystemSolver *sys = new Pendulum("TS");
+  sys->setInverseKinetics(true);
   sys->initialize();
 
   DOPRI5Integrator integrator;
