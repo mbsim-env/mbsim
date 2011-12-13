@@ -24,7 +24,6 @@ INCLUDES = $(DEPS_CFLAGS)
 
 mbsimControlincludedir = $(includedir)/mbsimControl
 mbsimControlinclude_HEADERS = \
-															signal_interface.h\
 															signal_.h\
 														  extern_signal_source.h\
 															sensor.h\

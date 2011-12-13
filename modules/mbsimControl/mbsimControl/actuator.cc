@@ -31,7 +31,7 @@ namespace MBSimControl {
   Actuator::Actuator(const string &name) : LinkMechanics(name), signal(0), KOSYID(1) {
   }
 
-  void Actuator::updateh(double t) {
+  void Actuator::updateh(double t, int j) {
     la = signal->getSignal();
     if(KOSYID) { // calculation of force / moment direction
       Wf = frame[KOSYID-1]->getOrientation()*forceDir;
@@ -42,10 +42,8 @@ namespace MBSimControl {
     WM[0] = Wm*la(IR);
     WM[1] = -WM[0];
 
-    h[0] += frame[0]->getJacobianOfTranslation().T()*WF[0] + frame[0]->getJacobianOfRotation().T()*WM[0];
-    h[1] += frame[1]->getJacobianOfTranslation().T()*WF[1] + frame[1]->getJacobianOfRotation().T()*WM[1];
-    hLink[0] += frame[0]->getJacobianOfTranslation().T()*WF[0] + frame[0]->getJacobianOfRotation().T()*WM[0];
-    hLink[1] += frame[1]->getJacobianOfTranslation().T()*WF[1] + frame[1]->getJacobianOfRotation().T()*WM[1];
+    h[j][0] += frame[0]->getJacobianOfTranslation(j).T()*WF[0] + frame[0]->getJacobianOfRotation(j).T()*WM[0];
+    h[j][1] += frame[1]->getJacobianOfTranslation(j).T()*WF[1] + frame[1]->getJacobianOfRotation(j).T()*WM[1];
   }
 
   void Actuator::init(InitStage stage) {
