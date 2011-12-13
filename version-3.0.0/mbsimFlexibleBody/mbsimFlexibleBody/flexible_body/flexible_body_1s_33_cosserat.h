@@ -80,11 +80,11 @@ namespace MBSimFlexibleBody {
       /* INHERITED INTERFACE OF OBJECT */
       virtual void init(MBSim::InitStage stage);
       virtual double computePotentialEnergy();
-      virtual void facLLM();
+      virtual void facLLM(int i=0);
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updateh(double t);
+      virtual void updateh(double t, int i=0);
       virtual void updateStateDependentVariables(double t);
 
       /* INHERITED INTERFACE OF ELEMENT */

@@ -51,7 +51,7 @@ namespace MBSimFlexibleBody {
       virtual ~FlexibleBody2s13Disk() {}
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updateM(double t);
+      virtual void updateM(double t, int j=0);
       /***************************************************/
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
