@@ -91,11 +91,11 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   shaft3->getFrame("C")->enableOpenMBV(0.2);
 #endif
 
-  Constraint2 *constraint = new Constraint2("C1",shaft2);
+  GearConstraint *constraint = new GearConstraint("C1",shaft2);
   addObject(constraint);
   constraint->addDependency(shaft1,-R1/R2a);
 
-  constraint = new Constraint2("C2",shaft3);
+  constraint = new GearConstraint("C2",shaft3);
   addObject(constraint);
   constraint->addDependency(shaft2,-R2b/R3);
 
