@@ -95,7 +95,7 @@ namespace MBSimControl {
       x.resize(xSize, INIT, 0);
     }
     else if (stage==MBSim::plot) {
-      updatePlotFeatures(parent);
+      updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
         if (getPlotFeature(globalPosition)==enabled)
           for (int i=0; i<C.rows(); i++)

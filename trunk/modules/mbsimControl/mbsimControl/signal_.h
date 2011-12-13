@@ -21,7 +21,6 @@
 #define _SIGNALMBSIM_H_
 
 #include "mbsim/link.h"
-#include "mbsimControl/signal_interface.h"
 
 namespace MBSim {
   class DynamicSystem;
@@ -33,7 +32,7 @@ namespace MBSimControl {
    * \brief Signal
    * \author Markus Schneider
    */
-  class Signal : public MBSim::Link, public SignalInterface {
+  class Signal : public MBSim::Link {
 
     public:
       Signal(const std::string &name) : Link(name) {}
@@ -48,7 +47,7 @@ namespace MBSimControl {
       /* INHERITED INTERFACE OF LINK */
       virtual void updateWRef(const fmatvec::Mat& ref, int i=0) {}
       virtual void updateVRef(const fmatvec::Mat& ref, int i=0) {}
-      virtual void updatehRef(const fmatvec::Vec &hRef, const fmatvec::Vec &hLinkRef, int i=0) {}
+      virtual void updatehRef(const fmatvec::Vec &hRef, int i=0) {}
       virtual void updatedhdqRef(const fmatvec::Mat& ref, int i=0) {}
       virtual void updatedhduRef(const fmatvec::SqrMat& ref, int i=0) {}
       virtual void updatedhdtRef(const fmatvec::Vec& ref, int i=0) {}
