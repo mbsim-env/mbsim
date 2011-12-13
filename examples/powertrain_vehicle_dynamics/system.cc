@@ -469,7 +469,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   shaft1->getFrame("Q")->enableOpenMBV(0.3);
 #endif
 
-  Constraint2 *constraint = new Constraint2("C0",shaft1);
+  GearConstraint *constraint = new GearConstraint("C0",shaft1);
   addObject(constraint);
   constraint->addDependency(static_cast<RigidBody*>(differentialGear->getObject("InputShaft")),-differentialGear->getRadiusInputShaft()/r1);
 
