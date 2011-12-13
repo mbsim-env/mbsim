@@ -45,28 +45,26 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody::updateh(double t) {
+  void FlexibleBody::updateh(double t, int k) {
 //#pragma omp parallel for schedule(static) shared(t) default(none) if((int)discretization.size()>4) 
     for(int i=0;i<(int)discretization.size();i++) {
       try { discretization[i]->computeh(qElement[i],uElement[i]); } // compute attributes of finite element
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
-    for(int i=0;i<(int)discretization.size();i++) GlobalVectorContribution(i,discretization[i]->geth(),h); // assemble
-    for(int i=0;i<(int)discretization.size();i++) GlobalVectorContribution(i,discretization[i]->geth(),hObject); // assemble
+    for(int i=0;i<(int)discretization.size();i++) GlobalVectorContribution(i,discretization[i]->geth(),h[k]); // assemble
 
     if(d_massproportional>0) { // mass proportional damping
-      h -= d_massproportional*(M*u);
-      hObject -= d_massproportional*(M*u);
+      h[k] -= d_massproportional*(M[k]*u);
     }
   }
 
-  void FlexibleBody::updateM(double t) {
+  void FlexibleBody::updateM(double t, int k) {
 //#pragma omp parallel for schedule(static) shared(t) default(none) if((int)discretization.size()>4) 
     for(int i=0;i<(int)discretization.size();i++) {
       try { discretization[i]->computeM(qElement[i]); } // compute attributes of finite element
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
-    for(int i=0;i<(int)discretization.size();i++) GlobalMatrixContribution(i,discretization[i]->getM(),M); // assemble
+    for(int i=0;i<(int)discretization.size();i++) GlobalMatrixContribution(i,discretization[i]->getM(),M[k]); // assemble
   }
 
   void FlexibleBody::updatedhdz(double t) {
@@ -88,15 +86,11 @@ namespace MBSimFlexibleBody {
     // TODO contour non native?
   }
 
-  void FlexibleBody::updateJacobians(double t) {
+  void FlexibleBody::updateJacobians(double t, int k) {
     for(unsigned int i=0; i<frame.size(); i++) { // frames
       updateJacobiansForFrame(S_Frame[i],frame[i]);
     }
     // TODO contour non native?
-  }
-
-  void FlexibleBody::updateInverseKineticsJacobians(double t) {
-    throw MBSimError("ERROR (FlexibleBody::updateInverseKineticsJacobians): Not implemented!");
   }
 
   void FlexibleBody::plot(double t, double dt) {
@@ -115,7 +109,7 @@ namespace MBSimFlexibleBody {
       }
     }
     else if(stage==MBSim::plot) {
-      updatePlotFeatures(parent);
+      updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
         Body::init(stage);

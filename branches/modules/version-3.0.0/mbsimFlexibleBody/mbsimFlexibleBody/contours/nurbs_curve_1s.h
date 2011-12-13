@@ -88,7 +88,7 @@ namespace MBSimFlexibleBody {
 
       /* INHERITED INTERFACE OF CONTOUR */
       virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff);
-      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp) { throw MBSim::MBSimError("ERROR(NurbsCurve1s::updateJacobiansForFrame): Not implemented!"); }
+      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j=0) { throw MBSim::MBSimError("ERROR(NurbsCurve1s::updateJacobiansForFrame): Not implemented!"); }
       virtual MBSim::ContactKinematics *findContactPairingWith(std::string type0, std::string type1) { throw MBSim::MBSimError("ERROR(NurbsCurve1s::findContactPairingWith): Not implemented!"); }
       /***************************************************/
 

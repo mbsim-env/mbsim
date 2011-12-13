@@ -133,13 +133,12 @@ namespace MBSimFlexibleBody {
     addFrame("COG", s);
   }
 
-  void FlexibleBody2s13::updateh(double t) {
+  void FlexibleBody2s13::updateh(double t, int j) {
     // update positions and velocities
     qext = Jext * q;
     uext = Jext * u;
 
-    h = -K * q;
-    hObject = -K * q;
+    h[j] = -K * q;
   }
 
   void FlexibleBody2s13::updatedhdz(double t) {

@@ -88,7 +88,7 @@ namespace MBSimFlexibleBody {
       virtual ~FlexibleBody2s13() {}
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updateh(double t);
+      virtual void updateh(double t, int j=0);
       virtual void updatedhdz(double t);
       virtual void updateStateDependentVariables(double t);
       /******************************************/
