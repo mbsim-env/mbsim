@@ -13,11 +13,11 @@ int main (int argc, char* argv[]) {
   sys.setgdTol(1e-8);
   sys.initialize();
 
-  ThetaTimeSteppingIntegrator integrator;
-  //TimeSteppingIntegrator integrator;
+  //ThetaTimeSteppingIntegrator integrator;
+  TimeSteppingIntegrator integrator;
   integrator.setStepSize(dt);
   //integrator.setDriftCompensation(true);
-  integrator.setTheta(0.75);
+  //integrator.setTheta(0.75);
   integrator.setEndTime(5);
   integrator.setPlotStepSize(5.e-3);
   
