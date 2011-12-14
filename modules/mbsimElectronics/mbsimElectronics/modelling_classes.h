@@ -27,8 +27,8 @@ namespace MBSimElectronics {
     void addConnectedBranch(Branch* branch);
     void setFlag(int f) { flag = f; }
     int getFlag() const { return flag; }
-    void setParent(ElectronicComponent* p) { parent = p; }
-    ElectronicComponent* getParent() const { return parent; }
+    //void setParent(ElectronicComponent* p) { parent = p; }
+    //ElectronicComponent* getParent() const { return parent; }
     int getNumberOfConnectedTerminals() const {return connectedTerminal.size();}
     int getNumberOfConnectedBranches() const {return connectedBranch.size();}
     Branch* getBranch(int i) {return connectedBranch[i];}

@@ -43,7 +43,7 @@ namespace MBSimElectronics {
 
         if(getParent() == connectedTerminal[i]->getParent()) {
      	  int vz = name=="A" ? 1 : -1;
-	  getParent()->connect(currentBranch,vz);
+	  dynamic_cast<ElectronicComponent*>(getParent())->connect(currentBranch,vz);
         }
       }
     }
@@ -59,7 +59,7 @@ namespace MBSimElectronics {
         currentBranch->setStartTerminal(this);
         if(getParent() == connectedTerminal[i]->getParent()) {
 	  int vz = name=="A" ? 1 : -1;
-          getParent()->connect(currentBranch,vz);
+          dynamic_cast<ElectronicComponent*>(getParent())->connect(currentBranch,vz);
         }
         connectedTerminal[i]->findEndOfBranch(this,currentBranch);
       }
@@ -70,7 +70,7 @@ namespace MBSimElectronics {
         currentBranch->setEndTerminal(connectedTerminal[i]);
         if(getParent() == connectedTerminal[i]->getParent()) {
 	  int vz = name=="A" ? 1 : -1;
-          getParent()->connect(currentBranch,vz);
+          dynamic_cast<ElectronicComponent*>(getParent())->connect(currentBranch,vz);
         }
       }
 
@@ -86,7 +86,8 @@ namespace MBSimElectronics {
       assert(getTerminal(terminal_->getName(),false) == NULL); 
     }
     terminal.push_back(terminal_);
-    terminal_->setParent(this);
+    //terminal_->setParent(this);
+    terminal_->setParent(dynamic_cast<Element*>(this));
   }
 
   void ElectronicComponent::addTerminal(const string &str) {
