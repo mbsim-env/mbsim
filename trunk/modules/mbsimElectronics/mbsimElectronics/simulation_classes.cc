@@ -15,7 +15,7 @@ namespace MBSimElectronics {
 	dependency.push_back(branch);
     } 
     else if(stage==MBSim::plot) {
-      updatePlotFeatures(parent);
+      updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
 	plotColumns.push_back("Charge");
@@ -62,14 +62,17 @@ namespace MBSimElectronics {
 
   void ElectronicLink::init(InitStage stage) {
     if(stage==unknownStage) {
-      h.push_back(Vec(branch->getJacobian().cols()));
-      hLink.push_back(Vec(branch->getJacobian().cols()));
-      r.push_back(Vec(branch->getJacobian().cols()));
-      W.push_back(Mat(branch->getJacobian().cols(),laSize));
-      V.push_back(Mat(branch->getJacobian().cols(),laSize));
+      h[0].push_back(Vec(branch->getJacobian(0).cols()));
+      r[0].push_back(Vec(branch->getJacobian(0).cols()));
+      W[0].push_back(Mat(branch->getJacobian(0).cols(),laSize));
+      V[0].push_back(Mat(branch->getJacobian(0).cols(),laSize));
+      h[1].push_back(Vec(branch->getJacobian(1).cols()));
+      r[1].push_back(Vec(branch->getJacobian(1).cols()));
+      W[1].push_back(Mat(branch->getJacobian(1).cols(),laSize));
+      V[1].push_back(Mat(branch->getJacobian(1).cols(),laSize));
   }
     else if(stage==MBSim::plot) {
-      updatePlotFeatures(parent);
+      updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
 	plotColumns.push_back("Charge");
@@ -112,26 +115,25 @@ namespace MBSimElectronics {
     }
   }
 
-  void ElectronicLink::updateW(double t) {
+  void ElectronicLink::updateW(double t, int j) {
 
-    W[0] += branch->getJacobian().T()*vz;
+    W[j][0] += branch->getJacobian(j).T()*vz;
   }
 
-  void ElectronicLink::updatehRef(const fmatvec::Vec &hParent, const fmatvec::Vec &hLinkParent, int j) {
-    fmatvec::Index I = fmatvec::Index(branch->getParent()->gethInd(parent,j),branch->getParent()->gethInd(parent,j)+branch->getJacobian().cols()-1);
-    h[0]>>hParent(I);
-    hLink[0]>>hLinkParent(I);
+  void ElectronicLink::updatehRef(const fmatvec::Vec &hParent, int j) {
+    fmatvec::Index I = fmatvec::Index(branch->gethInd(j),branch->gethInd(j)+branch->getJacobian(j).cols()-1);
+    h[j][0]>>hParent(I);
   } 
 
   void ElectronicLink::updaterRef(const Vec &rParent, int j) {
-    fmatvec::Index I = fmatvec::Index(branch->getParent()->gethInd(parent,j),branch->getParent()->gethInd(parent,j)+branch->getJacobian().cols()-1);
-    r[0]>>rParent(I);
+    fmatvec::Index I = fmatvec::Index(branch->gethInd(j),branch->gethInd(j)+branch->getJacobian(j).cols()-1);
+    r[j][0]>>rParent(I);
   } 
 
   void ElectronicLink::updateWRef(const fmatvec::Mat& WParent, int j) {
     Index J = Index(laInd,laInd+laSize-1);
-    Index I = Index(branch->getParent()->gethInd(parent,j),branch->getParent()->gethInd(parent,j)+branch->getJacobian().cols()-1);
-    W[0].resize()>>WParent(I,J);
+    Index I = Index(branch->gethInd(j),branch->gethInd(j)+branch->getJacobian(j).cols()-1);
+    W[j][0].resize()>>WParent(I,J);
  }
 
   void ElectronicLink::updateVRef(const fmatvec::Mat& ref, int j) {
@@ -147,7 +149,7 @@ namespace MBSimElectronics {
 	dependency.push_back(precessor);
     } 
     else if(stage==MBSim::plot) {
-      updatePlotFeatures(parent);
+      updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
 	Object::init(stage);
@@ -161,8 +163,8 @@ namespace MBSimElectronics {
     Q(0) = 0;
     I(0) = 0;
     for(int i=0; i<mesh.size(); i++) {
-      Q(0) += J(0,mesh[i]->getuInd())*mesh[i]->getq()(0);
-      I(0) += J(0,mesh[i]->getuInd())*mesh[i]->getu()(0);
+      Q(0) += J[0](0,mesh[i]->gethSize()-1)*mesh[i]->getq()(0);
+      I(0) += J[0](0,mesh[i]->gethSize()-1)*mesh[i]->getu()(0);
     }
   }
 
@@ -172,12 +174,27 @@ namespace MBSimElectronics {
 	vz[i] = vz_;
   }
 
+  void Branch::updateh0Fromh1(double t) {
+    h[0] += J[0].T()*h[1];
+  }
+
+  void Branch::updateW0FromW1(double t) {
+    W[0] += J[0].T()*W[1];
+  }
+
+  void Branch::updateV0FromV1(double t) {
+    V[0] += J[0].T()*V[1];
+  }
+
   void Branch::init(InitStage stage) {
     if(stage==MBSim::unknownStage) {
-      if(J.cols() == 0) {
-	J.resize(1,gethSize());
+      if(J[0].cols() == 0) {
+	J[0].resize(1,gethSize(0));
 	for(int i=0; i<mesh.size(); i++)
-	  J(0,mesh[i]->getuInd()) = vz[i]; 
+	  J[0](0,mesh[i]->gethSize()-1) = vz[i]; 
+      }
+      if(J[1].cols() == 0) {
+	J[1].resize(1,gethSize(1),INIT,1);
       }
     }
     else
@@ -240,8 +257,8 @@ namespace MBSimElectronics {
     I = branch->getCurrent()(0)*vz;
   }
 
-  void Inductor::updateM(double t) {
-    M += L*JTJ(branch->getJacobian());
+  void Inductor::updateM(double t, int i) {
+    M[i] += L*JTJ(branch->getJacobian(i));
   }
 
   Diode::Diode(const string &name) : ElectronicLink(name), sv(false) {
@@ -250,11 +267,10 @@ namespace MBSimElectronics {
     connectTerminal(terminal[0],terminal[1]);
   }
 
-  void Diode::updateh(double t) {
+  void Diode::updateh(double t, int j) {
     double slope=1e4;
     la(0) = (I >= 0) ? 0 : -slope*I;
-    h[0] += branch->getJacobian().T()*la(0)*vz; 
-    hLink[0] += branch->getJacobian().T()*la(0)*vz; 
+    h[j][0] += branch->getJacobian(j).T()*la(0)*vz; 
   }
 
   void Diode::checkImpactsForTermination(double dt) {
@@ -305,20 +321,19 @@ namespace MBSimElectronics {
     connectTerminal(terminal[0],terminal[1]);
   }
 
-  void Switch::updateW(double t) {
+  void Switch::updateW(double t, int j) {
     U0 = voltageSignal->getSignal()(0);
-    ElectronicLink::updateW(t);
+    ElectronicLink::updateW(t,j);
   }
 
-  void Switch::updateh(double t) {
+  void Switch::updateh(double t,int j) {
     double gdLim = 0.01;
     U0 = voltageSignal->getSignal()(0);
     if(fabs(I) < gdLim)
       la(0) = -U0*I/gdLim;
     else
       la(0) = I>0?-U0:U0;
-    h[0] += branch->getJacobian().T()*la(0)*vz; 
-    hLink[0] += branch->getJacobian().T()*la(0)*vz; 
+    h[j][0] += branch->getJacobian(j).T()*la(0)*vz; 
   }
 
   void Switch::checkImpactsForTermination(double dt) {
@@ -369,11 +384,10 @@ namespace MBSimElectronics {
     connectTerminal(terminal[0],terminal[1]);
   }
 
-  void Resistor::updateh(double t) {
+  void Resistor::updateh(double t, int j) {
     la(0) = -R*I; 
 
-    h[0] += branch->getJacobian().T()*la(0)*vz; 
-    hLink[0] += branch->getJacobian().T()*la(0)*vz; 
+    h[j][0] += branch->getJacobian(j).T()*la(0)*vz; 
   }
 
   double Resistor::computeVoltage() {
@@ -386,10 +400,9 @@ namespace MBSimElectronics {
     connectTerminal(terminal[0],terminal[1]);
   }
 
-  void Capacitor::updateh(double t) {
+  void Capacitor::updateh(double t, int j) {
     la(0) = -Q/C; 
-    h[0] += branch->getJacobian().T()*la(0)*vz;
-    hLink[0] += branch->getJacobian().T()*la(0)*vz;
+    h[j][0] += branch->getJacobian(j).T()*la(0)*vz;
   }
 
   VoltageSource::VoltageSource(const string &name) : ElectronicLink(name) {
@@ -398,10 +411,9 @@ namespace MBSimElectronics {
     connectTerminal(terminal[0],terminal[1]);
   }
 
-  void VoltageSource::updateh(double t) {
+  void VoltageSource::updateh(double t, int j) {
     la(0) = voltageSignal->getSignal()(0);
-    h[0] += branch->getJacobian().T()*la(0)*vz;
-    hLink[0] += branch->getJacobian().T()*la(0)*vz;
+    h[j][0] += branch->getJacobian(j).T()*la(0)*vz;
   }
 
 }
