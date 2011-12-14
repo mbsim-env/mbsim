@@ -68,7 +68,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   addGroup(differentialGear);
   double R2 = differentialGear->getRadiusInputShaft();
 
-  Constraint2 *constraint = new Constraint2("C1",shaft1);
+  GearConstraint *constraint = new GearConstraint("C1",shaft1);
   addObject(constraint);
   constraint->addDependency(static_cast<RigidBody*>(differentialGear->getObject("InputShaft")),-R2/R1);
 
