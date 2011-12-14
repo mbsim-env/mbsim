@@ -7,9 +7,10 @@ namespace MBSimPowertrain {
 
   class PlanetaryGear : public MBSim::Group { 
     protected:
+      int model;
 
     public:
-      PlanetaryGear(const std::string &name);
+      PlanetaryGear(const std::string &name, int model=1);
   };
 
 }

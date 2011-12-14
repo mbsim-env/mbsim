@@ -143,12 +143,12 @@ namespace MBSimPowertrain {
     shaft5->setInertiaTensor(data.inertiaTensorRightOutputShaft);
 
     if(planetIndependent) {
-      Constraint2 *constraint = new Constraint2("C1",shaft4); 	 
+      GearConstraint *constraint = new GearConstraint("C1",shaft4); 	 
       addObject(constraint); 	 
       constraint->addDependency(shaft2,1); 	 
       constraint->addDependency(planet,data.radiusPlanet/data.radiusLeftOutputShaft);
 
-      constraint = new Constraint2("C2",shaft5);
+      constraint = new GearConstraint("C2",shaft5);
       addObject(constraint);
       constraint->addDependency(shaft2,1);
       constraint->addDependency(planet,-data.radiusPlanet/data.radiusRightOutputShaft);
@@ -156,12 +156,12 @@ namespace MBSimPowertrain {
     else {
       double c1 = data.radiusLeftOutputShaft + data.radiusRightOutputShaft;
       double c2 = data.radiusLeftOutputShaft*data.radiusRightOutputShaft;
-      Constraint2 *constraint = new Constraint2("C1",shaft2);
+      GearConstraint *constraint = new GearConstraint("C1",shaft2);
       addObject(constraint);
       constraint->addDependency(shaft4,data.radiusLeftOutputShaft/c1);
       constraint->addDependency(shaft5,data.radiusRightOutputShaft/c1);
 
-      constraint = new Constraint2("C2",planet);
+      constraint = new GearConstraint("C2",planet);
       addObject(constraint);
       constraint->addDependency(shaft4,c2/(data.radiusPlanet*c1));
       constraint->addDependency(shaft5,-c2/(data.radiusPlanet*c1));
