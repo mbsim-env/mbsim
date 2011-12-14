@@ -10,6 +10,7 @@
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"
 #include "mbsim/rotational_spring_damper.h"
+#include "mbsim/utils/rotarymatrices.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/ivbody.h"
@@ -44,16 +45,8 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   Line *lL = new Line("LineL");
   Line *lR = new Line("LineR");
 
-cout << "------------------------------------------------" << endl;
-cout << "ATTENTION: settings of lines for rod still wrong" << endl;
-cout << "------------------------------------------------" << endl;
-
-  SqrMat TLine(3,INIT,0.0);
-  TLine(0,1) = -1.0; TLine(1,0) =  1.0; TLine(2,2) =  1.0;
-  this->addContour(lL, r*Vec("[1.0;0.0;0.0]"), TLine);
-  TLine(0,1) = -1.0; TLine(1,0) =  1.0; TLine(2,2) = -1.0;
-  this->addContour(lR,-r*Vec("[1.0;0.0;0.0]"), TLine);
-
+  this->addContour(lL, r/2.*Vec("[1.0;0.0;0.0]"), BasicRotAKIz(0));
+  this->addContour(lR,-r/2.*Vec("[1.0;0.0;0.0]"), BasicRotAKIz(M_PI));
 
   SymMat Theta(3);
   Vec WrOS(3);
@@ -78,7 +71,7 @@ cout << "------------------------------------------------" << endl;
   muffe->setRotation(new RotationAboutFixedAxis(JR));
 //  muffe->setRotation(new RotationAboutZAxis());
 
-  muffe->setInitialGeneralizedPosition(spiel*Vec("[0.4;0.0;0.0]"));
+  muffe->setInitialGeneralizedPosition(spiel*Vec("[0.2;0.0;0.0]"));
   muffe->setInitialGeneralizedVelocity(      Vec("[0.0;0.0;0.0]"));
 
   UnilateralConstraint   *cntForceLaw = new UnilateralConstraint;
@@ -98,16 +91,16 @@ cout << "------------------------------------------------" << endl;
 
     switch(i){
       case 0: contact->connect(pMuffe,this->getContour("LineL"));
-              KrSPMuffe(0) =  R;   KrSPMuffe(1) =  hoehe/2.;
+              KrSPMuffe(0) =  R/2;   KrSPMuffe(1) =  hoehe/2.;
               break;
       case 1: contact->connect(pMuffe,this->getContour("LineL"));
-              KrSPMuffe(0) =  R;   KrSPMuffe(1) = -hoehe/2.;
+              KrSPMuffe(0) =  R/2;   KrSPMuffe(1) = -hoehe/2.;
               break;
       case 2: contact->connect(pMuffe,this->getContour("LineR"));
-              KrSPMuffe(0) = -R;   KrSPMuffe(1) =  hoehe/2.;
+              KrSPMuffe(0) = -R/2;   KrSPMuffe(1) =  hoehe/2.;
               break;
       case 3: contact->connect(pMuffe,this->getContour("LineR"));
-              KrSPMuffe(0) = -R;   KrSPMuffe(1) = -hoehe/2.;
+              KrSPMuffe(0) = -R/2;   KrSPMuffe(1) = -hoehe/2.;
               break;
     }
     muffe->addContour(pMuffe,KrSPMuffe,SqrMat(3,EYE));
