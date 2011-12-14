@@ -1,6 +1,8 @@
 #include "planetary_gear.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/constraint.h"
+#include "mbsim/gear.h"
+#include "mbsim/gearing.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/frame.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -14,7 +16,7 @@ using namespace MBSim;
 
 namespace MBSimPowertrain {
 
-  PlanetaryGear::PlanetaryGear(const std::string &name) : Group(name) {
+  PlanetaryGear::PlanetaryGear(const std::string &name, int model_) : Group(name), model(model_) {
     double mS = 1;
     double mH = 1.5;
     double mT = 0.3;
@@ -66,7 +68,7 @@ namespace MBSimPowertrain {
     RigidBody* annulus = new RigidBody("Annulus");
     addObject(annulus);
 
-    r(2) = lS/2-lH/2*1.01;
+    r(2) = lS/2-lH/2*1.0;
     r(1) = 0;
     housing->addFrame("Q",r,BasicRotAKIy(0));
 
@@ -98,10 +100,6 @@ namespace MBSimPowertrain {
     Theta(2,2) = JT;
     carrier->setInertiaTensor(Theta);
 
-    Constraint2* constraint = new Constraint2("C1",carrier);
-    addObject(constraint);
-    constraint->addDependency(sun,0.5*rS/rT2);
-    constraint->addDependency(annulus,0.5*rH/rT2);
 
     r.init(0);
     r(2) = -lT/2-lP/2;
@@ -130,10 +128,69 @@ namespace MBSimPowertrain {
       Theta(2,2) = JP;
       planet[i]->setInertiaTensor(Theta);
 
-      Constraint2* constraint = new Constraint2(string("C_")+shaftName.str(),planet[i]);
+    }
+
+    if(model==1) {
+      GearConstraint* constraint = new GearConstraint("C1",carrier);
       addObject(constraint);
-      constraint->addDependency(sun,-0.5*(rS/rP+rS/rT2));
-      constraint->addDependency(annulus,0.5*(rH/rP-rH/rT2));
+      constraint->addDependency(sun,0.5*rS/rT2,0.5*rS/rT2);
+      constraint->addDependency(annulus,0.5*rH/rT2,0.5*rH/rT2);
+      constraint->setFrame(housing->getFrame("C"));
+    } else if(model==0) {
+      Gear *gear;
+      gear = new Gear("Gear1");
+      addLink(gear);
+      gear->setDependentBody(carrier);
+      gear->addDependency(sun,0.5*rS/rT2,0.5*rS/rT2);
+      gear->addDependency(annulus,0.5*rH/rT2,0.5*rH/rT2);
+      gear->connect(housing->getFrame("C"));
+      //gear->setForceFunction(new LinearSpringDamperForce(5,0.5,0));
+
+     // gear->setDependentBody(sun);
+     // gear->addDependency(carrier,rT2/rS-rP/rS);
+     // gear->addDependency(planet[0],-rP/rS);
+     // gear->setRatio2(rT2/rS,1);
+     // gear->setRatio2(-rP/rS,2);
+     // gear->setFrame(housing->getFrame("C"));
+    } else {
+    }
+    for(int i=0; i<numP; i++) {
+      stringstream str;
+      stringstream shaftName;
+      str << "P" << i;
+      shaftName << "Planet" << i;
+      if(model==1) {
+        GearConstraint* constraint = new GearConstraint(string("C_")+shaftName.str(),planet[i]);
+        addObject(constraint);
+        constraint->addDependency(sun,-0.5*(rS/rP+rS/rT2),-0.5*rS/rP);
+        constraint->addDependency(annulus,0.5*(rH/rP-rH/rT2),0.5*rH/rP);
+        constraint->setFrame(housing->getFrame("C"));
+      } else if (model==0) {
+        Gear *gear;
+        gear = new Gear(string("Gear_")+shaftName.str());
+        addLink(gear);
+        gear->setDependentBody(planet[i]);
+        gear->addDependency(sun,-0.5*(rS/rP+rS/rT2),-0.5*rS/rP);
+        gear->addDependency(annulus,0.5*(rH/rP-rH/rT2),0.5*rH/rP);
+        gear->connect(housing->getFrame("C"));
+        //gear->setForceFunction(new LinearSpringDamperForce(5,0.5,0));
+
+        //gear->setDependentBody(annulus);
+        //gear->addDependency(carrier,rT2/rH+rP/rH);
+        //gear->addDependency(planet[0],rP/rH);
+        //gear->setRatio2(rT2/rH,1);
+        //gear->setRatio2(rP/rH,2);
+        //gear->setFrame(housing->getFrame("C"));
+
+      } else {
+        Gearing *gear;
+        gear = new Gearing(string("S_")+shaftName.str());
+        addLink(gear);
+        gear->connect(rS,sun->getFrame("C"),rP,planet[i]->getFrame("C"));//,rS,sun->getFrame("C"));
+        gear = new Gearing(string("A_")+shaftName.str(),true);
+        addLink(gear);
+        gear->connect(rH,annulus->getFrame("C"),rP,planet[i]->getFrame("C"));
+      }
     }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

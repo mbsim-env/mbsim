@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.57])
-AC_INIT([mbsimPowertrain],[2.2.0],[martin.o.foerg@gmail.com])
+AC_INIT([mbsimPowertrain],[3.0.0],[martin.o.foerg@gmail.com])
 AC_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([mbsimPowertrain/Makefile.am])
@@ -18,7 +18,7 @@ AC_HEADER_STDBOOL
 
 LDFLAGS="$LDFLAGS -Wl,--no-undefined"
 
-PKG_CHECK_MODULES(DEPS, mbsim >= 0.1.0)
+PKG_CHECK_MODULES(DEPS, mbsim >= 3.0.0)
 
 dnl versioning (see http://www.gnu.org/software/libtool/manual.html)
 dnl current: 	The most recent interface number that this library implements. 
