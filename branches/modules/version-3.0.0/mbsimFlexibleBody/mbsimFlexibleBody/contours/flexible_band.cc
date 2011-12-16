@@ -58,7 +58,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBand::updateJacobiansForFrame(ContourPointData &cp) {
+  void FlexibleBand::updateJacobiansForFrame(ContourPointData &cp, int j /*=0*/) {
     static_cast<FlexibleBody*>(parent)->updateJacobiansForFrame(cp);
     Vec WrPC = cp.getFrameOfReference().getOrientation().col(0)*nDist + cp.getFrameOfReference().getOrientation().col(2)*cp.getLagrangeParameterPosition()(1); // vector from neutral line to contour surface point
     SqrMat tWrPC = tilde(WrPC).copy(); // tilde matrix of above vector
