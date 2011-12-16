@@ -1,7 +1,6 @@
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/integrators/time_stepping_integrator.h>
 
-#include "systemBeam.h"
 #include "system.h"
 
 #include <boost/timer.hpp>
@@ -18,7 +17,7 @@ int main(int argc, char *argv[]) {
   double plotStepSize = 1 * stepSize;
   double endTime = 5e-2;
 
-  for (int contactType =0; contactType <= 0; contactType++) {
+  for (int contactType =0; contactType <= 2; contactType++) {
     for (int contactNums = 2; contactNums <= 2; contactNums+=20) {
       stringstream MBSName;
       MBSName << "MBS_";
@@ -42,7 +41,22 @@ int main(int argc, char *argv[]) {
       //stream output to a file
 //      freopen((MBSName.str()+"_Output.txt").c_str(), "w+", stdout);
 
-      sys = new SystemBeam(MBSName.str(), contactType, 0, contactNums, Vec("[0;0;0]"));
+      Vec shift(3,INIT,0.);
+
+      switch(contactType) {
+        case 0:
+          break;
+        case 1:
+          shift(2) = 0.2;
+          break;
+        case 2:
+          shift(2) = 0.4;
+          break;
+        default:
+          throw MBSimError("No valid contactType chosen");
+      }
+
+      sys = new System(MBSName.str(), contactType, 0, contactNums, shift);
 
       sys->setLinAlg(PseudoInverse);
       sys->initialize();
