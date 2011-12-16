@@ -6,15 +6,17 @@
 #include <openmbvcppinterface/ivbody.h>
 #include <openmbvcppinterface/frustum.h>
 #include <openmbvcppinterface/arrow.h>
+#include <openmbvcppinterface/cuboid.h>
+#include <openmbvcppinterface/sphere.h>
 #endif
 
 #include <mbsim/environment.h>
 #include <mbsim/contour_pairing.h>
 #include <mbsim/maxwell_contact.h>
 #include <mbsim/rigid_body.h>
-#include <mbsim/contours/frustum.h>
-#include <mbsim/contours/planewithfrustum.h>
 #include <mbsim/contours/plane.h>
+#include <mbsim/contours/planewithfrustum.h>
+#include <mbsim/contours/point.h>
 #include <mbsim/contours/circle_solid.h>
 #include <mbsim/contact.h>
 #include <mbsim/constitutive_laws.h>
@@ -28,185 +30,191 @@ using namespace std;
 using namespace MBSim;
 using namespace fmatvec;
 
-class CountourCouplingPyramid : public InfluenceFunction {
+/**
+ * \brief Influence function that holds the analytical influence coefficients for a cantilever beam
+ */
+class CountourCouplingCantileverBeam : public InfluenceFunction {
   public:
-    CountourCouplingPyramid(const std::string& ContourName_) :
-        InfluenceFunction(ContourName_, ContourName_) {
+    CountourCouplingCantileverBeam(const std::string& ContourName_, double E_, double I_ ) :
+        InfluenceFunction(ContourName_, ContourName_), E(E_), I(I_) {
     }
 
-    virtual ~CountourCouplingPyramid() {
+    virtual ~CountourCouplingCantileverBeam() {
     }
 
     double operator()(const fmatvec::Vec &Arg1, const fmatvec::Vec &Arg2, const void * = NULL) {
-      if (fabs(Arg1(1) - Arg2(1)) < M_PI_2
-      )
-        return 1e-5 * cos(Arg1(1) - Arg2(1));
-      else
-        return 0;
+      double i=Arg1(0);  // it is: i < j
+      double j=Arg2(0);
+      if(i > j)
+      {
+        i = Arg2(0);
+        j = Arg1(0);
+      }
+
+      return fabs((j*i*i - i*i*i/3) / (E*I*2));
+
     }
+
+  protected:
+    double E;
+    double I;
 };
 
-System::System(const string &projectName, int contactType, int circleNums) :
+System::System(const string &projectName, int contactType, int firstBall, int lastBall, const Vec& ReferenceFrameShift) :
     DynamicSystemSolver(projectName) {
   srand((unsigned) time(0));
 
-  MaxwellContact *maxwellContact = new MaxwellContact("MaxwellContact");
+  /*create reference frame for all objects with the given shift*/
+  Frame* ReferenceFrame = new Frame(getName()+"RefFrame");
+  this->addFrame(ReferenceFrame, ReferenceFrameShift, SqrMat(3,EYE));
 
-  /*Lemke Test*/
-//  SqrMat M("[1,2,0; 0,1,2; 2,0,1]"); // matrix for a cycling problem
-//  Vec q(3,INIT,-1.); //vector for a cycling problem
-//
-//
-//
-//  LemkeAlgorithm Lemke(M,q,true);
-//
-//  Vec solution = Lemke.solve();
-//
-//  cout << solution << endl;
-//
-//  return;
-
-
-  /*add gravity*/
-//  Vec grav(3);
-//  grav(1) = -9.81;
-//  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
   /*General-Parameters*/
-
+  MaxwellContact *maxwellContact = new MaxwellContact("MaxwellContact");
 
   /*Print arrows for contacts*/
   OpenMBV::Arrow *normalArrow = new OpenMBV::Arrow();
-  normalArrow->setScaleLength(0.001);
+  normalArrow->setScaleLength(0.00001);
   OpenMBV::Arrow *frArrow = new OpenMBV::Arrow();
   frArrow->setScaleLength(0.001);
   frArrow->setStaticColor(0.75);
 
-  /*Parameters for the "Pyramid"*/
-  double massPyr = 1;
-  double heightPyr = 0.5;
-  Vec radiiPyr(2, INIT, 0.);
-  radiiPyr(0) = 2;
-  radiiPyr(1) = 1;
-  SymMat ThetaPyr(3, EYE);
 
-  /*Parameters for the "Circle"*/
-  double massCirc = 1;
-  double radiusCirc = 0.5;
-  SymMat ThetaCirc(3, EYE);
+  /*Parameters for the balls*/
+  double space = 0.03;  //defines the space between two balls
+  double radius = 0.01;
+  SymMat ThetaBall(3, EYE);
+
+  /*Parameters for the beam*/
+  double length = 2*(space+ 2*radius) + (2*radius+space) * (1+lastBall) ;
+  double depth = 2*radius;
+  double height = depth;
+  double E = 2.1e11; //Youngs modulus
+  double I = depth * height * height * height / 12; //Area moment of inertia
 
   /*Parameters of contact*/
   double mu = 0.5; //friction coefficient
 
-  /*Add plane to the world*/
-//  Plane* PyramidContour = new Plane("Plane");
-//  PyramidContour->enableOpenMBV();
-//  this->addContour(PyramidContour, Vec(3, INIT, 0.), BasicRotAIKz(M_PI_2));
-  /*Create Frustum-body "Pyramid"*/
-  RigidBody* Pyramid = new RigidBody("Pyramid");
+  /*Create Beam-body */
+  RigidBody* Beam = new RigidBody("Beam");
 
-  Pyramid->setFrameOfReference(this->getFrameI());
-  Pyramid->setMass(massPyr);
-  Pyramid->setInertiaTensor(ThetaPyr);
+  Beam->setFrameOfReference(ReferenceFrame);
+  Beam->setMass(1);
+  Beam->setInertiaTensor(SymMat(3,EYE));
 
-  this->addObject(Pyramid);
+  this->addObject(Beam);
 
   /*Add Contour to "Pyramid"*/
 
-  Frustum* PyramidContour = new Frustum("Frustum");
+  Plane* BeamContour = new Plane("Line");
 
-  PyramidContour->setHeight(heightPyr);
-  PyramidContour->setRadii(radiiPyr);
-  PyramidContour->setOutCont(true);
-  PyramidContour->enableOpenMBV();
+  //rotation of the plane contour on the upper side of the beam
+  double planeRot = M_PI/2;
 
-  Pyramid->addContour(PyramidContour, Vec(3, INIT, 0.), SqrMat(3, EYE));
+  //translation of the plane
+  Vec planeTrans(3, INIT, 0.);
+  planeTrans(1) = height/2;
 
-  /*Add Circles to System*/
-  vector<RigidBody*> circles;
-  vector<CircleSolid*> circleContours;
-  for (int circIter = 0; circIter < circleNums; circIter++) {
-    stringstream circlename;
-    circlename << "Circle" << circIter;
-    circles.push_back(new RigidBody(circlename.str()));
+  Beam->addContour(BeamContour, planeTrans, BasicRotAIKz(planeRot));
 
-    Vec CircInitialTranslation(3, INIT, 0.);
-    double circRadiusPosition = radiiPyr(0) + 0.5 * (radiiPyr(1) - radiiPyr(0));
-//    double circAzimuthalPosition = (rand() % (int)(2*M_PI*1000)) / 1000.0; //
-    double circAzimuthalPosition = circIter*circIter/100.;// circIter * M_PI / 60 + floor(circIter / 2) * M_PI / 100.;
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  OpenMBV::Cuboid *openMBVBeam=new OpenMBV::Cuboid();
+  openMBVBeam->setInitialTranslation(length/2,0,0);
+  openMBVBeam->setLength(length,height,depth);
+  openMBVBeam->setDrawMethod(OpenMBV::Body::DrawStyle(1));
+  Beam->setOpenMBVRigidBody(openMBVBeam);
+#endif
 
-    CircInitialTranslation(0) = circRadiusPosition * cos(circAzimuthalPosition);
-    CircInitialTranslation(1) = radiusCirc + heightPyr / 2 + 0.06;// + 0.0001 * circIter;
-    CircInitialTranslation(2) = circRadiusPosition * sin(circAzimuthalPosition);
+  /*Add Balls to System*/
+  vector<RigidBody*> balls;
+  vector<Point*> ballsContours;
+  for (int ballIter = 0; ballIter < lastBall-firstBall+1; ballIter++) {
 
-    SqrMat CircRot(3, EYE);
-    CircRot(0, 0) = cos(circAzimuthalPosition);
-    CircRot(2, 2) = cos(circAzimuthalPosition);
-    CircRot(0, 2) = -sin(circAzimuthalPosition);
-    CircRot(2, 0) = sin(circAzimuthalPosition);
+    //generate the name of each ball
+    stringstream ballname;
+    ballname << "Ball" << ballIter+firstBall;
+    balls.push_back(new RigidBody(ballname.str()));
 
-    this->addFrame(circlename.str(), CircInitialTranslation, CircRot);
+    //translation of the ball in longitudinal beam direction
+    Vec BallInitialTranslation(3, INIT, 0.);
 
-    circles[circIter]->setFrameOfReference(this->getFrame(circlename.str(), true));
-    circles[circIter]->setMass(massCirc);
-    circles[circIter]->setInertiaTensor(ThetaCirc);
-    circles[circIter]->setTranslation(new LinearTranslation(SqrMat(3, EYE)));
-    circles[circIter]->setInitialGeneralizedVelocity(Vec("[0;-1;0]"));
+    BallInitialTranslation(0) = 2*(space+ 2*radius) + (ballIter+firstBall) * (space+ 2*radius);
+    BallInitialTranslation(1) = height/2. + radius + 0.01;
 
-    this->addObject(circles[circIter]);
+    SqrMat BallRot(3, EYE);
 
-    /*Add contour of the Circle*/
-    circlename << "SolidContour";
-    circleContours.push_back(new CircleSolid(circlename.str()));
+    this->addFrame(ballname.str(), BallInitialTranslation, BallRot, ReferenceFrame);
 
-    circleContours[circIter]->setOutCont(true);
-    circleContours[circIter]->setRadius(radiusCirc);
-    circleContours[circIter]->enableOpenMBV();
+    balls[ballIter]->setFrameOfReference(this->getFrame(ballname.str(), true));
+    balls[ballIter]->setMass(1.);
+    balls[ballIter]->setInertiaTensor(SymMat(3,EYE));
+    balls[ballIter]->setTranslation(new LinearTranslation(SqrMat(3, EYE)));
+    balls[ballIter]->setInitialGeneralizedVelocity(Vec("[0;-1;0]"));
+
+    this->addObject(balls[ballIter]);
+
+    /*Add (point-)contour of the balls*/
+    ballname << "SolidContour";
+    ballsContours.push_back(new Point(ballname.str()));
 
     SqrMat CircContourRot(3, EYE);
-    double circContRotAngle = -M_PI_2 + M_PI; //M_PI_2 leads to x-direction points in -y-direction of the world system
-    CircContourRot(0, 0) = cos(circContRotAngle);
-    CircContourRot(0, 1) = -sin(circContRotAngle);
-    CircContourRot(1, 0) = sin(circContRotAngle);
-    CircContourRot(1, 1) = cos(circContRotAngle);
+    Vec pointTrans = Vec(3, INIT, 0.);
+    pointTrans(1) = - radius;
 
-    circles[circIter]->addContour(circleContours[circIter], Vec(3, INIT, 0.), CircContourRot);
+    balls[ballIter]->addContour(ballsContours[ballIter], pointTrans, CircContourRot);
 
-    //give circle contours flexibility(stiffness)
-//    if (!regularizedContact) {
-//      StiffnessInfluenceFuntion* circleStiffness = new StiffnessInfluenceFuntion(circleContours[circIter]->getName(), 1e-5);
-//      maxwellContact->addContourCoupling(circleContours[circIter], circleContours[circIter], circleStiffness);
-//    }
+    /*Visualization of the balls*/
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    OpenMBV::Sphere *openMBVSphere=new OpenMBV::Sphere();
+    openMBVSphere->setRadius(radius);
+
+    switch (contactType) {
+      case 0:
+        openMBVSphere->setDrawMethod(OpenMBV::Body::DrawStyle(0));
+        openMBVSphere->setStaticColor(0.4);
+        break;
+      case 1:
+        openMBVSphere->setDrawMethod(OpenMBV::Body::DrawStyle(1));
+        openMBVSphere->setStaticColor(0.6);
+        break;
+      case 2:
+        openMBVSphere->setDrawMethod(OpenMBV::Body::DrawStyle(1));
+        openMBVSphere->setStaticColor(0.8);
+        break;
+    }
+    balls[ballIter]->setOpenMBVRigidBody(openMBVSphere);
+#endif
+
+    //Add flexibility(stiffness) of balls
+//    if (contactType == 0) {
+//      FlexibilityInfluenceFunction* ballFlexibility= new FlexibilityInfluenceFunction(ballsContours[ballIter]->getName(), 1e-8);
+//      maxwellContact->addContourCoupling(ballsContours[ballIter], ballsContours[ballIter], ballFlexibility);
 //
-//    //contour coupling between two neighbour-contours
-//    if (circIter % 2 == 1 and !regularizedContact) {
-//      ConstantInfluenceFunction* CircleCoupling = new ConstantInfluenceFunction(circleContours[circIter - 1]->getName(), circleContours[circIter]->getName(), 1e-6);
-//      maxwellContact->addContourCoupling(circleContours[circIter - 1], circleContours[circIter], CircleCoupling);
+//      //contour coupling between two neighbour-contours
+//      if (ballIter % 2 == 1) {
+//        ConstantInfluenceFunction* ballCoupling = new ConstantInfluenceFunction(ballsContours[ballIter - 1]->getName(), ballsContours[ballIter]->getName(), 1e-7);
+//        maxwellContact->addContourCoupling(ballsContours[ballIter - 1], ballsContours[ballIter], ballCoupling);
+//      }
 //    }
   }
 
   switch (contactType) {
-    case 0: //maxwell Contact
-      //plotting features
-      maxwellContact->setDebuglevel(1);
+    case 0: //Maxwell Contact
+    {
+      //Debug features
+      maxwellContact->setDebuglevel(0);
 
-      if (1) {
-        CountourCouplingPyramid* couplingPyr = new CountourCouplingPyramid(PyramidContour->getName());
-        maxwellContact->addContourCoupling(PyramidContour, PyramidContour, couplingPyr);
-      }
-      else {
-        FlexibilityInfluenceFunction* couplingPyr = new FlexibilityInfluenceFunction(PyramidContour->getName(), 1e-5);
-        maxwellContact->addContourCoupling(PyramidContour, PyramidContour, couplingPyr);
-      }
+      CountourCouplingCantileverBeam* couplingBeam = new CountourCouplingCantileverBeam(BeamContour->getName(), E, I);
+      maxwellContact->addContourCoupling(BeamContour, BeamContour, couplingBeam);
 
-      for (size_t contactIter = 0; contactIter < circles.size(); contactIter++) {
+      for (size_t contactIter = 0; contactIter < balls.size(); contactIter++) {
         stringstream contactname;
-        contactname << "Contact_Pyr-" << circleContours[contactIter]->getName();
+        contactname << "Contact_Beam-" << ballsContours[contactIter]->getName();
 
-        ContourPairing* contourPairing = new ContourPairing(contactname.str(), PyramidContour, circleContours[contactIter]);
-        contourPairing->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+        ContourPairing* contourPairing = new ContourPairing(contactname.str(), BeamContour, ballsContours[contactIter]);
+        //contourPairing->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
         maxwellContact->addContourPairing(contourPairing);
 
-        contourPairing->enableOpenMBVContactPoints(1.,true);
+        contourPairing->enableOpenMBVContactPoints(1.,false);
         contourPairing->enableOpenMBVNormalForceArrow(normalArrow);
         contourPairing->enableOpenMBVFrictionForceArrow(frArrow);
       }
@@ -214,21 +222,23 @@ System::System(const string &projectName, int contactType, int circleNums) :
 
 
       this->addLink(maxwellContact);
+    }
     break;
 
     case 1: //regularized contact
-      for (size_t contactIter = 0; contactIter < circles.size(); contactIter++) {
+      for (size_t contactIter = 0; contactIter < balls.size(); contactIter++) {
         stringstream contactname;
-        contactname << "Contact_Pyr-" << circleContours[contactIter]->getName();
+        contactname << "Contact_Pyr-" << ballsContours[contactIter]->getName();
 
         Contact* contact = new Contact(contactname.str());
         //Force law (normal direction)
-        contact->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5, 0)));
+        double i = 2*(space+ 2*radius);  //this results in the stiffness of the first ball
+        contact->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(3*E*I/ (i*i*i), 0)));
 
         //Force Law (friction)
         contact->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
 
-        contact->connect(PyramidContour, circleContours[contactIter]);
+        contact->connect(BeamContour, ballsContours[contactIter]);
 
         //fancy stuff
         contact->enableOpenMBVContactPoints(1.,false);
@@ -240,9 +250,9 @@ System::System(const string &projectName, int contactType, int circleNums) :
     break;
 
     case 2:
-      for (size_t contactIter = 0; contactIter < circles.size(); contactIter++) {
+      for (size_t contactIter = 0; contactIter < balls.size(); contactIter++) {
         stringstream contactname;
-        contactname << "Contact_Pyr-" << circleContours[contactIter]->getName();
+        contactname << "Contact_Pyr-" << ballsContours[contactIter]->getName();
 
         Contact* contact = new Contact(contactname.str());
         //Force law (normal direction)
@@ -253,7 +263,7 @@ System::System(const string &projectName, int contactType, int circleNums) :
         contact->setFrictionForceLaw(new SpatialCoulombFriction(mu));
         contact->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
 
-        contact->connect(PyramidContour, circleContours[contactIter]);
+        contact->connect(BeamContour, ballsContours[contactIter]);
 
         //fancy stuff
         contact->enableOpenMBVContactPoints(1.,false);
