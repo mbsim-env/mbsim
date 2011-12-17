@@ -45,7 +45,7 @@ namespace MBSimHydraulics {
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateStateDependentVariables(double t) {};
-      virtual void updateJacobians(double t) {};
+      virtual void updateJacobians(double t, int j=0) {};
       virtual void updateInverseKineticsJacobians(double t) {};
 #ifdef HAVE_OPENMBVCPPINTERFACE
       virtual OpenMBV::Group* getOpenMBVGrp() { return 0; }
@@ -67,7 +67,7 @@ namespace MBSimHydraulics {
       virtual fmatvec::Vec getOutflowFactor() = 0;
       virtual fmatvec::Mat& getJacobian() {return Jacobian; }
       
-      void updateM(double t) {M=Mlocal; }
+      void updateM(double t, int j=0) {M[j]=Mlocal; }
 
       void init(MBSim::InitStage stage);
       void initializeUsingXML(TiXmlElement *element);
@@ -104,8 +104,8 @@ namespace MBSimHydraulics {
       fmatvec::Mat calculateJacobian(std::vector<RigidHLine*> dep_check);
       
       virtual void updateStateDependentVariables(double t);
-      void updateh(double t);
-      void updateM(double t);
+      void updateh(double t, int j=0);
+      void updateM(double t, int j=0);
       
       void initializeUsingXML(TiXmlElement *element);
       void init(MBSim::InitStage stage);
@@ -135,7 +135,7 @@ namespace MBSimHydraulics {
       void calcuSize(int j) {uSize[j]=0; }
       
       virtual void updateStateDependentVariables(double t);
-      void updateh(double t) {};
+      void updateh(double t, int j=0) {};
       
       void initializeUsingXML(TiXmlElement *element);
       void init(MBSim::InitStage stage);
@@ -160,7 +160,7 @@ namespace MBSimHydraulics {
       void calcqSize() {qSize=0; }
       void calcuSize(int j) {uSize[j]=0; }
       
-      void updateh(double t) {};
+      void updateh(double t, int j=0) {};
       
       void initializeUsingXML(TiXmlElement *element);
       void init(MBSim::InitStage stage);
@@ -191,7 +191,7 @@ namespace MBSimHydraulics {
       void calcqSize() {qSize=0; }
       void calcuSize(int j) {uSize[j]=0; }
       
-      void updateh(double t) {};
+      void updateh(double t, int j=0) {};
       
       void initializeUsingXML(TiXmlElement *element);
       void init(MBSim::InitStage stage);

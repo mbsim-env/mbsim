@@ -78,15 +78,15 @@ namespace MBSimHydraulics {
 
       virtual void updateWRef(const fmatvec::Mat& Wref, int i=0);
       virtual void updateVRef(const fmatvec::Mat& Vref, int i=0);
-      virtual void updatehRef(const fmatvec::Vec& href, const fmatvec::Vec& hLinkRef, int i=0);
+      virtual void updatehRef(const fmatvec::Vec& href, int i=0);
       virtual void updatedhdqRef(const fmatvec::Mat& dhdqRef, int i=0);
       virtual void updatedhduRef(const fmatvec::SqrMat& dhduRef, int i=0);
       virtual void updatedhdtRef(const fmatvec::Vec& dhdtRef, int i=0);
       virtual void updaterRef(const fmatvec::Vec& ref, int i=0);
 
-      void updateh(double t);
+      void updateh(double t, int j=0);
       void updatedhdz(double t);
-      virtual void updater(double t);
+      virtual void updater(double t, int j=0);
       void updategd(double t);
       void updatexd(double t);
       void updatedx(double t, double dt);
@@ -191,7 +191,7 @@ namespace MBSimHydraulics {
       void updatewbRef(const fmatvec::Vec& wbParent);
 
       void updategd(double t);
-      void updateW(double t);
+      void updateW(double t, int j=0);
 
       void updaterFactors();
       void solveImpactsFixpointSingle(double dt);

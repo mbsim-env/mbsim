@@ -72,15 +72,15 @@ namespace MBSimHydraulics {
 
       virtual void updateWRef(const fmatvec::Mat& WRef, int i=0);
       virtual void updateVRef(const fmatvec::Mat& VRef, int i=0);
-      virtual void updatehRef(const fmatvec::Vec& hRef, const fmatvec::Vec& hLinkRef, int i=0);
+      virtual void updatehRef(const fmatvec::Vec& hRef, int i=0);
       virtual void updaterRef(const fmatvec::Vec& rRef, int i=0);
       virtual void updatedhdqRef(const fmatvec::Mat& dhdqRef, int i=0);
       virtual void updatedhduRef(const fmatvec::SqrMat& dhduRef, int i=0);
       virtual void updatedhdtRef(const fmatvec::Vec& dhdtRef, int i=0);
 
-      void updateh(double t);
+      void updateh(double t, int j=0);
       void updatedhdz(double t);
-      virtual void updater(double t);
+      virtual void updater(double t, int j);
       virtual void updateg(double t) {};
       virtual void updategd(double t);
       virtual bool isActive() const {return false; }
@@ -178,7 +178,7 @@ namespace MBSimHydraulics {
       void calcrFactorSize() {rFactorSize=1; }
 
       void updategd(double t);
-      void updateW(double t);
+      void updateW(double t, int j=0);
 
       void updaterFactors();
       void solveImpactsFixpointSingle(double dt);
@@ -228,9 +228,9 @@ namespace MBSimHydraulics {
       bool gActiveChanged();
 
       void updateg(double t);
-      void updateh(double t);
+      void updateh(double t, int j=0);
       void updateStopVector(double t);
-      void updateW(double t);
+      void updateW(double t, int j=0);
       void updatexd(double t);
       void updatedx(double t, double dt);
       void updateCondition();
