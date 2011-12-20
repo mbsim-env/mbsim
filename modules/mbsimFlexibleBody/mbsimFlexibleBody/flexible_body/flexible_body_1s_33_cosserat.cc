@@ -315,14 +315,14 @@ namespace MBSimFlexibleBody {
     return V;
   }
 
-  void FlexibleBody1s33Cosserat::facLLM() {
+  void FlexibleBody1s33Cosserat::facLLM(int k) {
     for(int i=0;i<(int)discretization.size();i++) {
       int j = 6*i; 
-      LLM(Index(j+3,j+5)) = facLL(discretization[i]->getM()(Index(3,5)));
+      LLM[k](Index(j+3,j+5)) = facLL(discretization[i]->getM()(Index(3,5)));
     }
   }
 
-  void FlexibleBody1s33Cosserat::updateh(double t) {
+  void FlexibleBody1s33Cosserat::updateh(double t, int k) {
     /* translational elements */
     FlexibleBodyContinuum<double>::updateh(t);
 
@@ -332,8 +332,7 @@ namespace MBSimFlexibleBody {
       try { rotationDiscretization[i]->computeh(qRotationElement[i],uRotationElement[i]); } // compute attributes of finite element
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
-    for(int i=0;i<(int)rotationDiscretization.size();i++) GlobalVectorContributionRotation(i,rotationDiscretization[i]->geth(),h); // assemble
-    for(int i=0;i<(int)rotationDiscretization.size();i++) GlobalVectorContributionRotation(i,rotationDiscretization[i]->geth(),hObject); // assemble
+    for(int i=0;i<(int)rotationDiscretization.size();i++) GlobalVectorContributionRotation(i,rotationDiscretization[i]->geth(),h[0]); // assemble
   }
 
   void FlexibleBody1s33Cosserat::updateStateDependentVariables(double t) {
@@ -435,12 +434,12 @@ namespace MBSimFlexibleBody {
       try { static_cast<FiniteElement1s33CosseratTranslation*>(discretization[i])->initM(); } // compute attributes of finite element
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
-    for(int i=0;i<(int)discretization.size();i++) GlobalMatrixContribution(i,discretization[i]->getM(),M); // assemble
+    for(int i=0;i<(int)discretization.size();i++) GlobalMatrixContribution(i,discretization[i]->getM(),M[0]); // assemble
     for(int i=0;i<(int)discretization.size();i++) {
       int j = 6*i; 
-      LLM(Index(j,j+2)) = facLL(M(Index(j,j+2)));
+      LLM[0](Index(j,j+2)) = facLL(M[0](Index(j,j+2)));
       if(openStructure && i==(int)discretization.size()-1)
-        LLM(Index(j+6,j+8)) = facLL(M(Index(j+6,j+8)));
+        LLM[0](Index(j+6,j+8)) = facLL(M[0](Index(j+6,j+8)));
     }
   }
   
