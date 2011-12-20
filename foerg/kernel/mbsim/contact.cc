@@ -44,11 +44,11 @@ namespace MBSim {
   extern double tP;
   extern bool gflag;
 
-  Contact::Contact(const string &name) : LinkMechanics(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), cpData(0), gActive(0), gActive0(0), gdActive(0), gk(0), gdk(0), gdnk(0), gddk(0), lak(0), svk(0), rFactork(0), jsvk(0), fF(0), WF(0), laSizek(0), laIndk(0), gSizek(0), gIndk(0), gdSizek(0), gdIndk(0), svSizek(0), svIndk(0), rFactorSizek(0), rFactorIndk(0)
+  Contact::Contact(const string &name) : LinkMechanics(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), cpData(0), gActive(0), gActive0(0), gdActive(0), gddActive(0), projg(0), projgd(0), gk(0), gdk(0), gdnk(0), gddk(0), lak(0), svk(0), rFactork(0), jsvk(0), fF(0), WF(0), laSizek(0), laIndk(0), gSizek(0), gIndk(0), gdSizek(0), gdIndk(0), svSizek(0), svIndk(0), rFactorSizek(0), rFactorIndk(0)
 #ifdef HAVE_OPENMBVCPPINTERFACE
                                          , openMBVContactGrp(0), openMBVContactFrame(0), openMBVNormalForceArrow(0), openMBVFrictionArrow(0), openMBVContactFrameSize(0), openMBVContactFrameEnabled(true), contactArrow(NULL), frictionArrow(NULL)
 #endif
-                                           , saved_ref1(""), saved_ref2("")
+                        , corrSizek(0), corrIndk(0)                   , saved_ref1(""), saved_ref2("")
 					   {
 					   }
 
@@ -73,11 +73,15 @@ namespace MBSim {
       delete[] *i;
     for(vector<unsigned int*>::iterator i = gdActive.begin(); i != gdActive.end(); ++i)
       delete[] *i;
+    for(vector<unsigned int*>::iterator i = gddActive.begin(); i != gddActive.end(); ++i)
+      delete[] *i;
+    for(vector<unsigned int*>::iterator i = projgd.begin(); i != projgd.end(); ++i)
+      delete[] *i;
   }
 
   void Contact::updatewb(double t, int j) {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
-      if(gActive[k]) {
+      if(gdActive[k]) {
         for(unsigned i=0; i<contour.size(); i++) 
           wbk[k] += fF[k][i](Index(0,2),Index(0,laSizek[k]-1)).T()*cpData[k][i].getFrameOfReference().getGyroscopicAccelerationOfTranslation(j);
       }
@@ -87,7 +91,7 @@ namespace MBSim {
 
   void Contact::updateW(double t, int j) {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
-      if(gActive[k]) { // TODO
+      if(laSizek[k]>0) { // TODO
         fF[k][1].col(0) = cpData[k][0].getFrameOfReference().getOrientation().col(0);
         if(getFrictionDirections()) {
           fF[k][1].col(1) = cpData[k][0].getFrameOfReference().getOrientation().col(1);
@@ -139,7 +143,7 @@ namespace MBSim {
   void Contact::updategd(double t) {
     const bool flag = fcl->isSetValued();
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
-      if((flag && gActive[k]) || (!flag && fcl->isActive(gk[k](0),0))) {
+      if((flag && gdActive[k][0]) || (!flag && fcl->isActive(gk[k](0),0))) { // TODO
         for(unsigned int i=0; i<2; i++) contour[i]->updateKinematicsForFrame(cpData[k][i],velocities); // angular velocity necessary e.g. see ContactKinematicsSpherePlane::updatewb
 
         Vec Wn = cpData[k][0].getFrameOfReference().getOrientation().col(0);
@@ -160,7 +164,21 @@ namespace MBSim {
     }
   }
 
+  void Contact::adjustgd() {
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+      if(gActive[k]) {
+        if(gdk[k].size()>1) {
+          cout << "adjustgd" << endl;
+          cout << gddk[0](1) << endl;
+        gdk[k](1) += 1e-14*(gddk[0](1)>0? -1:1);
+        }
+      }
+    }
+  }
+
   void Contact::updateStopVector(double t) {
+    cout << "updateStopVector of " << name << endl;
+    cout << gddk[0]<<endl;
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]!=gdActive[k][0])
 	throw;
@@ -168,17 +186,19 @@ namespace MBSim {
         svk[k](0) = gddk[k](0)>gddTol ? -1 : 1;
         if(gdActive[k][1]) {
           svk[k](1) = nrm2(gddk[k](1,getFrictionDirections()))>gddTol ? -1 : 1;
+          if((int)svk[k](1) == -1)
+              gddkBuf[k] = gddk[k];
         } 
         else {
           if(getFrictionDirections() == 1)
-            svk[k](1) = gdk[k](1);
+            svk[k](1) = gdk[k](1) > 0 ? 1 : -1;
           else if(getFrictionDirections() == 2) {
-	    svk[k](1) = gdk[k](1)+gdk[k](2);
+	    svk[k](1) = gdk[k](1)+gdk[k](2); // TODO
 	  }
         }
       }
       else {
-        svk[k](0) = gk[k](0);
+        svk[k](0) = gk[k](0) > 0 ? 1 : -1;
         if(getFrictionDirections())
           svk[k](1) = 1;
       }
@@ -274,73 +294,158 @@ namespace MBSim {
     xSize = 0;
   }
 
-  void Contact::calclaSize() {
-    LinkMechanics::calclaSize();
-    laSize = 0;
-    for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
-      laIndk[i] = laSize;
-      laSizek[i] = gdActive[i][0]+gdActive[i][1]*getFrictionDirections();
-      laSize += laSizek[i];
+  void Contact::calclaSize(int j) {
+    LinkMechanics::calclaSize(j);
+    if(j==0) { // IA
+      for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+        laIndk[i] = laSize;
+        laSizek[i] = 1+getFrictionDirections();
+        laSize += laSizek[i];
+      }
+    } 
+    else if(j==1) { // IG
+      for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+        laIndk[i] = laSize;
+        laSizek[i] = gActive[i]*(1+getFrictionDirections());
+        laSize += laSizek[i];
+      }
+    } 
+    else if(j==2) { // IB
+      for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+        laIndk[i] = laSize;
+        laSizek[i] = gActive[i]*gdActive[i][0]*(1+getFrictionDirections());
+        laSize += laSizek[i];
+      }
+    } 
+    else if(j==3) { // IH
+      for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+        laIndk[i] = laSize;
+        laSizek[i] = gActive[i]*gdActive[i][0]*(1+gdActive[i][1]*getFrictionDirections());
+        laSize += laSizek[i];
+      }
     }
+    else if(j==4) { // IG
+      for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+        laIndk[i] = laSize;
+        laSizek[i] = gActive[i];
+        laSize += laSizek[i];
+      }
+    } 
+    else if(j==5) { // IB
+      for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+        laIndk[i] = laSize;
+        laSizek[i] = gActive[i]*gdActive[i][0];
+        laSize += laSizek[i];
+      }
+    } 
+    else
+      throw;
   }
 
-  void Contact::calclaSizeForActiveg() {
-    LinkMechanics::calclaSizeForActiveg();
-    laSize = 0;
-    for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
-      laIndk[i] = laSize;
-      laSizek[i] = gActive[i];
-      laSize += laSizek[i];
+  void Contact::calcgSize(int j) {
+    LinkMechanics::calcgSize(j);
+    if(j==0) { // IA
+      for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+        gIndk[i] = gSize;
+        gSizek[i] = 1;
+        gSize += gSizek[i];
+      }
     }
+    else if(j==1) { // IG
+      for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+        gIndk[i] = gSize;
+        gSizek[i] = gActive[i];
+        gSize += gSizek[i];
+      }
+    }
+    else if(j==2) { // IB
+      for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+        gIndk[i] = gSize;
+        gSizek[i] = gActive[i]*gdActive[i][0];
+        gSize += gSizek[i];
+      }
+    }
+    else
+      throw;
   }
 
-  void Contact::calcgSize() {
-    LinkMechanics::calcgSize();
-    gSize = 0;
-    for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
-      gIndk[i] = gSize;
-      gSizek[i] = 1;
-      gSize += gSizek[i];
+  void Contact::calcgdSize(int j) {
+    LinkMechanics::calcgdSize(j);
+    if(j==0) { // IA
+      for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+        gdIndk[i] = gdSize;
+        gdSizek[i] = 1+getFrictionDirections();
+        gdSize += gdSizek[i];
+      }
     }
+    else if(j==1) { // IG
+      for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+        gdIndk[i] = gdSize;
+        gdSizek[i] = gActive[i]*(1+getFrictionDirections());
+        gdSize += gdSizek[i];
+      }
+    }
+    else if(j==2) { // IB
+      for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+        gdIndk[i] = gdSize;
+        gdSizek[i] = gActive[i]*gdActive[i][0]*(1+getFrictionDirections());
+        gdSize += gdSizek[i];
+      }
+    }
+    else if(j==3) { // IH
+      for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+        gdIndk[i] = gdSize;
+        gdSizek[i] = gActive[i]*gdActive[i][0]*(1+gdActive[i][1]*getFrictionDirections());
+        gdSize += gdSizek[i];
+      }
+    }
+    else if(j==4) { // projection needed
+      for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+        gdIndk[i] = gdSize;
+        int proj = 0;
+        if(gdActive[i][0]) {
+          proj = fabs(gdk[i](0)) > 1e-15 ? 1 : 0;
+          if(gdActive[i][1])
+            proj += fabs(gdk[i](1)) > 1e-15 ? 1 : 0;
+        }
+        projgd[i][0] = proj;
+        gdSizek[i] = proj;
+        gdSize += gdSizek[i];
+      }
+    }
+    else
+      throw;
   }
 
-  void Contact::calcgSizeActive() {
-    LinkMechanics::calcgSizeActive();
-    gSize = 0;
-    for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
-      gIndk[i] = gSize;
-      gSizek[i] = gActive[i];
-      gSize += gSizek[i];
+  void Contact::calcrFactorSize(int j) {
+    LinkMechanics::calcrFactorSize(j);
+    if(j==0) { // IA
+      for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+        rFactorIndk[i] = rFactorSize;
+        rFactorSizek[i] = 1+min(getFrictionDirections(),1);
+        rFactorSize += rFactorSizek[i];
+      }
+    } 
+    else if(j==1) { // IG
+      for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+        rFactorIndk[i] = rFactorSize;
+        rFactorSizek[i] = gActive[i]*(1+min(getFrictionDirections(),1));
+        rFactorSize += rFactorSizek[i];
+      }
     }
-  }
-
-  void Contact::calcgdSize() {
-    LinkMechanics::calcgdSize();
-    gdSize = 0;
-    for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
-      gdIndk[i] = gdSize;
-      gdSizek[i] = gdActive[i][0]*(1+getFrictionDirections());
-      gdSize += gdSizek[i];
+    else if(j==2) { // IB
+      for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+        rFactorIndk[i] = rFactorSize;
+        rFactorSizek[i] = gActive[i]*gdActive[i][0]*(1+min(getFrictionDirections(),1));
+        rFactorSize += rFactorSizek[i];
+      }
     }
-  }
-
-  void Contact::calcgdSizeActive() {
-    LinkMechanics::calcgdSizeActive();
-    gdSize = 0;
-    for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
-      gdIndk[i] = gdSize;
-      gdSizek[i] = gdActive[i][0]+gdActive[i][1]*getFrictionDirections();
-      gdSize += gdSizek[i];
-    }
-  }
-
-  void Contact::calcrFactorSize() {
-    LinkMechanics::calcrFactorSize();
-    rFactorSize = 0;
-    for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
-      rFactorIndk[i] = rFactorSize;
-      rFactorSizek[i] = gdActive[i][0]+min(getFrictionDirections(),1)*gdActive[i][1];
-      rFactorSize += rFactorSizek[i];
+    else if(j==3) { // IB
+      for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+        rFactorIndk[i] = rFactorSize;
+        rFactorSizek[i] = gActive[i]*gdActive[i][0]*(1+gdActive[i][1]*min(getFrictionDirections(),1));
+        rFactorSize += rFactorSizek[i];
+      }
     }
   }
 
@@ -442,6 +547,7 @@ namespace MBSim {
         gdnk[k].resize() >> gdn(k*(1+getFrictionDirections()),(k+1)*(1+getFrictionDirections())-1);
         gddk[k].resize() >> gdd(k*(1+getFrictionDirections()),(k+1)*(1+getFrictionDirections())-1);
         gk[k].resize() >> g(k,k);
+        gddkBuf[k].resize(1+getFrictionDirections());
       }
     }
     else if(stage==preInit) {
@@ -464,13 +570,20 @@ namespace MBSim {
         gActive.push_back(int(1));
         gActive0.push_back(int(1));
         gdActive.push_back(new unsigned int[2]);
+        gddActive.push_back(new unsigned int[2]);
+        projg.push_back(int(0));
+        projgd.push_back(new unsigned int[2]);
         for(int j=0; j<1+min(1,getFrictionDirections()); j++) gdActive[i][j] = 1;
         for(int j=1+min(1,getFrictionDirections()); j<2; j++) gdActive[i][j] = 0;
+        for(int j=0; j<1+min(1,getFrictionDirections()); j++) gddActive[i][j] = 1;
+        for(int j=1+min(1,getFrictionDirections()); j<2; j++) gddActive[i][j] = 0;
+        for(int j=0; j<2; j++) projgd[i][j] = 0;
 
         gk.push_back(Vec(1));
         gdk.push_back(Vec(1));
         gdnk.push_back(Vec(1));
         gddk.push_back(Vec(1));
+        gddkBuf.push_back(Vec(1));
         lak.push_back(Vec());
         wbk.push_back(Vec());
         svk.push_back(Vec());
@@ -486,6 +599,11 @@ namespace MBSim {
         svIndk.push_back(int(0));
         rFactorSizek.push_back(int(0));
         rFactorIndk.push_back(int(0));
+
+        corrk.push_back(Vec(1));
+        corrSizek.push_back(int(0));
+        corrIndk.push_back(int(0));
+        rootID.push_back(int(0));
       }
     }
     else if(stage==MBSim::plot) {
@@ -982,7 +1100,7 @@ namespace MBSim {
 
   void Contact::updaterFactors() {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
-      if(gActive[k] && gdActive[k][0]) { // TODO
+      if(gActive[k]) { // TODO
 
         const double *a = ds->getGs()();
         const int *ia = ds->getGs().Ip();
@@ -1101,6 +1219,42 @@ namespace MBSim {
     }
   }
 
+  void Contact::checkActive(int j) { 
+    for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+      if(gActive[i]) {
+        if(gdActive[i][0]) {
+          if(gdActive[i][1]) {
+            if(!gddActive[i][1]) {
+              gdActive[i][1] = false;
+            }
+          }
+          if(!gddActive[i][0]) {
+            gActive[i] = false;
+            gdActive[i][0] = false;
+            gdActive[i][1] = false;
+          }
+        }
+        else
+          gActive[i] = false;
+      }
+      cout << "Final shift of " << name << endl;
+      cout << "gActive = " << gActive[0] << endl;
+      cout << "gdActive0 = " << gdActive[0][0] << endl;
+      cout << "gdActive1 = " << gdActive[0][1] << endl;
+      cout << "gddActive0 = " << gddActive[0][0] << endl;
+      cout << "gddActive1 = " << gddActive[0][1] << endl;
+    }
+  }
+//    if(j==3) // IG
+//    for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+//      gdActive[i][0] = gActive[i] ? 1 : 0; 
+//      gdActive[i][1] = getFrictionDirections() && gActive[i] ? 1 : 0; 
+//    }
+//    if(j==3)
+//    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) 
+//      gActive[k] = fcl->isActive(gk[k](0),gTol) ? 1 : 0; 
+//  }
+
   void Contact::checkActiveg() { 
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) 
       gActive[k] = fcl->isActive(gk[k](0),gTol) ? 1 : 0; 
@@ -1110,65 +1264,99 @@ namespace MBSim {
     for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
       gdActive[i][0] = gActive[i] ? (fcl->remainsActive(gdk[i](0),gdTol) ? 1 : 0) : 0; 
       gdActive[i][1] = getFrictionDirections() && gdActive[i][0] ? (fdf->isSticking(gdk[i](1,getFrictionDirections()),gdTol) ? 1 : 0) : 0; 
+      gddActive[i][0] = gdActive[i][0];
+      gddActive[i][1] = gdActive[i][1];
     }
   }
 
   void Contact::checkActivegdn() { 
+    cout << "checkActivegdn of " << name << endl;
+    cout << gdnk[0] << endl;
+    cout << "gActive = " << gActive[0] << endl;
+    cout << "gdActive0 = " << gdActive[0][0] << endl;
+    cout << "gdActive1 = " << gdActive[0][1] << endl;
+    cout << "gddActive0 = " << gddActive[0][0] << endl;
+    cout << "gddActive1 = " << gddActive[0][1] << endl;
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
-      if(gActive[k]) {
-        if(gdnk[k](0) <= gdTol) {
-          gActive[k] = true;
+      if(gActive[k]) { // Contact was closed
+        if(gdnk[k](0) <= gdTol) { // Contact stays closed
           gdActive[k][0] = true;
+          gddActive[k][0] = true;
+          if(getFrictionDirections()) {
+            if(nrm2(gdnk[k](1,getFrictionDirections())) <= gdTol) {
+              gdActive[k][1] = true;
+              gddActive[k][1] = true;
+            }
+            else {
+              gdActive[k][1] = false;
+              gddActive[k][1] = false;
+            }
+          }
         } 
-        else {
-          gActive[k] = false;
+        else { // Contact will open
           gdActive[k][0] = false;
+          gdActive[k][1] = false;
+          gddActive[k][0] = false;
+          gddActive[k][1] = false;
         }
       }
-      if(getFrictionDirections()) {
-        if(gdActive[k][0])
-          if(nrm2(gdnk[k](1,getFrictionDirections())) <= gdTol)
-            gdActive[k][1] = true;
-          else
-            gdActive[k][1] = false;
-        else
-          gdActive[k][1] = false;
-      }
     }
+    cout << "danach" << endl;
+    cout << "gActive = " << gActive[0] << endl;
+    cout << "gdActive0 = " << gdActive[0][0] << endl;
+    cout << "gdActive1 = " << gdActive[0][1] << endl;
+    cout << "gddActive0 = " << gddActive[0][0] << endl;
+    cout << "gddActive1 = " << gddActive[0][1] << endl;
   }
 
   void Contact::checkActivegdd() { 
+    cout << "checkActivegdd of " << name << endl;
+    cout << gddk[0] << endl;
+    cout << "gActive = " << gActive[0] << endl;
+    cout << "gdActive0 = " << gdActive[0][0] << endl;
+    cout << "gdActive1 = " << gdActive[0][1] << endl;
+    cout << "gddActive0 = " << gddActive[0][0] << endl;
+    cout << "gddActive1 = " << gddActive[0][1] << endl;
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
-      if(gdActive[k][0]) {
-        if(gddk[k](0) <= gddTol) {
-          gActive[k] = true;
-          gdActive[k][0] = true;
-        }
-        else {
-          gActive[k] = false;
-          gdActive[k][0] = false;
-        }
-      }
-      if(getFrictionDirections()) {
+      if(gActive[k]) {
         if(gdActive[k][0]) {
-          if(gdActive[k][1]) 
-            if(nrm2(gddk[k](1,getFrictionDirections())) <= gddTol)
-              gdActive[k][1] = true;
-            else
-              gdActive[k][1] = false;
-          else 
-            gdActive[k][1] = false;
+          if(gddk[k](0) <= gddTol) { // Contact stays closed
+            gddActive[k][0] = true;
+            if(getFrictionDirections()) {
+              if(gdActive[k][1]) {
+                if(nrm2(gddk[k](1,getFrictionDirections())) <= gddTol)
+                  gddActive[k][1] = true;
+                else {
+                  gddActive[k][1] = false;
+                }
+              }
+            }
+          }
+          else { // Contact will open
+            gddActive[k][0] = false;
+            gddActive[k][1] = false;
+          }
         }
-        else
-          gdActive[k][1] = false;
       }
     }
+    cout << "danach" << endl;
+    cout << "gActive = " << gActive[0] << endl;
+    cout << "gdActive0 = " << gdActive[0][0] << endl;
+    cout << "gdActive1 = " << gdActive[0][1] << endl;
+    cout << "gddActive0 = " << gddActive[0][0] << endl;
+    cout << "gddActive1 = " << gddActive[0][1] << endl;
   }
 
   void Contact::checkAllgd() { 
     for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
       gdActive[i][0] = gActive[i] ? 1 : 0; 
       gdActive[i][1] = getFrictionDirections() && gActive[i] ? 1 : 0; 
+    }
+  }
+
+  void Contact::checkAllgdd() { 
+    for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+      gdActive[i][1] = getFrictionDirections() && gdActive[i][0] ? 1 : 0; 
     }
   }
 
@@ -1193,36 +1381,54 @@ namespace MBSim {
     }
   }
 
-  void Contact::updateCondition() {
+  void Contact::updateCondition(int i) {
+    cout << "updateCondition of " << name << endl;
+    cout << "davor, i = " << i << endl;
+    cout << "gActive = " << gActive[0] << endl;
+    cout << "gdActive0 = " << gdActive[0][0] << endl;
+    cout << "gdActive1 = " << gdActive[0][1] << endl;
+    cout << "gddActive0 = " << gddActive[0][0] << endl;
+    cout << "gddActive1 = " << gddActive[0][1] << endl;
+    cout << "jsvk = " << jsvk[0] << endl;
+    cout << "rootID = " << rootID[0] << endl;
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
-      if(jsvk[k](0)) {
-        if(gActive[k]) {
-          gActive[k] = false;
-          gdActive[k][0] = false;
-          if(getFrictionDirections())
-            gdActive[k][1] = false;
-          return;
-        }
-        else {// TODO if(gdk[k](0)<=0)  // pseudo collision because of penetration
+      if(i==3) { // nur nach schließenden Kontakten schauen
+        if(rootID[k]==3) {
           gActive[k] = true;
-          gdActive[k][0] = false;
-          if(getFrictionDirections())
-            gdActive[k][1] = false;
-          ds->setImpact(true);
-          return;
+          gdActive[k][0] = true;
+          gdActive[k][1] = true;
+          gddActive[k][0] = true;
+          gddActive[k][1] = true;
+          //return;
         }
-      }
-      if(getFrictionDirections()) {
-        if(jsvk[k](1)) {
-          if(gdActive[k][1]) {
-            gdActive[k][1] = false;
-          } 
-          else if(nrm2(gdk[k](1,getFrictionDirections()))<gdTol) {
+      } else if(i==2) { // nur nach Gleit-Haft-Übergängen schauen
+        if(getFrictionDirections()) {
+          if(rootID[k]==2) {
             gdActive[k][1] = true;
-            ds->setSticking(true);
+            gddActive[k][1] = true;
+            //return;
           }
         }
+      } else if(i==1) { // nur nach öffnenden Kontakten und Haft-Gleit-Übergängen schauen
+        if(jsvk[k](0) && rootID[k]==1) { // Kontakt öffnet
+          gddActive[k][0] = false;
+          gddActive[k][1] = false;
+        }
+        if(getFrictionDirections()) {
+          if(jsvk[k](1) && rootID[k]==1) { // Haft-Gleitübergang
+            gddActive[k][1] = false;
+          }
+        }
+        //return;
       }
+      else
+        throw;
+      cout << "danach" << endl;
+      cout << "gActive = " << gActive[0] << endl;
+      cout << "gdActive0 = " << gdActive[0][0] << endl;
+      cout << "gdActive1 = " << gdActive[0][1] << endl;
+      cout << "gddActive0 = " << gddActive[0][0] << endl;
+      cout << "gddActive1 = " << gddActive[0][1] << endl;
     }
   }
 
@@ -1314,5 +1520,115 @@ namespace MBSim {
     }
 #endif
   }
+
+  void Contact::updatecorrRef(const Vec& corrParent) {
+    LinkMechanics::updatecorrRef(corrParent);
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) 
+      corrk[k].resize() >> corr(corrIndk[k],corrIndk[k]+corrSizek[k]-1);
+  }
+
+  void Contact::updatecorr(int j) {
+    if(j==1) { // IG position
+      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+        if(gActive[k]) { // Contact was closed
+          if(gdActive[k][0]) 
+            corrk[k](0) = 0; // Contact stays closed, regular projection
+          else
+            corrk[k](0) = 1e-15; // Contact opens, projection to positive normal distance
+        }
+      }
+    }
+    else if(j==2) { 
+      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+        if(gActive[k] && gdActive[k][0]) { // Contact was closed
+          if(gddActive[k][0])
+            corrk[k](0) = 0; // Contact stays closed, regular projection
+          else
+            corrk[k](0) = 1e-15; // Contact opens, projection to positive normal distance
+        }
+      }
+    }
+    else if(j==4) { 
+      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+        if(rootID[k]==1)
+          gddk[k] = gddkBuf[k];
+        cout << "updatecorr, gddT = " <<  gddk[0](1) << " " <<  gddkBuf[0](1) << endl;
+        if(gActive[k] && gdActive[k][0]) { // Contact was closed
+          if(gddActive[k][0])
+            corrk[k](0) = 0; // Contact stays closed, regular projection
+          else
+            corrk[k](0) = 1e-16; // Contact opens, projection to positive normal distance
+          if(gdActive[k][1]) { // Contact was sticking
+            if(gddActive[k][1])
+              corrk[k](1) = 0; // Contact stays sticking, regular projection
+            else {
+              corrk[k](1) = gddk[k](1)>0?1e-16:-1e-16; // Contact slides, projection to positive normal velocity
+            }
+          }
+        }
+      }
+    }
+    else
+      throw;
+  }
+
+  void Contact::calccorrSize(int j) {
+    LinkMechanics::calccorrSize(j);
+    if(j==1) { // IG
+      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+        corrIndk[k] = corrSize;
+        corrSizek[k] = gActive[k];
+        corrSize += corrSizek[k];
+      }
+    }
+    else if(j==2) { // IB
+      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+        corrIndk[k] = corrSize;
+        corrSizek[k] = gActive[k]*gdActive[k][0];
+        corrSize += corrSizek[k];
+      }
+    }
+//    else if(j==3) { // IG
+//      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+//        corrIndk[k] = corrSize;
+//        corrSizek[k] = gActive[i]*(1+getFrictionDirections());
+//        corrSize += corrSizek[k];
+//      }
+//    }
+    else if(j==4) { // IH
+      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+        corrIndk[k] = corrSize;
+        corrSizek[k] = gActive[k]*gdActive[k][0]*(1+gdActive[k][1]*getFrictionDirections());
+        corrSize += corrSizek[k];
+      }
+    }
+    else
+      throw;
+  }
+
+  void Contact::checkRoot() {
+    cout << "checkRoot of " <<  name << endl;
+    cout << ds->getRootID() << endl;
+    cout << jsvk[0] << endl;
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+      rootID[k] = 0;
+      if(jsvk[k](0)) {
+        if(gActive[k])
+          rootID[k] = 1; // Contact was closed -> opening
+        else
+          rootID[k] = 3; // Contact was open -> impact
+      }
+      if(getFrictionDirections()) {
+        if(jsvk[k](1)) {
+          if(gdActive[k][1])
+            rootID[k] = 1; // Contact was sticking -> sliding
+          else
+            rootID[k] = 2; // Contact was sliding -> sticking
+        }
+      }
+      ds->setRootID(max(ds->getRootID(),rootID[k]));
+    }
+  }
+
 }
 

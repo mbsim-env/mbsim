@@ -67,8 +67,8 @@ namespace MBSim {
     h[j][0]+=frame[0]->getJacobianOfTranslation(j).T()*WF[0] + frame[0]->getJacobianOfRotation(j).T()*WM[0];
   }
 
-  void KineticExcitation::calclaSize() {
-    LinkMechanics::calclaSize();
+  void KineticExcitation::calclaSize(int j) {
+    LinkMechanics::calclaSize(j);
     laSize=forceDir.cols()+momentDir.cols();
   }
 
