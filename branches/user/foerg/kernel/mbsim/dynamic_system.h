@@ -120,6 +120,7 @@ namespace MBSim {
       virtual void updateV(double t, int j=0); 
       virtual void updateg(double t);
       virtual void updategd(double t);
+      virtual void adjustgd();
       virtual void updateStopVector(double t); 
       virtual void updateLinkStatus(double t);
 
@@ -506,7 +507,7 @@ namespace MBSim {
       /**
        * \brief set possible attribute for active relative kinematics for updating event driven simulation before case study
        */
-      void updateCondition();
+      void updateCondition(int i);
       void checkState();
 
       /**
@@ -532,7 +533,7 @@ namespace MBSim {
       /**
        * \brief calculates size of contact force parameters
        */
-      void calclaSize();
+      void calclaSize(int j);
 
       /**
        * \brief calculates size of link status vector
@@ -550,39 +551,29 @@ namespace MBSim {
       void calcbInverseKineticsSize();
 
       /**
-       * \brief calculates size of active contact force parameters
-       */
-      void calclaSizeForActiveg();
-
-      /**
        * \brief calculates size of relative distances
        */
-      void calcgSize();
-
-      /**
-       * \brief calculates size of active relative distances
-       */
-      void calcgSizeActive();
+      void calcgSize(int j);
 
       /**
        * \brief calculates size of relative velocities
        */
-      void calcgdSize();
-
-      /**
-       * \brief calculates size of active relative velocities
-       */
-      void calcgdSizeActive();
+      void calcgdSize(int j);
 
       /**
        * \brief calculates size of relaxation factors for contact equations
        */
-      void calcrFactorSize();
+      void calcrFactorSize(int j);
 
       /** 
        * \brief rearrange vector of active setvalued links
        */
       void checkActiveLinks();
+
+      /**
+       * \brief set possible attribute for active relative distance in derived classes 
+       */
+      void checkActive(int i);
 
       /**
        * \brief set possible attribute for active relative distance in derived classes 
@@ -608,6 +599,7 @@ namespace MBSim {
        * \brief set possible attribute for active relative velocity in derived classes for updating event driven and time-stepping simulation before an impact
        */
       void checkAllgd();
+      void checkAllgdd();
 
       /**
        * \param tolerance for relative velocity
@@ -767,6 +759,12 @@ namespace MBSim {
 
       virtual Element *getByPathSearch(std::string path);
 
+      virtual void updatecorr(int j);
+      void updatecorrRef(const fmatvec::Vec &ref);
+      void calccorrSize(int j);
+
+      void checkRoot();
+
     protected:
       /**
        * \brief parent frame
@@ -796,6 +794,8 @@ namespace MBSim {
       std::vector<ModellingInterface*> model;
       std::vector<DynamicSystem*> dynamicsystem;
       std::vector<Link*> inverseKineticsLink;
+      std::vector<Link*>& IA;
+      std::vector<Link*> IG,IB,IH;
 #ifdef HAVE_OPENMBVCPPINTERFACE
       std::vector<Element*> plotElement;
 #endif
@@ -970,6 +970,9 @@ namespace MBSim {
 
       fmatvec::Mat WInverseKinetics[2], bInverseKinetics;
       fmatvec::Vec laInverseKinetics;
+
+      int corrSize, corrInd;
+      fmatvec::Vec corr;
 
     private:
       std::vector<std::string> saved_refFrameF, saved_refFrameC;

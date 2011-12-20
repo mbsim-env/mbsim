@@ -65,6 +65,7 @@ namespace MBSim {
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updateg(double t) = 0;
       virtual void updategd(double t) = 0;
+      virtual void adjustgd() {}
       virtual void updatewb(double t, int i=0) {};
       virtual void updateW(double t, int i=0) {};
       virtual void updateV(double t, int i=0) {};
@@ -177,37 +178,22 @@ namespace MBSim {
       /**
        * \brief calculates size of contact force parameters
        */
-      virtual void calclaSize() { laSize = 0; }
-
-      /**
-       * \brief calculates size of active contact force parameters
-       */
-      virtual void calclaSizeForActiveg() { laSize = 0; }
+      virtual void calclaSize(int j) { laSize = 0; }
 
       /**
        * \brief calculates size of relative distances
        */
-      virtual void calcgSize() { gSize = 0; }
-
-      /**
-       * \brief calculates size of active relative distances
-       */
-      virtual void calcgSizeActive() { gSize = 0; }
+      virtual void calcgSize(int j) { gSize = 0; }
 
       /**
        * \brief calculates size of relative velocities
        */
-      virtual void calcgdSize() { gdSize = 0; }
-
-      /**
-       * \brief calculates size of active relative velocities
-       */
-      virtual void calcgdSizeActive() { gdSize = 0; }
+      virtual void calcgdSize(int j) { gdSize = 0; }
 
       /**
        * \brief calculates size of rfactors
        */
-      virtual void calcrFactorSize() { rFactorSize = 0; }
+      virtual void calcrFactorSize(int j) { rFactorSize = 0; }
 
       /**
        * \brief calculates size of rfactors
@@ -299,6 +285,8 @@ namespace MBSim {
        */
       virtual void checkConstraintsForTermination() { throw MBSimError("ERROR in "+getName()+" (Link::checkConstraintsForTermination): Not implemented."); }
 
+      virtual void checkActive(int j) {}
+
       /**
        * \brief set possible attribute for active relative distance in derived classes 
        */
@@ -323,11 +311,12 @@ namespace MBSim {
        * \brief set possible attribute for active relative velocity in derived classes for updating event driven and time-stepping simulation before an impact
        */
       virtual void checkAllgd() {}
+      virtual void checkAllgdd() {}
 
       /**
        * \brief set possible attributes for active relative kinematics in derived classes for updating event driven simulation before case study
        */
-      virtual void updateCondition() {}
+      virtual void updateCondition(int i) {}
       virtual void checkState() {}
 
       /**
@@ -416,6 +405,13 @@ namespace MBSim {
        * \brief calculates the number of active and inactive unilateral constraints and increments sizeActive/sizeInActive
        */
       virtual void SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_) {};
+
+      virtual void updatecorr(int j) { corr.init(0); }
+      virtual void updatecorrRef(const fmatvec::Vec &ref);
+      virtual void calccorrSize(int j) { corrSize = 0; }
+      void setcorrInd(int corrInd_) { corrInd = corrInd_; } 
+      int getcorrSize() const { return corrSize; } 
+      virtual void checkRoot() {};
 
     protected:
       /** 
@@ -566,6 +562,8 @@ namespace MBSim {
        */
       fmatvec::Mat b;
 
+      int corrSize, corrInd;
+      fmatvec::Vec corr;
   };
 }
 

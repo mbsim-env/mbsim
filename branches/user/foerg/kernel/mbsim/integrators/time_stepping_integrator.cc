@@ -69,7 +69,7 @@ namespace MBSim {
       integrationSteps++;
       if((step*stepPlot - integrationSteps) < 0) {
         step++;
-        if(driftCompensation) system.projectGeneralizedPositions(t);
+        if(driftCompensation) system.projectGeneralizedPositions(t,0);
         system.plot2(z,t,dt);
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;

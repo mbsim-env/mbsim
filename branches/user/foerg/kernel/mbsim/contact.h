@@ -69,6 +69,7 @@ namespace MBSim {
       virtual void updateh(double t, int i=0);
       virtual void updateg(double t);
       virtual void updategd(double t);
+      virtual void adjustgd();
       virtual void updateStopVector(double t);
       virtual void updateJacobians(double t, int j=0);
       /***************************************************/
@@ -85,13 +86,10 @@ namespace MBSim {
       virtual void updatesvRef(const fmatvec::Vec &ref);
       virtual void updatejsvRef(const fmatvec::Vector<int> &ref);
       virtual void calcxSize();
-      virtual void calclaSize();
-      virtual void calclaSizeForActiveg();
-      virtual void calcgSize();
-      virtual void calcgSizeActive();
-      virtual void calcgdSize(); // TODO not consistent
-      virtual void calcgdSizeActive();
-      virtual void calcrFactorSize();
+      virtual void calclaSize(int j);
+      virtual void calcgSize(int j);
+      virtual void calcgdSize(int j);
+      virtual void calcrFactorSize(int j);
       virtual void calcsvSize();
       virtual void calcLinkStatusSize();
       virtual void init(InitStage stage);
@@ -111,12 +109,14 @@ namespace MBSim {
       virtual void checkConstraintsForTermination();
       virtual void checkImpactsForTermination(double dt);
       using LinkMechanics::connect;
+      virtual void checkActive(int j);
       virtual void checkActiveg();
       virtual void checkActivegd();
       virtual void checkActivegdn();
       virtual void checkActivegdd(); 
       virtual void checkAllgd();
-      virtual void updateCondition();
+      virtual void checkAllgdd();
+      virtual void updateCondition(int i);
       virtual void checkState();
       virtual void LinearImpactEstimation(fmatvec::Vec &gInActive_,fmatvec::Vec &gdInActive_,int *IndInActive_,fmatvec::Vec &gAct_,int *IndActive_);
       virtual void SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_);
@@ -180,6 +180,12 @@ namespace MBSim {
 
       virtual void initializeUsingXML(TiXmlElement *element);
 
+      void calccorrSize(int j);
+      void updatecorr(int j);
+      void updatecorrRef(const fmatvec::Vec& ref);
+
+      void checkRoot();
+
     protected:
       /**
        * \brief used contact kinematics
@@ -220,6 +226,10 @@ namespace MBSim {
        * \brief boolean vector symbolising activity of contacts on velocity level
        */
       std::vector<unsigned int*> gdActive; 
+      std::vector<unsigned int*> gddActive; 
+
+      std::vector<unsigned int> projg; 
+      std::vector<unsigned int*> projgd; 
 
       /** 
        * \brief index for tangential directions in projection matrices
@@ -292,6 +302,13 @@ namespace MBSim {
        */
       OpenMBV::Arrow *contactArrow, *frictionArrow;
 #endif
+
+      std::vector<fmatvec::Vec> corrk;
+      std::vector<int> corrSizek, corrIndk;
+
+      std::vector<int> rootID;
+
+      std::vector<fmatvec::Vec> gddkBuf;
 
     private:
       std::string saved_ref1, saved_ref2;

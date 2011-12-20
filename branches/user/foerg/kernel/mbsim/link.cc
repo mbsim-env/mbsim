@@ -193,5 +193,9 @@ namespace MBSim {
         return getByPathSearch(path.substr(1));
   }
 
+  void Link::updatecorrRef(const fmatvec::Vec &ref) {
+    corr.resize() >> ref(corrInd,corrInd+corrSize-1);
+  }
+
 }
 

@@ -58,11 +58,11 @@ namespace MBSim {
 
   bool DynamicSystemSolver::exitRequest=false;
 
-  DynamicSystemSolver::DynamicSystemSolver() : Group("Default"), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), impact(false), sticking(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), reorganizeHierarchy(true), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), INFO(true), READZ0(false), truncateSimulationFiles(true) { 
+  DynamicSystemSolver::DynamicSystemSolver() : Group("Default"), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), reorganizeHierarchy(true), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), rootID(0), INFO(true), READZ0(false), truncateSimulationFiles(true) { 
     constructor();
   } 
 
-  DynamicSystemSolver::DynamicSystemSolver(const string &projectName) : Group(projectName), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), impact(false), sticking(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), reorganizeHierarchy(true), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), INFO(true), READZ0(false), truncateSimulationFiles(true) { 
+  DynamicSystemSolver::DynamicSystemSolver(const string &projectName) : Group(projectName), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), reorganizeHierarchy(true), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), rootID(0), INFO(true), READZ0(false), truncateSimulationFiles(true) { 
     constructor();
   }
 
@@ -230,10 +230,10 @@ namespace MBSim {
       calclaInverseKineticsSize(); 
       calcbInverseKineticsSize(); 
 
-      calclaSize();
-      calcgSize();
-      calcgdSize();
-      calcrFactorSize();
+      calclaSize(0);
+      calcgSize(0);
+      calcgdSize(0);
+      calcrFactorSize(0);
       calcsvSize();
       svSize += 1; // TODO additional event for drift 
       calcLinkStatusSize();      
@@ -289,6 +289,7 @@ namespace MBSim {
       WInverseKineticsParent[1].resize(hSize[1],laInverseKineticsSize);
       bInverseKineticsParent.resize(bInverseKineticsSize,laInverseKineticsSize);
       laInverseKineticsParent.resize(laInverseKineticsSize);
+      corrParent.resize(getgdSize());
 
       updateMRef(MParent[0],0);
       updateMRef(MParent[1],1);
@@ -608,12 +609,8 @@ namespace MBSim {
 
   void DynamicSystemSolver::checkConstraintsForTermination() {
     term = true;
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) { 
-      (*i)->checkConstraintsForTermination(); 
-      if(term == false) return;
-    }
 
-    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) {
+    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) {
       (**i).checkConstraintsForTermination();
       if(term == false) return;
     }
@@ -621,12 +618,8 @@ namespace MBSim {
 
   void DynamicSystemSolver::checkImpactsForTermination(double dt) {
     term = true;
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) {
-      (*i)->checkImpactsForTermination(dt); 
-      if(term == false) return;
-    }
 
-    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) {
+    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) {
       (**i).checkImpactsForTermination(dt);
       if(term == false) return;
     }
@@ -832,8 +825,8 @@ namespace MBSim {
     checkActivegd();
     checkActiveLinks();
     updateJacobians(0);
-    calclaSize();
-    calcrFactorSize();
+    calclaSize(3);
+    calcrFactorSize(3);
     updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)),0);
     updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)),0);
     updateWRef(WParent[1](Index(0,getuSize(1)-1),Index(0,getlaSize()-1)),1);
@@ -901,7 +894,7 @@ namespace MBSim {
 
   void DynamicSystemSolver::decreaserFactors() {
 
-    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
+    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
       (*i)->decreaserFactors();
   }
 
@@ -915,9 +908,9 @@ namespace MBSim {
     checkActiveLinks();
     if(gActiveChanged() || options==1 ) {
       // checkAllgd(); // TODO necessary?
-      calcgdSizeActive();
-      calclaSize();
-      calcrFactorSize();
+      calcgdSize(2); // IB
+      calclaSize(2); // IB
+      calcrFactorSize(2); // IB
 
       updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
@@ -954,65 +947,121 @@ namespace MBSim {
     updateLinkStatus(t);
   }
 
-  void DynamicSystemSolver::projectGeneralizedPositions(double t) {
-    if(laSize) {
-      calcgSizeActive();
-
-      updategRef(gParent(0,gSize-1));
-      updateg(t);
-      Vec nu(getuSize());
-      calclaSizeForActiveg();
-      updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-      updateW(t);
-      Vec corr;
-      corr = g;
-      corr.init(tolProj);
-      SqrMat Gv= SqrMat(W[0].T()*slvLLFac(LLM[0],W[0])); 
-      // TODO: Wv*T check
-      int iter = 0;
-      while(nrmInf(g-corr) >= tolProj) {
-	if(++iter>500 && min(g)>0) {
-	  cout << "---------------------- breche ab ------------------" << endl;
-	  break;
-	}
-        Vec mu = slvLS(Gv,-g+W[0].T()*nu+corr);
-        Vec dnu = slvLLFac(LLM[0],W[0]*mu)-nu;
-        nu += dnu;
-        q += T*dnu;
-	//Vec mu = slvLS(Gv,corr-g);
-	//Vec dq = slvLLFac(LLM[0],W[0]*mu);
-	//q += dq;
-        updateStateDependentVariables(t);
-        updateg(t);
-      }
-      calclaSize();
-      updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-      calcgSize();
-      updategRef(gParent(0,gSize-1));
+  void DynamicSystemSolver::projectGeneralizedPositions(double t, int mode) {
+    cout << "projectGeneralizedPositions" << endl;
+    int gID = 0; 
+    int laID = 0;
+    int corrID = 0;
+    if(mode == 3) { // impact
+      gID = 1; // IG
+      laID = 4;
+      corrID = 1;
     }
+    else if(mode == 2) { // opening, slip->stick
+      gID = 2; // IB
+      laID = 5;
+      corrID = 2;
+    }
+    else if(mode == 1) { // opening
+      gID = 2; // IB
+      laID = 5;
+      corrID = 2;
+    }
+    else 
+      throw;
+
+    calcgSize(gID); 
+    calccorrSize(corrID); 
+    updatecorrRef(corrParent(0,corrSize-1));
+    updategRef(gParent(0,gSize-1));
+    updateg(t);
+    updatecorr(corrID);
+    cout << "corr = "<< corr <<endl;
+    Vec nu(getuSize());
+    calclaSize(laID); 
+    updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+    updateW(t);
+    cout << "g = " <<g <<endl;
+    //Vec corr;
+    //corr = g;
+    //corr.init(tolProj);
+    SqrMat Gv= SqrMat(W[0].T()*slvLLFac(LLM[0],W[0])); 
+    // TODO: Wv*T check
+    int iter = 0;
+    while(nrmInf(g-corr) >= tolProj) {
+      if(++iter>500 && min(g)>0) {
+        cout << "---------------------- breche ab ------------------" << endl;
+        break;
+      }
+      Vec mu = slvLS(Gv,-g+W[0].T()*nu+corr);
+      Vec dnu = slvLLFac(LLM[0],W[0]*mu)-nu;
+      nu += dnu;
+      q += T*dnu;
+      //Vec mu = slvLS(Gv,corr-g);
+      //Vec dq = slvLLFac(LLM[0],W[0]*mu);
+      //q += dq;
+      updateStateDependentVariables(t);
+      updateg(t);
+    }
+    calclaSize(3);
+    updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+    calcgSize(0);
+    updategRef(gParent(0,gSize-1));
   }
 
-  void DynamicSystemSolver::projectGeneralizedVelocities(double t) {
-    if(laSize) {
-      calcgdSizeActive();
+  void DynamicSystemSolver::projectGeneralizedVelocities(double t, int mode) {
+    cout << "projectGeneralizedVelocities" << endl;
+    int gdID = 0; // IH
+    int corrID = 0;
+    if(mode == 3) { // impact
+      gdID = 3; // IH
+      corrID = 4; // IH
+    }
+    else if(mode == 2) { // opening, slip->stick
+      gdID = 3;
+      corrID = 4; // IH
+    }
+    else if(mode == 1) { // opening and stick->slip
+      gdID = 3;
+      corrID = 4; // IH
+    }
+    else 
+      throw;
+    calccorrSize(corrID); // IH
+    if(corrSize) {
+      calcgdSize(gdID); // IH
+      updatecorrRef(corrParent(0,corrSize-1));
       updategdRef(gdParent(0,gdSize-1));
       updategd(t);
+      updatecorr(corrID);
+      cout << "corr = " << corr <<endl;
+      cout << "gd = " << gd <<endl;
+      cout << "q = " << q <<endl;
+      cout << "u = " << u <<endl;
 
-      SqrMat Gv= SqrMat(W[0].T()*slvLLFac(LLM[0],W[0])); 
-      Vec mu = slvLS(Gv,-gd);
-      u += slvLLFac(LLM[0],W[0]*mu);
-      calcgdSize();
+      calclaSize(gdID);
+      updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+      updateW(t);
+
+      if(laSize) {
+        SqrMat Gv= SqrMat(W[0].T()*slvLLFac(LLM[0],W[0])); 
+        Vec mu = slvLS(Gv,-gd+corr);
+        u += slvLLFac(LLM[0],W[0]*mu);
+      }
+      calclaSize(3);
+      updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+      calcgdSize(1);
       updategdRef(gdParent(0,gdSize-1));
     }
   }
 
   void DynamicSystemSolver::savela(double dt) {
-    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
+    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
       (**i).savela(dt);
   }
 
   void DynamicSystemSolver::initla(double dt) {
-    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
+    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
       (**i).initla(dt);
   }
 
@@ -1097,15 +1146,19 @@ namespace MBSim {
     cout << "dropping contact matrices to file <dump_matrices.asc>" << endl;
     ofstream contactDrop("dump_matrices.asc");   
 
-    contactDrop << "constraint functions g" << endl << g.T() << endl << endl;
+    contactDrop << "constraint functions g" << endl << g << endl << endl;
     contactDrop << endl;
-    contactDrop << "mass matrix M" << endl << M << endl << endl;
-    contactDrop << "generalized force directions W" << endl << W << endl << endl;
+    contactDrop << "mass matrix M" << endl << M[0] << endl << endl;
+    contactDrop << "decomposed mass matrix M" << endl << LLM[0] << endl << endl;
+    contactDrop << "generalized force vector h" << endl << h[0] << endl << endl;
+    contactDrop << "generalized force directions W" << endl << W[0] << endl << endl;
+    contactDrop << "generalized force directions V" << endl << V[0] << endl << endl;
     contactDrop << "Delassus matrix G" << endl << G << endl << endl;
+    contactDrop << "vector wb" << endl << wb << endl << endl;
     contactDrop << endl;
-    contactDrop << "constraint velocities gp" << endl << gd.T() << endl << endl;
-    contactDrop << "non-holonomic part in gp; b" << endl << b.T() << endl << endl;
-    contactDrop << "Lagrange multipliers la" << endl << la.T() << endl << endl;
+    contactDrop << "constraint velocities gp" << endl << gd << endl << endl;
+    contactDrop << "non-holonomic part in gp; b" << endl << b << endl << endl;
+    contactDrop << "Lagrange multipliers la" << endl << la << endl << endl;
     contactDrop.close();
   }
 
@@ -1307,67 +1360,23 @@ namespace MBSim {
       updatezRef(zParent);
     }
     jsv = jsv_;
+    cout << "shift at t = " << t << endl;
+    cout << "sv = " << sv << endl;
+    cout << "jsv = " << jsv << endl;
+    cout << "g beginn shift = " << g << endl;
+    cout << "gd beginn shift = " << gd << endl;
 
-    if(jsv(sv.size()-1)) { // projection
-      driftCount++;
-      updateStateDependentVariables(t);
-      updateg(t);
-      updateT(t); 
-      updateJacobians(t);
-      updateM(t); 
-      facLLM(); 
-      updateW(t); 
-      projectGeneralizedPositions(t);
-      updategd(t);
-      updateT(t); 
-      updateJacobians(t);
-      updateM(t); 
-      facLLM(); 
-      updateW(t); 
-      projectGeneralizedVelocities(t);
-      bool ret = true;
-      for(int j=0; j<jsv.size()-1; j++)
-        if(jsv(j)>0)
-          ret = false;
-      if(ret) return;
-    }
-
-    // project all closed contacts to positive normal distance
-    updateStateDependentVariables(t);
-    updateg(t);
-    //updategd(t); // TODO necessary?
-    updateT(t); 
-    updateJacobians(t);
-    //updateh(t); // TODO necessary?
-    updateM(t); 
-    facLLM(); 
-    updateW(t); 
-    //updateG(t); // TODO necessary?
-    projectGeneralizedPositions(t);
-    updategd(t);
-    updateT(t); 
-    updateJacobians(t);
-    updateM(t); 
-    facLLM(); 
-    updateW(t); 
-    projectGeneralizedVelocities(t);
-    // end of projection
-
-    updateCondition(); // decide which constraints should be added and deleted
-    checkActiveLinks(); // list with active links (g<=0)
-    calclaSize(); // adapt size of la 
-    updatelaRef(laParent(0,laSize-1));
-    updateJacobians(t); // not sure, if necessary
-    projectGeneralizedPositions(t); // project all newly closed contacts to positive normal distance
-
-    if(impact) { // impact
+    checkRoot();
+    int maxj = getRootID();
+    cout << "maxj = " << maxj << endl;
+    if(maxj==3) { // impact (velocity jump)
+      updateCondition(3); // decide which contacts have closed
       //cout << "stoss" << endl;
 
-      checkAllgd(); // look at all closed contacts
-      calcgdSizeActive();
+      calcgdSize(1); // IG
       updategdRef(gdParent(0,gdSize-1));
-      calclaSize();
-      calcrFactorSize();
+      calclaSize(1); // IG
+      calcrFactorSize(1); // IG
       updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updatelaRef(laParent(0,laSize-1));
@@ -1377,34 +1386,46 @@ namespace MBSim {
       updateg(t); // TODO necessary?
       updategd(t); // important because of updategdRef
       updateJacobians(t);
+      //updateh(t); // not relevant for impact
+      updateM(t);
       updateW(t); // important because of updateWRef
-      updateV(t); 
+      V[0] = W[0]; //updateV(t) not allowed here
       updateG(t); 
+      //updatewb(t); // not relevant for impact
 
-      // projectGeneralizedPositions(t);
       b.resize() = gd; // b = gd + trans(W)*slvLLFac(LLM,h)*dt with dt=0
       int iter;
       iter = solveImpacts();
+      cout << "la = " << la << endl;
+      cout << "u vorher" << u << endl;
       u += deltau(zParent,t,0);
+      cout << "u nacher" << u << endl;
 
-      //saveActive();
-      checkActivegdn(); // which contacts open / close after impact?
-      checkActiveLinks(); 
+      checkActivegdn(); // neuer Zustand nach Stoss
+      // Projektion:
+      // - es müssen immer alle Größen projiziert werden
+      // - neuer Zustand ab hier bekannt
+      // - Auswertung vor Setzen von gActive und gdActive
+      updateStateDependentVariables(t); // neues u berücksichtigen
+      updateJacobians(t); // für Berechnung von W
+      projectGeneralizedPositions(t,3);
+      // Projektion der Geschwindikgeiten erst am Schluss
+      //updateStateDependentVariables(t); // Änderung der Lageprojetion berücksichtigen, TODO, prüfen ob notwendig
+      //updateJacobians(t);
+      //projectGeneralizedVelocities(t,3);
 
-      //calcgdSize(); no invocation allowed 
-      //updategdRef(); no invocation allowed 
-
-      calclaSize();
-      calcrFactorSize();
-      updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-      updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-      updatelaRef(laParent(0,laSize-1));
-      updatewbRef(wbParent(0,laSize-1));
-      updaterFactorRef(rFactorParent(0,rFactorSize-1));
 
       if(laSize) {
 
-        updateStateDependentVariables(t); // necessary because of velocity change 
+        calclaSize(3); // IH
+        calcrFactorSize(3); // IH
+        updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+        updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+        updatelaRef(laParent(0,laSize-1));
+        updatewbRef(wbParent(0,laSize-1));
+        updaterFactorRef(rFactorParent(0,rFactorSize-1));
+
+        //updateStateDependentVariables(t); // necessary because of velocity change 
         updategd(t); // necessary because of velocity change 
         updateJacobians(t);
         updateh(t); 
@@ -1415,24 +1436,21 @@ namespace MBSim {
 	b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
         int iter;
         iter = solveConstraints();
+
         checkActivegdd();
-        checkActiveLinks();
-        calclaSize();
-        calcrFactorSize();
-	updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-	updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-//	updateWRef(WParent[1](Index(0,getuSize(1)-1),Index(0,getlaSize()-1)),1);
-//	updateVRef(VParent[1](Index(0,getuSize(1)-1),Index(0,getlaSize()-1)),1);
-	updatelaRef(laParent(0,laSize-1));
-        updatewbRef(wbParent(0,laSize-1));
-        updaterFactorRef(rFactorParent(0,rFactorSize-1));
+        projectGeneralizedPositions(t,2);
+        updateStateDependentVariables(t); // necessary because of velocity change 
+        updateJacobians(t);
+        projectGeneralizedVelocities(t,2);
+        
       }
     } 
-    else if(sticking) { // sticking->slip
+    else if(maxj==2) { // transition from slip to stick (acceleration jump)
       //cout << "haften" << endl;
+      updateCondition(2); // decide which contacts may stick
 
-      calclaSize();
-      calcrFactorSize();
+      calclaSize(3); // IH
+      calcrFactorSize(3); // IH
       updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updatelaRef(laParent(0,laSize-1));
@@ -1455,57 +1473,66 @@ namespace MBSim {
 	b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
         int iter;
         iter = solveConstraints();
+
         checkActivegdd();
-        checkActiveLinks();
-        calclaSize();
-        calcrFactorSize();
-	updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-	updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-//	updateWRef(WParent[1](Index(0,getuSize(1)-1),Index(0,getlaSize()-1)),1);
-//	updateVRef(VParent[1](Index(0,getuSize(1)-1),Index(0,getlaSize()-1)),1);
-	updatelaRef(laParent(0,laSize-1));
-        updatewbRef(wbParent(0,laSize-1));
-        updaterFactorRef(rFactorParent(0,rFactorSize-1));
+
+        projectGeneralizedPositions(t,2);
+        updateStateDependentVariables(t); // Änderung der Lageprojetion berücksichtigen, TODO, prüfen ob notwendig
+        updateJacobians(t);
+        projectGeneralizedVelocities(t,2);
+
       }
     } 
-    else { // contact opens
-      //cout << "oeffnen" << endl;
-      checkActiveLinks();
-      calclaSize();
-      calcrFactorSize();
-      updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-      updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-//      updateWRef(WParent[1](Index(0,getuSize(1)-1),Index(0,getlaSize()-1)),1);
-//      updateVRef(VParent[1](Index(0,getuSize(1)-1),Index(0,getlaSize()-1)),1);
-      updatelaRef(laParent(0,laSize-1));
-      updatewbRef(wbParent(0,laSize-1));
-      updaterFactorRef(rFactorParent(0,rFactorSize-1));
-    }
-    impact = false;
-    sticking = false;
-    updateStateDependentVariables(t);
-    updateg(t);
-    //updategd(t); TODO
-    updateT(t); 
-    updateJacobians(t);
-    //updateh(t); TODO
-    updateM(t); 
-    facLLM(); 
-    updateW(t); 
-    //updateG(t); TODO
+    else { // contact opens or transition from stick to slip
+      updateCondition(1);
 
-    projectGeneralizedPositions(t);
-    updategd(t);
-    updateT(t); 
+      // bring nichts, da Zustand vor Schaltpunkt
+   // updateStateDependentVariables(t);
+   // updateg(t);
+   // updategd(t);
+   // updateT(t); 
+   // updateJacobians(t);
+   // updateh(t); 
+   // updateM(t); 
+   // facLLM(); 
+   // cout <<"g = " << g << endl;
+   // cout <<"gd = " << gd << endl;
+   // if(laSize) {
+   //   updateW(t); 
+   //   updateV(t); 
+   //   updateG(t); 
+   //   updatewb(t); 
+   //   b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
+   //   int iter;
+   //   iter = solveConstraints();
+   // }
+      projectGeneralizedPositions(t,1);
+      updateStateDependentVariables(t); // Änderung der Lageprojetion berücksichtigen, TODO, prüfen ob notwendig
+      updateJacobians(t);
+      projectGeneralizedVelocities(t,1);
+    }
+    checkActive(1); // update von gActive, ...
+    calclaSize(3); // IH
+    calcrFactorSize(3); // IH
+    updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+    updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+    updatelaRef(laParent(0,laSize-1));
+    updatewbRef(wbParent(0,laSize-1));
+    updaterFactorRef(rFactorParent(0,rFactorSize-1));
+
+    updateStateDependentVariables(t);
     updateJacobians(t);
-    //updateh(t); TODO
-    updateM(t); 
-    facLLM(); 
-    updateW(t); 
-    projectGeneralizedVelocities(t);
+    updateg(t);
+    updategd(t);
+    cout << "g=" << g << endl;
+    cout << "gd=" << gd << endl;
+    cout << "u=" << u << endl;
+    cout << "laSize = " << laSize << endl;
+    setRootID(0);
   }
 
   void DynamicSystemSolver::getsv(const Vec& zParent, Vec& svExt, double t) { 
+    cout << "getsv at t = " << t << endl;
     if(sv()!=svExt()) {
       updatesvRef(svExt);
     }
@@ -1524,6 +1551,8 @@ namespace MBSim {
     updateh(t); 
     updateM(t); 
     facLLM(); 
+    cout <<"g = " << g << endl;
+    cout <<"gd = " << gd << endl;
     if(laSize) {
       updateW(t); 
       updateV(t); 
@@ -1534,10 +1563,13 @@ namespace MBSim {
       iter = solveConstraints();
     }
     updateStopVector(t);
-    sv(sv.size()-1) = driftCount*1e-0-t; 
+    cout << "sv = " << sv << endl;
+    //sv(sv.size()-1) = driftCount*1e-0-t; 
+    sv(sv.size()-1) = 1;
   }
 
  Vec DynamicSystemSolver::zdot(const Vec &zParent, double t) {
+    cout << "zdot at t = " << t << endl;
     if(q()!=zParent()) {
       updatezRef(zParent);
     }
@@ -1549,6 +1581,8 @@ namespace MBSim {
     updateh(t); 
     updateM(t); 
     facLLM(); 
+    cout <<"g = " << g << endl;
+    cout <<"gd = " << gd << endl;
     if(laSize) {
       updateW(t); 
       updateV(t); 
@@ -1556,8 +1590,11 @@ namespace MBSim {
       updatewb(t); 
       computeConstraintForces(t); 
     }
+    cout <<"la = " << la << endl;
     updater(t); 
     updatezd(t);
+    cout <<"u = " << u << endl;
+    cout <<"ud = " << ud[0] << endl;
 
     return zdParent;
   }

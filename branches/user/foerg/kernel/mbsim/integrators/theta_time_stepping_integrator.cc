@@ -46,9 +46,9 @@ namespace MBSim {
     system.checkActiveLinks();
     if(system.gActiveChanged()) {
       // system.checkAllgd(); // TODO necessary?
-      system.calcgdSizeActive();
-      system.calclaSize();
-      system.calcrFactorSize();
+      system.calcgdSize(3); // IH
+      system.calclaSize(3); // IH
+      system.calcrFactorSize(3); // IH
 
       system.updateWRef(system.getWParent()(Index(0,system.getuSize()-1),Index(0,system.getlaSize()-1)));
       system.updateVRef(system.getVParent()(Index(0,system.getuSize()-1),Index(0,system.getlaSize()-1)));
@@ -102,7 +102,7 @@ namespace MBSim {
       integrationSteps++;
       if((step*stepPlot - integrationSteps) < 0) {
         step++;
-        if(driftCompensation) system.projectGeneralizedPositions(t);
+        if(driftCompensation) system.projectGeneralizedPositions(t,0);
         system.plot2(z,t,dt);
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
