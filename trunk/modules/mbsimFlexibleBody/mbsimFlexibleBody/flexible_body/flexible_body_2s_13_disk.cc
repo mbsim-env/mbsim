@@ -43,8 +43,8 @@ namespace MBSimFlexibleBody {
     RefDofs = 2;
   }
 
-  void FlexibleBody2s13Disk::updateM(double t) {
-    M = MConst.copy();
+  void FlexibleBody2s13Disk::updateM(double t, int j) {
+    M[j] = MConst.copy();
   }
 
   void FlexibleBody2s13Disk::BuildElements() {
@@ -315,7 +315,7 @@ namespace MBSimFlexibleBody {
 
     }
     if(stage==MBSim::plot) {
-      updatePlotFeatures(parent); 
+      updatePlotFeatures(); 
 
       if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -475,7 +475,7 @@ namespace MBSimFlexibleBody {
     /*END-Eigenfrequencies*/
 
     // LU-decomposition of M
-    LLM = facLL(MConst);
+    LLM[0] = facLL(MConst);
   }
 
   void FlexibleBody2s13Disk::updateAG() {

@@ -104,7 +104,7 @@ namespace MBSimFlexibleBody {
 #endif
   }
 
-  void NurbsDisk2s::updateJacobiansForFrame(ContourPointData &cp) {
+  void NurbsDisk2s::updateJacobiansForFrame(ContourPointData &cp, int j /*=0*/) {
 #ifdef HAVE_NURBS
     cp.getFrameOfReference().getJacobianOfTranslation().resize(3,nj*nr*3+RefDofs);
     cp.getFrameOfReference().getJacobianOfRotation().resize(3,nj*nr*3+RefDofs);

@@ -64,12 +64,11 @@ namespace MBSimFlexibleBody {
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updatedq(double t, double dt) { qd = u*dt; }
       virtual void updateqd(double t) { qd = u; }
-      virtual void updateh(double t);
-      virtual void updateM(double t);
+      virtual void updateh(double t, int k=0);
+      virtual void updateM(double t, int k=0);
       virtual void updatedhdz(double t);
       virtual void updateStateDependentVariables(double t);
-      virtual void updateJacobians(double t);
-      virtual void updateInverseKineticsJacobians(double t);
+      virtual void updateJacobians(double t, int k=0);
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual void plot(double t, double dt=1);
