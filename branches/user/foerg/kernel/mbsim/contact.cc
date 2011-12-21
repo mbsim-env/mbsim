@@ -177,8 +177,8 @@ namespace MBSim {
   }
 
   void Contact::updateStopVector(double t) {
-    cout << "updateStopVector of " << name << endl;
-    cout << gddk[0]<<endl;
+    //cout << "updateStopVector of " << name << endl;
+    //cout << gddk[0]<<endl;
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]!=gdActive[k][0])
 	throw;
@@ -1552,17 +1552,19 @@ namespace MBSim {
       for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
         if(rootID[k]==1)
           gddk[k] = gddkBuf[k];
-        cout << "updatecorr, gddT = " <<  gddk[0](1) << " " <<  gddkBuf[0](1) << endl;
+        //cout << "updatecorr, gddT = " <<  gddk[0](1) << " " <<  gddkBuf[0](1) << endl;
         if(gActive[k] && gdActive[k][0]) { // Contact was closed
           if(gddActive[k][0])
             corrk[k](0) = 0; // Contact stays closed, regular projection
           else
             corrk[k](0) = 1e-16; // Contact opens, projection to positive normal distance
-          if(gdActive[k][1]) { // Contact was sticking
-            if(gddActive[k][1])
-              corrk[k](1) = 0; // Contact stays sticking, regular projection
-            else {
-              corrk[k](1) = gddk[k](1)>0?1e-16:-1e-16; // Contact slides, projection to positive normal velocity
+          if(getFrictionDirections()) {
+            if(gdActive[k][1]) { // Contact was sticking
+              if(gddActive[k][1])
+                corrk[k](1) = 0; // Contact stays sticking, regular projection
+              else {
+                corrk[k](1) = gddk[k](1)>0?1e-16:-1e-16; // Contact slides, projection to positive normal velocity
+              }
             }
           }
         }
