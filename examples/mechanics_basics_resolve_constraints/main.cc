@@ -8,6 +8,7 @@ int main (int argc, char* argv[])
 {
   System *sys = new System("MBS");
 
+  sys->setInverseKinetics(true);
   sys->initialize();
   
   RKSuiteIntegrator integrator;
