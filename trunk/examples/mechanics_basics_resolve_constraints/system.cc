@@ -69,9 +69,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   q0(0) = -phi2+phi1;
   stab2->setInitialGeneralizedPosition(q0);
 
-  stab1->setForceDirection("[1,0;0,1;0,0]]");
-  stab2->setForceDirection("[1,0;0,1;0,0]]");
-
 #ifdef HAVE_OPENMBVCPPINTERFACE
   cylinder = new OpenMBV::Frustum;
   cylinder->setTopRadius(0.02);
