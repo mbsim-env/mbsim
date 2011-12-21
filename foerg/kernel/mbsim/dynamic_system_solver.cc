@@ -1532,7 +1532,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::getsv(const Vec& zParent, Vec& svExt, double t) { 
-    cout << "getsv at t = " << t << endl;
+    //cout << "getsv at t = " << t << endl;
     if(sv()!=svExt()) {
       updatesvRef(svExt);
     }
@@ -1551,8 +1551,8 @@ namespace MBSim {
     updateh(t); 
     updateM(t); 
     facLLM(); 
-    cout <<"g = " << g << endl;
-    cout <<"gd = " << gd << endl;
+    //cout <<"g = " << g << endl;
+    //cout <<"gd = " << gd << endl;
     if(laSize) {
       updateW(t); 
       updateV(t); 
@@ -1563,13 +1563,13 @@ namespace MBSim {
       iter = solveConstraints();
     }
     updateStopVector(t);
-    cout << "sv = " << sv << endl;
+    //cout << "sv = " << sv << endl;
     //sv(sv.size()-1) = driftCount*1e-0-t; 
     sv(sv.size()-1) = 1;
   }
 
  Vec DynamicSystemSolver::zdot(const Vec &zParent, double t) {
-    cout << "zdot at t = " << t << endl;
+    //cout << "zdot at t = " << t << endl;
     if(q()!=zParent()) {
       updatezRef(zParent);
     }
@@ -1581,8 +1581,8 @@ namespace MBSim {
     updateh(t); 
     updateM(t); 
     facLLM(); 
-    cout <<"g = " << g << endl;
-    cout <<"gd = " << gd << endl;
+    //cout <<"g = " << g << endl;
+    //cout <<"gd = " << gd << endl;
     if(laSize) {
       updateW(t); 
       updateV(t); 
@@ -1590,11 +1590,11 @@ namespace MBSim {
       updatewb(t); 
       computeConstraintForces(t); 
     }
-    cout <<"la = " << la << endl;
+    //cout <<"la = " << la << endl;
     updater(t); 
     updatezd(t);
-    cout <<"u = " << u << endl;
-    cout <<"ud = " << ud[0] << endl;
+    //cout <<"u = " << u << endl;
+    //cout <<"ud = " << ud[0] << endl;
 
     return zdParent;
   }
