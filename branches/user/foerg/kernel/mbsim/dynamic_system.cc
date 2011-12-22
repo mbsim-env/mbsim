@@ -1025,12 +1025,6 @@ namespace MBSim {
         dynamicsystem[i]->buildListOfModels(modelList,recursive);
   }
 
-  void DynamicSystem::updateCondition(int j) {
-
-    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
-      (*i)->updateCondition(j);
-  }
-
   void DynamicSystem::setUpInverseKinetics() {
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 

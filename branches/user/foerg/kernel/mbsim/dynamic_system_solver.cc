@@ -1368,7 +1368,7 @@ namespace MBSim {
     int maxj = getRootID();
     cout << "maxj = " << maxj << endl;
     if(maxj==3) { // impact (velocity jump)
-      updateCondition(3); // decide which contacts have closed
+      checkActive(6); // decide which contacts have closed
       //cout << "stoss" << endl;
 
       calcgdSize(1); // IG
@@ -1445,7 +1445,7 @@ namespace MBSim {
     } 
     else if(maxj==2) { // transition from slip to stick (acceleration jump)
       //cout << "haften" << endl;
-      updateCondition(2); // decide which contacts may stick
+      checkActive(7); // decide which contacts may stick
 
       calclaSize(3); // IH
       calcrFactorSize(3); // IH
@@ -1482,7 +1482,7 @@ namespace MBSim {
       }
     } 
     else { // contact opens or transition from stick to slip
-      updateCondition(1);
+      checkActive(8);
 
       projectGeneralizedPositions(t,1);
       updateStateDependentVariables(t); // Änderung der Lageprojetion berücksichtigen, TODO, prüfen ob notwendig

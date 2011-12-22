@@ -288,38 +288,6 @@ namespace MBSim {
       virtual void checkActive(int j) {}
 
       /**
-       * \brief set possible attribute for active relative distance in derived classes 
-       */
-      virtual void checkActiveg() {}
-
-      /**
-       * \brief set possible attribute for active relative velocity in derived classes for initialising event driven simulation 
-       */
-      virtual void checkActivegd() {}
-
-      /**
-       * \brief set possible attribute for active relative velocity in derived classes for updating event driven simulation after an impact
-       */
-      virtual void checkActivegdn() {}
-
-      /**
-       * \brief set possible attribute for active relative acceleration in derived classes for updating event driven simulation after an impact
-       */
-      virtual void checkActivegdd() {}
-
-      /**
-       * \brief set possible attribute for active relative velocity in derived classes for updating event driven and time-stepping simulation before an impact
-       */
-      virtual void checkAllgd() {}
-      virtual void checkAllgdd() {}
-
-      /**
-       * \brief set possible attributes for active relative kinematics in derived classes for updating event driven simulation before case study
-       */
-      virtual void updateCondition(int i) {}
-      virtual void checkState() {}
-
-      /**
        * \brief compute potential energy
        */
       virtual double computePotentialEnergy() { return 0; }
