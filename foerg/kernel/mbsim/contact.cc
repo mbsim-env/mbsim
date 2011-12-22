@@ -1205,13 +1205,13 @@ namespace MBSim {
       }
     }
     else if(j==3) { // formerly checkActivegdn()
-      cout << "checkActivegdn of " << name << endl;
-      cout << gdnk[0] << endl;
-      cout << "gActive = " << gActive[0] << endl;
-      cout << "gdActive0 = " << gdActive[0][0] << endl;
-      cout << "gdActive1 = " << gdActive[0][1] << endl;
-      cout << "gddActive0 = " << gddActive[0][0] << endl;
-      cout << "gddActive1 = " << gddActive[0][1] << endl;
+//      cout << "checkActivegdn of " << name << endl;
+//      cout << gdnk[0] << endl;
+//      cout << "gActive = " << gActive[0] << endl;
+//      cout << "gdActive0 = " << gdActive[0][0] << endl;
+//      cout << "gdActive1 = " << gdActive[0][1] << endl;
+//      cout << "gddActive0 = " << gddActive[0][0] << endl;
+//      cout << "gddActive1 = " << gddActive[0][1] << endl;
       for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
         if(gActive[k]) { // Contact was closed
           if(gdnk[k](0) <= gdTol) { // Contact stays closed
@@ -1236,21 +1236,21 @@ namespace MBSim {
           }
         }
       }
-      cout << "danach" << endl;
-      cout << "gActive = " << gActive[0] << endl;
-      cout << "gdActive0 = " << gdActive[0][0] << endl;
-      cout << "gdActive1 = " << gdActive[0][1] << endl;
-      cout << "gddActive0 = " << gddActive[0][0] << endl;
-      cout << "gddActive1 = " << gddActive[0][1] << endl;
+//      cout << "danach" << endl;
+//      cout << "gActive = " << gActive[0] << endl;
+//      cout << "gdActive0 = " << gdActive[0][0] << endl;
+//      cout << "gdActive1 = " << gdActive[0][1] << endl;
+//      cout << "gddActive0 = " << gddActive[0][0] << endl;
+//      cout << "gddActive1 = " << gddActive[0][1] << endl;
     }
     else if(j==4) { // formerly checkActivegdd()
-      cout << "checkActivegdd of " << name << endl;
-      cout << gddk[0] << endl;
-      cout << "gActive = " << gActive[0] << endl;
-      cout << "gdActive0 = " << gdActive[0][0] << endl;
-      cout << "gdActive1 = " << gdActive[0][1] << endl;
-      cout << "gddActive0 = " << gddActive[0][0] << endl;
-      cout << "gddActive1 = " << gddActive[0][1] << endl;
+//      cout << "checkActivegdd of " << name << endl;
+//      cout << gddk[0] << endl;
+//      cout << "gActive = " << gActive[0] << endl;
+//      cout << "gdActive0 = " << gdActive[0][0] << endl;
+//      cout << "gdActive1 = " << gdActive[0][1] << endl;
+//      cout << "gddActive0 = " << gddActive[0][0] << endl;
+//      cout << "gddActive1 = " << gddActive[0][1] << endl;
       for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
         if(gActive[k]) {
           if(gdActive[k][0]) {
@@ -1273,12 +1273,12 @@ namespace MBSim {
           }
         }
       }
-      cout << "danach" << endl;
-      cout << "gActive = " << gActive[0] << endl;
-      cout << "gdActive0 = " << gdActive[0][0] << endl;
-      cout << "gdActive1 = " << gdActive[0][1] << endl;
-      cout << "gddActive0 = " << gddActive[0][0] << endl;
-      cout << "gddActive1 = " << gddActive[0][1] << endl;
+//      cout << "danach" << endl;
+//      cout << "gActive = " << gActive[0] << endl;
+//      cout << "gdActive0 = " << gdActive[0][0] << endl;
+//      cout << "gdActive1 = " << gdActive[0][1] << endl;
+//      cout << "gddActive0 = " << gddActive[0][0] << endl;
+//      cout << "gddActive1 = " << gddActive[0][1] << endl;
     }
     else if(j==5) {
       for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
@@ -1306,6 +1306,47 @@ namespace MBSim {
       //cout << "gddActive0 = " << gddActive[0][0] << endl;
       //cout << "gddActive1 = " << gddActive[0][1] << endl;
     }
+    else if(j==6) { // nur nach schließenden Kontakten schauen
+      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+        if(rootID[k]==3) {
+          gActive[k] = true;
+          gdActive[k][0] = true;
+          gdActive[k][1] = true;
+          gddActive[k][0] = true;
+          gddActive[k][1] = true;
+          //return;
+        }
+      }
+    } else if(j==7) { // nur nach Gleit-Haft-Übergängen schauen
+      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+        if(getFrictionDirections()) {
+          if(rootID[k]==2) {
+            gdActive[k][1] = true;
+            gddActive[k][1] = true;
+            //return;
+          }
+        }
+      }
+    } else if(j==8) { // nur nach öffnenden Kontakten und Haft-Gleit-Übergängen schauen
+      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+        if(jsvk[k](0) && rootID[k]==1) { // Kontakt öffnet
+          gddActive[k][0] = false;
+          gddActive[k][1] = false;
+        }
+        if(getFrictionDirections()) {
+          if(jsvk[k](1) && rootID[k]==1) { // Haft-Gleitübergang
+            gddActive[k][1] = false;
+          }
+        }
+        //return;
+      }
+    }
+//      cout << "danach" << endl;
+//      cout << "gActive = " << gActive[0] << endl;
+//      cout << "gdActive0 = " << gdActive[0][0] << endl;
+//      cout << "gdActive1 = " << gdActive[0][1] << endl;
+//      cout << "gddActive0 = " << gddActive[0][0] << endl;
+//      cout << "gddActive1 = " << gddActive[0][1] << endl;
     else
       throw;
   }
@@ -1318,57 +1359,6 @@ namespace MBSim {
 //    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) 
 //      gActive[k] = fcl->isActive(gk[k](0),gTol) ? 1 : 0; 
 //  }
-
-  void Contact::updateCondition(int i) {
-    cout << "updateCondition of " << name << endl;
-    cout << "davor, i = " << i << endl;
-    cout << "gActive = " << gActive[0] << endl;
-    cout << "gdActive0 = " << gdActive[0][0] << endl;
-    cout << "gdActive1 = " << gdActive[0][1] << endl;
-    cout << "gddActive0 = " << gddActive[0][0] << endl;
-    cout << "gddActive1 = " << gddActive[0][1] << endl;
-    cout << "jsvk = " << jsvk[0] << endl;
-    cout << "rootID = " << rootID[0] << endl;
-    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
-      if(i==3) { // nur nach schließenden Kontakten schauen
-        if(rootID[k]==3) {
-          gActive[k] = true;
-          gdActive[k][0] = true;
-          gdActive[k][1] = true;
-          gddActive[k][0] = true;
-          gddActive[k][1] = true;
-          //return;
-        }
-      } else if(i==2) { // nur nach Gleit-Haft-Übergängen schauen
-        if(getFrictionDirections()) {
-          if(rootID[k]==2) {
-            gdActive[k][1] = true;
-            gddActive[k][1] = true;
-            //return;
-          }
-        }
-      } else if(i==1) { // nur nach öffnenden Kontakten und Haft-Gleit-Übergängen schauen
-        if(jsvk[k](0) && rootID[k]==1) { // Kontakt öffnet
-          gddActive[k][0] = false;
-          gddActive[k][1] = false;
-        }
-        if(getFrictionDirections()) {
-          if(jsvk[k](1) && rootID[k]==1) { // Haft-Gleitübergang
-            gddActive[k][1] = false;
-          }
-        }
-        //return;
-      }
-      else
-        throw;
-      cout << "danach" << endl;
-      cout << "gActive = " << gActive[0] << endl;
-      cout << "gdActive0 = " << gdActive[0][0] << endl;
-      cout << "gdActive1 = " << gdActive[0][1] << endl;
-      cout << "gddActive0 = " << gddActive[0][0] << endl;
-      cout << "gddActive1 = " << gddActive[0][1] << endl;
-    }
-  }
 
   int Contact::getFrictionDirections() {
     if(fdf) 

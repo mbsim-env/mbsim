@@ -504,11 +504,6 @@ namespace MBSim {
       void buildListOfModels(std::vector<ModellingInterface*> &model, bool recursive = true);
 
       /**
-       * \brief set possible attribute for active relative kinematics for updating event driven simulation before case study
-       */
-      void updateCondition(int i);
-
-      /**
        * \brief analyse constraints of dynamic systems for usage in inverse kinetics
        */
       void setUpInverseKinetics();

@@ -88,8 +88,6 @@ namespace MBSim {
       virtual void updaterFactors();
       virtual void checkImpactsForTermination(double dt);
       virtual void checkConstraintsForTermination();
-      virtual void checkActiveg() {}
-      virtual void checkActivegd() {}
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
