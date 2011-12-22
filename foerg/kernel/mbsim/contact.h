@@ -69,7 +69,6 @@ namespace MBSim {
       virtual void updateh(double t, int i=0);
       virtual void updateg(double t);
       virtual void updategd(double t);
-      virtual void adjustgd();
       virtual void updateStopVector(double t);
       virtual void updateJacobians(double t, int j=0);
       /***************************************************/
@@ -227,9 +226,6 @@ namespace MBSim {
        */
       std::vector<unsigned int*> gdActive; 
       std::vector<unsigned int*> gddActive; 
-
-      std::vector<unsigned int> projg; 
-      std::vector<unsigned int*> projgd; 
 
       /** 
        * \brief index for tangential directions in projection matrices
