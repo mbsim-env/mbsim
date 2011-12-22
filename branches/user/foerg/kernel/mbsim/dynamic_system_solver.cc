@@ -820,9 +820,9 @@ namespace MBSim {
   void DynamicSystemSolver::computeInitialCondition() {
     updateStateDependentVariables(0);
     updateg(0);
-    checkActiveg();
+    checkActive(1);
     updategd(0);
-    checkActivegd();
+    checkActive(2);
     checkActiveLinks();
     updateJacobians(0);
     calclaSize(3);
@@ -903,7 +903,7 @@ namespace MBSim {
 
     updateStateDependentVariables(t);
     updateg(t);
-    checkActiveg();
+    checkActive(1);
     checkActiveLinks();
     if(gActiveChanged() || options==1 ) {
       calcgdSize(2); // IB
@@ -1399,7 +1399,7 @@ namespace MBSim {
       u += deltau(zParent,t,0);
       cout << "u nacher" << u << endl;
 
-      checkActivegdn(); // neuer Zustand nach Stoss
+      checkActive(3); // neuer Zustand nach Stoss
       // Projektion:
       // - es müssen immer alle Größen projiziert werden
       // - neuer Zustand ab hier bekannt
@@ -1435,7 +1435,7 @@ namespace MBSim {
         int iter;
         iter = solveConstraints();
 
-        checkActivegdd();
+        checkActive(4);
         projectGeneralizedPositions(t,2);
         updateStateDependentVariables(t); // necessary because of velocity change 
         updateJacobians(t);
@@ -1472,7 +1472,7 @@ namespace MBSim {
         int iter;
         iter = solveConstraints();
 
-        checkActivegdd();
+        checkActive(4);
 
         projectGeneralizedPositions(t,2);
         updateStateDependentVariables(t); // Änderung der Lageprojetion berücksichtigen, TODO, prüfen ob notwendig
@@ -1484,32 +1484,12 @@ namespace MBSim {
     else { // contact opens or transition from stick to slip
       updateCondition(1);
 
-      // bring nichts, da Zustand vor Schaltpunkt
-   // updateStateDependentVariables(t);
-   // updateg(t);
-   // updategd(t);
-   // updateT(t); 
-   // updateJacobians(t);
-   // updateh(t); 
-   // updateM(t); 
-   // facLLM(); 
-   // cout <<"g = " << g << endl;
-   // cout <<"gd = " << gd << endl;
-   // if(laSize) {
-   //   updateW(t); 
-   //   updateV(t); 
-   //   updateG(t); 
-   //   updatewb(t); 
-   //   b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
-   //   int iter;
-   //   iter = solveConstraints();
-   // }
       projectGeneralizedPositions(t,1);
       updateStateDependentVariables(t); // Änderung der Lageprojetion berücksichtigen, TODO, prüfen ob notwendig
       updateJacobians(t);
       projectGeneralizedVelocities(t,1);
     }
-    checkActive(1); // update von gActive, ...
+    checkActive(5); // final update von gActive, ...
     calclaSize(3); // IH
     calcrFactorSize(3); // IH
     updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));

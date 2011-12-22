@@ -1217,42 +1217,6 @@ namespace MBSim {
       (*i)->checkActive(j);
   }
 
-  void DynamicSystem::checkActiveg() {
-
-    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
-      (*i)->checkActiveg();
-  }
-
-  void DynamicSystem::checkActivegd() {
-
-    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
-      (*i)->checkActivegd();
-  }
-
-  void DynamicSystem::checkActivegdn() {
-
-    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
-      (*i)->checkActivegdn();
-  }
-
-  void DynamicSystem::checkActivegdd() {
-
-    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
-      (*i)->checkActivegdd();
-  }
-
-  void DynamicSystem::checkAllgd() {
-
-    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
-      (*i)->checkAllgd();
-  }
-
-  void DynamicSystem::checkAllgdd() {
-
-    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
-      (*i)->checkAllgdd();
-  }
-
   void DynamicSystem::setgTol(double tol) {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i!= dynamicsystem.end(); ++i)
       (**i).setgTol(tol);

@@ -42,7 +42,7 @@ namespace MBSim {
 
     system.updateStateDependentVariables(t);
     system.updateg(t);
-    system.checkActiveg();
+    system.checkActive(1);
     system.checkActiveLinks();
     if(system.gActiveChanged()) {
       // system.checkAllgd(); // TODO necessary?
