@@ -267,16 +267,12 @@ namespace MBSim {
 #endif
 
   void DynamicSystem::updatewb(double t, int j) {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updatewb(t,j);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
       (**i).updatewb(t,j);
   }
 
   void DynamicSystem::updateW(double t, int j) {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (**i).updateW(t,j);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
       (**i).updateW(t,j);
@@ -303,18 +299,12 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateV(double t, int j) {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (**i).updateV(t,j);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
       (**i).updateV(t,j);
   }
 
   void DynamicSystem::updateg(double t) {
-    for(int i=0; i<(int)dynamicsystem.size(); i++) {
-      try { dynamicsystem[i]->updateg(t); }
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
 
     for(int i=0; i<(int)linkSingleValued.size(); i++) {
       try { linkSingleValued[i]->updateg(t); }
@@ -328,10 +318,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::updategInverseKinetics(double t) {
-    for(int i=0; i<(int)dynamicsystem.size(); i++) {
-      try { dynamicsystem[i]->updategInverseKinetics(t); }
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
 
     for(int i=0; i<(int)inverseKineticsLink.size(); i++) {
       try { inverseKineticsLink[i]->updateg(t); }
@@ -340,10 +326,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::updategd(double t) {
-    for(int i=0; i<(int)dynamicsystem.size(); i++) {
-      try { dynamicsystem[i]->updategd(t); }
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
 
     for(int i=0; i<(int)linkSingleValued.size(); i++) {
       try { linkSingleValued[i]->updategd(t); }
@@ -362,10 +344,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::updategdInverseKinetics(double t) {
-    for(int i=0; i<(int)dynamicsystem.size(); i++) {
-      try { dynamicsystem[i]->updategdInverseKinetics(t); }
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
 
     for(int i=0; i<(int)inverseKineticsLink.size(); i++) { 
       try { inverseKineticsLink[i]->updategd(t); }
@@ -590,8 +568,6 @@ namespace MBSim {
   }
 
   int DynamicSystem::solveConstraintsFixpointSingle() {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->solveConstraintsFixpointSingle(); 
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
       (*i)->solveConstraintsFixpointSingle();
@@ -600,10 +576,6 @@ namespace MBSim {
   }
 
   int DynamicSystem::solveImpactsFixpointSingle(double dt) {
-    for(int i=0; i<(int)dynamicsystem.size(); i++) {
-      try { dynamicsystem[i]->solveImpactsFixpointSingle(dt); }
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
 
     for(int i=0; i<(int)linkSetValuedActive.size(); i++) {
       try { linkSetValuedActive[i]->solveImpactsFixpointSingle(dt); }
@@ -614,8 +586,6 @@ namespace MBSim {
   }
 
   int DynamicSystem::solveConstraintsGaussSeidel() {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->solveConstraintsGaussSeidel(); 
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
       (*i)->solveConstraintsGaussSeidel();
@@ -624,8 +594,6 @@ namespace MBSim {
   }
 
   int DynamicSystem::solveImpactsGaussSeidel(double dt) {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->solveImpactsGaussSeidel(dt); 
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
       (*i)->solveImpactsGaussSeidel(dt);
@@ -634,8 +602,6 @@ namespace MBSim {
   }
 
   int DynamicSystem::solveConstraintsRootFinding() {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->solveConstraintsRootFinding(); 
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
       (*i)->solveConstraintsRootFinding();
@@ -644,8 +610,6 @@ namespace MBSim {
   }
 
   int DynamicSystem::solveImpactsRootFinding(double dt) {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->solveImpactsRootFinding(dt);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
       (*i)->solveImpactsRootFinding(dt);
@@ -654,8 +618,6 @@ namespace MBSim {
   }
 
   int DynamicSystem::jacobianConstraints() {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->jacobianConstraints(); 
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
       (*i)->jacobianConstraints();
@@ -664,8 +626,6 @@ namespace MBSim {
   }
 
   int DynamicSystem::jacobianImpacts() {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->jacobianImpacts(); 
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
       (*i)->jacobianImpacts();
@@ -674,24 +634,18 @@ namespace MBSim {
   }
 
   void DynamicSystem::checkConstraintsForTermination() {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->checkConstraintsForTermination(); 
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
       (**i).checkConstraintsForTermination();
   }
 
   void DynamicSystem::checkImpactsForTermination(double dt) {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->checkImpactsForTermination(dt);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
       (**i).checkImpactsForTermination(dt);
   }
 
   void DynamicSystem::updaterFactors() {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updaterFactors(); 
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
       (**i).updaterFactors();
@@ -880,9 +834,6 @@ namespace MBSim {
   void DynamicSystem::updategRef(const Vec& gParent) {
     g.resize() >> gParent(gInd,gInd+gSize-1);
 
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updategRef(gParent);
-
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
       (**i).updategRef(gParent);
   }
@@ -890,18 +841,12 @@ namespace MBSim {
   void DynamicSystem::updategdRef(const Vec& gdParent) {
     gd.resize() >> gdParent(gdInd,gdInd+gdSize-1);
 
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updategdRef(gdParent);
-
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
       (**i).updategdRef(gdParent);
   }
 
   void DynamicSystem::updatelaRef(const Vec &laParent) {
     la.resize() >> laParent(laInd,laInd+laSize-1);
-
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updatelaRef(laParent);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
       (**i).updatelaRef(laParent);
@@ -923,18 +868,12 @@ namespace MBSim {
   void DynamicSystem::updatewbRef(const Vec &wbParent) {
     wb.resize() >> wbParent(laInd,laInd+laSize-1);
 
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updatewbRef(wbParent);
-
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
       (**i).updatewbRef(wbParent);
   }
 
   void DynamicSystem::updateWRef(const Mat &WParent, int j) {
     W[j].resize() >> WParent(Index(hInd[j],hInd[j]+hSize[j]-1),Index(laInd,laInd+laSize-1));
-
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updateWRef(WParent,j);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
       (**i).updateWRef(WParent,j);
@@ -971,9 +910,6 @@ namespace MBSim {
   void DynamicSystem::updateVRef(const Mat &VParent, int j) {
     V[j].resize() >> VParent(Index(hInd[j],hInd[j]+hSize[j]-1),Index(laInd,laInd+laSize-1));
 
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updateVRef(VParent,j);
-
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
       (**i).updateVRef(VParent,j);
   }
@@ -1001,18 +937,12 @@ namespace MBSim {
   void DynamicSystem::updateresRef(const Vec &resParent) {
     res.resize() >> resParent(laInd,laInd+laSize-1);
 
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updateresRef(resParent);
-
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
       (**i).updateresRef(resParent);
   }
 
   void DynamicSystem::updaterFactorRef(const Vec &rFactorParent) {
     rFactor.resize() >> rFactorParent(rFactorInd,rFactorInd+rFactorSize-1);
-
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updaterFactorRef(rFactorParent);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
       (**i).updaterFactorRef(rFactorParent);
@@ -1096,24 +1026,18 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateCondition() {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updateCondition();
 
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
       (*i)->updateCondition();
   }
 
   void DynamicSystem::checkState() {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->checkState();
 
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
       (*i)->checkState();
   }
 
   void DynamicSystem::setUpInverseKinetics() {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->setUpInverseKinetics();
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
       (*i)->setUpInverseKinetics();
@@ -1221,12 +1145,6 @@ namespace MBSim {
   void DynamicSystem::calclaSize() {
     laSize = 0;
 
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) {
-      (*i)->calclaSize();
-      (*i)->setlaInd(laSize);
-      laSize += (*i)->getlaSize();
-    }
-
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) {
       (*i)->calclaSize();
       (*i)->setlaInd(laSize);
@@ -1260,12 +1178,6 @@ namespace MBSim {
   void DynamicSystem::calclaSizeForActiveg() {
     laSize = 0;
 
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) {
-      (*i)->calclaSizeForActiveg();
-      (*i)->setlaInd(laSize);
-      laSize += (*i)->getlaSize();
-    }
-
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) {
       (*i)->calclaSizeForActiveg();
       (*i)->setlaInd(laSize);
@@ -1275,12 +1187,6 @@ namespace MBSim {
 
   void DynamicSystem::calcgSize() {
     gSize = 0;
-
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) {
-      (*i)->calcgSize();
-      (*i)->setgInd(gSize);
-      gSize += (*i)->getgSize();
-    }
 
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) {
       (*i)->calcgSize();
@@ -1292,12 +1198,6 @@ namespace MBSim {
   void DynamicSystem::calcgSizeActive() {
     gSize = 0;
 
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) {
-      (*i)->calcgSizeActive();
-      (*i)->setgInd(gSize);
-      gSize += (*i)->getgSize();
-    }
-
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) {
       (*i)->calcgSizeActive();
       (*i)->setgInd(gSize);
@@ -1307,12 +1207,6 @@ namespace MBSim {
 
   void DynamicSystem::calcgdSize() {
     gdSize = 0;
-
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) {
-      (*i)->calcgdSize();
-      (*i)->setgdInd(gdSize);
-      gdSize += (*i)->getgdSize();
-    }
 
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) {
       (*i)->calcgdSize();
@@ -1324,12 +1218,6 @@ namespace MBSim {
   void DynamicSystem::calcgdSizeActive() {
     gdSize = 0;
 
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) {
-      (*i)->calcgdSizeActive();
-      (*i)->setgdInd(gdSize);
-      gdSize += (*i)->getgdSize();
-    }
-
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) {
       (*i)->calcgdSizeActive();
       (*i)->setgdInd(gdSize);
@@ -1339,12 +1227,6 @@ namespace MBSim {
 
   void DynamicSystem::calcrFactorSize() {
     rFactorSize = 0;
-
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) {
-      (*i)->calcrFactorSize();
-      (*i)->setrFactorInd(rFactorSize);
-      rFactorSize += (*i)->getrFactorSize();
-    }
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) {
       (*i)->calcrFactorSize();
@@ -1358,9 +1240,6 @@ namespace MBSim {
     linkSetValuedActive.clear();
     linkSetValuedNotActiveWithSmoothPart.clear();
 
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->checkActiveLinks();
-
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) {
       if((*i)->isActive())
         linkSetValuedActive.push_back(*i);
@@ -1370,40 +1249,30 @@ namespace MBSim {
   }
 
   void DynamicSystem::checkActiveg() {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->checkActiveg();
 
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
       (*i)->checkActiveg();
   }
 
   void DynamicSystem::checkActivegd() {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->checkActivegd();
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
       (*i)->checkActivegd();
   }
 
   void DynamicSystem::checkActivegdn() {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->checkActivegdn();
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
       (*i)->checkActivegdn();
   }
 
   void DynamicSystem::checkActivegdd() {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->checkActivegdd();
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
       (*i)->checkActivegdd();
   }
 
   void DynamicSystem::checkAllgd() {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->checkAllgd();
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
       (*i)->checkAllgd();
