@@ -1069,7 +1069,7 @@ namespace MBSim {
 
   void Contact::updaterFactors() {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
-      if(gActive[k]) { // TODO
+      if(gdActive[k][0]) {
 
         const double *a = ds->getGs()();
         const int *ia = ds->getGs().Ip();
