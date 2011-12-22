@@ -123,7 +123,8 @@ namespace MBSim {
       nqR = 2; 
     }
     else if(dynamic_cast<RotationAboutThreeAxes*>(fAPK)) {
-      nqR = 3; 
+      if (not (dynamic_cast<TimeDependentCardanAngles*>(fAPK)))
+        nqR = 3;
     }
     else if(fAPK) {
       int nqtmp = fAPK->getqSize();
@@ -153,8 +154,9 @@ namespace MBSim {
 	  nuR = 2; 
 	} 
 	else if(dynamic_cast<RotationAboutThreeAxes*>(fAPK)) {
-	  nuR = 3; 
-	} 
+	  if (not (dynamic_cast<TimeDependentCardanAngles*>(fAPK)))
+	    nuR = 3;
+	}
       } else {
         int nutmp = fPJR->getuSize();
         if(nu[0]) assert(nu[0]==nutmp);
@@ -310,6 +312,22 @@ namespace MBSim {
           for(int i=0; i<nu[0]; i++)
             plotColumns.push_back("uRel("+numtostr(i)+")");
         }
+        if(getPlotFeature(globalPosition)==enabled) {
+          plotColumns.push_back("WxOS");
+          plotColumns.push_back("WyOS");
+          plotColumns.push_back("WzOS");
+          plotColumns.push_back("alpha");
+          plotColumns.push_back("beta");
+          plotColumns.push_back("gamma");
+        }
+        if(getPlotFeature(globalVelocity)==enabled) {
+          plotColumns.push_back("WvxS");
+          plotColumns.push_back("WvyS");
+          plotColumns.push_back("WvzS");
+          plotColumns.push_back("alphap");
+          plotColumns.push_back("betap");
+          plotColumns.push_back("gammap");
+        }
         Body::init(stage);
       }
     }
@@ -339,6 +357,26 @@ namespace MBSim {
           plotVector.push_back(qRel(i));
         for(int i=0; i<nu[0]; i++)
           plotVector.push_back(uRel(i));
+      }
+      if(getPlotFeature(globalPosition)==enabled) {
+        Vec WrOS=frame[0]->getPosition();
+        Vec cardan=AIK2Cardan(frame[0]->getOrientation());
+        plotVector.push_back(WrOS(0));
+        plotVector.push_back(WrOS(1));
+        plotVector.push_back(WrOS(2));
+        plotVector.push_back(cardan(0));
+        plotVector.push_back(cardan(1));
+        plotVector.push_back(cardan(2));
+      }
+      if(getPlotFeature(globalVelocity)==enabled) {
+        Vec WvS    =frame[0]->getVelocity();
+        Vec WomegaS=frame[0]->getAngularVelocity();
+        plotVector.push_back(WvS(0));
+        plotVector.push_back(WvS(1));
+        plotVector.push_back(WvS(2));
+        plotVector.push_back(WomegaS(0));
+        plotVector.push_back(WomegaS(1));
+        plotVector.push_back(WomegaS(2));
       }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

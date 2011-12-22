@@ -374,12 +374,12 @@ namespace MBSim {
       Function3<fmatvec::Mat, fmatvec::Vec, fmatvec::Vec, double> *fPdJR;
 
       /**
-       * \brief guiding vecloity of translation in parent system
+       * \brief guiding velocity of translation in parent system
        */
       Function1<fmatvec::Vec,double> *fPjT;
 
       /**
-       * \brief guiding vecloity of rotation in parent system
+       * \brief guiding velocity of rotation in parent system
        */
       Function1<fmatvec::Vec,double> *fPjR;
 
