@@ -1319,40 +1319,6 @@ namespace MBSim {
     cout << "gddActive1 = " << gddActive[0][1] << endl;
   }
 
-  void Contact::checkAllgd() { 
-    for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
-      gdActive[i][0] = gActive[i] ? 1 : 0; 
-      gdActive[i][1] = getFrictionDirections() && gActive[i] ? 1 : 0; 
-    }
-  }
-
-  void Contact::checkAllgdd() { 
-    for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
-      gdActive[i][1] = getFrictionDirections() && gdActive[i][0] ? 1 : 0; 
-    }
-  }
-
-  // überprüfen, was der Root Finder beobachten soll
-  void Contact::checkState() {
-    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
-      if(!gActive[k] && gk[k](0) < 0)
-        gLim = abs(gk[k](0))+1e-15;
-      else
-        gLim = 0;
-      if(gk[k](0) > 0) {
-	watchg = true;
-	watchgd = true;
-      } else {
-	watchg = false;
-	if(gdk[k](0) > 0) {
-	  watchgd = true;
-	} else {
-	  watchgd = false;
-	}
-      }
-    }
-  }
-
   void Contact::updateCondition(int i) {
     cout << "updateCondition of " << name << endl;
     cout << "davor, i = " << i << endl;

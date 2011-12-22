@@ -1031,12 +1031,6 @@ namespace MBSim {
       (*i)->updateCondition(j);
   }
 
-  void DynamicSystem::checkState() {
-
-    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
-      (*i)->checkState();
-  }
-
   void DynamicSystem::setUpInverseKinetics() {
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
