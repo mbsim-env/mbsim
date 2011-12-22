@@ -1225,8 +1225,11 @@ namespace MBSim {
 //  }
 
   void Contact::checkActiveg() { 
-    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) 
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       gActive[k] = fcl->isActive(gk[k](0),gTol) ? 1 : 0; 
+      gdActive[k][0] = gActive[k];
+      gdActive[k][1] = gdActive[k][0];
+    }
   }
 
   void Contact::checkActivegd() { 
