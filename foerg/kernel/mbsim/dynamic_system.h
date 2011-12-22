@@ -507,7 +507,6 @@ namespace MBSim {
        * \brief set possible attribute for active relative kinematics for updating event driven simulation before case study
        */
       void updateCondition(int i);
-      void checkState();
 
       /**
        * \brief analyse constraints of dynamic systems for usage in inverse kinetics

@@ -834,7 +834,6 @@ namespace MBSim {
     updatelaRef(laParent(0,laSize-1));
     updatewbRef(wbParent(0,laSize-1));
     updaterFactorRef(rFactorParent(0,rFactorSize-1));
-    checkState();
   }
 
   Vec DynamicSystemSolver::deltau(const Vec &zParent, double t, double dt) {
@@ -907,7 +906,6 @@ namespace MBSim {
     checkActiveg();
     checkActiveLinks();
     if(gActiveChanged() || options==1 ) {
-      // checkAllgd(); // TODO necessary?
       calcgdSize(2); // IB
       calclaSize(2); // IB
       calcrFactorSize(2); // IB

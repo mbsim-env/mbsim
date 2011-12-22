@@ -113,10 +113,7 @@ namespace MBSim {
       virtual void checkActivegd();
       virtual void checkActivegdn();
       virtual void checkActivegdd(); 
-      virtual void checkAllgd();
-      virtual void checkAllgdd();
       virtual void updateCondition(int i);
-      virtual void checkState();
       virtual void LinearImpactEstimation(fmatvec::Vec &gInActive_,fmatvec::Vec &gdInActive_,int *IndInActive_,fmatvec::Vec &gAct_,int *IndActive_);
       virtual void SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_);
  
@@ -308,8 +305,6 @@ namespace MBSim {
 
     private:
       std::string saved_ref1, saved_ref2;
-      bool watchg, watchgd;
-      double gLim;
   };
 
 }
