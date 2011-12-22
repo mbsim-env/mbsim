@@ -120,7 +120,6 @@ namespace MBSim {
       virtual void updateV(double t, int j=0); 
       virtual void updateg(double t);
       virtual void updategd(double t);
-      virtual void adjustgd();
       virtual void updateStopVector(double t); 
       virtual void updateLinkStatus(double t);
 
