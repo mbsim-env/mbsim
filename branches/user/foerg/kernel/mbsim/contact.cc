@@ -44,7 +44,7 @@ namespace MBSim {
   extern double tP;
   extern bool gflag;
 
-  Contact::Contact(const string &name) : LinkMechanics(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), cpData(0), gActive(0), gActive0(0), gdActive(0), gddActive(0), projg(0), projgd(0), gk(0), gdk(0), gdnk(0), gddk(0), lak(0), svk(0), rFactork(0), jsvk(0), fF(0), WF(0), laSizek(0), laIndk(0), gSizek(0), gIndk(0), gdSizek(0), gdIndk(0), svSizek(0), svIndk(0), rFactorSizek(0), rFactorIndk(0)
+  Contact::Contact(const string &name) : LinkMechanics(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), cpData(0), gActive(0), gActive0(0), gdActive(0), gddActive(0), gk(0), gdk(0), gdnk(0), gddk(0), lak(0), svk(0), rFactork(0), jsvk(0), fF(0), WF(0), laSizek(0), laIndk(0), gSizek(0), gIndk(0), gdSizek(0), gdIndk(0), svSizek(0), svIndk(0), rFactorSizek(0), rFactorIndk(0)
 #ifdef HAVE_OPENMBVCPPINTERFACE
                                          , openMBVContactGrp(0), openMBVContactFrame(0), openMBVNormalForceArrow(0), openMBVFrictionArrow(0), openMBVContactFrameSize(0), openMBVContactFrameEnabled(true), contactArrow(NULL), frictionArrow(NULL)
 #endif
@@ -74,8 +74,6 @@ namespace MBSim {
     for(vector<unsigned int*>::iterator i = gdActive.begin(); i != gdActive.end(); ++i)
       delete[] *i;
     for(vector<unsigned int*>::iterator i = gddActive.begin(); i != gddActive.end(); ++i)
-      delete[] *i;
-    for(vector<unsigned int*>::iterator i = projgd.begin(); i != projgd.end(); ++i)
       delete[] *i;
   }
 
@@ -159,18 +157,6 @@ namespace MBSim {
             Wt.col(1) = cpData[k][0].getFrameOfReference().getOrientation().col(2);
 
           gdk[k](1,gdk[k].size()-1) = Wt.T()*WvD;
-        }
-      }
-    }
-  }
-
-  void Contact::adjustgd() {
-    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
-      if(gActive[k]) {
-        if(gdk[k].size()>1) {
-          cout << "adjustgd" << endl;
-          cout << gddk[0](1) << endl;
-        gdk[k](1) += 1e-14*(gddk[0](1)>0? -1:1);
         }
       }
     }
@@ -399,20 +385,6 @@ namespace MBSim {
         gdSize += gdSizek[i];
       }
     }
-    else if(j==4) { // projection needed
-      for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
-        gdIndk[i] = gdSize;
-        int proj = 0;
-        if(gdActive[i][0]) {
-          proj = fabs(gdk[i](0)) > 1e-15 ? 1 : 0;
-          if(gdActive[i][1])
-            proj += fabs(gdk[i](1)) > 1e-15 ? 1 : 0;
-        }
-        projgd[i][0] = proj;
-        gdSizek[i] = proj;
-        gdSize += gdSizek[i];
-      }
-    }
     else
       throw;
   }
@@ -571,13 +543,10 @@ namespace MBSim {
         gActive0.push_back(int(1));
         gdActive.push_back(new unsigned int[2]);
         gddActive.push_back(new unsigned int[2]);
-        projg.push_back(int(0));
-        projgd.push_back(new unsigned int[2]);
         for(int j=0; j<1+min(1,getFrictionDirections()); j++) gdActive[i][j] = 1;
         for(int j=1+min(1,getFrictionDirections()); j<2; j++) gdActive[i][j] = 0;
         for(int j=0; j<1+min(1,getFrictionDirections()); j++) gddActive[i][j] = 1;
         for(int j=1+min(1,getFrictionDirections()); j<2; j++) gddActive[i][j] = 0;
-        for(int j=0; j<2; j++) projgd[i][j] = 0;
 
         gk.push_back(Vec(1));
         gdk.push_back(Vec(1));
