@@ -343,13 +343,6 @@ namespace MBSim {
     }
   }
 
-  void DynamicSystem::adjustgd() {
-    for(int i=0; i<(int)linkSetValued.size(); i++) { 
-      try { linkSetValued[i]->adjustgd(); }
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
-  }
-
   void DynamicSystem::updategdInverseKinetics(double t) {
 
     for(int i=0; i<(int)inverseKineticsLink.size(); i++) { 

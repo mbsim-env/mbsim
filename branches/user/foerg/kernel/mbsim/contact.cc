@@ -91,7 +91,7 @@ namespace MBSim {
 
   void Contact::updateW(double t, int j) {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
-      if(laSizek[k]>0) { // TODO
+      if(gActive[0]) {
         fF[k][1].col(0) = cpData[k][0].getFrameOfReference().getOrientation().col(0);
         if(getFrictionDirections()) {
           fF[k][1].col(1) = cpData[k][0].getFrameOfReference().getOrientation().col(1);
@@ -1534,7 +1534,7 @@ namespace MBSim {
           if(gdActive[k][0]) 
             corrk[k](0) = 0; // Contact stays closed, regular projection
           else
-            corrk[k](0) = 1e-15; // Contact opens, projection to positive normal distance
+            corrk[k](0) = 1e-14; // Contact opens, projection to positive normal distance
         }
       }
     }
@@ -1544,7 +1544,7 @@ namespace MBSim {
           if(gddActive[k][0])
             corrk[k](0) = 0; // Contact stays closed, regular projection
           else
-            corrk[k](0) = 1e-15; // Contact opens, projection to positive normal distance
+            corrk[k](0) = 1e-14; // Contact opens, projection to positive normal distance
         }
       }
     }
