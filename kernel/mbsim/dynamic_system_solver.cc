@@ -608,10 +608,6 @@ namespace MBSim {
 
   void DynamicSystemSolver::checkConstraintsForTermination() {
     term = true;
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) { 
-      (*i)->checkConstraintsForTermination(); 
-      if(term == false) return;
-    }
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) {
       (**i).checkConstraintsForTermination();
@@ -621,10 +617,6 @@ namespace MBSim {
 
   void DynamicSystemSolver::checkImpactsForTermination(double dt) {
     term = true;
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) {
-      (*i)->checkImpactsForTermination(dt); 
-      if(term == false) return;
-    }
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) {
       (**i).checkImpactsForTermination(dt);
