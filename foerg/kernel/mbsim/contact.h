@@ -109,10 +109,6 @@ namespace MBSim {
       virtual void checkImpactsForTermination(double dt);
       using LinkMechanics::connect;
       virtual void checkActive(int j);
-      virtual void checkActiveg();
-      virtual void checkActivegd();
-      virtual void checkActivegdn();
-      virtual void checkActivegdd(); 
       virtual void updateCondition(int i);
       virtual void LinearImpactEstimation(fmatvec::Vec &gInActive_,fmatvec::Vec &gdInActive_,int *IndInActive_,fmatvec::Vec &gAct_,int *IndActive_);
       virtual void SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_);
