@@ -1,19 +1,19 @@
 /* Copyright (C) 2004-2009 MBSim Development Team
  *
- * This library is free software; you can redistribute it and/or 
- * modify it under the terms of the GNU Lesser General Public 
- * License as published by the Free Software Foundation; either 
- * version 2.1 of the License, or (at your option) any later version. 
- *  
- * This library is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
- * Lesser General Public License for more details. 
- *  
- * You should have received a copy of the GNU Lesser General Public 
- * License along with this library; if not, write to the Free Software 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
- * 
+ *
  * Contact: martin.o.foerg@googlemail.com
  *          rzander@users.berlios.de
  */
@@ -100,7 +100,7 @@ namespace MBSim {
 
   class DynamicSystemSolver;
 
-  /** 
+  /**
    * \brief basic class of MBSim mainly for plotting
    * \author Martin Foerg
    * \date 2009-03-24 plot feature energy (Thorsten Schindler)
@@ -110,10 +110,10 @@ namespace MBSim {
     public:
       /**
        * \brief constructor
-       */	
+       */
       Element(const std::string &name);
 
-      /** 
+      /**
        * \brief destructor
        */
       virtual ~Element();
@@ -187,7 +187,12 @@ namespace MBSim {
        * \brief plots time series header
        * \param invocing parent class
        */
-      virtual void init(InitStage stage); 
+      virtual void init(InitStage stage);
+
+      /**
+       * \brief creates the plotGroup for H5-output
+       */
+      virtual void createPlotGroup();
 
       /**
        * \return associated plot group
@@ -196,7 +201,7 @@ namespace MBSim {
 
       /**
        * \brief Set a plot feature
-       * 
+       *
        * Set the plot feature pf of this object to enabled, disabled or unset.
        * If unset, this object uses the value of the plot feature pf of its parent object.
        */
@@ -204,14 +209,14 @@ namespace MBSim {
 
       /**
        * \brief Set a plot feature for the children of this object
-       * 
+       *
        * Set the plot feature pf of all children which plot feature is unset to enabled, disabled or unset.
        */
       void setPlotFeatureForChildren(PlotFeature pf, PlotFeatureStatus value) { plotFeatureForChildren[pf]=value; }
 
       /**
        * \brief Set a plot feature for this object and the children of this object.
-       * 
+       *
        * This is a convenience function. It simply calls setPlotFeature and setPlotFeatureForChildren.
        */
       void setPlotFeatureRecursive(PlotFeature pf, PlotFeatureStatus value) { plotFeature[pf]=value; plotFeatureForChildren[pf]=value; }
@@ -231,7 +236,7 @@ namespace MBSim {
       /**
        * \brief a general element access
        */
-      template<class T> 
+      template<class T>
         T* getByPath(std::string path) {
           Element * e = getByPathSearch(path);
           if (dynamic_cast<T*>(e))
@@ -261,7 +266,7 @@ namespace MBSim {
       virtual Element* getParent() {return parent;}
       virtual const Element* getParent() const {return parent;}
       virtual void setParent(Element* parent_) {parent = parent_;}
-      /** 
+      /**
        * \return full path of the object
        * \param delimiter of the path
        */
@@ -270,8 +275,8 @@ namespace MBSim {
     protected:
       Element *parent;
 
-      /** 
-       * \brief name of element 
+      /**
+       * \brief name of element
        */
       std::string name;
 
