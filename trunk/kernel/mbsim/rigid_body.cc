@@ -1,17 +1,17 @@
 /* Copyright (C) 2004-2010 MBSim Development Team
  *
- * This library is free software; you can redistribute it and/or 
- * modify it under the terms of the GNU Lesser General Public 
- * License as published by the Free Software Foundation; either 
- * version 2.1 of the License, or (at your option) any later version. 
- *  
- * This library is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
- * Lesser General Public License for more details. 
- *  
- * You should have received a copy of the GNU Lesser General Public 
- * License along with this library; if not, write to the Free Software 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
  * Contact: martin.o.foerg@googlemail.com
@@ -100,11 +100,11 @@ namespace MBSim {
   void RigidBody::updateStateDerivativeDependentVariables(double t) {
     for(unsigned int i=0; i<frame.size(); i++) {
       frame[i]->setAcceleration(frame[i]->getJacobianOfTranslation()*udall[0] + frame[i]->getGyroscopicAccelerationOfTranslation());
-      frame[i]->setAngularAcceleration(frame[i]->getJacobianOfRotation()*udall[0] + frame[i]->getGyroscopicAccelerationOfRotation()); 
+      frame[i]->setAngularAcceleration(frame[i]->getJacobianOfRotation()*udall[0] + frame[i]->getGyroscopicAccelerationOfRotation());
     }
     for(unsigned int i=0; i<contour.size(); i++) {
       contour[i]->setReferenceAcceleration(contour[i]->getReferenceJacobianOfTranslation()*udall[0] + contour[i]->getReferenceGyroscopicAccelerationOfTranslation());
-      contour[i]->setReferenceAngularAcceleration(contour[i]->getReferenceJacobianOfRotation()*udall[0] + contour[i]->getReferenceGyroscopicAccelerationOfRotation()); 
+      contour[i]->setReferenceAngularAcceleration(contour[i]->getReferenceJacobianOfRotation()*udall[0] + contour[i]->getReferenceGyroscopicAccelerationOfRotation());
     }
   }
 
@@ -117,10 +117,10 @@ namespace MBSim {
     else if(fPrPK)
       nq = fPrPK->getqSize();
     if(dynamic_cast<RotationAboutOneAxis*>(fAPK)) {
-      nqR = 1; 
+      nqR = 1;
     }
     else if(dynamic_cast<RotationAboutTwoAxes*>(fAPK)) {
-      nqR = 2; 
+      nqR = 2;
     }
     else if(dynamic_cast<RotationAboutThreeAxes*>(fAPK)) {
       if (not (dynamic_cast<TimeDependentCardanAngles*>(fAPK)))
@@ -141,18 +141,18 @@ namespace MBSim {
     if(j==0) {
       nu[0] = 0;
       if(fPJT==0) {
-        if(dynamic_cast<LinearTranslation*>(fPrPK)) 
+        if(dynamic_cast<LinearTranslation*>(fPrPK))
           nuT = dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors().cols();
-      } else 
+      } else
         nu[0] = fPJT->getuSize();
 
       if(fPJR==0) {
 	if(dynamic_cast<RotationAboutOneAxis*>(fAPK)) {
-	  nuR = 1; 
-	} 
+	  nuR = 1;
+	}
 	else if(dynamic_cast<RotationAboutTwoAxes*>(fAPK)) {
-	  nuR = 2; 
-	} 
+	  nuR = 2;
+	}
 	else if(dynamic_cast<RotationAboutThreeAxes*>(fAPK)) {
 	  if (not (dynamic_cast<TimeDependentCardanAngles*>(fAPK)))
 	    nuR = 3;
@@ -243,19 +243,19 @@ namespace MBSim {
         Mat JT(3,0);
         if(dynamic_cast<LinearTranslation*>(fPrPK)) {
           JT.resize() = dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors();
-        } 
+        }
         PJT[0](Index(0,2), Index(0,JT.cols()-1)) = JT;
       }
       if(fPJR==0) {
         Mat JR(3,0);
 
-        if(dynamic_cast<RotationAboutXAxis*>(fAPK)) 
+        if(dynamic_cast<RotationAboutXAxis*>(fAPK))
           JR.resize() = Vec("[1;0;0]");
-	else if(dynamic_cast<RotationAboutYAxis*>(fAPK)) 
+	else if(dynamic_cast<RotationAboutYAxis*>(fAPK))
           JR.resize() = Vec("[0;1;0]");
-	else if(dynamic_cast<RotationAboutZAxis*>(fAPK)) 
+	else if(dynamic_cast<RotationAboutZAxis*>(fAPK))
           JR.resize() = Vec("[0;0;1]");
-        else if(dynamic_cast<RotationAboutFixedAxis*>(fAPK)) 
+        else if(dynamic_cast<RotationAboutFixedAxis*>(fAPK))
           JR.resize() = dynamic_cast<RotationAboutFixedAxis*>(fAPK)->getAxisOfRotation();
         else if(dynamic_cast<RotationAboutAxesYZ*>(fAPK)) {
           fPJR = new JRotationAboutAxesYZ(nu[0]);
@@ -267,16 +267,16 @@ namespace MBSim {
         }
         else if(dynamic_cast<CardanAngles*>(fAPK)) {
           JR.resize() << DiagMat(3,INIT,1);
-          if(cb) 
+          if(cb)
             fT = new TCardanAngles2(nq,nu[0]);
-          else 
+          else
             fT = new TCardanAngles(nq,nu[0]);
         }
 	else if(dynamic_cast<EulerAngles*>(fAPK)) {
           JR.resize() << DiagMat(3,INIT,1);
-          if(cb) 
+          if(cb)
             fT = new TEulerAngles2(nq,nu[0]);
-          else 
+          else
             fT = new TEulerAngles(nq,nu[0]);
         }
 
@@ -299,7 +299,7 @@ namespace MBSim {
       if(constraint)
 	TRel.resize(nq,nu[0]);
 
-      for(int i=0; i<nu[0]; i++) 
+      for(int i=0; i<nu[0]; i++)
         TRel(i,i) = 1;
     }
     else if(stage==MBSim::plot) {
@@ -311,22 +311,6 @@ namespace MBSim {
             plotColumns.push_back("qRel("+numtostr(i)+")");
           for(int i=0; i<nu[0]; i++)
             plotColumns.push_back("uRel("+numtostr(i)+")");
-        }
-        if(getPlotFeature(globalPosition)==enabled) {
-          plotColumns.push_back("WxOS");
-          plotColumns.push_back("WyOS");
-          plotColumns.push_back("WzOS");
-          plotColumns.push_back("alpha");
-          plotColumns.push_back("beta");
-          plotColumns.push_back("gamma");
-        }
-        if(getPlotFeature(globalVelocity)==enabled) {
-          plotColumns.push_back("WvxS");
-          plotColumns.push_back("WvyS");
-          plotColumns.push_back("WvzS");
-          plotColumns.push_back("alphap");
-          plotColumns.push_back("betap");
-          plotColumns.push_back("gammap");
         }
         Body::init(stage);
       }
@@ -357,26 +341,6 @@ namespace MBSim {
           plotVector.push_back(qRel(i));
         for(int i=0; i<nu[0]; i++)
           plotVector.push_back(uRel(i));
-      }
-      if(getPlotFeature(globalPosition)==enabled) {
-        Vec WrOS=frame[0]->getPosition();
-        Vec cardan=AIK2Cardan(frame[0]->getOrientation());
-        plotVector.push_back(WrOS(0));
-        plotVector.push_back(WrOS(1));
-        plotVector.push_back(WrOS(2));
-        plotVector.push_back(cardan(0));
-        plotVector.push_back(cardan(1));
-        plotVector.push_back(cardan(2));
-      }
-      if(getPlotFeature(globalVelocity)==enabled) {
-        Vec WvS    =frame[0]->getVelocity();
-        Vec WomegaS=frame[0]->getAngularVelocity();
-        plotVector.push_back(WvS(0));
-        plotVector.push_back(WvS(1));
-        plotVector.push_back(WvS(2));
-        plotVector.push_back(WomegaS(0));
-        plotVector.push_back(WomegaS(1));
-        plotVector.push_back(WomegaS(2));
       }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -589,8 +553,8 @@ namespace MBSim {
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  void RigidBody::setOpenMBVRigidBody(OpenMBV::RigidBody* body) { 
-    openMBVBody=body; 
+  void RigidBody::setOpenMBVRigidBody(OpenMBV::RigidBody* body) {
+    openMBVBody=body;
   }
 #endif
 
@@ -697,7 +661,7 @@ namespace MBSim {
     frame[iKinematics]->getJacobianOfTranslation()(Index(0,2),Index(0,frameOfReference->getJacobianOfTranslation().cols()-1)) = frameOfReference->getJacobianOfTranslation() - tWrPK*frameOfReference->getJacobianOfRotation();
     frame[iKinematics]->getJacobianOfRotation()(Index(0,2),Index(0,frameOfReference->getJacobianOfRotation().cols()-1)) = frameOfReference->getJacobianOfRotation();
 
-    if(iKinematics != 0) { 
+    if(iKinematics != 0) {
 
       SqrMat tWrSK = tilde(WrSF[iKinematics]);
       frame[0]->setJacobianOfTranslation(frame[iKinematics]->getJacobianOfTranslation() + tWrSK*frame[iKinematics]->getJacobianOfRotation());

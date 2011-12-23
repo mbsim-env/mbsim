@@ -1,17 +1,17 @@
 /* Copyright (C) 2004-2009 MBSim Development Team
  *
- * This library is free software; you can redistribute it and/or 
- * modify it under the terms of the GNU Lesser General Public 
- * License as published by the Free Software Foundation; either 
- * version 2.1 of the License, or (at your option) any later version. 
- *  
- * This library is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
- * Lesser General Public License for more details. 
- *  
- * You should have received a copy of the GNU Lesser General Public 
- * License along with this library; if not, write to the Free Software 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
  * Contact: martin.o.foerg@googlemail.com
@@ -73,10 +73,10 @@ namespace MBSim {
         }
 
         if(numEnabled>0) {
-          plotGroup=new H5::Group(parent->getPlotGroup()->createGroup(name));
-          H5::SimpleAttribute<string>::setData(*plotGroup, "Description", "Object of class: "+getType());
-
-          plotColumns.insert(plotColumns.begin(), "Time");
+          if(not parent->getPlotGroup()) {
+            parent->createPlotGroup();
+          }
+          createPlotGroup();
           if(plotColumns.size()>1) {
             plotVectorSerie=new H5::VectorSerie<double>;
             // copy plotColumns to a std::vector
@@ -89,6 +89,13 @@ namespace MBSim {
         }
       }
     }
+  }
+
+  void Element::createPlotGroup() {
+    plotGroup=new H5::Group(parent->getPlotGroup()->createGroup(name));
+    H5::SimpleAttribute<string>::setData(*plotGroup, "Description", "Object of class: "+getType());
+
+    plotColumns.insert(plotColumns.begin(), "Time");
   }
 
   void Element::updatePlotFeatures() {
