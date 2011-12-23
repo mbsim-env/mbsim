@@ -407,9 +407,9 @@ namespace MBSim {
 
     //Define different solvers
     MultiDimNewtonMethod NewtonSolver(&func);
-    NewtonSolver.setMaximumNumberOfIterations(1e4);
+    NewtonSolver.setMaximumNumberOfIterations((int)1e4);
     MultiDimFixPointIteration FixpointIterator(&func);
-    FixpointIterator.setNumberOfMaximalIterations(1e6);
+    FixpointIterator.setNumberOfMaximalIterations((int)1e6);
     FixpointIterator.setTolerance(1e-4);
     LemkeAlgorithm LemkeSolver;
 
