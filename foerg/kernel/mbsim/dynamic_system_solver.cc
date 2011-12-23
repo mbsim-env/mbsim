@@ -980,10 +980,12 @@ namespace MBSim {
     updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
     updateW(t);
     cout << "g = " <<g <<endl;
+    cout << "W = " <<W[0] <<endl;
     //Vec corr;
     //corr = g;
     //corr.init(tolProj);
     SqrMat Gv= SqrMat(W[0].T()*slvLLFac(LLM[0],W[0])); 
+    cout << "G = " <<Gv <<endl;
     // TODO: Wv*T check
     int iter = 0;
     while(nrmInf(g-corr) >= tolProj) {
@@ -1481,7 +1483,7 @@ namespace MBSim {
 
       }
     } 
-    else { // contact opens or transition from stick to slip
+    else if(maxj==1) { // contact opens or transition from stick to slip
       checkActive(8);
 
       projectGeneralizedPositions(t,1);
