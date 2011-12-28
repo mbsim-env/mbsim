@@ -313,7 +313,7 @@ namespace MBSim {
       /**
        * \brief solve algorithm adapted from : Fast Implementation of Lemke’s Algorithm for Rigid Body Contact Simulation (John E. Lloyd)
        */
-      fmatvec::Vec solve(uint maxloops = 0);
+      fmatvec::Vec solve(unsigned int maxloops = 0);
 
       virtual ~LemkeAlgorithm() {
       }

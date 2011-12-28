@@ -1,4 +1,5 @@
 #include <config.h>
+#include <time.h>
 
 #include <maxwell_contact.h>
 
@@ -388,7 +389,7 @@ namespace MBSim {
     }
   }
 
-  Vec MaxwellContact::solveLCP(const SymMat & M, const Vec & q, const uint & LemkeSteps /* = 10000 */) {
+  Vec MaxwellContact::solveLCP(const SymMat & M, const Vec & q, const unsigned int & LemkeSteps /* = 10000 */) {
 
     clock_t t_start = clock();
     /*dimension of the system*/

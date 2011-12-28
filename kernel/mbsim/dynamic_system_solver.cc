@@ -1375,8 +1375,7 @@ namespace MBSim {
 
       // projectGeneralizedPositions(t);
       b.resize() = gd; // b = gd + trans(W)*slvLLFac(LLM,h)*dt with dt=0
-      int iter;
-      iter = solveImpacts();
+      solveImpacts();
       u += deltau(zParent,t,0);
 
       //saveActive();
@@ -1405,8 +1404,7 @@ namespace MBSim {
         updateG(t); 
         updatewb(t); 
 	b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
-        int iter;
-        iter = solveConstraints();
+        solveConstraints();
         checkActivegdd();
         checkActiveLinks();
         calclaSize();
@@ -1445,8 +1443,7 @@ namespace MBSim {
         updateG(t);  // TODO necessary 
         updatewb(t);  // TODO necessary 
 	b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
-        int iter;
-        iter = solveConstraints();
+        solveConstraints();
         checkActivegdd();
         checkActiveLinks();
         calclaSize();
@@ -1522,8 +1519,7 @@ namespace MBSim {
       updateG(t); 
       updatewb(t); 
       b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
-      int iter;
-      iter = solveConstraints();
+      solveConstraints();
     }
     updateStopVector(t);
     sv(sv.size()-1) = driftCount*1e-0-t; 
