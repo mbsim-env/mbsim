@@ -180,7 +180,7 @@ namespace MBSim {
        * \param q           constant vector of the LCP
        * \param LemkeSteps  Number of steps for the first Lemke try
        */
-      virtual fmatvec::Vec solveLCP(const fmatvec::SymMat & M, const fmatvec::Vec & q, const uint & LemkeSteps = 10000);
+      virtual fmatvec::Vec solveLCP(const fmatvec::SymMat & M, const fmatvec::Vec & q, const unsigned int & LemkeSteps = 10000);
 
       /**
        * \brief vector of ContourPairing (frames and Arrows)

@@ -245,7 +245,7 @@ namespace MBSim {
     return x;
   }
 
-  Vec LemkeAlgorithm::solve(uint maxloops) {
+  Vec LemkeAlgorithm::solve(unsigned int maxloops) {
     /*REMARK:
      * This algorithm is taken from:
      * Das lineare Komplementaritätsproblem: Eine Einführung  (Uwe Schäfer) pages 7 ff
@@ -286,10 +286,10 @@ namespace MBSim {
     if(!greaterZero(q_)) {
 
       if (maxloops == 0 )
-        maxloops = (uint) ::pow(2, dim);
+        maxloops = (unsigned int) ::pow(2, dim);
 
       /*start looping*/
-      uint step = 0;
+      unsigned int step = 0;
       for(; step < maxloops; step++) {
 
         GaussJordanEliminationStep(A, pivotRowIndex, pivotColIndex, basis);
