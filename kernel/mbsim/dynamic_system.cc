@@ -1170,8 +1170,8 @@ namespace MBSim {
       (*i)->setbInd(bInverseKineticsSize);
       bInverseKineticsSize += (*i)->getbSize();
     }
-    cout << name << endl;
-    cout << bInverseKineticsSize << endl;
+//    cout << name << endl;
+//    cout << bInverseKineticsSize << endl;
     //throw;
   }
 
