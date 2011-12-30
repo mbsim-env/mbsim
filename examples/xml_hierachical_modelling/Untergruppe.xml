@@ -117,7 +117,7 @@
         <ombv:diameter>0.02</ombv:diameter>
         <ombv:headDiameter>0.02*2</ombv:headDiameter>
         <ombv:headLength>0.02*4</ombv:headLength>
-        <ombv:type>"toHead"</ombv:type>
+        <ombv:type>"bothDoubleHeads"</ombv:type>
         <ombv:scaleLength>0.005</ombv:scaleLength>
       </ombv:Arrow>
     </SpringDamper>
