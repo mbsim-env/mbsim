@@ -47,7 +47,7 @@ string basename(const string &filename) {
   int i=filename.rfind('/');
   int i2=filename.rfind('\\');
   i=i>i2?i:i2;
-  return i>=0?filename.substr(i):filename;
+  return i>=0?filename.substr(i+1):filename;
 }
 
 // touch a file (OS-independent)
