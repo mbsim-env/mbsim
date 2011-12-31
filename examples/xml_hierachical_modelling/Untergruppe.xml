@@ -32,7 +32,7 @@
       <translation>
         <LinearTranslation>
           <translationVectors>
-            [0; 1; 0]
+            [0; myMFunction(1); 0]
           </translationVectors>
         </LinearTranslation>
       </translation>
@@ -49,11 +49,7 @@
           <orientation>rotateAboutX(0)</orientation>
         </frame>
         <pv:embed>
-          <frame>
-            <Frame name="P2"/>
-            <position>[0;h1/2;0]</position>
-            <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
-          </frame>
+          <include href="frame.xml" xmlns="http://www.w3.org/2001/XInclude"/>
         </pv:embed>
       </frames>
       <contours/>
