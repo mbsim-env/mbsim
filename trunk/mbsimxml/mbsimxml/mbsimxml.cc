@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
   // convert args to c++
   list<string> arg;
   list<string>::iterator i, i2;
-  for(int i=0; i<argc; i++)
+  for(int i=1; i<argc; i++)
     arg.push_back(argv[i]);
 
   // help
@@ -70,6 +70,7 @@ int main(int argc, char *argv[]) {
      (i=std::find(arg.begin(), arg.end(), "-?"))!=arg.end()) {
     cout<<"Usage: mbsimxml [--onlypreprocess|--donotintegrate|--stopafterfirststep|"<<endl
         <<"                 --autoreload]"<<endl
+        <<"                [--mpath <dir> [--mpath <dir>]]"<<endl
         <<"                [--mbsimparam <mbsimparameterfile>] <mbsimfile>"<<endl
         <<"                [--intparam <integratorparameterfile>] <integratorfile>"<<endl
         <<""<<endl
@@ -85,6 +86,7 @@ int main(int argc, char *argv[]) {
         <<"                     This generates a HDF5 output file with only one time serie"<<endl
         <<"--autoreload         Same as --stopafterfirststep but rerun mbsimxml each time"<<endl
         <<"                     a input file is newer than the output file"<<endl
+        <<"--mpath              Add <dir> to the octave search path for m-files"<<endl
         <<"--mbsimparam <file>  Use <file> as parameter file for mbsim xml file"<<endl
         <<"<mbsimfile>          Use <mbsimfile> as mbsim xml file"<<endl
         <<"--intparam <file>    Use <file> as parameter file for mbsim integrator xml file"<<endl
@@ -123,10 +125,15 @@ int main(int argc, char *argv[]) {
   if(stat((MBSIMXMLBIN+"/mbsimflatxml"+EXEEXT).c_str(), &st)!=0) MBSIMXMLBIN=exePath; // use rel path if build configuration dose not work
   if((env=getenv("MBSIMXMLBINDIR"))) MBSIMXMLBIN=env; // overwrite with envvar if exist
 
-  // remove program name form args
-  arg.erase(arg.begin());
-
   // parse parameters
+
+  // mpath
+  string MPATH="";
+  if((i=std::find(arg.begin(), arg.end(), "--mpath"))!=arg.end()) {
+    i2=i; i2++;
+    MPATH+=(*i)+" "+(*i2);
+    arg.erase(i); arg.erase(i2);
+  }
 
   bool ONLYPP=false;
   if((i=std::find(arg.begin(), arg.end(), "--onlypreprocess"))!=arg.end()) {
@@ -198,7 +205,7 @@ int main(int argc, char *argv[]) {
     unlink(ERRFILE.c_str());
 
     // run preprocessor
-    ret=runcommand(MBXMLUTILSBIN+"/mbxmlutilspp "+AUTORELOAD+" "+
+    ret=runcommand(MBXMLUTILSBIN+"/mbxmlutilspp "+AUTORELOAD+" "+MPATH+" "+
       PARAM+" "+MBSIM+" "+MBXMLUTILSSCHEMA+"/http___mbsim_berlios_de_MBSimXML/mbsimxml.xsd "+
       PARAMINT+" "+MBSIMINT+" "+MBXMLUTILSSCHEMA+"/http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd");
 

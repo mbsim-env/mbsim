@@ -286,7 +286,7 @@ namespace MBSim {
     if(!greaterZero(q_)) {
 
       if (maxloops == 0 )
-        maxloops = (unsigned int) ::pow(2, dim);
+        maxloops = (1<<dim); // =pow(2, dim) but faster
 
       /*start looping*/
       unsigned int step = 0;
