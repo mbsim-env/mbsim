@@ -73,6 +73,9 @@ namespace MBSimFlexibleBody {
    * \author Thorsten Schindler
    * \date 2010-04-23 initial commit (Schindler / Grundl)
    * \date 2010-08-12 revision (Schindler)
+   *
+   * The plate lies in the xy-plane of its reference frame. The z-vector is its "normal".
+   * Thus the radial and the azimuthal component give the x- and y- coordinates where the z-coordinate is defined by the thickness parameterization. (neglecting the flexible dofs)
    */
   class FlexibleBody2s13 : public FlexibleBodyContinuum<fmatvec::Vec> {
     public:
@@ -171,7 +174,9 @@ namespace MBSimFlexibleBody {
       double rho;
 
       /**
-       * \brief inner and outer thickness
+       * \brief parameterization of thickness over radius function: d(0) + d(1)*r + d(2)*r*r
+       *
+       * \remark vector must have length 3
        */
       fmatvec::Vec d;
 
@@ -298,7 +303,7 @@ namespace MBSimFlexibleBody {
        */
       int DEBUGLEVEL;
 
-      /*! 
+      /*!
        * \brief detect involved element for contact description
        * \param parametrisation vector (radial / azimuthal)
        */

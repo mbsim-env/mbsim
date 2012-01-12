@@ -27,6 +27,7 @@
 #include "mbsimFlexibleBody/contours/nurbs_disk_2s.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/utils/eps.h"
+#include <mbsim/utils/rotarymatrices.h>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/nurbsdisk.h"
@@ -168,6 +169,26 @@ namespace MBSimFlexibleBody {
         vector<double> data;
         data.push_back(t); //time
 
+        ContourPointData cp;
+        cp.getLagrangeParameterPosition() = Vec(2, NONINIT);
+
+        //center of gravity
+        cp.getLagrangeParameterPosition()(0) = 0.;
+        cp.getLagrangeParameterPosition()(1) = 0.;
+        contour->updateKinematicsForFrame(cp, position_cosy); // kinematics of the center of gravity of the disk (TODO frame feature)
+
+        //Translation of COG
+        data.push_back(cp.getFrameOfReference().getPosition()(0) + (cp.getFrameOfReference().getOrientation())(0, 2) * d(0) * 0.5); //global x-coordinate
+        data.push_back(cp.getFrameOfReference().getPosition()(1) + (cp.getFrameOfReference().getOrientation())(1, 2) * d(0) * 0.5); //global y-coordinate
+        data.push_back(cp.getFrameOfReference().getPosition()(2) + (cp.getFrameOfReference().getOrientation())(2, 2) * d(0) * 0.5); //global z-coordinate
+
+        //Rotation of COG
+        Vec AlphaBetaGamma = AIK2Cardan(cp.getFrameOfReference().getOrientation());
+        data.push_back(AlphaBetaGamma(0));
+        data.push_back(AlphaBetaGamma(1));
+        data.push_back(AlphaBetaGamma(2));
+
+        //Control-Point coordinates
         for(int i = 0; i < nr + 1; i++) {
           for(int j = 0; j < nj + degU; j++) {
             data.push_back(contour->getControlPoints(j, i)(0)); //global x-coordinate
@@ -175,9 +196,6 @@ namespace MBSimFlexibleBody {
             data.push_back(contour->getControlPoints(j, i)(2)); //global z-coordinate
           }
         }
-
-        ContourPointData cp;
-        cp.getLagrangeParameterPosition() = Vec(2, NONINIT);
 
         //inner ring
         for(int i = 0; i < nj; i++) {
@@ -206,19 +224,6 @@ namespace MBSimFlexibleBody {
             data.push_back(pos(2)); //global z-coordinate
           }
         }
-
-        //center of gravity
-        cp.getLagrangeParameterPosition()(0) = 0.;
-        cp.getLagrangeParameterPosition()(1) = 0.;
-        contour->updateKinematicsForFrame(cp, position_cosy); // kinematics of the center of gravity of the disk (TODO frame feature)
-
-        data.push_back(cp.getFrameOfReference().getPosition()(0) - (cp.getFrameOfReference().getOrientation())(0, 2) * d(0) * 0.5); //global x-coordinate
-        data.push_back(cp.getFrameOfReference().getPosition()(1) - (cp.getFrameOfReference().getOrientation())(1, 2) * d(0) * 0.5); //global y-coordinate
-        data.push_back(cp.getFrameOfReference().getPosition()(2) - (cp.getFrameOfReference().getOrientation())(2, 2) * d(0) * 0.5); //global z-coordinate
-
-        for(int i = 0; i < 3; i++)
-          for(int j = 0; j < 3; j++)
-            data.push_back((cp.getFrameOfReference().getOrientation())(i, j));
 
         ((OpenMBV::NurbsDisk*) openMBVBody)->append(data);
       }
