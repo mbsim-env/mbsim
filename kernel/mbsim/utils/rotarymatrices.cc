@@ -1,5 +1,5 @@
-/* Copyright (C) 2004-2006  Robert Huber
- 
+/* Copyright (C) 2004-2012  Robert Huber
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -101,12 +101,11 @@ namespace MBSim {
     return AIKx*AIKy*AIKz;          //Wie im TM VI Skript
   }
 
-
   Vec AIK2Cardan(const SqrMat &AIK) { 
     Vec AlphaBetaGamma(3,INIT,0.0);    
     AlphaBetaGamma(1)= asin(AIK(0,2));
     double nenner = cos(AlphaBetaGamma(1));
-    if (nenner>1e-10) {
+    if (fabs(nenner)>1e-10) {
       AlphaBetaGamma(0) = atan2(-AIK(1,2),AIK(2,2));
       AlphaBetaGamma(2) = atan2(-AIK(0,1),AIK(0,0));
     } else {
@@ -116,11 +115,27 @@ namespace MBSim {
     return AlphaBetaGamma;
   }
 
-
   Vec AKI2Cardan(const SqrMat &AKI) {
     return AIK2Cardan(trans(AKI));
   }
 
+  Vec AIK2RevCardan(const SqrMat &AIK) {
+    Vec AlphaBetaGamma(3,INIT,0.0);
+    AlphaBetaGamma(1)= asin(-AIK(2,0));
+    double nenner = cos(AlphaBetaGamma(1));
+    if (fabs(nenner)>1e-10) {
+      AlphaBetaGamma(0) = atan2(AIK(2,1),AIK(2,2));
+      AlphaBetaGamma(2) = atan2(AIK(1,0),AIK(0,0));
+    } else {
+      AlphaBetaGamma(0)=0;
+      AlphaBetaGamma(2)=atan2(-AIK(0,1),AIK(1,1));
+    }
+    return AlphaBetaGamma;
+  }
+
+  Vec AKI2RevCardan(const SqrMat &AKI) {
+    return AIK2RevCardan(trans(AKI));
+  }
 
   SqrMat Euler2AIK(double psi,double theta,double phi) {
     //z Preazession
@@ -141,7 +156,7 @@ namespace MBSim {
     Vec AlphaBetaGamma(3,INIT,0.0);
     AlphaBetaGamma(0) = asin(AIK(2,1));
     double nenner = cos(AlphaBetaGamma(0));
-    if (nenner>1e10) {
+    if (fabs(nenner)>1e10) {
       AlphaBetaGamma(2) = atan2(-AIK(0,1), AIK(1,1));
       AlphaBetaGamma(1) = atan2(-AIK(2,0),AIK(2,2));
     }
@@ -169,5 +184,4 @@ namespace MBSim {
     B(1,1)=1;
     return B*KomegaK;
   }
-
 }
