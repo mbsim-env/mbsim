@@ -8,15 +8,14 @@
 
 class System : public MBSim::DynamicSystemSolver {
   public:
-    System(const std::string &projectName); 
-    void initialize();
+    System(const std::string &projectName);
 
   private:
     /** flexible ring */
     MBSimFlexibleBody::FlexibleBody1s21RCM *rod;
-    
+
     /** vector of balls */
-    std::vector<MBSim::RigidBody*> balls; 
+    std::vector<MBSim::RigidBody*> balls;
 };
 
 #endif

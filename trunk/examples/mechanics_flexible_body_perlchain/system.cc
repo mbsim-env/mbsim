@@ -24,7 +24,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Vec grav(3,INIT,0.); grav(1) = -9.81;
   MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
-  // input flexible ring 
+  // input flexible ring
   double l0 = 1.; // length ring
   double E = 2.5e9; // E-Modul alu
   double rho = 2.5e3; // density alu
@@ -111,6 +111,34 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #endif
   }
 
+  //Set balls to correct position
+  FlexibleBody1s21RCM * rodInfo = new FlexibleBody1s21RCM("InfoRod", false);
+
+  rodInfo->setq0(rod->getq());
+  rodInfo->setu0(rod->getu());
+  rodInfo->setNumberElements(rod->getNumberElements());
+  rodInfo->setLength(rod->getLength());
+  rodInfo->setFrameOfReference(rod->getFrameOfReference());
+
+  rodInfo->initInfo();
+  rodInfo->updateStateDependentVariables(0.);
+
+  for(unsigned int i=0;i<balls.size();i++) {
+    Vec q0(3,INIT,0.);
+    double xL = fmod(i*rodInfo->getLength()/balls.size() + rodInfo->getLength()*0.25,rodInfo->getLength());
+    ContourPointData cp;
+    cp.getContourParameterType() = CONTINUUM;
+    cp.getLagrangeParameterPosition() = Vec(1,INIT,xL);
+
+    rodInfo->updateKinematicsForFrame(cp,position_cosy);
+    q0(0) = cp.getFrameOfReference().getPosition()(0);
+    q0(1) = cp.getFrameOfReference().getPosition()(1);
+    q0(2) = -AIK2Cardan(cp.getFrameOfReference().getOrientation())(2) + M_PI*0.5;
+    balls[i]->setInitialGeneralizedPosition(q0);
+  }
+
+  delete rodInfo;
+
   // inertial ball constraint
   this->addFrame("BearingFrame",l0/(2*M_PI)*Vec("[0;1;0]"),SqrMat(3,EYE),this->getFrame("I"));
   Joint *joint = new Joint("BearingJoint");
@@ -126,6 +154,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     contact->setContactForceLaw(new BilateralConstraint);
     contact->setContactImpactLaw(new BilateralImpact);
     contact->connect(balls[i]->getContour("COG"),rod->getContour("Contour1sFlexible"));
+    contact->enableOpenMBVContactPoints(0.01);
     this->addLink(contact);
   }
 
@@ -144,32 +173,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
       ctrt->connect(balls[0]->getContour("topPoint"),balls[i]->getContour("Plane"));
       ctrb->connect(balls[0]->getContour("bottomPoint"),balls[i]->getContour("Plane"));
     }
-    else { 
+    else {
       ctrt->connect(balls[i+1]->getContour("topPoint"),balls[i]->getContour("Plane"));
       ctrb->connect(balls[i+1]->getContour("bottomPoint"),balls[i]->getContour("Plane"));
     }
     this->addLink(ctrt);
     this->addLink(ctrb);
   }
-}
-
-void System::initialize() {
-  DynamicSystemSolver::initialize();
-  rod->updateStateDependentVariables(0.);
-
-  for(unsigned int i=0;i<balls.size();i++) {
-    Vec q0(3,INIT,0.);
-    double xL = fmod(i*rod->getLength()/balls.size() + rod->getLength()*0.25,rod->getLength());
-    ContourPointData cp;
-    cp.getContourParameterType() = CONTINUUM;
-    cp.getLagrangeParameterPosition() = Vec(1,INIT,xL);
-
-    rod->updateKinematicsForFrame(cp,position_cosy);
-    q0(0) = cp.getFrameOfReference().getPosition()(0);
-    q0(1) = cp.getFrameOfReference().getPosition()(1);
-    q0(2) = -AIK2Cardan(cp.getFrameOfReference().getOrientation())(2) + M_PI*0.5;
-    balls[i]->setInitialGeneralizedPosition(q0);
-  }
-
 }
 
