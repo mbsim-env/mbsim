@@ -1,17 +1,17 @@
 /* Copyright (C) 2004-2011 MBSim Development Team
  *
- * This library is free software; you can redistribute it and/or 
- * modify it under the terms of the GNU Lesser General Public 
- * License as published by the Free Software Foundation; either 
- * version 2.1 of the License, or (at your option) any later version. 
- *  
- * This library is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
- * Lesser General Public License for more details. 
- *  
- * You should have received a copy of the GNU Lesser General Public 
- * License along with this library; if not, write to the Free Software 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
  * Contact: thorsten.schindler@mytum.de
@@ -87,8 +87,10 @@ namespace MBSimFlexibleBody {
       /**
        * \brief sets size of positions and velocities
        */
-      void setNumberElements(int n); 
+      void setNumberElements(int n);
+      int getNumberElements(){return Elements;}
       void setLength(double L_) { L = L_; }
+      double getLength(){return L;}
       void setEModul(double E_) { E = E_; }
       void setCrossSectionalArea(double A_) { A = A_; }
       void setMomentInertia(double I_) { I = I_; }
@@ -96,7 +98,7 @@ namespace MBSimFlexibleBody {
       void setCurlRadius(double r);
       void setMaterialDamping(double d);
       void setLehrDamping(double d);
-      void setElementPlotList(fmatvec::Vector<int> plotElements_) {plotElements = plotElements_;} 
+      void setElementPlotList(fmatvec::Vector<int> plotElements_) {plotElements = plotElements_;}
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body) { openMBVBody=body; }
 #endif
@@ -129,22 +131,22 @@ namespace MBSimFlexibleBody {
        */
       void BuildElement(const double& sGlobal, double& sLocal, int& currentElement);
 
-      /** 
+      /**
        * \brief number of finite elements used for discretisation
        */
       int Elements;
 
       /**
        * \brief length of beam
-       */ 
+       */
       double L;
 
-      /** 
+      /**
        * \brief length of one finite element
        */
       double l0;
 
-      /** 
+      /**
        * \brief modulus of linear elasticity
        */
       double E;
@@ -159,12 +161,12 @@ namespace MBSimFlexibleBody {
        */
       double I;
 
-      /** 
+      /**
        * \brief material density
        */
       double rho;
 
-      /** 
+      /**
        * \brief curl radius
        */
       double rc;
@@ -174,19 +176,19 @@ namespace MBSimFlexibleBody {
        */
       double dm;
 
-      /** 
+      /**
        * \brief coefficient of Lehr-damping
        */
       double dl;
 
-      /** 
+      /**
        * \brief coefficient of Lehr-damping
        */
       fmatvec::Vector<int> plotElements;
 
-      /** 
+      /**
        * \brief flag for open (cantilever beam) or closed (rings) structures
-       */ 
+       */
       bool openStructure;
 
       /**
@@ -194,7 +196,7 @@ namespace MBSimFlexibleBody {
        */
       bool initialized;
 
-      /** 
+      /**
        * \brief contour of body
        */
       Contour1sFlexible *contour1sFlexible;
