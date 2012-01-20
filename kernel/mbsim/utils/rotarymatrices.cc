@@ -21,6 +21,7 @@
  */
 #include <config.h>
 #include "rotarymatrices.h"
+#include "utils.h"
 #include <cmath>
 
 using namespace fmatvec;
@@ -125,7 +126,7 @@ namespace MBSim {
     double nenner = cos(AlphaBetaGamma(1));
     if (fabs(nenner)>1e-10) {
       AlphaBetaGamma(0) = atan2(AIK(2,1),AIK(2,2));
-      AlphaBetaGamma(2) = atan2(AIK(1,0),AIK(0,0));
+      AlphaBetaGamma(2) = ArcTan(AIK(0,0),AIK(1,0));
     } else {
       AlphaBetaGamma(0)=0;
       AlphaBetaGamma(2)=atan2(-AIK(0,1),AIK(1,1));
