@@ -26,6 +26,7 @@
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
+#include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/frame.h"
 #include <mbsim/environment.h>
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -490,10 +491,12 @@ namespace MBSimFlexibleBody {
 
     PlNurbsCurved curve;
     curve.read(filename.c_str());
+    int DEBUGLEVEL = 0;
 
     //double L = curve.length(); // TODO ungenauer als mit L
     l0 = L/Elements;
     Vec q0Dummy(q0.size(),INIT,0.);
+    Point3Dd prevBinStart;
 
     for(int i = 0; i < Elements; i++) {
       Point3Dd posStart = curve.pointAt(i*l0);
@@ -502,22 +505,52 @@ namespace MBSimFlexibleBody {
       Point3Dd pos3Quart = curve.pointAt(i*l0 + l0*3./4.);
       Point3Dd tangStart = curve.derive3D(i*l0, 1);
       Point3Dd tangHalf = curve.derive3D(i*l0 + l0/2., 1);
-      Point3Dd zAxis; zAxis.z() = 1.;
-      Point3Dd norStart = crossProduct(tangStart,zAxis);
+      Point3Dd binStart = curve.derive3D(i*l0, 2);
+      binStart = crossProduct(binStart,tangStart);
+      binStart = binStart/norm(binStart);
+      if (i>0) {
+        if (dot(prevBinStart,binStart)<0)
+          binStart = -1. * binStart;
+      }
+      prevBinStart = binStart;
+      Point3Dd norStart = crossProduct(binStart,tangStart);
 
       q0Dummy(i*10)   = posStart.x(); // x
       q0Dummy(i*10+1) = posStart.y(); // y
       q0Dummy(i*10+2) = posStart.z(); // z
-      if(norStart.y()<0) { q0Dummy(i*10+3) = ArcTan(-norStart.y(),norStart.z()); } // angle around x-axis
-      else { q0Dummy(i*10+3) = ArcTan(norStart.y(),norStart.z()); }
-      if(tangStart.x()>0) { q0Dummy(i*10+4) = ArcTan(tangStart.z(),tangStart.x())-M_PI/2.; } // angle around y-axis
-      else { q0Dummy(i*10+4) = ArcTan(tangStart.z(),-tangStart.x())-M_PI/2.; }
-      q0Dummy(i*10+5) = ArcTan(tangStart.x(),tangStart.y())-2.*M_PI; // angle around z-axis
+      SqrMat AIK(3,3,INIT,0.0);
+      AIK(0,0) = tangStart.x(); AIK(1,0) = tangStart.y(); AIK(2,0) = tangStart.z();
+      AIK(0,1) = norStart.x(); AIK(1,1) = norStart.y(); AIK(2,1) = norStart.z();
+      AIK(0,2) = binStart.x(); AIK(1,2) = binStart.y(); AIK(2,2) = binStart.z();
+      Vec AlphaBetaGamma = AIK2RevCardan(AIK);
+      //q0Dummy(i*10+3) = AlphaBetaGamma(0); // alpha angle currently set to zero
+      q0Dummy(i*10+4) = AlphaBetaGamma(1);
+      q0Dummy(i*10+5) = AlphaBetaGamma(2);
 
       q0Dummy(i*10+6) = -absolute((pos1Quart.y()-posHalf.y())*(-tangHalf.z()) - (pos1Quart.z()-posHalf.z())*(-tangHalf.y()))/sqrt(tangHalf.y()*tangHalf.y() + tangHalf.z()*tangHalf.z()); // cL1
       q0Dummy(i*10+7) = -absolute((pos3Quart.y()-posHalf.y())*tangHalf.z() - (pos3Quart.z()-posHalf.z())*tangHalf.y())/sqrt(tangHalf.y()*tangHalf.y() + tangHalf.z()*tangHalf.z()); // cR1
       q0Dummy(i*10+8) = -absolute((pos1Quart.x()-posHalf.x())*(-tangHalf.y()) - (pos1Quart.y()-posHalf.y())*(-tangHalf.x()))/sqrt(tangHalf.x()*tangHalf.x() + tangHalf.y()*tangHalf.y()); // cL2
       q0Dummy(i*10+9) = -absolute((pos3Quart.x()-posHalf.x())*tangHalf.y() - (pos3Quart.y()-posHalf.y())*tangHalf.x())/sqrt(tangHalf.x()*tangHalf.x() + tangHalf.y()*tangHalf.y()); // cR2
+
+      if(DEBUGLEVEL==1) {
+   	    cout << "START(" <<i+1 << ",1:end) = [" << posStart <<"];" << endl;
+    	cout << "Tangent(" <<i+1 <<",1:end) = [" <<tangStart <<"];" << endl;
+    	cout << "Normal(" <<i+1 <<",1:end) = [" <<norStart <<"];" << endl;
+    	cout << "Binormal(" <<i+1 <<",1:end) = ["  <<binStart <<"];" << endl;
+
+    	cout << "alpha_Old(" << i+1 << ") = " << q(i*10+3) <<";" << endl;
+    	cout << "beta_Old(" << i+1 << ") = " << q(i*10+4) <<";" << endl;
+    	cout << "gamma_Old(" << i+1 << ") = " << q(i*10+5) <<";" << endl;
+    	cout << "%----------------------------------" << endl;
+    	cout << "alpha_New(" << i+1 << ") = " << q0Dummy(i*10+3) <<";" << endl;
+    	cout << "beta_New(" << i+1 << ") = " << q0Dummy(i*10+4) <<";" << endl;
+    	cout << "gamma_New(" << i+1 << ") = " << q0Dummy(i*10+5) <<";" << endl;
+    	cout << "%----------------------------------" << endl;
+    	cout << "diff_alpha(" << i+1 << ") = " << q(i*10+3) - q0Dummy(i*10+3) <<";" << endl;
+    	cout << "diff_beta(" << i+1 << ") = " << q(i*10+4) - q0Dummy(i*10+4) <<";" << endl;
+    	cout << "diff_gamma(" << i+1 << ") = " << q(i*10+5) - q0Dummy(i*10+5) <<";" << endl;
+    	cout << "%----------------------------------" << endl;
+      }
     }
     setq0(q0Dummy);
 
