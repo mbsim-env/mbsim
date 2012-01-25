@@ -194,8 +194,6 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setImpact(bool impact_) { impact = impact_; }
-      void setSticking(bool sticking_) { sticking = sticking_; }
 
       void setConstraintSolver(Solver solver_) { contactSolver = solver_; }                         
       void setImpactSolver(Solver solver_) { impactSolver = solver_; }                         
@@ -354,13 +352,13 @@ namespace MBSim {
        * \brief drift projection for positions
        * \param time
        */
-      void projectGeneralizedPositions(double t);
+      void projectGeneralizedPositions(double t, int mode);
 
       /**
        * \brief drift projection for positions
        * \param time
        */
-      void projectGeneralizedVelocities(double t);
+      void projectGeneralizedVelocities(double t, int mode);
 
       /**
        * \brief save contact force parameter for use as starting value in next time step
@@ -480,6 +478,8 @@ namespace MBSim {
        fmatvec::Mat dhdx(double t);
        fmatvec::Vec dhdt(double t);
 
+       void setRootID(int ID) {rootID = ID;}
+       int getRootID() const {return rootID;}
     protected:
       /**
        * \brief mass matrix
@@ -676,7 +676,7 @@ namespace MBSim {
       /**
        * \brief TODO, flag for occuring impact and sticking in event driven solver
        */
-      bool peds, impact, sticking;
+      bool peds;
 
       /**
        * \brief TODO, additional stop in event driven solver for drift correction
@@ -737,6 +737,10 @@ namespace MBSim {
 
       bool alwaysConsiderContact;
       bool inverseKinetics;
+
+      fmatvec::Vec corrParent;
+      
+      int rootID;
 
     private:
       /**

@@ -86,7 +86,6 @@ namespace MBSim {
       openMBVPosition->setHeadDiameter(headDiameter);
       openMBVPosition->setHeadLength(headLength);
       openMBVPosition->setStaticColor(color);
-      openMBVPosition->setType(OpenMBV::Arrow::fromHead);
     }
     else {
       openMBVPosition=0;
@@ -157,9 +156,9 @@ namespace MBSim {
         if(openMBVPosition && !openMBVPosition->isHDF5Link()) {
           vector<double> data;
           data.push_back(t);
-          data.push_back(0);
-          data.push_back(0);
-          data.push_back(0);
+          data.push_back(frame->getPosition()(0));
+          data.push_back(frame->getPosition()(1));
+          data.push_back(frame->getPosition()(2));
           data.push_back(frame->getPosition()(0));
           data.push_back(frame->getPosition()(1));
           data.push_back(frame->getPosition()(2));

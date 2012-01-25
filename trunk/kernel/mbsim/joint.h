@@ -70,13 +70,10 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */
-      virtual void calclaSize();
-      virtual void calclaSizeForActiveg();
-      virtual void calcgSize();
-      virtual void calcgSizeActive();
-      virtual void calcgdSize();
-      virtual void calcgdSizeActive();
-      virtual void calcrFactorSize();
+      virtual void calclaSize(int j);
+      virtual void calcgSize(int j);
+      virtual void calcgdSize(int j);
+      virtual void calcrFactorSize(int j);
       virtual bool isSetValued() const;
       virtual bool isActive() const { return true; }
       virtual bool gActiveChanged() { return false; }
@@ -91,8 +88,6 @@ namespace MBSim {
       virtual void updaterFactors();
       virtual void checkImpactsForTermination(double dt);
       virtual void checkConstraintsForTermination();
-      virtual void checkActiveg() {}
-      virtual void checkActivegd() {}
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */

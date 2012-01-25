@@ -210,35 +210,23 @@ namespace MBSim {
       LinkMechanics::init(stage);
   }
 
-  void Joint::calclaSize() {
-    LinkMechanics::calclaSize();
+  void Joint::calclaSize(int j) {
+    LinkMechanics::calclaSize(j);
     laSize = forceDir.cols()+momentDir.cols();
   }
 
-  void Joint::calclaSizeForActiveg() {
-    calclaSize();
-  }
-
-  void Joint::calcgSize() {
-    LinkMechanics::calcgSize();
+  void Joint::calcgSize(int j) {
+    LinkMechanics::calcgSize(j);
     gSize = forceDir.cols()+momentDir.cols();
   }
 
-  void Joint::calcgSizeActive() {
-    calcgSize();
-  }
-
-  void Joint::calcgdSize() {
-    LinkMechanics::calcgdSize();
+  void Joint::calcgdSize(int j) {
+    LinkMechanics::calcgdSize(j);
     gdSize = forceDir.cols()+momentDir.cols();
   }
 
-  void Joint::calcgdSizeActive() {
-    calcgdSize();
-  }
-
-  void Joint::calcrFactorSize() {
-    LinkMechanics::calcrFactorSize();
+  void Joint::calcrFactorSize(int j) {
+    LinkMechanics::calcrFactorSize(j);
     rFactorSize = isSetValued() ? forceDir.cols()+momentDir.cols() : 0;
   }
 
