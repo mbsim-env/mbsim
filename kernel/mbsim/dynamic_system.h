@@ -504,12 +504,6 @@ namespace MBSim {
       void buildListOfModels(std::vector<ModellingInterface*> &model, bool recursive = true);
 
       /**
-       * \brief set possible attribute for active relative kinematics for updating event driven simulation before case study
-       */
-      void updateCondition();
-      void checkState();
-
-      /**
        * \brief analyse constraints of dynamic systems for usage in inverse kinetics
        */
       void setUpInverseKinetics();
@@ -532,7 +526,7 @@ namespace MBSim {
       /**
        * \brief calculates size of contact force parameters
        */
-      void calclaSize();
+      void calclaSize(int j);
 
       /**
        * \brief calculates size of link status vector
@@ -550,64 +544,29 @@ namespace MBSim {
       void calcbInverseKineticsSize();
 
       /**
-       * \brief calculates size of active contact force parameters
-       */
-      void calclaSizeForActiveg();
-
-      /**
        * \brief calculates size of relative distances
        */
-      void calcgSize();
-
-      /**
-       * \brief calculates size of active relative distances
-       */
-      void calcgSizeActive();
+      void calcgSize(int j);
 
       /**
        * \brief calculates size of relative velocities
        */
-      void calcgdSize();
-
-      /**
-       * \brief calculates size of active relative velocities
-       */
-      void calcgdSizeActive();
+      void calcgdSize(int j);
 
       /**
        * \brief calculates size of relaxation factors for contact equations
        */
-      void calcrFactorSize();
+      void calcrFactorSize(int j);
 
       /** 
        * \brief rearrange vector of active setvalued links
        */
-      void checkActiveLinks();
+      void setUpActiveLinks();
 
       /**
        * \brief set possible attribute for active relative distance in derived classes 
        */
-      void checkActiveg();
-
-      /**
-       * \brief set possible attribute for active relative velocity in derived classes for initialising event driven simulation 
-       */
-      void checkActivegd();
-
-      /**
-       * \brief set possible attribute for active relative velocity in derived classes for updating event driven simulation after an impact
-       */
-      void checkActivegdn();
-
-      /**
-       * \brief set possible attribute for active relative acceleration in derived classes for updating event driven simulation after an impact
-       */
-      void checkActivegdd();
-
-      /**
-       * \brief set possible attribute for active relative velocity in derived classes for updating event driven and time-stepping simulation before an impact
-       */
-      void checkAllgd();
+      void checkActive(int i);
 
       /**
        * \param tolerance for relative velocity
@@ -766,6 +725,12 @@ namespace MBSim {
       Frame *getFrameI() { return I; }
 
       virtual Element *getByPathSearch(std::string path);
+
+      virtual void updatecorr(int j);
+      void updatecorrRef(const fmatvec::Vec &ref);
+      void calccorrSize(int j);
+
+      void checkRoot();
 
     protected:
       /**
@@ -970,6 +935,9 @@ namespace MBSim {
 
       fmatvec::Mat WInverseKinetics[2], bInverseKinetics;
       fmatvec::Vec laInverseKinetics;
+
+      int corrSize, corrInd;
+      fmatvec::Vec corr;
 
     private:
       std::vector<std::string> saved_refFrameF, saved_refFrameC;

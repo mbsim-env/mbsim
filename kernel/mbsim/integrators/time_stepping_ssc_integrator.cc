@@ -1361,7 +1361,7 @@ namespace MBSim {
       sysT1->updateStateDependentVariables(t+dte);
       for(unsigned int i=0; i<SetValuedLinkListT1.size(); i++){ 
         SetValuedLinkListT1[i]->updateg(t+dte);
-        SetValuedLinkListT1[i]->checkActiveg();
+        SetValuedLinkListT1[i]->checkActive(1);
         SetValuedLinkListT1[i]->SizeLinearImpactEstimation(&nInActive, &nActive);
       }
       gInActive.resize(nInActive,NONINIT);

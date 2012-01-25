@@ -54,7 +54,7 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */
-      void calclaSize();
+      void calclaSize(int j);
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
       /***************************************************/
