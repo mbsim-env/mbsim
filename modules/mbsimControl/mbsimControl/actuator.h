@@ -62,7 +62,7 @@ namespace MBSimControl {
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */
-      virtual void calclaSize();
+      virtual void calclaSize(int);
       virtual bool isActive() const { return true; }
       virtual bool gActiveChanged() { return false; }
       /***************************************************/

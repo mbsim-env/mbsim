@@ -75,8 +75,8 @@ namespace MBSimControl {
       LinkMechanics::init(stage);
   }
 
-  void Actuator::calclaSize() {
-    LinkMechanics::calclaSize();
+  void Actuator::calclaSize(int j) {
+    LinkMechanics::calclaSize(j);
     laSize = forceDir.cols()+momentDir.cols(); // cols = columns
   }
 
