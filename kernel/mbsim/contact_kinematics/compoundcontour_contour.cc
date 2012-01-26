@@ -44,8 +44,6 @@ namespace MBSim {
     Contour* c[2];
     c[icontour] = contour;
     numberOfPotentialContactPoints = 0;
-    cout << "Here ------------_" << endl;
-    cout << compound->getNumberOfElements()<< endl;
     for(unsigned int i=0; i<compound->getNumberOfElements(); i++) {
       c[icompound] = compound->getContourElement(i);
       ContactKinematics *tmp = findContactPairingRigidRigid(c[0]->getType().c_str(), c[1]->getType().c_str());
@@ -53,14 +51,10 @@ namespace MBSim {
 	tmp = findContactPairingRigidRigid(c[1]->getType().c_str(), c[0]->getType().c_str());
       if(tmp == 0)
 	throw;
-      cout << tmp << endl;
-      cout << c[0]->getType().c_str() << endl;
-      cout << c[1]->getType().c_str() << endl;
       if(tmp) {
         contactKinematics.push_back(tmp); 
         tmp->assignContours(c[0],c[1]);
         numberOfPotentialContactPoints += tmp->getNumberOfPotentialContactPoints();
-	cout << tmp->getNumberOfPotentialContactPoints() << endl;
       }
     }
   }
