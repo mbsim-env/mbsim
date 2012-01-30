@@ -1,0 +1,29 @@
+FlexibleBody
+===========
+
+Necessary:
+===========
+	- mbsim
+
+Installation:
+===========
+	1. 
+        aclocal
+        autoheader
+        libtoolize -c --force
+        autoconf
+        automake -a -c --force
+			                
+	2. 
+		    ./configure
+
+	      important options
+
+  		  --prefix=PREFIX (where to install the library)
+        -help (further options)
+    
+  3. 
+        make
+
+	4. 
+        make install 
