@@ -1,0 +1,22 @@
+How to install external Nurbs++ Library for MBSim
+
+1. Download: (in MBSim/thirdparty or originally at http://sourceforge.net/projects/libnurbs/)
+
+2. Patchen
+- change to ../MBSim/thirdparty/nurbs/nurbs++-3.0.11
+- use patch ("patch -p1 < ../nurbs++-3.0.11.1.patch")
+- use patch ("patch -p1 < ../nurbs++-3.0.11.2.patch")
+
+3. Installation
+- configure project in ../MBSim/thirdparty/nurbs/nurbs++-3.0.11/ ("./configure --prefix=../MBSim/Install")
+- compile and install project ("make install")
+
+4. Possible Nurbs++ improvements
+- virtual destructor
+- plib_config.h <-> plib.h
+- Nurbs++ seems not to work with cppunit 1.12 -> workaround: has_cppunit="no" in line 8273 of configure
+
+5. Compile using MinGW
+- configure with: ./configure ... CPPFLAGS="-fpermissive"
+
+DIFF: Two folders are compared by diff -ur Folder_Old Folder_New > FILE.patch
