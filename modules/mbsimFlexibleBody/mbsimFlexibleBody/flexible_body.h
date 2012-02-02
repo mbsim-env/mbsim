@@ -165,20 +165,22 @@ namespace MBSimFlexibleBody {
       void addFrame(MBSim::Frame *frame, const  int &id);
 
       /**
-       * \brief exports the position coordinates in a nurbs curve in the specified file
-       * \param filename    Name of the exported curve file
-       * \param deg         Degree of Nurbs interpolation
+       * \brief interpolates the position and optional the velocity coordinates of the flexible body with Nurbs-package and exports the nurbs curve in the specified file
+       * \param filenamePos    Name of the exported position curve file
+       * \param filenameVel    Name of the exported velocity curve file
+       * \param deg            Degree of Nurbs interpolation
        * \param writePsFile A Postscript-file of the curve profile is created
        *
        * Remark: the knot vector is parametrized between [0,L]
        */
-      virtual void exportProfile(const std::string& filename, const int & deg = 3, const bool &writePsFile = false){throw  MBSim::MBSimError("exportProfile(const std::string& filename) is not implemented for " + this->getType()) ;}
+      virtual void exportPositionVelocity(const std::string & filenamePos = std::string( ), const std::string & filenameVel = std::string( ), const int & deg = 3, const bool &writePsFile = false){throw  MBSim::MBSimError("exportPositionVelocity(const std::string& filenamePos, const std::string& filenameVel, const int& deg, const bool& writePsFile) is not implemented for " + this->getType()) ;}
 
       /**
-       * \brief imports the profile (created with exportProfile) and fits the flexible body to the imported curve
-       * \param filename Name of the imported curve file
+       * \brief imports the interpolated position and optional the velocity files (created with exportPositionVelocity) and fits the rigid and flexible coordinate dofs and optional the translatory velocity components of flexible body to the imported nurbs curve
+       * \param filenamePos    Name of the imported position curve file
+       * \param filenameVel    Name of the imported velocity curve file
        */
-      virtual void importProfile(const std::string& filename){throw  MBSim::MBSimError("importProfile(const std::string& filename) is not implemented for " + this->getType()) ;}
+      virtual void importPositionVelocity(const std::string& filenamePos, const std::string& filenameVel){throw  MBSim::MBSimError("importPositionVelocity(const std::string& filenamePos, const std::string& filenameVel) is not implemented for " + this->getType()) ;}
 
     protected:
       /** 

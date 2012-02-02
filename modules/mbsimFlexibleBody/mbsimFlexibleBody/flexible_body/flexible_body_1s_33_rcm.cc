@@ -439,23 +439,32 @@ namespace MBSimFlexibleBody {
 #endif
   }
 
-  void FlexibleBody1s33RCM::exportProfile(const string& filename, const int & deg /* = 3*/, const bool &writePsFile /*= false*/) {
+  void FlexibleBody1s33RCM::exportPositionVelocity(const string & filenamePos /* = string( )*/, const string & filenameVel /*= string( )*/, const int & deg /* = 3*/, const bool &writePsFile /*= false*/) {
 #ifdef HAVE_NURBS
 
-    PlNurbsCurved curve;
+    if(filenamePos.empty())
+      throw MBSimError("FlexibleBody1s33RCM::exportPositionVelocity(const string & filenamePos, const string & filenameVel, const int & deg, const bool &writePsFile) must contain a nonempty string filenamePos!");
+
+    PlNurbsCurved curve; // TODO curvePos und curveVel!!
     if (!openStructure) {
-      PLib::Vector<PLib::HPoint3Dd> Nodelist(Elements + deg);
+      PLib::Vector<PLib::HPoint3Dd> NodelistPos(Elements + deg);
+      PLib::Vector<PLib::HPoint3Dd> NodelistVel(Elements + deg);
 
       for (int i = 0; i < Elements + deg; i++) {  // +deg-Elements are needed, as the curve is closed
         ContourPointData cp(i);
         if (i >= Elements)
           cp.getNodeNumber() = i - Elements;
-        updateKinematicsForFrame(cp, position);
 
-        Nodelist[i] = HPoint3Dd(cp.getFrameOfReference().getPosition()(0), cp.getFrameOfReference().getPosition()(1), cp.getFrameOfReference().getPosition()(2), 1);
+        updateKinematicsForFrame(cp, position);
+        NodelistPos[i] = HPoint3Dd(cp.getFrameOfReference().getPosition()(0), cp.getFrameOfReference().getPosition()(1), cp.getFrameOfReference().getPosition()(2), 1);
+
+        if(not filenameVel.empty()) {
+          updateKinematicsForFrame(cp, velocity);
+          NodelistVel[i] = HPoint3Dd(cp.getFrameOfReference().getVelocity()(0), cp.getFrameOfReference().getVelocity()(1), cp.getFrameOfReference().getVelocity()(2), 1);
+        }
       }
 
-      /*create own vVec and vvec like in nurbsdisk_2s*/
+      /*create own uVec and uvec like in nurbsdisk_2s*/
       PLib::Vector<double> uvec = PLib::Vector<double>(Elements + deg);
       PLib::Vector<double> uVec = PLib::Vector<double>(Elements + deg + deg + 1);
 
@@ -471,14 +480,18 @@ namespace MBSimFlexibleBody {
         uVec[i] = uVec[i - 1] + stepU;
       }
 
-      curve.globalInterpClosedH(Nodelist, uvec, uVec, deg);
-
-      curve.write(filename.c_str());
+      curve.globalInterpClosedH(NodelistPos, uvec, uVec, deg);
+      curve.write(filenamePos.c_str());
 
       if (writePsFile) {
-        string psfile = filename + ".ps";
+        string psfile = filenamePos + ".ps";
 
         cout << curve.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
+      }
+
+      if(not filenameVel.empty()) {
+        curve.globalInterpClosedH(NodelistVel, uvec, uVec, deg);
+        curve.write(filenameVel.c_str());
       }
     }
 #else
@@ -486,28 +499,35 @@ namespace MBSimFlexibleBody {
 #endif
   }
 
-  void FlexibleBody1s33RCM::importProfile(const string & filename) {
+  void FlexibleBody1s33RCM::importPositionVelocity(const string & filenamePos /* = string( )*/, const string & filenameVel /* = string( )*/) {
 #ifdef HAVE_NURBS
 
-    PlNurbsCurved curve;
-    curve.read(filename.c_str());
+    if(filenamePos.empty())
+      throw MBSimError("FlexibleBody1s33RCM::importPositionVelocity(const string & filenamePos, const string & filenameVel, const int & deg, const bool &writePsFile) must contain a nonempty string filenamePos!");
+
     int DEBUGLEVEL = 0;
 
-    //double L = curve.length(); // TODO ungenauer als mit L
+    PlNurbsCurved curvePos;
+    PlNurbsCurved curveVel;
+    curvePos.read(filenamePos.c_str());
+    if(not filenameVel.empty())
+      curveVel.read(filenameVel.c_str());
+
     l0 = L/Elements;
     Vec q0Dummy(q0.size(),INIT,0.);
     Point3Dd prevBinStart;
 
     for(int i = 0; i < Elements; i++) {
-      Point3Dd posStart = curve.pointAt(i*l0);
-      Point3Dd pos1Quart = curve.pointAt(i*l0 + l0/4.);
-      Point3Dd posHalf = curve.pointAt(i*l0 + l0/2.);
-      Point3Dd pos3Quart = curve.pointAt(i*l0 + l0*3./4.);
-      Point3Dd tangStart = curve.derive3D(i*l0, 1);
-      Point3Dd tangHalf = curve.derive3D(i*l0 + l0/2., 1);
-      Point3Dd binStart = curve.derive3D(i*l0, 2);
+      Point3Dd posStart = curvePos.pointAt(i*l0);
+      Point3Dd pos1Quart = curvePos.pointAt(i*l0 + l0/4.);
+      Point3Dd posHalf = curvePos.pointAt(i*l0 + l0/2.);
+      Point3Dd pos3Quart = curvePos.pointAt(i*l0 + l0*3./4.);
+      Point3Dd tangStart = curvePos.derive3D(i*l0, 1);
+      tangStart /= norm(tangStart);
+      Point3Dd tangHalf = curvePos.derive3D(i*l0 + l0/2., 1);
+      Point3Dd binStart = curvePos.derive3D(i*l0, 2);
       binStart = crossProduct(binStart,tangStart);
-      binStart = binStart/norm(binStart);
+      binStart /= norm(binStart);
       if (i>0) {
         if (dot(prevBinStart,binStart)<0)
           binStart = -1. * binStart;
@@ -518,7 +538,8 @@ namespace MBSimFlexibleBody {
       q0Dummy(i*10)   = posStart.x(); // x
       q0Dummy(i*10+1) = posStart.y(); // y
       q0Dummy(i*10+2) = posStart.z(); // z
-      SqrMat AIK(3,3,INIT,0.0);
+
+      SqrMat AIK(3,3,INIT,0.);
       AIK(0,0) = tangStart.x(); AIK(1,0) = tangStart.y(); AIK(2,0) = tangStart.z();
       AIK(0,1) = norStart.x(); AIK(1,1) = norStart.y(); AIK(2,1) = norStart.z();
       AIK(0,2) = binStart.x(); AIK(1,2) = binStart.y(); AIK(2,2) = binStart.z();
@@ -532,24 +553,35 @@ namespace MBSimFlexibleBody {
       q0Dummy(i*10+8) = -absolute((pos1Quart.x()-posHalf.x())*(-tangHalf.y()) - (pos1Quart.y()-posHalf.y())*(-tangHalf.x()))/sqrt(tangHalf.x()*tangHalf.x() + tangHalf.y()*tangHalf.y()); // cL2
       q0Dummy(i*10+9) = -absolute((pos3Quart.x()-posHalf.x())*tangHalf.y() - (pos3Quart.y()-posHalf.y())*tangHalf.x())/sqrt(tangHalf.x()*tangHalf.x() + tangHalf.y()*tangHalf.y()); // cR2
 
-      if(DEBUGLEVEL==1) {
-   	    cout << "START(" <<i+1 << ",1:end) = [" << posStart <<"];" << endl;
-    	cout << "Tangent(" <<i+1 <<",1:end) = [" <<tangStart <<"];" << endl;
-    	cout << "Normal(" <<i+1 <<",1:end) = [" <<norStart <<"];" << endl;
-    	cout << "Binormal(" <<i+1 <<",1:end) = ["  <<binStart <<"];" << endl;
+      if(not filenameVel.empty()) {
+        Point3Dd velStart = curveVel.pointAt(i*l0);
 
-    	cout << "alpha_Old(" << i+1 << ") = " << q(i*10+3) <<";" << endl;
-    	cout << "beta_Old(" << i+1 << ") = " << q(i*10+4) <<";" << endl;
-    	cout << "gamma_Old(" << i+1 << ") = " << q(i*10+5) <<";" << endl;
-    	cout << "%----------------------------------" << endl;
-    	cout << "alpha_New(" << i+1 << ") = " << q0Dummy(i*10+3) <<";" << endl;
-    	cout << "beta_New(" << i+1 << ") = " << q0Dummy(i*10+4) <<";" << endl;
-    	cout << "gamma_New(" << i+1 << ") = " << q0Dummy(i*10+5) <<";" << endl;
-    	cout << "%----------------------------------" << endl;
-    	cout << "diff_alpha(" << i+1 << ") = " << q(i*10+3) - q0Dummy(i*10+3) <<";" << endl;
-    	cout << "diff_beta(" << i+1 << ") = " << q(i*10+4) - q0Dummy(i*10+4) <<";" << endl;
-    	cout << "diff_gamma(" << i+1 << ") = " << q(i*10+5) - q0Dummy(i*10+5) <<";" << endl;
-    	cout << "%----------------------------------" << endl;
+        Vec velK(3,INIT,0.); velK(0) = velStart.x(); velK(1) = velStart.y(); velK(2) = velStart.z();
+        Vec velI = trans(frameOfReference->getOrientation())*AIK*velK;
+
+        u(i*10) = velI(0);
+        u(i*10+1) = velI(1);
+        u(i*10+2) = velI(2);
+      }
+
+      if(DEBUGLEVEL==1) {
+        cout << "START(" <<i+1 << ",1:end) = [" << posStart <<"];" << endl;
+        cout << "Tangent(" <<i+1 <<",1:end) = [" <<tangStart <<"];" << endl;
+        cout << "Normal(" <<i+1 <<",1:end) = [" <<norStart <<"];" << endl;
+        cout << "Binormal(" <<i+1 <<",1:end) = ["  <<binStart <<"];" << endl;
+
+        cout << "alpha_Old(" << i+1 << ") = " << q(i*10+3) <<";" << endl;
+        cout << "beta_Old(" << i+1 << ") = " << q(i*10+4) <<";" << endl;
+        cout << "gamma_Old(" << i+1 << ") = " << q(i*10+5) <<";" << endl;
+        cout << "%----------------------------------" << endl;
+        cout << "alpha_New(" << i+1 << ") = " << q0Dummy(i*10+3) <<";" << endl;
+        cout << "beta_New(" << i+1 << ") = " << q0Dummy(i*10+4) <<";" << endl;
+        cout << "gamma_New(" << i+1 << ") = " << q0Dummy(i*10+5) <<";" << endl;
+        cout << "%----------------------------------" << endl;
+        cout << "diff_alpha(" << i+1 << ") = " << q(i*10+3) - q0Dummy(i*10+3) <<";" << endl;
+        cout << "diff_beta(" << i+1 << ") = " << q(i*10+4) - q0Dummy(i*10+4) <<";" << endl;
+        cout << "diff_gamma(" << i+1 << ") = " << q(i*10+5) - q0Dummy(i*10+5) <<";" << endl;
+        cout << "%----------------------------------" << endl;
       }
     }
     setq0(q0Dummy);
@@ -559,4 +591,3 @@ namespace MBSimFlexibleBody {
 #endif
   }
 }
-
