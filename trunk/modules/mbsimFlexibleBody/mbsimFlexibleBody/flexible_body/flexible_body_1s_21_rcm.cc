@@ -383,23 +383,43 @@ namespace MBSimFlexibleBody {
     BuildElements();
   }
 
-  void FlexibleBody1s21RCM::exportProfile(const string& filename, const int & deg /* = 3*/, const bool &writePsFile /*= false*/) {
+  void FlexibleBody1s21RCM::exportPositionVelocity(const string& filenamePos /*= string( )*/, const string& filenameVel /*= string( )*/, const int & deg /* = 3*/, const bool &writePsFile /*= false*/) {
 #ifdef HAVE_NURBS
 
-    PlNurbsCurved curve;
+    if(filenamePos.empty())
+      throw MBSimError("FlexibleBody1s21RCM::exportPositionVelocity(const string & filenamePos, const string & filenameVel, const int & deg, const bool &writePsFile) must contain a nonempty string filenamePos!");
+
+    PlNurbsCurved curvePos;
+    PlNurbsCurved curveVel;
+
     if (!openStructure) {
-      PLib::Vector<PLib::HPoint3Dd> Nodelist(Elements + deg);
+      PLib::Vector<PLib::HPoint3Dd> NodelistPos(Elements + deg);
+      PLib::Vector<PLib::HPoint3Dd> NodelistVel(Elements + deg);
 
       for (int i = 0; i < Elements + deg; i++) {  // +deg-Elements are needed, as the curve is closed
         ContourPointData cp(i);
         if (i >= Elements)
           cp.getNodeNumber() = i - Elements;
-        updateKinematicsForFrame(cp, position);
 
-        Nodelist[i] = HPoint3Dd(cp.getFrameOfReference().getPosition()(0), cp.getFrameOfReference().getPosition()(1), cp.getFrameOfReference().getPosition()(2), 1);
+        updateKinematicsForFrame(cp, position);
+        NodelistPos[i] = HPoint3Dd(cp.getFrameOfReference().getPosition()(0), cp.getFrameOfReference().getPosition()(1), cp.getFrameOfReference().getPosition()(2), 1); // Third component is zero as Nurbs library supports only 3D interpolation
+
+        if(not filenameVel.empty()) {
+          updateKinematicsForFrame(cp, velocity_cosy);
+
+          SqrMat TMPMat = cp.getFrameOfReference().getOrientation();
+          SqrMat AKI(3,3,INIT,0.);
+          AKI.row(0) = trans(TMPMat.col(1));
+          AKI.row(1) = trans(TMPMat.col(0));
+          AKI.row(2) = trans(TMPMat.col(2));
+          Vec Vel(3,INIT,0.);
+          Vel = AKI*cp.getFrameOfReference().getVelocity();
+
+          NodelistVel[i] = HPoint3Dd(Vel(0), Vel(1), Vel(2), 1);
+        }
       }
 
-      /*create own vVec and vvec like in nurbsdisk_2s*/
+      /*create own uVec and uvec like in nurbsdisk_2s*/
       PLib::Vector<double> uvec = PLib::Vector<double>(Elements + deg);
       PLib::Vector<double> uVec = PLib::Vector<double>(Elements + deg + deg + 1);
 
@@ -415,62 +435,94 @@ namespace MBSimFlexibleBody {
         uVec[i] = uVec[i - 1] + stepU;
       }
 
-      curve.globalInterpClosedH(Nodelist, uvec, uVec, deg);
-
-      curve.write(filename.c_str());
+      curvePos.globalInterpClosedH(NodelistPos, uvec, uVec, deg);
+      curvePos.write(filenamePos.c_str());
 
       if (writePsFile) {
-        string psfile = filename + ".ps";
+        string psfile = filenamePos + ".ps";
 
-        cout << curve.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
+        cout << curvePos.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
+      }
+
+      if(not filenameVel.empty()) {
+        curveVel.globalInterpClosedH(NodelistVel, uvec, uVec, deg);
+        curveVel.write(filenameVel.c_str());
       }
     }
 #else
     throw MBSimError("No Nurbs-Library installed ...");
 #endif
-
   }
 
-  void FlexibleBody1s21RCM::importProfile(const string & filename) {
+  void FlexibleBody1s21RCM::importPositionVelocity(const string & filenamePos /* = string( )*/, const string & filenameVel /* = string( )*/) {
 #ifdef HAVE_NURBS
 
-    PlNurbsCurved curve;
-    curve.read(filename.c_str());
+    if(filenamePos.empty())
+      throw MBSimError("FlexibleBody1s21RCM::importPositionVelocity(const string & filenamePos, const string & filenameVel, const int & deg, const bool &writePsFile) must contain a nonempty string filenamePos!");
 
-    //double L = curve.length(); // TODO ungenauer als mit L
+    int DEBUGLEVEL = 0;
+
+    PlNurbsCurved curvePos;
+    PlNurbsCurved curveVel;
+    curvePos.read(filenamePos.c_str());
+    if(not filenameVel.empty())
+      curveVel.read(filenameVel.c_str());
+
     double l0 = L/Elements;
     Vec q0Dummy(q0.size(),INIT,0.);
+    Point3Dd prevBinStart;
 
     for(int i = 0; i < Elements; i++) {
-      Point3Dd posStart = curve.pointAt(i*l0);
-      Point3Dd pos1Quart = curve.pointAt(i*l0 + l0/4.);
-      Point3Dd posHalf = curve.pointAt(i*l0 + l0/2.);
-      Point3Dd pos3Quart = curve.pointAt(i*l0 + l0*3./4.);
-      Point3Dd velStart = curve.derive3D(i*l0, 1);
-      Point3Dd velHalf = curve.derive3D(i*l0 + l0/2., 1);
+      Point3Dd posStart = curvePos.pointAt(i*l0);
+      Point3Dd pos1Quart = curvePos.pointAt(i*l0 + l0/4.);
+      Point3Dd posHalf = curvePos.pointAt(i*l0 + l0/2.);
+      Point3Dd pos3Quart = curvePos.pointAt(i*l0 + l0*3./4.);
+      Point3Dd tangStart = curvePos.derive3D(i*l0, 1);
+      tangStart /= norm(tangStart);
+      Point3Dd velHalf = curvePos.derive3D(i*l0 + l0/2., 1);
 
       q0Dummy(i*5)   = posStart.x(); // x
       q0Dummy(i*5+1) = posStart.y(); // y
-      q0Dummy(i*5+2) = ArcTan(velStart.x(),velStart.y()); // phi
+      q0Dummy(i*5+2) = ArcTan(tangStart.x(),tangStart.y()); // phi
 
       q0Dummy(i*5+3) = -absolute((pos1Quart.x()-posHalf.x())*(-velHalf.y()) - (pos1Quart.y()-posHalf.y())*(-velHalf.x()))/sqrt(velHalf.x()*velHalf.x() + velHalf.y()*velHalf.y()); // cL
       q0Dummy(i*5+4) = -absolute((pos3Quart.x()-posHalf.x())*velHalf.y() - (pos3Quart.y()-posHalf.y())*velHalf.x())/sqrt(velHalf.x()*velHalf.x() + velHalf.y()*velHalf.y()); // cR
+
+      if(not filenameVel.empty()) {
+        Point3Dd binStart = curvePos.derive3D(i*l0, 2);
+        binStart = crossProduct(binStart,tangStart);
+        binStart /= norm(binStart);
+        if (i>0) {
+          if (dot(prevBinStart,binStart)<0)
+            binStart = -1. * binStart;
+        }
+        prevBinStart = binStart;
+        Point3Dd norStart = crossProduct(binStart,tangStart);
+
+        SqrMat AIK(3,3,INIT,0.);
+        AIK(0,0) = tangStart.x(); AIK(1,0) = tangStart.y(); AIK(2,0) = tangStart.z();
+        AIK(0,1) = norStart.x(); AIK(1,1) = norStart.y(); AIK(2,1) = norStart.z();
+        AIK(0,2) = binStart.x(); AIK(1,2) = binStart.y(); AIK(2,2) = binStart.z();
+
+        Point3Dd velStart = curveVel.pointAt(i*l0);
+
+        Vec velK(3,INIT,0.); velK(0) = velStart.x(); velK(1) = velStart.y(); velK(2) = velStart.z();
+        Vec velI = trans(frameOfReference->getOrientation())*AIK*velK;
+
+        u(i*5) = velI(0);
+        u(i*5+1) = velI(1);
+      }
     }
     setq0(q0Dummy);
 
-    /*Testing
-
-      int j = 0;
-      for (double i = 0; i < 1; i += stepU) {
-      cout << "i=" << i << endl << curve.pointAt(i) << endl;
-      cout << Nodelist[j] << endl;
-      j++;
+    if(DEBUGLEVEL == 1) {
+      for (double i = 0; i < Elements; i++) {
+        cout << "i=" << i << endl << curvePos.pointAt(i) << endl;
       }
       cout << "Test of Nurbs-Curve" << endl;
       string psfile = "test.ps";
-      cout << curve.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
-
-      END - Testing*/
+      cout << curvePos.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
+    }
 #else
     throw MBSimError("No Nurbs-Library installed ...");
 #endif
