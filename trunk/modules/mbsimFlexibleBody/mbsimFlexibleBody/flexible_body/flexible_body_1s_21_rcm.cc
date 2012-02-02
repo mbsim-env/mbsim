@@ -1,17 +1,17 @@
 /* Copyright (C) 2004-2011 MBSim Development Team
  *
- * This library is free software; you can redistribute it and/or 
- * modify it under the terms of the GNU Lesser General Public 
- * License as published by the Free Software Foundation; either 
- * version 2.1 of the License, or (at your option) any later version. 
- *  
- * This library is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
- * Lesser General Public License for more details. 
- *  
- * You should have received a copy of the GNU Lesser General Public 
- * License along with this library; if not, write to the Free Software 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
  * Contact: thorsten.schindler@mytum.de
@@ -62,7 +62,7 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure_) : FlexibleBodyContinuum<double>(name), L(0), l0(0), E(0), A(0), I(0), rho(0), rc(0), dm(0), dl(0), openStructure(openStructure_), initialized(false) { 
+  FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure_) : FlexibleBodyContinuum<double>(name), L(0), l0(0), E(0), A(0), I(0), rho(0), rc(0), dm(0), dl(0), openStructure(openStructure_), initialized(false) {
     contour1sFlexible = new Contour1sFlexible("Contour1sFlexible");
     Body::addContour(contour1sFlexible);
   }
@@ -82,7 +82,7 @@ namespace MBSimFlexibleBody {
         if(qElement[i](2)-q(2)>0.0) qElement[i](7) += 2*M_PI;
         else qElement[i](7) -= 2*M_PI;
         uElement[i](5,7) << u(0,2);
-      } 
+      }
     }
   }
 
@@ -91,7 +91,7 @@ namespace MBSimFlexibleBody {
 
     if(n < Elements - 1 || openStructure==true) {
       gloVec(j,j+7) += locVec;
-    } 
+    }
     else { // ring closure at finite element (end,1) with angle difference 2*M_PI
       gloVec(j,j+4) += locVec(0,4);
       gloVec(0,  2) += locVec(5,7);
@@ -103,7 +103,7 @@ namespace MBSimFlexibleBody {
 
     if(n < Elements - 1 || openStructure==true) {
       gloMat(Index(j,j+7),Index(j,j+7)) += locMat;
-    } 
+    }
     else { // ring closure at finite element (end,1) with angle difference 2*M_PI
       gloMat(Index(j,j+4),Index(j,j+4)) += locMat(Index(0,4),Index(0,4));
       gloMat(Index(j,j+4),Index(0,2)) += locMat(Index(0,4),Index(5,7));
@@ -117,7 +117,7 @@ namespace MBSimFlexibleBody {
 
     if(n < Elements - 1 || openStructure==true) {
       gloMat(Index(j,j+7)) += locMat;
-    } 
+    }
     else { // ring closure at finite element (end,1) with angle difference 2*M_PI
       gloMat(Index(j,j+4))            += locMat(Index(0,4));
       gloMat(Index(j,j+4),Index(0,2)) += locMat(Index(0,4),Index(5,7));
@@ -135,7 +135,7 @@ namespace MBSimFlexibleBody {
         cp.getFrameOfReference().setPosition(frameOfReference->getPosition() + frameOfReference->getOrientation() * tmp);
       }
       if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
-        tmp(0) = cos(X(2)); tmp(1) = sin(X(2)); tmp(2) = 0.; 
+        tmp(0) = cos(X(2)); tmp(1) = sin(X(2)); tmp(2) = 0.;
         cp.getFrameOfReference().getOrientation().col(1) = frameOfReference->getOrientation() * tmp; // tangent
       }
       if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
@@ -165,7 +165,7 @@ namespace MBSimFlexibleBody {
       }
 
       if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
-        tmp(0) =  cos(q(5*node+2)); tmp(1) = sin(q(5*node+2)); tmp(2) = 0.; 
+        tmp(0) =  cos(q(5*node+2)); tmp(1) = sin(q(5*node+2)); tmp(2) = 0.;
         cp.getFrameOfReference().getOrientation().col(1)    = frameOfReference->getOrientation() * tmp; // tangent
       }
       if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
@@ -228,7 +228,7 @@ namespace MBSimFlexibleBody {
       frame->setJacobianOfRotation   (cp.getFrameOfReference().getJacobianOfRotation());
       frame->setGyroscopicAccelerationOfTranslation(cp.getFrameOfReference().getGyroscopicAccelerationOfTranslation());
       frame->setGyroscopicAccelerationOfRotation   (cp.getFrameOfReference().getGyroscopicAccelerationOfRotation());
-    }   
+    }
   }
 
   void FlexibleBody1s21RCM::init(InitStage stage) {
@@ -300,11 +300,11 @@ namespace MBSimFlexibleBody {
         plotVector.push_back(elementData(j));
     }
     FlexibleBodyContinuum<double>::plot(t,dt);
-  }  
+  }
 
   void FlexibleBody1s21RCM::setNumberElements(int n) {
     Elements = n;
-    if(openStructure) qSize = 5*n+3; 
+    if(openStructure) qSize = 5*n+3;
     else qSize = 5*n;
     uSize[0] = qSize;
     uSize[1] = qSize; // TODO
@@ -314,20 +314,20 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s21RCM::setCurlRadius(double r) {
     rc = r;
-    if(initialized) 
-      for(int i=0;i<Elements;i++) 
+    if(initialized)
+      for(int i=0;i<Elements;i++)
         static_cast<FiniteElement1s21RCM*>(discretization[i])->setCurlRadius(rc);
   }
 
   void FlexibleBody1s21RCM::setMaterialDamping(double d) {
     dm = d;
-    if(initialized) 
+    if(initialized)
       for(int i=0;i<Elements;i++) static_cast<FiniteElement1s21RCM*>(discretization[i])->setMaterialDamping(dm);
   }
 
   void FlexibleBody1s21RCM::setLehrDamping(double d) {
     dl = d;
-    if(initialized) 
+    if(initialized)
       for(int i=0;i<Elements;i++) static_cast<FiniteElement1s21RCM*>(discretization[i])->setLehrDamping(dl);
   }
 
@@ -352,7 +352,7 @@ namespace MBSimFlexibleBody {
           q0Dummy(5*i+0,5*i+1) = direction*L/Elements*i;
           q0Dummy(5*i+2)       = alpha;
         }
-      } 
+      }
       else {
         double R  = L/(2*M_PI);
         double a_ = sqrt(R*R + (L/Elements*L/Elements)/16.) - R;
@@ -383,7 +383,7 @@ namespace MBSimFlexibleBody {
     BuildElements();
   }
 
-  void FlexibleBody1s21RCM::exportPositionVelocity(const string& filenamePos /*= string( )*/, const string& filenameVel /*= string( )*/, const int & deg /* = 3*/, const bool &writePsFile /*= false*/) {
+  void FlexibleBody1s21RCM::exportPositionVelocity(const string& filenamePos, const string& filenameVel /*= string( )*/, const int & deg /* = 3*/, const bool &writePsFile /*= false*/) {
 #ifdef HAVE_NURBS
 
     if(filenamePos.empty())
@@ -454,7 +454,7 @@ namespace MBSimFlexibleBody {
 #endif
   }
 
-  void FlexibleBody1s21RCM::importPositionVelocity(const string & filenamePos /* = string( )*/, const string & filenameVel /* = string( )*/) {
+  void FlexibleBody1s21RCM::importPositionVelocity(const string & filenamePos, const string & filenameVel /* = string( )*/) {
 #ifdef HAVE_NURBS
 
     if(filenamePos.empty())
@@ -533,7 +533,7 @@ namespace MBSimFlexibleBody {
     if(openStructure && sGlobal >= L) remainder += L; // remainder \in (-eps,L+eps)
     if(!openStructure && sGlobal < 0.) remainder += L; // remainder \in [0,L)
 
-    currentElement = int(remainder/l0);   
+    currentElement = int(remainder/l0);
     sLocal = remainder - (0.5 + currentElement) * l0; // Lagrange-Parameter of the affected FE with sLocal==0 in the middle of the FE and sGlobal==0 at the beginning of the beam
 
     if(currentElement >= Elements && openStructure) { // contact solver computes to large sGlobal at the end of the entire beam is not considered only for open structure

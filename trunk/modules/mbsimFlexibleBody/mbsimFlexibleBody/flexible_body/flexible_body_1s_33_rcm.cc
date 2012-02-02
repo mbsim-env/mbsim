@@ -1,17 +1,17 @@
 /* Copyright (C) 2004-2011 MBSim Development Team
  *
- * This library is free software; you can redistribute it and/or 
- * modify it under the terms of the GNU Lesser General Public 
- * License as published by the Free Software Foundation; either 
- * version 2.1 of the License, or (at your option) any later version. 
- *  
- * This library is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
- * Lesser General Public License for more details. 
- *  
- * You should have received a copy of the GNU Lesser General Public 
- * License along with this library; if not, write to the Free Software 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
  * Contact: thorsten.schindler@mytum.de
@@ -83,7 +83,7 @@ namespace MBSimFlexibleBody {
         qElement[i] = q(j,j+15);
         uElement[i] = u(j,j+15);
       }
-      else { // last FE-Beam for closed structure	
+      else { // last FE-Beam for closed structure
         qElement[i](0,9) = q(j,j+9);
         uElement[i](0,9) = u(j,j+9);
         qElement[i](10,15) = q(0,5);
@@ -113,7 +113,7 @@ namespace MBSimFlexibleBody {
       gloMat(Index(j,j+15),Index(j,j+15)) += locMat;
     }
     else { // last FE for closed structure
-      gloMat(Index(j,j+9),Index(j,j+9)) += locMat(Index(0,9),Index(0,9)); 
+      gloMat(Index(j,j+9),Index(j,j+9)) += locMat(Index(0,9),Index(0,9));
       gloMat(Index(j,j+9),Index(0,5)) += locMat(Index(0,9),Index(10,15));
       gloMat(Index(0,5),Index(j,j+9)) += locMat(Index(10,15),Index(0,9));
       gloMat(Index(0,5),Index(0,5)) += locMat(Index(10,15),Index(10,15));
@@ -127,7 +127,7 @@ namespace MBSimFlexibleBody {
       gloMat(Index(j,j+15)) += locMat;
     }
     else { // last FE for closed structure
-      gloMat(Index(j,j+9)) += locMat(Index(0,9)); 
+      gloMat(Index(j,j+9)) += locMat(Index(0,9));
       gloMat(Index(j,j+9),Index(0,5)) += locMat(Index(0,9),Index(10,15));
       gloMat(Index(0,5)) += locMat(Index(10,15));
     }
@@ -177,7 +177,7 @@ namespace MBSimFlexibleBody {
       double sLocal;
       int currentElement;
       BuildElement(cp.getLagrangeParameterPosition()(0), sLocal, currentElement); // compute parameters of affected FE
-      Mat Jtmp = static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->computeJacobianOfMotion(qElement[currentElement],sLocal); // this local ansatz yields continuous and finite wave propagation 
+      Mat Jtmp = static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->computeJacobianOfMotion(qElement[currentElement],sLocal); // this local ansatz yields continuous and finite wave propagation
 
       if(currentElement<Elements-1 || openStructure) {
         Jacobian(Index(10*currentElement,10*currentElement+15),All) = Jtmp;
@@ -193,20 +193,20 @@ namespace MBSimFlexibleBody {
       Vec p = q(10*node+3,10*node+5);
       Vec t = angle->computet(p);
       Vec n = angle->computen(p);
-      Vec b = angle->computeb(p);		
+      Vec b = angle->computeb(p);
       SqrMat tp = angle->computetq(p);
       SqrMat np = angle->computenq(p);
-      SqrMat bp = angle->computebq(p); 
+      SqrMat bp = angle->computebq(p);
 
       Jacobian(Index(10*node,10*node+2),One) << SqrMat(3,EYE); // translation
       Jacobian(Index(10*node+3,10*node+5),3) = t(1)*tp(2,0,2,2).T()+n(1)*np(2,0,2,2).T()+b(1)*bp(2,0,2,2).T(); // rotation
       Jacobian(Index(10*node+3,10*node+5),4) = t(2)*tp(0,0,0,2).T()+n(2)*np(0,0,0,2).T()+b(2)*bp(0,0,0,2).T();
-      Jacobian(Index(10*node+3,10*node+5),5) = t(0)*tp(1,0,1,2).T()+n(0)*np(1,0,1,2).T()+b(0)*bp(1,0,1,2).T(); 
+      Jacobian(Index(10*node+3,10*node+5),5) = t(0)*tp(1,0,1,2).T()+n(0)*np(1,0,1,2).T()+b(0)*bp(1,0,1,2).T();
     }
     else throw MBSimError("ERROR(FlexibleBody1s33RCM::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
 
     cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation()*Jacobian(0,0,qSize-1,2).T());
-    cp.getFrameOfReference().setJacobianOfRotation(frameOfReference->getOrientation()*Jacobian(0,3,qSize-1,5).T()); 
+    cp.getFrameOfReference().setJacobianOfRotation(frameOfReference->getOrientation()*Jacobian(0,3,qSize-1,5).T());
     // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
     // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
 
@@ -288,7 +288,7 @@ namespace MBSimFlexibleBody {
         discretization.push_back(new FiniteElement1s33RCM(l0,rho,A,E,G,I1,I2,I0,g,angle));
         qElement.push_back(Vec(discretization[0]->getqSize(),INIT,0.));
         uElement.push_back(Vec(discretization[0]->getuSize(),INIT,0.));
-        static_cast<FiniteElement1s33RCM*>(discretization[i])->setGauss(nGauss);  		
+        static_cast<FiniteElement1s33RCM*>(discretization[i])->setGauss(nGauss);
         if(fabs(R1)>epsroot() || fabs(R2)>epsroot()) static_cast<FiniteElement1s33RCM*>(discretization[i])->setCurlRadius(R1,R2);
         static_cast<FiniteElement1s33RCM*>(discretization[i])->setMaterialDamping(Elements*epstD,Elements*k0D);
         if(fabs(epstD)<epsroot()) static_cast<FiniteElement1s33RCM*>(discretization[i])->setLehrDamping(Elements*epstL,Elements*k0L);
@@ -374,7 +374,7 @@ namespace MBSimFlexibleBody {
     if(openStructure && sGlobal >= L) remainder += L; // remainder \in (-eps,L+eps)
     if(!openStructure && sGlobal < 0.) remainder += L; // remainder \in [0,L)
 
-    currentElement = int(remainder/l0);   
+    currentElement = int(remainder/l0);
     sLocal = remainder - (0.5 + currentElement) * l0; // Lagrange-Parameter of the affected FE with sLocal==0 in the middle of the FE and sGlobal==0 at the beginning of the beam
 
     if(currentElement >= Elements && openStructure) { // contact solver computes to large sGlobal at the end of the entire beam is not considered only for open structure
@@ -398,7 +398,7 @@ namespace MBSimFlexibleBody {
       e=e->NextSiblingElement();
     }
 
-    //other properties 
+    //other properties
 
     e=element->FirstChildElement(MBSIMFLEXNS"numberOfElements");
     setNumberElements(getInt(e));
@@ -439,7 +439,7 @@ namespace MBSimFlexibleBody {
 #endif
   }
 
-  void FlexibleBody1s33RCM::exportPositionVelocity(const string & filenamePos /* = string( )*/, const string & filenameVel /*= string( )*/, const int & deg /* = 3*/, const bool &writePsFile /*= false*/) {
+  void FlexibleBody1s33RCM::exportPositionVelocity(const string & filenamePos, const string & filenameVel /*= string( )*/, const int & deg /* = 3*/, const bool &writePsFile /*= false*/) {
 #ifdef HAVE_NURBS
 
     if(filenamePos.empty())
@@ -499,7 +499,7 @@ namespace MBSimFlexibleBody {
 #endif
   }
 
-  void FlexibleBody1s33RCM::importPositionVelocity(const string & filenamePos /* = string( )*/, const string & filenameVel /* = string( )*/) {
+  void FlexibleBody1s33RCM::importPositionVelocity(const string & filenamePos, const string & filenameVel /* = string( )*/) {
 #ifdef HAVE_NURBS
 
     if(filenamePos.empty())
