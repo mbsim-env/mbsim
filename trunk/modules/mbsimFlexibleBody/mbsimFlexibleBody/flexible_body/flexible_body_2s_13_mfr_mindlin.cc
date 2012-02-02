@@ -1,17 +1,17 @@
 /* Copyright (C) 2004-2011 MBSim Development Team
  *
- * This library is free software; you can redistribute it and/or 
- * modify it under the terms of the GNU Lesser General Public 
- * License as published by the Free Software Foundation; either 
- * version 2.1 of the License, or (at your option) any later version. 
- *  
- * This library is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
- * Lesser General Public License for more details. 
- *  
- * You should have received a copy of the GNU Lesser General Public 
- * License along with this library; if not, write to the Free Software 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
  * Contact: thorsten.schindler@mytum.de
@@ -28,6 +28,7 @@
 #include "mbsim/dynamic_system.h"
 #include "mbsim/utils/eps.h"
 #include <mbsim/utils/utils.h>
+#include <mbsim/utils/rotarymatrices.h>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/nurbsdisk.h"
@@ -42,7 +43,7 @@ namespace MBSimFlexibleBody {
   FlexibleBody2s13MFRMindlin::FlexibleBody2s13MFRMindlin(const string &name, const int & DEBUGLEVEL_) :
       FlexibleBody2s13(name, DEBUGLEVEL_), N_compl(0), R_compl(0), R_ij(0) {
     RefDofs = 6;
-    for(int i=0;i<3;i++) 
+    for(int i=0;i<3;i++)
       for(int j=0;j<3;j++) {
         N_ij[i][j]=0;
         NR_ij[i][j]=0;
@@ -51,7 +52,7 @@ namespace MBSimFlexibleBody {
 
   FlexibleBody2s13MFRMindlin::~FlexibleBody2s13MFRMindlin() {
     delete N_compl;
-    for(int i=0;i<3;i++) 
+    for(int i=0;i<3;i++)
       for(int j=0;j<3;j++) {
         delete N_ij[i][j];
         delete NR_ij[i][j];
@@ -163,12 +164,12 @@ namespace MBSimFlexibleBody {
       file_eigval << eigval(H) << endl;
       file_eigval.close();
     }
-    
+
     //for testing
     //throw new MBSimError("FlexibleBody2s13MFRMindlin::updateM -- Testing the Mass matrix");
 
     // LU-decomposition of M
-    LLM[k] = facLL(M[k]); 
+    LLM[k] = facLL(M[k]);
   }
 
   void FlexibleBody2s13MFRMindlin::BuildElements() {
@@ -202,13 +203,15 @@ namespace MBSimFlexibleBody {
 
       if(ff == position || ff == position_cosy || ff == all) {
         Vec r_ref(3,NONINIT);
-        r_ref(0) = qext(RefDofs+node*NodeDofs+1)*computeThickness(NodeCoordinates(node,0))/2.+NodeCoordinates(node,0);
-        r_ref(1) = -qext(RefDofs+node*NodeDofs+2)*computeThickness(NodeCoordinates(node,0))/2.;
-        r_ref(2) = qext(RefDofs+node*NodeDofs)+computeThickness(NodeCoordinates(node,0))/2.;
+        //first compute vector
+        r_ref(0) = qext(RefDofs+node*NodeDofs+1)*computeThickness(NodeCoordinates(node,0))/2.+NodeCoordinates(node,0); // radial component
+        r_ref(1) = -qext(RefDofs+node*NodeDofs+2)*computeThickness(NodeCoordinates(node,0))/2.; // azimuthal component
+        r_ref(2) = qext(RefDofs+node*NodeDofs)+computeThickness(NodeCoordinates(node,0))/2.; //z-component
 
-        r_ref = A*TransformationMatrix(NodeCoordinates(node,1))*r_ref; //transformation into reference-frame
-        r_ref += qext(0,2);
-        cp.getFrameOfReference().setPosition(frameOfReference->getPosition()+frameOfReference->getOrientation()*r_ref);
+        r_ref = BasicRotAIKz(NodeCoordinates(node,1))*r_ref; //transformation into local frame
+        r_ref = A*r_ref; //transformation into moving frame of reference
+        r_ref += qext(0,2); //translation of moving frame of reference relative to frame of reference
+        cp.getFrameOfReference().setPosition(frameOfReference->getPosition()+frameOfReference->getOrientation()*r_ref); //at last step: transformation into world frame
       }
 
       if(ff == firstTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all) throw MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Not implemented!");
@@ -226,9 +229,9 @@ namespace MBSimFlexibleBody {
         r_ref(1) = -qext(RefDofs+node*NodeDofs+2)*computeThickness(NodeCoordinates(node,0))/2.;
         r_ref(2) = qext(RefDofs+node*NodeDofs)+computeThickness(NodeCoordinates(node,0))/2.;
 
-        r_ref = TransformationMatrix(NodeCoordinates(node,1))*r_ref;
+        r_ref = BasicRotAIKz(NodeCoordinates(node,1))*r_ref;
 
-        Vec u_ref_2 = A*(-tilde(r_ref)*G*uext(3,5)+TransformationMatrix(NodeCoordinates(node,1))*u_ref_1);
+        Vec u_ref_2 = A*(-tilde(r_ref)*G*uext(3,5)+BasicRotAIKz(NodeCoordinates(node,1))*u_ref_1);
         u_ref_2 += uext(0,2);
 
         cp.getFrameOfReference().setVelocity(frameOfReference->getOrientation()*u_ref_2);
@@ -239,7 +242,7 @@ namespace MBSimFlexibleBody {
         w_ref_1(0) = -uext(RefDofs+node*NodeDofs+2);
         w_ref_1(1) = uext(RefDofs+node*NodeDofs+1);
 
-        Vec w_ref_2 = A*(G*uext(3,5)+TransformationMatrix(NodeCoordinates(node,1))*w_ref_1);
+        Vec w_ref_2 = A*(G*uext(3,5)+BasicRotAIKz(NodeCoordinates(node,1))*w_ref_1);
 
         cp.getFrameOfReference().setAngularVelocity(frameOfReference->getOrientation()*w_ref_2);
       }
@@ -328,7 +331,7 @@ namespace MBSimFlexibleBody {
       r_tmp(1) = -computeThickness(NodeCoordinates(Node,0))/2.*qext(RefDofs+Node*NodeDofs+2);
       r_tmp(2) = qext(RefDofs+Node*NodeDofs);
 
-      r_tmp = TransformationMatrix(NodeCoordinates(Node,1))*r_tmp;
+      r_tmp = BasicRotAIKz(NodeCoordinates(Node,1))*r_tmp;
 
       Jactmp_trans(0,3,2,3) = dAdalpha*r_tmp;
       Jactmp_trans(0,4,2,4) = dAdbeta*r_tmp;
@@ -343,16 +346,16 @@ namespace MBSimFlexibleBody {
       u_tmp(1,2) = -computeThickness(NodeCoordinates(Node,0))/2.;
       u_tmp(2,0) = 1.;
 
-      Jactmp_trans(0,RefDofs,2,RefDofs+2) = A*TransformationMatrix(NodeCoordinates(Node,1))*u_tmp;
+      Jactmp_trans(0,RefDofs,2,RefDofs+2) = A*BasicRotAIKz(NodeCoordinates(Node,1))*u_tmp;
 
       // rotation
       SqrMat Z_tmp(3,INIT,0.);
       Z_tmp(0,2) = -1;
       Z_tmp(1,1) = 1;
-      Jactmp_rot(0,RefDofs,2,RefDofs+2) = A*TransformationMatrix(NodeCoordinates(Node,1))*Z_tmp;
+      Jactmp_rot(0,RefDofs,2,RefDofs+2) = A*BasicRotAIKz(NodeCoordinates(Node,1))*Z_tmp;
 
       // sort in the Jacobian of the disc disk
-      // reference dofs 
+      // reference dofs
       Mat Jacext_trans(3,Dofs,INIT,0.), Jacext_rot(3,Dofs,INIT,0.);
 
       Jacext_trans(0,0,2,RefDofs-1) = Jactmp_trans(0,0,2,RefDofs-1);
@@ -420,13 +423,13 @@ namespace MBSimFlexibleBody {
           NodeCoordinates(j+i*nj,1) = 0.+dj*j;
 
           // element number increases azimuthally from the inner to the outer ring
-          if(i<nr && j<nj-1) { 
+          if(i<nr && j<nj-1) {
             ElementNodeList(j+i*nj,0) = j     + i    *nj; // elementnode 1
             ElementNodeList(j+i*nj,1) = j     + (i+1)*nj; // elementnode 2
             ElementNodeList(j+i*nj,2) = (j+1) + (i+1)*nj; // elementnode 3
             ElementNodeList(j+i*nj,3) = (j+1) +  i   *nj; // elementnode 4
           }
-          else if(i<nr && j==nj-1) { // ring closure 
+          else if(i<nr && j==nj-1) { // ring closure
             ElementNodeList(j+i*nj,0) = j     + i    *nj; // elementnode 1
             ElementNodeList(j+i*nj,1) = j     + (i+1)*nj; // elementnode 2
             ElementNodeList(j+i*nj,2) = 0     + (i+1)*nj; // elementnode 3
@@ -526,7 +529,7 @@ namespace MBSimFlexibleBody {
 
     computeStiffnessMatrix();
     computeConstantMassMatrixParts();
-    updateM(0); 
+    updateM(0);
   }
 
   void FlexibleBody2s13MFRMindlin::updateAG() {
@@ -563,7 +566,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13MFRMindlin::computeStiffnessMatrix() {
-    SymMat Kext(Dofs,INIT,0.); 
+    SymMat Kext(Dofs,INIT,0.);
     int ElementNodes = 4;
 
     // element loop
@@ -571,7 +574,7 @@ namespace MBSimFlexibleBody {
       static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeStiffnessMatrix();
       SymMat ElK = static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->getK();
 
-      for(int node=0;node<ElementNodes;node++) { 
+      for(int node=0;node<ElementNodes;node++) {
         Index Ikges(RefDofs+ElementNodeList(element,node)*NodeDofs,RefDofs+(ElementNodeList(element,node)+1)*NodeDofs-1);
         Index Ikelement(node*NodeDofs,(node+1)*NodeDofs-1);
 
@@ -592,7 +595,7 @@ namespace MBSimFlexibleBody {
     //Vec F_test(K.size()-RefDofs,INIT,0.);
     //F_test((nr-1)*nj*3) = 1e10;
 
-    //// displacements in MBSim    
+    //// displacements in MBSim
     //Vec q_test = slvLL(K(Iall),F_test);
     //Vec u_mbsim(12,NONINIT);
     //// first: positive x-axis
@@ -601,15 +604,15 @@ namespace MBSimFlexibleBody {
     //u_mbsim(2) = q_test((nr-1)*nj*3);
     //// second: positive y-axis
     //u_mbsim(3) = q_test(nj/4*3);
-    //u_mbsim(4) = q_test(nr/2*nj*3+nj/4*3); 
-    //u_mbsim(5) = q_test((nr-1)*nj*3+nj/4*3); 
+    //u_mbsim(4) = q_test(nr/2*nj*3+nj/4*3);
+    //u_mbsim(5) = q_test((nr-1)*nj*3+nj/4*3);
     //// third: negative x-axis
     //u_mbsim(6) = q_test(nj/2*3);
     //u_mbsim(7) = q_test(nr/2*nj*3+nj/2*3);
     //u_mbsim(8) = q_test((nr-1)*nj*3+nj/2*3);
     //// fourth: negative y-axis
     //u_mbsim(9)  = q_test(3*nj/4*3);
-    //u_mbsim(10) = q_test(nr/2*nj*3+3*nj/4*3); 
+    //u_mbsim(10) = q_test(nr/2*nj*3+3*nj/4*3);
     //u_mbsim(11) = q_test((nr-1)*nj*3+3*nj/4*3);
 
     //// displacements in ANSYS
@@ -647,7 +650,7 @@ namespace MBSimFlexibleBody {
 
     /* N_compl */
     N_compl = new Mat(3,Dofs-RefDofs,INIT,0.);
-    for(int element=0;element<Elements;element++) { 
+    for(int element=0;element<Elements;element++) {
       static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeN_compl();
       Mat ElN_compl = static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->getN_compl();
       Index IRefTrans(0,2);
@@ -667,7 +670,7 @@ namespace MBSimFlexibleBody {
           static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeN_ij(i,j);
           SqrMat ElN_ij = static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->getN_ij(i,j);
 
-          for(int node=0;node<ElementNodes;node++) { 
+          for(int node=0;node<ElementNodes;node++) {
             Index Ikges(ElementNodeList(element,node)*NodeDofs,(ElementNodeList(element,node)+1)*NodeDofs-1);
             Index Ikelement(node*NodeDofs,(node+1)*NodeDofs-1);
 
