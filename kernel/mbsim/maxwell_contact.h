@@ -175,14 +175,6 @@ namespace MBSim {
       virtual void computeMaterialConstant(const double & t);
 
       /**
-       * \brief solves a linear complementarity problem (w = M z + q)
-       * \param M           linear coupling matrix of the LCP
-       * \param q           constant vector of the LCP
-       * \param LemkeSteps  Number of steps for the first Lemke try
-       */
-      virtual fmatvec::Vec solveLCP(const fmatvec::SymMat & M, const fmatvec::Vec & q, const unsigned int & LemkeSteps = 10000);
-
-      /**
        * \brief vector of ContourPairing (frames and Arrows)
        */
       std::vector<ContourPairing*> contourPairing;
@@ -224,87 +216,5 @@ namespace MBSim {
       int DEBUGLEVEL;
   };
 
-  class MaxwellFunction : public MBSim::Function1<fmatvec::Vec, fmatvec::Vec> {
-    public:
-      /**
-       * \brief constructor
-       * \param rigidBodyGap_  gap between the bodies if they were totally rigid
-       * \param C_             Influence-Matrix
-       * \param r_             r-factor for the project-function
-       * \param INFO_          print information to console?
-       */
-      MaxwellFunction(const fmatvec::Vec &rigidBodyGap_, const fmatvec::SymMat &C_, const double &r_ = 10, bool INFO_ = false);
-
-      /**
-       * \brief destructor
-       */
-      virtual ~MaxwellFunction();
-
-      /* INHERITED INTERFACE */
-      /**
-       * \param start parameter: first entries: gap, last entries: contact forces (lambda)
-       */
-      fmatvec::Vec operator()(const fmatvec::Vec &gapLambda, const void * = NULL);
-      /***************************************************/
-
-      /* GETTER / SETTER*/
-      SolverType getSolverType() {
-        return solverType;
-      }
-      void setSolverType(const SolverType &solverType_) {
-        solverType = solverType_;
-      }
-      /******************/
-
-    private:
-
-      /**
-       * \brief Number of possible contact points (= dimension of the MFL)
-       */
-      int NumberOfContacts;
-
-      /**
-       * \brief vector of all rigid body gaps
-       */
-      fmatvec::Vec rigidBodyGap;
-
-      /**
-       * \brief Influence matrix for the contacts
-       */
-      fmatvec::SymMat C;
-
-      /**
-       * \brief parameter for the prox-function (r>0)
-       */
-      double r;
-
-      /**
-       *  \brief which solver is used (leads to different return values of function)
-       */
-      SolverType solverType;
-
-      /**
-       * \brief parameter to print information
-       */
-      bool INFO;
-
-  };
-
-  class MaxwellJacobian : public MBSim::Function1<fmatvec::SqrMat, fmatvec::Vec> {
-    public:
-      /**
-       * \brief constructor
-       */
-      MaxwellJacobian();
-
-      /**
-       * \brief destructor
-       */
-      virtual ~MaxwellJacobian();
-
-      /* INHERITED INTERFACE */
-      fmatvec::SqrMat operator()(const fmatvec::Vec& distance, const void * = NULL);
-      /*******************************************/
-  };
 }
 #endif /* MAXWELL_CONTACT_H_ */

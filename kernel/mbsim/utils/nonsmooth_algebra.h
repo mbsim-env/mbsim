@@ -26,6 +26,11 @@
 
 namespace MBSim {
 
+  /**
+   * \brief computes the prox-function for the set of real numbers that has a lower boundary : )boundary , infinity]
+   * \param the argument of the prox-function
+   * \param the lower boundary (=0, for no value)
+   */
   double proxCN(const double arg, const double boundary=0);
 
   double proxCT2D(const double arg, const double LaNmue);
