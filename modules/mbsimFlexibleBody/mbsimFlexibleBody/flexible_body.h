@@ -1,17 +1,17 @@
 /* Copyright (C) 2004-2011 MBSim Development Team
  *
- * This library is free software; you can redistribute it and/or 
- * modify it under the terms of the GNU Lesser General Public 
- * License as published by the Free Software Foundation; either 
- * version 2.1 of the License, or (at your option) any later version. 
- *  
- * This library is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
- * Lesser General Public License for more details. 
- *  
- * You should have received a copy of the GNU Lesser General Public 
- * License along with this library; if not, write to the Free Software 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
  * Contact: thorsten.schindler@mytum.de
@@ -91,7 +91,7 @@ namespace MBSimFlexibleBody {
        */
       virtual void BuildElements() = 0;
 
-      /** 
+      /**
        * \brief insert 'local' information in global vectors
        * \param number of finite element
        * \param local vector
@@ -99,18 +99,18 @@ namespace MBSimFlexibleBody {
        */
       virtual void GlobalVectorContribution(int CurrentElement, const fmatvec::Vec &locVec, fmatvec::Vec &gloVec) = 0;
 
-      /** 
+      /**
        * \brief insert 'local' information in global matrices
        * \param CurrentElement number of current finite element
-       * \param locMat local matrix 
+       * \param locMat local matrix
        * \param gloMat global matrix
        */
       virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat &locMat, fmatvec::Mat &gloMat) = 0;
 
-      /** 
+      /**
        * \brief insert 'local' information in global matrices
        * \param CurrentElement number of current finite element
-       * \param locMat local matrix 
+       * \param locMat local matrix
        * \param gloMat global matrix
        */
       virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat &locMat, fmatvec::SymMat &gloMat) = 0;
@@ -132,15 +132,15 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* GETTER / SETTER */
-      /*! 
-       * damping matrix computation, updated with changes in mass matrix \f$\vM\f$: \f$\vh_d=-d_{pm}\vM\vu\f$ 
+      /*!
+       * damping matrix computation, updated with changes in mass matrix \f$\vM\f$: \f$\vh_d=-d_{pm}\vM\vu\f$
        * \brief set mass proportional damping
        * \param d_ coefficient \f$d_{pm}\f$
        */
       void setMassProportionalDamping(const double d_) { d_massproportional = d_; }
       /***************************************************/
 
-      /** 
+      /**
        *  \param name of frame
        *  \param frame location
        */
@@ -152,9 +152,9 @@ namespace MBSimFlexibleBody {
        */
       void addFrame(MBSim::Frame *frame, const MBSim::ContourPointData &S_);
 
-      /** 
+      /**
        *  \param name of frame
-       *  \param node of frame 
+       *  \param node of frame
        */
       void addFrame(const std::string &name, const int &id);
 
@@ -173,37 +173,37 @@ namespace MBSimFlexibleBody {
        *
        * Remark: the knot vector is parametrized between [0,L]
        */
-      virtual void exportPositionVelocity(const std::string & filenamePos = std::string( ), const std::string & filenameVel = std::string( ), const int & deg = 3, const bool &writePsFile = false){throw  MBSim::MBSimError("exportPositionVelocity(const std::string& filenamePos, const std::string& filenameVel, const int& deg, const bool& writePsFile) is not implemented for " + this->getType()) ;}
+      virtual void exportPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string(), const int & deg = 3, const bool &writePsFile = false){throw  MBSim::MBSimError("exportPositionVelocity(const std::string& filenamePos, const std::string& filenameVel, const int& deg, const bool& writePsFile) is not implemented for " + this->getType()) ;}
 
       /**
        * \brief imports the interpolated position and optional the velocity files (created with exportPositionVelocity) and fits the rigid and flexible coordinate dofs and optional the translatory velocity components of flexible body to the imported nurbs curve
        * \param filenamePos    Name of the imported position curve file
        * \param filenameVel    Name of the imported velocity curve file
        */
-      virtual void importPositionVelocity(const std::string& filenamePos, const std::string& filenameVel){throw  MBSim::MBSimError("importPositionVelocity(const std::string& filenamePos, const std::string& filenameVel) is not implemented for " + this->getType()) ;}
+      virtual void importPositionVelocity(const std::string& filenamePos, const std::string& filenameVel = std::string()){throw  MBSim::MBSimError("importPositionVelocity(const std::string& filenamePos, const std::string& filenameVel) is not implemented for " + this->getType()) ;}
 
     protected:
-      /** 
+      /**
        * \brief stl-vector of discretizations/finite elements
        */
       std::vector<MBSim::DiscretizationInterface*> discretization;
 
-      /** 
+      /**
        * \brief stl-vector of finite element wise positions
        */
       std::vector<fmatvec::Vec> qElement;
 
-      /** 
+      /**
        * \brief stl-vector of finite element wise velocities
        */
       std::vector<fmatvec::Vec> uElement;
 
-      /** 
+      /**
        * \brief damping factor for mass proportion, see BodyFlexible::setMassProportionalDamping()
        */
       double d_massproportional;
 
-      /** 
+      /**
        * \brief vector of contour parameters each describing a frame
        */
       std::vector<MBSim::ContourPointData> S_Frame;
