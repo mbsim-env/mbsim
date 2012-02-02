@@ -167,7 +167,7 @@ namespace MBSim {
     return 0;
   }
 
-  MultiDimNewtonMethod::MultiDimNewtonMethod(Function1<Vec,Vec> *fct_, Function1<SqrMat,Vec> *jac_) : fct(fct_), jac(jac_), itmax(300), iter(0), kmax(100), norms(0), tol(1e-10) {}
+  MultiDimNewtonMethod::MultiDimNewtonMethod(Function1<Vec,Vec> *fct_, Function1<SqrMat,Vec> *jac_) : fct(fct_), jac(jac_), itmax(300), iter(0), kmax(100), info(1), norms(0), tol(1e-10) {}
 
   Vec MultiDimNewtonMethod::solve(const Vec &x0) {
 
