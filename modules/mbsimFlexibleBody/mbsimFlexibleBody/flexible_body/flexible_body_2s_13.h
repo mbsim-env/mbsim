@@ -109,6 +109,7 @@ namespace MBSimFlexibleBody {
       void setEModul(double E_) { E = E_; }
       void setPoissonRatio(double nu_) { nu = nu_; }
       void setThickness(const fmatvec::Vec &d_) { d = d_; }
+      fmatvec::Vec getThickness() const { return d; }
       void setDensity(double rho_) { rho = rho_; }
       int getReferenceDegreesOfFreedom() const { return RefDofs; }
       int getRadialNumberOfElements() const { return nr; }
@@ -318,14 +319,6 @@ namespace MBSimFlexibleBody {
        * \brief update the transformation matrices A and G
        */
       virtual void updateAG() = 0;
-
-      /*!
-       * \brief rotation matrix about z-axis
-       * \param angle of rotation
-       *
-       * \todo replace by utils-function (rotation about z-axis)
-       */
-      fmatvec::SqrMat TransformationMatrix(const double &phi);
 
       /*!
        * \return thickness of disk at radial coordinate
