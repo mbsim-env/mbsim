@@ -442,10 +442,9 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s33RCM::exportPositionVelocity(const string & filenamePos, const string & filenameVel /*= string( )*/, const int & deg /* = 3*/, const bool &writePsFile /*= false*/) {
 #ifdef HAVE_NURBS
 
-    if(filenamePos.empty())
-      throw MBSimError("FlexibleBody1s33RCM::exportPositionVelocity(const string & filenamePos, const string & filenameVel, const int & deg, const bool &writePsFile) must contain a nonempty string filenamePos!");
+    PlNurbsCurved curvePos;
+    PlNurbsCurved curveVel;
 
-    PlNurbsCurved curve; // TODO curvePos und curveVel!!
     if (!openStructure) {
       PLib::Vector<PLib::HPoint3Dd> NodelistPos(Elements + deg);
       PLib::Vector<PLib::HPoint3Dd> NodelistVel(Elements + deg);
@@ -459,8 +458,17 @@ namespace MBSimFlexibleBody {
         NodelistPos[i] = HPoint3Dd(cp.getFrameOfReference().getPosition()(0), cp.getFrameOfReference().getPosition()(1), cp.getFrameOfReference().getPosition()(2), 1);
 
         if(not filenameVel.empty()) {
-          updateKinematicsForFrame(cp, velocity);
-          NodelistVel[i] = HPoint3Dd(cp.getFrameOfReference().getVelocity()(0), cp.getFrameOfReference().getVelocity()(1), cp.getFrameOfReference().getVelocity()(2), 1);
+          updateKinematicsForFrame(cp, velocity_cosy);
+
+          SqrMat TMPMat = cp.getFrameOfReference().getOrientation();
+          SqrMat AKI(3,3,INIT,0.);
+          AKI.row(0) = trans(TMPMat.col(1));
+          AKI.row(1) = trans(TMPMat.col(0));
+          AKI.row(2) = trans(TMPMat.col(2));
+          Vec Vel(3,INIT,0.);
+          Vel = AKI*cp.getFrameOfReference().getVelocity();
+
+          NodelistVel[i] = HPoint3Dd(Vel(0), Vel(1), Vel(2), 1);
         }
       }
 
@@ -480,18 +488,18 @@ namespace MBSimFlexibleBody {
         uVec[i] = uVec[i - 1] + stepU;
       }
 
-      curve.globalInterpClosedH(NodelistPos, uvec, uVec, deg);
-      curve.write(filenamePos.c_str());
+      curvePos.globalInterpClosedH(NodelistPos, uvec, uVec, deg);
+      curvePos.write(filenamePos.c_str());
 
       if (writePsFile) {
         string psfile = filenamePos + ".ps";
 
-        cout << curve.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
+        cout << curvePos.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
       }
 
       if(not filenameVel.empty()) {
-        curve.globalInterpClosedH(NodelistVel, uvec, uVec, deg);
-        curve.write(filenameVel.c_str());
+        curveVel.globalInterpClosedH(NodelistVel, uvec, uVec, deg);
+        curveVel.write(filenameVel.c_str());
       }
     }
 #else
@@ -501,9 +509,6 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s33RCM::importPositionVelocity(const string & filenamePos, const string & filenameVel /* = string( )*/) {
 #ifdef HAVE_NURBS
-
-    if(filenamePos.empty())
-      throw MBSimError("FlexibleBody1s33RCM::importPositionVelocity(const string & filenamePos, const string & filenameVel, const int & deg, const bool &writePsFile) must contain a nonempty string filenamePos!");
 
     int DEBUGLEVEL = 0;
 

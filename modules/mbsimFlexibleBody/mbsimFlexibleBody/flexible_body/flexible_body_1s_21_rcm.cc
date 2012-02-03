@@ -386,9 +386,6 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s21RCM::exportPositionVelocity(const string& filenamePos, const string& filenameVel /*= string( )*/, const int & deg /* = 3*/, const bool &writePsFile /*= false*/) {
 #ifdef HAVE_NURBS
 
-    if(filenamePos.empty())
-      throw MBSimError("FlexibleBody1s21RCM::exportPositionVelocity(const string & filenamePos, const string & filenameVel, const int & deg, const bool &writePsFile) must contain a nonempty string filenamePos!");
-
     PlNurbsCurved curvePos;
     PlNurbsCurved curveVel;
 
@@ -456,9 +453,6 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s21RCM::importPositionVelocity(const string & filenamePos, const string & filenameVel /* = string( )*/) {
 #ifdef HAVE_NURBS
-
-    if(filenamePos.empty())
-      throw MBSimError("FlexibleBody1s21RCM::importPositionVelocity(const string & filenamePos, const string & filenameVel, const int & deg, const bool &writePsFile) must contain a nonempty string filenamePos!");
 
     int DEBUGLEVEL = 0;
 
