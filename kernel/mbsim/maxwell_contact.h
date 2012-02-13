@@ -30,6 +30,9 @@
 #include <mbsim/link_mechanics.h>
 #include <mbsim/utils/function.h>
 #include <mbsim/utils/nonlinear_algebra.h>
+#ifdef HAVE_MBSIMNUMERICS
+#include <numerics/linear_complementarity_problem.h>
+#endif
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/group.h>
@@ -115,6 +118,15 @@ namespace MBSim {
       ContourPairing* getContourPariing(const int & contactNumber) {
         return contourPairing[contactNumber];
       }
+#ifdef HAVE_MBSIMNUMERICS
+      void setLCPSolvingStrategy(MBSimNumerics::LCPSolvingStrategy strategy) {
+        lcpSolvingStrategy = strategy;
+      }
+
+      MBSimNumerics::LCPSolvingStrategy getLCPSolvingStrategy(void) {
+        return lcpSolvingStrategy;
+      }
+#endif
 
       /**
        * \brief output information to console?
@@ -157,6 +169,11 @@ namespace MBSim {
       virtual void updateInfluenceMatrix(const double t);
 
       /**
+       * \brief update the rigid body distances (gaps) for the single contacts
+       */
+      void updateRigidBodyGap(const double & t);
+
+      /**
        * \brief computes the coupling factor for the influence matrix on one contact point (two contours)
        * \param number of contact point
        */
@@ -175,6 +192,11 @@ namespace MBSim {
       virtual void computeMaterialConstant(const double & t);
 
       /**
+       * \brief fit the solution vector for the solveLCP-routine if the size of the LCP has changed
+       */
+      virtual void fitSolution0(const double & t);
+
+      /**
        * \brief vector of ContourPairing (frames and Arrows)
        */
       std::vector<ContourPairing*> contourPairing;
@@ -189,10 +211,27 @@ namespace MBSim {
        */
       fmatvec::SymMat C;
 
+      /*
+       * \brief vector of rigid body distances(gaps) for the active contacts
+       */
+      fmatvec::Vec rigidBodyGap;
+
       /**
        * \brief saves the influence functions for a pair of contours. The key is the pair of contour names
        */
       std::map<std::pair<Contour*, Contour*>, InfluenceFunction*> influenceFunctions;
+
+#ifdef HAVE_MBSIMNUMERICS
+      /**
+       * \brief strategy for solving the LCP
+       */
+      MBSimNumerics::LCPSolvingStrategy lcpSolvingStrategy;
+#endif
+
+      /**
+       * \brief Solution of the last time, where contact has to be solved (can be used as starting guess for the next algorithm)
+       */
+      fmatvec::Vec solution0;
 
       /**
        * \brief parameter for guessing starting values of contact force (average eigenvalue of influence-matrix)
