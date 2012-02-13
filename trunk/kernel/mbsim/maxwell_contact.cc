@@ -16,7 +16,12 @@
 #include <mbsim/utils/nonlinear_algebra.h>
 #include <mbsim/utils/eps.h>
 #include <mbsim/utils/rotarymatrices.h>
+
+#ifdef HAVE_MBSIMNUMERICS
+#include <numerics/linear_complementarity_problem.h>
+#else
 #include <mbsim/utils/linear_complementarity_problem.h>
+#endif
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/group.h>
@@ -27,11 +32,18 @@
 
 using namespace std;
 using namespace fmatvec;
+#ifdef HAVE_MBSIMNUMERICS
+using namespace MBSimNumerics;
+#endif
 
 namespace MBSim {
 
   MaxwellContact::MaxwellContact(const string &name) :
-      LinkMechanics(name), contourPairing(0), possibleContactPoints(0), C(SymMat(0,NONINIT)), matConst(1.), matConstSetted(false), DEBUGLEVEL(0)
+      LinkMechanics(name), contourPairing(0), possibleContactPoints(0), C(SymMat(0,NONINIT)),
+#ifdef HAVE_MBSIMNUMERICS
+      lcpSolvingStrategy(MBSimNumerics::Standard),
+#endif
+      solution0(Vec(0,NONINIT)), matConst(1.), matConstSetted(false), DEBUGLEVEL(0)
   {
     gTol = 1;
   }
@@ -55,19 +67,31 @@ namespace MBSim {
       /*compute Influence Matrix*/
       updateInfluenceMatrix(t);
 
+      /*update rigidBodyGap*/
+      updateRigidBodyGap(t);
+      
       computeMaterialConstant(t);
 
-      /*save rigidBodyGaps in vector*/
-      Vec rigidBodyGap(possibleContactPoints.size(), INIT, 0.);
-      for (size_t i = 0; i < possibleContactPoints.size(); i++) {
-        rigidBodyGap(i) = contourPairing[possibleContactPoints[i]]->getRelativeDistance()(0);
-      }
-
-      if (DEBUGLEVEL >= 5)
-        cout << "rigidBodyGap: " << rigidBodyGap << endl;
-
       /*solve Linear Complementary Problem*/
-      Vec lambda = solveLCP(C, rigidBodyGap, MBSim::Standard, matConst)(rigidBodyGap.size(), 2 * rigidBodyGap.size()-1);
+//      if(solution0.size() > 2 * rigidBodyGap.size()) {
+//        fitSolution0(t);
+//        lcpSolvingStrategy = Reformulated;
+//      }
+//      else if(solution0.size() < 2 * rigidBodyGap.size())
+//        lcpSolvingStrategy = LemkeOnly;
+//      else
+//        lcpSolvingStrategy = Reformulated;
+
+#ifdef HAVE_MBSIMNUMERICS
+      LinearComplementarityProblem LCP(C, rigidBodyGap, lcpSolvingStrategy);
+
+      solution0.resize() = LCP.solve(solution0);
+
+#else
+      solution0.resize() = solveLCP(C, rigidBodyGap, MBSim::Standard, matConst);
+#endif
+
+      Vec lambda = solution0(rigidBodyGap.size(), 2 * rigidBodyGap.size()-1);
 
       if (DEBUGLEVEL >= 3) {
         cout << "lambda = " << lambda << endl;
@@ -280,6 +304,17 @@ namespace MBSim {
     }
   }
 
+  void MaxwellContact::updateRigidBodyGap(const double & t) {
+    /*save rigidBodyGaps in vector*/
+    rigidBodyGap.resize(possibleContactPoints.size());
+    for (size_t i = 0; i < possibleContactPoints.size(); i++) {
+      rigidBodyGap(i) = contourPairing[possibleContactPoints[i]]->getRelativeDistance()(0);
+    }
+
+    if (DEBUGLEVEL >= 5)
+      cout << "rigidBodyGap: " << rigidBodyGap << endl;
+  }
+
   double MaxwellContact::computeInfluenceCoefficient(const int &currentContactNumber) {
     double FactorC = 0.;
 
@@ -386,6 +421,35 @@ namespace MBSim {
 
       matConstSetted = true;
     }
+  }
+
+  void MaxwellContact::fitSolution0(const double & t) {
+#ifdef HAVE_MBSIMNUMERICS
+
+    if(DEBUGLEVEL >= 1)
+      cout << "*****" << __func__ << "*****" << endl;
+
+    if(solution0.size() == 0) {
+      computeMaterialConstant(t);
+      solution0 = LinearComplementarityProblem::createInitialSolution(C, rigidBodyGap, matConst);
+      return;
+    }
+
+    int diff = solution0.size() - 2 * rigidBodyGap.size();
+
+    if(diff > 0) { //old  system was larger
+      for(int i = rigidBodyGap.size(); i < 2* rigidBodyGap.size(); i++)
+        solution0(i) = solution0(i+diff);
+
+      //resize has to be done afterwards to keep the margin values
+      solution0.resize() = solution0(0 , 2 * rigidBodyGap.size()).copy();
+    }
+    else {
+      //first resize (enlarge) the solution vector
+      computeMaterialConstant(t);
+      solution0.resize() = LinearComplementarityProblem::createInitialSolution(C, rigidBodyGap, matConst);
+    }
+#endif
   }
 }
 

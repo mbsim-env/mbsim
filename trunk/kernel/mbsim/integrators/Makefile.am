@@ -33,8 +33,8 @@ libintegrators_la_SOURCES = integrator.cc\
 libintegrators_la_CPPFLAGS = -Ifortran -DTIXML_USE_STL
 integratorsincludedir = $(includedir)/mbsim/integrators
 
-INCLUDES = $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
-LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
+INCLUDES = $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)  $(MBSIMNUMERICS_CFLAGS)
+LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)  $(MBSIMNUMERICS_LIBS)
 
 integratorsinclude_HEADERS = integrator.h \
 			      integrators.h \

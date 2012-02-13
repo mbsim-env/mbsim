@@ -21,6 +21,12 @@ PKG_CHECK_MODULES(DEPS, fmatvec >= 1.0.1 hdf5serie)
 
 AC_SUBST([requires])
 
+dnl check for numerics library
+PKG_CHECK_MODULES(MBSIMNUMERICS, numerics ,[AC_DEFINE([HAVE_MBSIMNUMERICS],[1],[linking with MBSimNumerics-library])], [echo No numerics package is used. Consider to install it...])
+AC_SUBST([MBSIMNUMERICS_CFLAGS])
+AC_SUBST([MBSIMNUMERICS_LIBS])
+
+dnl check for OpenMBV-Cpp-Interface
 PKG_CHECK_MODULES(OPENMBVCPPINTERFACE, openmbvcppinterface >= 3.0.0,[requires="$requires openmbvcppinterface";openmbv_compilerflag="-DHAVE_OPENMBVCPPINTERFACE";AC_DEFINE([HAVE_OPENMBVCPPINTERFACE],[1],[linking with OpenMBVCppInterface])],[mbsimtinyxmlPC=-lmbsimtinyxml; echo "no"])
 AM_CONDITIONAL([COND_OPENMBVCPPINTERFACE], [test _$openmbv_compilerflag = _-DHAVE_OPENMBVCPPINTERFACE])
 AC_SUBST([openmbv_compilerflag])
