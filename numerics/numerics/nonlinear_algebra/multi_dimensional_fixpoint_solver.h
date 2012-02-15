@@ -22,7 +22,7 @@
 
 #include <fmatvec.h>
 
-#include <numerics/function.h>
+#include <numerics/functions/function.h>
 
 namespace MBSimNumerics {
 
@@ -33,6 +33,11 @@ namespace MBSimNumerics {
    */
   class MultiDimensionalFixpointSolver {
     public:
+      /*!
+       * \brief plain constructor
+       */
+      MultiDimensionalFixpointSolver(){}
+
       /*
        * \brief constructor
        * \param fct pointer to used fix-point-function
@@ -42,12 +47,13 @@ namespace MBSimNumerics {
       virtual ~MultiDimensionalFixpointSolver(){};
 
       /* GETTER / SETTER */
-      /*
+      /*!
        * \brief returns info of iteration progress
        * info == 0 :  a solution has been found
        * info == -1:  no converge
        * info == 1:   process (seems to) converge but hasn't finished
        */
+      void setFunction(Function1<fmatvec::Vec, fmatvec::Vec> *function_) {function = function_;}
       int getInfo() {
         return info;
       }

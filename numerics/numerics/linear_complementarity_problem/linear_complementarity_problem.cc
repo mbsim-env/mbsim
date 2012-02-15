@@ -55,10 +55,40 @@ namespace MBSimNumerics {
     }
   }
 
-  LinearComplementarityProblem::LinearComplementarityProblem(const SymMat & M_, const Vec & q_, const LCPSolvingStrategy & strategy_ /*= Standard*/, const JacobianType & jacobianType_ /*= LCPSpecial*/, const unsigned int & DEBUGLEVEL /*= 0*/) :
-      q(q_), strategy(strategy_), mediumEigenValue(0.0), jacobianType(jacobianType_) {
+  std::ostream& operator <<(std::ostream & o, const JacobianType &jacobianType) {
+    switch (jacobianType) {
+      case Numerical:
+        return o << "Numerical";
+      case LCPSpecial:
+        return o << "LCPSpecial";
+      default:
+        return o << "ERROR: Unknown jacobian type";
+    }
+  }
 
-    M = Sym2Sqr(M_);
+
+  LinearComplementarityProblem::LinearComplementarityProblem(const SymMat & M_, const Vec & q_, const LCPSolvingStrategy & strategy_ /*= Standard*/, const JacobianType & jacobianType_ /*= LCPSpecial*/, const unsigned int & DEBUGLEVEL /*= 0*/) :
+      strategy(strategy_), mediumEigenValue(0.0), jacobianType(jacobianType_) {
+
+
+    //set properties
+    if(jacobianType == LCPSpecial)
+      jacobianFunction = new LinearComplementarityJacobianFunction();
+    else
+      jacobianFunction = new NumericalJacobianFunction();
+
+    newtonFunction = new LCPNewtonReformulationFunction();
+    newtonSolver = new MultiDimensionalNewtonMethod();
+    newtonSolver->setMaximumNumberOfIterations((int) 1e3);
+    newtonSolver->setCriteriaFunction(new GlobalCriteriaFunction());
+    newtonSolver->setDampingFunction(new StandardDampingFunction());
+
+    fixpointFunction = new LCPFixpointReformulationFunction();
+
+    fixpointSolver = new MultiDimensionalFixpointSolver();
+    fixpointSolver->setNumberOfMaximalIterations((int) 1e4);
+
+    setSystem(M_, q_);
   }
 
   LinearComplementarityProblem::~LinearComplementarityProblem() {
@@ -67,6 +97,20 @@ namespace MBSimNumerics {
   void LinearComplementarityProblem::setSystem(const SymMat & M_, const Vec & q_) {
     q = q_;
     M = Sym2Sqr(M_);
+
+    /*set different solvers*/
+    //Lemke
+    lemkeSolver.setSystem(M, q);
+
+    //Newton
+    newtonFunction->setSystem(M, q);
+    newtonSolver->setFunction(newtonFunction);
+    newtonSolver->setJacobianFunction(jacobianFunction);
+
+    //Fixpoint
+    fixpointFunction->setSystem(M, q);
+    fixpointSolver->setFunction(fixpointFunction);
+
   }
 
   Vec LinearComplementarityProblem::solve(const Vec & initialSolution /*= Vec(0,NONINIT)*/) {
@@ -85,15 +129,12 @@ namespace MBSimNumerics {
     Vec z;
     z >> solution(dimension, 2 * dimension - 1);
 
-    //set different solvers
-    LemkeAlgorithm LemkeSolver;
-    LemkeSolver.setSystem(M, q);
-
     clock_t t_start = clock();
 
     if (DEBUGLEVEL >= 1) {
       cout << "*****" << __func__ << "*****" << endl;
       cout << "Solving-strategy is: " << strategy << endl;
+      cout << "Jacobian Type is: " << jacobianType << endl;
       cout << "dimension: " << dimension << endl;
     }
 
@@ -105,13 +146,13 @@ namespace MBSimNumerics {
 
       if (strategy == Standard) {
         clock_t t_start_Lemke1 = clock();
-        solution = LemkeSolver.solve(dimension);
+        solution = lemkeSolver.solve(dimension);
 
-        if (LemkeSolver.getInfo() == 0) {
+        if (lemkeSolver.getInfo() == 0) {
           solved = true;
 
           if (DEBUGLEVEL >= 1) {
-            cout << "LemkerSolver found solution in " << LemkeSolver.getSteps() << " step(s)." << endl;
+            cout << "LemkerSolver found solution in " << lemkeSolver.getSteps() << " step(s)." << endl;
             if (DEBUGLEVEL >= 2) {
               double cpuTime = double(clock() - t_start_Lemke1) / CLOCKS_PER_SEC;
               cout << "... in: " << cpuTime << "s = " << cpuTime / 3600 << "h" << endl;
@@ -148,35 +189,22 @@ namespace MBSimNumerics {
       /*Try to solve the reformulated system with iterative schemes*/
       for (int loop = 0; loop < 5 and not solved; loop++) {
 
-        /*create the Reformulate the LCP as a system of equations*/
-        LCPNewtonReformulationFunction newtonFunc = LCPNewtonReformulationFunction(q, M);
-
-        JacobianFunction * jacobian;
-        if(jacobianType == LCPSpecial)
-          jacobian = new LinearComplementarityJacobianFunction();
-        else
-          jacobian = new NumericalJacobianFunction();
-
-        /*Newton Solver*/
-        MultiDimensionalNewtonMethod NewtonSolver(&newtonFunc, jacobian);
-        NewtonSolver.setMaximumNumberOfIterations((int) 1e3);
-
         if (DEBUGLEVEL >= 1)
           cout << "Trying Newton Solver ... " << endl;
 
-        for (int i = 0; i < 3 and NewtonSolver.getInfo() == 1; i++) {
-          solution = NewtonSolver.solve(solution);
+        int i = 0;
+        do {
+          solution = newtonSolver->solve(solution);
 
-          if (NewtonSolver.getInfo() == 1)
-            if (DEBUGLEVEL >= 3) {
-              cout << "Newton scheme seems to converge but has not finished" << endl;
-              cout << "Starting it again .. " << endl;
+          if (newtonSolver->getInfo() == 1)
+            if (DEBUGLEVEL >= 2) {
+              cout << "Newton scheme seems to converge but has not finished --> Going on ..." << endl;
             }
-        }
+        } while (i++ < 3 and  newtonSolver->getInfo() == 1);
 
         if (DEBUGLEVEL >= 3) {
           cout << "Info about NewtonSolver" << endl;
-          cout << "nrm2(f(solution)):  " << nrm2(newtonFunc(solution)) << endl;
+          cout << "nrm2(f(solution)):  " << nrm2((*newtonFunction)(solution)) << endl;
           if (DEBUGLEVEL >= 4) { //Newton-Solver Info
             cout << "solution: " << solution << endl;
             cout << "gaps       forces   " << endl;
@@ -186,7 +214,7 @@ namespace MBSimNumerics {
           }
         }
 
-        switch (NewtonSolver.getInfo()) {
+        switch (newtonSolver->getInfo()) {
           case 0:
             solved = true;
 
@@ -207,25 +235,23 @@ namespace MBSimNumerics {
             }
           break;
           case -1: {
-            if (DEBUGLEVEL >= 1) {
-              cout << "No convergence of Newton scheme during calculation of contact forces" << endl;
-            }
-
             /*Fixpoint Solver*/
-            LCPFixpointReformulationFunction fixpointFunc = LCPFixpointReformulationFunction(q, M);
-            MultiDimensionalFixpointSolver FixpointIterator(&fixpointFunc);
-            FixpointIterator.setNumberOfMaximalIterations((int) 1e4);
-            FixpointIterator.setTolerance(1e-4);
-
             if (DEBUGLEVEL >= 1)
               cout << "Trying Fixpoint Solver ... " << endl;
 
-            for (int i = 0; i < 3 and FixpointIterator.getInfo() == 1; i++)
-              solution = FixpointIterator.solve(solution);
+            int i = 0;
+            do {
+              solution = fixpointSolver->solve(solution);
+
+              if (fixpointSolver->getInfo() == 1)
+                if (DEBUGLEVEL >= 2) {
+                  cout << "Newton scheme seems to converge but has not finished --> Going on ..." << endl;
+                }
+            } while (i++ < 3 and  fixpointSolver->getInfo() == 1);
 
             if (DEBUGLEVEL >= 3) {
               cout << "Info about FixpointSolver" << endl;
-              cout << "nrm2(f(solution)):  " << nrm2(newtonFunc(solution)) << endl;
+              cout << "nrm2(f(solution)):  " << nrm2((*newtonFunction)(solution)) << endl;
               if (DEBUGLEVEL >= 4) {
                 cout << "solution: " << solution << endl;
                 cout << "gaps       forces   " << endl;
@@ -235,7 +261,7 @@ namespace MBSimNumerics {
               }
             }
 
-            if (FixpointIterator.getInfo() == 0) {
+            if (fixpointSolver->getInfo() == 0) {
               solved = true;
 
               if (DEBUGLEVEL >= 1) {
@@ -256,9 +282,6 @@ namespace MBSimNumerics {
 
             break;
           }
-//          default:
-//            throw error("ERROR MaxwellContact::solveLCP(double t): No convergence during calculation of contact forces with reformulated system scheme!");
-//            break;
         }
       }
 
@@ -277,13 +300,13 @@ namespace MBSimNumerics {
     if (not solved) {
 
       clock_t t_start_Lemke1 = clock();
-      LemkeSolver.setSystem(M, q);
-      solution = LemkeSolver.solve();
+      lemkeSolver.setSystem(M, q);
+      solution = lemkeSolver.solve();
 
-      if (LemkeSolver.getInfo() == 0) {
+      if (lemkeSolver.getInfo() == 0) {
         solved = true;
         if (DEBUGLEVEL >= 1) {
-          cout << "LemkerSolver found solution (in fallback case): " << LemkeSolver.getSteps() << " step(s)." << endl;
+          cout << "LemkerSolver found solution (in fallback case): " << lemkeSolver.getSteps() << " step(s)." << endl;
           if (DEBUGLEVEL >= 2) {
             double cpuTime = double(clock() - t_start_Lemke1) / CLOCKS_PER_SEC;
             cout << "... in: " << cpuTime << "s = " << cpuTime / 3600 << "h" << endl;

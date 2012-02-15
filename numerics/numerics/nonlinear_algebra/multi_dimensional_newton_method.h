@@ -24,10 +24,10 @@
 
 #include <map>
 
-#include <numerics/function.h>
+#include <numerics/functions/function.h>
 
 namespace fmatvec {
-  bool operator< (const fmatvec::Index & i1, const fmatvec::Index & i2 );
+  bool operator<(const fmatvec::Index & i1, const fmatvec::Index & i2);
 }
 
 namespace MBSimNumerics {
@@ -41,12 +41,14 @@ namespace MBSimNumerics {
       /**
        * \brief Constructor
        */
-      CriteriaFunction(){}
+      CriteriaFunction() {
+      }
 
       /**
        * \brief Destructor
        */
-      virtual ~CriteriaFunction() {}
+      virtual ~CriteriaFunction() {
+      }
 
       /* GETTER / SETTER*/
       void setFunction(Function1<fmatvec::Vec, fmatvec::Vec> * function_) {
@@ -64,17 +66,21 @@ namespace MBSimNumerics {
        */
       virtual int operator ()(const fmatvec::Vec & vector, const void * = NULL) = 0;
 
+      /*!
+       * \brief deletes the list of criteria results
+       */
+      virtual void clear() = 0;
+
       /**
        * \brief compares the result of given vector with the last result and returns if it got better (for damping)
        */
-     virtual bool isBetter(const fmatvec::Vec & vector) = 0;
+      virtual bool isBetter(const fmatvec::Vec & vector) = 0;
 
     protected:
-     /**
-      * \brief function that computes the values
-      */
-     Function1<fmatvec::Vec, fmatvec::Vec> *function;
-
+      /**
+       * \brief function that computes the values
+       */
+      Function1<fmatvec::Vec, fmatvec::Vec> *function;
 
   };
 
@@ -92,11 +98,14 @@ namespace MBSimNumerics {
       /**
        * \brief Destructor
        */
-      virtual ~GlobalCriteriaFunction() { }
+      virtual ~GlobalCriteriaFunction() {
+      }
 
+      /* INHERITED INTERFACE */
       virtual int operator ()(const fmatvec::Vec & vector, const void * = NULL);
-
       virtual bool isBetter(const fmatvec::Vec & vector);
+      virtual void clear();
+      /*END - INHERITED INTERFACE*/
 
     private:
       /**
@@ -130,9 +139,11 @@ namespace MBSimNumerics {
         tolerances = tolerances_;
       }
 
+      /* INHERITED INTERFACE */
       virtual int operator ()(const fmatvec::Vec & x, const void * = NULL);
-
       virtual bool isBetter(const fmatvec::Vec & x);
+      virtual void clear();
+      /*END - INHERITED INTERFACE*/
 
     protected:
       virtual std::vector<double> computeResults(const fmatvec::Vec & x);
@@ -140,7 +151,7 @@ namespace MBSimNumerics {
       /*
        * \brief saves the tolerance for a specified index sets
        */
-     std::map<fmatvec::Index, double> tolerances;
+      std::map<fmatvec::Index, double> tolerances;
 
       /**
        * \brief saves the results of the criteria for each index set and each operator step
@@ -246,7 +257,6 @@ namespace MBSimNumerics {
       virtual ~NumericalJacobianFunction() {
       }
 
-
       virtual fmatvec::SqrMat operator ()(const fmatvec::Vec & x, const void* = NULL);
 
   };
@@ -290,16 +300,35 @@ namespace MBSimNumerics {
    */
   class MultiDimensionalNewtonMethod {
     public:
+      /*!
+       * \brief plain constructor
+       */
+      MultiDimensionalNewtonMethod() {}
+
+      /*!
+       * \brief constructor with all possibilities
+       */
       MultiDimensionalNewtonMethod(Function1<fmatvec::Vec, fmatvec::Vec> *function_, JacobianFunction *jacobian_ = new NumericalJacobianFunction(), DampingFunction *damping_ = new StandardDampingFunction(), CriteriaFunction *critera_ = new GlobalCriteriaFunction());
 
       virtual ~MultiDimensionalNewtonMethod() {
       }
 
       /* GETTER / SETTER */
-      int getNumberOfIterations() const { return iter; }
-      int getNumberOfMaximalIterations() const { return itermax; }
-      int getInfo() const { return info; }
-      void setMaximumNumberOfIterations(int itmax_) { itermax = itmax_; }
+      int getNumberOfIterations() const {
+        return iter;
+      }
+      int getNumberOfMaximalIterations() const {
+        return itermax;
+      }
+      int getInfo() const {
+        return info;
+      }
+      void setMaximumNumberOfIterations(int itmax_) {
+        itermax = itmax_;
+      }
+      void setFunction(Function1<fmatvec::Vec, fmatvec::Vec> *function_) {
+        function = function_;
+      }
       void setJacobianFunction(JacobianFunction * jacobian_) {
         jacobian = jacobian_;
       }
