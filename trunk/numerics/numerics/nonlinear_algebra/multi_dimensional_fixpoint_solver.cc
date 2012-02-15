@@ -18,8 +18,10 @@
  */
 
 #include "multi_dimensional_fixpoint_solver.h"
+#include <iostream>
 
 using namespace fmatvec;
+using namespace std;
 
 namespace MBSimNumerics {
 
@@ -44,29 +46,33 @@ namespace MBSimNumerics {
       norms.push_back(nrm2(currentGuess - lastGuess));
       if (norms[iter] < tol) {
         info = 0;
+        cout << "converged: iter = " << iter << endl;
         return currentGuess;
       }
 
-      double test = fabs(norms[norms.size() - 2] - norms[norms.size() - 1]);
-      if(test  <  tol) {
-        info = 2; //slow convergence --> stop
-        return currentGuess;
-    }
+      if(iter > 0) {
+        double test = fabs(norms[iter - 1] - norms[iter]);
+        if(test  <  tol) {
+          info = 2; //slow convergence --> stop
+          cout << "slow convergence: iter = " << iter << endl;
+          return currentGuess;
+        }
 
-//      if(norms[norms.size() - 2] - norms[norms.size() - 1]  < 0) {
-//        info = -1; //divergence --> stop
-//        return lastGuess;
-//      }
-
+        if(norms[iter - 1] <= norms[iter]) {
+          info = -1; //divergence --> stop
+          cout << "diverged: iter = " << iter << endl;
+          return lastGuess;
+        }
+      }
     }
 
     info = 1; //convergence (needs to be true for all steps)
-    for (size_t i = 1; i < norms.size(); i++) {
-      if (norms[i - 1] <= norms[i]) {
-        info = -1; //no convergence
-        break;
-      }
-    }
+//    for (size_t i = 1; i < norms.size(); i++) {
+//      if (norms[i - 1] <= norms[i]) {
+//        info = -1; //no convergence
+//        break;
+//      }
+//    }
 
     return currentGuess;
   }

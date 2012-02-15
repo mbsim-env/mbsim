@@ -21,7 +21,7 @@
 
 #include "multi_dimensional_newton_method.h"
 
-#include <numerics/eps.h>
+#include <numerics/utils/eps.h>
 
 #include <iostream>
 
@@ -51,15 +51,23 @@ namespace MBSimNumerics {
   }
 
   Vec MultiDimensionalNewtonMethod::solve(const Vec & initialValue) {
-
-    iter = 0;
-
+    /*Reset for comparing*/
+    criteria->clear();
     criteria->setFunction(function);
+    info = (*criteria)(initialValue);
+    if(info == 0)
+      return initialValue;
 
-    damping->setCriteriaFunction(criteria);
-    damping->setFunction(function);
+    if(damping) {
+      damping->setCriteriaFunction(criteria);
+      damping->setFunction(function);
+    }
 
     jacobian->setFunction(function);
+
+    info = 1;
+    iter = 0;
+    /*End - Reset*/
 
     //current position in function
     Vec x = initialValue;
@@ -85,7 +93,11 @@ namespace MBSimNumerics {
 
       //Criteria with info = 1 means: go on  (else there might be a solution found (=0) or something else)
       if (info != 1) {
-        return x;
+        cout << "iterations " << iter << endl;
+        if(info == -1) //new solution is worse than solution before --> return solution before
+          return x + dx;
+        else
+          return x;
       }
 
       //compute current value
@@ -166,8 +178,9 @@ namespace MBSimNumerics {
     for (unsigned int k = 0; k < kmax; k++) {
       xnew = x - alpha * dx;
       Vec f = (*function)(xnew);
-      if(criteria->isBetter(xnew))
+      if(criteria->isBetter(xnew)) {
         return alpha;
+      }
       alpha *= 0.5;
     }
 
@@ -189,6 +202,10 @@ namespace MBSimNumerics {
     if (criteriaResults.back() < tolerance)
       return 0;
 
+    if(criteriaResults.size() > 1)
+      if (criteriaResults.back() > criteriaResults[criteriaResults.size()-2])
+        return -1;
+
     return 1;
   }
 
@@ -197,6 +214,10 @@ namespace MBSimNumerics {
       return true;
 
     return false;
+  }
+
+  void GlobalCriteriaFunction::clear() {
+    criteriaResults.clear();
   }
 
   LocalCriteriaFuntion::LocalCriteriaFuntion(const map<Index, double> & tolerances_) :
@@ -241,6 +262,10 @@ namespace MBSimNumerics {
     }
 
     return results;
+  }
+
+  void LocalCriteriaFuntion::clear() {
+    criteriaResults.clear();
   }
 
 }

@@ -21,7 +21,7 @@
 
 #include "lemke_algorithm.h"
 
-#include <numerics/eps.h>
+#include <numerics/utils/eps.h>
 
 using namespace fmatvec;
 using namespace std;
