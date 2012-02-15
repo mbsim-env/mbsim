@@ -3,7 +3,7 @@ AC_PREREQ([2.57])
 AC_INIT([numerics],[0.0.1],[kgrundl@googlemail.com])
 AC_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE
-AC_CONFIG_SRCDIR([numerics/multi_dimensional_newton_method.h])
+AC_CONFIG_SRCDIR([numerics/utils/eps.h])
 AC_PROG_LIBTOOL
 AC_PROG_CXX
 AC_PROG_FC
@@ -72,7 +72,7 @@ if test $doxygen = "no" ; then
   AC_MSG_RESULT([can't generate documentation. 'doxygen' required.])
 fi
 
-AC_CONFIG_FILES([Makefile numerics/Makefile numerics.pc])
+AC_CONFIG_FILES([Makefile numerics/Makefile numerics/functions/Makefile numerics/linear_complementarity_problem/Makefile numerics/nonlinear_algebra/Makefile numerics/utils/Makefile numerics.pc])
 
 AC_OUTPUT
 
