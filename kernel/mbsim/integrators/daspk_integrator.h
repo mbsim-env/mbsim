@@ -20,59 +20,59 @@
  *
  */
 
-#ifndef _DASPK_INTEGRATOR_H_
-#define _DASPK_INTEGRATOR_H_
-
-#include "integrator.h"
-
-namespace MBSim {
-
-  /** \brief ODE-Integrator DASPK
-    Integrator with root finding for ODEs.
-    This integrator uses DASPK from http://www.netlib.org . */
-  class DASPKIntegrator : public Integrator {
-
-    private:
-
-      static void res(double *t, double *z, double *zd, double *cj, double *delta, int *ires, double *rpar, int *ipar);
-      static void fsv(int* zSize, double* t, double* z_, int* nsv, double* sv_);
-
-      /** maximal step size */
-      double dtMax;
-      /** minimal step size */
-      double dtMin;
-      /** Absolute Toleranz */
-      fmatvec::Vec aTol;
-      /** Relative Toleranz */
-      double rTol;
-      /** step size for the first step */
-      double dt0;
-      /**  maximum number of steps allowed during one call to the solver. (default 10000) */
-      int maxSteps;
-      /** use stiff (BDF) method */
-      bool stiff;
-      /** number of differential equations */
-      static int zSize;
-
-    public:
-
-      DASPKIntegrator();
-      ~DASPKIntegrator() {}
-
-      void setMaximalStepSize(double dtMax_) {dtMax = dtMax_;}
-      void setMinimalStepSize(double dtMin_) {dtMin = dtMin_;}
-      void setRelativeTolerance(double rTol_) {rTol = rTol_;}
-      void setAbsoluteTolerance(const fmatvec::Vec &aTol_) {aTol.resize() = aTol_;}
-      void setAbsoluteTolerance(double aTol_) {aTol.resize() = fmatvec::Vec(1,fmatvec::INIT,aTol_);}
-      void setInitialStepSize(double dt0_) {dt0 = dt0_;}
-      void setmaxSteps(int maxSteps_) {maxSteps = maxSteps_;}
-      void setStiff(bool flag) {stiff = flag;}
-
-      void integrate(DynamicSystemSolver& system);
-      
-      virtual void initializeUsingXML(TiXmlElement *element);
-  };
-
-}
-
-#endif
+//  #ifndef _DASPK_INTEGRATOR_H_
+//  #define _DASPK_INTEGRATOR_H_
+//  
+//  #include "integrator.h"
+//  
+//  namespace MBSim {
+//  
+//    /** \brief ODE-Integrator DASPK
+//      Integrator with root finding for ODEs.
+//      This integrator uses DASPK from http://www.netlib.org . */
+//    class DASPKIntegrator : public Integrator {
+//  
+//      private:
+//  
+//        static void res(double *t, double *z, double *zd, double *cj, double *delta, int *ires, double *rpar, int *ipar);
+//        static void fsv(int* zSize, double* t, double* z_, int* nsv, double* sv_);
+//  
+//        /** maximal step size */
+//        double dtMax;
+//        /** minimal step size */
+//        double dtMin;
+//        /** Absolute Toleranz */
+//        fmatvec::Vec aTol;
+//        /** Relative Toleranz */
+//        double rTol;
+//        /** step size for the first step */
+//        double dt0;
+//        /**  maximum number of steps allowed during one call to the solver. (default 10000) */
+//        int maxSteps;
+//        /** use stiff (BDF) method */
+//        bool stiff;
+//        /** number of differential equations */
+//        static int zSize;
+//  
+//      public:
+//  
+//        DASPKIntegrator();
+//        ~DASPKIntegrator() {}
+//  
+//        void setMaximalStepSize(double dtMax_) {dtMax = dtMax_;}
+//        void setMinimalStepSize(double dtMin_) {dtMin = dtMin_;}
+//        void setRelativeTolerance(double rTol_) {rTol = rTol_;}
+//        void setAbsoluteTolerance(const fmatvec::Vec &aTol_) {aTol.resize() = aTol_;}
+//        void setAbsoluteTolerance(double aTol_) {aTol.resize() = fmatvec::Vec(1,fmatvec::INIT,aTol_);}
+//        void setInitialStepSize(double dt0_) {dt0 = dt0_;}
+//        void setmaxSteps(int maxSteps_) {maxSteps = maxSteps_;}
+//        void setStiff(bool flag) {stiff = flag;}
+//  
+//        void integrate(DynamicSystemSolver& system);
+//        
+//        virtual void initializeUsingXML(TiXmlElement *element);
+//    };
+//  
+//  }
+//  
+//  #endif
