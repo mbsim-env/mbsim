@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2011  Kilian Grundl
+/* Copyright (C) 2004-2012  MBSim Development Team
 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -15,9 +15,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 
  *
- * Contact:
- *   TODO contact and Copyright time
- *
+ * Contact: martin.o.foerg@googlemail.com
  */
 
 #ifndef MAXWELL_CONTACT_H_
@@ -31,7 +29,9 @@
 #include <mbsim/utils/function.h>
 #include <mbsim/utils/nonlinear_algebra.h>
 #ifdef HAVE_MBSIMNUMERICS
-#include <numerics/linear_complementarity_problem.h>
+#include <numerics/linear_complementarity_problem/linear_complementarity_problem.h>
+#else
+#include <mbsim/utils/linear_complementarity_problem.h>
 #endif
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
