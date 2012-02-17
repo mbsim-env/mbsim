@@ -1,7 +1,26 @@
+/* Copyright (C) 2004-2012 MBSim Development Team
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+ *
+ * Contact: martin.o.foerg@googlemail.com
+ */
+
 #include <config.h>
 #include <time.h>
 
-#include <maxwell_contact.h>
+#include "maxwell_contact.h"
 
 #include <fmatvec.h>
 
@@ -16,12 +35,6 @@
 #include <mbsim/utils/nonlinear_algebra.h>
 #include <mbsim/utils/eps.h>
 #include <mbsim/utils/rotarymatrices.h>
-
-#ifdef HAVE_MBSIMNUMERICS
-#include <numerics/linear_complementarity_problem.h>
-#else
-#include <mbsim/utils/linear_complementarity_problem.h>
-#endif
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/group.h>
@@ -69,7 +82,7 @@ namespace MBSim {
 
       /*update rigidBodyGap*/
       updateRigidBodyGap(t);
-      
+
       computeMaterialConstant(t);
 
       /*solve Linear Complementary Problem*/
@@ -84,6 +97,12 @@ namespace MBSim {
 
 #ifdef HAVE_MBSIMNUMERICS
       LinearComplementarityProblem LCP(C, rigidBodyGap, lcpSolvingStrategy);
+
+      map<Index, double> tolerances;
+      tolerances.insert(pair<Index, double>(Index(0,possibleContactPoints.size() - 1), 1e-6)); //tolerances for distances
+      tolerances.insert(pair<Index, double>(Index(possibleContactPoints.size(),2*possibleContactPoints.size()-1), 1e-3)); //tolerances for forces
+      LCP.setNewtonCriteriaFunction(new LocalResidualCriteriaFunction(tolerances));
+      LCP.setStrategy(lcpSolvingStrategy);
 
       solution0.resize() = LCP.solve(solution0);
 
