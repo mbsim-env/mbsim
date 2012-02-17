@@ -28,7 +28,7 @@
 
 namespace MBSimNumerics {
 
-  /*
+  /*!
    * \brief Mother class for different criterias that are fulfilled or not
    */
   class CriteriaFunction : public Function1<int, fmatvec::Vec> {
@@ -43,8 +43,7 @@ namespace MBSimNumerics {
       /**
        * \brief Destructor
        */
-      virtual ~CriteriaFunction() {
-      }
+      virtual ~CriteriaFunction();
 
       /* GETTER / SETTER*/
       void setFunction(Function1<fmatvec::Vec, fmatvec::Vec> * function_) {
@@ -56,9 +55,10 @@ namespace MBSimNumerics {
        * \brief computes the criteria
        *
        * The criteria has to fulfill at least:
-       *   - result =  0: criteria is fulfilled
+       *   - result =  0: the criteria is fulfilled and should stop therefore
        *   - result =  1: the algorithm should go on
-       *   - result = -1: the algorithm should stop
+       *   - result =  2: the algorithm has slow convergence and should stop therefore
+       *   - result = -1: the algorithm diverges and should stop therefore
        */
       virtual int operator ()(const fmatvec::Vec & vector, const void * = NULL) = 0;
 
@@ -80,8 +80,8 @@ namespace MBSimNumerics {
 
   };
 
-  /*
-   * \brief This criteria function class applies a global criteria (euclidean norm) on the complete vector
+  /*!
+   * \brief This criteria function class applies the euclidean norm globally for complete vectors thus it has one tolerance and a list of "results" for each step
    */
   class GlobalCriteriaFunction : public CriteriaFunction {
 
@@ -94,8 +94,7 @@ namespace MBSimNumerics {
       /**
        * \brief Destructor
        */
-      virtual ~GlobalCriteriaFunction() {
-      }
+      virtual ~GlobalCriteriaFunction();
 
       /* INHERITED INTERFACE */
       virtual int operator ()(const fmatvec::Vec & vector, const void * = NULL);
@@ -103,7 +102,11 @@ namespace MBSimNumerics {
       virtual void clear();
       /*END - INHERITED INTERFACE*/
 
-    private:
+    protected:
+      /*INHERITED INTERFACE*/
+      virtual double computeResults(const fmatvec::Vec & x) = 0;
+      /********************/
+
       /**
        * \brief tolerance value for the criteria results
        */
@@ -115,34 +118,34 @@ namespace MBSimNumerics {
       std::vector<double> criteriaResults;
   };
 
-  /**
-   * \brief This criteria function class applies local criterias on single indices sets each with another tolerance
+  /*!
+   * \brief This criteria function class applies the euclidean norm locally for arbitrary combinations of sub-vectors of the complete vector. It has different tolerances for the different sub-vectors and a list of "result"-lists for each step and each "result" of a sub-vector.
    */
-  class LocalCriteriaFuntion : public CriteriaFunction {
+  class LocalCriteriaFunction : public CriteriaFunction {
 
     public:
       /**
        * \brief Constructor
        */
-      LocalCriteriaFuntion(const std::map<fmatvec::Index, double> & tolerances_);
+      LocalCriteriaFunction(const std::map<fmatvec::Index, double> & tolerances_);
 
       /**
        * \brief Destructor
        */
-      virtual ~LocalCriteriaFuntion();
+      virtual ~LocalCriteriaFunction();
+
+      /* INHERITED INTERFACE */
+      virtual int operator ()(const fmatvec::Vec & vector, const void * = NULL);
+      virtual bool isBetter(const fmatvec::Vec & vector);
+      virtual void clear();
+      /*END - INHERITED INTERFACE*/
 
       virtual void setTolerances(const std::map<fmatvec::Index, double> & tolerances_) {
         tolerances = tolerances_;
       }
 
-      /* INHERITED INTERFACE */
-      virtual int operator ()(const fmatvec::Vec & x, const void * = NULL);
-      virtual bool isBetter(const fmatvec::Vec & x);
-      virtual void clear();
-      /*END - INHERITED INTERFACE*/
-
     protected:
-      virtual std::vector<double> computeResults(const fmatvec::Vec & x);
+      virtual std::vector<double> computeResults(const fmatvec::Vec & x) = 0;
 
       /*
        * \brief saves the tolerance for a specified index sets
@@ -154,5 +157,116 @@ namespace MBSimNumerics {
        */
       std::vector<std::vector<double> > criteriaResults;
   };
+
+  /*!
+   * \brief This criteria function class applies the euclidean norm globally on the complete vector and compares it with zero (i.e. a residual criteria)
+   */
+  class GlobalResidualCriteriaFunction : public GlobalCriteriaFunction {
+
+    public:
+      /**
+       * \brief Constructor
+       */
+      GlobalResidualCriteriaFunction(const double & tolerance_ = 1e-10);
+
+      /**
+       * \brief Destructor
+       */
+      virtual ~GlobalResidualCriteriaFunction();
+
+    protected:
+      /* INHERITED INTERFACE */
+      virtual double computeResults(const fmatvec::Vec & x);
+      /*END - INHERITED INTERFACE*/
+  };
+
+  /*!
+   * \brief This criteria function class applies the euclidean norm on single indices sets (each with another tolerance) and compares it with zero (i.e. a residual criteria)
+   */
+  class LocalResidualCriteriaFunction : public LocalCriteriaFunction {
+
+    public:
+      /**
+       * \brief Constructor
+       */
+      LocalResidualCriteriaFunction(const std::map<fmatvec::Index, double> & tolerances_);
+
+      /**
+       * \brief Destructor
+       */
+      virtual ~LocalResidualCriteriaFunction();
+
+    protected:
+
+      virtual std::vector<double> computeResults(const fmatvec::Vec & x);
+  };
+
+  /*!
+   * \brief This criteria function class applies the euclidean norm globally on the difference between the complete vector of the current step and the complete vector of the step before and compares it with zero (i.e. a shift criteria)
+   */
+  class GlobalShiftCriteriaFunction : public GlobalCriteriaFunction {
+    public:
+      /**
+       * \brief Constructor
+       */
+      GlobalShiftCriteriaFunction(const double & tolerance_ = 1e-10);
+
+      /**
+       * \brief Destructor
+       */
+      virtual ~GlobalShiftCriteriaFunction();
+
+      virtual fmatvec::Vec getLastPoint() {
+        return lastPoint;
+      }
+
+    protected:
+      /* INHERITED INTERFACE */
+      virtual double computeResults(const fmatvec::Vec & x);
+      /*END - INHERITED INTERFACE*/
+
+      /*!
+       * \brief save the point of the last step for comparison
+       */
+      fmatvec::Vec lastPoint;
+
+  };
+
+  /*!
+   * \brief This criteria function class applies the euclidean norm on single indices sets (each with another tolerance) and compares it with zero (i.e. a residual criteria)
+   */
+  class LocalShiftCriteriaFunction : public LocalCriteriaFunction {
+
+    public:
+      /**
+       * \brief Constructor
+       */
+      LocalShiftCriteriaFunction(const std::map<fmatvec::Index, double> & tolerances_);
+
+      /**
+       * \brief Destructor
+       */
+      virtual ~LocalShiftCriteriaFunction();
+
+      virtual fmatvec::Vec getLastPoint() {
+        return lastPoint;
+      }
+
+    protected:
+      virtual std::vector<double> computeResults(const fmatvec::Vec & x);
+
+      /*!
+       * \brief save the point of the last step for comparison
+       */
+      fmatvec::Vec lastPoint;
+  };
+
+  inline CriteriaFunction::~CriteriaFunction(){}
+  inline GlobalCriteriaFunction::~GlobalCriteriaFunction(){}
+  inline LocalCriteriaFunction::~LocalCriteriaFunction(){}
+  inline GlobalResidualCriteriaFunction::~GlobalResidualCriteriaFunction() {}
+  inline GlobalShiftCriteriaFunction::~GlobalShiftCriteriaFunction() {}
+  inline LocalResidualCriteriaFunction::~LocalResidualCriteriaFunction() {}
+  inline LocalShiftCriteriaFunction::~LocalShiftCriteriaFunction() {}
 }
 #endif //NUMERICSCRITERIAFUNCTIONS_H_

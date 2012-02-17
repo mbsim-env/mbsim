@@ -25,8 +25,13 @@ using namespace std;
 
 namespace MBSimNumerics {
 
+  MultiDimensionalFixpointSolver::MultiDimensionalFixpointSolver() :
+    criteria(new GlobalShiftCriteriaFunction()), iter(0), itermax(1e3), norms(0), info(1){
+
+  }
+
   MultiDimensionalFixpointSolver::MultiDimensionalFixpointSolver(Function1<Vec, Vec> *function_) :
-      function(function_), tol(1e-10), iter(0), itermax(30000), norms(0), info(1) {
+      function(function_), criteria(new GlobalShiftCriteriaFunction()), iter(0), itermax(1e3), norms(0), info(1) {
   }
 
   /*
@@ -35,45 +40,28 @@ namespace MBSimNumerics {
    * \return vector after iteration (solution or currentGuess-value)
    */
   Vec MultiDimensionalFixpointSolver::solve(const Vec & initialGuess) {
+    /*Initialise*/
     Vec currentGuess = initialGuess.copy();
-    Vec lastGuess;
-    norms.clear();
-    for (iter = 0; iter < itermax; iter++) {
-      lastGuess = currentGuess.copy();
+    info = 1;
+    criteria->setFunction(function);
+    criteria->clear();
 
+    for (iter = 0; iter < itermax; iter++) {
       currentGuess = (*function)(currentGuess);
 
-      norms.push_back(nrm2(currentGuess - lastGuess));
-      if (norms[iter] < tol) {
-        info = 0;
-        cout << "converged: iter = " << iter << endl;
+      info = (*criteria)(currentGuess);
+
+      if(info != 1) {
+        if(info == -1) { //divergence case //TODO: a more clever structure (with multiple inheritage for shift-functions) might avoid the dynamic casting
+          if(dynamic_cast<LocalShiftCriteriaFunction*>(criteria))
+            return static_cast<LocalShiftCriteriaFunction*>(criteria)->getLastPoint();
+          else if(dynamic_cast<GlobalShiftCriteriaFunction*>(criteria))
+            return static_cast<GlobalShiftCriteriaFunction*>(criteria)->getLastPoint();
+        }
+
         return currentGuess;
       }
-
-      if(iter > 0) {
-        double test = fabs(norms[iter - 1] - norms[iter]);
-        if(test  <  tol) {
-          info = 2; //slow convergence --> stop
-          cout << "slow convergence: iter = " << iter << endl;
-          return currentGuess;
-        }
-
-        if(norms[iter - 1] <= norms[iter]) {
-          info = -1; //divergence --> stop
-          cout << "diverged: iter = " << iter << endl;
-          return lastGuess;
-        }
-      }
     }
-
-    info = 1; //convergence (needs to be true for all steps)
-//    for (size_t i = 1; i < norms.size(); i++) {
-//      if (norms[i - 1] <= norms[i]) {
-//        info = -1; //no convergence
-//        break;
-//      }
-//    }
-
     return currentGuess;
   }
 
