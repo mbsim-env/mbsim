@@ -71,7 +71,7 @@ namespace MBSimNumerics {
   }
 
   LinearComplementarityProblem::LinearComplementarityProblem(const SymMat & M_, const Vec & q_, const LCPSolvingStrategy & strategy_ /*= Standard*/, const JacobianType & jacobianType_ /*= LCPSpecial*/, const unsigned int & DEBUGLEVEL /*= 0*/) :
-      strategy(strategy_), mediumEigenValue(0.0), jacobianType(jacobianType_) {
+      strategy(strategy_), mediumEigenValue(0.0), jacobianType(jacobianType_), DEBUGLEVEL(0) {
 
     //set properties
 
@@ -176,10 +176,9 @@ namespace MBSimNumerics {
 
       /*Get initial solution for the reformulated system to apply recursive schemes*/
       if (not solved) {
-        if (initialSolution.size() == 0)
+        if (initialSolution.size() != 2*dimension)
           solution = createInitialSolution(M, q);
         else {
-          assert(initialSolution.size() == 2*dimension);
           solution = initialSolution;
         }
       }
