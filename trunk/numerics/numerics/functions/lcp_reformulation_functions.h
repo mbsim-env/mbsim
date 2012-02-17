@@ -28,75 +28,77 @@ namespace MBSimNumerics {
 
   class LCPReformulationFunction : public Function1<fmatvec::Vec, fmatvec::Vec> {
     public:
-    /*!
-     * \brief standard constructor
-     */
-    LCPReformulationFunction(const double &r_ = 10) : r(r_) {}
+      /*!
+       * \brief standard constructor
+       */
+      LCPReformulationFunction(const double &r_ = 10) :
+          r(r_), DEBUGLEVEL(0) {
+      }
 
-    /**
-     * \brief constructor
-     */
-    LCPReformulationFunction(const fmatvec::Vec &q_, const fmatvec::SqrMat &M_, const double &r_ = 10, const unsigned int & DEBUGLEVEL_ = 0);
+      /**
+       * \brief constructor
+       */
+      LCPReformulationFunction(const fmatvec::Vec &q_, const fmatvec::SqrMat &M_, const double &r_ = 10, const unsigned int & DEBUGLEVEL_ = 0);
 
-    /*
-     * \brief destructor
-     */
-    virtual ~LCPReformulationFunction();
+      /*
+       * \brief destructor
+       */
+      virtual ~LCPReformulationFunction();
 
-    /* INHERITED INTERFACE */
-    /**
-     * \param q: solution vector with
-     *           first entries: w, last entries: z
-     */
-    virtual fmatvec::Vec operator()(const fmatvec::Vec &q, const void * = NULL) = 0;
-    /***************************************************/
+      /* INHERITED INTERFACE */
+      /**
+       * \param q: solution vector with
+       *           first entries: w, last entries: z
+       */
+      virtual fmatvec::Vec operator()(const fmatvec::Vec &q, const void * = NULL) = 0;
+      /***************************************************/
 
-    /**GETTER / SETTER*/
-    fmatvec::Vec getq(void) {
-      return q;
-    }
-    void setSystem(const fmatvec::SqrMat & M_, const fmatvec::Vec & q_) {
-      M = M_;
-      q = q_;
-      assert(M.rows() == q.rows());
-      NumberOfContacts = q.rows();
-    }
-    fmatvec::SqrMat getM(void) {
-      return M;
-    }
-    double getr(void) {
-      return r;
-    }
-    void setr(const double & r_) {
-      r = r_;
-    }
-    /*****************/
+      /**GETTER / SETTER*/
+      fmatvec::Vec getq(void) {
+        return q;
+      }
+      void setSystem(const fmatvec::SqrMat & M_, const fmatvec::Vec & q_) {
+        M = M_;
+        q = q_;
+        assert(M.rows() == q.rows());
+        NumberOfContacts = q.rows();
+      }
+      fmatvec::SqrMat getM(void) {
+        return M;
+      }
+      double getr(void) {
+        return r;
+      }
+      void setr(const double & r_) {
+        r = r_;
+      }
+      /*****************/
 
     protected:
-    /**
-     * \brief Number of possible contact points (= dimension of the LCP)
-     */
-    int NumberOfContacts;
+      /**
+       * \brief Number of possible contact points (= dimension of the LCP)
+       */
+      int NumberOfContacts;
 
-    /**
-     * \brief vector of all rigid body gaps
-     */
-    fmatvec::Vec q;
+      /**
+       * \brief vector of all rigid body gaps
+       */
+      fmatvec::Vec q;
 
-    /**
-     * \brief Influence matrix for the contacts
-     */
-    fmatvec::SqrMat M;
+      /**
+       * \brief Influence matrix for the contacts
+       */
+      fmatvec::SqrMat M;
 
-    /**
-     * \brief parameter for the prox-function (r>0)
-     */
-    double r;
+      /**
+       * \brief parameter for the prox-function (r>0)
+       */
+      double r;
 
-    /**
-     * \brief parameter to print information
-     */
-    unsigned int DEBUGLEVEL;
+      /**
+       * \brief parameter to print information
+       */
+      unsigned int DEBUGLEVEL;
   };
 
   class LCPNewtonReformulationFunction : public LCPReformulationFunction {
@@ -104,7 +106,9 @@ namespace MBSimNumerics {
       /*!
        * \brief standard constructor
        */
-      LCPNewtonReformulationFunction(){}
+      LCPNewtonReformulationFunction() :
+          LCPReformulationFunction() {
+      }
 
       /**
        * \brief constructor
@@ -133,7 +137,9 @@ namespace MBSimNumerics {
       /*!
        * \brief standard constructor
        */
-      LCPFixpointReformulationFunction() {}
+      LCPFixpointReformulationFunction() :
+          LCPReformulationFunction() {
+      }
 
       /**
        * \brief constructor
