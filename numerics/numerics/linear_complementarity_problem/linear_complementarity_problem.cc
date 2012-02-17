@@ -30,7 +30,7 @@ using namespace fmatvec;
 
 //TODO: get into fmatvec
 namespace fmatvec {
-  SqrMat Sym2Sqr(const SymMat  & M_) {
+  SqrMat Sym2Sqr(const SymMat & M_) {
     SqrMat M(M_.size(), NONINIT);
     for (int i = 0; i < M_.size(); i++)
       for (int j = i; j < M_.size(); j++) {
@@ -46,8 +46,12 @@ namespace MBSimNumerics {
     switch (strategy) {
       case Standard:
         return o << "Standard";
-      case Reformulated:
-        return o << "Reformulated";
+      case ReformulatedStandard:
+        return o << "ReformulatedStandard";
+      case ReformulatedFixpointOnly:
+        return o <<"ReformulatedFixpointOnly";
+      case ReformulatedNewtonOnly:
+        return o << "ReformulatedNewtonOnly";
       case LemkeOnly:
         return o << "LemkeOnly";
       default:
@@ -66,27 +70,14 @@ namespace MBSimNumerics {
     }
   }
 
-
   LinearComplementarityProblem::LinearComplementarityProblem(const SymMat & M_, const Vec & q_, const LCPSolvingStrategy & strategy_ /*= Standard*/, const JacobianType & jacobianType_ /*= LCPSpecial*/, const unsigned int & DEBUGLEVEL /*= 0*/) :
       strategy(strategy_), mediumEigenValue(0.0), jacobianType(jacobianType_) {
 
-
     //set properties
-    if(jacobianType == LCPSpecial)
-      jacobianFunction = new LinearComplementarityJacobianFunction();
-    else
-      jacobianFunction = new NumericalNewtonJacobianFunction();
 
-    newtonFunction = new LCPNewtonReformulationFunction();
     newtonSolver = new MultiDimensionalNewtonMethod();
-    newtonSolver->setMaximumNumberOfIterations((int) 1e3);
-    newtonSolver->setCriteriaFunction(new GlobalCriteriaFunction());
-    newtonSolver->setDampingFunction(new StandardDampingFunction());
-
-    fixpointFunction = new LCPFixpointReformulationFunction();
 
     fixpointSolver = new MultiDimensionalFixpointSolver();
-    fixpointSolver->setNumberOfMaximalIterations((int) 1e4);
 
     setSystem(M_, q_);
   }
@@ -103,11 +94,19 @@ namespace MBSimNumerics {
     lemkeSolver.setSystem(M, q);
 
     //Newton
-    newtonFunction->setSystem(M, q);
-    newtonSolver->setFunction(newtonFunction);
+    if (jacobianType == LCPSpecial)
+      jacobianFunction = new LinearComplementarityJacobianFunction();
+    else
+      jacobianFunction = new NumericalNewtonJacobianFunction();
+
     newtonSolver->setJacobianFunction(jacobianFunction);
 
+    newtonFunction = new LCPNewtonReformulationFunction();
+    newtonFunction->setSystem(M, q);
+    newtonSolver->setFunction(newtonFunction);
+
     //Fixpoint
+    fixpointFunction = new LCPFixpointReformulationFunction();
     fixpointFunction->setSystem(M, q);
     fixpointSolver->setFunction(fixpointFunction);
 
@@ -143,7 +142,6 @@ namespace MBSimNumerics {
     //      NewtonSolverFortran.setRootFunction(&func);
     //      Vec gapLambdaFortran = NewtonSolverFortran.solve(gapLambda0);
     if (strategy != LemkeOnly) {
-
       if (strategy == Standard) {
         clock_t t_start_Lemke1 = clock();
         solution = lemkeSolver.solve(dimension);
@@ -174,7 +172,7 @@ namespace MBSimNumerics {
         }
       } //End Lemke-Solver in standard strategy
 
-      clock_t t_start_Iterative = clock();
+      //clock_t t_start_Iterative = clock();
 
       /*Get initial solution for the reformulated system to apply recursive schemes*/
       if (not solved) {
@@ -188,113 +186,34 @@ namespace MBSimNumerics {
 
       /*Try to solve the reformulated system with iterative schemes*/
       for (int loop = 0; loop < 5 and not solved; loop++) {
+        if(strategy == ReformulatedNewtonOnly) {
+          useNewton(solution, solved);
+        }
+        else if (strategy == ReformulatedFixpointOnly) {
+          useFixpoint(solution, solved);
+        }
+        else {
+          useNewton(solution, solved);
 
-        if (DEBUGLEVEL >= 1)
-          cout << "Trying Newton Solver ... " << endl;
+          switch (newtonSolver->getInfo()) {
+            case 0:
 
-        int i = 0;
-        do {
-          solution = newtonSolver->solve(solution);
-
-          if (newtonSolver->getInfo() == 1)
-            if (DEBUGLEVEL >= 2) {
-              cout << "Newton scheme seems to converge but has not finished --> Going on ..." << endl;
-            }
-        } while (i++ < 3 and  newtonSolver->getInfo() == 1);
-
-        if (DEBUGLEVEL >= 3) {
-          cout << "Info about NewtonSolver" << endl;
-          cout << "nrm2(f(solution)):  " << nrm2((*newtonFunction)(solution)) << endl;
-          if (DEBUGLEVEL >= 4) { //Newton-Solver Info
-            cout << "solution: " << solution << endl;
-            cout << "gaps       forces   " << endl;
-            for (int i = 0; i < solution.size() / 2; i++) {
-              cout << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
+              break;
+            case -1: {
+              useFixpoint(solution, solved);
+              break;
             }
           }
         }
-
-        switch (newtonSolver->getInfo()) {
-          case 0:
-            solved = true;
-
-            if (DEBUGLEVEL >= 1) {
-              cout << "Newton-Solver found solution" << endl;
-
-              if (DEBUGLEVEL >= 2) {
-                double cpuTime = double(clock() - t_start_Iterative) / CLOCKS_PER_SEC;
-                cout << "... in: " << cpuTime << "s = " << cpuTime / 3600 << "h" << endl;
-                if (DEBUGLEVEL >= 4) { //Newton-Solver Info
-                  cout << "solution: " << solution << endl;
-                  cout << "gaps       forces   " << endl;
-                  for (int i = 0; i < solution.size() / 2; i++) {
-                    cout << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
-                  }
-                }
-              }
-            }
-          break;
-          case -1: {
-            /*Fixpoint Solver*/
-            if (DEBUGLEVEL >= 1)
-              cout << "Trying Fixpoint Solver ... " << endl;
-
-            int i = 0;
-            do {
-              solution = fixpointSolver->solve(solution);
-
-              if (fixpointSolver->getInfo() == 1)
-                if (DEBUGLEVEL >= 2) {
-                  cout << "Newton scheme seems to converge but has not finished --> Going on ..." << endl;
-                }
-            } while (i++ < 3 and  fixpointSolver->getInfo() == 1);
-
-            if (DEBUGLEVEL >= 3) {
-              cout << "Info about FixpointSolver" << endl;
-              cout << "nrm2(f(solution)):  " << nrm2((*newtonFunction)(solution)) << endl;
-              if (DEBUGLEVEL >= 4) {
-                cout << "solution: " << solution << endl;
-                cout << "gaps       forces   " << endl;
-                for (int i = 0; i < solution.size() / 2; i++) {
-                  cout << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
-                }
-              }
-            }
-
-            if (fixpointSolver->getInfo() == 0) {
-              solved = true;
-
-              if (DEBUGLEVEL >= 1) {
-                cout << "Fixpoint-Solver found solution" << endl;
-                if (DEBUGLEVEL >= 2) {
-                  double cpuTime = double(clock() - t_start_Iterative) / CLOCKS_PER_SEC;
-                  cout << "... in: " << cpuTime << "s = " << cpuTime / 3600 << "h" << endl;
-                  if (DEBUGLEVEL >= 4) {
-                    cout << "solution: " << solution << endl;
-                    cout << "gaps       forces   " << endl;
-                    for (int i = 0; i < solution.size() / 2; i++) {
-                      cout << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
-                    }
-                  }
-                }
-              }
-            }
-
-            break;
-          }
-        }
-      }
+      } /*End reformulated system*/
 
       /*If no solution is found with the other algorithms use the Lemke-Algorithm with a maxmimal number of steps as fallback*/
       if (!solved) {
-
         if (DEBUGLEVEL >= 1) {
           cout << "No convergence during calculation of contact forces with reformulated system scheme!" << endl;
           cout << "Using Lemke Algorithm with maximal number of steps as fallback." << endl;
         }
-
       }
-
     }
 
     if (not solved) {
@@ -369,6 +288,105 @@ namespace MBSimNumerics {
     }
 
     return solution;
+  }
+
+  void LinearComplementarityProblem::useNewton(Vec & solution, bool & solved) {
+    if (DEBUGLEVEL >= 1)
+      cout << "Trying Newton Solver ... " << endl;
+
+    int i = 0;
+    do {
+      solution = newtonSolver->solve(solution);
+
+      if (newtonSolver->getInfo() == 1)
+        if (DEBUGLEVEL >= 2) {
+          cout << "Newton scheme seems to converge but has not finished --> Going on ..." << endl;
+        }
+    } while (i++ < 3 and newtonSolver->getInfo() == 1);
+
+    if (DEBUGLEVEL >= 1) {
+      cout << "Iterations = " << newtonSolver->getNumberOfIterations() << endl;
+      if (DEBUGLEVEL >= 3) {
+        cout << "Info about NewtonSolver" << endl;
+        cout << "nrm2(f(solution)):  " << nrm2((*newtonFunction)(solution)) << endl;
+        if (DEBUGLEVEL >= 4) { //Newton-Solver Info
+          cout << "solution: " << solution << endl;
+          cout << "gaps       forces   " << endl;
+          for (int i = 0; i < solution.size() / 2; i++) {
+            cout << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
+          }
+        }
+      }
+    }
+
+    if(newtonSolver->getInfo() == 0) {
+      solved = true;
+
+      if (DEBUGLEVEL >= 1) {
+        cout << "Newton-Solver found solution" << endl;
+
+        if (DEBUGLEVEL >= 2) {
+          //double cpuTime = double(clock() - t_start_Iterative) / CLOCKS_PER_SEC;
+          //cout << "... in: " << cpuTime << "s = " << cpuTime / 3600 << "h" << endl;
+          if (DEBUGLEVEL >= 4) { //Newton-Solver Info
+            cout << "solution: " << solution << endl;
+            cout << "gaps       forces   " << endl;
+            for (int i = 0; i < solution.size() / 2; i++) {
+              cout << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  void LinearComplementarityProblem::useFixpoint(Vec & solution, bool & solved) {
+    if (DEBUGLEVEL >= 1)
+      cout << "Trying Fixpoint Solver ... " << endl;
+
+    int i = 0;
+    do {
+      solution = fixpointSolver->solve(solution);
+
+      if (fixpointSolver->getInfo() == 1)
+        if (DEBUGLEVEL >= 2) {
+          cout << "Fixpoint scheme seems to converge but has not finished --> Going on ..." << endl;
+        }
+    } while (i++ < 3 and fixpointSolver->getInfo() == 1);
+
+    if (DEBUGLEVEL >= 1) {
+      cout << "Iterations = " << fixpointSolver->getNumberOfIterations() << endl;
+      if (DEBUGLEVEL >= 3) {
+        cout << "Info about FixpointSolver" << endl;
+        cout << "nrm2(f(solution)):  " << nrm2((*newtonFunction)(solution)) << endl;
+        if (DEBUGLEVEL >= 4) {
+          cout << "solution: " << solution << endl;
+          cout << "gaps       forces   " << endl;
+          for (int i = 0; i < solution.size() / 2; i++) {
+            cout << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
+          }
+        }
+      }
+    }
+
+    if (fixpointSolver->getInfo() == 0) {
+      solved = true;
+
+      if (DEBUGLEVEL >= 1) {
+        cout << "Fixpoint-Solver found solution" << endl;
+        if (DEBUGLEVEL >= 2) {
+          //double cpuTime = double(clock() - t_start_Iterative) / CLOCKS_PER_SEC;
+          //cout << "... in: " << cpuTime << "s = " << cpuTime / 3600 << "h" << endl;
+          if (DEBUGLEVEL >= 4) {
+            cout << "solution: " << solution << endl;
+            cout << "gaps       forces   " << endl;
+            for (int i = 0; i < solution.size() / 2; i++) {
+              cout << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
+            }
+          }
+        }
+      }
+    }
   }
 
 }

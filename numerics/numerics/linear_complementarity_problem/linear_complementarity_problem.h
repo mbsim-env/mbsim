@@ -32,7 +32,9 @@ namespace MBSimNumerics {
 
   enum LCPSolvingStrategy {
     Standard,      //trying to solve the LCP in a standard way (first some steps of Lemke algorithm, then trying iterative schemes in reformulated system, then trying Lemke again as fallback with all steps)
-    Reformulated,  //trying to use the iterative schemes at first (as fallback use Lemke)
+    ReformulatedStandard,  //trying to use the iterative schemes at first (as fallback use Lemke)
+    ReformulatedNewtonOnly,
+    ReformulatedFixpointOnly,
     LemkeOnly
     //only use LemkeAgorithm
   };
@@ -79,8 +81,11 @@ namespace MBSimNumerics {
       void setJacobianType(const JacobianType & jacobianType_) {
         jacobianType = jacobianType_;
       }
-      void setCriteriaFunction(CriteriaFunction * criteriaFunction_) {
+      void setNewtonCriteriaFunction(CriteriaFunction * criteriaFunction_) {
         newtonSolver->setCriteriaFunction(criteriaFunction_);
+      }
+      void setFixpointCriteriaFunction(CriteriaFunction * criteriaFunction_) {
+        fixpointSolver->setCriteriaFunction(criteriaFunction_);
       }
       void setDebugLevel(const unsigned int & DEBUGLEVEL_) {
         DEBUGLEVEL = DEBUGLEVEL_;
@@ -105,6 +110,16 @@ namespace MBSimNumerics {
       static fmatvec::Vec createInitialSolution(const fmatvec::SqrMat & M, const fmatvec::Vec & q, double mediumEigVal = 0);
 
     protected:
+      /*!
+       * \brief change the incoming solution vector using the fixpoint scheme
+       */
+      void useNewton(fmatvec::Vec & solution, bool & solved);
+
+      /*!
+       * \brief change the incoming solution vector using the fixpoint scheme
+       */
+      void useFixpoint(fmatvec::Vec & solution, bool & solved);
+
       /**
        * \brief linear coupling matrix of the LCP
        */

@@ -26,25 +26,25 @@ using namespace std;
 
 namespace MBSimNumerics {
 
-  GlobalCriteriaFunction::GlobalCriteriaFunction(const double & tolerance_ /* = 1e-10*/) :
+  GlobalCriteriaFunction::GlobalCriteriaFunction(const double & tolerance_) :
       tolerance(tolerance_), criteriaResults(0) {
   }
 
   int GlobalCriteriaFunction::operator ()(const Vec & x, const void *) {
-    criteriaResults.push_back(nrm2((*function)(x)));
+    criteriaResults.push_back(computeResults(x));
 
     if (criteriaResults.back() < tolerance)
       return 0;
 
-    if(criteriaResults.size() > 1)
-      if (criteriaResults.back() > criteriaResults[criteriaResults.size()-2])
+    if (criteriaResults.size() > 1)
+      if (criteriaResults.back() > criteriaResults[criteriaResults.size() - 2])
         return -1;
 
     return 1;
   }
 
   bool GlobalCriteriaFunction::isBetter(const Vec & x) {
-    if(criteriaResults.back() > nrm2((*function)(x)))
+    if (criteriaResults.back() > nrm2((*function)(x)))
       return true;
 
     return false;
@@ -54,52 +54,96 @@ namespace MBSimNumerics {
     criteriaResults.clear();
   }
 
-  LocalCriteriaFuntion::LocalCriteriaFuntion(const map<Index, double> & tolerances_) :
-      tolerances(tolerances_) {
-      }
-
-  LocalCriteriaFuntion::~LocalCriteriaFuntion() {
-
+  LocalCriteriaFunction::LocalCriteriaFunction(const map<Index, double> & tolerances_) :
+      tolerances(tolerances_), criteriaResults(0) {
   }
 
-  int LocalCriteriaFuntion::operator ()(const Vec & x, const void *) {
+  int LocalCriteriaFunction::operator ()(const Vec & x, const void *) {
     criteriaResults.push_back(computeResults(x));
 
     int i = 0;
-    for(map<Index,double>::iterator iter = tolerances.begin(); iter != tolerances.end(); ++iter) {
-      if(criteriaResults.back()[i] > iter->second)
+    for (map<Index, double>::iterator iter = tolerances.begin(); iter != tolerances.end(); ++iter) {
+      //TODO: somehow add the -1 case ...
+      if (criteriaResults.back()[i] > iter->second)
         return 1;
       i++;
     }
 
-
     return 0;
   }
 
-  bool LocalCriteriaFuntion::isBetter(const Vec & x) {
+  bool LocalCriteriaFunction::isBetter(const Vec & x) {
     vector<double> & lastResults = criteriaResults.back();
     vector<double> currentResults = computeResults(x);
 
-    for(size_t i=0; i < currentResults.size(); i++) {
-      if(currentResults[i] > lastResults[i])
+    for (size_t i = 0; i < currentResults.size(); i++) {
+      if (currentResults[i] > lastResults[i])
         return false;
     }
 
     return true;
   }
 
-  vector<double> LocalCriteriaFuntion::computeResults(const Vec & x) {
+  void LocalCriteriaFunction::clear() {
+    criteriaResults.clear();
+  }
+
+  GlobalResidualCriteriaFunction::GlobalResidualCriteriaFunction(const double & tolerance_ /* = 1e-10*/) :
+      GlobalCriteriaFunction(tolerance_) {
+  }
+
+  double GlobalResidualCriteriaFunction::computeResults(const Vec & x) {
+    return nrm2((*function)(x));
+  }
+
+  LocalResidualCriteriaFunction::LocalResidualCriteriaFunction(const map<Index, double> & tolerances_) :
+      LocalCriteriaFunction(tolerances_) {
+  }
+
+  vector<double> LocalResidualCriteriaFunction::computeResults(const Vec & x) {
     Vec functionValues = (*function)(x);
     vector<double> results;
-    for(map<Index,double>::iterator iter = tolerances.begin(); iter != tolerances.end(); ++iter) {
+    for (map<Index, double>::iterator iter = tolerances.begin(); iter != tolerances.end(); ++iter) {
       results.push_back(nrm2(functionValues(iter->first)));
     }
 
     return results;
   }
 
-  void LocalCriteriaFuntion::clear() {
-    criteriaResults.clear();
+  GlobalShiftCriteriaFunction::GlobalShiftCriteriaFunction(const double & tolerance_ /*=1e-10*/) :
+      GlobalCriteriaFunction(tolerance_), lastPoint(Vec(0, NONINIT)) {
+  }
+
+  double GlobalShiftCriteriaFunction::computeResults(const Vec & x) {
+    if(lastPoint.size() == 0) {
+      lastPoint.resize() = x.copy();
+      return 1e30; //TODO: Guarantee that this returned value is larger than the tolerance and larger then the first result!
+    }
+
+    double ret = nrm2((*function)(x) - (*function)(lastPoint));
+    lastPoint = x.copy();
+    return ret;
+  }
+
+  LocalShiftCriteriaFunction::LocalShiftCriteriaFunction(const map<Index, double> & tolerances_) :
+      LocalCriteriaFunction(tolerances_), lastPoint(Vec(0, NONINIT)) {
+  }
+
+  vector<double> LocalShiftCriteriaFunction::computeResults(const Vec & x) {
+    vector<double> results;
+    if(lastPoint.size() == 0) {
+      lastPoint.resize() = x.copy();
+      for (map<Index, double>::iterator iter = tolerances.begin(); iter != tolerances.end(); ++iter) {
+        results.push_back(1e30); //TODO: Guarantee that this returned value is larger than the tolerance and larger then the first result!
+      }
+    }
+    else {
+      for (map<Index, double>::iterator iter = tolerances.begin(); iter != tolerances.end(); ++iter) {
+        results.push_back(nrm2((*function)(x)(iter->first) - (*function)(lastPoint)(iter->first)));
+      }
+      lastPoint = x.copy();
+    }
+    return results;
   }
 
 }

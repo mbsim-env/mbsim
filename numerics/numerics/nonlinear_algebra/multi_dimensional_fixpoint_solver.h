@@ -22,7 +22,7 @@
 
 #include <fmatvec.h>
 
-#include <numerics/functions/function.h>
+#include <numerics/functions/criteria_functions.h>
 
 namespace MBSimNumerics {
 
@@ -36,7 +36,7 @@ namespace MBSimNumerics {
       /*!
        * \brief plain constructor
        */
-      MultiDimensionalFixpointSolver(){}
+      MultiDimensionalFixpointSolver();
 
       /*
        * \brief constructor
@@ -69,11 +69,8 @@ namespace MBSimNumerics {
       void setNumberOfMaximalIterations(int itermax_) {
         itermax = itermax_;
       }
-      double getTolerance() {
-        return tol;
-      }
-      void setTolerance(double tol_) {
-        tol = tol_;
+      void setCriteriaFunction(CriteriaFunction * criteria_) {
+        criteria = criteria_;
       }
       /*******************/
 
@@ -81,14 +78,16 @@ namespace MBSimNumerics {
 
     private:
       /**
-       * \brief fix-point function
+       * \brief fixpoint function
        */
       Function1<fmatvec::Vec, fmatvec::Vec> *function;
 
-      /**
-       * \brief tolerance
+      /*
+       * \brief criteria function
+       *
+       * This function defines the criteria when to stop the fixpoint iteration
        */
-      double tol;
+      CriteriaFunction *criteria;
 
       /**
        *  \brief number of iterations

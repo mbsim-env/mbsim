@@ -46,6 +46,10 @@ namespace fmatvec {
 /*MultiDimensionalNewtonMethod*/
 namespace MBSimNumerics {
 
+  MultiDimensionalNewtonMethod::MultiDimensionalNewtonMethod() :
+    jacobian(new NumericalNewtonJacobianFunction()), damping(new StandardDampingFunction()), criteria(new GlobalResidualCriteriaFunction()), itermax(300), iter(0), info(1){
+  }
+
   MultiDimensionalNewtonMethod::MultiDimensionalNewtonMethod(Function1<fmatvec::Vec, fmatvec::Vec> *function_, NewtonJacobianFunction *jacobian_, DampingFunction *damping_, CriteriaFunction *critera_) :
       function(function_), jacobian(jacobian_), damping(damping_), criteria(critera_), itermax(300), iter(0), info(1) {
   }
@@ -93,7 +97,6 @@ namespace MBSimNumerics {
 
       //Criteria with info = 1 means: go on  (else there might be a solution found (=0) or something else)
       if (info != 1) {
-        cout << "iterations " << iter << endl;
         if(info == -1) //new solution is worse than solution before --> return solution before
           return x + dx;
         else

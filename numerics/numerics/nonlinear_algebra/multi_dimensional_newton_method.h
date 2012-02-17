@@ -43,12 +43,12 @@ namespace MBSimNumerics {
       /*!
        * \brief plain constructor
        */
-      MultiDimensionalNewtonMethod() {}
+      MultiDimensionalNewtonMethod();
 
       /*!
        * \brief constructor with all possibilities
        */
-      MultiDimensionalNewtonMethod(Function1<fmatvec::Vec, fmatvec::Vec> *function_, NewtonJacobianFunction *jacobian_ = new NumericalNewtonJacobianFunction(), DampingFunction *damping_ = new StandardDampingFunction(), CriteriaFunction *critera_ = new GlobalCriteriaFunction());
+      MultiDimensionalNewtonMethod(Function1<fmatvec::Vec, fmatvec::Vec> *function_, NewtonJacobianFunction *jacobian_ = new NumericalNewtonJacobianFunction(), DampingFunction *damping_ = new StandardDampingFunction(), CriteriaFunction *critera_ = new GlobalResidualCriteriaFunction());
 
       virtual ~MultiDimensionalNewtonMethod() {
       }
