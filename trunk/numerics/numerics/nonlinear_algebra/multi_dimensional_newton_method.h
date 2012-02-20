@@ -78,6 +78,9 @@ namespace MBSimNumerics {
       void setCriteriaFunction(CriteriaFunction * criteria_) {
         criteria = criteria_;
       }
+      CriteriaFunction * getCriteriaFunction() {
+        return criteria;
+      }
       /***************************************************/
 
       /**

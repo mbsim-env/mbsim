@@ -81,7 +81,7 @@ namespace MBSimNumerics {
   };
 
   /*!
-   * \brief This criteria function class applies the euclidean norm globally for complete vectors thus it has one tolerance and a list of "results" for each step
+   * \brief This criteria function class applies the infinity norm globally for complete vectors thus it has one tolerance and a list of "results" for each step
    */
   class GlobalCriteriaFunction : public CriteriaFunction {
 
@@ -102,6 +102,10 @@ namespace MBSimNumerics {
       virtual void clear();
       /*END - INHERITED INTERFACE*/
 
+      const std::vector<double> & getResults() {
+        return criteriaResults;
+      }
+
     protected:
       /*INHERITED INTERFACE*/
       virtual double computeResults(const fmatvec::Vec & x) = 0;
@@ -119,7 +123,7 @@ namespace MBSimNumerics {
   };
 
   /*!
-   * \brief This criteria function class applies the euclidean norm locally for arbitrary combinations of sub-vectors of the complete vector. It has different tolerances for the different sub-vectors and a list of "result"-lists for each step and each "result" of a sub-vector.
+   * \brief This criteria function class applies the infinity norm locally for arbitrary combinations of sub-vectors of the complete vector. It has different tolerances for the different sub-vectors and a list of "result"-lists for each step and each "result" of a sub-vector.
    */
   class LocalCriteriaFunction : public CriteriaFunction {
 
@@ -159,7 +163,7 @@ namespace MBSimNumerics {
   };
 
   /*!
-   * \brief This criteria function class applies the euclidean norm globally on the complete vector and compares it with zero (i.e. a residual criteria)
+   * \brief This criteria function class applies the infinity norm globally on the complete vector and compares it with zero (i.e. a residual criteria)
    */
   class GlobalResidualCriteriaFunction : public GlobalCriteriaFunction {
 
@@ -181,7 +185,7 @@ namespace MBSimNumerics {
   };
 
   /*!
-   * \brief This criteria function class applies the euclidean norm on single indices sets (each with another tolerance) and compares it with zero (i.e. a residual criteria)
+   * \brief This criteria function class applies the infinity norm on single indices sets (each with another tolerance) and compares it with zero (i.e. a residual criteria)
    */
   class LocalResidualCriteriaFunction : public LocalCriteriaFunction {
 
@@ -202,7 +206,7 @@ namespace MBSimNumerics {
   };
 
   /*!
-   * \brief This criteria function class applies the euclidean norm globally on the difference between the complete vector of the current step and the complete vector of the step before and compares it with zero (i.e. a shift criteria)
+   * \brief This criteria function class applies the infinity norm globally on the difference between the complete vector of the current step and the complete vector of the step before and compares it with zero (i.e. a shift criteria)
    */
   class GlobalShiftCriteriaFunction : public GlobalCriteriaFunction {
     public:
@@ -233,7 +237,7 @@ namespace MBSimNumerics {
   };
 
   /*!
-   * \brief This criteria function class applies the euclidean norm on single indices sets (each with another tolerance) and compares it with zero (i.e. a residual criteria)
+   * \brief This criteria function class applies the infinity norm on single indices sets (each with another tolerance) and compares it with zero (i.e. a residual criteria)
    */
   class LocalShiftCriteriaFunction : public LocalCriteriaFunction {
 

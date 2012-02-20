@@ -74,7 +74,7 @@ namespace MBSimNumerics {
     /*End - Reset*/
 
     //current position in function
-    Vec x = initialValue;
+    Vec x = initialValue.copy();
 
     //current value of function
     Vec f = (*function)(x);
@@ -85,12 +85,15 @@ namespace MBSimNumerics {
     //step to next position
     Vec dx = slvLU(J, f);
 
-    //damp solution
-    x -= dx;
+    //Damp the solution
+    if(damping)
+      x -=  (*damping)(x, dx) * dx;
+    else
+      x -= dx;
 
     f = (*function)(x);
 
-    for (iter = 0; iter < itermax; iter++) {
+    for (iter = 1; iter < itermax; iter++) {
 
       //Get the information about the criteria
       info = (*criteria)(x);
@@ -111,6 +114,8 @@ namespace MBSimNumerics {
 
       //get step
       dx = slvLU(J, f);
+
+      //cout << "dxn[" << iter << "] = " << dx << endl;
 
       //Damp the solution
       if(damping)
