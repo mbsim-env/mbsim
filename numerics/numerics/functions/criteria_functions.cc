@@ -44,7 +44,7 @@ namespace MBSimNumerics {
   }
 
   bool GlobalCriteriaFunction::isBetter(const Vec & x) {
-    if (criteriaResults.back() > nrm2((*function)(x)))
+    if (criteriaResults.back() > nrmInf((*function)(x)))
       return true;
 
     return false;
@@ -93,7 +93,7 @@ namespace MBSimNumerics {
   }
 
   double GlobalResidualCriteriaFunction::computeResults(const Vec & x) {
-    return nrm2((*function)(x));
+    return nrmInf((*function)(x));
   }
 
   LocalResidualCriteriaFunction::LocalResidualCriteriaFunction(const map<Index, double> & tolerances_) :
@@ -104,7 +104,7 @@ namespace MBSimNumerics {
     Vec functionValues = (*function)(x);
     vector<double> results;
     for (map<Index, double>::iterator iter = tolerances.begin(); iter != tolerances.end(); ++iter) {
-      results.push_back(nrm2(functionValues(iter->first)));
+      results.push_back(nrmInf(functionValues(iter->first)));
     }
 
     return results;
@@ -120,7 +120,7 @@ namespace MBSimNumerics {
       return 1e30; //TODO: Guarantee that this returned value is larger than the tolerance and larger then the first result!
     }
 
-    double ret = nrm2((*function)(x) - (*function)(lastPoint));
+    double ret = nrmInf((*function)(x) - (*function)(lastPoint));
     lastPoint = x.copy();
     return ret;
   }
@@ -139,7 +139,7 @@ namespace MBSimNumerics {
     }
     else {
       for (map<Index, double>::iterator iter = tolerances.begin(); iter != tolerances.end(); ++iter) {
-        results.push_back(nrm2((*function)(x)(iter->first) - (*function)(lastPoint)(iter->first)));
+        results.push_back(nrmInf((*function)(x)(iter->first) - (*function)(lastPoint)(iter->first)));
       }
       lastPoint = x.copy();
     }
