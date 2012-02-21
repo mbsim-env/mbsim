@@ -169,9 +169,11 @@ namespace MBSim {
       if(gActive[k]) { 
         svk[k](0) = gddk[k](0)>gddTol ? -1 : 1;
         if(gdActive[k][1]) {
-          svk[k](1) = nrm2(gddk[k](1,getFrictionDirections()))>gddTol ? -1 : 1;
-          if((int)svk[k](1) == -1)
+          if(getFrictionDirections()) {
+            svk[k](1) = nrm2(gddk[k](1,getFrictionDirections()))>gddTol ? -1 : 1;
+            if((int)svk[k](1) == -1)
               gddkBuf[k] = gddk[k];
+          }
         } 
         else {
           if(getFrictionDirections() == 1)
