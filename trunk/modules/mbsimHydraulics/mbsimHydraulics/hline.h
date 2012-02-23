@@ -100,7 +100,7 @@ namespace MBSimHydraulics {
       virtual fmatvec::Vec getInflowFactor() {return fmatvec::Vec(1, fmatvec::INIT, -1.); }
       virtual fmatvec::Vec getOutflowFactor() {return fmatvec::Vec(1, fmatvec::INIT, 1.); }
       void calcqSize() {qSize=0; }
-      void calcuSize(int j) {uSize[j]=(dependency.size()?0:1); }
+      void calcuSize(int j=0) {uSize[j]=(dependency.size()?0:1); }
       fmatvec::Mat calculateJacobian(std::vector<RigidHLine*> dep_check);
       
       virtual void updateStateDependentVariables(double t);
