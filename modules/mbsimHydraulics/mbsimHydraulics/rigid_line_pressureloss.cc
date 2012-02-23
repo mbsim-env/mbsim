@@ -33,7 +33,7 @@ using namespace MBSimControl;
 
 namespace MBSimHydraulics {
 
-  RigidLinePressureLoss::RigidLinePressureLoss(const string &name, RigidHLine * line_, PressureLoss * pressureLoss, bool bilateral_, bool unilateral_) : Link(name), line(line_), active(false), active0(false), unilateral(unilateral_), bilateral(bilateral_), gdn(0), gdd(0), dpMin(0), linePressureLoss(NULL), closablePressureLoss(NULL), leakagePressureLoss(NULL), gfl(NULL), gil(NULL) {
+  RigidLinePressureLoss::RigidLinePressureLoss(const string &name, RigidHLine * line_, PressureLoss * pressureLoss, bool bilateral_, bool unilateral_) : Link(name), line(line_), active(true), active0(true), unilateral(unilateral_), bilateral(bilateral_), gdn(0), gdd(0), dpMin(0), linePressureLoss(NULL), closablePressureLoss(NULL), leakagePressureLoss(NULL), gfl(NULL), gil(NULL) {
     if (dynamic_cast<LinePressureLoss*>(pressureLoss))
       linePressureLoss = (LinePressureLoss*)(pressureLoss);
     else if (dynamic_cast<ClosablePressureLoss*>(pressureLoss))
@@ -67,11 +67,12 @@ namespace MBSimHydraulics {
   }
 
   void RigidLinePressureLoss::plot(double t, double dt) {
+    //cout << name << " at t = " << t << " active = " << active << " laSIze = " << laSize << " ds " << ds->getlaSize() << endl;
     if(getPlotFeature(plotRecursive)==enabled) {
-      plotVector.push_back((isActive()?la(0)/dt:la(0))*1e-5);
+      plotVector.push_back((isActive()?la(0)/dt:laSmooth)*1e-5); 
       if (isSetValued())
         plotVector.push_back(active);
-      Link::plot(t, dt);
+      Element::plot(t, dt);
     }
   }
 
@@ -104,7 +105,7 @@ namespace MBSimHydraulics {
         plotColumns.push_back("pressureLoss [bar]");
         if (isSetValued())
           plotColumns.push_back("active");
-        Link::init(stage);
+        Element::init(stage);
       }
     }
     else if (stage==MBSim::unknownStage) {
@@ -140,14 +141,14 @@ namespace MBSimHydraulics {
   void RigidLinePressureLoss::updateWRef(const Mat &WParent, int j) {
     const int hInd = line->gethInd(j);
     const Index I=Index(hInd, hInd+line->getJacobian().cols()-1);
-    const Index J=Index(laInd, laInd);
+    const Index J=Index(laInd, laInd+laSize-1);
     W[j][0].resize() >> WParent(I,J);
   }
 
   void RigidLinePressureLoss::updateVRef(const Mat &VParent, int j) {
     const int hInd = line->gethInd(j);
     const Index I=Index(hInd, hInd+line->getJacobian().cols()-1);
-    const Index J=Index(laInd, laInd);
+    const Index J=Index(laInd, laInd+laSize-1);
     V[j][0].resize() >> VParent(I,J);
   }
 
@@ -156,16 +157,19 @@ namespace MBSimHydraulics {
       gd=line->getQIn();
   }
 
-  void RigidLinePressureLoss::checkActiveg() {
-    if (bilateral)
-      active=(((ClosableRigidLine*)line)->getSignal()->getSignal()(0)<((ClosableRigidLine*)line)->getMinimalValue());
-    else if (unilateral)
-      active=(gd(0)<=(active?gdTol:0));
-  }
-
-  void RigidLinePressureLoss::checkActivegdn() {
-    if (unilateral && active)
+  void RigidLinePressureLoss::checkActive(int j) {
+    if(j==1) {
+      if (bilateral)
+        active=(((ClosableRigidLine*)line)->getSignal()->getSignal()(0)<((ClosableRigidLine*)line)->getMinimalValue());
+      else if (unilateral)
+        active=(gd(0)<=(active?gdTol:0));
+    }
+    else if(j==3) {
+      if (unilateral && active)
       active=(gdn<=0);
+    }
+    else
+      throw;
   }
 
   bool RigidLinePressureLoss::gActiveChanged() {
@@ -190,33 +194,37 @@ namespace MBSimHydraulics {
 
   void RigidLinePressureLoss::updateh(double t, int j) {
     if (linePressureLoss)
-      la(0)=(*linePressureLoss)(line->getQIn()(0), line);
+      laSmooth=(*linePressureLoss)(line->getQIn()(0), line);
     else if (closablePressureLoss)
-      la(0)=(*closablePressureLoss)(line->getQIn()(0), line);
+      laSmooth=(*closablePressureLoss)(line->getQIn()(0), line);
     else if (leakagePressureLoss)
-      la(0)=(*leakagePressureLoss)(line->getQIn()(0), line);
+      laSmooth=(*leakagePressureLoss)(line->getQIn()(0), line);
     else if (unilateral || unidirectionalPressureLoss) {
-      la(0)=0*dpMin+(unilateral ? 0 : (*unidirectionalPressureLoss)(gd(0), line));
+      laSmooth=0*dpMin+(unilateral ? 0 : (*unidirectionalPressureLoss)(gd(0), line));
     }
-    h[j][0]-=trans(line->getJacobian())*la(0);
+    h[j][0]-=trans(line->getJacobian())*laSmooth;
   }
 
   void RigidLinePressureLoss::updateW(double t, int j) {
-    W[j][0]=trans(line->getJacobian())*Mat(1,1,INIT,1.);
+    if(active)
+      W[j][0]=trans(line->getJacobian())*Mat(1,1,INIT,1.);
   }
 
-  void RigidLinePressureLoss::updateCondition() {
+  void RigidLinePressureLoss::checkRoot() {
     if (jsv(0)) {
-      if (active)
+      if (active) {
         active = false;
+        ds->setRootID(max(ds->getRootID(),1)); 
+      }
       else {
         active = true;
-        ds->setImpact(true);
+        ds->setRootID(max(ds->getRootID(),3)); // Impact
       }
     }
   }
 
   void RigidLinePressureLoss::updaterFactors() {
+    if(active) {
     const double *a = ds->getGs()();
     const int *ia = ds->getGs().Ip();
 
@@ -232,6 +240,7 @@ namespace MBSimHydraulics {
     else {
       rFactorUnsure(0) = 1;
       rFactor(0) = 1./ai;
+    }
     }
   }
 

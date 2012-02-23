@@ -182,9 +182,9 @@ namespace MBSimHydraulics {
       bool isSetValued() const {return true; }
       bool isActive() const {return true; }
 
-      void calclaSize() {laSize=1; }
-      void calclaSizeForActiveg() {laSize=0; }
-      void calcrFactorSize() {rFactorSize=1; }
+      void calclaSize(int j) {laSize=1; }
+      //void calclaSizeForActiveg() {laSize=0; }
+      void calcrFactorSize(int j) {rFactorSize=1; }
 
       void init(MBSim::InitStage stage);
 
