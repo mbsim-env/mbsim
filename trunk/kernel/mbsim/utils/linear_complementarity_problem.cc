@@ -19,6 +19,8 @@
 
 #include <linear_complementarity_problem.h>
 
+#include <time.h>
+
 #include <mbsim/utils/nonsmooth_algebra.h>
 
 using namespace std;
