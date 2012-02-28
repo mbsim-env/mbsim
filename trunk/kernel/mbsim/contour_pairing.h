@@ -30,9 +30,13 @@ namespace MBSim {
       virtual ~ContourPairing();
 
       /*INHERITED INTERFACE OF Object*/
-      void updateStateDependentVariables(double t) {throw MBSimError("ContourPairing::updateStateDependentVariables(double t): Not implemented!");}
-      void updateJacobians(double t, int j=0);
-      void updateInverseKineticsJacobians(double t) {throw MBSimError("ContourPairing::updateInverseKineticsJacobians(double t): Not implemented!");}
+      void updateStateDependentVariables(double t) {
+        throw MBSimError("ContourPairing::updateStateDependentVariables(double t): Not implemented!");
+      }
+      void updateJacobians(double t, int j = 0);
+      void updateInverseKineticsJacobians(double t) {
+        throw MBSimError("ContourPairing::updateInverseKineticsJacobians(double t): Not implemented!");
+      }
       void closePlot();
       /*******************************/
 
@@ -51,7 +55,7 @@ namespace MBSim {
         return contour2;
       }
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Group* getOpenMBVGrp() { return openMBVGroup;}
+      OpenMBV::Group* getOpenMBVGrp() {return openMBVGroup;}
 #endif
 
       bool isActive() {
@@ -113,14 +117,13 @@ namespace MBSim {
 
       void updategd(double t);
 
-
-      void checkActiveg() {
-        gActive = gk(0) < gTol ? true : false;
-      }
+      void checkActiveg();
 
       int getFrictionDirections();
 
-      FrictionForceLaw* getFrictionForceLaw(){return fdf;}
+      FrictionForceLaw* getFrictionForceLaw() {
+        return fdf;
+      }
     protected:
 
       /**
@@ -193,7 +196,7 @@ namespace MBSim {
       /**
        * \brief contact Group for OpenMBV-Plotting (inherits contact frames and arrows)
        */
-     OpenMBV::Group* openMBVGroup;
+      OpenMBV::Group* openMBVGroup;
 
       /**
        * \brief enable flag of ContactFrames to draw
