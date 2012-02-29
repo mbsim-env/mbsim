@@ -1,0 +1,119 @@
+/* include/plib_config.h.in.  Generated from configure.in by autoheader.  */
+// define if you want to use exception handling
+#undef USE_EXCEPTION
+
+// define if you want verbose exception handling
+#undef VERBOSE_EXCEPTION
+
+// define if you have the ISO C++ friend declaration style
+#undef HAVE_ISO_FRIEND_DECL
+
+// define if you can handle the template of template class
+#undef HAVE_TEMPLATE_OF_TEMPLATE
+
+// define if you can use -fno-implicit-template
+#undef NO_IMPLICIT_TEMPLATES
+
+// define if you can use -frepo
+#undef INCLUDE_TEMPLATE_SOURCE
+
+// define if you want Image Magick 
+#undef WITH_IMAGE_MAGICK
+
+// define if you want to do range validity checking
+// and also other debugging functions
+#undef DEBUG_PLIB
+
+// Define if you want the matrix to be in column order rather than row order.
+// Column ordering is used by fortran and OpenGL.
+#undef COLUMN_ORDER
+
+// the name of the package
+#undef PACKAGE 
+
+// the version of the package
+#undef VERSION 
+
+// if the C++ compiler supports namespaces
+#undef HAVE_NAMESPACE
+
+// Specify if OpenGL is present on this system
+#undef WITH_OPENGL 
+
+// Specify if you are using Solaris with egcs
+#undef USING_GNU_SOLARIS
+
+// Specify if you are using DEC Alpha with egcs
+#undef USING_GNU_DECALPHA
+
+// Specify if you are using SGI with egcs
+#undef USING_GNU_SGI
+
+// Specify if you are using Linux (assumed with egcs)
+#undef USING_LINUX
+
+// Specify if you have CppUnit installed
+#undef HAS_CPPUNIT
+
+// Specify if you have abs defined for the Complex type
+#undef HAS_COMPLEX_ABS
+
+// Specify if you have conf defined for the Complex type
+#undef HAS_COMPLEX_CONJ
+
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#undef HAVE_DLFCN_H
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#undef HAVE_INTTYPES_H
+
+/* Define to 1 if you have the <memory.h> header file. */
+#undef HAVE_MEMORY_H
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#undef HAVE_STDLIB_H
+
+/* Define to 1 if you have the <strings.h> header file. */
+#undef HAVE_STRINGS_H
+
+/* Define to 1 if you have the <string.h> header file. */
+#undef HAVE_STRING_H
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#undef HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#undef HAVE_SYS_TYPES_H
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H
+
+/* Name of package */
+#undef PACKAGE
+
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#undef PACKAGE_NAME
+
+/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING
+
+/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME
+
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION
+
+/* Define to 1 if you have the ANSI C header files. */
+#undef STDC_HEADERS
+
+/* Version number of package */
+#undef VERSION
+
+/* Define to 1 if the X Window System is missing or not being used. */
+#undef X_DISPLAY_MISSING
