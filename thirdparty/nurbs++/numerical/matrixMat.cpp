@@ -250,6 +250,9 @@ void LUMatrix<T>::backSub(const Matrix<T>& B, Matrix<T>& X){
 template <class T>
 void LUMatrix<T>::inverseIn(Matrix<T>& inv) 
 {
+  if(Matrix<T>::rows() > 14)
+    cout << "WARNING in LUMatrix<T>::inverseIn: There are errors in this routine (or class) that should be solved!\n They have been discovered when using a closed interpolation of a nurbs curve with more than 14 interpolated points.\n Solve them or use the SVD-Solver as it seems to work more reliable." << endl;
+
   T ten;
   int i, j, k, l, kb, kp1, nm1, n, coln;
 
@@ -1025,8 +1028,8 @@ int SVDMatrix<T>::solve(const Matrix<T>&B, Matrix<T>&X, double tau) {
 
   Solves the linear system \a A \a X = \a B. Given \a A and B it
   finds the value of \a X. The routine uses LU decomposition
-  if the A matrix is square and it uses SVD decomposition
-  otherwise.
+  if the A matrix is square and its dimension is less than 14.
+  It uses SVD decomposition otherwise.
 
   \param   A  the \a A matrix
   \param B  the right hand side of the equation
@@ -1041,7 +1044,8 @@ template <class T>
 int solve(const Matrix<T>& A, 
 	   const Matrix<T>& B, 
 	   Matrix<T>& X){
-  if(A.rows()==A.cols()){ 
+  if(A.rows()==A.cols() and A.rows() < 14){
+    // lu.inverse() seems not be relieable for more than about 14 interpolation points (just try an example for a (closed) circle with 14 points) and you will see ...
     // use LU decomposition to solve the problem
     LUMatrix<T> lu(A) ;
     X = lu.inverse()*B ;
@@ -1057,7 +1061,8 @@ int solve(const Matrix<T>& A,
   \brief finds the inverse of a matrix
 
   Finds the inverse of a matrix. It uses LU decomposition if
-  the matrix is square and it uses SVD decomposition otherwise.
+  the matrix is square and the dimension of A is < 14.
+  It uses SVD decomposition otherwise.
 
   \param A  the matrix to inverse
 
@@ -1072,7 +1077,8 @@ int solve(const Matrix<T>& A,
 template <class T>
 Matrix<T> inverse(const Matrix<T>&A){
   Matrix<T> inv ;
-  if(A.rows()==A.cols()){
+  if(A.rows()==A.cols()  and A.rows() < 14){
+    // lu.inverse() seems not be relieable for more than about 14 interpolation points (just try an example for a (closed) circle with 14 points) and you will see ...
     LUMatrix<T> lu(A) ;
     lu.inverseIn(inv) ;
   }

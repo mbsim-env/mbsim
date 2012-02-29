@@ -99,8 +99,8 @@ public:
   virtual HPoint_nD<T,N> operator()(T u, T v) const ;
 
   void basisFuns(T u, T v, int spanU, int spanV, Vector<T>& Nu, Vector<T>& Nv) const ;
-  void basisFunsU(T u, int span, Vector<T>& N) const ;
-  void basisFunsV(T u, int span, Vector<T>& N) const ;
+  void basisFunsU(T u, int span, Vector<T>& M) const ;
+  void basisFunsV(T u, int span, Vector<T>& M) const ;
   void dersBasisFuns(T u, T v, int dU, int dV,int uspan, int vspan,Matrix<T> & Niku, Matrix<T>& Njkv ) const ; 
 
   // Derivative functions
@@ -114,7 +114,9 @@ public:
   void globalInterp(const Matrix< Point_nD<T,N> >& Q, int pU, int pV);
   void globalInterpH(const Matrix< HPoint_nD<T,N> >& Q, int pU, int pV);
   void globalInterpClosedU(const Matrix< Point_nD<T,N> >& Q, int pU, int pV);
+  void globalInterpClosedU(const Matrix< Point_nD<T,N> >& Q,const Vector<T> &Uk, const Vector<T> &Vk, const Vector<T> &uk, const Vector<T> &vk, int pU, int pV);//testing
   void globalInterpClosedUH(const Matrix< HPoint_nD<T,N> >& Q, int pU, int pV);
+  void globalInterpClosedUH(const Matrix< HPoint_nD<T,N> >& Q,const Vector<T> &Uk, const Vector<T> &Vk, const Vector<T> &uk, const Vector<T> &vk, int pU, int pV);//testing
   void leastSquares(const Matrix< Point_nD<T,N> >& Q, int pU, int pV, int nU, int nV) ;
   void leastSquaresClosedU(const Matrix< Point_nD<T,N> >& Q, int pU, int pV, int nU, int nV) ;
 
@@ -135,8 +137,8 @@ public:
   int skinU(NurbsCurveArray<T,N>& ca, int degU);
   void sweep(const NurbsCurve<T,N>& t, const NurbsCurve<T,N>& C, const NurbsCurve<T,N>& Sv, int K,int useAy=0, int invAz=0) ;
   void sweep(const NurbsCurve<T,N>& t, const NurbsCurve<T,N>& C, int K,int useAy=0, int invAz=0) ;
-  void makeFromRevolution(const NurbsCurve<T,N>& profile, const Point_nD<T,N>& S, const Point_nD<T,N>& T, double theta) ;
-  void makeFromRevolution(const NurbsCurve<T,N>& profile, const Point_nD<T,N>& S, const Point_nD<T,N>& T) ;
+  void makeFromRevolution(const NurbsCurve<T,N>& profile, const Point_nD<T,N>& S, const Point_nD<T,N>& Z, double theta) ;
+  void makeFromRevolution(const NurbsCurve<T,N>& profile, const Point_nD<T,N>& S, const Point_nD<T,N>& Z) ;
   void makeFromRevolution(const NurbsCurve<T,N>& profile) ;
 
   void makeSphere(const Point_nD<T,N>& O, T r) ; 
@@ -202,7 +204,7 @@ public:
   int writePOVRAY(T tolerance, const char *filename, const Color& color, const Point_nD<T,N>& view, const Point_nD<T,N>& up, int smooth=0, T ambient=0.2, T diffuse=0.6) const ;
 
   int writeRIB(ostream& rib) const ;
-  int writeRIB(const char* filename, const Color& color, const Point_nD<T,N>& view) const ;
+  int writeRIB(char* filename, const Color& color, const Point_nD<T,N>& view) const ;
  
   // tesselate is deprecated...
   void tesselate(T tolerance, BasicList<Point_nD<T,N> > &points, BasicList<int> &connect, BasicList<Point_nD<T,N> > *normal=0) const ;
@@ -244,6 +246,10 @@ protected:
   Matrix< HPoint_nD<T,N> > P ; //!< The matrix of control points
   int degU ; //!< the degree of the surface in U
   int degV ; //!< the degree of the surface in V
+  
+  //changed 
+  Matrix<T> InverseU; //!< The matrix for the compution of the control points in U-direction
+  Matrix<T> InverseV; //!< The matrix for the compution of the control points in V-direction
 
 };
 

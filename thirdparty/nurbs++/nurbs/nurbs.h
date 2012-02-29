@@ -58,6 +58,7 @@ namespace PLib {
     class NurbsCurve : public ParaCurve<T,N>{
     public:
       NurbsCurve() ;
+      NurbsCurve(Matrix<T> inverse){Inverse = inverse; Inverse_setted=1;} //changed
       NurbsCurve(const NurbsCurve<T,N>& nurb) ;
       NurbsCurve(const Vector< HPoint_nD<T,N> >& P1, const Vector<T> &U1, int deg=3) ;
       NurbsCurve(const Vector< Point_nD<T,N> >& P1, const Vector<T> &W, const Vector<T> &U1, int deg=3) ;
@@ -105,8 +106,8 @@ namespace PLib {
       
       // Basis functions
       T basisFun(T u, int i, int p=-1) const ;
-      void basisFuns(T u, int span, Vector<T>& N) const ;
-      void dersBasisFuns(int n,T u, int span, Matrix<T>& N) const;
+      void basisFuns(T u, int span, Vector<T>& M) const ;
+      void dersBasisFuns(int n,T u, int span, Matrix<T>& M) const;
       
       // Knot functions
       T minKnot() const //! the minimal value for the knot vector
@@ -153,7 +154,6 @@ namespace PLib {
       void globalInterpH(const Vector< HPoint_nD<T,N> >& Q, int d);
       void globalInterpH(const Vector< HPoint_nD<T,N> >& Q, const Vector<T>& U, int d);
       void globalInterpH(const Vector< HPoint_nD<T,N> >& Q, const Vector<T>& ub, const Vector<T>& U, int d);
-      
       void globalInterpClosed(const Vector< Point_nD<T,N> >& Qw, int d);
       void globalInterpClosed(const Vector< Point_nD<T,N> >& Qw, const Vector<T>& ub, int d);
       void globalInterpClosedH(const Vector< HPoint_nD<T,N> >& Qw, int d);
@@ -162,7 +162,10 @@ namespace PLib {
       void globalInterpClosed(const Vector< Point_nD<T,N> >& Qw, const Vector<T>& ub, const Vector<T>& Uc, int d);
       
       void globalInterpD(const Vector< Point_nD<T,N> >& Q, const Vector< Point_nD<T,N> >& D, int d, int unitD, T a=1.0);
-      
+     
+      Matrix<T> computeInverse(const Vector<T> &v, const Vector<T> &V, const int p);
+      Matrix<T> computeInverseClosed(const Vector<T> &v, const Vector<T> &V, const int p);
+
       void projectTo(const Point_nD<T,N>& p, T guess, T& u, Point_nD<T,N>& r, T e1=0.001, T e2=0.001,int maxTry=100) const;
       
       
@@ -237,6 +240,9 @@ namespace PLib {
       Vector< HPoint_nD<T,N> > P; // the vector of control points
       Vector<T> U ;  // the knot vector
       int deg_ ;  // the degree of the NURBS curve
+
+      Matrix<T> Inverse; //changed
+      int Inverse_setted; //changed
     };
   
   typedef NurbsCurve<float,3> NurbsCurvef ;

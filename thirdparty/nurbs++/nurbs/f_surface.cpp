@@ -26,9 +26,7 @@ namespace PLib {
   template class InterPoint<float,3> ;
  
 
-//This breaks the "NO_IMPLICIT_TEMPLATES" thingy. Does BasicList not belong to PLib? 
-//  template class BasicList<InterPoint<float,2> > ; 
-//  template class BasicList<InterPoint<float,3> > ; 
+
   
   template class ParaSurface<float,2> ;
   template class ParaSurface<float,3> ;
@@ -40,3 +38,6 @@ namespace PLib {
 #endif 
 
 }
+
+template class BasicList<PLib::InterPoint<float,2> > ; 
+template class BasicList<PLib::InterPoint<float,3> > ; 

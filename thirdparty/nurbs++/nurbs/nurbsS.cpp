@@ -29,9 +29,7 @@
 #include <nurbsS.h>
 #include "integrate.h"
 
-#ifdef USING_VCC
 #include <malloc.h>
-#endif
 
 /*!
  */
@@ -741,8 +739,8 @@ int surfMeshParams(const Matrix< Point_nD<T,N> >& Q, Vector<T>& uk, Vector<T>& v
     else {
       d = 0.0 ;
       for(k=1;k<n;k++){
-	d += cds[k] ;
-	uk[k] += d/total ;
+    	d += cds[k] ;
+        uk[k] += d/total ;
       }
     }
   }
@@ -3417,13 +3415,13 @@ void NurbsSurface<T,D>::isoCurveV(T v, NurbsCurve<T,D>& c) const {
 }
 
 /*!
-  \brief Decompose the surface into Bézier patches
+  \brief Decompose the surface into BÃ©zier patches
 
-  This function decomposes the curve into an array of homogenous Bézier 
+  This function decomposes the curve into an array of homogenous BÃ©zier 
   patches.
 
-  \param S  an array of Bézier segments
-  \return The number of Bézier strips in the u direction.
+  \param S  an array of BÃ©zier segments
+  \return The number of BÃ©zier strips in the u direction.
 
   \author Philippe Lavoie
   \date 8 October, 1997
@@ -3999,7 +3997,7 @@ int NurbsSurface<T,N>::writeRIB(ostream& rib) const {
   \date 8 October, 1997
 */
 template <class T, int N>
-int NurbsSurface<T,N>::writeRIB(const char* filename, const Color& col, const Point_nD<T,N>& view) const {
+int NurbsSurface<T,N>::writeRIB(char* filename, const Color& col, const Point_nD<T,N>& view) const {
   ofstream fout(filename) ;
   if(!fout)
     return 0;
@@ -4554,6 +4552,77 @@ void NurbsSurface<T,N>::globalInterpClosedU(const Matrix< Point_nD<T,N> >& Q, in
 
 }
 
+/*!
+  \brief Generates a surface using global interpolation.
+
+  Generates a NURBS surface using global interpolation. In the u direction
+  the curve will be closed and with C(pU-1) continuity. Each column in Q
+  indicates the points for a closed curve in the u
+  direction. First and last point have to be equal.
+
+  \param  Q  a matrix of 3D points (wrapped in u dir. -rows)
+  \param Uk  a valid U-vector
+  \param Vk  a valid V-vector
+  \param uk  a valid u-vector
+  \param vk  a valid v-vector
+  \param pU  the degree of interpolation in the U direction
+  \param pV  the degree of interpolation in the V direction
+
+  \author Kilian Grundl
+  \date 19 July, 2011
+*/
+template <class T, int N>
+void NurbsSurface<T,N>::globalInterpClosedU(const Matrix< Point_nD<T,N> >& Q,const Vector<T> &Uk, const Vector<T> &Vk, const Vector<T> &uk, const Vector<T> &vk, int pU, int pV){
+  //Vector<T> vk,uk ;
+
+
+  if(degU != pU || degV != pV || U != Uk || V != Vk)
+   {
+      NurbsCurve<T,N> C1;
+      InverseV = C1.computeInverse(vk,Vk,pV);
+      NurbsCurve<T,N> C2;
+      InverseU = C2.computeInverseClosed(uk,Uk,pU);
+   }
+
+  resize(Q.rows(),Q.cols(),pU,pV) ;
+
+  //surfMeshParamsClosedU(Q,uk,vk,pU) ;
+  //knotAveragingClosed(uk,pU,U) ;
+  //knotAveraging(vk,pV,V) ;
+
+  U = Uk;
+  V = Vk;
+  //degU = pU;
+  //degV = pV;
+
+  Vector< HPoint_nD<T,N> > Pts(Q.cols()) ;
+
+  NurbsCurve<T,N> CV(InverseV);
+  
+  int i,j ;
+  for(i=0;i<Q.rows();i++){
+    for(j=0;j<Q.cols();j++)
+      Pts[j] = Q(i,j) ;
+    CV.globalInterpH(Pts,vk,V,degV) ;
+    for(j=0;j<Q.cols();j++)
+      P(i,j) = CV.ctrlPnts(j) ;
+  }
+
+  NurbsCurve<T,N> CU(InverseU);
+
+  Pts.resize(Q.rows()) ;
+  for(j=0;j<Q.cols();j++){
+    for(i=0;i<Q.rows();i++)
+      Pts[i] = P(i,j) ;
+    
+    CU.globalInterpClosedH(Pts,uk,U,degU);
+    for(i=0;i<Q.rows();i++)
+      P(i,j) = CU.ctrlPnts(i) ;
+  }
+
+}
+
+
 /*! 
   \brief Generates a surface using global interpolation. 
 
@@ -4600,6 +4669,77 @@ void NurbsSurface<T,N>::globalInterpClosedUH(const Matrix< HPoint_nD<T,N> >& Q, 
     for(j=0;j<Q.cols();j++)
       P(i,j) = R.ctrlPnts(j) ;
   }
+}
+
+/*!
+  \brief Generates a surface using global interpolation.
+
+  Generates a NURBS surface using global interpolation. In the u direction
+  the curve will be closed and with C(pU-1) continuity. Each column in Q
+  indicates the points for a closed curve in the u
+  direction. First and last point have to be equal.
+
+  \param  Q  a matrix of 3D points (wrapped in u dir. -rows)
+  \param Uk  a valid U-vector
+  \param Vk  a valid V-vector
+  \param uk  a valid u-vector
+  \param vk  a valid v-vector
+  \param pU  the degree of interpolation in the U direction
+  \param pV  the degree of interpolation in the V direction
+
+  \author Kilian Grundl
+  \date 19 July, 2011
+*/
+template <class T, int N>
+void NurbsSurface<T,N>::globalInterpClosedUH(const Matrix< HPoint_nD<T,N> >& Q,const Vector<T> &Uk, const Vector<T> &Vk, const Vector<T> &uk, const Vector<T> &vk, int pU, int pV){
+  //Vector<T> vk,uk ;
+
+
+  if(degU != pU || degV != pV || U != Uk || V != Vk)
+   {
+      NurbsCurve<T,N> C1;
+      InverseV = C1.computeInverse(vk,Vk,pV);
+      NurbsCurve<T,N> C2;
+      InverseU = C2.computeInverseClosed(uk,Uk,pU);
+   }
+
+  resize(Q.rows(),Q.cols(),pU,pV) ;
+
+  //surfMeshParamsClosedU(Q,uk,vk,pU) ;
+  //knotAveragingClosed(uk,pU,U) ;
+  //knotAveraging(vk,pV,V) ;
+
+  U = Uk;
+  V = Vk;
+
+  //degU = pU;
+  //degV = pV;
+
+  Vector< HPoint_nD<T,N> > Pts(Q.cols()) ;
+
+  NurbsCurve<T,N> CV(InverseV);
+
+  int i,j ;
+  for(i=0;i<Q.rows();i++){
+    for(j=0;j<Q.cols();j++)
+      Pts[j] = Q(i,j) ;
+    CV.globalInterpH(Pts,vk,V,degV) ;
+    for(j=0;j<Q.cols();j++)
+      P(i,j) = CV.ctrlPnts(j) ;
+  }
+
+  NurbsCurve<T,N> CU(InverseU);
+
+  Pts.resize(Q.rows()) ;
+  for(j=0;j<Q.cols();j++){
+    for(i=0;i<Q.rows();i++)
+      Pts[i] = P(i,j) ;
+
+    CU.globalInterpClosedH(Pts,uk,U,degU);
+    for(i=0;i<Q.rows();i++)
+      P(i,j) = CU.ctrlPnts(i) ;
+  }
+
 }
 
 
