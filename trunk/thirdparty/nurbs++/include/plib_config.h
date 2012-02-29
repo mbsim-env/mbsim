@@ -27,7 +27,7 @@
 
 // Define if you want the matrix to be in column order rather than row order.
 // Column ordering is used by fortran and OpenGL.
-#define COLUMN_ORDER 1
+/* #undef COLUMN_ORDER */
 
 // the name of the package
 #define PACKAGE "nurbs++"
@@ -39,7 +39,7 @@
 #define HAVE_NAMESPACE 1
 
 // Specify if OpenGL is present on this system
-#define WITH_OPENGL 1
+/* #undef WITH_OPENGL */
 
 // Specify if you are using Solaris with egcs
 /* #undef USING_GNU_SOLARIS */
@@ -54,7 +54,7 @@
 #define USING_LINUX 1
 
 // Specify if you have CppUnit installed
-#define HAS_CPPUNIT 1
+/* #undef HAS_CPPUNIT */
 
 // Specify if you have abs defined for the Complex type
 #define HAS_COMPLEX_ABS 1

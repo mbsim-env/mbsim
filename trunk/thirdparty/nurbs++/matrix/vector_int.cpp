@@ -27,7 +27,7 @@
 
 namespace PLib {
 
-  void Vector<int>::qSortStd(){
+ template<>  void Vector<int>::qSortStd(){
     qsort((char*)memory(),n(),sizeof(int),compareInt) ;
   }
   

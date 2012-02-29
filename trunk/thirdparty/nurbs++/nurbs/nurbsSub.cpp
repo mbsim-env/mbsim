@@ -904,7 +904,7 @@ DrawEvaluation( NurbSurface<T> * n )
   
   /* Allocate storage for the grid of points generated */
   
-  CHECK( pts = new (SurfSample<T>*)[Granularity+1]);
+  CHECK( pts = new SurfSample<T>*[Granularity+1]);
   CHECK( pts[0] = new SurfSample<T>[(Granularity+1)*(Granularity+1)]);
   
   for (i = 1; i <= Granularity; i++)
@@ -983,7 +983,7 @@ CalcAlpha( T * ukv, T * wkv, int m, int n, int k, T *** alpha )
   
   if (! *alpha)	/* Must allocate alpha */
     {
-      CHECK( *alpha = new (T*)[k+1]);
+      CHECK( *alpha = new T*[k+1]);
       for (i = 0; i <= k; i++)
 	CHECK( (*alpha)[i] = new T[(m + n + 1)]);
     }

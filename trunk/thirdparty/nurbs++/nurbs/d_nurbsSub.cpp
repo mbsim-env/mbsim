@@ -14,8 +14,8 @@ namespace PLib {
   template class RenderMeshPoints<double> ;
 
   
-  double NurbSurface<double>::epsilon = 1e-6 ;
-  double SurfSample<double>::epsilon = 1e-6 ;
+  template<> double NurbSurface<double>::epsilon = 1e-6 ;
+ template<>  double SurfSample<double>::epsilon = 1e-6 ;
 
   template void DrawSubdivision( NurbSurface<double> *, double tolerance );
   template void DrawEvaluation( NurbSurface<double> * );

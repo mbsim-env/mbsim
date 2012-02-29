@@ -54,19 +54,19 @@ Matrix<T>& Matrix<T>::operator=(const Matrix<T> &a){
   if ( this == &a )
     return *this;
   
-  if ( a.rows() != rows() || a.cols() != cols() ){
-    resize(a.rows(),a.cols()) ;
+  if ( a.rows() !=Matrix<T>::rows() || a.cols() !=Matrix<T>::cols() ){
+    this->resize(a.rows(),a.cols()) ;
   }
   
-  int sze = rows()*cols() ;
+  int sze =(Matrix<T>::rows())*(Matrix<T>::cols()) ;
   T *ptr, *aptr ;
-  ptr = m-1 ;
+  ptr = this->m-1 ;
   aptr = a.m-1 ;
   
   for (i = sze; i > 0; --i)
     *(++ptr) = *(++aptr) ;
   
-  by_columns = a.by_columns;
+  this->by_columns = a.by_columns;
   
   return *this;
 }
@@ -100,10 +100,10 @@ void Matrix<T>::submatrix(int sr, int sc, Matrix<T> &a)
 {
   int rwz,coz,i,j;
   
-  if ( rows() % a.rows() != 0 || cols() % a.cols() != 0 || rows() < a.rows() || cols() < a.cols() )
+  if (Matrix<T>::rows() % a.rows() != 0 ||Matrix<T>::cols() % a.cols() != 0 ||Matrix<T>::rows() < a.rows() ||Matrix<T>::cols() < a.cols() )
     {
 #ifdef USE_EXCEPTION
-      throw WrongSize2D(rows(),cols(),a.rows(),a.cols()) ;
+      throw WrongSize2D(Matrix<T>::rows(),Matrix<T>::cols(),a.rows(),a.cols()) ;
 #else
       Error error("Matrix<T>::submatrix");
       error << "Matrix and submatrix incommensurate" ;
@@ -111,13 +111,13 @@ void Matrix<T>::submatrix(int sr, int sc, Matrix<T> &a)
 #endif
     }
   
-  if ( sr >= rows()/a.rows() || sr < 0 || sc >= cols()/a.cols() || sc < 0 )
+  if ( sr >=Matrix<T>::rows()/a.rows() || sr < 0 || sc >=Matrix<T>::cols()/a.cols() || sc < 0 )
     {
 #ifdef USE_EXCEPTION
-      throw OutOfBound2D(sr,sc,0,rows()/a.rows()-1,0,cols()/a.cols()-1) ;
+      throw OutOfBound2D(sr,sc,0,Matrix<T>::rows()/a.rows()-1,0,Matrix<T>::cols()/a.cols()-1) ;
 #else
       Error error("Matrix<T>::submatrix");
-      error << "Submatrix location out of bounds.\nrowblock " << sr << ", " << rows()/a.rows() << " colblock " << sc << ", " << a.cols() << endl ;
+      error << "Submatrix location out of bounds.\nrowblock " << sr << ", " <<Matrix<T>::rows()/a.rows() << " colblock " << sc << ", " << a.cols() << endl ;
       error.fatal() ;
 #endif
     }
@@ -127,13 +127,13 @@ void Matrix<T>::submatrix(int sr, int sc, Matrix<T> &a)
 #ifdef COLUMN_ORDER
   for ( i = a.rows()-1; i >= 0; --i )
     for(j=a.cols()-1;j>=0;--j)
-      elem(i+rwz,j+coz) = a(i,j) ;
+      this->elem(i+rwz,j+coz) = a(i,j) ;
 #else
   T *ptr, *aptr ;
   aptr = a.m - 1;
   for ( i = a.rows()-1; i >= 0; --i )
     {
-      ptr = &m[(i+rwz)*cols()+coz]-1 ;
+      ptr = &(this->m)[(i+rwz)*Matrix<T>::cols()+coz]-1 ;
       for ( j = a.cols(); j > 0; --j)
 	*(++ptr) = *(++aptr) ;
     }  
@@ -159,7 +159,7 @@ void Matrix<T>::as(int rw, int cl, Matrix<T>& a)
   // Assign matrix a to this matrix at (i,j)
   int i, j;
   
-  if ( (rw + a.rows()) > rows() || ( cl + a.cols()) > cols()) {
+  if ( (rw + a.rows()) >Matrix<T>::rows() || ( cl + a.cols()) >Matrix<T>::cols()) {
 #ifdef USE_EXCEPTION
     throw MatrixErr();
 #else
@@ -172,12 +172,12 @@ void Matrix<T>::as(int rw, int cl, Matrix<T>& a)
 #ifdef COLUMN_ORDER
   for(i=0;i<a.rows();++i)
     for(j=0;j<a.cols();++j)
-      elem(i+rw,j+cl) = a(i,j) ;
+      this->elem(i+rw,j+cl) = a(i,j) ;
 #else
   T *pptr,*aptr ;
   aptr = a.m-1 ;
   for ( i = 0; i<a.rows(); ++i) {
-    pptr = &m[(i+rw)*cols()+cl]-1 ;
+    pptr = &(this->m)[(i+rw)*Matrix<T>::cols()+cl]-1 ;
     for ( j = 0; j < a.cols(); ++j)
       *(++pptr) = *(++aptr);
   }
@@ -194,7 +194,7 @@ void Matrix<T>::as(int rw, int cl, Matrix<T>& a)
 
   \param rw  the index of the row 
   \param cl  the index of the column
-  \param nr  the number of rows() of the matrix to generate
+  \param nr  the number ofMatrix<T>::rows() of the matrix to generate
   \param nc  the number of coluns of the matrix to generate
 
   \return the matrix of size \a (nr,nc) starting at index \a (rw,cl).
@@ -208,7 +208,7 @@ template <class T>
 Matrix<T> Matrix<T>::get(int rw, int cl, int nr, int nc) const
 {
   Matrix<T> getmat(nr,nc) ;
-  if ( (rw+nr) > rows() || (cl+nc) > cols()) {
+  if ( (rw+nr) >Matrix<T>::rows() || (cl+nc) >Matrix<T>::cols()) {
 #ifdef USE_EXCEPTION
     throw MatrixErr();
 #else
@@ -223,12 +223,12 @@ Matrix<T> Matrix<T>::get(int rw, int cl, int nr, int nc) const
 #ifdef COLUMN_ORDER
   for(i=0;i<nr;++i)
     for(j=0;j<nc;++j)
-      getmat(i,j) = elem(i+rw,j+cl) ;
+      getmat(i,j) = this->elem(i+rw,j+cl) ;
 #else
   T *pptr,*aptr ;
   aptr = getmat.m-1;
   for (i = 0; i < nr; ++i) {
-    pptr = &m[(i+rw)*cols()+cl]-1 ;
+    pptr = &(this->m)[(i+rw)*Matrix<T>::cols()+cl]-1 ;
     for ( j = 0; j < nc; ++j)
       *(++aptr) = *(++pptr) ;
   }
@@ -252,11 +252,11 @@ double Matrix<T>::norm(void){
   double sum, maxsum;
   int init=0 ;
   T *pptr ;
-  pptr = m-1 ;
+  pptr = this->m-1 ;
   maxsum = 0 ; // Silence the warning message
-  for(i=0;i<rows();++i){
+  for(i=0;i<Matrix<T>::rows();++i){
     sum = 0 ;
-    for ( j = 0; j < cols(); ++j) 
+    for ( j = 0; j <Matrix<T>::cols(); ++j) 
       sum += *(++pptr) ;
     if(init)
       maxsum = (maxsum>sum) ? maxsum : sum;
@@ -285,12 +285,12 @@ void Matrix<T>::diag(const T a)
 {
   int i, iend;
   
-  iend = rows();
-  if ( iend > cols() )
-    iend = cols();
+  iend =Matrix<T>::rows();
+  if ( iend >Matrix<T>::cols() )
+    iend =Matrix<T>::cols();
   
   for (i = iend-1; i >=0; --i)
-    elem(i,i) = a;
+    this->elem(i,i) = a;
 
 }
 
@@ -308,10 +308,10 @@ void Matrix<T>::diag(const T a)
 template <class T>
 Vector<T> Matrix<T>::getDiag(){
   int i, iend;
-  Vector<T> vec(minimum(rows(),cols())) ;
-  iend = minimum(rows(),cols());
+  Vector<T> vec(minimum(Matrix<T>::rows(),Matrix<T>::cols())) ;
+  iend = minimum(Matrix<T>::rows(),Matrix<T>::cols());
   for (i = iend-1; i >=0; --i)
-      vec[i] = elem(i,i);
+      vec[i] = this->elem(i,i);
   return vec ;
 }
 
@@ -328,8 +328,8 @@ template <class T>
 Matrix<T>& Matrix<T>::operator+=(double a)
 {
   T *p1 ;
-  p1 = m-1 ;
-  const int size = rows()*cols() ;
+  p1 = this->m-1 ;
+  const int size =Matrix<T>::rows()*Matrix<T>::cols() ;
   for(int i=size; i>0; --i)
     *(++p1) += a ;  
   return *this ;
@@ -348,8 +348,8 @@ template <class T>
 Matrix<T>& Matrix<T>::operator-=(double a)
 {
   T *p1 ;
-  p1 = m-1 ;
-  const int size = rows()*cols() ;
+  p1 = this->m-1 ;
+  const int size =Matrix<T>::rows()*Matrix<T>::cols() ;
   for(int i=size; i>0; --i)
     *(++p1) -= a ;  
   return *this ;
@@ -368,8 +368,8 @@ template <class T>
 Matrix<T>& Matrix<T>::operator*=(double a)
 {
   T *p1 ;
-  p1 = m-1 ;
-  const int size = rows()*cols() ;
+  p1 = this->m-1 ;
+  const int size =Matrix<T>::rows()*Matrix<T>::cols() ;
   for(int i=size; i>0; --i)
     *(++p1) *= a ;  
   return *this ;
@@ -388,8 +388,8 @@ template <class T>
 Matrix<T>& Matrix<T>::operator/=(double a)
 {
   T *p1 ;
-  p1 = m-1 ;
-  const int size = rows()*cols() ;
+  p1 = this->m-1 ;
+  const int size =Matrix<T>::rows()*Matrix<T>::cols() ;
   for(int i=size; i>0; --i)
     *(++p1) /= a ;  
   return *this ;
@@ -408,16 +408,16 @@ Matrix<T>& Matrix<T>::operator/=(double a)
 template <class T> 
 Matrix<T>& Matrix<T>::operator+=(const Matrix<T> &a)
 {
-  if ( a.rows() != rows() || a.cols() != cols() )
+  if ( a.rows() !=Matrix<T>::rows() || a.cols() !=Matrix<T>::cols() )
     {
 #ifdef USE_EXCEPTION
-      throw WrongSize2D(rows(),cols(),a.rows(),a.cols());
+      throw WrongSize2D(Matrix<T>::rows(),Matrix<T>::cols(),a.rows(),a.cols());
 #else
       Error error("Matrix<T>::operator+=") ;
-      if ( rows() != a.rows() )
-	error << "Matrices are of diferent size, a.rows() = " << rows() << " and b.rows() = " << a.rows() << endl ;
-      if ( cols() != a.cols())
-	error << "Matrices are of diferent size, a.cols() = " << cols() << " and b.cols() = " << a.cols() << endl ;
+      if (Matrix<T>::rows() != a.rows() )
+	error << "Matrices are of diferent size, a.rows() = " <<Matrix<T>::rows() << " and b.rows() = " << a.rows() << endl ;
+      if (Matrix<T>::cols() != a.cols())
+	error << "Matrices are of diferent size, a.cols() = " <<Matrix<T>::cols() << " and b.cols() = " << a.cols() << endl ;
       error.fatal() ;
 #endif
     }
@@ -425,8 +425,8 @@ Matrix<T>& Matrix<T>::operator+=(const Matrix<T> &a)
   int i, sze ;
   T *aptr,*sptr ;
   aptr = a.m - 1 ;
-  sptr = m - 1 ;
-  sze = rows()*cols() ;
+  sptr = this->m - 1 ;
+  sze =Matrix<T>::rows()*Matrix<T>::cols() ;
   for (i = sze; i > 0; --i){
       *(++sptr) += *(++aptr) ;
   }
@@ -468,16 +468,16 @@ Matrix<T> operator+(const Matrix<T> &a,const Matrix<T> &b)
 template <class T> 
 Matrix<T>& Matrix<T>::operator-=(const Matrix<T> &a)
 {
-  if ( a.rows() != rows() || a.cols() != cols() )
+  if ( a.rows() !=Matrix<T>::rows() || a.cols() !=Matrix<T>::cols() )
     {
 #ifdef USE_EXCEPTION
-      throw WrongSize2D(rows(),cols(),a.rows(),a.cols());
+      throw WrongSize2D(Matrix<T>::rows(),Matrix<T>::cols(),a.rows(),a.cols());
 #else
       Error error("Matrix<T>::operator-=") ;
-      if ( rows() != a.rows() )
-	error << "Matrices are of diferent size, a.rows() = " << rows() << " and b.rows() = " << a.rows() << endl ;
-      if ( cols() != a.cols())
-	error << "Matrices are of diferent size, a.cols() = " << cols() << " and b.cols() = " << a.cols() << endl ;
+      if (Matrix<T>::rows() != a.rows() )
+	error << "Matrices are of diferent size, a.rows() = " <<Matrix<T>::rows() << " and b.rows() = " << a.rows() << endl ;
+      if (Matrix<T>::cols() != a.cols())
+	error << "Matrices are of diferent size, a.cols() = " <<Matrix<T>::cols() << " and b.cols() = " << a.cols() << endl ;
       error.fatal() ;
 #endif
     }
@@ -485,8 +485,8 @@ Matrix<T>& Matrix<T>::operator-=(const Matrix<T> &a)
   int i, size;
   T *aptr,*sptr ;
   aptr = a.m - 1 ;
-  sptr = m - 1 ;
-  size = rows()*cols() ;
+  sptr = this->m - 1 ;
+  size =Matrix<T>::rows()*Matrix<T>::cols() ;
   for (i = size; i > 0; --i){
       *(++sptr) -= *(++aptr) ;
   }
@@ -742,14 +742,14 @@ Matrix<T> comm(const Matrix<T> &a,const Matrix<T> &b)
 template <class T>
 T Matrix<T>::trace() const
 {
-  int size = rows();
+  int size =Matrix<T>::rows();
   T sum = (T)0;
   
-  if ( size > cols() )
-    size = cols();
+  if ( size >Matrix<T>::cols() )
+    size =Matrix<T>::cols();
   
   for (int d = 0; d < size; ++d)
-    sum += elem(d,d) ;
+    sum += this->elem(d,d) ;
   
   return sum;
 }
@@ -770,12 +770,12 @@ T Matrix<T>::trace() const
 template <class T>
 Matrix<T> Matrix<T>::herm() const
 {
-  int i, j, r = cols(), c = rows();
+  int i, j, r =Matrix<T>::cols(), c =Matrix<T>::rows();
   Matrix<T> adj(r,c);
   
   for (i = 0; i < r; ++i)
     for (j = 0; j < c; ++j)
-      adj.elem(i,j) = elem(j,i) ;
+      adj.elem(i,j) = this->elem(j,i) ;
 
   return adj;
 
@@ -794,11 +794,11 @@ Matrix<T> Matrix<T>::herm() const
 template <class T>
 Matrix<T> Matrix<T>::flop() const
 {					
-  Matrix<T> f(rows(),cols()) ;
-  for(int i=rows()-1;i>=0;--i)
-    for(int j=cols()-1;j>=0;--j)
+  Matrix<T> f(Matrix<T>::rows(),Matrix<T>::cols()) ;
+  for(int i=Matrix<T>::rows()-1;i>=0;--i)
+    for(int j=Matrix<T>::cols()-1;j>=0;--j)
       {
-	f(i,j) = elem(i,cols()-j-1);
+	f(i,j) = this->elem(i,Matrix<T>::cols()-j-1);
       }
   return f; 
 }
@@ -817,13 +817,13 @@ Matrix<T> Matrix<T>::transpose() const
 {					
   // same as hermitian for real Matrix<T>
   int i, j;
-  const int& r = cols();
-  const int& c = rows();
+  const int& r =Matrix<T>::cols();
+  const int& c =Matrix<T>::rows();
   Matrix<T> adj(r,c);
   
   for (i = r-1; i >=0; --i)
     for (j = c-1; j >=0; --j)
-      adj.elem(i,j) = elem(j,i) ;
+      adj.elem(i,j) = this->elem(j,i) ;
   
   
   return adj; 
@@ -833,7 +833,7 @@ Matrix<T> Matrix<T>::transpose() const
 /*!
   \brief read a matrix file
   Reads a matrix file. The format of a file is
-{\tt rows() cols() data...}, where rows() and cols() are int and data is a vector of the matrix type.
+{\ttMatrix<T>::rows()Matrix<T>::cols() data...}, whereMatrix<T>::rows() andMatrix<T>::cols() are int and data is a vector of the matrix type.
   \param filename  the name of the file to read
   \return 1 if reading the file was successfull, 0 otherwise
   \warning
@@ -844,7 +844,7 @@ template <class T>
 int Matrix<T>::read(char* filename) {
   ifstream fin(filename) ;
   if(!fin) {
-    resize(1,1) ;
+    this->resize(1,1) ;
     return 0 ;
   }
   int r,c ;
@@ -855,8 +855,8 @@ int Matrix<T>::read(char* filename) {
   if(r) return 0 ;
   if(!fin.read((char*)&r,sizeof(int))) return 0 ;
   if(!fin.read((char*)&c,sizeof(int))) return 0 ;
-  resize(r,c) ;
-  if(!fin.read((char*)m,sizeof(T)*r*c)) return 0 ;
+  this->resize(r,c) ;
+  if(!fin.read((char*)(this->m),sizeof(T)*r*c)) return 0 ;
 
   delete []type ;
   return 1 ;
@@ -866,7 +866,7 @@ int Matrix<T>::read(char* filename) {
   \brief read a raw file containing a matrix of size $(r,c)$
   Reads a file containing raw data of a matrix of size $(r,c)$.
   \param filename  the name of the file to read
-                      r  the number of rows() 
+                      r  the number ofMatrix<T>::rows() 
                       c  the number of columns
   \return 1 if reading the file was successfull, 0 otherwise
   \warning
@@ -877,11 +877,11 @@ template <class T>
 int Matrix<T>::read(char* filename,int r, int c) {
   ifstream fin(filename) ;
   if(!fin) {
-    resize(1,1) ;
+    this->resize(1,1) ;
     return 0 ;
   }
-  resize(r,c) ;
-  if(!fin.read((char*)m,sizeof(T)*r*c)) return 0 ;
+  this->resize(r,c) ;
+  if(!fin.read((char*)(this->m),sizeof(T)*r*c)) return 0 ;
 
   return 1 ;
 }
@@ -890,7 +890,7 @@ int Matrix<T>::read(char* filename,int r, int c) {
 /*!
   \brief write a matrix into a Matrix file
   Writes a matrix file. The format of the file is
-               {\tt rows() cols() data...}, where rows() and cols() are int and data 
+               {\ttMatrix<T>::rows()Matrix<T>::cols() data...}, whereMatrix<T>::rows() andMatrix<T>::cols() are int and data 
 	       is a vector of the matrix type.
   \param filename  the name of the file to write to
   \return
@@ -904,11 +904,11 @@ int Matrix<T>::write(char* filename) {
   if(!fout)
     return 0 ;
   int r,c ;
-  r = rows() ; c = cols() ;
+  r = Matrix<T>::rows() ; c =Matrix<T>::cols() ;
   if(!fout.write((char*)&"matrix",sizeof(char)*6)) return 0 ;
   if(!fout.write((char*)&r,sizeof(int))) return 0 ;
   if(!fout.write((char*)&c,sizeof(int))) return 0 ;
-  if(!fout.write((char*)m,sizeof(T)*r*c)) return 0 ;
+  if(!fout.write((char*)(this->m),sizeof(T)*r*c)) return 0 ;
   return 1;
 }
 
@@ -927,7 +927,7 @@ int Matrix<T>::writeRaw(char* filename) {
   ofstream fout(filename) ;
   if(!fout)
     return 0 ;
-  if(!fout.write((char*)m,sizeof(T)*rows()*cols())) return 0 ;
+  if(!fout.write((char*)(this->m),sizeof(T)*(Matrix<T>::rows())*(Matrix<T>::cols()))) return 0 ;
   return 1;
 }
 

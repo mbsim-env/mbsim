@@ -27,7 +27,7 @@
 
 namespace PLib {
 
-ostream&
+template<> ostream&
 BasicArray<Complex>::print(ostream& os)  const{
   const int iend = size();
   
