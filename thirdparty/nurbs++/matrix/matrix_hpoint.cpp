@@ -27,7 +27,7 @@
 
 namespace PLib {
 
-  double
+template<>  double
     Matrix<HPoint3Df>::norm(void) {
     int i,j ;
     double sumX, sumY, sumZ, sumW, maxsum;
@@ -58,7 +58,7 @@ namespace PLib {
   }
   
   
-  double
+ template<>  double
     Matrix<HPoint3Dd>::norm(void) {
     int i,j ;
     double sumX, sumY, sumZ, sumW, maxsum;
@@ -89,7 +89,7 @@ namespace PLib {
   }
   
   
-  double
+ template<>  double
     Matrix<HPoint2Df>::norm(void) {
     int i,j ;
     double sumX, sumY, sumZ, sumW, maxsum;
@@ -119,7 +119,7 @@ namespace PLib {
     return sqrt(maxsum);
   }
   
-  double
+ template<>  double
     Matrix<HPoint2Dd>::norm(void) {
     int i,j ;
     double sumX, sumY, sumZ, sumW, maxsum;

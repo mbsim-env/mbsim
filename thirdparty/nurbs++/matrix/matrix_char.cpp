@@ -27,7 +27,7 @@
 
 namespace PLib {
 
-  Matrix<char>&
+template<>  Matrix<char>&
     Matrix<char>::operator*=(double a)
     {
       char *p1 ;
@@ -40,7 +40,7 @@ namespace PLib {
       return *this ;
     }
   
-  Matrix<char>&
+template<>  Matrix<char>&
     Matrix<char>::operator+=(double a)
     {
       char *p1 ;
@@ -51,7 +51,7 @@ namespace PLib {
       return *this ;
     }
   
-  Matrix<char>&
+ template<>  Matrix<char>&
     Matrix<char>::operator-=(double a)
     {
       char *p1 ;
@@ -62,7 +62,7 @@ namespace PLib {
       return *this ;
     }
   
-  Matrix<char>&
+ template<>  Matrix<char>&
     Matrix<char>::operator/=(double a)
     {
       char *p1 ;

@@ -27,7 +27,7 @@
 
 namespace PLib {
 
-  double Matrix<Complex>::norm(void){
+ template<>  double Matrix<Complex>::norm(void){
     int i,j ;
     double sumR, sumI, maxsum;
     int init=0 ;

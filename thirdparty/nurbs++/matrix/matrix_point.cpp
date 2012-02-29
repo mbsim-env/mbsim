@@ -27,7 +27,7 @@
 
 namespace PLib {
 
-  double
+template<>  double
     Matrix<Point3Df>::norm(void) {
     int i,j ;
     double sumX, sumY, sumZ, maxsum;
@@ -55,7 +55,7 @@ namespace PLib {
     return sqrt(maxsum);
   }
   
-  double
+template<>  double
     Matrix<Point3Dd>::norm(void) {
     int i,j ;
     double sumX, sumY, sumZ, maxsum;
@@ -83,7 +83,7 @@ namespace PLib {
     return sqrt(maxsum);
   }
   
-  double
+template<>  double
     Matrix<Point2Df>::norm(void) {
     int i,j ;
     double sumX, sumY, sumZ, maxsum;
@@ -111,7 +111,7 @@ namespace PLib {
     return sqrt(maxsum);
   }
 
-  double
+template<>  double
     Matrix<Point2Dd>::norm(void) {
     int i,j ;
     double sumX, sumY, sumZ, maxsum;

@@ -69,7 +69,7 @@ namespace PLib {
   {
   public:
     int rows() const //!< a reference to the size of the vector
-      { return sze ;}
+      { return this->sze ;}
     Vector() : BasicArray<T>(1) {} //!< Basic constructor
     Vector(const int r) : BasicArray<T>(r) {}
     Vector(const Vector<T>& v) : BasicArray<T>(v) {}

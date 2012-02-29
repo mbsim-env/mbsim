@@ -54,10 +54,10 @@ namespace PLib {
     CVector(const BasicArray<T>& v) : Vector<T>(v), index(0)  {;}
     virtual ~CVector() {}
     
-    T& operator[](const int i) { return x[i%sze]; }
-    T  operator[](const int i) const   { return x[i%sze]; }
+    T& operator[](const int i) { return (this->x)[i%(this->sze)]; }
+    T  operator[](const int i) const   { return (this->x)[i%(this->sze)]; }
     
-    void put(T v) { x[index] = v ; index = (index+1)%sze; }
+    void put(T v) { (this->x)[index] = v ; index = (index+1)%(this->sze); }
     
   protected:
     int index ;

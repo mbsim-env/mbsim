@@ -27,7 +27,7 @@
 
 namespace PLib {
   
-  void Matrix<float>::qSort(){
+  template<> void Matrix<float>::qSort(){
     qsort((char*)m,rows()*cols(),sizeof(float),compareFloat) ;
   }
 

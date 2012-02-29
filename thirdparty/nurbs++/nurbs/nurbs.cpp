@@ -102,6 +102,7 @@ void NurbsCurve<T,N>::reset(const Vector< HPoint_nD<T,N> >& P1, const Vector<T> 
   \author Philippe Lavoie 
   \date 24 January 1997
 */
+template<>
 template <class T, int N>
 NurbsCurve<T,N>::NurbsCurve(const Vector< HPoint_nD<T,N> >& P1, const Vector<T> &U1, int Degree): P(P1), U(U1), deg_(Degree) 
 {
@@ -131,6 +132,7 @@ NurbsCurve<T,N>::NurbsCurve(const Vector< HPoint_nD<T,N> >& P1, const Vector<T> 
   \author Philippe Lavoie 
   \date 24 January 1997
 */
+template<>
 template <class T, int N>
 NurbsCurve<T,N>::NurbsCurve(const Vector< Point_nD<T,N> >& P1, const Vector<T>& W, const Vector<T>& U1, int Degree): P(P1.n()), U(U1), deg_(Degree)
 {
@@ -177,6 +179,7 @@ NurbsCurve<T,N>::NurbsCurve(const Vector< Point_nD<T,N> >& P1, const Vector<T>& 
   \author Philippe Lavoie 
   \date 24 January 1997
 */
+template<>
 template <class T, int N>
 NurbsCurve<T,N>& NurbsCurve<T,N>::operator=(const NurbsCurve<T,N>& curve) {
   if(curve.U.n() != curve.P.n()+curve.deg_+1){
@@ -222,6 +225,7 @@ NurbsCurve<T,N>& NurbsCurve<T,N>::operator=(const NurbsCurve<T,N>& curve) {
   \author Philippe Lavoie 
   \date 24 January 1997
 */
+template<>
 template <class T, int N>
 void NurbsCurve<T,N>::drawImg(Image_UBYTE& Img,unsigned char color,T step){
   Point_nD<T,N> a1,a2 ;
@@ -263,6 +267,7 @@ void NurbsCurve<T,N>::drawImg(Image_UBYTE& Img,unsigned char color,T step){
   \author Philippe Lavoie 
   \date 24 January 1997
 */
+template<>
 template <class T, int N>
 void NurbsCurve<T,N>::drawImg(Image_Color& Img,const Color& color,T step){
   Point_nD<T,N> a1,a2 ;
@@ -306,6 +311,7 @@ void NurbsCurve<T,N>::drawImg(Image_Color& Img,const Color& color,T step){
   \author Philippe Lavoie 
   \date 25 July 1997
 */
+template<>
 template <class T, int N>
 void NurbsCurve<T,N>::drawAaImg(Image_Color& Img, const Color& color, int precision, int alpha){
   NurbsCurve<T,3> profile ;
@@ -335,6 +341,7 @@ void NurbsCurve<T,N>::drawAaImg(Image_Color& Img, const Color& color, int precis
   \author Philippe Lavoie 
   \date 22 August 1997
 */
+template<>
 template <class T, int N>
 void NurbsCurve<T,N>::drawAaImg(Image_Color& Img, const Color& color, const NurbsCurve<T,3>& profile, int precision, int alpha){
   Vector< HPoint_nD<T,3> > sPts(2) ;
@@ -378,7 +385,7 @@ void NurbsCurve<T,N>::drawAaImg(Image_Color& Img, const Color& color, const Nurb
   \author Philippe Lavoie 
   \date 25 July 1997
 */
-template <class T, int N>
+template<> template <class T, int N>
 NurbsSurface<T,3> NurbsCurve<T,N>::drawAaImg(Image_Color& Img, const Color& color, const NurbsCurve<T,3>& profile, const NurbsCurve<T,3>& scaling, int precision, int alpha){
   Matrix<T> addMatrix ;
   Matrix_INT nMatrix ;
@@ -391,9 +398,9 @@ NurbsSurface<T,3> NurbsCurve<T,N>::drawAaImg(Image_Color& Img, const Color& colo
   T du,dv ;
   // compute a coarse distance for the curve
   Point_nD<T,N> a,b,c ;
-  a = pointAt(0.0) ;
-  b = pointAt(0.5) ;
-  c = pointAt(1.0) ;
+  a = this->pointAt(0.0) ;
+  b = this->pointAt(0.5) ;
+  c = this->pointAt(1.0) ;
 
   T distance = norm(b-a) + norm(c-b) ;
 
@@ -464,7 +471,7 @@ NurbsSurface<T,3> NurbsCurve<T,N>::drawAaImg(Image_Color& Img, const Color& colo
   \author Philippe Lavoie 
   \date 22 August 1997
 */
-template <class T, int N>
+template<> template <class T, int N>
 void NurbsCurve<T,N>::transform(const MatrixRT<T>& A){
   for(int i=P.n()-1;i>=0;--i)
     P[i] = A*P[i] ;
@@ -495,7 +502,7 @@ void NurbsCurve<T,N>::transform(const MatrixRT<T>& A){
   \author Philippe Lavoie 
   \date 24 January, 1997
 */
-template <class T, int N>
+template<> template <class T, int N>
 HPoint_nD<T,N> NurbsCurve<T,N>::operator()(T u) const{
   static Vector<T> Nb ;
   int span = findSpan(u) ;
@@ -534,7 +541,7 @@ HPoint_nD<T,N> NurbsCurve<T,N>::operator()(T u) const{
   \author Philippe Lavoie    
   \date 24 January, 1997
 */
-template <class T, int N>
+template<> template <class T, int N>
 HPoint_nD<T,N> NurbsCurve<T,N>::hpointAt(T u, int span) const{
   static Vector<T> Nb ;
 
@@ -563,6 +570,7 @@ HPoint_nD<T,N> NurbsCurve<T,N>::hpointAt(T u, int span) const{
    \author  Philippe Lavoie
    \date 24 January, 1997
 */
+template<>
 template <class T, int N>
 Point_nD<T,N> NurbsCurve<T,N>::derive3D(T u, int d) const {
   Vector< Point_nD<T,N> > ders ;
@@ -586,7 +594,7 @@ Point_nD<T,N> NurbsCurve<T,N>::derive3D(T u, int d) const {
   \author  Philippe Lavoie
   \date 24 January, 1997
 */
-template <class T, int N>
+template<> template <class T, int N>
 HPoint_nD<T,N> NurbsCurve<T,N>::derive(T u, int d) const {
   Vector< HPoint_nD<T,N> > ders ;
   deriveAtH(u,d,ders) ;
@@ -609,7 +617,7 @@ HPoint_nD<T,N> NurbsCurve<T,N>::derive(T u, int d) const {
   \author  Philippe Lavoie
   \date 24 January, 1997
 */
-template <class T, int N>
+template<> template <class T, int N>
 void NurbsCurve<T,N>::deriveAtH(T u,int d, Vector< HPoint_nD<T,N> >& ders) const{
   int du = minimum(d,deg_) ;
   int span ;
@@ -641,6 +649,7 @@ void NurbsCurve<T,N>::deriveAtH(T u,int d, Vector< HPoint_nD<T,N> >& ders) const
   \author    Philippe Lavoie    
   \date 9 October, 1998
 */
+template<>
 template <class T, int N>
 void NurbsCurve<T,N>::deriveAtH(T u, int d, int span, Vector< HPoint_nD<T,N> >& ders) const{
   int du = minimum(d,deg_) ;
@@ -712,6 +721,7 @@ void binomialCoef(Matrix<T>& Bin){
   \author Philippe Lavoie
   \date 24 January, 1997
 */
+template<>
 template <class T, int N>
 void NurbsCurve<T,N>::deriveAt(T u, int d, Vector< Point_nD<T,N> >& ders) const{
   Vector< HPoint_nD<T,N> > dersW ;
@@ -752,6 +762,7 @@ void NurbsCurve<T,N>::deriveAt(T u, int d, Vector< Point_nD<T,N> >& ders) const{
   \author Philippe Lavoie     
   \date 9 October 1998
 */
+template<>
 template <class T, int N>
 void NurbsCurve<T,N>::deriveAt(T u, int d, int span, Vector< Point_nD<T,N> >& ders) const{
   Vector< HPoint_nD<T,N> > dersW ;
@@ -796,6 +807,7 @@ void NurbsCurve<T,N>::deriveAt(T u, int d, int span, Vector< Point_nD<T,N> >& de
   \author Philippe Lavoie    
   \date 2 September, 1997
 */
+template<>
 template <class T, int N>
 Point_nD<T,N> NurbsCurve<T,N>::normal(T u, const Point_nD<T,N>& v) const{
   return crossProduct(firstDn(u),v) ;
@@ -841,6 +853,7 @@ Point_nD<T,N> NurbsCurve<T,N>::normal(T u, const Point_nD<T,N>& v) const{
   \author Philippe Lavoie 
   \date 24 January 1997
 */
+template<>
 template <class T, int D>
 T NurbsCurve<T,D>::basisFun(T u, int i, int p) const{
   T Nip ;
@@ -913,6 +926,7 @@ T NurbsCurve<T,D>::basisFun(T u, int i, int p) const{
   \author Philippe Lavoie 
   \date 24 January 1997
 */
+template<>
 template <class T, int N>
 void NurbsCurve<T,N>::dersBasisFuns(int n,T u, int span, Matrix<T>& ders) const {
   T* left = (T*) alloca(2*(deg_+1)*sizeof(T)) ;
@@ -1050,6 +1064,7 @@ void NurbsCurve<T,N>::dersBasisFuns(int n,T u, int span, Matrix<T>& ders) const 
    \author Philippe Lavoie 
    \date 24 January 1997
 */
+template<>
 template <class T, int D>
 void NurbsCurve<T,D>::basisFuns(T u, int i, Vector<T>& N) const{
   T* left = (T*) alloca(2*(deg_+1)*sizeof(T)) ;
@@ -1088,6 +1103,7 @@ void NurbsCurve<T,D>::basisFuns(T u, int i, Vector<T>& N) const{
   \date 24 January 1997
   \modified 20 January, 1999 (Alejandro Frangi)
 */
+template<>
 template <class T, int N>
 int NurbsCurve<T,N>::findSpan(T u) const{
   if(u>=U[P.n()]) 
@@ -1122,6 +1138,7 @@ int NurbsCurve<T,N>::findSpan(T u) const{
   \author    Philippe Lavoie      
   \date 24 January, 1997
 */
+template<>
 template <class T, int N>
 int NurbsCurve<T,N>::findKnot(T u) const{
   if(u==U[P.n()])
@@ -1143,6 +1160,7 @@ int NurbsCurve<T,N>::findKnot(T u) const{
   \author  Philippe Lavoie
   \date 24 January, 1997
 */
+template<>
 template <class T, int N>
 int NurbsCurve<T,N>::findMult(int r) const {
   int s=1 ;
@@ -1169,6 +1187,7 @@ int NurbsCurve<T,N>::findMult(int r) const {
   \author Philippe Lavoie
   \date 24 January, 1997
 */
+template<>
 template <class T, int N>
 void NurbsCurve<T,N>::findMultSpan(T u, int& r, int& s) const {
   r = findKnot(u) ;
@@ -1191,6 +1210,7 @@ void NurbsCurve<T,N>::findMultSpan(T u, int& r, int& s) const {
   \author Philippe Lavoie 
   \date 24 January 1997
 */
+template<>
 template <class T, int N>
 void NurbsCurve<T,N>::resize(int n, int Deg){
   deg_ = Deg ;
@@ -1233,6 +1253,7 @@ void NurbsCurve<T,N>::resize(int n, int Deg){
   \author Philippe Lavoie   
   \date 24 January, 1997
 */
+template<>
 template <class T, int N>
 int NurbsCurve<T,N>::leastSquares(const Vector< Point_nD<T,N> >& Q, int degC, int n){
   Vector<T> ub(Q.n()) ;
@@ -1277,6 +1298,7 @@ int NurbsCurve<T,N>::leastSquares(const Vector< Point_nD<T,N> >& Q, int degC, in
   \author Philippe Lavoie 
   \date 24 January 1997
 */
+template<>
 template <class T, int N>
 int NurbsCurve<T,N>::leastSquares(const Vector< Point_nD<T,N> >& Q, int degC, int n, const Vector<T>& ub){
   int i,j;
@@ -1354,6 +1376,7 @@ int NurbsCurve<T,N>::leastSquares(const Vector< Point_nD<T,N> >& Q, int degC, in
   \author Philippe Lavoie 
   \date 24 January 1997
 */
+template<>
 template <class T, int N>
 int NurbsCurve<T,N>::leastSquaresH(const Vector< HPoint_nD<T,N> >& Q, int degC, int n, const Vector<T>& ub){
   int i,j;
@@ -1434,6 +1457,7 @@ int NurbsCurve<T,N>::leastSquaresH(const Vector< HPoint_nD<T,N> >& Q, int degC, 
   \author Philippe Lavoie 
   \date 24 January 1997
 */
+template<>
 template <class T, int D>
 int NurbsCurve<T,D>::leastSquares(const Vector< Point_nD<T,D> >& Q, int degC, int n, const Vector<T>& ub, const Vector<T>& knot){
   int i,j,span;
@@ -1569,6 +1593,7 @@ int NurbsCurve<T,D>::leastSquares(const Vector< Point_nD<T,D> >& Q, int degC, in
   \author Philippe Lavoie 
   \date 24 January 1997
 */
+template<>
 template <class T, int D>
 int NurbsCurve<T,D>::leastSquaresH(const Vector< HPoint_nD<T,D> >& Q, int degC, int n, const Vector<T>& ub, const Vector<T>& knot){
   int i,j,span,m ;
@@ -1682,6 +1707,7 @@ int NurbsCurve<T,D>::leastSquaresH(const Vector< HPoint_nD<T,D> >& Q, int degC, 
   \author    Philippe Lavoie 
   \date 24 January, 1997
 */
+template<>
 template <class T, int N>
 T NurbsCurve<T,N>::getRemovalBnd(int r, int s ) const{
   Vector< HPoint_nD<T,N> > temp(U.rows()) ;
@@ -1734,6 +1760,7 @@ T NurbsCurve<T,N>::getRemovalBnd(int r, int s ) const{
   \author Philippe Lavoie 
   \date 24 January 1997
 */
+template<>
 template <class T, int N>
 void NurbsCurve<T,N>::removeKnot(int  r, int s, int num)
 {
@@ -1821,6 +1848,7 @@ void NurbsCurve<T,N>::removeKnot(int  r, int s, int num)
   \author Philippe Lavoie 
   \date 24 January 1997
 */
+template<>
 template <class T, int N>
 void NurbsCurve<T,N>::removeKnotsBound(const Vector<T>& ub,
 				    Vector<T>& ek, T E){
@@ -2098,6 +2126,7 @@ T chordLengthParamH(const Vector< HPoint_nD<T,N> >& Q, Vector<T> &ub){
   \author Philippe Lavoie 
   \date 24 January 1997
 */
+template<>
 template <class T, int N>
 void NurbsCurve<T,N>::globalApproxErrBnd(Vector< Point_nD<T,N> >& Q, int degC, T E){
   Vector<T> ub(Q.n()) ;
@@ -2127,6 +2156,7 @@ void NurbsCurve<T,N>::globalApproxErrBnd(Vector< Point_nD<T,N> >& Q, int degC, T
   \author Philippe Lavoie 
   \code 24 January 1997
 */
+template<>
 template <class T, int N>
 void NurbsCurve<T,N>::globalApproxErrBnd(Vector< Point_nD<T,N> >& Q, Vector<T>& ub, int degC, T E){
   Vector<T> ek(Q.n()) ;
@@ -2224,6 +2254,7 @@ void NurbsCurve<T,N>::globalApproxErrBnd(Vector< Point_nD<T,N> >& Q, Vector<T>& 
   \author Philippe Lavoie 
   \date 24 January 1997
 */
+template<>
 template <class T, int N>
 void NurbsCurve<T,N>::globalApproxErrBnd2(Vector< Point_nD<T,N> >& Q,
 				       int degC,
@@ -2284,6 +2315,7 @@ void NurbsCurve<T,N>::globalApproxErrBnd2(Vector< Point_nD<T,N> >& Q,
   \author Philippe Lavoie 
   \date 24 January 1997
 */
+template<>
 template <class T, int N>
 void NurbsCurve<T,N>::globalApproxErrBnd3(Vector< Point_nD<T,N> >& Q,int degC,T E){
   //NurbsCurve<T,N> tCurve(1) ;
@@ -2333,6 +2365,7 @@ void NurbsCurve<T,N>::globalApproxErrBnd3(Vector< Point_nD<T,N> >& Q,int degC,T 
   \author Philippe Lavoie 
   \date 24 January 1997
 */
+template<>
 template <class T, int N>
 void NurbsCurve<T,N>::globalApproxErrBnd3(Vector< Point_nD<T,N> >& Q, 
 				       const Vector<T> &ub,
@@ -2378,6 +2411,7 @@ void NurbsCurve<T,N>::globalApproxErrBnd3(Vector< Point_nD<T,N> >& Q,
   \author Philippe Lavoie 
   \date 24 January 1997
 */
+template<>
 template <class T, int N>
 void NurbsCurve<T,N>::projectTo(const Point_nD<T,N>& p, T guess, T& u, Point_nD<T,N>& r, T e1, T e2,int maxTry) const{
   T un ;
@@ -2437,6 +2471,7 @@ void NurbsCurve<T,N>::projectTo(const Point_nD<T,N>& p, T guess, T& u, Point_nD<
   \author Philippe Lavoie
   \date 24 January, 1997
 */
+template<>
 template <class T, int N>
 void NurbsCurve<T,N>::degreeElevate(int t){
   if(t<=0){
@@ -2615,6 +2650,7 @@ void NurbsCurve<T,N>::degreeElevate(int t){
   \author Philippe Lavoie
   \date 24 January 1997
 */
+template<>
 template <class T, int N>
 int NurbsCurve<T,N>::knotInsertion(T u, int r,NurbsCurve<T,N>& nc){
   // Compute k and s      u = [ u_k , u_k+1)  with u_k having multiplicity s
@@ -2710,6 +2746,7 @@ int NurbsCurve<T,N>::knotInsertion(T u, int r,NurbsCurve<T,N>& nc){
   \author Philippe Lavoie     
   \date 24 January, 1997
 */
+template<>
 template <class T, int N>
 void NurbsCurve<T,N>::refineKnotVector(const Vector<T>& X){
   int n = P.n()-1 ;
@@ -2769,6 +2806,7 @@ void NurbsCurve<T,N>::refineKnotVector(const Vector<T>& X){
   \author Philippe Lavoie
   \date 24 January, 1997
 */
+template<>
 template <class T, int N>
 void NurbsCurve<T,N>::globalInterp(const Vector< Point_nD<T,N> >& Q, int d){
   Vector<T> ub ;
@@ -2791,6 +2829,7 @@ void NurbsCurve<T,N>::globalInterp(const Vector< Point_nD<T,N> >& Q, int d){
   \author Philippe Lavoie
   \date 24 January, 1997
 */
+template<>
 template <class T, int D>
 void NurbsCurve<T,D>::globalInterp(const Vector< Point_nD<T,D> >& Q, const Vector<T>& ub, int d){
   int i,j ;
@@ -2884,6 +2923,7 @@ void NurbsCurve<T,D>::globalInterp(const Vector< Point_nD<T,D> >& Q, const Vecto
   \author Philippe Lavoie 
   \date 3 September, 1997
 */
+template<>
 template <class T, int nD>
 void NurbsCurve<T,nD>::globalInterpD(const Vector< Point_nD<T,nD> >& Q, const Vector< Point_nD<T,nD> >& D, int d, int unitD, T a){
   int i,j,n ;
@@ -3073,6 +3113,7 @@ void NurbsCurve<T,nD>::globalInterpD(const Vector< Point_nD<T,nD> >& Q, const Ve
   \author  Philippe Lavoie
   \date 24 January, 1997
 */
+template<>
 template <class T, int D>
 void NurbsCurve<T,D>::globalInterpH(const Vector< HPoint_nD<T,D> >& Q, int d){
   int i,j ;
@@ -3139,6 +3180,7 @@ void NurbsCurve<T,D>::globalInterpH(const Vector< HPoint_nD<T,D> >& Q, int d){
   \author    Philippe Lavoie
   \date 24 January, 1997
 */
+template<>
 template <class T, int D>
 void NurbsCurve<T,D>::globalInterpH(const Vector< HPoint_nD<T,D> >& Q, const Vector<T>& Uc, int d){
   int i,j ;
@@ -3208,6 +3250,7 @@ void NurbsCurve<T,D>::globalInterpH(const Vector< HPoint_nD<T,D> >& Q, const Vec
   \author    Philippe Lavoie
   \date 24 January, 1997
 */
+template<>
 template <class T, int D>
 void NurbsCurve<T,D>::globalInterpH(const Vector< HPoint_nD<T,D> >& Q, const Vector<T>& ub, const Vector<T>& Uc, int d){
   int i,j ;
@@ -3355,6 +3398,7 @@ int intersectLine(const Point_nD<double,2>& p1, const Point_nD<double,2>& t1, co
   \author Philippe Lavoie
   \date 25 July, 1997
 */
+template<>
 template <class T, int N>
 void NurbsCurve<T,N>::makeCircle(const Point_nD<T,N>& O, const Point_nD<T,N>& X, const Point_nD<T,N>& Y, T r, double as, double ae){
   double theta,angle,dtheta ;
@@ -3437,6 +3481,7 @@ void NurbsCurve<T,N>::makeCircle(const Point_nD<T,N>& O, const Point_nD<T,N>& X,
   \author Philippe Lavoie
   \date 25 July, 1997
 */
+template<>
 template <class T, int N>
 void NurbsCurve<T,N>::makeCircle(const Point_nD<T,N>& O, T r, double as, double ae){
   makeCircle(O,Point_nD<T,N>(1,0,0),Point_nD<T,N>(0,1,0),r,as,ae) ;
@@ -3454,6 +3499,7 @@ void NurbsCurve<T,N>::makeCircle(const Point_nD<T,N>& O, T r, double as, double 
   \author Philippe Lavoie
   \date 3 May, 1999
 */
+template<>
 template <class T, int N>
 void NurbsCurve<T,N>::makeCircle(const Point_nD<T,N>& O, T r){
   resize(9,2);
@@ -3544,6 +3590,7 @@ Vector<T> knotUnion(const Vector<T>& Ua, const Vector<T>& Ub) {
   \author    Philippe Lavoie
   \date 24 January, 1997
 */
+template<>
 template <class T, int N>
 void NurbsCurve<T,N>::mergeKnotVector(const Vector<T> &Um){
   int i,ia,ib ;
@@ -3621,6 +3668,7 @@ void generateCompatibleCurves(NurbsCurveArray<T,N> &ca){
   \author Philippe Lavoie
   \date 24 January 1997
 */
+template<>
 template <class T, int N>
 int NurbsCurve<T,N>::read(ifstream &fin){
   if(!fin) {
@@ -3692,6 +3740,7 @@ int NurbsCurve<T,N>::read(ifstream &fin){
   \author Philippe Lavoie
   \date 24 January 1997
 */
+template<>
 template <class T, int N>
 int NurbsCurve<T,N>::read(const char* filename){
   ifstream fin(filename) ;
@@ -3710,6 +3759,7 @@ int NurbsCurve<T,N>::read(const char* filename){
   \author Philippe Lavoie
   \date 24 January 1997
 */
+template<>
 template <class T, int N>
 int NurbsCurve<T,N>::write(const char* filename) const {
   ofstream fout(filename) ;  
@@ -3728,6 +3778,7 @@ int NurbsCurve<T,N>::write(const char* filename) const {
   \author Philippe Lavoie 
   \date 24 January 1997
 */
+template<>
 template <class T, int N>
 int NurbsCurve<T,N>::write(ofstream &fout) const {
   if(!fout)

@@ -48,9 +48,9 @@ namespace PLib {
 template <class T>
 LUMatrix<T>& LUMatrix<T>::operator=(const LUMatrix<T>& a){
   resize(a.rows(),a.cols()) ;
-  for(int i=0;i<rows();++i)
-    for(int j=0;j<cols();++j)
-      elem(i,j) = a(i,j) ;
+  for(int i=0;i<Matrix<T>::rows();++i)
+    for(int j=0;j<Matrix<T>::cols();++j)
+      this->elem(i,j) = a(i,j) ;
   pivot_ = a.pivot_ ;
   return *this ;
 }
@@ -90,7 +90,7 @@ LUMatrix<T>& LUMatrix<T>::decompose(const Matrix<T>& a)
   //	lu = a;	 must do it by copying or LUFACT will be recursively called !
   for(i=0;i<n;++i)
     for(j=0;j<n;++j)
-      elem(i,j) = a(i,j) ;
+      this->elem(i,j) = a(i,j) ;
 
   errval = 0;
   nm1 = n - 1;
@@ -129,24 +129,24 @@ LUMatrix<T>& LUMatrix<T>::decompose(const Matrix<T>& a)
 	    }
 	  pivot_[k] = l;
 
-	  if ( elem(l,k) != 0.0 )
+	  if ( this->elem(l,k) != 0.0 )
 	    {			// nonsingular pivot found 
 	      if (l != k ){	// interchange needed 
 		for (i = k; i < n; i++)
 		  {
-		    t = elem(l,i) ;
-		    elem(l,i) = elem(k,i) ;
-		    elem(k,i) = t ; 
+		    t = this->elem(l,i) ;
+		    this->elem(l,i) = this->elem(k,i) ;
+		    this->elem(k,i) = t ; 
 		  }
 		sign = -sign ;
 	      }
-	      q =  elem(k,k);	/* scale row */
+	      q =  this->elem(k,k);	/* scale row */
 	      for (i = kp1; i < n; i++)
 		{
-		  t = - elem(i,k)/q;
-		  elem(i,k) = t;
+		  t = - this->elem(i,k)/q;
+		  this->elem(i,k) = t;
 		  for (j = kp1; j < n; j++)
-		    elem(i,j) += t * elem(k,j);
+		    this->elem(i,j) += t * this->elem(k,j);
 		}
 	    }
 	  else		/* pivot singular */
@@ -156,7 +156,7 @@ LUMatrix<T>& LUMatrix<T>::decompose(const Matrix<T>& a)
     }
   
   pivot_[nm1] = nm1;
-  if (elem(nm1,nm1) == 0.0)
+  if (this->elem(nm1,nm1) == 0.0)
     errval = nm1;  
   return *this;
 }
@@ -166,7 +166,7 @@ LUMatrix<T>& LUMatrix<T>::decompose(const Matrix<T>& a)
 template <class T>
 Matrix<T> LUMatrix::operator Matrix()	
 {
-  int i, j, r = rows(), c = cols();
+  int i, j, r =Matrix<T>::rows(), c =Matrix<T>::cols();
 
   Matrix mat( r, c );
 	
@@ -196,9 +196,9 @@ Matrix<T> LUMatrix::operator Matrix()
 */
 template <class T>
 T LUMatrix<T>::determinant(){
-  T det = elem(0,0) ;
-  for(int i=1;i<rows();++i)
-    det *= elem(i,i) ;
+  T det = this->elem(0,0) ;
+  for(int i=1;i<Matrix<T>::rows();++i)
+    det *= this->elem(i,i) ;
   return det * (T)sign ;
 }
 
@@ -209,7 +209,7 @@ template <class T>
 void LUMatrix<T>::backSub(const Matrix<T>& B, Matrix<T>& X){
   int i,ii,ip,j,k ;
   T sum ;
-  int n = rows() ;
+  int n =Matrix<T>::rows() ;
   // one column at a time
   //X.resize(n,B.cols()) ;
   X = B ;
@@ -221,7 +221,7 @@ void LUMatrix<T>::backSub(const Matrix<T>& B, Matrix<T>& X){
       X(ip,j) = X(i,j) ;
       if(ii)
 	for(k=ii;k<i;++k)
-	  sum -= elem(i,k)*X(k,j);
+	  sum -= this->elem(i,k)*X(k,j);
       else
 	if(sum)
 	  ii=i ;
@@ -230,7 +230,7 @@ void LUMatrix<T>::backSub(const Matrix<T>& B, Matrix<T>& X){
     for(i=n-1;i>0;--i){ // doing forward substitution
       sum=X(i,j) ;
       for(k=i+1;k<n;++k)
-	sum -= elem(i,k)*X(k,j) ;
+	sum -= this->elem(i,k)*X(k,j) ;
       X(i,j) = sum/elem(i,i) ;
     }
   }
@@ -253,18 +253,18 @@ void LUMatrix<T>::inverseIn(Matrix<T>& inv)
   T ten;
   int i, j, k, l, kb, kp1, nm1, n, coln;
 
-  if ( rows() != cols() )
+  if (Matrix<T>::rows() !=Matrix<T>::cols() )
     {
 #ifdef USE_EXCEPTION
-    throw WrongSize2D(rows(),cols(),0,0) ;
+    throw WrongSize2D(Matrix<T>::rows(),Matrix<T>::cols(),0,0) ;
 #else
       Error error("invm");
-      error << "matrix inverse, not square: " << rows() << " by " << cols() << endl;
+      error << "matrix inverse, not square: " <<Matrix<T>::rows() << " by " <<Matrix<T>::cols() << endl;
       error.fatal();
 #endif
     }
 
-  n = coln = rows();
+  n = coln =Matrix<T>::rows();
 
 
   inv = *this ;
@@ -338,13 +338,13 @@ void LUMatrix<T>::inverseIn(Matrix<T>& inv)
 template <class T>
 Matrix<T> LUMatrix<T>::inverse() 
 {
-  if ( rows() != cols() )
+  if (Matrix<T>::rows() !=Matrix<T>::cols() )
     {
 #ifdef USE_EXCEPTION
-      throw WrongSize2D(rows(),cols(),0,0) ;
+      throw WrongSize2D(Matrix<T>::rows(),Matrix<T>::cols(),0,0) ;
 #else
       Error error("invm");
-      error << "matrix inverse, not square: " << rows() << " by " << cols() << endl;
+      error << "matrix inverse, not square: " <<Matrix<T>::rows() << " by " <<Matrix<T>::cols() << endl;
       error.fatal();
 #endif
     }
@@ -823,7 +823,7 @@ int SVDMatrix<T>::decompose(const Matrix<T>& A){
     throw WrongSize2D(A.rows(),A.cols(),0,0) ;
 #else
     Error err("SVD") ;
-    err << "Matrix A should have at least as many rows() as it has columns";
+    err << "Matrix A should have at least as manyMatrix<T>::rows() as it has columns";
     err.warning() ;
 #endif
     return 0 ;
