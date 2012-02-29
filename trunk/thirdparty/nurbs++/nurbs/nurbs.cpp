@@ -3834,7 +3834,7 @@ int NurbsCurve<T,N>::read(ifstream &fin){
 template<>
 template <class T, int N>
 int NurbsCurve<T,N>::read(const char* filename){
-  ifstream fin(filename) ;
+  ifstream fin(filename, std::ios::binary) ;
   if(!fin) {
     return 0 ;
   }
@@ -3853,7 +3853,7 @@ int NurbsCurve<T,N>::read(const char* filename){
 template<>
 template <class T, int N>
 int NurbsCurve<T,N>::write(const char* filename) const {
-  ofstream fout(filename) ;  
+  ofstream fout(filename, std::ios::binary) ;  
 
   if(!fout)
     return 0 ;
