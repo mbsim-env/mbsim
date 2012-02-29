@@ -40,7 +40,7 @@ namespace PLib {
   \date 24 January 1997
 */
 template <class T, int N>
-NurbsCurve<T,N>::NurbsCurve(): P(1),U(1),deg_(0)
+NurbsCurve<T,N>::NurbsCurve(): P(1),U(1),deg_(0),Inverse_setted(0)
 {
 }
 
@@ -54,8 +54,8 @@ NurbsCurve<T,N>::NurbsCurve(): P(1),U(1),deg_(0)
 */
 template <class T, int N>
 NurbsCurve<T,N>::NurbsCurve(const NurbsCurve<T,N>& nurb): 
-  ParaCurve<T,N>(), P(nurb.P),U(nurb.U),deg_(nurb.deg_)
-{
+  ParaCurve<T,N>(), P(nurb.P),U(nurb.U),deg_(nurb.deg_) {
+  Inverse_setted = 0;
 }
 
 /*!
@@ -74,6 +74,7 @@ void NurbsCurve<T,N>::reset(const Vector< HPoint_nD<T,N> >& P1, const Vector<T> 
   int nSize = P1.n() ;
   int mSize = U1.n() ;
   deg_ = Degree ;
+  Inverse_setted = 0;
   if(nSize != mSize-deg_-1){
 #ifdef USE_EXCEPTION
     throw NurbsSizeError(P1.n(),U1.n(),Degree) ;
@@ -106,7 +107,7 @@ template<>
 template <class T, int N>
 NurbsCurve<T,N>::NurbsCurve(const Vector< HPoint_nD<T,N> >& P1, const Vector<T> &U1, int Degree): P(P1), U(U1), deg_(Degree) 
 {
-
+ Inverse_setted=0;
   if(P.n() != U.n()-deg_-1){
 #ifdef USE_EXCEPTION
     throw NurbsSizeError(P.n(),U.n(),deg_) ;
@@ -138,6 +139,7 @@ NurbsCurve<T,N>::NurbsCurve(const Vector< Point_nD<T,N> >& P1, const Vector<T>& 
 {
   int nSize = P1.n() ;
   int mSize = U1.n() ;
+  Inverse_setted=0;
 
   if(nSize != mSize-deg_-1){
 #ifdef USE_EXCEPTION
@@ -385,7 +387,8 @@ void NurbsCurve<T,N>::drawAaImg(Image_Color& Img, const Color& color, const Nurb
   \author Philippe Lavoie 
   \date 25 July 1997
 */
-template<> template <class T, int N>
+template<>
+template <class T, int N>
 NurbsSurface<T,3> NurbsCurve<T,N>::drawAaImg(Image_Color& Img, const Color& color, const NurbsCurve<T,3>& profile, const NurbsCurve<T,3>& scaling, int precision, int alpha){
   Matrix<T> addMatrix ;
   Matrix_INT nMatrix ;
@@ -471,7 +474,8 @@ NurbsSurface<T,3> NurbsCurve<T,N>::drawAaImg(Image_Color& Img, const Color& colo
   \author Philippe Lavoie 
   \date 22 August 1997
 */
-template<> template <class T, int N>
+template<>
+template <class T, int N>
 void NurbsCurve<T,N>::transform(const MatrixRT<T>& A){
   for(int i=P.n()-1;i>=0;--i)
     P[i] = A*P[i] ;
@@ -502,7 +506,8 @@ void NurbsCurve<T,N>::transform(const MatrixRT<T>& A){
   \author Philippe Lavoie 
   \date 24 January, 1997
 */
-template<> template <class T, int N>
+template<>
+template <class T, int N>
 HPoint_nD<T,N> NurbsCurve<T,N>::operator()(T u) const{
   static Vector<T> Nb ;
   int span = findSpan(u) ;
@@ -541,7 +546,8 @@ HPoint_nD<T,N> NurbsCurve<T,N>::operator()(T u) const{
   \author Philippe Lavoie    
   \date 24 January, 1997
 */
-template<> template <class T, int N>
+template<>
+template <class T, int N>
 HPoint_nD<T,N> NurbsCurve<T,N>::hpointAt(T u, int span) const{
   static Vector<T> Nb ;
 
@@ -594,7 +600,8 @@ Point_nD<T,N> NurbsCurve<T,N>::derive3D(T u, int d) const {
   \author  Philippe Lavoie
   \date 24 January, 1997
 */
-template<> template <class T, int N>
+template<>
+template <class T, int N>
 HPoint_nD<T,N> NurbsCurve<T,N>::derive(T u, int d) const {
   Vector< HPoint_nD<T,N> > ders ;
   deriveAtH(u,d,ders) ;
@@ -617,7 +624,8 @@ HPoint_nD<T,N> NurbsCurve<T,N>::derive(T u, int d) const {
   \author  Philippe Lavoie
   \date 24 January, 1997
 */
-template<> template <class T, int N>
+template<>
+template <class T, int N>
 void NurbsCurve<T,N>::deriveAtH(T u,int d, Vector< HPoint_nD<T,N> >& ders) const{
   int du = minimum(d,deg_) ;
   int span ;
@@ -2858,7 +2866,7 @@ void NurbsCurve<T,D>::globalInterp(const Vector< Point_nD<T,D> >& Q, const Vecto
 
 
   resize(Q.n(),d) ;
-  Matrix_DOUBLE A(Q.n(),Q.n()) ;
+  Matrix<T> A(Q.n(), Q.n());
 
   knotAveraging(ub,d,U) ;
 
@@ -2875,14 +2883,15 @@ void NurbsCurve<T,D>::globalInterp(const Vector< Point_nD<T,D> >& Q, const Vecto
   A(Q.n()-1,Q.n()-1) = 1.0 ;
 
   // Init matrix for LSE
-  Matrix_DOUBLE qq(Q.n(),D) ;
-  Matrix_DOUBLE xx(Q.n(),D) ;
+  Matrix<T> qq(Q.n(), D);
+  Matrix<T> xx(Q.n(), D);
   for(i=0;i<Q.n();i++){
     const Point_nD<T,D>& qp = Q[i] ; // this makes the SGI compiler happy
     for(j=0; j<D;j++)
       qq(i,j) = (double)qp.data[j] ;
   }
 
+  //TODO: add same routine as in the globalInterpH-case
   solve(A,qq,xx) ;
 
   // Store the data
@@ -3101,6 +3110,94 @@ void NurbsCurve<T,nD>::globalInterpD(const Vector< Point_nD<T,nD> >& Q, const Ve
 }
 
 /*!
+  \brief  computes the Inverse for the compution of the control-points
+
+  \param v  kind of "span"-vector
+  \param V  a valid knot-vector
+  \param p  the degree of the curve
+  
+  \warning v and V have to be valid 
+  \author Philippe Lavoie 
+  \date 3 September, 1997
+*/
+template <class T, int D>
+Matrix<T> NurbsCurve<T,D>::computeInverse(const Vector<T> &v, const Vector<T> &V, const int p){  //changed 
+
+  int i,j;
+  int iN = V.n()-p-1;
+
+  resize(iN,p); //so findSpan works ... V has to be a valid knot-vector!!!!
+
+  U = V;
+
+  Matrix<T> A(iN,iN);
+
+ 
+  // Initialize the basis matrix A
+  Vector<T> N(p+1) ;
+
+  for(i=1;i<iN-1;i++){
+    int span = findSpan(v[i]);
+    basisFuns(v[i],span,N) ;
+    for(j=0;j<=p;j++) 
+	A(i,span-p+j) = (double)N[j] ;
+  }
+  A(0,0)  = 1.0 ;
+  A(iN-1,iN-1) = 1.0 ;
+
+  Inverse = inverse(A);
+  
+//  LUMatrix<T> lu(A);
+//  Inverse = lu.inverse();
+  Inverse_setted=1;
+  return Inverse;
+
+}
+
+/*!
+  \brief  computes the Inverse for the compution of the control-points on a closed curve
+
+  \param v  kind of "span"-vector
+  \param V  a valid knot-vector
+  \param p  the degree of the curve
+  
+  \warning v and V have to be valid 
+  \author Philippe Lavoie 
+  \date 3 September, 1997
+*/
+template <class T, int D>
+Matrix<T> NurbsCurve<T,D>::computeInverseClosed(const Vector<T> &v, const Vector<T> &V, const int p){  //changed
+
+  int i,j ;
+  int iN = V.n() - p - 1 - p - 1;
+
+  resize(V.n()-p-1,p); //so findSpan works ... V has to be a valid knot-vector!!!!
+
+  U = V;
+
+  Matrix<T> A(iN+1,iN+1) ;
+
+
+  // Initialize the basis matrix A
+  Vector<T> N(p+1) ;
+
+  for(i=0;i<=iN;i++){
+    int span = findSpan(v[i]);
+    basisFuns(v[i],span,N) ;
+    for(j=span-p;j<=span;j++) 
+      A(i,j%(iN+1)) = (double)N[j-span+p] ;
+  }
+
+  Inverse = inverse(A);
+
+//  LUMatrix<T> lu(A);
+//  Inverse = lu.inverse();
+  Inverse_setted=1;
+  return Inverse;
+}
+
+
+/*!
   \brief global curve interpolation with points in 4D
 
   Global curve interpolation with points in 4D
@@ -3119,7 +3216,7 @@ void NurbsCurve<T,D>::globalInterpH(const Vector< HPoint_nD<T,D> >& Q, int d){
   int i,j ;
 
   resize(Q.n(),d) ;
-  Matrix_DOUBLE A(Q.n(),Q.n()) ;
+//  Matrix<T> A(Q.n(), Q.n());
   Vector<T> ub(Q.n()) ;
 
   chordLengthParamH(Q,ub) ;
@@ -3136,34 +3233,36 @@ void NurbsCurve<T,D>::globalInterpH(const Vector< HPoint_nD<T,D> >& Q, int d){
     U[j+deg_] = t/(T)deg_ ;
   }
   
-  // Initialize the basis matrix A
-  Vector<T> N(deg_+1) ;
+  globalInterpH(Q,ub,U,d);
 
-  for(i=1;i<Q.n()-1;i++){
-    int span = findSpan(ub[i]);
-    basisFuns(ub[i],span,N) ;
-    for(j=0;j<=deg_;j++) 
-	A(i,span-deg_+j) = (double)N[j] ;
+//  // Initialize the basis matrix A
+//  Vector < T > N(deg_ + 1);
+//
+//  for (i = 1; i < Q.n() - 1; i++) {
+//    int span = findSpan(ub[i]);
+//    basisFuns(ub[i], span, N);
+//    for (j = 0; j <= deg_; j++)
+//      A(i, span - deg_ + j) = (double) N[j];
+//  }
+//  A(0, 0) = 1.0;
+//  A(Q.n() - 1, Q.n() - 1) = 1.0;
+//
+//  // Init matrix for LSE
+//  Matrix<T> qq(Q.n(), D + 1);
+//  Matrix<T> xx(Q.n(), D + 1);
+//  for (i = 0; i < Q.n(); i++)
+//    for (j = 0; j < D + 1; j++)
+//      qq(i, j) = (double) Q[i].data[j];
+//
+//  SVDMatrix<double> svd(A);
+//  svd.solve(qq, xx);
+//
+//  // Store the data
+//  for (i = 0; i < xx.rows(); i++) {
+//    for (j = 0; j < D + 1; j++)
+//      P[i].data[j] = (T) xx(i, j);
   }
-  A(0,0)  = 1.0 ;
-  A(Q.n()-1,Q.n()-1) = 1.0 ;
 
-  // Init matrix for LSE
-  Matrix_DOUBLE qq(Q.n(),D+1) ;
-  Matrix_DOUBLE xx(Q.n(),D+1) ;
-  for(i=0;i<Q.n();i++)
-    for(j=0; j<D+1;j++)
-      qq(i,j) = (double)Q[i].data[j] ;
-
-  solve(A,qq,xx) ;
-
-  // Store the data
-  for(i=0;i<xx.rows();i++){
-    for(j=0;j<D+1;j++)
-      P[i].data[j] = (T)xx(i,j) ;
-  }
-
-}
 
 /*!
   \brief global curve interpolation with 4D points and a knot vector defined.
@@ -3186,7 +3285,7 @@ void NurbsCurve<T,D>::globalInterpH(const Vector< HPoint_nD<T,D> >& Q, const Vec
   int i,j ;
 
   resize(Q.n(),d) ;
-  Matrix_DOUBLE A(Q.n(),Q.n()) ;
+  Matrix<T> A(Q.n(), Q.n());
   Vector<T> ub(Q.n()) ;
 
   if(Uc.n() != U.n()){
@@ -3202,34 +3301,36 @@ void NurbsCurve<T,D>::globalInterpH(const Vector< HPoint_nD<T,D> >& Q, const Vec
   U = Uc ;
   chordLengthParamH(Q,ub) ;
   
-  // Initialize the basis matrix A
-  Vector<T> N(deg_+1) ;
+  globalInterpH(Q,ub,Uc,d);
 
-  for(i=1;i<Q.n()-1;i++){
-    int span = findSpan(ub[i]);
-    basisFuns(ub[i],span,N) ;
-    for(j=0;j<=deg_;j++) 
-	A(i,span-deg_+j) = (double)N[j] ;
+//  // Initialize the basis matrix A
+//  Vector < T > N(deg_ + 1);
+//
+//  for (i = 1; i < Q.n() - 1; i++) {
+//    int span = findSpan(ub[i]);
+//    basisFuns(ub[i], span, N);
+//    for (j = 0; j <= deg_; j++)
+//      A(i, span - deg_ + j) = (double) N[j];
+//  }
+//  A(0, 0) = 1.0;
+//  A(Q.n() - 1, Q.n() - 1) = 1.0;
+//
+//  // Init matrix for LSE
+//  Matrix<T> qq(Q.n(), D + 1);
+//  Matrix<T> xx(Q.n(), D + 1);
+//  for (i = 0; i < Q.n(); i++)
+//    for (j = 0; j < D + 1; j++)
+//      qq(i, j) = (double) Q[i].data[j];
+//
+//  SVDMatrix<double> svd(A);
+//  svd.solve(qq, xx);
+//
+//  // Store the data
+//  for (i = 0; i < xx.rows(); i++) {
+//    for (j = 0; j < D + 1; j++)
+//      P[i].data[j] = (T) xx(i, j);
   }
-  A(0,0)  = 1.0 ;
-  A(Q.n()-1,Q.n()-1) = 1.0 ;
 
-  // Init matrix for LSE
-  Matrix_DOUBLE qq(Q.n(),D+1) ;
-  Matrix_DOUBLE xx(Q.n(),D+1) ;
-  for(i=0;i<Q.n();i++)
-    for(j=0; j<D+1;j++)
-      qq(i,j) = (double)Q[i].data[j] ;
-
-  solve(A,qq,xx) ;
-
-  // Store the data
-  for(i=0;i<xx.rows();i++){
-    for(j=0;j<D+1;j++)
-      P[i].data[j] = (T)xx(i,j) ;
-  }
-
-}
 
 /*!
   \brief global curve interpolation with 4D points, 
@@ -3256,7 +3357,6 @@ void NurbsCurve<T,D>::globalInterpH(const Vector< HPoint_nD<T,D> >& Q, const Vec
   int i,j ;
 
   resize(Q.n(),d) ;
-  Matrix_DOUBLE A(Q.n(),Q.n()) ;
 
   if(Uc.n() != U.n()){
 #ifdef USE_EXCEPTION
@@ -3269,27 +3369,18 @@ void NurbsCurve<T,D>::globalInterpH(const Vector< HPoint_nD<T,D> >& Q, const Vec
 #endif
   }
   U = Uc ;
-  
-  // Initialize the basis matrix A
-  Vector<T> N(deg_+1) ;
-
-  for(i=1;i<Q.n()-1;i++){
-    int span = findSpan(ub[i]);
-    basisFuns(ub[i],span,N) ;
-    for(j=0;j<=deg_;j++) 
-	A(i,span-deg_+j) = (double)N[j] ;
-  }
-  A(0,0)  = 1.0 ;
-  A(Q.n()-1,Q.n()-1) = 1.0 ;
 
   // Init matrix for LSE
-  Matrix_DOUBLE qq(Q.n(),D+1) ;
-  Matrix_DOUBLE xx(Q.n(),D+1) ;
+  Matrix<T> qq(Q.n(),D+1) ;
+  Matrix<T> xx(Q.n(),D+1) ;
   for(i=0;i<Q.n();i++)
     for(j=0; j<D+1;j++)
       qq(i,j) = (double)Q[i].data[j] ;
 
-  solve(A,qq,xx) ;
+  if (Inverse_setted != 1) //changed
+    computeInverse(ub, Uc, d);
+
+  xx = Inverse * qq;
 
   // Store the data
   for(i=0;i<xx.rows();i++){
@@ -3958,14 +4049,14 @@ void nurbsDersBasisFuns(int n,T u, int span,  int deg, const Vector<T>& U, Matri
 
 
 /*!
-  \brief Decompose the curve into Bézier segments
+  \brief Decompose the curve into BÃ©zier segments
 
-  This function decomposes the curve into an array of 4D Bézier 
+  This function decomposes the curve into an array of 4D BÃ©zier 
   segments.
 
-  \param c  an array of Bézier segments
+  \param c  an array of BÃ©zier segments
 
-  \warning The end Bézier segments will not be valid if the NURBS curve 
+  \warning The end BÃ©zier segments will not be valid if the NURBS curve 
            is not clamped.
 
   \author Philippe Lavoie
@@ -5300,7 +5391,7 @@ BasicList<Point_nD<T,N> > NurbsCurve<T,N>::tesselate(T tolerance,BasicList<T> *u
   }
   else{
     for(int i=0;i<ca.n();++i){
-      list2 = ca[i].tesselate(tolerance,uk) ;
+      list2 = ca[i].tesselate(tolerance,uk);
 
       // remove the last point from the list to elliminate
       list.erase((BasicNode<Point_nD<T,N> >*)list.last()) ;
@@ -6606,12 +6697,15 @@ void NurbsCurve<T,D>::globalInterpClosedH(const Vector< HPoint_nD<T,D> >& Qw, co
 template <class T, int D>
 void NurbsCurve<T,D>::globalInterpClosed(const Vector< Point_nD<T,D> >& Qw,
 			const Vector<T>& ub, const Vector<T>& Uc, int d){
+			
+			cout << "WARNING: globalInterpClosed() doesn't work reliable. Use globalInterpClosedH() instead or better: try to find the cause of the problem!" << endl;
+			
   int i,j ;
 
   resize(Qw.n(),d) ;
 
   int iN = Qw.n() - d - 1;
-  Matrix_DOUBLE A(iN+1,iN+1) ;
+  Matrix<T> A(iN + 1, iN + 1);
   
   if(Uc.n() != U.n()){
 #ifdef USE_EXCEPTION
@@ -6636,8 +6730,8 @@ void NurbsCurve<T,D>::globalInterpClosed(const Vector< Point_nD<T,D> >& Qw,
   }
 
   // Init matrix for LSE
-  Matrix_DOUBLE qq(iN+1,D) ;
-  Matrix_DOUBLE xx(iN+1,D) ;
+  Matrix<T> qq(iN + 1, D);
+  Matrix<T> xx(iN + 1, D);
   for(i=0;i<=iN ;i++)
     for(j=0; j<D;j++)
       qq(i,j) = (double)Qw[i].data[j] ;
@@ -6646,8 +6740,11 @@ void NurbsCurve<T,D>::globalInterpClosed(const Vector< Point_nD<T,D> >& Qw,
   // using the SVD routine which works better when the system of
   // equations is very large (more than 50 points). Probably since in
   // this cases the system matrix A is very sparse.
-  SVDMatrix<double> svd(A) ;
-  svd.solve(qq,xx) ;
+
+  if (Inverse_setted != 1)
+    Inverse = computeInverseClosed(ub, Uc, d);
+
+  xx = Inverse * qq;
 
   // Store the data
   for(i=0;i<xx.rows();i++){
@@ -6689,7 +6786,6 @@ void NurbsCurve<T,D>::globalInterpClosedH(const Vector< HPoint_nD<T,D> >& Qw,
   resize(Qw.n(),d) ;
 
   int iN = Qw.n() - d - 1;
-  Matrix_DOUBLE A(iN+1,iN+1) ;
   
   if(Uc.n() != U.n()){
 #ifdef USE_EXCEPTION
@@ -6703,19 +6799,9 @@ void NurbsCurve<T,D>::globalInterpClosedH(const Vector< HPoint_nD<T,D> >& Qw,
   }
   U = Uc ;
 
-  // Initialize the basis matrix A
-  Vector<T> N(d+1) ;
-
-  for(i=0;i<=iN;i++){
-    int span = findSpan(ub[i]);
-    basisFuns(ub[i],span,N) ;
-    for(j=span-d;j<=span;j++) 
-      A(i,j%(iN+1)) = (double)N[j-span+d] ;
-  }
-
   // Init matrix for LSE
-  Matrix_DOUBLE qq(iN+1,D+1) ;
-  Matrix_DOUBLE xx(iN+1,D+1) ;
+  Matrix<T> qq(iN+1,D+1) ;
+  Matrix<T> xx(iN+1,D+1) ;
   for(i=0;i<=iN ;i++)
     for(j=0; j<D+1;j++)
       qq(i,j) = (double)Qw[i].data[j] ;
@@ -6724,8 +6810,11 @@ void NurbsCurve<T,D>::globalInterpClosedH(const Vector< HPoint_nD<T,D> >& Qw,
   // using the SVD routine which works better when the system of
   // equations is very large (more than 50 points). Probably since in
   // this cases the system matrix A is very sparse.
-  SVDMatrix<double> svd(A) ;
-  svd.solve(qq,xx) ;
+
+  if (Inverse_setted != 1)
+    Inverse = computeInverseClosed(ub, Uc, d);
+
+  xx = Inverse * qq;
 
   // Store the data
   for(i=0;i<xx.rows();i++){
@@ -6741,12 +6830,12 @@ void NurbsCurve<T,D>::globalInterpClosedH(const Vector< HPoint_nD<T,D> >& Qw,
 }
 
 /*!
-   \brief decompose the closed curve into Bézier segments
+   \brief decompose the closed curve into BÃ©zier segments
    
-   This function decomposes a closed curve into an array of Bézier 
+   This function decomposes a closed curve into an array of BÃ©zier 
    segments.
 
-   \param c an array of Bézier segments
+   \param c an array of BÃ©zier segments
 
    \author Alejandro Frangi
    \date 30 July 1998

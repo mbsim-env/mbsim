@@ -28,6 +28,8 @@
 #include "matrix_global.h"
 #include "matrixTool.h"
 
+#include <limits>
+
 /*!
  */
 namespace PLib {
@@ -253,7 +255,7 @@ namespace PLib {
     \date 14 May 1999
    */
   inline void Color::fromHSV(double h, double s, double v){
-    if(s==0.0){
+    if(abs(s)<std::numeric_limits<double>::epsilon()){
       r=g=b=0;
       return;
     }
