@@ -327,7 +327,6 @@ namespace MBSimFlexibleBody {
     FlexibleBodyContinuum<double>::updateh(t);
 
     /* rotational elements */
-    //#pragma omp parallel for schedule(static) shared(t) default(none) if((int)discretization.size()>4) 
     for(int i=0;i<(int)rotationDiscretization.size();i++) {
       try { rotationDiscretization[i]->computeh(qRotationElement[i],uRotationElement[i]); } // compute attributes of finite element
       catch(MBSimError error) { error.printExceptionMessage(); throw; }

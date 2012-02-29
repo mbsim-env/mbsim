@@ -9,9 +9,9 @@ using namespace MBSim;
 using namespace std;
 
 int main(int argc, char* argv[]) {
-#ifdef _OPENMP 
-    omp_set_num_threads(1);
-#endif
+//#ifdef _OPENMP 
+//    omp_set_num_threads(1);
+//#endif
 
   System *sys = new System("MBS");
 
