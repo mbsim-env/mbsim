@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2011 MBSim Development Team
+/* Copyright (C) 2004-2012 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -59,7 +59,7 @@ namespace MBSimFlexibleBody {
     /* Cardan angles */
     const Vec &Phi = qG(3,5);
     const Vec &Phit = qGt(3,5);
-    
+
     const double &alphat = qGt(3);
     const double &betat = qGt(4);
     const double &gammat = qGt(5);
@@ -68,11 +68,11 @@ namespace MBSimFlexibleBody {
     double sgamma = sin(qG(5));
     double cbeta = cos(qG(4));
     double cgamma = cos(qG(5));
-    
+
     Vec tangent = ag->computet(Phi);
     SqrMat dtangentdphi = ag->computetq(Phi);
     Vec tangentt = dtangentdphi*Phit;
-    
+
     Vec normal = ag->computen(Phi);
     SqrMat dnormaldphi = ag->computenq(Phi);
     Vec normaltt = dnormaldphi*Phit;
@@ -150,7 +150,7 @@ namespace MBSimFlexibleBody {
     dSDNdqGt(5) = -normal.T()*dtangentdphi.col(2)*l0;
     dSDNdqGt(6,8) = normal.copy();
     dSDNdqGt *= 2.*cEps1D*(deltaxt.T()*normal/l0 -normal.T()*tangentt);
- 
+
     Vec dSDBdqGt(9);
     dSDBdqGt(0,2) = -binormal.copy();
     dSDBdqGt(3) = -binormal.T()*dtangentdphi.col(0)*l0;
@@ -158,7 +158,7 @@ namespace MBSimFlexibleBody {
     dSDBdqGt(5) = -binormal.T()*dtangentdphi.col(2)*l0;
     dSDBdqGt(6,8) = binormal.copy();
     dSDBdqGt *= 2.*cEps2D*(deltax.T()*binormal/l0 - binormal.T()*tangentt);
- 
+
     Vec dSDdqGt = dSDTdqGt + dSDNdqGt + dSDBdqGt;
 
     /* generalized forces */
@@ -169,7 +169,7 @@ namespace MBSimFlexibleBody {
   double FiniteElement1s33CosseratTranslation::computeKineticEnergy(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) {
     /* translational kinetic energy */
     double TT = 0.25*rho*A*l0*(pow(nrm2(qGt(0,2)),2.)+pow(nrm2(qGt(6,8)),2.)); 
-    
+
     /* Cardan angles */
     double sbeta = sin(qG(4));
     double sgamma = sin(qG(5));
@@ -183,7 +183,7 @@ namespace MBSimFlexibleBody {
     Itilde(0,2) = I2*sbeta;
     Itilde(1,1) = (I0*sgamma*sgamma + I1*cgamma*cgamma);
     Itilde(2,2) = I2;
-    
+
     /* rotational kinetic energy */
     double TR = 0.5*rho*l0*qGt.T()(3,5)*Itilde*qGt(3,5); 
 
@@ -191,25 +191,25 @@ namespace MBSimFlexibleBody {
   }
 
   double FiniteElement1s33CosseratTranslation::computeGravitationalEnergy(const fmatvec::Vec& qG) {
-   return -0.5*rho*A*l0*g.T()*(qG(0,2)+qG(6,8)); 
+    return -0.5*rho*A*l0*g.T()*(qG(0,2)+qG(6,8)); 
   }
 
   double FiniteElement1s33CosseratTranslation::computeElasticEnergy(const fmatvec::Vec& qG) {
     /* Cardan angles */
     const Vec &Phi = qG(3,5);
-    
+
     Vec tangent = ag->computet(Phi);
     Vec normal = ag->computen(Phi);
     Vec binormal = ag->computeb(Phi);
 
     /* position difference */
     Vec deltax = qG(6,8)-qG(0,2);
-   
+
     /* strain energy */
     return 0.5*(E*A*pow(tangent.T()*deltax-l0,2.) + G*sigma1*A*pow(normal.T()*deltax,2.) + G*sigma2*A*pow(binormal.T()*deltax,2.))/l0;
   }
 
-  const Vec& FiniteElement1s33CosseratTranslation::computeState(const Vec& qG, const Vec& qGt,double s) {
+  const Vec& FiniteElement1s33CosseratTranslation::computeStateTranslation(const Vec& qG, const Vec& qGt,double s) {
     X(0,2) = qG(0,2) + s*(qG(6,8)-qG(0,2))/l0; // position
     X(6,8) = qGt(0,2) + s*((qGt(6,8)-qGt(0,2))/l0); // velocity
 
@@ -218,7 +218,7 @@ namespace MBSimFlexibleBody {
 
     return X;
   }
-      
+
   void FiniteElement1s33CosseratTranslation::initM() {
     /* constant mass matrix is just standard rigid body translational part */
     M(0,0) = 0.5*rho*A*l0;

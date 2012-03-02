@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2011 MBSim Development Team
+/* Copyright (C) 2004-2012 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -221,25 +221,33 @@ namespace MBSimFlexibleBody {
       FlexibleBody1s33Cosserat& operator=(const FlexibleBody1s33Cosserat&); // assignment operator
 
       /**
-       * \brief detect current finite element
+       * \brief detect current finite element (translation)
        * \param global parametrisation
        * \param local parametrisation
        * \param finite element number
        */
-      void BuildElement(const double& sGlobal, double& sLocal, int& currentElement);
-      
+      void BuildElementTranslation(const double& sGlobal, double& sLocal, int& currentElementTranslation);
+
+      /**
+       * \brief detect current finite element (rotation)
+       * \param global parametrisation
+       * \param local parametrisation
+       * \param finite element number
+       */
+      void BuildElementRotation(const double& sGlobal, double& slocal, int& currentElementRotation);
+
       /**
        * \brief initialize translational part of mass matrix and calculate Cholesky decomposition
        */
       void initM();
-      
+
       /**
        * \brief compute boundary conditions for rotation grid
        * first and last finite difference rotation beam element refer to values not directly given by dof in open structure
        * they have to be estimated in the following function
        */
       void computeBoundaryCondition();
-      
+
       /** 
        * \brief insert 'local' information in global vectors for rotation grid
        * \param number of finite element

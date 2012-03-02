@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2011 MBSim Development Team
+/* Copyright (C) 2004-2012 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -30,7 +30,7 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FiniteElement1s33CosseratRotation::FiniteElement1s33CosseratRotation(double l0_, double E_, double G_, double I1_, double I2_, double I0_, CardanPtr ag_) : l0(l0_), E(E_), G(G_), I1(I1_), I2(I2_), I0(I0_), k10(0.), k20(0.), h(9,INIT,0.), ag(ag_) {}
+  FiniteElement1s33CosseratRotation::FiniteElement1s33CosseratRotation(double l0_, double E_, double G_, double I1_, double I2_, double I0_, CardanPtr ag_) : l0(l0_), E(E_), G(G_), I1(I1_), I2(I2_), I0(I0_), k10(0.), k20(0.), h(9,INIT,0.), X(12,INIT,0.), ag(ag_) {}
 
   FiniteElement1s33CosseratRotation::~FiniteElement1s33CosseratRotation() {}
 
@@ -43,11 +43,11 @@ namespace MBSimFlexibleBody {
     /* angles */
     Vec phi = (qG(0,2)+qG(6,8))/2.;
     Vec dphids = (qG(6,8)-qG(0,2))/l0;
-    
+
     Vec tangent = ag->computet(phi);
     Vec normal = ag->computen(phi);
     Vec binormal = ag->computeb(phi);
-    
+
     SqrMat dtangentdphi = ag->computetq(phi);
     SqrMat dnormaldphi = ag->computenq(phi);
     SqrMat dbinormaldphi = ag->computebq(phi);
@@ -110,5 +110,14 @@ namespace MBSimFlexibleBody {
     return 0.5*l0*(G*I0*pow(binormal.T()*dnormaldphi*dphids,2.)+E*I1*pow(tangent.T()*dbinormaldphi*dphids-k10,2.)+E*I2*pow(normal.T()*dtangentdphi*dphids-k20,2.));
   }
 
+  const Vec& FiniteElement1s33CosseratRotation::computeStateRotation(const Vec& qG, const Vec& qGt, double s) {
+    X(0,2) = qG(3,5); // position
+    X(6,8) = qGt(3,5); // velocity    
+
+    X(3,5) = qG(0,2) + s*(qG(6,8)-qG(0,2))/l0; // angles
+    X(9,11) = qGt(0,2) + s*((qGt(6,8)-qGt(0,2))/l0); // time differentiated angles
+
+    return X;
+  }
 }
 
