@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2011 MBSim Development Team
+/* Copyright (C) 2004-2012 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -72,16 +72,19 @@ namespace MBSimFlexibleBody {
     }
 
     /* rotational elements */
-    if(openStructure) computeBoundaryCondition();
+    if(openStructure) {
+      computeBoundaryCondition();
+      Elements +=1;
+    }
 
-    for(int i=0;i<Elements+1;i++) {
+    for(int i=0;i<Elements;i++) {
       int j = 6*i; // start index in entire beam coordinates
 
-      if(i>0 && i<Elements) { // no problem case
+      if(i>0 && i<Elements-1) { // no problem case
         qRotationElement[i] = q(j-3,j+5); // staggered grid -> rotation offset 
         uRotationElement[i] = u(j-3,j+5);
       }
-      else if(i==0) { // first element 
+      else if(i==0) { // first element
         if(openStructure) { // open structure
           qRotationElement[i](0,2) = bound_ang_start;
           uRotationElement[i](0,2) = bound_ang_vel_start;
@@ -97,7 +100,7 @@ namespace MBSimFlexibleBody {
           else qRotationElement[i](2) += 2.*M_PI;
         }
       }
-      else if(i==Elements) { // last element
+      else if(i==Elements-1) { // last element
         if(openStructure) { // open structure
           qRotationElement[i](0,5) = q(j-3,j+2);
           uRotationElement[i](0,5) = u(j-3,j+2);
@@ -105,12 +108,12 @@ namespace MBSimFlexibleBody {
           uRotationElement[i](6,8) = bound_ang_vel_end;
         }
         else { // closed structure concerning gamma
-          qRotationElement[i](0,2) = q(j-3,j-1); 
-          uRotationElement[i](0,2) = u(j-3,j-1);
-          qRotationElement[i](3,8) = q(0,5);
-          uRotationElement[i](3,8) = u(0,5);
-          if(q(j-1)<q(5)) qRotationElement[i](8) -= 2.*M_PI;
-          else qRotationElement[i](8) += 2.*M_PI;
+          qRotationElement[i](0,5) = q(j-3,j+5); // TODO Dimension
+          uRotationElement[i](0,5) = u(j-3,j+5);
+          //qRotationElement[i](3,8) = q(0,2);
+          //uRotationElement[i](3,8) = u(0,5);
+          //if(q(j-1)<q(5)) qRotationElement[i](8) -= 2.*M_PI;
+          //else qRotationElement[i](8) += 2.*M_PI;
         }
       }
     }
@@ -118,7 +121,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s33Cosserat::GlobalVectorContribution(int n, const Vec& locVec,Vec& gloVec) {
     int j = 6*n; // start index in entire beam coordinates
-    
+
     if(n<Elements-1 || openStructure) {
       gloVec(j,j+8) += locVec;
     }
@@ -154,7 +157,7 @@ namespace MBSimFlexibleBody {
       gloMat(Index(0,2)) += locMat(Index(6,8));
     }
   }
-  
+
   void FlexibleBody1s33Cosserat::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
     if(cp.getContourParameterType() == CONTINUUM) { // frame on continuum
 #ifdef HAVE_NURBS
@@ -184,15 +187,15 @@ namespace MBSimFlexibleBody {
 
     if(cp.getContourParameterType() == CONTINUUM) { // frame on continuum
       double sLocal;
-      int currentElement;
-      BuildElement(cp.getLagrangeParameterPosition()(0), sLocal, currentElement); // compute parameters of affected FE
-      Mat Jtmp = static_cast<FiniteElement1s33CosseratTranslation*>(discretization[currentElement])->computeJacobianOfMotion(qElement[currentElement],sLocal); // this local ansatz yields continuous and finite wave propagation 
+      int currentElementTranslation;
+      BuildElementTranslation(cp.getLagrangeParameterPosition()(0), sLocal, currentElementTranslation); // compute parameters of affected FE
+      Mat Jtmp = static_cast<FiniteElement1s33CosseratTranslation*>(discretization[currentElementTranslation])->computeJacobianOfMotion(qElement[currentElementTranslation],sLocal); // this local ansatz yields continuous and finite wave propagation 
 
-      if(currentElement<Elements-1 || openStructure) {
-        Jacobian(Index(10*currentElement,10*currentElement+15),All) = Jtmp;
+      if(currentElementTranslation<Elements-1 || openStructure) {
+        Jacobian(Index(10*currentElementTranslation,10*currentElementTranslation+15),All) = Jtmp;
       }
       else { // last FE for closed structure
-        Jacobian(Index(10*currentElement,10*currentElement+9),All) = Jtmp(Index(0,9),All);
+        Jacobian(Index(10*currentElementTranslation,10*currentElementTranslation+9),All) = Jtmp(Index(0,9),All);
         Jacobian(Index(0,5),All) = Jtmp(Index(10,15),All);
       }
     }
@@ -276,7 +279,7 @@ namespace MBSimFlexibleBody {
 
       l0 = L / Elements;
       Vec g = frameOfReference->getOrientation().T()* MBSimEnvironment::getInstance()->getAccelerationOfGravity();
-      
+
       /* translational elements */
       for(int i=0;i<Elements;i++) {
         discretization.push_back(new FiniteElement1s33CosseratTranslation(l0,rho,A,E,G,I1,I2,I0,g,angle));
@@ -286,7 +289,7 @@ namespace MBSimFlexibleBody {
       }
 
       /* rotational elements */
-      for(int i=0;i<Elements+1;i++) { 
+      for(int i=0;i<Elements;i++) { 
         rotationDiscretization.push_back(new FiniteElement1s33CosseratRotation(l0,E,G,I1,I2,I0,angle));
         qRotationElement.push_back(Vec(rotationDiscretization[i]->getqSize(),INIT,0.));
         uRotationElement.push_back(Vec(rotationDiscretization[i]->getuSize(),INIT,0.));
@@ -398,40 +401,63 @@ namespace MBSimFlexibleBody {
   }
 
   Vec FlexibleBody1s33Cosserat::computeState(double sGlobal) {
-    double sLocal;
-    int currentElement;
-    BuildElement(sGlobal,sLocal,currentElement); // Lagrange parameter of affected FE
-    Vec temp = static_cast<FiniteElement1s33CosseratTranslation*> (discretization[currentElement])->computeState(qElement[currentElement],uElement[currentElement],sLocal);
+    double sLocalTranslation;
+    int currentElementTranslation;
+    BuildElementTranslation(sGlobal,sLocalTranslation,currentElementTranslation); // Lagrange parameter of translational element
+    Vec temp = static_cast<FiniteElement1s33CosseratTranslation*> (discretization[currentElementTranslation])->computeStateTranslation(qElement[currentElementTranslation],uElement[currentElementTranslation],sLocalTranslation);
+
+    double slocalRotation;
+    int currentElementRotation;
+    BuildElementRotation(sGlobal,slocalRotation,currentElementRotation);// Lagrange parameter of rotational element
+    Vec temp_Rotation = static_cast<FiniteElement1s33CosseratRotation*> (rotationDiscretization[currentElementRotation])->computeStateRotation(qElement[currentElementRotation],uElement[currentElementRotation],slocalRotation);
+
+    temp(3,5) = temp_Rotation(3,5);
+    temp(9,11) = temp_Rotation(9,11);
 
     //ContourPointData cp(sGlobal);
     //updateKinematicsForFrame(cp,position);
     //temp(0,2) = cp.getFrameOfReference().getPosition().copy();
     //updateKinematicsForFrame(cp,velocity);
     //temp(6,8) = cp.getFrameOfReference().getVelocity().copy();
+
     return temp.copy();
   }
 
-  void FlexibleBody1s33Cosserat::BuildElement(const double& sGlobal, double& sLocal,int& currentElement) {
+  void FlexibleBody1s33Cosserat::BuildElementTranslation(const double& sGlobal, double& sLocal,int& currentElementTranslation) {
     double remainder = fmod(sGlobal,L);
     if(openStructure && sGlobal >= L) remainder += L; // remainder \in (-eps,L+eps)
     if(!openStructure && sGlobal < 0.) remainder += L; // remainder \in [0,L)
 
-    currentElement = int(remainder/l0);
-    sLocal = remainder - (currentElement) * l0; // Lagrange-Parameter of the affected FE with sLocal==0 and sGlobal==0 at the beginning of the beam
-    
+    currentElementTranslation = int(remainder/l0);
+    sLocal = remainder - (currentElementTranslation) * l0; // Lagrange-Parameter of the affected FE with sLocal==0 and sGlobal==0 at the beginning of the beam
+
     assert(sLocal>-1e-8);
     assert(sLocal<l0+1e-8);
 
-    if(currentElement >= Elements && openStructure) { // contact solver computes to large sGlobal at the end of the entire beam is not considered only for open structure
-      currentElement = Elements - 1;
+    if(currentElementTranslation >= Elements && openStructure) { // contact solver computes to large sGlobal at the end of the entire beam is not considered only for open structure
+      currentElementTranslation = Elements - 1;
       sLocal += l0;
     }
   }
-  
+
+  void FlexibleBody1s33Cosserat::BuildElementRotation(const double& sGlobal, double& slocal,int& currentElementRotation) { // TODO ueberpruefen!
+    double remainder = fmod(sGlobal,L);
+    if(openStructure && sGlobal >= L) remainder += L; // remainder \in (-eps,L+eps)
+    if(!openStructure && sGlobal < 0.) remainder += L; // remainder \in [0,L)
+
+    if(remainder < l0/2 || (L-remainder) < l0/2) currentElementRotation=0;
+    else currentElementRotation = int(((remainder-l0/2)/l0)+1);
+
+    if(currentElementRotation == 0 && remainder > l0/2) slocal = remainder-(currentElementRotation-0.5)*l0;
+    else if(currentElementRotation == 0 && remainder < l0) slocal = remainder;
+    else if(currentElementRotation != 0) slocal = remainder-(currentElementRotation-0.5)*l0;
+  }
+
   void FlexibleBody1s33Cosserat::initM() {
     for(int i=0;i<(int)discretization.size();i++) {
-      try { static_cast<FiniteElement1s33CosseratTranslation*>(discretization[i])->initM(); } // compute attributes of finite element
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
+      try { static_cast<FiniteElement1s33CosseratTranslation*>(discretization[i])->initM(); 
+        static_cast<FiniteElement1s33CosseratTranslation*>(discretization[i])->computeM(qElement[i]);} // compute attributes of finite element // TODO computeM ?
+        catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
     for(int i=0;i<(int)discretization.size();i++) GlobalMatrixContribution(i,discretization[i]->getM(),M[0]); // assemble
     for(int i=0;i<(int)discretization.size();i++) {
@@ -441,11 +467,11 @@ namespace MBSimFlexibleBody {
         LLM[0](Index(j+6,j+8)) = facLL(M[0](Index(j+6,j+8)));
     }
   }
-  
+
   void FlexibleBody1s33Cosserat::computeBoundaryCondition() {
     // TODO
   }
-  
+
   void FlexibleBody1s33Cosserat::GlobalVectorContributionRotation(int n, const Vec& locVec,Vec& gloVec) {
     int j = 6*n; // start index in entire beam coordinates
     if(n>0 && n<Elements) { // no problem case
@@ -461,7 +487,7 @@ namespace MBSimFlexibleBody {
         gloVec(q.size()-3,q.size()-1) += locVec(0,2);
       }
     }
-    else if(n==Elements) { // last element
+    /*else if(n==Elements) { // last element
       if(openStructure) { // open structure
         gloVec(j-3,j+2) += locVec(0,5);
         gloVec(j-3,j-1) += locVec(6,8); // TODO depends on computeBoundaryConditions()
@@ -470,8 +496,7 @@ namespace MBSimFlexibleBody {
         gloVec(j-3,j-1) += locVec(0,2); 
         gloVec(0,5) += locVec(3,8);
       }
-    }
+    }*/ // TODO check
   }
-
 }
 

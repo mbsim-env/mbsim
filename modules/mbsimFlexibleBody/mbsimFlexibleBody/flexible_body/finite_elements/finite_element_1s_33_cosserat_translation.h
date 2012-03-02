@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2011 MBSim Development Team
+/* Copyright (C) 2004-2012 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -106,8 +106,8 @@ namespace MBSimFlexibleBody {
        * \param global velocities
        * \param LAGRANGIAN parameter in [0,l0]
        */
-      const fmatvec::Vec& computeState(const fmatvec::Vec& qG, const fmatvec::Vec& qGt, double s);
-      
+      const fmatvec::Vec& computeStateTranslation(const fmatvec::Vec& qG, const fmatvec::Vec& qGt, double s);
+
       /**
        * \brief compute JACOBIAN of contact description in global coordinates
        * \param global coordinates
@@ -181,12 +181,12 @@ namespace MBSimFlexibleBody {
        * \brief state at Lagrangian coordinate
        */
       fmatvec::Vec X;
-      
+
       /**
        * \brief Cardan-object 
        */
       CardanPtr ag;
-      
+
       FiniteElement1s33CosseratTranslation(); // standard constructor
       FiniteElement1s33CosseratTranslation(const FiniteElement1s33CosseratTranslation&); // copy constructor
       FiniteElement1s33CosseratTranslation& operator=(const FiniteElement1s33CosseratTranslation&); // assignment operator
