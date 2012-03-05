@@ -108,9 +108,9 @@ namespace MBSimFlexibleBody {
           uRotationElement[i](6,8) = bound_ang_vel_end;
         }
         else { // closed structure concerning gamma
-          qRotationElement[i](0,5) = q(j-3,j+5); // TODO Dimension
-          uRotationElement[i](0,5) = u(j-3,j+5);
-          //qRotationElement[i](3,8) = q(0,2);
+          qRotationElement[i] = q(j-3,j+5);
+          uRotationElement[i] = u(j-3,j+5);
+          //qRotationElement[i](3,8) = q(0,5);  // TODO delete
           //uRotationElement[i](3,8) = u(0,5);
           //if(q(j-1)<q(5)) qRotationElement[i](8) -= 2.*M_PI;
           //else qRotationElement[i](8) += 2.*M_PI;
@@ -456,7 +456,7 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s33Cosserat::initM() {
     for(int i=0;i<(int)discretization.size();i++) {
       try { static_cast<FiniteElement1s33CosseratTranslation*>(discretization[i])->initM(); 
-        static_cast<FiniteElement1s33CosseratTranslation*>(discretization[i])->computeM(qElement[i]);} // compute attributes of finite element // TODO computeM ?
+        static_cast<FiniteElement1s33CosseratTranslation*>(discretization[i])->computeM(qElement[i]); } // compute attributes of finite element
         catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
     for(int i=0;i<(int)discretization.size();i++) GlobalMatrixContribution(i,discretization[i]->getM(),M[0]); // assemble
