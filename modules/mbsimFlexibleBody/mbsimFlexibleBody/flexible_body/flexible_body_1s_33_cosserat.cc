@@ -411,8 +411,8 @@ namespace MBSimFlexibleBody {
     BuildElementRotation(sGlobal,slocalRotation,currentElementRotation);// Lagrange parameter of rotational element
     Vec temp_Rotation = static_cast<FiniteElement1s33CosseratRotation*> (rotationDiscretization[currentElementRotation])->computeStateRotation(qElement[currentElementRotation],uElement[currentElementRotation],slocalRotation);
 
-    temp(3,5) = temp_Rotation(3,5);
-    temp(9,11) = temp_Rotation(9,11);
+    //temp(3,5) = temp_Rotation(3,5);  // TODO
+    //temp(9,11) = temp_Rotation(9,11);
 
     //ContourPointData cp(sGlobal);
     //updateKinematicsForFrame(cp,position);
@@ -496,7 +496,7 @@ namespace MBSimFlexibleBody {
         gloVec(j-3,j-1) += locVec(0,2); 
         gloVec(0,5) += locVec(3,8);
       }
-    }*/ // TODO check
+    }*/ // TODO check n \in {0, ... , Elements-1}
   }
 }
 
