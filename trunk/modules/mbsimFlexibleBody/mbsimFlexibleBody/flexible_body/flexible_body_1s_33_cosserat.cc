@@ -39,7 +39,7 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FlexibleBody1s33Cosserat::FlexibleBody1s33Cosserat(const string &name, bool openStructure_) : FlexibleBodyContinuum<double> (name), cylinder(new CylinderFlexible("Cylinder")), top(new FlexibleBand("Top")), bottom(new FlexibleBand("Bottom")), left(new FlexibleBand("Left")), right(new FlexibleBand("Right")), angle(new Cardan()), Elements(0), L(0.), l0(0.), E(0.), G(0.),A(0.), I1(0.), I2(0.), I0(0.), rho(0.), R1(0.), R2(0.), cEps0D(0.), cEps1D(0.), cEps2D(0.), openStructure(openStructure_), initialised(false), bound_ang_start(3,INIT,0.), bound_ang_end(3,INIT,0.), bound_ang_vel_start(3,INIT,0.), bound_ang_vel_end(3,INIT,0.), cuboidBreadth(0.), cuboidHeight(0.), cylinderRadius(0.), curve(new NurbsCurve1s("Curve")) {
+  FlexibleBody1s33Cosserat::FlexibleBody1s33Cosserat(const string &name, bool openStructure_) : FlexibleBodyContinuum<double> (name), cylinder(new CylinderFlexible("Cylinder")), top(new FlexibleBand("Top")), bottom(new FlexibleBand("Bottom")), left(new FlexibleBand("Left")), right(new FlexibleBand("Right")), angle(new Cardan()), Elements(0), rotationalElements(0), L(0.), l0(0.), E(0.), G(0.),A(0.), I1(0.), I2(0.), I0(0.), rho(0.), R1(0.), R2(0.), cEps0D(0.), cEps1D(0.), cEps2D(0.), openStructure(openStructure_), initialised(false), bound_ang_start(3,INIT,0.), bound_ang_end(3,INIT,0.), bound_ang_vel_start(3,INIT,0.), bound_ang_vel_end(3,INIT,0.), cuboidBreadth(0.), cuboidHeight(0.), cylinderRadius(0.), curve(new NurbsCurve1s("Curve")) {
     Body::addContour(cylinder);
     Body::addContour(top);
     Body::addContour(bottom);
@@ -72,15 +72,13 @@ namespace MBSimFlexibleBody {
     }
 
     /* rotational elements */
-    if(openStructure) {
+    if(openStructure)
       computeBoundaryCondition();
-      Elements +=1;
-    }
 
-    for(int i=0;i<Elements;i++) {
+    for(int i=0;i<rotationalElements;i++) {
       int j = 6*i; // start index in entire beam coordinates
 
-      if(i>0 && i<Elements-1) { // no problem case
+      if(i>0 && i<rotationalElements-1) { // no problem case
         qRotationElement[i] = q(j-3,j+5); // staggered grid -> rotation offset 
         uRotationElement[i] = u(j-3,j+5);
       }
@@ -100,7 +98,7 @@ namespace MBSimFlexibleBody {
           else qRotationElement[i](2) += 2.*M_PI;
         }
       }
-      else if(i==Elements-1) { // last element
+      else if(i==rotationalElements-1) { // last element
         if(openStructure) { // open structure
           qRotationElement[i](0,5) = q(j-3,j+2);
           uRotationElement[i](0,5) = u(j-3,j+2);
@@ -110,10 +108,6 @@ namespace MBSimFlexibleBody {
         else { // closed structure concerning gamma
           qRotationElement[i] = q(j-3,j+5);
           uRotationElement[i] = u(j-3,j+5);
-          //qRotationElement[i](3,8) = q(0,5);  // TODO delete
-          //uRotationElement[i](3,8) = u(0,5);
-          //if(q(j-1)<q(5)) qRotationElement[i](8) -= 2.*M_PI;
-          //else qRotationElement[i](8) += 2.*M_PI;
         }
       }
     }
@@ -289,7 +283,7 @@ namespace MBSimFlexibleBody {
       }
 
       /* rotational elements */
-      for(int i=0;i<Elements;i++) { 
+      for(int i=0;i<rotationalElements;i++) {
         rotationDiscretization.push_back(new FiniteElement1s33CosseratRotation(l0,E,G,I1,I2,I0,angle));
         qRotationElement.push_back(Vec(rotationDiscretization[i]->getqSize(),INIT,0.));
         uRotationElement.push_back(Vec(rotationDiscretization[i]->getuSize(),INIT,0.));
@@ -372,7 +366,11 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s33Cosserat::setNumberElements(int n) {
     Elements = n;
-    if(openStructure) qSize = 6*n+3;
+    rotationalElements = n;
+    if(openStructure) {
+      qSize = 6*n+3;
+      rotationalElements += 1;
+    }
     else qSize = 6*n;
 
     Vec q0Tmp(0,INIT,0.);
@@ -455,9 +453,8 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s33Cosserat::initM() {
     for(int i=0;i<(int)discretization.size();i++) {
-      try { static_cast<FiniteElement1s33CosseratTranslation*>(discretization[i])->initM(); 
-        static_cast<FiniteElement1s33CosseratTranslation*>(discretization[i])->computeM(qElement[i]); } // compute attributes of finite element
-        catch(MBSimError error) { error.printExceptionMessage(); throw; }
+      try { static_cast<FiniteElement1s33CosseratTranslation*>(discretization[i])->initM(); } // compute attributes of finite element
+      catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
     for(int i=0;i<(int)discretization.size();i++) GlobalMatrixContribution(i,discretization[i]->getM(),M[0]); // assemble
     for(int i=0;i<(int)discretization.size();i++) {
@@ -474,7 +471,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s33Cosserat::GlobalVectorContributionRotation(int n, const Vec& locVec,Vec& gloVec) {
     int j = 6*n; // start index in entire beam coordinates
-    if(n>0 && n<Elements) { // no problem case
+    if(n>0 && n<rotationalElements-1) { // no problem case
       gloVec(j-3,j+5) += locVec; // staggered grid -> rotation offset
     }
     else if(n==0) { // first element 
@@ -487,16 +484,15 @@ namespace MBSimFlexibleBody {
         gloVec(q.size()-3,q.size()-1) += locVec(0,2);
       }
     }
-    /*else if(n==Elements) { // last element
+    else if(n==rotationalElements-1) { // last element
       if(openStructure) { // open structure
         gloVec(j-3,j+2) += locVec(0,5);
         gloVec(j-3,j-1) += locVec(6,8); // TODO depends on computeBoundaryConditions()
       }
       else { // closed structure
-        gloVec(j-3,j-1) += locVec(0,2); 
-        gloVec(0,5) += locVec(3,8);
+        gloVec(j-3,j+5) += locVec;
       }
-    }*/ // TODO check n \in {0, ... , Elements-1}
+    }
   }
 }
 
