@@ -147,9 +147,14 @@ namespace MBSimFlexibleBody {
       CardanPtr angle;
 
       /**
-       * \brief number of elements
+       * \brief number of translational elements
        */
       int Elements;
+
+      /**
+       * \brief number of rotational elements =Elements (for a closed structure) or =Elements+1 (for an open structure)
+       */
+      int rotationalElements;
 
       /**
        * \brief length of entire beam and finite elements
