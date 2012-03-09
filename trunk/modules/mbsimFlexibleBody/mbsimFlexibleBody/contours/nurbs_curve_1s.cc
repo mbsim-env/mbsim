@@ -49,14 +49,33 @@ namespace MBSimFlexibleBody {
 
   void NurbsCurve1s::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) {
 #ifdef HAVE_NURBS
-    if(ff==position) {
+    if(ff==position || ff==position_cosy || ff==all) {
       Point3Dd Tmppt = curveTranslations->pointAt(cp.getLagrangeParameterPosition()(0));
       cp.getFrameOfReference().getPosition()(0) = Tmppt.x();
       cp.getFrameOfReference().getPosition()(1) = Tmppt.y();
       cp.getFrameOfReference().getPosition()(2) = Tmppt.z();
     }
 
-    if(ff==velocity) {
+    if(ff==normal || ff==firstTangent || ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
+      Point3Dd tangent = curveTranslations->derive3D(cp.getLagrangeParameterPosition()(0), 1);
+      Point3Dd normal = curveTranslations->derive3D(cp.getLagrangeParameterPosition()(0), 2); // TODO check direction
+      normal /= norm(normal);
+      Point3Dd binormal = crossProduct(normal, tangent);
+      normal = crossProduct(tangent, binormal); // calculate normal again from cross product as second derivative is not normal to tangent
+      cp.getFrameOfReference().getOrientation().col(0)(0) = normal.x();
+      cp.getFrameOfReference().getOrientation().col(0)(1) = normal.y();
+      cp.getFrameOfReference().getOrientation().col(0)(2) = normal.z();
+
+      cp.getFrameOfReference().getOrientation().col(1)(0) = tangent.x();
+      cp.getFrameOfReference().getOrientation().col(1)(1) = tangent.y();
+      cp.getFrameOfReference().getOrientation().col(1)(2) = tangent.z();
+
+      cp.getFrameOfReference().getOrientation().col(2)(0) = binormal.x();
+      cp.getFrameOfReference().getOrientation().col(2)(1) = binormal.y();
+      cp.getFrameOfReference().getOrientation().col(2)(2) = binormal.z();
+    }
+
+    if(ff==velocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) {
       Point3Dd Tmpv = curveVelocities->pointAt(cp.getLagrangeParameterPosition()(0));
       cp.getFrameOfReference().getVelocity()(0) = Tmpv.x();
       cp.getFrameOfReference().getVelocity()(1) = Tmpv.y();
@@ -154,7 +173,7 @@ namespace MBSimFlexibleBody {
         static_cast<FlexibleBody1s33Cosserat*>(parent)->updateKinematicsForFrame(cp,velocity);
         Nodelist[i] = HPoint3Dd(cp.getFrameOfReference().getVelocity()(0),cp.getFrameOfReference().getVelocity()(1),cp.getFrameOfReference().getVelocity()(2),1);
       }
-      curveTranslations->globalInterpH(Nodelist, *uvec, *uVec, degU);
+      curveVelocities->globalInterpH(Nodelist, *uvec, *uVec, degU);
     }
     else {
       PLib::Vector<HPoint3Dd> Nodelist(Elements+degU);
@@ -166,7 +185,7 @@ namespace MBSimFlexibleBody {
       for(int i=0;i<degU;i++) {
         Nodelist[Elements+i] = Nodelist[i];
       }
-      curveTranslations->globalInterpClosedH(Nodelist, *uvec, *uVec, degU);
+      curveVelocities->globalInterpClosedH(Nodelist, *uvec, *uVec, degU);
     }
   }
 #endif

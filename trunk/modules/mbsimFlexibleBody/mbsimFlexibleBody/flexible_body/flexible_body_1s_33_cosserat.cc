@@ -159,10 +159,14 @@ namespace MBSimFlexibleBody {
 #endif
     }
     else if(cp.getContourParameterType() == NODE) { // frame on node
-      int node = cp.getNodeNumber();
+      int node = cp.getNodeNumber(); // TODO open structure different?
 
-      if(ff==position) cp.getFrameOfReference().setPosition(frameOfReference->getPosition() + frameOfReference->getOrientation()*q(6*node+0,6*node+2));
+      if(ff==position || ff==position_cosy || ff==all) cp.getFrameOfReference().setPosition(frameOfReference->getPosition() + frameOfReference->getOrientation()*q(6*node+0,6*node+2));
+      if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().col(1) = frameOfReference->getOrientation()*angle->computet(q(6*node+3,6*node+5)); // tangent
+      if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().col(0) = frameOfReference->getOrientation()*angle->computen(q(6*node+3,6*node+5)); // normal
+      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().col(2) = crossProduct(cp.getFrameOfReference().getOrientation().col(0),cp.getFrameOfReference().getOrientation().col(1)); // binormal (cartesian system)
       if(ff==velocity) cp.getFrameOfReference().setVelocity(frameOfReference->getOrientation()*u(6*node+0,6*node+2));
+      if(ff==angularVelocity || ff==velocities || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().setAngularVelocity(frameOfReference->getOrientation()*angle->computeOmega(q(6*node+3,6*node+5),u(6*node+3,6*node+5)));
     }
     else throw MBSimError("ERROR(FlexibleBody1s33Cosserat::updateKinematicsForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
 
