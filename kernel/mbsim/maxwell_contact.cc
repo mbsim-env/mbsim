@@ -228,7 +228,8 @@ namespace MBSim {
       }
     }
     //As last step: do init-step of LinkMechanics
-    LinkMechanics::init(stage);
+    if (stage != MBSim::plot)  //do not plot the standard values in Link mechanics --> already done in the single ContourPairings
+      LinkMechanics::init(stage);
   }
 
   void MaxwellContact::checkActiveg() {
