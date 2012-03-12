@@ -179,28 +179,21 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33Cosserat::updateJacobiansForFrame(ContourPointData &cp, Frame *frame) {
-    Index All(0,5);
-    Index One(0,2);
-    Mat Jacobian(qSize,6,INIT,0.);
-
-    if(cp.getContourParameterType() == CONTINUUM) { // frame on continuum
-      double sLocal;
-      int currentElementTranslation;
-      BuildElementTranslation(cp.getLagrangeParameterPosition()(0), sLocal, currentElementTranslation); // compute parameters of affected FE
-      Mat Jtmp = static_cast<FiniteElement1s33CosseratTranslation*>(discretization[currentElementTranslation])->computeJacobianOfMotion(qElement[currentElementTranslation],sLocal); // this local ansatz yields continuous and finite wave propagation 
-
-      if(currentElementTranslation<Elements-1 || openStructure) {
-        Jacobian(Index(10*currentElementTranslation,10*currentElementTranslation+15),All) = Jtmp;
-      }
-      else { // last FE for closed structure
-        Jacobian(Index(10*currentElementTranslation,10*currentElementTranslation+9),All) = Jtmp(Index(0,9),All);
-        Jacobian(Index(0,5),All) = Jtmp(Index(10,15),All);
-      }
+    if(cp.getContourParameterType() == CONTINUUM) { // force on continuum
+#ifdef HAVE_NURBS
+      curve->updateJacobiansForFrame(cp);
+#endif
     }
-    else throw MBSimError("ERROR(FlexibleBody1s33RCM::updateJacobiansForFrame): ContourPointDataType should be 'CONTINUUM'");
+    else if(cp.getContourParameterType() == NODE) { // force on node
+      int node = cp.getNodeNumber();
+      Mat Jacobian_trans(qSize,3,INIT,0.);
 
-    cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation()*Jacobian(0,0,qSize-1,2).T());
-    cp.getFrameOfReference().setJacobianOfRotation(frameOfReference->getOrientation()*Jacobian(0,3,qSize-1,5).T()); 
+      Jacobian_trans(Index(6*node,6*node+2),Index(0,2)) << SqrMat(3,EYE); // translation
+
+      cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation()*Jacobian_trans(0,0,qSize-1,2).T());
+    }
+    else throw MBSimError("ERROR(FlexibleBody1s33Cosserat::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
+
     // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
     // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
 
