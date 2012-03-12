@@ -148,7 +148,7 @@ for D in $EXAMPLES; do
     for H5F in $(cd reference && find -name "*.h5"); do
       for DS in $($(pkg-config hdf5serie --variable=bindir)/h5lsserie reference/$H5F | sed -nre "s|^.*\(Path: \"(.*)\"\)$|\1|p"); do
         P=$(echo $DS | sed -re "s|^.*\.h5/(.*)|\1|")
-        $H5DIFF --nan --relative=$RTOL --delta=$ATOL "$H5F" "reference/$H5F" "$P" "$P"
+        $H5DIFF --nan -p=$RTOL -d=$ATOL "$H5F" "reference/$H5F" "$P" "$P"
         RET=$?
         if [ $RET -ne 0 ]; then
           echo "EXAMPLE $DS FAILED DIFF WITH REFERENCE SOLUTION"
