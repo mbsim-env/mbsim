@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2011 MBSim Development Team
+/* Copyright (C) 2004-2012 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -123,6 +123,13 @@ namespace MBSimFlexibleBody {
       void computeCurveVelocities();
 #endif
 
+#ifdef HAVE_NURBS
+      /*!
+       * \brief interpolates the Jacobians of translation with the node-data from the body
+       */
+      void computeCurveJacobians();
+#endif
+
     protected:
       /**
        * \brief number of elements
@@ -154,6 +161,16 @@ namespace MBSimFlexibleBody {
        * \brief interpolated velocities of the contour
        */
       PlNurbsCurved *curveVelocities;
+
+      /**
+       * \brief Jacobians of finite element nodes
+       */
+      std::vector<MBSim::ContourPointData> jacobians; // size = number of interpolation points
+
+      /**
+       * \brief interpolated Jacobians of Translation of the contour
+       */
+      std::vector<PlNurbsCurved> CurveJacobiansOfTranslation; // size = number of generalized coordinates
 
       /**
        * \brief knot vector

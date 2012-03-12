@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2011 MBSim Development Team
+/* Copyright (C) 2004-2012 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -97,6 +97,14 @@ namespace MBSimFlexibleBody {
 
       curveTranslations = new PlNurbsCurved;
       curveVelocities = new PlNurbsCurved;
+      for(int i=0; i<Elements; i++) {
+        jacobians.push_back(ContourPointData(i));
+        jacobians[jacobians.size()-1].getFrameOfReference().getJacobianOfTranslation().resize();
+      }
+
+      for(int k=0; k<Elements*3; k++) {
+        CurveJacobiansOfTranslation.push_back(PlNurbsCurved());
+      }
 
       computeCurveTranslations();
     }
@@ -186,6 +194,32 @@ namespace MBSimFlexibleBody {
         Nodelist[Elements+i] = Nodelist[i];
       }
       curveVelocities->globalInterpClosedH(Nodelist, *uvec, *uVec, degU);
+    }
+  }
+#endif
+
+#ifdef HAVE_NURBS
+  void NurbsCurve1s::computeCurveJacobians() {
+    if(openStructure) { } // TODO
+    else {
+      PLib::Vector<HPoint3Dd> NodelistTrans(Elements+degU);
+
+      for(int i=0; i<Elements; i++) {
+        static_cast<FlexibleBody1s33Cosserat*>(parent)->updateJacobiansForFrame(jacobians[i]);
+      }
+      for(int k=0; k<Elements*3; k++) {
+        for(int i=0; i<Elements; i++) {
+          NodelistTrans[i] = HPoint3Dd(jacobians[i].getFrameOfReference().getJacobianOfTranslation()(0,k),
+              jacobians[i].getFrameOfReference().getJacobianOfTranslation()(1,k),
+              jacobians[i].getFrameOfReference().getJacobianOfTranslation()(2,k),
+              1);
+        }
+        for(int i=0;i<degU;i++) {
+          NodelistTrans[Elements+i] = NodelistTrans[i];
+        }
+
+        CurveJacobiansOfTranslation[k].globalInterpClosedH(NodelistTrans, *uVec, *uvec, degU);
+      }
     }
   }
 #endif
