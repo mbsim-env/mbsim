@@ -334,6 +334,7 @@ namespace MBSimFlexibleBody {
 #ifdef HAVE_NURBS
     curve->computeCurveTranslations();
     curve->computeCurveVelocities();
+    curve->computeCurveJacobians();
 #endif
   }
 
