@@ -84,6 +84,20 @@ namespace MBSimFlexibleBody {
 #endif
   }
 
+  void NurbsCurve1s::updateJacobiansForFrame(ContourPointData &cp, int j /*=0*/) {
+#ifdef HAVE_NURBS
+    cp.getFrameOfReference().getJacobianOfTranslation().resize(3,Elements*3);
+
+    for(int k=0; k<Elements*3; k++) {
+      Point3Dd TmpPtTrans = CurveJacobiansOfTranslation[k].pointAt(cp.getLagrangeParameterPosition()(0));
+
+      cp.getFrameOfReference().getJacobianOfTranslation().col(k)(0) = TmpPtTrans.x();
+      cp.getFrameOfReference().getJacobianOfTranslation().col(k)(1) = TmpPtTrans.y();
+      cp.getFrameOfReference().getJacobianOfTranslation().col(k)(2) = TmpPtTrans.z();
+    }
+#endif
+  }
+
 #ifdef HAVE_NURBS
   void NurbsCurve1s::initContourFromBody(InitStage stage) {
     if(stage==resize) {
@@ -218,7 +232,7 @@ namespace MBSimFlexibleBody {
           NodelistTrans[Elements+i] = NodelistTrans[i];
         }
 
-        CurveJacobiansOfTranslation[k].globalInterpClosedH(NodelistTrans, *uVec, *uvec, degU);
+        CurveJacobiansOfTranslation[k].globalInterpClosedH(NodelistTrans, *uvec, *uVec, degU);
       }
     }
   }
