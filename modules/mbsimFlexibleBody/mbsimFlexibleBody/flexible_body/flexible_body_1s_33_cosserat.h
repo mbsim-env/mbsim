@@ -42,6 +42,7 @@ namespace MBSimFlexibleBody {
    * \date 2011-09-10 initial commit (Thorsten Schindler)
    * \data 2011-10-08 basics derived and included (Thorsten Schindler)
    * \date 2011-10-12 rotation grid added (Thorsten Schindler)
+   * \date 2012-03-15 updateKinematicsForFrame and contact Jacobians (Cebulla / Schindler)
    * \todo compute boundary conditions TODO
    *
    * Cosserat model based on
@@ -109,6 +110,7 @@ namespace MBSimFlexibleBody {
 #endif
 
       int getNumberElements() const { return Elements; }   	
+      int getNumberDOFs() const { return qSize; }
       double getLength() const { return L; }
       bool isOpenStructure() const { return openStructure; }
       /***************************************************/

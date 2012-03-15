@@ -86,14 +86,20 @@ namespace MBSimFlexibleBody {
 
   void NurbsCurve1s::updateJacobiansForFrame(ContourPointData &cp, int j /*=0*/) {
 #ifdef HAVE_NURBS
-    cp.getFrameOfReference().getJacobianOfTranslation().resize(3,Elements*3);
+    cp.getFrameOfReference().getJacobianOfTranslation().resize(3,qSize);
+    cp.getFrameOfReference().getJacobianOfRotation().resize(3,qSize); // TODO open structure
 
-    for(int k=0; k<Elements*3; k++) {
+    for(int k=0; k<qSize; k++) {
       Point3Dd TmpPtTrans = CurveJacobiansOfTranslation[k].pointAt(cp.getLagrangeParameterPosition()(0));
+      Point3Dd TmpPtRot = CurveJacobiansOfRotation[k].pointAt(cp.getLagrangeParameterPosition()(0));
 
       cp.getFrameOfReference().getJacobianOfTranslation().col(k)(0) = TmpPtTrans.x();
       cp.getFrameOfReference().getJacobianOfTranslation().col(k)(1) = TmpPtTrans.y();
       cp.getFrameOfReference().getJacobianOfTranslation().col(k)(2) = TmpPtTrans.z();
+
+      cp.getFrameOfReference().getJacobianOfRotation().col(k)(0) = TmpPtRot.x();
+      cp.getFrameOfReference().getJacobianOfRotation().col(k)(1) = TmpPtRot.y();
+      cp.getFrameOfReference().getJacobianOfRotation().col(k)(2) = TmpPtRot.z();
     }
 #endif
   }
@@ -103,6 +109,7 @@ namespace MBSimFlexibleBody {
     if(stage==resize) {
       degU = 3;
       Elements = (static_cast<FlexibleBody1s33Cosserat*>(parent))->getNumberElements();
+      qSize = (static_cast<FlexibleBody1s33Cosserat*>(parent))->getNumberDOFs();
       openStructure = (static_cast<FlexibleBody1s33Cosserat*>(parent))->isOpenStructure();
       L = (static_cast<FlexibleBody1s33Cosserat*>(parent))->getLength();
 
@@ -111,19 +118,21 @@ namespace MBSimFlexibleBody {
 
       curveTranslations = new PlNurbsCurved;
       curveVelocities = new PlNurbsCurved;
-      for(int i=0; i<Elements; i++) {
-        jacobians.push_back(ContourPointData(i));
-        jacobians[jacobians.size()-1].getFrameOfReference().getJacobianOfTranslation().resize();
+      for(int i=0; i<Elements; i++) { // TODO openstructure: jacobians of Rotation different
+        jacobiansTrans.push_back(ContourPointData(i));
+        jacobiansRot.push_back(ContourPointData(i, STAGGEREDNODE)); // jacobians of rotation are on staggered grid
+        jacobiansTrans[jacobiansTrans.size()-1].getFrameOfReference().getJacobianOfTranslation().resize();
+        jacobiansRot[jacobiansRot.size()-1].getFrameOfReference().getJacobianOfRotation().resize();
       }
 
-      for(int k=0; k<Elements*3; k++) {
+      for(int k=0; k<qSize; k++) { // TODO openstructure: jacobians of Rotation different
         CurveJacobiansOfTranslation.push_back(PlNurbsCurved());
+        CurveJacobiansOfRotation.push_back(PlNurbsCurved());
       }
 
       computeCurveTranslations();
     }
-    else if(stage==worldFrameContourLocation)
-    {
+    else if(stage==worldFrameContourLocation) {
       R.getOrientation() = (static_cast<FlexibleBody1s33Cosserat*>(parent))->getFrameOfReference()->getOrientation();
       R.getPosition() = (static_cast<FlexibleBody1s33Cosserat*>(parent))->getFrameOfReference()->getPosition();
     }
@@ -217,22 +226,31 @@ namespace MBSimFlexibleBody {
     if(openStructure) { } // TODO
     else {
       PLib::Vector<HPoint3Dd> NodelistTrans(Elements+degU);
+      PLib::Vector<HPoint3Dd> NodelistRot(Elements+degU);
 
       for(int i=0; i<Elements; i++) {
-        static_cast<FlexibleBody1s33Cosserat*>(parent)->updateJacobiansForFrame(jacobians[i]);
+        static_cast<FlexibleBody1s33Cosserat*>(parent)->updateJacobiansForFrame(jacobiansTrans[i]);
+        static_cast<FlexibleBody1s33Cosserat*>(parent)->updateJacobiansForFrame(jacobiansRot[i]); // jacobians of rotation are on staggered grid
       }
-      for(int k=0; k<Elements*3; k++) {
+      for(int k=0; k<qSize; k++) {
         for(int i=0; i<Elements; i++) {
-          NodelistTrans[i] = HPoint3Dd(jacobians[i].getFrameOfReference().getJacobianOfTranslation()(0,k),
-              jacobians[i].getFrameOfReference().getJacobianOfTranslation()(1,k),
-              jacobians[i].getFrameOfReference().getJacobianOfTranslation()(2,k),
+          NodelistTrans[i] = HPoint3Dd(jacobiansTrans[i].getFrameOfReference().getJacobianOfTranslation()(0,k),
+              jacobiansTrans[i].getFrameOfReference().getJacobianOfTranslation()(1,k),
+              jacobiansTrans[i].getFrameOfReference().getJacobianOfTranslation()(2,k),
+              1);
+
+          NodelistRot[i] = HPoint3Dd(jacobiansRot[i].getFrameOfReference().getJacobianOfRotation()(0,k),
+              jacobiansRot[i].getFrameOfReference().getJacobianOfRotation()(1,k),
+              jacobiansRot[i].getFrameOfReference().getJacobianOfRotation()(2,k),
               1);
         }
         for(int i=0;i<degU;i++) {
           NodelistTrans[Elements+i] = NodelistTrans[i];
+          NodelistRot[Elements+i] = NodelistRot[i];
         }
 
         CurveJacobiansOfTranslation[k].globalInterpClosedH(NodelistTrans, *uvec, *uVec, degU);
+        CurveJacobiansOfRotation[k].globalInterpClosedH(NodelistRot, *uvec, *uVec, degU);
       }
     }
   }

@@ -27,7 +27,7 @@ namespace MBSim {
 
   class Point;
 
-  enum ContourParameterType { NODE, CONTINUUM, EXTINTERPOL };
+  enum ContourParameterType { NODE, STAGGEREDNODE, CONTINUUM, EXTINTERPOL };
 
   /**
    * \brief struct for data-management for single point on a contour to describe contact kinematics
@@ -35,6 +35,7 @@ namespace MBSim {
    * \date 2009-03-19 some comments (Thorsten Schindler)
    * \date 2009-04-02 Wn / Wt / WrOC deleted (Thorsten Schindler)
    * \date 2009-04-05 added specific constructors for arguments double and Vec (Schindler / Zander)
+   * \date 2012-03-14 added ContourParameterType for staggered grid and modified constructor for argument int (Cebulla)
    */
   class ContourPointData {
     public:
@@ -44,7 +45,7 @@ namespace MBSim {
       ContourPointData() : type(CONTINUUM), ID(0) {}
       ContourPointData(const double       &alpha_) : type(CONTINUUM), ID(0), alpha(1,fmatvec::INIT,alpha_) {}
       ContourPointData(const fmatvec::Vec &alpha_) : type(CONTINUUM), ID(0), alpha(alpha_) {}
-      ContourPointData(const int  &id_) : type(NODE), ID(id_) {}
+      ContourPointData(const int  &id_, const ContourParameterType type_ = NODE) : type(type_), ID(id_) {}
 
       /**
        * \brief destructor
