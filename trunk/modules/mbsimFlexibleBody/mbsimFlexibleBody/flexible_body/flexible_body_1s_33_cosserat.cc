@@ -190,9 +190,17 @@ namespace MBSimFlexibleBody {
 
       Jacobian_trans(Index(6*node,6*node+2),Index(0,2)) << SqrMat(3,EYE); // translation
 
-      cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation()*Jacobian_trans(0,0,qSize-1,2).T());
+      cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation()*Jacobian_trans.T());
     }
-    else throw MBSimError("ERROR(FlexibleBody1s33Cosserat::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
+    else if(cp.getContourParameterType() == STAGGEREDNODE) { // force on staggered node
+      int node = cp.getNodeNumber();
+      Mat Jacobian_rot(qSize,3,INIT,0.); // TODO open structure
+
+      Jacobian_rot(Index(6*node+3,6*node+5),Index(0,2)) << T(Index(6*node+3,6*node+5),Index(6*node+3,6*node+5)); // rotation TODO T is always equal to EYE ??
+
+      cp.getFrameOfReference().setJacobianOfRotation(frameOfReference->getOrientation()*Jacobian_rot.T());
+    }
+    else throw MBSimError("ERROR(FlexibleBody1s33Cosserat::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'STAGGEREDNODE' or 'CONTINUUM'");
 
     // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
     // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)

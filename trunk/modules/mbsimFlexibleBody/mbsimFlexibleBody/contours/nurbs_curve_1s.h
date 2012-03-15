@@ -61,6 +61,7 @@ namespace MBSimFlexibleBody {
    * \brief contour 1s flexible with NURBS parametrization
    * \author Thorsten Schindler
    * \date 2011-10-16 initial commit (Thorsten Schindler)
+   * \date 2012-03-15 updateKinematicsForFrame and contact Jacobians (Cebulla / Schindler)
    */
   class NurbsCurve1s : public MBSim::Contour1s {
     public:
@@ -137,6 +138,11 @@ namespace MBSimFlexibleBody {
       int Elements;
 
       /**
+       * \brief number of DOFs
+       */
+      int qSize;
+
+      /**
        * \brief open or closed beam structure
        */
       bool openStructure;
@@ -163,14 +169,24 @@ namespace MBSimFlexibleBody {
       PlNurbsCurved *curveVelocities;
 
       /**
-       * \brief Jacobians of finite element nodes
+       * \brief Jacobians of Translation of finite element nodes
        */
-      std::vector<MBSim::ContourPointData> jacobians; // size = number of interpolation points
+      std::vector<MBSim::ContourPointData> jacobiansTrans; // size = number of interpolation points
+
+      /**
+       * \brief Jacobians of Rotation of finite element nodes
+       */
+      std::vector<MBSim::ContourPointData> jacobiansRot; // size = number of interpolation points
 
       /**
        * \brief interpolated Jacobians of Translation of the contour
        */
       std::vector<PlNurbsCurved> CurveJacobiansOfTranslation; // size = number of generalized coordinates
+
+      /**
+       * \brief interpolated Jacobians of Rotation on the contour
+       */
+      std::vector<PlNurbsCurved> CurveJacobiansOfRotation; // size = number of generalized coordinates
 
       /**
        * \brief knot vector
