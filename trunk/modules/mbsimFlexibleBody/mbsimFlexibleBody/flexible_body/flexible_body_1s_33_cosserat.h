@@ -236,14 +236,6 @@ namespace MBSimFlexibleBody {
       void BuildElementTranslation(const double& sGlobal, double& sLocal, int& currentElementTranslation);
 
       /**
-       * \brief detect current finite element (rotation)
-       * \param global parametrisation
-       * \param local parametrisation
-       * \param finite element number
-       */
-      void BuildElementRotation(const double& sGlobal, double& slocal, int& currentElementRotation);
-
-      /**
        * \brief initialize translational part of mass matrix and calculate Cholesky decomposition
        */
       void initM();

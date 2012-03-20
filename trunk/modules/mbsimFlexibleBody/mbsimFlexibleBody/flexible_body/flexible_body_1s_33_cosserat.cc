@@ -165,7 +165,7 @@ namespace MBSimFlexibleBody {
       if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().col(1) = frameOfReference->getOrientation()*angle->computet(q(6*node+3,6*node+5)); // tangent
       if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().col(0) = frameOfReference->getOrientation()*angle->computen(q(6*node+3,6*node+5)); // normal
       if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().col(2) = crossProduct(cp.getFrameOfReference().getOrientation().col(0),cp.getFrameOfReference().getOrientation().col(1)); // binormal (cartesian system)
-      if(ff==velocity) cp.getFrameOfReference().setVelocity(frameOfReference->getOrientation()*u(6*node+0,6*node+2));
+      if(ff==velocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) cp.getFrameOfReference().setVelocity(frameOfReference->getOrientation()*u(6*node+0,6*node+2));
       if(ff==angularVelocity || ff==velocities || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().setAngularVelocity(frameOfReference->getOrientation()*angle->computeOmega(q(6*node+3,6*node+5),u(6*node+3,6*node+5)));
     }
     else throw MBSimError("ERROR(FlexibleBody1s33Cosserat::updateKinematicsForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
@@ -409,21 +409,14 @@ namespace MBSimFlexibleBody {
     double sLocalTranslation;
     int currentElementTranslation;
     BuildElementTranslation(sGlobal,sLocalTranslation,currentElementTranslation); // Lagrange parameter of translational element
-    Vec temp = static_cast<FiniteElement1s33CosseratTranslation*> (discretization[currentElementTranslation])->computeStateTranslation(qElement[currentElementTranslation],uElement[currentElementTranslation],sLocalTranslation);
+    Vec temp = static_cast<FiniteElement1s33CosseratTranslation*> (discretization[currentElementTranslation])->computeStateTranslation(qElement[currentElementTranslation],uElement[currentElementTranslation],sLocalTranslation); // TODO replace
 
-    double slocalRotation;
-    int currentElementRotation;
-    BuildElementRotation(sGlobal,slocalRotation,currentElementRotation);// Lagrange parameter of rotational element
-    Vec temp_Rotation = static_cast<FiniteElement1s33CosseratRotation*> (rotationDiscretization[currentElementRotation])->computeStateRotation(qElement[currentElementRotation],uElement[currentElementRotation],slocalRotation);
-
-    //temp(3,5) = temp_Rotation(3,5);  // TODO
-    //temp(9,11) = temp_Rotation(9,11);
-
-    //ContourPointData cp(sGlobal);
-    //updateKinematicsForFrame(cp,position);
-    //temp(0,2) = cp.getFrameOfReference().getPosition().copy();
-    //updateKinematicsForFrame(cp,velocity);
-    //temp(6,8) = cp.getFrameOfReference().getVelocity().copy();
+    ContourPointData cp(sGlobal);
+    updateKinematicsForFrame(cp,position);
+    temp(0,2) = cp.getFrameOfReference().getPosition().copy();
+    updateKinematicsForFrame(cp,velocities);
+    temp(6,8) = cp.getFrameOfReference().getVelocity().copy();
+    temp(9,11) = cp.getFrameOfReference().getAngularVelocity().copy();
 
     return temp.copy();
   }
@@ -443,19 +436,6 @@ namespace MBSimFlexibleBody {
       currentElementTranslation = Elements - 1;
       sLocal += l0;
     }
-  }
-
-  void FlexibleBody1s33Cosserat::BuildElementRotation(const double& sGlobal, double& slocal,int& currentElementRotation) { // TODO ueberpruefen!
-    double remainder = fmod(sGlobal,L);
-    if(openStructure && sGlobal >= L) remainder += L; // remainder \in (-eps,L+eps)
-    if(!openStructure && sGlobal < 0.) remainder += L; // remainder \in [0,L)
-
-    if(remainder < l0/2 || (L-remainder) < l0/2) currentElementRotation=0;
-    else currentElementRotation = int(((remainder-l0/2)/l0)+1);
-
-    if(currentElementRotation == 0 && remainder > l0/2) slocal = remainder-(currentElementRotation-0.5)*l0;
-    else if(currentElementRotation == 0 && remainder < l0) slocal = remainder;
-    else if(currentElementRotation != 0) slocal = remainder-(currentElementRotation-0.5)*l0;
   }
 
   void FlexibleBody1s33Cosserat::initM() {
