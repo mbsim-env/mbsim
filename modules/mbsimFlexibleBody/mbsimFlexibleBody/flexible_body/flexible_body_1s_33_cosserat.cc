@@ -195,8 +195,9 @@ namespace MBSimFlexibleBody {
     else if(cp.getContourParameterType() == STAGGEREDNODE) { // force on staggered node
       int node = cp.getNodeNumber();
       Mat Jacobian_rot(qSize,3,INIT,0.); // TODO open structure
+      Vec p = q(6*node+3,6*node+5);
 
-      Jacobian_rot(Index(6*node+3,6*node+5),Index(0,2)) << T(Index(6*node+3,6*node+5),Index(6*node+3,6*node+5)); // rotation TODO T is always equal to EYE ??
+      Jacobian_rot(Index(6*node+3,6*node+5),Index(0,2)) = angle->computeT(p); // rotation
 
       cp.getFrameOfReference().setJacobianOfRotation(frameOfReference->getOrientation()*Jacobian_rot.T());
     }
