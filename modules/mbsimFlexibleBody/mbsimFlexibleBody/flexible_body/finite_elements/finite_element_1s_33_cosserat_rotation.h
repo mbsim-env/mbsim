@@ -91,14 +91,6 @@ namespace MBSimFlexibleBody {
       double getl0() const;
 
       /**
-       * \brief compute state of finite element
-       * \param global coordinates
-       * \param global velocities
-       * \param LAGRANGIAN parameter in [0,l0]
-       */
-      const fmatvec::Vec& computeStateRotation(const fmatvec::Vec& qG, const fmatvec::Vec& qGt, double s);
-
-      /**
        * \brief compute JACOBIAN of contact description in global coordinates
        * \param global coordinates
        * \param LAGRANGIAN parameter

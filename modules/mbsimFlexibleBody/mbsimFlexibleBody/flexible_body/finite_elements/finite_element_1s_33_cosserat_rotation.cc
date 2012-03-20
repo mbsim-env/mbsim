@@ -109,15 +109,5 @@ namespace MBSimFlexibleBody {
 
     return 0.5*l0*(G*I0*pow(binormal.T()*dnormaldphi*dphids,2.)+E*I1*pow(tangent.T()*dbinormaldphi*dphids-k10,2.)+E*I2*pow(normal.T()*dtangentdphi*dphids-k20,2.));
   }
-
-  const Vec& FiniteElement1s33CosseratRotation::computeStateRotation(const Vec& qG, const Vec& qGt, double s) {
-    X(0,2) = qG(3,5); // position
-    X(6,8) = qGt(3,5); // velocity    
-
-    X(3,5) = qG(0,2) + s*(qG(6,8)-qG(0,2))/l0; // angles
-    X(9,11) = qGt(0,2) + s*((qGt(6,8)-qGt(0,2))/l0); // time differentiated angles
-
-    return X;
-  }
 }
 
