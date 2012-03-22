@@ -98,7 +98,7 @@ AC_SUBST([MBXMLUTILSDOCDIR],[$(pkg-config mbxmlutils --variable DOCDIR)])
 AC_SUBST([MBXMLUTILSSCHEMADIR],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
 AM_CONDITIONAL([COND_XML], [test "_$MBXMLUTILSSCHEMADIR" != "_"])
 
-AC_CONFIG_FILES([Makefile mbsim/Makefile mbsim/integrators/Makefile mbsim/contact_kinematics/Makefile mbsim/contours/Makefile mbsim/utils/Makefile doc/doxyfile doc/Makefile mbsim.pc mbsimtinyxml/Makefile schema/Makefile xmldoc/Makefile])
+AC_CONFIG_FILES([Makefile mbsim/Makefile mbsim/integrators/Makefile mbsim/contact_kinematics/Makefile mbsim/contours/Makefile mbsim/utils/Makefile mbsim/plot_elements/Makefile doc/doxyfile doc/Makefile mbsim.pc mbsimtinyxml/Makefile schema/Makefile xmldoc/Makefile])
 
 AC_OUTPUT
 
