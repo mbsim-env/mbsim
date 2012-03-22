@@ -56,45 +56,49 @@ namespace MBSim {
       if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
+          openMBVGrp=new OpenMBV::Group();
+          openMBVGrp->setName(name+"_Group");
+          openMBVGrp->setExpand(false);
+          parent->getOpenMBVGrp()->addObject(openMBVGrp);
           if(openMBVPosition) {
             openMBVPosition->setName(name+"_Position");
-            parent->getOpenMBVGrp()->addObject(openMBVPosition);
+            getOpenMBVGrp()->addObject(openMBVPosition);
           }
           if(openMBVVelocity) {
             openMBVVelocity->setName(name+"_Velocity");
-            parent->getOpenMBVGrp()->addObject(openMBVVelocity);
+            getOpenMBVGrp()->addObject(openMBVVelocity);
           }
           if(openMBVRadialVelocity) {
             openMBVRadialVelocity->setName(name+"_RadialVelocity");
-            parent->getOpenMBVGrp()->addObject(openMBVRadialVelocity);
+            getOpenMBVGrp()->addObject(openMBVRadialVelocity);
           }
           if(openMBVCircularVelocity) {
             openMBVCircularVelocity->setName(name+"_CircularVelocity");
-            parent->getOpenMBVGrp()->addObject(openMBVCircularVelocity);
+            getOpenMBVGrp()->addObject(openMBVCircularVelocity);
           }
           if(openMBVZVelocity) {
             openMBVZVelocity->setName(name+"_ZVelocity");
-            parent->getOpenMBVGrp()->addObject(openMBVZVelocity);
+            getOpenMBVGrp()->addObject(openMBVZVelocity);
           }
           if(openMBVAcceleration) {
             openMBVAcceleration->setName(name+"_Acceleration");
-            parent->getOpenMBVGrp()->addObject(openMBVAcceleration);
+            getOpenMBVGrp()->addObject(openMBVAcceleration);
           }
           if(openMBVRadialAcceleration) {
             openMBVRadialAcceleration->setName(name+"_RadialAcceleration");
-            parent->getOpenMBVGrp()->addObject(openMBVRadialAcceleration);
+            getOpenMBVGrp()->addObject(openMBVRadialAcceleration);
           }
           if(openMBVCircularAcceleration) {
             openMBVCircularAcceleration->setName(name+"_CircularAcceleration");
-            parent->getOpenMBVGrp()->addObject(openMBVCircularAcceleration);
+            getOpenMBVGrp()->addObject(openMBVCircularAcceleration);
           }
           if(openMBVZAcceleration) {
             openMBVZAcceleration->setName(name+"_ZAcceleration");
-            parent->getOpenMBVGrp()->addObject(openMBVZAcceleration);
+            getOpenMBVGrp()->addObject(openMBVZAcceleration);
           }
           if(openMBVFrame) {
             openMBVFrame->setName(name+"_Dreibein");
-            parent->getOpenMBVGrp()->addObject(openMBVFrame);
+            getOpenMBVGrp()->addObject(openMBVFrame);
           }
         }
 #endif

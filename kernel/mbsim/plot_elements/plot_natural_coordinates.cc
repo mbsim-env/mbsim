@@ -50,21 +50,25 @@ namespace MBSim {
       if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
+          openMBVGrp=new OpenMBV::Group();
+          openMBVGrp->setName(name+"_Group");
+          openMBVGrp->setExpand(false);
+          parent->getOpenMBVGrp()->addObject(openMBVGrp);
           if(openMBVPosition) {
             openMBVPosition->setName(name+"_Position");
-            parent->getOpenMBVGrp()->addObject(openMBVPosition);
+            getOpenMBVGrp()->addObject(openMBVPosition);
           }
           if(openMBVVelocity) {
             openMBVVelocity->setName(name+"_Velocity");
-            parent->getOpenMBVGrp()->addObject(openMBVVelocity);
+            getOpenMBVGrp()->addObject(openMBVVelocity);
           }
           if(openMBVTangentialAcceleration) {
             openMBVTangentialAcceleration->setName(name+"_TangentialAcceleration");
-            parent->getOpenMBVGrp()->addObject(openMBVTangentialAcceleration);
+            getOpenMBVGrp()->addObject(openMBVTangentialAcceleration);
             openMBVNormalAcceleration->setName(name+"_NormalAcceleration");
-            parent->getOpenMBVGrp()->addObject(openMBVNormalAcceleration);
+            getOpenMBVGrp()->addObject(openMBVNormalAcceleration);
             openMBVFrame->setName(name+"_Dreibein");
-            parent->getOpenMBVGrp()->addObject(openMBVFrame);
+            getOpenMBVGrp()->addObject(openMBVFrame);
           }
         }
 #endif

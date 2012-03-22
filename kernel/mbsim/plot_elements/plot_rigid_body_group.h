@@ -38,6 +38,7 @@ namespace MBSim {
       std::vector<RigidBody*> body;
       Frame* ref;
 #ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::Group* openMBVGrp;
       OpenMBV::Arrow *openMBVPosition, *openMBVVelocity, *openMBVAcceleration, *openMBVAngularVelocity, *openMBVAngularAcceleration, *openMBVWeight, *openMBVMomentum, *openMBVAngularMomentum, *openMBVDerivativeOfMomentum, *openMBVDerivativeOfAngularMomentum;
 #endif
 
@@ -50,6 +51,7 @@ namespace MBSim {
       virtual void plot(double t, double dt);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::Group* getOpenMBVGrp() { return openMBVGrp; }
       void enableOpenMBVWeight(double scaleLength, double diameter, double headDiameter, double headLength, double color=0.5); 
       void enableOpenMBVMomentum(double scaleLength, double diameter, double headDiameter, double headLength, double color=0.5); 
       void enableOpenMBVAngularMomentum(double scaleLength, double diameter, double headDiameter, double headLength, double color=0.5);

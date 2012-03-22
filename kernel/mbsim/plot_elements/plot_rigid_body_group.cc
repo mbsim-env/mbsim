@@ -55,45 +55,49 @@ namespace MBSim {
       if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
+          openMBVGrp=new OpenMBV::Group();
+          openMBVGrp->setName(name+"_Group");
+          openMBVGrp->setExpand(false);
+          parent->getOpenMBVGrp()->addObject(openMBVGrp);
           if(openMBVPosition) {
             openMBVPosition->setName(name+"_Position");
-            parent->getOpenMBVGrp()->addObject(openMBVPosition);
+            getOpenMBVGrp()->addObject(openMBVPosition);
           }
           if(openMBVVelocity) {
             openMBVVelocity->setName(name+"_Velocity");
-            parent->getOpenMBVGrp()->addObject(openMBVVelocity);
+            getOpenMBVGrp()->addObject(openMBVVelocity);
           }
           if(openMBVAcceleration) {
             openMBVAcceleration->setName(name+"_Acceleration");
-            parent->getOpenMBVGrp()->addObject(openMBVAcceleration);
+            getOpenMBVGrp()->addObject(openMBVAcceleration);
           }
           if(openMBVAngularVelocity) {
             openMBVAngularVelocity->setName(name+"_AngularVelocity");
-            parent->getOpenMBVGrp()->addObject(openMBVAngularVelocity);
+            getOpenMBVGrp()->addObject(openMBVAngularVelocity);
           }
           if(openMBVAngularAcceleration) {
             openMBVAngularAcceleration->setName(name+"_AngularAcceleration");
-            parent->getOpenMBVGrp()->addObject(openMBVAngularAcceleration);
+            getOpenMBVGrp()->addObject(openMBVAngularAcceleration);
           }
           if(openMBVWeight) {
             openMBVWeight->setName(name+"_Weight");
-            parent->getOpenMBVGrp()->addObject(openMBVWeight);
+            getOpenMBVGrp()->addObject(openMBVWeight);
           }
           if(openMBVMomentum) {
             openMBVMomentum->setName(name+"_Momentum");
-            parent->getOpenMBVGrp()->addObject(openMBVMomentum);
+            getOpenMBVGrp()->addObject(openMBVMomentum);
           }
           if(openMBVAngularMomentum) {
             openMBVAngularMomentum->setName(name+"_AngularMomentum");
-            parent->getOpenMBVGrp()->addObject(openMBVAngularMomentum);
+            getOpenMBVGrp()->addObject(openMBVAngularMomentum);
           }
           if(openMBVDerivativeOfMomentum) {
             openMBVDerivativeOfMomentum->setName(name+"_DerivativeOfMomentum");
-            parent->getOpenMBVGrp()->addObject(openMBVDerivativeOfMomentum);
+            getOpenMBVGrp()->addObject(openMBVDerivativeOfMomentum);
           }
           if(openMBVDerivativeOfAngularMomentum) {
             openMBVDerivativeOfAngularMomentum->setName(name+"_DerivativeOfAngularMomentum");
-            parent->getOpenMBVGrp()->addObject(openMBVDerivativeOfAngularMomentum);
+            getOpenMBVGrp()->addObject(openMBVDerivativeOfAngularMomentum);
           }
         }
 #endif
