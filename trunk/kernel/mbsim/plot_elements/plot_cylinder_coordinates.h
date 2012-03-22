@@ -26,6 +26,7 @@ namespace OpenMBV {
   //class Frame;
   class Arrow;
   class Frame;
+  class Group;
 }
 #endif
 
@@ -37,6 +38,7 @@ namespace MBSim {
     private:
       Frame* frame;
 #ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::Group* openMBVGrp;
       OpenMBV::Arrow *openMBVPosition, *openMBVVelocity, *openMBVRadialVelocity, *openMBVCircularVelocity, *openMBVZVelocity, *openMBVAcceleration, *openMBVRadialAcceleration, *openMBVCircularAcceleration, *openMBVZAcceleration; 
       OpenMBV::Frame* openMBVFrame;
       fmatvec::Vec roff, voff, aoff;
@@ -53,6 +55,7 @@ namespace MBSim {
       virtual void plot(double t, double dt);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::Group* getOpenMBVGrp() { return openMBVGrp; }
       void setvscale(double scale) { vscale = scale; }
       void setascale(double scale) { ascale = scale; }
       virtual void enableOpenMBVPosition(double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);

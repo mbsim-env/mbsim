@@ -37,6 +37,7 @@ namespace MBSim {
     private:
       Frame* frame;
 #ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::Group* openMBVGrp;
       OpenMBV::Arrow *openMBVPosition, *openMBVVelocity, *openMBVTangentialAcceleration, *openMBVNormalAcceleration, *openMBVAngularAcceleration;
       OpenMBV::Frame* openMBVFrame;
       fmatvec::Vec roff, voff, aoff;
@@ -51,7 +52,8 @@ namespace MBSim {
       virtual void plot(double t, double dt);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      virtual void enableOpenMBVPosition(double scale=1, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
+     OpenMBV::Group* getOpenMBVGrp() { return openMBVGrp; }
+     virtual void enableOpenMBVPosition(double scale=1, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
       virtual void enableOpenMBVVelocity(double scale=1, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
       virtual void enableOpenMBVAcceleration(double scale=1, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
 #endif
