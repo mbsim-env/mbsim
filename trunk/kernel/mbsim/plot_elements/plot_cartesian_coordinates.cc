@@ -180,8 +180,11 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
         Vec r = frame->getPosition();
-        Vec v = frame->getVelocity()*vscale;
-        Vec a = frame->getAcceleration()*ascale;
+        Vec v = frame->getVelocity();
+        Vec a = frame->getAcceleration();
+
+        v *= vscale;
+        a *= ascale;
 
         if(openMBVPosition && !openMBVPosition->isHDF5Link()) {
           vector<double> data;
