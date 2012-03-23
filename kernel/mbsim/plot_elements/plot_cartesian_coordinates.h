@@ -61,7 +61,7 @@ namespace MBSim {
       virtual void enableOpenMBVPosition(double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
       virtual void enableOpenMBVVelocity(double scale=1, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
       virtual void enableOpenMBVAcceleration(double scale=1, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
-      virtual void enableOpenMBVFrame(double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
+      virtual void enableOpenMBVFrame(double size=1, double offset=1);
 #endif
 
   };

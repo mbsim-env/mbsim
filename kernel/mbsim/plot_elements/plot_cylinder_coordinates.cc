@@ -166,10 +166,10 @@ namespace MBSim {
     ascale = scale;
   }
 
-  void PlotCylinderCoordinates::enableOpenMBVFrame(double diameter, double headDiameter, double headLength, double color) {
+  void PlotCylinderCoordinates::enableOpenMBVFrame(double size, double offset) {
     openMBVFrame=new OpenMBV::Frame;
-    openMBVFrame->setSize(1);
-    openMBVFrame->setOffset(1);
+    openMBVFrame->setSize(size);
+    openMBVFrame->setOffset(offset);
   }
 #endif
 
@@ -197,136 +197,144 @@ namespace MBSim {
         else
           ep = ep/nrmep;
         Vec er = crossProduct(ep,ez);
+
         if(openMBVPosition && !openMBVPosition->isHDF5Link()) {
           vector<double> data;
           data.push_back(t);
-          data.push_back(frame->getPosition()(0));
-          data.push_back(frame->getPosition()(1));
-          data.push_back(frame->getPosition()(2));
-          data.push_back(frame->getPosition()(0));
-          data.push_back(frame->getPosition()(1));
-          data.push_back(frame->getPosition()(2));
+          data.push_back(r(0));
+          data.push_back(r(1));
+          data.push_back(r(2));
+          data.push_back(r(0));
+          data.push_back(r(1));
+          data.push_back(r(2));
           data.push_back(0.5);
           openMBVPosition->append(data);
         }
+
         if(openMBVVelocity && !openMBVVelocity->isHDF5Link()) {
           vector<double> data;
           Vec off = v;
           data.push_back(t);
-          data.push_back(frame->getPosition()(0)+off(0));
-          data.push_back(frame->getPosition()(1)+off(1));
-          data.push_back(frame->getPosition()(2)+off(2));
+          data.push_back(r(0)+off(0));
+          data.push_back(r(1)+off(1));
+          data.push_back(r(2)+off(2));
           data.push_back(v(0));
           data.push_back(v(1));
           data.push_back(v(2));
           data.push_back(0.5);
           openMBVVelocity->append(data);
         }
+
         if(openMBVRadialVelocity && !openMBVRadialVelocity->isHDF5Link()) {
           vector<double> data;
           Vec vr =  (v.T()*er)*er;
           Vec off = vr;
           data.push_back(t);
-          data.push_back(frame->getPosition()(0)+off(0));
-          data.push_back(frame->getPosition()(1)+off(1));
-          data.push_back(frame->getPosition()(2)+off(2));
+          data.push_back(r(0)+off(0));
+          data.push_back(r(1)+off(1));
+          data.push_back(r(2)+off(2));
           data.push_back(vr(0));
           data.push_back(vr(1));
           data.push_back(vr(2));
           data.push_back(0.5);
           openMBVRadialVelocity->append(data);
         }
+
         if(openMBVCircularVelocity && !openMBVCircularVelocity->isHDF5Link()) {
           vector<double> data;
           Vec vp =  (v.T()*ep)*ep;
-          //Vec vz =  (v.T()*ez)*ez;
           Vec off = vp;
           data.push_back(t);
-          data.push_back(frame->getPosition()(0)+off(0));
-          data.push_back(frame->getPosition()(1)+off(1));
-          data.push_back(frame->getPosition()(2)+off(2));
+          data.push_back(r(0)+off(0));
+          data.push_back(r(1)+off(1));
+          data.push_back(r(2)+off(2));
           data.push_back(vp(0));
           data.push_back(vp(1));
           data.push_back(vp(2));
           data.push_back(0.5);
           openMBVCircularVelocity->append(data);
         }
+
         if(openMBVZVelocity && !openMBVZVelocity->isHDF5Link()) {
           vector<double> data;
           Vec vz =  (v.T()*ez)*ez;
           Vec off = vz;
           data.push_back(t);
-          data.push_back(frame->getPosition()(0)+off(0));
-          data.push_back(frame->getPosition()(1)+off(1));
-          data.push_back(frame->getPosition()(2)+off(2));
+          data.push_back(r(0)+off(0));
+          data.push_back(r(1)+off(1));
+          data.push_back(r(2)+off(2));
           data.push_back(vz(0));
           data.push_back(vz(1));
           data.push_back(vz(2));
           data.push_back(0.5);
           openMBVZVelocity->append(data);
         }
+
         if(openMBVAcceleration && !openMBVAcceleration->isHDF5Link()) {
           vector<double> data;
           Vec off = a;
           data.push_back(t);
-          data.push_back(frame->getPosition()(0)+off(0));
-          data.push_back(frame->getPosition()(1)+off(1));
-          data.push_back(frame->getPosition()(2)+off(2));
+          data.push_back(r(0)+off(0));
+          data.push_back(r(1)+off(1));
+          data.push_back(r(2)+off(2));
           data.push_back(a(0));
           data.push_back(a(1));
           data.push_back(a(2));
           data.push_back(0.5);
           openMBVAcceleration->append(data);
         }
+
         if(openMBVRadialAcceleration && !openMBVRadialAcceleration->isHDF5Link()) {
           vector<double> data;
           Vec ar =  (a.T()*er)*er;
           Vec off = ar;
           data.push_back(t);
-          data.push_back(frame->getPosition()(0)+off(0));
-          data.push_back(frame->getPosition()(1)+off(1));
-          data.push_back(frame->getPosition()(2)+off(2));
+          data.push_back(r(0)+off(0));
+          data.push_back(r(1)+off(1));
+          data.push_back(r(2)+off(2));
           data.push_back(ar(0));
           data.push_back(ar(1));
           data.push_back(ar(2));
           data.push_back(0.5);
           openMBVRadialAcceleration->append(data);
         }
+
         if(openMBVCircularAcceleration && !openMBVCircularAcceleration->isHDF5Link()) {
           vector<double> data;
           Vec ap =  (a.T()*ep)*ep;
           Vec off = ap;
           data.push_back(t);
-          data.push_back(frame->getPosition()(0)+off(0));
-          data.push_back(frame->getPosition()(1)+off(1));
-          data.push_back(frame->getPosition()(2)+off(2));
+          data.push_back(r(0)+off(0));
+          data.push_back(r(1)+off(1));
+          data.push_back(r(2)+off(2));
           data.push_back(ap(0));
           data.push_back(ap(1));
           data.push_back(ap(2));
           data.push_back(0.5);
           openMBVCircularAcceleration->append(data);
         }
+
         if(openMBVZAcceleration && !openMBVZAcceleration->isHDF5Link()) {
           vector<double> data;
           Vec az =  (a.T()*ez)*ez;
           Vec off = az;
           data.push_back(t);
-          data.push_back(frame->getPosition()(0)+off(0));
-          data.push_back(frame->getPosition()(1)+off(1));
-          data.push_back(frame->getPosition()(2)+off(2));
+          data.push_back(r(0)+off(0));
+          data.push_back(r(1)+off(1));
+          data.push_back(r(2)+off(2));
           data.push_back(az(0));
           data.push_back(az(1));
           data.push_back(az(2));
           data.push_back(0.5);
           openMBVZAcceleration->append(data);
         }
+
         if(openMBVFrame && !openMBVFrame->isHDF5Link()) {
           vector<double> data;
           SqrMat AWP(3);
           AWP.col(0) = er;
           AWP.col(1) = ep;
           AWP.col(2) = ez;
-          vector<double> data3;
           data.push_back(t);
           data.push_back(0);
           data.push_back(0);
@@ -337,7 +345,6 @@ namespace MBSim {
           data.push_back(cardan(2));
           data.push_back(0);
           openMBVFrame->append(data);
-
         }
       }
 #endif
