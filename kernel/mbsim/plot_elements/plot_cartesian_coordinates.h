@@ -34,20 +34,20 @@ namespace MBSim {
   class RigidBody;
   class Frame;
 
-  class PlotCylinderCoordinates : public Element {
+  class PlotCartesianCoordinates : public Element {
     private:
       Frame* frame;
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::Group* openMBVGrp;
-      OpenMBV::Arrow *openMBVPosition, *openMBVVelocity, *openMBVRadialVelocity, *openMBVCircularVelocity, *openMBVZVelocity, *openMBVAcceleration, *openMBVRadialAcceleration, *openMBVCircularAcceleration, *openMBVZAcceleration; 
+      OpenMBV::Arrow *openMBVPosition, *openMBVVelocity, *openMBVXVelocity, *openMBVYVelocity, *openMBVZVelocity, *openMBVAcceleration, *openMBVXAcceleration, *openMBVYAcceleration, *openMBVZAcceleration; 
       OpenMBV::Frame* openMBVFrame;
       fmatvec::Vec roff, voff, aoff;
       double rscale, vscale, ascale;
-      fmatvec::Vec ez;
+      fmatvec::Vec ex, ey, ez;
 #endif
 
     public:
-      PlotCylinderCoordinates(const std::string &name);
+      PlotCartesianCoordinates(const std::string &name);
       void setFrame(Frame *frame_) { frame = frame_; } 
 
       void init(InitStage stage);
