@@ -208,8 +208,8 @@ namespace MBSim {
       // after reorganizing a resize is required
       init(resize);
       for(unsigned int i=0; i< dynamicsystem.size(); i++)
-        if(dynamic_cast<Graph*>(dynamicsystem[0]))
-          dynamic_cast<Graph*>(dynamicsystem[0])->co();
+        if(dynamic_cast<Graph*>(dynamicsystem[i]))
+          dynamic_cast<Graph*>(dynamicsystem[i])->co();
    }
     else if(stage==resize) {
       calcqSize();
