@@ -61,6 +61,8 @@ namespace MBSimFlexibleBody {
       tangent /= norm(tangent);
       Point3Dd normal = curveTranslations->derive3D(cp.getLagrangeParameterPosition()(0), 2); // TODO check direction
       normal /= norm(normal);
+      if(dot(previousNormal,normal)<0)
+        normal *= -1.;
       Point3Dd binormal = crossProduct(normal, tangent);
       normal = crossProduct(tangent, binormal); // calculate normal again from cross product as second derivative is not normal to tangent
       cp.getFrameOfReference().getOrientation().col(0)(0) = normal.x();
@@ -74,6 +76,8 @@ namespace MBSimFlexibleBody {
       cp.getFrameOfReference().getOrientation().col(2)(0) = binormal.x();
       cp.getFrameOfReference().getOrientation().col(2)(1) = binormal.y();
       cp.getFrameOfReference().getOrientation().col(2)(2) = binormal.z();
+
+      previousNormal = normal;
     }
 
     if(ff==velocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) {
