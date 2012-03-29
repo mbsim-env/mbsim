@@ -169,6 +169,11 @@ namespace MBSimFlexibleBody {
       PlNurbsCurved *curveVelocities;
 
       /**
+       * \brief previous normal to avoid jumping
+       */
+      PLib::Point3Dd previousNormal;
+
+      /**
        * \brief Jacobians of Translation of finite element nodes
        */
       std::vector<MBSim::ContourPointData> jacobiansTrans; // size = number of interpolation points
