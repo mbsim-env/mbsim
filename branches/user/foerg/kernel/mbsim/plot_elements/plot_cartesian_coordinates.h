@@ -41,9 +41,9 @@ namespace MBSim {
       OpenMBV::Group* openMBVGrp;
       OpenMBV::Arrow *openMBVPosition, *openMBVVelocity, *openMBVXVelocity, *openMBVYVelocity, *openMBVZVelocity, *openMBVAcceleration, *openMBVXAcceleration, *openMBVYAcceleration, *openMBVZAcceleration; 
       OpenMBV::Frame* openMBVFrame;
-      fmatvec::Vec roff, voff, aoff;
+      fmatvec::Vec3 roff, voff, aoff;
       double rscale, vscale, ascale;
-      fmatvec::Vec ex, ey, ez;
+      fmatvec::Vec3 ex, ey, ez;
 #endif
 
     public:

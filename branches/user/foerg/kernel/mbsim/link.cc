@@ -83,8 +83,16 @@ namespace MBSim {
     xd >> xdParent(xInd,xInd+xSize-1);
   } 
 
+  void Link::updatelaAllRef(const Vec& laParent) {
+    laAll.resize() >> laParent(laAllInd,laAllInd+laAllSize-1);
+  }
+
   void Link::updatelaRef(const Vec& laParent) {
     la.resize() >> laParent(laInd,laInd+laSize-1);
+  }
+
+  void Link::updatelaSRef(const Vec& laParent) {
+    laS.resize() >> laParent(laSInd,laSInd+laSSize-1);
   }
 
   void Link::deletelaRef() {

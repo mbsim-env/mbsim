@@ -133,6 +133,8 @@ namespace MBSim {
        * \brief references to contact force parameter of dynamic system parent
        */
       virtual void updatelaRef(const fmatvec::Vec& ref);
+      virtual void updatelaAllRef(const fmatvec::Vec& ref);
+      virtual void updatelaSRef(const fmatvec::Vec& ref);
 
       /**
        * \brief delete reference to contact force parameter of dynamic system parent
@@ -178,6 +180,8 @@ namespace MBSim {
        * \brief calculates size of contact force parameters
        */
       virtual void calclaSize(int j) { laSize = 0; }
+      virtual void calclaAllSize(int j) { laAllSize = 0; }
+      virtual void calclaSSize(int j) { laSSize = 0; }
 
       /**
        * \brief calculates size of relative distances
@@ -434,7 +438,7 @@ namespace MBSim {
       /**
        * \brief relative distance, relative velocity, contact force parameters
        */
-      fmatvec::Vec g, gd, la;
+      fmatvec::Vec g, gd, la, laAll, laS;
       
       /**
        * \brief size and local index of relative distances
@@ -450,6 +454,8 @@ namespace MBSim {
        * \brief size and local index of contact force parameters
        */
       int laSize, laInd;
+      int laAllSize, laAllInd;
+      int laSSize, laSInd;
 
       /**
        * \brief size and local index of contact force parameters

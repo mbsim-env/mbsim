@@ -179,9 +179,9 @@ namespace MBSim {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
-        Vec r = frame->getPosition();
-        Vec v = frame->getVelocity();
-        Vec a = frame->getAcceleration();
+        Vec3 r = frame->getPosition();
+        Vec3 v = frame->getVelocity();
+        Vec3 a = frame->getAcceleration();
 
         v *= vscale;
         a *= ascale;
@@ -201,7 +201,7 @@ namespace MBSim {
 
         if(openMBVVelocity && !openMBVVelocity->isHDF5Link()) {
           vector<double> data;
-          Vec off = v;
+          Vec3 off = v;
           data.push_back(t);
           data.push_back(r(0)+off(0));
           data.push_back(r(1)+off(1));
@@ -215,8 +215,8 @@ namespace MBSim {
 
         if(openMBVXVelocity && !openMBVXVelocity->isHDF5Link()) {
           vector<double> data;
-          Vec vr =  (v.T()*ex)*ex;
-          Vec off = vr;
+          Vec3 vr =  (v.T()*ex)*ex;
+          Vec3 off = vr;
           data.push_back(t);
           data.push_back(r(0)+off(0));
           data.push_back(r(1)+off(1));
@@ -230,9 +230,9 @@ namespace MBSim {
 
         if(openMBVYVelocity && !openMBVYVelocity->isHDF5Link()) {
           vector<double> data;
-          Vec vp =  (v.T()*ey)*ey;
+          Vec3 vp =  (v.T()*ey)*ey;
           //Vec vz =  (v.T()*ez)*ez;
-          Vec off = vp;
+          Vec3 off = vp;
           data.push_back(t);
           data.push_back(r(0)+off(0));
           data.push_back(r(1)+off(1));
@@ -246,8 +246,8 @@ namespace MBSim {
 
         if(openMBVZVelocity && !openMBVZVelocity->isHDF5Link()) {
           vector<double> data;
-          Vec vz =  (v.T()*ez)*ez;
-          Vec off = vz;
+          Vec3 vz =  (v.T()*ez)*ez;
+          Vec3 off = vz;
           data.push_back(t);
           data.push_back(r(0)+off(0));
           data.push_back(r(1)+off(1));
@@ -261,7 +261,7 @@ namespace MBSim {
 
         if(openMBVAcceleration && !openMBVAcceleration->isHDF5Link()) {
           vector<double> data;
-          Vec off = a;
+          Vec3 off = a;
           data.push_back(t);
           data.push_back(r(0)+off(0));
           data.push_back(r(1)+off(1));
@@ -275,8 +275,8 @@ namespace MBSim {
 
         if(openMBVXAcceleration && !openMBVXAcceleration->isHDF5Link()) {
           vector<double> data;
-          Vec ar =  (a.T()*ex)*ex;
-          Vec off = ar;
+          Vec3 ar =  (a.T()*ex)*ex;
+          Vec3 off = ar;
           data.push_back(t);
           data.push_back(r(0)+off(0));
           data.push_back(r(1)+off(1));
@@ -290,8 +290,8 @@ namespace MBSim {
 
         if(openMBVYAcceleration && !openMBVYAcceleration->isHDF5Link()) {
           vector<double> data;
-          Vec ap =  (a.T()*ey)*ey;
-          Vec off = ap;
+          Vec3 ap =  (a.T()*ey)*ey;
+          Vec3 off = ap;
           data.push_back(t);
           data.push_back(r(0)+off(0));
           data.push_back(r(1)+off(1));
@@ -305,8 +305,8 @@ namespace MBSim {
 
         if(openMBVZAcceleration && !openMBVZAcceleration->isHDF5Link()) {
           vector<double> data;
-          Vec az =  (a.T()*ez)*ez;
-          Vec off = az;
+          Vec3 az =  (a.T()*ez)*ez;
+          Vec3 off = az;
           data.push_back(t);
           data.push_back(r(0)+off(0));
           data.push_back(r(1)+off(1));
@@ -320,15 +320,15 @@ namespace MBSim {
 
         if(openMBVFrame && !openMBVFrame->isHDF5Link()) {
           vector<double> data;
-          SqrMat AWP(3);
-          AWP.col(0) = ex;
-          AWP.col(1) = ey;
-          AWP.col(2) = ez;
+          Mat3 AWP;
+          AWP.setCol(0,ex);
+          AWP.setCol(1,ey);
+          AWP.setCol(2,ez);
           data.push_back(t);
           data.push_back(0);
           data.push_back(0);
           data.push_back(0);
-          Vec cardan=AIK2Cardan(AWP);
+          Vec3 cardan=AIK2Cardan(AWP);
           data.push_back(cardan(0));
           data.push_back(cardan(1));
           data.push_back(cardan(2));

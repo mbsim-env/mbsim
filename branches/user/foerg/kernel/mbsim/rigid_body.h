@@ -310,7 +310,7 @@ namespace MBSim {
       /**
        * \brief translation from parent to kinematic Frame in parent and world system
        */
-      fmatvec::Vec PrPK, WrPK;
+      fmatvec::Vec3 PrPK, WrPK;
 
       /**
        * \brief translational and angular velocity from parent to kinematic Frame in world system

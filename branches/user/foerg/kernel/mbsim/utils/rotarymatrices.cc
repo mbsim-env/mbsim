@@ -120,6 +120,24 @@ namespace MBSim {
     return AIK2Cardan(trans(AKI));
   }
 
+  Vec3 AIK2Cardan(const Mat3 &AIK) { 
+    Vec3 AlphaBetaGamma(INIT,0.0);    
+    AlphaBetaGamma(1)= asin(AIK(0,2));
+    double nenner = cos(AlphaBetaGamma(1));
+    if (fabs(nenner)>1e-10) {
+      AlphaBetaGamma(0) = atan2(-AIK(1,2),AIK(2,2));
+      AlphaBetaGamma(2) = atan2(-AIK(0,1),AIK(0,0));
+    } else {
+      AlphaBetaGamma(0)=0;
+      AlphaBetaGamma(2)=atan2(AIK(1,0),AIK(1,1));
+    }
+    return AlphaBetaGamma;
+  }
+
+  Vec3 AKI2Cardan(const Mat3 &AKI) {
+    return AIK2Cardan(trans(AKI));
+  }
+
   Vec AIK2RevCardan(const SqrMat &AIK) {
     Vec AlphaBetaGamma(3,INIT,0.0);
     AlphaBetaGamma(1)= asin(-AIK(2,0));
