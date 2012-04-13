@@ -39,7 +39,7 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::Group* openMBVGrp;
       OpenMBV::Arrow *openMBVPosition, *openMBVVelocity, *openMBVAcceleration, *openMBVAngularVelocity, *openMBVAngularAcceleration;
-      fmatvec::Vec roff, voff, aoff;
+      fmatvec::Vec3 roff, voff, aoff;
       double rscale, vscale, ascale;
 #endif
 

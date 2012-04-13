@@ -22,6 +22,13 @@
 #define _ELEMENT_H_
 
 #include "fmatvec.h"
+#include "fixed_vector.h"
+#include "general_fixed_matrix.h"
+namespace fmatvec {
+  typedef  FixedVector<3, double> Vec3;
+  typedef  Matrix<FixedSize<3,3>, double> Mat3;
+}
+
 #include <string>
 #include <hdf5serie/vectorserie.h>
 #include "mbsimtinyxml/tinyxml-src/tinyxml.h"
