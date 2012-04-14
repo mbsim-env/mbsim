@@ -49,7 +49,7 @@
           <orientation>rotateAboutX(0)</orientation>
         </frame>
         <pv:embed>
-          <include href="frame.xml" xmlns="http://www.w3.org/2001/XInclude"/>
+          <include href="../frame.xml" xmlns="http://www.w3.org/2001/XInclude"/>
         </pv:embed>
       </frames>
       <contours/>
