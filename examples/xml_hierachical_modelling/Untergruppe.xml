@@ -90,12 +90,13 @@
       </frames>
       <contours/>
       <openMBVRigidBody>
-        <ombv:Cuboid name="dummy">
-          <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
-          <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
-          <ombv:scaleFactor>1</ombv:scaleFactor>
-          <ombv:length>[h2;h2;h2]</ombv:length>
-        </ombv:Cuboid>
+        <IvBody name="dummy" xmlns="http://openmbv.berlios.de/OpenMBV">
+          <initialTranslation>[0;0;0]</initialTranslation>
+          <initialRotation>[0;0;0]</initialRotation>
+          <scaleFactor>1</scaleFactor>
+          <ivFileName>"iv/hat.iv"</ivFileName>
+          <creaseEdges unit="degree">30</creaseEdges>
+        </IvBody>
       </openMBVRigidBody>
     </RigidBody>
   </objects>
@@ -110,9 +111,9 @@
       </forceFunction>
       <connect ref1="../Object[Box1]/Frame[P1]" ref2="../Frame[I]"/>
       <ombv:Arrow name="dummy">
-        <ombv:diameter>0.02</ombv:diameter>
-        <ombv:headDiameter>0.02*2</ombv:headDiameter>
-        <ombv:headLength>0.02*4</ombv:headLength>
+        <ombv:diameter>0.03*numHG</ombv:diameter>
+        <ombv:headDiameter>0.03*2*numHG</ombv:headDiameter>
+        <ombv:headLength>0.03*4*numHG</ombv:headLength>
         <ombv:type>"bothDoubleHeads"</ombv:type>
         <ombv:scaleLength>0.005</ombv:scaleLength>
       </ombv:Arrow>
