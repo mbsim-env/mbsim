@@ -5,8 +5,6 @@ libmbsim_la_LDFLAGS = -version-info @LIBMBSIM_VERSION_INFO@
 libmbsim_la_SOURCES = \
 body.cc\
 constitutive_laws.cc\
-contact.cc\
-maxwell_contact.cc\
 contour.cc\
 contour_pairing.cc\
 dynamic_system.cc\
@@ -44,8 +42,6 @@ LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) $(MBSIMNUMERICS_LIBS)
 mbsimincludedir = $(includedir)/mbsim
 mbsiminclude_HEADERS = \
 body.h\
-contact.h\
-maxwell_contact.h\
 contour.h\
 contour_pairing.h\
 contour_pdata.h\

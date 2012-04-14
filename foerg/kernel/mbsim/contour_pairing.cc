@@ -75,7 +75,7 @@ namespace MBSim {
       contour1->updateKinematicsForFrame(cpData[0][0], velocities); // angular velocity necessary e.g. see ContactKinematicsSpherePlane::updatewb
       contour2->updateKinematicsForFrame(cpData[0][1], velocities); // angular velocity necessary e.g. see ContactKinematicsSpherePlane::updatewb
 
-      Vec Wn = cpData[0][0].getFrameOfReference().getOrientation().col(0);
+      FVec Wn = cpData[0][0].getFrameOfReference().getOrientation().col(0);
 
       Vec WvD = cpData[0][1].getFrameOfReference().getVelocity() - cpData[0][0].getFrameOfReference().getVelocity();
 

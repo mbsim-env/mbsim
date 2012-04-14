@@ -85,25 +85,25 @@ namespace MBSim {
        * \return normal in world frame
        * \param contour position
        */
-      virtual fmatvec::Vec computeNormal(ContourPointData &cp) { updateKinematicsForFrame(cp,normal); return cp.getFrameOfReference().getOrientation().col(0); }
+      virtual fmatvec::FVec computeNormal(ContourPointData &cp) { updateKinematicsForFrame(cp,normal); return cp.getFrameOfReference().getOrientation().col(0); }
 
       /**
        * \return position in world frame
        * \param contour position
        */
-      virtual fmatvec::Vec computePosition(ContourPointData &cp) { updateKinematicsForFrame(cp,position); return cp.getFrameOfReference().getPosition(); }
+      virtual fmatvec::FVec computePosition(ContourPointData &cp) { updateKinematicsForFrame(cp,position); return cp.getFrameOfReference().getPosition(); }
 
       /**
        * \return velocity in world frame
        * \param contour position
        */
-      virtual fmatvec::Vec computeVelocity(ContourPointData &cp) { updateKinematicsForFrame(cp,velocity); return cp.getFrameOfReference().getVelocity(); }
+      virtual fmatvec::FVec computeVelocity(ContourPointData &cp) { updateKinematicsForFrame(cp,velocity); return cp.getFrameOfReference().getVelocity(); }
 
       /**
        * \return angular in world frame
        * \param contour position
        */
-      virtual fmatvec::Vec computeAngularVelocity(ContourPointData &cp) { updateKinematicsForFrame(cp,angularVelocity); return cp.getFrameOfReference().getAngularVelocity(); } 
+      virtual fmatvec::FVec computeAngularVelocity(ContourPointData &cp) { updateKinematicsForFrame(cp,angularVelocity); return cp.getFrameOfReference().getAngularVelocity(); } 
 
       /**
        * \return curvature of contour in contour point
@@ -116,27 +116,27 @@ namespace MBSim {
        * \param WrPoint point in world coordinates
        * \return Vec of lagrange parameters
        */
-      virtual fmatvec::Vec computeLagrangeParameter(const fmatvec::Vec &WrPoint) {throw MBSimError("ERROR computeLagrangeParameter(const fmatvec::Vec &WrPoint): Not implemented for this contour: \"" + this->getType() + "\"."); return 0; }
+      virtual fmatvec::FVec computeLagrangeParameter(const fmatvec::Vec &WrPoint) {throw MBSimError("ERROR computeLagrangeParameter(const fmatvec::Vec &WrPoint): Not implemented for this contour: \"" + this->getType() + "\"."); return 0; }
 
       /**
        * \param position of contour in inertial frame
        */
-      virtual void setReferencePosition(const fmatvec::Vec &WrOP) { R.setPosition(WrOP); }
+      virtual void setReferencePosition(const fmatvec::FVec &WrOP) { R.setPosition(WrOP); }
 
       /**
        * \param orientation of contour to inertial frame
        */
-      virtual void setReferenceOrientation(const fmatvec::SqrMat &AWC) { R.setOrientation(AWC); }
+      virtual void setReferenceOrientation(const fmatvec::FSqrMat &AWC) { R.setOrientation(AWC); }
 
       /**
        * \param velocity of contour in inertial frame
        */
-      virtual void setReferenceVelocity(const fmatvec::Vec &WvP) { R.setVelocity(WvP); }
+      virtual void setReferenceVelocity(const fmatvec::FVec &WvP) { R.setVelocity(WvP); }
 
       /**
        * \param angular velocity of contour in inertial frame
        */
-      virtual void setReferenceAngularVelocity(const fmatvec::Vec &WomegaC) { R.setAngularVelocity(WomegaC); }
+      virtual void setReferenceAngularVelocity(const fmatvec::FVec &WomegaC) { R.setAngularVelocity(WomegaC); }
 
       /**
        * \param JACOBIAN of translation of contour in inertial frame
@@ -146,7 +146,7 @@ namespace MBSim {
       /**
        * \param gyroscopic acceleration of translation of contour in inertial frame
        */
-      virtual void setReferenceGyroscopicAccelerationOfTranslation(const fmatvec::Vec &WjP, int j=0) { R.setGyroscopicAccelerationOfTranslation(WjP,j); }
+      virtual void setReferenceGyroscopicAccelerationOfTranslation(const fmatvec::FVec &WjP, int j=0) { R.setGyroscopicAccelerationOfTranslation(WjP,j); }
 
       /**
        * \param JACOBIAN of rotation of contour in inertial frame
@@ -156,17 +156,17 @@ namespace MBSim {
       /**
        * \param gyroscopic acceleration of rotation of contour in inertial frame
        */
-      virtual void setReferenceGyroscopicAccelerationOfRotation(const fmatvec::Vec &WjR, int j=0) { R.setGyroscopicAccelerationOfRotation(WjR,j); }
+      virtual void setReferenceGyroscopicAccelerationOfRotation(const fmatvec::FVec &WjR, int j=0) { R.setGyroscopicAccelerationOfRotation(WjR,j); }
 
       /**
        * \param acceleration of contour in inertial frame
        */
-      virtual void setReferenceAcceleration(const fmatvec::Vec &WaP) { R.setAcceleration(WaP); }
+      virtual void setReferenceAcceleration(const fmatvec::FVec &WaP) { R.setAcceleration(WaP); }
 
       /**
        * \param angular acceleration of contour in inertial frame
        */
-      virtual void setReferenceAngularAcceleration(const fmatvec::Vec &WpsiC) { R.setAngularAcceleration(WpsiC); }
+      virtual void setReferenceAngularAcceleration(const fmatvec::FVec &WpsiC) { R.setAngularAcceleration(WpsiC); }
 
       /**
        * \brief TODO
@@ -183,18 +183,18 @@ namespace MBSim {
 
       /* GETTER / SETTER */
       Frame* getFrame() { return &R; }
-      const fmatvec::Vec& getReferencePosition() const { return R.getPosition(); }
-      const fmatvec::SqrMat& getReferenceOrientation() const { return R.getOrientation(); }
-      const fmatvec::Vec& getReferenceVelocity() const { return R.getVelocity(); }
-      const fmatvec::Vec& getReferenceAngularVelocity() const { return R.getAngularVelocity(); }
+      const fmatvec::FVec& getReferencePosition() const { return R.getPosition(); }
+      const fmatvec::FSqrMat& getReferenceOrientation() const { return R.getOrientation(); }
+      const fmatvec::FVec& getReferenceVelocity() const { return R.getVelocity(); }
+      const fmatvec::FVec& getReferenceAngularVelocity() const { return R.getAngularVelocity(); }
       const fmatvec::Mat& getReferenceJacobianOfTranslation(int j=0) const { return R.getJacobianOfTranslation(j); }
       const fmatvec::Mat& getReferenceJacobianOfRotation(int j=0) const { return R.getJacobianOfRotation(j); }
       fmatvec::Mat& getReferenceJacobianOfTranslation(int j=0) { return R.getJacobianOfTranslation(j); }
       fmatvec::Mat& getReferenceJacobianOfRotation(int j=0) { return R.getJacobianOfRotation(j); }
-      const fmatvec::Vec& getReferenceGyroscopicAccelerationOfTranslation() const { return R.getGyroscopicAccelerationOfTranslation(); }
-      const fmatvec::Vec& getReferenceGyroscopicAccelerationOfRotation() const { return R.getGyroscopicAccelerationOfRotation(); }
-      fmatvec::Vec& getReferenceGyroscopicAccelerationOfTranslation() { return R.getGyroscopicAccelerationOfTranslation(); }
-      fmatvec::Vec& getReferenceGyroscopicAccelerationOfRotation() { return R.getGyroscopicAccelerationOfRotation(); }
+      const fmatvec::FVec& getReferenceGyroscopicAccelerationOfTranslation() const { return R.getGyroscopicAccelerationOfTranslation(); }
+      const fmatvec::FVec& getReferenceGyroscopicAccelerationOfRotation() const { return R.getGyroscopicAccelerationOfRotation(); }
+      fmatvec::FVec& getReferenceGyroscopicAccelerationOfTranslation() { return R.getGyroscopicAccelerationOfTranslation(); }
+      fmatvec::FVec& getReferenceGyroscopicAccelerationOfRotation() { return R.getGyroscopicAccelerationOfRotation(); }
 
       int gethSize(int i=0) const { return hSize[i]; }
       int gethInd(int i=0) const { return hInd[i]; }

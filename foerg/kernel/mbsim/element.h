@@ -22,6 +22,7 @@
 #define _ELEMENT_H_
 
 #include "fmatvec.h"
+#include "fixed_square_matrix.h"
 #include <string>
 #include <hdf5serie/vectorserie.h>
 #include "mbsimtinyxml/tinyxml-src/tinyxml.h"
@@ -38,6 +39,11 @@ namespace OpenMBV {
 
 namespace H5 {
   class Group;
+}
+
+namespace fmatvec {
+  typedef  FixedSquareMatrix<3,double> FSqrMat;
+  typedef  FixedVector<3,double> FVec;
 }
 
 /**
