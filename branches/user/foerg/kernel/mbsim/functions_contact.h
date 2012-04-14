@@ -68,7 +68,7 @@ namespace MBSim {
          * \param contour parameter
          * \return helping distance vector at contour parameter
          */
-        virtual fmatvec::Vec computeWrD(const Arg& x) = 0;
+        virtual fmatvec::FVec computeWrD(const Arg& x) = 0;
         /*************************************************/
     };
 
@@ -90,12 +90,12 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &alpha, const void * =NULL) {
-        fmatvec::Vec Wd = computeWrD(alpha);
-        fmatvec::Vec Wt = cp.getFrameOfReference().getOrientation().col(1);
+        fmatvec::FVec Wd = computeWrD(alpha);
+        fmatvec::FVec Wt = cp.getFrameOfReference().getOrientation().col(1);
         return Wt.T()*Wd;
       }
 
-      fmatvec::Vec computeWrD(const double &alpha) {
+      fmatvec::FVec computeWrD(const double &alpha) {
         //if(fabs(alpha-cp.getLagrangeParameterPosition()(0))>epsroot()) { TODO this is not working in all cases
         cp.getLagrangeParameterPosition()(0) = alpha;
         contour->computeRootFunctionPosition(cp);
@@ -136,11 +136,11 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &alpha, const void * =NULL) {
-        fmatvec::Vec Wd = computeWrD(alpha);
+        fmatvec::FVec Wd = computeWrD(alpha);
         return circle->getReferenceOrientation().col(2).T()*Wd;
       }
 
-      fmatvec::Vec computeWrD(const double &alpha) {
+      fmatvec::FVec computeWrD(const double &alpha) {
         //if(fabs(alpha-cp.getLagrangeParameterPosition()(0))>epsroot()) { TODO this is not working in all cases
         cp.getLagrangeParameterPosition()(0) = alpha;
         contour->computeRootFunctionPosition(cp);
@@ -178,15 +178,15 @@ namespace MBSim {
       FuncPairPointContourInterpolation(Point* point_, ContourInterpolation *contour_) : contour(contour_), point(point_) {}
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
-      fmatvec::Vec operator()(const fmatvec::Vec &alpha, const void * =NULL) {
+      fmatvec::FVec operator()(const fmatvec::Vec &alpha, const void * =NULL) {
         fmatvec::Mat Wt = contour->computeWt(alpha);
-        fmatvec::Vec WrOC[2];
+        fmatvec::FVec WrOC[2];
         WrOC[0] = point->getFrame()->getPosition();
         WrOC[1] = contour->computeWrOC(alpha);
         return Wt.T() * ( WrOC[1] - WrOC[0] ); 
       }
 
-      fmatvec::Vec computeWrD(const fmatvec::Vec &alpha) {
+      fmatvec::FVec computeWrD(const fmatvec::Vec &alpha) {
         return contour->computeWrOC(alpha) - point->getFrame()->getPosition();
       }
       /*************************************************/

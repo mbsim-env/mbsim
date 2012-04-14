@@ -136,7 +136,7 @@ R.init(stage);
 
     cp.getFrameOfReference().setJacobianOfTranslation(R.getJacobianOfTranslation(j) - tWrPC*R.getJacobianOfRotation(j),j);
     cp.getFrameOfReference().setJacobianOfRotation(R.getJacobianOfRotation(j),j);
-    cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(R.getGyroscopicAccelerationOfTranslation() - tWrPC*R.getGyroscopicAccelerationOfRotation() + crossProduct(R.getAngularVelocity(),crossProduct(R.getAngularVelocity(),WrPC)));
+    cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(Vec(R.getGyroscopicAccelerationOfTranslation() - tWrPC*R.getGyroscopicAccelerationOfRotation() + crossProduct(R.getAngularVelocity(),crossProduct(R.getAngularVelocity(),WrPC))));
     cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(R.getGyroscopicAccelerationOfRotation());
 
     // adapt dimensions if necessary
@@ -173,7 +173,7 @@ R.init(stage);
         data.push_back(R.getPosition()(0));
         data.push_back(R.getPosition()(1));
         data.push_back(R.getPosition()(2));
-        Vec cardan=AIK2Cardan(SqrMat(R.getOrientation()));
+        FVec cardan=AIK2Cardan(R.getOrientation());
         data.push_back(cardan(0));
         data.push_back(cardan(1));
         data.push_back(cardan(2));

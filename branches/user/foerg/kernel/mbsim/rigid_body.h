@@ -169,17 +169,17 @@ namespace MBSim {
       Frame* getFrameForKinematics() { return frame[iKinematics]; };
       Frame* getFrameOfReference() { return frameOfReference; };
       void isFrameOfBodyForRotation(bool cb_) { cb = cb_; }
-      std::vector<fmatvec::SqrMat> getContainerForFrameOrientations() const { return ASF; }
-      std::vector<fmatvec::Vec> getContainerForFramePositions() const { return SrSF; }
-      std::vector<fmatvec::SqrMat> getContainerForContourOrientations() const { return ASC; }
-      std::vector<fmatvec::Vec> getContainerForContourPositions() const { return SrSC; }
+      std::vector<fmatvec::FSqrMat> getContainerForFrameOrientations() const { return ASF; }
+      std::vector<fmatvec::FVec> getContainerForFramePositions() const { return SrSF; }
+      std::vector<fmatvec::FSqrMat> getContainerForContourOrientations() const { return ASC; }
+      std::vector<fmatvec::FVec> getContainerForContourPositions() const { return SrSC; }
       /*****************************************************/
 
       /**
        * \param RThetaR  inertia tensor
        * \param refFrame optional reference Frame of inertia tensor, otherwise cog-Frame will be used as reference
        */
-      void setInertiaTensor(const fmatvec::SymMat& RThetaR, const Frame* refFrame=0) {
+      void setInertiaTensor(const fmatvec::FSymMat& RThetaR, const Frame* refFrame=0) {
         if(refFrame)
           iInertia = frameIndex(refFrame);
         else
@@ -187,8 +187,8 @@ namespace MBSim {
         SThetaS = RThetaR;
       }
 
-      const fmatvec::SymMat& getInertiaTensor() const {return SThetaS;}
-      fmatvec::SymMat& getInertiaTensor() {return SThetaS;}
+      const fmatvec::FSymMat& getInertiaTensor() const {return SThetaS;}
+      fmatvec::FSymMat& getInertiaTensor() {return SThetaS;}
 
       /**
        * \param frame        specific Frame to add
@@ -196,7 +196,7 @@ namespace MBSim {
        * \param ARF          constant relative rotation from specific Frame to reference Frame
        * \param refFrameName reference Frame name
        */
-      void addFrame(Frame *frame_, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const std::string& refFrameName); 
+      void addFrame(Frame *frame_, const fmatvec::FVec &RrRF, const fmatvec::FSqrMat &ARF, const std::string& refFrameName); 
 
       /**
        * \param frame        specific Frame to add
@@ -204,7 +204,7 @@ namespace MBSim {
        * \param ARF          constant relative rotation from specific Frame to reference Frame
        * \param refFrameName optional reference Frame, otherwise cog-Frame will be used as reference
        */
-      void addFrame(Frame *frame_, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const Frame* refFrame=0);
+      void addFrame(Frame *frame_, const fmatvec::FVec &RrRF, const fmatvec::FSqrMat &ARF, const Frame* refFrame=0);
 
       /**
        * \param str          name of Frame to add
@@ -212,7 +212,7 @@ namespace MBSim {
        * \param ARF          constant relative rotation from specific Frame to reference Frame
        * \param refFrameName optional reference Frame, otherwise cog-Frame will be used as reference
        */
-      void addFrame(const std::string &str, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const Frame* refFrame=0);
+      void addFrame(const std::string &str, const fmatvec::FVec &RrRF, const fmatvec::FSqrMat &ARF, const Frame* refFrame=0);
 
       /**
        * \param contour      specific contour to add
@@ -220,7 +220,7 @@ namespace MBSim {
        * \param ARC          constant relative rotation from specific contour to reference Frame
        * \param refFrameName reference Frame name
        */
-      void addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const std::string& refFrameName);
+      void addContour(Contour* contour, const fmatvec::FVec &RrRC, const fmatvec::FSqrMat &ARC, const std::string& refFrameName);
 
       /**
        * \param contour      specific contour to add
@@ -228,7 +228,7 @@ namespace MBSim {
        * \param ARC          constant relative rotation from specific contour to reference Frame
        * \param refFrameName optional reference Frame, otherwise cog-Frame will be used as reference
        */
-      void addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const Frame* refFrame=0);
+      void addContour(Contour* contour, const fmatvec::FVec &RrRC, const fmatvec::FSqrMat &ARC, const Frame* refFrame=0);
 
       /**
        * \param frame Frame to be used for kinematical description depending on reference Frame and generalised positions / velocities
@@ -270,7 +270,7 @@ namespace MBSim {
       /**
        * \brief inertia tensor with respect to centre of gravity in centre of gravity and world Frame
        */
-      fmatvec::SymMat SThetaS, WThetaS;
+      fmatvec::FSymMat SThetaS, WThetaS;
 
       /**
        * \brief Frame indices for kinematics and inertia description
@@ -305,38 +305,38 @@ namespace MBSim {
       /**
        * \brief rotation matrix from kinematic Frame to parent Frame
        */
-      fmatvec::SqrMat APK;
+      fmatvec::FSqrMat APK;
 
       /**
        * \brief translation from parent to kinematic Frame in parent and world system
        */
-      fmatvec::Vec PrPK, WrPK;
+      fmatvec::FVec PrPK, WrPK;
 
       /**
        * \brief translational and angular velocity from parent to kinematic Frame in world system
        */
-      fmatvec::Vec WvPKrel, WomPK;
+      fmatvec::FVec WvPKrel, WomPK;
 
       /** 
        * \brief vector of rotations from cog-Frame to specific Frame
        */
-      std::vector<fmatvec::SqrMat> ASF;
+      std::vector<fmatvec::FSqrMat> ASF;
 
       /** 
        * \brief vector of translations from cog to specific Frame in cog- and world-system
        */
-      std::vector<fmatvec::Vec> SrSF, WrSF;
+      std::vector<fmatvec::FVec> SrSF, WrSF;
 
 
       /** 
        * \brief vector of rotations from cog-Frame to specific contour
        */
-      std::vector<fmatvec::SqrMat> ASC;
+      std::vector<fmatvec::FSqrMat> ASC;
 
       /** 
        * \brief vector of translations from cog to specific contour in cog- and world-system
        */
-      std::vector<fmatvec::Vec> SrSC, WrSC;
+      std::vector<fmatvec::FVec> SrSC, WrSC;
 
       /**
        * \brief JACOBIAN for linear transformation between differentiated positions and velocities
@@ -447,8 +447,8 @@ namespace MBSim {
 
     private:
       std::vector<std::string> saved_refFrameF, saved_refFrameC;
-      std::vector<fmatvec::Vec> saved_RrRF, saved_RrRC;
-      std::vector<fmatvec::SqrMat> saved_ARF, saved_ARC;
+      std::vector<fmatvec::FVec> saved_RrRF, saved_RrRC;
+      std::vector<fmatvec::FSqrMat> saved_ARF, saved_ARC;
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /**
        * \brief Frame of reference for drawing openMBVBody

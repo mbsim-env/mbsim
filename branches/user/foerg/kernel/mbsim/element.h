@@ -41,11 +41,6 @@ namespace H5 {
   class Group;
 }
 
-namespace fmatvec {
-  typedef  FixedSquareMatrix<3,double> FSqrMat;
-  typedef  FixedVector<3,double> FVec;
-}
-
 /**
  * \brief namespace MBSim
  */

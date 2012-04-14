@@ -52,7 +52,7 @@ namespace MBSim {
         if(openMBVArrowF[i]) {
           vector<double> data;
           data.push_back(t); 
-          Vec toPoint=frame[i]->getPosition();
+          FVec toPoint=frame[i]->getPosition();
           data.push_back(toPoint(0));
           data.push_back(toPoint(1));
           data.push_back(toPoint(2));
@@ -67,7 +67,7 @@ namespace MBSim {
         if(openMBVArrowM[i]) {
           vector<double> data;
           data.push_back(t); 
-          Vec toPoint=frame[i]->getPosition();
+          FVec toPoint=frame[i]->getPosition();
           data.push_back(toPoint(0));
           data.push_back(toPoint(1));
           data.push_back(toPoint(2));

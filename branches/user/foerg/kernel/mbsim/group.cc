@@ -109,120 +109,120 @@ namespace MBSim {
   }
 
   void Group::initializeUsingXML(TiXmlElement *element) {
-    TiXmlElement *e;
-    Element::initializeUsingXML(element);
-    e=element->FirstChildElement();
-
-    // search first element known by Group
-    while(e && e->ValueStr()!=MBSIMNS"frameOfReference" &&
-        e->ValueStr()!=MBSIMNS"position" &&
-        e->ValueStr()!=MBSIMNS"orientation" &&
-        e->ValueStr()!=MBSIMNS"frames")
-      e=e->NextSiblingElement();
-
-    if(e && e->ValueStr()==MBSIMNS"frameOfReference") {
-      string ref=e->Attribute("ref");
-      setFrameOfReference(getByPath<Frame>(ref)); // must be a Frame of the parent, so it allready exists (no need to resolve path later)
-      e=e->NextSiblingElement();
-    }
-
-    if(e && e->ValueStr()==MBSIMNS"position") {
-      setPosition(getVec(e,3));
-      e=e->NextSiblingElement();
-    }
-
-    if(e && e->ValueStr()==MBSIMNS"orientation") {
-      setOrientation(getSqrMat(e,3));
-      e=e->NextSiblingElement();
-    }
-
-    // frames
-    TiXmlElement *E=e->FirstChildElement();
-    while(E && E->ValueStr()==MBSIMNS"frame") {
-      TiXmlElement *ec=E->FirstChildElement();
-      Frame *f=new Frame(ec->Attribute("name"));
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      TiXmlElement *ee;
-      if((ee=ec->FirstChildElement(MBSIMNS"enableOpenMBV")))
-        f->enableOpenMBV(getDouble(ee->FirstChildElement(MBSIMNS"size")), getDouble(ee->FirstChildElement(MBSIMNS"offset")));
-#endif
-      ec=ec->NextSiblingElement();
-      string refF="I";
-      if(ec->ValueStr()==MBSIMNS"frameOfReference") {
-        refF=ec->Attribute("ref");
-        refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
-        ec=ec->NextSiblingElement();
-      }
-      Vec RrRF=getVec(ec,3);
-      ec=ec->NextSiblingElement();
-      SqrMat ARF=getSqrMat(ec,3);
-      addFrame(f, RrRF, ARF, refF);
-      E=E->NextSiblingElement();
-    }
-    e=e->NextSiblingElement();
-
-    // contours
-    E=e->FirstChildElement();
-    while(E && E->ValueStr()==MBSIMNS"contour") {
-      TiXmlElement *ec=E->FirstChildElement();
-      Contour *c=ObjectFactory::getInstance()->createContour(ec);
-      TiXmlElement *contourElement=ec; // save for later initialization
-      ec=ec->NextSiblingElement();
-      string refF="I";
-      if(ec->ValueStr()==MBSIMNS"frameOfReference") {
-        refF=ec->Attribute("ref");
-        refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
-        ec=ec->NextSiblingElement();
-      }
-      Vec RrRC=getVec(ec,3);
-      ec=ec->NextSiblingElement();
-      SqrMat ARC=getSqrMat(ec,3);
-      addContour(c, RrRC, ARC, refF);
-      c->initializeUsingXML(contourElement);
-      E=E->NextSiblingElement();
-    }
-    e=e->NextSiblingElement();
-
-    // groups
-    E=e->FirstChildElement();
-    Group *g;
-    while((g=ObjectFactory::getInstance()->createGroup(E))) {
-      addGroup(g);
-      g->initializeUsingXML(E);
-      E=E->NextSiblingElement();
-    }
-    e=e->NextSiblingElement();
-
-    // objects
-    E=e->FirstChildElement();
-    Object *o;
-    while((o=ObjectFactory::getInstance()->createObject(E))) {
-      addObject(o);
-      o->initializeUsingXML(E);
-      E=E->NextSiblingElement();
-    }
-    e=e->NextSiblingElement();
-
-    // extraDynamics
-    if (e->ValueStr()==MBSIMNS"extraDynamics") {
-      E=e->FirstChildElement();
-      ExtraDynamic *ed;
-      while((ed=ObjectFactory::getInstance()->createExtraDynamic(E))) {
-        addExtraDynamic(ed);
-        ed->initializeUsingXML(E);
-        E=E->NextSiblingElement();
-      }
-      e=e->NextSiblingElement();
-    }
-
-    // links
-    E=e->FirstChildElement();
-    Link *l;
-    while((l=ObjectFactory::getInstance()->createLink(E))) {
-      addLink(l);
-      l->initializeUsingXML(E);
-      E=E->NextSiblingElement();
-    }
+//    TiXmlElement *e;
+//    Element::initializeUsingXML(element);
+//    e=element->FirstChildElement();
+//
+//    // search first element known by Group
+//    while(e && e->ValueStr()!=MBSIMNS"frameOfReference" &&
+//        e->ValueStr()!=MBSIMNS"position" &&
+//        e->ValueStr()!=MBSIMNS"orientation" &&
+//        e->ValueStr()!=MBSIMNS"frames")
+//      e=e->NextSiblingElement();
+//
+//    if(e && e->ValueStr()==MBSIMNS"frameOfReference") {
+//      string ref=e->Attribute("ref");
+//      setFrameOfReference(getByPath<Frame>(ref)); // must be a Frame of the parent, so it allready exists (no need to resolve path later)
+//      e=e->NextSiblingElement();
+//    }
+//
+//    if(e && e->ValueStr()==MBSIMNS"position") {
+//      setPosition(getVec(e,3));
+//      e=e->NextSiblingElement();
+//    }
+//
+//    if(e && e->ValueStr()==MBSIMNS"orientation") {
+//      setOrientation(getSqrMat(e,3));
+//      e=e->NextSiblingElement();
+//    }
+//
+//    // frames
+//    TiXmlElement *E=e->FirstChildElement();
+//    while(E && E->ValueStr()==MBSIMNS"frame") {
+//      TiXmlElement *ec=E->FirstChildElement();
+//      Frame *f=new Frame(ec->Attribute("name"));
+//#ifdef HAVE_OPENMBVCPPINTERFACE
+//      TiXmlElement *ee;
+//      if((ee=ec->FirstChildElement(MBSIMNS"enableOpenMBV")))
+//        f->enableOpenMBV(getDouble(ee->FirstChildElement(MBSIMNS"size")), getDouble(ee->FirstChildElement(MBSIMNS"offset")));
+//#endif
+//      ec=ec->NextSiblingElement();
+//      string refF="I";
+//      if(ec->ValueStr()==MBSIMNS"frameOfReference") {
+//        refF=ec->Attribute("ref");
+//        refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
+//        ec=ec->NextSiblingElement();
+//      }
+//      Vec RrRF=getVec(ec,3);
+//      ec=ec->NextSiblingElement();
+//      SqrMat ARF=getSqrMat(ec,3);
+//      addFrame(f, RrRF, ARF, refF);
+//      E=E->NextSiblingElement();
+//    }
+//    e=e->NextSiblingElement();
+//
+//    // contours
+//    E=e->FirstChildElement();
+//    while(E && E->ValueStr()==MBSIMNS"contour") {
+//      TiXmlElement *ec=E->FirstChildElement();
+//      Contour *c=ObjectFactory::getInstance()->createContour(ec);
+//      TiXmlElement *contourElement=ec; // save for later initialization
+//      ec=ec->NextSiblingElement();
+//      string refF="I";
+//      if(ec->ValueStr()==MBSIMNS"frameOfReference") {
+//        refF=ec->Attribute("ref");
+//        refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
+//        ec=ec->NextSiblingElement();
+//      }
+//      Vec RrRC=getVec(ec,3);
+//      ec=ec->NextSiblingElement();
+//      SqrMat ARC=getSqrMat(ec,3);
+//      addContour(c, RrRC, ARC, refF);
+//      c->initializeUsingXML(contourElement);
+//      E=E->NextSiblingElement();
+//    }
+//    e=e->NextSiblingElement();
+//
+//    // groups
+//    E=e->FirstChildElement();
+//    Group *g;
+//    while((g=ObjectFactory::getInstance()->createGroup(E))) {
+//      addGroup(g);
+//      g->initializeUsingXML(E);
+//      E=E->NextSiblingElement();
+//    }
+//    e=e->NextSiblingElement();
+//
+//    // objects
+//    E=e->FirstChildElement();
+//    Object *o;
+//    while((o=ObjectFactory::getInstance()->createObject(E))) {
+//      addObject(o);
+//      o->initializeUsingXML(E);
+//      E=E->NextSiblingElement();
+//    }
+//    e=e->NextSiblingElement();
+//
+//    // extraDynamics
+//    if (e->ValueStr()==MBSIMNS"extraDynamics") {
+//      E=e->FirstChildElement();
+//      ExtraDynamic *ed;
+//      while((ed=ObjectFactory::getInstance()->createExtraDynamic(E))) {
+//        addExtraDynamic(ed);
+//        ed->initializeUsingXML(E);
+//        E=E->NextSiblingElement();
+//      }
+//      e=e->NextSiblingElement();
+//    }
+//
+//    // links
+//    E=e->FirstChildElement();
+//    Link *l;
+//    while((l=ObjectFactory::getInstance()->createLink(E))) {
+//      addLink(l);
+//      l->initializeUsingXML(E);
+//      E=E->NextSiblingElement();
+//    }
   }
 
 }
