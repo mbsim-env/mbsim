@@ -10,9 +10,9 @@
   <frames/>
   <contours/>
   <groups>
-    <pv:embed href="Untergruppe.xml">
+    <pv:embed href="submodel/Untergruppe.xml">
       <!-- set local parameter for Untergruppe.xml; existing ones will be overwritten -->
-      <pv:localParameter href="Untergruppe.param.xml"/>
+      <pv:localParameter href="submodel/Untergruppe.param.xml"/>
     </pv:embed>
   </groups>
   <objects>
