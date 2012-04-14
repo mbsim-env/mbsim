@@ -29,9 +29,9 @@ namespace MBSim {
   MBSimEnvironment *MBSimEnvironment::instance=NULL;
 
   void MBSimEnvironment::initializeUsingXML(TiXmlElement *element) {
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"accelerationOfGravity");
-    setAccelerationOfGravity(Element::getVec(e,3));
+//    TiXmlElement *e;
+//    e=element->FirstChildElement(MBSIMNS"accelerationOfGravity");
+//    setAccelerationOfGravity(Element::getVec(e,3));
   }
 
 }

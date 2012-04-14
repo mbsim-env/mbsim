@@ -19,6 +19,10 @@
  *   rzander@users.berlios.de
  *
  */
+
+#define FMATVEC_NO_BOUNDS_CHECK
+#define FMATVEC_NO_SIZE_CHECK
+
 #include <config.h>
 #include "rotarymatrices.h"
 #include "utils.h"
@@ -102,8 +106,8 @@ namespace MBSim {
     return AIKx*AIKy*AIKz;          //Wie im TM VI Skript
   }
 
-  Vec AIK2Cardan(const SqrMat &AIK) { 
-    Vec AlphaBetaGamma(3,INIT,0.0);    
+  FVec AIK2Cardan(const FSqrMat &AIK) { 
+    FVec AlphaBetaGamma(NONINIT);    
     AlphaBetaGamma(1)= asin(AIK(0,2));
     double nenner = cos(AlphaBetaGamma(1));
     if (fabs(nenner)>1e-10) {
@@ -116,12 +120,12 @@ namespace MBSim {
     return AlphaBetaGamma;
   }
 
-  Vec AKI2Cardan(const SqrMat &AKI) {
+  FVec AKI2Cardan(const FSqrMat &AKI) {
     return AIK2Cardan(trans(AKI));
   }
 
-  Vec AIK2RevCardan(const SqrMat &AIK) {
-    Vec AlphaBetaGamma(3,INIT,0.0);
+  FVec AIK2RevCardan(const FSqrMat &AIK) {
+    FVec AlphaBetaGamma(NONINIT);
     AlphaBetaGamma(1)= asin(-AIK(2,0));
     double nenner = cos(AlphaBetaGamma(1));
     if (fabs(nenner)>1e-10) {
@@ -134,7 +138,7 @@ namespace MBSim {
     return AlphaBetaGamma;
   }
 
-  Vec AKI2RevCardan(const SqrMat &AKI) {
+  FVec AKI2RevCardan(const FSqrMat &AKI) {
     return AIK2RevCardan(trans(AKI));
   }
 

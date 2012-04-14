@@ -61,8 +61,8 @@ namespace MBSim {
                                                        I=new Frame("I");
                                                        addFrame(I);
 
-                                                       IrOF.push_back(Vec(3,INIT,0.));
-                                                       AIF.push_back(SqrMat(3,EYE));
+                                                       IrOF.push_back(FVec());
+                                                       AIF.push_back(FSqrMat());
                                                      }
 
   DynamicSystem::~DynamicSystem() {
@@ -1263,21 +1263,21 @@ namespace MBSim {
     cosy->setParent(this);
   }
 
-  void DynamicSystem::addFrame(Frame* cosy, const Vec &RrRF, const SqrMat &ARF, const string& refFrameName) {
+  void DynamicSystem::addFrame(Frame* cosy, const FVec &RrRF, const FSqrMat &ARF, const string& refFrameName) {
     addFrame(cosy);
 
     saved_refFrameF.push_back(refFrameName);
-    saved_RrRF.push_back(RrRF.copy()); // use .copy() because the copy constructor of fmatvec is a reference
-    saved_ARF.push_back(ARF.copy()); // use .copy() because the copy constructor of fmatvec is a reference
-    IrOF.push_back(Vec(3));
-    AIF.push_back(SqrMat(3));
+    saved_RrRF.push_back(RrRF); 
+    saved_ARF.push_back(ARF); 
+    IrOF.push_back(FVec());
+    AIF.push_back(FSqrMat());
   }
 
-  void DynamicSystem::addFrame(Frame *frame_, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const Frame* refFrame) {
+  void DynamicSystem::addFrame(Frame *frame_, const fmatvec::FVec &RrRF, const fmatvec::FSqrMat &ARF, const Frame* refFrame) {
     addFrame(frame_, RrRF, ARF, refFrame?refFrame->getName():"I");
   }
 
-  void DynamicSystem::addFrame(const string &str, const Vec &RrRF, const SqrMat &ARF, const Frame* refFrame) {
+  void DynamicSystem::addFrame(const string &str, const FVec &RrRF, const FSqrMat &ARF, const Frame* refFrame) {
     addFrame(new Frame(str),RrRF,ARF,refFrame);
   }
 
@@ -1290,17 +1290,17 @@ namespace MBSim {
     contour_->setParent(this);
   }
 
-  void DynamicSystem::addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const string& refFrameName) {
+  void DynamicSystem::addContour(Contour* contour, const FVec &RrRC, const FSqrMat &ARC, const string& refFrameName) {
     addContour(contour);
 
     saved_refFrameC.push_back(refFrameName);
     saved_RrRC.push_back(RrRC.copy()); // use .copy() because the copy constructor of fmatvec is a reference
     saved_ARC.push_back(ARC.copy()); // use .copy() because the copy constructor of fmatvec is a reference
-    IrOC.push_back(Vec(3));
-    AIC.push_back(SqrMat(3));
+    IrOC.push_back(FVec());
+    AIC.push_back(FSqrMat());
   }
 
-  void DynamicSystem::addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const Frame* refFrame) {
+  void DynamicSystem::addContour(Contour* contour, const fmatvec::FVec &RrRC, const fmatvec::FSqrMat &ARC, const Frame* refFrame) {
     addContour(contour, RrRC, ARC, refFrame?refFrame->getName():"I");
   }
 

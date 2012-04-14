@@ -65,8 +65,8 @@ namespace MBSim {
 
       /* GETTER / SETTER */
       static MBSimEnvironment *getInstance() { return instance?instance:(instance=new MBSimEnvironment); }
-      void setAccelerationOfGravity(const fmatvec::Vec &grav_) { grav=grav_; }
-      const fmatvec::Vec& getAccelerationOfGravity() const { return grav; }
+      void setAccelerationOfGravity(const fmatvec::FVec &grav_) { grav=grav_; }
+      const fmatvec::FVec& getAccelerationOfGravity() const { return grav; }
       /***************************************************/
     
     protected:
@@ -78,12 +78,12 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      MBSimEnvironment() : Environment(), grav(3) {}
+      MBSimEnvironment() : Environment() {}
 
       /**
        * \brief acceleration of gravity
        */
-      fmatvec::Vec grav;
+      fmatvec::FVec grav;
   };
 
 }
