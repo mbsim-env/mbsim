@@ -40,14 +40,6 @@ namespace MBSim {
     hSize[1] = 0;
     hInd[0] = 0;
     hInd[1] = 0;
-    WJP[0].resize(3,0);
-    WJR[0].resize(3,0);
-    WJP[1].resize(3,0);
-    WJR[1].resize(3,0);
-    WjP[0].resize(3,INIT,0.);
-    WjR[0].resize(3,INIT,0.);
-    WjP[1].resize(3,INIT,0.);
-    WjR[1].resize(3,INIT,0.);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
     openMBVFrame=0;
@@ -104,10 +96,10 @@ namespace MBSim {
 
   void Frame::init(InitStage stage) {
     if(stage==unknownStage) {
-      getJacobianOfTranslation(0).resize(3,hSize[0]);
-      getJacobianOfRotation(0).resize(3,hSize[0]);
-      getJacobianOfTranslation(1).resize(3,hSize[1]);
-      getJacobianOfRotation(1).resize(3,hSize[1]);
+      getJacobianOfTranslation(0).resize(hSize[0]);
+      getJacobianOfRotation(0).resize(hSize[0]);
+      getJacobianOfTranslation(1).resize(hSize[1]);
+      getJacobianOfRotation(1).resize(hSize[1]);
     }
     else if(stage==MBSim::plot) {
       updatePlotFeatures();

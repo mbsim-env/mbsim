@@ -124,14 +124,14 @@ namespace MBSim {
       cpData.push_back(new ContourPointData[2]);
       cpData[0][0].getFrameOfReference().setName("0");
       cpData[0][1].getFrameOfReference().setName("1");
-      cpData[0][0].getFrameOfReference().getJacobianOfTranslation(0).resize();
-      cpData[0][0].getFrameOfReference().getJacobianOfRotation(0).resize();
-      cpData[0][1].getFrameOfReference().getJacobianOfTranslation(0).resize();
-      cpData[0][1].getFrameOfReference().getJacobianOfRotation(0).resize();
-      cpData[0][0].getFrameOfReference().getJacobianOfTranslation(1).resize();
-      cpData[0][0].getFrameOfReference().getJacobianOfRotation(1).resize();
-      cpData[0][1].getFrameOfReference().getJacobianOfTranslation(1).resize();
-      cpData[0][1].getFrameOfReference().getJacobianOfRotation(1).resize();
+//      cpData[0][0].getFrameOfReference().getJacobianOfTranslation(0).resize();
+//      cpData[0][0].getFrameOfReference().getJacobianOfRotation(0).resize();
+//      cpData[0][1].getFrameOfReference().getJacobianOfTranslation(0).resize();
+//      cpData[0][1].getFrameOfReference().getJacobianOfRotation(0).resize();
+//      cpData[0][0].getFrameOfReference().getJacobianOfTranslation(1).resize();
+//      cpData[0][0].getFrameOfReference().getJacobianOfRotation(1).resize();
+//      cpData[0][1].getFrameOfReference().getJacobianOfTranslation(1).resize();
+//      cpData[0][1].getFrameOfReference().getJacobianOfRotation(1).resize();
 
       cpData[0][0].getFrameOfReference().sethSize(contour1->gethSize(0), 0);
       cpData[0][0].getFrameOfReference().sethSize(contour1->gethSize(1), 1);

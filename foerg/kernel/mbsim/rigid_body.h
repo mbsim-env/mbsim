@@ -258,8 +258,8 @@ namespace MBSim {
       fmatvec::Vec& getuRel() {return uRel;}
       // void setqRel(const fmatvec::Vec &q) {qRel0 = q;}
       // void setuRel(const fmatvec::Vec &u) {uRel0 = u;}
-      fmatvec::Mat& getPJT(int i=0) {return PJT[i];}
-      fmatvec::Mat& getPJR(int i=0) {return PJR[i];}
+      fmatvec::FVMat& getPJT(int i=0) {return PJT[i];}
+      fmatvec::FVMat& getPJR(int i=0) {return PJR[i];}
 
     protected:
       /**
@@ -290,17 +290,17 @@ namespace MBSim {
       /**
        * JACOBIAN of translation, rotation and their derivatives in parent system
        */
-      fmatvec::Mat PJT[2], PJR[2], PdJT, PdJR;
+      fmatvec::FVMat PJT[2], PJR[2], PdJT, PdJR;
 
       /**
        * guiding velocities of translation, rotation and their derivatives in parent system
        */
-      fmatvec::Vec PjT, PjR, PdjT, PdjR;
+      fmatvec::FVec PjT, PjR, PdjT, PdjR;
 
       /**
        * \brief TODO
        */
-      fmatvec::Mat PJR0;
+      fmatvec::FVMat PJR0;
 
       /**
        * \brief rotation matrix from kinematic Frame to parent Frame
