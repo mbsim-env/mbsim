@@ -141,17 +141,17 @@ namespace MBSim {
       /**
        * \param JACOBIAN of translation of contour in inertial frame
        */
-      virtual void setReferenceJacobianOfTranslation(const fmatvec::Mat &WJP, int j=0) { R.setJacobianOfTranslation(WJP,j); }
+      virtual void setReferenceJacobianOfTranslation(const fmatvec::FVMat &WJP, int j=0) { R.setJacobianOfTranslation(WJP,j); }
 
       /**
        * \param gyroscopic acceleration of translation of contour in inertial frame
        */
-      virtual void setReferenceGyroscopicAccelerationOfTranslation(const fmatvec::Vec &WjP, int j=0) { R.setGyroscopicAccelerationOfTranslation(WjP,j); }
+      virtual void setReferenceGyroscopicAccelerationOfTranslation(const fmatvec::FVec &WjP, int j=0) { R.setGyroscopicAccelerationOfTranslation(WjP,j); }
 
       /**
        * \param JACOBIAN of rotation of contour in inertial frame
        */
-      virtual void setReferenceJacobianOfRotation(const fmatvec::Mat &WJR, int j=0) { R.setJacobianOfRotation(WJR,j); }
+      virtual void setReferenceJacobianOfRotation(const fmatvec::FVMat &WJR, int j=0) { R.setJacobianOfRotation(WJR,j); }
 
       /**
        * \param gyroscopic acceleration of rotation of contour in inertial frame
@@ -187,14 +187,14 @@ namespace MBSim {
       const fmatvec::FSqrMat& getReferenceOrientation() const { return R.getOrientation(); }
       const fmatvec::FVec& getReferenceVelocity() const { return R.getVelocity(); }
       const fmatvec::FVec& getReferenceAngularVelocity() const { return R.getAngularVelocity(); }
-      const fmatvec::Mat& getReferenceJacobianOfTranslation(int j=0) const { return R.getJacobianOfTranslation(j); }
-      const fmatvec::Mat& getReferenceJacobianOfRotation(int j=0) const { return R.getJacobianOfRotation(j); }
-      fmatvec::Mat& getReferenceJacobianOfTranslation(int j=0) { return R.getJacobianOfTranslation(j); }
-      fmatvec::Mat& getReferenceJacobianOfRotation(int j=0) { return R.getJacobianOfRotation(j); }
-      const fmatvec::Vec& getReferenceGyroscopicAccelerationOfTranslation() const { return R.getGyroscopicAccelerationOfTranslation(); }
-      const fmatvec::Vec& getReferenceGyroscopicAccelerationOfRotation() const { return R.getGyroscopicAccelerationOfRotation(); }
-      fmatvec::Vec& getReferenceGyroscopicAccelerationOfTranslation() { return R.getGyroscopicAccelerationOfTranslation(); }
-      fmatvec::Vec& getReferenceGyroscopicAccelerationOfRotation() { return R.getGyroscopicAccelerationOfRotation(); }
+      const fmatvec::FVMat& getReferenceJacobianOfTranslation(int j=0) const { return R.getJacobianOfTranslation(j); }
+      const fmatvec::FVMat& getReferenceJacobianOfRotation(int j=0) const { return R.getJacobianOfRotation(j); }
+      fmatvec::FVMat& getReferenceJacobianOfTranslation(int j=0) { return R.getJacobianOfTranslation(j); }
+      fmatvec::FVMat& getReferenceJacobianOfRotation(int j=0) { return R.getJacobianOfRotation(j); }
+      const fmatvec::FVec& getReferenceGyroscopicAccelerationOfTranslation() const { return R.getGyroscopicAccelerationOfTranslation(); }
+      const fmatvec::FVec& getReferenceGyroscopicAccelerationOfRotation() const { return R.getGyroscopicAccelerationOfRotation(); }
+      fmatvec::FVec& getReferenceGyroscopicAccelerationOfTranslation() { return R.getGyroscopicAccelerationOfTranslation(); }
+      fmatvec::FVec& getReferenceGyroscopicAccelerationOfRotation() { return R.getGyroscopicAccelerationOfRotation(); }
 
       int gethSize(int i=0) const { return hSize[i]; }
       int gethInd(int i=0) const { return hInd[i]; }
