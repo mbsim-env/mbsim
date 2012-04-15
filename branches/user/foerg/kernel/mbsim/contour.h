@@ -156,7 +156,7 @@ namespace MBSim {
       /**
        * \param gyroscopic acceleration of rotation of contour in inertial frame
        */
-      virtual void setReferenceGyroscopicAccelerationOfRotation(const fmatvec::Vec &WjR, int j=0) { R.setGyroscopicAccelerationOfRotation(WjR,j); }
+      virtual void setReferenceGyroscopicAccelerationOfRotation(const fmatvec::FVec &WjR, int j=0) { R.setGyroscopicAccelerationOfRotation(WjR,j); }
 
       /**
        * \param acceleration of contour in inertial frame
