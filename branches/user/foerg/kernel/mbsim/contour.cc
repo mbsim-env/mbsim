@@ -53,10 +53,10 @@ namespace MBSim {
 
   void Contour::init(InitStage stage) {
     if(stage==unknownStage) {
-      getFrame()->getJacobianOfTranslation(0).resize(3,hSize[0]);
-      getFrame()->getJacobianOfRotation(0).resize(3,hSize[0]);
-      getFrame()->getJacobianOfTranslation(1).resize(3,hSize[1]);
-      getFrame()->getJacobianOfRotation(1).resize(3,hSize[1]);
+      getFrame()->getJacobianOfTranslation(0).resize(hSize[0]);
+      getFrame()->getJacobianOfRotation(0).resize(hSize[0]);
+      getFrame()->getJacobianOfTranslation(1).resize(hSize[1]);
+      getFrame()->getJacobianOfRotation(1).resize(hSize[1]);
     }
     else if(stage==MBSim::plot) {
       updatePlotFeatures();
@@ -136,7 +136,7 @@ R.init(stage);
 
     cp.getFrameOfReference().setJacobianOfTranslation(R.getJacobianOfTranslation(j) - tWrPC*R.getJacobianOfRotation(j),j);
     cp.getFrameOfReference().setJacobianOfRotation(R.getJacobianOfRotation(j),j);
-    cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(Vec(R.getGyroscopicAccelerationOfTranslation() - tWrPC*R.getGyroscopicAccelerationOfRotation() + crossProduct(R.getAngularVelocity(),crossProduct(R.getAngularVelocity(),WrPC))));
+    cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(R.getGyroscopicAccelerationOfTranslation() - tWrPC*R.getGyroscopicAccelerationOfRotation() + crossProduct(R.getAngularVelocity(),crossProduct(R.getAngularVelocity(),WrPC)));
     cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(R.getGyroscopicAccelerationOfRotation());
 
     // adapt dimensions if necessary
