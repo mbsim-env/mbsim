@@ -77,7 +77,7 @@ namespace MBSim {
        * \brief constructor
        * \param independent direction matrix of translation
        */
-      LinearTranslation(const fmatvec::Mat &PJT_) { PJT = PJT_; } 
+      LinearTranslation(const fmatvec::FVMat &PJT_) { PJT = PJT_; } 
 
       /* INTERFACE OF TRANSLATION */
       virtual int getqSize() const { throw; return 0; }
@@ -86,20 +86,20 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
-      const fmatvec::Mat& getTranslationVectors() const { return PJT; }
+      const fmatvec::FVMat& getTranslationVectors() const { return PJT; }
 
       /**
        * Set the posible translations vectors. Each column of the matrix
        * is a posible translation vector.
        */
-      void setTranslationVectors(const fmatvec::Mat &PJT_) { PJT = PJT_; }
+      void setTranslationVectors(const fmatvec::FVMat &PJT_) { PJT = PJT_; }
       /***************************************************/
 
     private:
       /**
        * independent direction matrix of translation
        */
-      fmatvec::Mat PJT;
+      fmatvec::FVMat PJT;
   };
 
   /**

@@ -230,10 +230,10 @@ namespace MBSim {
   }
 
   void TimeDependentCardanAngles::initializeUsingXML(TiXmlElement *element) {
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"position");
-    angle=ObjectFactory::getInstance()->createFunction1_VS(e->FirstChildElement());
-    angle->initializeUsingXML(e->FirstChildElement());
+//    TiXmlElement *e;
+//    e=element->FirstChildElement(MBSIMNS"position");
+//    angle=ObjectFactory::getInstance()->createFunction1_VS(e->FirstChildElement());
+//    angle->initializeUsingXML(e->FirstChildElement());
   }
 
   Mat JRotationAboutAxesXY::operator()(const fmatvec::Vec &q, const double &t, const void *) {
@@ -352,9 +352,9 @@ namespace MBSim {
   }
 
   void ConstantJacobian::initializeUsingXML(TiXmlElement *element) {
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"constant");
-    J=Element::getMat(e);
+//    TiXmlElement *e;
+//    e=element->FirstChildElement(MBSIMNS"constant");
+//    J=Element::getMat(e);
   }
 
   Mat JdRotationAboutAxesXY::operator()(const Vec &qd, const Vec& q, const double& t, const void*) {

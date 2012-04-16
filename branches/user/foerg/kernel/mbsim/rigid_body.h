@@ -248,12 +248,12 @@ namespace MBSim {
       virtual void updateAccelerations(double t, unsigned int i);
       virtual void updateRelativeJacobians(double t, unsigned int i);
       virtual void updateRelativeJacobians(double t, unsigned int i, fmatvec::Mat &WJTrel, fmatvec::Mat &WJRrel);
-      const fmatvec::Mat& getWJTrel() const {return WJTrel;}
-      const fmatvec::Mat& getWJRrel() const {return WJRrel;}
-      fmatvec::Mat& getWJTrel() {return WJTrel;}
-      fmatvec::Mat& getWJRrel() {return WJRrel;}
-      fmatvec::Mat& getJRel(int i=0) {return JRel[i];}
-      fmatvec::Vec& getjRel() {return jRel;}
+      const fmatvec::FVMat& getWJTrel() const {return WJTrel;}
+      const fmatvec::FVMat& getWJRrel() const {return WJRrel;}
+      fmatvec::FVMat& getWJTrel() {return WJTrel;}
+      fmatvec::FVMat& getWJRrel() {return WJRrel;}
+      fmatvec::VMat& getJRel(int i=0) {return JRel[i];}
+      fmatvec::VVec& getjRel() {return jRel;}
       fmatvec::Vec& getqRel() {return qRel;}
       fmatvec::Vec& getuRel() {return uRel;}
       // void setqRel(const fmatvec::Vec &q) {qRel0 = q;}
@@ -431,11 +431,11 @@ namespace MBSim {
       fmatvec::Vec aT, aR;
 
       fmatvec::Vec qRel, uRel;
-      fmatvec::Mat JRel[2];
-      fmatvec::Vec jRel;
+      fmatvec::VMat JRel[2];
+      fmatvec::VVec jRel;
 
-      fmatvec::Mat WJTrel,WJRrel;
-      fmatvec::Vec WjTrel,WjRrel;
+      fmatvec::FVMat WJTrel,WJRrel;
+      fmatvec::FVec WjTrel,WjRrel;
 
       fmatvec::Mat TRel;
 
