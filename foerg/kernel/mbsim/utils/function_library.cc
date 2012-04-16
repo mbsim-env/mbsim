@@ -26,21 +26,21 @@ using namespace fmatvec;
 namespace MBSim {
 
   void Function1_SS_from_VS::initializeUsingXML(TiXmlElement * element) {
-    TiXmlElement * e;
-    e=element;
-    Function1<fmatvec::Vec, double> * f=ObjectFactory::getInstance()->getInstance()->createFunction1_VS(e->FirstChildElement());
-    f->initializeUsingXML(e->FirstChildElement());
-    setFunction(f);
+//    TiXmlElement * e;
+//    e=element;
+//    Function1<fmatvec::Vec, double> * f=ObjectFactory::getInstance()->getInstance()->createFunction1_VS(e->FirstChildElement());
+//    f->initializeUsingXML(e->FirstChildElement());
+//    setFunction(f);
   }
 
   void Function1_VS_from_SS::initializeUsingXML(TiXmlElement * element) {
-    TiXmlElement * e;
-    e=element->FirstChildElement(MBSIMNS"function");
-    Function1<double, double> * f=ObjectFactory::getInstance()->getInstance()->createFunction1_SS(e->FirstChildElement());
-    f->initializeUsingXML(e->FirstChildElement());
-    setFunction(f);
-    e=element->FirstChildElement(MBSIMNS"direction");
-    setVector(Element::getVec(e));
+//    TiXmlElement * e;
+//    e=element->FirstChildElement(MBSIMNS"function");
+//    Function1<double, double> * f=ObjectFactory::getInstance()->getInstance()->createFunction1_SS(e->FirstChildElement());
+//    f->initializeUsingXML(e->FirstChildElement());
+//    setFunction(f);
+//    e=element->FirstChildElement(MBSIMNS"direction");
+//    setVector(Element::getVec(e));
   }
 
 
@@ -79,14 +79,14 @@ namespace MBSim {
   }
 
   void QuadraticFunction1_VS::initializeUsingXML(TiXmlElement *element) {
-    DifferentiableFunction1<Vec>::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"a0");
-    a0=Element::getVec(e);
-    ySize=a0.size();
-    e=element->FirstChildElement(MBSIMNS"a1");
-    a1=Element::getVec(e, ySize);
-    e=element->FirstChildElement(MBSIMNS"a2");
-    a2=Element::getVec(e, ySize);
+//    DifferentiableFunction1<Vec>::initializeUsingXML(element);
+//    TiXmlElement *e=element->FirstChildElement(MBSIMNS"a0");
+//    a0=Element::getVec(e);
+//    ySize=a0.size();
+//    e=element->FirstChildElement(MBSIMNS"a1");
+//    a1=Element::getVec(e, ySize);
+//    e=element->FirstChildElement(MBSIMNS"a2");
+//    a2=Element::getVec(e, ySize);
     
   }
 
@@ -126,24 +126,24 @@ namespace MBSim {
   }
 
   void SinusFunction1_VS::initializeUsingXML(TiXmlElement *element) {
-    DifferentiableFunction1<Vec>::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"amplitude");
-    Vec amplitude_=Element::getVec(e);
-    amplitude=amplitude_;
-    e=element->FirstChildElement(MBSIMNS"frequency");
-    Vec frequency_=Element::getVec(e, amplitude_.size());
-    frequency=frequency_;
-    e=element->FirstChildElement(MBSIMNS"phase");
-    Vec phase_=Element::getVec(e, amplitude_.size());
-    phase=phase_;
-    e=element->FirstChildElement(MBSIMNS"offset");
-    Vec offset_;
-    if (e)
-      offset_=Element::getVec(e, amplitude_.size());
-    else
-      offset_.resize(amplitude_.size(), INIT, 0);
-    offset=offset_;
-    check();
+//    DifferentiableFunction1<Vec>::initializeUsingXML(element);
+//    TiXmlElement *e=element->FirstChildElement(MBSIMNS"amplitude");
+//    Vec amplitude_=Element::getVec(e);
+//    amplitude=amplitude_;
+//    e=element->FirstChildElement(MBSIMNS"frequency");
+//    Vec frequency_=Element::getVec(e, amplitude_.size());
+//    frequency=frequency_;
+//    e=element->FirstChildElement(MBSIMNS"phase");
+//    Vec phase_=Element::getVec(e, amplitude_.size());
+//    phase=phase_;
+//    e=element->FirstChildElement(MBSIMNS"offset");
+//    Vec offset_;
+//    if (e)
+//      offset_=Element::getVec(e, amplitude_.size());
+//    else
+//      offset_.resize(amplitude_.size(), INIT, 0);
+//    offset=offset_;
+//    check();
   }
 
   void SinusFunction1_VS::check() {
@@ -173,13 +173,13 @@ namespace MBSim {
 
 
   void StepFunction1_VS::initializeUsingXML(TiXmlElement * element) {
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"time");
-    Vec stepTime_=Element::getVec(e);
-    stepTime=stepTime_;
-    e=element->FirstChildElement(MBSIMNS"size");
-    Vec stepSize_=Element::getVec(e);
-    stepSize=stepSize_;
-    check();
+ //   TiXmlElement *e=element->FirstChildElement(MBSIMNS"time");
+ //   Vec stepTime_=Element::getVec(e);
+ //   stepTime=stepTime_;
+ //   e=element->FirstChildElement(MBSIMNS"size");
+ //   Vec stepSize_=Element::getVec(e);
+ //   stepSize=stepSize_;
+ //   check();
   }
 
   void StepFunction1_VS::check() {
@@ -189,22 +189,22 @@ namespace MBSim {
 
 
   void TabularFunction1_VS::initializeUsingXML(TiXmlElement * element) {
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"x");
-    if (e) {
-      Vec x_=Element::getVec(e);
-      x=x_;
-      e=element->FirstChildElement(MBSIMNS"y");
-      Mat y_=Element::getMat(e, x.size(), 0);
-      y=y_;
-    }
-    e=element->FirstChildElement(MBSIMNS"xy");
-    if (e) {
-      Mat xy=Element::getMat(e);
-      assert(xy.cols()>1);
-      x=xy.col(0);
-      y=xy(0, 1, xy.rows()-1, xy.cols()-1);
-    }
-    check();
+  //  TiXmlElement *e=element->FirstChildElement(MBSIMNS"x");
+  //  if (e) {
+  //    Vec x_=Element::getVec(e);
+  //    x=x_;
+  //    e=element->FirstChildElement(MBSIMNS"y");
+  //    Mat y_=Element::getMat(e, x.size(), 0);
+  //    y=y_;
+  //  }
+  //  e=element->FirstChildElement(MBSIMNS"xy");
+  //  if (e) {
+  //    Mat xy=Element::getMat(e);
+  //    assert(xy.cols()>1);
+  //    x=xy.col(0);
+  //    y=xy(0, 1, xy.rows()-1, xy.cols()-1);
+  //  }
+  //  check();
   }
 
   Vec TabularFunction1_VS::operator()(const double& xVal, const void *) {
@@ -251,17 +251,17 @@ namespace MBSim {
 
 
   void SummationFunction1_VS::initializeUsingXML(TiXmlElement * element) {
-    TiXmlElement * e;
-    e=element->FirstChildElement(MBSIMNS"function");
-    while (e && e->ValueStr()==MBSIMNS"function") {
-      TiXmlElement * ee = e->FirstChildElement();
-      Function1<Vec,double> *f=ObjectFactory::getInstance()->createFunction1_VS(ee);
-      f->initializeUsingXML(ee);
-      ee=e->FirstChildElement(MBSIMNS"factor");
-      double factor=Element::getDouble(ee);
-      addFunction(f, factor);
-      e=e->NextSiblingElement();
-    }
+//    TiXmlElement * e;
+//    e=element->FirstChildElement(MBSIMNS"function");
+//    while (e && e->ValueStr()==MBSIMNS"function") {
+//      TiXmlElement * ee = e->FirstChildElement();
+//      Function1<Vec,double> *f=ObjectFactory::getInstance()->createFunction1_VS(ee);
+//      f->initializeUsingXML(ee);
+//      ee=e->FirstChildElement(MBSIMNS"factor");
+//      double factor=Element::getDouble(ee);
+//      addFunction(f, factor);
+//      e=e->NextSiblingElement();
+//    }
   }
 
 
@@ -361,16 +361,16 @@ namespace MBSim {
   }
 
   void TabularFunction2_SSS::initializeUsingXML(TiXmlElement * element) {
-    TiXmlElement * e;
-    e = element->FirstChildElement(MBSIMNS"xValues");
-    Vec x_=Element::getVec(e);
-    setXValues(x_);
-    e = element->FirstChildElement(MBSIMNS"yValues");
-    Vec y_=Element::getVec(e);
-    setYValues(y_);
-    e = element->FirstChildElement(MBSIMNS"xyValues");
-    Mat xy_=Element::getMat(e, y_.size(), x_.size());
-    setXYMat(xy_);
+//    TiXmlElement * e;
+//    e = element->FirstChildElement(MBSIMNS"xValues");
+//    Vec x_=Element::getVec(e);
+//    setXValues(x_);
+//    e = element->FirstChildElement(MBSIMNS"yValues");
+//    Vec y_=Element::getVec(e);
+//    setYValues(y_);
+//    e = element->FirstChildElement(MBSIMNS"xyValues");
+//    Mat xy_=Element::getMat(e, y_.size(), x_.size());
+//    setXYMat(xy_);
   }
 
 
@@ -387,9 +387,9 @@ namespace MBSim {
   }
 
   void Polynom1_SS::initializeUsingXML(TiXmlElement * element) {
-    MBSim::DifferentiableFunction1<double>::initializeUsingXML(element);
-    TiXmlElement * e=element->FirstChildElement(MBSIMNS"coefficients");
-    setCoefficients(MBSim::Element::getVec(e));
+//    MBSim::DifferentiableFunction1<double>::initializeUsingXML(element);
+//    TiXmlElement * e=element->FirstChildElement(MBSIMNS"coefficients");
+//    setCoefficients(MBSim::Element::getVec(e));
   }
 
   double Polynom1_SS::Polynom1_SSEvaluation::operator()(const double& tVal, const void *) {

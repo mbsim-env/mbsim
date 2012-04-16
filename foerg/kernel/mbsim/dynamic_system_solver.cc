@@ -1270,69 +1270,69 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::initializeUsingXML(TiXmlElement *element) {
-    Group::initializeUsingXML(element);
-    TiXmlElement *e;
-    // search first Environment element
-    e=element->FirstChildElement(MBSIMNS"environments")->FirstChildElement();
-
-    Environment *env;
-    while((env=ObjectFactory::getInstance()->getEnvironment(e))) {
-      env->initializeUsingXML(e);
-      e=e->NextSiblingElement();
-    }
-
-    e=element->FirstChildElement(MBSIMNS"solverParameters");
-    if (e) {
-      TiXmlElement * ee;
-      ee=e->FirstChildElement(MBSIMNS"constraintSolver");
-      if (ee) {
-        if (ee->FirstChildElement(MBSIMNS"FixedPointTotal"))
-          setConstraintSolver(FixedPointTotal);
-        else if (ee->FirstChildElement(MBSIMNS"FixedPointSingle"))
-          setConstraintSolver(FixedPointSingle);
-        else if (ee->FirstChildElement(MBSIMNS"GaussSeidel"))
-          setConstraintSolver(GaussSeidel);
-        else if (ee->FirstChildElement(MBSIMNS"LinearEquations"))
-          setConstraintSolver(LinearEquations);
-        else if (ee->FirstChildElement(MBSIMNS"RootFinding"))
-          setConstraintSolver(RootFinding);
-      }
-      ee=e->FirstChildElement(MBSIMNS"impactSolver");
-      if (ee) {
-        if (ee->FirstChildElement(MBSIMNS"FixedPointTotal"))
-          setImpactSolver(FixedPointTotal);
-        else if (ee->FirstChildElement(MBSIMNS"FixedPointSingle"))
-          setImpactSolver(FixedPointSingle);
-        else if (ee->FirstChildElement(MBSIMNS"GaussSeidel"))
-          setImpactSolver(GaussSeidel);
-        else if (ee->FirstChildElement(MBSIMNS"LinearEquations"))
-          setImpactSolver(LinearEquations);
-        else if (ee->FirstChildElement(MBSIMNS"RootFinding"))
-          setImpactSolver(RootFinding);
-      }
-      ee=e->FirstChildElement(MBSIMNS"numberOfMaximalIterations");
-      if (ee)
-        setMaxIter(atoi(ee->GetText()));
-      ee=e->FirstChildElement(MBSIMNS"tolerances");
-      if (ee) {
-        TiXmlElement * eee;
-        eee=ee->FirstChildElement(MBSIMNS"projection");
-        if (eee)
-          setProjectionTolerance(getDouble(eee));
-        eee=ee->FirstChildElement(MBSIMNS"gd");
-        if (eee)
-          setgdTol(getDouble(eee));
-        eee=ee->FirstChildElement(MBSIMNS"gdd");
-        if (eee)
-          setgddTol(getDouble(eee));
-        eee=ee->FirstChildElement(MBSIMNS"la");
-        if (eee)
-          setlaTol(getDouble(eee));
-        eee=ee->FirstChildElement(MBSIMNS"La");
-        if (eee)
-          setLaTol(getDouble(eee));
-      }
-    }
+//    Group::initializeUsingXML(element);
+//    TiXmlElement *e;
+//    // search first Environment element
+//    e=element->FirstChildElement(MBSIMNS"environments")->FirstChildElement();
+//
+//    Environment *env;
+//    while((env=ObjectFactory::getInstance()->getEnvironment(e))) {
+//      env->initializeUsingXML(e);
+//      e=e->NextSiblingElement();
+//    }
+//
+//    e=element->FirstChildElement(MBSIMNS"solverParameters");
+//    if (e) {
+//      TiXmlElement * ee;
+//      ee=e->FirstChildElement(MBSIMNS"constraintSolver");
+//      if (ee) {
+//        if (ee->FirstChildElement(MBSIMNS"FixedPointTotal"))
+//          setConstraintSolver(FixedPointTotal);
+//        else if (ee->FirstChildElement(MBSIMNS"FixedPointSingle"))
+//          setConstraintSolver(FixedPointSingle);
+//        else if (ee->FirstChildElement(MBSIMNS"GaussSeidel"))
+//          setConstraintSolver(GaussSeidel);
+//        else if (ee->FirstChildElement(MBSIMNS"LinearEquations"))
+//          setConstraintSolver(LinearEquations);
+//        else if (ee->FirstChildElement(MBSIMNS"RootFinding"))
+//          setConstraintSolver(RootFinding);
+//      }
+//      ee=e->FirstChildElement(MBSIMNS"impactSolver");
+//      if (ee) {
+//        if (ee->FirstChildElement(MBSIMNS"FixedPointTotal"))
+//          setImpactSolver(FixedPointTotal);
+//        else if (ee->FirstChildElement(MBSIMNS"FixedPointSingle"))
+//          setImpactSolver(FixedPointSingle);
+//        else if (ee->FirstChildElement(MBSIMNS"GaussSeidel"))
+//          setImpactSolver(GaussSeidel);
+//        else if (ee->FirstChildElement(MBSIMNS"LinearEquations"))
+//          setImpactSolver(LinearEquations);
+//        else if (ee->FirstChildElement(MBSIMNS"RootFinding"))
+//          setImpactSolver(RootFinding);
+//      }
+//      ee=e->FirstChildElement(MBSIMNS"numberOfMaximalIterations");
+//      if (ee)
+//        setMaxIter(atoi(ee->GetText()));
+//      ee=e->FirstChildElement(MBSIMNS"tolerances");
+//      if (ee) {
+//        TiXmlElement * eee;
+//        eee=ee->FirstChildElement(MBSIMNS"projection");
+//        if (eee)
+//          setProjectionTolerance(getDouble(eee));
+//        eee=ee->FirstChildElement(MBSIMNS"gd");
+//        if (eee)
+//          setgdTol(getDouble(eee));
+//        eee=ee->FirstChildElement(MBSIMNS"gdd");
+//        if (eee)
+//          setgddTol(getDouble(eee));
+//        eee=ee->FirstChildElement(MBSIMNS"la");
+//        if (eee)
+//          setlaTol(getDouble(eee));
+//        eee=ee->FirstChildElement(MBSIMNS"La");
+//        if (eee)
+//          setLaTol(getDouble(eee));
+//      }
+//    }
   }
 
   void DynamicSystemSolver::addToGraph(Graph* graph, SqrMat &A, int i, vector<Object*>& objList) {
@@ -1575,6 +1575,7 @@ namespace MBSim {
     updater(t,0); 
     updater(t,1);
     updatezd(t);
+    if(false) {
     updateStateDerivativeDependentVariables(t); // TODO: verbinden mit updatehInverseKinetics
 
     updatehInverseKinetics(t,1); // Accelerations of objects
@@ -1594,6 +1595,7 @@ namespace MBSim {
     A(Index(m1,m1+m2-1),Index(0,n-1)) = bInverseKinetics;
     b(0,m1-1) = -h[1]-r[1];
     laInverseKinetics =  slvLL(JTJ(A),A.T()*b);
+    }
 
     DynamicSystemSolver::plot(t,dt);
 

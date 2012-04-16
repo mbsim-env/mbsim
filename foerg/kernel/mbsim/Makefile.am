@@ -4,7 +4,6 @@ lib_LTLIBRARIES = libmbsim.la
 libmbsim_la_LDFLAGS = -version-info @LIBMBSIM_VERSION_INFO@
 libmbsim_la_SOURCES = \
 body.cc\
-constitutive_laws.cc\
 contour.cc\
 contour_pairing.cc\
 dynamic_system.cc\
@@ -19,11 +18,9 @@ link.cc\
 link_mechanics.cc\
 mbsim_event.cc\
 object.cc\
-objectfactory.cc\
 extra_dynamic.cc\
 rigid_body.cc\
-graph.cc\
-constraint.cc
+graph.cc
 
 libmbsim_la_LIBADD = integrators/libintegrators.la utils/libutils.la contact_kinematics/libcontactkinematics.la contours/libcontour.la plot_elements/libplotelements.la -lgfortran
 
@@ -38,7 +35,6 @@ body.h\
 contour.h\
 contour_pairing.h\
 contour_pdata.h\
-constitutive_laws.h\
 discretization_interface.h\
 dynamic_system.h\
 dynamic_system_solver.h\
@@ -53,8 +49,6 @@ link_mechanics.h\
 mbsim_event.h\
 modelling_interface.h\
 object.h\
-objectfactory.h\
 extra_dynamic.h\
 rigid_body.h\
-graph.h\
-constraint.h
+graph.h

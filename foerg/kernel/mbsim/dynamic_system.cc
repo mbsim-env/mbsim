@@ -1294,8 +1294,8 @@ namespace MBSim {
     addContour(contour);
 
     saved_refFrameC.push_back(refFrameName);
-    saved_RrRC.push_back(RrRC.copy()); // use .copy() because the copy constructor of fmatvec is a reference
-    saved_ARC.push_back(ARC.copy()); // use .copy() because the copy constructor of fmatvec is a reference
+    saved_RrRC.push_back(RrRC); 
+    saved_ARC.push_back(ARC); 
     IrOC.push_back(FVec());
     AIC.push_back(FSqrMat());
   }
