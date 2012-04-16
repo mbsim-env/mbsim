@@ -1554,8 +1554,9 @@ namespace MBSim {
     updateT(t); 
     updateJacobians(t,0);
     updateJacobians(t,1);
-    updateh(t,1);
-    updateh0Fromh1(t);
+    updateh(t,0);
+    //updateh(t,1);
+    //updateh0Fromh1(t);
     updateM(t,0); 
     facLLM(0); 
     updateWRef(WParent[1](Index(0,getuSize(1)-1),Index(0,getlaSize()-1)),1);
