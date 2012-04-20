@@ -259,29 +259,30 @@ namespace MBSim {
       // TODO memory problem with many contacts
       if(laSize>8000)
         laSize=8000;
-      MParent[0].resize(getuSize(0));
-      MParent[1].resize(getuSize(1));
-      TParent.resize(getqSize(),getuSize());
-      LLMParent[0].resize(getuSize(0));
-      LLMParent[1].resize(getuSize(1));
-      WParent[0].resize(getuSize(0),getlaSize());
-      VParent[0].resize(getuSize(0),getlaSize());
-      WParent[1].resize(getuSize(1),getlaSize());
-      VParent[1].resize(getuSize(1),getlaSize());
+      M[0].resize(getuSize(0));
+      M[1].resize(getuSize(1));
+      T.resize(getqSize(),getuSize());
+      LLM[0].resize(getuSize(0));
+      LLM[1].resize(getuSize(1));
+      W[0].resize(getuSize(0),getlaSize());
+      V[0].resize(getuSize(0),getlaSize());
+      W[1].resize(getuSize(1),getlaSize());
+      V[1].resize(getuSize(1),getlaSize());
       wbParent.resize(getlaSize());
-      laParent.resize(getlaSize());
+      la.resize(getlaSize());
       rFactorParent.resize(getlaSize());
       sParent.resize(getlaSize());
       if(impactSolver==RootFinding) resParent.resize(getlaSize());
       gParent.resize(getgSize());
       gdParent.resize(getgdSize());
+      zParent.resize(getzSize());
       zdParent.resize(getzSize());
       udParent1.resize(getuSize(1));
-      hParent[0].resize(getuSize(0));
-      hParent[1].resize(getuSize(1));
-      rParent[0].resize(getuSize(0));
-      rParent[1].resize(getuSize(1));
-      fParent.resize(getxSize());
+      h[0].resize(getuSize(0));
+      h[1].resize(getuSize(1));
+      r[0].resize(getuSize(0));
+      r[1].resize(getuSize(1));
+      f.resize(getxSize());
       svParent.resize(getsvSize());
       jsvParent.resize(getsvSize());
       LinkStatusParent.resize(getLinkStatusSize());
@@ -291,41 +292,25 @@ namespace MBSim {
       laInverseKineticsParent.resize(laInverseKineticsSize);
       corrParent.resize(getgdSize());
 
-      updateMRef(MParent[0],0);
-      updateMRef(MParent[1],1);
-      updateTRef(TParent);
-      updateLLMRef(LLMParent[0],0);
-      updateLLMRef(LLMParent[1],1);
-
       Group::init(stage);
 
       updatesvRef(svParent);
       updatejsvRef(jsvParent);
       updateLinkStatusRef(LinkStatusParent);
+      updatezRef(zParent);
       updatezdRef(zdParent);
-      updateudRef(udParent1,1);
-      updateudallRef(udParent1,1);
-      updatelaRef(laParent);
       updategRef(gParent);
       updategdRef(gdParent);
-      updatehRef(hParent[0],0);
-      updaterRef(rParent[0],0);
-      updatehRef(hParent[1],1);
-      updaterRef(rParent[1],1);
-      updateWRef(WParent[0],0);
-      updateWRef(WParent[1],1);
-      updateVRef(VParent[0],0);
-      updateVRef(VParent[1],1);
+      W[0].resize(getuSize(0),getlaSize());
+      V[0].resize(getuSize(0),getlaSize());
+      W[1].resize(getuSize(1),getlaSize());
+      V[1].resize(getuSize(1),getlaSize());
       updatewbRef(wbParent);
 
-      updatelaInverseKineticsRef(laInverseKineticsParent);
-      updateWInverseKineticsRef(WInverseKineticsParent[0],0);
-      updateWInverseKineticsRef(WInverseKineticsParent[1],1);
-      updatebInverseKineticsRef(bInverseKineticsParent);
-      updatehRef(hParent[1],1);
-      updaterRef(rParent[1],1);
-      updateWRef(WParent[1],1);
-      updateVRef(VParent[1],1);
+      //updatelaInverseKineticsRef(laInverseKineticsParent);
+      //updateWInverseKineticsRef(WInverseKineticsParent[0],0);
+      //updateWInverseKineticsRef(WInverseKineticsParent[1],1);
+      //updatebInverseKineticsRef(bInverseKineticsParent);
 
       if(impactSolver==RootFinding) updateresRef(resParent);
       updaterFactorRef(rFactorParent);
@@ -827,11 +812,11 @@ namespace MBSim {
     updateJacobians(0);
     calclaSize(3);
     calcrFactorSize(3);
-    updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)),0);
-    updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)),0);
-    updateWRef(WParent[1](Index(0,getuSize(1)-1),Index(0,getlaSize()-1)),1);
-    updateVRef(VParent[1](Index(0,getuSize(1)-1),Index(0,getlaSize()-1)),1);
-    updatelaRef(laParent(0,laSize-1));
+    W[0].resize(getuSize(0),getlaSize());
+    V[0].resize(getuSize(0),getlaSize());
+    W[1].resize(getuSize(1),getlaSize());
+    V[1].resize(getuSize(1),getlaSize());
+    la.resize(laSize);
     updatewbRef(wbParent(0,laSize-1));
     updaterFactorRef(rFactorParent(0,rFactorSize-1));
   }
@@ -910,9 +895,9 @@ namespace MBSim {
       calclaSize(2); // IB
       calcrFactorSize(2); // IB
 
-      updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-      updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-      updatelaRef(laParent(0,laSize-1));
+      W[0].resize(getuSize(0),getlaSize());
+      V[0].resize(getuSize(0),getlaSize());
+      la.resize(laSize-1);
       updategdRef(gdParent(0,gdSize-1));
       if(impactSolver==RootFinding) updateresRef(resParent(0,laSize-1));
       updaterFactorRef(rFactorParent(0,rFactorSize-1));
@@ -975,7 +960,7 @@ namespace MBSim {
     updatecorr(corrID);
     Vec nu(getuSize());
     calclaSize(laID); 
-    updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+    W[0].resize(getuSize(0),getlaSize());
     updateW(t);
     //Vec corr;
     //corr = g;
@@ -999,7 +984,7 @@ namespace MBSim {
       updateg(t);
     }
     calclaSize(3);
-    updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+    W[0].resize(getuSize(0),getlaSize());
     calcgSize(0);
     updategRef(gParent(0,gSize-1));
   }
@@ -1030,7 +1015,7 @@ namespace MBSim {
       updatecorr(corrID);
 
       calclaSize(gdID);
-      updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+      W[0].resize(getuSize(0),getlaSize());
       updateW(t);
 
       if(laSize) {
@@ -1039,7 +1024,7 @@ namespace MBSim {
         u += slvLLFac(LLM[0],W[0]*mu);
       }
       calclaSize(3);
-      updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+      W[0].resize(getuSize(0),getlaSize());
       calcgdSize(1);
       updategdRef(gdParent(0,gdSize-1));
     }
@@ -1219,9 +1204,6 @@ namespace MBSim {
     u >> ( zParent(qSize,qSize+uSize[0]-1) );
     x >> ( zParent(qSize+uSize[0],qSize+uSize[0]+xSize-1) );
 
-    updateqRef(q);
-    updateuRef(u);
-    updatexRef(x);
   }
 
   void DynamicSystemSolver::updatezdRef(const Vec &zdParent) {
@@ -1230,11 +1212,6 @@ namespace MBSim {
     ud[0] >> ( zdParent(qSize,qSize+uSize[0]-1) );
     xd >> ( zdParent(qSize+uSize[0],qSize+uSize[0]+xSize-1) );
 
-    updateqdRef(qd);
-    updateudRef(ud[0]);
-    updatexdRef(xd);
-
-    updateudallRef(ud[0]);
   }
 
   void DynamicSystemSolver::updaterFactors() {
@@ -1360,9 +1337,9 @@ namespace MBSim {
       updategdRef(gdParent(0,gdSize-1));
       calclaSize(1); // IG
       calcrFactorSize(1); // IG
-      updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-      updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-      updatelaRef(laParent(0,laSize-1));
+      W[0].resize(getuSize(0),getlaSize());
+      V[0].resize(getuSize(0),getlaSize());
+      la.resize(getlaSize());
       updaterFactorRef(rFactorParent(0,rFactorSize-1));
 
       updateStateDependentVariables(t); // TODO necessary?
@@ -1398,9 +1375,9 @@ namespace MBSim {
 
         calclaSize(3); // IH
         calcrFactorSize(3); // IH
-        updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-        updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-        updatelaRef(laParent(0,laSize-1));
+        W[0].resize(getuSize(0),getlaSize());
+        V[0].resize(getuSize(0),getlaSize());
+        la.resize(getlaSize());
         updatewbRef(wbParent(0,laSize-1));
         updaterFactorRef(rFactorParent(0,rFactorSize-1));
 
@@ -1429,9 +1406,9 @@ namespace MBSim {
 
       calclaSize(3); // IH
       calcrFactorSize(3); // IH
-      updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-      updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-      updatelaRef(laParent(0,laSize-1));
+      W[0].resize(getuSize(0),getlaSize());
+      V[0].resize(getuSize(0),getlaSize());
+      la.resize(getlaSize());
       updatewbRef(wbParent(0,laSize-1));
       updaterFactorRef(rFactorParent(0,rFactorSize-1));
 
@@ -1471,9 +1448,9 @@ namespace MBSim {
     checkActive(5); // final update von gActive, ...
     calclaSize(3); // IH
     calcrFactorSize(3); // IH
-    updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-    updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-    updatelaRef(laParent(0,laSize-1));
+    W[0].resize(getuSize(0),getlaSize());
+    V[0].resize(getuSize(0),getlaSize());
+    la.resize(getlaSize());
     updatewbRef(wbParent(0,laSize-1));
     updaterFactorRef(rFactorParent(0,rFactorSize-1));
 
@@ -1559,13 +1536,12 @@ namespace MBSim {
     //updateh0Fromh1(t);
     updateM(t,0); 
     facLLM(0); 
-    updateWRef(WParent[1](Index(0,getuSize(1)-1),Index(0,getlaSize()-1)),1);
-    updateVRef(VParent[1](Index(0,getuSize(1)-1),Index(0,getlaSize()-1)),1);
+    W[1].resize(getuSize(1),getlaSize());
+    V[1].resize(getuSize(1),getlaSize());
     if(laSize) {
 
       updateW(t,1); 
       updateV(t,1); 
-      updateWnVRefObjects();
       updateW0FromW1(t);
       updateV0FromV1(t);
       updateG(t); 

@@ -196,10 +196,10 @@ namespace MBSim {
   }
 
   void UnilateralNewtonImpact::initializeUsingXML(TiXmlElement *element) {
-    GeneralizedImpactLaw::initializeUsingXML(element);
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"restitutionCoefficient");
-    epsilon=Element::getDouble(e);
+//    GeneralizedImpactLaw::initializeUsingXML(element);
+//    TiXmlElement *e;
+//    e=element->FirstChildElement(MBSIMNS"restitutionCoefficient");
+//    epsilon=Element::getDouble(e);
   }
 
   double BilateralImpact::project(double la, double gdn, double gda, double r, double laMin) {
@@ -265,10 +265,10 @@ namespace MBSim {
   }
 
   void PlanarCoulombFriction::initializeUsingXML(TiXmlElement *element) {
-    FrictionForceLaw::initializeUsingXML(element);
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"frictionCoefficient");
-    setFrictionCoefficient(Element::getDouble(e));
+//    FrictionForceLaw::initializeUsingXML(element);
+//    TiXmlElement *e;
+//    e=element->FirstChildElement(MBSIMNS"frictionCoefficient");
+//    setFrictionCoefficient(Element::getDouble(e));
   }
   
   //Vec CoulombFriction::project(const Vec& la, const Vec& gdn, const Vec& r) {
@@ -395,10 +395,10 @@ namespace MBSim {
   }
 
   void SpatialCoulombFriction::initializeUsingXML(TiXmlElement *element) {
-    FrictionForceLaw::initializeUsingXML(element);
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"frictionCoefficient");
-    setFrictionCoefficient(Element::getDouble(e));
+//    FrictionForceLaw::initializeUsingXML(element);
+//    TiXmlElement *e;
+//    e=element->FirstChildElement(MBSIMNS"frictionCoefficient");
+//    setFrictionCoefficient(Element::getDouble(e));
   }
 
   Vec PlanarStribeckFriction::project(const Vec& la, const Vec& gdn, double laN, double r) {
@@ -527,10 +527,10 @@ namespace MBSim {
   }
 
   void PlanarCoulombImpact::initializeUsingXML(TiXmlElement *element) {
-    FrictionImpactLaw::initializeUsingXML(element);
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"frictionCoefficient");
-    setFrictionCoefficient(Element::getDouble(e));
+//    FrictionImpactLaw::initializeUsingXML(element);
+//    TiXmlElement *e;
+//    e=element->FirstChildElement(MBSIMNS"frictionCoefficient");
+//    setFrictionCoefficient(Element::getDouble(e));
   }
 
   Vec SpatialCoulombImpact::project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
@@ -575,10 +575,10 @@ namespace MBSim {
   }
 
   void SpatialCoulombImpact::initializeUsingXML(TiXmlElement *element) {
-    FrictionImpactLaw::initializeUsingXML(element);
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"frictionCoefficient");
-    setFrictionCoefficient(Element::getDouble(e));
+//    FrictionImpactLaw::initializeUsingXML(element);
+//    TiXmlElement *e;
+//    e=element->FirstChildElement(MBSIMNS"frictionCoefficient");
+//    setFrictionCoefficient(Element::getDouble(e));
   }
 
   Vec PlanarStribeckImpact::project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
@@ -667,35 +667,35 @@ namespace MBSim {
 
 
   void RegularizedUnilateralConstraint::initializeUsingXML(TiXmlElement *element) {
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"forceFunction");
-    Function2<double,double,double> *f=ObjectFactory::getInstance()->createFunction2_SSS(e->FirstChildElement());
-    setForceFunction(f);
-    f->initializeUsingXML(e->FirstChildElement());
+//    TiXmlElement *e;
+//    e=element->FirstChildElement(MBSIMNS"forceFunction");
+//    Function2<double,double,double> *f=ObjectFactory::getInstance()->createFunction2_SSS(e->FirstChildElement());
+//    setForceFunction(f);
+//    f->initializeUsingXML(e->FirstChildElement());
   }
 
   void RegularizedBilateralConstraint::initializeUsingXML(TiXmlElement *element) {
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"forceFunction");
-    Function2<double,double,double> *f=ObjectFactory::getInstance()->createFunction2_SSS(e->FirstChildElement());
-    setForceFunction(f);
-    f->initializeUsingXML(e->FirstChildElement());
+//    TiXmlElement *e;
+//    e=element->FirstChildElement(MBSIMNS"forceFunction");
+//    Function2<double,double,double> *f=ObjectFactory::getInstance()->createFunction2_SSS(e->FirstChildElement());
+//    setForceFunction(f);
+//    f->initializeUsingXML(e->FirstChildElement());
   }
 
   void RegularizedPlanarFriction::initializeUsingXML(TiXmlElement *element) {
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"frictionForceFunction");
-    Function2<Vec,Vec,double> *f=ObjectFactory::getInstance()->createFunction2_VVS(e->FirstChildElement());
-    setFrictionForceFunction(f);
-    f->initializeUsingXML(e->FirstChildElement());
+//    TiXmlElement *e;
+//    e=element->FirstChildElement(MBSIMNS"frictionForceFunction");
+//    Function2<Vec,Vec,double> *f=ObjectFactory::getInstance()->createFunction2_VVS(e->FirstChildElement());
+//    setFrictionForceFunction(f);
+//    f->initializeUsingXML(e->FirstChildElement());
   }
 
   void RegularizedSpatialFriction::initializeUsingXML(TiXmlElement *element) {
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"frictionForceFunction");
-    Function2<Vec,Vec,double> *f=ObjectFactory::getInstance()->createFunction2_VVS(e->FirstChildElement());
-    setFrictionForceFunction(f);
-    f->initializeUsingXML(e->FirstChildElement());
+//    TiXmlElement *e;
+//    e=element->FirstChildElement(MBSIMNS"frictionForceFunction");
+//    Function2<Vec,Vec,double> *f=ObjectFactory::getInstance()->createFunction2_VVS(e->FirstChildElement());
+//    setFrictionForceFunction(f);
+//    f->initializeUsingXML(e->FirstChildElement());
   }
 
 }

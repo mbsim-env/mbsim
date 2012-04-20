@@ -21,6 +21,7 @@
 #include "mbsim/object.h"
 #include "mbsim/frame.h"
 #include "mbsim/extra_dynamic.h"
+#include "mbsim/dynamic_system_solver.h"
 
 using namespace fmatvec; 
 using namespace std;
@@ -53,16 +54,16 @@ namespace MBSim {
   }
 
   void Graph::updatedu(double t, double dt) {
-    ud[0] = slvLLFac(LLM[0], h[0]*dt+r[0]);
+    ds->getud(0)(uInd[0],uInd[0]+uSize[0]-1) = slvLLFac(ds->getLLM(0)(Index(hInd[0],hInd[0]+hSize[0]-1)), ds->geth(0)(hInd[0],hInd[0]+hSize[0]-1)*dt+ds->getr(0)(hInd[0],hInd[0]+hSize[0]-1));
   }
 
   void Graph::updateud(double t, int j) {
-    ud[j] =  slvLLFac(LLM[j], h[j]+r[j]);
+    ds->getud(j)(uInd[j],uInd[j]+uSize[j]-1) =  slvLLFac(ds->getLLM(j)(Index(hInd[j],hInd[j]+hSize[j]-1)), ds->geth(j)(hInd[j],hInd[j]+hSize[j]-1)+ds->getr(j)(hInd[j],hInd[j]+hSize[j]-1));
   }
 
   void Graph::updatezd(double t) {
-    qd = T*u;
-    ud[0] = slvLLFac(LLM[0], h[0]+r[0]);
+    ds->getqd()(qInd,qInd+qSize-1) = ds->getT()(Index(qInd,qInd+qSize-1),Index(uInd[0],uInd[0]+uSize[0]-1))*ds->getu()(uInd[0],uInd[0]+uSize[0]-1);
+    ds->getud(0)(uInd[0],uInd[0]+uSize[0]-1) = slvLLFac(ds->getLLM(0)(Index(hInd[0],hInd[0]+hSize[0]-1)), ds->geth(0)(hInd[0],hInd[0]+hSize[0]-1)+ds->getr(0)(hInd[0],hInd[0]+hSize[0]-1));
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->updatexd(t);
@@ -144,7 +145,7 @@ namespace MBSim {
   }
 
   void Graph::facLLM(int i) {
-    LLM[i] = facLL(M[i]); 
+    ds->getLLM(i)(Index(hInd[i],hInd[i]+hSize[i]-1)) = facLL(ds->getM(i)(Index(hInd[i],hInd[i]+hSize[i]-1))); 
   }
 
   void Graph::addObject(int level, Object* object) {

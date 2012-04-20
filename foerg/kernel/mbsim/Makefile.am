@@ -16,6 +16,8 @@ kinematics.cc\
 extern_generalized_io.cc\
 link.cc\
 link_mechanics.cc\
+joint.cc\
+constitutive_laws.cc\
 mbsim_event.cc\
 object.cc\
 extra_dynamic.cc\
@@ -46,6 +48,8 @@ kinematics.h\
 extern_generalized_io.h\
 link.h\
 link_mechanics.h\
+joint.h\
+constitutive_laws.h\
 mbsim_event.h\
 modelling_interface.h\
 object.h\

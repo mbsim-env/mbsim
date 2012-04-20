@@ -68,7 +68,8 @@ namespace MBSim {
         constraint = constraint_;
       }
 
-      virtual void updateT(double t) { if(fT) TRel = (*fT)(qRel,t); }
+      void updateTRel(double t) { if(fT) TRel = (*fT)(qRel,t); }
+      virtual void updateT(double t);
       virtual void updateh(double t, int j=0);
       virtual void updateh0Fromh1(double t);
       virtual void updateW0FromW1(double t);
@@ -92,11 +93,7 @@ namespace MBSim {
       virtual void calcuSize(int j=0);
 
       /* INHERITED INTERFACE OF OBJECT */
-      virtual void updateqRef(const fmatvec::Vec& ref);
-      virtual void updateuRef(const fmatvec::Vec& ref);
-      virtual void updateTRef(const fmatvec::Mat &ref);
       virtual void init(InitStage stage);
-      virtual void initz();
       virtual void facLLM(int i=0) { (this->*facLLM_)(i); }
       virtual void setUpInverseKinetics();
       /*****************************************************/

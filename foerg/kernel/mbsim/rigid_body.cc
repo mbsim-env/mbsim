@@ -69,25 +69,31 @@ namespace MBSim {
     if(fPdjT) { delete fPdjT; fPdjT=0; }
     if(fPdjR) { delete fPdjR; fPdjR=0; }
   }
+  
+  void RigidBody::updateT(double t) {
+    updateTRel(t);
+    if(!constraint)
+      ds->getT()(Index(qInd,qInd+qSize-1),Index(uInd[0],uInd[0]+uSize[0]-1)) = TRel;
+  }
 
   void RigidBody::updateh(double t, int j) {
 
     FVec WF = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity() - m*frame[0]->getGyroscopicAccelerationOfTranslation(j);
     FVec WM = crossProduct(WThetaS*frame[0]->getAngularVelocity(),frame[0]->getAngularVelocity()) - WThetaS*frame[0]->getGyroscopicAccelerationOfRotation(j);
 
-    h[j] += Vec(frame[0]->getJacobianOfTranslation(j).T()*WF + frame[0]->getJacobianOfRotation(j).T()*WM);
+    ds->geth(j)(Index(hInd[j],hInd[j]+hSize[j]-1)) += Vec(frame[0]->getJacobianOfTranslation(j).T()*WF + frame[0]->getJacobianOfRotation(j).T()*WM);
   }
 
   void RigidBody::updateh0Fromh1(double t) {
-    h[0] += frame[0]->getJacobianOfTranslation(0).T()*(h[1](0,2) - m*frame[0]->getGyroscopicAccelerationOfTranslation()) + frame[0]->getJacobianOfRotation(0).T()*(h[1](3,5) - WThetaS*frame[0]->getGyroscopicAccelerationOfRotation());
+    ds->geth(0)(Index(hInd[0],hInd[0]+hSize[0]-1)) += frame[0]->getJacobianOfTranslation(0).T()*(ds->geth(1)(Index(hInd[1],hInd[1]+2)) - m*frame[0]->getGyroscopicAccelerationOfTranslation()) + frame[0]->getJacobianOfRotation(0).T()*(ds->geth(1)(Index(hInd[1]+3,hInd[1]+5)) - WThetaS*frame[0]->getGyroscopicAccelerationOfRotation());
   }
 
   void RigidBody::updateW0FromW1(double t) {
-    W[0] += frame[0]->getJacobianOfTranslation(0).T()*W[1](Index(0,2),Index(0,W[1].cols()-1)) + frame[0]->getJacobianOfRotation(0).T()*W[1](Index(3,5),Index(0,W[1].cols()-1));
+    ds->getW(0)(Index(hInd[0],hInd[0]+hSize[0]-1),Index(0,ds->getW(0).cols()-1)) += frame[0]->getJacobianOfTranslation(0).T()*ds->getW(1)(Index(hInd[1],hInd[1]+2),Index(0,ds->getW(1).cols()-1)) + frame[0]->getJacobianOfRotation(0).T()*ds->getW(1)(Index(hInd[1]+3,hInd[1]+5),Index(0,ds->getW(1).cols()-1));
   }
 
   void RigidBody::updateV0FromV1(double t) {
-    V[0] += frame[0]->getJacobianOfTranslation(0).T()*V[1](Index(0,2),Index(0,V[1].cols()-1)) + frame[0]->getJacobianOfRotation(0).T()*V[1](Index(3,5),Index(0,V[1].cols()-1));
+    ds->getV(0)(Index(hInd[0],hInd[0]+hSize[0]-1),Index(0,ds->getW(0).cols()-1)) += frame[0]->getJacobianOfTranslation(0).T()*ds->getV(1)(Index(hInd[1],hInd[1]+2),Index(0,ds->getV(1).cols()-1)) + frame[0]->getJacobianOfRotation(0).T()*ds->getV(1)(Index(hInd[1]+3,hInd[1]+5),Index(0,ds->getV(1).cols()-1));
   }
 
   void RigidBody::updatehInverseKinetics(double t, int j) {
@@ -96,12 +102,12 @@ namespace MBSim {
 
   void RigidBody::updateStateDerivativeDependentVariables(double t) {
     for(unsigned int i=0; i<frame.size(); i++) {
-      frame[i]->setAcceleration(frame[i]->getJacobianOfTranslation()*udall[0] + frame[i]->getGyroscopicAccelerationOfTranslation());
-      frame[i]->setAngularAcceleration(frame[i]->getJacobianOfRotation()*udall[0] + frame[i]->getGyroscopicAccelerationOfRotation());
+      frame[i]->setAcceleration(frame[i]->getJacobianOfTranslation()*ds->getud(0)(hInd[0],hInd[0]+hSize[0]-1) + frame[i]->getGyroscopicAccelerationOfTranslation());
+      frame[i]->setAngularAcceleration(frame[i]->getJacobianOfRotation()*ds->getud(0)(hInd[0],hInd[0]+hSize[0]-1) + frame[i]->getGyroscopicAccelerationOfRotation());
     }
     for(unsigned int i=0; i<contour.size(); i++) {
-      contour[i]->setReferenceAcceleration(contour[i]->getReferenceJacobianOfTranslation()*udall[0] + contour[i]->getReferenceGyroscopicAccelerationOfTranslation());
-      contour[i]->setReferenceAngularAcceleration(contour[i]->getReferenceJacobianOfRotation()*udall[0] + contour[i]->getReferenceGyroscopicAccelerationOfRotation());
+      contour[i]->setReferenceAcceleration(contour[i]->getReferenceJacobianOfTranslation()*ds->getud(0)(hInd[0],hInd[0]+hSize[0]-1) + contour[i]->getReferenceGyroscopicAccelerationOfTranslation());
+      contour[i]->setReferenceAngularAcceleration(contour[i]->getReferenceJacobianOfRotation()*ds->getud(0)(hInd[0],hInd[0]+hSize[0]-1) + contour[i]->getReferenceGyroscopicAccelerationOfRotation());
     }
   }
 
@@ -219,8 +225,6 @@ namespace MBSim {
       jRel.resize(nu[0]);
       qRel.resize(nq);
       uRel.resize(nu[0]);
-      q.resize(qSize);
-      u.resize(uSize[0]);
 
       WJTrel.resize(nu[0]);
       WJRrel.resize(nu[0]);
@@ -281,7 +285,7 @@ namespace MBSim {
           if(iKinematics == 0 && dynamic_cast<DynamicSystem*>(frameOfReference->getParent())) {
             updateM_ = &RigidBody::updateMConst;
             Mbuf = SymMat(m*JTJ(PJT[0]) + JTMJ(SThetaS,PJR[0]));
-            LLM[0] = facLL(Mbuf);
+            ds->getM(0)(Index(hInd[0],hInd[0]+hSize[0]-1)) = facLL(Mbuf);
             facLLM_ = &RigidBody::facLLMConst;
           }
           PJR0 = PJR[0];
@@ -289,12 +293,9 @@ namespace MBSim {
       }
 
       if(iInertia != 0)
-        //SThetaS = FSymMat(ASF[iInertia]*SThetaS*ASF[iInertia].T()) - m*JTJ(tilde(SrSF[iInertia]));
         SThetaS = JMJT(ASF[iInertia],SThetaS) - m*JTJ(tilde(SrSF[iInertia]));
 
-      if(constraint)
-	TRel.resize(nq,nu[0]);
-
+      TRel.resize(nq,nu[0]);
       for(int i=0; i<nu[0]; i++)
         TRel(i,i) = 1;
     }
@@ -302,23 +303,15 @@ namespace MBSim {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
-        if(getPlotFeature(notMinimalState)==enabled) {
-          for(int i=0; i<nq; i++)
-            plotColumns.push_back("qRel("+numtostr(i)+")");
-          for(int i=0; i<nu[0]; i++)
-            plotColumns.push_back("uRel("+numtostr(i)+")");
-        }
+        for(int i=0; i<nq; i++)
+          plotColumns.push_back("qRel("+numtostr(i)+")");
+        for(int i=0; i<nu[0]; i++)
+          plotColumns.push_back("uRel("+numtostr(i)+")");
         Body::init(stage);
       }
     }
     else
       Body::init(stage);
-  }
-
-  void RigidBody::initz() {
-    Object::initz();
-    if(!constraint) qRel>>q;
-    if(!constraint) uRel>>u;
   }
 
   void RigidBody::setUpInverseKinetics() {
@@ -332,12 +325,10 @@ namespace MBSim {
 
   void RigidBody::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      if(getPlotFeature(notMinimalState)==enabled) {
-        for(int i=0; i<nq; i++)
-          plotVector.push_back(qRel(i));
-        for(int i=0; i<nu[0]; i++)
-          plotVector.push_back(uRel(i));
-      }
+      for(int i=0; i<nq; i++)
+        plotVector.push_back(qRel(i));
+      for(int i=0; i<nu[0]; i++)
+        plotVector.push_back(uRel(i));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
@@ -362,6 +353,10 @@ namespace MBSim {
   }
 
   void RigidBody::updateKinematicsForSelectedFrame(double t) {
+    if(!constraint) {
+      qRel = ds->getq()(qInd,qInd+qSize-1);
+      uRel = ds->getu()(uInd[0],uInd[0]+uSize[0]-1);
+    }
     if(fPJT)
       PJT[0] = (*fPJT)(qRel,t);
     if(fPJR)
@@ -499,21 +494,6 @@ namespace MBSim {
     }
   }
 
-  void RigidBody::updateqRef(const Vec& ref) {
-    Object::updateqRef(ref);
-    if(!constraint) qRel>>q;
-  }
-
-  void RigidBody::updateuRef(const Vec& ref) {
-    Object::updateuRef(ref);
-    if(!constraint) uRel>>u;
-  }
-
-  void RigidBody::updateTRef(const Mat& ref) {
-    Object::updateTRef(ref);
-    if(!constraint) TRel>>T;
-  }
-
   void RigidBody::addFrame(Frame *cosy, const FVec &RrRF, const FSqrMat &ARF, const string& refFrameName) {
     Body::addFrame(cosy);
 
@@ -555,11 +535,11 @@ namespace MBSim {
 #endif
 
   void RigidBody::updateMConst(double t, int i) {
-    M[i] += Mbuf; // TODO
+    ds->getM(i)(Index(hInd[i],hInd[i]+hSize[i]-1)) += Mbuf; // TODO
   }
 
   void RigidBody::updateMNotConst(double t, int i) {
-    M[i] += SymMat(m*JTJ(frame[0]->getJacobianOfTranslation(i)) + JTMJ(WThetaS,frame[0]->getJacobianOfRotation(i)));
+    ds->getM(i)(Index(hInd[i],hInd[i]+hSize[i]-1)) += SymMat(m*JTJ(frame[0]->getJacobianOfTranslation(i)) + JTMJ(WThetaS,frame[0]->getJacobianOfRotation(i)));
   }
 
   void RigidBody::updatePositionAndOrientationOfFrame(double t, unsigned int i) {

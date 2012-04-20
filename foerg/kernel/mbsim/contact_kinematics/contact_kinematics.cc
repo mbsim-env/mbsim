@@ -17,6 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
+#define FMATVEC_NO_BOUNDS_CHECK
+
 #include <config.h>
 #include "contact_kinematics.h"
 
@@ -24,8 +26,8 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  Vec computeTangential(const Vec &n) {
-    Vec t(3,NONINIT);
+  FVec computeTangential(const FVec &n) {
+    FVec t(NONINIT);
     if(fabs(n(0))+fabs(n(1)) > 1e-12) {
       t(2)=0;
       double buf = pow(n(0),2)+pow(n(1),2);
