@@ -121,6 +121,11 @@ namespace MBSimFlexibleBody {
        */
       fmatvec::Vec computeState(double s);
 
+      /**
+       * \brief initialise beam only for giving information with respect to state, number elements, length, (not for simulation)
+       */
+      void initInfo();
+
     private:
       /** 
        * \brief stl-vector of finite elements for rotation grid
