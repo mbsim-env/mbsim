@@ -414,11 +414,31 @@ namespace MBSimFlexibleBody {
     ContourPointData cp(sGlobal);
     updateKinematicsForFrame(cp,position);
     temp(0,2) = cp.getFrameOfReference().getPosition().copy();
-    updateKinematicsForFrame(cp,velocities);
+    updateKinematicsForFrame(cp,velocity);
     temp(6,8) = cp.getFrameOfReference().getVelocity().copy();
-    temp(9,11) = cp.getFrameOfReference().getAngularVelocity().copy();
 
     return temp.copy();
+  }
+
+  void FlexibleBody1s33Cosserat::initInfo() {
+    FlexibleBodyContinuum<double>::init(unknownStage);
+    l0 = L/Elements;
+    Vec g = Vec("[0.;0.;0.]");
+
+    /* translational elements */
+    for(int i=0;i<Elements;i++) {
+      discretization.push_back(new FiniteElement1s33CosseratTranslation(l0,rho,A,E,G,I1,I2,I0,g,angle));
+      qElement.push_back(Vec(discretization[i]->getqSize(),INIT,0.));
+      uElement.push_back(Vec(discretization[i]->getuSize(),INIT,0.));
+    }
+
+    /* rotational elements */
+    for(int i=0;i<rotationalElements;i++) {
+      rotationDiscretization.push_back(new FiniteElement1s33CosseratRotation(l0,E,G,I1,I2,I0,angle));
+      qRotationElement.push_back(Vec(rotationDiscretization[i]->getqSize(),INIT,0.));
+      uRotationElement.push_back(Vec(rotationDiscretization[i]->getuSize(),INIT,0.));
+    }
+    BuildElements();
   }
 
   void FlexibleBody1s33Cosserat::BuildElementTranslation(const double& sGlobal, double& sLocal,int& currentElementTranslation) {
