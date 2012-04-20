@@ -112,12 +112,12 @@ namespace MBSim {
       /**
        * \param local force direction represented in first frame
        */
-      void setForceDirection(const fmatvec::Mat& fd);
+      void setForceDirection(const fmatvec::FVMat& fd);
 
       /**
        * \param local moment direction represented in first frame
        */
-      void setMomentDirection(const fmatvec::Mat& md);
+      void setMomentDirection(const fmatvec::FVMat& md);
 
       virtual void initializeUsingXML(TiXmlElement *element);
 
@@ -146,22 +146,22 @@ namespace MBSim {
       /**
        * \brief local force and moment direction
        */
-      fmatvec::Mat forceDir, momentDir;
+      fmatvec::FVMat forceDir, momentDir;
 
       /**
        * \brief global force and moment direction
        */
-      fmatvec::Mat Wf, Wm;
+      fmatvec::FVMat Wf, Wm;
 
       /**
        * \brief translational JACOBIAN (not empty for e.g. prismatic joints)
        */
-      fmatvec::Mat JT;
+      fmatvec::FVMat JT;
 
       /**
        * \brief difference vector of position, velocity and angular velocity
        */
-      fmatvec::Vec WrP0P1, WvP0P1, WomP0P1;
+      fmatvec::FVec WrP0P1, WvP0P1, WomP0P1;
 
       /**
        * constitutive laws on acceleration and velocity level for forces and torques

@@ -72,16 +72,6 @@ namespace MBSim {
       virtual void closePlot();
       /***************************************************/
 
-      /* INHERITED INTERFACE OF LINK */
-      virtual void updateWRef(const fmatvec::Mat& ref, int i=0);
-      virtual void updateVRef(const fmatvec::Mat& ref, int i=0);
-      virtual void updatehRef(const fmatvec::Vec &hRef, int i=0);
-      virtual void updatedhdqRef(const fmatvec::Mat& ref, int i=0);
-      virtual void updatedhduRef(const fmatvec::SqrMat& ref, int i=0);
-      virtual void updatedhdtRef(const fmatvec::Vec& ref, int i=0);
-      virtual void updaterRef(const fmatvec::Vec &ref, int i=0);
-      /***************************************************/
-
       /* INTERFACE TO BE DEFINED IN DERIVED CLASS */
       /**
        * \param frame to add to link frame vector
@@ -102,12 +92,12 @@ namespace MBSim {
       /** 
        * \brief force and moment direction for smooth right hand side
        */
-      std::vector<fmatvec::Vec> WF, WM;
+      std::vector<fmatvec::FVec> WF, WM;
 
       /**
        * \brief cartesian force and moment direction matrix for nonsmooth right hand side
        */
-      std::vector<fmatvec::Mat> fF, fM;
+      std::vector<fmatvec::FVMat> fF, fM;
 
       /**
        * \brief array in which all frames are listed, connecting bodies via a link

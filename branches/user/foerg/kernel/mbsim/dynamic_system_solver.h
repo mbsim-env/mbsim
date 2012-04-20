@@ -222,9 +222,6 @@ namespace MBSim {
       const fmatvec::SqrMat& getJprox() const { return Jprox; }
       fmatvec::SqrMat& getJprox() { return Jprox; }
 
-      const fmatvec::Mat& getWParent(int i=0) const { return WParent[i]; }
-      const fmatvec::Mat& getVParent(int i=0) const { return VParent[i]; }
-      const fmatvec::Vec& getlaParent() const { return laParent; }
       const fmatvec::Vec& getgdParent() const { return gdParent; }
       const fmatvec::Vec& getresParent() const { return resParent; }
       const fmatvec::Vec& getrFactorParent() const { return rFactorParent; }
@@ -480,41 +477,95 @@ namespace MBSim {
 
        void setRootID(int ID) {rootID = ID;}
        int getRootID() const {return rootID;}
+
+       fmatvec::SymMat& getM(int i=0) { return M[i]; };
+       const fmatvec::SymMat& getM(int i=0) const { return M[i]; };
+       fmatvec::SymMat& getLLM(int i=0) { return LLM[i]; };
+       const fmatvec::SymMat& getLLM(int i=0) const { return LLM[i]; };
+       fmatvec::Vec& geth(int j=0) { return h[j]; };
+       const fmatvec::Vec& geth(int j=0) const { return h[j]; };
+       fmatvec::Vec& getr(int j=0) { return r[j]; };
+       const fmatvec::Vec& getr(int j=0) const { return r[j]; };
+       fmatvec::Vec& getf() { return f; };
+       const fmatvec::Vec& getf() const { return f; };
+       fmatvec::Mat& getW(int i=0) { return W[i]; }
+       const fmatvec::Mat& getW(int i=0) const { return W[i]; }
+       fmatvec::Mat& getV(int i=0) { return V[i]; }
+       const fmatvec::Mat& getV(int i=0) const { return V[i]; }
+       fmatvec::Mat& getT() { return T; };
+       const fmatvec::Mat& getT() const { return T; };
+       fmatvec::Vec& getq() { return q; };
+       const fmatvec::Vec& getq() const { return q; };
+       fmatvec::Vec& getu() { return u; };
+       const fmatvec::Vec& getu() const { return u; };
+       fmatvec::Vec& getx() { return x; };
+       const fmatvec::Vec& getx() const { return x; };
+       fmatvec::Vec& getqd() { return qd; };
+       const fmatvec::Vec& getqd() const { return qd; };
+       fmatvec::Vec& getud(int i=0) { return ud[i]; };
+       const fmatvec::Vec& getud(int i=0) const { return ud[i]; };
+       fmatvec::Vec& getxd() { return xd; };
+       const fmatvec::Vec& getxd() const { return xd; };
+       fmatvec::Vec& getx0() { return x0; };
+       const fmatvec::Vec& getx0() const { return x0; };
+       fmatvec::Vec& getla() { return la; }
+       const fmatvec::Vec& getla() const { return la; }
+
+       //void setx(const fmatvec::Vec& x_) { x = x_; }
+       //void setx0(const fmatvec::Vec &x0_) { x0 = x0_; }
+       //void setx0(double x0_) { x0 = fmatvec::Vec(1,fmatvec::INIT,x0_); }
+
     protected:
+
       /**
        * \brief mass matrix
        */
-      fmatvec::SymMat MParent[2];
+      fmatvec::SymMat M[2];
 
-      /**
+      /** 
        * \brief Cholesky decomposition of mass matrix
        */
-      fmatvec::SymMat LLMParent[2];
+      fmatvec::SymMat LLM[2];
 
       /**
-       * \brief matrix of linear relation between differentiated positions and velocities
+       * \brief smooth, smooth with respect to objects, smooth with respect to links, nonsmooth and order one right hand side
        */
-      fmatvec::Mat TParent;
+      fmatvec::Vec h[2], r[2], f;
 
       /**
-       * \brief contact force directions
+       * \brief 
        */
-      fmatvec::Mat WParent[2];
+      fmatvec::Mat W[2], V[2];
+
+      /** 
+       * \brief linear relation matrix of position and velocity parameters
+       */
+      fmatvec::Mat T;
 
       /**
-       * \brief condensed contact force directions
+       * \brief positions, differentiated positions, initial positions
        */
-      fmatvec::Mat VParent[2];
+      fmatvec::Vec q, qd, q0;
+
+      /**
+       * \brief velocities, differentiated velocities, initial velocities
+       */
+      fmatvec::Vec u, ud[2], u0;
+
+      /**
+       * \brief order one parameters, differentiated order one parameters, initial order one parameters
+       */
+      fmatvec::Vec x, xd, x0;
+
+      /**
+       * \brief contact force parameters
+       */
+      fmatvec::Vec la;
 
       /**
        * \brief TODO
        */
       fmatvec::Vec wbParent;
-
-      /**
-       * \brief contact force parameters
-       */
-      fmatvec::Vec laParent;
 
       /**
        * \brief relaxation parameters for contact equations
@@ -544,24 +595,9 @@ namespace MBSim {
       /**
        * \brief differentiated state
        */
-      fmatvec::Vec zdParent;
+      fmatvec::Vec zParent, zdParent;
 
       fmatvec::Vec udParent1;
-
-      /**
-       * \brief smooth, smooth with respect to objects, smooth with respect to links right hand side
-       */
-      fmatvec::Vec hParent[2];
-
-      /**
-       * \brief nonsmooth right hand side
-       */
-      fmatvec::Vec rParent[2];
-
-      /**
-       * \brief right hand side of order one parameters
-       */
-      fmatvec::Vec fParent;
 
       /**
        * \brief stopvector (rootfunctions for event driven integration

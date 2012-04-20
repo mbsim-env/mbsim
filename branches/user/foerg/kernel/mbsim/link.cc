@@ -51,8 +51,8 @@ namespace MBSim {
           plotVector.push_back(gd(i));
       }
       if(getPlotFeature(generalizedLinkForce)==enabled) {
-        for(int i=0; i<la.size(); ++i)
-          plotVector.push_back(la(i));
+//        for(int i=0; i<la.size(); ++i)
+//          plotVector.push_back(la(i));
       }
       if(getPlotFeature(stopVector)==enabled)
         for(int i=0; i<sv.size(); ++i)
@@ -73,22 +73,6 @@ namespace MBSim {
 
   void Link::updatewbRef(const Vec& wbParent) {
     wb.resize() >> wbParent(laInd,laInd+laSize-1);
-  }
-
-  void Link::updatexRef(const Vec &xParent) {
-    x >> xParent(xInd,xInd+xSize-1);
-  } 
-
-  void Link::updatexdRef(const Vec &xdParent) {
-    xd >> xdParent(xInd,xInd+xSize-1);
-  } 
-
-  void Link::updatelaRef(const Vec& laParent) {
-    la.resize() >> laParent(laInd,laInd+laSize-1);
-  }
-
-  void Link::deletelaRef() {
-    la.resize(la.size(), NONINIT);
   }
 
   void Link::updategRef(const Vec& gParent) {
@@ -146,8 +130,8 @@ namespace MBSim {
             plotColumns.push_back("gd("+numtostr(i)+")");
         }
         if(getPlotFeature(generalizedLinkForce)==enabled) {
-          for(int i=0; i<la.size(); ++i)
-            plotColumns.push_back("la("+numtostr(i)+")");
+//          for(int i=0; i<la.size(); ++i)
+//            plotColumns.push_back("la("+numtostr(i)+")");
         }
         if(getPlotFeature(stopVector)==enabled)
           for(int i=0; i<svSize; ++i)
@@ -167,14 +151,14 @@ namespace MBSim {
   }
 
   void Link::savela(double dt) {
-    la0.resize() = la/dt;
+//    la0.resize() = la/dt;
   }
 
   void Link::initla(double dt) {
-    if(la0.size() == la.size()) // TODO check if initialising to 0 is better if contact was inactive before
-      la = la0*dt;
-    else
-      la.init(0);
+ //   if(la0.size() == la.size()) // TODO check if initialising to 0 is better if contact was inactive before
+  //    la = la0*dt;
+   // else
+    //  la.init(0);
   }
 
   void Link::decreaserFactors() {

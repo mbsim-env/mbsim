@@ -89,92 +89,15 @@ namespace MBSim {
     }
   }
 
-  void LinkMechanics::updateWRef(const Mat& WParent, int j) {
-    for(unsigned i=0; i<frame.size(); i++) {
-      Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->getJacobianOfTranslation(j).cols()-1); // TODO Prüfen ob hSize
-      W[j][i].resize()>>WParent(I,J);
-    }
-    for(unsigned i=0; i<contour.size(); i++) {
-      Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(contour[i]->gethInd(j),contour[i]->gethInd(j)+contour[i]->gethSize(j)-1);
-      W[j][i]>>WParent(I,J);
-    }
-  } 
-
-  void LinkMechanics::updateVRef(const Mat& VParent, int j) {
-    for(unsigned i=0; i<frame.size(); i++) {
-      Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->getJacobianOfTranslation(j).cols()-1);
-      V[j][i].resize()>>VParent(I,J);
-    }
-    for(unsigned i=0; i<contour.size(); i++) {
-      Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(contour[i]->gethInd(j),contour[i]->gethInd(j)+contour[i]->getReferenceJacobianOfTranslation(j).cols()-1);
-      V[j][i]>>VParent(I,J);
-    }
-  } 
-
-  void LinkMechanics::updatehRef(const Vec &hParent, int j) {
-    for(unsigned i=0; i<frame.size(); i++) {
-      Index I = Index(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->getJacobianOfTranslation(j).cols()-1);
-      h[j][i].resize()>>hParent(I);
-    }
-    for(unsigned i=0; i<contour.size(); i++) {
-      Index I = Index(contour[i]->gethInd(j),contour[i]->gethInd(j)+contour[i]->getReferenceJacobianOfTranslation(j).cols()-1);
-      h[j][i].resize()>>hParent(I);
-    }
-  } 
-
-  void LinkMechanics::updatedhdqRef(const fmatvec::Mat& dhdqParent, int k) {
-    throw;
-  }
-
-  void LinkMechanics::updatedhduRef(const fmatvec::SqrMat& dhduParent, int k) {
-    throw;
-  }
-
-  void LinkMechanics::updatedhdtRef(const fmatvec::Vec& dhdtParent, int j) {
-    for(unsigned i=0; i<frame.size(); i++) {
-      Index I = Index(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->getJacobianOfTranslation(j).cols()-1);
-      dhdt[i]>>dhdtParent(I);
-    }
-    for(unsigned i=0; i<contour.size(); i++) {
-      Index I = Index(contour[i]->gethInd(j),contour[i]->gethInd(j)+contour[i]->getReferenceJacobianOfTranslation(j).cols()-1);
-      dhdt[i]>>dhdtParent(I);
-    }
-  }
-
-  void LinkMechanics::updaterRef(const Vec &rParent, int j) {
-  for(unsigned i=0; i<frame.size(); i++) {
-      int hInd =  frame[i]->gethInd(j);
-      Index I = Index(hInd,hInd+frame[i]->getJacobianOfTranslation(j).cols()-1);
-      r[j][i].resize()>>rParent(I);
-    }
-    for(unsigned i=0; i<contour.size(); i++) {
-      int hInd =  contour[i]->gethInd(j);
-      Index I = Index(hInd,hInd+contour[i]->getReferenceJacobianOfTranslation(j).cols()-1);
-      r[j][i].resize()>>rParent(I);
-    }
-  } 
-
   void LinkMechanics::init(InitStage stage) {
     if(stage==unknownStage) {
       Link::init(stage);
 
       for(unsigned int i=0; i<frame.size(); i++) {
-        W[0].push_back(Mat(frame[i]->getJacobianOfTranslation(0).cols(),laSize));
-        V[0].push_back(Mat(frame[i]->getJacobianOfTranslation(0).cols(),laSize));
-        h[0].push_back(Vec(frame[i]->getJacobianOfTranslation(0).cols()));
-        W[1].push_back(Mat(frame[i]->getJacobianOfTranslation(1).cols(),laSize));
-        V[1].push_back(Mat(frame[i]->getJacobianOfTranslation(1).cols(),laSize));
-        h[1].push_back(Vec(frame[i]->getJacobianOfTranslation(1).cols()));
-        r[0].push_back(Vec(frame[i]->getJacobianOfTranslation(0).cols()));
-        r[1].push_back(Vec(frame[i]->getJacobianOfTranslation(1).cols()));
-        WF.push_back(Vec(3));
-        WM.push_back(Vec(3));
-        fF.push_back(Mat(3,laSize));
-        fM.push_back(Mat(3,laSize));
+        WF.push_back(FVec());
+        WM.push_back(FVec());
+        fF.push_back(FVMat(laSize));
+        fM.push_back(FVMat(laSize));
       }
 #ifdef HAVE_OPENMBVCPPINTERFACE
       assert(openMBVArrowF.size()==0 || openMBVArrowF.size()==frame.size());
@@ -182,18 +105,10 @@ namespace MBSim {
 #endif
 
       for(unsigned int i=0; i<contour.size(); i++) {
-        W[0].push_back(Mat(contour[i]->getReferenceJacobianOfTranslation(0).cols(),laSize));
-        V[0].push_back(Mat(contour[i]->getReferenceJacobianOfTranslation(0).cols(),laSize));
-        h[0].push_back(Vec(contour[i]->getReferenceJacobianOfTranslation(0).cols()));
-        W[1].push_back(Mat(contour[i]->getReferenceJacobianOfTranslation(1).cols(),laSize));
-        V[1].push_back(Mat(contour[i]->getReferenceJacobianOfTranslation(1).cols(),laSize));
-        h[1].push_back(Vec(contour[i]->getReferenceJacobianOfTranslation(1).cols()));
-        r[0].push_back(Vec(contour[i]->getReferenceJacobianOfTranslation(0).cols()));
-        r[1].push_back(Vec(contour[i]->getReferenceJacobianOfTranslation(1).cols()));
-        WF.push_back(Vec(3));
-        WM.push_back(Vec(3));
-        fF.push_back(Mat(3,laSize));
-        fM.push_back(Mat(3,laSize));
+        WF.push_back(FVec());
+        WM.push_back(FVec());
+        fF.push_back(FVMat(laSize));
+        fM.push_back(FVMat(laSize));
       }
     }
     else if(stage==MBSim::plot) {

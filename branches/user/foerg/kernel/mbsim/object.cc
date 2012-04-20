@@ -44,77 +44,77 @@ namespace MBSim {
   Object::~Object() {}
 
   void Object::updatedhdz(double t) {
-    Vec h0 = h[0].copy();
-
-    updateh(t); // update with correct state
-    Vec hEnd = h[0].copy();
-
-    /**************** velocity dependent calculations ********************/
-    for(int i=0;i<uSize[0];i++) {  
-      h[0] = h0;
-
-      double ui = u(i); // save correct position
-
-      u(i) += epsroot(); // update with disturbed positions assuming same active links
-      updateStateDependentVariables(t); 
-      updateh(t);
-
-      //dhdu.col(i) = (hObject-hObjectEnd)/epsroot();
-      u(i) = ui;
-    }
-
-    /***************** position dependent calculations ********************/
-    for(int i=0;i<qSize;i++) { 
-      h[0] = h0;
-
-      double qi = q(i); // save correct position
-
-      q(i) += epsroot(); // update with disturbed positions assuming same active links
-      updateStateDependentVariables(t); 
-      updateT(t); 
-      updateJacobians(t);
-      updateh(t);
-
-      //dhdq.col(i) = (hObject-hObjectEnd)/epsroot();
-      q(i) = qi;
-    }
-
-    /******************* time dependent calculations **********************/
-    // hObject = hObject0; // set to old values
-    // h = h0;
-
-    // double t0 = t; // save correct position
-
-    // t += epsroot(); // update with disturbed positions assuming same active links
-    // updateStateDependentVariables(t); 
-    // updateT(t); 
-    // updateJacobians(t);
-    // updateh(t);
-
-    // dhdt = (hObject-hObjectEnd)/epsroot();
-    // t = t0;
-
-    /******************* back to initial state **********************/
-    updateStateDependentVariables(t); 
-    updateT(t); 
-    updateJacobians(t);
-    h[0] = hEnd;
+//    Vec h0 = h[0].copy();
+//
+//    updateh(t); // update with correct state
+//    Vec hEnd = h[0].copy();
+//
+//    /**************** velocity dependent calculations ********************/
+//    for(int i=0;i<uSize[0];i++) {  
+//      h[0] = h0;
+//
+//      double ui = u(i); // save correct position
+//
+//      u(i) += epsroot(); // update with disturbed positions assuming same active links
+//      updateStateDependentVariables(t); 
+//      updateh(t);
+//
+//      //dhdu.col(i) = (hObject-hObjectEnd)/epsroot();
+//      u(i) = ui;
+//    }
+//
+//    /***************** position dependent calculations ********************/
+//    for(int i=0;i<qSize;i++) { 
+//      h[0] = h0;
+//
+//      double qi = q(i); // save correct position
+//
+//      q(i) += epsroot(); // update with disturbed positions assuming same active links
+//      updateStateDependentVariables(t); 
+//      updateT(t); 
+//      updateJacobians(t);
+//      updateh(t);
+//
+//      //dhdq.col(i) = (hObject-hObjectEnd)/epsroot();
+//      q(i) = qi;
+//    }
+//
+//    /******************* time dependent calculations **********************/
+//    // hObject = hObject0; // set to old values
+//    // h = h0;
+//
+//    // double t0 = t; // save correct position
+//
+//    // t += epsroot(); // update with disturbed positions assuming same active links
+//    // updateStateDependentVariables(t); 
+//    // updateT(t); 
+//    // updateJacobians(t);
+//    // updateh(t);
+//
+//    // dhdt = (hObject-hObjectEnd)/epsroot();
+//    // t = t0;
+//
+//    /******************* back to initial state **********************/
+//    updateStateDependentVariables(t); 
+//    updateT(t); 
+//    updateJacobians(t);
+//    h[0] = hEnd;
   }
 
   void Object::updatedq(double t, double dt) {
-    qd = T*u*dt;
+    ds->getqd()(qInd,qInd+qSize-1) = ds->getT()(Index(qInd,qInd+qSize-1),Index(uInd[0],uInd[0]+uSize[0]-1))*ds->getu()(uInd[0],uInd[0]+uSize[0]-1)*dt;
   }
 
   void Object::updatedu(double t, double dt) {
-    ud[0] = slvLLFac(LLM[0], h[0]*dt+r[0]);
+    ds->getud(0)(uInd[0],uInd[0]+uSize[0]-1) = slvLLFac(ds->getLLM(0)(Index(hInd[0],hInd[0]+hSize[0]-1)), ds->geth(0)(hInd[0],hInd[0]+hSize[0]-1)*dt+ds->getr(0)(hInd[0],hInd[0]+hSize[0]-1));
   }
 
   void Object::updateud(double t, int i) {
-    ud[i] =  slvLLFac(LLM[i], h[i]+r[i]);
+    ds->getud(i)(uInd[i],uInd[i]+uSize[i]-1) =  slvLLFac(ds->getLLM(i)(Index(hInd[i],hInd[i]+hSize[i]-1)), ds->geth(i)(hInd[i],hInd[i]+hSize[i]-1)+ds->getr(i)(hInd[i],hInd[i]+hSize[i]-1));
   }
 
   void Object::updateqd(double t) {
-    qd = T*u;
+    ds->getqd()(qInd,qInd+qSize-1) = ds->getT()(Index(qInd,qInd+qSize-1),Index(uInd[0],uInd[0]+uSize[0]-1))*ds->getu()(uInd[0],uInd[0]+uSize[0]-1);
   }
 
   void Object::updatezd(double t) {
@@ -141,23 +141,23 @@ namespace MBSim {
   void Object::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
       if(getPlotFeature(state)==enabled) {
-        for(int i=0; i<qSize; ++i)
-          plotVector.push_back(q(i));
-        for(int i=0; i<uSize[0]; ++i)
-          plotVector.push_back(u(i));
+//        for(int i=0; i<qSize; ++i)
+//          plotVector.push_back(q(i));
+//        for(int i=0; i<uSize[0]; ++i)
+//          plotVector.push_back(u(i));
       }
       if(getPlotFeature(stateDerivative)==enabled) {
-        for(int i=0; i<qSize; ++i)
-          plotVector.push_back(qd(i)/dt);
-        for(int i=0; i<uSize[0]; ++i)
-          plotVector.push_back(ud[0](i)/dt);
+//        for(int i=0; i<qSize; ++i)
+//          plotVector.push_back(qd(i)/dt);
+//        for(int i=0; i<uSize[0]; ++i)
+//          plotVector.push_back(ud[0](i)/dt);
       }
-      if(getPlotFeature(rightHandSide)==enabled) {
-        for(int i=0; i<uSize[0]; ++i)
-          plotVector.push_back(h[0](i));
-        for(int i=0; i<uSize[0]; ++i)
-          plotVector.push_back(r[0](i)/dt);
-      }
+//      if(getPlotFeature(rightHandSide)==enabled) {
+//        for(int i=0; i<uSize[0]; ++i)
+//          plotVector.push_back(h[0](i));
+//        for(int i=0; i<uSize[0]; ++i)
+//          plotVector.push_back(r[0](i)/dt);
+//      }
       if(getPlotFeature(energy)==enabled) {
         double Ttemp = computeKineticEnergy();
         double Vtemp = computePotentialEnergy();
@@ -176,74 +176,6 @@ namespace MBSim {
     }
   }
 
-  //void Object::setDynamicSystemSolver(DynamicSystemSolver* sys) {
-  //  Element::setDynamicSystemSolver(sys);
-  //}
-
-  void Object::updateqRef(const Vec &qParent) {
-    q>>qParent(qInd,qInd+qSize-1);
-  }
-
-  void Object::updateqdRef(const Vec &qdParent) {
-    qd>>qdParent(qInd,qInd+qSize-1);
-  }
-
-  void Object::updateuRef(const Vec &uParent) {
-    u>>uParent(uInd[0],uInd[0]+uSize[0]-1);
-  }
-
-  void Object::updateuallRef(const Vec &uParent) {
-    uall>>uParent(hInd[0],hInd[0]+hSize[0]-1);
-  }
-
-  void Object::updateudRef(const Vec &udParent, int i) {
-    ud[i]>>udParent(uInd[i],uInd[i]+uSize[i]-1);
-  }
-
-  void Object::updateudallRef(const Vec &udParent, int i) {
-    udall[i]>>udParent(hInd[i],hInd[i]+hSize[i]-1);
-  }
-
-  void Object::updatehRef(const Vec& hParent, int i) {
-    h[i].resize()>>hParent(hInd[i],hInd[i]+hSize[i]-1);
-  }
-
-  void Object::updateWRef(const Mat& WParent, int i) {
-    W[i].resize()>>WParent(Index(hInd[i],hInd[i]+hSize[i]-1),Index(0,WParent.cols()-1));
-  }
-
-  void Object::updateVRef(const Mat& VParent, int i) {
-    V[i].resize()>>VParent(Index(hInd[i],hInd[i]+hSize[i]-1),Index(0,VParent.cols()-1));
-  }
-
-  void Object::updatedhdqRef(const Mat& dhdqParent, int i) {
-    dhdq.resize()>>dhdqParent(Index(hInd[i],hInd[i]+hSize[i]-1),Index(qInd,qInd+qSize-1));
-  }
-
-  void Object::updatedhduRef(const SqrMat& dhduParent, int i) {
-    dhdu.resize()>>dhduParent(Index(hInd[i],hInd[i]+hSize[i]-1),Index(uInd[0],uInd[0]+uSize[0]-1));
-  }
-
-  void Object::updatedhdtRef(const Vec& dhdtParent, int i) {
-    dhdt.resize()>>dhdtParent(hInd[i],hInd[i]+hSize[i]-1);
-  }
-
-  void Object::updaterRef(const Vec& rParent, int i) {
-    r[i].resize()>>rParent(uInd[i],uInd[i]+uSize[i]-1);
-  }
-
-  void Object::updateTRef(const Mat &TParent) {
-    T>>TParent(Index(qInd,qInd+qSize-1),Index(uInd[0],uInd[0]+uSize[0]-1));
-  }
-
-  void Object::updateMRef(const SymMat &MParent, int i) {
-    M[i].resize()>>MParent(Index(hInd[i],hInd[i]+hSize[i]-1));
-  }
-
-  void Object::updateLLMRef(const SymMat &LLMParent, int i) {
-    LLM[i].resize()>>LLMParent(Index(hInd[i],hInd[i]+hSize[i]-1));
-  }
-
   void Object::init(InitStage stage) {  
     if(stage==unknownStage) {
     }
@@ -252,22 +184,22 @@ namespace MBSim {
 
       if(getPlotFeature(plotRecursive)==enabled) {
         if(getPlotFeature(state)==enabled) {
-          for(int i=0; i<qSize; ++i)
-            plotColumns.push_back("q("+numtostr(i)+")");
-          for(int i=0; i<uSize[0]; ++i)
-            plotColumns.push_back("u("+numtostr(i)+")");
+      //    for(int i=0; i<qSize; ++i)
+      //      plotColumns.push_back("q("+numtostr(i)+")");
+      //    for(int i=0; i<uSize[0]; ++i)
+      //      plotColumns.push_back("u("+numtostr(i)+")");
         }
         if(getPlotFeature(stateDerivative)==enabled) {
-          for(int i=0; i<qSize; ++i)
-            plotColumns.push_back("qd("+numtostr(i)+")");
-          for(int i=0; i<uSize[0]; ++i)
-            plotColumns.push_back("ud("+numtostr(i)+")");
+      //    for(int i=0; i<qSize; ++i)
+      //      plotColumns.push_back("qd("+numtostr(i)+")");
+      //    for(int i=0; i<uSize[0]; ++i)
+      //      plotColumns.push_back("ud("+numtostr(i)+")");
         }
         if(getPlotFeature(rightHandSide)==enabled) {
-          for(int i=0; i<uSize[0]; ++i)
-            plotColumns.push_back("h("+numtostr(i)+")");
-          for(int i=0; i<getuSize(); ++i)
-            plotColumns.push_back("r("+numtostr(i)+")");
+      //    for(int i=0; i<uSize[0]; ++i)
+      //      plotColumns.push_back("h("+numtostr(i)+")");
+      //    for(int i=0; i<getuSize(); ++i)
+      //      plotColumns.push_back("r("+numtostr(i)+")");
         }
         if(getPlotFeature(energy)==enabled) {
           plotColumns.push_back("T");
@@ -283,16 +215,18 @@ namespace MBSim {
   }
 
   void Object::initz() {
-    q = q0;
-    u = u0;
-    if (q.size()==0)
-      q = Vec(qSize, INIT, 0);
-    if (u.size()==0)
-      u = Vec(uSize[0], INIT, 0);
+    if(q0.size())
+      ds->getq()(qInd,qInd+qSize-1) = Vec(q0);
+    if(u0.size())
+      ds->getu()(uInd[0],uInd[0]+uSize[0]-1) = Vec(u0);
+    //if (q.size()==0)
+    //  q = Vec(qSize, INIT, 0);
+    //if (u.size()==0)
+    //  u = Vec(uSize[0], INIT, 0);
   }
 
   void Object::facLLM(int i) {
-    LLM[i] = facLL(M[i]); 
+    ds->getLLM(i)(Index(hInd[i],hInd[i]+hSize[i]-1)) = facLL(ds->getM(i)(Index(hInd[i],hInd[i]+hSize[i]-1))); 
   }
 
   void Object::sethInd(int hInd_, int j) {
@@ -300,14 +234,14 @@ namespace MBSim {
   }  
 
   void Object::initializeUsingXML(TiXmlElement *element) {
-    TiXmlElement *e;
-    Element::initializeUsingXML(element);
-    e=element->FirstChildElement(MBSIMNS"initialGeneralizedPosition");
-    if (e)
-      setInitialGeneralizedPosition(getVec(e));
-    e=element->FirstChildElement(MBSIMNS"initialGeneralizedVelocity");
-    if (e)
-      setInitialGeneralizedVelocity(getVec(e));
+//    TiXmlElement *e;
+//    Element::initializeUsingXML(element);
+//    e=element->FirstChildElement(MBSIMNS"initialGeneralizedPosition");
+//    if (e)
+//      setInitialGeneralizedPosition(getVec(e));
+//    e=element->FirstChildElement(MBSIMNS"initialGeneralizedVelocity");
+//    if (e)
+//      setInitialGeneralizedVelocity(getVec(e));
   }
 
   Element * Object::getByPathSearch(string path) {

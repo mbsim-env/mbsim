@@ -31,28 +31,28 @@ namespace MBSim {
   }
 
   void ExternGeneralizedIO::updateh(double t) {
-    if(type==CONSTANT) {
-      connectedObject->geth()(uInd)+=la(0);
-      for(unsigned int i=0; i<applyForceAlsoTo.size(); i++)
-        applyForceAlsoTo[i].ref->geth()(applyForceAlsoTo[i].index)+=applyForceAlsoTo[i].factor*la(0);
-    }
-    else if(type==LINEAR) {
-      la(0)=m*(t-t0)+a;
-      connectedObject->geth()(uInd)+=la(0);
-      for(unsigned int i=0; i<applyForceAlsoTo.size(); i++)
-        applyForceAlsoTo[i].ref->geth()(applyForceAlsoTo[i].index)+=applyForceAlsoTo[i].factor*la(0);
-    }
+//    if(type==CONSTANT) {
+//      connectedObject->geth()(uInd)+=la(0);
+//      for(unsigned int i=0; i<applyForceAlsoTo.size(); i++)
+//        applyForceAlsoTo[i].ref->geth()(applyForceAlsoTo[i].index)+=applyForceAlsoTo[i].factor*la(0);
+//    }
+//    else if(type==LINEAR) {
+//      la(0)=m*(t-t0)+a;
+//      connectedObject->geth()(uInd)+=la(0);
+//      for(unsigned int i=0; i<applyForceAlsoTo.size(); i++)
+//        applyForceAlsoTo[i].ref->geth()(applyForceAlsoTo[i].index)+=applyForceAlsoTo[i].factor*la(0);
+//    }
   }
 
   void ExternGeneralizedIO::updateg(double) {
-    if(qInd>=0)
-      g(0)=connectedObject->getq()(qInd);
-    else
-      g(0)=x(0);
+//    if(qInd>=0)
+//      g(0)=connectedObject->getq()(qInd);
+//    else
+//      g(0)=x(0);
   } 
 
   void ExternGeneralizedIO::updategd(double) {
-    gd(0)=connectedObject->getu()(uInd);
+    //gd(0)=connectedObject->getu()(uInd);
   }
 
   void ExternGeneralizedIO::calcxSize() {
@@ -60,13 +60,13 @@ namespace MBSim {
   }
 
   void ExternGeneralizedIO::updatedx(double t, double dt) {
-    if(qInd<0)
-      xd(0)=connectedObject->getu()(uInd)*dt;
+//    if(qInd<0)
+//      xd(0)=connectedObject->getu()(uInd)*dt;
   }
 
   void ExternGeneralizedIO::updatexd(double t) {
-    if(qInd<0)
-      xd(0)=connectedObject->getu()(uInd);
+//    if(qInd<0)
+//      xd(0)=connectedObject->getu()(uInd);
   }
 
   void ExternGeneralizedIO::init(InitStage stage) {
@@ -86,7 +86,7 @@ namespace MBSim {
       Link::init(stage);
       g.resize(1);
       gd.resize(1);
-      la.resize(1); la(0)=0;
+      //la.resize(1); la(0)=0;
       if(qInd<0)
         x.resize(1);
     }
@@ -98,12 +98,12 @@ namespace MBSim {
       }
     }
     else if(stage==MBSim::calculateLocalInitialValues) {
-      Link::init(stage);
-      if(qInd>=0)
-        g(0)=connectedObject->getq()(qInd);
-      else
-        g(0)=0;
-      gd(0)=connectedObject->getu()(uInd);
+//      Link::init(stage);
+//      if(qInd>=0)
+//        g(0)=connectedObject->getq()(qInd);
+//      else
+//        g(0)=0;
+//      gd(0)=connectedObject->getu()(uInd);
     }
     else
       Link::init(stage);
@@ -111,7 +111,7 @@ namespace MBSim {
 
   void ExternGeneralizedIO::plot(double t,double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      plotVector.push_back(la(0));
+//      plotVector.push_back(la(0));
       Link::plot(t,dt);
     }
   }

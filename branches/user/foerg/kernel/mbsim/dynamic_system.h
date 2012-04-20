@@ -97,10 +97,6 @@ namespace MBSim {
       virtual void sethInd(int hInd_, int i=0);
       virtual void setxInd(int xInd_);
       //virtual int gethInd(DynamicSystem* sys, int i=0); 
-      virtual const fmatvec::Vec& getq() const { return q; };
-      virtual fmatvec::Vec& getq() { return q; };
-      virtual const fmatvec::Vec& getu() const { return u; };
-      virtual fmatvec::Vec& getu() { return u; };
       virtual H5::Group *getPlotGroup() { return plotGroup; }
       virtual PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); };
       virtual PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); };
@@ -135,11 +131,7 @@ namespace MBSim {
       virtual void updatedx(double t, double dt); 
       virtual void updatexd(double t);
       virtual void calcxSize();
-      const fmatvec::Vec& getx() const { return x; };
-      fmatvec::Vec& getx() { return x; };
       int getxSize() const { return xSize; }
-      void updatexRef(const fmatvec::Vec &ref);
-      void updatexdRef(const fmatvec::Vec &ref);
       virtual void init(InitStage stage);
       virtual void initz();
       /*****************************************************/
@@ -234,25 +226,7 @@ namespace MBSim {
       void setOrientation(const fmatvec::FSqrMat& APF_) { APF = APF_; }
       void setFrameOfReference(Frame *frame) { frameParent = frame; };
 
-      const fmatvec::Vec& getxd() const { return xd; };
-      fmatvec::Vec& getxd() { return xd; };
-      const fmatvec::Vec& getx0() const { return x0; };
-      fmatvec::Vec& getx0() { return x0; };
 
-      const fmatvec::Mat& getT() const { return T; };
-      const fmatvec::SymMat& getM(int i=0) const { return M[i]; };
-      const fmatvec::SymMat& getLLM(int i=0) const { return LLM[i]; };
-      const fmatvec::Vec& geth(int j=0) const { return h[j]; };
-      const fmatvec::Vec& getf() const { return f; };
-      fmatvec::Vec& getf() { return f; };
-
-      const fmatvec::Mat& getW(int i=0) const { return W[i]; }
-      fmatvec::Mat& getW(int i=0) { return W[i]; }
-      const fmatvec::Mat& getV(int i=0) const { return V[i]; }
-      fmatvec::Mat& getV(int i=0) { return V[i]; }
-
-      const fmatvec::Vec& getla() const { return la; }
-      fmatvec::Vec& getla() { return la; }
       const fmatvec::Vec& getg() const { return g; }
       fmatvec::Vec& getg() { return g; }
       const fmatvec::Vec& getgd() const { return gd; }
@@ -268,9 +242,6 @@ namespace MBSim {
       const fmatvec::Vec& getres() const { return res; }
       fmatvec::Vec& getres() { return res; }
 
-      void setx(const fmatvec::Vec& x_) { x = x_; }
-      void setx0(const fmatvec::Vec &x0_) { x0 = x0_; }
-      void setx0(double x0_) { x0 = fmatvec::Vec(1,fmatvec::INIT,x0_); }
 
       int getxInd() { return xInd; }
       int getlaInd() const { return laInd; } 
@@ -298,83 +269,6 @@ namespace MBSim {
       /*****************************************************/
 
       /**
-       * \brief references to positions of dynamic system parent
-       * \param vector to be referenced
-       */
-      void updateqRef(const fmatvec::Vec &ref); 
-
-      /**
-       * \brief references to differentiated positions of dynamic system parent
-       * \param vector to be referenced
-       */
-      void updateqdRef(const fmatvec::Vec &ref);
-
-      /**
-       * \brief references to velocities of dynamic system parent
-       * \param vector to be referenced
-       */
-      void updateuRef(const fmatvec::Vec &ref);
-
-      /**
-       * \brief references to velocities of dynamic system parent
-       * \param vector to be referenced
-       */
-      void updateuallRef(const fmatvec::Vec &ref);
-
-      /**
-       * \brief references to differentiated velocities of dynamic system parent
-       * \param vector to be referenced
-       */
-      void updateudRef(const fmatvec::Vec &ref, int i=0);
-
-      /**
-       * \brief references to velocities of dynamic system parent
-       * \param vector to be referenced
-       */
-      void updateudallRef(const fmatvec::Vec &ref, int i=0);
-
-      /**
-       * \brief references to smooth right hand side of dynamic system parent
-       * \param complete vector to be referenced
-       * \param vector concerning objects to be referenced
-       * \param vector concerning links to be referenced
-       * \param index of normal usage and inverse kinetics
-       */
-      void updatehRef(const fmatvec::Vec &hRef, int i=0);
-
-      /**
-       * \brief references to order one right hand side of dynamic system parent
-       * \param vector to be referenced
-       */
-      void updatefRef(const fmatvec::Vec &ref);
-
-      /**
-       * \brief references to nonsmooth right hand side of dynamic system parent
-       * \param vector to be referenced
-       */
-      void updaterRef(const fmatvec::Vec &ref, int j=0);
-
-      /**
-       * \brief references to linear transformation matrix between differentiated positions and velocities of dynamic system parent
-       * \param matrix to be referenced
-       */
-      void updateTRef(const fmatvec::Mat &ref);
-
-      /**
-       * \brief references to mass matrix of dynamic system parent
-       * \param matrix to be referenced
-       * \param index of normal usage and inverse kinetics
-       */
-      void updateMRef(const fmatvec::SymMat &ref, int i=0);
-
-      /**
-       * \brief references to Cholesky decomposition of dynamic system parent
-       * \param matrix to be referenced
-       * \param index of normal usage and inverse kinetics
-       */
-      void updateLLMRef(const fmatvec::SymMat &ref, int i=0);
-
-      /**
        * \brief references to relative distances of dynamic system parent
        * \param vector to be referenced
        */
@@ -386,13 +280,6 @@ namespace MBSim {
        */
       void updategdRef(const fmatvec::Vec &ref);
 
-      /**
-       * \brief references to contact force parameters of dynamic system parent
-       * \param vector to be referenced
-       */
-      void updatelaRef(const fmatvec::Vec &ref);
-
-      void updatelaInverseKineticsRef(const fmatvec::Vec &ref);
       void updatebInverseKineticsRef(const fmatvec::Mat &ref);
 
       /**
@@ -400,29 +287,6 @@ namespace MBSim {
        * \param vector to be referenced
        */      
       void updatewbRef(const fmatvec::Vec &ref);
-
-      /**
-       * \brief references to contact force direction matrix of dynamic system parent
-       * \param matrix to be referenced
-       * \param index of normal usage and inverse kinetics
-       */
-      void updateWRef(const fmatvec::Mat &ref, int i=0);
-
-      void updateWnVRefObjects();
-
-      /**
-       * \brief references to contact force direction matrix of dynamic system parent
-       * \param matrix to be referenced
-       * \param index of normal usage and inverse kinetics
-       */
-      void updateWInverseKineticsRef(const fmatvec::Mat &ref, int i=0);
-
-      /**
-       * \brief references to condensed contact force direction matrix of dynamic system parent
-       * \param matrix to be referenced
-       * \param index of normal usage and inverse kinetics
-       */
-      void updateVRef(const fmatvec::Mat &ref, int i=0);
 
       /**
        * \brief references to stopvector (rootfunction for event driven integrator) of dynamic system parent
@@ -765,50 +629,6 @@ namespace MBSim {
       std::vector<Element*> plotElement;
 #endif
 
-      /** 
-       * \brief linear relation matrix of position and velocity parameters
-       */
-      fmatvec::Mat T;
-
-      /**
-       * \brief mass matrix
-       */
-      fmatvec::SymMat M[2];
-
-      /** 
-       * \brief Cholesky decomposition of mass matrix
-       */
-      fmatvec::SymMat LLM[2];
-
-      /**
-       * \brief positions, differentiated positions, initial positions
-       */
-      fmatvec::Vec q, qd, q0;
-
-      /**
-       * \brief velocities, differentiated velocities, initial velocities
-       */
-      fmatvec::Vec u, ud[2], u0;
-
-      /**
-       * \brief order one parameters, differentiated order one parameters, initial order one parameters
-       */
-      fmatvec::Vec x, xd, x0;
-
-      /**
-       * \brief smooth, smooth with respect to objects, smooth with respect to links, nonsmooth and order one right hand side
-       */
-      fmatvec::Vec h[2], r[2], f;
-
-      /**
-       * \brief 
-       */
-      fmatvec::Mat W[2], V[2];
-
-      /**
-       * \brief contact force parameters
-       */
-      fmatvec::Vec la;
 
       /** 
        * \brief relative distances and velocities

@@ -76,8 +76,6 @@ namespace MBSim {
       virtual void setqInd(int qInd_) { qInd = qInd_; }
       virtual void setuInd(int uInd_, int i=0) { uInd[i] = uInd_; }
       //virtual int gethInd(DynamicSystem* sys,int i=0); 
-      virtual const fmatvec::Vec& getq() const { return q; };
-      virtual const fmatvec::Vec& getu() const { return u; };
       virtual H5::Group *getPlotGroup() { return plotGroup; }
       virtual PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); };
       virtual PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); };
@@ -93,99 +91,6 @@ namespace MBSim {
       virtual std::string getType() const { return "Object"; }
       //virtual void setDynamicSystemSolver(DynamicSystemSolver *sys);
       /*******************************************************/ 
-
-      /**
-       * \brief references to positions of dynamic system parent
-       * \param qRef vector to be referenced
-       */
-      virtual void updateqRef(const fmatvec::Vec& qRef);
-
-      /**
-       * \brief references to differentiated positions of dynamic system parent
-       * \param qdRef vector to be referenced
-       */
-      virtual void updateqdRef(const fmatvec::Vec& qdRef);
-
-      /**
-       * \brief references to velocities of dynamic system parent
-       * \param uRef vector to be referenced
-       */
-      virtual void updateuRef(const fmatvec::Vec& uRef);
-
-      /**
-       * \brief references to velocities of dynamic system parent
-       * \param uallRef vector to be referenced
-       */
-      virtual void updateuallRef(const fmatvec::Vec& uallRef);
-
-      /**
-       * \brief references to differentiated velocities of dynamic system parent
-       * \param udRef vector to be referenced
-       */
-      virtual void updateudRef(const fmatvec::Vec& udRef, int i=0);
-
-      /**
-       * \brief references to differentiated velocities of dynamic system parent
-       * \param udallRef vector to be referenced
-       */
-      virtual void updateudallRef(const fmatvec::Vec& udallRef, int i=0);
-
-      /**
-       * \brief references to smooth force vector of dynamic system parent
-       * \param hRef vector to be referenced
-       * \param i    index of normal usage and inverse kinetics
-       */
-      virtual void updatehRef(const fmatvec::Vec& hRef, int i=0);
-
-      virtual void updateWRef(const fmatvec::Mat& WRef, int i=0);
-      virtual void updateVRef(const fmatvec::Mat& VRef, int i=0);
-
-      /**
-       * \brief references to object Jacobian for implicit integration of dynamic system parent regarding positions
-       * \param dhdqRef matrix concerning links to be referenced
-       * \param i       index of normal usage and inverse kinetics
-       */
-      virtual void updatedhdqRef(const fmatvec::Mat& dhdqRef, int i=0);
-
-      /**
-       * \brief references to object Jacobian for implicit integration of dynamic system parent regarding velocities
-       * \param dhduRef matrix concerning links to be referenced
-       * \param i       index of normal usage and inverse kinetics
-       */
-      virtual void updatedhduRef(const fmatvec::SqrMat& dhduRef, int i=0);
-
-      /**
-       * \brief references to object Jacobian for implicit integration of dynamic system parent regarding time
-       * \param dhdtRef matrix concerning links to be referenced
-       * \param i       index of normal usage and inverse kinetics
-       */
-      virtual void updatedhdtRef(const fmatvec::Vec& dhdtRef, int i=0);
-
-      /**
-       * \brief references to nonsmooth force vector of dynamic system parent
-       * \param vector to be referenced
-       */
-      virtual void updaterRef(const fmatvec::Vec& ref, int i=0);
-
-      /**
-       * \brief references to linear transformation matrix between differentiated positions and velocities of dynamic system parent
-       * \param matrix to be referenced
-       */
-      virtual void updateTRef(const fmatvec::Mat &ref);
-
-      /**
-       * \brief references to mass matrix of dynamic system parent
-       * \param vector to be referenced
-       * \param index of normal usage and inverse kinetics
-       */
-      virtual void updateMRef(const fmatvec::SymMat &ref, int i=0);
-
-      /**
-       * \brief references to Cholesky decomposition of dynamic system parent
-       * \param vector to be referenced
-       * \param index of normal usage and inverse kinetics
-       */
-      virtual void updateLLMRef(const fmatvec::SymMat &ref, int i=0);
 
       /**
        * \brief initialize object at start of simulation with respect to contours and frames
@@ -227,7 +132,7 @@ namespace MBSim {
       /**
        * \return kinetic energy 
        */
-      virtual double computeKineticEnergy() { return 0.5*u.T()*M[0]*u; }
+      virtual double computeKineticEnergy() { return 0; }
 
       /**
        * \return potential energy
@@ -248,37 +153,15 @@ namespace MBSim {
       virtual void sethInd(int hInd_, int i=0); 
       int gethInd(int i=0) { return hInd[i]; }
 
-      const fmatvec::Vec& geth(int i=0) const { return h[i]; };
-      fmatvec::Vec& geth(int i=0) { return h[i]; };
-      const fmatvec::Vec& getr(int i=0) const { return r[i]; };
-      fmatvec::Vec& getr(int i=0) { return r[i]; };
-      const fmatvec::SymMat& getM(int i=0) const { return M[i]; };
-      fmatvec::SymMat& getM(int i=0) { return M[i]; };
-      const fmatvec::Mat& getT() const { return T; };
-      fmatvec::Mat& getT() { return T; };
-      const fmatvec::SymMat& getLLM(int i=0) const { return LLM[i]; };
-      fmatvec::SymMat& getLLM(int i=0) { return LLM[i]; };
+      const fmatvec::VVec& getq0() const { return q0; };
+      const fmatvec::VVec& getu0() const { return u0; };
+      fmatvec::VVec& getq0() { return q0; };
+      fmatvec::VVec& getu0() { return u0; };
 
-      fmatvec::Vec& getq() { return q; };
-      fmatvec::Vec& getu() { return u; };
-
-      const fmatvec::Vec& getq0() const { return q0; };
-      const fmatvec::Vec& getu0() const { return u0; };
-      fmatvec::Vec& getq0() { return q0; };
-      fmatvec::Vec& getu0() { return u0; };
-
-      const fmatvec::Vec& getqd() const { return qd; };
-      const fmatvec::Vec& getud(int i=0) const { return ud[i]; };
-      fmatvec::Vec& getqd() { return qd; };
-      fmatvec::Vec& getud(int i=0) { return ud[i]; };
-
-      void setq(const fmatvec::Vec &q_) { q = q_; }
-      void setu(const fmatvec::Vec &u_) { u = u_; }
-
-      void setInitialGeneralizedPosition(const fmatvec::Vec &q0_) { q0 = q0_; }
-      void setInitialGeneralizedVelocity(const fmatvec::Vec &u0_) { u0 = u0_; }
-      void setInitialGeneralizedPosition(double q0_) { q0 = fmatvec::Vec(1,fmatvec::INIT,q0_); }
-      void setInitialGeneralizedVelocity(double u0_) { u0 = fmatvec::Vec(1,fmatvec::INIT,u0_); }
+      void setInitialGeneralizedPosition(const fmatvec::VVec &q0_) { q0.assign(q0_); }
+      void setInitialGeneralizedVelocity(const fmatvec::VVec &u0_) { u0.assign(u0_); }
+      //void setInitialGeneralizedPosition(double q0_) { q0 = fmatvec::Vec(1,fmatvec::INIT,q0_); }
+      //void setInitialGeneralizedVelocity(double u0_) { u0 = fmatvec::Vec(1,fmatvec::INIT,u0_); }
 
       /*******************************************************/ 
 
@@ -307,49 +190,10 @@ namespace MBSim {
        */
       int qInd, uInd[2], hInd[2];
 
-      /** 
-       * \brief positions, velocities
-       */
-      fmatvec::Vec q, u, uall;
-
       /**
        * \brief initial position, velocity
        */
-      fmatvec::Vec q0, u0;
-
-      /**
-       * \brief differentiated positions, velocities
-       */
-      fmatvec::Vec qd, ud[2], udall[2];
-
-      /** 
-       * \brief complete and object smooth and nonsmooth right hand side
-       */
-      fmatvec::Vec h[2], r[2];
-
-      fmatvec::Mat W[2], V[2];
-
-      /** 
-       * \brief Jacobians of h
-       */
-      fmatvec::Mat    dhdq;
-      fmatvec::SqrMat dhdu;
-      fmatvec::Vec    dhdt;
-
-      /** 
-       * \brief linear relation matrix of differentiated position and velocity parameters
-       */
-      fmatvec::Mat T;
-
-      /** 
-       * \brief mass matrix 
-       */
-      fmatvec::SymMat M[2];
-
-      /**
-       * \brief LU-decomposition of mass matrix 
-       */
-      fmatvec::SymMat LLM[2];
+      fmatvec::VVec q0, u0;
 
       /**
        * \brief indices for velocities and right hand side

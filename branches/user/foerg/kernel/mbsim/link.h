@@ -83,12 +83,11 @@ namespace MBSim {
       virtual fmatvec::Vec& getx() { return x; }
       virtual void setxInd(int xInd_) { xInd = xInd_; };
       virtual int getxSize() const { return xSize; }
-      virtual void updatexRef(const fmatvec::Vec& ref);
-      virtual void updatexdRef(const fmatvec::Vec& ref);
-      virtual void updatebRef(const fmatvec::Mat &hRef);
       virtual void init(InitStage stage);
       virtual void initz();
       /***************************************************/
+
+      virtual void updatebRef(const fmatvec::Mat &hRef);
 
       virtual void setbInd(int bInd_) { bInd = bInd_; };
 
@@ -97,27 +96,6 @@ namespace MBSim {
       virtual void plot(double t, double dt = 1);
       virtual void closePlot();
       /***************************************************/
-
-      /* INTERFACE TO BE DEFINED IN DERIVED CLASS */
-      /**
-       * \brief references to contact force direction matrix of dynamic system parent
-       */
-      virtual void updateWRef(const fmatvec::Mat& ref, int i=0) = 0;
-
-      /**
-       * \brief references to condensed contact force direction matrix of dynamic system parent
-       */
-      virtual void updateVRef(const fmatvec::Mat& ref, int i=0) = 0;
-
-      /**
-       * \brief references to complete and link smooth force vector of dynamic system parent
-       */
-      virtual void updatehRef(const fmatvec::Vec &hRef, int i=0) = 0;
-
-      /**
-       * \brief references to nonsmooth force vector of dynamic system parent
-       */
-      virtual void updaterRef(const fmatvec::Vec &ref, int i=0) = 0;
 
       /**
        * \brief references to TODO of dynamic system parent
@@ -128,16 +106,6 @@ namespace MBSim {
        * \brief references to TODO of dynamic system parent
        */
       virtual void updatefRef(const fmatvec::Vec &ref) {};
-
-      /**
-       * \brief references to contact force parameter of dynamic system parent
-       */
-      virtual void updatelaRef(const fmatvec::Vec& ref);
-
-      /**
-       * \brief delete reference to contact force parameter of dynamic system parent
-       */
-      virtual void deletelaRef();
 
       /**
        * \brief references to contact relative distances of dynamic system parent
@@ -304,22 +272,12 @@ namespace MBSim {
       virtual void setrMax(double rMax_) { rMax = rMax_; }
       /***************************************************/
 
-      /* GETTER / SETTER */
-      const std::vector<fmatvec::Mat>& getW(int i=0) const { return W[i]; }
-      const std::vector<fmatvec::Mat>& getV(int i=0) const { return V[i]; }
-      const std::vector<fmatvec::Vec>& geth(int i=0) const { return h[i]; }
-
-      void setx(const fmatvec::Vec &x_) { x = x_; }
-      const fmatvec::Vec& getxd() const { return xd; }
-      
       void setsvInd(int svInd_) { svInd = svInd_; };
       int getsvSize() const { return svSize; }
 
       void setLinkStatusInd(int LinkStatusInd_) { LinkStatusInd = LinkStatusInd_; };
       int getLinkStatusSize() const { return LinkStatusSize; }
 
-      const fmatvec::Vec& getla() const { return la; }
-      fmatvec::Vec& getla() { return la; }
       void setlaInd(int laInd_) { laInd = laInd_;Ila=fmatvec::Index(laInd,laInd+laSize-1); } 
       int getlaInd() const { return laInd; } 
       int getlaSize() const { return laSize; } 
@@ -434,7 +392,7 @@ namespace MBSim {
       /**
        * \brief relative distance, relative velocity, contact force parameters
        */
-      fmatvec::Vec g, gd, la;
+      fmatvec::Vec g, gd;
       
       /**
        * \brief size and local index of relative distances
@@ -496,33 +454,6 @@ namespace MBSim {
        */
       fmatvec::Vec res;
 
-      /** 
-       * \brief force direction matrix for nonsmooth right hand side
-       */
-      std::vector<fmatvec::Mat> W[2];
-
-      /**
-       * \brief reduced force direction matrix for nonsmooth right hand side
-       */
-      std::vector<fmatvec::Mat> V[2];
-      
-      /**
-       * \brief smooth complete and link right hand side
-       */
-      std::vector<fmatvec::Vec> h[2];
-      
-      /**
-       * \brief smooth Jacobians for implicit integration
-       */
-      std::vector<fmatvec::Mat> dhdq;
-      std::vector<fmatvec::Mat> dhdu;
-      std::vector<fmatvec::Vec> dhdt;
-      
-      /**
-       * \brief nonsmooth right hand side
-       */
-      std::vector<fmatvec::Vec> r[2];
-      
       /**
        * \brief TODO
        */
