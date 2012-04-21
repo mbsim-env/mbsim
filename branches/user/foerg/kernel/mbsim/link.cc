@@ -38,25 +38,25 @@ namespace MBSim {
 
   void Link::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      if(getPlotFeature(state)==enabled)
-        for(int i=0; i<xSize; ++i)
-          plotVector.push_back(x(i));
-      if(getPlotFeature(stateDerivative)==enabled)
-        for(int i=0; i<xSize; ++i)
-          plotVector.push_back(xd(i)/dt);
-      if(getPlotFeature(linkKinematics)==enabled) {
-        for(int i=0; i<g.size(); ++i)
-          plotVector.push_back(g(i));
-        for(int i=0; i<gd.size(); ++i)
-          plotVector.push_back(gd(i));
-      }
+//      if(getPlotFeature(state)==enabled)
+//        for(int i=0; i<xSize; ++i)
+//          plotVector.push_back(x(i));
+//      if(getPlotFeature(stateDerivative)==enabled)
+//        for(int i=0; i<xSize; ++i)
+//          plotVector.push_back(xd(i)/dt);
+//      if(getPlotFeature(linkKinematics)==enabled) {
+//        for(int i=0; i<g.size(); ++i)
+//          plotVector.push_back(g(i));
+//        for(int i=0; i<gd.size(); ++i)
+//          plotVector.push_back(gd(i));
+//    }
       if(getPlotFeature(generalizedLinkForce)==enabled) {
 //        for(int i=0; i<la.size(); ++i)
 //          plotVector.push_back(la(i));
       }
       if(getPlotFeature(stopVector)==enabled)
-        for(int i=0; i<sv.size(); ++i)
-          plotVector.push_back(sv(i));
+//        for(int i=0; i<sv.size(); ++i)
+//          plotVector.push_back(sv(i));
       if(getPlotFeature(energy)==enabled) {
         plotVector.push_back(computePotentialEnergy()); 
       }
@@ -71,44 +71,6 @@ namespace MBSim {
     }
   }
 
-  void Link::updatewbRef(const Vec& wbParent) {
-    wb.resize() >> wbParent(laInd,laInd+laSize-1);
-  }
-
-  void Link::updategRef(const Vec& gParent) {
-    g.resize() >> gParent(gInd,gInd+gSize-1);
-  }
-
-  void Link::updategdRef(const Vec& gdParent) {
-    gd.resize() >> gdParent(gdInd,gdInd+gdSize-1);
-  }
-
-  void Link::updateresRef(const Vec& resParent) {
-    res.resize() >> resParent(laInd,laInd+laSize-1);
-  }
-
-  void Link::updaterFactorRef(const Vec& rFactorParent) {
-    rFactor.resize() >> rFactorParent(rFactorInd,rFactorInd+rFactorSize-1);
-  }
-
-  void Link::updatesvRef(const Vec &svParent) {
-    sv >> svParent(svInd,svInd+svSize-1);
-  }
-
-  void Link::updatejsvRef(const Vector<fmatvec::General, int> &jsvParent) {
-    jsv >> jsvParent(svInd,svInd+svSize-1);
-  }
-   
-  void Link::updateLinkStatusRef(const Vector<fmatvec::General, int> &LinkStatusParent) {
-    LinkStatus.resize() >> LinkStatusParent(LinkStatusInd,LinkStatusInd+LinkStatusSize-1);
-  }
-
-  void Link::updatebRef(const Mat &bParent) {
-    Index J = Index(laInd,laInd+laSize-1);
-    Index I = Index(bInd,bInd+bSize-1);
-    b.resize()>>bParent(I,J);
-  } 
-
   void Link::init(InitStage stage) {
     if(stage==unknownStage) {
       rFactorUnsure.resize(rFactorSize);
@@ -117,25 +79,25 @@ namespace MBSim {
       updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
-        if(getPlotFeature(state)==enabled)
-          for(int i=0; i<xSize; ++i)
-            plotColumns.push_back("x("+numtostr(i)+")");
-        if(getPlotFeature(stateDerivative)==enabled)
-          for(int i=0; i<xSize; ++i)
-            plotColumns.push_back("xd("+numtostr(i)+")");
-        if(getPlotFeature(linkKinematics)==enabled) {
-          for(int i=0; i<g.size(); ++i)
-            plotColumns.push_back("g("+numtostr(i)+")");
-          for(int i=0; i<gd.size(); ++i)
-            plotColumns.push_back("gd("+numtostr(i)+")");
-        }
+  //      if(getPlotFeature(state)==enabled)
+  //        for(int i=0; i<xSize; ++i)
+  //          plotColumns.push_back("x("+numtostr(i)+")");
+  //      if(getPlotFeature(stateDerivative)==enabled)
+  //        for(int i=0; i<xSize; ++i)
+  //          plotColumns.push_back("xd("+numtostr(i)+")");
+  //      if(getPlotFeature(linkKinematics)==enabled) {
+  //        for(int i=0; i<g.size(); ++i)
+  //          plotColumns.push_back("g("+numtostr(i)+")");
+  //        for(int i=0; i<gd.size(); ++i)
+  //          plotColumns.push_back("gd("+numtostr(i)+")");
+  //      }
         if(getPlotFeature(generalizedLinkForce)==enabled) {
 //          for(int i=0; i<la.size(); ++i)
 //            plotColumns.push_back("la("+numtostr(i)+")");
         }
         if(getPlotFeature(stopVector)==enabled)
-          for(int i=0; i<svSize; ++i)
-            plotColumns.push_back("sv("+numtostr(i)+")");
+    //      for(int i=0; i<svSize; ++i)
+    //        plotColumns.push_back("sv("+numtostr(i)+")");
         if(getPlotFeature(energy)==enabled)
           plotColumns.push_back("V");
 
@@ -147,7 +109,8 @@ namespace MBSim {
   }
 
   void Link::initz() {
-    x=x0;
+    if(x0.size())
+      ds->getx()(xInd,xInd+xSize-1) = Vec(x0);
   }
 
   void Link::savela(double dt) {
@@ -162,9 +125,9 @@ namespace MBSim {
   }
 
   void Link::decreaserFactors() {
-    for(int i=0; i<rFactor.size(); i++)
+    for(int i=0; i<rFactorSize; i++)
       if(rFactorUnsure(i))
-        rFactor(i) *= 0.9;
+        ds->getrFactor()(rFactorInd+i) *= 0.9;
   }
 
   Element * Link::getByPathSearch(string path) {
@@ -177,8 +140,8 @@ namespace MBSim {
         return getByPathSearch(path.substr(1));
   }
 
-  void Link::updatecorrRef(const fmatvec::Vec &ref) {
-    corr.resize() >> ref(corrInd,corrInd+corrSize-1);
+  void Link::updatecorr(int j) {
+    ds->getcorr()(corrInd,corrInd+corrSize-1).init(0); 
   }
 
 }

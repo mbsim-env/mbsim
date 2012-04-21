@@ -268,13 +268,12 @@ namespace MBSim {
       V[0].resize(getuSize(0),getlaSize());
       W[1].resize(getuSize(1),getlaSize());
       V[1].resize(getuSize(1),getlaSize());
-      wbParent.resize(getlaSize());
+      wb.resize(getlaSize());
       la.resize(getlaSize());
-      rFactorParent.resize(getlaSize());
-      sParent.resize(getlaSize());
-      if(impactSolver==RootFinding) resParent.resize(getlaSize());
-      gParent.resize(getgSize());
-      gdParent.resize(getgdSize());
+      rFactor.resize(getlaSize());
+      if(impactSolver==RootFinding) res.resize(getlaSize());
+      g.resize(getgSize());
+      gd.resize(getgdSize());
       zParent.resize(getzSize());
       zdParent.resize(getzSize());
       udParent1.resize(getuSize(1));
@@ -283,37 +282,28 @@ namespace MBSim {
       r[0].resize(getuSize(0));
       r[1].resize(getuSize(1));
       f.resize(getxSize());
-      svParent.resize(getsvSize());
-      jsvParent.resize(getsvSize());
-      LinkStatusParent.resize(getLinkStatusSize());
+      sv.resize(getsvSize());
+      jsv.resize(getsvSize());
+      LinkStatus.resize(getLinkStatusSize());
       WInverseKineticsParent[0].resize(hSize[0],laInverseKineticsSize);
       WInverseKineticsParent[1].resize(hSize[1],laInverseKineticsSize);
       bInverseKineticsParent.resize(bInverseKineticsSize,laInverseKineticsSize);
       laInverseKineticsParent.resize(laInverseKineticsSize);
-      corrParent.resize(getgdSize());
+      corr.resize(getgdSize());
 
       Group::init(stage);
 
-      updatesvRef(svParent);
-      updatejsvRef(jsvParent);
-      updateLinkStatusRef(LinkStatusParent);
       updatezRef(zParent);
       updatezdRef(zdParent);
-      updategRef(gParent);
-      updategdRef(gdParent);
       W[0].resize(getuSize(0),getlaSize());
       V[0].resize(getuSize(0),getlaSize());
       W[1].resize(getuSize(1),getlaSize());
       V[1].resize(getuSize(1),getlaSize());
-      updatewbRef(wbParent);
 
       //updatelaInverseKineticsRef(laInverseKineticsParent);
       //updateWInverseKineticsRef(WInverseKineticsParent[0],0);
       //updateWInverseKineticsRef(WInverseKineticsParent[1],1);
       //updatebInverseKineticsRef(bInverseKineticsParent);
-
-      if(impactSolver==RootFinding) updateresRef(resParent);
-      updaterFactorRef(rFactorParent);
 
       // contact solver specific settings
       if(INFO) cout << "  use contact solver \'" << getSolverInfo() << "\' for contact situations" << endl;
@@ -463,7 +453,7 @@ namespace MBSim {
     int iter;
     int checkTermLevel = 0;
 
-    updateresRef(resParent(0,laSize-1));
+    res.resize(laSize);
     Group::solveConstraintsRootFinding(); 
 
     double nrmf0 = nrm2(res);
@@ -531,7 +521,7 @@ namespace MBSim {
     int iter;
     int checkTermLevel = 0;
 
-    updateresRef(resParent(0,laSize-1));
+    res.resize(laSize);
     Group::solveImpactsRootFinding(dt); 
     
     double nrmf0 = nrm2(res);
@@ -817,8 +807,8 @@ namespace MBSim {
     W[1].resize(getuSize(1),getlaSize());
     V[1].resize(getuSize(1),getlaSize());
     la.resize(laSize);
-    updatewbRef(wbParent(0,laSize-1));
-    updaterFactorRef(rFactorParent(0,rFactorSize-1));
+    wb.resize(laSize);
+    rFactor.resize(rFactorSize);
   }
 
   Vec DynamicSystemSolver::deltau(const Vec &zParent, double t, double dt) {
@@ -897,10 +887,10 @@ namespace MBSim {
 
       W[0].resize(getuSize(0),getlaSize());
       V[0].resize(getuSize(0),getlaSize());
-      la.resize(laSize-1);
-      updategdRef(gdParent(0,gdSize-1));
-      if(impactSolver==RootFinding) updateresRef(resParent(0,laSize-1));
-      updaterFactorRef(rFactorParent(0,rFactorSize-1));
+      la.resize(laSize);
+      gd.resize(gdSize);
+      if(impactSolver==RootFinding) res.resize(laSize);
+      rFactor.resize(rFactorSize);
 
     }
     updategd(t);
@@ -925,8 +915,6 @@ namespace MBSim {
  void DynamicSystemSolver::getLinkStatus(Vector<fmatvec::General, int> &LinkStatusExt, double t) {
     if(LinkStatusExt.size()<LinkStatusSize) 
       LinkStatusExt.resize(LinkStatusSize, INIT, 0);
-    if(LinkStatus()!=LinkStatusExt())
-      updateLinkStatusRef(LinkStatusExt);
     updateLinkStatus(t);
   }
 
@@ -954,8 +942,8 @@ namespace MBSim {
 
     calcgSize(gID); 
     calccorrSize(corrID); 
-    updatecorrRef(corrParent(0,corrSize-1));
-    updategRef(gParent(0,gSize-1));
+    corr.resize(corrSize);
+    g.resize(gSize);
     updateg(t);
     updatecorr(corrID);
     Vec nu(getuSize());
@@ -986,7 +974,7 @@ namespace MBSim {
     calclaSize(3);
     W[0].resize(getuSize(0),getlaSize());
     calcgSize(0);
-    updategRef(gParent(0,gSize-1));
+    g.resize(gSize);
   }
 
   void DynamicSystemSolver::projectGeneralizedVelocities(double t, int mode) {
@@ -1009,8 +997,8 @@ namespace MBSim {
     calccorrSize(corrID); // IH
     if(corrSize) {
       calcgdSize(gdID); // IH
-      updatecorrRef(corrParent(0,corrSize-1));
-      updategdRef(gdParent(0,gdSize-1));
+      corr.resize(corrSize);
+      gd.resize(gdSize);
       updategd(t);
       updatecorr(corrID);
 
@@ -1026,7 +1014,7 @@ namespace MBSim {
       calclaSize(3);
       W[0].resize(getuSize(0),getlaSize());
       calcgdSize(1);
-      updategdRef(gdParent(0,gdSize-1));
+      gd.resize(gdSize);
     }
   }
 
@@ -1334,13 +1322,13 @@ namespace MBSim {
       //cout << "stoss" << endl;
 
       calcgdSize(1); // IG
-      updategdRef(gdParent(0,gdSize-1));
+      gd.resize(gdSize);
       calclaSize(1); // IG
       calcrFactorSize(1); // IG
       W[0].resize(getuSize(0),getlaSize());
       V[0].resize(getuSize(0),getlaSize());
       la.resize(getlaSize());
-      updaterFactorRef(rFactorParent(0,rFactorSize-1));
+      rFactor.resize(rFactorSize);
 
       updateStateDependentVariables(t); // TODO necessary?
       updateg(t); // TODO necessary?
@@ -1378,8 +1366,8 @@ namespace MBSim {
         W[0].resize(getuSize(0),getlaSize());
         V[0].resize(getuSize(0),getlaSize());
         la.resize(getlaSize());
-        updatewbRef(wbParent(0,laSize-1));
-        updaterFactorRef(rFactorParent(0,rFactorSize-1));
+        wb.resize(laSize);
+        rFactor.resize(rFactorSize);
 
         //updateStateDependentVariables(t); // necessary because of velocity change 
         updategd(t); // necessary because of velocity change 
@@ -1409,8 +1397,8 @@ namespace MBSim {
       W[0].resize(getuSize(0),getlaSize());
       V[0].resize(getuSize(0),getlaSize());
       la.resize(getlaSize());
-      updatewbRef(wbParent(0,laSize-1));
-      updaterFactorRef(rFactorParent(0,rFactorSize-1));
+      wb.resize(laSize);
+      rFactor.resize(rFactorSize);
 
       if(laSize) {
         updateStateDependentVariables(t); // TODO necessary
@@ -1451,8 +1439,8 @@ namespace MBSim {
     W[0].resize(getuSize(0),getlaSize());
     V[0].resize(getuSize(0),getlaSize());
     la.resize(getlaSize());
-    updatewbRef(wbParent(0,laSize-1));
-    updaterFactorRef(rFactorParent(0,rFactorSize-1));
+    wb.resize(laSize);
+    rFactor.resize(rFactorSize);
 
     updateStateDependentVariables(t);
     updateJacobians(t);
@@ -1463,7 +1451,7 @@ namespace MBSim {
 
   void DynamicSystemSolver::getsv(const Vec& zParent, Vec& svExt, double t) { 
     if(sv()!=svExt()) {
-      updatesvRef(svExt);
+      //updatesvRef(svExt); // TODO
     }
 
     if(q()!=zParent())

@@ -56,8 +56,8 @@ namespace MBSim {
       void connect(Object *obj, int qInd_, int uInd_) { connectedObject=obj; qInd=qInd_; uInd=uInd_; }
       void setGeneralizedForce(double h) { } // la(0)=h; }
       void setGeneralizedLinearForceParameters(double m_, double a_, double t0_) { m=m_; a=a_; t0=t0_; }
-      double getGeneralizedPosition() { return g(0); }
-      double getGeneralizedVelocity() { return gd(0); }
+      double getGeneralizedPosition();
+      double getGeneralizedVelocity();
 
       void plot(double t, double dt=1);
       void initializeUsingXML(TiXmlElement *element);

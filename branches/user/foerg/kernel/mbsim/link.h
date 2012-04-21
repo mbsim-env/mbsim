@@ -79,15 +79,11 @@ namespace MBSim {
       virtual void updatedx(double t, double dt) {}
       virtual void updatexd(double t) {}
       virtual void calcxSize() { xSize = 0; }
-      virtual const fmatvec::Vec& getx() const { return x; }
-      virtual fmatvec::Vec& getx() { return x; }
       virtual void setxInd(int xInd_) { xInd = xInd_; };
       virtual int getxSize() const { return xSize; }
       virtual void init(InitStage stage);
       virtual void initz();
       /***************************************************/
-
-      virtual void updatebRef(const fmatvec::Mat &hRef);
 
       virtual void setbInd(int bInd_) { bInd = bInd_; };
 
@@ -96,51 +92,6 @@ namespace MBSim {
       virtual void plot(double t, double dt = 1);
       virtual void closePlot();
       /***************************************************/
-
-      /**
-       * \brief references to TODO of dynamic system parent
-       */
-      virtual void updatewbRef(const fmatvec::Vec &ref);
-
-      /**
-       * \brief references to TODO of dynamic system parent
-       */
-      virtual void updatefRef(const fmatvec::Vec &ref) {};
-
-      /**
-       * \brief references to contact relative distances of dynamic system parent
-       */
-      virtual void updategRef(const fmatvec::Vec& ref);
-
-      /**
-       * \brief references to contact relative velocities of dynamic system parent
-       */
-      virtual void updategdRef(const fmatvec::Vec& ref);
-
-      /**
-       * \brief references to residuum of nonlinear contact equations of dynamic system parent
-       */
-      virtual void updateresRef(const fmatvec::Vec& ref);
-
-      /**
-       * \brief references to rfactors of dynamic system parent
-       */
-      virtual void updaterFactorRef(const fmatvec::Vec& ref);
-
-      /**
-       * \brief references to stopvector of dynamic system parent (root function for event driven integration)
-       */
-      virtual void updatesvRef(const fmatvec::Vec &sv);
-
-      /**
-       * \brief references to stopvector evaluation of dynamic system parent (root detection with corresponding bool array by event driven integrator)
-       */
-      virtual void updatejsvRef(const fmatvec::Vector<fmatvec::General, int> &jsvParent);
-
-      /**
-       * \brief reference to vector of link status (for set valued links with piecewise link equations)
-       */
-       virtual void updateLinkStatusRef(const fmatvec::Vector<fmatvec::General, int> &LinkStatusParent);
 
       /**
        * \brief calculates size of contact force parameters
@@ -284,11 +235,7 @@ namespace MBSim {
       int getbSize() const { return bSize; }
       const fmatvec::Index& getlaIndex() const { return Ila; }
 
-      const fmatvec::Vec& getg() const { return g; }
-      fmatvec::Vec& getg() { return g; }
       void setgInd(int gInd_) { gInd = gInd_; Ig=fmatvec::Index(gInd,gInd+gSize-1); } 
-      const fmatvec::Vec& getgd() const { return gd; }
-      fmatvec::Vec& getgd() { return gd; }
       void setgdInd(int gdInd_) { gdInd = gdInd_; } 
       int getgdInd() const { return gdInd; } 
       int getgSize() const { return gSize; } 
@@ -335,23 +282,14 @@ namespace MBSim {
        */
       virtual void SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_) {};
 
-      virtual void updatecorr(int j) { corr.init(0); }
-      virtual void updatecorrRef(const fmatvec::Vec &ref);
       virtual void calccorrSize(int j) { corrSize = 0; }
       void setcorrInd(int corrInd_) { corrInd = corrInd_; } 
       int getcorrSize() const { return corrSize; } 
       virtual void checkRoot() {};
 
-    protected:
-      /** 
-       * \brief order one parameters
-       */
-      fmatvec::Vec x;
+      virtual void updatecorr(int j); 
 
-      /** 
-       * \brief differentiated order one parameters 
-       */
-      fmatvec::Vec xd;
+    protected:
 
       /**
        * \brief order one initial value
@@ -364,36 +302,15 @@ namespace MBSim {
       int xSize, xInd;
 
       /**
-       * \brief stop vector for event driven integration (root function)
-       */
-      fmatvec::Vec sv;
-
-      /**
-       * \brief evaluation of roots of stop vector with a boolean vector
-       */
-      fmatvec::Vector<fmatvec::General, int> jsv;
-
-      /**
        * \brief size and local index of stop vector
        */
       int svSize, svInd;
              
       /**
-       * for set valued links with piecewise link equation (e.g. unilateral contacts or coulomb friction)
-       * \brief status of link (default 0) describing which pice of the equation is valid (e.g. stick or slip)
-       */
-      fmatvec::Vector<fmatvec::General, int> LinkStatus;
-
-      /**
        * \brief size and local index of link status vector
        */
        int LinkStatusSize, LinkStatusInd;
     
-      /**
-       * \brief relative distance, relative velocity, contact force parameters
-       */
-      fmatvec::Vec g, gd;
-      
       /**
        * \brief size and local index of relative distances
        */
@@ -430,11 +347,6 @@ namespace MBSim {
       fmatvec::Vec la0;
 
       /**
-       * \brief vector of rfactors for relaxation of contact equations
-       */
-      fmatvec::Vec rFactor;
-
-      /**
        * \brief boolean vector defining if rfactor belongs to not diagonal dominant mass action matrix (cf. Foerg Dissertation, page 80 et seq.)
        */
       fmatvec::Vector<fmatvec::General, int> rFactorUnsure;
@@ -449,23 +361,7 @@ namespace MBSim {
        */
       double rMax;
 
-      /**
-       * residuum of nonlinear contact equations
-       */
-      fmatvec::Vec res;
-
-      /**
-       * \brief TODO
-       */
-      fmatvec::Vec wb;
-
-      /**
-       * \brief TODO
-       */
-      fmatvec::Mat b;
-
       int corrSize, corrInd;
-      fmatvec::Vec corr;
   };
 }
 

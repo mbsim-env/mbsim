@@ -227,20 +227,6 @@ namespace MBSim {
       void setFrameOfReference(Frame *frame) { frameParent = frame; };
 
 
-      const fmatvec::Vec& getg() const { return g; }
-      fmatvec::Vec& getg() { return g; }
-      const fmatvec::Vec& getgd() const { return gd; }
-      fmatvec::Vec& getgd() { return gd; }
-      const fmatvec::Vec& getrFactor() const { return rFactor; }
-      fmatvec::Vec& getrFactor() { return rFactor; }
-      fmatvec::Vec& getsv() { return sv; }
-      const fmatvec::Vec& getsv() const { return sv; }
-      fmatvec::Vector<fmatvec::General, int>& getjsv() { return jsv; }
-      const fmatvec::Vector<fmatvec::General, int>& getjsv() const { return jsv; }
-      fmatvec::Vector<fmatvec::General, int>& getLinkStatus() { return LinkStatus; }
-      const fmatvec::Vector<fmatvec::General, int>& getLinkStatus() const { return LinkStatus; }
-      const fmatvec::Vec& getres() const { return res; }
-      fmatvec::Vec& getres() { return res; }
 
 
       int getxInd() { return xInd; }
@@ -267,56 +253,6 @@ namespace MBSim {
       int getsvSize() const { return svSize; }
       int getLinkStatusSize() const { return LinkStatusSize; }
       /*****************************************************/
-
-      /**
-       * \brief references to relative distances of dynamic system parent
-       * \param vector to be referenced
-       */
-      void updategRef(const fmatvec::Vec &ref);
-
-      /**
-       * \brief references to relative velocities of dynamic system parent
-       * \param vector to be referenced
-       */
-      void updategdRef(const fmatvec::Vec &ref);
-
-      void updatebInverseKineticsRef(const fmatvec::Mat &ref);
-
-      /**
-       * \brief references to TODO of dynamic system parent
-       * \param vector to be referenced
-       */      
-      void updatewbRef(const fmatvec::Vec &ref);
-
-      /**
-       * \brief references to stopvector (rootfunction for event driven integrator) of dynamic system parent
-       * \param vector to be referenced
-       */
-      void updatesvRef(const fmatvec::Vec& ref);
-
-      /**
-       * \brief references to boolean evaluation of stopvector concerning roots of dynamic system parent
-       * \param vector to be referenced
-       */
-      void updatejsvRef(const fmatvec::Vector<fmatvec::General, int> &ref);
-
-      /**
-       * \brief references to status vector of set valued links with piecewise link equations (which piece is valid)
-       * \param vector to be referenced 
-       */
-      void updateLinkStatusRef(const fmatvec::Vector<fmatvec::General, int> &LinkStatusParent);
-
-      /**
-       * \brief references to residuum of contact equations of dynamic system parent
-       * \param vector to be referenced
-       */
-      void updateresRef(const fmatvec::Vec &ref);
-
-      /**
-       * \brief references to relaxation factors for contact equations of dynamic system parent
-       * \param vector to be referenced
-       */
-      void updaterFactorRef(const fmatvec::Vec &ref);
 
       /**
        * \brief build flat list of objects
@@ -591,7 +527,6 @@ namespace MBSim {
       virtual Element *getByPathSearch(std::string path);
 
       virtual void updatecorr(int j);
-      void updatecorrRef(const fmatvec::Vec &ref);
       void calccorrSize(int j);
 
       void checkRoot();
@@ -630,40 +565,6 @@ namespace MBSim {
 #endif
 
 
-      /** 
-       * \brief relative distances and velocities
-       */
-      fmatvec::Vec g, gd;
-
-      /**
-       * \brief TODO
-       */
-      fmatvec::Vec wb;
-
-      /**
-       * \brief residuum of nonlinear contact equations for Newton scheme
-       */
-      fmatvec::Vec res;
-
-      /**
-       * \brief rfactors for relaxation nonlinear contact equations
-       */
-      fmatvec::Vec rFactor;
-
-      /**
-       * \brief stop vector (root functions for event driven integration
-       */
-      fmatvec::Vec sv;
-
-      /**
-       * \brief boolean evaluation of stop vector concerning roots
-       */
-      fmatvec::Vector<fmatvec::General, int> jsv;
-
-      /**
-       * \brief status of set valued links 
-       */
-      fmatvec::Vector<fmatvec::General, int> LinkStatus;
 
       /** 
        * \brief size and local start index of positions relative to parent
@@ -757,7 +658,6 @@ namespace MBSim {
       fmatvec::Vec laInverseKinetics;
 
       int corrSize, corrInd;
-      fmatvec::Vec corr;
 
     private:
       std::vector<std::string> saved_refFrameF, saved_refFrameC;
