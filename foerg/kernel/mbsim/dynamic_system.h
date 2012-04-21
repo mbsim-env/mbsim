@@ -235,10 +235,10 @@ namespace MBSim {
       fmatvec::Vec& getrFactor() { return rFactor; }
       fmatvec::Vec& getsv() { return sv; }
       const fmatvec::Vec& getsv() const { return sv; }
-      fmatvec::Vector<int>& getjsv() { return jsv; }
-      const fmatvec::Vector<int>& getjsv() const { return jsv; }
-      fmatvec::Vector<int>& getLinkStatus() { return LinkStatus; }
-      const fmatvec::Vector<int>& getLinkStatus() const { return LinkStatus; }
+      fmatvec::Vector<fmatvec::General, int>& getjsv() { return jsv; }
+      const fmatvec::Vector<fmatvec::General, int>& getjsv() const { return jsv; }
+      fmatvec::Vector<fmatvec::General, int>& getLinkStatus() { return LinkStatus; }
+      const fmatvec::Vector<fmatvec::General, int>& getLinkStatus() const { return LinkStatus; }
       const fmatvec::Vec& getres() const { return res; }
       fmatvec::Vec& getres() { return res; }
 
@@ -298,13 +298,13 @@ namespace MBSim {
        * \brief references to boolean evaluation of stopvector concerning roots of dynamic system parent
        * \param vector to be referenced
        */
-      void updatejsvRef(const fmatvec::Vector<int> &ref);
+      void updatejsvRef(const fmatvec::Vector<fmatvec::General, int> &ref);
 
       /**
        * \brief references to status vector of set valued links with piecewise link equations (which piece is valid)
        * \param vector to be referenced 
        */
-      void updateLinkStatusRef(const fmatvec::Vector<int> &LinkStatusParent);
+      void updateLinkStatusRef(const fmatvec::Vector<fmatvec::General, int> &LinkStatusParent);
 
       /**
        * \brief references to residuum of contact equations of dynamic system parent
@@ -658,12 +658,12 @@ namespace MBSim {
       /**
        * \brief boolean evaluation of stop vector concerning roots
        */
-      fmatvec::Vector<int> jsv;
+      fmatvec::Vector<fmatvec::General, int> jsv;
 
       /**
        * \brief status of set valued links 
        */
-      fmatvec::Vector<int> LinkStatus;
+      fmatvec::Vector<fmatvec::General, int> LinkStatus;
 
       /** 
        * \brief size and local start index of positions relative to parent

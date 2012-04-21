@@ -98,7 +98,7 @@ namespace MBSim {
 
     int lWork = 2*(11*zSize+8*nrDens+21);
     int liWork = 2*(nrDens+21);
-    Vector<int> iWork(liWork);
+    Vector<fmatvec::General, int> iWork(liWork);
     Vec work(lWork);
 
     // if(warnLevel)

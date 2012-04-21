@@ -95,11 +95,11 @@ namespace MBSim {
     sv >> svParent(svInd,svInd+svSize-1);
   }
 
-  void Link::updatejsvRef(const Vector<int> &jsvParent) {
+  void Link::updatejsvRef(const Vector<fmatvec::General, int> &jsvParent) {
     jsv >> jsvParent(svInd,svInd+svSize-1);
   }
    
-  void Link::updateLinkStatusRef(const Vector<int> &LinkStatusParent) {
+  void Link::updateLinkStatusRef(const Vector<fmatvec::General, int> &LinkStatusParent) {
     LinkStatus.resize() >> LinkStatusParent(LinkStatusInd,LinkStatusInd+LinkStatusSize-1);
   }
 
