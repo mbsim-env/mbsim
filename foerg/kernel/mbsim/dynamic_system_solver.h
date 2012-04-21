@@ -213,18 +213,6 @@ namespace MBSim {
       void setCheckGSize(bool checkGSize_) { checkGSize = checkGSize_; }
       void setLimitGSize(int limitGSize_) { limitGSize = limitGSize_; checkGSize = false; }
 
-      const fmatvec::Matrix<fmatvec::Sparse, double>& getGs() const { return Gs; }
-      fmatvec::Matrix<fmatvec::Sparse, double>& getGs() { return Gs; }
-      const fmatvec::SqrMat& getG() const { return G; }
-      fmatvec::SqrMat& getG() { return G; }
-      const fmatvec::Vec& getb() const { return b; }
-      fmatvec::Vec& getb() { return b; }
-      const fmatvec::SqrMat& getJprox() const { return Jprox; }
-      fmatvec::SqrMat& getJprox() { return Jprox; }
-
-      const fmatvec::Vec& getgdParent() const { return gdParent; }
-      const fmatvec::Vec& getresParent() const { return resParent; }
-      const fmatvec::Vec& getrFactorParent() const { return rFactorParent; }
 
       DynamicSystemSolver* getDynamicSystemSolver() { return this; }
       bool getIntegratorExitRequest() { return integratorExitRequest; }
@@ -510,6 +498,34 @@ namespace MBSim {
        const fmatvec::Vec& getx0() const { return x0; };
        fmatvec::Vec& getla() { return la; }
        const fmatvec::Vec& getla() const { return la; }
+       fmatvec::Vec& getg() { return g; }
+       const fmatvec::Vec& getg() const { return g; }
+       fmatvec::Vec& getgd() { return gd; }
+       const fmatvec::Vec& getgd() const { return gd; }
+       fmatvec::Vec& getrFactor() { return rFactor; }
+       const fmatvec::Vec& getrFactor() const { return rFactor; }
+       fmatvec::Vec& getsv() { return sv; }
+       const fmatvec::Vec& getsv() const { return sv; }
+       fmatvec::Vector<fmatvec::General, int>& getjsv() { return jsv; }
+       const fmatvec::Vector<fmatvec::General, int>& getjsv() const { return jsv; }
+       fmatvec::Vec& getres() { return res; }
+       const fmatvec::Vec& getres() const { return res; }
+       fmatvec::Vector<fmatvec::General, int>& getLinkStatus() { return LinkStatus; }
+       const fmatvec::Vector<fmatvec::General, int>& getLinkStatus() const { return LinkStatus; }
+      fmatvec::Matrix<fmatvec::Sparse, double>& getGs() { return Gs; }
+      const fmatvec::Matrix<fmatvec::Sparse, double>& getGs() const { return Gs; }
+      fmatvec::SqrMat& getG() { return G; }
+      const fmatvec::SqrMat& getG() const { return G; }
+      fmatvec::Vec& getb() { return b; }
+      const fmatvec::Vec& getb() const { return b; }
+      fmatvec::Mat& getB() { return b; }
+      const fmatvec::Mat& getB() const { return b; }
+      fmatvec::SqrMat& getJprox() { return Jprox; }
+      const fmatvec::SqrMat& getJprox() const { return Jprox; }
+      fmatvec::Vec& getcorr() { return corr; }
+      const fmatvec::Vec& getcorr() const { return corr; }
+      fmatvec::Vec& getwb() { return wb; }
+      const fmatvec::Vec& getwb() const { return wb; }
 
        //void setx(const fmatvec::Vec& x_) { x = x_; }
        //void setx0(const fmatvec::Vec &x0_) { x0 = x0_; }
@@ -562,35 +578,40 @@ namespace MBSim {
        */
       fmatvec::Vec la;
 
-      /**
-       * \brief TODO
+      /** 
+       * \brief relative distances and velocities
        */
-      fmatvec::Vec wbParent;
-
-      /**
-       * \brief relaxation parameters for contact equations
-       */
-      fmatvec::Vec rFactorParent;
+      fmatvec::Vec g, gd;
 
       /**
        * \brief TODO
        */
-      fmatvec::Vec sParent;
+      fmatvec::Vec wb;
 
       /**
-       * \brief residuum of contact equations
+       * \brief residuum of nonlinear contact equations for Newton scheme
        */
-      fmatvec::Vec resParent;
+      fmatvec::Vec res;
 
       /**
-       * \brief relative distances
+       * \brief rfactors for relaxation nonlinear contact equations
        */
-      fmatvec::Vec gParent;
+      fmatvec::Vec rFactor;
 
       /**
-       * \brief relative velocities
+       * \brief stop vector (root functions for event driven integration
        */
-      fmatvec::Vec gdParent;
+      fmatvec::Vec sv;
+
+      /**
+       * \brief boolean evaluation of stop vector concerning roots
+       */
+      fmatvec::Vector<fmatvec::General, int> jsv;
+
+      /**
+       * \brief status of set valued links 
+       */
+      fmatvec::Vector<fmatvec::General, int> LinkStatus;
 
       /**
        * \brief differentiated state
@@ -598,21 +619,6 @@ namespace MBSim {
       fmatvec::Vec zParent, zdParent;
 
       fmatvec::Vec udParent1;
-
-      /**
-       * \brief stopvector (rootfunctions for event driven integration
-       */
-      fmatvec::Vec svParent;
-
-      /**
-       * \brief boolean evaluation of stopvector
-       */
-      fmatvec::Vector<fmatvec::General, int> jsvParent;
-      
-      /**
-       * \brief status vector of set valued links with piecewise link equation (which piece is valid)
-       */
-      fmatvec::Vector<fmatvec::General, int> LinkStatusParent;
 
       /**
        * \brief sparse mass action matrix
@@ -633,6 +639,10 @@ namespace MBSim {
        * \brief TODO
        */
       fmatvec::Vec b;
+
+      fmatvec::Mat B;
+
+      fmatvec::Vec corr;
 
       /**
        * \brief boolean to check for termination of contact equations solution
@@ -774,8 +784,6 @@ namespace MBSim {
       bool alwaysConsiderContact;
       bool inverseKinetics;
 
-      fmatvec::Vec corrParent;
-      
       int rootID;
 
     private:

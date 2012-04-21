@@ -54,8 +54,8 @@ namespace MBSim {
     FVMat WJT = frame[0]->getOrientation()*JT;
     VVec sdT = WJT.T()*(WvP0P1);
 
-    wb(0,Wf.cols()-1) += Vec(Wf.T()*(frame[1]->getGyroscopicAccelerationOfTranslation(j) - C.getGyroscopicAccelerationOfTranslation(j) - crossProduct(C.getAngularVelocity(),WvP0P1+WJT*sdT)));
-    wb(Wf.cols(),Wm.cols()+Wf.cols()-1) += Vec(Wm.T()*(frame[1]->getGyroscopicAccelerationOfRotation(j) - C.getGyroscopicAccelerationOfRotation(j) - crossProduct(C.getAngularVelocity(),WomP0P1)));
+    ds->getwb()(laInd,laInd+Wf.cols()-1) += Vec(Wf.T()*(frame[1]->getGyroscopicAccelerationOfTranslation(j) - C.getGyroscopicAccelerationOfTranslation(j) - crossProduct(C.getAngularVelocity(),WvP0P1+WJT*sdT)));
+    ds->getwb()(laInd+Wf.cols(),laInd+Wm.cols()+Wf.cols()-1) += Vec(Wm.T()*(frame[1]->getGyroscopicAccelerationOfRotation(j) - C.getGyroscopicAccelerationOfRotation(j) - crossProduct(C.getAngularVelocity(),WomP0P1)));
   }
 
   void Joint::updateW(double t, int j) {
@@ -78,10 +78,10 @@ namespace MBSim {
 
   void Joint::updateh(double t, int j) {
     for(int i=0; i<forceDir.cols(); i++) 
-      ds->getla()(laInd+i) = (*ffl)(g(i), gd(i));
+      ds->getla()(laInd+i) = (*ffl)(ds->getg()(gInd+i), ds->getgd()(gdInd+i));
 
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++)
-      ds->getla()(laInd+i) = (*fml)(g(i), gd(i));
+      ds->getla()(laInd+i) = (*fml)(ds->getg()(gInd+i), ds->getgd()(gdInd+i));
 
     WF[1] = Wf*ds->getla()(laInd,laInd+forceDir.cols()-1);
     WM[1] = Wm*ds->getla()(laInd+forceDir.cols(),laInd+laSize-1);
@@ -99,8 +99,8 @@ namespace MBSim {
     C.setOrientation(frame[0]->getOrientation());
     C.setPosition(frame[0]->getPosition() + WrP0P1);
 
-    g(IT) = Vec(Wf.T()*WrP0P1);
-    g(IR) = x;
+    ds->getg()(gInd,gInd+forceDir.cols()-1) = Vec(Wf.T()*WrP0P1);
+    ds->getg()(gInd+forceDir.cols(),gInd+gSize-1) = ds->getx()(xInd,xInd+xSize-1);
   }
 
   void Joint::updategd(double t) {
@@ -110,8 +110,8 @@ namespace MBSim {
     WvP0P1 = frame[1]->getVelocity()-C.getVelocity();
     WomP0P1 = frame[1]->getAngularVelocity()-C.getAngularVelocity();
 
-    gd(IT) = Vec(Wf.T()*WvP0P1);
-    gd(IR) = Vec(Wm.T()*WomP0P1);
+    ds->getgd()(gdInd,gdInd+forceDir.cols()-1) = Vec(Wf.T()*WvP0P1);
+    ds->getgd()(gdInd+forceDir.cols(),gdInd+gdSize-1) = Vec(Wm.T()*WomP0P1);
   }
 
   void Joint::updateJacobians(double t, int j) {
@@ -128,11 +128,11 @@ namespace MBSim {
   }
 
   void Joint::updatexd(double t) {
-    xd = gd(IR);
+    ds->getxd()(xInd,xInd+xSize-1) = ds->getgd()(gdInd+forceDir.cols(),gdInd+gdSize-1);
   }
 
   void Joint::updatedx(double t, double dt) {
-    xd = gd(IR)*dt;
+    ds->getxd()(xInd,xInd+xSize-1) = ds->getgd()(gdInd+forceDir.cols(),gdInd+gdSize-1)*dt;
   }
 
   void Joint::calcxSize() {
@@ -149,9 +149,6 @@ namespace MBSim {
     else if(stage==resize) {
       LinkMechanics::init(stage);
 
-      g.resize(forceDir.cols()+momentDir.cols());
-      gd.resize(forceDir.cols()+momentDir.cols());
-      gdd.resize(gdSize);
       gdn.resize(gdSize);
     }
     else if(stage==unknownStage) {
@@ -197,10 +194,10 @@ namespace MBSim {
 //            plotColumns.push_back("la("+numtostr(j)+")");
         }
         if(getPlotFeature(linkKinematics)==enabled) {
-          for(int j=0; j<g.size(); ++j)
-            plotColumns.push_back("g("+numtostr(j)+")");
-          for(int j=0; j<gd.size(); ++j)
-            plotColumns.push_back("gd("+numtostr(j)+")");
+//          for(int j=0; j<g.size(); ++j)
+//            plotColumns.push_back("g("+numtostr(j)+")");
+//          for(int j=0; j<gd.size(); ++j)
+//            plotColumns.push_back("gd("+numtostr(j)+")");
         }
         LinkMechanics::init(stage);
       }
@@ -252,14 +249,14 @@ namespace MBSim {
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
         gdn(i) += a[j]*laMBS(ja[j]);
 
-      ds->getla()(laInd+i) = fifl->project(ds->getla()(laInd+i), gdn(i), gd(i), rFactor(i));
+      ds->getla()(laInd+i) = fifl->project(ds->getla()(laInd+i), gdn(i), ds->getgd()(gdInd+i), ds->getrFactor()(rFactorInd+i));
     }
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
       gdn(i) = b(laInd+i);
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
         gdn(i) += a[j]*laMBS(ja[j]);
 
-      ds->getla()(laInd+i) = fiml->project(ds->getla()(laInd+i), gdn(i), gd(i), rFactor(i));
+      ds->getla()(laInd+i) = fiml->project(ds->getla()(laInd+i), gdn(i), ds->getgd()(gdInd+i), ds->getrFactor()(rFactorInd+i));
     }
   }
 
@@ -276,14 +273,14 @@ namespace MBSim {
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
         gdd(i) += a[j]*laMBS(ja[j]);
 
-      ds->getla()(laInd+i) = ffl->project(ds->getla()(laInd+i), gdd(i), rFactor(i));
+      ds->getla()(laInd+i) = ffl->project(ds->getla()(laInd+i), gdd(i), ds->getrFactor()(rFactorInd+i));
     }
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
       gdd(i) = b(laInd+i);
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
         gdd(i) += a[j]*laMBS(ja[j]);
 
-      ds->getla()(laInd+i) = fml->project(ds->getla()(laInd+i), gdd(i), rFactor(i));
+      ds->getla()(laInd+i) = fml->project(ds->getla()(laInd+i), gdd(i), ds->getrFactor()(rFactorInd+i));
     }
   }
 
@@ -300,14 +297,14 @@ namespace MBSim {
       for(int j=ia[laInd+i]+1; j<ia[laInd+1+i]; j++)
         gdn(i) += a[j]*laMBS(ja[j]);
 
-      ds->getla()(laInd+i) = fifl->solve(a[ia[laInd+i]], gdn(i), gd(i));
+      ds->getla()(laInd+i) = fifl->solve(a[ia[laInd+i]], gdn(i), ds->getgd()(gdInd+i));
     }
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
       gdn(i) = b(laInd+i);
       for(int j=ia[laInd+i]+1; j<ia[laInd+1+i]; j++)
         gdn(i) += a[j]*laMBS(ja[j]);
 
-      ds->getla()(laInd+i) = fiml->solve(a[ia[laInd+i]], gdn(i), gd(i));
+      ds->getla()(laInd+i) = fiml->solve(a[ia[laInd+i]], gdn(i), ds->getgd()(gdInd+i));
     }
   }
 
@@ -348,14 +345,14 @@ namespace MBSim {
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
         gdn(i) += a[j]*laMBS(ja[j]);
 
-      res(i) = ds->getla()(laInd+i) - fifl->project(ds->getla()(laInd+i), gdn(i), gd(i), rFactor(i));
+      ds->getres()(laInd+i) = ds->getla()(laInd+i) - fifl->project(ds->getla()(laInd+i), gdn(i), ds->getgd()(gdInd+i), ds->getrFactor()(rFactorInd+i));
     }
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
       gdn(i) = b(laInd+i);
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
         gdn(i) += a[j]*laMBS(ja[j]);
 
-      res(i) = ds->getla()(laInd+i) - fiml->project(ds->getla()(laInd+i), gdn(i), gd(i), rFactor(i));
+      ds->getres()(laInd+i) = ds->getla()(laInd+i) - fiml->project(ds->getla()(laInd+i), gdn(i), ds->getgd()(gdInd+i), ds->getrFactor()(rFactorInd+i));
     }
   }
 
@@ -372,14 +369,14 @@ namespace MBSim {
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
         gdd(i) += a[j]*laMBS(ja[j]);
 
-      res(i) = ds->getla()(laInd+i) - ffl->project(ds->getla()(laInd+i), gdd(i), rFactor(i));
+      ds->getres()(laInd+i) = ds->getla()(laInd+i) - ffl->project(ds->getla()(laInd+i), gdd(i), ds->getrFactor()(rFactorInd+i));
     }
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
       gdd(i) = b(laInd+i);
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
         gdd(i) += a[j]*laMBS(ja[j]);
 
-      res(i) = ds->getla()(laInd+i) - fml->project(ds->getla()(laInd+i), gdd(i), rFactor(i));
+      ds->getres()(laInd+i) = ds->getla()(laInd+i) - fml->project(ds->getla()(laInd+i), gdd(i), ds->getrFactor()(rFactorInd+i));
     }
   }
 
@@ -392,7 +389,7 @@ namespace MBSim {
       RowVec jp1=Jprox.row(laInd+i);
       RowVec e1(jp1.size());
       e1(laInd+i) = 1;
-      Vec diff = ffl->diff(ds->getla()(laInd+i), gdd(i), rFactor(i));
+      Vec diff = ffl->diff(ds->getla()(laInd+i), gdd(i), ds->getrFactor()(rFactorInd+i));
 
       jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laInd+i)
       for(int j=0; j<G.size(); j++) 
@@ -404,7 +401,7 @@ namespace MBSim {
       RowVec jp1=Jprox.row(laInd+i);
       RowVec e1(jp1.size());
       e1(laInd+i) = 1;
-      Vec diff = fml->diff(ds->getla()(laInd+i), gdd(i), rFactor(i));
+      Vec diff = fml->diff(ds->getla()(laInd+i), gdd(i), ds->getrFactor()(rFactorInd+i));
 
       jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laInd+i)
       for(int j=0; j<G.size(); j++) 
@@ -421,7 +418,7 @@ namespace MBSim {
       RowVec jp1=Jprox.row(laInd+i);
       RowVec e1(jp1.size());
       e1(laInd+i) = 1;
-      Vec diff = fifl->diff(ds->getla()(laInd+i), gdn(i), gd(i), rFactor(i));
+      Vec diff = fifl->diff(ds->getla()(laInd+i), gdn(i), ds->getgd()(gdInd+i), ds->getrFactor()(rFactorInd+i));
 
       jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laInd+i)
       for(int j=0; j<G.size(); j++) 
@@ -432,7 +429,7 @@ namespace MBSim {
       RowVec jp1=Jprox.row(laInd+i);
       RowVec e1(jp1.size());
       e1(laInd+i) = 1;
-      Vec diff = fiml->diff(ds->getla()(laInd+i), gdn(i), gd(i), rFactor(i));
+      Vec diff = fiml->diff(ds->getla()(laInd+i), gdn(i), ds->getgd()(gdInd+i), ds->getrFactor()(rFactorInd+i));
 
       jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laInd+i)
       for(int j=0; j<G.size(); j++) 
@@ -453,10 +450,10 @@ namespace MBSim {
         double ai = a[ia[laInd+i]];
         if(ai > sum) {
           rFactorUnsure(i) = 0;
-          rFactor(i) = 1.0/ai;
+          ds->getrFactor()(rFactorInd+i) = 1.0/ai;
         } else {
           rFactorUnsure(i) = 1;
-          rFactor(i) = 1.0/ai;
+          ds->getrFactor()(rFactorInd+i) = 1.0/ai;
         }
       }
     }
@@ -475,7 +472,7 @@ namespace MBSim {
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
         gdn(i) += a[j]*laMBS(ja[j]);
 
-      if(!fifl->isFulfilled(ds->getla()(laInd+i),gdn(i),gd(i),LaTol,gdTol)) {
+      if(!fifl->isFulfilled(ds->getla()(laInd+i),gdn(i),ds->getgd()(gdInd+i),LaTol,gdTol)) {
         ds->setTermination(false);
         return;
       }
@@ -485,7 +482,7 @@ namespace MBSim {
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
         gdn(i) += a[j]*laMBS(ja[j]);
 
-      if(!fiml->isFulfilled(ds->getla()(laInd+i),gdn(i),gd(i),LaTol,gdTol)) {
+      if(!fiml->isFulfilled(ds->getla()(laInd+i),gdn(i),ds->getgd()(gdInd+i),LaTol,gdTol)) {
         ds->setTermination(false);
         return;
       }
@@ -554,10 +551,10 @@ namespace MBSim {
           //plotVector.push_back(la(j)/(isSetValued()?dt:1.));
       }
       if(getPlotFeature(linkKinematics)==enabled) {
-        for(int j=0; j<g.size(); j++)
-          plotVector.push_back(g(j));
-        for(int j=0; j<gd.size(); j++)
-          plotVector.push_back(gd(j));
+//        for(int j=0; j<g.size(); j++)
+//          plotVector.push_back(g(j));
+//        for(int j=0; j<gd.size(); j++)
+//          plotVector.push_back(gd(j));
       }
       LinkMechanics::plot(t,dt);
     }
@@ -628,8 +625,8 @@ namespace MBSim {
 
   void InverseKineticsJoint::updateb(double t) {
     if(bSize) {
-      b(Index(0,bSize-1),Index(0,2)) = Mat(body->getPJT().T());
-      b(Index(0,bSize-1),Index(3,5)) = Mat(body->getPJR().T());
+      ds->getB()(Index(bInd,bInd+bSize-1),Index(laInd,laInd+2)) = Mat(body->getPJT().T());
+      ds->getB()(Index(bInd,bInd+bSize-1),Index(laInd+3,laInd+5)) = Mat(body->getPJR().T());
     }
   }
 

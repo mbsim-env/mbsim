@@ -20,6 +20,7 @@
 #include "mbsim/extern_generalized_io.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/object.h"
+#include "mbsim/dynamic_system_solver.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -84,11 +85,6 @@ namespace MBSim {
     }
     else if(stage==resize) {
       Link::init(stage);
-      g.resize(1);
-      gd.resize(1);
-      //la.resize(1); la(0)=0;
-      if(qInd<0)
-        x.resize(1);
     }
     else if(stage==MBSim::plot) {
       updatePlotFeatures();
@@ -148,4 +144,6 @@ namespace MBSim {
     applyForceAlsoTo.push_back(alsoTo);
   }
 
+  double ExternGeneralizedIO::getGeneralizedPosition() { return ds->getg()(gInd); }
+  double ExternGeneralizedIO::getGeneralizedVelocity() { return ds->getgd()(gdInd); }
 }
