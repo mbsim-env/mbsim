@@ -83,7 +83,7 @@ namespace MBSim {
       virtual void updategdRef(const fmatvec::Vec& ref);
       virtual void updaterFactorRef(const fmatvec::Vec &ref);
       virtual void updatesvRef(const fmatvec::Vec &ref);
-      virtual void updatejsvRef(const fmatvec::Vector<int> &ref);
+      virtual void updatejsvRef(const fmatvec::Vector<fmatvec::General, int> &ref);
       virtual void calcxSize();
       virtual void calclaSize(int j);
       virtual void calcgSize(int j);
@@ -241,7 +241,7 @@ namespace MBSim {
       /**
        * \brief boolean evaluation of stop vector for possible contact points
        */
-      std::vector<fmatvec::Vector<int> > jsvk;
+      std::vector<fmatvec::Vector<fmatvec::General, int> > jsvk;
 
       /**
        * \brief single-valued forces for possible contact points

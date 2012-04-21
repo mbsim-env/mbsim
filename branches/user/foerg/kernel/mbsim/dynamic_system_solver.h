@@ -208,8 +208,8 @@ namespace MBSim {
       void setLinAlg(LinAlg linAlg_) { linAlg = linAlg_; }                         
 
       void setUseOldla(bool flag) { useOldla = flag; }
-      void setDecreaseLevels(const fmatvec::Vector<int> &decreaseLevels_) { decreaseLevels = decreaseLevels_; }
-      void setCheckTermLevels(const fmatvec::Vector<int> &checkTermLevels_) { checkTermLevels = checkTermLevels_; }
+      void setDecreaseLevels(const fmatvec::Vector<fmatvec::General, int> &decreaseLevels_) { decreaseLevels = decreaseLevels_; }
+      void setCheckTermLevels(const fmatvec::Vector<fmatvec::General, int> &checkTermLevels_) { checkTermLevels = checkTermLevels_; }
       void setCheckGSize(bool checkGSize_) { checkGSize = checkGSize_; }
       void setLimitGSize(int limitGSize_) { limitGSize = limitGSize_; checkGSize = false; }
 
@@ -314,7 +314,7 @@ namespace MBSim {
        * \param boolean evaluation of stop vector
        * \param time
        */
-      virtual void shift(fmatvec::Vec& z, const fmatvec::Vector<int>& jsv, double t);
+      virtual void shift(fmatvec::Vec& z, const fmatvec::Vector<fmatvec::General, int>& jsv, double t);
 
       /**
        * \brief update for event driven integrator during smooth phase
@@ -343,7 +343,7 @@ namespace MBSim {
        * \param result vector
        * \param time
        */
-      void getLinkStatus(fmatvec::Vector<int> &LinkStatusExt, double t);
+      void getLinkStatus(fmatvec::Vector<fmatvec::General, int> &LinkStatusExt, double t);
 
       /**
        * \brief drift projection for positions
@@ -607,12 +607,12 @@ namespace MBSim {
       /**
        * \brief boolean evaluation of stopvector
        */
-      fmatvec::Vector<int> jsvParent;
+      fmatvec::Vector<fmatvec::General, int> jsvParent;
       
       /**
        * \brief status vector of set valued links with piecewise link equation (which piece is valid)
        */
-      fmatvec::Vector<int> LinkStatusParent;
+      fmatvec::Vector<fmatvec::General, int> LinkStatusParent;
 
       /**
        * \brief sparse mass action matrix
@@ -687,12 +687,12 @@ namespace MBSim {
       /**
        * \brief decreasing relaxation factors is done in levels containing the number of contact iterations as condition
        */
-      fmatvec::Vector<int> decreaseLevels;
+      fmatvec::Vector<fmatvec::General, int> decreaseLevels;
 
       /**
        * \brief TODO
        */
-      fmatvec::Vector<int> checkTermLevels;
+      fmatvec::Vector<fmatvec::General, int> checkTermLevels;
 
       /**
        * \brief boolean if force action matrix should be resized in each step

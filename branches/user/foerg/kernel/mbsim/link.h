@@ -135,12 +135,12 @@ namespace MBSim {
       /**
        * \brief references to stopvector evaluation of dynamic system parent (root detection with corresponding bool array by event driven integrator)
        */
-      virtual void updatejsvRef(const fmatvec::Vector<int> &jsvParent);
+      virtual void updatejsvRef(const fmatvec::Vector<fmatvec::General, int> &jsvParent);
 
       /**
        * \brief reference to vector of link status (for set valued links with piecewise link equations)
        */
-       virtual void updateLinkStatusRef(const fmatvec::Vector<int> &LinkStatusParent);
+       virtual void updateLinkStatusRef(const fmatvec::Vector<fmatvec::General, int> &LinkStatusParent);
 
       /**
        * \brief calculates size of contact force parameters
@@ -298,7 +298,7 @@ namespace MBSim {
       void setrFactorInd(int rFactorInd_) { rFactorInd = rFactorInd_; } 
       int getrFactorSize() const { return rFactorSize; } 
       
-      const fmatvec::Vector<int>& getrFactorUnsure() const { return rFactorUnsure; }
+      const fmatvec::Vector<fmatvec::General, int>& getrFactorUnsure() const { return rFactorUnsure; }
 
       /**
        * \brief saves contact force parameters for use as starting value in next time step
@@ -371,7 +371,7 @@ namespace MBSim {
       /**
        * \brief evaluation of roots of stop vector with a boolean vector
        */
-      fmatvec::Vector<int> jsv;
+      fmatvec::Vector<fmatvec::General, int> jsv;
 
       /**
        * \brief size and local index of stop vector
@@ -382,7 +382,7 @@ namespace MBSim {
        * for set valued links with piecewise link equation (e.g. unilateral contacts or coulomb friction)
        * \brief status of link (default 0) describing which pice of the equation is valid (e.g. stick or slip)
        */
-      fmatvec::Vector<int> LinkStatus;
+      fmatvec::Vector<fmatvec::General, int> LinkStatus;
 
       /**
        * \brief size and local index of link status vector
@@ -437,7 +437,7 @@ namespace MBSim {
       /**
        * \brief boolean vector defining if rfactor belongs to not diagonal dominant mass action matrix (cf. Foerg Dissertation, page 80 et seq.)
        */
-      fmatvec::Vector<int> rFactorUnsure;
+      fmatvec::Vector<fmatvec::General, int> rFactorUnsure;
 
       /**
        * \brief size and local index of rfactors
