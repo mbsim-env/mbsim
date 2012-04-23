@@ -668,6 +668,12 @@ namespace MBSim {
       q(i) = qtmp;
     }
     h[0] = hOld;
+    updateStateDependentVariables(t);
+    updateg(t);
+    updategd(t);
+    updateT(t); 
+    updateJacobians(t);
+    updateh(t);
     return J;
   }
 
@@ -675,25 +681,22 @@ namespace MBSim {
     double delta = epsroot();
     Mat J(hSize[0],uSize[0],NONINIT);
     updateStateDependentVariables(t);
-    updateg(t);
     updategd(t);
-    updateT(t); 
-    updateJacobians(t);
     updateh(t); 
     Vec hOld = h[0].copy();
     for(int i=0; i<uSize[0]; i++) {
       double utmp = u(i);
       u(i) += delta;
       updateStateDependentVariables(t);
-      updateg(t);
       updategd(t);
-      updateT(t); 
-      updateJacobians(t);
       updateh(t); 
       J.col(i) = (h[0] - hOld)/delta;
       u(i) = utmp;
     }
     h[0] = hOld;
+    updateStateDependentVariables(t);
+    updategd(t);
+    updateh(t);
     return J;
   }
 
