@@ -216,6 +216,9 @@ namespace MBSim {
       for(int i=3; i<6; i++)
 	PJR[1](i-3,i) = 1;
 
+      if(cb)
+        PJR0.resize(nu[0]);
+
       JRel[0].resize(nu[0],hSize[0]);
       for(int i=0; i<uSize[0]; i++)
         JRel[0](i,hSize[0]-uSize[0]+i) = 1;
@@ -285,7 +288,7 @@ namespace MBSim {
           if(iKinematics == 0 && dynamic_cast<DynamicSystem*>(frameOfReference->getParent())) {
             updateM_ = &RigidBody::updateMConst;
             Mbuf = SymMat(m*JTJ(PJT[0]) + JTMJ(SThetaS,PJR[0]));
-            ds->getM(0)(Index(hInd[0],hInd[0]+hSize[0]-1)) = facLL(Mbuf);
+            ds->getLLM(0)(Index(hInd[0],hInd[0]+hSize[0]-1)) = facLL(Mbuf);
             facLLM_ = &RigidBody::facLLMConst;
           }
           PJR0 = PJR[0];
