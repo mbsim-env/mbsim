@@ -229,7 +229,7 @@ namespace MBSim {
       integPlot << "#6 active contacts: " << endl;
       integPlot << "#7 calculation time [s]:" << endl;
     }
-    
+
     if(z0.size()) zi = z0; 					// define initial state
     else sysT1->initz(zi); 
 
@@ -321,8 +321,8 @@ namespace MBSim {
       if (method==0 && !FlagSSC && maxOrder==1) numThreads=1;
     }
 
-    sysT1->getLinkStatus(LStmp,t);
-    LS = LStmp;
+    sysT1->getLinkStatus(LStmp_T1,t);
+    LS = LStmp_T1;
     while(! ExitIntegration) 
     {
       while(StepFinished==0) 
@@ -358,8 +358,8 @@ namespace MBSim {
               //                sysT1->updateStateDependentVariables(t+dt);
               //                getDataForGapControl(SetValuedLinkListT1);
               //              }
-              sysT1->getLinkStatus(LStmp,t+dt);
-              LSA = LStmp;
+              sysT1->getLinkStatus(LStmp_T1,t+dt);
+              LSA = LStmp_T1;
               ConstraintsChangedA = changedLinkStatus(LSA,LS,indexLSException);
               singleStepsT1++;
               z1d << zT1;
@@ -375,8 +375,8 @@ namespace MBSim {
                 la2b/=dtHalf;
                 uT1 += sysT1->deltau(zT1,t+dtHalf,dtHalf);
                 xT1 += sysT1->deltax(zT1,t+dtHalf,dtHalf);
-                sysT1->getLinkStatus(LStmp,t+dtHalf);
-                LSB1 = LStmp;
+                sysT1->getLinkStatus(LStmp_T1,t+dtHalf);
+                LSB1 = LStmp_T1;
                 ConstraintsChangedB = changedLinkStatus(LSB1,LS,indexLSException);
                 singleStepsT1++;
                 z2b << zT1;
@@ -409,8 +409,8 @@ namespace MBSim {
                 la2b/=dtHalf;
                 uT2 += sysT2->deltau(zT2,t+dtHalf,dtHalf);
                 xT2 += sysT2->deltax(zT2,t+dtHalf,dtHalf);
-                sysT2->getLinkStatus(LStmp,t+dtHalf);
-                LSB1 = LStmp;
+                sysT2->getLinkStatus(LStmp_T2,t+dtHalf);
+                LSB1 = LStmp_T2;
                 ConstraintsChangedB = changedLinkStatus(LSB1,LS,indexLSException);
                 singleStepsT2++;
                 z2b << zT2;
@@ -425,8 +425,8 @@ namespace MBSim {
                 iterC1 = sysT2->solveImpacts(dtQuarter);
                 uT2 += sysT2->deltau(zT2,t+dtQuarter,dtQuarter);
                 xT2 += sysT2->deltax(zT2,t+dtQuarter,dtQuarter);
-                sysT2->getLinkStatus(LStmp,t+dtQuarter);
-                LSC1 = LStmp;
+                sysT2->getLinkStatus(LStmp_T2,t+dtQuarter);
+                LSC1 = LStmp_T2;
                 ConstraintsChangedC =  changedLinkStatus(LSC1,LS,indexLSException);
 
                 qT2 += sysT2->deltaq(zT2,t+dtQuarter,dtQuarter);
@@ -435,8 +435,8 @@ namespace MBSim {
                 iterC2 = sysT2->solveImpacts(dtQuarter);
                 uT2 += sysT2->deltau(zT2,t+dtHalf,dtQuarter);
                 xT2 += sysT2->deltax(zT2,t+dtHalf,dtQuarter);
-                sysT2->getLinkStatus(LStmp,t+dtHalf);
-                LSC2 = LStmp;
+                sysT2->getLinkStatus(LStmp_T2,t+dtHalf);
+                LSC2 = LStmp_T2;
                 ConstraintsChangedC = ConstraintsChangedC || changedLinkStatus(LSC2,LSC1,indexLSException);
                 singleStepsT2+=2;
                 z4b << zT2;
@@ -473,8 +473,8 @@ namespace MBSim {
                 sysT3->solveImpacts(dtSixth);
                 uT3 += sysT3->deltau(zT3,t+dtSixth,dtSixth);
                 xT3 += sysT3->deltax(zT3,t+dtSixth,dtSixth);
-                sysT3->getLinkStatus(LStmp,t+dtSixth);
-                LSD1 = LStmp;
+                sysT3->getLinkStatus(LStmp_T3,t+dtSixth);
+                LSD1 = LStmp_T3;
                 ConstraintsChangedD = changedLinkStatus(LSD1,LS,indexLSException);
 
                 qT3 += sysT3->deltaq(zT3,t+dtSixth,dtSixth);
@@ -483,8 +483,8 @@ namespace MBSim {
                 sysT3->solveImpacts(dtSixth);
                 uT3 += sysT3->deltau(zT3,t+dtThird,dtSixth);
                 xT3 += sysT3->deltax(zT3,t+dtThird,dtSixth);
-                sysT3->getLinkStatus(LStmp,t+dtThird);
-                LSD2 = LStmp;
+                sysT3->getLinkStatus(LStmp_T3,t+dtThird);
+                LSD2 = LStmp_T3;
                 ConstraintsChangedD = ConstraintsChangedD || changedLinkStatus(LSD2,LSD1,indexLSException);
 
 
@@ -494,8 +494,8 @@ namespace MBSim {
                 sysT3->solveImpacts(dtSixth);
                 uT3 += sysT3->deltau(zT3,t+dtHalf,dtSixth);
                 xT3 += sysT3->deltax(zT3,t+dtHalf,dtSixth);
-                sysT3->getLinkStatus(LStmp,t+dtHalf);
-                LSD3 = LStmp;
+                sysT3->getLinkStatus(LStmp_T3,t+dtHalf);
+                LSD3 = LStmp_T3;
                 ConstraintsChangedD = ConstraintsChangedD || changedLinkStatus(LSD3,LSD2,indexLSException);
                 singleStepsT3+=3;
                 z6b << zT3;
@@ -503,22 +503,24 @@ namespace MBSim {
             }  // close omp thread 3
 
           }  // close omp sections (first sections)
-
+        }
 #pragma omp single
-          {
-            ConstraintsChangedBlock1 = ConstraintsChangedB || ConstraintsChangedC || ConstraintsChangedD;
-            ConstraintsChanged       = ConstraintsChangedA || ConstraintsChangedBlock1;
-            calcBlock2 = (Block2IsOptional==false) || (ConstraintsChangedBlock1==false);
-            ConstraintsChangedA = false;
-            ConstraintsChangedB = false;
-            ConstraintsChangedC = false;
-            ConstraintsChangedD = false;
-            ConstraintsChangedBlock2 = false;        
+        {
+          ConstraintsChangedBlock1 = ConstraintsChangedB || ConstraintsChangedC || ConstraintsChangedD;
+          ConstraintsChanged       = ConstraintsChangedA || ConstraintsChangedBlock1;
+          calcBlock2 = (Block2IsOptional==false) || (ConstraintsChangedBlock1==false);
+          ConstraintsChangedA = false;
+          ConstraintsChangedB = false;
+          ConstraintsChangedC = false;
+          ConstraintsChangedD = false;
+          ConstraintsChangedBlock2 = false;        
 
-            if (FlagSSC && method==0 && maxOrder==3) zStern << 0.5*z2b - 4.0*z4b + 4.5*z6b;
-            if (FlagSSC && method==0 && maxOrder==2) zStern << 2.0*z4b - z2b;
-          }
-          // Block 2
+          if (FlagSSC && method==0 && maxOrder==3) zStern << 0.5*z2b - 4.0*z4b + 4.5*z6b;
+          if (FlagSSC && method==0 && maxOrder==2) zStern << 2.0*z4b - z2b;
+        }
+        // Block 2
+#pragma omp parallel num_threads(numThreads)
+        {
 #pragma omp sections
           {
 #pragma omp section                     // thread 1
@@ -532,8 +534,8 @@ namespace MBSim {
                 iterB2  = sysT1->solveImpacts(dtHalf);
                 uT1 += sysT1->deltau(zT1,t+dt,dtHalf);
                 xT1 += sysT1->deltax(zT1,t+dt,dtHalf);
-                sysT1->getLinkStatus(LStmp,t+dt);
-                LSB2 = LStmp;
+                sysT1->getLinkStatus(LStmp_T1,t+dt);
+                LSB2 = LStmp_T1;
                 ConstraintsChangedB = changedLinkStatus(LSB2,LSB1,indexLSException);
                 singleStepsT1++;
                 z2d << zT1;
@@ -581,16 +583,16 @@ namespace MBSim {
                 iterC3  = sysT2->solveImpacts(dtQuarter);
                 uT2 += sysT2->deltau(zT2,t+dtHalf+dtQuarter,dtQuarter);
                 xT2 += sysT2->deltax(zT2,t+dtHalf+dtQuarter,dtQuarter);
-                sysT2->getLinkStatus(LStmp,t+dtHalf+dtQuarter);
-                LSC3 = LStmp;
+                sysT2->getLinkStatus(LStmp_T2,t+dtHalf+dtQuarter);
+                LSC3 = LStmp_T2;
                 qT2 += sysT2->deltaq(zT2,t+dtHalf+dtQuarter,dtQuarter);
                 sysT2->update(zT2,t+dt);
                 sysT2->getb().resize() = sysT2->getgd()+sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtQuarter;
                 iterC4 = sysT2->solveImpacts(dtQuarter);
                 uT2 += sysT2->deltau(zT2,t+dt,dtQuarter);
                 xT2 += sysT2->deltax(zT2,t+dt,dtQuarter);
-                sysT2->getLinkStatus(LStmp,t+dt);
-                LSC4 = LStmp;
+                sysT2->getLinkStatus(LStmp_T2,t+dt);
+                LSC4 = LStmp_T2;
                 ConstraintsChangedC = changedLinkStatus(LSC2,LSC3,indexLSException);
                 ConstraintsChangedC = ConstraintsChangedC || changedLinkStatus(LSC3,LSC4,indexLSException);
                 singleStepsT2+=2;
@@ -606,8 +608,8 @@ namespace MBSim {
                 iterB2  = sysT2->solveImpacts(dtHalf);
                 uT2 += sysT2->deltau(zT2,t+dt,dtHalf);
                 xT2 += sysT2->deltax(zT2,t+dt,dtHalf);
-                sysT2->getLinkStatus(LStmp,t+dt);
-                LSB2 = LStmp;
+                sysT2->getLinkStatus(LStmp_T2,t+dt);
+                LSB2 = LStmp_T2;
                 ConstraintsChangedB = changedLinkStatus(LSB2,LSB1,indexLSException);
 
                 getAllSetValuedla(la2b,la2bSizes,SetValuedLinkListT2);
@@ -651,8 +653,8 @@ namespace MBSim {
                 sysT3->solveImpacts(dtSixth);
                 uT3 += sysT3->deltau(zT3,t+4.0*dtSixth,dtSixth);
                 xT3 += sysT3->deltax(zT3,t+4.0*dtSixth,dtSixth);
-                sysT3->getLinkStatus(LStmp,t+4.0*dtSixth);
-                LSD4 = LStmp;
+                sysT3->getLinkStatus(LStmp_T3,t+4.0*dtSixth);
+                LSD4 = LStmp_T3;
                 ConstraintsChangedD =  changedLinkStatus(LSD4,LSD3,indexLSException);
 
                 qT3 += sysT3->deltaq(zT3,t+4.0*dtSixth,dtSixth);
@@ -661,8 +663,8 @@ namespace MBSim {
                 sysT3->solveImpacts(dtSixth);
                 uT3 += sysT3->deltau(zT3,t+5.0*dtSixth,dtSixth);
                 xT3 += sysT3->deltax(zT3,t+5.0*dtSixth,dtSixth);
-                sysT3->getLinkStatus(LStmp,t+5.0*dtSixth);
-                LSD5 = LStmp;
+                sysT3->getLinkStatus(LStmp_T3,t+5.0*dtSixth);
+                LSD5 = LStmp_T3;
                 ConstraintsChangedD = ConstraintsChangedD || changedLinkStatus(LSD4,LSD5,indexLSException);
 
                 qT3 += sysT3->deltaq(zT3,t+5.0*dtSixth,dtSixth);
@@ -671,8 +673,8 @@ namespace MBSim {
                 sysT3->solveImpacts(dtSixth);
                 uT3 += sysT3->deltau(zT3,t+dt,dtSixth);
                 xT3 += sysT3->deltax(zT3,t+dt,dtSixth);
-                sysT3->getLinkStatus(LStmp,t+dt);
-                LSD6 = LStmp;
+                sysT3->getLinkStatus(LStmp_T3,t+dt);
+                LSD6 = LStmp_T3;
                 ConstraintsChangedD = ConstraintsChangedD || changedLinkStatus(LSD5,LSD6,indexLSException);
 
                 singleStepsT3+=3;
@@ -1308,163 +1310,163 @@ namespace MBSim {
     return (dt<dtOrg);
   }
 
-    // SetValuedLinkLists are build up within preIntegrate 
-    // The Lagragian Multiplier of all Links stored in SetValuedLinkList of the corresponding DynamicSystemSolver (sysT1)
-    // are collecte and stored in Vec la
-    // Vector<int> laSizes contains the singel la-size of each link
+  // SetValuedLinkLists are build up within preIntegrate 
+  // The Lagragian Multiplier of all Links stored in SetValuedLinkList of the corresponding DynamicSystemSolver (sysT1)
+  // are collecte and stored in Vec la
+  // Vector<int> laSizes contains the singel la-size of each link
 
-    void TimeSteppingSSCIntegrator::getAllSetValuedla(fmatvec::Vec& la_, fmatvec::Vector<int>& la_Sizes,vector<Link*> &SetValuedLinkList) {
+  void TimeSteppingSSCIntegrator::getAllSetValuedla(fmatvec::Vec& la_, fmatvec::Vector<int>& la_Sizes,vector<Link*> &SetValuedLinkList) {
 
-      int SetValuedLaSize=0;
-      int NumberOfSetValuedLinks = SetValuedLinkList.size();
-      la_Sizes.resize(NumberOfSetValuedLinks,INIT,0);
+    int SetValuedLaSize=0;
+    int NumberOfSetValuedLinks = SetValuedLinkList.size();
+    la_Sizes.resize(NumberOfSetValuedLinks,INIT,0);
 
-      for(unsigned int i=0; i<SetValuedLinkList.size(); i++) {
-        la_Sizes(i)=SetValuedLinkList[i]->getlaSize();
-        SetValuedLaSize+=la_Sizes(i);
-      }
-      la_.resize(SetValuedLaSize,INIT,0.0);
-      int j=0;
-      int sizeLink;
-      for(unsigned int i=0; i<SetValuedLinkList.size(); i++) {
-        sizeLink = SetValuedLinkList[i]->getlaSize();
-        if (SetValuedLinkList[i]->isActive())
-          la_(j,j+sizeLink-1) = SetValuedLinkList[i]->getla();
-        else 
-          la_(j,j+sizeLink-1).init(0.0);
-        j+=sizeLink;  
-      }     
-    } 
+    for(unsigned int i=0; i<SetValuedLinkList.size(); i++) {
+      la_Sizes(i)=SetValuedLinkList[i]->getlaSize();
+      SetValuedLaSize+=la_Sizes(i);
+    }
+    la_.resize(SetValuedLaSize,INIT,0.0);
+    int j=0;
+    int sizeLink;
+    for(unsigned int i=0; i<SetValuedLinkList.size(); i++) {
+      sizeLink = SetValuedLinkList[i]->getlaSize();
+      if (SetValuedLinkList[i]->isActive())
+        la_(j,j+sizeLink-1) = SetValuedLinkList[i]->getla();
+      else 
+        la_(j,j+sizeLink-1).init(0.0);
+      j+=sizeLink;  
+    }     
+  } 
 
-    void TimeSteppingSSCIntegrator::setAllSetValuedla(const fmatvec::Vec& la_, const fmatvec::Vector<int>& la_Sizes,vector<Link*> &SetValuedLinkList) {
+  void TimeSteppingSSCIntegrator::setAllSetValuedla(const fmatvec::Vec& la_, const fmatvec::Vector<int>& la_Sizes,vector<Link*> &SetValuedLinkList) {
 
-      int j=0;
-      int sizeLink;
-      for(unsigned int i=0; i<SetValuedLinkList.size(); i++) {
-        sizeLink = SetValuedLinkList[i]->getlaSize();
-        if (! SetValuedLinkList[i]->isActive())
-          SetValuedLinkList[i]->deletelaRef();
-        if(sizeLink >= la_Sizes(i)) 
-          SetValuedLinkList[i]->getla()(0,la_Sizes(i)-1) =  la_(j,j+la_Sizes(i)-1); 
-        else
-          SetValuedLinkList[i]->getla()(0,sizeLink-1) =  la_(j,j+sizeLink-1); 
-        j+=la_Sizes(i);  
-      }     
+    int j=0;
+    int sizeLink;
+    for(unsigned int i=0; i<SetValuedLinkList.size(); i++) {
+      sizeLink = SetValuedLinkList[i]->getlaSize();
+      if (! SetValuedLinkList[i]->isActive())
+        SetValuedLinkList[i]->deletelaRef();
+      if(sizeLink >= la_Sizes(i)) 
+        SetValuedLinkList[i]->getla()(0,la_Sizes(i)-1) =  la_(j,j+la_Sizes(i)-1); 
+      else
+        SetValuedLinkList[i]->getla()(0,sizeLink-1) =  la_(j,j+sizeLink-1); 
+      j+=la_Sizes(i);  
+    }     
+  }
+
+
+  void TimeSteppingSSCIntegrator::getDataForGapControl() {
+    int nInActive=0;
+    int nActive=0;
+    zT1<<ze;
+    if((sysT1->getq())()!=zT1()) sysT1->updatezRef(zT1);
+    sysT1->updateStateDependentVariables(t+dte);
+    for(unsigned int i=0; i<SetValuedLinkListT1.size(); i++){ 
+      SetValuedLinkListT1[i]->updateg(t+dte);
+      SetValuedLinkListT1[i]->checkActive(1);
+      SetValuedLinkListT1[i]->SizeLinearImpactEstimation(&nInActive, &nActive);
+    }
+    gInActive.resize(nInActive,NONINIT);
+    gdInActive.resize(nInActive,NONINIT);
+    gUniActive.resize(nActive,NONINIT);
+    nInActive=0;
+    nActive=0;
+    for(unsigned int i=0; i<SetValuedLinkListT1.size(); i++) 
+      SetValuedLinkListT1[i]->LinearImpactEstimation(gInActive,gdInActive,&nInActive,gUniActive,&nActive);
+  }
+
+  bool TimeSteppingSSCIntegrator::changedLinkStatus(const Vector<int> &L1, const Vector<int> &L2, int ex) {
+    if (ex<0) return (L1!=L2);
+    int n=L1.size();
+    if (n!=L2.size()) return true;
+    for(int i=0; i<n; i++) 
+      if (i!=ex && L1(i)!=L2(i)) return true;
+    return false;
+  }
+
+  void TimeSteppingSSCIntegrator::initializeUsingXML(TiXmlElement *element) {
+
+    Integrator::initializeUsingXML(element);
+    TiXmlElement *e;
+
+    e=element->FirstChildElement(MBSIMINTNS"initialStepSize");
+    if (e) setInitialStepSize(Element::getDouble(e));
+
+    e=element->FirstChildElement(MBSIMINTNS"maximalStepSize");
+    if (e) setStepSizeMax(Element::getDouble(e));
+
+    e=element->FirstChildElement(MBSIMINTNS"minimalStepSize");
+    if (e) setStepSizeMin(Element::getDouble(e));
+
+    e=element->FirstChildElement(MBSIMINTNS"outputInterpolation");
+    if (e) setOutputInterpolation(Element::getBool(e));
+
+    e=element->FirstChildElement(MBSIMINTNS"gapControl");
+    if (e) {
+      TiXmlElement *ee;
+      ee=e->FirstChildElement();
+      if (ee->ValueStr()==MBSIMINTNS"withoutGapControl") setGapControl(-1);
+      if (ee->ValueStr()==MBSIMINTNS"biggestRoot") setGapControl(1);
+      if (ee->ValueStr()==MBSIMINTNS"scooring") setGapControl(2);
+      if (ee->ValueStr()==MBSIMINTNS"gapTollerance") setGapControl(3);
+      if (ee->ValueStr()==MBSIMINTNS"smallestRoot") setGapControl(4);
     }
 
-
-    void TimeSteppingSSCIntegrator::getDataForGapControl() {
-      int nInActive=0;
-      int nActive=0;
-      zT1<<ze;
-      if((sysT1->getq())()!=zT1()) sysT1->updatezRef(zT1);
-      sysT1->updateStateDependentVariables(t+dte);
-      for(unsigned int i=0; i<SetValuedLinkListT1.size(); i++){ 
-        SetValuedLinkListT1[i]->updateg(t+dte);
-        SetValuedLinkListT1[i]->checkActive(1);
-        SetValuedLinkListT1[i]->SizeLinearImpactEstimation(&nInActive, &nActive);
+    e=element->FirstChildElement(MBSIMINTNS"maximalOrder");
+    if (e) {
+      TiXmlElement *ee;
+      ee=e->FirstChildElement(MBSIMINTNS"order");
+      int orderXML=Element::getInt(ee);
+      int methodXML=0; 
+      ee=e->FirstChildElement(MBSIMINTNS"method");
+      if(ee) {
+        TiXmlElement *eee;
+        eee=ee->FirstChildElement();
+        if (eee->ValueStr()==MBSIMINTNS"extrapolation") methodXML=0;
+        if (eee->ValueStr()==MBSIMINTNS"embedded") methodXML=1;
+        if (eee->ValueStr()==MBSIMINTNS"embeddedHigherOrder") methodXML=2;
       }
-      gInActive.resize(nInActive,NONINIT);
-      gdInActive.resize(nInActive,NONINIT);
-      gUniActive.resize(nActive,NONINIT);
-      nInActive=0;
-      nActive=0;
-      for(unsigned int i=0; i<SetValuedLinkListT1.size(); i++) 
-        SetValuedLinkListT1[i]->LinearImpactEstimation(gInActive,gdInActive,&nInActive,gUniActive,&nActive);
+      setMaxOrder(orderXML,methodXML); 
     }
 
-    bool TimeSteppingSSCIntegrator::changedLinkStatus(const Vector<int> &L1, const Vector<int> &L2, int ex) {
-      if (ex<0) return (L1!=L2);
-      int n=L1.size();
-      if (n!=L2.size()) return true;
-      for(int i=0; i<n; i++) 
-       if (i!=ex && L1(i)!=L2(i)) return true;
-      return false;
+    e=element->FirstChildElement(MBSIMINTNS"errorTest");
+    if (e) {
+      TiXmlElement *ee;
+      ee=e->FirstChildElement();
+      int FlagErrorTestXML=2;
+      if(ee) {
+        if (ee->ValueStr()==MBSIMINTNS"scale") FlagErrorTestXML=2;
+        if (ee->ValueStr()==MBSIMINTNS"all") FlagErrorTestXML=0;
+        if (ee->ValueStr()==MBSIMINTNS"exclude") FlagErrorTestXML=3;
+      }
+      setFlagErrorTest(FlagErrorTestXML); 
     }
 
-    void TimeSteppingSSCIntegrator::initializeUsingXML(TiXmlElement *element) {
+    e=element->FirstChildElement(MBSIMINTNS"absoluteTolerance");
+    if(e) setAbsoluteTolerance(Element::getVec(e));
+    e=element->FirstChildElement(MBSIMINTNS"absoluteToleranceScalar");
+    if(e) setAbsoluteTolerance(Element::getDouble(e));
+    e=element->FirstChildElement(MBSIMINTNS"relativeTolerance");
+    if(e) setRelativeTolerance(Element::getVec(e));
+    e=element->FirstChildElement(MBSIMINTNS"relativeToleranceScalar");
+    if(e) setRelativeTolerance(Element::getDouble(e));
 
-      Integrator::initializeUsingXML(element);
-      TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMINTNS"advancedOptions");
+    if (e) {
+      TiXmlElement *ee;
+      ee=e->FirstChildElement(MBSIMINTNS"deactivateSSC");
+      if (ee) deactivateSSC(!(Element::getBool(ee)));
 
-      e=element->FirstChildElement(MBSIMINTNS"initialStepSize");
-      if (e) setInitialStepSize(Element::getDouble(e));
+      ee=e->FirstChildElement(MBSIMINTNS"gapTolerance");
+      if (ee) setgapTolerance(Element::getDouble(ee));
 
-      e=element->FirstChildElement(MBSIMINTNS"maximalStepSize");
-      if (e) setStepSizeMax(Element::getDouble(e));
+      ee=e->FirstChildElement(MBSIMINTNS"maximalSSCGain");
+      if (ee) setmaxGainSSC(Element::getDouble(ee));
 
-      e=element->FirstChildElement(MBSIMINTNS"minimalStepSize");
-      if (e) setStepSizeMin(Element::getDouble(e));
-
-      e=element->FirstChildElement(MBSIMINTNS"outputInterpolation");
-      if (e) setOutputInterpolation(Element::getBool(e));
-
-      e=element->FirstChildElement(MBSIMINTNS"gapControl");
-      if (e) {
-        TiXmlElement *ee;
-        ee=e->FirstChildElement();
-        if (ee->ValueStr()==MBSIMINTNS"withoutGapControl") setGapControl(-1);
-        if (ee->ValueStr()==MBSIMINTNS"biggestRoot") setGapControl(1);
-        if (ee->ValueStr()==MBSIMINTNS"scooring") setGapControl(2);
-        if (ee->ValueStr()==MBSIMINTNS"gapTollerance") setGapControl(3);
-        if (ee->ValueStr()==MBSIMINTNS"smallestRoot") setGapControl(4);
-      }
-
-      e=element->FirstChildElement(MBSIMINTNS"maximalOrder");
-      if (e) {
-        TiXmlElement *ee;
-        ee=e->FirstChildElement(MBSIMINTNS"order");
-        int orderXML=Element::getInt(ee);
-        int methodXML=0; 
-        ee=e->FirstChildElement(MBSIMINTNS"method");
-        if(ee) {
-          TiXmlElement *eee;
-          eee=ee->FirstChildElement();
-          if (eee->ValueStr()==MBSIMINTNS"extrapolation") methodXML=0;
-          if (eee->ValueStr()==MBSIMINTNS"embedded") methodXML=1;
-          if (eee->ValueStr()==MBSIMINTNS"embeddedHigherOrder") methodXML=2;
-        }
-        setMaxOrder(orderXML,methodXML); 
-      }
-
-      e=element->FirstChildElement(MBSIMINTNS"errorTest");
-      if (e) {
-        TiXmlElement *ee;
-        ee=e->FirstChildElement();
-        int FlagErrorTestXML=2;
-        if(ee) {
-          if (ee->ValueStr()==MBSIMINTNS"scale") FlagErrorTestXML=2;
-          if (ee->ValueStr()==MBSIMINTNS"all") FlagErrorTestXML=0;
-          if (ee->ValueStr()==MBSIMINTNS"exclude") FlagErrorTestXML=3;
-        }
-        setFlagErrorTest(FlagErrorTestXML); 
-      }
-
-      e=element->FirstChildElement(MBSIMINTNS"absoluteTolerance");
-      if(e) setAbsoluteTolerance(Element::getVec(e));
-      e=element->FirstChildElement(MBSIMINTNS"absoluteToleranceScalar");
-      if(e) setAbsoluteTolerance(Element::getDouble(e));
-      e=element->FirstChildElement(MBSIMINTNS"relativeTolerance");
-      if(e) setRelativeTolerance(Element::getVec(e));
-      e=element->FirstChildElement(MBSIMINTNS"relativeToleranceScalar");
-      if(e) setRelativeTolerance(Element::getDouble(e));
-
-      e=element->FirstChildElement(MBSIMINTNS"advancedOptions");
-      if (e) {
-        TiXmlElement *ee;
-        ee=e->FirstChildElement(MBSIMINTNS"deactivateSSC");
-        if (ee) deactivateSSC(!(Element::getBool(ee)));
-
-        ee=e->FirstChildElement(MBSIMINTNS"gapTolerance");
-        if (ee) setgapTolerance(Element::getDouble(ee));
-
-        ee=e->FirstChildElement(MBSIMINTNS"maximalSSCGain");
-        if (ee) setmaxGainSSC(Element::getDouble(ee));
-
-        ee=e->FirstChildElement(MBSIMINTNS"safetyFactorSSC");
-        if (ee) setSafetyFactorSSC(Element::getDouble(ee));
-      }
-
+      ee=e->FirstChildElement(MBSIMINTNS"safetyFactorSSC");
+      if (ee) setSafetyFactorSSC(Element::getDouble(ee));
     }
 
   }
+
+}
