@@ -233,7 +233,7 @@ namespace MBSim {
     if(z0.size()) zi = z0; 					// define initial state
     else sysT1->initz(zi); 
 
-    sysT1->plot(zi,t,1.);
+    sysT1->plot2(zi,t,1.);
 
     tPlot = t;
   }
@@ -741,7 +741,7 @@ namespace MBSim {
       tPlot+=dtPlot;
       zT1 << ze;
       setAllSetValuedla(lae,laeSizes,SetValuedLinkListT1);
-      sysT1->plot(zT1,t,1);
+      sysT1->plot2(zT1,t,1);
     }
     if ((t>=tPlot) && outputInterpolation && !FlagPlotEveryStep) {
 
@@ -777,7 +777,7 @@ namespace MBSim {
         double ratio = (tPlot -(t-dte))/dte;
         zT1 << zi + (ze-zi)*ratio;
         setAllSetValuedla(laSynchron+(laeSynchron-laSynchron)*ratio,laSizesSynchron,SetValuedLinkListT1);
-        sysT1->plot(zT1,tPlot,1);
+        sysT1->plot2(zT1,tPlot,1);
         tPlot += dtPlot;
       }
     }
