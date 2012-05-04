@@ -44,11 +44,13 @@ namespace MBSim {
       fmatvec::Vec roff, voff, aoff;
       double rscale, vscale, ascale;
       fmatvec::Vec ex, ey, ez;
+      fmatvec::SqrMat A;
 #endif
 
     public:
       PlotCartesianCoordinates(const std::string &name);
       void setFrame(Frame *frame_) { frame = frame_; } 
+      void setOrientation(const fmatvec::SqrMat &A_) { A = A_; } 
 
       void init(InitStage stage);
       void setez(const fmatvec::Vec &ez_) {ez = ez_/nrm2(ez_);}

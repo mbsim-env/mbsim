@@ -33,7 +33,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  PlotCartesianCoordinates::PlotCartesianCoordinates(const std::string &name) : Element(name), frame(0), roff(3), voff(3), aoff(3), rscale(1), vscale(1), ascale(1), ex(3), ey(3), ez(3) {
+  PlotCartesianCoordinates::PlotCartesianCoordinates(const std::string &name) : Element(name), frame(0), roff(3), voff(3), aoff(3), rscale(1), vscale(1), ascale(1), ex(3), ey(3), ez(3), A(3,EYE) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     openMBVPosition=0;
     openMBVVelocity=0;
@@ -46,9 +46,6 @@ namespace MBSim {
     openMBVZAcceleration=0;
     openMBVFrame=0;
 #endif
-    ex(0) = 1;
-    ey(1) = 1;
-    ez(2) = 1;
   }
 
   void PlotCartesianCoordinates::init(InitStage stage) {
@@ -57,6 +54,9 @@ namespace MBSim {
 
       if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
+	ex = A.col(0);
+	ey = A.col(1);
+	ez = A.col(2);
         if(getPlotFeature(openMBV)==enabled) {
           openMBVGrp=new OpenMBV::Group();
           openMBVGrp->setName(name+"_Group");
