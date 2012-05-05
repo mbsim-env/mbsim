@@ -40,7 +40,7 @@ namespace MBSim {
         CONSTANT, LINEAR
       };
       ExternGeneralizedIO(const std::string &name);
-      void updateh(double);
+      void updateh(double, int i=0);
       void updateg(double);
       void updategd(double);
 
