@@ -53,10 +53,10 @@ namespace MBSim {
 
   void Contour::init(InitStage stage) {
     if(stage==unknownStage) {
-      getFrame()->getJacobianOfTranslation(0).resize(3,hSize[0]);
-      getFrame()->getJacobianOfRotation(0).resize(3,hSize[0]);
-      getFrame()->getJacobianOfTranslation(1).resize(3,hSize[1]);
-      getFrame()->getJacobianOfRotation(1).resize(3,hSize[1]);
+      getFrame()->getJacobianOfTranslation(0).resize(hSize[0]);
+      getFrame()->getJacobianOfRotation(0).resize(hSize[0]);
+      getFrame()->getJacobianOfTranslation(1).resize(hSize[1]);
+      getFrame()->getJacobianOfRotation(1).resize(hSize[1]);
     }
     else if(stage==MBSim::plot) {
       updatePlotFeatures();
@@ -122,7 +122,7 @@ R.init(stage);
 
   void RigidContour::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) {
     if(ff==velocity || ff==velocities) {
-      Vec WrPC = cp.getFrameOfReference().getPosition() - R.getPosition();
+      FVec WrPC = cp.getFrameOfReference().getPosition() - R.getPosition();
       cp.getFrameOfReference().setVelocity(R.getVelocity() + crossProduct(R.getAngularVelocity(),WrPC));
     }
     if(ff==angularVelocity || ff==velocities)
@@ -131,8 +131,8 @@ R.init(stage);
   }
 
   void RigidContour::updateJacobiansForFrame(ContourPointData &cp, int j) {
-    Vec WrPC = cp.getFrameOfReference().getPosition() - R.getPosition();
-    Mat tWrPC = tilde(WrPC);
+    FVec WrPC = cp.getFrameOfReference().getPosition() - R.getPosition();
+    FSqrMat tWrPC = tilde(WrPC);
 
     cp.getFrameOfReference().setJacobianOfTranslation(R.getJacobianOfTranslation(j) - tWrPC*R.getJacobianOfRotation(j),j);
     cp.getFrameOfReference().setJacobianOfRotation(R.getJacobianOfRotation(j),j);
@@ -140,8 +140,8 @@ R.init(stage);
     cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(R.getGyroscopicAccelerationOfRotation());
 
     // adapt dimensions if necessary
-    if(cp.getFrameOfReference().getJacobianOfTranslation(j).rows() == 0) cp.getFrameOfReference().getJacobianOfTranslation(j).resize(3,R.getJacobianOfTranslation(j).cols());
-    if(cp.getFrameOfReference().getJacobianOfRotation(j).rows() == 0) cp.getFrameOfReference().getJacobianOfRotation(j).resize(3,R.getJacobianOfRotation(j).cols());
+    if(cp.getFrameOfReference().getJacobianOfTranslation(j).rows() == 0) cp.getFrameOfReference().getJacobianOfTranslation(j).resize(R.getJacobianOfTranslation(j).cols());
+    if(cp.getFrameOfReference().getJacobianOfRotation(j).rows() == 0) cp.getFrameOfReference().getJacobianOfRotation(j).resize(R.getJacobianOfRotation(j).cols());
   }
 
   void RigidContour::init(InitStage stage) {
@@ -173,7 +173,7 @@ R.init(stage);
         data.push_back(R.getPosition()(0));
         data.push_back(R.getPosition()(1));
         data.push_back(R.getPosition()(2));
-        Vec cardan=AIK2Cardan(R.getOrientation());
+        FVec cardan=AIK2Cardan(R.getOrientation());
         data.push_back(cardan(0));
         data.push_back(cardan(1));
         data.push_back(cardan(2));
@@ -186,7 +186,8 @@ R.init(stage);
   }
 
   ContactKinematics * RigidContour::findContactPairingWith(std::string type0, std::string type1) {
-    return findContactPairingRigidRigid(type0.c_str(), type1.c_str());
+    //return findContactPairingRigidRigid(type0.c_str(), type1.c_str());
+    return 0;
   }
 
 }
