@@ -750,7 +750,7 @@ namespace MBSim {
       // Dimension/size von la und lae synchronisieren
       Vec laSynchron;
       Vec laeSynchron;
-      Vector<int> laSizesSynchron;
+      VecInt laSizesSynchron;
       if(t>tPlot) {
         int nLinks = laSizes.size();
         if (nLinks>laeSizes.size()) nLinks=laeSizes.size();
@@ -1315,7 +1315,7 @@ namespace MBSim {
   // are collecte and stored in Vec la
   // Vector<int> laSizes contains the singel la-size of each link
 
-  void TimeSteppingSSCIntegrator::getAllSetValuedla(fmatvec::Vec& la_, fmatvec::Vector<int>& la_Sizes,vector<Link*> &SetValuedLinkList) {
+  void TimeSteppingSSCIntegrator::getAllSetValuedla(fmatvec::Vec& la_, fmatvec::VecInt& la_Sizes,vector<Link*> &SetValuedLinkList) {
 
     int SetValuedLaSize=0;
     int NumberOfSetValuedLinks = SetValuedLinkList.size();
@@ -1338,7 +1338,7 @@ namespace MBSim {
     }     
   } 
 
-  void TimeSteppingSSCIntegrator::setAllSetValuedla(const fmatvec::Vec& la_, const fmatvec::Vector<int>& la_Sizes,vector<Link*> &SetValuedLinkList) {
+  void TimeSteppingSSCIntegrator::setAllSetValuedla(const fmatvec::Vec& la_, const fmatvec::VecInt& la_Sizes,vector<Link*> &SetValuedLinkList) {
 
     int j=0;
     int sizeLink;
@@ -1375,7 +1375,7 @@ namespace MBSim {
       SetValuedLinkListT1[i]->LinearImpactEstimation(gInActive,gdInActive,&nInActive,gUniActive,&nActive);
   }
 
-  bool TimeSteppingSSCIntegrator::changedLinkStatus(const Vector<int> &L1, const Vector<int> &L2, int ex) {
+  bool TimeSteppingSSCIntegrator::changedLinkStatus(const VecInt &L1, const VecInt &L2, int ex) {
     if (ex<0) return (L1!=L2);
     int n=L1.size();
     if (n!=L2.size()) return true;

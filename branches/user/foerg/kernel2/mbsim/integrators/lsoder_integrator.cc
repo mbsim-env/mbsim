@@ -81,7 +81,7 @@ namespace MBSim {
     rWork(5) = 1e-2;
     rWork(6) = 1e-14;
     int liWork=(20+zSize)*10;
-    Vector<int> iWork(liWork);
+    VecInt iWork(liWork);
     iWork(5) = 10000;
 
     system->plot(z, t);
@@ -92,7 +92,7 @@ namespace MBSim {
 
     ofstream integPlot((name + ".plt").c_str());
 
-    Vector<int> jsv(nsv);  
+    VecInt jsv(nsv);  
 
     cout.setf(ios::scientific, ios::floatfield);
 
