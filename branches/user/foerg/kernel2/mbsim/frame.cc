@@ -34,23 +34,12 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  Frame::Frame(const string &name) : Element(name), WrOP(3,INIT,0.), AWP(3,INIT,0.), WvP(3,INIT,0.), WomegaP(3,INIT,0.), WaP(3,INIT,0), WpsiP(3,INIT,0) {
-    AWP(0,0) = 1;
-    AWP(1,1) = 1;
-    AWP(2,2) = 1;
+  Frame::Frame(const string &name) : Element(name), AWP(EYE) {
 
     hSize[0] = 0;
     hSize[1] = 0;
     hInd[0] = 0;
     hInd[1] = 0;
-    WJP[0].resize(3,0);
-    WJR[0].resize(3,0);
-    WJP[1].resize(3,0);
-    WJR[1].resize(3,0);
-    WjP[0].resize(3,INIT,0.);
-    WjR[0].resize(3,INIT,0.);
-    WjP[1].resize(3,INIT,0.);
-    WjR[1].resize(3,INIT,0.);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
     openMBVFrame=0;
@@ -62,7 +51,7 @@ namespace MBSim {
       if(getPlotFeature(globalPosition)==enabled) {
         for(int i=0; i<3; i++)
           plotVector.push_back(WrOP(i));
-        Vec cardan=AIK2Cardan(AWP);
+        FVec cardan=AIK2Cardan(AWP);
         for(int i=0; i<3; i++)
           plotVector.push_back(cardan(i));
       }
@@ -86,7 +75,7 @@ namespace MBSim {
           data.push_back(WrOP(0));
           data.push_back(WrOP(1));
           data.push_back(WrOP(2));
-          Vec cardan=AIK2Cardan(AWP);
+          FVec cardan=AIK2Cardan(AWP);
           data.push_back(cardan(0));
           data.push_back(cardan(1));
           data.push_back(cardan(2));
@@ -107,10 +96,10 @@ namespace MBSim {
 
   void Frame::init(InitStage stage) {
     if(stage==unknownStage) {
-      getJacobianOfTranslation(0).resize(3,hSize[0]);
-      getJacobianOfRotation(0).resize(3,hSize[0]);
-      getJacobianOfTranslation(1).resize(3,hSize[1]);
-      getJacobianOfRotation(1).resize(3,hSize[1]);
+      getJacobianOfTranslation(0).resize(hSize[0]);
+      getJacobianOfRotation(0).resize(hSize[0]);
+      getJacobianOfTranslation(1).resize(hSize[1]);
+      getJacobianOfRotation(1).resize(hSize[1]);
     }
     else if(stage==MBSim::plot) {
       updatePlotFeatures();

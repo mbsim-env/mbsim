@@ -69,20 +69,20 @@ namespace MBSim {
       virtual int gethInd(int i=0) const { return hInd[i]; }
       //virtual ObjectInterface* getParent() { return parent; }
       //virtual void setParent(ObjectInterface* parent_) { parent = parent_; }
-      virtual const fmatvec::Vec& getPosition() const { return WrOP; }
-      virtual const fmatvec::SqrMat& getOrientation() const { return AWP; }
-      virtual fmatvec::Vec& getPosition() { return WrOP; }
-      virtual fmatvec::SqrMat& getOrientation() { return AWP; }
-      virtual void setPosition(const fmatvec::Vec &v) { WrOP = v; }
-      virtual void setOrientation(const fmatvec::SqrMat &AWP_) { AWP = AWP_; }
-      virtual const fmatvec::Vec& getVelocity() const { return WvP; } 
-      virtual const fmatvec::Vec& getAngularVelocity() const { return WomegaP; }
-      virtual const fmatvec::Mat& getJacobianOfTranslation(int j=0) const { return WJP[j]; }
-      virtual const fmatvec::Mat& getJacobianOfRotation(int j=0) const { return WJR[j]; }
-      virtual const fmatvec::Vec& getGyroscopicAccelerationOfTranslation(int j=0) const { return WjP[j]; }
-      virtual const fmatvec::Vec& getGyroscopicAccelerationOfRotation(int j=0) const { return WjR[j]; }
-      virtual const fmatvec::Vec& getAcceleration() const { return WaP; } 
-      virtual const fmatvec::Vec& getAngularAcceleration() const { return WpsiP; }
+      virtual const fmatvec::FVec& getPosition() const { return WrOP; }
+      virtual const fmatvec::FSqrMat& getOrientation() const { return AWP; }
+      virtual fmatvec::FVec& getPosition() { return WrOP; }
+      virtual fmatvec::FSqrMat& getOrientation() { return AWP; }
+      virtual void setPosition(const fmatvec::FVec &v) { WrOP = v; }
+      virtual void setOrientation(const fmatvec::FSqrMat &AWP_) { AWP = AWP_; }
+      virtual const fmatvec::FVec& getVelocity() const { return WvP; } 
+      virtual const fmatvec::FVec& getAngularVelocity() const { return WomegaP; }
+      virtual const fmatvec::FVMat& getJacobianOfTranslation(int j=0) const { return WJP[j]; }
+      virtual const fmatvec::FVMat& getJacobianOfRotation(int j=0) const { return WJR[j]; }
+      virtual const fmatvec::FVec& getGyroscopicAccelerationOfTranslation(int j=0) const { return WjP[j]; }
+      virtual const fmatvec::FVec& getGyroscopicAccelerationOfRotation(int j=0) const { return WjR[j]; }
+      virtual const fmatvec::FVec& getAcceleration() const { return WaP; } 
+      virtual const fmatvec::FVec& getAngularAcceleration() const { return WpsiP; }
       virtual void init(InitStage stage);
 #ifdef HAVE_OPENMBVCPPINTERFACE
       virtual void enableOpenMBV(double size=1, double offset=1);
@@ -93,23 +93,23 @@ namespace MBSim {
       void sethSize(int size, int i=0) { hSize[i] = size; }
       void sethInd(int ind, int i=0) { hInd[i] = ind; }
 
-      fmatvec::Vec& getVelocity() { return WvP; } 
-      fmatvec::Vec& getAngularVelocity() { return WomegaP; }
-      void setVelocity(const fmatvec::Vec &v) { WvP = v; } 
-      void setAngularVelocity(const fmatvec::Vec &omega) { WomegaP = omega; }
+      fmatvec::FVec& getVelocity() { return WvP; } 
+      fmatvec::FVec& getAngularVelocity() { return WomegaP; }
+      void setVelocity(const fmatvec::FVec &v) { WvP = v; } 
+      void setAngularVelocity(const fmatvec::FVec &omega) { WomegaP = omega; }
 
-      void setJacobianOfTranslation(const fmatvec::Mat &WJP_, int j=0) { WJP[j]=WJP_; }
-      void setGyroscopicAccelerationOfTranslation(const fmatvec::Vec &WjP_, int j=0) { WjP[j]=WjP_; }
-      void setJacobianOfRotation(const fmatvec::Mat &WJR_, int j=0) { WJR[j]=WJR_; }
-      void setGyroscopicAccelerationOfRotation(const fmatvec::Vec &WjR_, int j=0) { WjR[j]=WjR_; }
-      fmatvec::Mat& getJacobianOfTranslation(int j=0) { return WJP[j]; }
-      fmatvec::Mat& getJacobianOfRotation(int j=0) { return WJR[j]; }
-      fmatvec::Vec& getGyroscopicAccelerationOfTranslation(int j=0) { return WjP[j]; }
-      fmatvec::Vec& getGyroscopicAccelerationOfRotation(int j=0) { return WjR[j]; }
-      fmatvec::Vec& getAcceleration() { return WaP; } 
-      fmatvec::Vec& getAngularAcceleration() { return WpsiP; }
-      void setAcceleration(const fmatvec::Vec &a) { WaP = a; } 
-      void setAngularAcceleration(const fmatvec::Vec &psi) { WpsiP = psi; }
+      void setJacobianOfTranslation(const fmatvec::FVMat &WJP_, int j=0) { WJP[j]=WJP_; }
+      void setGyroscopicAccelerationOfTranslation(const fmatvec::FVec &WjP_, int j=0) { WjP[j]=WjP_; }
+      void setJacobianOfRotation(const fmatvec::FVMat &WJR_, int j=0) { WJR[j]=WJR_; }
+      void setGyroscopicAccelerationOfRotation(const fmatvec::FVec &WjR_, int j=0) { WjR[j]=WjR_; }
+      fmatvec::FVMat& getJacobianOfTranslation(int j=0) { return WJP[j]; }
+      fmatvec::FVMat& getJacobianOfRotation(int j=0) { return WJR[j]; }
+      fmatvec::FVec& getGyroscopicAccelerationOfTranslation(int j=0) { return WjP[j]; }
+      fmatvec::FVec& getGyroscopicAccelerationOfRotation(int j=0) { return WjR[j]; }
+      fmatvec::FVec& getAcceleration() { return WaP; } 
+      fmatvec::FVec& getAngularAcceleration() { return WpsiP; }
+      void setAcceleration(const fmatvec::FVec &a) { WaP = a; } 
+      void setAngularAcceleration(const fmatvec::FVec &psi) { WpsiP = psi; }
       /***************************************************/
 
     protected:
@@ -126,32 +126,32 @@ namespace MBSim {
       /**
        * \brief position of coordinate system in inertial frame of reference
        */
-      fmatvec::Vec WrOP;
+      fmatvec::FVec WrOP;
 
       /**
        * \brief transformation matrix in inertial frame of reference
        */
-      fmatvec::SqrMat AWP;
+      fmatvec::FSqrMat AWP;
 
       /**
        * \brief velocity and angular velocity of coordinate system in inertial frame of reference
        */
-      fmatvec::Vec WvP, WomegaP;
+      fmatvec::FVec WvP, WomegaP;
 
       /** 
        * \brief Jacobians of translation and rotation from coordinate system to inertial frame
        */
-      fmatvec::Mat WJP[2], WJR[2];
+      fmatvec::FVMat WJP[2], WJR[2];
 
       /**
        * translational and rotational acceleration not linear in the generalised velocity derivatives
        */
-      fmatvec::Vec WjP[2], WjR[2];
+      fmatvec::FVec WjP[2], WjR[2];
 
       /**
        * \brief acceleration and angular acceleration of coordinate system in inertial frame of reference
        */
-      fmatvec::Vec WaP, WpsiP;
+      fmatvec::FVec WaP, WpsiP;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::Frame* openMBVFrame;

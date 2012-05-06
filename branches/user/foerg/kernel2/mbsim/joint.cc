@@ -51,8 +51,8 @@ namespace MBSim {
   }
 
   void Joint::updatewb(double t, int j) {
-    Mat WJT = frame[0]->getOrientation()*JT;
-    Vec sdT = WJT.T()*(WvP0P1);
+    FVMat WJT = frame[0]->getOrientation()*JT;
+    VVec sdT = WJT.T()*(WvP0P1);
 
     wb(0,Wf.cols()-1) += Wf.T()*(frame[1]->getGyroscopicAccelerationOfTranslation(j) - C.getGyroscopicAccelerationOfTranslation(j) - crossProduct(C.getAngularVelocity(),WvP0P1+WJT*sdT));
     wb(Wf.cols(),Wm.cols()+Wf.cols()-1) += Wm.T()*(frame[1]->getGyroscopicAccelerationOfRotation(j) - C.getGyroscopicAccelerationOfRotation(j) - crossProduct(C.getAngularVelocity(),WomP0P1));
@@ -115,7 +115,7 @@ namespace MBSim {
   }
 
   void Joint::updateJacobians(double t, int j) {
-    Mat tWrP0P1 = tilde(WrP0P1);
+    FMat tWrP0P1 = tilde(WrP0P1);
     //cout << "---------------------------------------" << endl;
     //cout << frame[0]->getJacobianOfTranslation(j) << endl;
     //cout << frame[0]->getJacobianOfRotation(j) << endl;
@@ -163,22 +163,18 @@ namespace MBSim {
       if(forceDir.cols()) 
         Wf = forceDir;
       else {
-        forceDir.resize(3,0);
-        Wf.resize(3,0);
       }
       if(momentDir.cols())
         Wm = momentDir;
       else {
-        momentDir.resize(3,0);
-        Wm.resize(3,0);
       }
 
-      C.getJacobianOfTranslation(0).resize(3,frame[0]->getJacobianOfTranslation(0).cols());
-      C.getJacobianOfRotation(0).resize(3,frame[0]->getJacobianOfRotation(0).cols());
-      C.getJacobianOfTranslation(1).resize(3,frame[0]->getJacobianOfTranslation(1).cols());
-      C.getJacobianOfRotation(1).resize(3,frame[0]->getJacobianOfRotation(1).cols());
+      C.getJacobianOfTranslation(0).resize(frame[0]->getJacobianOfTranslation(0).cols());
+      C.getJacobianOfRotation(0).resize(frame[0]->getJacobianOfRotation(0).cols());
+      C.getJacobianOfTranslation(1).resize(frame[0]->getJacobianOfTranslation(1).cols());
+      C.getJacobianOfRotation(1).resize(frame[0]->getJacobianOfRotation(1).cols());
 
-      JT.resize(3,3-forceDir.cols());
+      JT.resize(3-forceDir.cols());
       if(forceDir.cols() == 2)
         JT.col(0) = crossProduct(forceDir.col(0),forceDir.col(1));
       else if(forceDir.cols() == 3);
