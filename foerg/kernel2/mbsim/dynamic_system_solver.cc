@@ -940,7 +940,7 @@ namespace MBSim {
     zdot(zParent,t);
   }
 
- void DynamicSystemSolver::getLinkStatus(Vector<int> &LinkStatusExt, double t) {
+ void DynamicSystemSolver::getLinkStatus(VecInt &LinkStatusExt, double t) {
     if(LinkStatusExt.size()<LinkStatusSize) 
       LinkStatusExt.resize(LinkStatusSize, INIT, 0);
     if(LinkStatus()!=LinkStatusExt())
@@ -1347,7 +1347,7 @@ namespace MBSim {
         addToGraph(graph, A, j, objList);
   }
 
-  void DynamicSystemSolver::shift(Vec &zParent, const Vector<int> &jsv_, double t) {
+  void DynamicSystemSolver::shift(Vec &zParent, const VecInt &jsv_, double t) {
     if(q()!=zParent()) {
       updatezRef(zParent);
     }
