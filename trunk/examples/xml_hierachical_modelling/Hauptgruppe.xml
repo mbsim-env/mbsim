@@ -37,19 +37,19 @@
           <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
           <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
           <ombv:scaleFactor>1</ombv:scaleFactor>
-          <Sphere name="dummy" xmlns="http://openmbv.berlios.de/OpenMBV">
+          <Sphere name="crb_1" xmlns="http://openmbv.berlios.de/OpenMBV">
             <initialTranslation>[0;0;0]</initialTranslation>
             <initialRotation>[0;0;0]</initialRotation>
             <scaleFactor>1</scaleFactor>
             <radius>h/3</radius>
           </Sphere>
-          <Cube name="dummy" xmlns="http://openmbv.berlios.de/OpenMBV">
+          <Cube name="crb_2" xmlns="http://openmbv.berlios.de/OpenMBV">
             <initialTranslation>[2*h/3;0;0]</initialTranslation>
             <initialRotation unit="degree">[45;0;0]</initialRotation>
             <scaleFactor>1</scaleFactor>
             <length>h/2</length>
           </Cube>
-          <IvBody name="dummy" xmlns="http://openmbv.berlios.de/OpenMBV">
+          <IvBody name="crb_3" xmlns="http://openmbv.berlios.de/OpenMBV">
             <initialTranslation>[2*h/3;2*h/3;0]</initialTranslation>
             <initialRotation unit="degree">[0;30;20]</initialRotation>
             <scaleFactor>1</scaleFactor>
