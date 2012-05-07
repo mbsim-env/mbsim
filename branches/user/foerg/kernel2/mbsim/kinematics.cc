@@ -31,13 +31,13 @@ namespace MBSim {
   void LinearTranslation::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"translationVectors");
-    setTranslationVectors(Element::getMat(e,3,0));
+    setTranslationVectors(Element::getFVMat(e,0));
   }
 
   void TimeDependentTranslation::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"position");
-    pos=ObjectFactory::getInstance()->createFunction1_VS(e->FirstChildElement());
+    //pos=ObjectFactory::getInstance()->createFunction1_VS(e->FirstChildElement());
     pos->initializeUsingXML(e->FirstChildElement());
   }
 
@@ -45,7 +45,7 @@ namespace MBSim {
     APK(0,0) = 1;
   }
 
-  SqrMat RotationAboutXAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  FSqrMat RotationAboutXAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
 
     int i = q.size()-1;
     const double cosq=cos(q(i));
@@ -63,7 +63,7 @@ namespace MBSim {
     APK(1,1) = 1;
   }
 
-  SqrMat RotationAboutYAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  FSqrMat RotationAboutYAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
 
     int i = q.size()-1;
     const double cosq=cos(q(i));
@@ -81,7 +81,7 @@ namespace MBSim {
     APK(2,2) = 1;
   }
 
-  SqrMat RotationAboutZAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  FSqrMat RotationAboutZAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
 
     int i = q.size()-1;
     const double cosq=cos(q(i));
@@ -95,7 +95,7 @@ namespace MBSim {
     return APK;
   }
 
-  SqrMat RotationAboutFixedAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  FSqrMat RotationAboutFixedAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
 
     int i = q.size()-1;
     const double cosq=cos(q(i));
@@ -121,10 +121,10 @@ namespace MBSim {
   void RotationAboutFixedAxis::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"axisOfRotation");
-    setAxisOfRotation(Element::getVec(e,3));
+    setAxisOfRotation(Element::getFVec(e));
   }
 
-  SqrMat TimeDependentRotationAboutFixedAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  FSqrMat TimeDependentRotationAboutFixedAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     Vec phi(1,INIT,(*angle)(t));
     return (*rot)(phi,t);
   }
@@ -132,14 +132,14 @@ namespace MBSim {
   void TimeDependentRotationAboutFixedAxis::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"axisOfRotation");
-    setAxisOfRotation(Element::getVec(e,3));
+    setAxisOfRotation(Element::getFVec(e));
     e=element->FirstChildElement(MBSIMNS"position");
     angle=ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement());
     angle->initializeUsingXML(e->FirstChildElement());
   }
 
-  SqrMat RotationAboutAxesXY::operator()(const fmatvec::Vec &q, const double &t, const void *) {
-    SqrMat APK(3,NONINIT);
+  FSqrMat RotationAboutAxesXY::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+    FSqrMat APK(NONINIT);
 
     int i = q.size()-1;
     double a=q(i-1);
@@ -158,8 +158,8 @@ namespace MBSim {
     return APK;
   }
 
-  SqrMat RotationAboutAxesYZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
-    SqrMat APK(3,NONINIT);
+  FSqrMat RotationAboutAxesYZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+    FSqrMat APK(NONINIT);
 
     int i = q.size()-1;
     double b=q(i-1);
@@ -178,8 +178,8 @@ namespace MBSim {
     return APK;
   }
 
-  SqrMat CardanAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
-    SqrMat APK(3,NONINIT);
+  FSqrMat CardanAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+    FSqrMat APK(NONINIT);
 
     int i = q.size()-1;
     double a=q(i-2);
@@ -199,8 +199,8 @@ namespace MBSim {
     return APK;
   }
 
-  SqrMat EulerAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
-    SqrMat APK(3,NONINIT);
+  FSqrMat EulerAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+    FSqrMat APK(NONINIT);
 
     int i = q.size()-1;
     double psi=q(i-2); 
@@ -226,7 +226,7 @@ namespace MBSim {
     return APK;
   }
 
-  SqrMat TimeDependentCardanAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  FSqrMat TimeDependentCardanAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     return (*rot)((*angle)(t),t);
   }
 
