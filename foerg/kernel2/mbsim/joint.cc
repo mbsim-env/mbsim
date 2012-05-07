@@ -519,19 +519,17 @@ namespace MBSim {
     }
   }
 
-  void Joint::setForceDirection(const Mat &fd) {
-    assert(fd.rows() == 3);
+  void Joint::setForceDirection(const FVMat &fd) {
 
-    forceDir = fd;
+    forceDir.assign(fd);
 
     for(int i=0; i<fd.cols(); i++)
       forceDir.col(i) = forceDir.col(i)/nrm2(fd.col(i));
   }
 
-  void Joint::setMomentDirection(const Mat &md) {
-    assert(md.rows() == 3);
+  void Joint::setMomentDirection(const FVMat &md) {
 
-    momentDir = md;
+    momentDir.assign(md);
 
     for(int i=0; i<md.cols(); i++)
       momentDir.col(i) = momentDir.col(i)/nrm2(md.col(i));
@@ -568,7 +566,7 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"force");
     if(e) {
       ee=e->FirstChildElement(MBSIMNS"direction");
-      setForceDirection(getMat(ee,3,0));
+      setForceDirection(getFVMat(ee,0));
       ee=ee->NextSiblingElement();
       GeneralizedForceLaw *gfl=ObjectFactory::getInstance()->createGeneralizedForceLaw(ee->FirstChildElement());
       setForceLaw(gfl);
@@ -592,7 +590,7 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"moment");
     if(e) {
       ee=e->FirstChildElement(MBSIMNS"direction");
-      setMomentDirection(getMat(ee,3,0));
+      setMomentDirection(getFVMat(ee,0));
       ee=ee->NextSiblingElement();
       GeneralizedForceLaw *gfl=ObjectFactory::getInstance()->createGeneralizedForceLaw(ee->FirstChildElement());
       setMomentLaw(gfl);
