@@ -327,12 +327,12 @@ namespace MBSim {
   }
 
   void RigidBody::setUpInverseKinetics() {
-    InverseKineticsJoint *joint = new InverseKineticsJoint(string("Joint_")+frameOfReference->getParent()->getName()+"_"+name);
-    ds->addInverseKineticsLink(joint);
-    joint->setForceDirection(FVMat(3,EYE));
-    joint->setMomentDirection(FVMat(3,EYE));
-    joint->connect(frameOfReference,frame[iKinematics]);
-    joint->setBody(this);
+    //InverseKineticsJoint *joint = new InverseKineticsJoint(string("Joint_")+frameOfReference->getParent()->getName()+"_"+name);
+    //ds->addInverseKineticsLink(joint);
+    //joint->setForceDirection(FVMat(3,EYE));
+    //joint->setMomentDirection(FVMat(3,EYE));
+    //joint->connect(frameOfReference,frame[iKinematics]);
+    //joint->setBody(this);
   }
 
   void RigidBody::plot(double t, double dt) {
