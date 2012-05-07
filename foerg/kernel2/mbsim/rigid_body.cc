@@ -94,7 +94,8 @@ namespace MBSim {
   }
 
   void RigidBody::updatehInverseKinetics(double t, int j) {
-    // h[j] -= frame[0]->getJacobianOfTranslation(j).T()*m*(frame[0]->getJacobianOfTranslation()*udall[0] + frame[0]->getGyroscopicAccelerationOfTranslation()) + frame[0]->getJacobianOfRotation(j).T()*WThetaS*(frame[0]->getJacobianOfRotation()*udall[0] + frame[0]->getGyroscopicAccelerationOfRotation());
+    VVec buf = frame[0]->getJacobianOfTranslation(j).T()*(m*(frame[0]->getJacobianOfTranslation()*udall[0] + frame[0]->getGyroscopicAccelerationOfTranslation())) + frame[0]->getJacobianOfRotation(j).T()*(WThetaS*(frame[0]->getJacobianOfRotation()*udall[0] + frame[0]->getGyroscopicAccelerationOfRotation()));
+    h[j] -= buf;
   }
 
   void RigidBody::updateStateDerivativeDependentVariables(double t) {
@@ -327,12 +328,12 @@ namespace MBSim {
   }
 
   void RigidBody::setUpInverseKinetics() {
-    //InverseKineticsJoint *joint = new InverseKineticsJoint(string("Joint_")+frameOfReference->getParent()->getName()+"_"+name);
-    //ds->addInverseKineticsLink(joint);
-    //joint->setForceDirection(FVMat(3,EYE));
-    //joint->setMomentDirection(FVMat(3,EYE));
-    //joint->connect(frameOfReference,frame[iKinematics]);
-    //joint->setBody(this);
+    InverseKineticsJoint *joint = new InverseKineticsJoint(string("Joint_")+frameOfReference->getParent()->getName()+"_"+name);
+    ds->addInverseKineticsLink(joint);
+    joint->setForceDirection(FVMat(3,EYE));
+    joint->setMomentDirection(FVMat(3,EYE));
+    joint->connect(frameOfReference,frame[iKinematics]);
+    joint->setBody(this);
   }
 
   void RigidBody::plot(double t, double dt) {
