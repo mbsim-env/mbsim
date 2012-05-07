@@ -8,25 +8,25 @@
 #include "mbsim/spring_damper.h"
 #include "mbsim/extern_generalized_io.h"
 #include "mbsim/joint.h"
-#include "mbsim/contact.h"
-#include "mbsim/contours/sphere.h"
-#include "mbsim/contours/point.h"
-#include "mbsim/contours/line.h"
-#include "mbsim/contours/line_segment.h"
-#include "mbsim/contours/circle_solid.h"
-#include "mbsim/contours/circle_hollow.h"
-#include "mbsim/contours/frustum2d.h"
-#include "mbsim/contours/face.h"
-#include "mbsim/contours/edge.h"
-#include "mbsim/contours/frustum.h"
-#include "mbsim/contours/plane.h"
-#include "mbsim/contours/point.h"
-#include "mbsim/contours/planewithfrustum.h"
-#include "mbsim/contours/contour_interpolation.h"
-#include "mbsim/contours/contour_quad.h"
-#include "mbsim/contours/cuboid.h"
-#include "mbsim/contours/compound_contour.h"
-#include "mbsim/contours/contour1s_analytical.h"
+//#include "mbsim/contact.h"
+//#include "mbsim/contours/sphere.h"
+//#include "mbsim/contours/point.h"
+//#include "mbsim/contours/line.h"
+//#include "mbsim/contours/line_segment.h"
+//#include "mbsim/contours/circle_solid.h"
+//#include "mbsim/contours/circle_hollow.h"
+//#include "mbsim/contours/frustum2d.h"
+//#include "mbsim/contours/face.h"
+//#include "mbsim/contours/edge.h"
+//#include "mbsim/contours/frustum.h"
+//#include "mbsim/contours/plane.h"
+//#include "mbsim/contours/point.h"
+//#include "mbsim/contours/planewithfrustum.h"
+//#include "mbsim/contours/contour_interpolation.h"
+//#include "mbsim/contours/contour_quad.h"
+//#include "mbsim/contours/cuboid.h"
+//#include "mbsim/contours/compound_contour.h"
+//#include "mbsim/contours/contour1s_analytical.h"
 #include "mbsim/utils/function_library.h"
 #include "mbsim/integrators/dopri5_integrator.h"
 #include "mbsim/integrators/radau5_integrator.h"
@@ -211,10 +211,10 @@ namespace MBSim {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"RigidBody")
       return new RigidBody(element->Attribute("name"));
-    else if(element->ValueStr()==MBSIMNS"JointConstraint")
-      return new JointConstraint(element->Attribute("name"));
-    else if(element->ValueStr()==MBSIMNS"GearConstraint")
-      return new GearConstraint(element->Attribute("name"));
+//    else if(element->ValueStr()==MBSIMNS"JointConstraint")
+//      return new JointConstraint(element->Attribute("name"));
+//    else if(element->ValueStr()==MBSIMNS"GearConstraint")
+//      return new GearConstraint(element->Attribute("name"));
     return 0;
   }
 
@@ -242,16 +242,16 @@ namespace MBSim {
 
   Link* MBSimObjectFactory::createLink(TiXmlElement *element) {
     if(element==0) return 0;
-    if(element->ValueStr()==MBSIMNS"KineticExcitation")
-      return new KineticExcitation(element->Attribute("name"));
-    if(element->ValueStr()==MBSIMNS"SpringDamper")
-      return new SpringDamper(element->Attribute("name"));
+//    if(element->ValueStr()==MBSIMNS"KineticExcitation")
+//      return new KineticExcitation(element->Attribute("name"));
+//    if(element->ValueStr()==MBSIMNS"SpringDamper")
+//      return new SpringDamper(element->Attribute("name"));
     if(element->ValueStr()==MBSIMNS"Joint")
       return new Joint(element->Attribute("name"));
-    if(element->ValueStr()==MBSIMNS"Contact")
-      return new Contact(element->Attribute("name"));
-    if(element->ValueStr()==MBSIMNS"ExternGeneralizedIO")
-      return new ExternGeneralizedIO(element->Attribute("name"));
+    //if(element->ValueStr()==MBSIMNS"Contact")
+      //return new Contact(element->Attribute("name"));
+//    if(element->ValueStr()==MBSIMNS"ExternGeneralizedIO")
+//      return new ExternGeneralizedIO(element->Attribute("name"));
     return 0;
   }
 
@@ -267,8 +267,8 @@ namespace MBSim {
       return new LSODARIntegrator;
     if(element->ValueStr()==MBSIMINTNS"TimeSteppingIntegrator")
       return new TimeSteppingIntegrator;
-    if(element->ValueStr()==MBSIMINTNS"TimeSteppingSSCIntegrator")
-      return new TimeSteppingSSCIntegrator;
+//    if(element->ValueStr()==MBSIMINTNS"TimeSteppingSSCIntegrator")
+//      return new TimeSteppingSSCIntegrator;
     if(element->ValueStr()==MBSIMINTNS"ThetaTimeSteppingIntegrator")
       return new ThetaTimeSteppingIntegrator;
     if(element->ValueStr()==MBSIMINTNS"EulerExplicitIntegrator")
@@ -324,26 +324,26 @@ namespace MBSim {
 
   Contour *MBSimObjectFactory::createContour(TiXmlElement *element) {
     if(element==0) return 0;
-    if(element->ValueStr()==MBSIMNS"CircleHollow")
-      return new CircleHollow(element->Attribute("name"));
-    if(element->ValueStr()==MBSIMNS"CircleSolid")
-      return new CircleSolid(element->Attribute("name"));
-    if(element->ValueStr()==MBSIMNS"Frustum")
-      return new Frustum(element->Attribute("name"));
-    if(element->ValueStr()==MBSIMNS"Line")
-      return new Line(element->Attribute("name"));
-    if(element->ValueStr()==MBSIMNS"LineSegment")
-      return new LineSegment(element->Attribute("name"));
-    if(element->ValueStr()==MBSIMNS"Plane")
-      return new Plane(element->Attribute("name"));
-    if(element->ValueStr()==MBSIMNS"PlaneWithFrustum")
-      return new PlaneWithFrustum(element->Attribute("name"));
-    if(element->ValueStr()==MBSIMNS"Point")
-      return new Point(element->Attribute("name"));
-    if(element->ValueStr()==MBSIMNS"Sphere")
-      return new Sphere(element->Attribute("name"));
-    if(element->ValueStr()==MBSIMNS"Contour1sAnalytical")
-      return new Contour1sAnalytical(element->Attribute("name"));
+//    if(element->ValueStr()==MBSIMNS"CircleHollow")
+//      return new CircleHollow(element->Attribute("name"));
+//    if(element->ValueStr()==MBSIMNS"CircleSolid")
+//      return new CircleSolid(element->Attribute("name"));
+//    if(element->ValueStr()==MBSIMNS"Frustum")
+//      return new Frustum(element->Attribute("name"));
+//    if(element->ValueStr()==MBSIMNS"Line")
+//      return new Line(element->Attribute("name"));
+//    if(element->ValueStr()==MBSIMNS"LineSegment")
+//      return new LineSegment(element->Attribute("name"));
+//    if(element->ValueStr()==MBSIMNS"Plane")
+//      return new Plane(element->Attribute("name"));
+//    if(element->ValueStr()==MBSIMNS"PlaneWithFrustum")
+//      return new PlaneWithFrustum(element->Attribute("name"));
+//    if(element->ValueStr()==MBSIMNS"Point")
+//      return new Point(element->Attribute("name"));
+//    if(element->ValueStr()==MBSIMNS"Sphere")
+//      return new Sphere(element->Attribute("name"));
+//    if(element->ValueStr()==MBSIMNS"Contour1sAnalytical")
+//      return new Contour1sAnalytical(element->Attribute("name"));
     return 0;
   }
 
@@ -372,26 +372,26 @@ namespace MBSim {
   }
 
   Function1<Vec,double> *MBSimObjectFactory::createFunction1_VS(TiXmlElement *element) {
-    if(element->ValueStr()==MBSIMNS"ConstantFunction1_VS")
-      return new ConstantFunction1<Vec,double>;
-    if(element->ValueStr()==MBSIMNS"PiecewisePolynom1_VS")
-      return new PPolynom;
-    if(element->ValueStr()==MBSIMNS"QuadraticFunction1_VS")
-      return new QuadraticFunction1_VS;
-    if(element->ValueStr()==MBSIMNS"SinusFunction1_VS")
-      return new SinusFunction1_VS;
-    if(element->ValueStr()==MBSIMNS"PositiveSinusFunction1_VS")
-      return new PositiveSinusFunction1_VS;
-    if(element->ValueStr()==MBSIMNS"StepFunction1_VS")
-      return new StepFunction1_VS;
-    if(element->ValueStr()==MBSIMNS"TabularFunction1_VS")
-      return new TabularFunction1_VS;
-    if(element->ValueStr()==MBSIMNS"PeriodicTabularFunction1_VS")
-      return new PeriodicTabularFunction1_VS;
-    if(element->ValueStr()==MBSIMNS"SummationFunction1_VS")
-      return new SummationFunction1_VS;
-    if(element->ValueStr()==MBSIMNS"Function1_VS_from_SS")
-      return new Function1_VS_from_SS;
+//    if(element->ValueStr()==MBSIMNS"ConstantFunction1_VS")
+//      return new ConstantFunction1<Vec,double>;
+//    if(element->ValueStr()==MBSIMNS"PiecewisePolynom1_VS")
+//      return new PPolynom;
+//    if(element->ValueStr()==MBSIMNS"QuadraticFunction1_VS")
+//      return new QuadraticFunction1_VS;
+//    if(element->ValueStr()==MBSIMNS"SinusFunction1_VS")
+//      return new SinusFunction1_VS;
+//    if(element->ValueStr()==MBSIMNS"PositiveSinusFunction1_VS")
+//      return new PositiveSinusFunction1_VS;
+//    if(element->ValueStr()==MBSIMNS"StepFunction1_VS")
+//      return new StepFunction1_VS;
+//    if(element->ValueStr()==MBSIMNS"TabularFunction1_VS")
+//      return new TabularFunction1_VS;
+//    if(element->ValueStr()==MBSIMNS"PeriodicTabularFunction1_VS")
+//      return new PeriodicTabularFunction1_VS;
+//    if(element->ValueStr()==MBSIMNS"SummationFunction1_VS")
+//      return new SummationFunction1_VS;
+//    if(element->ValueStr()==MBSIMNS"Function1_VS_from_SS")
+//      return new Function1_VS_from_SS;
     return 0;
   }
 

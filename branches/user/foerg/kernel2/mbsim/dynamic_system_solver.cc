@@ -1560,8 +1560,9 @@ namespace MBSim {
     updateT(t); 
     updateJacobians(t,0);
     updateJacobians(t,1);
-    updateh(t,1);
-    updateh0Fromh1(t);
+    updateh(t,0);
+    //updateh(t,1);
+    //updateh0Fromh1(t);
     updateM(t,0); 
     facLLM(0); 
     updateWRef(WParent[1](Index(0,getuSize(1)-1),Index(0,getlaSize()-1)),1);
@@ -1581,6 +1582,7 @@ namespace MBSim {
     updater(t,0); 
     updater(t,1);
     updatezd(t);
+    if(false) {
     updateStateDerivativeDependentVariables(t); // TODO: verbinden mit updatehInverseKinetics
 
     updatehInverseKinetics(t,1); // Accelerations of objects
@@ -1600,6 +1602,7 @@ namespace MBSim {
     A(Index(m1,m1+m2-1),Index(0,n-1)) = bInverseKinetics;
     b(0,m1-1) = -h[1]-r[1];
     laInverseKinetics =  slvLL(JTJ(A),A.T()*b);
+    }
 
     DynamicSystemSolver::plot(t,dt);
 

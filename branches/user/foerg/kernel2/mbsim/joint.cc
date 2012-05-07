@@ -161,11 +161,11 @@ namespace MBSim {
       IT = Index(0,forceDir.cols()-1);
       IR = Index(forceDir.cols(),forceDir.cols()+momentDir.cols()-1);
       if(forceDir.cols()) 
-        Wf = forceDir;
+        Wf.assign(forceDir);
       else {
       }
       if(momentDir.cols())
-        Wm = momentDir;
+        Wm.assign(momentDir);
       else {
       }
 
