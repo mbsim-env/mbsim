@@ -201,6 +201,11 @@ namespace MBSim {
     return Vec();
   }
 
+  FVMat Element::getFVMat(TiXmlElement *e, int cols) {
+    Mat A = getMat(e,3,cols);
+    return FVMat(A);
+  }
+
   Mat Element::getMat(TiXmlElement *e, int rows, int cols) {
     Mat m=Mat(e->GetText());
     if((rows==0 || m.rows()==rows) && (cols==0 || m.cols()==cols))
@@ -232,6 +237,11 @@ namespace MBSim {
       throw MBSimError("Wrong type"+str.str());
     }
     return SqrMat();
+  }
+
+  fmatvec::FSymMat Element::getFSymMat(TiXmlElement *e) {
+    SymMat A = getSymMat(e,3);
+    return FSymMat(A);
   }
 
   fmatvec::SymMat Element::getSymMat(TiXmlElement *e, int size) {
