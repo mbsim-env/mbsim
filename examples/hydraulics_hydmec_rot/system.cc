@@ -126,6 +126,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   traegerVisuBoden->setInitialRotation(0, 0, 0);
   traegerVisuBoden->setInitialTranslation(0, 0, 0);
   traegerVisuBoden->setStaticColor(0);
+  traegerVisuBoden->setName("frustum1");
   traegerVisu->addRigidBody(traegerVisuBoden);
   OpenMBV::Frustum * traegerVisuMitte = new OpenMBV::Frustum();
   traegerVisuMitte->setBaseRadius(dI/2.);
@@ -134,6 +135,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   traegerVisuMitte->setInitialRotation(0, 0, 0);
   traegerVisuMitte->setInitialTranslation(0, 0, h);
   traegerVisuMitte->setStaticColor(0);
+  traegerVisuBoden->setName("frustum2");
   traegerVisu->addRigidBody(traegerVisuMitte);
   traeger->setOpenMBVRigidBody(traegerVisu);
 #endif

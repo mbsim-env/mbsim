@@ -65,13 +65,13 @@
           <initialTranslation>[0 0 0]'</initialTranslation>
           <initialRotation>[0 0 0]'</initialRotation>
           <scaleFactor>1.</scaleFactor>
-          <Cuboid name="XXX" xmlns="http://openmbv.berlios.de/OpenMBV">
+          <Cuboid name="cuboid" xmlns="http://openmbv.berlios.de/OpenMBV">
             <initialTranslation>[l2/2-r2 0 -b/4-2e-4]'</initialTranslation>
             <initialRotation>[0 0 0]'</initialRotation>
             <scaleFactor>1.</scaleFactor>
             <length>[l2 b b/2]'</length>
           </Cuboid>
-          <Frustum name="XXX" xmlns="http://openmbv.berlios.de/OpenMBV">
+          <Frustum name="frustum" xmlns="http://openmbv.berlios.de/OpenMBV">
             <initialTranslation>[l2-r2 0 -b*0-1e-4]'</initialTranslation>
             <initialRotation>[0 0 0]'</initialRotation>
             <scaleFactor>1</scaleFactor>
@@ -180,13 +180,13 @@
           <initialTranslation>[0 0 0]'</initialTranslation>
           <initialRotation>[0 0 0]'</initialRotation>
           <scaleFactor>1.</scaleFactor>
-          <Cuboid name="XXX" xmlns="http://openmbv.berlios.de/OpenMBV">
+          <Cuboid name="cuboid" xmlns="http://openmbv.berlios.de/OpenMBV">
             <initialTranslation>[-l3/2+r3-rBushing/2 0 0]'</initialTranslation>
             <initialRotation>[0 0 0]'</initialRotation>
             <scaleFactor>1.</scaleFactor>
             <length>[l3-rBushing b b]'</length>
           </Cuboid>
-          <Frustum name="XXX" xmlns="http://openmbv.berlios.de/OpenMBV">
+          <Frustum name="frustum" xmlns="http://openmbv.berlios.de/OpenMBV">
             <initialTranslation>[r3 0 -b*0-1e-4]'</initialTranslation>
             <initialRotation>[0 0 0]'</initialRotation>
             <scaleFactor>1</scaleFactor>
