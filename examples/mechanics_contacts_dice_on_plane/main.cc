@@ -11,7 +11,7 @@ int main (int argc, char* argv[])
 
   sys->initialize();
 
-  bool eventDriven = true;
+  bool eventDriven = false;
 
   if(eventDriven) { // Event driven time integration
     LSODARIntegrator integrator;
