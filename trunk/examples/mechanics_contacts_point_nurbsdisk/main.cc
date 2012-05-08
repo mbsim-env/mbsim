@@ -11,7 +11,7 @@ int main (int argc, char* argv[]) {
   sys->setStopIfNoConvergence(true,true);
   sys->initialize();
 
-  ThetaTimeSteppingIntegrator integrator;
+  TimeSteppingIntegrator integrator;
 
   integrator.setEndTime(0.5);
   integrator.setStepSize(1e-4);

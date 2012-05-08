@@ -10,11 +10,10 @@ int main (int argc, char* argv[]) {
 //  sys.setImpactSolver(RootFinding);
   sys.initialize();
 
-  ThetaTimeSteppingIntegrator integrator;
-  integrator.setStepSize(1.e-4);
+  TimeSteppingSSCIntegrator integrator;
+  //integrator.setStepSize(1.e-5);
   //integrator.setDriftCompensation(true);
-  integrator.setTheta(0.75);
-  integrator.setEndTime(5);
+  integrator.setEndTime(5e-2);
   integrator.setPlotStepSize(5.e-3);
   
   integrator.integrate(sys);
