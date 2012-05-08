@@ -439,6 +439,13 @@ namespace MBSim {
     LinkStatus.resize(LinkStatusSize);
   }
 
+  void Contact::calcLinkStatusRegSize() {
+    LinkMechanics::calcLinkStatusRegSize();
+    int n = contactKinematics->getNumberOfPotentialContactPoints();
+    LinkStatusRegSize= n;
+    LinkStatusReg.resize(LinkStatusRegSize);
+  }
+
   void Contact::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       if(saved_ref1!="" && saved_ref2!="")
@@ -659,6 +666,17 @@ namespace MBSim {
         }
       }
       else LinkStatus(k) = 1;
+    }
+  }
+
+  void Contact::updateLinkStatusReg(double t) {
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+      if (gActive[k])  {
+        LinkStatusReg(k) = 2;
+      }
+      else {
+        LinkStatusReg(k) = 1;
+      }
     }
   }
 
