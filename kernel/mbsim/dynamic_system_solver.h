@@ -58,6 +58,9 @@ namespace MBSim {
    * \date 2009-08-21 reorganize hierarchy (Thorsten Schindler)
    * \date 2009-12-14 revised inverse kinetics (Martin Foerg)
    * \date 2010-07-06 modifications for timestepper ssc - e.g LinkStatus (Robert Huber)
+   * \date 2012-05-08 modifications for AutoTimeSteppingSSCIntegrator (Jan Clauberg)
+   * \date 2012-05-08 dhdq and dhdu with lower and upper bound (Jan Clauberg)
+   *
    * \todo projectGeneralizedPositions seems to be buggy with at least TimeSteppingIntegrator (see SliderCrank)
    * \todo RootFinding seems to be buggy (see EdgeMill)
    */
@@ -342,12 +345,18 @@ namespace MBSim {
        */
       virtual void getsv(const fmatvec::Vec& z, fmatvec::Vec& svExt, double t);
 
-      /** brief collect status of all links
+      /** brief collect status of all set-valued links
        * \param result vector
        * \param time
        */
       void getLinkStatus(fmatvec::Vector<int> &LinkStatusExt, double t);
 
+      /** brief collect status of all single-valued links
+       * \param result vector
+       * \param time
+       */
+
+      void getLinkStatusReg(fmatvec::Vector<int> &LinkStatusRegExt, double t);
       /**
        * \brief drift projection for positions
        * \param time
@@ -473,13 +482,13 @@ namespace MBSim {
 
       void setInverseKinetics(bool inverseKinetics_) {inverseKinetics = inverseKinetics_;}
 
-       fmatvec::Mat dhdq(double t);
-       fmatvec::Mat dhdu(double t);
-       fmatvec::Mat dhdx(double t);
-       fmatvec::Vec dhdt(double t);
+      fmatvec::Mat dhdq(double t, int lb=0, int ub=0);
+      fmatvec::Mat dhdu(double t, int lb=0, int ub=0);
+      fmatvec::Mat dhdx(double t);
+      fmatvec::Vec dhdt(double t);
 
-       void setRootID(int ID) {rootID = ID;}
-       int getRootID() const {return rootID;}
+      void setRootID(int ID) {rootID = ID;}
+      int getRootID() const {return rootID;}
     protected:
       /**
        * \brief mass matrix
@@ -578,6 +587,11 @@ namespace MBSim {
        */
       fmatvec::Vector<int> LinkStatusParent;
 
+      /**
+       * \brief status vector of single valued links
+       */
+      
+      fmatvec::Vector<int> LinkStatusRegParent;
       /**
        * \brief sparse mass action matrix
        */

@@ -237,6 +237,7 @@ namespace MBSim {
       calcsvSize();
       svSize += 1; // TODO additional event for drift 
       calcLinkStatusSize();      
+      calcLinkStatusRegSize();      
 
       if(INFO) cout << "qSize = " << qSize << endl;
       if(INFO) cout << "uSize[0] = " << uSize[0] << endl;
@@ -246,6 +247,7 @@ namespace MBSim {
       if(INFO) cout << "laSize = " << laSize << endl;
       if(INFO) cout << "svSize = " << svSize << endl;
       if(INFO) cout << "LinkStatusSize = " << LinkStatusSize <<endl;
+      if(INFO) cout << "LinkStatusRegSize = " << LinkStatusRegSize <<endl;
       if(INFO) cout << "hSize[0] = " << hSize[0] << endl;
 
       if(INFO) cout << "uSize[1] = " << uSize[1] << endl;
@@ -285,6 +287,7 @@ namespace MBSim {
       svParent.resize(getsvSize());
       jsvParent.resize(getsvSize());
       LinkStatusParent.resize(getLinkStatusSize());
+      LinkStatusRegParent.resize(getLinkStatusRegSize());
       WInverseKineticsParent[0].resize(hSize[0],laInverseKineticsSize);
       WInverseKineticsParent[1].resize(hSize[1],laInverseKineticsSize);
       bInverseKineticsParent.resize(bInverseKineticsSize,laInverseKineticsSize);
@@ -302,6 +305,7 @@ namespace MBSim {
       updatesvRef(svParent);
       updatejsvRef(jsvParent);
       updateLinkStatusRef(LinkStatusParent);
+      updateLinkStatusRegRef(LinkStatusRegParent);
       updatezdRef(zdParent);
       updateudRef(udParent1,1);
       updateudallRef(udParent1,1);
@@ -645,9 +649,17 @@ namespace MBSim {
     Group::updateV0FromV1(t);
   }
 
-  Mat DynamicSystemSolver::dhdq(double t) {
+  Mat DynamicSystemSolver::dhdq(double t, int lb, int ub) {
+    if(lb!=0 || ub!=0) {
+      assert(lb>=0);
+      assert(ub<=qSize);
+    }
+    else if(lb==0 && ub==0) {
+      lb=0;
+      ub=qSize;
+    }
     double delta = epsroot();
-    Mat J(hSize[0],qSize,NONINIT);
+    Mat J(hSize[0],qSize,INIT,0.0);
     updateStateDependentVariables(t);
     updateg(t);
     updategd(t);
@@ -655,7 +667,7 @@ namespace MBSim {
     updateJacobians(t);
     updateh(t); 
     Vec hOld = h[0].copy();
-    for(int i=0; i<qSize; i++) {
+    for(int i=lb; i<ub; i++) {
       double qtmp = q(i);
       q(i) += delta;
       updateStateDependentVariables(t);
@@ -668,27 +680,44 @@ namespace MBSim {
       q(i) = qtmp;
     }
     h[0] = hOld;
+
     updateStateDependentVariables(t);
     updateg(t);
     updategd(t);
     updateT(t); 
     updateJacobians(t);
     updateh(t);
-    return J;
+
+    return J;  
   }
 
-  Mat DynamicSystemSolver::dhdu(double t) {
+  Mat DynamicSystemSolver::dhdu(double t, int lb, int ub) {
+    if(lb!=0 || ub!=0) {
+      assert(lb>=0);
+      assert(ub<=uSize[0]);
+    }
+    else if(lb==0 && ub==0) {
+      lb=0;
+      ub=uSize[0];
+    }    
     double delta = epsroot();
-    Mat J(hSize[0],uSize[0],NONINIT);
+    Mat J(hSize[0],uSize[0],INIT,0.0);
     updateStateDependentVariables(t);
+    updateg(t);
     updategd(t);
+    updateT(t); 
+    updateJacobians(t);
     updateh(t); 
     Vec hOld = h[0].copy();
-    for(int i=0; i<uSize[0]; i++) {
+    for(int i=lb; i<ub; i++) {
+      //cout << "bin bei i=" << i << endl;
       double utmp = u(i);
       u(i) += delta;
       updateStateDependentVariables(t);
+      //updateg(t);
       updategd(t);
+      //updateT(t); 
+      //updateJacobians(t);
       updateh(t); 
       J.col(i) = (h[0] - hOld)/delta;
       u(i) = utmp;
@@ -696,7 +725,8 @@ namespace MBSim {
     h[0] = hOld;
     updateStateDependentVariables(t);
     updategd(t);
-    updateh(t);
+    updateh(t); 
+
     return J;
   }
 
@@ -948,7 +978,15 @@ namespace MBSim {
     updateLinkStatus(t);
   }
 
-  void DynamicSystemSolver::projectGeneralizedPositions(double t, int mode) {
+ void DynamicSystemSolver::getLinkStatusReg(Vector<int> &LinkStatusRegExt, double t) {
+    if(LinkStatusRegExt.size()<LinkStatusRegSize) 
+      LinkStatusRegExt.resize(LinkStatusRegSize, INIT, 0);
+    if(LinkStatusReg()!=LinkStatusRegExt())
+      updateLinkStatusRegRef(LinkStatusRegExt);
+    updateLinkStatusReg(t);
+  }
+
+ void DynamicSystemSolver::projectGeneralizedPositions(double t, int mode) {
     int gID = 0; 
     int laID = 0;
     int corrID = 0;
