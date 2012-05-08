@@ -133,7 +133,7 @@
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; 0; 0]</initialRotation>
           <scaleFactor>1.</scaleFactor>
-          <Frustum xmlns="http://openmbv.berlios.de/OpenMBV" name="xxx">
+          <Frustum xmlns="http://openmbv.berlios.de/OpenMBV" name="frustum">
             <initialTranslation>[0; 0; -cylinder_Radius/3/2]</initialTranslation>
             <initialRotation>[0; 0; 0]</initialRotation>
             <scaleFactor>1.</scaleFactor>
@@ -143,7 +143,7 @@
             <innerBaseRadius>0</innerBaseRadius>
             <innerTopRadius>0</innerTopRadius>
           </Frustum>
-          <Cuboid xmlns="http://openmbv.berlios.de/OpenMBV" name="xxx">
+          <Cuboid xmlns="http://openmbv.berlios.de/OpenMBV" name="cuboid">
             <initialTranslation>[crank_Radius/2; 0; 0]</initialTranslation>
             <initialRotation>[0; 0; 0]</initialRotation>
             <scaleFactor>1.</scaleFactor>
