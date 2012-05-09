@@ -6,7 +6,7 @@
 #include "mbsimHydraulics/pressure_loss.h"
 
 #include "mbsim/rigid_body.h"
-#include "mbsim/tree.h"
+//#include "mbsim/tree.h"
 #include "mbsim/spring_damper.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/utils/function.h"
@@ -77,8 +77,6 @@ vector<OpenMBV::PolygonPoint*> * createPiece(double rI, double rA, double phi0, 
 #endif
 
 System::System(const string &name, bool unilateral) : Group(name) {
-  Tree * tree = new Tree("Baum");
-  addGroup(tree);
 
   double dI=0.01;
   double dA=0.05;
@@ -100,7 +98,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   cout << "area=" << area << endl;
 
   RigidBody * traeger = new RigidBody("Traeger");
-  Node * node = tree->addObject(0, traeger);
+  addObject(traeger);
   double phi=0;
   for (int i=0; i<5; i++) {
     traeger->addFrame(getBodyName(i), Vec(3), BasicRotAIKz(phi));
@@ -119,6 +117,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
 //  traeger->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::CompoundRigidBody * traegerVisu = new OpenMBV::CompoundRigidBody();
+  
   OpenMBV::Frustum * traegerVisuBoden = new OpenMBV::Frustum();
   traegerVisuBoden->setBaseRadius(dA/2.);
   traegerVisuBoden->setTopRadius(dA/2.);
@@ -128,6 +127,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   traegerVisuBoden->setStaticColor(0);
   traegerVisuBoden->setName("frustum1");
   traegerVisu->addRigidBody(traegerVisuBoden);
+  
   OpenMBV::Frustum * traegerVisuMitte = new OpenMBV::Frustum();
   traegerVisuMitte->setBaseRadius(dI/2.);
   traegerVisuMitte->setTopRadius(dI/2.);
@@ -135,9 +135,9 @@ System::System(const string &name, bool unilateral) : Group(name) {
   traegerVisuMitte->setInitialRotation(0, 0, 0);
   traegerVisuMitte->setInitialTranslation(0, 0, h);
   traegerVisuMitte->setStaticColor(0);
-  traegerVisuBoden->setName("frustum2");
+  traegerVisuMitte->setName("frustum2");
   traegerVisu->addRigidBody(traegerVisuMitte);
-  traeger->setOpenMBVRigidBody(traegerVisu);
+  traeger->setOpenMBVRigidBody(traegerVisuMitte);
 #endif
 
   Vec r(3, INIT, 0);
@@ -145,7 +145,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   r(2)=h/2.;
   for (int i=0; i<5; i++) {
     RigidBody * scheibe = new RigidBody("Scheibe_"+getBodyName(i));
-    tree->addObject(node, scheibe);
+    addObject(scheibe);
     scheibe->setMass(2.);
     scheibe->addFrame("L", BasicRotAIKz(phiSolid/2.)*r, BasicRotAIKz(phiSolid/2.));
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -177,8 +177,8 @@ System::System(const string &name, bool unilateral) : Group(name) {
       addLink(sp);
       sp->setForceFunction(new LinearSpringDamperForce(cF,0.05*cF,l0));
       sp->connect(
-          dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(i-1)))->getFrame("L"), 
-          dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(i)))->getFrame("R"));
+          dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(i-1)))->getFrame("L"), 
+          dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(i)))->getFrame("R"));
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::CoilSpring * spVisu = new OpenMBV::CoilSpring();
       spVisu->setSpringRadius(.75*.1*h);
@@ -192,8 +192,8 @@ System::System(const string &name, bool unilateral) : Group(name) {
   addLink(sp);
   sp->setForceFunction(new LinearSpringDamperForce(cF,0.05*cF,l0));
   sp->connect(
-      dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(4)))->getFrame("L"), 
-      dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(0)))->getFrame("R"));
+      dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(4)))->getFrame("L"), 
+      dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(0)))->getFrame("R"));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::CoilSpring * spVisu = new OpenMBV::CoilSpring();
   spVisu->setSpringRadius(.75*.1*h);
@@ -219,7 +219,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
 
   EnvironmentNodeMec * n1Inf = new EnvironmentNodeMec("n1Inf");
   addLink(n1Inf);
-  n1Inf->addRotMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(0)))->getFrame("R"), "[0;1;0]", area, traeger->getFrame("C"));
+  n1Inf->addRotMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(0)))->getFrame("R"), "[0;1;0]", area, traeger->getFrame("C"));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   n1Inf->enableOpenMBVArrows(.01);
 #endif
@@ -231,8 +231,8 @@ System::System(const string &name, bool unilateral) : Group(name) {
 #endif
   n1->setInitialVolume(V0);
   n1->setpFunction(new ConstantFunction1<double, double>(pRB));
-  n1->addRotMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(1)))->getFrame("R"), "[0;1;0]", area, traeger->getFrame("C"));
-  n1->addRotMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(0)))->getFrame("L"), "[0;-1;0]", area, traeger->getFrame("C"));
+  n1->addRotMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(1)))->getFrame("R"), "[0;1;0]", area, traeger->getFrame("C"));
+  n1->addRotMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(0)))->getFrame("L"), "[0;-1;0]", area, traeger->getFrame("C"));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   n1->enableOpenMBVArrows(.01);
 #endif
@@ -246,8 +246,8 @@ System::System(const string &name, bool unilateral) : Group(name) {
   n2->enableOpenMBV(.005);
 #endif
   n2->setInitialVolume(V0);
-  n2->addRotMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(2)))->getFrame("R"), Vec("[0;1;0]"), area, traeger->getFrame("C")); 
-  n2->addRotMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(1)))->getFrame("L"), Vec("[0;-1;0]"), area, traeger->getFrame("C"));
+  n2->addRotMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(2)))->getFrame("R"), Vec("[0;1;0]"), area, traeger->getFrame("C")); 
+  n2->addRotMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(1)))->getFrame("L"), Vec("[0;-1;0]"), area, traeger->getFrame("C"));
 
   ElasticNodeMec * n3 = new ElasticNodeMec("n_"+getBodyName(2)+"_"+getBodyName(3));
   n3->setFracAir(0.08);
@@ -258,8 +258,8 @@ System::System(const string &name, bool unilateral) : Group(name) {
   n3->enableOpenMBV(.005);
 #endif
   n3->setInitialVolume(V0);
-  n3->addRotMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(3)))->getFrame("R"), Vec("[0;1;0]"), area, traeger->getFrame("C"));
-  n3->addRotMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(2)))->getFrame("L"), Vec("[0;-1;0]"), area, traeger->getFrame("C"));
+  n3->addRotMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(3)))->getFrame("R"), Vec("[0;1;0]"), area, traeger->getFrame("C"));
+  n3->addRotMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(2)))->getFrame("L"), Vec("[0;-1;0]"), area, traeger->getFrame("C"));
 
   RigidNodeMec * n4 = new RigidNodeMec("n_"+getBodyName(3)+"_"+getBodyName(4));
   addLink(n4);
@@ -268,24 +268,13 @@ System::System(const string &name, bool unilateral) : Group(name) {
   n4->enableOpenMBVArrows(.01);
   n4->enableOpenMBV(.005);
 #endif
-  n4->addRotMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(4)))->getFrame("R"), Vec("[0;1;0]"), area, traeger->getFrame("C")); 
-  n4->addRotMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(3)))->getFrame("L"), Vec("[0;-1;0]"), area, traeger->getFrame("C"));
+  n4->addRotMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(4)))->getFrame("R"), Vec("[0;1;0]"), area, traeger->getFrame("C")); 
+  n4->addRotMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(3)))->getFrame("L"), Vec("[0;-1;0]"), area, traeger->getFrame("C"));
   n4->addInFlow(l04);
-
-//  ElasticNodeMec * n4 = new ElasticNodeMec("n_"+getBodyName(3)+"_"+getBodyName(4));
-//  n4->setFracAir(.01);
-//  n4->setp0(1e5);
-//  addLink(n4);
-//  n4->setInitialVolume(V0);
-//  n4->enableOpenMBVArrows(.01);
-//  n4->enableOpenMBV(.005);
-//  n4->addRotMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(4)))->getFrame("R"), Vec("[0;1;0]"), area, traeger->getFrame("C")); 
-//  n4->addRotMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(3)))->getFrame("L"), Vec("[0;-1;0]"), area, traeger->getFrame("C"));
-//  n4->addInFlow(l04);
 
   EnvironmentNodeMec * n4Inf = new EnvironmentNodeMec("n4Inf");
   addLink(n4Inf);
-  n4Inf->addRotMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(4)))->getFrame("L"), Vec("[0;-1;0]"), area, traeger->getFrame("C")); 
+  n4Inf->addRotMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(4)))->getFrame("L"), Vec("[0;-1;0]"), area, traeger->getFrame("C"));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   n4Inf->enableOpenMBVArrows(.01);
 #endif
