@@ -17,7 +17,7 @@ class PressBound : public Link {
     void updategd(double) {}
     void updateWRef(const fmatvec::Mat&, int) {}
     void updateVRef(const fmatvec::Mat&, int) {}
-    void updatehRef(const fmatvec::Vec&, const fmatvec::Vec&, int) {}
+    void updatehRef(const fmatvec::Vec&, int) {}
     void updatedhdqRef(const fmatvec::Mat&, int) {}
     void updatedhduRef(const fmatvec::SqrMat&, int) {}
     void updatedhdtRef(const fmatvec::Vec&, int) {}

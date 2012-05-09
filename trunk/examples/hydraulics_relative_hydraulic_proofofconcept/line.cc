@@ -26,21 +26,21 @@ void Line::calcuSize(int j) {
     uSize[j]=0;
 }
 
-void Line::updateM(double) {
-  M+=1*JTJ(J);
+void Line::updateM(double, int k) {
+  M[k]+=1*JTJ(J);
 }
 
-void Line::updateJacobians(double) {
+void Line::updateJacobians(double, int k) {
   if(dependency.size()==0) {
-    if(M.size()==1)
+    if(M[k].size()==1)
       J=Mat(1,1,INIT,1);
     else {
-      J=Mat(1,M.size());
+      J=Mat(1,M[k].size());
       J(0,uInd[0])=1;
     }
   }
   else {
-    J=Mat(1,M.size());
+    J=Mat(1,M[k].size());
     for(size_t i=0; i<dependency.size(); i++) {
       Mat Jdep=((Line*)dependency[i])->getJ();
       J(0,Index(0,Jdep.cols()-1))+=Jdep;
@@ -50,7 +50,7 @@ void Line::updateJacobians(double) {
 
 void Line::init(InitStage stage) {
   if(stage==MBSim::plot) {
-    updatePlotFeatures(parent);
+    updatePlotFeatures();
 
     if(getPlotFeature(plotRecursive)==enabled) {
       plotColumns.push_back("flowrate");
