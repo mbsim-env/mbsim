@@ -43,6 +43,7 @@ namespace MBSimFlexibleBody {
    * \data 2011-10-08 basics derived and included (Thorsten Schindler)
    * \date 2011-10-12 rotation grid added (Thorsten Schindler)
    * \date 2012-03-15 updateKinematicsForFrame and contact Jacobians (Cebulla / Schindler)
+   * \date 2012-05-10 added initInfo()-function and Contour1sFlexible for perlchain example (Thomas Cebulla)
    * \todo compute boundary conditions TODO
    *
    * Cosserat model based on
@@ -147,6 +148,7 @@ namespace MBSimFlexibleBody {
        */
       CylinderFlexible *cylinder;
       FlexibleBand *top, *bottom, *left, *right;
+      Contour1sFlexible *neutralFibre;
 
       /**
        * \brief angle parametrisation
