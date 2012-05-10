@@ -39,12 +39,13 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FlexibleBody1s33Cosserat::FlexibleBody1s33Cosserat(const string &name, bool openStructure_) : FlexibleBodyContinuum<double> (name), cylinder(new CylinderFlexible("Cylinder")), top(new FlexibleBand("Top")), bottom(new FlexibleBand("Bottom")), left(new FlexibleBand("Left")), right(new FlexibleBand("Right")), angle(new Cardan()), Elements(0), rotationalElements(0), L(0.), l0(0.), E(0.), G(0.),A(0.), I1(0.), I2(0.), I0(0.), rho(0.), R1(0.), R2(0.), cEps0D(0.), cEps1D(0.), cEps2D(0.), openStructure(openStructure_), initialised(false), bound_ang_start(3,INIT,0.), bound_ang_end(3,INIT,0.), bound_ang_vel_start(3,INIT,0.), bound_ang_vel_end(3,INIT,0.), cuboidBreadth(0.), cuboidHeight(0.), cylinderRadius(0.), curve(new NurbsCurve1s("Curve")) {
+  FlexibleBody1s33Cosserat::FlexibleBody1s33Cosserat(const string &name, bool openStructure_) : FlexibleBodyContinuum<double> (name), cylinder(new CylinderFlexible("Cylinder")), top(new FlexibleBand("Top")), bottom(new FlexibleBand("Bottom")), left(new FlexibleBand("Left")), right(new FlexibleBand("Right")), neutralFibre(new Contour1sFlexible("NeutralFibre")), angle(new Cardan()), Elements(0), rotationalElements(0), L(0.), l0(0.), E(0.), G(0.),A(0.), I1(0.), I2(0.), I0(0.), rho(0.), R1(0.), R2(0.), cEps0D(0.), cEps1D(0.), cEps2D(0.), openStructure(openStructure_), initialised(false), bound_ang_start(3,INIT,0.), bound_ang_end(3,INIT,0.), bound_ang_vel_start(3,INIT,0.), bound_ang_vel_end(3,INIT,0.), cuboidBreadth(0.), cuboidHeight(0.), cylinderRadius(0.), curve(new NurbsCurve1s("Curve")) {
     Body::addContour(cylinder);
     Body::addContour(top);
     Body::addContour(bottom);
     Body::addContour(left);
     Body::addContour(right);
+    Body::addContour(neutralFibre);
     Body::addContour(curve);
   }
 
@@ -253,6 +254,11 @@ namespace MBSimFlexibleBody {
       right->setAlphaStart(0.);
       right->setAlphaEnd(L);
 
+      /* neutral fibre  */
+      neutralFibre->getFrame()->setOrientation(frameOfReference->getOrientation());
+      neutralFibre->setAlphaStart(0.);
+      neutralFibre->setAlphaEnd(L);
+
       if(userContourNodes.size()==0) {
         Vec contourNodes(Elements+1);
         for(int i=0;i<=Elements;i++) contourNodes(i) = L / Elements * i;
@@ -260,12 +266,14 @@ namespace MBSimFlexibleBody {
         bottom->setNodes(contourNodes);
         left->setNodes(contourNodes);
         right->setNodes(contourNodes);
+        neutralFibre->setNodes(contourNodes);
       }
       else {
         top->setNodes(userContourNodes);
         bottom->setNodes(userContourNodes);
         left->setNodes(userContourNodes);
         right->setNodes(userContourNodes);
+        neutralFibre->setNodes(userContourNodes);
       }
 
       top->setWidth(cuboidBreadth);
@@ -428,17 +436,21 @@ namespace MBSimFlexibleBody {
     /* translational elements */
     for(int i=0;i<Elements;i++) {
       discretization.push_back(new FiniteElement1s33CosseratTranslation(l0,rho,A,E,G,I1,I2,I0,g,angle));
-      qElement.push_back(Vec(discretization[i]->getqSize(),INIT,0.));
-      uElement.push_back(Vec(discretization[i]->getuSize(),INIT,0.));
+      qElement.push_back(Vec(discretization[0]->getqSize(),INIT,0.));
+      uElement.push_back(Vec(discretization[0]->getuSize(),INIT,0.));
     }
 
     /* rotational elements */
     for(int i=0;i<rotationalElements;i++) {
       rotationDiscretization.push_back(new FiniteElement1s33CosseratRotation(l0,E,G,I1,I2,I0,angle));
-      qRotationElement.push_back(Vec(rotationDiscretization[i]->getqSize(),INIT,0.));
-      uRotationElement.push_back(Vec(rotationDiscretization[i]->getuSize(),INIT,0.));
+      qRotationElement.push_back(Vec(rotationDiscretization[0]->getqSize(),INIT,0.));
+      uRotationElement.push_back(Vec(rotationDiscretization[0]->getuSize(),INIT,0.));
     }
     BuildElements();
+
+#ifdef HAVE_NURBS
+    curve->initContourFromBody(resize);
+#endif
   }
 
   void FlexibleBody1s33Cosserat::BuildElementTranslation(const double& sGlobal, double& sLocal,int& currentElementTranslation) {

@@ -67,6 +67,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     q0(6*i+5) = phi - dphi/2.-M_PI/2.;
   }
   rod->setq0(q0);
+  rod->setu0(Vec(q0.size(),INIT,0.));
   this->addObject(rod);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -140,7 +141,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rodInfo->setLength(rod->getLength());
   rodInfo->setFrameOfReference(rod->getFrameOfReference());
 
-  //rodInfo->initInfo();
+  rodInfo->initInfo();
   rodInfo->updateStateDependentVariables(0.);
 
   for(unsigned int i=0;i<balls.size();i++) {
@@ -153,7 +154,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     rodInfo->updateKinematicsForFrame(cp,position_cosy);
     q0(0) = cp.getFrameOfReference().getPosition()(0);
     q0(1) = cp.getFrameOfReference().getPosition()(1);
-    q0(2) = -AIK2Cardan(cp.getFrameOfReference().getOrientation())(2) + M_PI*0.5;
+    q0(2) = AIK2Cardan(cp.getFrameOfReference().getOrientation())(2) + M_PI*0.5;
     balls[i]->setInitialGeneralizedPosition(q0);
   }
 
@@ -173,7 +174,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     Contact *contact = new Contact("Band_"+balls[i]->getName());
     contact->setContactForceLaw(new BilateralConstraint);
     contact->setContactImpactLaw(new BilateralImpact);
-    contact->connect(balls[i]->getContour("COG"),rod->getContour("Contour1sFlexible"));
+    contact->connect(balls[i]->getContour("COG"),rod->getContour("NeutralFibre"));
     contact->enableOpenMBVContactPoints(0.01);
     this->addLink(contact);
   }
