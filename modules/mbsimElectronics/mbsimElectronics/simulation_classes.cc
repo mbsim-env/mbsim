@@ -36,28 +36,16 @@ namespace MBSimElectronics {
     }
   }
 
-  void ElectronicLink::calcgSize() {
+  void ElectronicLink::calcgSize(int j) {
     gSize = 1;
   }
 
-  void ElectronicLink::calcgdSize() {
+  void ElectronicLink::calcgdSize(int j) {
     gdSize = 1;
   }
 
-  void ElectronicLink::calclaSize() {
+  void ElectronicLink::calclaSize(int j) {
     laSize = 1;
-  }
-
-  void ElectronicLink::calclaSizeForActiveg() {
-    calclaSize();
-  }
-
-  void ElectronicLink::calcgSizeActive() {
-    calcgSize();
-  }
-
-  void ElectronicLink::calcgdSizeActive() {
-    calcgdSize();
   }
 
   void ElectronicLink::init(InitStage stage) {

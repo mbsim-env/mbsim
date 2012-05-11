@@ -95,12 +95,9 @@ namespace MBSimElectronics {
       virtual const Element* getParent() const {return parent;}
       virtual void setParent(Element* parent_) {parent = parent_;}
 
-      void calcgSize();
-      void calcgdSize();
-      void calclaSize();
-      void calclaSizeForActiveg();
-      void calcgSizeActive();
-      void calcgdSizeActive();
+      void calcgSize(int j);
+      void calcgdSize(int j);
+      void calclaSize(int j);
       void updateg(double t);
       void updategd(double t);
       void updateW(double t, int j=0);
