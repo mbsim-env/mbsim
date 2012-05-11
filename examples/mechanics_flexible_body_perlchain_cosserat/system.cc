@@ -57,7 +57,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // circle shape
   Vec q0 = Vec(6*elements,INIT,0.);
-  double R = (l0/(2.*M_PI))*1.0; // stretched circle
+  double R = (l0/elements)/(2.*sin(M_PI/elements)); // radius of circumscribed circle of regular polygon
   double dphi = (2*M_PI)/elements;
   double phi0 = M_PI/2.;// + dphi;
   for(int i=0; i<elements; i++) {
@@ -102,7 +102,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     balls[i]->setFrameOfReference(this->getFrame("I"));
     balls[i]->setFrameForKinematics(balls[i]->getFrame("C"));
     balls[i]->setTranslation(new LinearTranslation("[1,0;0,1;0,0]"));
-    balls[i]->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+    balls[i]->setRotation(new RotationAboutZAxis);
     balls[i]->setMass(mass);
     SymMat Theta(3,INIT,0.);
     Theta(0,0) = 1./6.*mass*b*b;
