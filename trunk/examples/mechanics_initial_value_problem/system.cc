@@ -24,7 +24,7 @@ class initLink : public Link {
     initLink(const std::string &name, RigidBody * rocker_, Contact * contactCamRocker_) : Link(name), rocker(rocker_), contactCamRocker(contactCamRocker_) {}    
     void updateWRef(const fmatvec::Mat&, int){}
     void updateVRef(const fmatvec::Mat&, int){}
-    void updatehRef(const fmatvec::Vec&, const fmatvec::Vec&, int){}
+    void updatehRef(const fmatvec::Vec&, int){}
     void updatedhdqRef(const fmatvec::Mat&, int){}
     void updatedhduRef(const fmatvec::SqrMat&, int){}
     void updatedhdtRef(const fmatvec::Vec&, int){}
