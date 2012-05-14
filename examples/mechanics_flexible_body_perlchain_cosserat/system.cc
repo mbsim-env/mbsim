@@ -59,9 +59,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Vec q0 = Vec(6*elements,INIT,0.);
   double R = (l0/elements)/(2.*sin(M_PI/elements)); // radius of circumscribed circle of regular polygon
   double dphi = (2*M_PI)/elements;
-  double phi0 = M_PI/2.;// + dphi;
   for(int i=0; i<elements; i++) {
-    double phi = phi0 - i*dphi;
+    double phi = M_PI/2. - i*dphi;
     q0(6*i) = R*cos(phi);
     q0(6*i+1) = R*sin(phi);
     q0(6*i+5) = phi - dphi/2.-M_PI/2.;
@@ -146,7 +145,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   for(unsigned int i=0;i<balls.size();i++) {
     Vec q0(3,INIT,0.);
-    double xL = fmod(i*rodInfo->getLength()/balls.size() + rodInfo->getLength()*0.25,rodInfo->getLength());
+    double xL = i*rodInfo->getLength()/balls.size();
     ContourPointData cp;
     cp.getContourParameterType() = CONTINUUM;
     cp.getLagrangeParameterPosition() = Vec(1,INIT,xL);
@@ -154,7 +153,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     rodInfo->updateKinematicsForFrame(cp,position_cosy);
     q0(0) = cp.getFrameOfReference().getPosition()(0);
     q0(1) = cp.getFrameOfReference().getPosition()(1);
-    q0(2) = AIK2Cardan(cp.getFrameOfReference().getOrientation())(2) + M_PI*0.5;
+    q0(2) = M_PI + AIK2Cardan(cp.getFrameOfReference().getOrientation())(2) + M_PI*0.5;
     balls[i]->setInitialGeneralizedPosition(q0);
   }
 
@@ -166,7 +165,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   joint->setForceDirection(Mat("[1,0;0,1;0,0]"));
   joint->setForceLaw(new BilateralConstraint);
   joint->setImpactForceLaw(new BilateralImpact);
-  joint->connect(this->getFrame("BearingFrame"),balls[0]->getFrame("C"));
+  joint->connect(this->getFrame("BearingFrame"),balls[0]->getFrame("C")); // topmost ball is suspended to hold rod
   this->addLink(joint);
 
   // constraints balls on flexible band
