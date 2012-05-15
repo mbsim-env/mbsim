@@ -67,12 +67,13 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FlexibleBody1s33RCM::FlexibleBody1s33RCM(const string &name,bool openStructure_) : FlexibleBodyContinuum<double>(name),cylinder(new CylinderFlexible("Cylinder")),top(new FlexibleBand("Top")),bottom(new FlexibleBand("Bottom")),left(new FlexibleBand("Left")),right(new FlexibleBand("Right")),angle(new RevCardan()),Elements(0),L(0.),l0(0.),E(0.),G(0.),A(0.),I1(0.),I2(0.),I0(0.),rho(0.),R1(0.),R2(0.),epstD(0.),k0D(0.),epstL(0.),k0L(0.),openStructure(openStructure_),initialised(false),nGauss(3),cylinderRadius(0.),cuboidBreadth(0.),cuboidHeight(0.) {
+  FlexibleBody1s33RCM::FlexibleBody1s33RCM(const string &name,bool openStructure_) : FlexibleBodyContinuum<double>(name),cylinder(new CylinderFlexible("Cylinder")),top(new FlexibleBand("Top")),bottom(new FlexibleBand("Bottom")),left(new FlexibleBand("Left")),right(new FlexibleBand("Right")),neutralFibre(new Contour1sFlexible("NeutralFibre")),angle(new RevCardan()),Elements(0),L(0.),l0(0.),E(0.),G(0.),A(0.),I1(0.),I2(0.),I0(0.),rho(0.),R1(0.),R2(0.),epstD(0.),k0D(0.),epstL(0.),k0L(0.),openStructure(openStructure_),initialised(false),nGauss(3),cylinderRadius(0.),cuboidBreadth(0.),cuboidHeight(0.) {
     Body::addContour(cylinder);
     Body::addContour(top);
     Body::addContour(bottom);
     Body::addContour(left);
     Body::addContour(right);
+    Body::addContour(neutralFibre);
   }
 
   void FlexibleBody1s33RCM::BuildElements() {
@@ -257,6 +258,11 @@ namespace MBSimFlexibleBody {
       right->setAlphaStart(0.);
       right->setAlphaEnd(L);
 
+      /* neutral fibre  */
+      neutralFibre->getFrame()->setOrientation(frameOfReference->getOrientation());
+      neutralFibre->setAlphaStart(0.);
+      neutralFibre->setAlphaEnd(L);
+
       if(userContourNodes.size()==0) {
         Vec contourNodes(Elements+1);
         for(int i=0;i<=Elements;i++) contourNodes(i) = L/Elements * i;
@@ -264,12 +270,14 @@ namespace MBSimFlexibleBody {
         bottom->setNodes(contourNodes);
         left->setNodes(contourNodes);
         right->setNodes(contourNodes);
+        neutralFibre->setNodes(contourNodes);
       }
       else {
         top->setNodes(userContourNodes);
         bottom->setNodes(userContourNodes);
         left->setNodes(userContourNodes);
         right->setNodes(userContourNodes);
+        neutralFibre->setNodes(userContourNodes);
       }
 
       top->setWidth(cuboidBreadth);
