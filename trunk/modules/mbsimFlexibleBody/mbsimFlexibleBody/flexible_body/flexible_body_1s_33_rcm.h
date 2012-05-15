@@ -39,6 +39,8 @@ namespace MBSimFlexibleBody {
    * \date 2009-05-08 visualisation (Thorsten Schindler)
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    * \date 2009-07-23 implicit integration (Thorsten Schindler)
+   * \date 2012-01-10 import / export position and velocity (Cebulla / Grundl)
+   * \date 2012-05-14 added Contour1sFlexible for perlchain example (Thomas Cebulla)
    * \todo gyroscopic accelerations TODO
    * \todo inverse kinetics TODO
    */
@@ -79,7 +81,9 @@ namespace MBSimFlexibleBody {
 
       /* GETTER / SETTER */
       void setNumberElements(int n);
+      int getNumberElements(){return Elements;}
       void setLength(double L_);
+      double getLength(){return L;}
       void setEGModuls(double E_,double G_);
       void setDensity(double rho_);
       void setCrossSectionalArea(double A_);
@@ -113,6 +117,7 @@ namespace MBSimFlexibleBody {
        */
       CylinderFlexible *cylinder;
       FlexibleBand *top, *bottom, *left, *right;
+      Contour1sFlexible *neutralFibre;
 
       /**
        * \brief angle parametrisation
