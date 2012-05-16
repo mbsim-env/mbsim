@@ -23,8 +23,8 @@ Pendulum::Pendulum(const string &projectName) : Group(projectName) {
   KrKS(0) = a1;
   SqrMat A(3,EYE);
 
-  stab1->addFrame("Ref",-KrKS,A);
-  stab1->setFrameForKinematics(stab1->getFrame("Ref"));
+  stab1->addFrame("R",-KrKS,A);
+  stab1->setFrameForKinematics(stab1->getFrame("R"));
   stab1->setFrameOfReference(getFrame("I"));
 
   stab1->setqSize(1);
@@ -37,10 +37,11 @@ Pendulum::Pendulum(const string &projectName) : Group(projectName) {
 
 #if HAVE_OPENMBVCPPINTERFACE
   OpenMBV::IvBody* obj1=new OpenMBV::IvBody;
-  obj1->setIvFileName("objects/pendel1.wrl");
+  obj1->setIvFileName("wrl/pendel1.wrl");
   obj1->setScaleFactor(0.1*0.3);
-  obj1->setInitialRotation(Vec("[0;0;1]")*M_PI/2);
+  obj1->setInitialRotation(0,0,M_PI/2);
   stab1->setOpenMBVRigidBody(obj1);
+  stab1->setOpenMBVFrameOfReference(stab1->getFrame("R"));
 #endif
 
   stab2 = new RigidBody("Stab2");
@@ -62,10 +63,11 @@ Pendulum::Pendulum(const string &projectName) : Group(projectName) {
 
 #if HAVE_OPENMBVCPPINTERFACE
   OpenMBV::IvBody* obj2=new OpenMBV::IvBody;
-  obj2->setIvFileName("objects/pendel2.wrl");
+  obj2->setIvFileName("wrl/pendel2.wrl");
   obj2->setScaleFactor(0.1*0.3);
-  obj2->setInitialRotation(Vec("[0;0;1]")*M_PI/2);
+  obj2->setInitialRotation(0,0,M_PI/2);
   stab2->setOpenMBVRigidBody(obj2);
+  stab2->setOpenMBVFrameOfReference(stab2->getFrame("R"));
 #endif
 }
 
