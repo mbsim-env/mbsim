@@ -31,6 +31,10 @@ void Line::updateM(double, int k) {
 }
 
 void Line::updateJacobians(double, int k) {
+  if(k!=0) return; // How to calcualte the reactive forces for relative hydraulic lines?
+                   // Don't know => do nothing => this leads to wrong reactive forces in the whole model
+                   // but this does not influence the dynamics.
+
   if(dependency.size()==0) {
     if(M[k].size()==1)
       J=Mat(1,1,INIT,1);
