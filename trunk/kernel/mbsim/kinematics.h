@@ -289,19 +289,19 @@ namespace MBSim {
    * \date 2009-12-22 should be a rotation because otherwise it has some dof (Thorsten Schindler)
    * \date 2010-05-23 update according to change in Rotation (Martin Foerg)
    */
-  class TimeDependentRotationAboutFixedAxis: public RotationAboutOneAxis {
+  class TimeDependentRotationAboutFixedAxis: public Rotation {
     public:
       /**
        * \brief constructor
        */
-      TimeDependentRotationAboutFixedAxis() : RotationAboutOneAxis(), rot(new RotationAboutFixedAxis()), angle(NULL) {}
+      TimeDependentRotationAboutFixedAxis() : Rotation(), rot(new RotationAboutFixedAxis()), angle(NULL) {}
 
       /**
        * \brief constructor
        * \param independent rotation angle function
        * \param axis of rotation
        */
-      TimeDependentRotationAboutFixedAxis(Function1<double, double> *angle_, const fmatvec::Vec &a_) : RotationAboutOneAxis(), rot(new RotationAboutFixedAxis(a_)), angle(angle_) {}
+      TimeDependentRotationAboutFixedAxis(Function1<double, double> *angle_, const fmatvec::Vec &a_) : Rotation(), rot(new RotationAboutFixedAxis(a_)), angle(angle_) {}
 
       /**
        * \brief destructor
