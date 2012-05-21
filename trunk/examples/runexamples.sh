@@ -124,7 +124,7 @@ for D in $EXAMPLES; do
   echo $D | grep "^\./xml_" && XMLEXAMPLE=true_pp
   echo $D | grep "^xml_" && XMLEXAMPLE=true_pp
 
-
+  EXTRAARGS=""
   STARTTIME=$(date +%s)
   if [ $XMLEXAMPLE == false ]; then
     ERROR=1
