@@ -17,9 +17,10 @@ int main(int argc, char *argv[]) {
   int ret=0;
 
   try {
-    ret=MBSimXML::preInitDynamicSystemSolver(argc, argv, dss);
+    MBSimXML::preInitDynamicSystemSolver(argc, argv, dss);
   }
   catch (MBSimError error) {
+    ret=1;
     error.printExceptionMessage();
   }
   if(ret==-1) 
@@ -28,18 +29,20 @@ int main(int argc, char *argv[]) {
     return ret;
 
   try {
-    ret=MBSimXML::initDynamicSystemSolver(argc, argv, dss);
+    MBSimXML::initDynamicSystemSolver(argc, argv, dss);
   }
   catch (MBSimError error) {
+    ret=1;
     error.printExceptionMessage();
   }
   if(ret!=0) 
     return ret;
 
   try {
-    ret=MBSimXML::initIntegrator(argc, argv, integrator);
+    MBSimXML::initIntegrator(argc, argv, integrator);
   }
   catch (MBSimError error) {
+    ret=1;
     error.printExceptionMessage();
   }
   if(ret!=0) 
@@ -47,9 +50,10 @@ int main(int argc, char *argv[]) {
 
   if(doNotIntegrate==false) {
     try {
-      ret=MBSimXML::main(integrator, dss);
+      MBSimXML::main(integrator, dss);
     }
     catch (MBSimError error) {
+      ret=1;
       error.printExceptionMessage();
     }
     if(ret!=0) 
@@ -57,9 +61,10 @@ int main(int argc, char *argv[]) {
   }
 
   try {
-    ret=MBSimXML::postMain(argc, argv, integrator, dss);
+    MBSimXML::postMain(argc, argv, integrator, dss);
   }
   catch (MBSimError error) {
+    ret=1;
     error.printExceptionMessage();
   }
   if(ret!=0) 
