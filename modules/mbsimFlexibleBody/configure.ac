@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.57])
-AC_INIT([mbsimFlexibleBody],[2.2.0],[ts.schindler@gmail.com])
+AC_INIT([mbsimFlexibleBody],[3.0.0],[ts.schindler@gmail.com])
 AC_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([mbsimFlexibleBody/Makefile.am])
@@ -16,7 +16,7 @@ AC_C_CONST
 AC_CHECK_FUNCS([sqrt])
 AC_HEADER_STDBOOL
 
-PKG_CHECK_MODULES(DEPS, mbsim >= 2.1.0)
+PKG_CHECK_MODULES(DEPS, mbsim >= 3.0.0)
 
 LDFLAGS="$LDFLAGS -Wl,--no-undefined"
 
