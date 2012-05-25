@@ -44,7 +44,9 @@ namespace MBSimFlexibleBody {
    * \date 2011-10-12 rotation grid added (Thorsten Schindler)
    * \date 2012-03-15 updateKinematicsForFrame and contact Jacobians (Cebulla / Schindler)
    * \date 2012-05-10 added initInfo()-function and Contour1sFlexible for perlchain example (Thomas Cebulla)
+   * \date 2012-05-25 added export and import position velocity function (Thomas Cebulla)
    * \todo compute boundary conditions TODO
+   * \todo check open structure in contact kinematics TODO
    *
    * Cosserat model based on
    * H. Lang, J. Linn, M. Arnold: Multi-body dynamics simulation of geometrically exact Cosserat rods
@@ -77,6 +79,8 @@ namespace MBSimFlexibleBody {
       virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
       virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff, MBSim::Frame *frame=0);
       virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame=0);
+      virtual void exportPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string( ), const int & deg = 3, const bool & writePsFile = false);
+      virtual void importPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string( ));
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECT */

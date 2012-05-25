@@ -464,6 +464,7 @@ namespace MBSimFlexibleBody {
 
     double l0 = L/Elements;
     Vec q0Dummy(q0.size(),INIT,0.);
+    Vec u0Dummy(u0.size(),INIT,0.);
     Point3Dd prevBinStart;
 
     for(int i = 0; i < Elements; i++) {
@@ -503,11 +504,13 @@ namespace MBSimFlexibleBody {
         Vec velK(3,INIT,0.); velK(0) = velStart.x(); velK(1) = velStart.y(); velK(2) = velStart.z();
         Vec velI = trans(frameOfReference->getOrientation())*AIK*velK;
 
-        u(i*5) = velI(0);
-        u(i*5+1) = velI(1);
+        u0Dummy(i*5) = velI(0);
+        u0Dummy(i*5+1) = velI(1);
       }
     }
     setq0(q0Dummy);
+    if(not filenameVel.empty())
+      setu0(u0Dummy);
 
     if(DEBUGLEVEL == 1) {
       for (double i = 0; i < Elements; i++) {
