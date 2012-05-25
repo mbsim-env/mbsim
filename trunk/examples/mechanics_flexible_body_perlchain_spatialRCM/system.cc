@@ -155,7 +155,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     rodInfo->updateKinematicsForFrame(cp,position_cosy);
     q0(0) = cp.getFrameOfReference().getPosition()(0);
     q0(1) = cp.getFrameOfReference().getPosition()(1);
-    q0(2) = M_PI + AIK2RevCardan(cp.getFrameOfReference().getOrientation())(2) + M_PI*0.5;
+    q0(2) = AIK2RevCardan(cp.getFrameOfReference().getOrientation())(2) + M_PI*0.5;
     balls[i]->setInitialGeneralizedPosition(q0);
   }
 
