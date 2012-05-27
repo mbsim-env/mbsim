@@ -36,7 +36,7 @@ namespace MBSimFlexibleBody {
    * \author Markus Schneider
    * \date 2011-10-16 some comments (Thorsten Schindler)
    */
-  class ObjectFactory : protected MBSim::ObjectFactory {
+  class ObjectFactory : protected MBSim::ObjectFactoryBase {
     public:
       /**
        * \brief create and register new ObjectFactory

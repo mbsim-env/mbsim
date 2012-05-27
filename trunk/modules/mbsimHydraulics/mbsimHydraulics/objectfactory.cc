@@ -167,7 +167,7 @@ namespace MBSimHydraulics {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMHYDRAULICSNS"Controlvalve43")
       return new Controlvalve43(element->Attribute("name"));
-    if(element->ValueStr()==MBSIMHYDRAULICSNS"BallCheckvalve")
+    if(element->ValueStr()==MBSIMHYDRAULICSNS"Checkvalve")
       return new Checkvalve(element->Attribute("name"));
     return 0;
   }

@@ -5,7 +5,7 @@
   <frames/>
   <contours/>
   <groups>
-    <BallCheckvalve name="Checkvalve" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
+    <Checkvalve name="Checkvalve" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
       <basisFrame ref="../Object[Piston]/Frame[CheckvalveF]"/>
       <RigidLine>
         <length>.001</length>
@@ -55,7 +55,7 @@
       <enableOpenMBVBodies/>
       <enableOpenMBVFrames/>
       <enableOpenMBVArrows/>
-    </BallCheckvalve>
+    </Checkvalve>
   </groups>
   <objects>
     <RigidBody name="Housing">
