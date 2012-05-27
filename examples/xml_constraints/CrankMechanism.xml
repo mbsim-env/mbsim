@@ -157,14 +157,14 @@
         <offset>1.</offset>
       </enableOpenMBVFrameC>
     </RigidBody>
-    <Constraint2 xmlns="http://mbsim.berlios.de/MBSim" name="Constraint_Motor_Crank">
+    <GearConstraint xmlns="http://mbsim.berlios.de/MBSim" name="Constraint_Motor_Crank">
       <referenceRigidBody ref="../Object[Crank]"/>
       <dependentRigidBodies>
         <dependentRigidBody ref="../Object[Motor]">
           <transmissionRatio>-motor_TransmissionRadius/crank_TransmissionRadius</transmissionRatio>
         </dependentRigidBody>
       </dependentRigidBodies>
-    </Constraint2>
+    </GearConstraint>
     <RigidBody xmlns="http://mbsim.berlios.de/MBSim" name="Rocker">
       <frameOfReference ref="../Object[Crank]/Frame[fRocker]"/>
       <frameForKinematics ref="Frame[fCrank]"/>
