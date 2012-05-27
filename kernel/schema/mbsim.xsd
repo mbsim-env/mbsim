@@ -1183,7 +1183,7 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="Constraint2" substitutionGroup="Constraint" type="Constraint2Type">
+<!--  <xs:element name="Constraint2" substitutionGroup="Constraint" type="Constraint2Type">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         TODO <br/>
@@ -1233,7 +1233,7 @@
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
-  </xs:complexType>   
+  </xs:complexType>-->
 
   <xs:element name="JointConstraint" substitutionGroup="Constraint" type="JointConstraintType">
     <xs:annotation>

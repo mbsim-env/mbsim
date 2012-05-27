@@ -11,7 +11,7 @@
   <frames/>
   <contours/>
   <groups>
-    <h:BallCheckvalve name="Checkvalve">
+    <h:Checkvalve name="Checkvalve">
       <plotFeature feature="+rightHandSide"/>
       <h:basisFrame ref="../Object[Housing]/Frame[CVMount]"/>
       <h:RigidLine>
@@ -64,7 +64,7 @@
       <h:enableOpenMBVBodies/>
       <h:enableOpenMBVFrames/>
       <h:enableOpenMBVArrows/>
-    </h:BallCheckvalve>
+    </h:Checkvalve>
   </groups>
   <objects>
     <RigidBody name="Housing">
