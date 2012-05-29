@@ -28,6 +28,7 @@
 #include <mbsim/contour_pdata.h>
 #include <mbsim/contact_kinematics/contact_kinematics.h>
 #include <mbsim/constitutive_laws.h>
+#include <mbsim/numerics/linear_complementarity_problem/linear_complementarity_problem.h>
 #include <mbsim/utils/utils.h>
 #include <mbsim/utils/contact_utils.h>
 #include <mbsim/utils/function.h>
@@ -45,17 +46,11 @@
 
 using namespace std;
 using namespace fmatvec;
-#ifdef HAVE_MBSIMNUMERICS
-using namespace MBSimNumerics;
-#endif
 
 namespace MBSim {
 
   MaxwellContact::MaxwellContact(const string &name) :
-      LinkMechanics(name), contourPairing(0), possibleContactPoints(0), C(SymMat(0,NONINIT)),
-#ifdef HAVE_MBSIMNUMERICS
-      lcpSolvingStrategy(MBSimNumerics::Standard),
-#endif
+      LinkMechanics(name), contourPairing(0), possibleContactPoints(0), C(SymMat(0,NONINIT)), lcpSolvingStrategy(Standard),
       solution0(Vec(0,NONINIT)), matConst(1.), matConstSetted(false), DEBUGLEVEL(0)
   {
     gTol = 1;
@@ -95,20 +90,19 @@ namespace MBSim {
 //      else
 //        lcpSolvingStrategy = Reformulated;
 
-#ifdef HAVE_MBSIMNUMERICS
       LinearComplementarityProblem LCP(C, rigidBodyGap, lcpSolvingStrategy);
 
       map<Index, double> tolerances;
-      tolerances.insert(pair<Index, double>(Index(0,possibleContactPoints.size() - 1), 1e-6)); //tolerances for distances
+      tolerances.insert(pair<Index, double>(Index(0,possibleContactPoints.size() - 1), 1e-8)); //tolerances for distances
       tolerances.insert(pair<Index, double>(Index(possibleContactPoints.size(),2*possibleContactPoints.size()-1), 1e-3)); //tolerances for forces
-      LCP.setNewtonCriteriaFunction(new LocalResidualCriteriaFunction(tolerances));
-      LCP.setStrategy(lcpSolvingStrategy);
+      LocalResidualCriteriaFunction* critfunc = new LocalResidualCriteriaFunction(tolerances);
+      LCP.setNewtonCriteriaFunction(critfunc);
+      LCP.setDebugLevel(0);
 
       solution0.resize() = LCP.solve(solution0);
 
-#else
-      solution0.resize() = solveLCP(C, rigidBodyGap, MBSim::Standard, matConst);
-#endif
+      delete critfunc;
+
 
       Vec lambda = solution0(rigidBodyGap.size(), 2 * rigidBodyGap.size()-1);
 

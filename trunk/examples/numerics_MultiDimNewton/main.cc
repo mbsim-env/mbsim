@@ -1,4 +1,4 @@
-#include <numerics/nonlinear_algebra/multi_dimensional_newton_method.h>
+#include <mbsim/numerics/nonlinear_algebra/multi_dimensional_newton_method.h>
 #include <mbsim/utils/nonlinear_algebra.h>
 #include <mbsim/utils/stopwatch.h>
 #include <fmatvec.h>
@@ -7,11 +7,10 @@
 
 using namespace fmatvec;
 using namespace MBSim;
-using namespace MBSimNumerics;
 using namespace std;
 
 
-class TestFunction : public MBSimNumerics::Function1<fmatvec::Vec, fmatvec::Vec> {
+class TestFunction : public Function1<fmatvec::Vec, fmatvec::Vec> {
 
   public:
     /**
@@ -38,42 +37,17 @@ class TestFunction : public MBSimNumerics::Function1<fmatvec::Vec, fmatvec::Vec>
 
 };
 
-class TestFunction2 : public MBSim::Function1<fmatvec::Vec, fmatvec::Vec> {
-
-  public:
-    /**
-     * \brief Constructor
-     */
-  TestFunction2(){
-  }
-
-    /**
-     * \brief Destructor
-     */
-    virtual ~TestFunction2() {
-    }
-
-    virtual fmatvec::Vec operator ()(const fmatvec::Vec & vector, const void * = NULL) {
-      Vec result(vector.size(), INIT, 0.);
-
-      for(int i=0; i< result.size(); i++) {
-        result(i) = pow(sin(i*2*M_PI/vector.size()) + vector(i), 2);
-      }
-
-      return result;
-    }
-
-};
-
 int main (int argc, char* argv[]) {
 
-  int dimension = 3000;
+  int dimension = 300;
 
   TestFunction * function = new TestFunction();
 
-  MultiDimensionalNewtonMethod newton(function);
+  MultiDimensionalNewtonMethod newton;
+  newton.setFunction(function);
+  newton.setJacobianFunction(new NumericalNewtonJacobianFunction());
 
-  TestFunction2 * function2 = new TestFunction2();
+  TestFunction * function2 = new TestFunction();
 
   MultiDimNewtonMethod newton2(function2);
 

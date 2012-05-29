@@ -1,6 +1,5 @@
 noinst_LTLIBRARIES = libutils.la
 libutils_la_SOURCES = eps.cc\
-                      linear_complementarity_problem.cc\
                       nonlinear_algebra.cc\
                       nonsmooth_algebra.cc\
                       ppolynom.cc\
@@ -14,12 +13,11 @@ libutils_la_SOURCES = eps.cc\
 
 utilsincludedir = $(includedir)/mbsim/utils
 
-INCLUDES = $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)  $(MBSIMNUMERICS_CFLAGS)
-LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)  $(MBSIMNUMERICS_LIBS)
+INCLUDES = $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
+LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 libutils_la_CPPFLAGS = -DTIXML_USE_STL
 
 utilsinclude_HEADERS = eps.h\
-                       linear_complementarity_problem.h\
                        nonlinear_algebra.h\
                        nonsmooth_algebra.h\
                        function.h\

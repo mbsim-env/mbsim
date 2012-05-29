@@ -22,9 +22,9 @@ PKG_CHECK_MODULES(DEPS, fmatvec >= 1.0.1 hdf5serie)
 AC_SUBST([requires])
 
 dnl check for numerics library
-PKG_CHECK_MODULES(MBSIMNUMERICS, numerics ,[requires="$requires numerics"; numerics_compilerflag="-DHAVE_MBSIMNUMERICS";AC_DEFINE([HAVE_MBSIMNUMERICS],[1],[linking with MBSimNumerics-library])], [echo No numerics package is used. Consider to install it...])
-AM_CONDITIONAL([COND_NUMERICS], [test _$numerics_compilerflag = _-DHAVE_MBSIMNUMERICS])
-AC_SUBST([numerics_compilerflag])
+dnl PKG_CHECK_MODULES(MBSIMNUMERICS, numerics ,[requires="$requires numerics"; numerics_compilerflag="-DHAVE_MBSIMNUMERICS";AC_DEFINE([HAVE_MBSIMNUMERICS],[1],[linking with MBSimNumerics-library])], [echo No numerics package is used. Consider to install it...])
+dnl AM_CONDITIONAL([COND_NUMERICS], [test _$numerics_compilerflag = _-DHAVE_MBSIMNUMERICS])
+dnl AC_SUBST([numerics_compilerflag])
 
 dnl check for OpenMBV-Cpp-Interface
 PKG_CHECK_MODULES(OPENMBVCPPINTERFACE, openmbvcppinterface >= 3.0.0,[requires="$requires openmbvcppinterface";openmbv_compilerflag="-DHAVE_OPENMBVCPPINTERFACE";AC_DEFINE([HAVE_OPENMBVCPPINTERFACE],[1],[linking with OpenMBVCppInterface])],[mbsimtinyxmlPC=-lmbsimtinyxml; echo "no"])
@@ -98,7 +98,7 @@ AC_SUBST([MBXMLUTILSDOCDIR],[$(pkg-config mbxmlutils --variable DOCDIR)])
 AC_SUBST([MBXMLUTILSSCHEMADIR],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
 AM_CONDITIONAL([COND_XML], [test "_$MBXMLUTILSSCHEMADIR" != "_"])
 
-AC_CONFIG_FILES([Makefile mbsim/Makefile mbsim/integrators/Makefile mbsim/contact_kinematics/Makefile mbsim/contours/Makefile mbsim/utils/Makefile mbsim/plot_elements/Makefile doc/doxyfile doc/Makefile mbsim.pc mbsimtinyxml/Makefile schema/Makefile xmldoc/Makefile])
+AC_CONFIG_FILES([Makefile mbsim/Makefile mbsim/integrators/Makefile mbsim/contact_kinematics/Makefile mbsim/contours/Makefile mbsim/plot_elements/Makefile mbsim/numerics/Makefile mbsim/numerics/functions/Makefile mbsim/numerics/linear_complementarity_problem/Makefile mbsim/numerics/nonlinear_algebra/Makefile mbsim/utils/Makefile doc/doxyfile doc/Makefile mbsim.pc mbsimtinyxml/Makefile schema/Makefile xmldoc/Makefile])
 
 AC_OUTPUT
 
