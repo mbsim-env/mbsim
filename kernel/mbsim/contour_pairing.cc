@@ -182,15 +182,16 @@ namespace MBSim {
           }
         }
 #endif
-        if (getPlotFeature(generalizedLinkForce) == enabled) {
-          for (int j = 0; j < 1 + getFrictionDirections(); ++j)
-            plotColumns.push_back("la(" + numtostr(j) + ")");
-        }
 
         if (getPlotFeature(linkKinematics) == enabled) {
           plotColumns.push_back("g(" + numtostr(0) + ")");
           for (int j = 0; j < 1 + getFrictionDirections(); ++j)
             plotColumns.push_back("gd(" + numtostr(j) + ")");
+        }
+
+        if (getPlotFeature(generalizedLinkForce) == enabled) {
+          for (int j = 0; j < 1 + getFrictionDirections(); ++j)
+            plotColumns.push_back("la(" + numtostr(j) + ")");
         }
 
       }
@@ -261,6 +262,12 @@ namespace MBSim {
         }
       }
 #endif
+      if (getPlotFeature(linkKinematics) == enabled) {
+        plotVector.push_back(gk(0)); //gN
+        for (int j = 0; j < 1 + getFrictionDirections(); j++)
+          plotVector.push_back(gdk(j)); //gd
+      }
+
       if (getPlotFeature(generalizedLinkForce) == enabled) {
         if (gActive) {
           plotVector.push_back(lak(0));
@@ -273,11 +280,6 @@ namespace MBSim {
           for (int j = 0; j < 1 + getFrictionDirections(); j++)
             plotVector.push_back(0);
         }
-      }
-      if (getPlotFeature(linkKinematics) == enabled) {
-        plotVector.push_back(gk(0)); //gN
-        for (int j = 0; j < 1 + getFrictionDirections(); j++)
-          plotVector.push_back(gdk(j)); //gd
       }
       Object::plot(t, dt);
     }
