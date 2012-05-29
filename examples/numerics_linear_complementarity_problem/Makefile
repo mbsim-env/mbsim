@@ -10,11 +10,11 @@ CXX = g++
 libsources = 
 objects = $(sources:.cc=.o)
 
-OPENMPFLAG = $(shell g++ -fopenmp -MM `pkg-config --cflags numerics fmatvecTestbench` main.cc >& /dev/null && echo "-fopenmp")
-CPPFLAGS= -g3 -Wall -Werror -Wno-unknown-pragmas $(OPENMPFLAG) `pkg-config --cflags numerics fmatvecTestbench` 
+OPENMPFLAG = $(shell g++ -fopenmp -MM `pkg-config --cflags mbsim fmatvecTestbench` main.cc >& /dev/null && echo "-fopenmp")
+CPPFLAGS= -g3 -Wall -Werror -Wno-unknown-pragmas $(OPENMPFLAG) `pkg-config --cflags mbsim fmatvecTestbench` 
 
 $(Target) : $(objects)
-	$(CXX) -o $@ $(objects) $(OPENMPFLAG) `pkg-config --libs numerics fmatvecTestbench` 
+	$(CXX) -o $@ $(objects) $(OPENMPFLAG) `pkg-config --libs mbsim fmatvecTestbench` 
 
 %.d: %.cc
 	set -e; $(CXX) -MM $(CPPFLAGS) $< \
