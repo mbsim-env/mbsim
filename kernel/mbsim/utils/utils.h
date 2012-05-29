@@ -37,7 +37,7 @@ double sign(double x);
 int min(int i, int j);
 
 /*!
- * \brief calculates planar angle in [0,2\pi] with respect to Cartesian coordinates
+ * \brief calculates planar angle in [0,2\pi] with respect to Cartesian coordinates of: Arc Tangent (y/x)
  * \param Cartesian x-coordinate
  * \param Cartesian y-coordinate
  * \return angle
