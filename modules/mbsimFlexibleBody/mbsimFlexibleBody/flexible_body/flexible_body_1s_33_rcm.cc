@@ -598,9 +598,48 @@ namespace MBSimFlexibleBody {
         cout << "%----------------------------------" << endl;
       }
     }
+
     setq0(q0Dummy);
     if(not filenameVel.empty())
       setu0(u0Dummy);
+
+    if(DEBUGLEVEL > 0) {
+      cout << "Positions = [ ";
+      for (int ele=0; ele < Elements; ele++) {
+        ContourPointData cp(ele);
+        updateKinematicsForFrame(cp, position_cosy);
+
+        cout << cp.getFrameOfReference().getPosition()(0) << " " << cp.getFrameOfReference().getPosition()(1) << " " << cp.getFrameOfReference().getPosition()(2) << ";";
+      }
+      cout << "];" << endl;
+
+      cout << "Normals = [ ";
+      for (int ele=0; ele < Elements; ele++) {
+        ContourPointData cp(ele);
+        updateKinematicsForFrame(cp, position_cosy);
+
+        cout << cp.getFrameOfReference().getOrientation()(0,0) << " " << cp.getFrameOfReference().getOrientation()(0,1) << " " << cp.getFrameOfReference().getOrientation()(0,2) << ";";
+      }
+      cout << "];" << endl;
+
+      cout << "Tangents = [ ";
+      for (int ele=0; ele < Elements; ele++) {
+        ContourPointData cp(ele);
+        updateKinematicsForFrame(cp, position_cosy);
+
+        cout << cp.getFrameOfReference().getOrientation()(1,0) << " " << cp.getFrameOfReference().getOrientation()(1,1) << " " << cp.getFrameOfReference().getOrientation()(1,2) << ";";
+      }
+      cout << "];" << endl;
+
+      cout << "Binormals = [ ";
+      for (int ele=0; ele < Elements; ele++) {
+        ContourPointData cp(ele);
+        updateKinematicsForFrame(cp, position_cosy);
+
+        cout << cp.getFrameOfReference().getOrientation()(2,0) << " " << cp.getFrameOfReference().getOrientation()(2,1) << " " << cp.getFrameOfReference().getOrientation()(2,2) << ";";
+      }
+      cout << "];" << endl;
+    }
 
 #else
     throw MBSimError("No Nurbs-Library installed ...");
