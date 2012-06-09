@@ -4,14 +4,12 @@ AC_INIT([mbsimxml],[2.0.1],[friedrich.at.gc@googlemail.com])
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_SRCDIR([mbsimxml/mbsimflatxml.cc])
-AC_PROG_LIBTOOL
+LT_INIT([win32-dll])
 AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_LANG([C++])
 
 PKG_CHECK_MODULES(DEPS, mbsim openmbvcppinterface mbxmlutils)
-
-LDFLAGS="$LDFLAGS -Wl,--no-undefined"
 
 if test "_$host_os" = "_mingw32" ; then
   AC_DEFINE([MBSIMXML_MINGW], [1], [Host System is MinGW/MSys])
@@ -127,6 +125,8 @@ AC_SUBST([MBXMLUTILSDOCDIR],[$MBXMLUTILSDOCDIR])
 
 
 CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long"
+
+LDFLAGS="$LDFLAGS -no-undefined"
 
 AC_CONFIG_FILES([Makefile mbsimxml/Makefile schema/mbsimxml.xsd schema/Makefile xmldoc/Makefile mbsimxml.pc xmldoc/genContent.xsl mbsimxml/env.h])
 

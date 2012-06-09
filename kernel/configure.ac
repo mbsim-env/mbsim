@@ -4,7 +4,7 @@ AC_INIT([mbsim],[3.0.0],[martin.o.foerg@googlemail.com])
 AC_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([mbsim/element.h])
-AC_PROG_LIBTOOL
+LT_INIT([win32-dll])
 AC_PROG_CXX
 AC_PROG_FC
 AC_PROG_F77
@@ -13,8 +13,6 @@ AC_LANG([C++])
 AC_FC_WRAPPERS
 
 AC_C_CONST
-
-LDFLAGS="$LDFLAGS -Wl,--no-undefined"
 
 requires="fmatvec hdf5serie"
 PKG_CHECK_MODULES(DEPS, fmatvec >= 1.0.1 hdf5serie)
@@ -97,6 +95,8 @@ AC_SUBST([MBXMLUTILSBINDIR],[$(pkg-config mbxmlutils --variable BINDIR)])
 AC_SUBST([MBXMLUTILSDOCDIR],[$(pkg-config mbxmlutils --variable DOCDIR)])
 AC_SUBST([MBXMLUTILSSCHEMADIR],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
 AM_CONDITIONAL([COND_XML], [test "_$MBXMLUTILSSCHEMADIR" != "_"])
+
+LDFLAGS="$LDFLAGS -no-undefined"
 
 AC_CONFIG_FILES([Makefile mbsim/Makefile mbsim/integrators/Makefile mbsim/contact_kinematics/Makefile mbsim/contours/Makefile mbsim/plot_elements/Makefile mbsim/numerics/Makefile mbsim/numerics/functions/Makefile mbsim/numerics/linear_complementarity_problem/Makefile mbsim/numerics/nonlinear_algebra/Makefile mbsim/utils/Makefile doc/doxyfile doc/Makefile mbsim.pc mbsimtinyxml/Makefile schema/Makefile xmldoc/Makefile])
 
