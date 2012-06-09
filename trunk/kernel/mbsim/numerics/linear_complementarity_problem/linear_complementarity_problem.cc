@@ -19,6 +19,7 @@
 
 #include <config.h>
 
+#include <time.h>
 #include <iostream>
 
 #include "linear_complementarity_problem.h"
