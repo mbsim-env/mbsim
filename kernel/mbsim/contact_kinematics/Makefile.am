@@ -54,4 +54,4 @@ contactkinematicsinclude_HEADERS = circle_frustum.h\
   sphere_frustum.h \
   sphere_plane.h \
   sphere_sphere.h \
-  point_line_segment.cc
+  point_line_segment.h
