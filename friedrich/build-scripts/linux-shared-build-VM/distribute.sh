@@ -2,8 +2,8 @@
 
 # Usage:
 # Call this script from everywhere!
-# use argument noclean to disable cleaning the dist dir before starting
-# use argument noarchive to disalbe the creation of a tar.bz2 archive at end
+# use argument "noclean" to disable cleaning the dist dir before starting
+# use argument "noarchive" to disalbe the creation of a tar.bz2 archive at end
 
 DISTBASEDIR=/home/user/MBSimLinux/dist
 
@@ -27,22 +27,6 @@ $PREFIX/bin/openmbv
 /usr/bin/h5repart
 /usr/bin/h5stat
 /usr/bin/octave
-"
-
-INCDIRS="
-fmatvec
-hdf5serie
-mbsim
-mbsimControl
-mbsimElectronics
-mbsimFlexibleBody
-mbsimHydraulics
-mbsimPowertrain
-mbsimtinyxml
-mbsimxml
-mbxmlutilstinyxml
-openmbvcppinterface
-openmbvcppinterfacetinyxml
 "
 
 SHAREDIRS="
@@ -139,10 +123,27 @@ else # is not a script
 fi
 
 # copy includes
-mkdir -p $DISTDIR/include
-for D in $INCDIRS; do
-  cp -rul $PREFIX/include/$D $DISTDIR/include
+TMPINCFILE=/tmp/distribute.inc.cc
+rm -f $TMPINCFILE
+for F in $(find $PREFIX/include -type f | grep "/fmatvec/\|/hdf5serie/\|/mbsim/\|/mbsimControl/\|/mbsimElectronics/\|/mbsimFlexibleBody/\|/mbsimHydraulics/\|/mbsimPowertrain/\|/mbsimtinyxml/\|/mbsimxml/\|/mbxmlutilstinyxml/\|/openmbvcppinterface/\|/openmbvcppinterfacetinyxml/"); do
+  echo "#include <$F>" >> $TMPINCFILE
 done
+for FSRC in $(g++ -M -MT 'DUMMY' $TMPINCFILE $(pkg-config --cflags fmatvec hdf5serie mbsimControl mbsimElectronics mbsimFlexibleBody mbsimHydraulics mbsim mbsimPowertrain mbsimxml mbxmlutils openmbvcppinterface) | sed -re "s+^ *DUMMY *: *$TMPINCFILE *++;s+\\\++"); do
+  FDST=$(echo $FSRC | sed -re "s+^.*/include/++")
+  echo $FDST | grep "^/" > /dev/null
+  if [ $? -eq 0 ]; then
+    echo "WARNING: not copying $FSRC (no '/include/' in path)"
+  else
+    mkdir -p $(dirname $DISTDIR/include/$FDST)
+    cp -uL $FSRC $DISTDIR/include/$FDST
+  fi
+done
+
+
+
+
+
+
 
 # copy shares
 mkdir -p $DISTDIR/share
@@ -158,9 +159,53 @@ cp -rul $OCTAVEMDIR/* $DISTDIR/share/octave/$(octave-config --version)/m
 mkdir -p $DISTDIR/lib/octave/$(octave-config --version)/oct
 cp -rul $OCTAVEOCTDIR/* $DISTDIR/lib/octave/$(octave-config --version)/oct
 
+# SPECIAL ACTIONS
+rm -f $DISTDIR/lib/libc.so.6
+rm -f $DISTDIR/lib/libpthread.so.0
+rm -f $DISTDIR/include/sys/select.h
+rm -f $DISTDIR/include/features.h
+(cd $DISTDIR/lib; ln -s liblapack.so.3 liblapack.so)
+(cd $DISTDIR/lib; ln -s libblas.so.3 libblas.so)
+(cd $DISTDIR/lib; ln -s libgfortran.so.3 libgfortran.so)
+(cd $DISTDIR/lib; ln -s libm.so.6 libm.so)
+(cd $DISTDIR/lib; ln -s libquadmath.so.0 libquadmath.so)
+(cd $DISTDIR/lib; ln -s libhdf5_cpp.so.7 libhdf5_cpp.so)
+(cd $DISTDIR/lib; ln -s libhdf5.so.7 libhdf5.so)
+(cd $DISTDIR/lib; ln -s libz.so.1 libz.so)
+(cd $DISTDIR/lib; ln -s libf77blas.so.3 libf77blas.so)
+(cd $DISTDIR/lib; ln -s libcblas.so.3 libcblas.so)
+(cd $DISTDIR/lib; ln -s libatlas.so.3 libatlas.so)
+(cd $DISTDIR/lib; ln -s libstdc++.so.6 libstdc++.so)
+
+# create mbsim-config.sh
+cat << EOF > $DISTDIR/bin/mbsim-config.sh
+#! /bin/sh
+
+if [ \$# -ne 1 ]; then
+  echo "Usage: \$0 [--cflags|--libs]"
+  echo "  --cflags:  outputs the compile flags"
+  echo "  --libs:    outputs the link flags"
+  exit
+fi
+
+INSTDIR="\$(readlink -f \$(dirname \$0)/..)"
+
+# pkg-config --cflags openmbvcppinterface mbsim mbsimControl mbsimHydraulics mbsimFlexibleBody mbsimPowertrain mbsimElectronics fmatvec
+# pkg-config --libs openmbvcppinterface mbsim mbsimControl mbsimHydraulics mbsimFlexibleBody mbsimPowertrain mbsimElectronics fmatvec
+CFLAGS="-m32 -DTIXML_USE_STL -DHAVE_BOOST_FILE_LOCK -DHAVE_ANSICSIGNAL -DHAVE_OPENMBVCPPINTERFACE -I\$INSTDIR/include -I\$INSTDIR/include/fmatvec"
+LIBS="-m32 -Wl,--no-undefined -L\$INSTDIR/lib -lmbsimControl -lmbsimHydraulics -lmbsimFlexibleBody -lmbsimPowertrain -lmbsimElectronics -lmbsim -lopenmbvcppinterface -lopenmbvcppinterfacetinyxml -lfmatvec -llapack -lblas -lquadmath -lhdf5serie -lhdf5_cpp -lhdf5 -lf77blas -lcblas -latlas -lgfortran"
+
+if [ "_\$1" = "_--cflags" ]; then
+  echo "\$CFLAGS"
+elif [ "_\$1" = "_--libs" ]; then
+  echo "\$LIBS"
+fi
+EOF
+chmod +x $DISTDIR/bin/mbsim-config.sh
+     
 # archive dist dir
 if [ $NOARCHIVE -eq 0 ]; then
   rm -f $DISTBASEDIR/mbsim-linux-shared-build-xxx.tar.bz2
   (cd $DISTBASEDIR; tar -cjf $DISTBASEDIR/mbsim-linux-shared-build-xxx.tar.bz2 local)
-  echo "Create MBSim archive at $DISTBASEDIR/mbsim.tar.bz2"
+  echo "Create MBSim archive at $DISTBASEDIR/mbsim-linux-shared-build-xxx.tar.bz2"
 fi

@@ -18,7 +18,7 @@ fi
 echo -n "Enter Build Number: "
 read BUILDNR
 
-echo -n "Enter Google Acount Passwort for User $USER: "
+echo -n "Enter the googlecode.com Passwort (SVN Passwort) for User friedrich.at.gc: "
 STTY_ORG=$(stty -g)
 stty -echo
 read PASSWORD
