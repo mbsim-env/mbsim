@@ -9,6 +9,7 @@ DISTBASEDIR=/home/user/MBSimWindows/dist
 
 PREFIX=/home/user/MBSimWindows/local
 
+# Note: libmbsimElectronics-0.dll libmbsimPowertrain-0.dll in not linked by mbsimflatxml.exe (no XML avaiable)
 BINFILES="
 $PREFIX/bin/h5dumpserie.exe
 $PREFIX/bin/h5lsserie.exe
@@ -27,22 +28,8 @@ $PREFIX/bin/tools/h5repack.exe
 $PREFIX/bin/tools/h5repart.exe
 $PREFIX/bin/tools/h5stat.exe
 $PREFIX/bin/octave.exe
-"
-
-INCDIRS="
-fmatvec
-hdf5serie
-mbsim
-mbsimControl
-mbsimElectronics
-mbsimFlexibleBody
-mbsimHydraulics
-mbsimPowertrain
-mbsimtinyxml
-mbsimxml
-mbxmlutilstinyxml
-openmbvcppinterface
-openmbvcppinterfacetinyxml
+$PREFIX/bin/libmbsimElectronics-0.dll
+$PREFIX/bin/libmbsimPowertrain-0.dll
 "
 
 SHAREDIRS="
@@ -79,7 +66,7 @@ fi
 
 # copy libs
 mkdir -p $DISTDIR/lib/pkgconfig
-cp -rul $PREFIX/lib/pkgconfig/* $DISTDIR/lib/pkgconfig/
+cp -ruL $PREFIX/lib/pkgconfig/* $DISTDIR/lib/pkgconfig/
 for F in $PREFIX/lib/*; do
   echo $F | grep "libCoin.a$" > /dev/null && continue
   echo $F | grep "libCoin.la$" > /dev/null && continue
@@ -136,24 +123,71 @@ done
 mkdir -p $DISTDIR/bin/.wrapper
 mv $DISTDIR/bin/octave.exe $DISTDIR/bin/.wrapper/
 cat << EOF > $DISTDIR/bin/octave.bat
-echo NO IMPLEMENTED YET
+@echo off
+set THISDIR=%~dp0
+set OCTAVE_HOME=%THISDIR%..
+"%THISDIR%.wrapper/octave.exe"
 EOF
 
 # copy includes
-mkdir -p $DISTDIR/include
-for D in $INCDIRS; do
-  cp -rul $PREFIX/include/$D $DISTDIR/include
+TMPINCFILE=/tmp/distribute.inc.cc
+rm -f $TMPINCFILE
+for F in $(find $PREFIX/include -type f | grep "/fmatvec/\|/hdf5serie/\|/mbsim/\|/mbsimControl/\|/mbsimElectronics/\|/mbsimFlexibleBody/\|/mbsimHydraulics/\|/mbsimPowertrain/\|/mbsimtinyxml/\|/mbsimxml/\|/mbxmlutilstinyxml/\|/openmbvcppinterface/\|/openmbvcppinterfacetinyxml/"); do
+  echo "#include <$F>" >> $TMPINCFILE
+done
+for FSRC in $(i686-w64-mingw32-g++ -M -MT 'DUMMY' $TMPINCFILE $(pkg-config --cflags fmatvec hdf5serie mbsimControl mbsimElectronics mbsimFlexibleBody mbsimHydraulics mbsim mbsimPowertrain mbsimxml mbxmlutils openmbvcppinterface) | sed -re "s+^ *DUMMY *: *$TMPINCFILE *++;s+\\\++"); do
+  FDST=$(echo $FSRC | sed -re "s+^.*/include/++")
+  echo $FDST | grep "^/" > /dev/null
+  if [ $? -eq 0 ]; then
+    echo "WARNING: not copying $FSRC (no '/include/' in path)"
+  else
+    mkdir -p $(dirname $DISTDIR/include/$FDST)
+    cp -uL $FSRC $DISTDIR/include/$FDST
+  fi
 done
 
 # copy shares
 mkdir -p $DISTDIR/share
 for D in $SHAREDIRS; do
-  cp -rul $PREFIX/share/$D $DISTDIR/share
+  cp -ruL $PREFIX/share/$D $DISTDIR/share
 done
 
 # copy octave m
 mkdir -p $DISTDIR/share/octave/$OCTAVEVERSION/m
-cp -rul $OCTAVEMDIR/* $DISTDIR/share/octave/$OCTAVEVERSION/m
+cp -ruL $OCTAVEMDIR/* $DISTDIR/share/octave/$OCTAVEVERSION/m
+
+# SPECIAL handling
+cp -uL /usr/i686-w64-mingw32/sys-root/mingw/bin/iconv.dll $DISTDIR/bin
+
+# create mbsim-config.bat
+cat << EOF > $DISTDIR/bin/mbsim-config.bat
+@echo off
+
+if %1!==! (
+  echo Usage: %0 [--cflags^|--libs]
+  echo   --cflags:  outputs the compile flags
+  echo   --libs:    outputs the link flags
+  goto end
+)
+
+set INSTDIR=%~pd0..
+
+rem pkg-config --cflags openmbvcppinterface mbsim mbsimControl mbsimHydraulics mbsimFlexibleBody mbsimPowertrain mbsimElectronics fmatvec
+rem pkg-config --libs openmbvcppinterface mbsim mbsimControl mbsimHydraulics mbsimFlexibleBody mbsimPowertrain mbsimElectronics fmatvec
+
+set CFLAGS=-m32 -DTIXML_USE_STL -DHAVE_ANSICSIGNAL -DHAVE_OPENMBVCPPINTERFACE -I"%INSTDIR%\include" -I"%INSTDIR%\include\cpp" -I"%INSTDIR%\include\fmatvec"
+set LIBS=-m32 -Wl,--no-undefined -L"%INSTDIR%\lib" -lmbsimControl -lmbsimHydraulics -lmbsimFlexibleBody -lmbsimPowertrain -lmbsimElectronics -lmbsim -lopenmbvcppinterface
+ 
+if "%1" == "--cflags" (
+  echo %CFLAGS%
+) else (
+  if "%1" == "--libs" (
+    echo %LIBS%
+  )
+)
+
+:end
+EOF
 
 # archive dist dir
 if [ $NOARCHIVE -eq 0 ]; then
