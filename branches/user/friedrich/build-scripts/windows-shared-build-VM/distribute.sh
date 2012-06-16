@@ -175,7 +175,7 @@ set INSTDIR=%~pd0..
 rem pkg-config --cflags openmbvcppinterface mbsim mbsimControl mbsimHydraulics mbsimFlexibleBody mbsimPowertrain mbsimElectronics fmatvec
 rem pkg-config --libs openmbvcppinterface mbsim mbsimControl mbsimHydraulics mbsimFlexibleBody mbsimPowertrain mbsimElectronics fmatvec
 
-set CFLAGS=-m32 -DTIXML_USE_STL -DHAVE_ANSICSIGNAL -DHAVE_OPENMBVCPPINTERFACE -I"%INSTDIR%\include" -I"%INSTDIR%\include\cpp" -I"%INSTDIR%\include\fmatvec"
+set CFLAGS=-m32 -DTIXML_USE_STL -DHAVE_BOOST_FILE_LOCK -DHAVE_ANSICSIGNAL -DHAVE_OPENMBVCPPINTERFACE -I"%INSTDIR%\include" -I"%INSTDIR%\include\cpp" -I"%INSTDIR%\include\fmatvec"
 set LIBS=-m32 -Wl,--no-undefined -L"%INSTDIR%\lib" -lmbsimControl -lmbsimHydraulics -lmbsimFlexibleBody -lmbsimPowertrain -lmbsimElectronics -lmbsim -lopenmbvcppinterface
  
 if "%1" == "--cflags" (
@@ -188,6 +188,12 @@ if "%1" == "--cflags" (
 
 :end
 EOF
+
+# Qt plugins
+mkdir -p $DISTDIR/bin/imageformats
+mkdir -p $DISTDIR/bin/iconengines
+cp /usr/i686-w64-mingw32/sys-root/mingw/lib/qt4/plugins/imageformats/qsvg4.dll $DISTDIR/bin/imageformats
+cp /usr/i686-w64-mingw32/sys-root/mingw/lib/qt4/plugins/iconengines/qsvgicon4.dll $DISTDIR/bin/iconengines
 
 # archive dist dir
 if [ $NOARCHIVE -eq 0 ]; then
