@@ -63,7 +63,7 @@ fi
 
 # copy libs
 mkdir -p $DISTDIR/lib
-cp -rul $PREFIX/lib/* $DISTDIR/lib
+cp -ru $PREFIX/lib/* $DISTDIR/lib
 
 # copy bin and get dependent libs
 TMPSOFILE=/tmp/distribute.sh.sofile
@@ -148,16 +148,16 @@ done
 # copy shares
 mkdir -p $DISTDIR/share
 for D in $SHAREDIRS; do
-  cp -rul $PREFIX/share/$D $DISTDIR/share
+  cp -ruL $PREFIX/share/$D $DISTDIR/share
 done
 
 # copy octave m
 mkdir -p $DISTDIR/share/octave/$(octave-config --version)/m
-cp -rul $OCTAVEMDIR/* $DISTDIR/share/octave/$(octave-config --version)/m
+cp -ruL $OCTAVEMDIR/* $DISTDIR/share/octave/$(octave-config --version)/m
 
 # copy octave oct
 mkdir -p $DISTDIR/lib/octave/$(octave-config --version)/oct
-cp -rul $OCTAVEOCTDIR/* $DISTDIR/lib/octave/$(octave-config --version)/oct
+cp -ruL $OCTAVEOCTDIR/* $DISTDIR/lib/octave/$(octave-config --version)/oct
 
 # SPECIAL ACTIONS
 rm -f $DISTDIR/lib/libc.so.6
@@ -202,6 +202,12 @@ elif [ "_\$1" = "_--libs" ]; then
 fi
 EOF
 chmod +x $DISTDIR/bin/mbsim-config.sh
+
+# Qt plugins
+mkdir -p $DISTDIR/bin/imageformats
+mkdir -p $DISTDIR/bin/iconengines
+cp /usr/lib/qt4/plugins/imageformats/libqsvg.so $DISTDIR/bin/imageformats
+cp /usr/lib/qt4/plugins/iconengines/libqsvgicon.so $DISTDIR/bin/iconengines
      
 # archive dist dir
 if [ $NOARCHIVE -eq 0 ]; then
