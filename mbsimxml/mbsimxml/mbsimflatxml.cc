@@ -1,4 +1,5 @@
 #include "config.h"
+#include <stdlib.h>
 #include <iostream>
 #include "openmbvcppinterfacetinyxml/tinyxml-src/tinyxml.h"
 #include "openmbvcppinterfacetinyxml/tinyxml-src/tinynamespace.h"
@@ -12,7 +13,7 @@ using namespace std;
 
 namespace MBSim {
 
-int MBSimXML::preInitDynamicSystemSolver(int argc, char *argv[], DynamicSystemSolver*& dss) {
+void MBSimXML::preInitDynamicSystemSolver(int argc, char *argv[], DynamicSystemSolver*& dss) {
   // help
   if(argc<3 || argc>4) {
     cout<<"Usage: mbsimflatxml [--donotintegrate|--savestatevector|--stopafterfirststep]"<<endl;
@@ -30,7 +31,7 @@ int MBSimXML::preInitDynamicSystemSolver(int argc, char *argv[], DynamicSystemSo
     cout<<"--savefinalstatevector  Save the state vector to the file \"statevector.asc\" after integration"<<endl;
     cout<<"<mbsimfile>             The preprocessed mbsim xml file"<<endl;
     cout<<"<mbsimintegratorfile>   The preprocessed mbsim integrator xml file"<<endl;
-    return -1;
+    exit(0);
   }
 
 
@@ -46,10 +47,8 @@ int MBSimXML::preInitDynamicSystemSolver(int argc, char *argv[], DynamicSystemSo
 
   // load MBSim XML document
   TiXmlDocument *doc=new TiXmlDocument;
-  if(doc->LoadFile(argv[startArg])==false) {
-    cerr<<"ERROR! Unable to load file: "<<argv[startArg]<<endl;
-    return 1;
-  }
+  if(doc->LoadFile(argv[startArg])==false)
+    throw MBSimError(string("ERROR! Unable to load file: ")+argv[startArg]);
   TiXml_PostLoadFile(doc);
   TiXmlElement *e=doc->FirstChildElement();
   TiXml_setLineNrFromProcessingInstruction(e);
@@ -67,25 +66,20 @@ int MBSimXML::preInitDynamicSystemSolver(int argc, char *argv[], DynamicSystemSo
   else
     dss->setReorganizeHierarchy(true);
 
-  if(dss==0) {
-    cerr<<"ERROR! The root element of the MBSim main file must be of type 'DynamicSystemSolver'"<<endl;
-    return 1;
-  }
+  if(dss==0)
+    throw MBSimError("ERROR! The root element of the MBSim main file must be of type 'DynamicSystemSolver'");
   dss->initializeUsingXML(e);
   delete doc;
-
-  return 0;
 }
 
-int MBSimXML::initDynamicSystemSolver(int argc, char *argv[], DynamicSystemSolver*& dss) {
+void MBSimXML::initDynamicSystemSolver(int argc, char *argv[], DynamicSystemSolver*& dss) {
   if(strcmp(argv[1],"--donotintegrate")==0)
     dss->setTruncateSimulationFiles(false);
 
   dss->initialize();
-  return 0;
 }
 
-int MBSimXML::initIntegrator(int argc, char *argv[], Integrator *&integrator) {
+void MBSimXML::initIntegrator(int argc, char *argv[], Integrator *&integrator) {
   int startArg=1;
   if(strcmp(argv[1],"--donotintegrate")==0 || strcmp(argv[1],"--savefinalstatevector")==0 || strcmp(argv[1],"--stopafterfirststep")==0)
     startArg=2;
@@ -94,10 +88,8 @@ int MBSimXML::initIntegrator(int argc, char *argv[], Integrator *&integrator) {
 
   // load MBSimIntegrator XML document
   TiXmlDocument *doc=new TiXmlDocument;
-  if(doc->LoadFile(argv[startArg+1])==false) {
-    cerr<<"ERROR! Unable to load file: "<<argv[startArg+1]<<endl;
-    return 1;
-  }
+  if(doc->LoadFile(argv[startArg+1])==false)
+    throw MBSimError(string("ERROR! Unable to load file: ")+argv[startArg+1]);
   TiXml_PostLoadFile(doc);
   e=doc->FirstChildElement();
   TiXml_setLineNrFromProcessingInstruction(e);
@@ -106,10 +98,8 @@ int MBSimXML::initIntegrator(int argc, char *argv[], Integrator *&integrator) {
 
   // create integrator
   integrator=ObjectFactory::getInstance()->createIntegrator(e);
-  if(integrator==0) {
-    cerr<<"ERROR! Cannot create the integrator object!"<<endl;
-    return 1;
-  }
+  if(integrator==0)
+    throw MBSimError("ERROR! Cannot create the integrator object!");
   integrator->initializeUsingXML(e);
   delete doc;
 
@@ -118,22 +108,18 @@ int MBSimXML::initIntegrator(int argc, char *argv[], Integrator *&integrator) {
     // reset integrator end time to start time to force only one output
     integrator->setEndTime(integrator->getStartTime());
   }
-
-  return 0;
 }
 
-int MBSimXML::main(Integrator *&integrator, DynamicSystemSolver *&dss) {
+void MBSimXML::main(Integrator *&integrator, DynamicSystemSolver *&dss) {
   integrator->integrate(*dss);
-  return 0;
 }
 
-int MBSimXML::postMain(int argc, char *argv[], Integrator *&integrator, DynamicSystemSolver*& dss) {
+void MBSimXML::postMain(int argc, char *argv[], Integrator *&integrator, DynamicSystemSolver*& dss) {
 
   if(strcmp(argv[1],"--savefinalstatevector")==0)
     dss->writez("statevector.asc", false);
   delete dss;
   delete integrator;
-  return 0;
 }
 
 }
