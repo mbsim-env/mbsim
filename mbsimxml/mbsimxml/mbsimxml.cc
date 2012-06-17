@@ -131,7 +131,7 @@ int main(int argc, char *argv[]) {
   string MPATH="";
   if((i=std::find(arg.begin(), arg.end(), "--mpath"))!=arg.end()) {
     i2=i; i2++;
-    MPATH+=(*i)+" "+(*i2);
+    MPATH+=(*i)+" \""+(*i2)+"\"";
     arg.erase(i); arg.erase(i2);
   }
 
@@ -183,7 +183,7 @@ int main(int argc, char *argv[]) {
 
   string AUTORELOAD;
   if(AUTORELOADTIME>0) // AUTORELOAD is now set (see above)
-    AUTORELOAD="--dependencies "+DEPMBSIM;
+    AUTORELOAD="--dependencies \""+DEPMBSIM+"\"";
 
   string PARAMINT="none";
   if((i=std::find(arg.begin(), arg.end(), "--intparam"))!=arg.end()) {
@@ -205,12 +205,12 @@ int main(int argc, char *argv[]) {
     unlink(ERRFILE.c_str());
 
     // run preprocessor
-    ret=runcommand(MBXMLUTILSBIN+"/mbxmlutilspp "+AUTORELOAD+" "+MPATH+" "+
-      PARAM+" "+MBSIM+" "+MBXMLUTILSSCHEMA+"/http___mbsim_berlios_de_MBSimXML/mbsimxml.xsd "+
-      PARAMINT+" "+MBSIMINT+" "+MBXMLUTILSSCHEMA+"/http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd");
+    ret=runcommand("\""+MBXMLUTILSBIN+"/mbxmlutilspp\" "+AUTORELOAD+" "+MPATH+" "+
+      "\""+PARAM+"\" \""+MBSIM+"\" \""+MBXMLUTILSSCHEMA+"/http___mbsim_berlios_de_MBSimXML/mbsimxml.xsd\" "+
+      "\""+PARAMINT+"\" \""+MBSIMINT+"\" \""+MBXMLUTILSSCHEMA+"/http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd\"");
 
     if(!ONLYPP && ret==0)
-      ret=runcommand(MBSIMXMLBIN+"/mbsimflatxml "+NOINT+" "+ONLY1OUT+" "+PPMBSIM+" "+PPMBSIMINT);
+      ret=runcommand("\""+MBSIMXMLBIN+"/mbsimflatxml\" "+NOINT+" "+ONLY1OUT+" \""+PPMBSIM+"\" \""+PPMBSIMINT+"\"");
 
     if(ret!=0) touch(ERRFILE);
 
