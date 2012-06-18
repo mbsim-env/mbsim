@@ -1,17 +1,17 @@
 /* Copyright (C) 2004-2009 MBSim Development Team
  *
- * This library is free software; you can redistribute it and/or 
- * modify it under the terms of the GNU Lesser General Public 
- * License as published by the Free Software Foundation; either 
- * version 2.1 of the License, or (at your option) any later version. 
- *  
- * This library is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
- * Lesser General Public License for more details. 
- *  
- * You should have received a copy of the GNU Lesser General Public 
- * License along with this library; if not, write to the Free Software 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
  * Contact: martin.o.foerg@googlemail.com
@@ -32,12 +32,12 @@ namespace MBSim {
   class ExtraDynamicInterface;
   class Integrator;
 
-  /** 
+  /**
    * \brief solver for contact equations
    */
   enum Solver { FixedPointTotal, FixedPointSingle, GaussSeidel, LinearEquations, RootFinding };
 
-  /** 
+  /**
    * \brief relaxation strategies in solution of contact equations
    */
   enum Strategy { global, local };
@@ -48,7 +48,7 @@ namespace MBSim {
   enum LinAlg { LUDecomposition, LevenbergMarquardt, PseudoInverse };
 
   /**
-   * \brief solver interface for modelling and simulation of dynamic systeme
+   * \brief solver interface for modelling and simulation of dynamic systems
    * \author Martin Foerg
    * \date 2009-03-31 some comments (Thorsten Schindler)
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
@@ -66,7 +66,7 @@ namespace MBSim {
    */
   class DynamicSystemSolver : public Group {
     public:
-      /** 
+      /**
        * \brief constructor
        */
       DynamicSystemSolver();
@@ -90,7 +90,7 @@ namespace MBSim {
        *
        * The init(InitStage stage) functions of all classes MUST call
        * the init(InitStage stage) functions of all objects
-       * for which this class holds as a container. This call is 
+       * for which this class holds as a container. This call is
        * always done at the end of the function independent of the
        * stage.
        *
@@ -126,8 +126,8 @@ namespace MBSim {
        * If true (the default) then
        * the simulation output files (h5 files) are deleted/truncated/regenerated.
        * If false, then these files left are untouched from a previous run.
-       * This is usefull to regenerate the
-       * e.g. OpenMBV XML files whithout doing a new integration.
+       * This is useful to regenerate the
+       * e.g. OpenMBV XML files without doing a new integration.
        */
       void setTruncateSimulationFiles(bool trunc) { truncateSimulationFiles=trunc; }
 
@@ -137,14 +137,14 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF DYNAMICSYSTEM */
-      virtual int solveConstraintsFixpointSingle(); 
-      virtual int solveImpactsFixpointSingle(double dt = 0); 
+      virtual int solveConstraintsFixpointSingle();
+      virtual int solveImpactsFixpointSingle(double dt = 0);
       virtual int solveConstraintsGaussSeidel();
       virtual int solveImpactsGaussSeidel(double dt = 0);
-      virtual int solveConstraintsRootFinding(); 
-      virtual int solveImpactsRootFinding(double dt = 0); 
-      virtual void checkConstraintsForTermination(); 
-      virtual void checkImpactsForTermination(double dt = 0); 
+      virtual int solveConstraintsRootFinding();
+      virtual int solveImpactsRootFinding(double dt = 0);
+      virtual void checkConstraintsForTermination();
+      virtual void checkImpactsForTermination(double dt = 0);
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
@@ -188,19 +188,19 @@ namespace MBSim {
        * \brief solves prox-functions on acceleration level using sparsity structure but not decoupled
        * \return
        */
-      virtual int solveConstraints(); 
+      virtual int solveConstraints();
 
       /**
        * \brief solves prox-functions on velocity level using sparsity structure but not decoupled
        */
-      virtual int solveImpacts(double dt = 0); 
+      virtual int solveImpacts(double dt = 0);
       /***************************************************/
 
       /* GETTER / SETTER */
 
-      void setConstraintSolver(Solver solver_) { contactSolver = solver_; }                         
-      void setImpactSolver(Solver solver_) { impactSolver = solver_; }                         
-      const Solver& getImpactSolver() { return impactSolver; }                         
+      void setConstraintSolver(Solver solver_) { contactSolver = solver_; }
+      void setImpactSolver(Solver solver_) { impactSolver = solver_; }
+      const Solver& getImpactSolver() { return impactSolver; }
       void setTermination(bool term_) { term = term_; }
       void setStrategy(Strategy strategy_) { strategy = strategy_; }
       void setMaxIter(int iter) { maxIter = iter; }
@@ -208,7 +208,7 @@ namespace MBSim {
       void setNumJacProj(bool numJac_) { numJac = numJac_; }
       void setMaxDampingSteps(int maxDSteps) { maxDampingSteps = maxDSteps; }
       void setLevenbergMarquardtParam(double lmParm_) { lmParm = lmParm_; }
-      void setLinAlg(LinAlg linAlg_) { linAlg = linAlg_; }                         
+      void setLinAlg(LinAlg linAlg_) { linAlg = linAlg_; }
 
       void setUseOldla(bool flag) { useOldla = flag; }
       void setDecreaseLevels(const fmatvec::Vector<int> &decreaseLevels_) { decreaseLevels = decreaseLevels_; }
@@ -246,12 +246,12 @@ namespace MBSim {
        * \param state
        * \param time
        * \param time step
-       * \return velocity difference for current time 
+       * \return velocity difference for current time
        */
       fmatvec::Vec deltau(const fmatvec::Vec &zParent, double t, double dt);
 
       /**
-       * \return position difference for current time 
+       * \return position difference for current time
        * \param state
        * \param time
        * \param time step
@@ -286,13 +286,13 @@ namespace MBSim {
        * \return successful solution of contact equations with Cholesky decomposition on acceleration level
        * \todo put in dynamic system? TODO
        */
-      int solveConstraintsLinearEquations(); 
+      int solveConstraintsLinearEquations();
 
       /**
        * \return successful solution of contact equations with Cholesky decomposition on velocity level
        * \todo put in dynamic system? TODO
        */
-      int solveImpactsLinearEquations(double dt = 0); 
+      int solveImpactsLinearEquations(double dt = 0);
 
       /**
        * \brief updates mass action matrix
@@ -331,7 +331,7 @@ namespace MBSim {
       virtual void zdot(const fmatvec::Vec& z, fmatvec::Vec& zd, double t);
 
       /**
-       * \brief standard invocation of smooth update for event driven integration 
+       * \brief standard invocation of smooth update for event driven integration
        * \param state
        * \param time
        */
@@ -371,23 +371,23 @@ namespace MBSim {
 
       /**
        * \brief save contact force parameter for use as starting value in next time step
-       * \todo put in dynamic system TODO 
+       * \todo put in dynamic system TODO
        */
       void savela(double dt=1.0);
 
       /**
        * \brief load contact force parameter for use as starting value
-       * \todo put in dynamic system TODO 
+       * \todo put in dynamic system TODO
        */
-      void initla(double dt=1.0); 
+      void initla(double dt=1.0);
 
-      /** 
+      /**
        * \brief compute kinetic energy of entire dynamic system
        */
       double computeKineticEnergy() { return 0.5*u.T()*M[0]*u; }
 
-      /** 
-       * \brief compute potential energy of entire dynamic system 
+      /**
+       * \brief compute potential energy of entire dynamic system
        * \tofo change? TODO
        */
       double computePotentialEnergy();
@@ -403,7 +403,7 @@ namespace MBSim {
        * \return the pointer to an element
        * \todo not activated TODO
        */
-      Element* getElement(const std::string &name); 
+      Element* getElement(const std::string &name);
 
       /**
        * \return information for solver including strategy and linear algebra
@@ -473,7 +473,7 @@ namespace MBSim {
       void updatezRef(const fmatvec::Vec &ext);
 
       /**
-       * \brief set the number of plot-routine-calls after which all hdf5-files will be flushed 
+       * \brief set the number of plot-routine-calls after which all hdf5-files will be flushed
        * \param flag
        */
       void setFlushEvery(unsigned int every) {flushEvery = every;}
@@ -581,7 +581,7 @@ namespace MBSim {
        * \brief boolean evaluation of stopvector
        */
       fmatvec::Vector<int> jsvParent;
-      
+
       /**
        * \brief status vector of set valued links with piecewise link equation (which piece is valid)
        */
@@ -590,7 +590,7 @@ namespace MBSim {
       /**
        * \brief status vector of single valued links
        */
-      
+
       fmatvec::Vector<int> LinkStatusRegParent;
       /**
        * \brief sparse mass action matrix
@@ -710,7 +710,7 @@ namespace MBSim {
       unsigned int flushCount;
 
       /**
-       * \brief Flag for reorganisation of hierarchy. 
+       * \brief Flag for reorganisation of hierarchy.
        * This flag will be removed in the future.
        */
       bool reorganizeHierarchy;
@@ -728,7 +728,7 @@ namespace MBSim {
 
       /**
        * \brief update relaxation factors for contact equations
-       * \todo global not available because of unsymmetric mass action matrix TODO 
+       * \todo global not available because of unsymmetric mass action matrix TODO
        */
       void updaterFactors();
 
@@ -739,13 +739,13 @@ namespace MBSim {
       void computeConstraintForces(double t);
 
       /**
-       * \brief 
+       * \brief
        */
       fmatvec::Vec laInverseKineticsParent;
       fmatvec::Mat bInverseKineticsParent;
 
       /**
-       * \brief 
+       * \brief
        */
       fmatvec::Mat WInverseKineticsParent[2];
 
@@ -753,7 +753,7 @@ namespace MBSim {
       bool inverseKinetics;
 
       fmatvec::Vec corrParent;
-      
+
       int rootID;
 
     private:
@@ -762,12 +762,12 @@ namespace MBSim {
        */
       void constructor();
 
-      /** 
+      /**
        * \brief boolean signal evaluation for end integration set by program
        */
       bool integratorExitRequest;
 
-      /** 
+      /**
        * \brief boolean signal evaluation for end integration set by user
        */
       static bool exitRequest;

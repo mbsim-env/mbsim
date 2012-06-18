@@ -1,17 +1,17 @@
 /* Copyright (C) 2004-2009 MBSim Development Team
  *
- * This library is free software; you can redistribute it and/or 
- * modify it under the terms of the GNU Lesser General Public 
- * License as published by the Free Software Foundation; either 
- * version 2.1 of the License, or (at your option) any later version. 
- *  
- * This library is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
- * Lesser General Public License for more details. 
- *  
- * You should have received a copy of the GNU Lesser General Public 
- * License along with this library; if not, write to the Free Software 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
  * Contact: martin.o.foerg@googlemail.com
@@ -38,7 +38,7 @@ namespace MBSim {
   class ContourPointData;
   class ContactKinematics;
 
-  /** 
+  /**
    * \brief basic class for contour definition for rigid (which do not know about their shape) and flexible (they know how they look like) bodies
    * \author Martin Foerg
    * \date 2009-03-23 some comments (Thorsten Schindler)
@@ -46,11 +46,11 @@ namespace MBSim {
    * \date 2009-06-04 not rigid things are in separate files
    * \date 2009-07-16 split from concret contours into new folder contours
    *
-   * kinematics is stored in coordinate system class and is individually evaluated in specific contact kinematics 
+   * kinematics is stored in coordinate system class and is individually evaluated in specific contact kinematics
    */
-  class Contour : public Element { 
+  class Contour : public Element {
     public:
-      /** 
+      /**
        * \brief constructor
        * \param name of contour
        */
@@ -59,7 +59,7 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~Contour();	
+      virtual ~Contour();
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const { return "Contour"; }
@@ -103,18 +103,20 @@ namespace MBSim {
        * \return angular in world frame
        * \param contour position
        */
-      virtual fmatvec::Vec computeAngularVelocity(ContourPointData &cp) { updateKinematicsForFrame(cp,angularVelocity); return cp.getFrameOfReference().getAngularVelocity(); } 
+      virtual fmatvec::Vec computeAngularVelocity(ContourPointData &cp) { updateKinematicsForFrame(cp,angularVelocity); return cp.getFrameOfReference().getAngularVelocity(); }
 
       /**
        * \return curvature of contour in contour point
        * \param contour position
        */
-      virtual double computeCurvature(ContourPointData &cp) { throw MBSimError("ERROR in "+getName()+"(Contour::computeCurvature): Not implemented."); return 0; } 
+      virtual double computeCurvature(ContourPointData &cp) { throw MBSimError("ERROR in "+getName()+"(Contour::computeCurvature): Not implemented."); return 0; }
 
       /**
        * \brief projects the point on the contour to compute the Lagrange parameter
        * \param WrPoint point in world coordinates
        * \return Vec of lagrange parameters
+       *
+       * \remark: a vector length of 2 is necessary (Vec(2,INIT,0.))
        */
       virtual fmatvec::Vec computeLagrangeParameter(const fmatvec::Vec &WrPoint) {throw MBSimError("ERROR computeLagrangeParameter(const fmatvec::Vec &WrPoint): Not implemented for this contour: \"" + this->getType() + "\"."); return 0; }
 
@@ -218,7 +220,7 @@ namespace MBSim {
       int hSize[2], hInd[2];
 
       /**
-       * coordinate system of contour
+       * \brief coordinate system of contour
        */
       Frame R;
   };
