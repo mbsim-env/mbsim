@@ -36,7 +36,7 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
   void Plane::enableOpenMBV(bool enable, double size, int number) {
     if(enable) {
-      cout << "WARNING: Plane::enableOpenMBV() --> It might not work relieable ..." << endl;
+      cout << "WARNING: Plane::enableOpenMBV() --> It doesn't work..." << endl;
       openMBVRigidBody=new OpenMBV::Grid;
       ((OpenMBV::Grid*)openMBVRigidBody)->setXSize(size);
       ((OpenMBV::Grid*)openMBVRigidBody)->setYSize(size);
