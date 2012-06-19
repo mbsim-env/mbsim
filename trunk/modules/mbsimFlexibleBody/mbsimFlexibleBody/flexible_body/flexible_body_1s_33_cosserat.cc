@@ -624,30 +624,30 @@ namespace MBSimFlexibleBody {
     l0 = L/Elements;
     Vec q0Dummy(q0.size(),INIT,0.);
     Vec u0Dummy(u0.size(),INIT,0.);
-    Point3Dd prevBinStart;
+    Point3Dd prevBinHalf;
 
     for(int i = 0; i < Elements; i++) {
       Point3Dd posStart = curvePos.pointAt(i*l0);
-      Point3Dd tangStart = curvePos.derive3D(i*l0, 1);
-      tangStart /= norm(tangStart);
-      Point3Dd binStart = curvePos.derive3D(i*l0, 2);
-      binStart = crossProduct(binStart,tangStart);
-      binStart /= norm(binStart);
+      Point3Dd tangHalf = curvePos.derive3D(i*l0 + l0/2., 1);
+      tangHalf /= norm(tangHalf);
+      Point3Dd binHalf = curvePos.derive3D(i*l0 + l0/2., 2);
+      binHalf = crossProduct(binHalf,tangHalf);
+      binHalf /= norm(binHalf);
       if (i>0) {
-        if (dot(prevBinStart,binStart)<0)
-          binStart = -1. * binStart;
+        if (dot(prevBinHalf,binHalf)<0)
+          binHalf = -1. * binHalf;
       }
-      prevBinStart = binStart;
-      Point3Dd norStart = crossProduct(binStart,tangStart);
+      prevBinHalf = binHalf;
+      Point3Dd norHalf = crossProduct(binHalf,tangHalf);
 
       q0Dummy(i*6)   = posStart.x(); // x
       q0Dummy(i*6+1) = posStart.y(); // y
       q0Dummy(i*6+2) = posStart.z(); // z
 
       SqrMat AIK(3,3,INIT,0.);
-      AIK(0,0) = tangStart.x(); AIK(1,0) = tangStart.y(); AIK(2,0) = tangStart.z();
-      AIK(0,1) = norStart.x(); AIK(1,1) = norStart.y(); AIK(2,1) = norStart.z();
-      AIK(0,2) = binStart.x(); AIK(1,2) = binStart.y(); AIK(2,2) = binStart.z();
+      AIK(0,0) = tangHalf.x(); AIK(1,0) = tangHalf.y(); AIK(2,0) = tangHalf.z();
+      AIK(0,1) = norHalf.x(); AIK(1,1) = norHalf.y(); AIK(2,1) = norHalf.z();
+      AIK(0,2) = binHalf.x(); AIK(1,2) = binHalf.y(); AIK(2,2) = binHalf.z();
       Vec AlphaBetaGamma = AIK2Cardan(AIK);
       //q0Dummy(i*10+3) = AlphaBetaGamma(0); // alpha angle currently set to zero
       q0Dummy(i*6+4) = AlphaBetaGamma(1);
@@ -666,21 +666,13 @@ namespace MBSimFlexibleBody {
 
       if(DEBUGLEVEL==1) {
         cout << "START(" <<i+1 << ",1:end) = [" << posStart <<"];" << endl;
-        cout << "Tangent(" <<i+1 <<",1:end) = [" <<tangStart <<"];" << endl;
-        cout << "Normal(" <<i+1 <<",1:end) = [" <<norStart <<"];" << endl;
-        cout << "Binormal(" <<i+1 <<",1:end) = ["  <<binStart <<"];" << endl;
-
-        cout << "alpha_Old(" << i+1 << ") = " << q(i*10+3) <<";" << endl;
-        cout << "beta_Old(" << i+1 << ") = " << q(i*10+4) <<";" << endl;
-        cout << "gamma_Old(" << i+1 << ") = " << q(i*10+5) <<";" << endl;
+        cout << "Tangent(" <<i+1 <<",1:end) = [" <<tangHalf <<"];" << endl;
+        cout << "Normal(" <<i+1 <<",1:end) = [" <<norHalf <<"];" << endl;
+        cout << "Binormal(" <<i+1 <<",1:end) = ["  <<binHalf <<"];" << endl;
         cout << "%----------------------------------" << endl;
-        cout << "alpha_New(" << i+1 << ") = " << q0Dummy(i*10+3) <<";" << endl;
-        cout << "beta_New(" << i+1 << ") = " << q0Dummy(i*10+4) <<";" << endl;
-        cout << "gamma_New(" << i+1 << ") = " << q0Dummy(i*10+5) <<";" << endl;
-        cout << "%----------------------------------" << endl;
-        cout << "diff_alpha(" << i+1 << ") = " << q(i*10+3) - q0Dummy(i*10+3) <<";" << endl;
-        cout << "diff_beta(" << i+1 << ") = " << q(i*10+4) - q0Dummy(i*10+4) <<";" << endl;
-        cout << "diff_gamma(" << i+1 << ") = " << q(i*10+5) - q0Dummy(i*10+5) <<";" << endl;
+        cout << "alpha_New(" << i+1 << ") = " << q0Dummy(i*6+3) <<";" << endl;
+        cout << "beta_New(" << i+1 << ") = " << q0Dummy(i*6+4) <<";" << endl;
+        cout << "gamma_New(" << i+1 << ") = " << q0Dummy(i*6+5) <<";" << endl;
         cout << "%----------------------------------" << endl;
       }
     }
