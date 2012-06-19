@@ -126,6 +126,13 @@ namespace MBSimFlexibleBody {
 
 #ifdef HAVE_NURBS
       /*!
+       * \brief interpolates the angular velocities with the node-data from the body
+       */
+      void computeCurveAngularVelocities();
+#endif
+
+#ifdef HAVE_NURBS
+      /*!
        * \brief interpolates the Jacobians of translation with the node-data from the body
        */
       void computeCurveJacobians();
@@ -167,6 +174,11 @@ namespace MBSimFlexibleBody {
        * \brief interpolated velocities of the contour
        */
       PlNurbsCurved *curveVelocities;
+
+      /**
+       * \brief interpolated angular velocities of the contour
+       */
+      PlNurbsCurved *curveAngularVelocities;
 
       /**
        * \brief previous normal to avoid jumping

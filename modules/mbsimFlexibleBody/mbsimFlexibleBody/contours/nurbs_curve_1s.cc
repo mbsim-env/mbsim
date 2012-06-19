@@ -61,7 +61,7 @@ namespace MBSimFlexibleBody {
       tangent /= norm(tangent);
       Point3Dd normal = curveTranslations->derive3D(cp.getLagrangeParameterPosition()(0), 2); // TODO check direction
       normal /= norm(normal);
-      if(dot(previousNormal,normal)<0)
+      if(dot(previousNormal,normal)<0) //TODO new heuristic
         normal *= -1.;
       Point3Dd binormal = crossProduct(normal, tangent);
       normal = crossProduct(tangent, binormal); // calculate normal again from cross product as second derivative is not normal to tangent
@@ -85,6 +85,19 @@ namespace MBSimFlexibleBody {
       cp.getFrameOfReference().getVelocity()(0) = Tmpv.x();
       cp.getFrameOfReference().getVelocity()(1) = Tmpv.y();
       cp.getFrameOfReference().getVelocity()(2) = Tmpv.z();
+    }
+
+    if(ff==angularVelocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) {
+      double uStaggered = cp.getLagrangeParameterPosition()(0);
+      double l0 = L/Elements;
+      if (uStaggered < l0/2.)
+        uStaggered = L - l0/2. + uStaggered;
+      else
+        uStaggered -= l0/2.;
+      Point3Dd Tmpav = curveAngularVelocities->pointAt(uStaggered);
+      cp.getFrameOfReference().getAngularAcceleration()(0) = Tmpav.x();
+      cp.getFrameOfReference().getAngularAcceleration()(1) = Tmpav.y();
+      cp.getFrameOfReference().getAngularAcceleration()(2) = Tmpav.z();
     }
 #endif
   }
@@ -123,6 +136,7 @@ namespace MBSimFlexibleBody {
 
       curveTranslations = new PlNurbsCurved;
       curveVelocities = new PlNurbsCurved;
+      curveAngularVelocities = new PlNurbsCurved;
       for(int i=0; i<Elements; i++) { // TODO openstructure: jacobians of Rotation different
         jacobiansTrans.push_back(ContourPointData(i));
         jacobiansRot.push_back(ContourPointData(i, STAGGEREDNODE)); // jacobians of rotation are on staggered grid
@@ -136,6 +150,8 @@ namespace MBSimFlexibleBody {
       }
 
       computeCurveTranslations();
+      computeCurveVelocities();
+      computeCurveAngularVelocities();
     }
     else if(stage==worldFrameContourLocation) {
       R.getOrientation() = (static_cast<FlexibleBody1s33Cosserat*>(parent))->getFrameOfReference()->getOrientation();
@@ -222,6 +238,32 @@ namespace MBSimFlexibleBody {
         Nodelist[Elements+i] = Nodelist[i];
       }
       curveVelocities->globalInterpClosedH(Nodelist, *uvec, *uVec, degU);
+    }
+  }
+#endif
+
+#ifdef HAVE_NURBS
+  void NurbsCurve1s::computeCurveAngularVelocities() {
+    if(openStructure) {
+      PLib::Vector<HPoint3Dd> Nodelist(Elements+1);
+      for(int i=0; i<Elements+1; i++) {
+        ContourPointData cp(i);
+        static_cast<FlexibleBody1s33Cosserat*>(parent)->updateKinematicsForFrame(cp,angularVelocity);
+        Nodelist[i] = HPoint3Dd(cp.getFrameOfReference().getAngularVelocity()(0),cp.getFrameOfReference().getAngularVelocity()(1),cp.getFrameOfReference().getAngularVelocity()(2),1);
+      }
+      curveAngularVelocities->globalInterpH(Nodelist, *uvec, *uVec, degU);
+    }
+    else {
+      PLib::Vector<HPoint3Dd> Nodelist(Elements+degU);
+      for(int i=0; i<Elements; i++) {
+        ContourPointData cp(i);
+        static_cast<FlexibleBody1s33Cosserat*>(parent)->updateKinematicsForFrame(cp,angularVelocity);
+        Nodelist[i] = HPoint3Dd(cp.getFrameOfReference().getAngularVelocity()(0),cp.getFrameOfReference().getAngularVelocity()(1),cp.getFrameOfReference().getAngularVelocity()(2),1);
+      }
+      for(int i=0;i<degU;i++) {
+        Nodelist[Elements+i] = Nodelist[i];
+      }
+      curveAngularVelocities->globalInterpClosedH(Nodelist, *uvec, *uVec, degU);
     }
   }
 #endif
