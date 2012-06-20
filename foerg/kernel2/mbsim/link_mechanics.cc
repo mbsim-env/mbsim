@@ -171,10 +171,10 @@ namespace MBSim {
         h[1].push_back(Vec(frame[i]->getJacobianOfTranslation(1).cols()));
         r[0].push_back(Vec(frame[i]->getJacobianOfTranslation(0).cols()));
         r[1].push_back(Vec(frame[i]->getJacobianOfTranslation(1).cols()));
-        WF.push_back(Vec(3));
-        WM.push_back(Vec(3));
-        fF.push_back(Mat(3,laSize));
-        fM.push_back(Mat(3,laSize));
+        WF.push_back(FVec());
+        WM.push_back(FVec());
+        fF.push_back(FVMat(laSize));
+        fM.push_back(FVMat(laSize));
       }
 #ifdef HAVE_OPENMBVCPPINTERFACE
       assert(openMBVArrowF.size()==0 || openMBVArrowF.size()==frame.size());
@@ -190,10 +190,10 @@ namespace MBSim {
         h[1].push_back(Vec(contour[i]->getReferenceJacobianOfTranslation(1).cols()));
         r[0].push_back(Vec(contour[i]->getReferenceJacobianOfTranslation(0).cols()));
         r[1].push_back(Vec(contour[i]->getReferenceJacobianOfTranslation(1).cols()));
-        WF.push_back(Vec(3));
-        WM.push_back(Vec(3));
-        fF.push_back(Mat(3,laSize));
-        fM.push_back(Mat(3,laSize));
+        WF.push_back(FVec());
+        WM.push_back(FVec());
+        fF.push_back(FVMat(laSize));
+        fM.push_back(FVMat(laSize));
       }
     }
     else if(stage==MBSim::plot) {
