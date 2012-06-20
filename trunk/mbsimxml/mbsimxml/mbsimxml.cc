@@ -11,17 +11,42 @@
 #include <stdlib.h>
 #ifdef MBSIMXML_MINGW // Windows
 #  include <windows.h>
+#  include <process.h>
+#else
+#  include <spawn.h>
+#  include <sys/wait.h>
 #endif
 
 using namespace std;
 
-// run command (including params) (OS-independent)
-// returns the return value of the command
-int runcommand(const string &command) {
-  int ret=system(command.c_str());
-#ifdef HAVE_WEXITSTATUS
-  return WEXITSTATUS(ret);
+// run the program in arg[0] with the options arg[1], arg[2], ...
+// asyncronously (wait for arg[0] to finish) and
+// return -1 or error or the exit code of arg[0].
+int runProgramSyncronous(const vector<string> &arg) {
+  char **argv=new char*[arg.size()+1];
+  for(size_t i=0; i<arg.size(); i++)
+    argv[i]=const_cast<char*>(arg[i].c_str());
+  argv[arg.size()]=NULL;
+
+#if !defined MINGW
+  pid_t child;
+  int ret;
+  ret=posix_spawn(&child, argv[0], NULL, NULL, argv, NULL);
+  delete[]argv;
+  if(ret!=0)
+    return -1;
+
+  int status;
+  waitpid(child, &status, 0);
+
+  if(WIFEXITED(status))
+    return WEXITSTATUS(status);
+  else
+    return -1;
 #else
+  int ret;
+  ret=_spawnv(_P_WAIT, argv[0], argv);
+  delete[]argv;
   return ret;
 #endif
 }
@@ -128,10 +153,11 @@ int main(int argc, char *argv[]) {
   // parse parameters
 
   // mpath
-  string MPATH="";
+  vector<string> MPATH;
   if((i=std::find(arg.begin(), arg.end(), "--mpath"))!=arg.end()) {
     i2=i; i2++;
-    MPATH+=(*i)+" \""+(*i2)+"\"";
+    MPATH.push_back(*i);
+    MPATH.push_back(*i2);
     arg.erase(i); arg.erase(i2);
   }
 
@@ -181,9 +207,11 @@ int main(int argc, char *argv[]) {
   string DEPMBSIM=".dep."+basename(MBSIM);
   string ERRFILE=".err."+basename(MBSIM);
 
-  string AUTORELOAD;
-  if(AUTORELOADTIME>0) // AUTORELOAD is now set (see above)
-    AUTORELOAD="--dependencies \""+DEPMBSIM+"\"";
+  vector<string> AUTORELOAD;
+  if(AUTORELOADTIME>0) { // AUTORELOAD is now set (see above)
+    AUTORELOAD.push_back("--dependencies");
+    AUTORELOAD.push_back(DEPMBSIM);
+  }
 
   string PARAMINT="none";
   if((i=std::find(arg.begin(), arg.end(), "--intparam"))!=arg.end()) {
@@ -205,12 +233,27 @@ int main(int argc, char *argv[]) {
     unlink(ERRFILE.c_str());
 
     // run preprocessor
-    ret=runcommand("\""+MBXMLUTILSBIN+"/mbxmlutilspp\" "+AUTORELOAD+" "+MPATH+" "+
-      "\""+PARAM+"\" \""+MBSIM+"\" \""+MBXMLUTILSSCHEMA+"/http___mbsim_berlios_de_MBSimXML/mbsimxml.xsd\" "+
-      "\""+PARAMINT+"\" \""+MBSIMINT+"\" \""+MBXMLUTILSSCHEMA+"/http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd\"");
+    vector<string> command;
+    command.push_back(MBXMLUTILSBIN+"/mbxmlutilspp");
+    command.insert(command.end(), AUTORELOAD.begin(), AUTORELOAD.end());
+    command.insert(command.end(), MPATH.begin(), MPATH.end());
+    command.push_back(PARAM);
+    command.push_back(MBSIM);
+    command.push_back(MBXMLUTILSSCHEMA+"/http___mbsim_berlios_de_MBSimXML/mbsimxml.xsd");
+    command.push_back(PARAMINT);
+    command.push_back(MBSIMINT);
+    command.push_back(MBXMLUTILSSCHEMA+"/http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd");
+    ret=runProgramSyncronous(command);
 
-    if(!ONLYPP && ret==0)
-      ret=runcommand("\""+MBSIMXMLBIN+"/mbsimflatxml\" "+NOINT+" "+ONLY1OUT+" \""+PPMBSIM+"\" \""+PPMBSIMINT+"\"");
+    if(!ONLYPP && ret==0) {
+      vector<string> command;
+      command.push_back(MBSIMXMLBIN+"/mbsimflatxml");
+      if(NOINT!="") command.push_back(NOINT);
+      if(ONLY1OUT!="") command.push_back(ONLY1OUT);
+      command.push_back(PPMBSIM);
+      command.push_back(PPMBSIMINT);
+      ret=runProgramSyncronous(command);
+    }
 
     if(ret!=0) touch(ERRFILE);
 
