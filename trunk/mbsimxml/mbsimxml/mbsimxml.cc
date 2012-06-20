@@ -28,7 +28,7 @@ int runProgramSyncronous(const vector<string> &arg) {
     argv[i]=const_cast<char*>(arg[i].c_str());
   argv[arg.size()]=NULL;
 
-#if !defined MINGW
+#if !defined MBSIMXML_MINGW
   pid_t child;
   int ret;
   ret=posix_spawn(&child, argv[0], NULL, NULL, argv, NULL);
