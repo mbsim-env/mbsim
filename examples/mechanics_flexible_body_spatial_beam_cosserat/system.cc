@@ -54,7 +54,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::SpineExtrusion *cuboid = new OpenMBV::SpineExtrusion;
-  cuboid->setNumberOfSpinePoints(elements*4+1); 
+  cuboid->setNumberOfSpinePoints(elements*4+1);
   cuboid->setStaticColor(0.5);
   cuboid->setScaleFactor(1.); 
   vector<OpenMBV::PolygonPoint*> *rectangle = new vector<OpenMBV::PolygonPoint*>; 
@@ -75,9 +75,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Vec q0 = Vec(6*elements,INIT,0.);
   double R = (l0/(2.*M_PI))*1.0; // stretched circle
   double dphi = (2*M_PI)/elements;
-  double phi0 = M_PI/2.;// + dphi;
   for(int i=0; i<elements; i++) { 
-    double phi = phi0 - i*dphi;	
+    double phi = M_PI/2. - i*dphi;
     q0(6*i) = R*cos(phi);
     q0(6*i+1) = R*sin(phi);
     q0(6*i+5) = phi - dphi/2.-M_PI/2.;
@@ -91,6 +90,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   //}
 
   rod->setq0(q0);
+  rod->setu0(Vec(q0.size(),INIT,0.));
   this->addObject(rod);
 
   // Beginning Contact ---------------------------------------------------
