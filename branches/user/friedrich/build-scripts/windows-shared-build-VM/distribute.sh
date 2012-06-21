@@ -40,6 +40,7 @@ mbxmlutils
 
 OCTAVEVERSION=$($PREFIX/bin/octave-config.exe --version | dos2unix)
 OCTAVEMDIR="$PREFIX/share/octave/$OCTAVEVERSION/m"
+OCTAVEOCTDIR="$PREFIX/lib/octave/$OCTAVEVERSION/oct"
 
 
 
@@ -94,7 +95,8 @@ getdlls() {
   mv $TMPDLLFILESOUT.uniq $TMPDLLFILESOUT
   rm -f $TMPDLLFILESOUT.abs
   for F in $(cat $TMPDLLFILESOUT); do
-    locate $F | grep -E "^(/usr/i686-w64-mingw32/|/home/user/MBSimWindows/local/)" >> $TMPDLLFILESOUT.abs
+    locate $F | grep "$F$" | grep -v "/wine" | grep -v "/\.wine/" >> $TMPDLLFILESOUT.abs
+    find $PREFIX -name $(basename $F) | grep "$F$" | grep -v "/wine" | grep -v "/\.wine/" >> $TMPDLLFILESOUT.abs
   done
   sort $TMPDLLFILESOUT.abs | uniq > $TMPDLLFILESOUT.uniq
   rm -f $TMPDLLFILESOUT
@@ -118,16 +120,6 @@ done
 for F in $(grep -i "\.dll$" $TMPDLLFILESOUT); do
   cp -uL $F $DISTDIR/bin
 done
-
-# octave HOME_DIR
-mkdir -p $DISTDIR/bin/.wrapper
-mv $DISTDIR/bin/octave.exe $DISTDIR/bin/.wrapper/
-cat << EOF > $DISTDIR/bin/octave.bat
-@echo off
-set THISDIR=%~dp0
-set OCTAVE_HOME=%THISDIR%..
-"%THISDIR%.wrapper/octave.exe"
-EOF
 
 # copy includes
 TMPINCFILE=/tmp/distribute.inc.cc
@@ -155,6 +147,10 @@ done
 # copy octave m
 mkdir -p $DISTDIR/share/octave/$OCTAVEVERSION/m
 cp -ruL $OCTAVEMDIR/* $DISTDIR/share/octave/$OCTAVEVERSION/m
+
+# copy octave oct
+mkdir -p $DISTDIR/lib/octave/$OCTAVEVERSION/oct
+cp -ruL $OCTAVEOCTDIR/* $DISTDIR/lib/octave/$OCTAVEVERSION/oct
 
 # SPECIAL handling
 cp -uL /usr/i686-w64-mingw32/sys-root/mingw/bin/iconv.dll $DISTDIR/bin
@@ -195,12 +191,114 @@ mkdir -p $DISTDIR/bin/iconengines
 cp /usr/i686-w64-mingw32/sys-root/mingw/lib/qt4/plugins/imageformats/qsvg4.dll $DISTDIR/bin/imageformats
 cp /usr/i686-w64-mingw32/sys-root/mingw/lib/qt4/plugins/iconengines/qsvgicon4.dll $DISTDIR/bin/iconengines
 
+# Add some examples
+mkdir -p $DISTDIR/examples
+(cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/mechanics_basics_hierachical_modelling)
+(cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/xmlflat_hierachical_modelling)
+(cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/xml_hierachical_modelling)
+mkdir -p $DISTDIR/examples/compile_test_all
+cat << EOF > $DISTDIR/examples/compile_test_all/main.cc
+#include <openmbvcppinterface/cube.h>
+#include <mbsim/rigid_body.h>
+#include <mbsim/integrators/lsode_integrator.h>
+#include <mbsimControl/actuator.h>
+#include <mbsimElectronics/simulation_classes.h>
+#include <mbsimFlexibleBody/contours/flexible_band.h>
+#include <mbsimHydraulics/hnode.h>
+#include <mbsimPowertrain/cardan_shaft.h>
+
+int main() {
+  OpenMBV::Cube *cube=new OpenMBV::Cube();
+  MBSim::RigidBody *rb=new MBSim::RigidBody("RB");
+  MBSim::LSODEIntegrator *integ=new MBSim::LSODEIntegrator;
+  MBSimControl::Actuator *act=new MBSimControl::Actuator("ACT");
+  MBSimElectronics::Diode *di=new MBSimElectronics::Diode("DI");
+  MBSimFlexibleBody::FlexibleBand *band=new MBSimFlexibleBody::FlexibleBand("FLEX");
+  MBSimHydraulics::ElasticNode *node=new MBSimHydraulics::ElasticNode("NODE");
+  MBSimPowertrain::CardanShaft *shaft=new MBSimPowertrain::CardanShaft("SHAFT2");
+}
+EOF
+# Add test script
+cat << EOF > $DISTDIR/bin/mbsim-test.bat
+@echo off
+
+set PWD=%CD%
+
+set INSTDIR=%~dp0..
+
+set CXX=%1
+
+cd "%INSTDIR%\examples"
+set PATH="%INSTDIR%\bin;%PATH%"
+
+if not %CXX%!==! (
+  set CXXBINDIR=%~dp1
+  set PATH=%CXXBINDIR%;%PATH%
+
+  echo COMPILE_TEST_ALL
+  cd compile_test_all
+  for /f "delims=" %%a in ('"%INSTDIR%\bin\mbsim-config.bat" --cflags') do @set CFLAGS=%%a
+  for /f "delims=" %%a in ('"%INSTDIR%\bin\mbsim-config.bat" --libs') do @set LIBS=%%a
+  "%CXX%" -c -o main.o main.cc %CFLAGS%
+  if ERRORLEVEL 1 goto end
+  "%CXX%" -o main.exe main.o %LIBS%
+  if ERRORLEVEL 1 goto end
+  main.exe
+  if ERRORLEVEL 1 goto end
+  cd ..
+  echo DONE
+  
+  echo MECHANICS_BASICS_HIERACHICAL_MODELLING
+  cd mechanics_basics_hierachical_modelling
+  "%CXX%" -c -o group1.o group1.cc %CFLAGS%
+  if ERRORLEVEL 1 goto end
+  "%CXX%" -c -o group2.o group2.cc %CFLAGS%
+  if ERRORLEVEL 1 goto end
+  "%CXX%" -c -o system.o system.cc %CFLAGS%
+  if ERRORLEVEL 1 goto end
+  "%CXX%" -c -o main.o main.cc %CFLAGS%
+  if ERRORLEVEL 1 goto end
+  "%CXX%" -o main.exe main.o system.o group1.o group2.o %LIBS%
+  if ERRORLEVEL 1 goto end
+  main.exe
+  if ERRORLEVEL 1 goto end
+  cd ..
+  echo DONE
+)
+
+echo XMLFLAT_HIERACHICAL_MODELLING
+cd xmlflat_hierachical_modelling
+"%INSTDIR%\bin\mbsimflatxml.exe" TS.mbsim.xml Integrator.mbsimint.xml
+if ERRORLEVEL 1 goto end
+cd ..
+echo DONE
+
+echo XML_HIERACHICAL_MODELLING
+cd xml_hierachical_modelling
+"%INSTDIR%\bin\mbsimxml.exe" --mbsimparam parameter.xml TS.mbsim.xml Integrator.mbsimint.xml --mpath mfiles
+if ERRORLEVEL 1 goto end
+cd ..
+echo DONE
+
+echo STARTING H5PLOTSERIE
+"%INSTDIR%\bin\h5plotserie.exe" xml_hierachical_modelling\TS.mbsim.h5
+if ERRORLEVEL 1 goto end
+echo DONE
+
+echo STARTING OPENMBV
+"%INSTDIR%\bin\openmbv.exe" xml_hierachical_modelling\TS.ombv.xml
+if ERRORLEVEL 1 goto end
+echo DONE
+
+echo ALL TESTS DONE
+
+:end
+cd "%PWD%"
+EOF
+
 # archive dist dir
 if [ $NOARCHIVE -eq 0 ]; then
   rm -f $DISTBASEDIR/mbsim-windows-shared-build-xxx.zip
-  #MFMF
-  rm $DISTDIR/bin/.wrapper/octave.exe
-  #MFMF
   (cd $DISTBASEDIR; zip -r $DISTBASEDIR/mbsim-windows-shared-build-xxx.zip local)
   echo "Create MBSim archive at $DISTBASEDIR/mbsim-windows-shared-build-xxx.zip"
 fi
