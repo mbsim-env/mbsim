@@ -92,8 +92,8 @@ EOF
 chmod +x $DISTDIR/bin/.wrapper/ld_library_path_wrapper.sh
 for F in $DISTDIR/bin/*; do
   ldd $F &> /dev/null || continue
-  ldd $F | sed -rne "/=>/s/^.*=> ([^(]+) .*$/\1/p" | grep -v "^$DISTDIR" &> /dev/null
-  if [ $? -eq 0 ]; then
+  readelf -d $F | grep "Library rpath: \[.*\$ORIGIN/../lib.*" &> /dev/null
+  if [ $? -ne 0 ]; then
     echo "$F"
     mv $F $DISTDIR/bin/.wrapper/$(basename $F)
     (cd $DISTDIR/bin; ln -s .wrapper/ld_library_path_wrapper.sh $F)
@@ -177,8 +177,8 @@ rm -f $DISTDIR/include/features.h
 (cd $DISTDIR/lib; ln -s libatlas.so.3 libatlas.so)
 (cd $DISTDIR/lib; ln -s libstdc++.so.6 libstdc++.so)
 
-# create mbsim-config.sh
-cat << EOF > $DISTDIR/bin/mbsim-config.sh
+# create mbsim-config
+cat << EOF > $DISTDIR/bin/mbsim-config
 #! /bin/sh
 
 if [ \$# -ne 1 ]; then
@@ -201,13 +201,96 @@ elif [ "_\$1" = "_--libs" ]; then
   echo "\$LIBS"
 fi
 EOF
-chmod +x $DISTDIR/bin/mbsim-config.sh
+chmod +x $DISTDIR/bin/mbsim-config
 
 # Qt plugins
 mkdir -p $DISTDIR/bin/imageformats
 mkdir -p $DISTDIR/bin/iconengines
 cp /usr/lib/qt4/plugins/imageformats/libqsvg.so $DISTDIR/bin/imageformats
 cp /usr/lib/qt4/plugins/iconengines/libqsvgicon.so $DISTDIR/bin/iconengines
+
+# Add some examples
+mkdir -p $DISTDIR/examples
+(cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/mechanics_basics_hierachical_modelling)
+(cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/xmlflat_hierachical_modelling)
+(cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/xml_hierachical_modelling)
+mkdir -p $DISTDIR/examples/compile_test_all
+cat << EOF > $DISTDIR/examples/compile_test_all/main.cc
+#include <openmbvcppinterface/cube.h>
+#include <mbsim/rigid_body.h>
+#include <mbsim/integrators/lsode_integrator.h>
+#include <mbsimControl/actuator.h>
+#include <mbsimElectronics/simulation_classes.h>
+#include <mbsimFlexibleBody/contours/flexible_band.h>
+#include <mbsimHydraulics/hnode.h>
+#include <mbsimPowertrain/cardan_shaft.h>
+
+int main() {
+  OpenMBV::Cube *cube=new OpenMBV::Cube();
+  MBSim::RigidBody *rb=new MBSim::RigidBody("RB");
+  MBSim::LSODEIntegrator *integ=new MBSim::LSODEIntegrator;
+  MBSimControl::Actuator *act=new MBSimControl::Actuator("ACT");
+  MBSimElectronics::Diode *di=new MBSimElectronics::Diode("DI");
+  MBSimFlexibleBody::FlexibleBand *band=new MBSimFlexibleBody::FlexibleBand("FLEX");
+  MBSimHydraulics::ElasticNode *node=new MBSimHydraulics::ElasticNode("NODE");
+  MBSimPowertrain::CardanShaft *shaft=new MBSimPowertrain::CardanShaft("SHAFT2");
+}
+EOF
+# Add test script
+cat << EOF > $DISTDIR/bin/mbsim-test
+#! /bin/sh
+
+INSTDIR="\$(readlink -f \$(dirname \$0)/..)"
+
+CXX=\$1
+
+cd \$INSTDIR/examples
+export LD_LIBRARY_PATH=\$INSTDIR/lib
+
+if [ "_\$CXX" != "_" ]; then
+  echo "COMPILE_TEST_ALL"
+  cd compile_test_all
+  \$CXX -c -o main.o main.cc \$(\$INSTDIR/bin/mbsim-config --cflags) || exit
+  \$CXX -o main main.o \$(\$INSTDIR/bin/mbsim-config --libs) || exit
+  ./main || exit
+  cd ..
+  echo "DONE"
+  
+  echo "MECHANICS_BASICS_HIERACHICAL_MODELLING"
+  cd mechanics_basics_hierachical_modelling
+  \$CXX -c -o group1.o group1.cc \$(\$INSTDIR/bin/mbsim-config --cflags) || exit
+  \$CXX -c -o group2.o group2.cc \$(\$INSTDIR/bin/mbsim-config --cflags) || exit
+  \$CXX -c -o system.o system.cc \$(\$INSTDIR/bin/mbsim-config --cflags) || exit
+  \$CXX -c -o main.o main.cc \$(\$INSTDIR/bin/mbsim-config --cflags) || exit
+  \$CXX -o main main.o system.o group1.o group2.o \$(\$INSTDIR/bin/mbsim-config --libs) || exit
+  ./main || exit
+  cd ..
+  echo "DONE"
+fi
+
+echo "XMLFLAT_HIERACHICAL_MODELLING"
+cd xmlflat_hierachical_modelling
+\$INSTDIR/bin/mbsimflatxml TS.mbsim.xml Integrator.mbsimint.xml || exit
+cd ..
+echo "DONE"
+
+echo "XML_HIERACHICAL_MODELLING"
+cd xml_hierachical_modelling
+\$INSTDIR/bin/mbsimxml --mbsimparam parameter.xml TS.mbsim.xml Integrator.mbsimint.xml --mpath mfiles || exit
+cd ..
+echo "DONE"
+
+echo "STARTING H5PLOTSERIE"
+\$INSTDIR/bin/h5plotserie xml_hierachical_modelling/TS.mbsim.h5 || exit
+echo "DONE"
+
+echo "STARTING OPENMBV"
+\$INSTDIR/bin/openmbv xml_hierachical_modelling/TS.ombv.xml || exit
+echo "DONE"
+
+echo "ALL TESTS DONE"
+EOF
+chmod +x $DISTDIR/bin/mbsim-test
      
 # archive dist dir
 if [ $NOARCHIVE -eq 0 ]; then
