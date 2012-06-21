@@ -39,7 +39,7 @@ class TestFunction : public Function1<fmatvec::Vec, fmatvec::Vec> {
 
 int main (int argc, char* argv[]) {
 
-  int dimension = 300;
+  int dimension = 1000;
 
   TestFunction * function = new TestFunction();
 
@@ -47,15 +47,11 @@ int main (int argc, char* argv[]) {
   newton.setFunction(function);
   newton.setJacobianFunction(new NumericalNewtonJacobianFunction());
 
-  TestFunction * function2 = new TestFunction();
-
-  MultiDimNewtonMethod newton2(function2);
-
   map<Index, double> tolerances;
   tolerances.insert(pair<Index, double>(Index(0,dimension/2-1), 1e-10));
-  tolerances.insert(pair<Index, double>(Index(dimension/2,dimension-1), 1e-10));
+  tolerances.insert(pair<Index, double>(Index(dimension/2,dimension-1), 1e-8));
 
-  newton.setCriteriaFunction(new LocalResidualCriteriaFunction(tolerances));
+
 
   Vec initialSolution(dimension,INIT,0.0);
   for(int i =0; i< dimension; i++) {
@@ -66,36 +62,38 @@ int main (int argc, char* argv[]) {
 
   StopWatch sw;
 
+  cout << "Solving system of dimension " << dimension << endl;
+
+  /*New Newton*/
   for(int i =0 ; i < 2; i++) {
-    if(i==1)
-      newton.setCriteriaFunction(new GlobalResidualCriteriaFunction());
+    if(i==0) {
+      cout << "Solving with GlobalResidualCriteriaFunction with tolerance of 1e-10 ... " << endl;
+      newton.setCriteriaFunction(new GlobalResidualCriteriaFunction(1e-10));
+    }
+    else {
+      cout << "Solving with LocalResidualCriteriaFunction with tolerance for first half of solution vector of 1e-10 and second half of 1e-8 ... " << endl;
+      newton.setCriteriaFunction(new LocalResidualCriteriaFunction(tolerances));
+    }
     sw.start();
     test1 = newton.solve(initialSolution);
 
     cout << "Time = " << sw.stop(true) << endl;
+    cout << "Iterations = " << newton.getNumberOfIterations() << endl << endl;
   }
 
-  cout << "Info of new = " << newton.getInfo() << endl;
-
-  cout << "iter = " << newton.getNumberOfIterations() << endl;
-  cout << "itermax = " << newton.getNumberOfMaximalIterations() << endl;
-
-  //cout << "test1 = "  << test1 << endl;
+  /*Old newton*/
+  cout << "Solving system with old newton algorithm as reference with tolerance of 1e-10 ... " << endl;
+  TestFunction * function2 = new TestFunction();
+  MultiDimNewtonMethod newton2(function2);
+  newton2.setTolerance(1e-10);
 
   sw.start();
 
   test2 = newton2.solve(test2);
 
   cout << "Time = " << sw.stop(true) << endl;
-
-  cout << "Info of old = " << newton2.getInfo() << endl;
-
-  cout << "iter = " << newton2.getNumberOfIterations() << endl;
-  cout << "itermax = " << newton2.getNumberOfMaximalIterations() << endl;
-
-  //cout << "test2 = "  << test2 << endl;
-
-  //cout << "test1 - test2" << test1 - test2 << endl;
+  cout << "Iterations = " << newton2.getNumberOfIterations() << endl;
+  cout << "REAMARK: The iterations are counted differently (minus one) with the old newton..." << endl;
 
   return 0;
 
