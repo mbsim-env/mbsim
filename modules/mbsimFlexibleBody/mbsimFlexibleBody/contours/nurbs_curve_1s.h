@@ -93,6 +93,12 @@ namespace MBSimFlexibleBody {
       virtual MBSim::ContactKinematics *findContactPairingWith(std::string type0, std::string type1) { throw MBSim::MBSimError("ERROR(NurbsCurve1s::findContactPairingWith): Not implemented!"); }
       /***************************************************/
 
+      /* GETTER / SETTER */
+#ifdef HAVE_NURBS
+      void setNormalRotationGrid(fmatvec::Vec normal_) { normalRotationGrid.x() = normal_(0), normalRotationGrid.y() = normal_(1),normalRotationGrid.z() = normal_(2); }
+#endif
+      /***************************************************/
+
 #ifdef HAVE_NURBS
       /**
        * \brief initialize NURBS curve 
@@ -181,9 +187,9 @@ namespace MBSimFlexibleBody {
       PlNurbsCurved *curveAngularVelocities;
 
       /**
-       * \brief previous normal to avoid jumping
+       * \brief closest normal on rotation grid to update direction of normal of nurbs-curve and to avoid jumping
        */
-      PLib::Point3Dd previousNormal;
+      PLib::Point3Dd normalRotationGrid;
 
       /**
        * \brief Jacobians of Translation of finite element nodes

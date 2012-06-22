@@ -184,6 +184,10 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s33Cosserat::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
     if(cp.getContourParameterType() == CONTINUUM) { // frame on continuum
 #ifdef HAVE_NURBS
+      double sLocalTranslation;
+      int currentElementTranslation;
+      BuildElementTranslation(cp.getLagrangeParameterPosition()(0),sLocalTranslation,currentElementTranslation); // Lagrange parameter and number of translational element
+      curve->setNormalRotationGrid(frameOfReference->getOrientation()*angle->computen(q(6*currentElementTranslation+3,6*currentElementTranslation+5))); // normal
       curve->updateKinematicsForFrame(cp,ff);
 #endif
     }
@@ -649,7 +653,7 @@ namespace MBSimFlexibleBody {
       AIK(0,1) = norHalf.x(); AIK(1,1) = norHalf.y(); AIK(2,1) = norHalf.z();
       AIK(0,2) = binHalf.x(); AIK(1,2) = binHalf.y(); AIK(2,2) = binHalf.z();
       Vec AlphaBetaGamma = AIK2Cardan(AIK);
-      //q0Dummy(i*10+3) = AlphaBetaGamma(0); // alpha angle currently set to zero
+      q0Dummy(i*6+3) = AlphaBetaGamma(0);
       q0Dummy(i*6+4) = AlphaBetaGamma(1);
       q0Dummy(i*6+5) = AlphaBetaGamma(2);
 
@@ -657,7 +661,7 @@ namespace MBSimFlexibleBody {
         Point3Dd velStart = curveVel.pointAt(i*l0);
 
         Vec velK(3,INIT,0.); velK(0) = velStart.x(); velK(1) = velStart.y(); velK(2) = velStart.z();
-        Vec velI = trans(frameOfReference->getOrientation())*AIK*velK;
+        Vec velI = trans(frameOfReference->getOrientation())*AIK*velK; // TODO AIK now from staggered nodes
 
         u0Dummy(i*6) = velI(0);
         u0Dummy(i*6+1) = velI(1);
