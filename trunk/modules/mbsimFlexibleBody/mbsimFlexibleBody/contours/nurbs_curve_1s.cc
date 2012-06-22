@@ -59,9 +59,9 @@ namespace MBSimFlexibleBody {
     if(ff==normal || ff==firstTangent || ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
       Point3Dd tangent = curveTranslations->derive3D(cp.getLagrangeParameterPosition()(0), 1);
       tangent /= norm(tangent);
-      Point3Dd normal = curveTranslations->derive3D(cp.getLagrangeParameterPosition()(0), 2); // TODO check direction
+      Point3Dd normal = curveTranslations->derive3D(cp.getLagrangeParameterPosition()(0), 2);
       normal /= norm(normal);
-      if(dot(previousNormal,normal)<0) //TODO new heuristic
+      if(dot(normalRotationGrid,normal)<0) // orientate derived normal from NURBS curve to direction of closest rotation matrix of rotation grid
         normal *= -1.;
       Point3Dd binormal = crossProduct(normal, tangent);
       normal = crossProduct(tangent, binormal); // calculate normal again from cross product as second derivative is not normal to tangent
@@ -76,8 +76,6 @@ namespace MBSimFlexibleBody {
       cp.getFrameOfReference().getOrientation().col(2)(0) = binormal.x();
       cp.getFrameOfReference().getOrientation().col(2)(1) = binormal.y();
       cp.getFrameOfReference().getOrientation().col(2)(2) = binormal.z();
-
-      previousNormal = normal;
     }
 
     if(ff==velocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) {
@@ -88,7 +86,7 @@ namespace MBSimFlexibleBody {
     }
 
     if(ff==angularVelocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) {
-      double uStaggered = cp.getLagrangeParameterPosition()(0); // interpolation of angular velocity starts from 0 --> \phi_{1/2} but contour starts from 0 --> r_0 therefore this difference of l0
+      double uStaggered = cp.getLagrangeParameterPosition().copy()(0); // interpolation of angular velocity starts from 0 --> \phi_{1/2} but contour starts from 0 --> r_0 therefore this difference of l0/2
       double l0 = L/Elements;
       if (uStaggered < l0/2.)
         uStaggered = L - l0/2. + uStaggered;
@@ -107,7 +105,7 @@ namespace MBSimFlexibleBody {
     cp.getFrameOfReference().getJacobianOfTranslation().resize(3,qSize);
     cp.getFrameOfReference().getJacobianOfRotation().resize(3,qSize); // TODO open structure
 
-    double uStaggered = cp.getLagrangeParameterPosition()(0); // interpolation of Jacobian of Rotation starts from 0 --> \phi_{1/2} but Jacobian of Translation and contour starts from 0 --> r_0 therefore this difference of l0
+    double uStaggered = cp.getLagrangeParameterPosition().copy()(0); // interpolation of Jacobian of Rotation starts from 0 --> \phi_{1/2} but Jacobian of Translation and contour starts from 0 --> r_0 therefore this difference of l0/2
     double l0 = L/Elements;
     if (uStaggered < l0/2.)
       uStaggered = L - l0/2. + uStaggered;
