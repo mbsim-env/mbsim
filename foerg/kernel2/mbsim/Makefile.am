@@ -14,6 +14,7 @@ environment.cc\
 frame.cc\
 group.cc\
 joint.cc\
+contact.cc\
 kinematics.cc\
 extern_generalized_io.cc\
 link.cc\
@@ -47,6 +48,7 @@ environment.h\
 frame.h\
 group.h\
 joint.h\
+contact.h\
 kinematics.h\
 extern_generalized_io.h\
 link.h\

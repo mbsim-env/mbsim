@@ -108,10 +108,6 @@ namespace MBSim {
 
   void Joint::updateJacobians(double t, int j) {
     FMat tWrP0P1 = tilde(WrP0P1);
-    //cout << "---------------------------------------" << endl;
-    //cout << frame[0]->getJacobianOfTranslation(j) << endl;
-    //cout << frame[0]->getJacobianOfRotation(j) << endl;
-    //cout << "---------------------------------------" << endl;
 
     C.setJacobianOfTranslation(frame[0]->getJacobianOfTranslation(j) - tWrP0P1*frame[0]->getJacobianOfRotation(j),j);
     C.setJacobianOfRotation(frame[0]->getJacobianOfRotation(j),j);

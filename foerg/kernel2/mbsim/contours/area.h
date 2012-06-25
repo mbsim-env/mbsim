@@ -41,20 +41,20 @@ namespace MBSim {
       /* GETTER / SETTER */
       void setLimit1(double l) {lim1 = l;}
       void setLimit2(double l) {lim2 = l;}
-      void setCd1(const fmatvec::Vec& Cd);
-      void setCd2(const fmatvec::Vec& Cd);
+      void setCd1(const fmatvec::FVec& Cd);
+      void setCd2(const fmatvec::FVec& Cd);
       virtual void init(InitStage stage);
       double getLimit1() const { return lim1; }
       double getLimit2() const { return lim2; }
       /***************************************************/
 
-      fmatvec::Vec computeWn() { return R.getOrientation()*Cn; }
-      fmatvec::Vec computeWd1() { return R.getOrientation()*Cd1; }
-      fmatvec::Vec computeWd2() { return R.getOrientation()*Cd2; }
+      fmatvec::FVec computeWn() { return R.getOrientation()*Cn; }
+      fmatvec::FVec computeWd1() { return R.getOrientation()*Cd1; }
+      fmatvec::FVec computeWd2() { return R.getOrientation()*Cd2; }
 
     private:
       double lim1, lim2;
-      fmatvec::Vec Cn, Cd1, Cd2;
+      fmatvec::FVec Cn, Cd1, Cd2;
   };      
 }
 

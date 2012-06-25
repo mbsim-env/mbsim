@@ -246,12 +246,12 @@ namespace MBSim {
       /**
        * \brief single-valued forces for possible contact points
        */
-      std::vector<fmatvec::Mat*> fF;
+      std::vector<fmatvec::FVMat*> fF;
 
       /**
        * \brief set-valued forces for possible contact points
        */
-      std::vector<fmatvec::Vec*> WF;
+      std::vector<fmatvec::FVec*> WF;
 
       /**
        * \brief condensed and full force direction matrix for possible contact points
