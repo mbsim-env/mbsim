@@ -186,8 +186,7 @@ R.init(stage);
   }
 
   ContactKinematics * RigidContour::findContactPairingWith(std::string type0, std::string type1) {
-    //return findContactPairingRigidRigid(type0.c_str(), type1.c_str());
-    return 0;
+    return findContactPairingRigidRigid(type0.c_str(), type1.c_str());
   }
 
 }

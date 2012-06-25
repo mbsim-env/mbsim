@@ -43,7 +43,7 @@ namespace MBSim {
       double computePointWeight(const fmatvec::Vec &s, int i);
       double computePointWeight(const fmatvec::Vec &s, int i, int diff);
 
-      fmatvec::Vec computeWn(const ContourPointData &cp);
+      fmatvec::FVec computeWn(const ContourPointData &cp);
   };
 }
 

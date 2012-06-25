@@ -17,6 +17,9 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
+#define FMATVEC_NO_BOUNDS_CHECK
+#define FMATVEC_NO_SIZE_CHECK
+
 #include <config.h> 
 #include <mbsim/contact.h>
 #include <mbsim/contour.h>
@@ -67,9 +70,9 @@ namespace MBSim {
       delete[] *i;
     for(vector<Mat*>::iterator i = Vk[0].begin(); i != Vk[0].end(); ++i)
       delete[] *i;
-    for(vector<Mat*>::iterator i = fF.begin(); i != fF.end(); ++i)
+    for(vector<FVMat*>::iterator i = fF.begin(); i != fF.end(); ++i)
       delete[] *i;
-    for(vector<Vec*>::iterator i = WF.begin(); i != WF.end(); ++i)
+    for(vector<FVec*>::iterator i = WF.begin(); i != WF.end(); ++i)
       delete[] *i;
     for(vector<unsigned int*>::iterator i = gdActive.begin(); i != gdActive.end(); ++i)
       delete[] *i;
@@ -90,11 +93,11 @@ namespace MBSim {
   void Contact::updateW(double t, int j) {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) {
-        fF[k][1].col(0) = cpData[k][0].getFrameOfReference().getOrientation().col(0);
+        fF[k][1].set(0, cpData[k][0].getFrameOfReference().getOrientation().col(0));
         if(getFrictionDirections()) {
-          fF[k][1].col(1) = cpData[k][0].getFrameOfReference().getOrientation().col(1);
+          fF[k][1].set(1, cpData[k][0].getFrameOfReference().getOrientation().col(1));
           if(getFrictionDirections() > 1)
-            fF[k][1].col(2) = cpData[k][0].getFrameOfReference().getOrientation().col(2);
+            fF[k][1].set(2, cpData[k][0].getFrameOfReference().getOrientation().col(2));
         }
 
         fF[k][0] = -fF[k][1];
@@ -144,17 +147,17 @@ namespace MBSim {
       if((flag && gdActive[k][0]) || (!flag && fcl->isActive(gk[k](0),0))) { // TODO: nicer implementation
         for(unsigned int i=0; i<2; i++) contour[i]->updateKinematicsForFrame(cpData[k][i],velocities); // angular velocity necessary e.g. see ContactKinematicsSpherePlane::updatewb
 
-        Vec Wn = cpData[k][0].getFrameOfReference().getOrientation().col(0);
+        FVec Wn = cpData[k][0].getFrameOfReference().getOrientation().col(0);
 
-        Vec WvD = cpData[k][1].getFrameOfReference().getVelocity() - cpData[k][0].getFrameOfReference().getVelocity();
+        FVec WvD = cpData[k][1].getFrameOfReference().getVelocity() - cpData[k][0].getFrameOfReference().getVelocity();
 
         gdk[k](0) = Wn.T()*WvD;
 
         if(gdk[k].size()>1) {
-          Mat Wt(3,gdk[k].size()-1);
-          Wt.col(0) = cpData[k][0].getFrameOfReference().getOrientation().col(1);
+          FVMat Wt(gdk[k].size()-1);
+          Wt.set(0, cpData[k][0].getFrameOfReference().getOrientation().col(1));
           if(gdk[k].size() > 2)
-            Wt.col(1) = cpData[k][0].getFrameOfReference().getOrientation().col(2);
+            Wt.set(1, cpData[k][0].getFrameOfReference().getOrientation().col(2));
 
           gdk[k](1,gdk[k].size()-1) = Wt.T()*WvD;
         }
@@ -467,14 +470,6 @@ namespace MBSim {
 
         cpData[i][0].getFrameOfReference().setName("0");
         cpData[i][1].getFrameOfReference().setName("1");
-        cpData[i][0].getFrameOfReference().getJacobianOfTranslation(0).resize();
-        cpData[i][0].getFrameOfReference().getJacobianOfTranslation(1).resize();
-        cpData[i][0].getFrameOfReference().getJacobianOfRotation(1).resize();
-        cpData[i][0].getFrameOfReference().getJacobianOfRotation(0).resize();
-        cpData[i][1].getFrameOfReference().getJacobianOfTranslation(0).resize();
-        cpData[i][1].getFrameOfReference().getJacobianOfTranslation(1).resize();
-        cpData[i][1].getFrameOfReference().getJacobianOfRotation(0).resize();
-        cpData[i][1].getFrameOfReference().getJacobianOfRotation(1).resize();
 
 	cpData[i][0].getFrameOfReference().sethSize(contour[0]->gethSize(0),0);
         cpData[i][0].getFrameOfReference().sethSize(contour[0]->gethSize(1),1);
@@ -499,13 +494,11 @@ namespace MBSim {
         Vk[1][i][0].resize(contour[0]->gethSize(1),laSizek);
         Vk[1][i][1].resize(contour[1]->gethSize(1),laSizek);
 
-        fF.push_back(new Mat[2]);
-        fF[i][0].resize(3,laSizek);
-        fF[i][1].resize(3,laSizek);
+        fF.push_back(new FVMat[2]);
+        fF[i][0].resize(laSizek);
+        fF[i][1].resize(laSizek);
 
-        WF.push_back(new Vec[2]);
-        WF[i][0].resize(3);
-        WF[i][1].resize(3);
+        WF.push_back(new FVec[2]);
       }
     }
     else if(stage==unknownStage) {
@@ -514,6 +507,14 @@ namespace MBSim {
       iT = Index(1,getFrictionDirections());
 
       for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+        cpData[k][0].getFrameOfReference().getJacobianOfTranslation(0).resize(contour[0]->getReferenceJacobianOfTranslation(0).cols());
+        cpData[k][0].getFrameOfReference().getJacobianOfTranslation(1).resize(contour[0]->getReferenceJacobianOfTranslation(1).cols());
+        cpData[k][0].getFrameOfReference().getJacobianOfRotation(0).resize(contour[0]->getReferenceJacobianOfRotation(0).cols());
+        cpData[k][0].getFrameOfReference().getJacobianOfRotation(1).resize(contour[0]->getReferenceJacobianOfRotation(1).cols());
+        cpData[k][1].getFrameOfReference().getJacobianOfTranslation(0).resize(contour[1]->getReferenceJacobianOfTranslation(0).cols());
+        cpData[k][1].getFrameOfReference().getJacobianOfTranslation(1).resize(contour[1]->getReferenceJacobianOfTranslation(1).cols());
+        cpData[k][1].getFrameOfReference().getJacobianOfRotation(0).resize(contour[1]->getReferenceJacobianOfRotation(0).cols());
+        cpData[k][1].getFrameOfReference().getJacobianOfRotation(1).resize(contour[1]->getReferenceJacobianOfRotation(1).cols());
 	lak[k].resize() >> la(k*(1+getFrictionDirections()),(k+1)*(1+getFrictionDirections())-1);
 	gdk[k].resize() >> gd(k*(1+getFrictionDirections()),(k+1)*(1+getFrictionDirections())-1);
         gdnk[k].resize() >> gdn(k*(1+getFrictionDirections()),(k+1)*(1+getFrictionDirections())-1);
@@ -693,7 +694,7 @@ namespace MBSim {
               data.push_back(cpData[i][k].getFrameOfReference().getPosition()(0));
               data.push_back(cpData[i][k].getFrameOfReference().getPosition()(1));
               data.push_back(cpData[i][k].getFrameOfReference().getPosition()(2));
-              Vec cardan=AIK2Cardan(cpData[i][k].getFrameOfReference().getOrientation());
+              FVec cardan=AIK2Cardan(cpData[i][k].getFrameOfReference().getOrientation());
               data.push_back(cardan(0));
               data.push_back(cardan(1));
               data.push_back(cardan(2));
@@ -709,7 +710,7 @@ namespace MBSim {
             data.push_back(cpData[i][1].getFrameOfReference().getPosition()(0));
             data.push_back(cpData[i][1].getFrameOfReference().getPosition()(1));
             data.push_back(cpData[i][1].getFrameOfReference().getPosition()(2));
-            Vec F(3,INIT,0);
+            FVec F(INIT,0);
             if(isSetValued()) {
               if(gActive[i]) F=fF[i][1].col(0)*lak[i](0)/dt;
             }
@@ -727,7 +728,7 @@ namespace MBSim {
             data.push_back(cpData[i][1].getFrameOfReference().getPosition()(0));
             data.push_back(cpData[i][1].getFrameOfReference().getPosition()(1));
             data.push_back(cpData[i][1].getFrameOfReference().getPosition()(2));
-            Vec F(3,INIT,0);
+            FVec F(INIT,0);
             if(isSetValued()) {                    // TODO switch between stick and slip not possible with TimeStepper
               if(gActive[i] && lak[i].size()>1) { // stick friction
                 F=fF[i][1].col(1)*lak[i](1)/dt;
@@ -735,7 +736,7 @@ namespace MBSim {
                   F+=fF[i][1].col(2)*lak[i](2)/dt;
               }
               if(gActive[i] && lak[i].size()==1) // slip friction
-                F=fF[i][1](Index(0,2),iT)*fdf->dlaTdlaN(gdk[i](1,getFrictionDirections()), lak[i](0))*lak[i](0)/dt;
+                F=fF[i][1](Range<Fixed<0,2> >(),iT)*fdf->dlaTdlaN(gdk[i](1,getFrictionDirections()), lak[i](0))*lak[i](0)/dt;
             }
             else {
               F=cpData[i][0].getFrameOfReference().getOrientation().col(1)*lak[i](1);
@@ -1334,8 +1335,8 @@ namespace MBSim {
       }
       else {
 	for(unsigned int i=0; i<2; i++) contour[i]->updateKinematicsForFrame(cpData[k][i],velocities); 
-	Vec Wn = cpData[k][0].getFrameOfReference().getOrientation().col(0);
-	Vec WvD = cpData[k][1].getFrameOfReference().getVelocity() - cpData[k][0].getFrameOfReference().getVelocity();
+	FVec Wn = cpData[k][0].getFrameOfReference().getOrientation().col(0);
+	FVec WvD = cpData[k][1].getFrameOfReference().getVelocity() - cpData[k][0].getFrameOfReference().getVelocity();
 	gdInActive_(*IndInActive_) = Wn.T()*WvD;
 	gInActive_(*IndInActive_) = gk[k](0);
 	(*IndInActive_)++;

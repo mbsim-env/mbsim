@@ -40,17 +40,17 @@ namespace MBSim {
 
       /* GETTER / SETTER */
       void setLimit(double l) {lim = l;}
-      void setCd(const fmatvec::Vec& Cd);
-      void setCe(const fmatvec::Vec& Ce);
+      void setCd(const fmatvec::FVec& Cd);
+      void setCe(const fmatvec::FVec& Ce);
       double getLimit() const { return lim; }
       /***************************************************/
 
-      fmatvec::Vec computeWe() { return R.getOrientation()*Ce; }
-      fmatvec::Vec computeWd() { return R.getOrientation()*Cd; }
+      fmatvec::FVec computeWe() { return R.getOrientation()*Ce; }
+      fmatvec::FVec computeWd() { return R.getOrientation()*Cd; }
 
     private:
       double lim;
-      fmatvec::Vec Cn, Cd, Ce;
+      fmatvec::FVec Cn, Cd, Ce;
   };
 }
 

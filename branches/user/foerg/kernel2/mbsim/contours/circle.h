@@ -68,7 +68,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF CONTOUR */
       virtual double computeCurvature(ContourPointData &cp) { return curvature; }
-      virtual fmatvec::Vec computeLagrangeParameter(const fmatvec::Vec& WrPoint);
+      virtual fmatvec::Vector<fmatvec::GeneralFixed<2,1>,double> computeLagrangeParameter(const fmatvec::FVec& WrPoint);
       /***************************************************/
 
       /* GETTER / SETTER */

@@ -2,6 +2,7 @@ noinst_LTLIBRARIES = libutils.la
 libutils_la_SOURCES = eps.cc\
                       nonlinear_algebra.cc\
                       nonsmooth_algebra.cc\
+		      contact_utils.cc\
                       rotarymatrices.cc\
                       utils.cc\
                       function.cc\
@@ -18,5 +19,6 @@ utilsinclude_HEADERS = eps.h\
                        nonsmooth_algebra.h\
                        function.h\
                        function_library.h\
+		       contact_utils.h\
                        rotarymatrices.h\
                        utils.h
