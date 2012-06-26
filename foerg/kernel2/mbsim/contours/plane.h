@@ -46,7 +46,7 @@ namespace MBSim {
       /***************************************************/
       
       /* INTERFACE OF CONTOUR */
-      virtual fmatvec::Vec computeLagrangeParameter(const fmatvec::Vec &WrPoint);
+      virtual fmatvec::Vector<fmatvec::GeneralFixed<2,1>,double> computeLagrangeParameter(const fmatvec::FVec &WrPoint);
       /***************************************************/
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
