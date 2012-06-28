@@ -226,6 +226,27 @@ namespace MBSim {
     return APK;
   }
 
+  FSqrMat RotationAboutAxesXYZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+    FSqrMat APK(NONINIT);
+
+    int i = q.size()-1;
+    double a=q(i-2);
+    double b=q(i-1);
+    double g=q(i);
+
+    APK(0,0) = cos(b)*cos(g);
+    APK(1,0) = sin(a)*sin(b)*cos(g)+cos(a)*sin(g);
+    APK(2,0) = -cos(a)*sin(b)*cos(g)+sin(a)*sin(g);
+    APK(0,1) = -cos(b)*sin(g);
+    APK(1,1) = -sin(g)*sin(b)*sin(a)+cos(a)*cos(g);
+    APK(2,1) = cos(a)*sin(b)*sin(g)+sin(a)*cos(g);
+    APK(0,2) = sin(b);
+    APK(1,2) = -sin(a)*cos(b);
+    APK(2,2) = cos(a)*cos(b);
+
+    return APK;
+  }
+
   FSqrMat TimeDependentCardanAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     return (*rot)((*angle)(t),t);
   }
@@ -260,6 +281,23 @@ namespace MBSim {
     J(1,iu) = 0;
     J(2,iu-1) = 0;
     J(2,iu) = cos(beta);
+    return J;
+  }
+
+  Mat JRotationAboutAxesXYZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+    int iq = q.size()-1;
+    int iu = uSize-1;
+    double a = q(iq-2);
+    double b = q(iq-1);
+    J(0,iu-2) = 1;
+    J(0,iu-1) = 0;
+    J(0,iu) = sin(b);
+    J(1,iu-2) = 0;
+    J(1,iu-1) = cos(a);
+    J(1,iu) = -sin(a)*cos(b);
+    J(2,iu-2) = 0;
+    J(2,iu-1) = sin(a);
+    J(2,iu) = cos(a)*cos(b);
     return J;
   }
 
@@ -386,6 +424,26 @@ namespace MBSim {
     Jd(2,iu) = -sin(beta)*betad;
     return Jd;
   }
+
+  Mat JdRotationAboutAxesXYZ::operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
+    int iq = q.size()-1;
+    int iu = uSize-1;
+    double a = q(iq-2);
+    double b = q(iq-1);
+    double ad = qd(iq-2);
+    double bd = qd(iq-1);
+    Jd(0,iu-2) = 0;
+    Jd(0,iu-1) = 0;
+    Jd(0,iu) = cos(b)*bd;
+    Jd(1,iu-2) = 0;
+    Jd(1,iu-1) = -sin(a)*ad;
+    Jd(1,iu) = -cos(a)*cos(b)*ad + sin(a)*sin(b)*bd;
+    Jd(2,iu-2) = 0;
+    Jd(2,iu-1) = cos(a)*ad;
+    Jd(2,iu) = -sin(a)*cos(b)*ad - cos(a)*sin(b)*bd;
+    return Jd;
+  }
+
 
 ////   Kinematics::Kinematics() : PjT(3,INIT,0.), PjR(3,INIT,0.), PdjT(3,INIT,0.), PdjR(3,INIT,0.), APK(3,EYE), PrPK(3,INIT,0.),  fT(0), fPrPK(0), fAPK(0), fPJT(0), fPJR(0), fPdJT(0), fPdJR(0), fPjT(0), fPjR(0), fPdjT(0), fPdjR(0) {
 ////   }

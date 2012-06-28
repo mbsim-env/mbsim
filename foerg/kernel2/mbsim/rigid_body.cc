@@ -274,6 +274,10 @@ namespace MBSim {
           else
             fT = new TCardanAngles(nq,nu[0]);
         }
+        else if(dynamic_cast<RotationAboutAxesXYZ*>(fAPK)) {
+          fPJR = new JRotationAboutAxesXYZ(nu[0]);
+          fPdJR = new JdRotationAboutAxesXYZ(nu[0]);
+        }
 	else if(dynamic_cast<EulerAngles*>(fAPK)) {
           JR.assign(FMat(EYE));
           if(cb)

@@ -267,6 +267,8 @@ namespace MBSim {
       const fmatvec::VecInt& getLinkStatus() const { return LinkStatus; }
       const fmatvec::Vec& getres() const { return res; }
       fmatvec::Vec& getres() { return res; }
+      const fmatvec::Vec& getcorr() const { return corr; };
+      fmatvec::Vec& getcorr() { return corr; };
 
       void setx(const fmatvec::Vec& x_) { x = x_; }
       void setx0(const fmatvec::Vec &x0_) { x0 = x0_; }
