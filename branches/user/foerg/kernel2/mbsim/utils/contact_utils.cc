@@ -31,7 +31,7 @@
 //#include <mbsim/contact_kinematics/circlesolid_linesegment.h>
 //#include <mbsim/contact_kinematics/circlesolid_plane.h>
 //#include <mbsim/contact_kinematics/compoundcontour_compoundcontour.h>
-//#include <mbsim/contact_kinematics/compoundcontour_contour.h>
+#include <mbsim/contact_kinematics/compoundcontour_contour.h>
 //#include <mbsim/contact_kinematics/edge_edge.h>
 //#include <mbsim/contact_kinematics/line_contour1s.h>
 //#include <mbsim/contact_kinematics/point_area.h>
@@ -40,7 +40,7 @@
 //#include <mbsim/contact_kinematics/point_frustum.h>
 #include <mbsim/contact_kinematics/point_line.h>
 //#include <mbsim/contact_kinematics/point_circlesolid.h>
-//#include <mbsim/contact_kinematics/point_plane.h>
+#include <mbsim/contact_kinematics/point_plane.h>
 //#include <mbsim/contact_kinematics/point_planewithfrustum.h>
 //#include <mbsim/contact_kinematics/sphere_frustum.h>
 //#include <mbsim/contact_kinematics/sphere_plane.h>
@@ -93,8 +93,8 @@ namespace MBSim {
 ////      else if ( strcmp(contour0, "CircleSolid")==0 && strcmp(contour1, "Plane")==0 )
 ////        return new ContactKinematicsCircleSolidPlane;
 ////      
-////      else if ( strcmp(contour0, "Cuboid")==0 && strcmp(contour1, "Plane")==0 )
-////          return new ContactKinematicsCompoundContourContour;  
+      else if ( strcmp(contour0, "Cuboid")==0 && strcmp(contour1, "Plane")==0 )
+        return new ContactKinematicsCompoundContourContour;  
 ////  
 ////      /*
 ////       *else if ( strcmp(contour0, "CompoundContour")==0 )
@@ -125,8 +125,8 @@ namespace MBSim {
 ////      else if ( strcmp(contour0, "Point")==0 && strcmp(contour1, "CircleSolid")==0 )
 ////        return new ContactKinematicsPointCircleSolid; 
 ////  
-////      else if ( strcmp(contour0, "Point")==0 && strcmp(contour1, "Plane")==0 )
-////        return new ContactKinematicsPointPlane;
+      else if ( strcmp(contour0, "Point")==0 && strcmp(contour1, "Plane")==0 )
+        return new ContactKinematicsPointPlane;
 ////  
 ////      else if ( strcmp(contour0, "Point")==0 && strcmp(contour1, "PlaneWithFrustum")==0 )
 ////        return new ContactKinematicsPointPlaneWithFrustum;
