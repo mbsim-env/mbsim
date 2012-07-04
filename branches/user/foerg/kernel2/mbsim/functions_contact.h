@@ -86,7 +86,7 @@ namespace MBSim {
        * \param point contour or general rigid contour reduced to point of reference
        * \param contour with one contour parameter
        */
-      FuncPairContour1sPoint(Point* point_, Contour1s *contour_) : contour(contour_), point(point_), cp(fmatvec::Vec(1,fmatvec::INIT,0.)) {}
+      FuncPairContour1sPoint(Point* point_, Contour1s *contour_) : contour(contour_), point(point_), cp(fmatvec::VecV(1,fmatvec::INIT,0.)) {}
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &alpha, const void * =NULL) {
@@ -168,7 +168,7 @@ namespace MBSim {
    * \author Roland Zander
    * \date 2009-07-10 some comments (Thorsten Schindler)
    */
-  class FuncPairPointContourInterpolation : public DistanceFunction<fmatvec::FVec,fmatvec::Vec> {
+  class FuncPairPointContourInterpolation : public DistanceFunction<fmatvec::VecV,fmatvec::VecV> {
     public:
       /**
        * \brief constructor
@@ -178,15 +178,15 @@ namespace MBSim {
       FuncPairPointContourInterpolation(Point* point_, ContourInterpolation *contour_) : contour(contour_), point(point_) {}
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
-      fmatvec::FVec operator()(const fmatvec::Vec &alpha, const void * =NULL) {
-        fmatvec::FMat Wt = contour->computeWt(alpha);
-        fmatvec::FVec WrOC[2];
+      fmatvec::VecV operator()(const fmatvec::VecV &alpha, const void * =NULL) {
+        fmatvec::FVMat Wt = contour->computeWt(alpha);
+        fmatvec::Vec3 WrOC[2];
         WrOC[0] = point->getFrame()->getPosition();
         WrOC[1] = contour->computeWrOC(alpha);
         return Wt.T() * ( WrOC[1] - WrOC[0] ); 
       }
 
-      fmatvec::FVec computeWrD(const fmatvec::Vec &alpha) {
+      fmatvec::Vec3 computeWrD(const fmatvec::VecV &alpha) {
         return contour->computeWrOC(alpha) - point->getFrame()->getPosition();
       }
       /*************************************************/

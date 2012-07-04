@@ -42,14 +42,14 @@ namespace MBSim {
 
   void ContactKinematicsPointLineSegment::updateg(Vec &g, ContourPointData *cpData) {
     cpData[iline].getFrameOfReference().setOrientation(line->getFrame()->getOrientation());
-    cpData[ipoint].getFrameOfReference().getOrientation().col(0) = -line->getFrame()->getOrientation().col(0);
-    cpData[ipoint].getFrameOfReference().getOrientation().col(1) = -line->getFrame()->getOrientation().col(1);
-    cpData[ipoint].getFrameOfReference().getOrientation().col(2) = line->getFrame()->getOrientation().col(2);
+    cpData[ipoint].getFrameOfReference().getOrientation().set(0, -line->getFrame()->getOrientation().col(0));
+    cpData[ipoint].getFrameOfReference().getOrientation().set(1, -line->getFrame()->getOrientation().col(1));
+    cpData[ipoint].getFrameOfReference().getOrientation().set(2, line->getFrame()->getOrientation().col(2));
 
-    Vec Wn = cpData[iline].getFrameOfReference().getOrientation().col(0);
-    Vec Wt = cpData[iline].getFrameOfReference().getOrientation().col(1);
+    Vec3 Wn = cpData[iline].getFrameOfReference().getOrientation().col(0);
+    Vec3 Wt = cpData[iline].getFrameOfReference().getOrientation().col(1);
 
-    Vec Wd =  point->getFrame()->getPosition() - line->getFrame()->getPosition();
+    Vec3 Wd =  point->getFrame()->getPosition() - line->getFrame()->getPosition();
 
     double s = Wt.T()*Wd; 
     if(s > line->getBounds()(1) || s < line->getBounds()(0))
@@ -66,12 +66,12 @@ namespace MBSim {
   }
 
   void ContactKinematicsPointLineSegment::updatewb(Vec &wb, const Vec &g, ContourPointData *cpData) {
-    Vec n1 = cpData[iline].getFrameOfReference().getOrientation().col(0);
-    Vec u1 = cpData[iline].getFrameOfReference().getOrientation().col(1);
-    Vec vC1 = cpData[iline].getFrameOfReference().getVelocity();
-    Vec vC2 = cpData[ipoint].getFrameOfReference().getVelocity();
-    Vec Om1 = cpData[iline].getFrameOfReference().getAngularVelocity();
-    Vec Om2 = cpData[ipoint].getFrameOfReference().getAngularVelocity();
+    Vec3 n1 = cpData[iline].getFrameOfReference().getOrientation().col(0);
+    Vec3 u1 = cpData[iline].getFrameOfReference().getOrientation().col(1);
+    Vec3 vC1 = cpData[iline].getFrameOfReference().getVelocity();
+    Vec3 vC2 = cpData[ipoint].getFrameOfReference().getVelocity();
+    Vec3 Om1 = cpData[iline].getFrameOfReference().getAngularVelocity();
+    Vec3 Om2 = cpData[ipoint].getFrameOfReference().getAngularVelocity();
 
     double sd1 = u1.T()*(vC2 - vC1); 
 

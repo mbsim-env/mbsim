@@ -46,13 +46,13 @@ namespace MBSim {
 
   void ContactKinematicsCircleSolidPlane::updateg(Vec &g, ContourPointData *cpData) {
     cpData[iplane].getFrameOfReference().setOrientation(plane->getFrame()->getOrientation());
-    cpData[icircle].getFrameOfReference().getOrientation().col(0) = -plane->getFrame()->getOrientation().col(0);
-    cpData[icircle].getFrameOfReference().getOrientation().col(1) = -plane->getFrame()->getOrientation().col(1);
-    cpData[icircle].getFrameOfReference().getOrientation().col(2) = plane->getFrame()->getOrientation().col(2);
+    cpData[icircle].getFrameOfReference().getOrientation().set(0, -plane->getFrame()->getOrientation().col(0));
+    cpData[icircle].getFrameOfReference().getOrientation().set(1, -plane->getFrame()->getOrientation().col(1));
+    cpData[icircle].getFrameOfReference().getOrientation().set(2, plane->getFrame()->getOrientation().col(2));
 
-    Vec Wd;
-    Vec Wn = cpData[iplane].getFrameOfReference().getOrientation().col(0);
-    Vec Wb = circlesolid->getFrame()->getOrientation().col(2);
+    Vec3 Wd;
+    Vec3 Wn = cpData[iplane].getFrameOfReference().getOrientation().col(0);
+    Vec3 Wb = circlesolid->getFrame()->getOrientation().col(2);
     double t_EC = Wn.T()*Wb;
     if(t_EC>0) {
       Wb *= -1.;
@@ -60,7 +60,7 @@ namespace MBSim {
     }
     //cout << Wn << endl;
     //cout << Wb << endl;
-    Vec z_EC = Wn - t_EC*Wb;
+    Vec3 z_EC = Wn - t_EC*Wb;
     double z_EC_nrm2 = nrm2(z_EC);
     if(z_EC_nrm2 <= 1e-8) { // infinite possible contact points
       Wd = circlesolid->getFrame()->getPosition() - plane->getFrame()->getPosition();
