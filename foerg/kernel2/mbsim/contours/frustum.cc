@@ -55,8 +55,8 @@ namespace MBSim {
   }
 
   //TODO: Same function as in flexible_body_2s_13_mfr_mindlin (transformCW) --> this is just the transformation into cylindrical coordinates --> get it into utils?
-  Vec Frustum::computeLagrangeParameter(const Vec &WrPoint) {
-    Vec CrPoint = WrPoint.copy();
+  Vector<GeneralFixed<2,1>, double> Frustum::computeLagrangeParameter(const FVec &WrPoint) {
+    FVec CrPoint = WrPoint;
 
     CrPoint -= R.getPosition();
     CrPoint = R.getOrientation().T() * CrPoint; // position in moving frame of reference
@@ -64,12 +64,12 @@ namespace MBSim {
     const double xt = CrPoint(0);
     const double yt = CrPoint(2);
 
-    CrPoint.resize(2);
+    Vector<GeneralFixed<2,1>, double> p;
 
-    CrPoint(0) = sqrt(xt * xt + yt * yt);
-    CrPoint(1) = ArcTan(yt, xt);
+    p(0) = sqrt(xt * xt + yt * yt);
+    p(1) = ArcTan(yt, xt);
 
-    return CrPoint;
+    return p;
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
