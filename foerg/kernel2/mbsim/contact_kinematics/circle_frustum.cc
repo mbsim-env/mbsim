@@ -54,7 +54,7 @@ namespace MBSim {
 
     /* Geometry */	
     FVec Wa_F = frustum->getFrame()->getOrientation().col(1); // axis of Frustum in inertial FR
-    Vec r_F = frustum->getRadii().copy(); // radii of Frustum
+    Vec2 r_F = frustum->getRadii(); // radii of Frustum
     double h_F = frustum->getHeight(); // height of Frustum   
     bool outCont_F = frustum->getOutCont(); // contact on outer surface of Frustum?
     double phi_F = atan((r_F(1) - r_F(0))/h_F); // opening angle of Frustum
@@ -397,11 +397,11 @@ namespace MBSim {
 
     if(g(0)<eps) {
       cpData[ifrustum].getFrameOfReference().getPosition() = cpData[icircle].getFrameOfReference().getPosition() + cpData[icircle].getFrameOfReference().getOrientation().col(0)*g(0);
-      if(outCont_F) cpData[ifrustum].getFrameOfReference().getOrientation().col(1) = (Wa_F + sin(phi_F)*cpData[ifrustum].getFrameOfReference().getOrientation().col(0))/cos(phi_F); // radial direction
-      else cpData[ifrustum].getFrameOfReference().getOrientation().col(1) = (Wa_F - sin(phi_F)*cpData[ifrustum].getFrameOfReference().getOrientation().col(0))/cos(phi_F);
-      cpData[ifrustum].getFrameOfReference().getOrientation().col(2) = crossProduct(cpData[ifrustum].getFrameOfReference().getOrientation().col(0),cpData[ifrustum].getFrameOfReference().getOrientation().col(1)); // azimuthal direction
-      cpData[icircle].getFrameOfReference().getOrientation().col(1) = -cpData[ifrustum].getFrameOfReference().getOrientation().col(1);
-      cpData[icircle].getFrameOfReference().getOrientation().col(2) = cpData[ifrustum].getFrameOfReference().getOrientation().col(2);
+      if(outCont_F) cpData[ifrustum].getFrameOfReference().getOrientation().set(1, (Wa_F + sin(phi_F)*cpData[ifrustum].getFrameOfReference().getOrientation().col(0))/cos(phi_F)); // radial direction
+      else cpData[ifrustum].getFrameOfReference().getOrientation().set(1, (Wa_F - sin(phi_F)*cpData[ifrustum].getFrameOfReference().getOrientation().col(0))/cos(phi_F));
+      cpData[ifrustum].getFrameOfReference().getOrientation().set(2, crossProduct(cpData[ifrustum].getFrameOfReference().getOrientation().col(0),cpData[ifrustum].getFrameOfReference().getOrientation().col(1))); // azimuthal direction
+      cpData[icircle].getFrameOfReference().getOrientation().set(1, -cpData[ifrustum].getFrameOfReference().getOrientation().col(1));
+      cpData[icircle].getFrameOfReference().getOrientation().set(2, cpData[ifrustum].getFrameOfReference().getOrientation().col(2));
     }
   }	
   /***************************************************************/

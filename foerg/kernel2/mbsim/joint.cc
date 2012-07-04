@@ -164,12 +164,12 @@ namespace MBSim {
 
       JT.resize(3-forceDir.cols());
       if(forceDir.cols() == 2)
-        JT.col(0) = crossProduct(forceDir.col(0),forceDir.col(1));
+        JT.set(0, crossProduct(forceDir.col(0),forceDir.col(1)));
       else if(forceDir.cols() == 3);
       else if(forceDir.cols() == 0) JT = SqrMat(3,EYE);
       else { // define a coordinate system in the plane perpendicular to the force direction
-        JT.col(0) = computeTangential(forceDir.col(0));
-        JT.col(1) = crossProduct(forceDir.col(0),JT.col(0));
+        JT.set(0, computeTangential(forceDir.col(0)));
+        JT.set(1, crossProduct(forceDir.col(0),JT.col(0)));
       }
     }
     else if(stage==MBSim::plot) {
@@ -512,7 +512,7 @@ namespace MBSim {
     forceDir.assign(fd);
 
     for(int i=0; i<fd.cols(); i++)
-      forceDir.col(i) = forceDir.col(i)/nrm2(fd.col(i));
+      forceDir.set(i, forceDir.col(i)/nrm2(fd.col(i)));
   }
 
   void Joint::setMomentDirection(const FVMat &md) {
@@ -520,7 +520,7 @@ namespace MBSim {
     momentDir.assign(md);
 
     for(int i=0; i<md.cols(); i++)
-      momentDir.col(i) = momentDir.col(i)/nrm2(md.col(i));
+      momentDir.set(i, momentDir.col(i)/nrm2(md.col(i)));
   }
 
   void Joint::plot(double t, double dt) {

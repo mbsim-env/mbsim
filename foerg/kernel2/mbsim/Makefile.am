@@ -15,6 +15,7 @@ frame.cc\
 group.cc\
 joint.cc\
 contact.cc\
+functions_contact.cc\
 kinematics.cc\
 extern_generalized_io.cc\
 link.cc\
@@ -49,6 +50,7 @@ frame.h\
 group.h\
 joint.h\
 contact.h\
+functions_contact.h\
 kinematics.h\
 extern_generalized_io.h\
 link.h\

@@ -47,9 +47,9 @@ namespace MBSim {
 
   void ContactKinematicsPointFrustum::updateg(Vec &g, ContourPointData* cpData) {
     double eps = 5.e-2; // tolerance for rough contact description
-    Vec Wd = point->getFrame()->getPosition() - frustum->getFrame()->getPosition(); // difference vector of Point and Frustum basis point in inertial FR
-    Vec Wa = frustum->getFrame()->getOrientation().col(1); // axis in inertial FR 
-    Vec r = frustum->getRadii(); // radii of Frustum
+    Vec3 Wd = point->getFrame()->getPosition() - frustum->getFrame()->getPosition(); // difference vector of Point and Frustum basis point in inertial FR
+    Vec3 Wa = frustum->getFrame()->getOrientation().col(1); // axis in inertial FR 
+    Vec2 r = frustum->getRadii(); // radii of Frustum
     double h = frustum->getHeight(); // height of Frustum	    
     double s = Wd.T()*Wa; // projection of difference vector on axis
     double d = sqrt(pow(nrm2(Wd),2)-pow(s,2)); // distance Point to Frustum axis
@@ -62,28 +62,28 @@ namespace MBSim {
     else {
       if(outCont) { // contact on outer surface
         double  phi = atan((r(1) - r(0))/h); // half cone angle
-        Vec b = Wd-s*Wa;
+        Vec3 b = Wd-s*Wa;
         b /= d;
-        cpData[ifrustum].getFrameOfReference().getOrientation().col(0) =  cos(phi)*b - sin(phi)*Wa;
-        cpData[ipoint].getFrameOfReference().getOrientation().col(0) = -cpData[ifrustum].getFrameOfReference().getOrientation().col(0);    
+        cpData[ifrustum].getFrameOfReference().getOrientation().set(0,  cos(phi)*b - sin(phi)*Wa);
+        cpData[ipoint].getFrameOfReference().getOrientation().set(0, -cpData[ifrustum].getFrameOfReference().getOrientation().col(0));
         g(0) = (d-r_h)*cos(phi);
       }
       else { // contact on inner surface
         double  phi = atan((r(1) - r(0))/h); // half cone angle
-        Vec b = Wd-s*Wa;
+        Vec3 b = Wd-s*Wa;
         b /= d;
-        cpData[ifrustum].getFrameOfReference().getOrientation().col(0) = sin(phi)*Wa - cos(phi)*b;
-        cpData[ipoint].getFrameOfReference().getOrientation().col(0)  = -cpData[ifrustum].getFrameOfReference().getOrientation().col(0);
+        cpData[ifrustum].getFrameOfReference().getOrientation().set(0, sin(phi)*Wa - cos(phi)*b);
+        cpData[ipoint].getFrameOfReference().getOrientation().set(0, -cpData[ifrustum].getFrameOfReference().getOrientation().col(0));
         g(0) = (r_h-d)*cos(phi);
       }  
     }
 
     cpData[ipoint].getFrameOfReference().getPosition()= point->getFrame()->getPosition();
     cpData[ifrustum].getFrameOfReference().getPosition() =  cpData[ipoint].getFrameOfReference().getPosition() + cpData[ipoint].getFrameOfReference().getOrientation().col(0)*g;
-    cpData[ipoint].getFrameOfReference().getOrientation().col(1) = computeTangential(cpData[ipoint].getFrameOfReference().getOrientation().col(0));
-    cpData[ipoint].getFrameOfReference().getOrientation().col(2) = crossProduct(cpData[ipoint].getFrameOfReference().getOrientation().col(0),cpData[ipoint].getFrameOfReference().getOrientation().col(1));
-    cpData[ifrustum].getFrameOfReference().getOrientation().col(1) = -cpData[ipoint].getFrameOfReference().getOrientation().col(1);
-    cpData[ifrustum].getFrameOfReference().getOrientation().col(2) = cpData[ipoint].getFrameOfReference().getOrientation().col(2);
+    cpData[ipoint].getFrameOfReference().getOrientation().set(1, computeTangential(cpData[ipoint].getFrameOfReference().getOrientation().col(0)));
+    cpData[ipoint].getFrameOfReference().getOrientation().set(2, crossProduct(cpData[ipoint].getFrameOfReference().getOrientation().col(0),cpData[ipoint].getFrameOfReference().getOrientation().col(1)));
+    cpData[ifrustum].getFrameOfReference().getOrientation().set(1, -cpData[ipoint].getFrameOfReference().getOrientation().col(1));
+    cpData[ifrustum].getFrameOfReference().getOrientation().set(2, cpData[ipoint].getFrameOfReference().getOrientation().col(2));
   }
 
 }
