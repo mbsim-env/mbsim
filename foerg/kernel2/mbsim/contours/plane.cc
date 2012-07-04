@@ -29,7 +29,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  Vector<GeneralFixed<2,1>,double> Plane::computeLagrangeParameter(const fmatvec::FVec &WrPoint) {
+  Vector<GeneralFixed<2,1>,double> Plane::computeLagrangeParameter(const fmatvec::Vec3 &WrPoint) {
     cout << "WARNING: Plane::computeLagrangeParameter() just implemented for convenience till now. Proof correctness first before use." << endl;
     cout << "The parameters are the y and z coordinates : " << (R.getOrientation().T() *(WrPoint - R.getPosition()) )(Range<Fixed<1,2> >()) << endl;
     return (R.getOrientation().T() *(WrPoint - R.getPosition()) )(Range<Fixed<1,2> >()); //TODO: proof correctness (till now just implemented for convenience)

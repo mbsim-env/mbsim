@@ -254,13 +254,13 @@ namespace MBSim {
       static double getDouble(TiXmlElement *e);
       static int getInt(TiXmlElement *e);
       static bool getBool(TiXmlElement *e);
-      static fmatvec::FVec getFVec(TiXmlElement *e);
+      static fmatvec::Vec3 getVec3(TiXmlElement *e);
       static fmatvec::Vec getVec(TiXmlElement *e, int rows=0);
-      static fmatvec::FVMat getFVMat(TiXmlElement *e, int cols=0);
+      static fmatvec::Mat3V getMat3V(TiXmlElement *e, int cols=0);
       static fmatvec::Mat getMat(TiXmlElement *e, int rows=0, int cols=0);
-      static fmatvec::FSqrMat getFSqrMat(TiXmlElement *e);
+      static fmatvec::SqrMat3 getSqrMat3(TiXmlElement *e);
       static fmatvec::SqrMat getSqrMat(TiXmlElement *e, int size=0);
-      static fmatvec::FSymMat getFSymMat(TiXmlElement *e);
+      static fmatvec::SymMat3 getSymMat3(TiXmlElement *e);
       static fmatvec::SymMat getSymMat(TiXmlElement *e, int size=0);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

@@ -76,9 +76,9 @@ namespace MBSim {
       }
   }
 
-  FVec ContourQuad::computeWn(const ContourPointData &cp) {
-    const VVec &s = cp.getLagrangeParameterPosition();
-    FVMat tTemp = computeWt(s);
+  Vec3 ContourQuad::computeWn(const ContourPointData &cp) {
+    const VecV &s = cp.getLagrangeParameterPosition();
+    Mat3V tTemp = computeWt(s);
     return crossProduct(tTemp.col(1),tTemp.col(0)); // Achtung: Interpoation mit einem Konturparameter-> t.col(1) = Cb;
   }
 }

@@ -36,7 +36,7 @@ namespace MBSim {
   }
 
   void ContactKinematicsCircleSolidCircleSolid::updateg(Vec &g, ContourPointData *cpData) {
-    FVec WrD = circle0->getFrame()->getPosition() - circle1->getFrame()->getPosition();
+    Vec3 WrD = circle0->getFrame()->getPosition() - circle1->getFrame()->getPosition();
     cpData[icircle1].getFrameOfReference().getOrientation().set(0, WrD/nrm2(WrD));
     cpData[icircle0].getFrameOfReference().getOrientation().set(0, -cpData[icircle1].getFrameOfReference().getOrientation().col(0));
     cpData[icircle0].getFrameOfReference().getOrientation().set(2, circle0->getFrame()->getOrientation().col(2));
@@ -51,66 +51,66 @@ namespace MBSim {
       
   void ContactKinematicsCircleSolidCircleSolid::updatewb(Vec &wb, const Vec &g, ContourPointData *cpData) {
 
-    const FVec KrPC1 = circle0->getFrame()->getOrientation().T()*(cpData[icircle0].getFrameOfReference().getPosition() - circle0->getFrame()->getPosition());
+    const Vec3 KrPC1 = circle0->getFrame()->getOrientation().T()*(cpData[icircle0].getFrameOfReference().getPosition() - circle0->getFrame()->getPosition());
     const double zeta1=(KrPC1(1)>0) ? acos(KrPC1(0)/nrm2(KrPC1)) : 2.*M_PI - acos(KrPC1(0)/nrm2(KrPC1));
     const double sa1=sin(zeta1);
     const double ca1=cos(zeta1);
     const double r1=circle0->getRadius();
-    FVec Ks1(NONINIT);
+    Vec3 Ks1(NONINIT);
     Ks1(0)=-r1*sa1;
     Ks1(1)=r1*ca1;
     Ks1(2)=0;
-    FVec Kt1(NONINIT);
+    Vec3 Kt1(NONINIT);
     Kt1(0)=0;
     Kt1(1)=0;
     Kt1(2)=1;
-    const FVec s1=circle0->getFrame()->getOrientation()*Ks1;
-    const FVec t1=circle0->getFrame()->getOrientation()*Kt1;
-    FVec n1=crossProduct(s1, t1);
+    const Vec3 s1=circle0->getFrame()->getOrientation()*Ks1;
+    const Vec3 t1=circle0->getFrame()->getOrientation()*Kt1;
+    Vec3 n1=crossProduct(s1, t1);
     n1/=nrm2(n1);
-    const FVec u1=s1/nrm2(s1);
-    const FVec &R1 = s1;
-    FVec KN1(NONINIT);
+    const Vec3 u1=s1/nrm2(s1);
+    const Vec3 &R1 = s1;
+    Vec3 KN1(NONINIT);
     KN1(0)=-sa1;
     KN1(1)=ca1;
     KN1(2)=0;
-    const FVec N1=circle0->getFrame()->getOrientation()*KN1;
-    FVec KU1(NONINIT);
+    const Vec3 N1=circle0->getFrame()->getOrientation()*KN1;
+    Vec3 KU1(NONINIT);
     KU1(0)=-ca1;
     KU1(1)=-sa1;
     KU1(2)=0;
-    const FVec U1=circle0->getFrame()->getOrientation()*KU1;
+    const Vec3 U1=circle0->getFrame()->getOrientation()*KU1;
 
-    const FVec KrPC2 = circle1->getFrame()->getOrientation().T()*(cpData[icircle1].getFrameOfReference().getPosition() - circle1->getFrame()->getPosition());
+    const Vec3 KrPC2 = circle1->getFrame()->getOrientation().T()*(cpData[icircle1].getFrameOfReference().getPosition() - circle1->getFrame()->getPosition());
     const double zeta2=(KrPC2(1)>0) ? acos(KrPC2(0)/nrm2(KrPC2)) : 2.*M_PI - acos(KrPC2(0)/nrm2(KrPC2));
     const double sa2=sin(zeta2);
     const double ca2=cos(zeta2);
     const double r2=circle1->getRadius();
-    FVec Ks2(NONINIT);
+    Vec3 Ks2(NONINIT);
     Ks2(0)=-r2*sa2;
     Ks2(1)=r2*ca2;
     Ks2(2)=0;
-    FVec Kt2(NONINIT);
+    Vec3 Kt2(NONINIT);
     Kt2(0)=0;
     Kt2(1)=0;
     Kt2(2)=1;
-    const FVec s2=circle1->getFrame()->getOrientation()*Ks2;
-    const FVec t2=circle1->getFrame()->getOrientation()*Kt2;
-    FVec n2=crossProduct(s2, t2);
+    const Vec3 s2=circle1->getFrame()->getOrientation()*Ks2;
+    const Vec3 t2=circle1->getFrame()->getOrientation()*Kt2;
+    Vec3 n2=crossProduct(s2, t2);
     n2/=nrm2(n2);
-    const FVec u2=s2/nrm2(s2);
-    const FVec v2=crossProduct(n2, u2);
-    const FVec &R2 = s2;
-    FVec KU2(NONINIT);
+    const Vec3 u2=s2/nrm2(s2);
+    const Vec3 v2=crossProduct(n2, u2);
+    const Vec3 &R2 = s2;
+    Vec3 KU2(NONINIT);
     KU2(0)=-ca2;
     KU2(1)=-sa2;
     KU2(2)=0;
-    const FVec U2=circle1->getFrame()->getOrientation()*KU2;
+    const Vec3 U2=circle1->getFrame()->getOrientation()*KU2;
 
-    const FVec vC1 = cpData[icircle0].getFrameOfReference().getVelocity();
-    const FVec vC2 = cpData[icircle1].getFrameOfReference().getVelocity();
-    const FVec Om1 = cpData[icircle0].getFrameOfReference().getAngularVelocity();
-    const FVec Om2 = cpData[icircle1].getFrameOfReference().getAngularVelocity();
+    const Vec3 vC1 = cpData[icircle0].getFrameOfReference().getVelocity();
+    const Vec3 vC2 = cpData[icircle1].getFrameOfReference().getVelocity();
+    const Vec3 Om1 = cpData[icircle0].getFrameOfReference().getAngularVelocity();
+    const Vec3 Om2 = cpData[icircle1].getFrameOfReference().getAngularVelocity();
 
     SqrMat A(2,2,NONINIT); // TODO: change to FSqrMat
     A(0,0)=-u1.T()*R1;
@@ -122,8 +122,8 @@ namespace MBSim {
     b(1)=-v2.T()*(Om2-Om1);
     const Vec zetad = slvLU(A,b);
 
-    const FMat tOm1 = tilde(Om1);
-    const FMat tOm2 = tilde(Om2);
+    const Mat33 tOm1 = tilde(Om1);
+    const Mat33 tOm2 = tilde(Om2);
     
     wb(0) += ((vC2-vC1).T()*N1-n1.T()*tOm1*R1)*zetad(0)+n1.T()*tOm2*R2*zetad(1)-n1.T()*tOm1*(vC2-vC1);
     if (wb.size()>1) 

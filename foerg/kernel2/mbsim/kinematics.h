@@ -31,7 +31,7 @@ namespace MBSim {
    * \date 2009-04-08 some comments (Thorsten Schindler)
    * \date 2010-05-23 Translation inherits Function2 (Martin Foerg)
    */
-  class Translation : public Function2<fmatvec::FVec,fmatvec::Vec,double> {
+  class Translation : public Function2<fmatvec::Vec3,fmatvec::Vec,double> {
     public:
       /**
        * \brief constructor
@@ -54,7 +54,7 @@ namespace MBSim {
        * \param time
        * \return translational vector as a function of generalized position and time, r=r(q,t)
        */
-      virtual fmatvec::FVec operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) = 0;
+      virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) = 0;
 
       virtual void initializeUsingXML(TiXmlElement *element) {}
       /***************************************************/
@@ -77,29 +77,29 @@ namespace MBSim {
        * \brief constructor
        * \param independent direction matrix of translation
        */
-      LinearTranslation(const fmatvec::FVMat &PJT_) { PJT.assign(PJT_); } 
+      LinearTranslation(const fmatvec::Mat3V &PJT_) { PJT.assign(PJT_); } 
 
       /* INTERFACE OF TRANSLATION */
       virtual int getqSize() const { throw; return 0; }
-      virtual fmatvec::FVec operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return PJT*q(0,PJT.cols()-1); } 
+      virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return PJT*q(0,PJT.cols()-1); } 
       virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
 
       /* GETTER / SETTER */
-      const fmatvec::FVMat& getTranslationVectors() const { return PJT; }
+      const fmatvec::Mat3V& getTranslationVectors() const { return PJT; }
 
       /**
        * Set the posible translations vectors. Each column of the matrix
        * is a posible translation vector.
        */
-      void setTranslationVectors(const fmatvec::FVMat &PJT_) { PJT = PJT_; }
+      void setTranslationVectors(const fmatvec::Mat3V &PJT_) { PJT = PJT_; }
       /***************************************************/
 
     private:
       /**
        * independent direction matrix of translation
        */
-      fmatvec::FVMat PJT;
+      fmatvec::Mat3V PJT;
   };
 
   /**
@@ -119,7 +119,7 @@ namespace MBSim {
        * \brief constructor
        * \param independent translation function
        */
-      TimeDependentTranslation(Function1<fmatvec::FVec, double> *pos_) : pos(pos_) {}
+      TimeDependentTranslation(Function1<fmatvec::Vec3, double> *pos_) : pos(pos_) {}
 
       /**
        * \brief destructor
@@ -128,7 +128,7 @@ namespace MBSim {
 
       /* INTERFACE OF TRANSLATION */
       virtual int getqSize() const { return 0; }
-      virtual fmatvec::FVec operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return (*pos)(t); }
+      virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return (*pos)(t); }
       virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
 
@@ -136,14 +136,14 @@ namespace MBSim {
       /**
        * \brief set the translation function
        */
-      void setTranslationFunction(Function1<fmatvec::FVec, double> *pos_) { pos = pos_; }
+      void setTranslationFunction(Function1<fmatvec::Vec3, double> *pos_) { pos = pos_; }
       /***************************************************/
 
     private:
       /**
        * time dependent translation function
        */
-      Function1<fmatvec::FVec, double> *pos;
+      Function1<fmatvec::Vec3, double> *pos;
   };
 
   /**
@@ -152,7 +152,7 @@ namespace MBSim {
    * \date 2009-04-08 some comments (Thorsten Schindler)
    * \date 2010-05-23 Rotation inherits Function2 (Martin Foerg)
    */
-  class Rotation : public Function2<fmatvec::FSqrMat,fmatvec::Vec,double> {
+  class Rotation : public Function2<fmatvec::SqrMat3,fmatvec::Vec,double> {
     public:
       /**
        * \brief constructor
@@ -175,7 +175,7 @@ namespace MBSim {
        * \param time
        * \return rotational matrix as a function of generalized position and time, A=A(q,t)
        */
-      virtual fmatvec::FSqrMat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) = 0;
+      virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) = 0;
 
      virtual void initializeUsingXML(TiXmlElement *element) {}
       /***************************************************/
@@ -194,7 +194,7 @@ namespace MBSim {
       /**
        * \brief transformation matrix
        */
-      fmatvec::FSqrMat APK;
+      fmatvec::SqrMat3 APK;
   };
 
   /**
@@ -209,7 +209,7 @@ namespace MBSim {
       RotationAboutXAxis();
 
       /* INTERFACE OF ROTATION */
-       virtual fmatvec::FSqrMat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
+       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {}
   };
 
@@ -225,7 +225,7 @@ namespace MBSim {
       RotationAboutYAxis();
 
       /* INTERFACE OF ROTATION */
-      virtual fmatvec::FSqrMat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
+      virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {}
   };
 
@@ -242,7 +242,7 @@ namespace MBSim {
       RotationAboutZAxis();
 
       /* INTERFACE OF ROTATION */
-      virtual fmatvec::FSqrMat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
+      virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {}
   };
 
@@ -263,23 +263,23 @@ namespace MBSim {
        * \brief constructor
        * \param axis of rotation
        */
-      RotationAboutFixedAxis(const fmatvec::FVec &a_) : RotationAboutOneAxis() { a = a_; } 
+      RotationAboutFixedAxis(const fmatvec::Vec3 &a_) : RotationAboutOneAxis() { a = a_; } 
 
       /* INTERFACE OF ROTATION */
-      virtual fmatvec::FSqrMat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
+      virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
 
       /* GETTER / SETTER */
-      const fmatvec::FVec& getAxisOfRotation() const { return a; }
-      void setAxisOfRotation(const fmatvec::FVec& a_) { a = a_; }
+      const fmatvec::Vec3& getAxisOfRotation() const { return a; }
+      void setAxisOfRotation(const fmatvec::Vec3& a_) { a = a_; }
       /***************************************************/
 
     protected:
       /**
        * \brief axis of rotation
        */
-      fmatvec::FVec a;
+      fmatvec::Vec3 a;
   };
 
   /**
@@ -301,7 +301,7 @@ namespace MBSim {
        * \param independent rotation angle function
        * \param axis of rotation
        */
-      TimeDependentRotationAboutFixedAxis(Function1<double, double> *angle_, const fmatvec::FVec &a_) : RotationAboutOneAxis(), rot(new RotationAboutFixedAxis(a_)), angle(angle_) {}
+      TimeDependentRotationAboutFixedAxis(Function1<double, double> *angle_, const fmatvec::Vec3 &a_) : RotationAboutOneAxis(), rot(new RotationAboutFixedAxis(a_)), angle(angle_) {}
 
       /**
        * \brief destructor
@@ -311,14 +311,14 @@ namespace MBSim {
 
       /* INTERFACE OF ROTATION */
       virtual int getqSize() const { return 0; }
-      virtual fmatvec::FSqrMat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
+      virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
 
       /* GETTER / SETTER */
       void setRotationalFunction(Function1<double, double> *angle_) { angle = angle_; }
-      const fmatvec::FVec& getAxisOfRotation() const { return rot->getAxisOfRotation(); }
-      void setAxisOfRotation(const fmatvec::FVec& a_) { rot->setAxisOfRotation(a_); }
+      const fmatvec::Vec3& getAxisOfRotation() const { return rot->getAxisOfRotation(); }
+      void setAxisOfRotation(const fmatvec::Vec3& a_) { rot->setAxisOfRotation(a_); }
       /***************************************************/
 
     private:
@@ -346,7 +346,7 @@ namespace MBSim {
       /**
        * \brief transformation matrix
        */
-      fmatvec::FSqrMat APK;
+      fmatvec::SqrMat3 APK;
   };
 
   /**
@@ -364,7 +364,7 @@ namespace MBSim {
 
       /* INTERFACE OF ROTATION */
       virtual int getqSize() const { return 2; }
-      virtual fmatvec::FSqrMat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
+      virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {};
       /***************************************************/
   };
@@ -384,7 +384,7 @@ namespace MBSim {
 
       /* INTERFACE OF ROTATION */
       virtual int getqSize() const { return 2; }
-      virtual fmatvec::FSqrMat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
+      virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {};
       /***************************************************/
   };
@@ -402,7 +402,7 @@ namespace MBSim {
       /**
        * \brief transformation matrix
        */
-      fmatvec::FSqrMat APK;
+      fmatvec::SqrMat3 APK;
   };
 
   /**
@@ -420,7 +420,7 @@ namespace MBSim {
 
       /* INTERFACE OF ROTATION */
       virtual int getqSize() const { return 3; }
-      virtual fmatvec::FSqrMat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
+      virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {};
       /***************************************************/
   };
@@ -439,7 +439,7 @@ namespace MBSim {
 
       /* INTERFACE OF ROTATION */
       virtual int getqSize() const { return 3; }
-      virtual fmatvec::FSqrMat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
+      virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {};
       /***************************************************/
   };
@@ -459,7 +459,7 @@ namespace MBSim {
 
       /* INTERFACE OF ROTATION */
       virtual int getqSize() const { return 3; }
-      virtual fmatvec::FSqrMat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
+      virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {};
       /***************************************************/
   };
@@ -491,7 +491,7 @@ namespace MBSim {
 
       /* INTERFACE OF ROTATION */
       virtual int getqSize() const { return 0; }
-      virtual fmatvec::FSqrMat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
+      virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
 

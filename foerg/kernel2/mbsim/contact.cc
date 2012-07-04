@@ -70,9 +70,9 @@ namespace MBSim {
       delete[] *i;
     for(vector<Mat*>::iterator i = Vk[0].begin(); i != Vk[0].end(); ++i)
       delete[] *i;
-    for(vector<FVMat*>::iterator i = fF.begin(); i != fF.end(); ++i)
+    for(vector<Mat3V*>::iterator i = fF.begin(); i != fF.end(); ++i)
       delete[] *i;
-    for(vector<FVec*>::iterator i = WF.begin(); i != WF.end(); ++i)
+    for(vector<Vec3*>::iterator i = WF.begin(); i != WF.end(); ++i)
       delete[] *i;
     for(vector<unsigned int*>::iterator i = gdActive.begin(); i != gdActive.end(); ++i)
       delete[] *i;
@@ -147,14 +147,14 @@ namespace MBSim {
       if((flag && gdActive[k][0]) || (!flag && fcl->isActive(gk[k](0),0))) { // TODO: nicer implementation
         for(unsigned int i=0; i<2; i++) contour[i]->updateKinematicsForFrame(cpData[k][i],velocities); // angular velocity necessary e.g. see ContactKinematicsSpherePlane::updatewb
 
-        FVec Wn = cpData[k][0].getFrameOfReference().getOrientation().col(0);
+        Vec3 Wn = cpData[k][0].getFrameOfReference().getOrientation().col(0);
 
-        FVec WvD = cpData[k][1].getFrameOfReference().getVelocity() - cpData[k][0].getFrameOfReference().getVelocity();
+        Vec3 WvD = cpData[k][1].getFrameOfReference().getVelocity() - cpData[k][0].getFrameOfReference().getVelocity();
 
         gdk[k](0) = Wn.T()*WvD;
 
         if(gdk[k].size()>1) {
-          FVMat Wt(gdk[k].size()-1);
+          Mat3V Wt(gdk[k].size()-1);
           Wt.set(0, cpData[k][0].getFrameOfReference().getOrientation().col(1));
           if(gdk[k].size() > 2)
             Wt.set(1, cpData[k][0].getFrameOfReference().getOrientation().col(2));
@@ -494,11 +494,11 @@ namespace MBSim {
         Vk[1][i][0].resize(contour[0]->gethSize(1),laSizek);
         Vk[1][i][1].resize(contour[1]->gethSize(1),laSizek);
 
-        fF.push_back(new FVMat[2]);
+        fF.push_back(new Mat3V[2]);
         fF[i][0].resize(laSizek);
         fF[i][1].resize(laSizek);
 
-        WF.push_back(new FVec[2]);
+        WF.push_back(new Vec3[2]);
       }
     }
     else if(stage==unknownStage) {
@@ -694,7 +694,7 @@ namespace MBSim {
               data.push_back(cpData[i][k].getFrameOfReference().getPosition()(0));
               data.push_back(cpData[i][k].getFrameOfReference().getPosition()(1));
               data.push_back(cpData[i][k].getFrameOfReference().getPosition()(2));
-              FVec cardan=AIK2Cardan(cpData[i][k].getFrameOfReference().getOrientation());
+              Vec3 cardan=AIK2Cardan(cpData[i][k].getFrameOfReference().getOrientation());
               data.push_back(cardan(0));
               data.push_back(cardan(1));
               data.push_back(cardan(2));
@@ -710,7 +710,7 @@ namespace MBSim {
             data.push_back(cpData[i][1].getFrameOfReference().getPosition()(0));
             data.push_back(cpData[i][1].getFrameOfReference().getPosition()(1));
             data.push_back(cpData[i][1].getFrameOfReference().getPosition()(2));
-            FVec F(INIT,0);
+            Vec3 F(INIT,0);
             if(isSetValued()) {
               if(gActive[i]) F=fF[i][1].col(0)*lak[i](0)/dt;
             }
@@ -728,7 +728,7 @@ namespace MBSim {
             data.push_back(cpData[i][1].getFrameOfReference().getPosition()(0));
             data.push_back(cpData[i][1].getFrameOfReference().getPosition()(1));
             data.push_back(cpData[i][1].getFrameOfReference().getPosition()(2));
-            FVec F(INIT,0);
+            Vec3 F(INIT,0);
             if(isSetValued()) {                    // TODO switch between stick and slip not possible with TimeStepper
               if(gActive[i] && lak[i].size()>1) { // stick friction
                 F=fF[i][1].col(1)*lak[i](1)/dt;
@@ -1335,8 +1335,8 @@ namespace MBSim {
       }
       else {
 	for(unsigned int i=0; i<2; i++) contour[i]->updateKinematicsForFrame(cpData[k][i],velocities); 
-	FVec Wn = cpData[k][0].getFrameOfReference().getOrientation().col(0);
-	FVec WvD = cpData[k][1].getFrameOfReference().getVelocity() - cpData[k][0].getFrameOfReference().getVelocity();
+	Vec3 Wn = cpData[k][0].getFrameOfReference().getOrientation().col(0);
+	Vec3 WvD = cpData[k][1].getFrameOfReference().getVelocity() - cpData[k][0].getFrameOfReference().getVelocity();
 	gdInActive_(*IndInActive_) = Wn.T()*WvD;
 	gInActive_(*IndInActive_) = gk[k](0);
 	(*IndInActive_)++;

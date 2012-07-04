@@ -35,14 +35,14 @@ namespace MBSim {
    * \author Martin Foerg
    * \date some comments (Thorsten Schindler)
    */
-  double computeAngleOnUnitCircle(const fmatvec::FVec& r);
+  double computeAngleOnUnitCircle(const fmatvec::Vec3& r);
 
   /**
    * \brief computes azimuthal and polar angles
    * \author Martin Foerg
    * \date some comments (Thorsten Schindler)
    */
-  fmatvec::Vector<fmatvec::GeneralFixed<2,1>, double> computeAnglesOnUnitSphere(const fmatvec::FVec& r);
+  fmatvec::Vec2 computeAnglesOnUnitSphere(const fmatvec::Vec3& r);
 
   /**
    * \brief defines contact kinematics between two contours

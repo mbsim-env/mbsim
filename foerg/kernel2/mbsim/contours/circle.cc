@@ -41,10 +41,10 @@ namespace MBSim {
 
   Circle::~Circle() {}
 
-  Vector<GeneralFixed<2,1>,double> Circle::computeLagrangeParameter(const FVec& WrPoint) {
-    Vector<GeneralFixed<2,1>,double> LagrangeParameter(INIT,0.);
+  Vec2 Circle::computeLagrangeParameter(const Vec3& WrPoint) {
+    Vec2 LagrangeParameter(INIT,0.);
 
-    FVec CrPoint = WrPoint;
+    Vec3 CrPoint = WrPoint;
 
     CrPoint -= R.getPosition();
     CrPoint = R.getOrientation().T() * CrPoint; // position in moving frame of reference

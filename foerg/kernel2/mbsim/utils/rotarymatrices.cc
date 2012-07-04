@@ -106,8 +106,8 @@ namespace MBSim {
     return AIKx*AIKy*AIKz;          //Wie im TM VI Skript
   }
 
-  FVec AIK2Cardan(const FSqrMat &AIK) { 
-    FVec AlphaBetaGamma(NONINIT);    
+  Vec3 AIK2Cardan(const SqrMat3 &AIK) { 
+    Vec3 AlphaBetaGamma(NONINIT);    
     AlphaBetaGamma(1)= asin(AIK(0,2));
     double nenner = cos(AlphaBetaGamma(1));
     if (fabs(nenner)>1e-10) {
@@ -120,12 +120,12 @@ namespace MBSim {
     return AlphaBetaGamma;
   }
 
-  FVec AKI2Cardan(const FSqrMat &AKI) {
+  Vec3 AKI2Cardan(const SqrMat3 &AKI) {
     return AIK2Cardan(trans(AKI));
   }
 
-  FVec AIK2RevCardan(const FSqrMat &AIK) {
-    FVec AlphaBetaGamma(NONINIT);
+  Vec3 AIK2RevCardan(const SqrMat3 &AIK) {
+    Vec3 AlphaBetaGamma(NONINIT);
     AlphaBetaGamma(1)= asin(-AIK(2,0));
     double nenner = cos(AlphaBetaGamma(1));
     if (fabs(nenner)>1e-10) {
@@ -138,7 +138,7 @@ namespace MBSim {
     return AlphaBetaGamma;
   }
 
-  FVec AKI2RevCardan(const FSqrMat &AKI) {
+  Vec3 AKI2RevCardan(const SqrMat3 &AKI) {
     return AIK2RevCardan(trans(AKI));
   }
 

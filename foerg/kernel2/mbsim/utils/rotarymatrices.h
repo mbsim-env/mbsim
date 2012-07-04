@@ -46,14 +46,14 @@ namespace MBSim {
   /**
    * \brief Cardan parametrisation (x y z): calculate angles (alpha, beta, gamma) from rotation matrix AKI or AIK
    */
-  fmatvec::FVec AKI2Cardan(const fmatvec::FSqrMat &AKI);
-  fmatvec::FVec AIK2Cardan(const fmatvec::FSqrMat &AIK);
+  fmatvec::Vec3 AKI2Cardan(const fmatvec::SqrMat3 &AKI);
+  fmatvec::Vec3 AIK2Cardan(const fmatvec::SqrMat3 &AIK);
 
   /**
    * \brief reversed Cardan parametrisation (z y x): calculate angles (alpha, beta, gamma) from rotation matrix AKI or AIK
    */
-  fmatvec::FVec AKI2RevCardan(const fmatvec::FSqrMat &AKI);
-  fmatvec::FVec AIK2RevCardan(const fmatvec::FSqrMat &AIK);
+  fmatvec::Vec3 AKI2RevCardan(const fmatvec::SqrMat3 &AKI);
+  fmatvec::Vec3 AIK2RevCardan(const fmatvec::SqrMat3 &AIK);
 
   /**
    * \brief ZXY parametrisation (z -x -y)  with parameters (angles) = [al; be; ga]

@@ -51,9 +51,9 @@ namespace MBSim {
     openMBVFrame=C;
 #endif
 
-    SrSF.push_back(FVec());
-    WrSF.push_back(FVec());
-    ASF.push_back(FSqrMat(EYE));
+    SrSF.push_back(Vec3());
+    WrSF.push_back(Vec3());
+    ASF.push_back(SqrMat3(EYE));
 
     updateJacobians_[0] = &RigidBody::updateJacobians0;
     updateJacobians_[1] = &RigidBody::updateJacobians1;
@@ -75,8 +75,8 @@ namespace MBSim {
 
   void RigidBody::updateh(double t, int j) {
 
-    FVec WF = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity() - m*frame[0]->getGyroscopicAccelerationOfTranslation(j);
-    FVec WM = crossProduct(WThetaS*frame[0]->getAngularVelocity(),frame[0]->getAngularVelocity()) - WThetaS*frame[0]->getGyroscopicAccelerationOfRotation(j);
+    Vec3 WF = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity() - m*frame[0]->getGyroscopicAccelerationOfTranslation(j);
+    Vec3 WM = crossProduct(WThetaS*frame[0]->getAngularVelocity(),frame[0]->getAngularVelocity()) - WThetaS*frame[0]->getGyroscopicAccelerationOfRotation(j);
 
     h[j] += frame[0]->getJacobianOfTranslation(j).T()*WF + frame[0]->getJacobianOfRotation(j).T()*WM;
   }
@@ -94,7 +94,7 @@ namespace MBSim {
   }
 
   void RigidBody::updatehInverseKinetics(double t, int j) {
-    VVec buf = frame[0]->getJacobianOfTranslation(j).T()*(m*(frame[0]->getJacobianOfTranslation()*udall[0] + frame[0]->getGyroscopicAccelerationOfTranslation())) + frame[0]->getJacobianOfRotation(j).T()*(WThetaS*(frame[0]->getJacobianOfRotation()*udall[0] + frame[0]->getGyroscopicAccelerationOfRotation()));
+    VecV buf = frame[0]->getJacobianOfTranslation(j).T()*(m*(frame[0]->getJacobianOfTranslation()*udall[0] + frame[0]->getGyroscopicAccelerationOfTranslation())) + frame[0]->getJacobianOfRotation(j).T()*(WThetaS*(frame[0]->getJacobianOfRotation()*udall[0] + frame[0]->getGyroscopicAccelerationOfRotation()));
     h[j] -= buf;
   }
 
@@ -242,21 +242,21 @@ namespace MBSim {
       frame[0]->getJacobianOfRotation(1) = PJR[1];
 
       if(fPJT==0) {
-        FVMat JT;
+        Mat3V JT;
         if(dynamic_cast<LinearTranslation*>(fPrPK)) {
           JT.assign(dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors());
         }
         PJT[0].set(Index(0,2), Index(0,JT.cols()-1),JT);
       }
       if(fPJR==0) {
-        FVMat JR;
+        Mat3V JR;
 
         if(dynamic_cast<RotationAboutXAxis*>(fAPK))
-          JR.assign(FVec("[1;0;0]"));
+          JR.assign(Vec3("[1;0;0]"));
 	else if(dynamic_cast<RotationAboutYAxis*>(fAPK))
-          JR.assign(FVec("[0;1;0]"));
+          JR.assign(Vec3("[0;1;0]"));
 	else if(dynamic_cast<RotationAboutZAxis*>(fAPK))
-          JR.assign(FVec("[0;0;1]"));
+          JR.assign(Vec3("[0;0;1]"));
         else if(dynamic_cast<RotationAboutFixedAxis*>(fAPK))
           JR.assign(dynamic_cast<RotationAboutFixedAxis*>(fAPK)->getAxisOfRotation());
         else if(dynamic_cast<RotationAboutAxesYZ*>(fAPK)) {
@@ -268,7 +268,7 @@ namespace MBSim {
           fPdJR = new JdRotationAboutAxesXY(nu[0]);
         }
         else if(dynamic_cast<CardanAngles*>(fAPK)) {
-          JR.assign(FMat(EYE));
+          JR.assign(Mat33(EYE));
           if(cb)
             fT = new TCardanAngles2(nq,nu[0]);
           else
@@ -279,7 +279,7 @@ namespace MBSim {
           fPdJR = new JdRotationAboutAxesXYZ(nu[0]);
         }
 	else if(dynamic_cast<EulerAngles*>(fAPK)) {
-          JR.assign(FMat(EYE));
+          JR.assign(Mat33(EYE));
           if(cb)
             fT = new TEulerAngles2(nq,nu[0]);
           else
@@ -334,8 +334,8 @@ namespace MBSim {
   void RigidBody::setUpInverseKinetics() {
     InverseKineticsJoint *joint = new InverseKineticsJoint(string("Joint_")+frameOfReference->getParent()->getName()+"_"+name);
     ds->addInverseKineticsLink(joint);
-    joint->setForceDirection(FVMat(3,EYE));
-    joint->setMomentDirection(FVMat(3,EYE));
+    joint->setForceDirection(Mat3V(3,EYE));
+    joint->setMomentDirection(Mat3V(3,EYE));
     joint->connect(frameOfReference,frame[iKinematics]);
     joint->setBody(this);
   }
@@ -354,8 +354,8 @@ namespace MBSim {
         if(openMBVBody) {
           vector<double> data;
           data.push_back(t);
-          FVec WrOS=openMBVFrame->getPosition();
-          FVec cardan=AIK2Cardan(openMBVFrame->getOrientation());
+          Vec3 WrOS=openMBVFrame->getPosition();
+          Vec3 cardan=AIK2Cardan(openMBVFrame->getOrientation());
           data.push_back(WrOS(0));
           data.push_back(WrOS(1));
           data.push_back(WrOS(2));
@@ -415,7 +415,7 @@ namespace MBSim {
     if(fPdjR)
       PdjR = (*fPdjR)(t);
 
-    FSqrMat tWrPK = tilde(WrPK);
+    SqrMat3 tWrPK = tilde(WrPK);
     frame[iKinematics]->setGyroscopicAccelerationOfTranslation(frameOfReference->getGyroscopicAccelerationOfTranslation() - tWrPK*frameOfReference->getGyroscopicAccelerationOfRotation() + frameOfReference->getOrientation()*(PdJT*uRel + PdjT + PJT[0]*jRel) + crossProduct(frameOfReference->getAngularVelocity(), 2.*WvPKrel+crossProduct(frameOfReference->getAngularVelocity(),WrPK)));
     frame[iKinematics]->setGyroscopicAccelerationOfRotation(frameOfReference->getGyroscopicAccelerationOfRotation() + frameOfReference->getOrientation()*(PdJR*uRel + PdjR + PJR[0]*jRel) + crossProduct(frameOfReference->getAngularVelocity(), WomPK));
 
@@ -464,7 +464,7 @@ namespace MBSim {
   void RigidBody::updateJacobiansForRemainingFramesAndContours(double t, int j) {
 
     if(iKinematics != 0) { // only if kinematics frame is not cog-frame, update JACOBIAN of cog
-      FSqrMat tWrSK = tilde(WrSF[iKinematics]);
+      SqrMat3 tWrSK = tilde(WrSF[iKinematics]);
       frame[0]->setJacobianOfTranslation(frame[iKinematics]->getJacobianOfTranslation(j) + tWrSK*frame[iKinematics]->getJacobianOfRotation(j),j);
       frame[0]->setJacobianOfRotation(frame[iKinematics]->getJacobianOfRotation(j),j);
       frame[0]->setGyroscopicAccelerationOfTranslation(frame[iKinematics]->getGyroscopicAccelerationOfTranslation(j) + tWrSK*frame[iKinematics]->getGyroscopicAccelerationOfRotation(j) + crossProduct(frame[iKinematics]->getAngularVelocity(),crossProduct(frame[iKinematics]->getAngularVelocity(),-WrSF[iKinematics])),j);
@@ -473,7 +473,7 @@ namespace MBSim {
 
     for(unsigned int i=1; i<frame.size(); i++) {
       if(i!=unsigned(iKinematics)) {
-        FSqrMat tWrSK = tilde(WrSF[i]);
+        SqrMat3 tWrSK = tilde(WrSF[i]);
         frame[i]->setJacobianOfTranslation(frame[0]->getJacobianOfTranslation(j) - tWrSK*frame[0]->getJacobianOfRotation(j),j);
         frame[i]->setJacobianOfRotation(frame[0]->getJacobianOfRotation(j),j);
         frame[i]->setGyroscopicAccelerationOfTranslation(frame[0]->getGyroscopicAccelerationOfTranslation(j) - tWrSK*frame[0]->getGyroscopicAccelerationOfRotation(j) + crossProduct(frame[0]->getAngularVelocity(),crossProduct(frame[0]->getAngularVelocity(),WrSF[i])),j);
@@ -482,7 +482,7 @@ namespace MBSim {
     }
 
     for(unsigned int i=0; i<contour.size(); i++) {
-      FSqrMat tWrSC = tilde(WrSC[i]);
+      SqrMat3 tWrSC = tilde(WrSC[i]);
       contour[i]->setReferenceJacobianOfRotation(frame[0]->getJacobianOfRotation(j),j);
       contour[i]->setReferenceGyroscopicAccelerationOfRotation(frame[0]->getGyroscopicAccelerationOfRotation(j),j);
       contour[i]->setReferenceJacobianOfTranslation(frame[0]->getJacobianOfTranslation(j) - tWrSC*frame[0]->getJacobianOfRotation(j),j);
@@ -495,14 +495,14 @@ namespace MBSim {
     int j = 1;
 
     for(unsigned int i=1; i<frame.size(); i++) {
-      FSqrMat tWrSK = tilde(WrSF[i]);
+      SqrMat3 tWrSK = tilde(WrSF[i]);
       frame[i]->setJacobianOfTranslation(frame[0]->getJacobianOfTranslation(j) - tWrSK*frame[0]->getJacobianOfRotation(j),j);
       frame[i]->setJacobianOfRotation(frame[0]->getJacobianOfRotation(j),j);
       frame[i]->setGyroscopicAccelerationOfTranslation(crossProduct(frame[0]->getAngularVelocity(),crossProduct(frame[0]->getAngularVelocity(),WrSF[i]))- tWrSK*frame[0]->getGyroscopicAccelerationOfRotation(j),j);
     }
 
     for(unsigned int i=0; i<contour.size(); i++) {
-      FSqrMat tWrSC = tilde(WrSC[i]);
+      SqrMat3 tWrSC = tilde(WrSC[i]);
       contour[i]->setReferenceJacobianOfRotation(frame[0]->getJacobianOfRotation(j),j);
       contour[i]->setReferenceJacobianOfTranslation(frame[0]->getJacobianOfTranslation(j) - tWrSC*frame[0]->getJacobianOfRotation(j),j);
       contour[i]->setReferenceGyroscopicAccelerationOfTranslation(crossProduct(frame[0]->getAngularVelocity(),crossProduct(frame[0]->getAngularVelocity(),WrSC[i])) - tWrSC*frame[0]->getGyroscopicAccelerationOfRotation(j),j);
@@ -524,37 +524,37 @@ namespace MBSim {
     if(!constraint) TRel>>T;
   }
 
-  void RigidBody::addFrame(Frame *cosy, const FVec &RrRF, const FSqrMat &ARF, const string& refFrameName) {
+  void RigidBody::addFrame(Frame *cosy, const Vec3 &RrRF, const SqrMat3 &ARF, const string& refFrameName) {
     Body::addFrame(cosy);
 
     saved_refFrameF.push_back(refFrameName);
     saved_RrRF.push_back(RrRF); 
     saved_ARF.push_back(ARF);
-    SrSF.push_back(FVec());
-    WrSF.push_back(FVec());
-    ASF.push_back(FSqrMat());
+    SrSF.push_back(Vec3());
+    WrSF.push_back(Vec3());
+    ASF.push_back(SqrMat3());
   }
 
-  void RigidBody::addFrame(Frame *frame_, const fmatvec::FVec &RrRF, const fmatvec::FSqrMat &ARF, const Frame* refFrame) {
+  void RigidBody::addFrame(Frame *frame_, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const Frame* refFrame) {
     addFrame(frame_, RrRF, ARF, refFrame?refFrame->getName():"C");
   }
 
-  void RigidBody::addFrame(const string &str, const FVec &SrSF, const FSqrMat &ASF, const Frame* refFrame) {
+  void RigidBody::addFrame(const string &str, const Vec3 &SrSF, const SqrMat3 &ASF, const Frame* refFrame) {
     addFrame(new Frame(str),SrSF,ASF,refFrame);
   }
 
-  void RigidBody::addContour(Contour* contour, const FVec &RrRC, const FSqrMat &ARC, const string& refFrameName) {
+  void RigidBody::addContour(Contour* contour, const Vec3 &RrRC, const SqrMat3 &ARC, const string& refFrameName) {
     Body::addContour(contour);
 
     saved_refFrameC.push_back(refFrameName);
     saved_RrRC.push_back(RrRC);
     saved_ARC.push_back(ARC);
-    SrSC.push_back(FVec());
-    WrSC.push_back(FVec());
-    ASC.push_back(FSqrMat());
+    SrSC.push_back(Vec3());
+    WrSC.push_back(Vec3());
+    ASC.push_back(SqrMat3());
   }
 
-  void RigidBody::addContour(Contour* contour, const fmatvec::FVec &RrRC, const fmatvec::FSqrMat &ARC, const Frame* refFrame) {
+  void RigidBody::addContour(Contour* contour, const fmatvec::Vec3 &RrRC, const fmatvec::SqrMat3 &ARC, const Frame* refFrame) {
     addContour(contour, RrRC, ARC, refFrame?refFrame->getName():"C");
   }
 
@@ -659,7 +659,7 @@ namespace MBSim {
 
     // TODO prüfen ob Optimierungspotential
 
-    FSqrMat tWrPK = tilde(WrPK);
+    SqrMat3 tWrPK = tilde(WrPK);
 
     frame[iKinematics]->setGyroscopicAccelerationOfTranslation(frameOfReference->getGyroscopicAccelerationOfTranslation() - tWrPK*frameOfReference->getGyroscopicAccelerationOfRotation() + frameOfReference->getOrientation()*(PdJT*uRel + PdjT) + crossProduct(frameOfReference->getAngularVelocity(), 2.*WvPKrel+crossProduct(frameOfReference->getAngularVelocity(),WrPK)));
     frame[iKinematics]->setGyroscopicAccelerationOfRotation(frameOfReference->getGyroscopicAccelerationOfRotation() + frameOfReference->getOrientation()*(PdJR*uRel + PdjR) + crossProduct(frameOfReference->getAngularVelocity(), WomPK));
@@ -669,7 +669,7 @@ namespace MBSim {
 
     if(iKinematics != 0) {
 
-      FSqrMat tWrSK = tilde(WrSF[iKinematics]);
+      SqrMat3 tWrSK = tilde(WrSF[iKinematics]);
       frame[0]->setJacobianOfTranslation(frame[iKinematics]->getJacobianOfTranslation() + tWrSK*frame[iKinematics]->getJacobianOfRotation());
       frame[0]->setJacobianOfRotation(frame[iKinematics]->getJacobianOfRotation());
       frame[0]->setGyroscopicAccelerationOfTranslation(frame[iKinematics]->getGyroscopicAccelerationOfTranslation() + tWrSK*frame[iKinematics]->getGyroscopicAccelerationOfRotation() + crossProduct(frame[i]->getAngularVelocity(),crossProduct(frame[i]->getAngularVelocity(),-WrSF[iKinematics]))); // frame[iKinematics]->getAngularVelocity() not up to date
@@ -678,7 +678,7 @@ namespace MBSim {
 
     if(i>0) {
       if(i!=unsigned(iKinematics)) {
-        FSqrMat tWrSK = tilde(WrSF[i]);
+        SqrMat3 tWrSK = tilde(WrSF[i]);
         frame[i]->setJacobianOfTranslation(frame[0]->getJacobianOfTranslation() - tWrSK*frame[0]->getJacobianOfRotation());
         frame[i]->setJacobianOfRotation(frame[0]->getJacobianOfRotation());
         frame[i]->setGyroscopicAccelerationOfTranslation(frame[0]->getGyroscopicAccelerationOfTranslation() - tWrSK*frame[0]->getGyroscopicAccelerationOfRotation() + crossProduct(frame[i]->getAngularVelocity(),crossProduct(frame[i]->getAngularVelocity(),WrSF[i])));// frame[0]->getAngularVelocity() not up to date
@@ -725,9 +725,9 @@ namespace MBSim {
         refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
         ec=ec->NextSiblingElement();
       }
-      FVec RrRF=getFVec(ec);
+      Vec3 RrRF=getVec3(ec);
       ec=ec->NextSiblingElement();
-      FSqrMat ARF=getFSqrMat(ec);
+      SqrMat3 ARF=getSqrMat3(ec);
       addFrame(f, RrRF, ARF, refF);
       e=e->NextSiblingElement();
     }
@@ -745,9 +745,9 @@ namespace MBSim {
         refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
         ec=ec->NextSiblingElement();
       }
-      FVec RrRC=getFVec(ec);
+      Vec3 RrRC=getVec3(ec);
       ec=ec->NextSiblingElement();
-      FSqrMat ARC=getFSqrMat(ec);
+      SqrMat3 ARC=getSqrMat3(ec);
       addContour(c, RrRC, ARC, refF);
       c->initializeUsingXML(contourElement);
       e=e->NextSiblingElement();
@@ -758,7 +758,7 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"mass");
     setMass(getDouble(e));
     e=element->FirstChildElement(MBSIMNS"inertiaTensor");
-    setInertiaTensor(getFSymMat(e));
+    setInertiaTensor(getSymMat3(e));
     e=element->FirstChildElement(MBSIMNS"translation");
     Translation *trans=ObjectFactory::getInstance()->createTranslation(e->FirstChildElement());
     if(trans) {

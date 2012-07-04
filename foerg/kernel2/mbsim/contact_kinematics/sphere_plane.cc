@@ -47,9 +47,9 @@ namespace MBSim {
     cpData[isphere].getFrameOfReference().getOrientation().set(1, -plane->getFrame()->getOrientation().col(1));
     cpData[isphere].getFrameOfReference().getOrientation().set(2, plane->getFrame()->getOrientation().col(2));
 
-    FVec Wn = cpData[iplane].getFrameOfReference().getOrientation().col(0);
+    Vec3 Wn = cpData[iplane].getFrameOfReference().getOrientation().col(0);
 
-    FVec Wd = sphere->getFrame()->getPosition() - plane->getFrame()->getPosition();
+    Vec3 Wd = sphere->getFrame()->getPosition() - plane->getFrame()->getPosition();
 
     g(0) = Wn.T()*Wd - sphere->getRadius();
 
@@ -59,38 +59,38 @@ namespace MBSim {
   }
 
   void ContactKinematicsSpherePlane::updatewb(Vec &wb, const Vec &g, ContourPointData *cpData) {
-    FVec v1 = cpData[iplane].getFrameOfReference().getOrientation().col(2);
-    FVec n1 = cpData[iplane].getFrameOfReference().getOrientation().col(0);
-    FVec n2 = cpData[isphere].getFrameOfReference().getOrientation().col(0);
-    FVec u1 = cpData[iplane].getFrameOfReference().getOrientation().col(1);
-    FVec vC1 = cpData[iplane].getFrameOfReference().getVelocity();
-    FVec vC2 = cpData[isphere].getFrameOfReference().getVelocity();
-    FVec Om1 = cpData[iplane].getFrameOfReference().getAngularVelocity();
-    FVec Om2 = cpData[isphere].getFrameOfReference().getAngularVelocity();
+    Vec3 v1 = cpData[iplane].getFrameOfReference().getOrientation().col(2);
+    Vec3 n1 = cpData[iplane].getFrameOfReference().getOrientation().col(0);
+    Vec3 n2 = cpData[isphere].getFrameOfReference().getOrientation().col(0);
+    Vec3 u1 = cpData[iplane].getFrameOfReference().getOrientation().col(1);
+    Vec3 vC1 = cpData[iplane].getFrameOfReference().getVelocity();
+    Vec3 vC2 = cpData[isphere].getFrameOfReference().getVelocity();
+    Vec3 Om1 = cpData[iplane].getFrameOfReference().getAngularVelocity();
+    Vec3 Om2 = cpData[isphere].getFrameOfReference().getAngularVelocity();
 
-    FVec KrPC2 = sphere->getFrame()->getOrientation().T()*(cpData[isphere].getFrameOfReference().getPosition() - sphere->getFrame()->getPosition());
+    Vec3 KrPC2 = sphere->getFrame()->getOrientation().T()*(cpData[isphere].getFrameOfReference().getPosition() - sphere->getFrame()->getPosition());
     Vec2 zeta2 = computeAnglesOnUnitSphere(KrPC2/sphere->getRadius());
     double a2 = zeta2(0);
     double b2 = zeta2(1);
-    FVec &s1 = u1;
-    FVec &t1 = v1;
+    Vec3 &s1 = u1;
+    Vec3 &t1 = v1;
 
     double r = sphere->getRadius();
     Mat32 KR2(NONINIT);
-    FVec Ks2(NONINIT);
+    Vec3 Ks2(NONINIT);
     Ks2(0) = -r*sin(a2)*cos(b2);
     Ks2(1) = r*cos(a2)*cos(b2);
     Ks2(2) = 0;
 
-    FVec Kt2(NONINIT);
+    Vec3 Kt2(NONINIT);
     Kt2(0) = -r*cos(a2)*sin(b2);
     Kt2(1) = -r*sin(a2)*sin(b2);
     Kt2(2) = r*cos(b2);
 
-    FVec s2 = sphere->getFrame()->getOrientation()*Ks2;
-    FVec t2 = sphere->getFrame()->getOrientation()*Kt2;
-    FVec u2 = s2/nrm2(s2);
-    FVec v2 = crossProduct(n2,u2);
+    Vec3 s2 = sphere->getFrame()->getOrientation()*Ks2;
+    Vec3 t2 = sphere->getFrame()->getOrientation()*Kt2;
+    Vec3 u2 = s2/nrm2(s2);
+    Vec3 v2 = crossProduct(n2,u2);
 
     Mat32 R1;
     R1.set(0, s1);
@@ -138,8 +138,8 @@ namespace MBSim {
     Vec zetad1 = zetad(0,1);
     Vec zetad2 = zetad(2,3);
 
-    FMat tOm1 = tilde(Om1);
-    FMat tOm2 = tilde(Om2);
+    Mat33 tOm1 = tilde(Om1);
+    Mat33 tOm2 = tilde(Om2);
     wb(0) += n1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);
 
     if(wb.size() > 1) wb(1) += u1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);
