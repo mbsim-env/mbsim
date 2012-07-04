@@ -5,7 +5,13 @@ libcontactkinematics_la_SOURCES = contact_kinematics.cc\
 				  circlesolid_circlesolid.cc\
 				  circlesolid_line.cc\
 				  point_plane.cc\
-				  compoundcontour_contour.cc
+				  compoundcontour_contour.cc\
+				  compoundcontour_compoundcontour.cc\
+				  sphere_frustum.cc\
+				  sphere_plane.cc\
+				  sphere_sphere.cc\
+				  point_circlesolid.cc\
+				  point_planewithfrustum.cc
 
 contactkinematicsincludedir = $(includedir)/mbsim/contact_kinematics
 
@@ -18,4 +24,10 @@ contactkinematicsinclude_HEADERS = contact_kinematics.h \
 				   circlesolid_circlesolid.h\
 				   circlesolid_line.h\
 				   point_plane.h\
-				   compoundcontour_contour.h
+				   compoundcontour_contour.h\
+				   compoundcontour_compoundcontour.h\
+				   sphere_frustum.h\
+				   sphere_plane.h\
+				   sphere_sphere.h\
+				   point_circlesolid.h\
+				   point_planewithfrustum.h

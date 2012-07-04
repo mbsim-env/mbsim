@@ -44,7 +44,7 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      virtual fmatvec::Vec computeLagrangeParameter(const fmatvec::Vec &WrPoint);
+      virtual fmatvec::Vector<fmatvec::GeneralFixed<2,1>, double> computeLagrangeParameter(const fmatvec::FVec &WrPoint);
       /***************************************************/
 
       /**
@@ -55,8 +55,8 @@ namespace MBSim {
       Frustum(const std::string &name, bool outCont_) : RigidContour(name), r(2), h(0.), outCont(outCont_) {}
 
       /* GETTER / SETTER */
-      void setRadii(const fmatvec::Vec &r_);
-      const fmatvec::Vec& getRadii() const;
+      void setRadii(const fmatvec::Vector<fmatvec::GeneralFixed<2,1>, double> &r_);
+      const fmatvec::Vector<fmatvec::GeneralFixed<2,1>, double>& getRadii() const;
       void setHeight(double h_);
       double getHeight() const;
       void setOutCont(bool outCont_);
@@ -73,7 +73,7 @@ namespace MBSim {
       /** 
        * \brief upper r(1) and lower radius r(0) in direction of the axis
        */
-      fmatvec::Vec r;
+      fmatvec::Vector<fmatvec::GeneralFixed<2,1>, double> r;
 
       /** 
        * \brief height
@@ -86,8 +86,8 @@ namespace MBSim {
       bool outCont;
   };
 
-  inline void Frustum::setRadii(const fmatvec::Vec &r_) { r = r_; }
-  inline const fmatvec::Vec& Frustum::getRadii() const { return r; }
+  inline void Frustum::setRadii(const fmatvec::Vector<fmatvec::GeneralFixed<2,1>, double> &r_) { r = r_; }
+  inline const fmatvec::Vector<fmatvec::GeneralFixed<2,1>, double>& Frustum::getRadii() const { return r; }
   inline void Frustum::setHeight(double h_) { h = h_; }
   inline double Frustum::getHeight() const { return h; }
   inline void Frustum::setOutCont(bool outCont_) { outCont = outCont_; }

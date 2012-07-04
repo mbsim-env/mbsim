@@ -54,8 +54,8 @@ namespace MBSim {
        */
       double rho, h;
       double rTop, rFrustumTop, rFrustumPlane, rPlane;
-      fmatvec::Vec ET, EP, MT, MP;
-      fmatvec::Vec nFrustum, tFrustum;
+      fmatvec::Vec3 ET, EP, MT, MP;
+      fmatvec::Vec3 nFrustum, tFrustum;
 
       /**
        * \brief contour classes

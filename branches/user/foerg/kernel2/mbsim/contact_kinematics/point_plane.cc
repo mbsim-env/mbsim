@@ -72,7 +72,7 @@ namespace MBSim {
       FVec &s1 = u1;
       FVec &t1 = v1;
 
-      FVMat R1(2);
+      Mat32 R1;
       R1.set(0, s1);
       R1.set(1, t1);
 

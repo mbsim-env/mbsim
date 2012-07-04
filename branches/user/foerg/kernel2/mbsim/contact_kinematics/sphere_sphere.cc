@@ -35,11 +35,11 @@ namespace MBSim {
   }
 
   void ContactKinematicsSphereSphere::updateg(Vec &g, ContourPointData *cpData) {
-    Vec Wd = sphere1->getFrame()->getPosition() - sphere0->getFrame()->getPosition();
+    Vec3 Wd = sphere1->getFrame()->getPosition() - sphere0->getFrame()->getPosition();
     double l = nrm2(Wd);
     Wd = Wd/l;
     g(0) = l-sphere0->getRadius()-sphere1->getRadius();
-    Vec t(3);
+    Vec3 t;
     if(fabs(Wd(0))<epsroot() && fabs(Wd(1))<epsroot()) {
       t(0) = 1.;
       t(1) = 0.;
@@ -51,12 +51,12 @@ namespace MBSim {
       t(2) = 0.0;
     }
     t = t/nrm2(t);
-    cpData[isphere0].getFrameOfReference().getOrientation().col(0) = Wd;
-    cpData[isphere1].getFrameOfReference().getOrientation().col(0) = -cpData[isphere0].getFrameOfReference().getOrientation().col(0);
-    cpData[isphere0].getFrameOfReference().getOrientation().col(1) = t;
-    cpData[isphere1].getFrameOfReference().getOrientation().col(1) = -cpData[isphere0].getFrameOfReference().getOrientation().col(1);
-    cpData[isphere0].getFrameOfReference().getOrientation().col(2) = crossProduct(Wd,t);
-    cpData[isphere1].getFrameOfReference().getOrientation().col(2) = cpData[isphere0].getFrameOfReference().getOrientation().col(2);
+    cpData[isphere0].getFrameOfReference().getOrientation().set(0, Wd);
+    cpData[isphere1].getFrameOfReference().getOrientation().set(0, -cpData[isphere0].getFrameOfReference().getOrientation().col(0));
+    cpData[isphere0].getFrameOfReference().getOrientation().set(1, t);
+    cpData[isphere1].getFrameOfReference().getOrientation().set(1, -cpData[isphere0].getFrameOfReference().getOrientation().col(1));
+    cpData[isphere0].getFrameOfReference().getOrientation().set(2, crossProduct(Wd,t));
+    cpData[isphere1].getFrameOfReference().getOrientation().set(2, cpData[isphere0].getFrameOfReference().getOrientation().col(2));
     cpData[isphere0].getFrameOfReference().getPosition() = sphere0->getFrame()->getPosition() + sphere0->getRadius() * Wd;
     cpData[isphere1].getFrameOfReference().getPosition() = sphere1->getFrame()->getPosition() - sphere0->getRadius() * Wd;
   }

@@ -30,7 +30,7 @@
 #include <mbsim/contact_kinematics/circlesolid_line.h>
 //#include <mbsim/contact_kinematics/circlesolid_linesegment.h>
 //#include <mbsim/contact_kinematics/circlesolid_plane.h>
-//#include <mbsim/contact_kinematics/compoundcontour_compoundcontour.h>
+#include <mbsim/contact_kinematics/compoundcontour_compoundcontour.h>
 #include <mbsim/contact_kinematics/compoundcontour_contour.h>
 //#include <mbsim/contact_kinematics/edge_edge.h>
 //#include <mbsim/contact_kinematics/line_contour1s.h>
@@ -42,20 +42,22 @@
 //#include <mbsim/contact_kinematics/point_circlesolid.h>
 #include <mbsim/contact_kinematics/point_plane.h>
 //#include <mbsim/contact_kinematics/point_planewithfrustum.h>
-//#include <mbsim/contact_kinematics/sphere_frustum.h>
-//#include <mbsim/contact_kinematics/sphere_plane.h>
+#include <mbsim/contact_kinematics/sphere_frustum.h>
+#include <mbsim/contact_kinematics/sphere_plane.h>
 //#include <mbsim/contact_kinematics/sphere_sphere.h>
 //#include <mbsim/contact_kinematics/point_line_segment.h>
 // --- List of contact kinematic implementations - END ---
 
+using namespace fmatvec;
+
 namespace MBSim {
 
-  double computeAngleOnUnitCircle(const fmatvec::Vec& r) {
+  double computeAngleOnUnitCircle(const fmatvec::FVec& r) {
     return r(1)>=0 ? acos(r(0)) : 2*M_PI-acos(r(0));
   }
 
-  fmatvec::Vec computeAnglesOnUnitSphere(const fmatvec::Vec& r) {
-    fmatvec::Vec zeta(2,fmatvec::NONINIT);
+  Vector<GeneralFixed<2,1>, double> computeAnglesOnUnitSphere(const FVec& r) {
+    Vector<GeneralFixed<2,1>, double> zeta(NONINIT);
     double l = sqrt(r(0)*r(0) + r(1)*r(1));
     zeta(0)= r(1)>=0 ? acos(r(0)/l) : 2*M_PI-acos(r(0)/l);
     zeta(1)= asin(r(2));
@@ -131,11 +133,11 @@ namespace MBSim {
 ////      else if ( strcmp(contour0, "Point")==0 && strcmp(contour1, "PlaneWithFrustum")==0 )
 ////        return new ContactKinematicsPointPlaneWithFrustum;
 ////  
-////      else if ( strcmp(contour0, "Sphere")==0 && strcmp(contour1, "Frustum")==0 )
-////        return new ContactKinematicsSphereFrustum;
-////  
-////      else if ( strcmp(contour0, "Sphere")==0 && strcmp(contour1, "Plane")==0 )
-////        return new ContactKinematicsSpherePlane;
+      else if ( strcmp(contour0, "Sphere")==0 && strcmp(contour1, "Frustum")==0 )
+        return new ContactKinematicsSphereFrustum;
+  
+      else if ( strcmp(contour0, "Sphere")==0 && strcmp(contour1, "Plane")==0 )
+        return new ContactKinematicsSpherePlane;
 ////  
 ////      else if ( strcmp(contour0, "Sphere")==0 && strcmp(contour1, "Sphere")==0 )
 ////        return new ContactKinematicsSphereSphere;

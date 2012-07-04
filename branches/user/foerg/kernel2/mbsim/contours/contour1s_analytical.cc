@@ -47,9 +47,9 @@ namespace MBSim {
 
   void Contour1sAnalytical::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) {
     if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
-      cp.getFrameOfReference().getOrientation().col(0)= funcCrPC->computeN(cp.getLagrangeParameterPosition()(0));
-      cp.getFrameOfReference().getOrientation().col(1)= funcCrPC->computeT(cp.getLagrangeParameterPosition()(0));
-      cp.getFrameOfReference().getOrientation().col(2)= funcCrPC->computeB(cp.getLagrangeParameterPosition()(0));
+      cp.getFrameOfReference().getOrientation().set(0, funcCrPC->computeN(cp.getLagrangeParameterPosition()(0)));
+      cp.getFrameOfReference().getOrientation().set(1, funcCrPC->computeT(cp.getLagrangeParameterPosition()(0)));
+      cp.getFrameOfReference().getOrientation().set(2, funcCrPC->computeB(cp.getLagrangeParameterPosition()(0)));
       cp.getFrameOfReference().getOrientation() = R.getOrientation() * cp.getFrameOfReference().getOrientation();
     }
     if(ff==position || ff==position_cosy || ff==all) 
@@ -61,8 +61,8 @@ namespace MBSim {
   }
 
   void Contour1sAnalytical::updateJacobiansForFrame(ContourPointData &cp, int j) {
-    Vec WrPC = cp.getFrameOfReference().getPosition() - R.getPosition();
-    Mat tWrPC = tilde(WrPC);
+    FVec WrPC = cp.getFrameOfReference().getPosition() - R.getPosition();
+    FMat tWrPC = tilde(WrPC);
 
     cp.getFrameOfReference().setJacobianOfTranslation(
         R.getJacobianOfTranslation(j) - tWrPC*R.getJacobianOfRotation(j),j);
@@ -76,9 +76,9 @@ namespace MBSim {
 
     // adapt dimensions if necessary
     if(cp.getFrameOfReference().getJacobianOfTranslation(j).rows() == 0)
-      cp.getFrameOfReference().getJacobianOfTranslation(j).resize(3,R.getJacobianOfTranslation(j).cols());
+      cp.getFrameOfReference().getJacobianOfTranslation(j).resize(R.getJacobianOfTranslation(j).cols());
     if(cp.getFrameOfReference().getJacobianOfRotation(j).rows() == 0)
-      cp.getFrameOfReference().getJacobianOfRotation(j).resize(3,R.getJacobianOfRotation(j).cols());
+      cp.getFrameOfReference().getJacobianOfRotation(j).resize(R.getJacobianOfRotation(j).cols());
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -95,7 +95,7 @@ namespace MBSim {
       while(alpha.back()<ae) {
         class PointDistance : public Function1<double, double> {
           public:
-            PointDistance(Vec p1_, ContourFunction1s * f_, double d_) : p1(p1_), f(f_), d(d_) {}
+            PointDistance(FVec p1_, ContourFunction1s * f_, double d_) : p1(p1_), f(f_), d(d_) {}
             double operator()(const double &alpha, const void * = NULL) {
               return nrm2((*f)(alpha)-p1)-d;
             }
@@ -125,7 +125,7 @@ namespace MBSim {
 
       vector<OpenMBV::PolygonPoint*> * vpp = new vector<OpenMBV::PolygonPoint*>();
       for (unsigned int i=0; i<alpha.size(); i++) {
-        const Vec CrPC=(*funcCrPC)(alpha[i]);
+        const FVec CrPC=(*funcCrPC)(alpha[i]);
         vpp->push_back(new OpenMBV::PolygonPoint(CrPC(1), CrPC(2), 0));
       }
       openMBVRigidBody=new OpenMBV::Extrusion;
@@ -165,7 +165,7 @@ namespace MBSim {
         data.push_back(R.getPosition()(0));
         data.push_back(R.getPosition()(1));
         data.push_back(R.getPosition()(2));
-        Vec cardan=AIK2Cardan(R.getOrientation());
+        FVec cardan=AIK2Cardan(R.getOrientation());
         data.push_back(cardan(0));
         data.push_back(cardan(1));
         data.push_back(cardan(2));

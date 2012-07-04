@@ -43,16 +43,16 @@ namespace MBSim {
   }
 
   void ContactKinematicsPointCircleSolid::updateg(Vec &g, ContourPointData *cpData) {
-    const Vec WrD = -circlesolid->getFrame()->getPosition() + point->getFrame()->getPosition();
+    const Vec3 WrD = -circlesolid->getFrame()->getPosition() + point->getFrame()->getPosition();
     
-    cpData[icirclesolid].getFrameOfReference().getOrientation().col(0) = WrD/nrm2(WrD);
-    cpData[ipoint].getFrameOfReference().getOrientation().col(0) = -cpData[icirclesolid].getFrameOfReference().getOrientation().col(0);
+    cpData[icirclesolid].getFrameOfReference().getOrientation().set(0, WrD/nrm2(WrD));
+    cpData[ipoint].getFrameOfReference().getOrientation().set(0, -cpData[icirclesolid].getFrameOfReference().getOrientation().col(0));
     
-    cpData[icirclesolid].getFrameOfReference().getOrientation().col(2) = circlesolid->getFrame()->getOrientation().col(2);
-    cpData[ipoint].getFrameOfReference().getOrientation().col(2) = point->getFrame()->getOrientation().col(2);
+    cpData[icirclesolid].getFrameOfReference().getOrientation().set(2, circlesolid->getFrame()->getOrientation().col(2));
+    cpData[ipoint].getFrameOfReference().getOrientation().set(2, point->getFrame()->getOrientation().col(2));
     
-    cpData[icirclesolid].getFrameOfReference().getOrientation().col(1) = crossProduct(cpData[icirclesolid].getFrameOfReference().getOrientation().col(2), cpData[icirclesolid].getFrameOfReference().getOrientation().col(0));
-    cpData[ipoint].getFrameOfReference().getOrientation().col(1) = -cpData[icirclesolid].getFrameOfReference().getOrientation().col(1);
+    cpData[icirclesolid].getFrameOfReference().getOrientation().set(1, crossProduct(cpData[icirclesolid].getFrameOfReference().getOrientation().col(2), cpData[icirclesolid].getFrameOfReference().getOrientation().col(0)));
+    cpData[ipoint].getFrameOfReference().getOrientation().set(1, -cpData[icirclesolid].getFrameOfReference().getOrientation().col(1));
     
     cpData[icirclesolid].getFrameOfReference().getPosition() = circlesolid->getFrame()->getPosition() + cpData[icirclesolid].getFrameOfReference().getOrientation().col(0)*circlesolid->getRadius();
     cpData[ipoint].getFrameOfReference().getPosition() = point->getFrame()->getPosition();
