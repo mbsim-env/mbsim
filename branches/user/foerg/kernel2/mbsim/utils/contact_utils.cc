@@ -52,11 +52,11 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  double computeAngleOnUnitCircle(const fmatvec::FVec& r) {
+  double computeAngleOnUnitCircle(const fmatvec::Vec3& r) {
     return r(1)>=0 ? acos(r(0)) : 2*M_PI-acos(r(0));
   }
 
-  Vector<GeneralFixed<2,1>, double> computeAnglesOnUnitSphere(const FVec& r) {
+  Vector<GeneralFixed<2,1>, double> computeAnglesOnUnitSphere(const Vec3& r) {
     Vector<GeneralFixed<2,1>, double> zeta(NONINIT);
     double l = sqrt(r(0)*r(0) + r(1)*r(1));
     zeta(0)= r(1)>=0 ? acos(r(0)/l) : 2*M_PI-acos(r(0)/l);

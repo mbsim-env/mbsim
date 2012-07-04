@@ -48,16 +48,16 @@ namespace MBSim {
     // Bezugspunkt Kugel: Mittelpunkt
     // Bezugspunkt Kegel: Mittelpunkt Grundfläche
     // Rotationsachse Kegel: y-Achse
-    FVec Wd = sphere->getFrame()->getPosition() - frustum->getFrame()->getPosition(); // Vektor von Bezugspunkt Kegel zu Bezugspunkt Kreis
+    Vec3 Wd = sphere->getFrame()->getPosition() - frustum->getFrame()->getPosition(); // Vektor von Bezugspunkt Kegel zu Bezugspunkt Kreis
     
-    FSqrMat Mat0 = frustum->getFrame()->getOrientation();
-    FVec yAchse = Mat0.col(1);
+    SqrMat3 Mat0 = frustum->getFrame()->getOrientation();
+    Vec3 yAchse = Mat0.col(1);
     double loc = yAchse.T()*Wd; // Projektion Distanzvektor auf y-Achse
-    FVec xAchse = Wd - (yAchse * loc);
+    Vec3 xAchse = Wd - (yAchse * loc);
     double l=nrm2(xAchse);
-    FSqrMat AW1;
+    SqrMat3 AW1;
     xAchse =  xAchse/l;
-    FVec zAchse = crossProduct(xAchse,yAchse);
+    Vec3 zAchse = crossProduct(xAchse,yAchse);
     AW1.set(0, xAchse);
     AW1.set(1, yAchse);
     AW1.set(2, zAchse);

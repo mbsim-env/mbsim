@@ -51,7 +51,7 @@ namespace MBSim {
       if(getPlotFeature(globalPosition)==enabled) {
         for(int i=0; i<3; i++)
           plotVector.push_back(WrOP(i));
-        FVec cardan=AIK2Cardan(AWP);
+        Vec3 cardan=AIK2Cardan(AWP);
         for(int i=0; i<3; i++)
           plotVector.push_back(cardan(i));
       }
@@ -75,7 +75,7 @@ namespace MBSim {
           data.push_back(WrOP(0));
           data.push_back(WrOP(1));
           data.push_back(WrOP(2));
-          FVec cardan=AIK2Cardan(AWP);
+          Vec3 cardan=AIK2Cardan(AWP);
           data.push_back(cardan(0));
           data.push_back(cardan(1));
           data.push_back(cardan(2));

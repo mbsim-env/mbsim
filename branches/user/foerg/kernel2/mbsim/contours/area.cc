@@ -26,8 +26,8 @@ using namespace fmatvec;
 namespace MBSim {
 
   Area::Area(const string &name) : RigidContour(name), lim1(1), lim2(1), Cn(3), Cd1(3), Cd2(3) {}
-  void Area::setCd1(const FVec &d) {Cd1 = d/nrm2(d);}
-  void Area::setCd2(const FVec &d) {Cd2 = d/nrm2(d);}
+  void Area::setCd1(const Vec3 &d) {Cd1 = d/nrm2(d);}
+  void Area::setCd2(const Vec3 &d) {Cd2 = d/nrm2(d);}
   void Area::init(InitStage stage) {
     if(stage==unknownStage) {
       RigidContour::init(stage);

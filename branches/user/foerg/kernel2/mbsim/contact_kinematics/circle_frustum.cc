@@ -53,17 +53,17 @@ namespace MBSim {
     double eps = 0.; // tolerance for rough contact description can be set to zero (no bilateral contact possible)
 
     /* Geometry */	
-    FVec Wa_F = frustum->getFrame()->getOrientation().col(1); // axis of Frustum in inertial FR
+    Vec3 Wa_F = frustum->getFrame()->getOrientation().col(1); // axis of Frustum in inertial FR
     Vec2 r_F = frustum->getRadii(); // radii of Frustum
     double h_F = frustum->getHeight(); // height of Frustum   
     bool outCont_F = frustum->getOutCont(); // contact on outer surface of Frustum?
     double phi_F = atan((r_F(1) - r_F(0))/h_F); // opening angle of Frustum
-    FVec Wb_C = circle->getFrame()->getOrientation().col(2); // binormal of Circle in inertial FR
+    Vec3 Wb_C = circle->getFrame()->getOrientation().col(2); // binormal of Circle in inertial FR
     double r_C = circle->getRadius(); // radius of Circle
     bool outCont_C = circle->getOutCont(); // contact on outer surface of Circle?
 
     /* Contact Geometry */
-    FVec Wd_CF = circle->getFrame()->getPosition() - frustum->getFrame()->getPosition(); // difference vector of Circle and Frustum basis point in inertial FR    
+    Vec3 Wd_CF = circle->getFrame()->getPosition() - frustum->getFrame()->getPosition(); // difference vector of Circle and Frustum basis point in inertial FR    
     double t_CF = Wb_C.T()*Wa_F; // projection of Circle binormal on axis (-> rotational angle)
     if(t_CF < 0.) { // looking for equivalence classes
       Wb_C *= -1.;
@@ -73,8 +73,8 @@ namespace MBSim {
     if (t_CF <-1.0) t_CF=-1;
 
     double u_CF = Wd_CF.T() * Wa_F; // projection of difference vector on axis
-    FVec c_CF = Wd_CF - u_CF * Wa_F; // projection of translational vector
-    FVec z_CF = Wb_C - t_CF * Wa_F; // projection of rotational vector
+    Vec3 c_CF = Wd_CF - u_CF * Wa_F; // projection of translational vector
+    Vec3 z_CF = Wb_C - t_CF * Wa_F; // projection of rotational vector
     double z_CF_nrm2 = nrm2(z_CF);  //length of projection of rotational vector
     double c_CF_nrm2 = nrm2(c_CF);  // length of projection of translational vector
 
@@ -163,8 +163,8 @@ namespace MBSim {
 
       else { // circle - ellipse (frustum=cylinder) or circle - frustum
         double al_CF = acos(t_CF);
-        FVec eF1 = -z_CF/z_CF_nrm2;
-        FVec eF2 = crossProduct(Wa_F,eF1);	
+        Vec3 eF1 = -z_CF/z_CF_nrm2;
+        Vec3 eF2 = crossProduct(Wa_F,eF1);	
         double xi_1 = eF1.T()*Wd_CF;
         double xi_2 = Wa_F.T()*Wd_CF;
         if(xi_2 < -sin(al_CF)*r_C || xi_2 > h_F + sin(al_CF)*r_C) g(0) = 1.;
@@ -175,9 +175,9 @@ namespace MBSim {
             throw(1);
           }
           double cE1_star_nrm2 = r_F(0)/t_CF;
-          FVec cE1 = t_CF*eF1+sin(al_CF)*Wa_F; // semi-major axis
-          FVec cE2 = eF2; // semi-minor axis
-          FVec Wd_EC = -Wd_CF+(xi_2-tan(al_CF)*xi_1)*Wa_F;
+          Vec3 cE1 = t_CF*eF1+sin(al_CF)*Wa_F; // semi-major axis
+          Vec3 cE2 = eF2; // semi-minor axis
+          Vec3 Wd_EC = -Wd_CF+(xi_2-tan(al_CF)*xi_1)*Wa_F;
 
           FuncPairEllipseCircle* funcRho;
 
@@ -211,10 +211,10 @@ namespace MBSim {
 
           if((*funcRho)[cpData[ifrustum].getLagrangeParameterPosition()(0)] > eps) g(0) = 1.; // too far away?
           else {
-            FVec dTilde_tmp = funcRho->computeWrD(cpData[ifrustum].getLagrangeParameterPosition()(0));
-            FVec dTilde = dTilde_tmp - Wb_C.T()*dTilde_tmp*Wb_C; // projection in plane of circle
+            Vec3 dTilde_tmp = funcRho->computeWrD(cpData[ifrustum].getLagrangeParameterPosition()(0));
+            Vec3 dTilde = dTilde_tmp - Wb_C.T()*dTilde_tmp*Wb_C; // projection in plane of circle
             cpData[icircle].getFrameOfReference().getPosition() = circle->getFrame()->getPosition() + r_C*dTilde/nrm2(dTilde);	
-            FVec Wd_PF = cpData[icircle].getFrameOfReference().getPosition()-frustum->getFrame()->getPosition();
+            Vec3 Wd_PF = cpData[icircle].getFrameOfReference().getPosition()-frustum->getFrame()->getPosition();
             double s_PF = Wa_F.T() * Wd_PF;
 
             if(s_PF < 0. || s_PF > h_F) {
@@ -225,7 +225,7 @@ namespace MBSim {
             }
             else {
               double d_PF = sqrt(pow(nrm2(Wd_PF),2)-pow(s_PF,2));
-              FVec Wb_PF = (Wd_PF-s_PF*Wa_F) / d_PF;
+              Vec3 Wb_PF = (Wd_PF-s_PF*Wa_F) / d_PF;
 
               if(!outCont_F && outCont_C) {
                 g(0) = r_F(0)-d_PF;	
@@ -246,7 +246,7 @@ namespace MBSim {
         else { // no special case: it is frustum-circle
           FuncPairConeSectionCircle* funcRho=NULL;
           JacobianPairConeSectionCircle* jacRho=NULL;
-          FVec Wd_SC, c1, c2;
+          Vec3 Wd_SC, c1, c2;
           int SEC = 16; // global search setting
           double drho, rhoStartSpacing;	
           double ctan_al_CF = 1./tan(al_CF);
@@ -256,7 +256,7 @@ namespace MBSim {
 
           double pqr = p/(1. - q*q);
           Wd_SC = -Wd_CF+q*pqr*eF1+(pqr - r_F(0))/tan(phi_F)*Wa_F; // difference vector
-          FVec c1_star = pqr*(eF1 + q/tan(phi_F)*Wa_F); // semi-major axis
+          Vec3 c1_star = pqr*(eF1 + q/tan(phi_F)*Wa_F); // semi-major axis
           double c1_star_nrm2 = nrm2(c1_star);
           c1 = c1_star/c1_star_nrm2;
           c2 = eF2; // semi-minor axis
@@ -342,10 +342,10 @@ namespace MBSim {
 
           if((*funcRho)[cpData[ifrustum].getLagrangeParameterPosition()(0)] > eps) g(0) = 1.; // too far away?
           else {
-            FVec dTilde_tmp = funcRho->computeWrD(cpData[ifrustum].getLagrangeParameterPosition()(0));
-            FVec dTilde = dTilde_tmp - Wb_C.T()*dTilde_tmp*Wb_C; // projection in plane of circle
+            Vec3 dTilde_tmp = funcRho->computeWrD(cpData[ifrustum].getLagrangeParameterPosition()(0));
+            Vec3 dTilde = dTilde_tmp - Wb_C.T()*dTilde_tmp*Wb_C; // projection in plane of circle
             cpData[icircle].getFrameOfReference().getPosition() = circle->getFrame()->getPosition() + r_C*dTilde/nrm2(dTilde);				
-            FVec Wd_PF = cpData[icircle].getFrameOfReference().getPosition() - frustum->getFrame()->getPosition();
+            Vec3 Wd_PF = cpData[icircle].getFrameOfReference().getPosition() - frustum->getFrame()->getPosition();
             double s_PF = Wa_F.T() * Wd_PF;
 
             if(s_PF < 0. || s_PF > h_F) {
@@ -357,7 +357,7 @@ namespace MBSim {
             else {
               double d_PF = sqrt(pow(nrm2(Wd_PF),2)-pow(s_PF,2));
               double r_Fh = r_F(0)+tan(phi_F)*s_PF;
-              FVec Wb_PF = (Wd_PF-s_PF*Wa_F)/d_PF;
+              Vec3 Wb_PF = (Wd_PF-s_PF*Wa_F)/d_PF;
 
               if(!outCont_F && outCont_C) {
                 g(0) = (r_Fh-d_PF)*cos(phi_F);

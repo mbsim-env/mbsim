@@ -230,8 +230,8 @@ namespace MBSim {
       /*****************************************************/
 
       /* GETTER / SETTER */
-      void setPosition(const fmatvec::FVec& PrPF_) { PrPF = PrPF_; }
-      void setOrientation(const fmatvec::FSqrMat& APF_) { APF = APF_; }
+      void setPosition(const fmatvec::Vec3& PrPF_) { PrPF = PrPF_; }
+      void setOrientation(const fmatvec::SqrMat3& APF_) { APF = APF_; }
       void setFrameOfReference(Frame *frame) { frameParent = frame; };
 
       const fmatvec::Vec& getxd() const { return xd; };
@@ -606,7 +606,7 @@ namespace MBSim {
        * \param relative orientation of frame
        * \param relation frame name
        */
-      void addFrame(Frame *frame_, const fmatvec::FVec &RrRF, const fmatvec::FSqrMat &ARF, const std::string& refFrameName);
+      void addFrame(Frame *frame_, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const std::string& refFrameName);
 
       /**
        * \param frame to add
@@ -614,7 +614,7 @@ namespace MBSim {
        * \param relative orientation of frame
        * \param relation frame
        */
-      void addFrame(Frame *frame_, const fmatvec::FVec &RrRF, const fmatvec::FSqrMat &ARF, const Frame* refFrame=0);
+      void addFrame(Frame *frame_, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const Frame* refFrame=0);
 
       /**
        * \param name of frame to add
@@ -622,7 +622,7 @@ namespace MBSim {
        * \param relative orientation of frame
        * \param relation frame
        */
-      void addFrame(const std::string &str, const fmatvec::FVec &RrRF, const fmatvec::FSqrMat &ARF, const Frame* refFrame=0);
+      void addFrame(const std::string &str, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const Frame* refFrame=0);
 
       /**
        * \param contour to add
@@ -630,7 +630,7 @@ namespace MBSim {
        * \param relative orientation of contour
        * \param relation frame name
        */
-      void addContour(Contour* contour, const fmatvec::FVec &RrRC, const fmatvec::FSqrMat &ARC, const std::string& refFrameName);
+      void addContour(Contour* contour, const fmatvec::Vec3 &RrRC, const fmatvec::SqrMat3 &ARC, const std::string& refFrameName);
 
       /**
        * \param contour to add
@@ -638,14 +638,14 @@ namespace MBSim {
        * \param relative orientation of contour
        * \param relation frame
        */
-      void addContour(Contour* contour, const fmatvec::FVec &RrRC, const fmatvec::FSqrMat &ARC, const Frame* refFrame=0);
+      void addContour(Contour* contour, const fmatvec::Vec3 &RrRC, const fmatvec::SqrMat3 &ARC, const Frame* refFrame=0);
 
       /**
        * \param contour to add
        * \param relative position of contour
        * \param relation frame
        */
-      void addContour(Contour* contour, const fmatvec::FVec &RrRC, const Frame* refFrame=0) { addContour(contour,RrRC,fmatvec::FSqrMat(fmatvec::EYE),refFrame); }
+      void addContour(Contour* contour, const fmatvec::Vec3 &RrRC, const Frame* refFrame=0) { addContour(contour,RrRC,fmatvec::SqrMat3(fmatvec::EYE),refFrame); }
 
       /**
        * \param frame
@@ -743,12 +743,12 @@ namespace MBSim {
       /**
        * \brief relative translation with respect to parent frame
        */
-      fmatvec::FVec PrPF;
+      fmatvec::Vec3 PrPF;
 
       /**
        * \brief relative rotation with respect to parent frame
        */
-      fmatvec::FSqrMat APF;
+      fmatvec::SqrMat3 APF;
 
       /** 
        * \brief container for possible ingredients
@@ -900,12 +900,12 @@ namespace MBSim {
       /**
        * \brief inertial position of frames, contours (see group.h / tree.h)
        */
-      std::vector<fmatvec::FVec> IrOF, IrOC;
+      std::vector<fmatvec::Vec3> IrOF, IrOC;
 
       /**
        * \brief orientation to inertial frame of frames, contours (see group.h / tree.h)
        */
-      std::vector<fmatvec::FSqrMat> AIF, AIC;
+      std::vector<fmatvec::SqrMat3> AIF, AIC;
 
       /**
        * \brief vector of frames and contours
@@ -943,8 +943,8 @@ namespace MBSim {
 
     private:
       std::vector<std::string> saved_refFrameF, saved_refFrameC;
-      std::vector<fmatvec::FVec> saved_RrRF, saved_RrRC;
-      std::vector<fmatvec::FSqrMat> saved_ARF, saved_ARC;
+      std::vector<fmatvec::Vec3> saved_RrRF, saved_RrRC;
+      std::vector<fmatvec::SqrMat3> saved_ARF, saved_ARC;
   };
 }
 

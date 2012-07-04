@@ -44,7 +44,7 @@ namespace MBSim {
        */
       ContourPointData() : type(CONTINUUM), ID(0) {}
       ContourPointData(const double       &alpha_) : type(CONTINUUM), ID(0), alpha(1,fmatvec::INIT,alpha_) {}
-      ContourPointData(const fmatvec::VVec &alpha_) : type(CONTINUUM), ID(0), alpha(alpha_) {}
+      ContourPointData(const fmatvec::VecV &alpha_) : type(CONTINUUM), ID(0), alpha(alpha_) {}
       ContourPointData(const int  &id_, const ContourParameterType type_ = NODE) : type(type_), ID(id_) {}
 
       /**
@@ -57,12 +57,12 @@ namespace MBSim {
       const ContourParameterType& getContourParameterType() const { return type; }
       int& getNodeNumber() { return ID; }
       const int& getNodeNumber() const { return ID; }
-      fmatvec::VVec& getLagrangeParameterPosition() { return alpha; }
-      const fmatvec::VVec& getLagrangeParameterPosition() const { return alpha; }
-      fmatvec::VVec& getLagrangeParameterVelocity() { return alphap; }
-      const fmatvec::VVec& getLagrangeParameterVelocity() const { return alphap; }
-      fmatvec::VVec& getInterpolationWeights() { return iWeights; }
-      const fmatvec::VVec& getInterpolationWeights() const { return iWeights; }
+      fmatvec::VecV& getLagrangeParameterPosition() { return alpha; }
+      const fmatvec::VecV& getLagrangeParameterPosition() const { return alpha; }
+      fmatvec::VecV& getLagrangeParameterVelocity() { return alphap; }
+      const fmatvec::VecV& getLagrangeParameterVelocity() const { return alphap; }
+      fmatvec::VecV& getInterpolationWeights() { return iWeights; }
+      const fmatvec::VecV& getInterpolationWeights() const { return iWeights; }
       Frame& getFrameOfReference() { return cosy; }
       const Frame& getFrameOfReference() const { return cosy; }
       /***************************************************/
@@ -81,17 +81,17 @@ namespace MBSim {
       /**
        * \brief contour parameter(s)
        */
-      fmatvec::VVec alpha;
+      fmatvec::VecV alpha;
 
       /**
        * \brief contour parameter(s) velocities
        */
-      fmatvec::VVec alphap;
+      fmatvec::VecV alphap;
 
       /** 
        * \brief interpolation weights
        */
-      fmatvec::VVec iWeights;
+      fmatvec::VecV iWeights;
 
       /**
        * \brief list of nodes used in interpolation

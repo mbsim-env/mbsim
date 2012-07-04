@@ -75,15 +75,15 @@ namespace MBSim {
       contour1->updateKinematicsForFrame(cpData[0][0], velocities); // angular velocity necessary e.g. see ContactKinematicsSpherePlane::updatewb
       contour2->updateKinematicsForFrame(cpData[0][1], velocities); // angular velocity necessary e.g. see ContactKinematicsSpherePlane::updatewb
 
-      FVec Wn = cpData[0][0].getFrameOfReference().getOrientation().col(0);
+      Vec3 Wn = cpData[0][0].getFrameOfReference().getOrientation().col(0);
 
-      FVec WvD = cpData[0][1].getFrameOfReference().getVelocity() - cpData[0][0].getFrameOfReference().getVelocity();
+      Vec3 WvD = cpData[0][1].getFrameOfReference().getVelocity() - cpData[0][0].getFrameOfReference().getVelocity();
 
       //write normal-velocity in vector
       gdk(0) = Wn.T() * WvD;
 
       if (gdk.size() > 1) { //are there more velocity-directions needed?
-        FVMat Wt(gdk.size() - 1);
+        Mat3V Wt(gdk.size() - 1);
         Wt.set(0,cpData[0][0].getFrameOfReference().getOrientation().col(1));
         if (gdk.size() > 2)
           Wt.set(1,cpData[0][0].getFrameOfReference().getOrientation().col(2));
@@ -204,7 +204,7 @@ namespace MBSim {
             data.push_back(cpData[0][k].getFrameOfReference().getPosition()(0));
             data.push_back(cpData[0][k].getFrameOfReference().getPosition()(1));
             data.push_back(cpData[0][k].getFrameOfReference().getPosition()(2));
-            FVec cardan = AIK2Cardan(cpData[0][k].getFrameOfReference().getOrientation());
+            Vec3 cardan = AIK2Cardan(cpData[0][k].getFrameOfReference().getOrientation());
             data.push_back(cardan(0));
             data.push_back(cardan(1));
             data.push_back(cardan(2));
@@ -222,7 +222,7 @@ namespace MBSim {
           data.push_back(cpData[0][1].getFrameOfReference().getPosition()(0));
           data.push_back(cpData[0][1].getFrameOfReference().getPosition()(1));
           data.push_back(cpData[0][1].getFrameOfReference().getPosition()(2));
-          FVec F;
+          Vec3 F;
           if(gActive)
             F = cpData[0][0].getFrameOfReference().getOrientation().col(0) * lak(0);
           data.push_back(F(0));
@@ -239,7 +239,7 @@ namespace MBSim {
           data.push_back(cpData[0][1].getFrameOfReference().getPosition()(0));
           data.push_back(cpData[0][1].getFrameOfReference().getPosition()(1));
           data.push_back(cpData[0][1].getFrameOfReference().getPosition()(2));
-          FVec F;
+          Vec3 F;
           if(gActive) {
             F = cpData[0][0].getFrameOfReference().getOrientation().col(1) * lak(1);
             if (getFrictionDirections() > 1)

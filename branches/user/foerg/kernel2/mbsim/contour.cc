@@ -122,7 +122,7 @@ R.init(stage);
 
   void RigidContour::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) {
     if(ff==velocity || ff==velocities) {
-      FVec WrPC = cp.getFrameOfReference().getPosition() - R.getPosition();
+      Vec3 WrPC = cp.getFrameOfReference().getPosition() - R.getPosition();
       cp.getFrameOfReference().setVelocity(R.getVelocity() + crossProduct(R.getAngularVelocity(),WrPC));
     }
     if(ff==angularVelocity || ff==velocities)
@@ -131,8 +131,8 @@ R.init(stage);
   }
 
   void RigidContour::updateJacobiansForFrame(ContourPointData &cp, int j) {
-    FVec WrPC = cp.getFrameOfReference().getPosition() - R.getPosition();
-    FSqrMat tWrPC = tilde(WrPC);
+    Vec3 WrPC = cp.getFrameOfReference().getPosition() - R.getPosition();
+    SqrMat3 tWrPC = tilde(WrPC);
 
     cp.getFrameOfReference().setJacobianOfTranslation(R.getJacobianOfTranslation(j) - tWrPC*R.getJacobianOfRotation(j),j);
     cp.getFrameOfReference().setJacobianOfRotation(R.getJacobianOfRotation(j),j);
@@ -173,7 +173,7 @@ R.init(stage);
         data.push_back(R.getPosition()(0));
         data.push_back(R.getPosition()(1));
         data.push_back(R.getPosition()(2));
-        FVec cardan=AIK2Cardan(R.getOrientation());
+        Vec3 cardan=AIK2Cardan(R.getOrientation());
         data.push_back(cardan(0));
         data.push_back(cardan(1));
         data.push_back(cardan(2));

@@ -29,9 +29,9 @@ namespace MBSim {
 
   void Cuboid::init(InitStage stage) {
     if(stage==preInit) {
-      FVec Kr[8];
+      Vec3 Kr[8];
       //for(int i=0; i<8; i++) {
-        //Kr[i] = FVec();
+        //Kr[i] = Vec3();
       //}
       Kr[0](0) = l/2;
       Kr[0](1) = d/2;

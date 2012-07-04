@@ -32,40 +32,40 @@ namespace MBSim {
     iPoints[n] = point_;
   }
 
-  VVec ContourInterpolation::computePointWeights(const VVec &s) {
-    VVec weights(numberOfPoints);
+  VecV ContourInterpolation::computePointWeights(const VecV &s) {
+    VecV weights(numberOfPoints);
     for(int i=0;i<numberOfPoints; i++) weights(i) = computePointWeight(s,i);
     return weights;
   }
 
-  FVec ContourInterpolation::computeWrOC(const ContourPointData &cp) {
-    const VVec &s = cp.getLagrangeParameterPosition();
-    FVec r(INIT,0.0);
+  Vec3 ContourInterpolation::computeWrOC(const ContourPointData &cp) {
+    const VecV &s = cp.getLagrangeParameterPosition();
+    Vec3 r(INIT,0.0);
     for(int i=0; i<numberOfPoints;i++) r += computePointWeight(s,i) * iPoints[i]->getReferencePosition();
     return r;
   }
 
-  FVec ContourInterpolation::computeWvC(const ContourPointData &cp) {
-    const VVec &s = cp.getLagrangeParameterPosition();
-    FVec v(INIT,0.0);
+  Vec3 ContourInterpolation::computeWvC(const ContourPointData &cp) {
+    const VecV &s = cp.getLagrangeParameterPosition();
+    Vec3 v(INIT,0.0);
     for(int i=0; i<numberOfPoints;i++) v += computePointWeight(s,i) * iPoints[i]->getReferenceVelocity();
     return v;
   }
 
-  FVMat ContourInterpolation::computeWt(const ContourPointData &cp) {
-    const VVec &s = cp.getLagrangeParameterPosition();
-    FVMat t(contourParameters,INIT,0.0);
+  Mat3V ContourInterpolation::computeWt(const ContourPointData &cp) {
+    const VecV &s = cp.getLagrangeParameterPosition();
+    Mat3V t(contourParameters,INIT,0.0);
 
     for(int i=0; i<contourParameters; i++) {
-      FVec tTemp = t.col(i);
+      Vec3 tTemp = t.col(i);
       for(int j=0; j<numberOfPoints;j++) tTemp += computePointWeight(s,j,i) * iPoints[j]->getReferencePosition();
       tTemp /= nrm2(tTemp);
     }   
     return t;
   }
 
-  FVec ContourInterpolation::computeWrOC(const VVec& s) {ContourPointData cp; cp.getContourParameterType()=EXTINTERPOL;cp.getLagrangeParameterPosition()=s; return computeWrOC(cp);}
-  FVec ContourInterpolation::computeWvC (const VVec& s) {ContourPointData cp; cp.getContourParameterType()=EXTINTERPOL;cp.getLagrangeParameterPosition()=s; return computeWvC (cp);}
-  FVMat ContourInterpolation::computeWt  (const VVec& s) {ContourPointData cp; cp.getContourParameterType()=EXTINTERPOL;cp.getLagrangeParameterPosition()=s; return computeWt  (cp);}
-  FVec ContourInterpolation::computeWn  (const VVec& s) {ContourPointData cp; cp.getContourParameterType()=EXTINTERPOL;cp.getLagrangeParameterPosition()=s; return computeWn  (cp);}
+  Vec3 ContourInterpolation::computeWrOC(const VecV& s) {ContourPointData cp; cp.getContourParameterType()=EXTINTERPOL;cp.getLagrangeParameterPosition()=s; return computeWrOC(cp);}
+  Vec3 ContourInterpolation::computeWvC (const VecV& s) {ContourPointData cp; cp.getContourParameterType()=EXTINTERPOL;cp.getLagrangeParameterPosition()=s; return computeWvC (cp);}
+  Mat3V ContourInterpolation::computeWt  (const VecV& s) {ContourPointData cp; cp.getContourParameterType()=EXTINTERPOL;cp.getLagrangeParameterPosition()=s; return computeWt  (cp);}
+  Vec3 ContourInterpolation::computeWn  (const VecV& s) {ContourPointData cp; cp.getContourParameterType()=EXTINTERPOL;cp.getLagrangeParameterPosition()=s; return computeWn  (cp);}
 }

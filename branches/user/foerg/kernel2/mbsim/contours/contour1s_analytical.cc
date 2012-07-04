@@ -61,8 +61,8 @@ namespace MBSim {
   }
 
   void Contour1sAnalytical::updateJacobiansForFrame(ContourPointData &cp, int j) {
-    FVec WrPC = cp.getFrameOfReference().getPosition() - R.getPosition();
-    FMat tWrPC = tilde(WrPC);
+    Vec3 WrPC = cp.getFrameOfReference().getPosition() - R.getPosition();
+    Mat33 tWrPC = tilde(WrPC);
 
     cp.getFrameOfReference().setJacobianOfTranslation(
         R.getJacobianOfTranslation(j) - tWrPC*R.getJacobianOfRotation(j),j);
@@ -95,7 +95,7 @@ namespace MBSim {
       while(alpha.back()<ae) {
         class PointDistance : public Function1<double, double> {
           public:
-            PointDistance(FVec p1_, ContourFunction1s * f_, double d_) : p1(p1_), f(f_), d(d_) {}
+            PointDistance(Vec3 p1_, ContourFunction1s * f_, double d_) : p1(p1_), f(f_), d(d_) {}
             double operator()(const double &alpha, const void * = NULL) {
               return nrm2((*f)(alpha)-p1)-d;
             }
@@ -125,7 +125,7 @@ namespace MBSim {
 
       vector<OpenMBV::PolygonPoint*> * vpp = new vector<OpenMBV::PolygonPoint*>();
       for (unsigned int i=0; i<alpha.size(); i++) {
-        const FVec CrPC=(*funcCrPC)(alpha[i]);
+        const Vec3 CrPC=(*funcCrPC)(alpha[i]);
         vpp->push_back(new OpenMBV::PolygonPoint(CrPC(1), CrPC(2), 0));
       }
       openMBVRigidBody=new OpenMBV::Extrusion;
@@ -165,7 +165,7 @@ namespace MBSim {
         data.push_back(R.getPosition()(0));
         data.push_back(R.getPosition()(1));
         data.push_back(R.getPosition()(2));
-        FVec cardan=AIK2Cardan(R.getOrientation());
+        Vec3 cardan=AIK2Cardan(R.getOrientation());
         data.push_back(cardan(0));
         data.push_back(cardan(1));
         data.push_back(cardan(2));

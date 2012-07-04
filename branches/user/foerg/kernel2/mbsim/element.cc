@@ -182,9 +182,9 @@ namespace MBSim {
     return 0;
   }
 
-  FVec Element::getFVec(TiXmlElement *e) {
+  Vec3 Element::getVec3(TiXmlElement *e) {
     Vec x = getVec(e,3);
-    return FVec(x);
+    return Vec3(x);
   }
 
   Vec Element::getVec(TiXmlElement *e, int rows) {
@@ -201,9 +201,9 @@ namespace MBSim {
     return Vec();
   }
 
-  FVMat Element::getFVMat(TiXmlElement *e, int cols) {
+  Mat3V Element::getMat3V(TiXmlElement *e, int cols) {
     Mat A = getMat(e,3,cols);
-    return FVMat(A);
+    return Mat3V(A);
   }
 
   Mat Element::getMat(TiXmlElement *e, int rows, int cols) {
@@ -220,9 +220,9 @@ namespace MBSim {
     return Mat();
   }
 
-  FSqrMat Element::getFSqrMat(TiXmlElement *e) {
+  SqrMat3 Element::getSqrMat3(TiXmlElement *e) {
     SqrMat A = getSqrMat(e,3);
-    return FSqrMat(A);
+    return SqrMat3(A);
   }
 
   SqrMat Element::getSqrMat(TiXmlElement *e, int size) {
@@ -239,9 +239,9 @@ namespace MBSim {
     return SqrMat();
   }
 
-  fmatvec::FSymMat Element::getFSymMat(TiXmlElement *e) {
+  fmatvec::SymMat3 Element::getSymMat3(TiXmlElement *e) {
     SymMat A = getSymMat(e,3);
-    return FSymMat(A);
+    return SymMat3(A);
   }
 
   fmatvec::SymMat Element::getSymMat(TiXmlElement *e, int size) {

@@ -61,8 +61,8 @@ namespace MBSim {
                                                        I=new Frame("I");
                                                        addFrame(I);
 
-                                                       IrOF.push_back(FVec());
-                                                       AIF.push_back(FSqrMat(EYE));
+                                                       IrOF.push_back(Vec3());
+                                                       AIF.push_back(SqrMat3(EYE));
                                                      }
 
   DynamicSystem::~DynamicSystem() {
@@ -1263,21 +1263,21 @@ namespace MBSim {
     cosy->setParent(this);
   }
 
-  void DynamicSystem::addFrame(Frame* cosy, const FVec &RrRF, const FSqrMat &ARF, const string& refFrameName) {
+  void DynamicSystem::addFrame(Frame* cosy, const Vec3 &RrRF, const SqrMat3 &ARF, const string& refFrameName) {
     addFrame(cosy);
 
     saved_refFrameF.push_back(refFrameName);
     saved_RrRF.push_back(RrRF); 
     saved_ARF.push_back(ARF); 
-    IrOF.push_back(FVec());
-    AIF.push_back(FSqrMat());
+    IrOF.push_back(Vec3());
+    AIF.push_back(SqrMat3());
   }
 
-  void DynamicSystem::addFrame(Frame *frame_, const fmatvec::FVec &RrRF, const fmatvec::FSqrMat &ARF, const Frame* refFrame) {
+  void DynamicSystem::addFrame(Frame *frame_, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const Frame* refFrame) {
     addFrame(frame_, RrRF, ARF, refFrame?refFrame->getName():"I");
   }
 
-  void DynamicSystem::addFrame(const string &str, const FVec &RrRF, const FSqrMat &ARF, const Frame* refFrame) {
+  void DynamicSystem::addFrame(const string &str, const Vec3 &RrRF, const SqrMat3 &ARF, const Frame* refFrame) {
     addFrame(new Frame(str),RrRF,ARF,refFrame);
   }
 
@@ -1290,17 +1290,17 @@ namespace MBSim {
     contour_->setParent(this);
   }
 
-  void DynamicSystem::addContour(Contour* contour, const FVec &RrRC, const FSqrMat &ARC, const string& refFrameName) {
+  void DynamicSystem::addContour(Contour* contour, const Vec3 &RrRC, const SqrMat3 &ARC, const string& refFrameName) {
     addContour(contour);
 
     saved_refFrameC.push_back(refFrameName);
     saved_RrRC.push_back(RrRC); 
     saved_ARC.push_back(ARC); 
-    IrOC.push_back(FVec());
-    AIC.push_back(FSqrMat());
+    IrOC.push_back(Vec3());
+    AIC.push_back(SqrMat3());
   }
 
-  void DynamicSystem::addContour(Contour* contour, const fmatvec::FVec &RrRC, const fmatvec::FSqrMat &ARC, const Frame* refFrame) {
+  void DynamicSystem::addContour(Contour* contour, const fmatvec::Vec3 &RrRC, const fmatvec::SqrMat3 &ARC, const Frame* refFrame) {
     addContour(contour, RrRC, ARC, refFrame?refFrame->getName():"I");
   }
 

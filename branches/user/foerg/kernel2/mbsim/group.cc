@@ -127,12 +127,12 @@ namespace MBSim {
     }
 
     if(e && e->ValueStr()==MBSIMNS"position") {
-      setPosition(getFVec(e));
+      setPosition(getVec3(e));
       e=e->NextSiblingElement();
     }
 
     if(e && e->ValueStr()==MBSIMNS"orientation") {
-      setOrientation(getFSqrMat(e));
+      setOrientation(getSqrMat3(e));
       e=e->NextSiblingElement();
     }
 
@@ -153,9 +153,9 @@ namespace MBSim {
         refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
         ec=ec->NextSiblingElement();
       }
-      FVec RrRF=getFVec(ec);
+      Vec3 RrRF=getVec3(ec);
       ec=ec->NextSiblingElement();
-      FSqrMat ARF=getFSqrMat(ec);
+      SqrMat3 ARF=getSqrMat3(ec);
       addFrame(f, RrRF, ARF, refF);
       E=E->NextSiblingElement();
     }
@@ -174,9 +174,9 @@ namespace MBSim {
         refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
         ec=ec->NextSiblingElement();
       }
-      FVec RrRC=getFVec(ec);
+      Vec3 RrRC=getVec3(ec);
       ec=ec->NextSiblingElement();
-      FSqrMat ARC=getFSqrMat(ec);
+      SqrMat3 ARC=getSqrMat3(ec);
       addContour(c, RrRC, ARC, refF);
       c->initializeUsingXML(contourElement);
       E=E->NextSiblingElement();
