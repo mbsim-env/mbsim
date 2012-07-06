@@ -64,7 +64,7 @@ namespace MBSim {
     const double xt = CrPoint(0);
     const double yt = CrPoint(2);
 
-    Vector<GeneralFixed<2,1>, double> p;
+    Vec2 p;
 
     p(0) = sqrt(xt * xt + yt * yt);
     p(1) = ArcTan(yt, xt);

@@ -56,8 +56,8 @@ namespace MBSim {
     return r(1)>=0 ? acos(r(0)) : 2*M_PI-acos(r(0));
   }
 
-  Vector<GeneralFixed<2,1>, double> computeAnglesOnUnitSphere(const Vec3& r) {
-    Vector<GeneralFixed<2,1>, double> zeta(NONINIT);
+  Vec2 computeAnglesOnUnitSphere(const Vec3& r) {
+    Vec2 zeta(NONINIT);
     double l = sqrt(r(0)*r(0) + r(1)*r(1));
     zeta(0)= r(1)>=0 ? acos(r(0)/l) : 2*M_PI-acos(r(0)/l);
     zeta(1)= asin(r(2));
