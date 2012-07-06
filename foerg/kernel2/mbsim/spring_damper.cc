@@ -53,7 +53,7 @@ namespace MBSim {
   }
 
   void SpringDamper::updateg(double) {
-    Vec WrP0P1=frame[1]->getPosition() - frame[0]->getPosition();
+    Vec3 WrP0P1=frame[1]->getPosition() - frame[0]->getPosition();
     dist=nrm2(WrP0P1);
     if(dist>epsroot())
       n=WrP0P1/dist;
@@ -68,7 +68,7 @@ namespace MBSim {
   } 
 
   void SpringDamper::updategd(double) {
-    Vec Wvrel=frame[1]->getVelocity() - frame[0]->getVelocity();
+    Vec3 Wvrel=frame[1]->getVelocity() - frame[0]->getVelocity();
     if(refFrame==0) // Point to Point
       gd(0)=Wvrel.T()*n;
     else {

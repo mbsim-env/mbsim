@@ -31,8 +31,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  KineticExcitation::KineticExcitation(const string &name) : LinkMechanics(name), refFrame(NULL),
-  forceDir(3,0), momentDir(3,0), F(NULL), M(NULL) {}
+  KineticExcitation::KineticExcitation(const string &name) : LinkMechanics(name), refFrame(NULL), F(NULL), M(NULL) {}
 
   KineticExcitation::~KineticExcitation() {}
 
@@ -89,17 +88,21 @@ namespace MBSim {
   }
 
   void KineticExcitation::setForce(fmatvec::Mat dir, Function1<fmatvec::Vec,double> *func) {
-    forceDir.resize(3,dir.cols());
-    for (int i=0; i<dir.cols(); i++)
-      forceDir.col(i)=dir.col(i)/nrm2(dir.col(i));
+    forceDir.assign(dir);
+
+    for(int i=0; i<dir.cols(); i++)
+      forceDir.set(i, forceDir.col(i)/nrm2(dir.col(i)));
+
     F=func;
     assert((*F)(0).size()==forceDir.cols());
   }
 
   void KineticExcitation::setMoment(fmatvec::Mat dir, Function1<fmatvec::Vec,double> *func) {
-    momentDir.resize(3,dir.cols());
-    for (int i=0; i<dir.cols(); i++)
-      momentDir.col(i)=dir.col(i)/nrm2(dir.col(i));
+    momentDir.assign(dir);
+
+    for(int i=0; i<dir.cols(); i++)
+      momentDir.set(i, forceDir.col(i)/nrm2(dir.col(i)));
+
     M=func;
     assert((*M)(0).size()==momentDir.cols());
   }

@@ -49,7 +49,7 @@ namespace MBSim {
     WM[0] =  WtorqueDir*la; // projected force in direction of WtorqueDir
     WM[1] = -WM[0];
     for(unsigned int i=0; i<2; i++) {
-      h[j][i]+=trans(frame[i]->getJacobianOfRotation(j))*WM[i];
+      h[j][i]+=frame[i]->getJacobianOfRotation(j).T()*WM[i];
     }
   }
 

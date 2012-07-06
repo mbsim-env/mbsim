@@ -247,13 +247,13 @@ namespace MBSim {
       virtual void updatePositionAndOrientationOfFrame(double t, unsigned int i);
       virtual void updateAccelerations(double t, unsigned int i);
       virtual void updateRelativeJacobians(double t, unsigned int i);
-      virtual void updateRelativeJacobians(double t, unsigned int i, fmatvec::Mat &WJTrel, fmatvec::Mat &WJRrel);
+      virtual void updateRelativeJacobians(double t, unsigned int i, fmatvec::Mat3V &WJTrel, fmatvec::Mat3V &WJRrel);
       const fmatvec::Mat3V& getWJTrel() const {return WJTrel;}
       const fmatvec::Mat3V& getWJRrel() const {return WJRrel;}
       fmatvec::Mat3V& getWJTrel() {return WJTrel;}
       fmatvec::Mat3V& getWJRrel() {return WJRrel;}
-      fmatvec::MatV& getJRel(int i=0) {return JRel[i];}
-      fmatvec::VecV& getjRel() {return jRel;}
+      fmatvec::Mat& getJRel(int i=0) {return JRel[i];}
+      fmatvec::Vec& getjRel() {return jRel;}
       fmatvec::Vec& getqRel() {return qRel;}
       fmatvec::Vec& getuRel() {return uRel;}
       // void setqRel(const fmatvec::Vec &q) {qRel0 = q;}
@@ -431,8 +431,8 @@ namespace MBSim {
       fmatvec::Vec aT, aR;
 
       fmatvec::Vec qRel, uRel;
-      fmatvec::MatV JRel[2];
-      fmatvec::VecV jRel;
+      fmatvec::Mat JRel[2];
+      fmatvec::Vec jRel;
 
       fmatvec::Mat3V WJTrel,WJRrel;
       fmatvec::Vec3 WjTrel,WjRrel;

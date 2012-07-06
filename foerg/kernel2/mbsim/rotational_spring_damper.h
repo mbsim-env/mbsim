@@ -40,7 +40,7 @@ namespace MBSim {
       Function2<double,double,double> *func;
       Frame *refFrame;
       RigidBody *body;
-      fmatvec::Vec torqueDir, WtorqueDir;
+      fmatvec::Vec3 torqueDir, WtorqueDir;
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::CoilSpring *coilspringOpenMBV;
 #endif

@@ -100,7 +100,7 @@ namespace MBSim {
               return nrm2((*f)(alpha)-p1)-d;
             }
           private:
-            Vec p1;
+            Vec3 p1;
             ContourFunction1s * f;
             double d;
         };

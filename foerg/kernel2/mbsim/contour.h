@@ -116,7 +116,7 @@ namespace MBSim {
        * \param WrPoint point in world coordinates
        * \return Vec of lagrange parameters
        */
-      virtual fmatvec::Vec computeLagrangeParameter(const fmatvec::Vec &WrPoint) {throw MBSimError("ERROR computeLagrangeParameter(const fmatvec::Vec &WrPoint): Not implemented for this contour: \"" + this->getType() + "\"."); return 0; }
+      virtual fmatvec::Vec2 computeLagrangeParameter(const fmatvec::Vec3 &WrPoint) {throw MBSimError("ERROR computeLagrangeParameter(const fmatvec::Vec &WrPoint): Not implemented for this contour: \"" + this->getType() + "\"."); return 0; }
 
       /**
        * \param position of contour in inertial frame
