@@ -44,8 +44,8 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setRadii(const fmatvec::Vector<fmatvec::GeneralFixed<2,1>, double> &r_) { r = r_; }
-      const fmatvec::Vector<fmatvec::GeneralFixed<2,1>, double>& getRadii() const { return r; } 
+      void setRadii(const fmatvec::Vec2 &r_) { r = r_; }
+      const fmatvec::Vec2& getRadii() const { return r; } 
       void setHeight(double h_) { h = h_; }
       double getHeight() const { return h; } 
       /***************************************************/
@@ -58,7 +58,7 @@ namespace MBSim {
       /**
        * \brief radii of frustum in dirction of axis
        */
-      fmatvec::Vector<fmatvec::GeneralFixed<2,1>, double> r;
+      fmatvec::Vec2 r;
 
       /**
        * \brief height of frustum

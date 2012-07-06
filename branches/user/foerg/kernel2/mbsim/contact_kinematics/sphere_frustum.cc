@@ -64,7 +64,7 @@ namespace MBSim {
       
     //int fall = 0;
     double h = frustum->getHeight();
-    Vector<GeneralFixed<2,1>, double> r = frustum->getRadii(); // r(0): Basisradius, r(1): Topradius
+    Vec2 r = frustum->getRadii(); // r(0): Basisradius, r(1): Topradius
     double r_h = r(0) + (r(1)-r(0))/h * loc; // Radius an der Stelle des Kreismittelpunkts
     
 
