@@ -84,7 +84,7 @@ namespace MBSim {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gdActive[k]) {
         for(unsigned i=0; i<contour.size(); i++) 
-          wbk[k] += fF[k][i](Index(0,2),Index(0,laSizek[k]-1)).T()*cpData[k][i].getFrameOfReference().getGyroscopicAccelerationOfTranslation(j);
+          wbk[k] += fF[k][i](Range<Fixed<0,2> >(),Range<Var>(0,laSizek[k]-1)).T()*cpData[k][i].getFrameOfReference().getGyroscopicAccelerationOfTranslation(j);
       }
     }
     contactKinematics->updatewb(wbk.begin(),gk.begin(),cpData.begin());
@@ -103,7 +103,7 @@ namespace MBSim {
         fF[k][0] = -fF[k][1];
 
         for(unsigned int i=0; i<contour.size(); i++) 
-          Wk[j][k][i] += cpData[k][i].getFrameOfReference().getJacobianOfTranslation(j).T()*fF[k][i](Index(0,2),Index(0,laSizek[k]-1));
+          Wk[j][k][i] += cpData[k][i].getFrameOfReference().getJacobianOfTranslation(j).T()*fF[k][i](Range<Fixed<0,2> >(),Range<Var>(0,laSizek[k]-1));
       }
     }
   }
@@ -113,7 +113,7 @@ namespace MBSim {
       for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
         if(gdActive[k][0] && !gdActive[k][1]) {
           for(unsigned int i=0; i<contour.size(); i++) 
-            Vk[j][k][i] += cpData[k][i].getFrameOfReference().getJacobianOfTranslation(j).T()*fF[k][i](Index(0,2),iT)*fdf->dlaTdlaN(gdk[k](1,getFrictionDirections()), lak[k](0));
+            Vk[j][k][i] += cpData[k][i].getFrameOfReference().getJacobianOfTranslation(j).T()*fF[k][i](Range<Fixed<0,2> >(),iT)*fdf->dlaTdlaN(gdk[k](1,getFrictionDirections()), lak[k](0));
         }
       }
     }
@@ -504,7 +504,7 @@ namespace MBSim {
     else if(stage==unknownStage) {
       LinkMechanics::init(stage);
 
-      iT = Index(1,getFrictionDirections());
+      iT = Range<Var>(1,getFrictionDirections());
 
       for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
         cpData[k][0].getFrameOfReference().getJacobianOfTranslation(0).resize(contour[0]->getReferenceJacobianOfTranslation(0).cols());

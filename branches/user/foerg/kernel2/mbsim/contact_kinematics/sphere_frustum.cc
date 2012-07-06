@@ -109,7 +109,7 @@ namespace MBSim {
         }
 
         double alpha= vz*(out*M_PI/2.-phi);
-        SqrMat A(3); // Drehmatrix
+        SqrMat3 A; // Drehmatrix
         A(2,2) = 1;
         A(0,0) = cos(alpha);
         A(1,1) = cos(alpha);

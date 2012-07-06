@@ -688,7 +688,7 @@ namespace MBSim {
 
   }
 
-  void RigidBody::updateRelativeJacobians(double t, unsigned int i, Mat &WJTrel0, Mat &WJRrel0) {
+  void RigidBody::updateRelativeJacobians(double t, unsigned int i, Mat3V &WJTrel0, Mat3V &WJRrel0) {
 
     if(iKinematics != 0) {
       WJTrel0 += tilde(WrSF[iKinematics])*WJRrel0;

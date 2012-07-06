@@ -103,7 +103,7 @@ namespace MBSim {
       /**
        * \brief directions of force and moment in frame of reference
        */
-      fmatvec::Mat forceDir, momentDir;
+      fmatvec::Mat3V forceDir, momentDir;
 
       /**
        * \brief portions of the force / moment in the specific directions

@@ -359,8 +359,8 @@ namespace MBSim {
         Vec firstLagrangeParameter;
         Vec secondLagrangeParameter;
         if (contour1->getShortName() == (*fct).getFirstContourName() and contour2->getShortName() == (*fct).getSecondContourName()) {
-          firstLagrangeParameter.resize() = contour1->computeLagrangeParameter(contourPairing[currentContactNumber]->getContourPointData()[i].getFrameOfReference().getPosition());
-          secondLagrangeParameter.resize() = contour2->computeLagrangeParameter(contourPairing[currentContactNumber]->getContourPointData()[i].getFrameOfReference().getPosition());
+          firstLagrangeParameter = contour1->computeLagrangeParameter(contourPairing[currentContactNumber]->getContourPointData()[i].getFrameOfReference().getPosition());
+          secondLagrangeParameter = contour2->computeLagrangeParameter(contourPairing[currentContactNumber]->getContourPointData()[i].getFrameOfReference().getPosition());
         }
         else
           throw MBSimError("MaxwellContact::computeFactorC: The contours \"" + contour1->getShortName() + "\" and \"" + contour2->getShortName() + " don't fit with the function's contour names: \"" + (*fct).getFirstContourName() + "\" and \"" + (*fct).getSecondContourName() + "\"");
