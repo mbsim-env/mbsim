@@ -28,7 +28,7 @@ using namespace std;
 
 namespace MBSim {
 
-  ContactKinematicsPointPlaneWithFrustum::ContactKinematicsPointPlaneWithFrustum() : ET(3), EP(3), MT(3), MP(3), nFrustum(3), tFrustum(3) {
+  ContactKinematicsPointPlaneWithFrustum::ContactKinematicsPointPlaneWithFrustum() {
   }
 
   void ContactKinematicsPointPlaneWithFrustum::assignContours(const vector<Contour*> &contour) {

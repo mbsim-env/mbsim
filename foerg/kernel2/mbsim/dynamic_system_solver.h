@@ -213,8 +213,8 @@ namespace MBSim {
       void setCheckGSize(bool checkGSize_) { checkGSize = checkGSize_; }
       void setLimitGSize(int limitGSize_) { limitGSize = limitGSize_; checkGSize = false; }
 
-      const fmatvec::Matrix<fmatvec::Sparse<fmatvec::Ref>, double>& getGs() const { return Gs; }
-      fmatvec::Matrix<fmatvec::Sparse<fmatvec::Ref>, double>& getGs() { return Gs; }
+      const fmatvec::Matrix<fmatvec::Sparse<fmatvec::Ref,fmatvec::Ref>, double>& getGs() const { return Gs; }
+      fmatvec::Matrix<fmatvec::Sparse<fmatvec::Ref,fmatvec::Ref>, double>& getGs() { return Gs; }
       const fmatvec::SqrMat& getG() const { return G; }
       fmatvec::SqrMat& getG() { return G; }
       const fmatvec::Vec& getb() const { return b; }
@@ -581,7 +581,7 @@ namespace MBSim {
       /**
        * \brief sparse mass action matrix
        */
-      fmatvec::Matrix<fmatvec::Sparse<fmatvec::Ref>, double> Gs;
+      fmatvec::Matrix<fmatvec::Sparse<fmatvec::Ref,fmatvec::Ref>, double> Gs;
 
       /**
        * \brief JACOBIAN of contact equations for Newton scheme
