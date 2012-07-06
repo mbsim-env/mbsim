@@ -33,7 +33,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  RelativeRotationalSpringDamper::RelativeRotationalSpringDamper(const string &name) : LinkMechanics(name), func(NULL), refFrame(NULL), body(NULL), torqueDir(3), WtorqueDir(3)
+  RelativeRotationalSpringDamper::RelativeRotationalSpringDamper(const string &name) : LinkMechanics(name), func(NULL), refFrame(NULL), body(NULL)
 #ifdef HAVE_OPENMBVCPPINTERFACE
     , coilspringOpenMBV(NULL)
 #endif

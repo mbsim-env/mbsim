@@ -60,10 +60,10 @@ namespace MBSim {
     int nR = dR.cols();
 
     if(nT) 
-      res(Range<Var>(0,nT-1)) = dT.T()*(frame1->getPosition()-frame2->getPosition()); 
+      res(Range<Var,Var>(0,nT-1)) = dT.T()*(frame1->getPosition()-frame2->getPosition()); 
 
     if(nR) 
-      res(Range<Var>(nT,nT+nR-1)) = dR.T()*AIK2Cardan(frame1->getOrientation().T()*frame2->getOrientation()); 
+      res(Range<Var,Var>(nT,nT+nR-1)) = dR.T()*AIK2Cardan(frame1->getOrientation().T()*frame2->getOrientation()); 
 
     return res;
   } 
@@ -118,7 +118,7 @@ namespace MBSim {
   void GearConstraint::updateJacobians(double t, int jj){
     bd->getJRel().init(0); 
     for(unsigned int i=0; i<bi.size(); i++) {
-      bd->getJRel()(Range<Var>(0,bi[i]->getJRel().rows()-1),Range<Var>(0,bi[i]->getJRel().cols()-1)) += bi[i]->getJRel()*ratio[0][i];
+      bd->getJRel()(Range<Var,Var>(0,bi[i]->getJRel().rows()-1),Range<Var,Var>(0,bi[i]->getJRel().cols()-1)) += bi[i]->getJRel()*ratio[0][i];
     }
   }
 

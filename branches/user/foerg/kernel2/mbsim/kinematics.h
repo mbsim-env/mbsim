@@ -257,7 +257,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      RotationAboutFixedAxis() : RotationAboutOneAxis(), a(3) {}
+      RotationAboutFixedAxis() : RotationAboutOneAxis() {}
 
       /**
        * \brief constructor

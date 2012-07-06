@@ -32,7 +32,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  SpringDamper::SpringDamper(const string &name) : LinkMechanics(name), func(NULL), refFrame(NULL), forceDir(3)
+  SpringDamper::SpringDamper(const string &name) : LinkMechanics(name), func(NULL), refFrame(NULL) 
 #ifdef HAVE_OPENMBVCPPINTERFACE
     , coilspringOpenMBV(NULL)
 #endif
