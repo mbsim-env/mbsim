@@ -107,7 +107,7 @@ namespace MBSim {
       solution0.resize() = LCP.solve(solution0);
 
 #else
-      solution0.resize() = solveLCP(C, rigidBodyGap, MBSim::Standard, matConst);
+      //solution0.resize() = solveLCP(C, rigidBodyGap, MBSim::Standard, matConst);
 #endif
 
       Vec lambda = solution0(rigidBodyGap.size(), 2 * rigidBodyGap.size()-1);
