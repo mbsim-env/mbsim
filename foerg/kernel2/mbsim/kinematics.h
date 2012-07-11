@@ -186,7 +186,7 @@ namespace MBSim {
     /**
        * \brief constructor
        */
-      RotationAboutOneAxis(): APK(3) {}
+      RotationAboutOneAxis() {}
 
       virtual int getqSize() const { throw; return 0; }
 
@@ -338,7 +338,7 @@ namespace MBSim {
     /**
        * \brief constructor
        */
-      RotationAboutTwoAxes() : APK(3) {}
+      RotationAboutTwoAxes() {}
 
       virtual int getqSize() const { throw; return 0; }
 
@@ -394,7 +394,7 @@ namespace MBSim {
     /**
        * \brief constructor
        */
-      RotationAboutThreeAxes() : APK(3) {}
+      RotationAboutThreeAxes() {}
 
       virtual int getqSize() const { throw; return 0; }
 
