@@ -338,7 +338,7 @@ namespace MBSim {
 
         if(openMBVFrame && !openMBVFrame->isHDF5Link()) {
           vector<double> data;
-          SqrMat3 AWP(3);
+          SqrMat3 AWP;
           AWP.set(0, et);
           AWP.set(1, en);
           AWP.set(2, eb);
