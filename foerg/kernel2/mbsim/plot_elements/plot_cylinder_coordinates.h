@@ -41,9 +41,9 @@ namespace MBSim {
       OpenMBV::Group* openMBVGrp;
       OpenMBV::Arrow *openMBVPosition, *openMBVVelocity, *openMBVRadialVelocity, *openMBVCircularVelocity, *openMBVZVelocity, *openMBVAcceleration, *openMBVRadialAcceleration, *openMBVCircularAcceleration, *openMBVZAcceleration; 
       OpenMBV::Frame* openMBVFrame;
-      fmatvec::Vec roff, voff, aoff;
+      fmatvec::Vec3 roff, voff, aoff;
       double rscale, vscale, ascale;
-      fmatvec::Vec ez;
+      fmatvec::Vec3 ez;
 #endif
 
     public:
@@ -51,7 +51,7 @@ namespace MBSim {
       void setFrame(Frame *frame_) { frame = frame_; } 
 
       void init(InitStage stage);
-      void setez(const fmatvec::Vec &ez_) {ez = ez_/nrm2(ez_);}
+      void setez(const fmatvec::Vec3 &ez_) {ez = ez_/nrm2(ez_);}
       virtual void plot(double t, double dt);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

@@ -33,7 +33,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  PlotFrame::PlotFrame(const std::string &name) : Element(name), frame(0), roff(3), voff(3), aoff(3), rscale(1), vscale(1), ascale(1) {
+  PlotFrame::PlotFrame(const std::string &name) : Element(name), frame(0), rscale(1), vscale(1), ascale(1) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     openMBVPosition=0;
     openMBVVelocity=0;
@@ -84,7 +84,7 @@ namespace MBSim {
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  void PlotFrame::enableOpenMBVPosition(double scale, double diameter, double headDiameter, double headLength, double color, const Vec& off) {
+  void PlotFrame::enableOpenMBVPosition(double scale, double diameter, double headDiameter, double headLength, double color, const Vec3& off) {
     openMBVPosition=new OpenMBV::Arrow;
     openMBVPosition->setDiameter(diameter);
     openMBVPosition->setHeadDiameter(headDiameter);
@@ -94,7 +94,7 @@ namespace MBSim {
     rscale = scale;
   }
 
-  void PlotFrame::enableOpenMBVVelocity(double scale, double diameter, double headDiameter, double headLength, double color, const Vec& off) {
+  void PlotFrame::enableOpenMBVVelocity(double scale, double diameter, double headDiameter, double headLength, double color, const Vec3& off) {
     openMBVVelocity=new OpenMBV::Arrow;
     openMBVVelocity->setDiameter(diameter);
     openMBVVelocity->setHeadDiameter(headDiameter);
@@ -104,7 +104,7 @@ namespace MBSim {
     vscale = scale;
   }
 
-  void PlotFrame::enableOpenMBVAcceleration(double scale, double diameter, double headDiameter, double headLength, double color, const Vec& off) {
+  void PlotFrame::enableOpenMBVAcceleration(double scale, double diameter, double headDiameter, double headLength, double color, const Vec3& off) {
     openMBVAcceleration=new OpenMBV::Arrow;
     openMBVAcceleration->setDiameter(diameter);
     openMBVAcceleration->setHeadDiameter(headDiameter);
@@ -150,8 +150,8 @@ namespace MBSim {
         if(openMBVVelocity && !openMBVVelocity->isHDF5Link()) {
           vector<double> data;
           data.push_back(t);
-          Vec vframe = frame->getVelocity()*vscale;
-          Vec off = voff + vframe;
+          Vec3 vframe = frame->getVelocity()*vscale;
+          Vec3 off = voff + vframe;
           data.push_back(frame->getPosition()(0)+off(0));
           data.push_back(frame->getPosition()(1)+off(1));
           data.push_back(frame->getPosition()(2)+off(2));
@@ -164,8 +164,8 @@ namespace MBSim {
         if(openMBVAcceleration && !openMBVAcceleration->isHDF5Link()) {
           vector<double> data;
           data.push_back(t);
-          Vec aframe = frame->getAcceleration()*ascale;
-          Vec off = aoff + aframe;
+          Vec3 aframe = frame->getAcceleration()*ascale;
+          Vec3 off = aoff + aframe;
           data.push_back(frame->getPosition()(0)+off(0));
           data.push_back(frame->getPosition()(1)+off(1));
           data.push_back(frame->getPosition()(2)+off(2));
