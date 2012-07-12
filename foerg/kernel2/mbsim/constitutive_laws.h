@@ -77,6 +77,13 @@ namespace MBSim {
       virtual void initializeUsingXML(TiXmlElement *element) {}
       /***************************************************/
       
+      /**
+       * \brief
+       *
+       * \param g          distance of the contact points
+       * \param gd         relative velocity in normal direction of contact points
+       * \param additional ??
+       */
       double operator()(double g, double gd, const void * additional=NULL) { assert(forceFunc); return (*forceFunc)(g,gd,additional); }
 
       /** \brief Set the force function for use in regularisized constitutive laws

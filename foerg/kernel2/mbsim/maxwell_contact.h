@@ -28,11 +28,7 @@
 #include <mbsim/link_mechanics.h>
 #include <mbsim/utils/function.h>
 #include <mbsim/utils/nonlinear_algebra.h>
-#ifdef HAVE_MBSIMNUMERICS
-#include <numerics/linear_complementarity_problem/linear_complementarity_problem.h>
-#else
-#include <mbsim/utils/linear_complementarity_problem.h>
-#endif
+#include <mbsim/numerics/linear_complementarity_problem/linear_complementarity_problem.h>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/group.h>
@@ -118,15 +114,13 @@ namespace MBSim {
       ContourPairing* getContourPariing(const int & contactNumber) {
         return contourPairing[contactNumber];
       }
-#ifdef HAVE_MBSIMNUMERICS
-      void setLCPSolvingStrategy(MBSimNumerics::LCPSolvingStrategy strategy) {
+      void setLCPSolvingStrategy(LCPSolvingStrategy strategy) {
         lcpSolvingStrategy = strategy;
       }
 
-      MBSimNumerics::LCPSolvingStrategy getLCPSolvingStrategy(void) {
+      LCPSolvingStrategy getLCPSolvingStrategy(void) {
         return lcpSolvingStrategy;
       }
-#endif
 
       /**
        * \brief output information to console?
@@ -221,12 +215,10 @@ namespace MBSim {
        */
       std::map<std::pair<Contour*, Contour*>, InfluenceFunction*> influenceFunctions;
 
-#ifdef HAVE_MBSIMNUMERICS
       /**
        * \brief strategy for solving the LCP
        */
-      MBSimNumerics::LCPSolvingStrategy lcpSolvingStrategy;
-#endif
+      LCPSolvingStrategy lcpSolvingStrategy;
 
       /**
        * \brief Solution of the last time, where contact has to be solved (can be used as starting guess for the next algorithm)

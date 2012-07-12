@@ -48,150 +48,170 @@ namespace MBSim {
   ObjectFactory* ObjectFactory::instance=NULL;
 
   Group* ObjectFactory::createGroup(TiXmlElement *element) {
+    if(element==NULL) return NULL;
     Group *obj;
-    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->createGroup(element))) return obj;
-    return 0;
+    throw MBSimError(string("No Group of type ")+element->ValueStr()+" exists.");
   }
 
   Object* ObjectFactory::createObject(TiXmlElement *element) {
+    if(element==NULL) return NULL;
     Object *obj;
-    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->createObject(element))) return obj;
-    return 0;
+    throw MBSimError(string("No Object of type ")+element->ValueStr()+" exists.");
   }
 
   ExtraDynamic* ObjectFactory::createExtraDynamic(TiXmlElement *element) {
+    if(element==NULL) return NULL;
     ExtraDynamic *obj;
-    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->createExtraDynamic(element))) return obj;
-    return 0;
+    throw MBSimError(string("No ExtraDynamic of type ")+element->ValueStr()+" exists.");
   }
 
   Translation* ObjectFactory::createTranslation(TiXmlElement *element) {
+    if(element==NULL) return NULL;
     Translation *obj;
-    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->createTranslation(element))) return obj;
-    return 0;
+    throw MBSimError(string("No Translation of type ")+element->ValueStr()+" exists.");
   }
 
   Rotation* ObjectFactory::createRotation(TiXmlElement *element) {
+    if(element==NULL) return NULL;
     Rotation *obj;
-    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->createRotation(element))) return obj;
-    return 0;
+    throw MBSimError(string("No Rotation of type ")+element->ValueStr()+" exists.");
   }
 
   Link* ObjectFactory::createLink(TiXmlElement *element) {
+    if(element==NULL) return NULL;
     Link *obj;
-    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->createLink(element))) return obj;
-    return 0;
+    throw MBSimError(string("No Link of type ")+element->ValueStr()+" exists.");
   }
 
   Integrator* ObjectFactory::createIntegrator(TiXmlElement *element) {
+    if(element==NULL) return NULL;
     Integrator *obj;
-    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->createIntegrator(element))) return obj;
-    return 0;
+    throw MBSimError(string("No Integrator of type ")+element->ValueStr()+" exists.");
   }
 
   GeneralizedForceLaw* ObjectFactory::createGeneralizedForceLaw(TiXmlElement *element) {
+    if(element==NULL) return NULL;
     GeneralizedForceLaw *obj;
-    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->createGeneralizedForceLaw(element))) return obj;
-    return 0;
+    throw MBSimError(string("No GeneralizedForceLaw of type ")+element->ValueStr()+" exists.");
   }
 
   GeneralizedImpactLaw* ObjectFactory::createGeneralizedImpactLaw(TiXmlElement *element) {
+    if(element==NULL) return NULL;
     GeneralizedImpactLaw *obj;
-    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->createGeneralizedImpactLaw(element))) return obj;
-    return 0;
+    throw MBSimError(string("No GeneralizedImpactLaw of type ")+element->ValueStr()+" exists.");
   }
 
   FrictionForceLaw *ObjectFactory::createFrictionForceLaw(TiXmlElement *element) {
+    if(element==NULL) return NULL;
     FrictionForceLaw *obj;
-    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->createFrictionForceLaw(element))) return obj;
-    return 0;
+    throw MBSimError(string("No FrictionForceLaw of type ")+element->ValueStr()+" exists.");
   }
 
   FrictionImpactLaw *ObjectFactory::createFrictionImpactLaw(TiXmlElement *element) {
+    if(element==NULL) return NULL;
     FrictionImpactLaw *obj;
-    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->createFrictionImpactLaw(element))) return obj;
-    return 0;
+    throw MBSimError(string("No FrictionImpactLaw of type ")+element->ValueStr()+" exists.");
   }
 
   Contour *ObjectFactory::createContour(TiXmlElement *element) {
+    if(element==NULL) return NULL;
     Contour *obj;
-    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->createContour(element))) return obj;
-    return 0;
+    throw MBSimError(string("No Contour of type ")+element->ValueStr()+" exists.");
   }
 
   Environment *ObjectFactory::getEnvironment(TiXmlElement *element) {
+    if(element==NULL) return NULL;
     Environment *obj;
-    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->getEnvironment(element))) return obj;
-    return 0;
+    throw MBSimError(string("No Environment of type ")+element->ValueStr()+" exists.");
   }
 
   Jacobian *ObjectFactory::createJacobian(TiXmlElement *element) {
+    if(element==NULL) return NULL;
     Jacobian *obj;
-    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->createJacobian(element))) return obj;
-    return 0;
+    throw MBSimError(string("No Jacobian of type ")+element->ValueStr()+" exists.");
   }
 
   Function1<double,double> *ObjectFactory::createFunction1_SS(TiXmlElement *element) {
+    if(element==NULL) return NULL;
     Function1<double,double> *obj;
-    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->createFunction1_SS(element))) return obj;
-    return 0;
+    throw MBSimError(string("No Function1_SS of type ")+element->ValueStr()+" exists.");
   }
 
   Function1<Vec,double> *ObjectFactory::createFunction1_VS(TiXmlElement *element) {
+    if(element==NULL) return NULL;
     Function1<Vec,double> *obj;
-    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->createFunction1_VS(element))) return obj;
-    return 0;
+    throw MBSimError(string("No Fucntion1_VS of type ")+element->ValueStr()+" exists.");
   }
 
   Function1<Vec3,double> *ObjectFactory::createFunction1_V3S(TiXmlElement *element) {
     Function1<Vec3,double> *obj;
-    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->createFunction1_V3S(element))) return obj;
     return 0;
   }
 
   Function2<double,double,double> *ObjectFactory::createFunction2_SSS(TiXmlElement *element) {
+    if(element==NULL) return NULL;
     Function2<double,double,double> *obj;
-    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->createFunction2_SSS(element))) return obj;
-    return 0;
+    throw MBSimError(string("No Fucntion2_SSS of type ")+element->ValueStr()+" exists.");
   }
 
   Function2<Vec,Vec,double> *ObjectFactory::createFunction2_VVS(TiXmlElement *element) {
+    if(element==NULL) return NULL;
     Function2<Vec,Vec,double> *obj;
-    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->createFunction2_VVS(element))) return obj;
-    return 0;
+    throw MBSimError(string("No Function2_VVS of type ")+element->ValueStr()+" exists.");
   }
 
   Function3<Mat3V,Vec,Vec,double> *ObjectFactory::createFunction3_MVVS(TiXmlElement *element) {
+    if(element==NULL) return NULL;
     Function3<Mat3V,Vec,Vec,double> *obj;
-    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->createFunction3_MVVS(element))) return obj;
-    return 0;
+    throw MBSimError(string("No Function2_MVVS of type ")+element->ValueStr()+" exists.");
   }
 
   ContourFunction1s *ObjectFactory::createContourFunction1s(TiXmlElement *element) {
+    if(element==NULL) return NULL;
     ContourFunction1s * u;
-    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((u=(*i)->createContourFunction1s(element))) return u;
-    return 0;
+    throw MBSimError(string("No ContourFunction1s of type ")+element->ValueStr()+" exists.");
   }
 
 

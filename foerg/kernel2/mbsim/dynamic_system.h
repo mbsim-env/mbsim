@@ -51,7 +51,9 @@ namespace MBSim {
    * \date 2009-07-28 splitted interfaces (Thorsten Schindler)
    * \date 2009-12-14 revised inverse kinetics (Martin Foerg)
    * \date 2010-07-06 modifications for timestepper ssc, e.g LinkStatus and buildListOfSetValuedLinks (Robert Huber)
-   * \todo OpenMP only static scheduling with intelligent reordering of vectors by dynamic test runs
+   * \date 2012-05-08 OpenMP completely removed; will be inserted again soon (Jan Clauberg)
+   * \date 2012-05-08 modifications for AutoTimeSteppingSSCIntegrator (Jan Clauberg)
+   *
    */
   //class DynamicSystem : public Element, public ObjectInterface, public LinkInterface, public ExtraDynamicInterface {
   class DynamicSystem : public Element {
@@ -122,6 +124,7 @@ namespace MBSim {
       virtual void updategd(double t);
       virtual void updateStopVector(double t); 
       virtual void updateLinkStatus(double t);
+      virtual void updateLinkStatusReg(double t);
 
       virtual void updategInverseKinetics(double t); 
       virtual void updategdInverseKinetics(double t);
@@ -264,7 +267,9 @@ namespace MBSim {
       fmatvec::VecInt& getjsv() { return jsv; }
       const fmatvec::VecInt& getjsv() const { return jsv; }
       fmatvec::VecInt& getLinkStatus() { return LinkStatus; }
+      fmatvec::VecInt& getLinkStatusReg() { return LinkStatusReg; }
       const fmatvec::VecInt& getLinkStatus() const { return LinkStatus; }
+      const fmatvec::VecInt& getLinkStatusReg() const { return LinkStatusReg; }
       const fmatvec::Vec& getres() const { return res; }
       fmatvec::Vec& getres() { return res; }
       const fmatvec::Vec& getcorr() const { return corr; };
@@ -284,6 +289,7 @@ namespace MBSim {
       void setrFactorInd(int ind) { rFactorInd = ind; }
       void setsvInd(int svInd_) { svInd = svInd_; };
       void setLinkStatusInd(int LinkStatusInd_) {LinkStatusInd = LinkStatusInd_;};      
+      void setLinkStatusRegInd(int LinkStatusRegInd_) {LinkStatusRegInd = LinkStatusRegInd_;};
 
       int getzSize() const { return qSize + uSize[0] + xSize; }
 
@@ -297,6 +303,7 @@ namespace MBSim {
       int getrFactorSize() const { return rFactorSize; } 
       int getsvSize() const { return svSize; }
       int getLinkStatusSize() const { return LinkStatusSize; }
+      int getLinkStatusRegSize() const { return LinkStatusRegSize; }
       /*****************************************************/
 
       /**
@@ -445,6 +452,12 @@ namespace MBSim {
       void updateLinkStatusRef(const fmatvec::VecInt &LinkStatusParent);
 
       /**
+       * \brief references to status vector of single valued links
+       * \param vector to be referenced 
+       */
+      void updateLinkStatusRegRef(const fmatvec::VecInt &LinkStatusRegParent);      
+            
+      /**
        * \brief references to residuum of contact equations of dynamic system parent
        * \param vector to be referenced
        */
@@ -516,10 +529,15 @@ namespace MBSim {
       void setUpLinks();
 
       /**
-       * \return flag, if vector of active relative distances has changed
+       * \return flag, if vector of active relative distances has changed (set-valued laws)
        */
       bool gActiveChanged();
-
+      
+      /**
+       * \return flag, if vector of active relative distances has changed (single-valued laws)
+       */
+      bool gActiveChangedReg();
+      
       /**
        * \brief calculates size of stop vector
        */
@@ -531,9 +549,14 @@ namespace MBSim {
       void calclaSize(int j);
 
       /**
-       * \brief calculates size of link status vector
+       * \brief calculates size of set-valued link status vector
        */
       void calcLinkStatusSize();
+
+      /**
+       * \brief calculates size of single-valued link status vector
+       */
+      void calcLinkStatusRegSize();
 
       /**
        * \brief calculates size of contact force parameters
@@ -566,9 +589,14 @@ namespace MBSim {
       void setUpActiveLinks();
 
       /**
-       * \brief set possible attribute for active relative distance in derived classes 
+       * \brief check if set-valued contacts are active 
        */
       void checkActive(int i);
+
+      /**
+       * \brief check if single-valued contacts are active
+       */
+      void checkActiveReg(int i);
 
       /**
        * \param tolerance for relative velocity
@@ -843,9 +871,14 @@ namespace MBSim {
       fmatvec::VecInt jsv;
 
       /**
-       * \brief status of set valued links 
+       * \brief status of set-valued links 
        */
       fmatvec::VecInt LinkStatus;
+
+      /**
+       * \brief status of single-valued links 
+       */
+      fmatvec::VecInt LinkStatusReg;
 
       /** 
        * \brief size and local start index of positions relative to parent
@@ -893,10 +926,15 @@ namespace MBSim {
       int svSize, svInd;
 
       /**
-       * \brief size and local start index of link status vector relative to parent
+       * \brief size and local start index of set-valued link status vector relative to parent
        */
       int LinkStatusSize, LinkStatusInd;
-
+      
+      /**
+       * \brief size and local start index of single-valued link status vector relative to parent
+       */
+      int LinkStatusRegSize, LinkStatusRegInd;
+      
       /**
        * \brief inertial position of frames, contours (see group.h / tree.h)
        */
