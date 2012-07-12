@@ -1,17 +1,17 @@
 /* Copyright (C) 2004-2009 MBSim Development Team
  *
- * This library is free software; you can redistribute it and/or 
- * modify it under the terms of the GNU Lesser General Public 
- * License as published by the Free Software Foundation; either 
- * version 2.1 of the License, or (at your option) any later version. 
- *  
- * This library is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
- * Lesser General Public License for more details. 
- *  
- * You should have received a copy of the GNU Lesser General Public 
- * License along with this library; if not, write to the Free Software 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
  * Contact: thschindler@users.berlios.de
@@ -39,22 +39,22 @@ namespace MBSim {
    */
   class ContactKinematicsCircleFrustum : public ContactKinematics {
     public:
-      /*! 
-       * \brief constructor 
+      /*!
+       * \brief constructor
        * \default no debugging
        * \default no warnings
-       * \default global search 
+       * \default global search
        */
       ContactKinematicsCircleFrustum();
 
-      /*! 
+      /*!
        * \brief destructor
        */
       virtual ~ContactKinematicsCircleFrustum();
 
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
       void assignContours(const std::vector<Contour*> &contour);
-      virtual void updateg(fmatvec::Vec& g, ContourPointData *cpData);   
+      virtual void updateg(fmatvec::Vec& g, ContourPointData *cpData);
       virtual void updatewb(fmatvec::Vec& wb, const fmatvec::Vec &g,ContourPointData *cpData) { throw MBSimError("ERROR (ContactKinematicsCircleFrustum::updatewb): not implemented!"); }
       /***************************************************/
 
@@ -64,20 +64,20 @@ namespace MBSim {
       void setLocalSearch(bool LOCALSEARCH_);
       /***************************************************/
 
-    private:
-      /** 
+    protected:
+      /**
        * \brief contour index
        */
       int icircle, ifrustum;
 
-      /** 
-       * \brief contour classes 
+      /**
+       * \brief contour classes
        */
-      Frustum *frustum; 
+      Frustum *frustum;
       Circle *circle;
 
-      /** 
-       * \brief debug information during calculation? 
+      /**
+       * \brief debug information during calculation?
        */
       bool DEBUG;
 
