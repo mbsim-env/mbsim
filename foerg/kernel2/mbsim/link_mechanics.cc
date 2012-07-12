@@ -93,7 +93,7 @@ namespace MBSim {
     for(unsigned i=0; i<frame.size(); i++) {
       Index J = Index(laInd,laInd+laSize-1);
       Index I = Index(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->getJacobianOfTranslation(j).cols()-1); // TODO Prüfen ob hSize
-      W[j][i].resize()>>WParent(I,J);
+      W[j][i]>>WParent(I,J);
     }
     for(unsigned i=0; i<contour.size(); i++) {
       Index J = Index(laInd,laInd+laSize-1);
@@ -106,7 +106,7 @@ namespace MBSim {
     for(unsigned i=0; i<frame.size(); i++) {
       Index J = Index(laInd,laInd+laSize-1);
       Index I = Index(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->getJacobianOfTranslation(j).cols()-1);
-      V[j][i].resize()>>VParent(I,J);
+      V[j][i]>>VParent(I,J);
     }
     for(unsigned i=0; i<contour.size(); i++) {
       Index J = Index(laInd,laInd+laSize-1);
@@ -118,11 +118,11 @@ namespace MBSim {
   void LinkMechanics::updatehRef(const Vec &hParent, int j) {
     for(unsigned i=0; i<frame.size(); i++) {
       Index I = Index(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->getJacobianOfTranslation(j).cols()-1);
-      h[j][i].resize()>>hParent(I);
+      h[j][i]>>hParent(I);
     }
     for(unsigned i=0; i<contour.size(); i++) {
       Index I = Index(contour[i]->gethInd(j),contour[i]->gethInd(j)+contour[i]->getReferenceJacobianOfTranslation(j).cols()-1);
-      h[j][i].resize()>>hParent(I);
+      h[j][i]>>hParent(I);
     }
   } 
 
@@ -149,12 +149,12 @@ namespace MBSim {
   for(unsigned i=0; i<frame.size(); i++) {
       int hInd =  frame[i]->gethInd(j);
       Index I = Index(hInd,hInd+frame[i]->getJacobianOfTranslation(j).cols()-1);
-      r[j][i].resize()>>rParent(I);
+      r[j][i]>>rParent(I);
     }
     for(unsigned i=0; i<contour.size(); i++) {
       int hInd =  contour[i]->gethInd(j);
       Index I = Index(hInd,hInd+contour[i]->getReferenceJacobianOfTranslation(j).cols()-1);
-      r[j][i].resize()>>rParent(I);
+      r[j][i]>>rParent(I);
     }
   } 
 

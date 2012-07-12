@@ -89,7 +89,7 @@ namespace MBSim {
       h[j][i]>>hParent(I);
     }
     Index I = Index(frame->gethInd(j),frame->gethInd(j)+frame->getJacobianOfTranslation(j).cols()-1); // TODO Prüfen ob hSize
-    h[j][body.size()].resize()>>hParent(I);
+    h[j][body.size()]>>hParent(I);
   } 
 
   void Gear::updateg(double) {

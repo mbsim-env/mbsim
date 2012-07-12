@@ -178,7 +178,7 @@ namespace MBSim {
     for (size_t i = 0; i < contour.size(); i++) {
       int hInd = contour[i]->gethInd(j);
       Index I = Index(hInd, hInd + contour[i]->gethSize(j) - 1);
-      h[j][i].resize() >> hParent(I);
+      h[j][i] >> hParent(I);
     }
   }
 
@@ -220,9 +220,9 @@ namespace MBSim {
       // reference to the positions of (full) vectors of link-class
       int forceIndex = 0; //index that adds all force directions together
       for (size_t k = 0; k < contourPairing.size(); k++) {
-        contourPairing[k]->getRelativeDistance().resize() >> g(k, k);
-        contourPairing[k]->getRelativeVelocity().resize() >> gd(forceIndex, forceIndex + 1 + contourPairing[k]->getFrictionDirections() - 1);
-        contourPairing[k]->getContactForce().resize() >> la(forceIndex, forceIndex + 1 + contourPairing[k]->getFrictionDirections() - 1);
+        contourPairing[k]->getRelativeDistance() >> g(k, k);
+        contourPairing[k]->getRelativeVelocity() >> gd(forceIndex, forceIndex + 1 + contourPairing[k]->getFrictionDirections() - 1);
+        contourPairing[k]->getContactForce() >> la(forceIndex, forceIndex + 1 + contourPairing[k]->getFrictionDirections() - 1);
 
         forceIndex += 1 + contourPairing[k]->getFrictionDirections();
       }

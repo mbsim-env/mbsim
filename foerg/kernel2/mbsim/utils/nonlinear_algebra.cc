@@ -262,7 +262,7 @@ namespace MBSim {
     A(0, 2 * dim + 1, dim - 1, 2 * dim + 1) = q.copy();
 
     Vec q_;
-    q_.resize() >> A(0, 2 * dim + 1, dim - 1, 2 * dim + 1);
+    q_ >> A(0, 2 * dim + 1, dim - 1, 2 * dim + 1);
 
     vector<size_t> basis;
     //At first, all w-values are in the basis

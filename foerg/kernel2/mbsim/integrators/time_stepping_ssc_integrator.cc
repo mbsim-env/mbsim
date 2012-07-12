@@ -155,20 +155,20 @@ namespace MBSim {
     Index Ix(qSize+uSize, zSize-1);
 
     zT1.resize(zSize);
-    if (sysT1==sysT2) zT2.resize()>>zT1; else zT2.resize(zSize);
-    if (sysT1==sysT3) zT3.resize()>>zT1; else zT3.resize(zSize);
+    if (sysT1==sysT2) zT2>>zT1; else zT2.resize(zSize);
+    if (sysT1==sysT3) zT3>>zT1; else zT3.resize(zSize);
 
-    qT1.resize() >> zT1(Iq);
-    uT1.resize() >> zT1(Iu);
-    xT1.resize() >> zT1(Ix);
+    qT1 >> zT1(Iq);
+    uT1 >> zT1(Iu);
+    xT1 >> zT1(Ix);
 
-    qT2.resize() >> zT2(Iq);
-    uT2.resize() >> zT2(Iu);
-    xT2.resize() >> zT2(Ix);
+    qT2 >> zT2(Iq);
+    uT2 >> zT2(Iu);
+    xT2 >> zT2(Ix);
 
-    qT3.resize() >> zT3(Iq);
-    uT3.resize() >> zT3(Iu);
-    xT3.resize() >> zT3(Ix);
+    qT3 >> zT3(Iq);
+    uT3 >> zT3(Iu);
+    xT3 >> zT3(Ix);
 
     zi.resize(zSize,INIT,0.0); 	// starting value for ith step
 
@@ -347,7 +347,7 @@ namespace MBSim {
               zT1 << zi;
               qT1 += sysT1->deltaq(zT1,t,dt);
               sysT1->update(zT1,t+dt,1);
-              sysT1->getb().resize() = sysT1->getgd() + sysT1->getW().T()*slvLLFac(sysT1->getLLM(),sysT1->geth())*dt;
+              sysT1->getb() << sysT1->getgd() + sysT1->getW().T()*slvLLFac(sysT1->getLLM(),sysT1->geth())*dt;
               iterA  = sysT1->solveImpacts(dt);
               getAllSetValuedla(la1d,la1dSizes,SetValuedLinkListT1);
               la1d/=dt;
@@ -369,7 +369,7 @@ namespace MBSim {
                 zT1  << zi;
                 qT1 += sysT1->deltaq(zT1,t,dtHalf);
                 sysT1->update(zT1,t+dtHalf,1);
-                sysT1->getb().resize() = sysT1->getgd() + sysT1->getW().T()*slvLLFac(sysT1->getLLM(),sysT1->geth())*dtHalf;
+                sysT1->getb() << sysT1->getgd() + sysT1->getW().T()*slvLLFac(sysT1->getLLM(),sysT1->geth())*dtHalf;
                 iterB1  = sysT1->solveImpacts(dtHalf);
                 getAllSetValuedla(la2b,la2bSizes,SetValuedLinkListT1);
                 la2b/=dtHalf;
@@ -387,7 +387,7 @@ namespace MBSim {
                 zT1  << zi;
                 qT1 += sysT1->deltaq(zT1,t,dtThird);
                 sysT1->update(zT1,t+dtThird,1);
-                sysT1->getb().resize() = sysT1->getgd() + sysT1->getW().T()*slvLLFac(sysT1->getLLM(),sysT1->geth())*dtThird;
+                sysT1->getb() << sysT1->getgd() + sysT1->getW().T()*slvLLFac(sysT1->getLLM(),sysT1->geth())*dtThird;
                 sysT1->solveImpacts(dtThird);
                 uT1 += sysT1->deltau(zT1,t+dtThird,dtThird);
                 xT1 += sysT1->deltax(zT1,t+dtThird,dtThird); 
@@ -403,7 +403,7 @@ namespace MBSim {
                 zT2  << zi;
                 qT2 += sysT2->deltaq(zT2,t,dtHalf);
                 sysT2->update(zT2,t+dtHalf,1);
-                sysT2->getb().resize() = sysT2->getgd() + sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtHalf;
+                sysT2->getb() << sysT2->getgd() + sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtHalf;
                 iterB1  = sysT2->solveImpacts(dtHalf);
                 getAllSetValuedla(la2b,la2bSizes,SetValuedLinkListT2);
                 la2b/=dtHalf;
@@ -421,7 +421,7 @@ namespace MBSim {
                 zT2  << zi;
                 qT2 += sysT2->deltaq(zT2,t,dtQuarter);
                 sysT2->update(zT2,t+dtQuarter,1);
-                sysT2->getb().resize() = sysT2->getgd()+sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtQuarter;
+                sysT2->getb() << sysT2->getgd()+sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtQuarter;
                 iterC1 = sysT2->solveImpacts(dtQuarter);
                 uT2 += sysT2->deltau(zT2,t+dtQuarter,dtQuarter);
                 xT2 += sysT2->deltax(zT2,t+dtQuarter,dtQuarter);
@@ -431,7 +431,7 @@ namespace MBSim {
 
                 qT2 += sysT2->deltaq(zT2,t+dtQuarter,dtQuarter);
                 sysT2->update(zT2,t+dtHalf);
-                sysT2->getb().resize() = sysT2->getgd()+sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtQuarter;
+                sysT2->getb() << sysT2->getgd()+sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtQuarter;
                 iterC2 = sysT2->solveImpacts(dtQuarter);
                 uT2 += sysT2->deltau(zT2,t+dtHalf,dtQuarter);
                 xT2 += sysT2->deltax(zT2,t+dtHalf,dtQuarter);
@@ -446,14 +446,14 @@ namespace MBSim {
                 zT2  << zi;
                 qT2 += sysT2->deltaq(zT2,t,dtThird);
                 sysT2->update(zT2,t+dtThird,1);
-                sysT2->getb().resize() = sysT2->getgd() + sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtThird;
+                sysT2->getb() << sysT2->getgd() + sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtThird;
                 sysT2->solveImpacts(dtThird);
                 uT2 += sysT2->deltau(zT2,t+dtThird,dtThird);
                 xT2 += sysT2->deltax(zT2,t+dtThird,dtThird);
 
                 qT2 += sysT2->deltaq(zT2,t+dtThird,dtThird);
                 sysT2->update(zT2,t+2.0*dtThird);
-                sysT2->getb().resize() = sysT2->getgd() + sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtThird;
+                sysT2->getb() << sysT2->getgd() + sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtThird;
                 sysT2->solveImpacts(dtThird);
                 uT2 += sysT2->deltau(zT2,t+2.0*dtThird,dtThird);
                 xT2 += sysT2->deltax(zT2,t+2.0*dtThird,dtThird);
@@ -469,7 +469,7 @@ namespace MBSim {
                 zT3  << zi;
                 qT3 += sysT3->deltaq(zT3,t,dtSixth);
                 sysT3->update(zT3,t+dtSixth,1);
-                sysT3->getb().resize() = sysT3->getgd() + sysT3->getW().T()*slvLLFac(sysT3->getLLM(),sysT3->geth())*dtSixth;
+                sysT3->getb() << sysT3->getgd() + sysT3->getW().T()*slvLLFac(sysT3->getLLM(),sysT3->geth())*dtSixth;
                 sysT3->solveImpacts(dtSixth);
                 uT3 += sysT3->deltau(zT3,t+dtSixth,dtSixth);
                 xT3 += sysT3->deltax(zT3,t+dtSixth,dtSixth);
@@ -479,7 +479,7 @@ namespace MBSim {
 
                 qT3 += sysT3->deltaq(zT3,t+dtSixth,dtSixth);
                 sysT3->update(zT3,t+dtThird);
-                sysT3->getb().resize() = sysT3->getgd() + sysT3->getW().T()*slvLLFac(sysT3->getLLM(),sysT3->geth())*dtSixth;
+                sysT3->getb() << sysT3->getgd() + sysT3->getW().T()*slvLLFac(sysT3->getLLM(),sysT3->geth())*dtSixth;
                 sysT3->solveImpacts(dtSixth);
                 uT3 += sysT3->deltau(zT3,t+dtThird,dtSixth);
                 xT3 += sysT3->deltax(zT3,t+dtThird,dtSixth);
@@ -490,7 +490,7 @@ namespace MBSim {
 
                 qT3 += sysT3->deltaq(zT3,t+dtThird,dtSixth);
                 sysT3->update(zT3,t+dtHalf);
-                sysT3->getb().resize() = sysT3->getgd() + sysT3->getW().T()*slvLLFac(sysT3->getLLM(),sysT3->geth())*dtSixth;
+                sysT3->getb() << sysT3->getgd() + sysT3->getW().T()*slvLLFac(sysT3->getLLM(),sysT3->geth())*dtSixth;
                 sysT3->solveImpacts(dtSixth);
                 uT3 += sysT3->deltau(zT3,t+dtHalf,dtSixth);
                 xT3 += sysT3->deltax(zT3,t+dtHalf,dtSixth);
@@ -530,7 +530,7 @@ namespace MBSim {
                 zT1  << z2b;
                 qT1 += sysT1->deltaq(zT1,t+dtHalf,dtHalf);
                 sysT1->update(zT1,t+dt,1);
-                sysT1->getb().resize() = sysT1->getgd() + sysT1->getW().T()*slvLLFac(sysT1->getLLM(),sysT1->geth())*dtHalf;
+                sysT1->getb() << sysT1->getgd() + sysT1->getW().T()*slvLLFac(sysT1->getLLM(),sysT1->geth())*dtHalf;
                 iterB2  = sysT1->solveImpacts(dtHalf);
                 uT1 += sysT1->deltau(zT1,t+dt,dtHalf);
                 xT1 += sysT1->deltax(zT1,t+dt,dtHalf);
@@ -544,7 +544,7 @@ namespace MBSim {
                 zT1 << zStern;
                 qT1 += sysT1->deltaq(zT1,t+dtHalf,dtHalf);
                 sysT1->update(zT1,t+dt,1);
-                sysT1->getb().resize() = sysT1->getgd() + sysT1->getW().T()*slvLLFac(sysT1->getLLM(),sysT1->geth())*dtHalf;
+                sysT1->getb() << sysT1->getgd() + sysT1->getW().T()*slvLLFac(sysT1->getLLM(),sysT1->geth())*dtHalf;
                 iterB2RE  = sysT1->solveImpacts(dtHalf);
                 uT1 += sysT1->deltau(zT1,t+dt,dtHalf);
                 xT1 += sysT1->deltax(zT1,t+dt,dtHalf);
@@ -556,14 +556,14 @@ namespace MBSim {
                 zT1  << z3b;
                 qT1 += sysT1->deltaq(zT1,t+dtThird,dtThird);
                 sysT1->update(zT1,t+2.0*dtThird,1);
-                sysT1->getb().resize() = sysT1->getgd() + sysT1->getW().T()*slvLLFac(sysT1->getLLM(),sysT1->geth())*dtThird;
+                sysT1->getb() << sysT1->getgd() + sysT1->getW().T()*slvLLFac(sysT1->getLLM(),sysT1->geth())*dtThird;
                 sysT1->solveImpacts(dtThird);
                 uT1 += sysT1->deltau(zT1,t+2.0*dtThird,dtThird);
                 xT1 += sysT1->deltax(zT1,t+2.0*dtThird,dtThird);
 
                 qT1 += sysT1->deltaq(zT1,t+2.0*dtThird,dtThird);
                 sysT1->update(zT1,t+dt);
-                sysT1->getb().resize() = sysT1->getgd() + sysT1->getW().T()*slvLLFac(sysT1->getLLM(),sysT1->geth())*dtThird;
+                sysT1->getb() << sysT1->getgd() + sysT1->getW().T()*slvLLFac(sysT1->getLLM(),sysT1->geth())*dtThird;
                 sysT1->solveImpacts(dtThird);
                 uT1 += sysT1->deltau(zT1,t+dt,dtThird);
                 xT1 += sysT1->deltax(zT1,t+dt,dtThird);
@@ -579,7 +579,7 @@ namespace MBSim {
                 else zT2 << zStern; 
                 qT2 += sysT2->deltaq(zT2,t+dtHalf,dtQuarter);
                 sysT2->update(zT2,t+dtHalf+dtQuarter,1);
-                sysT2->getb().resize() = sysT2->getgd()+sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtQuarter;
+                sysT2->getb() << sysT2->getgd()+sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtQuarter;
                 iterC3  = sysT2->solveImpacts(dtQuarter);
                 uT2 += sysT2->deltau(zT2,t+dtHalf+dtQuarter,dtQuarter);
                 xT2 += sysT2->deltax(zT2,t+dtHalf+dtQuarter,dtQuarter);
@@ -587,7 +587,7 @@ namespace MBSim {
                 LSC3 = LStmp_T2;
                 qT2 += sysT2->deltaq(zT2,t+dtHalf+dtQuarter,dtQuarter);
                 sysT2->update(zT2,t+dt);
-                sysT2->getb().resize() = sysT2->getgd()+sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtQuarter;
+                sysT2->getb() << sysT2->getgd()+sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtQuarter;
                 iterC4 = sysT2->solveImpacts(dtQuarter);
                 uT2 += sysT2->deltau(zT2,t+dt,dtQuarter);
                 xT2 += sysT2->deltax(zT2,t+dt,dtQuarter);
@@ -604,7 +604,7 @@ namespace MBSim {
                 zT2  << z2b;
                 qT2 += sysT2->deltaq(zT2,t+dtHalf,dtHalf);
                 sysT2->update(zT2,t+dt,1);
-                sysT2->getb().resize() = sysT2->getgd() + sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtHalf;
+                sysT2->getb() << sysT2->getgd() + sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtHalf;
                 iterB2  = sysT2->solveImpacts(dtHalf);
                 uT2 += sysT2->deltau(zT2,t+dt,dtHalf);
                 xT2 += sysT2->deltax(zT2,t+dt,dtHalf);
@@ -621,7 +621,7 @@ namespace MBSim {
                 zT2 << zStern;
                 qT2 += sysT2->deltaq(zT2,t+dtHalf,dtHalf);
                 sysT2->update(zT2,t+dt,1);
-                sysT2->getb().resize() = sysT2->getgd() + sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtHalf;
+                sysT2->getb() << sysT2->getgd() + sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtHalf;
                 iterB2RE  = sysT2->solveImpacts(dtHalf);
                 uT2 += sysT2->deltau(zT2,t+dt,dtHalf);
                 xT2 += sysT2->deltax(zT2,t+dt,dtHalf);
@@ -633,7 +633,7 @@ namespace MBSim {
                 zT2  << z3b;
                 qT2 += sysT2->deltaq(zT2,t+2.0*dtThird,dtThird);
                 sysT2->update(zT2,t+dt,1);
-                sysT2->getb().resize() = sysT2->getgd() + sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtThird;
+                sysT2->getb() << sysT2->getgd() + sysT2->getW().T()*slvLLFac(sysT2->getLLM(),sysT2->geth())*dtThird;
                 sysT2->solveImpacts(dtThird);
                 uT2 += sysT2->deltau(zT2,t+dt,dtThird);
                 xT2 += sysT2->deltax(zT2,t+dt,dtThird);
@@ -649,7 +649,7 @@ namespace MBSim {
                 else zT3<<zStern;
                 qT3 += sysT3->deltaq(zT3,t+dtHalf,dtSixth);
                 sysT3->update(zT3,t+4.0*dtSixth,1);
-                sysT3->getb().resize() = sysT3->getgd() + sysT3->getW().T()*slvLLFac(sysT3->getLLM(),sysT3->geth())*dtSixth;
+                sysT3->getb() << sysT3->getgd() + sysT3->getW().T()*slvLLFac(sysT3->getLLM(),sysT3->geth())*dtSixth;
                 sysT3->solveImpacts(dtSixth);
                 uT3 += sysT3->deltau(zT3,t+4.0*dtSixth,dtSixth);
                 xT3 += sysT3->deltax(zT3,t+4.0*dtSixth,dtSixth);
@@ -659,7 +659,7 @@ namespace MBSim {
 
                 qT3 += sysT3->deltaq(zT3,t+4.0*dtSixth,dtSixth);
                 sysT3->update(zT3,t+5.0*dtSixth);
-                sysT3->getb().resize() = sysT3->getgd() + sysT3->getW().T()*slvLLFac(sysT3->getLLM(),sysT3->geth())*dtSixth;
+                sysT3->getb() << sysT3->getgd() + sysT3->getW().T()*slvLLFac(sysT3->getLLM(),sysT3->geth())*dtSixth;
                 sysT3->solveImpacts(dtSixth);
                 uT3 += sysT3->deltau(zT3,t+5.0*dtSixth,dtSixth);
                 xT3 += sysT3->deltax(zT3,t+5.0*dtSixth,dtSixth);
@@ -669,7 +669,7 @@ namespace MBSim {
 
                 qT3 += sysT3->deltaq(zT3,t+5.0*dtSixth,dtSixth);
                 sysT3->update(zT3,t+dt);
-                sysT3->getb().resize() = sysT3->getgd() + sysT3->getW().T()*slvLLFac(sysT3->getLLM(),sysT3->geth())*dtSixth;
+                sysT3->getb() << sysT3->getgd() + sysT3->getW().T()*slvLLFac(sysT3->getLLM(),sysT3->geth())*dtSixth;
                 sysT3->solveImpacts(dtSixth);
                 uT3 += sysT3->deltau(zT3,t+dt,dtSixth);
                 xT3 += sysT3->deltax(zT3,t+dt,dtSixth);
@@ -721,9 +721,8 @@ namespace MBSim {
       zi << ze;
       LS << LSe;
       if (outputInterpolation) {
-        if (la.size() != lae.size()) { la.resize(); laSizes.resize();}
-        la = lae;
-        laSizes = laeSizes;
+        la << lae;
+        laSizes << laeSizes;
       }
 
       if(ConstraintsChanged) integrationStepswithChange++;
@@ -1105,15 +1104,15 @@ namespace MBSim {
     } //endif method>0
 
     if (dte<dt) {		// nur halber Integrationsschritt wurde akzeptiert dte==dt/2
-      lae.resize() = la2b;
-      laeSizes.resize()  = la2bSizes;
+      lae << la2b;
+      laeSizes << la2bSizes;
       iter = iterB1;
       ConstraintsChanged = ConstraintsChangedBlock1;
       IterConvergenceBlock2 = true;
     }
     else {
-      lae.resize() = la1d;
-      laeSizes.resize()  = la1dSizes;        
+      lae << la1d;
+      laeSizes << la1dSizes;        
       iter = iterA;
     }
 
