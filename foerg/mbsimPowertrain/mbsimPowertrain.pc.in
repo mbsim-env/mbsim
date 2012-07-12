@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: mbsimPowertrain
+Description: mbsimPowertrain is an add-on for controlled systems to the mbsim-kernel.
+Requires: mbsim
+Version: @VERSION@
+Libs: -L${libdir} -lmbsimPowertrain
+Cflags: -I${includedir}
+
+
