@@ -273,7 +273,8 @@ namespace MBSim {
       bd2[i]->getJRel() >> J(Iu2[i],Ih2[i]);
       bd2[i]->getjRel() >> j(Iu2[i]); 
     }   
-    q = q0;
+    if(q0.size())
+      q = q0;
   }
 
   void JointConstraint::updateStateDependentVariables(double t){

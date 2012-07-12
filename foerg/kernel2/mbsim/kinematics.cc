@@ -255,7 +255,7 @@ namespace MBSim {
     angle->initializeUsingXML(e->FirstChildElement());
   }
 
-  Mat JRotationAboutAxesXY::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  Mat3V JRotationAboutAxesXY::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     int iq = q.size()-1;
     int iu = uSize-1;
     double a = q(iq-1);
@@ -268,7 +268,7 @@ namespace MBSim {
     return J;
   }
 
-  Mat JRotationAboutAxesYZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  Mat3V JRotationAboutAxesYZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     int iq = q.size()-1;
     int iu = uSize-1;
     double beta = q(iq-1);
@@ -281,7 +281,7 @@ namespace MBSim {
     return J;
   }
 
-  Mat JRotationAboutAxesXYZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  Mat3V JRotationAboutAxesXYZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     int iq = q.size()-1;
     int iu = uSize-1;
     double a = q(iq-2);
@@ -298,7 +298,7 @@ namespace MBSim {
     return J;
   }
 
-  Mat TCardanAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  MatV TCardanAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     int iq = qSize-1;
     int iu = uSize-1;
     double alpha = q(iq-2);
@@ -319,7 +319,7 @@ namespace MBSim {
     return T;
   }
 
-  Mat TEulerAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  MatV TEulerAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     int iq = qSize-1;
     int iu = uSize-1;
     double psi = q(iq-2);
@@ -343,7 +343,7 @@ namespace MBSim {
     return T;
   }
 
-  Mat TCardanAngles2::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  MatV TCardanAngles2::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     int iq = qSize-1;
     int iu = uSize-1;
     double beta = q(iq-1);
@@ -363,7 +363,7 @@ namespace MBSim {
     return T;
   }
 
-  Mat TEulerAngles2::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  MatV TEulerAngles2::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     int iq = qSize-1;
     int iu = uSize-1;
     double theta = q(iq-1);
@@ -393,7 +393,7 @@ namespace MBSim {
     J=Element::getMat(e);
   }
 
-  Mat JdRotationAboutAxesXY::operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
+  Mat3V JdRotationAboutAxesXY::operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
     int iq = q.size()-1;
     int iu = uSize-1;
     double a = q(iq-1);
@@ -408,7 +408,7 @@ namespace MBSim {
     return Jd;
   }
 
-  Mat JdRotationAboutAxesYZ::operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
+  Mat3V JdRotationAboutAxesYZ::operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
     int iq = q.size()-1;
     int iu = uSize-1;
     double beta = q(iq-1);
@@ -422,7 +422,7 @@ namespace MBSim {
     return Jd;
   }
 
-  Mat JdRotationAboutAxesXYZ::operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
+  Mat3V JdRotationAboutAxesXYZ::operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
     int iq = q.size()-1;
     int iu = uSize-1;
     double a = q(iq-2);
