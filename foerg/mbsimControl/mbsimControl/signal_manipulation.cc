@@ -175,7 +175,7 @@ namespace MBSimControl {
     if (stage==resolveXMLPath) {
       for (unsigned int i=0; i<signalString.size(); i++) {
         Vec tmp=indizesTmp[i];
-        fmatvec::Vector<int> tmpI(tmp.size(), INIT, 0);
+        fmatvec::VecInt tmpI(tmp.size(), INIT, 0);
         for (int j=0; j<tmp.size(); j++)
           tmpI(j)=int(tmp(j));
         addSignal(getByPath<Signal>(process_signal_string(signalString[i])), tmpI);
@@ -259,7 +259,7 @@ namespace MBSimControl {
 
   void SignalTimeDiscretization::updateg(double t) { 
     if (fabs(tOld-t)>epsroot()) {
-      y=s->getSignal(); 
+      y<<s->getSignal(); 
       tOld=t; 
     } 
   }

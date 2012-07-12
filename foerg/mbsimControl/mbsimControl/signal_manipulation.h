@@ -105,11 +105,11 @@ namespace MBSimControl {
       SignalDemux(const std::string &name) : Signal(name), totalSignalSize(0) {}
       void initializeUsingXML(TiXmlElement *element);
       void init(MBSim::InitStage stage);
-      void addSignal(Signal * signal, fmatvec::Vector<int> index) {signals.push_back(signal); indizes.push_back(index); }
+      void addSignal(Signal * signal, fmatvec::VecInt index) {signals.push_back(signal); indizes.push_back(index); }
       fmatvec::Vec getSignal();
     private:
       std::vector<Signal *> signals;
-      std::vector<fmatvec::Vector<int> > indizes;
+      std::vector<fmatvec::VecInt> indizes;
       std::vector<fmatvec::Vec> indizesTmp;
       std::vector<std::string> signalString;
       int totalSignalSize;
