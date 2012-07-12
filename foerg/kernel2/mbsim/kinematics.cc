@@ -17,6 +17,7 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
+#include <config.h>
 #include "mbsim/kinematics.h"
 #include "mbsim/objectfactory.h"
 
