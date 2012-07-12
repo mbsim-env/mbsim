@@ -17,9 +17,6 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#define FMATVEC_NO_BOUNDS_CHECK
-#define FMATVEC_NO_SIZE_CHECK
-
 #include "mbsim/kinematics.h"
 #include "mbsim/objectfactory.h"
 

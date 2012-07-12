@@ -17,9 +17,6 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#define FMATVEC_NO_BOUNDS_CHECK
-#define FMATVEC_NO_SIZE_CHECK
-
 #include <config.h> 
 #include <mbsim/contact.h>
 #include <mbsim/contour.h>
@@ -1413,7 +1410,7 @@ namespace MBSim {
           if(gdActive[k][0]) 
             corrk[k](0) = 0; // Contact stays closed, regular projection
           else
-            corrk[k](0) = 1e-15; // Contact opens, projection to positive normal distance
+            corrk[k](0) = 1e-14; // Contact opens, projection to positive normal distance
         }
       }
     }
@@ -1423,7 +1420,7 @@ namespace MBSim {
           if(gddActive[k][0])
             corrk[k](0) = 0; // Contact stays closed, regular projection
           else
-            corrk[k](0) = 1e-15; // Contact opens, projection to positive normal distance
+            corrk[k](0) = 1e-14; // Contact opens, projection to positive normal distance
         }
       }
     }
