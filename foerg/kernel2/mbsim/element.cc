@@ -18,9 +18,6 @@
  *          rzander@users.berlios.de
  */
 
-#define FMATVEC_NO_BOUNDS_CHECK
-#define FMATVEC_NO_SIZE_CHECK
-
 #include <config.h>
 #include <mbsim/element.h>
 //#include <mbsim/object_interface.h>
