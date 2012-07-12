@@ -364,12 +364,12 @@ namespace MBSim {
       /**
        * \brief normed base-vectors of cone-section 
        */
-      fmatvec::Vec b1, b2;
+      fmatvec::Vec3 b1, b2;
 
       /**
        * \brief distance-vector of circle- and cone-section-midpoint
        */
-      fmatvec::Vec d;
+      fmatvec::Vec3 d;
   };
 
   inline void JacobianPairConeSectionCircle::setDiffVec(fmatvec::Vec3 d_) { d=d_; }

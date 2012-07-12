@@ -77,7 +77,7 @@ namespace MBSim {
        * \brief constructor
        * \param independent direction matrix of translation
        */
-      LinearTranslation(const fmatvec::Mat3V &PJT_) { PJT.assign(PJT_); } 
+      LinearTranslation(const fmatvec::Mat3V &PJT_) { PJT << PJT_; } 
 
       /* INTERFACE OF TRANSLATION */
       virtual int getqSize() const { throw; return 0; }
@@ -507,6 +507,31 @@ namespace MBSim {
       Function1<fmatvec::Vec, double> *angle;
   };
 
+  class TMatrix : public Function2<fmatvec::MatV,fmatvec::Vec,double> {
+    public:
+      /**
+       * \brief constructor
+       */
+      TMatrix() {}
+
+      /**
+       * \brief destructor
+       */
+      virtual ~TMatrix() {}
+
+      /* INTERFACE FOR DERIVED CLASSES */
+      /**
+       * \return column size of TMatrix
+       */
+      virtual int getqSize() const = 0;
+      virtual int getuSize() const = 0;
+
+      virtual fmatvec::MatV operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) = 0;
+
+      virtual void initializeUsingXML(TiXmlElement *element) {};
+      /***************************************************/
+  };
+
   /**
    * \brief base class to describe Jacobians along a path
    * \author Martin Foerg
@@ -514,7 +539,7 @@ namespace MBSim {
    * \date 2009-04-20 some comments (Thorsten Schindler)
    * \date 2010-05-23 Jacobian inherits Function2 (Martin Foerg)
    */
-  class Jacobian : public Function2<fmatvec::Mat,fmatvec::Vec,double> {
+  class Jacobian : public Function2<fmatvec::Mat3V,fmatvec::Vec,double> {
     public:
       /**
        * \brief constructor
@@ -538,7 +563,7 @@ namespace MBSim {
        * \return Jacobian matrix as a function of generalized position and time,
        * J=J(q,t)
        */
-      virtual fmatvec::Mat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) = 0;
+      virtual fmatvec::Mat3V operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) = 0;
 
       virtual void initializeUsingXML(TiXmlElement *element) {};
       /***************************************************/
@@ -566,7 +591,7 @@ namespace MBSim {
 
       /* INTERFACE OF JACOBIAN */
       virtual int getuSize() const { return J.cols(); }
-      virtual fmatvec::Mat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return J; } 
+      virtual fmatvec::Mat3V operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return J; } 
       virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
 
@@ -574,7 +599,7 @@ namespace MBSim {
       /**
        * \brief constant Jacobian
        */
-      fmatvec::Mat J;
+      fmatvec::Mat3V J;
   };
 
   /**
@@ -588,11 +613,11 @@ namespace MBSim {
        * \brief constructor
        * \param size of generalized velocity vector
        */
-      JRotationAboutAxesXY(int uSize_) : uSize(uSize_), J(3,uSize) {}
+      JRotationAboutAxesXY(int uSize_) : uSize(uSize_), J(uSize) {}
 
       /* INTERFACE OF JACOBIAN */
       int getuSize() const { return uSize; }
-      virtual fmatvec::Mat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
+      virtual fmatvec::Mat3V operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       /***************************************************/
 
     private:
@@ -604,7 +629,7 @@ namespace MBSim {
       /**
        * \brief linear relation between differentiated positions and velocities
        */
-      fmatvec::Mat J;
+      fmatvec::Mat3V J;
   };
 
   /**
@@ -618,11 +643,11 @@ namespace MBSim {
        * \brief constructor
        * \param size of generalized velocity vector
        */
-      JRotationAboutAxesYZ(int uSize_) : uSize(uSize_), J(3,uSize) {}
+      JRotationAboutAxesYZ(int uSize_) : uSize(uSize_), J(uSize) {}
 
       /* INTERFACE OF JACOBIAN */
       int getuSize() const { return uSize; }
-      virtual fmatvec::Mat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
+      virtual fmatvec::Mat3V operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       /***************************************************/
 
     private:
@@ -634,7 +659,7 @@ namespace MBSim {
       /**
        * \brief linear relation between differentiated positions and velocities
        */
-      fmatvec::Mat J;
+      fmatvec::Mat3V J;
   };
 
   /**
@@ -648,11 +673,11 @@ namespace MBSim {
        * \brief constructor
        * \param size of generalized velocity vector
        */
-      JRotationAboutAxesXYZ(int uSize_) : uSize(uSize_), J(3,uSize) {}
+      JRotationAboutAxesXYZ(int uSize_) : uSize(uSize_), J(uSize) {}
 
       /* INTERFACE OF JACOBIAN */
       int getuSize() const { return uSize; }
-      virtual fmatvec::Mat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
+      virtual fmatvec::Mat3V operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       /***************************************************/
 
     private:
@@ -664,7 +689,7 @@ namespace MBSim {
       /**
        * \brief linear relation between differentiated positions and velocities
        */
-      fmatvec::Mat J;
+      fmatvec::Mat3V J;
   };
 
   /**
@@ -673,7 +698,7 @@ namespace MBSim {
    * \date 2009-04-08 some comments (Thorsten Schindler)
    * \date 2010-05-23 update according to change in Jacobian (Martin Foerg)
    */
-  class TCardanAngles : public Jacobian {
+  class TCardanAngles : public TMatrix {
     public:
       /**
        * \brief constructor
@@ -683,8 +708,9 @@ namespace MBSim {
       TCardanAngles(int qSize_, int uSize_) : qSize(qSize_), uSize(uSize_), T(qSize,uSize,fmatvec::EYE) {}
 
       /* INTERFACE OF JACOBIAN */
+      int getqSize() const { return qSize; }
       int getuSize() const { return uSize; }
-      virtual fmatvec::Mat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
+      virtual fmatvec::MatV operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       /***************************************************/
 
     private:
@@ -696,7 +722,7 @@ namespace MBSim {
       /**
        * \brief linear relation between differentiated positions and velocities
        */
-      fmatvec::Mat T;
+      fmatvec::MatV T;
   };
 
   /**
@@ -704,7 +730,7 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2010-10-20 first commit (Martin Foerg)
    */
-  class TEulerAngles : public Jacobian {
+  class TEulerAngles : public TMatrix {
     public:
       /**
        * \brief constructor
@@ -719,8 +745,9 @@ namespace MBSim {
       }
 
       /* INTERFACE OF JACOBIAN */
+      int getqSize() const { return qSize; }
       int getuSize() const { return uSize; }
-      virtual fmatvec::Mat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
+      virtual fmatvec::MatV operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       /***************************************************/
 
     private:
@@ -732,7 +759,7 @@ namespace MBSim {
       /**
        * \brief linear relation between differentiated positions and velocities
        */
-      fmatvec::Mat T;
+      fmatvec::MatV T;
   };
 
   /**
@@ -741,7 +768,7 @@ namespace MBSim {
    * \date 2009-04-08 some comments (Thorsten Schindler)
    * \date 2010-05-23 update according to change in Jacobian (Martin Foerg)
    */
-  class TCardanAngles2 : public Jacobian {
+  class TCardanAngles2 : public TMatrix {
     public:
       /**
        * \brief constructor
@@ -751,8 +778,9 @@ namespace MBSim {
       TCardanAngles2(int qSize_, int uSize_) : qSize(qSize_), uSize(uSize_), T(qSize,uSize,fmatvec::EYE) {}
 
       /* INTERFACE OF JACOBIAN */
+      int getqSize() const { return qSize; }
       int getuSize() const { return uSize; }
-      virtual fmatvec::Mat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
+      virtual fmatvec::MatV operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       /***************************************************/
 
     private:
@@ -764,7 +792,7 @@ namespace MBSim {
       /**
        * \brief linear relation between differentiated positions and velocities
        */
-      fmatvec::Mat T;
+      fmatvec::MatV T;
   };
 
   /**
@@ -772,7 +800,7 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2010-10-20 first commit (Martin Foerg)
    */
-  class TEulerAngles2 : public Jacobian {
+  class TEulerAngles2 : public TMatrix {
     public:
       /**
        * \brief constructor
@@ -783,8 +811,9 @@ namespace MBSim {
       }
 
       /* INTERFACE OF JACOBIAN */
+      int getqSize() const { return qSize; }
       int getuSize() const { return uSize; }
-      virtual fmatvec::Mat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
+      virtual fmatvec::MatV operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       /***************************************************/
 
     private:
@@ -796,22 +825,22 @@ namespace MBSim {
       /**
        * \brief linear relation between differentiated positions and velocities
        */
-      fmatvec::Mat T;
+      fmatvec::MatV T;
   };
 
   /**
    * \brief derivative of Jacobian for rotation about axes x and y
    * \author Martin Foerg
    */
-  class JdRotationAboutAxesXY : public Function3<fmatvec::Mat,fmatvec::Vec,fmatvec::Vec,double> {
+  class JdRotationAboutAxesXY : public Function3<fmatvec::Mat3V,fmatvec::Vec,fmatvec::Vec,double> {
     public:
       /**
        * \brief constructor
        * \param size of generalized velocity vector
        */
-      JdRotationAboutAxesXY(int uSize_) : uSize(uSize_), Jd(3,uSize) {}
+      JdRotationAboutAxesXY(int uSize_) : uSize(uSize_), Jd(uSize) {}
 
-      virtual fmatvec::Mat operator()(const fmatvec::Vec &qd, const fmatvec::Vec& q, const double& t, const void*);
+      virtual fmatvec::Mat3V operator()(const fmatvec::Vec &qd, const fmatvec::Vec& q, const double& t, const void*);
 
     private:
       /**
@@ -822,22 +851,22 @@ namespace MBSim {
       /**
        * \brief linear relation between differentiated positions and velocities
        */
-      fmatvec::Mat Jd;
+      fmatvec::Mat3V Jd;
   };
 
   /**
    * \brief derivative of Jacobian for rotation about axes y and z
    * \author Martin Foerg
    */
-  class JdRotationAboutAxesYZ : public Function3<fmatvec::Mat,fmatvec::Vec,fmatvec::Vec,double> {
+  class JdRotationAboutAxesYZ : public Function3<fmatvec::Mat3V,fmatvec::Vec,fmatvec::Vec,double> {
     public:
       /**
        * \brief constructor
        * \param size of generalized velocity vector
        */
-      JdRotationAboutAxesYZ(int uSize_) : uSize(uSize_), Jd(3,uSize) {}
+      JdRotationAboutAxesYZ(int uSize_) : uSize(uSize_), Jd(uSize) {}
 
-      virtual fmatvec::Mat operator()(const fmatvec::Vec &qd, const fmatvec::Vec& q, const double& t, const void*);
+      virtual fmatvec::Mat3V operator()(const fmatvec::Vec &qd, const fmatvec::Vec& q, const double& t, const void*);
 
     private:
       /**
@@ -848,22 +877,22 @@ namespace MBSim {
       /**
        * \brief linear relation between differentiated positions and velocities
        */
-      fmatvec::Mat Jd;
+      fmatvec::Mat3V Jd;
   };
 
   /**
    * \brief derivative of Jacobian for rotation about axes x and y
    * \author Martin Foerg
    */
-  class JdRotationAboutAxesXYZ : public Function3<fmatvec::Mat,fmatvec::Vec,fmatvec::Vec,double> {
+  class JdRotationAboutAxesXYZ : public Function3<fmatvec::Mat3V,fmatvec::Vec,fmatvec::Vec,double> {
     public:
       /**
        * \brief constructor
        * \param size of generalized velocity vector
        */
-      JdRotationAboutAxesXYZ(int uSize_) : uSize(uSize_), Jd(3,uSize) {}
+      JdRotationAboutAxesXYZ(int uSize_) : uSize(uSize_), Jd(uSize) {}
 
-      virtual fmatvec::Mat operator()(const fmatvec::Vec &qd, const fmatvec::Vec& q, const double& t, const void*);
+      virtual fmatvec::Mat3V operator()(const fmatvec::Vec &qd, const fmatvec::Vec& q, const double& t, const void*);
 
     private:
       /**
@@ -874,7 +903,7 @@ namespace MBSim {
       /**
        * \brief linear relation between differentiated positions and velocities
        */
-      fmatvec::Mat Jd;
+      fmatvec::Mat3V Jd;
   };
 
 ////   class Kinematics {

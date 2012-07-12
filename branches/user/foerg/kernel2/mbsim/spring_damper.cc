@@ -58,7 +58,7 @@ namespace MBSim {
     if(dist>epsroot())
       n=WrP0P1/dist;
     else
-      n=Vec(3,INIT,0);
+      n.init(0);
     if(refFrame==0) // Point to Point
       g(0)=dist;
     else {
@@ -118,8 +118,8 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
         if (coilspringOpenMBV) {
-          Vec WrOToPoint;
-          Vec WrOFromPoint;
+          Vec3 WrOToPoint;
+          Vec3 WrOFromPoint;
 
           WrOFromPoint = frame[0]->getPosition();
           WrOToPoint   = frame[1]->getPosition();

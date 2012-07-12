@@ -149,11 +149,11 @@ namespace MBSim {
       IT = Index(0,forceDir.cols()-1);
       IR = Index(forceDir.cols(),forceDir.cols()+momentDir.cols()-1);
       if(forceDir.cols()) 
-        Wf.assign(forceDir);
+        Wf << forceDir;
       else {
       }
       if(momentDir.cols())
-        Wm.assign(momentDir);
+        Wm << momentDir;
       else {
       }
 
@@ -509,7 +509,7 @@ namespace MBSim {
 
   void Joint::setForceDirection(const Mat3V &fd) {
 
-    forceDir.assign(fd);
+    forceDir << fd;
 
     for(int i=0; i<fd.cols(); i++)
       forceDir.set(i, forceDir.col(i)/nrm2(fd.col(i)));
@@ -517,7 +517,7 @@ namespace MBSim {
 
   void Joint::setMomentDirection(const Mat3V &md) {
 
-    momentDir.assign(md);
+    momentDir << md;
 
     for(int i=0; i<md.cols(); i++)
       momentDir.set(i, momentDir.col(i)/nrm2(md.col(i)));

@@ -44,9 +44,10 @@ class ObjectFactory {
     virtual Jacobian *createJacobian(TiXmlElement *element);
     virtual Function1<double,double> *createFunction1_SS(TiXmlElement *element);
     virtual Function1<fmatvec::Vec,double> *createFunction1_VS(TiXmlElement *element);
+    virtual Function1<fmatvec::Vec3,double> *createFunction1_V3S(TiXmlElement *element);
     virtual Function2<double,double,double> *createFunction2_SSS(TiXmlElement *element);
     virtual Function2<fmatvec::Vec,fmatvec::Vec,double> *createFunction2_VVS(TiXmlElement *element);
-    virtual Function3<fmatvec::Mat,fmatvec::Vec,fmatvec::Vec,double> *createFunction3_MVVS(TiXmlElement *element);
+    virtual Function3<fmatvec::Mat3V,fmatvec::Vec,fmatvec::Vec,double> *createFunction3_MVVS(TiXmlElement *element);
     virtual ContourFunction1s * createContourFunction1s(TiXmlElement * element);
 };
 
@@ -75,9 +76,10 @@ class MBSimObjectFactory : protected ObjectFactory {
     Jacobian *createJacobian(TiXmlElement *element);
     Function1<double,double> *createFunction1_SS(TiXmlElement *element);
     Function1<fmatvec::Vec,double> *createFunction1_VS(TiXmlElement *element);
+    Function1<fmatvec::Vec3,double> *createFunction1_V3S(TiXmlElement *element);
     Function2<double,double,double> *createFunction2_SSS(TiXmlElement *element);
     Function2<fmatvec::Vec,fmatvec::Vec,double> *createFunction2_VVS(TiXmlElement *element);
-    Function3<fmatvec::Mat,fmatvec::Vec,fmatvec::Vec,double> *createFunction3_MVVS(TiXmlElement *element);
+    Function3<fmatvec::Mat3V,fmatvec::Vec,fmatvec::Vec,double> *createFunction3_MVVS(TiXmlElement *element);
     ContourFunction1s * createContourFunction1s(TiXmlElement * element) {return 0; }
 };
 

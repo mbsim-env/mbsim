@@ -159,6 +159,13 @@ namespace MBSim {
     return 0;
   }
 
+  Function1<Vec3,double> *ObjectFactory::createFunction1_V3S(TiXmlElement *element) {
+    Function1<Vec3,double> *obj;
+    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+      if((obj=(*i)->createFunction1_V3S(element))) return obj;
+    return 0;
+  }
+
   Function2<double,double,double> *ObjectFactory::createFunction2_SSS(TiXmlElement *element) {
     Function2<double,double,double> *obj;
     for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
@@ -173,8 +180,8 @@ namespace MBSim {
     return 0;
   }
 
-  Function3<Mat,Vec,Vec,double> *ObjectFactory::createFunction3_MVVS(TiXmlElement *element) {
-    Function3<Mat,Vec,Vec,double> *obj;
+  Function3<Mat3V,Vec,Vec,double> *ObjectFactory::createFunction3_MVVS(TiXmlElement *element) {
+    Function3<Mat3V,Vec,Vec,double> *obj;
     for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->createFunction3_MVVS(element))) return obj;
     return 0;
@@ -395,6 +402,30 @@ namespace MBSim {
     return 0;
   }
 
+  Function1<Vec3,double> *MBSimObjectFactory::createFunction1_V3S(TiXmlElement *element) {
+//    if(element->ValueStr()==MBSIMNS"ConstantFunction1_VS")
+//      return new ConstantFunction1<Vec,double>;
+//    if(element->ValueStr()==MBSIMNS"PiecewisePolynom1_VS")
+//      return new PPolynom;
+//    if(element->ValueStr()==MBSIMNS"QuadraticFunction1_VS")
+//      return new QuadraticFunction1_VS;
+//    if(element->ValueStr()==MBSIMNS"SinusFunction1_VS")
+//      return new SinusFunction1_VS;
+//    if(element->ValueStr()==MBSIMNS"PositiveSinusFunction1_VS")
+//      return new PositiveSinusFunction1_VS;
+//    if(element->ValueStr()==MBSIMNS"StepFunction1_VS")
+//      return new StepFunction1_VS;
+//    if(element->ValueStr()==MBSIMNS"TabularFunction1_VS")
+//      return new TabularFunction1_VS;
+//    if(element->ValueStr()==MBSIMNS"PeriodicTabularFunction1_VS")
+//      return new PeriodicTabularFunction1_VS;
+//    if(element->ValueStr()==MBSIMNS"SummationFunction1_VS")
+//      return new SummationFunction1_VS;
+//    if(element->ValueStr()==MBSIMNS"Function1_VS_from_SS")
+//      return new Function1_VS_from_SS;
+    return 0;
+  }
+
   Function2<double,double,double> *MBSimObjectFactory::createFunction2_SSS(TiXmlElement *element) {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"ConstantFunction2_SSS")
@@ -421,7 +452,7 @@ namespace MBSim {
     return 0;
   }
 
-  Function3<Mat,Vec,Vec,double> *MBSimObjectFactory::createFunction3_MVVS(TiXmlElement *element) {
+  Function3<Mat3V,Vec,Vec,double> *MBSimObjectFactory::createFunction3_MVVS(TiXmlElement *element) {
     return 0;
   }
 

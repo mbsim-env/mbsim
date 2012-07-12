@@ -111,9 +111,9 @@ namespace MBSim {
       void setIndependentBody(RigidBody* bi);
 
       virtual void setUpInverseKinetics();
-      void setForceDirection(const fmatvec::Mat3V& d_) {dT = d_;}
-      void setMomentDirection(const fmatvec::Mat3V& d_) {dR = d_;}
-      void setq0(const fmatvec::Vec& q0_) {q0 = q0_;}
+      void setForceDirection(const fmatvec::Mat3V& d_) {dT << d_;}
+      void setMomentDirection(const fmatvec::Mat3V& d_) {dR << d_;}
+      void setq0(const fmatvec::Vec& q0_) {q0 << q0_;}
 
       fmatvec::Vec res(const fmatvec::Vec& q, const double& t);
       void updateStateDependentVariables(double t); 
