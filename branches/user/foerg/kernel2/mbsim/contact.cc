@@ -202,11 +202,11 @@ namespace MBSim {
       int hInd =  contour[i]->gethInd(j);
       Index I = Index(hInd,hInd+contour[i]->gethSize(j)-1);
       Index J = Index(laInd,laInd+laSize-1);
-      W[j][i].resize()>>WParent(I,J);
+      W[j][i]>>WParent(I,J);
       for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
         Index Ik = Index(0,W[j][i].rows()-1);
         Index Jk = Index(laIndk[k],laIndk[k]+laSizek[k]-1);
-        Wk[j][k][i].resize()>>W[j][i](Ik,Jk);
+        Wk[j][k][i]>>W[j][i](Ik,Jk);
       }
     }
   } 
@@ -216,11 +216,11 @@ namespace MBSim {
       int hInd =  contour[i]->gethInd(j);
       Index J = Index(laInd,laInd+laSize-1);
       Index I = Index(hInd,hInd+contour[i]->gethSize(j)-1);
-      V[j][i].resize()>>VParent(I,J);
+      V[j][i]>>VParent(I,J);
       for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
         Index Ik = Index(0,V[j][i].rows()-1);
         Index Jk = Index(laIndk[k],laIndk[k]+laSizek[k]-1);
-        Vk[j][k][i].resize()>>V[j][i](Ik,Jk);
+        Vk[j][k][i]>>V[j][i](Ik,Jk);
       }
     } 
   }
@@ -229,38 +229,38 @@ namespace MBSim {
     for(unsigned i=0; i<contour.size(); i++) {
       int hInd =  contour[i]->gethInd(j);
       Index I = Index(hInd,hInd+contour[i]->gethSize(j)-1);
-      h[j][i].resize()>>hParent(I);
+      h[j][i]>>hParent(I);
     }
   } 
 
   void Contact::updatewbRef(const Vec& wbParent) {
     LinkMechanics::updatewbRef(wbParent);
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) 
-      wbk[k].resize() >> wb(laIndk[k],laIndk[k]+laSizek[k]-1);
+      wbk[k] >> wb(laIndk[k],laIndk[k]+laSizek[k]-1);
   }
 
   void Contact::updatelaRef(const Vec& laParent) {
     LinkMechanics::updatelaRef(laParent);
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) 
-      lak[k].resize() >> la(laIndk[k],laIndk[k]+laSizek[k]-1);
+      lak[k] >> la(laIndk[k],laIndk[k]+laSizek[k]-1);
   }
 
   void Contact::updategRef(const Vec& gParent) {
     LinkMechanics::updategRef(gParent);
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) 
-      gk[k].resize() >> g(gIndk[k],gIndk[k]+gSizek[k]-1);
+      gk[k] >> g(gIndk[k],gIndk[k]+gSizek[k]-1);
   }
 
   void Contact::updategdRef(const Vec& gdParent) {
     LinkMechanics::updategdRef(gdParent);
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) 
-      gdk[k].resize() >> gd(gdIndk[k],gdIndk[k]+gdSizek[k]-1);
+      gdk[k] >> gd(gdIndk[k],gdIndk[k]+gdSizek[k]-1);
   }
 
   void Contact::updaterFactorRef(const Vec& rFactorParent) {
     LinkMechanics::updaterFactorRef(rFactorParent);
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) 
-      rFactork[k].resize() >> rFactor(rFactorIndk[k],rFactorIndk[k]+rFactorSizek[k]-1);
+      rFactork[k] >> rFactor(rFactorIndk[k],rFactorIndk[k]+rFactorSizek[k]-1);
   }
 
   void Contact::updatesvRef(const Vec &svParent) {
@@ -512,11 +512,11 @@ namespace MBSim {
         cpData[k][1].getFrameOfReference().getJacobianOfTranslation(1).resize(contour[1]->getReferenceJacobianOfTranslation(1).cols());
         cpData[k][1].getFrameOfReference().getJacobianOfRotation(0).resize(contour[1]->getReferenceJacobianOfRotation(0).cols());
         cpData[k][1].getFrameOfReference().getJacobianOfRotation(1).resize(contour[1]->getReferenceJacobianOfRotation(1).cols());
-	lak[k].resize() >> la(k*(1+getFrictionDirections()),(k+1)*(1+getFrictionDirections())-1);
-	gdk[k].resize() >> gd(k*(1+getFrictionDirections()),(k+1)*(1+getFrictionDirections())-1);
-        gdnk[k].resize() >> gdn(k*(1+getFrictionDirections()),(k+1)*(1+getFrictionDirections())-1);
-        gddk[k].resize() >> gdd(k*(1+getFrictionDirections()),(k+1)*(1+getFrictionDirections())-1);
-        gk[k].resize() >> g(k,k);
+	lak[k] >> la(k*(1+getFrictionDirections()),(k+1)*(1+getFrictionDirections())-1);
+	gdk[k] >> gd(k*(1+getFrictionDirections()),(k+1)*(1+getFrictionDirections())-1);
+        gdnk[k] >> gdn(k*(1+getFrictionDirections()),(k+1)*(1+getFrictionDirections())-1);
+        gddk[k] >> gdd(k*(1+getFrictionDirections()),(k+1)*(1+getFrictionDirections())-1);
+        gk[k] >> g(k,k);
         gddkBuf[k].resize(1+getFrictionDirections());
       }
     }
@@ -1400,7 +1400,7 @@ namespace MBSim {
   void Contact::updatecorrRef(const Vec& corrParent) {
     LinkMechanics::updatecorrRef(corrParent);
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) 
-      corrk[k].resize() >> corr(corrIndk[k],corrIndk[k]+corrSizek[k]-1);
+      corrk[k] >> corr(corrIndk[k],corrIndk[k]+corrSizek[k]-1);
   }
 
   void Contact::updatecorr(int j) {

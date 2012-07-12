@@ -189,6 +189,7 @@ namespace MBSim {
       virtual void updateb(double t);
       void calcbSize();
       void setBody(RigidBody* body_)    { body = body_; }
+      virtual void init(InitStage stage);
 
     protected:
       RigidBody* body;

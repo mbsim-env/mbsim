@@ -275,10 +275,10 @@ namespace MBSim {
       void setq(const fmatvec::Vec &q_) { q = q_; }
       void setu(const fmatvec::Vec &u_) { u = u_; }
 
-      void setInitialGeneralizedPosition(const fmatvec::Vec &q0_) { q0 = q0_; }
-      void setInitialGeneralizedVelocity(const fmatvec::Vec &u0_) { u0 = u0_; }
-      void setInitialGeneralizedPosition(double q0_) { q0 = fmatvec::Vec(1,fmatvec::INIT,q0_); }
-      void setInitialGeneralizedVelocity(double u0_) { u0 = fmatvec::Vec(1,fmatvec::INIT,u0_); }
+      void setInitialGeneralizedPosition(const fmatvec::Vec &q0_) { q0 << q0_; }
+      void setInitialGeneralizedVelocity(const fmatvec::Vec &u0_) { u0 << u0_; }
+      void setInitialGeneralizedPosition(double q0_) { q0 << fmatvec::Vec(1,fmatvec::INIT,q0_); }
+      void setInitialGeneralizedVelocity(double u0_) { u0 << fmatvec::Vec(1,fmatvec::INIT,u0_); }
 
       /*******************************************************/ 
 

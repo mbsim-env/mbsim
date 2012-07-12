@@ -764,7 +764,7 @@ namespace MBSim {
 
     int iter;
     Vec laOld;
-    laOld = la;
+    laOld << la;
     iter = (this->*solveConstraints_)(); // solver election
     if(iter >= maxIter) {
       if(INFO)  { 
@@ -797,7 +797,7 @@ namespace MBSim {
 
     int iter;
     Vec laOld;
-    laOld = la;
+    laOld << la;
     iter = (this->*solveImpacts_)(dt); // solver election
     if(iter >= maxIter) {
       if (INFO) {
@@ -883,9 +883,9 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updateG(double t, int j) {
-    G.resize() = SqrMat(W[j].T()*slvLLFac(LLM[j],V[j])); 
+    G << SqrMat(W[j].T()*slvLLFac(LLM[j],V[j])); 
 
-    if(checkGSize) Gs.resize();
+    if(checkGSize) ; // Gs.resize();
     else if(Gs.cols() != G.size()) {
       static double facSizeGs = 1;
       if(G.size()>limitGSize && fabs(facSizeGs-1) < epsroot()) facSizeGs = double(countElements(G))/double(G.size()*G.size())*1.5;
@@ -1379,7 +1379,7 @@ namespace MBSim {
       updateG(t); 
       //updatewb(t); // not relevant for impact
 
-      b.resize() = gd; // b = gd + trans(W)*slvLLFac(LLM,h)*dt with dt=0
+      b << gd; // b = gd + trans(W)*slvLLFac(LLM,h)*dt with dt=0
       solveImpacts();
       u += deltau(zParent,t,0);
 
@@ -1415,7 +1415,7 @@ namespace MBSim {
         updateV(t); 
         updateG(t); 
         updatewb(t); 
-	b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
+	b << W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
         solveConstraints();
 
         checkActive(4);
@@ -1451,7 +1451,7 @@ namespace MBSim {
         updateV(t);  // TODO necessary
         updateG(t);  // TODO necessary 
         updatewb(t);  // TODO necessary 
-	b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
+	b << W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
         solveConstraints();
 
         checkActive(4);
@@ -1511,7 +1511,7 @@ namespace MBSim {
       updateV(t); 
       updateG(t); 
       updatewb(t); 
-      b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
+      b << W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
       solveConstraints();
     }
     updateStopVector(t);
