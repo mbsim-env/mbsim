@@ -61,17 +61,10 @@ dnl Helper functions to convert path to windows
 dirtowin() {
   echo $(cd $1 && pwd -W 2> /dev/null)
 }
-filetowin() {
-  echo $(cd $(dirname $1) && pwd -W 2> /dev/null)/$(basename $1)
-}
 dnl Convert to Windows path
 win_MBXMLUTILSSCHEMA=$(dirtowin $MBXMLUTILSSCHEMA)
 AC_SUBST([win_MBXMLUTILSSCHEMA])
-win_MBXMLUTILSBINDIR=$(dirtowin $MBXMLUTILSBINDIR)
-AC_SUBST([win_MBXMLUTILSBINDIR])
 mkdir -p $(eval echo $(eval echo $prefix/bin)) 2> /dev/null
-win_bindir=$(dirtowin $(eval echo $(eval echo $prefix/bin)))
-AC_SUBST([win_bindir])
 BINDIR=$(eval echo $(eval echo $prefix/bin))
 AC_SUBST([BINDIR])
 dnl Convert to native path
