@@ -259,7 +259,7 @@ namespace MBSimControl {
 
   void SignalTimeDiscretization::updateg(double t) { 
     if (fabs(tOld-t)>epsroot()) {
-      y<<s->getSignal(); 
+      y=s->getSignal(); 
       tOld=t; 
     } 
   }

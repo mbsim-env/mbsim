@@ -27,16 +27,16 @@ using namespace fmatvec;
 namespace MBSimControl {
       
   FunctionSensor::FunctionSensor(const std::string &name, Function1<fmatvec::Vec, double>* function_) : Sensor(name), function(function_) {
-    y<<(*function)(0);
+    y=(*function)(0);
   }
 
   void FunctionSensor::setFunction(Function1<fmatvec::Vec, double>* function_) {
     function=function_; 
-    y<<(*function)(0); 
+    y=(*function)(0); 
   }
   void FunctionSensor::updateg(double t) {
     Sensor::updateg(t);
-    y<<(*function)(t); 
+    y=(*function)(t); 
   }
 
   void FunctionSensor::initializeUsingXML(TiXmlElement *element) {
@@ -44,7 +44,7 @@ namespace MBSimControl {
     TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"function");
     function=MBSim::ObjectFactory::getInstance()->getInstance()->createFunction1_VS(e->FirstChildElement()); 
     function->initializeUsingXML(e->FirstChildElement());
-    y<<(*function)(0);
+    y=(*function)(0);
   }
 
 
