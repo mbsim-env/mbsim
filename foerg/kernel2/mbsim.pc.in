@@ -9,5 +9,5 @@ Description: mbsim is a multi-body simulation library.
 Requires: @requires@
 Version: @VERSION@
 Libs: -L${libdir} -lmbsim @mbsimtinyxmlPC@
-Cflags: -I${includedir} @DEFINES@ @openmbv_compilerflag@ @numerics_compilerflag@
+Cflags: -I${includedir} @DEFINES@ @openmbv_compilerflag@
 
