@@ -18,6 +18,8 @@ AC_HEADER_STDBOOL
 
 PKG_CHECK_MODULES(DEPS, mbsim >= 3.0.0)
 
+AC_DEFINE([FMATVEC_RESIZE_VOID],[],[Resizing of void matrices])
+
 dnl versioning (see http://www.gnu.org/software/libtool/manual.html)
 dnl current: 	The most recent interface number that this library implements. 
 dnl revision: 	The implementation number of the current interface. 
