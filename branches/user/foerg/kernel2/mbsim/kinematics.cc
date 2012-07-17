@@ -550,11 +550,11 @@ namespace MBSim {
 ////           fPdJR = new JdRotationAboutAxesXY(uSize[0]);
 ////         }
 ////         else if(dynamic_cast<CardanAngles*>(fAPK)) {
-////           JR.resize() << DiagMat(3,INIT,1);
+////           JR.resize() = DiagMat(3,INIT,1);
 //// 	  fT = new TCardanAngles(qSize,uSize[0]);
 ////         }
 //// 	else if(dynamic_cast<EulerAngles*>(fAPK)) {
-////           JR.resize() << DiagMat(3,INIT,1);
+////           JR.resize() = DiagMat(3,INIT,1);
 //// 	  fT = new TEulerAngles(qSize,uSize[0]);
 ////         }
 //// 

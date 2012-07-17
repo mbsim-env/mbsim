@@ -62,10 +62,10 @@ namespace MBSim {
       DOPRI5Integrator();
       ~DOPRI5Integrator() {}
 
-      void setAbsoluteTolerance(const fmatvec::Vec &aTol_) {aTol << aTol_;}
-      void setAbsoluteTolerance(double aTol_) {aTol << fmatvec::Vec(1,fmatvec::INIT,aTol_);}
-      void setRelativeTolerance(const fmatvec::Vec &rTol_) {rTol << rTol_;}
-      void setRelativeTolerance(double rTol_) {rTol << fmatvec::Vec(1,fmatvec::INIT,rTol_);}
+      void setAbsoluteTolerance(const fmatvec::Vec &aTol_) {aTol = aTol_;}
+      void setAbsoluteTolerance(double aTol_) {aTol = fmatvec::Vec(1,fmatvec::INIT,aTol_);}
+      void setRelativeTolerance(const fmatvec::Vec &rTol_) {rTol = rTol_;}
+      void setRelativeTolerance(double rTol_) {rTol = fmatvec::Vec(1,fmatvec::INIT,rTol_);}
       void setInitialStepSize(double dt0_) {dt0 = dt0_;}
       void setMaxStepNumber(int maxSteps_) {maxSteps = maxSteps_;}    
       void setMaximalStepSize(double dtMax_) {dtMax = dtMax_;}

@@ -57,8 +57,8 @@ namespace MBSim {
 
       void setMaximalStepSize(double dtMax_) {dtMax = dtMax_;}
       void setMinimalStepSize(double dtMin_) {dtMin = dtMin_;}
-      void setAbsoluteTolerance(const fmatvec::Vec &aTol_) {aTol << aTol_;}
-      void setAbsoluteTolerance(double aTol_) {aTol << fmatvec::Vec(1,fmatvec::INIT,aTol_);}
+      void setAbsoluteTolerance(const fmatvec::Vec &aTol_) {aTol = aTol_;}
+      void setAbsoluteTolerance(double aTol_) {aTol = fmatvec::Vec(1,fmatvec::INIT,aTol_);}
       void setRelativeTolernace(double rTol_) {rTol = rTol_;}
       void setInitialStepSize(double dt0_) {dt0 = dt0_;}
 
