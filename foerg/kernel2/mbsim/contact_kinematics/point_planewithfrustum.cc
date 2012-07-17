@@ -132,8 +132,8 @@ namespace MBSim {
     Vec3 KrCP;
     if (d<rTop) { // Contact with small plane
       // cerr << "Fall 1" << endl;
-      Kn=Vec("[1; 0; 0]");
-      Kt=Vec("[0; -1; 0]");
+      Kn=Vec3("[1; 0; 0]");
+      Kt=Vec3("[0; -1; 0]");
       g(0)=KrOPoint(0)-h;
       KrCP(0)=h;
       KrCP(1)=KrOPoint(1);
@@ -179,8 +179,8 @@ namespace MBSim {
     }
     else { // contact with infinite plane
       // cerr << "Fall 5" << endl;
-      Kn=Vec("[1; 0; 0]");
-      Kt=Vec("[0; -1; 0]");
+      Kn=Vec3("[1; 0; 0]");
+      Kt=Vec3("[0; -1; 0]");
       g(0)=KrOPoint(0);
       KrCP(0)=0.;
       KrCP(1)=KrOPoint(1);

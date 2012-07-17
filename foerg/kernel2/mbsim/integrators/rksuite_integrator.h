@@ -46,8 +46,8 @@ namespace MBSim {
       /* GETTER / SETTER */
       void setMethod(int method_) {method = method_;}
       void setrTol(double rTol_) {rTol = rTol_;}
-      void setThreshold(const fmatvec::Vec &thres_) {thres << thres_;}
-      void setThreshold(double thres_) {thres << fmatvec::Vec(1,fmatvec::INIT,thres_);}
+      void setThreshold(const fmatvec::Vec &thres_) {thres = thres_;}
+      void setThreshold(double thres_) {thres = fmatvec::Vec(1,fmatvec::INIT,thres_);}
       void setInitialStepSize(double dt0_) {dt0 = dt0_;}
       /***************************************************/
 

@@ -211,7 +211,7 @@ namespace MBSim {
       for(int i=1;i<=(parent->order);i++) // Horner scheme
         yi = yi*dx+trans(((parent->coefs)[i]).row(parent->index));
       xSave=x;
-      ySave<<yi;
+      ySave=yi;
       return yi.copy();
     }
   }
@@ -237,7 +237,7 @@ namespace MBSim {
       for(int i=1;i<parent->order;i++)
         yi = yi*dx+trans(((parent->coefs)[i]).row(parent->index))*((parent->order)-i);
       xSave=x;
-      ySave<<yi;
+      ySave=yi;
       return yi.copy();
     }
   }
@@ -263,7 +263,7 @@ namespace MBSim {
       for(int i=1;i<=((parent->order)-2);i++)
         yi = yi*dx+trans(((parent->coefs)[i]).row(parent->index))*((parent->order)-i)*((parent->order)-i-1);
       xSave=x;
-      ySave<<yi;
+      ySave=yi;
       return yi.copy();
     }
   }

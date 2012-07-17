@@ -241,7 +241,7 @@ namespace MBSim {
       if(fPJT==0) {
         Mat3V JT;
         if(dynamic_cast<LinearTranslation*>(fPrPK)) {
-          JT << dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors();
+          JT = dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors();
         }
         PJT[0].set(Index(0,2), Index(0,JT.cols()-1),JT);
       }
@@ -249,13 +249,13 @@ namespace MBSim {
         Mat3V JR;
 
         if(dynamic_cast<RotationAboutXAxis*>(fAPK))
-          JR << Vec3("[1;0;0]");
+          JR = Vec3("[1;0;0]");
 	else if(dynamic_cast<RotationAboutYAxis*>(fAPK))
-          JR << Vec3("[0;1;0]");
+          JR = Vec3("[0;1;0]");
 	else if(dynamic_cast<RotationAboutZAxis*>(fAPK))
-          JR << Vec3("[0;0;1]");
+          JR = Vec3("[0;0;1]");
         else if(dynamic_cast<RotationAboutFixedAxis*>(fAPK))
-          JR << dynamic_cast<RotationAboutFixedAxis*>(fAPK)->getAxisOfRotation();
+          JR = dynamic_cast<RotationAboutFixedAxis*>(fAPK)->getAxisOfRotation();
         else if(dynamic_cast<RotationAboutAxesYZ*>(fAPK)) {
           fPJR = new JRotationAboutAxesYZ(nu[0]);
           fPdJR = new JdRotationAboutAxesYZ(nu[0]);
@@ -265,7 +265,7 @@ namespace MBSim {
           fPdJR = new JdRotationAboutAxesXY(nu[0]);
         }
         else if(dynamic_cast<CardanAngles*>(fAPK)) {
-          JR << Mat33(EYE);
+          JR = Mat33(EYE);
           if(cb)
             fT = new TCardanAngles2(nq,nu[0]);
           else
@@ -276,7 +276,7 @@ namespace MBSim {
           fPdJR = new JdRotationAboutAxesXYZ(nu[0]);
         }
 	else if(dynamic_cast<EulerAngles*>(fAPK)) {
-          JR << Mat33(EYE);
+          JR = Mat33(EYE);
           if(cb)
             fT = new TEulerAngles2(nq,nu[0]);
           else

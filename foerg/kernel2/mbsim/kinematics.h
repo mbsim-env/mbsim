@@ -77,7 +77,7 @@ namespace MBSim {
        * \brief constructor
        * \param independent direction matrix of translation
        */
-      LinearTranslation(const fmatvec::Mat3V &PJT_) { PJT << PJT_; } 
+      LinearTranslation(const fmatvec::Mat3V &PJT_) { PJT = PJT_; } 
 
       /* INTERFACE OF TRANSLATION */
       virtual int getqSize() const { throw; return 0; }

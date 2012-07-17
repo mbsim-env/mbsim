@@ -171,7 +171,6 @@ namespace MBSim {
     const double sa2=sin(zeta2);
     const double ca2=cos(zeta2);
     const double r2=nrm2(WrP1Z);
-    //cout << r1 << " " << r2 << endl;
     Vec3 Ks2(NONINIT);
     Ks2(0)=-r2*sa2;
     Ks2(1)=r2*ca2;

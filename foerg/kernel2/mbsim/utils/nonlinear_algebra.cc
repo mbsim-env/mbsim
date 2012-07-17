@@ -173,7 +173,7 @@ namespace MBSim {
 
     iter=0;
     Vec x, xold;
-    x << x0;
+    x = x0;
 
     Vec f = (*fct)(x);
     norms.clear();
@@ -187,9 +187,9 @@ namespace MBSim {
       }
 
       if(jac)
-        J << (*jac)(x);
+        J = (*jac)(x);
       else {
-        J << SqrMat(x.size()); // initialise size
+        J = SqrMat(x.size()); // initialise size
         double dx, xj;
         Vec f2;
 
@@ -202,7 +202,7 @@ namespace MBSim {
           } while (fabs(xj + dx - x(j))<epsroot());
 
           x(j)+=dx;
-          f2 << (*fct)(x);
+          f2 = (*fct)(x);
           x(j)=xj;
           J.col(j) = (f2-f)/dx;
         }
@@ -212,7 +212,7 @@ namespace MBSim {
 
       double nrmf = 1;
       double alpha = 1;
-      xold << x;
+      xold = x;
       for (int k=0; k<kmax; k++) {
         x = xold - alpha*dx;
         f = (*fct)(x);
