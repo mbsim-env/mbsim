@@ -1,3 +1,4 @@
+#include "config.h"
 #include "cardan_shaft.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/rigid_body.h"
