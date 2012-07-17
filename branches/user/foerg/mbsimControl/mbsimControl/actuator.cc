@@ -32,15 +32,15 @@ namespace MBSimControl {
   }
 
   void Actuator::updateh(double t, int j) {
-    la << signal->getSignal();
+    la = signal->getSignal();
     if(KOSYID) { // calculation of force / moment direction
       Wf = frame[KOSYID-1]->getOrientation()*forceDir;
       Wm = frame[KOSYID-1]->getOrientation()*momentDir;
     }
-    WF[0] << Wf*la(IT);
-    WF[1] << -WF[0];
-    WM[0] << Wm*la(IR);
-    WM[1] << -WM[0];
+    WF[0] = Wf*la(IT);
+    WF[1] = -WF[0];
+    WM[0] = Wm*la(IR);
+    WM[1] = -WM[0];
 
     h[j][0] += frame[0]->getJacobianOfTranslation(j).T()*WF[0] + frame[0]->getJacobianOfRotation(j).T()*WM[0];
     h[j][1] += frame[1]->getJacobianOfTranslation(j).T()*WF[1] + frame[1]->getJacobianOfRotation(j).T()*WM[1];
@@ -59,13 +59,13 @@ namespace MBSimControl {
       IT = Index(0,forceDir.cols()-1);
       IR = Index(forceDir.cols(),forceDir.cols()+momentDir.cols()-1);
       if(forceDir.cols()) 
-        Wf << forceDir;
+        Wf = forceDir;
       else {
         forceDir.resize(3,0);
         Wf.resize(3,0);
       }
       if(momentDir.cols())
-        Wm << momentDir;
+        Wm = momentDir;
       else {
         momentDir.resize(3,0);
         Wm.resize(3,0);
@@ -88,7 +88,7 @@ namespace MBSimControl {
   void Actuator::setForceDirection(const Mat &fd) {
     assert(fd.rows() == 3);
 
-    forceDir << fd;
+    forceDir = fd;
 
     for(int i=0; i<fd.cols(); i++)
       forceDir.col(i) = forceDir.col(i)/nrm2(fd.col(i));
@@ -97,7 +97,7 @@ namespace MBSimControl {
   void Actuator::setMomentDirection(const Mat &md) {
     assert(md.rows() == 3);
 
-    momentDir << md;
+    momentDir = md;
 
     for(int i=0; i<md.cols(); i++)
       momentDir.col(i) = momentDir.col(i)/nrm2(md.col(i));
