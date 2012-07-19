@@ -118,7 +118,7 @@ namespace MBSim {
     const Vec3 Om1 = cpData[icircle0].getFrameOfReference().getAngularVelocity();
     const Vec3 Om2 = cpData[icircle1].getFrameOfReference().getAngularVelocity();
 
-    SqrMat A(2,2,NONINIT); // TODO: change to FSqrMat
+    SqrMat A(2,NONINIT); // TODO: change to FSqrMat
     A(0,0)=-(u1.T()*R1);
     A(0,1)=u1.T()*R2;
     A(1,0)=u2.T()*N1;

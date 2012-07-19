@@ -167,7 +167,7 @@ namespace MBSim {
   }
 
   void Link::initz() {
-    x=x0;
+    x = (x0.size()==0)? Vec(xSize, INIT, 0) : x0;
   }
 
   void Link::savela(double dt) {

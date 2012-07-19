@@ -36,17 +36,6 @@ std::string numtostr(double d) {
   return oss.str(); 
 }
 
-std::string numtostr(Mat m) {
-  std::ostringstream oss;
-  oss << "[ ";
-  for(int i=0;i<m.rows()-1;i++) {
-    for(int j=0;i<m.cols()-1;j++) oss << m(i,j) << ", ";
-    oss << "\n";
-  }
-  oss << "]";
-  return oss.str(); 
-}
-
 double degtorad(double alpha) {return alpha/180.*M_PI; }
 double radtodeg(double phi) {return phi/M_PI*180.; }
 fmatvec::Vec degtorad(fmatvec::Vec alpha) {return alpha/180.*M_PI; }
