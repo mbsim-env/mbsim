@@ -188,57 +188,6 @@ namespace MBSim {
   }
 
 
-  void TabularFunction1_VS::initializeUsingXML(TiXmlElement * element) {
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"x");
-    if (e) {
-      Vec x_=Element::getVec(e);
-      x=x_;
-      e=element->FirstChildElement(MBSIMNS"y");
-      Mat y_=Element::getMat(e, x.size(), 0);
-      y=y_;
-    }
-    e=element->FirstChildElement(MBSIMNS"xy");
-    if (e) {
-      Mat xy=Element::getMat(e);
-      assert(xy.cols()>1);
-      x=xy.col(0);
-      y=xy(0, 1, xy.rows()-1, xy.cols()-1);
-    }
-    check();
-  }
-
-  Vec TabularFunction1_VS::operator()(const double& xVal, const void *) {
-    int i=xIndexOld;
-    if (xVal<=x(0)) {
-      xIndexOld=0;
-      return trans(y.row(0));
-    }
-    else if (xVal>=x(xSize-1)) {
-      xIndexOld=xSize-1;
-      return trans(y.row(xSize-1));
-    }
-    else if (xVal<=x(i)) {
-      while (xVal<x(i))
-        i--;
-    }
-    else {
-      do
-        i++;
-      while (xVal>x(i));
-      i--;
-    }
-    xIndexOld=i;
-    RowVec m=(y.row(i+1)-y.row(i))/(x(i+1)-x(i));
-    return trans(y.row(i)+(xVal-x(i))*m);
-  }
-
-  void TabularFunction1_VS::check() {
-    for (int i=1; i<x.size(); i++)
-      assert(x(i)>x(i-1));
-    assert(x.size()==y.rows());
-    xSize=x.size();
-  }
-
 
   Vec PeriodicTabularFunction1_VS::operator()(const double& xVal, const void *) {
     double xValTmp=xVal;

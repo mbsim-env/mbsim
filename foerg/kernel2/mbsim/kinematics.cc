@@ -35,7 +35,7 @@ namespace MBSim {
   void TimeDependentTranslation::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"position");
-    //pos=ObjectFactory::getInstance()->createFunction1_VS(e->FirstChildElement());
+    pos=ObjectFactory::getInstance()->createFunction1_V3S(e->FirstChildElement());
     pos->initializeUsingXML(e->FirstChildElement());
   }
 

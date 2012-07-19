@@ -25,7 +25,17 @@
 
 std::string numtostr(int i);   
 std::string numtostr(double d);   
-std::string numtostr(fmatvec::Mat v);
+template<class Type, class Row, class Col>
+std::string numtostr(fmatvec::Matrix<Type,Row,Col,double> m) {
+  std::ostringstream oss;
+  oss << "[ ";
+  for(int i=0;i<m.rows()-1;i++) {
+    for(int j=0;i<m.cols()-1;j++) oss << m.e(i,j) << ", ";
+    oss << "\n";
+  }
+  oss << "]";
+  return oss.str(); 
+}
 
 double degtorad(double alpha);
 double radtodeg(double phi);
