@@ -42,7 +42,7 @@ namespace MBSim {
   Circle::~Circle() {}
 
   Vec2 Circle::computeLagrangeParameter(const Vec3& WrPoint) {
-    Vec2 LagrangeParameter(INIT,0.);
+    Vec2 LagrangeParameter;
 
     Vec3 CrPoint = WrPoint;
 

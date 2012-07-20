@@ -343,7 +343,8 @@ namespace MBSim {
     fmatvec::Mat C1 = C_rs(0,0,N-3,N-3);
     fmatvec::Mat c(N-2,f.cols(),fmatvec::INIT,0.0);
     for(i=N-3;i>=0 ;i--) { // backward substitution
-      fmatvec::RowVector<Col,double> sum_ciCi(f.cols(),fmatvec::SCALAR(),0.); 
+      fmatvec::RowVector<Col,double> sum_ciCi(f.cols(),fmatvec::NONINIT); 
+      sum_ciCi.init(0.);
       for(int ii=i+1; ii<=N-3; ii++) sum_ciCi = sum_ciCi + C1(i,ii)*c.row(ii);
       c.row(i)= (rs1.row(i) - sum_ciCi)/C1(i,i);
     }

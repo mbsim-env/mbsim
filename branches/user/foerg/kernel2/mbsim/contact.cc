@@ -725,7 +725,7 @@ namespace MBSim {
             data.push_back(cpData[i][1].getFrameOfReference().getPosition()(0));
             data.push_back(cpData[i][1].getFrameOfReference().getPosition()(1));
             data.push_back(cpData[i][1].getFrameOfReference().getPosition()(2));
-            Vec3 F(INIT,0);
+            Vec3 F;
             if(isSetValued()) {
               if(gActive[i]) F=fF[i][1].col(0)*lak[i](0)/dt;
             }
@@ -743,7 +743,7 @@ namespace MBSim {
             data.push_back(cpData[i][1].getFrameOfReference().getPosition()(0));
             data.push_back(cpData[i][1].getFrameOfReference().getPosition()(1));
             data.push_back(cpData[i][1].getFrameOfReference().getPosition()(2));
-            Vec3 F(INIT,0);
+            Vec3 F;
             if(isSetValued()) {                    // TODO switch between stick and slip not possible with TimeStepper
               if(gActive[i] && lak[i].size()>1) { // stick friction
                 F=fF[i][1].col(1)*lak[i](1)/dt;

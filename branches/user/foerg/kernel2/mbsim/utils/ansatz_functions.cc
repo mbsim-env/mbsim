@@ -27,7 +27,7 @@ ansatz_function::~ansatz_function() {
 }
 
 SymMat ansatz_function::MatIntWWT() {
-  SymMat retMat(Dim, Dim, INIT, 0);
+  SymMat retMat(Dim, INIT, 0);
   for(int j=0; j<Dim; j++)
     for(int i=0; i<Dim; i++)
       retMat(i, j)=Intwiwj(i, j);
@@ -35,7 +35,7 @@ SymMat ansatz_function::MatIntWWT() {
 }
 
 SymMat ansatz_function::MatIntWSWST() {
-  SymMat retMat(Dim, Dim, INIT, 0);
+  SymMat retMat(Dim, INIT, 0);
   for(int j=0; j<Dim; j++)
     for(int i=0; i<Dim; i++)
       retMat(i, j)=Intwsiwsj(i, j);
