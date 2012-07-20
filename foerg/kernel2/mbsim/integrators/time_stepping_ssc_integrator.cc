@@ -170,7 +170,7 @@ namespace MBSim {
     uT3 >> zT3(Iu);
     xT3 >> zT3(Ix);
 
-    zi.resize(zSize,INIT,0.0); 	// starting value for ith step
+    zi.resize(zSize); 	// starting value for ith step
 
     SetValuedLinkListT1.clear();
     SetValuedLinkListT2.clear();
@@ -1318,13 +1318,13 @@ namespace MBSim {
 
     int SetValuedLaSize=0;
     int NumberOfSetValuedLinks = SetValuedLinkList.size();
-    la_Sizes.resize(NumberOfSetValuedLinks,INIT,0);
+    la_Sizes.resize(NumberOfSetValuedLinks);
 
     for(unsigned int i=0; i<SetValuedLinkList.size(); i++) {
       la_Sizes(i)=SetValuedLinkList[i]->getlaSize();
       SetValuedLaSize+=la_Sizes(i);
     }
-    la_.resize(SetValuedLaSize,INIT,0.0);
+    la_.resize(SetValuedLaSize);
     int j=0;
     int sizeLink;
     for(unsigned int i=0; i<SetValuedLinkList.size(); i++) {

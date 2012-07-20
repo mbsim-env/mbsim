@@ -141,7 +141,7 @@ namespace MBSim {
     if (e)
       offset_=Element::getVec(e, amplitude_.size());
     else
-      offset_.resize(amplitude_.size(), INIT, 0);
+      offset_.resize(amplitude_.size());
     offset=offset_;
     check();
   }

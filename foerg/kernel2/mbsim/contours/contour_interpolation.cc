@@ -40,21 +40,21 @@ namespace MBSim {
 
   Vec3 ContourInterpolation::computeWrOC(const ContourPointData &cp) {
     const VecV &s = cp.getLagrangeParameterPosition();
-    Vec3 r(INIT,0.0);
+    Vec3 r;
     for(int i=0; i<numberOfPoints;i++) r += computePointWeight(s,i) * iPoints[i]->getReferencePosition();
     return r;
   }
 
   Vec3 ContourInterpolation::computeWvC(const ContourPointData &cp) {
     const VecV &s = cp.getLagrangeParameterPosition();
-    Vec3 v(INIT,0.0);
+    Vec3 v;
     for(int i=0; i<numberOfPoints;i++) v += computePointWeight(s,i) * iPoints[i]->getReferenceVelocity();
     return v;
   }
 
   Mat3V ContourInterpolation::computeWt(const ContourPointData &cp) {
     const VecV &s = cp.getLagrangeParameterPosition();
-    Mat3V t(contourParameters,INIT,0.0);
+    Mat3V t(contourParameters);
 
     for(int i=0; i<contourParameters; i++) {
       Vec3 tTemp = t.col(i);
