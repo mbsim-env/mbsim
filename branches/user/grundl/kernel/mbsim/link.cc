@@ -119,6 +119,10 @@ namespace MBSim {
     LinkStatus.resize() >> LinkStatusParent(LinkStatusInd,LinkStatusInd+LinkStatusSize-1);
   }
 
+  void Link::updateLinkStatusRegRef(const Vector<int> &LinkStatusRegParent) {
+    LinkStatusReg.resize() >> LinkStatusRegParent(LinkStatusRegInd,LinkStatusRegInd+LinkStatusRegSize-1);
+  }
+
   void Link::updatebRef(const Mat &bParent) {
     Index J = Index(laInd,laInd+laSize-1);
     Index I = Index(bInd,bInd+bSize-1);

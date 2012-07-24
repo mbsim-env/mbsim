@@ -28,7 +28,7 @@ libcontactkinematics_la_SOURCES = circle_frustum.cc\
 contactkinematicsincludedir = $(includedir)/mbsim/contact_kinematics
 
 INCLUDES = $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
-LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
+LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) 
 
 contactkinematicsinclude_HEADERS = circle_frustum.h\
   circlesolid_circlehollow.h \
@@ -54,4 +54,4 @@ contactkinematicsinclude_HEADERS = circle_frustum.h\
   sphere_frustum.h \
   sphere_plane.h \
   sphere_sphere.h \
-  point_line_segment.cc
+  point_line_segment.h

@@ -1,7 +1,26 @@
+/* Copyright (C) 2004-2012 MBSim Development Team
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+ *
+ * Contact: martin.o.foerg@googlemail.com
+ */
+
 #include <config.h>
 #include <time.h>
 
-#include <maxwell_contact.h>
+#include "maxwell_contact.h"
 
 #include <fmatvec.h>
 
@@ -9,6 +28,7 @@
 #include <mbsim/contour_pdata.h>
 #include <mbsim/contact_kinematics/contact_kinematics.h>
 #include <mbsim/constitutive_laws.h>
+#include <mbsim/numerics/linear_complementarity_problem/linear_complementarity_problem.h>
 #include <mbsim/utils/utils.h>
 #include <mbsim/utils/contact_utils.h>
 #include <mbsim/utils/function.h>
@@ -29,10 +49,9 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  /* MaxwellContact   ***************************************************************************************************************************/
-
   MaxwellContact::MaxwellContact(const string &name) :
-      LinkMechanics(name), contourPairing(0), possibleContactPoints(0), C(SymMat(0,NONINIT)), matConst(1.), matConstSetted(false), DEBUGLEVEL(0)
+      LinkMechanics(name), contourPairing(0), possibleContactPoints(0), C(SymMat(0,NONINIT)), lcpSolvingStrategy(Standard),
+      solution0(Vec(0,NONINIT)), matConst(1.), matConstSetted(false), DEBUGLEVEL(0)
   {
     gTol = 1;
   }
@@ -56,19 +75,36 @@ namespace MBSim {
       /*compute Influence Matrix*/
       updateInfluenceMatrix(t);
 
+      /*update rigidBodyGap*/
+      updateRigidBodyGap(t);
+
       computeMaterialConstant(t);
 
-      /*save rigidBodyGaps in vector*/
-      Vec rigidBodyGap(possibleContactPoints.size(), INIT, 0.);
-      for (size_t i = 0; i < possibleContactPoints.size(); i++) {
-        rigidBodyGap(i) = contourPairing[possibleContactPoints[i]]->getRelativeDistance()(0);
-      }
-
-      if (DEBUGLEVEL >= 5)
-        cout << "rigidBodyGap: " << rigidBodyGap << endl;
-
       /*solve Linear Complementary Problem*/
-      Vec lambda = solveLCP(C, rigidBodyGap);
+//      if(solution0.size() > 2 * rigidBodyGap.size()) {
+//        fitSolution0(t);
+//        lcpSolvingStrategy = Reformulated;
+//      }
+//      else if(solution0.size() < 2 * rigidBodyGap.size())
+//        lcpSolvingStrategy = LemkeOnly;
+//      else
+//        lcpSolvingStrategy = Reformulated;
+
+      LinearComplementarityProblem LCP(C, rigidBodyGap, lcpSolvingStrategy);
+
+      map<Index, double> tolerances;
+      tolerances.insert(pair<Index, double>(Index(0,possibleContactPoints.size() - 1), 1e-8)); //tolerances for distances
+      tolerances.insert(pair<Index, double>(Index(possibleContactPoints.size(),2*possibleContactPoints.size()-1), 1e-3)); //tolerances for forces
+      LocalResidualCriteriaFunction* critfunc = new LocalResidualCriteriaFunction(tolerances);
+      LCP.setNewtonCriteriaFunction(critfunc);
+      LCP.setDebugLevel(0);
+
+      solution0.resize() = LCP.solve(solution0);
+
+      delete critfunc;
+
+
+      Vec lambda = solution0(rigidBodyGap.size(), 2 * rigidBodyGap.size()-1);
 
       if (DEBUGLEVEL >= 3) {
         cout << "lambda = " << lambda << endl;
@@ -186,7 +222,8 @@ namespace MBSim {
       }
     }
     //As last step: do init-step of LinkMechanics
-    LinkMechanics::init(stage);
+    if (stage != MBSim::plot)  //do not plot the standard values in Link mechanics --> already done in the single ContourPairings
+      LinkMechanics::init(stage);
   }
 
   void MaxwellContact::checkActiveg() {
@@ -279,6 +316,17 @@ namespace MBSim {
       cout << "The InfluenceMatrix is: " << C << endl;
       cout << "With eigenvalues: " << eigval(C) << endl;
     }
+  }
+
+  void MaxwellContact::updateRigidBodyGap(const double & t) {
+    /*save rigidBodyGaps in vector*/
+    rigidBodyGap.resize(possibleContactPoints.size());
+    for (size_t i = 0; i < possibleContactPoints.size(); i++) {
+      rigidBodyGap(i) = contourPairing[possibleContactPoints[i]]->getRelativeDistance()(0);
+    }
+
+    if (DEBUGLEVEL >= 5)
+      cout << "rigidBodyGap: " << rigidBodyGap << endl;
   }
 
   double MaxwellContact::computeInfluenceCoefficient(const int &currentContactNumber) {
@@ -389,332 +437,33 @@ namespace MBSim {
     }
   }
 
-  Vec MaxwellContact::solveLCP(const SymMat & M, const Vec & q, const unsigned int & LemkeSteps /* = 10000 */) {
+  void MaxwellContact::fitSolution0(const double & t) {
+#ifdef HAVE_MBSIMNUMERICS
 
-    clock_t t_start = clock();
-    /*dimension of the system*/
-    size_t dimension = q.size();
+    if(DEBUGLEVEL >= 1)
+      cout << "*****" << __func__ << "*****" << endl;
 
-	  if(DEBUGLEVEL >= 1) {
-		  cout << "*****" << name << ":" << __func__ << "*****" << endl;
-		  if(DEBUGLEVEL >= 2) {
-		    cout << "Systemdimension is: " << dimension << endl;
-		  }
-	  }
-
-    /*create the Maxwell Function*/
-    MaxwellFunction func = MaxwellFunction(q, M);
-    func.setSolverType(NewtonMethodSolver);
-
-    //Define different solvers
-    MultiDimNewtonMethod NewtonSolver(&func);
-    NewtonSolver.setMaximumNumberOfIterations((int)1e4);
-    MultiDimFixPointIteration FixpointIterator(&func);
-    FixpointIterator.setNumberOfMaximalIterations((int)1e6);
-    FixpointIterator.setTolerance(1e-4);
-    LemkeAlgorithm LemkeSolver;
-
-    /*Initialize gapLamba*/
-    Vec solution0(dimension * 2, INIT, 0.);
-    for (size_t i = 0; i < dimension; i++) {
-      if (q(i) > 0)
-        solution0(i) = q(i);
-      else
-        solution0(i) = 0;
+    if(solution0.size() == 0) {
+      computeMaterialConstant(t);
+      solution0 = LinearComplementarityProblem::createInitialSolution(C, rigidBodyGap, matConst);
+      return;
     }
 
-    for (size_t i = dimension; i < 2 * dimension; i++) {
-      if (q(i - dimension) > 0)
-        solution0(i) = 0;
-      else
-        solution0(i) = -q(i - dimension) / matConst;
-    }
+    int diff = solution0.size() - 2 * rigidBodyGap.size();
 
-    if (DEBUGLEVEL >= 5) {
-      cout << "solution0: " << solution0 << endl;
-      cout << "nrm2(f(solution0)): " << nrm2(func(solution0)) << endl;
-    }
+    if(diff > 0) { //old  system was larger
+      for(int i = rigidBodyGap.size(); i < 2* rigidBodyGap.size(); i++)
+        solution0(i) = solution0(i+diff);
 
-    /*create vector for solution*/
-    Vec solution(solution0.copy());
-
-    //TODO_grundl build Jacobian, if it is possible at all --> if it is computed numerically it gets more unstable?
-    MaxwellJacobian jac;
-
-    //NOTE: Fortran-NewtonSolver seems to work worse than the "native" NewtonSolver of the utils in mbsim
-    //      MultiDimNewtonMethodFortran NewtonSolverFortran;
-    //      NewtonSolverFortran.setRootFunction(&func);
-    //      Vec gapLambdaFortran = NewtonSolverFortran.solve(gapLambda0);
-
-    /* solve the LCP */
-    bool converged = false;
-    bool stop = false;
-
-    //use Lemke-Solver for small systems
-
-    LemkeSolver.setSystem(M, q);
-
-    clock_t t_start_Lemke1 = clock();
-    solution = LemkeSolver.solve(LemkeSteps);
-
-
-    if (LemkeSolver.getInfo() == 0) {
-      converged = true;
-      if (DEBUGLEVEL >= 1) {
-        cout << "LemkerSolver found solution" << endl;
-        if (DEBUGLEVEL >= 2) {
-          double cpuTime = double(clock()-t_start_Lemke1)/CLOCKS_PER_SEC;
-          cout << "... in: " << cpuTime << "s = " << cpuTime/3600 << "h" << endl;
-          if (DEBUGLEVEL >= 4) { //Lemke-Solver Info
-            cout << "solution: " << solution << endl;
-            cout << "gaps       forces   " << endl;
-            for (int i = 0; i < solution.size() / 2; i++) {
-              cout << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
-            }
-          }
-        }
-      }
+      //resize has to be done afterwards to keep the margin values
+      solution0.resize() = solution0(0 , 2 * rigidBodyGap.size()).copy();
     }
     else {
-      solution = solution0;
-      if (DEBUGLEVEL >= 1) {
-        cout << "No Solution for Lemke-Algorithm. Now Trying combination of Newton + FixpointIteration" << endl;
-      }
+      //first resize (enlarge) the solution vector
+      computeMaterialConstant(t);
+      solution0.resize() = LinearComplementarityProblem::createInitialSolution(C, rigidBodyGap, matConst);
     }
-
-    Vec lambda;
-    lambda >> solution(dimension, 2 * dimension - 1);
-
-    clock_t t_start_Iterative = clock();
-
-    while (!stop and !converged) {
-
-      //use Fixpoint-Iteration only once
-      if (func.getSolverType() == FixPointIterationSolver) {
-        stop = true;
-        func.setSolverType(NewtonMethodSolver);
-        NewtonSolver.setTolerance(1e-4);
-      }
-
-      solution = NewtonSolver.solve(solution);
-
-      if (DEBUGLEVEL >= 3) {
-        cout << "Info about NewtonSolver" << endl;
-        cout << "nrm2(f(solution)):  " << nrm2(func(solution)) << endl;
-        if (DEBUGLEVEL >= 4) { //Newton-Solver Info
-          cout << "solution: " << solution << endl;
-          cout << "gaps       forces   " << endl;
-          for (int i = 0; i < solution.size() / 2; i++) {
-            cout << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
-          }
-        }
-      }
-
-      switch (NewtonSolver.getInfo()) {
-        case 0:
-          converged = true;
-          if (DEBUGLEVEL >= 1) {
-            cout << "Newton-Solver found solution" << endl;
-            if (DEBUGLEVEL >= 2) {
-              double cpuTime = double(clock()-t_start_Iterative)/CLOCKS_PER_SEC;
-              cout << "... in: " << cpuTime << "s = " << cpuTime/3600 << "h" << endl;
-              if (DEBUGLEVEL >= 4) { //Newton-Solver Info
-                cout << "solution: " << solution << endl;
-                cout << "gaps       forces   " << endl;
-                for (int i = 0; i < solution.size() / 2; i++) {
-                  cout << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
-                }
-              }
-            }
-          }
-        break;
-        case 1: //convergence is active, but not enough steps
-          if (DEBUGLEVEL >= 3) {
-            cout << "Newton scheme seems to converge but has'nt finished" << endl;
-            cout << "Increasing number of maximal iterations ... " << endl;
-            vector<double> norms = NewtonSolver.getNorms();
-            cout << "Current Norm is: " << norms[norms.size() - 1] << endl;
-          }
-          NewtonSolver.setMaximumNumberOfIterations(10 * NewtonSolver.getNumberOfMaximalIterations()); //raise number of iterations (if there is convergence ...)
-        break;
-        case -1:
-          if (!stop) {
-            if (DEBUGLEVEL >= 3) {
-              cout << "MaxwellContact::solveLCP(double t): No convergence of Newton scheme during calculation of contact forces" << endl;
-              cout << "Trying a Fixpoint-solver (at least for a good starting value for the Newton scheme) ..." << endl;
-            }
-
-            func.setSolverType(FixPointIterationSolver);
-            solution = FixpointIterator.solve(solution);
-
-            if (DEBUGLEVEL >= 3) {
-              cout << "Info about FixpointSolver" << endl;
-              func.setSolverType(NewtonMethodSolver);
-              cout << "nrm2(f(solution)):  " << nrm2(func(solution)) << endl;
-              if (DEBUGLEVEL >= 4) {
-                cout << "solution: " << solution << endl;
-                cout << "gaps       forces   " << endl;
-                for (int i = 0; i < solution.size() / 2; i++) {
-                  cout << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
-                }
-              }
-              func.setSolverType(FixPointIterationSolver);
-            }
-
-            if (FixpointIterator.getInfo() == 0) {
-              converged = true;
-              if (DEBUGLEVEL >= 1) {
-                cout << "Fixpoint-Iterator found solution" << endl;
-                if (DEBUGLEVEL >= 2) {
-                  double cpuTime = double(clock()-t_start_Iterative)/CLOCKS_PER_SEC;
-                  cout << "... in: " << cpuTime << "s = " << cpuTime/3600 << "h" << endl;
-                  if (DEBUGLEVEL >= 4) {
-                    cout << "solution: " << solution << endl;
-                    cout << "gaps       forces   " << endl;
-                    for (int i = 0; i < solution.size() / 2; i++) {
-                      cout << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
-                    }
-                  }
-                }
-              }
-            }
-          }
-
-        break;
-        default:
-          throw MBSimError("ERROR MaxwellContact::solveLCP(double t): No convergence during calculation of contact forces with Newton scheme!");
-        break;
-      }
-    }
-
-    if (!converged) {
-      if (DEBUGLEVEL >= 1) {
-        cout << "No convergence during calculation of contact forces with Newton scheme!" << endl;
-        cout << "Now using Lemke Algorithm..." << endl;
-      }
-
-      clock_t t_start_Lemke1 = clock();
-      solution = LemkeSolver.solve();
-
-      if (LemkeSolver.getInfo() == 0) {
-        converged = true;
-        if (DEBUGLEVEL >= 1) {
-          cout << "LemkerSolver found solution with the second try ..." << endl;
-          if (DEBUGLEVEL >= 2) {
-            double cpuTime = double(clock()-t_start_Lemke1)/CLOCKS_PER_SEC;
-            cout << "... in: " << cpuTime << "s = " << cpuTime/3600 << "h" << endl;
-            if (DEBUGLEVEL >= 4) { //Newton-Solver Info
-              cout << "solution: " << solution << endl;
-              cout << "gaps       forces   " << endl;
-              for (int i = 0; i < solution.size() / 2; i++) {
-                cout << solution(i) << " | " << solution(i + solution.size() / 2) << endl;
-              }
-            }
-          }
-        }
-      }
-
-    }
-
-    if (!converged) {
-      throw MBSimError("ERROR MaxwellContact::solveLCP(): No Solution found for this LCP");
-    }
-
-    if (DEBUGLEVEL >= 1) {
-      double cpuTime = double(clock()-t_start)/CLOCKS_PER_SEC;
-      cout << "Solution found in: " << cpuTime << "s = " << cpuTime/3600 << "h" << endl;
-    }
-
-
-    return lambda;
+#endif
   }
-
-  /* END - MaxwellContact   ***************************************************************************************************************************/
-
-  /* MaxwellFunction   ***************************************************************************************************************************/
-
-  MaxwellFunction::MaxwellFunction(const fmatvec::Vec & rigidBodyGap_, const SymMat &C_, const double &r_ /*= 10*/, bool INFO_ /*= false*/) :
-      NumberOfContacts(rigidBodyGap_.size()), rigidBodyGap(rigidBodyGap_), C(C_), r(r_), solverType(NewtonMethodSolver), INFO(INFO_) {
-
-    //dimensions have to be equal
-    assert(C_.size() == NumberOfContacts);
-  }
-
-  MaxwellFunction::~MaxwellFunction() {
-
-  }
-
-  Vec MaxwellFunction::operator ()(const Vec &gapLambda, const void *) {
-
-    //check dimensions
-    assert(gapLambda.size() == 2 * NumberOfContacts);
-
-    Vec returnVec(2 * NumberOfContacts, INIT, 0.);
-
-    //reference to gap and lambda
-    Vec gap;
-    Vec lambda;
-    gap << gapLambda(0, NumberOfContacts - 1);
-    lambda << gapLambda(NumberOfContacts, 2 * NumberOfContacts - 1);
-
-    if (INFO) {
-
-      cout << "gap is: " << gap << endl;
-      cout << "lambda is: " << lambda << endl;
-
-      cout << "C is: " << C << endl;
-    }
-
-    //compute first part
-    if (solverType == NewtonMethodSolver) {
-      returnVec(0, NumberOfContacts - 1) = rigidBodyGap + C * lambda - gap;
-
-      //loop for the prox-functions
-      for (int contactIterator = 0; contactIterator < NumberOfContacts; contactIterator++) {
-        returnVec(NumberOfContacts + contactIterator) = proxCN(lambda(contactIterator) - r * gap(contactIterator)) - lambda(contactIterator);
-        if (INFO) {
-          cout << "returnVec(" << NumberOfContacts + contactIterator << ")=" << proxCN(lambda(contactIterator) - r * gap(contactIterator)) << "- " << lambda(contactIterator) << endl;
-          cout << "proxCN(lambda(i) - r * gap(i)) = proxCN( " << lambda(contactIterator) << "-" << r << "*" << gap(contactIterator) << endl;
-        }
-      }
-    }
-    else if (solverType == FixPointIterationSolver) {
-      returnVec(0, NumberOfContacts - 1) = rigidBodyGap + C * lambda;
-      //loop for the prox-functions
-      for (int contactIterator = 0; contactIterator < NumberOfContacts; contactIterator++) {
-        returnVec(NumberOfContacts + contactIterator) = proxCN(lambda(contactIterator) - r * gap(contactIterator));
-        if (INFO) {
-          cout << "returnVec(" << NumberOfContacts + contactIterator << ")=" << proxCN(lambda(contactIterator) - r * gap(contactIterator)) << "- " << lambda(contactIterator) << endl;
-          cout << "proxCN(lambda(i) - r * gap(i)) = proxCN( " << lambda(contactIterator) << "-" << r << "*" << gap(contactIterator) << endl;
-        }
-      }
-    }
-
-    if (INFO)
-      cout << "returnVec is: " << returnVec << endl;
-
-    return returnVec;
-
-  }
-
-  /* END - MaxwellFunction   ***************************************************************************************************************************/
-
-  /* MaxwellJacobian   ***************************************************************************************************************************/
-
-  MaxwellJacobian::MaxwellJacobian() {
-
-  }
-
-  MaxwellJacobian::~MaxwellJacobian() {
-
-  }
-
-  SqrMat MaxwellJacobian::operator ()(const Vec &distance, const void *) {
-    SqrMat returnMat(3, INIT, 0.);
-
-    return returnMat;
-  }
-
-/* END - MaxwellJacobian   ***************************************************************************************************************************/
 }
 

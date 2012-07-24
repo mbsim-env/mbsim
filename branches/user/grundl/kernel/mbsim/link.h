@@ -47,7 +47,9 @@ namespace MBSim {
    * \date 2009-07-28 splitted interfaces (Thorsten Schindler)
    * \date 2009-12-14 revised inverse kinetics (Martin Foerg)
    * \date 2010-07-06 added LinkStatus and LinearImpactEstimation for timestepper ssc (Robert Huber)
-    */
+   * \date 2012-05-08 added LinkStatusReg for AutoTimeSteppingSSCIntegrator (Jan Clauberg)
+   * 
+   */
   //class Link : public Element, public LinkInterface, public ExtraDynamicInterface {
   class Link : public Element {
     public:
@@ -71,6 +73,7 @@ namespace MBSim {
       virtual void updateh(double t, int i=0) {};
       virtual void updateStopVector(double t) {}
       virtual void updateLinkStatus(double t) {}
+      virtual void updateLinkStatusReg(double t) {}
       virtual void updateJacobians(double t, int j=0) {}
       virtual void updateb(double t) {};
       /***************************************************/
@@ -175,6 +178,11 @@ namespace MBSim {
        virtual void updateLinkStatusRef(const fmatvec::Vector<int> &LinkStatusParent);
 
       /**
+       * \brief reference to vector of link status (for single-valued links)
+       */
+       virtual void updateLinkStatusRegRef(const fmatvec::Vector<int> &LinkStatusRegParent);
+
+      /**
        * \brief calculates size of contact force parameters
        */
       virtual void calclaSize(int j) { laSize = 0; }
@@ -208,6 +216,11 @@ namespace MBSim {
        * \brief calculates size of vector LinkStatus
        */
       virtual void calcLinkStatusSize() { LinkStatusSize =0;}
+
+      /**
+       * \brief calculates size of vector LinkStatusReg
+       */
+      virtual void calcLinkStatusRegSize() { LinkStatusRegSize =0;}
 
       /**
        * \return set valued force laws used?
@@ -318,6 +331,9 @@ namespace MBSim {
       void setLinkStatusInd(int LinkStatusInd_) { LinkStatusInd = LinkStatusInd_; };
       int getLinkStatusSize() const { return LinkStatusSize; }
 
+      void setLinkStatusRegInd(int LinkStatusRegInd_) { LinkStatusRegInd = LinkStatusRegInd_; };
+      int getLinkStatusRegSize() const { return LinkStatusRegSize; }
+
       const fmatvec::Vec& getla() const { return la; }
       fmatvec::Vec& getla() { return la; }
       void setlaInd(int laInd_) { laInd = laInd_;Ila=fmatvec::Index(laInd,laInd+laSize-1); } 
@@ -427,10 +443,21 @@ namespace MBSim {
       fmatvec::Vector<int> LinkStatus;
 
       /**
-       * \brief size and local index of link status vector
+       * \brief size and local index of link status vector (set-valued)
        */
        int LinkStatusSize, LinkStatusInd;
     
+       /**
+       * for single valued links
+       * \brief status of link
+       */
+      fmatvec::Vector<int> LinkStatusReg;
+
+      /**
+       * \brief size and local index of single-valued link status vector
+       */
+       int LinkStatusRegSize, LinkStatusRegInd; 
+
       /**
        * \brief relative distance, relative velocity, contact force parameters
        */
