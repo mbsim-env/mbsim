@@ -141,7 +141,7 @@ namespace MBSimFlexibleBody {
 
       //with MBSIM
       SqrMat H = static_cast<SqrMat>(inv(M[k]) * K);
-      Vector<std::complex<double> > EigVal = eigval(H);
+      Vector<Ref,std::complex<double> > EigVal = eigval(H);
       Vec NaturalHarmonics(EigVal.size(), INIT, 0.);
       for (int i = 0; i < EigVal.size() - 1; i++) {
         if (EigVal(i).imag() < 0 or EigVal(i).imag() > 0)
