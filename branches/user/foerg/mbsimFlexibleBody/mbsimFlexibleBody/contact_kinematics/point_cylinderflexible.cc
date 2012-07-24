@@ -68,16 +68,16 @@ namespace MBSimFlexibleBody {
     cpData[icylinder].getLagrangeParameterPosition()(0) = search.slv();
 
     cylinder->updateKinematicsForFrame(cpData[icylinder],position_cosy); 
-    Vec WrD = cpData[ipoint].getFrameOfReference().getPosition() - cpData[icylinder].getFrameOfReference().getPosition();
+    Vec3 WrD = cpData[ipoint].getFrameOfReference().getPosition() - cpData[icylinder].getFrameOfReference().getPosition();
 
     // contact in estimated contact area? 
     if(cpData[icylinder].getLagrangeParameterPosition()(0) < cylinder->getAlphaStart() || cpData[icylinder].getLagrangeParameterPosition()(0) > cylinder->getAlphaEnd() ) g(0) = 1.;
     else {
-      cpData[ipoint].getFrameOfReference().getOrientation().col(0) = -WrD/nrm2(WrD); // outpointing normal
-      cpData[icylinder].getFrameOfReference().getOrientation().col(0) = -cpData[ipoint].getFrameOfReference().getOrientation().col(0);
-      cpData[icylinder].getFrameOfReference().getOrientation().col(2) = crossProduct(cpData[icylinder].getFrameOfReference().getOrientation().col(0),cpData[icylinder].getFrameOfReference().getOrientation().col(1));
-      cpData[ipoint].getFrameOfReference().getOrientation().col(1) = - cpData[icylinder].getFrameOfReference().getOrientation().col(1);
-      cpData[ipoint].getFrameOfReference().getOrientation().col(2) = cpData[icylinder].getFrameOfReference().getOrientation().col(2);
+      cpData[ipoint].getFrameOfReference().getOrientation().set(0, -WrD/nrm2(WrD)); // outpointing normal
+      cpData[icylinder].getFrameOfReference().getOrientation().set(0, -cpData[ipoint].getFrameOfReference().getOrientation().col(0));
+      cpData[icylinder].getFrameOfReference().getOrientation().set(2, crossProduct(cpData[icylinder].getFrameOfReference().getOrientation().col(0),cpData[icylinder].getFrameOfReference().getOrientation().col(1)));
+      cpData[ipoint].getFrameOfReference().getOrientation().set(1, - cpData[icylinder].getFrameOfReference().getOrientation().col(1));
+      cpData[ipoint].getFrameOfReference().getOrientation().set(2, cpData[icylinder].getFrameOfReference().getOrientation().col(2));
       g(0) = cpData[ipoint].getFrameOfReference().getOrientation().col(0).T()*WrD - cylinder->getRadius();
     }
   }
