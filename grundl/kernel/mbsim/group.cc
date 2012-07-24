@@ -186,7 +186,8 @@ namespace MBSim {
     // groups
     E=e->FirstChildElement();
     Group *g;
-    while((g=ObjectFactory::getInstance()->createGroup(E))) {
+    while(E) {
+      g=ObjectFactory::getInstance()->createGroup(E);
       addGroup(g);
       g->initializeUsingXML(E);
       E=E->NextSiblingElement();
@@ -196,7 +197,8 @@ namespace MBSim {
     // objects
     E=e->FirstChildElement();
     Object *o;
-    while((o=ObjectFactory::getInstance()->createObject(E))) {
+    while(E) {
+      o=ObjectFactory::getInstance()->createObject(E);
       addObject(o);
       o->initializeUsingXML(E);
       E=E->NextSiblingElement();
@@ -207,7 +209,8 @@ namespace MBSim {
     if (e->ValueStr()==MBSIMNS"extraDynamics") {
       E=e->FirstChildElement();
       ExtraDynamic *ed;
-      while((ed=ObjectFactory::getInstance()->createExtraDynamic(E))) {
+      while(E) {
+        ed=ObjectFactory::getInstance()->createExtraDynamic(E);
         addExtraDynamic(ed);
         ed->initializeUsingXML(E);
         E=E->NextSiblingElement();
@@ -218,7 +221,8 @@ namespace MBSim {
     // links
     E=e->FirstChildElement();
     Link *l;
-    while((l=ObjectFactory::getInstance()->createLink(E))) {
+    while(E) {
+      l=ObjectFactory::getInstance()->createLink(E);
       addLink(l);
       l->initializeUsingXML(E);
       E=E->NextSiblingElement();

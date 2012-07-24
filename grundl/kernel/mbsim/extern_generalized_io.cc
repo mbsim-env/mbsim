@@ -30,17 +30,17 @@ namespace MBSim {
     connectedObject(NULL), qInd(0), uInd(0), m(0), a(0), t0(0), saved_connectedObject("") {
   }
 
-  void ExternGeneralizedIO::updateh(double t) {
+  void ExternGeneralizedIO::updateh(double t, int j) {
     if(type==CONSTANT) {
-      connectedObject->geth()(uInd)+=la(0);
+      connectedObject->geth(j)(uInd)+=la(0);
       for(unsigned int i=0; i<applyForceAlsoTo.size(); i++)
-        applyForceAlsoTo[i].ref->geth()(applyForceAlsoTo[i].index)+=applyForceAlsoTo[i].factor*la(0);
+        applyForceAlsoTo[i].ref->geth(j)(applyForceAlsoTo[i].index)+=applyForceAlsoTo[i].factor*la(0);
     }
     else if(type==LINEAR) {
       la(0)=m*(t-t0)+a;
-      connectedObject->geth()(uInd)+=la(0);
+      connectedObject->geth(j)(uInd)+=la(0);
       for(unsigned int i=0; i<applyForceAlsoTo.size(); i++)
-        applyForceAlsoTo[i].ref->geth()(applyForceAlsoTo[i].index)+=applyForceAlsoTo[i].factor*la(0);
+        applyForceAlsoTo[i].ref->geth(j)(applyForceAlsoTo[i].index)+=applyForceAlsoTo[i].factor*la(0);
     }
   }
 

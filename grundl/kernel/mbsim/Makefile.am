@@ -1,4 +1,4 @@
-SUBDIRS =  utils integrators contact_kinematics contours .
+SUBDIRS =  numerics plot_elements utils integrators contact_kinematics contours .
  
 lib_LTLIBRARIES = libmbsim.la
 libmbsim_la_LDFLAGS = -version-info @LIBMBSIM_VERSION_INFO@
@@ -32,15 +32,14 @@ objectfactory.cc\
 extra_dynamic.cc\
 rigid_body.cc\
 graph.cc\
-constraint.cc\
-plot_elements.cc
+constraint.cc
 
-libmbsim_la_LIBADD = integrators/libintegrators.la utils/libutils.la contact_kinematics/libcontactkinematics.la contours/libcontour.la -lgfortran
+libmbsim_la_LIBADD = integrators/libintegrators.la utils/libutils.la contact_kinematics/libcontactkinematics.la contours/libcontour.la numerics/libnumerics.la plot_elements/libplotelements.la -lgfortran
 
 libmbsim_la_CPPFLAGS = -DTIXML_USE_STL
 
-INCLUDES = $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
-LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
+INCLUDES = $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) $(MBSIMNUMERICS_CFLAGS)
+LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) $(MBSIMNUMERICS_LIBS)
 
 mbsimincludedir = $(includedir)/mbsim
 mbsiminclude_HEADERS = \
@@ -76,5 +75,4 @@ objectfactory.h\
 extra_dynamic.h\
 rigid_body.h\
 graph.h\
-constraint.h\
-plot_elements.h
+constraint.h

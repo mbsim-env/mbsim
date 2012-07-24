@@ -169,9 +169,11 @@ namespace MBSim {
       if(gActive[k]) { 
         svk[k](0) = gddk[k](0)>gddTol ? -1 : 1;
         if(gdActive[k][1]) {
-          svk[k](1) = nrm2(gddk[k](1,getFrictionDirections()))>gddTol ? -1 : 1;
-          if((int)svk[k](1) == -1)
+          if(getFrictionDirections()) {
+            svk[k](1) = nrm2(gddk[k](1,getFrictionDirections()))>gddTol ? -1 : 1;
+            if((int)svk[k](1) == -1)
               gddkBuf[k] = gddk[k];
+          }
         } 
         else {
           if(getFrictionDirections() == 1)
@@ -437,6 +439,13 @@ namespace MBSim {
     LinkStatus.resize(LinkStatusSize);
   }
 
+  void Contact::calcLinkStatusRegSize() {
+    LinkMechanics::calcLinkStatusRegSize();
+    int n = contactKinematics->getNumberOfPotentialContactPoints();
+    LinkStatusRegSize= n;
+    LinkStatusReg.resize(LinkStatusRegSize);
+  }
+
   void Contact::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       if(saved_ref1!="" && saved_ref2!="")
@@ -657,6 +666,17 @@ namespace MBSim {
         }
       }
       else LinkStatus(k) = 1;
+    }
+  }
+
+  void Contact::updateLinkStatusReg(double t) {
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+      if (gActive[k])  {
+        LinkStatusReg(k) = 2;
+      }
+      else {
+        LinkStatusReg(k) = 1;
+      }
     }
   }
 

@@ -94,6 +94,14 @@ namespace MBSim {
     }
   }
 
+  void ContourPairing::checkActiveg() {
+    gActive0 = gActive;
+    gActive = gk(0) < gTol ? true : false;
+    if(not gActive and gActive0 != gActive)
+      for (int j = 0; j < 1 + getFrictionDirections(); j++)
+        lak(j) = 0;
+  }
+
   void ContourPairing::updateJacobians(double t, int j) {
     //TODO: checkActiveg shouldn't be here!
     checkActiveg();
@@ -174,15 +182,16 @@ namespace MBSim {
           }
         }
 #endif
-        if (getPlotFeature(generalizedLinkForce) == enabled) {
-          for (int j = 0; j < 1 + getFrictionDirections(); ++j)
-            plotColumns.push_back("la(" + numtostr(j) + ")");
-        }
 
         if (getPlotFeature(linkKinematics) == enabled) {
           plotColumns.push_back("g(" + numtostr(0) + ")");
           for (int j = 0; j < 1 + getFrictionDirections(); ++j)
             plotColumns.push_back("gd(" + numtostr(j) + ")");
+        }
+
+        if (getPlotFeature(generalizedLinkForce) == enabled) {
+          for (int j = 0; j < 1 + getFrictionDirections(); ++j)
+            plotColumns.push_back("la(" + numtostr(j) + ")");
         }
 
       }
@@ -223,7 +232,8 @@ namespace MBSim {
           data.push_back(cpData[0][1].getFrameOfReference().getPosition()(1));
           data.push_back(cpData[0][1].getFrameOfReference().getPosition()(2));
           Vec F(3, INIT, 0);
-          F = cpData[0][0].getFrameOfReference().getOrientation().col(0) * lak(0);
+          if(gActive)
+            F = cpData[0][0].getFrameOfReference().getOrientation().col(0) * lak(0);
           data.push_back(F(0));
           data.push_back(F(1));
           data.push_back(F(2));
@@ -239,9 +249,11 @@ namespace MBSim {
           data.push_back(cpData[0][1].getFrameOfReference().getPosition()(1));
           data.push_back(cpData[0][1].getFrameOfReference().getPosition()(2));
           Vec F(3, INIT, 0);
-          F = cpData[0][0].getFrameOfReference().getOrientation().col(1) * lak(1);
-          if (getFrictionDirections() > 1)
-            F += cpData[0][0].getFrameOfReference().getOrientation().col(2) * lak(2);
+          if(gActive) {
+            F = cpData[0][0].getFrameOfReference().getOrientation().col(1) * lak(1);
+            if (getFrictionDirections() > 1)
+              F += cpData[0][0].getFrameOfReference().getOrientation().col(2) * lak(2);
+          }
           data.push_back(F(0));
           data.push_back(F(1));
           data.push_back(F(2));
@@ -250,6 +262,12 @@ namespace MBSim {
         }
       }
 #endif
+      if (getPlotFeature(linkKinematics) == enabled) {
+        plotVector.push_back(gk(0)); //gN
+        for (int j = 0; j < 1 + getFrictionDirections(); j++)
+          plotVector.push_back(gdk(j)); //gd
+      }
+
       if (getPlotFeature(generalizedLinkForce) == enabled) {
         if (gActive) {
           plotVector.push_back(lak(0));
@@ -262,11 +280,6 @@ namespace MBSim {
           for (int j = 0; j < 1 + getFrictionDirections(); j++)
             plotVector.push_back(0);
         }
-      }
-      if (getPlotFeature(linkKinematics) == enabled) {
-        plotVector.push_back(gk(0)); //gN
-        for (int j = 0; j < 1 + getFrictionDirections(); j++)
-          plotVector.push_back(gdk(j)); //gd
       }
       Object::plot(t, dt);
     }

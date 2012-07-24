@@ -58,12 +58,12 @@ namespace MBSim {
       system.updaterFactorRef(system.getrFactorParent()(0,system.getrFactorSize()-1));
     }
     system.updategd(t);
-
     system.updateT(t); 
     system.updateJacobians(t);
     system.updateM(t);
     system.updateW(t); 
     system.updateV(t);
+    system.updateh(t);
   }
   
   void ThetaTimeSteppingIntegrator::preIntegrate(DynamicSystemSolver& system) {

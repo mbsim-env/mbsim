@@ -44,7 +44,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  DynamicSystem::DynamicSystem(const string &name) : Element(name), frameParent(0), PrPF(Vec(3,INIT,0.)), APF(SqrMat(3,EYE)), q0(0), u0(0), x0(0), qSize(0), qInd(0), xSize(0), xInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0), LinkStatusSize(0), LinkStatusInd(0)
+  DynamicSystem::DynamicSystem(const string &name) : Element(name), frameParent(0), PrPF(Vec(3,INIT,0.)), APF(SqrMat(3,EYE)), q0(0), u0(0), x0(0), qSize(0), qInd(0), xSize(0), xInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0), LinkStatusSize(0), LinkStatusInd(0), LinkStatusRegSize(0), LinkStatusRegInd(0)
 #ifdef HAVE_OPENMBVCPPINTERFACE                      
                                                      , openMBVGrp(0), corrInd(0)
 #endif
@@ -395,6 +395,13 @@ namespace MBSim {
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
       (*i)->updateLinkStatus(t); 
   } 
+
+  void DynamicSystem::updateLinkStatusReg(double t) {
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
+      (*i)->updateLinkStatusReg(t);
+    for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i) 
+      (*i)->updateLinkStatusReg(t); 
+  }
 
   void DynamicSystem::setDynamicSystemSolver(DynamicSystemSolver* sys) {
     Element::setDynamicSystemSolver(sys);
@@ -958,6 +965,16 @@ namespace MBSim {
       (**i).updateLinkStatusRef(LinkStatusParent);
   }
 
+  void DynamicSystem::updateLinkStatusRegRef(const Vector<int> &LinkStatusRegParent) {
+    LinkStatusReg.resize() >> LinkStatusRegParent(LinkStatusRegInd,LinkStatusRegInd+LinkStatusRegSize-1);
+
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
+      (*i)->updateLinkStatusRegRef(LinkStatusRegParent);
+
+    for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i) 
+      (**i).updateLinkStatusRegRef(LinkStatusRegParent);
+  }
+
   void DynamicSystem::initz() {
     for(unsigned i=0; i<dynamicsystem.size(); i++)
       dynamicsystem[i]->initz();
@@ -1064,6 +1081,20 @@ namespace MBSim {
     return changed;
   }
 
+ bool DynamicSystem::gActiveChangedReg() {
+    bool changed = false;
+
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
+      if ((*i)->gActiveChanged())
+        changed = true;
+
+    for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i) 
+      if ((*i)->gActiveChanged())
+        changed = true;
+    
+    return changed;
+  }
+
   void DynamicSystem::calcxSize() {
     xSize = 0;
 
@@ -1112,6 +1143,21 @@ namespace MBSim {
       (*i)->calcLinkStatusSize();
       (*i)->setLinkStatusInd(LinkStatusSize);
       LinkStatusSize += (*i)->getLinkStatusSize();
+    }
+  }
+
+  void DynamicSystem::calcLinkStatusRegSize() {
+    LinkStatusRegSize = 0;
+
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) {
+      (*i)->calcLinkStatusRegSize();
+      (*i)->setLinkStatusRegInd(LinkStatusRegSize);
+      LinkStatusRegSize += (*i)->getLinkStatusRegSize();
+    }
+    for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i) {
+      (*i)->calcLinkStatusRegSize();
+      (*i)->setLinkStatusRegInd(LinkStatusRegSize);
+      LinkStatusRegSize += (*i)->getLinkStatusRegSize();
     }
   }
 
@@ -1210,6 +1256,11 @@ namespace MBSim {
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
       (*i)->checkActive(j);
     setUpActiveLinks();
+  }
+
+  void DynamicSystem::checkActiveReg(int j) {
+    for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i)
+      (*i)->checkActive(j);
   }
 
   void DynamicSystem::setgTol(double tol) {
