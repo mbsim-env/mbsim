@@ -1,17 +1,17 @@
 /* Copyright (C) 2004-2011 MBSim Development Team
  *
- * This library is free software; you can redistribute it and/or 
- * modify it under the terms of the GNU Lesser General Public 
- * License as published by the Free Software Foundation; either 
- * version 2.1 of the License, or (at your option) any later version. 
- *  
- * This library is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
- * Lesser General Public License for more details. 
- *  
- * You should have received a copy of the GNU Lesser General Public 
- * License along with this library; if not, write to the Free Software 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
  * Contact: thorsten.schindler@mytum.de
@@ -62,7 +62,7 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure_) : FlexibleBodyContinuum<double>(name), L(0), l0(0), E(0), A(0), I(0), rho(0), rc(0), dm(0), dl(0), openStructure(openStructure_), initialized(false) { 
+  FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure_) : FlexibleBodyContinuum<double>(name), L(0), l0(0), E(0), A(0), I(0), rho(0), rc(0), dm(0), dl(0), openStructure(openStructure_), initialized(false) {
     contour1sFlexible = new Contour1sFlexible("Contour1sFlexible");
     Body::addContour(contour1sFlexible);
   }
@@ -82,7 +82,7 @@ namespace MBSimFlexibleBody {
         if(qElement[i](2)-q(2)>0.0) qElement[i](7) += 2*M_PI;
         else qElement[i](7) -= 2*M_PI;
         uElement[i](5,7) << u(0,2);
-      } 
+      }
     }
   }
 
@@ -91,7 +91,7 @@ namespace MBSimFlexibleBody {
 
     if(n < Elements - 1 || openStructure==true) {
       gloVec(j,j+7) += locVec;
-    } 
+    }
     else { // ring closure at finite element (end,1) with angle difference 2*M_PI
       gloVec(j,j+4) += locVec(0,4);
       gloVec(0,  2) += locVec(5,7);
@@ -103,7 +103,7 @@ namespace MBSimFlexibleBody {
 
     if(n < Elements - 1 || openStructure==true) {
       gloMat(Index(j,j+7),Index(j,j+7)) += locMat;
-    } 
+    }
     else { // ring closure at finite element (end,1) with angle difference 2*M_PI
       gloMat(Index(j,j+4),Index(j,j+4)) += locMat(Index(0,4),Index(0,4));
       gloMat(Index(j,j+4),Index(0,2)) += locMat(Index(0,4),Index(5,7));
@@ -117,7 +117,7 @@ namespace MBSimFlexibleBody {
 
     if(n < Elements - 1 || openStructure==true) {
       gloMat(Index(j,j+7)) += locMat;
-    } 
+    }
     else { // ring closure at finite element (end,1) with angle difference 2*M_PI
       gloMat(Index(j,j+4))            += locMat(Index(0,4));
       gloMat(Index(j,j+4),Index(0,2)) += locMat(Index(0,4),Index(5,7));
@@ -135,7 +135,7 @@ namespace MBSimFlexibleBody {
         cp.getFrameOfReference().setPosition(frameOfReference->getPosition() + frameOfReference->getOrientation() * tmp);
       }
       if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
-        tmp(0) = cos(X(2)); tmp(1) = sin(X(2)); tmp(2) = 0.; 
+        tmp(0) = cos(X(2)); tmp(1) = sin(X(2)); tmp(2) = 0.;
         cp.getFrameOfReference().getOrientation().col(1) = frameOfReference->getOrientation() * tmp; // tangent
       }
       if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
@@ -165,7 +165,7 @@ namespace MBSimFlexibleBody {
       }
 
       if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
-        tmp(0) =  cos(q(5*node+2)); tmp(1) = sin(q(5*node+2)); tmp(2) = 0.; 
+        tmp(0) =  cos(q(5*node+2)); tmp(1) = sin(q(5*node+2)); tmp(2) = 0.;
         cp.getFrameOfReference().getOrientation().col(1)    = frameOfReference->getOrientation() * tmp; // tangent
       }
       if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
@@ -228,7 +228,7 @@ namespace MBSimFlexibleBody {
       frame->setJacobianOfRotation   (cp.getFrameOfReference().getJacobianOfRotation());
       frame->setGyroscopicAccelerationOfTranslation(cp.getFrameOfReference().getGyroscopicAccelerationOfTranslation());
       frame->setGyroscopicAccelerationOfRotation   (cp.getFrameOfReference().getGyroscopicAccelerationOfRotation());
-    }   
+    }
   }
 
   void FlexibleBody1s21RCM::init(InitStage stage) {
@@ -300,11 +300,11 @@ namespace MBSimFlexibleBody {
         plotVector.push_back(elementData(j));
     }
     FlexibleBodyContinuum<double>::plot(t,dt);
-  }  
+  }
 
   void FlexibleBody1s21RCM::setNumberElements(int n) {
     Elements = n;
-    if(openStructure) qSize = 5*n+3; 
+    if(openStructure) qSize = 5*n+3;
     else qSize = 5*n;
     uSize[0] = qSize;
     uSize[1] = qSize; // TODO
@@ -314,20 +314,20 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s21RCM::setCurlRadius(double r) {
     rc = r;
-    if(initialized) 
-      for(int i=0;i<Elements;i++) 
+    if(initialized)
+      for(int i=0;i<Elements;i++)
         static_cast<FiniteElement1s21RCM*>(discretization[i])->setCurlRadius(rc);
   }
 
   void FlexibleBody1s21RCM::setMaterialDamping(double d) {
     dm = d;
-    if(initialized) 
+    if(initialized)
       for(int i=0;i<Elements;i++) static_cast<FiniteElement1s21RCM*>(discretization[i])->setMaterialDamping(dm);
   }
 
   void FlexibleBody1s21RCM::setLehrDamping(double d) {
     dl = d;
-    if(initialized) 
+    if(initialized)
       for(int i=0;i<Elements;i++) static_cast<FiniteElement1s21RCM*>(discretization[i])->setLehrDamping(dl);
   }
 
@@ -352,7 +352,7 @@ namespace MBSimFlexibleBody {
           q0Dummy(5*i+0,5*i+1) = direction*L/Elements*i;
           q0Dummy(5*i+2)       = alpha;
         }
-      } 
+      }
       else {
         double R  = L/(2*M_PI);
         double a_ = sqrt(R*R + (L/Elements*L/Elements)/16.) - R;
@@ -383,23 +383,40 @@ namespace MBSimFlexibleBody {
     BuildElements();
   }
 
-  void FlexibleBody1s21RCM::exportProfile(const string& filename, const int & deg /* = 3*/, const bool &writePsFile /*= false*/) {
+  void FlexibleBody1s21RCM::exportPositionVelocity(const string& filenamePos, const string& filenameVel /*= string( )*/, const int & deg /* = 3*/, const bool &writePsFile /*= false*/) {
 #ifdef HAVE_NURBS
 
-    PlNurbsCurved curve;
+    PlNurbsCurved curvePos;
+    PlNurbsCurved curveVel;
+
     if (!openStructure) {
-      PLib::Vector<PLib::HPoint3Dd> Nodelist(Elements + deg);
+      PLib::Vector<PLib::HPoint3Dd> NodelistPos(Elements + deg);
+      PLib::Vector<PLib::HPoint3Dd> NodelistVel(Elements + deg);
 
       for (int i = 0; i < Elements + deg; i++) {  // +deg-Elements are needed, as the curve is closed
         ContourPointData cp(i);
         if (i >= Elements)
           cp.getNodeNumber() = i - Elements;
-        updateKinematicsForFrame(cp, position);
 
-        Nodelist[i] = HPoint3Dd(cp.getFrameOfReference().getPosition()(0), cp.getFrameOfReference().getPosition()(1), cp.getFrameOfReference().getPosition()(2), 1);
+        updateKinematicsForFrame(cp, position);
+        NodelistPos[i] = HPoint3Dd(cp.getFrameOfReference().getPosition()(0), cp.getFrameOfReference().getPosition()(1), cp.getFrameOfReference().getPosition()(2), 1); // Third component is zero as Nurbs library supports only 3D interpolation
+
+        if(not filenameVel.empty()) {
+          updateKinematicsForFrame(cp, velocity_cosy);
+
+          SqrMat TMPMat = cp.getFrameOfReference().getOrientation();
+          SqrMat AKI(3,3,INIT,0.);
+          AKI.row(0) = trans(TMPMat.col(1));
+          AKI.row(1) = trans(TMPMat.col(0));
+          AKI.row(2) = trans(TMPMat.col(2));
+          Vec Vel(3,INIT,0.);
+          Vel = AKI*cp.getFrameOfReference().getVelocity();
+
+          NodelistVel[i] = HPoint3Dd(Vel(0), Vel(1), Vel(2), 1);
+        }
       }
 
-      /*create own vVec and vvec like in nurbsdisk_2s*/
+      /*create own uVec and uvec like in nurbsdisk_2s*/
       PLib::Vector<double> uvec = PLib::Vector<double>(Elements + deg);
       PLib::Vector<double> uVec = PLib::Vector<double>(Elements + deg + deg + 1);
 
@@ -415,62 +432,94 @@ namespace MBSimFlexibleBody {
         uVec[i] = uVec[i - 1] + stepU;
       }
 
-      curve.globalInterpClosedH(Nodelist, uvec, uVec, deg);
-
-      curve.write(filename.c_str());
+      curvePos.globalInterpClosedH(NodelistPos, uvec, uVec, deg);
+      curvePos.write(filenamePos.c_str());
 
       if (writePsFile) {
-        string psfile = filename + ".ps";
+        string psfile = filenamePos + ".ps";
 
-        cout << curve.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
+        cout << curvePos.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
+      }
+
+      if(not filenameVel.empty()) {
+        curveVel.globalInterpClosedH(NodelistVel, uvec, uVec, deg);
+        curveVel.write(filenameVel.c_str());
       }
     }
 #else
     throw MBSimError("No Nurbs-Library installed ...");
 #endif
-
   }
 
-  void FlexibleBody1s21RCM::importProfile(const string & filename) {
+  void FlexibleBody1s21RCM::importPositionVelocity(const string & filenamePos, const string & filenameVel /* = string( )*/) {
 #ifdef HAVE_NURBS
 
-    PlNurbsCurved curve;
-    curve.read(filename.c_str());
+    int DEBUGLEVEL = 0;
 
-    //double L = curve.length(); // TODO ungenauer als mit L
+    PlNurbsCurved curvePos;
+    PlNurbsCurved curveVel;
+    curvePos.read(filenamePos.c_str());
+    if(not filenameVel.empty())
+      curveVel.read(filenameVel.c_str());
+
     double l0 = L/Elements;
     Vec q0Dummy(q0.size(),INIT,0.);
+    Vec u0Dummy(u0.size(),INIT,0.);
+    Point3Dd prevBinStart;
 
     for(int i = 0; i < Elements; i++) {
-      Point3Dd posStart = curve.pointAt(i*l0);
-      Point3Dd pos1Quart = curve.pointAt(i*l0 + l0/4.);
-      Point3Dd posHalf = curve.pointAt(i*l0 + l0/2.);
-      Point3Dd pos3Quart = curve.pointAt(i*l0 + l0*3./4.);
-      Point3Dd velStart = curve.derive3D(i*l0, 1);
-      Point3Dd velHalf = curve.derive3D(i*l0 + l0/2., 1);
+      Point3Dd posStart = curvePos.pointAt(i*l0);
+      Point3Dd pos1Quart = curvePos.pointAt(i*l0 + l0/4.);
+      Point3Dd posHalf = curvePos.pointAt(i*l0 + l0/2.);
+      Point3Dd pos3Quart = curvePos.pointAt(i*l0 + l0*3./4.);
+      Point3Dd tangStart = curvePos.derive3D(i*l0, 1);
+      tangStart /= norm(tangStart);
+      Point3Dd velHalf = curvePos.derive3D(i*l0 + l0/2., 1);
 
       q0Dummy(i*5)   = posStart.x(); // x
       q0Dummy(i*5+1) = posStart.y(); // y
-      q0Dummy(i*5+2) = ArcTan(velStart.x(),velStart.y()); // phi
+      q0Dummy(i*5+2) = ArcTan(tangStart.x(),tangStart.y()); // phi
 
       q0Dummy(i*5+3) = -absolute((pos1Quart.x()-posHalf.x())*(-velHalf.y()) - (pos1Quart.y()-posHalf.y())*(-velHalf.x()))/sqrt(velHalf.x()*velHalf.x() + velHalf.y()*velHalf.y()); // cL
       q0Dummy(i*5+4) = -absolute((pos3Quart.x()-posHalf.x())*velHalf.y() - (pos3Quart.y()-posHalf.y())*velHalf.x())/sqrt(velHalf.x()*velHalf.x() + velHalf.y()*velHalf.y()); // cR
+
+      if(not filenameVel.empty()) {
+        Point3Dd binStart = curvePos.derive3D(i*l0, 2);
+        binStart = crossProduct(binStart,tangStart);
+        binStart /= norm(binStart);
+        if (i>0) {
+          if (dot(prevBinStart,binStart)<0)
+            binStart = -1. * binStart;
+        }
+        prevBinStart = binStart;
+        Point3Dd norStart = crossProduct(binStart,tangStart);
+
+        SqrMat AIK(3,3,INIT,0.);
+        AIK(0,0) = tangStart.x(); AIK(1,0) = tangStart.y(); AIK(2,0) = tangStart.z();
+        AIK(0,1) = norStart.x(); AIK(1,1) = norStart.y(); AIK(2,1) = norStart.z();
+        AIK(0,2) = binStart.x(); AIK(1,2) = binStart.y(); AIK(2,2) = binStart.z();
+
+        Point3Dd velStart = curveVel.pointAt(i*l0);
+
+        Vec velK(3,INIT,0.); velK(0) = velStart.x(); velK(1) = velStart.y(); velK(2) = velStart.z();
+        Vec velI = trans(frameOfReference->getOrientation())*AIK*velK;
+
+        u0Dummy(i*5) = velI(0);
+        u0Dummy(i*5+1) = velI(1);
+      }
     }
     setq0(q0Dummy);
+    if(not filenameVel.empty())
+      setu0(u0Dummy);
 
-    /*Testing
-
-      int j = 0;
-      for (double i = 0; i < 1; i += stepU) {
-      cout << "i=" << i << endl << curve.pointAt(i) << endl;
-      cout << Nodelist[j] << endl;
-      j++;
+    if(DEBUGLEVEL == 1) {
+      for (double i = 0; i < Elements; i++) {
+        cout << "i=" << i << endl << curvePos.pointAt(i) << endl;
       }
       cout << "Test of Nurbs-Curve" << endl;
       string psfile = "test.ps";
-      cout << curve.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
-
-      END - Testing*/
+      cout << curvePos.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
+    }
 #else
     throw MBSimError("No Nurbs-Library installed ...");
 #endif
@@ -481,7 +530,7 @@ namespace MBSimFlexibleBody {
     if(openStructure && sGlobal >= L) remainder += L; // remainder \in (-eps,L+eps)
     if(!openStructure && sGlobal < 0.) remainder += L; // remainder \in [0,L)
 
-    currentElement = int(remainder/l0);   
+    currentElement = int(remainder/l0);
     sLocal = remainder - (0.5 + currentElement) * l0; // Lagrange-Parameter of the affected FE with sLocal==0 in the middle of the FE and sGlobal==0 at the beginning of the beam
 
     if(currentElement >= Elements && openStructure) { // contact solver computes to large sGlobal at the end of the entire beam is not considered only for open structure

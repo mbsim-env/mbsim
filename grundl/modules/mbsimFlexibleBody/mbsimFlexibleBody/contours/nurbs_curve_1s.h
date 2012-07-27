@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2011 MBSim Development Team
+/* Copyright (C) 2004-2012 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -61,6 +61,7 @@ namespace MBSimFlexibleBody {
    * \brief contour 1s flexible with NURBS parametrization
    * \author Thorsten Schindler
    * \date 2011-10-16 initial commit (Thorsten Schindler)
+   * \date 2012-03-15 updateKinematicsForFrame and contact Jacobians (Cebulla / Schindler)
    */
   class NurbsCurve1s : public MBSim::Contour1s {
     public:
@@ -88,8 +89,14 @@ namespace MBSimFlexibleBody {
 
       /* INHERITED INTERFACE OF CONTOUR */
       virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff);
-      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j=0) { throw MBSim::MBSimError("ERROR(NurbsCurve1s::updateJacobiansForFrame): Not implemented!"); }
+      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j=0);
       virtual MBSim::ContactKinematics *findContactPairingWith(std::string type0, std::string type1) { throw MBSim::MBSimError("ERROR(NurbsCurve1s::findContactPairingWith): Not implemented!"); }
+      /***************************************************/
+
+      /* GETTER / SETTER */
+#ifdef HAVE_NURBS
+      void setNormalRotationGrid(fmatvec::Vec normal_) { normalRotationGrid.x() = normal_(0), normalRotationGrid.y() = normal_(1),normalRotationGrid.z() = normal_(2); }
+#endif
       /***************************************************/
 
 #ifdef HAVE_NURBS
@@ -123,11 +130,30 @@ namespace MBSimFlexibleBody {
       void computeCurveVelocities();
 #endif
 
+#ifdef HAVE_NURBS
+      /*!
+       * \brief interpolates the angular velocities with the node-data from the body
+       */
+      void computeCurveAngularVelocities();
+#endif
+
+#ifdef HAVE_NURBS
+      /*!
+       * \brief interpolates the Jacobians of translation with the node-data from the body
+       */
+      void computeCurveJacobians();
+#endif
+
     protected:
       /**
        * \brief number of elements
        */
       int Elements;
+
+      /**
+       * \brief number of DOFs
+       */
+      int qSize;
 
       /**
        * \brief open or closed beam structure
@@ -154,6 +180,36 @@ namespace MBSimFlexibleBody {
        * \brief interpolated velocities of the contour
        */
       PlNurbsCurved *curveVelocities;
+
+      /**
+       * \brief interpolated angular velocities of the contour
+       */
+      PlNurbsCurved *curveAngularVelocities;
+
+      /**
+       * \brief closest normal on rotation grid to update direction of normal of nurbs-curve and to avoid jumping
+       */
+      PLib::Point3Dd normalRotationGrid;
+
+      /**
+       * \brief Jacobians of Translation of finite element nodes
+       */
+      std::vector<MBSim::ContourPointData> jacobiansTrans; // size = number of interpolation points
+
+      /**
+       * \brief Jacobians of Rotation of finite element nodes
+       */
+      std::vector<MBSim::ContourPointData> jacobiansRot; // size = number of interpolation points
+
+      /**
+       * \brief interpolated Jacobians of Translation of the contour
+       */
+      std::vector<PlNurbsCurved> CurveJacobiansOfTranslation; // size = number of generalized coordinates
+
+      /**
+       * \brief interpolated Jacobians of Rotation on the contour
+       */
+      std::vector<PlNurbsCurved> CurveJacobiansOfRotation; // size = number of generalized coordinates
 
       /**
        * \brief knot vector

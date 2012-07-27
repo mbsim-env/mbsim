@@ -52,35 +52,35 @@ namespace MBSimControl {
   };
 
   /*!
-   * \brief AbsolutPositionSensor
+   * \brief AbsolutePositionSensor
    * \author Markus Schneider
    */
-  class AbsolutPositionSensor : public AbsolutCoordinateSensor {
+  class AbsolutePositionSensor : public AbsolutCoordinateSensor {
     public:
-      AbsolutPositionSensor(const std::string &name) : AbsolutCoordinateSensor(name) {}
-      std::string getType() const { return "AbsolutPositionSensor"; }
+      AbsolutePositionSensor(const std::string &name) : AbsolutCoordinateSensor(name) {}
+      std::string getType() const { return "AbsolutePositionSensor"; }
       fmatvec::Vec getSignal();
   };
 
   /*!
-   * \brief AbsolutVelocitySensor
+   * \brief AbsoluteVelocitySensor
    * \author Markus Schneider
    */
-  class AbsolutVelocitySensor : public AbsolutCoordinateSensor {
+  class AbsoluteVelocitySensor : public AbsolutCoordinateSensor {
     public:
-      AbsolutVelocitySensor(const std::string &name) : AbsolutCoordinateSensor(name) {}
-      std::string getType() const { return "AbsolutVelocitySensor"; }
+      AbsoluteVelocitySensor(const std::string &name) : AbsolutCoordinateSensor(name) {}
+      std::string getType() const { return "AbsoluteVelocitySensor"; }
       fmatvec::Vec getSignal();
   };
 
   /*!
-   * \brief AbsolutAngularPositionSensor
+   * \brief AbsoluteAngularPositionSensor
    * \author Markus Schneider
    */
-  class AbsolutAngularPositionSensor : public AbsolutCoordinateSensor {
+  class AbsoluteAngularPositionSensor : public AbsolutCoordinateSensor {
     public:
-      AbsolutAngularPositionSensor(const std::string &name) : AbsolutCoordinateSensor(name) {}
-      std::string getType() const { return "AbsolutAngularPositionSensor"; }
+      AbsoluteAngularPositionSensor(const std::string &name) : AbsolutCoordinateSensor(name) {}
+      std::string getType() const { return "AbsoluteAngularPositionSensor"; }
       fmatvec::Vec getSignal();
 
       void calcxSize() {xSize=direction.cols(); }
@@ -101,13 +101,13 @@ namespace MBSimControl {
   };
 
   /*!
-   * \brief AbsolutAngularVelocitySensor
+   * \brief AbsoluteAngularVelocitySensor
    * \author Markus Schneider
    */
-  class AbsolutAngularVelocitySensor : public AbsolutCoordinateSensor {
+  class AbsoluteAngularVelocitySensor : public AbsolutCoordinateSensor {
     public:
-      AbsolutAngularVelocitySensor(const std::string &name) : AbsolutCoordinateSensor(name) {}
-      std::string getType() const { return "AbsolutAngularVelocitySensor"; }
+      AbsoluteAngularVelocitySensor(const std::string &name) : AbsolutCoordinateSensor(name) {}
+      std::string getType() const { return "AbsoluteAngularVelocitySensor"; }
       fmatvec::Vec getSignal();
   };
   

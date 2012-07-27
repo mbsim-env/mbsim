@@ -204,6 +204,7 @@ namespace MBSimPowertrain {
     cylinder->setHeight(lS*5);
     cylinder->setStaticColor(0.1);
     cylinder->setInitialTranslation(0,0,0);
+    cylinder->setName("frustum1");
     sunOMBV->addRigidBody(cylinder);
     cylinder=new OpenMBV::Frustum;
     cylinder->setTopRadius(rS);
@@ -211,6 +212,7 @@ namespace MBSimPowertrain {
     cylinder->setHeight(lS);
     cylinder->setStaticColor(0.1);
     cylinder->setInitialTranslation(0,0,0);
+    cylinder->setName("frustum2");
     sunOMBV->addRigidBody(cylinder);
     sunOMBV->setInitialTranslation(0,0,lS/2);
     sun->setOpenMBVRigidBody(sunOMBV);

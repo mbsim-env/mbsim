@@ -56,7 +56,7 @@ namespace MBSimControl {
   };
 
   /*!
-   * \brief AbsolutVelocitySensor
+   * \brief AbsoluteVelocitySensor
    * \author Markus Schneider
    */
   class LinkVelocitySensor : public LinkSensor {

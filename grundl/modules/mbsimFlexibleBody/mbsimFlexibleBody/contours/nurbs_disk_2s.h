@@ -257,7 +257,7 @@ namespace MBSimFlexibleBody {
       std::vector<PlNurbsSurfaced> SurfaceJacobiansOfTranslation; // size = number of generalized coordinates
 
       /**
-       * \brief interpolated Jacobians of Translation on the surface
+       * \brief interpolated Jacobians of Rotation on the surface
        */
       std::vector<PlNurbsSurfaced> SurfaceJacobiansOfRotation; // size = number of generalized coordinates
 

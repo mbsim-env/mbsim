@@ -30,6 +30,7 @@ namespace MBSimFlexibleBody {
    * \author Thorsten Schindler
    * \date 2009-04-24 initial commit (Thorsten Schindler)
    * \date 2010-05-23 update according to change in Rotation (Martin Foerg)
+   * \date 2012-03-20 added T matrix (Schindler / Cebulla)
    * \todo unify with Rotation TODO
    */
   class Angles : public MBSim::Rotation {
@@ -215,7 +216,13 @@ namespace MBSimFlexibleBody {
        * \return angular velocity
        */
       fmatvec::Vec computeOmega(const fmatvec::Vec& q,const fmatvec::Vec& qt) const;
-      /********************************************************/		
+
+      /**
+       * \param angles
+       * \return T-matrix (transformation matrix from differentiated angles to angular velocity omega)
+       */
+       fmatvec::SqrMat computeT(const fmatvec::Vec& q) const;
+      /********************************************************/
   };
 
 }
