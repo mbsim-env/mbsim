@@ -1,10 +1,10 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.57])
-AC_INIT([mbsimFlexibleBody],[2.2.0],[ts.schindler@gmail.com])
+AC_INIT([mbsimFlexibleBody],[3.0.0],[ts.schindler@gmail.com])
 AC_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([mbsimFlexibleBody/Makefile.am])
-AC_PROG_LIBTOOL
+LT_INIT([win32-dll])
 AC_PROG_CXX
 AC_PROG_F77
 AC_PROG_CXXCPP
@@ -16,9 +16,7 @@ AC_C_CONST
 AC_CHECK_FUNCS([sqrt])
 AC_HEADER_STDBOOL
 
-PKG_CHECK_MODULES(DEPS, mbsim >= 2.1.0)
-
-LDFLAGS="$LDFLAGS -Wl,--no-undefined"
+PKG_CHECK_MODULES(DEPS, mbsim >= 3.0.0)
 
 dnl NURBS Package
 AC_ARG_WITH(nurbs-inc-prefix,[  --with-nurbs-inc-prefix=PFX  Prefix where nurbs includes are installed], [nurbs_inc_prefix="$withval"], [nurbs_inc_prefix="$prefix/include"])
@@ -78,6 +76,8 @@ AC_PATH_PROG([doxygen],[doxygen],[no],[$doxygenpath:$PATH])
 if test $doxygen = "no" ; then
   AC_MSG_RESULT([can't generate documentation. 'doxygen' required.])
 fi
+
+LDFLAGS="$LDFLAGS -no-undefined"
 
 AC_CONFIG_FILES([Makefile mbsimFlexibleBody/Makefile mbsimFlexibleBody/flexible_body/Makefile mbsimFlexibleBody/flexible_body/finite_elements/Makefile mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_rcm/Makefile mbsimFlexibleBody/flexible_body/finite_elements/finite_element_2s_13_mfr_mindlin/Makefile mbsimFlexibleBody/contact_kinematics/Makefile mbsimFlexibleBody/contours/Makefile mbsimFlexibleBody/utils/Makefile mbsimFlexibleBody.pc schema/Makefile xmldoc/Makefile doc/Makefile doc/doxyfile])
 

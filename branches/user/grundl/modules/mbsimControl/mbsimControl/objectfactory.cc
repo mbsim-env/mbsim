@@ -44,13 +44,13 @@ namespace MBSimControl {
     if(element->ValueStr()==MBSIMCONTROLNS"GeneralizedVelocitySensor")
       return new GeneralizedVelocitySensor(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"AbsolutePositionSensor")
-      return new AbsolutPositionSensor(element->Attribute("name"));
+      return new AbsolutePositionSensor(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"AbsoluteVelocitySensor")
-      return new AbsolutVelocitySensor(element->Attribute("name"));
+      return new AbsoluteVelocitySensor(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"AbsoluteAngularPositionSensor")
-      return new AbsolutAngularPositionSensor(element->Attribute("name"));
+      return new AbsoluteAngularPositionSensor(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"AbsoluteAngularVelocitySensor")
-      return new AbsolutAngularVelocitySensor(element->Attribute("name"));
+      return new AbsoluteAngularVelocitySensor(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"RelativePositionSensor")
       return new RelativePositionSensor(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"RelativeVelocitySensor")

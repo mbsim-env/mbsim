@@ -2133,20 +2133,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="Checkvalve" abstract="true" substitutionGroup="mbsim:EmptyGroup" type="CheckvalveType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Abstrakte Klasse eines Rückschlagventils
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="CheckvalveType">
-    <xs:complexContent>
-      <xs:extension base="mbsim:EmptyGroupType"/>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:element name="BallCheckvalve" substitutionGroup="Checkvalve" type="BallCheckvalveType">
+  <xs:element name="Checkvalve" substitutionGroup="mbsim:EmptyGroup" type="CheckvalveType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Modell eines Rückschlagventils mit Berücksichtigung der Trägheit der Ventilkugel.<br/>
@@ -2156,9 +2143,9 @@
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="BallCheckvalveType">
+  <xs:complexType name="CheckvalveType">
     <xs:complexContent>
-      <xs:extension base="CheckvalveType">
+      <xs:extension base="mbsim:EmptyGroupType">
         <xs:sequence>
           <xs:element name="basisFrame">
             <xs:annotation>

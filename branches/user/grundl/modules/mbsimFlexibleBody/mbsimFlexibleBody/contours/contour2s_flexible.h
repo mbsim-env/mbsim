@@ -20,7 +20,7 @@
 #ifndef _CONTOUR2SFLEXIBLE_H_
 #define _CONTOUR2SFLEXIBLE_H_
 
-#include "mbsim/contours/contour_2s.h"
+//#include "mbsim/contours/contour_2s.h"
 
 namespace MBSim {
   class ContactKinematics;

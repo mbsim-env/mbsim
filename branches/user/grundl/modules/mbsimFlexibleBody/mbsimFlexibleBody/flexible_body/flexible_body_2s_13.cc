@@ -178,9 +178,9 @@ namespace MBSimFlexibleBody {
         contour->updateKinematicsForFrame(cp, position_cosy); // kinematics of the center of gravity of the disk (TODO frame feature)
 
         //Translation of COG
-        data.push_back(cp.getFrameOfReference().getPosition()(0) + (cp.getFrameOfReference().getOrientation())(0, 2) * d(0) * 0.5); //global x-coordinate
-        data.push_back(cp.getFrameOfReference().getPosition()(1) + (cp.getFrameOfReference().getOrientation())(1, 2) * d(0) * 0.5); //global y-coordinate
-        data.push_back(cp.getFrameOfReference().getPosition()(2) + (cp.getFrameOfReference().getOrientation())(2, 2) * d(0) * 0.5); //global z-coordinate
+        data.push_back(cp.getFrameOfReference().getPosition()(0)); //global x-coordinate
+        data.push_back(cp.getFrameOfReference().getPosition()(1)); //global y-coordinate
+        data.push_back(cp.getFrameOfReference().getPosition()(2)); //global z-coordinate
 
         //Rotation of COG
         Vec AlphaBetaGamma = AIK2Cardan(cp.getFrameOfReference().getOrientation());
@@ -208,6 +208,7 @@ namespace MBSimFlexibleBody {
             data.push_back(pos(0)); //global x-coordinate
             data.push_back(pos(1)); //global y-coordinate
             data.push_back(pos(2)); //global z-coordinate
+
           }
         }
 
@@ -259,18 +260,6 @@ namespace MBSimFlexibleBody {
     assert(Ra >= s(0));
 
     currentElement = int((s(0) - Ri) / dr) * nj + int(s(1) / dj); // which element is involved?
-  }
-
-  SqrMat FlexibleBody2s13::TransformationMatrix(const double &phi) {
-    SqrMat TransMat(3,EYE);
-
-    TransMat(0,0) = cos(phi);
-    TransMat(0,1) = -sin(phi);
-
-    TransMat(1,0) = sin(phi);
-    TransMat(1,1) = cos(phi);
-
-    return TransMat.copy();
   }
 
   double FlexibleBody2s13::computeThickness(const double &r_) {

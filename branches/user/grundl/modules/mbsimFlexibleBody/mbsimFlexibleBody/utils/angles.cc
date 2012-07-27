@@ -134,5 +134,20 @@ namespace MBSimFlexibleBody {
     return omg.copy();
   }
 
+  SqrMat Angles::computeT(const Vec& q) const {
+    Vec t = computet(q);
+    Vec n = computen(q);
+    Vec b = computeb(q);
+    SqrMat tq = computetq(q);
+    SqrMat nq = computenq(q);
+    SqrMat bq = computebq(q);
+
+    SqrMat TMat(3);
+    TMat(0,0,0,2) = t(1)*tq(2,0,2,2)+n(1)*nq(2,0,2,2)+b(1)*bq(2,0,2,2);
+    TMat(1,0,1,2) = t(2)*tq(0,0,0,2)+n(2)*nq(0,0,0,2)+b(2)*bq(0,0,0,2);
+    TMat(2,0,2,2) = t(0)*tq(1,0,1,2)+n(0)*nq(1,0,1,2)+b(0)*bq(1,0,1,2);
+    return TMat.copy();
+  }
+
 }
 

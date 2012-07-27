@@ -35,7 +35,7 @@ namespace MBSim {
 
 namespace MBSimHydraulics {
 
-  class ObjectFactory : protected MBSim::ObjectFactory {
+  class ObjectFactory : protected MBSim::ObjectFactoryBase {
     private:
       static ObjectFactory *instance;
       ObjectFactory() {}

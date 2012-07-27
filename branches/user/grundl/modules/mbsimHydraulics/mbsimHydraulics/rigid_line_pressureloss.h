@@ -51,7 +51,7 @@ namespace MBSimHydraulics {
       // Methods from init-Process
       // ================================
       bool isSetValued() const {return (unilateral || bilateral); }
-      void calcgdSize() {gdSize=1; }
+      void calcgdSize(int j) {gdSize=active?1:0; }
       void calcsvSize() {svSize=isSetValued()?1:0; }
       void updatehRef(const fmatvec::Vec& hRef, int i=0);
       void updaterRef(const fmatvec::Vec& rRef, int i=0);
@@ -67,14 +67,14 @@ namespace MBSimHydraulics {
       // Methods for update-Process
       // ================================
       void updateg(double t); /* zdotStandard */
-      void checkActiveg(); /* update */
-      void checkActivegdn(); // event-driven
+      void checkActive(int j); /* update */
+      //void checkActivegdn(); // event-driven
       bool gActiveChanged(); /* update */
       bool isActive() const {return active; }
-      void calcgdSizeActive() {gdSize=1; }
-      void calclaSize() {laSize=1; }
-      void calclaSizeForActiveg() {laSize=0; } // event-driven
-      void calcrFactorSize() {rFactorSize=1; }
+      //void calcgdSizeActive() {gdSize=1; }
+      void calclaSize(int j) {laSize=active?1:0; }
+      //void calclaSizeForActiveg() {laSize=0; } // event-driven
+      void calcrFactorSize(int j) {rFactorSize=active?1:0; }
       void updategd(double t); /* zdotStandard */
       void updateStopVector(double t); // event-driven
       void updateh(double t, int j); /* zdotStandard */
@@ -85,7 +85,7 @@ namespace MBSimHydraulics {
       // ================================
       // Methods for solve-Process
       // ================================
-      void updateCondition();
+      void checkRoot();
       void updaterFactors();
       void solveImpactsFixpointSingle(double dt);
       void solveConstraintsFixpointSingle();
@@ -106,6 +106,8 @@ namespace MBSimHydraulics {
       bool unilateral, bilateral;
       double gdn, gdd;
       double dpMin;
+      double laSmooth;
+
       LinePressureLoss * linePressureLoss;
       ClosablePressureLoss * closablePressureLoss;
       LeakagePressureLoss * leakagePressureLoss;

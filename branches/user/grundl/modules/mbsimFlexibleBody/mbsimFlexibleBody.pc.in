@@ -12,6 +12,6 @@ Name: mbsimFlexibleBody
 Description: mbsimFlexibleBody is an add-on for flexible bodies to the mbsim-kernel
 Requires: mbsim
 Version: @VERSION@
-Libs: -L${libdir} -lmbsimFlexibleBody
+Libs: -L${libdir} -lmbsimFlexibleBody @LDFLAGS@ @LIBS@
 Cflags: -I${includedir}
 

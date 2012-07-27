@@ -4,7 +4,7 @@ AC_INIT([mbsimElectronics],[3.0.0],[martin.o.foerg@gmail.com])
 AC_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([mbsimElectronics/Makefile.am])
-AC_PROG_LIBTOOL
+LT_INIT([win32-dll])
 AC_PROG_CXX
 AC_PROG_F77
 AC_PROG_CXXCPP
@@ -15,8 +15,6 @@ AC_F77_WRAPPERS
 AC_C_CONST
 AC_CHECK_FUNCS([sqrt])
 AC_HEADER_STDBOOL
-
-LDFLAGS="$LDFLAGS -Wl,--no-undefined"
 
 PKG_CHECK_MODULES(DEPS, mbsim >= 3.0.0)
 
@@ -42,6 +40,8 @@ AC_PATH_PROG([doxygen],[doxygen],[no],[$doxygenpath:$PATH])
 if test $doxygen = "no" ; then
   AC_MSG_RESULT([can't generate documentation. 'doxygen' required.])
 fi
+
+LDFLAGS="$LDFLAGS -no-undefined"
 
 AC_CONFIG_FILES([Makefile mbsimElectronics/Makefile doc/Makefile mbsimElectronics.pc doc/doxyfile])
 

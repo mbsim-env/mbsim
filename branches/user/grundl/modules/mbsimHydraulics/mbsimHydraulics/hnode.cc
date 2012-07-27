@@ -619,17 +619,19 @@ namespace MBSimHydraulics {
     setCavitationPressure(getDouble(e));
   }
 
-  void RigidCavitationNode::checkActiveg() {
-    active=(g(0)<=0);
-  }
-
-  void RigidCavitationNode::checkActivegdn() {
-    if (active) {
-      if (gdn <= gdTol)
-        active = true;
-      else
-        active = false;
+  void RigidCavitationNode::checkActive(int j) {
+    if(j==1) 
+      active=(g(0)<=0);
+    else if(j==3) {
+      if (active) {
+        if (gdn <= gdTol)
+          active = true;
+        else
+          active = false;
+      }
     }
+    else
+      throw;
   }
 
   bool RigidCavitationNode::gActiveChanged() {
@@ -669,16 +671,15 @@ namespace MBSimHydraulics {
     xd(0) = isActive() ? (fabs(gdn)>(gdTol)?gdn:0)*dt : -QHyd*dt;
   }
 
-  void RigidCavitationNode::updateCondition() {
+  void RigidCavitationNode::checkRoot() {
     if(jsv(0)) {
       if(active) {
         active = false;
-        return;
+        ds->setRootID(max(ds->getRootID(),1)); 
       }
       else {
         active = true;
-        ds->setImpact(true);
-        return;
+        ds->setRootID(max(ds->getRootID(),3)); // Impact
       }
     }
   }

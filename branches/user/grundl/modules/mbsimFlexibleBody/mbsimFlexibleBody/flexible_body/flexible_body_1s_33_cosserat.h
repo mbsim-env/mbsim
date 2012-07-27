@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2011 MBSim Development Team
+/* Copyright (C) 2004-2012 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -42,7 +42,11 @@ namespace MBSimFlexibleBody {
    * \date 2011-09-10 initial commit (Thorsten Schindler)
    * \data 2011-10-08 basics derived and included (Thorsten Schindler)
    * \date 2011-10-12 rotation grid added (Thorsten Schindler)
+   * \date 2012-03-15 updateKinematicsForFrame and contact Jacobians (Cebulla / Schindler)
+   * \date 2012-05-10 added initInfo()-function and Contour1sFlexible for perlchain example (Thomas Cebulla)
+   * \date 2012-05-25 added export and import position velocity function (Thomas Cebulla)
    * \todo compute boundary conditions TODO
+   * \todo check open structure in contact kinematics TODO
    *
    * Cosserat model based on
    * H. Lang, J. Linn, M. Arnold: Multi-body dynamics simulation of geometrically exact Cosserat rods
@@ -75,6 +79,8 @@ namespace MBSimFlexibleBody {
       virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
       virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff, MBSim::Frame *frame=0);
       virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame=0);
+      virtual void exportPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string( ), const int & deg = 3, const bool & writePsFile = false);
+      virtual void importPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string( ));
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
@@ -109,6 +115,7 @@ namespace MBSimFlexibleBody {
 #endif
 
       int getNumberElements() const { return Elements; }   	
+      int getNumberDOFs() const { return qSize; }
       double getLength() const { return L; }
       bool isOpenStructure() const { return openStructure; }
       /***************************************************/
@@ -118,6 +125,11 @@ namespace MBSimFlexibleBody {
        * \param Lagrangian coordinate
        */
       fmatvec::Vec computeState(double s);
+
+      /**
+       * \brief initialise beam only for giving information with respect to state, number elements, length, (not for simulation)
+       */
+      void initInfo();
 
     private:
       /** 
@@ -140,6 +152,7 @@ namespace MBSimFlexibleBody {
        */
       CylinderFlexible *cylinder;
       FlexibleBand *top, *bottom, *left, *right;
+      Contour1sFlexible *neutralFibre;
 
       /**
        * \brief angle parametrisation
@@ -147,9 +160,14 @@ namespace MBSimFlexibleBody {
       CardanPtr angle;
 
       /**
-       * \brief number of elements
+       * \brief number of translational elements
        */
       int Elements;
+
+      /**
+       * \brief number of rotational elements =Elements (for a closed structure) or =Elements+1 (for an open structure)
+       */
+      int rotationalElements;
 
       /**
        * \brief length of entire beam and finite elements
@@ -221,25 +239,25 @@ namespace MBSimFlexibleBody {
       FlexibleBody1s33Cosserat& operator=(const FlexibleBody1s33Cosserat&); // assignment operator
 
       /**
-       * \brief detect current finite element
+       * \brief detect current finite element (translation)
        * \param global parametrisation
        * \param local parametrisation
        * \param finite element number
        */
-      void BuildElement(const double& sGlobal, double& sLocal, int& currentElement);
-      
+      void BuildElementTranslation(const double& sGlobal, double& sLocal, int& currentElementTranslation);
+
       /**
        * \brief initialize translational part of mass matrix and calculate Cholesky decomposition
        */
       void initM();
-      
+
       /**
        * \brief compute boundary conditions for rotation grid
        * first and last finite difference rotation beam element refer to values not directly given by dof in open structure
        * they have to be estimated in the following function
        */
       void computeBoundaryCondition();
-      
+
       /** 
        * \brief insert 'local' information in global vectors for rotation grid
        * \param number of finite element
