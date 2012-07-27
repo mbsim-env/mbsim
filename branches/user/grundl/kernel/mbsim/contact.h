@@ -21,6 +21,9 @@
 #define _CONTACT_H_
 
 #include <mbsim/link_mechanics.h>
+
+#include <map>
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
 namespace OpenMBV {
   class Frame;
@@ -29,6 +32,15 @@ namespace OpenMBV {
 #endif
 
 namespace MBSim {
+
+  /*!
+   * \brief define a templated typedef to have shorter double vectors
+   */
+  template<class T>
+  struct dvec {
+      typedef std::vector<std::vector<T> > type;
+  };
+
 
   class ContactKinematics;
   class GeneralizedForceLaw;
@@ -155,22 +167,24 @@ namespace MBSim {
       void setContactImpactLaw(GeneralizedImpactLaw *fnil_) { fnil = fnil_; }
       void setFrictionForceLaw(FrictionForceLaw *fdf_) { fdf = fdf_; }
       void setFrictionImpactLaw(FrictionImpactLaw *ftil_) { ftil = ftil_; }
-      void setContactKinematics(ContactKinematics* ck) { contactKinematics = ck; }
-      ContactKinematics* getContactKinematics() const { return contactKinematics; } 
+      void setContactKinematics(ContactKinematics* ck, int index) { contactKinematics[index] = ck; }
+      ContactKinematics* getContactKinematics(int index) const { return contactKinematics[index]; }
       /***************************************************/
 
       /**
        * \return number of considered friction directions
        */
-      virtual int getFrictionDirections(); 
+      virtual int getFrictionDirections();
 
       /*! connect two contours
        * \param first contour
        * \param second contour
+       *
+       * \return The index of the contactKinematics within the contact
        */
-      void connect(Contour *contour1, Contour* contour2);
+      int connect(Contour *contour1, Contour* contour2, ContactKinematics* contactKinematics = 0);
 
-      void computeCurvatures(fmatvec::Vec & r) const;
+      void computeCurvatures(fmatvec::Vec & r, int contactKinematicsIndex) const;
 
       virtual void initializeUsingXML(TiXmlElement *element);
 
@@ -184,7 +198,7 @@ namespace MBSim {
       /**
        * \brief used contact kinematics
        */
-      ContactKinematics *contactKinematics;
+      std::vector<ContactKinematics*> contactKinematics;
 
       /**
        * \brief force laws in normal and tangential direction on acceleration and velocity level
@@ -209,22 +223,22 @@ namespace MBSim {
       /**
        * \brief vector of frames for definition of relative contact situation
        */
-      std::vector<ContourPointData*> cpData;
+      dvec<ContourPointData*>::type cpData;
 
       /** 
        * \brief boolean vector symbolising activity of contacts on position level with possibility to save previous time step
        */
-      std::vector<unsigned int> gActive, gActive0;
+      dvec<unsigned int>::type gActive, gActive0;
 
       /** 
        * \brief boolean vector symbolising activity of contacts on velocity level
        */
-      std::vector<unsigned int*> gdActive; 
+      dvec<unsigned int*>::type gdActive;
 
       /** 
        * \brief boolean vector symbolising activity of contacts on acceleration level
        */
-      std::vector<unsigned int*> gddActive; 
+      dvec<unsigned int*>::type gddActive;
 
       /** 
        * \brief index for tangential directions in projection matrices
@@ -239,48 +253,55 @@ namespace MBSim {
       /**
        * \brief vectors of relative distance, velocity, velocity after impact in event driven scheme, acceleration in event driven scheme, force parameters, acceleration description with respect to contour parameters, stop vector, relaxation factors for possible contact points
        */
-      std::vector<fmatvec::Vec> gk, gdk, gdnk, gddk, lak, wbk, svk, rFactork;
+      dvec<fmatvec::Vec>::type gk, gdk, gdnk, gddk, lak, wbk, svk, rFactork;
 
       /**
        * \brief boolean evaluation of stop vector for possible contact points
        */
-      std::vector<fmatvec::Vector<int> > jsvk;
+      dvec<fmatvec::Vector<int> >::type jsvk;
 
       /**
        * \brief single-valued forces for possible contact points
        */
-      std::vector<fmatvec::Mat*> fF;
+      dvec<fmatvec::Mat*>::type fF;
 
       /**
        * \brief set-valued forces for possible contact points
        */
-      std::vector<fmatvec::Vec*> WF;
+      dvec<fmatvec::Vec*>::type WF;
 
       /**
        * \brief condensed and full force direction matrix for possible contact points
+       *
+       * You have to use the following indices of Wk/vK[i][j][k][l](m,n) with
+       *     i = index of array (is 1 or 2)
+       *     j = index of first (=contactKinematics)-vector
+       *     k = index of second (=number of potential contact points)-vector
+       *     l = index of the pointer of Mat* (also 1 or 2)
+       *     m,n = index pair of the fmatvec::Mat (other operators are possible too...)
        */
-      std::vector<fmatvec::Mat*> Vk[2], Wk[2];
+      dvec<fmatvec::Mat*>::type Vk[2], Wk[2];
 
       /**
        * \brief size and index of force parameters, relative distances, relative velocities, stop vector and relaxation factors for possible contact points
        */
-      std::vector<int> laSizek, laIndk, gSizek, gIndk, gdSizek, gdIndk, svSizek, svIndk, rFactorSizek, rFactorIndk;
+      dvec<int>::type laSizek, laIndk, gSizek, gIndk, gdSizek, gdIndk, svSizek, svIndk, rFactorSizek, rFactorIndk;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /**
        * \brief contact group to draw
        */
-      OpenMBV::Group * openMBVContactGrp;
+      std::vector<OpenMBV::Group*> openMBVContactGrp;
 
       /**
        * \brief container of ContactFrames to draw
        */
-      std::vector<std::vector<OpenMBV::Frame*> > openMBVContactFrame;
+      dvec<std::vector<OpenMBV::Frame*> >::type openMBVContactFrame;
 
       /**
        * \brief container of normal and friction forces to draw
        */
-      std::vector<OpenMBV::Arrow *> openMBVNormalForceArrow, openMBVFrictionArrow;
+      dvec<OpenMBV::Arrow *>::type openMBVNormalForceArrow, openMBVFrictionArrow;
 
       /**
        * \brief size of ContactFrames to draw
@@ -303,22 +324,22 @@ namespace MBSim {
        *
        * Needed e.g. to project contact to positive normal distance.
        * */
-      std::vector<fmatvec::Vec> corrk;
+      dvec<fmatvec::Vec>::type corrk;
 
       /**
        * \brief size and index of correction vector.
        * */
-      std::vector<int> corrSizek, corrIndk;
+      dvec<int>::type corrSizek, corrIndk;
 
       /**
        * \brief type of detected root.
        * */
-      std::vector<int> rootID;
+      dvec<int>::type rootID;
 
       /**
        * \brief buffer for contact acceleration.
        * */
-      std::vector<fmatvec::Vec> gddkBuf;
+      dvec<fmatvec::Vec>::type gddkBuf;
 
     private:
       std::string saved_ref1, saved_ref2;
