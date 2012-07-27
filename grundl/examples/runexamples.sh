@@ -24,12 +24,20 @@ if [ $# -eq 1 -a "$1" = "-h" ]; then
   echo "runexamples.sh install ../myref/ref.tar.bz2 (install the ../myref/ref.tar.bz2"
   echo "                                            reference file)"
   echo "runexamples.sh validateXML (validate all *.mbsim.xml and *.ombv.xml files)"
+  echo "runexamples.sh [xmlflat_|xml_|xml] ...   run only example dir starting with"
   exit
+fi
+
+# which examples to run
+WHICHEXAMPLES=""
+if [ "_$1" == "_xmlflat_" -o "_$1" == "_xml" -o "_$1" == "_xml_" ]; then
+  WHICHEXAMPLES=$1
+  shift
 fi
 
 RTOL=1e-6
 ATOL=1e-6
-EXAMPLES=$(find -maxdepth 1 -type d | grep -v "^\.$" | grep -v "^\./\.")
+EXAMPLES=$(find -maxdepth 1 -type d | grep -v "^\.$" | grep -v "^\./\." | grep "^\./$WHICHEXAMPLES")
 if [ $# -eq 1 ]; then
   if echo $1 | grep -E "^[0-9]+/[0-9]+$" > /dev/null; then
     I=$(echo $1 | sed -re "s|^([0-9]+)/.*$|\1|")
@@ -102,6 +110,8 @@ find -name "*.d" -exec rm -f {} \;
 
 NR=0
 NRMAX=$(echo $EXAMPLES | wc -w)
+TIMEFILE=$(pwd)/runexamples.time
+rm $TIMEFILE
 for D in $EXAMPLES; do
   NR=$[$NR+1]
   echo -ne "\033]0;RUNNING EXAMPLE $NR/$NRMAX $D\007"
@@ -114,7 +124,8 @@ for D in $EXAMPLES; do
   echo $D | grep "^\./xml_" && XMLEXAMPLE=true_pp
   echo $D | grep "^xml_" && XMLEXAMPLE=true_pp
 
-
+  EXTRAARGS=""
+  STARTTIME=$(date +%s)
   if [ $XMLEXAMPLE == false ]; then
     ERROR=1
     make clean && \
@@ -134,6 +145,8 @@ for D in $EXAMPLES; do
     fi
     $(pkg-config mbsim --variable=bindir)/mbsimxml $EXTRAARGS TS.mbsim.xml Integrator.mbsimint.xml && ERROR=0
   fi
+  ENDTIME=$(date +%s)
+  echo "$D: $[$ENDTIME-$STARTTIME]" >> $TIMEFILE
 
   if [ $ERROR -eq 0 ]; then
     echo "EXAMPLE $D PASSED COMPILING AND RUNNING"
@@ -148,7 +161,7 @@ for D in $EXAMPLES; do
     for H5F in $(cd reference && find -name "*.h5"); do
       for DS in $($(pkg-config hdf5serie --variable=bindir)/h5lsserie reference/$H5F | sed -nre "s|^.*\(Path: \"(.*)\"\)$|\1|p"); do
         P=$(echo $DS | sed -re "s|^.*\.h5/(.*)|\1|")
-        $H5DIFF --nan --relative=$RTOL --delta=$ATOL "$H5F" "reference/$H5F" "$P" "$P"
+        $H5DIFF --nan -p=$RTOL -d=$ATOL "$H5F" "reference/$H5F" "$P" "$P"
         RET=$?
         if [ $RET -ne 0 ]; then
           echo "EXAMPLE $DS FAILED DIFF WITH REFERENCE SOLUTION"

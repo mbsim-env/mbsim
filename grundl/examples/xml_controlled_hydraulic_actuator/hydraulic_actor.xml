@@ -55,7 +55,7 @@
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; 0; 0]</initialRotation>
           <scaleFactor>1</scaleFactor>
-          <Frustum name="x">
+          <Frustum name="frustum1">
             <staticColor>.4</staticColor>
             <initialTranslation>[0; 0; 0]</initialTranslation>
             <initialRotation>[pi/2; 0; 0]</initialRotation>
@@ -66,7 +66,7 @@
             <innerBaseRadius>0</innerBaseRadius>
             <innerTopRadius>0</innerTopRadius>
           </Frustum>
-          <Frustum name="x">
+          <Frustum name="frustum2">
             <staticColor>.4</staticColor>
             <initialTranslation>[0; .13; 0]</initialTranslation>
             <initialRotation>[pi/2; 0; 0]</initialRotation>
@@ -121,7 +121,7 @@
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; 0; 0]</initialRotation>
           <scaleFactor>1</scaleFactor>
-          <Frustum name="x">
+          <Frustum name="frustum1">
             <staticColor>.1</staticColor>
             <initialTranslation>[0; -.01; 0]</initialTranslation>
             <initialRotation>[pi/2; 0; 0]</initialRotation>
@@ -132,7 +132,7 @@
             <innerBaseRadius>0</innerBaseRadius>
             <innerTopRadius>0</innerTopRadius>
           </Frustum>
-          <Frustum name="x">
+          <Frustum name="frustum2">
             <staticColor>.1</staticColor>
             <initialTranslation>[0; .01; 0]</initialTranslation>
             <initialRotation>[pi/2; 0; 0]</initialRotation>

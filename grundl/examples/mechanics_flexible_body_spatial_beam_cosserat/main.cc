@@ -15,7 +15,7 @@ int main (int argc, char* argv[]) {
 
   TimeSteppingIntegrator integrator;
 
-  integrator.setEndTime(1.);
+  integrator.setEndTime(0.1);
   integrator.setStepSize(1e-4);
   integrator.setPlotStepSize(1e-4);
 
@@ -28,7 +28,7 @@ int main (int argc, char* argv[]) {
   cout << "finished after calculation time [s] : " << calctime << endl;
 
   delete sys;
-  
+
   return 0;
 
 }

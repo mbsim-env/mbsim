@@ -74,4 +74,33 @@ class FuncCrPC : public MBSim::ContourFunction1s {
     double calculateLocalAlpha(const double& alpha);
 };  
 
+class FuncCrPC_PlanePolar : public MBSim::ContourFunction1s {
+  public:
+    FuncCrPC_PlanePolar();
+  
+    void setYZ(const fmatvec::Mat& YZ, int discretization=1, fmatvec::Vec rYZ=fmatvec::Vec(3, fmatvec::INIT, 0));
+
+    fmatvec::Vec operator()(const double& alpha, const void * =NULL);
+    fmatvec::Vec diff1(const double& alpha); // Tangente in C
+    fmatvec::Vec diff2(const double& alpha); // 2. Ableitung in C
+    fmatvec::Vec computeT(const double& alpha);
+    fmatvec::Vec computeB(const double& alpha);
+    fmatvec::Vec computeN(const double& alpha);
+    double computeCurvature(const double& alpha);
+
+    double computeR(const double &alpha);
+    double computedRdAlpha(const double &alpha);
+    double computed2RdAlpha2(const double &alpha);
+  
+    virtual void initializeUsingXML(TiXmlElement * element);
+  private:
+    const fmatvec::Vec Cb;
+    MBSim::PPolynom * pp_r;
+
+    double alphaSave, salphaSave, calphaSave, rSave, drdalphaSave, d2rdalpha2Save;
+    
+    void updateData(const double& alpha);
+};
+
+
 #endif

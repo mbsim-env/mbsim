@@ -21,10 +21,10 @@ using namespace fmatvec;
 
 class initLink : public Link {
   public:
-    initLink(const std::string &name, RigidBody * rocker_, Contact * contactCamRocker_) : Link(name), rocker(rocker_), contactCamRocker(contactCamRocker_) {}    
+    initLink(const std::string &name, RigidBody * rocker_, Contact * contactCamRocker_, int contactKinematicsIndex_) : Link(name), rocker(rocker_), contactCamRocker(contactCamRocker_), contactKinematicsIndex(contactKinematicsIndex_) {}
     void updateWRef(const fmatvec::Mat&, int){}
     void updateVRef(const fmatvec::Mat&, int){}
-    void updatehRef(const fmatvec::Vec&, const fmatvec::Vec&, int){}
+    void updatehRef(const fmatvec::Vec&, int){}
     void updatedhdqRef(const fmatvec::Mat&, int){}
     void updatedhduRef(const fmatvec::SqrMat&, int){}
     void updatedhdtRef(const fmatvec::Vec&, int){}
@@ -35,20 +35,21 @@ class initLink : public Link {
       if (stage==MBSim::calculateLocalInitialValues) {
         class CamRockerDistance : public Function1<double, double> {
           public:
-            CamRockerDistance(RigidBody * rocker_, Contact * contactCamRocker_) : rocker(rocker_), contactCamRocker(contactCamRocker_) {}
+            CamRockerDistance(RigidBody * rocker_, Contact * contactCamRocker_, int contactKinematicsIndex_) : rocker(rocker_), contactCamRocker(contactCamRocker_), contactKinematicsIndex(contactKinematicsIndex_) {}
             double operator()(const double &phi, const void * = NULL) {
               rocker->setInitialGeneralizedPosition(Vec(1, INIT, phi));
               rocker->initz();
               rocker->getDynamicSystemSolver()->updateStateDependentVariables(0);
-              ((ContactKinematicsCircleSolidContour1s*)(contactCamRocker->getContactKinematics()))->setSearchAllCP(true);
+              ((ContactKinematicsCircleSolidContour1s*)(contactCamRocker->getContactKinematics(contactKinematicsIndex)))->setSearchAllCP(true);
               contactCamRocker->updateg(0);
               return contactCamRocker->getg()(0);
             }
           private:
             RigidBody * rocker;
             Contact * contactCamRocker;
+            int contactKinematicsIndex;
         };
-        CamRockerDistance gCamRocker(rocker, contactCamRocker);
+        CamRockerDistance gCamRocker(rocker, contactCamRocker, contactKinematicsIndex);
         RegulaFalsi gCamRockerSolver(&gCamRocker);
         gCamRockerSolver.setTolerance(2.*epsroot()*epsroot());
         const double phi0Rocker=gCamRockerSolver.solve(-M_PI/2., M_PI/20.);
@@ -106,6 +107,7 @@ class initLink : public Link {
   private:
     RigidBody * rocker;
     Contact * contactCamRocker;
+    int contactKinematicsIndex;
 };
 
 System::System(const string &name) : DynamicSystemSolver(name) {
@@ -165,10 +167,10 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   contactCamRocker->setContactImpactLaw(new UnilateralNewtonImpact);
   contactCamRocker->setFrictionForceLaw(new PlanarCoulombFriction(.1));
   contactCamRocker->setFrictionImpactLaw(new PlanarCoulombImpact(.1));
-  contactCamRocker->connect(cam->getContour("Contour"), rocker->getContour("Contour"));
+  int contactKinematicsIndex = contactCamRocker->connect(cam->getContour("Contour"), rocker->getContour("Contour"));
   addLink(contactCamRocker);
 
-  addLink(new initLink("InitialValueSearch", rocker, contactCamRocker));
+  addLink(new initLink("InitialValueSearch", rocker, contactCamRocker, contactKinematicsIndex));
 
 #if HAVE_OPENMBVCPPINTERFACE
   camContour->enableOpenMBV();

@@ -17,7 +17,7 @@ int main (int argc, char* argv[]) {
 
   Integrator *integrator;
 
-  const int selIntegrator = 1;
+  const int selIntegrator = 0;
   switch(selIntegrator) {
     default:{
               integrator = new TimeSteppingIntegrator();
@@ -33,7 +33,7 @@ int main (int argc, char* argv[]) {
   }
 
   //integrator.setTheta(0.5);
-  integrator->setEndTime(5.0e-1);
+  integrator->setEndTime(5.0e-2);
   integrator->setPlotStepSize(5e-4);
   integrator->integrate(*sys);
 

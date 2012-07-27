@@ -330,7 +330,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Regelung
 
   // Geschwindigkeitssensor an Crank
-  AbsolutAngularVelocitySensor *AbsVelSensorAnCrank = new AbsolutAngularVelocitySensor("AbsVelSensorAnCrank");
+  AbsoluteAngularVelocitySensor *AbsVelSensorAnCrank = new AbsoluteAngularVelocitySensor("AbsVelSensorAnCrank");
   addLink(AbsVelSensorAnCrank);
   AbsVelSensorAnCrank->setFrame(Crank->getFrameForKinematics());
   AbsVelSensorAnCrank->setDirection("[0;0;1]");
@@ -348,7 +348,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   GenVelSensorAnRod->setIndex(0);
 
   // Zusätzlicher Sensor
-  AbsolutAngularVelocitySensor *AbsVelSensorAnRod = new AbsolutAngularVelocitySensor("AbsVelSensorAnRod");
+  AbsoluteAngularVelocitySensor *AbsVelSensorAnRod = new AbsoluteAngularVelocitySensor("AbsVelSensorAnRod");
   addLink(AbsVelSensorAnRod);
   AbsVelSensorAnRod->setFrame(Rod->getFrameForKinematics());
   AbsVelSensorAnRod->setDirection("[0;0;1]");

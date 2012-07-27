@@ -19,7 +19,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   double m1=1.0;
   double l1=0.1;
 
-  bool rigid=false;
+  bool rigid=true;
 
   SymMat Theta(3);
   Theta(2,2) = 1./12.*m1*l1*l1;
@@ -34,7 +34,8 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   for (int j=0; j<searchpoints.size(); j++)
     searchpoints(j)=j/double((searchpoints.size()-1))*2.*M_PI;
 
-  FuncCrPC *funcCamContour=new FuncCrPC();
+  //FuncCrPC *funcCamContour=new FuncCrPC();
+  FuncCrPC_PlanePolar *funcCamContour=new FuncCrPC_PlanePolar();
   funcCamContour->setYZ(YZ);
 
   RigidBody * cam = new RigidBody("Cam");
@@ -61,7 +62,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   RigidBody * roll = new RigidBody("Roll");
   roll->setFrameOfReference(this->getFrame("I2"));
   roll->setFrameForKinematics(roll->getFrame("C"));
-  roll->setMass(m1*10);
+  roll->setMass(m1);
   roll->setInertiaTensor(Theta);
   roll->setRotation(new RotationAboutFixedAxis("[0;0;1]"));
   roll->setTranslation(new LinearTranslation("[0;1;0]"));

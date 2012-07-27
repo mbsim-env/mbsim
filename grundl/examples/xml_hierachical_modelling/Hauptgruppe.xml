@@ -10,9 +10,9 @@
   <frames/>
   <contours/>
   <groups>
-    <pv:embed href="Untergruppe.xml">
+    <pv:embed href="submodel/Untergruppe.xml">
       <!-- set local parameter for Untergruppe.xml; existing ones will be overwritten -->
-      <pv:localParameter href="Untergruppe.param.xml"/>
+      <pv:localParameter href="submodel/Untergruppe.param.xml"/>
     </pv:embed>
   </groups>
   <objects>
@@ -33,12 +33,30 @@
       <frames/>
       <contours/>
       <openMBVRigidBody>
-        <ombv:Cuboid name="dummy">
+        <ombv:CompoundRigidBody name="dummy">
           <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
           <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
           <ombv:scaleFactor>1</ombv:scaleFactor>
-          <ombv:length>[h;h;h]</ombv:length>
-        </ombv:Cuboid>
+          <Sphere name="crb_1" xmlns="http://openmbv.berlios.de/OpenMBV">
+            <initialTranslation>[0;0;0]</initialTranslation>
+            <initialRotation>[0;0;0]</initialRotation>
+            <scaleFactor>1</scaleFactor>
+            <radius>h/3</radius>
+          </Sphere>
+          <Cube name="crb_2" xmlns="http://openmbv.berlios.de/OpenMBV">
+            <initialTranslation>[2*h/3;0;0]</initialTranslation>
+            <initialRotation unit="degree">[45;0;0]</initialRotation>
+            <scaleFactor>1</scaleFactor>
+            <length>h/2</length>
+          </Cube>
+          <IvBody name="crb_3" xmlns="http://openmbv.berlios.de/OpenMBV">
+            <initialTranslation>[2*h/3;2*h/3;0]</initialTranslation>
+            <initialRotation unit="degree">[0;30;20]</initialRotation>
+            <scaleFactor>1</scaleFactor>
+            <ivFileName>"iv/hat.iv"</ivFileName>
+            <creaseEdges unit="degree">30</creaseEdges>
+          </IvBody>
+        </ombv:CompoundRigidBody>
       </openMBVRigidBody>
       <enableOpenMBVFrameC>
         <size>2*h</size>

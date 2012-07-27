@@ -116,12 +116,14 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   c1->setBaseRadius(r1);
   c1->setHeight(l);
   c1->setInitialTranslation(0,0,l/2);
+  c1->setName("frustum1");
 
   OpenMBV::Frustum *c2=new OpenMBV::Frustum;
   c2->setTopRadius(R1);
   c2->setBaseRadius(R1);
   c2->setHeight(l/10);
   c2->setInitialTranslation(0,0,l/2+l/20);
+  c2->setName("frustum2");
 
   OpenMBV::CompoundRigidBody *c = new OpenMBV::CompoundRigidBody;
   c->addRigidBody(c1);
@@ -134,18 +136,21 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   c1->setBaseRadius(r2);
   c1->setHeight(l);
   c1->setInitialTranslation(0,0,l/2);
+  c1->setName("frustum1");
 
   c2=new OpenMBV::Frustum;
   c2->setTopRadius(R2a);
   c2->setBaseRadius(R2a);
   c2->setHeight(l/10);
   c2->setInitialTranslation(0,0,-l/2+l/20);
+  c2->setName("frustum2");
 
   OpenMBV::Frustum* c3=new OpenMBV::Frustum;
   c3->setTopRadius(R2b);
   c3->setBaseRadius(R2b);
   c3->setHeight(l/10);
   c3->setInitialTranslation(0,0,l/2+l/20);
+  c3->setName("frustum3");
 
   c = new OpenMBV::CompoundRigidBody;
   c->addRigidBody(c1);
@@ -159,12 +164,14 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   c1->setBaseRadius(r3);
   c1->setHeight(l);
   c1->setInitialTranslation(0,0,l/2);
+  c1->setName("frustum1");
 
   c2=new OpenMBV::Frustum;
   c2->setTopRadius(R3);
   c2->setBaseRadius(R3);
   c2->setHeight(l/10);
   c2->setInitialTranslation(0,0,-l/2+l/20);
+  c2->setName("frustum2");
 
   c = new OpenMBV::CompoundRigidBody;
   c->addRigidBody(c1);

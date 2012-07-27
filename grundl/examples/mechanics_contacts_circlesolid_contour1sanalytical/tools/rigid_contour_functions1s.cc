@@ -29,6 +29,18 @@ using namespace std;
 using namespace fmatvec;
 using namespace MBSim;
 
+double calculateLocalAlpha(const double& alpha) {
+  if ((alpha>0) && (alpha<2.*M_PI))
+    return alpha;
+  else {
+    double a=fmod(alpha, 2.*M_PI);
+    if(a<0) 
+      a+=2.*M_PI;
+    return a;
+  }
+}
+
+
 Mat ContourXY2angleXY(const Mat &ContourMat_u, double scale, const Vec &rCOG_u , int discretization) { 
   Mat ContourMat;
   Vec rCOG;
@@ -283,5 +295,104 @@ void FuncCrPC::initializeUsingXML(TiXmlElement * element) {
   if (e)
     enableTabularFit(Element::getDouble(e->FirstChildElement(MBSIMVALVETRAINNS"fitLength")));*/
 }
+
+FuncCrPC_PlanePolar::FuncCrPC_PlanePolar() : ContourFunction1s(), Cb(Vec("[1; 0; 0]")), pp_r(0), alphaSave(0.), salphaSave(0.), calphaSave(0.), rSave(0.), drdalphaSave(0.), d2rdalpha2Save(0.) {
+}
+
+void FuncCrPC_PlanePolar::setYZ(const Mat& YZ, int discretization, Vec rYZ) {
+  Mat angleYZ=ContourXY2angleXY(YZ, 1, rYZ , 1); 
+  Vec r(angleYZ.rows(), NONINIT);
+  for (int i=0; i<r.size(); i++)
+    r(i)=nrm2(angleYZ(Index(i,i), Index(1,2)));
+  pp_r=new PPolynom();
+  pp_r->setXF(angleYZ.col(0), r, "csplinePer");
+  updateData(1.);
+}   
+
+Vec FuncCrPC_PlanePolar::operator()(const double& alpha, const void * ) {
+  updateData(alpha);
+  Vec f(3,NONINIT);
+  f(0) = 0;
+  f(1) = rSave*calphaSave;
+  f(2) = rSave*salphaSave;
+  return f;
+} 
+
+Vec FuncCrPC_PlanePolar::diff1(const double& alpha) {
+  updateData(alpha);
+  Vec f(3,NONINIT);
+  f(0) = 0;
+  f(1) = drdalphaSave*calphaSave-rSave*salphaSave;
+  f(2) = drdalphaSave*salphaSave+rSave*calphaSave;
+  return f;
+}
+
+Vec FuncCrPC_PlanePolar::diff2(const double& alpha) {
+  updateData(alpha);
+  const double s1=-rSave+d2rdalpha2Save;
+  const double s2=2.*drdalphaSave;
+  Vec f(3,NONINIT);
+  f(0) = 0;
+  f(1) = s1*calphaSave-s2*salphaSave;
+  f(2) = s1*salphaSave+s2*calphaSave;
+  return f;
+}
+
+Vec FuncCrPC_PlanePolar::computeT(const double& alpha) {
+  const Vec T = -diff1(alpha);
+  return T/sqrt(T(1)*T(1)+T(2)*T(2));
+}
+
+Vec FuncCrPC_PlanePolar::computeN(const double& alpha) { 
+  updateData(alpha);
+  Vec N(3,NONINIT);
+  N(0) = 0;
+  N(1) = drdalphaSave*salphaSave+rSave*calphaSave;
+  N(2) = -drdalphaSave*calphaSave+rSave*salphaSave;
+  return N/sqrt(N(1)*N(1)+N(2)*N(2));
+}
+
+Vec FuncCrPC_PlanePolar::computeB(const double& alpha) {
+  return Cb;
+}
+
+double FuncCrPC_PlanePolar::computeCurvature(const double& alpha) {
+  updateData(alpha);
+  const double r2=rSave*rSave;
+  const double drdalphaSave2=drdalphaSave*drdalphaSave;
+  const double numer=r2+2.*drdalphaSave2-rSave*d2rdalpha2Save;
+  const double denomfactor=r2+drdalphaSave2;
+  return abs(numer/sqrt(denomfactor*denomfactor*denomfactor));
+}
+
+double FuncCrPC_PlanePolar::computeR(const double& alpha) {
+  updateData(alpha);
+  return rSave;
+}
+
+double FuncCrPC_PlanePolar::computedRdAlpha(const double& alpha) {
+  updateData(alpha);
+  return drdalphaSave;
+}
+
+double FuncCrPC_PlanePolar::computed2RdAlpha2(const double& alpha) {
+  updateData(alpha);
+  return d2rdalpha2Save;
+}
+
+void FuncCrPC_PlanePolar::updateData(const double& alpha) {
+  if (fabs(calculateLocalAlpha(alpha)-alphaSave)>epsroot()*epsroot()) {
+    alphaSave=calculateLocalAlpha(alpha);
+    salphaSave=sin(alphaSave);
+    calphaSave=cos(alphaSave);
+    rSave=(pp_r->getDerivative(0))(alphaSave)(0);
+    drdalphaSave=(pp_r->getDerivative(1))(alphaSave)(0);
+    d2rdalpha2Save=(pp_r->getDerivative(2))(alphaSave)(0);
+  }
+}
+
+void FuncCrPC_PlanePolar::initializeUsingXML(TiXmlElement * element) {
+}
+
 
 
