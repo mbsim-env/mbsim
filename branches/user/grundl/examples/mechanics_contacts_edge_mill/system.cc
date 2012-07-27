@@ -305,9 +305,9 @@ void System::initialize() {
   DynamicSystemSolver::initialize();
 
   for(unsigned i=0; i<link.size(); i++) {
-    dynamic_cast<ContactKinematicsCircleFrustum*>(dynamic_cast<Contact*>(link[i])->getContactKinematics())->setDebug(false);
-    dynamic_cast<ContactKinematicsCircleFrustum*>(dynamic_cast<Contact*>(link[i])->getContactKinematics())->setWarnLevel(0);
-    dynamic_cast<ContactKinematicsCircleFrustum*>(dynamic_cast<Contact*>(link[i])->getContactKinematics())->setLocalSearch(true);
+    dynamic_cast<ContactKinematicsCircleFrustum*>(dynamic_cast<Contact*>(link[i])->getContactKinematics(0))->setDebug(false);
+    dynamic_cast<ContactKinematicsCircleFrustum*>(dynamic_cast<Contact*>(link[i])->getContactKinematics(0))->setWarnLevel(0);
+    dynamic_cast<ContactKinematicsCircleFrustum*>(dynamic_cast<Contact*>(link[i])->getContactKinematics(0))->setLocalSearch(true);
   }
 }
 

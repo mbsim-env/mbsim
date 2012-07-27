@@ -19,9 +19,9 @@ class Line : public Object {
 
     void calcqSize() { qSize=0; }
     void calcuSize(int j);
-    void updateM(double);
+    void updateM(double, int k);
     fmatvec::Mat getJ() { return J; }
-    void updateJacobians(double);
+    void updateJacobians(double,int k);
     double getFlowrate() { return flowrate; }
     void init(InitStage stage);
     void plot(double t, double dt=1);

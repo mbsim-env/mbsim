@@ -172,12 +172,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   /* contact */
   Contact *contact = new Contact("Contact");
-  contact->connect(nurbsdisk->getContour("SurfaceContour"),muller->getContour("Disk"));
+  ContactKinematicsCircleNurbsDisk2s* cKCND2s = new ContactKinematicsCircleNurbsDisk2s();
+  cKCND2s->setLocalSearch(true);
+  contact->connect(nurbsdisk->getContour("SurfaceContour"),muller->getContour("Disk"), cKCND2s);
   contact->setContactForceLaw(new UnilateralConstraint);
   contact->setContactImpactLaw(new UnilateralNewtonImpact);
   contact->setFrictionForceLaw(new SpatialCoulombFriction(0.2));
   contact->setFrictionImpactLaw(new SpatialCoulombImpact(0.2));
-  contact->setContactKinematics(new ContactKinematicsCircleNurbsDisk2s());
+  //contact->setContactKinematics();
   contact->enableOpenMBVContactPoints(); // shows the frames in openmbv
   this->addLink(contact);
 
@@ -208,7 +210,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 void System::init(InitStage stage) {
   if(stage==preInit) {
     DynamicSystemSolver::init(stage);
-    static_cast<ContactKinematicsCircleNurbsDisk2s*>(static_cast<Contact*>(this->getLink("Contact"))->getContactKinematics())->setLocalSearch(true);
+    //static_cast<ContactKinematicsCircleNurbsDisk2s*>(static_cast<Contact*>(this->getLink("Contact"))->getContactKinematics())->setLocalSearch(true);
   }
   else DynamicSystemSolver::init(stage);
 }

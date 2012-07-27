@@ -72,6 +72,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   //cnf->setPlotFeature(linkKinematics,disabled);
   //cnf->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e4,100));
   //cnf->setFrictionForceLaw(new LinearRegularizedSpatialCoulombFriction(0.3));
+  //TODO: vermutlich werden der CompoundContour erst später die einzelnen Konturen gegeben, so dass hier noch keine darin ist und deswegen letztlich die assignContours-Funktion die number of potential contact points zu null setzt...
   cnf->connect(getContour("WandUnten"), body->getContour("Wuerfel"));
   addLink(cnf);
 
