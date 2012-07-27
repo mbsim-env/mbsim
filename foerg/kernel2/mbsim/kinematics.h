@@ -57,6 +57,7 @@ namespace MBSim {
       virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) = 0;
 
       virtual void initializeUsingXML(TiXmlElement *element) {}
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent) { return 0;}
       /***************************************************/
   };
 
@@ -83,6 +84,7 @@ namespace MBSim {
       virtual int getqSize() const { throw; return 0; }
       virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return PJT*q(0,PJT.cols()-1); } 
       virtual void initializeUsingXML(TiXmlElement *element);
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -178,6 +180,7 @@ namespace MBSim {
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) = 0;
 
      virtual void initializeUsingXML(TiXmlElement *element) {}
+     virtual TiXmlElement* writeXMLFile(TiXmlNode *parent) { return 0;}
       /***************************************************/
   };
 
@@ -268,6 +271,7 @@ namespace MBSim {
       /* INTERFACE OF ROTATION */
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element);
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
       /***************************************************/
 
       /* GETTER / SETTER */

@@ -229,5 +229,58 @@ namespace MBSim {
     }
   }
 
+  TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = DynamicSystem::writeXMLFile(parent);
+
+    TiXmlElement *ele1;
+
+    if(getFrameOfReference()) {
+      ele1 = new TiXmlElement( "frameOfReference" );
+      ele1->SetAttribute("ref", getFrameOfReference()->getName() );
+      ele0->LinkEndChild(ele1);
+    }
+
+    ele1 = new TiXmlElement( "position" );
+    TiXmlText * text = new TiXmlText( vec2str(getPosition()) );
+    ele1->LinkEndChild( text );
+    ele0->LinkEndChild( ele1 );
+
+    ele1 = new TiXmlElement( "orientation" );
+    text = new TiXmlText( mat2str(getOrientation()) );
+    ele1->LinkEndChild( text );
+    ele0->LinkEndChild( ele1 );
+
+    ele1 = new TiXmlElement( "frames" );
+    for(vector<Frame*>::iterator i = frame.begin()+1; i != frame.end(); ++i) 
+      (*i)->writeXMLFile(ele1);
+    ele0->LinkEndChild( ele1 );
+
+    ele1 = new TiXmlElement( "contours" );
+    for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i) 
+      (*i)->writeXMLFile(ele1);
+    ele0->LinkEndChild( ele1 );
+
+    ele1 = new TiXmlElement( "groups" );
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
+      (*i)->writeXMLFile(ele1);
+    ele0->LinkEndChild( ele1 );
+
+    ele1 = new TiXmlElement( "objects" );
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
+      (*i)->writeXMLFile(ele1);
+    ele0->LinkEndChild( ele1 );
+
+    ele1 = new TiXmlElement( "extraDynamics" );
+    for(vector<ExtraDynamic*>::iterator i = extraDynamic.begin(); i != extraDynamic.end(); ++i) 
+      (*i)->writeXMLFile(ele1);
+    ele0->LinkEndChild( ele1 );
+
+    ele1 = new TiXmlElement( "links" );
+    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
+      (*i)->writeXMLFile(ele1);
+    ele0->LinkEndChild( ele1 );
+    return ele0;
+  }
+
 }
 

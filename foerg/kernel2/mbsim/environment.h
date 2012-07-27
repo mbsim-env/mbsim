@@ -38,6 +38,7 @@ namespace MBSim {
        * \param XML element
        */
       virtual void initializeUsingXML(TiXmlElement *element)=0;
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent)=0;
       /***************************************************/
     
     protected:
@@ -61,6 +62,7 @@ namespace MBSim {
     public:
       /* INHERITED INTERFACE */
       virtual void initializeUsingXML(TiXmlElement *element);
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
       /***************************************************/
 
       /* GETTER / SETTER */

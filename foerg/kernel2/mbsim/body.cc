@@ -206,6 +206,26 @@ namespace MBSim {
     saved_frameOfReference=e->Attribute("ref");
   }
 
+  TiXmlElement* Body::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = Object::writeXMLFile(parent);
+    TiXmlElement *ele1 = new TiXmlElement( "frameOfReference" );
+
+    string str = string("/Frame[") + getFrameOfReference()->getName() + "]";
+    Element* element = getFrameOfReference()->getParent();
+    while(!dynamic_cast<DynamicSystemSolver*>(element)) {
+      if(dynamic_cast<Group*>(element))
+        str = string("/Group[") + element->getName() + "]" + str;
+      else if(dynamic_cast<Object*>(element))
+        str = string("/Object[") + element->getName() + "]" + str;
+      else
+        throw;
+      element = element->getParent();
+    }
+    ele1->SetAttribute("ref", str);
+    ele0->LinkEndChild(ele1);
+    return ele0;
+  }
+
   Element * Body::getByPathSearch(string path) {
     if (path.substr(0, 1)=="/") // absolut path
       if(parent)

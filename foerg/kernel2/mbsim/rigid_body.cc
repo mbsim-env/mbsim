@@ -839,4 +839,80 @@ namespace MBSim {
 #endif
   }
 
+  TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = Body::writeXMLFile(parent);
+
+    TiXmlElement * ele1 = new TiXmlElement( "frameForKinematics" );
+    string str = "Frame[";
+    str += getFrameForKinematics()->getShortName() + "]";
+    ele1->SetAttribute("ref", str);
+    ele0->LinkEndChild(ele1);
+
+    ele1 = new TiXmlElement( "mass" );
+    stringstream s;
+    s << getMass();
+    TiXmlText *text = new TiXmlText( s.str() );
+    ele1->LinkEndChild(text);
+    ele0->LinkEndChild(ele1);
+
+    ele1 = new TiXmlElement( "inertiaTensor" );
+    text = new TiXmlText( mat2str(getInertiaTensor()) );
+    ele1->LinkEndChild(text);
+    ele0->LinkEndChild(ele1);
+
+    ele1 = new TiXmlElement( "translation" );
+    if(getTranslation()) getTranslation()->writeXMLFile(ele1);
+    ele0->LinkEndChild(ele1);
+
+    ele1 = new TiXmlElement( "rotation" );
+    if(getRotation()) getRotation()->writeXMLFile(ele1);
+    ele0->LinkEndChild(ele1);
+
+    ele1 = new TiXmlElement( "frames" );
+    for(unsigned int i=1; i<frame.size(); i++) {
+      TiXmlElement* ele2 = new TiXmlElement( "frame" );
+      ele1->LinkEndChild( ele2 );
+      frame[i]->writeXMLFile(ele2);
+      if(saved_refFrameF[i-1] != "C") {
+        TiXmlElement *ele3 = new TiXmlElement( "frameOfReference" );
+        string str = string("Frame[") + saved_refFrameF[i-1] + "]";
+        ele3->SetAttribute("ref", str);
+        ele2->LinkEndChild(ele3);
+      }
+
+      TiXmlElement *ele3 = new TiXmlElement( "position" );
+      text = new TiXmlText( vec2str(saved_RrRF[i-1]) );
+      ele3->LinkEndChild(text);
+      ele2->LinkEndChild(ele3);
+
+      ele3 = new TiXmlElement( "orientation" );
+      text = new TiXmlText( mat2str(saved_ARF[i-1]) );
+      ele3->LinkEndChild(text);
+      ele2->LinkEndChild(ele3);
+    }
+    ele0->LinkEndChild( ele1 );
+
+    ele1 = new TiXmlElement( "contours" );
+    for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i) 
+      (*i)->writeXMLFile(ele1);
+    ele0->LinkEndChild( ele1 );
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    ele1 = new TiXmlElement( "openMBVRigidBody" );
+    getOpenMBVBody()->writeXMLFile(ele1);
+    ele0->LinkEndChild(ele1);
+
+//    e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameC");
+//    if(e) {
+//      if(!openMBVBody)
+//        setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
+//      C->enableOpenMBV(getDouble(e->FirstChildElement(MBSIMNS"size")),
+//          getDouble(e->FirstChildElement(MBSIMNS"offset")));
+//    }
+#endif
+
+    return ele0;
+  }
+
+
 }

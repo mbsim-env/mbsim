@@ -39,5 +39,23 @@ namespace MBSim {
     if(e) setInitialState(Element::getVec(e));
   }
 
+  TiXmlElement* Integrator::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0=new TiXmlElement(getType());
+    parent->LinkEndChild(ele0);
+    ele0->SetAttribute("name", getShortName());
+    if(q0.size()) {
+      TiXmlElement *ele1 = new TiXmlElement( "initialGeneralizedPosition" );
+      TiXmlText *text = new TiXmlText(vec2str(q0));
+      ele1->LinkEndChild(text);
+      ele0->LinkEndChild(ele1);
+    }
+    if(u0.size()) {
+      TiXmlElement *ele1 = new TiXmlElement( "initialGeneralizedVelocity" );
+      TiXmlText *text = new TiXmlText(vec2str(u0));
+      ele1->LinkEndChild(text);
+      ele0->LinkEndChild(ele1);
+    }
+    return ele0;
+  }
 }
 

@@ -63,6 +63,8 @@ namespace MBSim {
       /***************************************************/
 
       virtual void initializeUsingXML(TiXmlElement *element);
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+
       fmatvec::Vec RrRD;
       fmatvec::SqrMat ARD;
   };

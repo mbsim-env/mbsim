@@ -244,6 +244,8 @@ namespace MBSim {
 #endif
 
       virtual void initializeUsingXML(TiXmlElement *element);
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+
       virtual void updatePositionAndOrientationOfFrame(double t, unsigned int i);
       virtual void updateAccelerations(double t, unsigned int i);
       virtual void updateRelativeJacobians(double t, unsigned int i);
