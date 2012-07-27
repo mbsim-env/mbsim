@@ -54,4 +54,36 @@ int min(int i, int j);
  */
 double ArcTan(double x,double y);
 
+template <class Type, class Row, class Col, class AT>
+std::string mat2str(const fmatvec::Matrix<Type,Row,Col,AT> &A) {
+  std::stringstream s;
+  s << "[";
+  for(int i=0; i<A.rows(); i++) {
+    for(int j=0; j<A.cols(); j++) {
+      s << A(i,j);
+      if(j<A.cols()-1)
+        s << ",";
+    }
+    if(i<A.rows()-1)
+      s << ";";
+  }
+  s << "]";
+  return s.str();
+
+}
+
+template <class Row, class AT>
+std::string vec2str(const fmatvec::Vector<Row,AT> &x) {
+  std::stringstream s;
+  s << "[";
+  for(int i=0; i<x.size(); i++) {
+    s << x(i);
+    if(i<x.size()-1)
+      s << ";";
+  }
+  s << "]";
+  return s.str();
+
+}
+
 #endif

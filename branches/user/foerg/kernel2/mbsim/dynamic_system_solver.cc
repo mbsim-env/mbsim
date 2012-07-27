@@ -1376,6 +1376,17 @@ namespace MBSim {
     }
   }
 
+  TiXmlElement* DynamicSystemSolver::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = Group::writeXMLFile(parent);
+    ele0->SetAttribute("xmlns", "http://mbsim.berlios.de/MBSim");
+    ele0->SetAttribute("xmlns:ombv", "http://openmbv.berlios.de/OpenMBV");
+
+    TiXmlElement *ele1 = new TiXmlElement( "environments" );
+    MBSimEnvironment::getInstance()->writeXMLFile(ele1);
+    ele0->LinkEndChild( ele1 );
+    return ele0;
+  }
+
   void DynamicSystemSolver::addToGraph(Graph* graph, SqrMat &A, int i, vector<Object*>& objList) {
     graph->addObject(objList[i]->computeLevel(),objList[i]);
     A(i,i) = -1;

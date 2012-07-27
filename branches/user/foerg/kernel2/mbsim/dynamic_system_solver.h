@@ -448,6 +448,7 @@ namespace MBSim {
       void readz0(std::string fileName);
 
       virtual void initializeUsingXML(TiXmlElement *element);
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
 
       /**
        * \brief decide, whether the model-hierarchy should be reorganized.

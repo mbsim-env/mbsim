@@ -306,6 +306,23 @@ namespace MBSim {
       setInitialGeneralizedVelocity(getVec(e));
   }
 
+  TiXmlElement* Object::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = Element::writeXMLFile(parent);
+    if(q0.size()) {
+      TiXmlElement *ele1 = new TiXmlElement( "initialGeneralizedPosition" );
+      TiXmlText *text = new TiXmlText(vec2str(q0));
+      ele1->LinkEndChild(text);
+      ele0->LinkEndChild(ele1);
+    }
+    if(u0.size()) {
+      TiXmlElement *ele1 = new TiXmlElement( "initialGeneralizedVelocity" );
+      TiXmlText *text = new TiXmlText(vec2str(u0));
+      ele1->LinkEndChild(text);
+      ele0->LinkEndChild(ele1);
+    }
+    return ele0;
+  }
+
   Element * Object::getByPathSearch(string path) {
     if (path.substr(0, 1)=="/") // absolut path
       if(parent)

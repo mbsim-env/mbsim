@@ -139,6 +139,13 @@ namespace MBSim {
     }
   }
 
+  TiXmlElement* Element::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0=new TiXmlElement(getType());
+    parent->LinkEndChild(ele0);
+    ele0->SetAttribute("name", getShortName());
+    return ele0;
+  }
+
   // some convenience function for XML
   double Element::getDouble(TiXmlElement *e) {
     Mat m=Mat(e->GetText());

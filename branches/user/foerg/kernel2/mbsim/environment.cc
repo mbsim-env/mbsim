@@ -20,6 +20,7 @@
 #include "config.h"
 #include "mbsim/environment.h"
 #include "mbsim/element.h"
+#include "mbsim/utils/utils.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -32,6 +33,17 @@ namespace MBSim {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"accelerationOfGravity");
     setAccelerationOfGravity(Element::getVec3(e));
+  }
+
+  TiXmlElement* MBSimEnvironment::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement* ele0 = new TiXmlElement( "MBSimEnvironment" );
+
+    TiXmlElement *ele1 = new TiXmlElement( "accelerationOfGravity" );
+    TiXmlText *text = new TiXmlText( vec2str(getAccelerationOfGravity()) );
+    ele1->LinkEndChild(text);
+    ele0->LinkEndChild( ele1 );
+    parent->LinkEndChild(ele0);
+    return ele0;
   }
 
 }

@@ -74,7 +74,13 @@ namespace MBSim {
        * \param XML description
        */
       virtual void initializeUsingXML(TiXmlElement *element);
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
       /***************************************************/
+
+      /**
+       * \return std::string representation
+       */
+      virtual std::string getType() const { return "Integrator"; }
 
     protected:
       /**

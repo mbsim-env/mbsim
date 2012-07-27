@@ -32,6 +32,16 @@ namespace MBSim {
     setTranslationVectors(Element::getMat3V(e,0));
   }
 
+  TiXmlElement* LinearTranslation::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = new TiXmlElement( "LinearTranslation" );
+    TiXmlElement *ele1 = new TiXmlElement( "translationVectors" );
+    TiXmlText *text = new TiXmlText(mat2str(getTranslationVectors()));
+    ele1->LinkEndChild(text);
+    ele0->LinkEndChild(ele1);
+    parent->LinkEndChild(ele0);
+    return ele0;
+  }
+
   void TimeDependentTranslation::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"position");
@@ -120,6 +130,16 @@ namespace MBSim {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"axisOfRotation");
     setAxisOfRotation(Element::getVec3(e));
+  }
+
+  TiXmlElement* RotationAboutFixedAxis::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = new TiXmlElement( "RotationAboutFixedAxis" );
+    TiXmlElement *ele1 = new TiXmlElement( "axisOfRotation" );
+    TiXmlText *text = new TiXmlText(vec2str(getAxisOfRotation()));
+    ele1->LinkEndChild(text);
+    ele0->LinkEndChild(ele1);
+    parent->LinkEndChild(ele0);
+    return ele0;
   }
 
   SqrMat3 TimeDependentRotationAboutFixedAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
