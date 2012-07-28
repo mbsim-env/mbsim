@@ -240,15 +240,8 @@ namespace MBSim {
       ele0->LinkEndChild(ele1);
     }
 
-    ele1 = new TiXmlElement( "position" );
-    TiXmlText * text = new TiXmlText( vec2str(getPosition()) );
-    ele1->LinkEndChild( text );
-    ele0->LinkEndChild( ele1 );
-
-    ele1 = new TiXmlElement( "orientation" );
-    text = new TiXmlText( mat2str(getOrientation()) );
-    ele1->LinkEndChild( text );
-    ele0->LinkEndChild( ele1 );
+    addElementText(ele0,"position",vec2str(getPosition()));
+    addElementText(ele0,"orientation", mat2str(getOrientation()));
 
     ele1 = new TiXmlElement( "frames" );
     for(vector<Frame*>::iterator i = frame.begin()+1; i != frame.end(); ++i) 

@@ -848,17 +848,8 @@ namespace MBSim {
     ele1->SetAttribute("ref", str);
     ele0->LinkEndChild(ele1);
 
-    ele1 = new TiXmlElement( "mass" );
-    stringstream s;
-    s << getMass();
-    TiXmlText *text = new TiXmlText( s.str() );
-    ele1->LinkEndChild(text);
-    ele0->LinkEndChild(ele1);
-
-    ele1 = new TiXmlElement( "inertiaTensor" );
-    text = new TiXmlText( mat2str(getInertiaTensor()) );
-    ele1->LinkEndChild(text);
-    ele0->LinkEndChild(ele1);
+    addElementText(ele0,"mass",getMass());
+    addElementText(ele0,"inertiaTensor",mat2str(getInertiaTensor()));
 
     ele1 = new TiXmlElement( "translation" );
     if(getTranslation()) getTranslation()->writeXMLFile(ele1);
@@ -880,15 +871,8 @@ namespace MBSim {
         ele2->LinkEndChild(ele3);
       }
 
-      TiXmlElement *ele3 = new TiXmlElement( "position" );
-      text = new TiXmlText( vec2str(saved_RrRF[i-1]) );
-      ele3->LinkEndChild(text);
-      ele2->LinkEndChild(ele3);
-
-      ele3 = new TiXmlElement( "orientation" );
-      text = new TiXmlText( mat2str(saved_ARF[i-1]) );
-      ele3->LinkEndChild(text);
-      ele2->LinkEndChild(ele3);
+      addElementText(ele2,"position",vec2str(saved_RrRF[i-1]));
+      addElementText(ele2,"orientation",mat2str(saved_ARF[i-1]));
     }
     ele0->LinkEndChild( ele1 );
 
@@ -898,9 +882,9 @@ namespace MBSim {
     ele0->LinkEndChild( ele1 );
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    ele1 = new TiXmlElement( "openMBVRigidBody" );
-    getOpenMBVBody()->writeXMLFile(ele1);
-    ele0->LinkEndChild(ele1);
+ //   ele1 = new TiXmlElement( "openMBVRigidBody" );
+ //   getOpenMBVBody()->writeXMLFile(ele1);
+ //   ele0->LinkEndChild(ele1);
 
 //    e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameC");
 //    if(e) {

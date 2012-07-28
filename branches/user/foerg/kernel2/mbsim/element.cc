@@ -142,7 +142,7 @@ namespace MBSim {
   TiXmlElement* Element::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0=new TiXmlElement(getType());
     parent->LinkEndChild(ele0);
-    ele0->SetAttribute("name", getShortName());
+    ele0->SetAttribute("name", getName());
     return ele0;
   }
 
