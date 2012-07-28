@@ -982,7 +982,7 @@ namespace MBSim {
       int corrSize, corrInd;
       fmatvec::Vec corr;
 
-    private:
+    protected:
       std::vector<std::string> saved_refFrameF, saved_refFrameC;
       std::vector<fmatvec::Vec3> saved_RrRF, saved_RrRC;
       std::vector<fmatvec::SqrMat3> saved_ARF, saved_ARC;

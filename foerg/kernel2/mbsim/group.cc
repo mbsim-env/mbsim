@@ -244,8 +244,20 @@ namespace MBSim {
     addElementText(ele0,"orientation", mat2str(getOrientation()));
 
     ele1 = new TiXmlElement( "frames" );
-    for(vector<Frame*>::iterator i = frame.begin()+1; i != frame.end(); ++i) 
-      (*i)->writeXMLFile(ele1);
+    for(unsigned int i=1; i<frame.size(); i++) {
+      TiXmlElement* ele2 = new TiXmlElement( "frame" );
+      ele1->LinkEndChild( ele2 );
+      frame[i]->writeXMLFile(ele2);
+      if(saved_refFrameF[i-1] != "I") {
+        TiXmlElement *ele3 = new TiXmlElement( "frameOfReference" );
+        string str = string("Frame[") + saved_refFrameF[i-1] + "]";
+        ele3->SetAttribute("ref", str);
+        ele2->LinkEndChild(ele3);
+      }
+
+      addElementText(ele2,"position",vec2str(saved_RrRF[i-1]));
+      addElementText(ele2,"orientation",mat2str(saved_ARF[i-1]));
+    }
     ele0->LinkEndChild( ele1 );
 
     ele1 = new TiXmlElement( "contours" );

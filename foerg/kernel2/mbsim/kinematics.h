@@ -57,7 +57,7 @@ namespace MBSim {
       virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) = 0;
 
       virtual void initializeUsingXML(TiXmlElement *element) {}
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent) { return 0;}
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent) { return 0; }
       /***************************************************/
   };
 
