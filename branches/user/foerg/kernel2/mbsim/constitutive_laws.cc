@@ -136,6 +136,12 @@ namespace MBSim {
     return fabs(gdn) <= gdTol;
   }
 
+  TiXmlElement* BilateralConstraint::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = new TiXmlElement( "BilateralConstraint" );
+    parent->LinkEndChild(ele0);
+    return ele0;
+  }
+
   double UnilateralNewtonImpact::project(double la, double gdn, double gda, double r, double laMin) {
    if(gda <= -gd_limit) {       // 2 Aenderungen :
       gdn += epsilon*gda;       // elastischer Anteil nur bei negativer Annäherungsgeschw. ueber gd_limit
@@ -219,6 +225,12 @@ namespace MBSim {
 
   bool BilateralImpact::isFulfilled(double la, double gdn, double gda, double laTol, double gdTol, double laMin) {
     return fabs(gdn) <= gdTol;
+  }
+
+  TiXmlElement* BilateralImpact::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = new TiXmlElement( "BilateralImpact" );
+    parent->LinkEndChild(ele0);
+    return ele0;
   }
 
   Vec PlanarCoulombFriction::project(const Vec& la, const Vec& gdn, double laN, double r) {

@@ -61,7 +61,7 @@ std::string mat2str(const fmatvec::Matrix<Type,Row,Col,AT> &A) {
   s << "[";
   for(int i=0; i<A.rows(); i++) {
     for(int j=0; j<A.cols(); j++) {
-      s << A(i,j);
+      s << std::setprecision(12) << A(i,j);
       if(j<A.cols()-1)
         s << ",";
     }
@@ -78,7 +78,7 @@ std::string vec2str(const fmatvec::Vector<Row,AT> &x) {
   std::stringstream s;
   s << "[";
   for(int i=0; i<x.size(); i++) {
-    s << x(i);
+    s << std::setprecision(12) << x(i);
     if(i<x.size()-1)
       s << ";";
   }

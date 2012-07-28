@@ -604,6 +604,40 @@ namespace MBSim {
     saved_ref2=e->Attribute("ref2");
   }
 
+  TiXmlElement* Joint::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = Element::writeXMLFile(parent);
+    if(forceDir.cols()) {
+      TiXmlElement *ele1 = new TiXmlElement("force");
+      addElementText(ele1,"direction",mat2str(forceDir));
+      TiXmlElement *ele2 = new TiXmlElement("generalizedForceLaw");
+      ffl->writeXMLFile(ele2);
+      ele1->LinkEndChild(ele2);
+      ele2 = new TiXmlElement("generalizedImpactLaw");
+      fifl->writeXMLFile(ele2);
+      ele1->LinkEndChild(ele2);
+      ele0->LinkEndChild(ele1);
+    }
+    TiXmlElement *ele1 = new TiXmlElement("connect");
+    for(int i=0; i<2; i++) {
+      string str = string("/Frame[") + frame[i]->getName() + "]";
+      Element* element =  frame[i]->getParent();
+      while(!dynamic_cast<DynamicSystemSolver*>(element)) {
+        if(dynamic_cast<Group*>(element))
+          str = string("/Group[") + element->getName() + "]" + str;
+        else if(dynamic_cast<Object*>(element))
+          str = string("/Object[") + element->getName() + "]" + str;
+        else
+          throw;
+        element = element->getParent();
+      }
+      stringstream s;
+      s << "ref" << i+1;
+      ele1->SetAttribute(s.str(), str);
+    }
+    ele0->LinkEndChild(ele1);
+    return ele0;
+  }
+
   InverseKineticsJoint::InverseKineticsJoint(const string &name) : Joint(name), body(0) {
   }
 

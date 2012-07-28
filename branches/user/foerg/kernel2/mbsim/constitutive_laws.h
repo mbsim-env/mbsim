@@ -75,6 +75,7 @@ namespace MBSim {
        * \param XML element
        */
       virtual void initializeUsingXML(TiXmlElement *element) {}
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *element) { return 0; }
       /***************************************************/
       
       /**
@@ -155,6 +156,8 @@ namespace MBSim {
       /***************************************************/
 
       bool remainsClosed(double s, double sTol) { return true; }
+
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
   };
 
   /**
@@ -180,6 +183,7 @@ namespace MBSim {
       virtual double solve(double G, double gdn, double gda) = 0;
       virtual bool isFulfilled(double la,  double gdn, double gda, double tolla, double tolgd, double laMin=0) = 0;
       virtual void initializeUsingXML(TiXmlElement *element) {}
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *element) { return 0; }
       /***************************************************/
   };
 
@@ -245,7 +249,8 @@ namespace MBSim {
       virtual fmatvec::Vec diff(double la, double gdn, double gda, double r, double laMin=0);
       virtual double solve(double G, double gdn, double gda);
       virtual bool isFulfilled(double la,  double gdn, double gda, double tolla, double tolgd, double laMin=0);
-      /***************************************************/
+
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
   };
 
   /**

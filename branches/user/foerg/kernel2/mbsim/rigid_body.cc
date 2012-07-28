@@ -852,11 +852,13 @@ namespace MBSim {
     addElementText(ele0,"inertiaTensor",mat2str(getInertiaTensor()));
 
     ele1 = new TiXmlElement( "translation" );
-    if(getTranslation()) getTranslation()->writeXMLFile(ele1);
+    if(getTranslation()) 
+      getTranslation()->writeXMLFile(ele1);
     ele0->LinkEndChild(ele1);
 
     ele1 = new TiXmlElement( "rotation" );
-    if(getRotation()) getRotation()->writeXMLFile(ele1);
+    if(getRotation()) 
+      getRotation()->writeXMLFile(ele1);
     ele0->LinkEndChild(ele1);
 
     ele1 = new TiXmlElement( "frames" );
