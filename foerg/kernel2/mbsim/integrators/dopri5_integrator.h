@@ -69,10 +69,18 @@ namespace MBSim {
       void setInitialStepSize(double dt0_) {dt0 = dt0_;}
       void setMaxStepNumber(int maxSteps_) {maxSteps = maxSteps_;}    
       void setMaximalStepSize(double dtMax_) {dtMax = dtMax_;}
+      const fmatvec::Vec& getAbsoluteTolerance() const { return aTol; }
+      const fmatvec::Vec& getRelativeTolerance() const { return rTol; }
+      double getInitialStepSize() const { return dt0; }
+      int getMaxStepNumber() const { return maxSteps; }
+      double getMaximalStepSize() const { return dtMax; }
 
       void integrate(DynamicSystemSolver& system);
 
       virtual void initializeUsingXML(TiXmlElement *element);
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+
+      virtual std::string getType() const { return "DOPRI5Integrator"; }
   };
 
 }

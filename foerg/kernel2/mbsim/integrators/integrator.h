@@ -55,7 +55,12 @@ namespace MBSim {
       void setInitialState(const fmatvec::Vec &z0_) { z0 = z0_; }
       void setWarnLevel(int level) { warnLevel = level; }
       void setOutput(bool flag) { output = flag; }
-      double getStartTime() { return tStart; }
+      double getStartTime() const { return tStart; }
+      double getEndTime() const { return tEnd; }
+      double getPlotStepSize() const { return dtPlot; }
+      const fmatvec::Vec& getInitialState() const { return z0; }
+      int getWarnLevel() const { return warnLevel; }
+      bool getOutput() const { return output; }
       /***************************************************/
       
       /* INTERFACE FOR DERIVED CLASSES */

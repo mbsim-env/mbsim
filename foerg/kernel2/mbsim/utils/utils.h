@@ -22,6 +22,7 @@
 
 #include <string>
 #include "fmatvec.h"
+#include "mbsimtinyxml/tinyxml-src/tinyxml.h"
 
 std::string numtostr(int i);   
 std::string numtostr(double d);   
@@ -84,6 +85,13 @@ std::string vec2str(const fmatvec::Vector<Row,AT> &x) {
   s << "]";
   return s.str();
 
+}
+
+template <class T>
+void addElementText(TiXmlElement *parent, std::string name, T value) {
+  std::ostringstream oss;
+  oss<<value;
+  parent->LinkEndChild(new TiXmlElement(name))->LinkEndChild(new TiXmlText(oss.str()));
 }
 
 #endif

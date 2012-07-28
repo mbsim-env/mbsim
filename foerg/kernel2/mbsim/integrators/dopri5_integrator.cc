@@ -22,6 +22,7 @@
 
 #include <config.h>
 #include <mbsim/dynamic_system_solver.h>
+#include <mbsim/utils/utils.h>
 #include "fortran_wrapper.h"
 #include "dopri5_integrator.h"
 #include <fstream>
@@ -168,6 +169,23 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMINTNS"maximalNumberOfSteps");
     if (e)
       setMaxStepNumber(atoi(e->GetText()));
+  }
+
+  TiXmlElement* DOPRI5Integrator::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = Integrator::writeXMLFile(parent);
+    if(getAbsoluteTolerance().size() > 1) 
+      addElementText(ele0,"absoluteTolerance",vec2str(getAbsoluteTolerance()));
+    else
+      addElementText(ele0,"absoluteToleranceScalar",getAbsoluteTolerance()(0));
+    if(getRelativeTolerance().size() > 1) 
+      addElementText(ele0,"relativeTolerance",vec2str(getRelativeTolerance()));
+    else
+      addElementText(ele0,"relativeToleranceScalar",getRelativeTolerance()(0));
+    addElementText(ele0,"initialStepSize",getInitialStepSize());
+    addElementText(ele0,"maximalStepSize",getMaximalStepSize());
+    if(getMaxStepNumber() != 2000000000)
+      addElementText(ele0,"maximalNumberOfSteps",getMaxStepNumber());
+    return ele0;
   }
 
 }

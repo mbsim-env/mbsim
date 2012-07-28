@@ -20,6 +20,9 @@
 #include <config.h>
 #include "integrator.h"
 #include "mbsim/element.h"
+#include "mbsim/utils/utils.h"
+
+using namespace std;
 
 namespace MBSim {
 
@@ -43,10 +46,13 @@ namespace MBSim {
     TiXmlElement *ele0=new TiXmlElement(getType());
     parent->LinkEndChild(ele0);
     ele0->SetAttribute("xmlns", "http://mbsim.berlios.de/MBSimIntegrator");
-//    TiXmlElement *ele1 = new TiXmlElement( "initialGeneralizedPosition" );
-//    TiXmlText *text = new TiXmlText(vec2str(q0));
-//    ele1->LinkEndChild(text);
-//    ele0->LinkEndChild(ele1);
+
+    addElementText(ele0,"startTime",getStartTime());
+    addElementText(ele0,"endTime",getEndTime());
+    addElementText(ele0,"plotStepSize",getPlotStepSize());
+    if(getInitialState().size())
+      addElementText(ele0,"initialState",vec2str(getInitialState()));
+
     return ele0;
   }
 }
