@@ -45,6 +45,14 @@ namespace H5 {
  */
 namespace MBSim {
 
+  /*!
+   * \brief define a templated typedef to have shorter double vectors
+   */
+  template<class T>
+  struct dvec {
+      typedef std::vector<std::vector<T> > type;
+  };
+
   class ObjectInterface;
 
   /** \brief Plot feature status */

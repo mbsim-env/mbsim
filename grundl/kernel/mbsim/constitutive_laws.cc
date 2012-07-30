@@ -71,12 +71,12 @@ namespace MBSim {
   //  }
 
   double UnilateralConstraint::project(double la, double gdn, double r, double laMin) {
-    return proxCN(la-r*gdn, laMin);
+    return proxCN(la - r * gdn, laMin);
   }
 
   Vec UnilateralConstraint::diff(double la, double gdn, double r, double laMin) {
-    Vec d(2,NONINIT);
-    if(la-r*gdn < laMin)
+    Vec d(2, NONINIT);
+    if (la - r * gdn < laMin)
       d.init(0);
     else {
       d(0) = 1;
@@ -86,18 +86,18 @@ namespace MBSim {
   }
 
   double UnilateralConstraint::solve(double G, double gdn) {
-    if(gdn >= 0)
+    if (gdn >= 0)
       return 0;
-    else 
-      return -gdn/G;
+    else
+      return -gdn / G;
   }
 
   bool UnilateralConstraint::isFulfilled(double la, double gdn, double laTol, double gdTol, double laMin) {
-    if(gdn >= -gdTol && fabs(la-laMin) <= laTol)
+    if (gdn >= -gdTol && fabs(la - laMin) <= laTol)
       return true;
-    else if(la-laMin >= -laTol && fabs(gdn) <= gdTol)
+    else if (la - laMin >= -laTol && fabs(gdn) <= gdTol)
       return true;
-    else 
+    else
       return false;
   }
 
@@ -118,18 +118,18 @@ namespace MBSim {
   //}
 
   double BilateralConstraint::project(double la, double gdn, double r, double laMin) {
-    return la-r*gdn;
+    return la - r * gdn;
   }
 
   Vec BilateralConstraint::diff(double la, double gdn, double r, double laMin) {
-    Vec d(2,NONINIT);
+    Vec d(2, NONINIT);
     d(0) = 1;
     d(1) = -r;
     return d;
   }
 
   double BilateralConstraint::solve(double G, double gdn) {
-    return -gdn/G;
+    return -gdn / G;
   }
 
   bool BilateralConstraint::isFulfilled(double la, double gdn, double laTol, double gdTol, double laMin) {
@@ -137,21 +137,21 @@ namespace MBSim {
   }
 
   double UnilateralNewtonImpact::project(double la, double gdn, double gda, double r, double laMin) {
-   if(gda <= -gd_limit) {       // 2 Aenderungen :
-      gdn += epsilon*gda;       // elastischer Anteil nur bei negativer Annäherungsgeschw. ueber gd_limit
+    if (gda <= -gd_limit) {       // 2 Aenderungen :
+      gdn += epsilon * gda;       // elastischer Anteil nur bei negativer Annäherungsgeschw. ueber gd_limit
     }                           // zwischen gd_limit und gd_limit/10 wird eps stetig auf 0 zurueckgefuehrt
     else {
-      if(gda < -0.1*gd_limit) {
-        double epsi=epsilon*0.5*(cos(M_PI/(0.9*gd_limit)*(fabs(gda)-gd_limit))+1);
-        gdn += epsi*gda;
+      if (gda < -0.1 * gd_limit) {
+        double epsi = epsilon * 0.5 * (cos(M_PI / (0.9 * gd_limit) * (fabs(gda) - gd_limit)) + 1);
+        gdn += epsi * gda;
       }
     }
-   return proxCN(la-r*gdn, laMin);
+    return proxCN(la - r * gdn, laMin);
   }
 
   Vec UnilateralNewtonImpact::diff(double la, double gdn, double gda, double r, double laMin) {
-    Vec d(2,NONINIT);
-    if(la-laMin-r*gdn < 0)
+    Vec d(2, NONINIT);
+    if (la - laMin - r * gdn < 0)
       d.init(0);
     else {
       d(0) = 1;
@@ -161,60 +161,60 @@ namespace MBSim {
   }
 
   double UnilateralNewtonImpact::solve(double G, double gdn, double gda) {
-    if(gda <= -gd_limit) {
-      gdn += epsilon*gda;
+    if (gda <= -gd_limit) {
+      gdn += epsilon * gda;
     }
     else {
-      if(gda < -0.1*gd_limit) {
-        double epsi=epsilon*0.5*(cos(M_PI/(0.9*gd_limit)*(fabs(gda)-gd_limit))+1);
-        gdn += epsi*gda;
+      if (gda < -0.1 * gd_limit) {
+        double epsi = epsilon * 0.5 * (cos(M_PI / (0.9 * gd_limit) * (fabs(gda) - gd_limit)) + 1);
+        gdn += epsi * gda;
       }
     }
 
-    if(gdn >= 0)
+    if (gdn >= 0)
       return 0;
-    else 
-      return -gdn/G;
+    else
+      return -gdn / G;
   }
 
   bool UnilateralNewtonImpact::isFulfilled(double la, double gdn, double gda, double laTol, double gdTol, double laMin) {
-  if(gda <= -gd_limit) {
-      gdn += epsilon*gda;
+    if (gda <= -gd_limit) {
+      gdn += epsilon * gda;
     }
     else {
-      if(gda < -0.1*gd_limit) {
-        double epsi=epsilon*0.5*(cos(M_PI/(0.9*gd_limit)*(fabs(gda)-gd_limit))+1);
-        gdn += epsi*gda;
+      if (gda < -0.1 * gd_limit) {
+        double epsi = epsilon * 0.5 * (cos(M_PI / (0.9 * gd_limit) * (fabs(gda) - gd_limit)) + 1);
+        gdn += epsi * gda;
       }
     }
-    if(gdn >= -gdTol && fabs(la-laMin) <= laTol)
+    if (gdn >= -gdTol && fabs(la - laMin) <= laTol)
       return true;
-    else if(la-laMin >= -laTol && fabs(gdn) <= gdTol)
+    else if (la - laMin >= -laTol && fabs(gdn) <= gdTol)
       return true;
-    else 
+    else
       return false;
   }
 
   void UnilateralNewtonImpact::initializeUsingXML(TiXmlElement *element) {
     GeneralizedImpactLaw::initializeUsingXML(element);
     TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"restitutionCoefficient");
-    epsilon=Element::getDouble(e);
+    e = element->FirstChildElement(MBSIMNS"restitutionCoefficient");
+    epsilon = Element::getDouble(e);
   }
 
   double BilateralImpact::project(double la, double gdn, double gda, double r, double laMin) {
-    return la-r*gdn;
+    return la - r * gdn;
   }
 
   Vec BilateralImpact::diff(double la, double gdn, double gda, double r, double laMin) {
-    Vec d(2,NONINIT);
+    Vec d(2, NONINIT);
     d(0) = 1;
     d(1) = -r;
     return d;
   }
 
   double BilateralImpact::solve(double G, double gdn, double gda) {
-    return -gdn/G;
+    return -gdn / G;
   }
 
   bool BilateralImpact::isFulfilled(double la, double gdn, double gda, double laTol, double gdTol, double laMin) {
@@ -222,52 +222,52 @@ namespace MBSim {
   }
 
   Vec PlanarCoulombFriction::project(const Vec& la, const Vec& gdn, double laN, double r) {
-    return Vec(1,INIT,proxCT2D(la(0)-r*gdn(0),mu*fabs(laN)));
+    return Vec(1, INIT, proxCT2D(la(0) - r * gdn(0), mu * fabs(laN)));
   }
 
   Mat PlanarCoulombFriction::diff(const Vec& la, const Vec& gdn, double laN, double r) {
-    double argT = la(0)-r*gdn(0);
-    Mat d(1,3,NONINIT);
-    if(abs(argT) < mu*fabs(laN)) {
+    double argT = la(0) - r * gdn(0);
+    Mat d(1, 3, NONINIT);
+    if (abs(argT) < mu * fabs(laN)) {
       //d_dargT = Mat(2,2,EYE);
-      d(0,0) = 1;
-      d(0,1) = -r;
-      d(0,2) = 0;
-    } 
+      d(0, 0) = 1;
+      d(0, 1) = -r;
+      d(0, 2) = 0;
+    }
     else {
-      d(0,0) = 0;
-      d(0,1) = 0;
-      d(0,2) = sign(argT)*sign(laN)*mu;
+      d(0, 0) = 0;
+      d(0, 1) = 0;
+      d(0, 2) = sign(argT) * sign(laN) * mu;
     }
     return d;
   }
 
   Vec PlanarCoulombFriction::solve(const SqrMat& G, const Vec& gdn, double laN) {
-    double laNmu = fabs(laN)*mu;
-    double sdG = -gdn(0)/G(0,0);
-    if(fabs(sdG)<=laNmu) 
-      return Vec(1,INIT,sdG);
-    else 
-      return Vec(1,INIT,(laNmu<=sdG) ? laNmu : -laNmu);
+    double laNmu = fabs(laN) * mu;
+    double sdG = -gdn(0) / G(0, 0);
+    if (fabs(sdG) <= laNmu)
+      return Vec(1, INIT, sdG);
+    else
+      return Vec(1, INIT, (laNmu <= sdG) ? laNmu : -laNmu);
   }
 
   bool PlanarCoulombFriction::isFulfilled(const Vec& la, const Vec& gdn, double laN, double laTol, double gdTol) {
-    if(fabs(la(0) + gdn(0)/fabs(gdn(0))*mu*fabs(laN)) <= laTol)
+    if (fabs(la(0) + gdn(0) / fabs(gdn(0)) * mu * fabs(laN)) <= laTol)
       return true;
-    else if(fabs(la(0)) <= mu*fabs(laN)+laTol && fabs(gdn(0)) <= gdTol)
+    else if (fabs(la(0)) <= mu * fabs(laN) + laTol && fabs(gdn(0)) <= gdTol)
       return true;
-    else 
+    else
       return false;
   }
 
   Vec PlanarCoulombFriction::dlaTdlaN(const Vec& gd, double laN) {
-    return Vec(1,INIT,-mu*sign(gd(0)));
+    return Vec(1, INIT, -mu * sign(gd(0)));
   }
 
   void PlanarCoulombFriction::initializeUsingXML(TiXmlElement *element) {
     FrictionForceLaw::initializeUsingXML(element);
     TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"frictionCoefficient");
+    e = element->FirstChildElement(MBSIMNS"frictionCoefficient");
     setFrictionCoefficient(Element::getDouble(e));
   }
   
@@ -355,24 +355,24 @@ namespace MBSim {
   //  }
 
   Vec SpatialCoulombFriction::project(const Vec& la, const Vec& gdn, double laN, double r) {
-    return proxCT3D(la-r*gdn,mu*fabs(laN));
+    return proxCT3D(la - r * gdn, mu * fabs(laN));
   }
 
   Mat SpatialCoulombFriction::diff(const Vec& la, const Vec& gdn, double laN, double r) {
-    Vec argT = la-r*gdn;
-    Mat E(2,2,EYE);
-    Mat d(2,5,NONINIT);
-    if(nrm2(argT) < mu*fabs(laN)) {
+    Vec argT = la - r * gdn;
+    Mat E(2, 2, EYE);
+    Mat d(2, 5, NONINIT);
+    if (nrm2(argT) < mu * fabs(laN)) {
       //d_dargT = Mat(2,2,EYE);
-      d(Index(0,1),Index(0,1)) = E;
-      d(Index(0,1),Index(2,3)) = -r*E;
-      d(Index(0,1),Index(4,4)).init(0);
-    } 
+      d(Index(0, 1), Index(0, 1)) = E;
+      d(Index(0, 1), Index(2, 3)) = -r * E;
+      d(Index(0, 1), Index(4, 4)).init(0);
+    }
     else {
-      Mat d_dargT = (E - (argT*argT.T())/(argT.T()*argT))*mu*la(0)/nrm2(argT);
-      d(Index(0,1),Index(0,1)) = d_dargT;
-      d(Index(0,1),Index(2,3)) = -r*d_dargT;
-      d(Index(0,1),Index(4,4)) = argT/nrm2(argT)*mu;
+      Mat d_dargT = (E - (argT * argT.T()) / (argT.T() * argT)) * mu * la(0) / nrm2(argT);
+      d(Index(0, 1), Index(0, 1)) = d_dargT;
+      d(Index(0, 1), Index(2, 3)) = -r * d_dargT;
+      d(Index(0, 1), Index(4, 4)) = argT / nrm2(argT) * mu;
     }
     return d;
   }
@@ -382,85 +382,85 @@ namespace MBSim {
   }
 
   bool SpatialCoulombFriction::isFulfilled(const Vec& la, const Vec& gdn, double laN, double laTol, double gdTol) {
-    if(nrm2(la + gdn/nrm2(gdn)*mu*fabs(laN)) <= laTol)
+    if (nrm2(la + gdn / nrm2(gdn) * mu * fabs(laN)) <= laTol)
       return true;
-    else if(nrm2(la) <= mu*fabs(laN)+laTol && nrm2(gdn) <= gdTol)
+    else if (nrm2(la) <= mu * fabs(laN) + laTol && nrm2(gdn) <= gdTol)
       return true;
-    else 
+    else
       return false;
   }
 
   Vec SpatialCoulombFriction::dlaTdlaN(const Vec& gd, double laN) {
-    return -mu*gd/nrm2(gd);
+    return -mu * gd / nrm2(gd);
   }
 
   void SpatialCoulombFriction::initializeUsingXML(TiXmlElement *element) {
     FrictionForceLaw::initializeUsingXML(element);
     TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"frictionCoefficient");
+    e = element->FirstChildElement(MBSIMNS"frictionCoefficient");
     setFrictionCoefficient(Element::getDouble(e));
   }
 
   Vec PlanarStribeckFriction::project(const Vec& la, const Vec& gdn, double laN, double r) {
-    return Vec(1,INIT,proxCT2D(la(0)-r*gdn(0),(*fmu)(0)*fabs(laN)));
+    return Vec(1, INIT, proxCT2D(la(0) - r * gdn(0), (*fmu)(0) * fabs(laN)));
   }
 
   Mat PlanarStribeckFriction::diff(const Vec& la, const Vec& gdn, double laN, double r) {
-    double argT = la(0)-r*gdn(0);
-    Mat d(1,3,NONINIT);
-    if(abs(argT) < (*fmu)(0)*fabs(laN)) {
-      d(0,0) = 1;
-      d(0,1) = -r;
-      d(0,2) = 0;
-    } 
+    double argT = la(0) - r * gdn(0);
+    Mat d(1, 3, NONINIT);
+    if (abs(argT) < (*fmu)(0) * fabs(laN)) {
+      d(0, 0) = 1;
+      d(0, 1) = -r;
+      d(0, 2) = 0;
+    }
     else {
-      d(0,0) = 0;
-      d(0,1) = 0;
-      d(0,2) = sign(argT)*sign(laN)*(*fmu)(0);
+      d(0, 0) = 0;
+      d(0, 1) = 0;
+      d(0, 2) = sign(argT) * sign(laN) * (*fmu)(0);
     }
     return d;
   }
 
   Vec PlanarStribeckFriction::solve(const SqrMat& G, const Vec& gdn, double laN) {
-    double laNmu = fabs(laN)*(*fmu)(0);
-    double sdG = -gdn(0)/G(0,0);
-    if(fabs(sdG)<=laNmu) 
-      return Vec(1,INIT,sdG);
-    else 
-      return Vec(1,INIT,(laNmu<=sdG) ? laNmu : -laNmu);
+    double laNmu = fabs(laN) * (*fmu)(0);
+    double sdG = -gdn(0) / G(0, 0);
+    if (fabs(sdG) <= laNmu)
+      return Vec(1, INIT, sdG);
+    else
+      return Vec(1, INIT, (laNmu <= sdG) ? laNmu : -laNmu);
   }
 
   bool PlanarStribeckFriction::isFulfilled(const Vec& la, const Vec& gdn, double laN, double laTol, double gdTol) {
-    if(fabs(la(0) + gdn(0)/fabs(gdn(0))*(*fmu)(0)*fabs(laN)) <= laTol)
+    if (fabs(la(0) + gdn(0) / fabs(gdn(0)) * (*fmu)(0) * fabs(laN)) <= laTol)
       return true;
-    else if(fabs(la(0)) <= (*fmu)(0)*fabs(laN)+laTol && fabs(gdn(0)) <= gdTol)
+    else if (fabs(la(0)) <= (*fmu)(0) * fabs(laN) + laTol && fabs(gdn(0)) <= gdTol)
       return true;
-    else 
+    else
       return false;
   }
 
   Vec PlanarStribeckFriction::dlaTdlaN(const Vec& gd, double laN) {
-    return Vec(1,INIT,-(*fmu)(fabs(gd(0)))*sign(gd(0)));
+    return Vec(1, INIT, -(*fmu)(fabs(gd(0))) * sign(gd(0)));
   }
 
   Vec SpatialStribeckFriction::project(const Vec& la, const Vec& gdn, double laN, double r) {
-    return proxCT3D(la-r*gdn,(*fmu)(nrm2(gdn))*fabs(laN));
+    return proxCT3D(la - r * gdn, (*fmu)(nrm2(gdn)) * fabs(laN));
   }
 
   Mat SpatialStribeckFriction::diff(const Vec& la, const Vec& gdn, double laN, double r) {
-    Vec argT = la-r*gdn;
-    Mat E(2,2,EYE);
-    Mat d(2,5,NONINIT);
-    if(nrm2(argT) < (*fmu)(nrm2(gdn))*fabs(laN)) {
-      d(Index(0,1),Index(0,1)) = E;
-      d(Index(0,1),Index(2,3)) = -r*E;
-      d(Index(0,1),Index(4,4)).init(0);
-    } 
+    Vec argT = la - r * gdn;
+    Mat E(2, 2, EYE);
+    Mat d(2, 5, NONINIT);
+    if (nrm2(argT) < (*fmu)(nrm2(gdn)) * fabs(laN)) {
+      d(Index(0, 1), Index(0, 1)) = E;
+      d(Index(0, 1), Index(2, 3)) = -r * E;
+      d(Index(0, 1), Index(4, 4)).init(0);
+    }
     else {
-      Mat d_dargT = (E - (argT*argT.T())/(argT.T()*argT))*(*fmu)(nrm2(gdn))*la(0)/nrm2(argT);
-      d(Index(0,1),Index(0,1)) = d_dargT;
-      d(Index(0,1),Index(2,3)) = -r*d_dargT;
-      d(Index(0,1),Index(4,4)) = argT/nrm2(argT)*(*fmu)(nrm2(gdn));
+      Mat d_dargT = (E - (argT * argT.T()) / (argT.T() * argT)) * (*fmu)(nrm2(gdn)) * la(0) / nrm2(argT);
+      d(Index(0, 1), Index(0, 1)) = d_dargT;
+      d(Index(0, 1), Index(2, 3)) = -r * d_dargT;
+      d(Index(0, 1), Index(4, 4)) = argT / nrm2(argT) * (*fmu)(nrm2(gdn));
     }
     return d;
   }
@@ -470,88 +470,90 @@ namespace MBSim {
   }
 
   bool SpatialStribeckFriction::isFulfilled(const Vec& la, const Vec& gdn, double laN, double laTol, double gdTol) {
-    if(nrm2(la + gdn/nrm2(gdn)*(*fmu)(nrm2(gdn))*fabs(laN)) <= laTol)
+    if (nrm2(la + gdn / nrm2(gdn) * (*fmu)(nrm2(gdn)) * fabs(laN)) <= laTol)
       return true;
-    else if(nrm2(la) <= (*fmu)(nrm2(gdn))*fabs(laN)+laTol && nrm2(gdn) <= gdTol)
+    else if (nrm2(la) <= (*fmu)(nrm2(gdn)) * fabs(laN) + laTol && nrm2(gdn) <= gdTol)
       return true;
-    else 
+    else
       return false;
   }
 
   Vec SpatialStribeckFriction::dlaTdlaN(const Vec& gd, double laN) {
-    return -(*fmu)(nrm2(gd))*gd/nrm2(gd);
+    return -(*fmu)(nrm2(gd)) * gd / nrm2(gd);
   }
 
   Vec PlanarCoulombImpact::project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
-    return Vec(1,INIT,proxCT2D(la(0)-r*gdn(0),mu*fabs(laN)));
+    return Vec(1, INIT, proxCT2D(la(0) - r * gdn(0), mu * fabs(laN)));
   }
 
   Mat PlanarCoulombImpact::diff(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
-    double argT = la(0)-r*gdn(0);
-    Mat d(1,3,NONINIT);
-    if(abs(argT) < mu*fabs(laN)) {
+    double argT = la(0) - r * gdn(0);
+    Mat d(1, 3, NONINIT);
+    if (abs(argT) < mu * fabs(laN)) {
       //d_dargT = Mat(2,2,EYE);
-      d(0,0) = 1;
-      d(0,1) = -r;
-      d(0,2) = 0;
-    } 
+      d(0, 0) = 1;
+      d(0, 1) = -r;
+      d(0, 2) = 0;
+    }
     else {
-      d(0,0) = 0;
-      d(0,1) = 0;
-      d(0,2) = sign(argT)*sign(laN)*mu;
+      d(0, 0) = 0;
+      d(0, 1) = 0;
+      d(0, 2) = sign(argT) * sign(laN) * mu;
     }
     return d;
   }
 
   Vec PlanarCoulombImpact::solve(const SqrMat& G, const Vec& gdn, const Vec& gda, double laN) {
-    double laNmu = fabs(laN)*mu;
-    double sdG = -gdn(0)/G(0,0);
-    if(fabs(sdG)<=laNmu) 
-      return Vec(1,INIT,sdG);
-    else 
-      return Vec(1,INIT,(laNmu<=sdG) ? laNmu : -laNmu);
+    double laNmu = fabs(laN) * mu;
+    double sdG = -gdn(0) / G(0, 0);
+    if (fabs(sdG) <= laNmu)
+      return Vec(1, INIT, sdG);
+    else
+      return Vec(1, INIT, (laNmu <= sdG) ? laNmu : -laNmu);
   }
 
   bool PlanarCoulombImpact::isFulfilled(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double laTol, double gdTol) {
-    if(fabs(la(0) + gdn(0)/fabs(gdn(0))*mu*fabs(laN)) <= laTol)
+    if (fabs(la(0) + gdn(0) / fabs(gdn(0)) * mu * fabs(laN)) <= laTol)
       return true;
-    else if(fabs(la(0)) <= mu*fabs(laN)+laTol && fabs(gdn(0)) <= gdTol)
+    else if (fabs(la(0)) <= mu * fabs(laN) + laTol && fabs(gdn(0)) <= gdTol)
       return true;
-    else 
+    else
       return false;
   }
 
   int PlanarCoulombImpact::isSticking(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double laTol, double gdTol) {
-    if(fabs(la(0)) <= mu*fabs(laN)+laTol && fabs(gdn(0)) <= gdTol) return 1;
-    else return 0;
+    if (fabs(la(0)) <= mu * fabs(laN) + laTol && fabs(gdn(0)) <= gdTol)
+      return 1;
+    else
+      return 0;
   }
 
   void PlanarCoulombImpact::initializeUsingXML(TiXmlElement *element) {
     FrictionImpactLaw::initializeUsingXML(element);
     TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"frictionCoefficient");
+    e = element->FirstChildElement(MBSIMNS"frictionCoefficient");
     setFrictionCoefficient(Element::getDouble(e));
   }
 
   Vec SpatialCoulombImpact::project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
-    return proxCT3D(la-r*gdn,mu*fabs(laN));
+    return proxCT3D(la - r * gdn, mu * fabs(laN));
   }
 
   Mat SpatialCoulombImpact::diff(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
-    Vec argT = la-r*gdn;
-    Mat E(2,2,EYE);
-    Mat d(2,5,NONINIT);
-    if(nrm2(argT) < mu*fabs(laN)) {
+    Vec argT = la - r * gdn;
+    Mat E(2, 2, EYE);
+    Mat d(2, 5, NONINIT);
+    if (nrm2(argT) < mu * fabs(laN)) {
       //d_dargT = Mat(2,2,EYE);
-      d(Index(0,1),Index(0,1)) = E;
-      d(Index(0,1),Index(2,3)) = -r*E;
-      d(Index(0,1),Index(4,4)).init(0);
-    } 
+      d(Index(0, 1), Index(0, 1)) = E;
+      d(Index(0, 1), Index(2, 3)) = -r * E;
+      d(Index(0, 1), Index(4, 4)).init(0);
+    }
     else {
-      Mat d_dargT = (E - (argT*argT.T())/(argT.T()*argT))*mu*la(0)/nrm2(argT);
-      d(Index(0,1),Index(0,1)) = d_dargT;
-      d(Index(0,1),Index(2,3)) = -r*d_dargT;
-      d(Index(0,1),Index(4,4)) = argT/nrm2(argT)*mu;
+      Mat d_dargT = (E - (argT * argT.T()) / (argT.T() * argT)) * mu * la(0) / nrm2(argT);
+      d(Index(0, 1), Index(0, 1)) = d_dargT;
+      d(Index(0, 1), Index(2, 3)) = -r * d_dargT;
+      d(Index(0, 1), Index(4, 4)) = argT / nrm2(argT) * mu;
     }
     return d;
   }
@@ -561,87 +563,91 @@ namespace MBSim {
   }
 
   bool SpatialCoulombImpact::isFulfilled(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double laTol, double gdTol) {
-    if(nrm2(la + gdn/nrm2(gdn)*mu*fabs(laN)) <= laTol)
+    if (nrm2(la + gdn / nrm2(gdn) * mu * fabs(laN)) <= laTol)
       return true;
-    else if(nrm2(la) <= mu*fabs(laN)+laTol && nrm2(gdn) <= gdTol)
+    else if (nrm2(la) <= mu * fabs(laN) + laTol && nrm2(gdn) <= gdTol)
       return true;
-    else 
+    else
       return false;
   }
 
   int SpatialCoulombImpact::isSticking(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double laTol, double gdTol) {
-    if(nrm2(la) <= mu*fabs(laN)+laTol && nrm2(gdn) <= gdTol) return 1;
-    else return 0;
+    if (nrm2(la) <= mu * fabs(laN) + laTol && nrm2(gdn) <= gdTol)
+      return 1;
+    else
+      return 0;
   }
 
   void SpatialCoulombImpact::initializeUsingXML(TiXmlElement *element) {
     FrictionImpactLaw::initializeUsingXML(element);
     TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"frictionCoefficient");
+    e = element->FirstChildElement(MBSIMNS"frictionCoefficient");
     setFrictionCoefficient(Element::getDouble(e));
   }
 
   Vec PlanarStribeckImpact::project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
-    return Vec(1,INIT,proxCT2D(la(0)-r*gdn(0),(*fmu)(fabs(gdn(0)))*fabs(laN)));
+    return Vec(1, INIT, proxCT2D(la(0) - r * gdn(0), (*fmu)(fabs(gdn(0))) * fabs(laN)));
   }
 
   Mat PlanarStribeckImpact::diff(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
-    double argT = la(0)-r*gdn(0);
-    Mat d(1,3,NONINIT);
-    if(abs(argT) < (*fmu)(fabs(gdn(0)))*fabs(laN)) {
-      d(0,0) = 1;
-      d(0,1) = -r;
-      d(0,2) = 0;
-    } 
+    double argT = la(0) - r * gdn(0);
+    Mat d(1, 3, NONINIT);
+    if (abs(argT) < (*fmu)(fabs(gdn(0))) * fabs(laN)) {
+      d(0, 0) = 1;
+      d(0, 1) = -r;
+      d(0, 2) = 0;
+    }
     else {
-      d(0,0) = 0;
-      d(0,1) = 0;
-      d(0,2) = sign(argT)*sign(laN)*(*fmu)(fabs(gdn(0)));
+      d(0, 0) = 0;
+      d(0, 1) = 0;
+      d(0, 2) = sign(argT) * sign(laN) * (*fmu)(fabs(gdn(0)));
     }
     return d;
   }
 
   Vec PlanarStribeckImpact::solve(const SqrMat& G, const Vec& gdn, const Vec& gda, double laN) {
-    double laNmu = fabs(laN)*(*fmu)(fabs(gdn(0)));
-    double sdG = -gdn(0)/G(0,0);
-    if(fabs(sdG)<=laNmu) 
-      return Vec(1,INIT,sdG);
-    else 
-      return Vec(1,INIT,(laNmu<=sdG) ? laNmu : -laNmu);
+    double laNmu = fabs(laN) * (*fmu)(fabs(gdn(0)));
+    double sdG = -gdn(0) / G(0, 0);
+    if (fabs(sdG) <= laNmu)
+      return Vec(1, INIT, sdG);
+    else
+      return Vec(1, INIT, (laNmu <= sdG) ? laNmu : -laNmu);
   }
 
   bool PlanarStribeckImpact::isFulfilled(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double laTol, double gdTol) {
-    if(fabs(la(0) + gdn(0)/fabs(gdn(0))*(*fmu)(fabs(gdn(0)))*fabs(laN)) <= laTol)
+    if (fabs(la(0) + gdn(0) / fabs(gdn(0)) * (*fmu)(fabs(gdn(0))) * fabs(laN)) <= laTol)
       return true;
-    else if(fabs(la(0)) <= (*fmu)(fabs(gdn(0)))*fabs(laN)+laTol && fabs(gdn(0)) <= gdTol)
+    else if (fabs(la(0)) <= (*fmu)(fabs(gdn(0))) * fabs(laN) + laTol && fabs(gdn(0)) <= gdTol)
       return true;
-    else 
+    else
       return false;
   }
 
   int PlanarStribeckImpact::isSticking(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double laTol, double gdTol) {
-    if(fabs(la(0)) <= (*fmu)(fabs(gdn(0)))*fabs(laN)+laTol && fabs(gdn(0)) <= gdTol) return 1;
-    else return 0;
-  } 
+    if (fabs(la(0)) <= (*fmu)(fabs(gdn(0))) * fabs(laN) + laTol && fabs(gdn(0)) <= gdTol)
+      return 1;
+    else
+      return 0;
+  }
 
   Vec SpatialStribeckImpact::project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
-    return proxCT3D(la-r*gdn,(*fmu)(nrm2(gdn))*fabs(laN));
+    return proxCT3D(la - r * gdn, (*fmu)(nrm2(gdn)) * fabs(laN));
   }
 
   Mat SpatialStribeckImpact::diff(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
-    Vec argT = la-r*gdn;
-    Mat E(2,2,EYE);
-    Mat d(2,5,NONINIT);
-    if(nrm2(argT) < (*fmu)(nrm2(gdn))*fabs(laN)) {
-      d(Index(0,1),Index(0,1)) = E;
-      d(Index(0,1),Index(2,3)) = -r*E;
-      d(Index(0,1),Index(4,4)).init(0);
-    } 
+    Vec argT = la - r * gdn;
+    Mat E(2, 2, EYE);
+    Mat d(2, 5, NONINIT);
+    if (nrm2(argT) < (*fmu)(nrm2(gdn)) * fabs(laN)) {
+      d(Index(0, 1), Index(0, 1)) = E;
+      d(Index(0, 1), Index(2, 3)) = -r * E;
+      d(Index(0, 1), Index(4, 4)).init(0);
+    }
     else {
-      Mat d_dargT = (E - (argT*argT.T())/(argT.T()*argT))*(*fmu)(nrm2(gdn))*la(0)/nrm2(argT);
-      d(Index(0,1),Index(0,1)) = d_dargT;
-      d(Index(0,1),Index(2,3)) = -r*d_dargT;
-      d(Index(0,1),Index(4,4)) = argT/nrm2(argT)*(*fmu)(nrm2(gdn));
+      Mat d_dargT = (E - (argT * argT.T()) / (argT.T() * argT)) * (*fmu)(nrm2(gdn)) * la(0) / nrm2(argT);
+      d(Index(0, 1), Index(0, 1)) = d_dargT;
+      d(Index(0, 1), Index(2, 3)) = -r * d_dargT;
+      d(Index(0, 1), Index(4, 4)) = argT / nrm2(argT) * (*fmu)(nrm2(gdn));
     }
     return d;
   }
@@ -651,49 +657,237 @@ namespace MBSim {
   }
 
   bool SpatialStribeckImpact::isFulfilled(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double laTol, double gdTol) {
-    if(nrm2(la + gdn/nrm2(gdn)*(*fmu)(nrm2(gdn))*fabs(laN)) <= laTol)
+    if (nrm2(la + gdn / nrm2(gdn) * (*fmu)(nrm2(gdn)) * fabs(laN)) <= laTol)
       return true;
-    else if(nrm2(la) <= (*fmu)(nrm2(gdn))*fabs(laN)+laTol && nrm2(gdn) <= gdTol)
+    else if (nrm2(la) <= (*fmu)(nrm2(gdn)) * fabs(laN) + laTol && nrm2(gdn) <= gdTol)
       return true;
-    else 
+    else
       return false;
   }
 
   int SpatialStribeckImpact::isSticking(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double laTol, double gdTol) {
-    if(nrm2(la) <= (*fmu)(nrm2(gdn))*fabs(laN)+laTol && nrm2(gdn) <= gdTol) return 1;
-    else return 0;
+    if (nrm2(la) <= (*fmu)(nrm2(gdn)) * fabs(laN) + laTol && nrm2(gdn) <= gdTol)
+      return 1;
+    else
+      return 0;
   }
-
-
 
   void RegularizedUnilateralConstraint::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"forceFunction");
-    Function2<double,double,double> *f=ObjectFactory::getInstance()->createFunction2_SSS(e->FirstChildElement());
+    e = element->FirstChildElement(MBSIMNS"forceFunction");
+    Function2<double, double, double> *f = ObjectFactory::getInstance()->createFunction2_SSS(e->FirstChildElement());
     setForceFunction(f);
     f->initializeUsingXML(e->FirstChildElement());
   }
 
+  MaxwellContactLaw::MaxwellContactLaw() :
+    lcpSolvingStrategy(Standard), matConst(0), matConstSetted(false), DEBUGLEVEL(0) {
+
+  }
+
+  void MaxwellContactLaw::addContourCoupling(Contour *contour1, Contour *contour2, InfluenceFunction *fct) {
+    pair<Contour*, Contour*> Pair(contour1, contour2);
+    if (contour2 < contour1)
+      Pair = pair<Contour*, Contour*>(contour2, contour1);
+    if (!influenceFunctions.count(Pair)) {
+      influenceFunctions[Pair] = fct;
+    }
+    else {
+      cout << "WARNING: Function existed for contour-pair: \"" << contour1->getName() << "\" + \"" << contour2->getName() << "\"." << endl;
+      cout << "         No Function has been added." << endl;
+    }
+
+  }
+
+  void MaxwellContactLaw::computeSmoothForces(const vector<Contour*> & contours, const dvec<ContourPointData*>::type & cpData, const dvec<Vec>::type & g, const dvec<Vec>::type & gd, dvec<Vec>::type & la) {
+    updatePossibleContactPoints(g);
+
+    //Set every force to zero
+    //TODO: there must be a more elegant way to avoid this zero setting!
+    for(size_t cK = 0; cK < la.size(); ++cK) {
+      for(size_t k = 0; k < la[cK].size(); ++k) {
+        la[cK][k] = 0;
+      }
+    }
+
+    if(possibleContactPoints.size()) {
+      updateInfluenceMatrix(contours, cpData);
+      updateRigidBodyGap(g);
+
+      LinearComplementarityProblem LCP(C, rigidBodyGap, lcpSolvingStrategy);
+
+      map<Index, double> tolerances;
+      tolerances.insert(pair<Index, double>(Index(0,possibleContactPoints.size() - 1), 1e-8)); //tolerances for distances
+      tolerances.insert(pair<Index, double>(Index(possibleContactPoints.size(),2*possibleContactPoints.size()-1), 1e-3)); //tolerances for forces
+      LocalResidualCriteriaFunction* critfunc = new LocalResidualCriteriaFunction(tolerances);
+      LCP.setNewtonCriteriaFunction(critfunc);
+      LCP.setDebugLevel(0);
+
+      solution0.resize() = LCP.solve(solution0);
+
+      delete critfunc;
+
+
+      Vec lambda = solution0(rigidBodyGap.size(), 2 * rigidBodyGap.size()-1);
+
+      if (DEBUGLEVEL >= 3) {
+        cout << "lambda = " << lambda << endl;
+      }
+
+      for(size_t i = 0; i < possibleContactPoints.size(); ++i) {
+        la[possibleContactPoints[i].first][possibleContactPoints[i].second](0) = lambda(i);
+      }
+    }
+  }
+
+  void MaxwellContactLaw::updatePossibleContactPoints(const dvec<Vec>::type & g) {
+    possibleContactPoints.clear();
+    for (size_t cK = 0; cK < g.size(); cK++) {
+      for (size_t k = 0; k < g[cK].size(); k++) {
+        if (g[cK][k](0) < 0) { //TODO: enable a tolerance value
+          possibleContactPoints.push_back(pair<int, int>(cK, k));
+        }
+      }
+    }
+  }
+
+  void MaxwellContactLaw::updateInfluenceMatrix(const vector<Contour*> & contours, const dvec<ContourPointData*>::type & cpData) {
+    C.resize(possibleContactPoints.size());
+
+    for (size_t i = 0; i < possibleContactPoints.size(); i++) {
+      //get index of contours of current possible contactPoint
+      const std::pair<int,int> currentContactNumber = possibleContactPoints[i];
+
+      C(i, i) = computeInfluenceCoefficient(contours, cpData, currentContactNumber);
+
+      for (size_t j = i + 1; j < possibleContactPoints.size(); j++) {
+        //get index of coupled contour
+        const std::pair<int,int> coupledContactNumber = possibleContactPoints[j];
+
+        C(i, j) = computeInfluenceCoefficient(contours, cpData, currentContactNumber, coupledContactNumber);
+      }
+    }
+
+    if (DEBUGLEVEL >= 5) {
+      cout << "The InfluenceMatrix is: " << C << endl;
+      cout << "With eigenvalues: " << eigval(C) << endl;
+    }
+  }
+
+  void MaxwellContactLaw::updateRigidBodyGap(const dvec<Vec>::type & g) {
+    /*save rigidBodyGaps in vector*/
+    rigidBodyGap.resize(possibleContactPoints.size());
+    for (size_t i = 0; i < possibleContactPoints.size(); i++) {
+      rigidBodyGap(i) = g[possibleContactPoints[i].first][possibleContactPoints[i].second](0);
+    }
+
+    if (DEBUGLEVEL >= 5)
+      cout << "rigidBodyGap: " << rigidBodyGap << endl;
+  }
+
+  double MaxwellContactLaw::computeInfluenceCoefficient(const vector<Contour*> & contours, const dvec<ContourPointData*>::type & cpData, const pair<int,int> & contactIndex) {
+    double FactorC = 0.;
+
+    int currentContourNumber = 2 * contactIndex.first;
+
+    for (int i = 0; i < 2; i++) {
+
+      //get involved contours
+      Contour * contour = contours[currentContourNumber + i];
+      pair<Contour*, Contour*> contourPair = pair<Contour*, Contour*>(contour, contour);
+
+      if (influenceFunctions.count(contourPair)) { //If there is a function, there is a coupling between these contours
+        InfluenceFunction *fct = influenceFunctions[contourPair];
+        Vec lagrangeParameter;
+        lagrangeParameter.resize() = contour->computeLagrangeParameter(cpData[contactIndex.first][contactIndex.second][i].getFrameOfReference().getPosition());
+
+        if (DEBUGLEVEL >= 3) {
+          cout << "LagrangeParameter of contour \"" << contour->getShortName() << "\" is:" << lagrangeParameter << endl;
+        }
+
+        FactorC += (*fct)(lagrangeParameter, lagrangeParameter);
+      }
+    }
+
+    if (fabs(FactorC) <= macheps()) {
+      throw MBSimError("No elasticity is given for one of the following contours:\n  -" + contours[currentContourNumber]->getShortName() + "\n  -" + contours[currentContourNumber + 1]->getShortName() + "\nThat is not an option!");
+    }
+
+    return FactorC;
+  }
+
+  double MaxwellContactLaw::computeInfluenceCoefficient(const vector<Contour*> & contours, const dvec<ContourPointData*>::type & cpData, const pair<int,int> & contactIndex, const pair<int,int> & coupledContactIndex) {
+    double FactorC = 0;
+
+    int affectedContourNumber = 2 * contactIndex.first;
+    int coupledContourNumber = 2 * coupledContactIndex.first;
+
+    for (int affectedContourIterator = 0; affectedContourIterator < 2; affectedContourIterator++) {
+      for (int coupledContourIterator = 0; coupledContourIterator < 2; coupledContourIterator++) {
+        //get involved contours
+        Contour *contour1 = contours[affectedContourNumber + affectedContourIterator];
+        Contour *contour2 = contours[coupledContourNumber + coupledContourIterator];
+
+        pair<Contour*, Contour*> Pair;
+
+        if (contour1 < contour2)
+          Pair = pair<Contour*, Contour*>(contour1, contour2);
+        else
+          Pair = pair<Contour*, Contour*>(contour2, contour1);
+
+        if (influenceFunctions.count(Pair)) { //If there is a function, there is a coupling between these contours
+          InfluenceFunction *fct = influenceFunctions[Pair];
+          Vec firstLagrangeParameter = Vec(2, NONINIT);
+          Vec secondLagrangeParameter = Vec(2, NONINIT);
+          firstLagrangeParameter = contour1->computeLagrangeParameter(cpData[contactIndex.first][contactIndex.second][affectedContourIterator].getFrameOfReference().getPosition());
+          secondLagrangeParameter = contour2->computeLagrangeParameter(cpData[coupledContactIndex.first][coupledContactIndex.second][coupledContourIterator].getFrameOfReference().getPosition());
+
+          if (DEBUGLEVEL >= 3) {
+            cout << "First LagrangeParameter of contour \"" << contour1->getShortName() << "\" is:" << firstLagrangeParameter << endl;
+            cout << "Second LagrangeParameter contour \"" << contour2->getShortName() << "\" is:" << secondLagrangeParameter << endl;
+          }
+
+          FactorC += (*fct)(firstLagrangeParameter, secondLagrangeParameter);
+        }
+      }
+    }
+    return FactorC;
+  }
+
+  void MaxwellContactLaw::computeMaterialConstant() {
+    if (!matConstSetted and possibleContactPoints.size()) {
+      /*update Material constant*/
+      Vec Eigvals = eigval(C);
+      double eigvalSum = 0;
+      for (int i = 0; i < Eigvals.size(); i++) {
+        eigvalSum += Eigvals(i);
+      }
+      matConst = eigvalSum / Eigvals.size();
+
+      matConstSetted = true;
+    }
+  }
+
   void RegularizedBilateralConstraint::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"forceFunction");
-    Function2<double,double,double> *f=ObjectFactory::getInstance()->createFunction2_SSS(e->FirstChildElement());
+    e = element->FirstChildElement(MBSIMNS"forceFunction");
+    Function2<double, double, double> *f = ObjectFactory::getInstance()->createFunction2_SSS(e->FirstChildElement());
     setForceFunction(f);
     f->initializeUsingXML(e->FirstChildElement());
   }
 
   void RegularizedPlanarFriction::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"frictionForceFunction");
-    Function2<Vec,Vec,double> *f=ObjectFactory::getInstance()->createFunction2_VVS(e->FirstChildElement());
+    e = element->FirstChildElement(MBSIMNS"frictionForceFunction");
+    Function2<Vec, Vec, double> *f = ObjectFactory::getInstance()->createFunction2_VVS(e->FirstChildElement());
     setFrictionForceFunction(f);
     f->initializeUsingXML(e->FirstChildElement());
   }
 
   void RegularizedSpatialFriction::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"frictionForceFunction");
-    Function2<Vec,Vec,double> *f=ObjectFactory::getInstance()->createFunction2_VVS(e->FirstChildElement());
+    e = element->FirstChildElement(MBSIMNS"frictionForceFunction");
+    Function2<Vec, Vec, double> *f = ObjectFactory::getInstance()->createFunction2_VVS(e->FirstChildElement());
     setFrictionForceFunction(f);
     f->initializeUsingXML(e->FirstChildElement());
   }

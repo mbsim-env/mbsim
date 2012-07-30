@@ -33,15 +33,6 @@ namespace OpenMBV {
 
 namespace MBSim {
 
-  /*!
-   * \brief define a templated typedef to have shorter double vectors
-   */
-  template<class T>
-  struct dvec {
-      typedef std::vector<std::vector<T> > type;
-  };
-
-
   class ContactKinematics;
   class GeneralizedForceLaw;
   class GeneralizedImpactLaw;

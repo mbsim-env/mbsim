@@ -190,12 +190,14 @@ namespace MBSim {
   //  }
 
   void Contact::updateh(double t, int j) {
+    (*fcl).computeSmoothForces(contour, cpData, gk, gdk, lak);
+
     for (size_t cK = 0; cK != contactKinematics.size(); ++cK) {
       int contourIndex = cK * 2;
       for (int k = 0; k < contactKinematics[cK]->getNumberOfPotentialContactPoints(); k++) { // gActive should not be checked, e.g. because of possible predamping in constitutive laws
 
         //TODO: the computation of the normal forces has to be done before this loop (as in maxwell-contact)
-        lak[cK][k](0) = (*fcl)(gk[cK][k](0), gdk[cK][k](0), this);
+//        lak[cK][k](0) = (*fcl)(gk[cK][k](0), gdk[cK][k](0), this);
         if (fdf)
           lak[cK][k](1, getFrictionDirections()) = (*fdf)(gdk[cK][k](1, getFrictionDirections()), fabs(lak[cK][k](0)));
 
