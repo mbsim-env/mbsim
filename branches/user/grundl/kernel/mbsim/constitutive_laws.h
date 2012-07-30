@@ -20,7 +20,12 @@
 #ifndef _CONSTITUTIVE_LAWS_H_
 #define _CONSTITUTIVE_LAWS_H_
 
+#include <map>
+
 #include "fmatvec.h"
+
+#include <mbsim/numerics/linear_complementarity_problem/linear_complementarity_problem.h>
+#include <mbsim/contour.h>
 #include "mbsim/utils/function.h"
 
 namespace MBSim {
@@ -86,6 +91,17 @@ namespace MBSim {
        */
       double operator()(double g, double gd, const void * additional=NULL) { assert(forceFunc); return (*forceFunc)(g,gd,additional); }
 
+      /*!
+       * \brief computes the normal forces for smooth constitutive law on every contact point
+       *
+       * \param g  vector of the distances
+       * \param gd vector of the relative velocities
+       * \param la vector of the forces (to be set by this function)
+       *
+       * \todo implement for every smooth contact force law
+       */
+      virtual void computeSmoothForces(const std::vector<Contour*> & contours, const dvec<ContourPointData*>::type & cpData, const dvec<fmatvec::Vec>::type & g, const dvec<fmatvec::Vec>::type & gd, dvec<fmatvec::Vec>::type & la) {};
+
       /** \brief Set the force function for use in regularisized constitutive laws
        * The first input parameter to the force function is g.
        * The second input parameter to the force function is gd.
@@ -94,6 +110,9 @@ namespace MBSim {
       void setForceFunction(Function2<double,double,double> *forceFunc_) { forceFunc=forceFunc_; }
 
     protected:
+      /*!
+       * \brief force function for a regularized contact law
+       */
       Function2<double,double,double> *forceFunc;
   };
 
@@ -673,6 +692,133 @@ namespace MBSim {
       /***************************************************/
 
       virtual void initializeUsingXML(TiXmlElement *element);
+  };
+
+  /*!
+   * \brief A force law that computes the normal force of many contact kinematics based on the Maxwell-Force-Law
+   * \author Kilian Grundl
+   * \date 30-07-2012 start of development
+   */
+  class MaxwellContactLaw : public GeneralizedForceLaw {
+    public:
+      /*!
+       * \brief constructor
+       */
+      MaxwellContactLaw();
+
+      /*!
+       * \brief destructor
+       */
+      virtual ~MaxwellContactLaw() {};
+
+      /* INHERITED INTERFACE */
+      virtual bool isActive(double g, double gTol) { return true; }
+      virtual bool remainsActive(double s, double sTol) {return true; }
+      virtual bool isSetValued() const { return false; }
+      virtual void computeSmoothForces(const std::vector<Contour*> & contours, const dvec<ContourPointData*>::type & cpData, const dvec<fmatvec::Vec>::type & g, const dvec<fmatvec::Vec>::type & gd, dvec<fmatvec::Vec>::type & la);
+      /***************************************************/
+
+      /**
+       * \brief add a function that represents the coupling between two contours
+       * \param name of first contour
+       * \param name of second contour
+       * \param Function to describe coupling between contours
+       *
+       * \General Remark: The parameters (LagrangeParameterPositions) of the function have to be in the same order as it was given the add(...)-method
+       */
+      void addContourCoupling(Contour *contour1, Contour *contour2, InfluenceFunction *fct);
+
+    protected:
+      /**
+       * \brief saves all possible contacts in a vector
+       */
+      virtual void updatePossibleContactPoints(const dvec<fmatvec::Vec>::type & g);
+
+      /**
+       * \brief updates the influence matrix C
+       * \param contours vector of contours that are part of the contact
+       * \param cpData   vector of ContourPointDatas
+       */
+      virtual void updateInfluenceMatrix(const std::vector<Contour*> & contours, const dvec<ContourPointData*>::type & cpData);
+
+      /**
+       * \brief update the rigid body distances (gaps) for the single contacts
+       */
+      void updateRigidBodyGap(const dvec<fmatvec::Vec>::type & g);
+
+      /**
+       * \brief computes the coupling factor for the influence matrix on one contact point (two contours)
+       * \param contours     vector of contours that are part of the contact
+       * \param cpData       vector of ContourPointDatas
+       * \param contactIndex index pair of contact point
+       */
+      virtual double computeInfluenceCoefficient(const std::vector<Contour*> & contours, const dvec<ContourPointData*>::type & cpData, const std::pair<int,int> & contactIndex);
+
+      /**
+       * \brief computes the coupling factor for the influence matrix between two contact points (four contours)
+       * \param contours            vector of contours that are part of the contact
+       * \param cpData              vector of ContourPointDatas
+       * \param contactIndex        index pair of contact point
+       * \param coupledContactIndex index pair of coupling contact point
+       */
+      virtual double computeInfluenceCoefficient(const std::vector<Contour*> & contours, const dvec<ContourPointData*>::type & cpData, const std::pair<int,int> & contactIndex, const std::pair<int,int> & couplingContactIndex);
+
+      /*
+       * \brief computes the "material constant" to have a good guess for the lambda-vector
+       */
+      virtual void computeMaterialConstant();
+
+      /**
+       * \brief saves the indices of all active contacts
+       */
+      std::vector<std::pair<int,int> > possibleContactPoints;
+
+      /**
+       * \brief Influence matrix between contact points
+       */
+      fmatvec::SymMat C;
+
+      /*
+       * \brief vector of rigid body distances(gaps) for the active contacts
+       */
+      fmatvec::Vec rigidBodyGap;
+
+      /**
+       * \brief saves the influence functions for a pair of contours. The key is the pair of contour names
+       */
+      std::map<std::pair<Contour*, Contour*>, InfluenceFunction*> influenceFunctions;
+
+      /**
+       * \brief strategy for solving the LCP
+       */
+      LCPSolvingStrategy lcpSolvingStrategy;
+
+      /**
+       * \brief Solution of the last time, where contact has to be solved (can be used as starting guess for the next algorithm)
+       */
+      fmatvec::Vec solution0;
+
+      /**
+       * \brief parameter for guessing starting values of contact force (average eigenvalue of influence-matrix)
+       */
+      double matConst;
+
+      /**
+       * \brief parameter to save if matConst has been computed already
+       */
+      bool matConstSetted;
+
+      /**
+       * \brief print INFO output?
+       *
+       * 0 = no DEBUGOutput
+       * 1 = most important information
+       * 2 = ...
+       * 5 = Matrices and Vectors
+       * \todo wouldn't a logger for MBSim be nice
+       */
+      int DEBUGLEVEL;
+
   };
 
   /**

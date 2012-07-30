@@ -69,7 +69,7 @@ System::System(const string &projectName, int contactType, int firstBall, int la
   this->addFrame(ReferenceFrame, ReferenceFrameShift, SqrMat(3,EYE));
 
   /*General-Parameters*/
-  MaxwellContact *maxwellContact = new MaxwellContact("MaxwellContact");
+  Contact *maxwellContact = new Contact("MaxwellContact");
 
   /*Print arrows for contacts*/
   OpenMBV::Arrow *normalArrow = new OpenMBV::Arrow();
@@ -200,23 +200,27 @@ System::System(const string &projectName, int contactType, int firstBall, int la
   switch (contactType) {
     case 0: //Maxwell Contact
     {
+      MaxwellContactLaw* mcl = new MaxwellContactLaw();
+      maxwellContact->setContactForceLaw(mcl);
       //Debug features
-      maxwellContact->setDebuglevel(0);
+      //maxwellContact->setDebuglevel(0);
 
       CountourCouplingCantileverBeam* couplingBeam = new CountourCouplingCantileverBeam(BeamContour->getName(), E, I);
-      maxwellContact->addContourCoupling(BeamContour, BeamContour, couplingBeam);
+      mcl->addContourCoupling(BeamContour, BeamContour, couplingBeam);
+      //TODO:
+      //maxwellContact->addContourCoupling(BeamContour, BeamContour, couplingBeam);
 
       for (size_t contactIter = 0; contactIter < balls.size(); contactIter++) {
         stringstream contactname;
         contactname << "Contact_Beam-" << ballsContours[contactIter]->getName();
 
-        ContourPairing* contourPairing = new ContourPairing(contactname.str(), BeamContour, ballsContours[contactIter]);
+        //ContourPairing* contourPairing = new ContourPairing(contactname.str(), BeamContour, ballsContours[contactIter]);
         //contourPairing->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
-        maxwellContact->addContourPairing(contourPairing);
+        maxwellContact->connect(BeamContour, ballsContours[contactIter]);
 
-        contourPairing->enableOpenMBVContactPoints(1.,false);
-        contourPairing->enableOpenMBVNormalForceArrow(normalArrow);
-        contourPairing->enableOpenMBVFrictionForceArrow(frArrow);
+        //contourPairing->enableOpenMBVContactPoints(1.,false);
+        //contourPairing->enableOpenMBVNormalForceArrow(normalArrow);
+        //contourPairing->enableOpenMBVFrictionForceArrow(frArrow);
       }
 
 
