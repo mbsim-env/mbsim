@@ -263,6 +263,12 @@ namespace MBSim {
        */
       ContactKinematics * findContactPairingWith(std::string type0, std::string type1);
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::RigidBody * getOpenMBVRigidBody() {
+        return openMBVRigidBody;
+      }
+#endif
+
     protected:
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::RigidBody *openMBVRigidBody;
