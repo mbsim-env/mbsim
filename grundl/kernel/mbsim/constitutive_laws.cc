@@ -680,8 +680,16 @@ namespace MBSim {
     f->initializeUsingXML(e->FirstChildElement());
   }
 
-  MaxwellContactLaw::MaxwellContactLaw() :
-    lcpSolvingStrategy(Standard), matConst(0), matConstSetted(false), DEBUGLEVEL(0) {
+  void RegularizedUnilateralConstraint::computeSmoothForces(const vector<Contour*> & contours, const dvec<ContourPointData*>::type & cpData, const dvec<Vec>::type & g, const dvec<Vec>::type & gd, dvec<Vec>::type & la) {
+    for(size_t cK = 0; cK < la.size(); ++cK) {
+      for(size_t k = 0; k < la[cK].size(); ++k) {
+        la[cK][k](0) = (*forceFunc)(g[cK][k](0),gd[cK][k](0));
+      }
+    }
+  }
+
+  MaxwellContactLaw::MaxwellContactLaw(const double & damping, const double & gapLimit) :
+    lcpSolvingStrategy(Standard), dampingCoefficient(damping), gLim(gapLimit), matConst(0), matConstSetted(false), DEBUGLEVEL(0) {
 
   }
 
@@ -702,11 +710,13 @@ namespace MBSim {
   void MaxwellContactLaw::computeSmoothForces(const vector<Contour*> & contours, const dvec<ContourPointData*>::type & cpData, const dvec<Vec>::type & g, const dvec<Vec>::type & gd, dvec<Vec>::type & la) {
     updatePossibleContactPoints(g);
 
-    //Set every force to zero
-    //TODO: there must be a more elegant way to avoid this zero setting!
+    //Apply damping force
     for(size_t cK = 0; cK < la.size(); ++cK) {
       for(size_t k = 0; k < la[cK].size(); ++k) {
-        la[cK][k] = 0;
+        if(g[cK][k](0) < gLim and gd[cK][k](0) < 0)
+          la[cK][k](0) = -dampingCoefficient * gd[cK][k](0);
+        else
+          la[cK][k](0) = 0;
       }
     }
 
@@ -735,7 +745,7 @@ namespace MBSim {
       }
 
       for(size_t i = 0; i < possibleContactPoints.size(); ++i) {
-        la[possibleContactPoints[i].first][possibleContactPoints[i].second](0) = lambda(i);
+        la[possibleContactPoints[i].first][possibleContactPoints[i].second](0) += lambda(i);
       }
     }
   }
@@ -875,6 +885,15 @@ namespace MBSim {
     setForceFunction(f);
     f->initializeUsingXML(e->FirstChildElement());
   }
+
+  void RegularizedBilateralConstraint::computeSmoothForces(const vector<Contour*> & contours, const dvec<ContourPointData*>::type & cpData, const dvec<Vec>::type & g, const dvec<Vec>::type & gd, dvec<Vec>::type & la) {
+      for(size_t cK = 0; cK < la.size(); ++cK) {
+        for(size_t k = 0; k < la[cK].size(); ++k) {
+          la[cK][k](0) = (*forceFunc)(g[cK][k](0),gd[cK][k](0));
+        }
+      }
+    }
+
 
   void RegularizedPlanarFriction::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;

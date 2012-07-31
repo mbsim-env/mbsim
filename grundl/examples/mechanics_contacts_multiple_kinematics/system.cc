@@ -11,6 +11,7 @@
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frustum.h>
+#include <openmbvcppinterface/arrow.h>
 #endif
 
 using namespace MBSim;
@@ -20,10 +21,15 @@ using namespace std;
 System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   /* preliminaries */
-  int nB = 12; //number of balls
+
+  //balls
+  int nB = 1; //number of balls
   vector<RigidBody*> balls;
   vector<Sphere*> spheres;
   double mass = 1;
+
+  //contact
+  double mu = 0.4;
 
   Vec WrOK(3);
   Vec KrKS(3);
@@ -68,14 +74,47 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   /* contact */
   Contact *contact = new Contact("Contact");
-  if(false) {
-    //contact->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e7,0)));
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  /*Print arrows for contacts*/
+  OpenMBV::Arrow *normalArrow = new OpenMBV::Arrow();
+  normalArrow->setScaleLength(0.001);
+  OpenMBV::Arrow *frArrow = new OpenMBV::Arrow();
+  frArrow->setScaleLength(0.001);
+  frArrow->setStaticColor(0.75);
+
+  //fancy stuff
+  contact->enableOpenMBVContactPoints(0.01);
+  contact->setOpenMBVNormalForceArrow(normalArrow);
+  contact->setOpenMBVFrictionArrow(frArrow);
+#endif
+
+  int contactlaw = 0;
+  if(contactlaw == 0) { //Maxwell Contact
+    //Normal force
+    InfluenceFunction* infl = new FlexibilityInfluenceFunction(ground->getShortName(), 1e-6);
+    MaxwellContactLaw* mfl = new MaxwellContactLaw();
+    mfl->addContourCoupling(ground, ground, infl);
+    contact->setContactForceLaw(mfl);
+
+    //Frictional force
+    contact->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
   }
-  else {
+  else if(contactlaw == 1) { //Regularized Unilateral Contact
+    //Normal force
+    contact->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e4,1000)));
+
+    //Frictional force
+    contact->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+  }
+  else if (2) { //Unilateral Constraint Contact
+    //Normal force
     contact->setContactForceLaw(new UnilateralConstraint);
     contact->setContactImpactLaw(new UnilateralNewtonImpact);
-    //  contact->setFrictionForceLaw(new SpatialCoulombFriction(0.4));
-    //  contact->setFrictionImpactLaw(new SpatialCoulombImpact(0.4));
+
+    //Frictional force
+    contact->setFrictionForceLaw(new SpatialCoulombFriction(mu));
+    contact->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
   }
   this->addLink(contact);
 
@@ -99,6 +138,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     balls[k]->setMass(mass);
     balls[k]->setInertiaTensor(Theta);
     balls[k]->setTranslation(new LinearTranslation(SqrMat(3,EYE))); // only translational dof because of point masses
+
+    Vec u0(3,INIT,0);
+    u0(1) = -1;
+    balls[k]->setInitialGeneralizedVelocity(u0);
 
     stringstream spherename;
     spherename << "sphere_" << k;

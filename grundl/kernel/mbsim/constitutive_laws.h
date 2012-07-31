@@ -94,11 +94,11 @@ namespace MBSim {
       /*!
        * \brief computes the normal forces for smooth constitutive law on every contact point
        *
-       * \param g  vector of the distances
-       * \param gd vector of the relative velocities
-       * \param la vector of the forces (to be set by this function)
-       *
-       * \todo implement for every smooth contact force law
+       * \param contours vector of contours that are part of the contact
+       * \param cpData   vector of the contourPointDatas
+       * \param g        vector of the distances
+       * \param gd       vector of the relative velocities
+       * \param la       vector of the forces (to be set by this function)
        */
       virtual void computeSmoothForces(const std::vector<Contour*> & contours, const dvec<ContourPointData*>::type & cpData, const dvec<fmatvec::Vec>::type & g, const dvec<fmatvec::Vec>::type & gd, dvec<fmatvec::Vec>::type & la) {};
 
@@ -689,6 +689,7 @@ namespace MBSim {
       virtual bool isActive(double g, double gTol) { return g<=gTol; }
       virtual bool remainsActive(double s, double sTol) { return s<=sTol; }
       virtual bool isSetValued() const { return false; }
+      virtual void computeSmoothForces(const std::vector<Contour*> & contours, const dvec<ContourPointData*>::type & cpData, const dvec<fmatvec::Vec>::type & g, const dvec<fmatvec::Vec>::type & gd, dvec<fmatvec::Vec>::type & la);
       /***************************************************/
 
       virtual void initializeUsingXML(TiXmlElement *element);
@@ -704,7 +705,7 @@ namespace MBSim {
       /*!
        * \brief constructor
        */
-      MaxwellContactLaw();
+      MaxwellContactLaw(const double & damping = 0, const double & gapLimit = 0);
 
       /*!
        * \brief destructor
@@ -717,6 +718,12 @@ namespace MBSim {
       virtual bool isSetValued() const { return false; }
       virtual void computeSmoothForces(const std::vector<Contour*> & contours, const dvec<ContourPointData*>::type & cpData, const dvec<fmatvec::Vec>::type & g, const dvec<fmatvec::Vec>::type & gd, dvec<fmatvec::Vec>::type & la);
       /***************************************************/
+
+      /*GETTER - SETTER*/
+      void setDebuglevel(int debuglevel) {
+        DEBUGLEVEL = debuglevel;
+      }
+      /*****************/
 
       /**
        * \brief add a function that represents the coupling between two contours
@@ -798,6 +805,16 @@ namespace MBSim {
        */
       fmatvec::Vec solution0;
 
+      /*!
+       * \brief coefficient for possible contact damping
+       */
+      double dampingCoefficient;
+
+      /*!
+       * \brief relative contact point distance limit under which damping is active
+       */
+      double gLim;
+
       /**
        * \brief parameter for guessing starting values of contact force (average eigenvalue of influence-matrix)
        */
@@ -844,6 +861,7 @@ namespace MBSim {
       virtual bool isActive(double g, double gTol) { return true; }
       virtual bool remainsActive(double s, double sTol) { return true; }
       virtual bool isSetValued() const { return false; }
+      virtual void computeSmoothForces(const std::vector<Contour*> & contours, const dvec<ContourPointData*>::type & cpData, const dvec<fmatvec::Vec>::type & g, const dvec<fmatvec::Vec>::type & gd, dvec<fmatvec::Vec>::type & la);
       /***************************************************/
 
       virtual void initializeUsingXML(TiXmlElement *element);
