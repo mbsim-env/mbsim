@@ -223,12 +223,23 @@ namespace MBSim {
       virtual void calcLinkStatusRegSize() { LinkStatusRegSize =0;}
 
       /**
-       * \return set valued force laws used?
+       * \brief asks the link if it contains force laws that contribute to the lagrange multiplier and is therefore set valued
+       *
+       * \return set valued force laws used within the link?
        */
       virtual bool isSetValued() const { return false; }
 
+      /*!
+       * \brief asks the link if it contains single valued force laws that contribute to the right-hand side vector h
+       *
+       * \return single valued force laws used within link?
+       */
+      virtual bool isSingleValued() const { return false; }
+
       /**
        * \return updateh is needed if set valued force law is not active?
+       *
+       * \todo: is this used anyhow?
        */
       virtual bool hasSmoothPart() const { return false; }
 
@@ -463,6 +474,11 @@ namespace MBSim {
        */
       fmatvec::Vec g, gd, la;
       
+      /*!
+       * \brief contact forces of smooth contact laws
+       */
+      fmatvec::Vec laS;
+
       /**
        * \brief size and local index of relative distances
        */

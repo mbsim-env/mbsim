@@ -98,6 +98,7 @@ namespace MBSim {
       virtual void calcLinkStatusRegSize();
       virtual void init(InitStage stage);
       virtual bool isSetValued() const;
+      virtual bool isSingleValued() const;
       virtual void updateLinkStatus(double dt);
       virtual void updateLinkStatusReg(double dt);
       virtual bool isActive() const;
@@ -242,9 +243,11 @@ namespace MBSim {
       fmatvec::Vec gdn, gdd;
 
       /**
-       * \brief vectors of relative distance, velocity, velocity after impact in event driven scheme, acceleration in event driven scheme, force parameters, acceleration description with respect to contour parameters, stop vector, relaxation factors for possible contact points
+       * \brief vectors of relative distance, velocity, velocity after impact in event driven scheme, acceleration in event driven scheme, force parameters, force parameters for smooth contact, acceleration description with respect to contour parameters, stop vector, relaxation factors for possible contact points
+       *
+       * \todo: rFactork split up in tangential and normal?!
        */
-      dvec<fmatvec::Vec>::type gk, gdk, gdnk, gddk, lak, wbk, svk, rFactork;
+      dvec<fmatvec::Vec>::type gk, gdkN, gdkT, gdnkN, gdnkT, gddk, lakN, lakT, wbk, svk, rFactork;
 
       /**
        * \brief boolean evaluation of stop vector for possible contact points

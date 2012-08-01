@@ -1058,12 +1058,19 @@ namespace MBSim {
     linkSetValuedNotActiveWithSmoothPart.clear();
     linkSingleValued.clear();
     for(unsigned int i=0; i<link.size(); i++) {
+      bool hasForceLaw = false;
       if(link[i]->isSetValued()) {
+        hasForceLaw = true;
         linkSetValued.push_back(link[i]);
         linkSetValuedActive.push_back(link[i]);
       }
-      else 
+      if(link[i]->isSingleValued()) {
+        hasForceLaw = true;
         linkSingleValued.push_back(link[i]);
+      }
+      if(not hasForceLaw) {
+        throw new MBSimError("The Link \"" + link[i]->getName() +  "\" comprises now force law!");
+      }
     }
   }
 

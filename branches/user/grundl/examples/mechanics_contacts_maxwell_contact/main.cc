@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
   double plotStepSize = 1 * stepSize;
   double endTime = 5e-2;
 
-  for (int contactType =0; contactType <= 2; contactType++) {
+  for (int contactType = 0; contactType <= 0; contactType++) {
     for (int contactNums = 1; contactNums <= 1; contactNums+=20) {
       stringstream MBSName;
       MBSName << "MBS_";

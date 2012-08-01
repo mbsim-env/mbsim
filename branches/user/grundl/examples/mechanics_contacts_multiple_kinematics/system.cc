@@ -29,7 +29,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   double mass = 1;
 
   //contact
-  double mu = 0.4;
+  double mu = 0.01;
 
   Vec WrOK(3);
   Vec KrKS(3);
@@ -92,22 +92,24 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   int contactlaw = 0;
   if(contactlaw == 0) { //Maxwell Contact
     //Normal force
-    InfluenceFunction* infl = new FlexibilityInfluenceFunction(ground->getShortName(), 1e-6);
-    MaxwellContactLaw* mfl = new MaxwellContactLaw();
+    InfluenceFunction* infl = new FlexibilityInfluenceFunction(ground->getShortName(), 1e-5);
+    MaxwellContactLaw* mfl = new MaxwellContactLaw(10000);
     mfl->addContourCoupling(ground, ground, infl);
     contact->setContactForceLaw(mfl);
 
     //Frictional force
-    contact->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+//    contact->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+    contact->setFrictionForceLaw(new SpatialCoulombFriction(mu));
+    contact->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
   }
   else if(contactlaw == 1) { //Regularized Unilateral Contact
     //Normal force
-    contact->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e4,1000)));
+    contact->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e6,1000)));
 
     //Frictional force
     contact->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
   }
-  else if (2) { //Unilateral Constraint Contact
+  else if (contactlaw == 2) { //Unilateral Constraint Contact
     //Normal force
     contact->setContactForceLaw(new UnilateralConstraint);
     contact->setContactImpactLaw(new UnilateralNewtonImpact);
