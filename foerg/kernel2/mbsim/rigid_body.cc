@@ -843,8 +843,7 @@ namespace MBSim {
     TiXmlElement *ele0 = Body::writeXMLFile(parent);
 
     TiXmlElement * ele1 = new TiXmlElement( "frameForKinematics" );
-    string str = "Frame[";
-    str += getFrameForKinematics()->getShortName() + "]";
+    string str = string("Frame[") + getFrameForKinematics()->getName() + "]";
     ele1->SetAttribute("ref", str);
     ele0->LinkEndChild(ele1);
 
