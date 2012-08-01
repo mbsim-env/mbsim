@@ -235,7 +235,7 @@ namespace MBSim {
     TiXmlElement *ele1;
 
     if(getFrameOfReference()) {
-      ele1 = new TiXmlElement( "frameOfReference" );
+      ele1 = new TiXmlElement( "frameOfReference" ); // TODO
       ele1->SetAttribute("ref", getFrameOfReference()->getName() );
       ele0->LinkEndChild(ele1);
     }

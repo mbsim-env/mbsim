@@ -618,22 +618,10 @@ namespace MBSim {
       ele0->LinkEndChild(ele1);
     }
     TiXmlElement *ele1 = new TiXmlElement("connect");
-    for(int i=0; i<2; i++) {
-      string str = string("/Frame[") + frame[i]->getName() + "]";
-      Element* element =  frame[i]->getParent();
-      while(!dynamic_cast<DynamicSystemSolver*>(element)) {
-        if(dynamic_cast<Group*>(element))
-          str = string("/Group[") + element->getName() + "]" + str;
-        else if(dynamic_cast<Object*>(element))
-          str = string("/Object[") + element->getName() + "]" + str;
-        else
-          throw;
-        element = element->getParent();
-      }
-      stringstream s;
-      s << "ref" << i+1;
-      ele1->SetAttribute(s.str(), str);
-    }
+    //ele1->SetAttribute("ref1", frame[0]->getXMLPath(frame[0])); // absolute path
+    //ele1->SetAttribute("ref2", frame[1]->getXMLPath(frame[1])); // absolute path
+    ele1->SetAttribute("ref1", frame[0]->getXMLPath(this,true)); // relative path
+    ele1->SetAttribute("ref2", frame[1]->getXMLPath(this,true)); // relative path
     ele0->LinkEndChild(ele1);
     return ele0;
   }

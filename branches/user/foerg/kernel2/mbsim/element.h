@@ -275,6 +275,8 @@ namespace MBSim {
        */
       std::string getPath(char pathDelim='.');
 
+      std::string getXMLPath(MBSim::Element *ref=0, bool rel=false);
+
     protected:
       Element *parent;
 

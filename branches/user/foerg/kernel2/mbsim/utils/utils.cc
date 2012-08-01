@@ -17,11 +17,11 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
+#include "config.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
 
-#include <mbsim/utils/eps.h>
-
+using namespace std;
 using namespace fmatvec;
 
 std::string numtostr(int i){

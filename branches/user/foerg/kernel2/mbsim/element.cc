@@ -20,7 +20,8 @@
 
 #include <config.h>
 #include <mbsim/element.h>
-//#include <mbsim/object_interface.h>
+#include <mbsim/dynamic_system_solver.h>
+#include <mbsim/object.h>
 #include <mbsim/mbsim_event.h>
 #include <mbsim/utils/eps.h>
 #include "mbsimtinyxml/tinyxml-src/tinynamespace.h"
@@ -107,6 +108,53 @@ namespace MBSim {
 
   string Element::getPath(char pathDelim) {
     return parent?parent->getPath()+pathDelim+name:name;
+  }
+
+  string Element::getXMLPath(MBSim::Element *ref, bool rel) {
+    if(rel) {
+      vector<Element*> e0, e1;
+      Element* element = ref;
+      e0.push_back(element);
+      while(!dynamic_cast<DynamicSystemSolver*>(element)) {
+        element = element->getParent();
+        e0.push_back(element);
+      }
+      element = getParent();
+      e1.push_back(element);
+      while(!dynamic_cast<DynamicSystemSolver*>(element)) {
+        element = element->getParent();
+        e1.push_back(element);
+      }
+      int imatch=0;
+      for(vector<Element*>::iterator i0 = e0.end()-1, i1 = e1.end()-1 ; (i0 != e0.begin()-1) && (i1 != e1.begin()-1) ; i0--, i1--) 
+        if(*i0 == *i1) imatch++;
+      string str = getType()+ "[" + getName() + "]";
+      for(vector<Element*>::iterator i1 = e1.begin() ; i1 != e1.end()-imatch ; i1++) {
+        if(dynamic_cast<Group*>(*i1))
+          str = string("Group[") + (*i1)->getName() + "]/" + str;
+        else if(dynamic_cast<Object*>(*i1))
+          str = string("Object[") + (*i1)->getName() + "]/" + str;
+        else
+          throw;
+      }
+      for(int i=0; i<int(e0.size())-imatch; i++)
+        str = "../" + str;
+      return str;
+    } else {
+      string str = getType()+ "[" + getName() + "]";
+      Element* element = getParent();
+      while(!dynamic_cast<DynamicSystemSolver*>(element)) {
+        if(dynamic_cast<Group*>(element))
+          str = string("Group[") + element->getName() + "]/" + str;
+        else if(dynamic_cast<Object*>(element))
+          str = string("Object[") + element->getName() + "]/" + str;
+        else
+          throw;
+        element = element->getParent();
+      }
+      str = "/" + str;
+      return str;
+    }
   }
 
   void Element::initializeUsingXML(TiXmlElement *element) {
