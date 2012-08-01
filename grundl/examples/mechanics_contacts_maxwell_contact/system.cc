@@ -145,7 +145,7 @@ System::System(const string &projectName, int contactType, int firstBall, int la
     balls[ballIter]->setMass(1.);
     balls[ballIter]->setInertiaTensor(SymMat(3,EYE));
     balls[ballIter]->setTranslation(new LinearTranslation(SqrMat(3, EYE)));
-    balls[ballIter]->setInitialGeneralizedVelocity(Vec("[0;-1;0]"));
+    balls[ballIter]->setInitialGeneralizedVelocity(Vec("[0;-1;0.5]"));
 
     this->addObject(balls[ballIter]);
 
@@ -229,7 +229,9 @@ System::System(const string &projectName, int contactType, int firstBall, int la
       mcl->addContourCoupling(BeamContour, BeamContour, couplingBeam);
 
       //Force Law (friction)
-      contact->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+//      contact->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+      contact->setFrictionForceLaw(new SpatialCoulombFriction(mu));
+      contact->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
 
     }
     break;
