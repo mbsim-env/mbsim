@@ -1381,7 +1381,7 @@ namespace MBSim {
     ele0->SetAttribute("xmlns", "http://mbsim.berlios.de/MBSim");
     ele0->SetAttribute("xmlns:ombv", "http://openmbv.berlios.de/OpenMBV");
 
-    TiXmlElement *ele1 = new TiXmlElement( "environments" );
+    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"environments" );
     MBSimEnvironment::getInstance()->writeXMLFile(ele1);
     ele0->LinkEndChild( ele1 );
     return ele0;

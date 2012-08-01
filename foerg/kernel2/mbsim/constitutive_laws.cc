@@ -137,7 +137,7 @@ namespace MBSim {
   }
 
   TiXmlElement* BilateralConstraint::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = new TiXmlElement( "BilateralConstraint" );
+    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"BilateralConstraint" );
     parent->LinkEndChild(ele0);
     return ele0;
   }
@@ -228,7 +228,7 @@ namespace MBSim {
   }
 
   TiXmlElement* BilateralImpact::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = new TiXmlElement( "BilateralImpact" );
+    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"BilateralImpact" );
     parent->LinkEndChild(ele0);
     return ele0;
   }

@@ -36,9 +36,9 @@ namespace MBSim {
   }
 
   TiXmlElement* MBSimEnvironment::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement* ele0 = new TiXmlElement( "MBSimEnvironment" );
+    TiXmlElement* ele0 = new TiXmlElement( MBSIMNS"MBSimEnvironment" );
 
-    TiXmlElement *ele1 = new TiXmlElement( "accelerationOfGravity" );
+    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"accelerationOfGravity" );
     TiXmlText *text = new TiXmlText( vec2str(getAccelerationOfGravity()) );
     ele1->LinkEndChild(text);
     ele0->LinkEndChild( ele1 );

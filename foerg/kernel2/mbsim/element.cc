@@ -188,7 +188,7 @@ namespace MBSim {
   }
 
   TiXmlElement* Element::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0=new TiXmlElement(getType());
+    TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
     parent->LinkEndChild(ele0);
     ele0->SetAttribute("name", getName());
     return ele0;
