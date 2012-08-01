@@ -208,7 +208,7 @@ namespace MBSim {
 
   TiXmlElement* Body::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0 = Object::writeXMLFile(parent);
-    TiXmlElement *ele1 = new TiXmlElement( "frameOfReference" );
+    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"frameOfReference" );
     // ele1->SetAttribute("ref", getFrameOfReference()->getXMLPath()); // absolute path
     ele1->SetAttribute("ref", frameOfReference->getXMLPath(this,true)); // relative path
     ele0->LinkEndChild(ele1);

@@ -309,9 +309,9 @@ namespace MBSim {
   TiXmlElement* Object::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0 = Element::writeXMLFile(parent);
     if(q0.size()) 
-      addElementText(ele0,"initialGeneralizedPosition",vec2str(q0));
+      addElementText(ele0,MBSIMNS"initialGeneralizedPosition",vec2str(q0));
     if(u0.size()) 
-      addElementText(ele0,"initialGeneralizedVelocity",vec2str(u0));
+      addElementText(ele0,MBSIMNS"initialGeneralizedVelocity",vec2str(u0));
     return ele0;
   }
 

@@ -235,52 +235,52 @@ namespace MBSim {
     TiXmlElement *ele1;
 
     if(getFrameOfReference()) {
-      ele1 = new TiXmlElement( "frameOfReference" ); // TODO
-      ele1->SetAttribute("ref", getFrameOfReference()->getName() );
+      ele1 = new TiXmlElement( MBSIMNS"frameOfReference" );
+      ele1->SetAttribute("ref", frameParent->getXMLPath(this,true));
       ele0->LinkEndChild(ele1);
     }
 
-    addElementText(ele0,"position",vec2str(getPosition()));
-    addElementText(ele0,"orientation", mat2str(getOrientation()));
+    addElementText(ele0,MBSIMNS"position",vec2str(getPosition()));
+    addElementText(ele0,MBSIMNS"orientation", mat2str(getOrientation()));
 
-    ele1 = new TiXmlElement( "frames" );
+    ele1 = new TiXmlElement( MBSIMNS"frames" );
     for(unsigned int i=1; i<frame.size(); i++) {
-      TiXmlElement* ele2 = new TiXmlElement( "frame" );
+      TiXmlElement* ele2 = new TiXmlElement( MBSIMNS"frame" );
       ele1->LinkEndChild( ele2 );
       frame[i]->writeXMLFile(ele2);
       if(saved_refFrameF[i-1] != "I") {
-        TiXmlElement *ele3 = new TiXmlElement( "frameOfReference" );
+        TiXmlElement *ele3 = new TiXmlElement( MBSIMNS"frameOfReference" );
         string str = string("Frame[") + saved_refFrameF[i-1] + "]";
         ele3->SetAttribute("ref", str);
         ele2->LinkEndChild(ele3);
       }
 
-      addElementText(ele2,"position",vec2str(saved_RrRF[i-1]));
-      addElementText(ele2,"orientation",mat2str(saved_ARF[i-1]));
+      addElementText(ele2,MBSIMNS"position",vec2str(saved_RrRF[i-1]));
+      addElementText(ele2,MBSIMNS"orientation",mat2str(saved_ARF[i-1]));
     }
     ele0->LinkEndChild( ele1 );
 
-    ele1 = new TiXmlElement( "contours" );
+    ele1 = new TiXmlElement( MBSIMNS"contours" );
     for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i) 
       (*i)->writeXMLFile(ele1);
     ele0->LinkEndChild( ele1 );
 
-    ele1 = new TiXmlElement( "groups" );
+    ele1 = new TiXmlElement( MBSIMNS"groups" );
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->writeXMLFile(ele1);
     ele0->LinkEndChild( ele1 );
 
-    ele1 = new TiXmlElement( "objects" );
+    ele1 = new TiXmlElement( MBSIMNS"objects" );
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
       (*i)->writeXMLFile(ele1);
     ele0->LinkEndChild( ele1 );
 
-    ele1 = new TiXmlElement( "extraDynamics" );
+    ele1 = new TiXmlElement( MBSIMNS"extraDynamics" );
     for(vector<ExtraDynamic*>::iterator i = extraDynamic.begin(); i != extraDynamic.end(); ++i) 
       (*i)->writeXMLFile(ele1);
     ele0->LinkEndChild( ele1 );
 
-    ele1 = new TiXmlElement( "links" );
+    ele1 = new TiXmlElement( MBSIMNS"links" );
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
       (*i)->writeXMLFile(ele1);
     ele0->LinkEndChild( ele1 );

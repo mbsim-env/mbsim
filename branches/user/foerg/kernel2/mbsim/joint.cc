@@ -607,17 +607,17 @@ namespace MBSim {
   TiXmlElement* Joint::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0 = Element::writeXMLFile(parent);
     if(forceDir.cols()) {
-      TiXmlElement *ele1 = new TiXmlElement("force");
-      addElementText(ele1,"direction",mat2str(forceDir));
-      TiXmlElement *ele2 = new TiXmlElement("generalizedForceLaw");
+      TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"force");
+      addElementText(ele1,MBSIMNS"direction",mat2str(forceDir));
+      TiXmlElement *ele2 = new TiXmlElement(MBSIMNS"generalizedForceLaw");
       ffl->writeXMLFile(ele2);
       ele1->LinkEndChild(ele2);
-      ele2 = new TiXmlElement("generalizedImpactLaw");
+      ele2 = new TiXmlElement(MBSIMNS"generalizedImpactLaw");
       fifl->writeXMLFile(ele2);
       ele1->LinkEndChild(ele2);
       ele0->LinkEndChild(ele1);
     }
-    TiXmlElement *ele1 = new TiXmlElement("connect");
+    TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"connect");
     //ele1->SetAttribute("ref1", frame[0]->getXMLPath(frame[0])); // absolute path
     //ele1->SetAttribute("ref2", frame[1]->getXMLPath(frame[1])); // absolute path
     ele1->SetAttribute("ref1", frame[0]->getXMLPath(this,true)); // relative path
