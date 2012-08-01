@@ -713,7 +713,7 @@ namespace MBSim {
       virtual ~MaxwellContactLaw() {};
 
       /* INHERITED INTERFACE */
-      virtual bool isActive(double g, double gTol) { return true; }
+      virtual bool isActive(double g, double gTol) { return g < gTol ? true : false; }
       virtual bool remainsActive(double s, double sTol) {return true; }
       virtual bool isSetValued() const { return false; }
       virtual void computeSmoothForces(const std::vector<Contour*> & contours, const dvec<ContourPointData*>::type & cpData, const dvec<fmatvec::Vec>::type & g, const dvec<fmatvec::Vec>::type & gd, dvec<fmatvec::Vec>::type & la);

@@ -18,12 +18,11 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
 
-System::System(const string &projectName) : DynamicSystemSolver(projectName) {
+System::System(const string &projectName, const int contactlaw, const int nB) : DynamicSystemSolver(projectName) {
 
   /* preliminaries */
 
   //balls
-  int nB = 1; //number of balls
   vector<RigidBody*> balls;
   vector<Sphere*> spheres;
   double mass = 1;
@@ -89,7 +88,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   contact->setOpenMBVFrictionArrow(frArrow);
 #endif
 
-  int contactlaw = 0;
   if(contactlaw == 0) { //Maxwell Contact
     //Normal force
     InfluenceFunction* infl = new FlexibilityInfluenceFunction(ground->getShortName(), 1e-5);
@@ -104,7 +102,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   }
   else if(contactlaw == 1) { //Regularized Unilateral Contact
     //Normal force
-    contact->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e6,1000)));
+    contact->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,10000)));
 
     //Frictional force
     contact->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));

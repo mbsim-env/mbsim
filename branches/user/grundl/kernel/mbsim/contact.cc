@@ -1943,9 +1943,9 @@ namespace MBSim {
         }
       }
 #endif
-      if (getPlotFeature(linkKinematics) == enabled) {
-        bool flag = fcl->isSetValued();
-        for (size_t cK = 0; cK < contactKinematics.size(); cK++) {
+      for (size_t cK = 0; cK < contactKinematics.size(); cK++) {
+        if (getPlotFeature(linkKinematics) == enabled) {
+          bool flag = fcl->isSetValued();
           for (int k = 0; k < contactKinematics[cK]->getNumberOfPotentialContactPoints(); k++) {
             plotVector.push_back(gk[cK][k](0)); //gN
             if ((flag && gActive[cK][k]) || (!flag && fcl->isActive(gk[cK][k](0), 0))) {
@@ -1959,9 +1959,7 @@ namespace MBSim {
             }
           }
         }
-      }
-      if (getPlotFeature(generalizedLinkForce) == enabled) {
-        for (size_t cK = 0; cK < contactKinematics.size(); cK++) {
+        if (getPlotFeature(generalizedLinkForce) == enabled) {
           for (int k = 0; k < contactKinematics[cK]->getNumberOfPotentialContactPoints(); k++) {
             if (gActive[cK][k] && gdActive[cK][k][0]) {
               plotVector.push_back(lakN[cK][k](0) / (fcl->isSetValued() ? dt : 1.));
