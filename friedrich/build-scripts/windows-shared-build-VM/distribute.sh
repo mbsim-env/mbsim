@@ -5,7 +5,13 @@
 # use argument "noclean" to disable cleaning the dist dir before starting
 # use argument "noarchive" to disalbe the creation of a tar.bz2 archive at end
 
-DISTBASEDIR=/home/user/MBSimWindows/dist
+
+
+##############################################################################
+# MBSIM
+##############################################################################
+
+DISTBASEDIR=/home/user/MBSimWindows/dist_mbsim
 
 PREFIX=/home/user/MBSimWindows/local
 
@@ -36,6 +42,7 @@ SHAREDIRS="
 doc
 hdf5serie
 mbxmlutils
+openmbv
 "
 
 OCTAVEVERSION=$($PREFIX/bin/octave-config.exe --version | dos2unix)
@@ -58,7 +65,7 @@ while [ $# -gt 0 ]; do
 done
 
 # dist dir
-DISTDIR=$DISTBASEDIR/local
+DISTDIR=$DISTBASEDIR/mbsim
 
 # clear previout dist dir
 if [ $NOCLEAN -eq 0 ]; then
@@ -95,8 +102,8 @@ getdlls() {
   mv $TMPDLLFILESOUT.uniq $TMPDLLFILESOUT
   rm -f $TMPDLLFILESOUT.abs
   for F in $(cat $TMPDLLFILESOUT); do
-    locate $F | grep "$F$" | grep -v "/wine" | grep -v "/\.wine/" >> $TMPDLLFILESOUT.abs
-    find $PREFIX -name $(basename $F) | grep "$F$" | grep -v "/wine" | grep -v "/\.wine/" >> $TMPDLLFILESOUT.abs
+    locate $F | grep "$F$" | grep -v "/wine" | grep -v "/\.wine/" | grep -v "/dist_mbsim/" >> $TMPDLLFILESOUT.abs
+    find $PREFIX -name $(basename $F) | grep "$F$" | grep -v "/wine" | grep -v "/\.wine/" | grep -v "/dist_mbsim/" >> $TMPDLLFILESOUT.abs
   done
   sort $TMPDLLFILESOUT.abs | uniq > $TMPDLLFILESOUT.uniq
   rm -f $TMPDLLFILESOUT
@@ -190,6 +197,35 @@ mkdir -p $DISTDIR/bin/imageformats
 mkdir -p $DISTDIR/bin/iconengines
 cp /usr/i686-w64-mingw32/sys-root/mingw/lib/qt4/plugins/imageformats/qsvg4.dll $DISTDIR/bin/imageformats
 cp /usr/i686-w64-mingw32/sys-root/mingw/lib/qt4/plugins/iconengines/qsvgicon4.dll $DISTDIR/bin/iconengines
+
+# README.txt
+cat << EOF > $DISTDIR/README.txt
+Using of the MBSim and Co. Package:
+===================================
+
+- Unpack the archive to an arbitary directory (already done)
+  (Note: It is recommended, that the full directory path where the archive
+  is unpacked does not contain any spaces.)
+- Test the installation:
+  1)Run the program <install-dir>/mbsim/bin/mbsim-test to check the
+    installation. This will run the MBSim example xmlflat_hierachical_modelling,
+    the xml_hierachical_modelling example, the h5plotserie program as well as
+    the openmbv program.
+  2)If you have a compiler (MinGW32) installed you can also run
+    <install-dir>/mbsim/bin/mbsim-test <path-to-my-c++-compiler>.
+    This will first try to compile a simple MBSim test program including all
+    MBSim modules. Afterwards the mechanics_basics_hierachical_modelling
+    example will be compiled and executed. At least the same as in 1) is run.
+- Try any of the programs in <install-dir>/mbsim/bin
+- Build your own models using XML and run it with
+  <install-dir>/mbsim/bin/mbsimxml ...
+  View the plots with h5plotserie and view the animation with openmbv.
+- Try to compile and run your own source code models. Use the output of
+  <install-dir>/mbsim/bin/mbsim-config --cflags and 
+  <install-dir>/mbsim/bin/mbsim-config --libs as compiler and linker flags.
+
+Have fun!
+EOF
 
 # Add some examples
 mkdir -p $DISTDIR/examples
@@ -299,6 +335,125 @@ EOF
 # archive dist dir
 if [ $NOARCHIVE -eq 0 ]; then
   rm -f $DISTBASEDIR/mbsim-windows-shared-build-xxx.zip
-  (cd $DISTBASEDIR; zip -r $DISTBASEDIR/mbsim-windows-shared-build-xxx.zip local)
+  (cd $DISTBASEDIR; zip -r $DISTBASEDIR/mbsim-windows-shared-build-xxx.zip mbsim)
   echo "Create MBSim archive at $DISTBASEDIR/mbsim-windows-shared-build-xxx.zip"
+fi
+
+
+
+##############################################################################
+# OPENMBV
+##############################################################################
+
+DISTBASEDIR=/home/user/MBSimWindows/dist_openmbv
+
+PREFIX=/home/user/MBSimWindows/local
+
+BINFILES="
+$PREFIX/bin/openmbv.exe
+$PREFIX/bin/tools/h5import.exe
+"
+
+SHAREDIRS="
+openmbv
+"
+
+DOCDIRS="
+http___openmbv_berlios_de_MBXMLUtils_physicalvariable
+http___openmbv_berlios_de_OpenMBV
+"
+
+
+
+
+
+# dist dir
+DISTDIR=$DISTBASEDIR/openmbv
+
+# clear previout dist dir
+if [ $NOCLEAN -eq 0 ]; then
+  rm -rf $DISTDIR
+fi
+
+mkdir -p $DISTDIR/bin
+
+# copy binfiles to bin dir
+mkdir -p $DISTDIR/bin
+for F in $BINFILES; do
+  cp -uL $F $DISTDIR/bin
+done
+
+#get dependent dlls and copy to bindir
+TMPDLLFILESOUT=/tmp/distribute.sh.sofile.out
+TMPDLLFILESIN=/tmp/distribute.sh.sofile.in
+
+getdlls() {
+  for F in $(cat $TMPDLLFILESIN); do
+    objdump -p $F 2> /dev/null | grep "DLL Name" | sed -re "s/^.*DLL Name: //" >> $TMPDLLFILESOUT
+  done
+  sort $TMPDLLFILESOUT | uniq > $TMPDLLFILESOUT.uniq
+  rm -f $TMPDLLFILESOUT
+  mv $TMPDLLFILESOUT.uniq $TMPDLLFILESOUT
+  rm -f $TMPDLLFILESOUT.abs
+  for F in $(cat $TMPDLLFILESOUT); do
+    locate $F | grep "$F$" | grep -v "/wine" | grep -v "/\.wine/" | grep -v "/dist_openmbv/" >> $TMPDLLFILESOUT.abs
+    find $PREFIX -name $(basename $F) | grep "$F$" | grep -v "/wine" | grep -v "/\.wine/" | grep -v "/dist_openmbv/" >> $TMPDLLFILESOUT.abs
+  done
+  sort $TMPDLLFILESOUT.abs | uniq > $TMPDLLFILESOUT.uniq
+  rm -f $TMPDLLFILESOUT
+  mv $TMPDLLFILESOUT.uniq $TMPDLLFILESOUT
+}
+
+echo $BINFILES > $TMPDLLFILESOUT
+
+RERUN=1
+while [ $RERUN -ge 1 ]; do
+  cp $TMPDLLFILESOUT $TMPDLLFILESIN
+  getdlls
+  diff $TMPDLLFILESOUT $TMPDLLFILESIN &> /dev/null
+  if [ $? -ne 0 ]; then
+    RERUN=1
+  else
+    RERUN=0
+  fi
+done
+
+for F in $(grep -i "\.dll$" $TMPDLLFILESOUT); do
+  cp -uL $F $DISTDIR/bin
+done
+
+# copy binfiles to bin dir
+mkdir -p $DISTDIR/bin
+for F in $BINFILES; do
+  cp -uL $F $DISTDIR/bin
+done
+
+# copy shares
+mkdir -p $DISTDIR/share
+for D in $SHAREDIRS; do
+  cp -ruL $PREFIX/share/$D $DISTDIR/share
+done
+
+# copy doc dir
+mkdir -p $DISTDIR/share/mbxmlutils/doc
+for D in $DOCDIRS; do
+  cp -ruL $PREFIX/share/mbxmlutils/doc/$D $DISTDIR/share/mbxmlutils/doc
+done
+
+# SPECIAL handling
+cp -uL /usr/i686-w64-mingw32/sys-root/mingw/bin/iconv.dll $DISTDIR/bin
+mkdir -p $DISTDIR/share/hdf5serie/octave/
+cp -uL $PREFIX/share/hdf5serie/octave/hdf5serieappenddataset.m $DISTDIR/share/hdf5serie/octave/
+
+# Qt plugins
+mkdir -p $DISTDIR/bin/imageformats
+mkdir -p $DISTDIR/bin/iconengines
+cp /usr/i686-w64-mingw32/sys-root/mingw/lib/qt4/plugins/imageformats/qsvg4.dll $DISTDIR/bin/imageformats
+cp /usr/i686-w64-mingw32/sys-root/mingw/lib/qt4/plugins/iconengines/qsvgicon4.dll $DISTDIR/bin/iconengines
+
+# archive dist dir
+if [ $NOARCHIVE -eq 0 ]; then
+  rm -f $DISTBASEDIR/openmbv-windows-shared-build-xxx.zip
+  (cd $DISTBASEDIR; zip -r $DISTBASEDIR/openmbv-windows-shared-build-xxx.zip openmbv)
+  echo "Create OpenMBV archive at $DISTBASEDIR/openmbv-windows-shared-build-xxx.zip"
 fi
