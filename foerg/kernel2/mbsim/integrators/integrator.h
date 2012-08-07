@@ -80,6 +80,10 @@ namespace MBSim {
        */
       virtual void initializeUsingXML(TiXmlElement *element);
       virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+
+      static Integrator* readXMLFile(const std::string &filename);
+      void writeXMLFile();
+
       /***************************************************/
 
       /**

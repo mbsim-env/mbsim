@@ -21,6 +21,8 @@
 #include "integrator.h"
 #include "mbsim/element.h"
 #include "mbsim/utils/utils.h"
+#include "mbsim/objectfactory.h"
+#include "mbsimtinyxml/tinyxml-src/tinynamespace.h"
 
 using namespace std;
 
@@ -55,5 +57,27 @@ namespace MBSim {
 
     return ele0;
   }
+
+  Integrator* Integrator::readXMLFile(const string &filename) {
+    TiXmlDocument doc;
+    assert(doc.LoadFile(filename)==true);
+    TiXml_PostLoadFile(&doc);
+    TiXmlElement *e=doc.FirstChildElement();
+    TiXml_setLineNrFromProcessingInstruction(e);
+    map<string,string> dummy;
+    incorporateNamespace(e, dummy);
+    Integrator *integrator=ObjectFactory::getInstance()->createIntegrator(e);
+    integrator->initializeUsingXML(doc.FirstChildElement());
+    return integrator;
+  }
+
+  void Integrator::writeXMLFile() {
+    TiXmlDocument doc;
+    TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
+    doc.LinkEndChild( decl );
+    writeXMLFile(&doc);
+    doc.SaveFile(getType()+".mbsimint.xml");
+  }
+
 }
 

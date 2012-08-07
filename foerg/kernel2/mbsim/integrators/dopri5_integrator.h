@@ -80,6 +80,8 @@ namespace MBSim {
       virtual void initializeUsingXML(TiXmlElement *element);
       virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
 
+      using Integrator::writeXMLFile;
+
       virtual std::string getType() const { return "DOPRI5Integrator"; }
   };
 
