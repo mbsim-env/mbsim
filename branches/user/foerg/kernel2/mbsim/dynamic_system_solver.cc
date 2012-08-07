@@ -1387,6 +1387,30 @@ namespace MBSim {
     return ele0;
   }
 
+  DynamicSystemSolver* DynamicSystemSolver::readXMLFile(const string &filename) {
+    MBSimObjectFactory::initialize();
+    TiXmlDocument doc;
+    assert(doc.LoadFile(filename)==true);
+    TiXml_PostLoadFile(&doc);
+    TiXmlElement *e=doc.FirstChildElement();
+    TiXml_setLineNrFromProcessingInstruction(e);
+    map<string,string> dummy;
+    incorporateNamespace(doc.FirstChildElement(), dummy);
+    DynamicSystemSolver *dss=dynamic_cast<DynamicSystemSolver*>(ObjectFactory::getInstance()->createGroup(e));
+    dss->initializeUsingXML(doc.FirstChildElement());
+    return dss;
+ }
+
+  void DynamicSystemSolver::writeXMLFile() {
+    TiXmlDocument doc;
+    TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
+    doc.LinkEndChild( decl );
+    writeXMLFile(&doc);
+    map<string, string> nsprefix;
+    unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
+    doc.SaveFile(getName()+".mbsim.xml");
+  }
+
   void DynamicSystemSolver::addToGraph(Graph* graph, SqrMat &A, int i, vector<Object*>& objList) {
     graph->addObject(objList[i]->computeLevel(),objList[i]);
     A(i,i) = -1;

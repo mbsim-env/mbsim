@@ -450,6 +450,9 @@ namespace MBSim {
       virtual void initializeUsingXML(TiXmlElement *element);
       virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
 
+      static DynamicSystemSolver* readXMLFile(const std::string &filename);
+      void writeXMLFile();
+
       /**
        * \brief decide, whether the model-hierarchy should be reorganized.
        * \param true for reorganisation, false otherwise
