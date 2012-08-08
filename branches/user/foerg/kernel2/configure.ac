@@ -56,9 +56,6 @@ int main() {
 ], [AC_MSG_RESULT([yes]); DEFINES="$DEFINES -DHAVE_ANSICSIGNAL"; AC_DEFINE([HAVE_ANSICSIGNAL],[],[Use ANSI C Signal Handling])],
    [AC_MSG_RESULT([no])])
 
-DEFINES="$DEFINES -DFMATVEC_RESIZE_VOID"
-AC_DEFINE([FMATVEC_RESIZE_VOID],[],[Resizing of void matrices])
-
 dnl versioning (see http://www.gnu.org/software/libtool/manual.html)
 dnl current: 	The most recent interface number that this library implements. 
 dnl revision: 	The implementation number of the current interface. 
