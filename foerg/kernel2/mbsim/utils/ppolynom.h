@@ -161,7 +161,7 @@ namespace MBSim {
        */
       class ZerothDerivative : public Function1<fmatvec::Vector<Col,double>,double> {
         public:
-          ZerothDerivative(PPolynom<Row,Col> *polynom) : Function1<fmatvec::Vector<Col,double>,double>(), parent(polynom), xSave(0), ySave(fmatvec::Vec(0)) {}
+          ZerothDerivative(PPolynom<Row,Col> *polynom) : Function1<fmatvec::Vector<Col,double>,double>(), parent(polynom), xSave(), ySave() {}
           virtual ~ZerothDerivative() {}
 
           /* INHERITED INTERFACE OF FUNCTION */
@@ -179,7 +179,7 @@ namespace MBSim {
        */
       class FirstDerivative : public Function1<fmatvec::Vector<Col,double>,double> {
         public:
-          FirstDerivative(PPolynom<Row,Col> *polynom) : Function1<fmatvec::Vector<Col,double>,double>(), parent(polynom), xSave(0), ySave(fmatvec::Vec(0)) {}
+          FirstDerivative(PPolynom<Row,Col> *polynom) : Function1<fmatvec::Vector<Col,double>,double>(), parent(polynom), xSave(), ySave() {}
           virtual ~FirstDerivative() {}
 
           /* INHERITED INTERFACE OF FUNCTION */
@@ -197,7 +197,7 @@ namespace MBSim {
        */
       class SecondDerivative : public Function1<fmatvec::Vector<Col,double>,double> {
         public:
-          SecondDerivative(PPolynom<Row,Col> *polynom) : Function1<fmatvec::Vector<Col,double>,double>(), parent(polynom), xSave(0), ySave(fmatvec::Vec(0)) {}
+          SecondDerivative(PPolynom<Row,Col> *polynom) : Function1<fmatvec::Vector<Col,double>,double>(), parent(polynom), xSave(), ySave() {}
           virtual ~SecondDerivative() {}
 
           /* INHERITED INTERFACE OF FUNCTION */
