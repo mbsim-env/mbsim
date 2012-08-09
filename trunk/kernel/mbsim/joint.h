@@ -121,6 +121,8 @@ namespace MBSim {
 
       virtual void initializeUsingXML(TiXmlElement *element);
 
+      virtual std::string getType() const { return "Joint"; }
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /** \brief Visualize a force arrow acting on frame2 */
       void setOpenMBVForceArrow(OpenMBV::Arrow *arrow) {
