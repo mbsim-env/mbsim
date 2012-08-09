@@ -54,8 +54,6 @@
 using namespace PLib;
 #endif
 
-#define FMATVEC_DEEP_COPY
-
 using namespace fmatvec;
 using namespace std;
 using namespace MBSim;

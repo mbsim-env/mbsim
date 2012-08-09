@@ -19,9 +19,6 @@
  */
 
 #include <config.h>
-#define FMATVEC_NO_INITIALIZATION
-#define FMATVEC_NO_BOUNDS_CHECK
-
 #include "finite_element_1s_21_ancf.h"
 #include <fstream>
 

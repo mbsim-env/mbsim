@@ -19,9 +19,6 @@
  */
 
 #include <config.h>
-#define FMATVEC_NO_INITIALIZATION
-#define FMATVEC_NO_BOUNDS_CHECK
-
 #include <mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_21_rcm.h>
 #include <mbsim/utils/eps.h>
 #include <fstream>

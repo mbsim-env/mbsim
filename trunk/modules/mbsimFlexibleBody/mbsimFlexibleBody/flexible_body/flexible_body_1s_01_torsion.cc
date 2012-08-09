@@ -19,7 +19,6 @@
  */
 
 #include <config.h>
-#define FMATVEC_DEEP_COPY
 #include "body_flexible_1s_01_torsion.h"
 #include "frame.h"
 #include "dynamic_system_solver.h"

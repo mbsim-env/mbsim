@@ -18,11 +18,6 @@
  */
 
 #include<config.h>
-
-#define FMATVEC_DEEP_COPY
-#define FMATVEC_NO_INITIALIZATION
-#define FMATVEC_NO_BOUNDS_CHECK
-
 #include "mbsimFlexibleBody/flexible_body/flexible_body_2s_13_mfr_mindlin.h"
 #include "mbsimFlexibleBody/contours/nurbs_disk_2s.h"
 #include "mbsim/dynamic_system.h"
