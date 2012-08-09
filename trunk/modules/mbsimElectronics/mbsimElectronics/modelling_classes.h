@@ -43,7 +43,7 @@ namespace MBSimElectronics {
     protected:
       std::vector<Terminal*> terminal;
       Branch* branch;
-      int vz;
+      double vz;
       double Q,I;
     public:
       ElectronicComponent();
@@ -51,10 +51,10 @@ namespace MBSimElectronics {
       void addTerminal(const std::string &str);
       Terminal* getTerminal(const std::string &name, bool check=true);
       void buildListOfTerminals(std::vector<Terminal*> &terminal);
-      void connect(Branch *branch_,int vz=0);
+      void connect(Branch *branch_,double vz=0);
       Branch* getBranch() {return branch;}
       void processModellList(std::vector<ModellingInterface*> &modellList, std::vector<MBSim::Object*> &objectList, std::vector<MBSim::Link*> &linkList);
-      int getvz() const { return vz;}
+      double getvz() const { return vz;}
   };
 
 }

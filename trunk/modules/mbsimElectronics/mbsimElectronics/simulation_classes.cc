@@ -1,3 +1,4 @@
+#include <config.h>
 #include "simulation_classes.h"
 #include "mbsimControl/signal_.h"
 
@@ -156,7 +157,7 @@ namespace MBSimElectronics {
     }
   }
 
-  void Branch::setvz(int vz_, Mesh* mesh_) {
+  void Branch::setvz(double vz_, Mesh* mesh_) {
     for(int i=0; i<mesh.size(); i++)
       if(mesh_ == mesh[i])
 	vz[i] = vz_;
