@@ -40,7 +40,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointLineSegment::updateg(Vec &g, ContourPointData *cpData) {
+  void ContactKinematicsPointLineSegment::updateg(Vec &g, ContourPointData *cpData, int index) {
     cpData[iline].getFrameOfReference().setOrientation(line->getFrame()->getOrientation());
     cpData[ipoint].getFrameOfReference().getOrientation().col(0) = -line->getFrame()->getOrientation().col(0);
     cpData[ipoint].getFrameOfReference().getOrientation().col(1) = -line->getFrame()->getOrientation().col(1);

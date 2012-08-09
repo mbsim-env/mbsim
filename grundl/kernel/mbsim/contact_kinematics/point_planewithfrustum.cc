@@ -88,7 +88,7 @@ namespace MBSim {
     // cerr << "rFrustumPlane=" << rFrustumPlane << endl;
   }
 
-  void ContactKinematicsPointPlaneWithFrustum::updateg(Vec &g, ContourPointData* cpData) {
+  void ContactKinematicsPointPlaneWithFrustum::updateg(Vec &g, ContourPointData* cpData, int index) {
 
     Vec WrOPoint = point->getFrame()->getPosition();
     Vec WrOPlane = plane->getFrame()->getPosition();

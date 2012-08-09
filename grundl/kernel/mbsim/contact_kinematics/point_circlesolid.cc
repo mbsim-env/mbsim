@@ -42,7 +42,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointCircleSolid::updateg(Vec &g, ContourPointData *cpData) {
+  void ContactKinematicsPointCircleSolid::updateg(Vec &g, ContourPointData *cpData, int index) {
     const Vec WrD = -circlesolid->getFrame()->getPosition() + point->getFrame()->getPosition();
     
     cpData[icirclesolid].getFrameOfReference().getOrientation().col(0) = WrD/nrm2(WrD);

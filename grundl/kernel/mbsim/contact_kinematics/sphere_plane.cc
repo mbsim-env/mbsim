@@ -41,7 +41,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsSpherePlane::updateg(Vec &g, ContourPointData *cpData) {
+  void ContactKinematicsSpherePlane::updateg(Vec &g, ContourPointData *cpData, int index) {
     cpData[iplane].getFrameOfReference().setOrientation(plane->getFrame()->getOrientation());
     cpData[isphere].getFrameOfReference().getOrientation().col(0) = -plane->getFrame()->getOrientation().col(0);
     cpData[isphere].getFrameOfReference().getOrientation().col(1) = -plane->getFrame()->getOrientation().col(1);

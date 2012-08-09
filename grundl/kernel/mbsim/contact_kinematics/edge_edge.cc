@@ -33,7 +33,7 @@ namespace MBSim {
     edge1 = static_cast<Edge*>(contour[1]);
   }
 
-  void ContactKinematicsEdgeEdge::updateg(fmatvec::Vec &g, ContourPointData *cpData) {}
+  void ContactKinematicsEdgeEdge::updateg(fmatvec::Vec &g, ContourPointData *cpData, int index) {}
 
 //  void ContactKinematicsEdgeEdge::stage1(Vec &g, vector<ContourPointData> &cpData) {
 //

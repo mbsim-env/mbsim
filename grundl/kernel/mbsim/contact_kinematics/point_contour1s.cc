@@ -46,7 +46,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointContour1s::updateg(Vec &g, ContourPointData *cpData) {
+  void ContactKinematicsPointContour1s::updateg(Vec &g, ContourPointData *cpData, int index) {
     cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition()); // position of point
     
     FuncPairContour1sPoint *func= new FuncPairContour1sPoint(point,contour1s); // root function for searching contact parameters

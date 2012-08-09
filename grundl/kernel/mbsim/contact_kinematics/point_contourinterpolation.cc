@@ -48,7 +48,7 @@ namespace MBSim {
     func = new FuncPairPointContourInterpolation(point,cinterpol);
   }
 
-  void ContactKinematicsPointContourInterpolation::updateg(fmatvec::Vec &g, ContourPointData *cpData) {}
+  void ContactKinematicsPointContourInterpolation::updateg(fmatvec::Vec &g, ContourPointData *cpData, int index) {}
 
   //  void ContactKinematicsPointContourInterpolation::stage1(Vec &g, vector<ContourPointData> &cpData) {
 

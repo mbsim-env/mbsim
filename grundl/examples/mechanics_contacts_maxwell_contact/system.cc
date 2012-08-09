@@ -18,7 +18,7 @@
 #include <mbsim/contours/planewithfrustum.h>
 #include <mbsim/contours/point.h>
 #include <mbsim/contours/circle_solid.h>
-#include <mbsim/contact.h>
+#include <mbsim/multi_contact.h>
 #include <mbsim/constitutive_laws.h>
 #include <mbsim/utils/function.h>
 #include <mbsim/utils/rotarymatrices.h>
@@ -194,25 +194,19 @@ System::System(const string &projectName, int contactType, int firstBall, int la
 //    }
   }
 
-  Contact* contact = new Contact("Contact");
+  MultiContact* contact = new MultiContact("Contact");
 
   //fancy stuff
   contact->enableOpenMBVContactPoints(1.,false);
   contact->setOpenMBVNormalForceArrow(normalArrow);
-  contact->setOpenMBVFrictionArrow(frArrow);
+  contact->setOpenMBVFrictionForceArrow(frArrow);
 
 
   for (size_t contactIter = 0; contactIter < balls.size(); contactIter++) {
     stringstream contactname;
     contactname << "Contact_Beam-" << ballsContours[contactIter]->getName();
 
-    //ContourPairing* contourPairing = new ContourPairing(contactname.str(), BeamContour, ballsContours[contactIter]);
-    //contourPairing->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
     contact->connect(BeamContour, ballsContours[contactIter]);
-
-    //contourPairing->enableOpenMBVContactPoints(1.,false);
-    //contourPairing->enableOpenMBVNormalForceArrow(normalArrow);
-    //contourPairing->enableOpenMBVFrictionForceArrow(frArrow);
   }
 
   addLink(contact);

@@ -40,7 +40,7 @@ namespace MBSim {
     public:
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
-      virtual void updateg(fmatvec::Vec &g, ContourPointData* cpData);
+      virtual void updateg(fmatvec::Vec &g, ContourPointData* cpData, int index = 0);
       virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData *cpData) { throw MBSimError("ERROR(ContactKinematicsPointFrustum:updatewb): Not implemented!"); }
       /***************************************************/
 

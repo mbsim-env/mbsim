@@ -75,6 +75,7 @@ namespace MBSim {
       virtual void calcgdSize(int j);
       virtual void calcrFactorSize(int j);
       virtual bool isSetValued() const;
+      virtual bool isSingleValued() const;
       virtual bool isActive() const { return true; }
       virtual bool gActiveChanged() { return false; }
       virtual void solveImpactsFixpointSingle(double dt);

@@ -43,7 +43,7 @@ namespace MBSim {
   }
 
 
-  void ContactKinematicsSphereFrustum::updateg(Vec &g, ContourPointData *cpData) {
+  void ContactKinematicsSphereFrustum::updateg(Vec &g, ContourPointData *cpData, int index) {
 
     // Bezugspunkt Kugel: Mittelpunkt
     // Bezugspunkt Kegel: Mittelpunkt Grundfläche

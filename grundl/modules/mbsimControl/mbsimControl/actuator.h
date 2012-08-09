@@ -65,6 +65,7 @@ namespace MBSimControl {
       virtual void calclaSize(int);
       virtual bool isActive() const { return true; }
       virtual bool gActiveChanged() { return false; }
+      virtual bool isSingleValued () const { return true; }
       /***************************************************/
 
       /* GETTER / SETTER */

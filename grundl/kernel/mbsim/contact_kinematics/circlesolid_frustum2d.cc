@@ -43,7 +43,7 @@ namespace MBSim {
   }
 
 
-  void ContactKinematicsCircleSolidFrustum2D::updateg(Vec &g, ContourPointData *cpData) {
+  void ContactKinematicsCircleSolidFrustum2D::updateg(Vec &g, ContourPointData *cpData, int index) {
     
     Vec Wd = circle->getFrame()->getPosition() - frustum->getFrame()->getPosition();
     SqrMat Mat0 = frustum->getFrame()->getOrientation();

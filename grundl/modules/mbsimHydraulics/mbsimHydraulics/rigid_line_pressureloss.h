@@ -51,6 +51,7 @@ namespace MBSimHydraulics {
       // Methods from init-Process
       // ================================
       bool isSetValued() const {return (unilateral || bilateral); }
+      bool isSingleValued() const { return not (unilateral && bilateral); }
       void calcgdSize(int j) {gdSize=active?1:0; }
       void calcsvSize() {svSize=isSetValued()?1:0; }
       void updatehRef(const fmatvec::Vec& hRef, int i=0);

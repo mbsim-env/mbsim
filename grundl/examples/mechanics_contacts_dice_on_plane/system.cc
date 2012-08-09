@@ -2,7 +2,7 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/contour.h"
 #include "mbsim/constitutive_laws.h"
-#include "mbsim/contact.h"
+#include "mbsim/multi_contact.h"
 #include "mbsim/contours/plane.h"
 #include "mbsim/contours/cuboid.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -28,6 +28,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   AWK(1,1) = cos(phi);
   AWK(1,0) = sin(phi);
   AWK(2,2) = 1;
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  wall->enableOpenMBV(true, 10, 5);
+#endif
   addContour(wall,Vec(3),AWK);
 
   RigidBody* body = new RigidBody("Wuerfel");
@@ -64,7 +67,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cuboid->setDepth(b);
   body->addContour(cuboid,Vec(3),SqrMat(3,EYE));
 
-  Contact *cnf = new Contact("Kontakt_Wuerfel");
+  MultiContact *cnf = new MultiContact("Kontakt_Wuerfel");
   cnf->setContactForceLaw(new UnilateralConstraint);
   cnf->setContactImpactLaw(new UnilateralNewtonImpact(0.4));
   cnf->setFrictionForceLaw(new SpatialCoulombFriction(0.3));
@@ -72,7 +75,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   //cnf->setPlotFeature(linkKinematics,disabled);
   //cnf->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e4,100));
   //cnf->setFrictionForceLaw(new LinearRegularizedSpatialCoulombFriction(0.3));
-  //TODO: vermutlich werden der CompoundContour erst später die einzelnen Konturen gegeben, so dass hier noch keine darin ist und deswegen letztlich die assignContours-Funktion die number of potential contact points zu null setzt...
   cnf->connect(getContour("WandUnten"), body->getContour("Wuerfel"));
   addLink(cnf);
 

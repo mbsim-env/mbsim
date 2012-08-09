@@ -35,7 +35,7 @@ namespace MBSim {
     circle1 = static_cast<CircleSolid*>(contour[1]);
   }
 
-  void ContactKinematicsCircleSolidCircleSolid::updateg(Vec &g, ContourPointData *cpData) {
+  void ContactKinematicsCircleSolidCircleSolid::updateg(Vec &g, ContourPointData *cpData, int index) {
     Vec WrD = circle0->getFrame()->getPosition() - circle1->getFrame()->getPosition();
     cpData[icircle1].getFrameOfReference().getOrientation().col(0) = WrD/nrm2(WrD);
     cpData[icircle0].getFrameOfReference().getOrientation().col(0) = -cpData[icircle1].getFrameOfReference().getOrientation().col(0);

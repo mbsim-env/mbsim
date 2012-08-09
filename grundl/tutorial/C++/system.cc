@@ -65,7 +65,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   sphere2->setRadius(0.2);
   sphere2->enableOpenMBV();
   mass2->addContour(sphere2,Vec(3,INIT,0.),SqrMat(3,EYE));
-  Contact *contact = new Contact("Contact");
+  MultiContact *contact = new MultiContact("Contact");
   contact->connect(sphere1,sphere2);
   contact->setContactForceLaw(new UnilateralConstraint());
   contact->setContactImpactLaw(new UnilateralNewtonImpact(0.3));

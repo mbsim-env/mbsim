@@ -48,7 +48,7 @@ namespace MBSim {
     func= new FuncPairContour1sLine(line,contour1s);
   }
 
-  void ContactKinematicsLineContour1s::updateg(fmatvec::Vec &g, ContourPointData *cpData) {}
+  void ContactKinematicsLineContour1s::updateg(fmatvec::Vec &g, ContourPointData *cpData, int index) {}
 
   //  void ContactKinematicsLineContour1s::stage1(Vec &g, vector<ContourPointData> &cpData) {
   //

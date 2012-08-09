@@ -82,6 +82,10 @@ namespace MBSim {
       virtual void updaterRef(const fmatvec::Vec &ref, int i=0);
       /***************************************************/
 
+      /*GETTER / SETTER*/
+      const std::vector<Contour*> & getContour() const { return contour; }
+      /*****************/
+
       /* INTERFACE TO BE DEFINED IN DERIVED CLASS */
       /**
        * \param frame to add to link frame vector

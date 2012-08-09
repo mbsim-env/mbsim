@@ -49,7 +49,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsCircleFrustum::updateg(fmatvec::Vec& g, ContourPointData *cpData) {	
+  void ContactKinematicsCircleFrustum::updateg(fmatvec::Vec& g, ContourPointData *cpData, int index) {
     double eps = 0.; // tolerance for rough contact description can be set to zero (no bilateral contact possible)
 
     /* Geometry */	

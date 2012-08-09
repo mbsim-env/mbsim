@@ -45,7 +45,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointFrustum::updateg(Vec &g, ContourPointData* cpData) {
+  void ContactKinematicsPointFrustum::updateg(Vec &g, ContourPointData* cpData, int index) {
     double eps = 5.e-2; // tolerance for rough contact description
     Vec Wd = point->getFrame()->getPosition() - frustum->getFrame()->getPosition(); // difference vector of Point and Frustum basis point in inertial FR
     Vec Wa = frustum->getFrame()->getOrientation().col(1); // axis in inertial FR 

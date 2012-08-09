@@ -48,7 +48,7 @@ namespace MBSim {
       c[icompound] = compound->getContourElement(i);
       ContactKinematics *tmp = findContactPairingRigidRigid(c[0]->getType().c_str(), c[1]->getType().c_str());
       if(tmp == 0)
-	tmp = findContactPairingRigidRigid(c[1]->getType().c_str(), c[0]->getType().c_str());
+        tmp = findContactPairingRigidRigid(c[1]->getType().c_str(), c[0]->getType().c_str());
       if(tmp == 0)
 	throw;
       if(tmp) {
@@ -57,6 +57,10 @@ namespace MBSim {
         numberOfPotentialContactPoints += tmp->getNumberOfPotentialContactPoints();
       }
     }
+  }
+
+  void ContactKinematicsCompoundContourContour::updateg(fmatvec::Vec &g, ContourPointData *cpData, int index) {
+    contactKinematics[index]->updateg(g, cpData);
   }
 
   void ContactKinematicsCompoundContourContour::updateg(std::vector<fmatvec::Vec>::iterator ig, std::vector<ContourPointData*>::iterator icpData) {

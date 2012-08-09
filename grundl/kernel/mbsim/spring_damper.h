@@ -53,10 +53,13 @@ namespace MBSim {
       /** \brief Connect the SpringDamper to frame1 and frame2 */
       void connect(Frame *frame1, Frame* frame2);
 
+      /*INHERITED INTERFACE OF LINK*/
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
+      bool isSingleValued() const { return true; }
       std::string getType() const { return "SpringDamper"; }
       void init(InitStage stage);
+      /*****************************/
 
       /** \brief Set function for the force calculation.
        * The first input parameter to that function is the distance g between frame2 and frame1.
