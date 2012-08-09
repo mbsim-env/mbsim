@@ -231,7 +231,7 @@ namespace MBSimElectronics {
     branch = &tmpbranch;
   }
 
-  void ElectronicComponent::connect(Branch *branch_, int vz_) {
+  void ElectronicComponent::connect(Branch *branch_, double vz_) {
     vz = vz_;
     branch=branch_;
   }
