@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.57])
-AC_INIT([mbsimPowertrain],[3.0.1],[martin.o.foerg@gmail.com])
+AC_INIT([mbsimPowertrain],[3.0.2],[martin.o.foerg@gmail.com])
 AC_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([mbsimPowertrain/Makefile.am])
