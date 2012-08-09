@@ -76,12 +76,12 @@ namespace MBSimFlexibleBody {
     /* M_ThetaTheta */
     SymMat I(3,INIT,0.);
 
-    I(0,0) = (*R_ij)(1,1)+(*R_ij)(2,2)+2*((*NR_ij[1][1])+(*NR_ij[2][2]))*qf+qf.T()*((*N_ij[1][1])+(*N_ij[2][2]))*qf;
+    I(0,0) = (*R_ij)(1,1)+(*R_ij)(2,2)+2.*((*NR_ij[1][1])+(*NR_ij[2][2]))*qf+qf.T()*((*N_ij[1][1])+(*N_ij[2][2]))*qf;
     I(0,1) = -((*R_ij)(1,0)+((*NR_ij[1][0])+(*NR_ij[0][1]))*qf+qf.T()*(*N_ij[1][0])*qf);
     I(0,2) = -((*R_ij)(2,0)+((*NR_ij[2][0])+(*NR_ij[0][2]))*qf+qf.T()*(*N_ij[2][0])*qf);
-    I(1,1) = (*R_ij)(2,2)+(*R_ij)(0,0)+2*((*NR_ij[2][2])+(*NR_ij[0][0]))*qf+qf.T()*((*N_ij[2][2])+(*N_ij[0][0]))*qf;
+    I(1,1) = (*R_ij)(2,2)+(*R_ij)(0,0)+2.*((*NR_ij[2][2])+(*NR_ij[0][0]))*qf+qf.T()*((*N_ij[2][2])+(*N_ij[0][0]))*qf;
     I(1,2) = -((*R_ij)(2,1)+((*NR_ij[2][1])+(*NR_ij[1][2]))*qf+qf.T()*(*N_ij[2][1])*qf);
-    I(2,2) = (*R_ij)(1,1)+(*R_ij)(0,0)+2*((*NR_ij[1][1])+(*NR_ij[0][0]))*qf+qf.T()*((*N_ij[1][1])+(*N_ij[0][0]))*qf;
+    I(2,2) = (*R_ij)(1,1)+(*R_ij)(0,0)+2.*((*NR_ij[1][1])+(*NR_ij[0][0]))*qf+qf.T()*((*N_ij[1][1])+(*N_ij[0][0]))*qf;
 
     Mat M_ThetaTheta = G.T()*(I+J0)*G;
 
@@ -141,7 +141,7 @@ namespace MBSimFlexibleBody {
 
       //with MBSIM
       SqrMat H = static_cast<SqrMat>(inv(M[k]) * K);
-      Vector<std::complex<double> > EigVal = eigval(H);
+      Vector<Ref,std::complex<double> > EigVal = eigval(H);
       Vec NaturalHarmonics(EigVal.size(), INIT, 0.);
       for (int i = 0; i < EigVal.size() - 1; i++) {
         if (EigVal(i).imag() < 0 or EigVal(i).imag() > 0)

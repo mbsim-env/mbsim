@@ -333,7 +333,7 @@ namespace MBSimFlexibleBody {
     if(openStructure) qSize = 10*n+6;
     else qSize = 10*n;
 
-    Vec q0Tmp(0,INIT,0.);
+    Vec q0Tmp;
     if(q0.size())
       q0Tmp = q0.copy();
     q0.resize(qSize,INIT,0.);
@@ -346,7 +346,7 @@ namespace MBSimFlexibleBody {
 
     uSize[0] = qSize;
     uSize[1] = qSize; // TODO
-    Vec u0Tmp(0,INIT,0);
+    Vec u0Tmp;
     if(u0.size())
       u0Tmp=u0.copy();
     u0.resize(uSize[0],INIT,0.);
@@ -469,7 +469,7 @@ namespace MBSimFlexibleBody {
           updateKinematicsForFrame(cp, velocity_cosy);
 
           SqrMat TMPMat = cp.getFrameOfReference().getOrientation();
-          SqrMat AKI(3,3,INIT,0.);
+          SqrMat AKI(3,INIT,0.);
           AKI.row(0) = trans(TMPMat.col(1));
           AKI.row(1) = trans(TMPMat.col(0));
           AKI.row(2) = trans(TMPMat.col(2));
@@ -553,7 +553,7 @@ namespace MBSimFlexibleBody {
       q0Dummy(i*10+1) = posStart.y(); // y
       q0Dummy(i*10+2) = posStart.z(); // z
 
-      SqrMat AIK(3,3,INIT,0.);
+      SqrMat AIK(3,INIT,0.);
       AIK(0,0) = tangStart.x(); AIK(1,0) = tangStart.y(); AIK(2,0) = tangStart.z();
       AIK(0,1) = norStart.x(); AIK(1,1) = norStart.y(); AIK(2,1) = norStart.z();
       AIK(0,2) = binStart.x(); AIK(1,2) = binStart.y(); AIK(2,2) = binStart.z();

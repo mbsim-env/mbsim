@@ -349,7 +349,7 @@ namespace MBSimFlexibleBody {
         direction(1) = sin(alpha);
 
         for(int i=0;i<=Elements;i++) {
-          q0Dummy(5*i+0,5*i+1) = direction*L/Elements*i;
+          q0Dummy(5*i+0,5*i+1) = direction*double(L/Elements*i);
           q0Dummy(5*i+2)       = alpha;
         }
       }
@@ -405,7 +405,7 @@ namespace MBSimFlexibleBody {
           updateKinematicsForFrame(cp, velocity_cosy);
 
           SqrMat TMPMat = cp.getFrameOfReference().getOrientation();
-          SqrMat AKI(3,3,INIT,0.);
+          SqrMat AKI(3,INIT,0.);
           AKI.row(0) = trans(TMPMat.col(1));
           AKI.row(1) = trans(TMPMat.col(0));
           AKI.row(2) = trans(TMPMat.col(2));
@@ -494,7 +494,7 @@ namespace MBSimFlexibleBody {
         prevBinStart = binStart;
         Point3Dd norStart = crossProduct(binStart,tangStart);
 
-        SqrMat AIK(3,3,INIT,0.);
+        SqrMat AIK(3,INIT,0.);
         AIK(0,0) = tangStart.x(); AIK(1,0) = tangStart.y(); AIK(2,0) = tangStart.z();
         AIK(0,1) = norStart.x(); AIK(1,1) = norStart.y(); AIK(2,1) = norStart.z();
         AIK(0,2) = binStart.x(); AIK(1,2) = binStart.y(); AIK(2,2) = binStart.z();
