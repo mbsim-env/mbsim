@@ -36,7 +36,7 @@ namespace MBSim {
   class Object;
   class Link;
   class ModellingInterface;
-  class Contact;
+  class MultiContact;
   class InverseKineticsJoint;
 
   /**

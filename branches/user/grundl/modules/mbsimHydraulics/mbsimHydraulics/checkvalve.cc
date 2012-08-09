@@ -58,6 +58,7 @@ namespace MBSimHydraulics {
       void updaterRef(const fmatvec::Vec&, int) {}
       bool isActive() const {return false; }
       bool gActiveChanged() {return false; }
+      virtual bool isSingleValued() const { return true; }
       void init(InitStage stage) {}
       void updateg(double t) {}
       void updategd(double t) {body->setDynamicColor((l->isClosed())?.9:.1); }

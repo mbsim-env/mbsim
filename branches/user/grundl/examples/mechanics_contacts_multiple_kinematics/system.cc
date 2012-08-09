@@ -1,7 +1,7 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/mbsim_event.h"
-#include "mbsim/contact.h"
+#include "mbsim/multi_contact.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/contour.h"
 #include "mbsim/contours/sphere.h"
@@ -28,7 +28,7 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
   double mass = 1;
 
   //contact
-  double mu = 0.01;
+  double mu = 0.8;
 
   Vec WrOK(3);
   Vec KrKS(3);
@@ -43,7 +43,7 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
   RigidBody* groundBase = new RigidBody("GroundBase");
   Frustum* ground = new Frustum("Ground");
 
-  double h = 0.5; // height and offset of frustum
+  double h = 0.1; // height and offset of frustum
   double rI = 0.01; // inner radius
   double rO = 0.4; // outer radius
   ground->setOutCont(false);
@@ -72,7 +72,7 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
   groundBase->addContour(ground,Vec(3,INIT,0.),SqrMat(3,EYE));
 
   /* contact */
-  Contact *contact = new Contact("Contact");
+  MultiContact *contact = new MultiContact("Contact");
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   /*Print arrows for contacts*/
@@ -85,13 +85,19 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
   //fancy stuff
   contact->enableOpenMBVContactPoints(0.01);
   contact->setOpenMBVNormalForceArrow(normalArrow);
-  contact->setOpenMBVFrictionArrow(frArrow);
+  contact->setOpenMBVFrictionForceArrow(frArrow);
 #endif
+
+  double stiffness = 1e5;
+  double damping = 10000;
+  double epsilon = damping * 1. / 10000;
+  if (epsilon > 1)
+    epsilon = 1;
 
   if(contactlaw == 0) { //Maxwell Contact
     //Normal force
-    InfluenceFunction* infl = new FlexibilityInfluenceFunction(ground->getShortName(), 1e-5);
-    MaxwellContactLaw* mfl = new MaxwellContactLaw(10000);
+    InfluenceFunction* infl = new FlexibilityInfluenceFunction(ground->getShortName(), 1/stiffness);
+    MaxwellContactLaw* mfl = new MaxwellContactLaw(damping);
     mfl->addContourCoupling(ground, ground, infl);
     contact->setContactForceLaw(mfl);
 
@@ -102,15 +108,17 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
   }
   else if(contactlaw == 1) { //Regularized Unilateral Contact
     //Normal force
-    contact->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,10000)));
+    contact->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,damping)));
 
     //Frictional force
-    contact->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+//    contact->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+    contact->setFrictionForceLaw(new SpatialCoulombFriction(mu));
+    contact->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
   }
   else if (contactlaw == 2) { //Unilateral Constraint Contact
     //Normal force
     contact->setContactForceLaw(new UnilateralConstraint);
-    contact->setContactImpactLaw(new UnilateralNewtonImpact);
+    contact->setContactImpactLaw(new UnilateralNewtonImpact(0));
 
     //Frictional force
     contact->setFrictionForceLaw(new SpatialCoulombFriction(mu));
@@ -128,9 +136,9 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
     stringstream frame; // ball location
     frame << "B_"  << k;
     Vec WrOS0B(3,INIT,0.);
-    WrOS0B(0) = (rI+rO)*0.25*cos(k*2.*M_PI/nB);
+    WrOS0B(0) = (rI+rO)*0.75*cos(k*2.*M_PI/nB);
     WrOS0B(1) = h;
-    WrOS0B(2) = (rI+rO)*0.35*sin(k*2.*M_PI/nB);
+    WrOS0B(2) = (rI+rO)*0.85*sin(k*2.*M_PI/nB);
     this->addFrame(frame.str(),WrOS0B,SqrMat(3,EYE),this->getFrame("I"));
 
     balls[k]->setFrameOfReference(this->getFrame(frame.str()));

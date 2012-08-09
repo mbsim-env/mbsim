@@ -17,10 +17,12 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _CONTACT_H_
-#define _CONTACT_H_
+#ifndef _MULTI_CONTACT_H_
+#define _MULTI_CONTACT_H_
 
 #include <mbsim/link_mechanics.h>
+
+#include <mbsim/contact.h>
 
 #include <map>
 
@@ -38,7 +40,6 @@ namespace MBSim {
   class GeneralizedImpactLaw;
   class FrictionForceLaw;
   class FrictionImpactLaw;
-  class ContourPointData;
 
   /*! \brief class for contacts
    * \author Martin Foerg
@@ -53,18 +54,25 @@ namespace MBSim {
    * Remarks:
    * - constitutive laws on acceleration and velocity level have to be set pairwise
    */
-  class Contact: public LinkMechanics {
+  class MultiContact: public LinkMechanics {
     public:
       /*!
        * \brief constructor
        * \param name of contact
        */      
-      Contact(const std::string &name);
+      MultiContact(const std::string &name);
 
       /**
        * \brief destructor
        */
-      virtual ~Contact();
+      virtual ~MultiContact();
+
+      /*INHERITED INTERFACE OF ELEMENT*/
+      virtual void setDynamicSystemSolver(DynamicSystemSolver *sys);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::Group* getOpenMBVGrp();
+#endif
+      /********************************/
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updatewb(double t, int i=0);
@@ -81,8 +89,13 @@ namespace MBSim {
       virtual void updateWRef(const fmatvec::Mat &ref, int j=0);
       virtual void updateVRef(const fmatvec::Mat &ref, int j=0);
       virtual void updatehRef(const fmatvec::Vec &hRef, int j=0);
+      virtual void updatewbRef(const fmatvec::Vec &ref);
       virtual void updatelaRef(const fmatvec::Vec& ref);
+      virtual void updategRef(const fmatvec::Vec& ref);
       virtual void updategdRef(const fmatvec::Vec& ref);
+      virtual void updaterFactorRef(const fmatvec::Vec &ref);
+      virtual void updatesvRef(const fmatvec::Vec &ref);
+      virtual void updatejsvRef(const fmatvec::Vector<int> &ref);
       virtual void calcxSize();
       virtual void calclaSize(int j);
       virtual void calcgSize(int j);
@@ -117,7 +130,7 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const { return "Contact"; }
+      virtual std::string getType() const { return "MultiContact"; }
       virtual void plot(double t, double dt = 1);
       virtual void closePlot();
       /***************************************************/
@@ -149,18 +162,17 @@ namespace MBSim {
 #endif
 
       /* GETTER / SETTER */
+      void setgInd(int gInd_);
+      void setgdInd(int gdInd_);
+      void setlaInd(int laInd_);
+      void setrFactorInd(int rFactorInd_);
       void setContactForceLaw(GeneralizedForceLaw *fcl_) { fcl = fcl_; }
       GeneralizedForceLaw * getContactForceLaw() const {return fcl; }
       void setContactImpactLaw(GeneralizedImpactLaw *fnil_) { fnil = fnil_; }
       void setFrictionForceLaw(FrictionForceLaw *fdf_) { fdf = fdf_; }
       void setFrictionImpactLaw(FrictionImpactLaw *ftil_) { ftil = ftil_; }
-      void setContactKinematics(ContactKinematics* ck) { contactKinematics = ck; }
-      ContactKinematics* getContactKinematics() const { return contactKinematics; }
-      ContourPointData* & getcpData() { return cpData; }
-      fmatvec::Vec & getlaN() { return laN; }
-      fmatvec::Vec & getlaT() { return laT; }
-      fmatvec::Vec & getgdN() { return gdN; }
-      fmatvec::Vec & getgdT() { return gdT; }
+      void setContactKinematics(ContactKinematics* ck, int index) { contactKinematics[index] = ck; }
+      ContactKinematics* getContactKinematics(int index) const { return contactKinematics[index]; }
       /***************************************************/
 
       /**
@@ -169,33 +181,49 @@ namespace MBSim {
       virtual int getFrictionDirections();
 
       /*! connect two contours
-       * \param first contour
-       * \param second contour
-       * \param specify the contact kinematics
+       * \param contour0          first contour
+       * \param contour1          second contour
+       * \param contactKinematics The contact kinematics that should be used to compute the contact point.
+       * \param name              Name of the contact in the output
+       *
        */
-      void connect(Contour *contour1, Contour* contour2, ContactKinematics* contactKinematics = 0);
+      void connect(Contour *contour1, Contour* contour2, ContactKinematics* contactKinematics = 0, const std::string & name = "");
 
       /*!
-       * \brief apply forces to the h-vector
-       * \param t time of the integration
-       * \param j position in h-vector (0 or 1)
+       * \brief set the plot feature for a specific contact point (or the complete contact kinematic)
+       * \param pf                   PlotFeature
+       * \param value                the status of the plot feature
+       * \param indexKinematics      the index of the kinematics that should be changed
        */
-      void applyh(int t, int j);
+      virtual void setPlotFeature(PlotFeature pf, PlotFeatureStatus value, size_t indexKinematics);
 
-      void computeCurvatures(fmatvec::Vec & r) const;
+      void computeCurvatures(fmatvec::Vec & r, int contactKinematicsIndex) const;
 
       virtual void initializeUsingXML(TiXmlElement *element);
 
       void calccorrSize(int j);
       void updatecorr(int j);
+      void updatecorrRef(const fmatvec::Vec& ref);
 
       void checkRoot();
 
     protected:
       /**
-       * \brief used contact kinematics
+       * \brief list of the single sub-contact(-points)
        */
-      ContactKinematics* contactKinematics;
+      std::vector<std::vector<Contact> > contacts;
+
+      /**
+       * \brief list of the single contact kinematics
+       */
+      std::vector<ContactKinematics*> contactKinematics;
+
+      /*!
+       * \brief names for the contact kinematics
+       *
+       * \todo: what really is annoying is the fact, that due to the concept of the compound contour the sub contacts can not be build when the contours are connected. Thus it is not possible before the contact kinematics are assigned (what happens in the preInit-stage) that plot featers (and everything else, like names for the plot and so on) can not be set before. Thus this properties have to be saved in a special list in the multiple contact or the things are set later on...
+       */
+      std::vector<std::string> ckNames;
 
       /**
        * \brief force laws in normal and tangential direction on acceleration and velocity level
@@ -217,93 +245,11 @@ namespace MBSim {
       */
       FrictionImpactLaw *ftil;
 
-      /**
-       * \brief vector of frames for definition of relative contact situation
-       */
-      ContourPointData* cpData;
-
-      /*!
-       * \brief force in normal direction
-       *
-       * \todo: only double needed here
-       */
-      fmatvec::Vec laN;
-
-      /*!
-       * \brief force in tangential direction
-       *
-       * \todo: use fixed size?
-       */
-      fmatvec::Vec laT;
-
-      /*!
-       * \brief relative velocity in normal direction
-       *
-       * \todo: only double needed here
-       */
-      fmatvec::Vec gdN;
-
-      /*!
-       * \brief relative velocity in tangential direction
-       *
-       * \todo: use fixed size?
-       */
-      fmatvec::Vec gdT;
-
-      /** 
-       * \brief boolean vector symbolising activity of contacts on position level with possibility to save previous time step
-       */
-      unsigned int gActive, gActive0;
-
-      /** 
-       * \brief boolean vector symbolising activity of contacts on velocity level
-       *
-       * length of array is two with index 0 for normal direction and index one for tangential direction
-       */
-      unsigned int* gdActive;
-
-      /** 
-       * \brief boolean vector symbolising activity of contacts on acceleration level
-       *
-       * length of array is two with index 0 for normal direction and index one for tangential direction
-       */
-      unsigned int* gddActive;
-
-      /** 
-       * \brief index for tangential directions in projection matrices
-       */
-      fmatvec::Index iT;
-
-      /**
-       * \brief relative velocity and acceleration after an impact for event driven scheme summarizing all possible contacts
-       */
-      fmatvec::Vec gdnN, gdnT, gddN, gddT;
-
-      /*!
-       * \brief buffer for contact acceleration
-       */
-      fmatvec::Vec gddNBuf, gddTBuf;
-
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      /**
-       * \brief contact group to draw
+      /*!
+       * \brief group for the plotting of the openMBV sub elements
        */
-      OpenMBV::Group* openMBVContactGrp;
-
-      /**
-       * \brief container of ContactFrames to draw
-       */
-      std::vector<OpenMBV::Frame*> openMBVContactFrame;
-
-      /**
-       * \brief container of normal forces to draw
-       */
-      OpenMBV::Arrow * openMBVNormalForceArrow;
-
-      /**
-       * \brief container of tangential forces to draw
-       */
-      OpenMBV::Arrow * openMBVFrictionForceArrow;
+      OpenMBV::Group * openMBVGrp;
 
       /**
        * \brief size of ContactFrames to draw
@@ -321,16 +267,11 @@ namespace MBSim {
       OpenMBV::Arrow *contactArrow, *frictionArrow;
 #endif
 
-      /**
-       * \brief type of detected root.
-       * */
-      int rootID;
-
     private:
       std::string saved_ref1, saved_ref2;
   };
 
 }
 
-#endif /* _CONTACT_H_ */
+#endif /* _MULTI_CONTACT_H_ */
 

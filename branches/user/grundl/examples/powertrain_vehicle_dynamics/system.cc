@@ -270,7 +270,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   A(2,2) = 1;
   addContour(plane,SrSP,A);
 
-  Contact *c = new Contact("KontaktVorneLinks"); 
+  Contact *c = new Contact("KontaktVorneLinks");
   if(rigidContacts) {
     c->setContactForceLaw(new UnilateralConstraint);
     c->setContactImpactLaw(new UnilateralNewtonImpact);
@@ -283,7 +283,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   c->connect(getContour("Ebene"),vl->getContour("Reifen"));
   addLink(c);
 
-  c = new Contact("KontaktHintenLinks"); 
+  c = new Contact("KontaktHintenLinks");
   if(rigidContacts) {
     c->setContactForceLaw(new UnilateralConstraint);
     c->setContactImpactLaw(new UnilateralNewtonImpact);
@@ -296,7 +296,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   c->connect(getContour("Ebene"),hl->getContour("Reifen"));
   addLink(c);
 
-  c = new Contact("KontaktVorneRechts"); 
+  c = new Contact("KontaktVorneRechts");
   if(rigidContacts) {
     c->setContactForceLaw(new UnilateralConstraint);
     c->setContactImpactLaw(new UnilateralNewtonImpact);
@@ -309,7 +309,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   c->connect(getContour("Ebene"),vr->getContour("Reifen"));
   addLink(c);
 
-  c = new Contact("KontaktHintenRechts"); 
+  c = new Contact("KontaktHintenRechts");
   if(rigidContacts) {
     c->setContactForceLaw(new UnilateralConstraint);
     c->setContactImpactLaw(new UnilateralNewtonImpact);

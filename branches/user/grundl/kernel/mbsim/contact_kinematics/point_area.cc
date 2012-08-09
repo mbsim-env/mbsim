@@ -41,7 +41,7 @@ namespace MBSim {
     }
   }
       
-  void ContactKinematicsPointArea::updateg(fmatvec::Vec &g, ContourPointData *cpData) {}
+  void ContactKinematicsPointArea::updateg(fmatvec::Vec &g, ContourPointData *cpData, int index) {}
 
 //  void ContactKinematicsPointArea::stage1(Vec &g, vector<ContourPointData> &cpData) {
 

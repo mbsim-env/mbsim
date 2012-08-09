@@ -42,7 +42,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsCircleSolidLineSegment::updateg(Vec &g, ContourPointData *cpData) {
+  void ContactKinematicsCircleSolidLineSegment::updateg(Vec &g, ContourPointData *cpData, int index) {
 
     const Vec WC=circlesolid->getFrame()->getPosition();
     const Vec WL=linesegment->getFrame()->getPosition();

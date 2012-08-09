@@ -97,17 +97,17 @@ namespace MBSim {
       /**
        * \brief compute the medium eigenvalue of a matrix (for guessing a initial solution for iterative schemes)
        */
-      static double computeMediumEigVal(const fmatvec::SqrMat & M);
+      double computeMediumEigVal(const fmatvec::SqrMat & M);
 
       /**
        * \brief creates an initial solution for the iterative schemes that use a reformulated system
        */
-      static fmatvec::Vec createInitialSolution(const fmatvec::SymMat & M, const fmatvec::Vec & q, double mediumEigVal = 0);
+      fmatvec::Vec createInitialSolution(const fmatvec::SymMat & M, const fmatvec::Vec & q, double mediumEigVal = 0);
 
       /**
        * \brief creates an initial solution for the iterative schemes that use a reformulated system
        */
-      static fmatvec::Vec createInitialSolution(const fmatvec::SqrMat & M, const fmatvec::Vec & q, double mediumEigVal = 0);
+      fmatvec::Vec createInitialSolution(const fmatvec::SqrMat & M, const fmatvec::Vec & q, double mediumEigVal = 0);
 
     protected:
       /*!

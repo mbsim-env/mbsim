@@ -30,6 +30,8 @@
 
 namespace MBSim {
 
+  class Contact;
+
   /**
    * \brief basic force law on acceleration level for constraint description
    * \author Martin Foerg
@@ -94,13 +96,9 @@ namespace MBSim {
       /*!
        * \brief computes the normal forces for smooth constitutive law on every contact point
        *
-       * \param contours vector of contours that are part of the contact
-       * \param cpData   vector of the contourPointDatas
-       * \param g        vector of the distances
-       * \param gd       vector of the relative velocities
-       * \param la       vector of the forces (to be set by this function)
+       * \param contacts vector of contacts that are part of the contact law
        */
-      virtual void computeSmoothForces(const std::vector<Contour*> & contours, const dvec<ContourPointData*>::type & cpData, const dvec<fmatvec::Vec>::type & g, const dvec<fmatvec::Vec>::type & gd, dvec<fmatvec::Vec>::type & la) {};
+      virtual void computeSmoothForces(std::vector<std::vector<Contact> > & contact) {};
 
       /** \brief Set the force function for use in regularisized constitutive laws
        * The first input parameter to the force function is g.
@@ -689,7 +687,7 @@ namespace MBSim {
       virtual bool isActive(double g, double gTol) { return g<=gTol; }
       virtual bool remainsActive(double s, double sTol) { return s<=sTol; }
       virtual bool isSetValued() const { return false; }
-      virtual void computeSmoothForces(const std::vector<Contour*> & contours, const dvec<ContourPointData*>::type & cpData, const dvec<fmatvec::Vec>::type & g, const dvec<fmatvec::Vec>::type & gd, dvec<fmatvec::Vec>::type & la);
+      virtual void computeSmoothForces(std::vector<std::vector<Contact> > & contacts);
       /***************************************************/
 
       virtual void initializeUsingXML(TiXmlElement *element);
@@ -716,7 +714,7 @@ namespace MBSim {
       virtual bool isActive(double g, double gTol) { return g < gTol ? true : false; }
       virtual bool remainsActive(double s, double sTol) {return true; }
       virtual bool isSetValued() const { return false; }
-      virtual void computeSmoothForces(const std::vector<Contour*> & contours, const dvec<ContourPointData*>::type & cpData, const dvec<fmatvec::Vec>::type & g, const dvec<fmatvec::Vec>::type & gd, dvec<fmatvec::Vec>::type & la);
+      virtual void computeSmoothForces(std::vector<std::vector<Contact> > & contacts);
       /***************************************************/
 
       /*GETTER - SETTER*/
@@ -742,19 +740,19 @@ namespace MBSim {
       /**
        * \brief saves all possible contacts in a vector
        */
-      virtual void updatePossibleContactPoints(const dvec<fmatvec::Vec>::type & g);
+      virtual void updatePossibleContactPoints(const std::vector<std::vector<Contact> > & contacts);
 
       /**
        * \brief updates the influence matrix C
        * \param contours vector of contours that are part of the contact
        * \param cpData   vector of ContourPointDatas
        */
-      virtual void updateInfluenceMatrix(const std::vector<Contour*> & contours, const dvec<ContourPointData*>::type & cpData);
+      virtual void updateInfluenceMatrix(std::vector<std::vector<Contact> > & contacts);
 
       /**
        * \brief update the rigid body distances (gaps) for the single contacts
        */
-      void updateRigidBodyGap(const dvec<fmatvec::Vec>::type & g);
+      void updateRigidBodyGap(const std::vector<std::vector<Contact> > & contacts);
 
       /**
        * \brief computes the coupling factor for the influence matrix on one contact point (two contours)
@@ -762,7 +760,7 @@ namespace MBSim {
        * \param cpData       vector of ContourPointDatas
        * \param contactIndex index pair of contact point
        */
-      virtual double computeInfluenceCoefficient(const std::vector<Contour*> & contours, const dvec<ContourPointData*>::type & cpData, const std::pair<int,int> & contactIndex);
+      virtual double computeInfluenceCoefficient(std::vector<std::vector<Contact> > & contacts, const std::pair<int, int> & contactIndex);
 
       /**
        * \brief computes the coupling factor for the influence matrix between two contact points (four contours)
@@ -771,7 +769,7 @@ namespace MBSim {
        * \param contactIndex        index pair of contact point
        * \param coupledContactIndex index pair of coupling contact point
        */
-      virtual double computeInfluenceCoefficient(const std::vector<Contour*> & contours, const dvec<ContourPointData*>::type & cpData, const std::pair<int,int> & contactIndex, const std::pair<int,int> & couplingContactIndex);
+      virtual double computeInfluenceCoefficient(std::vector<std::vector<Contact> > & contacts, const std::pair<int, int> & contactIndex, const std::pair<int, int> & couplingContactIndex);
 
       /*
        * \brief computes the "material constant" to have a good guess for the lambda-vector
@@ -779,9 +777,12 @@ namespace MBSim {
       virtual void computeMaterialConstant();
 
       /**
-       * \brief saves the indices of all active contacts
+       * \brief saves the indices of all active contacts in pairs
+       *
+       * pair.first: number of contact kinematics
+       * pair.second: number of subcontact point of contact kinematics
        */
-      std::vector<std::pair<int,int> > possibleContactPoints;
+      std::vector<std::pair<int, int> > possibleContactPoints;
 
       /**
        * \brief Influence matrix between contact points
@@ -864,7 +865,7 @@ namespace MBSim {
       virtual bool isActive(double g, double gTol) { return true; }
       virtual bool remainsActive(double s, double sTol) { return true; }
       virtual bool isSetValued() const { return false; }
-      virtual void computeSmoothForces(const std::vector<Contour*> & contours, const dvec<ContourPointData*>::type & cpData, const dvec<fmatvec::Vec>::type & g, const dvec<fmatvec::Vec>::type & gd, dvec<fmatvec::Vec>::type & la);
+      virtual void computeSmoothForces(std::vector<std::vector<Contact> > & contact);
       /***************************************************/
 
       virtual void initializeUsingXML(TiXmlElement *element);

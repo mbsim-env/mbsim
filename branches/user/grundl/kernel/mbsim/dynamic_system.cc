@@ -306,13 +306,8 @@ namespace MBSim {
 
   void DynamicSystem::updateg(double t) {
 
-    for(int i=0; i<(int)linkSingleValued.size(); i++) {
-      try { linkSingleValued[i]->updateg(t); }
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
-
-    for(int i=0; i<(int)linkSetValued.size(); i++) {
-      try { linkSetValued[i]->updateg(t); }
+    for(int i=0; i<(int)link.size(); i++) {
+      try { link[i]->updateg(t); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
   }

@@ -54,6 +54,7 @@ namespace MBSimControl {
       virtual void updaterRef(const fmatvec::Vec &ref, int i=0) {}
       virtual bool isActive() const {return false; }
       virtual bool gActiveChanged() {return false; }
+      virtual bool isSingleValued() const { return true; }
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */

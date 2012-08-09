@@ -65,7 +65,7 @@ namespace MBSim {
 
   }
 
-  void ContactKinematicsCircleSolidContour1s::updateg(fmatvec::Vec &g, ContourPointData *cpData) {
+  void ContactKinematicsCircleSolidContour1s::updateg(fmatvec::Vec &g, ContourPointData *cpData, int index) {
     Contact1sSearch search(func);
     search.setNodes(contour1s->getNodes());
 

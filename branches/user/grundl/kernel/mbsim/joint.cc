@@ -240,6 +240,18 @@ namespace MBSim {
     return flag;
   }
 
+  bool Joint::isSingleValued() const {
+    bool flag = false;
+    if(ffl)
+      if(not ffl->isSetValued())
+      flag = true;
+    if(fml)
+      if(not fml->isSetValued())
+      flag = true;
+
+    return flag;
+  }
+
   void Joint::solveImpactsFixpointSingle(double dt) {
 
     const double *a = ds->getGs()();

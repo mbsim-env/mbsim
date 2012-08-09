@@ -84,6 +84,7 @@ namespace MBSimHydraulics {
       virtual void updategd(double t);
       virtual bool isActive() const {return false; }
       virtual bool gActiveChanged() {return false; }
+      virtual bool isSingleValued() const { return true; }
 
       void plot(double t, double dt);
 

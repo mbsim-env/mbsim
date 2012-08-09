@@ -106,6 +106,7 @@ namespace MBSimElectronics {
       virtual void setName(std::string name) {Link::setName(name);}
       bool isActive() const {return true;}
       bool gActiveChanged() {return true;}
+      virtual bool isSingleValued() const { return true; }
       void init(MBSim::InitStage stage);
       void updatehRef(const fmatvec::Vec &hParent, int j=0);
       void updaterRef(const fmatvec::Vec &rParent, int j=0);

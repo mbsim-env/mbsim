@@ -138,7 +138,8 @@ namespace MBSim {
       virtual std::string getType() const { return "Element"; }
 
       /**
-       * \param TODO
+       * \brief sets the used dynamics system solver to the element
+       * \param pointer to the dynamic system solver of which the element is part of
        */
       virtual void setDynamicSystemSolver(DynamicSystemSolver *sys) { ds = sys; }
 

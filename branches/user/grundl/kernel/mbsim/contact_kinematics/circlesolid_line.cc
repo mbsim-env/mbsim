@@ -42,7 +42,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsCircleSolidLine::updateg(Vec &g, ContourPointData *cpData) {
+  void ContactKinematicsCircleSolidLine::updateg(Vec &g, ContourPointData *cpData, int index) {
 
     cpData[iline].getFrameOfReference().setOrientation(line->getFrame()->getOrientation());
     cpData[icircle].getFrameOfReference().getOrientation().col(0) = -line->getFrame()->getOrientation().col(0);

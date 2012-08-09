@@ -19,10 +19,13 @@
 
 #include <config.h>
 #include "mbsim/constitutive_laws.h"
+#include "mbsim/contact.h"
 #include "mbsim/element.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/utils/nonsmooth_algebra.h"
 #include "mbsim/utils/utils.h"
+
+#include <map>
 
 using namespace std;
 using namespace fmatvec;
@@ -680,16 +683,16 @@ namespace MBSim {
     f->initializeUsingXML(e->FirstChildElement());
   }
 
-  void RegularizedUnilateralConstraint::computeSmoothForces(const vector<Contour*> & contours, const dvec<ContourPointData*>::type & cpData, const dvec<Vec>::type & g, const dvec<Vec>::type & gd, dvec<Vec>::type & la) {
-    for(size_t cK = 0; cK < la.size(); ++cK) {
-      for(size_t k = 0; k < la[cK].size(); ++k) {
-        la[cK][k](0) = (*forceFunc)(g[cK][k](0),gd[cK][k](0));
+  void RegularizedUnilateralConstraint::computeSmoothForces(std::vector<std::vector<Contact> > & contacts) {
+    for (std::vector<std::vector<Contact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<Contact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
+        (*jter).getlaN()(0) = (*forceFunc)((*jter).getg()(0), (*jter).getgdN()(0));
       }
     }
   }
 
   MaxwellContactLaw::MaxwellContactLaw(const double & damping, const double & gapLimit) :
-    lcpSolvingStrategy(Standard), dampingCoefficient(damping), gLim(gapLimit), matConst(0), matConstSetted(false), DEBUGLEVEL(0) {
+      lcpSolvingStrategy(Standard), dampingCoefficient(damping), gLim(gapLimit), matConst(0), matConstSetted(false), DEBUGLEVEL(0) {
 
   }
 
@@ -707,28 +710,29 @@ namespace MBSim {
 
   }
 
-  void MaxwellContactLaw::computeSmoothForces(const vector<Contour*> & contours, const dvec<ContourPointData*>::type & cpData, const dvec<Vec>::type & g, const dvec<Vec>::type & gd, dvec<Vec>::type & la) {
-    updatePossibleContactPoints(g);
+  void MaxwellContactLaw::computeSmoothForces(std::vector<std::vector<Contact> > & contacts) {
+    updatePossibleContactPoints(contacts);
 
     //Apply damping force
-    for(size_t cK = 0; cK < la.size(); ++cK) {
-      for(size_t k = 0; k < la[cK].size(); ++k) {
-        if(g[cK][k](0) < gLim and gd[cK][k](0) < 0)
-          la[cK][k](0) = -dampingCoefficient * gd[cK][k](0);
+    //TODO: use damping function for that (to be more flexible...)
+    for (std::vector<std::vector<Contact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<Contact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
+        if ((*jter).getg()(0) < gLim and (*jter).getgdN()(0) < 0)
+          (*jter).getlaN()(0) = -dampingCoefficient * (*jter).getgdN()(0);
         else
-          la[cK][k](0) = 0;
+          (*jter).getlaN()(0) = 0;
       }
     }
 
-    if(possibleContactPoints.size()) {
-      updateInfluenceMatrix(contours, cpData);
-      updateRigidBodyGap(g);
+    if (possibleContactPoints.size()) {
+      updateInfluenceMatrix(contacts);
+      updateRigidBodyGap(contacts);
 
       LinearComplementarityProblem LCP(C, rigidBodyGap, lcpSolvingStrategy);
 
       map<Index, double> tolerances;
-      tolerances.insert(pair<Index, double>(Index(0,possibleContactPoints.size() - 1), 1e-8)); //tolerances for distances
-      tolerances.insert(pair<Index, double>(Index(possibleContactPoints.size(),2*possibleContactPoints.size()-1), 1e-3)); //tolerances for forces
+      tolerances.insert(pair<Index, double>(Index(0, possibleContactPoints.size() - 1), 1e-8)); //tolerances for distances
+      tolerances.insert(pair<Index, double>(Index(possibleContactPoints.size(), 2 * possibleContactPoints.size() - 1), 1e-3)); //tolerances for forces
       LocalResidualCriteriaFunction* critfunc = new LocalResidualCriteriaFunction(tolerances);
       LCP.setNewtonCriteriaFunction(critfunc);
       LCP.setDebugLevel(0);
@@ -737,44 +741,43 @@ namespace MBSim {
 
       delete critfunc;
 
-
-      Vec lambda = solution0(rigidBodyGap.size(), 2 * rigidBodyGap.size()-1);
+      Vec lambda = solution0(rigidBodyGap.size(), 2 * rigidBodyGap.size() - 1);
 
       if (DEBUGLEVEL >= 3) {
         cout << "lambda = " << lambda << endl;
       }
 
-      for(size_t i = 0; i < possibleContactPoints.size(); ++i) {
-        la[possibleContactPoints[i].first][possibleContactPoints[i].second](0) += lambda(i);
+      for (size_t i = 0; i < possibleContactPoints.size(); ++i) {
+        contacts[possibleContactPoints[i].first][possibleContactPoints[i].second].getlaN()(0) += lambda(i);
       }
     }
   }
 
-  void MaxwellContactLaw::updatePossibleContactPoints(const dvec<Vec>::type & g) {
+  void MaxwellContactLaw::updatePossibleContactPoints(const std::vector<std::vector<Contact> > & contacts) {
     possibleContactPoints.clear();
-    for (size_t cK = 0; cK < g.size(); cK++) {
-      for (size_t k = 0; k < g[cK].size(); k++) {
-        if (g[cK][k](0) < 0) { //TODO: enable a tolerance value
-          possibleContactPoints.push_back(pair<int, int>(cK, k));
+    for (size_t i = 0; i < contacts.size(); ++i) {
+      for (size_t j = 0; j < contacts[i].size(); ++j) {
+        if (contacts[i][j].getg()(0) < 0) { //TODO: use gActive, but only at timestep No 2...
+          possibleContactPoints.push_back(pair<int,int>(i,j));
         }
       }
     }
   }
 
-  void MaxwellContactLaw::updateInfluenceMatrix(const vector<Contour*> & contours, const dvec<ContourPointData*>::type & cpData) {
+  void MaxwellContactLaw::updateInfluenceMatrix(std::vector<std::vector<Contact> > & contacts) {
     C.resize(possibleContactPoints.size());
 
     for (size_t i = 0; i < possibleContactPoints.size(); i++) {
       //get index of contours of current possible contactPoint
-      const std::pair<int,int> currentContactNumber = possibleContactPoints[i];
+      const std::pair<int, int> & currentContactIndex = possibleContactPoints[i];
 
-      C(i, i) = computeInfluenceCoefficient(contours, cpData, currentContactNumber);
+      C(i, i) = computeInfluenceCoefficient(contacts, currentContactIndex);
 
       for (size_t j = i + 1; j < possibleContactPoints.size(); j++) {
         //get index of coupled contour
-        const std::pair<int,int> coupledContactNumber = possibleContactPoints[j];
+        const std::pair<int, int> & coupledContactIndex = possibleContactPoints[j];
 
-        C(i, j) = computeInfluenceCoefficient(contours, cpData, currentContactNumber, coupledContactNumber);
+        C(i, j) = computeInfluenceCoefficient(contacts, currentContactIndex, coupledContactIndex);
       }
     }
 
@@ -784,32 +787,30 @@ namespace MBSim {
     }
   }
 
-  void MaxwellContactLaw::updateRigidBodyGap(const dvec<Vec>::type & g) {
+  void MaxwellContactLaw::updateRigidBodyGap(const std::vector<std::vector<Contact> > & contacts) {
     /*save rigidBodyGaps in vector*/
     rigidBodyGap.resize(possibleContactPoints.size());
     for (size_t i = 0; i < possibleContactPoints.size(); i++) {
-      rigidBodyGap(i) = g[possibleContactPoints[i].first][possibleContactPoints[i].second](0);
+      rigidBodyGap(i) = contacts[possibleContactPoints[i].first][possibleContactPoints[i].second].getg()(0);
     }
 
     if (DEBUGLEVEL >= 5)
       cout << "rigidBodyGap: " << rigidBodyGap << endl;
   }
 
-  double MaxwellContactLaw::computeInfluenceCoefficient(const vector<Contour*> & contours, const dvec<ContourPointData*>::type & cpData, const pair<int,int> & contactIndex) {
+  double MaxwellContactLaw::computeInfluenceCoefficient(std::vector<std::vector<Contact> > & contacts, const std::pair<int, int> & contactIndex) {
     double FactorC = 0.;
-
-    int currentContourNumber = 2 * contactIndex.first;
 
     for (int i = 0; i < 2; i++) {
 
       //get involved contours
-      Contour * contour = contours[currentContourNumber + i];
+      Contour * contour = contacts[contactIndex.first][contactIndex.second].getContour()[i];
       pair<Contour*, Contour*> contourPair = pair<Contour*, Contour*>(contour, contour);
 
       if (influenceFunctions.count(contourPair)) { //If there is a function, there is a coupling between these contours
         InfluenceFunction *fct = influenceFunctions[contourPair];
         Vec lagrangeParameter;
-        lagrangeParameter.resize() = contour->computeLagrangeParameter(cpData[contactIndex.first][contactIndex.second][i].getFrameOfReference().getPosition());
+        lagrangeParameter.resize() = contour->computeLagrangeParameter(contacts[contactIndex.first][contactIndex.second].getcpData()[i].getFrameOfReference().getPosition());
 
         if (DEBUGLEVEL >= 3) {
           cout << "LagrangeParameter of contour \"" << contour->getShortName() << "\" is:" << lagrangeParameter << endl;
@@ -820,23 +821,20 @@ namespace MBSim {
     }
 
     if (fabs(FactorC) <= macheps()) {
-      throw MBSimError("No elasticity is given for one of the following contours:\n  -" + contours[currentContourNumber]->getShortName() + "\n  -" + contours[currentContourNumber + 1]->getShortName() + "\nThat is not an option!");
+      throw MBSimError("No elasticity is given for one of the following contours:\n  -" + contacts[contactIndex.first][contactIndex.second].getContour()[0]->getShortName() + "\n  -" + contacts[contactIndex.first][contactIndex.second].getContour()[0]->getShortName() + "\nThat is not an option!");
     }
 
     return FactorC;
   }
 
-  double MaxwellContactLaw::computeInfluenceCoefficient(const vector<Contour*> & contours, const dvec<ContourPointData*>::type & cpData, const pair<int,int> & contactIndex, const pair<int,int> & coupledContactIndex) {
+  double MaxwellContactLaw::computeInfluenceCoefficient(std::vector<std::vector<Contact> > & contacts, const std::pair<int, int> & contactIndex, const std::pair<int, int> & coupledContactIndex) {
     double FactorC = 0;
-
-    int affectedContourNumber = 2 * contactIndex.first;
-    int coupledContourNumber = 2 * coupledContactIndex.first;
 
     for (int affectedContourIterator = 0; affectedContourIterator < 2; affectedContourIterator++) {
       for (int coupledContourIterator = 0; coupledContourIterator < 2; coupledContourIterator++) {
         //get involved contours
-        Contour *contour1 = contours[affectedContourNumber + affectedContourIterator];
-        Contour *contour2 = contours[coupledContourNumber + coupledContourIterator];
+        Contour *contour1 = contacts[contactIndex.first][contactIndex.second].getContour()[affectedContourIterator];
+        Contour *contour2 = contacts[coupledContactIndex.first][coupledContactIndex.second].getContour()[coupledContourIterator];
 
         pair<Contour*, Contour*> Pair;
 
@@ -849,8 +847,8 @@ namespace MBSim {
           InfluenceFunction *fct = influenceFunctions[Pair];
           Vec firstLagrangeParameter = Vec(2, NONINIT);
           Vec secondLagrangeParameter = Vec(2, NONINIT);
-          firstLagrangeParameter = contour1->computeLagrangeParameter(cpData[contactIndex.first][contactIndex.second][affectedContourIterator].getFrameOfReference().getPosition());
-          secondLagrangeParameter = contour2->computeLagrangeParameter(cpData[coupledContactIndex.first][coupledContactIndex.second][coupledContourIterator].getFrameOfReference().getPosition());
+          firstLagrangeParameter = contour1->computeLagrangeParameter(contacts[contactIndex.first][contactIndex.second].getcpData()[affectedContourIterator].getFrameOfReference().getPosition());
+          secondLagrangeParameter = contour2->computeLagrangeParameter(contacts[coupledContactIndex.first][coupledContactIndex.second].getcpData()[coupledContourIterator].getFrameOfReference().getPosition());
 
           if (DEBUGLEVEL >= 3) {
             cout << "First LagrangeParameter of contour \"" << contour1->getShortName() << "\" is:" << firstLagrangeParameter << endl;
@@ -886,14 +884,13 @@ namespace MBSim {
     f->initializeUsingXML(e->FirstChildElement());
   }
 
-  void RegularizedBilateralConstraint::computeSmoothForces(const vector<Contour*> & contours, const dvec<ContourPointData*>::type & cpData, const dvec<Vec>::type & g, const dvec<Vec>::type & gd, dvec<Vec>::type & la) {
-      for(size_t cK = 0; cK < la.size(); ++cK) {
-        for(size_t k = 0; k < la[cK].size(); ++k) {
-          la[cK][k](0) = (*forceFunc)(g[cK][k](0),gd[cK][k](0));
-        }
+  void RegularizedBilateralConstraint::computeSmoothForces(std::vector<std::vector<Contact> > & contacts) {
+    for (std::vector<std::vector<Contact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<Contact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
+        (*jter).getlaN()(0) = (*forceFunc)((*jter).getg()(0), (*jter).getgdN()(0));
       }
     }
-
+  }
 
   void RegularizedPlanarFriction::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
