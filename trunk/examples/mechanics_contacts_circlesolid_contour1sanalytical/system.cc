@@ -42,7 +42,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   cam->setFrameOfReference(this->getFrame("I"));
   cam->setFrameForKinematics(cam->getFrame("C"));
   cam->setMass(m1);
-  cam->setInertiaTensor(1000*Theta);
+  cam->setInertiaTensor(1000.*Theta);
   cam->setRotation(new RotationAboutFixedAxis("[0;0;1]"));
   cam->setInitialGeneralizedVelocity(4.*M_PI);
   this->addObject(cam);
