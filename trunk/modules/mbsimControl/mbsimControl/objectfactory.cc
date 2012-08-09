@@ -1,4 +1,4 @@
-#include "config.h"
+#include <config.h>
 #include "mbsimControl/objectfactory.h"
 #include "mbsimControl/signal_.h"
 #include "mbsimControl/sensor.h"
