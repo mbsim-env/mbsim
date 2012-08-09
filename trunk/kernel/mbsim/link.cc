@@ -111,15 +111,15 @@ namespace MBSim {
     sv >> svParent(svInd,svInd+svSize-1);
   }
 
-  void Link::updatejsvRef(const Vector<int> &jsvParent) {
+  void Link::updatejsvRef(const VecInt &jsvParent) {
     jsv >> jsvParent(svInd,svInd+svSize-1);
   }
    
-  void Link::updateLinkStatusRef(const Vector<int> &LinkStatusParent) {
+  void Link::updateLinkStatusRef(const VecInt &LinkStatusParent) {
     LinkStatus.resize() >> LinkStatusParent(LinkStatusInd,LinkStatusInd+LinkStatusSize-1);
   }
 
-  void Link::updateLinkStatusRegRef(const Vector<int> &LinkStatusRegParent) {
+  void Link::updateLinkStatusRegRef(const VecInt &LinkStatusRegParent) {
     LinkStatusReg.resize() >> LinkStatusRegParent(LinkStatusRegInd,LinkStatusRegInd+LinkStatusRegSize-1);
   }
 
@@ -167,7 +167,7 @@ namespace MBSim {
   }
 
   void Link::initz() {
-    x=x0;
+    x = (x0.size()==0)? Vec(xSize, INIT, 0) : x0;
   }
 
   void Link::savela(double dt) {

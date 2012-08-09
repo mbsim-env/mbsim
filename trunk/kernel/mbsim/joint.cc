@@ -636,5 +636,14 @@ namespace MBSim {
     }
   }
 
+  void InverseKineticsJoint::init(InitStage stage) {
+    if(stage==resize) {
+      Joint::init(stage);
+      x.resize(3);
+    }
+    else
+      Joint::init(stage);
+  }
+
 }
 

@@ -43,7 +43,7 @@ namespace MBSim {
   }
 
   void ExtraDynamic::initz() {
-    x = x0;
+    x = (x0.size()==0)? Vec(xSize, INIT, 0) : x0;
   }
 
   void ExtraDynamic::closePlot() {

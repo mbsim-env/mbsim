@@ -88,8 +88,8 @@ namespace MBSim {
         
         // System of frustum
         cpData[ifrustum].getFrameOfReference().getPosition() = frustum->getFrame()->getPosition() + r(0)*xAchse + loc*yAchse;
-        cpData[ifrustum].getFrameOfReference().getOrientation().col(0) = out*xAchse;
-        cpData[ifrustum].getFrameOfReference().getOrientation().col(1) = out*yAchse;
+        cpData[ifrustum].getFrameOfReference().getOrientation().col(0) = double(out)*xAchse;
+        cpData[ifrustum].getFrameOfReference().getOrientation().col(1) = double(out)*yAchse;
         cpData[ifrustum].getFrameOfReference().getOrientation().col(2) = crossProduct(xAchse,yAchse);
       }
 

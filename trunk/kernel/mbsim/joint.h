@@ -187,8 +187,10 @@ namespace MBSim {
     public: 
       InverseKineticsJoint(const std::string &name);
       virtual void updateb(double t);
+      virtual bool isSetValued() const {return true;}
       void calcbSize();
       void setBody(RigidBody* body_)    { body = body_; }
+      virtual void init(InitStage stage);
 
     protected:
       RigidBody* body;

@@ -269,7 +269,7 @@ namespace MBSim {
       svk[k] >> sv(svIndk[k],svIndk[k]+svSizek[k]-1);
   }
 
-  void Contact::updatejsvRef(const Vector<int> &jsvParent) {
+  void Contact::updatejsvRef(const VecInt &jsvParent) {
     LinkMechanics::updatejsvRef(jsvParent);
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) 
       jsvk[k] >> jsv(svIndk[k],svIndk[k]+svSizek[k]-1);
@@ -563,7 +563,7 @@ namespace MBSim {
         lak.push_back(Vec());
         wbk.push_back(Vec());
         svk.push_back(Vec());
-        jsvk.push_back(Vector<int>());
+        jsvk.push_back(VecInt());
         rFactork.push_back(Vec());
         laSizek.push_back(int(0));
         laIndk.push_back(int(0));

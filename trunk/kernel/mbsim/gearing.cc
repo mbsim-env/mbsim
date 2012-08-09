@@ -183,7 +183,7 @@ namespace MBSim {
     Kt2(2)=1;
     const Vec s2=P1->getOrientation()*Ks2;
     const Vec t2=P1->getOrientation()*Kt2;
-    Vec n2=(flag==false?1:-1)*crossProduct(s2, t2);
+    Vec n2=(flag==false?1.:-1.)*crossProduct(s2, t2);
     n2/=nrm2(n2);
     const Vec u2=s2/nrm2(s2);
     const Vec v2=crossProduct(n2, u2);
@@ -199,7 +199,7 @@ namespace MBSim {
     const Vec Om1 = Z0.getAngularVelocity();
     const Vec Om2 = Z1.getAngularVelocity();
 
-    SqrMat A(2,2,NONINIT);
+    SqrMat A(2,NONINIT);
     A(0,0)=-u1.T()*R1;
     A(0,1)=u1.T()*R2;
     A(1,0)=u2.T()*N1;

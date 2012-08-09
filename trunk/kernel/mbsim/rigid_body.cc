@@ -272,6 +272,10 @@ namespace MBSim {
           else
             fT = new TCardanAngles(nq,nu[0]);
         }
+        else if(dynamic_cast<RotationAboutAxesXYZ*>(fAPK)) {
+          fPJR = new JRotationAboutAxesXYZ(nu[0]);
+          fPdJR = new JdRotationAboutAxesXYZ(nu[0]);
+        }
 	else if(dynamic_cast<EulerAngles*>(fAPK)) {
           JR.resize() << DiagMat(3,INIT,1);
           if(cb)
@@ -332,6 +336,18 @@ namespace MBSim {
     joint->setMomentDirection(SqrMat(3,EYE));
     joint->connect(frameOfReference,frame[iKinematics]);
     joint->setBody(this);
+//    OpenMBV::Arrow *arrow = new OpenMBV::Arrow;
+//    arrow->setScaleLength(0.1);
+//    arrow->setDiameter(0.1);
+//    arrow->setHeadDiameter(0.2);
+//    arrow->setHeadLength(0.2);
+//    joint->setOpenMBVForceArrow(arrow);
+//    arrow = new OpenMBV::Arrow;
+//    arrow->setScaleLength(0.1);
+//    arrow->setDiameter(0.1);
+//    arrow->setHeadDiameter(0.2);
+//    arrow->setHeadLength(0.2);
+//    joint->setOpenMBVMomentArrow(arrow);
   }
 
   void RigidBody::plot(double t, double dt) {
@@ -410,7 +426,7 @@ namespace MBSim {
       PdjR = (*fPdjR)(t);
 
     SqrMat tWrPK = tilde(WrPK);
-    frame[iKinematics]->setGyroscopicAccelerationOfTranslation(frameOfReference->getGyroscopicAccelerationOfTranslation() - tWrPK*frameOfReference->getGyroscopicAccelerationOfRotation() + frameOfReference->getOrientation()*(PdJT*uRel + PdjT + PJT[0]*jRel) + crossProduct(frameOfReference->getAngularVelocity(), 2*WvPKrel+crossProduct(frameOfReference->getAngularVelocity(),WrPK)));
+    frame[iKinematics]->setGyroscopicAccelerationOfTranslation(frameOfReference->getGyroscopicAccelerationOfTranslation() - tWrPK*frameOfReference->getGyroscopicAccelerationOfRotation() + frameOfReference->getOrientation()*(PdJT*uRel + PdjT + PJT[0]*jRel) + crossProduct(frameOfReference->getAngularVelocity(), 2.*WvPKrel+crossProduct(frameOfReference->getAngularVelocity(),WrPK)));
     frame[iKinematics]->setGyroscopicAccelerationOfRotation(frameOfReference->getGyroscopicAccelerationOfRotation() + frameOfReference->getOrientation()*(PdJR*uRel + PdjR + PJR[0]*jRel) + crossProduct(frameOfReference->getAngularVelocity(), WomPK));
 
     frame[iKinematics]->getJacobianOfTranslation()(Index(0,2),Index(0,frameOfReference->getJacobianOfTranslation().cols()-1)) = frameOfReference->getJacobianOfTranslation() - tWrPK*frameOfReference->getJacobianOfRotation();
@@ -655,7 +671,7 @@ namespace MBSim {
 
     SqrMat tWrPK = tilde(WrPK);
 
-    frame[iKinematics]->setGyroscopicAccelerationOfTranslation(frameOfReference->getGyroscopicAccelerationOfTranslation() - tWrPK*frameOfReference->getGyroscopicAccelerationOfRotation() + frameOfReference->getOrientation()*(PdJT*uRel + PdjT) + crossProduct(frameOfReference->getAngularVelocity(), 2*WvPKrel+crossProduct(frameOfReference->getAngularVelocity(),WrPK)));
+    frame[iKinematics]->setGyroscopicAccelerationOfTranslation(frameOfReference->getGyroscopicAccelerationOfTranslation() - tWrPK*frameOfReference->getGyroscopicAccelerationOfRotation() + frameOfReference->getOrientation()*(PdJT*uRel + PdjT) + crossProduct(frameOfReference->getAngularVelocity(), 2.*WvPKrel+crossProduct(frameOfReference->getAngularVelocity(),WrPK)));
     frame[iKinematics]->setGyroscopicAccelerationOfRotation(frameOfReference->getGyroscopicAccelerationOfRotation() + frameOfReference->getOrientation()*(PdJR*uRel + PdjR) + crossProduct(frameOfReference->getAngularVelocity(), WomPK));
 
     frame[iKinematics]->getJacobianOfTranslation()(Index(0,2),Index(0,frameOfReference->getJacobianOfTranslation().cols()-1)) = frameOfReference->getJacobianOfTranslation() - tWrPK*frameOfReference->getJacobianOfRotation();

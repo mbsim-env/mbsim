@@ -69,7 +69,7 @@ namespace MBSim {
        * \brief set system with Matrix M and vector q
        */
       void setSystem(const fmatvec::SymMat & M_, const fmatvec::Vec & q_) {
-        M = fmatvec::SqrMat(M_.size(), M_.size(), fmatvec::NONINIT);
+        M = fmatvec::SqrMat(M_.size(), fmatvec::NONINIT);
         for(int i = 0; i < M.size(); i++)
           for(int j = 0; j < M.size(); j++)
             M(i, j) = M_(i, j);

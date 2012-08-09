@@ -106,7 +106,7 @@ namespace MBSim {
     // }
     // AKWTmp.col(2)=crossProduct(AKWTmp.col(0), AKWTmp.col(1));
     // SqrMat AKW=trans(AKWTmp);
-    SqrMat AKW(3,3);
+    SqrMat AKW(3);
     AKW.row(0) = WnContour.T();
     if (d<1e-9)
       AKW.row(1) = plane->getFrame()->getOrientation().col(1).T();

@@ -33,7 +33,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  PlotFrame::PlotFrame(const std::string &name) : Element(name), frame(0), roff(3), voff(3), aoff(3), rscale(1), vscale(1), ascale(1) {
+  PlotFrame::PlotFrame(const std::string &name) : Element(name), frame(0), roff(3), voff(3), aoff(3), rscale(1), vscale(1), ascale(1), oscale(1), pscale(1) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     openMBVPosition=0;
     openMBVVelocity=0;
@@ -114,20 +114,22 @@ namespace MBSim {
     ascale = scale;
   }
 
-  void PlotFrame::enableOpenMBVAngularVelocity(double diameter, double headDiameter, double headLength, double color) {
+  void PlotFrame::enableOpenMBVAngularVelocity(double scale, double diameter, double headDiameter, double headLength, double color) {
     openMBVAngularVelocity=new OpenMBV::Arrow;
     openMBVAngularVelocity->setDiameter(diameter);
     openMBVAngularVelocity->setHeadDiameter(headDiameter);
     openMBVAngularVelocity->setHeadLength(headLength);
     openMBVAngularVelocity->setStaticColor(color);
+    oscale = scale;
   }
 
-  void PlotFrame::enableOpenMBVAngularAcceleration(double diameter, double headDiameter, double headLength, double color) {
+  void PlotFrame::enableOpenMBVAngularAcceleration(double scale, double diameter, double headDiameter, double headLength, double color) {
     openMBVAngularAcceleration=new OpenMBV::Arrow;
     openMBVAngularAcceleration->setDiameter(diameter);
     openMBVAngularAcceleration->setHeadDiameter(headDiameter);
     openMBVAngularAcceleration->setHeadLength(headLength);
     openMBVAngularAcceleration->setStaticColor(color);
+    pscale = scale;
   }
 #endif
 
@@ -178,24 +180,28 @@ namespace MBSim {
         if(openMBVAngularVelocity && !openMBVAngularVelocity->isHDF5Link()) {
           vector<double> data;
           data.push_back(t);
+          Vec oframe = frame->getAngularVelocity()*oscale;
+          Vec off = oframe;
           data.push_back(frame->getPosition()(0));
           data.push_back(frame->getPosition()(1));
           data.push_back(frame->getPosition()(2));
-          data.push_back(frame->getAngularVelocity()(0));
-          data.push_back(frame->getAngularVelocity()(1));
-          data.push_back(frame->getAngularVelocity()(2));
+          data.push_back(oframe(0));
+          data.push_back(oframe(1));
+          data.push_back(oframe(2));
           data.push_back(0.5);
           openMBVAngularVelocity->append(data);
         }
         if(openMBVAngularAcceleration && !openMBVAngularAcceleration->isHDF5Link()) {
           vector<double> data;
           data.push_back(t);
+          Vec pframe = frame->getAngularAcceleration()*pscale;
+          Vec off = pframe;
           data.push_back(frame->getPosition()(0));
           data.push_back(frame->getPosition()(1));
           data.push_back(frame->getPosition()(2));
-          data.push_back(frame->getAngularAcceleration()(0));
-          data.push_back(frame->getAngularAcceleration()(1));
-          data.push_back(frame->getAngularAcceleration()(2));
+          data.push_back(pframe(0));
+          data.push_back(pframe(1));
+          data.push_back(pframe(2));
           data.push_back(0.5);
           openMBVAngularAcceleration->append(data);
         }
