@@ -292,8 +292,8 @@ namespace MBSim {
     for(int i=0; i<N-1; i++) {
       hi = x(i+1)-x(i);  
       a.row(i) = f.row(i);
-      d.row(i) = (ctmp.row(i+1) - ctmp.row(i) ) / 3 / hi;
-      b.row(i) = (f.row(i+1)-f.row(i)) / hi - (ctmp.row(i+1) + 2*ctmp.row(i) ) / 3 * hi;
+      d.row(i) = (ctmp.row(i+1) - ctmp.row(i) ) / 3. / hi;
+      b.row(i) = (f.row(i+1)-f.row(i)) / hi - (ctmp.row(i+1) + 2.*ctmp.row(i) ) / 3. * hi;
     }
 
     breaks.resize(N);
@@ -359,8 +359,8 @@ namespace MBSim {
     for(i=0; i<N-1; i++) {
       hi = x(i+1)-x(i);  
       a.row(i) = f.row(i);
-      d.row(i) = (ctmp.row(i+1) - ctmp.row(i) ) / 3 / hi;
-      b.row(i) = (f.row(i+1)-f.row(i)) / hi - (ctmp.row(i+1) + 2*ctmp.row(i) ) / 3 * hi;
+      d.row(i) = (ctmp.row(i+1) - ctmp.row(i) ) / 3. / hi;
+      b.row(i) = (f.row(i+1)-f.row(i)) / hi - (ctmp.row(i+1) + 2.*ctmp.row(i) ) / 3. * hi;
     }
 
     breaks.resize(N);
@@ -435,9 +435,9 @@ namespace MBSim {
       }
 
       double dx = x - (parent->breaks)(parent->index);
-      fmatvec::Vector<Row,double> yi = trans(((parent->coefs)[0]).row(parent->index))*(parent->order);
+      fmatvec::Vector<Row,double> yi = trans(((parent->coefs)[0]).row(parent->index))*double(parent->order);
       for(int i=1;i<parent->order;i++)
-        yi = yi*dx+trans(((parent->coefs)[i]).row(parent->index))*((parent->order)-i);
+        yi = yi*dx+trans(((parent->coefs)[i]).row(parent->index))*double((parent->order)-i);
       xSave=x;
       ySave=yi;
       return yi;
@@ -462,9 +462,9 @@ namespace MBSim {
       }
 
       double dx = x - (parent->breaks)(parent->index);
-      fmatvec::Vector<Row,double> yi = trans(((parent->coefs)[0]).row(parent->index))*(parent->order)*((parent->order)-1);
+      fmatvec::Vector<Row,double> yi = trans(((parent->coefs)[0]).row(parent->index))*double(parent->order)*double((parent->order)-1);
       for(int i=1;i<=((parent->order)-2);i++)
-        yi = yi*dx+trans(((parent->coefs)[i]).row(parent->index))*((parent->order)-i)*((parent->order)-i-1);
+        yi = yi*dx+trans(((parent->coefs)[i]).row(parent->index))*double((parent->order)-i)*double((parent->order)-i-1);
       xSave=x;
       ySave=yi;
       return yi;
