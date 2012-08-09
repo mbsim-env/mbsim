@@ -34,7 +34,7 @@ namespace MBSimControl {
    */
   class AbsolutCoordinateSensor : public Sensor {
     public:
-      AbsolutCoordinateSensor(const std::string &name) : Sensor(name), frame(NULL), direction(0, fmatvec::INIT), frameString("") {}
+      AbsolutCoordinateSensor(const std::string &name) : Sensor(name), frame(NULL), direction(), frameString("") {}
       std::string getType() const { return "AbsolutCoordinateSensor"; }
       void initializeUsingXML(TiXmlElement *element);
       void init(MBSim::InitStage stage);
@@ -118,7 +118,7 @@ namespace MBSimControl {
    */
   class RelativeCoordinateSensor : public Sensor {
     public:
-      RelativeCoordinateSensor(const std::string &name) : Sensor(name), refFrame(NULL), relFrame(NULL), direction(0, fmatvec::INIT), refFrameString(""), relFrameString("") {}
+      RelativeCoordinateSensor(const std::string &name) : Sensor(name), refFrame(NULL), relFrame(NULL), direction(), refFrameString(""), relFrameString("") {}
       std::string getType() const { return "RelativeCoordinateSensor"; }
       void initializeUsingXML(TiXmlElement *element);
       void init(MBSim::InitStage stage);

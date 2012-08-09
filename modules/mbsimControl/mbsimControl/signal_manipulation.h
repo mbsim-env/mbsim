@@ -105,11 +105,11 @@ namespace MBSimControl {
       SignalDemux(const std::string &name) : Signal(name), totalSignalSize(0) {}
       void initializeUsingXML(TiXmlElement *element);
       void init(MBSim::InitStage stage);
-      void addSignal(Signal * signal, fmatvec::Vector<int> index) {signals.push_back(signal); indizes.push_back(index); }
+      void addSignal(Signal * signal, fmatvec::VecInt index) {signals.push_back(signal); indizes.push_back(index); }
       fmatvec::Vec getSignal();
     private:
       std::vector<Signal *> signals;
-      std::vector<fmatvec::Vector<int> > indizes;
+      std::vector<fmatvec::VecInt > indizes;
       std::vector<fmatvec::Vec> indizesTmp;
       std::vector<std::string> signalString;
       int totalSignalSize;
@@ -122,7 +122,7 @@ namespace MBSimControl {
    */
   class SignalLimitation : public Signal {  
     public:
-      SignalLimitation(const std::string &name) : Signal(name), s(NULL), minValue(0), maxValue(0), signalString("") {}
+      SignalLimitation(const std::string &name) : Signal(name), s(NULL), minValue(), maxValue(), signalString("") {}
       void initializeUsingXML(TiXmlElement *element);
       void init(MBSim::InitStage stage);
       void setMinimalValue(fmatvec::Vec minValue_) {minValue=minValue_; }
@@ -142,7 +142,7 @@ namespace MBSimControl {
    */
   class SignalTimeDiscretization : public Signal {  
     public:
-      SignalTimeDiscretization(const std::string &name) : Signal(name), s(NULL), y(0), tOld(-99e99), signalString("") {}
+      SignalTimeDiscretization(const std::string &name) : Signal(name), s(NULL), y(), tOld(-99e99), signalString("") {}
       void initializeUsingXML(TiXmlElement *element);
       void init(MBSim::InitStage stage);
       void setSignal(Signal * signal_) {s=signal_; }

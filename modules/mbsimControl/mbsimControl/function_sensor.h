@@ -31,7 +31,7 @@ namespace MBSimControl {
    */
   class FunctionSensor : public Sensor {
     public:
-      FunctionSensor(const std::string &name) : Sensor(name), function(NULL), y(0) {}
+      FunctionSensor(const std::string &name) : Sensor(name), function(NULL), y() {}
       FunctionSensor(const std::string &name, MBSim::Function1<fmatvec::Vec, double>* function_);
       std::string getType() const { return "FunctionSensor"; }
       void setFunction(MBSim::Function1<fmatvec::Vec, double>* function_);
