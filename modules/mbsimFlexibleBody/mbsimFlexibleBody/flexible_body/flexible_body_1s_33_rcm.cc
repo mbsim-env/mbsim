@@ -18,9 +18,6 @@
  */
 
 #include<config.h>
-#define FMATVEC_NO_INITIALIZATION
-#define FMATVEC_NO_BOUNDS_CHECK
-
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_rcm.h"
 #include "mbsimFlexibleBody/utils/revcardan.h"
 #include "mbsim/dynamic_system_solver.h"
