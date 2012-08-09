@@ -52,7 +52,7 @@ namespace MBSim {
     double hi, hii;
     int N = x.size();
     if(nrm2(f.row(0)-f.row(f.rows()-1))>epsroot()) throw MBSimError("ERROR (PPolynom::calculateSplinePeriodic): f(0)= "+numtostr(f.row(0))+"!="+numtostr(f.row(f.rows()-1))+" =f(end)");
-    SqrMat C(N-1,N-1,INIT,0.0);
+    SqrMat C(N-1,INIT,0.0);
     Mat rs(N-1,f.cols(),INIT,0.0);
 
     // Matrix C and vector rs C*c=rs
@@ -62,7 +62,7 @@ namespace MBSim {
       C(i,i) = hi;
       C(i,i+1) = 2*(hi+hii);
       C(i,i+2) = hii;
-      rs.row(i) = 3*((f.row(i+2)-f.row(i+1))/hii - (f.row(i+1)-f.row(i))/hi);
+      rs.row(i) = 3.*((f.row(i+2)-f.row(i+1))/hii - (f.row(i+1)-f.row(i))/hi);
     }
 
     // last but one row
@@ -71,7 +71,7 @@ namespace MBSim {
     C(N-3,N-3) = hi;
     C(N-3,N-2)= 2*(hi+hii);
     C(N-3,0)= hii;
-    rs.row(N-3) = 3*((f.row(N-1)-f.row(N-2))/hii - (f.row(N-2)-f.row(N-3))/hi);
+    rs.row(N-3) = 3.*((f.row(N-1)-f.row(N-2))/hii - (f.row(N-2)-f.row(N-3))/hi);
 
     // last row
     double h1 = x(1)-x(0);
@@ -79,7 +79,7 @@ namespace MBSim {
     C(N-2,0) = 2*(h1+hN_1);
     C(N-2,1) = h1;
     C(N-2,N-2)= hN_1;
-    rs.row(N-2) = 3*((f.row(1)-f.row(0))/h1 - (f.row(0)-f.row(N-2))/hN_1);
+    rs.row(N-2) = 3.*((f.row(1)-f.row(0))/h1 - (f.row(0)-f.row(N-2))/hN_1);
 
     // solve C*c = rs -> TODO BETTER: RANK-1-MODIFICATION FOR LINEAR EFFORT (Simeon - Numerik 1)
     Mat c = slvLU(C,rs);
@@ -95,8 +95,8 @@ namespace MBSim {
     for(int i=0; i<N-1; i++) {
       hi = x(i+1)-x(i);  
       a.row(i) = f.row(i);
-      d.row(i) = (ctmp.row(i+1) - ctmp.row(i) ) / 3 / hi;
-      b.row(i) = (f.row(i+1)-f.row(i)) / hi - (ctmp.row(i+1) + 2*ctmp.row(i) ) / 3 * hi;
+      d.row(i) = (ctmp.row(i+1) - ctmp.row(i) ) / 3. / hi;
+      b.row(i) = (f.row(i+1)-f.row(i)) / hi - (ctmp.row(i+1) + 2.*ctmp.row(i) ) / 3. * hi;
     }
 
     breaks.resize(N);
@@ -111,13 +111,13 @@ namespace MBSim {
     // first row
     int i=0;
     int N = x.size();
-    SqrMat C(N-2,N-2,INIT,0.0);
+    SqrMat C(N-2,INIT,0.0);
     Mat rs(N-2,f.cols(),INIT,0.0);
     double hi = x(i+1)-x(i);
     double hii = x(i+2)-x(i+1);
     C(i,i) = 2*hi+2*hii;
     C(i,i+1) = hii;
-    rs.row(i) = 3*(f.row(i+2)-f.row(i+1))/hii - 3*(f.row(i+1)-f.row(i))/hi;    
+    rs.row(i) = 3.*(f.row(i+2)-f.row(i+1))/hii - 3.*(f.row(i+1)-f.row(i))/hi;    
 
     // last row
     i = (N-3);
@@ -125,7 +125,7 @@ namespace MBSim {
     hii = x(i+2)-x(i+1);
     C(i,i-1) = hi;
     C(i,i) = 2*hii + 2*hi;
-    rs.row(i) = 3*(f.row(i+2)-f.row(i+1))/hii - 3*(f.row(i+1)-f.row(i))/hi;
+    rs.row(i) = 3.*(f.row(i+2)-f.row(i+1))/hii - 3.*(f.row(i+1)-f.row(i))/hi;
 
     for(i=1;i<N-3;i++) { 
       hi = x(i+1)-x(i);
@@ -133,7 +133,7 @@ namespace MBSim {
       C(i,i-1) = hi;
       C(i,i) = 2*(hi+hii);
       C(i,i+1) = hii;
-      rs.row(i) = 3*(f.row(i+2)-f.row(i+1))/hii - 3*(f.row(i+1)-f.row(i))/hi;
+      rs.row(i) = 3.*(f.row(i+2)-f.row(i+1))/hii - 3.*(f.row(i+1)-f.row(i))/hi;
     }
 
     // solve C*c = rs with C tridiagonal
@@ -160,8 +160,8 @@ namespace MBSim {
     for(i=0; i<N-1; i++) {
       hi = x(i+1)-x(i);  
       a.row(i) = f.row(i);
-      d.row(i) = (ctmp.row(i+1) - ctmp.row(i) ) / 3 / hi;
-      b.row(i) = (f.row(i+1)-f.row(i)) / hi - (ctmp.row(i+1) + 2*ctmp.row(i) ) / 3 * hi;
+      d.row(i) = (ctmp.row(i+1) - ctmp.row(i) ) / 3. / hi;
+      b.row(i) = (f.row(i+1)-f.row(i)) / hi - (ctmp.row(i+1) + 2.*ctmp.row(i) ) / 3. * hi;
     }
 
     breaks.resize(N);
@@ -233,9 +233,9 @@ namespace MBSim {
       }
 
       double dx = x - (parent->breaks)(parent->index);
-      Vec yi = trans(((parent->coefs)[0]).row(parent->index).copy())*(parent->order);
+      Vec yi = trans(((parent->coefs)[0]).row(parent->index).copy())*double(parent->order);
       for(int i=1;i<parent->order;i++)
-        yi = yi*dx+trans(((parent->coefs)[i]).row(parent->index))*((parent->order)-i);
+        yi = yi*dx+trans(((parent->coefs)[i]).row(parent->index))*double((parent->order)-i);
       xSave=x;
       ySave=yi;
       return yi.copy();
@@ -259,9 +259,9 @@ namespace MBSim {
       }
 
       double dx = x - (parent->breaks)(parent->index);
-      Vec yi = trans(((parent->coefs)[0]).row(parent->index).copy())*(parent->order)*((parent->order)-1);
+      Vec yi = trans(((parent->coefs)[0]).row(parent->index).copy())*double(parent->order)*double((parent->order)-1);
       for(int i=1;i<=((parent->order)-2);i++)
-        yi = yi*dx+trans(((parent->coefs)[i]).row(parent->index))*((parent->order)-i)*((parent->order)-i-1);
+        yi = yi*dx+trans(((parent->coefs)[i]).row(parent->index))*double((parent->order)-i)*double((parent->order)-i-1);
       xSave=x;
       ySave=yi;
       return yi.copy();

@@ -119,7 +119,7 @@ namespace MBSim {
     Mat U2 = sphere->getFrame()->getOrientation()*KU2;
     Mat V2 = sphere->getFrame()->getOrientation()*KV2;
 
-    SqrMat A(4,4,NONINIT);
+    SqrMat A(4,NONINIT);
     A(Index(0,0),Index(0,1)) = -u1.T()*R1;
     A(Index(0,0),Index(2,3)) = u1.T()*R2;
     A(Index(1,1),Index(0,1)) = -v1.T()*R1;

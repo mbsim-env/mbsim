@@ -32,7 +32,7 @@ using namespace std;
 namespace MBSim {
 
   ContourPairing::ContourPairing(const std::string & name_, Contour* contour1_, Contour* contour2_, bool plotContact /*= true*/, ContactKinematics * contactKinematics_ /*= 0*/) :
-      Object(name_), contour1(contour1_), contour2(contour2_), contactKinematics(contactKinematics_), fdf(0), cpData(0), gTol(0.), gActive(true), gActive0(0), gk(0), gdk(0), lak(0), WF(0)
+      Object(name_), contour1(contour1_), contour2(contour2_), contactKinematics(contactKinematics_), fdf(0), cpData(0), gTol(0.), gActive(true), gActive0(0), gk(), gdk(), lak(), WF()
 #ifdef HAVE_OPENMBVCPPINTERFACE
           , openMBVGroup(0), openMBVContactFrameEnabled(true), openMBVContactFrames(0), openMBVContactFrameSize(0), openMBVNormalForceArrow(0), openMBVFrictionForceArrow(0)
 #endif

@@ -170,17 +170,17 @@ namespace MBSim {
       /**
        * \brief references to stopvector evaluation of dynamic system parent (root detection with corresponding bool array by event driven integrator)
        */
-      virtual void updatejsvRef(const fmatvec::Vector<int> &jsvParent);
+      virtual void updatejsvRef(const fmatvec::VecInt &jsvParent);
 
       /**
        * \brief reference to vector of link status (for set valued links with piecewise link equations)
        */
-       virtual void updateLinkStatusRef(const fmatvec::Vector<int> &LinkStatusParent);
+       virtual void updateLinkStatusRef(const fmatvec::VecInt &LinkStatusParent);
 
       /**
        * \brief reference to vector of link status (for single-valued links)
        */
-       virtual void updateLinkStatusRegRef(const fmatvec::Vector<int> &LinkStatusRegParent);
+       virtual void updateLinkStatusRegRef(const fmatvec::VecInt &LinkStatusRegParent);
 
       /**
        * \brief calculates size of contact force parameters
@@ -356,7 +356,7 @@ namespace MBSim {
       void setrFactorInd(int rFactorInd_) { rFactorInd = rFactorInd_; } 
       int getrFactorSize() const { return rFactorSize; } 
       
-      const fmatvec::Vector<int>& getrFactorUnsure() const { return rFactorUnsure; }
+      const fmatvec::VecInt& getrFactorUnsure() const { return rFactorUnsure; }
 
       /**
        * \brief saves contact force parameters for use as starting value in next time step
@@ -429,7 +429,7 @@ namespace MBSim {
       /**
        * \brief evaluation of roots of stop vector with a boolean vector
        */
-      fmatvec::Vector<int> jsv;
+      fmatvec::VecInt jsv;
 
       /**
        * \brief size and local index of stop vector
@@ -440,7 +440,7 @@ namespace MBSim {
        * for set valued links with piecewise link equation (e.g. unilateral contacts or coulomb friction)
        * \brief status of link (default 0) describing which pice of the equation is valid (e.g. stick or slip)
        */
-      fmatvec::Vector<int> LinkStatus;
+      fmatvec::VecInt LinkStatus;
 
       /**
        * \brief size and local index of link status vector (set-valued)
@@ -451,7 +451,7 @@ namespace MBSim {
        * for single valued links
        * \brief status of link
        */
-      fmatvec::Vector<int> LinkStatusReg;
+      fmatvec::VecInt LinkStatusReg;
 
       /**
        * \brief size and local index of single-valued link status vector
@@ -506,7 +506,7 @@ namespace MBSim {
       /**
        * \brief boolean vector defining if rfactor belongs to not diagonal dominant mass action matrix (cf. Foerg Dissertation, page 80 et seq.)
        */
-      fmatvec::Vector<int> rFactorUnsure;
+      fmatvec::VecInt rFactorUnsure;
 
       /**
        * \brief size and local index of rfactors

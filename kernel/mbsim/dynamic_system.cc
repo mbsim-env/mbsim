@@ -931,7 +931,7 @@ namespace MBSim {
       (**i).updatesvRef(svParent);
   }
 
-  void DynamicSystem::updatejsvRef(const Vector<int> &jsvParent) {
+  void DynamicSystem::updatejsvRef(const VecInt &jsvParent) {
     jsv >> jsvParent(svInd,svInd+svSize-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
@@ -955,7 +955,7 @@ namespace MBSim {
       (**i).updaterFactorRef(rFactorParent);
   }
 
-  void DynamicSystem::updateLinkStatusRef(const Vector<int> &LinkStatusParent) {
+  void DynamicSystem::updateLinkStatusRef(const VecInt &LinkStatusParent) {
     LinkStatus.resize() >> LinkStatusParent(LinkStatusInd,LinkStatusInd+LinkStatusSize-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
@@ -965,7 +965,7 @@ namespace MBSim {
       (**i).updateLinkStatusRef(LinkStatusParent);
   }
 
-  void DynamicSystem::updateLinkStatusRegRef(const Vector<int> &LinkStatusRegParent) {
+  void DynamicSystem::updateLinkStatusRegRef(const VecInt &LinkStatusRegParent) {
     LinkStatusReg.resize() >> LinkStatusRegParent(LinkStatusRegInd,LinkStatusRegInd+LinkStatusRegSize-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 

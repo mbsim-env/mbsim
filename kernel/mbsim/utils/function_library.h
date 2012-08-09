@@ -37,7 +37,7 @@ namespace MBSim {
 
   class Function1_VS_from_SS : public Function1<fmatvec::Vec, double> {
     public:
-      Function1_VS_from_SS() : fun(NULL), vec(0) {}
+      Function1_VS_from_SS() : fun(NULL), vec() {}
       Function1_VS_from_SS(Function1<double, double> * fun_, fmatvec::Vec v) : fun(fun_), vec(v) {vec/=nrm2(v); }
       void setFunction(Function1<double, double> * fun_) {fun=fun_; }
       void setVector(fmatvec::Vec v) {vec=v; vec/=nrm2(v); }

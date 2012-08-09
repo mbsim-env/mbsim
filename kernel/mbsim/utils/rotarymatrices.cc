@@ -40,7 +40,7 @@ namespace MBSim {
 
 
   SqrMat BasicRotAKIx(double phi) {
-    SqrMat AKI(3,3,INIT,0.0);
+    SqrMat AKI(3,INIT,0.0);
     AKI(0,0)= 1.0;
     AKI(1,1)= cos(phi);
     AKI(2,2)= AKI(1,1);
@@ -50,7 +50,7 @@ namespace MBSim {
   }
 
   SqrMat BasicRotAKIy(double phi) {
-    SqrMat AKI(3,3,INIT,0.0);
+    SqrMat AKI(3,INIT,0.0);
     AKI(1,1)= 1.0;
     AKI(0,0)= cos(phi);
     AKI(2,2)= AKI(0,0);
@@ -60,7 +60,7 @@ namespace MBSim {
   }
 
   SqrMat BasicRotAKIz(double phi) {
-    SqrMat AKI(3,3,INIT,0.0);
+    SqrMat AKI(3,INIT,0.0);
     AKI(2,2)= 1.0;
     AKI(0,0)= cos(phi);
     AKI(1,1)= AKI(0,0);
@@ -70,33 +70,33 @@ namespace MBSim {
   }
 
   SqrMat BasicRotAIKx(double phi) {
-    SqrMat AIK(3,3,INIT,0.0);
+    SqrMat AIK(3,INIT,0.0);
     AIK = BasicRotAKIx(-phi);
     return AIK;
   }
 
   SqrMat BasicRotAIKy(double phi) {
-    SqrMat AIK(3,3,INIT,0.0);
+    SqrMat AIK(3,INIT,0.0);
     AIK = BasicRotAKIy(-phi);
     return AIK; 
   }
 
   SqrMat BasicRotAIKz(double phi) {
-    SqrMat AIK(3,3,INIT,0.0);
+    SqrMat AIK(3,INIT,0.0);
     AIK = BasicRotAKIz(-phi);
     return AIK; 
   }
 
   SqrMat Cardan2AIK(double alpha,double beta,double gamma) {
     //x
-    SqrMat AIKx(3,3,INIT,0);
+    SqrMat AIKx(3,INIT,0);
     AIKx =  BasicRotAIKx(alpha);
     //y
-    SqrMat AIKy(3,3,INIT,0); 
+    SqrMat AIKy(3,INIT,0); 
     AIKy =  BasicRotAIKy(beta);
 
     //z
-    SqrMat AIKz(3,3,INIT,0);  
+    SqrMat AIKz(3,INIT,0);  
     AIKz = BasicRotAIKz(gamma);
 
     return AIKx*AIKy*AIKz;          //Wie im TM VI Skript
@@ -140,14 +140,14 @@ namespace MBSim {
 
   SqrMat Euler2AIK(double psi,double theta,double phi) {
     //z Preazession
-    SqrMat AIKz_psi(3,3,INIT,0);
+    SqrMat AIKz_psi(3,INIT,0);
     AIKz_psi =  BasicRotAIKz(psi);
     //x Nutation (Kippen)
-    SqrMat AIKx(3,3,INIT,0); 
+    SqrMat AIKx(3,INIT,0); 
     AIKx =  BasicRotAIKx(theta);
 
     //z Rotation (um eigene Achse)
-    SqrMat AIKz_phi(3,3,INIT,0);  
+    SqrMat AIKz_phi(3,INIT,0);  
     AIKz_phi = BasicRotAIKz(phi);
 
     return AIKz_psi*AIKx*AIKz_phi; 

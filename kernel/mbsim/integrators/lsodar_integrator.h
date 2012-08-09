@@ -52,7 +52,7 @@ namespace MBSim {
       int zSize, iTol, istate, nsv, lrWork, liWork, integrationSteps;
       double t, tPlot, s0, time;
       fmatvec::Vec z, rWork;
-      fmatvec::Vector<int> iWork, jsv;
+      fmatvec::VecInt iWork, jsv;
       std::ofstream integPlot;
     public:
 

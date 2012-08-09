@@ -124,7 +124,7 @@ namespace MBSim {
       Mat dhdq = system.dhdq(t);
       Mat dhdu = system.dhdu(t);
 
-      Vector<int> ipiv(M.size());
+      VecInt ipiv(M.size());
       SqrMat luMeff = SqrMat(facLU(M - theta*dt*dhdu - theta*theta*dt*dt*dhdq*T,ipiv));
       Vec heff = h+theta*dhdq*T*u*dt;
       system.getG().resize() = SqrMat(W.T()*slvLUFac(luMeff,V,ipiv));

@@ -91,7 +91,7 @@ namespace MBSim {
   }
 
 
-  SinusFunction1_VS::SinusFunction1_VS() : DifferentiableFunction1<Vec>(), ySize(0), amplitude(0), frequency(0), phase(0), offset(0) {
+  SinusFunction1_VS::SinusFunction1_VS() : DifferentiableFunction1<Vec>(), ySize(), amplitude(), frequency(), phase(), offset() {
     addDerivative(new SinusFunction1_VS::ZerothDerivative(this));
     addDerivative(new SinusFunction1_VS::FirstDerivative(this));
     addDerivative(new SinusFunction1_VS::SecondDerivative(this));
