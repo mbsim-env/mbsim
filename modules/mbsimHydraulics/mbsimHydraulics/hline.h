@@ -40,7 +40,7 @@ namespace MBSimHydraulics {
   /*! HLine */
   class HLine : public MBSim::Object {
     public:
-      HLine(const std::string &name) : MBSim::Object(name), nFrom(NULL), nTo(NULL), nFromRelative(false), nToRelative(false), direction(fmatvec::Vec(3, fmatvec::INIT, 0)), Mlocal(0), Jacobian(0,0), frameOfReference(NULL), saved_frameOfReference("") {};
+      HLine(const std::string &name) : MBSim::Object(name), nFrom(NULL), nTo(NULL), nFromRelative(false), nToRelative(false), direction(fmatvec::Vec(3, fmatvec::INIT, 0)), Mlocal(), Jacobian(), frameOfReference(NULL), saved_frameOfReference("") {};
       virtual std::string getType() const { return "HLine"; }
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */

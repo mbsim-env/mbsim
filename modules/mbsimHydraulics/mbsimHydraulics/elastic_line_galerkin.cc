@@ -31,7 +31,7 @@ using namespace MBSim;
 
 namespace MBSimHydraulics {
 
-  ElasticLineGalerkin::ElasticLineGalerkin(const string &name) : HLine(name), mdim(0), plotdim(0), g(0), E(0), k(0), WInt(Vec(0)), wA(Vec(0)), wE(Vec(0)), lambda(0), MatIntWWT(SymMat(0)), MatIntWSWST(SymMat(0)), K(SymMat(0)), D(SymMat(0)), N(SymMat(0)), Omega(SymMat(0)), phi(SqrMat(0,0)), ansatz(NULL), plotVecW(Mat(0,0)), plotVecWS(Mat(0,0)), QIn(1), QOut(1), l(0), d(0), Area(0), Flow2D(false), nAnsatz(0), p0(0), Q0(0), fracAir(0), delta_h(0), DLehr(0), relPlotPoints(Vec(0)) {
+  ElasticLineGalerkin::ElasticLineGalerkin(const string &name) : HLine(name), mdim(0), plotdim(0), g(0), E(0), k(0), WInt(), wA(), wE(), lambda(0), MatIntWWT(), MatIntWSWST(), K(), D(), N(), Omega(), phi(), ansatz(NULL), plotVecW(), plotVecWS(), QIn(1), QOut(1), l(0), d(0), Area(0), Flow2D(false), nAnsatz(0), p0(0), Q0(0), fracAir(0), delta_h(0), DLehr(0), relPlotPoints() {
   }
 
   void ElasticLineGalerkin::setAnsatzFunction(AnsatzTypes method_, int nAnsatz_) {
@@ -82,7 +82,7 @@ namespace MBSimHydraulics {
       HLine::init(stage);
       double nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
       double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
-      phi.resize(mdim, mdim);
+      phi.resize(mdim);
       lambda.resize(mdim);
       
       Jacobian.resize(mdim, mdim, INIT, 0);
