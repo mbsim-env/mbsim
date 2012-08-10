@@ -164,7 +164,7 @@ namespace MBSimHydraulics {
         ReValues(i)=re[i];
         lambdaValues(i)=la[i];
       }
-      lambdaTabular = new TabularFunction1_VS(ReValues, lambdaValues);
+      lambdaTabular = new TabularFunction1_VS<Ref,Ref>(ReValues, lambdaValues);
       initialized=true;
     }
     const double Re=Q*((Q>0)?ReynoldsFactor:ReynoldsFactorNeg);
