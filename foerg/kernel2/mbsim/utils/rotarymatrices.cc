@@ -103,42 +103,6 @@ namespace MBSim {
     return AIKx*AIKy*AIKz;          //Wie im TM VI Skript
   }
 
-  Vec3 AIK2Cardan(const SqrMat3 &AIK) { 
-    Vec3 AlphaBetaGamma(NONINIT);    
-    AlphaBetaGamma(1)= asin(AIK(0,2));
-    double nenner = cos(AlphaBetaGamma(1));
-    if (fabs(nenner)>1e-10) {
-      AlphaBetaGamma(0) = atan2(-AIK(1,2),AIK(2,2));
-      AlphaBetaGamma(2) = atan2(-AIK(0,1),AIK(0,0));
-    } else {
-      AlphaBetaGamma(0)=0;
-      AlphaBetaGamma(2)=atan2(AIK(1,0),AIK(1,1));
-    }
-    return AlphaBetaGamma;
-  }
-
-  Vec3 AKI2Cardan(const SqrMat3 &AKI) {
-    return AIK2Cardan(trans(AKI));
-  }
-
-  Vec3 AIK2RevCardan(const SqrMat3 &AIK) {
-    Vec3 AlphaBetaGamma(NONINIT);
-    AlphaBetaGamma(1)= asin(-AIK(2,0));
-    double nenner = cos(AlphaBetaGamma(1));
-    if (fabs(nenner)>1e-10) {
-      AlphaBetaGamma(0) = atan2(AIK(2,1),AIK(2,2));
-      AlphaBetaGamma(2) = ArcTan(AIK(0,0),AIK(1,0));
-    } else {
-      AlphaBetaGamma(0)=0;
-      AlphaBetaGamma(2)=atan2(-AIK(0,1),AIK(1,1));
-    }
-    return AlphaBetaGamma;
-  }
-
-  Vec3 AKI2RevCardan(const SqrMat3 &AKI) {
-    return AIK2RevCardan(trans(AKI));
-  }
-
   SqrMat Euler2AIK(double psi,double theta,double phi) {
     //z Preazession
     SqrMat AIKz_psi(3,INIT,0);
