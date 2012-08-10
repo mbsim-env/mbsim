@@ -179,7 +179,7 @@ rem pkg-config --cflags openmbvcppinterface mbsim mbsimControl mbsimHydraulics m
 rem pkg-config --libs openmbvcppinterface mbsim mbsimControl mbsimHydraulics mbsimFlexibleBody mbsimPowertrain mbsimElectronics fmatvec
 
 set CFLAGS=-m32 -DTIXML_USE_STL -DHAVE_BOOST_FILE_LOCK -DHAVE_ANSICSIGNAL -DHAVE_OPENMBVCPPINTERFACE -I"%INSTDIR%\include" -I"%INSTDIR%\include\cpp" -I"%INSTDIR%\include\fmatvec"
-set LIBS=-m32 -Wl,--no-undefined -L"%INSTDIR%\lib" -lmbsimControl -lmbsimHydraulics -lmbsimFlexibleBody -lmbsimPowertrain -lmbsimElectronics -lmbsim -lopenmbvcppinterface
+set LIBS=-m32 -Wl,--no-undefined -L"%INSTDIR%\lib" -lmbsimControl -lmbsimHydraulics -lmbsimFlexibleBody -lmbsimPowertrain -lmbsimElectronics -lmbsim -lopenmbvcppinterface -lfmatvec
  
 if "%1" == "--cflags" (
   echo %CFLAGS%
@@ -207,22 +207,25 @@ Using of the MBSim and Co. Package:
   (Note: It is recommended, that the full directory path where the archive
   is unpacked does not contain any spaces.)
 - Test the installation:
-  1)Run the program <install-dir>/mbsim/bin/mbsim-test to check the
+  1)Run the program <install-dir>/mbsim/bin/mbsim-test.bat to check the
     installation. This will run the MBSim example xmlflat_hierachical_modelling,
     the xml_hierachical_modelling example, the h5plotserie program as well as
     the openmbv program.
-  2)If you have a compiler (MinGW32) installed you can also run
-    <install-dir>/mbsim/bin/mbsim-test <path-to-my-c++-compiler>.
+  2)If you have a compiler installed you can also run
+    <install-dir>/mbsim/bin/mbsim-test.bat <path-to-my-c++-compiler>.
     This will first try to compile a simple MBSim test program including all
     MBSim modules. Afterwards the mechanics_basics_hierachical_modelling
     example will be compiled and executed. At least the same as in 1) is run.
+    NOTE: You have to use the MinGW-w64 compiler from
+          http://mingw-w64.sourceforg.net NOT the MinGW compiler from
+          http://www.mingw.org (both differ and are incompatible)!
 - Try any of the programs in <install-dir>/mbsim/bin
 - Build your own models using XML and run it with
   <install-dir>/mbsim/bin/mbsimxml ...
   View the plots with h5plotserie and view the animation with openmbv.
 - Try to compile and run your own source code models. Use the output of
-  <install-dir>/mbsim/bin/mbsim-config --cflags and 
-  <install-dir>/mbsim/bin/mbsim-config --libs as compiler and linker flags.
+  <install-dir>/mbsim/bin/mbsim-config.bat --cflags and 
+  <install-dir>/mbsim/bin/mbsim-config.bat --libs as compiler and linker flags.
 
 Have fun!
 EOF
@@ -265,9 +268,9 @@ set INSTDIR=%~dp0..
 set CXX=%1
 
 cd "%INSTDIR%\examples"
-set PATH="%INSTDIR%\bin;%PATH%"
+set PATH=%INSTDIR%\bin;%PATH%
 
-if not %CXX%!==! (
+if %CXX%!==! goto skipgcc
   set CXXBINDIR=%~dp1
   set PATH=%CXXBINDIR%;%PATH%
 
@@ -300,7 +303,7 @@ if not %CXX%!==! (
   if ERRORLEVEL 1 goto end
   cd ..
   echo DONE
-)
+:skipgcc
 
 echo XMLFLAT_HIERACHICAL_MODELLING
 cd xmlflat_hierachical_modelling
