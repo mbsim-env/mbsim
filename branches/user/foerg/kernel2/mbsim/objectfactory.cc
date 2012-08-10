@@ -405,7 +405,7 @@ namespace MBSim {
     if(element->ValueStr()==MBSIMNS"QuadraticFunction1_VS")
       return new QuadraticFunction1_VS;
     if(element->ValueStr()==MBSIMNS"SinusFunction1_VS")
-      return new SinusFunction1_VS;
+      return new SinusFunction1_VS<Ref>;
     if(element->ValueStr()==MBSIMNS"PositiveSinusFunction1_VS")
       return new PositiveSinusFunction1_VS;
     if(element->ValueStr()==MBSIMNS"StepFunction1_VS")
@@ -417,17 +417,21 @@ namespace MBSim {
     if(element->ValueStr()==MBSIMNS"SummationFunction1_VS")
       return new SummationFunction1_VS;
     if(element->ValueStr()==MBSIMNS"Function1_VS_from_SS")
-      return new Function1_VS_from_SS;
+      return new Function1_VS_from_SS<Ref>;
     return 0;
   }
 
   Function1<Vec3,double> *MBSimObjectFactory::createFunction1_V3S(TiXmlElement *element) {
     if(element->ValueStr()==MBSIMNS"ConstantFunction1_VS")
       return new ConstantFunction1<Vec3,double>;
+    if(element->ValueStr()==MBSIMNS"SinusFunction1_VS")
+      return new SinusFunction1_VS<Fixed<3> >;
     if(element->ValueStr()==MBSIMNS"TabularFunction1_VS")
       return new TabularFunction1_VS<Var,Fixed<3> >;
     if(element->ValueStr()==MBSIMNS"PiecewisePolynom1_VS")
       return new PPolynom<Var,Fixed<3> >;
+    if(element->ValueStr()==MBSIMNS"Function1_VS_from_SS")
+      return new Function1_VS_from_SS<Fixed<3> >;
     return 0;
   }
 

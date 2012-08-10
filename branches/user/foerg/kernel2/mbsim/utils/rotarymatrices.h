@@ -22,6 +22,7 @@
 #ifndef ROTARYMATRICES_H
 #define ROTARYMATRICES_H
 #include "fmatvec.h"
+#include "mbsim/utils/utils.h"
 
 namespace MBSim {
 

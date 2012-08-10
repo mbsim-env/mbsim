@@ -33,16 +33,6 @@ namespace MBSim {
     setFunction(f);
   }
 
-  void Function1_VS_from_SS::initializeUsingXML(TiXmlElement * element) {
-    TiXmlElement * e;
-    e=element->FirstChildElement(MBSIMNS"function");
-    Function1<double, double> * f=ObjectFactory::getInstance()->getInstance()->createFunction1_SS(e->FirstChildElement());
-    f->initializeUsingXML(e->FirstChildElement());
-    setFunction(f);
-    e=element->FirstChildElement(MBSIMNS"direction");
-    setVector(Element::getVec(e));
-  }
-
 
   QuadraticFunction1_VS::QuadraticFunction1_VS() : DifferentiableFunction1<Vec>(), ySize(0), a0(0), a1(0), a2(0) {
     addDerivative(new QuadraticFunction1_VS::ZerothDerivative(this));
@@ -88,69 +78,6 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"a2");
     a2=Element::getVec(e, ySize);
     
-  }
-
-
-  SinusFunction1_VS::SinusFunction1_VS() : DifferentiableFunction1<Vec>(), ySize(0), amplitude(0), frequency(0), phase(0), offset(0) {
-    addDerivative(new SinusFunction1_VS::ZerothDerivative(this));
-    addDerivative(new SinusFunction1_VS::FirstDerivative(this));
-    addDerivative(new SinusFunction1_VS::SecondDerivative(this));
-  }
-
-  SinusFunction1_VS::SinusFunction1_VS(Vec amplitude_, Vec frequency_, Vec phase_, Vec offset_) : DifferentiableFunction1<Vec>(), amplitude(amplitude_), frequency(frequency_), phase(phase_), offset(offset_) {
-    addDerivative(new SinusFunction1_VS::ZerothDerivative(this));
-    addDerivative(new SinusFunction1_VS::FirstDerivative(this));
-    addDerivative(new SinusFunction1_VS::SecondDerivative(this));
-    check();
-  }
-  
-  Vec SinusFunction1_VS::ZerothDerivative::operator()(const double& tVal, const void *) {
-    Vec y(parent->ySize, NONINIT);
-    for (int i=0; i<parent->ySize; i++)
-      y(i)=parent->offset(i)+parent->amplitude(i)*sin(2.*M_PI*parent->frequency(i)*tVal+parent->phase(i));
-    return y;
-  }
-
-  Vec SinusFunction1_VS::FirstDerivative::operator()(const double& tVal, const void *) {
-    Vec y(parent->ySize, NONINIT);
-    for (int i=0; i<parent->ySize; i++)
-      y(i)=parent->amplitude(i)*2.*M_PI*parent->frequency(i)*cos(2.*M_PI*parent->frequency(i)*tVal+parent->phase(i));
-    return y;
-  }
-
-  Vec SinusFunction1_VS::SecondDerivative::operator()(const double& tVal, const void *) {
-    Vec y(parent->ySize, NONINIT);
-    for (int i=0; i<parent->ySize; i++)
-      y(i)=-parent->amplitude(i)*2.*M_PI*parent->frequency(i)*2.*M_PI*parent->frequency(i)*sin(2.*M_PI*parent->frequency(i)*tVal+parent->phase(i));
-    return y;
-  }
-
-  void SinusFunction1_VS::initializeUsingXML(TiXmlElement *element) {
-    DifferentiableFunction1<Vec>::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"amplitude");
-    Vec amplitude_=Element::getVec(e);
-    amplitude=amplitude_;
-    e=element->FirstChildElement(MBSIMNS"frequency");
-    Vec frequency_=Element::getVec(e, amplitude_.size());
-    frequency=frequency_;
-    e=element->FirstChildElement(MBSIMNS"phase");
-    Vec phase_=Element::getVec(e, amplitude_.size());
-    phase=phase_;
-    e=element->FirstChildElement(MBSIMNS"offset");
-    Vec offset_;
-    if (e)
-      offset_=Element::getVec(e, amplitude_.size());
-    else
-      offset_.resize(amplitude_.size());
-    offset=offset_;
-    check();
-  }
-
-  void SinusFunction1_VS::check() {
-    ySize=amplitude.size();
-    assert(frequency.size()==ySize);
-    assert(phase.size()==ySize);
-    assert(offset.size()==ySize);
   }
 
 
