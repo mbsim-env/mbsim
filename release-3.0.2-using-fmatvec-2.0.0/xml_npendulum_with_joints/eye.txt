@@ -1,0 +1,7 @@
+# a comment
+% a comment
+1 0 0 # first row
+0 1 0
+
+# last row
+0 0 1
