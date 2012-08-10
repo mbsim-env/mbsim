@@ -47,8 +47,8 @@ namespace MBSimFlexibleBody {
       /* INHERITED INTERFACE OF CONTOUR */
       virtual void updateKinematicsForFrame(MBSim::ContourPointData& cp, MBSim::FrameFeature ff);   
       virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
-      virtual fmatvec::Vec computePosition(MBSim::ContourPointData &cp) { updateKinematicsForFrame(cp, MBSim::position_cosy); return cp.getFrameOfReference().getPosition(); }
-      virtual fmatvec::Vec computeVelocity(MBSim::ContourPointData &cp) { updateKinematicsForFrame(cp, MBSim::velocity_cosy); return cp.getFrameOfReference().getVelocity(); }
+      virtual fmatvec::Vec3 computePosition(MBSim::ContourPointData &cp) { updateKinematicsForFrame(cp, MBSim::position_cosy); return cp.getFrameOfReference().getPosition(); }
+      virtual fmatvec::Vec3 computeVelocity(MBSim::ContourPointData &cp) { updateKinematicsForFrame(cp, MBSim::velocity_cosy); return cp.getFrameOfReference().getVelocity(); }
       /***************************************************/
       
       /* INHERITED INTERFACE OF CONTOURCONTINUUM */

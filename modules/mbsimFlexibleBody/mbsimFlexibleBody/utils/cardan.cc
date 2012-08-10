@@ -19,7 +19,6 @@
 
 #include<config.h>
 #include "mbsimFlexibleBody/utils/cardan.h"
-
 #include <iostream>
 
 using namespace fmatvec;

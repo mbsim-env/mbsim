@@ -91,8 +91,8 @@ namespace MBSimFlexibleBody {
 //	  }
 	}
 
-    cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation()(0,0,2,1)*Jacobian(0,0,qSize-1,1).T());// TODO dimensionen der internen Jacobis
-    cp.getFrameOfReference().setJacobianOfRotation   (frameOfReference->getOrientation()(0,2,2,2)*Jacobian(0,2,qSize-1,2).T()); 
+    cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation()(Index(0,2),Index(0,1))*Jacobian(Index(0,qSize-1),Index(0,1)).T());// TODO dimensionen der internen Jacobis
+    cp.getFrameOfReference().setJacobianOfRotation   (frameOfReference->getOrientation()(Index(0,2),Index(2,2))*Jacobian(Index(0,qSize-1),Index(2,2)).T()); 
     // S_.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
     // S_.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
 

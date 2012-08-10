@@ -76,7 +76,7 @@ namespace MBSimFlexibleBody {
 
       // first tangent: radial-direction, second tangent:  azimuthal-direction
       if(ff==firstTangent || ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all)
-      cp.getFrameOfReference().getOrientation()(0,1,2,2) = computeDirectionalDerivatives(cp.getLagrangeParameterPosition()(1),cp.getLagrangeParameterPosition()(0),1);
+      cp.getFrameOfReference().getOrientation().set(Index(0,2),Index(1,2), computeDirectionalDerivatives(cp.getLagrangeParameterPosition()(1),cp.getLagrangeParameterPosition()(0),1));
 
       if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
         Point3Dd normal(Surface->normal(cp.getLagrangeParameterPosition()(1),cp.getLagrangeParameterPosition()(0)));
@@ -85,9 +85,9 @@ namespace MBSimFlexibleBody {
 
         normal *= -1;//normal should point out of the contour (as the normal is the crossproduct between the tangent in u und the tangent in v direction, the normal of nurbs++ points into the material)
 
-        cp.getFrameOfReference().getOrientation().col(0)(0) = normal.x() /normalLength;
-        cp.getFrameOfReference().getOrientation().col(0)(1) = normal.y() /normalLength;
-        cp.getFrameOfReference().getOrientation().col(0)(2) = normal.z() /normalLength;
+        cp.getFrameOfReference().getOrientation()(0,0) = normal.x() /normalLength;
+        cp.getFrameOfReference().getOrientation()(1,0) = normal.y() /normalLength;
+        cp.getFrameOfReference().getOrientation()(2,0) = normal.z() /normalLength;
       }
 
       if(ff==velocity || ff==velocities || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
@@ -106,20 +106,20 @@ namespace MBSimFlexibleBody {
 
   void NurbsDisk2s::updateJacobiansForFrame(ContourPointData &cp, int j /*=0*/) {
 #ifdef HAVE_NURBS
-    cp.getFrameOfReference().getJacobianOfTranslation().resize(3,nj*nr*3+RefDofs);
-    cp.getFrameOfReference().getJacobianOfRotation().resize(3,nj*nr*3+RefDofs);
+    cp.getFrameOfReference().getJacobianOfTranslation().resize(nj*nr*3+RefDofs);
+    cp.getFrameOfReference().getJacobianOfRotation().resize(nj*nr*3+RefDofs);
 
     for(int k=0; k<nj*nr*3+RefDofs; k++) {
       Point3Dd TmpPtTrans = SurfaceJacobiansOfTranslation[k].pointAt(cp.getLagrangeParameterPosition()(1),cp.getLagrangeParameterPosition()(0));
       Point3Dd TmpPtRot = SurfaceJacobiansOfRotation[k].pointAt(cp.getLagrangeParameterPosition()(1),cp.getLagrangeParameterPosition()(0));
 
-      cp.getFrameOfReference().getJacobianOfTranslation().col(k)(0) = TmpPtTrans.x();
-      cp.getFrameOfReference().getJacobianOfTranslation().col(k)(1) = TmpPtTrans.y();
-      cp.getFrameOfReference().getJacobianOfTranslation().col(k)(2) = TmpPtTrans.z();
+      cp.getFrameOfReference().getJacobianOfTranslation()(0,k) = TmpPtTrans.x();
+      cp.getFrameOfReference().getJacobianOfTranslation()(1,k) = TmpPtTrans.y();
+      cp.getFrameOfReference().getJacobianOfTranslation()(2,k) = TmpPtTrans.z();
 
-      cp.getFrameOfReference().getJacobianOfRotation().col(k)(0) = TmpPtRot.x();
-      cp.getFrameOfReference().getJacobianOfRotation().col(k)(1) = TmpPtRot.y();
-      cp.getFrameOfReference().getJacobianOfRotation().col(k)(2) = TmpPtRot.z();
+      cp.getFrameOfReference().getJacobianOfRotation()(0,k) = TmpPtRot.x();
+      cp.getFrameOfReference().getJacobianOfRotation()(1,k) = TmpPtRot.y();
+      cp.getFrameOfReference().getJacobianOfRotation()(2,k) = TmpPtRot.z();
     }
 
     /*TESTING*/

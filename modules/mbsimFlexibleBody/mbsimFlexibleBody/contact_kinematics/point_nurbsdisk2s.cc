@@ -65,9 +65,9 @@ namespace MBSimFlexibleBody {
       nurbsdisk->updateKinematicsForFrame(cpData[inurbsdisk],position_cosy); // writes the position, as well as the normal and the tangents into the FrameOfReference
       // cout << "Position auf Scheibe: " << cpData[inurbsdisk].getFrameOfReference().getPosition() << endl;
 
-      cpData[ipoint].getFrameOfReference().getOrientation().col(0)= -cpData[inurbsdisk].getFrameOfReference().getOrientation().col(0);
-      cpData[ipoint].getFrameOfReference().getOrientation().col(1)= -cpData[inurbsdisk].getFrameOfReference().getOrientation().col(1);   
-      cpData[ipoint].getFrameOfReference().getOrientation().col(2)=  cpData[inurbsdisk].getFrameOfReference().getOrientation().col(2);   // to have a legal framework the second tangent is not the negative of the tanget of the disk
+      cpData[ipoint].getFrameOfReference().getOrientation().set(0, -cpData[inurbsdisk].getFrameOfReference().getOrientation().col(0));
+      cpData[ipoint].getFrameOfReference().getOrientation().set(1, -cpData[inurbsdisk].getFrameOfReference().getOrientation().col(1));   
+      cpData[ipoint].getFrameOfReference().getOrientation().set(2,  cpData[inurbsdisk].getFrameOfReference().getOrientation().col(2));   // to have a legal framework the second tangent is not the negative of the tanget of the disk
 
       //cout << "Normale: " <<  cpData[inurbsdisk].getFrameOfReference().getOrientation().col(0) << endl;
       //cout << "1.Tangente: " <<  cpData[inurbsdisk].getFrameOfReference().getOrientation().col(1) << endl;

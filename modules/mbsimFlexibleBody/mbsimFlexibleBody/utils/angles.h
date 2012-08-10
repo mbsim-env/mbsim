@@ -45,7 +45,7 @@ namespace MBSimFlexibleBody {
       virtual ~Angles();
 
       /* INTERFACE OF ROTATION */
-      virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
+      virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       /***************************************************/
 
       /* INTERFACE */
