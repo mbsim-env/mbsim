@@ -148,12 +148,12 @@ namespace MBSimFlexibleBody {
 
       Surface = new PlNurbsSurfaced;
       SurfaceVelocities = new PlNurbsSurfaced;
-      for(int i=0; i<nr+1; i++) {
-        for(int j=0; j<nj; j++) {
+      for(int i=0; i<nr+1; i++) 
+        for(int j=0; j<nj; j++) 
           jacobians.push_back(ContourPointData(i*nj+j));
-          jacobians[jacobians.size()-1].getFrameOfReference().getJacobianOfTranslation().resize();
-          jacobians[jacobians.size()-1].getFrameOfReference().getJacobianOfRotation().resize();
-        }
+      for(int i=0; i<(nr+1)*nj; i++) {
+        jacobians[i].getFrameOfReference().getJacobianOfTranslation().resize();
+        jacobians[i].getFrameOfReference().getJacobianOfRotation().resize();
       }
 
       for(int k=0; k<nr*nj*3+RefDofs; k++) {
