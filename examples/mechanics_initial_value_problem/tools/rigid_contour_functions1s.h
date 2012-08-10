@@ -24,7 +24,7 @@
 #include <mbsim/utils/contour_functions.h>
 
 namespace MBSim {
-  class TabularFunction1_VS;
+  template <class Row, class Col> class TabularFunction1_VS;
 };
 
 class FuncCrPC : public MBSim::ContourFunction1s {
@@ -36,37 +36,37 @@ class FuncCrPC : public MBSim::ContourFunction1s {
     // void init(const double& alpha);
     void enableTabularFit(double tabularFitLength);
     
-    fmatvec::Vec operator()(const double& alpha, const void * =NULL) {return (this->*operator_)(alpha); }
-    fmatvec::Vec diff1(const double& alpha); // Tangente in C
-    fmatvec::Vec diff2(const double& alpha); // 2. Ableitung in C
-    fmatvec::Vec computeT(const double& alpha) {return (this->*computeT_)(alpha); }
-    fmatvec::Vec computeB(const double& alpha) {return (this->*computeB_)(alpha); }
-    fmatvec::Vec computeN(const double& alpha) {return (this->*computeN_)(alpha); }
+    fmatvec::Vec3 operator()(const double& alpha, const void * =NULL) {return (this->*operator_)(alpha); }
+    fmatvec::Vec3 diff1(const double& alpha); // Tangente in C
+    fmatvec::Vec3 diff2(const double& alpha); // 2. Ableitung in C
+    fmatvec::Vec3 computeT(const double& alpha) {return (this->*computeT_)(alpha); }
+    fmatvec::Vec3 computeB(const double& alpha) {return (this->*computeB_)(alpha); }
+    fmatvec::Vec3 computeN(const double& alpha) {return (this->*computeN_)(alpha); }
     double computeCurvature(const double& alpha) {return (this->*computeCurvature_)(alpha); }
 
     virtual void initializeUsingXML(TiXmlElement * element);
   private:
-    fmatvec::Vec Cb;
-    MBSim::PPolynom pp_y;
-    MBSim::PPolynom pp_z;
-    MBSim::TabularFunction1_VS * tab_operator;
-    MBSim::TabularFunction1_VS * tab_T;
-    MBSim::TabularFunction1_VS * tab_B;
-    MBSim::TabularFunction1_VS * tab_N;
-    MBSim::TabularFunction1_VS * tab_curvature;
+    fmatvec::Vec3 Cb;
+    MBSim::PPolynom<fmatvec::Ref,fmatvec::Ref> pp_y;
+    MBSim::PPolynom<fmatvec::Ref,fmatvec::Ref> pp_z;
+    MBSim::TabularFunction1_VS<fmatvec::Ref,fmatvec::Ref> * tab_operator;
+    MBSim::TabularFunction1_VS<fmatvec::Ref,fmatvec::Ref> * tab_T;
+    MBSim::TabularFunction1_VS<fmatvec::Ref,fmatvec::Ref> * tab_B;
+    MBSim::TabularFunction1_VS<fmatvec::Ref,fmatvec::Ref> * tab_N;
+    MBSim::TabularFunction1_VS<fmatvec::Ref,fmatvec::Ref> * tab_curvature;
 
-    fmatvec::Vec (FuncCrPC::*operator_)(const double& alpha);
-    fmatvec::Vec operatorPPolynom(const double& alpha);
-    fmatvec::Vec operatorTabular(const double& alpha);
-    fmatvec::Vec (FuncCrPC::*computeT_)(const double& alpha);
-    fmatvec::Vec computeTPPolynom(const double& alpha);
-    fmatvec::Vec computeTTabular(const double& alpha);
-    fmatvec::Vec (FuncCrPC::*computeN_)(const double& alpha);
-    fmatvec::Vec computeNPPolynom(const double& alpha);
-    fmatvec::Vec computeNTabular(const double& alpha);
-    fmatvec::Vec (FuncCrPC::*computeB_)(const double& alpha);
-    fmatvec::Vec computeBPPolynom(const double& alpha);
-    fmatvec::Vec computeBTabular(const double& alpha);
+    fmatvec::Vec3 (FuncCrPC::*operator_)(const double& alpha);
+    fmatvec::Vec3 operatorPPolynom(const double& alpha);
+    fmatvec::Vec3 operatorTabular(const double& alpha);
+    fmatvec::Vec3 (FuncCrPC::*computeT_)(const double& alpha);
+    fmatvec::Vec3 computeTPPolynom(const double& alpha);
+    fmatvec::Vec3 computeTTabular(const double& alpha);
+    fmatvec::Vec3 (FuncCrPC::*computeN_)(const double& alpha);
+    fmatvec::Vec3 computeNPPolynom(const double& alpha);
+    fmatvec::Vec3 computeNTabular(const double& alpha);
+    fmatvec::Vec3 (FuncCrPC::*computeB_)(const double& alpha);
+    fmatvec::Vec3 computeBPPolynom(const double& alpha);
+    fmatvec::Vec3 computeBTabular(const double& alpha);
     double (FuncCrPC::*computeCurvature_)(const double& alpha);
     double computeCurvaturePPolynom(const double& alpha);
     double computeCurvatureTabular(const double& alpha);

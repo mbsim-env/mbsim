@@ -12,8 +12,8 @@ using namespace std;
 
 class MyRot : public Rotation {
   public:
-    virtual SqrMat operator()(const Vec &q, double t) {
-      SqrMat A(3);
+    virtual SqrMat3 operator()(const Vec &q, double t) {
+      SqrMat3 A;
       for(int i=0; i<3; i++)
         A(i,i) = 1;
       return A;
@@ -23,8 +23,8 @@ class MyRot : public Rotation {
 class MyPos : public Translation {
   public:
     int getqSize() const {return 0;}
-    virtual Vec operator()(const Vec &q, const double &t, const void * =NULL) {
-      Vec PrPK(3);
+    virtual Vec3 operator()(const Vec &q, const double &t, const void * =NULL) {
+      Vec3 PrPK;
       double om = 1;
       PrPK(0) = cos(om*t);
       PrPK(1) = sin(om*t);
@@ -32,10 +32,10 @@ class MyPos : public Translation {
     }; 
 };
 
-class jT : public Function1<Vec,double> {
+class jT : public Function1<Vec3,double> {
   public:
-    Vec operator()(const double& t, const void*) {
-      Vec j(3);
+    Vec3 operator()(const double& t, const void*) {
+      Vec3 j;
       double om = 1;
       j(0) = -sin(om*t)*om;
       j(1) =  cos(om*t)*om;
@@ -43,10 +43,10 @@ class jT : public Function1<Vec,double> {
     }
 };
 
-class djT : public Function1<Vec,double> {
+class djT : public Function1<Vec3,double> {
   public:
-    Vec operator()(const double& t, const void*) {
-      Vec dj(3);
+    Vec3 operator()(const double& t, const void*) {
+      Vec3 dj;
       double om = 1;
       dj(0) = -cos(om*t)*om*om;
       dj(1) =  -sin(om*t)*om*om;

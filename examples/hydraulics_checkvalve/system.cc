@@ -70,7 +70,7 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
     lCV->setMaximalContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(c, d)));
 
   ConstrainedNodeMec * n1 = new ConstrainedNodeMec("n1");
-  n1->setpFunction(new Function1_SS_from_VS(new  TabularFunction1_VS(Vec("[0; .9; 1.1; 2.9; 3.1; 5]")*.1, "[4e5; 4e5; 2e5; 2e5; 4e5; 4e5]")));
+  n1->setpFunction(new Function1_SS_from_VS(new TabularFunction1_VS<Ref,Ref>(Vec("[0; .9; 1.1; 2.9; 3.1; 5]")*.1, "[4e5; 4e5; 2e5; 2e5; 4e5; 4e5]")));
   addLink(n1);
   n1->addOutFlow(lCV->getLine());
 
