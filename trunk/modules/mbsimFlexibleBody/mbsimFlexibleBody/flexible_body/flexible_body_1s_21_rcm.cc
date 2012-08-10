@@ -134,13 +134,13 @@ namespace MBSimFlexibleBody {
       }
       if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
         tmp(0) = cos(X(2)); tmp(1) = sin(X(2)); tmp(2) = 0.;
-        cp.getFrameOfReference().getOrientation().col(1) = frameOfReference->getOrientation() * tmp; // tangent
+        cp.getFrameOfReference().getOrientation().set(1, frameOfReference->getOrientation() * tmp); // tangent
       }
       if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
         tmp(0) = -sin(X(2)); tmp(1) = cos(X(2)); tmp(2) = 0.;
-        cp.getFrameOfReference().getOrientation().col(0) = frameOfReference->getOrientation() * tmp; // normal
+        cp.getFrameOfReference().getOrientation().set(0, frameOfReference->getOrientation() * tmp); // normal
       }
-      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().col(2) = -frameOfReference->getOrientation().col(2); // binormal (cartesian system)
+      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(2, -frameOfReference->getOrientation().col(2)); // binormal (cartesian system)
 
       if(ff==velocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) {
         tmp(0) = X(3); tmp(1) = X(4); tmp(2) = 0.;
@@ -164,13 +164,13 @@ namespace MBSimFlexibleBody {
 
       if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
         tmp(0) =  cos(q(5*node+2)); tmp(1) = sin(q(5*node+2)); tmp(2) = 0.;
-        cp.getFrameOfReference().getOrientation().col(1)    = frameOfReference->getOrientation() * tmp; // tangent
+        cp.getFrameOfReference().getOrientation().set(1, frameOfReference->getOrientation() * tmp); // tangent
       }
       if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
         tmp(0) = -sin(q(5*node+2)); tmp(1) = cos(q(5*node+2)); tmp(2) = 0.;
-        cp.getFrameOfReference().getOrientation().col(0)    =  frameOfReference->getOrientation() * tmp; // normal
+        cp.getFrameOfReference().getOrientation().set(0, frameOfReference->getOrientation() * tmp); // normal
       }
-      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().col(2) = -frameOfReference->getOrientation().col(2); // binormal (cartesian system)
+      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(2, -frameOfReference->getOrientation().col(2)); // binormal (cartesian system)
 
       if(ff==velocity || ff==velocities || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
         tmp(0) = u(5*node+0); tmp(1) = u(5*node+1); tmp(2) = 0.;
@@ -215,8 +215,8 @@ namespace MBSimFlexibleBody {
     }
     else throw MBSimError("ERROR(FlexibleBody1s21RCM::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
 
-    cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation()(0,0,2,1)*Jacobian(0,0,qSize-1,1).T());
-    cp.getFrameOfReference().setJacobianOfRotation   (frameOfReference->getOrientation()(0,2,2,2)*Jacobian(0,2,qSize-1,2).T());
+    cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation()(Index(0,2),Index(0,1))*Jacobian(Index(0,qSize-1),Index(0,1)).T());
+    cp.getFrameOfReference().setJacobianOfRotation   (frameOfReference->getOrientation()(Index(0,2),Index(2,2))*Jacobian(Index(0,qSize-1),Index(2,2)).T());
 
     // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
     // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
@@ -245,7 +245,7 @@ namespace MBSimFlexibleBody {
       else contour1sFlexible->setNodes(userContourNodes);
 
       l0 = L/Elements;
-      Vec g = frameOfReference->getOrientation()(0,0,2,1).T()*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
+      Vec g = frameOfReference->getOrientation()(Index(0,2),Index(0,1)).T()*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
       for(int i=0;i<Elements;i++) {
         qElement.push_back(Vec(8,INIT,0.));
         uElement.push_back(Vec(8,INIT,0.));
@@ -402,12 +402,12 @@ namespace MBSimFlexibleBody {
         if(not filenameVel.empty()) {
           updateKinematicsForFrame(cp, velocity_cosy);
 
-          SqrMat TMPMat = cp.getFrameOfReference().getOrientation();
-          SqrMat AKI(3,INIT,0.);
-          AKI.row(0) = trans(TMPMat.col(1));
-          AKI.row(1) = trans(TMPMat.col(0));
-          AKI.row(2) = trans(TMPMat.col(2));
-          Vec Vel(3,INIT,0.);
+          SqrMat3 TMPMat = cp.getFrameOfReference().getOrientation();
+          SqrMat3 AKI(INIT,0.);
+          AKI.set(0, trans(TMPMat.col(1)));
+          AKI.set(1, trans(TMPMat.col(0)));
+          AKI.set(2, trans(TMPMat.col(2)));
+          Vec3 Vel(INIT,0.);
           Vel = AKI*cp.getFrameOfReference().getVelocity();
 
           NodelistVel[i] = HPoint3Dd(Vel(0), Vel(1), Vel(2), 1);
@@ -492,7 +492,7 @@ namespace MBSimFlexibleBody {
         prevBinStart = binStart;
         Point3Dd norStart = crossProduct(binStart,tangStart);
 
-        SqrMat AIK(3,INIT,0.);
+        SqrMat3 AIK(INIT,0.);
         AIK(0,0) = tangStart.x(); AIK(1,0) = tangStart.y(); AIK(2,0) = tangStart.z();
         AIK(0,1) = norStart.x(); AIK(1,1) = norStart.y(); AIK(2,1) = norStart.z();
         AIK(0,2) = binStart.x(); AIK(1,2) = binStart.y(); AIK(2,2) = binStart.z();
