@@ -161,7 +161,7 @@ namespace MBSim {
        */
       class ZerothDerivative : public Function1<fmatvec::Vector<Col,double>,double> {
         public:
-          ZerothDerivative(PPolynom<Row,Col> *polynom) : Function1<fmatvec::Vector<Col,double>,double>(), parent(polynom), xSave(), ySave() {}
+          ZerothDerivative(PPolynom<Row,Col> *polynom) : Function1<fmatvec::Vector<Col,double>,double>(), parent(polynom), xSave(0), ySave(), firstCall(true) {}
           virtual ~ZerothDerivative() {}
 
           /* INHERITED INTERFACE OF FUNCTION */
@@ -172,6 +172,7 @@ namespace MBSim {
           PPolynom<Row,Col> *parent;
           double xSave;
           fmatvec::Vector<Col,double> ySave;
+          bool firstCall;
       };
 
       /**
@@ -179,7 +180,7 @@ namespace MBSim {
        */
       class FirstDerivative : public Function1<fmatvec::Vector<Col,double>,double> {
         public:
-          FirstDerivative(PPolynom<Row,Col> *polynom) : Function1<fmatvec::Vector<Col,double>,double>(), parent(polynom), xSave(), ySave() {}
+          FirstDerivative(PPolynom<Row,Col> *polynom) : Function1<fmatvec::Vector<Col,double>,double>(), parent(polynom), xSave(0), ySave(), firstCall(true) {}
           virtual ~FirstDerivative() {}
 
           /* INHERITED INTERFACE OF FUNCTION */
@@ -190,6 +191,7 @@ namespace MBSim {
           PPolynom<Row,Col> *parent;
           double xSave;
           fmatvec::Vector<Col,double> ySave;
+          bool firstCall;
       };
 
       /**
@@ -197,7 +199,7 @@ namespace MBSim {
        */
       class SecondDerivative : public Function1<fmatvec::Vector<Col,double>,double> {
         public:
-          SecondDerivative(PPolynom<Row,Col> *polynom) : Function1<fmatvec::Vector<Col,double>,double>(), parent(polynom), xSave(), ySave() {}
+          SecondDerivative(PPolynom<Row,Col> *polynom) : Function1<fmatvec::Vector<Col,double>,double>(), parent(polynom), xSave(0), ySave(), firstCall(true) {}
           virtual ~SecondDerivative() {}
 
           /* INHERITED INTERFACE OF FUNCTION */
@@ -208,6 +210,7 @@ namespace MBSim {
           PPolynom<Row,Col> *parent;
           double xSave;
           fmatvec::Vector<Col,double> ySave;
+          bool firstCall;
       };
   };
 
@@ -395,9 +398,10 @@ namespace MBSim {
     if(x<(parent->breaks)(0)) 
       throw MBSimError("ERROR (PPolynom::operator()): x out of range! x= "+numtostr(x)+", lower bound= "+numtostr((parent->breaks)(0)));
 
-    if ((fabs(x-xSave)<macheps()) && ySave.size())
+    if ((fabs(x-xSave)<macheps()) && !firstCall)
       return ySave;
     else {
+      firstCall = false;
       if(x<(parent->breaks)(parent->index)) // saved index still OK? otherwise search downwards
         while((parent->index) > 0 && (parent->breaks)(parent->index) > x)
           (parent->index)--;
@@ -422,9 +426,10 @@ namespace MBSim {
     if(x>(parent->breaks)(parent->nPoly)) throw MBSimError("ERROR (PPolynom::diff1): x out of range! x= "+numtostr(x)+", upper bound= "+numtostr((parent->breaks)(parent->nPoly)));
     if(x<(parent->breaks)(0)) throw MBSimError("ERROR (PPolynom::diff1): x out of range!   x= "+numtostr(x)+" lower bound= "+numtostr((parent->breaks)(0)));
 
-    if ((fabs(x-xSave)<macheps()) && ySave.size())
+    if ((fabs(x-xSave)<macheps()) && !firstCall)
       return ySave;
     else {
+      firstCall = false;
       if(x<(parent->breaks)(parent->index)) // saved index still OK? otherwise search downwards
         while((parent->index) > 0 && (parent->breaks)(parent->index) > x)
           (parent->index)--;
@@ -449,9 +454,10 @@ namespace MBSim {
     if(x>(parent->breaks)(parent->nPoly)) throw MBSimError("ERROR (PPolynom::diff2): x out of range!   x= "+numtostr(x)+" upper bound= "+numtostr((parent->breaks)(parent->nPoly)));
     if(x<(parent->breaks)(0)) throw MBSimError("ERROR (PPolynom::diff2): x out of range!   x= "+numtostr(x)+" lower bound= "+numtostr((parent->breaks)(0)));
 
-    if ((fabs(x-xSave)<macheps()) && ySave.size())
+    if ((fabs(x-xSave)<macheps()) && !firstCall)
       return ySave;
     else {
+      firstCall = false;
       if(x<(parent->breaks)(parent->index)) // saved index still OK? otherwise search downwards
         while((parent->index) > 0 && (parent->breaks)(parent->index) > x)
           (parent->index)--;
