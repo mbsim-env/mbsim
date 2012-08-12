@@ -166,15 +166,17 @@ cp -ruL $OCTAVEMDIR/* $DISTDIR/share/octave/$(octave-config --version)/m
 mkdir -p $DISTDIR/lib/octave/$(octave-config --version)/oct
 cp -ruL $OCTAVEOCTDIR/* $DISTDIR/lib/octave/$(octave-config --version)/oct
 
+# Remove all libs being hardware or OS dependent (here all libs from the packages glibc-* and mesa-*)
+for F in $(rpm -qa | grep -e "^glibc-" -e "^mesa-" | xargs rpm -ql | grep -e "\.so$" -e "\.so\." | sed -re "s+^.*/++"); do
+  rm -f $DISTDIR/lib/$F &> /dev/null
+done
 # SPECIAL ACTIONS
-rm -f $DISTDIR/lib/libc.so.6
-rm -f $DISTDIR/lib/libpthread.so.0
+cp -uL /usr/lib/libQtXml.so.4 $DISTDIR/lib/. # required by QSvg-plugin
 rm -f $DISTDIR/include/sys/select.h
 rm -f $DISTDIR/include/features.h
 (cd $DISTDIR/lib; ln -s liblapack.so.3 liblapack.so)
 (cd $DISTDIR/lib; ln -s libblas.so.3 libblas.so)
 (cd $DISTDIR/lib; ln -s libgfortran.so.3 libgfortran.so)
-(cd $DISTDIR/lib; ln -s libm.so.6 libm.so)
 (cd $DISTDIR/lib; ln -s libquadmath.so.0 libquadmath.so)
 (cd $DISTDIR/lib; ln -s libhdf5_cpp.so.7 libhdf5_cpp.so)
 (cd $DISTDIR/lib; ln -s libhdf5.so.7 libhdf5.so)
@@ -220,6 +222,9 @@ cp /usr/lib/qt4/plugins/iconengines/libqsvgicon.so $DISTDIR/bin/iconengines
 cat << EOF > $DISTDIR/README.txt
 Using of the MBSim and Co. Package:
 ===================================
+
+NOTE
+This binary Linux build requires a Linux distribution with glibc >= 2.15.
 
 - Unpack the archive to an arbitary directory (already done)
   (Note: It is recommended, that the full directory path where the archive
@@ -400,10 +405,12 @@ for D in $DOCDIRS; do
   cp -ruL $PREFIX/share/mbxmlutils/doc/$D $DISTDIR/share/mbxmlutils/doc
 done
 
+# Remove all libs being hardware or OS dependent (here all libs from the packages glibc-* and mesa-*)
+for F in $(rpm -qa | grep -e "^glibc-" -e "^mesa-" | xargs rpm -ql | grep -e "\.so$" -e "\.so\." | sed -re "s+^.*/++"); do
+  rm -f $DISTDIR/lib/$F &> /dev/null
+done
 # SPECIAL ACTIONS
-rm -f $DISTDIR/lib/libc.so.6
-rm -f $DISTDIR/lib/libpthread.so.0
-(cd $DISTDIR/lib; ln -s libm.so.6 libm.so)
+cp -uL /usr/lib/libQtXml.so.4 $DISTDIR/lib/. # required by QSvg-plugin
 (cd $DISTDIR/lib; ln -s libhdf5_cpp.so.7 libhdf5_cpp.so)
 (cd $DISTDIR/lib; ln -s libhdf5.so.7 libhdf5.so)
 (cd $DISTDIR/lib; ln -s libz.so.1 libz.so)
@@ -416,6 +423,15 @@ mkdir -p $DISTDIR/bin/imageformats
 mkdir -p $DISTDIR/bin/iconengines
 cp /usr/lib/qt4/plugins/imageformats/libqsvg.so $DISTDIR/bin/imageformats
 cp /usr/lib/qt4/plugins/iconengines/libqsvgicon.so $DISTDIR/bin/iconengines
+
+# README.txt
+cat << EOF > $DISTDIR/README.txt
+Using of the OpenMBV Package:
+=============================
+
+NOTE
+This binary Linux build requires a Linux distribution with glibc >= 2.15.
+EOF
      
 # archive dist dir
 if [ $NOARCHIVE -eq 0 ]; then
