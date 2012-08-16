@@ -135,7 +135,7 @@ namespace MBSim {
   TiXmlElement* RotationAboutFixedAxis::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"RotationAboutFixedAxis" );
     TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"axisOfRotation" );
-    TiXmlText *text = new TiXmlText(vec2str(getAxisOfRotation()));
+    TiXmlText *text = new TiXmlText(mat2str(getAxisOfRotation()));
     ele1->LinkEndChild(text);
     ele0->LinkEndChild(ele1);
     parent->LinkEndChild(ele0);

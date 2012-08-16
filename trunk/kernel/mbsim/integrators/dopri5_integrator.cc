@@ -174,11 +174,11 @@ namespace MBSim {
   TiXmlElement* DOPRI5Integrator::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0 = Integrator::writeXMLFile(parent);
     if(getAbsoluteTolerance().size() > 1) 
-      addElementText(ele0,"absoluteTolerance",vec2str(getAbsoluteTolerance()));
+      addElementText(ele0,"absoluteTolerance",mat2str(getAbsoluteTolerance()));
     else
       addElementText(ele0,"absoluteToleranceScalar",getAbsoluteTolerance()(0));
     if(getRelativeTolerance().size() > 1) 
-      addElementText(ele0,"relativeTolerance",vec2str(getRelativeTolerance()));
+      addElementText(ele0,"relativeTolerance",mat2str(getRelativeTolerance()));
     else
       addElementText(ele0,"relativeToleranceScalar",getRelativeTolerance()(0));
     addElementText(ele0,"initialStepSize",getInitialStepSize());

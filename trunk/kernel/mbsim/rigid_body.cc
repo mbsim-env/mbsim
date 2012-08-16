@@ -872,7 +872,7 @@ namespace MBSim {
         ele2->LinkEndChild(ele3);
       }
 
-      addElementText(ele2,MBSIMNS"position",vec2str(saved_RrRF[i-1]));
+      addElementText(ele2,MBSIMNS"position",mat2str(saved_RrRF[i-1]));
       addElementText(ele2,MBSIMNS"orientation",mat2str(saved_ARF[i-1]));
     }
     ele0->LinkEndChild( ele1 );
