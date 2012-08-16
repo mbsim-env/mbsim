@@ -70,21 +70,6 @@ std::string mat2str(const fmatvec::Matrix<Type,Row,Col,AT> &A) {
   }
   s << "]";
   return s.str();
-
-}
-
-template <class Row, class AT>
-std::string vec2str(const fmatvec::Vector<Row,AT> &x) {
-  std::stringstream s;
-  s << "[";
-  for(int i=0; i<x.size(); i++) {
-    s << std::setprecision(12) << x(i);
-    if(i<x.size()-1)
-      s << ";";
-  }
-  s << "]";
-  return s.str();
-
 }
 
 template <class T>

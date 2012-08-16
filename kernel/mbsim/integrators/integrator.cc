@@ -53,7 +53,7 @@ namespace MBSim {
     addElementText(ele0,"endTime",getEndTime());
     addElementText(ele0,"plotStepSize",getPlotStepSize());
     if(getInitialState().size())
-      addElementText(ele0,"initialState",vec2str(getInitialState()));
+      addElementText(ele0,"initialState",mat2str(getInitialState()));
 
     return ele0;
   }
