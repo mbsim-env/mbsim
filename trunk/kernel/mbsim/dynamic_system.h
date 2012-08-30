@@ -309,6 +309,11 @@ namespace MBSim {
       int getLinkStatusRegSize() const { return LinkStatusRegSize; }
       /*****************************************************/
 
+      const std::vector<Object*>& getObjects() const { return object; }
+      const std::vector<DynamicSystem*>& getDynamicSystems() const { return dynamicsystem; }
+      const std::vector<Frame*>& getFrames() const { return frame; }
+      const std::vector<Contour*>& getContours() const { return contour; }
+
       /**
        * \brief references to positions of dynamic system parent
        * \param vector to be referenced
