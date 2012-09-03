@@ -63,7 +63,7 @@ namespace MBSim {
 
     Vec3 v2 = cpData[icircle].getFrameOfReference().getOrientation().col(2);
     Vec3 n1 = cpData[iline].getFrameOfReference().getOrientation().col(0);
-    Vec3 n2 = cpData[icircle].getFrameOfReference().getOrientation().col(0);
+    // Vec3 n2 = cpData[icircle].getFrameOfReference().getOrientation().col(0);
     Vec3 u1 = cpData[iline].getFrameOfReference().getOrientation().col(1);
     Vec3 u2 = cpData[icircle].getFrameOfReference().getOrientation().col(1);
     Vec3 vC1 = cpData[iline].getFrameOfReference().getVelocity();

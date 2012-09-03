@@ -166,9 +166,9 @@ namespace MBSim {
   void LinearComplementarityJacobianFunction::updateJacobian(const Vec & x) {
     int dim = J.size();
     double r = static_cast<LCPNewtonReformulationFunction*>(function)->getr();
-    Vec w;
+    Vec w(0);
     w << x(0, dim / 2 - 1);
-    Vec z;
+    Vec z(0);
     z << x(dim / 2, dim - 1);
 
     //only to update lower half of Jacobian matrix
