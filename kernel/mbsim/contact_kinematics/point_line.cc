@@ -62,7 +62,7 @@ namespace MBSim {
     Vec3 vC1 = cpData[iline].getFrameOfReference().getVelocity();
     Vec3 vC2 = cpData[ipoint].getFrameOfReference().getVelocity();
     Vec3 Om1 = cpData[iline].getFrameOfReference().getAngularVelocity();
-    Vec3 Om2 = cpData[ipoint].getFrameOfReference().getAngularVelocity();
+    // Vec3 Om2 = cpData[ipoint].getFrameOfReference().getAngularVelocity();
 
     double sd1 = u1.T()*(vC2 - vC1); 
 
