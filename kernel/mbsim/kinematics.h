@@ -78,11 +78,11 @@ namespace MBSim {
        * \brief constructor
        * \param independent direction matrix of translation
        */
-      LinearTranslation(const fmatvec::Mat3V &PJT_) { PJT = PJT_; } 
+      LinearTranslation(const fmatvec::Mat3V &PJT_) { PJT = PJT_; }
 
       /* INTERFACE OF TRANSLATION */
       virtual int getqSize() const { throw; return 0; }
-      virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return PJT*q(0,PJT.cols()-1); } 
+      virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return PJT*q(0,PJT.cols()-1); }
       virtual void initializeUsingXML(TiXmlElement *element);
       virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
       /***************************************************/
@@ -266,7 +266,7 @@ namespace MBSim {
        * \brief constructor
        * \param axis of rotation
        */
-      RotationAboutFixedAxis(const fmatvec::Vec3 &a_) : RotationAboutOneAxis() { a = a_; } 
+      RotationAboutFixedAxis(const fmatvec::Vec3 &a_) : RotationAboutOneAxis() { a = a_; }
 
       /* INTERFACE OF ROTATION */
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
@@ -486,7 +486,7 @@ namespace MBSim {
        * \brief constructor
        * \param independent rotation angle function
        */
-      TimeDependentCardanAngles(Function1<fmatvec::Vec, double> *angle_) : RotationAboutThreeAxes(), rot(new CardanAngles()), angle(angle_) {}
+      TimeDependentCardanAngles(Function1<fmatvec::Vec3, double> *angle_) : RotationAboutThreeAxes(), rot(new CardanAngles()), angle(angle_) {}
 
       /**
        * \brief destructor
@@ -508,7 +508,7 @@ namespace MBSim {
       /**
        * \brief time dependent rotation angle
        */
-      Function1<fmatvec::Vec, double> *angle;
+      Function1<fmatvec::Vec3, double> *angle;
   };
 
   class TMatrix : public Function2<fmatvec::MatV,fmatvec::Vec,double> {
@@ -595,7 +595,7 @@ namespace MBSim {
 
       /* INTERFACE OF JACOBIAN */
       virtual int getuSize() const { return J.cols(); }
-      virtual fmatvec::Mat3V operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return J; } 
+      virtual fmatvec::Mat3V operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return J; }
       virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
 
