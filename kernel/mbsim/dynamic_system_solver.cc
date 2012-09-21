@@ -1401,14 +1401,14 @@ namespace MBSim {
     return dss;
  }
 
-  void DynamicSystemSolver::writeXMLFile() {
+  void DynamicSystemSolver::writeXMLFile(const string &name) {
     TiXmlDocument doc;
     TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
     doc.LinkEndChild( decl );
     writeXMLFile(&doc);
     map<string, string> nsprefix;
     unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
-    doc.SaveFile(getName()+".mbsim.xml");
+    doc.SaveFile(name+".mbsim.xml");
   }
 
   void DynamicSystemSolver::addToGraph(Graph* graph, SqrMat &A, int i, vector<Object*>& objList) {

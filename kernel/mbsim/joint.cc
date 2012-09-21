@@ -620,8 +620,14 @@ namespace MBSim {
     TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"connect");
     //ele1->SetAttribute("ref1", frame[0]->getXMLPath(frame[0])); // absolute path
     //ele1->SetAttribute("ref2", frame[1]->getXMLPath(frame[1])); // absolute path
-    ele1->SetAttribute("ref1", frame[0]->getXMLPath(this,true)); // relative path
-    ele1->SetAttribute("ref2", frame[1]->getXMLPath(this,true)); // relative path
+    if(frame.size()) {
+      ele1->SetAttribute("ref1", frame[0]->getXMLPath(this,true)); // relative path
+      ele1->SetAttribute("ref2", frame[1]->getXMLPath(this,true)); // relative path
+    }
+    else {
+      ele1->SetAttribute("ref1", saved_ref1);
+      ele1->SetAttribute("ref2", saved_ref2);
+    }
     ele0->LinkEndChild(ele1);
     return ele0;
   }
