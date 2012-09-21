@@ -266,12 +266,6 @@ namespace MBSim {
       std::string& getFrameF(int i) {return saved_refFrameF[i];}
       fmatvec::Vec3& getRrRF(int i) {return saved_RrRF[i];}
       fmatvec::SqrMat3& getARF(int i) {return saved_ARF[i];}
-      //const std::string& getFrameF(int i) const {return saved_refFrameF[i];}
-      //const fmatvec::Vec3& getRrRF(int i) const {return saved_RrRF[i];}
-      //const fmatvec::SqrMat3& getARF(int i) const {return saved_ARF[i];}
-      //void setFrameF(int i, const std::string &str) {saved_refFrameF[i] = str;}
-      //void setRrRF(int i, const fmatvec::Vec3 &r) {saved_RrRF[i] = r;}
-      //void setARF(int i, const fmatvec::SqrMat3 &A) {saved_ARF[i] = A;}
 
     protected:
       /**
