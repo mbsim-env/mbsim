@@ -33,6 +33,7 @@
 #include <openmbvcppinterface/arrow.h>
 #include <openmbvcppinterface/invisiblebody.h>
 #include <openmbvcppinterface/objectfactory.h>
+#include <openmbvcppinterface/frame.h>
 #endif
 
 using namespace std;
@@ -883,17 +884,25 @@ namespace MBSim {
     ele0->LinkEndChild( ele1 );
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    ele1 = new TiXmlElement( MBSIMNS"openMBVRigidBody" );
-    getOpenMBVBody()->writeXMLFile(ele1);
-    ele0->LinkEndChild(ele1);
+    if(getOpenMBVBody()) {
+      ele1 = new TiXmlElement( MBSIMNS"openMBVRigidBody" );
+      getOpenMBVBody()->writeXMLFile(ele1);
 
-//    e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameC");
-//    if(e) {
-//      if(!openMBVBody)
-//        setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
-//      C->enableOpenMBV(getDouble(e->FirstChildElement(MBSIMNS"size")),
-//          getDouble(e->FirstChildElement(MBSIMNS"offset")));
-//    }
+      if(getOpenMBVFrameOfReference()) {
+        TiXmlElement * ele2 = new TiXmlElement( MBSIMNS"frameOfReference" );
+        string str = string("Frame[") + getOpenMBVFrameOfReference()->getName() + "]";
+        ele2->SetAttribute("ref", str);
+        ele1->LinkEndChild(ele2);
+      }
+      ele0->LinkEndChild(ele1);
+    }
+
+    if(C->getOpenMBVFrame()) {
+      ele1 = new TiXmlElement( MBSIMNS"enableOpenMBVFrameC" );
+      addElementText(ele1,MBSIMNS"size",C->getOpenMBVFrame()->getSize());
+      addElementText(ele1,MBSIMNS"offset",C->getOpenMBVFrame()->getOffset());
+      ele0->LinkEndChild(ele1);
+    }
 #endif
 
     return ele0;
