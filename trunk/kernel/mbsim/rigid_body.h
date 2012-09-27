@@ -241,6 +241,7 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVRigidBody(OpenMBV::RigidBody* body);
       void setOpenMBVFrameOfReference(Frame * frame) {openMBVFrame=frame; }
+      const Frame* getOpenMBVFrameOfReference() const {return openMBVFrame; }
 #endif
 
       virtual void initializeUsingXML(TiXmlElement *element);
@@ -262,10 +263,6 @@ namespace MBSim {
       // void setuRel(const fmatvec::Vec &u) {uRel0 = u;}
       fmatvec::Mat3V& getPJT(int i=0) {return PJT[i];}
       fmatvec::Mat3V& getPJR(int i=0) {return PJR[i];}
-
-      std::string& getFrameF(int i) {return saved_refFrameF[i];}
-      fmatvec::Vec3& getRrRF(int i) {return saved_RrRF[i];}
-      fmatvec::SqrMat3& getARF(int i) {return saved_ARF[i];}
 
     protected:
       /**

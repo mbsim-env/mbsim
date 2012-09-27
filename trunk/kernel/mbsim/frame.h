@@ -86,6 +86,7 @@ namespace MBSim {
       virtual void init(InitStage stage);
 #ifdef HAVE_OPENMBVCPPINTERFACE
       virtual void enableOpenMBV(double size=1, double offset=1);
+      OpenMBV::Frame* getOpenMBVFrame() {return openMBVFrame; }
 #endif
       /***************************************************/
       

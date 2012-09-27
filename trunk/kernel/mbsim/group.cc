@@ -28,6 +28,10 @@
 #include "hdf5serie/simpleattribute.h"
 #include "mbsim/objectfactory.h"
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/frame.h>
+#endif
+
 //#ifdef _OPENMP
 //#include <omp.h>
 //#endif
@@ -227,6 +231,16 @@ namespace MBSim {
       l->initializeUsingXML(E);
       E=E->NextSiblingElement();
     }
+#ifdef HAVE_OPENMBVCPPINTERFACE
+
+    e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameI");
+    if(e) {
+      //if(!openMBVBody)
+        //setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
+      I->enableOpenMBV(getDouble(e->FirstChildElement(MBSIMNS"size")),
+          getDouble(e->FirstChildElement(MBSIMNS"offset")));
+    }
+#endif
   }
 
   TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
@@ -284,6 +298,14 @@ namespace MBSim {
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
       (*i)->writeXMLFile(ele1);
     ele0->LinkEndChild( ele1 );
+
+    if(I->getOpenMBVFrame()) {
+      ele1 = new TiXmlElement( MBSIMNS"enableOpenMBVFrameI" );
+      addElementText(ele1,MBSIMNS"size",I->getOpenMBVFrame()->getSize());
+      addElementText(ele1,MBSIMNS"offset",I->getOpenMBVFrame()->getOffset());
+      ele0->LinkEndChild(ele1);
+    }
+
     return ele0;
   }
 
