@@ -185,8 +185,8 @@ namespace MBSim {
         m += body[i]->getMass();
       }
       Vec3 mpos, mvel, macc;
-      Vec3 p = mvel;
-      Vec3 pd = macc;
+      Vec3 &p = mvel;
+      Vec3 &pd = macc;
       Vec3 L, Ld;
       for(unsigned int i=0; i<body.size(); i++) {
         mpos += body[i]->getMass()*body[i]->getFrame("C")->getPosition();
