@@ -605,7 +605,7 @@ namespace MBSim {
   }
 
   TiXmlElement* Joint::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = Element::writeXMLFile(parent);
+    TiXmlElement *ele0 = LinkMechanics::writeXMLFile(parent);
     if(forceDir.cols()) {
       TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"force");
       addElementText(ele1,MBSIMNS"direction",mat2str(forceDir));
