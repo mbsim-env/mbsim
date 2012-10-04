@@ -596,6 +596,31 @@
               </xs:choice>
             </xs:complexType>
           </xs:element>
+          <xs:element name="enableOpenMBVFrameI" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Aktiviert die Visualisierung des Koordinatensystems "I" dieser Gruppe in OpenMBV.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="size" type="pv:lengthScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Länge der Achsen des KOS in OpenMBV.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="offset" type="pv:nounitScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Relative Verschiebung der Achsen (0=Achsenkreuz, 1=Rechtssystem).
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType> 
+          </xs:element>
         </xs:sequence> 
         <xs:attribute ref="xml:base"/>
       </xs:extension>
