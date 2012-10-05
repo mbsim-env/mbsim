@@ -1,0 +1,194 @@
+Microsoft Developer Studio Workspace File, Format Version 6.00
+# WARNING: DO NOT EDIT OR DELETE THIS WORKSPACE FILE!
+
+###############################################################################
+
+Project: "AllTests"=".\AllTests\AllTests.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name terr
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name tint
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name tint2
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name tmatrix
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name tmatrixMat
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name TnAprox
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name tnclosed
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name tnInterp
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name tnlength
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name tnurbs
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name tvqsort
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "TnAprox"=".\TnAprox\TnAprox.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "terr"=".\terr\terr.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "tint"=".\tint\tint.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "tint2"=".\tint2\tint2.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "tmatrix"=".\tmatrix\tmatrix.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "tmatrixMat"=".\tmatrixMat\tmatrixMat.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "tnInterp"=".\tnInterp\tnInterp.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "tnclosed"=".\tnclosed\tnclosed.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "tnlength"=".\tnlength\tnlength.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "tnurbs"=".\tnurbs\tnurbs.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "tvqsort"=".\tvqsort\tvqsort.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Global:
+
+Package=<5>
+{{{
+}}}
+
+Package=<3>
+{{{
+}}}
+
+###############################################################################
+
