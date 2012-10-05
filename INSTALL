@@ -1,0 +1,6 @@
+shell commands using autoconfig:
+
+autoreconf -fi
+./configure
+make
+make install
