@@ -257,6 +257,12 @@ namespace MBSim {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"RotationAboutFixedAxis")
       return new RotationAboutFixedAxis;
+    if(element->ValueStr()==MBSIMNS"RotationAboutXAxis")
+      return new RotationAboutXAxis;
+    if(element->ValueStr()==MBSIMNS"RotationAboutYAxis")
+      return new RotationAboutYAxis;
+    if(element->ValueStr()==MBSIMNS"RotationAboutZAxis")
+      return new RotationAboutZAxis;
     if(element->ValueStr()==MBSIMNS"TimeDependentRotationAboutFixedAxis")
       return new TimeDependentRotationAboutFixedAxis;
     if(element->ValueStr()==MBSIMNS"CardanAngles")
