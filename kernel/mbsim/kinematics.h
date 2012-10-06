@@ -212,8 +212,9 @@ namespace MBSim {
       RotationAboutXAxis();
 
       /* INTERFACE OF ROTATION */
-       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
+      virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {}
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
   };
 
   /**
@@ -230,6 +231,7 @@ namespace MBSim {
       /* INTERFACE OF ROTATION */
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {}
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
   };
 
   /**
@@ -247,6 +249,7 @@ namespace MBSim {
       /* INTERFACE OF ROTATION */
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {}
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
   };
 
   /**

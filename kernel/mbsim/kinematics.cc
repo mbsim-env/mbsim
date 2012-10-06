@@ -67,6 +67,12 @@ namespace MBSim {
     return APK;
   }
 
+  TiXmlElement* RotationAboutXAxis::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"RotationAboutXAxis" );
+    parent->LinkEndChild(ele0);
+    return ele0;
+  }
+
   RotationAboutYAxis::RotationAboutYAxis() : RotationAboutOneAxis() {
     APK(1,1) = 1;
   }
@@ -85,6 +91,12 @@ namespace MBSim {
     return APK;
   }
 
+  TiXmlElement* RotationAboutYAxis::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"RotationAboutYAxis" );
+    parent->LinkEndChild(ele0);
+    return ele0;
+  }
+
   RotationAboutZAxis::RotationAboutZAxis() : RotationAboutOneAxis() {
     APK(2,2) = 1;
   }
@@ -101,6 +113,12 @@ namespace MBSim {
     APK(1,1) = cosq;
 
     return APK;
+  }
+
+  TiXmlElement* RotationAboutZAxis::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"RotationAboutZAxis" );
+    parent->LinkEndChild(ele0);
+    return ele0;
   }
 
   SqrMat3 RotationAboutFixedAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
