@@ -82,7 +82,8 @@ namespace MBSim {
       virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
 
       static Integrator* readXMLFile(const std::string &filename);
-      void writeXMLFile();
+      void writeXMLFile(const std::string &name);
+      void writeXMLFile() { writeXMLFile(getType()); }
 
       /***************************************************/
 

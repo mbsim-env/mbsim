@@ -71,12 +71,14 @@ namespace MBSim {
     return integrator;
   }
 
-  void Integrator::writeXMLFile() {
+  void Integrator::writeXMLFile(const string &name) {
     TiXmlDocument doc;
     TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
     doc.LinkEndChild( decl );
     writeXMLFile(&doc);
-    doc.SaveFile(getType()+".mbsimint.xml");
+    //map<string, string> nsprefix;
+    //unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
+    doc.SaveFile(name+".mbsimint.xml");
   }
 
 }
