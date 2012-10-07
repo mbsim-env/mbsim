@@ -23,6 +23,7 @@
 #include <string>
 #include "fmatvec.h"
 #include "mbsimtinyxml/tinyxml-src/tinyxml.h"
+#include <limits>
 
 std::string numtostr(int i);   
 std::string numtostr(double d);   
@@ -61,7 +62,7 @@ std::string mat2str(const fmatvec::Matrix<Type,Row,Col,AT> &A) {
   s << "[";
   for(int i=0; i<A.rows(); i++) {
     for(int j=0; j<A.cols(); j++) {
-      s << std::setprecision(12) << A(i,j);
+      s << std::setprecision(std::numeric_limits<double>::digits10) << A(i,j);
       if(j<A.cols()-1)
         s << ",";
     }
@@ -75,7 +76,7 @@ std::string mat2str(const fmatvec::Matrix<Type,Row,Col,AT> &A) {
 template <class T>
 void addElementText(TiXmlElement *parent, std::string name, T value) {
   std::ostringstream oss;
-  oss<<value;
+  oss << std::setprecision(std::numeric_limits<double>::digits10) << value;
   parent->LinkEndChild(new TiXmlElement(name))->LinkEndChild(new TiXmlText(oss.str()));
 }
 
