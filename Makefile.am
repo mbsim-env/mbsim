@@ -4,7 +4,7 @@ ACLOCAL_AMFLAGS = -I m4
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = nurbs++.pc
 
-SUBDIRS= include matrix numerical image nurbs tests
+SUBDIRS= include matrix numerical image nurbs #tests
 #EXTRA_SUBDIRS = examples
 DIST_SUBDIRS = include matrix numerical image nurbs examples tests m4
 
