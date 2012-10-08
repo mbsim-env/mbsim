@@ -174,17 +174,17 @@ namespace MBSim {
   TiXmlElement* DOPRI5Integrator::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0 = Integrator::writeXMLFile(parent);
     if(getAbsoluteTolerance().size() > 1) 
-      addElementText(ele0,"absoluteTolerance",mat2str(getAbsoluteTolerance()));
+      addElementText(ele0,MBSIMINTNS"absoluteTolerance",mat2str(getAbsoluteTolerance()));
     else
-      addElementText(ele0,"absoluteToleranceScalar",getAbsoluteTolerance()(0));
+      addElementText(ele0,MBSIMINTNS"absoluteToleranceScalar",getAbsoluteTolerance()(0));
     if(getRelativeTolerance().size() > 1) 
-      addElementText(ele0,"relativeTolerance",mat2str(getRelativeTolerance()));
+      addElementText(ele0,MBSIMINTNS"relativeTolerance",mat2str(getRelativeTolerance()));
     else
-      addElementText(ele0,"relativeToleranceScalar",getRelativeTolerance()(0));
-    addElementText(ele0,"initialStepSize",getInitialStepSize());
-    addElementText(ele0,"maximalStepSize",getMaximalStepSize());
+      addElementText(ele0,MBSIMINTNS"relativeToleranceScalar",getRelativeTolerance()(0));
+    addElementText(ele0,MBSIMINTNS"initialStepSize",getInitialStepSize());
+    addElementText(ele0,MBSIMINTNS"maximalStepSize",getMaximalStepSize());
     if(getMaxStepNumber() != 2000000000)
-      addElementText(ele0,"maximalNumberOfSteps",getMaxStepNumber());
+      addElementText(ele0,MBSIMINTNS"maximalNumberOfSteps",getMaxStepNumber());
     return ele0;
   }
 

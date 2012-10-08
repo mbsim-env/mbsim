@@ -45,15 +45,14 @@ namespace MBSim {
   }
 
   TiXmlElement* Integrator::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0=new TiXmlElement(getType());
+    TiXmlElement *ele0=new TiXmlElement(MBSIMINTNS+getType());
     parent->LinkEndChild(ele0);
-    ele0->SetAttribute("xmlns", "http://mbsim.berlios.de/MBSimIntegrator");
 
-    addElementText(ele0,"startTime",getStartTime());
-    addElementText(ele0,"endTime",getEndTime());
-    addElementText(ele0,"plotStepSize",getPlotStepSize());
+    addElementText(ele0,MBSIMINTNS"startTime",getStartTime());
+    addElementText(ele0,MBSIMINTNS"endTime",getEndTime());
+    addElementText(ele0,MBSIMINTNS"plotStepSize",getPlotStepSize());
     if(getInitialState().size())
-      addElementText(ele0,"initialState",mat2str(getInitialState()));
+      addElementText(ele0,MBSIMINTNS"initialState",mat2str(getInitialState()));
 
     return ele0;
   }
@@ -73,12 +72,13 @@ namespace MBSim {
   }
 
   void Integrator::writeXMLFile(const string &name) {
+    MBSimObjectFactory::initialize();
     TiXmlDocument doc;
     TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
     doc.LinkEndChild( decl );
     writeXMLFile(&doc);
-    //map<string, string> nsprefix;
-    //unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
+    map<string, string> nsprefix=ObjectFactory::getInstance()->getNamespacePrefixMapping();
+    unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
     doc.SaveFile(name+".mbsimint.xml");
   }
 

@@ -13,6 +13,7 @@
 #include "mbsim/environment.h"
 #include "mbsim/utils/contour_functions.h"
 #include <set>
+#include <map>
 
 namespace MBSim {
 
@@ -20,7 +21,11 @@ class ObjectFactoryBase {
   protected:
     ObjectFactoryBase() {}
     virtual ~ObjectFactoryBase() {}
+    typedef std::pair<std::string, std::string> P_NSPRE;
+    typedef std::map<std::string, std::string> M_NSPRE;
+    typedef std::pair<double, P_NSPRE> P_PRINSPRE;
   public:
+    typedef std::multimap<double, P_NSPRE> MM_PRINSPRE;
     virtual Group* createGroup(TiXmlElement *element) { return NULL; }
     virtual Object* createObject(TiXmlElement *element) { return NULL; }
     virtual ExtraDynamic * createExtraDynamic(TiXmlElement *element) { return NULL; }
@@ -42,6 +47,10 @@ class ObjectFactoryBase {
     virtual Function2<fmatvec::Vec,fmatvec::Vec,double> *createFunction2_VVS(TiXmlElement *element) { return NULL; }
     virtual Function3<fmatvec::Mat3V,fmatvec::Vec,fmatvec::Vec,double> *createFunction3_MVVS(TiXmlElement *element) { return NULL; }
     virtual ContourFunction1s * createContourFunction1s(TiXmlElement * element) { return NULL; }
+    virtual MM_PRINSPRE& getPriorityNamespacePrefix() {
+      static MM_PRINSPRE ret;
+      return ret;
+    }
 };
 
 class ObjectFactory : public ObjectFactoryBase {
@@ -77,6 +86,7 @@ class ObjectFactory : public ObjectFactoryBase {
     Function2<fmatvec::Vec,fmatvec::Vec,double> *createFunction2_VVS(TiXmlElement *element);
     Function3<fmatvec::Mat3V,fmatvec::Vec,fmatvec::Vec,double> *createFunction3_MVVS(TiXmlElement *element);
     ContourFunction1s * createContourFunction1s(TiXmlElement * element);
+    M_NSPRE getNamespacePrefixMapping();
 };
 
 class MBSimObjectFactory : protected ObjectFactoryBase {
@@ -109,6 +119,7 @@ class MBSimObjectFactory : protected ObjectFactoryBase {
     Function2<fmatvec::Vec,fmatvec::Vec,double> *createFunction2_VVS(TiXmlElement *element);
     Function3<fmatvec::Mat3V,fmatvec::Vec,fmatvec::Vec,double> *createFunction3_MVVS(TiXmlElement *element);
     ContourFunction1s * createContourFunction1s(TiXmlElement * element) {return 0; }
+    MM_PRINSPRE& getPriorityNamespacePrefix();
 };
 
 }

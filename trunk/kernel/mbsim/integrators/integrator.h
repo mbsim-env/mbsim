@@ -20,7 +20,8 @@
 #ifndef _INTEGRATOR_H_
 #define _INTEGRATOR_H_
 
-#define MBSIMINTNS "{http://mbsim.berlios.de/MBSimIntegrator}"
+#define MBSIMINTNS_ "http://mbsim.berlios.de/MBSimIntegrator"
+#define MBSIMINTNS "{"MBSIMINTNS_"}"
 
 #include<fmatvec.h>
 #include"mbsimtinyxml/tinyxml-src/tinyxml.h"

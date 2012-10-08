@@ -24,7 +24,8 @@
 #include "mbsimtinyxml/tinyxml-src/tinyxml.h"
 #include "mbsim/utils/function.h"
 
-#define MBSIMHYDRAULICSNS "{http://mbsim.berlios.de/MBSimHydraulics}"
+#define MBSIMHYDRAULICSNS_ "http://mbsim.berlios.de/MBSimHydraulics"
+#define MBSIMHYDRAULICSNS "{"MBSIMHYDRAULICSNS_"}"
 
 namespace MBSim {
   class Group;
@@ -49,6 +50,7 @@ namespace MBSimHydraulics {
       MBSim::Link* createLink(TiXmlElement *element);
       MBSim::Environment *getEnvironment(TiXmlElement *element);
       MBSim::Function1<double, double> * createFunction1_SS(TiXmlElement *element);
+      MBSim::ObjectFactoryBase::MM_PRINSPRE& getPriorityNamespacePrefix();
   };
 
 }

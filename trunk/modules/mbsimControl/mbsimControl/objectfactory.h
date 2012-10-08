@@ -4,7 +4,8 @@
 #include "mbsim/objectfactory.h"
 #include "mbsimtinyxml/tinyxml-src/tinyxml.h"
 
-#define MBSIMCONTROLNS "{http://mbsim.berlios.de/MBSimControl}"
+#define MBSIMCONTROLNS_ "http://mbsim.berlios.de/MBSimControl"
+#define MBSIMCONTROLNS "{"MBSIMCONTROLNS_"}"
 
 namespace MBSim {
   class ExtraDynamic;
@@ -24,6 +25,7 @@ namespace MBSimControl {
     protected:
       MBSim::ExtraDynamic * createExtraDynamic(TiXmlElement *element);
       MBSim::Link* createLink(TiXmlElement *element);
+      MBSim::ObjectFactoryBase::MM_PRINSPRE& getPriorityNamespacePrefix();
   };
 
 }

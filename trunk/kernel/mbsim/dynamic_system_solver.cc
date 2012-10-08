@@ -1378,8 +1378,6 @@ namespace MBSim {
 
   TiXmlElement* DynamicSystemSolver::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0 = Group::writeXMLFile(parent);
-    ele0->SetAttribute("xmlns", "http://mbsim.berlios.de/MBSim");
-    ele0->SetAttribute("xmlns:ombv", "http://openmbv.berlios.de/OpenMBV");
 
     TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"environments" );
     MBSimEnvironment::getInstance()->writeXMLFile(ele1);
@@ -1403,11 +1401,12 @@ namespace MBSim {
  }
 
   void DynamicSystemSolver::writeXMLFile(const string &name) {
+    MBSimObjectFactory::initialize();
     TiXmlDocument doc;
     TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
     doc.LinkEndChild( decl );
     writeXMLFile(&doc);
-    map<string, string> nsprefix;
+    map<string, string> nsprefix=ObjectFactory::getInstance()->getNamespacePrefixMapping();
     unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
     doc.SaveFile(name+".mbsim.xml");
   }
