@@ -140,7 +140,7 @@ NurbsSurfaceSP<T,N> NurbsSurfaceSP<T,N>::generateParallel(T d) const {
   for(i=0;i<this->P.rows();++i)
     for(j=0;j<this->P.cols();++j){
       Point_nD<T,N> norm ;
-      norm = normal(maxAtU_[i],maxAtV_[j]) ;
+      norm = this->normal(maxAtU_[i],maxAtV_[j]) ;
       if(norm.x() == T(0) && 
 	 norm.y() == T(0) &&
 	 norm.z() == T(0)){
@@ -150,26 +150,26 @@ NurbsSurfaceSP<T,N> NurbsSurfaceSP<T,N>::generateParallel(T d) const {
 	// must handle the corner cases
 	int ok = 0 ; 
 	if(i==0 && j==0){
-	  norm = normal(maxAtU_[i]+delta,maxAtV_[j]) ;
-	  norm += normal(maxAtU_[i],maxAtV_[j]+delta) ;
+	  norm = this->normal(maxAtU_[i]+delta,maxAtV_[j]) ;
+	  norm += this->normal(maxAtU_[i],maxAtV_[j]+delta) ;
 	  norm /= T(2) ;
 	  ok = 1 ;
 	}
 	if(i==this->P.rows()-1 && j==this->P.cols()-1){
-	  norm = normal(maxAtU_[i]-delta,maxAtV_[j]) ;
-	  norm += normal(maxAtU_[i],maxAtV_[j]-delta) ;
+	  norm = this->normal(maxAtU_[i]-delta,maxAtV_[j]) ;
+	  norm += this->normal(maxAtU_[i],maxAtV_[j]-delta) ;
 	  norm /= T(2) ;
 	  ok = 1 ;
 	}
 	if(i==0 && j==this->P.cols()-1){
-	  norm = normal(maxAtU_[i]-delta,maxAtV_[j]) ;
-	  norm += normal(maxAtU_[i],maxAtV_[j]+delta) ;
+	  norm = this->normal(maxAtU_[i]-delta,maxAtV_[j]) ;
+	  norm += this->normal(maxAtU_[i],maxAtV_[j]+delta) ;
 	  norm /= T(2) ;
 	  ok = 1 ;
 	}
 	if(i==this->P.rows()-1 && j==0){
-	  norm = normal(maxAtU_[i]-delta,maxAtV_[j]) ;
-	  norm += normal(maxAtU_[i],maxAtV_[j]+delta) ;
+	  norm = this->normal(maxAtU_[i]-delta,maxAtV_[j]) ;
+	  norm += this->normal(maxAtU_[i],maxAtV_[j]+delta) ;
 	  norm /= T(2) ;
 	  ok = 1 ;
 	}
@@ -194,8 +194,8 @@ NurbsSurfaceSP<T,N> NurbsSurfaceSP<T,N>::generateParallel(T d) const {
 	      v2 = maxAtV_[j]- nt*delta ;
 	      if(v1>this->V[this->V.n()-1]) v1 = this->V[this->V.n()-1] ;
 	      if(v2<this->V[0]) v2 = this->V[0] ;
-	      norm = normal(u1,v1);
-	      norm += normal(u2,v2) ;
+	      norm = this->normal(u1,v1);
+	      norm += this->normal(u2,v2) ;
 	      norm /= 2 ; 
 	    }
 	    else{
@@ -215,9 +215,9 @@ NurbsSurfaceSP<T,N> NurbsSurfaceSP<T,N>::generateParallel(T d) const {
 	      if(v3<this->V[0]) v3 = this->V[0] ;
 	      if(v3>this->V[this->V.n()-1]) v3 = this->V[this->V.n()-1] ;
 
-	      norm = normal(u1,v1);
-	      norm += normal(u2,v2) ;
-	      norm += normal(u3,v3) ;
+	      norm = this->normal(u1,v1);
+	      norm += this->normal(u2,v2) ;
+	      norm += this->normal(u3,v3) ;
 	      norm /= 3 ; 
 	    }
 	    nt *= 10.0 ; 
@@ -316,7 +316,7 @@ void NurbsSurfaceSP<T,N>::modOnlySurfCPby(int i, int j, const HPoint_nD<T,N>& a)
   pu.resize(n) ; 
   pv.resize(n) ; 
 
-  movePoint(u,v,pts,pu,pv) ;
+  this->movePoint(u,v,pts,pu,pv) ;
 }
 
 } // end namespace
