@@ -38,6 +38,9 @@
 #include "mbsim/integrators/rksuite_integrator.h"
 #include "mbsim/utils/contour_functions.h"
 #include "mbsim/constraint.h"
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#  include "openmbvcppinterface/objectfactory.h"
+#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -211,6 +214,33 @@ namespace MBSim {
     for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((u=(*i)->createContourFunction1s(element))) return u;
     throw MBSimError(string("No ContourFunction1s of type ")+element->ValueStr()+" exists.");
+  }
+
+  ObjectFactoryBase::M_NSPRE ObjectFactory::getNamespacePrefixMapping() {
+    // collect all priority-namespace-prefix mappings
+    MM_PRINSPRE priorityNSPrefix;
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
+      priorityNSPrefix.insert((*i)->getPriorityNamespacePrefix().begin(), (*i)->getPriorityNamespacePrefix().end());
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    // add the openmbv mapping
+    priorityNSPrefix.insert(OpenMBV::ObjectFactory::getPriorityNamespacePrefix().begin(),
+                            OpenMBV::ObjectFactory::getPriorityNamespacePrefix().end());
+#endif
+    
+    // generate the namespace-prefix mapping considering the priority
+    M_NSPRE nsprefix;
+    set<string> prefix;
+    for(MM_PRINSPRE::reverse_iterator i=priorityNSPrefix.rbegin(); i!=priorityNSPrefix.rend(); i++) {
+      // insert only if the prefix does not already exist
+      if(prefix.find(i->second.second)!=prefix.end())
+        continue;
+      // insert only if the namespace does not already exist
+      pair<M_NSPRE::iterator, bool> ret=nsprefix.insert(i->second);
+      if(ret.second)
+        prefix.insert(i->second.second);
+    }
+
+    return nsprefix;
   }
 
 
@@ -469,6 +499,26 @@ namespace MBSim {
 
   Function3<Mat3V,Vec,Vec,double> *MBSimObjectFactory::createFunction3_MVVS(TiXmlElement *element) {
     return 0;
+  }
+
+  ObjectFactoryBase::MM_PRINSPRE& MBSimObjectFactory::getPriorityNamespacePrefix() {
+    static MM_PRINSPRE priorityNamespacePrefix;
+
+    if(priorityNamespacePrefix.empty()) {
+      // mbsim namespace (very high priority for the default namespace)
+      priorityNamespacePrefix.insert(P_PRINSPRE(100, P_NSPRE(MBSIMNS_, "")));
+      priorityNamespacePrefix.insert(P_PRINSPRE( 90, P_NSPRE(MBSIMNS_, "mbsim")));
+
+      // mbsim-integrator namespace (very high priority for the default namespace)
+      priorityNamespacePrefix.insert(P_PRINSPRE( 90, P_NSPRE(MBSIMINTNS_, "")));
+      priorityNamespacePrefix.insert(P_PRINSPRE( 80, P_NSPRE(MBSIMINTNS_, "mbsimint")));
+
+      // XInclude
+      priorityNamespacePrefix.insert(P_PRINSPRE(  2, P_NSPRE(XINCLUDENS_, "xi")));
+      priorityNamespacePrefix.insert(P_PRINSPRE(  1, P_NSPRE(XINCLUDENS_, "xinclude")));
+    }
+
+    return priorityNamespacePrefix;
   }
 
 }

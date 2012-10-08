@@ -23,7 +23,8 @@
 #include "mbsim/objectfactory.h"
 #include "mbsimtinyxml/tinyxml-src/tinyxml.h"
 
-#define MBSIMFLEXIBLEBODYNS "{http://mbsim.berlios.de/MBSimFlexibleBody}"
+#define MBSIMFLEXIBLEBODYNS_ "http://mbsim.berlios.de/MBSimFlexibleBody"
+#define MBSIMFLEXIBLEBODYNS "{"MBSIMFLEXIBLEBODYNS_"}"
 
 namespace MBSim {
   class Object;
@@ -50,6 +51,7 @@ namespace MBSimFlexibleBody {
        * \return analogous MBSim::Object
        */
       MBSim::Object* createObject(TiXmlElement *element);
+      MBSim::ObjectFactoryBase::MM_PRINSPRE& getPriorityNamespacePrefix();
     
     private:
       /**
