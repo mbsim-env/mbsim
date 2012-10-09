@@ -63,7 +63,11 @@ namespace MBSim {
       /*! 
        * \brief constructor
        */
-      PPolynom() : DifferentiableFunction1<fmatvec::Vector<Col,double> >() { addDerivative(new PPolynom<Row,Col>::ZerothDerivative(this)); addDerivative(new PPolynom<Row,Col>::FirstDerivative(this)); addDerivative(new PPolynom<Row,Col>::SecondDerivative(this)); }
+      PPolynom() : DifferentiableFunction1<fmatvec::Vector<Col,double> >() {
+        this->addDerivative(new PPolynom<Row,Col>::ZerothDerivative(this));
+        this->addDerivative(new PPolynom<Row,Col>::FirstDerivative(this));
+        this->addDerivative(new PPolynom<Row,Col>::SecondDerivative(this));
+      }
 
       /*! 
        * \brief destructor

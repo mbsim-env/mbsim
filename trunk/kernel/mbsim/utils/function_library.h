@@ -291,16 +291,16 @@ namespace MBSim {
 
   template<class Col>
     SinusFunction1_VS<Col>::SinusFunction1_VS() : DifferentiableFunction1<fmatvec::Vector<Col,double> >(), ySize(0), amplitude(), frequency(), phase(), offset() {
-      addDerivative(new SinusFunction1_VS::ZerothDerivative(this));
-      addDerivative(new SinusFunction1_VS::FirstDerivative(this));
-      addDerivative(new SinusFunction1_VS::SecondDerivative(this));
+      this->addDerivative(new SinusFunction1_VS::ZerothDerivative(this));
+      this->addDerivative(new SinusFunction1_VS::FirstDerivative(this));
+      this->addDerivative(new SinusFunction1_VS::SecondDerivative(this));
     }
 
   template<class Col>
     SinusFunction1_VS<Col>::SinusFunction1_VS(fmatvec::Vector<Col,double> amplitude_, fmatvec::Vector<Col,double> frequency_, fmatvec::Vector<Col,double> phase_, fmatvec::Vector<Col,double> offset_) : DifferentiableFunction1<fmatvec::Vector<Col,double> >(), amplitude(amplitude_), frequency(frequency_), phase(phase_), offset(offset_) {
-      addDerivative(new SinusFunction1_VS::ZerothDerivative(this));
-      addDerivative(new SinusFunction1_VS::FirstDerivative(this));
-      addDerivative(new SinusFunction1_VS::SecondDerivative(this));
+      this->addDerivative(new SinusFunction1_VS::ZerothDerivative(this));
+      this->addDerivative(new SinusFunction1_VS::FirstDerivative(this));
+      this->addDerivative(new SinusFunction1_VS::SecondDerivative(this));
       check();
     }
 
