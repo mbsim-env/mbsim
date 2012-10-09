@@ -46,6 +46,7 @@
 #include <mbsim/contact_kinematics/sphere_plane.h>
 #include <mbsim/contact_kinematics/sphere_sphere.h>
 #include <mbsim/contact_kinematics/point_line_segment.h>
+#include <mbsim/contact_kinematics/area_polynomialfrustum.h>
 // --- List of contact kinematic implementations - END ---
 
 namespace MBSim {
@@ -142,6 +143,9 @@ namespace MBSim {
 
     else if ( strcmp(contour0, "Point")==0 && strcmp(contour1, "LineSegment")==0 )
       return new ContactKinematicsPointLineSegment; 
+
+    else if ( strcmp(contour0, "Area")==0 && strcmp(contour1, "PolynomialFrustum")==0 )
+      return new ContactKinematicsAreaPolynomialFrustum;
 
     else
       return 0;
