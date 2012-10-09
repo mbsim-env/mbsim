@@ -20,7 +20,10 @@
 #ifndef _AREA_H_
 #define _AREA_H_
 
-#include "mbsim/contour.h"
+#include "mbsim/contours/plane.h"
+#include "fmatvec.h"
+
+
 
 namespace MBSim {
 
@@ -30,7 +33,7 @@ namespace MBSim {
    *  \date 2009-07-16 new file (Bastian Esefeld)
    *  \todo adapt to new interface TODO
    */ 
-  class Area : public RigidContour {
+  class Area : public Plane {
     public:
       /**
        * \brief constructor
@@ -38,23 +41,33 @@ namespace MBSim {
        */
       Area(const std::string &name);
 
+      /* INHERITED INTERFACE OF ELEMENT */
+      std::string getType() const { return "Area"; }
+      /**********************************/
+
       /* GETTER / SETTER */
-      void setLimit1(double l) {lim1 = l;}
-      void setLimit2(double l) {lim2 = l;}
-      void setCd1(const fmatvec::Vec3& Cd);
-      void setCd2(const fmatvec::Vec3& Cd);
-      virtual void init(InitStage stage);
-      double getLimit1() const { return lim1; }
-      double getLimit2() const { return lim2; }
+      void setLimitY(double l) {limy = l;}
+      void setLimitZ(double l) {limz = l;}
+      double getLimitY() const { return limy; }
+      double getLimitZ() const { return limz; }
+
+      /*!
+       * \brief projection from a point to center of the area
+       */
+      double prj_Area_Point(fmatvec::Vec3& Point);
+
+      /*!
+       * \brief check if the area has contact with the sphere
+       *
+       */
       /***************************************************/
 
-      fmatvec::Vec3 computeWn() { return R.getOrientation()*Cn; }
-      fmatvec::Vec3 computeWd1() { return R.getOrientation()*Cd1; }
-      fmatvec::Vec3 computeWd2() { return R.getOrientation()*Cd2; }
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  virtual void enableOpenMBV(bool enable = true, int number = 10);
+#endif
 
-    private:
-      double lim1, lim2;
-      fmatvec::Vec3 Cn, Cd1, Cd2;
+    protected:
+      double limy, limz;
   };      
 }
 

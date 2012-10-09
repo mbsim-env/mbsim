@@ -1,5 +1,6 @@
 noinst_LTLIBRARIES = libcontactkinematics.la
-libcontactkinematics_la_SOURCES = circle_frustum.cc\
+libcontactkinematics_la_SOURCES = area_polynomialfrustum.cc\
+                  circle_frustum.cc\
 				  circlesolid_circlehollow.cc\
 				  circlesolid_circlesolid.cc\
 				  circlesolid_contour1s.cc\
@@ -30,7 +31,8 @@ contactkinematicsincludedir = $(includedir)/mbsim/contact_kinematics
 INCLUDES = $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
 LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) 
 
-contactkinematicsinclude_HEADERS = circle_frustum.h\
+contactkinematicsinclude_HEADERS = area_polynomialfrustum.h\
+                   circle_frustum.h\
 				   circlesolid_circlehollow.h \
 				   circlesolid_circlesolid.h \
 				   circlesolid_contour1s.h \
