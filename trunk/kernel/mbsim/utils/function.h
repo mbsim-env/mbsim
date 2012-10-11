@@ -587,13 +587,13 @@ namespace MBSim {
   /**
    * \brief function describing the influence between the deformations on a body
    */
-  class InfluenceFunction : public Function2<double, fmatvec::Vec,  fmatvec::Vec > {
+  class InfluenceFunction : public Function2<double, fmatvec::Vec2,  fmatvec::Vec2 > {
     public:
       InfluenceFunction(const std::string& firstContourName_, const std::string& secondContourName_) :
           firstContourName(firstContourName_), secondContourName(secondContourName_) {
       }
       /* INHERITED INTERFACE OF FUNCTION2 */
-      virtual double operator()(const fmatvec::Vec& firstContourLagrangeParameter, const fmatvec::Vec& secondContourLagrangeParameter, const void * = NULL)=0;
+      virtual double operator()(const fmatvec::Vec2& firstContourLagrangeParameter, const fmatvec::Vec2& secondContourLagrangeParameter, const void * = NULL)=0;
       virtual void initializeUsingXML(TiXmlElement *element) {
         throw MBSimError("InfluenceFuntion::initializeUsingXML : Method not implemented");
       }
@@ -631,7 +631,7 @@ namespace MBSim {
       }
       virtual ~FlexibilityInfluenceFunction() {}
       /* INHERITED INTERFACE OF FUNCTION2 */
-      virtual double operator()(const fmatvec::Vec& firstContourLagrangeParameter, const fmatvec::Vec& secondContourLagrangeParameter, const void * = NULL) {
+      virtual double operator()(const fmatvec::Vec2& firstContourLagrangeParameter, const fmatvec::Vec2& secondContourLagrangeParameter, const void * = NULL) {
         if(nrm2(firstContourLagrangeParameter - secondContourLagrangeParameter) < macheps())
           return flexibility;
         else
@@ -653,7 +653,7 @@ namespace MBSim {
       }
       virtual ~ConstantInfluenceFunction() {}
       /* INHERITED INTERFACE OF FUNCTION2 */
-      virtual double operator()(const fmatvec::Vec& firstContourLagrangeParameter, const fmatvec::Vec& secondContourLagrangeParameter, const void * = NULL) {
+      virtual double operator()(const fmatvec::Vec2& firstContourLagrangeParameter, const fmatvec::Vec2& secondContourLagrangeParameter, const void * = NULL) {
         return couplingValue;
       }
       /***************************************************/

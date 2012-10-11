@@ -50,8 +50,7 @@ using namespace fmatvec;
 namespace MBSim {
 
   MaxwellContact::MaxwellContact(const string &name) :
-      LinkMechanics(name), contourPairing(0), possibleContactPoints(0), C(SymMat(0,NONINIT)), lcpSolvingStrategy(Standard),
-      solution0(Vec(0,NONINIT)), matConst(1.), matConstSetted(false), DEBUGLEVEL(0)
+      LinkMechanics(name), contourPairing(0), possibleContactPoints(0), C(SymMat(0,NONINIT)), rigidBodyGap(Vec(0,NONINIT)), influenceFunctions(), lcpSolvingStrategy(Standard), solution0(Vec(0,NONINIT)), matConst(1.), matConstSetted(false), DEBUGLEVEL(0)
   {
     gTol = 1;
   }
@@ -337,34 +336,35 @@ namespace MBSim {
     for (int i = 0; i < 2; i++) {
 
       //get involved contours
-      Contour *contour1 = contour[currentContourNumber + i];
-      Contour *contour2 = contour[currentContourNumber + i];
+      Contour *contour = this->contour[currentContourNumber + i];
+      //Contour *contour2 = contour[currentContourNumber + i];
       pair<Contour*, Contour*> Pair;
 
-      if (contour1 < contour2)
-        Pair = pair<Contour*, Contour*>(contour1, contour2);
-      else
-        Pair = pair<Contour*, Contour*>(contour2, contour1);
+      //if (contour1 < contour2)
+        Pair = pair<Contour*, Contour*>(contour, contour);
+      //else
+      //  Pair = pair<Contour*, Contour*>(contour2, contour1);
 
       if (influenceFunctions.count(Pair)) { //If there is a function, there is a coupling between these contours
         InfluenceFunction *fct = influenceFunctions[Pair];
         /*TODO_grundl: solve the problem of the ordering input parameters for the function (for now it isn't really solved ..)
          maybe add a MaxwellCouplingFunction class that is derived from Function2 but has these identifiers --> Identifiers are now the (short)names*/
-        Vec firstLagrangeParameter;
-        Vec secondLagrangeParameter;
-        if (contour1->getShortName() == (*fct).getFirstContourName() and contour2->getShortName() == (*fct).getSecondContourName()) {
-          firstLagrangeParameter = contour1->computeLagrangeParameter(contourPairing[currentContactNumber]->getContourPointData()[i].getFrameOfReference().getPosition());
-          secondLagrangeParameter = contour2->computeLagrangeParameter(contourPairing[currentContactNumber]->getContourPointData()[i].getFrameOfReference().getPosition());
-        }
-        else
-          throw MBSimError("MaxwellContact::computeFactorC: The contours \"" + contour1->getShortName() + "\" and \"" + contour2->getShortName() + " don't fit with the function's contour names: \"" + (*fct).getFirstContourName() + "\" and \"" + (*fct).getSecondContourName() + "\"");
+        Vec2 lagrangeParameter;
+        //Vec secondLagrangeParameter;
+        //if (contour1->getShortName() == (*fct).getFirstContourName() and contour2->getShortName() == (*fct).getSecondContourName()) {
+          lagrangeParameter = contour->computeLagrangeParameter(contourPairing[currentContactNumber]->getContourPointData()[i].getFrameOfReference().getPosition());
+          //secondLagrangeParameter = contour->computeLagrangeParameter(contourPairing[currentContactNumber]->getContourPointData()[i].getFrameOfReference().getPosition());
+
+        //}
+        //else
+        //  throw MBSimError("MaxwellContact::computeFactorC: The contours \"" + contour1->getShortName() + "\" and \"" + contour2->getShortName() + " don't fit with the function's contour names: \"" + (*fct).getFirstContourName() + "\" and \"" + (*fct).getSecondContourName() + "\"");
 
         if (DEBUGLEVEL >= 3) {
-          cout << "First LagrangeParameter of contour \"" << contour1->getShortName() << "\" is:" << firstLagrangeParameter << endl;
-          cout << "Second LagrangeParameter contour \"" << contour2->getShortName() << "\" is:" << secondLagrangeParameter << endl;
+          cout << "LagrangeParameter of contour \"" << contour->getShortName() << "\" is:" << lagrangeParameter << endl;
+          //cout << "Second LagrangeParameter contour \"" << contour->getShortName() << "\" is:" << secondLagrangeParameter << endl;
         }
 
-        FactorC += (*fct)(firstLagrangeParameter, secondLagrangeParameter);
+        FactorC += (*fct)(lagrangeParameter, lagrangeParameter);
       }
     }
 
@@ -398,8 +398,8 @@ namespace MBSim {
           InfluenceFunction *fct = influenceFunctions[Pair];
           /*TODO_grundl: solve the problem of the ordering for the function input parameters (for now it isn't really solved ..)
            maybe add a MaxwellCouplingFunction class that is derived from Function2 but has these identifiers*/
-          Vec firstLagrangeParameter = Vec(2, NONINIT);
-          Vec secondLagrangeParameter = Vec(2, NONINIT);
+          Vec2 firstLagrangeParameter;
+          Vec2 secondLagrangeParameter;
           if (contour1->getShortName() == (*fct).getFirstContourName() and contour2->getShortName() == (*fct).getSecondContourName()) {
             firstLagrangeParameter = contour1->computeLagrangeParameter(contourPairing[affectedContactNumber]->getContourPointData()[affectedContourIterator].getFrameOfReference().getPosition());
             secondLagrangeParameter = contour2->computeLagrangeParameter(contourPairing[coupledContactNumber]->getContourPointData()[coupledContourIterator].getFrameOfReference().getPosition());
