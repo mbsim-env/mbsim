@@ -166,9 +166,12 @@ namespace MBSim {
       const std::string getShortName() const {
         size_t i = name.length() - 1;
 
-        while ((name[i-1] != '/') and (i > 0)) {
+        while ((name[i-1] != '/') and (i > 1)) {
           i--;
         }
+        if(i == 1)
+          i--;
+
         return name.substr(i, name.length() - i);
       }
 
