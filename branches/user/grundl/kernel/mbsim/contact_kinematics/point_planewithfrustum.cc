@@ -28,7 +28,7 @@ using namespace std;
 
 namespace MBSim {
 
-  ContactKinematicsPointPlaneWithFrustum::ContactKinematicsPointPlaneWithFrustum() : ET(3), EP(3), MT(3), MP(3), nFrustum(3), tFrustum(3) {
+  ContactKinematicsPointPlaneWithFrustum::ContactKinematicsPointPlaneWithFrustum() {
   }
 
   void ContactKinematicsPointPlaneWithFrustum::assignContours(const vector<Contour*> &contour) {
@@ -73,7 +73,7 @@ namespace MBSim {
     nFrustum(1)=1;
     nFrustum/=nrm2(nFrustum)*sign(h);
 
-    tFrustum=crossProduct(nFrustum, Vec("[0; 0; 1]"));
+    tFrustum=crossProduct(nFrustum, Vec3("[0; 0; 1]"));
     tFrustum/=nrm2(tFrustum);
 
     // cerr << "ET=" << trans(ET) << endl;
@@ -90,10 +90,10 @@ namespace MBSim {
 
   void ContactKinematicsPointPlaneWithFrustum::updateg(Vec &g, ContourPointData* cpData, int index) {
 
-    Vec WrOPoint = point->getFrame()->getPosition();
-    Vec WrOPlane = plane->getFrame()->getPosition();
-    Vec WnContour = plane->getFrame()->getOrientation().col(0);
-    Vec WrPlanePoint = -WrOPlane+WrOPoint;
+    Vec3 WrOPoint = point->getFrame()->getPosition();
+    Vec3 WrOPlane = plane->getFrame()->getPosition();
+    Vec3 WnContour = plane->getFrame()->getOrientation().col(0);
+    Vec3 WrPlanePoint = -WrOPlane+WrOPoint;
     double d = nrm2(crossProduct(WnContour, WrPlanePoint));
 
     // SqrMat AKWTmp(3,3);
@@ -106,16 +106,16 @@ namespace MBSim {
     // }
     // AKWTmp.col(2)=crossProduct(AKWTmp.col(0), AKWTmp.col(1));
     // SqrMat AKW=trans(AKWTmp);
-    SqrMat AKW(3,3);
-    AKW.row(0) = WnContour.T();
+    SqrMat3 AKW;
+    AKW.set(0, WnContour.T());
     if (d<1e-9)
-      AKW.row(1) = plane->getFrame()->getOrientation().col(1).T();
+      AKW.set(1, plane->getFrame()->getOrientation().col(1).T());
     else {
-      AKW.row(1) = crossProduct(crossProduct(AKW.row(0).T(), WrPlanePoint), AKW.row(0).T()).T();
-      AKW.row(1) /= nrm2(AKW.row(1));
+      AKW.set(1, crossProduct(crossProduct(AKW.row(0).T(), WrPlanePoint), AKW.row(0).T()).T());
+      AKW.set(1, AKW.row(1)/nrm2(AKW.row(1)));
     }
-    AKW.row(2) = crossProduct(AKW.row(0).T(), AKW.row(1).T()).T();
-    Vec KrOPoint = AKW*WrPlanePoint;
+    AKW.set(2, crossProduct(AKW.row(0).T(), AKW.row(1).T()).T());
+    Vec3 KrOPoint = AKW*WrPlanePoint;
 
     // cerr << "\n\n\n\n" << endl;
     // cerr << "WrOPoint=" << trans(WrOPoint) << endl;
@@ -126,14 +126,14 @@ namespace MBSim {
     // cerr << "AKW=" << AKW << endl;
     // cerr << "KrOPoint=" << trans(KrOPoint) << endl;
 
-    Vec Kn(3);
-    Vec Kt(3);
-    Vec Kb("[0; 0; 1]");
-    Vec KrCP(3);
+    Vec3 Kn;
+    Vec3 Kt;
+    Vec3 Kb("[0; 0; 1]");
+    Vec3 KrCP;
     if (d<rTop) { // Contact with small plane
       // cerr << "Fall 1" << endl;
-      Kn=Vec("[1; 0; 0]");
-      Kt=Vec("[0; -1; 0]");
+      Kn=Vec3("[1; 0; 0]");
+      Kt=Vec3("[0; -1; 0]");
       g(0)=KrOPoint(0)-h;
       KrCP(0)=h;
       KrCP(1)=KrOPoint(1);
@@ -147,14 +147,14 @@ namespace MBSim {
       Kt(0)=sign(h)*sin_alpha;
       Kt(1)=-cos_alpha;
       KrCP=MT+sign(h)*rho*Kn;
-      Vec KrPointCP=-KrOPoint+KrCP;
-      g(0)=-sign(KrPointCP.T()*Vec("[1; 0; 0]"))*nrm2(KrPointCP);
+      Vec3 KrPointCP=-KrOPoint+KrCP;
+      g(0)=-sign(KrPointCP.T()*Vec3("[1; 0; 0]"))*nrm2(KrPointCP);
     }
     else if (d<rFrustumPlane) { // contact with frustum
       // cerr << "Fall 3" << endl;
       Kn=nFrustum;
       Kt=tFrustum;
-      Vec KrExP(3);
+      Vec3 KrExP;
       if (h<0) {
         KrExP=-EP+KrOPoint;
         KrCP=EP+(KrExP.T()*tFrustum)*tFrustum;
@@ -174,23 +174,23 @@ namespace MBSim {
       Kt(0)=sign(h)*sin_alpha;
       Kt(1)=-cos_alpha;
       KrCP=MP-sign(h)*rho*Kn;
-      Vec KrPointCP=-KrOPoint+KrCP;
-      g(0)=-sign(KrPointCP.T()*Vec("[1; 0; 0]"))*nrm2(KrPointCP);
+      Vec3 KrPointCP=-KrOPoint+KrCP;
+      g(0)=-sign(KrPointCP.T()*Vec3("[1; 0; 0]"))*nrm2(KrPointCP);
     }
     else { // contact with infinite plane
       // cerr << "Fall 5" << endl;
-      Kn=Vec("[1; 0; 0]");
-      Kt=Vec("[0; -1; 0]");
+      Kn=Vec3("[1; 0; 0]");
+      Kt=Vec3("[0; -1; 0]");
       g(0)=KrOPoint(0);
       KrCP(0)=0.;
       KrCP(1)=KrOPoint(1);
     }
 
-    SqrMat AWK = AKW.T();
-    Vec Wn = AWK * Kn;
-    Vec Wt = AWK * Kt;
-    Vec Wb = AWK * Kb;
-    Vec WrCP = WrOPlane + AWK * KrCP;
+    SqrMat3 AWK = AKW.T();
+    Vec3 Wn = AWK * Kn;
+    Vec3 Wt = AWK * Kt;
+    Vec3 Wb = AWK * Kb;
+    Vec3 WrCP = WrOPlane + AWK * KrCP;
 
     // cerr << "Kn=" << trans(Kn) << endl;
     // cerr << "Kt=" << trans(Kt) << endl;
@@ -206,12 +206,12 @@ namespace MBSim {
     cpData[ipoint].getFrameOfReference().getPosition() = WrOPoint;
     cpData[iplane].getFrameOfReference().getPosition() =  WrCP;
 
-    cpData[iplane].getFrameOfReference().getOrientation().col(0) = Wn;
-    cpData[iplane].getFrameOfReference().getOrientation().col(1) = Wt;
-    cpData[iplane].getFrameOfReference().getOrientation().col(2) = -Wb;
-    cpData[ipoint].getFrameOfReference().getOrientation().col(0) = -Wn;
-    cpData[ipoint].getFrameOfReference().getOrientation().col(1) = -Wt;
-    cpData[ipoint].getFrameOfReference().getOrientation().col(2) = -Wb;
+    cpData[iplane].getFrameOfReference().getOrientation().set(0, Wn);
+    cpData[iplane].getFrameOfReference().getOrientation().set(1, Wt);
+    cpData[iplane].getFrameOfReference().getOrientation().set(2, -Wb);
+    cpData[ipoint].getFrameOfReference().getOrientation().set(0, -Wn);
+    cpData[ipoint].getFrameOfReference().getOrientation().set(1, -Wt);
+    cpData[ipoint].getFrameOfReference().getOrientation().set(2, -Wb);
   }
 }
 

@@ -45,13 +45,13 @@ namespace MBSim {
   void ContactKinematicsCircleSolidLine::updateg(Vec &g, ContourPointData *cpData, int index) {
 
     cpData[iline].getFrameOfReference().setOrientation(line->getFrame()->getOrientation());
-    cpData[icircle].getFrameOfReference().getOrientation().col(0) = -line->getFrame()->getOrientation().col(0);
-    cpData[icircle].getFrameOfReference().getOrientation().col(1) = -line->getFrame()->getOrientation().col(1);
-    cpData[icircle].getFrameOfReference().getOrientation().col(2) = line->getFrame()->getOrientation().col(2);
+    cpData[icircle].getFrameOfReference().getOrientation().set(0, -line->getFrame()->getOrientation().col(0));
+    cpData[icircle].getFrameOfReference().getOrientation().set(1, -line->getFrame()->getOrientation().col(1));
+    cpData[icircle].getFrameOfReference().getOrientation().set(2, line->getFrame()->getOrientation().col(2));
 
-    Vec Wn = cpData[iline].getFrameOfReference().getOrientation().col(0);
+    Vec3 Wn = cpData[iline].getFrameOfReference().getOrientation().col(0);
 
-    Vec Wd = circlesolid->getFrame()->getPosition() - line->getFrame()->getPosition();
+    Vec3 Wd = circlesolid->getFrame()->getPosition() - line->getFrame()->getPosition();
 
     g(0) = Wn.T()*Wd - circlesolid->getRadius();
 
@@ -61,20 +61,20 @@ namespace MBSim {
 
   void ContactKinematicsCircleSolidLine::updatewb(Vec &wb, const Vec &g, ContourPointData *cpData) {
 
-    Vec v2 = cpData[icircle].getFrameOfReference().getOrientation().col(2);
-    Vec n1 = cpData[iline].getFrameOfReference().getOrientation().col(0);
-    Vec n2 = cpData[icircle].getFrameOfReference().getOrientation().col(0);
-    Vec u1 = cpData[iline].getFrameOfReference().getOrientation().col(1);
-    Vec u2 = cpData[icircle].getFrameOfReference().getOrientation().col(1);
-    Vec vC1 = cpData[iline].getFrameOfReference().getVelocity();
-    Vec vC2 = cpData[icircle].getFrameOfReference().getVelocity();
-    Vec Om1 = cpData[iline].getFrameOfReference().getAngularVelocity();
-    Vec Om2 = cpData[icircle].getFrameOfReference().getAngularVelocity();
+    Vec3 v2 = cpData[icircle].getFrameOfReference().getOrientation().col(2);
+    Vec3 n1 = cpData[iline].getFrameOfReference().getOrientation().col(0);
+    // Vec3 n2 = cpData[icircle].getFrameOfReference().getOrientation().col(0);
+    Vec3 u1 = cpData[iline].getFrameOfReference().getOrientation().col(1);
+    Vec3 u2 = cpData[icircle].getFrameOfReference().getOrientation().col(1);
+    Vec3 vC1 = cpData[iline].getFrameOfReference().getVelocity();
+    Vec3 vC2 = cpData[icircle].getFrameOfReference().getVelocity();
+    Vec3 Om1 = cpData[iline].getFrameOfReference().getAngularVelocity();
+    Vec3 Om2 = cpData[icircle].getFrameOfReference().getAngularVelocity();
     double r = circlesolid->getRadius();
 
     double ad2 = -v2.T()*(Om2-Om1);
     double ad1 = u1.T()*(vC2-vC1) - r*ad2;
-    Vec s2 = u2*r;
+    Vec3 s2 = u2*r;
 
     wb(0) += n1.T()*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*ad1 + crossProduct(Om2,s2)*ad2);
     

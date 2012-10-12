@@ -33,7 +33,7 @@ namespace MBSim {
    * \return perpendicular vector
    * \param input vector 
    */	
-  fmatvec::Vec computeTangential(const fmatvec::Vec &n);
+  fmatvec::Vec3 computeTangential(const fmatvec::Vec3 &n);
 
   /** 
    * \brief basic class for contact kinematical calculations
