@@ -45,13 +45,13 @@ namespace MBSim {
 
   void ContactKinematicsPointPlane::updateg(Vec &g, ContourPointData* cpData, int index) {
     cpData[iplane].getFrameOfReference().setOrientation(plane->getFrame()->getOrientation()); // data of possible contact point
-    cpData[ipoint].getFrameOfReference().getOrientation().col(0) = -plane->getFrame()->getOrientation().col(0);
-    cpData[ipoint].getFrameOfReference().getOrientation().col(1) = -plane->getFrame()->getOrientation().col(1);
-    cpData[ipoint].getFrameOfReference().getOrientation().col(2) = plane->getFrame()->getOrientation().col(2);
+    cpData[ipoint].getFrameOfReference().getOrientation().set(0, -plane->getFrame()->getOrientation().col(0));
+    cpData[ipoint].getFrameOfReference().getOrientation().set(1, -plane->getFrame()->getOrientation().col(1));
+    cpData[ipoint].getFrameOfReference().getOrientation().set(2, plane->getFrame()->getOrientation().col(2));
 
-    Vec Wn = cpData[iplane].getFrameOfReference().getOrientation().col(0); // normal is first vector of coordinate orientation
+    Vec3 Wn = cpData[iplane].getFrameOfReference().getOrientation().col(0); // normal is first vector of coordinate orientation
 
-    Vec Wd =  point->getFrame()->getPosition() - plane->getFrame()->getPosition();
+    Vec3 Wd =  point->getFrame()->getPosition() - plane->getFrame()->getPosition();
 
     g(0) = Wn.T()*Wd; // distance
 
@@ -62,21 +62,21 @@ namespace MBSim {
   void ContactKinematicsPointPlane::updatewb(Vec &wb, const Vec &g, ContourPointData *cpData) {
     if(wb.size()) { // check whether contact is closed
 
-      Vec v1 = cpData[iplane].getFrameOfReference().getOrientation().col(2); // second tangential vector in contact
-      Vec n1 = cpData[iplane].getFrameOfReference().getOrientation().col(0); // normal in contact
-      Vec u1 = cpData[iplane].getFrameOfReference().getOrientation().col(1); // first tangential vector in contact
-      Vec vC1 = cpData[iplane].getFrameOfReference().getVelocity(); // velocity of possible plane contact
-      Vec vC2 = cpData[ipoint].getFrameOfReference().getVelocity(); // velocity of point
-      Vec Om1 = cpData[iplane].getFrameOfReference().getAngularVelocity(); // angular velocity of possible plane contact
+      Vec3 v1 = cpData[iplane].getFrameOfReference().getOrientation().col(2); // second tangential vector in contact
+      Vec3 n1 = cpData[iplane].getFrameOfReference().getOrientation().col(0); // normal in contact
+      Vec3 u1 = cpData[iplane].getFrameOfReference().getOrientation().col(1); // first tangential vector in contact
+      Vec3 vC1 = cpData[iplane].getFrameOfReference().getVelocity(); // velocity of possible plane contact
+      Vec3 vC2 = cpData[ipoint].getFrameOfReference().getVelocity(); // velocity of point
+      Vec3 Om1 = cpData[iplane].getFrameOfReference().getAngularVelocity(); // angular velocity of possible plane contact
 
-      Vec s1 = u1;
-      Vec t1 = v1;
+      Vec3 &s1 = u1;
+      Vec3 &t1 = v1;
 
-      Mat R1(3,2);
-      R1.col(0) = s1;
-      R1.col(1) = t1;
+      Mat32 R1;
+      R1.set(0, s1);
+      R1.set(1, t1);
 
-      SqrMat A(2,2,NONINIT);
+      SqrMat A(2,NONINIT);
       A(Index(0,0),Index(0,1)) = -u1.T()*R1; // first matrix row
       A(Index(1,1),Index(0,1)) = -v1.T()*R1; // second matrix row
 
@@ -85,7 +85,7 @@ namespace MBSim {
       b(1) = -v1.T()*(vC2-vC1);
       Vec zetad1 =  slvLU(A,b);
 
-      Mat tOm1 = tilde(Om1); // tilde operator
+      Mat33 tOm1 = tilde(Om1); // tilde operator
       wb(0) += n1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1); // acceleration in terms of contour parametrisation
 
       if(wb.size() > 1) {

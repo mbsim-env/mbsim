@@ -48,23 +48,23 @@ namespace MBSim {
     // Bezugspunkt Kugel: Mittelpunkt
     // Bezugspunkt Kegel: Mittelpunkt Grundfläche
     // Rotationsachse Kegel: y-Achse
-    Vec Wd = sphere->getFrame()->getPosition() - frustum->getFrame()->getPosition(); // Vektor von Bezugspunkt Kegel zu Bezugspunkt Kreis
+    Vec3 Wd = sphere->getFrame()->getPosition() - frustum->getFrame()->getPosition(); // Vektor von Bezugspunkt Kegel zu Bezugspunkt Kreis
     
-    SqrMat Mat0 = frustum->getFrame()->getOrientation();
-    Vec yAchse = Mat0.col(1);
+    SqrMat3 Mat0 = frustum->getFrame()->getOrientation();
+    Vec3 yAchse = Mat0.col(1);
     double loc = yAchse.T()*Wd; // Projektion Distanzvektor auf y-Achse
-    Vec xAchse = Wd - (yAchse * loc);
+    Vec3 xAchse = Wd - (yAchse * loc);
     double l=nrm2(xAchse);
-    SqrMat AW1(3);
+    SqrMat3 AW1;
     xAchse =  xAchse/l;
-    Vec zAchse = crossProduct(xAchse,yAchse);
-    AW1.col(0) = xAchse;
-    AW1.col(1) = yAchse;
-    AW1.col(2) = zAchse;
+    Vec3 zAchse = crossProduct(xAchse,yAchse);
+    AW1.set(0, xAchse);
+    AW1.set(1, yAchse);
+    AW1.set(2, zAchse);
       
     //int fall = 0;
     double h = frustum->getHeight();
-    Vec r = frustum->getRadii(); // r(0): Basisradius, r(1): Topradius
+    Vec2 r = frustum->getRadii(); // r(0): Basisradius, r(1): Topradius
     double r_h = r(0) + (r(1)-r(0))/h * loc; // Radius an der Stelle des Kreismittelpunkts
     
 
@@ -77,7 +77,7 @@ namespace MBSim {
       double phi = M_PI*0.5 - fabs(psi);
       double vz=psi/fabs(psi);
       g(0) = fabs(r_h-l)*sin(phi)-sphere->getRadius();
-      int out = 1;
+      double out = 1;
 
       // Fallabfrage
       if(fabs(psi)<epsroot()) {
@@ -92,9 +92,9 @@ namespace MBSim {
         
         // System of frustum
         cpData[ifrustum].getFrameOfReference().getPosition() = frustum->getFrame()->getPosition() + r(0)*xAchse + loc*yAchse;
-        cpData[ifrustum].getFrameOfReference().getOrientation().col(0) = out*xAchse;
-        cpData[ifrustum].getFrameOfReference().getOrientation().col(1) = out*yAchse;
-        cpData[ifrustum].getFrameOfReference().getOrientation().col(2) = crossProduct(xAchse,yAchse);
+        cpData[ifrustum].getFrameOfReference().getOrientation().set(0, out*xAchse);
+        cpData[ifrustum].getFrameOfReference().getOrientation().set(1, out*yAchse);
+        cpData[ifrustum].getFrameOfReference().getOrientation().set(2, crossProduct(xAchse,yAchse));
       }
 
       else {
@@ -109,7 +109,7 @@ namespace MBSim {
         }
 
         double alpha= vz*(out*M_PI/2.-phi);
-        SqrMat A(3); // Drehmatrix
+        SqrMat3 A; // Drehmatrix
         A(2,2) = 1;
         A(0,0) = cos(alpha);
         A(1,1) = cos(alpha);
@@ -129,9 +129,9 @@ namespace MBSim {
       // System of sphere (position)
       cpData[isphere].getFrameOfReference().getPosition() = cpData[ifrustum].getFrameOfReference().getPosition() + g(0)*cpData[ifrustum].getFrameOfReference().getOrientation().col(0);
       // System of sphere (orientation)
-      cpData[isphere].getFrameOfReference().getOrientation().col(0) = -cpData[ifrustum].getFrameOfReference().getOrientation().col(0);
-      cpData[isphere].getFrameOfReference().getOrientation().col(1) = -cpData[ifrustum].getFrameOfReference().getOrientation().col(1);
-      cpData[isphere].getFrameOfReference().getOrientation().col(2) = crossProduct(cpData[isphere].getFrameOfReference().getOrientation().col(0),cpData[isphere].getFrameOfReference().getOrientation().col(1));
+      cpData[isphere].getFrameOfReference().getOrientation().set(0, -cpData[ifrustum].getFrameOfReference().getOrientation().col(0));
+      cpData[isphere].getFrameOfReference().getOrientation().set(1, -cpData[ifrustum].getFrameOfReference().getOrientation().col(1));
+      cpData[isphere].getFrameOfReference().getOrientation().set(2, crossProduct(cpData[isphere].getFrameOfReference().getOrientation().col(0),cpData[isphere].getFrameOfReference().getOrientation().col(1)));
 
     }
   }
