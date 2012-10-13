@@ -188,11 +188,7 @@ namespace MBSim {
       virtual double solve(double G, double gdn, double gda) = 0;
       virtual bool isFulfilled(double la,  double gdn, double gda, double tolla, double tolgd, double laMin=0) = 0;
       virtual void initializeUsingXML(TiXmlElement *element) {}
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent) { 
-        TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
-        parent->LinkEndChild(ele0);
-        return ele0;
-      }
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
 
       /**
        * \return std::string representation
