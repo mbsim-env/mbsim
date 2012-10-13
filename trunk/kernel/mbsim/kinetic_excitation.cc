@@ -154,5 +154,32 @@ namespace MBSim {
     e=e->NextSiblingElement();
   }
 
+  TiXmlElement* KineticExcitation::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = LinkMechanics::writeXMLFile(parent);
+    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"frameOfReference" );
+    ele1->SetAttribute("ref", refFrame->getXMLPath(this,true)); // relative path
+    ele0->LinkEndChild(ele1);
+    if(forceDir.cols()) {
+      TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"force");
+      addElementText(ele1,MBSIMNS"directionVectors",forceDir);
+      TiXmlElement *ele2 = new TiXmlElement(MBSIMNS"function");
+      F->writeXMLFile(ele2);
+      ele1->LinkEndChild(ele2);
+      ele0->LinkEndChild(ele1);
+    }
+    if(momentDir.cols()) {
+      TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"moment");
+      addElementText(ele1,MBSIMNS"directionVectors",momentDir);
+      TiXmlElement *ele2 = new TiXmlElement(MBSIMNS"function");
+      M->writeXMLFile(ele2);
+      ele1->LinkEndChild(ele2);
+      ele0->LinkEndChild(ele1);
+    }
+    ele1 = new TiXmlElement(MBSIMNS"connect");
+    ele1->SetAttribute("ref", frame[0]->getXMLPath(this,true)); // relative path
+    ele0->LinkEndChild(ele1);
+    return ele0;
+  }
+
 }
 

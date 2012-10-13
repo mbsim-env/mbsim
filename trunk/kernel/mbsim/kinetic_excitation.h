@@ -93,6 +93,9 @@ namespace MBSim {
 #endif
 
       void initializeUsingXML(TiXmlElement *element);
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+
+      virtual std::string getType() const { return "KineticExcitation"; }
 
     protected:
       /**
