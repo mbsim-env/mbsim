@@ -608,12 +608,27 @@ namespace MBSim {
     TiXmlElement *ele0 = LinkMechanics::writeXMLFile(parent);
     if(forceDir.cols()) {
       TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"force");
-      addElementText(ele1,MBSIMNS"direction",mat2str(forceDir));
+      addElementText(ele1,MBSIMNS"direction",forceDir);
       TiXmlElement *ele2 = new TiXmlElement(MBSIMNS"generalizedForceLaw");
-      ffl->writeXMLFile(ele2);
+      if(ffl)
+        ffl->writeXMLFile(ele2);
       ele1->LinkEndChild(ele2);
       ele2 = new TiXmlElement(MBSIMNS"generalizedImpactLaw");
-      fifl->writeXMLFile(ele2);
+      if(fifl)
+        fifl->writeXMLFile(ele2);
+      ele1->LinkEndChild(ele2);
+      ele0->LinkEndChild(ele1);
+    }
+    if(momentDir.cols()) {
+      TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"moment");
+      addElementText(ele1,MBSIMNS"direction",momentDir);
+      TiXmlElement *ele2 = new TiXmlElement(MBSIMNS"generalizedForceLaw");
+      if(fml)
+        fml->writeXMLFile(ele2);
+      ele1->LinkEndChild(ele2);
+      ele2 = new TiXmlElement(MBSIMNS"generalizedImpactLaw");
+      if(fiml)
+        fiml->writeXMLFile(ele2);
       ele1->LinkEndChild(ele2);
       ele0->LinkEndChild(ele1);
     }

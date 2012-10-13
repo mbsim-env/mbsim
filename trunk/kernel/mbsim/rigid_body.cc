@@ -849,7 +849,7 @@ namespace MBSim {
     ele0->LinkEndChild(ele1);
 
     addElementText(ele0,MBSIMNS"mass",getMass());
-    addElementText(ele0,MBSIMNS"inertiaTensor",mat2str(getInertiaTensor()));
+    addElementText(ele0,MBSIMNS"inertiaTensor",getInertiaTensor());
 
     ele1 = new TiXmlElement( MBSIMNS"translation" );
     if(getTranslation()) 
@@ -873,8 +873,8 @@ namespace MBSim {
         ele2->LinkEndChild(ele3);
       }
 
-      addElementText(ele2,MBSIMNS"position",mat2str(saved_RrRF[i-1]));
-      addElementText(ele2,MBSIMNS"orientation",mat2str(saved_ARF[i-1]));
+      addElementText(ele2,MBSIMNS"position",saved_RrRF[i-1]);
+      addElementText(ele2,MBSIMNS"orientation",saved_ARF[i-1]);
     }
     ele0->LinkEndChild( ele1 );
 
