@@ -147,6 +147,12 @@ namespace MBSim {
     return fabs(gdn) <= gdTol;
   }
 
+  TiXmlElement* GeneralizedImpactLaw::writeXMLFile(TiXmlNode *parent) { 
+    TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
+    parent->LinkEndChild(ele0);
+    return ele0;
+  }
+
   double UnilateralNewtonImpact::project(double la, double gdn, double gda, double r, double laMin) {
    if(gda <= -gd_limit) {       // 2 Aenderungen :
       gdn += epsilon*gda;       // elastischer Anteil nur bei negativer Annäherungsgeschw. ueber gd_limit
