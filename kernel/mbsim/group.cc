@@ -254,8 +254,8 @@ namespace MBSim {
       ele0->LinkEndChild(ele1);
     }
 
-    addElementText(ele0,MBSIMNS"position",mat2str(getPosition()));
-    addElementText(ele0,MBSIMNS"orientation", mat2str(getOrientation()));
+    addElementText(ele0,MBSIMNS"position",getPosition());
+    addElementText(ele0,MBSIMNS"orientation", getOrientation());
 
     ele1 = new TiXmlElement( MBSIMNS"frames" );
     for(unsigned int i=1; i<frame.size(); i++) {
@@ -269,8 +269,8 @@ namespace MBSim {
         ele2->LinkEndChild(ele3);
       }
 
-      addElementText(ele2,MBSIMNS"position",mat2str(saved_RrRF[i-1]));
-      addElementText(ele2,MBSIMNS"orientation",mat2str(saved_ARF[i-1]));
+      addElementText(ele2,MBSIMNS"position",saved_RrRF[i-1]);
+      addElementText(ele2,MBSIMNS"orientation",saved_ARF[i-1]);
     }
     ele0->LinkEndChild( ele1 );
 

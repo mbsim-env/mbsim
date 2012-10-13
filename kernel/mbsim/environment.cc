@@ -39,7 +39,7 @@ namespace MBSim {
     TiXmlElement* ele0 = new TiXmlElement( MBSIMNS"MBSimEnvironment" );
 
     TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"accelerationOfGravity" );
-    TiXmlText *text = new TiXmlText( mat2str(getAccelerationOfGravity()) );
+    TiXmlText *text = new TiXmlText( toStr(getAccelerationOfGravity()) );
     ele1->LinkEndChild(text);
     ele0->LinkEndChild( ele1 );
     parent->LinkEndChild(ele0);
