@@ -105,6 +105,8 @@ namespace MBSim {
       SinusFunction1_VS();
       SinusFunction1_VS(fmatvec::Vector<Col,double>, fmatvec::Vector<Col,double> frequency_, fmatvec::Vector<Col,double> phase_, fmatvec::Vector<Col,double> offset_);
       void initializeUsingXML(TiXmlElement *element);
+      TiXmlElement* writeXMLFile(TiXmlNode *parent);
+      std::string getType() const { return "SinusFunction1_VS"; }
 
       class ZerothDerivative : public Function1<fmatvec::Vector<Col,double>,double> {
          public:
@@ -349,6 +351,16 @@ namespace MBSim {
       offset=offset_;
       check();
     }
+
+  template<class Col>
+  TiXmlElement* SinusFunction1_VS<Col>::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = DifferentiableFunction1<fmatvec::Vector<Col,double> >::writeXMLFile(parent);
+    addElementText(ele0,MBSIMNS"amplitude",amplitude);
+    addElementText(ele0,MBSIMNS"frequency",frequency);
+    addElementText(ele0,MBSIMNS"phase",phase);
+    addElementText(ele0,MBSIMNS"offset",offset);
+    return ele0;
+  }
 
   template<class Col>
     void SinusFunction1_VS<Col>::check() {
