@@ -56,8 +56,24 @@ int min(int i, int j);
  */
 double ArcTan(double x,double y);
 
+inline std::string toStr(const std::string &str) {
+  return str;
+}
+
+inline std::string toStr(int i) {
+  std::stringstream s;
+  s << i;
+  return s.str();
+}
+
+inline std::string toStr(double d) {
+  std::stringstream s;
+  s << d;
+  return s.str();
+}
+
 template <class Type, class Row, class Col, class AT>
-std::string mat2str(const fmatvec::Matrix<Type,Row,Col,AT> &A) {
+inline std::string toStr(const fmatvec::Matrix<Type,Row,Col,AT> &A) {
   std::stringstream s;
   s << "[";
   for(int i=0; i<A.rows(); i++) {
@@ -73,10 +89,31 @@ std::string mat2str(const fmatvec::Matrix<Type,Row,Col,AT> &A) {
   return s.str();
 }
 
+template<class T>
+inline std::string funcExt() {
+  return "V";
+}
+
+template < >
+inline std::string funcExt<double>() {
+  return "S";
+}
+
+template <class T>
+inline T fromMatStr(const std::string &str) {
+  return T(str.c_str());
+}
+
+template < >
+inline double fromMatStr(const std::string &str) {
+  fmatvec::Mat A(str.c_str());
+  return A(0,0);
+}
+
 template <class T>
 void addElementText(TiXmlElement *parent, std::string name, T value) {
   std::ostringstream oss;
-  oss << std::setprecision(std::numeric_limits<double>::digits10) << value;
+  oss << std::setprecision(std::numeric_limits<double>::digits10) << toStr(value);
   parent->LinkEndChild(new TiXmlElement(name))->LinkEndChild(new TiXmlText(oss.str()));
 }
 
