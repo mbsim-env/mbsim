@@ -70,6 +70,17 @@ namespace MBSim {
   //    
   //  }
 
+  TiXmlElement* GeneralizedForceLaw::writeXMLFile(TiXmlNode *parent) { 
+    TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
+    if(forceFunc) {
+      TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"forceFunction" );
+      forceFunc->writeXMLFile(ele1);
+      ele0->LinkEndChild(ele1);
+    }
+    parent->LinkEndChild(ele0);
+    return ele0;
+  }
+
   double UnilateralConstraint::project(double la, double gdn, double r, double laMin) {
     return proxCN(la-r*gdn, laMin);
   }
@@ -134,12 +145,6 @@ namespace MBSim {
 
   bool BilateralConstraint::isFulfilled(double la, double gdn, double laTol, double gdTol, double laMin) {
     return fabs(gdn) <= gdTol;
-  }
-
-  TiXmlElement* BilateralConstraint::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"BilateralConstraint" );
-    parent->LinkEndChild(ele0);
-    return ele0;
   }
 
   double UnilateralNewtonImpact::project(double la, double gdn, double gda, double r, double laMin) {
@@ -225,12 +230,6 @@ namespace MBSim {
 
   bool BilateralImpact::isFulfilled(double la, double gdn, double gda, double laTol, double gdTol, double laMin) {
     return fabs(gdn) <= gdTol;
-  }
-
-  TiXmlElement* BilateralImpact::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"BilateralImpact" );
-    parent->LinkEndChild(ele0);
-    return ele0;
   }
 
   Vec PlanarCoulombFriction::project(const Vec& la, const Vec& gdn, double laN, double r) {
@@ -675,8 +674,6 @@ namespace MBSim {
     if(nrm2(la) <= (*fmu)(nrm2(gdn))*fabs(laN)+laTol && nrm2(gdn) <= gdTol) return 1;
     else return 0;
   }
-
-
 
   void RegularizedUnilateralConstraint::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
