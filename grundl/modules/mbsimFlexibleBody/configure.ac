@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.57])
-AC_INIT([mbsimFlexibleBody],[3.0.0],[ts.schindler@gmail.com])
+AC_INIT([mbsimFlexibleBody],[3.0.3],[ts.schindler@gmail.com])
 AC_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([mbsimFlexibleBody/Makefile.am])

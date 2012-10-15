@@ -101,8 +101,8 @@ namespace MBSimFlexibleBody {
       Body::init(stage);
       T = SqrMat(qSize,fmatvec::EYE);
       for(unsigned int i=0; i<frame.size(); i++) { // frames
-        S_Frame[i].getFrameOfReference().getJacobianOfTranslation().resize(3,uSize[0]);
-        S_Frame[i].getFrameOfReference().getJacobianOfRotation().resize(3,uSize[0]);
+        S_Frame[i].getFrameOfReference().getJacobianOfTranslation().resize(uSize[0]);
+        S_Frame[i].getFrameOfReference().getJacobianOfRotation().resize(uSize[0]);
       }
     }
     else if(stage==MBSim::plot) {

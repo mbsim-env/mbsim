@@ -18,9 +18,6 @@
  */
 
 #include<config.h>
-#define FMATVEC_NO_INITIALIZATION
-#define FMATVEC_NO_BOUNDS_CHECK
-
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_cosserat.h"
 #include "mbsimFlexibleBody/contours/nurbs_curve_1s.h"
 #include "mbsimFlexibleBody/utils/cardan.h"
@@ -195,9 +192,9 @@ namespace MBSimFlexibleBody {
       int node = cp.getNodeNumber(); // TODO open structure different?
 
       if(ff==position || ff==position_cosy || ff==all) cp.getFrameOfReference().setPosition(frameOfReference->getPosition() + frameOfReference->getOrientation()*q(6*node+0,6*node+2));
-      if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().col(1) = frameOfReference->getOrientation()*angle->computet(q(6*node+3,6*node+5)); // tangent
-      if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().col(0) = frameOfReference->getOrientation()*angle->computen(q(6*node+3,6*node+5)); // normal
-      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().col(2) = crossProduct(cp.getFrameOfReference().getOrientation().col(0),cp.getFrameOfReference().getOrientation().col(1)); // binormal (cartesian system)
+      if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(1, frameOfReference->getOrientation()*angle->computet(q(6*node+3,6*node+5))); // tangent
+      if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(0, frameOfReference->getOrientation()*angle->computen(q(6*node+3,6*node+5))); // normal
+      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(2, crossProduct(cp.getFrameOfReference().getOrientation().col(0),cp.getFrameOfReference().getOrientation().col(1))); // binormal (cartesian system)
       if(ff==velocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) cp.getFrameOfReference().setVelocity(frameOfReference->getOrientation()*u(6*node+0,6*node+2));
       if(ff==angularVelocity || ff==velocities || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().setAngularVelocity(frameOfReference->getOrientation()*angle->computeOmega(q(6*node+3,6*node+5),u(6*node+3,6*node+5)));
     }
@@ -420,7 +417,7 @@ namespace MBSimFlexibleBody {
     }
     else qSize = 6*n;
 
-    Vec q0Tmp(0,INIT,0.);
+    Vec q0Tmp;
     if(q0.size())
       q0Tmp = q0.copy();
     q0.resize(qSize,INIT,0.);
@@ -433,7 +430,7 @@ namespace MBSimFlexibleBody {
 
     uSize[0] = qSize;
     uSize[1] = qSize; // TODO
-    Vec u0Tmp(0,INIT,0);
+    Vec u0Tmp;
     if(u0.size())
       u0Tmp = u0.copy();
     u0.resize(uSize[0],INIT,0.);
@@ -453,9 +450,9 @@ namespace MBSimFlexibleBody {
 
     ContourPointData cp(sGlobal);
     updateKinematicsForFrame(cp,position);
-    temp(0,2) = cp.getFrameOfReference().getPosition().copy();
+    temp(0,2) = cp.getFrameOfReference().getPosition();
     updateKinematicsForFrame(cp,velocity);
-    temp(6,8) = cp.getFrameOfReference().getVelocity().copy();
+    temp(6,8) = cp.getFrameOfReference().getVelocity();
 
     return temp.copy();
   }
@@ -567,12 +564,12 @@ namespace MBSimFlexibleBody {
         if(not filenameVel.empty()) {
           updateKinematicsForFrame(cp, velocity_cosy);
 
-          SqrMat TMPMat = cp.getFrameOfReference().getOrientation();
-          SqrMat AKI(3,3,INIT,0.);
-          AKI.row(0) = trans(TMPMat.col(1));
-          AKI.row(1) = trans(TMPMat.col(0));
-          AKI.row(2) = trans(TMPMat.col(2));
-          Vec Vel(3,INIT,0.);
+          SqrMat3 TMPMat = cp.getFrameOfReference().getOrientation();
+          SqrMat3 AKI(INIT,0.);
+          AKI.set(0, trans(TMPMat.col(1)));
+          AKI.set(1, trans(TMPMat.col(0)));
+          AKI.set(2, trans(TMPMat.col(2)));
+          Vec3 Vel(INIT,0.);
           Vel = AKI*cp.getFrameOfReference().getVelocity();
 
           NodelistVel[i] = HPoint3Dd(Vel(0), Vel(1), Vel(2), 1);
@@ -648,7 +645,7 @@ namespace MBSimFlexibleBody {
       q0Dummy(i*6+1) = posStart.y(); // y
       q0Dummy(i*6+2) = posStart.z(); // z
 
-      SqrMat AIK(3,3,INIT,0.);
+      SqrMat AIK(3,INIT,0.);
       AIK(0,0) = tangHalf.x(); AIK(1,0) = tangHalf.y(); AIK(2,0) = tangHalf.z();
       AIK(0,1) = norHalf.x(); AIK(1,1) = norHalf.y(); AIK(2,1) = norHalf.z();
       AIK(0,2) = binHalf.x(); AIK(1,2) = binHalf.y(); AIK(2,2) = binHalf.z();

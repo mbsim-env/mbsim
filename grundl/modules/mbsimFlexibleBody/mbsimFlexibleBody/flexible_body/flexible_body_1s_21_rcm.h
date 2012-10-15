@@ -98,7 +98,7 @@ namespace MBSimFlexibleBody {
       void setCurlRadius(double r);
       void setMaterialDamping(double d);
       void setLehrDamping(double d);
-      void setElementPlotList(fmatvec::Vector<int> plotElements_) {plotElements = plotElements_;}
+      void setElementPlotList(fmatvec::VecInt plotElements_) {plotElements = plotElements_;}
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body) { openMBVBody=body; }
 #endif
@@ -184,7 +184,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief coefficient of Lehr-damping
        */
-      fmatvec::Vector<int> plotElements;
+      fmatvec::VecInt plotElements;
 
       /**
        * \brief flag for open (cantilever beam) or closed (rings) structures

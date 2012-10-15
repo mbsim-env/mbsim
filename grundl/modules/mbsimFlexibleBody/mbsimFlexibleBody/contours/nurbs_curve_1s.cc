@@ -65,17 +65,17 @@ namespace MBSimFlexibleBody {
         normal *= -1.;
       Point3Dd binormal = crossProduct(normal, tangent);
       normal = crossProduct(tangent, binormal); // calculate normal again from cross product as second derivative is not normal to tangent
-      cp.getFrameOfReference().getOrientation().col(0)(0) = normal.x();
-      cp.getFrameOfReference().getOrientation().col(0)(1) = normal.y();
-      cp.getFrameOfReference().getOrientation().col(0)(2) = normal.z();
+      cp.getFrameOfReference().getOrientation()(0,0) = normal.x();
+      cp.getFrameOfReference().getOrientation()(1,0) = normal.y();
+      cp.getFrameOfReference().getOrientation()(2,0) = normal.z();
 
-      cp.getFrameOfReference().getOrientation().col(1)(0) = tangent.x();
-      cp.getFrameOfReference().getOrientation().col(1)(1) = tangent.y();
-      cp.getFrameOfReference().getOrientation().col(1)(2) = tangent.z();
+      cp.getFrameOfReference().getOrientation()(0,1) = tangent.x();
+      cp.getFrameOfReference().getOrientation()(1,1) = tangent.y();
+      cp.getFrameOfReference().getOrientation()(2,1) = tangent.z();
 
-      cp.getFrameOfReference().getOrientation().col(2)(0) = binormal.x();
-      cp.getFrameOfReference().getOrientation().col(2)(1) = binormal.y();
-      cp.getFrameOfReference().getOrientation().col(2)(2) = binormal.z();
+      cp.getFrameOfReference().getOrientation()(0,2) = binormal.x();
+      cp.getFrameOfReference().getOrientation()(1,2) = binormal.y();
+      cp.getFrameOfReference().getOrientation()(2,2) = binormal.z();
     }
 
     if(ff==velocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) {
@@ -86,7 +86,7 @@ namespace MBSimFlexibleBody {
     }
 
     if(ff==angularVelocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) {
-      double uStaggered = cp.getLagrangeParameterPosition().copy()(0); // interpolation of angular velocity starts from 0 --> \phi_{1/2} but contour starts from 0 --> r_0 therefore this difference of l0/2
+      double uStaggered = cp.getLagrangeParameterPosition()(0); // interpolation of angular velocity starts from 0 --> \phi_{1/2} but contour starts from 0 --> r_0 therefore this difference of l0/2
       double l0 = L/Elements;
       if (uStaggered < l0/2.)
         uStaggered = L - l0/2. + uStaggered;
@@ -102,10 +102,10 @@ namespace MBSimFlexibleBody {
 
   void NurbsCurve1s::updateJacobiansForFrame(ContourPointData &cp, int j /*=0*/) {
 #ifdef HAVE_NURBS
-    cp.getFrameOfReference().getJacobianOfTranslation().resize(3,qSize);
-    cp.getFrameOfReference().getJacobianOfRotation().resize(3,qSize); // TODO open structure
+    cp.getFrameOfReference().getJacobianOfTranslation().resize(qSize);
+    cp.getFrameOfReference().getJacobianOfRotation().resize(qSize); // TODO open structure
 
-    double uStaggered = cp.getLagrangeParameterPosition().copy()(0); // interpolation of Jacobian of Rotation starts from 0 --> \phi_{1/2} but Jacobian of Translation and contour starts from 0 --> r_0 therefore this difference of l0/2
+    double uStaggered = cp.getLagrangeParameterPosition()(0); // interpolation of Jacobian of Rotation starts from 0 --> \phi_{1/2} but Jacobian of Translation and contour starts from 0 --> r_0 therefore this difference of l0/2
     double l0 = L/Elements;
     if (uStaggered < l0/2.)
       uStaggered = L - l0/2. + uStaggered;
@@ -116,13 +116,13 @@ namespace MBSimFlexibleBody {
       Point3Dd TmpPtTrans = CurveJacobiansOfTranslation[k].pointAt(cp.getLagrangeParameterPosition()(0));
       Point3Dd TmpPtRot = CurveJacobiansOfRotation[k].pointAt(uStaggered);
 
-      cp.getFrameOfReference().getJacobianOfTranslation().col(k)(0) = TmpPtTrans.x();
-      cp.getFrameOfReference().getJacobianOfTranslation().col(k)(1) = TmpPtTrans.y();
-      cp.getFrameOfReference().getJacobianOfTranslation().col(k)(2) = TmpPtTrans.z();
+      cp.getFrameOfReference().getJacobianOfTranslation()(0,k) = TmpPtTrans.x();
+      cp.getFrameOfReference().getJacobianOfTranslation()(1,k) = TmpPtTrans.y();
+      cp.getFrameOfReference().getJacobianOfTranslation()(2,k) = TmpPtTrans.z();
 
-      cp.getFrameOfReference().getJacobianOfRotation().col(k)(0) = TmpPtRot.x();
-      cp.getFrameOfReference().getJacobianOfRotation().col(k)(1) = TmpPtRot.y();
-      cp.getFrameOfReference().getJacobianOfRotation().col(k)(2) = TmpPtRot.z();
+      cp.getFrameOfReference().getJacobianOfRotation()(0,k) = TmpPtRot.x();
+      cp.getFrameOfReference().getJacobianOfRotation()(1,k) = TmpPtRot.y();
+      cp.getFrameOfReference().getJacobianOfRotation()(2,k) = TmpPtRot.z();
     }
 #endif
   }
@@ -145,8 +145,10 @@ namespace MBSimFlexibleBody {
       for(int i=0; i<Elements; i++) { // TODO openstructure: jacobians of Rotation different
         jacobiansTrans.push_back(ContourPointData(i));
         jacobiansRot.push_back(ContourPointData(i, STAGGEREDNODE)); // jacobians of rotation are on staggered grid
-        jacobiansTrans[jacobiansTrans.size()-1].getFrameOfReference().getJacobianOfTranslation().resize();
-        jacobiansRot[jacobiansRot.size()-1].getFrameOfReference().getJacobianOfRotation().resize();
+      }
+      for(int i=0; i<Elements; i++) { 
+        jacobiansTrans[i].getFrameOfReference().getJacobianOfTranslation().resize();
+        jacobiansRot[i].getFrameOfReference().getJacobianOfRotation().resize();
       }
 
       for(int k=0; k<qSize; k++) { // TODO openstructure: jacobians of Rotation different

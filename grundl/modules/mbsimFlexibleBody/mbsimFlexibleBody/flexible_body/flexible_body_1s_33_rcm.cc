@@ -18,9 +18,6 @@
  */
 
 #include<config.h>
-#define FMATVEC_NO_INITIALIZATION
-#define FMATVEC_NO_BOUNDS_CHECK
-
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_rcm.h"
 #include "mbsimFlexibleBody/utils/revcardan.h"
 #include "mbsim/dynamic_system_solver.h"
@@ -141,9 +138,9 @@ namespace MBSimFlexibleBody {
       const Vec &Phit = X(9,11);
 
       if(ff==position || ff==position_cosy || ff==all) cp.getFrameOfReference().setPosition(frameOfReference->getPosition() + frameOfReference->getOrientation() * X(0,2));
-      if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().col(1) = frameOfReference->getOrientation()*angle->computet(Phi); // tangent
-      if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().col(0) = frameOfReference->getOrientation()*angle->computen(Phi); // normal
-      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().col(2) = crossProduct(cp.getFrameOfReference().getOrientation().col(0),cp.getFrameOfReference().getOrientation().col(1)); // binormal
+      if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(1, frameOfReference->getOrientation()*angle->computet(Phi)); // tangent
+      if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(0, frameOfReference->getOrientation()*angle->computen(Phi)); // normal
+      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(2, crossProduct(cp.getFrameOfReference().getOrientation().col(0),cp.getFrameOfReference().getOrientation().col(1))); // binormal
       if(ff==velocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) cp.getFrameOfReference().setVelocity(frameOfReference->getOrientation()*X(6,8));
       if(ff==angularVelocity || ff==velocities || ff==velocities_cosy || ff==all) cp.getFrameOfReference().setAngularVelocity(frameOfReference->getOrientation()*angle->computeOmega(Phi,Phit));
     }
@@ -153,9 +150,9 @@ namespace MBSimFlexibleBody {
       const Vec &Phit = u(10*node+3,10*node+5);
 
       if(ff==position || ff==position_cosy || ff==all) cp.getFrameOfReference().setPosition(frameOfReference->getPosition() + frameOfReference->getOrientation()*q(10*node+0,10*node+2));
-      if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().col(1) = frameOfReference->getOrientation()*angle->computet(Phi); // tangent
-      if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().col(0) = frameOfReference->getOrientation()*angle->computen(Phi); // normal
-      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().col(2) = crossProduct(cp.getFrameOfReference().getOrientation().col(0),cp.getFrameOfReference().getOrientation().col(1)); // binormal (cartesian system)
+      if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(1, frameOfReference->getOrientation()*angle->computet(Phi)); // tangent
+      if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(0, frameOfReference->getOrientation()*angle->computen(Phi)); // normal
+      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(2, crossProduct(cp.getFrameOfReference().getOrientation().col(0),cp.getFrameOfReference().getOrientation().col(1))); // binormal (cartesian system)
       if(ff==velocity || ff==velocities || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().setVelocity(frameOfReference->getOrientation()*u(10*node+0,10*node+2));
       if(ff==angularVelocity || ff==velocities || ff==velocities_cosy || ff==all) cp.getFrameOfReference().setAngularVelocity(frameOfReference->getOrientation()*angle->computeOmega(Phi,Phit));
     }
@@ -333,7 +330,7 @@ namespace MBSimFlexibleBody {
     if(openStructure) qSize = 10*n+6;
     else qSize = 10*n;
 
-    Vec q0Tmp(0,INIT,0.);
+    Vec q0Tmp;
     if(q0.size())
       q0Tmp = q0.copy();
     q0.resize(qSize,INIT,0.);
@@ -346,7 +343,7 @@ namespace MBSimFlexibleBody {
 
     uSize[0] = qSize;
     uSize[1] = qSize; // TODO
-    Vec u0Tmp(0,INIT,0);
+    Vec u0Tmp;
     if(u0.size())
       u0Tmp=u0.copy();
     u0.resize(uSize[0],INIT,0.);
@@ -468,12 +465,12 @@ namespace MBSimFlexibleBody {
         if(not filenameVel.empty()) {
           updateKinematicsForFrame(cp, velocity_cosy);
 
-          SqrMat TMPMat = cp.getFrameOfReference().getOrientation();
-          SqrMat AKI(3,3,INIT,0.);
-          AKI.row(0) = trans(TMPMat.col(1));
-          AKI.row(1) = trans(TMPMat.col(0));
-          AKI.row(2) = trans(TMPMat.col(2));
-          Vec Vel(3,INIT,0.);
+          SqrMat3 TMPMat = cp.getFrameOfReference().getOrientation();
+          SqrMat3 AKI(INIT,0.);
+          AKI.set(0, trans(TMPMat.col(1)));
+          AKI.set(1, trans(TMPMat.col(0)));
+          AKI.set(2, trans(TMPMat.col(2)));
+          Vec3 Vel(INIT,0.);
           Vel = AKI*cp.getFrameOfReference().getVelocity();
 
           NodelistVel[i] = HPoint3Dd(Vel(0), Vel(1), Vel(2), 1);
@@ -553,7 +550,7 @@ namespace MBSimFlexibleBody {
       q0Dummy(i*10+1) = posStart.y(); // y
       q0Dummy(i*10+2) = posStart.z(); // z
 
-      SqrMat AIK(3,3,INIT,0.);
+      SqrMat AIK(3,INIT,0.);
       AIK(0,0) = tangStart.x(); AIK(1,0) = tangStart.y(); AIK(2,0) = tangStart.z();
       AIK(0,1) = norStart.x(); AIK(1,1) = norStart.y(); AIK(2,1) = norStart.z();
       AIK(0,2) = binStart.x(); AIK(1,2) = binStart.y(); AIK(2,2) = binStart.z();
