@@ -119,6 +119,9 @@ namespace MBSim {
       void updateStateDependentVariables(double t); 
       void updateJacobians(double t, int j=0); 
       virtual void initializeUsingXML(TiXmlElement *element);
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+
+      virtual std::string getType() const { return "JointConstraint"; }
 
     private:
       class Residuum : public Function1<fmatvec::Vec,fmatvec::Vec> {
