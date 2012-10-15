@@ -251,7 +251,7 @@ namespace MBSimFlexibleBody {
        *
        * ElementNodeList(Element,LocalNodeNumber) = globalNodeNumber;
        */
-      fmatvec::Matrix<fmatvec::General,int> ElementNodeList;
+      fmatvec::Matrix<fmatvec::General,fmatvec::Ref,fmatvec::Ref,int> ElementNodeList;
 
       /**
        * \brief total dof of disk with reference movement and elastic deformation but without including bearing

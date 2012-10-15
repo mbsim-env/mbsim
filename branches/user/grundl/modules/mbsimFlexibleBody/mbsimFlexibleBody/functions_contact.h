@@ -44,11 +44,11 @@ namespace MBSimFlexibleBody {
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &alpha, const void * =NULL) {
         //Parameters of the AWK of the nurbs disk and the circle
-        fmatvec::SqrMat AWK_disk   = nurbsdisk->getFrame()->getOrientation();
-        fmatvec::SqrMat AWK_circle = circle->getFrame()->getOrientation();
+        fmatvec::SqrMat3 AWK_disk   = nurbsdisk->getFrame()->getOrientation();
+        fmatvec::SqrMat3 AWK_circle = circle->getFrame()->getOrientation();
 
         //Point on the Circle
-        fmatvec::Vec WP_circle(3,fmatvec::INIT,0.);  //world-coordinates of the point on the circle
+        fmatvec::Vec3 WP_circle(fmatvec::INIT,0.);  //world-coordinates of the point on the circle
         WP_circle(0) = cos(alpha);  
         WP_circle(1) = sin(alpha);
         WP_circle = circle->getFrame()->getPosition() + circle->getRadius() * AWK_circle * WP_circle;
@@ -81,7 +81,7 @@ namespace MBSimFlexibleBody {
         return nurbsdisk->getFrame()->getOrientation().col(2).T() * (circle_tangent - (nurbs_radial_tangent *  drphidalpha(0)+ nurbs_azimuthal_tangent * drphidalpha(1)));
       }
 
-      fmatvec::Vec computeWrD(const double &alpha) {
+      fmatvec::Vec3 computeWrD(const double &alpha) {
         //point on the circle
         fmatvec::Vec WP_circle(3,fmatvec::INIT,0.);
         WP_circle(0) = cos(alpha); 

@@ -92,16 +92,16 @@ namespace MBSimFlexibleBody {
 
         {
 
-          Vec Wb = cpData[icontour].getFrameOfReference().getOrientation().col(2).copy();
+          Vec Wb = cpData[icontour].getFrameOfReference().getOrientation().col(2);
           cpData[icontour].getLagrangeParameterPosition()(1) = trans(Wb)*Wd; // get contact parameter of second tangential direction
 
           if(fabs(cpData[icontour].getLagrangeParameterPosition()(1)) > 0.5*wBand)
             (ig[i])(0) = 1.0;
           else { // calculate the normal distance
             cpData[icontour].getFrameOfReference().getPosition()           += cpData[icontour].getLagrangeParameterPosition()(1)*Wb; 
-            cpData[icircle] .getFrameOfReference().getOrientation().col(0)  = -cpData[icontour].getFrameOfReference().getOrientation().col(0);
-            cpData[icircle] .getFrameOfReference().getOrientation().col(1)  = -cpData[icontour].getFrameOfReference().getOrientation().col(1);
-            cpData[icircle] .getFrameOfReference().getOrientation().col(2)  =  cpData[icontour].getFrameOfReference().getOrientation().col(2);
+            cpData[icircle] .getFrameOfReference().getOrientation().set(0, -cpData[icontour].getFrameOfReference().getOrientation().col(0));
+            cpData[icircle] .getFrameOfReference().getOrientation().set(1, -cpData[icontour].getFrameOfReference().getOrientation().col(1));
+            cpData[icircle] .getFrameOfReference().getOrientation().set(2,  cpData[icontour].getFrameOfReference().getOrientation().col(2));
           //cpData[icircle] .getFrameOfReference().getPosition()            =  circle->getFrame()->getPosition() + cpData[icircle].getFrameOfReference().getOrientation().col(0)*rCircle;
             cpData[icircle] .getFrameOfReference().getPosition()            =  circle->getFrame()->getPosition() - rCircle*Wd/nrm2(Wd);
 
@@ -164,16 +164,16 @@ namespace MBSimFlexibleBody {
           }
 
           {
-            Vec Wb = cpData[icontour].getFrameOfReference().getOrientation().col(2).copy();
+            Vec Wb = cpData[icontour].getFrameOfReference().getOrientation().col(2);
             cpData[icontour].getLagrangeParameterPosition()(1) = trans(Wb)*Wd; // get contact parameter of second tangential direction
 
             if(fabs(cpData[icontour].getLagrangeParameterPosition()(1)) > 0.5*wBand)
               (ig[i])(0) = 1.0;
             else { // calculate the normal distance
               cpData[icontour].getFrameOfReference().getPosition()           += cpData[icontour].getLagrangeParameterPosition()(1)*Wb; 
-              cpData[icircle] .getFrameOfReference().getOrientation().col(0)  = -cpData[icontour].getFrameOfReference().getOrientation().col(0);
-              cpData[icircle] .getFrameOfReference().getOrientation().col(1)  = -cpData[icontour].getFrameOfReference().getOrientation().col(1);
-              cpData[icircle] .getFrameOfReference().getOrientation().col(2)  =  cpData[icontour].getFrameOfReference().getOrientation().col(2);
+              cpData[icircle] .getFrameOfReference().getOrientation().set(0, -cpData[icontour].getFrameOfReference().getOrientation().col(0));
+              cpData[icircle] .getFrameOfReference().getOrientation().set(1, -cpData[icontour].getFrameOfReference().getOrientation().col(1));
+              cpData[icircle] .getFrameOfReference().getOrientation().set(2,  cpData[icontour].getFrameOfReference().getOrientation().col(2));
               cpData[icircle] .getFrameOfReference().getPosition()            =  circle->getFrame()->getPosition() + cpData[icircle].getFrameOfReference().getOrientation().col(0)*rCircle;
 
 #if 0

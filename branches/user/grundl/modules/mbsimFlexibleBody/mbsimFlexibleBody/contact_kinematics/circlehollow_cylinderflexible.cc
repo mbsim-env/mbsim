@@ -50,7 +50,7 @@ namespace MBSimFlexibleBody {
     func= new FuncPairContour1sCircleHollow(circle,cylinder);
   }
 
-  void ContactKinematicsCircleHollowCylinderFlexible::updateg(Vec &g, ContourPointData *cpData) {
+  void ContactKinematicsCircleHollowCylinderFlexible::updateg(Vec &g, ContourPointData *cpData, int index) {
 
     Vec WrOP_circle =  circle->getFrame()->getPosition();
 
@@ -124,18 +124,18 @@ namespace MBSimFlexibleBody {
 
       g(0) = nrm2(WrD2);
       if( nrm2(normal)>0.01*a ) { // hack of Roland Zander, oh my god; what about the COSY in the non-if-case? TODO
-        cpData[icircle].getFrameOfReference().getOrientation().col(0) = normal/nrm2(normal);
-        cpData[icylinder].getFrameOfReference().getOrientation().col(0) = - cpData[icircle].getFrameOfReference().getOrientation().col(0);
-        cpData[icylinder].getFrameOfReference().getOrientation().col(2) = crossProduct(cpData[icylinder].getFrameOfReference().getOrientation().col(0),cpData[icylinder].getFrameOfReference().getOrientation().col(1));
+        cpData[icircle].getFrameOfReference().getOrientation().set(0, normal/nrm2(normal));
+        cpData[icylinder].getFrameOfReference().getOrientation().set(0, - cpData[icircle].getFrameOfReference().getOrientation().col(0));
+        cpData[icylinder].getFrameOfReference().getOrientation().set(2, crossProduct(cpData[icylinder].getFrameOfReference().getOrientation().col(0),cpData[icylinder].getFrameOfReference().getOrientation().col(1)));
 
         g(0) = cpData[icylinder].getFrameOfReference().getOrientation().col(0).T() * WrD2 ;
       }
     }
     else { // only dimensioning
       cpData[icircle].getFrameOfReference().setPosition(WrOP_circle);
-      cpData[icircle].getFrameOfReference().getOrientation().col(0) = -cpData[icylinder].getFrameOfReference().getOrientation().col(0);
-      cpData[icircle].getFrameOfReference().getOrientation().col(1) = -cpData[icylinder].getFrameOfReference().getOrientation().col(1);
-      cpData[icircle].getFrameOfReference().getOrientation().col(2) = cpData[icylinder].getFrameOfReference().getOrientation().col(2);
+      cpData[icircle].getFrameOfReference().getOrientation().set(0, -cpData[icylinder].getFrameOfReference().getOrientation().col(0));
+      cpData[icircle].getFrameOfReference().getOrientation().set(1, -cpData[icylinder].getFrameOfReference().getOrientation().col(1));
+      cpData[icircle].getFrameOfReference().getOrientation().set(2, cpData[icylinder].getFrameOfReference().getOrientation().col(2));
 
       g(0) = R*abs(cos_alpha) - r ;
     }

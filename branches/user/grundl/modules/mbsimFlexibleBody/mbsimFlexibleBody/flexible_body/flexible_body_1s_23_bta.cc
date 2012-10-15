@@ -78,7 +78,7 @@ namespace MBSimFlexibleBody {
         X = static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->StateAxis(qElement[currentElement],uElement[currentElement],sLocal); 
         X(0) = cp.getLagrangeParameterPosition()(0);
       }
-      SqrMat AWK;
+      SqrMat3 AWK;
       if(ff==firstTangent || ff==normal || ff==cosy || ff==secondTangent || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
         AWK = frameOfReference->getOrientation()*static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->AWK(qElement[currentElement],sLocal);
       }
@@ -87,12 +87,12 @@ namespace MBSimFlexibleBody {
         cp.getFrameOfReference().setPosition(frameOfReference->getPosition() + frameOfReference->getOrientation() * X(0,2));
       }
       if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
-        cp.getFrameOfReference().getOrientation().col(1) = AWK.col(0); // tangent
+        cp.getFrameOfReference().getOrientation().set(1, AWK.col(0)); // tangent
       }
       if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
-        cp.getFrameOfReference().getOrientation().col(0) = AWK.col(1); // normal
+        cp.getFrameOfReference().getOrientation().set(0, AWK.col(1)); // normal
       }
-      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().col(2) = -AWK.col(2); // binormal (cartesian system)
+      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(2, -AWK.col(2)); // binormal (cartesian system)
       if(ff==velocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) {
         cp.getFrameOfReference().setVelocity(frameOfReference->getOrientation() * X(6,8));
       }
@@ -129,8 +129,8 @@ namespace MBSimFlexibleBody {
     }
     else throw MBSimError("ERROR(FlexibleBody1s23BTA::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
 
-    cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation()(0,1,2,2)*Jacobian(0,0,qSize-1,1).T());
-    cp.getFrameOfReference().setJacobianOfRotation   (frameOfReference->getOrientation()*Jacobian(0,2,qSize-1,4).T());
+    cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation()(Index(0,2),Index(1,2))*Jacobian(Index(0,qSize-1),Index(0,1)).T());
+    cp.getFrameOfReference().setJacobianOfRotation   (frameOfReference->getOrientation()*Jacobian(Index(0,qSize-1),Index(2,4)).T());
 
     // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
     // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)

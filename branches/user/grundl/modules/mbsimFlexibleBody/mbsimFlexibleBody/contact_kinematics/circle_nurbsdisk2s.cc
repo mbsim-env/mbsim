@@ -50,7 +50,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void ContactKinematicsCircleNurbsDisk2s::updateg(fmatvec::Vec& g, ContourPointData *cpData) {
+  void ContactKinematicsCircleNurbsDisk2s::updateg(fmatvec::Vec& g, ContourPointData *cpData, int index) {
     FuncPairCircleNurbsDisk2s *func= new FuncPairCircleNurbsDisk2s(circle, nurbsdisk); // root function for searching contact parameters
     Contact1sSearch search(func);
 
@@ -81,9 +81,9 @@ namespace MBSimFlexibleBody {
     else {
       nurbsdisk->updateKinematicsForFrame(cpData[inurbsdisk],position_cosy); // writes the position, as well as the normal and the tangents into the frame of reference
 
-      cpData[icircle].getFrameOfReference().getOrientation().col(0)= -cpData[inurbsdisk].getFrameOfReference().getOrientation().col(0);
-      cpData[icircle].getFrameOfReference().getOrientation().col(1)= -cpData[inurbsdisk].getFrameOfReference().getOrientation().col(1);   
-      cpData[icircle].getFrameOfReference().getOrientation().col(2)=  cpData[inurbsdisk].getFrameOfReference().getOrientation().col(2); // to have a legal framework the second tangent is not the negative of the tanget of the disk
+      cpData[icircle].getFrameOfReference().getOrientation().set(0, -cpData[inurbsdisk].getFrameOfReference().getOrientation().col(0));
+      cpData[icircle].getFrameOfReference().getOrientation().set(1, -cpData[inurbsdisk].getFrameOfReference().getOrientation().col(1));   
+      cpData[icircle].getFrameOfReference().getOrientation().set(2,  cpData[inurbsdisk].getFrameOfReference().getOrientation().col(2)); // to have a legal framework the second tangent is not the negative of the tanget of the disk
 
       g(0) = cpData[inurbsdisk].getFrameOfReference().getOrientation().col(0).T() * (cpData[icircle].getFrameOfReference().getPosition() - cpData[inurbsdisk].getFrameOfReference().getPosition());
     }

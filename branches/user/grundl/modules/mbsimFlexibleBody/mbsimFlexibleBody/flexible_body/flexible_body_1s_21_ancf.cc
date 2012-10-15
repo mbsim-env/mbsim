@@ -26,8 +26,6 @@
 #include "contact.h"
 #include "contour.h"
 
-#define FMATVEC_DEEP_COPY
-
 namespace MBSim {
 
   const int BodyFlexible1s21ANCF::NodeDOFs      = 4;

@@ -18,10 +18,8 @@
  */
 
 #include<config.h>
-#define FMATVEC_NO_INITIALIZATION
-#define FMATVEC_NO_BOUNDS_CHECK
-
 #include "mbsimFlexibleBody/utils/angles.h"
+
 using namespace fmatvec;
 using namespace MBSim;
 
@@ -31,12 +29,12 @@ namespace MBSimFlexibleBody {
 
   Angles::~Angles() {}
 
-  SqrMat Angles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
-    SqrMat AWK(3);
-    AWK.col(0) = computet(q);
-    AWK.col(1) = computen(q);
-    AWK.col(2) = computeb(q);
-    return AWK.copy();
+  SqrMat3 Angles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+    SqrMat3 AWK;
+    AWK.set(0, computet(q));
+    AWK.set(1, computen(q));
+    AWK.set(2, computeb(q));
+    return AWK;
   }
 
   Vec Angles::computett(const Vec& q,const Vec& qt) const {

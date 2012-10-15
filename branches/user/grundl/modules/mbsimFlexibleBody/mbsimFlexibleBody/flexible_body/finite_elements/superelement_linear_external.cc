@@ -19,9 +19,6 @@
  */
 
 #include <config.h>
-#define FMATVEC_NO_INITIALIZATION
-#define FMATVEC_NO_BOUNDS_CHECK
-
 #include "mbsimFlexibleBody/flexible_body/finite_elements/superelement_linear_external.h"
 #include <fstream>
 using namespace std;
