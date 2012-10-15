@@ -68,7 +68,7 @@ namespace MBSim {
          * \param contour parameter
          * \return helping distance vector at contour parameter
          */
-        virtual fmatvec::Vec computeWrD(const Arg& x) = 0;
+        virtual fmatvec::Vec3 computeWrD(const Arg& x) = 0;
         /*************************************************/
     };
 
@@ -86,16 +86,16 @@ namespace MBSim {
        * \param point contour or general rigid contour reduced to point of reference
        * \param contour with one contour parameter
        */
-      FuncPairContour1sPoint(Point* point_, Contour1s *contour_) : contour(contour_), point(point_), cp(fmatvec::Vec(1,fmatvec::INIT,0.)) {}
+      FuncPairContour1sPoint(Point* point_, Contour1s *contour_) : contour(contour_), point(point_), cp(fmatvec::VecV(1)) {}
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &alpha, const void * =NULL) {
-        fmatvec::Vec Wd = computeWrD(alpha);
-        fmatvec::Vec Wt = cp.getFrameOfReference().getOrientation().col(1);
+        fmatvec::Vec3 Wd = computeWrD(alpha);
+        fmatvec::Vec3 Wt = cp.getFrameOfReference().getOrientation().col(1);
         return Wt.T()*Wd;
       }
 
-      fmatvec::Vec computeWrD(const double &alpha) {
+      fmatvec::Vec3 computeWrD(const double &alpha) {
         //if(fabs(alpha-cp.getLagrangeParameterPosition()(0))>epsroot()) { TODO this is not working in all cases
         cp.getLagrangeParameterPosition()(0) = alpha;
         contour->computeRootFunctionPosition(cp);
@@ -136,11 +136,11 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &alpha, const void * =NULL) {
-        fmatvec::Vec Wd = computeWrD(alpha);
+        fmatvec::Vec3 Wd = computeWrD(alpha);
         return circle->getReferenceOrientation().col(2).T()*Wd;
       }
 
-      fmatvec::Vec computeWrD(const double &alpha) {
+      fmatvec::Vec3 computeWrD(const double &alpha) {
         //if(fabs(alpha-cp.getLagrangeParameterPosition()(0))>epsroot()) { TODO this is not working in all cases
         cp.getLagrangeParameterPosition()(0) = alpha;
         contour->computeRootFunctionPosition(cp);
@@ -168,7 +168,7 @@ namespace MBSim {
    * \author Roland Zander
    * \date 2009-07-10 some comments (Thorsten Schindler)
    */
-  class FuncPairPointContourInterpolation : public DistanceFunction<fmatvec::Vec,fmatvec::Vec> {
+  class FuncPairPointContourInterpolation : public DistanceFunction<fmatvec::VecV,fmatvec::VecV> {
     public:
       /**
        * \brief constructor
@@ -178,15 +178,15 @@ namespace MBSim {
       FuncPairPointContourInterpolation(Point* point_, ContourInterpolation *contour_) : contour(contour_), point(point_) {}
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
-      fmatvec::Vec operator()(const fmatvec::Vec &alpha, const void * =NULL) {
-        fmatvec::Mat Wt = contour->computeWt(alpha);
-        fmatvec::Vec WrOC[2];
+      fmatvec::VecV operator()(const fmatvec::VecV &alpha, const void * =NULL) {
+        fmatvec::Mat3V Wt = contour->computeWt(alpha);
+        fmatvec::Vec3 WrOC[2];
         WrOC[0] = point->getFrame()->getPosition();
         WrOC[1] = contour->computeWrOC(alpha);
         return Wt.T() * ( WrOC[1] - WrOC[0] ); 
       }
 
-      fmatvec::Vec computeWrD(const fmatvec::Vec &alpha) {
+      fmatvec::Vec3 computeWrD(const fmatvec::VecV &alpha) {
         return contour->computeWrOC(alpha) - point->getFrame()->getPosition();
       }
       /*************************************************/
@@ -227,13 +227,13 @@ namespace MBSim {
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       virtual double operator()(const double &phi, const void * =NULL) = 0;
       double operator[](const double &phi);
-      virtual fmatvec::Vec computeWrD(const double &phi) = 0;
+      virtual fmatvec::Vec3 computeWrD(const double &phi) = 0;
       /*************************************************/
 
       /* GETTER / SETTER */
-      void setDiffVec(fmatvec::Vec d_);
+      void setDiffVec(fmatvec::Vec3 d_);
 
-      void setSectionCOS(fmatvec::Vec b1_,fmatvec::Vec b2_);
+      void setSectionCOS(fmatvec::Vec3 b1_,fmatvec::Vec3 b2_);
       /*************************************************/
 
     protected:
@@ -250,16 +250,16 @@ namespace MBSim {
       /**
        * \brief normed base-vectors of cone-section
        */
-      fmatvec::Vec b1, b2;
+      fmatvec::Vec3 b1, b2;
 
       /** 
        * \brief distance-vector of cone-section- and circle-midpoint
        */
-      fmatvec::Vec d;  
+      fmatvec::Vec3 d;  
   };
 
-  inline void FuncPairConeSectionCircle::setDiffVec(fmatvec::Vec d_) { d=d_; }
-  inline void FuncPairConeSectionCircle::setSectionCOS(fmatvec::Vec b1_,fmatvec::Vec b2_) { b1=b1_; b2=b2_; }
+  inline void FuncPairConeSectionCircle::setDiffVec(fmatvec::Vec3 d_) { d=d_; }
+  inline void FuncPairConeSectionCircle::setSectionCOS(fmatvec::Vec3 b1_,fmatvec::Vec3 b2_) { b1=b1_; b2=b2_; }
   inline double FuncPairConeSectionCircle::operator[](const double &phi) { if(sec_IN_ci) return R - nrm2(computeWrD(phi)); else return nrm2(computeWrD(phi)) - R; }
 
   /*! 
@@ -290,17 +290,17 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &phi, const void * =NULL);
-      fmatvec::Vec computeWrD(const double &phi);
+      fmatvec::Vec3 computeWrD(const double &phi);
       /*************************************************/
 
       /* GETTER / SETTER */
-      void setEllipseCOS(fmatvec::Vec b1e_,fmatvec::Vec b2e_);
+      void setEllipseCOS(fmatvec::Vec3 b1e_,fmatvec::Vec3 b2e_);
       /*************************************************/
   };
 
-  inline void FuncPairEllipseCircle::setEllipseCOS(fmatvec::Vec b1e_,fmatvec::Vec b2e_) {setSectionCOS(b1e_,b2e_);}
+  inline void FuncPairEllipseCircle::setEllipseCOS(fmatvec::Vec3 b1e_,fmatvec::Vec3 b2e_) {setSectionCOS(b1e_,b2e_);}
   inline double FuncPairEllipseCircle::operator()(const double &phi, const void *) { return -2*b*(b2(0)*d(0) + b2(1)*d(1) + b2(2)*d(2))*cos(phi) + 2*a*(b1(0)*d(0) + b1(1)*d(1) + b1(2)*d(2))*sin(phi) + ((a*a) - (b*b))*sin(2*phi); }
-  inline fmatvec::Vec FuncPairEllipseCircle::computeWrD(const double &phi) { return d + b1*a*cos(phi) + b2*b*sin(phi); }
+  inline fmatvec::Vec3 FuncPairEllipseCircle::computeWrD(const double &phi) { return d + b1*a*cos(phi) + b2*b*sin(phi); }
 
   /*! 
    * \brief root function for planar pairing Hyperbola and Circle 
@@ -329,12 +329,12 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &phi, const void * =NULL);
-      fmatvec::Vec computeWrD(const double &phi);
+      fmatvec::Vec3 computeWrD(const double &phi);
       /*************************************************/
   };
 
   inline double FuncPairHyperbolaCircle::operator()(const double &phi, const void *) { return -2*b*(b2(0)*d(0) + b2(1)*d(1) + b2(2)*d(2))*cosh(phi) - 2*a*(b1(0)*d(0) + b1(1)*d(1) + b1(2)*d(2))*sinh(phi) - ((a*a) + (b*b))*sinh(2*phi); }
-  inline fmatvec::Vec FuncPairHyperbolaCircle::computeWrD(const double &phi) { return d + b1*a*cosh(phi) + b2*b*sinh(phi); }
+  inline fmatvec::Vec3 FuncPairHyperbolaCircle::computeWrD(const double &phi) { return d + b1*a*cosh(phi) + b2*b*sinh(phi); }
 
   /*! 
    * \brief base Jacobian of root function for planar pairing ConeSection and Circle 
@@ -351,8 +351,8 @@ namespace MBSim {
       JacobianPairConeSectionCircle(double a_, double b_) : a(a_), b(b_) {}
 
       /* GETTER / SETTER */
-      void setDiffVec(fmatvec::Vec d_);
-      void setSectionCOS(fmatvec::Vec b1_,fmatvec::Vec b2_);
+      void setDiffVec(fmatvec::Vec3 d_);
+      void setSectionCOS(fmatvec::Vec3 b1_,fmatvec::Vec3 b2_);
       /*************************************************/
 
     protected:
@@ -364,16 +364,16 @@ namespace MBSim {
       /**
        * \brief normed base-vectors of cone-section 
        */
-      fmatvec::Vec b1, b2;
+      fmatvec::Vec3 b1, b2;
 
       /**
        * \brief distance-vector of circle- and cone-section-midpoint
        */
-      fmatvec::Vec d;
+      fmatvec::Vec3 d;
   };
 
-  inline void JacobianPairConeSectionCircle::setDiffVec(fmatvec::Vec d_) { d=d_; }
-  inline void JacobianPairConeSectionCircle::setSectionCOS(fmatvec::Vec b1_,fmatvec::Vec b2_) { b1=b1_; b2=b2_; }
+  inline void JacobianPairConeSectionCircle::setDiffVec(fmatvec::Vec3 d_) { d=d_; }
+  inline void JacobianPairConeSectionCircle::setSectionCOS(fmatvec::Vec3 b1_,fmatvec::Vec3 b2_) { b1=b1_; b2=b2_; }
 
   /*! 
    * \brief Jacobian of root function for planar pairing Ellipse and Circle
@@ -440,7 +440,7 @@ namespace MBSim {
         //return trans(WtC)*WnL;
       }
 
-      virtual fmatvec::Vec computeWrD(const double &s) {
+      virtual fmatvec::Vec3 computeWrD(const double &s) {
         throw MBSimError("ERROR (FuncPairContour1sLine::computeWrD): Not implemented!");
         //fmatvec::Vec WrOCContour =  contour->computeWrOC(s);
         //fmatvec::Vec Wn = contour->computeWn(s);
@@ -474,14 +474,14 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &alpha, const void * =NULL) {
-        cp.getLagrangeParameterPosition() = fmatvec::Vec(1, fmatvec::INIT, alpha);
-        fmatvec::Vec Wd = computeWrD(alpha);
-        fmatvec::Vec Wt = contour->computeTangent(cp);
+        cp.getLagrangeParameterPosition() = fmatvec::VecV(1,fmatvec::INIT,alpha);
+        fmatvec::Vec3 Wd = computeWrD(alpha);
+        fmatvec::Vec3 Wt = contour->computeTangent(cp);
         return Wt.T()*Wd;
       }
 
-      fmatvec::Vec computeWrD(const double &alpha) {
-        cp.getLagrangeParameterPosition() = fmatvec::Vec(1, fmatvec::INIT, alpha);
+      fmatvec::Vec3 computeWrD(const double &alpha) {
+        cp.getLagrangeParameterPosition() = fmatvec::VecV(1,fmatvec::INIT,alpha);
         contour->computeRootFunctionPosition(cp);
         contour->computeRootFunctionFirstTangent(cp);
         contour->computeRootFunctionNormal(cp);
@@ -506,7 +506,7 @@ namespace MBSim {
       /**
        * \brief contour point data for saving old values
        */
-      fmatvec::Vec WrOC[2];
+      fmatvec::Vec3 WrOC[2];
   };
 
   /*! 

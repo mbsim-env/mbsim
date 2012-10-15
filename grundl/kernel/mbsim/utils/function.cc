@@ -64,6 +64,13 @@ namespace MBSim {
     d=Element::getDouble(e);
   }
 
+  TiXmlElement* LinearRegularizedBilateralConstraint::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = Function2<double,double,double>::writeXMLFile(parent);
+    addElementText(ele0, MBSIMNS"stiffnessCoefficient", c);
+    addElementText(ele0, MBSIMNS"dampingCoefficient", d);
+    return ele0;
+  }
+
   Vec LinearRegularizedCoulombFriction::operator()(const Vec &gd, const double& laN, const void *) { 
     int nFric = gd.size();
     Vec la(nFric,NONINIT);

@@ -84,7 +84,7 @@ namespace MBSim {
     rWork(5) = dtMax;
     rWork(6) = dtMin;
     int liWork=(20+zSize)                             *10;//////////////;
-    Vector<int> iWork(liWork);
+    VecInt iWork(liWork);
     iWork(5) = maxSteps;
 
     system->plot(z, t);
@@ -104,7 +104,7 @@ namespace MBSim {
     else
       MF = 10; // Nonstiff (Adams) method, no Jacobian used.
 
-    Vector<int> jsv(nsv);  
+    VecInt jsv(nsv);  
 //    bool donedrift;
 
     cout.setf(ios::scientific, ios::floatfield);

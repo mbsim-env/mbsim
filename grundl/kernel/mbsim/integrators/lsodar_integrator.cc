@@ -77,7 +77,7 @@ namespace MBSim {
   void LSODARIntegrator::preIntegrate(DynamicSystemSolver& system_) {
     system = &system_;
     zSize=system->getzSize();
-    z.resize(zSize, INIT, 0);
+    z.resize(zSize);
     if(z0.size())
       z = z0;
     else
@@ -94,19 +94,19 @@ namespace MBSim {
     istate=1;
     nsv=system->getsvSize();
     lrWork = (22 + zSize * max(16, zSize + 9) + 3 * nsv) * 2;
-    rWork.resize(lrWork, INIT, 0);
+    rWork.resize(lrWork);
     rWork(4) = dt0; 
     rWork(5) = dtMax;
     rWork(6) = dtMin;
     liWork = (20+zSize)*10;
-    iWork.resize(liWork, INIT, 0);
+    iWork.resize(liWork);
     iWork(5) = 10000;
     //system->plot(z, t);
     s0 = clock();
     time = 0;
     integrationSteps = 0;
     integPlot.open((name + ".plt").c_str());
-    jsv.resize(nsv, INIT, 0);  
+    jsv.resize(nsv);  
     cout.setf(ios::scientific, ios::floatfield);
   }
 

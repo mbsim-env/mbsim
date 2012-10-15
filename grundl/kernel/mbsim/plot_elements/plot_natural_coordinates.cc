@@ -176,16 +176,16 @@ namespace MBSim {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
-        Vec r = frame->getPosition();
-        Vec v = frame->getVelocity();
-        Vec a = frame->getAcceleration();
+        Vec3 r = frame->getPosition();
+        Vec3 v = frame->getVelocity();
+        Vec3 a = frame->getAcceleration();
         double nrmv = nrm2(v);
-        Vec et(3);
+        Vec3 et;
         if(nrmv<epsroot())
           et(0) = 1;
         else
           et = v/nrmv;
-        Vec eb = crossProduct(et,a);
+        Vec3 eb = crossProduct(et,a);
         double nrmeb = nrm2(eb);
         if(nrmeb<epsroot()) {
           if(fabs(et(0))<epsroot() && fabs(et(1))<epsroot()) {
@@ -201,7 +201,7 @@ namespace MBSim {
         }
         else
           eb = eb/nrmeb;
-        Vec en = -crossProduct(et,eb);
+        Vec3 en = -crossProduct(et,eb);
 
         v *= vscale;
         a *= ascale;
@@ -221,7 +221,7 @@ namespace MBSim {
         if(openMBVVelocity && !openMBVVelocity->isHDF5Link()) {
           vector<double> data;
           data.push_back(t);
-          Vec off = v;
+          Vec3 off = v;
           data.push_back(r(0)+off(0));
           data.push_back(r(1)+off(1));
           data.push_back(r(2)+off(2));
@@ -234,8 +234,8 @@ namespace MBSim {
 
         if(openMBVTangentialVelocity && !openMBVTangentialVelocity->isHDF5Link()) {
           vector<double> data;
-          Vec vt =  (v.T()*et)*et;
-          Vec off = vt;
+          Vec3 vt =  (v.T()*et)*et;
+          Vec3 off = vt;
           data.push_back(t);
           data.push_back(r(0)+off(0));
           data.push_back(r(1)+off(1));
@@ -249,8 +249,8 @@ namespace MBSim {
 
         if(openMBVNormalVelocity && !openMBVNormalVelocity->isHDF5Link()) {
           vector<double> data;
-          Vec vn =  (v.T()*en)*en;
-          Vec off = vn;
+          Vec3 vn =  (v.T()*en)*en;
+          Vec3 off = vn;
           data.push_back(t);
           data.push_back(r(0)+off(0));
           data.push_back(r(1)+off(1));
@@ -264,8 +264,8 @@ namespace MBSim {
 
         if(openMBVBinormalVelocity && !openMBVBinormalVelocity->isHDF5Link()) {
           vector<double> data;
-          Vec vb =  (v.T()*eb)*eb;
-          Vec off = vb;
+          Vec3 vb =  (v.T()*eb)*eb;
+          Vec3 off = vb;
           data.push_back(t);
           data.push_back(r(0)+off(0));
           data.push_back(r(1)+off(1));
@@ -280,7 +280,7 @@ namespace MBSim {
         if(openMBVAcceleration && !openMBVAcceleration->isHDF5Link()) {
           vector<double> data;
           data.push_back(t);
-          Vec off = a;
+          Vec3 off = a;
           data.push_back(r(0)+off(0));
           data.push_back(r(1)+off(1));
           data.push_back(r(2)+off(2));
@@ -293,8 +293,8 @@ namespace MBSim {
 
         if(openMBVTangentialAcceleration && !openMBVTangentialAcceleration->isHDF5Link()) {
           vector<double> data;
-          Vec at =  (a.T()*et)*et;
-          Vec off = at;
+          Vec3 at =  (a.T()*et)*et;
+          Vec3 off = at;
           data.push_back(t);
           data.push_back(r(0)+off(0));
           data.push_back(r(1)+off(1));
@@ -308,8 +308,8 @@ namespace MBSim {
 
         if(openMBVNormalAcceleration && !openMBVNormalAcceleration->isHDF5Link()) {
           vector<double> data;
-          Vec an =  (a.T()*en)*en;
-          Vec off = an;
+          Vec3 an =  (a.T()*en)*en;
+          Vec3 off = an;
           data.push_back(t);
           data.push_back(r(0)+off(0));
           data.push_back(r(1)+off(1));
@@ -323,8 +323,8 @@ namespace MBSim {
 
         if(openMBVBinormalAcceleration && !openMBVBinormalAcceleration->isHDF5Link()) {
           vector<double> data;
-          Vec ab =  (a.T()*eb)*eb;
-          Vec off = ab;
+          Vec3 ab =  (a.T()*eb)*eb;
+          Vec3 off = ab;
           data.push_back(t);
           data.push_back(r(0)+off(0));
           data.push_back(r(1)+off(1));
@@ -338,15 +338,15 @@ namespace MBSim {
 
         if(openMBVFrame && !openMBVFrame->isHDF5Link()) {
           vector<double> data;
-          SqrMat AWP(3);
-          AWP.col(0) = et;
-          AWP.col(1) = en;
-          AWP.col(2) = eb;
+          SqrMat3 AWP;
+          AWP.set(0, et);
+          AWP.set(1, en);
+          AWP.set(2, eb);
           data.push_back(t);
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
-          Vec cardan=AIK2Cardan(AWP);
+          Vec3 cardan=AIK2Cardan(AWP);
           data.push_back(cardan(0));
           data.push_back(cardan(1));
           data.push_back(cardan(2));

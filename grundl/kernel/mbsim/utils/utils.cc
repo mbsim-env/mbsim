@@ -17,11 +17,11 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
+#include "config.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
 
-#include <mbsim/utils/eps.h>
-
+using namespace std;
 using namespace fmatvec;
 
 std::string numtostr(int i){
@@ -33,17 +33,6 @@ std::string numtostr(int i){
 std::string numtostr(double d) {
   std::ostringstream oss;
   oss << d;
-  return oss.str(); 
-}
-
-std::string numtostr(Mat m) {
-  std::ostringstream oss;
-  oss << "[ ";
-  for(int i=0;i<m.rows()-1;i++) {
-    for(int j=0;i<m.cols()-1;j++) oss << m(i,j) << ", ";
-    oss << "\n";
-  }
-  oss << "]";
   return oss.str(); 
 }
 

@@ -233,9 +233,12 @@ namespace MBSim {
       /*****************************************************/
 
       /* GETTER / SETTER */
-      void setPosition(const fmatvec::Vec& PrPF_) { PrPF = PrPF_; }
-      void setOrientation(const fmatvec::SqrMat& APF_) { APF = APF_; }
+      void setPosition(const fmatvec::Vec3& PrPF_) { PrPF = PrPF_; }
+      void setOrientation(const fmatvec::SqrMat3& APF_) { APF = APF_; }
       void setFrameOfReference(Frame *frame) { frameParent = frame; };
+      const fmatvec::Vec3& getPosition() const { return PrPF; }
+      const fmatvec::SqrMat3& getOrientation() const { return APF; }
+      const Frame* getFrameOfReference() const { return frameParent; };
 
       const fmatvec::Vec& getxd() const { return xd; };
       fmatvec::Vec& getxd() { return xd; };
@@ -264,14 +267,16 @@ namespace MBSim {
       fmatvec::Vec& getrFactor() { return rFactor; }
       fmatvec::Vec& getsv() { return sv; }
       const fmatvec::Vec& getsv() const { return sv; }
-      fmatvec::Vector<int>& getjsv() { return jsv; }
-      const fmatvec::Vector<int>& getjsv() const { return jsv; }
-      fmatvec::Vector<int>& getLinkStatus() { return LinkStatus; }
-      fmatvec::Vector<int>& getLinkStatusReg() { return LinkStatusReg; }
-      const fmatvec::Vector<int>& getLinkStatus() const { return LinkStatus; }
-      const fmatvec::Vector<int>& getLinkStatusReg() const { return LinkStatusReg; }
+      fmatvec::VecInt& getjsv() { return jsv; }
+      const fmatvec::VecInt& getjsv() const { return jsv; }
+      fmatvec::VecInt& getLinkStatus() { return LinkStatus; }
+      fmatvec::VecInt& getLinkStatusReg() { return LinkStatusReg; }
+      const fmatvec::VecInt& getLinkStatus() const { return LinkStatus; }
+      const fmatvec::VecInt& getLinkStatusReg() const { return LinkStatusReg; }
       const fmatvec::Vec& getres() const { return res; }
       fmatvec::Vec& getres() { return res; }
+      const fmatvec::Vec& getcorr() const { return corr; };
+      fmatvec::Vec& getcorr() { return corr; };
 
       void setx(const fmatvec::Vec& x_) { x = x_; }
       void setx0(const fmatvec::Vec &x0_) { x0 = x0_; }
@@ -303,6 +308,11 @@ namespace MBSim {
       int getLinkStatusSize() const { return LinkStatusSize; }
       int getLinkStatusRegSize() const { return LinkStatusRegSize; }
       /*****************************************************/
+
+      const std::vector<Object*>& getObjects() const { return object; }
+      const std::vector<DynamicSystem*>& getDynamicSystems() const { return dynamicsystem; }
+      const std::vector<Frame*>& getFrames() const { return frame; }
+      const std::vector<Contour*>& getContours() const { return contour; }
 
       /**
        * \brief references to positions of dynamic system parent
@@ -441,19 +451,19 @@ namespace MBSim {
        * \brief references to boolean evaluation of stopvector concerning roots of dynamic system parent
        * \param vector to be referenced
        */
-      void updatejsvRef(const fmatvec::Vector<int> &ref);
+      void updatejsvRef(const fmatvec::VecInt &ref);
 
       /**
        * \brief references to status vector of set valued links with piecewise link equations (which piece is valid)
        * \param vector to be referenced 
        */
-      void updateLinkStatusRef(const fmatvec::Vector<int> &LinkStatusParent);
+      void updateLinkStatusRef(const fmatvec::VecInt &LinkStatusParent);
 
       /**
        * \brief references to status vector of single valued links
        * \param vector to be referenced 
        */
-      void updateLinkStatusRegRef(const fmatvec::Vector<int> &LinkStatusRegParent);      
+      void updateLinkStatusRegRef(const fmatvec::VecInt &LinkStatusRegParent);      
             
       /**
        * \brief references to residuum of contact equations of dynamic system parent
@@ -632,7 +642,7 @@ namespace MBSim {
        * \param relative orientation of frame
        * \param relation frame name
        */
-      void addFrame(Frame *frame_, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const std::string& refFrameName);
+      void addFrame(Frame *frame_, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const std::string& refFrameName);
 
       /**
        * \param frame to add
@@ -640,7 +650,7 @@ namespace MBSim {
        * \param relative orientation of frame
        * \param relation frame
        */
-      void addFrame(Frame *frame_, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const Frame* refFrame=0);
+      void addFrame(Frame *frame_, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const Frame* refFrame=0);
 
       /**
        * \param name of frame to add
@@ -648,7 +658,7 @@ namespace MBSim {
        * \param relative orientation of frame
        * \param relation frame
        */
-      void addFrame(const std::string &str, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const Frame* refFrame=0);
+      void addFrame(const std::string &str, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const Frame* refFrame=0);
 
       /**
        * \param contour to add
@@ -656,7 +666,7 @@ namespace MBSim {
        * \param relative orientation of contour
        * \param relation frame name
        */
-      void addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const std::string& refFrameName);
+      void addContour(Contour* contour, const fmatvec::Vec3 &RrRC, const fmatvec::SqrMat3 &ARC, const std::string& refFrameName);
 
       /**
        * \param contour to add
@@ -664,14 +674,14 @@ namespace MBSim {
        * \param relative orientation of contour
        * \param relation frame
        */
-      void addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const Frame* refFrame=0);
+      void addContour(Contour* contour, const fmatvec::Vec3 &RrRC, const fmatvec::SqrMat3 &ARC, const Frame* refFrame=0);
 
       /**
        * \param contour to add
        * \param relative position of contour
        * \param relation frame
        */
-      void addContour(Contour* contour, const fmatvec::Vec &RrRC, const Frame* refFrame=0) { addContour(contour,RrRC,fmatvec::SqrMat(3,fmatvec::EYE),refFrame); }
+      void addContour(Contour* contour, const fmatvec::Vec3 &RrRC, const Frame* refFrame=0) { addContour(contour,RrRC,fmatvec::SqrMat3(fmatvec::EYE),refFrame); }
 
       /**
        * \param frame
@@ -769,12 +779,12 @@ namespace MBSim {
       /**
        * \brief relative translation with respect to parent frame
        */
-      fmatvec::Vec PrPF;
+      fmatvec::Vec3 PrPF;
 
       /**
        * \brief relative rotation with respect to parent frame
        */
-      fmatvec::SqrMat APF;
+      fmatvec::SqrMat3 APF;
 
       /** 
        * \brief container for possible ingredients
@@ -866,17 +876,17 @@ namespace MBSim {
       /**
        * \brief boolean evaluation of stop vector concerning roots
        */
-      fmatvec::Vector<int> jsv;
+      fmatvec::VecInt jsv;
 
       /**
        * \brief status of set-valued links 
        */
-      fmatvec::Vector<int> LinkStatus;
+      fmatvec::VecInt LinkStatus;
 
       /**
        * \brief status of single-valued links 
        */
-      fmatvec::Vector<int> LinkStatusReg;
+      fmatvec::VecInt LinkStatusReg;
 
       /** 
        * \brief size and local start index of positions relative to parent
@@ -936,12 +946,12 @@ namespace MBSim {
       /**
        * \brief inertial position of frames, contours (see group.h / tree.h)
        */
-      std::vector<fmatvec::Vec> IrOF, IrOC;
+      std::vector<fmatvec::Vec3> IrOF, IrOC;
 
       /**
        * \brief orientation to inertial frame of frames, contours (see group.h / tree.h)
        */
-      std::vector<fmatvec::SqrMat> AIF, AIC;
+      std::vector<fmatvec::SqrMat3> AIF, AIC;
 
       /**
        * \brief vector of frames and contours
@@ -977,10 +987,10 @@ namespace MBSim {
       int corrSize, corrInd;
       fmatvec::Vec corr;
 
-    private:
+    protected:
       std::vector<std::string> saved_refFrameF, saved_refFrameC;
-      std::vector<fmatvec::Vec> saved_RrRF, saved_RrRC;
-      std::vector<fmatvec::SqrMat> saved_ARF, saved_ARC;
+      std::vector<fmatvec::Vec3> saved_RrRF, saved_RrRC;
+      std::vector<fmatvec::SqrMat3> saved_ARF, saved_ARC;
   };
 }
 

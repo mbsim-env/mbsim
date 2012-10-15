@@ -31,8 +31,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  KineticExcitation::KineticExcitation(const string &name) : LinkMechanics(name), refFrame(NULL),
-  forceDir(3,0), momentDir(3,0), F(NULL), M(NULL) {}
+  KineticExcitation::KineticExcitation(const string &name) : LinkMechanics(name), refFrame(NULL), F(NULL), M(NULL) {}
 
   KineticExcitation::~KineticExcitation() {}
 
@@ -89,17 +88,21 @@ namespace MBSim {
   }
 
   void KineticExcitation::setForce(fmatvec::Mat dir, Function1<fmatvec::Vec,double> *func) {
-    forceDir.resize(3,dir.cols());
-    for (int i=0; i<dir.cols(); i++)
-      forceDir.col(i)=dir.col(i)/nrm2(dir.col(i));
+    forceDir << dir;
+
+    for(int i=0; i<dir.cols(); i++)
+      forceDir.set(i, forceDir.col(i)/nrm2(dir.col(i)));
+
     F=func;
     assert((*F)(0).size()==forceDir.cols());
   }
 
   void KineticExcitation::setMoment(fmatvec::Mat dir, Function1<fmatvec::Vec,double> *func) {
-    momentDir.resize(3,dir.cols());
-    for (int i=0; i<dir.cols(); i++)
-      momentDir.col(i)=dir.col(i)/nrm2(dir.col(i));
+    momentDir << dir;
+
+    for(int i=0; i<dir.cols(); i++)
+      momentDir.set(i, momentDir.col(i)/nrm2(dir.col(i)));
+
     M=func;
     assert((*M)(0).size()==momentDir.cols());
   }
@@ -149,6 +152,33 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"connect");
     saved_ref=e->Attribute("ref");
     e=e->NextSiblingElement();
+  }
+
+  TiXmlElement* KineticExcitation::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = LinkMechanics::writeXMLFile(parent);
+    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"frameOfReference" );
+    ele1->SetAttribute("ref", refFrame->getXMLPath(this,true)); // relative path
+    ele0->LinkEndChild(ele1);
+    if(forceDir.cols()) {
+      TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"force");
+      addElementText(ele1,MBSIMNS"directionVectors",forceDir);
+      TiXmlElement *ele2 = new TiXmlElement(MBSIMNS"function");
+      F->writeXMLFile(ele2);
+      ele1->LinkEndChild(ele2);
+      ele0->LinkEndChild(ele1);
+    }
+    if(momentDir.cols()) {
+      TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"moment");
+      addElementText(ele1,MBSIMNS"directionVectors",momentDir);
+      TiXmlElement *ele2 = new TiXmlElement(MBSIMNS"function");
+      M->writeXMLFile(ele2);
+      ele1->LinkEndChild(ele2);
+      ele0->LinkEndChild(ele1);
+    }
+    ele1 = new TiXmlElement(MBSIMNS"connect");
+    ele1->SetAttribute("ref", frame[0]->getXMLPath(this,true)); // relative path
+    ele0->LinkEndChild(ele1);
+    return ele0;
   }
 
 }

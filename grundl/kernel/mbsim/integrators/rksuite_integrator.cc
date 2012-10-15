@@ -42,7 +42,7 @@ namespace MBSim {
 
     zSize=system->getzSize();
 
-    z.resize(zSize, INIT, 0);
+    z.resize(zSize);
     if(z0.size()) z = z0; // define initial state
     else system->initz(z);
 
@@ -56,8 +56,8 @@ namespace MBSim {
     if (warnLevel)
       messages=1;
 
-    zdGot.resize(zSize, INIT, 0);
-    zMax.resize(zSize, INIT, 0);
+    zdGot.resize(zSize);
+    zMax.resize(zSize);
 
     t=tStart;
     system->plot(z, t);

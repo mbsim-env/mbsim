@@ -47,13 +47,13 @@ namespace MBSim {
        * \return tangent in world frame
        * \param contour position
        */
-      virtual fmatvec::Vec computeTangent(ContourPointData &cp) { updateKinematicsForFrame(cp,firstTangent); return cp.getFrameOfReference().getOrientation().col(1); }
+      virtual fmatvec::Vec3 computeTangent(ContourPointData &cp) { updateKinematicsForFrame(cp,firstTangent); return cp.getFrameOfReference().getOrientation().col(1); }
 
       /**
        * \return binormal in world frame
        * \param Lagrangian position
        */
-      virtual fmatvec::Vec computeBinormal(ContourPointData &cp) { updateKinematicsForFrame(cp,secondTangent); return cp.getFrameOfReference().getOrientation().col(2); }
+      virtual fmatvec::Vec3 computeBinormal(ContourPointData &cp) { updateKinematicsForFrame(cp,secondTangent); return cp.getFrameOfReference().getOrientation().col(2); }
       /***************************************************/
 
       /**

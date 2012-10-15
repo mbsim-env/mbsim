@@ -73,6 +73,17 @@ namespace MBSim {
   //    
   //  }
 
+  TiXmlElement* GeneralizedForceLaw::writeXMLFile(TiXmlNode *parent) { 
+    TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
+    if(forceFunc) {
+      TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"forceFunction" );
+      forceFunc->writeXMLFile(ele1);
+      ele0->LinkEndChild(ele1);
+    }
+    parent->LinkEndChild(ele0);
+    return ele0;
+  }
+
   double UnilateralConstraint::project(double la, double gdn, double r, double laMin) {
     return proxCN(la - r * gdn, laMin);
   }
@@ -137,6 +148,12 @@ namespace MBSim {
 
   bool BilateralConstraint::isFulfilled(double la, double gdn, double laTol, double gdTol, double laMin) {
     return fabs(gdn) <= gdTol;
+  }
+
+  TiXmlElement* GeneralizedImpactLaw::writeXMLFile(TiXmlNode *parent) { 
+    TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
+    parent->LinkEndChild(ele0);
+    return ele0;
   }
 
   double UnilateralNewtonImpact::project(double la, double gdn, double gda, double r, double laMin) {

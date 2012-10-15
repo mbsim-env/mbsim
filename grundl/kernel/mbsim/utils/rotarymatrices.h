@@ -22,6 +22,7 @@
 #ifndef ROTARYMATRICES_H
 #define ROTARYMATRICES_H
 #include "fmatvec.h"
+#include "mbsim/utils/utils.h"
 
 namespace MBSim {
 
@@ -46,14 +47,49 @@ namespace MBSim {
   /**
    * \brief Cardan parametrisation (x y z): calculate angles (alpha, beta, gamma) from rotation matrix AKI or AIK
    */
-  fmatvec::Vec AKI2Cardan(const fmatvec::SqrMat &AKI);
-  fmatvec::Vec AIK2Cardan(const fmatvec::SqrMat &AIK);
+  template<class Row>
+  fmatvec::Vector<Row,double> AIK2Cardan(const fmatvec::SquareMatrix<Row,double> &AIK) { 
+    fmatvec::Vector<Row,double> AlphaBetaGamma(AIK.size(),fmatvec::NONINIT);    
+    AlphaBetaGamma(1)= asin(AIK(0,2));
+    double nenner = cos(AlphaBetaGamma(1));
+    if (fabs(nenner)>1e-10) {
+      AlphaBetaGamma(0) = atan2(-AIK(1,2),AIK(2,2));
+      AlphaBetaGamma(2) = atan2(-AIK(0,1),AIK(0,0));
+    } else {
+      AlphaBetaGamma(0)=0;
+      AlphaBetaGamma(2)=atan2(AIK(1,0),AIK(1,1));
+    }
+    return AlphaBetaGamma;
+  }
+
+  template<class Row>
+  fmatvec::Vector<Row,double> AKI2Cardan(const fmatvec::SquareMatrix<Row,double> &AKI) {
+    return AIK2Cardan(trans(AKI));
+  }
 
   /**
    * \brief reversed Cardan parametrisation (z y x): calculate angles (alpha, beta, gamma) from rotation matrix AKI or AIK
    */
-  fmatvec::Vec AKI2RevCardan(const fmatvec::SqrMat &AKI);
-  fmatvec::Vec AIK2RevCardan(const fmatvec::SqrMat &AIK);
+  template<class Row>
+  fmatvec::Vector<Row,double> AIK2RevCardan(const fmatvec::SquareMatrix<Row,double> &AIK) {
+    fmatvec::Vector<Row,double> AlphaBetaGamma(AIK.size(),fmatvec::NONINIT);
+    AlphaBetaGamma(1)= asin(-AIK(2,0));
+    double nenner = cos(AlphaBetaGamma(1));
+    if (fabs(nenner)>1e-10) {
+      AlphaBetaGamma(0) = atan2(AIK(2,1),AIK(2,2));
+      AlphaBetaGamma(2) = ArcTan(AIK(0,0),AIK(1,0));
+    } else {
+      AlphaBetaGamma(0)=0;
+      AlphaBetaGamma(2)=atan2(-AIK(0,1),AIK(1,1));
+    }
+    return AlphaBetaGamma;
+  }
+
+  template<class Row>
+  fmatvec::Vector<Row,double> AKI2RevCardan(const fmatvec::SquareMatrix<Row,double> &AKI) {
+    return AIK2RevCardan(trans(AKI));
+  }
+
 
   /**
    * \brief ZXY parametrisation (z -x -y)  with parameters (angles) = [al; be; ga]

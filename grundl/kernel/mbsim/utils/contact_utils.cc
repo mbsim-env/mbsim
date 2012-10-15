@@ -46,16 +46,17 @@
 #include <mbsim/contact_kinematics/sphere_plane.h>
 #include <mbsim/contact_kinematics/sphere_sphere.h>
 #include <mbsim/contact_kinematics/point_line_segment.h>
+#include <mbsim/contact_kinematics/area_polynomialfrustum.h>
 // --- List of contact kinematic implementations - END ---
 
 namespace MBSim {
 
-  double computeAngleOnUnitCircle(const fmatvec::Vec& r) {
+  double computeAngleOnUnitCircle(const fmatvec::Vec3& r) {
     return r(1)>=0 ? acos(r(0)) : 2*M_PI-acos(r(0));
   }
 
-  fmatvec::Vec computeAnglesOnUnitSphere(const fmatvec::Vec& r) {
-    fmatvec::Vec zeta(2,fmatvec::NONINIT);
+  fmatvec::Vec2 computeAnglesOnUnitSphere(const fmatvec::Vec3& r) {
+    fmatvec::Vec2 zeta(fmatvec::NONINIT);
     double l = sqrt(r(0)*r(0) + r(1)*r(1));
     zeta(0)= r(1)>=0 ? acos(r(0)/l) : 2*M_PI-acos(r(0)/l);
     zeta(1)= asin(r(2));
@@ -142,6 +143,9 @@ namespace MBSim {
 
     else if ( strcmp(contour0, "Point")==0 && strcmp(contour1, "LineSegment")==0 )
       return new ContactKinematicsPointLineSegment; 
+
+    else if ( strcmp(contour0, "Area")==0 && strcmp(contour1, "PolynomialFrustum")==0 )
+      return new ContactKinematicsAreaPolynomialFrustum;
 
     else
       return 0;

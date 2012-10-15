@@ -29,8 +29,8 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  Vec Plane::computeLagrangeParameter(const fmatvec::Vec &WrPoint) {
-    return (R.getOrientation().T() *(WrPoint - R.getPosition()) )(1,2); //TODO: proof correctness (till now just implemented for convenience)
+  Vec2 Plane::computeLagrangeParameter(const fmatvec::Vec3 &WrPoint) {
+    return (R.getOrientation().T() *(WrPoint - R.getPosition()) )(Range<Fixed<1>,Fixed<2> >()); //TODO: proof correctness (till now just implemented for convenience)
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

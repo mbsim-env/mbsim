@@ -77,9 +77,9 @@ namespace MBSim {
       double t, tPlot;
       int qSize, xSize, uSize, zSize;
       fmatvec::Vec ze, zi, zT1, zT2, zT3, z1d, z2d, z2dRE, z3d, z4d, z6d, z2b, z3b, z4b, z6b, zStern;
-      fmatvec::Vector<int> LS, LSe, LStmp_T1, LStmp_T2, LStmp_T3, LSA, LSB1, LSB2, LSC1, LSC2, LSC3, LSC4, LSD1, LSD2, LSD3, LSD4, LSD5, LSD6;
+      fmatvec::VecInt LS, LSe, LStmp_T1, LStmp_T2, LStmp_T3, LSA, LSB1, LSB2, LSC1, LSC2, LSC3, LSC4, LSD1, LSD2, LSD3, LSD4, LSD5, LSD6;
       fmatvec::Vec la, lae, la1d, la2b;
-      fmatvec::Vector<int> laSizes, laeSizes, la1dSizes, la2bSizes;
+      fmatvec::VecInt laSizes, laeSizes, la1dSizes, la2bSizes;
       fmatvec::Vec qT1, qT2, qT3;
       fmatvec::Vec uT1, uT2, uT3;
       fmatvec::Vec xT1, xT2, xT3;
@@ -215,10 +215,10 @@ namespace MBSim {
       /*! Threads: Number of Threads (0,1,2 or 3) 0: auto (number of threads depends on order and SSC)*/ 
       void integrate(DynamicSystemSolver& systemT1_, DynamicSystemSolver& systemT2_, DynamicSystemSolver& systemT3_, int Threads=0);
 
-      void setAbsoluteTolerance(const fmatvec::Vec &aTol_) {aTol.resize() = aTol_;}
-      void setAbsoluteTolerance(double aTol_) {aTol.resize() = fmatvec::Vec(1,fmatvec::INIT,aTol_);}
-      void setRelativeTolerance(const fmatvec::Vec &rTol_) {rTol.resize() = rTol_;}
-      void setRelativeTolerance(double rTol_) {rTol.resize() = fmatvec::Vec(1,fmatvec::INIT,rTol_);}
+      void setAbsoluteTolerance(const fmatvec::Vec &aTol_) {aTol = aTol_;}
+      void setAbsoluteTolerance(double aTol_) {aTol = fmatvec::Vec(1,fmatvec::INIT,aTol_);}
+      void setRelativeTolerance(const fmatvec::Vec &rTol_) {rTol = rTol_;}
+      void setRelativeTolerance(double rTol_) {rTol = fmatvec::Vec(1,fmatvec::INIT,rTol_);}
       void setgapTolerance(double gTol) {gapTol = gTol;}
 
       /** subroutines for integrate function */
@@ -229,12 +229,12 @@ namespace MBSim {
       void preIntegrate(DynamicSystemSolver& systemT1_, DynamicSystemSolver& systemT2_, DynamicSystemSolver& systemT3_);
        
       /** internal subroutines */
-      void getAllSetValuedla(fmatvec::Vec& la_,fmatvec::Vector<int>& la_Sizes,std::vector<MBSim::Link*> &SetValuedLinkList);
-      void setAllSetValuedla(const fmatvec::Vec& la_,const fmatvec::Vector<int>& la_Sizes,std::vector<MBSim::Link*> &SetValuedLinkList);
+      void getAllSetValuedla(fmatvec::Vec& la_,fmatvec::VecInt& la_Sizes,std::vector<MBSim::Link*> &SetValuedLinkList);
+      void setAllSetValuedla(const fmatvec::Vec& la_,const fmatvec::VecInt& la_Sizes,std::vector<MBSim::Link*> &SetValuedLinkList);
       void getDataForGapControl();
       bool testTolerances();
       bool GapControl(double qUnsafe, bool SSCTestOK); 
-      bool changedLinkStatus(const fmatvec::Vector<int> &L1, const fmatvec::Vector<int> &L2, int ex);
+      bool changedLinkStatus(const fmatvec::VecInt &L1, const fmatvec::VecInt &L2, int ex);
       double calculatedtNewRel(const fmatvec::Vec &ErrorLocal, double H);
       void plot();
 

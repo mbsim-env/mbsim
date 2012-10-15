@@ -82,6 +82,12 @@ namespace MBSim {
        * \param XML element
        */
       virtual void initializeUsingXML(TiXmlElement *element) {}
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+
+      /**
+       * \return std::string representation
+       */
+      virtual std::string getType() const { return "GeneralizedForceLaw"; }
       /***************************************************/
       
       /**
@@ -172,6 +178,8 @@ namespace MBSim {
       /***************************************************/
 
       bool remainsClosed(double s, double sTol) { return true; }
+
+      virtual std::string getType() const { return "BilateralConstraint"; }
   };
 
   /**
@@ -197,6 +205,12 @@ namespace MBSim {
       virtual double solve(double G, double gdn, double gda) = 0;
       virtual bool isFulfilled(double la,  double gdn, double gda, double tolla, double tolgd, double laMin=0) = 0;
       virtual void initializeUsingXML(TiXmlElement *element) {}
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+
+      /**
+       * \return std::string representation
+       */
+      virtual std::string getType() const { return "GeneralizedImpactLaw"; }
       /***************************************************/
   };
 
@@ -262,7 +276,8 @@ namespace MBSim {
       virtual fmatvec::Vec diff(double la, double gdn, double gda, double r, double laMin=0);
       virtual double solve(double G, double gdn, double gda);
       virtual bool isFulfilled(double la,  double gdn, double gda, double tolla, double tolgd, double laMin=0);
-      /***************************************************/
+
+      virtual std::string getType() const { return "BilateralImpact"; }
   };
 
   /**
@@ -869,6 +884,8 @@ namespace MBSim {
       /***************************************************/
 
       virtual void initializeUsingXML(TiXmlElement *element);
+
+      virtual std::string getType() const { return "RegularizedBilateralConstraint"; }
   };
 
   class RegularizedPlanarFriction : public FrictionForceLaw {

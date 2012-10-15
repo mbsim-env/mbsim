@@ -28,6 +28,10 @@
 #include "hdf5serie/simpleattribute.h"
 #include "mbsim/objectfactory.h"
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/frame.h>
+#endif
+
 //#ifdef _OPENMP
 //#include <omp.h>
 //#endif
@@ -127,12 +131,12 @@ namespace MBSim {
     }
 
     if(e && e->ValueStr()==MBSIMNS"position") {
-      setPosition(getVec(e,3));
+      setPosition(getVec3(e));
       e=e->NextSiblingElement();
     }
 
     if(e && e->ValueStr()==MBSIMNS"orientation") {
-      setOrientation(getSqrMat(e,3));
+      setOrientation(getSqrMat3(e));
       e=e->NextSiblingElement();
     }
 
@@ -153,9 +157,9 @@ namespace MBSim {
         refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
         ec=ec->NextSiblingElement();
       }
-      Vec RrRF=getVec(ec,3);
+      Vec3 RrRF=getVec3(ec);
       ec=ec->NextSiblingElement();
-      SqrMat ARF=getSqrMat(ec,3);
+      SqrMat3 ARF=getSqrMat3(ec);
       addFrame(f, RrRF, ARF, refF);
       E=E->NextSiblingElement();
     }
@@ -174,9 +178,9 @@ namespace MBSim {
         refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
         ec=ec->NextSiblingElement();
       }
-      Vec RrRC=getVec(ec,3);
+      Vec3 RrRC=getVec3(ec);
       ec=ec->NextSiblingElement();
-      SqrMat ARC=getSqrMat(ec,3);
+      SqrMat3 ARC=getSqrMat3(ec);
       addContour(c, RrRC, ARC, refF);
       c->initializeUsingXML(contourElement);
       E=E->NextSiblingElement();
@@ -227,6 +231,82 @@ namespace MBSim {
       l->initializeUsingXML(E);
       E=E->NextSiblingElement();
     }
+#ifdef HAVE_OPENMBVCPPINTERFACE
+
+    e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameI");
+    if(e) {
+      //if(!openMBVBody)
+        //setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
+      I->enableOpenMBV(getDouble(e->FirstChildElement(MBSIMNS"size")),
+          getDouble(e->FirstChildElement(MBSIMNS"offset")));
+  }
+#endif
+  }
+
+  TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = DynamicSystem::writeXMLFile(parent);
+
+    TiXmlElement *ele1;
+
+    if(getFrameOfReference()) {
+      ele1 = new TiXmlElement( MBSIMNS"frameOfReference" );
+      ele1->SetAttribute("ref", frameParent->getXMLPath(this,true));
+      ele0->LinkEndChild(ele1);
+    }
+
+    addElementText(ele0,MBSIMNS"position",getPosition());
+    addElementText(ele0,MBSIMNS"orientation", getOrientation());
+
+    ele1 = new TiXmlElement( MBSIMNS"frames" );
+    for(unsigned int i=1; i<frame.size(); i++) {
+      TiXmlElement* ele2 = new TiXmlElement( MBSIMNS"frame" );
+      ele1->LinkEndChild( ele2 );
+      frame[i]->writeXMLFile(ele2);
+      if(saved_refFrameF[i-1] != "I") {
+        TiXmlElement *ele3 = new TiXmlElement( MBSIMNS"frameOfReference" );
+        string str = string("Frame[") + saved_refFrameF[i-1] + "]";
+        ele3->SetAttribute("ref", str);
+        ele2->LinkEndChild(ele3);
+      }
+
+      addElementText(ele2,MBSIMNS"position",saved_RrRF[i-1]);
+      addElementText(ele2,MBSIMNS"orientation",saved_ARF[i-1]);
+    }
+    ele0->LinkEndChild( ele1 );
+
+    ele1 = new TiXmlElement( MBSIMNS"contours" );
+    for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i) 
+      (*i)->writeXMLFile(ele1);
+    ele0->LinkEndChild( ele1 );
+
+    ele1 = new TiXmlElement( MBSIMNS"groups" );
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
+      (*i)->writeXMLFile(ele1);
+    ele0->LinkEndChild( ele1 );
+
+    ele1 = new TiXmlElement( MBSIMNS"objects" );
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
+      (*i)->writeXMLFile(ele1);
+    ele0->LinkEndChild( ele1 );
+
+    ele1 = new TiXmlElement( MBSIMNS"extraDynamics" );
+    for(vector<ExtraDynamic*>::iterator i = extraDynamic.begin(); i != extraDynamic.end(); ++i) 
+      (*i)->writeXMLFile(ele1);
+    ele0->LinkEndChild( ele1 );
+
+    ele1 = new TiXmlElement( MBSIMNS"links" );
+    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
+      (*i)->writeXMLFile(ele1);
+    ele0->LinkEndChild( ele1 );
+
+    if(I->getOpenMBVFrame()) {
+      ele1 = new TiXmlElement( MBSIMNS"enableOpenMBVFrameI" );
+      addElementText(ele1,MBSIMNS"size",I->getOpenMBVFrame()->getSize());
+      addElementText(ele1,MBSIMNS"offset",I->getOpenMBVFrame()->getOffset());
+      ele0->LinkEndChild(ele1);
+    }
+
+    return ele0;
   }
 
 }

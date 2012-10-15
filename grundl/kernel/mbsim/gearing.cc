@@ -54,8 +54,8 @@ namespace MBSim {
   }
 
   void Gearing::updateJacobians(double t, int j) {
-    Mat tWrP0Z = tilde(WrP0Z);
-    Mat tWrP1Z = tilde(WrP1Z);
+    Mat33 tWrP0Z = tilde(WrP0Z);
+    Mat33 tWrP1Z = tilde(WrP1Z);
 
     Z0.setJacobianOfTranslation(P0->getJacobianOfTranslation(j) - tWrP0Z*P0->getJacobianOfRotation(j),j);
     Z0.setJacobianOfRotation(P0->getJacobianOfRotation(j),j);
@@ -70,13 +70,13 @@ namespace MBSim {
 
   void Gearing::updateW(double t, int j) {
     W[j][0] += Z0.getJacobianOfTranslation(j).T()*Wt;
-    W[j][1] += -Z1.getJacobianOfTranslation(j).T()*Wt;
+    W[j][1] -= Z1.getJacobianOfTranslation(j).T()*Wt;
   }
 
   void Gearing::updateh(double t, int j) {
     la(0) = (*func)(g(0),gd(0));
     h[j][0] += Z0.getJacobianOfTranslation(j).T()*Wt*la(0);
-    h[j][1] += -Z1.getJacobianOfTranslation(j).T()*Wt*la(0);
+    h[j][1] -= Z1.getJacobianOfTranslation(j).T()*Wt*la(0);
   }
 
   void Gearing::updateWRef(const Mat &WParent, int j) {
@@ -103,8 +103,8 @@ namespace MBSim {
   void Gearing::updateg(double) {
     //WrP0Z = Z->getPosition()-P0->getPosition();
     //WrP1Z = Z->getPosition()-P1->getPosition();
-    Vec WrP0P1 = P1->getPosition()-P0->getPosition();
-    Vec dir =  WrP0P1/nrm2(WrP0P1);
+    Vec3 WrP0P1 = P1->getPosition()-P0->getPosition();
+    Vec3 dir =  WrP0P1/nrm2(WrP0P1);
     WrP0Z = dir*r0;
     WrP1Z = -dir*r1;
     //WrP0Z = WrP0P1/(1.+ratio);
@@ -123,10 +123,9 @@ namespace MBSim {
     Z1.setAngularVelocity(P1->getAngularVelocity());
     Z1.setVelocity(P1->getVelocity() + crossProduct(P1->getAngularVelocity(),WrP1Z));
 
-    Vec WvZ0Z1 = Z1.getVelocity()-Z0.getVelocity();
+    Vec3 WvZ0Z1 = Z1.getVelocity()-Z0.getVelocity();
     RigidBody* bodyP0 = dynamic_cast<RigidBody*>(P0->getParent());
-    Mat a;
-    a = bodyP0->getFrameOfReference()->getOrientation()*bodyP0->getPJR();
+    Mat3V a = bodyP0->getFrameOfReference()->getOrientation()*bodyP0->getPJR();
     Wt = crossProduct(WrP0Z,a.col(0));
     Wt /= -nrm2(Wt);
     gd(0)=Wt.T()*WvZ0Z1;
@@ -137,69 +136,68 @@ namespace MBSim {
   }
 
   void Gearing::updatewb(double t, int j) {
-    const Vec KrPC1 = P0->getOrientation().T()*(Z0.getPosition() - P0->getPosition());
+    const Vec3 KrPC1 = P0->getOrientation().T()*(Z0.getPosition() - P0->getPosition());
     const double zeta1=(KrPC1(1)>0) ? acos(KrPC1(0)/nrm2(KrPC1)) : 2.*M_PI - acos(KrPC1(0)/nrm2(KrPC1));
     const double sa1=sin(zeta1);
     const double ca1=cos(zeta1);
     const double r1=nrm2(WrP0Z);
-    Vec Ks1(3, NONINIT);
+    Vec3 Ks1(NONINIT);
     Ks1(0)=-r1*sa1;
     Ks1(1)=r1*ca1;
     Ks1(2)=0;
-    Vec Kt1(3, NONINIT);
+    Vec3 Kt1(NONINIT);
     Kt1(0)=0;
     Kt1(1)=0;
     Kt1(2)=1;
-    const Vec s1=P0->getOrientation()*Ks1;
-    const Vec t1=P0->getOrientation()*Kt1;
-    Vec n1=crossProduct(s1, t1);
+    const Vec3 s1=P0->getOrientation()*Ks1;
+    const Vec3 t1=P0->getOrientation()*Kt1;
+    Vec3 n1=crossProduct(s1, t1);
     n1/=nrm2(n1);
-    const Vec u1=s1/nrm2(s1);
-    const Vec R1(s1);
+    const Vec3 u1=s1/nrm2(s1);
+    const Vec3 &R1 = s1;
     Vec KN1(3,NONINIT);
     KN1(0)=-sa1;
     KN1(1)=ca1;
     KN1(2)=0;
-    const Vec N1=P0->getOrientation()*KN1;
+    const Vec3 N1=P0->getOrientation()*KN1;
     Vec KU1(3,NONINIT);
     KU1(0)=-ca1;
     KU1(1)=-sa1;
     KU1(2)=0;
-    const Vec U1=P0->getOrientation()*KU1;
+    const Vec3 U1=P0->getOrientation()*KU1;
 
-    const Vec KrPC2 = P1->getOrientation().T()*(Z1.getPosition() - P1->getPosition());
+    const Vec3 KrPC2 = P1->getOrientation().T()*(Z1.getPosition() - P1->getPosition());
     const double zeta2=(KrPC2(1)>0) ? acos(KrPC2(0)/nrm2(KrPC2)) : 2.*M_PI - acos(KrPC2(0)/nrm2(KrPC2));
     const double sa2=sin(zeta2);
     const double ca2=cos(zeta2);
     const double r2=nrm2(WrP1Z);
-    //cout << r1 << " " << r2 << endl;
-    Vec Ks2(3, NONINIT);
+    Vec3 Ks2(NONINIT);
     Ks2(0)=-r2*sa2;
     Ks2(1)=r2*ca2;
     Ks2(2)=0;
-    Vec Kt2(3, NONINIT);
+    Vec3 Kt2(NONINIT);
     Kt2(0)=0;
     Kt2(1)=0;
     Kt2(2)=1;
-    const Vec s2=P1->getOrientation()*Ks2;
-    const Vec t2=P1->getOrientation()*Kt2;
-    Vec n2=(flag==false?1:-1)*crossProduct(s2, t2);
+    const Vec3 s2=P1->getOrientation()*Ks2;
+    const Vec3 t2=P1->getOrientation()*Kt2;
+    Vec3 n2=(flag==false?1.:-1.)*crossProduct(s2, t2);
     n2/=nrm2(n2);
-    const Vec u2=s2/nrm2(s2);
-    const Vec v2=crossProduct(n2, u2);
-    const Vec R2(s2);
-    Vec KU2(3,NONINIT);
+    const Vec3 u2=s2/nrm2(s2);
+    const Vec3 v2=crossProduct(n2, u2);
+    const Vec3 &R2 = s2;
+    Vec3 KU2(NONINIT);
     KU2(0)=-ca2;
     KU2(1)=-sa2;
     KU2(2)=0;
-    const Vec U2=P1->getOrientation()*KU2;
+    const Vec3 U2=P1->getOrientation()*KU2;
 
-    const Vec vC1 = Z0.getVelocity();
-    const Vec vC2 = Z1.getVelocity();
-    const Vec Om1 = Z0.getAngularVelocity();
-    const Vec Om2 = Z1.getAngularVelocity();
+    const Vec3 vC1 = Z0.getVelocity();
+    const Vec3 vC2 = Z1.getVelocity();
+    const Vec3 Om1 = Z0.getAngularVelocity();
+    const Vec3 Om2 = Z1.getAngularVelocity();
 
-    SqrMat A(2,2,NONINIT);
+    SqrMat A(2,NONINIT);
     A(0,0)=-u1.T()*R1;
     A(0,1)=u1.T()*R2;
     A(1,0)=u2.T()*N1;
@@ -209,8 +207,8 @@ namespace MBSim {
     b(1)=-v2.T()*(Om2-Om1);
     const Vec zetad = slvLU(A,b);
 
-    const Mat tOm1 = tilde(Om1);
-    const Mat tOm2 = tilde(Om2);
+    const Mat33 tOm1 = tilde(Om1);
+    const Mat33 tOm2 = tilde(Om2);
     
     wb(0) += Wt.T()*(Z1.getGyroscopicAccelerationOfTranslation(j) - Z0.getGyroscopicAccelerationOfTranslation(j)); 
     wb(0) += ((vC2-vC1).T()*U1-u1.T()*tOm1*R1)*zetad(0)+u1.T()*tOm2*R2*zetad(1)-u1.T()*tOm1*(vC2-vC1);
@@ -229,14 +227,14 @@ namespace MBSim {
       W[1].push_back(Mat(6,laSize));
       W[0].push_back(Mat(P1->getJacobianOfTranslation().cols(),laSize));
       W[1].push_back(Mat(6,laSize));
-      Z0.getJacobianOfTranslation(0).resize(3,P0->getJacobianOfTranslation(0).cols());
-      Z0.getJacobianOfTranslation(1).resize(3,P0->getJacobianOfTranslation(1).cols());
-      Z1.getJacobianOfTranslation(0).resize(3,P1->getJacobianOfTranslation(0).cols());
-      Z1.getJacobianOfTranslation(1).resize(3,P1->getJacobianOfTranslation(1).cols());
-      Z0.getJacobianOfRotation(0).resize(3,P0->getJacobianOfRotation(0).cols());
-      Z0.getJacobianOfRotation(1).resize(3,P0->getJacobianOfRotation(1).cols());
-      Z1.getJacobianOfRotation(0).resize(3,P1->getJacobianOfRotation(0).cols());
-      Z1.getJacobianOfRotation(1).resize(3,P1->getJacobianOfRotation(1).cols());
+      Z0.getJacobianOfTranslation(0).resize(P0->getJacobianOfTranslation(0).cols());
+      Z0.getJacobianOfTranslation(1).resize(P0->getJacobianOfTranslation(1).cols());
+      Z1.getJacobianOfTranslation(0).resize(P1->getJacobianOfTranslation(0).cols());
+      Z1.getJacobianOfTranslation(1).resize(P1->getJacobianOfTranslation(1).cols());
+      Z0.getJacobianOfRotation(0).resize(P0->getJacobianOfRotation(0).cols());
+      Z0.getJacobianOfRotation(1).resize(P0->getJacobianOfRotation(1).cols());
+      Z1.getJacobianOfRotation(0).resize(P1->getJacobianOfRotation(0).cols());
+      Z1.getJacobianOfRotation(1).resize(P1->getJacobianOfRotation(1).cols());
     }
     else if(stage==resize) {
       LinkMechanics::init(stage);

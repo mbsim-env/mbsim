@@ -36,7 +36,7 @@ namespace MBSim {
        * \brief constructor with contact from inside
        * \param name of contour
        */
-      Frustum(const std::string &name) : RigidContour(name), r(2), h(0.), outCont(false) {}
+      Frustum(const std::string &name) : RigidContour(name), h(0.), outCont(false) {}
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "Frustum"; }
@@ -44,7 +44,7 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      virtual fmatvec::Vec computeLagrangeParameter(const fmatvec::Vec &WrPoint);
+      virtual fmatvec::Vec2 computeLagrangeParameter(const fmatvec::Vec3 &WrPoint);
       /***************************************************/
 
       /**
@@ -52,11 +52,11 @@ namespace MBSim {
        * \param name of the contour
        * \param contact from outside?
        */
-      Frustum(const std::string &name, bool outCont_) : RigidContour(name), r(2), h(0.), outCont(outCont_) {}
+      Frustum(const std::string &name, bool outCont_) : RigidContour(name), h(0.), outCont(outCont_) {}
 
       /* GETTER / SETTER */
-      void setRadii(const fmatvec::Vec &r_);
-      const fmatvec::Vec& getRadii() const;
+      void setRadii(const fmatvec::Vec2 &r_);
+      const fmatvec::Vec2& getRadii() const;
       void setHeight(double h_);
       double getHeight() const;
       void setOutCont(bool outCont_);
@@ -73,7 +73,7 @@ namespace MBSim {
       /** 
        * \brief upper r(1) and lower radius r(0) in direction of the axis
        */
-      fmatvec::Vec r;
+      fmatvec::Vec2 r;
 
       /** 
        * \brief height
@@ -86,8 +86,8 @@ namespace MBSim {
       bool outCont;
   };
 
-  inline void Frustum::setRadii(const fmatvec::Vec &r_) { r = r_; }
-  inline const fmatvec::Vec& Frustum::getRadii() const { return r; }
+  inline void Frustum::setRadii(const fmatvec::Vec2 &r_) { r = r_; }
+  inline const fmatvec::Vec2& Frustum::getRadii() const { return r; }
   inline void Frustum::setHeight(double h_) { h = h_; }
   inline double Frustum::getHeight() const { return h; }
   inline void Frustum::setOutCont(bool outCont_) { outCont = outCont_; }

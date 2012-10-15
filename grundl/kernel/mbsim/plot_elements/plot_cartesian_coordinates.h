@@ -41,19 +41,19 @@ namespace MBSim {
       OpenMBV::Group* openMBVGrp;
       OpenMBV::Arrow *openMBVPosition, *openMBVVelocity, *openMBVXVelocity, *openMBVYVelocity, *openMBVZVelocity, *openMBVAcceleration, *openMBVXAcceleration, *openMBVYAcceleration, *openMBVZAcceleration; 
       OpenMBV::Frame* openMBVFrame;
-      fmatvec::Vec roff, voff, aoff;
+      fmatvec::Vec3 roff, voff, aoff;
       double rscale, vscale, ascale;
-      fmatvec::Vec ex, ey, ez;
-      fmatvec::SqrMat A;
+      fmatvec::Vec3 ex, ey, ez;
+      fmatvec::SqrMat3 A;
 #endif
 
     public:
       PlotCartesianCoordinates(const std::string &name);
       void setFrame(Frame *frame_) { frame = frame_; } 
-      void setOrientation(const fmatvec::SqrMat &A_) { A = A_; } 
+      void setOrientation(const fmatvec::SqrMat3 &A_) { A = A_; } 
 
       void init(InitStage stage);
-      void setez(const fmatvec::Vec &ez_) {ez = ez_/nrm2(ez_);}
+      void setez(const fmatvec::Vec3 &ez_) {ez = ez_/nrm2(ez_);}
       virtual void plot(double t, double dt);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

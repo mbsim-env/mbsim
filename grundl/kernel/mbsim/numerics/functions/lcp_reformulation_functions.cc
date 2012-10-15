@@ -148,7 +148,7 @@ namespace MBSim {
       //Initialize Jacobians constant parts
       int dim = 2 * static_cast<LCPNewtonReformulationFunction*>(function_)->getq().size();
 
-      J.resize() = SqrMat(dim, INIT, 0.);
+      J >> SqrMat(dim, INIT, 0.);
 
       J(0, 0, dim / 2 - 1, dim / 2 - 1) = -SqrMat(dim / 2, EYE);
       J(0, dim / 2, dim / 2 - 1, dim - 1) = static_cast<LCPNewtonReformulationFunction*>(function_)->getM();
@@ -166,9 +166,9 @@ namespace MBSim {
   void LinearComplementarityJacobianFunction::updateJacobian(const Vec & x) {
     int dim = J.size();
     double r = static_cast<LCPNewtonReformulationFunction*>(function)->getr();
-    Vec w;
+    Vec w(0);
     w << x(0, dim / 2 - 1);
-    Vec z;
+    Vec z(0);
     z << x(dim / 2, dim - 1);
 
     //only to update lower half of Jacobian matrix

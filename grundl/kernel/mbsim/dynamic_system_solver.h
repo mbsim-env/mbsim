@@ -211,13 +211,13 @@ namespace MBSim {
       void setLinAlg(LinAlg linAlg_) { linAlg = linAlg_; }
 
       void setUseOldla(bool flag) { useOldla = flag; }
-      void setDecreaseLevels(const fmatvec::Vector<int> &decreaseLevels_) { decreaseLevels = decreaseLevels_; }
-      void setCheckTermLevels(const fmatvec::Vector<int> &checkTermLevels_) { checkTermLevels = checkTermLevels_; }
+      void setDecreaseLevels(const fmatvec::VecInt &decreaseLevels_) { decreaseLevels = decreaseLevels_; }
+      void setCheckTermLevels(const fmatvec::VecInt &checkTermLevels_) { checkTermLevels = checkTermLevels_; }
       void setCheckGSize(bool checkGSize_) { checkGSize = checkGSize_; }
       void setLimitGSize(int limitGSize_) { limitGSize = limitGSize_; checkGSize = false; }
 
-      const fmatvec::Matrix<fmatvec::Sparse, double>& getGs() const { return Gs; }
-      fmatvec::Matrix<fmatvec::Sparse, double>& getGs() { return Gs; }
+      const fmatvec::SparseMat& getGs() const { return Gs; }
+      fmatvec::SparseMat& getGs() { return Gs; }
       const fmatvec::SqrMat& getG() const { return G; }
       fmatvec::SqrMat& getG() { return G; }
       const fmatvec::Vec& getb() const { return b; }
@@ -320,7 +320,7 @@ namespace MBSim {
        * \param boolean evaluation of stop vector
        * \param time
        */
-      virtual void shift(fmatvec::Vec& z, const fmatvec::Vector<int>& jsv, double t);
+      virtual void shift(fmatvec::Vec& z, const fmatvec::VecInt& jsv, double t);
 
       /**
        * \brief update for event driven integrator during smooth phase
@@ -349,14 +349,14 @@ namespace MBSim {
        * \param result vector
        * \param time
        */
-      void getLinkStatus(fmatvec::Vector<int> &LinkStatusExt, double t);
+      void getLinkStatus(fmatvec::VecInt &LinkStatusExt, double t);
 
       /** brief collect status of all single-valued links
        * \param result vector
        * \param time
        */
 
-      void getLinkStatusReg(fmatvec::Vector<int> &LinkStatusRegExt, double t);
+      void getLinkStatusReg(fmatvec::VecInt &LinkStatusRegExt, double t);
       /**
        * \brief drift projection for positions
        * \param time
@@ -448,6 +448,12 @@ namespace MBSim {
       void readz0(std::string fileName);
 
       virtual void initializeUsingXML(TiXmlElement *element);
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+
+      static DynamicSystemSolver* readXMLFile(const std::string &filename);
+      void writeXMLFile(const std::string &name);
+      void writeXMLFile() { writeXMLFile(getName()); }
+
 
       /**
        * \brief decide, whether the model-hierarchy should be reorganized.
@@ -580,22 +586,22 @@ namespace MBSim {
       /**
        * \brief boolean evaluation of stopvector
        */
-      fmatvec::Vector<int> jsvParent;
+      fmatvec::VecInt jsvParent;
 
       /**
        * \brief status vector of set valued links with piecewise link equation (which piece is valid)
        */
-      fmatvec::Vector<int> LinkStatusParent;
+      fmatvec::VecInt LinkStatusParent;
 
       /**
        * \brief status vector of single valued links
        */
 
-      fmatvec::Vector<int> LinkStatusRegParent;
+      fmatvec::VecInt LinkStatusRegParent;
       /**
        * \brief sparse mass action matrix
        */
-      fmatvec::Matrix<fmatvec::Sparse, double> Gs;
+      fmatvec::SparseMat Gs;
 
       /**
        * \brief JACOBIAN of contact equations for Newton scheme
@@ -665,12 +671,12 @@ namespace MBSim {
       /**
        * \brief decreasing relaxation factors is done in levels containing the number of contact iterations as condition
        */
-      fmatvec::Vector<int> decreaseLevels;
+      fmatvec::VecInt decreaseLevels;
 
       /**
        * \brief TODO
        */
-      fmatvec::Vector<int> checkTermLevels;
+      fmatvec::VecInt checkTermLevels;
 
       /**
        * \brief boolean if force action matrix should be resized in each step

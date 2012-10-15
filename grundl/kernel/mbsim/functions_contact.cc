@@ -49,7 +49,7 @@ namespace MBSim {
 
     if(searchAll) { 
       RegulaFalsi rf(func);
-      gbuf = Vec(alphaC.size());
+      gbuf >> Vec(alphaC.size());
 
       for(int i=0;i<nodes.size()-1; i++) {
         double fa = (*func)(nodes(i));

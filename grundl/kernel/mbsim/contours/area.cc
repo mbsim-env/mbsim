@@ -20,21 +20,40 @@
 #include<config.h>
 #include "mbsim/contours/area.h"
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/grid.h>
+#endif
+
 using namespace std;
 using namespace fmatvec;
 
 namespace MBSim {
 
-  Area::Area(const string &name) : RigidContour(name), lim1(1), lim2(1), Cn(3), Cd1(3), Cd2(3) {}
-  void Area::setCd1(const Vec &d) {Cd1 = d/nrm2(d);}
-  void Area::setCd2(const Vec &d) {Cd2 = d/nrm2(d);}
-  void Area::init(InitStage stage) {
-    if(stage==unknownStage) {
-      RigidContour::init(stage);
-      Cn = crossProduct(Cd1,Cd2);
-      Cn = Cn/nrm2(Cn);
-    }
-    else
-      RigidContour::init(stage);
+  Area::Area(const string &name) : Plane(name), limy(1), limz(1) {}
+
+  double Area::prj_Area_Point(fmatvec::Vec3& Point){
+	  Vec3 C_A=this->getFrame()->getPosition();//center of area
+	  Vec3 Dis=Point-C_A;// distance vector from center of area to point
+	  Vec3 Norm=this->getFrame()->getOrientation().col(0);//norm of the area
+	  Vec3 Proj_n= (Dis.T()*Norm)*Norm;//projection on normal
+	  Vec3 Proj_a= Dis - Proj_n;//projection on the area
+	  double prj = nrm2(Proj_a);//length of the projection
+	  return prj;
+
   }
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  void Area::enableOpenMBV(bool enable, int number) {
+    if(enable) {
+      openMBVRigidBody=new OpenMBV::Grid;
+      ((OpenMBV::Grid*)openMBVRigidBody)->setXSize(limy);
+      ((OpenMBV::Grid*)openMBVRigidBody)->setYSize(limz);
+      ((OpenMBV::Grid*)openMBVRigidBody)->setXNumber(number);
+      ((OpenMBV::Grid*)openMBVRigidBody)->setYNumber(number);
+      ((OpenMBV::Grid*)openMBVRigidBody)->setInitialRotation(0.,M_PI/2.,0.);
+    }
+    else openMBVRigidBody=0;
+  }
+#endif
+
 }

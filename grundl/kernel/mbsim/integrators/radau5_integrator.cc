@@ -112,7 +112,7 @@ namespace MBSim {
 
     int lWork =2*(zSize*(lJac+lMas+3*le+12)+20);
     int liWork = 2*(3*zSize+20);
-    Vector<int> iWork(liWork);
+    VecInt iWork(liWork);
     Vec work(lWork);
 
     if(dtMax>0)

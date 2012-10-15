@@ -198,7 +198,7 @@ namespace MBSim {
     }
   }
 
-  void MultiContact::updatejsvRef(const Vector<int> &jsvParent) {
+  void MultiContact::updatejsvRef(const VecInt &jsvParent) {
     for (std::vector<std::vector<Contact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<Contact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
         jter->updatejsvRef(jsvParent);

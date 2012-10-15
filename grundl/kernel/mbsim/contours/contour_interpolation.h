@@ -71,7 +71,7 @@ namespace MBSim {
         \param i Point number
         \return weight of Point i at s
         */
-       virtual double computePointWeight(const fmatvec::Vec &s, int i) = 0;
+       virtual double computePointWeight(const fmatvec::VecV &s, int i) = 0;
        /**
         * prototype of method giving first derivatives with respect to the diff-th Contour-parameters of all Point s 
         \param s Contour-parameter(s)
@@ -79,22 +79,22 @@ namespace MBSim {
         \param diff -th derivative
         \return weight/derivative of Point i at s
         */
-       virtual double computePointWeight(const fmatvec::Vec &s, int i, int diff) = 0;
+       virtual double computePointWeight(const fmatvec::VecV &s, int i, int diff) = 0;
        /**
         * \brief compute all weights for nodes
         */
-       fmatvec::Vec computePointWeights(const fmatvec::Vec &s);
+       fmatvec::VecV computePointWeights(const fmatvec::VecV &s);
 
-       fmatvec::Vec computeWrOC(const fmatvec::Vec& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWrOC(cp);};
-       fmatvec::Vec computeWvC (const fmatvec::Vec& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWvC (cp);};
-       fmatvec::Mat computeWt  (const fmatvec::Vec& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWt  (cp);};
-       fmatvec::Vec computeWn  (const fmatvec::Vec& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWn  (cp);};
+       fmatvec::Vec3 computeWrOC(const fmatvec::VecV& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWrOC(cp);};
+       fmatvec::Vec3 computeWvC (const fmatvec::VecV& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWvC (cp);};
+       fmatvec::Mat3V computeWt  (const fmatvec::VecV& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWt  (cp);};
+       fmatvec::Vec3 computeWn  (const fmatvec::VecV& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWn  (cp);};
 
-       fmatvec::Vec computeWrOC(const ContourPointData &cp);
-       fmatvec::Vec computeWvC (const ContourPointData &cp);
+       fmatvec::Vec3 computeWrOC(const ContourPointData &cp);
+       fmatvec::Vec3 computeWvC (const ContourPointData &cp);
 
-       fmatvec::Mat computeWt  (const ContourPointData &cp);
-       virtual fmatvec::Vec computeWn  (const ContourPointData &cp) = 0;
+       fmatvec::Mat3V computeWt  (const ContourPointData &cp);
+       virtual fmatvec::Vec3 computeWn  (const ContourPointData &cp) = 0;
 
     protected:
        /**

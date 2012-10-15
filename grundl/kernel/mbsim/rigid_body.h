@@ -150,36 +150,36 @@ namespace MBSim {
       Rotation*    getRotation()               { return fAPK;    }
       void setJacobianOfTranslation(Jacobian* fPJT_) { fPJT = fPJT_; }
       void setJacobianOfRotation(Jacobian* fPJR_)    { fPJR = fPJR_; }
-      void setDerivativeOfJacobianOfTranslation(Function3<fmatvec::Mat, fmatvec::Vec, fmatvec::Vec, double>* fPdJT_) { fPdJT = fPdJT_;}
-      void setDerivativeOfJacobianOfRotation(Function3<fmatvec::Mat, fmatvec::Vec, fmatvec::Vec, double>* fPdJR_) { fPdJR = fPdJR_;}
+      void setDerivativeOfJacobianOfTranslation(Function3<fmatvec::Mat3V, fmatvec::Vec, fmatvec::Vec, double>* fPdJT_) { fPdJT = fPdJT_;}
+      void setDerivativeOfJacobianOfRotation(Function3<fmatvec::Mat3V, fmatvec::Vec, fmatvec::Vec, double>* fPdJR_) { fPdJR = fPdJR_;}
 
       /** \brief Sets the time dependent function for the guiding velocity of translation */
-      void setGuidingVelocityOfTranslation(Function1<fmatvec::Vec,double>* fPjT_) { fPjT = fPjT_;}
+      void setGuidingVelocityOfTranslation(Function1<fmatvec::Vec3,double>* fPjT_) { fPjT = fPjT_;}
 
       /** \brief Sets the time dependent function for the guiding velocity of rotation */
-      void setGuidingVelocityOfRotation(Function1<fmatvec::Vec,double>* fPjR_) { fPjR = fPjR_;}
+      void setGuidingVelocityOfRotation(Function1<fmatvec::Vec3,double>* fPjR_) { fPjR = fPjR_;}
 
       /** \brief Sets the time dependent function for the derivative of the guilding velocity of translation */
-      void setDerivativeOfGuidingVelocityOfTranslation(Function1<fmatvec::Vec,double>* fPdjT_) { fPdjT = fPdjT_;}
+      void setDerivativeOfGuidingVelocityOfTranslation(Function1<fmatvec::Vec3,double>* fPdjT_) { fPdjT = fPdjT_;}
 
       /** \brief Sets the time dependent function for the derivative of the guilding velocity of rotation */
-      void setDerivativeOfGuidingVelocityOfRotation(Function1<fmatvec::Vec,double>* fPdjR_) { fPdjR = fPdjR_;}
+      void setDerivativeOfGuidingVelocityOfRotation(Function1<fmatvec::Vec3,double>* fPdjR_) { fPdjR = fPdjR_;}
       void setMass(double m_) { m = m_; }
       double getMass() const { return m; }
       Frame* getFrameForKinematics() { return frame[iKinematics]; };
       Frame* getFrameOfReference() { return frameOfReference; };
       void isFrameOfBodyForRotation(bool cb_) { cb = cb_; }
-      std::vector<fmatvec::SqrMat> getContainerForFrameOrientations() const { return ASF; }
-      std::vector<fmatvec::Vec> getContainerForFramePositions() const { return SrSF; }
-      std::vector<fmatvec::SqrMat> getContainerForContourOrientations() const { return ASC; }
-      std::vector<fmatvec::Vec> getContainerForContourPositions() const { return SrSC; }
+      std::vector<fmatvec::SqrMat3> getContainerForFrameOrientations() const { return ASF; }
+      std::vector<fmatvec::Vec3> getContainerForFramePositions() const { return SrSF; }
+      std::vector<fmatvec::SqrMat3> getContainerForContourOrientations() const { return ASC; }
+      std::vector<fmatvec::Vec3> getContainerForContourPositions() const { return SrSC; }
       /*****************************************************/
 
       /**
        * \param RThetaR  inertia tensor
        * \param refFrame optional reference Frame of inertia tensor, otherwise cog-Frame will be used as reference
        */
-      void setInertiaTensor(const fmatvec::SymMat& RThetaR, const Frame* refFrame=0) {
+      void setInertiaTensor(const fmatvec::SymMat3& RThetaR, const Frame* refFrame=0) {
         if(refFrame)
           iInertia = frameIndex(refFrame);
         else
@@ -187,8 +187,8 @@ namespace MBSim {
         SThetaS = RThetaR;
       }
 
-      const fmatvec::SymMat& getInertiaTensor() const {return SThetaS;}
-      fmatvec::SymMat& getInertiaTensor() {return SThetaS;}
+      const fmatvec::SymMat3& getInertiaTensor() const {return SThetaS;}
+      fmatvec::SymMat3& getInertiaTensor() {return SThetaS;}
 
       /**
        * \param frame        specific Frame to add
@@ -196,7 +196,7 @@ namespace MBSim {
        * \param ARF          constant relative rotation from specific Frame to reference Frame
        * \param refFrameName reference Frame name
        */
-      void addFrame(Frame *frame_, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const std::string& refFrameName); 
+      void addFrame(Frame *frame_, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const std::string& refFrameName); 
 
       /**
        * \param frame        specific Frame to add
@@ -204,7 +204,7 @@ namespace MBSim {
        * \param ARF          constant relative rotation from specific Frame to reference Frame
        * \param refFrameName optional reference Frame, otherwise cog-Frame will be used as reference
        */
-      void addFrame(Frame *frame_, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const Frame* refFrame=0);
+      void addFrame(Frame *frame_, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const Frame* refFrame=0);
 
       /**
        * \param str          name of Frame to add
@@ -212,7 +212,7 @@ namespace MBSim {
        * \param ARF          constant relative rotation from specific Frame to reference Frame
        * \param refFrameName optional reference Frame, otherwise cog-Frame will be used as reference
        */
-      void addFrame(const std::string &str, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const Frame* refFrame=0);
+      void addFrame(const std::string &str, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const Frame* refFrame=0);
 
       /**
        * \param contour      specific contour to add
@@ -220,7 +220,7 @@ namespace MBSim {
        * \param ARC          constant relative rotation from specific contour to reference Frame
        * \param refFrameName reference Frame name
        */
-      void addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const std::string& refFrameName);
+      void addContour(Contour* contour, const fmatvec::Vec3 &RrRC, const fmatvec::SqrMat3 &ARC, const std::string& refFrameName);
 
       /**
        * \param contour      specific contour to add
@@ -228,7 +228,7 @@ namespace MBSim {
        * \param ARC          constant relative rotation from specific contour to reference Frame
        * \param refFrameName optional reference Frame, otherwise cog-Frame will be used as reference
        */
-      void addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const Frame* refFrame=0);
+      void addContour(Contour* contour, const fmatvec::Vec3 &RrRC, const fmatvec::SqrMat3 &ARC, const Frame* refFrame=0);
 
       /**
        * \param frame Frame to be used for kinematical description depending on reference Frame and generalised positions / velocities
@@ -241,25 +241,28 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVRigidBody(OpenMBV::RigidBody* body);
       void setOpenMBVFrameOfReference(Frame * frame) {openMBVFrame=frame; }
+      const Frame* getOpenMBVFrameOfReference() const {return openMBVFrame; }
 #endif
 
       virtual void initializeUsingXML(TiXmlElement *element);
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+
       virtual void updatePositionAndOrientationOfFrame(double t, unsigned int i);
       virtual void updateAccelerations(double t, unsigned int i);
       virtual void updateRelativeJacobians(double t, unsigned int i);
-      virtual void updateRelativeJacobians(double t, unsigned int i, fmatvec::Mat &WJTrel, fmatvec::Mat &WJRrel);
-      const fmatvec::Mat& getWJTrel() const {return WJTrel;}
-      const fmatvec::Mat& getWJRrel() const {return WJRrel;}
-      fmatvec::Mat& getWJTrel() {return WJTrel;}
-      fmatvec::Mat& getWJRrel() {return WJRrel;}
+      virtual void updateRelativeJacobians(double t, unsigned int i, fmatvec::Mat3V &WJTrel, fmatvec::Mat3V &WJRrel);
+      const fmatvec::Mat3V& getWJTrel() const {return WJTrel;}
+      const fmatvec::Mat3V& getWJRrel() const {return WJRrel;}
+      fmatvec::Mat3V& getWJTrel() {return WJTrel;}
+      fmatvec::Mat3V& getWJRrel() {return WJRrel;}
       fmatvec::Mat& getJRel(int i=0) {return JRel[i];}
       fmatvec::Vec& getjRel() {return jRel;}
       fmatvec::Vec& getqRel() {return qRel;}
       fmatvec::Vec& getuRel() {return uRel;}
       // void setqRel(const fmatvec::Vec &q) {qRel0 = q;}
       // void setuRel(const fmatvec::Vec &u) {uRel0 = u;}
-      fmatvec::Mat& getPJT(int i=0) {return PJT[i];}
-      fmatvec::Mat& getPJR(int i=0) {return PJR[i];}
+      fmatvec::Mat3V& getPJT(int i=0) {return PJT[i];}
+      fmatvec::Mat3V& getPJR(int i=0) {return PJR[i];}
 
     protected:
       /**
@@ -270,7 +273,7 @@ namespace MBSim {
       /**
        * \brief inertia tensor with respect to centre of gravity in centre of gravity and world Frame
        */
-      fmatvec::SymMat SThetaS, WThetaS;
+      fmatvec::SymMat3 SThetaS, WThetaS;
 
       /**
        * \brief Frame indices for kinematics and inertia description
@@ -290,58 +293,58 @@ namespace MBSim {
       /**
        * JACOBIAN of translation, rotation and their derivatives in parent system
        */
-      fmatvec::Mat PJT[2], PJR[2], PdJT, PdJR;
+      fmatvec::Mat3V PJT[2], PJR[2], PdJT, PdJR;
 
       /**
        * guiding velocities of translation, rotation and their derivatives in parent system
        */
-      fmatvec::Vec PjT, PjR, PdjT, PdjR;
+      fmatvec::Vec3 PjT, PjR, PdjT, PdjR;
 
       /**
        * \brief TODO
        */
-      fmatvec::Mat PJR0;
+      fmatvec::Mat3V PJR0;
 
       /**
        * \brief rotation matrix from kinematic Frame to parent Frame
        */
-      fmatvec::SqrMat APK;
+      fmatvec::SqrMat3 APK;
 
       /**
        * \brief translation from parent to kinematic Frame in parent and world system
        */
-      fmatvec::Vec PrPK, WrPK;
+      fmatvec::Vec3 PrPK, WrPK;
 
       /**
        * \brief translational and angular velocity from parent to kinematic Frame in world system
        */
-      fmatvec::Vec WvPKrel, WomPK;
+      fmatvec::Vec3 WvPKrel, WomPK;
 
       /** 
        * \brief vector of rotations from cog-Frame to specific Frame
        */
-      std::vector<fmatvec::SqrMat> ASF;
+      std::vector<fmatvec::SqrMat3> ASF;
 
       /** 
        * \brief vector of translations from cog to specific Frame in cog- and world-system
        */
-      std::vector<fmatvec::Vec> SrSF, WrSF;
+      std::vector<fmatvec::Vec3> SrSF, WrSF;
 
 
       /** 
        * \brief vector of rotations from cog-Frame to specific contour
        */
-      std::vector<fmatvec::SqrMat> ASC;
+      std::vector<fmatvec::SqrMat3> ASC;
 
       /** 
        * \brief vector of translations from cog to specific contour in cog- and world-system
        */
-      std::vector<fmatvec::Vec> SrSC, WrSC;
+      std::vector<fmatvec::Vec3> SrSC, WrSC;
 
       /**
        * \brief JACOBIAN for linear transformation between differentiated positions and velocities
        */
-      Jacobian *fT;
+      TMatrix *fT;
 
       /**
        * \brief translation from parent Frame to kinematic Frame in parent system
@@ -366,32 +369,32 @@ namespace MBSim {
       /**
        * \brief differentiated JACOBIAN of translation in parent system
        */
-      Function3<fmatvec::Mat, fmatvec::Vec, fmatvec::Vec, double> *fPdJT;
+      Function3<fmatvec::Mat3V, fmatvec::Vec, fmatvec::Vec, double> *fPdJT;
 
       /**
        * \brief differentiated JACOBIAN of rotation in parent system
        */
-      Function3<fmatvec::Mat, fmatvec::Vec, fmatvec::Vec, double> *fPdJR;
+      Function3<fmatvec::Mat3V, fmatvec::Vec, fmatvec::Vec, double> *fPdJR;
 
       /**
        * \brief guiding velocity of translation in parent system
        */
-      Function1<fmatvec::Vec,double> *fPjT;
+      Function1<fmatvec::Vec3,double> *fPjT;
 
       /**
        * \brief guiding velocity of rotation in parent system
        */
-      Function1<fmatvec::Vec,double> *fPjR;
+      Function1<fmatvec::Vec3,double> *fPjR;
 
       /**
        * \brief differentiated guiding veclocity of translation in parent system
        */
-      Function1<fmatvec::Vec,double> *fPdjT;
+      Function1<fmatvec::Vec3,double> *fPdjT;
 
       /**
        * \brief differentiated guiding veclocity of rotation in parent system
        */
-      Function1<fmatvec::Vec,double> *fPdjR;
+      Function1<fmatvec::Vec3,double> *fPdjR;
 
       /**
        * \brief function pointer to update mass matrix
@@ -434,8 +437,8 @@ namespace MBSim {
       fmatvec::Mat JRel[2];
       fmatvec::Vec jRel;
 
-      fmatvec::Mat WJTrel,WJRrel;
-      fmatvec::Vec WjTrel,WjRrel;
+      fmatvec::Mat3V WJTrel,WJRrel;
+      fmatvec::Vec3 WjTrel,WjRrel;
 
       fmatvec::Mat TRel;
 
@@ -447,8 +450,8 @@ namespace MBSim {
 
     private:
       std::vector<std::string> saved_refFrameF, saved_refFrameC;
-      std::vector<fmatvec::Vec> saved_RrRF, saved_RrRC;
-      std::vector<fmatvec::SqrMat> saved_ARF, saved_ARC;
+      std::vector<fmatvec::Vec3> saved_RrRF, saved_RrRC;
+      std::vector<fmatvec::SqrMat3> saved_ARF, saved_ARC;
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /**
        * \brief Frame of reference for drawing openMBVBody

@@ -2,7 +2,6 @@
 #include "mbsim/objectfactory.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/group.h"
-//#include "mbsim/tree.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/kinetic_excitation.h"
 #include "mbsim/spring_damper.h"
@@ -39,6 +38,9 @@
 #include "mbsim/integrators/rksuite_integrator.h"
 #include "mbsim/utils/contour_functions.h"
 #include "mbsim/constraint.h"
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#  include "openmbvcppinterface/objectfactory.h"
+#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -175,6 +177,13 @@ namespace MBSim {
     throw MBSimError(string("No Fucntion1_VS of type ")+element->ValueStr()+" exists.");
   }
 
+  Function1<Vec3,double> *ObjectFactory::createFunction1_V3S(TiXmlElement *element) {
+    Function1<Vec3,double> *obj;
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
+      if((obj=(*i)->createFunction1_V3S(element))) return obj;
+    return 0;
+  }
+
   Function2<double,double,double> *ObjectFactory::createFunction2_SSS(TiXmlElement *element) {
     if(element==NULL) return NULL;
     Function2<double,double,double> *obj;
@@ -191,9 +200,9 @@ namespace MBSim {
     throw MBSimError(string("No Function2_VVS of type ")+element->ValueStr()+" exists.");
   }
 
-  Function3<Mat,Vec,Vec,double> *ObjectFactory::createFunction3_MVVS(TiXmlElement *element) {
+  Function3<Mat3V,Vec,Vec,double> *ObjectFactory::createFunction3_MVVS(TiXmlElement *element) {
     if(element==NULL) return NULL;
-    Function3<Mat,Vec,Vec,double> *obj;
+    Function3<Mat3V,Vec,Vec,double> *obj;
     for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->createFunction3_MVVS(element))) return obj;
     throw MBSimError(string("No Function2_MVVS of type ")+element->ValueStr()+" exists.");
@@ -205,6 +214,33 @@ namespace MBSim {
     for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((u=(*i)->createContourFunction1s(element))) return u;
     throw MBSimError(string("No ContourFunction1s of type ")+element->ValueStr()+" exists.");
+  }
+
+  ObjectFactoryBase::M_NSPRE ObjectFactory::getNamespacePrefixMapping() {
+    // collect all priority-namespace-prefix mappings
+    MM_PRINSPRE priorityNSPrefix;
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
+      priorityNSPrefix.insert((*i)->getPriorityNamespacePrefix().begin(), (*i)->getPriorityNamespacePrefix().end());
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    // add the openmbv mapping
+    priorityNSPrefix.insert(OpenMBV::ObjectFactory::getPriorityNamespacePrefix().begin(),
+                            OpenMBV::ObjectFactory::getPriorityNamespacePrefix().end());
+#endif
+    
+    // generate the namespace-prefix mapping considering the priority
+    M_NSPRE nsprefix;
+    set<string> prefix;
+    for(MM_PRINSPRE::reverse_iterator i=priorityNSPrefix.rbegin(); i!=priorityNSPrefix.rend(); i++) {
+      // insert only if the prefix does not already exist
+      if(prefix.find(i->second.second)!=prefix.end())
+        continue;
+      // insert only if the namespace does not already exist
+      pair<M_NSPRE::iterator, bool> ret=nsprefix.insert(i->second);
+      if(ret.second)
+        prefix.insert(i->second.second);
+    }
+
+    return nsprefix;
   }
 
 
@@ -251,6 +287,12 @@ namespace MBSim {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"RotationAboutFixedAxis")
       return new RotationAboutFixedAxis;
+    if(element->ValueStr()==MBSIMNS"RotationAboutXAxis")
+      return new RotationAboutXAxis;
+    if(element->ValueStr()==MBSIMNS"RotationAboutYAxis")
+      return new RotationAboutYAxis;
+    if(element->ValueStr()==MBSIMNS"RotationAboutZAxis")
+      return new RotationAboutZAxis;
     if(element->ValueStr()==MBSIMNS"TimeDependentRotationAboutFixedAxis")
       return new TimeDependentRotationAboutFixedAxis;
     if(element->ValueStr()==MBSIMNS"CardanAngles")
@@ -395,23 +437,37 @@ namespace MBSim {
     if(element->ValueStr()==MBSIMNS"ConstantFunction1_VS")
       return new ConstantFunction1<Vec,double>;
     if(element->ValueStr()==MBSIMNS"PiecewisePolynom1_VS")
-      return new PPolynom;
+      return new PPolynom<Ref,Ref>;
     if(element->ValueStr()==MBSIMNS"QuadraticFunction1_VS")
       return new QuadraticFunction1_VS;
     if(element->ValueStr()==MBSIMNS"SinusFunction1_VS")
-      return new SinusFunction1_VS;
+      return new SinusFunction1_VS<Ref>;
     if(element->ValueStr()==MBSIMNS"PositiveSinusFunction1_VS")
       return new PositiveSinusFunction1_VS;
     if(element->ValueStr()==MBSIMNS"StepFunction1_VS")
       return new StepFunction1_VS;
     if(element->ValueStr()==MBSIMNS"TabularFunction1_VS")
-      return new TabularFunction1_VS;
+      return new TabularFunction1_VS<Ref,Ref>;
     if(element->ValueStr()==MBSIMNS"PeriodicTabularFunction1_VS")
       return new PeriodicTabularFunction1_VS;
     if(element->ValueStr()==MBSIMNS"SummationFunction1_VS")
       return new SummationFunction1_VS;
     if(element->ValueStr()==MBSIMNS"Function1_VS_from_SS")
-      return new Function1_VS_from_SS;
+      return new Function1_VS_from_SS<Ref>;
+    return 0;
+  }
+
+  Function1<Vec3,double> *MBSimObjectFactory::createFunction1_V3S(TiXmlElement *element) {
+    if(element->ValueStr()==MBSIMNS"ConstantFunction1_VS")
+      return new ConstantFunction1<Vec3,double>;
+    if(element->ValueStr()==MBSIMNS"SinusFunction1_VS")
+      return new SinusFunction1_VS<Fixed<3> >;
+    if(element->ValueStr()==MBSIMNS"TabularFunction1_VS")
+      return new TabularFunction1_VS<Var,Fixed<3> >;
+    if(element->ValueStr()==MBSIMNS"PiecewisePolynom1_VS")
+      return new PPolynom<Var,Fixed<3> >;
+    if(element->ValueStr()==MBSIMNS"Function1_VS_from_SS")
+      return new Function1_VS_from_SS<Fixed<3> >;
     return 0;
   }
 
@@ -441,8 +497,28 @@ namespace MBSim {
     return 0;
   }
 
-  Function3<Mat,Vec,Vec,double> *MBSimObjectFactory::createFunction3_MVVS(TiXmlElement *element) {
+  Function3<Mat3V,Vec,Vec,double> *MBSimObjectFactory::createFunction3_MVVS(TiXmlElement *element) {
     return 0;
+  }
+
+  ObjectFactoryBase::MM_PRINSPRE& MBSimObjectFactory::getPriorityNamespacePrefix() {
+    static MM_PRINSPRE priorityNamespacePrefix;
+
+    if(priorityNamespacePrefix.empty()) {
+      // mbsim namespace (very high priority for the default namespace)
+      priorityNamespacePrefix.insert(P_PRINSPRE(100, P_NSPRE(MBSIMNS_, "")));
+      priorityNamespacePrefix.insert(P_PRINSPRE( 90, P_NSPRE(MBSIMNS_, "mbsim")));
+
+      // mbsim-integrator namespace (very high priority for the default namespace)
+      priorityNamespacePrefix.insert(P_PRINSPRE( 90, P_NSPRE(MBSIMINTNS_, "")));
+      priorityNamespacePrefix.insert(P_PRINSPRE( 80, P_NSPRE(MBSIMINTNS_, "mbsimint")));
+
+      // XInclude
+      priorityNamespacePrefix.insert(P_PRINSPRE(  2, P_NSPRE(XINCLUDENS_, "xi")));
+      priorityNamespacePrefix.insert(P_PRINSPRE(  1, P_NSPRE(XINCLUDENS_, "xinclude")));
+    }
+
+    return priorityNamespacePrefix;
   }
 
 }

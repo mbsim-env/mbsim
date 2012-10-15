@@ -28,32 +28,32 @@ namespace MBSim {
   CompoundContour::CompoundContour(const string &name) : RigidContour(name) {
   }
 
-  void CompoundContour::addContourElement(Contour* c, const Vec& Kr_) {
+  void CompoundContour::addContourElement(Contour* c, const Vec3& Kr_) {
     element.push_back(c);
     c->setParent(this);
     Kr.push_back(Kr_);
-    Wr.push_back(Vec(3));
+    Wr.push_back(Vec3());
   }
 
-  void CompoundContour::setReferencePosition(const Vec &WrOP) {
+  void CompoundContour::setReferencePosition(const Vec3 &WrOP) {
     Contour::setReferencePosition(WrOP);
     for(unsigned int i=0; i<element.size(); i++) 
       element[i]->setReferencePosition(R.getPosition() + Wr[i]);
   }
 
-  void CompoundContour::setReferenceVelocity(const Vec &WvP) {
+  void CompoundContour::setReferenceVelocity(const Vec3 &WvP) {
     Contour::setReferenceVelocity(WvP);
     for(unsigned int i=0; i<element.size(); i++) 
       element[i]->setReferenceVelocity(R.getVelocity() + crossProduct(R.getAngularVelocity(), Wr[i]));
   }
 
-  void CompoundContour::setReferenceAngularVelocity(const Vec &WomegaC) {
+  void CompoundContour::setReferenceAngularVelocity(const Vec3 &WomegaC) {
     Contour::setReferenceAngularVelocity(WomegaC);
     for(unsigned int i=0; i<element.size(); i++) 
       element[i]->setReferenceAngularVelocity(R.getAngularVelocity());
   }
 
-  void CompoundContour::setReferenceOrientation(const SqrMat &AWC) {
+  void CompoundContour::setReferenceOrientation(const SqrMat3 &AWC) {
     Contour::setReferenceOrientation(AWC);
     for(unsigned int i=0; i<element.size(); i++) {
       element[i]->setReferenceOrientation(R.getOrientation());
@@ -61,25 +61,25 @@ namespace MBSim {
     }
   }
 
-  void CompoundContour::setReferenceJacobianOfTranslation(const Mat &WJP) {
+  void CompoundContour::setReferenceJacobianOfTranslation(const Mat3V &WJP) {
     Contour::setReferenceJacobianOfTranslation(WJP);
     for(unsigned int i=0; i<element.size(); i++) 
       element[i]->setReferenceJacobianOfTranslation(R.getJacobianOfTranslation() - tilde(Wr[i])*R.getJacobianOfRotation());
   }
 
-  void CompoundContour::setReferenceGyroscopicAccelerationOfTranslation(const Vec &WjP) {
+  void CompoundContour::setReferenceGyroscopicAccelerationOfTranslation(const Vec3 &WjP) {
     Contour::setReferenceGyroscopicAccelerationOfTranslation(WjP);
     for(unsigned int i=0; i<element.size(); i++) 
       element[i]->setReferenceGyroscopicAccelerationOfTranslation(R.getGyroscopicAccelerationOfTranslation() - tilde(Wr[i])*R.getGyroscopicAccelerationOfRotation() + crossProduct(R.getAngularVelocity(),crossProduct(R.getAngularVelocity(),Wr[i])));
   }
 
-  void CompoundContour::setReferenceJacobianOfRotation(const Mat &WJR) {
+  void CompoundContour::setReferenceJacobianOfRotation(const Mat3V &WJR) {
     Contour::setReferenceJacobianOfRotation(WJR);
     for(unsigned int i=0; i<element.size(); i++) 
       element[i]->setReferenceJacobianOfRotation(R.getJacobianOfRotation());
   }
 
-  void CompoundContour::setReferenceGyroscopicAccelerationOfRotation(const Vec &WjR) {
+  void CompoundContour::setReferenceGyroscopicAccelerationOfRotation(const Vec3 &WjR) {
     Contour::setReferenceGyroscopicAccelerationOfRotation(WjR);
     for(unsigned int i=0; i<element.size(); i++) 
       element[i]->setReferenceGyroscopicAccelerationOfRotation(R.getGyroscopicAccelerationOfRotation());
