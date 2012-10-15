@@ -20,6 +20,11 @@
 #include <config.h>
 #include "integrator.h"
 #include "mbsim/element.h"
+#include "mbsim/utils/utils.h"
+#include "mbsim/objectfactory.h"
+#include "mbsimtinyxml/tinyxml-src/tinynamespace.h"
+
+using namespace std;
 
 namespace MBSim {
 
@@ -37,6 +42,44 @@ namespace MBSim {
     setPlotStepSize(Element::getDouble(e));
     e=element->FirstChildElement(MBSIMINTNS"initialState");
     if(e) setInitialState(Element::getVec(e));
+  }
+
+  TiXmlElement* Integrator::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0=new TiXmlElement(MBSIMINTNS+getType());
+    parent->LinkEndChild(ele0);
+
+    addElementText(ele0,MBSIMINTNS"startTime",getStartTime());
+    addElementText(ele0,MBSIMINTNS"endTime",getEndTime());
+    addElementText(ele0,MBSIMINTNS"plotStepSize",getPlotStepSize());
+    if(getInitialState().size())
+      addElementText(ele0,MBSIMINTNS"initialState",getInitialState());
+
+    return ele0;
+  }
+
+  Integrator* Integrator::readXMLFile(const string &filename) {
+    MBSimObjectFactory::initialize();
+    TiXmlDocument doc;
+    assert(doc.LoadFile(filename)==true);
+    TiXml_PostLoadFile(&doc);
+    TiXmlElement *e=doc.FirstChildElement();
+    TiXml_setLineNrFromProcessingInstruction(e);
+    map<string,string> dummy;
+    incorporateNamespace(e, dummy);
+    Integrator *integrator=ObjectFactory::getInstance()->createIntegrator(e);
+    integrator->initializeUsingXML(doc.FirstChildElement());
+    return integrator;
+  }
+
+  void Integrator::writeXMLFile(const string &name) {
+    MBSimObjectFactory::initialize();
+    TiXmlDocument doc;
+    TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
+    doc.LinkEndChild( decl );
+    writeXMLFile(&doc);
+    map<string, string> nsprefix=ObjectFactory::getInstance()->getNamespacePrefixMapping();
+    unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
+    doc.SaveFile(name+".mbsimint.xml");
   }
 
 }

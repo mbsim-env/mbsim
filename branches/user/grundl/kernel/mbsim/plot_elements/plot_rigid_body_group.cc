@@ -184,35 +184,35 @@ namespace MBSim {
       for(unsigned int i=0; i<body.size(); i++) {
         m += body[i]->getMass();
       }
-      Vec mpos(3), mvel(3), macc(3);
-      Vec p = mvel;
-      Vec pd = macc;
-      Vec L(3), Ld(3);
+      Vec3 mpos, mvel, macc;
+      Vec3 &p = mvel;
+      Vec3 &pd = macc;
+      Vec3 L, Ld;
       for(unsigned int i=0; i<body.size(); i++) {
         mpos += body[i]->getMass()*body[i]->getFrame("C")->getPosition();
         mvel += body[i]->getMass()*body[i]->getFrame("C")->getVelocity();
         macc += body[i]->getMass()*body[i]->getFrame("C")->getAcceleration();
       }
-      Vec rOS = mpos/m;
-      Vec vS = mvel/m;
-      Vec aS = macc/m;
-      Vec rOR = ref?ref->getPosition():rOS;
-      Vec vR = ref?ref->getVelocity():vS;
-      Vec aR = ref?ref->getAcceleration():aS;
+      Vec3 rOS = mpos/m;
+      Vec3 vS = mvel/m;
+      Vec3 aS = macc/m;
+      Vec3 rOR = ref?ref->getPosition():rOS;
+      Vec3 vR = ref?ref->getVelocity():vS;
+      Vec3 aR = ref?ref->getAcceleration():aS;
       for(unsigned int i=0; i<body.size(); i++) {
-        SqrMat AIK = body[i]->getFrame("C")->getOrientation();
-        Vec rRSi = body[i]->getFrame("C")->getPosition() - rOR;
-        Vec vSi = body[i]->getFrame("C")->getVelocity() - vR;
-        Vec aSi = body[i]->getFrame("C")->getAcceleration() - aR;
-        Vec omi = body[i]->getFrame("C")->getAngularVelocity();
-        Vec psii = body[i]->getFrame("C")->getAngularAcceleration();
+        SqrMat3 AIK = body[i]->getFrame("C")->getOrientation();
+        Vec3 rRSi = body[i]->getFrame("C")->getPosition() - rOR;
+        Vec3 vSi = body[i]->getFrame("C")->getVelocity() - vR;
+        Vec3 aSi = body[i]->getFrame("C")->getAcceleration() - aR;
+        Vec3 omi = body[i]->getFrame("C")->getAngularVelocity();
+        Vec3 psii = body[i]->getFrame("C")->getAngularAcceleration();
         double mi = body[i]->getMass();
         //L += (AIK*body[i]->getInertiaTensor()*AIK.T() - body[i]->getMass()*tilde(rRi)*tilde(rRi))*body[i]->getFrame("C")->getAngularVelocity();
-        Mat WThetaS = AIK*body[i]->getInertiaTensor()*AIK.T();
+        Mat33 WThetaS = AIK*body[i]->getInertiaTensor()*AIK.T();
         L += WThetaS*omi + crossProduct(rRSi,mi*vSi);
         Ld += WThetaS*psii + crossProduct(omi,WThetaS*omi) + crossProduct(rRSi,mi*aSi);
       }
-      Vec G = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
+      Vec3 G = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
       if(getPlotFeature(openMBV)==enabled) {
         if(openMBVWeight) {
           vector<double> data;

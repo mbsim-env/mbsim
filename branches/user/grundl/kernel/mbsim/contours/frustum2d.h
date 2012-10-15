@@ -36,7 +36,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of frustum
        */
-      Frustum2D(const std::string &name) : RigidContour(name), r(2), h(0) {}
+      Frustum2D(const std::string &name) : RigidContour(name), h(0) {}
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "Frustum2D"; }
@@ -44,8 +44,8 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setRadii(const fmatvec::Vec &r_) { r = r_; }
-      const fmatvec::Vec& getRadii() const { return r; } 
+      void setRadii(const fmatvec::Vec2 &r_) { r = r_; }
+      const fmatvec::Vec2& getRadii() const { return r; } 
       void setHeight(double h_) { h = h_; }
       double getHeight() const { return h; } 
       /***************************************************/
@@ -58,7 +58,7 @@ namespace MBSim {
       /**
        * \brief radii of frustum in dirction of axis
        */
-      fmatvec::Vec r;
+      fmatvec::Vec2 r;
 
       /**
        * \brief height of frustum

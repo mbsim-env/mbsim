@@ -37,10 +37,10 @@ namespace MBSim {
   class SpringDamper : public LinkMechanics {
     protected:
       double dist;
-      fmatvec::Vec n;
+      fmatvec::Vec3 n;
       Function2<double,double,double> *func;
       Frame *refFrame;
-      fmatvec::Vec forceDir, WforceDir;
+      fmatvec::Vec3 forceDir, WforceDir;
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::CoilSpring *coilspringOpenMBV;
 #endif

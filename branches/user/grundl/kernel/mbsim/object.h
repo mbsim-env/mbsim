@@ -283,6 +283,7 @@ namespace MBSim {
       /*******************************************************/ 
 
       virtual void initializeUsingXML(TiXmlElement *element);
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
 
       virtual Element* getByPathSearch(std::string path);
 

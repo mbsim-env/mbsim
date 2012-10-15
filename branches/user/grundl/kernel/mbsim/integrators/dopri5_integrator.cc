@@ -22,6 +22,7 @@
 
 #include <config.h>
 #include <mbsim/dynamic_system_solver.h>
+#include <mbsim/utils/utils.h>
 #include "fortran_wrapper.h"
 #include "dopri5_integrator.h"
 #include <fstream>
@@ -102,7 +103,7 @@ namespace MBSim {
 
     int lWork = 2*(8*zSize+5*nrDens+21);
     int liWork = 2*(nrDens+21);
-    Vector<int> iWork(liWork);
+    VecInt iWork(liWork);
     Vec work(lWork);
     if(dtMax>0)
       work(5)=dtMax;
@@ -168,6 +169,23 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMINTNS"maximalNumberOfSteps");
     if (e)
       setMaxStepNumber(atoi(e->GetText()));
+  }
+
+  TiXmlElement* DOPRI5Integrator::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = Integrator::writeXMLFile(parent);
+    if(getAbsoluteTolerance().size() > 1) 
+      addElementText(ele0,MBSIMINTNS"absoluteTolerance",getAbsoluteTolerance());
+    else
+      addElementText(ele0,MBSIMINTNS"absoluteToleranceScalar",getAbsoluteTolerance()(0));
+    if(getRelativeTolerance().size() > 1) 
+      addElementText(ele0,MBSIMINTNS"relativeTolerance",getRelativeTolerance());
+    else
+      addElementText(ele0,MBSIMINTNS"relativeToleranceScalar",getRelativeTolerance()(0));
+    addElementText(ele0,MBSIMINTNS"initialStepSize",getInitialStepSize());
+    addElementText(ele0,MBSIMINTNS"maximalStepSize",getMaximalStepSize());
+    if(getMaxStepNumber() != 2000000000)
+      addElementText(ele0,MBSIMINTNS"maximalNumberOfSteps",getMaxStepNumber());
+    return ele0;
   }
 
 }

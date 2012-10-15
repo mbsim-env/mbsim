@@ -37,17 +37,17 @@ namespace MBSim {
       virtual ~ContourFunction1s() {};
       virtual void init(const double& alpha) {};
       virtual void init(const ContourPointData &cp) { init(cp.getLagrangeParameterPosition()(0)); }
-      virtual fmatvec::Vec operator()(const double& alpha, const void * =NULL) = 0;
-      virtual fmatvec::Vec diff1(const double& alpha) = 0;
-      virtual fmatvec::Vec diff2(const double& alpha) = 0;
-      virtual fmatvec::Vec computeN(const double& alpha) { const fmatvec::Vec N=crossProduct(diff1(alpha),computeB(alpha)); return N/nrm2(N); }
-      virtual fmatvec::Vec computeN(const ContourPointData &cp) { return computeN(cp.getLagrangeParameterPosition()(0)); };
-      virtual fmatvec::Vec computeT(const double& alpha) { const fmatvec::Vec T=-diff1(alpha); return T/nrm2(T); }
-      virtual fmatvec::Vec computeT(const ContourPointData &cp) { return computeT(cp.getLagrangeParameterPosition()(0)); };
-      virtual fmatvec::Vec computeB(const double& alpha) { const fmatvec::Vec B = crossProduct(operator()(alpha), diff1(alpha)); return B/nrm2(B); }
-      virtual fmatvec::Vec computeB(const ContourPointData &cp) { return computeB(cp.getLagrangeParameterPosition()(0)); };
+      virtual fmatvec::Vec3 operator()(const double& alpha, const void * =NULL) = 0;
+      virtual fmatvec::Vec3 diff1(const double& alpha) = 0;
+      virtual fmatvec::Vec3 diff2(const double& alpha) = 0;
+      virtual fmatvec::Vec3 computeN(const double& alpha) { const fmatvec::Vec3 N=crossProduct(diff1(alpha),computeB(alpha)); return N/nrm2(N); }
+      virtual fmatvec::Vec3 computeN(const ContourPointData &cp) { return computeN(cp.getLagrangeParameterPosition()(0)); };
+      virtual fmatvec::Vec3 computeT(const double& alpha) { const fmatvec::Vec3 T=-diff1(alpha); return T/nrm2(T); }
+      virtual fmatvec::Vec3 computeT(const ContourPointData &cp) { return computeT(cp.getLagrangeParameterPosition()(0)); };
+      virtual fmatvec::Vec3 computeB(const double& alpha) { const fmatvec::Vec3 B = crossProduct(operator()(alpha), diff1(alpha)); return B/nrm2(B); }
+      virtual fmatvec::Vec3 computeB(const ContourPointData &cp) { return computeB(cp.getLagrangeParameterPosition()(0)); };
       virtual double computeCurvature(const double& alpha) {
-        const fmatvec::Vec rs = diff1(alpha);
+        const fmatvec::Vec3 rs = diff1(alpha);
         const double nrm2rs = nrm2(rs);
         return nrm2(crossProduct(rs,diff2(alpha)))/(nrm2rs*nrm2rs*nrm2rs); 
       }

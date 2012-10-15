@@ -22,6 +22,7 @@
 
 #include <mbsimtinyxml/tinyxml-src/tinyxml.h>
 #include <mbsim/element.h>
+#include <mbsim/utils/utils.h>
 #include <mbsim/utils/eps.h>
 
 #include <fmatvec.h>
@@ -54,6 +55,16 @@ namespace MBSim {
          * \param XML element
          */
         virtual void initializeUsingXML(TiXmlElement *element) {}
+        virtual TiXmlElement* writeXMLFile(TiXmlNode *parent) { 
+          TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
+          parent->LinkEndChild(ele0);
+          return ele0;
+        }
+
+        /**
+         * \return std::string representation
+         */
+        virtual std::string getType() const { return "Function1"; }
         /***************************************************/
     };
 
@@ -83,6 +94,16 @@ namespace MBSim {
          * \param XML element
          */
         virtual void initializeUsingXML(TiXmlElement *element) {}
+        virtual TiXmlElement* writeXMLFile(TiXmlNode *parent) { 
+          TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
+          parent->LinkEndChild(ele0);
+          return ele0;
+        }
+
+         /**
+         * \return std::string representation
+         */
+        virtual std::string getType() const { return "Function2"; }
         /***************************************************/
     };
 
@@ -178,6 +199,12 @@ namespace MBSim {
           if (e)
             setOrderOfDerivative(atoi(e->GetText()));
         }
+        TiXmlElement* writeXMLFile(TiXmlNode *parent) {
+          TiXmlElement *ele0 = Function1<Ret,double>::writeXMLFile(parent);
+          addElementText(ele0,MBSIMNS"orderOfDerivative",order);
+          return ele0;
+        }
+        std::string getType() const { return "DifferentiableFunction1"; }
         /***************************************************/
 
       protected:
@@ -213,8 +240,16 @@ namespace MBSim {
           Function1<Ret,Arg>::initializeUsingXML(element);
           TiXmlElement *e;
           e=element->FirstChildElement(MBSIMNS"value");
+          // TODO: use c=fromMatStr<Ret>(e->GetText()) and remove ConstantFunction1<double, Arg>
           c=Ret(e->GetText());
         }
+        virtual TiXmlElement* writeXMLFile(TiXmlNode *parent) {
+          TiXmlElement *ele0 = Function1<Ret,Arg>::writeXMLFile(parent);
+          addElementText(ele0,MBSIMNS"value",c);
+          return ele0;
+        } 
+
+        inline std::string getType() const { return std::string("ConstantFunction1_")+funcExt<Ret>()+funcExt<Arg>(); }
         /***************************************************/
 
         /* GETTER / SETTER */
@@ -255,6 +290,12 @@ namespace MBSim {
           e=element->FirstChildElement(MBSIMNS"value");
           c=Element::getDouble(e);
         }
+        virtual TiXmlElement* writeXMLFile(TiXmlNode *parent) {
+          TiXmlElement *ele0 = Function1<double,Arg>::writeXMLFile(parent);
+          addElementText(ele0,MBSIMNS"value",c);
+          return ele0;
+        } 
+        inline std::string getType() const { return std::string("ConstantFunction1_")+funcExt<double>()+funcExt<Arg>(); }
         /***************************************************/
 
         /* GETTER / SETTER */
@@ -490,6 +531,9 @@ namespace MBSim {
         return -c*g - d*gd;
       }
       virtual void initializeUsingXML(TiXmlElement *element);
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+
+      virtual std::string getType() const { return "LinearRegularizedBilateralConstraint"; }
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -587,13 +631,13 @@ namespace MBSim {
   /**
    * \brief function describing the influence between the deformations on a body
    */
-  class InfluenceFunction : public Function2<double, fmatvec::Vec,  fmatvec::Vec > {
+  class InfluenceFunction : public Function2<double, fmatvec::Vec2,  fmatvec::Vec2 > {
     public:
       InfluenceFunction(const std::string& firstContourName_, const std::string& secondContourName_) :
           firstContourName(firstContourName_), secondContourName(secondContourName_) {
       }
       /* INHERITED INTERFACE OF FUNCTION2 */
-      virtual double operator()(const fmatvec::Vec& firstContourLagrangeParameter, const fmatvec::Vec& secondContourLagrangeParameter, const void * = NULL)=0;
+      virtual double operator()(const fmatvec::Vec2& firstContourLagrangeParameter, const fmatvec::Vec2& secondContourLagrangeParameter, const void * = NULL)=0;
       virtual void initializeUsingXML(TiXmlElement *element) {
         throw MBSimError("InfluenceFuntion::initializeUsingXML : Method not implemented");
       }
@@ -631,7 +675,7 @@ namespace MBSim {
       }
       virtual ~FlexibilityInfluenceFunction() {}
       /* INHERITED INTERFACE OF FUNCTION2 */
-      virtual double operator()(const fmatvec::Vec& firstContourLagrangeParameter, const fmatvec::Vec& secondContourLagrangeParameter, const void * = NULL) {
+      virtual double operator()(const fmatvec::Vec2& firstContourLagrangeParameter, const fmatvec::Vec2& secondContourLagrangeParameter, const void * = NULL) {
         if(nrm2(firstContourLagrangeParameter - secondContourLagrangeParameter) < macheps())
           return flexibility;
         else
@@ -653,7 +697,7 @@ namespace MBSim {
       }
       virtual ~ConstantInfluenceFunction() {}
       /* INHERITED INTERFACE OF FUNCTION2 */
-      virtual double operator()(const fmatvec::Vec& firstContourLagrangeParameter, const fmatvec::Vec& secondContourLagrangeParameter, const void * = NULL) {
+      virtual double operator()(const fmatvec::Vec2& firstContourLagrangeParameter, const fmatvec::Vec2& secondContourLagrangeParameter, const void * = NULL) {
         return couplingValue;
       }
       /***************************************************/

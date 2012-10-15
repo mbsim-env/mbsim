@@ -32,7 +32,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  SpringDamper::SpringDamper(const string &name) : LinkMechanics(name), func(NULL), refFrame(NULL), forceDir(3)
+  SpringDamper::SpringDamper(const string &name) : LinkMechanics(name), func(NULL), refFrame(NULL) 
 #ifdef HAVE_OPENMBVCPPINTERFACE
     , coilspringOpenMBV(NULL)
 #endif
@@ -53,12 +53,12 @@ namespace MBSim {
   }
 
   void SpringDamper::updateg(double) {
-    Vec WrP0P1=frame[1]->getPosition() - frame[0]->getPosition();
+    Vec3 WrP0P1=frame[1]->getPosition() - frame[0]->getPosition();
     dist=nrm2(WrP0P1);
     if(dist>epsroot())
       n=WrP0P1/dist;
     else
-      n=Vec(3,INIT,0);
+      n.init(0);
     if(refFrame==0) // Point to Point
       g(0)=dist;
     else {
@@ -68,7 +68,7 @@ namespace MBSim {
   } 
 
   void SpringDamper::updategd(double) {
-    Vec Wvrel=frame[1]->getVelocity() - frame[0]->getVelocity();
+    Vec3 Wvrel=frame[1]->getVelocity() - frame[0]->getVelocity();
     if(refFrame==0) // Point to Point
       gd(0)=Wvrel.T()*n;
     else {
@@ -118,8 +118,8 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
         if (coilspringOpenMBV) {
-          Vec WrOToPoint;
-          Vec WrOFromPoint;
+          Vec3 WrOToPoint;
+          Vec3 WrOFromPoint;
 
           WrOFromPoint = frame[0]->getPosition();
           WrOToPoint   = frame[1]->getPosition();

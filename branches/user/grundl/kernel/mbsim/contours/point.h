@@ -42,12 +42,12 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      fmatvec::Vec computeLagrangeParameter(const fmatvec::Vec &WrPoint);
+      fmatvec::Vec2 computeLagrangeParameter(const fmatvec::Vec3 &WrPoint);
       /**********************************/
   };
 
-  inline fmatvec::Vec Point::computeLagrangeParameter(const fmatvec::Vec & WrPoint) {
-    return fmatvec::Vec(2,fmatvec::INIT,0.);
+  inline fmatvec::Vec2 Point::computeLagrangeParameter(const fmatvec::Vec3 & WrPoint) {
+    return fmatvec::Vec2(fmatvec::INIT,0.);
   }
 }
 

@@ -17,8 +17,7 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#define FMATVEC_NO_BOUNDS_CHECK
-
+#include <config.h>
 #include "mbsim/kinematics.h"
 #include "mbsim/objectfactory.h"
 
@@ -30,13 +29,23 @@ namespace MBSim {
   void LinearTranslation::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"translationVectors");
-    setTranslationVectors(Element::getMat(e,3,0));
+    setTranslationVectors(Element::getMat3V(e,0));
+  }
+
+  TiXmlElement* LinearTranslation::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"LinearTranslation" );
+    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"translationVectors" );
+    TiXmlText *text = new TiXmlText(toStr(getTranslationVectors()));
+    ele1->LinkEndChild(text);
+    ele0->LinkEndChild(ele1);
+    parent->LinkEndChild(ele0);
+    return ele0;
   }
 
   void TimeDependentTranslation::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"position");
-    pos=ObjectFactory::getInstance()->createFunction1_VS(e->FirstChildElement());
+    pos=ObjectFactory::getInstance()->createFunction1_V3S(e->FirstChildElement());
     pos->initializeUsingXML(e->FirstChildElement());
   }
 
@@ -44,7 +53,7 @@ namespace MBSim {
     APK(0,0) = 1;
   }
 
-  SqrMat RotationAboutXAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  SqrMat3 RotationAboutXAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
 
     int i = q.size()-1;
     const double cosq=cos(q(i));
@@ -58,11 +67,17 @@ namespace MBSim {
     return APK;
   }
 
+  TiXmlElement* RotationAboutXAxis::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"RotationAboutXAxis" );
+    parent->LinkEndChild(ele0);
+    return ele0;
+  }
+
   RotationAboutYAxis::RotationAboutYAxis() : RotationAboutOneAxis() {  
     APK(1,1) = 1;
   }
 
-  SqrMat RotationAboutYAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  SqrMat3 RotationAboutYAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
 
     int i = q.size()-1;
     const double cosq=cos(q(i));
@@ -76,11 +91,17 @@ namespace MBSim {
     return APK;
   }
 
+  TiXmlElement* RotationAboutYAxis::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"RotationAboutYAxis" );
+    parent->LinkEndChild(ele0);
+    return ele0;
+  }
+
   RotationAboutZAxis::RotationAboutZAxis() : RotationAboutOneAxis() {  
     APK(2,2) = 1;
   }
 
-  SqrMat RotationAboutZAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  SqrMat3 RotationAboutZAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
 
     int i = q.size()-1;
     const double cosq=cos(q(i));
@@ -94,7 +115,13 @@ namespace MBSim {
     return APK;
   }
 
-  SqrMat RotationAboutFixedAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  TiXmlElement* RotationAboutZAxis::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"RotationAboutZAxis" );
+    parent->LinkEndChild(ele0);
+    return ele0;
+  }
+
+  SqrMat3 RotationAboutFixedAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
 
     int i = q.size()-1;
     const double cosq=cos(q(i));
@@ -120,10 +147,20 @@ namespace MBSim {
   void RotationAboutFixedAxis::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"axisOfRotation");
-    setAxisOfRotation(Element::getVec(e,3));
+    setAxisOfRotation(Element::getVec3(e));
   }
 
-  SqrMat TimeDependentRotationAboutFixedAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  TiXmlElement* RotationAboutFixedAxis::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"RotationAboutFixedAxis" );
+    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"axisOfRotation" );
+    TiXmlText *text = new TiXmlText(toStr(getAxisOfRotation()));
+    ele1->LinkEndChild(text);
+    ele0->LinkEndChild(ele1);
+    parent->LinkEndChild(ele0);
+    return ele0;
+  }
+
+  SqrMat3 TimeDependentRotationAboutFixedAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     Vec phi(1,INIT,(*angle)(t));
     return (*rot)(phi,t);
   }
@@ -131,14 +168,14 @@ namespace MBSim {
   void TimeDependentRotationAboutFixedAxis::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"axisOfRotation");
-    setAxisOfRotation(Element::getVec(e,3));
+    setAxisOfRotation(Element::getVec3(e));
     e=element->FirstChildElement(MBSIMNS"position");
     angle=ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement());
     angle->initializeUsingXML(e->FirstChildElement());
   }
 
-  SqrMat RotationAboutAxesXY::operator()(const fmatvec::Vec &q, const double &t, const void *) {
-    SqrMat APK(3,NONINIT);
+  SqrMat3 RotationAboutAxesXY::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+    SqrMat3 APK(NONINIT);
 
     int i = q.size()-1;
     double a=q(i-1);
@@ -157,8 +194,8 @@ namespace MBSim {
     return APK;
   }
 
-  SqrMat RotationAboutAxesYZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
-    SqrMat APK(3,NONINIT);
+  SqrMat3 RotationAboutAxesYZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+    SqrMat3 APK(NONINIT);
 
     int i = q.size()-1;
     double b=q(i-1);
@@ -177,8 +214,8 @@ namespace MBSim {
     return APK;
   }
 
-  SqrMat CardanAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
-    SqrMat APK(3,NONINIT);
+  SqrMat3 CardanAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+    SqrMat3 APK(NONINIT);
 
     int i = q.size()-1;
     double a=q(i-2);
@@ -198,8 +235,8 @@ namespace MBSim {
     return APK;
   }
 
-  SqrMat EulerAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
-    SqrMat APK(3,NONINIT);
+  SqrMat3 EulerAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+    SqrMat3 APK(NONINIT);
 
     int i = q.size()-1;
     double psi=q(i-2); 
@@ -225,18 +262,39 @@ namespace MBSim {
     return APK;
   }
 
-  SqrMat TimeDependentCardanAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  SqrMat3 RotationAboutAxesXYZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+    SqrMat3 APK(NONINIT);
+
+    int i = q.size()-1;
+    double a=q(i-2);
+    double b=q(i-1);
+    double g=q(i);
+
+    APK(0,0) = cos(b)*cos(g);
+    APK(1,0) = sin(a)*sin(b)*cos(g)+cos(a)*sin(g);
+    APK(2,0) = -cos(a)*sin(b)*cos(g)+sin(a)*sin(g);
+    APK(0,1) = -cos(b)*sin(g);
+    APK(1,1) = -sin(g)*sin(b)*sin(a)+cos(a)*cos(g);
+    APK(2,1) = cos(a)*sin(b)*sin(g)+sin(a)*cos(g);
+    APK(0,2) = sin(b);
+    APK(1,2) = -sin(a)*cos(b);
+    APK(2,2) = cos(a)*cos(b);
+
+    return APK;
+  }
+
+  SqrMat3 TimeDependentCardanAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     return (*rot)((*angle)(t),t);
   }
 
   void TimeDependentCardanAngles::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"position");
-    angle=ObjectFactory::getInstance()->createFunction1_VS(e->FirstChildElement());
+    angle=ObjectFactory::getInstance()->createFunction1_V3S(e->FirstChildElement());
     angle->initializeUsingXML(e->FirstChildElement());
   }
 
-  Mat JRotationAboutAxesXY::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  Mat3V JRotationAboutAxesXY::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     int iq = q.size()-1;
     int iu = uSize-1;
     double a = q(iq-1);
@@ -249,7 +307,7 @@ namespace MBSim {
     return J;
   }
 
-  Mat JRotationAboutAxesYZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  Mat3V JRotationAboutAxesYZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     int iq = q.size()-1;
     int iu = uSize-1;
     double beta = q(iq-1);
@@ -262,7 +320,24 @@ namespace MBSim {
     return J;
   }
 
-  Mat TCardanAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  Mat3V JRotationAboutAxesXYZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+    int iq = q.size()-1;
+    int iu = uSize-1;
+    double a = q(iq-2);
+    double b = q(iq-1);
+    J(0,iu-2) = 1;
+    J(0,iu-1) = 0;
+    J(0,iu) = sin(b);
+    J(1,iu-2) = 0;
+    J(1,iu-1) = cos(a);
+    J(1,iu) = -sin(a)*cos(b);
+    J(2,iu-2) = 0;
+    J(2,iu-1) = sin(a);
+    J(2,iu) = cos(a)*cos(b);
+    return J;
+  }
+
+  MatV TCardanAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     int iq = qSize-1;
     int iu = uSize-1;
     double alpha = q(iq-2);
@@ -283,7 +358,7 @@ namespace MBSim {
     return T;
   }
 
-  Mat TEulerAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  MatV TEulerAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     int iq = qSize-1;
     int iu = uSize-1;
     double psi = q(iq-2);
@@ -307,7 +382,7 @@ namespace MBSim {
     return T;
   }
 
-  Mat TCardanAngles2::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  MatV TCardanAngles2::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     int iq = qSize-1;
     int iu = uSize-1;
     double beta = q(iq-1);
@@ -327,7 +402,7 @@ namespace MBSim {
     return T;
   }
 
-  Mat TEulerAngles2::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  MatV TEulerAngles2::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     int iq = qSize-1;
     int iu = uSize-1;
     double theta = q(iq-1);
@@ -357,7 +432,7 @@ namespace MBSim {
     J=Element::getMat(e);
   }
 
-  Mat JdRotationAboutAxesXY::operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
+  Mat3V JdRotationAboutAxesXY::operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
     int iq = q.size()-1;
     int iu = uSize-1;
     double a = q(iq-1);
@@ -372,7 +447,7 @@ namespace MBSim {
     return Jd;
   }
 
-  Mat JdRotationAboutAxesYZ::operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
+  Mat3V JdRotationAboutAxesYZ::operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
     int iq = q.size()-1;
     int iu = uSize-1;
     double beta = q(iq-1);
@@ -385,6 +460,26 @@ namespace MBSim {
     Jd(2,iu) = -sin(beta)*betad;
     return Jd;
   }
+
+  Mat3V JdRotationAboutAxesXYZ::operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
+    int iq = q.size()-1;
+    int iu = uSize-1;
+    double a = q(iq-2);
+    double b = q(iq-1);
+    double ad = qd(iq-2);
+    double bd = qd(iq-1);
+    Jd(0,iu-2) = 0;
+    Jd(0,iu-1) = 0;
+    Jd(0,iu) = cos(b)*bd;
+    Jd(1,iu-2) = 0;
+    Jd(1,iu-1) = -sin(a)*ad;
+    Jd(1,iu) = -cos(a)*cos(b)*ad + sin(a)*sin(b)*bd;
+    Jd(2,iu-2) = 0;
+    Jd(2,iu-1) = cos(a)*ad;
+    Jd(2,iu) = -sin(a)*cos(b)*ad - cos(a)*sin(b)*bd;
+    return Jd;
+  }
+
 
 ////   Kinematics::Kinematics() : PjT(3,INIT,0.), PjR(3,INIT,0.), PdjT(3,INIT,0.), PdjR(3,INIT,0.), APK(3,EYE), PrPK(3,INIT,0.),  fT(0), fPrPK(0), fAPK(0), fPJT(0), fPJR(0), fPdJT(0), fPdJR(0), fPjT(0), fPjR(0), fPdjT(0), fPdjR(0) {
 ////   }
@@ -493,11 +588,11 @@ namespace MBSim {
 ////           fPdJR = new JdRotationAboutAxesXY(uSize[0]);
 ////         }
 ////         else if(dynamic_cast<CardanAngles*>(fAPK)) {
-////           JR.resize() << DiagMat(3,INIT,1);
+////           JR.resize() = DiagMat(3,INIT,1);
 //// 	  fT = new TCardanAngles(qSize,uSize[0]);
 ////         }
 //// 	else if(dynamic_cast<EulerAngles*>(fAPK)) {
-////           JR.resize() << DiagMat(3,INIT,1);
+////           JR.resize() = DiagMat(3,INIT,1);
 //// 	  fT = new TEulerAngles(qSize,uSize[0]);
 ////         }
 //// 

@@ -794,7 +794,7 @@ namespace MBSim {
 
     int iter;
     Vec laOld;
-    laOld = la;
+    laOld << la;
     iter = (this->*solveConstraints_)(); // solver election
     if(iter >= maxIter) {
       if(INFO)  { 
@@ -827,7 +827,7 @@ namespace MBSim {
 
     int iter;
     Vec laOld;
-    laOld = la;
+    laOld << la;
     iter = (this->*solveImpacts_)(dt); // solver election
     if(iter >= maxIter) {
       if (INFO) {
@@ -913,9 +913,9 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updateG(double t, int j) {
-    G.resize() = SqrMat(W[j].T()*slvLLFac(LLM[j],V[j])); 
+    G << SqrMat(W[j].T()*slvLLFac(LLM[j],V[j])); 
 
-    if(checkGSize) Gs.resize();
+    if(checkGSize) ; // Gs.resize();
     else if(Gs.cols() != G.size()) {
       static double facSizeGs = 1;
       if(G.size()>limitGSize && fabs(facSizeGs-1) < epsroot()) facSizeGs = double(countElements(G))/double(G.size()*G.size())*1.5;
@@ -970,17 +970,17 @@ namespace MBSim {
     zdot(zParent,t);
   }
 
- void DynamicSystemSolver::getLinkStatus(Vector<int> &LinkStatusExt, double t) {
+ void DynamicSystemSolver::getLinkStatus(VecInt &LinkStatusExt, double t) {
     if(LinkStatusExt.size()<LinkStatusSize) 
-      LinkStatusExt.resize(LinkStatusSize, INIT, 0);
+      LinkStatusExt.resize(LinkStatusSize);
     if(LinkStatus()!=LinkStatusExt())
       updateLinkStatusRef(LinkStatusExt);
     updateLinkStatus(t);
   }
 
- void DynamicSystemSolver::getLinkStatusReg(Vector<int> &LinkStatusRegExt, double t) {
+ void DynamicSystemSolver::getLinkStatusReg(VecInt &LinkStatusRegExt, double t) {
     if(LinkStatusRegExt.size()<LinkStatusRegSize) 
-      LinkStatusRegExt.resize(LinkStatusRegSize, INIT, 0);
+      LinkStatusRegExt.resize(LinkStatusRegSize);
     if(LinkStatusReg()!=LinkStatusRegExt())
       updateLinkStatusRegRef(LinkStatusRegExt);
     updateLinkStatusReg(t);
@@ -1376,6 +1376,41 @@ namespace MBSim {
     }
   }
 
+  TiXmlElement* DynamicSystemSolver::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = Group::writeXMLFile(parent);
+
+    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"environments" );
+    MBSimEnvironment::getInstance()->writeXMLFile(ele1);
+    ele0->LinkEndChild( ele1 );
+    return ele0;
+  }
+
+  DynamicSystemSolver* DynamicSystemSolver::readXMLFile(const string &filename) {
+    MBSimObjectFactory::initialize();
+    TiXmlDocument doc;
+    assert(doc.LoadFile(filename)==true);
+    TiXml_PostLoadFile(&doc);
+    TiXmlElement *e=doc.FirstChildElement();
+    TiXml_setLineNrFromProcessingInstruction(e);
+    map<string,string> dummy;
+    incorporateNamespace(doc.FirstChildElement(), dummy);
+    DynamicSystemSolver *dss=dynamic_cast<DynamicSystemSolver*>(ObjectFactory::getInstance()->createGroup(e));
+    dss->initializeUsingXML(doc.FirstChildElement());
+    dss->init(resolveXMLPath);
+    return dss;
+ }
+
+  void DynamicSystemSolver::writeXMLFile(const string &name) {
+    MBSimObjectFactory::initialize();
+    TiXmlDocument doc;
+    TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
+    doc.LinkEndChild( decl );
+    writeXMLFile(&doc);
+    map<string, string> nsprefix=ObjectFactory::getInstance()->getNamespacePrefixMapping();
+    unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
+    doc.SaveFile(name+".mbsim.xml");
+  }
+
   void DynamicSystemSolver::addToGraph(Graph* graph, SqrMat &A, int i, vector<Object*>& objList) {
     graph->addObject(objList[i]->computeLevel(),objList[i]);
     A(i,i) = -1;
@@ -1385,7 +1420,7 @@ namespace MBSim {
         addToGraph(graph, A, j, objList);
   }
 
-  void DynamicSystemSolver::shift(Vec &zParent, const Vector<int> &jsv_, double t) {
+  void DynamicSystemSolver::shift(Vec &zParent, const VecInt &jsv_, double t) {
     if(q()!=zParent()) {
       updatezRef(zParent);
     }
@@ -1417,7 +1452,7 @@ namespace MBSim {
       updateG(t); 
       //updatewb(t); // not relevant for impact
 
-      b.resize() = gd; // b = gd + trans(W)*slvLLFac(LLM,h)*dt with dt=0
+      b << gd; // b = gd + trans(W)*slvLLFac(LLM,h)*dt with dt=0
       solveImpacts();
       u += deltau(zParent,t,0);
 
@@ -1453,7 +1488,7 @@ namespace MBSim {
         updateV(t); 
         updateG(t); 
         updatewb(t); 
-	b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
+	b << W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
         solveConstraints();
 
         checkActive(4);
@@ -1489,7 +1524,7 @@ namespace MBSim {
         updateV(t);  // TODO necessary
         updateG(t);  // TODO necessary 
         updatewb(t);  // TODO necessary 
-	b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
+	b << W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
         solveConstraints();
 
         checkActive(4);
@@ -1549,7 +1584,7 @@ namespace MBSim {
       updateV(t); 
       updateG(t); 
       updatewb(t); 
-      b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
+      b << W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
       solveConstraints();
     }
     updateStopVector(t);
@@ -1616,6 +1651,7 @@ namespace MBSim {
     updater(t,0); 
     updater(t,1);
     updatezd(t);
+    if(true) {
     updateStateDerivativeDependentVariables(t); // TODO: verbinden mit updatehInverseKinetics
 
     updatehInverseKinetics(t,1); // Accelerations of objects
@@ -1635,6 +1671,7 @@ namespace MBSim {
     A(Index(m1,m1+m2-1),Index(0,n-1)) = bInverseKinetics;
     b(0,m1-1) = -h[1]-r[1];
     laInverseKinetics =  slvLL(JTJ(A),A.T()*b);
+    }
 
     DynamicSystemSolver::plot(t,dt);
 

@@ -43,19 +43,19 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      void setReferencePosition(const fmatvec::Vec &WrOP);
-      void setReferenceOrientation(const fmatvec::SqrMat &AWC);
-      void setReferenceVelocity(const fmatvec::Vec &WvP);
-      void setReferenceAngularVelocity(const fmatvec::Vec &WomegaC);
-      void setReferenceJacobianOfTranslation(const fmatvec::Mat &WJP);
-      void setReferenceGyroscopicAccelerationOfTranslation(const fmatvec::Vec &WjP);
-      void setReferenceJacobianOfRotation(const fmatvec::Mat &WJR);
-      void setReferenceGyroscopicAccelerationOfRotation(const fmatvec::Vec &WjR);
+      void setReferencePosition(const fmatvec::Vec3 &WrOP);
+      void setReferenceOrientation(const fmatvec::SqrMat3 &AWC);
+      void setReferenceVelocity(const fmatvec::Vec3 &WvP);
+      void setReferenceAngularVelocity(const fmatvec::Vec3 &WomegaC);
+      void setReferenceJacobianOfTranslation(const fmatvec::Mat3V &WJP);
+      void setReferenceGyroscopicAccelerationOfTranslation(const fmatvec::Vec3 &WjP);
+      void setReferenceJacobianOfRotation(const fmatvec::Mat3V &WJR);
+      void setReferenceGyroscopicAccelerationOfRotation(const fmatvec::Vec3 &WjR);
       /***************************************************/
 
       void init(InitStage stage);
       Contour* getContourElement(int i) { return element[i]; }
-      void addContourElement(Contour* ce, const fmatvec::Vec& re);
+      void addContourElement(Contour* ce, const fmatvec::Vec3& re);
       unsigned int getNumberOfElements() { return element.size(); }
 
       void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff);
@@ -63,7 +63,7 @@ namespace MBSim {
 
     private:
       std::vector<Contour*> element;
-      std::vector<fmatvec::Vec> Kr, Wr;
+      std::vector<fmatvec::Vec3> Kr, Wr;
   };
 }
 

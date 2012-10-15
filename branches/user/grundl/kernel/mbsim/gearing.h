@@ -33,8 +33,8 @@ namespace MBSim {
       bool flag;
       Frame Z0, Z1;
       Frame *P0, *P1;
-      fmatvec::Vec WrP0Z, WrP1Z;
-      fmatvec::Vec Wt;
+      fmatvec::Vec3 WrP0Z, WrP1Z;
+      fmatvec::Vec3 Wt;
     public:
       Gearing(const std::string &name, bool flag = false);
       void updateh(double, int i=0);

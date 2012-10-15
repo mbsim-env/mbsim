@@ -1,5 +1,6 @@
 noinst_LTLIBRARIES = libutils.la
-libutils_la_SOURCES = eps.cc\
+libutils_la_SOURCES = colors.cc\
+                      eps.cc\
                       nonlinear_algebra.cc\
                       nonsmooth_algebra.cc\
                       ppolynom.cc\
@@ -17,7 +18,8 @@ INCLUDES = $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
 LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 libutils_la_CPPFLAGS = -DTIXML_USE_STL
 
-utilsinclude_HEADERS = eps.h\
+utilsinclude_HEADERS = colors.h\
+                       eps.h\
                        nonlinear_algebra.h\
                        nonsmooth_algebra.h\
                        function.h\

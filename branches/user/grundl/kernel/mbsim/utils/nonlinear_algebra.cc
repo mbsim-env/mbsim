@@ -245,6 +245,5 @@ namespace MBSim {
     return x;
   }
 
-
 }
 

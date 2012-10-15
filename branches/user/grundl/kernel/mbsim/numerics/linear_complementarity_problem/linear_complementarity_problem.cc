@@ -270,7 +270,7 @@ namespace MBSim {
 
   double LinearComplementarityProblem::computeMediumEigVal(const SqrMat & M) {
     /*update Material constant*/
-    Vector<complex<double> > Eigvals = eigval(M);
+    Vector<Ref,complex<double> > Eigvals = eigval(M);
     double eigvalSum = 0;
     for (int i = 0; i < Eigvals.size(); i++) {
       eigvalSum += Eigvals(i).real(); //TODO: handle complex values

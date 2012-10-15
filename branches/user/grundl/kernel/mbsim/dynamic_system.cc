@@ -44,7 +44,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  DynamicSystem::DynamicSystem(const string &name) : Element(name), frameParent(0), PrPF(Vec(3,INIT,0.)), APF(SqrMat(3,EYE)), q0(0), u0(0), x0(0), qSize(0), qInd(0), xSize(0), xInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0), LinkStatusSize(0), LinkStatusInd(0), LinkStatusRegSize(0), LinkStatusRegInd(0)
+  DynamicSystem::DynamicSystem(const string &name) : Element(name), frameParent(0), PrPF(Vec3()), APF(SqrMat3(EYE)), q0(0), u0(0), x0(0), qSize(0), qInd(0), xSize(0), xInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0), LinkStatusSize(0), LinkStatusInd(0), LinkStatusRegSize(0), LinkStatusRegInd(0)
 #ifdef HAVE_OPENMBVCPPINTERFACE                      
                                                      , openMBVGrp(0), corrInd(0)
 #endif
@@ -61,8 +61,8 @@ namespace MBSim {
                                                        I=new Frame("I");
                                                        addFrame(I);
 
-                                                       IrOF.push_back(Vec(3,INIT,0.));
-                                                       AIF.push_back(SqrMat(3,EYE));
+                                                       IrOF.push_back(Vec3());
+                                                       AIF.push_back(SqrMat3(EYE));
                                                      }
 
   DynamicSystem::~DynamicSystem() {
@@ -834,21 +834,21 @@ namespace MBSim {
   }
 
   void DynamicSystem::updategRef(const Vec& gParent) {
-    g.resize() >> gParent(gInd,gInd+gSize-1);
+    g >> gParent(gInd,gInd+gSize-1);
 
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
       (**i).updategRef(gParent);
   }
 
   void DynamicSystem::updategdRef(const Vec& gdParent) {
-    gd.resize() >> gdParent(gdInd,gdInd+gdSize-1);
+    gd >> gdParent(gdInd,gdInd+gdSize-1);
 
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
       (**i).updategdRef(gdParent);
   }
 
   void DynamicSystem::updatelaRef(const Vec &laParent) {
-    la.resize() >> laParent(laInd,laInd+laSize-1);
+    la >> laParent(laInd,laInd+laSize-1);
 
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
       (**i).updatelaRef(laParent);
@@ -868,14 +868,14 @@ namespace MBSim {
   }
 
   void DynamicSystem::updatewbRef(const Vec &wbParent) {
-    wb.resize() >> wbParent(laInd,laInd+laSize-1);
+    wb >> wbParent(laInd,laInd+laSize-1);
 
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
       (**i).updatewbRef(wbParent);
   }
 
   void DynamicSystem::updateWRef(const Mat &WParent, int j) {
-    W[j].resize() >> WParent(Index(hInd[j],hInd[j]+hSize[j]-1),Index(laInd,laInd+laSize-1));
+    W[j] >> WParent(Index(hInd[j],hInd[j]+hSize[j]-1),Index(laInd,laInd+laSize-1));
 
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
       (**i).updateWRef(WParent,j);
@@ -910,7 +910,7 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateVRef(const Mat &VParent, int j) {
-    V[j].resize() >> VParent(Index(hInd[j],hInd[j]+hSize[j]-1),Index(laInd,laInd+laSize-1));
+    V[j] >> VParent(Index(hInd[j],hInd[j]+hSize[j]-1),Index(laInd,laInd+laSize-1));
 
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
       (**i).updateVRef(VParent,j);
@@ -926,7 +926,7 @@ namespace MBSim {
       (**i).updatesvRef(svParent);
   }
 
-  void DynamicSystem::updatejsvRef(const Vector<int> &jsvParent) {
+  void DynamicSystem::updatejsvRef(const VecInt &jsvParent) {
     jsv >> jsvParent(svInd,svInd+svSize-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
@@ -937,21 +937,21 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateresRef(const Vec &resParent) {
-    res.resize() >> resParent(laInd,laInd+laSize-1);
+    res >> resParent(laInd,laInd+laSize-1);
 
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
       (**i).updateresRef(resParent);
   }
 
   void DynamicSystem::updaterFactorRef(const Vec &rFactorParent) {
-    rFactor.resize() >> rFactorParent(rFactorInd,rFactorInd+rFactorSize-1);
+    rFactor >> rFactorParent(rFactorInd,rFactorInd+rFactorSize-1);
 
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
       (**i).updaterFactorRef(rFactorParent);
   }
 
-  void DynamicSystem::updateLinkStatusRef(const Vector<int> &LinkStatusParent) {
-    LinkStatus.resize() >> LinkStatusParent(LinkStatusInd,LinkStatusInd+LinkStatusSize-1);
+  void DynamicSystem::updateLinkStatusRef(const VecInt &LinkStatusParent) {
+    LinkStatus >> LinkStatusParent(LinkStatusInd,LinkStatusInd+LinkStatusSize-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->updateLinkStatusRef(LinkStatusParent);
@@ -960,8 +960,8 @@ namespace MBSim {
       (**i).updateLinkStatusRef(LinkStatusParent);
   }
 
-  void DynamicSystem::updateLinkStatusRegRef(const Vector<int> &LinkStatusRegParent) {
-    LinkStatusReg.resize() >> LinkStatusRegParent(LinkStatusRegInd,LinkStatusRegInd+LinkStatusRegSize-1);
+  void DynamicSystem::updateLinkStatusRegRef(const VecInt &LinkStatusRegParent) {
+    LinkStatusReg >> LinkStatusRegParent(LinkStatusRegInd,LinkStatusRegInd+LinkStatusRegSize-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->updateLinkStatusRegRef(LinkStatusRegParent);
@@ -1316,21 +1316,21 @@ namespace MBSim {
     cosy->setParent(this);
   }
 
-  void DynamicSystem::addFrame(Frame* cosy, const Vec &RrRF, const SqrMat &ARF, const string& refFrameName) {
+  void DynamicSystem::addFrame(Frame* cosy, const Vec3 &RrRF, const SqrMat3 &ARF, const string& refFrameName) {
     addFrame(cosy);
 
     saved_refFrameF.push_back(refFrameName);
-    saved_RrRF.push_back(RrRF.copy()); // use .copy() because the copy constructor of fmatvec is a reference
-    saved_ARF.push_back(ARF.copy()); // use .copy() because the copy constructor of fmatvec is a reference
-    IrOF.push_back(Vec(3));
-    AIF.push_back(SqrMat(3));
+    saved_RrRF.push_back(RrRF); 
+    saved_ARF.push_back(ARF); 
+    IrOF.push_back(Vec3());
+    AIF.push_back(SqrMat3());
   }
 
-  void DynamicSystem::addFrame(Frame *frame_, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const Frame* refFrame) {
+  void DynamicSystem::addFrame(Frame *frame_, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const Frame* refFrame) {
     addFrame(frame_, RrRF, ARF, refFrame?refFrame->getName():"I");
   }
 
-  void DynamicSystem::addFrame(const string &str, const Vec &RrRF, const SqrMat &ARF, const Frame* refFrame) {
+  void DynamicSystem::addFrame(const string &str, const Vec3 &RrRF, const SqrMat3 &ARF, const Frame* refFrame) {
     addFrame(new Frame(str),RrRF,ARF,refFrame);
   }
 
@@ -1343,17 +1343,17 @@ namespace MBSim {
     contour_->setParent(this);
   }
 
-  void DynamicSystem::addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const string& refFrameName) {
+  void DynamicSystem::addContour(Contour* contour, const Vec3 &RrRC, const SqrMat3 &ARC, const string& refFrameName) {
     addContour(contour);
 
     saved_refFrameC.push_back(refFrameName);
-    saved_RrRC.push_back(RrRC.copy()); // use .copy() because the copy constructor of fmatvec is a reference
-    saved_ARC.push_back(ARC.copy()); // use .copy() because the copy constructor of fmatvec is a reference
-    IrOC.push_back(Vec(3));
-    AIC.push_back(SqrMat(3));
+    saved_RrRC.push_back(RrRC); 
+    saved_ARC.push_back(ARC); 
+    IrOC.push_back(Vec3());
+    AIC.push_back(SqrMat3());
   }
 
-  void DynamicSystem::addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const Frame* refFrame) {
+  void DynamicSystem::addContour(Contour* contour, const fmatvec::Vec3 &RrRC, const fmatvec::SqrMat3 &ARC, const Frame* refFrame) {
     addContour(contour, RrRC, ARC, refFrame?refFrame->getName():"I");
   }
 
@@ -1570,7 +1570,7 @@ namespace MBSim {
   }
   
   void DynamicSystem::updatecorrRef(const fmatvec::Vec &ref) {
-    corr.resize() >> ref(corrInd,corrInd+corrSize-1);
+    corr >> ref(corrInd,corrInd+corrSize-1);
 
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
       (**i).updatecorrRef(ref);

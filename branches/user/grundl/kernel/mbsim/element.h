@@ -26,7 +26,8 @@
 #include <hdf5serie/vectorserie.h>
 #include "mbsimtinyxml/tinyxml-src/tinyxml.h"
 
-#define MBSIMNS "{http://mbsim.berlios.de/MBSim}"
+#define MBSIMNS_ "http://mbsim.berlios.de/MBSim"
+#define MBSIMNS "{"MBSIMNS_"}"
 
 #include "mbsim/mbsim_event.h"
 
@@ -44,14 +45,6 @@ namespace H5 {
  * \brief namespace MBSim
  */
 namespace MBSim {
-
-  /*!
-   * \brief define a templated typedef to have shorter double vectors
-   */
-  template<class T>
-  struct dvec {
-      typedef std::vector<std::vector<T> > type;
-  };
 
   class ObjectInterface;
 
@@ -174,9 +167,12 @@ namespace MBSim {
       const std::string getShortName() const {
         size_t i = name.length() - 1;
 
-        while ((name[i-1] != '/') and (i > 0)) {
+        while ((name[i-1] != '/') and (i > 1)) {
           i--;
         }
+        if(i == 1)
+          i--;
+
         return name.substr(i, name.length() - i);
       }
 
@@ -239,6 +235,7 @@ namespace MBSim {
       PlotFeatureStatus getPlotFeatureForChildren(PlotFeature pf) { return plotFeatureForChildren[pf]; }
 
       virtual void initializeUsingXML(TiXmlElement *element);
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
 
       /**
        * \brief a general element access
@@ -261,9 +258,13 @@ namespace MBSim {
       static double getDouble(TiXmlElement *e);
       static int getInt(TiXmlElement *e);
       static bool getBool(TiXmlElement *e);
+      static fmatvec::Vec3 getVec3(TiXmlElement *e);
       static fmatvec::Vec getVec(TiXmlElement *e, int rows=0);
+      static fmatvec::Mat3V getMat3V(TiXmlElement *e, int cols=0);
       static fmatvec::Mat getMat(TiXmlElement *e, int rows=0, int cols=0);
+      static fmatvec::SqrMat3 getSqrMat3(TiXmlElement *e);
       static fmatvec::SqrMat getSqrMat(TiXmlElement *e, int size=0);
+      static fmatvec::SymMat3 getSymMat3(TiXmlElement *e);
       static fmatvec::SymMat getSymMat(TiXmlElement *e, int size=0);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -278,6 +279,8 @@ namespace MBSim {
        * \param delimiter of the path
        */
       std::string getPath(char pathDelim='.');
+
+      std::string getXMLPath(MBSim::Element *ref=0, bool rel=false);
 
     protected:
       Element *parent;

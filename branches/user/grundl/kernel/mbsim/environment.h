@@ -38,6 +38,7 @@ namespace MBSim {
        * \param XML element
        */
       virtual void initializeUsingXML(TiXmlElement *element)=0;
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent)=0;
       /***************************************************/
     
     protected:
@@ -61,12 +62,13 @@ namespace MBSim {
     public:
       /* INHERITED INTERFACE */
       virtual void initializeUsingXML(TiXmlElement *element);
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
       /***************************************************/
 
       /* GETTER / SETTER */
       static MBSimEnvironment *getInstance() { return instance?instance:(instance=new MBSimEnvironment); }
-      void setAccelerationOfGravity(const fmatvec::Vec &grav_) { grav=grav_; }
-      const fmatvec::Vec& getAccelerationOfGravity() const { return grav; }
+      void setAccelerationOfGravity(const fmatvec::Vec3 &grav_) { grav=grav_; }
+      const fmatvec::Vec3& getAccelerationOfGravity() const { return grav; }
       /***************************************************/
     
     protected:
@@ -78,12 +80,12 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      MBSimEnvironment() : Environment(), grav(3) {}
+      MBSimEnvironment() : Environment() {}
 
       /**
        * \brief acceleration of gravity
        */
-      fmatvec::Vec grav;
+      fmatvec::Vec3 grav;
   };
 
 }

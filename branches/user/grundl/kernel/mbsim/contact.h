@@ -195,7 +195,7 @@ namespace MBSim {
       /**
        * \brief used contact kinematics
        */
-      ContactKinematics* contactKinematics;
+      ContactKinematics *contactKinematics;
 
       /**
        * \brief force laws in normal and tangential direction on acceleration and velocity level

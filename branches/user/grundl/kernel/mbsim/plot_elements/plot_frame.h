@@ -39,7 +39,7 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::Group* openMBVGrp;
       OpenMBV::Arrow *openMBVPosition, *openMBVVelocity, *openMBVAcceleration, *openMBVAngularVelocity, *openMBVAngularAcceleration;
-      fmatvec::Vec roff, voff, aoff;
+      fmatvec::Vec3 roff, voff, aoff;
       double rscale, vscale, ascale;
 #endif
 
@@ -52,9 +52,9 @@ namespace MBSim {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::Group* getOpenMBVGrp() { return openMBVGrp; }
-      virtual void enableOpenMBVPosition(double scale=1, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5, const fmatvec::Vec& off=fmatvec::Vec(3));
-      virtual void enableOpenMBVVelocity(double scale=1, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5, const fmatvec::Vec& off=fmatvec::Vec(3));
-      virtual void enableOpenMBVAcceleration(double scale=1, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5, const fmatvec::Vec& off=fmatvec::Vec(3));
+      virtual void enableOpenMBVPosition(double scale=1, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5, const fmatvec::Vec3& off=fmatvec::Vec3());
+      virtual void enableOpenMBVVelocity(double scale=1, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5, const fmatvec::Vec3& off=fmatvec::Vec3());
+      virtual void enableOpenMBVAcceleration(double scale=1, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5, const fmatvec::Vec3& off=fmatvec::Vec3());
       virtual void enableOpenMBVAngularVelocity(double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
       virtual void enableOpenMBVAngularAcceleration(double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
 #endif

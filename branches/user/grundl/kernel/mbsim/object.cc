@@ -205,31 +205,31 @@ namespace MBSim {
   }
 
   void Object::updatehRef(const Vec& hParent, int i) {
-    h[i].resize()>>hParent(hInd[i],hInd[i]+hSize[i]-1);
+    h[i]>>hParent(hInd[i],hInd[i]+hSize[i]-1);
   }
 
   void Object::updateWRef(const Mat& WParent, int i) {
-    W[i].resize()>>WParent(Index(hInd[i],hInd[i]+hSize[i]-1),Index(0,WParent.cols()-1));
+    W[i]>>WParent(Index(hInd[i],hInd[i]+hSize[i]-1),Index(0,WParent.cols()-1));
   }
 
   void Object::updateVRef(const Mat& VParent, int i) {
-    V[i].resize()>>VParent(Index(hInd[i],hInd[i]+hSize[i]-1),Index(0,VParent.cols()-1));
+    V[i]>>VParent(Index(hInd[i],hInd[i]+hSize[i]-1),Index(0,VParent.cols()-1));
   }
 
   void Object::updatedhdqRef(const Mat& dhdqParent, int i) {
-    dhdq.resize()>>dhdqParent(Index(hInd[i],hInd[i]+hSize[i]-1),Index(qInd,qInd+qSize-1));
+    dhdq>>dhdqParent(Index(hInd[i],hInd[i]+hSize[i]-1),Index(qInd,qInd+qSize-1));
   }
 
   void Object::updatedhduRef(const SqrMat& dhduParent, int i) {
-    dhdu.resize()>>dhduParent(Index(hInd[i],hInd[i]+hSize[i]-1),Index(uInd[0],uInd[0]+uSize[0]-1));
+    dhdu>>dhduParent(Index(hInd[i],hInd[i]+hSize[i]-1),Index(uInd[0],uInd[0]+uSize[0]-1));
   }
 
   void Object::updatedhdtRef(const Vec& dhdtParent, int i) {
-    dhdt.resize()>>dhdtParent(hInd[i],hInd[i]+hSize[i]-1);
+    dhdt>>dhdtParent(hInd[i],hInd[i]+hSize[i]-1);
   }
 
   void Object::updaterRef(const Vec& rParent, int i) {
-    r[i].resize()>>rParent(uInd[i],uInd[i]+uSize[i]-1);
+    r[i]>>rParent(uInd[i],uInd[i]+uSize[i]-1);
   }
 
   void Object::updateTRef(const Mat &TParent) {
@@ -237,11 +237,11 @@ namespace MBSim {
   }
 
   void Object::updateMRef(const SymMat &MParent, int i) {
-    M[i].resize()>>MParent(Index(hInd[i],hInd[i]+hSize[i]-1));
+    M[i]>>MParent(Index(hInd[i],hInd[i]+hSize[i]-1));
   }
 
   void Object::updateLLMRef(const SymMat &LLMParent, int i) {
-    LLM[i].resize()>>LLMParent(Index(hInd[i],hInd[i]+hSize[i]-1));
+    LLM[i]>>LLMParent(Index(hInd[i],hInd[i]+hSize[i]-1));
   }
 
   void Object::init(InitStage stage) {  
@@ -283,12 +283,8 @@ namespace MBSim {
   }
 
   void Object::initz() {
-    q = q0;
-    u = u0;
-    if (q.size()==0)
-      q = Vec(qSize, INIT, 0);
-    if (u.size()==0)
-      u = Vec(uSize[0], INIT, 0);
+    q = (q0.size()==0)? Vec(qSize, INIT, 0) : q0;
+    u = (u0.size()==0)? Vec(uSize[0], INIT, 0) : u0;
   }
 
   void Object::facLLM(int i) {
@@ -308,6 +304,15 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"initialGeneralizedVelocity");
     if (e)
       setInitialGeneralizedVelocity(getVec(e));
+  }
+
+  TiXmlElement* Object::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = Element::writeXMLFile(parent);
+    if(q0.size()) 
+      addElementText(ele0,MBSIMNS"initialGeneralizedPosition",q0);
+    if(u0.size()) 
+      addElementText(ele0,MBSIMNS"initialGeneralizedVelocity",u0);
+    return ele0;
   }
 
   Element * Object::getByPathSearch(string path) {

@@ -113,14 +113,17 @@ namespace MBSim {
       /**
        * \param local force direction represented in first frame
        */
-      void setForceDirection(const fmatvec::Mat& fd);
+      void setForceDirection(const fmatvec::Mat3V& fd);
 
       /**
        * \param local moment direction represented in first frame
        */
-      void setMomentDirection(const fmatvec::Mat& md);
+      void setMomentDirection(const fmatvec::Mat3V& md);
 
       virtual void initializeUsingXML(TiXmlElement *element);
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+
+      virtual std::string getType() const { return "Joint"; }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /** \brief Visualize a force arrow acting on frame2 */
@@ -147,22 +150,22 @@ namespace MBSim {
       /**
        * \brief local force and moment direction
        */
-      fmatvec::Mat forceDir, momentDir;
+      fmatvec::Mat3V forceDir, momentDir;
 
       /**
        * \brief global force and moment direction
        */
-      fmatvec::Mat Wf, Wm;
+      fmatvec::Mat3V Wf, Wm;
 
       /**
        * \brief translational JACOBIAN (not empty for e.g. prismatic joints)
        */
-      fmatvec::Mat JT;
+      fmatvec::Mat3V JT;
 
       /**
        * \brief difference vector of position, velocity and angular velocity
        */
-      fmatvec::Vec WrP0P1, WvP0P1, WomP0P1;
+      fmatvec::Vec3 WrP0P1, WvP0P1, WomP0P1;
 
       /**
        * constitutive laws on acceleration and velocity level for forces and torques
@@ -190,6 +193,7 @@ namespace MBSim {
       virtual void updateb(double t);
       void calcbSize();
       void setBody(RigidBody* body_)    { body = body_; }
+      virtual void init(InitStage stage);
 
     protected:
       RigidBody* body;

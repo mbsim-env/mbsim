@@ -57,10 +57,10 @@ namespace MBSim {
       DOP853Integrator();
       ~DOP853Integrator() {}
 
-      void setAbsoluteTolerance(const fmatvec::Vec &aTol_) {aTol.resize() = aTol_;}
-      void setAbsoluteTolerance(double aTol_) {aTol.resize() = fmatvec::Vec(1,fmatvec::INIT,aTol_);}
-      void setRelativeTolerance(const fmatvec::Vec &rTol_) {rTol.resize() = rTol_;}
-      void setRelativeTolerance(double rTol_) {rTol.resize() = fmatvec::Vec(1,fmatvec::INIT,rTol_);}
+      void setAbsoluteTolerance(const fmatvec::Vec &aTol_) {aTol = aTol_;}
+      void setAbsoluteTolerance(double aTol_) {aTol = fmatvec::Vec(1,fmatvec::INIT,aTol_);}
+      void setRelativeTolerance(const fmatvec::Vec &rTol_) {rTol = rTol_;}
+      void setRelativeTolerance(double rTol_) {rTol = fmatvec::Vec(1,fmatvec::INIT,rTol_);}
       void setInitialStepSize(double dt0_) {dt0 = dt0_;}
 
 

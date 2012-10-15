@@ -20,7 +20,8 @@
 
 #include <config.h>
 #include <mbsim/element.h>
-//#include <mbsim/object_interface.h>
+#include <mbsim/dynamic_system_solver.h>
+#include <mbsim/object.h>
 #include <mbsim/mbsim_event.h>
 #include <mbsim/utils/eps.h>
 #include "mbsimtinyxml/tinyxml-src/tinynamespace.h"
@@ -109,6 +110,53 @@ namespace MBSim {
     return parent?parent->getPath()+pathDelim+name:name;
   }
 
+  string Element::getXMLPath(MBSim::Element *ref, bool rel) {
+    if(rel) {
+      vector<Element*> e0, e1;
+      Element* element = ref;
+      e0.push_back(element);
+      while(!dynamic_cast<DynamicSystemSolver*>(element)) {
+        element = element->getParent();
+        e0.push_back(element);
+      }
+      element = getParent();
+      e1.push_back(element);
+      while(!dynamic_cast<DynamicSystemSolver*>(element)) {
+        element = element->getParent();
+        e1.push_back(element);
+      }
+      int imatch=0;
+      for(vector<Element*>::iterator i0 = e0.end()-1, i1 = e1.end()-1 ; (i0 != e0.begin()-1) && (i1 != e1.begin()-1) ; i0--, i1--) 
+        if(*i0 == *i1) imatch++;
+      string str = getType()+ "[" + getName() + "]";
+      for(vector<Element*>::iterator i1 = e1.begin() ; i1 != e1.end()-imatch ; i1++) {
+        if(dynamic_cast<Group*>(*i1))
+          str = string("Group[") + (*i1)->getName() + "]/" + str;
+        else if(dynamic_cast<Object*>(*i1))
+          str = string("Object[") + (*i1)->getName() + "]/" + str;
+        else
+          throw;
+      }
+      for(int i=0; i<int(e0.size())-imatch; i++)
+        str = "../" + str;
+      return str;
+    } else {
+      string str = getType()+ "[" + getName() + "]";
+      Element* element = getParent();
+      while(!dynamic_cast<DynamicSystemSolver*>(element)) {
+        if(dynamic_cast<Group*>(element))
+          str = string("Group[") + element->getName() + "]/" + str;
+        else if(dynamic_cast<Object*>(element))
+          str = string("Object[") + element->getName() + "]/" + str;
+        else
+          throw;
+        element = element->getParent();
+      }
+      str = "/" + str;
+      return str;
+    }
+  }
+
   void Element::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     e=element->FirstChildElement();
@@ -137,6 +185,13 @@ namespace MBSim {
       if(e->ValueStr()==MBSIMNS"plotFeatureRecursive") setPlotFeatureRecursive(feature, status);
       e=e->NextSiblingElement();
     }
+  }
+
+  TiXmlElement* Element::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
+    parent->LinkEndChild(ele0);
+    ele0->SetAttribute("name", getName());
+    return ele0;
   }
 
   // some convenience function for XML
@@ -182,6 +237,11 @@ namespace MBSim {
     return 0;
   }
 
+  Vec3 Element::getVec3(TiXmlElement *e) {
+    Vec x = getVec(e,3);
+    return Vec3(x);
+  }
+
   Vec Element::getVec(TiXmlElement *e, int rows) {
     Mat m=Mat(e->GetText());
     if((rows==0 || m.rows()==rows) && m.cols()==1)
@@ -194,6 +254,11 @@ namespace MBSim {
       throw MBSimError("Wrong type"+str.str());
     }
     return Vec();
+  }
+
+  Mat3V Element::getMat3V(TiXmlElement *e, int cols) {
+    Mat A = getMat(e,3,cols);
+    return Mat3V(A);
   }
 
   Mat Element::getMat(TiXmlElement *e, int rows, int cols) {
@@ -210,6 +275,11 @@ namespace MBSim {
     return Mat();
   }
 
+  SqrMat3 Element::getSqrMat3(TiXmlElement *e) {
+    SqrMat A = getSqrMat(e,3);
+    return SqrMat3(A);
+  }
+
   SqrMat Element::getSqrMat(TiXmlElement *e, int size) {
     Mat m=Mat(e->GetText());
     if((size==0 || m.rows()==size) && (size==0 || m.cols()==size) && m.rows()==m.cols())
@@ -222,6 +292,11 @@ namespace MBSim {
       throw MBSimError("Wrong type"+str.str());
     }
     return SqrMat();
+  }
+
+  fmatvec::SymMat3 Element::getSymMat3(TiXmlElement *e) {
+    SymMat A = getSymMat(e,3);
+    return SymMat3(A);
   }
 
   fmatvec::SymMat Element::getSymMat(TiXmlElement *e, int size) {

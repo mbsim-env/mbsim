@@ -34,9 +34,9 @@ using namespace std;
 
 namespace MBSim {
 
-  JointConstraint::Residuum::Residuum(vector<RigidBody*> body1_, vector<RigidBody*> body2_, const Mat &dT_, const Mat &dR_,Frame *frame1_, Frame *frame2_,double t_,vector<int> i1_, vector<int> i2_) : body1(body1_),body2(body2_),dT(dT_),dR(dR_),frame1(frame1_), frame2(frame2_), t(t_), i1(i1_), i2(i2_) {}
+  JointConstraint::Residuum::Residuum(vector<RigidBody*> body1_, vector<RigidBody*> body2_, const Mat3V &dT_, const Mat3V &dR_,Frame *frame1_, Frame *frame2_,double t_,vector<int> i1_, vector<int> i2_) : body1(body1_),body2(body2_),dT(dT_),dR(dR_),frame1(frame1_), frame2(frame2_), t(t_), i1(i1_), i2(i2_) {}
   Vec JointConstraint::Residuum::operator()(const Vec &x, const void *) {
-    Vec res(x.size()); 
+    Vec res(x.size(),NONINIT); 
     int nq = 0;
     for(unsigned int i=0; i<body1.size(); i++) {
       int dq = body1[i]->getqRel().size();
@@ -60,10 +60,10 @@ namespace MBSim {
     int nR = dR.cols();
 
     if(nT) 
-      res(0,nT-1) = dT.T()*(frame1->getPosition()-frame2->getPosition()); 
+      res(Range<Var,Var>(0,nT-1)) = dT.T()*(frame1->getPosition()-frame2->getPosition()); 
 
     if(nR) 
-      res(nT,nT+nR-1) = dR.T()*AIK2Cardan(trans(frame1->getOrientation())*frame2->getOrientation()); 
+      res(Range<Var,Var>(nT,nT+nR-1)) = dR.T()*AIK2Cardan(frame1->getOrientation().T()*frame2->getOrientation()); 
 
     return res;
   } 
@@ -118,7 +118,7 @@ namespace MBSim {
   void GearConstraint::updateJacobians(double t, int jj){
     bd->getJRel().init(0); 
     for(unsigned int i=0; i<bi.size(); i++) {
-      bd->getJRel()(Index(0,bi[i]->getJRel().rows()-1),Index(0,bi[i]->getJRel().cols()-1)) += bi[i]->getJRel()*ratio[0][i];
+      bd->getJRel()(Range<Var,Var>(0,bi[i]->getJRel().rows()-1),Range<Var,Var>(0,bi[i]->getJRel().cols()-1)) += bi[i]->getJRel()*ratio[0][i];
     }
   }
 
@@ -221,9 +221,9 @@ namespace MBSim {
     } 
     else if(stage==unknownStage) {
       if(!dT.cols()) 
-        dT.resize(3,0);
+        dT.resize(0);
       if(!dR.cols()) 
-        dR.resize(3,0);
+        dR.resize(0);
     } else
       Constraint::init(stage);
   }
@@ -273,7 +273,8 @@ namespace MBSim {
       bd2[i]->getJRel() >> J(Iu2[i],Ih2[i]);
       bd2[i]->getjRel() >> j(Iu2[i]); 
     }   
-    q = q0;
+    if(q0.size())
+      q = q0;
   }
 
   void JointConstraint::updateStateDependentVariables(double t){
@@ -306,8 +307,8 @@ namespace MBSim {
     A(Index(0,dT.cols()-1),Index(0,nu-1)) = dT.T()*JT;
     A(Index(dT.cols(),dT.cols()+dR.cols()-1),Index(0,nu-1)) = dR.T()*JR;
     Vec b(nu);
-    b(0,dT.cols()-1) = -dT.T()*(frame1->getVelocity()-frame2->getVelocity());
-    b(dT.cols(),dT.cols()+dR.cols()-1) = -dR.T()*(frame1->getAngularVelocity()-frame2->getAngularVelocity());
+    b(0,dT.cols()-1) = -(dT.T()*(frame1->getVelocity()-frame2->getVelocity()));
+    b(dT.cols(),dT.cols()+dR.cols()-1) = -(dR.T()*(frame1->getAngularVelocity()-frame2->getAngularVelocity()));
     u = slvLU(A,b); 
   }
 
@@ -333,11 +334,11 @@ namespace MBSim {
         JT0(Index(0,2),Index(0,frame2->getJacobianOfTranslation().cols()-1))-=frame2->getJacobianOfTranslation();
         JR0(Index(0,2),Index(0,frame2->getJacobianOfRotation().cols()-1))-=frame2->getJacobianOfRotation();
       }
-      B(Index(0,dT.cols()-1),Index(0,nh-1)) = -dT.T()*JT0;
-      B(Index(dT.cols(),dT.cols()+dR.cols()-1),Index(0,nh-1)) = -dR.T()*JR0;
+      B(Index(0,dT.cols()-1),Index(0,nh-1)) = -(dT.T()*JT0);
+      B(Index(dT.cols(),dT.cols()+dR.cols()-1),Index(0,nh-1)) = -(dR.T()*JR0);
       Vec b(nu);
-      b(0,dT.cols()-1) = -dT.T()*(frame1->getGyroscopicAccelerationOfTranslation()-frame2->getGyroscopicAccelerationOfTranslation());
-      b(dT.cols(),dT.cols()+dR.cols()-1) = -dR.T()*(frame1->getGyroscopicAccelerationOfRotation()-frame2->getGyroscopicAccelerationOfRotation());
+      b(0,dT.cols()-1) = -(dT.T()*(frame1->getGyroscopicAccelerationOfTranslation()-frame2->getGyroscopicAccelerationOfTranslation()));
+      b(dT.cols(),dT.cols()+dR.cols()-1) = -(dR.T()*(frame1->getGyroscopicAccelerationOfRotation()-frame2->getGyroscopicAccelerationOfRotation()));
 
       J = slvLU(A,B); 
       j = slvLU(A,b); 
@@ -378,10 +379,10 @@ namespace MBSim {
     saved_IndependentBody=e->Attribute("ref");
     e=element->FirstChildElement(MBSIMNS"forceDirection");
     if(e)
-      setForceDirection(getMat(e,3,0));
+      setForceDirection(getMat3V(e,0));
     e=element->FirstChildElement(MBSIMNS"momentDirection");
     if(e)
-      setMomentDirection(getMat(e,3,0));
+      setMomentDirection(getMat3V(e,3));
     e=element->FirstChildElement(MBSIMNS"connect");
     saved_ref1=e->Attribute("ref1");
     saved_ref2=e->Attribute("ref2");

@@ -1,5 +1,6 @@
 noinst_LTLIBRARIES = libplotelements.la
 libplotelements_la_SOURCES = plot_rigid_body_group.cc\
+			     plot_rigid_body.cc\
 			     plot_frame.cc\
 			     plot_cartesian_coordinates.cc\
 			     plot_natural_coordinates.cc\
@@ -12,6 +13,7 @@ LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 libplotelements_la_CPPFLAGS = -DTIXML_USE_STL
 
 plotelementsinclude_HEADERS = plot_rigid_body_group.h\
+			      plot_rigid_body.h\
 			      plot_frame.h\
 			      plot_cartesian_coordinates.h\
 			      plot_natural_coordinates.h\

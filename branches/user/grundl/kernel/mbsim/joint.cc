@@ -51,29 +51,21 @@ namespace MBSim {
   }
 
   void Joint::updatewb(double t, int j) {
-    Mat WJT = frame[0]->getOrientation()*JT;
-    Vec sdT = WJT.T()*(WvP0P1);
+    Mat3V WJT = frame[0]->getOrientation()*JT;
+    VecV sdT = WJT.T()*(WvP0P1);
 
     wb(0,Wf.cols()-1) += Wf.T()*(frame[1]->getGyroscopicAccelerationOfTranslation(j) - C.getGyroscopicAccelerationOfTranslation(j) - crossProduct(C.getAngularVelocity(),WvP0P1+WJT*sdT));
     wb(Wf.cols(),Wm.cols()+Wf.cols()-1) += Wm.T()*(frame[1]->getGyroscopicAccelerationOfRotation(j) - C.getGyroscopicAccelerationOfRotation(j) - crossProduct(C.getAngularVelocity(),WomP0P1));
   }
 
   void Joint::updateW(double t, int j) {
-    fF[0](Index(0,2),Index(0,Wf.cols()-1)) = -Wf;
-    fM[0](Index(0,2),Index(Wf.cols(),Wf.cols()+Wm.cols()-1)) = -Wm;
+    fF[0].set(Index(0,2),Index(0,Wf.cols()-1), -Wf);
+    fM[0].set(Index(0,2),Index(Wf.cols(),Wf.cols()+Wm.cols()-1), -Wm);
     fF[1] = -fF[0];
     fM[1] = -fM[0];
- //cout << "updateW" << endl;
- // cout << "j = " << j << endl;
- //  cout << "JT0 = " << C.getJacobianOfTranslation(j) << endl;
- //  cout << "JT1 = " << frame[1]->getJacobianOfTranslation(j) << endl;
- //  cout << "fF[0] = " << fF[0] << endl;
- //  cout << "fF[1] = " << fF[1] << endl;
 
     W[j][0] += C.getJacobianOfTranslation(j).T()*fF[0] + C.getJacobianOfRotation(j).T()*fM[0];
     W[j][1] += frame[1]->getJacobianOfTranslation(j).T()*fF[1] + frame[1]->getJacobianOfRotation(j).T()*fM[1];
- //  cout << "W[j][0] = " << W[j][0] << endl;
- //  cout << "W[j][1] = " << W[j][1] << endl;
   }
 
   void Joint::updateh(double t, int j) {
@@ -115,11 +107,7 @@ namespace MBSim {
   }
 
   void Joint::updateJacobians(double t, int j) {
-    Mat tWrP0P1 = tilde(WrP0P1);
-    //cout << "---------------------------------------" << endl;
-    //cout << frame[0]->getJacobianOfTranslation(j) << endl;
-    //cout << frame[0]->getJacobianOfRotation(j) << endl;
-    //cout << "---------------------------------------" << endl;
+    Mat33 tWrP0P1 = tilde(WrP0P1);
 
     C.setJacobianOfTranslation(frame[0]->getJacobianOfTranslation(j) - tWrP0P1*frame[0]->getJacobianOfRotation(j),j);
     C.setJacobianOfRotation(frame[0]->getJacobianOfRotation(j),j);
@@ -163,29 +151,25 @@ namespace MBSim {
       if(forceDir.cols()) 
         Wf = forceDir;
       else {
-        forceDir.resize(3,0);
-        Wf.resize(3,0);
       }
       if(momentDir.cols())
         Wm = momentDir;
       else {
-        momentDir.resize(3,0);
-        Wm.resize(3,0);
       }
 
-      C.getJacobianOfTranslation(0).resize(3,frame[0]->getJacobianOfTranslation(0).cols());
-      C.getJacobianOfRotation(0).resize(3,frame[0]->getJacobianOfRotation(0).cols());
-      C.getJacobianOfTranslation(1).resize(3,frame[0]->getJacobianOfTranslation(1).cols());
-      C.getJacobianOfRotation(1).resize(3,frame[0]->getJacobianOfRotation(1).cols());
+      C.getJacobianOfTranslation(0).resize(frame[0]->getJacobianOfTranslation(0).cols());
+      C.getJacobianOfRotation(0).resize(frame[0]->getJacobianOfRotation(0).cols());
+      C.getJacobianOfTranslation(1).resize(frame[0]->getJacobianOfTranslation(1).cols());
+      C.getJacobianOfRotation(1).resize(frame[0]->getJacobianOfRotation(1).cols());
 
-      JT.resize(3,3-forceDir.cols());
+      JT.resize(3-forceDir.cols());
       if(forceDir.cols() == 2)
-        JT.col(0) = crossProduct(forceDir.col(0),forceDir.col(1));
+        JT.set(0, crossProduct(forceDir.col(0),forceDir.col(1)));
       else if(forceDir.cols() == 3);
       else if(forceDir.cols() == 0) JT = SqrMat(3,EYE);
       else { // define a coordinate system in the plane perpendicular to the force direction
-        JT.col(0) = computeTangential(forceDir.col(0));
-        JT.col(1) = crossProduct(forceDir.col(0),JT.col(0));
+        JT.set(0, computeTangential(forceDir.col(0)));
+        JT.set(1, crossProduct(forceDir.col(0),JT.col(0)));
       }
     }
     else if(stage==MBSim::plot) {
@@ -535,22 +519,20 @@ namespace MBSim {
     }
   }
 
-  void Joint::setForceDirection(const Mat &fd) {
-    assert(fd.rows() == 3);
+  void Joint::setForceDirection(const Mat3V &fd) {
 
     forceDir = fd;
 
     for(int i=0; i<fd.cols(); i++)
-      forceDir.col(i) = forceDir.col(i)/nrm2(fd.col(i));
+      forceDir.set(i, forceDir.col(i)/nrm2(fd.col(i)));
   }
 
-  void Joint::setMomentDirection(const Mat &md) {
-    assert(md.rows() == 3);
+  void Joint::setMomentDirection(const Mat3V &md) {
 
     momentDir = md;
 
     for(int i=0; i<md.cols(); i++)
-      momentDir.col(i) = momentDir.col(i)/nrm2(md.col(i));
+      momentDir.set(i, momentDir.col(i)/nrm2(md.col(i)));
   }
 
   void Joint::plot(double t, double dt) {
@@ -584,7 +566,7 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"force");
     if(e) {
       ee=e->FirstChildElement(MBSIMNS"direction");
-      setForceDirection(getMat(ee,3,0));
+      setForceDirection(getMat3V(ee,0));
       ee=ee->NextSiblingElement();
       GeneralizedForceLaw *gfl=ObjectFactory::getInstance()->createGeneralizedForceLaw(ee->FirstChildElement());
       setForceLaw(gfl);
@@ -608,7 +590,7 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"moment");
     if(e) {
       ee=e->FirstChildElement(MBSIMNS"direction");
-      setMomentDirection(getMat(ee,3,0));
+      setMomentDirection(getMat3V(ee,0));
       ee=ee->NextSiblingElement();
       GeneralizedForceLaw *gfl=ObjectFactory::getInstance()->createGeneralizedForceLaw(ee->FirstChildElement());
       setMomentLaw(gfl);
@@ -634,6 +616,43 @@ namespace MBSim {
     saved_ref2=e->Attribute("ref2");
   }
 
+  TiXmlElement* Joint::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = LinkMechanics::writeXMLFile(parent);
+    if(forceDir.cols()) {
+      TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"force");
+      addElementText(ele1,MBSIMNS"direction",forceDir);
+      TiXmlElement *ele2 = new TiXmlElement(MBSIMNS"generalizedForceLaw");
+      if(ffl)
+        ffl->writeXMLFile(ele2);
+      ele1->LinkEndChild(ele2);
+      ele2 = new TiXmlElement(MBSIMNS"generalizedImpactLaw");
+      if(fifl)
+        fifl->writeXMLFile(ele2);
+      ele1->LinkEndChild(ele2);
+      ele0->LinkEndChild(ele1);
+    }
+    if(momentDir.cols()) {
+      TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"moment");
+      addElementText(ele1,MBSIMNS"direction",momentDir);
+      TiXmlElement *ele2 = new TiXmlElement(MBSIMNS"generalizedForceLaw");
+      if(fml)
+        fml->writeXMLFile(ele2);
+      ele1->LinkEndChild(ele2);
+      ele2 = new TiXmlElement(MBSIMNS"generalizedImpactLaw");
+      if(fiml)
+        fiml->writeXMLFile(ele2);
+      ele1->LinkEndChild(ele2);
+      ele0->LinkEndChild(ele1);
+    }
+    TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"connect");
+    //ele1->SetAttribute("ref1", frame[0]->getXMLPath(frame[0])); // absolute path
+    //ele1->SetAttribute("ref2", frame[1]->getXMLPath(frame[1])); // absolute path
+    ele1->SetAttribute("ref1", frame[0]->getXMLPath(this,true)); // relative path
+    ele1->SetAttribute("ref2", frame[1]->getXMLPath(this,true)); // relative path
+    ele0->LinkEndChild(ele1);
+    return ele0;
+  }
+
   InverseKineticsJoint::InverseKineticsJoint(const string &name) : Joint(name), body(0) {
   }
 
@@ -646,6 +665,15 @@ namespace MBSim {
       b(Index(0,bSize-1),Index(0,2)) = body->getPJT().T();
       b(Index(0,bSize-1),Index(3,5)) = body->getPJR().T();
     }
+  }
+
+  void InverseKineticsJoint::init(InitStage stage) {
+    if(stage==resize) {
+      Joint::init(stage);
+      x.resize(3);
+    }
+    else
+      Joint::init(stage);
   }
 
 }

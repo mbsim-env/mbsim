@@ -62,17 +62,27 @@ namespace MBSim {
       DOPRI5Integrator();
       ~DOPRI5Integrator() {}
 
-      void setAbsoluteTolerance(const fmatvec::Vec &aTol_) {aTol.resize() = aTol_;}
-      void setAbsoluteTolerance(double aTol_) {aTol.resize() = fmatvec::Vec(1,fmatvec::INIT,aTol_);}
-      void setRelativeTolerance(const fmatvec::Vec &rTol_) {rTol.resize() = rTol_;}
-      void setRelativeTolerance(double rTol_) {rTol.resize() = fmatvec::Vec(1,fmatvec::INIT,rTol_);}
+      void setAbsoluteTolerance(const fmatvec::Vec &aTol_) {aTol = aTol_;}
+      void setAbsoluteTolerance(double aTol_) {aTol = fmatvec::Vec(1,fmatvec::INIT,aTol_);}
+      void setRelativeTolerance(const fmatvec::Vec &rTol_) {rTol = rTol_;}
+      void setRelativeTolerance(double rTol_) {rTol = fmatvec::Vec(1,fmatvec::INIT,rTol_);}
       void setInitialStepSize(double dt0_) {dt0 = dt0_;}
       void setMaxStepNumber(int maxSteps_) {maxSteps = maxSteps_;}    
       void setMaximalStepSize(double dtMax_) {dtMax = dtMax_;}
+      const fmatvec::Vec& getAbsoluteTolerance() const { return aTol; }
+      const fmatvec::Vec& getRelativeTolerance() const { return rTol; }
+      double getInitialStepSize() const { return dt0; }
+      int getMaxStepNumber() const { return maxSteps; }
+      double getMaximalStepSize() const { return dtMax; }
 
       void integrate(DynamicSystemSolver& system);
 
       virtual void initializeUsingXML(TiXmlElement *element);
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+
+      using Integrator::writeXMLFile;
+
+      virtual std::string getType() const { return "DOPRI5Integrator"; }
   };
 
 }
