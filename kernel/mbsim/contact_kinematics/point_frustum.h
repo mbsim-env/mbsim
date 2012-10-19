@@ -35,6 +35,9 @@ namespace MBSim {
    * \author Thorsten Schindler
    * \date 2009-04-02 some comments (Thorsten Schindler)
    * \date 2009-07-08 new interface (Thorsten Schindler)
+   * \date 2012-10-09 update kinematics (Kilian Grundl)
+   *
+   * REMARK The first tangential of the contact frame of the frustum points in positive axial direction, i.e. the height direction
    */
   class ContactKinematicsPointFrustum : public ContactKinematics {
     public:
