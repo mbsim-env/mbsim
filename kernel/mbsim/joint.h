@@ -193,6 +193,7 @@ namespace MBSim {
       void calcbSize();
       void setBody(RigidBody* body_)    { body = body_; }
       virtual void init(InitStage stage);
+      virtual bool isSetValued() const {return true;}
 
     protected:
       RigidBody* body;

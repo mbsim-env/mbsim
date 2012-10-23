@@ -47,6 +47,8 @@ namespace MBSim {
     Body::addFrame(C);
 #ifdef HAVE_OPENMBVCPPINTERFACE
     openMBVFrame=C;
+    FArrow = 0;
+    MArrow = 0;
 #endif
 
     SrSF.push_back(Vec3());
@@ -336,6 +338,10 @@ namespace MBSim {
     joint->setMomentDirection(Mat3V(3,EYE));
     joint->connect(frameOfReference,frame[iKinematics]);
     joint->setBody(this);
+    if(FArrow)
+      joint->setOpenMBVForceArrow(FArrow);
+    if(MArrow)
+      joint->setOpenMBVMomentArrow(MArrow);
   }
 
   void RigidBody::plot(double t, double dt) {
