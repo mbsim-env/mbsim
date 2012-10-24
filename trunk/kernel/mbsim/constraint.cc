@@ -160,6 +160,10 @@ namespace MBSim {
   }
 
   JointConstraint::JointConstraint(const string &name) : Constraint(name), bi(NULL), frame1(0), frame2(0), nq(0), nu(0), nh(0), saved_ref1(""), saved_ref2("") {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    FArrow = 0;
+    MArrow = 0;
+#endif
   }
 
   void JointConstraint::connect(Frame* frame1_, Frame* frame2_) {
@@ -353,6 +357,10 @@ namespace MBSim {
     if(dR.cols())
       joint->setMomentDirection(dR);
     joint->connect(frame1,frame2);
+    if(FArrow)
+      joint->setOpenMBVForceArrow(FArrow);
+    if(MArrow)
+      joint->setOpenMBVMomentArrow(MArrow);
   }
 
   void JointConstraint::initializeUsingXML(TiXmlElement *element) {
