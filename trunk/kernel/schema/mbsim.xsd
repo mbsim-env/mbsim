@@ -2502,6 +2502,17 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="EulerAngles" substitutionGroup="Rotation" type="EulerAnglesType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Definiert eine Rotation für Starrkörper ausschließlich abhängig von generalisierten Kardan Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="EulerAnglesType">
+    <xs:complexContent>
+      <xs:extension base="RotationType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="GeneralizedForceLaw" abstract="true" type="GeneralizedForceLawType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
