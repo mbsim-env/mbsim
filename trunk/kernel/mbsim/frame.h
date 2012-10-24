@@ -111,6 +111,9 @@ namespace MBSim {
       fmatvec::Vec3& getAngularAcceleration() { return WpsiP; }
       void setAcceleration(const fmatvec::Vec3 &a) { WaP = a; } 
       void setAngularAcceleration(const fmatvec::Vec3 &psi) { WpsiP = psi; }
+
+      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
       /***************************************************/
 
     protected:

@@ -716,12 +716,6 @@ namespace MBSim {
       TiXmlElement *ec=e->FirstChildElement();
       Frame *f=new Frame(ec->Attribute("name"));
       f->initializeUsingXML(ec);
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      TiXmlElement *ee;
-      if((ee=ec->FirstChildElement(MBSIMNS"enableOpenMBV")))
-        f->enableOpenMBV(getDouble(ee->FirstChildElement(MBSIMNS"size")),
-            getDouble(ee->FirstChildElement(MBSIMNS"offset")));
-#endif
       ec=ec->NextSiblingElement();
       string refF="C";
       if(ec->ValueStr()==MBSIMNS"frameOfReference") {
