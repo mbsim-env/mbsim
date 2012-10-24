@@ -408,7 +408,7 @@ namespace MBSim {
     }
     ele0->LinkEndChild(ele1);
     ele1 = new TiXmlElement( MBSIMNS"dependentRigidBodiesSecondSide" );
-    for(unsigned int i=0; i<bd1.size(); i++) {
+    for(unsigned int i=0; i<bd2.size(); i++) {
       TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"dependentRigidBody" );
       ele2->SetAttribute("ref", bd2[i]->getXMLPath(this,true)); // relative path
       ele1->LinkEndChild(ele2);

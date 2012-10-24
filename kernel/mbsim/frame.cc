@@ -153,5 +153,32 @@ namespace MBSim {
   }
 #endif
 
+  void Frame::initializeUsingXML(TiXmlElement *element) {
+    Element::initializeUsingXML(element);
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    TiXmlElement *ee;
+    if((ee=element->FirstChildElement(MBSIMNS"enableOpenMBV"))) {
+      enableOpenMBV(getDouble(ee->FirstChildElement(MBSIMNS"size")),
+          getDouble(ee->FirstChildElement(MBSIMNS"offset")));
+    }
+#endif
+  }
+
+  TiXmlElement* Frame::writeXMLFile(TiXmlNode *parent) {
+
+    TiXmlElement *ele0 = Element::writeXMLFile(parent);
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    if(openMBVFrame) {
+      TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"enableOpenMBV" );
+      addElementText(ele1,MBSIMNS"size",openMBVFrame->getSize());
+      addElementText(ele1,MBSIMNS"offset",openMBVFrame->getOffset());
+      ele0->LinkEndChild(ele1);
+    }
+#endif
+    return ele0;
+  }
+
 }
 
