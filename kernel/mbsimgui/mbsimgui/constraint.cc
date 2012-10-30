@@ -1,0 +1,173 @@
+/*
+    MBSimGUI - A fronted for MBSim.
+    Copyright (C) 2012 Martin Förg
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+#include "constraint.h"
+#include "frame.h"
+#include "rigidbody.h"
+
+using namespace std;
+
+
+Constraint::Constraint(const QString &str, QTreeWidgetItem *parentItem, int ind) : Object(str, parentItem, ind) {
+}
+
+Constraint::~Constraint() {
+}
+
+JointConstraint::JointConstraint(const QString &str, QTreeWidgetItem *parentItem, int ind) : Constraint(str, parentItem, ind) {
+
+  setText(1,getType());
+
+  properties->addTab("Kinetics");
+  independentBody=new RigidBodyOfReferenceEditor(this, properties, Utils::QIconCached("lines.svg"), "Independent body", "General");
+  dependentBodiesFirstSide=new DependenciesEditor(this, properties, Utils::QIconCached("lines.svg"), "Dependendent bodies first side", "General");
+  //connect(dependentBodiesFirstSide,SIGNAL(bodyChanged()),this,SLOT(updateGeneralizedCoordinates()));
+  dependentBodiesSecondSide=new DependenciesEditor(this, properties, Utils::QIconCached("lines.svg"), "Dependendent bodies second side", "General");
+  //connect(dependentBodiesSecondSide,SIGNAL(bodyChanged()),this,SLOT(updateGeneralizedCoordinates()));
+  connections=new ConnectEditor(2, this, properties, Utils::QIconCached("lines.svg"), "Connections", "Kinetics");
+  force=new GeneralizedForceDirectionEditor(properties, Utils::QIconCached("lines.svg"), true);
+  moment=new GeneralizedForceDirectionEditor(properties, Utils::QIconCached("lines.svg"), false);
+
+  properties->addStretch();
+}
+
+JointConstraint::~JointConstraint() {
+}
+
+void JointConstraint::resizeGeneralizedPosition() {
+  int size = 0;
+  for(int i=0; i<dependentBodiesFirstSide->getSize(); i++)
+    if(dependentBodiesFirstSide->getBody(i))
+    size += dependentBodiesFirstSide->getBody(i)->getUnconstrainedSize();
+  for(int i=0; i<dependentBodiesSecondSide->getSize(); i++)
+    if(dependentBodiesSecondSide->getBody(i))
+      size += dependentBodiesSecondSide->getBody(i)->getUnconstrainedSize();
+  cout << size << endl;
+  if(((SVecWidget*)initialGeneralizedPosition->getExtPhysicalWidget()->getInputWidget(0))->size() != size)
+    ((SVecWidget*)initialGeneralizedPosition->getExtPhysicalWidget()->getInputWidget(0))->resize(size);
+}
+
+void JointConstraint::updateGeneralizedCoordinates() {
+  int size = 0;
+  for(int i=0; i<dependentBodiesFirstSide->getSize(); i++)
+    if(dependentBodiesFirstSide->getBody(i))
+    size += dependentBodiesFirstSide->getBody(i)->getSize();
+  for(int i=0; i<dependentBodiesSecondSide->getSize(); i++)
+    if(dependentBodiesSecondSide->getBody(i))
+      size += dependentBodiesSecondSide->getBody(i)->getSize();
+  //initialGeneralizedPosition->setSize(size,1);
+}
+
+void JointConstraint::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e, *ee;
+  Constraint::initializeUsingXML(element);
+  //initialGeneralizedPosition
+  //e=element->FirstChildElement(MBSIMNS"initialGeneralizedPosition");
+  //if (e)
+  //  initialGeneralizedPosition->setMat(getVec(e));
+  e=element->FirstChildElement(MBSIMNS"dependentRigidBodiesFirstSide");
+  ee=e->FirstChildElement();
+  while(ee) {
+    e=element->FirstChildElement(MBSIMNS"frameOfReference");
+    saved_RigidBodyFirstSide.push_back(ee->Attribute("ref"));
+    ee=ee->NextSiblingElement();
+  }
+  e=element->FirstChildElement(MBSIMNS"dependentRigidBodiesSecondSide");
+  ee=e->FirstChildElement();
+  while(ee) {
+    saved_RigidBodySecondSide.push_back(ee->Attribute("ref"));
+    ee=ee->NextSiblingElement();
+  }
+  e=element->FirstChildElement(MBSIMNS"independentRigidBody");
+  saved_IndependentBody=e->Attribute("ref");
+  e=element->FirstChildElement(MBSIMNS"forceDirection");
+  if(e)
+    force->setForceDir(getMat(e,0));
+  e=element->FirstChildElement(MBSIMNS"momentDirection");
+  if(e)
+    moment->setForceDir(getMat(e,3));
+  e=element->FirstChildElement(MBSIMNS"connect");
+  saved_ref1=e->Attribute("ref1");
+  saved_ref2=e->Attribute("ref2");
+}
+
+TiXmlElement* JointConstraint::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = Constraint::writeXMLFile(parent);
+//  if(initialGeneralizedPosition->getRows()) 
+//    addElementText(ele0,MBSIMNS"initialGeneralizedPosition",initialGeneralizedPosition->getMat());
+  TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"dependentRigidBodiesFirstSide" );
+  for(int i=0; i<dependentBodiesFirstSide->getSize(); i++) {
+    if(dependentBodiesFirstSide->getBody(i)) {
+      TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"dependentRigidBody" );
+      ele2->SetAttribute("ref", dependentBodiesFirstSide->getBody(i)->getXMLPath(this,true).toStdString()); // relative path
+      ele1->LinkEndChild(ele2);
+    }
+  }
+  ele0->LinkEndChild(ele1);
+  ele1 = new TiXmlElement( MBSIMNS"dependentRigidBodiesSecondSide" );
+  for(int i=0; i<dependentBodiesSecondSide->getSize(); i++) {
+    if(dependentBodiesSecondSide->getBody(i)) {
+      TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"dependentRigidBody" );
+      ele2->SetAttribute("ref", dependentBodiesSecondSide->getBody(i)->getXMLPath(this,true).toStdString()); // relative path
+      ele1->LinkEndChild(ele2);
+    }
+  }
+  ele0->LinkEndChild(ele1);
+
+  ele1 = new TiXmlElement( MBSIMNS"independentRigidBody" );
+  if(independentBody->getBody())
+    ele1->SetAttribute("ref", independentBody->getBody()->getXMLPath(this,true).toStdString()); // relative path
+  ele0->LinkEndChild(ele1);
+
+  if(force->getSize())
+    addElementText(ele0, MBSIMNS"forceDirection", force->getForceDir());
+  if(moment->getSize())
+    addElementText(ele0, MBSIMNS"momentDirection", moment->getForceDir());
+
+  ele1 = new TiXmlElement(MBSIMNS"connect");
+  if(connections->getFrame(0))
+    ele1->SetAttribute("ref1", connections->getFrame(0)->getXMLPath(this,true).toStdString()); // relative path
+  if(connections->getFrame(1))
+    ele1->SetAttribute("ref2", connections->getFrame(1)->getXMLPath(this,true).toStdString()); // relative path
+  ele0->LinkEndChild(ele1);
+
+  return ele0;
+}
+
+void JointConstraint::initialize() {
+  if(saved_ref1!="")
+  connections->setFrame(0,getByPath<Frame>(saved_ref1));
+  if(saved_ref2!="")
+  connections->setFrame(1,getByPath<Frame>(saved_ref2));
+  vector<RigidBody*> rigidBodies;
+  if (saved_RigidBodyFirstSide.size()>0) {
+    for (unsigned int i=0; i<saved_RigidBodyFirstSide.size(); i++)
+      rigidBodies.push_back(getByPath<RigidBody>(saved_RigidBodyFirstSide[i]));
+    dependentBodiesFirstSide->setBodies(rigidBodies);
+  }
+  rigidBodies.clear();
+  if (saved_RigidBodySecondSide.size()>0) {
+    for (unsigned int i=0; i<saved_RigidBodySecondSide.size(); i++)
+      rigidBodies.push_back(getByPath<RigidBody>(saved_RigidBodySecondSide[i]));
+    dependentBodiesSecondSide->setBodies(rigidBodies);
+  }
+  rigidBodies.clear();
+  if (saved_IndependentBody!="")
+    independentBody->setBody(getByPath<RigidBody>(saved_IndependentBody));
+}
