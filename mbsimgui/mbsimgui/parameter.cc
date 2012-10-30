@@ -125,11 +125,9 @@ void Parameter::updateOctaveParameter() {
 
 DoubleParameter::DoubleParameter(const QString &str, QTreeWidgetItem *parentItem, int ind) : Parameter(str,parentItem,ind) {
   QStringList units;
-  SScalarWidget *a = new SScalarWidget;
-  a->setValue("1");
   //ExtPhysicalVarWidget *d = new ExtPhysicalVarWidget(a, units);
   //value=new XMLWidgetEditor(properties, Utils::QIconCached("lines.svg"), "Value", "General", d, "scalarParameter");
-  value=new ParameterValueEditor(a, properties, Utils::QIconCached("lines.svg"), "Value", "General");
+  value=new ParameterValueEditor(new PhysicalStringWidget(new SScalarWidget("1"),PVNS"scalarParameter",QStringList(),0), properties, Utils::QIconCached("lines.svg"), "Value", "General");
 
   //value = new DoubleEditor(properties,  Utils::QIconCached("lines.svg"), "Value", "General");
   properties->addStretch();
@@ -140,12 +138,12 @@ void DoubleParameter::initializeUsingXML(TiXmlElement *element) {
   value->getExtPhysicalWidget()->initializeUsingXML(element);
   TiXmlText *text = dynamic_cast<TiXmlText*>(element->FirstChild());
     if(text) {
-      value->getExtPhysicalWidget()->getInputWidget(0)->setValue(text->Value());
-      value->getExtPhysicalWidget()->getInputWidget(1)->setValue(text->Value());
+      value->getExtPhysicalWidget()->getPhysicalStringWidget(0)->setValue(text->Value());
+      value->getExtPhysicalWidget()->getPhysicalStringWidget(1)->setValue(text->Value());
     } 
     else if(element) {
-      value->getExtPhysicalWidget()->getInputWidget(0)->initializeUsingXML(element);
-      value->getExtPhysicalWidget()->getInputWidget(1)->setValue(value->getExtPhysicalWidget()->getInputWidget(0)->getValue().c_str());
+      value->getExtPhysicalWidget()->getPhysicalStringWidget(0)->initializeUsingXML(element);
+      value->getExtPhysicalWidget()->getPhysicalStringWidget(1)->setValue(value->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getValue().c_str());
     } 
   //value->setValue(Element::getDouble(element));
 }

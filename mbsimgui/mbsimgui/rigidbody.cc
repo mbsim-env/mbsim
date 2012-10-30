@@ -54,13 +54,13 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
 
   frameForKinematics=new FrameForKinematicsEditor(this,properties, Utils::QIconCached("lines.svg"), "Frame for kinematics", "Kinematics");
   frameOfReference=new FrameOfReferenceEditor(this,properties, Utils::QIconCached("lines.svg"), "Frame of reference", "Kinematics", ((Group*)getParentElement())->getFrame(0));
-  vector<InputWidget*> input;
-  input.push_back(new SScalarWidget("1"));
-  ExtPhysicalVarWidget *d = new ExtPhysicalVarWidget(input,MBSIMNS"mass",massUnits(),2);
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("1"),MBSIMNS"mass",massUnits(),2));
+  ExtPhysicalVarWidget *d = new ExtPhysicalVarWidget(input);
   mass=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Mass", "General", d);
   input.clear();
-  input.push_back(new SSymMatWidget(getEye<string>(3,3,"0.01","0")));
-  ExtPhysicalVarWidget *mat = new ExtPhysicalVarWidget(input,MBSIMNS"inertiaTensor",inertiaUnits(),2);
+  input.push_back(new PhysicalStringWidget(new SSymMatWidget(getEye<string>(3,3,"0.01","0")),MBSIMNS"inertiaTensor",inertiaUnits(),2));
+  ExtPhysicalVarWidget *mat = new ExtPhysicalVarWidget(input);
   inertia=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Inertia tensor", "General", mat);
 
   framePos = new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Position and orientation of frames", "Frame positioning", new FramePositionsWidget(this));
@@ -98,14 +98,14 @@ void RigidBody::addFrame() {
 
 void RigidBody::resizeGeneralizedPosition() {
   int size = getSize();
-  if(((SVecWidget*)initialGeneralizedPosition->getExtPhysicalWidget()->getInputWidget(0))->size() != size)
-    ((SVecWidget*)initialGeneralizedPosition->getExtPhysicalWidget()->getInputWidget(0))->resize(size);
+  if(((SVecWidget*)initialGeneralizedPosition->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getWidget())->size() != size)
+    ((SVecWidget*)initialGeneralizedPosition->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getWidget())->resize(size);
 }
 
 void RigidBody::resizeGeneralizedVelocity() {
   int size = getSize();
-  if(((SVecWidget*)initialGeneralizedVelocity->getExtPhysicalWidget()->getInputWidget(0))->size() != size)
-    ((SVecWidget*)initialGeneralizedVelocity->getExtPhysicalWidget()->getInputWidget(0))->resize(size);
+  if(((SVecWidget*)initialGeneralizedVelocity->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getWidget())->size() != size)
+    ((SVecWidget*)initialGeneralizedVelocity->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getWidget())->resize(size);
 }
 
 void RigidBody::initializeUsingXML(TiXmlElement *element) {
