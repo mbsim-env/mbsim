@@ -86,6 +86,7 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
 
   QAction *action;
 
+  properties->addTab("Frame positioning");
   if(parentItem != treeWidget()->invisibleRootItem()) {
     properties->addTab("Kinematics");
     position=new Vec3Editor(properties, Utils::QIconCached("lines.svg"), "Position");
@@ -93,10 +94,7 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
     frameOfReference=new FrameOfReferenceEditor(this,properties, Utils::QIconCached("lines.svg"), "Frame of reference", "Kinematics", ((Group*)getParentElement())->getFrame(0));
   }
 
-  framePos = new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Frame Pos", "General", new FramePositionsWidget(this));
-
-  properties->addTab("Parameterfile");
-  parameterFile = new FileEditor(properties, Utils::QIconCached("lines.svg"), "Parameterfile", "Parameterfile");
+  framePos = new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Position and orientation of frames", "Frame positioning", new FramePositionsWidget(this));
 
   action=new QAction(Utils::QIconCached("newobject.svg"),"Add frame", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addFrame()));

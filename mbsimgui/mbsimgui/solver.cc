@@ -59,8 +59,10 @@ Solver::Solver(const QString &str, QTreeWidgetItem *parentItem, int ind) : Group
   Element::copiedElement = 0;
 
   properties->addTab("Environment");
+  properties->addTab("Parameterfile");
 
   environment=new EnvironmentEditor(properties, Utils::QIconCached("lines.svg"), "Frame of reference");
+  parameterFile = new FileEditor(properties, Utils::QIconCached("lines.svg"), "Parameterfile", "Parameterfile");
 
 //  properties->updateHeader();
   properties->addStretch();
