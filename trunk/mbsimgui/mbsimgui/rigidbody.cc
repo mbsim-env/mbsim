@@ -30,6 +30,7 @@ using namespace std;
 RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) : Body(str, parentItem, ind), constrained(false) {
   setText(1,getType());
   properties->addTab("Kinematics");
+  properties->addTab("Frame positioning");
   properties->addTab("Visualisation");
 
   QColor color;
@@ -62,16 +63,10 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
   ExtPhysicalVarWidget *mat = new ExtPhysicalVarWidget(input,MBSIMNS"inertiaTensor",inertiaUnits(),2);
   inertia=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Inertia tensor", "General", mat);
 
-  framePos = new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Frame Pos", "General", new FramePositionsWidget(this));
-
+  framePos = new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Position and orientation of frames", "Frame positioning", new FramePositionsWidget(this));
   
   translation=new TranslationEditor(properties, Utils::QIconCached("lines.svg"), "Translation");
-  //connect(translation,SIGNAL(translationChanged()),this,SLOT(updateGeneralizedCoordinates()));
-  //connect(translation,SIGNAL(translationChanged()),this,SIGNAL(sizeChanged()));
   rotation=new RotationEditor(properties, Utils::QIconCached("lines.svg"), "Rotation");
-  //connect(rotation,SIGNAL(rotationChanged()),this,SLOT(updateGeneralizedCoordinates()));
-  //connect(rotation,SIGNAL(rotationChanged()),this,SIGNAL(sizeChanged()));
-  //InertiaEditor2 *inertia2=new InertiaEditor2(properties, Utils::QIconCached("lines.svg"), "Inertia tensor");
  
   ombvEditor=new OMBVEditor(this, properties, Utils::QIconCached("lines.svg"), "OpenMBV");
 
