@@ -59,19 +59,8 @@ void JointConstraint::resizeGeneralizedPosition() {
     if(dependentBodiesSecondSide->getBody(i))
       size += dependentBodiesSecondSide->getBody(i)->getUnconstrainedSize();
   cout << size << endl;
-  if(((SVecWidget*)initialGeneralizedPosition->getExtPhysicalWidget()->getInputWidget(0))->size() != size)
-    ((SVecWidget*)initialGeneralizedPosition->getExtPhysicalWidget()->getInputWidget(0))->resize(size);
-}
-
-void JointConstraint::updateGeneralizedCoordinates() {
-  int size = 0;
-  for(int i=0; i<dependentBodiesFirstSide->getSize(); i++)
-    if(dependentBodiesFirstSide->getBody(i))
-    size += dependentBodiesFirstSide->getBody(i)->getSize();
-  for(int i=0; i<dependentBodiesSecondSide->getSize(); i++)
-    if(dependentBodiesSecondSide->getBody(i))
-      size += dependentBodiesSecondSide->getBody(i)->getSize();
-  //initialGeneralizedPosition->setSize(size,1);
+  if(((SVecWidget*)initialGeneralizedPosition->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getWidget())->size() != size)
+    ((SVecWidget*)initialGeneralizedPosition->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getWidget())->resize(size);
 }
 
 void JointConstraint::initializeUsingXML(TiXmlElement *element) {

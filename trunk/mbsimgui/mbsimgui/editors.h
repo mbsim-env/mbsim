@@ -68,25 +68,13 @@ class XMLWidget : public QWidget {
     virtual void update() {}
 };
 
-class InputWidget : public QWidget {
-  public:
-    virtual bool initializeUsingXML(TiXmlElement *element) = 0;
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element) = 0;
-    virtual std::string getValue() const = 0;
-    virtual void setValue(const std::string &str) = 0;
-};
-
-class OctaveExpressionWidget : public InputWidget {
-  public:
-    OctaveExpressionWidget();
-    std::string getValue() const { return value->toPlainText().toStdString(); }
-    void setValue(const std::string &str) { value->setPlainText(str.c_str()); }
-    virtual bool initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-
-  private:
-    QPlainTextEdit *value;
-};
+//class InputWidget : public QWidget {
+//  public:
+//    virtual bool initializeUsingXML(TiXmlElement *element) = 0;
+//    virtual TiXmlElement* writeXMLFile(TiXmlNode *element) = 0;
+//    virtual std::string getValue() const = 0;
+//    virtual void setValue(const std::string &str) = 0;
+//};
 
 class QElementItem : public QTreeWidgetItem {
   private:
@@ -371,15 +359,30 @@ class Mat3VWidget : public QWidget {
 };
 
 // TODO Prüfen ob überflüssig
-class StringWidget : public InputWidget {
+class StringWidget : public QWidget {
 
   public:
-    virtual void setReadOnly(bool flag) = 0;
+    virtual void setReadOnly(bool flag) {}
     virtual bool validate(const std::string &str) {return true;}
-    //virtual bool initializeUsingXML(TiXmlElement *element) {}
-    //virtual TiXmlElement* writeXMLFile(TiXmlElement *element) {}
-    virtual StringWidget* cloneStringWidget() = 0;
+    virtual std::string getValue() const = 0;
+    virtual void setValue(const std::string &str) = 0;
+    virtual bool initializeUsingXML(TiXmlElement *element) = 0;
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element) = 0;
+    virtual StringWidget* cloneStringWidget() {return 0;}
 };
+
+class OctaveExpressionWidget : public StringWidget {
+  public:
+    OctaveExpressionWidget();
+    std::string getValue() const { return value->toPlainText().toStdString(); }
+    void setValue(const std::string &str) { value->setPlainText(str.c_str()); }
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+
+  private:
+    QPlainTextEdit *value;
+};
+
 
 class SScalarWidget : public StringWidget {
   Q_OBJECT
@@ -551,6 +554,30 @@ class SMatColsVarWidget : public StringWidget {
   signals:
     void currentIndexChanged(int);
 
+};
+
+class PhysicalStringWidget : public StringWidget {
+
+  Q_OBJECT
+
+  private:
+    StringWidget *widget;
+    QComboBox* unit;
+    std::string xmlName;
+    QStringList units;
+    int defaultUnit;
+  public:
+    PhysicalStringWidget(StringWidget *widget, const std::string &xmlname,  const QStringList &units, int defaultUnit);
+    std::string getValue() const {return widget->getValue();}
+    void setValue(const std::string &str) {widget->setValue(str);}
+    void setReadOnly(bool flag) {widget->setReadOnly(flag);}
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual StringWidget* cloneStringWidget() {return widget->cloneStringWidget();}
+    virtual StringWidget* getWidget() {return widget;}
+    const std::string& getXmlName() const {return xmlName;}
+    const QStringList& getUnitList() const {return units;}
+    int getDefaultUnit() const {return defaultUnit;}
 };
 
 class PropertyDialog : public QScrollArea {
@@ -795,18 +822,17 @@ class ExtPhysicalVarWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    ExtPhysicalVarWidget(std::vector<InputWidget*> inputWidget, const std::string &xmlname, const QStringList &units, int defaultUnit);
+    ExtPhysicalVarWidget(std::vector<PhysicalStringWidget*> inputWidget);
 
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    InputWidget* getInputWidget(int i) {return inputWidget[i];}
-    InputWidget* getCurrentInputWidget() {return inputWidget[inputCombo->currentIndex()];}
+    PhysicalStringWidget* getPhysicalStringWidget(int i) {return inputWidget[i];}
+    PhysicalStringWidget* getCurrentPhysicalStringWidget() {return inputWidget[inputCombo->currentIndex()];}
     virtual std::string getValue() const;
 
   protected:
-    std::vector<InputWidget*> inputWidget;
-    std::string xmlName;
-    QComboBox *unit, *inputCombo;
+    std::vector<PhysicalStringWidget*> inputWidget;
+    QComboBox *inputCombo;
     EvalDialog *evalDialog;
     int evalInput;
   protected slots:
@@ -833,7 +859,6 @@ class LinearTranslation : public TranslationWidget {
     LinearTranslation(QWidget *parent = 0);
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    //int getSize() const { return ((SMatColsVarWidget*)mat->getInputWidget(0))->cols(); }
     int getSize() const;
   protected:
     ExtPhysicalVarWidget *mat;
@@ -1021,7 +1046,7 @@ class FramePositionWidget : public XMLWidget {
 
   protected:
     Frame *frame;
-    DMatWidget *position, *orientation;
+    ExtPhysicalVarWidget *position, *orientation;
     LocalFrameOfReferenceWidget *refFrame;
 };
 
@@ -1442,7 +1467,7 @@ class ParameterValueEditor : public Editor {
   Q_OBJECT
 
   public:
-    ParameterValueEditor(StringWidget *var, PropertyDialog *parent_, const QIcon &icon, const QString &name, const QString &tab);
+    ParameterValueEditor(PhysicalStringWidget *var, PropertyDialog *parent_, const QIcon &icon, const QString &name, const QString &tab);
 
 //    virtual void initializeUsingXML(TiXmlElement *element);
 //    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);

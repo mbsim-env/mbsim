@@ -58,11 +58,11 @@ void Object::update() {
 }
 
 void Object::disableGeneralizedPosition() {
-  ((SVecWidget*)initialGeneralizedPosition->getExtPhysicalWidget()->getInputWidget(0))->resize(0);
+  ((SVecWidget*)initialGeneralizedPosition->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getWidget())->resize(0);
 }
 
 void Object::disableGeneralizedVelocity() {
-  ((SVecWidget*)initialGeneralizedVelocity->getExtPhysicalWidget()->getInputWidget(0))->resize(0);
+  ((SVecWidget*)initialGeneralizedVelocity->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getWidget())->resize(0);
 }
 
 

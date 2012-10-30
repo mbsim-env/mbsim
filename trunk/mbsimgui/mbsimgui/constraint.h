@@ -44,9 +44,6 @@ class JointConstraint : public Constraint {
     virtual QString getType() const { return "JointConstraint"; }
     void initialize();
 
-  public slots:
-    void updateGeneralizedCoordinates();
-
   protected:
     MatEditor *q0;
     GeneralizedForceDirectionEditor *force, *moment;
