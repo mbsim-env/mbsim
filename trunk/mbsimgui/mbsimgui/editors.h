@@ -729,38 +729,41 @@ class NameEditor : public Editor {
     void rename();
 };
 
-class LocalFrameOfReferenceWidget : public QWidget {
+class LocalFrameOfReferenceWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    LocalFrameOfReferenceWidget(Element* element, Frame* omitFrame=0);
+    LocalFrameOfReferenceWidget(const std::string &xmlName, Element* element, Frame* omitFrame=0);
 
     void update();
     Frame* getFrame() {return selectedFrame;}
     void setFrame(Frame* frame_);
+    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
 
   protected:
     QComboBox *frame;
     Element* element;
     Frame *selectedFrame, *omitFrame;
+    std::string xmlName;
 
   protected slots:
     void setFrame(const QString &str);
 };
 
 
-class FrameForKinematicsEditor : public Editor {
-
-  public:
-    FrameForKinematicsEditor(RigidBody* rb, PropertyDialog *parent, const QIcon &icon, const QString &name, const QString &tab);
-
-    void update() {refFrame->update();}
-    Frame* getFrame() {return refFrame->getFrame();}
-    void setFrame(Frame* frame) {refFrame->setFrame(frame);}
-
-  protected:
-    LocalFrameOfReferenceWidget *refFrame;
-};
+//class FrameForKinematicsEditor : public Editor {
+//
+//  public:
+//    FrameForKinematicsEditor(RigidBody* rb, PropertyDialog *parent, const QIcon &icon, const QString &name, const QString &tab);
+//
+//    void update() {refFrame->update();}
+//    Frame* getFrame() {return refFrame->getFrame();}
+//    void setFrame(Frame* frame) {refFrame->setFrame(frame);}
+//
+//  protected:
+//    LocalFrameOfReferenceWidget *refFrame;
+//};
 
 class FrameOfReferenceWidget : public QWidget {
   Q_OBJECT
@@ -1070,17 +1073,16 @@ class OMBVBodyWidget : public QWidget {
 
   public:
     OMBVBodyWidget(RigidBody *body, QWidget *parent = 0);
-    virtual void update() {ref->update();}
+    //virtual void update() {ref->update();}
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element); 
     virtual QString getType() const { return "OMBVBody"; }
-    Frame* getFrame() const {return ref->getFrame();}
-    void setFrame(Frame *frame) {ref->setFrame(frame);}
+    //Frame* getFrame() const {return ref->getFrame();}
+    //void setFrame(Frame *frame) {ref->setFrame(frame);}
   protected:
     RigidBody *body;
     QGridLayout *layout;
     ExtPhysicalVarWidget *trans, *rot, *color, *scale;
-    LocalFrameOfReferenceWidget *ref;
 };
 
 class CuboidWidget : public OMBVBodyWidget {
@@ -1125,7 +1127,7 @@ class OMBVEditor : public Editor {
 
     OMBVEditor(RigidBody* body, PropertyDialog *parent_, const QIcon &icon, const std::string &name);
 
-    virtual void update() {if(ombv) ombv->update();}
+    virtual void update() {ref->update();}
     int getOpenMBVBody() {return comboBox->currentIndex();}
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
@@ -1138,7 +1140,7 @@ class OMBVEditor : public Editor {
     QComboBox *comboBox;
     RigidBody *body;
     OMBVBodyWidget *ombv;
-    //OpenMBV::RigidBody* obj;
+    LocalFrameOfReferenceWidget *ref;
 };
 
 class FrameVisuEditor : public Editor {

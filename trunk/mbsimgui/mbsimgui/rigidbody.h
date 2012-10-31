@@ -47,7 +47,7 @@ class RigidBody : public Body {
   protected:
     TranslationEditor *translation;
     RotationEditor *rotation;
-    FrameForKinematicsEditor *frameForKinematics;
+    XMLEditor *frameForKinematics;
     FrameOfReferenceEditor *frameOfReference;
     XMLEditor *mass, *inertia, *framePos;
     OMBVEditor *ombvEditor;

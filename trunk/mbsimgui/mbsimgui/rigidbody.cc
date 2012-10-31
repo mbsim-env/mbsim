@@ -52,7 +52,7 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
 
   new Frame("C", frames, -1, true);
 
-  frameForKinematics=new FrameForKinematicsEditor(this,properties, Utils::QIconCached("lines.svg"), "Frame for kinematics", "Kinematics");
+  frameForKinematics=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Frame for kinematics", "Kinematics", new LocalFrameOfReferenceWidget(MBSIMNS"frameForKinematics",this,0));
   frameOfReference=new FrameOfReferenceEditor(this,properties, Utils::QIconCached("lines.svg"), "Frame of reference", "Kinematics", ((Group*)getParentElement())->getFrame(0));
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1"),MBSIMNS"mass",massUnits(),2));
@@ -147,9 +147,9 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
     saved_frameOfReference=e->Attribute("ref");
     //frameOfReference->update();
 
-    e=element->FirstChildElement(MBSIMNS"frameForKinematics");
-    //frameForKinematics->update();
-    frameForKinematics->setFrame(getByPath<Frame>(e->Attribute("ref"))); // must be on of "Frame[X]" which allready exists
+    frameForKinematics->initializeUsingXML(element);
+    //e=element->FirstChildElement(MBSIMNS"frameForKinematics");
+    //frameForKinematics->setFrame(getByPath<Frame>(e->Attribute("ref"))); // must be on of "Frame[X]" which allready exists
 
     mass->initializeUsingXML(element);
     inertia->initializeUsingXML(element);
@@ -229,10 +229,11 @@ TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
   ele1->SetAttribute("ref", frameOfReference->getFrame()->getXMLPath(this,true).toStdString()); // relative path
   ele0->LinkEndChild(ele1);
 
-  ele1 = new TiXmlElement( MBSIMNS"frameForKinematics" );
-  QString str = QString("Frame[") + frameForKinematics->getFrame()->getName() + "]";
-  ele1->SetAttribute("ref", str.toStdString());
-  ele0->LinkEndChild(ele1);
+  frameForKinematics->writeXMLFile(ele0);
+  //ele1 = new TiXmlElement( MBSIMNS"frameForKinematics" );
+  //QString str = QString("Frame[") + frameForKinematics->getFrame()->getName() + "]";
+  //ele1->SetAttribute("ref", str.toStdString());
+  //ele0->LinkEndChild(ele1);
   
   mass->writeXMLFile(ele0);
   inertia->writeXMLFile(ele0);
