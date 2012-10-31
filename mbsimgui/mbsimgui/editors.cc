@@ -680,11 +680,7 @@ PhysicalStringWidget::PhysicalStringWidget(StringWidget *widget_, const string &
 }
 
 bool PhysicalStringWidget::initializeUsingXML(TiXmlElement *parent) {
-  cout << "PhysicalStringWidget::initializeUsingXML" << endl;
-  cout << parent->ValueStr() << endl;
   TiXmlElement *e = parent->FirstChildElement(xmlName);
-  if(e)
-  cout << e->ValueStr() << endl;
   if(e) {
     if(e->Attribute("unit"))
       unit->setCurrentIndex(unit->findText(e->Attribute("unit")));
@@ -1046,7 +1042,7 @@ void NameEditor::rename() {
   ((Element*)element->treeWidget()->topLevelItem(0))->update();
 }
 
-LocalFrameOfReferenceWidget::LocalFrameOfReferenceWidget(Element *element_, Frame* omitFrame_) : element(element_), selectedFrame(0), omitFrame(omitFrame_) {
+LocalFrameOfReferenceWidget::LocalFrameOfReferenceWidget(const string &xmlName_, Element *element_, Frame* omitFrame_) : element(element_), selectedFrame(0), omitFrame(omitFrame_), xmlName(xmlName_) {
   frame = new QComboBox;
   QHBoxLayout *layout = new QHBoxLayout;
   layout->setMargin(0);
@@ -1080,14 +1076,32 @@ void LocalFrameOfReferenceWidget::setFrame(const QString &str) {
   selectedFrame = element->getFrame(str.toStdString());
 }
 
-FrameForKinematicsEditor::FrameForKinematicsEditor(RigidBody *body, PropertyDialog *parent_, const QIcon& icon, const QString &name, const QString &tab) : Editor(parent_, icon, name.toStdString()){
-  QGroupBox *groupBox = new QGroupBox(name);  
-  dialog->addToTab(tab, groupBox);
-  QHBoxLayout *layout = new QHBoxLayout;
-  groupBox->setLayout(layout);
-  refFrame = new LocalFrameOfReferenceWidget(body);
-  layout->addWidget(refFrame);
+void LocalFrameOfReferenceWidget::initializeUsingXML(TiXmlElement *parent) {
+  TiXmlElement *e = parent->FirstChildElement(xmlName);
+  if(e) {
+    string refF="";
+    refF=e->Attribute("ref");
+    refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
+    setFrame(refF==""?element->getFrame(0):element->getFrame(refF));
+  }
 }
+
+TiXmlElement* LocalFrameOfReferenceWidget::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele = new TiXmlElement(xmlName);
+  QString str = QString("Frame[") + getFrame()->getName() + "]";
+  ele->SetAttribute("ref", str.toStdString());
+  parent->LinkEndChild(ele);
+  return 0;
+}
+
+//FrameForKinematicsEditor::FrameForKinematicsEditor(RigidBody *body, PropertyDialog *parent_, const QIcon& icon, const QString &name, const QString &tab) : Editor(parent_, icon, name.toStdString()){
+//  QGroupBox *groupBox = new QGroupBox(name);  
+//  dialog->addToTab(tab, groupBox);
+//  QHBoxLayout *layout = new QHBoxLayout;
+//  groupBox->setLayout(layout);
+//  refFrame = new LocalFrameOfReferenceWidget(MBSIMNS"frameForKinematics",body);
+//  layout->addWidget(refFrame);
+//}
 
 FrameOfReferenceWidget::FrameOfReferenceWidget(Element *element_, Frame* selectedFrame_) : element(element_), selectedFrame(selectedFrame_) {
   frame = new QLineEdit;
@@ -1528,7 +1542,7 @@ FramePositionWidget::FramePositionWidget(Frame *frame_) : frame(frame_) {
   QGridLayout *layout = new QGridLayout;
   setLayout(layout);
 
-  refFrame = new LocalFrameOfReferenceWidget(element,frame);
+  refFrame = new LocalFrameOfReferenceWidget(MBSIMNS"frameOfReference",element,frame);
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SVecWidget(3), MBSIMNS"position", lengthUnits(), 4));
@@ -1551,14 +1565,15 @@ void FramePositionWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *ec=element->FirstChildElement();
  // Frame *f=new Frame(ec->Attribute("name"), ele->getContainerFrame(), -1);
  // frame->initializeUsingXML(ec->FirstChildElement());
-  ec=ec->NextSiblingElement();
-  string refF="";
-  if(ec->ValueStr()==MBSIMNS"frameOfReference") {
-    refF=ec->Attribute("ref");
-    refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
-    ec=ec->NextSiblingElement();
-  }
-  refFrame->setFrame(refF==""?ele->getFrame(0):ele->getFrame(refF));
+  //ec=ec->NextSiblingElement();
+  //string refF="";
+  //if(ec->ValueStr()==MBSIMNS"frameOfReference") {
+  //  refF=ec->Attribute("ref");
+  //  refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
+  //  ec=ec->NextSiblingElement();
+  //}
+  //refFrame->setFrame(refF==""?ele->getFrame(0):ele->getFrame(refF));
+  refFrame->initializeUsingXML(element);
   position->initializeUsingXML(element);
 //  TiXmlText* text = dynamic_cast<TiXmlText*>(ec->FirstChild());
 //  position->setMat(strToDMat(text->Value()));
@@ -1572,12 +1587,14 @@ TiXmlElement* FramePositionWidget::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele;
   TiXmlText *text;
   frame->writeXMLFile(parent);
-  if(refFrame->getFrame() != element->getFrame(0)) {
-    ele = new TiXmlElement( MBSIMNS"frameOfReference" );
-    QString str = QString("Frame[") + refFrame->getFrame()->getName() + "]";
-    ele->SetAttribute("ref", str.toStdString());
-    parent->LinkEndChild(ele);
-  }
+  //if(refFrame->getFrame() != element->getFrame(0)) {
+  //  ele = new TiXmlElement( MBSIMNS"frameOfReference" );
+  //  QString str = QString("Frame[") + refFrame->getFrame()->getName() + "]";
+  //  ele->SetAttribute("ref", str.toStdString());
+  //  parent->LinkEndChild(ele);
+  //}
+  if(refFrame->getFrame() != element->getFrame(0))
+    refFrame->writeXMLFile(parent);
   position->writeXMLFile(parent);
   orientation->writeXMLFile(parent);
   return ele;
@@ -1678,25 +1695,18 @@ OMBVBodyWidget::OMBVBodyWidget(RigidBody *body_, QWidget *parent) :  QWidget(par
   layout->addWidget(new QLabel("Initial rotation:"),2,0);
   layout->addWidget(rot,2,1);
 
-  //  QComboBox* ref = new QComboBox;
-  ref=new LocalFrameOfReferenceWidget(body);
-  layout->addWidget(new QLabel("Frame of reference:"),3,0);
-  layout->addWidget(ref,3,1);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), OPENMBVNS"scaleFactor", noUnitUnits(), 1));
   scale = new ExtPhysicalVarWidget(input);
-  layout->addWidget(new QLabel("Scale factor:"),4,0);
-  layout->addWidget(scale,4,1);
+  layout->addWidget(new QLabel("Scale factor:"),3,0);
+  layout->addWidget(scale,3,1);
 }
 
 void OMBVBodyWidget::initializeUsingXML(TiXmlElement *element) {
   color->initializeUsingXML(element);
-  //e=element->FirstChildElement(OPENMBVNS"initialTranslation");
   trans->initializeUsingXML(element);
-  //e=element->FirstChildElement(OPENMBVNS"initialRotation");
   rot->initializeUsingXML(element);
-  //e=element->FirstChildElement(OPENMBVNS"scaleFactor");
   scale->initializeUsingXML(element);
 }
 
@@ -1704,18 +1714,10 @@ TiXmlElement* OMBVBodyWidget::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *e=new TiXmlElement(OPENMBVNS+getType().toStdString());
   parent->LinkEndChild(e);
   e->SetAttribute("name", "NOTSET");
-  //TiXmlElement *e1 = new TiXmlElement(OPENMBVNS"staticColor");
   color->writeXMLFile(e);
-  //e->LinkEndChild(e1);
-  //e1 = new TiXmlElement(OPENMBVNS"initialTranslation");
   trans->writeXMLFile(e);
-  //e->LinkEndChild(e1);
-  //e1 = new TiXmlElement(OPENMBVNS"initialRotation");
   rot->writeXMLFile(e);
-  //e->LinkEndChild(e1);
-  //e1 = new TiXmlElement(OPENMBVNS"scaleFactor");
   scale->writeXMLFile(e);
-  //e->LinkEndChild(e1);
   return e;
 }
 
@@ -1859,6 +1861,10 @@ OMBVEditor::OMBVEditor(RigidBody *body_ , PropertyDialog *parent_, const QIcon& 
   comboBox->addItem(tr("Sphere"));
   layout->addWidget(comboBox);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ombvSelection(int)));
+  //  QComboBox* ref = new QComboBox;
+  ref=new LocalFrameOfReferenceWidget(MBSIMNS"frameOfReference",body);
+  layout->addWidget(new QLabel("Frame of reference:"));
+  layout->addWidget(ref);
 }
 
 void OMBVEditor::ombvSelection(int index) {
@@ -1907,10 +1913,8 @@ void OMBVEditor::initializeUsingXML(TiXmlElement *element) {
         comboBox->setCurrentIndex(3);
         ombv->initializeUsingXML(e1);
       }
+      ref->initializeUsingXML(e);
     }
-    e1=e->FirstChildElement(MBSIMNS"frameOfReference");
-    if(e1)
-      ombv->setFrame(body->getByPath<Frame>(e1->Attribute("ref")));
   }
 }
 
@@ -1919,12 +1923,8 @@ TiXmlElement* OMBVEditor::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"openMBVRigidBody" );
     ombv->writeXMLFile(ele0);
 
-    if(ombv->getFrame()->getName()!="C") {
-      TiXmlElement * ele1 = new TiXmlElement( MBSIMNS"frameOfReference" );
-      QString str = QString("Frame[") + ombv->getFrame()->getName() + "]";
-      ele1->SetAttribute("ref", str.toStdString());
-      ele0->LinkEndChild(ele1);
-    }
+    if(ref->getFrame()->getName()!="C")
+      ref->writeXMLFile(ele0);
     parent->LinkEndChild(ele0);
   }
   return 0;
