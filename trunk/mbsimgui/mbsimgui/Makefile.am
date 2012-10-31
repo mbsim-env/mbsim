@@ -4,9 +4,9 @@ bin_PROGRAMS = mbsimgui
 
 mbsimguidir = $(includedir)/mbsimgui
 
-INCLUDES = $(DEPS_CFLAGS) -DTIXML_USE_STL $(QT_CFLAGS) $(HDF5SERIE_CFLAGS) $(QWT_CFLAGS) -I"/usr/include/octave-3.4.3/" 
+INCLUDES = $(DEPS_CFLAGS) -DTIXML_USE_STL $(QT_CFLAGS) $(HDF5SERIE_CFLAGS) $(QWT_CFLAGS) $(MKOCTFILE_CFLAGS)
 
-LDADD = $(DEPS_LIBS)  $(QT_LIBS) $(QWT_LIBS) -L"/usr/lib/octave/3.4.3/" -loctave -loctinterp
+LDADD = $(DEPS_LIBS)  $(QT_LIBS) $(QWT_LIBS) $(MKOCTFILE_LIBS)
 
 # mbsimgui_CPPFLAGS = -DTIXML_USE_STL $(QT_CFLAGS) $(HDF5SERIE_CFLAGS) $(QWT_CFLAGS)
 
