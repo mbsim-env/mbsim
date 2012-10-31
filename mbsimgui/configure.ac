@@ -25,6 +25,36 @@ AC_SUBST([MOC])
 AC_SUBST([UIC])
 AC_SUBST([RCC])
 
+dnl Check for octave
+# user supplied mkoctfile program
+AC_ARG_WITH([mkoctfile],
+  [  --with-mkoctfile=PATHTOMKOCTFILE  The 'mkoctfile' program.],
+  [mkoctfile="$withval"],[mkoctfile="no"])
+# get mkoctfile program
+if test "$mkoctfile" == "no"; then
+  AC_PATH_PROG([mkoctfile],[mkoctfile],[no],[$prefix/bin:$PATH])
+fi
+test $mkoctfile = "no" && AC_MSG_ERROR([mkoctfile not found])
+AC_SUBST([MKOCTFILE],[$mkoctfile])
+# get mkoctfile compiler flags
+DOS2UNIX="cat"
+if test "$cross_compiling" == "yes"; then
+  DOS2UNIX="dos2unix"
+fi
+MKOCTFILE_CFLAGS="$(echo $($MKOCTFILE -p INCFLAGS | $DOS2UNIX) | sed -re 's|\\|/|g')"
+MKOCTFILE_LIBS="$(echo \
+  $(unset RLD_FLAG; $MKOCTFILE -p RLD_FLAG | $DOS2UNIX) \
+  $(unset LFLAGS; $MKOCTFILE -p LFLAGS | $DOS2UNIX) \
+  $(unset LIBOCTINTERP; $MKOCTFILE -p LIBOCTINTERP | $DOS2UNIX) \
+  $(unset LIBOCTAVE; $MKOCTFILE -p LIBOCTAVE | $DOS2UNIX) \
+  $(unset LIBCRUFT; $MKOCTFILE -p LIBCRUFT | $DOS2UNIX) \
+  $(unset FFTW_LIBS; $MKOCTFILE -p FFTW_LIBS | $DOS2UNIX) \
+  $(unset BLAS_LIBS; $MKOCTFILE -p BLAS_LIBS | $DOS2UNIX) \
+  $(unset FLIBS; $MKOCTFILE -p FLIBS | $DOS2UNIX) \
+  $(unset LIBS; $MKOCTFILE -p LIBS | $DOS2UNIX) \
+  | sed -re 's|\\|/|g')"
+AC_SUBST([MKOCTFILE_CFLAGS])
+AC_SUBST([MKOCTFILE_LIBS])
 
 dnl Include path for Boost
 AC_ARG_WITH([boost-inc],
