@@ -41,6 +41,8 @@ Parameter::Parameter(const QString &str, QTreeWidgetItem *parentItem, int ind) :
   name = new ParameterNameEditor(this, properties, Utils::QIconCached("lines.svg"), "Name");
 
   contextMenu=new QMenu("Context Menu");
+
+  connect(this,SIGNAL(parameterChanged(const QString&)),this,SLOT(updateTreeWidgetItem(const QString&)));
 }
 
 Parameter::~Parameter() {
@@ -96,31 +98,8 @@ void Parameter::writeXMLFile(const QString &name) {
   doc.SaveFile((name+".mbsimparam.xml").toAscii().data());
 }
 
-void Parameter::updateOctaveParameter() {
-  if(true) {
-  vector<Param> param;
-  TiXmlElement *ele0 = new TiXmlElement("parameter");
-  TiXmlElement *ele1 = new TiXmlElement(getType().toStdString());
-  ele0->LinkEndChild(ele1);
-  param.push_back(Param(getName().toStdString(), toStr(getValue()), 0));
-
-  string str = getValue();
-  bool error = false;
-  if(str!="") {
-    try{
-      octaveEvalRet(str);
-      //octaveGetRet();
-    }
-    catch (string e) {
-      cout << "An exception occurred: " << e << endl;
-      error = true;
-    }
-    if(!error) {
-      fillParam(param);
-      setText(1,str.c_str());
-    }
-  }
-  }
+void Parameter::updateTreeWidgetItem(const QString &str) {
+  setText(1, str);
 }
 
 DoubleParameter::DoubleParameter(const QString &str, QTreeWidgetItem *parentItem, int ind) : Parameter(str,parentItem,ind) {
@@ -145,6 +124,7 @@ void DoubleParameter::initializeUsingXML(TiXmlElement *element) {
       value->getExtPhysicalWidget()->getPhysicalStringWidget(0)->initializeUsingXML(element);
       value->getExtPhysicalWidget()->getPhysicalStringWidget(1)->setValue(value->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getValue().c_str());
     } 
+    emit parameterChanged(getValue().c_str());
   //value->setValue(Element::getDouble(element));
 }
 

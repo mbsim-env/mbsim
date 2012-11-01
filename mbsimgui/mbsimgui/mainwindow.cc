@@ -28,6 +28,7 @@
 #include "frame.h"
 #include "rigidbody.h"
 #include "parameter.h"
+#include "octaveutils.h"
 #ifdef MBSIMXML_MINGW // Windows
 #  include <windows.h>
 #  include <process.h>
@@ -37,8 +38,6 @@
 #endif
 
 using namespace std;
-
-int fillParam(TiXmlElement *e);
 
 int digits;
 bool saveNumeric;
@@ -497,8 +496,8 @@ void MainWindow::newDoubleParameter() {
       break;
   }
   Parameter *parameter = new DoubleParameter(str, parentItem, -1);
-  connect(parameter,SIGNAL(parameterChanged(const QString&)),this,SLOT(updateOctaveParameter(const QString&)));
-  updateOctaveParameter("");
+  connect(parameter,SIGNAL(parameterChanged(const QString&)),this,SLOT(updateOctaveParameters()));
+  updateOctaveParameters();
 }
 
 void MainWindow::loadParameter(const QString &file) {
@@ -524,13 +523,12 @@ void MainWindow::loadParameter(const QString &file) {
       Parameter *parameter=ObjectFactory::getInstance()->createParameter(E, parentItem, -1);
       //Parameter *parameter = new DoubleParameter(E->Attribute("name"),parentItem,-1);
 
-      connect(parameter,SIGNAL(parameterChanged(const QString&)),this,SLOT(updateOctaveParameter(const QString&)));
 //    connect(parameter,SIGNAL(valueChanged()),(Solver*)elementList->topLevelItem(0),SLOT(update()));
       parameter->initializeUsingXML(E);
-      updateOctaveParameter("");
+      connect(parameter,SIGNAL(parameterChanged(const QString&)),this,SLOT(updateOctaveParameters()));
       E=E->NextSiblingElement();
     }
-    //fillParam(e);
+    updateOctaveParameters();
     actionSaveParameter->setDisabled(false);
   }
 }
@@ -565,20 +563,19 @@ void MainWindow::saveParameter() {
   doc.SaveFile(fileParameter.toAscii().data());
 }
 
-void MainWindow::updateOctaveParameter(const QString & str) {
-//  bool found = false;
-//  bool ok;
-//  str.toDouble(&ok);
-//  if(ok) 
-//    found = true;
-//  else
-//  for(int i=0; i<parameterList->topLevelItemCount(); i++)
-//    if(parameterList->topLevelItem(i)->text(0) == str)
-//      found = true;
-//
-//  if(found)
-  for(int i=0; i<parameterList->topLevelItemCount(); i++)
-    ((Parameter*)parameterList->topLevelItem(i))->updateOctaveParameter();
+void MainWindow::updateOctaveParameters() {
+  vector<Param> param;
+  for(int i=0; i<parameterList->topLevelItemCount(); i++) {
+    Parameter *p=static_cast<Parameter*>(parameterList->invisibleRootItem()->child(i));
+    param.push_back(Param(p->getName().toStdString(), toStr(p->getValue()), 0));
+  }
+  try {
+    currentParam.clear();
+    fillParam(param);
+  }
+  catch(string e) {
+    cout << "An exception occurred: " << e << endl;
+  }
 }
 
 void MainWindow::preview() {
