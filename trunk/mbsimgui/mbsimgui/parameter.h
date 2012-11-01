@@ -62,8 +62,9 @@ class Parameter : public QObject, public QTreeWidgetItem {
     void setName(const QString &str) {setText(0,str);name->setName(str);}
     virtual std::string getValue() const = 0;
   public slots:
-      void saveAs();
-      void updateOctaveParameter();
+    void saveAs();
+  protected slots:
+    void updateTreeWidgetItem(const QString &str);
   signals:
     void parameterChanged(const QString &str);
 

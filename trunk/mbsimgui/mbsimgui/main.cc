@@ -29,5 +29,7 @@ int main(int argc, char *argv[]) {
   MainWindow *mainwindow = new MainWindow;
   mainwindow->show();
   mainwindow->resize(1024, 768);
-  return app.exec();
+  int ret=app.exec();
+  do_octave_atexit(); // do_octave_atexit must be called before leaving (to prevent crashed in atexit())
+  return ret;
 }

@@ -6,6 +6,8 @@
 
 class TiXmlElement;
 
+extern std::map<std::string, octave_value> currentParam;
+
 enum ValueType {
   ArbitraryType,
   ScalarType,
@@ -22,6 +24,5 @@ struct Param {
 
 void octaveEvalRet(std::string str, TiXmlElement *e=NULL);
 std::string octaveGetRet(ValueType expectedType=ArbitraryType);
-int fillParam(TiXmlElement *e);
 void initializeOctave();
 int fillParam(std::vector<Param> param);

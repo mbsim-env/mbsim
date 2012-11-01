@@ -141,7 +141,7 @@ class MainWindow : public QMainWindow {
     void h5plotserie();
     void help();
     void about();
-    void updateOctaveParameter(const QString &str);
+    void updateOctaveParameters();
 };
 
 #endif

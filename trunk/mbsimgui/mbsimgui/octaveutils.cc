@@ -53,17 +53,17 @@ void enable_stderr() {
 map<string, octave_value> currentParam;
 // stack of parameters
 stack<map<string, octave_value> > paramStack;
-vector<int> currentParamHash;
+//vector<int> currentParamHash;
 
 // add a parameter to the parameter list (used by octavePushParam and octavePopParams)
 void octaveAddParam(const string &paramName, const octave_value& value) {
   // add paramter to parameter list if a parameter of the same name dose not exist in the list
   currentParam[paramName]=value;
-  if(paramStack.size()>=currentParamHash.size()) {
-    currentParamHash.resize(paramStack.size()+1);
-    currentParamHash[paramStack.size()]=0;
-  }
-  currentParamHash[paramStack.size()]++;
+//  if(paramStack.size()>=currentParamHash.size()) {
+//    currentParamHash.resize(paramStack.size()+1);
+//    currentParamHash[paramStack.size()]=0;
+//  }
+//  currentParamHash[paramStack.size()]++;
 }
 
 // push all parameters from list to a parameter stack
@@ -88,18 +88,18 @@ void octaveEvalRet(string str, TiXmlElement *e) {
   for(unsigned int j=str.length()-1; j>=0 && (str[j]==' ' || str[j]=='\n' || str[j]=='\t'); j--)
     str[j]=' ';
 
-  // a cache
-  if(paramStack.size()>=currentParamHash.size()) {
-    currentParamHash.resize(paramStack.size()+1);
-    currentParamHash[paramStack.size()]=0;
-  }
-  stringstream s; s<<paramStack.size()<<";"<<currentParamHash[paramStack.size()]<<";"; string id=s.str();
-  static unordered_map<string, octave_value> cache;
-  pair<unordered_map<string, octave_value>::iterator, bool> ins=cache.insert(pair<string, octave_value>(id+str, octave_value()));
-  if(!ins.second) {
-    symbol_table::varref("ret")=ins.first->second;
-    return;
-  }
+//  // a cache
+//  if(paramStack.size()>=currentParamHash.size()) {
+//    currentParamHash.resize(paramStack.size()+1);
+//    currentParamHash[paramStack.size()]=0;
+//  }
+//  stringstream s; s<<paramStack.size()<<";"<<currentParamHash[paramStack.size()]<<";"; string id=s.str();
+//  static unordered_map<string, octave_value> cache;
+//  pair<unordered_map<string, octave_value>::iterator, bool> ins=cache.insert(pair<string, octave_value>(id+str, octave_value()));
+//  if(!ins.second) {
+//    symbol_table::varref("ret")=ins.first->second;
+//    return;
+//  }
 
   // clear octave
   symbol_table::clear_variables();
@@ -134,7 +134,7 @@ void octaveEvalRet(string str, TiXmlElement *e) {
   }
   if(e) if(chdir(savedPath)!=0) throw(1);
 
-  ins.first->second=symbol_table::varval("ret"); // add to cache
+//  ins.first->second=symbol_table::varval("ret"); // add to cache
 }
 
 void checkType(const octave_value& val, ValueType expectedType) {
@@ -204,29 +204,29 @@ int fillParam(vector<Param> param) {
   // generate a vector of parameters
 
   // outer loop to resolve recursive parameters
-  for(vector<Param>::iterator j=param.begin(); j!=param.end(); j++)
+  size_t length=param.size();
+  for(size_t outerLoop=0; outerLoop<length; outerLoop++)
     // evaluate parameter
-    for(vector<Param>::iterator i=j; i!=param.end(); i++) {
+    for(vector<Param>::iterator i=param.begin(); i!=param.end(); i++) {
       disable_stderr();
       int err=0;
       octave_value ret;
       try { 
         octaveEvalRet(i->equ, i->ele);
         ret=symbol_table::varval("ret");
-       // checkType(ret, i->ele->ValueStr()=="{http://openmbv.berlios.de/MBXMLUtils/parameter}scalarParameter"?ScalarType:
-       //                i->ele->ValueStr()=="{http://openmbv.berlios.de/MBXMLUtils/parameter}vectorParameter"?VectorType:
-       //                i->ele->ValueStr()=="{http://openmbv.berlios.de/MBXMLUtils/parameter}matrixParameter"?MatrixType:
-       //                i->ele->ValueStr()=="{http://openmbv.berlios.de/MBXMLUtils/parameter}stringParameter"?StringType:ArbitraryType);
+        if(i->ele)
+          checkType(ret, i->ele->ValueStr()=="{http://openmbv.berlios.de/MBXMLUtils/parameter}scalarParameter"?ScalarType:
+                         i->ele->ValueStr()=="{http://openmbv.berlios.de/MBXMLUtils/parameter}vectorParameter"?VectorType:
+                         i->ele->ValueStr()=="{http://openmbv.berlios.de/MBXMLUtils/parameter}matrixParameter"?MatrixType:
+                         i->ele->ValueStr()=="{http://openmbv.berlios.de/MBXMLUtils/parameter}stringParameter"?StringType:ArbitraryType);
       }
       catch(...) { err=1; }
       enable_stderr();
       if(err==0) { // if no error
         octaveAddParam(i->name, ret); // add param to list
         vector<Param>::iterator isave=i-1; // delete param from vector
-        bool restorej=j==i;
         param.erase(i);
         i=isave;
-        if(restorej) j=isave;
       }
     }
   if(param.size()>0) { // if parameters are left => error
@@ -235,13 +235,14 @@ int fillParam(vector<Param> param) {
       try {
         octaveEvalRet(param[i].equ, param[i].ele); // output octave error
         octave_value ret=symbol_table::varval("ret");
-        checkType(ret, param[i].ele->ValueStr()=="{http://openmbv.berlios.de/MBXMLUtils/parameter}scalarParameter"?ScalarType:
-                       param[i].ele->ValueStr()=="{http://openmbv.berlios.de/MBXMLUtils/parameter}vectorParameter"?VectorType:
-                       param[i].ele->ValueStr()=="{http://openmbv.berlios.de/MBXMLUtils/parameter}matrixParameter"?MatrixType:
-                       param[i].ele->ValueStr()=="{http://openmbv.berlios.de/MBXMLUtils/parameter}stringParameter"?StringType:ArbitraryType);
+        if(param[i].ele)
+          checkType(ret, param[i].ele->ValueStr()=="{http://openmbv.berlios.de/MBXMLUtils/parameter}scalarParameter"?ScalarType:
+                         param[i].ele->ValueStr()=="{http://openmbv.berlios.de/MBXMLUtils/parameter}vectorParameter"?VectorType:
+                         param[i].ele->ValueStr()=="{http://openmbv.berlios.de/MBXMLUtils/parameter}matrixParameter"?MatrixType:
+                         param[i].ele->ValueStr()=="{http://openmbv.berlios.de/MBXMLUtils/parameter}stringParameter"?StringType:ArbitraryType);
       }
       catch(string str) { cout<<str<<endl; }
-      TiXml_location(param[i].ele, "", ": "+param[i].name+": "+param[i].equ); // output location of element
+      if(param[i].ele) TiXml_location(param[i].ele, "", ": "+param[i].name+": "+param[i].equ); // output location of element
     }
     return 1;
   }
