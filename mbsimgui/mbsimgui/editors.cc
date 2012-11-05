@@ -667,6 +667,85 @@ TiXmlElement* SMatColsVarWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
+SCardanWidget::SCardanWidget(bool transpose_) : transpose(transpose_) {
+
+  QGridLayout *layout = new QGridLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+  box.resize(3);
+  for(int i=0; i<3; i++) {
+    box[i] = new QLineEdit(this);
+    box[i]->setText("0");
+    if(transpose) 
+      layout->addWidget(box[i], 0, i);
+    else
+      layout->addWidget(box[i], i, 0);
+  }
+}
+
+SCardanWidget::SCardanWidget(const vector<string> &x, bool transpose_) : transpose(transpose_) {
+
+  QGridLayout *layout = new QGridLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+  box.resize(3);
+  for(int i=0; i<3; i++) {
+    box[i] = new QLineEdit(this);
+    box[i]->setText(x[i].c_str());
+    if(transpose) 
+      layout->addWidget(box[i], 0, i);
+    else
+      layout->addWidget(box[i], i, 0);
+  }
+}
+
+vector<string> SCardanWidget::getCardan() const {
+  vector<string> x(box.size());
+  for(unsigned int i=0; i<box.size(); i++) {
+    x[i] = box[i]->text().toStdString();
+  }
+  return x;
+}
+
+void SCardanWidget::setCardan(const vector<string> &x) {
+  for(unsigned int i=0; i<box.size(); i++) 
+    box[i]->setText(x[i].c_str());
+}
+
+void SCardanWidget::setReadOnly(bool flag) {
+  for(unsigned int i=0; i<box.size(); i++) {
+    box[i]->setReadOnly(flag);
+  }
+}
+
+bool SCardanWidget::initializeUsingXML(TiXmlElement *parent) {
+  TiXmlElement *element=parent->FirstChildElement();
+  if(!element || element->ValueStr() != (PVNS"xmlCardan"))
+    return false;
+  vector<string> x;
+  TiXmlElement *ei=element->FirstChildElement();
+  int i=0;
+  while(ei && ei->ValueStr()==PVNS"ele") {
+    x.push_back(ei->GetText());
+    ei=ei->NextSiblingElement();
+    i++;
+  }
+  setCardan(x);
+  return true;
+}
+
+TiXmlElement* SCardanWidget::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele = new TiXmlElement(PVNS"xmlCardan");
+  for(unsigned int i=0; i<box.size(); i++) {
+    TiXmlElement *elei = new TiXmlElement(PVNS"ele");
+    TiXmlText *text = new TiXmlText(box[i]->text().toStdString());
+    elei->LinkEndChild(text);
+    ele->LinkEndChild(elei);
+  }
+  parent->LinkEndChild(ele);
+  return 0;
+}
+
 PhysicalStringWidget::PhysicalStringWidget(StringWidget *widget_, const string &xmlName_, const QStringList &units_, int defaultUnit_) : widget(widget_), xmlName(xmlName_), units(units_), defaultUnit(defaultUnit_) {
   QHBoxLayout *layout = new QHBoxLayout;
   setLayout(layout);
@@ -682,10 +761,11 @@ PhysicalStringWidget::PhysicalStringWidget(StringWidget *widget_, const string &
 bool PhysicalStringWidget::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *e = parent->FirstChildElement(xmlName);
   if(e) {
-    if(e->Attribute("unit"))
-      unit->setCurrentIndex(unit->findText(e->Attribute("unit")));
-    if(widget->initializeUsingXML(e))
+    if(widget->initializeUsingXML(e)) {
+      if(e->Attribute("unit"))
+        unit->setCurrentIndex(unit->findText(e->Attribute("unit")));
       return true;
+    }
   } 
   return false;
 }
@@ -1557,7 +1637,8 @@ FramePositionWidget::FramePositionWidget(Frame *frame_) : frame(frame_) {
   position = new ExtPhysicalVarWidget(input);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new SMatWidget(getEye<string>(3,3,"1","0")),MBSIMNS"orientation",noUnitUnits(),1));//getEye<string>(3,3,"1","0")));
+  input.push_back(new PhysicalStringWidget(new SMatWidget(getEye<string>(3,3,"1","0")),MBSIMNS"orientation",noUnitUnits(),1));
+  //input.push_back(new PhysicalStringWidget(new SCardanWidget,MBSIMNS"orientation",angleUnits(),0));
   orientation = new ExtPhysicalVarWidget(input);
 
   layout->addWidget(new QLabel("Position:"),0,0);
