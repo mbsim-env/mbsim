@@ -267,12 +267,14 @@ MainWindow::MainWindow() {
   connect(elementList,SIGNAL(pressed(QModelIndex)), this, SLOT(elementListClicked()));
 
   integratorList = new QTreeWidget;
-  integratorList->setHeaderLabel("Integrator");
+  integratorList->setHeaderLabel("Type");
   connect(integratorList,SIGNAL(pressed(QModelIndex)), this, SLOT(integratorListClicked()));
 
   parameterList = new QTreeWidget;
   parameterList->setColumnCount(2);
-  parameterList->setHeaderLabel("Parameter");
+  list.clear();
+  list << "Name" << "Value";
+  parameterList->setHeaderLabels(list);
   connect(parameterList,SIGNAL(pressed(QModelIndex)), this, SLOT(parameterListClicked()));
 
   pagesWidget = new QStackedWidget;
@@ -288,10 +290,34 @@ MainWindow::MainWindow() {
   connect(sourceList,SIGNAL(pressed(QModelIndex)), this, SLOT(sourceListClicked()));
   connect(sourceList,SIGNAL(doubleClicked(QModelIndex)), this, SLOT(sourceListDoubleClicked()));
 
-  layout->addWidget(elementList,3);
-  layout->addWidget(integratorList);
-  layout->addWidget(parameterList);
-//  splitter->addWidget(sourceList);
+  QGroupBox *box = new QGroupBox("MBS");
+  QGridLayout* gl = new QGridLayout;
+  box->setLayout(gl);
+  fileMBS = new QLineEdit("");
+  fileMBS->setReadOnly(true);
+  gl->addWidget(new QLabel("File:"),0,0);
+  gl->addWidget(fileMBS,0,1);
+  gl->addWidget(elementList,1,0,1,2);
+  layout->addWidget(box);
+  box = new QGroupBox("Integrator");
+  gl = new QGridLayout;
+  box->setLayout(gl);
+  fileIntegrator = new QLineEdit("");
+  fileIntegrator->setReadOnly(true);
+  gl->addWidget(new QLabel("File:"),0,0);
+  gl->addWidget(fileIntegrator,0,1);
+  gl->addWidget(integratorList,1,0,1,2);
+  layout->addWidget(box);
+  box = new QGroupBox("Parameter");
+  gl = new QGridLayout;
+  box->setLayout(gl);
+  fileParameter = new QLineEdit("");
+  fileParameter->setReadOnly(true);
+  gl->addWidget(new QLabel("File:"),0,0);
+  gl->addWidget(fileParameter,0,1);
+  gl->addWidget(parameterList,1,0,1,2);
+  layout->addWidget(box);
+
   splitter->addWidget(dummy);
   splitter->addWidget(pagesWidget);
 
@@ -372,9 +398,11 @@ void MainWindow::newMBS() {
   
   actionSaveMBS->setDisabled(true);
   actionSaveMBSAs->setDisabled(false);
+  fileMBS->setText("");
 }
 
 void MainWindow::loadMBS(const QString &file) {
+  fileMBS->setText(file);
   actionOpenMBV->setDisabled(true);
   actionH5plotserie->setDisabled(true);
   actionSaveMBS->setDisabled(true);
@@ -393,15 +421,16 @@ void MainWindow::loadMBS(const QString &file) {
 }
 
 void MainWindow::loadMBS() {
-  fileMBS=QFileDialog::getOpenFileName(0, "XML model files", ".", "hdf5 Files (*.mbsim.xml)");
-  if(fileMBS!="") 
-    loadMBS(fileMBS);
+  QString file=QFileDialog::getOpenFileName(0, "XML model files", ".", "hdf5 Files (*.mbsim.xml)");
+  if(file!="") 
+    loadMBS(file);
 }
 
 void MainWindow::saveMBSAs() {
   if(elementList->topLevelItemCount()) {
-    fileMBS=QFileDialog::getSaveFileName(0, "XML model files", QString("./")+((Solver*)elementList->topLevelItem(0))->getName()+".mbsim.xml", "hdf5 Files (*.mbsim.xml)");
-    if(fileMBS!="") {
+    QString file=QFileDialog::getSaveFileName(0, "XML model files", QString("./")+((Solver*)elementList->topLevelItem(0))->getName()+".mbsim.xml", "hdf5 Files (*.mbsim.xml)");
+    if(file!="") {
+      fileMBS->setText(file);
       actionSaveMBS->setDisabled(false);
       saveMBS();
     }
@@ -409,9 +438,10 @@ void MainWindow::saveMBSAs() {
 }
 
 void MainWindow::saveMBS() {
-  if(fileMBS.contains(".mbsim.xml"))
-    fileMBS.chop(10);
-  ((Solver*)elementList->topLevelItem(0))->writeXMLFile(fileMBS);
+  QString file = fileMBS->text();
+  if(file.contains(".mbsim.xml"))
+    file.chop(10);
+  ((Solver*)elementList->topLevelItem(0))->writeXMLFile(file);
 }
 
 //void MainWindow::newIntegrator(const QString &str) {
@@ -445,6 +475,7 @@ void MainWindow::newDOPRI5Integrator() {
   QTreeWidgetItem* parentItem = integratorList->invisibleRootItem();
   Integrator *integrator = new DOPRI5Integrator("DOPRI5",parentItem, 1);
   parentItem->addChild(integrator);
+  fileIntegrator->setText("");
 }
 
 void MainWindow::newLSODEIntegrator() {
@@ -452,9 +483,11 @@ void MainWindow::newLSODEIntegrator() {
   QTreeWidgetItem* parentItem = integratorList->invisibleRootItem();
   Integrator *integrator = new LSODEIntegrator("LSODE",parentItem, 1);
   parentItem->addChild(integrator);
+  fileIntegrator->setText("");
 }
 
 void MainWindow::loadIntegrator(const QString &file) {
+  fileIntegrator->setText(file);
   actionSaveIntegrator->setDisabled(true);
   if(file!="") {
     integratorList->clear();
@@ -466,15 +499,16 @@ void MainWindow::loadIntegrator(const QString &file) {
 }
 
 void MainWindow::loadIntegrator() {
-  fileIntegrator=QFileDialog::getOpenFileName(0, "MBSim integrator files", ".", "hdf5 Files (*.mbsimint.xml)");
-  if(fileIntegrator!="")
-    loadIntegrator(fileIntegrator);
+  QString file=QFileDialog::getOpenFileName(0, "MBSim integrator files", ".", "hdf5 Files (*.mbsimint.xml)");
+  if(file!="")
+    loadIntegrator(file);
 }
 
 void MainWindow::saveIntegratorAs() {
   if(integratorList->topLevelItemCount()) {
-    fileIntegrator=QFileDialog::getSaveFileName(0, "MBSim integrator files", QString("./")+((Integrator*)integratorList->topLevelItem(0))->getType()+".mbsimint.xml", "hdf5 Files (*.mbsimint.xml)");
-    if(fileIntegrator!="") {
+    QString file=QFileDialog::getSaveFileName(0, "MBSim integrator files", QString("./")+((Integrator*)integratorList->topLevelItem(0))->getType()+".mbsimint.xml", "hdf5 Files (*.mbsimint.xml)");
+    if(file!="") {
+      fileIntegrator->setText(file);
       actionSaveIntegrator->setDisabled(false);
       saveIntegrator();
     }
@@ -482,9 +516,10 @@ void MainWindow::saveIntegratorAs() {
 }
 
 void MainWindow::saveIntegrator() {
-  if(fileIntegrator.contains(".mbsimint.xml"))
-    fileIntegrator.chop(13);
-  ((Integrator*)integratorList->topLevelItem(0))->writeXMLFile(fileIntegrator);
+  QString file = fileIntegrator->text();
+  if(file.contains(".mbsimint.xml"))
+    file.chop(13);
+  ((Integrator*)integratorList->topLevelItem(0))->writeXMLFile(file);
 }
 
 void MainWindow::newDoubleParameter() {
@@ -501,6 +536,7 @@ void MainWindow::newDoubleParameter() {
 }
 
 void MainWindow::loadParameter(const QString &file) {
+  fileParameter->setText(file);
   actionSaveParameter->setDisabled(true);
   if(file!="") {
     parameterList->clear();
@@ -534,15 +570,16 @@ void MainWindow::loadParameter(const QString &file) {
 }
 
 void MainWindow::loadParameter() {
-  fileParameter=QFileDialog::getOpenFileName(0, "MBSim parameter files", ".", "hdf5 Files (*.mbsimparam.xml)");
-  if(fileParameter!="") 
-    loadParameter(fileParameter);
+  QString file=QFileDialog::getOpenFileName(0, "MBSim parameter files", ".", "hdf5 Files (*.mbsimparam.xml)");
+  if(file!="")
+    loadParameter(file);
 }
 
 void MainWindow::saveParameterAs() {
   if(parameterList->topLevelItemCount()) {
-    fileParameter=QFileDialog::getSaveFileName(0, "MBSim parameter files", QString("./")+"Parameter.mbsimparam.xml", "hdf5 Files (*.mbsimparam.xml)");
-    if(fileParameter!="") {
+    QString file=QFileDialog::getSaveFileName(0, "MBSim parameter files", QString("./")+"Parameter.mbsimparam.xml", "hdf5 Files (*.mbsimparam.xml)");
+    if(file!="") {
+    fileParameter->setText(file);
       actionSaveParameter->setDisabled(false);
       saveParameter();
     }
@@ -560,7 +597,8 @@ void MainWindow::saveParameter() {
   doc.LinkEndChild(ele0);
   map<string, string> nsprefix;
   unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
-  doc.SaveFile(fileParameter.toAscii().data());
+  QString file = fileParameter->text();
+  doc.SaveFile(file.toAscii().data());
 }
 
 void MainWindow::updateOctaveParameters() {
@@ -612,10 +650,10 @@ void MainWindow::simulate() {
   Solver *solver = ((Solver*)elementList->topLevelItem(0));
   solver->writeXMLFile(".sim");
   ((Integrator*)integratorList->topLevelItem(0))->writeXMLFile(".sim");
-  QString file = fileParameter;
-  fileParameter = solver->getParameterFile();
+  QString file = fileParameter->text();
+  fileParameter->setText(solver->getParameterFile());
   saveParameter();
-  fileParameter = file;
+  fileParameter->setText(file);
 
   string prog = "mbsimxml";
   vector<string> command;
