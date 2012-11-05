@@ -65,6 +65,7 @@ class XMLWidget : public QWidget {
   public:
     virtual void initializeUsingXML(TiXmlElement *element) = 0;
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element) = 0;
+    virtual void initialize() {};
     virtual void update() {}
 };
 
@@ -601,6 +602,7 @@ class PropertyDialog : public QScrollArea {
         (*it).second->addStretch(1);
     }
     void update();
+    void initialize();
   protected:
     QObject* parentObject;
     std::map<QString,QVBoxLayout*> layout, layout2;
@@ -652,6 +654,7 @@ class Editor : public QWidget {
   public:
     Editor(PropertyDialog *parent_, const QIcon &icon, const std::string &name);
     virtual void update() {}
+    virtual void initialize() {}
   protected:
     PropertyDialog *dialog;
 };
@@ -751,52 +754,30 @@ class LocalFrameOfReferenceWidget : public XMLWidget {
     void setFrame(const QString &str);
 };
 
-
-//class FrameForKinematicsEditor : public Editor {
-//
-//  public:
-//    FrameForKinematicsEditor(RigidBody* rb, PropertyDialog *parent, const QIcon &icon, const QString &name, const QString &tab);
-//
-//    void update() {refFrame->update();}
-//    Frame* getFrame() {return refFrame->getFrame();}
-//    void setFrame(Frame* frame) {refFrame->setFrame(frame);}
-//
-//  protected:
-//    LocalFrameOfReferenceWidget *refFrame;
-//};
-
-class FrameOfReferenceWidget : public QWidget {
+class FrameOfReferenceWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    FrameOfReferenceWidget(Element* element, Frame* selectedFrame);
+    FrameOfReferenceWidget(const std::string &xmlName, Element* element, Frame* selectedFrame);
 
+    void initialize();
     void update();
     Frame* getFrame() {return selectedFrame;}
     void setFrame(Frame* frame_);
     QLineEdit* getLineEdit() {return frame;}
+    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
 
   protected:
     QLineEdit *frame;
     Element* element;
     FrameBrowser *frameBrowser;
     Frame *selectedFrame;
+    std::string xmlName;
+    QString saved_frameOfReference;
 
   public slots:
     void setFrame();
-};
-
-class FrameOfReferenceEditor : public Editor {
-
-  public:
-    FrameOfReferenceEditor(Element* element, PropertyDialog *parent_, const QIcon &icon, const QString &name, const QString &tab, Frame* selectedFrame);
-
-    void update() {widget->update();}
-    Frame* getFrame() {return widget->getFrame();}
-    void setFrame(Frame* frame) {widget->setFrame(frame);}
-
-  protected:
-    FrameOfReferenceWidget *widget;
 };
 
 class EvalDialog : public QDialog {
@@ -1493,6 +1474,7 @@ class XMLEditor : public Editor {
     virtual void initializeUsingXML(TiXmlElement *element) {widget->initializeUsingXML(element);}
     virtual TiXmlElement* writeXMLFile(TiXmlElement *element) {return widget->writeXMLFile(element);}
     XMLWidget* getXMLWidget() {return widget;}
+    virtual void initialize() {widget->initialize();}
     virtual void update() {widget->update();}
 
   protected:

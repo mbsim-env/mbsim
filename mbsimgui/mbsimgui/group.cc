@@ -91,7 +91,8 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
     properties->addTab("Kinematics");
     position=new Vec3Editor(properties, Utils::QIconCached("lines.svg"), "Position");
     orientation=new Vec3Editor(properties, Utils::QIconCached("lines.svg"), "Orientation");
-    frameOfReference=new FrameOfReferenceEditor(this,properties, Utils::QIconCached("lines.svg"), "Frame of reference", "Kinematics", ((Group*)getParentElement())->getFrame(0));
+    frameOfReference=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Frame of reference", "Kinematics", new FrameOfReferenceWidget(MBSIMNS"frameOfReference",this,((Group*)getParentElement())->getFrame(0)));
+
   }
 
   framePos = new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Position and orientation of frames", "Frame positioning", new FramePositionsWidget(this));
@@ -284,20 +285,16 @@ void Group::addFromFile() {
     Element::initializeUsingXML(element);
     e=element->FirstChildElement();
 
+    if(frameOfReference)
+      frameOfReference->initializeUsingXML(element);
+
     // search first element known by Group
-    while(e && e->ValueStr()!=MBSIMNS"frameOfReference" &&
+    while(e && 
         e->ValueStr()!=MBSIMNS"position" &&
         e->ValueStr()!=MBSIMNS"orientation" &&
         e->ValueStr()!=MBSIMNS"frames")
       e=e->NextSiblingElement();
-
-    if(e && e->ValueStr()==MBSIMNS"frameOfReference") {
-      QString ref=e->Attribute("ref");
-      if(frameOfReference)
-        frameOfReference->setFrame(getByPath<Frame>(ref)); // must be a Frame of the parent, so it allready exists (no need to resolve path later)
-      e=e->NextSiblingElement();
-    }
-
+    
     if(e && e->ValueStr()==MBSIMNS"position") {
       if(position)
         position->setVec(getVec(e));
@@ -323,32 +320,6 @@ void Group::addFromFile() {
 
     framePos->initializeUsingXML(element->FirstChildElement(MBSIMNS"frames"));
 
-//    TiXmlElement *E=e->FirstChildElement();
-//    int i=0;
-//    vector<QString> refFrame;
-//    while(E && E->ValueStr()==MBSIMNS"frame") {
-//      TiXmlElement *ec=E->FirstChildElement();
-//      Frame *f = new Frame(ec->Attribute("name"), frames, -1);
-//      f->initializeUsingXML(ec);
-//      ec=ec->NextSiblingElement();
-//      string refF="I";
-//      if(ec->ValueStr()==MBSIMNS"frameOfReference") {
-//        refF=ec->Attribute("ref");
-//        refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
-//        ec=ec->NextSiblingElement();
-//      }
-//      vector<vector<double> > RrRF=getVec(ec);
-//      ec=ec->NextSiblingElement();
-//      vector<vector<double> > ARF=getSqrMat(ec);
-//      f->getFramePosition()->setPosition(RrRF);
-//      f->getFramePosition()->setOrientation(AIK2Cardan(ARF));
-//      refFrame.push_back(refF.c_str());
-//      E=E->NextSiblingElement();
-//      i++;
-//    }
-////    framePositions->update();
-//    for(unsigned int i=0; i<refFrame.size(); i++) 
-//      getFrame(i+1)->getFramePosition()->setFrame(getFrame(refFrame[i].toStdString()));
     e=e->NextSiblingElement();
 
     // contours
@@ -431,9 +402,7 @@ void Group::addFromFile() {
     TiXmlElement *ele1;
 
     if(position) {
-      ele1 = new TiXmlElement( MBSIMNS"frameOfReference" );
-      ele1->SetAttribute("ref", frameOfReference->getFrame()->getXMLPath(this,true).toStdString());
-      ele0->LinkEndChild(ele1);
+      frameOfReference->writeXMLFile(ele0);
 
       vector<vector<double> > AIK = orientation->getVec();
       addElementText(ele0,MBSIMNS"position",position->getVec());

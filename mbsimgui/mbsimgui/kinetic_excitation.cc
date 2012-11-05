@@ -33,10 +33,9 @@ KineticExcitation::KineticExcitation(const QString &str, QTreeWidgetItem *parent
   //properties->addTab("Constitutive laws");
 
   connections = new ConnectEditor(1, this, properties, Utils::QIconCached("lines.svg"), "Connection", "Kinetics");
-  connect(connections->getLineEdit(0),SIGNAL(textChanged(const QString&)),this,SLOT(updateFrameOfReference()));
   force = new ForceLawEditor(properties, Utils::QIconCached("lines.svg"), true);
   moment = new ForceLawEditor(properties, Utils::QIconCached("lines.svg"), false);
-  frameOfReference = new FrameOfReferenceEditor(this,properties, Utils::QIconCached("lines.svg"), "Frame of reference", "Kinetics", 0);
+  frameOfReference=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Frame of reference", "Kinetics", new FrameOfReferenceWidget(MBSIMNS"frameOfReference",this,0));
 
   properties->addStretch();
 }
@@ -44,32 +43,21 @@ KineticExcitation::KineticExcitation(const QString &str, QTreeWidgetItem *parent
 KineticExcitation::~KineticExcitation() {
 }
 
-void KineticExcitation::updateFrameOfReference() {
-  //if(frameOfReference->getFrame()==0)
-    frameOfReference->setFrame(connections->getFrame(0));
-    frameOfReference->update();
-}
-
 void KineticExcitation::initializeUsingXML(TiXmlElement *element) {
   Link::initializeUsingXML(element);
-  TiXmlElement *e=element->FirstChildElement(MBSIMNS"frameOfReference");
-  if(e)
-    saved_frameOfReference=e->Attribute("ref");
+  frameOfReference->initializeUsingXML(element);
   force->initializeUsingXML(element);
   moment->initializeUsingXML(element);
-  e=element->FirstChildElement(MBSIMNS"connect");
+  TiXmlElement *e=element->FirstChildElement(MBSIMNS"connect");
   saved_ref=e->Attribute("ref");
 }
 
 TiXmlElement* KineticExcitation::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Link::writeXMLFile(parent);
-  TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"frameOfReference" );
-  if(frameOfReference->getFrame())
-    ele1->SetAttribute("ref", frameOfReference->getFrame()->getXMLPath(this,true).toStdString()); // relative path
-  ele0->LinkEndChild(ele1);
+  frameOfReference->writeXMLFile(ele0);
   force->writeXMLFile(ele0);
   moment->writeXMLFile(ele0);
-  ele1 = new TiXmlElement(MBSIMNS"connect");
+  TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"connect");
   if(connections->getFrame(0))
     ele1->SetAttribute("ref", connections->getFrame(0)->getXMLPath(this,true).toStdString()); // relative path
   ele0->LinkEndChild(ele1);
@@ -81,8 +69,4 @@ void KineticExcitation::initialize() {
   if(saved_ref!="")
     connections->setFrame(0,getByPath<Frame>(saved_ref));
   connections->getLineEdit(0)->blockSignals(false);
-  if(saved_frameOfReference!="")
-    frameOfReference->setFrame(getByPath<Frame>(saved_frameOfReference));
-  else if(connections->getFrame(0))
-    frameOfReference->setFrame(connections->getFrame(0));
 }
