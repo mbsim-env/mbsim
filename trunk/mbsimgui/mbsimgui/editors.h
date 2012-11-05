@@ -493,38 +493,6 @@ class SVecVarWidget : public StringWidget {
 
 };
 
-//class SMatRowsVarWidget : public StringWidget {
-//
-//  Q_OBJECT
-//
-//  private:
-//    SMatWidget *widget;
-//    QComboBox* rowsCombo;
-//    int minRows, maxRows;
-//  public:
-//    SMatRowsVarWidget(int rows, int cols, int minRows, int maxRows);
-//    std::vector<std::vector<std::string> > getMat() const {return widget->getMat();}
-//    void setMat(const std::vector<std::vector<std::string> > &A) {
-//      rowsCombo->setCurrentIndex(rowsCombo->findText(QString::number(A.size())));
-//      widget->setMat(A);
-//    }
-//    void resize(int rows, int cols) {widget->resize(rows,cols);}
-//    int rows() const {return rowsCombo->currentText().toInt();}
-//    int cols() const {return widget->cols();}
-//    std::string getValue() const {return toStr(getMat());}
-//    void setValue(const std::string &str) {setMat(strToSMat(str));}
-//    void setReadOnly(bool flag) {widget->setReadOnly(flag);}
-//    virtual bool initializeUsingXML(TiXmlElement *element);
-//    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-//    virtual StringWidget* cloneStringWidget() {return new SMatWidget(rows(),cols());}
-//
-//  public slots:
-//    void resize(const QString &rows) {widget->resize(rows.toInit(),widget->cols());}
-//  signals:
-//    void currentIndexChanged(int);
-//
-//};
-
 class SMatColsVarWidget : public StringWidget {
 
   Q_OBJECT
@@ -555,6 +523,24 @@ class SMatColsVarWidget : public StringWidget {
   signals:
     void currentIndexChanged(int);
 
+};
+
+class SCardanWidget : public StringWidget {
+
+  private:
+    std::vector<QLineEdit*> box;
+    bool transpose;
+  public:
+    SCardanWidget(bool transpose=false);
+    SCardanWidget(const std::vector<std::string> &x, bool transpose=false);
+    std::vector<std::string> getCardan() const;
+    void setCardan(const std::vector<std::string> &x);
+    void setReadOnly(bool flag);
+    std::string getValue() const {return toStr(getCardan());}
+    void setValue(const std::string &str) {setCardan(strToSVec(str));}
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual StringWidget* cloneStringWidget() {return new SCardanWidget;}
 };
 
 class PhysicalStringWidget : public StringWidget {
