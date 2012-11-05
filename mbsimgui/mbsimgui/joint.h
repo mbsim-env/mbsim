@@ -27,17 +27,15 @@
 #include <editors.h>
 
 class Joint : public Link {
-  private:
   public:
     Joint(const QString &str, QTreeWidgetItem *parentItem, int ind);
     ~Joint();
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     QString getType() const { return "Joint"; }
-    void initialize();
   protected:
     GeneralizedForceLawEditor *force, *moment;
-    ConnectEditor* connections;
+    XMLEditor* connections;
     QString saved_ref1, saved_ref2;
     friend class MainWindow;
 };

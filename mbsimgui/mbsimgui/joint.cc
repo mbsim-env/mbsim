@@ -32,15 +32,9 @@ Joint::Joint(const QString &str, QTreeWidgetItem *parentItem, int ind) : Link(st
   properties->addTab("Kinetics");
   //properties->addTab("Constitutive laws");
 
-  //force=new ForceDirectionEditor(properties, Utils::QIconCached("lines.svg"), "Position");
-  //MomentDirectionEditor *moment=new MomentDirectionEditor(properties, Utils::QIconCached("lines.svg"), "Position");
-  connections=new ConnectEditor(2, this, properties, Utils::QIconCached("lines.svg"), "Connections", "Kinetics");
+  connections = new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Connections", "Kinetics", new ConnectWidget(2,this));
   force=new GeneralizedForceLawEditor(properties, Utils::QIconCached("lines.svg"), true);
   moment=new GeneralizedForceLawEditor(properties, Utils::QIconCached("lines.svg"), false);
-  //MomentLawEditor *momentLaw=new MomentLawEditor(properties, Utils::QIconCached("lines.svg"), "Connections");
-  //cout << force << endl;
-  //cout << moment << endl;
-  //cout << momentLaw << endl;
 
   properties->addStretch();
 }
@@ -53,27 +47,13 @@ void Joint::initializeUsingXML(TiXmlElement *element) {
   Link::initializeUsingXML(element);
   force->initializeUsingXML(element);
   moment->initializeUsingXML(element);
-  e=element->FirstChildElement(MBSIMNS"connect");
-  saved_ref1=e->Attribute("ref1");
-  saved_ref2=e->Attribute("ref2");
+  connections->initializeUsingXML(element);
 }
 
 TiXmlElement* Joint::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Link::writeXMLFile(parent);
   force->writeXMLFile(ele0);
   moment->writeXMLFile(ele0);
-  TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"connect");
-  if(connections->getFrame(0))
-    ele1->SetAttribute("ref1", connections->getFrame(0)->getXMLPath(this,true).toStdString()); // relative path
-  if(connections->getFrame(1))
-    ele1->SetAttribute("ref2", connections->getFrame(1)->getXMLPath(this,true).toStdString()); // relative path
-  ele0->LinkEndChild(ele1);
+  connections->writeXMLFile(ele0);
   return ele0;
-}
-
-void Joint::initialize() {
-  if(saved_ref1!="")
-    connections->setFrame(0,getByPath<Frame>(saved_ref1));
-  if(saved_ref2!="")
-    connections->setFrame(1,getByPath<Frame>(saved_ref2));
 }

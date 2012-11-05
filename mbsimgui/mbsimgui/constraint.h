@@ -47,7 +47,7 @@ class JointConstraint : public Constraint {
   protected:
     MatEditor *q0;
     GeneralizedForceDirectionEditor *force, *moment;
-    ConnectEditor* connections;
+    XMLEditor* connections;
     RigidBodyOfReferenceEditor* independentBody;
     DependenciesEditor *dependentBodiesFirstSide, *dependentBodiesSecondSide;
     QString saved_ref1, saved_ref2;

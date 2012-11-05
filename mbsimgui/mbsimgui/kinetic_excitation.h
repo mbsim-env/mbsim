@@ -27,22 +27,16 @@
 #include <editors.h>
 
 class KineticExcitation : public Link {
-  Q_OBJECT
-  private:
   public:
     KineticExcitation(const QString &str, QTreeWidgetItem *parentItem, int ind);
     ~KineticExcitation();
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     QString getType() const { return "KineticExcitation"; }
-    void initialize();
-  public slots:
   protected:
     ForceLawEditor *force, *moment;
-    ConnectEditor* connections;
-    XMLEditor* frameOfReference;
+    XMLEditor* connections, *frameOfReference;
     QString saved_frameOfReference, saved_ref;
-    friend class MainWindow;
 };
 
 #endif

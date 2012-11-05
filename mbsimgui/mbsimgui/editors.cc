@@ -1100,15 +1100,6 @@ TiXmlElement* LocalFrameOfReferenceWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-//FrameForKinematicsEditor::FrameForKinematicsEditor(RigidBody *body, PropertyDialog *parent_, const QIcon& icon, const QString &name, const QString &tab) : Editor(parent_, icon, name.toStdString()){
-//  QGroupBox *groupBox = new QGroupBox(name);  
-//  dialog->addToTab(tab, groupBox);
-//  QHBoxLayout *layout = new QHBoxLayout;
-//  groupBox->setLayout(layout);
-//  refFrame = new LocalFrameOfReferenceWidget(MBSIMNS"frameForKinematics",body);
-//  layout->addWidget(refFrame);
-//}
-
 FrameOfReferenceWidget::FrameOfReferenceWidget(const string &xmlName_, Element *element_, Frame* selectedFrame_) : element(element_), selectedFrame(selectedFrame_), xmlName(xmlName_) {
   frame = new QLineEdit;
   frame->setReadOnly(true);
@@ -1971,17 +1962,53 @@ FrameVisuEditor::FrameVisuEditor(Frame *frame_ , PropertyDialog *parent_, const 
   layout->addWidget(offset,2,1);
 }
 
-ConnectEditor::ConnectEditor(int n, Element *element, PropertyDialog *parent_, const QIcon& icon, const QString &name, const QString &tab) : Editor(parent_, icon, name.toStdString()) {
-  QGroupBox *groupBox = new QGroupBox(name);  
-  dialog->addToTab(tab, groupBox);
+ConnectWidget::ConnectWidget(int n, Element *element_) : element(element_) {
   QGridLayout *layout = new QGridLayout;
-  groupBox->setLayout(layout);
+  setLayout(layout);
   for(int i=0; i<n; i++) {
-    if(n>1)
+    QString xmlName = MBSIMNS"ref";
+    if(n>1) {
       layout->addWidget(new QLabel(QString("Frame") + QString::number(i+1) +":"),i,0);
-    widget.push_back(new FrameOfReferenceWidget("frameOfReference",element,0));
+      xmlName += QString::number(i+1);
+    }
+    widget.push_back(new FrameOfReferenceWidget(xmlName.toStdString(),element,0));
     layout->addWidget(widget[i],i,1);
   }
+}
+
+void ConnectWidget::initialize() {
+  for(unsigned int i=0; i<widget.size(); i++)
+    widget[i]->initialize();
+}
+
+void ConnectWidget::update() {
+  for(unsigned int i=0; i<widget.size(); i++)
+    widget[i]->update();
+}
+
+void ConnectWidget::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e = element->FirstChildElement(MBSIMNS"connect");
+  if(e) {
+    for(unsigned int i=0; i<widget.size(); i++) {
+      QString xmlName = "ref";
+      if(widget.size()>1)
+        xmlName += QString::number(i+1);
+      widget[i]->setSavedFrameOfReference(e->Attribute(xmlName.toAscii().data()));
+    }
+  }
+}
+
+TiXmlElement* ConnectWidget::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele = new TiXmlElement(MBSIMNS"connect");
+  for(unsigned int i=0; i<widget.size(); i++) {
+      QString xmlName = "ref";
+      if(widget.size()>1)
+        xmlName += QString::number(i+1);
+    if(widget[i]->getFrame())
+      ele->SetAttribute(xmlName.toAscii().data(), widget[i]->getFrame()->getXMLPath(element,true).toStdString()); // relative path
+  }
+  parent->LinkEndChild(ele);
+  return ele;
 }
 
 TiXmlElement* GeneralizedForceLawWidget::writeXMLFile(TiXmlNode *parent) {

@@ -27,22 +27,16 @@
 #include <editors.h>
 
 class SpringDamper : public Link {
-  Q_OBJECT
-  private:
   public:
     SpringDamper(const QString &str, QTreeWidgetItem *parentItem, int ind);
     ~SpringDamper();
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     QString getType() const { return "SpringDamper"; }
-    void initialize();
-  public slots:
-    void updateFrameOfReference();
   protected:
     ForceLawEditor2 *force;
-    ConnectEditor* connections;
+    XMLEditor* connections;
     QString saved_ref1, saved_ref2;
-    friend class MainWindow;
 };
 
 #endif

@@ -764,9 +764,10 @@ class FrameOfReferenceWidget : public XMLWidget {
     void update();
     Frame* getFrame() {return selectedFrame;}
     void setFrame(Frame* frame_);
-    QLineEdit* getLineEdit() {return frame;}
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void setSavedFrameOfReference(const QString &str) {saved_frameOfReference = str;}
+    const QString& getSavedFrameOfReference() const {return saved_frameOfReference;}
 
   protected:
     QLineEdit *frame;
@@ -1144,22 +1145,19 @@ class FrameVisuEditor : public Editor {
     DoubleEdit *size, *offset;
 };
 
-class ConnectEditor : public Editor {
+class ConnectWidget : public XMLWidget {
 
   public:
-    ConnectEditor(int n, Element* element, PropertyDialog *parent_, const QIcon &icon, const QString &name, const QString &tab);
+    ConnectWidget(int n, Element* element);
 
-    void update() {
-      for(unsigned int i=0; i<widget.size(); i++)
-        widget[i]->update();
-    }
-    Frame* getFrame(int i) {return widget[i]->getFrame();}
-    void setFrame(int i, Frame* frame) {widget[i]->setFrame(frame);}
-    void setFrame(int i) {widget[i]->setFrame();}
-    QLineEdit* getLineEdit(int i) {return widget[i]->getLineEdit();}
+    void initialize();
+    void update();
+    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
 
   protected:
     std::vector<FrameOfReferenceWidget*> widget;
+    Element* element;
 };
 
 class GeneralizedForceLawWidget : public QWidget {
