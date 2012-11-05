@@ -34,6 +34,8 @@ class QStackedWidget;
 class PropertyDialog;
 class QAction;
 class QMenu;
+class QLabel;
+class QLineEdit;
 
 class ElementItem : public QObject, public QTreeWidgetItem {
   Q_OBJECT
@@ -109,7 +111,7 @@ class MainWindow : public QMainWindow {
     QTreeWidget *elementList, *integratorList, *parameterList, *sourceList;
     PropertyDialog *properties;
     QStackedWidget *pagesWidget;
-    QString fileMBS, fileIntegrator, fileParameter;
+    QLineEdit *fileMBS, *fileIntegrator, *fileParameter;
     QAction *actionSaveMBSAs, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameter;
     void loadMBS(const QString &file);
     void loadIntegrator(const QString &file);
