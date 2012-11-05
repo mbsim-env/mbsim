@@ -119,7 +119,6 @@ Integrator* ObjectFactory::createIntegrator(TiXmlElement *element, QTreeWidgetIt
 
 Integrator* MBSimObjectFactory::createIntegrator(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind) {
   if(element==0) return 0;
-  cout << element->ValueStr() << endl;
   if(element->ValueStr()==MBSIMINTNS"DOPRI5Integrator")
     return new DOPRI5Integrator("DOPRI5",parentItem,ind);
 //  if(element->ValueStr()==MBSIMINTNS"RADAU5Integrator")
@@ -150,7 +149,6 @@ Parameter* ObjectFactory::createParameter(TiXmlElement *element, QTreeWidgetItem
 
 Parameter* MBSimObjectFactory::createParameter(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind) {
   if(element==0) return 0;
-  cout << element->ValueStr() << endl;
   if(element->ValueStr()==PARAMNS"scalarParameter")
     return new DoubleParameter(element->Attribute("name"),parentItem,ind);
   return 0;
