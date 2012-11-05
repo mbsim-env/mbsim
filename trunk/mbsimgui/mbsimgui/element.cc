@@ -156,6 +156,7 @@ void Element::update() {
 }
 
 void Element::initialize() {
+  properties->initialize();
   if(getContainerGroup()) {
     for(int i=0; i<getContainerGroup()->childCount(); i++)
       getGroup(i)->initialize();

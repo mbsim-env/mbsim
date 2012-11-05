@@ -53,7 +53,7 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
   new Frame("C", frames, -1, true);
 
   frameForKinematics=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Frame for kinematics", "Kinematics", new LocalFrameOfReferenceWidget(MBSIMNS"frameForKinematics",this,0));
-  frameOfReference=new FrameOfReferenceEditor(this,properties, Utils::QIconCached("lines.svg"), "Frame of reference", "Kinematics", ((Group*)getParentElement())->getFrame(0));
+  frameOfReference=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Frame of reference", "Kinematics", new FrameOfReferenceWidget(MBSIMNS"frameOfReference",this,((Group*)getParentElement())->getFrame(0)));
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1"),MBSIMNS"mass",massUnits(),2));
   ExtPhysicalVarWidget *d = new ExtPhysicalVarWidget(input);
@@ -84,8 +84,6 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
 }
 
 RigidBody::~RigidBody() {
-  // delete scene graph
-  // remove from map
 }
 
 void RigidBody::addFrame() {
@@ -143,13 +141,9 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
       e=e->NextSiblingElement();
     }
 
-    e=element->FirstChildElement(MBSIMNS"frameOfReference");
-    saved_frameOfReference=e->Attribute("ref");
-    //frameOfReference->update();
+    frameOfReference->initializeUsingXML(element);
 
     frameForKinematics->initializeUsingXML(element);
-    //e=element->FirstChildElement(MBSIMNS"frameForKinematics");
-    //frameForKinematics->setFrame(getByPath<Frame>(e->Attribute("ref"))); // must be on of "Frame[X]" which allready exists
 
     mass->initializeUsingXML(element);
     inertia->initializeUsingXML(element);
@@ -224,16 +218,9 @@ TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
 
   TiXmlElement *ele0 = Body::writeXMLFile(parent);
 
-  TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"frameOfReference" );
-  // ele1->SetAttribute("ref", getFrameOfReference()->getXMLPath()); // absolute path
-  ele1->SetAttribute("ref", frameOfReference->getFrame()->getXMLPath(this,true).toStdString()); // relative path
-  ele0->LinkEndChild(ele1);
+  frameOfReference->writeXMLFile(ele0);
 
   frameForKinematics->writeXMLFile(ele0);
-  //ele1 = new TiXmlElement( MBSIMNS"frameForKinematics" );
-  //QString str = QString("Frame[") + frameForKinematics->getFrame()->getName() + "]";
-  //ele1->SetAttribute("ref", str.toStdString());
-  //ele0->LinkEndChild(ele1);
   
   mass->writeXMLFile(ele0);
   inertia->writeXMLFile(ele0);
@@ -241,7 +228,7 @@ TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
   translation->writeXMLFile(ele0);
   rotation->writeXMLFile(ele0);
 
-  ele1 = new TiXmlElement( MBSIMNS"frames" );
+  TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"frames" );
   framePos->writeXMLFile(ele1);
   ele0->LinkEndChild( ele1 );
 
@@ -261,13 +248,5 @@ TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
         ele0->LinkEndChild(ele1);
       }
   
-  
   return ele0;
 }
-
-void RigidBody::initialize() {
-  //if(saved_frameOfReference!="")
-  frameOfReference->setFrame(getByPath<Frame>(saved_frameOfReference));
-}
-
-

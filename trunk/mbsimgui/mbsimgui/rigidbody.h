@@ -37,7 +37,6 @@ class RigidBody : public Body {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     QString getType() const { return "RigidBody"; }
-    void initialize();
     void setConstrained(bool b) {constrained = b;}
     int getSize() const {return constrained ? 0 : getUnconstrainedSize();}
     int getUnconstrainedSize() const {return translation->getSize() + rotation->getSize();}
@@ -47,11 +46,8 @@ class RigidBody : public Body {
   protected:
     TranslationEditor *translation;
     RotationEditor *rotation;
-    XMLEditor *frameForKinematics;
-    FrameOfReferenceEditor *frameOfReference;
-    XMLEditor *mass, *inertia, *framePos;
+    XMLEditor *frameOfReference, *frameForKinematics, *mass, *inertia, *framePos;
     OMBVEditor *ombvEditor;
-    QString saved_frameOfReference;
     bool constrained;
 
     void resizeGeneralizedPosition();

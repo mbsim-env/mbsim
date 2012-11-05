@@ -786,6 +786,12 @@ void PropertyDialog::update() {
   }
 }
 
+void PropertyDialog::initialize() {
+  for(unsigned int i=0; i<editor.size(); i++) {
+    editor[i]->initialize();
+  }
+}
+
 void PropertyDialog::addTab(const QString &name) {  
   QScrollArea *tab = new QScrollArea;
   tab->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -1103,7 +1109,7 @@ TiXmlElement* LocalFrameOfReferenceWidget::writeXMLFile(TiXmlNode *parent) {
 //  layout->addWidget(refFrame);
 //}
 
-FrameOfReferenceWidget::FrameOfReferenceWidget(Element *element_, Frame* selectedFrame_) : element(element_), selectedFrame(selectedFrame_) {
+FrameOfReferenceWidget::FrameOfReferenceWidget(const string &xmlName_, Element *element_, Frame* selectedFrame_) : element(element_), selectedFrame(selectedFrame_), xmlName(xmlName_) {
   frame = new QLineEdit;
   frame->setReadOnly(true);
   if(selectedFrame)
@@ -1117,6 +1123,11 @@ FrameOfReferenceWidget::FrameOfReferenceWidget(Element *element_, Frame* selecte
   QPushButton *button = new QPushButton(tr("Browse"));
   connect(button,SIGNAL(clicked(bool)),frameBrowser,SLOT(show()));
   layout->addWidget(button);
+}
+
+void FrameOfReferenceWidget::initialize() {
+  if(saved_frameOfReference!="")
+    setFrame(element->getByPath<Frame>(saved_frameOfReference));
 }
 
 void FrameOfReferenceWidget::update() {
@@ -1136,13 +1147,19 @@ void FrameOfReferenceWidget::setFrame(Frame* frame_) {
   frame->setText(selectedFrame->getXMLPath());
 }
 
-FrameOfReferenceEditor::FrameOfReferenceEditor(Element *element, PropertyDialog *parent_, const QIcon& icon, const QString &name, const QString &tab, Frame* selectedFrame) : Editor(parent_, icon, name.toStdString()) {
- QGroupBox *groupBox = new QGroupBox(tr("Frame of reference"));  
- dialog->addToTab(tab, groupBox);
- QHBoxLayout *layout = new QHBoxLayout;
- groupBox->setLayout(layout);
- widget = new FrameOfReferenceWidget(element,selectedFrame);
- layout->addWidget(widget);
+void FrameOfReferenceWidget::initializeUsingXML(TiXmlElement *parent) {
+  TiXmlElement *e = parent->FirstChildElement(xmlName);
+  if(e)
+    saved_frameOfReference=e->Attribute("ref");
+}
+
+TiXmlElement* FrameOfReferenceWidget::writeXMLFile(TiXmlNode *parent) {
+  if(getFrame()) {
+    TiXmlElement *ele = new TiXmlElement(xmlName);
+    ele->SetAttribute("ref", getFrame()->getXMLPath(element,true).toStdString()); // relative path
+    parent->LinkEndChild(ele);
+  }
+  return 0;
 }
 
 EvalDialog::EvalDialog(StringWidget *var_) : var(var_) {
@@ -1962,7 +1979,7 @@ ConnectEditor::ConnectEditor(int n, Element *element, PropertyDialog *parent_, c
   for(int i=0; i<n; i++) {
     if(n>1)
       layout->addWidget(new QLabel(QString("Frame") + QString::number(i+1) +":"),i,0);
-    widget.push_back(new FrameOfReferenceWidget(element,0));
+    widget.push_back(new FrameOfReferenceWidget("frameOfReference",element,0));
     layout->addWidget(widget[i],i,1);
   }
 }
@@ -2185,7 +2202,7 @@ ForceLawEditor2::ForceLawEditor2(Element *element_, PropertyDialog *parent_, con
 
   mat = new DMatWidget(3,1);  
   hlayout->addWidget(mat);
-  refFrame = new FrameOfReferenceWidget(element,0);
+  refFrame = new FrameOfReferenceWidget("frameOfReference",element,0);
   hlayout->addWidget(refFrame);
 
   connect(forceDirButton, SIGNAL(toggled(bool)), forceDirWidget, SLOT(setVisible(bool)));

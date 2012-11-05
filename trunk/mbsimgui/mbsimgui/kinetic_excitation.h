@@ -37,11 +37,10 @@ class KineticExcitation : public Link {
     QString getType() const { return "KineticExcitation"; }
     void initialize();
   public slots:
-    void updateFrameOfReference();
   protected:
     ForceLawEditor *force, *moment;
     ConnectEditor* connections;
-    FrameOfReferenceEditor* frameOfReference;
+    XMLEditor* frameOfReference;
     QString saved_frameOfReference, saved_ref;
     friend class MainWindow;
 };
