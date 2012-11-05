@@ -65,6 +65,7 @@ class Parameter : public QObject, public QTreeWidgetItem {
     void saveAs();
   protected slots:
     void updateTreeWidgetItem(const QString &str);
+    void remove();
   signals:
     void parameterChanged(const QString &str);
 
