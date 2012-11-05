@@ -377,7 +377,14 @@ void MainWindow::integratorListClicked() {
 }
 
 void MainWindow::parameterListClicked() {
-  if(QApplication::mouseButtons()==Qt::LeftButton) {
+  if(QApplication::mouseButtons()==Qt::RightButton) {
+    Parameter *parameter=dynamic_cast<Parameter*>(parameterList->currentItem());
+    if(parameter) {
+      QMenu* menu=parameter->getContextMenu();
+      menu->exec(QCursor::pos());
+    }
+  } 
+  else if(QApplication::mouseButtons()==Qt::LeftButton) {
     Parameter *parameter=(Parameter*)parameterList->currentItem();
     pagesWidget->insertWidget(0,parameter->getPropertyDialog());
     pagesWidget->setCurrentWidget(parameter->getPropertyDialog());

@@ -43,6 +43,10 @@ Parameter::Parameter(const QString &str, QTreeWidgetItem *parentItem, int ind) :
   contextMenu=new QMenu("Context Menu");
 
   connect(this,SIGNAL(parameterChanged(const QString&)),this,SLOT(updateTreeWidgetItem(const QString&)));
+
+  QAction *action=new QAction(Utils::QIconCached("newobject.svg"),"Remove", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(remove()));
+  contextMenu->addAction(action);
 }
 
 Parameter::~Parameter() {
@@ -125,6 +129,10 @@ void DoubleParameter::initializeUsingXML(TiXmlElement *element) {
       value->getExtPhysicalWidget()->getPhysicalStringWidget(1)->setValue(value->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getValue().c_str());
     } 
     emit parameterChanged(getValue().c_str());
-  //value->setValue(Element::getDouble(element));
 }
 
+void Parameter::remove() {
+  QTreeWidget *tree = treeWidget();
+  tree->invisibleRootItem()->removeChild(this);
+  emit parameterChanged(getValue().c_str());
+}
