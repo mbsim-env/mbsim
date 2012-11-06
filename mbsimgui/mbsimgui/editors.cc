@@ -427,7 +427,7 @@ void SMatWidget::setMat(const vector<vector<string> > &A) {
   if(A.size() != box.size() || A[0].size()!=box[0].size())
     resize(A.size(),A[0].size());
   for(unsigned int i=0; i<box.size(); i++) 
-    for(unsigned int j=0; j<box[i].size(); j++) 
+    for(unsigned int j=0; j<box[i].size(); j++)
       box[i][j]->setText(A[i][j].c_str());
 }
 
@@ -455,8 +455,8 @@ bool SMatWidget::initializeUsingXML(TiXmlElement *parent) {
       ej=ej->NextSiblingElement();
       j++;
     }
-    i++;
     ei=ei->NextSiblingElement();
+    i++;
   }
   setMat(A);
   return true;
@@ -652,9 +652,9 @@ SMatColsVarWidget::SMatColsVarWidget(int rows, int cols, int minCols, int maxCol
 bool SMatColsVarWidget::initializeUsingXML(TiXmlElement *parent) {
   if(!widget->initializeUsingXML(parent))
     return false;
-  blockSignals(true);
+  colsCombo->blockSignals(true);
   colsCombo->setCurrentIndex(colsCombo->findText(QString::number(widget->cols())));
-  blockSignals(false);
+  colsCombo->blockSignals(false);
   return true;
 }
 
@@ -796,50 +796,7 @@ Mat3VWidget::Mat3VWidget(int cols, int minCols, int maxCols, QWidget *parent) : 
   setLayout(layout);
 }
 
-//VecWidget::VecWidget(int rows, int minRows, int maxRows, QWidget *parent) : QWidget(parent) {
-//  QVBoxLayout *layout = new QVBoxLayout;
-//  layout->setMargin(0);
-//  QHBoxLayout *hbox = new QHBoxLayout;
-//  hbox->setMargin(0);
-//  layout->addLayout(hbox);
-//  hbox->addWidget(new QLabel("Rows:"));
-//  rowsCombo = new QComboBox;
-//  for(int j=minRows; j<=maxRows; j++)
-//    rowsCombo->addItem(QString::number(j));
-//
-//  hbox->addWidget(rowsCombo);
-//  hbox->addStretch(2);
-//  widget = new DMatWidget(rows,1);
-//  QObject::connect(rowsCombo, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(resize(const QString&)));
-//  layout->addWidget(widget);
-//  rowsCombo->setCurrentIndex(0);
-//
-//  setLayout(layout);
-//}
-//
-//Vec3Widget::Vec3Widget(QWidget *parent) : QWidget(parent) {
-//  QVBoxLayout *layout = new QVBoxLayout;
-//  layout->setMargin(0);
-//  widget = new MatWidget(3,1);
-//  layout->addWidget(widget);
-//
-//  setLayout(layout);
-//}
-//
-//RowVec3Widget::RowVec3Widget(QWidget *parent) : QWidget(parent) {
-//  QVBoxLayout *layout = new QVBoxLayout;
-//  layout->setMargin(0);
-//  widget = new MatWidget(1,3);
-//  layout->addWidget(widget);
-//
-//  setLayout(layout);
-//}
-
 PropertyDialog::PropertyDialog(QObject *parentObject_) : parentObject(parentObject_) {
-//  setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-//  setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-//  setWidgetResizable(true);
-
   tabWidget = new QTabWidget;
   setWidget(tabWidget);
   mainLayout = new QVBoxLayout;
@@ -847,7 +804,6 @@ PropertyDialog::PropertyDialog(QObject *parentObject_) : parentObject(parentObje
   setLayout(mainLayout);
 
   setWindowTitle("Properties");
-
 }
 
 PropertyDialog::~PropertyDialog() {
@@ -870,7 +826,7 @@ void PropertyDialog::initialize() {
 
 void PropertyDialog::addTab(const QString &name) {  
   QScrollArea *tab = new QScrollArea;
-  tab->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  tab->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
   tab->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
   tab->setWidgetResizable(true);
   QWidget *widget = new QWidget;
