@@ -309,9 +309,7 @@ SVecWidget::SVecWidget(const vector<string> &x, bool transpose_) : transpose(tra
   QGridLayout *layout = new QGridLayout;
   layout->setMargin(0);
   setLayout(layout);
-  resize(x.size());
-  for(unsigned int i=0; i<box.size(); i++) 
-    box[i]->setText(x[i].c_str());
+  setVec(x);
 }
 
 void SVecWidget::resize(int size) {
@@ -392,10 +390,7 @@ SMatWidget::SMatWidget(const vector<vector<string> > &A) {
   QGridLayout *layout = new QGridLayout;
   layout->setMargin(0);
   setLayout(layout);
-  resize(A.size(),A[0].size());
-  for(unsigned int i=0; i<box.size(); i++) 
-    for(unsigned int j=0; j<box[i].size(); j++) 
-      box[i][j]->setText(A[i][j].c_str());
+  setMat(A);
 }
 
 void SMatWidget::resize(int rows, int cols) {
@@ -427,6 +422,8 @@ vector<vector<string> > SMatWidget::getMat() const {
 }
 
 void SMatWidget::setMat(const vector<vector<string> > &A) {
+  if(A.size()==0)
+    return resize(0,0);
   if(A.size() != box.size() || A[0].size()!=box[0].size())
     resize(A.size(),A[0].size());
   for(unsigned int i=0; i<box.size(); i++) 
@@ -498,10 +495,7 @@ SSymMatWidget::SSymMatWidget(const vector<vector<string> > &A) {
   QGridLayout *layout = new QGridLayout;
   layout->setMargin(0);
   setLayout(layout);
-  resize(A.size());
-  for(unsigned int i=0; i<box.size(); i++) 
-    for(unsigned int j=0; j<box.size(); j++) 
-      box[i][j]->setText(A[i][j].c_str());
+  setMat(A);
 }
 
 void SSymMatWidget::resize(int rows) {
@@ -532,6 +526,8 @@ vector<vector<string> > SSymMatWidget::getMat() const {
 }
 
 void SSymMatWidget::setMat(const vector<vector<string> > &A) {
+  if(A.size() == 0 || A.size() != A[0].size())
+    return resize(0);
   if(A.size() != box.size())
     resize(A.size());
   for(unsigned int i=0; i<box.size(); i++) 
@@ -1347,24 +1343,18 @@ void LinearTranslation::checkInputSchema() {
 int LinearTranslation::getSize() const {
   string str = evalOctaveExpression(mat->getCurrentPhysicalStringWidget()->getValue());
   vector<vector<string> > A = strToSMat(str);
-  return A[0].size();
+  return A.size()?A[0].size():0;
+}
+
+void LinearTranslation::initializeUsingXML(TiXmlElement *element) {
+  mat->initializeUsingXML(element);
 }
 
 TiXmlElement* LinearTranslation::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"LinearTranslation" );
-  //TiXmlElement *ele3 = new TiXmlElement( MBSIMNS"translationVectors" );
   mat->writeXMLFile(ele2);
-  //TiXmlText *text = new TiXmlText(toStr(getTranslationVectors()));
-  //ele3->LinkEndChild(text);
-  //ele2->LinkEndChild(ele3);
   parent->LinkEndChild(ele2);
   return ele2;
-}
-
-void LinearTranslation::initializeUsingXML(TiXmlElement *element) {
-  //TiXmlElement *e=element->FirstChildElement(MBSIMNS"translationVectors");
-  mat->initializeUsingXML(element);
-  //setTranslationVectors(fromStr(e->GetText()));
 }
 
 TranslationEditor::TranslationEditor(PropertyDialog *parent_, const QIcon& icon, const string &name) : Editor(parent_, icon, name), translation(0) {
@@ -2216,22 +2206,22 @@ TiXmlElement* GeneralizedForceLawEditor::writeXMLFile(TiXmlNode *parent) {
 
 ForceLawEditor::ForceLawEditor(PropertyDialog *parent_, const QIcon& icon, bool force_) : Editor(parent_, icon, "gfe"), forceLaw(0), force(force_) {
   groupBox = new QGroupBox(force?tr("Force"):tr("Moment"));  
-  //if(force)
   dialog->addToTab("Kinetics", groupBox);
-  //else
-  //dialog->addToTab2("Kinetics", groupBox);
   layout = new QVBoxLayout;
   groupBox->setLayout(layout);
 
   layout->addWidget(new QLabel("Direction vectors:"));
 
-  mat = new Mat3VWidget(0,0,3);  
-  layout->addWidget(mat);
+  vector<PhysicalStringWidget*> input;
+
+  mat = new PhysicalStringWidget(new SMatColsVarWidget(3,0,0,3),MBSIMNS"directionVectors",noUnitUnits(),1);
+  input.push_back(mat);
+  widget = new ExtPhysicalVarWidget(input);  
+  layout->addWidget(widget);
 
   comboBox = new QComboBox;
   comboBox->addItem(tr("Constant function"));
   comboBox->addItem(tr("Sinus function"));
-  //  comboBox->addItem(tr("Regularized bilateral constraint"));
   layout->addWidget(comboBox);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineForceLaw(int)));
   defineForceLaw(0);
@@ -2241,15 +2231,16 @@ void ForceLawEditor::defineForceLaw(int index) {
   if(index==0) {
     layout->removeWidget(forceLaw);
     delete forceLaw;
-    forceLaw = new ConstantFunction1(new DMatWidget(1,mat->cols()),"VS");  
-    connect(mat->getComboBox(), SIGNAL(currentIndexChanged(int)), this, SLOT(resize(int)));
+    forceLaw = new ConstantFunction1(new DMatWidget(1,((SMatColsVarWidget*)mat->getWidget())->cols()),"VS");  
+    connect((SMatColsVarWidget*)mat->getWidget(), SIGNAL(currentIndexChanged(int)), this, SLOT(resize(int)));
     layout->addWidget(forceLaw);
   } 
   else if(index==1) {
     layout->removeWidget(forceLaw);
     delete forceLaw;
-    forceLaw = new SinusFunction1(new DMatWidget(1,mat->cols()), new DMatWidget(1,mat->cols()), new DMatWidget(1,mat->cols()), new DMatWidget(1,mat->cols()));  
-    connect(mat->getComboBox(), SIGNAL(currentIndexChanged(int)), this, SLOT(resize(int)));
+    int cols = ((SMatColsVarWidget*)mat->getWidget())->cols();
+    forceLaw = new SinusFunction1(new DMatWidget(1,cols), new DMatWidget(1,cols), new DMatWidget(1,cols), new DMatWidget(1,cols));  
+    connect((SMatColsVarWidget*)mat->getWidget(), SIGNAL(currentIndexChanged(int)), this, SLOT(resize(int)));
     layout->addWidget(forceLaw);
   } 
 }
@@ -2260,8 +2251,8 @@ void ForceLawEditor::resize(int i) {
 void ForceLawEditor::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement  *e=element->FirstChildElement(force?MBSIMNS"force":MBSIMNS"moment");
   if(e) {
+    widget->initializeUsingXML(e);
     TiXmlElement* ee=e->FirstChildElement(MBSIMNS"directionVectors");
-    mat->setMat(Element::getMat(ee,0));
     ee=ee->NextSiblingElement()->FirstChildElement();
 
     if(ee) {
@@ -2278,9 +2269,12 @@ void ForceLawEditor::initializeUsingXML(TiXmlElement *element) {
 }
 
 TiXmlElement* ForceLawEditor::writeXMLFile(TiXmlNode *parent) {
-  if(getSize()) {
+  string str = evalOctaveExpression(widget->getCurrentPhysicalStringWidget()->getValue());
+  vector<vector<string> > A = strToSMat(str);
+  int cols = A.size()?A[0].size():0;
+  if(cols) {
     TiXmlElement *ele0 = new TiXmlElement(force?MBSIMNS"force":MBSIMNS"moment");
-    addElementText(ele0,MBSIMNS"directionVectors",mat->getMat());
+    widget->writeXMLFile(ele0);
     TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"function");
     if(forceLaw)
       forceLaw->writeXMLFile(ele1);

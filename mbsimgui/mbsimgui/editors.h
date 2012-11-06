@@ -1229,8 +1229,8 @@ class ForceLawEditor : public Editor {
 
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    int getForceLaw() {return comboBox->currentIndex();}
-    int getSize() const { return mat->cols(); }
+    //int getForceLaw() {return comboBox->currentIndex();}
+    //int getSize() const { return mat->cols(); }
 
   protected slots:
     void defineForceLaw(int);
@@ -1241,7 +1241,8 @@ class ForceLawEditor : public Editor {
     QVBoxLayout *layout;
     QComboBox *comboBox;
     Function1 *forceLaw;
-    Mat3VWidget *mat;
+    PhysicalStringWidget *mat;
+    ExtPhysicalVarWidget *widget;
     bool force;
 };
 
