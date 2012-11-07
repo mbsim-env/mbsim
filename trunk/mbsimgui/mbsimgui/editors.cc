@@ -2184,24 +2184,35 @@ ForceLawEditor::ForceLawEditor(PropertyDialog *parent_, const QIcon& icon, bool 
 }
 
 void ForceLawEditor::defineForceLaw(int index) {
+  int cols = getSize();
   if(index==0) {
     layout->removeWidget(forceLaw);
     delete forceLaw;
-    forceLaw = new ConstantFunction1(new DMatWidget(1,((SMatColsVarWidget*)mat->getWidget())->cols()),"VS");  
-    connect((SMatColsVarWidget*)mat->getWidget(), SIGNAL(currentIndexChanged(int)), this, SLOT(resize(int)));
+    vector<PhysicalStringWidget*> input;
+    input.push_back(new PhysicalStringWidget(new SVecWidget(cols,true),MBSIMNS"value",QStringList(),0));
+    forceLaw = new ConstantFunction1(new ExtPhysicalVarWidget(input),"VS");  
+    connect(forceLaw,SIGNAL(resize()),this,SLOT(resize()));
     layout->addWidget(forceLaw);
   } 
   else if(index==1) {
     layout->removeWidget(forceLaw);
     delete forceLaw;
-    int cols = ((SMatColsVarWidget*)mat->getWidget())->cols();
     forceLaw = new SinusFunction1(new DMatWidget(1,cols), new DMatWidget(1,cols), new DMatWidget(1,cols), new DMatWidget(1,cols));  
     connect((SMatColsVarWidget*)mat->getWidget(), SIGNAL(currentIndexChanged(int)), this, SLOT(resize(int)));
     layout->addWidget(forceLaw);
   } 
 }
+void ForceLawEditor::resize() {
+  forceLaw->resize(getSize(),1);
+}
 void ForceLawEditor::resize(int i) {
   forceLaw->resize(1,i);
+}
+
+int ForceLawEditor::getSize() const {
+  string str = evalOctaveExpression(widget->getCurrentPhysicalStringWidget()->getValue());
+  vector<vector<string> > A = strToSMat(str);
+  return A.size()?A[0].size():0;
 }
 
 void ForceLawEditor::initializeUsingXML(TiXmlElement *element) {
@@ -2225,10 +2236,7 @@ void ForceLawEditor::initializeUsingXML(TiXmlElement *element) {
 }
 
 TiXmlElement* ForceLawEditor::writeXMLFile(TiXmlNode *parent) {
-  string str = evalOctaveExpression(widget->getCurrentPhysicalStringWidget()->getValue());
-  vector<vector<string> > A = strToSMat(str);
-  int cols = A.size()?A[0].size():0;
-  if(cols) {
+  if(getSize()) {
     TiXmlElement *ele0 = new TiXmlElement(force?MBSIMNS"force":MBSIMNS"moment");
     widget->writeXMLFile(ele0);
     TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"function");
@@ -2348,26 +2356,37 @@ GeneralizedForceDirectionEditor::GeneralizedForceDirectionEditor(PropertyDialog 
   layout->addWidget(mat);
 }
 
-ConstantFunction1::ConstantFunction1(DMatWidget* ret, const QString &ext) : Function1(ext) {
-  QHBoxLayout *layout = new QHBoxLayout;
+ConstantFunction1::ConstantFunction1(ExtPhysicalVarWidget* ret, const QString &ext) : Function1(ext) {
+  QVBoxLayout *layout = new QVBoxLayout;
   c = ret;
   //c->setValue(100);
   layout->addWidget(new QLabel("Constant:"));
   layout->addWidget(c);
   QWidget::setLayout(layout);
+  buttonResize = new QPushButton("Resize");
+  layout->addWidget(buttonResize);
+  connect(buttonResize,SIGNAL(clicked(bool)),this,SIGNAL(resize()));
+  connect(c,SIGNAL(inputDialogChanged(int)),this,SLOT(updateButtons(int)));
+}
+int ConstantFunction1::getSize() const {
+  string str = evalOctaveExpression(c->getCurrentPhysicalStringWidget()->getValue());
+  vector<vector<string> > A = strToSMat(str);
+  return A.size()?A[0].size():0;
+}
+void ConstantFunction1::updateButtons(int i) {
+  buttonResize->setDisabled(i==1);
 }
 void ConstantFunction1::resize(int m, int n) {
-  c->resize(m,n);
+  if(((SVecWidget*)c->getPhysicalStringWidget(0)->getWidget())->size() != m)
+    ((SVecWidget*)c->getPhysicalStringWidget(0)->getWidget())->resize(m);
 }
 void ConstantFunction1::initializeUsingXML(TiXmlElement *element) {
   Function1::initializeUsingXML(element);
-  TiXmlElement *e;
-  e=element->FirstChildElement(MBSIMNS"value");
-  c->setMat(transpose(strToDMat(e->GetText())));
+  c->initializeUsingXML(element);
 }
 TiXmlElement* ConstantFunction1::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Function1::writeXMLFile(parent);
-  addElementText(ele0,MBSIMNS"value",transpose(c->getMat()));
+  c->writeXMLFile(ele0);
   return ele0;
 } 
 

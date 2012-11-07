@@ -77,6 +77,8 @@ inline std::string toStr(double d) {
 
 template <class AT>
 inline std::string toStr(const std::vector<AT> &x) {
+  if(x.size()==0)
+    return "";
   std::stringstream s;
   s << "[";
   for(int i=0; i<x.size(); i++) {
@@ -90,6 +92,8 @@ inline std::string toStr(const std::vector<AT> &x) {
 
 template <class AT>
 inline std::string toStr(const std::vector<std::vector<AT> > &A) {
+  if(A.size()==0 || A[0].size()==0)
+    return "";
   std::stringstream s;
   s << "[";
   for(int i=0; i<A.size(); i++) {
@@ -142,7 +146,7 @@ inline std::vector<std::string> extract(const std::string &str, char c) {
 }
 
 inline std::vector<std::string> strToSVec(const std::string &str) {
-  if(str[0]!='[' || str[str.size()-1]!=']')  {
+  if(str=="") {
     std::vector<std::string> x;
     return x;
   }
@@ -158,7 +162,7 @@ inline std::vector<std::string> strToSVec(const std::string &str) {
 }
 
 inline std::vector<std::vector<std::string> > strToSMat(const std::string &str) {
-  if(str[0]!='[' || str[str.size()-1]!=']')  {
+  if(str=="") {
     std::vector<std::vector<std::string> > A;
     return A;
   }
