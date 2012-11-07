@@ -115,11 +115,21 @@ void octaveEvalRet(string str, TiXmlElement *e) {
 
   int dummy;
   disable_stderr();
-  eval_string("ret="+str,true,dummy); // eval as single statement, and save in 'ret'
+  try {
+    eval_string("ret="+str,true,dummy); // eval as single statement, and save in 'ret'
+  }
+  catch(...) {
+    error_state=1;
+  }
   enable_stderr();
   if(error_state!=0) { // if error, maybe it is a statement list
     error_state=0;
-    eval_string(str,true,dummy,0); // eval as statement list
+    try {
+      eval_string(str,true,dummy,0); // eval as statement list
+    }
+    catch(...) {
+      error_state=1;
+    }
     if(error_state!=0) { // if error => wrong code => throw error
       error_state=0;
       if(e) if(chdir(savedPath)!=0) throw(1);
