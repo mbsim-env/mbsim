@@ -48,6 +48,7 @@ class Frame;
 class Joint;
 class Parameter;
 class QStackedLayout;
+class ExtPhysicalVarWidget;
 
 class OctaveHighlighter : public QSyntaxHighlighter {
 
@@ -249,15 +250,22 @@ class DifferentiableFunction1 : public Function1 {
 };
 
 class ConstantFunction1 : public Function1 {
+  Q_OBJECT
   public:
-    ConstantFunction1(DMatWidget* ret, const QString &ext);
-    virtual DMatWidget* getMatWidget() { return c; }
+    ConstantFunction1(ExtPhysicalVarWidget* ret, const QString &ext);
+    //virtual ExtPhysicalVarWidget* getMatWidget() { return c; }
     void initializeUsingXML(TiXmlElement *element);
     TiXmlElement* writeXMLFile(TiXmlNode *parent);
     inline QString getType() const { return QString("ConstantFunction1_")+ext; }
     void resize(int m, int n);
+    int getSize() const;
   protected:
-    DMatWidget *c;
+    ExtPhysicalVarWidget *c;
+    QPushButton *buttonResize;
+  protected slots:
+    void updateButtons(int i);
+  signals:
+    void resize();
 };
 
 class SinusFunction1 : public DifferentiableFunction1 {
@@ -1230,11 +1238,12 @@ class ForceLawEditor : public Editor {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     //int getForceLaw() {return comboBox->currentIndex();}
-    //int getSize() const { return mat->cols(); }
+    int getSize() const; 
 
   protected slots:
     void defineForceLaw(int);
     void resize(int);
+    void resize();
 
   protected:
     QGroupBox *groupBox;
