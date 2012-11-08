@@ -418,5 +418,28 @@ inline QStringList inertiaUnits() {
   return units;
 }
 
+inline QStringList accelerationUnits() {
+  QStringList units;
+  units << "m/s^2"; 
+  return units;
+}
+
+inline QStringList stiffnessUnits() {
+  QStringList units;
+  units << "N/mm" << "N/m"; 
+  return units;
+}
+
+inline QStringList dampingUnits() {
+  QStringList units;
+  units << "N*s/m"; 
+  return units;
+}
+
+inline QStringList forceUnits() {
+  QStringList units;
+  units << "mN" << "N" << "kN";
+  return units;
+}
 
 #endif
