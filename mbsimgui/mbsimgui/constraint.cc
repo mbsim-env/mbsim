@@ -80,12 +80,8 @@ void JointConstraint::initializeUsingXML(TiXmlElement *element) {
   }
   e=element->FirstChildElement(MBSIMNS"independentRigidBody");
   saved_IndependentBody=e->Attribute("ref");
-  e=element->FirstChildElement(MBSIMNS"forceDirection");
-  if(e)
-    force->setForceDir(getMat(e,0));
-  e=element->FirstChildElement(MBSIMNS"momentDirection");
-  if(e)
-    moment->setForceDir(getMat(e,3));
+  force->initializeUsingXML(element);
+  moment->initializeUsingXML(element);
 
   connections->initializeUsingXML(element);
 }
@@ -116,10 +112,8 @@ TiXmlElement* JointConstraint::writeXMLFile(TiXmlNode *parent) {
     ele1->SetAttribute("ref", independentBody->getBody()->getXMLPath(this,true).toStdString()); // relative path
   ele0->LinkEndChild(ele1);
 
-  if(force->getSize())
-    addElementText(ele0, MBSIMNS"forceDirection", force->getForceDir());
-  if(moment->getSize())
-    addElementText(ele0, MBSIMNS"momentDirection", moment->getForceDir());
+  force->writeXMLFile(ele0);
+  moment->writeXMLFile(ele0);
 
   connections->writeXMLFile(ele0);
 

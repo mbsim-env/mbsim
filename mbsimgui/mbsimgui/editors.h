@@ -41,7 +41,7 @@ class QTreeWidget;
 class QTreeWidgetItem;
 class QPushButton;
 class QPlainTextEdit;
-class DMatWidget;
+//class DMatWidget;
 class Element;
 class RigidBody;
 class Frame;
@@ -69,14 +69,6 @@ class XMLWidget : public QWidget {
     virtual void initialize() {};
     virtual void update() {}
 };
-
-//class InputWidget : public QWidget {
-//  public:
-//    virtual bool initializeUsingXML(TiXmlElement *element) = 0;
-//    virtual TiXmlElement* writeXMLFile(TiXmlNode *element) = 0;
-//    virtual std::string getValue() const = 0;
-//    virtual void setValue(const std::string &str) = 0;
-//};
 
 class QElementItem : public QTreeWidgetItem {
   private:
@@ -331,46 +323,6 @@ class LinearRegularizedBilateralConstraint: public Function1 {
 
   private:
     DoubleEdit *c, *d;
-};
-
-
-class DMatWidget : public QWidget {
-
-  private:
-    std::vector<std::vector<QLineEdit*> > box;
-  public:
-    DMatWidget(int rows, int cols, QWidget *parent = 0);
-    void resize(int rows, int cols);
-    void init();
-    std::vector<std::vector<double> >getMat() const;
-    void setMat(const std::vector<std::vector<double> > &A);
-    void setReadOnly(bool flag);
-    int rows() const {return box.size();}
-    int cols() const {return box[0].size();}
-};
-
-class Mat3VWidget : public QWidget {
-
-  Q_OBJECT
-
-  private:
-    DMatWidget *widget;
-    QComboBox* colsCombo;
-    int minCols, maxCols;
-  public:
-    Mat3VWidget(int cols, int minCols, int maxCols, QWidget *parent = 0);
-    std::vector<std::vector<double> > getMat() const {return widget->getMat();}
-    void setMat(const std::vector<std::vector<double> > &A) {
-      colsCombo->setCurrentIndex(colsCombo->findText(QString::number(A[0].size())));
-      widget->setMat(A);
-    }
-    QComboBox* getComboBox() {return colsCombo;}
-    int rows() const {return 3;}
-    int cols() const {return colsCombo->currentText().toInt();}
-
-  public slots:
-    void resize(const QString &text) {widget->resize(3,text.toInt());}//widget->init();}
-
 };
 
 // TODO Prüfen ob überflüssig
@@ -693,22 +645,6 @@ class DoubleEditor : public Editor {
     void valueChanged(double d);
 };
 
-class MatEditor : public Editor {
-  Q_OBJECT
-
-  public:
-    MatEditor(PropertyDialog *parent_, const QIcon &icon, const QString &name, const QString &tab);
-
-  void setSize(int rows, int cols) { A->resize(rows,cols); }
-  int getRows() const { return A->rows(); }
-  std::vector<std::vector<double> > getMat() const {return A->getMat();}
-  void setMat(const std::vector<std::vector<double> > &A_) {A->setMat(A_);}
-
-  protected:
-    DMatWidget *A;
-};
-
-
 class NameEditor : public Editor {
   Q_OBJECT
 
@@ -979,20 +915,6 @@ class EnvironmentEditor : public Editor {
     ExtPhysicalVarWidget *vec;
 };
 
-class Vec3Editor : public Editor {
-  Q_OBJECT
-
-  public:
-    Vec3Editor(PropertyDialog *parent_, const QIcon &icon, const std::string &name);
-
-    std::vector<std::vector<double> >getVec() {return vec->getMat();}
-    void setVec(const std::vector<std::vector<double> > &x) {vec->setMat(x);}
-
-  protected:
-    QGroupBox *groupBox;
-    DMatWidget *vec;
-};
-
 class FramePositionWidget : public XMLWidget {
 
   public:
@@ -1194,7 +1116,8 @@ class GeneralizedForceLawEditor : public Editor {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     int getForceLaw() {return comboBox->currentIndex();}
-    int getSize() const { return mat->cols(); }
+    int getSize() const; 
+    //int getSize() const { return mat->cols(); }
 
   protected slots:
     void defineForceLaw(int);
@@ -1205,7 +1128,7 @@ class GeneralizedForceLawEditor : public Editor {
     QComboBox *comboBox;
     GeneralizedForceLawWidget *generalizedForceLaw;
     GeneralizedImpactLawWidget *generalizedImpactLaw;
-    Mat3VWidget *mat;
+    ExtPhysicalVarWidget *widget;
     bool force;
 };
 
@@ -1230,7 +1153,6 @@ class ForceLawEditor : public Editor {
     QVBoxLayout *layout;
     QComboBox *comboBox;
     Function1 *forceLaw;
-    PhysicalStringWidget *mat;
     ExtPhysicalVarWidget *widget;
     bool force;
 };
@@ -1269,14 +1191,15 @@ class GeneralizedForceDirectionEditor : public Editor {
   public:
     GeneralizedForceDirectionEditor(PropertyDialog *parent_, const QIcon &icon, bool force);
 
-    //virtual void initializeUsingXML(TiXmlElement *element);
-    //virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    std::vector<std::vector<double> > getForceDir() {return mat->getMat();}
-    void setForceDir(const std::vector<std::vector<double> > &dir) {mat->setMat(dir);}
-    int getSize() const { return mat->cols(); }
+    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    //std::vector<std::vector<double> > getForceDir() {return mat->getMat();}
+    //void setForceDir(const std::vector<std::vector<double> > &dir) {mat->setMat(dir);}
+    //int getSize() const { return mat->cols(); }
+    int getSize() const;
 
   protected:
-    Mat3VWidget *mat;
+    ExtPhysicalVarWidget *mat;
     bool force;
 };
 

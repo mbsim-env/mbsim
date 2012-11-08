@@ -38,7 +38,7 @@ class Group : public Element {
     QAction *actionPaste;
     QFileInfo *xmlFileInfo, *h5FileInfo;
     QDateTime xmlLastModified, h5LastModified;
-    Vec3Editor *position, *orientation;
+    XMLEditor *position, *orientation;
     FileEditor *parameterFile;
     XMLEditor *frameOfReference, *framePos;
     void setActionPasteDisabled(bool flag);
