@@ -89,8 +89,16 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
   properties->addTab("Frame positioning");
   if(parentItem != treeWidget()->invisibleRootItem()) {
     properties->addTab("Kinematics");
-    position=new Vec3Editor(properties, Utils::QIconCached("lines.svg"), "Position");
-    orientation=new Vec3Editor(properties, Utils::QIconCached("lines.svg"), "Orientation");
+    vector<PhysicalStringWidget*> input;
+    input.push_back(new PhysicalStringWidget(new SVecWidget(3),MBSIMNS"position",lengthUnits(),4));
+    ExtPhysicalVarWidget *d = new ExtPhysicalVarWidget(input);
+    position=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Position", "Kinematics", d);
+    //position=new Vec3Editor(properties, Utils::QIconCached("lines.svg"), "Position");
+    input.clear();
+    input.push_back(new PhysicalStringWidget(new SMatWidget(getEye<string>(3,3,"1","0")),MBSIMNS"orientation",noUnitUnits(),1));
+    d = new ExtPhysicalVarWidget(input);
+    orientation=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Orientation", "Kinematics", d);
+    //orientation=new Vec3Editor(properties, Utils::QIconCached("lines.svg"), "Orientation");
     frameOfReference=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Frame of reference", "Kinematics", new FrameOfReferenceWidget(MBSIMNS"frameOfReference",this,((Group*)getParentElement())->getFrame(0)));
 
   }
@@ -269,306 +277,262 @@ void Group::addFromFile() {
   }
 }
 
-//void Group::remove() {
-//  Group* parent = static_cast<Group*>(static_cast<QTreeWidgetItem*>(this)->parent());
-//
-//  if(parent) {
-//    parent->removeChild(this);
-//  }
-//  else
-//    treeWidget()->takeTopLevelItem(0);
-//}
+void Group::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e;
+  Element::initializeUsingXML(element);
+  e=element->FirstChildElement();
 
+  if(frameOfReference)
+    frameOfReference->initializeUsingXML(element);
 
-  void Group::initializeUsingXML(TiXmlElement *element) {
-    TiXmlElement *e;
-    Element::initializeUsingXML(element);
-    e=element->FirstChildElement();
-
-    if(frameOfReference)
-      frameOfReference->initializeUsingXML(element);
-
-    // search first element known by Group
-    while(e && 
-        e->ValueStr()!=MBSIMNS"position" &&
-        e->ValueStr()!=MBSIMNS"orientation" &&
-        e->ValueStr()!=MBSIMNS"frames")
-      e=e->NextSiblingElement();
-    
-    if(e && e->ValueStr()==MBSIMNS"position") {
-      if(position)
-        position->setVec(getVec(e));
-      e=e->NextSiblingElement();
-    }
-
-    if(e && e->ValueStr()==MBSIMNS"orientation") {
-      vector<vector<double> > AIK = getSqrMat(e);
-      if(orientation)
-        orientation->setVec(AIK2Cardan(AIK));
-      e=e->NextSiblingElement();
-    }
-
-    // frames
-    TiXmlElement *E=e->FirstChildElement();
-//    e=element->FirstChildElement(MBSIMNS"frames")->FirstChildElement();
-    while(E && E->ValueStr()==MBSIMNS"frame") {
-      TiXmlElement *ec=E->FirstChildElement();
-      Frame *f=new Frame(ec->Attribute("name"), frames, -1);
-      f->initializeUsingXML(ec);
-      E=E->NextSiblingElement();
-    }
-
-    framePos->initializeUsingXML(element->FirstChildElement(MBSIMNS"frames"));
-
+  // search first element known by Group
+  while(e && 
+      e->ValueStr()!=MBSIMNS"position" &&
+      e->ValueStr()!=MBSIMNS"orientation" &&
+      e->ValueStr()!=MBSIMNS"frames")
     e=e->NextSiblingElement();
 
-    // contours
-    E=e->FirstChildElement();
-    while(E && E->ValueStr()==MBSIMNS"contour") {
- //     TiXmlElement *ec=E->FirstChildElement();
- //     Contour *c=ObjectFactory::getInstance()->createContour(ec);
- //     TiXmlElement *contourElement=ec; // save for later initialization
- //     ec=ec->NextSiblingElement();
- //     string refF="I";
- //     if(ec->ValueStr()==MBSIMNS"frameOfReference") {
- //       refF=ec->Attribute("ref");
- //       refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
- //       ec=ec->NextSiblingElement();
- //     }
- //     Vec3 RrRC=getVec3(ec);
- //     ec=ec->NextSiblingElement();
- //     SqrMat3 ARC=getSqrMat3(ec);
- //     addContour(c, RrRC, ARC, refF);
- //     c->initializeUsingXML(contourElement);
-      E=E->NextSiblingElement();
-    }
-    e=e->NextSiblingElement();
+  if(position)
+    position->initializeUsingXML(element);
 
-    // groups
-    E=e->FirstChildElement();
-    Group *g;
-    while(E) {
-      g=ObjectFactory::getInstance()->createGroup(E, groups, -1);
-      g->initializeUsingXML(E);
-      E=E->NextSiblingElement();
-    }
-    e=e->NextSiblingElement();
+  if(orientation)
+    orientation->initializeUsingXML(element);
 
-    // objects
-    E=e->FirstChildElement();
-    Object *o;
-    while(E) {
-      o=ObjectFactory::getInstance()->createObject(E, objects, -1);
-      o->initializeUsingXML(E);
-      E=E->NextSiblingElement();
-    }
-    e=e->NextSiblingElement();
-
-    // extraDynamics
-    if (e->ValueStr()==MBSIMNS"extraDynamics") {
-      E=e->FirstChildElement();
-      //ExtraDynamic *ed;
-      while(E) {
-//        ed=ObjectFactory::getInstance()->createExtraDynamic(E);
-//        addExtraDynamic(ed);
-//        ed->initializeUsingXML(E);
-        E=E->NextSiblingElement();
-      }
-      e=e->NextSiblingElement();
-    }
-
-    // links
-    E=e->FirstChildElement();
-    Link *l;
-    while(E) {
-      l=ObjectFactory::getInstance()->createLink(E, links, -1);
-      l->initializeUsingXML(E);
-      E=E->NextSiblingElement();
-    }
-
-    e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameI");
-    if(e) {
-      Frame *I = getFrame(0);
-      I->setOpenMBVFrame(true);
-      I->setSize(getDouble(e->FirstChildElement(MBSIMNS"size")));
-      I->setOffset(getDouble(e->FirstChildElement(MBSIMNS"offset")));
-    }
-
+  // frames
+  TiXmlElement *E=element->FirstChildElement(MBSIMNS"frames")->FirstChildElement();
+  while(E && E->ValueStr()==MBSIMNS"frame") {
+    TiXmlElement *ec=E->FirstChildElement();
+    Frame *f=new Frame(ec->Attribute("name"), frames, -1);
+    f->initializeUsingXML(ec);
+    E=E->NextSiblingElement();
   }
 
-  TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = Element::writeXMLFile(parent);
+  framePos->initializeUsingXML(element->FirstChildElement(MBSIMNS"frames"));
 
-    TiXmlElement *ele1;
+  e=e->NextSiblingElement();
 
-    if(position) {
-      frameOfReference->writeXMLFile(ele0);
+  // contours
+  E=element->FirstChildElement(MBSIMNS"contours")->FirstChildElement();
+  while(E && E->ValueStr()==MBSIMNS"contour") {
+    //     TiXmlElement *ec=E->FirstChildElement();
+    //     Contour *c=ObjectFactory::getInstance()->createContour(ec);
+    //     TiXmlElement *contourElement=ec; // save for later initialization
+    //     ec=ec->NextSiblingElement();
+    //     string refF="I";
+    //     if(ec->ValueStr()==MBSIMNS"frameOfReference") {
+    //       refF=ec->Attribute("ref");
+    //       refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
+    //       ec=ec->NextSiblingElement();
+    //     }
+    //     Vec3 RrRC=getVec3(ec);
+    //     ec=ec->NextSiblingElement();
+    //     SqrMat3 ARC=getSqrMat3(ec);
+    //     addContour(c, RrRC, ARC, refF);
+    //     c->initializeUsingXML(contourElement);
+    E=E->NextSiblingElement();
+  }
+  e=e->NextSiblingElement();
 
-      vector<vector<double> > AIK = orientation->getVec();
-      addElementText(ele0,MBSIMNS"position",position->getVec());
-      addElementText(ele0,MBSIMNS"orientation",Cardan2AIK(AIK));
-    }
+  // groups
+  E=element->FirstChildElement(MBSIMNS"groups")->FirstChildElement();
+  Group *g;
+  while(E) {
+    g=ObjectFactory::getInstance()->createGroup(E, groups, -1);
+    g->initializeUsingXML(E);
+    E=E->NextSiblingElement();
+  }
 
-    ele1 = new TiXmlElement( MBSIMNS"frames" );
-    framePos->writeXMLFile(ele1);
-    ele0->LinkEndChild( ele1 );
+  // objects
+  E=element->FirstChildElement(MBSIMNS"objects")->FirstChildElement();
+  Object *o;
+  while(E) {
+    o=ObjectFactory::getInstance()->createObject(E, objects, -1);
+    o->initializeUsingXML(E);
+    E=E->NextSiblingElement();
+  }
 
-//    ele1 = new TiXmlElement( MBSIMNS"frames" );
-//    for(int i=1; i<frames->childCount(); i++) {
-//      TiXmlElement* ele2 = new TiXmlElement( MBSIMNS"frame" );
-//      ele1->LinkEndChild( ele2 );
-//      getFrame(i)->writeXMLFile(ele2);
-//      if(getFrame(i)->getFramePosition()->getFrame() != getFrame(0)) {
-//        TiXmlElement *ele3 = new TiXmlElement( MBSIMNS"frameOfReference" );
-//        QString str = QString("Frame[") + getFrame(i)->getFramePosition()->getFrame()->getName() + "]";
-//        ele3->SetAttribute("ref", str.toStdString());
-//        ele2->LinkEndChild(ele3);
-//      }
-//
-//      vector<vector<double> > AIK = getFrame(i)->getFramePosition()->getOrientation();
-//      addElementText(ele2,MBSIMNS"position",getFrame(i)->getFramePosition()->getPosition());
-//      addElementText(ele2,MBSIMNS"orientation",Cardan2AIK(AIK));
-//    }
-//    ele0->LinkEndChild( ele1 );
+  // extraDynamics
+  E=element->FirstChildElement(MBSIMNS"extraDynamics")->FirstChildElement();
+  //ExtraDynamic *ed;
+  while(E) {
+    //        ed=ObjectFactory::getInstance()->createExtraDynamic(E);
+    //        addExtraDynamic(ed);
+    //        ed->initializeUsingXML(E);
+    E=E->NextSiblingElement();
+  }
 
-    ele1 = new TiXmlElement( MBSIMNS"contours" );
-    ele0->LinkEndChild( ele1 );
+  // links
+  E=element->FirstChildElement(MBSIMNS"links")->FirstChildElement();
+  Link *l;
+  while(E) {
+    l=ObjectFactory::getInstance()->createLink(E, links, -1);
+    l->initializeUsingXML(E);
+    E=E->NextSiblingElement();
+  }
 
-    ele1 = new TiXmlElement( MBSIMNS"groups" );
-    for(int i=0; i<groups->childCount(); i++)
-      getGroup(i)->writeXMLFile(ele1);
-    ele0->LinkEndChild( ele1 );
-
-    ele1 = new TiXmlElement( MBSIMNS"objects" );
-    for(int i=0; i<objects->childCount(); i++)
-      getObject(i)->writeXMLFile(ele1);
-    ele0->LinkEndChild( ele1 );
-
-    ele1 = new TiXmlElement( MBSIMNS"extraDynamics" );
-    ele0->LinkEndChild( ele1 );
-
-    ele1 = new TiXmlElement( MBSIMNS"links" );
-    for(int i=0; i<links->childCount(); i++)
-      getLink(i)->writeXMLFile(ele1);
-    ele0->LinkEndChild( ele1 );
-
+  e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameI");
+  if(e) {
     Frame *I = getFrame(0);
-    if(I->openMBVFrame()) {
-      ele1 = new TiXmlElement( MBSIMNS"enableOpenMBVFrameI" );
-      addElementText(ele1,MBSIMNS"size",I->getSize());
-      addElementText(ele1,MBSIMNS"offset",I->getOffset());
-      ele0->LinkEndChild(ele1);
-    }
-    
-    return ele0;
+    I->setOpenMBVFrame(true);
+    I->setSize(getDouble(e->FirstChildElement(MBSIMNS"size")));
+    I->setOffset(getDouble(e->FirstChildElement(MBSIMNS"offset")));
   }
 
-  Element * Group::getByPathSearch(string path) {
-    if (path.substr(0, 1)=="/") { // absolut path
-      if(getParentElement())
-        return getParentElement()->getByPathSearch(path);
-      else
-        return getByPathSearch(path.substr(1));
-    }
-    else if (path.substr(0, 3)=="../") // relative path
-      return getParentElement()->getByPathSearch(path.substr(3));
-    else { // local path
-      size_t pos0=path.find_first_of("[");
-      string container=path.substr(0, pos0);
-      size_t pos1=path.find_first_of("]", pos0);
-      string searched_name=path.substr(pos0+1, pos1-pos0-1);
-      if(path.length()>pos1+1) { // weiter absteigen
-        string rest=path.substr(pos1+2);
-        if (container=="Object")
-          return getObject(searched_name)->getByPathSearch(rest);
-        else if (container=="Link")
-          return getLink(searched_name)->getByPathSearch(rest);
-        //else if (container=="ExtraDynamic")
-          //return getExtraDynamic(searched_name)->getByPathSearch(rest);
-        else if (container=="Group")
-          return getGroup(searched_name)->getByPathSearch(rest);
-        else {
-          cout << "Unknown name of container" << endl;
-          throw;
-        }
-      }
+}
+
+TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = Element::writeXMLFile(parent);
+
+  TiXmlElement *ele1;
+
+  if(position) {
+    frameOfReference->writeXMLFile(ele0);
+    position->writeXMLFile(ele0);
+    orientation->writeXMLFile(ele0);
+  }
+
+  ele1 = new TiXmlElement( MBSIMNS"frames" );
+  framePos->writeXMLFile(ele1);
+  ele0->LinkEndChild( ele1 );
+
+  ele1 = new TiXmlElement( MBSIMNS"contours" );
+  ele0->LinkEndChild( ele1 );
+
+  ele1 = new TiXmlElement( MBSIMNS"groups" );
+  for(int i=0; i<groups->childCount(); i++)
+    getGroup(i)->writeXMLFile(ele1);
+  ele0->LinkEndChild( ele1 );
+
+  ele1 = new TiXmlElement( MBSIMNS"objects" );
+  for(int i=0; i<objects->childCount(); i++)
+    getObject(i)->writeXMLFile(ele1);
+  ele0->LinkEndChild( ele1 );
+
+  ele1 = new TiXmlElement( MBSIMNS"extraDynamics" );
+  ele0->LinkEndChild( ele1 );
+
+  ele1 = new TiXmlElement( MBSIMNS"links" );
+  for(int i=0; i<links->childCount(); i++)
+    getLink(i)->writeXMLFile(ele1);
+  ele0->LinkEndChild( ele1 );
+
+  Frame *I = getFrame(0);
+  if(I->openMBVFrame()) {
+    ele1 = new TiXmlElement( MBSIMNS"enableOpenMBVFrameI" );
+    addElementText(ele1,MBSIMNS"size",I->getSize());
+    addElementText(ele1,MBSIMNS"offset",I->getOffset());
+    ele0->LinkEndChild(ele1);
+  }
+
+  return ele0;
+}
+
+Element * Group::getByPathSearch(string path) {
+  if (path.substr(0, 1)=="/") { // absolut path
+    if(getParentElement())
+      return getParentElement()->getByPathSearch(path);
+    else
+      return getByPathSearch(path.substr(1));
+  }
+  else if (path.substr(0, 3)=="../") // relative path
+    return getParentElement()->getByPathSearch(path.substr(3));
+  else { // local path
+    size_t pos0=path.find_first_of("[");
+    string container=path.substr(0, pos0);
+    size_t pos1=path.find_first_of("]", pos0);
+    string searched_name=path.substr(pos0+1, pos1-pos0-1);
+    if(path.length()>pos1+1) { // weiter absteigen
+      string rest=path.substr(pos1+2);
+      if (container=="Object")
+        return getObject(searched_name)->getByPathSearch(rest);
+      else if (container=="Link")
+        return getLink(searched_name)->getByPathSearch(rest);
+      //else if (container=="ExtraDynamic")
+      //return getExtraDynamic(searched_name)->getByPathSearch(rest);
+      else if (container=="Group")
+        return getGroup(searched_name)->getByPathSearch(rest);
       else {
-        if (container=="Object")
-          return getObject(searched_name);
-        else if (container=="Link")
-          return getLink(searched_name);
-//        else if (container=="ExtraDynamic")
-//          return getExtraDynamic(searched_name);
-        else if (container=="Group")
-          return getGroup(searched_name);
-        else if (container=="Frame")
-          return getFrame(searched_name);
-//        else if (container=="Contour")
-//          return getContour(searched_name);
-        else {
-          cout << "Unknown name of container" << endl;
-          throw;
-        }
+        cout << "Unknown name of container" << endl;
+        throw;
+      }
+    }
+    else {
+      if (container=="Object")
+        return getObject(searched_name);
+      else if (container=="Link")
+        return getLink(searched_name);
+      //        else if (container=="ExtraDynamic")
+      //          return getExtraDynamic(searched_name);
+      else if (container=="Group")
+        return getGroup(searched_name);
+      else if (container=="Frame")
+        return getFrame(searched_name);
+      //        else if (container=="Contour")
+      //          return getContour(searched_name);
+      else {
+        cout << "Unknown name of container" << endl;
+        throw;
       }
     }
   }
+}
 
 void Group::paste() {
-    MBSimObjectFactory::initialize();
-    //TiXmlDocument doc;
-    //assert(doc.LoadFile(file.toAscii().data())==true);
-    //TiXml_PostLoadFile(&doc);
-    TiXmlElement *e=copiedElement->FirstChildElement();
-    TiXml_setLineNrFromProcessingInstruction(e);
-    map<string,string> dummy;
-    incorporateNamespace(copiedElement->FirstChildElement(), dummy);
-    bool renameObject = false, renameGroup = false;
-    string name = e->Attribute("name");
-    if(getObject(name,false))
-      renameObject = true;
-    if(getGroup(e->Attribute("name"),false))
-      renameGroup = true;
-    Object *o=ObjectFactory::getInstance()->createObject(e, objects, -1);
-    if(o) {
-      if(renameObject) {
-        QString s = e->ValueStr().c_str();
-        s.remove(MBSIMNS);
-        s += QString::number(objects->childCount());
-        QString text = name.c_str();
-        do {
-          QMessageBox msgBox;
-          msgBox.setText(QString("The name ") + text + " does already exist in group.");
-          msgBox.exec();
-          text = QInputDialog::getText(0, tr("Rename"), tr("Name:"), QLineEdit::Normal, s);
+  MBSimObjectFactory::initialize();
+  //TiXmlDocument doc;
+  //assert(doc.LoadFile(file.toAscii().data())==true);
+  //TiXml_PostLoadFile(&doc);
+  TiXmlElement *e=copiedElement->FirstChildElement();
+  TiXml_setLineNrFromProcessingInstruction(e);
+  map<string,string> dummy;
+  incorporateNamespace(copiedElement->FirstChildElement(), dummy);
+  bool renameObject = false, renameGroup = false;
+  string name = e->Attribute("name");
+  if(getObject(name,false))
+    renameObject = true;
+  if(getGroup(e->Attribute("name"),false))
+    renameGroup = true;
+  Object *o=ObjectFactory::getInstance()->createObject(e, objects, -1);
+  if(o) {
+    if(renameObject) {
+      QString s = e->ValueStr().c_str();
+      s.remove(MBSIMNS);
+      s += QString::number(objects->childCount());
+      QString text = name.c_str();
+      do {
+        QMessageBox msgBox;
+        msgBox.setText(QString("The name ") + text + " does already exist in group.");
+        msgBox.exec();
+        text = QInputDialog::getText(0, tr("Rename"), tr("Name:"), QLineEdit::Normal, s);
 
-        } while(getObject(text.toStdString(),false));
-        o->setName(text);
-      }
-      o->initializeUsingXML(e);
-      ((Element*)treeWidget()->topLevelItem(0))->update();
-      return;
+      } while(getObject(text.toStdString(),false));
+      o->setName(text);
     }
-    Group *g=ObjectFactory::getInstance()->createGroup(e, groups, -1);
-    if(g) {
-      if(renameGroup) {
-        QString s = e->ValueStr().c_str();
-        s.remove(MBSIMNS);
-        s += QString::number(groups->childCount());
-        QString text = name.c_str();
-        do {
-          QMessageBox msgBox;
-          msgBox.setText(QString("The name ") + text + " does already exist in group.");
-          msgBox.exec();
-          text = QInputDialog::getText(0, tr("Rename"), tr("Name:"), QLineEdit::Normal, s);
-
-        } while(getGroup(text.toStdString(),false));
-        g->setName(text);
-      }
-      g->initializeUsingXML(e);
-      ((Element*)treeWidget()->topLevelItem(0))->update();
-      return;
-    }
+    o->initializeUsingXML(e);
+    ((Element*)treeWidget()->topLevelItem(0))->update();
+    return;
   }
+  Group *g=ObjectFactory::getInstance()->createGroup(e, groups, -1);
+  if(g) {
+    if(renameGroup) {
+      QString s = e->ValueStr().c_str();
+      s.remove(MBSIMNS);
+      s += QString::number(groups->childCount());
+      QString text = name.c_str();
+      do {
+        QMessageBox msgBox;
+        msgBox.setText(QString("The name ") + text + " does already exist in group.");
+        msgBox.exec();
+        text = QInputDialog::getText(0, tr("Rename"), tr("Name:"), QLineEdit::Normal, s);
+
+      } while(getGroup(text.toStdString(),false));
+      g->setName(text);
+    }
+    g->initializeUsingXML(e);
+    ((Element*)treeWidget()->topLevelItem(0))->update();
+    return;
+  }
+}
 
 void Group::setActionPasteDisabled(bool flag) {
   actionPaste->setDisabled(flag);

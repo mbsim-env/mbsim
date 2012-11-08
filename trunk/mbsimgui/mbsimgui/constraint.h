@@ -45,7 +45,6 @@ class JointConstraint : public Constraint {
     void initialize();
 
   protected:
-    MatEditor *q0;
     GeneralizedForceDirectionEditor *force, *moment;
     XMLEditor* connections;
     RigidBodyOfReferenceEditor* independentBody;

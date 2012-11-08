@@ -211,66 +211,6 @@ TiXmlElement* LinearRegularizedBilateralConstraint::writeXMLFile(TiXmlNode *pare
   return ele0;
 }
 
-DMatWidget::DMatWidget(int rows, int cols, QWidget *parent) : QWidget(parent) {
-  QGridLayout *layout = new QGridLayout;
-  layout->setMargin(0);
-  setLayout(layout);
-  resize(rows,cols);
-}
-
-void DMatWidget::resize(int rows, int cols) {
-  if(box.size())
-  for(unsigned int i=0; i<box.size(); i++) {
-    for(unsigned int j=0; j<box[i].size(); j++) {
-      layout()->removeWidget(box[i][j]);
-      delete box[i][j];
-    }
-  }
-  box.resize(rows);
-  for(int i=0; i<rows; i++) {
-    box[i].resize(cols);
-    for(int j=0; j<cols; j++) {
-      //box[i][j] = new DoubleEdit(this);
-      box[i][j] = new DoubleEdit(this);
-      static_cast<QGridLayout*>(layout())->addWidget(box[i][j], i, j);
-    }
-  }
-}
-
-void DMatWidget::init() {
-  if(box.size())
-  for(unsigned int i=0; i<box.size(); i++)
-    for(unsigned int j=0; j<box[i].size(); j++)
-      if(i==j) box[i][j]->setText("1.");
-}
-
-vector<vector<double> > DMatWidget::getMat() const {
-  vector<vector<double> > A(box.size());
-  for(unsigned int i=0; i<box.size(); i++) {
-    A[i].resize(box[0].size());
-    for(unsigned int j=0; j<box[i].size(); j++) 
-      A[i][j] = box[i][j]->text().toDouble();
-  }
-  return A;
-}
-
-void DMatWidget::setMat(const vector<vector<double> > &A) {
-  if((box.size()==0) || (A.size() != box.size()) || A[0].size() != box[0].size()) {
-    resize(A.size(),A[0].size());
-  }
-  for(unsigned int i=0; i<box.size(); i++) 
-    for(unsigned int j=0; j<box[0].size(); j++) 
-      box[i][j]->setText(QString::number(A[i][j]));
-}
-
-void DMatWidget::setReadOnly(bool flag) {
-  for(unsigned int i=0; i<box.size(); i++) {
-    for(unsigned int j=0; j<box[i].size(); j++) {
-      box[i][j]->setReadOnly(flag);
-    }
-  }
-}
-
 SScalarWidget::SScalarWidget(const std::string &d) {
 
   QVBoxLayout *layout = new QVBoxLayout;
@@ -775,27 +715,6 @@ TiXmlElement* PhysicalStringWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-Mat3VWidget::Mat3VWidget(int cols, int minCols, int maxCols, QWidget *parent) : QWidget(parent) {
-  QVBoxLayout *layout = new QVBoxLayout;
-  layout->setMargin(0);
-  QHBoxLayout *hbox = new QHBoxLayout;
-  hbox->setMargin(0);
-  layout->addLayout(hbox);
-  hbox->addWidget(new QLabel("Columns:"));
-  colsCombo = new QComboBox;
-  for(int j=minCols; j<=maxCols; j++)
-    colsCombo->addItem(QString::number(j));
-
-  hbox->addWidget(colsCombo);
-  hbox->addStretch(2);
-  widget = new DMatWidget(3,cols);
-  QObject::connect(colsCombo, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(resize(const QString&)));
-  layout->addWidget(widget);
-  colsCombo->setCurrentIndex(0);
-
-  setLayout(layout);
-}
-
 PropertyDialog::PropertyDialog(QObject *parentObject_) : parentObject(parentObject_) {
   tabWidget = new QTabWidget;
   setWidget(tabWidget);
@@ -1032,15 +951,6 @@ DoubleEditor::DoubleEditor(PropertyDialog *parent_, const QIcon &icon, const QSt
   QHBoxLayout* layout = new QHBoxLayout;
   groupBox->setLayout(layout);
   layout->addWidget(value);
-}
-
-MatEditor::MatEditor(PropertyDialog *parent_, const QIcon& icon, const QString &name, const QString &tab) : Editor(parent_, icon, name.toStdString()) {
-  A = new DMatWidget(0,0);
-  QGroupBox *groupBox = new QGroupBox(name);  
-  dialog->addToTab(tab, groupBox);
-  QVBoxLayout *layout = new QVBoxLayout;
-  groupBox->setLayout(layout);
-  layout->addWidget(A);
 }
 
 NameEditor::NameEditor(Element* ele, PropertyDialog *parent_, const QIcon& icon, const string &name, bool renaming) : Editor(parent_, icon, name), element(ele) {
@@ -1542,16 +1452,6 @@ TiXmlElement* EnvironmentEditor::writeXMLFile(TiXmlNode *parent) {
   vec->writeXMLFile(ele0);
   parent->LinkEndChild( ele0 );
   return ele0;
-}
-
-Vec3Editor::Vec3Editor(PropertyDialog *parent_, const QIcon& icon, const string &name) : Editor(parent_, icon, name) {
-
-  groupBox = new QGroupBox(name.c_str());  
-  dialog->addToTab("Kinematics", groupBox);
-  QHBoxLayout *layout = new QHBoxLayout;
-  groupBox->setLayout(layout);
-  vec = new DMatWidget(3,1);
-  layout->addWidget(vec);
 }
 
 FramePositionWidget::FramePositionWidget(Frame *frame_) : frame(frame_) {
@@ -2076,8 +1976,11 @@ GeneralizedForceLawEditor::GeneralizedForceLawEditor(PropertyDialog *parent_, co
   layout = new QVBoxLayout;
   groupBox->setLayout(layout);
 
-  mat = new Mat3VWidget(0,0,3);  
-  layout->addWidget(mat);
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new SMatColsVarWidget(3,0,0,3),MBSIMNS"direction",noUnitUnits(),1));
+  widget = new ExtPhysicalVarWidget(input);  
+//  mat = new Mat3VWidget(0,0,3);  
+  layout->addWidget(widget);
 
   comboBox = new QComboBox;
   comboBox->addItem(tr("Bilateral constraint"));
@@ -2106,11 +2009,17 @@ void GeneralizedForceLawEditor::defineForceLaw(int index) {
   }
 }
 
+int GeneralizedForceLawEditor::getSize() const {
+  string str = evalOctaveExpression(widget->getCurrentPhysicalStringWidget()->getValue());
+  vector<vector<string> > A = strToSMat(str);
+  return A.size()?A[0].size():0;
+}
+
 void GeneralizedForceLawEditor::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement  *e=element->FirstChildElement(force?MBSIMNS"force":MBSIMNS"moment");
   if(e) {
+    widget->initializeUsingXML(e);
     TiXmlElement* ee=e->FirstChildElement(MBSIMNS"direction");
-    mat->setMat(Element::getMat(ee,0));
     ee=ee->NextSiblingElement()->FirstChildElement();
 
     if(ee) {
@@ -2129,7 +2038,7 @@ void GeneralizedForceLawEditor::initializeUsingXML(TiXmlElement *element) {
 TiXmlElement* GeneralizedForceLawEditor::writeXMLFile(TiXmlNode *parent) {
   if(getSize()) {
     TiXmlElement *ele0 = new TiXmlElement(force?MBSIMNS"force":MBSIMNS"moment");
-    addElementText(ele0,MBSIMNS"direction",mat->getMat());
+    widget->writeXMLFile(ele0);
     TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"generalizedForceLaw");
     if(generalizedForceLaw)
       generalizedForceLaw->writeXMLFile(ele1);
@@ -2153,10 +2062,10 @@ ForceLawEditor::ForceLawEditor(PropertyDialog *parent_, const QIcon& icon, bool 
   layout->addWidget(new QLabel("Direction vectors:"));
 
   vector<PhysicalStringWidget*> input;
-
-  mat = new PhysicalStringWidget(new SMatColsVarWidget(3,0,0,3),MBSIMNS"directionVectors",noUnitUnits(),1);
+  PhysicalStringWidget *mat = new PhysicalStringWidget(new SMatColsVarWidget(3,0,0,3),MBSIMNS"directionVectors",noUnitUnits(),1);
   input.push_back(mat);
   widget = new ExtPhysicalVarWidget(input);  
+
   connect(widget,SIGNAL(inputDialogChanged(int)),this,SLOT(resize()));
   connect((SMatColsVarWidget*)mat->getWidget(), SIGNAL(currentIndexChanged(int)), this, SLOT(resize(int)));
   layout->addWidget(widget);
@@ -2333,8 +2242,26 @@ GeneralizedForceDirectionEditor::GeneralizedForceDirectionEditor(PropertyDialog 
 
   layout->addWidget(new QLabel("Direction vectors:"));
 
-  mat = new Mat3VWidget(0,0,3);  
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new SMatColsVarWidget(3,0,0,3),force?MBSIMNS"forceDirection":MBSIMNS"momentDirection",noUnitUnits(),1));
+  mat = new ExtPhysicalVarWidget(input);  
   layout->addWidget(mat);
+}
+
+int GeneralizedForceDirectionEditor::getSize() const {
+  string str = evalOctaveExpression(mat->getCurrentPhysicalStringWidget()->getValue());
+  vector<vector<string> > A = strToSMat(str);
+  return A.size()?A[0].size():0;
+}
+
+void GeneralizedForceDirectionEditor::initializeUsingXML(TiXmlElement *element) {
+  mat->initializeUsingXML(element);
+}
+
+TiXmlElement* GeneralizedForceDirectionEditor::writeXMLFile(TiXmlNode *parent) {
+  if(getSize())
+    mat->writeXMLFile(parent);
+  return 0;
 }
 
 ConstantFunction1::ConstantFunction1(ExtPhysicalVarWidget* ret, const QString &ext) : Function1(ext) {
