@@ -1518,13 +1518,14 @@ TiXmlElement* RotationEditor::writeXMLFile(TiXmlNode *parent) {
 }
 
 EnvironmentEditor::EnvironmentEditor(PropertyDialog *parent_, const QIcon& icon, const string &name) : Editor(parent_, icon, name) {
-  vec = new DMatWidget(3,1);
-  vector<vector<double> > g(3);
-  for(int i=0; i<3; i++)
-    g[i].resize(1);
-  g[1][0] = -9.81;
+  vector<PhysicalStringWidget*> input;
+  vector<string> g(3);
+  g[0] = "0";
+  g[1] = "-9.81";
+  g[2] = "0";
+  input.push_back(new PhysicalStringWidget(new SVecWidget(g),MBSIMNS"accelerationOfGravity",accelerationUnits(),0));
+  vec = new ExtPhysicalVarWidget(input);  
   
-  vec->setMat(g);
   groupBox = new QGroupBox(tr("Acceleration of gravity"));  
   dialog->addToTab("Environment", groupBox);
   layout = new QVBoxLayout;
@@ -1533,16 +1534,12 @@ EnvironmentEditor::EnvironmentEditor(PropertyDialog *parent_, const QIcon& icon,
 }
 
 void EnvironmentEditor::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=element->FirstChildElement(MBSIMNS"accelerationOfGravity");
-  setAccelerationOfGravity(Element::getVec(e));
+  vec->initializeUsingXML(element);
 }
 
 TiXmlElement* EnvironmentEditor::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement* ele0 = new TiXmlElement( MBSIMNS"MBSimEnvironment" );
-  TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"accelerationOfGravity" );
-  TiXmlText *text = new TiXmlText( toStr(getAccelerationOfGravity()) );
-  ele1->LinkEndChild(text);
-  ele0->LinkEndChild( ele1 );
+  vec->writeXMLFile(ele0);
   parent->LinkEndChild( ele0 );
   return ele0;
 }
@@ -2288,7 +2285,6 @@ void ForceLawEditor2::defineForceLaw(int index) {
     layout->removeWidget(forceLaw);
     delete forceLaw;
     forceLaw = new LinearSpringDamperForce;  
-    //  connect(mat->getComboBox(), SIGNAL(currentIndexChanged(int)), this, SLOT(resize(int)));
     layout->addWidget(forceLaw);
   } 
 }
@@ -2433,35 +2429,35 @@ TiXmlElement* SinusFunction1::writeXMLFile(TiXmlNode *parent) {
 
 LinearSpringDamperForce::LinearSpringDamperForce() : Function2("") {
   QGridLayout *layout = new QGridLayout;
+
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMNS"stiffnessCoefficient",stiffnessUnits(),1));
+  var.push_back(new ExtPhysicalVarWidget(input));
   layout->addWidget(new QLabel("Stiffness coefficient:"),0,0);
-  c = new DoubleEdit;
-  c->setDecimals(digits);
-  layout->addWidget(c,0,1);
+  layout->addWidget(var[0],0,1);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMNS"dampingCoefficient",dampingUnits(),0));
+  var.push_back(new ExtPhysicalVarWidget(input));
   layout->addWidget(new QLabel("Damping coefficient:"),1,0);
-  d = new DoubleEdit;
-  d->setDecimals(digits);
-  layout->addWidget(d,1,1);
+  layout->addWidget(var[1],1,1);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMNS"unloadedLength",lengthUnits(),4));
+  var.push_back(new ExtPhysicalVarWidget(input));
   layout->addWidget(new QLabel("Unloaded length:"),2,0);
-  l0 = new DoubleEdit;
-  l0->setDecimals(digits);
-  layout->addWidget(l0,2,1);
+  layout->addWidget(var[2],2,1);
   QWidget::setLayout(layout);
 }
 void LinearSpringDamperForce::initializeUsingXML(TiXmlElement *element) {
   Function2::initializeUsingXML(element);
-  TiXmlElement *e;
-  e=element->FirstChildElement(MBSIMNS"stiffnessCoefficient");
-  c->setValue(Element::getDouble(e));
-  e=element->FirstChildElement(MBSIMNS"dampingCoefficient");
-  d->setValue(Element::getDouble(e));
-  e=element->FirstChildElement(MBSIMNS"unloadedLength");
-  l0->setValue(Element::getDouble(e));
+  for(unsigned int i=0; i<var.size(); i++)
+    var[i]->initializeUsingXML(element);
 }
 TiXmlElement* LinearSpringDamperForce::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Function2::writeXMLFile(parent);
-  addElementText(ele0, MBSIMNS"stiffnessCoefficient", c->value());
-  addElementText(ele0, MBSIMNS"dampingCoefficient", d->value());
-  addElementText(ele0, MBSIMNS"unloadedLength", l0->value());
+  for(unsigned int i=0; i<var.size(); i++)
+    var[i]->writeXMLFile(ele0);
   return ele0;
 } 
 

@@ -318,7 +318,7 @@ class LinearSpringDamperForce : public Function2 {
     TiXmlElement* writeXMLFile(TiXmlNode *parent);
     inline QString getType() const { return QString("LinearSpringDamperForce")+ext; }
   protected:
-    DoubleEdit *c, *d, *l0;
+    std::vector<ExtPhysicalVarWidget*> var;
 };
 
 class LinearRegularizedBilateralConstraint: public Function1 {
@@ -969,14 +969,14 @@ class EnvironmentEditor : public Editor {
   public:
     EnvironmentEditor(PropertyDialog *parent_, const QIcon &icon, const std::string &name);
 
-    void setAccelerationOfGravity(const std::vector<std::vector<double> > &g) {vec->setMat(g);}
-    std::vector<std::vector<double> > getAccelerationOfGravity() {return vec->getMat();}
+    //void setAccelerationOfGravity(const std::vector<std::vector<double> > &g) {vec->setMat(g);}
+    //std::vector<std::vector<double> > getAccelerationOfGravity() {return vec->getMat();}
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
   protected:
     QGroupBox *groupBox;
     QVBoxLayout *layout;
-    DMatWidget *vec;
+    ExtPhysicalVarWidget *vec;
 };
 
 class Vec3Editor : public Editor {
