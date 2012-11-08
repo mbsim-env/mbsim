@@ -1517,19 +1517,6 @@ TiXmlElement* RotationEditor::writeXMLFile(TiXmlNode *parent) {
  return 0;
 }
 
-InitialGeneralizedCoordinatsEditor::InitialGeneralizedCoordinatsEditor(PropertyDialog *parent_, const QIcon& icon, const string &name) : Editor(parent_, icon, name) {
-  q0 = new DMatWidget(0,1);
-  u0 = new DMatWidget(0,1);
-  groupBox = new QGroupBox(tr("Initial generalized coordinates"));  
-  dialog->addToTab("Initial conditions", groupBox);
-  QGridLayout *layout = new QGridLayout;
-  groupBox->setLayout(layout);
-  layout->addWidget(new QLabel("Position"),0,0);
-  layout->addWidget(new QLabel("Velocity"),0,1);
-  layout->addWidget(q0,1,0);
-  layout->addWidget(u0,1,1);
-}
-
 EnvironmentEditor::EnvironmentEditor(PropertyDialog *parent_, const QIcon& icon, const string &name) : Editor(parent_, icon, name) {
   vec = new DMatWidget(3,1);
   vector<vector<double> > g(3);
@@ -2173,6 +2160,8 @@ ForceLawEditor::ForceLawEditor(PropertyDialog *parent_, const QIcon& icon, bool 
   mat = new PhysicalStringWidget(new SMatColsVarWidget(3,0,0,3),MBSIMNS"directionVectors",noUnitUnits(),1);
   input.push_back(mat);
   widget = new ExtPhysicalVarWidget(input);  
+  connect(widget,SIGNAL(inputDialogChanged(int)),this,SLOT(resize()));
+  connect((SMatColsVarWidget*)mat->getWidget(), SIGNAL(currentIndexChanged(int)), this, SLOT(resize(int)));
   layout->addWidget(widget);
 
   comboBox = new QComboBox;
@@ -2191,22 +2180,27 @@ void ForceLawEditor::defineForceLaw(int index) {
     vector<PhysicalStringWidget*> input;
     input.push_back(new PhysicalStringWidget(new SVecWidget(cols,true),MBSIMNS"value",QStringList(),0));
     forceLaw = new ConstantFunction1(new ExtPhysicalVarWidget(input),"VS");  
-    connect(forceLaw,SIGNAL(resize()),this,SLOT(resize()));
     layout->addWidget(forceLaw);
   } 
   else if(index==1) {
     layout->removeWidget(forceLaw);
     delete forceLaw;
-    forceLaw = new SinusFunction1(new DMatWidget(1,cols), new DMatWidget(1,cols), new DMatWidget(1,cols), new DMatWidget(1,cols));  
-    connect((SMatColsVarWidget*)mat->getWidget(), SIGNAL(currentIndexChanged(int)), this, SLOT(resize(int)));
+    vector<PhysicalStringWidget*> input1, input2, input3, input4;
+    input1.push_back(new PhysicalStringWidget(new SVecWidget(cols,true),MBSIMNS"amplitude",QStringList(),0));
+    SVecWidget *vec = new SVecWidget(cols,true);
+    input2.push_back(new PhysicalStringWidget(vec,MBSIMNS"frequency",QStringList(),0));
+    input3.push_back(new PhysicalStringWidget(new SVecWidget(cols,true),MBSIMNS"phase",QStringList(),0));
+    input4.push_back(new PhysicalStringWidget(new SVecWidget(cols,true),MBSIMNS"offset",QStringList(),0));
+    forceLaw = new SinusFunction1(new ExtPhysicalVarWidget(input1), new ExtPhysicalVarWidget(input2), new ExtPhysicalVarWidget(input3), new ExtPhysicalVarWidget(input4));  
     layout->addWidget(forceLaw);
   } 
+  connect(forceLaw,SIGNAL(resize()),this,SLOT(resize()));
 }
 void ForceLawEditor::resize() {
   forceLaw->resize(getSize(),1);
 }
 void ForceLawEditor::resize(int i) {
-  forceLaw->resize(1,i);
+  forceLaw->resize(i,1);
 }
 
 int ForceLawEditor::getSize() const {
@@ -2390,53 +2384,50 @@ TiXmlElement* ConstantFunction1::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 } 
 
-SinusFunction1::SinusFunction1(DMatWidget *a, DMatWidget *f, DMatWidget *p, DMatWidget *o) : DifferentiableFunction1() {
+SinusFunction1::SinusFunction1(ExtPhysicalVarWidget* a, ExtPhysicalVarWidget *f, ExtPhysicalVarWidget* p, ExtPhysicalVarWidget* o) : DifferentiableFunction1() {
   QGridLayout *layout = new QGridLayout;
-  amplitude = a;
-  frequency = f;
-  phase = p;
-  offset = o;
+  var.push_back(a);
+  var.push_back(f);
+  var.push_back(p);
+  var.push_back(o);
   layout->addWidget(new QLabel("Amplitude:"),0,0);
-  layout->addWidget(amplitude,0,1);
+  layout->addWidget(var[0],0,1);
   layout->addWidget(new QLabel("Frequency:"),1,0);
-  layout->addWidget(frequency,1,1);
+  layout->addWidget(var[1],1,1);
   layout->addWidget(new QLabel("Phase:"),2,0);
-  layout->addWidget(phase,2,1);
+  layout->addWidget(var[2],2,1);
   layout->addWidget(new QLabel("Offset:"),3,0);
-  layout->addWidget(offset,3,1);
+  layout->addWidget(var[3],3,1);
   QWidget::setLayout(layout);
+  buttonResize = new QPushButton("Resize");
+  layout->addWidget(buttonResize);
+  connect(buttonResize,SIGNAL(clicked(bool)),this,SIGNAL(resize()));
+  //for(unsigned int i=0; i<var.size(); i++)
+    //connect(var[i],SIGNAL(inputDialogChanged(int)),this,SLOT(updateButtons(int)));
+}
+int SinusFunction1::getSize() const {
+  string str = evalOctaveExpression(var[0]->getCurrentPhysicalStringWidget()->getValue());
+  vector<vector<string> > A = strToSMat(str);
+  return A.size()?A[0].size():0;
+}
+void SinusFunction1::updateButtons(int i) {
+  buttonResize->setDisabled(i==1);
 }
 void SinusFunction1::resize(int m, int n) {
-  amplitude->resize(m,n);
-  frequency->resize(m,n);
-  phase->resize(m,n);
-  offset->resize(m,n);
+  for(unsigned int i=0; i<var.size(); i++)
+    if(((SVecWidget*)var[i]->getPhysicalStringWidget(0)->getWidget())->size() != m)
+      ((SVecWidget*)var[i]->getPhysicalStringWidget(0)->getWidget())->resize(m);
 }
 void SinusFunction1::initializeUsingXML(TiXmlElement *element) {
   DifferentiableFunction1::initializeUsingXML(element);
-  TiXmlElement *e=element->FirstChildElement(MBSIMNS"amplitude");
-  amplitude->setMat(transpose(strToDMat(e->GetText())));
-  e=element->FirstChildElement(MBSIMNS"frequency");
-  frequency->setMat(transpose(strToDMat(e->GetText())));
-  e=element->FirstChildElement(MBSIMNS"phase");
-  phase->setMat(transpose(strToDMat(e->GetText())));
-  e=element->FirstChildElement(MBSIMNS"offset");
-  if (e)
-    offset->setMat(transpose(strToDMat(e->GetText())));
-  else {
-    vector<vector<double> > A(amplitude->getMat().size());
-    for(int i=0; i<A.size(); i++)
-      A[i].resize(amplitude->getMat()[0].size());
-    offset->setMat(transpose(A));
-  }
+  for(unsigned int i=0; i<var.size(); i++)
+    var[i]->initializeUsingXML(element);
 }
 
 TiXmlElement* SinusFunction1::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = DifferentiableFunction1::writeXMLFile(parent);
-  addElementText(ele0,MBSIMNS"amplitude",transpose(amplitude->getMat()));
-  addElementText(ele0,MBSIMNS"frequency",transpose(frequency->getMat()));
-  addElementText(ele0,MBSIMNS"phase",transpose(phase->getMat()));
-  addElementText(ele0,MBSIMNS"offset",transpose(offset->getMat()));
+  for(unsigned int i=0; i<var.size(); i++)
+    var[i]->writeXMLFile(ele0);
   return ele0;
 }
 
