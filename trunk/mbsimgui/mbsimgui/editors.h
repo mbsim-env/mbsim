@@ -1244,8 +1244,9 @@ class ForceLawEditor2 : public Editor {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     int getForceLaw() {return comboBox->currentIndex();}
-    void initialize();
+    void initialize() {refFrame->initialize();}
     FrameOfReferenceWidget* getFrameOfReference() {return refFrame;}
+
 
   protected slots:
     void defineForceDir(bool);
@@ -1259,7 +1260,7 @@ class ForceLawEditor2 : public Editor {
     FrameOfReferenceWidget* refFrame;
     Element *element;
     Function2 *forceLaw;
-    DMatWidget *mat;
+    ExtPhysicalVarWidget *mat;
     QString saved_frameOfReference;
 };
 

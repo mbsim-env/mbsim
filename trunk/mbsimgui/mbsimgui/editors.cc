@@ -2257,9 +2257,11 @@ ForceLawEditor2::ForceLawEditor2(Element *element_, PropertyDialog *parent_, con
   QHBoxLayout *hlayout = new QHBoxLayout;
   forceDirWidget->setLayout(hlayout);
 
-  mat = new DMatWidget(3,1);  
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new SVecWidget(3),MBSIMNS"direction",noUnitUnits(),1));
+  mat = new ExtPhysicalVarWidget(input);
   hlayout->addWidget(mat);
-  refFrame = new FrameOfReferenceWidget("frameOfReference",element,0);
+  refFrame = new FrameOfReferenceWidget(MBSIMNS"frameOfReference",element,0);
   hlayout->addWidget(refFrame);
 
   connect(forceDirButton, SIGNAL(toggled(bool)), forceDirWidget, SLOT(setVisible(bool)));
@@ -2304,10 +2306,8 @@ void ForceLawEditor2::initializeUsingXML(TiXmlElement *element) {
   e=element->FirstChildElement(MBSIMNS"projectionDirection");
   if(e) {
     forceDirButton->setChecked(true);
-    TiXmlElement *ee=e->FirstChildElement(MBSIMNS"frameOfReference");
-    saved_frameOfReference=ee->Attribute("ref");
-    ee=e->FirstChildElement(MBSIMNS"direction");
-    mat->setMat(Element::getVec(ee,3));
+    refFrame->initializeUsingXML(e);
+    mat->initializeUsingXML(e);
   }
 }
 
@@ -2317,21 +2317,12 @@ TiXmlElement* ForceLawEditor2::writeXMLFile(TiXmlNode *parent) {
   parent->LinkEndChild(ele0);
   if(forceDirButton->isChecked()) {
     TiXmlElement *ele0 = new TiXmlElement(MBSIMNS"projectionDirection");
-    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"frameOfReference" );
-    if(refFrame->getFrame())
-      ele1->SetAttribute("ref", refFrame->getFrame()->getXMLPath(element,true).toStdString()); // relative path
-    ele0->LinkEndChild(ele1);
-
-    addElementText(ele0,MBSIMNS"direction",mat->getMat());
+    refFrame->writeXMLFile(ele0);
+    mat->writeXMLFile(ele0);
     parent->LinkEndChild(ele0);
   }
 
   return 0;
-}
-
-void ForceLawEditor2::initialize() {
-  if(saved_frameOfReference!="")
-    refFrame->setFrame(element->getByPath<Frame>(saved_frameOfReference));
 }
 
 GeneralizedForceDirectionEditor::GeneralizedForceDirectionEditor(PropertyDialog *parent_, const QIcon& icon, bool force_) : Editor(parent_, icon, "gfd"), force(force_) {
