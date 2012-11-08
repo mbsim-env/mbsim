@@ -269,12 +269,14 @@ class ConstantFunction1 : public Function1 {
 };
 
 class SinusFunction1 : public DifferentiableFunction1 {
+  Q_OBJECT
   public:
-    SinusFunction1(DMatWidget *amplitude, DMatWidget *frequency, DMatWidget *phase, DMatWidget *offset);
+    SinusFunction1(ExtPhysicalVarWidget *amplitude, ExtPhysicalVarWidget *frequency, ExtPhysicalVarWidget *phase, ExtPhysicalVarWidget *offset);
     void initializeUsingXML(TiXmlElement *element);
     TiXmlElement* writeXMLFile(TiXmlNode *parent);
     inline QString getType() const { return QString("SinusFunction1_VS"); }
     void resize(int m, int n);
+    int getSize() const;
 
  //   class ZerothDerivative : public Function1 {
  //      public:
@@ -301,8 +303,12 @@ class SinusFunction1 : public DifferentiableFunction1 {
  //   };
   protected:
     int ySize;
-    DMatWidget *amplitude, *frequency, *phase, *offset;
-  private:
+    std::vector<ExtPhysicalVarWidget*> var;
+    QPushButton *buttonResize;
+  protected slots:
+    void updateButtons(int i);
+  signals:
+    void resize();
 };
 
 class LinearSpringDamperForce : public Function2 {
@@ -394,8 +400,6 @@ class OctaveExpressionWidget : public StringWidget {
 
 
 class SScalarWidget : public StringWidget {
-  Q_OBJECT
-
   private:
     QLineEdit* box;
   public:
@@ -406,12 +410,9 @@ class SScalarWidget : public StringWidget {
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual StringWidget* cloneStringWidget() {return new SScalarWidget;}
-  //signals:
-    //void valueChanged(const QString& d);
 };
 
 class SVecWidget : public StringWidget {
-
   private:
     std::vector<QLineEdit*> box;
     bool transpose;
@@ -961,27 +962,6 @@ class RotationEditor : public Editor {
   signals:
     void rotationChanged();
 };
-
-class InitialGeneralizedCoordinatsEditor : public Editor {
-  Q_OBJECT
-
-  public:
-    InitialGeneralizedCoordinatsEditor(PropertyDialog *parent_, const QIcon &icon, const std::string &name);
-
-  void setq0Size(int size) { q0->resize(size,1); }
-  void setu0Size(int size) { u0->resize(size,1); }
-  int getq0Size() const { return q0->rows(); }
-  int getu0Size() const { return u0->rows(); }
-  std::vector<std::vector<double> > getq0() const {return q0->getMat();}
-  std::vector<std::vector<double> > getu0() const {return u0->getMat();}
-  void setq0(const std::vector<std::vector<double> > &x) {q0->setMat(x);}
-  void setu0(const std::vector<std::vector<double> > &x) {u0->setMat(x);}
-
-  protected:
-    QGroupBox *groupBox;
-    DMatWidget *q0, *u0;
-};
-
 
 class EnvironmentEditor : public Editor {
   Q_OBJECT
