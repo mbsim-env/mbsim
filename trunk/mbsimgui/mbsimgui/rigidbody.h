@@ -39,6 +39,8 @@ class RigidBody : public Body {
     void setConstrained(bool b) {constrained = b;}
     int getSize() const {return constrained ? 0 : getUnconstrainedSize();}
     int getUnconstrainedSize() const {return translation->getSize() + rotation->getSize();}
+    void resizeGeneralizedPosition();
+    void resizeGeneralizedVelocity();
 
   public slots:
     void addFrame();
@@ -48,9 +50,6 @@ class RigidBody : public Body {
     XMLEditor *frameOfReference, *frameForKinematics, *mass, *inertia, *framePos;
     OMBVEditor *ombvEditor;
     bool constrained;
-
-    void resizeGeneralizedPosition();
-    void resizeGeneralizedVelocity();
   signals:
     void sizeChanged();
 };

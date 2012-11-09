@@ -68,9 +68,11 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
   translation=new TranslationEditor(properties, Utils::QIconCached("lines.svg"), "Translation");
   connect(translation,SIGNAL(translationChanged()),this,SLOT(resizeGeneralizedPosition()));
   connect(translation,SIGNAL(translationChanged()),this,SLOT(resizeGeneralizedVelocity()));
+  connect(translation,SIGNAL(translationChanged()),this,SIGNAL(sizeChanged()));
   rotation=new RotationEditor(properties, Utils::QIconCached("lines.svg"), "Rotation");
   connect(rotation,SIGNAL(rotationChanged()),this,SLOT(resizeGeneralizedPosition()));
   connect(rotation,SIGNAL(rotationChanged()),this,SLOT(resizeGeneralizedVelocity()));
+  connect(rotation,SIGNAL(rotationChanged()),this,SIGNAL(sizeChanged()));
  
   ombvEditor=new OMBVEditor(this, properties, Utils::QIconCached("lines.svg"), "OpenMBV");
 
