@@ -22,7 +22,6 @@
 #include "solver.h"
 #include "integrator.h"
 #include "parameter.h"
-#include <H5Cpp.h>
 
 //Element *ObjectFactory(MBSim::Element *obj, QTreeWidgetItem* parentItem, int ind);
 

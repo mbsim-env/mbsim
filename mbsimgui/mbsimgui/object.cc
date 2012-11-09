@@ -29,9 +29,7 @@ Object::Object(const QString &str, QTreeWidgetItem *parentItem, int ind) : Eleme
   initialGeneralizedPosition=new GeneralizedCoordinatesEditor(properties, Utils::QIconCached("lines.svg"), "Initial generalized position", "Initial conditions", MBSIMNS"initialGeneralizedPosition");
   initialGeneralizedVelocity=new GeneralizedCoordinatesEditor(properties, Utils::QIconCached("lines.svg"), "Initial generalized velocity", "Initial conditions", MBSIMNS"initialGeneralizedVelocity");
   connect(initialGeneralizedPosition,SIGNAL(resizeGeneralizedCoordinates()),this,SLOT(resizeGeneralizedPosition()));
-  connect(initialGeneralizedPosition,SIGNAL(disableGeneralizedCoordinates()),this,SLOT(disableGeneralizedPosition()));
   connect(initialGeneralizedVelocity,SIGNAL(resizeGeneralizedCoordinates()),this,SLOT(resizeGeneralizedVelocity()));
-  connect(initialGeneralizedVelocity,SIGNAL(disableGeneralizedCoordinates()),this,SLOT(disableGeneralizedVelocity()));
 
   actionSaveAs=new QAction(Utils::QIconCached("newobject.svg"),"Save as", this);
   connect(actionSaveAs,SIGNAL(triggered()),this,SLOT(saveAs()));
