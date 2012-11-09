@@ -37,9 +37,9 @@ JointConstraint::JointConstraint(const QString &str, QTreeWidgetItem *parentItem
   properties->addTab("Kinetics");
   independentBody=new RigidBodyOfReferenceEditor(this, properties, Utils::QIconCached("lines.svg"), "Independent body", "General");
   dependentBodiesFirstSide=new DependenciesEditor(this, properties, Utils::QIconCached("lines.svg"), "Dependendent bodies first side", "General");
-  //connect(dependentBodiesFirstSide,SIGNAL(bodyChanged()),this,SLOT(updateGeneralizedCoordinates()));
+  connect(dependentBodiesFirstSide,SIGNAL(bodyChanged()),this,SLOT(resizeGeneralizedPosition()));
   dependentBodiesSecondSide=new DependenciesEditor(this, properties, Utils::QIconCached("lines.svg"), "Dependendent bodies second side", "General");
-  //connect(dependentBodiesSecondSide,SIGNAL(bodyChanged()),this,SLOT(updateGeneralizedCoordinates()));
+  connect(dependentBodiesSecondSide,SIGNAL(bodyChanged()),this,SLOT(resizeGeneralizedPosition()));
   connections = new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Connections", "Kinetics", new ConnectWidget(2,this));
   force=new GeneralizedForceDirectionEditor(properties, Utils::QIconCached("lines.svg"), true);
   moment=new GeneralizedForceDirectionEditor(properties, Utils::QIconCached("lines.svg"), false);

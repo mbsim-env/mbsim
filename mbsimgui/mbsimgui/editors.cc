@@ -2362,12 +2362,14 @@ void DependenciesEditor::updateGeneralizedCoordinatesOfBodies() {
   for(unsigned int i=0; i<refBody.size(); i++) {
     if(selectedBody[i]) {
       selectedBody[i]->setConstrained(false);
-      //selectedBody[i]->updateGeneralizedCoordinates();
+      selectedBody[i]->resizeGeneralizedPosition();
+      selectedBody[i]->resizeGeneralizedVelocity();
     }
     selectedBody[i] = refBody[i]->getBody();
     if(selectedBody[i]) {
       selectedBody[i]->setConstrained(true);
-      //selectedBody[i]->updateGeneralizedCoordinates();
+      selectedBody[i]->resizeGeneralizedPosition();
+      selectedBody[i]->resizeGeneralizedVelocity();
       connect(selectedBody[i],SIGNAL(sizeChanged()),this,SIGNAL(bodyChanged()));
     }
   }
@@ -2396,7 +2398,8 @@ void DependenciesEditor::addDependency() {
 void DependenciesEditor::removeDependency() {
   if(refBody.size()) {
     selectedBody[selectedBody.size()-1]->setConstrained(false);
-    //selectedBody[selectedBody.size()-1]->updateGeneralizedCoordinates();
+    selectedBody[selectedBody.size()-1]->resizeGeneralizedPosition();
+    selectedBody[selectedBody.size()-1]->resizeGeneralizedVelocity();
     selectedBody.pop_back();
 
     layout->removeWidget(refBody[refBody.size()-1]);
