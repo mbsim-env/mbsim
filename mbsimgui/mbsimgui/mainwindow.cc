@@ -328,8 +328,8 @@ MainWindow::MainWindow() {
   newDOPRI5Integrator();
   QTreeWidgetItem* parentItem = new QTreeWidgetItem;
   Integrator *previewIntegrator = new DOPRI5Integrator("DOPRI5",parentItem, 1);
-  previewIntegrator->setEndTime(1e-10);
-  previewIntegrator->writeXMLFile(".preview");
+//  previewIntegrator->setEndTime(1e-10);
+//  previewIntegrator->writeXMLFile(".preview");
 
 }
 

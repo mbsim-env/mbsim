@@ -394,6 +394,12 @@ inline QStringList noUnitUnits() {
   return units;
 }
 
+inline QStringList timeUnits() {
+  QStringList units;
+  units << "mus" << "ms" << "s" << "sec" << "min" << "h" << "d";
+  return units;
+}
+
 inline QStringList lengthUnits() {
   QStringList units;
   units << "mum" << "mm" << "cm" << "dm" << "m" << "km";

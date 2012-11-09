@@ -371,12 +371,8 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   }
 
   e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameI");
-  if(e) {
-    Frame *I = getFrame(0);
-    I->setOpenMBVFrame(true);
-    I->setSize(getDouble(e->FirstChildElement(MBSIMNS"size")));
-    I->setOffset(getDouble(e->FirstChildElement(MBSIMNS"offset")));
-  }
+  if(e)
+    getFrame(0)->initializeUsingXML2(e);
 
 }
 
@@ -419,8 +415,7 @@ TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
   Frame *I = getFrame(0);
   if(I->openMBVFrame()) {
     ele1 = new TiXmlElement( MBSIMNS"enableOpenMBVFrameI" );
-    addElementText(ele1,MBSIMNS"size",I->getSize());
-    addElementText(ele1,MBSIMNS"offset",I->getOffset());
+    I->writeXMLFile2(ele1);
     ele0->LinkEndChild(ele1);
   }
 
@@ -539,36 +534,3 @@ void Group::setActionPasteDisabled(bool flag) {
   for(int i=0; i<groups->childCount(); i++)
     getGroup(i)->setActionPasteDisabled(flag);
 }
-
-//void Group::update() {
-//  Element::update();
-//  for(int i=0; i<groups->childCount(); i++)
-//    getGroup(i)->update();
-//  for(int i=0; i<frames->childCount(); i++)
-//    getFrame(i)->update();
-//  ///for(int i=0; i<contours->childCount(); i++)
-//    ///getContour(i)->update();
-//  for(int i=0; i<objects->childCount(); i++)
-//    getObject(i)->update();
-//  for(int i=0; i<links->childCount(); i++)
-//    getLink(i)->update();
-////  for(int i=0; i<extraDynamics->childCount(); i++)
-////    getExtraDynamic(i)->update();
-//}
-
-//Frame* Group::getFrame(int i) {
-//  return (Frame*)frames->child(i); 
-//}
-//
-//Object* Group::getObject(int i) {
-//  return (Object*)objects->child(i); 
-//}
-//
-//Link* Group::getLink(int i) {
-//  return (Link*)links->child(i); 
-//}
-//
-//Group* Group::getGroup(int i) {
-//  return (Group*)groups->child(i); 
-//}
-//

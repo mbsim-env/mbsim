@@ -52,24 +52,22 @@ void Frame::resetAnimRange(int numOfRows, double dt) {
 
 void Frame::initializeUsingXML(TiXmlElement *element) {
   Element::initializeUsingXML(element);
-
-  TiXmlElement *ee;
-  if((ee=element->FirstChildElement(MBSIMNS"enableOpenMBV"))) {
-    visu->setOpenMBVFrame(true);
-    visu->setSize(getDouble(ee->FirstChildElement(MBSIMNS"size")));
-    visu->setOffset(getDouble(ee->FirstChildElement(MBSIMNS"offset")));
-  }
+  visu->initializeUsingXML(element);
 }
 
 TiXmlElement* Frame::writeXMLFile(TiXmlNode *parent) {
 
   TiXmlElement *ele0 = Element::writeXMLFile(parent);
-  if(visu->openMBVFrame()) {
-    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"enableOpenMBV" );
-    addElementText(ele1,MBSIMNS"size",visu->getSize());
-    addElementText(ele1,MBSIMNS"offset",visu->getOffset());
-    ele0->LinkEndChild(ele1);
-  }
+  visu->writeXMLFile(ele0);
   return ele0;
 }
 
+void Frame::initializeUsingXML2(TiXmlElement *element) {
+  visu->initializeUsingXML2(element);
+}
+
+TiXmlElement* Frame::writeXMLFile2(TiXmlNode *parent) {
+
+  visu->writeXMLFile2(parent);
+  return 0;
+}

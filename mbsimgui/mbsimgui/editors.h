@@ -41,7 +41,6 @@ class QTreeWidget;
 class QTreeWidgetItem;
 class QPushButton;
 class QPlainTextEdit;
-//class DMatWidget;
 class Element;
 class RigidBody;
 class Frame;
@@ -92,7 +91,6 @@ class IntEdit : public QLineEdit {
     double value() const {return text().toInt();}
 
   public slots:
-    //void setValue(double d) { setText(QString::number(d,'g',std::numeric_limits<double>::digits10)+suffix); }
     void setValue(int i) { setText(QString::number(i)); }
     void sendSignal(const QString& str) { emit valueChanged(str.toDouble()); }
     void sendSignal2(const QString& str) { emit valueChanged2(str.toDouble()); }
@@ -103,72 +101,6 @@ class IntEdit : public QLineEdit {
   private:
     QIntValidator *validator;
 };
-
-class MyDoubleEdit : public QLineEdit {
-  Q_OBJECT
-
-  public:
-    MyDoubleEdit(QWidget * parent = 0) : QLineEdit(parent) {
-      validator = new QDoubleValidator();
-      setValidator(validator);
-      validator->setDecimals(std::numeric_limits<double>::digits10);
-      setValue(0);
-      QObject::connect(this, SIGNAL(textChanged(const QString&)), this, SLOT(sendSignal(const QString&)));
-      QObject::connect(this, SIGNAL(textEdited(const QString&)), this, SLOT(sendSignal2(const QString&)));
-    }
-    //double value() const {QString buf = text(); buf.chop(suffix.size()); return buf.toDouble();}
-    double value() const {return text().toDouble();}
-    void setDecimals(int decimals) {validator->setDecimals(decimals);}
-    void setRange(int min, int max) {};
-    void setSingleStep(int step) {};
-    void setSuffix(const QString &suffix_) {} //{suffix = suffix_;}
-
-  public slots:
-    //void setValue(double d) { setText(QString::number(d,'g',std::numeric_limits<double>::digits10)+suffix); }
-    void setValue(double d) { setText(QString::number(d,'g',validator->decimals())); }
-    void sendSignal(const QString& str) { emit valueChanged(str.toDouble()); }
-    void sendSignal2(const QString& str) { emit valueChanged2(str.toDouble()); }
-
-  signals:
-    void valueChanged(double);
-    void valueChanged2(double);
-  private:
-    QDoubleValidator *validator;
-    //QString suffix;
-};
-
-class MyDoubleSpinBox : public QDoubleSpinBox {
-  public:
-    MyDoubleSpinBox(QWidget * parent = 0) : QDoubleSpinBox(parent) { 
-        //cachedSizeHint = QDoubleSpinBox::sizeHint();
-        QDoubleSpinBox::setDecimals(std::numeric_limits<double>::max_exponent);
-    }
-    QString textFromValue(double value) const {
-     //   return QString::number(value, 'g', std::numeric_limits<double>::digits10);
-//return locale().toString(value, 'f', std::numeric_limits<double>::digits10);
-//      QDoubleSpinBox::textFromValue(value);
-//    //Q_D(const QDoubleSpinBox);
-//      std::cout << QString::number(value).toStdString() << std::endl;
-//      std::cout << locale().toString(value, 'f', 5).toStdString() << std::endl;
-//    QString str = QString::number(value);
-//    if (qAbs(value) >= 1000.0) {
-//        str.remove(locale().groupSeparator());
-//    }
-//    return str;
-     return QString::number(value);
-    }
- //   double valueFromText ( const QString & text ) const {
- //     return text.toDouble();
- //   }
-     
-//    QSize sizeHint() const {
-//        return cachedSizeHint;
-//    }
-};
-
-//typedef QDoubleSpinBox DoubleEdit;
-typedef MyDoubleEdit DoubleEdit;
-//typedef MyDoubleSpinBox DoubleEdit;
 
 class Function1 : public QWidget {
   Q_OBJECT
@@ -245,7 +177,6 @@ class ConstantFunction1 : public Function1 {
   Q_OBJECT
   public:
     ConstantFunction1(ExtPhysicalVarWidget* ret, const QString &ext);
-    //virtual ExtPhysicalVarWidget* getMatWidget() { return c; }
     void initializeUsingXML(TiXmlElement *element);
     TiXmlElement* writeXMLFile(TiXmlNode *parent);
     inline QString getType() const { return QString("ConstantFunction1_")+ext; }
@@ -322,7 +253,7 @@ class LinearRegularizedBilateralConstraint: public Function1 {
     virtual QString getType() const { return "LinearRegularizedBilateralConstraint"; }
 
   private:
-    DoubleEdit *c, *d;
+    std::vector<ExtPhysicalVarWidget*> var;
 };
 
 // TODO Prüfen ob überflüssig
@@ -618,33 +549,6 @@ class BoolEditor : public Editor {
     QCheckBox *value;
 };
 
-class IntEditor : public Editor {
-
-  public:
-    IntEditor(PropertyDialog *parent_, const QIcon &icon, const QString &name, const QString &tab="General", int val=1.);
-
-    void setValue(int i) {value->setValue(i);}
-    int getValue() const {return value->value();}
-
-  protected:
-    IntEdit *value;
-};
-
-class DoubleEditor : public Editor {
-  Q_OBJECT
-
-  public:
-    DoubleEditor(PropertyDialog *parent_, const QIcon &icon, const QString &name, const QString &tab="General", double val=1., double singleStep=1., const QString &suffix="");
-
-    void setValue(double d) {value->setValue(d);}
-    double getValue() const {return value->value();}
-
-  protected:
-    DoubleEdit *value;
-  signals:
-    void valueChanged(double d);
-};
-
 class NameEditor : public Editor {
   Q_OBJECT
 
@@ -716,8 +620,6 @@ class EvalDialog : public QDialog {
   Q_OBJECT
   public:
     EvalDialog(StringWidget *var);
-    //void setMat(const std::vector<std::vector<double> > &A) {mat->setMat(A);}
-    //std::vector<std::vector<double> > getMat() const {return mat->getMat();}
     void setValue(const std::string &str) {var->setValue(str);}
     std::string getValue() const {return var->getValue();}
     void setButtonDisabled(bool flag) {button->setDisabled(flag);}
@@ -727,12 +629,6 @@ class EvalDialog : public QDialog {
   signals:
     void clicked(bool);
 };
-
-//class XMLWidget : public QWidget {
-//  public:
-//    virtual void initializeUsingXML(TiXmlElement *element) = 0;
-//    virtual TiXmlElement* writeXMLFile(TiXmlNode *element) = 0;
-//};
 
 class ExtPhysicalVarWidget : public XMLWidget {
   Q_OBJECT
@@ -850,8 +746,6 @@ class RotationAboutFixedAxis : public RotationWidget {
     RotationAboutFixedAxis(QWidget *parent = 0);
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    //std::vector<std::vector<double> > getAxisOfRotation() {return vec->getMat();}
-    //void setAxisOfRotation(const std::vector<std::vector<double> > &x) {vec->setMat(x);}
     virtual int getSize() const {return 1;}
    protected:
     ExtPhysicalVarWidget *vec;
@@ -905,8 +799,6 @@ class EnvironmentEditor : public Editor {
   public:
     EnvironmentEditor(PropertyDialog *parent_, const QIcon &icon, const std::string &name);
 
-    //void setAccelerationOfGravity(const std::vector<std::vector<double> > &g) {vec->setMat(g);}
-    //std::vector<std::vector<double> > getAccelerationOfGravity() {return vec->getMat();}
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
   protected:
@@ -951,12 +843,9 @@ class OMBVBodyWidget : public QWidget {
 
   public:
     OMBVBodyWidget(RigidBody *body, QWidget *parent = 0);
-    //virtual void update() {ref->update();}
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element); 
     virtual QString getType() const { return "OMBVBody"; }
-    //Frame* getFrame() const {return ref->getFrame();}
-    //void setFrame(Frame *frame) {ref->setFrame(frame);}
   protected:
     RigidBody *body;
     QGridLayout *layout;
@@ -1027,18 +916,18 @@ class FrameVisuEditor : public Editor {
   public:
     FrameVisuEditor(Frame* frame, PropertyDialog *parent_, const QIcon &icon, const std::string &name);
 
+    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual void initializeUsingXML2(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile2(TiXmlNode *element);
     bool openMBVFrame() const {return visu->checkState()==Qt::Checked;}
-    double getSize() const {return size->value();}
-    double getOffset() const {return offset->value();}
     void setOpenMBVFrame(bool b) {visu->setCheckState(b?Qt::Checked:Qt::Unchecked);}
-    void setSize(double d) {size->setValue(d);}
-    void setOffset(double d) {offset->setValue(d);}
 
   protected:
     QGroupBox *groupBox;
     QCheckBox *visu;
     Frame* frame;
-    DoubleEdit *size, *offset;
+    std::vector<ExtPhysicalVarWidget*> var;
 };
 
 class ConnectWidget : public XMLWidget {
@@ -1117,7 +1006,6 @@ class GeneralizedForceLawEditor : public Editor {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     int getForceLaw() {return comboBox->currentIndex();}
     int getSize() const; 
-    //int getSize() const { return mat->cols(); }
 
   protected slots:
     void defineForceLaw(int);
@@ -1140,7 +1028,6 @@ class ForceLawEditor : public Editor {
 
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    //int getForceLaw() {return comboBox->currentIndex();}
     int getSize() const; 
 
   protected slots:
@@ -1193,9 +1080,6 @@ class GeneralizedForceDirectionEditor : public Editor {
 
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    //std::vector<std::vector<double> > getForceDir() {return mat->getMat();}
-    //void setForceDir(const std::vector<std::vector<double> > &dir) {mat->setMat(dir);}
-    //int getSize() const { return mat->cols(); }
     int getSize() const;
 
   protected:
@@ -1274,43 +1158,6 @@ class DependenciesEditor : public Editor {
       void bodyChanged();
 };
 
-class DoubleParameterWidget : public QWidget {
-
-  public:
-    DoubleParameterWidget(QWidget *parent = 0);
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-  protected:
-    QLineEdit *name;
-    DoubleEdit *value;
-};
-
-class DoubleParameterEditor : public Editor {
-
-  public:
-    DoubleParameterEditor(PropertyDialog *parent_, const QIcon &icon, const QString &name, const QString &tab="Parameters");
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-  protected:
-    DoubleParameterWidget *parameter;
-};
-
-class ParameterEditor : public Editor {
-  Q_OBJECT
-
-  public:
-    ParameterEditor(PropertyDialog *parent_, const QIcon &icon, const QString &name, const QString &tab="Parameters");
-
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    void writeXMLFile(const QString &name);
-  protected:
-    QGridLayout *layout;
-    std::vector<DoubleParameterWidget*> parameter;
-  protected slots:
-    void addParameter();
-};
-
 class ParameterNameEditor : public Editor {
   Q_OBJECT
 
@@ -1350,9 +1197,6 @@ class ParameterValueEditor : public Editor {
   public:
     ParameterValueEditor(PhysicalStringWidget *var, PropertyDialog *parent_, const QIcon &icon, const QString &name, const QString &tab);
 
-//    virtual void initializeUsingXML(TiXmlElement *element);
-//    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-   //StringWidget* getStringWidget() {return var;}
    ExtPhysicalVarWidget* getExtPhysicalWidget() {return widget;}
    virtual std::string getValue() const { return widget->getValue(); }
 
