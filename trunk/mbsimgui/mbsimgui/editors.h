@@ -1056,21 +1056,28 @@ class GeneralizedForceDirectionEditor : public Editor {
     bool force;
 };
 
-class RigidBodyOfReferenceWidget : public QWidget {
+class RigidBodyOfReferenceWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    RigidBodyOfReferenceWidget(Element* element);
+    RigidBodyOfReferenceWidget(const std::string &xmlName, Element* element, RigidBody* selectedBody);
 
+    void initialize();
     void update();
     RigidBody* getBody() {return selectedBody;}
     void setBody(RigidBody* body_);
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void setSavedBodyOfReference(const QString &str) {saved_bodyOfReference = str;}
+    const QString& getSavedBodyOfReference() const {return saved_bodyOfReference;}
 
   protected:
     QLineEdit* body;
     Element* element;
     RigidBodyBrowser* bodyBrowser;
     RigidBody* selectedBody;
+    std::string xmlName;
+    QString saved_bodyOfReference;
 
   public slots:
     void setBody();
@@ -1079,40 +1086,27 @@ class RigidBodyOfReferenceWidget : public QWidget {
     void bodyChanged();
 };
 
-class RigidBodyOfReferenceEditor : public Editor {
-
-  public:
-    RigidBodyOfReferenceEditor(Element* element, PropertyDialog *parent_, const QIcon &icon, const QString &name, const QString &tab);
-
-    void update() {refBody->update();}
-    RigidBody* getBody() {return refBody->getBody();}
-    void setBody(RigidBody* body) {refBody->setBody(body);}
-
-  protected:
-    RigidBodyOfReferenceWidget *refBody;
-};
-
-
-class DependenciesEditor : public Editor {
+class DependenciesWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    DependenciesEditor(Element* element, PropertyDialog *parent_, const QIcon &icon, const QString &name, const QString &tab);
+    DependenciesWidget(const std::string &xmlName, Element* element);
 
-    void update() {
-      for(unsigned int i=0; i<refBody.size(); i++)
-        refBody[i]->update();
-    }
+    void update(); 
+    void initialize();
     RigidBody* getBody(int i) {return refBody[i]->getBody();}
     void setBody(int i, RigidBody* body) {refBody[i]->setBody(body);}
     void setBody(int i) {refBody[i]->setBody();}
     void addBody(int i, RigidBody* body_);
     int getSize() const {return refBody.size();}
     void setBodies(std::vector<RigidBody*> rigidBodies);
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
 
   protected:
     QGridLayout *layout;
     Element* element;
+    std::string xmlName;
     std::vector<RigidBody*> selectedBody;
     std::vector<RigidBodyOfReferenceWidget*> refBody;
     std::vector<QPushButton*> button;

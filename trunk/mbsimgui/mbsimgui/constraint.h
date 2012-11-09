@@ -42,13 +42,10 @@ class JointConstraint : public Constraint {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
 
     virtual QString getType() const { return "JointConstraint"; }
-    void initialize();
 
   protected:
     GeneralizedForceDirectionEditor *force, *moment;
-    XMLEditor* connections;
-    RigidBodyOfReferenceEditor* independentBody;
-    DependenciesEditor *dependentBodiesFirstSide, *dependentBodiesSecondSide;
+    XMLEditor* connections, *independentBody, *dependentBodiesFirstSide, *dependentBodiesSecondSide;
     QString saved_ref1, saved_ref2;
     std::vector<QString> saved_RigidBodyFirstSide, saved_RigidBodySecondSide;
     QString saved_IndependentBody;

@@ -35,11 +35,13 @@ JointConstraint::JointConstraint(const QString &str, QTreeWidgetItem *parentItem
   setText(1,getType());
 
   properties->addTab("Kinetics");
-  independentBody=new RigidBodyOfReferenceEditor(this, properties, Utils::QIconCached("lines.svg"), "Independent body", "General");
-  dependentBodiesFirstSide=new DependenciesEditor(this, properties, Utils::QIconCached("lines.svg"), "Dependendent bodies first side", "General");
-  connect(dependentBodiesFirstSide,SIGNAL(bodyChanged()),this,SLOT(resizeGeneralizedPosition()));
-  dependentBodiesSecondSide=new DependenciesEditor(this, properties, Utils::QIconCached("lines.svg"), "Dependendent bodies second side", "General");
-  connect(dependentBodiesSecondSide,SIGNAL(bodyChanged()),this,SLOT(resizeGeneralizedPosition()));
+  independentBody=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Independent body", "General", new RigidBodyOfReferenceWidget(MBSIMNS"independentRigidBody",this,0));
+  DependenciesWidget *widget = new DependenciesWidget(MBSIMNS"dependentRigidBodiesFirstSide",this);
+  dependentBodiesFirstSide=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Dependendent bodies first side", "General", widget);
+  connect(widget,SIGNAL(bodyChanged()),this,SLOT(resizeGeneralizedPosition()));
+  widget = new DependenciesWidget(MBSIMNS"dependentRigidBodiesSecondSide",this);
+  dependentBodiesSecondSide=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Dependendent bodies second side", "General", widget);
+  connect(widget,SIGNAL(bodyChanged()),this,SLOT(resizeGeneralizedPosition()));
   connections = new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Connections", "Kinetics", new ConnectWidget(2,this));
   force=new GeneralizedForceDirectionEditor(properties, Utils::QIconCached("lines.svg"), true);
   moment=new GeneralizedForceDirectionEditor(properties, Utils::QIconCached("lines.svg"), false);
@@ -52,12 +54,12 @@ JointConstraint::~JointConstraint() {
 
 void JointConstraint::resizeGeneralizedPosition() {
   int size = 0;
-  for(int i=0; i<dependentBodiesFirstSide->getSize(); i++)
-    if(dependentBodiesFirstSide->getBody(i))
-    size += dependentBodiesFirstSide->getBody(i)->getUnconstrainedSize();
-  for(int i=0; i<dependentBodiesSecondSide->getSize(); i++)
-    if(dependentBodiesSecondSide->getBody(i))
-      size += dependentBodiesSecondSide->getBody(i)->getUnconstrainedSize();
+  for(int i=0; i<((DependenciesWidget*)dependentBodiesFirstSide->getXMLWidget())->getSize(); i++)
+    if(((DependenciesWidget*)dependentBodiesFirstSide->getXMLWidget())->getBody(i))
+    size += ((DependenciesWidget*)dependentBodiesFirstSide->getXMLWidget())->getBody(i)->getUnconstrainedSize();
+  for(int i=0; i<((DependenciesWidget*)dependentBodiesSecondSide->getXMLWidget())->getSize(); i++)
+    if(((DependenciesWidget*)dependentBodiesSecondSide->getXMLWidget())->getBody(i))
+      size += ((DependenciesWidget*)dependentBodiesSecondSide->getXMLWidget())->getBody(i)->getUnconstrainedSize();
   if(((SVecWidget*)initialGeneralizedPosition->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getWidget())->size() != size)
     ((SVecWidget*)initialGeneralizedPosition->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getWidget())->resize(size);
 }
@@ -65,52 +67,22 @@ void JointConstraint::resizeGeneralizedPosition() {
 void JointConstraint::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e, *ee;
   Constraint::initializeUsingXML(element);
-  e=element->FirstChildElement(MBSIMNS"dependentRigidBodiesFirstSide");
-  ee=e->FirstChildElement();
-  while(ee) {
-    e=element->FirstChildElement(MBSIMNS"frameOfReference");
-    saved_RigidBodyFirstSide.push_back(ee->Attribute("ref"));
-    ee=ee->NextSiblingElement();
-  }
-  e=element->FirstChildElement(MBSIMNS"dependentRigidBodiesSecondSide");
-  ee=e->FirstChildElement();
-  while(ee) {
-    saved_RigidBodySecondSide.push_back(ee->Attribute("ref"));
-    ee=ee->NextSiblingElement();
-  }
-  e=element->FirstChildElement(MBSIMNS"independentRigidBody");
-  saved_IndependentBody=e->Attribute("ref");
+  dependentBodiesFirstSide->initializeUsingXML(element);
+  dependentBodiesSecondSide->initializeUsingXML(element);
+  independentBody->initializeUsingXML(element);
+
   force->initializeUsingXML(element);
   moment->initializeUsingXML(element);
-
   connections->initializeUsingXML(element);
 }
 
 TiXmlElement* JointConstraint::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Constraint::writeXMLFile(parent);
-  TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"dependentRigidBodiesFirstSide" );
-  for(int i=0; i<dependentBodiesFirstSide->getSize(); i++) {
-    if(dependentBodiesFirstSide->getBody(i)) {
-      TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"dependentRigidBody" );
-      ele2->SetAttribute("ref", dependentBodiesFirstSide->getBody(i)->getXMLPath(this,true).toStdString()); // relative path
-      ele1->LinkEndChild(ele2);
-    }
-  }
-  ele0->LinkEndChild(ele1);
-  ele1 = new TiXmlElement( MBSIMNS"dependentRigidBodiesSecondSide" );
-  for(int i=0; i<dependentBodiesSecondSide->getSize(); i++) {
-    if(dependentBodiesSecondSide->getBody(i)) {
-      TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"dependentRigidBody" );
-      ele2->SetAttribute("ref", dependentBodiesSecondSide->getBody(i)->getXMLPath(this,true).toStdString()); // relative path
-      ele1->LinkEndChild(ele2);
-    }
-  }
-  ele0->LinkEndChild(ele1);
 
-  ele1 = new TiXmlElement( MBSIMNS"independentRigidBody" );
-  if(independentBody->getBody())
-    ele1->SetAttribute("ref", independentBody->getBody()->getXMLPath(this,true).toStdString()); // relative path
-  ele0->LinkEndChild(ele1);
+  dependentBodiesFirstSide->writeXMLFile(ele0);
+  dependentBodiesSecondSide->writeXMLFile(ele0);
+
+  independentBody->writeXMLFile(ele0);
 
   force->writeXMLFile(ele0);
   moment->writeXMLFile(ele0);
@@ -118,23 +90,4 @@ TiXmlElement* JointConstraint::writeXMLFile(TiXmlNode *parent) {
   connections->writeXMLFile(ele0);
 
   return ele0;
-}
-
-void JointConstraint::initialize() {
-  Object::initialize();
-  vector<RigidBody*> rigidBodies;
-  if (saved_RigidBodyFirstSide.size()>0) {
-    for (unsigned int i=0; i<saved_RigidBodyFirstSide.size(); i++)
-      rigidBodies.push_back(getByPath<RigidBody>(saved_RigidBodyFirstSide[i]));
-    dependentBodiesFirstSide->setBodies(rigidBodies);
-  }
-  rigidBodies.clear();
-  if (saved_RigidBodySecondSide.size()>0) {
-    for (unsigned int i=0; i<saved_RigidBodySecondSide.size(); i++)
-      rigidBodies.push_back(getByPath<RigidBody>(saved_RigidBodySecondSide[i]));
-    dependentBodiesSecondSide->setBodies(rigidBodies);
-  }
-  rigidBodies.clear();
-  if (saved_IndependentBody!="")
-    independentBody->setBody(getByPath<RigidBody>(saved_IndependentBody));
 }
