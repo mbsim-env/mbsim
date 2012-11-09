@@ -47,6 +47,7 @@ namespace MBSim {
     Body::addFrame(C);
 #ifdef HAVE_OPENMBVCPPINTERFACE
     openMBVFrame=C;
+    FWeight = 0;
     FArrow = 0;
     MArrow = 0;
 #endif
@@ -319,6 +320,14 @@ namespace MBSim {
             plotColumns.push_back("uRel("+numtostr(i)+")");
         }
         Body::init(stage);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+        if(getPlotFeature(openMBV)==enabled) {
+          if(getPlotFeature(openMBV)==enabled && FWeight) {
+            FWeight->setName("Weight");
+            openMBVGrp->addObject(FWeight);
+          }
+        }
+#endif
       }
     }
     else
@@ -355,6 +364,20 @@ namespace MBSim {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
+        if(FWeight) {
+          vector<double> data;
+          data.push_back(t);
+          Vec3 WrOS=frame[0]->getPosition();
+          Vec3 WG = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
+          data.push_back(WrOS(0));
+          data.push_back(WrOS(1));
+          data.push_back(WrOS(2));
+          data.push_back(WG(0));
+          data.push_back(WG(1));
+          data.push_back(WG(2));
+          data.push_back(1.0);
+          FWeight->append(data);
+        }
         if(openMBVBody) {
           vector<double> data;
           data.push_back(t);
