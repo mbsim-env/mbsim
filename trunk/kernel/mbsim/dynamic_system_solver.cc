@@ -1396,7 +1396,6 @@ namespace MBSim {
     incorporateNamespace(doc.FirstChildElement(), dummy);
     DynamicSystemSolver *dss=dynamic_cast<DynamicSystemSolver*>(ObjectFactory::getInstance()->createGroup(e));
     dss->initializeUsingXML(doc.FirstChildElement());
-    dss->init(resolveXMLPath);
     return dss;
  }
 
