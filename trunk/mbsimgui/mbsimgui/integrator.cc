@@ -37,9 +37,20 @@ Integrator::Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind)
   properties=new PropertyDialog(this);
   properties->addTab("General");
 
-  startTime = new DoubleEditor(properties,  Utils::QIconCached("lines.svg"), "Start time", "General", 0, 1, " s");
-  endTime = new DoubleEditor(properties,  Utils::QIconCached("lines.svg"), "End time", "General", 1, 1, " s");
-  plotStepSize = new DoubleEditor(properties,  Utils::QIconCached("lines.svg"), "Plot step size", "General", 1e-2, 1e-4, " s");
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMINTNS"startTime",timeUnits(),2));
+  ExtPhysicalVarWidget *d = new ExtPhysicalVarWidget(input);
+  startTime=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Start time", "General", d);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("1"),MBSIMINTNS"endTime",timeUnits(),2));
+  d = new ExtPhysicalVarWidget(input);
+  endTime=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "End time", "General", d);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("1e-2"),MBSIMINTNS"plotStepSize",timeUnits(),2));
+  d = new ExtPhysicalVarWidget(input);
+  plotStepSize=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Plot step size", "General", d);
 
   contextMenu=new QMenu("Context Menu");
 }
@@ -61,27 +72,19 @@ void Integrator::saveAs() {
   }
 }
   void Integrator::initializeUsingXML(TiXmlElement *element) {
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMINTNS"startTime");
-    startTime->setValue(Element::getDouble(e));
-    e=element->FirstChildElement(MBSIMINTNS"endTime");
-    endTime->setValue(Element::getDouble(e));
-    e=element->FirstChildElement(MBSIMINTNS"plotStepSize");
-    plotStepSize->setValue(Element::getDouble(e));
-//    e=element->FirstChildElement(MBSIMINTNS"initialState");
-//    if(e) setInitialState(Element::getVec(e));
+    startTime->initializeUsingXML(element);
+    endTime->initializeUsingXML(element);
+    plotStepSize->initializeUsingXML(element);
   }
 
   TiXmlElement* Integrator::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0=new TiXmlElement(getType().toStdString());
+    TiXmlElement *ele0=new TiXmlElement(MBSIMINTNS+getType().toStdString());
     parent->LinkEndChild(ele0);
     ele0->SetAttribute("xmlns", "http://mbsim.berlios.de/MBSimIntegrator");
 
-    addElementText(ele0,"startTime",startTime->getValue());
-    addElementText(ele0,"endTime",endTime->getValue());
-    addElementText(ele0,"plotStepSize",plotStepSize->getValue());
-//    if(getInitialState().size())
-//      addElementText(ele0,"initialState",mat2str(getInitialState()));
+    startTime->writeXMLFile(ele0);
+    endTime->writeXMLFile(ele0);
+    plotStepSize->writeXMLFile(ele0);
 
     return ele0;
   }
@@ -105,56 +108,59 @@ void Integrator::writeXMLFile(const QString &name) {
   TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
   doc.LinkEndChild( decl );
   writeXMLFile(&doc);
-  //map<string, string> nsprefix;
-  //unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
+  map<string, string> nsprefix=ObjectFactory::getInstance()->getNamespacePrefixMapping();
+  unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
   doc.SaveFile((name+".mbsimint.xml").toAscii().data());
 }
 
 DOPRI5Integrator::DOPRI5Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind) : Integrator(str,parentItem,ind) {
   properties->addTab("Tolerances");
   properties->addTab("Step size");
-  absTol = new DoubleEditor(properties,  Utils::QIconCached("lines.svg"), "Absolute tolerance", "Tolerances", 1e-6, 1e-6, "");
-  relTol = new DoubleEditor(properties,  Utils::QIconCached("lines.svg"), "Relative tolerance", "Tolerances", 1e-6, 1e-6, "");
-  initialStepSize = new DoubleEditor(properties,  Utils::QIconCached("lines.svg"), "Initial step size", "Step size", 0, 1e-6, " s");
-  maximalStepSize = new DoubleEditor(properties,  Utils::QIconCached("lines.svg"), "Maximal step size", "Step size", 0, 1e-6, " s");
-  maxSteps = new IntEditor(properties,  Utils::QIconCached("lines.svg"), "Number of maximal steps", "Step size", 2000);
+
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("1e-6"),MBSIMINTNS"absoluteToleranceScalar",QStringList(),1));
+  ExtPhysicalVarWidget *d = new ExtPhysicalVarWidget(input);
+  absTol=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Absolute tolerance", "Tolerances", d);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("1e-6"),MBSIMINTNS"relativeToleranceScalar",QStringList(),1));
+  d = new ExtPhysicalVarWidget(input);
+  relTol=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Relative tolerance", "Tolerances", d);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMINTNS"initialStepSize",QStringList(),2));
+  d = new ExtPhysicalVarWidget(input);
+  initialStepSize=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Initial step size", "Step size", d);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMINTNS"maximalStepSize",QStringList(),2));
+  d = new ExtPhysicalVarWidget(input);
+  maximalStepSize=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Maximal step size", "Step size", d);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMINTNS"maximalNumberOfSteps",QStringList(),1));
+  d = new ExtPhysicalVarWidget(input);
+  maxSteps=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Number of maximal steps", "Step size", d);
+
   properties->addStretch();
 }
 
 void DOPRI5Integrator::initializeUsingXML(TiXmlElement *element) {
   Integrator::initializeUsingXML(element);
-  TiXmlElement *e;
-//  e=element->FirstChildElement(MBSIMINTNS"absoluteTolerance");
-//  if(e) setAbsoluteTolerance(Element::getVec(e));
-  e=element->FirstChildElement(MBSIMINTNS"absoluteToleranceScalar");
-  if(e) absTol->setValue(Element::getDouble(e));
-//  e=element->FirstChildElement(MBSIMINTNS"relativeTolerance");
-//  if(e) setRelativeTolerance(Element::getVec(e));
-  e=element->FirstChildElement(MBSIMINTNS"relativeToleranceScalar");
-  if(e) relTol->setValue(Element::getDouble(e));
-  e=element->FirstChildElement(MBSIMINTNS"initialStepSize");
-  initialStepSize->setValue(Element::getDouble(e));
-  e=element->FirstChildElement(MBSIMINTNS"maximalStepSize");
-  maximalStepSize->setValue(Element::getDouble(e));
-  e=element->FirstChildElement(MBSIMINTNS"maximalNumberOfSteps");
-  if (e)
-    maxSteps->setValue(Element::getInt(e));
+  absTol->initializeUsingXML(element);
+  relTol->initializeUsingXML(element);
+  initialStepSize->initializeUsingXML(element);
+  maximalStepSize->initializeUsingXML(element);
+  maxSteps->initializeUsingXML(element);
 }
 
 TiXmlElement* DOPRI5Integrator::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Integrator::writeXMLFile(parent);
-//  if(getAbsoluteTolerance().size() > 1) 
-//    addElementText(ele0,"absoluteTolerance",mat2str(getAbsoluteTolerance()));
-//  else
-    addElementText(ele0,"absoluteToleranceScalar",absTol->getValue());
-//  if(getRelativeTolerance().size() > 1) 
-//    addElementText(ele0,"relativeTolerance",mat2str(getRelativeTolerance()));
-//  else
-//    addElementText(ele0,"relativeToleranceScalar",getRelativeTolerance()(0));
-    addElementText(ele0,"relativeToleranceScalar",relTol->getValue());
-    addElementText(ele0,"initialStepSize",initialStepSize->getValue());
-    addElementText(ele0,"maximalStepSize",maximalStepSize->getValue());
-    addElementText(ele0,"maximalNumberOfSteps",maxSteps->getValue());
+  absTol->writeXMLFile(ele0);
+  relTol->writeXMLFile(ele0);
+  initialStepSize->writeXMLFile(ele0);
+  maximalStepSize->writeXMLFile(ele0);
+  maxSteps->writeXMLFile(ele0);
   return ele0;
 }
 
@@ -162,55 +168,63 @@ LSODEIntegrator::LSODEIntegrator(const QString &str, QTreeWidgetItem *parentItem
   properties->addTab("Tolerances");
   properties->addTab("Step size");
   properties->addTab("Extra");
-  absTol = new DoubleEditor(properties,  Utils::QIconCached("lines.svg"), "Absolute tolerance", "Tolerances", 1e-6, 1e-6, "");
-  relTol = new DoubleEditor(properties,  Utils::QIconCached("lines.svg"), "Relative tolerance", "Tolerances", 1e-6, 1e-6, "");
-  initialStepSize = new DoubleEditor(properties,  Utils::QIconCached("lines.svg"), "Initial step size", "Step size", 0, 1e-6, " s");
-  maximalStepSize = new DoubleEditor(properties,  Utils::QIconCached("lines.svg"), "Maximal step size", "Step size", 0, 1e-6, " s");
-  minimalStepSize = new DoubleEditor(properties,  Utils::QIconCached("lines.svg"), "Minimal step size", "Step size", 0, 1e-6, " s");
-  maxSteps = new IntEditor(properties,  Utils::QIconCached("lines.svg"), "Number of maximal steps", "Step size", 2000);
+
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("1e-6"),MBSIMINTNS"absoluteToleranceScalar",QStringList(),1));
+  ExtPhysicalVarWidget *d = new ExtPhysicalVarWidget(input);
+  absTol=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Absolute tolerance", "Tolerances", d);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("1e-6"),MBSIMINTNS"relativeToleranceScalar",QStringList(),1));
+  d = new ExtPhysicalVarWidget(input);
+  relTol=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Relative tolerance", "Tolerances", d);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMINTNS"initialStepSize",QStringList(),2));
+  d = new ExtPhysicalVarWidget(input);
+  initialStepSize=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Initial step size", "Step size", d);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMINTNS"maximalStepSize",QStringList(),2));
+  d = new ExtPhysicalVarWidget(input);
+  maximalStepSize=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Maximal step size", "Step size", d);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMINTNS"minimalStepSize",QStringList(),2));
+  d = new ExtPhysicalVarWidget(input);
+  minimalStepSize=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Maximal step size", "Step size", d);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMINTNS"numberOfMaximalSteps",QStringList(),1));
+  d = new ExtPhysicalVarWidget(input);
+  maxSteps=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Number of maximal steps", "Step size", d);
+
   stiff = new BoolEditor(properties,  Utils::QIconCached("lines.svg"), "Stiff modus", "Extra", false);
  properties->addStretch();
 }
 
 void LSODEIntegrator::initializeUsingXML(TiXmlElement *element) {
   Integrator::initializeUsingXML(element);
+  absTol->initializeUsingXML(element);
+  relTol->initializeUsingXML(element);
+  initialStepSize->initializeUsingXML(element);
+  maximalStepSize->initializeUsingXML(element);
+  minimalStepSize->initializeUsingXML(element);
+  maxSteps->initializeUsingXML(element);
   TiXmlElement *e;
-//  e=element->FirstChildElement(MBSIMINTNS"absoluteTolerance");
-//  if(e) setAbsoluteTolerance(Element::getVec(e));
-  e=element->FirstChildElement(MBSIMINTNS"absoluteToleranceScalar");
-  if(e) absTol->setValue(Element::getDouble(e));
-//  e=element->FirstChildElement(MBSIMINTNS"relativeTolerance");
-//  if(e) setRelativeTolerance(Element::getVec(e));
-  e=element->FirstChildElement(MBSIMINTNS"relativeToleranceScalar");
-  if(e) relTol->setValue(Element::getDouble(e));
-  e=element->FirstChildElement(MBSIMINTNS"initialStepSize");
-  initialStepSize->setValue(Element::getDouble(e));
-  e=element->FirstChildElement(MBSIMINTNS"maximalStepSize");
-  maximalStepSize->setValue(Element::getDouble(e));
-  e=element->FirstChildElement(MBSIMINTNS"minimalStepSize");
-  minimalStepSize->setValue(Element::getDouble(e));
-  e=element->FirstChildElement(MBSIMINTNS"numberOfMaximalSteps");
-  maxSteps->setValue(Element::getInt(e));
   e=element->FirstChildElement(MBSIMINTNS"stiffModus");
   stiff->setValue(Element::getBool(e));
 }
 
 TiXmlElement* LSODEIntegrator::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Integrator::writeXMLFile(parent);
-//  if(getAbsoluteTolerance().size() > 1) 
-//    addElementText(ele0,"absoluteTolerance",mat2str(getAbsoluteTolerance()));
-//  else
-    addElementText(ele0,"absoluteToleranceScalar",absTol->getValue());
-//  if(getRelativeTolerance().size() > 1) 
-//    addElementText(ele0,"relativeTolerance",mat2str(getRelativeTolerance()));
-//  else
-//    addElementText(ele0,"relativeToleranceScalar",getRelativeTolerance()(0));
-    addElementText(ele0,"relativeToleranceScalar",relTol->getValue());
-    addElementText(ele0,"initialStepSize",initialStepSize->getValue());
-    addElementText(ele0,"maximalStepSize",maximalStepSize->getValue());
-    addElementText(ele0,"minimalStepSize",minimalStepSize->getValue());
-    addElementText(ele0,"numberOfMaximalSteps",maxSteps->getValue());
-    addElementText(ele0,"stiffModus",stiff->getValue());
+  absTol->writeXMLFile(ele0);
+  relTol->writeXMLFile(ele0);
+  initialStepSize->writeXMLFile(ele0);
+  maximalStepSize->writeXMLFile(ele0);
+  minimalStepSize->writeXMLFile(ele0);
+  maxSteps->writeXMLFile(ele0);
+  addElementText(ele0,"stiffModus",stiff->getValue());
   return ele0;
 }
 

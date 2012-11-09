@@ -174,7 +174,7 @@ void Solver::writeXMLFile(const QString &name) {
   TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
   doc.LinkEndChild( decl );
   writeXMLFile(&doc);
-  map<string, string> nsprefix;
+  map<string, string> nsprefix=ObjectFactory::getInstance()->getNamespacePrefixMapping();
   unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
   doc.SaveFile((name+".mbsim.xml").toAscii().data());
 }

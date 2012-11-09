@@ -182,32 +182,31 @@ TiXmlElement* OctaveExpressionWidget::writeXMLFile(TiXmlNode *parent) {
 
 LinearRegularizedBilateralConstraint::LinearRegularizedBilateralConstraint() : Function1() {
   QGridLayout *layout = new QGridLayout;
-  c = new DoubleEdit;
-  c->setDecimals(digits);
-  c->setValue(100);
-  d = new DoubleEdit;
-  d->setDecimals(digits);
-  d->setValue(1);
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMNS"stiffnessCoefficient",stiffnessUnits(),1));
+  var.push_back(new ExtPhysicalVarWidget(input));
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMNS"dampingCoefficient",dampingUnits(),0));
+  var.push_back(new ExtPhysicalVarWidget(input));
+
   layout->addWidget(new QLabel("Stiffness:"),0,0);
-  layout->addWidget(c,0,1);
+  layout->addWidget(var[0],0,1);
   layout->addWidget(new QLabel("Damping:"),1,0);
-  layout->addWidget(d,1,1);
+  layout->addWidget(var[1],1,1);
   setLayout(layout);
 }
 
 void LinearRegularizedBilateralConstraint::initializeUsingXML(TiXmlElement *element) {
   Function1::initializeUsingXML(element);
-  TiXmlElement *e;
-  e=element->FirstChildElement(MBSIMNS"stiffnessCoefficient");
-  c->setValue(Element::getDouble(e));
-  e=element->FirstChildElement(MBSIMNS"dampingCoefficient");
-  d->setValue(Element::getDouble(e));
+  for(unsigned int i=0; i<var.size(); i++)
+    var[i]->initializeUsingXML(element);
 }
 
 TiXmlElement* LinearRegularizedBilateralConstraint::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Function1::writeXMLFile(parent);
-  addElementText(ele0, MBSIMNS"stiffnessCoefficient", c->value());
-  addElementText(ele0, MBSIMNS"dampingCoefficient", d->value());
+  for(unsigned int i=0; i<var.size(); i++)
+    var[i]->writeXMLFile(ele0);
   return ele0;
 }
 
@@ -776,14 +775,11 @@ void PropertyDialog::addEditor(Editor *child) {
 }
 
 RigidBodyBrowser::RigidBodyBrowser(QTreeWidget* tree_, RigidBody* rigidBody, QWidget *parentObject_) : QDialog(parentObject_), selection(rigidBody), savedItem(0), tree(tree_) {
-  // main layout
   QGridLayout* mainLayout=new QGridLayout;
   setLayout(mainLayout);
   rigidBodyList = new QTreeWidget;
   rigidBodyList->setColumnCount(1);
   mainLayout->addWidget(rigidBodyList,0,0);
-  //mbs2RigidBodyTree(root,rigidBodyList->invisibleRootItem());
-  //rigidBodyList->setCurrentItem(savedItem);
   QObject::connect(rigidBodyList, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(checkForRigidBody(QTreeWidgetItem*,int)));
 
   okButton = new QPushButton("Ok");
@@ -808,7 +804,6 @@ void RigidBodyBrowser::update(RigidBody *sel) {
 }
 
 void RigidBodyBrowser::mbs2RigidBodyTree(Element* ele, QTreeWidgetItem* parentItem) {
-  //QTreeWidgetItem *item = new QTreeWidgetItem;
   if(dynamic_cast<Group*>(ele) || dynamic_cast<RigidBody*>(ele) || dynamic_cast<RigidBody*>(ele)) {
 
     QElementItem *item = new QElementItem(ele);
@@ -831,9 +826,6 @@ void RigidBodyBrowser::mbs2RigidBodyTree(Element* ele, QTreeWidgetItem* parentIt
       for(int i=0; i<ele->getContainerObject()->childCount(); i++) {
         mbs2RigidBodyTree((Element*)ele->getContainerObject()->child(i),item);
       }
-    //for(int i=0; i<ele->childCount(); i++) {
-    //  mbs2RigidBodyTree((Element*)ele->child(i),item);
-    //}
   }
 }
 
@@ -846,14 +838,11 @@ void RigidBodyBrowser::checkForRigidBody(QTreeWidgetItem* item_,int) {
 }
 
 FrameBrowser::FrameBrowser(QTreeWidget* tree_, Frame* frame, QWidget *parentObject_) : QDialog(parentObject_), selection(frame), savedItem(0), tree(tree_) {
-  // main layout
   QGridLayout* mainLayout=new QGridLayout;
   setLayout(mainLayout);
   frameList = new QTreeWidget;
   frameList->setColumnCount(1);
   mainLayout->addWidget(frameList,0,0);
-  //mbs2FrameTree(root,frameList->invisibleRootItem());
-  //frameList->setCurrentItem(savedItem);
   QObject::connect(frameList, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(checkForFrame(QTreeWidgetItem*,int)));
 
   okButton = new QPushButton("Ok");
@@ -900,9 +889,6 @@ void FrameBrowser::mbs2FrameTree(Element* ele, QTreeWidgetItem* parentItem) {
       for(int i=0; i<ele->getContainerObject()->childCount(); i++) {
         mbs2FrameTree((Element*)ele->getContainerObject()->child(i),item);
       }
-    //for(int i=0; i<ele->childCount(); i++) {
-      //mbs2FrameTree((Element*)ele->child(i),item);
-    //}
   }
 }
 
@@ -921,31 +907,6 @@ Editor::Editor(PropertyDialog *parent_, const QIcon &icon, const std::string &na
 BoolEditor::BoolEditor(PropertyDialog *parent_, const QIcon &icon, const QString &name, const QString &tab, bool val) : Editor(parent_, icon, name.toStdString()) {
   value = new QCheckBox;
   setValue(val);
-  QGroupBox* groupBox = new QGroupBox(name);  
-  dialog->addToTab(tab, groupBox);
-  QHBoxLayout* layout = new QHBoxLayout;
-  groupBox->setLayout(layout);
-  layout->addWidget(value);
-}
-
-IntEditor::IntEditor(PropertyDialog *parent_, const QIcon &icon, const QString &name, const QString &tab, int val) : Editor(parent_, icon, name.toStdString()) {
-  value = new IntEdit;
-  value->setValue(val);
-  QGroupBox* groupBox = new QGroupBox(name);  
-  dialog->addToTab(tab, groupBox);
-  QHBoxLayout* layout = new QHBoxLayout;
-  groupBox->setLayout(layout);
-  layout->addWidget(value);
-}
-
-DoubleEditor::DoubleEditor(PropertyDialog *parent_, const QIcon &icon, const QString &name, const QString &tab, double val, double singleStep, const QString &suffix) : Editor(parent_, icon, name.toStdString()) {
-  value = new DoubleEdit;
-  value->setDecimals(digits);
-  value->setSingleStep(singleStep);
-  value->setRange(-1000,1000);
-  value->setSuffix(suffix);
-  value->setValue(val);
-  connect(value,SIGNAL(valueChanged(double)),this,SIGNAL(valueChanged(double)));
   QGroupBox* groupBox = new QGroupBox(name);  
   dialog->addToTab(tab, groupBox);
   QHBoxLayout* layout = new QHBoxLayout;
@@ -1029,7 +990,7 @@ void LocalFrameOfReferenceWidget::initializeUsingXML(TiXmlElement *parent) {
   if(e) {
     string refF="";
     refF=e->Attribute("ref");
-    refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
+    refF=refF.substr(6, refF.length()-7);
     setFrame(refF==""?element->getFrame(0):element->getFrame(refF));
   }
 }
@@ -1089,14 +1050,13 @@ void FrameOfReferenceWidget::initializeUsingXML(TiXmlElement *parent) {
 TiXmlElement* FrameOfReferenceWidget::writeXMLFile(TiXmlNode *parent) {
   if(getFrame()) {
     TiXmlElement *ele = new TiXmlElement(xmlName);
-    ele->SetAttribute("ref", getFrame()->getXMLPath(element,true).toStdString()); // relative path
+    ele->SetAttribute("ref", getFrame()->getXMLPath(element,true).toStdString());
     parent->LinkEndChild(ele);
   }
   return 0;
 }
 
 EvalDialog::EvalDialog(StringWidget *var_) : var(var_) {
-  //mat = new DMatWidget(3,3);
   var->setReadOnly(true);
   QVBoxLayout *layout = new QVBoxLayout;
   setLayout(layout);
@@ -1107,13 +1067,11 @@ EvalDialog::EvalDialog(StringWidget *var_) : var(var_) {
 }
 
 ExtPhysicalVarWidget::ExtPhysicalVarWidget(std::vector<PhysicalStringWidget*> inputWidget_) : inputWidget(inputWidget_), evalInput(0) {
-  //QGridLayout *layout = new QGridLayout;
   QHBoxLayout *layout = new QHBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
   inputWidget.push_back(new PhysicalStringWidget(new OctaveExpressionWidget, inputWidget[0]->getXmlName(), inputWidget[0]->getUnitList(), inputWidget[0]->getDefaultUnit()));
-  //inputWidget[inputWidget.size()-1]->setValue(inputWidget[0]->getValue());
 
   QPushButton *evalButton = new QPushButton("Eval");
   connect(evalButton,SIGNAL(clicked(bool)),this,SLOT(openEvalDialog()));
@@ -1299,15 +1257,12 @@ RotationAboutFixedAxis::RotationAboutFixedAxis(QWidget *parent) : RotationWidget
 
 TiXmlElement* RotationAboutFixedAxis::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"RotationAboutFixedAxis" );
-  //TiXmlElement *ele3 = new TiXmlElement( MBSIMNS"axisOfRotation" );
   vec->writeXMLFile(ele2);
-  //ele2->LinkEndChild(ele3);
   parent->LinkEndChild(ele2);
   return ele2;
 }
 
 void RotationAboutFixedAxis::initializeUsingXML(TiXmlElement *element) {
-  //TiXmlElement *e=element->FirstChildElement(MBSIMNS"axisOfRotation");
   vec->initializeUsingXML(element);
 }
 
@@ -1482,23 +1437,9 @@ FramePositionWidget::FramePositionWidget(Frame *frame_) : frame(frame_) {
 void FramePositionWidget::initializeUsingXML(TiXmlElement *element) {
   Element *ele = frame->getParentElement();
   TiXmlElement *ec=element->FirstChildElement();
- // Frame *f=new Frame(ec->Attribute("name"), ele->getContainerFrame(), -1);
- // frame->initializeUsingXML(ec->FirstChildElement());
-  //ec=ec->NextSiblingElement();
-  //string refF="";
-  //if(ec->ValueStr()==MBSIMNS"frameOfReference") {
-  //  refF=ec->Attribute("ref");
-  //  refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
-  //  ec=ec->NextSiblingElement();
-  //}
-  //refFrame->setFrame(refF==""?ele->getFrame(0):ele->getFrame(refF));
   refFrame->initializeUsingXML(element);
   position->initializeUsingXML(element);
-//  TiXmlText* text = dynamic_cast<TiXmlText*>(ec->FirstChild());
-//  position->setMat(strToDMat(text->Value()));
   orientation->initializeUsingXML(element);
-//  text = dynamic_cast<TiXmlText*>(ec->FirstChild());
-//  orientation->setMat(strToDMat(text->Value()));
 }
 
 TiXmlElement* FramePositionWidget::writeXMLFile(TiXmlNode *parent) {
@@ -1506,12 +1447,6 @@ TiXmlElement* FramePositionWidget::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele;
   TiXmlText *text;
   frame->writeXMLFile(parent);
-  //if(refFrame->getFrame() != element->getFrame(0)) {
-  //  ele = new TiXmlElement( MBSIMNS"frameOfReference" );
-  //  QString str = QString("Frame[") + refFrame->getFrame()->getName() + "]";
-  //  ele->SetAttribute("ref", str.toStdString());
-  //  parent->LinkEndChild(ele);
-  //}
   if(refFrame->getFrame() != element->getFrame(0))
     refFrame->writeXMLFile(parent);
   position->writeXMLFile(parent);
@@ -1543,7 +1478,6 @@ void FramePositionsWidget::update() {
     layout->removeWidget(widget[i]);
   }
   frameList->clear();
-  //  ((FramePositionWidget*)layout->widget())->update();
   for(int i=1; i<element->getContainerFrame()->childCount(); i++) {
     int k=-1;
     for(int j=0; j<widget.size(); j++) {
@@ -1559,7 +1493,6 @@ void FramePositionsWidget::update() {
     else
       layout->addWidget(new FramePositionWidget(element->getFrame(i)));
     frameList->addItem(element->getFrame(i)->getName());
-    //}
 }
 for(int i=0; i<widget.size(); i++) {
   if(widget[i])
@@ -1659,9 +1592,7 @@ void CuboidWidget::initializeUsingXML(TiXmlElement *element) {
 
 TiXmlElement* CuboidWidget::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *e=OMBVBodyWidget::writeXMLFile(parent);
-  //TiXmlElement *e1 = new TiXmlElement(OPENMBVNS"length");
   length->writeXMLFile(e);
-  //e->LinkEndChild(e1);
   return e;
 }
 
@@ -1677,15 +1608,12 @@ SphereWidget::SphereWidget(RigidBody *body, QWidget *parent) : OMBVBodyWidget(bo
 
 void SphereWidget::initializeUsingXML(TiXmlElement *element) {
   OMBVBodyWidget::initializeUsingXML(element);
-  //e=element->FirstChildElement(OPENMBVNS"radius");
   radius->initializeUsingXML(element);
 }
 
 TiXmlElement* SphereWidget::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *e=OMBVBodyWidget::writeXMLFile(parent);
-  //TiXmlElement *e1 = new TiXmlElement(OPENMBVNS"radius");
   radius->writeXMLFile(e);
-  //e->LinkEndChild(e1);
   return e;
 }
 
@@ -1730,44 +1658,24 @@ FrustumWidget::FrustumWidget(RigidBody *body, QWidget *parent) : OMBVBodyWidget(
 void FrustumWidget::initializeUsingXML(TiXmlElement *element) {
   OMBVBodyWidget::initializeUsingXML(element);
   TiXmlElement *e;
-  //e=element->FirstChildElement(OPENMBVNS"baseRadius");
   base->initializeUsingXML(element);
-  //e=element->FirstChildElement(OPENMBVNS"topRadius");
   top->initializeUsingXML(element);
-  //e=element->FirstChildElement(OPENMBVNS"height");
   height->initializeUsingXML(element);
-  //e=element->FirstChildElement(OPENMBVNS"innerBaseRadius");
   innerBase->initializeUsingXML(element);
-  //e=element->FirstChildElement(OPENMBVNS"innerTopRadius");
   innerTop->initializeUsingXML(element);
 }
 
 TiXmlElement* FrustumWidget::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *e=OMBVBodyWidget::writeXMLFile(parent);
-  //TiXmlElement *e1 = new TiXmlElement(OPENMBVNS"baseRadius");
   base->writeXMLFile(e);
-  //e->LinkEndChild(e1);
-  //e1 = new TiXmlElement(OPENMBVNS"topRadius");
   top->writeXMLFile(e);
-  ////e->LinkEndChild(e1);
-  //e1 = new TiXmlElement(OPENMBVNS"height");
   height->writeXMLFile(e);
-  //e->LinkEndChild(e1);
-  //e1 = new TiXmlElement(OPENMBVNS"innerBaseRadius");
   innerBase->writeXMLFile(e);
-  //e->LinkEndChild(e1);
-  //e1 = new TiXmlElement(OPENMBVNS"innerTopRadius");
   innerTop->writeXMLFile(e);
-  //e->LinkEndChild(e1);
   return e;
 }
 
 OMBVEditor::OMBVEditor(RigidBody *body_ , PropertyDialog *parent_, const QIcon& icon, const string &name) : Editor(parent_, icon, name), body(body_), ombv(0) {
-  //  if(dynamic_cast<MBSim::LinearTranslation*>(body->getTranslation()))
-  //    size += dynamic_cast<MBSim::LinearTranslation*>(body->getTranslation())->getTranslationVectors().cols();
-  //  if(dynamic_cast<MBSim::RotationAboutFixedAxis*>(body->getRotation()))
-  //    size += 1;
-  //obj = static_cast<OpenMBV::RigidBody*>(body->getOpenMBVBody());
 
   groupBox = new QGroupBox(tr("OpenMBV selection"));  
   dialog->addToTab("Visualisation", groupBox);
@@ -1780,7 +1688,6 @@ OMBVEditor::OMBVEditor(RigidBody *body_ , PropertyDialog *parent_, const QIcon& 
   comboBox->addItem(tr("Sphere"));
   layout->addWidget(comboBox);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ombvSelection(int)));
-  //  QComboBox* ref = new QComboBox;
   ref=new LocalFrameOfReferenceWidget(MBSIMNS"frameOfReference",body);
   layout->addWidget(new QLabel("Frame of reference:"));
   layout->addWidget(ref);
@@ -1851,26 +1758,57 @@ TiXmlElement* OMBVEditor::writeXMLFile(TiXmlNode *parent) {
 
 FrameVisuEditor::FrameVisuEditor(Frame *frame_ , PropertyDialog *parent_, const QIcon& icon, const string &name) : Editor(parent_, icon, name), frame(frame_) {
   visu = new QCheckBox;
-  //groupBox = new QGroupBox(tr("Animation of Frame"));  
   dialog->addToTab("Visualisation", this);
   QGridLayout *layout = new QGridLayout;
   setLayout(layout);
   layout->addWidget(new QLabel("Show frame:"),0,0);
   layout->addWidget(visu,0,1);
 
-  size = new DoubleEdit;
-  size->setDecimals(digits);
-  size->setRange(-1000,1000);
-  size->setValue(1);
-  layout->addWidget(new QLabel("Size:"),1,0);
-  layout->addWidget(size,1,1);
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("1"),MBSIMNS"size",lengthUnits(),4));
+  var.push_back(new ExtPhysicalVarWidget(input));
 
-  offset = new DoubleEdit;
-  offset->setDecimals(digits);
-  offset->setRange(-1000,1000);
-  offset->setValue(1);
+  layout->addWidget(new QLabel("Size:"),1,0);
+  layout->addWidget(var[0],1,1);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("1"),MBSIMNS"offset",noUnitUnits(),1));
+  var.push_back(new ExtPhysicalVarWidget(input));
   layout->addWidget(new QLabel("Offset:"),2,0);
-  layout->addWidget(offset,2,1);
+  layout->addWidget(var[1],2,1);
+}
+
+void FrameVisuEditor::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *ee;
+  if((ee=element->FirstChildElement(MBSIMNS"enableOpenMBV"))) {
+    setOpenMBVFrame(true);
+    for(unsigned int i=0; i<var.size(); i++)
+      var[i]->initializeUsingXML(ee);
+  }
+}
+
+TiXmlElement* FrameVisuEditor::writeXMLFile(TiXmlNode *parent) {
+  if(openMBVFrame()) {
+    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"enableOpenMBV" );
+    for(unsigned int i=0; i<var.size(); i++)
+      var[i]->writeXMLFile(ele1);
+    parent->LinkEndChild(ele1);
+  }
+  return 0;
+}
+
+void FrameVisuEditor::initializeUsingXML2(TiXmlElement *element) {
+  setOpenMBVFrame(true);
+  for(unsigned int i=0; i<var.size(); i++)
+    var[i]->initializeUsingXML(element);
+}
+
+TiXmlElement* FrameVisuEditor::writeXMLFile2(TiXmlNode *parent) {
+  if(openMBVFrame()) {
+    for(unsigned int i=0; i<var.size(); i++)
+      var[i]->writeXMLFile(parent);
+  }
+  return 0;
 }
 
 ConnectWidget::ConnectWidget(int n, Element *element_) : element(element_) {
@@ -1916,7 +1854,7 @@ TiXmlElement* ConnectWidget::writeXMLFile(TiXmlNode *parent) {
       if(widget.size()>1)
         xmlName += QString::number(i+1);
     if(widget[i]->getFrame())
-      ele->SetAttribute(xmlName.toAscii().data(), widget[i]->getFrame()->getXMLPath(element,true).toStdString()); // relative path
+      ele->SetAttribute(xmlName.toAscii().data(), widget[i]->getFrame()->getXMLPath(element,true).toStdString()); 
   }
   parent->LinkEndChild(ele);
   return ele;
@@ -1979,7 +1917,6 @@ GeneralizedForceLawEditor::GeneralizedForceLawEditor(PropertyDialog *parent_, co
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SMatColsVarWidget(3,0,0,3),MBSIMNS"direction",noUnitUnits(),1));
   widget = new ExtPhysicalVarWidget(input);  
-//  mat = new Mat3VWidget(0,0,3);  
   layout->addWidget(widget);
 
   comboBox = new QComboBox;
@@ -2151,10 +2088,7 @@ TiXmlElement* ForceLawEditor::writeXMLFile(TiXmlNode *parent) {
 
 ForceLawEditor2::ForceLawEditor2(Element *element_, PropertyDialog *parent_, const QIcon& icon) : Editor(parent_, icon, "gfe"), element(element_), forceLaw(0) {
   QGroupBox *groupBox = new QGroupBox(tr("Force"));  
-  //if(force)
   dialog->addToTab("Kinetics", groupBox);
-  //else
-  //dialog->addToTab2("Kinetics", groupBox);
   layout = new QVBoxLayout;
   groupBox->setLayout(layout);
 
@@ -2177,7 +2111,6 @@ ForceLawEditor2::ForceLawEditor2(Element *element_, PropertyDialog *parent_, con
 
   comboBox = new QComboBox;
   comboBox->addItem(tr("Linear spring damper force"));
-  //  comboBox->addItem(tr("Regularized bilateral constraint"));
   layout->addWidget(comboBox);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineForceLaw(int)));
   defineForceLaw(0);
@@ -2267,7 +2200,6 @@ TiXmlElement* GeneralizedForceDirectionEditor::writeXMLFile(TiXmlNode *parent) {
 ConstantFunction1::ConstantFunction1(ExtPhysicalVarWidget* ret, const QString &ext) : Function1(ext) {
   QVBoxLayout *layout = new QVBoxLayout;
   c = ret;
-  //c->setValue(100);
   layout->addWidget(new QLabel("Constant:"));
   layout->addWidget(c);
   QWidget::setLayout(layout);
@@ -2487,90 +2419,6 @@ void DependenciesEditor::removeDependency() {
 
     emit bodyChanged();
   }
-}
-
-DoubleParameterWidget::DoubleParameterWidget(QWidget *parent) : QWidget(parent) {
-  QHBoxLayout *layout = new QHBoxLayout;
-  name = new QLineEdit;
-  layout->addWidget(new QLabel("Name:"));
-  layout->addWidget(name);
-  value = new DoubleEdit;
-  layout->addWidget(new QLabel("Value:"));
-  layout->addWidget(value);
-  setLayout(layout);
-}
-
-void DoubleParameterWidget::initializeUsingXML(TiXmlElement *element) {
-  //  TiXmlElement *e=element->FirstChildElement(MBSIMNS"mass");
-}
-
-TiXmlElement* DoubleParameterWidget::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0=new TiXmlElement(PARAMNS+string("scalarParameter"));
-  ele0->SetAttribute("name", name->text().toStdString());
-  TiXmlText* text= new TiXmlText(toStr(value->value()));
-  ele0->LinkEndChild(text);
-  parent->LinkEndChild(ele0);
-  return ele0;
-}
-
-DoubleParameterEditor::DoubleParameterEditor(PropertyDialog *parent_, const QIcon& icon, const QString &name, const QString &tab) : Editor(parent_, icon, name.toStdString()) {
-  QGroupBox *groupBox = new QGroupBox(name);  
-  dialog->addToTab(tab, groupBox);
-  QHBoxLayout *layout = new QHBoxLayout;
-  groupBox->setLayout(layout);
-  parameter = new DoubleParameterWidget;
-  layout->addWidget(parameter);
-}
-
-void DoubleParameterEditor::initializeUsingXML(TiXmlElement *element) {
-  parameter->initializeUsingXML(element);
-}
-
-TiXmlElement* DoubleParameterEditor::writeXMLFile(TiXmlNode *parent) {
-  return parameter->writeXMLFile(parent);
-}
-
-ParameterEditor::ParameterEditor(PropertyDialog *parent_, const QIcon& icon, const QString &name, const QString &tab) : Editor(parent_, icon, name.toStdString()) {
-  QGroupBox *groupBox = new QGroupBox(name);  
-  dialog->addToTab(tab, groupBox);
-  layout = new QGridLayout;
-  groupBox->setLayout(layout);
-  QComboBox *choice = new QComboBox;
-  choice->addItem("Double");
-  choice->addItem("Symbolical");
-  choice->addItem("Editor");
-  layout->addWidget(choice,0,0);
-  QPushButton* button = new QPushButton("Add");
-  layout->addWidget(button,0,1);
-  connect(button,SIGNAL(clicked(bool)),this,SLOT(addParameter()));
-}
-
-void ParameterEditor::addParameter() {
-  parameter.push_back(new DoubleParameterWidget);
-  layout->addWidget(parameter[parameter.size()-1],layout->rowCount(),0,1,2);
-}
-
-void ParameterEditor::initializeUsingXML(TiXmlElement *element) {
-  //  TiXmlElement *e=element->FirstChildElement(MBSIMNS"mass");
-}
-
-TiXmlElement* ParameterEditor::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0=new TiXmlElement(PARAMNS+string("parameter"));
-  for(unsigned int i=0; i<parameter.size(); i++) {
-    parameter[i]->writeXMLFile(ele0);
-  }
-  parent->LinkEndChild(ele0);
-  return ele0;
-}
-
-void ParameterEditor::writeXMLFile(const QString &name) {
-  TiXmlDocument doc;
-  TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
-  doc.LinkEndChild( decl );
-  writeXMLFile(&doc);
-  map<string, string> nsprefix;
-  unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
-  doc.SaveFile((name+".mbsimparam.xml").toAscii().data());
 }
 
 ParameterNameEditor::ParameterNameEditor(Parameter* parameter_, PropertyDialog *parent_, const QIcon& icon, const string &name, bool renaming) : Editor(parent_, icon, name), parameter(parameter_) {

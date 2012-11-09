@@ -153,3 +153,32 @@ Parameter* MBSimObjectFactory::createParameter(TiXmlElement *element, QTreeWidge
     return new DoubleParameter(element->Attribute("name"),parentItem,ind);
   return 0;
 }
+
+  ObjectFactoryBase::M_NSPRE ObjectFactory::getNamespacePrefixMapping() {
+    // collect all priority-namespace-prefix mappings
+    MM_PRINSPRE priorityNSPrefix;
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
+      priorityNSPrefix.insert((*i)->getPriorityNamespacePrefix().begin(), (*i)->getPriorityNamespacePrefix().end());
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    // add the openmbv mapping
+    priorityNSPrefix.insert(OpenMBV::ObjectFactory::getPriorityNamespacePrefix().begin(),
+                            OpenMBV::ObjectFactory::getPriorityNamespacePrefix().end());
+#endif
+    
+    // generate the namespace-prefix mapping considering the priority
+    M_NSPRE nsprefix;
+    set<string> prefix;
+    for(MM_PRINSPRE::reverse_iterator i=priorityNSPrefix.rbegin(); i!=priorityNSPrefix.rend(); i++) {
+      // insert only if the prefix does not already exist
+      if(prefix.find(i->second.second)!=prefix.end())
+        continue;
+      // insert only if the namespace does not already exist
+      pair<M_NSPRE::iterator, bool> ret=nsprefix.insert(i->second);
+      if(ret.second)
+        prefix.insert(i->second.second);
+    }
+
+    return nsprefix;
+  }
+
+

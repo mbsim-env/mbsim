@@ -34,17 +34,13 @@ class Frame : public Element {
     ~Frame();
     void resetAnimRange(int numOfRows, double dt);
     static int counter;
-    //virtual void initializeUsingXML(TiXmlElement *element);
-    //virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     QString getType() const { return "Frame"; }
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual void initializeUsingXML2(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile2(TiXmlNode *element);
     bool openMBVFrame() const {return visu->openMBVFrame();}
     void setOpenMBVFrame(bool b) {visu->setOpenMBVFrame(b);}
-    double getSize() const {return visu->getSize();}
-    double getOffset() const {return visu->getOffset();}
-    void setSize(double d) {visu->setSize(d);}
-    void setOffset(double d) {visu->setOffset(d);}
   public slots:
   protected:
     FrameVisuEditor *visu;

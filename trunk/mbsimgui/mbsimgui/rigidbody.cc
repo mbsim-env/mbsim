@@ -205,12 +205,9 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
     ombvEditor->initializeUsingXML(element);
 
     e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameC");
-    if(e) {
-      Frame *C = getFrame(0);
-      C->setOpenMBVFrame(true);
-      C->setSize(getDouble(e->FirstChildElement(MBSIMNS"size")));
-      C->setOffset(getDouble(e->FirstChildElement(MBSIMNS"offset")));
-    }
+    if(e)
+      getFrame(0)->initializeUsingXML2(e);
+
     Body::initializeUsingXML(element);
 }
 
@@ -243,8 +240,7 @@ TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
       Frame *C = getFrame(0);
       if(C->openMBVFrame()) {
         ele1 = new TiXmlElement( MBSIMNS"enableOpenMBVFrameC" );
-        addElementText(ele1,MBSIMNS"size",C->getSize());
-        addElementText(ele1,MBSIMNS"offset",C->getOffset());
+        C->writeXMLFile2(ele1);
         ele0->LinkEndChild(ele1);
       }
   

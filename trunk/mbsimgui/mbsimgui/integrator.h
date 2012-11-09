@@ -20,7 +20,6 @@
 #ifndef _INTEGRATOR__H_
 #define _INTEGRATOR__H_
 
-#define MBSIMINTNS "{http://mbsim.berlios.de/MBSimIntegrator}"
 
 #include <QtGui/QTreeWidgetItem>
 #include "mbsimguitinyxml/tinyxml-src/tinyxml.h"
@@ -29,6 +28,9 @@
 #include "utils.h"
 #include <string>
 #include <set>
+
+#define MBSIMINTNS_ "http://mbsim.berlios.de/MBSimIntegrator"
+#define MBSIMINTNS "{"MBSIMINTNS_"}"
 
 class PropertyDialog;
 
@@ -43,7 +45,7 @@ class Integrator : public QObject, public QTreeWidgetItem {
     bool searchMatched;
     PropertyDialog *properties;
     QMenu *contextMenu;
-    DoubleEditor *startTime, *endTime, *plotStepSize;
+    XMLEditor *startTime, *endTime, *plotStepSize;
   public:
     Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind);
     virtual ~Integrator();
@@ -57,8 +59,8 @@ class Integrator : public QObject, public QTreeWidgetItem {
     virtual QString getType() const { return "Integrator"; }
     QMenu* getContextMenu() { return contextMenu; }
     PropertyDialog* getPropertyDialog() { return properties; }
-    void setEndTime(double t) {endTime->setValue(t);}
-    void setPlotStepSize(double dt) {plotStepSize->setValue(dt);}
+    //void setEndTime(double t) {endTime->setValue(t);}
+    //void setPlotStepSize(double dt) {plotStepSize->setValue(dt);}
     public slots:
       void saveAs();
 };
@@ -70,8 +72,8 @@ class DOPRI5Integrator : public Integrator {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "DOPRI5Integrator"; }
   protected:
-    DoubleEditor *absTol, *relTol, *initialStepSize, *maximalStepSize;
-    IntEditor *maxSteps;
+    XMLEditor *absTol, *relTol, *initialStepSize, *maximalStepSize;
+    XMLEditor *maxSteps;
 };
 
 class LSODEIntegrator : public Integrator {
@@ -81,8 +83,8 @@ class LSODEIntegrator : public Integrator {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "LSODEIntegrator"; }
   protected:
-    DoubleEditor *absTol, *relTol, *initialStepSize, *maximalStepSize, *minimalStepSize;
-    IntEditor *maxSteps;
+    XMLEditor *absTol, *relTol, *initialStepSize, *maximalStepSize, *minimalStepSize;
+    XMLEditor *maxSteps;
     BoolEditor *stiff;
 };
 
