@@ -21,7 +21,6 @@
 #define _JOINT__H_
 
 #include "link.h"
-#include <H5Cpp.h>
 #include <QtGui/QActionGroup>
 #include "utils.h"
 #include <editors.h>

@@ -63,7 +63,7 @@ class OctaveHighlighter : public QSyntaxHighlighter {
 
 class XMLWidget : public QWidget {
   public:
-    virtual void initializeUsingXML(TiXmlElement *element) = 0;
+    virtual bool initializeUsingXML(TiXmlElement *element) = 0;
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element) = 0;
     virtual void initialize() {};
     virtual void update() {}
@@ -77,38 +77,13 @@ class QElementItem : public QTreeWidgetItem {
     Element* getElement() const {return element;}
 };
 
-class IntEdit : public QLineEdit {
-  Q_OBJECT
-
-  public:
-    IntEdit(QWidget * parent = 0) : QLineEdit(parent) {
-      validator = new QIntValidator();
-      setValidator(validator);
-      setValue(0);
-      QObject::connect(this, SIGNAL(textChanged(const QString&)), this, SLOT(sendSignal(const QString&)));
-      QObject::connect(this, SIGNAL(textEdited(const QString&)), this, SLOT(sendSignal2(const QString&)));
-    }
-    double value() const {return text().toInt();}
-
-  public slots:
-    void setValue(int i) { setText(QString::number(i)); }
-    void sendSignal(const QString& str) { emit valueChanged(str.toDouble()); }
-    void sendSignal2(const QString& str) { emit valueChanged2(str.toDouble()); }
-
-  signals:
-    void valueChanged(double);
-    void valueChanged2(double);
-  private:
-    QIntValidator *validator;
-};
-
 class Function1 : public QWidget {
   Q_OBJECT
   public:
     Function1() {}
     Function1(const QString& ext_) : ext(ext_) {}
     virtual ~Function1() {}
-    virtual void initializeUsingXML(TiXmlElement *element) {}
+    virtual bool initializeUsingXML(TiXmlElement *element) {}
     virtual TiXmlElement* writeXMLFile(TiXmlNode *parent) {
       TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType().toStdString());
       parent->LinkEndChild(ele0);
@@ -128,7 +103,7 @@ class Function2 : public QWidget {
     Function2() {}
     Function2(const QString& ext_) : ext(ext_) {}
     virtual ~Function2() {}
-    virtual void initializeUsingXML(TiXmlElement *element) {}
+    virtual bool initializeUsingXML(TiXmlElement *element) {}
     virtual TiXmlElement* writeXMLFile(TiXmlNode *parent) {
       TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType().toStdString());
       parent->LinkEndChild(ele0);
@@ -154,7 +129,7 @@ class DifferentiableFunction1 : public Function1 {
 
     void setOrderOfDerivative(int i) { order=i; }
 
-    virtual void initializeUsingXML(TiXmlElement *element) {
+    virtual bool initializeUsingXML(TiXmlElement *element) {
       Function1::initializeUsingXML(element);
       TiXmlElement * e;
       e=element->FirstChildElement(MBSIMNS"orderOfDerivative");
@@ -177,7 +152,7 @@ class ConstantFunction1 : public Function1 {
   Q_OBJECT
   public:
     ConstantFunction1(ExtPhysicalVarWidget* ret, const QString &ext);
-    void initializeUsingXML(TiXmlElement *element);
+    bool initializeUsingXML(TiXmlElement *element);
     TiXmlElement* writeXMLFile(TiXmlNode *parent);
     inline QString getType() const { return QString("ConstantFunction1_")+ext; }
     void resize(int m, int n);
@@ -185,8 +160,6 @@ class ConstantFunction1 : public Function1 {
   protected:
     ExtPhysicalVarWidget *c;
     QPushButton *buttonResize;
-  protected slots:
-    void updateButtons(int i);
   signals:
     void resize();
 };
@@ -195,7 +168,7 @@ class SinusFunction1 : public DifferentiableFunction1 {
   Q_OBJECT
   public:
     SinusFunction1(ExtPhysicalVarWidget *amplitude, ExtPhysicalVarWidget *frequency, ExtPhysicalVarWidget *phase, ExtPhysicalVarWidget *offset);
-    void initializeUsingXML(TiXmlElement *element);
+    bool initializeUsingXML(TiXmlElement *element);
     TiXmlElement* writeXMLFile(TiXmlNode *parent);
     inline QString getType() const { return QString("SinusFunction1_VS"); }
     void resize(int m, int n);
@@ -228,8 +201,6 @@ class SinusFunction1 : public DifferentiableFunction1 {
     int ySize;
     std::vector<ExtPhysicalVarWidget*> var;
     QPushButton *buttonResize;
-  protected slots:
-    void updateButtons(int i);
   signals:
     void resize();
 };
@@ -237,7 +208,7 @@ class SinusFunction1 : public DifferentiableFunction1 {
 class LinearSpringDamperForce : public Function2 {
   public:
     LinearSpringDamperForce();
-    void initializeUsingXML(TiXmlElement *element);
+    bool initializeUsingXML(TiXmlElement *element);
     TiXmlElement* writeXMLFile(TiXmlNode *parent);
     inline QString getType() const { return QString("LinearSpringDamperForce")+ext; }
   protected:
@@ -248,7 +219,7 @@ class LinearRegularizedBilateralConstraint: public Function1 {
   public:
     LinearRegularizedBilateralConstraint(); 
 
-    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
     virtual QString getType() const { return "LinearRegularizedBilateralConstraint"; }
 
@@ -354,36 +325,36 @@ class SSymMatWidget : public StringWidget {
     int cols() const {return box[0].size();}
 };
 
-class SVecVarWidget : public StringWidget {
-
-  Q_OBJECT
-
-  private:
-    SVecWidget *widget;
-    QComboBox* sizeCombo;
-    int minSize, maxSize;
-  public:
-    SVecVarWidget(int size, int minSize, int maxSize);
-    std::vector<std::string> getVec() const {return widget->getVec();}
-    void setVec(const std::vector<std::string> &x) {
-      sizeCombo->setCurrentIndex(sizeCombo->findText(QString::number(x.size())));
-      widget->setVec(x);
-    }
-    void resize(int size) {widget->resize(size);}
-    int size() const {return sizeCombo->currentText().toInt();}
-    std::string getValue() const {return toStr(getVec());}
-    void setValue(const std::string &str) {setVec(strToSVec(str));}
-    void setReadOnly(bool flag) {widget->setReadOnly(flag);}
-    virtual bool initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual StringWidget* cloneStringWidget() {return new SVecWidget(size());}
-
-  public slots:
-    void resize(const QString &size) {widget->resize(size.toInt());}
-  signals:
-    void currentIndexChanged(int);
-
-};
+//class SVecVarWidget : public StringWidget {
+//
+//  Q_OBJECT
+//
+//  private:
+//    SVecWidget *widget;
+//    QComboBox* sizeCombo;
+//    int minSize, maxSize;
+//  public:
+//    SVecVarWidget(int size, int minSize, int maxSize);
+//    std::vector<std::string> getVec() const {return widget->getVec();}
+//    void setVec(const std::vector<std::string> &x) {
+//      sizeCombo->setCurrentIndex(sizeCombo->findText(QString::number(x.size())));
+//      widget->setVec(x);
+//    }
+//    void resize(int size) {widget->resize(size);}
+//    int size() const {return sizeCombo->currentText().toInt();}
+//    std::string getValue() const {return toStr(getVec());}
+//    void setValue(const std::string &str) {setVec(strToSVec(str));}
+//    void setReadOnly(bool flag) {widget->setReadOnly(flag);}
+//    virtual bool initializeUsingXML(TiXmlElement *element);
+//    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+//    virtual StringWidget* cloneStringWidget() {return new SVecWidget(size());}
+//
+//  public slots:
+//    void resize(const QString &size) {widget->resize(size.toInt());}
+//  signals:
+//    void currentIndexChanged(int);
+//
+//};
 
 class SMatColsVarWidget : public StringWidget {
 
@@ -411,9 +382,10 @@ class SMatColsVarWidget : public StringWidget {
     virtual StringWidget* cloneStringWidget() {return new SMatWidget(rows(),cols());}
 
   public slots:
-    void resize(const QString &cols) {widget->resize(widget->rows(),cols.toInt());}
-  signals:
+    //void resize(const QString &cols) {widget->resize(widget->rows(),cols.toInt());}
     void currentIndexChanged(int);
+  signals:
+    void sizeChanged(int);
 
 };
 
@@ -462,7 +434,6 @@ class PhysicalStringWidget : public StringWidget {
 class PropertyDialog : public QScrollArea {
   Q_OBJECT
 
-  friend class TransRotEditor;
   public:
     PropertyDialog(QObject *obj);
     ~PropertyDialog();
@@ -576,7 +547,7 @@ class LocalFrameOfReferenceWidget : public XMLWidget {
     void update();
     Frame* getFrame() {return selectedFrame;}
     void setFrame(Frame* frame_);
-    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
 
   protected:
@@ -599,7 +570,7 @@ class FrameOfReferenceWidget : public XMLWidget {
     void update();
     Frame* getFrame() {return selectedFrame;}
     void setFrame(Frame* frame_);
-    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void setSavedFrameOfReference(const QString &str) {saved_frameOfReference = str;}
     const QString& getSavedFrameOfReference() const {return saved_frameOfReference;}
@@ -636,10 +607,11 @@ class ExtPhysicalVarWidget : public XMLWidget {
   public:
     ExtPhysicalVarWidget(std::vector<PhysicalStringWidget*> inputWidget);
 
-    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     PhysicalStringWidget* getPhysicalStringWidget(int i) {return inputWidget[i];}
     PhysicalStringWidget* getCurrentPhysicalStringWidget() {return inputWidget[inputCombo->currentIndex()];}
+    int getNumberOfInputs() const {return inputWidget.size();}
     virtual std::string getValue() const;
 
   protected:
@@ -658,7 +630,7 @@ class TranslationWidget : public QWidget {
 
   public:
     TranslationWidget(QWidget *parent = 0) : QWidget(parent) {}
-    virtual void initializeUsingXML(TiXmlElement *element) = 0;
+    virtual bool initializeUsingXML(TiXmlElement *element) = 0;
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element) = 0;
     virtual int getSize() const = 0;
    protected:
@@ -669,15 +641,13 @@ class LinearTranslation : public TranslationWidget {
 
   public:
     LinearTranslation(QWidget *parent = 0);
-    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     int getSize() const;
   protected:
     ExtPhysicalVarWidget *mat;
-  protected slots:
-    void checkInputSchema();
   signals:
-    void currentIndexChanged(int);
+    void translationChanged();
 };
 
 class TranslationEditor : public Editor {
@@ -687,7 +657,7 @@ class TranslationEditor : public Editor {
     /*! Constructor. */
     TranslationEditor(PropertyDialog *parent_, const QIcon &icon, const std::string &name);
 
-    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     int getSize() const { return comboBox->currentIndex()>0?translation->getSize():0; }
     int getTranslation() {return comboBox->currentIndex();}
@@ -708,7 +678,7 @@ class RotationWidget : public QWidget {
 
   public:
     RotationWidget(QWidget *parent = 0) {}
-    virtual void initializeUsingXML(TiXmlElement *element) = 0;
+    virtual bool initializeUsingXML(TiXmlElement *element) = 0;
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element) = 0;
     virtual int getSize() const = 0;
 };
@@ -717,7 +687,7 @@ class RotationAboutXAxis : public RotationWidget {
 
   public:
     RotationAboutXAxis(QWidget *parent = 0) {}
-    virtual void initializeUsingXML(TiXmlElement *element) {}
+    virtual bool initializeUsingXML(TiXmlElement *element) {}
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual int getSize() const {return 1;}
 };
@@ -726,7 +696,7 @@ class RotationAboutYAxis : public RotationWidget {
 
   public:
     RotationAboutYAxis(QWidget *parent = 0) {}
-    virtual void initializeUsingXML(TiXmlElement *element) {}
+    virtual bool initializeUsingXML(TiXmlElement *element) {}
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual int getSize() const {return 1;}
 };
@@ -735,7 +705,7 @@ class RotationAboutZAxis : public RotationWidget {
 
   public:
     RotationAboutZAxis(QWidget *parent = 0) {}
-    virtual void initializeUsingXML(TiXmlElement *element) {}
+    virtual bool initializeUsingXML(TiXmlElement *element) {}
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual int getSize() const {return 1;}
 };
@@ -744,7 +714,7 @@ class RotationAboutFixedAxis : public RotationWidget {
 
   public:
     RotationAboutFixedAxis(QWidget *parent = 0);
-    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual int getSize() const {return 1;}
    protected:
@@ -755,7 +725,7 @@ class RotationAboutAxesXY : public RotationWidget {
 
   public:
     RotationAboutAxesXY(QWidget *parent = 0) {}
-    virtual void initializeUsingXML(TiXmlElement *element) {}
+    virtual bool initializeUsingXML(TiXmlElement *element) {}
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual int getSize() const {return 2;}
 };
@@ -764,7 +734,7 @@ class CardanAngles : public RotationWidget {
 
   public:
     CardanAngles(QWidget *parent = 0) {}
-    virtual void initializeUsingXML(TiXmlElement *element) {}
+    virtual bool initializeUsingXML(TiXmlElement *element) {}
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual int getSize() const {return 3;}
 };
@@ -776,7 +746,7 @@ class RotationEditor : public Editor {
     /*! Constructor. */
     RotationEditor(PropertyDialog *parent_, const QIcon &icon, const std::string &name);
 
-    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     int getSize() const { return comboBox->currentIndex()>0?rotation->getSize():0; }
     int getRotation() {return comboBox->currentIndex();}
@@ -799,7 +769,7 @@ class EnvironmentEditor : public Editor {
   public:
     EnvironmentEditor(PropertyDialog *parent_, const QIcon &icon, const std::string &name);
 
-    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
   protected:
     QGroupBox *groupBox;
@@ -813,7 +783,7 @@ class FramePositionWidget : public XMLWidget {
     FramePositionWidget(Frame *frame);
 
     void update() {refFrame->update();}
-    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     Frame *getFrame() {return frame;}
 
@@ -829,7 +799,7 @@ class FramePositionsWidget : public XMLWidget {
     FramePositionsWidget(Element *element);
 
     void update();
-    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
 
   protected:
@@ -843,7 +813,7 @@ class OMBVBodyWidget : public QWidget {
 
   public:
     OMBVBodyWidget(RigidBody *body, QWidget *parent = 0);
-    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element); 
     virtual QString getType() const { return "OMBVBody"; }
   protected:
@@ -857,7 +827,7 @@ class CuboidWidget : public OMBVBodyWidget {
 
   public:
     CuboidWidget(RigidBody *body, QWidget *parent = 0);
-    void initializeUsingXML(TiXmlElement *element);
+    bool initializeUsingXML(TiXmlElement *element);
     TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "Cuboid"; }
   protected:
@@ -869,7 +839,7 @@ class SphereWidget : public OMBVBodyWidget {
 
   public:
     SphereWidget(RigidBody *body, QWidget *parent = 0);
-    void initializeUsingXML(TiXmlElement *element);
+    bool initializeUsingXML(TiXmlElement *element);
     TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "Sphere"; }
   protected:
@@ -881,7 +851,7 @@ class FrustumWidget : public OMBVBodyWidget {
 
   public:
     FrustumWidget(RigidBody *body, QWidget *parent = 0);
-    void initializeUsingXML(TiXmlElement *element);
+    bool initializeUsingXML(TiXmlElement *element);
     TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "Frustum"; }
   protected:
@@ -896,7 +866,7 @@ class OMBVEditor : public Editor {
 
     virtual void update() {ref->update();}
     int getOpenMBVBody() {return comboBox->currentIndex();}
-    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     protected slots:
       void ombvSelection(int index);
@@ -916,9 +886,9 @@ class FrameVisuEditor : public Editor {
   public:
     FrameVisuEditor(Frame* frame, PropertyDialog *parent_, const QIcon &icon, const std::string &name);
 
-    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual void initializeUsingXML2(TiXmlElement *element);
+    virtual bool initializeUsingXML2(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile2(TiXmlNode *element);
     bool openMBVFrame() const {return visu->checkState()==Qt::Checked;}
     void setOpenMBVFrame(bool b) {visu->setCheckState(b?Qt::Checked:Qt::Unchecked);}
@@ -937,7 +907,7 @@ class ConnectWidget : public XMLWidget {
 
     void initialize();
     void update();
-    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
 
   protected:
@@ -949,7 +919,7 @@ class GeneralizedForceLawWidget : public QWidget {
 
   public:
     GeneralizedForceLawWidget(QWidget *parent = 0) : forceFunc(0) {}
-    virtual void initializeUsingXML(TiXmlElement *element) {};
+    virtual bool initializeUsingXML(TiXmlElement *element) {};
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "GeneralizedForceLaw"; }
    protected:
@@ -969,7 +939,7 @@ class RegularizedBilateralConstraint : public GeneralizedForceLawWidget {
 
   public:
     RegularizedBilateralConstraint(QWidget *parent = 0); 
-    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual bool initializeUsingXML(TiXmlElement *element);
     virtual QString getType() const { return "RegularizedBilateralConstraint"; }
   protected:
     QVBoxLayout *layout;
@@ -982,7 +952,7 @@ class GeneralizedImpactLawWidget : public QWidget {
 
   public:
     GeneralizedImpactLawWidget(QWidget *parent = 0) {}
-    virtual void initializeUsingXML(TiXmlElement *element) {};
+    virtual bool initializeUsingXML(TiXmlElement *element) {};
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "GeneralizedImpactLaw"; }
    protected:
@@ -1002,7 +972,7 @@ class GeneralizedForceLawEditor : public Editor {
   public:
     GeneralizedForceLawEditor(PropertyDialog *parent_, const QIcon &icon, bool force);
 
-    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     int getForceLaw() {return comboBox->currentIndex();}
     int getSize() const; 
@@ -1026,13 +996,12 @@ class ForceLawEditor : public Editor {
   public:
     ForceLawEditor(PropertyDialog *parent_, const QIcon &icon, bool force);
 
-    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     int getSize() const; 
 
   protected slots:
     void defineForceLaw(int);
-    void resize(int);
     void resize();
 
   protected:
@@ -1050,7 +1019,7 @@ class ForceLawEditor2 : public Editor {
   public:
     ForceLawEditor2(Element *element, PropertyDialog *parent_, const QIcon &icon);
 
-    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     int getForceLaw() {return comboBox->currentIndex();}
     void initialize() {refFrame->initialize();}
@@ -1060,7 +1029,7 @@ class ForceLawEditor2 : public Editor {
   protected slots:
     void defineForceDir(bool);
     void defineForceLaw(int);
-    void resize(int);
+    //void resize(int);
 
   protected:
     QVBoxLayout *layout;
@@ -1078,7 +1047,7 @@ class GeneralizedForceDirectionEditor : public Editor {
   public:
     GeneralizedForceDirectionEditor(PropertyDialog *parent_, const QIcon &icon, bool force);
 
-    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     int getSize() const;
 
@@ -1213,7 +1182,7 @@ class XMLEditor : public Editor {
   public:
     XMLEditor(PropertyDialog *parent_, const QIcon &icon, const QString &name, const QString &tab, XMLWidget *d);
 
-    virtual void initializeUsingXML(TiXmlElement *element) {widget->initializeUsingXML(element);}
+    virtual bool initializeUsingXML(TiXmlElement *element) {widget->initializeUsingXML(element);}
     virtual TiXmlElement* writeXMLFile(TiXmlElement *element) {return widget->writeXMLFile(element);}
     XMLWidget* getXMLWidget() {return widget;}
     virtual void initialize() {widget->initialize();}
@@ -1229,19 +1198,20 @@ class GeneralizedCoordinatesEditor : public Editor {
   public:
     GeneralizedCoordinatesEditor(PropertyDialog *parent_, const QIcon &icon, const QString &name, const QString &tab, const std::string &xmlName);
 
-    virtual void initializeUsingXML(TiXmlElement *element) {widget->initializeUsingXML(element);}
-    virtual TiXmlElement* writeXMLFile(TiXmlElement *element) {return widget->writeXMLFile(element);}
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlElement *element) {return buttonDisable->isChecked()?0:widget->writeXMLFile(element);}
     ExtPhysicalVarWidget* getExtPhysicalWidget() {return widget;}
     virtual void update() {widget->update();}
 
   protected:
     ExtPhysicalVarWidget *widget;
     QPushButton *buttonDisable, *buttonResize;
+    SVecWidget *vec;
   protected slots:
-    void updateButtons(int i);
+    void resize(int);
+    void disableGeneralizedCoordinates(bool);
   signals:
     void resizeGeneralizedCoordinates();
-    void disableGeneralizedCoordinates();
 };
 
 #endif

@@ -21,7 +21,6 @@
 #define _RIGIDBODY__H_
 
 #include "body.h"
-#include <H5Cpp.h>
 #include <QtGui/QActionGroup>
 #include "utils.h"
 #include <editors.h>

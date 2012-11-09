@@ -22,7 +22,6 @@
 
 #include "group.h"
 #include <string>
-#include <H5Cpp.h>
 #include <QtCore/QFileInfo>
 #include <QtCore/QDateTime>
 
