@@ -244,15 +244,14 @@ namespace MBSim {
       void setOpenMBVFrameOfReference(Frame * frame) {openMBVFrame=frame; }
       const Frame* getOpenMBVFrameOfReference() const {return openMBVFrame; }
 
-      /** \brief Visualize a force arrow acting on frame2 */
-      void setOpenMBVForceArrow(OpenMBV::Arrow *arrow) {
-        FArrow = arrow;
-      }
+      /** \brief Visualize the weight */
+      void setOpenMBVWeightArrow(OpenMBV::Arrow *arrow) { FWeight = arrow; }
 
-      /** \brief Visualize a moment arrow acting on frame2 */
-      void setOpenMBVMomentArrow(OpenMBV::Arrow *arrow) {
-        MArrow = arrow;
-      }
+      /** \brief Visualize the joint force */
+      void setOpenMBVForceArrow(OpenMBV::Arrow *arrow) { FArrow = arrow; }
+
+      /** \brief Visualize the joint moment */
+      void setOpenMBVMomentArrow(OpenMBV::Arrow *arrow) { MArrow = arrow; }
 #endif
 
       virtual void initializeUsingXML(TiXmlElement *element);
@@ -468,7 +467,7 @@ namespace MBSim {
        * \brief Frame of reference for drawing openMBVBody
        */
       Frame * openMBVFrame;
-      OpenMBV::Arrow *FArrow, *MArrow;
+      OpenMBV::Arrow *FWeight, *FArrow, *MArrow;
 #endif
   };
 
