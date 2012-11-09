@@ -2301,19 +2301,25 @@ TiXmlElement* LinearSpringDamperForce::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 } 
 
-RigidBodyOfReferenceWidget::RigidBodyOfReferenceWidget(Element *element_) : element(element_) {
+RigidBodyOfReferenceWidget::RigidBodyOfReferenceWidget(const string &xmlName_, Element *element_, RigidBody* selectedBody_) : element(element_), selectedBody(selectedBody_), xmlName(xmlName_) {
+  body = new QLineEdit;
+  body->setReadOnly(true);
+  if(selectedBody)
+    body->setText(selectedBody->getXMLPath());
+  bodyBrowser = new RigidBodyBrowser(element->treeWidget(),0,this);
+  connect(bodyBrowser,SIGNAL(accepted()),this,SLOT(setBody()));
   QHBoxLayout *layout = new QHBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
-  selectedBody = 0;
-  body = new QLineEdit;
-  body->setReadOnly(true);
-  bodyBrowser = new RigidBodyBrowser(element->treeWidget(),0,this);
-  connect(bodyBrowser,SIGNAL(accepted()),this,SLOT(setBody()));
   layout->addWidget(body);
   QPushButton *button = new QPushButton(tr("Browse"));
   connect(button,SIGNAL(clicked(bool)),bodyBrowser,SLOT(show()));
   layout->addWidget(button);
+}
+
+void RigidBodyOfReferenceWidget::initialize() {
+  if(saved_bodyOfReference!="")
+    setBody(element->getByPath<RigidBody>(saved_bodyOfReference));
 }
 
 void RigidBodyOfReferenceWidget::update() {
@@ -2335,20 +2341,24 @@ void RigidBodyOfReferenceWidget::setBody(RigidBody* body_) {
   emit bodyChanged();
 }
 
-RigidBodyOfReferenceEditor::RigidBodyOfReferenceEditor(Element *element, PropertyDialog *parent_, const QIcon& icon, const QString &name, const QString &tab) : Editor(parent_, icon, name.toStdString()) {
-  QGroupBox *groupBox = new QGroupBox(name);  
-  dialog->addToTab(tab, groupBox);
-  QHBoxLayout *layout = new QHBoxLayout;
-  groupBox->setLayout(layout);
-  refBody = new RigidBodyOfReferenceWidget(element);
-  layout->addWidget(refBody);
+bool RigidBodyOfReferenceWidget::initializeUsingXML(TiXmlElement *parent) {
+  TiXmlElement *e = parent->FirstChildElement(xmlName);
+  if(e)
+    saved_bodyOfReference=e->Attribute("ref");
 }
 
-DependenciesEditor::DependenciesEditor(Element *element_, PropertyDialog *parent_, const QIcon& icon, const QString &name, const QString &tab) : Editor(parent_, icon, name.toStdString()), element(element_) {
-  QGroupBox *groupBox = new QGroupBox(name);  
-  dialog->addToTab(tab, groupBox);
+TiXmlElement* RigidBodyOfReferenceWidget::writeXMLFile(TiXmlNode *parent) {
+  if(getBody()) {
+    TiXmlElement *ele = new TiXmlElement(xmlName);
+    ele->SetAttribute("ref", getBody()->getXMLPath(element,true).toStdString());
+    parent->LinkEndChild(ele);
+  }
+  return 0;
+}
+
+DependenciesWidget::DependenciesWidget(const string &xmlName_, Element *element_) : element(element_), xmlName(xmlName_) {
   layout = new QGridLayout;
-  groupBox->setLayout(layout);
+  setLayout(layout);
   QPushButton *buttonAdd = new QPushButton(tr("Add"));
   layout->addWidget(buttonAdd,0,0);
   connect(buttonAdd,SIGNAL(clicked(bool)),this,SLOT(addDependency()));
@@ -2358,7 +2368,17 @@ DependenciesEditor::DependenciesEditor(Element *element_, PropertyDialog *parent
   connect(this,SIGNAL(bodyChanged()),this,SLOT(updateGeneralizedCoordinatesOfBodies()));
 }
 
-void DependenciesEditor::updateGeneralizedCoordinatesOfBodies() {
+void DependenciesWidget::initialize() {
+  for(unsigned int i=0; i<refBody.size(); i++)
+    refBody[i]->initialize();
+}
+
+void DependenciesWidget::update() {
+  for(unsigned int i=0; i<refBody.size(); i++)
+    refBody[i]->update();
+}
+
+void DependenciesWidget::updateGeneralizedCoordinatesOfBodies() {
   for(unsigned int i=0; i<refBody.size(); i++) {
     if(selectedBody[i]) {
       selectedBody[i]->setConstrained(false);
@@ -2375,18 +2395,18 @@ void DependenciesEditor::updateGeneralizedCoordinatesOfBodies() {
   }
 }
 
-void DependenciesEditor::setBodies(std::vector<RigidBody*> rigidBodies) {
+void DependenciesWidget::setBodies(std::vector<RigidBody*> rigidBodies) {
   for(unsigned int i=0; i<rigidBodies.size(); i++) {
     addDependency();
     setBody(i,rigidBodies[i]);
   }
 }
 
-void DependenciesEditor::addDependency() {
+void DependenciesWidget::addDependency() {
   int i = refBody.size();
   if(i<5) {
     selectedBody.push_back(0);
-    refBody.push_back(new RigidBodyOfReferenceWidget(element));
+    refBody.push_back(new RigidBodyOfReferenceWidget(MBSIMNS"dependentRigidBody",element,0));
     connect(refBody[i],SIGNAL(bodyChanged()),this,SIGNAL(bodyChanged()));
     label.push_back(new QLabel(QString("RigidBody") + QString::number(i+1) +":"));
     layout->addWidget(label[i],i+1,0);
@@ -2395,7 +2415,7 @@ void DependenciesEditor::addDependency() {
   }
 }
 
-void DependenciesEditor::removeDependency() {
+void DependenciesWidget::removeDependency() {
   if(refBody.size()) {
     selectedBody[selectedBody.size()-1]->setConstrained(false);
     selectedBody[selectedBody.size()-1]->resizeGeneralizedPosition();
@@ -2413,6 +2433,33 @@ void DependenciesEditor::removeDependency() {
     emit bodyChanged();
   }
 }
+
+bool DependenciesWidget::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e = element->FirstChildElement(xmlName);
+  if(e) {
+    TiXmlElement *ee=e->FirstChildElement();
+    while(ee) {
+      addDependency();
+      refBody[refBody.size()-1]->setSavedBodyOfReference(ee->Attribute("ref"));
+      ee=ee->NextSiblingElement();
+    }
+  }
+}
+
+TiXmlElement* DependenciesWidget::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele = new TiXmlElement(xmlName);
+  for(int i=0; i<getSize(); i++) {
+    if(getBody(i)) {
+      refBody[i]->writeXMLFile(ele);
+//      TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"dependentRigidBody" );
+//      ele1->SetAttribute("ref", getBody(i)->getXMLPath(this,true).toStdString()); // relative path
+//      ele->LinkEndChild(ele1);
+    }
+  }
+  parent->LinkEndChild(ele);
+  return ele;
+}
+
 
 ParameterNameEditor::ParameterNameEditor(Parameter* parameter_, PropertyDialog *parent_, const QIcon& icon, const string &name, bool renaming) : Editor(parent_, icon, name), parameter(parameter_) {
   ename = new QLineEdit;
