@@ -150,36 +150,6 @@ void OctaveHighlighter::highlightBlock(const QString &text) {
   }
 }
 
-OctaveExpressionWidget::OctaveExpressionWidget() {
-  QVBoxLayout *layout=new QVBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
-  value=new QPlainTextEdit;
-  new OctaveHighlighter(value->document());
-  QFont font;
-  font.setFamily("Monospace");
-  value->setFont(font);
-  //value->setPlainText(toPlainText());
-  value->setLineWrapMode(QPlainTextEdit::NoWrap);
-  layout->addWidget(value);
-}
-
-bool OctaveExpressionWidget::initializeUsingXML(TiXmlElement *element) {
-  TiXmlText* text = dynamic_cast<TiXmlText*>(element->FirstChild());
-  if(!text)
-    return false;
-  setValue(text->Value());
-  return true;
-}
-
-TiXmlElement* OctaveExpressionWidget::writeXMLFile(TiXmlNode *parent) {
-  string str = getValue();
-  if(saveNumeric) str = evalOctaveExpression(str);
-  TiXmlText *text = new TiXmlText(str);
-  parent->LinkEndChild(text);
-  return 0;
-}
-
 LinearRegularizedBilateralConstraint::LinearRegularizedBilateralConstraint() : Function1() {
   QGridLayout *layout = new QGridLayout;
   vector<PhysicalStringWidget*> input;
@@ -208,6 +178,58 @@ TiXmlElement* LinearRegularizedBilateralConstraint::writeXMLFile(TiXmlNode *pare
   for(unsigned int i=0; i<var.size(); i++)
     var[i]->writeXMLFile(ele0);
   return ele0;
+}
+
+BoolWidget::BoolWidget(const std::string &b) { 
+  value = new QCheckBox;
+  setValue(b);
+  QHBoxLayout* layout = new QHBoxLayout;
+  setLayout(layout);
+  layout->addWidget(value);
+}
+
+bool BoolWidget::initializeUsingXML(TiXmlElement *element) {
+  TiXmlText* text = dynamic_cast<TiXmlText*>(element->FirstChild());
+  if(!text)
+    return false;
+  setValue(text->Value());
+  return true;
+}
+
+TiXmlElement* BoolWidget::writeXMLFile(TiXmlNode *parent) {
+  TiXmlText *text = new TiXmlText(getValue());
+  parent->LinkEndChild(text);
+  return 0;
+}
+
+OctaveExpressionWidget::OctaveExpressionWidget() {
+  QVBoxLayout *layout=new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+  value=new QPlainTextEdit;
+  new OctaveHighlighter(value->document());
+  QFont font;
+  font.setFamily("Monospace");
+  value->setFont(font);
+  //value->setPlainText(toPlainText());
+  value->setLineWrapMode(QPlainTextEdit::NoWrap);
+  layout->addWidget(value);
+}
+
+bool OctaveExpressionWidget::initializeUsingXML(TiXmlElement *element) {
+  TiXmlText* text = dynamic_cast<TiXmlText*>(element->FirstChild());
+  if(!text)
+    return false;
+  setValue(text->Value());
+  return true;
+}
+
+TiXmlElement* OctaveExpressionWidget::writeXMLFile(TiXmlNode *parent) {
+  string str = getValue();
+  if(saveNumeric) str = evalOctaveExpression(str);
+  TiXmlText *text = new TiXmlText(str);
+  parent->LinkEndChild(text);
+  return 0;
 }
 
 SScalarWidget::SScalarWidget(const std::string &d) {
@@ -520,50 +542,6 @@ TiXmlElement* SSymMatWidget::writeXMLFile(TiXmlNode *parent) {
   parent->LinkEndChild(ele);
   return 0;
 }
-
-//SVecVarWidget::SVecVarWidget(int size, int minSize, int maxSize) {
-//  QVBoxLayout *layout = new QVBoxLayout;
-//  layout->setMargin(0);
-//  QHBoxLayout *hbox = new QHBoxLayout;
-//  hbox->setMargin(0);
-//  layout->addLayout(hbox);
-//  sizeCombo = new QComboBox;
-//  for(int j=minSize; j<=maxSize; j++)
-//    sizeCombo->addItem(QString::number(j));
-//  hbox->addWidget(sizeCombo);
-//  hbox->addWidget(new QLabel("x"));
-//  hbox->addWidget(new QLabel("1"));
-//  hbox->addStretch(2);
-//  widget = new SVecWidget(size);
-//  QObject::connect(sizeCombo, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(resize(const QString&)));
-//  QObject::connect(sizeCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(currentIndexChanged(int)));
-//  layout->addWidget(widget);
-//  sizeCombo->setCurrentIndex(0);
-//
-//  setLayout(layout);
-//}
-//
-//bool SVecVarWidget::initializeUsingXML(TiXmlElement *parent) {
-//  TiXmlElement *element=parent->FirstChildElement();
-//  if(!element || element->ValueStr() != (PVNS"xmlVector"))
-//    return false;
-//  vector<string> x;
-//  TiXmlElement *ei=element->FirstChildElement();
-//  int i=0;
-//  while(ei && ei->ValueStr()==PVNS"ele") {
-//    x.push_back(ei->GetText());
-//    ei=ei->NextSiblingElement();
-//    i++;
-//  }
-//  sizeCombo->setCurrentIndex(sizeCombo->findText(QString::number(x.size())));
-//  widget->setVec(x);
-//  return true;
-//}
-//
-//TiXmlElement* SVecVarWidget::writeXMLFile(TiXmlNode *parent) {
-//  widget->writeXMLFile(parent);
-//  return 0;
-//}
 
 SMatColsVarWidget::SMatColsVarWidget(int rows, int cols, int minCols_, int maxCols_) : minCols(minCols_), maxCols(maxCols_) {
   QVBoxLayout *layout = new QVBoxLayout;
@@ -906,18 +884,18 @@ void FrameBrowser::checkForFrame(QTreeWidgetItem* item_,int) {
     okButton->setDisabled(true);
 }
 
-Editor::Editor(PropertyDialog *parent_, const QIcon &icon, const std::string &name) : dialog(parent_) {
-  dialog->addEditor(this);
+EvalDialog::EvalDialog(StringWidget *var_) : var(var_) {
+  var->setReadOnly(true);
+  QVBoxLayout *layout = new QVBoxLayout;
+  setLayout(layout);
+  layout->addWidget(var);
+  button = new QPushButton(tr("Assign to Schema 1"));
+  connect(button,SIGNAL(clicked(bool)),this,SIGNAL(clicked(bool)));
+  layout->addWidget(button);
 }
 
-BoolEditor::BoolEditor(PropertyDialog *parent_, const QIcon &icon, const QString &name, const QString &tab, bool val) : Editor(parent_, icon, name.toStdString()) {
-  value = new QCheckBox;
-  setValue(val);
-  QGroupBox* groupBox = new QGroupBox(name);  
-  dialog->addToTab(tab, groupBox);
-  QHBoxLayout* layout = new QHBoxLayout;
-  groupBox->setLayout(layout);
-  layout->addWidget(value);
+Editor::Editor(PropertyDialog *parent_, const QIcon &icon, const std::string &name) : dialog(parent_) {
+  dialog->addEditor(this);
 }
 
 NameEditor::NameEditor(Element* ele, PropertyDialog *parent_, const QIcon& icon, const string &name, bool renaming) : Editor(parent_, icon, name), element(ele) {
@@ -1060,16 +1038,6 @@ TiXmlElement* FrameOfReferenceWidget::writeXMLFile(TiXmlNode *parent) {
     parent->LinkEndChild(ele);
   }
   return 0;
-}
-
-EvalDialog::EvalDialog(StringWidget *var_) : var(var_) {
-  var->setReadOnly(true);
-  QVBoxLayout *layout = new QVBoxLayout;
-  setLayout(layout);
-  layout->addWidget(var);
-  button = new QPushButton(tr("Assign to Schema 1"));
-  connect(button,SIGNAL(clicked(bool)),this,SIGNAL(clicked(bool)));
-  layout->addWidget(button);
 }
 
 ExtPhysicalVarWidget::ExtPhysicalVarWidget(std::vector<PhysicalStringWidget*> inputWidget_) : inputWidget(inputWidget_), evalInput(0) {

@@ -227,7 +227,6 @@ class LinearRegularizedBilateralConstraint: public Function1 {
     std::vector<ExtPhysicalVarWidget*> var;
 };
 
-// TODO Prüfen ob überflüssig
 class StringWidget : public QWidget {
 
   public:
@@ -238,6 +237,22 @@ class StringWidget : public QWidget {
     virtual bool initializeUsingXML(TiXmlElement *element) = 0;
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element) = 0;
     virtual StringWidget* cloneStringWidget() {return 0;}
+};
+
+class BoolWidget : public StringWidget {
+
+  public:
+    BoolWidget(const std::string &b="0");
+    //int getValue() const {return value->checkState()==Qt::Checked?true:false;}
+    //void setValue(bool b) {value->setCheckState(b?Qt::Checked:Qt::Unchecked);}
+    std::string getValue() const {return value->checkState()==Qt::Checked?"1":"0";}
+    void setValue(const std::string &str) {value->setCheckState((str=="0"||str=="false")?Qt::Unchecked:Qt::Checked);}
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual StringWidget* cloneStringWidget() {return new BoolWidget;}
+
+  protected:
+    QCheckBox *value;
 };
 
 class OctaveExpressionWidget : public StringWidget {
@@ -324,37 +339,6 @@ class SSymMatWidget : public StringWidget {
     int rows() const {return box.size();}
     int cols() const {return box[0].size();}
 };
-
-//class SVecVarWidget : public StringWidget {
-//
-//  Q_OBJECT
-//
-//  private:
-//    SVecWidget *widget;
-//    QComboBox* sizeCombo;
-//    int minSize, maxSize;
-//  public:
-//    SVecVarWidget(int size, int minSize, int maxSize);
-//    std::vector<std::string> getVec() const {return widget->getVec();}
-//    void setVec(const std::vector<std::string> &x) {
-//      sizeCombo->setCurrentIndex(sizeCombo->findText(QString::number(x.size())));
-//      widget->setVec(x);
-//    }
-//    void resize(int size) {widget->resize(size);}
-//    int size() const {return sizeCombo->currentText().toInt();}
-//    std::string getValue() const {return toStr(getVec());}
-//    void setValue(const std::string &str) {setVec(strToSVec(str));}
-//    void setReadOnly(bool flag) {widget->setReadOnly(flag);}
-//    virtual bool initializeUsingXML(TiXmlElement *element);
-//    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-//    virtual StringWidget* cloneStringWidget() {return new SVecWidget(size());}
-//
-//  public slots:
-//    void resize(const QString &size) {widget->resize(size.toInt());}
-//  signals:
-//    void currentIndexChanged(int);
-//
-//};
 
 class SMatColsVarWidget : public StringWidget {
 
@@ -499,6 +483,21 @@ class FrameBrowser : public QDialog {
     void checkForFrame(QTreeWidgetItem* item_,int);
 };
 
+class EvalDialog : public QDialog {
+  Q_OBJECT
+  public:
+    EvalDialog(StringWidget *var);
+    void setValue(const std::string &str) {var->setValue(str);}
+    std::string getValue() const {return var->getValue();}
+    void setButtonDisabled(bool flag) {button->setDisabled(flag);}
+  protected:
+    StringWidget *var;
+    QPushButton *button;
+  signals:
+    void clicked(bool);
+};
+
+
 class Editor : public QWidget {
   public:
     Editor(PropertyDialog *parent_, const QIcon &icon, const std::string &name);
@@ -506,18 +505,6 @@ class Editor : public QWidget {
     virtual void initialize() {}
   protected:
     PropertyDialog *dialog;
-};
-
-class BoolEditor : public Editor {
-
-  public:
-    BoolEditor(PropertyDialog *parent_, const QIcon &icon, const QString &name, const QString &tab="General", bool val=false);
-
-    void setValue(bool b) {value->setCheckState(b?Qt::Checked:Qt::Unchecked);}
-    int getValue() const {return value->checkState()==Qt::Checked?true:false;}
-
-  protected:
-    QCheckBox *value;
 };
 
 class NameEditor : public Editor {
@@ -585,20 +572,6 @@ class FrameOfReferenceWidget : public XMLWidget {
 
   public slots:
     void setFrame();
-};
-
-class EvalDialog : public QDialog {
-  Q_OBJECT
-  public:
-    EvalDialog(StringWidget *var);
-    void setValue(const std::string &str) {var->setValue(str);}
-    std::string getValue() const {return var->getValue();}
-    void setButtonDisabled(bool flag) {button->setDisabled(flag);}
-  protected:
-    StringWidget *var;
-    QPushButton *button;
-  signals:
-    void clicked(bool);
 };
 
 class ExtPhysicalVarWidget : public XMLWidget {
