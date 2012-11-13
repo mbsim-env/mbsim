@@ -60,7 +60,6 @@ class Integrator : public QObject, public QTreeWidgetItem {
     QMenu* getContextMenu() { return contextMenu; }
     PropertyDialog* getPropertyDialog() { return properties; }
     void setEndTime(double t) {((ExtPhysicalVarWidget*)endTime->getXMLWidget())->setValue(QString::number(t).toStdString());}
-    //void setPlotStepSize(double dt) {plotStepSize->setValue(dt);}
     public slots:
       void saveAs();
 };
@@ -72,8 +71,7 @@ class DOPRI5Integrator : public Integrator {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "DOPRI5Integrator"; }
   protected:
-    XMLEditor *absTol, *relTol, *initialStepSize, *maximalStepSize;
-    XMLEditor *maxSteps;
+    XMLEditor *absTol, *relTol, *initialStepSize, *maximalStepSize, *maxSteps;
 };
 
 class LSODEIntegrator : public Integrator {
@@ -83,9 +81,7 @@ class LSODEIntegrator : public Integrator {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "LSODEIntegrator"; }
   protected:
-    XMLEditor *absTol, *relTol, *initialStepSize, *maximalStepSize, *minimalStepSize;
-    XMLEditor *maxSteps;
-    BoolEditor *stiff;
+    XMLEditor *absTol, *relTol, *initialStepSize, *maximalStepSize, *minimalStepSize, *maxSteps, *stiff;
 };
 
 #endif

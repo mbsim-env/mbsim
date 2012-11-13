@@ -199,8 +199,12 @@ LSODEIntegrator::LSODEIntegrator(const QString &str, QTreeWidgetItem *parentItem
   d = new ExtPhysicalVarWidget(input);
   maxSteps=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Number of maximal steps", "Step size", d);
 
-  stiff = new BoolEditor(properties,  Utils::QIconCached("lines.svg"), "Stiff modus", "Extra", false);
- properties->addStretch();
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new BoolWidget("0"),MBSIMINTNS"stiffModus",QStringList(),1));
+  d = new ExtPhysicalVarWidget(input);
+  stiff = new XMLEditor(properties,  Utils::QIconCached("lines.svg"), "Stiff modus", "Extra", d);
+
+  properties->addStretch();
 }
 
 void LSODEIntegrator::initializeUsingXML(TiXmlElement *element) {
@@ -211,9 +215,7 @@ void LSODEIntegrator::initializeUsingXML(TiXmlElement *element) {
   maximalStepSize->initializeUsingXML(element);
   minimalStepSize->initializeUsingXML(element);
   maxSteps->initializeUsingXML(element);
-  TiXmlElement *e;
-  e=element->FirstChildElement(MBSIMINTNS"stiffModus");
-  stiff->setValue(Element::getBool(e));
+  stiff->initializeUsingXML(element);
 }
 
 TiXmlElement* LSODEIntegrator::writeXMLFile(TiXmlNode *parent) {
@@ -224,7 +226,7 @@ TiXmlElement* LSODEIntegrator::writeXMLFile(TiXmlNode *parent) {
   maximalStepSize->writeXMLFile(ele0);
   minimalStepSize->writeXMLFile(ele0);
   maxSteps->writeXMLFile(ele0);
-  addElementText(ele0,"stiffModus",stiff->getValue());
+  stiff->writeXMLFile(ele0);
   return ele0;
 }
 
