@@ -44,7 +44,7 @@ class Parameter : public QObject, public QTreeWidgetItem {
     bool searchMatched;
     PropertyDialog *properties;
     QMenu *contextMenu;
-    ParameterNameEditor *name;
+    XMLEditor *name;
   public:
     Parameter(const QString &str, QTreeWidgetItem *parentItem, int ind);
     virtual ~Parameter();
@@ -59,7 +59,7 @@ class Parameter : public QObject, public QTreeWidgetItem {
     QMenu* getContextMenu() { return contextMenu; }
     PropertyDialog* getPropertyDialog() { return properties; }
     QString getName() const {return text(0);}
-    void setName(const QString &str) {setText(0,str);name->setName(str);}
+    void setName(const QString &str) {setText(0,str);((NameWidget*)name->getXMLWidget())->setName(str);}
     virtual std::string getValue() const = 0;
   public slots:
     void saveAs();

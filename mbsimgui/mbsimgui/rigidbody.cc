@@ -102,14 +102,16 @@ void RigidBody::addFrame() {
 
 void RigidBody::resizeGeneralizedPosition() {
   int size = getSize();
-  if(((SVecWidget*)initialGeneralizedPosition->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getWidget())->size() != size)
-    ((SVecWidget*)initialGeneralizedPosition->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getWidget())->resize(size);
+ GeneralizedCoordinatesWidget *q0 = (GeneralizedCoordinatesWidget*)initialGeneralizedPosition->getXMLWidget();
+  if(((SVecWidget*)q0->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getWidget())->size() != size)
+    ((SVecWidget*)q0->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getWidget())->resize(size);
 }
 
 void RigidBody::resizeGeneralizedVelocity() {
   int size = getSize();
-  if(((SVecWidget*)initialGeneralizedVelocity->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getWidget())->size() != size)
-    ((SVecWidget*)initialGeneralizedVelocity->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getWidget())->resize(size);
+  GeneralizedCoordinatesWidget *u0 = (GeneralizedCoordinatesWidget*)initialGeneralizedVelocity->getXMLWidget();
+  if(((SVecWidget*)u0->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getWidget())->size() != size)
+    ((SVecWidget*)u0->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getWidget())->resize(size);
 }
 
 void RigidBody::initializeUsingXML(TiXmlElement *element) {

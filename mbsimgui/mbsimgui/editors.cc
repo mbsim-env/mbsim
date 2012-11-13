@@ -2439,15 +2439,12 @@ TiXmlElement* DependenciesWidget::writeXMLFile(TiXmlNode *parent) {
   return ele;
 }
 
-
-ParameterNameEditor::ParameterNameEditor(Parameter* parameter_, PropertyDialog *parent_, const QIcon& icon, const string &name, bool renaming) : Editor(parent_, icon, name), parameter(parameter_) {
+ParameterNameWidget::ParameterNameWidget(Parameter* parameter_, bool renaming) : parameter(parameter_) {
   ename = new QLineEdit;
   ename->setReadOnly(true);
   ename->setText(parameter->getName());
-  QGroupBox *groupBox = new QGroupBox(tr("Name"));  
-  dialog->addToTab("General", groupBox);
   QHBoxLayout* layout = new QHBoxLayout;
-  groupBox->setLayout(layout);
+  setLayout(layout);
   layout->addWidget(ename);
   if(renaming) {
     QPushButton *button = new QPushButton("Rename");
@@ -2456,7 +2453,7 @@ ParameterNameEditor::ParameterNameEditor(Parameter* parameter_, PropertyDialog *
   }
 }
 
-void ParameterNameEditor::rename() {
+void ParameterNameWidget::rename() {
   QString text;
   do {
     text = QInputDialog::getText(0, tr("Rename"), tr("Name:"), QLineEdit::Normal, getName());
@@ -2471,6 +2468,15 @@ void ParameterNameEditor::rename() {
   if(text!="")
     parameter->setName(text);
   //((Parameter*)parameter->treeWidget()->topLevelItem(0))->update();
+}
+
+bool ParameterNameWidget::initializeUsingXML(TiXmlElement *parent) {
+  return true;
+}
+
+TiXmlElement* ParameterNameWidget::writeXMLFile(TiXmlNode *parent) {
+  ((TiXmlElement*)parent)->SetAttribute("name", getName().toStdString());
+  return 0;
 }
 
 FileEditor::FileEditor(PropertyDialog *parent_, const QIcon& icon, const QString &name, const QString &tab) : Editor(parent_, icon, name.toStdString()) {
@@ -2521,11 +2527,9 @@ XMLEditor::XMLEditor(PropertyDialog *parent_, const QIcon& icon, const QString &
   layout->addWidget(widget);
 }
 
-GeneralizedCoordinatesEditor::GeneralizedCoordinatesEditor(PropertyDialog *parent_, const QIcon& icon, const QString &name, const QString &tab, const string &xmlName) : Editor(parent_, icon, name.toStdString()) {
-  QGroupBox *groupBox = new QGroupBox(name);  
-  dialog->addToTab(tab, groupBox);
+GeneralizedCoordinatesWidget::GeneralizedCoordinatesWidget(const string &xmlName) {
   QVBoxLayout *layout = new QVBoxLayout;
-  groupBox->setLayout(layout);
+  setLayout(layout);
 
   vector<PhysicalStringWidget*> input;
   vec = new SVecWidget(0);
@@ -2543,17 +2547,17 @@ GeneralizedCoordinatesEditor::GeneralizedCoordinatesEditor(PropertyDialog *paren
   layout->addWidget(buttonDisable);
 }
 
-void GeneralizedCoordinatesEditor::disableGeneralizedCoordinates(bool flag) {
+void GeneralizedCoordinatesWidget::disableGeneralizedCoordinates(bool flag) {
   widget->setVisible(!flag);
   buttonResize->setDisabled(flag);
   emit resizeGeneralizedCoordinates();
 }
 
-void GeneralizedCoordinatesEditor::resize(int i) {
+void GeneralizedCoordinatesWidget::resize(int i) {
   vec->resize(i);
 }
 
-bool GeneralizedCoordinatesEditor::initializeUsingXML(TiXmlElement *element) {
+bool GeneralizedCoordinatesWidget::initializeUsingXML(TiXmlElement *element) {
  bool flag = widget->initializeUsingXML(element);
  buttonDisable->setChecked(!flag);
  return flag;

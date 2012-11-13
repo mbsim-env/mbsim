@@ -26,10 +26,12 @@ using namespace std;
 
 Object::Object(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element(str, parentItem, ind) {
   properties->addTab("Initial conditions");
-  initialGeneralizedPosition=new GeneralizedCoordinatesEditor(properties, Utils::QIconCached("lines.svg"), "Initial generalized position", "Initial conditions", MBSIMNS"initialGeneralizedPosition");
-  initialGeneralizedVelocity=new GeneralizedCoordinatesEditor(properties, Utils::QIconCached("lines.svg"), "Initial generalized velocity", "Initial conditions", MBSIMNS"initialGeneralizedVelocity");
-  connect(initialGeneralizedPosition,SIGNAL(resizeGeneralizedCoordinates()),this,SLOT(resizeGeneralizedPosition()));
-  connect(initialGeneralizedVelocity,SIGNAL(resizeGeneralizedCoordinates()),this,SLOT(resizeGeneralizedVelocity()));
+  GeneralizedCoordinatesWidget *q0 = new GeneralizedCoordinatesWidget(MBSIMNS"initialGeneralizedPosition");
+  GeneralizedCoordinatesWidget *u0 = new GeneralizedCoordinatesWidget(MBSIMNS"initialGeneralizedVelocity");
+  initialGeneralizedPosition=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Initial generalized position", "Initial conditions", q0);
+  initialGeneralizedVelocity=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Initial generalized velocity", "Initial conditions", u0);
+  connect(q0,SIGNAL(resizeGeneralizedCoordinates()),this,SLOT(resizeGeneralizedPosition()));
+  connect(u0,SIGNAL(resizeGeneralizedCoordinates()),this,SLOT(resizeGeneralizedVelocity()));
 
   actionSaveAs=new QAction(Utils::QIconCached("newobject.svg"),"Save as", this);
   connect(actionSaveAs,SIGNAL(triggered()),this,SLOT(saveAs()));
@@ -55,41 +57,16 @@ void Object::update() {
   Element::update();
 }
 
-void Object::disableGeneralizedPosition() {
-  ((SVecWidget*)initialGeneralizedPosition->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getWidget())->resize(0);
-}
-
-void Object::disableGeneralizedVelocity() {
-  ((SVecWidget*)initialGeneralizedVelocity->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getWidget())->resize(0);
-}
-
-
 void Object::initializeUsingXML(TiXmlElement *element) {
-    TiXmlElement *e;
-    Element::initializeUsingXML(element);
-    initialGeneralizedPosition->initializeUsingXML(element);
-    initialGeneralizedVelocity->initializeUsingXML(element);
-//    e=element->FirstChildElement(MBSIMNS"initialGeneralizedPosition");
-//    if (e)
-//      initialGeneralizedPosition->setVec(getVec(e));
-//    e=element->FirstChildElement(MBSIMNS"initialGeneralizedVelocity");
-//    if (e)
-//      initialGeneralizedVelocity->setVec(getVec(e));
+  Element::initializeUsingXML(element);
+  initialGeneralizedPosition->initializeUsingXML(element);
+  initialGeneralizedVelocity->initializeUsingXML(element);
 }
 
 TiXmlElement* Object::writeXMLFile(TiXmlNode *parent) {    
   TiXmlElement *ele0 = Element::writeXMLFile(parent);
-  string str = (initialGeneralizedPosition->getExtPhysicalWidget())->getValue();
-  if(str!="[]" && str!="")
-    initialGeneralizedPosition->writeXMLFile(ele0);
-  str = (initialGeneralizedVelocity->getExtPhysicalWidget())->getValue();
-  if(str!="[]" && str!="")
-    initialGeneralizedVelocity->writeXMLFile(ele0);
-
- // if(initialGeneralizedPosition->getRows()) 
- //   addElementText(ele0,MBSIMNS"initialGeneralizedPosition",initialGeneralizedPosition->getMat());
- // if(initialGeneralizedVelocity->getRows()) 
- //   addElementText(ele0,MBSIMNS"initialGeneralizedVelocity",initialGeneralizedVelocity->getMat());
+  initialGeneralizedPosition->writeXMLFile(ele0);
+  initialGeneralizedVelocity->writeXMLFile(ele0);
   return ele0;
 }
 

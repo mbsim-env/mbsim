@@ -526,6 +526,26 @@ class NameWidget : public XMLWidget {
     void rename();
 };
 
+class ParameterNameWidget : public XMLWidget {
+  Q_OBJECT
+
+  public:
+    ParameterNameWidget(Parameter* ele, bool renaming=true);
+
+    QString getName() const {return ename->text();}
+    void setName(const QString &name) {ename->setText(name);}
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+
+  protected:
+    QLineEdit *ename;
+    Parameter* parameter;
+
+  protected slots:
+    void rename();
+};
+
+
 class LocalFrameOfReferenceWidget : public XMLWidget {
   Q_OBJECT
 
@@ -1096,23 +1116,6 @@ class DependenciesWidget : public XMLWidget {
       void bodyChanged();
 };
 
-class ParameterNameEditor : public Editor {
-  Q_OBJECT
-
-  public:
-    ParameterNameEditor(Parameter* ele, PropertyDialog *parent_, const QIcon &icon, const std::string &name, bool renaming=true);
-
-    QString getName() const {return ename->text();}
-    void setName(const QString &name) {ename->setText(name);}
-
-  protected:
-    QLineEdit *ename;
-    Parameter* parameter;
-
-  protected slots:
-    void rename();
-};
-
 class FileEditor : public Editor {
   Q_OBJECT
 
@@ -1161,14 +1164,14 @@ class XMLEditor : public Editor {
     XMLWidget *widget;
 };
 
-class GeneralizedCoordinatesEditor : public Editor {
+class GeneralizedCoordinatesWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    GeneralizedCoordinatesEditor(PropertyDialog *parent_, const QIcon &icon, const QString &name, const QString &tab, const std::string &xmlName);
+    GeneralizedCoordinatesWidget(const std::string &xmlName);
 
     virtual bool initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlElement *element) {return buttonDisable->isChecked()?0:widget->writeXMLFile(element);}
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element) {return buttonDisable->isChecked()?0:widget->writeXMLFile(element);}
     ExtPhysicalVarWidget* getExtPhysicalWidget() {return widget;}
     virtual void update() {widget->update();}
 
