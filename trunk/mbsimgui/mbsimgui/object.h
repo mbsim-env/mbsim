@@ -37,14 +37,10 @@ class Object : public Element {
   public slots:
     void update();
     virtual void resizeGeneralizedPosition() {}
-    virtual void disableGeneralizedPosition();
     virtual void resizeGeneralizedVelocity() {}
-    virtual void disableGeneralizedVelocity();
   protected:
     QAction *actionSaveAs;
-    //InitialGeneralizedCoordinatsEditor *initialGeneralizedCoordinates;
-    //MatEditor *initialGeneralizedPosition, *initialGeneralizedVelocity;
-    GeneralizedCoordinatesEditor *initialGeneralizedPosition, *initialGeneralizedVelocity;
+    XMLEditor *initialGeneralizedPosition, *initialGeneralizedVelocity;
 };
 
 #endif

@@ -60,8 +60,9 @@ void JointConstraint::resizeGeneralizedPosition() {
   for(int i=0; i<((DependenciesWidget*)dependentBodiesSecondSide->getXMLWidget())->getSize(); i++)
     if(((DependenciesWidget*)dependentBodiesSecondSide->getXMLWidget())->getBody(i))
       size += ((DependenciesWidget*)dependentBodiesSecondSide->getXMLWidget())->getBody(i)->getUnconstrainedSize();
-  if(((SVecWidget*)initialGeneralizedPosition->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getWidget())->size() != size)
-    ((SVecWidget*)initialGeneralizedPosition->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getWidget())->resize(size);
+  GeneralizedCoordinatesWidget *q0 = (GeneralizedCoordinatesWidget*)initialGeneralizedPosition->getXMLWidget();
+  if(((SVecWidget*)q0->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getWidget())->size() != size)
+    ((SVecWidget*)q0->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getWidget())->resize(size);
 }
 
 void JointConstraint::initializeUsingXML(TiXmlElement *element) {

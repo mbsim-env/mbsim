@@ -38,7 +38,7 @@ Parameter::Parameter(const QString &str, QTreeWidgetItem *parentItem, int ind) :
   properties=new PropertyDialog(this);
   properties->addTab("General");
 
-  name = new ParameterNameEditor(this, properties, Utils::QIconCached("lines.svg"), "Name");
+  name = new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Name", "General",new ParameterNameWidget(this));
 
   contextMenu=new QMenu("Context Menu");
 
@@ -71,7 +71,7 @@ void Parameter::initializeUsingXML(TiXmlElement *element) {
 
 TiXmlElement* Parameter::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0=new TiXmlElement(PARAMNS+getType().toStdString());
-  ele0->SetAttribute("name", text(0).toStdString());
+  name->writeXMLFile(ele0);
   TiXmlText* text= new TiXmlText(getValue());
   ele0->LinkEndChild(text);
   parent->LinkEndChild(ele0);
