@@ -65,14 +65,16 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
 
   framePos = new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Position and orientation of frames", "Frame positioning", new FramePositionsWidget(this));
   
-  translation=new TranslationEditor(properties, Utils::QIconCached("lines.svg"), "Translation");
-  connect(translation,SIGNAL(translationChanged()),this,SLOT(resizeGeneralizedPosition()));
-  connect(translation,SIGNAL(translationChanged()),this,SLOT(resizeGeneralizedVelocity()));
-  connect(translation,SIGNAL(translationChanged()),this,SIGNAL(sizeChanged()));
-  rotation=new RotationEditor(properties, Utils::QIconCached("lines.svg"), "Rotation");
-  connect(rotation,SIGNAL(rotationChanged()),this,SLOT(resizeGeneralizedPosition()));
-  connect(rotation,SIGNAL(rotationChanged()),this,SLOT(resizeGeneralizedVelocity()));
-  connect(rotation,SIGNAL(rotationChanged()),this,SIGNAL(sizeChanged()));
+  TranslationChoiceWidget *trans = new TranslationChoiceWidget;
+  translation=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Translation", "Kinematics", trans);
+  connect(trans,SIGNAL(translationChanged()),this,SLOT(resizeGeneralizedPosition()));
+  connect(trans,SIGNAL(translationChanged()),this,SLOT(resizeGeneralizedVelocity()));
+  connect(trans,SIGNAL(translationChanged()),this,SIGNAL(sizeChanged()));
+  RotationChoiceWidget *rot = new RotationChoiceWidget;
+  rotation=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Rotation", "Kinematics", rot);
+  connect(rot,SIGNAL(rotationChanged()),this,SLOT(resizeGeneralizedPosition()));
+  connect(rot,SIGNAL(rotationChanged()),this,SLOT(resizeGeneralizedVelocity()));
+  connect(rot,SIGNAL(rotationChanged()),this,SIGNAL(sizeChanged()));
  
   ombvEditor=new OMBVEditor(this, properties, Utils::QIconCached("lines.svg"), "OpenMBV");
 

@@ -1162,11 +1162,9 @@ TiXmlElement* LinearTranslation::writeXMLFile(TiXmlNode *parent) {
   return ele2;
 }
 
-TranslationEditor::TranslationEditor(PropertyDialog *parent_, const QIcon& icon, const string &name) : Editor(parent_, icon, name), translation(0) {
-  groupBox = new QGroupBox(tr("Translation"));  
-  dialog->addToTab("Kinematics", groupBox);
+TranslationChoiceWidget::TranslationChoiceWidget() : translation(0) {
   layout = new QVBoxLayout;
-  groupBox->setLayout(layout);
+  setLayout(layout);
 
   comboBox = new QComboBox;
   comboBox->addItem(tr("None"));
@@ -1175,7 +1173,7 @@ TranslationEditor::TranslationEditor(PropertyDialog *parent_, const QIcon& icon,
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineTranslation(int)));
 }
 
-void TranslationEditor::defineTranslation(int index) {
+void TranslationChoiceWidget::defineTranslation(int index) {
   if(index==0) {
     layout->removeWidget(translation);
     delete translation;
@@ -1189,7 +1187,7 @@ void TranslationEditor::defineTranslation(int index) {
   emit translationChanged();
 }
 
-bool TranslationEditor::initializeUsingXML(TiXmlElement *element) {
+bool TranslationChoiceWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=element->FirstChildElement(MBSIMNS"translation");
   TiXmlElement *e1 = e->FirstChildElement();
   if(e1 && e1->ValueStr() == MBSIMNS"LinearTranslation") {
@@ -1198,7 +1196,7 @@ bool TranslationEditor::initializeUsingXML(TiXmlElement *element) {
   }
 }
 
-TiXmlElement* TranslationEditor::writeXMLFile(TiXmlNode *parent) {
+TiXmlElement* TranslationChoiceWidget::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"translation" );
   if(getTranslation()==1) {
     translation->writeXMLFile(ele0);
@@ -1259,11 +1257,9 @@ TiXmlElement* CardanAngles::writeXMLFile(TiXmlNode *parent) {
   return ele2;
 }
 
-RotationEditor::RotationEditor(PropertyDialog *parent_, const QIcon& icon, const string &name) : Editor(parent_, icon, name), rotation(0) {
-  groupBox = new QGroupBox(tr("Rotation"));  
-  dialog->addToTab("Kinematics", groupBox);
+RotationChoiceWidget::RotationChoiceWidget() : rotation(0) {
   layout = new QVBoxLayout;
-  groupBox->setLayout(layout);
+  setLayout(layout);
 
   comboBox = new QComboBox;
   comboBox->addItem(tr("None"));
@@ -1277,7 +1273,7 @@ RotationEditor::RotationEditor(PropertyDialog *parent_, const QIcon& icon, const
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineRotation(int)));
 }
 
-void RotationEditor::defineRotation(int index) {
+void RotationChoiceWidget::defineRotation(int index) {
   if(index==0) {
     layout->removeWidget(rotation);
     delete rotation;
@@ -1322,7 +1318,7 @@ void RotationEditor::defineRotation(int index) {
   emit rotationChanged();
 }
 
-bool RotationEditor::initializeUsingXML(TiXmlElement *element) {
+bool RotationChoiceWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=element->FirstChildElement(MBSIMNS"rotation");
   TiXmlElement *e1 = e->FirstChildElement();
   if(e1) {
@@ -1353,7 +1349,7 @@ bool RotationEditor::initializeUsingXML(TiXmlElement *element) {
   }
 }
 
-TiXmlElement* RotationEditor::writeXMLFile(TiXmlNode *parent) {
+TiXmlElement* RotationChoiceWidget::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"rotation" );
   if(getRotation()>0) {
     rotation->writeXMLFile(ele0);

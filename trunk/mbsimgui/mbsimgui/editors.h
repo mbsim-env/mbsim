@@ -645,12 +645,11 @@ class LinearTranslation : public TranslationWidget {
     void translationChanged();
 };
 
-class TranslationEditor : public Editor {
+class TranslationChoiceWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    /*! Constructor. */
-    TranslationEditor(PropertyDialog *parent_, const QIcon &icon, const std::string &name);
+    TranslationChoiceWidget();
 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
@@ -661,7 +660,6 @@ class TranslationEditor : public Editor {
     void defineTranslation(int);
 
   protected:
-    QGroupBox *groupBox;
     QVBoxLayout *layout;
     QComboBox *comboBox;
     TranslationWidget *translation;
@@ -734,12 +732,11 @@ class CardanAngles : public RotationWidget {
     virtual int getSize() const {return 3;}
 };
 
-class RotationEditor : public Editor {
+class RotationChoiceWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    /*! Constructor. */
-    RotationEditor(PropertyDialog *parent_, const QIcon &icon, const std::string &name);
+    RotationChoiceWidget();
 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
@@ -750,7 +747,6 @@ class RotationEditor : public Editor {
    void defineRotation(int);
 
   protected:
-    QGroupBox *groupBox;
     QVBoxLayout *layout;
     QComboBox *comboBox;
     RotationWidget *rotation;
