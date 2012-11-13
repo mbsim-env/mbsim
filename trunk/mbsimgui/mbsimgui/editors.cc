@@ -1108,8 +1108,12 @@ ExtPhysicalVarWidget::ExtPhysicalVarWidget(std::vector<PhysicalStringWidget*> in
  // layout->addWidget(inputCombo,2,1);
 }
 
-std::string ExtPhysicalVarWidget::getValue() const { 
+string ExtPhysicalVarWidget::getValue() const { 
   return inputWidget[inputCombo->currentIndex()]->getValue();
+}
+
+void ExtPhysicalVarWidget::setValue(const string &str) { 
+  return inputWidget[inputCombo->currentIndex()]->setValue(str);
 }
 
 void ExtPhysicalVarWidget::updateInput() {

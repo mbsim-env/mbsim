@@ -29,7 +29,7 @@
 #include "rigidbody.h"
 #include "parameter.h"
 #include "octaveutils.h"
-#ifdef MBSIMXML_MINGW // Windows
+#ifdef MBSIMGUI_MINGW // Windows
 #  include <windows.h>
 #  include <process.h>
 #else
@@ -48,7 +48,7 @@ int runProgramSyncronous(const vector<string> &arg) {
     argv[i]=const_cast<char*>(arg[i].c_str());
   argv[arg.size()]=NULL;
 
-#if !defined MBSIMXML_MINGW
+#if !defined MBSIMGUI_MINGW
   pid_t child;
   int ret;
   extern char** environ;
@@ -226,7 +226,6 @@ MainWindow::MainWindow() {
 
   QToolBar *toolBar = addToolBar("Tasks");
   action = toolBar->addAction("Preview");
-  action->setDisabled(true);
   connect(action,SIGNAL(triggered()),this,SLOT(preview()));
   toolBar->addAction(action);
   actionSimulate = toolBar->addAction("Simulate");
@@ -328,8 +327,8 @@ MainWindow::MainWindow() {
   newDOPRI5Integrator();
   QTreeWidgetItem* parentItem = new QTreeWidgetItem;
   Integrator *previewIntegrator = new DOPRI5Integrator("DOPRI5",parentItem, 1);
-//  previewIntegrator->setEndTime(1e-10);
-//  previewIntegrator->writeXMLFile(".preview");
+  previewIntegrator->setEndTime(1e-10);
+  previewIntegrator->writeXMLFile(".preview");
 
 }
 
@@ -624,19 +623,32 @@ void MainWindow::updateOctaveParameters() {
 }
 
 void MainWindow::preview() {
-  ((Solver*)elementList->topLevelItem(0))->writeXMLFile(".sim");
-  //string dir = string(MBSIMXMLBINDIR)+"/";
-  string prog = "mbsimflatxml";
+  Solver *solver = ((Solver*)elementList->topLevelItem(0));
+  solver->writeXMLFile(".sim");
+  ((Integrator*)integratorList->topLevelItem(0))->writeXMLFile(".sim");
+  QString file = fileParameter->text();
+  fileParameter->setText(solver->getParameterFile());
+  saveParameter();
+  fileParameter->setText(file);
+
+  string prog = "mbsimxml";
   vector<string> command;
   command.push_back(prog);
-  command.push_back("--mbsimparam");
-  command.push_back(".sim.mbsimparam.xml");
+  if(solver->getParameterFile() != "") {
+    command.push_back("--mbsimparam");
+    command.push_back(solver->getParameterFile().toStdString());
+  }
   command.push_back(".sim.mbsim.xml");
   command.push_back(".preview.mbsimint.xml");
-  cout << (command[0] + " " + command[1] + " " + command[2] + " " + command[3] + " " + command[4]).c_str() << endl;
-  int ret = system((command[0] + " " + command[1] + " " + command[2] + " " + command[3] + " " + command[4]).c_str());
+  string str = command[0];
+  for(unsigned int i=1; i<command.size(); i++)
+    str += " " + command[i];
+
+  cout << str.c_str() << endl;
+  int ret = system(str.c_str());
   cout << ret << endl;
   //runProgramSyncronous(command);
+#if !defined MBSIMGUI_MINGW
   {
     QString name1 = ((Solver*)elementList->topLevelItem(0))->getName() + ".ombv.xml";
     QString name2 = ((Solver*)elementList->topLevelItem(0))->getName() + ".ombv.h5";
@@ -650,6 +662,7 @@ void MainWindow::preview() {
     int ret = system((command[0] + " " + command[1] + " " + command[2]).c_str());
     cout << ret << endl;
   }
+#endif
   actionOpenMBV->setDisabled(false);
 }
 
@@ -679,6 +692,7 @@ void MainWindow::simulate() {
   int ret = system(str.c_str());
   cout << ret << endl;
   //runProgramSyncronous(command);
+#if !defined MBSIMGUI_MINGW
   {
     QString name1 = ((Solver*)elementList->topLevelItem(0))->getName() + ".ombv.xml";
     QString name2 = ((Solver*)elementList->topLevelItem(0))->getName() + ".ombv.h5";
@@ -692,6 +706,7 @@ void MainWindow::simulate() {
     int ret = system((command[0] + " " + command[1] + " " + command[2]).c_str());
     cout << ret << endl;
   }
+#endif
   actionOpenMBV->setDisabled(false);
   actionH5plotserie->setDisabled(false);
 }
@@ -716,7 +731,6 @@ void MainWindow::h5plotserie() {
   if(elementList->topLevelItemCount()) {
     QString name = ((Solver*)elementList->topLevelItem(0))->getName() + ".mbsim.h5";
     if(QFile::exists(name)) {
-      //string dir = string(MBSIMXMLBINDIR)+"/";
       string prog = "h5plotserie";
       vector<string> command;
       command.push_back(prog);
