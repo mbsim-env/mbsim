@@ -108,25 +108,23 @@ void Parameter::updateTreeWidgetItem(const QString &str) {
 
 DoubleParameter::DoubleParameter(const QString &str, QTreeWidgetItem *parentItem, int ind) : Parameter(str,parentItem,ind) {
   QStringList units;
-  //ExtPhysicalVarWidget *d = new ExtPhysicalVarWidget(a, units);
-  //value=new XMLWidgetEditor(properties, Utils::QIconCached("lines.svg"), "Value", "General", d, "scalarParameter");
-  value=new ParameterValueEditor(new PhysicalStringWidget(new SScalarWidget("1"),PVNS"scalarParameter",QStringList(),0), properties, Utils::QIconCached("lines.svg"), "Value", "General");
-
-  //value = new DoubleEditor(properties,  Utils::QIconCached("lines.svg"), "Value", "General");
+  ParameterValueWidget* val = new ParameterValueWidget(new PhysicalStringWidget(new SScalarWidget("1"),PVNS"scalarParameter",QStringList(),0));
+  value=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Value", "General", val);
   properties->addStretch();
-  connect(value,SIGNAL(parameterChanged(const QString&)),this,SIGNAL(parameterChanged(const QString&)));
+  connect(val,SIGNAL(parameterChanged(const QString&)),this,SIGNAL(parameterChanged(const QString&)));
 }
 
 void DoubleParameter::initializeUsingXML(TiXmlElement *element) {
-  value->getExtPhysicalWidget()->initializeUsingXML(element);
+  ParameterValueWidget *val = (ParameterValueWidget*)value->getXMLWidget();
+  val->getExtPhysicalWidget()->initializeUsingXML(element);
   TiXmlText *text = dynamic_cast<TiXmlText*>(element->FirstChild());
     if(text) {
-      value->getExtPhysicalWidget()->getPhysicalStringWidget(0)->setValue(text->Value());
-      value->getExtPhysicalWidget()->getPhysicalStringWidget(1)->setValue(text->Value());
+      val->getExtPhysicalWidget()->getPhysicalStringWidget(0)->setValue(text->Value());
+      val->getExtPhysicalWidget()->getPhysicalStringWidget(1)->setValue(text->Value());
     } 
     else if(element) {
-      value->getExtPhysicalWidget()->getPhysicalStringWidget(0)->initializeUsingXML(element);
-      value->getExtPhysicalWidget()->getPhysicalStringWidget(1)->setValue(value->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getValue().c_str());
+      val->getExtPhysicalWidget()->getPhysicalStringWidget(0)->initializeUsingXML(element);
+      val->getExtPhysicalWidget()->getPhysicalStringWidget(1)->setValue(val->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getValue().c_str());
     } 
     emit parameterChanged(getValue().c_str());
 }

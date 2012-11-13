@@ -44,11 +44,7 @@ class JointConstraint : public Constraint {
     virtual QString getType() const { return "JointConstraint"; }
 
   protected:
-    GeneralizedForceDirectionEditor *force, *moment;
-    XMLEditor* connections, *independentBody, *dependentBodiesFirstSide, *dependentBodiesSecondSide;
-    QString saved_ref1, saved_ref2;
-    std::vector<QString> saved_RigidBodyFirstSide, saved_RigidBodySecondSide;
-    QString saved_IndependentBody;
+    XMLEditor *force, *moment, *connections, *independentBody, *dependentBodiesFirstSide, *dependentBodiesSecondSide;
 
     void resizeGeneralizedPosition();
 };

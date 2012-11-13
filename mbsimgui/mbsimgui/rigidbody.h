@@ -45,8 +45,7 @@ class RigidBody : public Body {
   public slots:
     void addFrame();
   protected:
-    XMLEditor *translation, *rotation, *frameOfReference, *frameForKinematics, *mass, *inertia, *framePos;
-    OMBVEditor *ombvEditor;
+    XMLEditor *translation, *rotation, *frameOfReference, *frameForKinematics, *mass, *inertia, *framePos, *ombvEditor;
     bool constrained;
   signals:
     void sizeChanged();

@@ -33,8 +33,8 @@ Joint::Joint(const QString &str, QTreeWidgetItem *parentItem, int ind) : Link(st
   //properties->addTab("Constitutive laws");
 
   connections = new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Connections", "Kinetics", new ConnectWidget(2,this));
-  force=new GeneralizedForceLawEditor(properties, Utils::QIconCached("lines.svg"), true);
-  moment=new GeneralizedForceLawEditor(properties, Utils::QIconCached("lines.svg"), false);
+  force=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Force", "Kinetics", new GeneralizedForceLawChoiceWidget(MBSIMNS"force"));
+  moment=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Moment", "Kinetics", new GeneralizedForceLawChoiceWidget(MBSIMNS"moment"));
 
   properties->addStretch();
 }

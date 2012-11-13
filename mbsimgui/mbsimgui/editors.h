@@ -526,26 +526,6 @@ class NameWidget : public XMLWidget {
     void rename();
 };
 
-class ParameterNameWidget : public XMLWidget {
-  Q_OBJECT
-
-  public:
-    ParameterNameWidget(Parameter* ele, bool renaming=true);
-
-    QString getName() const {return ename->text();}
-    void setName(const QString &name) {ename->setText(name);}
-    virtual bool initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-
-  protected:
-    QLineEdit *ename;
-    Parameter* parameter;
-
-  protected slots:
-    void rename();
-};
-
-
 class LocalFrameOfReferenceWidget : public XMLWidget {
   Q_OBJECT
 
@@ -754,17 +734,15 @@ class RotationChoiceWidget : public XMLWidget {
     void rotationChanged();
 };
 
-class EnvironmentEditor : public Editor {
+class EnvironmentWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    EnvironmentEditor(PropertyDialog *parent_, const QIcon &icon, const std::string &name);
+    EnvironmentWidget();
 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
   protected:
-    QGroupBox *groupBox;
-    QVBoxLayout *layout;
     ExtPhysicalVarWidget *vec;
 };
 
@@ -849,21 +827,21 @@ class FrustumWidget : public OMBVBodyWidget {
     ExtPhysicalVarWidget *top, *base, *height, *innerBase, *innerTop;
 };
 
-class OMBVEditor : public Editor {
+class OMBVChoiceWidget : public XMLWidget {
   Q_OBJECT
   public:
 
-    OMBVEditor(RigidBody* body, PropertyDialog *parent_, const QIcon &icon, const std::string &name);
+    OMBVChoiceWidget(RigidBody* body);
 
     virtual void update() {ref->update();}
     int getOpenMBVBody() {return comboBox->currentIndex();}
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    protected slots:
+
+  protected slots:
       void ombvSelection(int index);
 
   protected:
-    QGroupBox *groupBox;
     QVBoxLayout *layout;
     QComboBox *comboBox;
     RigidBody *body;
@@ -871,11 +849,11 @@ class OMBVEditor : public Editor {
     LocalFrameOfReferenceWidget *ref;
 };
 
-class FrameVisuEditor : public Editor {
+class FrameVisuWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    FrameVisuEditor(Frame* frame, PropertyDialog *parent_, const QIcon &icon, const std::string &name);
+    FrameVisuWidget(Frame* frame);
 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
@@ -885,7 +863,6 @@ class FrameVisuEditor : public Editor {
     void setOpenMBVFrame(bool b) {visu->setCheckState(b?Qt::Checked:Qt::Unchecked);}
 
   protected:
-    QGroupBox *groupBox;
     QCheckBox *visu;
     Frame* frame;
     std::vector<ExtPhysicalVarWidget*> var;
@@ -957,11 +934,11 @@ class BilateralImpact : public GeneralizedImpactLawWidget {
    protected:
 };
 
-class GeneralizedForceLawEditor : public Editor {
+class GeneralizedForceLawChoiceWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    GeneralizedForceLawEditor(PropertyDialog *parent_, const QIcon &icon, bool force);
+    GeneralizedForceLawChoiceWidget(const std::string &xmlName);
 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
@@ -972,20 +949,19 @@ class GeneralizedForceLawEditor : public Editor {
     void defineForceLaw(int);
 
   protected:
-    QGroupBox *groupBox;
     QVBoxLayout *layout;
     QComboBox *comboBox;
     GeneralizedForceLawWidget *generalizedForceLaw;
     GeneralizedImpactLawWidget *generalizedImpactLaw;
     ExtPhysicalVarWidget *widget;
-    bool force;
+    std::string xmlName;
 };
 
-class ForceLawEditor : public Editor {
+class ForceLawChoiceWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    ForceLawEditor(PropertyDialog *parent_, const QIcon &icon, bool force);
+    ForceLawChoiceWidget(const std::string &xmlName);
 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
@@ -996,19 +972,18 @@ class ForceLawEditor : public Editor {
     void resize();
 
   protected:
-    QGroupBox *groupBox;
     QVBoxLayout *layout;
     QComboBox *comboBox;
     Function1 *forceLaw;
     ExtPhysicalVarWidget *widget;
-    bool force;
+    std::string xmlName;
 };
 
-class ForceLawEditor2 : public Editor {
+class ForceLawChoiceWidget2 : public XMLWidget {
   Q_OBJECT
 
   public:
-    ForceLawEditor2(Element *element, PropertyDialog *parent_, const QIcon &icon);
+    ForceLawChoiceWidget2(Element *element);
 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
@@ -1020,7 +995,6 @@ class ForceLawEditor2 : public Editor {
   protected slots:
     void defineForceDir(bool);
     void defineForceLaw(int);
-    //void resize(int);
 
   protected:
     QVBoxLayout *layout;
@@ -1033,10 +1007,10 @@ class ForceLawEditor2 : public Editor {
     QString saved_frameOfReference;
 };
 
-class GeneralizedForceDirectionEditor : public Editor {
+class GeneralizedForceDirectionWidget : public XMLWidget {
 
   public:
-    GeneralizedForceDirectionEditor(PropertyDialog *parent_, const QIcon &icon, bool force);
+    GeneralizedForceDirectionWidget(const std::string &xmlName);
 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
@@ -1044,7 +1018,6 @@ class GeneralizedForceDirectionEditor : public Editor {
 
   protected:
     ExtPhysicalVarWidget *mat;
-    bool force;
 };
 
 class RigidBodyOfReferenceWidget : public XMLWidget {
@@ -1112,13 +1085,15 @@ class DependenciesWidget : public XMLWidget {
       void bodyChanged();
 };
 
-class FileEditor : public Editor {
+class FileWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    FileEditor(PropertyDialog *parent_, const QIcon &icon, const QString &name, const QString &tab);
+    FileWidget();
     QString getFile() const {return fileName->text();}
     void setFile(const QString &file) {fileName->setText(file);}
+    virtual bool initializeUsingXML(TiXmlElement *element) {return true;}
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element) {return 0;}
 
   protected:
     QLineEdit *fileName;
@@ -1128,14 +1103,35 @@ class FileEditor : public Editor {
 
 };
 
-class ParameterValueEditor : public Editor {
+class ParameterNameWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    ParameterValueEditor(PhysicalStringWidget *var, PropertyDialog *parent_, const QIcon &icon, const QString &name, const QString &tab);
+    ParameterNameWidget(Parameter* ele, bool renaming=true);
+
+    QString getName() const {return ename->text();}
+    void setName(const QString &name) {ename->setText(name);}
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+
+  protected:
+    QLineEdit *ename;
+    Parameter* parameter;
+
+  protected slots:
+    void rename();
+};
+
+class ParameterValueWidget : public XMLWidget {
+  Q_OBJECT
+
+  public:
+    ParameterValueWidget(PhysicalStringWidget *var);
 
    ExtPhysicalVarWidget* getExtPhysicalWidget() {return widget;}
    virtual std::string getValue() const { return widget->getValue(); }
+   virtual bool initializeUsingXML(TiXmlElement *element) {return true;}
+   virtual TiXmlElement* writeXMLFile(TiXmlNode *element) {return 0;}
 
   protected:
     ExtPhysicalVarWidget *widget;
@@ -1150,7 +1146,7 @@ class XMLEditor : public Editor {
   public:
     XMLEditor(PropertyDialog *parent_, const QIcon &icon, const QString &name, const QString &tab, XMLWidget *d);
 
-    virtual bool initializeUsingXML(TiXmlElement *element) {widget->initializeUsingXML(element);}
+    virtual bool initializeUsingXML(TiXmlElement *element) {return widget->initializeUsingXML(element);}
     virtual TiXmlElement* writeXMLFile(TiXmlElement *element) {return widget->writeXMLFile(element);}
     XMLWidget* getXMLWidget() {return widget;}
     virtual void initialize() {widget->initialize();}
