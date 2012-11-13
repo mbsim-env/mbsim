@@ -43,8 +43,8 @@ JointConstraint::JointConstraint(const QString &str, QTreeWidgetItem *parentItem
   dependentBodiesSecondSide=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Dependendent bodies second side", "General", widget);
   connect(widget,SIGNAL(bodyChanged()),this,SLOT(resizeGeneralizedPosition()));
   connections = new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Connections", "Kinetics", new ConnectWidget(2,this));
-  force=new GeneralizedForceDirectionEditor(properties, Utils::QIconCached("lines.svg"), true);
-  moment=new GeneralizedForceDirectionEditor(properties, Utils::QIconCached("lines.svg"), false);
+  force=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Force", "Kinetics", new GeneralizedForceDirectionWidget(MBSIMNS"forceDirection"));
+  moment=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Moment", "Kinetics", new GeneralizedForceDirectionWidget(MBSIMNS"momentDirection"));
 
   properties->addStretch();
 }

@@ -33,7 +33,7 @@ SpringDamper::SpringDamper(const QString &str, QTreeWidgetItem *parentItem, int 
   //properties->addTab("Constitutive laws");
 
   connections=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Connections", "Kinetics", new ConnectWidget(2,this));
-  force=new ForceLawEditor2(this, properties, Utils::QIconCached("lines.svg"));
+  force=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Force", "Kinetics", new ForceLawChoiceWidget2(this));
 
   properties->addStretch();
 }

@@ -33,9 +33,7 @@ class Joint : public Link {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     QString getType() const { return "Joint"; }
   protected:
-    GeneralizedForceLawEditor *force, *moment;
-    XMLEditor* connections;
-    QString saved_ref1, saved_ref2;
+    XMLEditor *force, *moment, *connections;
     friend class MainWindow;
 };
 

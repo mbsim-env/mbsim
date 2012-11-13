@@ -1359,7 +1359,7 @@ TiXmlElement* RotationChoiceWidget::writeXMLFile(TiXmlNode *parent) {
  return 0;
 }
 
-EnvironmentEditor::EnvironmentEditor(PropertyDialog *parent_, const QIcon& icon, const string &name) : Editor(parent_, icon, name) {
+EnvironmentWidget::EnvironmentWidget() {
   vector<PhysicalStringWidget*> input;
   vector<string> g(3);
   g[0] = "0";
@@ -1368,18 +1368,16 @@ EnvironmentEditor::EnvironmentEditor(PropertyDialog *parent_, const QIcon& icon,
   input.push_back(new PhysicalStringWidget(new SVecWidget(g),MBSIMNS"accelerationOfGravity",accelerationUnits(),0));
   vec = new ExtPhysicalVarWidget(input);  
   
-  groupBox = new QGroupBox(tr("Acceleration of gravity"));  
-  dialog->addToTab("Environment", groupBox);
-  layout = new QVBoxLayout;
-  groupBox->setLayout(layout);
+  QVBoxLayout *layout = new QVBoxLayout;
+  setLayout(layout);
   layout->addWidget(vec);
 }
 
-bool EnvironmentEditor::initializeUsingXML(TiXmlElement *element) {
+bool EnvironmentWidget::initializeUsingXML(TiXmlElement *element) {
   vec->initializeUsingXML(element);
 }
 
-TiXmlElement* EnvironmentEditor::writeXMLFile(TiXmlNode *parent) {
+TiXmlElement* EnvironmentWidget::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement* ele0 = new TiXmlElement( MBSIMNS"MBSimEnvironment" );
   vec->writeXMLFile(ele0);
   parent->LinkEndChild( ele0 );
@@ -1652,12 +1650,9 @@ TiXmlElement* FrustumWidget::writeXMLFile(TiXmlNode *parent) {
   return e;
 }
 
-OMBVEditor::OMBVEditor(RigidBody *body_ , PropertyDialog *parent_, const QIcon& icon, const string &name) : Editor(parent_, icon, name), body(body_), ombv(0) {
-
-  groupBox = new QGroupBox(tr("OpenMBV selection"));  
-  dialog->addToTab("Visualisation", groupBox);
+OMBVChoiceWidget::OMBVChoiceWidget(RigidBody *body_) : body(body_), ombv(0) {
   layout = new QVBoxLayout;
-  groupBox->setLayout(layout);
+  setLayout(layout);
   comboBox = new QComboBox;
   comboBox->addItem(tr("None"));
   comboBox->addItem(tr("Cuboid"));
@@ -1670,7 +1665,7 @@ OMBVEditor::OMBVEditor(RigidBody *body_ , PropertyDialog *parent_, const QIcon& 
   layout->addWidget(ref);
 }
 
-void OMBVEditor::ombvSelection(int index) {
+void OMBVChoiceWidget::ombvSelection(int index) {
   if(index==0) {
     layout->removeWidget(ombv);
     delete ombv;
@@ -1699,7 +1694,7 @@ void OMBVEditor::ombvSelection(int index) {
   }
 }
 
-bool OMBVEditor::initializeUsingXML(TiXmlElement *element) {
+bool OMBVChoiceWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=element->FirstChildElement(MBSIMNS"openMBVRigidBody");
   if(e) {
     TiXmlElement *e1 = e->FirstChildElement();
@@ -1721,7 +1716,7 @@ bool OMBVEditor::initializeUsingXML(TiXmlElement *element) {
   }
 }
 
-TiXmlElement* OMBVEditor::writeXMLFile(TiXmlNode *parent) {
+TiXmlElement* OMBVChoiceWidget::writeXMLFile(TiXmlNode *parent) {
   if(getOpenMBVBody()) {
     TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"openMBVRigidBody" );
     ombv->writeXMLFile(ele0);
@@ -1733,9 +1728,8 @@ TiXmlElement* OMBVEditor::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-FrameVisuEditor::FrameVisuEditor(Frame *frame_ , PropertyDialog *parent_, const QIcon& icon, const string &name) : Editor(parent_, icon, name), frame(frame_) {
+FrameVisuWidget::FrameVisuWidget(Frame *frame_) : frame(frame_) {
   visu = new QCheckBox;
-  dialog->addToTab("Visualisation", this);
   QGridLayout *layout = new QGridLayout;
   setLayout(layout);
   layout->addWidget(new QLabel("Show frame:"),0,0);
@@ -1755,7 +1749,7 @@ FrameVisuEditor::FrameVisuEditor(Frame *frame_ , PropertyDialog *parent_, const 
   layout->addWidget(var[1],2,1);
 }
 
-bool FrameVisuEditor::initializeUsingXML(TiXmlElement *element) {
+bool FrameVisuWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *ee;
   if((ee=element->FirstChildElement(MBSIMNS"enableOpenMBV"))) {
     setOpenMBVFrame(true);
@@ -1764,7 +1758,7 @@ bool FrameVisuEditor::initializeUsingXML(TiXmlElement *element) {
   }
 }
 
-TiXmlElement* FrameVisuEditor::writeXMLFile(TiXmlNode *parent) {
+TiXmlElement* FrameVisuWidget::writeXMLFile(TiXmlNode *parent) {
   if(openMBVFrame()) {
     TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"enableOpenMBV" );
     for(unsigned int i=0; i<var.size(); i++)
@@ -1774,13 +1768,13 @@ TiXmlElement* FrameVisuEditor::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-bool FrameVisuEditor::initializeUsingXML2(TiXmlElement *element) {
+bool FrameVisuWidget::initializeUsingXML2(TiXmlElement *element) {
   setOpenMBVFrame(true);
   for(unsigned int i=0; i<var.size(); i++)
     var[i]->initializeUsingXML(element);
 }
 
-TiXmlElement* FrameVisuEditor::writeXMLFile2(TiXmlNode *parent) {
+TiXmlElement* FrameVisuWidget::writeXMLFile2(TiXmlNode *parent) {
   if(openMBVFrame()) {
     for(unsigned int i=0; i<var.size(); i++)
       var[i]->writeXMLFile(parent);
@@ -1885,11 +1879,9 @@ TiXmlElement* GeneralizedImpactLawWidget::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
-GeneralizedForceLawEditor::GeneralizedForceLawEditor(PropertyDialog *parent_, const QIcon& icon, bool force_) : Editor(parent_, icon, "gfe"), generalizedForceLaw(0), generalizedImpactLaw(0), force(force_) {
-  groupBox = new QGroupBox(force?tr("Force"):tr("Moment"));  
-  dialog->addToTab("Kinetics", groupBox);
+GeneralizedForceLawChoiceWidget::GeneralizedForceLawChoiceWidget(const string &xmlName_) : generalizedImpactLaw(0), xmlName(xmlName_) {
   layout = new QVBoxLayout;
-  groupBox->setLayout(layout);
+  setLayout(layout);
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SMatColsVarWidget(3,0,0,3),MBSIMNS"direction",noUnitUnits(),1));
@@ -1904,7 +1896,7 @@ GeneralizedForceLawEditor::GeneralizedForceLawEditor(PropertyDialog *parent_, co
   defineForceLaw(0);
 }
 
-void GeneralizedForceLawEditor::defineForceLaw(int index) {
+void GeneralizedForceLawChoiceWidget::defineForceLaw(int index) {
   if(index==0) {
     layout->removeWidget(generalizedForceLaw);
     delete generalizedForceLaw;
@@ -1923,14 +1915,14 @@ void GeneralizedForceLawEditor::defineForceLaw(int index) {
   }
 }
 
-int GeneralizedForceLawEditor::getSize() const {
+int GeneralizedForceLawChoiceWidget::getSize() const {
   string str = evalOctaveExpression(widget->getCurrentPhysicalStringWidget()->getValue());
   vector<vector<string> > A = strToSMat(str);
   return A.size()?A[0].size():0;
 }
 
-bool GeneralizedForceLawEditor::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement  *e=element->FirstChildElement(force?MBSIMNS"force":MBSIMNS"moment");
+bool GeneralizedForceLawChoiceWidget::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement  *e=element->FirstChildElement(xmlName);
   if(e) {
     widget->initializeUsingXML(e);
     TiXmlElement* ee=e->FirstChildElement(MBSIMNS"direction");
@@ -1949,9 +1941,9 @@ bool GeneralizedForceLawEditor::initializeUsingXML(TiXmlElement *element) {
   }
 }
 
-TiXmlElement* GeneralizedForceLawEditor::writeXMLFile(TiXmlNode *parent) {
+TiXmlElement* GeneralizedForceLawChoiceWidget::writeXMLFile(TiXmlNode *parent) {
   if(getSize()) {
-    TiXmlElement *ele0 = new TiXmlElement(force?MBSIMNS"force":MBSIMNS"moment");
+    TiXmlElement *ele0 = new TiXmlElement(xmlName);
     widget->writeXMLFile(ele0);
     TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"generalizedForceLaw");
     if(generalizedForceLaw)
@@ -1967,11 +1959,9 @@ TiXmlElement* GeneralizedForceLawEditor::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-ForceLawEditor::ForceLawEditor(PropertyDialog *parent_, const QIcon& icon, bool force_) : Editor(parent_, icon, "gfe"), forceLaw(0), force(force_) {
-  groupBox = new QGroupBox(force?tr("Force"):tr("Moment"));  
-  dialog->addToTab("Kinetics", groupBox);
+ForceLawChoiceWidget::ForceLawChoiceWidget(const string &xmlName_) : forceLaw(0), xmlName(xmlName_) {
   layout = new QVBoxLayout;
-  groupBox->setLayout(layout);
+  setLayout(layout);
 
   layout->addWidget(new QLabel("Direction vectors:"));
 
@@ -1992,7 +1982,7 @@ ForceLawEditor::ForceLawEditor(PropertyDialog *parent_, const QIcon& icon, bool 
   defineForceLaw(0);
 }
 
-void ForceLawEditor::defineForceLaw(int index) {
+void ForceLawChoiceWidget::defineForceLaw(int index) {
   int cols = getSize();
   if(index==0) {
     layout->removeWidget(forceLaw);
@@ -2016,18 +2006,18 @@ void ForceLawEditor::defineForceLaw(int index) {
   } 
   connect(forceLaw,SIGNAL(resize()),this,SLOT(resize()));
 }
-void ForceLawEditor::resize() {
+void ForceLawChoiceWidget::resize() {
   forceLaw->resize(getSize(),1);
 }
 
-int ForceLawEditor::getSize() const {
+int ForceLawChoiceWidget::getSize() const {
   string str = evalOctaveExpression(widget->getCurrentPhysicalStringWidget()->getValue());
   vector<vector<string> > A = strToSMat(str);
   return A.size()?A[0].size():0;
 }
 
-bool ForceLawEditor::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement  *e=element->FirstChildElement(force?MBSIMNS"force":MBSIMNS"moment");
+bool ForceLawChoiceWidget::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement  *e=element->FirstChildElement(xmlName);
   if(e) {
     widget->initializeUsingXML(e);
     TiXmlElement* ee=e->FirstChildElement(MBSIMNS"directionVectors");
@@ -2046,9 +2036,9 @@ bool ForceLawEditor::initializeUsingXML(TiXmlElement *element) {
   }
 }
 
-TiXmlElement* ForceLawEditor::writeXMLFile(TiXmlNode *parent) {
+TiXmlElement* ForceLawChoiceWidget::writeXMLFile(TiXmlNode *parent) {
   if(getSize()) {
-    TiXmlElement *ele0 = new TiXmlElement(force?MBSIMNS"force":MBSIMNS"moment");
+    TiXmlElement *ele0 = new TiXmlElement(xmlName);
     widget->writeXMLFile(ele0);
     TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"function");
     if(forceLaw)
@@ -2060,11 +2050,9 @@ TiXmlElement* ForceLawEditor::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-ForceLawEditor2::ForceLawEditor2(Element *element_, PropertyDialog *parent_, const QIcon& icon) : Editor(parent_, icon, "gfe"), element(element_), forceLaw(0) {
-  QGroupBox *groupBox = new QGroupBox(tr("Force"));  
-  dialog->addToTab("Kinetics", groupBox);
+ForceLawChoiceWidget2::ForceLawChoiceWidget2(Element *element_) : element(element_), forceLaw(0) {
   layout = new QVBoxLayout;
-  groupBox->setLayout(layout);
+  setLayout(layout);
 
   forceDirButton = new QPushButton(tr("&Define force direction"));
   forceDirButton->setCheckable(true);
@@ -2095,10 +2083,10 @@ ForceLawEditor2::ForceLawEditor2(Element *element_, PropertyDialog *parent_, con
   refFrame->update();
 }
 
-void ForceLawEditor2::defineForceDir(bool define) {
+void ForceLawChoiceWidget2::defineForceDir(bool define) {
 }
 
-void ForceLawEditor2::defineForceLaw(int index) {
+void ForceLawChoiceWidget2::defineForceLaw(int index) {
   if(index==0) {
     layout->removeWidget(forceLaw);
     delete forceLaw;
@@ -2106,11 +2094,8 @@ void ForceLawEditor2::defineForceLaw(int index) {
     layout->addWidget(forceLaw);
   } 
 }
-//void ForceLawEditor2::resize(int i) {
-//  forceLaw->resize(1,i);
-//}
 
-bool ForceLawEditor2::initializeUsingXML(TiXmlElement *element) {
+bool ForceLawChoiceWidget2::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=element->FirstChildElement(MBSIMNS"forceFunction");
   TiXmlElement *ee=e->FirstChildElement();
   if(ee) {
@@ -2127,7 +2112,7 @@ bool ForceLawEditor2::initializeUsingXML(TiXmlElement *element) {
   }
 }
 
-TiXmlElement* ForceLawEditor2::writeXMLFile(TiXmlNode *parent) {
+TiXmlElement* ForceLawChoiceWidget2::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = new TiXmlElement(MBSIMNS"forceFunction");
   forceLaw->writeXMLFile(ele0);
   parent->LinkEndChild(ele0);
@@ -2141,31 +2126,29 @@ TiXmlElement* ForceLawEditor2::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-GeneralizedForceDirectionEditor::GeneralizedForceDirectionEditor(PropertyDialog *parent_, const QIcon& icon, bool force_) : Editor(parent_, icon, "gfd"), force(force_) {
-  QGroupBox *groupBox = new QGroupBox(force?tr("Force"):tr("Moment"));  
-  dialog->addToTab("Kinetics", groupBox);
+GeneralizedForceDirectionWidget::GeneralizedForceDirectionWidget(const string &xmlName) {
   QVBoxLayout *layout = new QVBoxLayout;
-  groupBox->setLayout(layout);
+  setLayout(layout);
 
   layout->addWidget(new QLabel("Direction vectors:"));
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new SMatColsVarWidget(3,0,0,3),force?MBSIMNS"forceDirection":MBSIMNS"momentDirection",noUnitUnits(),1));
+  input.push_back(new PhysicalStringWidget(new SMatColsVarWidget(3,0,0,3),xmlName,noUnitUnits(),1));
   mat = new ExtPhysicalVarWidget(input);  
   layout->addWidget(mat);
 }
 
-int GeneralizedForceDirectionEditor::getSize() const {
+int GeneralizedForceDirectionWidget::getSize() const {
   string str = evalOctaveExpression(mat->getCurrentPhysicalStringWidget()->getValue());
   vector<vector<string> > A = strToSMat(str);
   return A.size()?A[0].size():0;
 }
 
-bool GeneralizedForceDirectionEditor::initializeUsingXML(TiXmlElement *element) {
+bool GeneralizedForceDirectionWidget::initializeUsingXML(TiXmlElement *element) {
   mat->initializeUsingXML(element);
 }
 
-TiXmlElement* GeneralizedForceDirectionEditor::writeXMLFile(TiXmlNode *parent) {
+TiXmlElement* GeneralizedForceDirectionWidget::writeXMLFile(TiXmlNode *parent) {
   if(getSize())
     mat->writeXMLFile(parent);
   return 0;
@@ -2475,34 +2458,30 @@ TiXmlElement* ParameterNameWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-FileEditor::FileEditor(PropertyDialog *parent_, const QIcon& icon, const QString &name, const QString &tab) : Editor(parent_, icon, name.toStdString()) {
+FileWidget::FileWidget() {
   fileName = new QLineEdit;
   fileName->setReadOnly(true);
   //ename->setText(parameter->getName());
-  QGroupBox *groupBox = new QGroupBox(name);  
-  dialog->addToTab(tab, groupBox);
   QHBoxLayout* layout = new QHBoxLayout;
-  groupBox->setLayout(layout);
+  setLayout(layout);
   layout->addWidget(fileName);
   QPushButton *button = new QPushButton("Browse");
   layout->addWidget(button);
   connect(button,SIGNAL(clicked(bool)),this,SLOT(selectFile()));
 }
 
-void FileEditor::selectFile() {
+void FileWidget::selectFile() {
   QString file=QFileDialog::getOpenFileName(0, "XML model files", QString("./")+"Parameter.mbsimparam.xml", "hdf5 Files (*.mbsimparam.xml)");
   if(file!="")
     fileName->setText(file);
 }
 
-ParameterValueEditor::ParameterValueEditor(PhysicalStringWidget *var, PropertyDialog *parent_, const QIcon& icon, const QString &name, const QString &tab) : Editor(parent_, icon, name.toStdString()) {
+ParameterValueWidget::ParameterValueWidget(PhysicalStringWidget *var) {
   vector<PhysicalStringWidget*> input;
   input.push_back(var);
   widget = new ExtPhysicalVarWidget(input);
-  QGroupBox *groupBox = new QGroupBox(name);  
-  dialog->addToTab(tab, groupBox);
   QHBoxLayout* layout = new QHBoxLayout;
-  groupBox->setLayout(layout);
+  setLayout(layout);
   QPushButton *button = new QPushButton("Set");
 
   layout->addWidget(widget);
@@ -2510,7 +2489,7 @@ ParameterValueEditor::ParameterValueEditor(PhysicalStringWidget *var, PropertyDi
   connect(button,SIGNAL(clicked(bool)),this,SLOT(parameterChanged()));
 }
 
-void ParameterValueEditor::parameterChanged() {
+void ParameterValueWidget::parameterChanged() {
   emit parameterChanged(getValue().c_str());
 }
 

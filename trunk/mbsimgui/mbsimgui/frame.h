@@ -38,11 +38,11 @@ class Frame : public Element {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual void initializeUsingXML2(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile2(TiXmlNode *element);
-    bool openMBVFrame() const {return visu->openMBVFrame();}
-    void setOpenMBVFrame(bool b) {visu->setOpenMBVFrame(b);}
+    bool openMBVFrame() const {return ((FrameVisuWidget*)visu->getXMLWidget())->openMBVFrame();}
+    //void setOpenMBVFrame(bool b) {((FrameVisuWidget*)visu->getXMLWidget())->setOpenMBVFrame(b);}
   public slots:
   protected:
-    FrameVisuEditor *visu;
+    XMLEditor *visu;
     friend class MainWindow;
 };
 

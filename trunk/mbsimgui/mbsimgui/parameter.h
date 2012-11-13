@@ -75,13 +75,10 @@ class DoubleParameter : public Parameter {
   public:
     DoubleParameter(const QString &str, QTreeWidgetItem *parentItem, int ind);
     virtual QString getType() const { return "scalarParameter"; }
-    //virtual std::string getValue() const { return toStr(((ExtPhysicalVarWidget*)value->getXMLWidget())->getStringWidget()->getValue()); }
-    virtual std::string getValue() const { return value->getValue(); }
+    virtual std::string getValue() const { return ((ParameterValueWidget*)value->getXMLWidget())->getValue(); }
     virtual void initializeUsingXML(TiXmlElement *element);
   protected:
-    //ExtPhysicalVarWidget *value;
-    //XMLWidgetEditor *value;
-    ParameterValueEditor *value;
+    XMLEditor *value;
 };
 
 #endif

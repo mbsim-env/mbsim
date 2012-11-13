@@ -33,9 +33,7 @@ class SpringDamper : public Link {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     QString getType() const { return "SpringDamper"; }
   protected:
-    ForceLawEditor2 *force;
-    XMLEditor* connections;
-    QString saved_ref1, saved_ref2;
+    XMLEditor *force, *connections;
 };
 
 #endif
