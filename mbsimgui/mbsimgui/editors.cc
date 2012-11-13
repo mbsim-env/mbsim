@@ -898,14 +898,12 @@ Editor::Editor(PropertyDialog *parent_, const QIcon &icon, const std::string &na
   dialog->addEditor(this);
 }
 
-NameEditor::NameEditor(Element* ele, PropertyDialog *parent_, const QIcon& icon, const string &name, bool renaming) : Editor(parent_, icon, name), element(ele) {
+NameWidget::NameWidget(Element* ele, bool renaming) : element(ele) {
   ename = new QLineEdit;
   ename->setReadOnly(true);
   ename->setText(element->getName());
-  groupBox = new QGroupBox(tr("Name"));  
-  dialog->addToTab("General", groupBox);
   QHBoxLayout* layout = new QHBoxLayout;
-  groupBox->setLayout(layout);
+  setLayout(layout);
   layout->addWidget(ename);
   if(renaming) {
     QPushButton *button = new QPushButton("Rename");
@@ -914,7 +912,7 @@ NameEditor::NameEditor(Element* ele, PropertyDialog *parent_, const QIcon& icon,
   }
 }
 
-void NameEditor::rename() {
+void NameWidget::rename() {
   QString text;
   do {
     text = QInputDialog::getText(0, tr("Rename"), tr("Name:"), QLineEdit::Normal, getName());
@@ -933,6 +931,15 @@ void NameEditor::rename() {
   if(text!="")
     element->setName(text);
   ((Element*)element->treeWidget()->topLevelItem(0))->update();
+}
+
+bool NameWidget::initializeUsingXML(TiXmlElement *parent) {
+  return true;
+}
+
+TiXmlElement* NameWidget::writeXMLFile(TiXmlNode *parent) {
+  ((TiXmlElement*)parent)->SetAttribute("name", getName().toStdString());
+  return 0;
 }
 
 LocalFrameOfReferenceWidget::LocalFrameOfReferenceWidget(const string &xmlName_, Element *element_, Frame* omitFrame_) : element(element_), selectedFrame(0), omitFrame(omitFrame_), xmlName(xmlName_) {

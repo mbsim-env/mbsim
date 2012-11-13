@@ -57,7 +57,7 @@ class Element : public QObject, public QTreeWidgetItem {
     QMenu *contextMenu;
     QAction *actionSave;
     QString file;
-    NameEditor *name;
+    XMLEditor *name;
     static TiXmlElement* copiedElement;
     Element *parentElement;
     Container *frames, *contours, *groups, *objects, *links, *extraDynamics;
@@ -83,7 +83,7 @@ class Element : public QObject, public QTreeWidgetItem {
     QMenu* getContextMenu() { return contextMenu; }
     PropertyDialog* getPropertyDialog() { return properties; }
     QString getName() const {return text(0);}
-    void setName(const QString &str) {setText(0,str);name->setName(str);}
+    void setName(const QString &str) {setText(0,str);((NameWidget*)name->getXMLWidget())->setName(str);}
     static double getDouble(TiXmlElement *e);
     static int getInt(TiXmlElement *e);
     static bool getBool(TiXmlElement *e);
@@ -113,7 +113,6 @@ class Element : public QObject, public QTreeWidgetItem {
       virtual void saveAs();
       virtual void save();
       void copy();
-      void rename();
 };
 
 template<class T>
