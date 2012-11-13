@@ -613,6 +613,7 @@ class ExtPhysicalVarWidget : public XMLWidget {
     PhysicalStringWidget* getCurrentPhysicalStringWidget() {return inputWidget[inputCombo->currentIndex()];}
     int getNumberOfInputs() const {return inputWidget.size();}
     virtual std::string getValue() const;
+    void setValue(const std::string &str);
 
   protected:
     std::vector<PhysicalStringWidget*> inputWidget;

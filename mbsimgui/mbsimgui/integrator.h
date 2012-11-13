@@ -59,7 +59,7 @@ class Integrator : public QObject, public QTreeWidgetItem {
     virtual QString getType() const { return "Integrator"; }
     QMenu* getContextMenu() { return contextMenu; }
     PropertyDialog* getPropertyDialog() { return properties; }
-    //void setEndTime(double t) {endTime->setValue(t);}
+    void setEndTime(double t) {((ExtPhysicalVarWidget*)endTime->getXMLWidget())->setValue(QString::number(t).toStdString());}
     //void setPlotStepSize(double dt) {plotStepSize->setValue(dt);}
     public slots:
       void saveAs();

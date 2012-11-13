@@ -38,17 +38,17 @@ Integrator::Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind)
   properties->addTab("General");
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMINTNS"startTime",timeUnits(),2));
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMINTNS"startTime",QStringList(),2));
   ExtPhysicalVarWidget *d = new ExtPhysicalVarWidget(input);
   startTime=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Start time", "General", d);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new SScalarWidget("1"),MBSIMINTNS"endTime",timeUnits(),2));
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("1"),MBSIMINTNS"endTime",QStringList(),2));
   d = new ExtPhysicalVarWidget(input);
   endTime=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "End time", "General", d);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new SScalarWidget("1e-2"),MBSIMINTNS"plotStepSize",timeUnits(),2));
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("1e-2"),MBSIMINTNS"plotStepSize",QStringList(),2));
   d = new ExtPhysicalVarWidget(input);
   plotStepSize=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Plot step size", "General", d);
 
