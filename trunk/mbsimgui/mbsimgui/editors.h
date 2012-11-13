@@ -507,17 +507,18 @@ class Editor : public QWidget {
     PropertyDialog *dialog;
 };
 
-class NameEditor : public Editor {
+class NameWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    NameEditor(Element* ele, PropertyDialog *parent_, const QIcon &icon, const std::string &name, bool renaming=true);
+    NameWidget(Element* ele, bool renaming=true);
 
     QString getName() const {return ename->text();}
     void setName(const QString &name) {ename->setText(name);}
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
 
   protected:
-    QGroupBox *groupBox;
     QLineEdit *ename;
     Element* element;
 

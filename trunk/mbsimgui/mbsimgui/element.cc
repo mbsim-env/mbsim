@@ -56,19 +56,14 @@ Element::Element(const QString &str, QTreeWidgetItem *parentItem, int ind, bool 
     QBrush brush(color);
     //setForeground(0,brush);
     //setForeground(1,brush);
-    name = new NameEditor(this, properties, Utils::QIconCached("lines.svg"), "Name", false);
   }
   else {
-    name = new NameEditor(this, properties, Utils::QIconCached("lines.svg"), "Name");
   }
+
+  name=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Name", "General", new NameWidget(this,!grey));
 
   contextMenu=new QMenu("Context Menu");
 
-//  QAction *action=new QAction(Utils::QIconCached("newobject.svg"),"Properties", this);
-//  connect(action,SIGNAL(triggered()),properties,SLOT(show()));
-//  contextMenu->addAction(action);
-//
-//  contextMenu->addSeparator();
 }
 
 Element::~Element() {
@@ -175,20 +170,13 @@ void Element::initialize() {
   }
 }
 
-void Element::rename() {
-  QString text = QInputDialog::getText(0, tr("Rename"), tr("Name:"), QLineEdit::Normal);
-
-  setName(text);
-  ((Element*)treeWidget()->topLevelItem(0))->update();
-}
-
 void Element::initializeUsingXML(TiXmlElement *element) {
 }
 
 TiXmlElement* Element::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType().toStdString());
+  name->writeXMLFile(ele0);
   parent->LinkEndChild(ele0);
-  ele0->SetAttribute("name", text(0).toStdString());
   return ele0;
 }
 
@@ -252,120 +240,6 @@ QString Element::getXMLPath(Element *ref, bool rel) {
     return str;
   }
 }
-
-//std::vector<Frame*> Element::getFrames() const {
-//  std::vector<Frame*> frames;
-//  for(int i=0; i<childCount(); i++)
-//    if(dynamic_cast<Frame*>(child(i)))
-//      frames.push_back((Frame*)child(i));
-//  return frames;
-//}
-//
-//std::vector<Object*> Element::getObjects() const {
-//  std::vector<Object*> objects;
-//  for(int i=0; i<childCount(); i++)
-//    if(dynamic_cast<Object*>(child(i)))
-//      objects.push_back((Object*)child(i));
-//  return objects;
-//}
-//
-//std::vector<Group*> Element::getGroups() const {
-//  std::vector<Group*> groups;
-//  for(int i=0; i<childCount(); i++)
-//    if(dynamic_cast<Group*>(child(i)))
-//      groups.push_back((Group*)child(i));
-//  return groups;
-//}  
-//
-//std::vector<Link*> Element::getLinks() const {
-//  std::vector<Link*> objects;
-//  for(int i=0; i<childCount(); i++)
-//    if(dynamic_cast<Link*>(child(i)))
-//      objects.push_back((Link*)child(i));
-//  return objects;
-//}
-//
-//ExtraDynamic* Element::getExtraDynamic(const string &name, bool check) {
-//  //    unsigned int i;
-//  //    for(i=0; i<extraDynamic.size(); i++) {
-//  //      if(extraDynamic[i]->getName() == name)
-//  //        return extraDynamic[i];
-//  //    }
-//  //    if(check){
-//  //      if(!(i<extraDynamic.size()))
-//  //        throw MBSimError("The DynamicSystem \""+this->name+"\" comprises no ExtraDynamic \""+name+"\"!");
-//  //      assert(i<extraDynamic.size());
-//  //    }
-//      return NULL;
-//}
-//
-//Link* Element::getLink(const string &name, bool check) {
-//    unsigned int i;
-//    vector<Link*> link = getLinks();
-//    for(i=0; i<link.size(); i++) {
-//      if(link[i]->getName().toStdString() == name)
-//        return link[i];
-//    }
-//    if(check){
-//      if(!(i<link.size())) {
-//        cout << "The DynamicSystem \""+link[i]->getName().toStdString()+"\" comprises no Link \""+name+"\"!" << endl;
-//        throw;
-//      }
-//      assert(i<link.size());
-//    }
-//    return NULL;
-//  }
-//
-//  Object* Element::getObject(const string &name, bool check) {
-//    unsigned int i;
-//    vector<Object*> object = getObjects();
-//    for(i=0; i<object.size(); i++) {
-//      if(object[i]->getName().toStdString() == name)
-//        return object[i];
-//    }
-//    if(check){
-//      if(!(i<object.size())) {
-//        cout << "The DynamicSystem \""+object[i]->getName().toStdString()+"\" comprises no Object \""+name+"\"!" << endl;
-//        throw;
-//      }
-//      assert(i<object.size());
-//    }
-//    return NULL;
-//  }
-//
-//  Group* Element::getGroup(const string &name, bool check) {
-//    unsigned int i;
-//    vector<Group*> group = getGroups();
-//    for(i=0; i<group.size(); i++) {
-//      if(group[i]->getName().toStdString() == name)
-//        return group[i];
-//    }
-//    if(check){
-//      if(!(i<group.size())) {
-//        cout << "The DynamicSystem \""+group[i]->getName().toStdString()+"\" comprises no DynamicSystem \""+name+"\"!";
-//        throw;
-//      }
-//      assert(i<group.size());
-//    }
-//    return NULL;
-//  }
-//
-//  Frame* Element::getFrame(const string &name, bool check) {
-//    unsigned int i;
-//    vector<Frame*> frame = getFrames();
-//    for(i=0; i<frame.size(); i++) {
-//      if(frame[i]->getName().toStdString() == name)
-//        return frame[i];
-//    }
-//    if(check) {
-//      if(!(i<frame.size())) {
-//        cout << "The object \""+frame[i]->getName().toStdString()+"\" comprises no frame \""+name+"\"!" << endl;
-//        throw;
-//      }
-//      assert(i<frame.size());
-//    }
-//    return NULL;
-//  }
 
 // some convenience function for XML
 double Element::getDouble(TiXmlElement *e) {
@@ -471,30 +345,6 @@ vector<vector<double > > Element::getSymMat(TiXmlElement *e, int size) {
   }
   return vector<vector<double > >();
 }
-
-//QString Element::newName(const QString &type) {
-//  bool askForName = false;
-//  QString str;
-//  for(int i=1; i<10000; i++) {
-//    str = type + QString::number(i);
-//    if(!get<Element>(str.toStdString(),false))
-//      break;
-//  }
-//  QString text=str;
-//  if(askForName) {
-//    do {
-//      text = QInputDialog::getText(0, tr("Add"), tr("Name:"), QLineEdit::Normal, str);
-//
-//      if(get<Element>(text.toStdString(),false)) {
-//        QMessageBox msgBox;
-//        msgBox.setText(QString("The name ") + text + " does already exist.");
-//        msgBox.exec();
-//      } else
-//        break;
-//    } while(true);
-//  }
-//  return text;
-//}
 
 Element* Element::getChild(QTreeWidgetItem* container, const std::string &name, bool check) {
   int i;
