@@ -67,7 +67,7 @@ int runProgramSyncronous(const vector<string> &arg) {
 //    return -1;
 #else
   int ret;
-  ret=_spawnv(_P_WAIT, argv[0], argv);
+  ret=_spawnv(_P_NOWAIT, argv[0], argv);
   delete[]argv;
   return ret;
 #endif
