@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.57])
-AC_INIT([mbsimgui],[3.1.0],[friedrich.at.gc@googlemail.com])
+AC_INIT([mbsimgui],[3.1.0],[martin.of.foerggooglemail.com])
 AC_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([mbsimgui/body.h])
@@ -9,9 +9,9 @@ AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_LANG([C++])
 
-dnl force strict standard conformance
-CPPFLAGS="$CPPFLAGS"
-CFLAGS="$CFLAGS -std=iso9899:1990"
+if test "_$host_os" = "_mingw32" ; then
+  AC_DEFINE([MBSIMGUI_MINGW], [1], [Host System is MinGW/MSys])
+fi
 
 AC_SUBST([DEFINES])
 
