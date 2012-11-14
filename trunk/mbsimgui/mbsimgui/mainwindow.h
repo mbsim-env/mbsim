@@ -22,7 +22,6 @@
 
 #include <QMainWindow>
 #include <QStandardItemModel>
-#include "window.h" 
 #include <QGridLayout>
 #include <QComboBox>
 #include <QTreeWidgetItem>
