@@ -15,7 +15,6 @@ mbsimgui_LDFLAGS = ../mbsimguitinyxml/libmbsimguitinyxml.la $(HDF5SERIE_LIBS)
 
 mbsimgui_SOURCES = main.cc \
 			mainwindow.cc \
-			window.cc \
 			editors.cc\
 			utils.cc \
 			element.cc \
