@@ -85,10 +85,6 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
 
   contextMenu->insertSeparator(actionSaveAs);
 
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Remove", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(remove()));
-  contextMenu->addAction(action);
-
   properties->addStretch();
 }
 

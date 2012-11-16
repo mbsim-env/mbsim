@@ -132,10 +132,11 @@ class MainWindow : public QMainWindow {
     void loadIntegrator();
     void saveIntegratorAs();
     void saveIntegrator();
-    void newDoubleParameter();
+    void newParameter();
     void loadParameter();
     void saveParameterAs();
     void saveParameter();
+    void newDoubleParameter();
     void preview();
     void simulate();
     void openmbv();
@@ -143,6 +144,8 @@ class MainWindow : public QMainWindow {
     void help();
     void about();
     void updateOctaveParameters();
+  protected:
+    void closeEvent ( QCloseEvent * event );
 };
 
 #endif

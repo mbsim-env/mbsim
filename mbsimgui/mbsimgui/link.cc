@@ -29,6 +29,9 @@ using namespace std;
 
 Link::Link(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element(str, parentItem, ind) {
 
+  QAction *action=new QAction(Utils::QIconCached("newobject.svg"),"Remove", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(remove()));
+  contextMenu->addAction(action);
 }
 
 Link::~Link() {

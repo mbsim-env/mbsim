@@ -47,6 +47,10 @@ Object::Object(const QString &str, QTreeWidgetItem *parentItem, int ind) : Eleme
   connect(action,SIGNAL(triggered()),this,SLOT(copy()));
   contextMenu->addAction(action);
 
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Remove", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(remove()));
+  contextMenu->addAction(action);
+
   contextMenu->addSeparator();
 
 }
