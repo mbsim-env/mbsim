@@ -21,6 +21,7 @@
 #include "octaveutils.h"
 #include "mbsimguitinyxml/tinyxml-src/tinyxml.h"
 #include "mbsimguitinyxml/tinyxml-src/tinynamespace.h"
+#include <sys/stat.h>
 #include <unistd.h>
 #ifdef HAVE_UNORDERED_MAP
 #  include <unordered_map>
@@ -34,12 +35,9 @@
 #  include <set>
 #  define unordered_set set
 #endif
+#include "env.h"
 
 using namespace std;
-
-string SCHEMADIR;
-
-string nslocation;
 
 int machinePrec;
 
@@ -484,22 +482,43 @@ int fillParam(vector<Param> param) {
 //}
 
 void initializeOctave() {
-   string OCTAVEDIR="/home/foerg/install/share/mbxmlutils/octave"; // default: from build configuration
+  // get path of this executable
+  char exePath[4096];
+#ifdef _WIN32 // Windows
+  GetModuleFileName(NULL, exePath, sizeof(exePath));
+  for(size_t i=0; i<strlen(exePath); i++) if(exePath[i]=='\\') exePath[i]='/'; // convert '\' to '/'
+  *strrchr(exePath, '/')=0; // remove the program name
+#else // Linux
+  int exePathLength=readlink("/proc/self/exe", exePath, sizeof(exePath)); // get abs path to this executable
+  exePath[exePathLength]=0; // null terminate
+  *strrchr(exePath, '/')=0; // remove the program name
+#endif
 
-    // initialize octave
-    char **octave_argv=(char**)malloc(2*sizeof(char*));
-    octave_argv[0]=(char*)malloc(6*sizeof(char*)); strcpy(octave_argv[0], "dummy");
-    octave_argv[1]=(char*)malloc(3*sizeof(char*)); strcpy(octave_argv[1], "-q");
-    octave_main(2, octave_argv, 1);
-    int dummy;
-    eval_string("warning('error','Octave:divide-by-zero');",true,dummy,0); // statement list
-    eval_string("addpath('"+OCTAVEDIR+"');",true,dummy,0); // statement list
-  
-    // calcaulate machine precision
-    double machineEps;
-    for(machineEps=1.0; (1.0+machineEps)>1.0; machineEps*=0.5);
-    machineEps*=2.0;
-    machinePrec=(int)(-log(machineEps)/log(10))+1;
+  // check for environment variables (none default installation)
+  string OCTAVEDIR;
+  struct stat st;
+  char *env;
+  OCTAVEDIR=OCTAVEDIR_DEFAULT; // default: from build configuration
+  if(stat(OCTAVEDIR.c_str(), &st)!=0) OCTAVEDIR=string(exePath)+"/../share/mbxmlutils/octave"; // use rel path if build configuration dose not work
+  if((env=getenv("MBSIMOCTAVEDIR"))) OCTAVEDIR=env; // overwrite with envvar if exist
+
+  // initialize octave
+  char **octave_argv=(char**)malloc(2*sizeof(char*));
+  octave_argv[0]=(char*)malloc(6*sizeof(char*)); strcpy(octave_argv[0], "dummy");
+  octave_argv[1]=(char*)malloc(3*sizeof(char*)); strcpy(octave_argv[1], "-q");
+  octave_main(2, octave_argv, 1);
+  int dummy;
+  eval_string("warning('error','Octave:divide-by-zero');",true,dummy,0); // statement list
+  eval_string("addpath('"+OCTAVEDIR+"');",true,dummy,0); // statement list
+
+  // preserve whitespace and newline in TiXmlText nodes
+  TiXmlBase::SetCondenseWhiteSpace(false);
+
+  // calcaulate machine precision
+  double machineEps;
+  for(machineEps=1.0; (1.0+machineEps)>1.0; machineEps*=0.5);
+  machineEps*=2.0;
+  machinePrec=(int)(-log(machineEps)/log(10))+1;
 }
 
 

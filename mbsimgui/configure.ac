@@ -13,6 +13,8 @@ if test "_$host_os" = "_mingw32" ; then
   AC_DEFINE([MBSIMGUI_MINGW], [1], [Host System is MinGW/MSys])
 fi
 
+AC_SUBST([DATADIR], ["$(eval echo $(eval echo $datadir))"])
+
 AC_SUBST([DEFINES])
 
 dnl Qt
@@ -77,8 +79,15 @@ fi
 AC_SUBST([MBXMLUTILSSCHEMA],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
 AM_CONDITIONAL([COND_XML], [test "_$MBXMLUTILSSCHEMA" != "_"])
 
+AC_SUBST([OCTAVEDIR],[$(pkg-config mbxmlutils --variable OCTAVEDIR)])
+dnl AM_CONDITIONAL([COND_XML], [test "_$MBXMLUTILSSCHEMA" != "_"])
+if test "_$host_os" = "_mingw32" ; then
+  MBXMLUTILSSCHEMA=$(dirtowin $MBXMLUTILSSCHEMA)
+  OCTAVEDIR=$(dirtowin $OCTAVEDIR)
+fi
+
 LDFLAGS="$LDFLAGS -no-undefined"
 
-AC_CONFIG_FILES([Makefile mbsimguitinyxml/Makefile mbsimgui/Makefile])
+AC_CONFIG_FILES([Makefile mbsimguitinyxml/Makefile mbsimgui/Makefile mbsimgui/env.h])
 
 AC_OUTPUT
