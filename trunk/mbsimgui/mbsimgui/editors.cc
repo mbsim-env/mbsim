@@ -1194,7 +1194,7 @@ void ExtPhysicalVarWidget::openEvalDialog() {
   evalInput = inputCombo->currentIndex();
   string str = evalOctaveExpression(getValue());
   str = removeWhiteSpace(str);
-  if(evalInput == inputCombo->count()-1 && !inputWidget[0]->validate(str)) {
+  if(str=="" || (evalInput == inputCombo->count()-1 && !inputWidget[0]->validate(str))) {
     QMessageBox::warning( this, "Validation", "Value not valid"); 
     return;
   }

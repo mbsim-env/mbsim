@@ -207,14 +207,15 @@ MainWindow::MainWindow() {
   menuBar()->addMenu(integratorMenu);
 
   QMenu *parameterMenu=new QMenu("Parameter", menuBar());
-  submenu = parameterMenu->addMenu("New");
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Scalar", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(newDoubleParameter()));
-  submenu->addAction(action);
+  parameterMenu->addAction("New", this, SLOT(newParameter()));
   parameterMenu->addAction("Load", this, SLOT(loadParameter()));
   parameterMenu->addAction("Save as", this, SLOT(saveParameterAs()));
   actionSaveParameter = parameterMenu->addAction("Save", this, SLOT(saveParameter()));
   actionSaveParameter->setDisabled(true);
+  submenu = parameterMenu->addMenu("New parameter");
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Scalar", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(newDoubleParameter()));
+  submenu->addAction(action);
   menuBar()->addMenu(parameterMenu);
 
   // help menu
@@ -329,7 +330,40 @@ MainWindow::MainWindow() {
   Integrator *previewIntegrator = new DOPRI5Integrator("DOPRI5",parentItem, 1);
   previewIntegrator->setEndTime(1e-10);
   previewIntegrator->writeXMLFile(".preview");
+}
 
+void MainWindow::closeEvent(QCloseEvent *event) {
+  //if(actionSaveMBS->isEnabled() || actionSaveMBS->isEnabled() || actionSaveParameter->isEnabled()) {
+  QMessageBox::StandardButton ret;
+  ret = QMessageBox::warning(this, tr("Application"),
+      tr("A document may has been modified.\n"
+        "Do you want to save your changes?"),
+      QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+  if (ret == QMessageBox::Save) {
+    if(actionSaveMBS->isEnabled())
+      saveMBS();
+    else
+      saveMBSAs();
+    if(actionSaveIntegrator->isEnabled())
+      saveIntegrator();
+    else
+      saveIntegratorAs();
+    if(actionSaveParameter->isEnabled())
+      saveParameter();
+    else
+      saveParameterAs();
+    event->accept();
+  } 
+  else if (ret == QMessageBox::Discard) 
+    event->accept();
+  else if(ret == QMessageBox::Cancel) 
+    event->ignore();
+  //  if (maybeSave()) {
+  ////    writeSettings();
+  //    event->accept();
+  //  } else {
+  //    event->ignore();
+  //  }
 }
 
 void MainWindow::elementListClicked() {
@@ -397,10 +431,9 @@ void MainWindow::newMBS() {
   QTreeWidgetItem* parentItem = elementList->invisibleRootItem();
   Solver *sys=new Solver("MBS", parentItem,1);
   parentItem->addChild(sys);
-  if(QFile::exists("Parameter.mbsimparam.xml")) {
-    sys->setParameterFile("Parameter.mbsimparam.xml");
-    loadParameter("Parameter.mbsimparam.xml");
-  }
+  //if(QFile::exists("Parameter.mbsimparam.xml")) {
+    //loadParameter("Parameter.mbsimparam.xml");
+  //}
   
   actionSaveMBS->setDisabled(true);
   actionSaveMBSAs->setDisabled(false);
@@ -419,10 +452,9 @@ void MainWindow::loadMBS(const QString &file) {
     sys->update();
     actionSaveMBS->setDisabled(false);
     actionSaveMBSAs->setDisabled(false);
-    if(QFile::exists("Parameter.mbsimparam.xml")) {
-      sys->setParameterFile("Parameter.mbsimparam.xml");
-      loadParameter("Parameter.mbsimparam.xml");
-    }
+    //if(QFile::exists("Parameter.mbsimparam.xml")) {
+      //loadParameter("Parameter.mbsimparam.xml");
+    //}
   }
 }
 
@@ -541,10 +573,18 @@ void MainWindow::newDoubleParameter() {
   updateOctaveParameters();
 }
 
+void MainWindow::newParameter() {
+  parameterList->clear();
+  actionSaveParameter->setDisabled(true);
+  //actionSaveParameterAs->setDisabled(false);
+  fileParameter->setText("");
+}
+
 void MainWindow::loadParameter(const QString &file) {
   fileParameter->setText(file);
   actionSaveParameter->setDisabled(true);
   if(file!="") {
+    //((Solver*)elementList->topLevelItem(0))->setParameterFile(file);
     parameterList->clear();
     QTreeWidgetItem* parentItem = 0;
     if(parentItem==NULL) parentItem=parameterList->invisibleRootItem();
@@ -577,8 +617,9 @@ void MainWindow::loadParameter(const QString &file) {
 
 void MainWindow::loadParameter() {
   QString file=QFileDialog::getOpenFileName(0, "MBSim parameter files", ".", "hdf5 Files (*.mbsimparam.xml)");
-  if(file!="")
+  if(file!="") {
     loadParameter(file);
+  }
 }
 
 void MainWindow::saveParameterAs() {
@@ -627,17 +668,15 @@ void MainWindow::preview() {
   solver->writeXMLFile(".sim");
   ((Integrator*)integratorList->topLevelItem(0))->writeXMLFile(".sim");
   QString file = fileParameter->text();
-  fileParameter->setText(solver->getParameterFile());
+  fileParameter->setText(".sim.mbsimparam.xml");
   saveParameter();
   fileParameter->setText(file);
 
   string prog = "mbsimxml";
   vector<string> command;
   command.push_back(prog);
-  if(solver->getParameterFile() != "") {
-    command.push_back("--mbsimparam");
-    command.push_back(solver->getParameterFile().toStdString());
-  }
+  command.push_back("--mbsimparam");
+  command.push_back(".sim.mbsimparam.xml");
   command.push_back(".sim.mbsim.xml");
   command.push_back(".preview.mbsimint.xml");
   string str = command[0];
@@ -671,17 +710,15 @@ void MainWindow::simulate() {
   solver->writeXMLFile(".sim");
   ((Integrator*)integratorList->topLevelItem(0))->writeXMLFile(".sim");
   QString file = fileParameter->text();
-  fileParameter->setText(solver->getParameterFile());
+  fileParameter->setText(".sim.mbsimparam.xml");
   saveParameter();
   fileParameter->setText(file);
 
   string prog = "mbsimxml";
   vector<string> command;
   command.push_back(prog);
-  if(solver->getParameterFile() != "") {
-    command.push_back("--mbsimparam");
-    command.push_back(solver->getParameterFile().toStdString());
-  }
+  command.push_back("--mbsimparam");
+  command.push_back(".sim.mbsimparam.xml");
   command.push_back(".sim.mbsim.xml");
   command.push_back(".sim.mbsimint.xml");
   string str = command[0];
@@ -741,6 +778,7 @@ void MainWindow::h5plotserie() {
     }
   }
 }
+
 void MainWindow::help() {
   QMessageBox::information(this, "MBSim GUI - GUI Help", 
       "<h1>GUI Help</h1>"
