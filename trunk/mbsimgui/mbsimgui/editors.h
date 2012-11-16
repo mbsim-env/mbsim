@@ -250,12 +250,13 @@ class StringWidget : public QWidget {
 
   public:
     virtual void setReadOnly(bool flag) {}
-    virtual bool validate(const std::string &str) {return true;}
     virtual std::string getValue() const = 0;
     virtual void setValue(const std::string &str) = 0;
     virtual bool initializeUsingXML(TiXmlElement *element) = 0;
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element) = 0;
     virtual StringWidget* cloneStringWidget() {return 0;}
+    virtual std::string getType() const = 0;
+    virtual bool validate(const std::string &str) const {return true;}
 };
 
 class BoolWidget : public StringWidget {
@@ -269,6 +270,7 @@ class BoolWidget : public StringWidget {
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual StringWidget* cloneStringWidget() {return new BoolWidget;}
+    virtual std::string getType() const {return "Boolean";}
 
   protected:
     QCheckBox *value;
@@ -281,6 +283,7 @@ class OctaveExpressionWidget : public StringWidget {
     void setValue(const std::string &str) { value->setPlainText(str.c_str()); }
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual std::string getType() const {return "Editor";}
 
   private:
     QPlainTextEdit *value;
@@ -298,6 +301,7 @@ class SScalarWidget : public StringWidget {
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual StringWidget* cloneStringWidget() {return new SScalarWidget;}
+    virtual std::string getType() const {return "Scalar";}
 };
 
 class SVecWidget : public StringWidget {
@@ -317,6 +321,8 @@ class SVecWidget : public StringWidget {
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual StringWidget* cloneStringWidget() {return new SVecWidget(size());}
+    virtual std::string getType() const {return "Vector";}
+    bool validate(const std::string &str) const;
 };
 
 class SMatWidget : public StringWidget {
@@ -337,6 +343,8 @@ class SMatWidget : public StringWidget {
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual StringWidget* cloneStringWidget() {return new SMatWidget(rows(),cols());}
+    virtual std::string getType() const {return "Matrix";}
+    bool validate(const std::string &str) const;
 };
 
 class SSymMatWidget : public StringWidget {
@@ -357,6 +365,8 @@ class SSymMatWidget : public StringWidget {
     virtual StringWidget* cloneStringWidget() {return new SSymMatWidget(rows());}
     int rows() const {return box.size();}
     int cols() const {return box[0].size();}
+    virtual std::string getType() const {return "Matrix";}
+    bool validate(const std::string &str) const;
 };
 
 class SMatColsVarWidget : public StringWidget {
@@ -383,6 +393,8 @@ class SMatColsVarWidget : public StringWidget {
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual StringWidget* cloneStringWidget() {return new SMatWidget(rows(),cols());}
+    virtual std::string getType() const {return "Matrix";}
+    bool validate(const std::string &str) const;
 
   public slots:
     //void resize(const QString &cols) {widget->resize(widget->rows(),cols.toInt());}
@@ -408,6 +420,7 @@ class SCardanWidget : public StringWidget {
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual StringWidget* cloneStringWidget() {return new SCardanWidget;}
+    virtual std::string getType() const {return "Cardan";}
 };
 
 class PhysicalStringWidget : public StringWidget {
@@ -432,6 +445,8 @@ class PhysicalStringWidget : public StringWidget {
     const std::string& getXmlName() const {return xmlName;}
     const QStringList& getUnitList() const {return units;}
     int getDefaultUnit() const {return defaultUnit;}
+    virtual std::string getType() const {return widget->getType();}
+    bool validate(const std::string &str) const {return widget->validate(str);}
 };
 
 class PropertyDialog : public QScrollArea {

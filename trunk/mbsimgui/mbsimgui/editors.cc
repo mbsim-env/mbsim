@@ -357,6 +357,15 @@ TiXmlElement* SVecWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
+bool SVecWidget::validate(const string &str) const {
+  vector<string> x = strToSVec(str);
+  if(size()!=x.size())
+    return false;
+  if(x[0]=="" || x[0].find(",")!=string::npos)
+    return false;
+  return true;
+}
+
 SMatWidget::SMatWidget(int rows, int cols) {
 
   QGridLayout *layout = new QGridLayout;
@@ -456,6 +465,13 @@ TiXmlElement* SMatWidget::writeXMLFile(TiXmlNode *parent) {
   }
   parent->LinkEndChild(ele);
   return 0;
+}
+
+bool SMatWidget::validate(const string &str) const {
+  vector<vector<string> > A = strToSMat(str);
+  if(rows()!=A.size() || cols()!=A[0].size())
+    return false;
+  return true;
 }
 
 SSymMatWidget::SSymMatWidget(int rows) {
@@ -562,6 +578,21 @@ TiXmlElement* SSymMatWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
+bool SSymMatWidget::validate(const string &str) const {
+  vector<vector<string> > A = strToSMat(str);
+  if(rows()!=A.size() || cols()!=A[0].size())
+    return false;
+  for(unsigned int i=0; i<rows(); i++) {
+    //if(cols()!=A[i].size())
+      //return false;
+    for(unsigned int j=0; j<i; j++) {
+      if(fabs(atof(A[i][j].c_str()) - atof(A[j][i].c_str()))>1e-8)
+        return false;
+    }
+  }
+  return true;
+}
+
 SMatColsVarWidget::SMatColsVarWidget(int rows, int cols, int minCols_, int maxCols_) : minCols(minCols_), maxCols(maxCols_) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -603,6 +634,17 @@ bool SMatColsVarWidget::initializeUsingXML(TiXmlElement *parent) {
 TiXmlElement* SMatColsVarWidget::writeXMLFile(TiXmlNode *parent) {
   widget->writeXMLFile(parent);
   return 0;
+}
+
+bool SMatColsVarWidget::validate(const string &str) const {
+  vector<vector<string> > A = strToSMat(str);
+  if(rows()!=A.size())
+    return false;
+  if(A[0].size()<minCols || A[0].size()>maxCols)
+    return false;
+  if(A[0][0]=="")
+    return false;
+  return true;
 }
 
 SCardanWidget::SCardanWidget(bool transpose_) : transpose(transpose_) {
@@ -908,9 +950,30 @@ EvalDialog::EvalDialog(StringWidget *var_) : var(var_) {
   QVBoxLayout *layout = new QVBoxLayout;
   setLayout(layout);
   layout->addWidget(var);
-  button = new QPushButton(tr("Assign to Schema 1"));
+  QWidget *extension = new QWidget;
+//  button = new QPushButton(tr("Assign to Schema 1"));
+  button = new QPushButton(QString("Assign to ") + var->getType().c_str());
   connect(button,SIGNAL(clicked(bool)),this,SIGNAL(clicked(bool)));
-  layout->addWidget(button);
+  QVBoxLayout *extensionLayout = new QVBoxLayout;
+  extensionLayout->setMargin(0);
+  extensionLayout->addWidget(button);
+  extension->setLayout(extensionLayout);
+
+  QPushButton *okButton = new QPushButton("Ok");
+  okButton->setDefault(true);
+  QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+  buttonBox->addButton(QDialogButtonBox::Close);
+  QPushButton *moreButton = new QPushButton(tr("&More"));
+  moreButton->setCheckable(true);
+  moreButton->setAutoDefault(false);
+  //buttonBox->addButton(moreButton, QDialogButtonBox::ActionRole);
+  connect(moreButton, SIGNAL(toggled(bool)), extension, SLOT(setVisible(bool)));
+  connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+
+  layout->addWidget(buttonBox);
+  layout->addWidget(extension);
+  extension->hide();
+  setWindowTitle("Octave expression evaluation");
 }
 
 Editor::Editor(PropertyDialog *parent_, const QIcon &icon, const std::string &name) : dialog(parent_) {
@@ -1085,11 +1148,13 @@ ExtPhysicalVarWidget::ExtPhysicalVarWidget(std::vector<PhysicalStringWidget*> in
   connect(inputCombo,SIGNAL(currentIndexChanged(int)),this,SIGNAL(inputDialogChanged(int)));
   for(unsigned int i=0; i<inputWidget.size()-1; i++) {
     stackedWidget->addWidget(inputWidget[i]);
-    inputCombo->addItem(QString("Schema ")+QString::number(i+1));
+    //inputCombo->addItem(QString("Schema ")+QString::number(i+1));
+    inputCombo->addItem(inputWidget[i]->getType().c_str());
     inputWidget[i+1]->hide();
   }
   stackedWidget->addWidget(inputWidget[inputWidget.size()-1]);
-  inputCombo->addItem("Editor");
+  //inputCombo->addItem("Editor");
+  inputCombo->addItem(inputWidget[inputWidget.size()-1]->getType().c_str());
 
   layout->addWidget(stackedWidget);
   layout->addWidget(evalButton);
@@ -1128,9 +1193,14 @@ void ExtPhysicalVarWidget::updateInput() {
 void ExtPhysicalVarWidget::openEvalDialog() {
   evalInput = inputCombo->currentIndex();
   string str = evalOctaveExpression(getValue());
-  evalDialog->setValue(removeWhiteSpace(str));
-  evalDialog->setButtonDisabled(evalInput != (inputCombo->count()-1));
+  str = removeWhiteSpace(str);
+  if(evalInput == inputCombo->count()-1 && !inputWidget[0]->validate(str)) {
+    QMessageBox::warning( this, "Validation", "Value not valid"); 
+    return;
+  }
+  evalDialog->setValue(str);
   evalDialog->show();
+  evalDialog->setButtonDisabled(evalInput != (inputCombo->count()-1));
 }
 
 bool ExtPhysicalVarWidget::initializeUsingXML(TiXmlElement *element) {
