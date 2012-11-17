@@ -33,7 +33,7 @@ class KineticExcitation : public Link {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     QString getType() const { return "KineticExcitation"; }
   protected:
-    XMLEditor *force, *moment, *connections, *frameOfReference;
+    XMLEditor *force, *moment, *connections, *frameOfReference, *forceArrow, *momentArrow;
 };
 
 #endif

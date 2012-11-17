@@ -77,7 +77,7 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
   connect(rot,SIGNAL(rotationChanged()),this,SLOT(resizeGeneralizedVelocity()));
   connect(rot,SIGNAL(rotationChanged()),this,SIGNAL(sizeChanged()));
  
-  ombvEditor=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "OpenMBV body", "Visualisation", new OMBVChoiceWidget(this));
+  ombvEditor=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "OpenMBV body", "Visualisation", new OMBVBodyChoiceWidget(this));
 
   QAction *action=new QAction(Utils::QIconCached("newobject.svg"),"Add frame", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addFrame()));

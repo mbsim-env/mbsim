@@ -263,8 +263,6 @@ class BoolWidget : public StringWidget {
 
   public:
     BoolWidget(const std::string &b="0");
-    //int getValue() const {return value->checkState()==Qt::Checked?true:false;}
-    //void setValue(bool b) {value->setCheckState(b?Qt::Checked:Qt::Unchecked);}
     std::string getValue() const {return value->checkState()==Qt::Checked?"1":"0";}
     void setValue(const std::string &str) {value->setCheckState((str=="0"||str=="false")?Qt::Unchecked:Qt::Checked);}
     virtual bool initializeUsingXML(TiXmlElement *element);
@@ -274,6 +272,24 @@ class BoolWidget : public StringWidget {
 
   protected:
     QCheckBox *value;
+};
+
+class ChoiceWidget : public StringWidget {
+
+  public:
+    ChoiceWidget(const std::vector<std::string> &list, int num);
+    std::string getValue() const {return value->currentText().toStdString();}
+    void setValue(const std::string &str) {value->setCurrentIndex(value->findText(str.c_str()));}
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual StringWidget* cloneStringWidget() {ChoiceWidget *widget=new ChoiceWidget(list,value->currentIndex());widget->setDisabled(true);return widget;}
+    virtual std::string getType() const {return "Choice";}
+    void setDisabled(bool flag) {value->setDisabled(flag);}
+    bool validate(const std::string &str) const {return value->findText(str.c_str())>=0;}
+
+  protected:
+    QComboBox *value;
+    std::vector<std::string> list;
 };
 
 class OctaveExpressionWidget : public StringWidget {
@@ -288,7 +304,6 @@ class OctaveExpressionWidget : public StringWidget {
   private:
     QPlainTextEdit *value;
 };
-
 
 class SScalarWidget : public StringWidget {
   private:
@@ -811,16 +826,47 @@ class FramePositionsWidget : public XMLWidget {
     QListWidget *frameList; 
 };
 
+class OMBVArrowWidget : public QWidget {
+  Q_OBJECT
+
+  public:
+    OMBVArrowWidget();
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element); 
+    virtual QString getType() const { return "Arrow"; }
+  protected:
+    QGridLayout *layout;
+    ExtPhysicalVarWidget *diameter, *headDiameter, *headLength, *type, *scaleLength;
+};
+
+class OMBVArrowChoiceWidget : public XMLWidget {
+  Q_OBJECT
+  public:
+
+    OMBVArrowChoiceWidget(const std::string &xmlName);
+
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+
+  protected:
+    bool openMBVArrow() const {return visu->checkState()==Qt::Checked;}
+    void setOpenMBVArrow(bool b) {visu->setCheckState(b?Qt::Checked:Qt::Unchecked);}
+
+  protected:
+    QCheckBox *visu;
+    OMBVArrowWidget *ombv;
+    std::string xmlName;
+};
+
 class OMBVBodyWidget : public QWidget {
   Q_OBJECT
 
   public:
-    OMBVBodyWidget(RigidBody *body, QWidget *parent = 0);
+    OMBVBodyWidget();
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element); 
-    virtual QString getType() const { return "OMBVBody"; }
+    virtual QString getType() const = 0;
   protected:
-    RigidBody *body;
     QGridLayout *layout;
     ExtPhysicalVarWidget *trans, *rot, *color, *scale;
 };
@@ -829,7 +875,7 @@ class CuboidWidget : public OMBVBodyWidget {
   Q_OBJECT
 
   public:
-    CuboidWidget(RigidBody *body, QWidget *parent = 0);
+    CuboidWidget();
     bool initializeUsingXML(TiXmlElement *element);
     TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "Cuboid"; }
@@ -841,7 +887,7 @@ class SphereWidget : public OMBVBodyWidget {
   Q_OBJECT
 
   public:
-    SphereWidget(RigidBody *body, QWidget *parent = 0);
+    SphereWidget();
     bool initializeUsingXML(TiXmlElement *element);
     TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "Sphere"; }
@@ -853,7 +899,7 @@ class FrustumWidget : public OMBVBodyWidget {
   Q_OBJECT
 
   public:
-    FrustumWidget(RigidBody *body, QWidget *parent = 0);
+    FrustumWidget();
     bool initializeUsingXML(TiXmlElement *element);
     TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "Frustum"; }
@@ -861,11 +907,11 @@ class FrustumWidget : public OMBVBodyWidget {
     ExtPhysicalVarWidget *top, *base, *height, *innerBase, *innerTop;
 };
 
-class OMBVChoiceWidget : public XMLWidget {
+class OMBVBodyChoiceWidget : public XMLWidget {
   Q_OBJECT
   public:
 
-    OMBVChoiceWidget(RigidBody* body);
+    OMBVBodyChoiceWidget(RigidBody* body);
 
     virtual void update() {ref->update();}
     int getOpenMBVBody() {return comboBox->currentIndex();}
@@ -995,7 +1041,7 @@ class ForceLawChoiceWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    ForceLawChoiceWidget(const std::string &xmlName);
+    ForceLawChoiceWidget(const std::string &xmlName, OMBVArrowChoiceWidget* arrow);
 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
@@ -1011,6 +1057,7 @@ class ForceLawChoiceWidget : public XMLWidget {
     Function1 *forceLaw;
     ExtPhysicalVarWidget *widget;
     std::string xmlName;
+    OMBVArrowChoiceWidget *arrow;
 };
 
 class ForceLawChoiceWidget2 : public XMLWidget {

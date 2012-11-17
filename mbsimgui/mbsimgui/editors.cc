@@ -221,6 +221,30 @@ TiXmlElement* BoolWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
+ChoiceWidget::ChoiceWidget(const vector<string> &list_, int num) : list(list_) { 
+  value = new QComboBox;
+  for(unsigned int i=0; i<list.size(); i++)
+    value->addItem(list[i].c_str());
+  value->setCurrentIndex(num);
+  QHBoxLayout* layout = new QHBoxLayout;
+  setLayout(layout);
+  layout->addWidget(value);
+}
+
+bool ChoiceWidget::initializeUsingXML(TiXmlElement *element) {
+  TiXmlText* text = dynamic_cast<TiXmlText*>(element->FirstChild());
+  if(!text)
+    return false;
+  setValue(text->Value());
+  return true;
+}
+
+TiXmlElement* ChoiceWidget::writeXMLFile(TiXmlNode *parent) {
+  TiXmlText *text = new TiXmlText(getValue());
+  parent->LinkEndChild(text);
+  return 0;
+}
+
 OctaveExpressionWidget::OctaveExpressionWidget() {
   QVBoxLayout *layout=new QVBoxLayout;
   layout->setMargin(0);
@@ -1592,7 +1616,114 @@ TiXmlElement* FramePositionsWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-OMBVBodyWidget::OMBVBodyWidget(RigidBody *body_, QWidget *parent) :  QWidget(parent), body(body_) {
+OMBVArrowWidget::OMBVArrowWidget() {
+  layout = new QGridLayout;
+  setLayout(layout);
+
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("0.1"), OPENMBVNS"diameter", lengthUnits(), 4));
+  diameter = new ExtPhysicalVarWidget(input);
+  layout->addWidget(new QLabel("Diameter:"),0,0);
+  layout->addWidget(diameter,0,1);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("0.2"), OPENMBVNS"headDiameter", lengthUnits(), 4));
+  headDiameter = new ExtPhysicalVarWidget(input);
+  layout->addWidget(new QLabel("Head diameter:"),1,0);
+  layout->addWidget(headDiameter,1,1);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("0.2"), OPENMBVNS"headLength", lengthUnits(), 4));
+  headLength = new ExtPhysicalVarWidget(input);
+  layout->addWidget(new QLabel("Head length:"),2,0);
+  layout->addWidget(headLength,2,1);
+
+  input.clear();
+  vector<string> list;
+  list.push_back(string("\"")+"line"+"\"");
+  list.push_back(string("\"")+"fromHead"+"\"");
+  list.push_back(string("\"")+"toHead"+"\"");
+  list.push_back(string("\"")+"bothHeads"+"\"");
+  list.push_back(string("\"")+"formDoubleHead"+"\"");
+  list.push_back(string("\"")+"toDoubleHead"+"\"");
+  list.push_back(string("\"")+"bothDoubleHeads"+"\"");
+  input.push_back(new PhysicalStringWidget(new ChoiceWidget(list,2), OPENMBVNS"type", QStringList(), 0));
+  type = new ExtPhysicalVarWidget(input);
+  layout->addWidget(new QLabel("Type:"),3,0);
+  layout->addWidget(type,3,1);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), OPENMBVNS"scaleLength", noUnitUnits(), 1));
+  scaleLength = new ExtPhysicalVarWidget(input);
+  layout->addWidget(new QLabel("Scale length:"),4,0);
+  layout->addWidget(scaleLength,4,1);
+}
+
+bool OMBVArrowWidget::initializeUsingXML(TiXmlElement *element) {
+  diameter->initializeUsingXML(element);
+  headDiameter->initializeUsingXML(element);
+  headLength->initializeUsingXML(element);
+  type->initializeUsingXML(element);
+  scaleLength->initializeUsingXML(element);
+}
+
+TiXmlElement* OMBVArrowWidget::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *e=new TiXmlElement(OPENMBVNS+getType().toStdString());
+  parent->LinkEndChild(e);
+  e->SetAttribute("name", "dummy");
+  diameter->writeXMLFile(e);
+  headDiameter->writeXMLFile(e);
+  headLength->writeXMLFile(e);
+  type->writeXMLFile(e);
+  scaleLength->writeXMLFile(e);
+  return e;
+}
+
+OMBVArrowChoiceWidget::OMBVArrowChoiceWidget(const string &xmlName_) : ombv(0), xmlName(xmlName_) {
+  visu = new QCheckBox;
+  QGridLayout *layout = new QGridLayout;
+  setLayout(layout);
+  layout->addWidget(new QLabel("Show arrow:"),0,0);
+  layout->addWidget(visu,0,1);
+
+  ombv = new OMBVArrowWidget;
+  layout->addWidget(ombv,1,0,1,2);
+  layout->setColumnStretch(1,1);
+  connect(visu,SIGNAL(toggled(bool)),ombv,SLOT(setVisible(bool)));
+  ombv->hide();
+}
+
+bool OMBVArrowChoiceWidget::initializeUsingXML(TiXmlElement *element) {
+  if(xmlName!="") {
+    TiXmlElement *e=element->FirstChildElement(xmlName);
+    if(e) {
+      setOpenMBVArrow(true);
+      ombv->initializeUsingXML(e);
+    }
+  }
+  else {
+    TiXmlElement *e=element->FirstChildElement(OPENMBVNS"Arrow");
+    if(e) {
+      setOpenMBVArrow(true);
+      ombv->initializeUsingXML(e);
+    }
+  }
+}
+
+TiXmlElement* OMBVArrowChoiceWidget::writeXMLFile(TiXmlNode *parent) {
+  if(openMBVArrow()) {
+    if(xmlName!="") {
+      TiXmlElement *ele0 = new TiXmlElement(xmlName);
+      ombv->writeXMLFile(ele0);
+      parent->LinkEndChild(ele0);
+    }
+    else
+      ombv->writeXMLFile(parent);
+  }
+  return 0;
+}
+
+OMBVBodyWidget::OMBVBodyWidget() {
   layout = new QGridLayout;
   setLayout(layout);
 
@@ -1640,7 +1771,7 @@ TiXmlElement* OMBVBodyWidget::writeXMLFile(TiXmlNode *parent) {
   return e;
 }
 
-CuboidWidget::CuboidWidget(RigidBody *body, QWidget *parent) : OMBVBodyWidget(body,parent) {
+CuboidWidget::CuboidWidget() {
 
   int index = layout->rowCount()+1;
   vector<PhysicalStringWidget*> input;
@@ -1663,7 +1794,7 @@ TiXmlElement* CuboidWidget::writeXMLFile(TiXmlNode *parent) {
   return e;
 }
 
-SphereWidget::SphereWidget(RigidBody *body, QWidget *parent) : OMBVBodyWidget(body,parent) {
+SphereWidget::SphereWidget() {
 
   int index = layout->rowCount()+1;
   vector<PhysicalStringWidget*> input;
@@ -1684,7 +1815,7 @@ TiXmlElement* SphereWidget::writeXMLFile(TiXmlNode *parent) {
   return e;
 }
 
-FrustumWidget::FrustumWidget(RigidBody *body, QWidget *parent) : OMBVBodyWidget(body,parent) {
+FrustumWidget::FrustumWidget() {
 
   int index = layout->rowCount()+1;
   vector<PhysicalStringWidget*> input;
@@ -1742,7 +1873,7 @@ TiXmlElement* FrustumWidget::writeXMLFile(TiXmlNode *parent) {
   return e;
 }
 
-OMBVChoiceWidget::OMBVChoiceWidget(RigidBody *body_) : body(body_), ombv(0) {
+OMBVBodyChoiceWidget::OMBVBodyChoiceWidget(RigidBody *body_) : body(body_), ombv(0) {
   layout = new QVBoxLayout;
   setLayout(layout);
   comboBox = new QComboBox;
@@ -1757,7 +1888,7 @@ OMBVChoiceWidget::OMBVChoiceWidget(RigidBody *body_) : body(body_), ombv(0) {
   layout->addWidget(ref);
 }
 
-void OMBVChoiceWidget::ombvSelection(int index) {
+void OMBVBodyChoiceWidget::ombvSelection(int index) {
   if(index==0) {
     layout->removeWidget(ombv);
     delete ombv;
@@ -1766,27 +1897,27 @@ void OMBVChoiceWidget::ombvSelection(int index) {
   else if(index==1) {
     layout->removeWidget(ombv);
     delete ombv;
-    ombv = new CuboidWidget(body, this);  
+    ombv = new CuboidWidget;  
     layout->addWidget(ombv);
     ombv->update();
   }
   else if(index==2) {
     layout->removeWidget(ombv);
     delete ombv;
-    ombv = new FrustumWidget(body, this);  
+    ombv = new FrustumWidget;  
     layout->addWidget(ombv);
     ombv->update();
   }
   else if(index==3) {
     layout->removeWidget(ombv);
     delete ombv;
-    ombv = new SphereWidget(body, this);  
+    ombv = new SphereWidget;  
     layout->addWidget(ombv);
     ombv->update();
   }
 }
 
-bool OMBVChoiceWidget::initializeUsingXML(TiXmlElement *element) {
+bool OMBVBodyChoiceWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=element->FirstChildElement(MBSIMNS"openMBVRigidBody");
   if(e) {
     TiXmlElement *e1 = e->FirstChildElement();
@@ -1808,7 +1939,7 @@ bool OMBVChoiceWidget::initializeUsingXML(TiXmlElement *element) {
   }
 }
 
-TiXmlElement* OMBVChoiceWidget::writeXMLFile(TiXmlNode *parent) {
+TiXmlElement* OMBVBodyChoiceWidget::writeXMLFile(TiXmlNode *parent) {
   if(getOpenMBVBody()) {
     TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"openMBVRigidBody" );
     ombv->writeXMLFile(ele0);
@@ -2051,7 +2182,7 @@ TiXmlElement* GeneralizedForceLawChoiceWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-ForceLawChoiceWidget::ForceLawChoiceWidget(const string &xmlName_) : forceLaw(0), xmlName(xmlName_) {
+ForceLawChoiceWidget::ForceLawChoiceWidget(const string &xmlName_, OMBVArrowChoiceWidget* arrow_) : forceLaw(0), xmlName(xmlName_), arrow(arrow_) {
   layout = new QVBoxLayout;
   setLayout(layout);
 
@@ -2125,6 +2256,7 @@ bool ForceLawChoiceWidget::initializeUsingXML(TiXmlElement *element) {
         forceLaw->initializeUsingXML(ee);
       }
     }
+    arrow->initializeUsingXML(e);
   }
 }
 
@@ -2136,6 +2268,7 @@ TiXmlElement* ForceLawChoiceWidget::writeXMLFile(TiXmlNode *parent) {
     if(forceLaw)
       forceLaw->writeXMLFile(ele1);
     ele0->LinkEndChild(ele1);
+    arrow->writeXMLFile(ele0);
     parent->LinkEndChild(ele0);
   }
 

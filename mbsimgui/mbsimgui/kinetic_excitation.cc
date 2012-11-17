@@ -32,10 +32,14 @@ KineticExcitation::KineticExcitation(const QString &str, QTreeWidgetItem *parent
 
   properties->addTab("Kinetics");
   //properties->addTab("Constitutive laws");
+  properties->addTab("Visualisation");
+
+  forceArrow=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Force arrow", "Visualisation", new OMBVArrowChoiceWidget(""));
+  momentArrow=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Moment arrow", "Visualisation", new OMBVArrowChoiceWidget(""));
 
   connections = new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Connections", "Kinetics", new ConnectWidget(1,this));
-  force = new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Force", "Kinetics", new ForceLawChoiceWidget(MBSIMNS"force"));
-  moment = new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Moment", "Kinetics", new ForceLawChoiceWidget(MBSIMNS"moment"));
+  force = new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Force", "Kinetics", new ForceLawChoiceWidget(MBSIMNS"force", (OMBVArrowChoiceWidget*)forceArrow->getXMLWidget()));
+  moment = new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Moment", "Kinetics", new ForceLawChoiceWidget(MBSIMNS"moment", (OMBVArrowChoiceWidget*)momentArrow->getXMLWidget()));
   frameOfReference=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Frame of reference", "Kinetics", new FrameOfReferenceWidget(MBSIMNS"frameOfReference",this,0));
 
   properties->addStretch();
