@@ -843,9 +843,9 @@ RigidBodyBrowser::RigidBodyBrowser(QTreeWidget* tree_, RigidBody* rigidBody, QWi
 void RigidBodyBrowser::update(RigidBody *sel) {
   selection = sel;
   rigidBodyList->clear();
+  savedItem = 0;
   mbs2RigidBodyTree((Element*)tree->topLevelItem(0),rigidBodyList->invisibleRootItem());
-  if(savedItem)
-    rigidBodyList->setCurrentItem(savedItem);
+  rigidBodyList->setCurrentItem(savedItem);
 }
 
 void RigidBodyBrowser::mbs2RigidBodyTree(Element* ele, QTreeWidgetItem* parentItem) {
@@ -906,9 +906,9 @@ FrameBrowser::FrameBrowser(QTreeWidget* tree_, Frame* frame, QWidget *parentObje
 void FrameBrowser::update(Frame *sel) {
   selection = sel;
   frameList->clear();
+  savedItem = 0;
   mbs2FrameTree((Element*)tree->topLevelItem(0),frameList->invisibleRootItem());
-  if(savedItem)
-    frameList->setCurrentItem(savedItem);
+  frameList->setCurrentItem(savedItem);
 }
 
 void FrameBrowser::mbs2FrameTree(Element* ele, QTreeWidgetItem* parentItem) {
@@ -1104,8 +1104,11 @@ void FrameOfReferenceWidget::update() {
   }
 }
 
-void FrameOfReferenceWidget::setFrame() {
-  selectedFrame = (Frame*)static_cast<QElementItem*>(frameBrowser->getFrameList()->currentItem())->getElement();
+void FrameOfReferenceWidget::setFrame() { 
+  if(frameBrowser->getFrameList()->currentItem())
+    selectedFrame = (Frame*)static_cast<QElementItem*>(frameBrowser->getFrameList()->currentItem())->getElement();
+  else
+    selectedFrame = ((Group*)element->getParentElement())->getFrame(0);
   frame->setText(selectedFrame->getXMLPath());
 }
 
@@ -2377,8 +2380,11 @@ void RigidBodyOfReferenceWidget::update() {
 }
 
 void RigidBodyOfReferenceWidget::setBody() {
-  selectedBody = static_cast<RigidBody*>(static_cast<QElementItem*>(bodyBrowser->getRigidBodyList()->currentItem())->getElement());
-  body->setText(selectedBody->getXMLPath());
+  if(bodyBrowser->getRigidBodyList()->currentItem())
+    selectedBody = static_cast<RigidBody*>(static_cast<QElementItem*>(bodyBrowser->getRigidBodyList()->currentItem())->getElement());
+  else
+    selectedBody = 0;
+  body->setText(selectedBody?selectedBody->getXMLPath():"");
   emit bodyChanged();
 }
 
