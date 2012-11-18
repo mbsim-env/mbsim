@@ -40,7 +40,7 @@ Frame::Frame(const QString &str, QTreeWidgetItem *parentItem, int ind, bool grey
   }
 
   properties->addTab("Visualisation");
-  visu=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "OpenMBV frame", "Visualisation", new FrameVisuWidget(this));
+  visu=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "OpenMBV frame", "Visualisation", new OMBVObjectChoiceWidget(new OMBVFrameWidget, grey?"":MBSIMNS"enableOpenMBV"));
 
   properties->addStretch();
 }
@@ -64,11 +64,11 @@ TiXmlElement* Frame::writeXMLFile(TiXmlNode *parent) {
 }
 
 void Frame::initializeUsingXML2(TiXmlElement *element) {
-  ((FrameVisuWidget*)visu->getXMLWidget())->initializeUsingXML2(element);
+  visu->getXMLWidget()->initializeUsingXML(element);
 }
 
 TiXmlElement* Frame::writeXMLFile2(TiXmlNode *parent) {
 
-  ((FrameVisuWidget*)visu->getXMLWidget())->writeXMLFile2(parent);
+  visu->getXMLWidget()->writeXMLFile(parent);
   return 0;
 }

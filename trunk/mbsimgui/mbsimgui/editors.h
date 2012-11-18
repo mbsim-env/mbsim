@@ -826,8 +826,26 @@ class FramePositionsWidget : public XMLWidget {
     QListWidget *frameList; 
 };
 
-class OMBVArrowWidget : public QWidget {
-  Q_OBJECT
+class OMBVObjectWidget : public QWidget {
+
+  public:
+    virtual bool initializeUsingXML(TiXmlElement *element) = 0;
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element) = 0;
+    virtual QString getType() const = 0;
+};
+
+class OMBVFrameWidget : public OMBVObjectWidget {
+
+  public:
+    OMBVFrameWidget();
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element); 
+    virtual QString getType() const { return "Frame"; }
+  protected:
+    ExtPhysicalVarWidget *size, *offset;
+};
+
+class OMBVArrowWidget : public OMBVObjectWidget {
 
   public:
     OMBVArrowWidget();
@@ -835,31 +853,27 @@ class OMBVArrowWidget : public QWidget {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element); 
     virtual QString getType() const { return "Arrow"; }
   protected:
-    QGridLayout *layout;
     ExtPhysicalVarWidget *diameter, *headDiameter, *headLength, *type, *scaleLength;
 };
 
-class OMBVArrowChoiceWidget : public XMLWidget {
-  Q_OBJECT
-  public:
+class OMBVObjectChoiceWidget : public XMLWidget {
 
-    OMBVArrowChoiceWidget(const std::string &xmlName);
+  public:
+    OMBVObjectChoiceWidget(OMBVObjectWidget *ombv, const std::string &xmlName);
 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
 
-  protected:
-    bool openMBVArrow() const {return visu->checkState()==Qt::Checked;}
-    void setOpenMBVArrow(bool b) {visu->setCheckState(b?Qt::Checked:Qt::Unchecked);}
+    bool openMBVObject() const {return visu->checkState()==Qt::Checked;}
+    void setOpenMBVObject(bool b) {visu->setCheckState(b?Qt::Checked:Qt::Unchecked);}
 
   protected:
     QCheckBox *visu;
-    OMBVArrowWidget *ombv;
+    OMBVObjectWidget *ombv;
     std::string xmlName;
 };
 
-class OMBVBodyWidget : public QWidget {
-  Q_OBJECT
+class OMBVBodyWidget : public OMBVObjectWidget {
 
   public:
     OMBVBodyWidget();
@@ -872,7 +886,6 @@ class OMBVBodyWidget : public QWidget {
 };
 
 class CuboidWidget : public OMBVBodyWidget {
-  Q_OBJECT
 
   public:
     CuboidWidget();
@@ -884,7 +897,6 @@ class CuboidWidget : public OMBVBodyWidget {
 };
 
 class SphereWidget : public OMBVBodyWidget {
-  Q_OBJECT
 
   public:
     SphereWidget();
@@ -896,8 +908,6 @@ class SphereWidget : public OMBVBodyWidget {
 };
 
 class FrustumWidget : public OMBVBodyWidget {
-  Q_OBJECT
-
   public:
     FrustumWidget();
     bool initializeUsingXML(TiXmlElement *element);
@@ -909,6 +919,7 @@ class FrustumWidget : public OMBVBodyWidget {
 
 class OMBVBodyChoiceWidget : public XMLWidget {
   Q_OBJECT
+
   public:
 
     OMBVBodyChoiceWidget(RigidBody* body);
@@ -927,25 +938,6 @@ class OMBVBodyChoiceWidget : public XMLWidget {
     RigidBody *body;
     OMBVBodyWidget *ombv;
     LocalFrameOfReferenceWidget *ref;
-};
-
-class FrameVisuWidget : public XMLWidget {
-  Q_OBJECT
-
-  public:
-    FrameVisuWidget(Frame* frame);
-
-    virtual bool initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual bool initializeUsingXML2(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile2(TiXmlNode *element);
-    bool openMBVFrame() const {return visu->checkState()==Qt::Checked;}
-    void setOpenMBVFrame(bool b) {visu->setCheckState(b?Qt::Checked:Qt::Unchecked);}
-
-  protected:
-    QCheckBox *visu;
-    Frame* frame;
-    std::vector<ExtPhysicalVarWidget*> var;
 };
 
 class ConnectWidget : public XMLWidget {
@@ -1041,7 +1033,7 @@ class ForceLawChoiceWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    ForceLawChoiceWidget(const std::string &xmlName, OMBVArrowChoiceWidget* arrow);
+    ForceLawChoiceWidget(const std::string &xmlName, OMBVObjectChoiceWidget* arrow);
 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
@@ -1057,7 +1049,7 @@ class ForceLawChoiceWidget : public XMLWidget {
     Function1 *forceLaw;
     ExtPhysicalVarWidget *widget;
     std::string xmlName;
-    OMBVArrowChoiceWidget *arrow;
+    OMBVObjectChoiceWidget *arrow;
 };
 
 class ForceLawChoiceWidget2 : public XMLWidget {
