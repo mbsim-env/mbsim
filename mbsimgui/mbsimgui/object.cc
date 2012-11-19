@@ -27,12 +27,12 @@ using namespace std;
 
 Object::Object(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element(str, parentItem, ind) {
   properties->addTab("Initial conditions");
-  GeneralizedCoordinatesWidget *q0 = new GeneralizedCoordinatesWidget(MBSIMNS"initialGeneralizedPosition");
-  GeneralizedCoordinatesWidget *u0 = new GeneralizedCoordinatesWidget(MBSIMNS"initialGeneralizedVelocity");
-  initialGeneralizedPosition=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Initial generalized position", "Initial conditions", q0);
-  initialGeneralizedVelocity=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Initial generalized velocity", "Initial conditions", u0);
-  connect(q0,SIGNAL(resizeGeneralizedCoordinates()),this,SLOT(resizeGeneralizedPosition()));
-  connect(u0,SIGNAL(resizeGeneralizedCoordinates()),this,SLOT(resizeGeneralizedVelocity()));
+  initialGeneralizedPosition = new GeneralizedCoordinatesWidget("Initial generalized position", MBSIMNS"initialGeneralizedPosition");
+  initialGeneralizedVelocity = new GeneralizedCoordinatesWidget("Initial generalized velocity", MBSIMNS"initialGeneralizedVelocity");
+  properties->addToTab("Initial conditions", initialGeneralizedPosition);
+  properties->addToTab("Initial conditions", initialGeneralizedVelocity);
+  connect(initialGeneralizedPosition,SIGNAL(resizeGeneralizedCoordinates()),this,SLOT(resizeGeneralizedPosition()));
+  connect(initialGeneralizedVelocity,SIGNAL(resizeGeneralizedCoordinates()),this,SLOT(resizeGeneralizedVelocity()));
 
   actionSaveAs=new QAction(Utils::QIconCached("newobject.svg"),"Save as", this);
   connect(actionSaveAs,SIGNAL(triggered()),this,SLOT(saveAs()));

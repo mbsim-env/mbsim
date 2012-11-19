@@ -60,12 +60,10 @@ Solver::Solver(const QString &str, QTreeWidgetItem *parentItem, int ind) : Group
   Element::copiedElement = 0;
 
   properties->addTab("Environment");
-  //properties->addTab("Parameterfile");
 
-  environment=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Acceleration of gravity", "Environment", new EnvironmentWidget);
-  //parameterFile = new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Parameterfile", "Parameterfile", new FileWidget);
+  environment= new EnvironmentWidget("Acceleration of gravity");
+  properties->addToTab("Environment", environment);
 
-//  properties->updateHeader();
   properties->addStretch();
 }
 

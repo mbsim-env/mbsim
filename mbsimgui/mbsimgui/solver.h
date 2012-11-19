@@ -44,7 +44,7 @@ class Solver : public Group {
   friend class MainWindow;
   friend class Object;
   protected:
-    XMLEditor *environment;
+    XMLWidget *environment;
   public:
     Solver(const QString &str, QTreeWidgetItem *parentItem, int ind);
     virtual QString getInfo();
@@ -52,13 +52,10 @@ class Solver : public Group {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     QString getType() const { return "DynamicSystemSolver"; }
     QString getFileExtension() const { return ".mbsim.xml"; }
-    //QString getParameterFile() const { return ((FileWidget*)parameterFile->getXMLWidget())->getFile(); }
-    //void setParameterFile(const QString &file) { ((FileWidget*)parameterFile->getXMLWidget())->setFile(file); }
 
     static Solver* readXMLFile(const QString &filename, QTreeWidgetItem *parent);
     void writeXMLFile(const QString &name);
     void writeXMLFile() { writeXMLFile(getName()); }
-    //void writeXMLParamFile(const QString &name) {parameters->writeXMLFile(name);}
 };
 
 #endif

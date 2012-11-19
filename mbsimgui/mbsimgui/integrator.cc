@@ -40,18 +40,18 @@ Integrator::Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind)
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMINTNS"startTime",timeUnits(),2));
-  ExtPhysicalVarWidget *d = new ExtPhysicalVarWidget(input);
-  startTime=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Start time", "General", d);
+  startTime = new ExtPhysicalVarWidget("Start time", input);
+  properties->addToTab("General", startTime);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1"),MBSIMINTNS"endTime",timeUnits(),2));
-  d = new ExtPhysicalVarWidget(input);
-  endTime=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "End time", "General", d);
+  endTime = new ExtPhysicalVarWidget("End time",input);
+  properties->addToTab("General", endTime);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1e-2"),MBSIMINTNS"plotStepSize",timeUnits(),2));
-  d = new ExtPhysicalVarWidget(input);
-  plotStepSize=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Plot step size", "General", d);
+  plotStepSize = new ExtPhysicalVarWidget("Plot step size",input);
+  properties->addToTab("General", plotStepSize);
 
   contextMenu=new QMenu("Context Menu");
 }
@@ -120,28 +120,28 @@ DOPRI5Integrator::DOPRI5Integrator(const QString &str, QTreeWidgetItem *parentIt
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1e-6"),MBSIMINTNS"absoluteToleranceScalar",QStringList(),1));
-  ExtPhysicalVarWidget *d = new ExtPhysicalVarWidget(input);
-  absTol=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Absolute tolerance", "Tolerances", d);
+  absTol = new ExtPhysicalVarWidget("Absolute tolerance", input);
+  properties->addToTab("Tolerances", absTol);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1e-6"),MBSIMINTNS"relativeToleranceScalar",QStringList(),1));
-  d = new ExtPhysicalVarWidget(input);
-  relTol=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Relative tolerance", "Tolerances", d);
+  relTol = new ExtPhysicalVarWidget("Relative tolerance", input);
+  properties->addToTab("Tolerances", relTol);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMINTNS"initialStepSize",timeUnits(),2));
-  d = new ExtPhysicalVarWidget(input);
-  initialStepSize=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Initial step size", "Step size", d);
+  initialStepSize = new ExtPhysicalVarWidget("Initial step size", input);
+  properties->addToTab("Step size", initialStepSize);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMINTNS"maximalStepSize",timeUnits(),2));
-  d = new ExtPhysicalVarWidget(input);
-  maximalStepSize=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Maximal step size", "Step size", d);
+  maximalStepSize = new ExtPhysicalVarWidget("Maximal step size", input);
+  properties->addToTab("Step size", maximalStepSize);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMINTNS"maximalNumberOfSteps",QStringList(),1));
-  d = new ExtPhysicalVarWidget(input);
-  maxSteps=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Number of maximal steps", "Step size", d);
+  maxSteps = new ExtPhysicalVarWidget("Number of maximal steps", input);
+  properties->addToTab("Step size", maxSteps);
 
   properties->addStretch();
 }
@@ -172,38 +172,38 @@ LSODEIntegrator::LSODEIntegrator(const QString &str, QTreeWidgetItem *parentItem
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1e-6"),MBSIMINTNS"absoluteToleranceScalar",QStringList(),1));
-  ExtPhysicalVarWidget *d = new ExtPhysicalVarWidget(input);
-  absTol=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Absolute tolerance", "Tolerances", d);
+  absTol = new ExtPhysicalVarWidget("Absolute tolerance", input);
+  properties->addToTab("Tolerances", absTol);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1e-6"),MBSIMINTNS"relativeToleranceScalar",QStringList(),1));
-  d = new ExtPhysicalVarWidget(input);
-  relTol=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Relative tolerance", "Tolerances", d);
+  relTol = new ExtPhysicalVarWidget("Relative tolerance", input);
+  properties->addToTab("Tolerances", relTol);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMINTNS"initialStepSize",timeUnits(),2));
-  d = new ExtPhysicalVarWidget(input);
-  initialStepSize=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Initial step size", "Step size", d);
+  initialStepSize = new ExtPhysicalVarWidget("Initial step size", input);
+  properties->addToTab("Step size", initialStepSize);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMINTNS"maximalStepSize",timeUnits(),2));
-  d = new ExtPhysicalVarWidget(input);
-  maximalStepSize=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Maximal step size", "Step size", d);
+  maximalStepSize = new ExtPhysicalVarWidget("Maximal step size", input);
+  properties->addToTab("Step size", maximalStepSize);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMINTNS"minimalStepSize",timeUnits(),2));
-  d = new ExtPhysicalVarWidget(input);
-  minimalStepSize=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Maximal step size", "Step size", d);
+  minimalStepSize = new ExtPhysicalVarWidget("Minimal step size", input);
+  properties->addToTab("Step size", minimalStepSize);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMINTNS"numberOfMaximalSteps",QStringList(),1));
-  d = new ExtPhysicalVarWidget(input);
-  maxSteps=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Number of maximal steps", "Step size", d);
+  maxSteps = new ExtPhysicalVarWidget("Number of maximal steps", input);
+  properties->addToTab("Step size", maxSteps);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new BoolWidget("0"),MBSIMINTNS"stiffModus",QStringList(),1));
-  d = new ExtPhysicalVarWidget(input);
-  stiff = new XMLEditor(properties,  Utils::QIconCached("lines.svg"), "Stiff modus", "Extra", d);
+  stiff = new ExtPhysicalVarWidget("Stiff modus", input);
+  properties->addToTab("Extra", stiff);
 
   properties->addStretch();
 }

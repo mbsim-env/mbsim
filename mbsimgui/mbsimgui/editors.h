@@ -54,7 +54,6 @@ T max(T x1, T x2) {
   return x1>=x2?x1:x2;
 }
 
-class Editor;
 class FrameBrowser;
 class QTreeWidget;
 class QTreeWidgetItem;
@@ -82,10 +81,13 @@ class OctaveHighlighter : public QSyntaxHighlighter {
 
 class XMLWidget : public QWidget {
   public:
+    XMLWidget(const QString &name="");
     virtual bool initializeUsingXML(TiXmlElement *element) = 0;
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element) = 0;
     virtual void initialize() {};
     virtual void update() {}
+  protected:
+    QBoxLayout *layout;
 };
 
 class QElementItem : public QTreeWidgetItem {
@@ -472,11 +474,11 @@ class PropertyDialog : public QScrollArea {
     ~PropertyDialog();
     void setParentObject(QObject *obj);
     void addToTab(const QString &name, QWidget* widget) {layout[name]->addWidget(widget);}
+    void addToTab(const QString &name, XMLWidget* widget_) {layout[name]->addWidget(widget_);widget.push_back(widget_);}
     void addToTab2(const QString &name, QWidget* widget) {layout2[name]->addWidget(widget);}
     void addTab(const QString &name);
     void updateHeader();
     QObject* getParentObject() { return parentObject; }
-    void addEditor(Editor *child); 
     void addStretch() {
       for ( std::map<QString,QVBoxLayout*>::iterator it=layout.begin() ; it != layout.end(); it++ )
         (*it).second->addStretch(1);
@@ -489,7 +491,7 @@ class PropertyDialog : public QScrollArea {
     QObject* parentObject;
     std::map<QString,QVBoxLayout*> layout, layout2;
     QVBoxLayout *mainLayout;
-    std::vector<Editor*> editor;
+    std::vector<XMLWidget*> widget;
     QTabWidget *tabWidget;
   protected slots:
 };
@@ -547,20 +549,20 @@ class EvalDialog : public QDialog {
 };
 
 
-class Editor : public QWidget {
-  public:
-    Editor(PropertyDialog *parent_, const QIcon &icon, const std::string &name);
-    virtual void update() {}
-    virtual void initialize() {}
-  protected:
-    PropertyDialog *dialog;
-};
+//class Editor : public QWidget {
+//  public:
+//    Editor(PropertyDialog *parent_, const QIcon &icon, const std::string &name);
+//    virtual void update() {}
+//    virtual void initialize() {}
+//  protected:
+//    PropertyDialog *dialog;
+//};
 
 class NameWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    NameWidget(Element* ele, bool renaming=true);
+    NameWidget(Element* ele, const QString &name="", bool renaming=true);
 
     QString getName() const {return ename->text();}
     void setName(const QString &name) {ename->setText(name);}
@@ -579,7 +581,7 @@ class LocalFrameOfReferenceWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    LocalFrameOfReferenceWidget(const std::string &xmlName, Element* element, Frame* omitFrame=0);
+    LocalFrameOfReferenceWidget(const QString &name, const std::string &xmlName, Element* element, Frame* omitFrame=0);
 
     void update();
     Frame* getFrame() {return selectedFrame;}
@@ -601,7 +603,7 @@ class FrameOfReferenceWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    FrameOfReferenceWidget(const std::string &xmlName, Element* element, Frame* selectedFrame);
+    FrameOfReferenceWidget(const QString &name, const std::string &xmlName, Element* element, Frame* selectedFrame);
 
     void initialize();
     void update();
@@ -628,7 +630,7 @@ class ExtPhysicalVarWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    ExtPhysicalVarWidget(std::vector<PhysicalStringWidget*> inputWidget);
+    ExtPhysicalVarWidget(const QString &name, std::vector<PhysicalStringWidget*> inputWidget);
 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
@@ -653,7 +655,7 @@ class ExtPhysicalVarWidget : public XMLWidget {
 class TranslationWidget : public QWidget {
 
   public:
-    TranslationWidget(QWidget *parent = 0) : QWidget(parent) {}
+    TranslationWidget() {}
     virtual bool initializeUsingXML(TiXmlElement *element) = 0;
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element) = 0;
     virtual int getSize() const = 0;
@@ -664,7 +666,7 @@ class LinearTranslation : public TranslationWidget {
   Q_OBJECT
 
   public:
-    LinearTranslation(QWidget *parent = 0);
+    LinearTranslation();
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     int getSize() const;
@@ -678,7 +680,7 @@ class TranslationChoiceWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    TranslationChoiceWidget();
+    TranslationChoiceWidget(const QString &name);
 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
@@ -689,7 +691,6 @@ class TranslationChoiceWidget : public XMLWidget {
     void defineTranslation(int);
 
   protected:
-    QVBoxLayout *layout;
     QComboBox *comboBox;
     TranslationWidget *translation;
   signals:
@@ -699,7 +700,7 @@ class TranslationChoiceWidget : public XMLWidget {
 class RotationWidget : public QWidget {
 
   public:
-    RotationWidget(QWidget *parent = 0) {}
+    RotationWidget() {}
     virtual bool initializeUsingXML(TiXmlElement *element) = 0;
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element) = 0;
     virtual int getSize() const = 0;
@@ -708,7 +709,7 @@ class RotationWidget : public QWidget {
 class RotationAboutXAxis : public RotationWidget {
 
   public:
-    RotationAboutXAxis(QWidget *parent = 0) {}
+    RotationAboutXAxis() {}
     virtual bool initializeUsingXML(TiXmlElement *element) {}
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual int getSize() const {return 1;}
@@ -717,7 +718,7 @@ class RotationAboutXAxis : public RotationWidget {
 class RotationAboutYAxis : public RotationWidget {
 
   public:
-    RotationAboutYAxis(QWidget *parent = 0) {}
+    RotationAboutYAxis() {}
     virtual bool initializeUsingXML(TiXmlElement *element) {}
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual int getSize() const {return 1;}
@@ -726,7 +727,7 @@ class RotationAboutYAxis : public RotationWidget {
 class RotationAboutZAxis : public RotationWidget {
 
   public:
-    RotationAboutZAxis(QWidget *parent = 0) {}
+    RotationAboutZAxis() {}
     virtual bool initializeUsingXML(TiXmlElement *element) {}
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual int getSize() const {return 1;}
@@ -735,7 +736,7 @@ class RotationAboutZAxis : public RotationWidget {
 class RotationAboutFixedAxis : public RotationWidget {
 
   public:
-    RotationAboutFixedAxis(QWidget *parent = 0);
+    RotationAboutFixedAxis();
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual int getSize() const {return 1;}
@@ -746,7 +747,7 @@ class RotationAboutFixedAxis : public RotationWidget {
 class RotationAboutAxesXY : public RotationWidget {
 
   public:
-    RotationAboutAxesXY(QWidget *parent = 0) {}
+    RotationAboutAxesXY() {}
     virtual bool initializeUsingXML(TiXmlElement *element) {}
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual int getSize() const {return 2;}
@@ -755,7 +756,7 @@ class RotationAboutAxesXY : public RotationWidget {
 class CardanAngles : public RotationWidget {
 
   public:
-    CardanAngles(QWidget *parent = 0) {}
+    CardanAngles() {}
     virtual bool initializeUsingXML(TiXmlElement *element) {}
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual int getSize() const {return 3;}
@@ -765,7 +766,7 @@ class RotationChoiceWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    RotationChoiceWidget();
+    RotationChoiceWidget(const QString &name);
 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
@@ -776,7 +777,6 @@ class RotationChoiceWidget : public XMLWidget {
    void defineRotation(int);
 
   protected:
-    QVBoxLayout *layout;
     QComboBox *comboBox;
     RotationWidget *rotation;
   signals:
@@ -787,7 +787,7 @@ class EnvironmentWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    EnvironmentWidget();
+    EnvironmentWidget(const QString &name);
 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
@@ -798,7 +798,7 @@ class EnvironmentWidget : public XMLWidget {
 class FramePositionWidget : public XMLWidget {
 
   public:
-    FramePositionWidget(Frame *frame);
+    FramePositionWidget(const QString &name, Frame *frame);
 
     void update() {refFrame->update();}
     virtual bool initializeUsingXML(TiXmlElement *element);
@@ -814,7 +814,7 @@ class FramePositionWidget : public XMLWidget {
 class FramePositionsWidget : public XMLWidget {
 
   public:
-    FramePositionsWidget(Element *element);
+    FramePositionsWidget(const QString &name, Element *element);
 
     void update();
     virtual bool initializeUsingXML(TiXmlElement *element);
@@ -822,7 +822,7 @@ class FramePositionsWidget : public XMLWidget {
 
   protected:
     Element *element;
-    QStackedLayout *layout; 
+    QStackedLayout *sublayout; 
     QListWidget *frameList; 
 };
 
@@ -859,7 +859,7 @@ class OMBVArrowWidget : public OMBVObjectWidget {
 class OMBVObjectChoiceWidget : public XMLWidget {
 
   public:
-    OMBVObjectChoiceWidget(OMBVObjectWidget *ombv, const std::string &xmlName);
+    OMBVObjectChoiceWidget(const QString &name, OMBVObjectWidget *ombv, const std::string &xmlName);
 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
@@ -881,7 +881,7 @@ class OMBVBodyWidget : public OMBVObjectWidget {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element); 
     virtual QString getType() const = 0;
   protected:
-    QGridLayout *layout;
+    QVBoxLayout *layout;
     ExtPhysicalVarWidget *trans, *rot, *color, *scale;
 };
 
@@ -922,7 +922,7 @@ class OMBVBodyChoiceWidget : public XMLWidget {
 
   public:
 
-    OMBVBodyChoiceWidget(RigidBody* body);
+    OMBVBodyChoiceWidget(const QString& name, RigidBody* body);
 
     virtual void update() {ref->update();}
     int getOpenMBVBody() {return comboBox->currentIndex();}
@@ -933,7 +933,6 @@ class OMBVBodyChoiceWidget : public XMLWidget {
       void ombvSelection(int index);
 
   protected:
-    QVBoxLayout *layout;
     QComboBox *comboBox;
     RigidBody *body;
     OMBVBodyWidget *ombv;
@@ -943,7 +942,7 @@ class OMBVBodyChoiceWidget : public XMLWidget {
 class ConnectWidget : public XMLWidget {
 
   public:
-    ConnectWidget(int n, Element* element);
+    ConnectWidget(const QString &name, int n, Element* element);
 
     void initialize();
     void update();
@@ -958,7 +957,7 @@ class ConnectWidget : public XMLWidget {
 class GeneralizedForceLawWidget : public QWidget {
 
   public:
-    GeneralizedForceLawWidget(QWidget *parent = 0) : forceFunc(0) {}
+    GeneralizedForceLawWidget() : forceFunc(0) {}
     virtual bool initializeUsingXML(TiXmlElement *element) {};
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "GeneralizedForceLaw"; }
@@ -969,7 +968,7 @@ class GeneralizedForceLawWidget : public QWidget {
 class BilateralConstraint : public GeneralizedForceLawWidget {
 
   public:
-    BilateralConstraint(QWidget *parent = 0) : GeneralizedForceLawWidget(parent) {}
+    BilateralConstraint() {}
     virtual QString getType() const { return "BilateralConstraint"; }
    protected:
 };
@@ -978,7 +977,7 @@ class RegularizedBilateralConstraint : public GeneralizedForceLawWidget {
   Q_OBJECT
 
   public:
-    RegularizedBilateralConstraint(QWidget *parent = 0); 
+    RegularizedBilateralConstraint(); 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual QString getType() const { return "RegularizedBilateralConstraint"; }
   protected:
@@ -991,7 +990,7 @@ class RegularizedBilateralConstraint : public GeneralizedForceLawWidget {
 class GeneralizedImpactLawWidget : public QWidget {
 
   public:
-    GeneralizedImpactLawWidget(QWidget *parent = 0) {}
+    GeneralizedImpactLawWidget() {}
     virtual bool initializeUsingXML(TiXmlElement *element) {};
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "GeneralizedImpactLaw"; }
@@ -1001,7 +1000,7 @@ class GeneralizedImpactLawWidget : public QWidget {
 class BilateralImpact : public GeneralizedImpactLawWidget {
 
   public:
-    BilateralImpact(QWidget *parent = 0) : GeneralizedImpactLawWidget(parent) {}
+    BilateralImpact() {}
     virtual QString getType() const { return "BilateralImpact"; }
    protected:
 };
@@ -1010,7 +1009,7 @@ class GeneralizedForceLawChoiceWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    GeneralizedForceLawChoiceWidget(const std::string &xmlName);
+    GeneralizedForceLawChoiceWidget(const QString &name, const std::string &xmlName);
 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
@@ -1021,7 +1020,6 @@ class GeneralizedForceLawChoiceWidget : public XMLWidget {
     void defineForceLaw(int);
 
   protected:
-    QVBoxLayout *layout;
     QComboBox *comboBox;
     GeneralizedForceLawWidget *generalizedForceLaw;
     GeneralizedImpactLawWidget *generalizedImpactLaw;
@@ -1029,11 +1027,30 @@ class GeneralizedForceLawChoiceWidget : public XMLWidget {
     std::string xmlName;
 };
 
+class Function1ChoiceWidget : public XMLWidget {
+  Q_OBJECT
+
+  public:
+    Function1ChoiceWidget(const QString &name);
+
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+
+  protected slots:
+    void defineForceLaw(int);
+//    void resize();
+
+  protected:
+    QComboBox *comboBox;
+    Function1 *forceLaw;
+//    std::string xmlName;
+};
+
 class ForceLawChoiceWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    ForceLawChoiceWidget(const std::string &xmlName, OMBVObjectChoiceWidget* arrow);
+    ForceLawChoiceWidget(const QString &name, const std::string &xmlName, OMBVObjectChoiceWidget* arrow);
 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
@@ -1044,19 +1061,19 @@ class ForceLawChoiceWidget : public XMLWidget {
     void resize();
 
   protected:
-    QVBoxLayout *layout;
     QComboBox *comboBox;
     Function1 *forceLaw;
     ExtPhysicalVarWidget *widget;
     std::string xmlName;
     OMBVObjectChoiceWidget *arrow;
+    Function1ChoiceWidget* forceLaw2;
 };
 
 class ForceLawChoiceWidget2 : public XMLWidget {
   Q_OBJECT
 
   public:
-    ForceLawChoiceWidget2(Element *element);
+    ForceLawChoiceWidget2(const QString &name, Element *element);
 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
@@ -1070,7 +1087,6 @@ class ForceLawChoiceWidget2 : public XMLWidget {
     void defineForceLaw(int);
 
   protected:
-    QVBoxLayout *layout;
     QPushButton *forceDirButton;
     QComboBox *comboBox;
     FrameOfReferenceWidget* refFrame;
@@ -1083,7 +1099,7 @@ class ForceLawChoiceWidget2 : public XMLWidget {
 class GeneralizedForceDirectionWidget : public XMLWidget {
 
   public:
-    GeneralizedForceDirectionWidget(const std::string &xmlName);
+    GeneralizedForceDirectionWidget(const QString &name, const std::string &xmlName);
 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
@@ -1097,7 +1113,7 @@ class RigidBodyOfReferenceWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    RigidBodyOfReferenceWidget(const std::string &xmlName, Element* element, RigidBody* selectedBody);
+    RigidBodyOfReferenceWidget(const QString &name, const std::string &xmlName, Element* element, RigidBody* selectedBody);
 
     void initialize();
     void update();
@@ -1127,7 +1143,7 @@ class DependenciesWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    DependenciesWidget(const std::string &xmlName, Element* element);
+    DependenciesWidget(const QString &name, const std::string &xmlName, Element* element);
 
     void update(); 
     void initialize();
@@ -1141,7 +1157,6 @@ class DependenciesWidget : public XMLWidget {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
 
   protected:
-    QGridLayout *layout;
     Element* element;
     std::string xmlName;
     std::vector<RigidBody*> selectedBody;
@@ -1180,7 +1195,7 @@ class ParameterNameWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    ParameterNameWidget(Parameter* ele, bool renaming=true);
+    ParameterNameWidget(const QString &name, Parameter* ele, bool renaming=true);
 
     QString getName() const {return ename->text();}
     void setName(const QString &name) {ename->setText(name);}
@@ -1199,7 +1214,7 @@ class ParameterValueWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    ParameterValueWidget(PhysicalStringWidget *var);
+    ParameterValueWidget(const QString &name, PhysicalStringWidget *var);
 
    ExtPhysicalVarWidget* getExtPhysicalWidget() {return widget;}
    virtual std::string getValue() const { return widget->getValue(); }
@@ -1214,26 +1229,11 @@ class ParameterValueWidget : public XMLWidget {
     void parameterChanged(const QString &str);
 };
 
-class XMLEditor : public Editor {
-
-  public:
-    XMLEditor(PropertyDialog *parent_, const QIcon &icon, const QString &name, const QString &tab, XMLWidget *d);
-
-    virtual bool initializeUsingXML(TiXmlElement *element) {return widget->initializeUsingXML(element);}
-    virtual TiXmlElement* writeXMLFile(TiXmlElement *element) {return widget->writeXMLFile(element);}
-    XMLWidget* getXMLWidget() {return widget;}
-    virtual void initialize() {widget->initialize();}
-    virtual void update() {widget->update();}
-
-  protected:
-    XMLWidget *widget;
-};
-
 class GeneralizedCoordinatesWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    GeneralizedCoordinatesWidget(const std::string &xmlName);
+    GeneralizedCoordinatesWidget(const QString &name, const std::string &xmlName);
 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element) {return buttonDisable->isChecked()?0:widget->writeXMLFile(element);}

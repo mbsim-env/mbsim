@@ -38,14 +38,14 @@ class RigidBody : public Body {
     QString getType() const { return "RigidBody"; }
     void setConstrained(bool b) {constrained = b;}
     int getSize() const {return constrained ? 0 : getUnconstrainedSize();}
-    int getUnconstrainedSize() const {return ((TranslationChoiceWidget*)translation->getXMLWidget())->getSize() + ((RotationChoiceWidget*)rotation->getXMLWidget())->getSize();}
+    int getUnconstrainedSize() const {return ((TranslationChoiceWidget*)translation)->getSize() + ((RotationChoiceWidget*)rotation)->getSize();}
     void resizeGeneralizedPosition();
     void resizeGeneralizedVelocity();
 
   public slots:
     void addFrame();
   protected:
-    XMLEditor *translation, *rotation, *frameOfReference, *frameForKinematics, *mass, *inertia, *framePos, *ombvEditor;
+    XMLWidget *frameForKinematics, *mass, *inertia, *translation, *rotation, *frameOfReference, *framePos, *ombvEditor;
     bool constrained;
   signals:
     void sizeChanged();
