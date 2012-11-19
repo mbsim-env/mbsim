@@ -61,7 +61,8 @@ Element::Element(const QString &str, QTreeWidgetItem *parentItem, int ind, bool 
   else {
   }
 
-  name=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Name", "General", new NameWidget(this,!grey));
+  name=new NameWidget(this,"Name",!grey);
+  properties->addToTab("General",name);
 
   contextMenu=new QMenu("Context Menu");
 

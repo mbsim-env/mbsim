@@ -38,10 +38,10 @@ class Frame : public Element {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual void initializeUsingXML2(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile2(TiXmlNode *element);
-    bool openMBVFrame() const {return ((OMBVObjectChoiceWidget*)visu->getXMLWidget())->openMBVObject();}
+    bool openMBVFrame() const {return ((OMBVObjectChoiceWidget*)visu)->openMBVObject();}
   public slots:
   protected:
-    XMLEditor *visu;
+    XMLWidget *visu;
     friend class MainWindow;
 };
 

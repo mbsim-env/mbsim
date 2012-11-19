@@ -40,7 +40,7 @@ class Object : public Element {
     virtual void resizeGeneralizedVelocity() {}
   protected:
     QAction *actionSaveAs;
-    XMLEditor *initialGeneralizedPosition, *initialGeneralizedVelocity;
+    XMLWidget *initialGeneralizedPosition, *initialGeneralizedVelocity;
 };
 
 #endif

@@ -33,7 +33,7 @@ class SpringDamper : public Link {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     QString getType() const { return "SpringDamper"; }
   protected:
-    XMLEditor *force, *connections;
+    XMLWidget *force, *connections;
 };
 
 #endif

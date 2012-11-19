@@ -34,13 +34,23 @@ KineticExcitation::KineticExcitation(const QString &str, QTreeWidgetItem *parent
   //properties->addTab("Constitutive laws");
   properties->addTab("Visualisation");
 
-  forceArrow=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Force arrow", "Visualisation", new OMBVObjectChoiceWidget(new OMBVArrowWidget, ""));
-  momentArrow=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Moment arrow", "Visualisation", new OMBVObjectChoiceWidget(new OMBVArrowWidget, ""));
+  forceArrow=new OMBVObjectChoiceWidget("Force arrow",new OMBVArrowWidget,"");
+  properties->addToTab("Visualisation",forceArrow);
 
-  connections = new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Connections", "Kinetics", new ConnectWidget(1,this));
-  force = new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Force", "Kinetics", new ForceLawChoiceWidget(MBSIMNS"force", (OMBVObjectChoiceWidget*)forceArrow->getXMLWidget()));
-  moment = new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Moment", "Kinetics", new ForceLawChoiceWidget(MBSIMNS"moment", (OMBVObjectChoiceWidget*)momentArrow->getXMLWidget()));
-  frameOfReference=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Frame of reference", "Kinetics", new FrameOfReferenceWidget(MBSIMNS"frameOfReference",this,0));
+  momentArrow=new OMBVObjectChoiceWidget("Moment arrow", new OMBVArrowWidget,"");
+  properties->addToTab("Visualisation",momentArrow);
+
+  connections = new ConnectWidget("Connections",1,this);
+  properties->addToTab("Kinetics",connections);
+
+  force = new ForceLawChoiceWidget("Force", MBSIMNS"force", (OMBVObjectChoiceWidget*)forceArrow);
+  properties->addToTab("Kinetics",force);
+
+  moment = new ForceLawChoiceWidget("Moment", MBSIMNS"moment", (OMBVObjectChoiceWidget*)momentArrow);
+  properties->addToTab("Kinetics",moment);
+
+  frameOfReference = new FrameOfReferenceWidget("Frame of reference",MBSIMNS"frameOfReference",this,0);
+  properties->addToTab("Kinetics",frameOfReference);
 
   properties->addStretch();
 }

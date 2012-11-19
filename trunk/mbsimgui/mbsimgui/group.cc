@@ -90,21 +90,23 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
   properties->addTab("Frame positioning");
   if(parentItem != treeWidget()->invisibleRootItem()) {
     properties->addTab("Kinematics");
+
     vector<PhysicalStringWidget*> input;
     input.push_back(new PhysicalStringWidget(new SVecWidget(3),MBSIMNS"position",lengthUnits(),4));
-    ExtPhysicalVarWidget *d = new ExtPhysicalVarWidget(input);
-    position=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Position", "Kinematics", d);
-    //position=new Vec3Editor(properties, Utils::QIconCached("lines.svg"), "Position");
+    position = new ExtPhysicalVarWidget("Position", input);
+    properties->addToTab("Kinematics", position);
+
     input.clear();
     input.push_back(new PhysicalStringWidget(new SMatWidget(getEye<string>(3,3,"1","0")),MBSIMNS"orientation",noUnitUnits(),1));
-    d = new ExtPhysicalVarWidget(input);
-    orientation=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Orientation", "Kinematics", d);
-    //orientation=new Vec3Editor(properties, Utils::QIconCached("lines.svg"), "Orientation");
-    frameOfReference=new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Frame of reference", "Kinematics", new FrameOfReferenceWidget(MBSIMNS"frameOfReference",this,((Group*)getParentElement())->getFrame(0)));
+    orientation = new ExtPhysicalVarWidget("Orientation",input);
+    properties->addToTab("Kinematics", orientation);
 
+    frameOfReference=new FrameOfReferenceWidget("Frame of reference",MBSIMNS"frameOfReference",this,((Group*)getParentElement())->getFrame(0));
+    properties->addToTab("Kinematics", frameOfReference);
   }
 
-  framePos = new XMLEditor(properties, Utils::QIconCached("lines.svg"), "Position and orientation of frames", "Frame positioning", new FramePositionsWidget(this));
+  framePos = new FramePositionsWidget("Position and orientation of frames",this);
+  properties->addToTab("Frame positioning", framePos);
 
   action=new QAction(Utils::QIconCached("newobject.svg"),"Add frame", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addFrame()));
