@@ -856,6 +856,17 @@ class OMBVArrowWidget : public OMBVObjectWidget {
     ExtPhysicalVarWidget *diameter, *headDiameter, *headLength, *type, *scaleLength;
 };
 
+class OMBVCoilSpringWidget : public OMBVObjectWidget {
+
+  public:
+    OMBVCoilSpringWidget();
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element); 
+    virtual QString getType() const { return "CoilSpring"; }
+  protected:
+    ExtPhysicalVarWidget *type, *numberOfCoils, *springRadius, *crossSectionRadius, *nominalLength, *scaleFactor;
+};
+
 class OMBVObjectChoiceWidget : public XMLWidget {
 
   public:
