@@ -1035,15 +1035,16 @@ class Function1ChoiceWidget : public XMLWidget {
 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void resize(int m, int n) {if(forceLaw) forceLaw->resize(m,n);}
 
   protected slots:
     void defineForceLaw(int);
-//    void resize();
 
   protected:
     QComboBox *comboBox;
     Function1 *forceLaw;
-//    std::string xmlName;
+  signals:
+    void resize();
 };
 
 class ForceLawChoiceWidget : public XMLWidget {
@@ -1057,16 +1058,14 @@ class ForceLawChoiceWidget : public XMLWidget {
     int getSize() const; 
 
   protected slots:
-    void defineForceLaw(int);
     void resize();
 
   protected:
     QComboBox *comboBox;
-    Function1 *forceLaw;
     ExtPhysicalVarWidget *widget;
     std::string xmlName;
     OMBVObjectChoiceWidget *arrow;
-    Function1ChoiceWidget* forceLaw2;
+    Function1ChoiceWidget* forceLaw;
 };
 
 class ForceLawChoiceWidget2 : public XMLWidget {
