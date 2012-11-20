@@ -43,10 +43,10 @@ KineticExcitation::KineticExcitation(const QString &str, QTreeWidgetItem *parent
   connections = new ConnectWidget("Connections",1,this);
   properties->addToTab("Kinetics",connections);
 
-  force = new ForceLawChoiceWidget("Force", MBSIMNS"force", (OMBVObjectChoiceWidget*)forceArrow);
+  force = new ForceChoiceWidget("Force", MBSIMNS"force", (OMBVObjectChoiceWidget*)forceArrow);
   properties->addToTab("Kinetics",force);
 
-  moment = new ForceLawChoiceWidget("Moment", MBSIMNS"moment", (OMBVObjectChoiceWidget*)momentArrow);
+  moment = new ForceChoiceWidget("Moment", MBSIMNS"moment", (OMBVObjectChoiceWidget*)momentArrow);
   properties->addToTab("Kinetics",moment);
 
   frameOfReference = new FrameOfReferenceWidget("Frame of reference",MBSIMNS"frameOfReference",this,0);

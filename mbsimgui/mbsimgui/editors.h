@@ -1014,7 +1014,6 @@ class GeneralizedForceLawChoiceWidget : public XMLWidget {
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     int getForceLaw() {return comboBox->currentIndex();}
-    int getSize() const; 
 
   protected slots:
     void defineForceLaw(int);
@@ -1022,7 +1021,40 @@ class GeneralizedForceLawChoiceWidget : public XMLWidget {
   protected:
     QComboBox *comboBox;
     GeneralizedForceLawWidget *generalizedForceLaw;
+    std::string xmlName;
+};
+
+class GeneralizedImpactLawChoiceWidget : public XMLWidget {
+  Q_OBJECT
+
+  public:
+    GeneralizedImpactLawChoiceWidget(const QString &name, const std::string &xmlName);
+
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    int getImpactLaw() {return comboBox->currentIndex();}
+
+  protected slots:
+    void defineImpactLaw(int);
+
+  protected:
+    QComboBox *comboBox;
     GeneralizedImpactLawWidget *generalizedImpactLaw;
+    std::string xmlName;
+};
+
+class GeneralizedForceChoiceWidget : public XMLWidget {
+
+  public:
+    GeneralizedForceChoiceWidget(const QString &name, const std::string &xmlName);
+
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    int getSize() const; 
+
+  protected:
+    GeneralizedForceLawChoiceWidget *generalizedForceLaw;
+    GeneralizedImpactLawChoiceWidget *generalizedImpactLaw;
     ExtPhysicalVarWidget *widget;
     std::string xmlName;
 };
@@ -1070,11 +1102,11 @@ class Function2ChoiceWidget : public XMLWidget {
 };
 
 
-class ForceLawChoiceWidget : public XMLWidget {
+class ForceChoiceWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    ForceLawChoiceWidget(const QString &name, const std::string &xmlName, OMBVObjectChoiceWidget* arrow);
+    ForceChoiceWidget(const QString &name, const std::string &xmlName, OMBVObjectChoiceWidget* arrow);
 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);

@@ -36,10 +36,10 @@ Joint::Joint(const QString &str, QTreeWidgetItem *parentItem, int ind) : Link(st
   connections = new ConnectWidget("Connections",2,this);
   properties->addToTab("Kinetics", connections);
 
-  force=new GeneralizedForceLawChoiceWidget("Force",MBSIMNS"force");
+  force=new GeneralizedForceChoiceWidget("Force",MBSIMNS"force");
   properties->addToTab("Kinetics", force);
 
-  moment=new GeneralizedForceLawChoiceWidget("Moment",MBSIMNS"moment");
+  moment=new GeneralizedForceChoiceWidget("Moment",MBSIMNS"moment");
   properties->addToTab("Kinetics", moment);
 
   properties->addStretch();
