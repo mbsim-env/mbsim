@@ -35,8 +35,11 @@ SpringDamper::SpringDamper(const QString &str, QTreeWidgetItem *parentItem, int 
   connections=new ConnectWidget("Connections",2,this);
   properties->addToTab("Kinetics", connections);
 
-  force=new ForceLawChoiceWidget2("Force",this);
-  properties->addToTab("Kinetics", force);
+  forceFunction=new Function2ChoiceWidget("Force function",MBSIMNS"forceFunction");
+  properties->addToTab("Kinetics", forceFunction);
+
+  forceDirection=new ForceDirectionWidget("Force direction",MBSIMNS"projectionDirection",this);
+  properties->addToTab("Kinetics", forceDirection);
 
   properties->addStretch();
 }
@@ -47,13 +50,15 @@ SpringDamper::~SpringDamper() {
 void SpringDamper::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e;
   Link::initializeUsingXML(element);
-  force->initializeUsingXML(element);
+  forceFunction->initializeUsingXML(element);
+  forceDirection->initializeUsingXML(element);
   connections->initializeUsingXML(element);
 }
 
 TiXmlElement* SpringDamper::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Link::writeXMLFile(parent);
-  force->writeXMLFile(ele0);
+  forceFunction->writeXMLFile(ele0);
+  forceDirection->writeXMLFile(ele0);
   connections->writeXMLFile(ele0);
   return ele0;
 }

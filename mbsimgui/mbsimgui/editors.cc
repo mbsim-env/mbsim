@@ -2128,13 +2128,13 @@ TiXmlElement* GeneralizedForceLawChoiceWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-Function1ChoiceWidget::Function1ChoiceWidget(const QString &name) : XMLWidget(name), forceLaw(0) {
+Function1ChoiceWidget::Function1ChoiceWidget(const QString &name, const string &xmlName_) : XMLWidget(name), function(0), xmlName(xmlName_) {
   layout->setDirection(QBoxLayout::TopToBottom);
 
   comboBox = new QComboBox;
   comboBox->addItem(tr("None"));
-  comboBox->addItem(tr("Constant"));
-  comboBox->addItem(tr("Sinus"));
+  comboBox->addItem(tr("Constant function"));
+  comboBox->addItem(tr("Sinus function"));
   layout->addWidget(comboBox);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineForceLaw(int)));
   defineForceLaw(0);
@@ -2142,15 +2142,15 @@ Function1ChoiceWidget::Function1ChoiceWidget(const QString &name) : XMLWidget(na
 
 void Function1ChoiceWidget::defineForceLaw(int index) {
   int cols = 0;
-  layout->removeWidget(forceLaw);
-  delete forceLaw;
+  layout->removeWidget(function);
+  delete function;
   if(index==0)
-    forceLaw = 0;
+    function = 0;
   else if(index==1) {
     vector<PhysicalStringWidget*> input;
     input.push_back(new PhysicalStringWidget(new SVecWidget(cols,true),MBSIMNS"value",QStringList(),0));
-    forceLaw = new ConstantFunction1(new ExtPhysicalVarWidget("Value",input),"VS");  
-    layout->addWidget(forceLaw);
+    function = new ConstantFunction1(new ExtPhysicalVarWidget("Value",input),"VS");  
+    layout->addWidget(function);
   } 
   else if(index==2) {
     vector<PhysicalStringWidget*> input1, input2, input3, input4;
@@ -2159,36 +2159,85 @@ void Function1ChoiceWidget::defineForceLaw(int index) {
     input2.push_back(new PhysicalStringWidget(vec,MBSIMNS"frequency",QStringList(),0));
     input3.push_back(new PhysicalStringWidget(new SVecWidget(cols,true),MBSIMNS"phase",QStringList(),0));
     input4.push_back(new PhysicalStringWidget(new SVecWidget(cols,true),MBSIMNS"offset",QStringList(),0));
-    forceLaw = new SinusFunction1(new ExtPhysicalVarWidget("Amplitude",input1), new ExtPhysicalVarWidget("Frequency",input2), new ExtPhysicalVarWidget("Phase",input3), new ExtPhysicalVarWidget("Offset",input4));  
-    layout->addWidget(forceLaw);
+    function = new SinusFunction1(new ExtPhysicalVarWidget("Amplitude",input1), new ExtPhysicalVarWidget("Frequency",input2), new ExtPhysicalVarWidget("Phase",input3), new ExtPhysicalVarWidget("Offset",input4));  
+    layout->addWidget(function);
   } 
-  if(forceLaw) {
+  if(function) {
     emit resize();
-    connect(forceLaw,SIGNAL(resize()),this,SIGNAL(resize()));
+    connect(function,SIGNAL(resize()),this,SIGNAL(resize()));
   }
 }
 
 bool Function1ChoiceWidget::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement  *e=element->FirstChildElement(MBSIMNS"function");
+  TiXmlElement *e=element->FirstChildElement(xmlName);
   if(e) {
     TiXmlElement* ee=e->FirstChildElement();
     if(ee) {
       if(ee->ValueStr() == MBSIMNS"ConstantFunction1_VS") {
         comboBox->setCurrentIndex(1);
-        forceLaw->initializeUsingXML(ee);
+        function->initializeUsingXML(ee);
       }
       else if(ee->ValueStr() == MBSIMNS"SinusFunction1_VS") {
         comboBox->setCurrentIndex(2);
-        forceLaw->initializeUsingXML(ee);
+        function->initializeUsingXML(ee);
       }
     }
   }
 }
 
 TiXmlElement* Function1ChoiceWidget::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = new TiXmlElement(MBSIMNS"function");
-  if(forceLaw)
-    forceLaw->writeXMLFile(ele0);
+  TiXmlElement *ele0 = new TiXmlElement(xmlName);
+  if(function)
+    function->writeXMLFile(ele0);
+  parent->LinkEndChild(ele0);
+
+  return 0;
+}
+
+Function2ChoiceWidget::Function2ChoiceWidget(const QString &name, const string &xmlName_) : XMLWidget(name), function(0), xmlName(xmlName_) {
+  layout->setDirection(QBoxLayout::TopToBottom);
+
+  comboBox = new QComboBox;
+  comboBox->addItem(tr("None"));
+  comboBox->addItem(tr("Linear spring damper force"));
+  layout->addWidget(comboBox);
+  connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineForceLaw(int)));
+  defineForceLaw(0);
+}
+
+void Function2ChoiceWidget::defineForceLaw(int index) {
+  int cols = 0;
+  layout->removeWidget(function);
+  delete function;
+  if(index==0)
+    function = 0;
+  else if(index==1) {
+    function = new LinearSpringDamperForce;  
+    layout->addWidget(function);
+  } 
+  if(function) {
+    //emit resize();
+    //connect(function,SIGNAL(resize()),this,SIGNAL(resize()));
+  }
+}
+
+bool Function2ChoiceWidget::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e=element->FirstChildElement(xmlName);
+  if(e) {
+    TiXmlElement* ee=e->FirstChildElement();
+    if(ee) {
+      if(ee->ValueStr() == MBSIMNS"LinearSpringDamperForce") {
+        comboBox->setCurrentIndex(1);
+        function->initializeUsingXML(ee);
+      }
+    }
+  }
+}
+
+TiXmlElement* Function2ChoiceWidget::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = new TiXmlElement(xmlName);
+  if(function)
+    function->writeXMLFile(ele0);
   parent->LinkEndChild(ele0);
 
   return 0;
@@ -2206,7 +2255,7 @@ ForceLawChoiceWidget::ForceLawChoiceWidget(const QString &name, const string &xm
   connect((SMatColsVarWidget*)mat->getWidget(), SIGNAL(sizeChanged(int)), this, SLOT(resize()));
   layout->addWidget(widget);
 
-  forceLaw = new Function1ChoiceWidget("Function");
+  forceLaw = new Function1ChoiceWidget("Function",MBSIMNS"function");
   layout->addWidget(forceLaw);
   connect(forceLaw,SIGNAL(resize()),this,SLOT(resize()));
 }
@@ -2222,10 +2271,9 @@ int ForceLawChoiceWidget::getSize() const {
 }
 
 bool ForceLawChoiceWidget::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement  *e=element->FirstChildElement(xmlName);
+  TiXmlElement *e=element->FirstChildElement(xmlName);
   if(e) {
     widget->initializeUsingXML(e);
-    TiXmlElement* ee=e->FirstChildElement(MBSIMNS"directionVectors");
     forceLaw->initializeUsingXML(e);
     arrow->initializeUsingXML(e);
   }
@@ -2243,15 +2291,16 @@ TiXmlElement* ForceLawChoiceWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-ForceLawChoiceWidget2::ForceLawChoiceWidget2(const QString &name, Element *element_) : XMLWidget(name), element(element_), forceLaw(0) {
+ForceDirectionWidget::ForceDirectionWidget(const QString &name, const string &xmlName_, Element *element_) : XMLWidget(name), element(element_), xmlName(xmlName_) {
   layout->setDirection(QBoxLayout::TopToBottom);
 
-  forceDirButton = new QPushButton(tr("&Define force direction"));
-  forceDirButton->setCheckable(true);
-  forceDirButton->setAutoDefault(false);
+  buttonDisable = new QPushButton(tr("Disable"));
+  buttonDisable->setCheckable(true);
+  buttonDisable->setAutoDefault(false);
+  buttonDisable->setChecked(true);
 
-  QWidget *forceDirWidget = new QWidget;
-  QHBoxLayout *hlayout = new QHBoxLayout;
+  forceDirWidget = new QWidget;
+  QVBoxLayout *hlayout = new QVBoxLayout;
   forceDirWidget->setLayout(hlayout);
 
   vector<PhysicalStringWidget*> input;
@@ -2261,55 +2310,30 @@ ForceLawChoiceWidget2::ForceLawChoiceWidget2(const QString &name, Element *eleme
   refFrame = new FrameOfReferenceWidget("Frame of reference",MBSIMNS"frameOfReference",element,0);
   hlayout->addWidget(refFrame);
 
-  connect(forceDirButton, SIGNAL(toggled(bool)), forceDirWidget, SLOT(setVisible(bool)));
+  connect(buttonDisable, SIGNAL(toggled(bool)), this, SLOT(defineForceDir(bool)));
 
-  comboBox = new QComboBox;
-  comboBox->addItem(tr("Linear spring damper force"));
-  layout->addWidget(comboBox);
-  connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineForceLaw(int)));
-  defineForceLaw(0);
-
-  layout->addWidget(forceDirButton);
+  layout->addWidget(buttonDisable);
   layout->addWidget(forceDirWidget);
   forceDirWidget->hide();
   refFrame->update();
 }
 
-void ForceLawChoiceWidget2::defineForceDir(bool define) {
+void ForceDirectionWidget::defineForceDir(bool flag) {
+  forceDirWidget->setVisible(!flag);
 }
 
-void ForceLawChoiceWidget2::defineForceLaw(int index) {
-  if(index==0) {
-    layout->removeWidget(forceLaw);
-    delete forceLaw;
-    forceLaw = new LinearSpringDamperForce;  
-    layout->addWidget(forceLaw);
-  } 
-}
-
-bool ForceLawChoiceWidget2::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=element->FirstChildElement(MBSIMNS"forceFunction");
-  TiXmlElement *ee=e->FirstChildElement();
-  if(ee) {
-    if(ee->ValueStr() == MBSIMNS"LinearSpringDamperForce") {
-      comboBox->setCurrentIndex(0);
-      forceLaw->initializeUsingXML(ee);
-    }
-  }
-  e=element->FirstChildElement(MBSIMNS"projectionDirection");
+bool ForceDirectionWidget::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e=element->FirstChildElement(xmlName);
   if(e) {
-    forceDirButton->setChecked(true);
+    buttonDisable->setChecked(false);
     refFrame->initializeUsingXML(e);
     mat->initializeUsingXML(e);
   }
 }
 
-TiXmlElement* ForceLawChoiceWidget2::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = new TiXmlElement(MBSIMNS"forceFunction");
-  forceLaw->writeXMLFile(ele0);
-  parent->LinkEndChild(ele0);
-  if(forceDirButton->isChecked()) {
-    TiXmlElement *ele0 = new TiXmlElement(MBSIMNS"projectionDirection");
+TiXmlElement* ForceDirectionWidget::writeXMLFile(TiXmlNode *parent) {
+  if(!buttonDisable->isChecked()) {
+    TiXmlElement *ele0 = new TiXmlElement(xmlName);
     refFrame->writeXMLFile(ele0);
     mat->writeXMLFile(ele0);
     parent->LinkEndChild(ele0);
