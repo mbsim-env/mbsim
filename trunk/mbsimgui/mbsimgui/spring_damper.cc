@@ -31,6 +31,7 @@ SpringDamper::SpringDamper(const QString &str, QTreeWidgetItem *parentItem, int 
   setText(1,getType());
 
   properties->addTab("Kinetics");
+  properties->addTab("Visualisation");
 
   connections=new ConnectWidget("Connections",2,this);
   properties->addToTab("Kinetics", connections);
@@ -40,6 +41,9 @@ SpringDamper::SpringDamper(const QString &str, QTreeWidgetItem *parentItem, int 
 
   forceDirection=new ForceDirectionWidget("Force direction",MBSIMNS"projectionDirection",this);
   properties->addToTab("Kinetics", forceDirection);
+
+  coilSpring=new OMBVObjectChoiceWidget("Coil spring",new OMBVCoilSpringWidget,"");
+  properties->addToTab("Visualisation",coilSpring);
 
   properties->addStretch();
 }
@@ -53,6 +57,7 @@ void SpringDamper::initializeUsingXML(TiXmlElement *element) {
   forceFunction->initializeUsingXML(element);
   forceDirection->initializeUsingXML(element);
   connections->initializeUsingXML(element);
+  coilSpring->initializeUsingXML(element);
 }
 
 TiXmlElement* SpringDamper::writeXMLFile(TiXmlNode *parent) {
@@ -60,5 +65,6 @@ TiXmlElement* SpringDamper::writeXMLFile(TiXmlNode *parent) {
   forceFunction->writeXMLFile(ele0);
   forceDirection->writeXMLFile(ele0);
   connections->writeXMLFile(ele0);
+  coilSpring->writeXMLFile(ele0);
   return ele0;
 }

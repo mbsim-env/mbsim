@@ -251,6 +251,7 @@ ChoiceWidget::ChoiceWidget(const vector<string> &list_, int num) : list(list_) {
     value->addItem(list[i].c_str());
   value->setCurrentIndex(num);
   QHBoxLayout* layout = new QHBoxLayout;
+  layout->setMargin(0);
   setLayout(layout);
   layout->addWidget(value);
 }
@@ -1696,6 +1697,73 @@ TiXmlElement* OMBVArrowWidget::writeXMLFile(TiXmlNode *parent) {
   headLength->writeXMLFile(e);
   type->writeXMLFile(e);
   scaleLength->writeXMLFile(e);
+  return e;
+}
+
+OMBVCoilSpringWidget::OMBVCoilSpringWidget() {
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
+  vector<PhysicalStringWidget*> input;
+  vector<string> list;
+  list.push_back(string("\"")+"tube"+"\"");
+  list.push_back(string("\"")+"scaledTube"+"\"");
+  list.push_back(string("\"")+"polyline"+"\"");
+  input.push_back(new PhysicalStringWidget(new ChoiceWidget(list,0), OPENMBVNS"type", QStringList(), 0));
+  type = new ExtPhysicalVarWidget("Type",input);
+  layout->addWidget(type);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("3"), OPENMBVNS"numberOfCoils", noUnitUnits(), 1));
+  numberOfCoils= new ExtPhysicalVarWidget("Number of coils",input);
+  layout->addWidget(numberOfCoils);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("0.1"), OPENMBVNS"springRadius", lengthUnits(), 4));
+  springRadius= new ExtPhysicalVarWidget("Spring radius",input);
+  layout->addWidget(springRadius);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("-1"), OPENMBVNS"crossSectionRadius", lengthUnits(), 4));
+  crossSectionRadius= new ExtPhysicalVarWidget("Cross section radius",input);
+  layout->addWidget(crossSectionRadius);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("-1"), OPENMBVNS"nominalLength", lengthUnits(), 4));
+  nominalLength= new ExtPhysicalVarWidget("Nominal length",input);
+  layout->addWidget(nominalLength);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), OPENMBVNS"scaleFactor", noUnitUnits(), 1));
+  scaleFactor = new ExtPhysicalVarWidget("Scale factor",input);
+  layout->addWidget(scaleFactor);
+}
+
+bool OMBVCoilSpringWidget::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e=element->FirstChildElement(OPENMBVNS+getType().toStdString());
+  if(e) {
+    type->initializeUsingXML(e);
+    numberOfCoils->initializeUsingXML(e);
+    springRadius->initializeUsingXML(e);
+    crossSectionRadius->initializeUsingXML(e);
+    nominalLength->initializeUsingXML(e);
+    scaleFactor->initializeUsingXML(e);
+    return true;
+  }
+  return false;
+}
+
+TiXmlElement* OMBVCoilSpringWidget::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *e=new TiXmlElement(OPENMBVNS+getType().toStdString());
+  parent->LinkEndChild(e);
+  e->SetAttribute("name", "dummy");
+  type->writeXMLFile(e);
+  numberOfCoils->writeXMLFile(e);
+  springRadius->writeXMLFile(e);
+  crossSectionRadius->writeXMLFile(e);
+  nominalLength->writeXMLFile(e);
+  scaleFactor->writeXMLFile(e);
   return e;
 }
 
