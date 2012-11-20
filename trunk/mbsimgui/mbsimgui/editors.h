@@ -1031,21 +1031,44 @@ class Function1ChoiceWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    Function1ChoiceWidget(const QString &name);
+    Function1ChoiceWidget(const QString &name, const std::string &xmlName);
 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    void resize(int m, int n) {if(forceLaw) forceLaw->resize(m,n);}
+    void resize(int m, int n) {if(function) function->resize(m,n);}
 
   protected slots:
     void defineForceLaw(int);
 
   protected:
     QComboBox *comboBox;
-    Function1 *forceLaw;
+    Function1 *function;
+    std::string xmlName;
   signals:
     void resize();
 };
+
+class Function2ChoiceWidget : public XMLWidget {
+  Q_OBJECT
+
+  public:
+    Function2ChoiceWidget(const QString &name, const std::string &xmlName);
+
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void resize(int m, int n) {if(function) function->resize(m,n);}
+
+  protected slots:
+      void defineForceLaw(int);
+
+  protected:
+    QComboBox *comboBox;
+    Function2 *function;
+    std::string xmlName;
+  signals:
+    void resize();
+};
+
 
 class ForceLawChoiceWidget : public XMLWidget {
   Q_OBJECT
@@ -1068,31 +1091,26 @@ class ForceLawChoiceWidget : public XMLWidget {
     Function1ChoiceWidget* forceLaw;
 };
 
-class ForceLawChoiceWidget2 : public XMLWidget {
+class ForceDirectionWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    ForceLawChoiceWidget2(const QString &name, Element *element);
+    ForceDirectionWidget(const QString &name, const std::string &xmlName, Element *element);
 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    int getForceLaw() {return comboBox->currentIndex();}
     void initialize() {refFrame->initialize();}
-    FrameOfReferenceWidget* getFrameOfReference() {return refFrame;}
-
 
   protected slots:
     void defineForceDir(bool);
-    void defineForceLaw(int);
 
   protected:
-    QPushButton *forceDirButton;
-    QComboBox *comboBox;
+    QPushButton *buttonDisable;
+    QWidget *forceDirWidget;
     FrameOfReferenceWidget* refFrame;
     Element *element;
-    Function2 *forceLaw;
     ExtPhysicalVarWidget *mat;
-    QString saved_frameOfReference;
+    std::string xmlName;
 };
 
 class GeneralizedForceDirectionWidget : public XMLWidget {
