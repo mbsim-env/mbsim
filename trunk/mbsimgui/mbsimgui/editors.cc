@@ -2049,15 +2049,11 @@ TiXmlElement* GeneralizedImpactLawWidget::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
-GeneralizedForceLawChoiceWidget::GeneralizedForceLawChoiceWidget(const QString &name, const string &xmlName_) : XMLWidget(name), generalizedForceLaw(0), generalizedImpactLaw(0), xmlName(xmlName_) {
+GeneralizedForceLawChoiceWidget::GeneralizedForceLawChoiceWidget(const QString &name, const string &xmlName_) : XMLWidget(name), generalizedForceLaw(0), xmlName(xmlName_) {
   layout->setDirection(QBoxLayout::TopToBottom);
 
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new SMatColsVarWidget(3,0,0,3),MBSIMNS"direction",noUnitUnits(),1));
-  widget = new ExtPhysicalVarWidget("Direction vectors",input);  
-  layout->addWidget(widget);
-
   comboBox = new QComboBox;
+  comboBox->addItem(tr("None"));
   comboBox->addItem(tr("Bilateral constraint"));
   comboBox->addItem(tr("Regularized bilateral constraint"));
   layout->addWidget(comboBox);
@@ -2066,44 +2062,31 @@ GeneralizedForceLawChoiceWidget::GeneralizedForceLawChoiceWidget(const QString &
 }
 
 void GeneralizedForceLawChoiceWidget::defineForceLaw(int index) {
-  if(index==0) {
-    layout->removeWidget(generalizedForceLaw);
-    delete generalizedForceLaw;
-    delete generalizedImpactLaw;
+  layout->removeWidget(generalizedForceLaw);
+  delete generalizedForceLaw;
+  if(index==0)
+    generalizedForceLaw = 0;
+  else if(index==1) {
     generalizedForceLaw = new BilateralConstraint;  
-    generalizedImpactLaw = new BilateralImpact;  
     layout->addWidget(generalizedForceLaw);
   } 
-  else if(index==1) {
-    layout->removeWidget(generalizedForceLaw);
-    delete generalizedForceLaw;
-    delete generalizedImpactLaw;
+  else if(index==2) {
     generalizedForceLaw = new RegularizedBilateralConstraint;  
-    generalizedImpactLaw = 0;
     layout->addWidget(generalizedForceLaw);
   }
-}
-
-int GeneralizedForceLawChoiceWidget::getSize() const {
-  string str = evalOctaveExpression(widget->getCurrentPhysicalStringWidget()->getValue());
-  vector<vector<string> > A = strToSMat(str);
-  return A.size()?A[0].size():0;
 }
 
 bool GeneralizedForceLawChoiceWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement  *e=element->FirstChildElement(xmlName);
   if(e) {
-    widget->initializeUsingXML(e);
-    TiXmlElement* ee=e->FirstChildElement(MBSIMNS"direction");
-    ee=ee->NextSiblingElement()->FirstChildElement();
-
+    TiXmlElement* ee=e->FirstChildElement();
     if(ee) {
       if(ee->ValueStr() == MBSIMNS"BilateralConstraint") {
-        comboBox->setCurrentIndex(0);
+        comboBox->setCurrentIndex(1);
         generalizedForceLaw->initializeUsingXML(ee);
       }
       else if(ee->ValueStr() == MBSIMNS"RegularizedBilateralConstraint") {
-        comboBox->setCurrentIndex(1);
+        comboBox->setCurrentIndex(2);
         generalizedForceLaw->initializeUsingXML(ee);
       }
     }
@@ -2111,17 +2094,94 @@ bool GeneralizedForceLawChoiceWidget::initializeUsingXML(TiXmlElement *element) 
 }
 
 TiXmlElement* GeneralizedForceLawChoiceWidget::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = new TiXmlElement(xmlName);
+    if(generalizedForceLaw)
+      generalizedForceLaw->writeXMLFile(ele0);
+    parent->LinkEndChild(ele0);
+
+  return 0;
+}
+
+GeneralizedImpactLawChoiceWidget::GeneralizedImpactLawChoiceWidget(const QString &name, const string &xmlName_) : XMLWidget(name), generalizedImpactLaw(0), xmlName(xmlName_) {
+  layout->setDirection(QBoxLayout::TopToBottom);
+
+  comboBox = new QComboBox;
+  comboBox->addItem(tr("None"));
+  comboBox->addItem(tr("Bilateral impact"));
+  layout->addWidget(comboBox);
+  connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineImpactLaw(int)));
+  defineImpactLaw(0);
+}
+
+void GeneralizedImpactLawChoiceWidget::defineImpactLaw(int index) {
+  layout->removeWidget(generalizedImpactLaw);
+  delete generalizedImpactLaw;
+  if(index==0)
+    generalizedImpactLaw = 0;
+  else if(index==1) {
+    generalizedImpactLaw = new BilateralImpact;  
+    layout->addWidget(generalizedImpactLaw);
+  } 
+}
+
+bool GeneralizedImpactLawChoiceWidget::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement  *e=element->FirstChildElement(xmlName);
+  if(e) {
+    TiXmlElement* ee=e->FirstChildElement();
+    if(ee) {
+      if(ee->ValueStr() == MBSIMNS"BilateralImpact") {
+        comboBox->setCurrentIndex(1);
+        generalizedImpactLaw->initializeUsingXML(ee);
+      }
+    }
+  }
+}
+
+TiXmlElement* GeneralizedImpactLawChoiceWidget::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = new TiXmlElement(xmlName);
+    if(generalizedImpactLaw)
+      generalizedImpactLaw->writeXMLFile(ele0);
+    parent->LinkEndChild(ele0);
+
+  return 0;
+}
+
+GeneralizedForceChoiceWidget::GeneralizedForceChoiceWidget(const QString &name, const string &xmlName_) : XMLWidget(name), xmlName(xmlName_) {
+  layout->setDirection(QBoxLayout::TopToBottom);
+
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new SMatColsVarWidget(3,0,0,3),MBSIMNS"direction",noUnitUnits(),1));
+  widget = new ExtPhysicalVarWidget("Direction vectors",input);  
+  layout->addWidget(widget);
+
+  generalizedForceLaw = new GeneralizedForceLawChoiceWidget("Generalized force law", MBSIMNS"generalizedForceLaw");
+  layout->addWidget(generalizedForceLaw);
+
+  generalizedImpactLaw = new GeneralizedImpactLawChoiceWidget("Generalized impact law", MBSIMNS"generalizedImpactLaw");
+  layout->addWidget(generalizedImpactLaw);
+}
+
+int GeneralizedForceChoiceWidget::getSize() const {
+  string str = evalOctaveExpression(widget->getCurrentPhysicalStringWidget()->getValue());
+  vector<vector<string> > A = strToSMat(str);
+  return A.size()?A[0].size():0;
+}
+
+bool GeneralizedForceChoiceWidget::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement  *e=element->FirstChildElement(xmlName);
+  if(e) {
+    widget->initializeUsingXML(e);
+    generalizedForceLaw->initializeUsingXML(e);
+    generalizedImpactLaw->initializeUsingXML(e);
+  }
+}
+
+TiXmlElement* GeneralizedForceChoiceWidget::writeXMLFile(TiXmlNode *parent) {
   if(getSize()) {
     TiXmlElement *ele0 = new TiXmlElement(xmlName);
     widget->writeXMLFile(ele0);
-    TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"generalizedForceLaw");
-    if(generalizedForceLaw)
-      generalizedForceLaw->writeXMLFile(ele1);
-    ele0->LinkEndChild(ele1);
-    ele1 = new TiXmlElement(MBSIMNS"generalizedImpactLaw");
-    if(generalizedImpactLaw)
-      generalizedImpactLaw->writeXMLFile(ele1);
-    ele0->LinkEndChild(ele1);
+    generalizedForceLaw->writeXMLFile(ele0);
+    generalizedImpactLaw->writeXMLFile(ele0);
     parent->LinkEndChild(ele0);
   }
 
@@ -2243,7 +2303,7 @@ TiXmlElement* Function2ChoiceWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-ForceLawChoiceWidget::ForceLawChoiceWidget(const QString &name, const string &xmlName_, OMBVObjectChoiceWidget* arrow_) : XMLWidget(name), xmlName(xmlName_), arrow(arrow_) {
+ForceChoiceWidget::ForceChoiceWidget(const QString &name, const string &xmlName_, OMBVObjectChoiceWidget* arrow_) : XMLWidget(name), xmlName(xmlName_), arrow(arrow_) {
   layout->setDirection(QBoxLayout::TopToBottom);
 
   vector<PhysicalStringWidget*> input;
@@ -2260,17 +2320,17 @@ ForceLawChoiceWidget::ForceLawChoiceWidget(const QString &name, const string &xm
   connect(forceLaw,SIGNAL(resize()),this,SLOT(resize()));
 }
 
-void ForceLawChoiceWidget::resize() {
+void ForceChoiceWidget::resize() {
   forceLaw->resize(getSize(),1);
 }
 
-int ForceLawChoiceWidget::getSize() const {
+int ForceChoiceWidget::getSize() const {
   string str = evalOctaveExpression(widget->getCurrentPhysicalStringWidget()->getValue());
   vector<vector<string> > A = strToSMat(str);
   return A.size()?A[0].size():0;
 }
 
-bool ForceLawChoiceWidget::initializeUsingXML(TiXmlElement *element) {
+bool ForceChoiceWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=element->FirstChildElement(xmlName);
   if(e) {
     widget->initializeUsingXML(e);
@@ -2279,7 +2339,7 @@ bool ForceLawChoiceWidget::initializeUsingXML(TiXmlElement *element) {
   }
 }
 
-TiXmlElement* ForceLawChoiceWidget::writeXMLFile(TiXmlNode *parent) {
+TiXmlElement* ForceChoiceWidget::writeXMLFile(TiXmlNode *parent) {
   if(getSize()) {
     TiXmlElement *ele0 = new TiXmlElement(xmlName);
     widget->writeXMLFile(ele0);
