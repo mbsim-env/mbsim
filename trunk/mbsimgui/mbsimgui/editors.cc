@@ -2132,26 +2132,27 @@ Function1ChoiceWidget::Function1ChoiceWidget(const QString &name) : XMLWidget(na
   layout->setDirection(QBoxLayout::TopToBottom);
 
   comboBox = new QComboBox;
-  comboBox->addItem(tr("Constant function"));
-  comboBox->addItem(tr("Sinus function"));
+  comboBox->addItem(tr("None"));
+  comboBox->addItem(tr("Constant"));
+  comboBox->addItem(tr("Sinus"));
   layout->addWidget(comboBox);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineForceLaw(int)));
   defineForceLaw(0);
 }
 
 void Function1ChoiceWidget::defineForceLaw(int index) {
-  int cols = 1;
-  if(index==0) {
-    layout->removeWidget(forceLaw);
-    delete forceLaw;
+  int cols = 0;
+  layout->removeWidget(forceLaw);
+  delete forceLaw;
+  if(index==0)
+    forceLaw = 0;
+  else if(index==1) {
     vector<PhysicalStringWidget*> input;
     input.push_back(new PhysicalStringWidget(new SVecWidget(cols,true),MBSIMNS"value",QStringList(),0));
-    forceLaw = new ConstantFunction1(new ExtPhysicalVarWidget("Constant",input),"VS");  
+    forceLaw = new ConstantFunction1(new ExtPhysicalVarWidget("Value",input),"VS");  
     layout->addWidget(forceLaw);
   } 
-  else if(index==1) {
-    layout->removeWidget(forceLaw);
-    delete forceLaw;
+  else if(index==2) {
     vector<PhysicalStringWidget*> input1, input2, input3, input4;
     input1.push_back(new PhysicalStringWidget(new SVecWidget(cols,true),MBSIMNS"amplitude",QStringList(),0));
     SVecWidget *vec = new SVecWidget(cols,true);
@@ -2161,18 +2162,23 @@ void Function1ChoiceWidget::defineForceLaw(int index) {
     forceLaw = new SinusFunction1(new ExtPhysicalVarWidget("Amplitude",input1), new ExtPhysicalVarWidget("Frequency",input2), new ExtPhysicalVarWidget("Phase",input3), new ExtPhysicalVarWidget("Offset",input4));  
     layout->addWidget(forceLaw);
   } 
+  if(forceLaw) {
+    emit resize();
+    connect(forceLaw,SIGNAL(resize()),this,SIGNAL(resize()));
+  }
 }
+
 bool Function1ChoiceWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement  *e=element->FirstChildElement(MBSIMNS"function");
   if(e) {
     TiXmlElement* ee=e->FirstChildElement();
     if(ee) {
       if(ee->ValueStr() == MBSIMNS"ConstantFunction1_VS") {
-        comboBox->setCurrentIndex(0);
+        comboBox->setCurrentIndex(1);
         forceLaw->initializeUsingXML(ee);
       }
       else if(ee->ValueStr() == MBSIMNS"SinusFunction1_VS") {
-        comboBox->setCurrentIndex(1);
+        comboBox->setCurrentIndex(2);
         forceLaw->initializeUsingXML(ee);
       }
     }
@@ -2188,7 +2194,7 @@ TiXmlElement* Function1ChoiceWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-ForceLawChoiceWidget::ForceLawChoiceWidget(const QString &name, const string &xmlName_, OMBVObjectChoiceWidget* arrow_) : XMLWidget(name), forceLaw(0), xmlName(xmlName_), arrow(arrow_) {
+ForceLawChoiceWidget::ForceLawChoiceWidget(const QString &name, const string &xmlName_, OMBVObjectChoiceWidget* arrow_) : XMLWidget(name), xmlName(xmlName_), arrow(arrow_) {
   layout->setDirection(QBoxLayout::TopToBottom);
 
   vector<PhysicalStringWidget*> input;
@@ -2200,39 +2206,8 @@ ForceLawChoiceWidget::ForceLawChoiceWidget(const QString &name, const string &xm
   connect((SMatColsVarWidget*)mat->getWidget(), SIGNAL(sizeChanged(int)), this, SLOT(resize()));
   layout->addWidget(widget);
 
-  comboBox = new QComboBox;
-  comboBox->addItem(tr("Constant function"));
-  comboBox->addItem(tr("Sinus function"));
-  layout->addWidget(comboBox);
-  connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineForceLaw(int)));
-  defineForceLaw(0);
-
-  //forceLaw2 = new Function1ChoiceWidget("Function");
-  //layout->addWidget(forceLaw2);
-}
-
-void ForceLawChoiceWidget::defineForceLaw(int index) {
-  int cols = getSize();
-  if(index==0) {
-    layout->removeWidget(forceLaw);
-    delete forceLaw;
-    vector<PhysicalStringWidget*> input;
-    input.push_back(new PhysicalStringWidget(new SVecWidget(cols,true),MBSIMNS"value",QStringList(),0));
-    forceLaw = new ConstantFunction1(new ExtPhysicalVarWidget("Constant",input),"VS");  
-    layout->addWidget(forceLaw);
-  } 
-  else if(index==1) {
-    layout->removeWidget(forceLaw);
-    delete forceLaw;
-    vector<PhysicalStringWidget*> input1, input2, input3, input4;
-    input1.push_back(new PhysicalStringWidget(new SVecWidget(cols,true),MBSIMNS"amplitude",QStringList(),0));
-    SVecWidget *vec = new SVecWidget(cols,true);
-    input2.push_back(new PhysicalStringWidget(vec,MBSIMNS"frequency",QStringList(),0));
-    input3.push_back(new PhysicalStringWidget(new SVecWidget(cols,true),MBSIMNS"phase",QStringList(),0));
-    input4.push_back(new PhysicalStringWidget(new SVecWidget(cols,true),MBSIMNS"offset",QStringList(),0));
-    forceLaw = new SinusFunction1(new ExtPhysicalVarWidget("Amplitude",input1), new ExtPhysicalVarWidget("Frequency",input2), new ExtPhysicalVarWidget("Phase",input3), new ExtPhysicalVarWidget("Offset",input4));  
-    layout->addWidget(forceLaw);
-  } 
+  forceLaw = new Function1ChoiceWidget("Function");
+  layout->addWidget(forceLaw);
   connect(forceLaw,SIGNAL(resize()),this,SLOT(resize()));
 }
 
@@ -2251,19 +2226,7 @@ bool ForceLawChoiceWidget::initializeUsingXML(TiXmlElement *element) {
   if(e) {
     widget->initializeUsingXML(e);
     TiXmlElement* ee=e->FirstChildElement(MBSIMNS"directionVectors");
-    ee=ee->NextSiblingElement()->FirstChildElement();
-
-    if(ee) {
-      if(ee->ValueStr() == MBSIMNS"ConstantFunction1_VS") {
-        comboBox->setCurrentIndex(0);
-        forceLaw->initializeUsingXML(ee);
-      }
-      else if(ee->ValueStr() == MBSIMNS"SinusFunction1_VS") {
-        comboBox->setCurrentIndex(1);
-        forceLaw->initializeUsingXML(ee);
-      }
-    }
-    //forceLaw2->initializeUsingXML(e);
+    forceLaw->initializeUsingXML(e);
     arrow->initializeUsingXML(e);
   }
 }
@@ -2272,10 +2235,7 @@ TiXmlElement* ForceLawChoiceWidget::writeXMLFile(TiXmlNode *parent) {
   if(getSize()) {
     TiXmlElement *ele0 = new TiXmlElement(xmlName);
     widget->writeXMLFile(ele0);
-    TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"function");
-    if(forceLaw)
-      forceLaw->writeXMLFile(ele1);
-    ele0->LinkEndChild(ele1);
+    forceLaw->writeXMLFile(ele0);
     arrow->writeXMLFile(ele0);
     parent->LinkEndChild(ele0);
   }
