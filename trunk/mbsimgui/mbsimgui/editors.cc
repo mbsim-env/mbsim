@@ -168,46 +168,21 @@ void OctaveHighlighter::highlightBlock(const QString &text) {
   }
 }
 
-XMLWidget::XMLWidget(const QString &name) {
-  layout = new QBoxLayout(QBoxLayout::LeftToRight);
-  if(name != "") {
-    if(name.at(name.size()-1)==':') {
-      QWidget *box = new QWidget;
-      QHBoxLayout *mainlayout = new QHBoxLayout;
-      mainlayout->setMargin(0);
-      box->setLayout(layout);
-      mainlayout->addWidget(new QLabel(name));
-      mainlayout->addWidget(box);
-      setLayout(mainlayout);
-    }
-    else {
-      QGroupBox *box = new QGroupBox(name);
-      QHBoxLayout *mainlayout = new QHBoxLayout;
-      mainlayout->setMargin(0);
-      box->setLayout(layout);
-      mainlayout->addWidget(box);
-      setLayout(mainlayout);
-    }
-  }
-  else {
-    layout->setMargin(0);
-    setLayout(layout);
-  }
-}
-
-LinearRegularizedBilateralConstraint::LinearRegularizedBilateralConstraint() : Function1() {
+LinearRegularizedBilateralConstraint::LinearRegularizedBilateralConstraint() {
   QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMNS"stiffnessCoefficient",stiffnessUnits(),1));
-  var.push_back(new ExtPhysicalVarWidget("Stiffness coefficient",input));
+  var.push_back(new ExtXMLWidget("Stiffness coefficient","",new ExtPhysicalVarWidget(input)));
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMNS"dampingCoefficient",dampingUnits(),0));
-  var.push_back(new ExtPhysicalVarWidget("Damping coefficient",input));
+  var.push_back(new ExtXMLWidget("Damping coefficient","",new ExtPhysicalVarWidget(input)));
 
   layout->addWidget(var[0]);
   layout->addWidget(var[1]);
-  setLayout(layout);
 }
 
 bool LinearRegularizedBilateralConstraint::initializeUsingXML(TiXmlElement *element) {
@@ -227,6 +202,7 @@ BoolWidget::BoolWidget(const std::string &b) {
   value = new QCheckBox;
   setValue(b);
   QHBoxLayout* layout = new QHBoxLayout;
+  layout->setMargin(0);
   setLayout(layout);
   layout->addWidget(value);
 }
@@ -275,6 +251,8 @@ OctaveExpressionWidget::OctaveExpressionWidget() {
   layout->setMargin(0);
   setLayout(layout);
   value=new QPlainTextEdit;
+  value->setMinimumHeight(value->sizeHint().height()/2);
+  value->setMaximumHeight(value->sizeHint().height()/2);
   new OctaveHighlighter(value->document());
   QFont font;
   font.setFamily("Monospace");
@@ -645,9 +623,11 @@ bool SSymMatWidget::validate(const string &str) const {
 SMatColsVarWidget::SMatColsVarWidget(int rows, int cols, int minCols_, int maxCols_) : minCols(minCols_), maxCols(maxCols_) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
+  QWidget *box = new QWidget;
   QHBoxLayout *hbox = new QHBoxLayout;
+  box->setLayout(hbox);
   hbox->setMargin(0);
-  layout->addLayout(hbox);
+  layout->addWidget(box);
   hbox->addWidget(new QLabel(QString::number(rows)));
   hbox->addWidget(new QLabel("x"));
   colsCombo = new QComboBox;
@@ -831,6 +811,11 @@ void PropertyDialog::initialize() {
     widget[i]->initialize();
 }
 
+void PropertyDialog::resizeVariables() {
+  for(unsigned int i=0; i<widget.size(); i++)
+    widget[i]->resizeVariables();
+}
+
 void PropertyDialog::addTab(const QString &name) {  
   QScrollArea *tab = new QScrollArea;
   tab->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -839,13 +824,11 @@ void PropertyDialog::addTab(const QString &name) {
   QWidget *widget = new QWidget;
   QHBoxLayout *hlo = new QHBoxLayout;
 
+  QWidget *box = new QWidget;
   QVBoxLayout *layout_ = new QVBoxLayout;
+  box->setLayout(layout_);
   layout[name] = layout_;
-  hlo->addLayout(layout_);
-
-  layout_ = new QVBoxLayout;
-  layout2[name] = layout_;
-  hlo->addLayout(layout_);
+  hlo->addWidget(box);
 
   widget->setLayout(hlo);
   tab->setWidget(widget);
@@ -1016,7 +999,10 @@ EvalDialog::EvalDialog(StringWidget *var_) : var(var_) {
   setWindowTitle("Octave expression evaluation");
 }
 
-NameWidget::NameWidget(Element* ele, const QString &name, bool renaming) : XMLWidget(name), element(ele) {
+NameWidget::NameWidget(Element* ele, bool renaming) : element(ele) {
+  QHBoxLayout *layout = new QHBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
 
   ename = new QLineEdit;
   ename->setReadOnly(true);
@@ -1059,7 +1045,10 @@ TiXmlElement* NameWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-LocalFrameOfReferenceWidget::LocalFrameOfReferenceWidget(const QString &name, const string &xmlName_, Element *element_, Frame* omitFrame_) : XMLWidget(name), element(element_), selectedFrame(0), omitFrame(omitFrame_), xmlName(xmlName_) {
+LocalFrameOfReferenceWidget::LocalFrameOfReferenceWidget(const string &xmlName_, Element *element_, Frame* omitFrame_) : element(element_), selectedFrame(0), omitFrame(omitFrame_), xmlName(xmlName_) {
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
 
   frame = new QComboBox;
   layout->addWidget(frame);
@@ -1109,7 +1098,11 @@ TiXmlElement* LocalFrameOfReferenceWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-FrameOfReferenceWidget::FrameOfReferenceWidget(const QString &name, const string &xmlName_, Element *element_, Frame* selectedFrame_) : XMLWidget(name), element(element_), selectedFrame(selectedFrame_), xmlName(xmlName_) {
+FrameOfReferenceWidget::FrameOfReferenceWidget(const string &xmlName_, Element *element_, Frame* selectedFrame_) : element(element_), selectedFrame(selectedFrame_), xmlName(xmlName_) {
+  QHBoxLayout *layout = new QHBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
   frame = new QLineEdit;
   frame->setReadOnly(true);
   if(selectedFrame)
@@ -1162,7 +1155,10 @@ TiXmlElement* FrameOfReferenceWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-ExtPhysicalVarWidget::ExtPhysicalVarWidget(const QString &name, std::vector<PhysicalStringWidget*> inputWidget_) : XMLWidget(name), inputWidget(inputWidget_), evalInput(0) {
+ExtPhysicalVarWidget::ExtPhysicalVarWidget(std::vector<PhysicalStringWidget*> inputWidget_) : inputWidget(inputWidget_), evalInput(0) {
+  QHBoxLayout *layout = new QHBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
 
   inputWidget.push_back(new PhysicalStringWidget(new OctaveExpressionWidget, inputWidget[0]->getXmlName(), inputWidget[0]->getUnitList(), inputWidget[0]->getDefaultUnit()));
 
@@ -1172,9 +1168,9 @@ ExtPhysicalVarWidget::ExtPhysicalVarWidget(const QString &name, std::vector<Phys
   connect(evalDialog,SIGNAL(clicked(bool)),this,SLOT(updateInput()));
 
   inputCombo = new QComboBox;
-  //connect(inputCombo,SIGNAL(currentIndexChanged(int)),this,SLOT(changeInput(int)));
-  QStackedWidget *stackedWidget = new QStackedWidget;
-  connect(inputCombo,SIGNAL(currentIndexChanged(int)),stackedWidget,SLOT(setCurrentIndex(int)));
+  stackedWidget = new QStackedWidget;
+  //connect(inputCombo,SIGNAL(currentIndexChanged(int)),stackedWidget,SLOT(setCurrentIndex(int)));
+  connect(inputCombo,SIGNAL(currentIndexChanged(int)),this,SLOT(changeCurrent(int)));
   connect(inputCombo,SIGNAL(currentIndexChanged(int)),this,SIGNAL(inputDialogChanged(int)));
   for(unsigned int i=0; i<inputWidget.size()-1; i++) {
     stackedWidget->addWidget(inputWidget[i]);
@@ -1182,19 +1178,32 @@ ExtPhysicalVarWidget::ExtPhysicalVarWidget(const QString &name, std::vector<Phys
     inputCombo->addItem(inputWidget[i]->getType().c_str());
     inputWidget[i+1]->hide();
   }
+  inputWidget[inputWidget.size()-1]->setSizePolicy(QSizePolicy::Ignored,
+      QSizePolicy::Ignored);
   stackedWidget->addWidget(inputWidget[inputWidget.size()-1]);
   //inputCombo->addItem("Editor");
   inputCombo->addItem(inputWidget[inputWidget.size()-1]->getType().c_str());
+
 
   layout->addWidget(stackedWidget);
   layout->addWidget(evalButton);
   layout->addWidget(inputCombo);
 
+
+  //adjustSize();
  // layout->addWidget(stackedWidget,0,0,3,1);
  // if(units.size())
  //   layout->addWidget(unit,0,1);
  // layout->addWidget(evalButton,1,1);
  // layout->addWidget(inputCombo,2,1);
+}
+
+void ExtPhysicalVarWidget::changeCurrent(int idx) {
+  if (stackedWidget->currentWidget() !=0)
+    stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->setCurrentIndex(idx);
+  stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  adjustSize();
 }
 
 string ExtPhysicalVarWidget::getValue() const { 
@@ -1254,11 +1263,12 @@ LinearTranslation::LinearTranslation() {
   vector<PhysicalStringWidget*> input;
   SMatColsVarWidget* m = new SMatColsVarWidget(3,1,1,3);
   input.push_back(new PhysicalStringWidget(m,MBSIMNS"translationVectors",noUnitUnits(),1));
-  mat = new ExtPhysicalVarWidget("Translation vectors",input);  
+  mat = new ExtPhysicalVarWidget(input);
+  QWidget *widget = new ExtXMLWidget("Translation vectors","",mat);
   QVBoxLayout *layout = new QVBoxLayout;
-  setLayout(layout);
   layout->setMargin(0);
-  layout->addWidget(mat);
+  setLayout(layout);
+  layout->addWidget(widget);
   QObject::connect(m, SIGNAL(sizeChanged(int)), this, SIGNAL(translationChanged()));
   QObject::connect(mat, SIGNAL(inputDialogChanged(int)), this, SIGNAL(translationChanged()));
 }
@@ -1280,8 +1290,10 @@ TiXmlElement* LinearTranslation::writeXMLFile(TiXmlNode *parent) {
   return ele2;
 }
 
-TranslationChoiceWidget::TranslationChoiceWidget(const QString &name) : XMLWidget(name), translation(0) {
-  layout->setDirection(QBoxLayout::TopToBottom);
+TranslationChoiceWidget::TranslationChoiceWidget() : translation(0) {
+  layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
 
   comboBox = new QComboBox;
   comboBox->addItem(tr("None"));
@@ -1344,7 +1356,7 @@ TiXmlElement* RotationAboutZAxis::writeXMLFile(TiXmlNode *parent) {
 RotationAboutFixedAxis::RotationAboutFixedAxis() {
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SVecWidget(3),MBSIMNS"axisOfRotation",noUnitUnits(),1));
-  vec = new ExtPhysicalVarWidget("Axis of rotation",input);  
+  vec = new ExtXMLWidget("Axis of rotation","",new ExtPhysicalVarWidget(input));  
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -1374,8 +1386,10 @@ TiXmlElement* CardanAngles::writeXMLFile(TiXmlNode *parent) {
   return ele2;
 }
 
-RotationChoiceWidget::RotationChoiceWidget(const QString &name) : XMLWidget(name), rotation(0) {
-  layout->setDirection(QBoxLayout::TopToBottom);
+RotationChoiceWidget::RotationChoiceWidget() : rotation(0) {
+  layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
 
   comboBox = new QComboBox;
   comboBox->addItem(tr("None"));
@@ -1475,14 +1489,19 @@ TiXmlElement* RotationChoiceWidget::writeXMLFile(TiXmlNode *parent) {
  return 0;
 }
 
-EnvironmentWidget::EnvironmentWidget(const QString &name) : XMLWidget(name) {
+EnvironmentWidget::EnvironmentWidget() {
+
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
   vector<PhysicalStringWidget*> input;
   vector<string> g(3);
   g[0] = "0";
   g[1] = "-9.81";
   g[2] = "0";
   input.push_back(new PhysicalStringWidget(new SVecWidget(g),MBSIMNS"accelerationOfGravity",accelerationUnits(),0));
-  vec = new ExtPhysicalVarWidget("Acceleration of gravity",input);  
+  vec = new ExtPhysicalVarWidget(input);  
   
   layout->addWidget(vec);
 }
@@ -1498,25 +1517,31 @@ TiXmlElement* EnvironmentWidget::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
-FramePositionWidget::FramePositionWidget(const QString &name, Frame *frame_) : XMLWidget(name), frame(frame_) {
-  layout->setDirection(QBoxLayout::TopToBottom);
+FramePositionWidget::FramePositionWidget(Frame *frame_) : frame(frame_) {
+
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
 
   Element *element = frame->getParentElement();
 
-  refFrame = new LocalFrameOfReferenceWidget("Frame of reference", MBSIMNS"frameOfReference",element,frame);
+  refFrame = new LocalFrameOfReferenceWidget(MBSIMNS"frameOfReference",element,frame);
+  QWidget *refFrameWidget = new ExtXMLWidget("Frame of reference","",refFrame);
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SVecWidget(3), MBSIMNS"position", lengthUnits(), 4));
-  position = new ExtPhysicalVarWidget("Position",input);
+  position = new ExtPhysicalVarWidget(input);
+  QWidget *positionWidget = new ExtXMLWidget("Position","",position);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SMatWidget(getEye<string>(3,3,"1","0")),MBSIMNS"orientation",noUnitUnits(),1));
   //input.push_back(new PhysicalStringWidget(new SCardanWidget,MBSIMNS"orientation",angleUnits(),0));
-  orientation = new ExtPhysicalVarWidget("Orientation",input);
+  orientation = new ExtPhysicalVarWidget(input);
+  QWidget *orientationWidget = new ExtXMLWidget("Orientation","",orientation);
 
-  layout->addWidget(position);
-  layout->addWidget(orientation);
-  layout->addWidget(refFrame);
+  layout->addWidget(positionWidget);
+  layout->addWidget(orientationWidget);
+  layout->addWidget(refFrameWidget);
 }
 
 bool FramePositionWidget::initializeUsingXML(TiXmlElement *element) {
@@ -1539,26 +1564,41 @@ TiXmlElement* FramePositionWidget::writeXMLFile(TiXmlNode *parent) {
   return ele;
 }
 
-FramePositionsWidget::FramePositionsWidget(const QString &name, Element *element_) : XMLWidget(name), element(element_) {
+FramePositionsWidget::FramePositionsWidget(Element *element_) : element(element_) {
+
+  QHBoxLayout *layout = new QHBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
 
   frameList = new QListWidget;
+  frameList->setMinimumWidth(frameList->sizeHint().width()/3);
+  frameList->setMaximumWidth(frameList->sizeHint().width()/3);
   layout->addWidget(frameList);
-  sublayout = new QStackedLayout;
+  stackedWidget = new QStackedWidget;
   for(int i=1; i<element->getContainerFrame()->childCount(); i++) {
     frameList->addItem(element->getFrame(i)->getName());
-    sublayout->addWidget(new FramePositionWidget("",element->getFrame(i)));
+    stackedWidget->addWidget(new FramePositionWidget(element->getFrame(i)));
+    stackedWidget->widget(i-1)->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Ignored);
   }
-  connect(frameList,SIGNAL(currentRowChanged(int)),sublayout,SLOT(setCurrentIndex(int)));
-  layout->addLayout(sublayout);
+  connect(frameList,SIGNAL(currentRowChanged(int)),this,SLOT(changeCurrent(int)));
+  layout->addWidget(stackedWidget);
+}
+
+void FramePositionsWidget::changeCurrent(int idx) {
+  if (stackedWidget->currentWidget() !=0)
+    stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->setCurrentIndex(idx);
+  stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  adjustSize();
 }
 
 void FramePositionsWidget::update() {
   frameList->blockSignals(true);
   vector<FramePositionWidget*> widget;
-  for(int i=0; i<sublayout->count(); i++) 
-    widget.push_back((FramePositionWidget*)sublayout->widget(i));
+  for(int i=0; i<stackedWidget->count(); i++) 
+    widget.push_back((FramePositionWidget*)stackedWidget->widget(i));
   for(int i=0; i<widget.size(); i++) {
-    sublayout->removeWidget(widget[i]);
+    stackedWidget->removeWidget(widget[i]);
   }
   frameList->clear();
   for(int i=1; i<element->getContainerFrame()->childCount(); i++) {
@@ -1570,39 +1610,39 @@ void FramePositionsWidget::update() {
       }
     }
     if(k>-1) {
-      sublayout->addWidget(widget[k]);
+      stackedWidget->addWidget(widget[k]);
       widget[k] = 0;
     }
     else
-      sublayout->addWidget(new FramePositionWidget("",element->getFrame(i)));
+      stackedWidget->addWidget(new FramePositionWidget(element->getFrame(i)));
     frameList->addItem(element->getFrame(i)->getName());
   }
   for(int i=0; i<widget.size(); i++) {
     if(widget[i])
       delete widget[i];
   }
-  for(int i=0; i<sublayout->count(); i++) {
-    FramePositionWidget *widget = (FramePositionWidget*)sublayout->widget(i);
+  for(int i=0; i<stackedWidget->count(); i++) {
+    FramePositionWidget *widget = (FramePositionWidget*)stackedWidget->widget(i);
     widget->update();
   }
   frameList->setCurrentRow(0);
-  sublayout->setCurrentIndex(0);
+  stackedWidget->setCurrentIndex(0);
   frameList->blockSignals(false);
 }
 
 bool FramePositionsWidget::initializeUsingXML(TiXmlElement *ele) {
   update();
   TiXmlElement *e=ele->FirstChildElement();
-  for(int i=0; i<sublayout->count(); i++) {
-    ((FramePositionWidget*)sublayout->widget(i))->initializeUsingXML(e);
+  for(int i=0; i<stackedWidget->count(); i++) {
+    ((FramePositionWidget*)stackedWidget->widget(i))->initializeUsingXML(e);
     e=e->NextSiblingElement();
   }
 }
 
 TiXmlElement* FramePositionsWidget::writeXMLFile(TiXmlNode *parent) {
-  for(int i=0; i<sublayout->count(); i++) {
+  for(int i=0; i<stackedWidget->count(); i++) {
     TiXmlElement *ele = new TiXmlElement(MBSIMNS"frame");
-    ((FramePositionWidget*)sublayout->widget(i))->writeXMLFile(ele);
+    ((FramePositionWidget*)stackedWidget->widget(i))->writeXMLFile(ele);
     parent->LinkEndChild(ele);
   }
   return 0;
@@ -1615,12 +1655,12 @@ OMBVFrameWidget::OMBVFrameWidget() {
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), MBSIMNS"size", lengthUnits(), 4));
-  size = new ExtPhysicalVarWidget("Size",input);
+  size = new ExtXMLWidget("Size","",new ExtPhysicalVarWidget(input));
   layout->addWidget(size);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), MBSIMNS"offset", noUnitUnits(), 1));
-  offset = new ExtPhysicalVarWidget("Offset",input);
+  offset = new ExtXMLWidget("Offset","",new ExtPhysicalVarWidget(input));
   layout->addWidget(offset);
  }
 
@@ -1643,17 +1683,17 @@ OMBVArrowWidget::OMBVArrowWidget() {
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0.1"), OPENMBVNS"diameter", lengthUnits(), 4));
-  diameter = new ExtPhysicalVarWidget("Diameter",input);
+  diameter = new ExtXMLWidget("Diameter","",new ExtPhysicalVarWidget(input));
   layout->addWidget(diameter);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0.2"), OPENMBVNS"headDiameter", lengthUnits(), 4));
-  headDiameter = new ExtPhysicalVarWidget("Head diameter",input);
+  headDiameter = new ExtXMLWidget("Head diameter","",new ExtPhysicalVarWidget(input));
   layout->addWidget(headDiameter);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0.2"), OPENMBVNS"headLength", lengthUnits(), 4));
-  headLength = new ExtPhysicalVarWidget("Head length",input);
+  headLength = new ExtXMLWidget("Head length","",new ExtPhysicalVarWidget(input));
   layout->addWidget(headLength);
 
   input.clear();
@@ -1666,12 +1706,12 @@ OMBVArrowWidget::OMBVArrowWidget() {
   list.push_back(string("\"")+"toDoubleHead"+"\"");
   list.push_back(string("\"")+"bothDoubleHeads"+"\"");
   input.push_back(new PhysicalStringWidget(new ChoiceWidget(list,2), OPENMBVNS"type", QStringList(), 0));
-  type = new ExtPhysicalVarWidget("Type",input);
+  type = new ExtXMLWidget("Type","",new ExtPhysicalVarWidget(input));
   layout->addWidget(type);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), OPENMBVNS"scaleLength", noUnitUnits(), 1));
-  scaleLength = new ExtPhysicalVarWidget("Scale length",input);
+  scaleLength = new ExtXMLWidget("Scale length","",new ExtPhysicalVarWidget(input));
   layout->addWidget(scaleLength);
 }
 
@@ -1711,32 +1751,32 @@ OMBVCoilSpringWidget::OMBVCoilSpringWidget() {
   list.push_back(string("\"")+"scaledTube"+"\"");
   list.push_back(string("\"")+"polyline"+"\"");
   input.push_back(new PhysicalStringWidget(new ChoiceWidget(list,0), OPENMBVNS"type", QStringList(), 0));
-  type = new ExtPhysicalVarWidget("Type",input);
+  type = new ExtXMLWidget("Type","",new ExtPhysicalVarWidget(input));
   layout->addWidget(type);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("3"), OPENMBVNS"numberOfCoils", noUnitUnits(), 1));
-  numberOfCoils= new ExtPhysicalVarWidget("Number of coils",input);
+  numberOfCoils= new ExtXMLWidget("Number of coils","",new ExtPhysicalVarWidget(input));
   layout->addWidget(numberOfCoils);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0.1"), OPENMBVNS"springRadius", lengthUnits(), 4));
-  springRadius= new ExtPhysicalVarWidget("Spring radius",input);
+  springRadius= new ExtXMLWidget("Spring radius","",new ExtPhysicalVarWidget(input));
   layout->addWidget(springRadius);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("-1"), OPENMBVNS"crossSectionRadius", lengthUnits(), 4));
-  crossSectionRadius= new ExtPhysicalVarWidget("Cross section radius",input);
+  crossSectionRadius = new ExtXMLWidget("Cross section radius","",new ExtPhysicalVarWidget(input),true,false);
   layout->addWidget(crossSectionRadius);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("-1"), OPENMBVNS"nominalLength", lengthUnits(), 4));
-  nominalLength= new ExtPhysicalVarWidget("Nominal length",input);
+  nominalLength= new ExtXMLWidget("Nominal length","",new ExtPhysicalVarWidget(input),true,false);
   layout->addWidget(nominalLength);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), OPENMBVNS"scaleFactor", noUnitUnits(), 1));
-  scaleFactor = new ExtPhysicalVarWidget("Scale factor",input);
+  scaleFactor = new ExtXMLWidget("Scale factor","",new ExtPhysicalVarWidget(input));
   layout->addWidget(scaleFactor);
 }
 
@@ -1767,9 +1807,11 @@ TiXmlElement* OMBVCoilSpringWidget::writeXMLFile(TiXmlNode *parent) {
   return e;
 }
 
-OMBVObjectChoiceWidget::OMBVObjectChoiceWidget(const QString &name, OMBVObjectWidget *ombv_, const string &xmlName_) : XMLWidget(name), ombv(ombv_), xmlName(xmlName_) {
-  layout->setDirection(QBoxLayout::TopToBottom);
-  
+OMBVObjectChoiceWidget::OMBVObjectChoiceWidget(OMBVObjectWidget *ombv_, const string &xmlName_) : ombv(ombv_), xmlName(xmlName_) {
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
   QGroupBox *box = new QGroupBox("Show");
   QHBoxLayout *sublayout = new QHBoxLayout;
   box->setLayout(sublayout);
@@ -1816,22 +1858,22 @@ OMBVBodyWidget::OMBVBodyWidget() {
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0"), OPENMBVNS"staticColor", noUnitUnits(), 1));
-  color = new ExtPhysicalVarWidget("Static color",input);
+  color = new ExtXMLWidget("Static color","",new ExtPhysicalVarWidget(input));
   layout->addWidget(color);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SVecWidget(3,true), OPENMBVNS"initialTranslation", lengthUnits(), 4));
-  trans = new ExtPhysicalVarWidget("Initial translation",input);
+  trans = new ExtXMLWidget("Initial translation","",new ExtPhysicalVarWidget(input));
   layout->addWidget(trans);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SVecWidget(3,true), OPENMBVNS"initialRotation", angleUnits(), 0));
-  rot = new ExtPhysicalVarWidget("Initial rotation",input);
+  rot = new ExtXMLWidget("Initial rotation","",new ExtPhysicalVarWidget(input));
   layout->addWidget(rot);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), OPENMBVNS"scaleFactor", noUnitUnits(), 1));
-  scale = new ExtPhysicalVarWidget("Scale factor",input);
+  scale = new ExtXMLWidget("Scale factor","",new ExtPhysicalVarWidget(input));
   layout->addWidget(scale);
 }
 
@@ -1857,7 +1899,7 @@ CuboidWidget::CuboidWidget() {
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SVecWidget(getScalars<string>(3,"1"),true), OPENMBVNS"length", lengthUnits(), 4));
-  length = new ExtPhysicalVarWidget("Length",input);
+  length = new ExtXMLWidget("Length","",new ExtPhysicalVarWidget(input));
   layout->addWidget(length);
 }
 
@@ -1876,7 +1918,7 @@ SphereWidget::SphereWidget() {
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), OPENMBVNS"radius", lengthUnits(), 4));
-  radius = new ExtPhysicalVarWidget("Radius",input);
+  radius = new ExtXMLWidget("Radius","",new ExtPhysicalVarWidget(input));
   layout->addWidget(radius);
 }
 
@@ -1895,27 +1937,27 @@ FrustumWidget::FrustumWidget() {
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), OPENMBVNS"topRadius", lengthUnits(), 4));
-  top = new ExtPhysicalVarWidget("Top radius",input);
+  top = new ExtXMLWidget("Top radius","",new ExtPhysicalVarWidget(input));
   layout->addWidget(top);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), OPENMBVNS"baseRadius", lengthUnits(), 4));
-  base = new ExtPhysicalVarWidget("Base radius",input);
+  base = new ExtXMLWidget("Base radius","",new ExtPhysicalVarWidget(input));
   layout->addWidget(base);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), OPENMBVNS"height", lengthUnits(), 4));
-  height = new ExtPhysicalVarWidget("Height",input);
+  height = new ExtXMLWidget("Height","",new ExtPhysicalVarWidget(input));
   layout->addWidget(height);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0"), OPENMBVNS"innerTopRadius", lengthUnits(), 4));
-  innerTop = new ExtPhysicalVarWidget("Inner top radius",input);
+  innerTop = new ExtXMLWidget("Inner top radius","",new ExtPhysicalVarWidget(input));
   layout->addWidget(innerTop);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0"), OPENMBVNS"innerBaseRadius", lengthUnits(), 4));
-  innerBase = new ExtPhysicalVarWidget("Inner base radius",input);
+  innerBase = new ExtXMLWidget("Inner base radius","",new ExtPhysicalVarWidget(input));
   layout->addWidget(innerBase);
 }
 
@@ -1939,8 +1981,11 @@ TiXmlElement* FrustumWidget::writeXMLFile(TiXmlNode *parent) {
   return e;
 }
 
-OMBVBodyChoiceWidget::OMBVBodyChoiceWidget(const QString& name, RigidBody *body_) : XMLWidget(name), body(body_), ombv(0) {
-  layout->setDirection(QBoxLayout::TopToBottom);
+OMBVBodyChoiceWidget::OMBVBodyChoiceWidget(RigidBody *body_) : body(body_), ombv(0) {
+
+  layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
 
   comboBox = new QComboBox;
   comboBox->addItem(tr("None"));
@@ -1949,13 +1994,14 @@ OMBVBodyChoiceWidget::OMBVBodyChoiceWidget(const QString& name, RigidBody *body_
   comboBox->addItem(tr("Sphere"));
   layout->addWidget(comboBox);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ombvSelection(int)));
-  ref=new LocalFrameOfReferenceWidget("Frame of reference",MBSIMNS"frameOfReference",body);
-  layout->addWidget(ref);
-  ref->hide();
+  ref=new LocalFrameOfReferenceWidget(MBSIMNS"frameOfReference",body);
+  widget = new ExtXMLWidget("Frame of reference","",ref);
+  layout->addWidget(widget);
+  widget->hide();
 }
 
 void OMBVBodyChoiceWidget::ombvSelection(int index) {
-  ref->setVisible(index>0);
+  widget->setVisible(index>0);
   if(index==0) {
     layout->removeWidget(ombv);
     delete ombv;
@@ -2018,9 +2064,12 @@ TiXmlElement* OMBVBodyChoiceWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-ConnectWidget::ConnectWidget(const QString &name, int n, Element *element_) : XMLWidget(name), element(element_) {
-  layout->setDirection(QBoxLayout::TopToBottom);
+ConnectWidget::ConnectWidget(int n, Element *element_) : element(element_) {
   
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
   for(int i=0; i<n; i++) {
     QString xmlName = MBSIMNS"ref";
     QString subname = "Frame";
@@ -2029,8 +2078,9 @@ ConnectWidget::ConnectWidget(const QString &name, int n, Element *element_) : XM
       //layout->addWidget(new QLabel(QString("Frame") + QString::number(i+1) +":"));
       xmlName += QString::number(i+1);
     }
-    widget.push_back(new FrameOfReferenceWidget(subname,xmlName.toStdString(),element,0));
-    layout->addWidget(widget[i]);
+    widget.push_back(new FrameOfReferenceWidget(xmlName.toStdString(),element,0));
+    QWidget *subwidget = new ExtXMLWidget(subname,"",widget[i]);
+    layout->addWidget(subwidget);
   }
 }
 
@@ -2083,6 +2133,7 @@ TiXmlElement* GeneralizedForceLawWidget::writeXMLFile(TiXmlNode *parent) {
 RegularizedBilateralConstraint::RegularizedBilateralConstraint() {
 
   layout = new QVBoxLayout;
+  layout->setMargin(0);
   funcList = new QComboBox;
   funcList->addItem(tr("Linear regularized bilateral constraint"));
   layout->addWidget(funcList);
@@ -2117,8 +2168,11 @@ TiXmlElement* GeneralizedImpactLawWidget::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
-GeneralizedForceLawChoiceWidget::GeneralizedForceLawChoiceWidget(const QString &name, const string &xmlName_) : XMLWidget(name), generalizedForceLaw(0), xmlName(xmlName_) {
-  layout->setDirection(QBoxLayout::TopToBottom);
+GeneralizedForceLawChoiceWidget::GeneralizedForceLawChoiceWidget(const string &xmlName_) : generalizedForceLaw(0), xmlName(xmlName_) {
+
+  layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
 
   comboBox = new QComboBox;
   comboBox->addItem(tr("None"));
@@ -2170,8 +2224,11 @@ TiXmlElement* GeneralizedForceLawChoiceWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-GeneralizedImpactLawChoiceWidget::GeneralizedImpactLawChoiceWidget(const QString &name, const string &xmlName_) : XMLWidget(name), generalizedImpactLaw(0), xmlName(xmlName_) {
-  layout->setDirection(QBoxLayout::TopToBottom);
+GeneralizedImpactLawChoiceWidget::GeneralizedImpactLawChoiceWidget(const string &xmlName_) : generalizedImpactLaw(0), xmlName(xmlName_) {
+
+  layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
 
   comboBox = new QComboBox;
   comboBox->addItem(tr("None"));
@@ -2214,19 +2271,25 @@ TiXmlElement* GeneralizedImpactLawChoiceWidget::writeXMLFile(TiXmlNode *parent) 
   return 0;
 }
 
-GeneralizedForceChoiceWidget::GeneralizedForceChoiceWidget(const QString &name, const string &xmlName_) : XMLWidget(name), xmlName(xmlName_) {
-  layout->setDirection(QBoxLayout::TopToBottom);
+GeneralizedForceChoiceWidget::GeneralizedForceChoiceWidget(const string &xmlName_) : xmlName(xmlName_) {
+  
+  layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SMatColsVarWidget(3,0,0,3),MBSIMNS"direction",noUnitUnits(),1));
-  widget = new ExtPhysicalVarWidget("Direction vectors",input);  
-  layout->addWidget(widget);
+  widget = new ExtPhysicalVarWidget(input);  
+  ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Direction vectors","",widget);
+  layout->addWidget(extXMLWidget);
 
-  generalizedForceLaw = new GeneralizedForceLawChoiceWidget("Generalized force law", MBSIMNS"generalizedForceLaw");
-  layout->addWidget(generalizedForceLaw);
+  generalizedForceLaw = new GeneralizedForceLawChoiceWidget(MBSIMNS"generalizedForceLaw");
+  extXMLWidget = new ExtXMLWidget("Generalized force law","",generalizedForceLaw);
+  layout->addWidget(extXMLWidget);
 
-  generalizedImpactLaw = new GeneralizedImpactLawChoiceWidget("Generalized impact law", MBSIMNS"generalizedImpactLaw");
-  layout->addWidget(generalizedImpactLaw);
+  generalizedImpactLaw = new GeneralizedImpactLawChoiceWidget(MBSIMNS"generalizedImpactLaw");
+  extXMLWidget = new ExtXMLWidget("Generalized impact law","",generalizedImpactLaw);
+  layout->addWidget(extXMLWidget);
 }
 
 int GeneralizedForceChoiceWidget::getSize() const {
@@ -2256,8 +2319,11 @@ TiXmlElement* GeneralizedForceChoiceWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-Function1ChoiceWidget::Function1ChoiceWidget(const QString &name, const string &xmlName_) : XMLWidget(name), function(0), xmlName(xmlName_) {
-  layout->setDirection(QBoxLayout::TopToBottom);
+Function1ChoiceWidget::Function1ChoiceWidget(const string &xmlName_) : function(0), xmlName(xmlName_) {
+
+  layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
 
   comboBox = new QComboBox;
   comboBox->addItem(tr("None"));
@@ -2269,30 +2335,19 @@ Function1ChoiceWidget::Function1ChoiceWidget(const QString &name, const string &
 }
 
 void Function1ChoiceWidget::defineForceLaw(int index) {
-  int cols = 0;
   layout->removeWidget(function);
   delete function;
-  if(index==0)
+  if(index==0) {
     function = 0;
-  else if(index==1) {
-    vector<PhysicalStringWidget*> input;
-    input.push_back(new PhysicalStringWidget(new SVecWidget(cols,true),MBSIMNS"value",QStringList(),0));
-    function = new ConstantFunction1(new ExtPhysicalVarWidget("Value",input),"VS");  
-    layout->addWidget(function);
-  } 
-  else if(index==2) {
-    vector<PhysicalStringWidget*> input1, input2, input3, input4;
-    input1.push_back(new PhysicalStringWidget(new SVecWidget(cols,true),MBSIMNS"amplitude",QStringList(),0));
-    SVecWidget *vec = new SVecWidget(cols,true);
-    input2.push_back(new PhysicalStringWidget(vec,MBSIMNS"frequency",QStringList(),0));
-    input3.push_back(new PhysicalStringWidget(new SVecWidget(cols,true),MBSIMNS"phase",QStringList(),0));
-    input4.push_back(new PhysicalStringWidget(new SVecWidget(cols,true),MBSIMNS"offset",QStringList(),0));
-    function = new SinusFunction1(new ExtPhysicalVarWidget("Amplitude",input1), new ExtPhysicalVarWidget("Frequency",input2), new ExtPhysicalVarWidget("Phase",input3), new ExtPhysicalVarWidget("Offset",input4));  
-    layout->addWidget(function);
-  } 
+  }
+  else if(index==1)
+    function = new ConstantFunction1("VS");  
+  else if(index==2)
+    function = new SinusFunction1;
+
   if(function) {
+    layout->addWidget(function);
     emit resize();
-    connect(function,SIGNAL(resize()),this,SIGNAL(resize()));
   }
 }
 
@@ -2322,8 +2377,10 @@ TiXmlElement* Function1ChoiceWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-Function2ChoiceWidget::Function2ChoiceWidget(const QString &name, const string &xmlName_) : XMLWidget(name), function(0), xmlName(xmlName_) {
-  layout->setDirection(QBoxLayout::TopToBottom);
+Function2ChoiceWidget::Function2ChoiceWidget(const string &xmlName_) : function(0), xmlName(xmlName_) {
+  layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
 
   comboBox = new QComboBox;
   comboBox->addItem(tr("None"));
@@ -2371,25 +2428,31 @@ TiXmlElement* Function2ChoiceWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-ForceChoiceWidget::ForceChoiceWidget(const QString &name, const string &xmlName_, OMBVObjectChoiceWidget* arrow_) : XMLWidget(name), xmlName(xmlName_), arrow(arrow_) {
-  layout->setDirection(QBoxLayout::TopToBottom);
+ForceChoiceWidget::ForceChoiceWidget(const string &xmlName_, OMBVObjectChoiceWidget* arrow_) : xmlName(xmlName_), arrow(arrow_) {
+  layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
 
   vector<PhysicalStringWidget*> input;
   PhysicalStringWidget *mat = new PhysicalStringWidget(new SMatColsVarWidget(3,0,0,3),MBSIMNS"directionVectors",noUnitUnits(),1);
   input.push_back(mat);
-  widget = new ExtPhysicalVarWidget("Direction vectors",input);  
+  widget = new ExtPhysicalVarWidget(input);  
+  ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Direction vectors","",widget);
 
-  connect(widget,SIGNAL(inputDialogChanged(int)),this,SLOT(resize()));
-  connect((SMatColsVarWidget*)mat->getWidget(), SIGNAL(sizeChanged(int)), this, SLOT(resize()));
-  layout->addWidget(widget);
+  connect(widget,SIGNAL(inputDialogChanged(int)),this,SLOT(resizeVariables()));
+  connect((SMatColsVarWidget*)mat->getWidget(), SIGNAL(sizeChanged(int)), this, SLOT(resizeVariables()));
+  layout->addWidget(extXMLWidget);
 
-  forceLaw = new Function1ChoiceWidget("Function",MBSIMNS"function");
-  layout->addWidget(forceLaw);
-  connect(forceLaw,SIGNAL(resize()),this,SLOT(resize()));
+  forceLaw = new Function1ChoiceWidget(MBSIMNS"function");
+  extXMLWidget = new ExtXMLWidget("Function","",forceLaw);
+
+  layout->addWidget(extXMLWidget);
+  connect(forceLaw,SIGNAL(resize()),this,SLOT(resizeVariables()));
 }
 
-void ForceChoiceWidget::resize() {
+void ForceChoiceWidget::resizeVariables() {
   forceLaw->resize(getSize(),1);
+  //((Function1ChoiceWidget*)forceLaw->getWidget())->resize(getSize(),1);
 }
 
 int ForceChoiceWidget::getSize() const {
@@ -2419,63 +2482,59 @@ TiXmlElement* ForceChoiceWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-ForceDirectionWidget::ForceDirectionWidget(const QString &name, const string &xmlName_, Element *element_) : XMLWidget(name), element(element_), xmlName(xmlName_) {
-  layout->setDirection(QBoxLayout::TopToBottom);
+ForceDirectionWidget::ForceDirectionWidget(const string &xmlName_, Element *element_) : element(element_), xmlName(xmlName_) {
 
-  buttonDisable = new QPushButton(tr("Disable"));
-  buttonDisable->setCheckable(true);
-  buttonDisable->setAutoDefault(false);
-  buttonDisable->setChecked(true);
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
 
   forceDirWidget = new QWidget;
   QVBoxLayout *hlayout = new QVBoxLayout;
+  hlayout->setMargin(0);
   forceDirWidget->setLayout(hlayout);
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SVecWidget(3),MBSIMNS"direction",noUnitUnits(),1));
-  mat = new ExtPhysicalVarWidget("Direction vector",input);
-  hlayout->addWidget(mat);
-  refFrame = new FrameOfReferenceWidget("Frame of reference",MBSIMNS"frameOfReference",element,0);
-  hlayout->addWidget(refFrame);
+  mat = new ExtPhysicalVarWidget(input);
+  ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Direction vector","",mat);
+  hlayout->addWidget(extXMLWidget);
+  refFrame = new FrameOfReferenceWidget(MBSIMNS"frameOfReference",element,0);
+  extXMLWidget = new ExtXMLWidget("Frame of reference","",refFrame);
+  hlayout->addWidget(extXMLWidget);
 
-  connect(buttonDisable, SIGNAL(toggled(bool)), this, SLOT(defineForceDir(bool)));
-
-  layout->addWidget(buttonDisable);
   layout->addWidget(forceDirWidget);
-  forceDirWidget->hide();
-  refFrame->update();
-}
 
-void ForceDirectionWidget::defineForceDir(bool flag) {
-  forceDirWidget->setVisible(!flag);
+  refFrame->update();
 }
 
 bool ForceDirectionWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=element->FirstChildElement(xmlName);
   if(e) {
-    buttonDisable->setChecked(false);
     refFrame->initializeUsingXML(e);
     mat->initializeUsingXML(e);
   }
 }
 
 TiXmlElement* ForceDirectionWidget::writeXMLFile(TiXmlNode *parent) {
-  if(!buttonDisable->isChecked()) {
-    TiXmlElement *ele0 = new TiXmlElement(xmlName);
-    refFrame->writeXMLFile(ele0);
-    mat->writeXMLFile(ele0);
-    parent->LinkEndChild(ele0);
-  }
+  TiXmlElement *ele0 = new TiXmlElement(xmlName);
+  refFrame->writeXMLFile(ele0);
+  mat->writeXMLFile(ele0);
+  parent->LinkEndChild(ele0);
 
   return 0;
 }
 
-GeneralizedForceDirectionWidget::GeneralizedForceDirectionWidget(const QString &name, const string &xmlName) : XMLWidget(name) {
+GeneralizedForceDirectionWidget::GeneralizedForceDirectionWidget(const string &xmlName) {
+
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SMatColsVarWidget(3,0,0,3),xmlName,noUnitUnits(),1));
-  mat = new ExtPhysicalVarWidget("Direction vectors",input);  
-  layout->addWidget(mat);
+  mat = new ExtPhysicalVarWidget(input);  
+  ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Direction vectors","",mat);
+  layout->addWidget(extXMLWidget);
 }
 
 int GeneralizedForceDirectionWidget::getSize() const {
@@ -2494,15 +2553,15 @@ TiXmlElement* GeneralizedForceDirectionWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-ConstantFunction1::ConstantFunction1(ExtPhysicalVarWidget* ret, const QString &ext) : Function1(ext) {
+ConstantFunction1::ConstantFunction1(const QString &ext) : Function1(ext) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
-  c = ret;
-  layout->addWidget(c);
-  QWidget::setLayout(layout);
-  buttonResize = new QPushButton("Resize");
-  layout->addWidget(buttonResize);
-  connect(buttonResize,SIGNAL(clicked(bool)),this,SIGNAL(resize()));
+  setLayout(layout);
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new SVecWidget(0,true),MBSIMNS"value",QStringList(),0));
+  c = new ExtPhysicalVarWidget(input),"VS";  
+  ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Value","",c);
+  layout->addWidget(extXMLWidget);
 }
 int ConstantFunction1::getSize() const {
   string str = evalOctaveExpression(c->getCurrentPhysicalStringWidget()->getValue());
@@ -2523,21 +2582,37 @@ TiXmlElement* ConstantFunction1::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 } 
 
-SinusFunction1::SinusFunction1(ExtPhysicalVarWidget* a, ExtPhysicalVarWidget *f, ExtPhysicalVarWidget* p, ExtPhysicalVarWidget* o) : DifferentiableFunction1() {
+SinusFunction1::SinusFunction1() {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
-  var.push_back(a);
-  var.push_back(f);
-  var.push_back(p);
-  var.push_back(o);
-  layout->addWidget(var[0]);
-  layout->addWidget(var[1]);
-  layout->addWidget(var[2]);
-  layout->addWidget(var[3]);
-  QWidget::setLayout(layout);
-  buttonResize = new QPushButton("Resize");
-  layout->addWidget(buttonResize);
-  connect(buttonResize,SIGNAL(clicked(bool)),this,SIGNAL(resize()));
+  setLayout(layout);
+
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new SVecWidget(0,true),MBSIMNS"amplitude",QStringList(),0));
+  var.push_back(new ExtPhysicalVarWidget(input));
+  ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Amplitude","",var[var.size()-1]);
+  layout->addWidget(extXMLWidget);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SVecWidget(0,true),MBSIMNS"frequency",QStringList(),0));
+  var.push_back(new ExtPhysicalVarWidget(input));
+  extXMLWidget = new ExtXMLWidget("Frequency","",var[var.size()-1]);
+  layout->addWidget(extXMLWidget);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SVecWidget(0,true),MBSIMNS"phase",QStringList(),0));
+  var.push_back(new ExtPhysicalVarWidget(input));
+  extXMLWidget = new ExtXMLWidget("Phase","",var[var.size()-1]);
+  layout->addWidget(extXMLWidget);
+
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SVecWidget(0,true),MBSIMNS"offset",QStringList(),0));
+  var.push_back(new ExtPhysicalVarWidget(input));  
+  extXMLWidget = new ExtXMLWidget("Offset","",var[var.size()-1]);
+  layout->addWidget(extXMLWidget);
+
+
 }
 int SinusFunction1::getSize() const {
   string str = evalOctaveExpression(var[0]->getCurrentPhysicalStringWidget()->getValue());
@@ -2562,25 +2637,28 @@ TiXmlElement* SinusFunction1::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
-LinearSpringDamperForce::LinearSpringDamperForce() : Function2("") {
+LinearSpringDamperForce::LinearSpringDamperForce() {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
+  setLayout(layout);
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMNS"stiffnessCoefficient",stiffnessUnits(),1));
-  var.push_back(new ExtPhysicalVarWidget("Stiffness coefficient",input));
-  layout->addWidget(var[0]);
+  var.push_back(new ExtPhysicalVarWidget(input));
+  ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Stiffness coefficient","",var[var.size()-1]);
+  layout->addWidget(extXMLWidget);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMNS"dampingCoefficient",dampingUnits(),0));
-  var.push_back(new ExtPhysicalVarWidget("Damping coefficient",input));
-  layout->addWidget(var[1]);
+  var.push_back(new ExtPhysicalVarWidget(input));
+  extXMLWidget = new ExtXMLWidget("Damping coefficient","",var[var.size()-1]);
+  layout->addWidget(extXMLWidget);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMNS"unloadedLength",lengthUnits(),4));
-  var.push_back(new ExtPhysicalVarWidget("Unloaded length",input));
-  layout->addWidget(var[2]);
-  QWidget::setLayout(layout);
+  var.push_back(new ExtPhysicalVarWidget(input));
+  extXMLWidget = new ExtXMLWidget("Unloaded length","",var[var.size()-1]);
+  layout->addWidget(extXMLWidget);
 }
 bool LinearSpringDamperForce::initializeUsingXML(TiXmlElement *element) {
   Function2::initializeUsingXML(element);
@@ -2594,7 +2672,11 @@ TiXmlElement* LinearSpringDamperForce::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 } 
 
-RigidBodyOfReferenceWidget::RigidBodyOfReferenceWidget(const QString &name, const string &xmlName_, Element *element_, RigidBody* selectedBody_) : XMLWidget(name), element(element_), selectedBody(selectedBody_), xmlName(xmlName_) {
+RigidBodyOfReferenceWidget::RigidBodyOfReferenceWidget(const string &xmlName_, Element *element_, RigidBody* selectedBody_) : element(element_), selectedBody(selectedBody_), xmlName(xmlName_) {
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
   body = new QLineEdit;
   body->setReadOnly(true);
   if(selectedBody)
@@ -2649,8 +2731,11 @@ TiXmlElement* RigidBodyOfReferenceWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-DependenciesWidget::DependenciesWidget(const QString &name, const string &xmlName_, Element *element_) : XMLWidget(name), element(element_), xmlName(xmlName_) {
-  layout->setDirection(QBoxLayout::TopToBottom);
+DependenciesWidget::DependenciesWidget(const string &xmlName_, Element *element_) : element(element_), xmlName(xmlName_) {
+  layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
   QPushButton *buttonAdd = new QPushButton(tr("Add"));
   layout->addWidget(buttonAdd);
   connect(buttonAdd,SIGNAL(clicked(bool)),this,SLOT(addDependency()));
@@ -2698,11 +2783,10 @@ void DependenciesWidget::addDependency() {
   int i = refBody.size();
   if(i<5) {
     selectedBody.push_back(0);
-    refBody.push_back(new RigidBodyOfReferenceWidget(QString("RigidBody") + QString::number(i+1),MBSIMNS"dependentRigidBody",element,0));
+    refBody.push_back(new RigidBodyOfReferenceWidget(MBSIMNS"dependentRigidBody",element,0));
+    widget.push_back(new ExtXMLWidget(QString("RigidBody") + QString::number(i+1),"",refBody[i]));
     connect(refBody[i],SIGNAL(bodyChanged()),this,SIGNAL(bodyChanged()));
-    //label.push_back(new QLabel(QString("RigidBody") + QString::number(i+1) +":"));
-    //layout->addWidget(label[i],i+1,0);
-    layout->addWidget(refBody[i]);
+    layout->addWidget(widget[i]);
     update();
   }
 }
@@ -2714,13 +2798,9 @@ void DependenciesWidget::removeDependency() {
     selectedBody[selectedBody.size()-1]->resizeGeneralizedVelocity();
     selectedBody.pop_back();
 
-    layout->removeWidget(refBody[refBody.size()-1]);
+    layout->removeWidget(widget[widget.size()-1]);
     delete refBody[refBody.size()-1];
     refBody.pop_back();
-
-    layout->removeWidget(label[label.size()-1]);
-    delete label[label.size()-1];
-    label.pop_back();
 
     emit bodyChanged();
   }
@@ -2741,18 +2821,18 @@ bool DependenciesWidget::initializeUsingXML(TiXmlElement *element) {
 TiXmlElement* DependenciesWidget::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele = new TiXmlElement(xmlName);
   for(int i=0; i<getSize(); i++) {
-    if(getBody(i)) {
+    if(getBody(i))
       refBody[i]->writeXMLFile(ele);
-//      TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"dependentRigidBody" );
-//      ele1->SetAttribute("ref", getBody(i)->getXMLPath(this,true).toStdString()); // relative path
-//      ele->LinkEndChild(ele1);
-    }
   }
   parent->LinkEndChild(ele);
   return ele;
 }
 
-ParameterNameWidget::ParameterNameWidget(const QString &name, Parameter* parameter_, bool renaming) : XMLWidget(name), parameter(parameter_) {
+ParameterNameWidget::ParameterNameWidget(Parameter* parameter_, bool renaming) : parameter(parameter_) {
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
   ename = new QLineEdit;
   ename->setReadOnly(true);
   ename->setText(parameter->getName());
@@ -2790,7 +2870,11 @@ TiXmlElement* ParameterNameWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-FileWidget::FileWidget() : XMLWidget("") {
+FileWidget::FileWidget() {
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
   fileName = new QLineEdit;
   fileName->setReadOnly(true);
   //ename->setText(parameter->getName());
@@ -2806,10 +2890,14 @@ void FileWidget::selectFile() {
     fileName->setText(file);
 }
 
-ParameterValueWidget::ParameterValueWidget(const QString &name, PhysicalStringWidget *var) : XMLWidget(name) {
+ParameterValueWidget::ParameterValueWidget(PhysicalStringWidget *var) {
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
   vector<PhysicalStringWidget*> input;
   input.push_back(var);
-  widget = new ExtPhysicalVarWidget("",input);
+  widget = new ExtPhysicalVarWidget(input);
   QPushButton *button = new QPushButton("Set");
 
   layout->addWidget(widget);
@@ -2821,37 +2909,44 @@ void ParameterValueWidget::parameterChanged() {
   emit parameterChanged(getValue().c_str());
 }
 
-GeneralizedCoordinatesWidget::GeneralizedCoordinatesWidget(const QString &name, const string &xmlName) : XMLWidget(name) {
-  layout->setDirection(QBoxLayout::TopToBottom);
+ExtXMLWidget::ExtXMLWidget(const QString &name, const string &xmlName, XMLWidget *widget_, bool disable, bool resize, bool hide) : widget(widget_) {
+  QBoxLayout *layout = new QBoxLayout(QBoxLayout::LeftToRight);
+  
+  if(name != "") {
+    if(name.at(name.size()-1)==':') {
+      QWidget *box = new QWidget;
+      QHBoxLayout *mainlayout = new QHBoxLayout;
+      mainlayout->setMargin(0);
+      box->setLayout(layout);
+      mainlayout->addWidget(new QLabel(name));
+      mainlayout->addWidget(box);
+      setLayout(mainlayout);
+    }
+    else {
+      box = new QGroupBox(name);
+      if(disable) {
+      box->setCheckable(true);
+      box->setChecked(false);
+      connect(box,SIGNAL(toggled(bool)),this,SIGNAL(resize()));
+      }
+      QHBoxLayout *mainlayout = new QHBoxLayout;
+      mainlayout->setMargin(0);
+      box->setLayout(layout);
 
-  vector<PhysicalStringWidget*> input;
-  vec = new SVecWidget(0);
-  input.push_back(new PhysicalStringWidget(vec,xmlName,QStringList(),1));
-  widget = new ExtPhysicalVarWidget("",input);  
+      mainlayout->addWidget(box);
+      setLayout(mainlayout);
+    }
+  }
+  else {
+    layout->setMargin(0);
+    setLayout(layout);
+  }
   layout->addWidget(widget);
-  buttonResize = new QPushButton("Resize");
-  layout->addWidget(buttonResize);
-  connect(buttonResize,SIGNAL(clicked(bool)),this,SIGNAL(resizeGeneralizedCoordinates()));
-  buttonDisable = new QPushButton("Disable");
-  buttonDisable->setCheckable(true);
-  buttonDisable->setAutoDefault(false);
-  connect(buttonDisable,SIGNAL(toggled(bool)),this,SLOT(disableGeneralizedCoordinates(bool)));
-  buttonDisable->setChecked(true);
-  layout->addWidget(buttonDisable);
 }
 
-void GeneralizedCoordinatesWidget::disableGeneralizedCoordinates(bool flag) {
-  widget->setVisible(!flag);
-  buttonResize->setDisabled(flag);
-  emit resizeGeneralizedCoordinates();
-}
-
-void GeneralizedCoordinatesWidget::resize(int i) {
-  vec->resize(i);
-}
-
-bool GeneralizedCoordinatesWidget::initializeUsingXML(TiXmlElement *element) {
+bool ExtXMLWidget::initializeUsingXML(TiXmlElement *element) {
  bool flag = widget->initializeUsingXML(element);
- buttonDisable->setChecked(!flag);
+ if(box->isCheckable())
+   box->setChecked(flag);
  return flag;
 }

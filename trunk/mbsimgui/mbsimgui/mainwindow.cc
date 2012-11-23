@@ -240,6 +240,9 @@ MainWindow::MainWindow() {
   actionH5plotserie->setDisabled(true);
   connect(actionH5plotserie,SIGNAL(triggered()),this,SLOT(h5plotserie()));
   toolBar->addAction(actionH5plotserie);
+  action= toolBar->addAction("Resize");
+  connect(action,SIGNAL(triggered()),this,SLOT(resizeVariables()));
+  toolBar->addAction(action);
 
   // title
   setWindowTitle("MBSim GUI");
@@ -422,6 +425,11 @@ void MainWindow::parameterListClicked() {
     pagesWidget->insertWidget(0,parameter->getPropertyDialog());
     pagesWidget->setCurrentWidget(parameter->getPropertyDialog());
   }
+}
+
+void MainWindow::resizeVariables() {
+  Solver *solver = ((Solver*)elementList->topLevelItem(0));
+  solver->resizeVariables();
 }
 
 void MainWindow::newMBS() {

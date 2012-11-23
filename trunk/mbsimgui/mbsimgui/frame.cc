@@ -41,8 +41,9 @@ Frame::Frame(const QString &str, QTreeWidgetItem *parentItem, int ind, bool grey
 
   properties->addTab("Visualisation");
 
-  visu=new OMBVObjectChoiceWidget("OpenMBV frame", new OMBVFrameWidget, grey?"":MBSIMNS"enableOpenMBV");
-  properties->addToTab("Visualisation", visu);
+  visu=new OMBVObjectChoiceWidget(new OMBVFrameWidget, grey?"":MBSIMNS"enableOpenMBV");
+  ExtXMLWidget *widget = new ExtXMLWidget("OpenMBV frame","",visu);
+  properties->addToTab("Visualisation", widget);
 
   properties->addStretch();
 }

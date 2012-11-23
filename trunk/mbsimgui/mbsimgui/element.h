@@ -74,6 +74,8 @@ class Element : public QObject, public QTreeWidgetItem {
     virtual void writeXMLFile(const QString &name);
     virtual void writeXMLFile() { writeXMLFile(getName()); }
     virtual void update();
+    virtual void initialize();
+    virtual void resizeVariables();
     virtual QString getType() const { return "Element"; }
     //QString newName(const QString &type);
     virtual QString getFileExtension() const { return ".xml"; }
@@ -93,7 +95,6 @@ class Element : public QObject, public QTreeWidgetItem {
     static std::vector<std::vector<double > > getSymMat(TiXmlElement *e, int size=0);
     template<class T> T* getByPath(QString path);
     virtual Element* getByPathSearch(std::string path) {return 0; }
-    virtual void initialize();
     Element* getChild(QTreeWidgetItem* container, const std::string &name, bool check=true);
     QString newName(QTreeWidgetItem* container, const QString &type);
     virtual Container* getContainerFrame() {return frames;}

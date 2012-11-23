@@ -37,26 +37,32 @@ JointConstraint::JointConstraint(const QString &str, QTreeWidgetItem *parentItem
 
   properties->addTab("Kinetics");
 
-  independentBody = new RigidBodyOfReferenceWidget("Independent body",MBSIMNS"independentRigidBody",this,0);
-  properties->addToTab("General", independentBody);
+  independentBody = new RigidBodyOfReferenceWidget(MBSIMNS"independentRigidBody",this,0);
+  ExtXMLWidget *widget = new ExtXMLWidget("Independent body","",independentBody);
+  properties->addToTab("General", widget);
 
-  dependentBodiesFirstSide = new DependenciesWidget("Dependendent bodies first side",MBSIMNS"dependentRigidBodiesFirstSide",this);
-  properties->addToTab("General", dependentBodiesFirstSide);
+  dependentBodiesFirstSide = new DependenciesWidget(MBSIMNS"dependentRigidBodiesFirstSide",this);
+  widget = new ExtXMLWidget("Dependendent bodies first side","",dependentBodiesFirstSide);
+  properties->addToTab("General", widget);
   connect(dependentBodiesFirstSide,SIGNAL(bodyChanged()),this,SLOT(resizeGeneralizedPosition()));
 
-  dependentBodiesSecondSide = new DependenciesWidget("Dependendent bodies second side",MBSIMNS"dependentRigidBodiesSecondSide",this);
-  properties->addToTab("General", dependentBodiesSecondSide);
+  dependentBodiesSecondSide = new DependenciesWidget(MBSIMNS"dependentRigidBodiesSecondSide",this);
+  widget = new ExtXMLWidget("Dependendent bodies second side","",dependentBodiesSecondSide);
+  properties->addToTab("General", widget);
 
   connect(dependentBodiesSecondSide,SIGNAL(bodyChanged()),this,SLOT(resizeGeneralizedPosition()));
 
-  connections = new ConnectWidget("Connections",2,this);
-  properties->addToTab("Kinetics", connections);
+  connections = new ConnectWidget(2,this);
+  widget = new ExtXMLWidget("Connections","",connections);
+  properties->addToTab("Kinetics", widget);
 
-  force = new GeneralizedForceDirectionWidget("Force",MBSIMNS"forceDirection");
-  properties->addToTab("Kinetics", force);
+  force = new GeneralizedForceDirectionWidget(MBSIMNS"forceDirection");
+  widget = new ExtXMLWidget("Force","",force);
+  properties->addToTab("Kinetics", widget);
 
-  moment = new GeneralizedForceDirectionWidget("Moment",MBSIMNS"momentDirection");
-  properties->addToTab("Kinetics", moment);
+  moment = new GeneralizedForceDirectionWidget(MBSIMNS"momentDirection");
+  widget = new ExtXMLWidget("Moment","",moment);
+  properties->addToTab("Kinetics", widget);
 
   properties->addStretch();
 }
@@ -72,9 +78,8 @@ void JointConstraint::resizeGeneralizedPosition() {
   for(int i=0; i<((DependenciesWidget*)dependentBodiesSecondSide)->getSize(); i++)
     if(((DependenciesWidget*)dependentBodiesSecondSide)->getBody(i))
       size += ((DependenciesWidget*)dependentBodiesSecondSide)->getBody(i)->getUnconstrainedSize();
-  GeneralizedCoordinatesWidget *q0 = (GeneralizedCoordinatesWidget*)initialGeneralizedPosition;
-  if(((SVecWidget*)q0->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getWidget())->size() != size)
-    ((SVecWidget*)q0->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getWidget())->resize(size);
+  if(q0->size() != size)
+    q0->resize(size);
 }
 
 void JointConstraint::initializeUsingXML(TiXmlElement *element) {

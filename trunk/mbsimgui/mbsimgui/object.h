@@ -38,9 +38,12 @@ class Object : public Element {
     void update();
     virtual void resizeGeneralizedPosition() {}
     virtual void resizeGeneralizedVelocity() {}
+    virtual void resizeVariables() {resizeGeneralizedPosition();resizeGeneralizedVelocity();}
   protected:
     QAction *actionSaveAs;
     XMLWidget *initialGeneralizedPosition, *initialGeneralizedVelocity;
+    SVecWidget *q0, *u0;
+
 };
 
 #endif

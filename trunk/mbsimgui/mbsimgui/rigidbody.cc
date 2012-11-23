@@ -53,38 +53,47 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
 
   new Frame("C", frames, -1, true);
 
-  frameForKinematics = new LocalFrameOfReferenceWidget("Frame for kinematics",MBSIMNS"frameForKinematics",this,0);
-  properties->addToTab("Kinematics", frameForKinematics);
-  frameOfReference = new FrameOfReferenceWidget("Frame of Reference", MBSIMNS"frameOfReference",this,((Group*)getParentElement())->getFrame(0));
-  properties->addToTab("Kinematics", frameOfReference);
+  frameForKinematics = new LocalFrameOfReferenceWidget(MBSIMNS"frameForKinematics",this,0);
+  ExtXMLWidget *widget = new ExtXMLWidget("Frame for kinematics","",frameForKinematics);
+  properties->addToTab("Kinematics", widget);
+
+  frameOfReference = new FrameOfReferenceWidget(MBSIMNS"frameOfReference",this,((Group*)getParentElement())->getFrame(0));
+  widget = new ExtXMLWidget("Frame of reference","",frameOfReference);
+  properties->addToTab("Kinematics", widget);
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1"),MBSIMNS"mass",massUnits(),2));
-  mass = new ExtPhysicalVarWidget("Mass",input);
-  properties->addToTab("General", mass);
+  mass = new ExtPhysicalVarWidget(input);
+  widget = new ExtXMLWidget("Mass","",mass);
+  properties->addToTab("General", widget);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SSymMatWidget(getEye<string>(3,3,"0.01","0")),MBSIMNS"inertiaTensor",inertiaUnits(),2));
-  inertia = new ExtPhysicalVarWidget("Inertia tensor",input);
-  properties->addToTab("General", inertia);
+  inertia = new ExtPhysicalVarWidget(input);
+  widget = new ExtXMLWidget("Inertia tensor","",inertia);
+  properties->addToTab("General", widget);
 
-  framePos = new FramePositionsWidget("Position and orientation of frames",this);
-  properties->addToTab("Frame positioning", framePos);
+  framePos = new FramePositionsWidget(this);
+  widget = new ExtXMLWidget("Position and orientation of frames","",framePos);
+  properties->addToTab("Frame positioning", widget);
   
-  translation = new TranslationChoiceWidget("Translation");
-  properties->addToTab("Kinematics", translation);
+  translation = new TranslationChoiceWidget;
+  widget = new ExtXMLWidget("Translation","",translation);
+  properties->addToTab("Kinematics", widget);
   connect(translation,SIGNAL(translationChanged()),this,SLOT(resizeGeneralizedPosition()));
   connect(translation,SIGNAL(translationChanged()),this,SLOT(resizeGeneralizedVelocity()));
   connect(translation,SIGNAL(translationChanged()),this,SIGNAL(sizeChanged()));
 
-  rotation = new RotationChoiceWidget("Rotation");
-  properties->addToTab("Kinematics", rotation);
+  rotation = new RotationChoiceWidget;
+  widget = new ExtXMLWidget("Rotation","",rotation);
+  properties->addToTab("Kinematics", widget);
   connect(rotation,SIGNAL(rotationChanged()),this,SLOT(resizeGeneralizedPosition()));
   connect(rotation,SIGNAL(rotationChanged()),this,SLOT(resizeGeneralizedVelocity()));
   connect(rotation,SIGNAL(rotationChanged()),this,SIGNAL(sizeChanged()));
  
-  ombvEditor=new OMBVBodyChoiceWidget("OpenMBV body",this);
-  properties->addToTab("Visualisation", ombvEditor);
+  ombvEditor=new OMBVBodyChoiceWidget(this);
+  widget = new ExtXMLWidget("OpenMBV body","",ombvEditor);
+  properties->addToTab("Visualisation", widget);
 
   QAction *action=new QAction(Utils::QIconCached("newobject.svg"),"Add frame", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addFrame()));
@@ -108,16 +117,14 @@ void RigidBody::addFrame() {
 
 void RigidBody::resizeGeneralizedPosition() {
   int size = getSize();
-  GeneralizedCoordinatesWidget *q0 = (GeneralizedCoordinatesWidget*)initialGeneralizedPosition;
-  if(((SVecWidget*)q0->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getWidget())->size() != size)
-    ((SVecWidget*)q0->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getWidget())->resize(size);
+  if(q0->size() != size)
+    q0->resize(size);
 }
 
 void RigidBody::resizeGeneralizedVelocity() {
   int size = getSize();
-  GeneralizedCoordinatesWidget *u0 = (GeneralizedCoordinatesWidget*)initialGeneralizedVelocity;
-  if(((SVecWidget*)u0->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getWidget())->size() != size)
-    ((SVecWidget*)u0->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getWidget())->resize(size);
+  if(u0->size() != size)
+    u0->resize(size);
 }
 
 void RigidBody::initializeUsingXML(TiXmlElement *element) {

@@ -61,8 +61,9 @@ Element::Element(const QString &str, QTreeWidgetItem *parentItem, int ind, bool 
   else {
   }
 
-  name=new NameWidget(this,"Name",!grey);
-  properties->addToTab("General",name);
+  name=new NameWidget(this,!grey);
+  ExtXMLWidget *widget=new ExtXMLWidget("Name","",name);
+  properties->addToTab("General",widget);
 
   contextMenu=new QMenu("Context Menu");
 
@@ -169,6 +170,26 @@ void Element::initialize() {
   if(getContainerLink()) {
     for(int i=0; i<getContainerLink()->childCount(); i++)
       getLink(i)->initialize();
+  }
+}
+
+void Element::resizeVariables() {
+  properties->resizeVariables();
+  if(getContainerGroup()) {
+    for(int i=0; i<getContainerGroup()->childCount(); i++)
+      getGroup(i)->resizeVariables();
+  }
+  if(getContainerObject()) {
+    for(int i=0; i<getContainerObject()->childCount(); i++)
+      getObject(i)->resizeVariables();
+  }
+  if(getContainerFrame()) {
+    for(int i=0; i<getContainerFrame()->childCount(); i++)
+      getFrame(i)->resizeVariables();
+  }
+  if(getContainerLink()) {
+    for(int i=0; i<getContainerLink()->childCount(); i++)
+      getLink(i)->resizeVariables();
   }
 }
 
