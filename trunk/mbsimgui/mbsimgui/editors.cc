@@ -2829,7 +2829,7 @@ TiXmlElement* DependenciesWidget::writeXMLFile(TiXmlNode *parent) {
 }
 
 ParameterNameWidget::ParameterNameWidget(Parameter* parameter_, bool renaming) : parameter(parameter_) {
-  QVBoxLayout *layout = new QVBoxLayout;
+  QHBoxLayout *layout = new QHBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
@@ -2891,7 +2891,7 @@ void FileWidget::selectFile() {
 }
 
 ParameterValueWidget::ParameterValueWidget(PhysicalStringWidget *var) {
-  QVBoxLayout *layout = new QVBoxLayout;
+  QHBoxLayout *layout = new QHBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
