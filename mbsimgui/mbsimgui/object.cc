@@ -27,12 +27,22 @@ using namespace std;
 
 Object::Object(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element(str, parentItem, ind) {
   properties->addTab("Initial conditions");
-  initialGeneralizedPosition = new GeneralizedCoordinatesWidget("Initial generalized position", MBSIMNS"initialGeneralizedPosition");
-  initialGeneralizedVelocity = new GeneralizedCoordinatesWidget("Initial generalized velocity", MBSIMNS"initialGeneralizedVelocity");
+
+  vector<PhysicalStringWidget*> input;
+  q0 = new SVecWidget(0);
+  input.push_back(new PhysicalStringWidget(q0,MBSIMNS"initialGeneralizedPosition",QStringList(),1));
+  ExtPhysicalVarWidget *var = new ExtPhysicalVarWidget(input);  
+  initialGeneralizedPosition = new ExtXMLWidget("Initial generalized position","",var,true,true);
   properties->addToTab("Initial conditions", initialGeneralizedPosition);
+  connect(initialGeneralizedPosition,SIGNAL(resize()),this,SLOT(resizeGeneralizedPosition()));
+
+  input.clear();
+  u0 = new SVecWidget(0);
+  input.push_back(new PhysicalStringWidget(u0,MBSIMNS"initialGeneralizedVelocity",QStringList(),1));
+  var = new ExtPhysicalVarWidget(input);  
+  initialGeneralizedVelocity = new ExtXMLWidget("Initial generalized velocity","",var,true,true);
   properties->addToTab("Initial conditions", initialGeneralizedVelocity);
-  connect(initialGeneralizedPosition,SIGNAL(resizeGeneralizedCoordinates()),this,SLOT(resizeGeneralizedPosition()));
-  connect(initialGeneralizedVelocity,SIGNAL(resizeGeneralizedCoordinates()),this,SLOT(resizeGeneralizedVelocity()));
+  connect(initialGeneralizedVelocity,SIGNAL(resize()),this,SLOT(resizeGeneralizedVelocity()));
 
   actionSaveAs=new QAction(Utils::QIconCached("newobject.svg"),"Save as", this);
   connect(actionSaveAs,SIGNAL(triggered()),this,SLOT(saveAs()));

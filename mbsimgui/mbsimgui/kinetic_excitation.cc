@@ -34,22 +34,30 @@ KineticExcitation::KineticExcitation(const QString &str, QTreeWidgetItem *parent
   //properties->addTab("Constitutive laws");
   properties->addTab("Visualisation");
 
-  forceArrow=new OMBVObjectChoiceWidget("Force arrow",new OMBVArrowWidget,"");
-  properties->addToTab("Visualisation",forceArrow);
+  forceArrow=new OMBVObjectChoiceWidget(new OMBVArrowWidget,"");
+  ExtXMLWidget *widget = new ExtXMLWidget("Force arrow","",forceArrow);
+  properties->addToTab("Visualisation",widget);
 
-  momentArrow=new OMBVObjectChoiceWidget("Moment arrow", new OMBVArrowWidget,"");
-  properties->addToTab("Visualisation",momentArrow);
+  momentArrow=new OMBVObjectChoiceWidget(new OMBVArrowWidget,"");
+  widget = new ExtXMLWidget("Moment arrow","",momentArrow);
+  properties->addToTab("Visualisation",widget);
 
-  connections = new ConnectWidget("Connections",1,this);
-  properties->addToTab("Kinetics",connections);
+  connections = new ConnectWidget(1,this);
+  widget = new ExtXMLWidget("Connections","",connections);
+  properties->addToTab("Kinetics",widget);
 
-  force = new ForceChoiceWidget("Force", MBSIMNS"force", (OMBVObjectChoiceWidget*)forceArrow);
+//  force = new ForceChoiceWidget("Force", MBSIMNS"force", (OMBVObjectChoiceWidget*)forceArrow);
+  ForceChoiceWidget *f = new ForceChoiceWidget(MBSIMNS"force", (OMBVObjectChoiceWidget*)forceArrow);
+  force = new ExtXMLWidget("Force","",f,false,true);
   properties->addToTab("Kinetics",force);
 
-  moment = new ForceChoiceWidget("Moment", MBSIMNS"moment", (OMBVObjectChoiceWidget*)momentArrow);
+  //moment = new ForceChoiceWidget("Moment", MBSIMNS"moment", (OMBVObjectChoiceWidget*)momentArrow);
+  ForceChoiceWidget *m = new ForceChoiceWidget(MBSIMNS"moment", (OMBVObjectChoiceWidget*)momentArrow);
+  moment = new ExtXMLWidget("Moment","",m,false,true);
   properties->addToTab("Kinetics",moment);
 
-  frameOfReference = new FrameOfReferenceWidget("Frame of reference",MBSIMNS"frameOfReference",this,0);
+  FrameOfReferenceWidget* ref = new FrameOfReferenceWidget(MBSIMNS"frameOfReference",this,0);
+  frameOfReference = new ExtXMLWidget("Frame of reference","",ref,true,false);
   properties->addToTab("Kinetics",frameOfReference);
 
   properties->addStretch();

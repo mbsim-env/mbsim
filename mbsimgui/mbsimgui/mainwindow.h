@@ -144,6 +144,7 @@ class MainWindow : public QMainWindow {
     void help();
     void about();
     void updateOctaveParameters();
+    void resizeVariables();
   protected:
     void closeEvent ( QCloseEvent * event );
 };
