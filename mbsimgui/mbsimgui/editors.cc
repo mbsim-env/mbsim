@@ -2673,7 +2673,7 @@ TiXmlElement* LinearSpringDamperForce::writeXMLFile(TiXmlNode *parent) {
 } 
 
 RigidBodyOfReferenceWidget::RigidBodyOfReferenceWidget(const string &xmlName_, Element *element_, RigidBody* selectedBody_) : element(element_), selectedBody(selectedBody_), xmlName(xmlName_) {
-  QVBoxLayout *layout = new QVBoxLayout;
+  QHBoxLayout *layout = new QHBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
