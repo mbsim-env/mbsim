@@ -821,6 +821,11 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
+          <xs:element name="inverseKinetics" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert, ob Gelenkreaktionen berechnet werden sollen.
+            </xs:documentation></xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
