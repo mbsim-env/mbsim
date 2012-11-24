@@ -60,7 +60,8 @@ namespace MBSim {
   Integrator* Integrator::readXMLFile(const string &filename) {
     MBSimObjectFactory::initialize();
     TiXmlDocument doc;
-    assert(doc.LoadFile(filename)==true);
+    bool ret=doc.LoadFile(filename);
+    assert(ret==true);
     TiXml_PostLoadFile(&doc);
     TiXmlElement *e=doc.FirstChildElement();
     TiXml_setLineNrFromProcessingInstruction(e);
