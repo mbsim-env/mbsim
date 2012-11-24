@@ -83,7 +83,8 @@ TiXmlElement* Parameter::writeXMLFile(TiXmlNode *parent) {
 Parameter* Parameter::readXMLFile(const QString &filename, QTreeWidgetItem* parent) {
   MBSimObjectFactory::initialize();
   TiXmlDocument doc;
-  assert(doc.LoadFile(filename.toAscii().data())==true);
+  bool ret=doc.LoadFile(filename.toAscii().data());
+  assert(ret==true);
   TiXml_PostLoadFile(&doc);
   TiXmlElement *e=doc.FirstChildElement();
   TiXml_setLineNrFromProcessingInstruction(e);
