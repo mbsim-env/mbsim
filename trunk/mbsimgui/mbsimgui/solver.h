@@ -44,7 +44,7 @@ class Solver : public Group {
   friend class MainWindow;
   friend class Object;
   protected:
-    XMLWidget *environment;
+    ExtXMLWidget *environment;
   public:
     Solver(const QString &str, QTreeWidgetItem *parentItem, int ind);
     virtual QString getInfo();

@@ -45,7 +45,7 @@ class Integrator : public QObject, public QTreeWidgetItem {
     bool searchMatched;
     PropertyDialog *properties;
     QMenu *contextMenu;
-    XMLWidget *startTime, *endTime, *plotStepSize;
+    ExtXMLWidget *startTime, *endTime, *plotStepSize;
   public:
     Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind);
     virtual ~Integrator();
@@ -59,7 +59,7 @@ class Integrator : public QObject, public QTreeWidgetItem {
     virtual QString getType() const { return "Integrator"; }
     QMenu* getContextMenu() { return contextMenu; }
     PropertyDialog* getPropertyDialog() { return properties; }
-    void setEndTime(double t) {((ExtPhysicalVarWidget*)endTime)->setValue(QString::number(t).toStdString());}
+    void setEndTime(double t) {((ExtPhysicalVarWidget*)endTime->getWidget())->setValue(QString::number(t).toStdString());}
     public slots:
       void saveAs();
 };
@@ -71,7 +71,7 @@ class DOPRI5Integrator : public Integrator {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "DOPRI5Integrator"; }
   protected:
-    XMLWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *maxSteps;
+    ExtXMLWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *maxSteps;
 };
 
 class LSODEIntegrator : public Integrator {
@@ -81,7 +81,7 @@ class LSODEIntegrator : public Integrator {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "LSODEIntegrator"; }
   protected:
-    XMLWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *minimalStepSize, *maxSteps, *stiff;
+    ExtXMLWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *minimalStepSize, *maxSteps, *stiff;
 };
 
 #endif

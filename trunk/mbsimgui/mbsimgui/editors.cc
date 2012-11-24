@@ -788,60 +788,6 @@ TiXmlElement* PhysicalStringWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-PropertyDialog::PropertyDialog(QObject *parentObject_) : parentObject(parentObject_) {
-  tabWidget = new QTabWidget;
-  setWidget(tabWidget);
-  mainLayout = new QVBoxLayout;
-  mainLayout->addWidget(tabWidget);
-  setLayout(mainLayout);
-
-  setWindowTitle("Properties");
-}
-
-PropertyDialog::~PropertyDialog() {
-}
-
-void PropertyDialog::update() {
-  for(unsigned int i=0; i<widget.size(); i++)
-    widget[i]->update();
-}
-
-void PropertyDialog::initialize() {
-  for(unsigned int i=0; i<widget.size(); i++)
-    widget[i]->initialize();
-}
-
-void PropertyDialog::resizeVariables() {
-  for(unsigned int i=0; i<widget.size(); i++)
-    widget[i]->resizeVariables();
-}
-
-void PropertyDialog::addTab(const QString &name) {  
-  QScrollArea *tab = new QScrollArea;
-  tab->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-  tab->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-  tab->setWidgetResizable(true);
-  QWidget *widget = new QWidget;
-  QHBoxLayout *hlo = new QHBoxLayout;
-
-  QWidget *box = new QWidget;
-  QVBoxLayout *layout_ = new QVBoxLayout;
-  box->setLayout(layout_);
-  layout[name] = layout_;
-  hlo->addWidget(box);
-
-  widget->setLayout(hlo);
-  tab->setWidget(widget);
-  tabWidget->addTab(tab, name);
-}
-
-void PropertyDialog::setParentObject(QObject *parentObject_) {
-  parentObject=parentObject_;
-}
-
-void PropertyDialog::updateHeader() {
-}
-
 RigidBodyBrowser::RigidBodyBrowser(QTreeWidget* tree_, RigidBody* rigidBody, QWidget *parentObject_) : QDialog(parentObject_), selection(rigidBody), savedItem(0), tree(tree_) {
   QGridLayout* mainLayout=new QGridLayout;
   setLayout(mainLayout);
@@ -2909,44 +2855,76 @@ void ParameterValueWidget::parameterChanged() {
   emit parameterChanged(getValue().c_str());
 }
 
-ExtXMLWidget::ExtXMLWidget(const QString &name, const string &xmlName, XMLWidget *widget_, bool disable, bool resize, bool hide) : widget(widget_) {
+ExtXMLWidget::ExtXMLWidget(const QString &name, const string &xmlName, XMLWidget *widget_, bool disable, bool resize, bool hide) : QGroupBox(name), widget(widget_) {
   QBoxLayout *layout = new QBoxLayout(QBoxLayout::LeftToRight);
-  
-  if(name != "") {
-    if(name.at(name.size()-1)==':') {
-      QWidget *box = new QWidget;
-      QHBoxLayout *mainlayout = new QHBoxLayout;
-      mainlayout->setMargin(0);
-      box->setLayout(layout);
-      mainlayout->addWidget(new QLabel(name));
-      mainlayout->addWidget(box);
-      setLayout(mainlayout);
-    }
-    else {
-      box = new QGroupBox(name);
-      if(disable) {
-      box->setCheckable(true);
-      box->setChecked(false);
-      connect(box,SIGNAL(toggled(bool)),this,SIGNAL(resize()));
-      }
-      QHBoxLayout *mainlayout = new QHBoxLayout;
-      mainlayout->setMargin(0);
-      box->setLayout(layout);
 
-      mainlayout->addWidget(box);
-      setLayout(mainlayout);
-    }
+  if(disable) {
+    setCheckable(true);
+    setChecked(false);
+    connect(this,SIGNAL(toggled(bool)),this,SIGNAL(resize()));
   }
-  else {
-    layout->setMargin(0);
-    setLayout(layout);
-  }
+  setLayout(layout);
   layout->addWidget(widget);
 }
 
 bool ExtXMLWidget::initializeUsingXML(TiXmlElement *element) {
- bool flag = widget->initializeUsingXML(element);
- if(box->isCheckable())
-   box->setChecked(flag);
- return flag;
+  bool flag = widget->initializeUsingXML(element);
+  if(isCheckable())
+    setChecked(flag);
+  return flag;
 }
+
+PropertyDialog::PropertyDialog(QObject *parentObject_) : parentObject(parentObject_) {
+  tabWidget = new QTabWidget;
+  setWidget(tabWidget);
+  mainLayout = new QVBoxLayout;
+  mainLayout->addWidget(tabWidget);
+  setLayout(mainLayout);
+
+  setWindowTitle("Properties");
+}
+
+PropertyDialog::~PropertyDialog() {
+}
+
+void PropertyDialog::update() {
+  for(unsigned int i=0; i<widget.size(); i++)
+    widget[i]->update();
+}
+
+void PropertyDialog::initialize() {
+  for(unsigned int i=0; i<widget.size(); i++)
+    widget[i]->initialize();
+}
+
+void PropertyDialog::resizeVariables() {
+  for(unsigned int i=0; i<widget.size(); i++)
+    widget[i]->resizeVariables();
+}
+
+void PropertyDialog::addTab(const QString &name) {  
+  QScrollArea *tab = new QScrollArea;
+  tab->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+  tab->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+  tab->setWidgetResizable(true);
+  QWidget *widget = new QWidget;
+  QHBoxLayout *hlo = new QHBoxLayout;
+
+  QWidget *box = new QWidget;
+  QVBoxLayout *layout_ = new QVBoxLayout;
+  box->setLayout(layout_);
+  layout[name] = layout_;
+  hlo->addWidget(box);
+
+  widget->setLayout(hlo);
+  tab->setWidget(widget);
+  tabWidget->addTab(tab, name);
+}
+
+void PropertyDialog::setParentObject(QObject *parentObject_) {
+  parentObject=parentObject_;
+}
+
+void PropertyDialog::updateHeader() {
+}
+

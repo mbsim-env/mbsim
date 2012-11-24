@@ -37,32 +37,27 @@ JointConstraint::JointConstraint(const QString &str, QTreeWidgetItem *parentItem
 
   properties->addTab("Kinetics");
 
-  independentBody = new RigidBodyOfReferenceWidget(MBSIMNS"independentRigidBody",this,0);
-  ExtXMLWidget *widget = new ExtXMLWidget("Independent body","",independentBody);
-  properties->addToTab("General", widget);
+  independentBody = new ExtXMLWidget("Independent body","",new RigidBodyOfReferenceWidget(MBSIMNS"independentRigidBody",this,0));
+  properties->addToTab("General", independentBody);
 
-  dependentBodiesFirstSide = new DependenciesWidget(MBSIMNS"dependentRigidBodiesFirstSide",this);
-  widget = new ExtXMLWidget("Dependendent bodies first side","",dependentBodiesFirstSide);
-  properties->addToTab("General", widget);
-  connect(dependentBodiesFirstSide,SIGNAL(bodyChanged()),this,SLOT(resizeGeneralizedPosition()));
+  DependenciesWidget *dependentBodiesFirstSide_ = new DependenciesWidget(MBSIMNS"dependentRigidBodiesFirstSide",this);
+  dependentBodiesFirstSide = new ExtXMLWidget("Dependendent bodies first side","",dependentBodiesFirstSide_);
+  properties->addToTab("General", dependentBodiesFirstSide);
+  connect(dependentBodiesFirstSide_,SIGNAL(bodyChanged()),this,SLOT(resizeGeneralizedPosition()));
 
-  dependentBodiesSecondSide = new DependenciesWidget(MBSIMNS"dependentRigidBodiesSecondSide",this);
-  widget = new ExtXMLWidget("Dependendent bodies second side","",dependentBodiesSecondSide);
-  properties->addToTab("General", widget);
+  DependenciesWidget *dependentBodiesSecondSide_ = new DependenciesWidget(MBSIMNS"dependentRigidBodiesSecondSide",this);
+  dependentBodiesSecondSide = new ExtXMLWidget("Dependendent bodies second side","",dependentBodiesSecondSide_);
+  properties->addToTab("General", dependentBodiesSecondSide);
+  connect(dependentBodiesSecondSide_,SIGNAL(bodyChanged()),this,SLOT(resizeGeneralizedPosition()));
 
-  connect(dependentBodiesSecondSide,SIGNAL(bodyChanged()),this,SLOT(resizeGeneralizedPosition()));
+  connections = new ExtXMLWidget("Connections","",new ConnectWidget(2,this));
+  properties->addToTab("Kinetics", connections);
 
-  connections = new ConnectWidget(2,this);
-  widget = new ExtXMLWidget("Connections","",connections);
-  properties->addToTab("Kinetics", widget);
+  force = new ExtXMLWidget("Force","",new GeneralizedForceDirectionWidget(MBSIMNS"forceDirection"));
+  properties->addToTab("Kinetics", force);
 
-  force = new GeneralizedForceDirectionWidget(MBSIMNS"forceDirection");
-  widget = new ExtXMLWidget("Force","",force);
-  properties->addToTab("Kinetics", widget);
-
-  moment = new GeneralizedForceDirectionWidget(MBSIMNS"momentDirection");
-  widget = new ExtXMLWidget("Moment","",moment);
-  properties->addToTab("Kinetics", widget);
+  moment = new ExtXMLWidget("Moment","",new GeneralizedForceDirectionWidget(MBSIMNS"momentDirection"));
+  properties->addToTab("Kinetics", moment);
 
   properties->addStretch();
 }
@@ -72,12 +67,12 @@ JointConstraint::~JointConstraint() {
 
 void JointConstraint::resizeGeneralizedPosition() {
   int size = 0;
-  for(int i=0; i<((DependenciesWidget*)dependentBodiesFirstSide)->getSize(); i++)
-    if(((DependenciesWidget*)dependentBodiesFirstSide)->getBody(i))
-    size += ((DependenciesWidget*)dependentBodiesFirstSide)->getBody(i)->getUnconstrainedSize();
-  for(int i=0; i<((DependenciesWidget*)dependentBodiesSecondSide)->getSize(); i++)
-    if(((DependenciesWidget*)dependentBodiesSecondSide)->getBody(i))
-      size += ((DependenciesWidget*)dependentBodiesSecondSide)->getBody(i)->getUnconstrainedSize();
+  for(int i=0; i<((DependenciesWidget*)dependentBodiesFirstSide->getWidget())->getSize(); i++)
+    if(((DependenciesWidget*)dependentBodiesFirstSide->getWidget())->getBody(i))
+    size += ((DependenciesWidget*)dependentBodiesFirstSide->getWidget())->getBody(i)->getUnconstrainedSize();
+  for(int i=0; i<((DependenciesWidget*)dependentBodiesSecondSide->getWidget())->getSize(); i++)
+    if(((DependenciesWidget*)dependentBodiesSecondSide->getWidget())->getBody(i))
+      size += ((DependenciesWidget*)dependentBodiesSecondSide->getWidget())->getBody(i)->getUnconstrainedSize();
   if(q0->size() != size)
     q0->resize(size);
 }

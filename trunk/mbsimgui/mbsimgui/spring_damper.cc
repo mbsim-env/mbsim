@@ -33,20 +33,17 @@ SpringDamper::SpringDamper(const QString &str, QTreeWidgetItem *parentItem, int 
   properties->addTab("Kinetics");
   properties->addTab("Visualisation");
 
-  connections=new ConnectWidget(2,this);
-  ExtXMLWidget *widget = new ExtXMLWidget("Connections","",connections);
-  properties->addToTab("Kinetics", widget);
+  connections = new ExtXMLWidget("Connections","",new ConnectWidget(2,this));
+  properties->addToTab("Kinetics", connections);
 
-  forceFunction=new Function2ChoiceWidget(MBSIMNS"forceFunction");
-  widget = new ExtXMLWidget("Force function","",forceFunction);
-  properties->addToTab("Kinetics", widget);
+  forceFunction = new ExtXMLWidget("Force function","",new Function2ChoiceWidget(MBSIMNS"forceFunction"));
+  properties->addToTab("Kinetics", forceFunction);
 
   forceDirection = new ExtXMLWidget("Force direction","",new ForceDirectionWidget(MBSIMNS"projectionDirection",this),true,false);
   properties->addToTab("Kinetics", forceDirection);
 
-  coilSpring=new OMBVObjectChoiceWidget(new OMBVCoilSpringWidget,"");
-  widget = new ExtXMLWidget("Coil spring","",coilSpring);
-  properties->addToTab("Visualisation", widget);
+  coilSpring = new ExtXMLWidget("Coil spring","",new OMBVObjectChoiceWidget(new OMBVCoilSpringWidget,""));
+  properties->addToTab("Visualisation", coilSpring);
 
   properties->addStretch();
 }

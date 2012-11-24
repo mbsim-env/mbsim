@@ -44,7 +44,7 @@ class Parameter : public QObject, public QTreeWidgetItem {
     bool searchMatched;
     PropertyDialog *properties;
     QMenu *contextMenu;
-    XMLWidget *name;
+    ExtXMLWidget *name;
   public:
     Parameter(const QString &str, QTreeWidgetItem *parentItem, int ind);
     virtual ~Parameter();
@@ -59,7 +59,7 @@ class Parameter : public QObject, public QTreeWidgetItem {
     QMenu* getContextMenu() { return contextMenu; }
     PropertyDialog* getPropertyDialog() { return properties; }
     QString getName() const {return text(0);}
-    void setName(const QString &str) {setText(0,str);((NameWidget*)name)->setName(str);}
+    void setName(const QString &str) {setText(0,str);((NameWidget*)name->getWidget())->setName(str);}
     virtual std::string getValue() const = 0;
   public slots:
     void saveAs();
@@ -75,10 +75,10 @@ class DoubleParameter : public Parameter {
   public:
     DoubleParameter(const QString &str, QTreeWidgetItem *parentItem, int ind);
     virtual QString getType() const { return "scalarParameter"; }
-    virtual std::string getValue() const { return ((ParameterValueWidget*)value)->getValue(); }
+    virtual std::string getValue() const { return ((ParameterValueWidget*)value->getWidget())->getValue(); }
     virtual void initializeUsingXML(TiXmlElement *element);
   protected:
-    XMLWidget *value;
+    ExtXMLWidget *value;
 };
 
 #endif

@@ -61,9 +61,8 @@ Element::Element(const QString &str, QTreeWidgetItem *parentItem, int ind, bool 
   else {
   }
 
-  name=new NameWidget(this,!grey);
-  ExtXMLWidget *widget=new ExtXMLWidget("Name","",name);
-  properties->addToTab("General",widget);
+  name=new ExtXMLWidget("Name","",new NameWidget(this,!grey));
+  properties->addToTab("General",name);
 
   contextMenu=new QMenu("Context Menu");
 

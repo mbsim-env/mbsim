@@ -457,33 +457,6 @@ class PhysicalStringWidget : public StringWidget {
     bool validate(const std::string &str) const {return widget->validate(str);}
 };
 
-class PropertyDialog : public QScrollArea {
-  Q_OBJECT
-
-  public:
-    PropertyDialog(QObject *obj);
-    ~PropertyDialog();
-    void setParentObject(QObject *obj);
-    void addToTab(const QString &name, QWidget* widget) {layout[name]->addWidget(widget);}
-    void addToTab(const QString &name, XMLWidget* widget_) {layout[name]->addWidget(widget_);widget.push_back(widget_);}
-    void addTab(const QString &name);
-    void updateHeader();
-    QObject* getParentObject() { return parentObject; }
-    void addStretch() {
-      for ( std::map<QString,QVBoxLayout*>::iterator it=layout.begin() ; it != layout.end(); it++ )
-        (*it).second->addStretch(1);
-    }
-    void update();
-    void initialize();
-    void resizeVariables();
-  protected:
-    QObject* parentObject;
-    std::map<QString,QVBoxLayout*> layout;
-    QVBoxLayout *mainLayout;
-    std::vector<XMLWidget*> widget;
-    QTabWidget *tabWidget;
-  protected slots:
-};
 
 class RigidBodyBrowser : public QDialog {
   Q_OBJECT
@@ -1279,14 +1252,14 @@ class ParameterValueWidget : public XMLWidget {
     void parameterChanged(const QString &str);
 };
 
-class ExtXMLWidget : public XMLWidget {
+class ExtXMLWidget : public QGroupBox {
   Q_OBJECT
 
   public:
     ExtXMLWidget(const QString &name, const std::string &xmlName, XMLWidget *widget, bool disable=false, bool resize=false, bool hide=false);
 
     virtual bool initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element) {return (box->isCheckable() && !box->isChecked())?0:widget->writeXMLFile(element);}
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element) {return (isCheckable() && !isChecked())?0:widget->writeXMLFile(element);}
     XMLWidget* getWidget() {return widget;}
     virtual void initialize() {widget->initialize();}
     virtual void update() {widget->update();}
@@ -1294,9 +1267,35 @@ class ExtXMLWidget : public XMLWidget {
 
   protected:
     XMLWidget *widget;
-    QGroupBox *box;
   signals:
     void resize();
 };
 
+class PropertyDialog : public QScrollArea {
+  Q_OBJECT
+
+  public:
+    PropertyDialog(QObject *obj);
+    ~PropertyDialog();
+    void setParentObject(QObject *obj);
+    //void addToTab(const QString &name, QWidget* widget) {layout[name]->addWidget(widget);}
+    void addToTab(const QString &name, ExtXMLWidget* widget_) {layout[name]->addWidget(widget_);widget.push_back(widget_);}
+    void addTab(const QString &name);
+    void updateHeader();
+    QObject* getParentObject() { return parentObject; }
+    void addStretch() {
+      for ( std::map<QString,QVBoxLayout*>::iterator it=layout.begin() ; it != layout.end(); it++ )
+        (*it).second->addStretch(1);
+    }
+    void update();
+    void initialize();
+    void resizeVariables();
+  protected:
+    QObject* parentObject;
+    std::map<QString,QVBoxLayout*> layout;
+    QVBoxLayout *mainLayout;
+    std::vector<ExtXMLWidget*> widget;
+    QTabWidget *tabWidget;
+  protected slots:
+};
 #endif
