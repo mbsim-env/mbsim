@@ -2853,8 +2853,6 @@ ExtXMLWidget::ExtXMLWidget(const QString &name, XMLWidget *widget_, bool disable
 
   QHBoxLayout *layout = new QHBoxLayout;
 
-  setFlat(true);
-
   if(disable) {
     setCheckable(true);
     setChecked(false);

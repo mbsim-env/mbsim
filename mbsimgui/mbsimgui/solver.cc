@@ -60,9 +60,15 @@ Solver::Solver(const QString &str, QTreeWidgetItem *parentItem, int ind) : Group
   Element::copiedElement = 0;
 
   properties->addTab("Environment");
+  properties->addTab("Extra");
 
   environment = new ExtXMLWidget("Acceleration of gravity",new EnvironmentWidget);
   properties->addToTab("Environment", environment);
+
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new BoolWidget("0"),MBSIMNS"inverseKinetics",QStringList(),1));
+  inverseKinetics = new ExtXMLWidget("Inverse kinetics",new ExtPhysicalVarWidget(input)); 
+  properties->addToTab("Extra", inverseKinetics);
 
   properties->addStretch();
 }
@@ -74,72 +80,75 @@ QString Solver::getInfo() {
 }
 
 
-  void Solver::initializeUsingXML(TiXmlElement *element) {
-    Group::initializeUsingXML(element);
-    TiXmlElement *e;
-    // search first Environment element
-    e=element->FirstChildElement(MBSIMNS"environments")->FirstChildElement();
+void Solver::initializeUsingXML(TiXmlElement *element) {
+  Group::initializeUsingXML(element);
+  TiXmlElement *e;
 
-    Environment *env;
-    while((env=ObjectFactory::getInstance()->getEnvironment(e))) {
-      env->initializeUsingXML(e);
-      environment->initializeUsingXML(e);
-      e=e->NextSiblingElement();
-    }
-
-//    e=element->FirstChildElement(MBSIMNS"solverParameters");
-//    if (e) {
-//      TiXmlElement * ee;
-//      ee=e->FirstChildElement(MBSIMNS"constraintSolver");
-//      if (ee) {
-//        if (ee->FirstChildElement(MBSIMNS"FixedPointTotal"))
-//          setConstraintSolver(FixedPointTotal);
-//        else if (ee->FirstChildElement(MBSIMNS"FixedPointSingle"))
-//          setConstraintSolver(FixedPointSingle);
-//        else if (ee->FirstChildElement(MBSIMNS"GaussSeidel"))
-//          setConstraintSolver(GaussSeidel);
-//        else if (ee->FirstChildElement(MBSIMNS"LinearEquations"))
-//          setConstraintSolver(LinearEquations);
-//        else if (ee->FirstChildElement(MBSIMNS"RootFinding"))
-//          setConstraintSolver(RootFinding);
-//      }
-//      ee=e->FirstChildElement(MBSIMNS"impactSolver");
-//      if (ee) {
-//        if (ee->FirstChildElement(MBSIMNS"FixedPointTotal"))
-//          setImpactSolver(FixedPointTotal);
-//        else if (ee->FirstChildElement(MBSIMNS"FixedPointSingle"))
-//          setImpactSolver(FixedPointSingle);
-//        else if (ee->FirstChildElement(MBSIMNS"GaussSeidel"))
-//          setImpactSolver(GaussSeidel);
-//        else if (ee->FirstChildElement(MBSIMNS"LinearEquations"))
-//          setImpactSolver(LinearEquations);
-//        else if (ee->FirstChildElement(MBSIMNS"RootFinding"))
-//          setImpactSolver(RootFinding);
-//      }
-//      ee=e->FirstChildElement(MBSIMNS"numberOfMaximalIterations");
-//      if (ee)
-//        setMaxIter(atoi(ee->GetText()));
-//      ee=e->FirstChildElement(MBSIMNS"tolerances");
-//      if (ee) {
-//        TiXmlElement * eee;
-//        eee=ee->FirstChildElement(MBSIMNS"projection");
-//        if (eee)
-//          setProjectionTolerance(getDouble(eee));
-//        eee=ee->FirstChildElement(MBSIMNS"gd");
-//        if (eee)
-//          setgdTol(getDouble(eee));
-//        eee=ee->FirstChildElement(MBSIMNS"gdd");
-//        if (eee)
-//          setgddTol(getDouble(eee));
-//        eee=ee->FirstChildElement(MBSIMNS"la");
-//        if (eee)
-//          setlaTol(getDouble(eee));
-//        eee=ee->FirstChildElement(MBSIMNS"La");
-//        if (eee)
-//          setLaTol(getDouble(eee));
-//      }
-//    }
+  // search first Environment element
+  e=element->FirstChildElement(MBSIMNS"environments")->FirstChildElement();
+  Environment *env;
+  while((env=ObjectFactory::getInstance()->getEnvironment(e))) {
+    env->initializeUsingXML(e);
+    environment->initializeUsingXML(e);
+    e=e->NextSiblingElement();
   }
+
+  inverseKinetics->initializeUsingXML(element);
+
+  //    e=element->FirstChildElement(MBSIMNS"solverParameters");
+  //    if (e) {
+  //      TiXmlElement * ee;
+  //      ee=e->FirstChildElement(MBSIMNS"constraintSolver");
+  //      if (ee) {
+  //        if (ee->FirstChildElement(MBSIMNS"FixedPointTotal"))
+  //          setConstraintSolver(FixedPointTotal);
+  //        else if (ee->FirstChildElement(MBSIMNS"FixedPointSingle"))
+  //          setConstraintSolver(FixedPointSingle);
+  //        else if (ee->FirstChildElement(MBSIMNS"GaussSeidel"))
+  //          setConstraintSolver(GaussSeidel);
+  //        else if (ee->FirstChildElement(MBSIMNS"LinearEquations"))
+  //          setConstraintSolver(LinearEquations);
+  //        else if (ee->FirstChildElement(MBSIMNS"RootFinding"))
+  //          setConstraintSolver(RootFinding);
+  //      }
+  //      ee=e->FirstChildElement(MBSIMNS"impactSolver");
+  //      if (ee) {
+  //        if (ee->FirstChildElement(MBSIMNS"FixedPointTotal"))
+  //          setImpactSolver(FixedPointTotal);
+  //        else if (ee->FirstChildElement(MBSIMNS"FixedPointSingle"))
+  //          setImpactSolver(FixedPointSingle);
+  //        else if (ee->FirstChildElement(MBSIMNS"GaussSeidel"))
+  //          setImpactSolver(GaussSeidel);
+  //        else if (ee->FirstChildElement(MBSIMNS"LinearEquations"))
+  //          setImpactSolver(LinearEquations);
+  //        else if (ee->FirstChildElement(MBSIMNS"RootFinding"))
+  //          setImpactSolver(RootFinding);
+  //      }
+  //      ee=e->FirstChildElement(MBSIMNS"numberOfMaximalIterations");
+  //      if (ee)
+  //        setMaxIter(atoi(ee->GetText()));
+  //      ee=e->FirstChildElement(MBSIMNS"tolerances");
+  //      if (ee) {
+  //        TiXmlElement * eee;
+  //        eee=ee->FirstChildElement(MBSIMNS"projection");
+  //        if (eee)
+  //          setProjectionTolerance(getDouble(eee));
+  //        eee=ee->FirstChildElement(MBSIMNS"gd");
+  //        if (eee)
+  //          setgdTol(getDouble(eee));
+  //        eee=ee->FirstChildElement(MBSIMNS"gdd");
+  //        if (eee)
+  //          setgddTol(getDouble(eee));
+  //        eee=ee->FirstChildElement(MBSIMNS"la");
+  //        if (eee)
+  //          setlaTol(getDouble(eee));
+  //        eee=ee->FirstChildElement(MBSIMNS"La");
+  //        if (eee)
+  //          setLaTol(getDouble(eee));
+  //      }
+  //    }
+
+}
 
 TiXmlElement* Solver::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Group::writeXMLFile(parent);
@@ -148,8 +157,10 @@ TiXmlElement* Solver::writeXMLFile(TiXmlNode *parent) {
 
   TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"environments" );
   environment->writeXMLFile(ele1);
-
   ele0->LinkEndChild( ele1 );
+
+  inverseKinetics->writeXMLFile(ele0);
+
   return ele0;
 }
 
