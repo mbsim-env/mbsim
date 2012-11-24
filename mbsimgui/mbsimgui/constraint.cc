@@ -37,26 +37,26 @@ JointConstraint::JointConstraint(const QString &str, QTreeWidgetItem *parentItem
 
   properties->addTab("Kinetics");
 
-  independentBody = new ExtXMLWidget("Independent body","",new RigidBodyOfReferenceWidget(MBSIMNS"independentRigidBody",this,0));
+  independentBody = new ExtXMLWidget("Independent body",new RigidBodyOfReferenceWidget(MBSIMNS"independentRigidBody",this,0));
   properties->addToTab("General", independentBody);
 
   DependenciesWidget *dependentBodiesFirstSide_ = new DependenciesWidget(MBSIMNS"dependentRigidBodiesFirstSide",this);
-  dependentBodiesFirstSide = new ExtXMLWidget("Dependendent bodies first side","",dependentBodiesFirstSide_);
+  dependentBodiesFirstSide = new ExtXMLWidget("Dependendent bodies first side",dependentBodiesFirstSide_);
   properties->addToTab("General", dependentBodiesFirstSide);
   connect(dependentBodiesFirstSide_,SIGNAL(bodyChanged()),this,SLOT(resizeGeneralizedPosition()));
 
   DependenciesWidget *dependentBodiesSecondSide_ = new DependenciesWidget(MBSIMNS"dependentRigidBodiesSecondSide",this);
-  dependentBodiesSecondSide = new ExtXMLWidget("Dependendent bodies second side","",dependentBodiesSecondSide_);
+  dependentBodiesSecondSide = new ExtXMLWidget("Dependendent bodies second side",dependentBodiesSecondSide_);
   properties->addToTab("General", dependentBodiesSecondSide);
   connect(dependentBodiesSecondSide_,SIGNAL(bodyChanged()),this,SLOT(resizeGeneralizedPosition()));
 
-  connections = new ExtXMLWidget("Connections","",new ConnectWidget(2,this));
+  connections = new ExtXMLWidget("Connections",new ConnectWidget(2,this));
   properties->addToTab("Kinetics", connections);
 
-  force = new ExtXMLWidget("Force","",new GeneralizedForceDirectionWidget(MBSIMNS"forceDirection"));
+  force = new ExtXMLWidget("Force",new GeneralizedForceDirectionWidget(MBSIMNS"forceDirection"));
   properties->addToTab("Kinetics", force);
 
-  moment = new ExtXMLWidget("Moment","",new GeneralizedForceDirectionWidget(MBSIMNS"momentDirection"));
+  moment = new ExtXMLWidget("Moment",new GeneralizedForceDirectionWidget(MBSIMNS"momentDirection"));
   properties->addToTab("Kinetics", moment);
 
   properties->addStretch();

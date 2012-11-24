@@ -33,13 +33,13 @@ Joint::Joint(const QString &str, QTreeWidgetItem *parentItem, int ind) : Link(st
   properties->addTab("Kinetics");
   //properties->addTab("Constitutive laws");
 
-  connections = new ExtXMLWidget("Connections","",new ConnectWidget(2,this));
+  connections = new ExtXMLWidget("Connections",new ConnectWidget(2,this));
   properties->addToTab("Kinetics", connections);
 
-  force = new ExtXMLWidget("Force","",new GeneralizedForceChoiceWidget(MBSIMNS"force"));
+  force = new ExtXMLWidget("Force",new GeneralizedForceChoiceWidget(MBSIMNS"force"));
   properties->addToTab("Kinetics", force);
 
-  moment = new ExtXMLWidget("Moment","",new GeneralizedForceChoiceWidget(MBSIMNS"moment"));
+  moment = new ExtXMLWidget("Moment",new GeneralizedForceChoiceWidget(MBSIMNS"moment"));
   properties->addToTab("Kinetics", moment);
 
   properties->addStretch();

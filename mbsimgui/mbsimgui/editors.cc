@@ -175,11 +175,11 @@ LinearRegularizedBilateralConstraint::LinearRegularizedBilateralConstraint() {
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMNS"stiffnessCoefficient",stiffnessUnits(),1));
-  var.push_back(new ExtXMLWidget("Stiffness coefficient","",new ExtPhysicalVarWidget(input)));
+  var.push_back(new ExtXMLWidget("Stiffness coefficient",new ExtPhysicalVarWidget(input)));
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMNS"dampingCoefficient",dampingUnits(),0));
-  var.push_back(new ExtXMLWidget("Damping coefficient","",new ExtPhysicalVarWidget(input)));
+  var.push_back(new ExtXMLWidget("Damping coefficient",new ExtPhysicalVarWidget(input)));
 
   layout->addWidget(var[0]);
   layout->addWidget(var[1]);
@@ -1210,7 +1210,7 @@ LinearTranslation::LinearTranslation() {
   SMatColsVarWidget* m = new SMatColsVarWidget(3,1,1,3);
   input.push_back(new PhysicalStringWidget(m,MBSIMNS"translationVectors",noUnitUnits(),1));
   mat = new ExtPhysicalVarWidget(input);
-  QWidget *widget = new ExtXMLWidget("Translation vectors","",mat);
+  QWidget *widget = new ExtXMLWidget("Translation vectors",mat);
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -1302,7 +1302,7 @@ TiXmlElement* RotationAboutZAxis::writeXMLFile(TiXmlNode *parent) {
 RotationAboutFixedAxis::RotationAboutFixedAxis() {
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SVecWidget(3),MBSIMNS"axisOfRotation",noUnitUnits(),1));
-  vec = new ExtXMLWidget("Axis of rotation","",new ExtPhysicalVarWidget(input));  
+  vec = new ExtXMLWidget("Axis of rotation",new ExtPhysicalVarWidget(input));  
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -1472,18 +1472,18 @@ FramePositionWidget::FramePositionWidget(Frame *frame_) : frame(frame_) {
   Element *element = frame->getParentElement();
 
   refFrame = new LocalFrameOfReferenceWidget(MBSIMNS"frameOfReference",element,frame);
-  QWidget *refFrameWidget = new ExtXMLWidget("Frame of reference","",refFrame);
+  QWidget *refFrameWidget = new ExtXMLWidget("Frame of reference",refFrame);
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SVecWidget(3), MBSIMNS"position", lengthUnits(), 4));
   position = new ExtPhysicalVarWidget(input);
-  QWidget *positionWidget = new ExtXMLWidget("Position","",position);
+  QWidget *positionWidget = new ExtXMLWidget("Position",position);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SMatWidget(getEye<string>(3,3,"1","0")),MBSIMNS"orientation",noUnitUnits(),1));
   //input.push_back(new PhysicalStringWidget(new SCardanWidget,MBSIMNS"orientation",angleUnits(),0));
   orientation = new ExtPhysicalVarWidget(input);
-  QWidget *orientationWidget = new ExtXMLWidget("Orientation","",orientation);
+  QWidget *orientationWidget = new ExtXMLWidget("Orientation",orientation);
 
   layout->addWidget(positionWidget);
   layout->addWidget(orientationWidget);
@@ -1601,12 +1601,12 @@ OMBVFrameWidget::OMBVFrameWidget() {
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), MBSIMNS"size", lengthUnits(), 4));
-  size = new ExtXMLWidget("Size","",new ExtPhysicalVarWidget(input));
+  size = new ExtXMLWidget("Size",new ExtPhysicalVarWidget(input));
   layout->addWidget(size);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), MBSIMNS"offset", noUnitUnits(), 1));
-  offset = new ExtXMLWidget("Offset","",new ExtPhysicalVarWidget(input));
+  offset = new ExtXMLWidget("Offset",new ExtPhysicalVarWidget(input));
   layout->addWidget(offset);
  }
 
@@ -1629,17 +1629,17 @@ OMBVArrowWidget::OMBVArrowWidget() {
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0.1"), OPENMBVNS"diameter", lengthUnits(), 4));
-  diameter = new ExtXMLWidget("Diameter","",new ExtPhysicalVarWidget(input));
+  diameter = new ExtXMLWidget("Diameter",new ExtPhysicalVarWidget(input));
   layout->addWidget(diameter);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0.2"), OPENMBVNS"headDiameter", lengthUnits(), 4));
-  headDiameter = new ExtXMLWidget("Head diameter","",new ExtPhysicalVarWidget(input));
+  headDiameter = new ExtXMLWidget("Head diameter",new ExtPhysicalVarWidget(input));
   layout->addWidget(headDiameter);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0.2"), OPENMBVNS"headLength", lengthUnits(), 4));
-  headLength = new ExtXMLWidget("Head length","",new ExtPhysicalVarWidget(input));
+  headLength = new ExtXMLWidget("Head length",new ExtPhysicalVarWidget(input));
   layout->addWidget(headLength);
 
   input.clear();
@@ -1652,12 +1652,12 @@ OMBVArrowWidget::OMBVArrowWidget() {
   list.push_back(string("\"")+"toDoubleHead"+"\"");
   list.push_back(string("\"")+"bothDoubleHeads"+"\"");
   input.push_back(new PhysicalStringWidget(new ChoiceWidget(list,2), OPENMBVNS"type", QStringList(), 0));
-  type = new ExtXMLWidget("Type","",new ExtPhysicalVarWidget(input));
+  type = new ExtXMLWidget("Type",new ExtPhysicalVarWidget(input));
   layout->addWidget(type);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), OPENMBVNS"scaleLength", noUnitUnits(), 1));
-  scaleLength = new ExtXMLWidget("Scale length","",new ExtPhysicalVarWidget(input));
+  scaleLength = new ExtXMLWidget("Scale length",new ExtPhysicalVarWidget(input));
   layout->addWidget(scaleLength);
 }
 
@@ -1697,32 +1697,32 @@ OMBVCoilSpringWidget::OMBVCoilSpringWidget() {
   list.push_back(string("\"")+"scaledTube"+"\"");
   list.push_back(string("\"")+"polyline"+"\"");
   input.push_back(new PhysicalStringWidget(new ChoiceWidget(list,0), OPENMBVNS"type", QStringList(), 0));
-  type = new ExtXMLWidget("Type","",new ExtPhysicalVarWidget(input));
+  type = new ExtXMLWidget("Type",new ExtPhysicalVarWidget(input));
   layout->addWidget(type);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("3"), OPENMBVNS"numberOfCoils", noUnitUnits(), 1));
-  numberOfCoils= new ExtXMLWidget("Number of coils","",new ExtPhysicalVarWidget(input));
+  numberOfCoils= new ExtXMLWidget("Number of coils",new ExtPhysicalVarWidget(input));
   layout->addWidget(numberOfCoils);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0.1"), OPENMBVNS"springRadius", lengthUnits(), 4));
-  springRadius= new ExtXMLWidget("Spring radius","",new ExtPhysicalVarWidget(input));
+  springRadius= new ExtXMLWidget("Spring radius",new ExtPhysicalVarWidget(input));
   layout->addWidget(springRadius);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("-1"), OPENMBVNS"crossSectionRadius", lengthUnits(), 4));
-  crossSectionRadius = new ExtXMLWidget("Cross section radius","",new ExtPhysicalVarWidget(input),true,false);
+  crossSectionRadius = new ExtXMLWidget("Cross section radius",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(crossSectionRadius);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("-1"), OPENMBVNS"nominalLength", lengthUnits(), 4));
-  nominalLength= new ExtXMLWidget("Nominal length","",new ExtPhysicalVarWidget(input),true,false);
+  nominalLength= new ExtXMLWidget("Nominal length",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(nominalLength);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), OPENMBVNS"scaleFactor", noUnitUnits(), 1));
-  scaleFactor = new ExtXMLWidget("Scale factor","",new ExtPhysicalVarWidget(input));
+  scaleFactor = new ExtXMLWidget("Scale factor",new ExtPhysicalVarWidget(input));
   layout->addWidget(scaleFactor);
 }
 
@@ -1757,14 +1757,8 @@ OMBVObjectChoiceWidget::OMBVObjectChoiceWidget(OMBVObjectWidget *ombv_, const st
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
-
-  QGroupBox *box = new QGroupBox("Show");
-  QHBoxLayout *sublayout = new QHBoxLayout;
-  box->setLayout(sublayout);
-  visu = new QCheckBox;
-  sublayout->addWidget(visu);
-  layout->addWidget(box);
-
+  visu = new QCheckBox("Show");
+  layout->addWidget(visu);
   layout->addWidget(ombv);
   connect(visu,SIGNAL(toggled(bool)),ombv,SLOT(setVisible(bool)));
   ombv->hide();
@@ -1804,22 +1798,22 @@ OMBVBodyWidget::OMBVBodyWidget() {
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0"), OPENMBVNS"staticColor", noUnitUnits(), 1));
-  color = new ExtXMLWidget("Static color","",new ExtPhysicalVarWidget(input));
+  color = new ExtXMLWidget("Static color",new ExtPhysicalVarWidget(input));
   layout->addWidget(color);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SVecWidget(3,true), OPENMBVNS"initialTranslation", lengthUnits(), 4));
-  trans = new ExtXMLWidget("Initial translation","",new ExtPhysicalVarWidget(input));
+  trans = new ExtXMLWidget("Initial translation",new ExtPhysicalVarWidget(input));
   layout->addWidget(trans);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SVecWidget(3,true), OPENMBVNS"initialRotation", angleUnits(), 0));
-  rot = new ExtXMLWidget("Initial rotation","",new ExtPhysicalVarWidget(input));
+  rot = new ExtXMLWidget("Initial rotation",new ExtPhysicalVarWidget(input));
   layout->addWidget(rot);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), OPENMBVNS"scaleFactor", noUnitUnits(), 1));
-  scale = new ExtXMLWidget("Scale factor","",new ExtPhysicalVarWidget(input));
+  scale = new ExtXMLWidget("Scale factor",new ExtPhysicalVarWidget(input));
   layout->addWidget(scale);
 }
 
@@ -1845,7 +1839,7 @@ CuboidWidget::CuboidWidget() {
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SVecWidget(getScalars<string>(3,"1"),true), OPENMBVNS"length", lengthUnits(), 4));
-  length = new ExtXMLWidget("Length","",new ExtPhysicalVarWidget(input));
+  length = new ExtXMLWidget("Length",new ExtPhysicalVarWidget(input));
   layout->addWidget(length);
 }
 
@@ -1864,7 +1858,7 @@ SphereWidget::SphereWidget() {
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), OPENMBVNS"radius", lengthUnits(), 4));
-  radius = new ExtXMLWidget("Radius","",new ExtPhysicalVarWidget(input));
+  radius = new ExtXMLWidget("Radius",new ExtPhysicalVarWidget(input));
   layout->addWidget(radius);
 }
 
@@ -1883,27 +1877,27 @@ FrustumWidget::FrustumWidget() {
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), OPENMBVNS"topRadius", lengthUnits(), 4));
-  top = new ExtXMLWidget("Top radius","",new ExtPhysicalVarWidget(input));
+  top = new ExtXMLWidget("Top radius",new ExtPhysicalVarWidget(input));
   layout->addWidget(top);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), OPENMBVNS"baseRadius", lengthUnits(), 4));
-  base = new ExtXMLWidget("Base radius","",new ExtPhysicalVarWidget(input));
+  base = new ExtXMLWidget("Base radius",new ExtPhysicalVarWidget(input));
   layout->addWidget(base);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), OPENMBVNS"height", lengthUnits(), 4));
-  height = new ExtXMLWidget("Height","",new ExtPhysicalVarWidget(input));
+  height = new ExtXMLWidget("Height",new ExtPhysicalVarWidget(input));
   layout->addWidget(height);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0"), OPENMBVNS"innerTopRadius", lengthUnits(), 4));
-  innerTop = new ExtXMLWidget("Inner top radius","",new ExtPhysicalVarWidget(input));
+  innerTop = new ExtXMLWidget("Inner top radius",new ExtPhysicalVarWidget(input));
   layout->addWidget(innerTop);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0"), OPENMBVNS"innerBaseRadius", lengthUnits(), 4));
-  innerBase = new ExtXMLWidget("Inner base radius","",new ExtPhysicalVarWidget(input));
+  innerBase = new ExtXMLWidget("Inner base radius",new ExtPhysicalVarWidget(input));
   layout->addWidget(innerBase);
 }
 
@@ -1941,7 +1935,7 @@ OMBVBodyChoiceWidget::OMBVBodyChoiceWidget(RigidBody *body_) : body(body_), ombv
   layout->addWidget(comboBox);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ombvSelection(int)));
   ref=new LocalFrameOfReferenceWidget(MBSIMNS"frameOfReference",body);
-  widget = new ExtXMLWidget("Frame of reference","",ref);
+  widget = new ExtXMLWidget("Frame of reference",ref);
   layout->addWidget(widget);
   widget->hide();
 }
@@ -2025,7 +2019,7 @@ ConnectWidget::ConnectWidget(int n, Element *element_) : element(element_) {
       xmlName += QString::number(i+1);
     }
     widget.push_back(new FrameOfReferenceWidget(xmlName.toStdString(),element,0));
-    QWidget *subwidget = new ExtXMLWidget(subname,"",widget[i]);
+    QWidget *subwidget = new ExtXMLWidget(subname,widget[i]);
     layout->addWidget(subwidget);
   }
 }
@@ -2226,15 +2220,15 @@ GeneralizedForceChoiceWidget::GeneralizedForceChoiceWidget(const string &xmlName
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SMatColsVarWidget(3,0,0,3),MBSIMNS"direction",noUnitUnits(),1));
   widget = new ExtPhysicalVarWidget(input);  
-  ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Direction vectors","",widget);
+  ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Direction vectors",widget);
   layout->addWidget(extXMLWidget);
 
   generalizedForceLaw = new GeneralizedForceLawChoiceWidget(MBSIMNS"generalizedForceLaw");
-  extXMLWidget = new ExtXMLWidget("Generalized force law","",generalizedForceLaw);
+  extXMLWidget = new ExtXMLWidget("Generalized force law",generalizedForceLaw);
   layout->addWidget(extXMLWidget);
 
   generalizedImpactLaw = new GeneralizedImpactLawChoiceWidget(MBSIMNS"generalizedImpactLaw");
-  extXMLWidget = new ExtXMLWidget("Generalized impact law","",generalizedImpactLaw);
+  extXMLWidget = new ExtXMLWidget("Generalized impact law",generalizedImpactLaw);
   layout->addWidget(extXMLWidget);
 }
 
@@ -2383,14 +2377,14 @@ ForceChoiceWidget::ForceChoiceWidget(const string &xmlName_, OMBVObjectChoiceWid
   PhysicalStringWidget *mat = new PhysicalStringWidget(new SMatColsVarWidget(3,0,0,3),MBSIMNS"directionVectors",noUnitUnits(),1);
   input.push_back(mat);
   widget = new ExtPhysicalVarWidget(input);  
-  ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Direction vectors","",widget);
+  ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Direction vectors",widget);
 
   connect(widget,SIGNAL(inputDialogChanged(int)),this,SLOT(resizeVariables()));
   connect((SMatColsVarWidget*)mat->getWidget(), SIGNAL(sizeChanged(int)), this, SLOT(resizeVariables()));
   layout->addWidget(extXMLWidget);
 
   forceLaw = new Function1ChoiceWidget(MBSIMNS"function");
-  extXMLWidget = new ExtXMLWidget("Function","",forceLaw);
+  extXMLWidget = new ExtXMLWidget("Function",forceLaw);
 
   layout->addWidget(extXMLWidget);
   connect(forceLaw,SIGNAL(resize()),this,SLOT(resizeVariables()));
@@ -2442,10 +2436,10 @@ ForceDirectionWidget::ForceDirectionWidget(const string &xmlName_, Element *elem
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SVecWidget(3),MBSIMNS"direction",noUnitUnits(),1));
   mat = new ExtPhysicalVarWidget(input);
-  ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Direction vector","",mat);
+  ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Direction vector",mat);
   hlayout->addWidget(extXMLWidget);
   refFrame = new FrameOfReferenceWidget(MBSIMNS"frameOfReference",element,0);
-  extXMLWidget = new ExtXMLWidget("Frame of reference","",refFrame);
+  extXMLWidget = new ExtXMLWidget("Frame of reference",refFrame);
   hlayout->addWidget(extXMLWidget);
 
   layout->addWidget(forceDirWidget);
@@ -2479,7 +2473,7 @@ GeneralizedForceDirectionWidget::GeneralizedForceDirectionWidget(const string &x
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SMatColsVarWidget(3,0,0,3),xmlName,noUnitUnits(),1));
   mat = new ExtPhysicalVarWidget(input);  
-  ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Direction vectors","",mat);
+  ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Direction vectors",mat);
   layout->addWidget(extXMLWidget);
 }
 
@@ -2506,7 +2500,7 @@ ConstantFunction1::ConstantFunction1(const QString &ext) : Function1(ext) {
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SVecWidget(0,true),MBSIMNS"value",QStringList(),0));
   c = new ExtPhysicalVarWidget(input),"VS";  
-  ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Value","",c);
+  ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Value",c);
   layout->addWidget(extXMLWidget);
 }
 int ConstantFunction1::getSize() const {
@@ -2536,26 +2530,26 @@ SinusFunction1::SinusFunction1() {
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SVecWidget(0,true),MBSIMNS"amplitude",QStringList(),0));
   var.push_back(new ExtPhysicalVarWidget(input));
-  ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Amplitude","",var[var.size()-1]);
+  ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Amplitude",var[var.size()-1]);
   layout->addWidget(extXMLWidget);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SVecWidget(0,true),MBSIMNS"frequency",QStringList(),0));
   var.push_back(new ExtPhysicalVarWidget(input));
-  extXMLWidget = new ExtXMLWidget("Frequency","",var[var.size()-1]);
+  extXMLWidget = new ExtXMLWidget("Frequency",var[var.size()-1]);
   layout->addWidget(extXMLWidget);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SVecWidget(0,true),MBSIMNS"phase",QStringList(),0));
   var.push_back(new ExtPhysicalVarWidget(input));
-  extXMLWidget = new ExtXMLWidget("Phase","",var[var.size()-1]);
+  extXMLWidget = new ExtXMLWidget("Phase",var[var.size()-1]);
   layout->addWidget(extXMLWidget);
 
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SVecWidget(0,true),MBSIMNS"offset",QStringList(),0));
   var.push_back(new ExtPhysicalVarWidget(input));  
-  extXMLWidget = new ExtXMLWidget("Offset","",var[var.size()-1]);
+  extXMLWidget = new ExtXMLWidget("Offset",var[var.size()-1]);
   layout->addWidget(extXMLWidget);
 
 
@@ -2591,19 +2585,19 @@ LinearSpringDamperForce::LinearSpringDamperForce() {
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMNS"stiffnessCoefficient",stiffnessUnits(),1));
   var.push_back(new ExtPhysicalVarWidget(input));
-  ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Stiffness coefficient","",var[var.size()-1]);
+  ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Stiffness coefficient",var[var.size()-1]);
   layout->addWidget(extXMLWidget);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMNS"dampingCoefficient",dampingUnits(),0));
   var.push_back(new ExtPhysicalVarWidget(input));
-  extXMLWidget = new ExtXMLWidget("Damping coefficient","",var[var.size()-1]);
+  extXMLWidget = new ExtXMLWidget("Damping coefficient",var[var.size()-1]);
   layout->addWidget(extXMLWidget);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMNS"unloadedLength",lengthUnits(),4));
   var.push_back(new ExtPhysicalVarWidget(input));
-  extXMLWidget = new ExtXMLWidget("Unloaded length","",var[var.size()-1]);
+  extXMLWidget = new ExtXMLWidget("Unloaded length",var[var.size()-1]);
   layout->addWidget(extXMLWidget);
 }
 bool LinearSpringDamperForce::initializeUsingXML(TiXmlElement *element) {
@@ -2730,7 +2724,7 @@ void DependenciesWidget::addDependency() {
   if(i<5) {
     selectedBody.push_back(0);
     refBody.push_back(new RigidBodyOfReferenceWidget(MBSIMNS"dependentRigidBody",element,0));
-    widget.push_back(new ExtXMLWidget(QString("RigidBody") + QString::number(i+1),"",refBody[i]));
+    widget.push_back(new ExtXMLWidget(QString("RigidBody") + QString::number(i+1),refBody[i]));
     connect(refBody[i],SIGNAL(bodyChanged()),this,SIGNAL(bodyChanged()));
     layout->addWidget(widget[i]);
     update();
@@ -2855,8 +2849,11 @@ void ParameterValueWidget::parameterChanged() {
   emit parameterChanged(getValue().c_str());
 }
 
-ExtXMLWidget::ExtXMLWidget(const QString &name, const string &xmlName, XMLWidget *widget_, bool disable, bool resize, bool hide) : QGroupBox(name), widget(widget_) {
-  QBoxLayout *layout = new QBoxLayout(QBoxLayout::LeftToRight);
+ExtXMLWidget::ExtXMLWidget(const QString &name, XMLWidget *widget_, bool disable) : QGroupBox(name), widget(widget_) {
+
+  QHBoxLayout *layout = new QHBoxLayout;
+
+  setFlat(true);
 
   if(disable) {
     setCheckable(true);
@@ -2924,7 +2921,3 @@ void PropertyDialog::addTab(const QString &name) {
 void PropertyDialog::setParentObject(QObject *parentObject_) {
   parentObject=parentObject_;
 }
-
-void PropertyDialog::updateHeader() {
-}
-

@@ -39,7 +39,7 @@ Parameter::Parameter(const QString &str, QTreeWidgetItem *parentItem, int ind) :
   properties=new PropertyDialog(this);
   properties->addTab("General");
 
-  name = new ExtXMLWidget("Name","",new ParameterNameWidget(this));
+  name = new ExtXMLWidget("Name",new ParameterNameWidget(this));
   properties->addToTab("General", name);
 
   contextMenu=new QMenu("Context Menu");
@@ -111,7 +111,7 @@ void Parameter::updateTreeWidgetItem(const QString &str) {
 DoubleParameter::DoubleParameter(const QString &str, QTreeWidgetItem *parentItem, int ind) : Parameter(str,parentItem,ind) {
 
   ParameterValueWidget *value_ = new ParameterValueWidget(new PhysicalStringWidget(new SScalarWidget("1"),PVNS"scalarParameter",QStringList(),0));
-  value = new ExtXMLWidget("Value","",value_);
+  value = new ExtXMLWidget("Value",value_);
   properties->addToTab("General", value);
   connect(value_,SIGNAL(parameterChanged(const QString&)),this,SIGNAL(parameterChanged(const QString&)));
 

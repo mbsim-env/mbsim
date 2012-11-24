@@ -1256,7 +1256,7 @@ class ExtXMLWidget : public QGroupBox {
   Q_OBJECT
 
   public:
-    ExtXMLWidget(const QString &name, const std::string &xmlName, XMLWidget *widget, bool disable=false, bool resize=false, bool hide=false);
+    ExtXMLWidget(const QString &name, XMLWidget *widget, bool disable=false);
 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element) {return (isCheckable() && !isChecked())?0:widget->writeXMLFile(element);}
@@ -1272,16 +1272,13 @@ class ExtXMLWidget : public QGroupBox {
 };
 
 class PropertyDialog : public QScrollArea {
-  Q_OBJECT
 
   public:
     PropertyDialog(QObject *obj);
     ~PropertyDialog();
     void setParentObject(QObject *obj);
-    //void addToTab(const QString &name, QWidget* widget) {layout[name]->addWidget(widget);}
     void addToTab(const QString &name, ExtXMLWidget* widget_) {layout[name]->addWidget(widget_);widget.push_back(widget_);}
     void addTab(const QString &name);
-    void updateHeader();
     QObject* getParentObject() { return parentObject; }
     void addStretch() {
       for ( std::map<QString,QVBoxLayout*>::iterator it=layout.begin() ; it != layout.end(); it++ )
@@ -1296,6 +1293,6 @@ class PropertyDialog : public QScrollArea {
     QVBoxLayout *mainLayout;
     std::vector<ExtXMLWidget*> widget;
     QTabWidget *tabWidget;
-  protected slots:
 };
+
 #endif
