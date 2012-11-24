@@ -311,11 +311,6 @@ namespace MBSim {
       fmatvec::Vec3 PjT, PjR, PdjT, PdjR;
 
       /**
-       * \brief TODO
-       */
-      fmatvec::Mat3V PJR0;
-
-      /**
        * \brief rotation matrix from kinematic Frame to parent Frame
        */
       fmatvec::SqrMat3 APK;
@@ -455,6 +450,8 @@ namespace MBSim {
       Constraint *constraint;
 
       int nu[2], nq;
+
+      Frame* frameForJacobianOfRotation;
 
       //fmatvec::Vec qRel0, uRel0;
 
