@@ -44,7 +44,7 @@ class Solver : public Group {
   friend class MainWindow;
   friend class Object;
   protected:
-    ExtXMLWidget *environment;
+    ExtXMLWidget *environment, *inverseKinetics;
   public:
     Solver(const QString &str, QTreeWidgetItem *parentItem, int ind);
     virtual QString getInfo();
