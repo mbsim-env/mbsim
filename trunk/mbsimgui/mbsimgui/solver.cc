@@ -61,7 +61,7 @@ Solver::Solver(const QString &str, QTreeWidgetItem *parentItem, int ind) : Group
 
   properties->addTab("Environment");
 
-  environment = new ExtXMLWidget("Acceleration of gravity","",new EnvironmentWidget);
+  environment = new ExtXMLWidget("Acceleration of gravity",new EnvironmentWidget);
   properties->addToTab("Environment", environment);
 
   properties->addStretch();

@@ -93,19 +93,19 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
 
     vector<PhysicalStringWidget*> input;
     input.push_back(new PhysicalStringWidget(new SVecWidget(3),MBSIMNS"position",lengthUnits(),4));
-    position = new ExtXMLWidget("Position","",new ExtPhysicalVarWidget(input)); 
+    position = new ExtXMLWidget("Position",new ExtPhysicalVarWidget(input)); 
     properties->addToTab("Kinematics", position);
 
     input.clear();
     input.push_back(new PhysicalStringWidget(new SMatWidget(getEye<string>(3,3,"1","0")),MBSIMNS"orientation",noUnitUnits(),1));
-    orientation = new ExtXMLWidget("Orientation","",new ExtPhysicalVarWidget(input)); 
+    orientation = new ExtXMLWidget("Orientation",new ExtPhysicalVarWidget(input)); 
     properties->addToTab("Kinematics", orientation);
 
-    frameOfReference = new ExtXMLWidget("Frame of reference","",new FrameOfReferenceWidget(MBSIMNS"frameOfReference",this,((Group*)getParentElement())->getFrame(0))); 
+    frameOfReference = new ExtXMLWidget("Frame of reference",new FrameOfReferenceWidget(MBSIMNS"frameOfReference",this,((Group*)getParentElement())->getFrame(0))); 
     properties->addToTab("Kinematics", frameOfReference);
   }
 
-  framePos = new ExtXMLWidget("Position and orientation of frames","",new FramePositionsWidget(this)); 
+  framePos = new ExtXMLWidget("Position and orientation of frames",new FramePositionsWidget(this)); 
   properties->addToTab("Frame positioning", framePos);
 
   action=new QAction(Utils::QIconCached("newobject.svg"),"Add frame", this);

@@ -32,7 +32,7 @@ Object::Object(const QString &str, QTreeWidgetItem *parentItem, int ind) : Eleme
   q0 = new SVecWidget(0);
   input.push_back(new PhysicalStringWidget(q0,MBSIMNS"initialGeneralizedPosition",QStringList(),1));
   ExtPhysicalVarWidget *var = new ExtPhysicalVarWidget(input);  
-  initialGeneralizedPosition = new ExtXMLWidget("Initial generalized position","",var,true,true);
+  initialGeneralizedPosition = new ExtXMLWidget("Initial generalized position",var,true);
   properties->addToTab("Initial conditions", initialGeneralizedPosition);
   connect(initialGeneralizedPosition,SIGNAL(resize()),this,SLOT(resizeGeneralizedPosition()));
 
@@ -40,7 +40,7 @@ Object::Object(const QString &str, QTreeWidgetItem *parentItem, int ind) : Eleme
   u0 = new SVecWidget(0);
   input.push_back(new PhysicalStringWidget(u0,MBSIMNS"initialGeneralizedVelocity",QStringList(),1));
   var = new ExtPhysicalVarWidget(input);  
-  initialGeneralizedVelocity = new ExtXMLWidget("Initial generalized velocity","",var,true,true);
+  initialGeneralizedVelocity = new ExtXMLWidget("Initial generalized velocity",var,true);
   properties->addToTab("Initial conditions", initialGeneralizedVelocity);
   connect(initialGeneralizedVelocity,SIGNAL(resize()),this,SLOT(resizeGeneralizedVelocity()));
 

@@ -53,40 +53,40 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
 
   new Frame("C", frames, -1, true);
 
-  frameForKinematics = new ExtXMLWidget("Frame for kinematics","",new LocalFrameOfReferenceWidget(MBSIMNS"frameForKinematics",this,0));
+  frameForKinematics = new ExtXMLWidget("Frame for kinematics",new LocalFrameOfReferenceWidget(MBSIMNS"frameForKinematics",this,0));
   properties->addToTab("Kinematics", frameForKinematics);
 
-  frameOfReference = new ExtXMLWidget("Frame of reference","",new FrameOfReferenceWidget(MBSIMNS"frameOfReference",this,((Group*)getParentElement())->getFrame(0)));
+  frameOfReference = new ExtXMLWidget("Frame of reference",new FrameOfReferenceWidget(MBSIMNS"frameOfReference",this,((Group*)getParentElement())->getFrame(0)));
   properties->addToTab("Kinematics", frameOfReference);
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1"),MBSIMNS"mass",massUnits(),2));
-  mass = new ExtXMLWidget("Mass","",new ExtPhysicalVarWidget(input));
+  mass = new ExtXMLWidget("Mass",new ExtPhysicalVarWidget(input));
   properties->addToTab("General", mass);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SSymMatWidget(getEye<string>(3,3,"0.01","0")),MBSIMNS"inertiaTensor",inertiaUnits(),2));
-  inertia = new ExtXMLWidget("Inertia tensor","",new ExtPhysicalVarWidget(input));
+  inertia = new ExtXMLWidget("Inertia tensor",new ExtPhysicalVarWidget(input));
   properties->addToTab("General", inertia);
 
-  framePos = new ExtXMLWidget("Position and orientation of frames","",new FramePositionsWidget(this));
+  framePos = new ExtXMLWidget("Position and orientation of frames",new FramePositionsWidget(this));
   properties->addToTab("Frame positioning", framePos);
   
   TranslationChoiceWidget *translation_ = new TranslationChoiceWidget;
-  translation = new ExtXMLWidget("Translation","",translation_);
+  translation = new ExtXMLWidget("Translation",translation_);
   properties->addToTab("Kinematics", translation);
   connect(translation_,SIGNAL(translationChanged()),this,SLOT(resizeGeneralizedPosition()));
   connect(translation_,SIGNAL(translationChanged()),this,SLOT(resizeGeneralizedVelocity()));
   connect(translation_,SIGNAL(translationChanged()),this,SIGNAL(sizeChanged()));
 
   RotationChoiceWidget *rotation_ = new RotationChoiceWidget;
-  rotation = new ExtXMLWidget("Rotation","",rotation_);
+  rotation = new ExtXMLWidget("Rotation",rotation_);
   properties->addToTab("Kinematics", rotation);
   connect(rotation_,SIGNAL(rotationChanged()),this,SLOT(resizeGeneralizedPosition()));
   connect(rotation_,SIGNAL(rotationChanged()),this,SLOT(resizeGeneralizedVelocity()));
   connect(rotation_,SIGNAL(rotationChanged()),this,SIGNAL(sizeChanged()));
  
-  ombvEditor = new ExtXMLWidget("OpenMBV body","",new OMBVBodyChoiceWidget(this));
+  ombvEditor = new ExtXMLWidget("OpenMBV body",new OMBVBodyChoiceWidget(this));
   properties->addToTab("Visualisation", ombvEditor);
 
   QAction *action=new QAction(Utils::QIconCached("newobject.svg"),"Add frame", this);
