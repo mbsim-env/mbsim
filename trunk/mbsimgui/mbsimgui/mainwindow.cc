@@ -599,7 +599,8 @@ void MainWindow::loadParameter(const QString &file) {
 
     MBSimObjectFactory::initialize();
     TiXmlDocument doc;
-    assert(doc.LoadFile(file.toAscii().data())==true);
+    bool ret=doc.LoadFile(file.toAscii().data());
+    assert(ret==true);
     TiXml_PostLoadFile(&doc);
     TiXmlElement *e=doc.FirstChildElement();
     TiXml_setLineNrFromProcessingInstruction(e);
