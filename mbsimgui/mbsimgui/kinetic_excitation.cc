@@ -34,25 +34,22 @@ KineticExcitation::KineticExcitation(const QString &str, QTreeWidgetItem *parent
   //properties->addTab("Constitutive laws");
   properties->addTab("Visualisation");
 
-  forceArrow=new OMBVObjectChoiceWidget(new OMBVArrowWidget,"");
-  ExtXMLWidget *widget = new ExtXMLWidget("Force arrow","",forceArrow);
-  properties->addToTab("Visualisation",widget);
+  OMBVObjectChoiceWidget *FArrow = new OMBVObjectChoiceWidget(new OMBVArrowWidget,"");
+  forceArrow = new ExtXMLWidget("Force arrow","",FArrow);
+  properties->addToTab("Visualisation",forceArrow);
 
-  momentArrow=new OMBVObjectChoiceWidget(new OMBVArrowWidget,"");
-  widget = new ExtXMLWidget("Moment arrow","",momentArrow);
-  properties->addToTab("Visualisation",widget);
+  OMBVObjectChoiceWidget *MArrow=new OMBVObjectChoiceWidget(new OMBVArrowWidget,"");
+  momentArrow = new ExtXMLWidget("Moment arrow","",MArrow);
+  properties->addToTab("Visualisation",momentArrow);
 
-  connections = new ConnectWidget(1,this);
-  widget = new ExtXMLWidget("Connections","",connections);
-  properties->addToTab("Kinetics",widget);
+  connections = new ExtXMLWidget("Connections","",new ConnectWidget(1,this));
+  properties->addToTab("Kinetics",connections);
 
-//  force = new ForceChoiceWidget("Force", MBSIMNS"force", (OMBVObjectChoiceWidget*)forceArrow);
-  ForceChoiceWidget *f = new ForceChoiceWidget(MBSIMNS"force", (OMBVObjectChoiceWidget*)forceArrow);
+  ForceChoiceWidget *f = new ForceChoiceWidget(MBSIMNS"force", FArrow);
   force = new ExtXMLWidget("Force","",f,false,true);
   properties->addToTab("Kinetics",force);
 
-  //moment = new ForceChoiceWidget("Moment", MBSIMNS"moment", (OMBVObjectChoiceWidget*)momentArrow);
-  ForceChoiceWidget *m = new ForceChoiceWidget(MBSIMNS"moment", (OMBVObjectChoiceWidget*)momentArrow);
+  ForceChoiceWidget *m = new ForceChoiceWidget(MBSIMNS"moment", MArrow);
   moment = new ExtXMLWidget("Moment","",m,false,true);
   properties->addToTab("Kinetics",moment);
 

@@ -53,47 +53,41 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
 
   new Frame("C", frames, -1, true);
 
-  frameForKinematics = new LocalFrameOfReferenceWidget(MBSIMNS"frameForKinematics",this,0);
-  ExtXMLWidget *widget = new ExtXMLWidget("Frame for kinematics","",frameForKinematics);
-  properties->addToTab("Kinematics", widget);
+  frameForKinematics = new ExtXMLWidget("Frame for kinematics","",new LocalFrameOfReferenceWidget(MBSIMNS"frameForKinematics",this,0));
+  properties->addToTab("Kinematics", frameForKinematics);
 
-  frameOfReference = new FrameOfReferenceWidget(MBSIMNS"frameOfReference",this,((Group*)getParentElement())->getFrame(0));
-  widget = new ExtXMLWidget("Frame of reference","",frameOfReference);
-  properties->addToTab("Kinematics", widget);
+  frameOfReference = new ExtXMLWidget("Frame of reference","",new FrameOfReferenceWidget(MBSIMNS"frameOfReference",this,((Group*)getParentElement())->getFrame(0)));
+  properties->addToTab("Kinematics", frameOfReference);
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1"),MBSIMNS"mass",massUnits(),2));
-  mass = new ExtPhysicalVarWidget(input);
-  widget = new ExtXMLWidget("Mass","",mass);
-  properties->addToTab("General", widget);
+  mass = new ExtXMLWidget("Mass","",new ExtPhysicalVarWidget(input));
+  properties->addToTab("General", mass);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SSymMatWidget(getEye<string>(3,3,"0.01","0")),MBSIMNS"inertiaTensor",inertiaUnits(),2));
-  inertia = new ExtPhysicalVarWidget(input);
-  widget = new ExtXMLWidget("Inertia tensor","",inertia);
-  properties->addToTab("General", widget);
+  inertia = new ExtXMLWidget("Inertia tensor","",new ExtPhysicalVarWidget(input));
+  properties->addToTab("General", inertia);
 
-  framePos = new FramePositionsWidget(this);
-  widget = new ExtXMLWidget("Position and orientation of frames","",framePos);
-  properties->addToTab("Frame positioning", widget);
+  framePos = new ExtXMLWidget("Position and orientation of frames","",new FramePositionsWidget(this));
+  properties->addToTab("Frame positioning", framePos);
   
-  translation = new TranslationChoiceWidget;
-  widget = new ExtXMLWidget("Translation","",translation);
-  properties->addToTab("Kinematics", widget);
-  connect(translation,SIGNAL(translationChanged()),this,SLOT(resizeGeneralizedPosition()));
-  connect(translation,SIGNAL(translationChanged()),this,SLOT(resizeGeneralizedVelocity()));
-  connect(translation,SIGNAL(translationChanged()),this,SIGNAL(sizeChanged()));
+  TranslationChoiceWidget *translation_ = new TranslationChoiceWidget;
+  translation = new ExtXMLWidget("Translation","",translation_);
+  properties->addToTab("Kinematics", translation);
+  connect(translation_,SIGNAL(translationChanged()),this,SLOT(resizeGeneralizedPosition()));
+  connect(translation_,SIGNAL(translationChanged()),this,SLOT(resizeGeneralizedVelocity()));
+  connect(translation_,SIGNAL(translationChanged()),this,SIGNAL(sizeChanged()));
 
-  rotation = new RotationChoiceWidget;
-  widget = new ExtXMLWidget("Rotation","",rotation);
-  properties->addToTab("Kinematics", widget);
-  connect(rotation,SIGNAL(rotationChanged()),this,SLOT(resizeGeneralizedPosition()));
-  connect(rotation,SIGNAL(rotationChanged()),this,SLOT(resizeGeneralizedVelocity()));
-  connect(rotation,SIGNAL(rotationChanged()),this,SIGNAL(sizeChanged()));
+  RotationChoiceWidget *rotation_ = new RotationChoiceWidget;
+  rotation = new ExtXMLWidget("Rotation","",rotation_);
+  properties->addToTab("Kinematics", rotation);
+  connect(rotation_,SIGNAL(rotationChanged()),this,SLOT(resizeGeneralizedPosition()));
+  connect(rotation_,SIGNAL(rotationChanged()),this,SLOT(resizeGeneralizedVelocity()));
+  connect(rotation_,SIGNAL(rotationChanged()),this,SIGNAL(sizeChanged()));
  
-  ombvEditor=new OMBVBodyChoiceWidget(this);
-  widget = new ExtXMLWidget("OpenMBV body","",ombvEditor);
-  properties->addToTab("Visualisation", widget);
+  ombvEditor = new ExtXMLWidget("OpenMBV body","",new OMBVBodyChoiceWidget(this));
+  properties->addToTab("Visualisation", ombvEditor);
 
   QAction *action=new QAction(Utils::QIconCached("newobject.svg"),"Add frame", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addFrame()));
@@ -128,108 +122,108 @@ void RigidBody::resizeGeneralizedVelocity() {
 }
 
 void RigidBody::initializeUsingXML(TiXmlElement *element) {
-    TiXmlElement *e;
+  TiXmlElement *e;
 
-    // frames
-    e=element->FirstChildElement(MBSIMNS"frames")->FirstChildElement();
-    while(e && e->ValueStr()==MBSIMNS"frame") {
-      TiXmlElement *ec=e->FirstChildElement();
-      Frame *f=new Frame(ec->Attribute("name"), frames, -1);
-      f->initializeUsingXML(ec);
-      e=e->NextSiblingElement();
-    }
+  // frames
+  e=element->FirstChildElement(MBSIMNS"frames")->FirstChildElement();
+  while(e && e->ValueStr()==MBSIMNS"frame") {
+    TiXmlElement *ec=e->FirstChildElement();
+    Frame *f=new Frame(ec->Attribute("name"), frames, -1);
+    f->initializeUsingXML(ec);
+    e=e->NextSiblingElement();
+  }
 
-    framePos->initializeUsingXML(element->FirstChildElement(MBSIMNS"frames"));
+  framePos->initializeUsingXML(element->FirstChildElement(MBSIMNS"frames"));
 
-    // contours
-    e=element->FirstChildElement(MBSIMNS"contours")->FirstChildElement();
-    while(e && e->ValueStr()==MBSIMNS"contour") {
-//      TiXmlElement *ec=e->FirstChildElement();
-//      Contour *c=ObjectFactory::getInstance()->createContour(ec);
-//      TiXmlElement *contourElement=ec; // save for later initialization
-//      ec=ec->NextSiblingElement();
-//      string refF="C";
-//      if(ec->ValueStr()==MBSIMNS"frameOfReference") {
-//        refF=ec->Attribute("ref");
-//        refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
-//        ec=ec->NextSiblingElement();
-//      }
-//      Vec3 RrRC=getVec3(ec);
-//      ec=ec->NextSiblingElement();
-//      SqrMat3 ARC=getSqrMat3(ec);
-//      addContour(c, RrRC, ARC, refF);
-//      c->initializeUsingXML(contourElement);
-      e=e->NextSiblingElement();
-    }
+  // contours
+  e=element->FirstChildElement(MBSIMNS"contours")->FirstChildElement();
+  while(e && e->ValueStr()==MBSIMNS"contour") {
+    //      TiXmlElement *ec=e->FirstChildElement();
+    //      Contour *c=ObjectFactory::getInstance()->createContour(ec);
+    //      TiXmlElement *contourElement=ec; // save for later initialization
+    //      ec=ec->NextSiblingElement();
+    //      string refF="C";
+    //      if(ec->ValueStr()==MBSIMNS"frameOfReference") {
+    //        refF=ec->Attribute("ref");
+    //        refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
+    //        ec=ec->NextSiblingElement();
+    //      }
+    //      Vec3 RrRC=getVec3(ec);
+    //      ec=ec->NextSiblingElement();
+    //      SqrMat3 ARC=getSqrMat3(ec);
+    //      addContour(c, RrRC, ARC, refF);
+    //      c->initializeUsingXML(contourElement);
+    e=e->NextSiblingElement();
+  }
 
-    frameOfReference->initializeUsingXML(element);
+  frameOfReference->initializeUsingXML(element);
 
-    frameForKinematics->initializeUsingXML(element);
+  frameForKinematics->initializeUsingXML(element);
 
-    mass->initializeUsingXML(element);
-    inertia->initializeUsingXML(element);
+  mass->initializeUsingXML(element);
+  inertia->initializeUsingXML(element);
 
-    translation->initializeUsingXML(element);
-    rotation->initializeUsingXML(element);
-    
-//    // BEGIN The following elements are rarly used. That is why they are optional
-//    e=element->FirstChildElement(MBSIMNS"jacobianOfTranslation");
-//    if(e) {
-//      Jacobian *jac=ObjectFactory::getInstance()->createJacobian(e->FirstChildElement());
-//      setJacobianOfTranslation(jac);
-//      jac->initializeUsingXML(e->FirstChildElement());
-//    }
-//    e=element->FirstChildElement(MBSIMNS"jacobianOfRotation");
-//    if(e) {
-//      Jacobian *jac=ObjectFactory::getInstance()->createJacobian(e->FirstChildElement());
-//      setJacobianOfRotation(jac);
-//      jac->initializeUsingXML(e->FirstChildElement());
-//    }
-//    e=element->FirstChildElement(MBSIMNS"derivativeOfJacobianOfTranslation");
-//    if(e) {
-//      Function3<Mat3V,Vec,Vec,double> *f=ObjectFactory::getInstance()->createFunction3_MVVS(e->FirstChildElement());
-//      setDerivativeOfJacobianOfTranslation(f);
-//      f->initializeUsingXML(e->FirstChildElement());
-//    }
-//    e=element->FirstChildElement(MBSIMNS"derivativeOfJacobianOfRotation");
-//    if(e) {
-//      Function3<Mat3V,Vec,Vec,double> *f=ObjectFactory::getInstance()->createFunction3_MVVS(e->FirstChildElement());
-//      setDerivativeOfJacobianOfRotation(f);
-//      f->initializeUsingXML(e->FirstChildElement());
-//    }
-//    e=element->FirstChildElement(MBSIMNS"guidingVelocityOfTranslation");
-//    if(e) {
-//      Function1<Vec3,double> *f=ObjectFactory::getInstance()->createFunction1_V3S(e->FirstChildElement());
-//      setGuidingVelocityOfTranslation(f);
-//      f->initializeUsingXML(e->FirstChildElement());
-//    }
-//    e=element->FirstChildElement(MBSIMNS"guidingVelocityOfRotation");
-//    if(e) {
-//      Function1<Vec3,double> *f=ObjectFactory::getInstance()->createFunction1_V3S(e->FirstChildElement());
-//      setGuidingVelocityOfRotation(f);
-//      f->initializeUsingXML(e->FirstChildElement());
-//    }
-//    e=element->FirstChildElement(MBSIMNS"derivativeOfGuidingVelocityOfTranslation");
-//    if(e) {
-//      Function1<Vec3,double> *f=ObjectFactory::getInstance()->createFunction1_V3S(e->FirstChildElement());
-//      setDerivativeOfGuidingVelocityOfTranslation(f);
-//      f->initializeUsingXML(e->FirstChildElement());
-//    }
-//    e=element->FirstChildElement(MBSIMNS"derivativeOfGuidingVelocityOfRotation");
-//    if(e) {
-//      Function1<Vec3,double> *f=ObjectFactory::getInstance()->createFunction1_V3S(e->FirstChildElement());
-//      setDerivativeOfGuidingVelocityOfRotation(f);
-//      f->initializeUsingXML(e->FirstChildElement());
-//    }
-//    // END
+  translation->initializeUsingXML(element);
+  rotation->initializeUsingXML(element);
 
-    ombvEditor->initializeUsingXML(element);
+  //    // BEGIN The following elements are rarly used. That is why they are optional
+  //    e=element->FirstChildElement(MBSIMNS"jacobianOfTranslation");
+  //    if(e) {
+  //      Jacobian *jac=ObjectFactory::getInstance()->createJacobian(e->FirstChildElement());
+  //      setJacobianOfTranslation(jac);
+  //      jac->initializeUsingXML(e->FirstChildElement());
+  //    }
+  //    e=element->FirstChildElement(MBSIMNS"jacobianOfRotation");
+  //    if(e) {
+  //      Jacobian *jac=ObjectFactory::getInstance()->createJacobian(e->FirstChildElement());
+  //      setJacobianOfRotation(jac);
+  //      jac->initializeUsingXML(e->FirstChildElement());
+  //    }
+  //    e=element->FirstChildElement(MBSIMNS"derivativeOfJacobianOfTranslation");
+  //    if(e) {
+  //      Function3<Mat3V,Vec,Vec,double> *f=ObjectFactory::getInstance()->createFunction3_MVVS(e->FirstChildElement());
+  //      setDerivativeOfJacobianOfTranslation(f);
+  //      f->initializeUsingXML(e->FirstChildElement());
+  //    }
+  //    e=element->FirstChildElement(MBSIMNS"derivativeOfJacobianOfRotation");
+  //    if(e) {
+  //      Function3<Mat3V,Vec,Vec,double> *f=ObjectFactory::getInstance()->createFunction3_MVVS(e->FirstChildElement());
+  //      setDerivativeOfJacobianOfRotation(f);
+  //      f->initializeUsingXML(e->FirstChildElement());
+  //    }
+  //    e=element->FirstChildElement(MBSIMNS"guidingVelocityOfTranslation");
+  //    if(e) {
+  //      Function1<Vec3,double> *f=ObjectFactory::getInstance()->createFunction1_V3S(e->FirstChildElement());
+  //      setGuidingVelocityOfTranslation(f);
+  //      f->initializeUsingXML(e->FirstChildElement());
+  //    }
+  //    e=element->FirstChildElement(MBSIMNS"guidingVelocityOfRotation");
+  //    if(e) {
+  //      Function1<Vec3,double> *f=ObjectFactory::getInstance()->createFunction1_V3S(e->FirstChildElement());
+  //      setGuidingVelocityOfRotation(f);
+  //      f->initializeUsingXML(e->FirstChildElement());
+  //    }
+  //    e=element->FirstChildElement(MBSIMNS"derivativeOfGuidingVelocityOfTranslation");
+  //    if(e) {
+  //      Function1<Vec3,double> *f=ObjectFactory::getInstance()->createFunction1_V3S(e->FirstChildElement());
+  //      setDerivativeOfGuidingVelocityOfTranslation(f);
+  //      f->initializeUsingXML(e->FirstChildElement());
+  //    }
+  //    e=element->FirstChildElement(MBSIMNS"derivativeOfGuidingVelocityOfRotation");
+  //    if(e) {
+  //      Function1<Vec3,double> *f=ObjectFactory::getInstance()->createFunction1_V3S(e->FirstChildElement());
+  //      setDerivativeOfGuidingVelocityOfRotation(f);
+  //      f->initializeUsingXML(e->FirstChildElement());
+  //    }
+  //    // END
 
-    e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameC");
-    if(e)
-      getFrame(0)->initializeUsingXML2(e);
+  ombvEditor->initializeUsingXML(element);
 
-    Body::initializeUsingXML(element);
+  e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameC");
+  if(e)
+    getFrame(0)->initializeUsingXML2(e);
+
+  Body::initializeUsingXML(element);
 }
 
 TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
@@ -239,10 +233,10 @@ TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
   frameOfReference->writeXMLFile(ele0);
 
   frameForKinematics->writeXMLFile(ele0);
-  
+
   mass->writeXMLFile(ele0);
   inertia->writeXMLFile(ele0);
-  
+
   translation->writeXMLFile(ele0);
   rotation->writeXMLFile(ele0);
 
@@ -250,20 +244,19 @@ TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
   framePos->writeXMLFile(ele1);
   ele0->LinkEndChild( ele1 );
 
-  
-      ele1 = new TiXmlElement( MBSIMNS"contours" );
- //     for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i) 
- //       (*i)->writeXMLFile(ele1);
-      ele0->LinkEndChild( ele1 );
-  
-      ombvEditor->writeXMLFile(ele0);
-  
-      Frame *C = getFrame(0);
-      if(C->openMBVFrame()) {
-        ele1 = new TiXmlElement( MBSIMNS"enableOpenMBVFrameC" );
-        C->writeXMLFile2(ele1);
-        ele0->LinkEndChild(ele1);
-      }
-  
+  ele1 = new TiXmlElement( MBSIMNS"contours" );
+  //     for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i) 
+  //       (*i)->writeXMLFile(ele1);
+  ele0->LinkEndChild( ele1 );
+
+  ombvEditor->writeXMLFile(ele0);
+
+  Frame *C = getFrame(0);
+  if(C->openMBVFrame()) {
+    ele1 = new TiXmlElement( MBSIMNS"enableOpenMBVFrameC" );
+    C->writeXMLFile2(ele1);
+    ele0->LinkEndChild(ele1);
+  }
+
   return ele0;
 }

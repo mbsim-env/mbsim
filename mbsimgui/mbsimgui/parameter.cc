@@ -39,9 +39,8 @@ Parameter::Parameter(const QString &str, QTreeWidgetItem *parentItem, int ind) :
   properties=new PropertyDialog(this);
   properties->addTab("General");
 
-  name = new ParameterNameWidget(this);
-  ExtXMLWidget *widget = new ExtXMLWidget("Name","",name);
-  properties->addToTab("General", widget);
+  name = new ExtXMLWidget("Name","",new ParameterNameWidget(this));
+  properties->addToTab("General", name);
 
   contextMenu=new QMenu("Context Menu");
 
@@ -111,16 +110,16 @@ void Parameter::updateTreeWidgetItem(const QString &str) {
 
 DoubleParameter::DoubleParameter(const QString &str, QTreeWidgetItem *parentItem, int ind) : Parameter(str,parentItem,ind) {
 
-  value = new ParameterValueWidget(new PhysicalStringWidget(new SScalarWidget("1"),PVNS"scalarParameter",QStringList(),0));
-  ExtXMLWidget *widget = new ExtXMLWidget("Value","",value);
-  properties->addToTab("General", widget);
-  connect(value,SIGNAL(parameterChanged(const QString&)),this,SIGNAL(parameterChanged(const QString&)));
+  ParameterValueWidget *value_ = new ParameterValueWidget(new PhysicalStringWidget(new SScalarWidget("1"),PVNS"scalarParameter",QStringList(),0));
+  value = new ExtXMLWidget("Value","",value_);
+  properties->addToTab("General", value);
+  connect(value_,SIGNAL(parameterChanged(const QString&)),this,SIGNAL(parameterChanged(const QString&)));
 
   properties->addStretch();
 }
 
 void DoubleParameter::initializeUsingXML(TiXmlElement *element) {
-  ParameterValueWidget *val = (ParameterValueWidget*)value;
+  ParameterValueWidget *val = (ParameterValueWidget*)value->getWidget();
   val->getExtPhysicalWidget()->initializeUsingXML(element);
   TiXmlText *text = dynamic_cast<TiXmlText*>(element->FirstChild());
     if(text) {

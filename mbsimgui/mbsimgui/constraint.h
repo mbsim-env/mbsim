@@ -44,7 +44,7 @@ class JointConstraint : public Constraint {
     virtual QString getType() const { return "JointConstraint"; }
 
   protected:
-    XMLWidget *force, *moment, *connections, *independentBody, *dependentBodiesFirstSide, *dependentBodiesSecondSide;
+    ExtXMLWidget *force, *moment, *connections, *independentBody, *dependentBodiesFirstSide, *dependentBodiesSecondSide;
 
     void resizeGeneralizedPosition();
 };
