@@ -82,6 +82,29 @@ void touch(const string &filename) {
   f.close();
 }
 
+string getInstallPath() {
+  // get path of this executable
+  static char exePath[4096]="";
+  if(strcmp(exePath, "")!=0) return string(exePath)+"/..";
+
+#ifdef _WIN32 // Windows
+  GetModuleFileName(NULL, exePath, sizeof(exePath));
+  for(size_t i=0; i<strlen(exePath); i++) if(exePath[i]=='\\') exePath[i]='/'; // convert '\' to '/'
+  *strrchr(exePath, '/')=0; // remove the program name
+#else // Linux
+#ifdef DEVELOPER_HACK_EXEPATH
+  // use hardcoded exePath
+  strcpy(exePath, DEVELOPER_HACK_EXEPATH);
+#else
+  int exePathLength=readlink("/proc/self/exe", exePath, sizeof(exePath)); // get abs path to this executable
+  exePath[exePathLength]=0; // null terminate
+  *strrchr(exePath, '/')=0; // remove the program name
+#endif
+#endif
+
+  return string(exePath)+"/..";
+}
+
 int main(int argc, char *argv[]) {
   // convert args to c++
   list<string> arg;
@@ -121,17 +144,10 @@ int main(int argc, char *argv[]) {
   }
 
   // get path of this executable
-  char exePath[4096];
   string EXEEXT;
 #ifdef MBSIMXML_MINGW // Windows
-  GetModuleFileName(NULL, exePath, sizeof(exePath));
-  for(size_t i=0; i<strlen(exePath); i++) if(exePath[i]=='\\') exePath[i]='/'; // convert '\' to '/'
-  *strrchr(exePath, '/')=0; // remove the program name
   EXEEXT=".exe";
 #else // Linux
-  int exePathLength=readlink("/proc/self/exe", exePath, sizeof(exePath)); // get abs path to this executable
-  exePath[exePathLength]=0; // null terminate
-  *strrchr(exePath, '/')=0; // remove the program name
   EXEEXT="";
 #endif
 
@@ -142,13 +158,13 @@ int main(int argc, char *argv[]) {
   struct stat st;
   char *env;
   MBXMLUTILSBIN=MBXMLUTILSBIN_DEFAULT; // default: from build configuration
-  if(stat((MBXMLUTILSBIN+"/mbxmlutilspp"+EXEEXT).c_str(), &st)!=0) MBXMLUTILSBIN=exePath; // use rel path if build configuration dose not work
+  if(stat((MBXMLUTILSBIN+"/mbxmlutilspp"+EXEEXT).c_str(), &st)!=0) MBXMLUTILSBIN=getInstallPath()+"/bin"; // use rel path if build configuration dose not work
   if((env=getenv("MBXMLUTILSBINDIR"))) MBXMLUTILSBIN=env; // overwrite with envvar if exist
   MBXMLUTILSSCHEMA=MBXMLUTILSSCHEMA_DEFAULT; // default: from build configuration
-  if(stat((MBXMLUTILSSCHEMA+"/http___mbsim_berlios_de_MBSimXML/mbsimxml.xsd").c_str(), &st)!=0) MBXMLUTILSSCHEMA=string(exePath)+"/../share/mbxmlutils/schema"; // use rel path if build configuration dose not work
+  if(stat((MBXMLUTILSSCHEMA+"/http___mbsim_berlios_de_MBSimXML/mbsimxml.xsd").c_str(), &st)!=0) MBXMLUTILSSCHEMA=getInstallPath()+"/share/mbxmlutils/schema"; // use rel path if build configuration dose not work
   if((env=getenv("MBXMLUTILSSCHEMADIR"))) MBXMLUTILSSCHEMA=env; // overwrite with envvar if exist
   MBSIMXMLBIN=MBSIMXMLBIN_DEFAULT; // default: from build configuration
-  if(stat((MBSIMXMLBIN+"/mbsimflatxml"+EXEEXT).c_str(), &st)!=0) MBSIMXMLBIN=exePath; // use rel path if build configuration dose not work
+  if(stat((MBSIMXMLBIN+"/mbsimflatxml"+EXEEXT).c_str(), &st)!=0) MBSIMXMLBIN=getInstallPath()+"/bin"; // use rel path if build configuration dose not work
   if((env=getenv("MBSIMXMLBINDIR"))) MBSIMXMLBIN=env; // overwrite with envvar if exist
 
   // parse parameters
