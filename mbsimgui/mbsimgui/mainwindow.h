@@ -25,6 +25,7 @@
 #include <QGridLayout>
 #include <QComboBox>
 #include <QTreeWidgetItem>
+#include <mbxmlutils/utils.h>
 
 class QListWidget;
 class QTableWidget;
@@ -117,6 +118,7 @@ class MainWindow : public QMainWindow {
     void loadParameter(const QString &file);
   public:
     MainWindow();
+    static MBXMLUtils::OctaveEvaluator *octEval;
   public slots:
     void elementListClicked();
     void sourceListClicked();
