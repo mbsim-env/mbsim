@@ -33,8 +33,7 @@ class Joint : public Link {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     QString getType() const { return "Joint"; }
   protected:
-    ExtXMLWidget *force, *moment, *connections;
-    friend class MainWindow;
+    ExtXMLWidget *force, *moment, *connections, *forceArrow, *momentArrow;
 };
 
 #endif

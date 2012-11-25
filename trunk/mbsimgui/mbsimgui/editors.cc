@@ -2211,7 +2211,7 @@ TiXmlElement* GeneralizedImpactLawChoiceWidget::writeXMLFile(TiXmlNode *parent) 
   return 0;
 }
 
-GeneralizedForceChoiceWidget::GeneralizedForceChoiceWidget(const string &xmlName_) : xmlName(xmlName_) {
+GeneralizedForceChoiceWidget::GeneralizedForceChoiceWidget(const string &xmlName_, OMBVObjectChoiceWidget* arrow_) : xmlName(xmlName_), arrow(arrow_) {
   
   layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -2244,6 +2244,7 @@ bool GeneralizedForceChoiceWidget::initializeUsingXML(TiXmlElement *element) {
     widget->initializeUsingXML(e);
     generalizedForceLaw->initializeUsingXML(e);
     generalizedImpactLaw->initializeUsingXML(e);
+    arrow->initializeUsingXML(e);
   }
 }
 
@@ -2253,6 +2254,7 @@ TiXmlElement* GeneralizedForceChoiceWidget::writeXMLFile(TiXmlNode *parent) {
     widget->writeXMLFile(ele0);
     generalizedForceLaw->writeXMLFile(ele0);
     generalizedImpactLaw->writeXMLFile(ele0);
+    arrow->writeXMLFile(ele0);
     parent->LinkEndChild(ele0);
   }
 
