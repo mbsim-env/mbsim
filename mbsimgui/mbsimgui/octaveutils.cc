@@ -19,8 +19,8 @@
 
 #include <config.h>
 #include "octaveutils.h"
-#include "mbsimguitinyxml/tinyxml-src/tinyxml.h"
-#include "mbsimguitinyxml/tinyxml-src/tinynamespace.h"
+#include "mbxmlutilstinyxml/tinyxml.h"
+#include "mbxmlutilstinyxml/tinynamespace.h"
 #include <sys/stat.h>
 #include <unistd.h>
 #ifdef HAVE_UNORDERED_MAP

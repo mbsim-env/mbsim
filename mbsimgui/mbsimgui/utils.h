@@ -25,8 +25,8 @@
 #include <iostream>
 #include <iomanip>
 #include <limits>
-#include "mbsimguitinyxml/tinyxml-src/tinyxml.h"
-#include "mbsimguitinyxml/tinyxml-src/tinynamespace.h"
+#include "mbxmlutilstinyxml/tinyxml.h"
+#include "mbxmlutilstinyxml/tinynamespace.h"
 
 class QTreeWidgetItem;
 
