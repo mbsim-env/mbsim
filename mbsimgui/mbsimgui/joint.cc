@@ -32,14 +32,23 @@ Joint::Joint(const QString &str, QTreeWidgetItem *parentItem, int ind) : Link(st
 
   properties->addTab("Kinetics");
   //properties->addTab("Constitutive laws");
+  properties->addTab("Visualisation");
+
+  OMBVObjectChoiceWidget *FArrow = new OMBVObjectChoiceWidget(new OMBVArrowWidget,"");
+  forceArrow = new ExtXMLWidget("Force arrow",FArrow);
+  properties->addToTab("Visualisation",forceArrow);
+
+  OMBVObjectChoiceWidget *MArrow=new OMBVObjectChoiceWidget(new OMBVArrowWidget,"");
+  momentArrow = new ExtXMLWidget("Moment arrow",MArrow);
+  properties->addToTab("Visualisation",momentArrow);
 
   connections = new ExtXMLWidget("Connections",new ConnectWidget(2,this));
   properties->addToTab("Kinetics", connections);
 
-  force = new ExtXMLWidget("Force",new GeneralizedForceChoiceWidget(MBSIMNS"force"));
+  force = new ExtXMLWidget("Force",new GeneralizedForceChoiceWidget(MBSIMNS"force",FArrow));
   properties->addToTab("Kinetics", force);
 
-  moment = new ExtXMLWidget("Moment",new GeneralizedForceChoiceWidget(MBSIMNS"moment"));
+  moment = new ExtXMLWidget("Moment",new GeneralizedForceChoiceWidget(MBSIMNS"moment",MArrow));
   properties->addToTab("Kinetics", moment);
 
   properties->addStretch();

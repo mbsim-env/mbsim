@@ -1020,7 +1020,7 @@ class GeneralizedImpactLawChoiceWidget : public XMLWidget {
 class GeneralizedForceChoiceWidget : public XMLWidget {
 
   public:
-    GeneralizedForceChoiceWidget(const std::string &xmlName);
+    GeneralizedForceChoiceWidget(const std::string &xmlName, OMBVObjectChoiceWidget* arrow);
 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
@@ -1031,6 +1031,7 @@ class GeneralizedForceChoiceWidget : public XMLWidget {
     GeneralizedForceLawChoiceWidget *generalizedForceLaw;
     GeneralizedImpactLawChoiceWidget *generalizedImpactLaw;
     ExtPhysicalVarWidget *widget;
+    OMBVObjectChoiceWidget *arrow;
     std::string xmlName;
 };
 
@@ -1093,7 +1094,6 @@ class ForceChoiceWidget : public XMLWidget {
     void resizeVariables();
 
   protected:
-    QComboBox *comboBox;
     QVBoxLayout *layout;
     ExtPhysicalVarWidget *widget;
     std::string xmlName;
