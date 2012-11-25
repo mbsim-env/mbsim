@@ -92,6 +92,12 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
   weightArrow = new ExtXMLWidget("Weight arrow",new OMBVObjectChoiceWidget(new OMBVArrowWidget,MBSIMNS"openMBVWeightArrow"));
   properties->addToTab("Visualisation",weightArrow);
 
+  jointForceArrow = new ExtXMLWidget("Joint force arrow",new OMBVObjectChoiceWidget(new OMBVArrowWidget,MBSIMNS"openMBVJointForceArrow"));
+  properties->addToTab("Visualisation",jointForceArrow);
+
+  jointMomentArrow = new ExtXMLWidget("Joint moment arrow",new OMBVObjectChoiceWidget(new OMBVArrowWidget,MBSIMNS"openMBVJointMomentArrow"));
+  properties->addToTab("Visualisation",jointMomentArrow);
+
   QAction *action=new QAction(Utils::QIconCached("newobject.svg"),"Add frame", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addFrame()));
   contextMenu->insertAction(actionSaveAs,action);
@@ -228,6 +234,9 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
 
   weightArrow->initializeUsingXML(element);
 
+  jointForceArrow->initializeUsingXML(element);
+  jointMomentArrow->initializeUsingXML(element);
+
   Body::initializeUsingXML(element);
 }
 
@@ -264,6 +273,9 @@ TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
   }
 
   weightArrow->writeXMLFile(ele0);
+
+  jointForceArrow->writeXMLFile(ele0);
+  jointMomentArrow->writeXMLFile(ele0);
 
   return ele0;
 }
