@@ -862,7 +862,25 @@ namespace MBSim {
       if(!openMBVBody)
         setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
       arrow->initializeUsingXML(e->FirstChildElement());
-        setOpenMBVWeightArrow(arrow);
+      setOpenMBVWeightArrow(arrow);
+    }
+
+    e=element->FirstChildElement(MBSIMNS"openMBVJointForceArrow");
+    if(e) {
+      OpenMBV::Arrow *arrow=dynamic_cast<OpenMBV::Arrow*>(OpenMBV::ObjectFactory::createObject(e->FirstChildElement()));
+      if(!openMBVBody)
+        setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
+      arrow->initializeUsingXML(e->FirstChildElement());
+      setOpenMBVJointForceArrow(arrow);
+    }
+
+    e=element->FirstChildElement(MBSIMNS"openMBVJointMomentArrow");
+    if(e) {
+      OpenMBV::Arrow *arrow=dynamic_cast<OpenMBV::Arrow*>(OpenMBV::ObjectFactory::createObject(e->FirstChildElement()));
+      if(!openMBVBody)
+        setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
+      arrow->initializeUsingXML(e->FirstChildElement());
+      setOpenMBVJointMomentArrow(arrow);
     }
 #endif
   }
