@@ -45,7 +45,7 @@ class RigidBody : public Body {
   public slots:
     void addFrame();
   protected:
-    ExtXMLWidget *frameForKinematics, *mass, *inertia, *translation, *rotation, *frameOfReference, *framePos, *ombvEditor, *weightArrow;
+    ExtXMLWidget *frameForKinematics, *mass, *inertia, *translation, *rotation, *frameOfReference, *framePos, *ombvEditor, *weightArrow, *jointForceArrow, *jointMomentArrow;
     bool constrained;
   signals:
     void sizeChanged();
