@@ -1079,7 +1079,6 @@ class Function2ChoiceWidget : public XMLWidget {
     void resize();
 };
 
-
 class ForceChoiceWidget : public XMLWidget {
   Q_OBJECT
 

@@ -89,6 +89,9 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
   ombvEditor = new ExtXMLWidget("OpenMBV body",new OMBVBodyChoiceWidget(this));
   properties->addToTab("Visualisation", ombvEditor);
 
+  weightArrow = new ExtXMLWidget("Weight arrow",new OMBVObjectChoiceWidget(new OMBVArrowWidget,MBSIMNS"openMBVWeightArrow"));
+  properties->addToTab("Visualisation",weightArrow);
+
   QAction *action=new QAction(Utils::QIconCached("newobject.svg"),"Add frame", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addFrame()));
   contextMenu->insertAction(actionSaveAs,action);
@@ -223,6 +226,8 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
   if(e)
     getFrame(0)->initializeUsingXML2(e);
 
+  weightArrow->initializeUsingXML(element);
+
   Body::initializeUsingXML(element);
 }
 
@@ -257,6 +262,8 @@ TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
     C->writeXMLFile2(ele1);
     ele0->LinkEndChild(ele1);
   }
+
+  weightArrow->writeXMLFile(ele0);
 
   return ele0;
 }
