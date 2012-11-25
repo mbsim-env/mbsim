@@ -37,6 +37,7 @@
 #include "rigidbody.h"
 #include "parameter.h"
 #include "octaveutils.h"
+#include "mainwindow.h"
 #define OPENMBVNS_ "http://openmbv.berlios.de/OpenMBV"
 #define OPENMBVNS "{"OPENMBVNS_"}"
 
@@ -50,8 +51,8 @@ string evalOctaveExpression(const string &str) {
   if(str!="") {
     bool error = false;
     try{
-      octaveEvalRet(str);
-      ret = octaveGetRet();
+      MainWindow::octEval->octaveEvalRet(str, false);
+      ret = MainWindow::octEval->octaveGetRet();
     }
     catch (string e) {
       cout << "An exception occurred: " << e << endl;

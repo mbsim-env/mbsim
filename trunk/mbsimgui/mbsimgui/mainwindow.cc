@@ -17,7 +17,6 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <config.h>
 #include "mainwindow.h"
 #include "element.h"
 #include "integrator.h"
@@ -179,8 +178,12 @@ void FileItem::add() {
   }
 }
 
+MBXMLUtils::OctaveEvaluator *MainWindow::octEval=NULL;
+
 MainWindow::MainWindow() {
   MBSimObjectFactory::initialize();
+  octEval=new MBXMLUtils::OctaveEvaluator;
+
   digits = 10;
   saveNumeric = false;
   QMenu *MBSMenu=new QMenu("MBS", menuBar());
@@ -658,14 +661,14 @@ void MainWindow::saveParameter() {
 }
 
 void MainWindow::updateOctaveParameters() {
-  vector<Param> param;
+  vector<MBXMLUtils::OctaveEvaluator::Param> param;
   for(int i=0; i<parameterList->topLevelItemCount(); i++) {
     Parameter *p=static_cast<Parameter*>(parameterList->invisibleRootItem()->child(i));
-    param.push_back(Param(p->getName().toStdString(), toStr(p->getValue()), 0));
+    param.push_back(MBXMLUtils::OctaveEvaluator::Param(p->getName().toStdString(), toStr(p->getValue()), 0));
   }
   try {
-    currentParam.clear();
-    fillParam(param);
+    octEval->saveAndClearCurrentParam();
+    octEval->fillParam(param, false);
   }
   catch(string e) {
     cout << "An exception occurred: " << e << endl;

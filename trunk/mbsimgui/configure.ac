@@ -27,7 +27,7 @@ AC_SUBST([MOC])
 AC_SUBST([UIC])
 AC_SUBST([RCC])
 
-PKG_CHECK_MODULES(MBXMLUTILSTINYXML, [mbxmlutilstinyxml])
+PKG_CHECK_MODULES(MBXMLUTILS, [mbxmlutils])
 
 dnl Check for octave
 # user supplied mkoctfile program
