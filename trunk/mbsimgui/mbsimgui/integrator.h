@@ -22,8 +22,8 @@
 
 
 #include <QtGui/QTreeWidgetItem>
-#include "mbsimguitinyxml/tinyxml-src/tinyxml.h"
-#include "mbsimguitinyxml/tinyxml-src/tinynamespace.h"
+#include "mbxmlutilstinyxml/tinyxml.h"
+#include "mbxmlutilstinyxml/tinynamespace.h"
 #include "editors.h"
 #include "utils.h"
 #include <string>

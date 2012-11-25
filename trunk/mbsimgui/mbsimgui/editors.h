@@ -36,8 +36,8 @@
 #include <QGroupBox>
 #include <QSyntaxHighlighter>
 #include "utils.h"
-#include "mbsimguitinyxml/tinyxml-src/tinyxml.h"
-#include "mbsimguitinyxml/tinyxml-src/tinynamespace.h"
+#include "mbxmlutilstinyxml/tinyxml.h"
+#include "mbxmlutilstinyxml/tinynamespace.h"
 #include <limits>
 
 #define MBSIMNS_ "http://mbsim.berlios.de/MBSim"
