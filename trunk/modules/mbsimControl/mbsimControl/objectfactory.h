@@ -2,7 +2,7 @@
 #define _MBSIMCONTROL_OBJECTFACTORY_H_
 
 #include "mbsim/objectfactory.h"
-#include "mbsimtinyxml/tinyxml-src/tinyxml.h"
+#include "mbxmlutilstinyxml/tinyxml.h"
 
 #define MBSIMCONTROLNS_ "http://mbsim.berlios.de/MBSimControl"
 #define MBSIMCONTROLNS "{"MBSIMCONTROLNS_"}"

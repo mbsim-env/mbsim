@@ -25,8 +25,8 @@
 #include "time_stepping_ssc_integrator.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/utils/stopwatch.h"
-#include "mbsimtinyxml/tinyxml-src/tinynamespace.h"
-#include "mbsimtinyxml/tinyxml-src/tinyxml.h"
+#include "mbxmlutilstinyxml/tinynamespace.h"
+#include "mbxmlutilstinyxml/tinyxml.h"
 
 #ifdef _OPENMP
 #include <omp.h>

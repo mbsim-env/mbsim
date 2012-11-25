@@ -20,7 +20,7 @@
 #ifndef _MBSIMHYDRAULICS_ENVIRONMENT_H_
 #define _MBSIMHYDRAULICS_ENVIRONMENT_H_
 
-#include "mbsimtinyxml/tinyxml-src/tinyxml.h"
+#include "mbxmlutilstinyxml/tinyxml.h"
 #include "mbsim/environment.h"
 
 namespace MBSimHydraulics {

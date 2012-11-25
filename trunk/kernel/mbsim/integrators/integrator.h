@@ -24,7 +24,7 @@
 #define MBSIMINTNS "{"MBSIMINTNS_"}"
 
 #include<fmatvec.h>
-#include"mbsimtinyxml/tinyxml-src/tinyxml.h"
+#include"mbxmlutilstinyxml/tinyxml.h"
 #include<string>
 #include<iostream>
 

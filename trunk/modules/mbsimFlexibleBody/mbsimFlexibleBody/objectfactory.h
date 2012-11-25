@@ -21,7 +21,7 @@
 #define _MBSIMFLEXIBLEBODY_OBJECTFACTORY_H_
 
 #include "mbsim/objectfactory.h"
-#include "mbsimtinyxml/tinyxml-src/tinyxml.h"
+#include "mbxmlutilstinyxml/tinyxml.h"
 
 #define MBSIMFLEXIBLEBODYNS_ "http://mbsim.berlios.de/MBSimFlexibleBody"
 #define MBSIMFLEXIBLEBODYNS "{"MBSIMFLEXIBLEBODYNS_"}"

@@ -20,7 +20,7 @@
 #ifndef _MBSIM_ENVIRONMENT_H_
 #define _MBSIM_ENVIRONMENT_H_
 
-#include "mbsimtinyxml/tinyxml-src/tinyxml.h"
+#include "mbxmlutilstinyxml/tinyxml.h"
 #include "fmatvec.h"
 
 namespace MBSim {
