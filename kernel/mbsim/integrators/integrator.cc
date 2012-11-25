@@ -22,7 +22,7 @@
 #include "mbsim/element.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/objectfactory.h"
-#include "mbsimtinyxml/tinyxml-src/tinynamespace.h"
+#include "mbxmlutilstinyxml/tinynamespace.h"
 
 using namespace std;
 

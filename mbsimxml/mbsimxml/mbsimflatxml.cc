@@ -1,8 +1,8 @@
 #include "config.h"
 #include <stdlib.h>
 #include <iostream>
-#include "openmbvcppinterfacetinyxml/tinyxml-src/tinyxml.h"
-#include "openmbvcppinterfacetinyxml/tinyxml-src/tinynamespace.h"
+#include "mbxmlutilstinyxml/tinyxml.h"
+#include "mbxmlutilstinyxml/tinynamespace.h"
 
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/objectfactory.h"

@@ -21,7 +21,7 @@
 #define _MBSIMHYDRAULICS_OBJECTFACTORY_H_
 
 #include "mbsim/objectfactory.h"
-#include "mbsimtinyxml/tinyxml-src/tinyxml.h"
+#include "mbxmlutilstinyxml/tinyxml.h"
 #include "mbsim/utils/function.h"
 
 #define MBSIMHYDRAULICSNS_ "http://mbsim.berlios.de/MBSimHydraulics"
