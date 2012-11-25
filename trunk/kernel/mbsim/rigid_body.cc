@@ -286,6 +286,7 @@ namespace MBSim {
 
         PJR[0].set(Index(0,2), Index(nu[0]-JR.cols(),nu[0]-1),JR);
 
+        // TODO: Alle Fälle überprüfen
         if(cb) {
           if(iKinematics == 0 && dynamic_cast<DynamicSystem*>(frameOfReference->getParent())) {
             updateM_ = &RigidBody::updateMConst;
@@ -853,6 +854,15 @@ namespace MBSim {
         setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
       C->enableOpenMBV(getDouble(e->FirstChildElement(MBSIMNS"size")),
           getDouble(e->FirstChildElement(MBSIMNS"offset")));
+    }
+
+    e=element->FirstChildElement(MBSIMNS"openMBVWeightArrow");
+    if(e) {
+      OpenMBV::Arrow *arrow=dynamic_cast<OpenMBV::Arrow*>(OpenMBV::ObjectFactory::createObject(e->FirstChildElement()));
+      if(!openMBVBody)
+        setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
+      arrow->initializeUsingXML(e->FirstChildElement());
+        setOpenMBVWeightArrow(arrow);
     }
 #endif
   }
