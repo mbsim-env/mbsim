@@ -1,3 +1,3 @@
-SUBDIRS = mbsimguitinyxml mbsimgui 
+SUBDIRS = mbsimgui 
 
 

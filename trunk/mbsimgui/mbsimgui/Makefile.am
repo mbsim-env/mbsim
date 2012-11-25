@@ -10,7 +10,7 @@ LDADD = $(DEPS_LIBS)  $(QT_LIBS) $(QWT_LIBS) $(MKOCTFILE_LIBS)
 
 # mbsimgui_CPPFLAGS = -DTIXML_USE_STL $(QT_CFLAGS) $(HDF5SERIE_CFLAGS) $(QWT_CFLAGS)
 
-mbsimgui_LDFLAGS = ../mbsimguitinyxml/libmbsimguitinyxml.la $(HDF5SERIE_LIBS)
+mbsimgui_LDFLAGS = $(HDF5SERIE_LIBS) $(MBXMLUTILSTINYXML_LIBS)
 # mbsimgui_LIBDADD    = $(QT_LIBS) $(QWT_LIBS)
 
 mbsimgui_SOURCES = main.cc \

@@ -27,6 +27,8 @@ AC_SUBST([MOC])
 AC_SUBST([UIC])
 AC_SUBST([RCC])
 
+PKG_CHECK_MODULES(MBXMLUTILSTINYXML, [mbxmlutilstinyxml])
+
 dnl Check for octave
 # user supplied mkoctfile program
 AC_ARG_WITH([mkoctfile],
@@ -88,6 +90,6 @@ fi
 
 LDFLAGS="$LDFLAGS -no-undefined"
 
-AC_CONFIG_FILES([Makefile mbsimguitinyxml/Makefile mbsimgui/Makefile mbsimgui/env.h])
+AC_CONFIG_FILES([Makefile mbsimgui/Makefile mbsimgui/env.h])
 
 AC_OUTPUT
