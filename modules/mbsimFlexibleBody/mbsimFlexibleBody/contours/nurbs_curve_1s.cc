@@ -56,28 +56,6 @@ namespace MBSimFlexibleBody {
       cp.getFrameOfReference().getPosition()(2) = Tmppt.z();
     }
 
-    if(ff==normal || ff==firstTangent || ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
-      Point3Dd tangent = curveTranslations->derive3D(cp.getLagrangeParameterPosition()(0), 1);
-      tangent /= norm(tangent);
-      Point3Dd normal = curveTranslations->derive3D(cp.getLagrangeParameterPosition()(0), 2);
-      normal /= norm(normal);
-      if(dot(normalRotationGrid,normal)<0) // orientate derived normal from NURBS curve to direction of closest rotation matrix of rotation grid
-        normal *= -1.;
-      Point3Dd binormal = crossProduct(normal, tangent);
-      normal = crossProduct(tangent, binormal); // calculate normal again from cross product as second derivative is not normal to tangent
-      cp.getFrameOfReference().getOrientation()(0,0) = normal.x();
-      cp.getFrameOfReference().getOrientation()(1,0) = normal.y();
-      cp.getFrameOfReference().getOrientation()(2,0) = normal.z();
-
-      cp.getFrameOfReference().getOrientation()(0,1) = tangent.x();
-      cp.getFrameOfReference().getOrientation()(1,1) = tangent.y();
-      cp.getFrameOfReference().getOrientation()(2,1) = tangent.z();
-
-      cp.getFrameOfReference().getOrientation()(0,2) = binormal.x();
-      cp.getFrameOfReference().getOrientation()(1,2) = binormal.y();
-      cp.getFrameOfReference().getOrientation()(2,2) = binormal.z();
-    }
-
     if(ff==velocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) {
       Point3Dd Tmpv = curveVelocities->pointAt(cp.getLagrangeParameterPosition()(0));
       cp.getFrameOfReference().getVelocity()(0) = Tmpv.x();
