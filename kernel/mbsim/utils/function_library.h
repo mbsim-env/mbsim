@@ -142,10 +142,10 @@ namespace MBSim {
   class PositiveSinusFunction1_VS : public SinusFunction1_VS<fmatvec::Ref> {
     public:
       PositiveSinusFunction1_VS() {}
-      PositiveSinusFunction1_VS(fmatvec::Vec amplitude, fmatvec::Vec frequency, fmatvec::Vec phase, fmatvec::Vec offset) : SinusFunction1_VS(amplitude, frequency, phase, offset) {}
+      PositiveSinusFunction1_VS(fmatvec::Vec amplitude, fmatvec::Vec frequency, fmatvec::Vec phase, fmatvec::Vec offset) : SinusFunction1_VS<fmatvec::Ref>(amplitude, frequency, phase, offset) {}
       fmatvec::Vec operator()(const double& tVal, const void * =NULL);
       void initializeUsingXML(TiXmlElement *element) {
-        SinusFunction1_VS::initializeUsingXML(element);
+        SinusFunction1_VS<fmatvec::Ref>::initializeUsingXML(element);
       }
   };
 
@@ -186,7 +186,7 @@ namespace MBSim {
   class PeriodicTabularFunction1_VS : public TabularFunction1_VS<fmatvec::Ref,fmatvec::Ref> {
     public:
       PeriodicTabularFunction1_VS() {}
-      PeriodicTabularFunction1_VS(fmatvec::Vec x_, fmatvec::Mat y_) : TabularFunction1_VS(x_, y_) {
+      PeriodicTabularFunction1_VS(fmatvec::Vec x_, fmatvec::Mat y_) : TabularFunction1_VS<fmatvec::Ref,fmatvec::Ref>(x_, y_) {
         check();
       }
       fmatvec::Vec operator()(const double& xVal, const void * =NULL);
