@@ -82,7 +82,7 @@ namespace MBSim {
 
 
   Vec PositiveSinusFunction1_VS::operator()(const double& tVal, const void *) {
-    Vec y=SinusFunction1_VS::operator()(tVal);
+    Vec y=SinusFunction1_VS<fmatvec::Ref>::operator()(tVal);
     for (int i=0; i<ySize; i++)
       if (y(i)<0)
         y(i)=0;
@@ -122,7 +122,7 @@ namespace MBSim {
       xValTmp+=xDelta;
     while (xValTmp>xMax)
       xValTmp-=xDelta;
-    return TabularFunction1_VS::operator()(xValTmp);
+    return TabularFunction1_VS<fmatvec::Ref,fmatvec::Ref>::operator()(xValTmp);
   }
 
 
