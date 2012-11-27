@@ -75,7 +75,7 @@ AC_ARG_WITH([doxygenpath],
   [doxygenpath="$withval"],[doxygenpath=""])
 AC_PATH_PROG([doxygen],[doxygen],[no],[$doxygenpath:$PATH])
 if test $doxygen = "no" ; then
-  AC_MSG_RESULT([can't generate API documentation. 'doxygen' is required.])
+  AC_MSG_RESULT([cannot generate API documentation. 'doxygen' is required.])
 fi
 
 AC_SUBST([MBXMLUTILSSCHEMA],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
@@ -83,6 +83,11 @@ AM_CONDITIONAL([COND_XML], [test "_$MBXMLUTILSSCHEMA" != "_"])
 
 AC_SUBST([OCTAVEDIR],[$(pkg-config mbxmlutils --variable OCTAVEDIR)])
 dnl AM_CONDITIONAL([COND_XML], [test "_$MBXMLUTILSSCHEMA" != "_"])
+
+dnl Helper functions to convert path to windows
+dirtowin() {
+  echo $(cd $1 && pwd -W 2> /dev/null)
+}
 if test "_$host_os" = "_mingw32" ; then
   MBXMLUTILSSCHEMA=$(dirtowin $MBXMLUTILSSCHEMA)
   OCTAVEDIR=$(dirtowin $OCTAVEDIR)
