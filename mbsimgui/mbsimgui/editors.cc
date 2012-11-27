@@ -51,11 +51,11 @@ string evalOctaveExpression(const string &str) {
   if(str!="") {
     bool error = false;
     try{
-      MainWindow::octEval->octaveEvalRet(str, false);
+      MainWindow::octEval->octaveEvalRet(str, 0, false);
       ret = MainWindow::octEval->octaveGetRet();
     }
     catch (string e) {
-      cout << "An exception occurred: " << e << endl;
+      cout << "An exception occurred in evalOctaveExpression: " << e << endl;
     }
   }
   return ret;

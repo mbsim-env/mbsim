@@ -663,7 +663,7 @@ void MainWindow::updateOctaveParameters() {
     octEval->fillParam(param, false);
   }
   catch(string e) {
-    cout << "An exception occurred: " << e << endl;
+    cout << "An exception occurred in updateOctaveParameters: " << e << endl;
   }
 }
 
