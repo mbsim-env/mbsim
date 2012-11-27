@@ -187,7 +187,9 @@ namespace MBSimFlexibleBody {
       curve->setNormalRotationGrid(frameOfReference->getOrientation()*angle->computen(q(6*currentElementTranslation+3,6*currentElementTranslation+5))); // normal
       curve->updateKinematicsForFrame(cp,ff);
 #endif
-      Vec3 phiTmp = computeAngles(cp.getLagrangeParameterPosition()(0)); // interpolate angles linearly
+      Vec3 phiTmp;
+      if(ff==firstTangent || ff==normal || ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all)
+        phiTmp = computeAngles(cp.getLagrangeParameterPosition()(0)); // interpolate angles linearly
 
       if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(1, frameOfReference->getOrientation()*angle->computet(phiTmp)); // tangent
       if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(0, frameOfReference->getOrientation()*angle->computen(phiTmp)); // normal
@@ -448,16 +450,16 @@ namespace MBSimFlexibleBody {
   }
 
   Vec FlexibleBody1s33Cosserat::computeState(double sGlobal) {
-    double sLocalTranslation;
-    int currentElementTranslation;
-    BuildElementTranslation(sGlobal,sLocalTranslation,currentElementTranslation); // Lagrange parameter of translational element
-    Vec temp = static_cast<FiniteElement1s33CosseratTranslation*> (discretization[currentElementTranslation])->computeStateTranslation(qElement[currentElementTranslation],uElement[currentElementTranslation],sLocalTranslation); // TODO replace
-
+    Vec temp(12,INIT,0.);
     ContourPointData cp(sGlobal);
+
     updateKinematicsForFrame(cp,position);
     temp(0,2) = cp.getFrameOfReference().getPosition();
-    updateKinematicsForFrame(cp,velocity);
+    temp(3,5) = computeAngles(sGlobal);
+
+    updateKinematicsForFrame(cp,velocities);
     temp(6,8) = cp.getFrameOfReference().getVelocity();
+    temp(9,11) = cp.getFrameOfReference().getAngularVelocity();
 
     return temp.copy();
   }
