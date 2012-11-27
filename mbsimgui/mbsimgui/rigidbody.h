@@ -38,7 +38,7 @@ class RigidBody : public Body {
     QString getType() const { return "RigidBody"; }
     void setConstrained(bool b) {constrained = b;}
     int getSize() const {return constrained ? 0 : getUnconstrainedSize();}
-    int getUnconstrainedSize() const {return ((TranslationChoiceWidget*)translation->getWidget())->getSize() + ((RotationChoiceWidget*)rotation->getWidget())->getSize();}
+    int getUnconstrainedSize() const {return (translation->isActive()?((TranslationChoiceWidget*)translation->getWidget())->getSize():0) + (rotation->isActive()?((RotationChoiceWidget*)rotation->getWidget())->getSize():0);}
     void resizeGeneralizedPosition();
     void resizeGeneralizedVelocity();
 
@@ -47,8 +47,6 @@ class RigidBody : public Body {
   protected:
     ExtXMLWidget *frameForKinematics, *mass, *inertia, *translation, *rotation, *frameOfReference, *framePos, *ombvEditor, *weightArrow, *jointForceArrow, *jointMomentArrow;
     bool constrained;
-  signals:
-    void sizeChanged();
 };
 
 #endif

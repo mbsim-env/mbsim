@@ -34,15 +34,17 @@ class Object : public Element {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual Element* getByPathSearch(std::string path);
-  public slots:
-    void update();
     virtual void resizeGeneralizedPosition() {}
     virtual void resizeGeneralizedVelocity() {}
-    virtual void resizeVariables() {resizeGeneralizedPosition();resizeGeneralizedVelocity();}
+  public slots:
+    void update();
+    virtual void resizeVariables() {resizeGeneralizedPosition();resizeGeneralizedVelocity();emit sizeChanged();}
   protected:
     QAction *actionSaveAs;
     ExtXMLWidget *initialGeneralizedPosition, *initialGeneralizedVelocity;
     SVecWidget *q0, *u0;
+  signals:
+    void sizeChanged();
 
 };
 

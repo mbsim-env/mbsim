@@ -43,12 +43,12 @@ JointConstraint::JointConstraint(const QString &str, QTreeWidgetItem *parentItem
   DependenciesWidget *dependentBodiesFirstSide_ = new DependenciesWidget(MBSIMNS"dependentRigidBodiesFirstSide",this);
   dependentBodiesFirstSide = new ExtXMLWidget("Dependendent bodies first side",dependentBodiesFirstSide_);
   properties->addToTab("General", dependentBodiesFirstSide);
-  connect(dependentBodiesFirstSide_,SIGNAL(bodyChanged()),this,SLOT(resizeGeneralizedPosition()));
+  connect(dependentBodiesFirstSide_,SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
 
   DependenciesWidget *dependentBodiesSecondSide_ = new DependenciesWidget(MBSIMNS"dependentRigidBodiesSecondSide",this);
   dependentBodiesSecondSide = new ExtXMLWidget("Dependendent bodies second side",dependentBodiesSecondSide_);
   properties->addToTab("General", dependentBodiesSecondSide);
-  connect(dependentBodiesSecondSide_,SIGNAL(bodyChanged()),this,SLOT(resizeGeneralizedPosition()));
+  connect(dependentBodiesSecondSide_,SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
 
   connections = new ExtXMLWidget("Connections",new ConnectWidget(2,this));
   properties->addToTab("Kinetics", connections);
