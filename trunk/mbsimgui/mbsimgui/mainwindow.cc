@@ -221,7 +221,6 @@ MainWindow::MainWindow() {
   submenu->addAction(action);
   menuBar()->addMenu(parameterMenu);
 
-  // help menu
   menuBar()->addSeparator();
   QMenu *helpMenu=new QMenu("Help", menuBar());
   helpMenu->addAction("GUI Help...", this, SLOT(help()));
@@ -247,23 +246,12 @@ MainWindow::MainWindow() {
   connect(action,SIGNAL(triggered()),this,SLOT(resizeVariables()));
   toolBar->addAction(action);
 
-  // title
   setWindowTitle("MBSim GUI");
   QGridLayout* mainlayout = new QGridLayout;
 
   centralWidget = new QWidget;  
   setCentralWidget(centralWidget);
   centralWidget->setLayout(mainlayout);
-
-
-  QWidget* dummy=new QWidget(this);
-  QVBoxLayout* layout=new QVBoxLayout(this);
-  dummy->setLayout(layout);
-
-//  QDockWidget *elementListDW=new QDockWidget("Model",this);
-//  addDockWidget(Qt::LeftDockWidgetArea,elementListDW);
-  QSplitter *splitter = new QSplitter;
-//  elementListDW->setWidget(splitter);
 
   elementList = new QTreeWidget;
   elementList->setColumnCount(2);
@@ -296,7 +284,10 @@ MainWindow::MainWindow() {
   connect(sourceList,SIGNAL(pressed(QModelIndex)), this, SLOT(sourceListClicked()));
   connect(sourceList,SIGNAL(doubleClicked(QModelIndex)), this, SLOT(sourceListDoubleClicked()));
 
-  QGroupBox *box = new QGroupBox("MBS");
+  QDockWidget *dockWidget = new QDockWidget("MBS");
+  addDockWidget(Qt::LeftDockWidgetArea,dockWidget);
+  QWidget *box = new QWidget;
+  dockWidget->setWidget(box);
   QGridLayout* gl = new QGridLayout;
   box->setLayout(gl);
   fileMBS = new QLineEdit("");
@@ -304,8 +295,11 @@ MainWindow::MainWindow() {
   gl->addWidget(new QLabel("File:"),0,0);
   gl->addWidget(fileMBS,0,1);
   gl->addWidget(elementList,1,0,1,2);
-  layout->addWidget(box);
-  box = new QGroupBox("Integrator");
+
+  dockWidget = new QDockWidget("Integrator");
+  addDockWidget(Qt::LeftDockWidgetArea,dockWidget);
+  box = new QWidget;
+  dockWidget->setWidget(box);
   gl = new QGridLayout;
   box->setLayout(gl);
   fileIntegrator = new QLineEdit("");
@@ -313,8 +307,11 @@ MainWindow::MainWindow() {
   gl->addWidget(new QLabel("File:"),0,0);
   gl->addWidget(fileIntegrator,0,1);
   gl->addWidget(integratorList,1,0,1,2);
-  layout->addWidget(box);
-  box = new QGroupBox("Parameter");
+
+  dockWidget = new QDockWidget("Parameter");
+  addDockWidget(Qt::LeftDockWidgetArea,dockWidget);
+  box = new QWidget;
+  dockWidget->setWidget(box);
   gl = new QGridLayout;
   box->setLayout(gl);
   fileParameter = new QLineEdit("");
@@ -322,13 +319,8 @@ MainWindow::MainWindow() {
   gl->addWidget(new QLabel("File:"),0,0);
   gl->addWidget(fileParameter,0,1);
   gl->addWidget(parameterList,1,0,1,2);
-  layout->addWidget(box);
 
-  splitter->addWidget(dummy);
-  splitter->addWidget(pagesWidget);
-
-  mainlayout->addWidget(splitter,0,0);
-  pagesWidget->resize(800,768);
+  mainlayout->addWidget(pagesWidget,0,0);
 
   newMBS();
   newDOPRI5Integrator();
