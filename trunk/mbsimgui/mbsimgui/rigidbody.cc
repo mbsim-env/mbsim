@@ -72,30 +72,37 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
   framePos = new ExtXMLWidget("Position and orientation of frames",new FramePositionsWidget(this));
   properties->addToTab("Frame positioning", framePos);
   
-  TranslationChoiceWidget *translation_ = new TranslationChoiceWidget;
-  translation = new ExtXMLWidget("Translation",translation_);
+  TranslationChoiceWidget *translation_ = new TranslationChoiceWidget("");
+  translation = new ExtXMLWidget("Translation",translation_,true);
+  translation->setXMLName(MBSIMNS"translation");
   properties->addToTab("Kinematics", translation);
-  connect(translation_,SIGNAL(translationChanged()),this,SLOT(resizeGeneralizedPosition()));
-  connect(translation_,SIGNAL(translationChanged()),this,SLOT(resizeGeneralizedVelocity()));
-  connect(translation_,SIGNAL(translationChanged()),this,SIGNAL(sizeChanged()));
+  connect(translation_,SIGNAL(translationChanged()),this,SLOT(resizeVariables()));
+  //connect(translation_,SIGNAL(translationChanged()),this,SLOT(resizeGeneralizedVelocity()));
+  //connect(translation,SIGNAL(resize()),this,SLOT(resizeGeneralizedPosition()));
+  connect(translation,SIGNAL(resize()),this,SLOT(resizeVariables()));
 
-  RotationChoiceWidget *rotation_ = new RotationChoiceWidget;
-  rotation = new ExtXMLWidget("Rotation",rotation_);
+  RotationChoiceWidget *rotation_ = new RotationChoiceWidget("");
+  rotation = new ExtXMLWidget("Rotation",rotation_,true);
+  rotation->setXMLName(MBSIMNS"rotation");
   properties->addToTab("Kinematics", rotation);
-  connect(rotation_,SIGNAL(rotationChanged()),this,SLOT(resizeGeneralizedPosition()));
-  connect(rotation_,SIGNAL(rotationChanged()),this,SLOT(resizeGeneralizedVelocity()));
-  connect(rotation_,SIGNAL(rotationChanged()),this,SIGNAL(sizeChanged()));
+  connect(rotation_,SIGNAL(rotationChanged()),this,SLOT(resizeVariables()));
+//  connect(rotation_,SIGNAL(rotationChanged()),this,SLOT(resizeGeneralizedVelocity()));
+//  connect(rotation,SIGNAL(resize()),this,SLOT(resizeGeneralizedPosition()));
+  connect(rotation,SIGNAL(resize()),this,SLOT(resizeVariables()));
  
-  ombvEditor = new ExtXMLWidget("OpenMBV body",new OMBVBodyChoiceWidget(this));
+  ombvEditor = new ExtXMLWidget("OpenMBV body",new OMBVBodyChoiceWidget(this),true);
   properties->addToTab("Visualisation", ombvEditor);
 
-  weightArrow = new ExtXMLWidget("Weight arrow",new OMBVObjectChoiceWidget(new OMBVArrowWidget,MBSIMNS"openMBVWeightArrow"));
+  weightArrow = new ExtXMLWidget("OpenMBV weight arrow",new OMBVArrowWidget,true);
+  weightArrow->setXMLName(MBSIMNS"openMBVWeightArrow",false);
   properties->addToTab("Visualisation",weightArrow);
 
-  jointForceArrow = new ExtXMLWidget("Joint force arrow",new OMBVObjectChoiceWidget(new OMBVArrowWidget,MBSIMNS"openMBVJointForceArrow"));
+  jointForceArrow = new ExtXMLWidget("OpenMBV joint force arrow",new OMBVArrowWidget,true);
+  jointForceArrow->setXMLName(MBSIMNS"openMBVJointForceArrow",false);
   properties->addToTab("Visualisation",jointForceArrow);
 
-  jointMomentArrow = new ExtXMLWidget("Joint moment arrow",new OMBVObjectChoiceWidget(new OMBVArrowWidget,MBSIMNS"openMBVJointMomentArrow"));
+  jointMomentArrow = new ExtXMLWidget("OpenMBV joint moment arrow",new OMBVArrowWidget,true);
+  jointMomentArrow->setXMLName(MBSIMNS"openMBVJointMomentArrow",false);
   properties->addToTab("Visualisation",jointMomentArrow);
 
   QAction *action=new QAction(Utils::QIconCached("newobject.svg"),"Add frame", this);

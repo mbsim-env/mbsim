@@ -34,7 +34,7 @@ Object::Object(const QString &str, QTreeWidgetItem *parentItem, int ind) : Eleme
   ExtPhysicalVarWidget *var = new ExtPhysicalVarWidget(input);  
   initialGeneralizedPosition = new ExtXMLWidget("Initial generalized position",var,true);
   properties->addToTab("Initial conditions", initialGeneralizedPosition);
-  connect(initialGeneralizedPosition,SIGNAL(resize()),this,SLOT(resizeGeneralizedPosition()));
+  //connect(initialGeneralizedPosition,SIGNAL(resize()),this,SLOT(resizeVariables()));
 
   input.clear();
   u0 = new SVecWidget(0);
@@ -42,7 +42,7 @@ Object::Object(const QString &str, QTreeWidgetItem *parentItem, int ind) : Eleme
   var = new ExtPhysicalVarWidget(input);  
   initialGeneralizedVelocity = new ExtXMLWidget("Initial generalized velocity",var,true);
   properties->addToTab("Initial conditions", initialGeneralizedVelocity);
-  connect(initialGeneralizedVelocity,SIGNAL(resize()),this,SLOT(resizeGeneralizedVelocity()));
+  //connect(initialGeneralizedVelocity,SIGNAL(resize()),this,SLOT(resizeVariables()));
 
   actionSaveAs=new QAction(Utils::QIconCached("newobject.svg"),"Save as", this);
   connect(actionSaveAs,SIGNAL(triggered()),this,SLOT(saveAs()));

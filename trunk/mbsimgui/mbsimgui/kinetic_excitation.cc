@@ -34,23 +34,21 @@ KineticExcitation::KineticExcitation(const QString &str, QTreeWidgetItem *parent
   //properties->addTab("Constitutive laws");
   properties->addTab("Visualisation");
 
-  OMBVObjectChoiceWidget *FArrow = new OMBVObjectChoiceWidget(new OMBVArrowWidget,"");
-  forceArrow = new ExtXMLWidget("Force arrow",FArrow);
+  forceArrow = new ExtXMLWidget("OpenMBV force arrow",new OMBVArrowWidget,true);
   properties->addToTab("Visualisation",forceArrow);
 
-  OMBVObjectChoiceWidget *MArrow=new OMBVObjectChoiceWidget(new OMBVArrowWidget,"");
-  momentArrow = new ExtXMLWidget("Moment arrow",MArrow);
+  momentArrow = new ExtXMLWidget("OpenMBV moment arrow",new OMBVArrowWidget,true);
   properties->addToTab("Visualisation",momentArrow);
 
   connections = new ExtXMLWidget("Connections",new ConnectWidget(1,this));
   properties->addToTab("Kinetics",connections);
 
-  ForceChoiceWidget *f = new ForceChoiceWidget(MBSIMNS"force", FArrow);
-  force = new ExtXMLWidget("Force",f);
+  ForceChoiceWidget *f = new ForceChoiceWidget(MBSIMNS"force", forceArrow);
+  force = new ExtXMLWidget("Force",f,true);
   properties->addToTab("Kinetics",force);
 
-  ForceChoiceWidget *m = new ForceChoiceWidget(MBSIMNS"moment", MArrow);
-  moment = new ExtXMLWidget("Moment",m);
+  ForceChoiceWidget *m = new ForceChoiceWidget(MBSIMNS"moment", momentArrow);
+  moment = new ExtXMLWidget("Moment",m,true);
   properties->addToTab("Kinetics",moment);
 
   FrameOfReferenceWidget* ref = new FrameOfReferenceWidget(MBSIMNS"frameOfReference",this,0);

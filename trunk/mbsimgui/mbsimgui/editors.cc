@@ -1237,25 +1237,26 @@ TiXmlElement* LinearTranslation::writeXMLFile(TiXmlNode *parent) {
   return ele2;
 }
 
-TranslationChoiceWidget::TranslationChoiceWidget() : translation(0) {
+TranslationChoiceWidget::TranslationChoiceWidget(const string &xmlName_) : translation(0), xmlName(xmlName_) {
   layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
   comboBox = new QComboBox;
-  comboBox->addItem(tr("None"));
+  //comboBox->addItem(tr("None"));
   comboBox->addItem(tr("LinearTranslation"));
   layout->addWidget(comboBox);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineTranslation(int)));
+  defineTranslation(0);
 }
 
 void TranslationChoiceWidget::defineTranslation(int index) {
+//  if(index==0) {
+//    layout->removeWidget(translation);
+//    delete translation;
+//    translation = 0;
+//  } 
   if(index==0) {
-    layout->removeWidget(translation);
-    delete translation;
-    translation = 0;
-  } 
-  else if(index==1) {
     translation = new LinearTranslation;  
     connect((LinearTranslation*)translation, SIGNAL(translationChanged()), this, SIGNAL(translationChanged()));
   layout->addWidget(translation);
@@ -1264,20 +1265,29 @@ void TranslationChoiceWidget::defineTranslation(int index) {
 }
 
 bool TranslationChoiceWidget::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=element->FirstChildElement(MBSIMNS"translation");
-  TiXmlElement *e1 = e->FirstChildElement();
-  if(e1 && e1->ValueStr() == MBSIMNS"LinearTranslation") {
-    comboBox->setCurrentIndex(1);
-    translation->initializeUsingXML(e1);
+  TiXmlElement *e=(xmlName=="")?element:element->FirstChildElement(xmlName);
+  if(e) {
+    TiXmlElement* ee=e->FirstChildElement();
+    if(ee) {
+      if(ee->ValueStr() == MBSIMNS"LinearTranslation")
+        comboBox->setCurrentIndex(0);
+      translation->initializeUsingXML(ee);
+      return true;
+    }
   }
+  return false;
 }
 
 TiXmlElement* TranslationChoiceWidget::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"translation" );
-  if(getTranslation()==1) {
+  if(xmlName!="") {
+    TiXmlElement *ele0 = new TiXmlElement(xmlName);
+    //if(getTranslation()==1) {
     translation->writeXMLFile(ele0);
+    //}
+    parent->LinkEndChild(ele0);
   }
-  parent->LinkEndChild(ele0);
+  else
+    translation->writeXMLFile(parent);
 
  return 0;
 }
@@ -1333,13 +1343,13 @@ TiXmlElement* CardanAngles::writeXMLFile(TiXmlNode *parent) {
   return ele2;
 }
 
-RotationChoiceWidget::RotationChoiceWidget() : rotation(0) {
+RotationChoiceWidget::RotationChoiceWidget(const string &xmlName_) : rotation(0), xmlName(xmlName_) {
   layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
   comboBox = new QComboBox;
-  comboBox->addItem(tr("None"));
+  //comboBox->addItem(tr("None"));
   comboBox->addItem(tr("Rotation about x-axis"));
   comboBox->addItem(tr("Rotation about y-axis"));
   comboBox->addItem(tr("Rotation about z-axis"));
@@ -1348,45 +1358,46 @@ RotationChoiceWidget::RotationChoiceWidget() : rotation(0) {
   comboBox->addItem(tr("Rotation about x- and y-axis"));
   layout->addWidget(comboBox);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineRotation(int)));
+  defineRotation(0);
 }
 
 void RotationChoiceWidget::defineRotation(int index) {
+//  if(index==0) {
+//    layout->removeWidget(rotation);
+//    delete rotation;
+//    rotation = 0;
+//  } 
   if(index==0) {
-    layout->removeWidget(rotation);
-    delete rotation;
-    rotation = 0;
-  } 
-  else if(index==1) {
     layout->removeWidget(rotation);
     delete rotation;
     rotation = new RotationAboutXAxis;  
     layout->addWidget(rotation);
   }
-  else if(index==2) {
+  else if(index==1) {
     layout->removeWidget(rotation);
     delete rotation;
     rotation = new RotationAboutYAxis;  
     layout->addWidget(rotation);
   }
-  else if(index==3) {
+  else if(index==2) {
     layout->removeWidget(rotation);
     delete rotation;
     rotation = new RotationAboutZAxis;  
     layout->addWidget(rotation);
   }
-  else if(index==4) {
+  else if(index==3) {
     layout->removeWidget(rotation);
     delete rotation;
     rotation = new RotationAboutFixedAxis;  
     layout->addWidget(rotation);
   }
-  else if(index==5) {
+  else if(index==4) {
     layout->removeWidget(rotation);
     delete rotation;
     rotation = new CardanAngles;  
     layout->addWidget(rotation);
   }
-  else if(index==6) {
+  else if(index==5) {
     layout->removeWidget(rotation);
     delete rotation;
     rotation = new RotationAboutAxesXY;  
@@ -1396,42 +1407,37 @@ void RotationChoiceWidget::defineRotation(int index) {
 }
 
 bool RotationChoiceWidget::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=element->FirstChildElement(MBSIMNS"rotation");
-  TiXmlElement *e1 = e->FirstChildElement();
-  if(e1) {
-    if(e1->ValueStr() == MBSIMNS"RotationAboutXAxis") {
-      comboBox->setCurrentIndex(1);
-      rotation->initializeUsingXML(e1);
-    }
-    else if(e1->ValueStr() == MBSIMNS"RotationAboutYAxis") {
-      comboBox->setCurrentIndex(2);
-      rotation->initializeUsingXML(e1);
-    }
-    else if(e1->ValueStr() == MBSIMNS"RotationAboutZAxis") {
-      comboBox->setCurrentIndex(3);
-      rotation->initializeUsingXML(e1);
-    }
-    else if(e1->ValueStr() == MBSIMNS"RotationAboutFixedAxis") {
-      comboBox->setCurrentIndex(4);
-      rotation->initializeUsingXML(e1);
-    }
-    else if(e1->ValueStr() == MBSIMNS"CardanAngles") {
-      comboBox->setCurrentIndex(5);
-      rotation->initializeUsingXML(e1);
-    }
-    else if(e1->ValueStr() == MBSIMNS"RotationAboutAxesXY") {
-      comboBox->setCurrentIndex(6);
-      rotation->initializeUsingXML(e1);
+  TiXmlElement *e=(xmlName=="")?element:element->FirstChildElement(xmlName);
+  if(e) {
+    TiXmlElement *ee = e->FirstChildElement();
+    if(ee) {
+      if(ee->ValueStr() == MBSIMNS"RotationAboutXAxis")
+        comboBox->setCurrentIndex(0);
+      else if(ee->ValueStr() == MBSIMNS"RotationAboutYAxis")
+        comboBox->setCurrentIndex(1);
+      else if(ee->ValueStr() == MBSIMNS"RotationAboutZAxis")
+        comboBox->setCurrentIndex(2);
+      else if(ee->ValueStr() == MBSIMNS"RotationAboutFixedAxis")
+        comboBox->setCurrentIndex(3);
+      else if(ee->ValueStr() == MBSIMNS"CardanAngles")
+        comboBox->setCurrentIndex(4);
+      else if(ee->ValueStr() == MBSIMNS"RotationAboutAxesXY")
+        comboBox->setCurrentIndex(5);
+      rotation->initializeUsingXML(ee);
+      return true;
     }
   }
+  return false;
 }
 
 TiXmlElement* RotationChoiceWidget::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"rotation" );
-  if(getRotation()>0) {
+  if(xmlName!="") {
+    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"rotation" );
     rotation->writeXMLFile(ele0);
+    parent->LinkEndChild(ele0);
   }
-  parent->LinkEndChild(ele0);
+  else
+    rotation->writeXMLFile(parent);
 
  return 0;
 }
@@ -1595,7 +1601,7 @@ TiXmlElement* FramePositionsWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-OMBVFrameWidget::OMBVFrameWidget() {
+OMBVFrameWidget::OMBVFrameWidget(const string &xmlName_) : xmlName(xmlName_) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -1612,15 +1618,28 @@ OMBVFrameWidget::OMBVFrameWidget() {
  }
 
 bool OMBVFrameWidget::initializeUsingXML(TiXmlElement *element) {
-  size->initializeUsingXML(element);
-  offset->initializeUsingXML(element);
-  return true;
+  TiXmlElement *e=(xmlName=="")?element:element->FirstChildElement(xmlName);
+  if(e) {
+    size->initializeUsingXML(element);
+    offset->initializeUsingXML(element);
+    return true;
+  }
+  return false;
 }
 
 TiXmlElement* OMBVFrameWidget::writeXMLFile(TiXmlNode *parent) {
-  size->writeXMLFile(parent);
-  offset->writeXMLFile(parent);
-  return 0;
+  if(xmlName!="") {
+    TiXmlElement *e=new TiXmlElement(xmlName);
+    parent->LinkEndChild(e);
+    size->writeXMLFile(e);
+    offset->writeXMLFile(e);
+    return e;
+  }
+  else {
+    size->writeXMLFile(parent);
+    offset->writeXMLFile(parent);
+    return 0;
+  }
 }
 
 OMBVArrowWidget::OMBVArrowWidget() {
@@ -1752,44 +1771,6 @@ TiXmlElement* OMBVCoilSpringWidget::writeXMLFile(TiXmlNode *parent) {
   nominalLength->writeXMLFile(e);
   scaleFactor->writeXMLFile(e);
   return e;
-}
-
-OMBVObjectChoiceWidget::OMBVObjectChoiceWidget(OMBVObjectWidget *ombv_, const string &xmlName_) : ombv(ombv_), xmlName(xmlName_) {
-  QVBoxLayout *layout = new QVBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
-  visu = new QCheckBox("Show");
-  layout->addWidget(visu);
-  layout->addWidget(ombv);
-  connect(visu,SIGNAL(toggled(bool)),ombv,SLOT(setVisible(bool)));
-  ombv->hide();
-}
-
-bool OMBVObjectChoiceWidget::initializeUsingXML(TiXmlElement *element) {
-  if(xmlName!="") {
-    TiXmlElement *e=element->FirstChildElement(xmlName);
-    if(e) {
-      setOpenMBVObject(true);
-      ombv->initializeUsingXML(e);
-    }
-  }
-  else {
-    if(ombv->initializeUsingXML(element))
-      setOpenMBVObject(true);
-  }
-}
-
-TiXmlElement* OMBVObjectChoiceWidget::writeXMLFile(TiXmlNode *parent) {
-  if(openMBVObject()) {
-    if(xmlName!="") {
-      TiXmlElement *ele0 = new TiXmlElement(xmlName);
-      ombv->writeXMLFile(ele0);
-      parent->LinkEndChild(ele0);
-    }
-    else
-      ombv->writeXMLFile(parent);
-  }
-  return 0;
 }
 
 OMBVBodyWidget::OMBVBodyWidget() {
@@ -1929,7 +1910,7 @@ OMBVBodyChoiceWidget::OMBVBodyChoiceWidget(RigidBody *body_) : body(body_), ombv
   setLayout(layout);
 
   comboBox = new QComboBox;
-  comboBox->addItem(tr("None"));
+  //comboBox->addItem(tr("None"));
   comboBox->addItem(tr("Cuboid"));
   comboBox->addItem(tr("Frustum"));
   comboBox->addItem(tr("Sphere"));
@@ -1938,31 +1919,32 @@ OMBVBodyChoiceWidget::OMBVBodyChoiceWidget(RigidBody *body_) : body(body_), ombv
   ref=new LocalFrameOfReferenceWidget(MBSIMNS"frameOfReference",body);
   widget = new ExtXMLWidget("Frame of reference",ref);
   layout->addWidget(widget);
-  widget->hide();
+  ombvSelection(0);
+  //widget->hide();
 }
 
 void OMBVBodyChoiceWidget::ombvSelection(int index) {
-  widget->setVisible(index>0);
+  //widget->setVisible(index>0);
+  //if(index==0) {
+  //  layout->removeWidget(ombv);
+  //  delete ombv;
+  //  ombv = 0;
+  //} 
   if(index==0) {
-    layout->removeWidget(ombv);
-    delete ombv;
-    ombv = 0;
-  } 
-  else if(index==1) {
     layout->removeWidget(ombv);
     delete ombv;
     ombv = new CuboidWidget;  
     layout->addWidget(ombv);
     ombv->update();
   }
-  else if(index==2) {
+  else if(index==1) {
     layout->removeWidget(ombv);
     delete ombv;
     ombv = new FrustumWidget;  
     layout->addWidget(ombv);
     ombv->update();
   }
-  else if(index==3) {
+  else if(index==2) {
     layout->removeWidget(ombv);
     delete ombv;
     ombv = new SphereWidget;  
@@ -1977,31 +1959,33 @@ bool OMBVBodyChoiceWidget::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e1 = e->FirstChildElement();
     if(e1) {
       if(e1->ValueStr() == OPENMBVNS"Cuboid") {
-        comboBox->setCurrentIndex(1);
+        comboBox->setCurrentIndex(0);
         ombv->initializeUsingXML(e1);
       }
       else if(e1->ValueStr() == OPENMBVNS"Frustum") {
-        comboBox->setCurrentIndex(2);
+        comboBox->setCurrentIndex(1);
         ombv->initializeUsingXML(e1);
       }
       else if(e1->ValueStr() == OPENMBVNS"Sphere") {
-        comboBox->setCurrentIndex(3);
+        comboBox->setCurrentIndex(2);
         ombv->initializeUsingXML(e1);
       }
       ref->initializeUsingXML(e);
     }
+    return true;
   }
+  return false;
 }
 
 TiXmlElement* OMBVBodyChoiceWidget::writeXMLFile(TiXmlNode *parent) {
-  if(getOpenMBVBody()) {
-    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"openMBVRigidBody" );
-    ombv->writeXMLFile(ele0);
+  //if(getOpenMBVBody()) {
+  TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"openMBVRigidBody" );
+  ombv->writeXMLFile(ele0);
 
-    if(ref->getFrame()->getName()!="C")
-      ref->writeXMLFile(ele0);
-    parent->LinkEndChild(ele0);
-  }
+  if(ref->getFrame()->getName()!="C")
+    ref->writeXMLFile(ele0);
+  parent->LinkEndChild(ele0);
+  //}
   return 0;
 }
 
@@ -2116,7 +2100,7 @@ GeneralizedForceLawChoiceWidget::GeneralizedForceLawChoiceWidget(const string &x
   setLayout(layout);
 
   comboBox = new QComboBox;
-  comboBox->addItem(tr("None"));
+  //comboBox->addItem(tr("None"));
   comboBox->addItem(tr("Bilateral constraint"));
   comboBox->addItem(tr("Regularized bilateral constraint"));
   layout->addWidget(comboBox);
@@ -2127,13 +2111,13 @@ GeneralizedForceLawChoiceWidget::GeneralizedForceLawChoiceWidget(const string &x
 void GeneralizedForceLawChoiceWidget::defineForceLaw(int index) {
   layout->removeWidget(generalizedForceLaw);
   delete generalizedForceLaw;
-  if(index==0)
-    generalizedForceLaw = 0;
-  else if(index==1) {
+//  if(index==0)
+//    generalizedForceLaw = 0;
+  if(index==0) {
     generalizedForceLaw = new BilateralConstraint;  
     layout->addWidget(generalizedForceLaw);
   } 
-  else if(index==2) {
+  else if(index==1) {
     generalizedForceLaw = new RegularizedBilateralConstraint;  
     layout->addWidget(generalizedForceLaw);
   }
@@ -2145,15 +2129,17 @@ bool GeneralizedForceLawChoiceWidget::initializeUsingXML(TiXmlElement *element) 
     TiXmlElement* ee=e->FirstChildElement();
     if(ee) {
       if(ee->ValueStr() == MBSIMNS"BilateralConstraint") {
-        comboBox->setCurrentIndex(1);
+        comboBox->setCurrentIndex(0);
         generalizedForceLaw->initializeUsingXML(ee);
       }
       else if(ee->ValueStr() == MBSIMNS"RegularizedBilateralConstraint") {
-        comboBox->setCurrentIndex(2);
+        comboBox->setCurrentIndex(1);
         generalizedForceLaw->initializeUsingXML(ee);
       }
     }
+    return true;
   }
+  return false;
 }
 
 TiXmlElement* GeneralizedForceLawChoiceWidget::writeXMLFile(TiXmlNode *parent) {
@@ -2172,7 +2158,7 @@ GeneralizedImpactLawChoiceWidget::GeneralizedImpactLawChoiceWidget(const string 
   setLayout(layout);
 
   comboBox = new QComboBox;
-  comboBox->addItem(tr("None"));
+  //comboBox->addItem(tr("None"));
   comboBox->addItem(tr("Bilateral impact"));
   layout->addWidget(comboBox);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineImpactLaw(int)));
@@ -2182,59 +2168,65 @@ GeneralizedImpactLawChoiceWidget::GeneralizedImpactLawChoiceWidget(const string 
 void GeneralizedImpactLawChoiceWidget::defineImpactLaw(int index) {
   layout->removeWidget(generalizedImpactLaw);
   delete generalizedImpactLaw;
-  if(index==0)
-    generalizedImpactLaw = 0;
-  else if(index==1) {
+  //if(index==0)
+    //generalizedImpactLaw = 0;
+  if(index==0) {
     generalizedImpactLaw = new BilateralImpact;  
     layout->addWidget(generalizedImpactLaw);
   } 
 }
 
 bool GeneralizedImpactLawChoiceWidget::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement  *e=element->FirstChildElement(xmlName);
+  TiXmlElement *e=(xmlName=="")?element:element->FirstChildElement(xmlName);
   if(e) {
     TiXmlElement* ee=e->FirstChildElement();
     if(ee) {
-      if(ee->ValueStr() == MBSIMNS"BilateralImpact") {
-        comboBox->setCurrentIndex(1);
-        generalizedImpactLaw->initializeUsingXML(ee);
-      }
+      if(ee->ValueStr() == MBSIMNS"BilateralImpact")
+        comboBox->setCurrentIndex(0);
+      generalizedImpactLaw->initializeUsingXML(ee);
+      return true;
     }
   }
+  return false;
 }
 
 TiXmlElement* GeneralizedImpactLawChoiceWidget::writeXMLFile(TiXmlNode *parent) {
+  if(xmlName!="") {
     TiXmlElement *ele0 = new TiXmlElement(xmlName);
     if(generalizedImpactLaw)
       generalizedImpactLaw->writeXMLFile(ele0);
     parent->LinkEndChild(ele0);
+  }
+  else
+    generalizedImpactLaw->writeXMLFile(parent);
 
   return 0;
 }
 
-GeneralizedForceChoiceWidget::GeneralizedForceChoiceWidget(const string &xmlName_, OMBVObjectChoiceWidget* arrow_) : xmlName(xmlName_), arrow(arrow_) {
+GeneralizedForceChoiceWidget::GeneralizedForceChoiceWidget(const string &xmlName_, ExtXMLWidget* arrow_) : xmlName(xmlName_), arrow(arrow_) {
   
   layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new SMatColsVarWidget(3,0,0,3),MBSIMNS"direction",noUnitUnits(),1));
-  widget = new ExtPhysicalVarWidget(input);  
-  ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Direction vectors",widget);
-  layout->addWidget(extXMLWidget);
+  input.push_back(new PhysicalStringWidget(new SMatColsVarWidget(3,1,1,3),MBSIMNS"direction",noUnitUnits(),1));
+  mat_ = new ExtPhysicalVarWidget(input);  
+  mat = new ExtXMLWidget("Direction vectors",mat_);
+  layout->addWidget(mat);
 
-  generalizedForceLaw = new GeneralizedForceLawChoiceWidget(MBSIMNS"generalizedForceLaw");
-  extXMLWidget = new ExtXMLWidget("Generalized force law",generalizedForceLaw);
-  layout->addWidget(extXMLWidget);
+  generalizedForceLaw_ = new GeneralizedForceLawChoiceWidget(MBSIMNS"generalizedForceLaw");
+  generalizedForceLaw = new ExtXMLWidget("Generalized force law",generalizedForceLaw_);
+  layout->addWidget(generalizedForceLaw);
 
-  generalizedImpactLaw = new GeneralizedImpactLawChoiceWidget(MBSIMNS"generalizedImpactLaw");
-  extXMLWidget = new ExtXMLWidget("Generalized impact law",generalizedImpactLaw);
-  layout->addWidget(extXMLWidget);
+  generalizedImpactLaw_ = new GeneralizedImpactLawChoiceWidget("");
+  generalizedImpactLaw = new ExtXMLWidget("Generalized impact law",generalizedImpactLaw_,true);
+  generalizedImpactLaw->setXMLName(MBSIMNS"generalizedImpactLaw");
+  layout->addWidget(generalizedImpactLaw);
 }
 
 int GeneralizedForceChoiceWidget::getSize() const {
-  string str = evalOctaveExpression(widget->getCurrentPhysicalStringWidget()->getValue());
+  string str = evalOctaveExpression(mat_->getCurrentPhysicalStringWidget()->getValue());
   vector<vector<string> > A = strToSMat(str);
   return A.size()?A[0].size():0;
 }
@@ -2242,22 +2234,24 @@ int GeneralizedForceChoiceWidget::getSize() const {
 bool GeneralizedForceChoiceWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement  *e=element->FirstChildElement(xmlName);
   if(e) {
-    widget->initializeUsingXML(e);
+    mat->initializeUsingXML(e);
     generalizedForceLaw->initializeUsingXML(e);
     generalizedImpactLaw->initializeUsingXML(e);
     arrow->initializeUsingXML(e);
+    return true;
   }
+  return false;
 }
 
 TiXmlElement* GeneralizedForceChoiceWidget::writeXMLFile(TiXmlNode *parent) {
-  if(getSize()) {
+//  if(getSize()) {
     TiXmlElement *ele0 = new TiXmlElement(xmlName);
-    widget->writeXMLFile(ele0);
+    mat->writeXMLFile(ele0);
     generalizedForceLaw->writeXMLFile(ele0);
     generalizedImpactLaw->writeXMLFile(ele0);
     arrow->writeXMLFile(ele0);
     parent->LinkEndChild(ele0);
-  }
+//  }
 
   return 0;
 }
@@ -2269,7 +2263,7 @@ Function1ChoiceWidget::Function1ChoiceWidget(const string &xmlName_) : function(
   setLayout(layout);
 
   comboBox = new QComboBox;
-  comboBox->addItem(tr("None"));
+  //comboBox->addItem(tr("None"));
   comboBox->addItem(tr("Constant function"));
   comboBox->addItem(tr("Sinus function"));
   layout->addWidget(comboBox);
@@ -2280,12 +2274,12 @@ Function1ChoiceWidget::Function1ChoiceWidget(const string &xmlName_) : function(
 void Function1ChoiceWidget::defineForceLaw(int index) {
   layout->removeWidget(function);
   delete function;
-  if(index==0) {
-    function = 0;
-  }
-  else if(index==1)
+//  if(index==0) {
+//    function = 0;
+//  }
+  if(index==0)
     function = new ConstantFunction1("VS");  
-  else if(index==2)
+  else if(index==1)
     function = new SinusFunction1;
 
   if(function) {
@@ -2300,11 +2294,11 @@ bool Function1ChoiceWidget::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement* ee=e->FirstChildElement();
     if(ee) {
       if(ee->ValueStr() == MBSIMNS"ConstantFunction1_VS") {
-        comboBox->setCurrentIndex(1);
+        comboBox->setCurrentIndex(0);
         function->initializeUsingXML(ee);
       }
       else if(ee->ValueStr() == MBSIMNS"SinusFunction1_VS") {
-        comboBox->setCurrentIndex(2);
+        comboBox->setCurrentIndex(1);
         function->initializeUsingXML(ee);
       }
     }
@@ -2326,7 +2320,7 @@ Function2ChoiceWidget::Function2ChoiceWidget(const string &xmlName_) : function(
   setLayout(layout);
 
   comboBox = new QComboBox;
-  comboBox->addItem(tr("None"));
+  //comboBox->addItem(tr("None"));
   comboBox->addItem(tr("Linear spring damper force"));
   layout->addWidget(comboBox);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineForceLaw(int)));
@@ -2337,9 +2331,9 @@ void Function2ChoiceWidget::defineForceLaw(int index) {
   int cols = 0;
   layout->removeWidget(function);
   delete function;
-  if(index==0)
-    function = 0;
-  else if(index==1) {
+//  if(index==0)
+//    function = 0;
+  if(index==0) {
     function = new LinearSpringDamperForce;  
     layout->addWidget(function);
   } 
@@ -2355,7 +2349,7 @@ bool Function2ChoiceWidget::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement* ee=e->FirstChildElement();
     if(ee) {
       if(ee->ValueStr() == MBSIMNS"LinearSpringDamperForce") {
-        comboBox->setCurrentIndex(1);
+        comboBox->setCurrentIndex(0);
         function->initializeUsingXML(ee);
       }
     }
@@ -2371,13 +2365,13 @@ TiXmlElement* Function2ChoiceWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-ForceChoiceWidget::ForceChoiceWidget(const string &xmlName_, OMBVObjectChoiceWidget* arrow_) : xmlName(xmlName_), arrow(arrow_) {
+ForceChoiceWidget::ForceChoiceWidget(const string &xmlName_, ExtXMLWidget* arrow_) : xmlName(xmlName_), arrow(arrow_) {
   layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
   vector<PhysicalStringWidget*> input;
-  PhysicalStringWidget *mat = new PhysicalStringWidget(new SMatColsVarWidget(3,0,0,3),MBSIMNS"directionVectors",noUnitUnits(),1);
+  PhysicalStringWidget *mat = new PhysicalStringWidget(new SMatColsVarWidget(3,1,1,3),MBSIMNS"directionVectors",noUnitUnits(),1);
   input.push_back(mat);
   widget = new ExtPhysicalVarWidget(input);  
   ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Direction vectors",widget);
@@ -2387,6 +2381,7 @@ ForceChoiceWidget::ForceChoiceWidget(const string &xmlName_, OMBVObjectChoiceWid
   layout->addWidget(extXMLWidget);
 
   forceLaw = new Function1ChoiceWidget(MBSIMNS"function");
+  forceLaw->resize(1,1);
   extXMLWidget = new ExtXMLWidget("Function",forceLaw);
 
   layout->addWidget(extXMLWidget);
@@ -2410,17 +2405,19 @@ bool ForceChoiceWidget::initializeUsingXML(TiXmlElement *element) {
     widget->initializeUsingXML(e);
     forceLaw->initializeUsingXML(e);
     arrow->initializeUsingXML(e);
+    return true;
   }
+  return false;
 }
 
 TiXmlElement* ForceChoiceWidget::writeXMLFile(TiXmlNode *parent) {
-  if(getSize()) {
+  //if(getSize()) {
     TiXmlElement *ele0 = new TiXmlElement(xmlName);
     widget->writeXMLFile(ele0);
     forceLaw->writeXMLFile(ele0);
     arrow->writeXMLFile(ele0);
     parent->LinkEndChild(ele0);
-  }
+  //}
 
   return 0;
 }
@@ -2736,14 +2733,18 @@ void DependenciesWidget::addDependency() {
 
 void DependenciesWidget::removeDependency() {
   if(refBody.size()) {
-    selectedBody[selectedBody.size()-1]->setConstrained(false);
-    selectedBody[selectedBody.size()-1]->resizeGeneralizedPosition();
-    selectedBody[selectedBody.size()-1]->resizeGeneralizedVelocity();
+    if(selectedBody[selectedBody.size()-1]) {
+      selectedBody[selectedBody.size()-1]->setConstrained(false);
+      selectedBody[selectedBody.size()-1]->resizeGeneralizedPosition();
+      selectedBody[selectedBody.size()-1]->resizeGeneralizedVelocity();
+    }
     selectedBody.pop_back();
 
     layout->removeWidget(widget[widget.size()-1]);
     delete refBody[refBody.size()-1];
+    delete widget[widget.size()-1];
     refBody.pop_back();
+    widget.pop_back();
 
     emit bodyChanged();
   }
@@ -2858,18 +2859,46 @@ ExtXMLWidget::ExtXMLWidget(const QString &name, XMLWidget *widget_, bool disable
 
   if(disable) {
     setCheckable(true);
-    setChecked(false);
     connect(this,SIGNAL(toggled(bool)),this,SIGNAL(resize()));
+    connect(this,SIGNAL(toggled(bool)),widget,SLOT(setVisible(bool)));
+    setChecked(false);
   }
   setLayout(layout);
   layout->addWidget(widget);
 }
 
 bool ExtXMLWidget::initializeUsingXML(TiXmlElement *element) {
-  bool flag = widget->initializeUsingXML(element);
+  bool flag = false;
+  if(xmlName!="") {
+    TiXmlElement *e=element->FirstChildElement(xmlName);
+    if(e)
+      flag = widget->initializeUsingXML(e);
+  }
+  else {
+    flag = widget->initializeUsingXML(element);
+  }
   if(isCheckable())
     setChecked(flag);
   return flag;
+}
+
+TiXmlElement* ExtXMLWidget::writeXMLFile(TiXmlNode *parent) {
+  if(xmlName!="") {
+    if(alwaysWriteXMLName) {
+      TiXmlElement *ele0 = new TiXmlElement(xmlName);
+      if(isActive()) widget->writeXMLFile(ele0);
+      parent->LinkEndChild(ele0);
+      return ele0;
+    }
+    else if(isActive()) {
+      TiXmlElement *ele0 = new TiXmlElement(xmlName);
+      widget->writeXMLFile(ele0);
+      parent->LinkEndChild(ele0);
+      return ele0;
+    }
+  }
+  else
+    return isActive()?widget->writeXMLFile(parent):0;
 }
 
 PropertyDialog::PropertyDialog(QObject *parentObject_) : parentObject(parentObject_) {
