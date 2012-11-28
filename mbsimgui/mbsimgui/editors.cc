@@ -1905,6 +1905,38 @@ TiXmlElement* FrustumWidget::writeXMLFile(TiXmlNode *parent) {
   return e;
 }
 
+IvBodyWidget::IvBodyWidget() {
+
+  ivFileName = new ExtXMLWidget("Iv file name",new FileWidget(OPENMBVNS"ivFileName"));
+  layout->addWidget(ivFileName);
+
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("-1"), OPENMBVNS"creaseEdges", angleUnits(), 0));
+  creaseEdges = new ExtXMLWidget("Crease edges",new ExtPhysicalVarWidget(input),true);
+  layout->addWidget(creaseEdges);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new BoolWidget("0"), OPENMBVNS"boundaryEdges", QStringList(), 4));
+  boundaryEdges = new ExtXMLWidget("Boundary edges",new ExtPhysicalVarWidget(input),true);
+  layout->addWidget(boundaryEdges);
+}
+
+bool IvBodyWidget::initializeUsingXML(TiXmlElement *element) {
+  OMBVBodyWidget::initializeUsingXML(element);
+  TiXmlElement *e;
+  ivFileName->initializeUsingXML(element);
+  creaseEdges->initializeUsingXML(element);
+  boundaryEdges->initializeUsingXML(element);
+}
+
+TiXmlElement* IvBodyWidget::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *e=OMBVBodyWidget::writeXMLFile(parent);
+  ivFileName->writeXMLFile(e);
+  creaseEdges->writeXMLFile(e);
+  boundaryEdges->writeXMLFile(e);
+  return e;
+}
+
 OMBVBodyChoiceWidget::OMBVBodyChoiceWidget(RigidBody *body_) : body(body_), ombv(0) {
 
   layout = new QVBoxLayout;
@@ -1916,6 +1948,7 @@ OMBVBodyChoiceWidget::OMBVBodyChoiceWidget(RigidBody *body_) : body(body_), ombv
   comboBox->addItem(tr("Cuboid"));
   comboBox->addItem(tr("Frustum"));
   comboBox->addItem(tr("Sphere"));
+  comboBox->addItem(tr("IvBody"));
   layout->addWidget(comboBox);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ombvSelection(int)));
   ref=new LocalFrameOfReferenceWidget(MBSIMNS"frameOfReference",body);
@@ -1953,6 +1986,13 @@ void OMBVBodyChoiceWidget::ombvSelection(int index) {
     layout->addWidget(ombv);
     ombv->update();
   }
+  else if(index==3) {
+    layout->removeWidget(ombv);
+    delete ombv;
+    ombv = new IvBodyWidget;  
+    layout->addWidget(ombv);
+    ombv->update();
+  }
 }
 
 bool OMBVBodyChoiceWidget::initializeUsingXML(TiXmlElement *element) {
@@ -1970,6 +2010,10 @@ bool OMBVBodyChoiceWidget::initializeUsingXML(TiXmlElement *element) {
       }
       else if(e1->ValueStr() == OPENMBVNS"Sphere") {
         comboBox->setCurrentIndex(2);
+        ombv->initializeUsingXML(e1);
+      }
+      else if(e1->ValueStr() == OPENMBVNS"IvBody") {
+        comboBox->setCurrentIndex(3);
         ombv->initializeUsingXML(e1);
       }
       ref->initializeUsingXML(e);
@@ -2816,14 +2860,13 @@ TiXmlElement* ParameterNameWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-FileWidget::FileWidget() {
-  QVBoxLayout *layout = new QVBoxLayout;
+FileWidget::FileWidget(const string &xmlName_) : xmlName(xmlName_) {
+  QHBoxLayout *layout = new QHBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
   fileName = new QLineEdit;
   fileName->setReadOnly(true);
-  //ename->setText(parameter->getName());
   layout->addWidget(fileName);
   QPushButton *button = new QPushButton("Browse");
   layout->addWidget(button);
@@ -2831,9 +2874,30 @@ FileWidget::FileWidget() {
 }
 
 void FileWidget::selectFile() {
-  QString file=QFileDialog::getOpenFileName(0, "XML model files", QString("./")+"Parameter.mbsimparam.xml", "hdf5 Files (*.mbsimparam.xml)");
+  QString file=QFileDialog::getOpenFileName(0, "XML model files", QString("./"), "iv files (*.iv)");
   if(file!="")
-    fileName->setText(file);
+    fileName->setText(QString("\"")+file+"\"");
+}
+
+bool FileWidget::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e=element->FirstChildElement(xmlName);
+  if(e) {
+    TiXmlText *text = dynamic_cast<TiXmlText*>(e->FirstChild());
+    if(text) {
+      fileName->setText(text->Value());
+      return true;
+    }
+  }
+  return false;
+}
+
+TiXmlElement* FileWidget::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = new TiXmlElement(xmlName);
+  TiXmlText *text = new TiXmlText(fileName->text().toStdString());
+  ele0->LinkEndChild(text);
+  parent->LinkEndChild(ele0);
+
+  return 0;
 }
 
 ParameterValueWidget::ParameterValueWidget(PhysicalStringWidget *var) {
