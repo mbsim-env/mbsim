@@ -1192,7 +1192,9 @@ void ExtPhysicalVarWidget::openEvalDialog() {
 bool ExtPhysicalVarWidget::initializeUsingXML(TiXmlElement *element) {
   for(int i=0; i< inputWidget.size(); i++) {
     if(inputWidget[i]->initializeUsingXML(element)) { 
+      blockSignals(true);
       inputCombo->setCurrentIndex(i);
+      blockSignals(false);
       return true;
     }
   }
