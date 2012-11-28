@@ -66,8 +66,8 @@ Solver::Solver(const QString &str, QTreeWidgetItem *parentItem, int ind) : Group
   properties->addToTab("Environment", environment);
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new BoolWidget("0"),MBSIMNS"inverseKinetics",QStringList(),1));
-  inverseKinetics = new ExtXMLWidget("Inverse kinetics",new ExtPhysicalVarWidget(input)); 
+  input.push_back(new PhysicalStringWidget(new BoolWidget("1"),MBSIMNS"inverseKinetics",QStringList(),1));
+  inverseKinetics = new ExtXMLWidget("Inverse kinetics",new ExtPhysicalVarWidget(input),true); 
   properties->addToTab("Extra", inverseKinetics);
 
   properties->addStretch();
