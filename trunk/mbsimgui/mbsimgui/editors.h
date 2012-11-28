@@ -871,6 +871,16 @@ class FrustumWidget : public OMBVBodyWidget {
     ExtXMLWidget *top, *base, *height, *innerBase, *innerTop;
 };
 
+class IvBodyWidget : public OMBVBodyWidget {
+  public:
+    IvBodyWidget();
+    bool initializeUsingXML(TiXmlElement *element);
+    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual QString getType() const { return "IvBody"; }
+  protected:
+    ExtXMLWidget *ivFileName, *creaseEdges, *boundaryEdges;
+};
+
 class OMBVBodyChoiceWidget : public XMLWidget {
   Q_OBJECT
 
@@ -1184,14 +1194,13 @@ class FileWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    FileWidget();
-    QString getFile() const {return fileName->text();}
-    void setFile(const QString &file) {fileName->setText(file);}
-    virtual bool initializeUsingXML(TiXmlElement *element) {return true;}
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element) {return 0;}
+    FileWidget(const std::string &xmlName);
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
 
   protected:
     QLineEdit *fileName;
+    std::string xmlName;
 
   protected slots:
     void selectFile();
