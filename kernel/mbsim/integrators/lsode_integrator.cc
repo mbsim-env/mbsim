@@ -159,7 +159,8 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMINTNS"numberOfMaximalSteps");
     setmaxSteps(Element::getInt(e));
     e=element->FirstChildElement(MBSIMINTNS"stiffModus");
-    setStiff(Element::getBool(e));
+    if(e)
+      setStiff(Element::getBool(e));
       
   }
 
