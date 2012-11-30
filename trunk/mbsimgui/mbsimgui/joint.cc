@@ -34,10 +34,10 @@ Joint::Joint(const QString &str, QTreeWidgetItem *parentItem, int ind) : Link(st
   //properties->addTab("Constitutive laws");
   properties->addTab("Visualisation");
 
-  forceArrow = new ExtXMLWidget("OpenMBV force arrow",new OMBVArrowWidget,true);
+  forceArrow = new ExtXMLWidget("OpenMBV force arrow",new OMBVArrowWidget("NOTSET"),true);
   properties->addToTab("Visualisation",forceArrow);
 
-  momentArrow = new ExtXMLWidget("OpenMBV moment arrow",new OMBVArrowWidget,true);
+  momentArrow = new ExtXMLWidget("OpenMBV moment arrow",new OMBVArrowWidget("NOTSET"),true);
   properties->addToTab("Visualisation",momentArrow);
 
   connections = new ExtXMLWidget("Connections",new ConnectWidget(2,this));

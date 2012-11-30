@@ -90,18 +90,18 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
 //  connect(rotation,SIGNAL(resize()),this,SLOT(resizeGeneralizedPosition()));
   connect(rotation,SIGNAL(resize()),this,SLOT(resizeVariables()));
  
-  ombvEditor = new ExtXMLWidget("OpenMBV body",new OMBVBodyChoiceWidget(this),true);
+  ombvEditor = new ExtXMLWidget("OpenMBV body",new OMBVBodySelectionWidget(this),true);
   properties->addToTab("Visualisation", ombvEditor);
 
-  weightArrow = new ExtXMLWidget("OpenMBV weight arrow",new OMBVArrowWidget,true);
+  weightArrow = new ExtXMLWidget("OpenMBV weight arrow",new OMBVArrowWidget("NOTSET"),true);
   weightArrow->setXMLName(MBSIMNS"openMBVWeightArrow",false);
   properties->addToTab("Visualisation",weightArrow);
 
-  jointForceArrow = new ExtXMLWidget("OpenMBV joint force arrow",new OMBVArrowWidget,true);
+  jointForceArrow = new ExtXMLWidget("OpenMBV joint force arrow",new OMBVArrowWidget("NOTSET"),true);
   jointForceArrow->setXMLName(MBSIMNS"openMBVJointForceArrow",false);
   properties->addToTab("Visualisation",jointForceArrow);
 
-  jointMomentArrow = new ExtXMLWidget("OpenMBV joint moment arrow",new OMBVArrowWidget,true);
+  jointMomentArrow = new ExtXMLWidget("OpenMBV joint moment arrow",new OMBVArrowWidget("NOTSET"),true);
   jointMomentArrow->setXMLName(MBSIMNS"openMBVJointMomentArrow",false);
   properties->addToTab("Visualisation",jointMomentArrow);
 

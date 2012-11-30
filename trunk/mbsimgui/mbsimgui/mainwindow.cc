@@ -462,14 +462,14 @@ void MainWindow::loadMBS(const QString &file) {
 }
 
 void MainWindow::loadMBS() {
-  QString file=QFileDialog::getOpenFileName(0, "XML model files", ".", "hdf5 Files (*.mbsim.xml)");
+  QString file=QFileDialog::getOpenFileName(0, "XML model files", ".", "XML files (*.mbsim.xml)");
   if(file!="") 
     loadMBS(file);
 }
 
 void MainWindow::saveMBSAs() {
   if(elementList->topLevelItemCount()) {
-    QString file=QFileDialog::getSaveFileName(0, "XML model files", QString("./")+((Solver*)elementList->topLevelItem(0))->getName()+".mbsim.xml", "hdf5 Files (*.mbsim.xml)");
+    QString file=QFileDialog::getSaveFileName(0, "XML model files", QString("./")+((Solver*)elementList->topLevelItem(0))->getName()+".mbsim.xml", "XML files (*.mbsim.xml)");
     if(file!="") {
       fileMBS->setText(file);
       actionSaveMBS->setDisabled(false);
@@ -540,14 +540,14 @@ void MainWindow::loadIntegrator(const QString &file) {
 }
 
 void MainWindow::loadIntegrator() {
-  QString file=QFileDialog::getOpenFileName(0, "MBSim integrator files", ".", "hdf5 Files (*.mbsimint.xml)");
+  QString file=QFileDialog::getOpenFileName(0, "MBSim integrator files", ".", "XML files (*.mbsimint.xml)");
   if(file!="")
     loadIntegrator(file);
 }
 
 void MainWindow::saveIntegratorAs() {
   if(integratorList->topLevelItemCount()) {
-    QString file=QFileDialog::getSaveFileName(0, "MBSim integrator files", QString("./")+((Integrator*)integratorList->topLevelItem(0))->getType()+".mbsimint.xml", "hdf5 Files (*.mbsimint.xml)");
+    QString file=QFileDialog::getSaveFileName(0, "MBSim integrator files", QString("./")+((Integrator*)integratorList->topLevelItem(0))->getType()+".mbsimint.xml", "XML files (*.mbsimint.xml)");
     if(file!="") {
       fileIntegrator->setText(file);
       actionSaveIntegrator->setDisabled(false);
@@ -620,7 +620,7 @@ void MainWindow::loadParameter(const QString &file) {
 }
 
 void MainWindow::loadParameter() {
-  QString file=QFileDialog::getOpenFileName(0, "MBSim parameter files", ".", "hdf5 Files (*.mbsimparam.xml)");
+  QString file=QFileDialog::getOpenFileName(0, "MBSim parameter files", ".", "XML files (*.mbsimparam.xml)");
   if(file!="") {
     loadParameter(file);
   }
@@ -628,7 +628,7 @@ void MainWindow::loadParameter() {
 
 void MainWindow::saveParameterAs() {
   if(parameterList->topLevelItemCount()) {
-    QString file=QFileDialog::getSaveFileName(0, "MBSim parameter files", QString("./")+"Parameter.mbsimparam.xml", "hdf5 Files (*.mbsimparam.xml)");
+    QString file=QFileDialog::getSaveFileName(0, "MBSim parameter files", QString("./")+"Parameter.mbsimparam.xml", "XML files (*.mbsimparam.xml)");
     if(file!="") {
     fileParameter->setText(file);
       actionSaveParameter->setDisabled(false);
