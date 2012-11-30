@@ -17,7 +17,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <config.h>
+//#include <config.h>
 #include <editors.h>
 #include <QMenu>
 #include <QLabel>
@@ -2000,12 +2000,10 @@ void CompoundRigidBodyWidget::openContextMenu(const QPoint &pos) {
 
 void CompoundRigidBodyWidget::addBody() {
   int i = body.size();
-  if(i<5) {
-    body.push_back(new OMBVBodyChoiceWidget((QString("Body")+QString::number(i)).toStdString(),false));
-    bodyList->addItem((QString("Body")+QString::number(i)));
-    stackedWidget->addWidget(body[i]);
-    //stackedWidget->widget(i)->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Ignored);
-  }
+  body.push_back(new OMBVBodyChoiceWidget((QString("Body")+QString::number(i+1)).toStdString(),false));
+  bodyList->addItem((QString("Body")+QString::number(i+1)));
+  stackedWidget->addWidget(body[i]);
+  //stackedWidget->widget(i)->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Ignored);
 }
 
 void CompoundRigidBodyWidget::removeBody() {
@@ -2016,7 +2014,7 @@ void CompoundRigidBodyWidget::removeBody() {
   body.erase(body.begin()+i);
   delete bodyList->takeItem(i);
   for(int i=0; i<bodyList->count(); i++) {
-    bodyList->item(i)->setText((QString("Body")+QString::number(i)));
+    bodyList->item(i)->setText((QString("Body")+QString::number(i+1)));
     body[i]->setName(bodyList->item(i)->text().toStdString());
   }
 }
@@ -2856,17 +2854,37 @@ TiXmlElement* RigidBodyOfReferenceWidget::writeXMLFile(TiXmlNode *parent) {
 }
 
 DependenciesWidget::DependenciesWidget(const string &xmlName_, Element *element_) : element(element_), xmlName(xmlName_) {
-  layout = new QVBoxLayout;
-  layout->setMargin(0);
+  QHBoxLayout *layout = new QHBoxLayout;
   setLayout(layout);
-
-  QPushButton *buttonAdd = new QPushButton(tr("Add"));
-  layout->addWidget(buttonAdd);
-  connect(buttonAdd,SIGNAL(clicked(bool)),this,SLOT(addDependency()));
-  QPushButton *buttonRemove = new QPushButton(tr("Remove"));
-  layout->addWidget(buttonRemove);
-  connect(buttonRemove,SIGNAL(clicked(bool)),this,SLOT(removeDependency()));
+  layout->setMargin(0);
+  bodyList = new QListWidget;
+  bodyList->setContextMenuPolicy (Qt::CustomContextMenu);
+  bodyList->setMinimumWidth(bodyList->sizeHint().width()/3);
+  bodyList->setMaximumWidth(bodyList->sizeHint().width()/3);
+  layout->addWidget(bodyList);
+  stackedWidget = new QStackedWidget;
+  //connect(bodyList,SIGNAL(currentRowChanged(int)),this,SLOT(changeCurrent(int)));
+  connect(bodyList,SIGNAL(currentRowChanged(int)),stackedWidget,SLOT(setCurrentIndex(int)));
+  connect(bodyList,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(openContextMenu(const QPoint &)));
   connect(this,SIGNAL(bodyChanged()),this,SLOT(updateGeneralizedCoordinatesOfBodies()));
+  layout->addWidget(stackedWidget,0,Qt::AlignTop);
+}
+
+void DependenciesWidget::openContextMenu(const QPoint &pos) {
+ if(bodyList->itemAt(pos)) {
+   QMenu menu(this);
+   QAction *add = new QAction(tr("Remove"), this);
+   connect(add, SIGNAL(triggered()), this, SLOT(removeDependency()));
+   menu.addAction(add);
+   menu.exec(QCursor::pos());
+ }
+ else {
+   QMenu menu(this);
+   QAction *add = new QAction(tr("Add"), this);
+   connect(add, SIGNAL(triggered()), this, SLOT(addDependency()));
+   menu.addAction(add);
+   menu.exec(QCursor::pos());
+ }
 }
 
 void DependenciesWidget::initialize() {
@@ -2896,42 +2914,31 @@ void DependenciesWidget::updateGeneralizedCoordinatesOfBodies() {
   }
 }
 
-void DependenciesWidget::setBodies(std::vector<RigidBody*> rigidBodies) {
-  for(unsigned int i=0; i<rigidBodies.size(); i++) {
-    addDependency();
-    setBody(i,rigidBodies[i]);
-  }
-}
-
 void DependenciesWidget::addDependency() {
   int i = refBody.size();
-  if(i<5) {
-    selectedBody.push_back(0);
-    refBody.push_back(new RigidBodyOfReferenceWidget(MBSIMNS"dependentRigidBody",element,0));
-    widget.push_back(new ExtXMLWidget(QString("RigidBody") + QString::number(i+1),refBody[i]));
-    connect(refBody[i],SIGNAL(bodyChanged()),this,SIGNAL(bodyChanged()));
-    layout->addWidget(widget[i]);
-    update();
-  }
+  selectedBody.push_back(0);
+  refBody.push_back(new RigidBodyOfReferenceWidget(MBSIMNS"dependentRigidBody",element,0));
+  connect(refBody[i],SIGNAL(bodyChanged()),this,SIGNAL(bodyChanged()));
+  bodyList->addItem((QString("Body")+QString::number(i+1)));
+  stackedWidget->addWidget(refBody[i]);
+  update();
 }
 
 void DependenciesWidget::removeDependency() {
-  if(refBody.size()) {
-    if(selectedBody[selectedBody.size()-1]) {
-      selectedBody[selectedBody.size()-1]->setConstrained(false);
-      selectedBody[selectedBody.size()-1]->resizeGeneralizedPosition();
-      selectedBody[selectedBody.size()-1]->resizeGeneralizedVelocity();
-    }
-    selectedBody.pop_back();
-
-    layout->removeWidget(widget[widget.size()-1]);
-    delete refBody[refBody.size()-1];
-    delete widget[widget.size()-1];
-    refBody.pop_back();
-    widget.pop_back();
-
-    emit bodyChanged();
+  int i = bodyList->currentRow();
+  if(selectedBody[i]) {
+    selectedBody[i]->setConstrained(false);
+    selectedBody[i]->resizeGeneralizedPosition();
+    selectedBody[i]->resizeGeneralizedVelocity();
   }
+  selectedBody.pop_back();
+
+  stackedWidget->removeWidget(refBody[i]);
+  delete refBody[i];
+  refBody.erase(refBody.begin()+i);
+  delete bodyList->takeItem(i);
+
+  emit bodyChanged();
 }
 
 bool DependenciesWidget::initializeUsingXML(TiXmlElement *element) {

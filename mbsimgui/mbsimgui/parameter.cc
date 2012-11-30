@@ -117,6 +117,7 @@ DoubleParameter::DoubleParameter(const QString &str, QTreeWidgetItem *parentItem
   connect(value_,SIGNAL(parameterChanged(const QString&)),this,SIGNAL(parameterChanged(const QString&)));
 
   properties->addStretch();
+  updateTreeWidgetItem(getValue().c_str());
 }
 
 void DoubleParameter::initializeUsingXML(TiXmlElement *element) {
@@ -131,7 +132,8 @@ void DoubleParameter::initializeUsingXML(TiXmlElement *element) {
       val->getExtPhysicalWidget()->getPhysicalStringWidget(0)->initializeUsingXML(element);
       val->getExtPhysicalWidget()->getPhysicalStringWidget(1)->setValue(val->getExtPhysicalWidget()->getPhysicalStringWidget(0)->getValue().c_str());
     } 
-    emit parameterChanged(getValue().c_str());
+    //emit parameterChanged(getValue().c_str());
+    updateTreeWidgetItem(getValue().c_str());
 }
 
 void Parameter::remove() {
