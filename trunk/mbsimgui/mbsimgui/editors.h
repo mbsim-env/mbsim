@@ -1211,27 +1211,24 @@ class DependenciesWidget : public XMLWidget {
     void update(); 
     void initialize();
     RigidBody* getBody(int i) {return refBody[i]->getBody();}
-    void setBody(int i, RigidBody* body) {refBody[i]->setBody(body);}
-    void setBody(int i) {refBody[i]->setBody();}
     void addBody(int i, RigidBody* body_);
     int getSize() const {return refBody.size();}
-    void setBodies(std::vector<RigidBody*> rigidBodies);
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
 
   protected:
     Element* element;
-    QVBoxLayout *layout;
     std::string xmlName;
     std::vector<RigidBody*> selectedBody;
     std::vector<RigidBodyOfReferenceWidget*> refBody;
-    std::vector<ExtXMLWidget*> widget;
-    std::vector<QPushButton*> button;
+    QStackedWidget *stackedWidget; 
+    QListWidget *bodyList; 
 
   protected slots:
     void addDependency();
     void removeDependency();
     void updateGeneralizedCoordinatesOfBodies();
+    void openContextMenu(const QPoint &pos);
 
   signals:
       void bodyChanged();
