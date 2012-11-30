@@ -37,6 +37,7 @@ Integrator::Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind)
 
   properties=new PropertyDialog(this);
   properties->addTab("General");
+//  properties->addTab("Initial state");
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMINTNS"startTime",timeUnits(),2));
@@ -52,6 +53,11 @@ Integrator::Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind)
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1e-2"),MBSIMINTNS"plotStepSize",timeUnits(),2));
   plotStepSize = new ExtXMLWidget("Plot step size",new ExtPhysicalVarWidget(input)); 
   properties->addToTab("General", plotStepSize);
+
+//  input.clear();
+//  input.push_back(new PhysicalStringWidget(new SVecWidget("1e-2"),MBSIMINTNS"plotStepSize",timeUnits(),2));
+//  plotStepSize = new ExtXMLWidget("Plot step size",new ExtPhysicalVarWidget(input)); 
+//  properties->addToTab("Initial state", plotStepSize);
 
   contextMenu=new QMenu("Context Menu");
 }
@@ -141,7 +147,7 @@ DOPRI5Integrator::DOPRI5Integrator(const QString &str, QTreeWidgetItem *parentIt
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMINTNS"maximalNumberOfSteps",QStringList(),1));
-  maxSteps = new ExtXMLWidget("Number of maximal steps",new ExtPhysicalVarWidget(input)); 
+  maxSteps = new ExtXMLWidget("Number of maximal steps",new ExtPhysicalVarWidget(input),true); 
   properties->addToTab("Step size", maxSteps);
 
   properties->addStretch();
@@ -157,6 +163,57 @@ void DOPRI5Integrator::initializeUsingXML(TiXmlElement *element) {
 }
 
 TiXmlElement* DOPRI5Integrator::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = Integrator::writeXMLFile(parent);
+  absTol->writeXMLFile(ele0);
+  relTol->writeXMLFile(ele0);
+  initialStepSize->writeXMLFile(ele0);
+  maximalStepSize->writeXMLFile(ele0);
+  maxSteps->writeXMLFile(ele0);
+  return ele0;
+}
+
+RADAU5Integrator::RADAU5Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind) : Integrator(str,parentItem,ind) {
+  properties->addTab("Tolerances");
+  properties->addTab("Step size");
+
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("1e-6"),MBSIMINTNS"absoluteToleranceScalar",QStringList(),1));
+  absTol = new ExtXMLWidget("Absolute tolerance",new ExtPhysicalVarWidget(input)); 
+  properties->addToTab("Tolerances", absTol);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("1e-6"),MBSIMINTNS"relativeToleranceScalar",QStringList(),1));
+  relTol = new ExtXMLWidget("Relative tolerance",new ExtPhysicalVarWidget(input)); 
+  properties->addToTab("Tolerances", relTol);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMINTNS"initialStepSize",timeUnits(),2));
+  initialStepSize = new ExtXMLWidget("Initial step size",new ExtPhysicalVarWidget(input)); 
+  properties->addToTab("Step size", initialStepSize);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMINTNS"maximalStepSize",timeUnits(),2));
+  maximalStepSize = new ExtXMLWidget("Maximal step size",new ExtPhysicalVarWidget(input)); 
+  properties->addToTab("Step size", maximalStepSize);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMINTNS"maximalNumberOfSteps",QStringList(),1));
+  maxSteps = new ExtXMLWidget("Number of maximal steps",new ExtPhysicalVarWidget(input),true); 
+  properties->addToTab("Step size", maxSteps);
+
+  properties->addStretch();
+}
+
+void RADAU5Integrator::initializeUsingXML(TiXmlElement *element) {
+  Integrator::initializeUsingXML(element);
+  absTol->initializeUsingXML(element);
+  relTol->initializeUsingXML(element);
+  initialStepSize->initializeUsingXML(element);
+  maximalStepSize->initializeUsingXML(element);
+  maxSteps->initializeUsingXML(element);
+}
+
+TiXmlElement* RADAU5Integrator::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Integrator::writeXMLFile(parent);
   absTol->writeXMLFile(ele0);
   relTol->writeXMLFile(ele0);
@@ -203,7 +260,7 @@ LSODEIntegrator::LSODEIntegrator(const QString &str, QTreeWidgetItem *parentItem
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new BoolWidget("0"),MBSIMINTNS"stiffModus",QStringList(),1));
-  stiff = new ExtXMLWidget("Stiff modus",new ExtPhysicalVarWidget(input)); 
+  stiff = new ExtXMLWidget("Stiff modus",new ExtPhysicalVarWidget(input),true); 
   properties->addToTab("Extra", stiff);
 
   properties->addStretch();
@@ -231,4 +288,177 @@ TiXmlElement* LSODEIntegrator::writeXMLFile(TiXmlNode *parent) {
   stiff->writeXMLFile(ele0);
   return ele0;
 }
+
+LSODARIntegrator::LSODARIntegrator(const QString &str, QTreeWidgetItem *parentItem, int ind) : Integrator(str,parentItem,ind) {
+  properties->addTab("Tolerances");
+  properties->addTab("Step size");
+  properties->addTab("Extra");
+
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("1e-6"),MBSIMINTNS"absoluteToleranceScalar",QStringList(),1));
+  absTol = new ExtXMLWidget("Absolute tolerance",new ExtPhysicalVarWidget(input)); 
+  properties->addToTab("Tolerances", absTol);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("1e-6"),MBSIMINTNS"relativeToleranceScalar",QStringList(),1));
+  relTol = new ExtXMLWidget("Relative tolerance",new ExtPhysicalVarWidget(input)); 
+  properties->addToTab("Tolerances", relTol);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMINTNS"initialStepSize",timeUnits(),2));
+  initialStepSize = new ExtXMLWidget("Initial step size",new ExtPhysicalVarWidget(input)); 
+  properties->addToTab("Step size", initialStepSize);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMINTNS"maximalStepSize",timeUnits(),2));
+  maximalStepSize = new ExtXMLWidget("Maximal step size",new ExtPhysicalVarWidget(input)); 
+  properties->addToTab("Step size", maximalStepSize);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMINTNS"minimalStepSize",timeUnits(),2));
+  minimalStepSize = new ExtXMLWidget("Minimal step size",new ExtPhysicalVarWidget(input)); 
+  properties->addToTab("Step size", minimalStepSize);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new BoolWidget("0"),MBSIMINTNS"plotOnRoot",QStringList(),1));
+  plotOnRoot = new ExtXMLWidget("Plot at root",new ExtPhysicalVarWidget(input)); 
+  properties->addToTab("Extra", plotOnRoot);
+
+  properties->addStretch();
+}
+
+void LSODARIntegrator::initializeUsingXML(TiXmlElement *element) {
+  Integrator::initializeUsingXML(element);
+  absTol->initializeUsingXML(element);
+  relTol->initializeUsingXML(element);
+  initialStepSize->initializeUsingXML(element);
+  minimalStepSize->initializeUsingXML(element);
+  maximalStepSize->initializeUsingXML(element);
+  plotOnRoot->initializeUsingXML(element);
+}
+
+TiXmlElement* LSODARIntegrator::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = Integrator::writeXMLFile(parent);
+  absTol->writeXMLFile(ele0);
+  relTol->writeXMLFile(ele0);
+  initialStepSize->writeXMLFile(ele0);
+  minimalStepSize->writeXMLFile(ele0);
+  maximalStepSize->writeXMLFile(ele0);
+  plotOnRoot->writeXMLFile(ele0);
+  return ele0;
+}
+
+class RKSuiteTypeWidget : public XMLWidget {
+  public:
+    RKSuiteTypeWidget() {
+      QHBoxLayout *layout = new QHBoxLayout;
+      layout->setMargin(0);
+      setLayout(layout);
+      comboBox = new QComboBox;
+      comboBox->addItem("Method 23");
+      comboBox->addItem("Method 45");
+      comboBox->addItem("Method 67");
+      layout->addWidget(comboBox);
+    }
+    virtual bool initializeUsingXML(TiXmlElement *element) {}
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element) {
+      vector<string> str;
+      str.push_back(MBSIMINTNS"method23");
+      str.push_back(MBSIMINTNS"method45");
+      str.push_back(MBSIMINTNS"method67");
+      TiXmlElement *ele = new TiXmlElement(str[comboBox->currentIndex()]);
+      element->LinkEndChild(ele);
+      return 0;
+    }
+  protected:
+    QComboBox *comboBox;
+};
+
+TimeSteppingIntegrator::TimeSteppingIntegrator(const QString &str, QTreeWidgetItem *parentItem, int ind) : Integrator(str,parentItem,ind) {
+  properties->addTab("Step size");
+
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("1e-3"),MBSIMINTNS"stepSize",timeUnits(),2));
+  stepSize = new ExtXMLWidget("Time step size",new ExtPhysicalVarWidget(input)); 
+  properties->addToTab("Step size", stepSize);
+
+  properties->addStretch();
+}
+
+void TimeSteppingIntegrator::initializeUsingXML(TiXmlElement *element) {
+  Integrator::initializeUsingXML(element);
+  stepSize->initializeUsingXML(element);
+}
+
+TiXmlElement* TimeSteppingIntegrator::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = Integrator::writeXMLFile(parent);
+  stepSize->writeXMLFile(ele0);
+  return ele0;
+}
+
+
+EulerExplicitIntegrator::EulerExplicitIntegrator(const QString &str, QTreeWidgetItem *parentItem, int ind) : Integrator(str,parentItem,ind) {
+  properties->addTab("Step size");
+
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("1e-3"),MBSIMINTNS"stepSize",timeUnits(),2));
+  stepSize = new ExtXMLWidget("Time step size",new ExtPhysicalVarWidget(input)); 
+  properties->addToTab("Step size", stepSize);
+
+  properties->addStretch();
+}
+
+void EulerExplicitIntegrator::initializeUsingXML(TiXmlElement *element) {
+  Integrator::initializeUsingXML(element);
+  stepSize->initializeUsingXML(element);
+}
+
+TiXmlElement* EulerExplicitIntegrator::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = Integrator::writeXMLFile(parent);
+  stepSize->writeXMLFile(ele0);
+  return ele0;
+}
+
+RKSuiteIntegrator::RKSuiteIntegrator(const QString &str, QTreeWidgetItem *parentItem, int ind) : Integrator(str,parentItem,ind) {
+  properties->addTab("Tolerances");
+  properties->addTab("Step size");
+
+  type = new ExtXMLWidget("Type",new RKSuiteTypeWidget);
+  properties->addToTab("General", type);
+
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("1e-6"),MBSIMINTNS"relativeToleranceScalar",QStringList(),1));
+  relTol = new ExtXMLWidget("Relative tolerance",new ExtPhysicalVarWidget(input)); 
+  properties->addToTab("Tolerances", relTol);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("1e-6"),MBSIMINTNS"thresholdScalar",QStringList(),1));
+  threshold = new ExtXMLWidget("Threshold",new ExtPhysicalVarWidget(input)); 
+  properties->addToTab("Tolerances", threshold);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMINTNS"initialStepSize",timeUnits(),2));
+  initialStepSize = new ExtXMLWidget("Initial step size",new ExtPhysicalVarWidget(input),true); 
+  properties->addToTab("Step size", initialStepSize);
+
+  properties->addStretch();
+}
+
+void RKSuiteIntegrator::initializeUsingXML(TiXmlElement *element) {
+  Integrator::initializeUsingXML(element);
+  type->initializeUsingXML(element);
+  relTol->initializeUsingXML(element);
+  threshold->initializeUsingXML(element);
+  initialStepSize->initializeUsingXML(element);
+}
+
+TiXmlElement* RKSuiteIntegrator::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = Integrator::writeXMLFile(parent);
+  type->writeXMLFile(ele0);
+  relTol->writeXMLFile(ele0);
+  threshold->writeXMLFile(ele0);
+  initialStepSize->writeXMLFile(ele0);
+  return ele0;
+}
+
 

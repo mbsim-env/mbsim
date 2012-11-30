@@ -74,6 +74,16 @@ class DOPRI5Integrator : public Integrator {
     ExtXMLWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *maxSteps;
 };
 
+class RADAU5Integrator : public Integrator {
+  public:
+    RADAU5Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual QString getType() const { return "RADAU5Integrator"; }
+  protected:
+    ExtXMLWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *maxSteps;
+};
+
 class LSODEIntegrator : public Integrator {
   public:
     LSODEIntegrator(const QString &str, QTreeWidgetItem *parentItem, int ind);
@@ -83,5 +93,47 @@ class LSODEIntegrator : public Integrator {
   protected:
     ExtXMLWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *minimalStepSize, *maxSteps, *stiff;
 };
+
+class LSODARIntegrator : public Integrator {
+  public:
+    LSODARIntegrator(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual QString getType() const { return "LSODARIntegrator"; }
+  protected:
+    ExtXMLWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *minimalStepSize, *plotOnRoot;
+};
+
+class TimeSteppingIntegrator : public Integrator {
+  public:
+    TimeSteppingIntegrator(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual QString getType() const { return "TimeSteppingIntegrator"; }
+  protected:
+    ExtXMLWidget *stepSize;
+};
+
+class EulerExplicitIntegrator : public Integrator {
+  public:
+    EulerExplicitIntegrator(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual QString getType() const { return "EulerExplicitIntegrator"; }
+  protected:
+    ExtXMLWidget *stepSize;
+};
+
+class RKSuiteIntegrator : public Integrator {
+  public:
+    RKSuiteIntegrator(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual QString getType() const { return "RKSuiteIntegrator"; }
+  protected:
+    ExtXMLWidget *type, *relTol, *threshold, *initialStepSize;
+};
+
+
 
 #endif
