@@ -34,10 +34,10 @@ KineticExcitation::KineticExcitation(const QString &str, QTreeWidgetItem *parent
   //properties->addTab("Constitutive laws");
   properties->addTab("Visualisation");
 
-  forceArrow = new ExtXMLWidget("OpenMBV force arrow",new OMBVArrowWidget,true);
+  forceArrow = new ExtXMLWidget("OpenMBV force arrow",new OMBVArrowWidget("NOTSET"),true);
   properties->addToTab("Visualisation",forceArrow);
 
-  momentArrow = new ExtXMLWidget("OpenMBV moment arrow",new OMBVArrowWidget,true);
+  momentArrow = new ExtXMLWidget("OpenMBV moment arrow",new OMBVArrowWidget("NOTSET"),true);
   properties->addToTab("Visualisation",momentArrow);
 
   connections = new ExtXMLWidget("Connections",new ConnectWidget(1,this));

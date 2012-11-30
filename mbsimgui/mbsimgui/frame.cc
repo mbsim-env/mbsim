@@ -22,7 +22,6 @@
 #include "utils.h"
 #include <QtGui/QMenu>
 #include "mainwindow.h"
-#include "utils.h"
 #include "rigidbody.h"
 #include "objectfactory.h"
 
@@ -42,7 +41,7 @@ Frame::Frame(const QString &str, QTreeWidgetItem *parentItem, int ind, bool grey
   properties->addTab("Visualisation");
 
   //visu = new ExtXMLWidget("OpenMBV frame",new OMBVObjectChoiceWidget(new OMBVFrameWidget, grey?"":MBSIMNS"enableOpenMBV"));
-  visu = new ExtXMLWidget("OpenMBV frame",new OMBVFrameWidget(grey?"":MBSIMNS"enableOpenMBV"), true);
+  visu = new ExtXMLWidget("OpenMBV frame",new OMBVFrameWidget("NOTSET",grey?"":MBSIMNS"enableOpenMBV"), true);
   properties->addToTab("Visualisation", visu);
 
   properties->addStretch();

@@ -1603,7 +1603,7 @@ TiXmlElement* FramePositionsWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-OMBVFrameWidget::OMBVFrameWidget(const string &xmlName_) : xmlName(xmlName_) {
+OMBVFrameWidget::OMBVFrameWidget(const string &name, const string &xmlName_) : OMBVObjectWidget(name), xmlName(xmlName_) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -1644,7 +1644,7 @@ TiXmlElement* OMBVFrameWidget::writeXMLFile(TiXmlNode *parent) {
   }
 }
 
-OMBVArrowWidget::OMBVArrowWidget() {
+OMBVArrowWidget::OMBVArrowWidget(const string &name) : OMBVObjectWidget(name) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -1708,7 +1708,7 @@ TiXmlElement* OMBVArrowWidget::writeXMLFile(TiXmlNode *parent) {
   return e;
 }
 
-OMBVCoilSpringWidget::OMBVCoilSpringWidget() {
+OMBVCoilSpringWidget::OMBVCoilSpringWidget(const string &name) : OMBVObjectWidget(name) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -1775,7 +1775,7 @@ TiXmlElement* OMBVCoilSpringWidget::writeXMLFile(TiXmlNode *parent) {
   return e;
 }
 
-OMBVBodyWidget::OMBVBodyWidget() {
+OMBVBodyWidget::OMBVBodyWidget(const string &name) : OMBVObjectWidget(name) {
   layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -1811,7 +1811,7 @@ bool OMBVBodyWidget::initializeUsingXML(TiXmlElement *element) {
 TiXmlElement* OMBVBodyWidget::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *e=new TiXmlElement(OPENMBVNS+getType().toStdString());
   parent->LinkEndChild(e);
-  e->SetAttribute("name", "NOTSET");
+  e->SetAttribute("name", name==""?"NOTSET":name);
   color->writeXMLFile(e);
   trans->writeXMLFile(e);
   rot->writeXMLFile(e);
@@ -1819,7 +1819,26 @@ TiXmlElement* OMBVBodyWidget::writeXMLFile(TiXmlNode *parent) {
   return e;
 }
 
-CuboidWidget::CuboidWidget() {
+CubeWidget::CubeWidget(const string &name) : OMBVBodyWidget(name) {
+
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), OPENMBVNS"length", lengthUnits(), 4));
+  length = new ExtXMLWidget("Length",new ExtPhysicalVarWidget(input));
+  layout->addWidget(length);
+}
+
+bool CubeWidget::initializeUsingXML(TiXmlElement *element) {
+  OMBVBodyWidget::initializeUsingXML(element);
+  length->initializeUsingXML(element);
+}
+
+TiXmlElement* CubeWidget::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *e=OMBVBodyWidget::writeXMLFile(parent);
+  length->writeXMLFile(e);
+  return e;
+}
+
+CuboidWidget::CuboidWidget(const string &name) : OMBVBodyWidget(name) {
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SVecWidget(getScalars<string>(3,"1"),true), OPENMBVNS"length", lengthUnits(), 4));
@@ -1838,7 +1857,7 @@ TiXmlElement* CuboidWidget::writeXMLFile(TiXmlNode *parent) {
   return e;
 }
 
-SphereWidget::SphereWidget() {
+SphereWidget::SphereWidget(const string &name) : OMBVBodyWidget(name) {
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), OPENMBVNS"radius", lengthUnits(), 4));
@@ -1857,7 +1876,7 @@ TiXmlElement* SphereWidget::writeXMLFile(TiXmlNode *parent) {
   return e;
 }
 
-FrustumWidget::FrustumWidget() {
+FrustumWidget::FrustumWidget(const string &name) : OMBVBodyWidget(name) {
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), OPENMBVNS"topRadius", lengthUnits(), 4));
@@ -1905,7 +1924,7 @@ TiXmlElement* FrustumWidget::writeXMLFile(TiXmlNode *parent) {
   return e;
 }
 
-IvBodyWidget::IvBodyWidget() {
+IvBodyWidget::IvBodyWidget(const string &name) : OMBVBodyWidget(name) {
 
   ivFileName = new ExtXMLWidget("Iv file name",new FileWidget(OPENMBVNS"ivFileName"));
   layout->addWidget(ivFileName);
@@ -1937,86 +1956,180 @@ TiXmlElement* IvBodyWidget::writeXMLFile(TiXmlNode *parent) {
   return e;
 }
 
-OMBVBodyChoiceWidget::OMBVBodyChoiceWidget(RigidBody *body_) : body(body_), ombv(0) {
+CompoundRigidBodyWidget::CompoundRigidBodyWidget(const string &name) : OMBVBodyWidget(name) {
+  QGroupBox *box = new QGroupBox("Bodies");
+  QHBoxLayout *sublayout = new QHBoxLayout;
+  box->setLayout(sublayout);
+  layout->addWidget(box);
+  bodyList = new QListWidget;
+  bodyList->setContextMenuPolicy (Qt::CustomContextMenu);
+  bodyList->setMinimumWidth(bodyList->sizeHint().width()/3);
+  bodyList->setMaximumWidth(bodyList->sizeHint().width()/3);
+  sublayout->addWidget(bodyList);
+  stackedWidget = new QStackedWidget;
+  connect(bodyList,SIGNAL(currentRowChanged(int)),this,SLOT(changeCurrent(int)));
+//  connect(bodyList,SIGNAL(currentRowChanged(int)),stackedWidget,SLOT(setCurrentIndex(int)));
+  connect(bodyList,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(openContextMenu(const QPoint &)));
+  sublayout->addWidget(stackedWidget);
+}
+
+void CompoundRigidBodyWidget::changeCurrent(int idx) {
+  if (stackedWidget->currentWidget() !=0)
+    stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->setCurrentIndex(idx);
+  stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  adjustSize();
+}
+
+void CompoundRigidBodyWidget::openContextMenu(const QPoint &pos) {
+ if(bodyList->itemAt(pos)) {
+   QMenu menu(this);
+   QAction *add = new QAction(tr("Remove"), this);
+   connect(add, SIGNAL(triggered()), this, SLOT(removeBody()));
+   menu.addAction(add);
+   menu.exec(QCursor::pos());
+ }
+ else {
+   QMenu menu(this);
+   QAction *add = new QAction(tr("Add"), this);
+   connect(add, SIGNAL(triggered()), this, SLOT(addBody()));
+   menu.addAction(add);
+   menu.exec(QCursor::pos());
+ }
+}
+
+void CompoundRigidBodyWidget::addBody() {
+  int i = body.size();
+  if(i<5) {
+    body.push_back(new OMBVBodyChoiceWidget((QString("Body")+QString::number(i)).toStdString(),false));
+    bodyList->addItem((QString("Body")+QString::number(i)));
+    stackedWidget->addWidget(body[i]);
+    //stackedWidget->widget(i)->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Ignored);
+  }
+}
+
+void CompoundRigidBodyWidget::removeBody() {
+  int i = bodyList->currentRow();
+
+  stackedWidget->removeWidget(body[i]);
+  delete body[i];
+  body.erase(body.begin()+i);
+  delete bodyList->takeItem(i);
+  for(int i=0; i<bodyList->count(); i++) {
+    bodyList->item(i)->setText((QString("Body")+QString::number(i)));
+    body[i]->setName(bodyList->item(i)->text().toStdString());
+  }
+}
+
+bool CompoundRigidBodyWidget::initializeUsingXML(TiXmlElement *element) {
+  OMBVBodyWidget::initializeUsingXML(element);
+  TiXmlElement *e=element->FirstChildElement(OPENMBVNS"scaleFactor");
+  e=e->NextSiblingElement();
+  while(e) {
+    addBody();
+    body[body.size()-1]->initializeUsingXML(e);
+    e=e->NextSiblingElement();
+  }
+}
+
+TiXmlElement* CompoundRigidBodyWidget::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *e=OMBVBodyWidget::writeXMLFile(parent);
+  for(unsigned int i=0; i<body.size(); i++)
+    body[i]->writeXMLFile(e);
+  return e;
+}
+
+OMBVBodyChoiceWidget::OMBVBodyChoiceWidget(const string &name_, bool flag) : ombv(0), name(name_) {
 
   layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
   comboBox = new QComboBox;
-  //comboBox->addItem(tr("None"));
+  comboBox->addItem(tr("Cube"));
   comboBox->addItem(tr("Cuboid"));
   comboBox->addItem(tr("Frustum"));
   comboBox->addItem(tr("Sphere"));
   comboBox->addItem(tr("IvBody"));
+  if(flag)
+    comboBox->addItem(tr("CompoundRigidBody"));
   layout->addWidget(comboBox);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ombvSelection(int)));
-  ref=new LocalFrameOfReferenceWidget(MBSIMNS"frameOfReference",body);
-  widget = new ExtXMLWidget("Frame of reference",ref);
-  layout->addWidget(widget);
   ombvSelection(0);
-  //widget->hide();
 }
 
 void OMBVBodyChoiceWidget::ombvSelection(int index) {
-  //widget->setVisible(index>0);
-  //if(index==0) {
-  //  layout->removeWidget(ombv);
-  //  delete ombv;
-  //  ombv = 0;
-  //} 
   if(index==0) {
     layout->removeWidget(ombv);
     delete ombv;
-    ombv = new CuboidWidget;  
+    ombv = new CubeWidget(name);  
     layout->addWidget(ombv);
     ombv->update();
   }
-  else if(index==1) {
+  if(index==1) {
     layout->removeWidget(ombv);
     delete ombv;
-    ombv = new FrustumWidget;  
+    ombv = new CuboidWidget(name);  
     layout->addWidget(ombv);
     ombv->update();
   }
   else if(index==2) {
     layout->removeWidget(ombv);
     delete ombv;
-    ombv = new SphereWidget;  
+    ombv = new FrustumWidget(name);  
     layout->addWidget(ombv);
     ombv->update();
   }
   else if(index==3) {
     layout->removeWidget(ombv);
     delete ombv;
-    ombv = new IvBodyWidget;  
+    ombv = new SphereWidget(name);  
+    layout->addWidget(ombv);
+    ombv->update();
+  }
+  else if(index==4) {
+    layout->removeWidget(ombv);
+    delete ombv;
+    ombv = new IvBodyWidget(name);  
+    layout->addWidget(ombv);
+    ombv->update();
+  }
+  else if(index==5) {
+    layout->removeWidget(ombv);
+    delete ombv;
+    ombv = new CompoundRigidBodyWidget(name);  
     layout->addWidget(ombv);
     ombv->update();
   }
 }
 
 bool OMBVBodyChoiceWidget::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=element->FirstChildElement(MBSIMNS"openMBVRigidBody");
-  if(e) {
-    TiXmlElement *e1 = e->FirstChildElement();
-    if(e1) {
-      if(e1->ValueStr() == OPENMBVNS"Cuboid") {
-        comboBox->setCurrentIndex(0);
-        ombv->initializeUsingXML(e1);
-      }
-      else if(e1->ValueStr() == OPENMBVNS"Frustum") {
-        comboBox->setCurrentIndex(1);
-        ombv->initializeUsingXML(e1);
-      }
-      else if(e1->ValueStr() == OPENMBVNS"Sphere") {
-        comboBox->setCurrentIndex(2);
-        ombv->initializeUsingXML(e1);
-      }
-      else if(e1->ValueStr() == OPENMBVNS"IvBody") {
-        comboBox->setCurrentIndex(3);
-        ombv->initializeUsingXML(e1);
-      }
-      ref->initializeUsingXML(e);
+  //TiXmlElement *e1 = element->FirstChildElement();
+  TiXmlElement *e1 = element;
+  if(e1) {
+    if(e1->ValueStr() == OPENMBVNS"Cube") {
+      comboBox->setCurrentIndex(0);
+      ombv->initializeUsingXML(e1);
+    }
+    if(e1->ValueStr() == OPENMBVNS"Cuboid") {
+      comboBox->setCurrentIndex(1);
+      ombv->initializeUsingXML(e1);
+    }
+    else if(e1->ValueStr() == OPENMBVNS"Frustum") {
+      comboBox->setCurrentIndex(2);
+      ombv->initializeUsingXML(e1);
+    }
+    else if(e1->ValueStr() == OPENMBVNS"Sphere") {
+      comboBox->setCurrentIndex(3);
+      ombv->initializeUsingXML(e1);
+    }
+    else if(e1->ValueStr() == OPENMBVNS"IvBody") {
+      comboBox->setCurrentIndex(4);
+      ombv->initializeUsingXML(e1);
+    }
+    else if(e1->ValueStr() == OPENMBVNS"CompoundRigidBody") {
+      comboBox->setCurrentIndex(5);
+      ombv->initializeUsingXML(e1);
     }
     return true;
   }
@@ -2024,14 +2137,39 @@ bool OMBVBodyChoiceWidget::initializeUsingXML(TiXmlElement *element) {
 }
 
 TiXmlElement* OMBVBodyChoiceWidget::writeXMLFile(TiXmlNode *parent) {
-  //if(getOpenMBVBody()) {
+  ombv->writeXMLFile(parent);
+  return 0;
+}
+
+OMBVBodySelectionWidget::OMBVBodySelectionWidget(RigidBody *body) : ombv(0), ref(0) {
+
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
+  ombv = new OMBVBodyChoiceWidget("NOTSET");
+  ref=new LocalFrameOfReferenceWidget(MBSIMNS"frameOfReference",body);
+  ExtXMLWidget *widget = new ExtXMLWidget("Frame of reference",ref);
+  layout->addWidget(ombv);
+  layout->addWidget(widget);
+}
+
+bool OMBVBodySelectionWidget::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e=element->FirstChildElement(MBSIMNS"openMBVRigidBody");
+  if(e) {
+    ombv->initializeUsingXML(e->FirstChildElement());
+    ref->initializeUsingXML(e);
+    return true;
+  }
+  return false;
+}
+
+TiXmlElement* OMBVBodySelectionWidget::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"openMBVRigidBody" );
   ombv->writeXMLFile(ele0);
-
   if(ref->getFrame()->getName()!="C")
     ref->writeXMLFile(ele0);
   parent->LinkEndChild(ele0);
-  //}
   return 0;
 }
 
