@@ -125,12 +125,18 @@ class MainWindow : public QMainWindow {
     void sourceListDoubleClicked();
     void integratorListClicked();
     void parameterListClicked();
+//    void parameterListClicked(const QPoint &pos);
     void newMBS();
     void loadMBS();
     void saveMBSAs();
     void saveMBS();
     void newDOPRI5Integrator();
+    void newRADAU5Integrator();
     void newLSODEIntegrator();
+    void newLSODARIntegrator();
+    void newTimeSteppingIntegrator();
+    void newEulerExplicitIntegrator();
+    void newRKSuiteIntegrator();
     void loadIntegrator();
     void saveIntegratorAs();
     void saveIntegrator();

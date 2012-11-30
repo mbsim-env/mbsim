@@ -197,12 +197,35 @@ MainWindow::MainWindow() {
 
   QMenu *integratorMenu=new QMenu("Integrator", menuBar());
   QMenu *submenu = integratorMenu->addMenu("New");
+
   QAction *action=new QAction(Utils::QIconCached("newobject.svg"),"DOPRI5", this);
   connect(action,SIGNAL(triggered()),this,SLOT(newDOPRI5Integrator()));
   submenu->addAction(action);
+  
+  action=new QAction(Utils::QIconCached("newobject.svg"),"RADAU5", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(newRADAU5Integrator()));
+  submenu->addAction(action);
+
   action=new QAction(Utils::QIconCached("newobject.svg"),"LSODE", this);
   connect(action,SIGNAL(triggered()),this,SLOT(newLSODEIntegrator()));
   submenu->addAction(action);
+
+  action=new QAction(Utils::QIconCached("newobject.svg"),"LSODAR", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(newLSODARIntegrator()));
+  submenu->addAction(action);
+
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Time stepping", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(newTimeSteppingIntegrator()));
+  submenu->addAction(action);
+
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Euler explicit", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(newEulerExplicitIntegrator()));
+  submenu->addAction(action);
+
+  action=new QAction(Utils::QIconCached("newobject.svg"),"RKSuite", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(newRKSuiteIntegrator()));
+  submenu->addAction(action);
+
   integratorMenu->addAction("Load", this, SLOT(loadIntegrator()));
   integratorMenu->addAction("Save as", this, SLOT(saveIntegratorAs()));
   actionSaveIntegrator = integratorMenu->addAction("Save", this, SLOT(saveIntegrator()));
@@ -270,6 +293,9 @@ MainWindow::MainWindow() {
   list << "Name" << "Value";
   parameterList->setHeaderLabels(list);
   connect(parameterList,SIGNAL(pressed(QModelIndex)), this, SLOT(parameterListClicked()));
+  //connect(parameterList,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(parameterListClicked(const QPoint &)));
+  //parameterList->header()->setContextMenuPolicy (Qt::CustomContextMenu);
+  //connect(parameterList->header(),SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(parameterListClicked(const QPoint &)));
 
   pagesWidget = new QStackedWidget;
 
@@ -422,6 +448,12 @@ void MainWindow::parameterListClicked() {
   }
 }
 
+//void MainWindow::parameterListClicked(const QPoint &pos) {
+//  QMenu menu(this);
+//  menu.addMenu(newParameterMenu);
+//  menu.exec(QCursor::pos());
+//}
+
 void MainWindow::resizeVariables() {
   Solver *solver = ((Solver*)elementList->topLevelItem(0));
   solver->resizeVariables();
@@ -519,10 +551,51 @@ void MainWindow::newDOPRI5Integrator() {
   fileIntegrator->setText("");
 }
 
+void MainWindow::newRADAU5Integrator() {
+  actionSaveIntegrator->setDisabled(true);
+  integratorList->clear();
+  QTreeWidgetItem* parentItem = integratorList->invisibleRootItem();
+  Integrator *integrator = new RADAU5Integrator("RADAU5",parentItem, 1);
+  parentItem->addChild(integrator);
+  fileIntegrator->setText("");
+}
+
 void MainWindow::newLSODEIntegrator() {
   integratorList->clear();
   QTreeWidgetItem* parentItem = integratorList->invisibleRootItem();
   Integrator *integrator = new LSODEIntegrator("LSODE",parentItem, 1);
+  parentItem->addChild(integrator);
+  fileIntegrator->setText("");
+}
+
+void MainWindow::newLSODARIntegrator() {
+  integratorList->clear();
+  QTreeWidgetItem* parentItem = integratorList->invisibleRootItem();
+  Integrator *integrator = new LSODARIntegrator("LSODAR",parentItem, 1);
+  parentItem->addChild(integrator);
+  fileIntegrator->setText("");
+}
+
+void MainWindow::newTimeSteppingIntegrator() {
+  integratorList->clear();
+  QTreeWidgetItem* parentItem = integratorList->invisibleRootItem();
+  Integrator *integrator = new TimeSteppingIntegrator("Time stepping",parentItem, 1);
+  parentItem->addChild(integrator);
+  fileIntegrator->setText("");
+}
+
+void MainWindow::newEulerExplicitIntegrator() {
+  integratorList->clear();
+  QTreeWidgetItem* parentItem = integratorList->invisibleRootItem();
+  Integrator *integrator = new EulerExplicitIntegrator("Euler explicit",parentItem, 1);
+  parentItem->addChild(integrator);
+  fileIntegrator->setText("");
+}
+
+void MainWindow::newRKSuiteIntegrator() {
+  integratorList->clear();
+  QTreeWidgetItem* parentItem = integratorList->invisibleRootItem();
+  Integrator *integrator = new RKSuiteIntegrator("RKSuite",parentItem, 1);
   parentItem->addChild(integrator);
   fileIntegrator->setText("");
 }
