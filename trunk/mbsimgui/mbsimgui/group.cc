@@ -92,12 +92,12 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
     properties->addTab("Kinematics");
 
     vector<PhysicalStringWidget*> input;
-    input.push_back(new PhysicalStringWidget(new SVecWidget(3),MBSIMNS"position",lengthUnits(),4));
+    input.push_back(new PhysicalStringWidget(new VecWidget(3),MBSIMNS"position",lengthUnits(),4));
     position = new ExtXMLWidget("Position",new ExtPhysicalVarWidget(input)); 
     properties->addToTab("Kinematics", position);
 
     input.clear();
-    input.push_back(new PhysicalStringWidget(new SMatWidget(getEye<string>(3,3,"1","0")),MBSIMNS"orientation",noUnitUnits(),1));
+    input.push_back(new PhysicalStringWidget(new MatWidget(getEye<string>(3,3,"1","0")),MBSIMNS"orientation",noUnitUnits(),1));
     orientation = new ExtXMLWidget("Orientation",new ExtPhysicalVarWidget(input)); 
     properties->addToTab("Kinematics", orientation);
 

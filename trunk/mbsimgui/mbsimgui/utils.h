@@ -145,7 +145,7 @@ inline std::vector<std::string> extract(const std::string &str, char c) {
   return ret;
 }
 
-inline std::vector<std::string> strToSVec(const std::string &str) {
+inline std::vector<std::string> strToVec(const std::string &str) {
   if(str=="") {
     std::vector<std::string> x;
     return x;
@@ -161,7 +161,7 @@ inline std::vector<std::string> strToSVec(const std::string &str) {
   return x;
 }
 
-inline std::vector<std::vector<std::string> > strToSMat(const std::string &str) {
+inline std::vector<std::vector<std::string> > strToMat(const std::string &str) {
   if(str=="") {
     std::vector<std::vector<std::string> > A;
     return A;

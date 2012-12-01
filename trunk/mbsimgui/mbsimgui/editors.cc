@@ -17,8 +17,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-//#include <config.h>
-#include <editors.h>
+#include <config.h>
+#include "editors.h"
 #include <QMenu>
 #include <QLabel>
 #include <QPushButton>
@@ -175,11 +175,11 @@ LinearRegularizedBilateralConstraint::LinearRegularizedBilateralConstraint() {
   setLayout(layout);
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMNS"stiffnessCoefficient",stiffnessUnits(),1));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),MBSIMNS"stiffnessCoefficient",stiffnessUnits(),1));
   var.push_back(new ExtXMLWidget("Stiffness coefficient",new ExtPhysicalVarWidget(input)));
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMNS"dampingCoefficient",dampingUnits(),0));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),MBSIMNS"dampingCoefficient",dampingUnits(),0));
   var.push_back(new ExtXMLWidget("Damping coefficient",new ExtPhysicalVarWidget(input)));
 
   layout->addWidget(var[0]);
@@ -279,7 +279,7 @@ TiXmlElement* OctaveExpressionWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-SScalarWidget::SScalarWidget(const std::string &d) {
+ScalarWidget::ScalarWidget(const std::string &d) {
 
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -290,7 +290,7 @@ SScalarWidget::SScalarWidget(const std::string &d) {
   //connect(box,SIGNAL(textEdited(const QString&)),this,SIGNAL(valueChanged(const QString&)));
 }
 
-bool SScalarWidget::initializeUsingXML(TiXmlElement *element) {
+bool ScalarWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlText* text = dynamic_cast<TiXmlText*>(element->FirstChild());
   if(!text)
     return false;
@@ -298,13 +298,13 @@ bool SScalarWidget::initializeUsingXML(TiXmlElement *element) {
   return true;
 }
 
-TiXmlElement* SScalarWidget::writeXMLFile(TiXmlNode *parent) {
+TiXmlElement* ScalarWidget::writeXMLFile(TiXmlNode *parent) {
   TiXmlText *text = new TiXmlText(box->text().toStdString());
   parent->LinkEndChild(text);
   return 0;
 }
 
-SVecWidget::SVecWidget(int size, bool transpose_) : transpose(transpose_) {
+VecWidget::VecWidget(int size, bool transpose_) : transpose(transpose_) {
 
   QGridLayout *layout = new QGridLayout;
   layout->setMargin(0);
@@ -312,7 +312,7 @@ SVecWidget::SVecWidget(int size, bool transpose_) : transpose(transpose_) {
   resize(size);
 }
 
-SVecWidget::SVecWidget(const vector<string> &x, bool transpose_) : transpose(transpose_) {
+VecWidget::VecWidget(const vector<string> &x, bool transpose_) : transpose(transpose_) {
 
   QGridLayout *layout = new QGridLayout;
   layout->setMargin(0);
@@ -320,7 +320,7 @@ SVecWidget::SVecWidget(const vector<string> &x, bool transpose_) : transpose(tra
   setVec(x);
 }
 
-void SVecWidget::resize(int size) {
+void VecWidget::resize(int size) {
   for(unsigned int i=0; i<box.size(); i++) {
     layout()->removeWidget(box[i]);
     delete box[i];
@@ -336,7 +336,7 @@ void SVecWidget::resize(int size) {
   }
 }
 
-vector<string> SVecWidget::getVec() const {
+vector<string> VecWidget::getVec() const {
   vector<string> x(box.size());
   for(unsigned int i=0; i<box.size(); i++) {
     x[i] = box[i]->text().toStdString();
@@ -344,20 +344,20 @@ vector<string> SVecWidget::getVec() const {
   return x;
 }
 
-void SVecWidget::setVec(const vector<string> &x) {
+void VecWidget::setVec(const vector<string> &x) {
   if(x.size() != box.size())
     resize(x.size());
   for(unsigned int i=0; i<box.size(); i++) 
     box[i]->setText(x[i].c_str());
 }
 
-void SVecWidget::setReadOnly(bool flag) {
+void VecWidget::setReadOnly(bool flag) {
   for(unsigned int i=0; i<box.size(); i++) {
     box[i]->setReadOnly(flag);
   }
 }
 
-bool SVecWidget::initializeUsingXML(TiXmlElement *parent) {
+bool VecWidget::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *element=parent->FirstChildElement();
   if(!element || element->ValueStr() != (PVNS"xmlVector"))
     return false;
@@ -373,7 +373,7 @@ bool SVecWidget::initializeUsingXML(TiXmlElement *parent) {
   return true;
 }
 
-TiXmlElement* SVecWidget::writeXMLFile(TiXmlNode *parent) {
+TiXmlElement* VecWidget::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele = new TiXmlElement(PVNS"xmlVector");
   for(unsigned int i=0; i<box.size(); i++) {
     TiXmlElement *elei = new TiXmlElement(PVNS"ele");
@@ -385,8 +385,8 @@ TiXmlElement* SVecWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-bool SVecWidget::validate(const string &str) const {
-  vector<string> x = strToSVec(str);
+bool VecWidget::validate(const string &str) const {
+  vector<string> x = strToVec(str);
   if(size()!=x.size())
     return false;
   if(x[0]=="" || x[0].find(",")!=string::npos)
@@ -394,7 +394,7 @@ bool SVecWidget::validate(const string &str) const {
   return true;
 }
 
-SMatWidget::SMatWidget(int rows, int cols) {
+MatWidget::MatWidget(int rows, int cols) {
 
   QGridLayout *layout = new QGridLayout;
   layout->setMargin(0);
@@ -402,7 +402,7 @@ SMatWidget::SMatWidget(int rows, int cols) {
   resize(rows,cols);
 }
 
-SMatWidget::SMatWidget(const vector<vector<string> > &A) {
+MatWidget::MatWidget(const vector<vector<string> > &A) {
 
   QGridLayout *layout = new QGridLayout;
   layout->setMargin(0);
@@ -410,7 +410,7 @@ SMatWidget::SMatWidget(const vector<vector<string> > &A) {
   setMat(A);
 }
 
-void SMatWidget::resize(int rows, int cols) {
+void MatWidget::resize(int rows, int cols) {
   for(unsigned int i=0; i<box.size(); i++) {
     for(unsigned int j=0; j<box[i].size(); j++) {
       layout()->removeWidget(box[i][j]);
@@ -428,7 +428,7 @@ void SMatWidget::resize(int rows, int cols) {
   }
 }
 
-vector<vector<string> > SMatWidget::getMat() const {
+vector<vector<string> > MatWidget::getMat() const {
   vector<vector<string> > A(box.size());
   for(unsigned int i=0; i<box.size(); i++) {
     A[i].resize(box[i].size());
@@ -438,7 +438,7 @@ vector<vector<string> > SMatWidget::getMat() const {
   return A;
 }
 
-void SMatWidget::setMat(const vector<vector<string> > &A) {
+void MatWidget::setMat(const vector<vector<string> > &A) {
   if(A.size()==0)
     return resize(0,0);
   if(A.size() != box.size() || A[0].size()!=box[0].size())
@@ -448,7 +448,7 @@ void SMatWidget::setMat(const vector<vector<string> > &A) {
       box[i][j]->setText(A[i][j].c_str());
 }
 
-void SMatWidget::setReadOnly(bool flag) {
+void MatWidget::setReadOnly(bool flag) {
   for(unsigned int i=0; i<box.size(); i++) {
     for(unsigned int j=0; j<box[i].size(); j++) {
       box[i][j]->setReadOnly(flag);
@@ -456,7 +456,7 @@ void SMatWidget::setReadOnly(bool flag) {
   }
 }
 
-bool SMatWidget::initializeUsingXML(TiXmlElement *parent) {
+bool MatWidget::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *element=parent->FirstChildElement();
   if(!element || element->ValueStr() != (PVNS"xmlMatrix"))
     return false;
@@ -479,7 +479,7 @@ bool SMatWidget::initializeUsingXML(TiXmlElement *parent) {
   return true;
 }
 
-TiXmlElement* SMatWidget::writeXMLFile(TiXmlNode *parent) {
+TiXmlElement* MatWidget::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele = new TiXmlElement(PVNS"xmlMatrix");
   for(unsigned int i=0; i<box.size(); i++) {
     TiXmlElement *elei = new TiXmlElement(PVNS"row");
@@ -495,14 +495,14 @@ TiXmlElement* SMatWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-bool SMatWidget::validate(const string &str) const {
-  vector<vector<string> > A = strToSMat(str);
+bool MatWidget::validate(const string &str) const {
+  vector<vector<string> > A = strToMat(str);
   if(rows()!=A.size() || cols()!=A[0].size())
     return false;
   return true;
 }
 
-SSymMatWidget::SSymMatWidget(int rows) {
+SymMatWidget::SymMatWidget(int rows) {
 
   QGridLayout *layout = new QGridLayout;
   layout->setMargin(0);
@@ -514,7 +514,7 @@ SSymMatWidget::SSymMatWidget(int rows) {
         connect(box[i][j],SIGNAL(textChanged(const QString&)),box[j][i],SLOT(setText(const QString&)));
 }
 
-SSymMatWidget::SSymMatWidget(const vector<vector<string> > &A) {
+SymMatWidget::SymMatWidget(const vector<vector<string> > &A) {
 
   QGridLayout *layout = new QGridLayout;
   layout->setMargin(0);
@@ -522,7 +522,7 @@ SSymMatWidget::SSymMatWidget(const vector<vector<string> > &A) {
   setMat(A);
 }
 
-void SSymMatWidget::resize(int rows) {
+void SymMatWidget::resize(int rows) {
   for(unsigned int i=0; i<box.size(); i++) {
     for(unsigned int j=0; j<box[i].size(); j++) {
       layout()->removeWidget(box[i][j]);
@@ -539,7 +539,7 @@ void SSymMatWidget::resize(int rows) {
   }
 }
 
-vector<vector<string> > SSymMatWidget::getMat() const {
+vector<vector<string> > SymMatWidget::getMat() const {
   vector<vector<string> > A(box.size());
   for(unsigned int i=0; i<box.size(); i++) {
     A[i].resize(box.size());
@@ -549,7 +549,7 @@ vector<vector<string> > SSymMatWidget::getMat() const {
   return A;
 }
 
-void SSymMatWidget::setMat(const vector<vector<string> > &A) {
+void SymMatWidget::setMat(const vector<vector<string> > &A) {
   if(A.size() == 0 || A.size() != A[0].size())
     return resize(0);
   if(A.size() != box.size())
@@ -559,7 +559,7 @@ void SSymMatWidget::setMat(const vector<vector<string> > &A) {
       box[i][j]->setText(A[i][j].c_str());
 }
 
-void SSymMatWidget::setReadOnly(bool flag) {
+void SymMatWidget::setReadOnly(bool flag) {
   for(unsigned int i=0; i<box.size(); i++) {
     for(unsigned int j=0; j<box[i].size(); j++) {
       box[i][j]->setReadOnly(flag);
@@ -567,7 +567,7 @@ void SSymMatWidget::setReadOnly(bool flag) {
   }
 }
 
-bool SSymMatWidget::initializeUsingXML(TiXmlElement *parent) {
+bool SymMatWidget::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *element=parent->FirstChildElement();
   if(!element || element->ValueStr() != (PVNS"xmlMatrix"))
     return false;
@@ -590,7 +590,7 @@ bool SSymMatWidget::initializeUsingXML(TiXmlElement *parent) {
   return true;
 }
 
-TiXmlElement* SSymMatWidget::writeXMLFile(TiXmlNode *parent) {
+TiXmlElement* SymMatWidget::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele = new TiXmlElement(PVNS"xmlMatrix");
   for(unsigned int i=0; i<box.size(); i++) {
     TiXmlElement *elei = new TiXmlElement(PVNS"row");
@@ -606,8 +606,8 @@ TiXmlElement* SSymMatWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-bool SSymMatWidget::validate(const string &str) const {
-  vector<vector<string> > A = strToSMat(str);
+bool SymMatWidget::validate(const string &str) const {
+  vector<vector<string> > A = strToMat(str);
   if(rows()!=A.size() || cols()!=A[0].size())
     return false;
   for(unsigned int i=0; i<rows(); i++) {
@@ -621,7 +621,7 @@ bool SSymMatWidget::validate(const string &str) const {
   return true;
 }
 
-SMatColsVarWidget::SMatColsVarWidget(int rows, int cols, int minCols_, int maxCols_) : minCols(minCols_), maxCols(maxCols_) {
+MatColsVarWidget::MatColsVarWidget(int rows, int cols, int minCols_, int maxCols_) : minCols(minCols_), maxCols(maxCols_) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   QWidget *box = new QWidget;
@@ -637,7 +637,7 @@ SMatColsVarWidget::SMatColsVarWidget(int rows, int cols, int minCols_, int maxCo
 
   hbox->addWidget(colsCombo);
   hbox->addStretch(2);
-  widget = new SMatWidget(rows,cols);
+  widget = new MatWidget(rows,cols);
   //QObject::connect(colsCombo, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(resize(const QString&)));
   QObject::connect(colsCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(currentIndexChanged(int)));
   layout->addWidget(widget);
@@ -646,13 +646,13 @@ SMatColsVarWidget::SMatColsVarWidget(int rows, int cols, int minCols_, int maxCo
   setLayout(layout);
 }
 
-void SMatColsVarWidget::currentIndexChanged(int i) {
+void MatColsVarWidget::currentIndexChanged(int i) {
   int cols = i+minCols;
   widget->resize(widget->rows(),cols);
   emit sizeChanged(cols);
 }
 
-bool SMatColsVarWidget::initializeUsingXML(TiXmlElement *parent) {
+bool MatColsVarWidget::initializeUsingXML(TiXmlElement *parent) {
   if(!widget->initializeUsingXML(parent))
     return false;
   colsCombo->blockSignals(true);
@@ -661,13 +661,13 @@ bool SMatColsVarWidget::initializeUsingXML(TiXmlElement *parent) {
   return true;
 }
 
-TiXmlElement* SMatColsVarWidget::writeXMLFile(TiXmlNode *parent) {
+TiXmlElement* MatColsVarWidget::writeXMLFile(TiXmlNode *parent) {
   widget->writeXMLFile(parent);
   return 0;
 }
 
-bool SMatColsVarWidget::validate(const string &str) const {
-  vector<vector<string> > A = strToSMat(str);
+bool MatColsVarWidget::validate(const string &str) const {
+  vector<vector<string> > A = strToMat(str);
   if(rows()!=A.size())
     return false;
   if(A[0].size()<minCols || A[0].size()>maxCols)
@@ -677,7 +677,7 @@ bool SMatColsVarWidget::validate(const string &str) const {
   return true;
 }
 
-SCardanWidget::SCardanWidget(bool transpose_) : transpose(transpose_) {
+CardanWidget::CardanWidget(bool transpose_) : transpose(transpose_) {
 
   QGridLayout *layout = new QGridLayout;
   layout->setMargin(0);
@@ -693,7 +693,7 @@ SCardanWidget::SCardanWidget(bool transpose_) : transpose(transpose_) {
   }
 }
 
-SCardanWidget::SCardanWidget(const vector<string> &x, bool transpose_) : transpose(transpose_) {
+CardanWidget::CardanWidget(const vector<string> &x, bool transpose_) : transpose(transpose_) {
 
   QGridLayout *layout = new QGridLayout;
   layout->setMargin(0);
@@ -709,7 +709,7 @@ SCardanWidget::SCardanWidget(const vector<string> &x, bool transpose_) : transpo
   }
 }
 
-vector<string> SCardanWidget::getCardan() const {
+vector<string> CardanWidget::getCardan() const {
   vector<string> x(box.size());
   for(unsigned int i=0; i<box.size(); i++) {
     x[i] = box[i]->text().toStdString();
@@ -717,18 +717,18 @@ vector<string> SCardanWidget::getCardan() const {
   return x;
 }
 
-void SCardanWidget::setCardan(const vector<string> &x) {
+void CardanWidget::setCardan(const vector<string> &x) {
   for(unsigned int i=0; i<box.size(); i++) 
     box[i]->setText(x[i].c_str());
 }
 
-void SCardanWidget::setReadOnly(bool flag) {
+void CardanWidget::setReadOnly(bool flag) {
   for(unsigned int i=0; i<box.size(); i++) {
     box[i]->setReadOnly(flag);
   }
 }
 
-bool SCardanWidget::initializeUsingXML(TiXmlElement *parent) {
+bool CardanWidget::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *element=parent->FirstChildElement();
   if(!element || element->ValueStr() != (PVNS"xmlCardan"))
     return false;
@@ -744,7 +744,7 @@ bool SCardanWidget::initializeUsingXML(TiXmlElement *parent) {
   return true;
 }
 
-TiXmlElement* SCardanWidget::writeXMLFile(TiXmlNode *parent) {
+TiXmlElement* CardanWidget::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele = new TiXmlElement(PVNS"xmlCardan");
   for(unsigned int i=0; i<box.size(); i++) {
     TiXmlElement *elei = new TiXmlElement(PVNS"ele");
@@ -1210,7 +1210,7 @@ TiXmlElement* ExtPhysicalVarWidget::writeXMLFile(TiXmlNode *parent) {
 
 LinearTranslation::LinearTranslation() {
   vector<PhysicalStringWidget*> input;
-  SMatColsVarWidget* m = new SMatColsVarWidget(3,1,1,3);
+  MatColsVarWidget* m = new MatColsVarWidget(3,1,1,3);
   input.push_back(new PhysicalStringWidget(m,MBSIMNS"translationVectors",noUnitUnits(),1));
   mat = new ExtPhysicalVarWidget(input);
   QWidget *widget = new ExtXMLWidget("Translation vectors",mat);
@@ -1224,7 +1224,7 @@ LinearTranslation::LinearTranslation() {
 
 int LinearTranslation::getSize() const {
   string str = evalOctaveExpression(mat->getCurrentPhysicalStringWidget()->getValue());
-  vector<vector<string> > A = strToSMat(str);
+  vector<vector<string> > A = strToMat(str);
   return A.size()?A[0].size():0;
 }
 
@@ -1314,7 +1314,7 @@ TiXmlElement* RotationAboutZAxis::writeXMLFile(TiXmlNode *parent) {
 
 RotationAboutFixedAxis::RotationAboutFixedAxis() {
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new SVecWidget(3),MBSIMNS"axisOfRotation",noUnitUnits(),1));
+  input.push_back(new PhysicalStringWidget(new VecWidget(3),MBSIMNS"axisOfRotation",noUnitUnits(),1));
   vec = new ExtXMLWidget("Axis of rotation",new ExtPhysicalVarWidget(input));  
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -1455,7 +1455,7 @@ EnvironmentWidget::EnvironmentWidget() {
   g[0] = "0";
   g[1] = "-9.81";
   g[2] = "0";
-  input.push_back(new PhysicalStringWidget(new SVecWidget(g),MBSIMNS"accelerationOfGravity",accelerationUnits(),0));
+  input.push_back(new PhysicalStringWidget(new VecWidget(g),MBSIMNS"accelerationOfGravity",accelerationUnits(),0));
   vec = new ExtPhysicalVarWidget(input);  
   
   layout->addWidget(vec);
@@ -1484,13 +1484,13 @@ FramePositionWidget::FramePositionWidget(Frame *frame_) : frame(frame_) {
   QWidget *refFrameWidget = new ExtXMLWidget("Frame of reference",refFrame);
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new SVecWidget(3), MBSIMNS"position", lengthUnits(), 4));
+  input.push_back(new PhysicalStringWidget(new VecWidget(3), MBSIMNS"position", lengthUnits(), 4));
   position = new ExtPhysicalVarWidget(input);
   QWidget *positionWidget = new ExtXMLWidget("Position",position);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new SMatWidget(getEye<string>(3,3,"1","0")),MBSIMNS"orientation",noUnitUnits(),1));
-  //input.push_back(new PhysicalStringWidget(new SCardanWidget,MBSIMNS"orientation",angleUnits(),0));
+  input.push_back(new PhysicalStringWidget(new MatWidget(getEye<string>(3,3,"1","0")),MBSIMNS"orientation",noUnitUnits(),1));
+  //input.push_back(new PhysicalStringWidget(new CardanWidget,MBSIMNS"orientation",angleUnits(),0));
   orientation = new ExtPhysicalVarWidget(input);
   QWidget *orientationWidget = new ExtXMLWidget("Orientation",orientation);
 
@@ -1609,12 +1609,12 @@ OMBVFrameWidget::OMBVFrameWidget(const string &name, const string &xmlName_) : O
   setLayout(layout);
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), MBSIMNS"size", lengthUnits(), 4));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1"), MBSIMNS"size", lengthUnits(), 4));
   size = new ExtXMLWidget("Size",new ExtPhysicalVarWidget(input));
   layout->addWidget(size);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), MBSIMNS"offset", noUnitUnits(), 1));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1"), MBSIMNS"offset", noUnitUnits(), 1));
   offset = new ExtXMLWidget("Offset",new ExtPhysicalVarWidget(input));
   layout->addWidget(offset);
  }
@@ -1650,17 +1650,17 @@ OMBVArrowWidget::OMBVArrowWidget(const string &name) : OMBVObjectWidget(name) {
   setLayout(layout);
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new SScalarWidget("0.1"), OPENMBVNS"diameter", lengthUnits(), 4));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0.1"), OPENMBVNS"diameter", lengthUnits(), 4));
   diameter = new ExtXMLWidget("Diameter",new ExtPhysicalVarWidget(input));
   layout->addWidget(diameter);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new SScalarWidget("0.2"), OPENMBVNS"headDiameter", lengthUnits(), 4));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0.2"), OPENMBVNS"headDiameter", lengthUnits(), 4));
   headDiameter = new ExtXMLWidget("Head diameter",new ExtPhysicalVarWidget(input));
   layout->addWidget(headDiameter);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new SScalarWidget("0.2"), OPENMBVNS"headLength", lengthUnits(), 4));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0.2"), OPENMBVNS"headLength", lengthUnits(), 4));
   headLength = new ExtXMLWidget("Head length",new ExtPhysicalVarWidget(input));
   layout->addWidget(headLength);
 
@@ -1678,7 +1678,7 @@ OMBVArrowWidget::OMBVArrowWidget(const string &name) : OMBVObjectWidget(name) {
   layout->addWidget(type);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), OPENMBVNS"scaleLength", noUnitUnits(), 1));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1"), OPENMBVNS"scaleLength", noUnitUnits(), 1));
   scaleLength = new ExtXMLWidget("Scale length",new ExtPhysicalVarWidget(input));
   layout->addWidget(scaleLength);
 }
@@ -1723,27 +1723,27 @@ OMBVCoilSpringWidget::OMBVCoilSpringWidget(const string &name) : OMBVObjectWidge
   layout->addWidget(type);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new SScalarWidget("3"), OPENMBVNS"numberOfCoils", noUnitUnits(), 1));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("3"), OPENMBVNS"numberOfCoils", noUnitUnits(), 1));
   numberOfCoils= new ExtXMLWidget("Number of coils",new ExtPhysicalVarWidget(input));
   layout->addWidget(numberOfCoils);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new SScalarWidget("0.1"), OPENMBVNS"springRadius", lengthUnits(), 4));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0.1"), OPENMBVNS"springRadius", lengthUnits(), 4));
   springRadius= new ExtXMLWidget("Spring radius",new ExtPhysicalVarWidget(input));
   layout->addWidget(springRadius);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new SScalarWidget("-1"), OPENMBVNS"crossSectionRadius", lengthUnits(), 4));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("-1"), OPENMBVNS"crossSectionRadius", lengthUnits(), 4));
   crossSectionRadius = new ExtXMLWidget("Cross section radius",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(crossSectionRadius);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new SScalarWidget("-1"), OPENMBVNS"nominalLength", lengthUnits(), 4));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("-1"), OPENMBVNS"nominalLength", lengthUnits(), 4));
   nominalLength= new ExtXMLWidget("Nominal length",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(nominalLength);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), OPENMBVNS"scaleFactor", noUnitUnits(), 1));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1"), OPENMBVNS"scaleFactor", noUnitUnits(), 1));
   scaleFactor = new ExtXMLWidget("Scale factor",new ExtPhysicalVarWidget(input));
   layout->addWidget(scaleFactor);
 }
@@ -1781,22 +1781,22 @@ OMBVBodyWidget::OMBVBodyWidget(const string &name) : OMBVObjectWidget(name) {
   setLayout(layout);
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new SScalarWidget("0"), OPENMBVNS"staticColor", noUnitUnits(), 1));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"), OPENMBVNS"staticColor", noUnitUnits(), 1));
   color = new ExtXMLWidget("Static color",new ExtPhysicalVarWidget(input));
   layout->addWidget(color);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new SVecWidget(3,true), OPENMBVNS"initialTranslation", lengthUnits(), 4));
+  input.push_back(new PhysicalStringWidget(new VecWidget(3,true), OPENMBVNS"initialTranslation", lengthUnits(), 4));
   trans = new ExtXMLWidget("Initial translation",new ExtPhysicalVarWidget(input));
   layout->addWidget(trans);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new SVecWidget(3,true), OPENMBVNS"initialRotation", angleUnits(), 0));
+  input.push_back(new PhysicalStringWidget(new VecWidget(3,true), OPENMBVNS"initialRotation", angleUnits(), 0));
   rot = new ExtXMLWidget("Initial rotation",new ExtPhysicalVarWidget(input));
   layout->addWidget(rot);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), OPENMBVNS"scaleFactor", noUnitUnits(), 1));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1"), OPENMBVNS"scaleFactor", noUnitUnits(), 1));
   scale = new ExtXMLWidget("Scale factor",new ExtPhysicalVarWidget(input));
   layout->addWidget(scale);
 }
@@ -1822,7 +1822,7 @@ TiXmlElement* OMBVBodyWidget::writeXMLFile(TiXmlNode *parent) {
 CubeWidget::CubeWidget(const string &name) : OMBVBodyWidget(name) {
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), OPENMBVNS"length", lengthUnits(), 4));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1"), OPENMBVNS"length", lengthUnits(), 4));
   length = new ExtXMLWidget("Length",new ExtPhysicalVarWidget(input));
   layout->addWidget(length);
 }
@@ -1841,7 +1841,7 @@ TiXmlElement* CubeWidget::writeXMLFile(TiXmlNode *parent) {
 CuboidWidget::CuboidWidget(const string &name) : OMBVBodyWidget(name) {
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new SVecWidget(getScalars<string>(3,"1"),true), OPENMBVNS"length", lengthUnits(), 4));
+  input.push_back(new PhysicalStringWidget(new VecWidget(getScalars<string>(3,"1"),true), OPENMBVNS"length", lengthUnits(), 4));
   length = new ExtXMLWidget("Length",new ExtPhysicalVarWidget(input));
   layout->addWidget(length);
 }
@@ -1860,7 +1860,7 @@ TiXmlElement* CuboidWidget::writeXMLFile(TiXmlNode *parent) {
 SphereWidget::SphereWidget(const string &name) : OMBVBodyWidget(name) {
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), OPENMBVNS"radius", lengthUnits(), 4));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1"), OPENMBVNS"radius", lengthUnits(), 4));
   radius = new ExtXMLWidget("Radius",new ExtPhysicalVarWidget(input));
   layout->addWidget(radius);
 }
@@ -1879,27 +1879,27 @@ TiXmlElement* SphereWidget::writeXMLFile(TiXmlNode *parent) {
 FrustumWidget::FrustumWidget(const string &name) : OMBVBodyWidget(name) {
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), OPENMBVNS"topRadius", lengthUnits(), 4));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1"), OPENMBVNS"topRadius", lengthUnits(), 4));
   top = new ExtXMLWidget("Top radius",new ExtPhysicalVarWidget(input));
   layout->addWidget(top);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), OPENMBVNS"baseRadius", lengthUnits(), 4));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1"), OPENMBVNS"baseRadius", lengthUnits(), 4));
   base = new ExtXMLWidget("Base radius",new ExtPhysicalVarWidget(input));
   layout->addWidget(base);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new SScalarWidget("1"), OPENMBVNS"height", lengthUnits(), 4));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1"), OPENMBVNS"height", lengthUnits(), 4));
   height = new ExtXMLWidget("Height",new ExtPhysicalVarWidget(input));
   layout->addWidget(height);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new SScalarWidget("0"), OPENMBVNS"innerTopRadius", lengthUnits(), 4));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"), OPENMBVNS"innerTopRadius", lengthUnits(), 4));
   innerTop = new ExtXMLWidget("Inner top radius",new ExtPhysicalVarWidget(input));
   layout->addWidget(innerTop);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new SScalarWidget("0"), OPENMBVNS"innerBaseRadius", lengthUnits(), 4));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"), OPENMBVNS"innerBaseRadius", lengthUnits(), 4));
   innerBase = new ExtXMLWidget("Inner base radius",new ExtPhysicalVarWidget(input));
   layout->addWidget(innerBase);
 }
@@ -1930,7 +1930,7 @@ IvBodyWidget::IvBodyWidget(const string &name) : OMBVBodyWidget(name) {
   layout->addWidget(ivFileName);
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new SScalarWidget("-1"), OPENMBVNS"creaseEdges", angleUnits(), 0));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("-1"), OPENMBVNS"creaseEdges", angleUnits(), 0));
   creaseEdges = new ExtXMLWidget("Crease edges",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(creaseEdges);
 
@@ -2392,7 +2392,7 @@ GeneralizedForceChoiceWidget::GeneralizedForceChoiceWidget(const string &xmlName
   setLayout(layout);
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new SMatColsVarWidget(3,1,1,3),MBSIMNS"direction",noUnitUnits(),1));
+  input.push_back(new PhysicalStringWidget(new MatColsVarWidget(3,1,1,3),MBSIMNS"direction",noUnitUnits(),1));
   mat_ = new ExtPhysicalVarWidget(input);  
   mat = new ExtXMLWidget("Direction vectors",mat_);
   layout->addWidget(mat);
@@ -2409,7 +2409,7 @@ GeneralizedForceChoiceWidget::GeneralizedForceChoiceWidget(const string &xmlName
 
 int GeneralizedForceChoiceWidget::getSize() const {
   string str = evalOctaveExpression(mat_->getCurrentPhysicalStringWidget()->getValue());
-  vector<vector<string> > A = strToSMat(str);
+  vector<vector<string> > A = strToMat(str);
   return A.size()?A[0].size():0;
 }
 
@@ -2553,13 +2553,13 @@ ForceChoiceWidget::ForceChoiceWidget(const string &xmlName_, ExtXMLWidget* arrow
   setLayout(layout);
 
   vector<PhysicalStringWidget*> input;
-  PhysicalStringWidget *mat = new PhysicalStringWidget(new SMatColsVarWidget(3,1,1,3),MBSIMNS"directionVectors",noUnitUnits(),1);
+  PhysicalStringWidget *mat = new PhysicalStringWidget(new MatColsVarWidget(3,1,1,3),MBSIMNS"directionVectors",noUnitUnits(),1);
   input.push_back(mat);
   widget = new ExtPhysicalVarWidget(input);  
   ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Direction vectors",widget);
 
   connect(widget,SIGNAL(inputDialogChanged(int)),this,SLOT(resizeVariables()));
-  connect((SMatColsVarWidget*)mat->getWidget(), SIGNAL(sizeChanged(int)), this, SLOT(resizeVariables()));
+  connect((MatColsVarWidget*)mat->getWidget(), SIGNAL(sizeChanged(int)), this, SLOT(resizeVariables()));
   layout->addWidget(extXMLWidget);
 
   forceLaw = new Function1ChoiceWidget(MBSIMNS"function");
@@ -2577,7 +2577,7 @@ void ForceChoiceWidget::resizeVariables() {
 
 int ForceChoiceWidget::getSize() const {
   string str = evalOctaveExpression(widget->getCurrentPhysicalStringWidget()->getValue());
-  vector<vector<string> > A = strToSMat(str);
+  vector<vector<string> > A = strToMat(str);
   return A.size()?A[0].size():0;
 }
 
@@ -2616,7 +2616,7 @@ ForceDirectionWidget::ForceDirectionWidget(const string &xmlName_, Element *elem
   forceDirWidget->setLayout(hlayout);
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new SVecWidget(3),MBSIMNS"direction",noUnitUnits(),1));
+  input.push_back(new PhysicalStringWidget(new VecWidget(3),MBSIMNS"direction",noUnitUnits(),1));
   mat = new ExtPhysicalVarWidget(input);
   ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Direction vector",mat);
   hlayout->addWidget(extXMLWidget);
@@ -2653,7 +2653,7 @@ GeneralizedForceDirectionWidget::GeneralizedForceDirectionWidget(const string &x
   setLayout(layout);
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new SMatColsVarWidget(3,0,0,3),xmlName,noUnitUnits(),1));
+  input.push_back(new PhysicalStringWidget(new MatColsVarWidget(3,0,0,3),xmlName,noUnitUnits(),1));
   mat = new ExtPhysicalVarWidget(input);  
   ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Direction vectors",mat);
   layout->addWidget(extXMLWidget);
@@ -2661,7 +2661,7 @@ GeneralizedForceDirectionWidget::GeneralizedForceDirectionWidget(const string &x
 
 int GeneralizedForceDirectionWidget::getSize() const {
   string str = evalOctaveExpression(mat->getCurrentPhysicalStringWidget()->getValue());
-  vector<vector<string> > A = strToSMat(str);
+  vector<vector<string> > A = strToMat(str);
   return A.size()?A[0].size():0;
 }
 
@@ -2680,19 +2680,19 @@ ConstantFunction1::ConstantFunction1(const QString &ext) : Function1(ext) {
   layout->setMargin(0);
   setLayout(layout);
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new SVecWidget(0,true),MBSIMNS"value",QStringList(),0));
+  input.push_back(new PhysicalStringWidget(new VecWidget(0,true),MBSIMNS"value",QStringList(),0));
   c = new ExtPhysicalVarWidget(input),"VS";  
   ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Value",c);
   layout->addWidget(extXMLWidget);
 }
 int ConstantFunction1::getSize() const {
   string str = evalOctaveExpression(c->getCurrentPhysicalStringWidget()->getValue());
-  vector<vector<string> > A = strToSMat(str);
+  vector<vector<string> > A = strToMat(str);
   return A.size()?A[0].size():0;
 }
 void ConstantFunction1::resize(int m, int n) {
-  if(((SVecWidget*)c->getPhysicalStringWidget(0)->getWidget())->size() != m)
-    ((SVecWidget*)c->getPhysicalStringWidget(0)->getWidget())->resize(m);
+  if(((VecWidget*)c->getPhysicalStringWidget(0)->getWidget())->size() != m)
+    ((VecWidget*)c->getPhysicalStringWidget(0)->getWidget())->resize(m);
 }
 bool ConstantFunction1::initializeUsingXML(TiXmlElement *element) {
   Function1::initializeUsingXML(element);
@@ -2710,26 +2710,26 @@ SinusFunction1::SinusFunction1() {
   setLayout(layout);
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new SVecWidget(0,true),MBSIMNS"amplitude",QStringList(),0));
+  input.push_back(new PhysicalStringWidget(new VecWidget(0,true),MBSIMNS"amplitude",QStringList(),0));
   var.push_back(new ExtPhysicalVarWidget(input));
   ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Amplitude",var[var.size()-1]);
   layout->addWidget(extXMLWidget);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new SVecWidget(0,true),MBSIMNS"frequency",QStringList(),0));
+  input.push_back(new PhysicalStringWidget(new VecWidget(0,true),MBSIMNS"frequency",QStringList(),0));
   var.push_back(new ExtPhysicalVarWidget(input));
   extXMLWidget = new ExtXMLWidget("Frequency",var[var.size()-1]);
   layout->addWidget(extXMLWidget);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new SVecWidget(0,true),MBSIMNS"phase",QStringList(),0));
+  input.push_back(new PhysicalStringWidget(new VecWidget(0,true),MBSIMNS"phase",QStringList(),0));
   var.push_back(new ExtPhysicalVarWidget(input));
   extXMLWidget = new ExtXMLWidget("Phase",var[var.size()-1]);
   layout->addWidget(extXMLWidget);
 
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new SVecWidget(0,true),MBSIMNS"offset",QStringList(),0));
+  input.push_back(new PhysicalStringWidget(new VecWidget(0,true),MBSIMNS"offset",QStringList(),0));
   var.push_back(new ExtPhysicalVarWidget(input));  
   extXMLWidget = new ExtXMLWidget("Offset",var[var.size()-1]);
   layout->addWidget(extXMLWidget);
@@ -2738,13 +2738,13 @@ SinusFunction1::SinusFunction1() {
 }
 int SinusFunction1::getSize() const {
   string str = evalOctaveExpression(var[0]->getCurrentPhysicalStringWidget()->getValue());
-  vector<vector<string> > A = strToSMat(str);
+  vector<vector<string> > A = strToMat(str);
   return A.size()?A[0].size():0;
 }
 void SinusFunction1::resize(int m, int n) {
   for(unsigned int i=0; i<var.size(); i++)
-    if(((SVecWidget*)var[i]->getPhysicalStringWidget(0)->getWidget())->size() != m)
-      ((SVecWidget*)var[i]->getPhysicalStringWidget(0)->getWidget())->resize(m);
+    if(((VecWidget*)var[i]->getPhysicalStringWidget(0)->getWidget())->size() != m)
+      ((VecWidget*)var[i]->getPhysicalStringWidget(0)->getWidget())->resize(m);
 }
 bool SinusFunction1::initializeUsingXML(TiXmlElement *element) {
   DifferentiableFunction1::initializeUsingXML(element);
@@ -2765,19 +2765,19 @@ LinearSpringDamperForce::LinearSpringDamperForce() {
   setLayout(layout);
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMNS"stiffnessCoefficient",stiffnessUnits(),1));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),MBSIMNS"stiffnessCoefficient",stiffnessUnits(),1));
   var.push_back(new ExtPhysicalVarWidget(input));
   ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Stiffness coefficient",var[var.size()-1]);
   layout->addWidget(extXMLWidget);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMNS"dampingCoefficient",dampingUnits(),0));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),MBSIMNS"dampingCoefficient",dampingUnits(),0));
   var.push_back(new ExtPhysicalVarWidget(input));
   extXMLWidget = new ExtXMLWidget("Damping coefficient",var[var.size()-1]);
   layout->addWidget(extXMLWidget);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new SScalarWidget("0"),MBSIMNS"unloadedLength",lengthUnits(),4));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),MBSIMNS"unloadedLength",lengthUnits(),4));
   var.push_back(new ExtPhysicalVarWidget(input));
   extXMLWidget = new ExtXMLWidget("Unloaded length",var[var.size()-1]);
   layout->addWidget(extXMLWidget);

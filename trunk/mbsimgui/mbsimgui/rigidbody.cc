@@ -60,12 +60,12 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
   properties->addToTab("Kinematics", frameOfReference);
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new SScalarWidget("1"),MBSIMNS"mass",massUnits(),2));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1"),MBSIMNS"mass",massUnits(),2));
   mass = new ExtXMLWidget("Mass",new ExtPhysicalVarWidget(input));
   properties->addToTab("General", mass);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new SSymMatWidget(getEye<string>(3,3,"0.01","0")),MBSIMNS"inertiaTensor",inertiaUnits(),2));
+  input.push_back(new PhysicalStringWidget(new SymMatWidget(getEye<string>(3,3,"0.01","0")),MBSIMNS"inertiaTensor",inertiaUnits(),2));
   inertia = new ExtXMLWidget("Inertia tensor",new ExtPhysicalVarWidget(input));
   properties->addToTab("General", inertia);
 

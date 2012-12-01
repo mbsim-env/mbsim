@@ -298,95 +298,95 @@ class OctaveExpressionWidget : public StringWidget {
     QPlainTextEdit *value;
 };
 
-class SScalarWidget : public StringWidget {
+class ScalarWidget : public StringWidget {
   private:
     QLineEdit* box;
   public:
-    SScalarWidget(const std::string &d="1");
+    ScalarWidget(const std::string &d="1");
     void setReadOnly(bool flag) {box->setReadOnly(flag);}
     std::string getValue() const {return box->text().toStdString();}
     void setValue(const std::string &str) {box->setText(str.c_str());}
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual StringWidget* cloneStringWidget() {return new SScalarWidget;}
+    virtual StringWidget* cloneStringWidget() {return new ScalarWidget;}
     virtual std::string getType() const {return "Scalar";}
 };
 
-class SVecWidget : public StringWidget {
+class VecWidget : public StringWidget {
   private:
     std::vector<QLineEdit*> box;
     bool transpose;
   public:
-    SVecWidget(int size, bool transpose=false);
-    SVecWidget(const std::vector<std::string> &x, bool transpose=false);
+    VecWidget(int size, bool transpose=false);
+    VecWidget(const std::vector<std::string> &x, bool transpose=false);
     void resize(int size);
     std::vector<std::string> getVec() const;
     void setVec(const std::vector<std::string> &x);
     void setReadOnly(bool flag);
     std::string getValue() const {return toStr(getVec());}
-    void setValue(const std::string &str) {setVec(strToSVec(str));}
+    void setValue(const std::string &str) {setVec(strToVec(str));}
     int size() const {return box.size();}
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual StringWidget* cloneStringWidget() {return new SVecWidget(size());}
+    virtual StringWidget* cloneStringWidget() {return new VecWidget(size());}
     virtual std::string getType() const {return "Vector";}
     bool validate(const std::string &str) const;
 };
 
-class SMatWidget : public StringWidget {
+class MatWidget : public StringWidget {
 
   private:
     std::vector<std::vector<QLineEdit*> > box;
   public:
-    SMatWidget(int rows, int cols);
-    SMatWidget(const std::vector<std::vector<std::string> > &A);
+    MatWidget(int rows, int cols);
+    MatWidget(const std::vector<std::vector<std::string> > &A);
     void resize(int rows, int cols);
     std::vector<std::vector<std::string> > getMat() const;
     void setMat(const std::vector<std::vector<std::string> > &A);
     void setReadOnly(bool flag);
     std::string getValue() const {return toStr(getMat());}
-    void setValue(const std::string &str) {setMat(strToSMat(str));}
+    void setValue(const std::string &str) {setMat(strToMat(str));}
     int rows() const {return box.size();}
     int cols() const {return box[0].size();}
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual StringWidget* cloneStringWidget() {return new SMatWidget(rows(),cols());}
+    virtual StringWidget* cloneStringWidget() {return new MatWidget(rows(),cols());}
     virtual std::string getType() const {return "Matrix";}
     bool validate(const std::string &str) const;
 };
 
-class SSymMatWidget : public StringWidget {
+class SymMatWidget : public StringWidget {
 
   private:
     std::vector<std::vector<QLineEdit*> > box;
   public:
-    SSymMatWidget(int rows);
-    SSymMatWidget(const std::vector<std::vector<std::string> > &A);
+    SymMatWidget(int rows);
+    SymMatWidget(const std::vector<std::vector<std::string> > &A);
     void resize(int rows);
     std::vector<std::vector<std::string> > getMat() const;
     void setMat(const std::vector<std::vector<std::string> > &A);
     void setReadOnly(bool flag);
     std::string getValue() const {return toStr(getMat());}
-    void setValue(const std::string &str) {setMat(strToSMat(str));}
+    void setValue(const std::string &str) {setMat(strToMat(str));}
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual StringWidget* cloneStringWidget() {return new SSymMatWidget(rows());}
+    virtual StringWidget* cloneStringWidget() {return new SymMatWidget(rows());}
     int rows() const {return box.size();}
     int cols() const {return box[0].size();}
     virtual std::string getType() const {return "Matrix";}
     bool validate(const std::string &str) const;
 };
 
-class SMatColsVarWidget : public StringWidget {
+class MatColsVarWidget : public StringWidget {
 
   Q_OBJECT
 
   private:
-    SMatWidget *widget;
+    MatWidget *widget;
     QComboBox* colsCombo;
     int minCols, maxCols;
   public:
-    SMatColsVarWidget(int rows, int cols, int minCols, int maxCols);
+    MatColsVarWidget(int rows, int cols, int minCols, int maxCols);
     std::vector<std::vector<std::string> > getMat() const {return widget->getMat();}
     void setMat(const std::vector<std::vector<std::string> > &A) {
       colsCombo->setCurrentIndex(colsCombo->findText(QString::number(A[0].size())));
@@ -396,11 +396,11 @@ class SMatColsVarWidget : public StringWidget {
     int rows() const {return widget->rows();}
     int cols() const {return colsCombo->currentText().toInt();}
     std::string getValue() const {return toStr(getMat());}
-    void setValue(const std::string &str) {setMat(strToSMat(str));}
+    void setValue(const std::string &str) {setMat(strToMat(str));}
     void setReadOnly(bool flag) {widget->setReadOnly(flag);}
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual StringWidget* cloneStringWidget() {return new SMatWidget(rows(),cols());}
+    virtual StringWidget* cloneStringWidget() {return new MatWidget(rows(),cols());}
     virtual std::string getType() const {return "Matrix";}
     bool validate(const std::string &str) const;
 
@@ -412,22 +412,22 @@ class SMatColsVarWidget : public StringWidget {
 
 };
 
-class SCardanWidget : public StringWidget {
+class CardanWidget : public StringWidget {
 
   private:
     std::vector<QLineEdit*> box;
     bool transpose;
   public:
-    SCardanWidget(bool transpose=false);
-    SCardanWidget(const std::vector<std::string> &x, bool transpose=false);
+    CardanWidget(bool transpose=false);
+    CardanWidget(const std::vector<std::string> &x, bool transpose=false);
     std::vector<std::string> getCardan() const;
     void setCardan(const std::vector<std::string> &x);
     void setReadOnly(bool flag);
     std::string getValue() const {return toStr(getCardan());}
-    void setValue(const std::string &str) {setCardan(strToSVec(str));}
+    void setValue(const std::string &str) {setCardan(strToVec(str));}
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual StringWidget* cloneStringWidget() {return new SCardanWidget;}
+    virtual StringWidget* cloneStringWidget() {return new CardanWidget;}
     virtual std::string getType() const {return "Cardan";}
 };
 
