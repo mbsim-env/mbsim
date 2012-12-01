@@ -31,9 +31,8 @@ class Link : public Element {
   public:
     Link(const QString &str, QTreeWidgetItem *parentItem, int ind);
     ~Link();
-    //virtual void initializeUsingXML(TiXmlElement *element);
-    //virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-     virtual Element* getByPathSearch(std::string path);
+    virtual int getxSize() {return 0;}
+    virtual Element* getByPathSearch(std::string path);
   public slots:
   protected:
     friend class MainWindow;

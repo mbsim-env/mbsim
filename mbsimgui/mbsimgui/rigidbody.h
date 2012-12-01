@@ -33,6 +33,8 @@ class RigidBody : public Body {
   public:
     RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind);
     ~RigidBody();
+    virtual int getqSize() {return getSize();}
+    virtual int getuSize() {return getSize();}
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     QString getType() const { return "RigidBody"; }
