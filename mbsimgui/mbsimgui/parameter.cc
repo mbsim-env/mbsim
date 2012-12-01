@@ -111,7 +111,7 @@ void Parameter::updateTreeWidgetItem(const QString &str) {
 
 DoubleParameter::DoubleParameter(const QString &str, QTreeWidgetItem *parentItem, int ind) : Parameter(str,parentItem,ind) {
 
-  ParameterValueWidget *value_ = new ParameterValueWidget(new PhysicalStringWidget(new SScalarWidget("1"),PVNS"scalarParameter",QStringList(),0));
+  ParameterValueWidget *value_ = new ParameterValueWidget(new PhysicalStringWidget(new ScalarWidget("1"),PVNS"scalarParameter",QStringList(),0));
   value = new ExtXMLWidget("Value",value_);
   properties->addToTab("General", value);
   connect(value_,SIGNAL(parameterChanged(const QString&)),this,SIGNAL(parameterChanged(const QString&)));

@@ -44,7 +44,7 @@ class Object : public Element {
   protected:
     QAction *actionSaveAs;
     ExtXMLWidget *initialGeneralizedPosition, *initialGeneralizedVelocity;
-    SVecWidget *q0, *u0;
+    VecWidget *q0, *u0;
   signals:
     void sizeChanged();
 
