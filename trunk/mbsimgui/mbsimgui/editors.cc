@@ -2914,12 +2914,19 @@ void DependenciesWidget::updateGeneralizedCoordinatesOfBodies() {
   }
 }
 
+void DependenciesWidget::updateList() {
+  emit bodyChanged();
+  for(int i=0; i<bodyList->count(); i++)
+    if(refBody[i]->getBody())
+      bodyList->item(i)->setText(refBody[i]->getBody()->getName());
+}
+
 void DependenciesWidget::addDependency() {
   int i = refBody.size();
   selectedBody.push_back(0);
   refBody.push_back(new RigidBodyOfReferenceWidget(MBSIMNS"dependentRigidBody",element,0));
-  connect(refBody[i],SIGNAL(bodyChanged()),this,SIGNAL(bodyChanged()));
-  bodyList->addItem((QString("Body")+QString::number(i+1)));
+  connect(refBody[i],SIGNAL(bodyChanged()),this,SLOT(updateList()));
+  bodyList->addItem("Undefined");
   stackedWidget->addWidget(refBody[i]);
   update();
 }
@@ -2938,7 +2945,7 @@ void DependenciesWidget::removeDependency() {
   refBody.erase(refBody.begin()+i);
   delete bodyList->takeItem(i);
 
-  emit bodyChanged();
+  updateList();
 }
 
 bool DependenciesWidget::initializeUsingXML(TiXmlElement *element) {
@@ -2950,7 +2957,9 @@ bool DependenciesWidget::initializeUsingXML(TiXmlElement *element) {
       refBody[refBody.size()-1]->setSavedBodyOfReference(ee->Attribute("ref"));
       ee=ee->NextSiblingElement();
     }
+    return true;
   }
+  return false;
 }
 
 TiXmlElement* DependenciesWidget::writeXMLFile(TiXmlNode *parent) {

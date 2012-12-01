@@ -1225,13 +1225,14 @@ class DependenciesWidget : public XMLWidget {
     QListWidget *bodyList; 
 
   protected slots:
+    void updateList();
     void addDependency();
     void removeDependency();
     void updateGeneralizedCoordinatesOfBodies();
     void openContextMenu(const QPoint &pos);
 
   signals:
-      void bodyChanged();
+    void bodyChanged();
 };
 
 class FileWidget : public XMLWidget {
