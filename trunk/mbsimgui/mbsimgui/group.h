@@ -42,7 +42,9 @@ class Group : public Element {
 
   public:
     Group(const QString &str, QTreeWidgetItem *parentItem, int ind);
-    virtual QString getInfo();
+    int getqSize();
+    int getuSize();
+    int getxSize();
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual Element *getByPathSearch(std::string path);

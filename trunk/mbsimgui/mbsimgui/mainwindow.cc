@@ -455,8 +455,10 @@ void MainWindow::parameterListClicked() {
 //}
 
 void MainWindow::resizeVariables() {
-  Solver *solver = ((Solver*)elementList->topLevelItem(0));
+  Solver *solver = (Solver*)elementList->topLevelItem(0);
   solver->resizeVariables();
+  Integrator *integrator = (Integrator*)integratorList->topLevelItem(0);
+  integrator->resizeVariables();
 }
 
 void MainWindow::newMBS() {

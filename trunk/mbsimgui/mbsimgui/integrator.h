@@ -60,6 +60,7 @@ class Integrator : public QObject, public QTreeWidgetItem {
     QMenu* getContextMenu() { return contextMenu; }
     PropertyDialog* getPropertyDialog() { return properties; }
     void setEndTime(double t) {((ExtPhysicalVarWidget*)endTime->getWidget())->setValue(QString::number(t).toStdString());}
+    virtual void resizeVariables() {};
     public slots:
       void saveAs();
 };
@@ -70,6 +71,7 @@ class DOPRI5Integrator : public Integrator {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "DOPRI5Integrator"; }
+    virtual void resizeVariables() {};
   protected:
     ExtXMLWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *maxSteps;
 };

@@ -31,6 +31,8 @@ class Object : public Element {
   public:
     Object(const QString &str, QTreeWidgetItem *parentItem, int ind);
     ~Object();
+    virtual int getqSize() {return 0;}
+    virtual int getuSize() {return 0;}
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual Element* getByPathSearch(std::string path);

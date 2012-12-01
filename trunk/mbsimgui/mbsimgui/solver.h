@@ -47,7 +47,6 @@ class Solver : public Group {
     ExtXMLWidget *environment, *inverseKinetics;
   public:
     Solver(const QString &str, QTreeWidgetItem *parentItem, int ind);
-    virtual QString getInfo();
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     QString getType() const { return "DynamicSystemSolver"; }

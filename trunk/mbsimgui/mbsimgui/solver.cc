@@ -73,13 +73,6 @@ Solver::Solver(const QString &str, QTreeWidgetItem *parentItem, int ind) : Group
   properties->addStretch();
 }
 
-QString Solver::getInfo() {
-  return Element::getInfo()+
-         QString("<hr width=\"10000\"/>")+
-         QString("<b>Number of children:</b> %1").arg(childCount());
-}
-
-
 void Solver::initializeUsingXML(TiXmlElement *element) {
   Group::initializeUsingXML(element);
   TiXmlElement *e;

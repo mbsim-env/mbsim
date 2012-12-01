@@ -178,10 +178,43 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
   properties->addStretch();
 }
 
-QString Group::getInfo() {
-  return Element::getInfo()+
-         QString("<hr width=\"10000\"/>")+
-         QString("<b>Number of children:</b> %1").arg(childCount());
+int Group::getqSize() {
+  int qSize = 0;
+  if(getContainerGroup()) {
+    for(int i=0; i<getContainerGroup()->childCount(); i++)
+      qSize += getGroup(i)->getqSize();
+  }
+  if(getContainerObject()) {
+    for(int i=0; i<getContainerObject()->childCount(); i++)
+      qSize += getObject(i)->getqSize();
+  }
+  return qSize;
+}
+
+int Group::getuSize() {
+  int uSize = 0;
+  if(getContainerGroup()) {
+    for(int i=0; i<getContainerGroup()->childCount(); i++)
+      uSize += getGroup(i)->getuSize();
+  }
+  if(getContainerObject()) {
+    for(int i=0; i<getContainerObject()->childCount(); i++)
+      uSize += getObject(i)->getuSize();
+  }
+  return uSize;
+}
+
+int Group::getxSize() {
+  int xSize = 0;
+  if(getContainerGroup()) {
+    for(int i=0; i<getContainerGroup()->childCount(); i++)
+      xSize += getGroup(i)->getxSize();
+  }
+  if(getContainerLink()) {
+    for(int i=0; i<getContainerLink()->childCount(); i++)
+      xSize += getLink(i)->getxSize();
+  }
+  return xSize;
 }
 
 void Group::addRigidBody() {
