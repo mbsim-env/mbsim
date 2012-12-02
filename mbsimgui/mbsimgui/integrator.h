@@ -33,11 +33,10 @@
 #define MBSIMINTNS "{"MBSIMINTNS_"}"
 
 class PropertyDialog;
+class Solver;
 
 class Integrator : public QObject, public QTreeWidgetItem {
   Q_OBJECT
-  friend class Editor;
-  friend class MainWindow;
   protected:
     QString newName(const QString &type);
     bool drawThisPath;
@@ -45,12 +44,14 @@ class Integrator : public QObject, public QTreeWidgetItem {
     bool searchMatched;
     PropertyDialog *properties;
     QMenu *contextMenu;
-    ExtXMLWidget *startTime, *endTime, *plotStepSize;
+    VecWidget *z0;
+    ExtXMLWidget *startTime, *endTime, *plotStepSize, *initialState;
+    Solver *solver;
   public:
     Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind);
     virtual ~Integrator();
     std::string &getIconFile() { return iconFile; }
-    virtual QString getInfo();
+    void setSolver(Solver *solver_) {solver = solver_;}
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     static Integrator* readXMLFile(const QString &filename, QTreeWidgetItem *parent);
@@ -60,9 +61,9 @@ class Integrator : public QObject, public QTreeWidgetItem {
     QMenu* getContextMenu() { return contextMenu; }
     PropertyDialog* getPropertyDialog() { return properties; }
     void setEndTime(double t) {((ExtPhysicalVarWidget*)endTime->getWidget())->setValue(QString::number(t).toStdString());}
-    virtual void resizeVariables() {};
-    public slots:
-      void saveAs();
+    virtual void resizeVariables(); 
+  public slots:
+    void saveAs();
 };
 
 class DOPRI5Integrator : public Integrator {
@@ -71,8 +72,9 @@ class DOPRI5Integrator : public Integrator {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "DOPRI5Integrator"; }
-    virtual void resizeVariables() {};
+    virtual void resizeVariables();
   protected:
+    VecWidget *aTol, *rTol;
     ExtXMLWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *maxSteps;
 };
 
@@ -82,7 +84,9 @@ class RADAU5Integrator : public Integrator {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "RADAU5Integrator"; }
+    virtual void resizeVariables();
   protected:
+    VecWidget *aTol, *rTol;
     ExtXMLWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *maxSteps;
 };
 
@@ -92,7 +96,9 @@ class LSODEIntegrator : public Integrator {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "LSODEIntegrator"; }
+    virtual void resizeVariables();
   protected:
+    VecWidget *aTol;
     ExtXMLWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *minimalStepSize, *maxSteps, *stiff;
 };
 
@@ -102,7 +108,9 @@ class LSODARIntegrator : public Integrator {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "LSODARIntegrator"; }
+    virtual void resizeVariables();
   protected:
+    VecWidget *aTol;
     ExtXMLWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *minimalStepSize, *plotOnRoot;
 };
 

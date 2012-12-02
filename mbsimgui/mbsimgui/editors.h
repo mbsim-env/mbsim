@@ -1290,6 +1290,20 @@ class ParameterValueWidget : public XMLWidget {
     void parameterChanged(const QString &str);
 };
 
+class XMLWidgetChoiceWidget : public XMLWidget {
+  Q_OBJECT
+
+  public:
+    XMLWidgetChoiceWidget(const std::vector<std::string> &name, const std::vector<XMLWidget*> &widget);
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+  protected slots:
+    void changeCurrent(int idx);
+  protected:
+    QComboBox *choice;
+    QStackedWidget *stackedWidget;
+};
+
 class ExtXMLWidget : public QGroupBox {
   Q_OBJECT
 

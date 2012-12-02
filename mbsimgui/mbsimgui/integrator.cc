@@ -37,7 +37,7 @@ Integrator::Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind)
 
   properties=new PropertyDialog(this);
   properties->addTab("General");
-//  properties->addTab("Initial state");
+  properties->addTab("Initial conditions");
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),MBSIMINTNS"startTime",timeUnits(),2));
@@ -54,10 +54,11 @@ Integrator::Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind)
   plotStepSize = new ExtXMLWidget("Plot step size",new ExtPhysicalVarWidget(input)); 
   properties->addToTab("General", plotStepSize);
 
-//  input.clear();
-//  input.push_back(new PhysicalStringWidget(new SVecWidget("1e-2"),MBSIMINTNS"plotStepSize",timeUnits(),2));
-//  plotStepSize = new ExtXMLWidget("Plot step size",new ExtPhysicalVarWidget(input)); 
-//  properties->addToTab("Initial state", plotStepSize);
+  input.clear();
+  z0 = new VecWidget(0);
+  input.push_back(new PhysicalStringWidget(z0, MBSIMINTNS"initialState", QStringList(), 0));
+  initialState = new ExtXMLWidget("Initial state",new ExtPhysicalVarWidget(input),true);
+  properties->addToTab("Initial conditions", initialState);
 
   contextMenu=new QMenu("Context Menu");
 }
@@ -66,8 +67,8 @@ Integrator::~Integrator() {
   delete properties;
 }
 
-QString Integrator::getInfo() {
-  return "";
+void Integrator::resizeVariables() {
+  z0->resize(solver->getqSize()+solver->getuSize()+solver->getxSize());
 }
 
 void Integrator::saveAs() {
@@ -78,23 +79,26 @@ void Integrator::saveAs() {
     writeXMLFile(file.toAscii().data());
   }
 }
-  void Integrator::initializeUsingXML(TiXmlElement *element) {
-    startTime->initializeUsingXML(element);
-    endTime->initializeUsingXML(element);
-    plotStepSize->initializeUsingXML(element);
-  }
 
-  TiXmlElement* Integrator::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0=new TiXmlElement(MBSIMINTNS+getType().toStdString());
-    parent->LinkEndChild(ele0);
-    ele0->SetAttribute("xmlns", "http://mbsim.berlios.de/MBSimIntegrator");
+void Integrator::initializeUsingXML(TiXmlElement *element) {
+  startTime->initializeUsingXML(element);
+  endTime->initializeUsingXML(element);
+  plotStepSize->initializeUsingXML(element);
+  initialState->initializeUsingXML(element);
+}
 
-    startTime->writeXMLFile(ele0);
-    endTime->writeXMLFile(ele0);
-    plotStepSize->writeXMLFile(ele0);
+TiXmlElement* Integrator::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0=new TiXmlElement(MBSIMINTNS+getType().toStdString());
+  parent->LinkEndChild(ele0);
+  ele0->SetAttribute("xmlns", "http://mbsim.berlios.de/MBSimIntegrator");
 
-    return ele0;
-  }
+  startTime->writeXMLFile(ele0);
+  endTime->writeXMLFile(ele0);
+  plotStepSize->writeXMLFile(ele0);
+  initialState->writeXMLFile(ele0);
+
+  return ele0;
+}
 
 Integrator* Integrator::readXMLFile(const QString &filename, QTreeWidgetItem* parent) {
   MBSimObjectFactory::initialize();
@@ -126,13 +130,30 @@ DOPRI5Integrator::DOPRI5Integrator(const QString &str, QTreeWidgetItem *parentIt
   properties->addTab("Step size");
 
   vector<PhysicalStringWidget*> input;
+  vector<XMLWidget*> widget;
+  vector<string> name;
+  name.push_back("Scalar");
+  name.push_back("Vector");
   input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-6"),MBSIMINTNS"absoluteToleranceScalar",QStringList(),1));
-  absTol = new ExtXMLWidget("Absolute tolerance",new ExtPhysicalVarWidget(input)); 
+  widget.push_back(new ExtPhysicalVarWidget(input));
+  input.clear();
+  aTol = new VecWidget(0);
+  input.push_back(new PhysicalStringWidget(aTol,MBSIMINTNS"absoluteTolerance",QStringList(),1));
+  widget.push_back(new ExtPhysicalVarWidget(input));
+  absTol = new ExtXMLWidget("Absolute tolerance",new XMLWidgetChoiceWidget(name,widget)); 
   properties->addToTab("Tolerances", absTol);
+  //absTol = new ExtXMLWidget("Absolute tolerance",new XMLChoiceWidget(name,widget)); 
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-6"),MBSIMINTNS"relativeToleranceScalar",QStringList(),1));
-  relTol = new ExtXMLWidget("Relative tolerance",new ExtPhysicalVarWidget(input)); 
+  widget.clear();
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-6"),MBSIMINTNS"relativeToleranceScalar",noUnitUnits(),1));
+  widget.push_back(new ExtPhysicalVarWidget(input));
+  input.clear();
+  rTol = new VecWidget(0);
+  input.push_back(new PhysicalStringWidget(rTol,MBSIMINTNS"relativeTolerance",noUnitUnits(),1));
+  widget.push_back(new ExtPhysicalVarWidget(input));
+  relTol = new ExtXMLWidget("Relative tolerance",new XMLWidgetChoiceWidget(name,widget)); 
+  //relTol = new ExtXMLWidget("Relative tolerance",new ExtPhysicalVarWidget(input)); 
   properties->addToTab("Tolerances", relTol);
 
   input.clear();
@@ -151,6 +172,14 @@ DOPRI5Integrator::DOPRI5Integrator(const QString &str, QTreeWidgetItem *parentIt
   properties->addToTab("Step size", maxSteps);
 
   properties->addStretch();
+}
+
+void DOPRI5Integrator::resizeVariables() {
+  Integrator::resizeVariables();
+  if(aTol->size() != z0->size())
+    aTol->setVec(getScalars<string>(z0->size(),"1e-6"));
+  if(rTol->size() != z0->size())
+    rTol->setVec(getScalars<string>(z0->size(),"1e-6"));
 }
 
 void DOPRI5Integrator::initializeUsingXML(TiXmlElement *element) {
@@ -177,13 +206,29 @@ RADAU5Integrator::RADAU5Integrator(const QString &str, QTreeWidgetItem *parentIt
   properties->addTab("Step size");
 
   vector<PhysicalStringWidget*> input;
+  vector<XMLWidget*> widget;
+  vector<string> name;
+  name.push_back("Scalar");
+  name.push_back("Vector");
   input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-6"),MBSIMINTNS"absoluteToleranceScalar",QStringList(),1));
-  absTol = new ExtXMLWidget("Absolute tolerance",new ExtPhysicalVarWidget(input)); 
+  widget.push_back(new ExtPhysicalVarWidget(input));
+  input.clear();
+  aTol = new VecWidget(0);
+  input.push_back(new PhysicalStringWidget(aTol,MBSIMINTNS"absoluteTolerance",QStringList(),1));
+  widget.push_back(new ExtPhysicalVarWidget(input));
+  absTol = new ExtXMLWidget("Absolute tolerance",new XMLWidgetChoiceWidget(name,widget)); 
   properties->addToTab("Tolerances", absTol);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-6"),MBSIMINTNS"relativeToleranceScalar",QStringList(),1));
-  relTol = new ExtXMLWidget("Relative tolerance",new ExtPhysicalVarWidget(input)); 
+  widget.clear();
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-6"),MBSIMINTNS"relativeToleranceScalar",noUnitUnits(),1));
+  widget.push_back(new ExtPhysicalVarWidget(input));
+  input.clear();
+  rTol = new VecWidget(0);
+  input.push_back(new PhysicalStringWidget(rTol,MBSIMINTNS"relativeTolerance",noUnitUnits(),1));
+  widget.push_back(new ExtPhysicalVarWidget(input));
+  relTol = new ExtXMLWidget("Relative tolerance",new XMLWidgetChoiceWidget(name,widget)); 
+  //relTol = new ExtXMLWidget("Relative tolerance",new ExtPhysicalVarWidget(input)); 
   properties->addToTab("Tolerances", relTol);
 
   input.clear();
@@ -202,6 +247,14 @@ RADAU5Integrator::RADAU5Integrator(const QString &str, QTreeWidgetItem *parentIt
   properties->addToTab("Step size", maxSteps);
 
   properties->addStretch();
+}
+
+void RADAU5Integrator::resizeVariables() {
+  Integrator::resizeVariables();
+  if(aTol->size() != z0->size())
+    aTol->setVec(getScalars<string>(z0->size(),"1e-6"));
+  if(rTol->size() != z0->size())
+    rTol->setVec(getScalars<string>(z0->size(),"1e-6"));
 }
 
 void RADAU5Integrator::initializeUsingXML(TiXmlElement *element) {
@@ -229,12 +282,21 @@ LSODEIntegrator::LSODEIntegrator(const QString &str, QTreeWidgetItem *parentItem
   properties->addTab("Extra");
 
   vector<PhysicalStringWidget*> input;
+  vector<XMLWidget*> widget;
+  vector<string> name;
+  name.push_back("Scalar");
+  name.push_back("Vector");
   input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-6"),MBSIMINTNS"absoluteToleranceScalar",QStringList(),1));
-  absTol = new ExtXMLWidget("Absolute tolerance",new ExtPhysicalVarWidget(input)); 
+  widget.push_back(new ExtPhysicalVarWidget(input));
+  input.clear();
+  aTol = new VecWidget(0);
+  input.push_back(new PhysicalStringWidget(aTol,MBSIMINTNS"absoluteTolerance",QStringList(),1));
+  widget.push_back(new ExtPhysicalVarWidget(input));
+  absTol = new ExtXMLWidget("Absolute tolerance",new XMLWidgetChoiceWidget(name,widget)); 
   properties->addToTab("Tolerances", absTol);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-6"),MBSIMINTNS"relativeToleranceScalar",QStringList(),1));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-6"),MBSIMINTNS"relativeToleranceScalar",noUnitUnits(),1));
   relTol = new ExtXMLWidget("Relative tolerance",new ExtPhysicalVarWidget(input)); 
   properties->addToTab("Tolerances", relTol);
 
@@ -266,6 +328,12 @@ LSODEIntegrator::LSODEIntegrator(const QString &str, QTreeWidgetItem *parentItem
   properties->addStretch();
 }
 
+void LSODEIntegrator::resizeVariables() {
+  Integrator::resizeVariables();
+  if(aTol->size() != z0->size())
+    aTol->setVec(getScalars<string>(z0->size(),"1e-6"));
+}
+
 void LSODEIntegrator::initializeUsingXML(TiXmlElement *element) {
   Integrator::initializeUsingXML(element);
   absTol->initializeUsingXML(element);
@@ -295,12 +363,21 @@ LSODARIntegrator::LSODARIntegrator(const QString &str, QTreeWidgetItem *parentIt
   properties->addTab("Extra");
 
   vector<PhysicalStringWidget*> input;
+  vector<XMLWidget*> widget;
+  vector<string> name;
+  name.push_back("Scalar");
+  name.push_back("Vector");
   input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-6"),MBSIMINTNS"absoluteToleranceScalar",QStringList(),1));
-  absTol = new ExtXMLWidget("Absolute tolerance",new ExtPhysicalVarWidget(input)); 
+  widget.push_back(new ExtPhysicalVarWidget(input));
+  input.clear();
+  aTol = new VecWidget(0);
+  input.push_back(new PhysicalStringWidget(aTol,MBSIMINTNS"absoluteTolerance",QStringList(),1));
+  widget.push_back(new ExtPhysicalVarWidget(input));
+  absTol = new ExtXMLWidget("Absolute tolerance",new XMLWidgetChoiceWidget(name,widget)); 
   properties->addToTab("Tolerances", absTol);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-6"),MBSIMINTNS"relativeToleranceScalar",QStringList(),1));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-6"),MBSIMINTNS"relativeToleranceScalar",noUnitUnits(),1));
   relTol = new ExtXMLWidget("Relative tolerance",new ExtPhysicalVarWidget(input)); 
   properties->addToTab("Tolerances", relTol);
 
@@ -325,6 +402,12 @@ LSODARIntegrator::LSODARIntegrator(const QString &str, QTreeWidgetItem *parentIt
   properties->addToTab("Extra", plotOnRoot);
 
   properties->addStretch();
+}
+
+void LSODARIntegrator::resizeVariables() {
+  Integrator::resizeVariables();
+  if(aTol->size() != z0->size())
+    aTol->setVec(getScalars<string>(z0->size(),"1e-6"));
 }
 
 void LSODARIntegrator::initializeUsingXML(TiXmlElement *element) {
@@ -427,12 +510,12 @@ RKSuiteIntegrator::RKSuiteIntegrator(const QString &str, QTreeWidgetItem *parent
   properties->addToTab("General", type);
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-6"),MBSIMINTNS"relativeToleranceScalar",QStringList(),1));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-6"),MBSIMINTNS"relativeToleranceScalar",noUnitUnits(),1));
   relTol = new ExtXMLWidget("Relative tolerance",new ExtPhysicalVarWidget(input)); 
   properties->addToTab("Tolerances", relTol);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-6"),MBSIMINTNS"thresholdScalar",QStringList(),1));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-6"),MBSIMINTNS"thresholdScalar",noUnitUnits(),1));
   threshold = new ExtXMLWidget("Threshold",new ExtPhysicalVarWidget(input)); 
   properties->addToTab("Tolerances", threshold);
 
