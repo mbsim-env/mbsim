@@ -11,6 +11,10 @@ AC_LANG([C++])
 
 if test "_$host_os" = "_mingw32" ; then
   AC_DEFINE([MBSIMGUI_MINGW], [1], [Host System is MinGW/MSys])
+  # -fno-keep-inline-dllexport: requires gcc >= 4.6; and is reauired by Qt to avoid the generatoin of
+  # code for inline functions which causes undefines symbols on linkage.
+  CPPFLAGS="-fno-keep-inline-dllexport $CPPFLAGS"
+  LDFLAGS="-mwindows $LDFLAGS"
 fi
 
 AC_SUBST([DATADIR], ["$(eval echo $(eval echo $datadir))"])
