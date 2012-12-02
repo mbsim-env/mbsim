@@ -22,6 +22,7 @@ $PREFIX/bin/h5lsserie.exe
 $PREFIX/bin/h5plotserie.exe
 $PREFIX/bin/mbsimflatxml.exe
 $PREFIX/bin/mbsimxml.exe
+$PREFIX/bin/mbsimgui.exe
 $PREFIX/bin/mbxmlutilspp.exe
 $PREFIX/bin/openmbv.exe
 $PREFIX/bin/tools/h5copy.exe
@@ -326,6 +327,11 @@ echo DONE
 
 echo STARTING OPENMBV
 "%INSTDIR%\bin\openmbv.exe" xml_hierachical_modelling\TS.ombv.xml
+if ERRORLEVEL 1 goto end
+echo DONE
+
+echo STARTING MBSIMGUI
+"%INSTDIR%\bin\mbsimgui.exe"
 if ERRORLEVEL 1 goto end
 echo DONE
 
