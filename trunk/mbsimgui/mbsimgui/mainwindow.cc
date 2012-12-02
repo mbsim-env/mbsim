@@ -29,7 +29,7 @@
 #include "rigidbody.h"
 #include "parameter.h"
 #include "octaveutils.h"
-#ifdef MBSIMGUI_MINGW // Windows
+#ifdef _WIN32 // Windows
 #  include <windows.h>
 #  include <process.h>
 #else
@@ -48,7 +48,7 @@ int runProgramSyncronous(const vector<string> &arg) {
     argv[i]=const_cast<char*>(arg[i].c_str());
   argv[arg.size()]=NULL;
 
-#if !defined MBSIMGUI_MINGW
+#if !defined _WIN32
   pid_t child;
   int ret;
   extern char** environ;
