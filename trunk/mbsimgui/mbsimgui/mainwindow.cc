@@ -349,8 +349,8 @@ MainWindow::MainWindow() {
 
   mainlayout->addWidget(pagesWidget,0,0);
 
-  newMBS();
   newDOPRI5Integrator();
+  newMBS();
   QTreeWidgetItem* parentItem = new QTreeWidgetItem;
   Integrator *previewIntegrator = new DOPRI5Integrator("DOPRI5",parentItem, 1);
   previewIntegrator->setEndTime(1e-10);
@@ -456,10 +456,14 @@ void MainWindow::parameterListClicked() {
 //}
 
 void MainWindow::resizeVariables() {
-  Solver *solver = (Solver*)elementList->topLevelItem(0);
-  solver->resizeVariables();
-  Integrator *integrator = (Integrator*)integratorList->topLevelItem(0);
-  integrator->resizeVariables();
+//  Solver *solver = (Solver*)elementList->topLevelItem(0);
+  Element *element=dynamic_cast<Element*>(elementList->currentItem());
+  if(element)
+    element->resizeVariables();
+//  Integrator *integrator = (Integrator*)integratorList->topLevelItem(0);
+  Integrator *integrator=(Integrator*)integratorList->currentItem();
+  if(integrator)
+    integrator->resizeVariables();
 }
 
 void MainWindow::newMBS() {
@@ -469,10 +473,8 @@ void MainWindow::newMBS() {
   QTreeWidgetItem* parentItem = elementList->invisibleRootItem();
   Solver *sys=new Solver("MBS", parentItem,1);
   parentItem->addChild(sys);
-  //if(QFile::exists("Parameter.mbsimparam.xml")) {
-    //loadParameter("Parameter.mbsimparam.xml");
-  //}
-  
+  ((Integrator*)integratorList->topLevelItem(0))->setSolver(sys);
+
   actionSaveMBS->setDisabled(true);
   actionSaveMBSAs->setDisabled(false);
   fileMBS->setText("");
@@ -488,6 +490,7 @@ void MainWindow::loadMBS(const QString &file) {
     QTreeWidgetItem* parentItem = elementList->invisibleRootItem();
     Solver *sys = Solver::readXMLFile(file,parentItem);
     sys->update();
+    ((Integrator*)integratorList->topLevelItem(0))->setSolver(sys);
     actionSaveMBS->setDisabled(false);
     actionSaveMBSAs->setDisabled(false);
     //if(QFile::exists("Parameter.mbsimparam.xml")) {
@@ -550,6 +553,7 @@ void MainWindow::newDOPRI5Integrator() {
   integratorList->clear();
   QTreeWidgetItem* parentItem = integratorList->invisibleRootItem();
   Integrator *integrator = new DOPRI5Integrator("DOPRI5",parentItem, 1);
+  integrator->setSolver(((Solver*)elementList->topLevelItem(0)));
   parentItem->addChild(integrator);
   fileIntegrator->setText("");
 }
@@ -559,6 +563,7 @@ void MainWindow::newRADAU5Integrator() {
   integratorList->clear();
   QTreeWidgetItem* parentItem = integratorList->invisibleRootItem();
   Integrator *integrator = new RADAU5Integrator("RADAU5",parentItem, 1);
+  integrator->setSolver(((Solver*)elementList->topLevelItem(0)));
   parentItem->addChild(integrator);
   fileIntegrator->setText("");
 }
@@ -567,6 +572,7 @@ void MainWindow::newLSODEIntegrator() {
   integratorList->clear();
   QTreeWidgetItem* parentItem = integratorList->invisibleRootItem();
   Integrator *integrator = new LSODEIntegrator("LSODE",parentItem, 1);
+  integrator->setSolver(((Solver*)elementList->topLevelItem(0)));
   parentItem->addChild(integrator);
   fileIntegrator->setText("");
 }
@@ -575,6 +581,7 @@ void MainWindow::newLSODARIntegrator() {
   integratorList->clear();
   QTreeWidgetItem* parentItem = integratorList->invisibleRootItem();
   Integrator *integrator = new LSODARIntegrator("LSODAR",parentItem, 1);
+  integrator->setSolver(((Solver*)elementList->topLevelItem(0)));
   parentItem->addChild(integrator);
   fileIntegrator->setText("");
 }
@@ -583,6 +590,7 @@ void MainWindow::newTimeSteppingIntegrator() {
   integratorList->clear();
   QTreeWidgetItem* parentItem = integratorList->invisibleRootItem();
   Integrator *integrator = new TimeSteppingIntegrator("Time stepping",parentItem, 1);
+  integrator->setSolver(((Solver*)elementList->topLevelItem(0)));
   parentItem->addChild(integrator);
   fileIntegrator->setText("");
 }
@@ -591,6 +599,7 @@ void MainWindow::newEulerExplicitIntegrator() {
   integratorList->clear();
   QTreeWidgetItem* parentItem = integratorList->invisibleRootItem();
   Integrator *integrator = new EulerExplicitIntegrator("Euler explicit",parentItem, 1);
+  integrator->setSolver(((Solver*)elementList->topLevelItem(0)));
   parentItem->addChild(integrator);
   fileIntegrator->setText("");
 }
@@ -599,6 +608,7 @@ void MainWindow::newRKSuiteIntegrator() {
   integratorList->clear();
   QTreeWidgetItem* parentItem = integratorList->invisibleRootItem();
   Integrator *integrator = new RKSuiteIntegrator("RKSuite",parentItem, 1);
+  integrator->setSolver(((Solver*)elementList->topLevelItem(0)));
   parentItem->addChild(integrator);
   fileIntegrator->setText("");
 }
@@ -610,7 +620,8 @@ void MainWindow::loadIntegrator(const QString &file) {
     integratorList->clear();
     QTreeWidgetItem* parentItem = 0;
     if(parentItem==NULL) parentItem=integratorList->invisibleRootItem();
-    Integrator::readXMLFile(file,parentItem);
+    Integrator *integrator = Integrator::readXMLFile(file,parentItem);
+    integrator->setSolver(((Solver*)elementList->topLevelItem(0)));
     actionSaveIntegrator->setDisabled(false);
   }
 }

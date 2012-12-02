@@ -3073,6 +3073,44 @@ void ParameterValueWidget::parameterChanged() {
   emit parameterChanged(getValue().c_str());
 }
 
+XMLWidgetChoiceWidget::XMLWidgetChoiceWidget(const vector<string> &name, const vector<XMLWidget*> &widget) { 
+  QHBoxLayout* layout = new QHBoxLayout;
+  layout->setMargin(0);
+  choice = new QComboBox;
+  stackedWidget = new QStackedWidget;
+  for(unsigned int i=0; i<name.size(); i++) {
+    choice->addItem(name[i].c_str());
+    stackedWidget->addWidget(widget[i]);
+  }
+  setLayout(layout);
+  layout->addWidget(choice);
+
+//  connect(choice,SIGNAL(currentIndexChanged(int)),stackedWidget,SLOT(setCurrentIndex(int)));
+  connect(choice,SIGNAL(currentIndexChanged(int)),this,SLOT(changeCurrent(int)));
+  layout->addWidget(stackedWidget);
+}
+
+void XMLWidgetChoiceWidget::changeCurrent(int idx) {
+  if (stackedWidget->currentWidget() !=0)
+    stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->setCurrentIndex(idx);
+  stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  adjustSize();
+}
+
+bool XMLWidgetChoiceWidget::initializeUsingXML(TiXmlElement *element) {
+  for(int i=0; i<stackedWidget->count(); i++)
+    if(((XMLWidget*)stackedWidget->widget(i))->initializeUsingXML(element)) {
+      choice->setCurrentIndex(i);
+      return true;
+    }
+  return false;
+}
+
+TiXmlElement* XMLWidgetChoiceWidget::writeXMLFile(TiXmlNode *parent) {
+  return ((XMLWidget*)stackedWidget->currentWidget())->writeXMLFile(parent);
+}
+
 ExtXMLWidget::ExtXMLWidget(const QString &name, XMLWidget *widget_, bool disable) : QGroupBox(name), widget(widget_) {
 
   QHBoxLayout *layout = new QHBoxLayout;
