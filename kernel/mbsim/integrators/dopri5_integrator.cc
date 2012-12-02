@@ -36,7 +36,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  DOPRI5Integrator::DOPRI5Integrator() : aTol(1,INIT,1e-6), rTol(1,INIT,1e-6), dt0(0), maxSteps(2000000000), dtMax(0) {
+  DOPRI5Integrator::DOPRI5Integrator() : dt0(0), maxSteps(2000000000), dtMax(0) {
   }
 
   double DOPRI5Integrator::tPlot = 0;
@@ -85,6 +85,11 @@ namespace MBSim {
       z = z0;
     else
       system->initz(z);          
+
+    if(aTol.size() == 0) 
+      aTol.resize(1,INIT,1e-6);
+    if(rTol.size() == 0) 
+      rTol.resize(1,INIT,1e-6);
 
     assert(aTol.size() == rTol.size());
 
