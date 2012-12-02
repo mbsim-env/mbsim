@@ -21,6 +21,7 @@ $PREFIX/bin/h5lsserie
 $PREFIX/bin/h5plotserie
 $PREFIX/bin/mbsimflatxml
 $PREFIX/bin/mbsimxml
+$PREFIX/bin/mbsimgui
 $PREFIX/bin/mbxmlutilspp
 $PREFIX/bin/openmbv
 /usr/bin/h5copy
@@ -327,6 +328,10 @@ echo "DONE"
 
 echo "STARTING OPENMBV"
 \$INSTDIR/bin/openmbv xml_hierachical_modelling/TS.ombv.xml || exit
+echo "DONE"
+
+echo "STARTING MBSIMGUI"
+\$INSTDIR/bin/mbsimgui || exit
 echo "DONE"
 
 echo "ALL TESTS DONE"
