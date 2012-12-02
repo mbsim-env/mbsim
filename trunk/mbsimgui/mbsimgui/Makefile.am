@@ -10,7 +10,7 @@ LDADD = $(DEPS_LIBS)  $(QT_LIBS) $(QWT_LIBS) $(MKOCTFILE_LIBS)
 
 mbsimgui_CPPFLAGS = $(MBXMLUTILS_CFLAGS)
 
-mbsimgui_LDFLAGS = $(HDF5SERIE_LIBS) $(MBXMLUTILS_LIBS)
+mbsimgui_LDFLAGS = $(HDF5SERIE_LIBS) $(MBXMLUTILS_LIBS) -Wl,-rpath -Wl,\$$ORIGIN/../lib
 
 mbsimgui_SOURCES = main.cc \
 			mainwindow.cc \
