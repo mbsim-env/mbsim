@@ -21,9 +21,9 @@
 #define _OBJECT__H_
 
 #include "element.h"
-#include <QtGui/QActionGroup>
-#include "utils.h"
-#include <editors.h>
+
+class QAction;
+class VecWidget;
 
 class Object : public Element {
   Q_OBJECT

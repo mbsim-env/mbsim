@@ -19,12 +19,12 @@
 
 #include <config.h>
 #include "spring_damper.h"
-#include "utils.h"
-#include <QtGui/QMenu>
-#include "frame.h"
+#include "kinetics_widgets.h"
+#include "function_widgets.h"
+#include "extended_widgets.h"
+#include "ombv_widgets.h"
 
 using namespace std;
-
 
 SpringDamper::SpringDamper(const QString &str, QTreeWidgetItem *parentItem, int ind) : Link(str, parentItem, ind) {
 

@@ -19,11 +19,11 @@
 
 #include <config.h>
 #include "object.h"
-#include "utils.h"
+#include "string_widgets.h"
+#include "extended_widgets.h"
 #include <QtGui/QMenu>
 
 using namespace std;
-
 
 Object::Object(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element(str, parentItem, ind) {
   properties->addTab("Initial conditions");

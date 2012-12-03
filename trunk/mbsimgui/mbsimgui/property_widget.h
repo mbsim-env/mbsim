@@ -17,20 +17,35 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _SPRING_DAMPER__H_
-#define _SPRING_DAMPER__H_
+#ifndef _PROPERTY_WIDGET_H_
+#define _PROPERTY_WIDGET_H_
 
-#include "link.h"
+#include <QScrollArea>
+#include <map>
 
-class SpringDamper : public Link {
+class ExtXMLWidget;
+class QVBoxLayout;
+class QTabWidget;
+
+class PropertyWidget : public QScrollArea {
+
   public:
-    SpringDamper(const QString &str, QTreeWidgetItem *parentItem, int ind);
-    ~SpringDamper();
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    QString getType() const { return "SpringDamper"; }
+    PropertyWidget(QObject *obj);
+    ~PropertyWidget();
+    void setParentObject(QObject *obj);
+    void addToTab(const QString &name, ExtXMLWidget* widget_);
+    void addTab(const QString &name);
+    QObject* getParentObject() { return parentObject; }
+    void addStretch();
+    void update();
+    void initialize();
+    void resizeVariables();
   protected:
-    ExtXMLWidget *forceFunction, *connections, *forceDirection, *coilSpring;
+    QObject* parentObject;
+    std::map<QString,QVBoxLayout*> layout;
+    QVBoxLayout *mainLayout;
+    std::vector<ExtXMLWidget*> widget;
+    QTabWidget *tabWidget;
 };
 
 #endif

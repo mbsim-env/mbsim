@@ -20,24 +20,18 @@
 #include <config.h>
 #include "element.h"
 #include <QtGui/QMenu>
-#include <QtGui/QApplication>
-#include <QtGui/QGridLayout>
-#include <QtGui/QInputDialog>
 #include <QtGui/QFileDialog>
+#include <QtGui/QInputDialog>
 #include <QtGui/QMessageBox>
 #include <cmath>
-#include "mainwindow.h"
-#include "utils.h"
-#include "editors.h"
+#include "property_widget.h"
+#include "basic_widgets.h"
 #include "solver.h"
 #include "object.h"
 #include "frame.h"
 #include "link.h"
 
 using namespace std;
-
-
-//set<Element*> Element::objects;
 
 Element::Element(const QString &str, QTreeWidgetItem *parentItem, int ind, bool grey) : QTreeWidgetItem(), drawThisPath(true), searchMatched(true), frames(0), contours(0), groups(0), objects(0), links(0), extraDynamics(0) {
   if(ind==-1 || ind>=parentItem->childCount())
@@ -48,7 +42,7 @@ Element::Element(const QString &str, QTreeWidgetItem *parentItem, int ind, bool 
 
   setText(0, str);
 
-  properties=new PropertyDialog(this);
+  properties=new PropertyWidget(this);
   properties->addTab("General");
 
   if(grey) {
@@ -72,6 +66,11 @@ Element::~Element() {
   // delete scene graph
   delete properties;
   //objects.erase(this);
+}
+
+void Element::setName(const QString &str) {
+  setText(0,str);
+  ((NameWidget*)name->getWidget())->setName(str);
 }
 
 QString Element::getPath() {

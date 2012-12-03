@@ -20,12 +20,11 @@
 #include <config.h>
 #include "solver.h"
 #include <QtGui/QMenu>
-#include <QtGui/QPushButton>
 #include "objectfactory.h"
-#include "editors.h"
 #include <string>
-#include "utils.h"
-#include <QtGui/QMessageBox>
+#include "basic_widgets.h"
+#include "string_widgets.h"
+#include "extended_widgets.h"
 
 using namespace std;
 
@@ -62,10 +61,17 @@ Solver::Solver(const QString &str, QTreeWidgetItem *parentItem, int ind) : Group
   properties->addTab("Environment");
   properties->addTab("Extra");
 
-  environment = new ExtXMLWidget("Acceleration of gravity",new EnvironmentWidget);
+  vector<PhysicalStringWidget*> input;
+  vector<string> g(3);
+  g[0] = "0";
+  g[1] = "-9.81";
+  g[2] = "0";
+  input.push_back(new PhysicalStringWidget(new VecWidget(g),MBSIMNS"accelerationOfGravity",accelerationUnits(),0));
+
+  environment = new ExtXMLWidget("Acceleration of gravity",new ExtPhysicalVarWidget(input));
   properties->addToTab("Environment", environment);
 
-  vector<PhysicalStringWidget*> input;
+  input.clear();
   input.push_back(new PhysicalStringWidget(new BoolWidget("1"),MBSIMNS"inverseKinetics",QStringList(),1));
   inverseKinetics = new ExtXMLWidget("Inverse kinetics",new ExtPhysicalVarWidget(input),true); 
   properties->addToTab("Extra", inverseKinetics);
@@ -149,7 +155,9 @@ TiXmlElement* Solver::writeXMLFile(TiXmlNode *parent) {
   ele0->SetAttribute("xmlns:ombv", "http://openmbv.berlios.de/OpenMBV");
 
   TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"environments" );
-  environment->writeXMLFile(ele1);
+  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"MBSimEnvironment" );
+  environment->writeXMLFile(ele2);
+  ele1->LinkEndChild( ele2 );
   ele0->LinkEndChild( ele1 );
 
   inverseKinetics->writeXMLFile(ele0);

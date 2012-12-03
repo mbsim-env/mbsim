@@ -21,9 +21,6 @@
 #define _JOINT__H_
 
 #include "link.h"
-#include <QtGui/QActionGroup>
-#include "utils.h"
-#include <editors.h>
 
 class Joint : public Link {
   public:

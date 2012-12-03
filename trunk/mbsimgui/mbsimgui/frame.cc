@@ -19,14 +19,10 @@
 
 #include <config.h>
 #include "frame.h"
-#include "utils.h"
-#include <QtGui/QMenu>
-#include "mainwindow.h"
-#include "rigidbody.h"
-#include "objectfactory.h"
+#include "ombv_widgets.h"
+#include <QMenu>
 
 using namespace std;
-
 
 Frame::Frame(const QString &str, QTreeWidgetItem *parentItem, int ind, bool grey) : Element(str, parentItem, ind, grey) {
 

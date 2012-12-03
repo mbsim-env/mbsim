@@ -20,7 +20,6 @@
 #include <config.h>
 #include "group.h"
 #include <QtGui/QMenu>
-#include <QtGui/QPushButton>
 #include <QtGui/QInputDialog>
 #include <QtGui/QFileDialog>
 #include <QtGui/QMessageBox>
@@ -31,7 +30,9 @@
 #include "joint.h"
 #include "kinetic_excitation.h"
 #include "frame.h"
-#include "editors.h"
+#include "property_widget.h"
+#include "basic_widgets.h"
+#include "string_widgets.h"
 #include <string>
 #include "utils.h"
 

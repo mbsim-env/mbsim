@@ -19,10 +19,8 @@
 
 #include <config.h>
 #include "link.h"
-#include "utils.h"
 #include <QtGui/QMenu>
 #include "mainwindow.h"
-#include "objectfactory.h"
 
 using namespace std;
 

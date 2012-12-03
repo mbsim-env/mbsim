@@ -21,21 +21,13 @@
 #define _LINK__H_
 
 #include "element.h"
-#include <QtGui/QActionGroup>
-#include "utils.h"
-#include <editors.h>
 
 class Link : public Element {
-  Q_OBJECT
-  private:
   public:
     Link(const QString &str, QTreeWidgetItem *parentItem, int ind);
     ~Link();
     virtual int getxSize() {return 0;}
     virtual Element* getByPathSearch(std::string path);
-  public slots:
-  protected:
-    friend class MainWindow;
 };
 
 #endif

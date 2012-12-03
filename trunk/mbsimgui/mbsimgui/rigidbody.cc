@@ -19,12 +19,12 @@
 
 #include <config.h>
 #include "rigidbody.h"
-#include <QtGui/QMenu>
-#include <QtGui/QInputDialog>
-#include <QtGui/QMessageBox>
 #include "frame.h"
-#include "utils.h"
 #include "group.h"
+#include "string_widgets.h"
+#include "kinematics_widgets.h"
+#include "ombv_widgets.h"
+#include <QMenu>
 
 using namespace std;
 
@@ -115,6 +115,10 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
 }
 
 RigidBody::~RigidBody() {
+}
+
+int RigidBody::getUnconstrainedSize() const {
+  return (translation->isActive()?((TranslationChoiceWidget*)translation->getWidget())->getSize():0) + (rotation->isActive()?((RotationChoiceWidget*)rotation->getWidget())->getSize():0);
 }
 
 void RigidBody::addFrame() {

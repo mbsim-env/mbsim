@@ -21,6 +21,7 @@
 #include <QApplication>
 #include "mainwindow.h"
 #include "octaveutils.h"
+#include <QLocale>
 
 int main(int argc, char *argv[]) {
   initializeOctave();

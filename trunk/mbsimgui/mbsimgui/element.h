@@ -21,22 +21,17 @@
 #define _ELEMENT__H_
 
 #include <QtGui/QTreeWidgetItem>
-#include "mbxmlutilstinyxml/tinyxml.h"
-#include "mbxmlutilstinyxml/tinynamespace.h"
-#include "editors.h"
+#include "property_widget.h"
 #include "utils.h"
-#include <string>
-#include <set>
 
-#define MBSIMNS_ "http://mbsim.berlios.de/MBSim"
-#define MBSIMNS "{"MBSIMNS_"}"
-
-class PropertyDialog;
+class Element;
 class Frame;
 class Group;
 class Object;
 class Link;
 class ExtraDynamic;
+class TiXmlElement;
+class TiXmlNode;
 
 class Container : public QTreeWidgetItem {
   public:
@@ -44,16 +39,13 @@ class Container : public QTreeWidgetItem {
     Element* getChild(const std::string &name, bool check=false);
 };
 
-
 class Element : public QObject, public QTreeWidgetItem {
   Q_OBJECT
-  friend class Editor;
-  friend class MainWindow;
   protected:
     bool drawThisPath;
     std::string iconFile;
     bool searchMatched;
-    PropertyDialog *properties;
+    PropertyWidget *properties;
     QMenu *contextMenu;
     QAction *actionSave;
     QString file;
@@ -83,9 +75,9 @@ class Element : public QObject, public QTreeWidgetItem {
     bool getSearchMatched() { return searchMatched; }
     void setSearchMatched(bool m) { searchMatched=m; }
     QMenu* getContextMenu() { return contextMenu; }
-    PropertyDialog* getPropertyDialog() { return properties; }
+    PropertyWidget* getPropertyWidget() { return properties; }
     QString getName() const {return text(0);}
-    void setName(const QString &str) {setText(0,str);((NameWidget*)name->getWidget())->setName(str);}
+    void setName(const QString &str);
     static double getDouble(TiXmlElement *e);
     static int getInt(TiXmlElement *e);
     static bool getBool(TiXmlElement *e);
@@ -109,11 +101,11 @@ class Element : public QObject, public QTreeWidgetItem {
     Object* getObject(const std::string &name, bool check=true);
     Group* getGroup(const std::string &name, bool check=true);
     Link* getLink(const std::string &name, bool check=true);
-    public slots:
-      void remove();
-      virtual void saveAs();
-      virtual void save();
-      void copy();
+  public slots:
+    void remove();
+    virtual void saveAs();
+    virtual void save();
+    void copy();
 };
 
 template<class T>

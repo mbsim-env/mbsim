@@ -21,9 +21,6 @@
 #define _KINETIC_EXCITATION__H_
 
 #include "link.h"
-#include <QtGui/QActionGroup>
-#include "utils.h"
-#include <editors.h>
 
 class KineticExcitation : public Link {
   public:
