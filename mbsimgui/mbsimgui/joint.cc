@@ -19,12 +19,11 @@
 
 #include <config.h>
 #include "joint.h"
-#include "utils.h"
-#include <QtGui/QMenu>
-#include "frame.h"
+#include "kinetics_widgets.h"
+#include "extended_widgets.h"
+#include "ombv_widgets.h"
 
 using namespace std;
-
 
 Joint::Joint(const QString &str, QTreeWidgetItem *parentItem, int ind) : Link(str, parentItem, ind) {
 

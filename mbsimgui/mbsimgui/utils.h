@@ -25,8 +25,8 @@
 #include <iostream>
 #include <iomanip>
 #include <limits>
-#include "mbxmlutilstinyxml/tinyxml.h"
-#include "mbxmlutilstinyxml/tinynamespace.h"
+#include <mbxmlutilstinyxml/tinyxml.h>
+#include <mbxmlutilstinyxml/tinynamespace.h>
 
 class QTreeWidgetItem;
 
@@ -447,5 +447,12 @@ inline QStringList forceUnits() {
   units << "mN" << "N" << "kN";
   return units;
 }
+
+std::string removeWhiteSpace(const std::string &str);
+
+//template<class T> 
+//T max(T x1, T x2) {
+//  return x1>=x2?x1:x2;
+//}
 
 #endif

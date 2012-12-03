@@ -21,14 +21,13 @@
 #include "mainwindow.h"
 #include "element.h"
 #include "integrator.h"
-#include "editors.h"
-#include "utils.h"
 #include "objectfactory.h"
 #include <QtGui>
 #include "frame.h"
 #include "rigidbody.h"
 #include "parameter.h"
 #include "octaveutils.h"
+#include <mbxmlutils/utils.h>
 #ifdef _WIN32 // Windows
 #  include <windows.h>
 #  include <process.h>
@@ -71,112 +70,6 @@ int runProgramSyncronous(const vector<string> &arg) {
   delete[]argv;
   return ret;
 #endif
-}
-
-ElementItem::ElementItem(const QString &str, QTreeWidget* elementList_) : elementList(elementList_) {
-  setText(0,str);
-  contextMenu=new QMenu("Context Menu");
-  if(str=="frames") {
-    addChild(new FrameItem("Frame",elementList));
-  }
-  if(str=="groups") {
-    addChild(new GroupItem("Group",elementList));
-  }
-  if(str=="objects") {
-    addChild(new ObjectItem("RigidBody",elementList));
-    addChild(new ObjectItem("JointConstraint",elementList));
-  }
-  if(str=="links") {
-    addChild(new LinkItem("KineticExcitation",elementList));
-    addChild(new LinkItem("Joint",elementList));
-    addChild(new LinkItem("SpringDamper",elementList));
-  }
-}
-
-void ElementItem::add() {
-}
-
-FrameItem::FrameItem(const QString &str, QTreeWidget* elementlist) : ElementItem(str, elementlist) {
-  QAction *action=new QAction(Utils::QIconCached("newobject.svg"),"Add", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(add()));
-  contextMenu->addAction(action);
-}
-
-void FrameItem::add() {
-  Group *group = dynamic_cast<Group*>(elementList->currentItem());
-  RigidBody *body = dynamic_cast<RigidBody*>(elementList->currentItem());
-  Container *container = dynamic_cast<Container*>(elementList->currentItem());
-  if(group) {
-    new Frame(group->newName(group->getContainerFrame(),"P"), group->getContainerFrame(), -1);
-    ((Element*)elementList->topLevelItem(0))->update();
-  } else if(body) {
-    new Frame(body->newName(body->getContainerFrame(),"P"), body->getContainerFrame(), -1);
-    ((Element*)elementList->topLevelItem(0))->update();
-  } else if(container && container->text(0)=="frames") {
-    new Frame(((Element*)container->parent())->newName(container,"P"), container, -1);
-    ((Element*)elementList->topLevelItem(0))->update();
-  }
-}
-
-GroupItem::GroupItem(const QString &str, QTreeWidget* elementlist) : ElementItem(str, elementlist) {
-  QAction *action=new QAction(Utils::QIconCached("newobject.svg"),"Add", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(add()));
-  contextMenu->addAction(action);
-}
-
-void GroupItem::add() {
-  Group *group = dynamic_cast<Group*>(elementList->currentItem());
-  if(group) {
-    TiXmlElement* e = new TiXmlElement(MBSIMNS+getName().toStdString());
-    e->SetAttribute("name",group->newName(group->getContainerGroup(),getName()).toStdString());
-    ObjectFactory::getInstance()->createGroup(e, group->getContainerGroup(), -1);
-    ((Element*)elementList->topLevelItem(0))->update();
-  }
-}
-
-ObjectItem::ObjectItem(const QString &str, QTreeWidget* elementlist) : ElementItem(str, elementlist) {
-  QAction *action=new QAction(Utils::QIconCached("newobject.svg"),"Add", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(add()));
-  contextMenu->addAction(action);
-}
-
-void ObjectItem::add() {
-  Group *group = dynamic_cast<Group*>(elementList->currentItem());
-  if(group) {
-    TiXmlElement* e = new TiXmlElement(MBSIMNS+getName().toStdString());
-    e->SetAttribute("name",group->newName(group->getContainerObject(),getName()).toStdString());
-    ObjectFactory::getInstance()->createObject(e, group->getContainerObject(), -1);
-    ((Element*)elementList->topLevelItem(0))->update();
-  }
-}
-
-LinkItem::LinkItem(const QString &str, QTreeWidget* elementlist) : ElementItem(str, elementlist) {
-  QAction *action=new QAction(Utils::QIconCached("newobject.svg"),"Add", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(add()));
-  contextMenu->addAction(action);
-}
-
-void LinkItem::add() {
-  Group *group = dynamic_cast<Group*>(elementList->currentItem());
-  if(group) {
-    TiXmlElement* e = new TiXmlElement(MBSIMNS+getName().toStdString());
-    e->SetAttribute("name",group->newName(group->getContainerLink(),getName()).toStdString());
-    ObjectFactory::getInstance()->createLink(e, group->getContainerLink(), -1);
-    ((Element*)elementList->topLevelItem(0))->update();
-  }
-}
-
-FileItem::FileItem(const QString &str, QTreeWidget* elementlist) : ElementItem(str, elementlist) {
-  QAction *action=new QAction(Utils::QIconCached("newobject.svg"),"Add", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(add()));
-  contextMenu->addAction(action);
-}
-
-void FileItem::add() {
-  Group *group = dynamic_cast<Group*>(elementList->currentItem());
-  if(group) {
-    group->addFromFile();
-  }
 }
 
 MBXMLUtils::OctaveEvaluator *MainWindow::octEval=NULL;
@@ -300,17 +193,6 @@ MainWindow::MainWindow() {
 
   pagesWidget = new QStackedWidget;
 
-  sourceList = new QTreeWidget;
-  sourceList->setHeaderLabel("Elements");
-  sourceList->addTopLevelItem(new ElementItem("frames",elementList));
-  sourceList->addTopLevelItem(new ElementItem("contours",elementList));
-  sourceList->addTopLevelItem(new ElementItem("groups",elementList));
-  sourceList->addTopLevelItem(new ElementItem("objects",elementList));
-  sourceList->addTopLevelItem(new ElementItem("links",elementList));
-  sourceList->addTopLevelItem(new FileItem("File",elementList));
-  connect(sourceList,SIGNAL(pressed(QModelIndex)), this, SLOT(sourceListClicked()));
-  connect(sourceList,SIGNAL(doubleClicked(QModelIndex)), this, SLOT(sourceListDoubleClicked()));
-
   QDockWidget *dockWidget = new QDockWidget("MBS");
   addDockWidget(Qt::LeftDockWidgetArea,dockWidget);
   QWidget *box = new QWidget;
@@ -402,24 +284,11 @@ void MainWindow::elementListClicked() {
   else if(QApplication::mouseButtons()==Qt::LeftButton) {
     Element *element=dynamic_cast<Element*>(elementList->currentItem());
     if(element) {
-      pagesWidget->insertWidget(0,element->getPropertyDialog());
-      pagesWidget->setCurrentWidget(element->getPropertyDialog());
+      pagesWidget->insertWidget(0,element->getPropertyWidget());
+      pagesWidget->setCurrentWidget(element->getPropertyWidget());
     }
   }
 }
-
-void MainWindow::sourceListClicked() {
-  if(QApplication::mouseButtons()==Qt::RightButton) {
-    ElementItem *element=(ElementItem*)sourceList->currentItem();
-    QMenu* menu=element->getContextMenu();
-    menu->exec(QCursor::pos());
-  } 
-}
-
-void MainWindow::sourceListDoubleClicked() {
-  ((ElementItem*)sourceList->currentItem())->add();
-}
-
 
 void MainWindow::integratorListClicked() {
   if(QApplication::mouseButtons()==Qt::RightButton) {
@@ -429,8 +298,8 @@ void MainWindow::integratorListClicked() {
   } 
   else if(QApplication::mouseButtons()==Qt::LeftButton) {
     Integrator *integrator=(Integrator*)integratorList->currentItem();
-    pagesWidget->insertWidget(0,integrator->getPropertyDialog());
-    pagesWidget->setCurrentWidget(integrator->getPropertyDialog());
+    pagesWidget->insertWidget(0,integrator->getPropertyWidget());
+    pagesWidget->setCurrentWidget(integrator->getPropertyWidget());
   }
 }
 
@@ -444,8 +313,8 @@ void MainWindow::parameterListClicked() {
   } 
   else if(QApplication::mouseButtons()==Qt::LeftButton) {
     Parameter *parameter=(Parameter*)parameterList->currentItem();
-    pagesWidget->insertWidget(0,parameter->getPropertyDialog());
-    pagesWidget->setCurrentWidget(parameter->getPropertyDialog());
+    pagesWidget->insertWidget(0,parameter->getPropertyWidget());
+    pagesWidget->setCurrentWidget(parameter->getPropertyWidget());
   }
 }
 

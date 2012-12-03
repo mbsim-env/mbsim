@@ -19,8 +19,9 @@
 
 #include <config.h>
 #include "parameter.h"
-#include "editors.h"
-#include "element.h"
+#include "property_widget.h"
+#include "basic_widgets.h"
+#include "string_widgets.h"
 #include "objectfactory.h"
 #include "octaveutils.h"
 #include <QtGui/QMenu>
@@ -36,7 +37,7 @@ Parameter::Parameter(const QString &str, QTreeWidgetItem *parentItem, int ind) :
 
   setText(0, str);
 
-  properties=new PropertyDialog(this);
+  properties=new PropertyWidget(this);
   properties->addTab("General");
 
   name = new ExtXMLWidget("Name",new ParameterNameWidget(this));
@@ -55,6 +56,11 @@ Parameter::~Parameter() {
   delete properties;
 }
 
+void Parameter::setName(const QString &str) {
+  setText(0,str);
+  ((ParameterNameWidget*)name->getWidget())->setName(str);
+}
+
 QString Parameter::getInfo() {
   return "";
 }
@@ -66,6 +72,12 @@ void Parameter::saveAs() {
       file.chop(10);
     writeXMLFile(file.toAscii().data());
   }
+}
+
+void Parameter::remove() {
+  QTreeWidget *tree = treeWidget();
+  tree->invisibleRootItem()->removeChild(this);
+  emit parameterChanged(getValue().c_str());
 }
 
 void Parameter::initializeUsingXML(TiXmlElement *element) {
@@ -120,6 +132,10 @@ DoubleParameter::DoubleParameter(const QString &str, QTreeWidgetItem *parentItem
   updateTreeWidgetItem(getValue().c_str());
 }
 
+string DoubleParameter::getValue() const { 
+  return ((ParameterValueWidget*)value->getWidget())->getValue();
+}
+
 void DoubleParameter::initializeUsingXML(TiXmlElement *element) {
   ParameterValueWidget *val = (ParameterValueWidget*)value->getWidget();
   val->getExtPhysicalWidget()->initializeUsingXML(element);
@@ -136,8 +152,3 @@ void DoubleParameter::initializeUsingXML(TiXmlElement *element) {
     updateTreeWidgetItem(getValue().c_str());
 }
 
-void Parameter::remove() {
-  QTreeWidget *tree = treeWidget();
-  tree->invisibleRootItem()->removeChild(this);
-  emit parameterChanged(getValue().c_str());
-}

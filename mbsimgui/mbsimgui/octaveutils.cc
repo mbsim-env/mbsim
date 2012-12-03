@@ -17,13 +17,16 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#include <config.h>
 #include "octaveutils.h"
 #include <string>
 #include <mbxmlutilstinyxml/getinstallpath.h>
+#include <mbxmlutilstinyxml/tinyxml.h>
 #include <stdlib.h>
 #include <string.h>
-#include "mbxmlutilstinyxml/tinyxml.h"
 #include <sys/stat.h>
+#include "mainwindow.h"
+#include <mbxmlutils/utils.h>
 #include "env.h"
 
 using namespace std;
@@ -50,4 +53,18 @@ void initializeOctave() {
   TiXmlBase::SetCondenseWhiteSpace(false);
 }
 
+string evalOctaveExpression(const string &str) {
+  string ret;
+  if(str!="") {
+    bool error = false;
+    try{
+      MainWindow::octEval->octaveEvalRet(str, 0, false);
+      ret = MainWindow::octEval->octaveGetRet();
+    }
+    catch (string e) {
+      cout << "An exception occurred in evalOctaveExpression: " << e << endl;
+    }
+  }
+  return ret;
+}
 

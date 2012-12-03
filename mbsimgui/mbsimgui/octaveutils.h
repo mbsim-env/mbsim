@@ -17,11 +17,11 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <iostream>
 #include <octave/oct.h>
 #include <octave/octave.h>
 #include <octave/parse.h>
 #include <octave/toplev.h>
+#include <iostream>
 
 class TiXmlElement;
 
@@ -45,3 +45,6 @@ void octaveEvalRet(std::string str, TiXmlElement *e=NULL);
 std::string octaveGetRet(ValueType expectedType=ArbitraryType);
 void initializeOctave();
 int fillParam(std::vector<Param> param);
+
+std::string evalOctaveExpression(const std::string &str);
+

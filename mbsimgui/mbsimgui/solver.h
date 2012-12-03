@@ -27,7 +27,6 @@
 
 
 class Environment : public QObject {
-  Q_OBJECT
   public:
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
@@ -40,9 +39,6 @@ class Environment : public QObject {
 };
 
 class Solver : public Group {
-  Q_OBJECT
-  friend class MainWindow;
-  friend class Object;
   protected:
     ExtXMLWidget *environment, *inverseKinetics;
   public:

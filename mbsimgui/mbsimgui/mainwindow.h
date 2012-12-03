@@ -21,95 +21,23 @@
 #define _MAINWINDOW_H_
 
 #include <QMainWindow>
-#include <QStandardItemModel>
-#include <QGridLayout>
-#include <QComboBox>
-#include <QTreeWidgetItem>
-#include <mbxmlutils/utils.h>
 
-class QListWidget;
-class QTableWidget;
 class QTreeWidget;
 class QStackedWidget;
-class PropertyDialog;
 class QAction;
-class QMenu;
-class QLabel;
 class QLineEdit;
 
-class ElementItem : public QObject, public QTreeWidgetItem {
-  Q_OBJECT
-  protected:
-    QMenu *contextMenu;
-    QTreeWidget *elementList;
-  public:
-    ElementItem(const QString &str, QTreeWidget* elementList);
-    virtual ~ElementItem() {}
-    QMenu* getContextMenu() {return contextMenu;}
-    QString getName() const {return text(0);}
-  public slots:
-    virtual void add();
-};
-
-class FrameItem : public ElementItem {
-  Q_OBJECT
-  protected:
-  public:
-    FrameItem(const QString &str, QTreeWidget* elementList);
-    virtual ~FrameItem() {}
-  public slots:
-    void add();
-};
-
-class GroupItem : public ElementItem {
-  Q_OBJECT
-  protected:
-  public:
-    GroupItem(const QString &str, QTreeWidget* elementList);
-    virtual ~GroupItem() {}
-  public slots:
-    void add();
-};
-
-class ObjectItem : public ElementItem {
-  Q_OBJECT
-  protected:
-  public:
-    ObjectItem(const QString &str, QTreeWidget* elementList);
-    virtual ~ObjectItem() {}
-  public slots:
-    void add();
-};
-
-class LinkItem : public ElementItem {
-  Q_OBJECT
-  protected:
-  public:
-    LinkItem(const QString &str, QTreeWidget* elementList);
-    virtual ~LinkItem() {}
-  public slots:
-    void add();
-};
-
-class FileItem : public ElementItem {
-  Q_OBJECT
-  protected:
-  public:
-    FileItem(const QString &str, QTreeWidget* elementList);
-    virtual ~FileItem() {}
-  public slots:
-    void add();
-};
+namespace MBXMLUtils {
+  class OctaveEvaluator;
+}
 
 class MainWindow : public QMainWindow {
 
   Q_OBJECT
 
   private:
-    QStandardItemModel *model;
     QWidget *centralWidget;
-    QTreeWidget *elementList, *integratorList, *parameterList, *sourceList;
-    PropertyDialog *properties;
+    QTreeWidget *elementList, *integratorList, *parameterList;
     QStackedWidget *pagesWidget;
     QLineEdit *fileMBS, *fileIntegrator, *fileParameter;
     QAction *actionSaveMBSAs, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameter;
@@ -121,8 +49,6 @@ class MainWindow : public QMainWindow {
     static MBXMLUtils::OctaveEvaluator *octEval;
   public slots:
     void elementListClicked();
-    void sourceListClicked();
-    void sourceListDoubleClicked();
     void integratorListClicked();
     void parameterListClicked();
 //    void parameterListClicked(const QPoint &pos);

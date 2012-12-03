@@ -19,12 +19,11 @@
 
 #include <config.h>
 #include "kinetic_excitation.h"
-#include "utils.h"
-#include <QtGui/QMenu>
-#include "frame.h"
+#include "kinetics_widgets.h"
+#include "extended_widgets.h"
+#include "ombv_widgets.h"
 
 using namespace std;
-
 
 KineticExcitation::KineticExcitation(const QString &str, QTreeWidgetItem *parentItem, int ind) : Link(str, parentItem, ind) {
 

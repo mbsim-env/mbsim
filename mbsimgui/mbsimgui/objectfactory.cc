@@ -27,6 +27,7 @@
 #include "kinetic_excitation.h"
 #include "joint.h"
 #include "spring_damper.h"
+#include "xml_widget.h"
 #include <string>
 
 using namespace std;

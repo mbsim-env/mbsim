@@ -21,9 +21,10 @@
 #include "constraint.h"
 #include "frame.h"
 #include "rigidbody.h"
+#include "string_widgets.h"
+#include "kinetics_widgets.h"
 
 using namespace std;
-
 
 Constraint::Constraint(const QString &str, QTreeWidgetItem *parentItem, int ind) : Object(str, parentItem, ind) {
 }

@@ -19,11 +19,14 @@
 
 #include <config.h>
 #include "integrator.h"
-#include "editors.h"
+#include "property_widget.h"
+#include "string_widgets.h"
+#include "extended_widgets.h"
 #include "element.h"
 #include "objectfactory.h"
 #include <QtGui/QMenu>
 #include <QtGui/QFileDialog>
+#include <QtGui/QHBoxLayout>
 
 using namespace std;
 
@@ -35,7 +38,7 @@ Integrator::Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind)
 
   setText(0, str);
 
-  properties=new PropertyDialog(this);
+  properties=new PropertyWidget(this);
   properties->addTab("General");
   properties->addTab("Initial conditions");
 
@@ -65,6 +68,10 @@ Integrator::Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind)
 
 Integrator::~Integrator() {
   delete properties;
+}
+
+void Integrator::setEndTime(double t) {
+  ((ExtPhysicalVarWidget*)endTime->getWidget())->setValue(QString::number(t).toStdString());
 }
 
 void Integrator::resizeVariables() {

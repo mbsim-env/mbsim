@@ -21,15 +21,9 @@
 #define _RIGIDBODY__H_
 
 #include "body.h"
-#include <QtGui/QActionGroup>
-#include "utils.h"
-#include <editors.h>
-
-class Frame;
 
 class RigidBody : public Body {
   Q_OBJECT
-  private:
   public:
     RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind);
     ~RigidBody();
@@ -40,10 +34,9 @@ class RigidBody : public Body {
     QString getType() const { return "RigidBody"; }
     void setConstrained(bool b) {constrained = b;}
     int getSize() const {return constrained ? 0 : getUnconstrainedSize();}
-    int getUnconstrainedSize() const {return (translation->isActive()?((TranslationChoiceWidget*)translation->getWidget())->getSize():0) + (rotation->isActive()?((RotationChoiceWidget*)rotation->getWidget())->getSize():0);}
+    int getUnconstrainedSize() const; 
     void resizeGeneralizedPosition();
     void resizeGeneralizedVelocity();
-
   public slots:
     void addFrame();
   protected:

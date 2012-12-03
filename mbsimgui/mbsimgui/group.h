@@ -21,24 +21,13 @@
 #define _GROUP__H_
 
 #include "element.h"
-#include <string>
-#include <QtCore/QFileInfo>
-#include <QtCore/QDateTime>
-#include <QtGui/QInputDialog>
-#include <QtGui/QMessageBox>
-
 
 class Group : public Element {
   Q_OBJECT
-  friend class MainWindow;
-  friend class Element;
   protected:
     QString getType() const { return "Group"; }
     QAction *actionPaste;
-    QFileInfo *xmlFileInfo, *h5FileInfo;
-    QDateTime xmlLastModified, h5LastModified;
     ExtXMLWidget *position, *orientation, *parameterFile, *frameOfReference, *framePos;
-    void setActionPasteDisabled(bool flag);
 
   public:
     Group(const QString &str, QTreeWidgetItem *parentItem, int ind);
@@ -48,6 +37,7 @@ class Group : public Element {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual Element *getByPathSearch(std::string path);
+    void setActionPasteDisabled(bool flag);
 
   protected slots:
     void addGroup();

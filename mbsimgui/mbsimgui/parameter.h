@@ -20,18 +20,13 @@
 #ifndef _PARAMETER__H_
 #define _PARAMETER__H_
 
-#define PARAMNS_ "http://openmbv.berlios.de/MBXMLUtils/parameter"
-#define PARAMNS "{"PARAMNS_"}"
-
 #include <QtGui/QTreeWidgetItem>
-#include "mbxmlutilstinyxml/tinyxml.h"
-#include "mbxmlutilstinyxml/tinynamespace.h"
-#include "editors.h"
-#include "utils.h"
 #include <string>
-#include <set>
 
-class PropertyDialog;
+class PropertyWidget;
+class ExtXMLWidget;
+class TiXmlElement;
+class TiXmlNode;
 
 class Parameter : public QObject, public QTreeWidgetItem {
   Q_OBJECT
@@ -42,7 +37,7 @@ class Parameter : public QObject, public QTreeWidgetItem {
     bool drawThisPath;
     std::string iconFile;
     bool searchMatched;
-    PropertyDialog *properties;
+    PropertyWidget *properties;
     QMenu *contextMenu;
     ExtXMLWidget *name;
   public:
@@ -57,9 +52,9 @@ class Parameter : public QObject, public QTreeWidgetItem {
     virtual void writeXMLFile() { writeXMLFile(getType()); }
     virtual QString getType() const { return "Parameter"; }
     QMenu* getContextMenu() { return contextMenu; }
-    PropertyDialog* getPropertyDialog() { return properties; }
+    PropertyWidget* getPropertyWidget() { return properties; }
     QString getName() const {return text(0);}
-    void setName(const QString &str) {setText(0,str);((NameWidget*)name->getWidget())->setName(str);}
+    void setName(const QString &str);
     virtual std::string getValue() const = 0;
   public slots:
     void saveAs();
@@ -75,7 +70,7 @@ class DoubleParameter : public Parameter {
   public:
     DoubleParameter(const QString &str, QTreeWidgetItem *parentItem, int ind);
     virtual QString getType() const { return "scalarParameter"; }
-    virtual std::string getValue() const { return ((ParameterValueWidget*)value->getWidget())->getValue(); }
+    virtual std::string getValue() const;
     virtual void initializeUsingXML(TiXmlElement *element);
   protected:
     ExtXMLWidget *value;

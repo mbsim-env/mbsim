@@ -20,20 +20,14 @@
 #ifndef _INTEGRATOR__H_
 #define _INTEGRATOR__H_
 
-
 #include <QtGui/QTreeWidgetItem>
-#include "mbxmlutilstinyxml/tinyxml.h"
-#include "mbxmlutilstinyxml/tinynamespace.h"
-#include "editors.h"
-#include "utils.h"
-#include <string>
-#include <set>
 
-#define MBSIMINTNS_ "http://mbsim.berlios.de/MBSimIntegrator"
-#define MBSIMINTNS "{"MBSIMINTNS_"}"
-
-class PropertyDialog;
 class Solver;
+class PropertyWidget;
+class ExtXMLWidget;
+class VecWidget;
+class TiXmlElement;
+class TiXmlNode;
 
 class Integrator : public QObject, public QTreeWidgetItem {
   Q_OBJECT
@@ -42,7 +36,7 @@ class Integrator : public QObject, public QTreeWidgetItem {
     bool drawThisPath;
     std::string iconFile;
     bool searchMatched;
-    PropertyDialog *properties;
+    PropertyWidget *properties;
     QMenu *contextMenu;
     VecWidget *z0;
     ExtXMLWidget *startTime, *endTime, *plotStepSize, *initialState;
@@ -59,8 +53,8 @@ class Integrator : public QObject, public QTreeWidgetItem {
     virtual void writeXMLFile() { writeXMLFile(getType()); }
     virtual QString getType() const { return "Integrator"; }
     QMenu* getContextMenu() { return contextMenu; }
-    PropertyDialog* getPropertyDialog() { return properties; }
-    void setEndTime(double t) {((ExtPhysicalVarWidget*)endTime->getWidget())->setValue(QString::number(t).toStdString());}
+    PropertyWidget* getPropertyWidget() { return properties; }
+    void setEndTime(double t);
     virtual void resizeVariables(); 
   public slots:
     void saveAs();

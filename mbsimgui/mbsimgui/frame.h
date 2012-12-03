@@ -21,9 +21,7 @@
 #define _FRAME__H_
 
 #include "element.h"
-#include <QtGui/QActionGroup>
-#include "utils.h"
-#include <editors.h>
+#include "extended_widgets.h"
 
 class Frame : public Element {
   Q_OBJECT

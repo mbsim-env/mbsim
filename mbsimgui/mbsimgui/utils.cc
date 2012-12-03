@@ -27,13 +27,6 @@
 #endif
 #include <iostream>
 #include <cmath>
-#include <QtGui/QDialog>
-#include <QtGui/QPushButton>
-#include <QtGui/QLineEdit>
-#include <QtGui/QMessageBox>
-#include <QtGui/QGridLayout>
-#include <QtGui/QComboBox>
-#include <QtGui/QLabel>
 #include <QtGui/QTreeWidgetItem>
 
 using namespace std;
@@ -167,5 +160,15 @@ QTreeWidgetItem* getChild(QTreeWidgetItem *parentItem, const QString &str) {
   return 0;
 }
 
+string removeWhiteSpace(const string &str) {
+  string ret = str;
+  size_t found;
+  found=ret.find_first_of(" ");
+  while (found!=string::npos) {
+    ret.erase(found,1);
+    found=ret.find_first_of(" ",found);
+  }
+  return ret;
+}
 
 
