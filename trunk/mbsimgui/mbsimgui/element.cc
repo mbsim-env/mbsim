@@ -29,6 +29,7 @@
 #include "solver.h"
 #include "object.h"
 #include "frame.h"
+#include "contour.h"
 #include "link.h"
 
 using namespace std;
@@ -145,6 +146,10 @@ void Element::update() {
     for(int i=0; i<getContainerFrame()->childCount(); i++)
       getFrame(i)->update();
   }
+  if(getContainerContour()) {
+    for(int i=0; i<getContainerContour()->childCount(); i++)
+      getContour(i)->update();
+  }
   if(getContainerLink()) {
     for(int i=0; i<getContainerLink()->childCount(); i++)
       getLink(i)->update();
@@ -165,6 +170,10 @@ void Element::initialize() {
     for(int i=0; i<getContainerFrame()->childCount(); i++)
       getFrame(i)->initialize();
   }
+  if(getContainerContour()) {
+    for(int i=0; i<getContainerContour()->childCount(); i++)
+      getContour(i)->initialize();
+  }
   if(getContainerLink()) {
     for(int i=0; i<getContainerLink()->childCount(); i++)
       getLink(i)->initialize();
@@ -184,6 +193,10 @@ void Element::resizeVariables() {
   if(getContainerFrame()) {
     for(int i=0; i<getContainerFrame()->childCount(); i++)
       getFrame(i)->resizeVariables();
+  }
+  if(getContainerContour()) {
+    for(int i=0; i<getContainerContour()->childCount(); i++)
+      getContour(i)->resizeVariables();
   }
   if(getContainerLink()) {
     for(int i=0; i<getContainerLink()->childCount(); i++)
@@ -224,6 +237,8 @@ QString Element::getXMLPath(Element *ref, bool rel) {
       type = "Group";
     else if(dynamic_cast<Object*>(this))
       type = "Object";
+    else if(dynamic_cast<Contour*>(this))
+      type = "Contour";
     else 
       type = getType();
     QString str = type + "[" + getName() + "]";
@@ -232,6 +247,8 @@ QString Element::getXMLPath(Element *ref, bool rel) {
         str = QString("Group[") + (*i1)->getName() + "]/" + str;
       else if(dynamic_cast<Object*>(*i1))
         str = QString("Object[") + (*i1)->getName() + "]/" + str;
+      else if(dynamic_cast<Contour*>(*i1))
+        str = QString("Contour[") + (*i1)->getName() + "]/" + str;
       else
         throw;
     }
@@ -244,6 +261,8 @@ QString Element::getXMLPath(Element *ref, bool rel) {
       type = "Group";
     else if(dynamic_cast<Object*>(this))
       type = "Object";
+    else if(dynamic_cast<Contour*>(this))
+      type = "Contour";
     else 
       type = getType();
     QString str = type + "[" + getName() + "]";
@@ -253,6 +272,8 @@ QString Element::getXMLPath(Element *ref, bool rel) {
         str = QString("Group[") + element->getName() + "]/" + str;
       else if(dynamic_cast<Object*>(element))
         str = QString("Object[") + element->getName() + "]/" + str;
+      else if(dynamic_cast<Contour*>(element))
+        str = QString("Contour[") + element->getName() + "]/" + str;
       else
         throw;
       element = element->getParentElement();
@@ -487,8 +508,26 @@ Frame* Element::getFrame(const std::string &name, bool check) {
   return NULL;
 }
 
+Contour* Element::getContour(const std::string &name, bool check) {
+  int i;
+  for(i=0; i<getContainerContour()->childCount(); i++) {
+    if(getContour(i)->getName().toStdString() == name)
+      return getContour(i);
+  }
+  if(check) {
+    if(!(i<getContainerContour()->childCount()))
+      throw MBSimError("The contours \""+getContour(i)->getName().toStdString()+"\" comprises no contour \""+name+"\"!");
+    assert(i<getContainerContour()->childCount());
+  }
+  return NULL;
+}
+
 Frame* Element::getFrame(int i) {
   return (Frame*)frames->child(i); 
+}
+
+Contour* Element::getContour(int i) {
+  return (Contour*)contours->child(i); 
 }
 
 Object* Element::getObject(int i) {

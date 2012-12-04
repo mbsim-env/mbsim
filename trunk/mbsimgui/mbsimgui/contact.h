@@ -17,44 +17,20 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _GROUP__H_
-#define _GROUP__H_
+#ifndef _CONTACT__H_
+#define _CONTACT__H_
 
-#include "element.h"
+#include "link.h"
 
-class Group : public Element {
-  Q_OBJECT
-  protected:
-    QString getType() const { return "Group"; }
-    QAction *actionPaste;
-    ExtXMLWidget *position, *orientation, *parameterFile, *frameOfReference, *framePos, *contourPos;
-
+class Contact : public Link {
   public:
-    Group(const QString &str, QTreeWidgetItem *parentItem, int ind);
-    int getqSize();
-    int getuSize();
-    int getxSize();
+    Contact(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    ~Contact();
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual Element *getByPathSearch(std::string path);
-    void setActionPasteDisabled(bool flag);
-
-  protected slots:
-    void addGroup();
-    void addFrame();
-    void addPoint();
-    void addLine();
-    void addRigidBody();
-    void addJointConstraint();
-    void addJoint();
-    void addKineticExcitation();
-    void addSpringDamper();
-    void addContact();
-    //void remove();
-
-  public slots:
-    void addFromFile();
-    void paste();
+    QString getType() const { return "Contact"; }
+  protected:
+    ExtXMLWidget *contactForceLaw, *contactImpactLaw, *frictionForceLaw, *frictionImpactLaw, *connections, *enableOpenMBVContactPoints, *normalForceArrow, *frictionArrow;
 };
 
 #endif

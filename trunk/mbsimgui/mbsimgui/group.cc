@@ -29,7 +29,9 @@
 #include "spring_damper.h"
 #include "joint.h"
 #include "kinetic_excitation.h"
+#include "contact.h"
 #include "frame.h"
+#include "contour.h"
 #include "property_widget.h"
 #include "basic_widgets.h"
 #include "string_widgets.h"
@@ -89,6 +91,7 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
   QAction *action;
 
   properties->addTab("Frame positioning");
+  properties->addTab("Contour positioning");
   if(parentItem != treeWidget()->invisibleRootItem()) {
     properties->addTab("Kinematics");
 
@@ -109,9 +112,20 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
   framePos = new ExtXMLWidget("Position and orientation of frames",new FramePositionsWidget(this)); 
   properties->addToTab("Frame positioning", framePos);
 
+  contourPos = new ExtXMLWidget("Position and orientation of contours",new ContourPositionsWidget(this)); 
+  properties->addToTab("Contour positioning", contourPos);
+
   action=new QAction(Utils::QIconCached("newobject.svg"),"Add frame", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addFrame()));
   contextMenu->addAction(action);
+
+  QMenu *submenu = contextMenu->addMenu("Add contour");
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add point", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addPoint()));
+  submenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add line", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addLine()));
+  submenu->addAction(action);
 
   action=new QAction(Utils::QIconCached("newobject.svg"),"Add group", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addGroup()));
@@ -120,7 +134,7 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
   //action=new QAction(Utils::QIconCached("newobject.svg"),"Add object", this);
   //connect(action,SIGNAL(triggered()),this,SLOT(addObject()));
   //contextMenu->addAction(action);
-  QMenu *submenu = contextMenu->addMenu("Add object");
+  submenu = contextMenu->addMenu("Add object");
   action=new QAction(Utils::QIconCached("newobject.svg"),"Rigid body", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addRigidBody()));
   submenu->addAction(action);
@@ -140,6 +154,9 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
   submenu->addAction(action);
   action=new QAction(Utils::QIconCached("newobject.svg"),"Spring damper", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addSpringDamper()));
+  submenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Contact", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addContact()));
   submenu->addAction(action);
 
   action=new QAction(Utils::QIconCached("newobject.svg"),"Add from file", this);
@@ -243,9 +260,30 @@ void Group::addSpringDamper() {
   ((Element*)treeWidget()->topLevelItem(0))->update();
 }
 
+void Group::addContact() {
+  new Contact(newName(links,"Contact"), links, -1);
+  ((Element*)treeWidget()->topLevelItem(0))->update();
+}
+
 void Group::addFrame() {
   new Frame(newName(frames,"P"), frames, -1);
   ((Element*)treeWidget()->topLevelItem(0))->update();
+}
+
+void Group::addPoint() {
+  QString text = newName(contours,"Point");
+  if (!text.isEmpty()) {
+    new Point(text, contours, -1);
+    ((Element*)treeWidget()->topLevelItem(0))->update();
+  }
+}
+
+void Group::addLine() {
+  QString text = newName(contours,"Line");
+  if (!text.isEmpty()) {
+    new Line(text, contours, -1);
+    ((Element*)treeWidget()->topLevelItem(0))->update();
+  }
 }
 
 void Group::addGroup() {
@@ -351,24 +389,16 @@ void Group::initializeUsingXML(TiXmlElement *element) {
 
   // contours
   E=element->FirstChildElement(MBSIMNS"contours")->FirstChildElement();
+  Contour *c;
   while(E && E->ValueStr()==MBSIMNS"contour") {
-    //     TiXmlElement *ec=E->FirstChildElement();
-    //     Contour *c=ObjectFactory::getInstance()->createContour(ec);
-    //     TiXmlElement *contourElement=ec; // save for later initialization
-    //     ec=ec->NextSiblingElement();
-    //     string refF="I";
-    //     if(ec->ValueStr()==MBSIMNS"frameOfReference") {
-    //       refF=ec->Attribute("ref");
-    //       refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
-    //       ec=ec->NextSiblingElement();
-    //     }
-    //     Vec3 RrRC=getVec3(ec);
-    //     ec=ec->NextSiblingElement();
-    //     SqrMat3 ARC=getSqrMat3(ec);
-    //     addContour(c, RrRC, ARC, refF);
-    //     c->initializeUsingXML(contourElement);
+    TiXmlElement *ec=E->FirstChildElement();
+    c=ObjectFactory::getInstance()->createContour(ec, contours, -1);
+    c->initializeUsingXML(ec);
     E=E->NextSiblingElement();
   }
+
+  contourPos->initializeUsingXML(element->FirstChildElement(MBSIMNS"contours"));
+
   e=e->NextSiblingElement();
 
   // groups
@@ -430,6 +460,7 @@ TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
   ele0->LinkEndChild( ele1 );
 
   ele1 = new TiXmlElement( MBSIMNS"contours" );
+  contourPos->writeXMLFile(ele1);
   ele0->LinkEndChild( ele1 );
 
   ele1 = new TiXmlElement( MBSIMNS"groups" );
@@ -500,8 +531,8 @@ Element * Group::getByPathSearch(string path) {
         return getGroup(searched_name);
       else if (container=="Frame")
         return getFrame(searched_name);
-      //        else if (container=="Contour")
-      //          return getContour(searched_name);
+      else if (container=="Contour")
+        return getContour(searched_name);
       else {
         cout << "Unknown name of container" << endl;
         throw;

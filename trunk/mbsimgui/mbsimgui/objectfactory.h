@@ -35,6 +35,7 @@ class ObjectFactoryBase {
     typedef std::pair<double, P_NSPRE> P_PRINSPRE;
   public:
     typedef std::multimap<double, P_NSPRE> MM_PRINSPRE;
+    virtual Contour* createContour(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind) { return NULL; }
     virtual Group* createGroup(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind) { return NULL; }
     virtual Object* createObject(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind) { return NULL; }
   //  virtual ExtraDynamic * createExtraDynamic(TiXmlElement *element) { return NULL; }
@@ -75,6 +76,7 @@ class ObjectFactory : public ObjectFactoryBase {
     void registerObjectFactory(ObjectFactoryBase *fac) { factories.insert(fac); }
     void unregisterObjectFactory(ObjectFactory *fac) { factories.erase(fac); }
 
+    Contour* createContour(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind);
     Group* createGroup(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind);
     Object* createObject(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind);
 //    ExtraDynamic * createExtraDynamic(TiXmlElement *element);
@@ -87,7 +89,6 @@ class ObjectFactory : public ObjectFactoryBase {
 //    GeneralizedImpactLaw *createGeneralizedImpactLaw(TiXmlElement *element);
 //    FrictionForceLaw *createFrictionForceLaw(TiXmlElement *element);
 //    FrictionImpactLaw *createFrictionImpactLaw(TiXmlElement *element);
-//    Contour *createContour(TiXmlElement *element);
     Environment *getEnvironment(TiXmlElement *element);
 //    Jacobian *createJacobian(TiXmlElement *element);
 //    Function1<double,double> *createFunction1_SS(TiXmlElement *element);
@@ -110,6 +111,7 @@ class MBSimObjectFactory : protected ObjectFactoryBase  {
     // objects from MBSimObjectFactory
     static void initialize();
   protected:
+    Contour* createContour(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind);
     Group* createGroup(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind);
     Object* createObject(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind);
 //    ExtraDynamic * createExtraDynamic(TiXmlElement *element) {return 0; }
@@ -122,7 +124,6 @@ class MBSimObjectFactory : protected ObjectFactoryBase  {
 //    GeneralizedImpactLaw *createGeneralizedImpactLaw(TiXmlElement *element);
 //    FrictionForceLaw *createFrictionForceLaw(TiXmlElement *element);
 //    FrictionImpactLaw *createFrictionImpactLaw(TiXmlElement *element);
-//    Contour *createContour(TiXmlElement *element);
     Environment *getEnvironment(TiXmlElement *element);
 //    Jacobian *createJacobian(TiXmlElement *element);
 //    Function1<double,double> *createFunction1_SS(TiXmlElement *element);

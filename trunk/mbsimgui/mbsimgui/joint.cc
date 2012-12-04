@@ -39,7 +39,7 @@ Joint::Joint(const QString &str, QTreeWidgetItem *parentItem, int ind) : Link(st
   momentArrow = new ExtXMLWidget("OpenMBV moment arrow",new OMBVArrowWidget("NOTSET"),true);
   properties->addToTab("Visualisation",momentArrow);
 
-  connections = new ExtXMLWidget("Connections",new ConnectWidget(2,this));
+  connections = new ExtXMLWidget("Connections",new ConnectFramesWidget(2,this));
   properties->addToTab("Kinetics", connections);
 
   force = new ExtXMLWidget("Force",new GeneralizedForceChoiceWidget(MBSIMNS"force",forceArrow),true);

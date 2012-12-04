@@ -27,11 +27,13 @@
 class Element;
 class RigidBody;
 class Frame;
+class Contour;
 class Parameter;
 class QComboBox;
 class QStackedWidget;
 class QListWidget;
 class FrameBrowser;
+class ContourBrowser;
 class RigidBodyBrowser;
 
 class LocalFrameOfReferenceWidget : public XMLWidget {
@@ -81,6 +83,33 @@ class FrameOfReferenceWidget : public XMLWidget {
 
   public slots:
     void setFrame();
+};
+
+class ContourOfReferenceWidget : public XMLWidget {
+  Q_OBJECT
+
+  public:
+    ContourOfReferenceWidget(const std::string &xmlName, Element* element, Contour* selectedContour);
+
+    void initialize();
+    void update();
+    Contour* getContour() {return selectedContour;}
+    void setContour(Contour* contour_);
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void setSavedContourOfReference(const QString &str) {saved_contourOfReference = str;}
+    const QString& getSavedContourOfReference() const {return saved_contourOfReference;}
+
+  protected:
+    QLineEdit *contour;
+    Element* element;
+    ContourBrowser *contourBrowser;
+    Contour *selectedContour;
+    std::string xmlName;
+    QString saved_contourOfReference;
+
+  public slots:
+    void setContour();
 };
 
 class RigidBodyOfReferenceWidget : public XMLWidget {
@@ -149,18 +178,18 @@ class NameWidget : public XMLWidget {
     void rename();
 };
 
-class FramePositionWidget : public XMLWidget {
+class ElementPositionWidget : public XMLWidget {
 
   public:
-    FramePositionWidget(Frame *frame);
+    ElementPositionWidget(Element *element);
 
     void update() {refFrame->update();}
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    Frame *getFrame() {return frame;}
+    Element *getElement() {return element;}
 
   protected:
-    Frame *frame;
+    Element *element;
     ExtPhysicalVarWidget *position, *orientation;
     LocalFrameOfReferenceWidget *refFrame;
 };
@@ -183,10 +212,28 @@ class FramePositionsWidget : public XMLWidget {
     void changeCurrent(int idx);
 };
 
-class ConnectWidget : public XMLWidget {
+class ContourPositionsWidget : public XMLWidget {
+  Q_OBJECT
 
   public:
-    ConnectWidget(int n, Element* element);
+    ContourPositionsWidget(Element *element);
+
+    void update();
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+
+  protected:
+    Element *element;
+    QStackedWidget *stackedWidget; 
+    QListWidget *contourList; 
+  protected slots:
+    void changeCurrent(int idx);
+};
+
+class ConnectFramesWidget : public XMLWidget {
+
+  public:
+    ConnectFramesWidget(int n, Element* element);
 
     void initialize();
     void update();
@@ -195,6 +242,21 @@ class ConnectWidget : public XMLWidget {
 
   protected:
     std::vector<FrameOfReferenceWidget*> widget;
+    Element* element;
+};
+
+class ConnectContoursWidget : public XMLWidget {
+
+  public:
+    ConnectContoursWidget(int n, Element* element);
+
+    void initialize();
+    void update();
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+
+  protected:
+    std::vector<ContourOfReferenceWidget*> widget;
     Element* element;
 };
 

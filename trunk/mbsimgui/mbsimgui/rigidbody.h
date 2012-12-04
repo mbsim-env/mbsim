@@ -39,8 +39,10 @@ class RigidBody : public Body {
     void resizeGeneralizedVelocity();
   public slots:
     void addFrame();
+    void addPoint();
+    void addLine();
   protected:
-    ExtXMLWidget *frameForKinematics, *mass, *inertia, *translation, *rotation, *frameOfReference, *framePos, *ombvEditor, *weightArrow, *jointForceArrow, *jointMomentArrow;
+    ExtXMLWidget *frameForKinematics, *mass, *inertia, *translation, *rotation, *frameOfReference, *framePos, *contourPos, *ombvEditor, *weightArrow, *jointForceArrow, *jointMomentArrow;
     bool constrained;
 };
 

@@ -17,24 +17,34 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _FRAME__H_
-#define _FRAME__H_
+#ifndef _CONTOUR__H_
+#define _CONTOUR__H_
 
 #include "element.h"
 #include "extended_widgets.h"
 
-class Frame : public Element {
+class Contour : public Element {
   public:
-    Frame(const QString &str, QTreeWidgetItem *parentItem, int ind, bool grey=false);
-    ~Frame();
-    QString getType() const { return "Frame"; }
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual void initializeUsingXML2(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile2(TiXmlNode *element);
-    bool openMBVFrame() const {return visu->isActive();}
-  protected:
-    ExtXMLWidget *visu;
+    Contour(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    ~Contour();
+    QString getType() const { return "Contour"; }
+    //virtual void initializeUsingXML(TiXmlElement *element);
+    //virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
 };
+
+class Point : public Contour {
+  public:
+    Point(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    ~Point();
+    QString getType() const { return "Point"; }
+};
+
+class Line : public Contour {
+  public:
+    Line(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    ~Line();
+    QString getType() const { return "Line"; }
+};
+
 
 #endif

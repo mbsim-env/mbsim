@@ -20,6 +20,7 @@
 #include <config.h>
 #include "body.h"
 #include "frame.h"
+#include "contour.h"
 
 using namespace std;
 
@@ -44,8 +45,8 @@ Element * Body::getByPathSearch(string path) {
     string searched_name=path.substr(pos0+1, pos1-pos0-1);
     if (container=="Frame")
       return getFrame(searched_name);
-    //      else if (container=="Contour")
-    //        return getContour(searched_name);
+    else if (container=="Contour")
+      return getContour(searched_name);
     else {
       cout << "ERROR in "+getName().toStdString()+" (Body::getByPathSearch): Unknown name of container!" << endl;
       throw;

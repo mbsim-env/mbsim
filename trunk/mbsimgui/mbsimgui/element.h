@@ -26,6 +26,7 @@
 
 class Element;
 class Frame;
+class Contour;
 class Group;
 class Object;
 class Link;
@@ -90,14 +91,17 @@ class Element : public QObject, public QTreeWidgetItem {
     Element* getChild(QTreeWidgetItem* container, const std::string &name, bool check=true);
     QString newName(QTreeWidgetItem* container, const QString &type);
     virtual Container* getContainerFrame() {return frames;}
+    virtual Container* getContainerContour() {return contours;}
     virtual Container* getContainerGroup() {return groups;}
     virtual Container* getContainerObject() {return objects;}
     virtual Container* getContainerLink() {return links;}
     virtual Frame* getFrame(int i);
+    virtual Contour* getContour(int i);
     virtual Group* getGroup(int i);
     virtual Object* getObject(int i);
     virtual Link* getLink(int i);
     Frame* getFrame(const std::string &name, bool check=true);
+    Contour* getContour(const std::string &name, bool check=true);
     Object* getObject(const std::string &name, bool check=true);
     Group* getGroup(const std::string &name, bool check=true);
     Link* getLink(const std::string &name, bool check=true);
