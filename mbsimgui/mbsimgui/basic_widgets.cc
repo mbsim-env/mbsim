@@ -21,6 +21,7 @@
 #include "basic_widgets.h"
 #include "rigidbody.h"
 #include "frame.h"
+#include "contour.h"
 #include "group.h"
 #include "parameter.h"
 #include "dialogs.h"
@@ -134,6 +135,63 @@ TiXmlElement* FrameOfReferenceWidget::writeXMLFile(TiXmlNode *parent) {
   if(getFrame()) {
     TiXmlElement *ele = new TiXmlElement(xmlName);
     ele->SetAttribute("ref", getFrame()->getXMLPath(element,true).toStdString());
+    parent->LinkEndChild(ele);
+  }
+  return 0;
+}
+
+ContourOfReferenceWidget::ContourOfReferenceWidget(const string &xmlName_, Element *element_, Contour* selectedContour_) : element(element_), selectedContour(selectedContour_), xmlName(xmlName_) {
+  QHBoxLayout *layout = new QHBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
+  contour = new QLineEdit;
+  contour->setReadOnly(true);
+  if(selectedContour)
+    contour->setText(selectedContour->getXMLPath());
+  contourBrowser = new ContourBrowser(element->treeWidget(),selectedContour,this);
+  connect(contourBrowser,SIGNAL(accepted()),this,SLOT(setContour()));
+  layout->addWidget(contour);
+  QPushButton *button = new QPushButton(tr("Browse"));
+  connect(button,SIGNAL(clicked(bool)),contourBrowser,SLOT(show()));
+  layout->addWidget(button);
+}
+
+void ContourOfReferenceWidget::initialize() {
+  if(saved_contourOfReference!="")
+    setContour(element->getByPath<Contour>(saved_contourOfReference));
+}
+
+void ContourOfReferenceWidget::update() {
+  contourBrowser->update(selectedContour);
+  if(selectedContour) {
+    setContour();
+  }
+}
+
+void ContourOfReferenceWidget::setContour() { 
+  if(contourBrowser->getContourList()->currentItem())
+    selectedContour = (Contour*)static_cast<ElementItem*>(contourBrowser->getContourList()->currentItem())->getElement();
+  else
+    selectedContour = ((Group*)element->getParentElement())->getContour(0);
+  contour->setText(selectedContour->getXMLPath());
+}
+
+void ContourOfReferenceWidget::setContour(Contour* contour_) {
+  selectedContour = contour_; 
+  contour->setText(selectedContour->getXMLPath());
+}
+
+bool ContourOfReferenceWidget::initializeUsingXML(TiXmlElement *parent) {
+  TiXmlElement *e = parent->FirstChildElement(xmlName);
+  if(e)
+    saved_contourOfReference=e->Attribute("ref");
+}
+
+TiXmlElement* ContourOfReferenceWidget::writeXMLFile(TiXmlNode *parent) {
+  if(getContour()) {
+    TiXmlElement *ele = new TiXmlElement(xmlName);
+    ele->SetAttribute("ref", getContour()->getXMLPath(element,true).toStdString());
     parent->LinkEndChild(ele);
   }
   return 0;
@@ -284,15 +342,16 @@ TiXmlElement* NameWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-FramePositionWidget::FramePositionWidget(Frame *frame_) : frame(frame_) {
+ElementPositionWidget::ElementPositionWidget(Element *element_) : element(element_) {
 
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
-  Element *element = frame->getParentElement();
+  Element *parentElement = element->getParentElement();
 
-  refFrame = new LocalFrameOfReferenceWidget(MBSIMNS"frameOfReference",element,frame);
+  Frame *omitFrame = dynamic_cast<Frame*>(element);
+  refFrame = new LocalFrameOfReferenceWidget(MBSIMNS"frameOfReference",parentElement,omitFrame);
   QWidget *refFrameWidget = new ExtXMLWidget("Frame of reference",refFrame);
 
   vector<PhysicalStringWidget*> input;
@@ -311,20 +370,19 @@ FramePositionWidget::FramePositionWidget(Frame *frame_) : frame(frame_) {
   layout->addWidget(refFrameWidget);
 }
 
-bool FramePositionWidget::initializeUsingXML(TiXmlElement *element) {
-  Element *ele = frame->getParentElement();
-  TiXmlElement *ec=element->FirstChildElement();
-  refFrame->initializeUsingXML(element);
-  position->initializeUsingXML(element);
-  orientation->initializeUsingXML(element);
+bool ElementPositionWidget::initializeUsingXML(TiXmlElement *ele) {
+  TiXmlElement *ec=ele->FirstChildElement();
+  refFrame->initializeUsingXML(ele);
+  position->initializeUsingXML(ele);
+  orientation->initializeUsingXML(ele);
 }
 
-TiXmlElement* FramePositionWidget::writeXMLFile(TiXmlNode *parent) {
-  Element *element = frame->getParentElement();
+TiXmlElement* ElementPositionWidget::writeXMLFile(TiXmlNode *parent) {
+  Element *parentElement = element->getParentElement();
   TiXmlElement *ele;
   TiXmlText *text;
-  frame->writeXMLFile(parent);
-  if(refFrame->getFrame() != element->getFrame(0))
+  element->writeXMLFile(parent);
+  if(refFrame->getFrame() != parentElement->getFrame(0))
     refFrame->writeXMLFile(parent);
   position->writeXMLFile(parent);
   orientation->writeXMLFile(parent);
@@ -344,7 +402,7 @@ FramePositionsWidget::FramePositionsWidget(Element *element_) : element(element_
   stackedWidget = new QStackedWidget;
   for(int i=1; i<element->getContainerFrame()->childCount(); i++) {
     frameList->addItem(element->getFrame(i)->getName());
-    stackedWidget->addWidget(new FramePositionWidget(element->getFrame(i)));
+    stackedWidget->addWidget(new ElementPositionWidget(element->getFrame(i)));
     stackedWidget->widget(i-1)->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Ignored);
   }
   connect(frameList,SIGNAL(currentRowChanged(int)),this,SLOT(changeCurrent(int)));
@@ -361,9 +419,9 @@ void FramePositionsWidget::changeCurrent(int idx) {
 
 void FramePositionsWidget::update() {
   frameList->blockSignals(true);
-  vector<FramePositionWidget*> widget;
+  vector<ElementPositionWidget*> widget;
   for(int i=0; i<stackedWidget->count(); i++) 
-    widget.push_back((FramePositionWidget*)stackedWidget->widget(i));
+    widget.push_back((ElementPositionWidget*)stackedWidget->widget(i));
   for(int i=0; i<widget.size(); i++) {
     stackedWidget->removeWidget(widget[i]);
   }
@@ -371,7 +429,7 @@ void FramePositionsWidget::update() {
   for(int i=1; i<element->getContainerFrame()->childCount(); i++) {
     int k=-1;
     for(int j=0; j<widget.size(); j++) {
-      if(widget[j] && (element->getFrame(i) == widget[j]->getFrame())) {
+      if(widget[j] && (element->getFrame(i) == widget[j]->getElement())) {
         k = j;
         break;
       }
@@ -381,7 +439,7 @@ void FramePositionsWidget::update() {
       widget[k] = 0;
     }
     else
-      stackedWidget->addWidget(new FramePositionWidget(element->getFrame(i)));
+      stackedWidget->addWidget(new ElementPositionWidget(element->getFrame(i)));
     frameList->addItem(element->getFrame(i)->getName());
   }
   for(int i=0; i<widget.size(); i++) {
@@ -389,7 +447,7 @@ void FramePositionsWidget::update() {
       delete widget[i];
   }
   for(int i=0; i<stackedWidget->count(); i++) {
-    FramePositionWidget *widget = (FramePositionWidget*)stackedWidget->widget(i);
+    ElementPositionWidget *widget = (ElementPositionWidget*)stackedWidget->widget(i);
     widget->update();
   }
   frameList->setCurrentRow(0);
@@ -401,7 +459,7 @@ bool FramePositionsWidget::initializeUsingXML(TiXmlElement *ele) {
   update();
   TiXmlElement *e=ele->FirstChildElement();
   for(int i=0; i<stackedWidget->count(); i++) {
-    ((FramePositionWidget*)stackedWidget->widget(i))->initializeUsingXML(e);
+    ((ElementPositionWidget*)stackedWidget->widget(i))->initializeUsingXML(e);
     e=e->NextSiblingElement();
   }
 }
@@ -409,13 +467,97 @@ bool FramePositionsWidget::initializeUsingXML(TiXmlElement *ele) {
 TiXmlElement* FramePositionsWidget::writeXMLFile(TiXmlNode *parent) {
   for(int i=0; i<stackedWidget->count(); i++) {
     TiXmlElement *ele = new TiXmlElement(MBSIMNS"frame");
-    ((FramePositionWidget*)stackedWidget->widget(i))->writeXMLFile(ele);
+    ((ElementPositionWidget*)stackedWidget->widget(i))->writeXMLFile(ele);
     parent->LinkEndChild(ele);
   }
   return 0;
 }
 
-ConnectWidget::ConnectWidget(int n, Element *element_) : element(element_) {
+ContourPositionsWidget::ContourPositionsWidget(Element *element_) : element(element_) {
+
+  QHBoxLayout *layout = new QHBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
+  contourList = new QListWidget;
+  contourList->setMinimumWidth(contourList->sizeHint().width()/3);
+  contourList->setMaximumWidth(contourList->sizeHint().width()/3);
+  layout->addWidget(contourList);
+  stackedWidget = new QStackedWidget;
+  for(int i=0; i<element->getContainerContour()->childCount(); i++) {
+    contourList->addItem(element->getContour(i)->getName());
+    stackedWidget->addWidget(new ElementPositionWidget(element->getContour(i)));
+    stackedWidget->widget(i-1)->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Ignored);
+  }
+  connect(contourList,SIGNAL(currentRowChanged(int)),this,SLOT(changeCurrent(int)));
+  layout->addWidget(stackedWidget);
+}
+
+void ContourPositionsWidget::changeCurrent(int idx) {
+  if (stackedWidget->currentWidget() !=0)
+    stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->setCurrentIndex(idx);
+  stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  adjustSize();
+}
+
+void ContourPositionsWidget::update() {
+  contourList->blockSignals(true);
+  vector<ElementPositionWidget*> widget;
+  for(int i=0; i<stackedWidget->count(); i++) 
+    widget.push_back((ElementPositionWidget*)stackedWidget->widget(i));
+  for(int i=0; i<widget.size(); i++) {
+    stackedWidget->removeWidget(widget[i]);
+  }
+  contourList->clear();
+  for(int i=0; i<element->getContainerContour()->childCount(); i++) {
+    int k=-1;
+    for(int j=0; j<widget.size(); j++) {
+      if(widget[j] && (element->getContour(i) == widget[j]->getElement())) {
+        k = j;
+        break;
+      }
+    }
+    if(k>-1) {
+      stackedWidget->addWidget(widget[k]);
+      widget[k] = 0;
+    }
+    else
+      stackedWidget->addWidget(new ElementPositionWidget(element->getContour(i)));
+    contourList->addItem(element->getContour(i)->getName());
+  }
+  for(int i=0; i<widget.size(); i++) {
+    if(widget[i])
+      delete widget[i];
+  }
+  for(int i=0; i<stackedWidget->count(); i++) {
+    ElementPositionWidget *widget = (ElementPositionWidget*)stackedWidget->widget(i);
+    widget->update();
+  }
+  contourList->setCurrentRow(0);
+  stackedWidget->setCurrentIndex(0);
+  contourList->blockSignals(false);
+}
+
+bool ContourPositionsWidget::initializeUsingXML(TiXmlElement *ele) {
+  update();
+  TiXmlElement *e=ele->FirstChildElement();
+  for(int i=0; i<stackedWidget->count(); i++) {
+    ((ElementPositionWidget*)stackedWidget->widget(i))->initializeUsingXML(e);
+    e=e->NextSiblingElement();
+  }
+}
+
+TiXmlElement* ContourPositionsWidget::writeXMLFile(TiXmlNode *parent) {
+  for(int i=0; i<stackedWidget->count(); i++) {
+    TiXmlElement *ele = new TiXmlElement(MBSIMNS"contour");
+    ((ElementPositionWidget*)stackedWidget->widget(i))->writeXMLFile(ele);
+    parent->LinkEndChild(ele);
+  }
+  return 0;
+}
+
+ConnectFramesWidget::ConnectFramesWidget(int n, Element *element_) : element(element_) {
   
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -435,17 +577,17 @@ ConnectWidget::ConnectWidget(int n, Element *element_) : element(element_) {
   }
 }
 
-void ConnectWidget::initialize() {
+void ConnectFramesWidget::initialize() {
   for(unsigned int i=0; i<widget.size(); i++)
     widget[i]->initialize();
 }
 
-void ConnectWidget::update() {
+void ConnectFramesWidget::update() {
   for(unsigned int i=0; i<widget.size(); i++)
     widget[i]->update();
 }
 
-bool ConnectWidget::initializeUsingXML(TiXmlElement *element) {
+bool ConnectFramesWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e = element->FirstChildElement(MBSIMNS"connect");
   if(e) {
     for(unsigned int i=0; i<widget.size(); i++) {
@@ -457,7 +599,7 @@ bool ConnectWidget::initializeUsingXML(TiXmlElement *element) {
   }
 }
 
-TiXmlElement* ConnectWidget::writeXMLFile(TiXmlNode *parent) {
+TiXmlElement* ConnectFramesWidget::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele = new TiXmlElement(MBSIMNS"connect");
   for(unsigned int i=0; i<widget.size(); i++) {
       QString xmlName = "ref";
@@ -465,6 +607,61 @@ TiXmlElement* ConnectWidget::writeXMLFile(TiXmlNode *parent) {
         xmlName += QString::number(i+1);
     if(widget[i]->getFrame())
       ele->SetAttribute(xmlName.toAscii().data(), widget[i]->getFrame()->getXMLPath(element,true).toStdString()); 
+  }
+  parent->LinkEndChild(ele);
+  return ele;
+}
+
+ConnectContoursWidget::ConnectContoursWidget(int n, Element *element_) : element(element_) {
+  
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
+  for(int i=0; i<n; i++) {
+    QString xmlName = MBSIMNS"ref";
+    QString subname = "Contour";
+    if(n>1) {
+      subname += QString::number(i+1);
+      //layout->addWidget(new QLabel(QString("Contour") + QString::number(i+1) +":"));
+      xmlName += QString::number(i+1);
+    }
+    widget.push_back(new ContourOfReferenceWidget(xmlName.toStdString(),element,0));
+    QWidget *subwidget = new ExtXMLWidget(subname,widget[i]);
+    layout->addWidget(subwidget);
+  }
+}
+
+void ConnectContoursWidget::initialize() {
+  for(unsigned int i=0; i<widget.size(); i++)
+    widget[i]->initialize();
+}
+
+void ConnectContoursWidget::update() {
+  for(unsigned int i=0; i<widget.size(); i++)
+    widget[i]->update();
+}
+
+bool ConnectContoursWidget::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e = element->FirstChildElement(MBSIMNS"connect");
+  if(e) {
+    for(unsigned int i=0; i<widget.size(); i++) {
+      QString xmlName = "ref";
+      if(widget.size()>1)
+        xmlName += QString::number(i+1);
+      widget[i]->setSavedContourOfReference(e->Attribute(xmlName.toAscii().data()));
+    }
+  }
+}
+
+TiXmlElement* ConnectContoursWidget::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele = new TiXmlElement(MBSIMNS"connect");
+  for(unsigned int i=0; i<widget.size(); i++) {
+      QString xmlName = "ref";
+      if(widget.size()>1)
+        xmlName += QString::number(i+1);
+    if(widget[i]->getContour())
+      ele->SetAttribute(xmlName.toAscii().data(), widget[i]->getContour()->getXMLPath(element,true).toStdString()); 
   }
   parent->LinkEndChild(ele);
   return ele;

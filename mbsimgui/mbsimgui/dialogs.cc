@@ -22,6 +22,7 @@
 #include "group.h"
 #include "rigidbody.h"
 #include "frame.h"
+#include "contour.h"
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
 #include <QTreeWidget>
@@ -178,6 +179,69 @@ void FrameBrowser::mbs2FrameTree(Element* ele, QTreeWidgetItem* parentItem) {
 void FrameBrowser::checkForFrame(QTreeWidgetItem* item_,int) {
   ElementItem* item = static_cast<ElementItem*>(item_);
   if(dynamic_cast<Frame*>(item->getElement()))
+    okButton->setDisabled(false);
+  else
+    okButton->setDisabled(true);
+}
+
+ContourBrowser::ContourBrowser(QTreeWidget* tree_, Contour* contour, QWidget *parentObject_) : QDialog(parentObject_), selection(contour), savedItem(0), tree(tree_) {
+  QGridLayout* mainLayout=new QGridLayout;
+  setLayout(mainLayout);
+  contourList = new QTreeWidget;
+  contourList->setColumnCount(1);
+  mainLayout->addWidget(contourList,0,0);
+  QObject::connect(contourList, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(checkForContour(QTreeWidgetItem*,int)));
+
+  okButton = new QPushButton("Ok");
+  if(!selection)
+    okButton->setDisabled(true);
+  mainLayout->addWidget(okButton,1,0);
+  connect(okButton, SIGNAL(clicked(bool)), this, SLOT(accept()));
+
+  QPushButton *button = new QPushButton("Cancel");
+  mainLayout->addWidget(button,1,1);
+  connect(button, SIGNAL(clicked(bool)), this, SLOT(reject()));
+
+  setWindowTitle("Contour browser");
+}
+
+void ContourBrowser::update(Contour *sel) {
+  selection = sel;
+  contourList->clear();
+  savedItem = 0;
+  mbs2ContourTree((Element*)tree->topLevelItem(0),contourList->invisibleRootItem());
+  contourList->setCurrentItem(savedItem);
+}
+
+void ContourBrowser::mbs2ContourTree(Element* ele, QTreeWidgetItem* parentItem) {
+  if(dynamic_cast<Group*>(ele) || dynamic_cast<RigidBody*>(ele) || dynamic_cast<Contour*>(ele)) {
+
+    ElementItem *item = new ElementItem(ele);
+    item->setText(0,ele->getName());
+
+    if(ele == selection)
+      savedItem = item;
+
+    parentItem->addChild(item);
+
+    if(ele->getContainerContour())
+      for(int i=0; i<ele->getContainerContour()->childCount(); i++) {
+        mbs2ContourTree((Element*)ele->getContainerContour()->child(i),item);
+      }
+    if(ele->getContainerGroup())
+      for(int i=0; i<ele->getContainerGroup()->childCount(); i++) {
+        mbs2ContourTree((Element*)ele->getContainerGroup()->child(i),item);
+      }
+    if(ele->getContainerObject())
+      for(int i=0; i<ele->getContainerObject()->childCount(); i++) {
+        mbs2ContourTree((Element*)ele->getContainerObject()->child(i),item);
+      }
+  }
+}
+
+void ContourBrowser::checkForContour(QTreeWidgetItem* item_,int) {
+  ElementItem* item = static_cast<ElementItem*>(item_);
+  if(dynamic_cast<Contour*>(item->getElement()))
     okButton->setDisabled(false);
   else
     okButton->setDisabled(true);

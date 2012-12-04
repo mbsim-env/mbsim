@@ -71,7 +71,6 @@ class GeneralizedImpactLawWidget : public XMLWidget {
     virtual bool initializeUsingXML(TiXmlElement *element) {};
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "GeneralizedImpactLaw"; }
-   protected:
 };
 
 class BilateralImpact : public GeneralizedImpactLawWidget {
@@ -79,7 +78,28 @@ class BilateralImpact : public GeneralizedImpactLawWidget {
   public:
     BilateralImpact() {}
     virtual QString getType() const { return "BilateralImpact"; }
+};
+
+class FrictionForceLawWidget : public XMLWidget {
+
+  public:
+    FrictionForceLawWidget() : frictionForceFunc(0) {}
+    virtual bool initializeUsingXML(TiXmlElement *element) {};
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual QString getType() const { return "FrictionForceLaw"; }
    protected:
+    Function1 *frictionForceFunc;
+};
+
+class FrictionImpactLawWidget : public XMLWidget {
+
+  public:
+    FrictionImpactLawWidget() {}
+    virtual bool initializeUsingXML(TiXmlElement *element) {};
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual QString getType() const { return "FrictionImpactLaw"; }
+   //protected:
+    //Function1 *forceFunc;
 };
 
 class GeneralizedForceLawChoiceWidget : public XMLWidget {
@@ -119,6 +139,46 @@ class GeneralizedImpactLawChoiceWidget : public XMLWidget {
     QComboBox *comboBox;
     QVBoxLayout *layout;
     GeneralizedImpactLawWidget *generalizedImpactLaw;
+    std::string xmlName;
+};
+
+class FrictionForceLawChoiceWidget : public XMLWidget {
+  Q_OBJECT
+
+  public:
+    FrictionForceLawChoiceWidget(const std::string &xmlName);
+
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    int getForceLaw() {return comboBox->currentIndex();}
+
+  protected slots:
+    void defineForceLaw(int);
+
+  protected:
+    QComboBox *comboBox;
+    QVBoxLayout *layout;
+    FrictionForceLawWidget *frictionForceLaw;
+    std::string xmlName;
+};
+
+class FrictionImpactLawChoiceWidget : public XMLWidget {
+  Q_OBJECT
+
+  public:
+    FrictionImpactLawChoiceWidget(const std::string &xmlName);
+
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    int getImpactLaw() {return comboBox->currentIndex();}
+
+  protected slots:
+    void defineImpactLaw(int);
+
+  protected:
+    QComboBox *comboBox;
+    QVBoxLayout *layout;
+    FrictionImpactLawWidget *frictionImpactLaw;
     std::string xmlName;
 };
 

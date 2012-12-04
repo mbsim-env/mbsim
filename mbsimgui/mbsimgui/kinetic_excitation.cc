@@ -39,7 +39,7 @@ KineticExcitation::KineticExcitation(const QString &str, QTreeWidgetItem *parent
   momentArrow = new ExtXMLWidget("OpenMBV moment arrow",new OMBVArrowWidget("NOTSET"),true);
   properties->addToTab("Visualisation",momentArrow);
 
-  connections = new ExtXMLWidget("Connections",new ConnectWidget(1,this));
+  connections = new ExtXMLWidget("Connections",new ConnectFramesWidget(1,this));
   properties->addToTab("Kinetics",connections);
 
   ForceChoiceWidget *f = new ForceChoiceWidget(MBSIMNS"force", forceArrow);

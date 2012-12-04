@@ -32,8 +32,10 @@ mbsimgui_SOURCES = main.cc \
 		   objectfactory.cc \
 		   solver.cc \
 		   frame.cc \
+		   contour.cc \
 		   link.cc \
 		   joint.cc \
+		   contact.cc \
 		   spring_damper.cc \
 		   kinetic_excitation.cc \
 		   constraint.cc \
@@ -54,6 +56,7 @@ QT_BUILT_SOURCES = mainwindow.moc.cc \
 		   extended_widgets.moc.cc \
 		   body.moc.cc \
 		   frame.moc.cc \
+		   contour.moc.cc \
 		   object.moc.cc \
 		   property_widget.moc.cc  \
 		   dialogs.moc.cc  \
@@ -63,6 +66,7 @@ QT_BUILT_SOURCES = mainwindow.moc.cc \
 		   solver.moc.cc \
 		   link.moc.cc \
 		   joint.moc.cc \
+		   contact.moc.cc \
 		   spring_damper.moc.cc \
 		   kinetic_excitation.moc.cc \
 		   constraint.moc.cc \

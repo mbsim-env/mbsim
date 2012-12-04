@@ -33,7 +33,7 @@ SpringDamper::SpringDamper(const QString &str, QTreeWidgetItem *parentItem, int 
   properties->addTab("Kinetics");
   properties->addTab("Visualisation");
 
-  connections = new ExtXMLWidget("Connections",new ConnectWidget(2,this));
+  connections = new ExtXMLWidget("Connections",new ConnectFramesWidget(2,this));
   properties->addToTab("Kinetics", connections);
 
   forceFunction = new ExtXMLWidget("Force function",new Function2ChoiceWidget(MBSIMNS"forceFunction"));

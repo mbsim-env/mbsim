@@ -19,7 +19,9 @@
 
 #include <config.h>
 #include "rigidbody.h"
+#include "objectfactory.h"
 #include "frame.h"
+#include "contour.h"
 #include "group.h"
 #include "string_widgets.h"
 #include "kinematics_widgets.h"
@@ -32,6 +34,7 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
   setText(1,getType());
   properties->addTab("Kinematics");
   properties->addTab("Frame positioning");
+  properties->addTab("Contour positioning");
   properties->addTab("Visualisation");
 
   QColor color;
@@ -71,6 +74,9 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
 
   framePos = new ExtXMLWidget("Position and orientation of frames",new FramePositionsWidget(this));
   properties->addToTab("Frame positioning", framePos);
+
+  contourPos = new ExtXMLWidget("Position and orientation of contours",new ContourPositionsWidget(this));
+  properties->addToTab("Contour positioning", contourPos);
   
   TranslationChoiceWidget *translation_ = new TranslationChoiceWidget("");
   translation = new ExtXMLWidget("Translation",translation_,true);
@@ -109,6 +115,15 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
   connect(action,SIGNAL(triggered()),this,SLOT(addFrame()));
   contextMenu->insertAction(actionSaveAs,action);
 
+  QMenu *submenu = new QMenu("Add contour");
+  contextMenu->insertMenu(actionSaveAs,submenu);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add point", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addPoint()));
+  submenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add line", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addLine()));
+  submenu->addAction(action);
+
   contextMenu->insertSeparator(actionSaveAs);
 
   properties->addStretch();
@@ -128,6 +143,23 @@ void RigidBody::addFrame() {
     ((Element*)treeWidget()->topLevelItem(0))->update();
   }
 }
+
+void RigidBody::addPoint() {
+  QString text = newName(contours,"Point");
+  if (!text.isEmpty()) {
+    new Point(text, contours, -1);
+    ((Element*)treeWidget()->topLevelItem(0))->update();
+  }
+}
+
+void RigidBody::addLine() {
+  QString text = newName(contours,"Line");
+  if (!text.isEmpty()) {
+    new Line(text, contours, -1);
+    ((Element*)treeWidget()->topLevelItem(0))->update();
+  }
+}
+
 
 void RigidBody::resizeGeneralizedPosition() {
   int size = getSize();
@@ -157,24 +189,15 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
 
   // contours
   e=element->FirstChildElement(MBSIMNS"contours")->FirstChildElement();
+  Contour *c;
   while(e && e->ValueStr()==MBSIMNS"contour") {
-    //      TiXmlElement *ec=e->FirstChildElement();
-    //      Contour *c=ObjectFactory::getInstance()->createContour(ec);
-    //      TiXmlElement *contourElement=ec; // save for later initialization
-    //      ec=ec->NextSiblingElement();
-    //      string refF="C";
-    //      if(ec->ValueStr()==MBSIMNS"frameOfReference") {
-    //        refF=ec->Attribute("ref");
-    //        refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
-    //        ec=ec->NextSiblingElement();
-    //      }
-    //      Vec3 RrRC=getVec3(ec);
-    //      ec=ec->NextSiblingElement();
-    //      SqrMat3 ARC=getSqrMat3(ec);
-    //      addContour(c, RrRC, ARC, refF);
-    //      c->initializeUsingXML(contourElement);
+    TiXmlElement *ec=e->FirstChildElement();
+    c=ObjectFactory::getInstance()->createContour(ec, contours, -1);
+    c->initializeUsingXML(ec);
     e=e->NextSiblingElement();
   }
+
+  contourPos->initializeUsingXML(element->FirstChildElement(MBSIMNS"contours"));
 
   frameOfReference->initializeUsingXML(element);
 
@@ -270,8 +293,7 @@ TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
   ele0->LinkEndChild( ele1 );
 
   ele1 = new TiXmlElement( MBSIMNS"contours" );
-  //     for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i) 
-  //       (*i)->writeXMLFile(ele1);
+  contourPos->writeXMLFile(ele1);
   ele0->LinkEndChild( ele1 );
 
   ombvEditor->writeXMLFile(ele0);

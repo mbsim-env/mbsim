@@ -51,7 +51,7 @@ JointConstraint::JointConstraint(const QString &str, QTreeWidgetItem *parentItem
   properties->addToTab("General", dependentBodiesSecondSide);
   connect(dependentBodiesSecondSide_,SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
 
-  connections = new ExtXMLWidget("Connections",new ConnectWidget(2,this));
+  connections = new ExtXMLWidget("Connections",new ConnectFramesWidget(2,this));
   properties->addToTab("Kinetics", connections);
 
   force = new ExtXMLWidget("Force",new GeneralizedForceDirectionWidget(MBSIMNS"forceDirection"));

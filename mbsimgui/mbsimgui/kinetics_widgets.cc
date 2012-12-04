@@ -17,7 +17,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <config.h>
+//#include <config.h>
 #include "kinetics_widgets.h"
 #include "function_widgets.h"
 #include "string_widgets.h"
@@ -71,6 +71,23 @@ bool RegularizedBilateralConstraint::initializeUsingXML(TiXmlElement *element) {
 }
 
 TiXmlElement* GeneralizedImpactLawWidget::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType().toStdString());
+  parent->LinkEndChild(ele0);
+  return ele0;
+}
+
+TiXmlElement* FrictionForceLawWidget::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType().toStdString());
+  if(frictionForceFunc) {
+    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"frictionForceFunction" );
+    frictionForceFunc->writeXMLFile(ele1);
+    ele0->LinkEndChild(ele1);
+  }
+  parent->LinkEndChild(ele0);
+  return ele0;
+}
+
+TiXmlElement* FrictionImpactLawWidget::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType().toStdString());
   parent->LinkEndChild(ele0);
   return ele0;
@@ -182,6 +199,103 @@ TiXmlElement* GeneralizedImpactLawChoiceWidget::writeXMLFile(TiXmlNode *parent) 
   }
   else
     generalizedImpactLaw->writeXMLFile(parent);
+
+  return 0;
+}
+
+FrictionForceLawChoiceWidget::FrictionForceLawChoiceWidget(const string &xmlName_) : frictionForceLaw(0), xmlName(xmlName_) {
+
+  layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
+  comboBox = new QComboBox;
+  //comboBox->addItem(tr("None"));
+  comboBox->addItem(tr("Planar coulomb friction"));
+  layout->addWidget(comboBox);
+  connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineForceLaw(int)));
+  defineForceLaw(0);
+}
+
+void FrictionForceLawChoiceWidget::defineForceLaw(int index) {
+  layout->removeWidget(frictionForceLaw);
+  delete frictionForceLaw;
+//  if(index==0) {
+//    frictionForceLaw = new PlanarCoulombFriction;  
+//    layout->addWidget(frictionForceLaw);
+//  } 
+}
+
+bool FrictionForceLawChoiceWidget::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement  *e=element->FirstChildElement(xmlName);
+  if(e) {
+    TiXmlElement* ee=e->FirstChildElement();
+    if(ee) {
+      if(ee->ValueStr() == MBSIMNS"PlanarCoulombFriction") {
+        comboBox->setCurrentIndex(0);
+        frictionForceLaw->initializeUsingXML(ee);
+      }
+    }
+    return true;
+  }
+  return false;
+}
+
+TiXmlElement* FrictionForceLawChoiceWidget::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = new TiXmlElement(xmlName);
+    if(frictionForceLaw)
+      frictionForceLaw->writeXMLFile(ele0);
+    parent->LinkEndChild(ele0);
+
+  return 0;
+}
+
+FrictionImpactLawChoiceWidget::FrictionImpactLawChoiceWidget(const string &xmlName_) : frictionImpactLaw(0), xmlName(xmlName_) {
+
+  layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
+  comboBox = new QComboBox;
+  //comboBox->addItem(tr("None"));
+  comboBox->addItem(tr("Planar coloumb impact"));
+  layout->addWidget(comboBox);
+  connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineImpactLaw(int)));
+  defineImpactLaw(0);
+}
+
+void FrictionImpactLawChoiceWidget::defineImpactLaw(int index) {
+  layout->removeWidget(frictionImpactLaw);
+  delete frictionImpactLaw;
+//  if(index==0) {
+//    frictionImpactLaw = new PlanarCoulombImpact;  
+//    layout->addWidget(frictionImpactLaw);
+//  } 
+}
+
+bool FrictionImpactLawChoiceWidget::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e=(xmlName=="")?element:element->FirstChildElement(xmlName);
+  if(e) {
+    TiXmlElement* ee=e->FirstChildElement();
+    if(ee) {
+      if(ee->ValueStr() == MBSIMNS"PlanarCoulombImpact")
+        comboBox->setCurrentIndex(0);
+      frictionImpactLaw->initializeUsingXML(ee);
+      return true;
+    }
+  }
+  return false;
+}
+
+TiXmlElement* FrictionImpactLawChoiceWidget::writeXMLFile(TiXmlNode *parent) {
+  if(xmlName!="") {
+    TiXmlElement *ele0 = new TiXmlElement(xmlName);
+    if(frictionImpactLaw)
+      frictionImpactLaw->writeXMLFile(ele0);
+    parent->LinkEndChild(ele0);
+  }
+  else
+    frictionImpactLaw->writeXMLFile(parent);
 
   return 0;
 }

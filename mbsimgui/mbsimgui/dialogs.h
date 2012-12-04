@@ -28,6 +28,7 @@
 class Element;
 class RigidBody;
 class Frame;
+class Contour;
 
 class ElementItem : public QTreeWidgetItem {
   private:
@@ -87,6 +88,25 @@ class FrameBrowser : public QDialog {
     void mbs2FrameTree(Element* item, QTreeWidgetItem* parentItem);
   protected slots:
     void checkForFrame(QTreeWidgetItem* item_,int);
+};
+
+class ContourBrowser : public QDialog {
+  Q_OBJECT
+
+  public:
+    ContourBrowser(QTreeWidget* tree, Contour* selection, QWidget *obj);
+    ~ContourBrowser() {}
+    QTreeWidget* getContourList() const {return contourList;}
+    void update(Contour *contour);
+  protected:
+    QPushButton *okButton;
+    QTreeWidget *contourList;
+    Contour *selection;
+    ElementItem *savedItem;
+    QTreeWidget* tree;
+    void mbs2ContourTree(Element* item, QTreeWidgetItem* parentItem);
+  protected slots:
+    void checkForContour(QTreeWidgetItem* item_,int);
 };
 
 

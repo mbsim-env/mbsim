@@ -46,9 +46,6 @@ Frame::Frame(const QString &str, QTreeWidgetItem *parentItem, int ind, bool grey
 Frame::~Frame() {
 }
 
-void Frame::resetAnimRange(int numOfRows, double dt) {
-}
-
 void Frame::initializeUsingXML(TiXmlElement *element) {
   Element::initializeUsingXML(element);
   visu->initializeUsingXML(element);
