@@ -44,6 +44,7 @@ class MainWindow : public QMainWindow {
     void loadMBS(const QString &file);
     void loadIntegrator(const QString &file);
     void loadParameter(const QString &file);
+    void mbsimxml(int task);
   public:
     MainWindow();
     static MBXMLUtils::OctaveEvaluator *octEval;

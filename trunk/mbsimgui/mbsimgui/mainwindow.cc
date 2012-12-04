@@ -234,9 +234,6 @@ MainWindow::MainWindow() {
   newDOPRI5Integrator();
   newMBS();
   QTreeWidgetItem* parentItem = new QTreeWidgetItem;
-  Integrator *previewIntegrator = new DOPRI5Integrator("DOPRI5",parentItem, 1);
-  previewIntegrator->setEndTime(1e-10);
-  previewIntegrator->writeXMLFile(".preview");
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
@@ -623,7 +620,7 @@ void MainWindow::updateOctaveParameters() {
   }
 }
 
-void MainWindow::preview() {
+void MainWindow::mbsimxml(int task) {
   Solver *solver = ((Solver*)elementList->topLevelItem(0));
   solver->writeXMLFile(".sim");
   ((Integrator*)integratorList->topLevelItem(0))->writeXMLFile(".sim");
@@ -635,48 +632,8 @@ void MainWindow::preview() {
   string prog = "mbsimxml";
   vector<string> command;
   command.push_back(prog);
-  command.push_back("--mbsimparam");
-  command.push_back(".sim.mbsimparam.xml");
-  command.push_back(".sim.mbsim.xml");
-  command.push_back(".preview.mbsimint.xml");
-  string str = command[0];
-  for(unsigned int i=1; i<command.size(); i++)
-    str += " " + command[i];
-
-  cout << str.c_str() << endl;
-  int ret = system(str.c_str());
-  cout << ret << endl;
-  //runProgramSyncronous(command);
-#if !defined MBSIMGUI_MINGW
-  {
-    QString name1 = ((Solver*)elementList->topLevelItem(0))->getName() + ".ombv.xml";
-    QString name2 = ((Solver*)elementList->topLevelItem(0))->getName() + ".ombv.h5";
-    //string dir = "/usr/bin/";
-    string prog = "touch";
-    vector<string> command;
-    command.push_back(prog);
-    command.push_back(name1.toStdString());
-    command.push_back(name2.toStdString());
-    cout << (command[0] + " " + command[1] + " " + command[2]).c_str()<< endl;
-    int ret = system((command[0] + " " + command[1] + " " + command[2]).c_str());
-    cout << ret << endl;
-  }
-#endif
-  actionOpenMBV->setDisabled(false);
-}
-
-void MainWindow::simulate() {
-  Solver *solver = ((Solver*)elementList->topLevelItem(0));
-  solver->writeXMLFile(".sim");
-  ((Integrator*)integratorList->topLevelItem(0))->writeXMLFile(".sim");
-  QString file = fileParameter->text();
-  fileParameter->setText(".sim.mbsimparam.xml");
-  saveParameter();
-  fileParameter->setText(file);
-
-  string prog = "mbsimxml";
-  vector<string> command;
-  command.push_back(prog);
+  if(task==1)
+    command.push_back("--stopafterfirststep");
   command.push_back("--mbsimparam");
   command.push_back(".sim.mbsimparam.xml");
   command.push_back(".sim.mbsim.xml");
@@ -705,7 +662,15 @@ void MainWindow::simulate() {
   }
 #endif
   actionOpenMBV->setDisabled(false);
-  actionH5plotserie->setDisabled(false);
+  actionH5plotserie->setDisabled(task==1);
+}
+
+void MainWindow::preview() {
+  mbsimxml(1);
+}
+
+void MainWindow::simulate() {
+  mbsimxml(0);
 }
 
 void MainWindow::openmbv() {
