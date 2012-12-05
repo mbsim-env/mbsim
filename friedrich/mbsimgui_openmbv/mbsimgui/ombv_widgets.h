@@ -38,8 +38,11 @@ class OMBVObjectWidget : public XMLWidget {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element) = 0;
     virtual QString getType() const = 0;
     void setName(const std::string &name_) {name = name_;}
+    void setID(const std::string &_ID) { ID=_ID; }
   protected:
     std::string name;
+    std::string ID;
+    void writeXMLFileID(TiXmlNode *parent);
 };
 
 class OMBVFrameWidget : public OMBVObjectWidget {
@@ -172,6 +175,7 @@ class OMBVBodyChoiceWidget : public XMLWidget {
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void setName(const std::string &name) {ombv->setName(name);}
+    void setID(const std::string &ID_) { ID=ID_; }
 
   protected slots:
       void ombvSelection(int index);
@@ -181,6 +185,7 @@ class OMBVBodyChoiceWidget : public XMLWidget {
     QVBoxLayout *layout;
     OMBVBodyWidget *ombv;
     std::string name;
+    std::string ID;
 };
 
 class OMBVBodySelectionWidget : public XMLWidget {

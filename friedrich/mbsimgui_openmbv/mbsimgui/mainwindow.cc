@@ -17,7 +17,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <config.h>
+//#include <config.h>
 #include "mainwindow.h"
 #include "element.h"
 #include "integrator.h"
@@ -28,6 +28,10 @@
 #include "parameter.h"
 #include "octaveutils.h"
 #include <mbxmlutils/utils.h>
+#include <openmbv/mainwindow.h>
+#include <mbxmlutilstinyxml/getinstallpath.h>
+#include <boost/bind.hpp>
+#include "property_dialog.h"
 #ifdef _WIN32 // Windows
 #  include <windows.h>
 #  include <process.h>
@@ -37,6 +41,7 @@
 #endif
 
 using namespace std;
+namespace bfs=boost::filesystem;
 
 int digits;
 bool saveNumeric;
@@ -75,6 +80,8 @@ int runProgramSyncronous(const vector<string> &arg) {
 MBXMLUtils::OctaveEvaluator *MainWindow::octEval=NULL;
 
 MainWindow::MainWindow() {
+  initInlineOpenMBV();
+
   MBSimObjectFactory::initialize();
   octEval=new MBXMLUtils::OctaveEvaluator;
 
@@ -164,11 +171,8 @@ MainWindow::MainWindow() {
   toolBar->addAction(action);
 
   setWindowTitle("MBSim GUI");
-  QGridLayout* mainlayout = new QGridLayout;
 
-  centralWidget = new QWidget;  
-  setCentralWidget(centralWidget);
-  centralWidget->setLayout(mainlayout);
+  setCentralWidget(inlineOpenMBVMW);
 
   elementList = new QTreeWidget;
   elementList->setColumnCount(2);
@@ -176,10 +180,11 @@ MainWindow::MainWindow() {
   list << "Name" << "Type";
   elementList->setHeaderLabels(list);
   connect(elementList,SIGNAL(pressed(QModelIndex)), this, SLOT(elementListClicked()));
+  connect(elementList,SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(elementListDoubleClicked()));
 
   integratorList = new QTreeWidget;
   integratorList->setHeaderLabel("Type");
-  connect(integratorList,SIGNAL(pressed(QModelIndex)), this, SLOT(integratorListClicked()));
+  connect(integratorList,SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(integratorListDoubleClicked()));
 
   parameterList = new QTreeWidget;
   parameterList->setColumnCount(2);
@@ -187,11 +192,10 @@ MainWindow::MainWindow() {
   list << "Name" << "Value";
   parameterList->setHeaderLabels(list);
   connect(parameterList,SIGNAL(pressed(QModelIndex)), this, SLOT(parameterListClicked()));
+  connect(parameterList,SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(parameterListDoubleClicked()));
   //connect(parameterList,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(parameterListClicked(const QPoint &)));
   //parameterList->header()->setContextMenuPolicy (Qt::CustomContextMenu);
   //connect(parameterList->header(),SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(parameterListClicked(const QPoint &)));
-
-  pagesWidget = new QStackedWidget;
 
   QDockWidget *dockWidget = new QDockWidget("MBS");
   addDockWidget(Qt::LeftDockWidgetArea,dockWidget);
@@ -229,11 +233,37 @@ MainWindow::MainWindow() {
   gl->addWidget(fileParameter,0,1);
   gl->addWidget(parameterList,1,0,1,2);
 
-  mainlayout->addWidget(pagesWidget,0,0);
-
   newDOPRI5Integrator();
   newMBS();
   QTreeWidgetItem* parentItem = new QTreeWidgetItem;
+}
+
+void MainWindow::initInlineOpenMBV() {
+  if(bfs::is_directory("/dev/shm"))
+    uniqueTempDir=bfs::unique_path("/dev/shm/mbsimgui_tmp_%%%%-%%%%-%%%%-%%%%");
+  else
+    uniqueTempDir=bfs::unique_path(bfs::temp_directory_path()/"mbsimgui_tmp_%%%%-%%%%-%%%%-%%%%");
+  bfs::create_directories(uniqueTempDir);
+  bfs::copy_file(MBXMLUtils::getInstallPath()+"/share/mbsimgui/empty.ombv.xml",
+                 uniqueTempDir/"openmbv.ombv.xml");
+  bfs::copy_file(MBXMLUtils::getInstallPath()+"/share/mbsimgui/empty.ombv.h5",
+                 uniqueTempDir/"openmbv.ombv.h5");
+  std::list<string> arg;
+  arg.push_back("--wst");
+  arg.push_back(MBXMLUtils::getInstallPath()+"/share/mbsimgui/inlineopenmbv.ombv.wst");
+  arg.push_back("--autoreload");
+  arg.push_back((uniqueTempDir/"openmbv.ombv.xml").generic_string());
+  inlineOpenMBVMW=new OpenMBVGUI::MainWindow(arg);
+
+  connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, Object*)), this, SLOT(selectElement(std::string)));
+  connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, Object*)), this, SLOT(openPropertyDialog(std::string)));
+  connect(inlineOpenMBVMW, SIGNAL(fileReloaded()), this, SLOT(elementListClicked()));
+}
+
+MainWindow::~MainWindow() {
+  delete inlineOpenMBVMW;
+
+  bfs::remove_all(uniqueTempDir);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
@@ -278,26 +308,28 @@ void MainWindow::elementListClicked() {
       menu->exec(QCursor::pos());
     }
   } 
-  else if(QApplication::mouseButtons()==Qt::LeftButton) {
-    Element *element=dynamic_cast<Element*>(elementList->currentItem());
-    if(element) {
-      pagesWidget->insertWidget(0,element->getPropertyWidget());
-      pagesWidget->setCurrentWidget(element->getPropertyWidget());
-    }
+
+  Element *element=dynamic_cast<Element*>(elementList->currentItem());
+  if(element)
+    emit inlineOpenMBVMW->highlightObject(element->getID());
+  else
+    emit inlineOpenMBVMW->highlightObject("");
+}
+
+void MainWindow::elementListDoubleClicked() {
+  Element *element=dynamic_cast<Element*>(elementList->currentItem());
+  if(element) {
+    PropertyDialog::create(this, element->getPropertyWidget(),
+                           boost::bind(static_cast<TiXmlElement* (Element::*)(TiXmlNode*)>(&Element::writeXMLFile), element, _1),
+                           boost::bind(&Element::initializeUsingXML, element, _1));
   }
 }
 
-void MainWindow::integratorListClicked() {
-  if(QApplication::mouseButtons()==Qt::RightButton) {
-//    Element *element=(Element*)elementList->currentItem();
-//    QMenu* menu=element->getContextMenu();
-//    menu->exec(QCursor::pos());
-  } 
-  else if(QApplication::mouseButtons()==Qt::LeftButton) {
-    Integrator *integrator=(Integrator*)integratorList->currentItem();
-    pagesWidget->insertWidget(0,integrator->getPropertyWidget());
-    pagesWidget->setCurrentWidget(integrator->getPropertyWidget());
-  }
+void MainWindow::integratorListDoubleClicked() {
+  Integrator *integrator=(Integrator*)integratorList->currentItem();
+  PropertyDialog::create(this, integrator->getPropertyWidget(),
+                         boost::bind(static_cast<TiXmlElement* (Integrator::*)(TiXmlNode*)>(&Integrator::writeXMLFile), integrator, _1),
+                         boost::bind(&Integrator::initializeUsingXML, integrator, _1));
 }
 
 void MainWindow::parameterListClicked() {
@@ -308,11 +340,13 @@ void MainWindow::parameterListClicked() {
       menu->exec(QCursor::pos());
     }
   } 
-  else if(QApplication::mouseButtons()==Qt::LeftButton) {
-    Parameter *parameter=(Parameter*)parameterList->currentItem();
-    pagesWidget->insertWidget(0,parameter->getPropertyWidget());
-    pagesWidget->setCurrentWidget(parameter->getPropertyWidget());
-  }
+}
+
+void MainWindow::parameterListDoubleClicked() {
+  Parameter *parameter=(Parameter*)parameterList->currentItem();
+  PropertyDialog::create(this, parameter->getPropertyWidget(),
+                         boost::bind(static_cast<TiXmlElement* (Parameter::*)(TiXmlNode*)>(&Parameter::writeXMLFile), parameter, _1),
+                         boost::bind(&Parameter::initializeUsingXML, parameter, _1));
 }
 
 //void MainWindow::parameterListClicked(const QPoint &pos) {
@@ -344,6 +378,8 @@ void MainWindow::newMBS() {
   actionSaveMBS->setDisabled(true);
   actionSaveMBSAs->setDisabled(false);
   fileMBS->setText("");
+
+  inlineOpenMBV();
 }
 
 void MainWindow::loadMBS(const QString &file) {
@@ -363,6 +399,8 @@ void MainWindow::loadMBS(const QString &file) {
       //loadParameter("Parameter.mbsimparam.xml");
     //}
   }
+
+  inlineOpenMBV();
 }
 
 void MainWindow::loadMBS() {
@@ -422,6 +460,8 @@ void MainWindow::newDOPRI5Integrator() {
   integrator->setSolver(((Solver*)elementList->topLevelItem(0)));
   parentItem->addChild(integrator);
   fileIntegrator->setText("");
+
+  inlineOpenMBV();
 }
 
 void MainWindow::newRADAU5Integrator() {
@@ -432,6 +472,8 @@ void MainWindow::newRADAU5Integrator() {
   integrator->setSolver(((Solver*)elementList->topLevelItem(0)));
   parentItem->addChild(integrator);
   fileIntegrator->setText("");
+
+  inlineOpenMBV();
 }
 
 void MainWindow::newLSODEIntegrator() {
@@ -441,6 +483,8 @@ void MainWindow::newLSODEIntegrator() {
   integrator->setSolver(((Solver*)elementList->topLevelItem(0)));
   parentItem->addChild(integrator);
   fileIntegrator->setText("");
+
+  inlineOpenMBV();
 }
 
 void MainWindow::newLSODARIntegrator() {
@@ -450,6 +494,8 @@ void MainWindow::newLSODARIntegrator() {
   integrator->setSolver(((Solver*)elementList->topLevelItem(0)));
   parentItem->addChild(integrator);
   fileIntegrator->setText("");
+
+  inlineOpenMBV();
 }
 
 void MainWindow::newTimeSteppingIntegrator() {
@@ -459,6 +505,8 @@ void MainWindow::newTimeSteppingIntegrator() {
   integrator->setSolver(((Solver*)elementList->topLevelItem(0)));
   parentItem->addChild(integrator);
   fileIntegrator->setText("");
+
+  inlineOpenMBV();
 }
 
 void MainWindow::newEulerExplicitIntegrator() {
@@ -468,6 +516,8 @@ void MainWindow::newEulerExplicitIntegrator() {
   integrator->setSolver(((Solver*)elementList->topLevelItem(0)));
   parentItem->addChild(integrator);
   fileIntegrator->setText("");
+
+  inlineOpenMBV();
 }
 
 void MainWindow::newRKSuiteIntegrator() {
@@ -477,6 +527,8 @@ void MainWindow::newRKSuiteIntegrator() {
   integrator->setSolver(((Solver*)elementList->topLevelItem(0)));
   parentItem->addChild(integrator);
   fileIntegrator->setText("");
+
+  inlineOpenMBV();
 }
 
 void MainWindow::loadIntegrator(const QString &file) {
@@ -527,6 +579,8 @@ void MainWindow::newDoubleParameter() {
   Parameter *parameter = new DoubleParameter(str, parentItem, -1);
   connect(parameter,SIGNAL(parameterChanged(const QString&)),this,SLOT(updateOctaveParameters()));
   updateOctaveParameters();
+
+  inlineOpenMBV();
 }
 
 void MainWindow::newParameter() {
@@ -570,6 +624,8 @@ void MainWindow::loadParameter(const QString &file) {
     updateOctaveParameters();
     actionSaveParameter->setDisabled(false);
   }
+
+  inlineOpenMBV();
 }
 
 void MainWindow::loadParameter() {
@@ -590,7 +646,7 @@ void MainWindow::saveParameterAs() {
   }
 }
 
-void MainWindow::saveParameter() {
+void MainWindow::saveParameter(QString fileName) {
   TiXmlDocument doc;
   TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
   doc.LinkEndChild( decl );
@@ -602,7 +658,7 @@ void MainWindow::saveParameter() {
   map<string, string> nsprefix;
   unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
   QString file = fileParameter->text();
-  doc.SaveFile(file.toAscii().data());
+  doc.SaveFile(fileName.isEmpty()?file.toAscii().data():fileName.toStdString());
 }
 
 void MainWindow::updateOctaveParameters() {
@@ -702,6 +758,54 @@ void MainWindow::h5plotserie() {
       //cout << ret << endl;
     }
   }
+}
+
+void MainWindow::inlineOpenMBV() {
+  Solver *slv=(Solver*)elementList->topLevelItem(0);
+  Integrator *integ=(Integrator*)integratorList->topLevelItem(0);
+  if(!slv || !integ)
+    return;
+
+  QString mbsFile=(uniqueTempDir/"mbsim").c_str();
+  // modify the top level element name to enforce a special filename of the openmbv xml file
+  QString saveName=slv->getName();
+  slv->setName("openmbv");
+  // write xml file
+  slv->writeXMLFile(mbsFile);
+  // restore element name
+  slv->setName(saveName);
+
+  QString mbsParamFile=(uniqueTempDir/"mbsim.param.xml").c_str();
+  saveParameter(mbsParamFile);
+
+  QString intFile=(uniqueTempDir/"mbsim").c_str();
+  integ->writeXMLFile(intFile);
+
+  vector<string> arg;
+  arg.push_back(MBXMLUtils::getInstallPath()+"/bin/mbsimxml");
+  arg.push_back("--stopafterfirststep");
+  arg.push_back("--mbsimparam");
+  arg.push_back(mbsParamFile.toStdString());
+  arg.push_back(mbsFile.toStdString()+".mbsim.xml");
+  arg.push_back(intFile.toStdString()+".mbsimint.xml");
+  bfs::path CURDIR(bfs::current_path());
+  bfs::current_path(uniqueTempDir);
+  runProgramSyncronous(arg);
+  bfs::current_path(CURDIR);
+}
+
+void MainWindow::selectElement(string ID) {
+  emit inlineOpenMBVMW->highlightObject(ID);
+  map<string, Element*>::iterator it=Element::idEleMap.find(ID);
+  if(it!=Element::idEleMap.end()) {
+    elementList->setCurrentItem(it->second);
+    elementListClicked();
+  }
+}
+
+void MainWindow::openPropertyDialog(string ID) {
+  // note: the element is already selected by the first click which has called selectElement
+  elementListDoubleClicked();
 }
 
 void MainWindow::help() {

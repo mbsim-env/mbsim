@@ -54,6 +54,8 @@ class Element : public QObject, public QTreeWidgetItem {
     static TiXmlElement* copiedElement;
     Element *parentElement;
     Container *frames, *contours, *groups, *objects, *links, *extraDynamics;
+    static int IDcounter;
+    std::string ID;
   public:
     Element(const QString &str, QTreeWidgetItem *parentItem, int ind, bool grey=false);
     virtual ~Element();
@@ -105,6 +107,8 @@ class Element : public QObject, public QTreeWidgetItem {
     Object* getObject(const std::string &name, bool check=true);
     Group* getGroup(const std::string &name, bool check=true);
     Link* getLink(const std::string &name, bool check=true);
+    std::string getID() { return ID; }
+    static std::map<std::string, Element*> idEleMap;
   public slots:
     void remove();
     virtual void saveAs();
