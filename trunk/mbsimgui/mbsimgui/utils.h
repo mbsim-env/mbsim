@@ -412,6 +412,12 @@ inline QStringList angleUnits() {
   return units;
 }
 
+inline QStringList velocityUnits() {
+  QStringList units;
+  units << "m/s" << "km/h"; 
+  return units;
+}
+
 inline QStringList massUnits() {
   QStringList units;
   units << "mg" << "g" << "kg" << "t";

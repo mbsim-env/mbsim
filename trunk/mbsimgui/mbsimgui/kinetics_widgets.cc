@@ -17,7 +17,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-//#include <config.h>
+#include <config.h>
 #include "kinetics_widgets.h"
 #include "function_widgets.h"
 #include "string_widgets.h"
@@ -70,6 +70,38 @@ bool RegularizedBilateralConstraint::initializeUsingXML(TiXmlElement *element) {
   }
 }
 
+RegularizedUnilateralConstraint::RegularizedUnilateralConstraint() {
+
+  layout = new QVBoxLayout;
+  layout->setMargin(0);
+  funcList = new QComboBox;
+  funcList->addItem(tr("Linear regularized unilateral constraint"));
+  layout->addWidget(funcList);
+  setLayout(layout);
+  connect(funcList, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFunction(int)));
+  forceFunc = new LinearRegularizedUnilateralConstraint;  
+  layout->addWidget(forceFunc);
+}
+
+void RegularizedUnilateralConstraint::defineFunction(int index) {
+  if(index==0) {
+    layout->removeWidget(forceFunc);
+    delete forceFunc;
+    forceFunc = new LinearRegularizedUnilateralConstraint;  
+    layout->addWidget(forceFunc);
+  }
+}
+
+bool RegularizedUnilateralConstraint::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e;
+  e=element->FirstChildElement(MBSIMNS"forceFunction");
+  TiXmlElement *e1 = e->FirstChildElement();
+  if(e1 && e1->ValueStr() == MBSIMNS"LinearRegularizedUnilateralConstraint") {
+    funcList->setCurrentIndex(0);
+    forceFunc->initializeUsingXML(e->FirstChildElement());
+  }
+}
+
 TiXmlElement* GeneralizedImpactLawWidget::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType().toStdString());
   parent->LinkEndChild(ele0);
@@ -96,7 +128,6 @@ TiXmlElement* UnilateralNewtonImpact::writeXMLFile(TiXmlNode *parent) {
   return ele;
 }
 
-
 TiXmlElement* FrictionForceLawWidget::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType().toStdString());
   if(frictionForceFunc) {
@@ -108,10 +139,82 @@ TiXmlElement* FrictionForceLawWidget::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
+PlanarCoulombFriction::PlanarCoulombFriction() {
+  QVBoxLayout *layout = new QVBoxLayout;
+  setLayout(layout);
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),MBSIMNS"frictionCoefficient",noUnitUnits(),1));
+  frictionCoefficient = new ExtXMLWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
+  layout->addWidget(frictionCoefficient);
+}
+
+bool PlanarCoulombFriction::initializeUsingXML(TiXmlElement *element) {
+  FrictionForceLawWidget::initializeUsingXML(element);
+  frictionCoefficient->initializeUsingXML(element);
+}
+
+TiXmlElement* PlanarCoulombFriction::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele = FrictionForceLawWidget::writeXMLFile(parent);
+  frictionCoefficient->writeXMLFile(ele);
+  return ele;
+}
+
+RegularizedPlanarFriction::RegularizedPlanarFriction() {
+
+  layout = new QVBoxLayout;
+  layout->setMargin(0);
+  funcList = new QComboBox;
+  funcList->addItem(tr("Linear regularized coulomb friction"));
+  layout->addWidget(funcList);
+  setLayout(layout);
+  connect(funcList, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFunction(int)));
+  frictionForceFunc = new LinearRegularizedCoulombFriction;  
+  layout->addWidget(frictionForceFunc);
+}
+
+void RegularizedPlanarFriction::defineFunction(int index) {
+  if(index==0) {
+    layout->removeWidget(frictionForceFunc);
+    delete frictionForceFunc;
+    frictionForceFunc = new LinearRegularizedCoulombFriction;  
+    layout->addWidget(frictionForceFunc);
+  }
+}
+
+bool RegularizedPlanarFriction::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e;
+  e=element->FirstChildElement(MBSIMNS"frictionForceFunction");
+  TiXmlElement *e1 = e->FirstChildElement();
+  if(e1 && e1->ValueStr() == MBSIMNS"LinearRegularizedCoulombFriction") {
+    funcList->setCurrentIndex(0);
+    frictionForceFunc->initializeUsingXML(e->FirstChildElement());
+  }
+}
+
 TiXmlElement* FrictionImpactLawWidget::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType().toStdString());
   parent->LinkEndChild(ele0);
   return ele0;
+}
+
+PlanarCoulombImpact::PlanarCoulombImpact() {
+  QVBoxLayout *layout = new QVBoxLayout;
+  setLayout(layout);
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),MBSIMNS"frictionCoefficient",noUnitUnits(),1));
+  frictionCoefficient = new ExtXMLWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
+  layout->addWidget(frictionCoefficient);
+}
+
+bool PlanarCoulombImpact::initializeUsingXML(TiXmlElement *element) {
+  FrictionImpactLawWidget::initializeUsingXML(element);
+  frictionCoefficient->initializeUsingXML(element);
+}
+
+TiXmlElement* PlanarCoulombImpact::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele = FrictionImpactLawWidget::writeXMLFile(parent);
+  frictionCoefficient->writeXMLFile(ele);
+  return ele;
 }
 
 GeneralizedForceLawChoiceWidget::GeneralizedForceLawChoiceWidget(const string &xmlName_) : generalizedForceLaw(0), xmlName(xmlName_) {
@@ -121,10 +224,10 @@ GeneralizedForceLawChoiceWidget::GeneralizedForceLawChoiceWidget(const string &x
   setLayout(layout);
 
   comboBox = new QComboBox;
-  //comboBox->addItem(tr("None"));
   comboBox->addItem(tr("Bilateral constraint"));
   comboBox->addItem(tr("Regularized bilateral constraint"));
   comboBox->addItem(tr("Unilateral constraint"));
+  comboBox->addItem(tr("Regularized unilateral constraint"));
   layout->addWidget(comboBox);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineForceLaw(int)));
   defineForceLaw(0);
@@ -133,8 +236,6 @@ GeneralizedForceLawChoiceWidget::GeneralizedForceLawChoiceWidget(const string &x
 void GeneralizedForceLawChoiceWidget::defineForceLaw(int index) {
   layout->removeWidget(generalizedForceLaw);
   delete generalizedForceLaw;
-//  if(index==0)
-//    generalizedForceLaw = 0;
   if(index==0) {
     generalizedForceLaw = new BilateralConstraint;  
     layout->addWidget(generalizedForceLaw);
@@ -145,6 +246,10 @@ void GeneralizedForceLawChoiceWidget::defineForceLaw(int index) {
   }
   else if(index==2) {
     generalizedForceLaw = new UnilateralConstraint;  
+    layout->addWidget(generalizedForceLaw);
+  }
+  else if(index==3) {
+    generalizedForceLaw = new RegularizedUnilateralConstraint;  
     layout->addWidget(generalizedForceLaw);
   }
 }
@@ -166,6 +271,10 @@ bool GeneralizedForceLawChoiceWidget::initializeUsingXML(TiXmlElement *element) 
         comboBox->setCurrentIndex(2);
         generalizedForceLaw->initializeUsingXML(ee);
       }
+      else if(ee->ValueStr() == MBSIMNS"RegularizedUnilateralConstraint") {
+        comboBox->setCurrentIndex(3);
+        generalizedForceLaw->initializeUsingXML(ee);
+      }
     }
     return true;
   }
@@ -173,10 +282,10 @@ bool GeneralizedForceLawChoiceWidget::initializeUsingXML(TiXmlElement *element) 
 }
 
 TiXmlElement* GeneralizedForceLawChoiceWidget::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = new TiXmlElement(xmlName);
-    if(generalizedForceLaw)
-      generalizedForceLaw->writeXMLFile(ele0);
-    parent->LinkEndChild(ele0);
+  TiXmlElement *ele0 = new TiXmlElement(xmlName);
+  if(generalizedForceLaw)
+    generalizedForceLaw->writeXMLFile(ele0);
+  parent->LinkEndChild(ele0);
 
   return 0;
 }
@@ -188,7 +297,6 @@ GeneralizedImpactLawChoiceWidget::GeneralizedImpactLawChoiceWidget(const string 
   setLayout(layout);
 
   comboBox = new QComboBox;
-  //comboBox->addItem(tr("None"));
   comboBox->addItem(tr("Bilateral impact"));
   comboBox->addItem(tr("Unilateral Newton impact"));
   layout->addWidget(comboBox);
@@ -199,8 +307,6 @@ GeneralizedImpactLawChoiceWidget::GeneralizedImpactLawChoiceWidget(const string 
 void GeneralizedImpactLawChoiceWidget::defineImpactLaw(int index) {
   layout->removeWidget(generalizedImpactLaw);
   delete generalizedImpactLaw;
-  //if(index==0)
-    //generalizedImpactLaw = 0;
   if(index==0) {
     generalizedImpactLaw = new BilateralImpact;  
     layout->addWidget(generalizedImpactLaw);
@@ -247,24 +353,28 @@ FrictionForceLawChoiceWidget::FrictionForceLawChoiceWidget(const string &xmlName
   setLayout(layout);
 
   comboBox = new QComboBox;
-  //comboBox->addItem(tr("None"));
   comboBox->addItem(tr("Planar coulomb friction"));
+  comboBox->addItem(tr("Regularized planar friction"));
   layout->addWidget(comboBox);
-  connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineForceLaw(int)));
-  defineForceLaw(0);
+  connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFrictionLaw(int)));
+  defineFrictionLaw(0);
 }
 
-void FrictionForceLawChoiceWidget::defineForceLaw(int index) {
+void FrictionForceLawChoiceWidget::defineFrictionLaw(int index) {
   layout->removeWidget(frictionForceLaw);
   delete frictionForceLaw;
-//  if(index==0) {
-//    frictionForceLaw = new PlanarCoulombFriction;  
-//    layout->addWidget(frictionForceLaw);
-//  } 
+  if(index==0) {
+    frictionForceLaw = new PlanarCoulombFriction;  
+    layout->addWidget(frictionForceLaw);
+  } 
+  if(index==1) {
+    frictionForceLaw = new RegularizedPlanarFriction;  
+    layout->addWidget(frictionForceLaw);
+  } 
 }
 
 bool FrictionForceLawChoiceWidget::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement  *e=element->FirstChildElement(xmlName);
+  TiXmlElement *e=(xmlName=="")?element:element->FirstChildElement(xmlName);
   if(e) {
     TiXmlElement* ee=e->FirstChildElement();
     if(ee) {
@@ -272,17 +382,25 @@ bool FrictionForceLawChoiceWidget::initializeUsingXML(TiXmlElement *element) {
         comboBox->setCurrentIndex(0);
         frictionForceLaw->initializeUsingXML(ee);
       }
+      else if(ee->ValueStr() == MBSIMNS"RegularizedPlanarFriction") {
+        comboBox->setCurrentIndex(1);
+        frictionForceLaw->initializeUsingXML(ee);
+      }
+      return true;
     }
-    return true;
   }
   return false;
 }
 
 TiXmlElement* FrictionForceLawChoiceWidget::writeXMLFile(TiXmlNode *parent) {
+  if(xmlName!="") {
     TiXmlElement *ele0 = new TiXmlElement(xmlName);
     if(frictionForceLaw)
       frictionForceLaw->writeXMLFile(ele0);
     parent->LinkEndChild(ele0);
+  }
+  else
+    frictionForceLaw->writeXMLFile(parent);
 
   return 0;
 }
@@ -294,20 +412,19 @@ FrictionImpactLawChoiceWidget::FrictionImpactLawChoiceWidget(const string &xmlNa
   setLayout(layout);
 
   comboBox = new QComboBox;
-  //comboBox->addItem(tr("None"));
   comboBox->addItem(tr("Planar coloumb impact"));
   layout->addWidget(comboBox);
-  connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineImpactLaw(int)));
-  defineImpactLaw(0);
+  connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFrictionImpactLaw(int)));
+  defineFrictionImpactLaw(0);
 }
 
-void FrictionImpactLawChoiceWidget::defineImpactLaw(int index) {
+void FrictionImpactLawChoiceWidget::defineFrictionImpactLaw(int index) {
   layout->removeWidget(frictionImpactLaw);
   delete frictionImpactLaw;
-//  if(index==0) {
-//    frictionImpactLaw = new PlanarCoulombImpact;  
-//    layout->addWidget(frictionImpactLaw);
-//  } 
+  if(index==0) {
+    frictionImpactLaw = new PlanarCoulombImpact;  
+    layout->addWidget(frictionImpactLaw);
+  } 
 }
 
 bool FrictionImpactLawChoiceWidget::initializeUsingXML(TiXmlElement *element) {
@@ -338,7 +455,7 @@ TiXmlElement* FrictionImpactLawChoiceWidget::writeXMLFile(TiXmlNode *parent) {
 }
 
 GeneralizedForceChoiceWidget::GeneralizedForceChoiceWidget(const string &xmlName_, ExtXMLWidget* arrow_) : xmlName(xmlName_), arrow(arrow_) {
-  
+
   layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -378,14 +495,14 @@ bool GeneralizedForceChoiceWidget::initializeUsingXML(TiXmlElement *element) {
 }
 
 TiXmlElement* GeneralizedForceChoiceWidget::writeXMLFile(TiXmlNode *parent) {
-//  if(getSize()) {
-    TiXmlElement *ele0 = new TiXmlElement(xmlName);
-    mat->writeXMLFile(ele0);
-    generalizedForceLaw->writeXMLFile(ele0);
-    generalizedImpactLaw->writeXMLFile(ele0);
-    arrow->writeXMLFile(ele0);
-    parent->LinkEndChild(ele0);
-//  }
+  //  if(getSize()) {
+  TiXmlElement *ele0 = new TiXmlElement(xmlName);
+  mat->writeXMLFile(ele0);
+  generalizedForceLaw->writeXMLFile(ele0);
+  generalizedImpactLaw->writeXMLFile(ele0);
+  arrow->writeXMLFile(ele0);
+  parent->LinkEndChild(ele0);
+  //  }
 
   return 0;
 }
@@ -437,11 +554,11 @@ bool ForceChoiceWidget::initializeUsingXML(TiXmlElement *element) {
 
 TiXmlElement* ForceChoiceWidget::writeXMLFile(TiXmlNode *parent) {
   //if(getSize()) {
-    TiXmlElement *ele0 = new TiXmlElement(xmlName);
-    widget->writeXMLFile(ele0);
-    forceLaw->writeXMLFile(ele0);
-    arrow->writeXMLFile(ele0);
-    parent->LinkEndChild(ele0);
+  TiXmlElement *ele0 = new TiXmlElement(xmlName);
+  widget->writeXMLFile(ele0);
+  forceLaw->writeXMLFile(ele0);
+  arrow->writeXMLFile(ele0);
+  parent->LinkEndChild(ele0);
   //}
 
   return 0;
