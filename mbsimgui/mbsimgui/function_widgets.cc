@@ -68,19 +68,23 @@ ConstantFunction1::ConstantFunction1(const QString &ext) : Function1(ext) {
   ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Value",c);
   layout->addWidget(extXMLWidget);
 }
+
 int ConstantFunction1::getSize() const {
   string str = evalOctaveExpression(c->getCurrentPhysicalStringWidget()->getValue());
   vector<vector<string> > A = strToMat(str);
   return A.size()?A[0].size():0;
 }
+
 void ConstantFunction1::resize(int m, int n) {
   if(((VecWidget*)c->getPhysicalStringWidget(0)->getWidget())->size() != m)
     ((VecWidget*)c->getPhysicalStringWidget(0)->getWidget())->resize(m);
 }
+
 bool ConstantFunction1::initializeUsingXML(TiXmlElement *element) {
   Function1::initializeUsingXML(element);
   c->initializeUsingXML(element);
 }
+
 TiXmlElement* ConstantFunction1::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Function1::writeXMLFile(parent);
   c->writeXMLFile(ele0);
@@ -95,50 +99,50 @@ SinusFunction1::SinusFunction1() {
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new VecWidget(0,true),MBSIMNS"amplitude",QStringList(),0));
   var.push_back(new ExtPhysicalVarWidget(input));
-  ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Amplitude",var[var.size()-1]);
-  layout->addWidget(extXMLWidget);
+  widget.push_back(new ExtXMLWidget("Amplitude",var[var.size()-1]));
+  layout->addWidget(widget[widget.size()-1]);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new VecWidget(0,true),MBSIMNS"frequency",QStringList(),0));
   var.push_back(new ExtPhysicalVarWidget(input));
-  extXMLWidget = new ExtXMLWidget("Frequency",var[var.size()-1]);
-  layout->addWidget(extXMLWidget);
+  widget.push_back(new ExtXMLWidget("Frequency",var[var.size()-1]));
+  layout->addWidget(widget[widget.size()-1]);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new VecWidget(0,true),MBSIMNS"phase",QStringList(),0));
   var.push_back(new ExtPhysicalVarWidget(input));
-  extXMLWidget = new ExtXMLWidget("Phase",var[var.size()-1]);
-  layout->addWidget(extXMLWidget);
-
+  widget.push_back(new ExtXMLWidget("Phase",var[var.size()-1]));
+  layout->addWidget(widget[widget.size()-1]);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new VecWidget(0,true),MBSIMNS"offset",QStringList(),0));
   var.push_back(new ExtPhysicalVarWidget(input));  
-  extXMLWidget = new ExtXMLWidget("Offset",var[var.size()-1]);
-  layout->addWidget(extXMLWidget);
-
-
+  widget.push_back(new ExtXMLWidget("Offset",var[var.size()-1],true));
+  layout->addWidget(widget[widget.size()-1]);
 }
+
 int SinusFunction1::getSize() const {
   string str = evalOctaveExpression(var[0]->getCurrentPhysicalStringWidget()->getValue());
   vector<vector<string> > A = strToMat(str);
   return A.size()?A[0].size():0;
 }
+
 void SinusFunction1::resize(int m, int n) {
   for(unsigned int i=0; i<var.size(); i++)
     if(((VecWidget*)var[i]->getPhysicalStringWidget(0)->getWidget())->size() != m)
       ((VecWidget*)var[i]->getPhysicalStringWidget(0)->getWidget())->resize(m);
 }
+
 bool SinusFunction1::initializeUsingXML(TiXmlElement *element) {
   DifferentiableFunction1::initializeUsingXML(element);
   for(unsigned int i=0; i<var.size(); i++)
-    var[i]->initializeUsingXML(element);
+    widget[i]->initializeUsingXML(element);
 }
 
 TiXmlElement* SinusFunction1::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = DifferentiableFunction1::writeXMLFile(parent);
   for(unsigned int i=0; i<var.size(); i++)
-    var[i]->writeXMLFile(ele0);
+    widget[i]->writeXMLFile(ele0);
   return ele0;
 }
 
@@ -177,7 +181,6 @@ TiXmlElement* LinearSpringDamperForce::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 } 
 
-
 LinearRegularizedBilateralConstraint::LinearRegularizedBilateralConstraint() {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -196,13 +199,73 @@ LinearRegularizedBilateralConstraint::LinearRegularizedBilateralConstraint() {
 }
 
 bool LinearRegularizedBilateralConstraint::initializeUsingXML(TiXmlElement *element) {
-  Function1::initializeUsingXML(element);
+  Function2::initializeUsingXML(element);
   for(unsigned int i=0; i<var.size(); i++)
     var[i]->initializeUsingXML(element);
 }
 
 TiXmlElement* LinearRegularizedBilateralConstraint::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Function1::writeXMLFile(parent);
+  TiXmlElement *ele0 = Function2::writeXMLFile(parent);
+  for(unsigned int i=0; i<var.size(); i++)
+    var[i]->writeXMLFile(ele0);
+  return ele0;
+}
+
+LinearRegularizedUnilateralConstraint::LinearRegularizedUnilateralConstraint() {
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),MBSIMNS"stiffnessCoefficient",stiffnessUnits(),1));
+  var.push_back(new ExtXMLWidget("Stiffness coefficient",new ExtPhysicalVarWidget(input)));
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),MBSIMNS"dampingCoefficient",dampingUnits(),0));
+  var.push_back(new ExtXMLWidget("Damping coefficient",new ExtPhysicalVarWidget(input)));
+
+  layout->addWidget(var[0]);
+  layout->addWidget(var[1]);
+}
+
+bool LinearRegularizedUnilateralConstraint::initializeUsingXML(TiXmlElement *element) {
+  Function2::initializeUsingXML(element);
+  for(unsigned int i=0; i<var.size(); i++)
+    var[i]->initializeUsingXML(element);
+}
+
+TiXmlElement* LinearRegularizedUnilateralConstraint::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = Function2::writeXMLFile(parent);
+  for(unsigned int i=0; i<var.size(); i++)
+    var[i]->writeXMLFile(ele0);
+  return ele0;
+}
+
+LinearRegularizedCoulombFriction::LinearRegularizedCoulombFriction() {
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0.01"),MBSIMNS"marginalVelocity",velocityUnits(),0));
+  var.push_back(new ExtXMLWidget("Marginal velocity",new ExtPhysicalVarWidget(input),true));
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),MBSIMNS"frictionCoefficient",noUnitUnits(),1));
+  var.push_back(new ExtXMLWidget("Friction coefficient",new ExtPhysicalVarWidget(input)));
+
+  layout->addWidget(var[0]);
+  layout->addWidget(var[1]);
+}
+
+bool LinearRegularizedCoulombFriction::initializeUsingXML(TiXmlElement *element) {
+  Function2::initializeUsingXML(element);
+  for(unsigned int i=0; i<var.size(); i++)
+    var[i]->initializeUsingXML(element);
+}
+
+TiXmlElement* LinearRegularizedCoulombFriction::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = Function2::writeXMLFile(parent);
   for(unsigned int i=0; i<var.size(); i++)
     var[i]->writeXMLFile(ele0);
   return ele0;

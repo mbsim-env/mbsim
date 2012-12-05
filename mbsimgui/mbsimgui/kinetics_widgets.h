@@ -24,7 +24,7 @@
 #include "basic_widgets.h"
 #include <QComboBox>
 
-class Function1;
+class Function2;
 class QVBoxLayout;
 class ExtXMLWidget;
 class ExtPhysicalVarWidget;
@@ -39,7 +39,7 @@ class GeneralizedForceLawWidget : public XMLWidget {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "GeneralizedForceLaw"; }
    protected:
-    Function1 *forceFunc;
+    Function2 *forceFunc;
 };
 
 class BilateralConstraint : public GeneralizedForceLawWidget {
@@ -68,6 +68,20 @@ class UnilateralConstraint : public GeneralizedForceLawWidget {
   public:
     UnilateralConstraint() {}
     virtual QString getType() const { return "UnilateralConstraint"; }
+};
+
+class RegularizedUnilateralConstraint : public GeneralizedForceLawWidget {
+  Q_OBJECT
+
+  public:
+    RegularizedUnilateralConstraint(); 
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual QString getType() const { return "RegularizedUnilateralConstraint"; }
+  protected:
+    QVBoxLayout *layout;
+    QComboBox *funcList;
+  protected slots:
+    void defineFunction(int);
 };
 
 class GeneralizedImpactLawWidget : public XMLWidget {
@@ -105,7 +119,32 @@ class FrictionForceLawWidget : public XMLWidget {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "FrictionForceLaw"; }
    protected:
-    Function1 *frictionForceFunc;
+    Function2 *frictionForceFunc;
+};
+
+class PlanarCoulombFriction : public FrictionForceLawWidget {
+
+  public:
+    PlanarCoulombFriction();
+    virtual QString getType() const { return "PlanarCoulombFriction"; }
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+  protected:
+    ExtXMLWidget* frictionCoefficient;
+};
+
+class RegularizedPlanarFriction : public FrictionForceLawWidget {
+  Q_OBJECT
+
+  public:
+    RegularizedPlanarFriction(); 
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual QString getType() const { return "RegularizedPlanarFriction"; }
+  protected:
+    QVBoxLayout *layout;
+    QComboBox *funcList;
+  protected slots:
+    void defineFunction(int);
 };
 
 class FrictionImpactLawWidget : public XMLWidget {
@@ -115,9 +154,19 @@ class FrictionImpactLawWidget : public XMLWidget {
     virtual bool initializeUsingXML(TiXmlElement *element) {};
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "FrictionImpactLaw"; }
-   //protected:
-    //Function1 *forceFunc;
 };
+
+class PlanarCoulombImpact : public FrictionImpactLawWidget {
+
+  public:
+    PlanarCoulombImpact();
+    virtual QString getType() const { return "PlanarCoulombImpact"; }
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+  protected:
+    ExtXMLWidget* frictionCoefficient;
+};
+
 
 class GeneralizedForceLawChoiceWidget : public XMLWidget {
   Q_OBJECT
@@ -170,7 +219,7 @@ class FrictionForceLawChoiceWidget : public XMLWidget {
     int getForceLaw() {return comboBox->currentIndex();}
 
   protected slots:
-    void defineForceLaw(int);
+    void defineFrictionLaw(int);
 
   protected:
     QComboBox *comboBox;
@@ -190,7 +239,7 @@ class FrictionImpactLawChoiceWidget : public XMLWidget {
     int getImpactLaw() {return comboBox->currentIndex();}
 
   protected slots:
-    void defineImpactLaw(int);
+    void defineFrictionImpactLaw(int);
 
   protected:
     QComboBox *comboBox;

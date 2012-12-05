@@ -124,6 +124,7 @@ class SinusFunction1 : public DifferentiableFunction1 {
   protected:
     int ySize;
     std::vector<ExtPhysicalVarWidget*> var;
+    std::vector<ExtXMLWidget*> widget;
 };
 
 class LinearSpringDamperForce : public Function2 {
@@ -136,13 +137,37 @@ class LinearSpringDamperForce : public Function2 {
     std::vector<ExtPhysicalVarWidget*> var;
 };
 
-class LinearRegularizedBilateralConstraint: public Function1 {
+class LinearRegularizedBilateralConstraint: public Function2 {
   public:
     LinearRegularizedBilateralConstraint(); 
 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
     virtual QString getType() const { return "LinearRegularizedBilateralConstraint"; }
+
+  private:
+    std::vector<ExtXMLWidget*> var;
+};
+
+class LinearRegularizedUnilateralConstraint: public Function2 {
+  public:
+    LinearRegularizedUnilateralConstraint(); 
+
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+    virtual QString getType() const { return "LinearRegularizedUnilateralConstraint"; }
+
+  private:
+    std::vector<ExtXMLWidget*> var;
+};
+
+class LinearRegularizedCoulombFriction: public Function2 {
+  public:
+    LinearRegularizedCoulombFriction(); 
+
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+    virtual QString getType() const { return "LinearRegularizedCoulombFriction"; }
 
   private:
     std::vector<ExtXMLWidget*> var;
