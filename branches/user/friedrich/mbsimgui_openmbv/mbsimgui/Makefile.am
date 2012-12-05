@@ -4,9 +4,9 @@ bin_PROGRAMS = mbsimgui
 
 mbsimguidir = $(includedir)/mbsimgui
 
-INCLUDES = $(DEPS_CFLAGS) -DTIXML_USE_STL $(QT_CFLAGS) $(HDF5SERIE_CFLAGS) $(QWT_CFLAGS) $(MKOCTFILE_CFLAGS)
+INCLUDES = -DTIXML_USE_STL $(QT_CFLAGS) $(MKOCTFILE_CFLAGS) $(OPENMBV_CFLAGS)
 
-LDADD = $(DEPS_LIBS)  $(QT_LIBS) $(QWT_LIBS) $(MKOCTFILE_LIBS)
+LDADD = $(QT_LIBS) $(MKOCTFILE_LIBS) $(OPENMBV_LIBS) -lboost_filesystem
 
 mbsimgui_CPPFLAGS = $(MBXMLUTILS_CFLAGS)
 
@@ -41,7 +41,8 @@ mbsimgui_SOURCES = main.cc \
 		   constraint.cc \
 		   integrator.cc \
 		   parameter.cc \
-		   octaveutils.cc
+		   octaveutils.cc \
+		   property_dialog.cc
 
 nodist_mbsimgui_SOURCES=$(QT_BUILT_SOURCES)
 
@@ -71,15 +72,14 @@ QT_BUILT_SOURCES = mainwindow.moc.cc \
 		   kinetic_excitation.moc.cc \
 		   constraint.moc.cc \
 		   integrator.moc.cc \
-		   parameter.moc.cc
+		   parameter.moc.cc \
+		   property_dialog.moc.cc
 
 mbsimgui_HEADERS = 
 		   
 		   
 		   
-		   
-		   
-		   
-		   
-		   
-
+mbsimguisharedir = @datadir@/mbsimgui
+dist_mbsimguishare_DATA = inlineopenmbv.ombv.wst \
+			  empty.ombv.xml \
+			  empty.ombv.h5

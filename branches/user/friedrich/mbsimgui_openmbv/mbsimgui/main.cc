@@ -21,17 +21,27 @@
 #include <QApplication>
 #include "mainwindow.h"
 #include "octaveutils.h"
+#include <H5Cpp.h>
 #include <QLocale>
 
 int main(int argc, char *argv[]) {
+  // environment variables
+  // Disalbe COIN VBO per default (see --help)
+  char COIN_VBO[strlen("COIN_VBO=0")+1];
+  if(getenv("COIN_VBO")==NULL) putenv(strcpy(COIN_VBO, "COIN_VBO=0"));
+
+  // disalbe HDF5 error message print
+  H5::Exception::dontPrint();
+
   initializeOctave();
   QApplication app(argc, argv);
   QLocale::setDefault(QLocale::C);
   setlocale(LC_ALL, "C");
   MainWindow *mainwindow = new MainWindow;
   mainwindow->show();
-  mainwindow->resize(1024, 768);
+  mainwindow->resize(1100, 700);
   int ret=app.exec();
   do_octave_atexit(); // do_octave_atexit must be called before leaving (to prevent crashed in atexit())
+  delete mainwindow;
   return ret;
 }

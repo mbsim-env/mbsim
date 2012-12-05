@@ -27,6 +27,14 @@
 
 using namespace std;
 
+void OMBVObjectWidget::writeXMLFileID(TiXmlNode *parent) {
+  if(!ID.empty()) {
+    TiXmlUnknown *id=new TiXmlUnknown;
+    id->SetValue("?OPENMBV_ID "+ID+"?");
+    parent->LinkEndChild(id);
+  }
+}
+
 OMBVFrameWidget::OMBVFrameWidget(const string &name, const string &xmlName_) : OMBVObjectWidget(name), xmlName(xmlName_) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -56,12 +64,14 @@ bool OMBVFrameWidget::initializeUsingXML(TiXmlElement *element) {
 TiXmlElement* OMBVFrameWidget::writeXMLFile(TiXmlNode *parent) {
   if(xmlName!="") {
     TiXmlElement *e=new TiXmlElement(xmlName);
+    writeXMLFileID(e);
     parent->LinkEndChild(e);
     size->writeXMLFile(e);
     offset->writeXMLFile(e);
     return e;
   }
   else {
+    writeXMLFileID(parent);
     size->writeXMLFile(parent);
     offset->writeXMLFile(parent);
     return 0;
@@ -124,6 +134,7 @@ TiXmlElement* OMBVArrowWidget::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *e=new TiXmlElement(OPENMBVNS+getType().toStdString());
   parent->LinkEndChild(e);
   e->SetAttribute("name", "dummy");
+  writeXMLFileID(e);
   diameter->writeXMLFile(e);
   headDiameter->writeXMLFile(e);
   headLength->writeXMLFile(e);
@@ -190,6 +201,7 @@ TiXmlElement* OMBVCoilSpringWidget::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *e=new TiXmlElement(OPENMBVNS+getType().toStdString());
   parent->LinkEndChild(e);
   e->SetAttribute("name", "dummy");
+  writeXMLFileID(e);
   type->writeXMLFile(e);
   numberOfCoils->writeXMLFile(e);
   springRadius->writeXMLFile(e);
@@ -236,6 +248,7 @@ TiXmlElement* OMBVBodyWidget::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *e=new TiXmlElement(OPENMBVNS+getType().toStdString());
   parent->LinkEndChild(e);
   e->SetAttribute("name", name==""?"NOTSET":name);
+  writeXMLFileID(e);
   color->writeXMLFile(e);
   trans->writeXMLFile(e);
   rot->writeXMLFile(e);
@@ -523,6 +536,8 @@ void OMBVBodyChoiceWidget::ombvSelection(int index) {
     layout->addWidget(ombv);
     ombv->update();
   }
+
+  ombv->setID(ID);
 }
 
 bool OMBVBodyChoiceWidget::initializeUsingXML(TiXmlElement *element) {
@@ -574,6 +589,8 @@ OMBVBodySelectionWidget::OMBVBodySelectionWidget(RigidBody *body) : ombv(0), ref
   ExtXMLWidget *widget = new ExtXMLWidget("Frame of reference",ref);
   layout->addWidget(ombv);
   layout->addWidget(widget);
+
+  ombv->setID(body->getID());
 }
 
 bool OMBVBodySelectionWidget::initializeUsingXML(TiXmlElement *element) {

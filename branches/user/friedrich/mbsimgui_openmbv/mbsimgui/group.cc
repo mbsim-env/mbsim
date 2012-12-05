@@ -420,7 +420,9 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   }
 
   // extraDynamics
-  E=element->FirstChildElement(MBSIMNS"extraDynamics")->FirstChildElement();
+  E=element->FirstChildElement(MBSIMNS"extraDynamics");
+  if(E)
+    E=E->FirstChildElement();
   //ExtraDynamic *ed;
   while(E) {
     //        ed=ObjectFactory::getInstance()->createExtraDynamic(E);

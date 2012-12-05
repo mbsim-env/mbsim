@@ -34,7 +34,15 @@
 
 using namespace std;
 
+int Element::IDcounter=0;
+map<string, Element*> Element::idEleMap;
+
 Element::Element(const QString &str, QTreeWidgetItem *parentItem, int ind, bool grey) : QTreeWidgetItem(), drawThisPath(true), searchMatched(true), frames(0), contours(0), groups(0), objects(0), links(0), extraDynamics(0) {
+  stringstream sstr;
+  sstr<<IDcounter++;
+  ID=sstr.str();
+  idEleMap.insert(make_pair(ID, this));
+
   if(ind==-1 || ind>=parentItem->childCount())
     parentItem->addChild(this); // insert as last element
   else
@@ -64,6 +72,7 @@ Element::Element(const QString &str, QTreeWidgetItem *parentItem, int ind, bool 
 }
 
 Element::~Element() {
+  idEleMap.erase(ID);
   // delete scene graph
   delete properties;
   //objects.erase(this);

@@ -31,6 +31,9 @@ AC_SUBST([MOC])
 AC_SUBST([UIC])
 AC_SUBST([RCC])
 
+dnl OpenMBV
+PKG_CHECK_MODULES(OPENMBV, [openmbv])
+
 PKG_CHECK_MODULES(MBXMLUTILS, [mbxmlutils])
 
 dnl Check for octave
