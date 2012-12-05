@@ -20,6 +20,7 @@
 #include <config.h>
 #include "contact.h"
 #include "kinetics_widgets.h"
+#include "string_widgets.h"
 #include "extended_widgets.h"
 #include "ombv_widgets.h"
 
@@ -51,6 +52,19 @@ Contact::Contact(const QString &str, QTreeWidgetItem *parentItem, int ind) : Lin
   frictionImpactLaw->setXMLName(MBSIMNS"frictionImpactLaw");
   properties->addToTab("Kinetics", frictionImpactLaw);
 
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new BoolWidget("0"),MBSIMNS"enableOpenMBVContactPoints",QStringList(),1));
+  enableOpenMBVContactPoints = new ExtXMLWidget("OpenMBV contact points",new ExtPhysicalVarWidget(input),true); 
+  properties->addToTab("Visualisation",enableOpenMBVContactPoints);
+
+  normalForceArrow = new ExtXMLWidget("OpenMBV normal force arrow",new OMBVArrowWidget("NOTSET"),true);
+  normalForceArrow->setXMLName(MBSIMNS"openMBVNormalForceArrow",false);
+  properties->addToTab("Visualisation",normalForceArrow);
+
+  frictionArrow = new ExtXMLWidget("OpenMBV friction arrow",new OMBVArrowWidget("NOTSET"),true);
+  frictionArrow->setXMLName(MBSIMNS"openMBVFrictionArrow",false);
+  properties->addToTab("Visualisation",frictionArrow);
+
   properties->addStretch();
 }
 
@@ -65,6 +79,9 @@ void Contact::initializeUsingXML(TiXmlElement *element) {
   frictionForceLaw->initializeUsingXML(element);
   frictionImpactLaw->initializeUsingXML(element);
   connections->initializeUsingXML(element);
+  enableOpenMBVContactPoints->initializeUsingXML(element);
+  normalForceArrow->initializeUsingXML(element);
+  frictionArrow->initializeUsingXML(element);
 }
 
 TiXmlElement* Contact::writeXMLFile(TiXmlNode *parent) {
@@ -74,5 +91,8 @@ TiXmlElement* Contact::writeXMLFile(TiXmlNode *parent) {
   frictionForceLaw->writeXMLFile(ele0);
   frictionImpactLaw->writeXMLFile(ele0);
   connections->writeXMLFile(ele0);
+  enableOpenMBVContactPoints->writeXMLFile(ele0);
+  normalForceArrow->writeXMLFile(ele0);
+  frictionArrow->writeXMLFile(ele0);
   return ele0;
 }

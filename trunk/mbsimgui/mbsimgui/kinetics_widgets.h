@@ -47,7 +47,6 @@ class BilateralConstraint : public GeneralizedForceLawWidget {
   public:
     BilateralConstraint() {}
     virtual QString getType() const { return "BilateralConstraint"; }
-   protected:
 };
 
 class RegularizedBilateralConstraint : public GeneralizedForceLawWidget {
@@ -64,6 +63,13 @@ class RegularizedBilateralConstraint : public GeneralizedForceLawWidget {
     void defineFunction(int);
 };
 
+class UnilateralConstraint : public GeneralizedForceLawWidget {
+
+  public:
+    UnilateralConstraint() {}
+    virtual QString getType() const { return "UnilateralConstraint"; }
+};
+
 class GeneralizedImpactLawWidget : public XMLWidget {
 
   public:
@@ -78,6 +84,17 @@ class BilateralImpact : public GeneralizedImpactLawWidget {
   public:
     BilateralImpact() {}
     virtual QString getType() const { return "BilateralImpact"; }
+};
+
+class UnilateralNewtonImpact : public GeneralizedImpactLawWidget {
+
+  public:
+    UnilateralNewtonImpact();
+    virtual QString getType() const { return "UnilateralNewtonImpact"; }
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+  protected:
+    ExtXMLWidget* restitutionCoefficient;
 };
 
 class FrictionForceLawWidget : public XMLWidget {
