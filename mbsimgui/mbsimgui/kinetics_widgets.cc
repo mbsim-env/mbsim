@@ -76,6 +76,27 @@ TiXmlElement* GeneralizedImpactLawWidget::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
+UnilateralNewtonImpact::UnilateralNewtonImpact() {
+  QVBoxLayout *layout = new QVBoxLayout;
+  setLayout(layout);
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),MBSIMNS"restitutionCoefficient",noUnitUnits(),1));
+  restitutionCoefficient = new ExtXMLWidget("Restitution coefficient",new ExtPhysicalVarWidget(input));
+  layout->addWidget(restitutionCoefficient);
+}
+
+bool UnilateralNewtonImpact::initializeUsingXML(TiXmlElement *element) {
+  GeneralizedImpactLawWidget::initializeUsingXML(element);
+  restitutionCoefficient->initializeUsingXML(element);
+}
+
+TiXmlElement* UnilateralNewtonImpact::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele = GeneralizedImpactLawWidget::writeXMLFile(parent);
+  restitutionCoefficient->writeXMLFile(ele);
+  return ele;
+}
+
+
 TiXmlElement* FrictionForceLawWidget::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType().toStdString());
   if(frictionForceFunc) {
@@ -103,6 +124,7 @@ GeneralizedForceLawChoiceWidget::GeneralizedForceLawChoiceWidget(const string &x
   //comboBox->addItem(tr("None"));
   comboBox->addItem(tr("Bilateral constraint"));
   comboBox->addItem(tr("Regularized bilateral constraint"));
+  comboBox->addItem(tr("Unilateral constraint"));
   layout->addWidget(comboBox);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineForceLaw(int)));
   defineForceLaw(0);
@@ -121,6 +143,10 @@ void GeneralizedForceLawChoiceWidget::defineForceLaw(int index) {
     generalizedForceLaw = new RegularizedBilateralConstraint;  
     layout->addWidget(generalizedForceLaw);
   }
+  else if(index==2) {
+    generalizedForceLaw = new UnilateralConstraint;  
+    layout->addWidget(generalizedForceLaw);
+  }
 }
 
 bool GeneralizedForceLawChoiceWidget::initializeUsingXML(TiXmlElement *element) {
@@ -134,6 +160,10 @@ bool GeneralizedForceLawChoiceWidget::initializeUsingXML(TiXmlElement *element) 
       }
       else if(ee->ValueStr() == MBSIMNS"RegularizedBilateralConstraint") {
         comboBox->setCurrentIndex(1);
+        generalizedForceLaw->initializeUsingXML(ee);
+      }
+      else if(ee->ValueStr() == MBSIMNS"UnilateralConstraint") {
+        comboBox->setCurrentIndex(2);
         generalizedForceLaw->initializeUsingXML(ee);
       }
     }
@@ -160,6 +190,7 @@ GeneralizedImpactLawChoiceWidget::GeneralizedImpactLawChoiceWidget(const string 
   comboBox = new QComboBox;
   //comboBox->addItem(tr("None"));
   comboBox->addItem(tr("Bilateral impact"));
+  comboBox->addItem(tr("Unilateral Newton impact"));
   layout->addWidget(comboBox);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineImpactLaw(int)));
   defineImpactLaw(0);
@@ -174,6 +205,10 @@ void GeneralizedImpactLawChoiceWidget::defineImpactLaw(int index) {
     generalizedImpactLaw = new BilateralImpact;  
     layout->addWidget(generalizedImpactLaw);
   } 
+  else if(index==1) {
+    generalizedImpactLaw = new UnilateralNewtonImpact;  
+    layout->addWidget(generalizedImpactLaw);
+  } 
 }
 
 bool GeneralizedImpactLawChoiceWidget::initializeUsingXML(TiXmlElement *element) {
@@ -183,6 +218,8 @@ bool GeneralizedImpactLawChoiceWidget::initializeUsingXML(TiXmlElement *element)
     if(ee) {
       if(ee->ValueStr() == MBSIMNS"BilateralImpact")
         comboBox->setCurrentIndex(0);
+      if(ee->ValueStr() == MBSIMNS"UnilateralNewtonImpact")
+        comboBox->setCurrentIndex(1);
       generalizedImpactLaw->initializeUsingXML(ee);
       return true;
     }
