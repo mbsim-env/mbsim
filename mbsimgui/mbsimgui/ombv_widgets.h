@@ -197,5 +197,15 @@ class OMBVBodySelectionWidget : public XMLWidget {
     LocalFrameOfReferenceWidget *ref;
 };
 
+class OMBVPlaneWidget : public XMLWidget {
+
+  public:
+    OMBVPlaneWidget(const std::string &xmlName);
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element); 
+  protected:
+    ExtXMLWidget *size, *numberOfLines;
+    std::string xmlName;
+};
 
 #endif

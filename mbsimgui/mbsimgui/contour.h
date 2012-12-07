@@ -51,6 +51,8 @@ class Plane : public Contour {
     Plane(const QString &str, QTreeWidgetItem *parentItem, int ind);
     ~Plane();
     QString getType() const { return "Plane"; }
+    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
   protected:
     ExtXMLWidget *visu;
 };
