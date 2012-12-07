@@ -598,6 +598,7 @@ void Group::paste() {
       o->setName(text);
     }
     o->initializeUsingXML(e);
+    o->initialize();
     ((Element*)treeWidget()->topLevelItem(0))->update();
     return;
   }
@@ -618,6 +619,7 @@ void Group::paste() {
       g->setName(text);
     }
     g->initializeUsingXML(e);
+    g->initialize();
     ((Element*)treeWidget()->topLevelItem(0))->update();
     return;
   }
