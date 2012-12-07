@@ -126,6 +126,9 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
   action=new QAction(Utils::QIconCached("newobject.svg"),"Add line", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addLine()));
   submenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add plane", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addPlane()));
+  submenu->addAction(action);
 
   action=new QAction(Utils::QIconCached("newobject.svg"),"Add group", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addGroup()));
@@ -282,6 +285,14 @@ void Group::addLine() {
   QString text = newName(contours,"Line");
   if (!text.isEmpty()) {
     new Line(text, contours, -1);
+    ((Element*)treeWidget()->topLevelItem(0))->update();
+  }
+}
+
+void Group::addPlane() {
+  QString text = newName(contours,"Plane");
+  if (!text.isEmpty()) {
+    new Plane(text, contours, -1);
     ((Element*)treeWidget()->topLevelItem(0))->update();
   }
 }

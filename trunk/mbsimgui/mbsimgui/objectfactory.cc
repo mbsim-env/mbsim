@@ -73,6 +73,8 @@ Contour* MBSimObjectFactory::createContour(TiXmlElement *element, QTreeWidgetIte
     return new Point(element->Attribute("name"),parentItem,ind);
   else if(element->ValueStr()==MBSIMNS"Line")
     return new Line(element->Attribute("name"),parentItem,ind);
+  else if(element->ValueStr()==MBSIMNS"Plane")
+    return new Plane(element->Attribute("name"),parentItem,ind);
   return 0;
 }
 

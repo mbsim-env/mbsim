@@ -24,7 +24,6 @@
 using namespace std;
 
 Contour::Contour(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element(str,parentItem,ind) {
-  setText(1,getType());
 }
 
 Contour::~Contour() {
@@ -39,6 +38,7 @@ Contour::~Contour() {
 //}
 
 Point::Point(const QString &str, QTreeWidgetItem *parentItem, int ind) : Contour(str,parentItem,ind) {
+  setText(1,getType());
   properties->addStretch();
 }
 
@@ -46,8 +46,19 @@ Point::~Point() {
 }
 
 Line::Line(const QString &str, QTreeWidgetItem *parentItem, int ind) : Contour(str,parentItem,ind) {
+  setText(1,getType());
   properties->addStretch();
 }
 
 Line::~Line() {
+}
+
+Plane::Plane(const QString &str, QTreeWidgetItem *parentItem, int ind) : Contour(str,parentItem,ind) {
+  setText(1,getType());
+ // visu = new ExtXMLWidget("OpenMBV frame",new OMBVFrameWidget("NOTSET",grey?"":MBSIMNS"enableOpenMBV"), true);
+ // properties->addToTab("Visualisation", visu);
+  properties->addStretch();
+}
+
+Plane::~Plane() {
 }

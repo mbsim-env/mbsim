@@ -133,6 +133,17 @@ class PlanarCoulombFriction : public FrictionForceLawWidget {
     ExtXMLWidget* frictionCoefficient;
 };
 
+class SpatialCoulombFriction : public FrictionForceLawWidget {
+
+  public:
+    SpatialCoulombFriction();
+    virtual QString getType() const { return "SpatialCoulombFriction"; }
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+  protected:
+    ExtXMLWidget* frictionCoefficient;
+};
+
 class RegularizedPlanarFriction : public FrictionForceLawWidget {
   Q_OBJECT
 
@@ -140,6 +151,20 @@ class RegularizedPlanarFriction : public FrictionForceLawWidget {
     RegularizedPlanarFriction(); 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual QString getType() const { return "RegularizedPlanarFriction"; }
+  protected:
+    QVBoxLayout *layout;
+    QComboBox *funcList;
+  protected slots:
+    void defineFunction(int);
+};
+
+class RegularizedSpatialFriction : public FrictionForceLawWidget {
+  Q_OBJECT
+
+  public:
+    RegularizedSpatialFriction(); 
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual QString getType() const { return "RegularizedSpatialFriction"; }
   protected:
     QVBoxLayout *layout;
     QComboBox *funcList;
@@ -167,6 +192,16 @@ class PlanarCoulombImpact : public FrictionImpactLawWidget {
     ExtXMLWidget* frictionCoefficient;
 };
 
+class SpatialCoulombImpact : public FrictionImpactLawWidget {
+
+  public:
+    SpatialCoulombImpact();
+    virtual QString getType() const { return "SpatialCoulombImpact"; }
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+  protected:
+    ExtXMLWidget* frictionCoefficient;
+};
 
 class GeneralizedForceLawChoiceWidget : public XMLWidget {
   Q_OBJECT
