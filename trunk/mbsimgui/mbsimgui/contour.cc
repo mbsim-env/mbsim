@@ -21,6 +21,7 @@
 #include "contour.h"
 #include "basic_widgets.h"
 #include "string_widgets.h"
+#include "ombv_widgets.h"
 #include <QMenu>
 
 using namespace std;
@@ -57,25 +58,38 @@ Line::~Line() {
 
 Plane::Plane(const QString &str, QTreeWidgetItem *parentItem, int ind) : Contour(str,parentItem,ind) {
   setText(1,getType());
- // visu = new ExtXMLWidget("OpenMBV frame",new OMBVFrameWidget("NOTSET",grey?"":MBSIMNS"enableOpenMBV"), true);
- // properties->addToTab("Visualisation", visu);
+  properties->addTab("Visualisation");
+
+  visu = new ExtXMLWidget("OpenMBV Plane",new OMBVPlaneWidget(MBSIMNS"enableOpenMBV"),true);
+  properties->addToTab("Visualisation", visu);
+
   properties->addStretch();
 }
 
 Plane::~Plane() {
 }
 
+void Plane::initializeUsingXML(TiXmlElement *element) {
+  Contour::initializeUsingXML(element);
+  visu->initializeUsingXML(element);
+}
+
+TiXmlElement* Plane::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *e = Contour::writeXMLFile(parent);
+  visu->writeXMLFile(e);
+  return e;
+}
+
 Sphere::Sphere(const QString &str, QTreeWidgetItem *parentItem, int ind) : Contour(str,parentItem,ind) {
   setText(1,getType());
   properties->addTab("Visualisation");
- // visu = new ExtXMLWidget("OpenMBV frame",new OMBVFrameWidget("NOTSET",grey?"":MBSIMNS"enableOpenMBV"), true);
- // properties->addToTab("Visualisation", visu);
+ 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new ScalarWidget("1"), MBSIMNS"radius", lengthUnits(), 4));
   radius= new ExtXMLWidget("Radius",new ExtPhysicalVarWidget(input));
   properties->addToTab("General", radius);
 
-  visu= new ExtXMLWidget("OpenMBV",new EmptyWidget(MBSIMNS"enableOpenMBV"),true);
+  visu= new ExtXMLWidget("OpenMBV Sphere",new EmptyWidget(MBSIMNS"enableOpenMBV"),true);
   properties->addToTab("Visualisation", visu);
 
   properties->addStretch();

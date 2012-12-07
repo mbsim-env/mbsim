@@ -594,3 +594,37 @@ TiXmlElement* OMBVBodySelectionWidget::writeXMLFile(TiXmlNode *parent) {
   parent->LinkEndChild(ele0);
   return 0;
 }
+
+OMBVPlaneWidget::OMBVPlaneWidget(const string &xmlName_) : xmlName(xmlName_) {
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0.1"), MBSIMNS"size", lengthUnits(), 4));
+  size = new ExtXMLWidget("Size",new ExtPhysicalVarWidget(input));
+  layout->addWidget(size);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("10"), MBSIMNS"numberOfLines", QStringList(), 0));
+  numberOfLines = new ExtXMLWidget("Number of lines",new ExtPhysicalVarWidget(input));
+  layout->addWidget(numberOfLines);
+}
+
+bool OMBVPlaneWidget::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e=element->FirstChildElement(xmlName);
+  if(e) {
+    size->initializeUsingXML(e);
+    numberOfLines->initializeUsingXML(e);
+    return true;
+  }
+  return false;
+}
+
+TiXmlElement* OMBVPlaneWidget::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *e=new TiXmlElement(xmlName);
+  parent->LinkEndChild(e);
+  size->writeXMLFile(e);
+  numberOfLines->writeXMLFile(e);
+  return e;
+}
