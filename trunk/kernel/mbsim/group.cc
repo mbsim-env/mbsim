@@ -235,6 +235,14 @@ namespace MBSim {
         //setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
       I->enableOpenMBV(getDouble(e->FirstChildElement(MBSIMNS"size")),
           getDouble(e->FirstChildElement(MBSIMNS"offset")));
+
+      // pass a OPENMBV_ID processing instruction to the OpenMBV Frame object
+      for(TiXmlNode *child=e->FirstChild(); child; child=child->NextSibling()) {
+        TiXmlUnknown *unknown=child->ToUnknown();
+        const size_t length=strlen("?OPENMBV_ID ");
+        if(unknown && unknown->ValueStr().substr(0, length)=="?OPENMBV_ID ")
+          I->getOpenMBVFrame()->setID(unknown->ValueStr().substr(length, unknown->ValueStr().length()-length-1));
+      }
     }
 #endif
   }

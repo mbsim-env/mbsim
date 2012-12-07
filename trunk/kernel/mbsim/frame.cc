@@ -161,6 +161,14 @@ namespace MBSim {
     if((ee=element->FirstChildElement(MBSIMNS"enableOpenMBV"))) {
       enableOpenMBV(getDouble(ee->FirstChildElement(MBSIMNS"size")),
           getDouble(ee->FirstChildElement(MBSIMNS"offset")));
+
+      // pass a OPENMBV_ID processing instruction to the OpenMBV Frame object
+      for(TiXmlNode *child=ee->FirstChild(); child; child=child->NextSibling()) {
+        TiXmlUnknown *unknown=child->ToUnknown();
+        const size_t length=strlen("?OPENMBV_ID ");
+        if(unknown && unknown->ValueStr().substr(0, length)=="?OPENMBV_ID ")
+          openMBVFrame->setID(unknown->ValueStr().substr(length, unknown->ValueStr().length()-length-1));
+      }
     }
 #endif
   }
