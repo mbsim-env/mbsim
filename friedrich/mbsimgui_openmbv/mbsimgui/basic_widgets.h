@@ -36,6 +36,18 @@ class FrameBrowser;
 class ContourBrowser;
 class RigidBodyBrowser;
 
+class EmptyWidget : public XMLWidget {
+
+  public:
+    EmptyWidget(const std::string &xmlName);
+
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+
+  protected:
+    std::string xmlName;
+};
+
 class LocalFrameOfReferenceWidget : public XMLWidget {
   Q_OBJECT
 

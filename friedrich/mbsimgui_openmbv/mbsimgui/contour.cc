@@ -19,12 +19,14 @@
 
 #include <config.h>
 #include "contour.h"
+#include "basic_widgets.h"
+#include "string_widgets.h"
+#include "ombv_widgets.h"
 #include <QMenu>
 
 using namespace std;
 
 Contour::Contour(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element(str,parentItem,ind) {
-  setText(1,getType());
 }
 
 Contour::~Contour() {
@@ -39,6 +41,7 @@ Contour::~Contour() {
 //}
 
 Point::Point(const QString &str, QTreeWidgetItem *parentItem, int ind) : Contour(str,parentItem,ind) {
+  setText(1,getType());
   properties->addStretch();
 }
 
@@ -46,8 +49,65 @@ Point::~Point() {
 }
 
 Line::Line(const QString &str, QTreeWidgetItem *parentItem, int ind) : Contour(str,parentItem,ind) {
+  setText(1,getType());
   properties->addStretch();
 }
 
 Line::~Line() {
 }
+
+Plane::Plane(const QString &str, QTreeWidgetItem *parentItem, int ind) : Contour(str,parentItem,ind) {
+  setText(1,getType());
+  properties->addTab("Visualisation");
+
+  visu = new ExtXMLWidget("OpenMBV Plane",new OMBVPlaneWidget(MBSIMNS"enableOpenMBV"),true);
+  properties->addToTab("Visualisation", visu);
+
+  properties->addStretch();
+}
+
+Plane::~Plane() {
+}
+
+void Plane::initializeUsingXML(TiXmlElement *element) {
+  Contour::initializeUsingXML(element);
+  visu->initializeUsingXML(element);
+}
+
+TiXmlElement* Plane::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *e = Contour::writeXMLFile(parent);
+  visu->writeXMLFile(e);
+  return e;
+}
+
+Sphere::Sphere(const QString &str, QTreeWidgetItem *parentItem, int ind) : Contour(str,parentItem,ind) {
+  setText(1,getType());
+  properties->addTab("Visualisation");
+ 
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1"), MBSIMNS"radius", lengthUnits(), 4));
+  radius= new ExtXMLWidget("Radius",new ExtPhysicalVarWidget(input));
+  properties->addToTab("General", radius);
+
+  visu= new ExtXMLWidget("OpenMBV Sphere",new EmptyWidget(MBSIMNS"enableOpenMBV"),true);
+  properties->addToTab("Visualisation", visu);
+
+  properties->addStretch();
+}
+
+Sphere::~Sphere() {
+}
+
+void Sphere::initializeUsingXML(TiXmlElement *element) {
+  Contour::initializeUsingXML(element);
+  radius->initializeUsingXML(element);
+  visu->initializeUsingXML(element);
+}
+
+TiXmlElement* Sphere::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *e = Contour::writeXMLFile(parent);
+  radius->writeXMLFile(e);
+  visu->writeXMLFile(e);
+  return e;
+}
+

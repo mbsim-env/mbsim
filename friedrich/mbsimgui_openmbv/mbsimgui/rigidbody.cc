@@ -123,6 +123,12 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
   action=new QAction(Utils::QIconCached("newobject.svg"),"Add line", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addLine()));
   submenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add plane", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addPlane()));
+  submenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add sphere", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addSphere()));
+  submenu->addAction(action);
 
   contextMenu->insertSeparator(actionSaveAs);
 
@@ -160,6 +166,21 @@ void RigidBody::addLine() {
   }
 }
 
+void RigidBody::addPlane() {
+  QString text = newName(contours,"Plane");
+  if (!text.isEmpty()) {
+    new Plane(text, contours, -1);
+    ((Element*)treeWidget()->topLevelItem(0))->update();
+  }
+}
+
+void RigidBody::addSphere() {
+  QString text = newName(contours,"Sphere");
+  if (!text.isEmpty()) {
+    new Sphere(text, contours, -1);
+    ((Element*)treeWidget()->topLevelItem(0))->update();
+  }
+}
 
 void RigidBody::resizeGeneralizedPosition() {
   int size = getSize();

@@ -46,5 +46,27 @@ class Line : public Contour {
     QString getType() const { return "Line"; }
 };
 
+class Plane : public Contour {
+  public:
+    Plane(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    ~Plane();
+    QString getType() const { return "Plane"; }
+    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+  protected:
+    ExtXMLWidget *visu;
+};
+
+class Sphere : public Contour {
+  public:
+    Sphere(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    ~Sphere();
+    QString getType() const { return "Sphere"; }
+    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+  protected:
+    ExtXMLWidget *radius, *visu;
+};
+
 
 #endif

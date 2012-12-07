@@ -73,6 +73,10 @@ Contour* MBSimObjectFactory::createContour(TiXmlElement *element, QTreeWidgetIte
     return new Point(element->Attribute("name"),parentItem,ind);
   else if(element->ValueStr()==MBSIMNS"Line")
     return new Line(element->Attribute("name"),parentItem,ind);
+  else if(element->ValueStr()==MBSIMNS"Plane")
+    return new Plane(element->Attribute("name"),parentItem,ind);
+  else if(element->ValueStr()==MBSIMNS"Sphere")
+    return new Sphere(element->Attribute("name"),parentItem,ind);
   return 0;
 }
 
@@ -141,22 +145,18 @@ Integrator* MBSimObjectFactory::createIntegrator(TiXmlElement *element, QTreeWid
   if(element==0) return 0;
   if(element->ValueStr()==MBSIMINTNS"DOPRI5Integrator")
     return new DOPRI5Integrator("DOPRI5",parentItem,ind);
-  //  if(element->ValueStr()==MBSIMINTNS"RADAU5Integrator")
-  //    return new RADAU5Integrator;
-  if(element->ValueStr()==MBSIMINTNS"LSODEIntegrator")
+  else if(element->ValueStr()==MBSIMINTNS"RADAU5Integrator")
+    return new RADAU5Integrator("RADAU5",parentItem,ind);
+  else if(element->ValueStr()==MBSIMINTNS"LSODEIntegrator")
     return new LSODEIntegrator("LSODE",parentItem,ind);
-  //  if(element->ValueStr()==MBSIMINTNS"LSODARIntegrator")
-  //    return new LSODARIntegrator;
-  //  if(element->ValueStr()==MBSIMINTNS"TimeSteppingIntegrator")
-  //    return new TimeSteppingIntegrator;
-  //  if(element->ValueStr()==MBSIMINTNS"TimeSteppingSSCIntegrator")
-  //    return new TimeSteppingSSCIntegrator;
-  //  if(element->ValueStr()==MBSIMINTNS"ThetaTimeSteppingIntegrator")
-  //    return new ThetaTimeSteppingIntegrator;
-  //  if(element->ValueStr()==MBSIMINTNS"EulerExplicitIntegrator")
-  //    return new EulerExplicitIntegrator;
-  //  if(element->ValueStr()==MBSIMINTNS"RKSuiteIntegrator")
-  //    return new RKSuiteIntegrator;
+  else if(element->ValueStr()==MBSIMINTNS"LSODARIntegrator")
+    return new LSODARIntegrator("LSODAR",parentItem,ind);
+  else if(element->ValueStr()==MBSIMINTNS"TimeSteppingIntegrator")
+    return new TimeSteppingIntegrator("TimeStepping",parentItem,ind);
+  else if(element->ValueStr()==MBSIMINTNS"EulerExplicitIntegrator")
+    return new EulerExplicitIntegrator("EulerExplicit",parentItem,ind);
+  else if(element->ValueStr()==MBSIMINTNS"RKSuiteIntegrator")
+    return new RKSuiteIntegrator("RKSuite",parentItem,ind);
   return 0;
 }
 
