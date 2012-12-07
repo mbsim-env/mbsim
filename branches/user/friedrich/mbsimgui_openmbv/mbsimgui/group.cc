@@ -126,6 +126,12 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
   action=new QAction(Utils::QIconCached("newobject.svg"),"Add line", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addLine()));
   submenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add plane", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addPlane()));
+  submenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add sphere", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addSphere()));
+  submenu->addAction(action);
 
   action=new QAction(Utils::QIconCached("newobject.svg"),"Add group", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addGroup()));
@@ -286,6 +292,22 @@ void Group::addLine() {
   }
 }
 
+void Group::addPlane() {
+  QString text = newName(contours,"Plane");
+  if (!text.isEmpty()) {
+    new Plane(text, contours, -1);
+    ((Element*)treeWidget()->topLevelItem(0))->update();
+  }
+}
+
+void Group::addSphere() {
+  QString text = newName(contours,"Sphere");
+  if (!text.isEmpty()) {
+    new Sphere(text, contours, -1);
+    ((Element*)treeWidget()->topLevelItem(0))->update();
+  }
+}
+
 void Group::addGroup() {
   new Group(newName(groups,"Group"), groups, -1);
   ((Element*)treeWidget()->topLevelItem(0))->update();
@@ -420,15 +442,15 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   }
 
   // extraDynamics
-  E=element->FirstChildElement(MBSIMNS"extraDynamics");
-  if(E)
-    E=E->FirstChildElement();
-  //ExtraDynamic *ed;
-  while(E) {
-    //        ed=ObjectFactory::getInstance()->createExtraDynamic(E);
-    //        addExtraDynamic(ed);
-    //        ed->initializeUsingXML(E);
-    E=E->NextSiblingElement();
+  if(element->FirstChildElement(MBSIMNS"extraDynamics")) {
+    E=element->FirstChildElement(MBSIMNS"extraDynamics")->FirstChildElement();
+    //ExtraDynamic *ed;
+    while(E) {
+      //        ed=ObjectFactory::getInstance()->createExtraDynamic(E);
+      //        addExtraDynamic(ed);
+      //        ed->initializeUsingXML(E);
+      E=E->NextSiblingElement();
+    }
   }
 
   // links
@@ -576,6 +598,7 @@ void Group::paste() {
       o->setName(text);
     }
     o->initializeUsingXML(e);
+    o->initialize();
     ((Element*)treeWidget()->topLevelItem(0))->update();
     return;
   }
@@ -596,6 +619,7 @@ void Group::paste() {
       g->setName(text);
     }
     g->initializeUsingXML(e);
+    g->initialize();
     ((Element*)treeWidget()->topLevelItem(0))->update();
     return;
   }

@@ -44,6 +44,8 @@ class Group : public Element {
     void addFrame();
     void addPoint();
     void addLine();
+    void addPlane();
+    void addSphere();
     void addRigidBody();
     void addJointConstraint();
     void addJoint();
