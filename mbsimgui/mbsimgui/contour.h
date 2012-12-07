@@ -46,5 +46,14 @@ class Line : public Contour {
     QString getType() const { return "Line"; }
 };
 
+class Plane : public Contour {
+  public:
+    Plane(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    ~Plane();
+    QString getType() const { return "Plane"; }
+  protected:
+    ExtXMLWidget* visu;
+};
+
 
 #endif
