@@ -9,7 +9,8 @@ AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_LANG([C++])
 
-PKG_CHECK_MODULES(DEPS, mbsim openmbvcppinterface mbxmlutils)
+PKG_CHECK_MODULES(DEPS, mbsim openmbvcppinterface)
+PKG_CHECK_MODULES(NOLINK_DEPS, mbxmlutils)
 
 if test "_$host_os" = "_mingw32" ; then
   AC_DEFINE([MBSIMXML_MINGW], [1], [Host System is MinGW/MSys])
