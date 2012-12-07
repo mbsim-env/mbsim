@@ -1379,14 +1379,14 @@ namespace MBSim {
     if(gifl) {
       setContactImpactLaw(gifl);
       gifl->initializeUsingXML(e->FirstChildElement());
-      e=e->NextSiblingElement();
     }
+    e=e->NextSiblingElement();
     FrictionForceLaw *ffl=ObjectFactory::getInstance()->createFrictionForceLaw(e->FirstChildElement());
     if(ffl) {
       setFrictionForceLaw(ffl);
       ffl->initializeUsingXML(e->FirstChildElement());
-      e=e->NextSiblingElement();
     }
+    e=e->NextSiblingElement();
     FrictionImpactLaw *fil=ObjectFactory::getInstance()->createFrictionImpactLaw(e->FirstChildElement());
     if(fil) {
       setFrictionImpactLaw(fil);
