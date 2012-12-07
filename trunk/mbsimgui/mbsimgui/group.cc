@@ -129,6 +129,9 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
   action=new QAction(Utils::QIconCached("newobject.svg"),"Add plane", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addPlane()));
   submenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add sphere", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addSphere()));
+  submenu->addAction(action);
 
   action=new QAction(Utils::QIconCached("newobject.svg"),"Add group", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addGroup()));
@@ -297,6 +300,14 @@ void Group::addPlane() {
   }
 }
 
+void Group::addSphere() {
+  QString text = newName(contours,"Sphere");
+  if (!text.isEmpty()) {
+    new Sphere(text, contours, -1);
+    ((Element*)treeWidget()->topLevelItem(0))->update();
+  }
+}
+
 void Group::addGroup() {
   new Group(newName(groups,"Group"), groups, -1);
   ((Element*)treeWidget()->topLevelItem(0))->update();
@@ -431,13 +442,15 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   }
 
   // extraDynamics
-  E=element->FirstChildElement(MBSIMNS"extraDynamics")->FirstChildElement();
-  //ExtraDynamic *ed;
-  while(E) {
-    //        ed=ObjectFactory::getInstance()->createExtraDynamic(E);
-    //        addExtraDynamic(ed);
-    //        ed->initializeUsingXML(E);
-    E=E->NextSiblingElement();
+  if(element->FirstChildElement(MBSIMNS"extraDynamics")) {
+    E=element->FirstChildElement(MBSIMNS"extraDynamics")->FirstChildElement();
+    //ExtraDynamic *ed;
+    while(E) {
+      //        ed=ObjectFactory::getInstance()->createExtraDynamic(E);
+      //        addExtraDynamic(ed);
+      //        ed->initializeUsingXML(E);
+      E=E->NextSiblingElement();
+    }
   }
 
   // links

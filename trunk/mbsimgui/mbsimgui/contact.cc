@@ -53,7 +53,7 @@ Contact::Contact(const QString &str, QTreeWidgetItem *parentItem, int ind) : Lin
   properties->addToTab("Kinetics", frictionImpactLaw);
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new BoolWidget("0"),MBSIMNS"enableOpenMBVContactPoints",QStringList(),1));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0.1"),MBSIMNS"enableOpenMBVContactPoints",lengthUnits(),4));
   enableOpenMBVContactPoints = new ExtXMLWidget("OpenMBV contact points",new ExtPhysicalVarWidget(input),true); 
   properties->addToTab("Visualisation",enableOpenMBVContactPoints);
 
