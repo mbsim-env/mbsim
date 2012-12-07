@@ -19,6 +19,8 @@
 
 #include <config.h>
 #include "contour.h"
+#include "basic_widgets.h"
+#include "string_widgets.h"
 #include <QMenu>
 
 using namespace std;
@@ -62,3 +64,36 @@ Plane::Plane(const QString &str, QTreeWidgetItem *parentItem, int ind) : Contour
 
 Plane::~Plane() {
 }
+
+Sphere::Sphere(const QString &str, QTreeWidgetItem *parentItem, int ind) : Contour(str,parentItem,ind) {
+  setText(1,getType());
+  properties->addTab("Visualisation");
+ // visu = new ExtXMLWidget("OpenMBV frame",new OMBVFrameWidget("NOTSET",grey?"":MBSIMNS"enableOpenMBV"), true);
+ // properties->addToTab("Visualisation", visu);
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1"), MBSIMNS"radius", lengthUnits(), 4));
+  radius= new ExtXMLWidget("Radius",new ExtPhysicalVarWidget(input));
+  properties->addToTab("General", radius);
+
+  visu= new ExtXMLWidget("OpenMBV",new EmptyWidget(MBSIMNS"enableOpenMBV"),true);
+  properties->addToTab("Visualisation", visu);
+
+  properties->addStretch();
+}
+
+Sphere::~Sphere() {
+}
+
+void Sphere::initializeUsingXML(TiXmlElement *element) {
+  Contour::initializeUsingXML(element);
+  radius->initializeUsingXML(element);
+  visu->initializeUsingXML(element);
+}
+
+TiXmlElement* Sphere::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *e = Contour::writeXMLFile(parent);
+  radius->writeXMLFile(e);
+  visu->writeXMLFile(e);
+  return e;
+}
+
