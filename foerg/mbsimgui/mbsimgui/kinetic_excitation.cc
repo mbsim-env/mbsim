@@ -34,9 +34,11 @@ KineticExcitation::KineticExcitation(const QString &str, QTreeWidgetItem *parent
   properties->addTab("Visualisation");
 
   forceArrow = new ExtXMLWidget("OpenMBV force arrow",new OMBVArrowWidget("NOTSET"),true);
+  ((OMBVArrowWidget*)forceArrow->getWidget())->setID(getID());
   properties->addToTab("Visualisation",forceArrow);
 
   momentArrow = new ExtXMLWidget("OpenMBV moment arrow",new OMBVArrowWidget("NOTSET"),true);
+  ((OMBVArrowWidget*)momentArrow->getWidget())->setID(getID());
   properties->addToTab("Visualisation",momentArrow);
 
   connections = new ExtXMLWidget("Connections",new ConnectFramesWidget(1,this));

@@ -474,7 +474,7 @@ TiXmlElement* CompoundRigidBodyWidget::writeXMLFile(TiXmlNode *parent) {
   return e;
 }
 
-OMBVBodyChoiceWidget::OMBVBodyChoiceWidget(const string &name_, bool flag) : ombv(0), name(name_) {
+OMBVBodyChoiceWidget::OMBVBodyChoiceWidget(const string &name_, bool flag, const string &ID_) : ombv(0), name(name_), ID(ID_) {
 
   layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -584,13 +584,11 @@ OMBVBodySelectionWidget::OMBVBodySelectionWidget(RigidBody *body) : ombv(0), ref
   layout->setMargin(0);
   setLayout(layout);
 
-  ombv = new OMBVBodyChoiceWidget("NOTSET");
+  ombv = new OMBVBodyChoiceWidget("NOTSET", true, body->getID());
   ref=new LocalFrameOfReferenceWidget(MBSIMNS"frameOfReference",body);
   ExtXMLWidget *widget = new ExtXMLWidget("Frame of reference",ref);
   layout->addWidget(ombv);
   layout->addWidget(widget);
-
-  ombv->setID(body->getID());
 }
 
 bool OMBVBodySelectionWidget::initializeUsingXML(TiXmlElement *element) {

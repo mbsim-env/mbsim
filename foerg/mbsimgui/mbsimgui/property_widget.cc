@@ -84,3 +84,13 @@ void PropertyWidget::addTab(const QString &name) {
 void PropertyWidget::setParentObject(QObject *parentObject_) {
   parentObject=parentObject_;
 }
+
+void PropertyWidget::initializeUsingXML(TiXmlElement *element) {
+  for(unsigned int i=0; i<widget.size(); i++)
+    widget[i]->initializeUsingXML(element);
+}
+
+TiXmlElement* PropertyWidget::writeXMLFile(TiXmlNode *parent) {
+  for(unsigned int i=0; i<widget.size(); i++)
+    widget[i]->writeXMLFile(parent);
+}

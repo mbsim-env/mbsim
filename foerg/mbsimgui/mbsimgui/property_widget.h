@@ -26,9 +26,13 @@
 class ExtXMLWidget;
 class QVBoxLayout;
 class QTabWidget;
+class TiXmlElement;
+class TiXmlNode;
 
 class PropertyWidget : public QScrollArea {
+  Q_OBJECT
 
+    friend class PropertyDialog;
   public:
     PropertyWidget(QObject *obj);
     ~PropertyWidget();
@@ -40,12 +44,16 @@ class PropertyWidget : public QScrollArea {
     void update();
     void initialize();
     void resizeVariables();
+    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
   protected:
     QObject* parentObject;
     std::map<QString,QVBoxLayout*> layout;
     QVBoxLayout *mainLayout;
     std::vector<ExtXMLWidget*> widget;
     QTabWidget *tabWidget;
+  signals:
+    void dataAccepted();
 };
 
 #endif
