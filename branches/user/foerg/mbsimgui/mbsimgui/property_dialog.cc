@@ -19,6 +19,8 @@
 
 #include "property_dialog.h"
 #include "mainwindow.h"
+#include "element.h"
+#include <map>
 #include <QGridLayout>
 #include <QPushButton>
 #include <QMessageBox>
@@ -35,7 +37,7 @@ PropertyDialog::PropertyDialog(MainWindow *mw_,
 
   // save dialog settings
   savedSettings=new TiXmlElement("dummy");
-  writeXMLFile(savedSettings);
+  ((PropertyWidget*)widget)->writeXMLFile(savedSettings);
 
   // create dialog
   resize(550, 650);
@@ -44,7 +46,7 @@ PropertyDialog::PropertyDialog(MainWindow *mw_,
   layout->addWidget(widget, 0, 0, 1, 4);
   QPushButton *button;
   button=new QPushButton("Cancel");
-  button->setDisabled(true); // MISSING: remove if Cancel works
+  //button->setDisabled(true); // MISSING: remove if Cancel works
   connect(button, SIGNAL(clicked(bool)), this, SLOT(cancelPressed()));
   layout->addWidget(button, 1, 0);
   button=new QPushButton("Apply");
@@ -66,33 +68,45 @@ void PropertyDialog::create(MainWindow *mw,
                             boost::function<TiXmlElement* (TiXmlNode*)> writeXMLFile,
                             boost::function<void (TiXmlElement*)> initializeUsingXML) {
   // singelton
-  if(instance) {
-    QMessageBox::information(NULL, "Dialog Information",
-                             "Only one property dialog can be opened at the same time.");
-    return;
-  }
+//  if(instance) {
+//    QMessageBox::information(NULL, "Dialog Information",
+//                             "Only one property dialog can be opened at the same time.");
+//    return;
+//  }
 
-  instance=new PropertyDialog(mw, widget, writeXMLFile, initializeUsingXML);
+  PropertyDialog *instance=new PropertyDialog(mw, widget, writeXMLFile, initializeUsingXML);
+
   instance->show();
+  //instance->resize(1024,768);
 }
 
 void PropertyDialog::applyPressed() {
+  ((PropertyWidget*)widget)->emit dataAccepted();
   mw->inlineOpenMBV();
 }
 
 void PropertyDialog::cancelPressed() {
+  std::cout << "cancel" << std::endl;
   // restore dialog settings
-  //MISSING not working: initializeUsingXML(savedSettings->FirstChildElement());
 
+  ((PropertyWidget*)widget)->initializeUsingXML(savedSettings);
+  ((PropertyWidget*)widget)->initialize();
+  ((PropertyWidget*)widget)->update();
+
+  blockSignals(true);
   close();
+  blockSignals(false);
   instance=NULL;
   layout()->removeWidget(widget);
   widget->setParent(NULL);
-  delete savedSettings;
+  //delete savedSettings;
   deleteLater();
 }
 
 void PropertyDialog::okPressed() {
+  ((PropertyWidget*)widget)->emit dataAccepted();
+
+  std::cout << "ok" << std::endl;
   blockSignals(true);
   close();
   blockSignals(false);

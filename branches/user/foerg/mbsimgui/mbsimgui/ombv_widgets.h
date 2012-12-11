@@ -170,12 +170,11 @@ class OMBVBodyChoiceWidget : public XMLWidget {
 
   public:
 
-    OMBVBodyChoiceWidget(const std::string &name, bool flag=true);
+    OMBVBodyChoiceWidget(const std::string &name, bool flag=true, const std::string &ID="");
 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void setName(const std::string &name) {ombv->setName(name);}
-    void setID(const std::string &ID_) { ID=ID_; }
 
   protected slots:
       void ombvSelection(int index);

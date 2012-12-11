@@ -17,8 +17,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _MAINWINDOW_H_
-#define _MAINWINDOW_H_
+#ifndef __MAINWINDOW_H_
+#define __MAINWINDOW_H_
 
 #include <QMainWindow>
 #include <mbxmlutilstinyxml/tinyxml.h>
@@ -44,6 +44,7 @@ class MainWindow : public QMainWindow {
 
   private:
     QTreeWidget *elementList, *integratorList, *parameterList;
+    QStackedWidget *pagesWidget;
     QLineEdit *fileMBS, *fileIntegrator, *fileParameter;
     QAction *actionSaveMBSAs, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameter;
     void loadMBS(const QString &file);
@@ -59,10 +60,8 @@ class MainWindow : public QMainWindow {
     static MBXMLUtils::OctaveEvaluator *octEval;
   public slots:
     void elementListClicked();
-    void elementListDoubleClicked();
-    void integratorListDoubleClicked();
     void parameterListClicked();
-    void parameterListDoubleClicked();
+    void integratorListClicked();
 //    void parameterListClicked(const QPoint &pos);
     void newMBS();
     void loadMBS();
@@ -94,7 +93,6 @@ class MainWindow : public QMainWindow {
     void resizeVariables();
   protected slots:
     void selectElement(std::string);
-    void openPropertyDialog(std::string);
   protected:
     void closeEvent ( QCloseEvent * event );
 };

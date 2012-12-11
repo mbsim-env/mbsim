@@ -172,7 +172,7 @@ MainWindow::MainWindow() {
 
   setWindowTitle("MBSim GUI");
 
-  setCentralWidget(inlineOpenMBVMW);
+  //setCentralWidget(inlineOpenMBVMW);
 
   elementList = new QTreeWidget;
   elementList->setColumnCount(2);
@@ -180,11 +180,10 @@ MainWindow::MainWindow() {
   list << "Name" << "Type";
   elementList->setHeaderLabels(list);
   connect(elementList,SIGNAL(pressed(QModelIndex)), this, SLOT(elementListClicked()));
-  connect(elementList,SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(elementListDoubleClicked()));
 
   integratorList = new QTreeWidget;
   integratorList->setHeaderLabel("Type");
-  connect(integratorList,SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(integratorListDoubleClicked()));
+  connect(integratorList,SIGNAL(pressed(QModelIndex)), this, SLOT(integratorListClicked()));
 
   parameterList = new QTreeWidget;
   parameterList->setColumnCount(2);
@@ -192,13 +191,15 @@ MainWindow::MainWindow() {
   list << "Name" << "Value";
   parameterList->setHeaderLabels(list);
   connect(parameterList,SIGNAL(pressed(QModelIndex)), this, SLOT(parameterListClicked()));
-  connect(parameterList,SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(parameterListDoubleClicked()));
   //connect(parameterList,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(parameterListClicked(const QPoint &)));
   //parameterList->header()->setContextMenuPolicy (Qt::CustomContextMenu);
   //connect(parameterList->header(),SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(parameterListClicked(const QPoint &)));
 
+  QDockWidget *dockWidget4 = new QDockWidget("OpenMBV");
+  addDockWidget(Qt::RightDockWidgetArea,dockWidget4);
+
   QDockWidget *dockWidget = new QDockWidget("MBS");
-  addDockWidget(Qt::LeftDockWidgetArea,dockWidget);
+  addDockWidget(Qt::RightDockWidgetArea,dockWidget);
   QWidget *box = new QWidget;
   dockWidget->setWidget(box);
   QGridLayout* gl = new QGridLayout;
@@ -209,10 +210,10 @@ MainWindow::MainWindow() {
   gl->addWidget(fileMBS,0,1);
   gl->addWidget(elementList,1,0,1,2);
 
-  dockWidget = new QDockWidget("Integrator");
-  addDockWidget(Qt::LeftDockWidgetArea,dockWidget);
+  QDockWidget *dockWidget2 = new QDockWidget("Integrator");
+  addDockWidget(Qt::RightDockWidgetArea,dockWidget2);
   box = new QWidget;
-  dockWidget->setWidget(box);
+  dockWidget2->setWidget(box);
   gl = new QGridLayout;
   box->setLayout(gl);
   fileIntegrator = new QLineEdit("");
@@ -221,10 +222,10 @@ MainWindow::MainWindow() {
   gl->addWidget(fileIntegrator,0,1);
   gl->addWidget(integratorList,1,0,1,2);
 
-  dockWidget = new QDockWidget("Parameter");
-  addDockWidget(Qt::LeftDockWidgetArea,dockWidget);
+  QDockWidget *dockWidget3 = new QDockWidget("Parameter");
+  addDockWidget(Qt::RightDockWidgetArea,dockWidget3);
   box = new QWidget;
-  dockWidget->setWidget(box);
+  dockWidget3->setWidget(box);
   gl = new QGridLayout;
   box->setLayout(gl);
   fileParameter = new QLineEdit("");
@@ -232,6 +233,20 @@ MainWindow::MainWindow() {
   gl->addWidget(new QLabel("File:"),0,0);
   gl->addWidget(fileParameter,0,1);
   gl->addWidget(parameterList,1,0,1,2);
+
+
+  tabifyDockWidget(dockWidget,dockWidget2);
+  tabifyDockWidget(dockWidget2,dockWidget3);
+
+  QWidget *centralWidget = new QWidget;  
+  setCentralWidget(centralWidget);
+  QHBoxLayout *mainlayout = new QHBoxLayout;
+  centralWidget->setLayout(mainlayout);
+  pagesWidget = new QStackedWidget;
+//  mainlayout->addWidget(inlineOpenMBVMW);
+//  dockWidget4->setWidget(pagesWidget);
+  mainlayout->addWidget(pagesWidget);
+  dockWidget4->setWidget(inlineOpenMBVMW);
 
   newDOPRI5Integrator();
   newMBS();
@@ -256,7 +271,6 @@ void MainWindow::initInlineOpenMBV() {
   inlineOpenMBVMW=new OpenMBVGUI::MainWindow(arg);
 
   connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, Object*)), this, SLOT(selectElement(std::string)));
-  connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, Object*)), this, SLOT(openPropertyDialog(std::string)));
   connect(inlineOpenMBVMW, SIGNAL(fileReloaded()), this, SLOT(elementListClicked()));
 }
 
@@ -308,6 +322,13 @@ void MainWindow::elementListClicked() {
       menu->exec(QCursor::pos());
     }
   } 
+  else if(QApplication::mouseButtons()==Qt::LeftButton) {
+    Element *element=dynamic_cast<Element*>(elementList->currentItem());
+    if(element) {
+      pagesWidget->insertWidget(0,element->getPropertyWidget());
+      pagesWidget->setCurrentWidget(element->getPropertyWidget());
+    }
+  }
 
   Element *element=dynamic_cast<Element*>(elementList->currentItem());
   if(element)
@@ -316,20 +337,17 @@ void MainWindow::elementListClicked() {
     emit inlineOpenMBVMW->highlightObject("");
 }
 
-void MainWindow::elementListDoubleClicked() {
-  Element *element=dynamic_cast<Element*>(elementList->currentItem());
-  if(element) {
-    PropertyDialog::create(this, element->getPropertyWidget(),
-                           boost::bind(static_cast<TiXmlElement* (Element::*)(TiXmlNode*)>(&Element::writeXMLFile), element, _1),
-                           boost::bind(&Element::initializeUsingXML, element, _1));
+void MainWindow::integratorListClicked() {
+  if(QApplication::mouseButtons()==Qt::RightButton) {
+//    Element *element=(Element*)elementList->currentItem();
+//    QMenu* menu=element->getContextMenu();
+//    menu->exec(QCursor::pos());
+  } 
+  else if(QApplication::mouseButtons()==Qt::LeftButton) {
+    Integrator *integrator=(Integrator*)integratorList->currentItem();
+    pagesWidget->insertWidget(0,integrator->getPropertyWidget());
+    pagesWidget->setCurrentWidget(integrator->getPropertyWidget());
   }
-}
-
-void MainWindow::integratorListDoubleClicked() {
-  Integrator *integrator=(Integrator*)integratorList->currentItem();
-  PropertyDialog::create(this, integrator->getPropertyWidget(),
-                         boost::bind(static_cast<TiXmlElement* (Integrator::*)(TiXmlNode*)>(&Integrator::writeXMLFile), integrator, _1),
-                         boost::bind(&Integrator::initializeUsingXML, integrator, _1));
 }
 
 void MainWindow::parameterListClicked() {
@@ -340,13 +358,11 @@ void MainWindow::parameterListClicked() {
       menu->exec(QCursor::pos());
     }
   } 
-}
-
-void MainWindow::parameterListDoubleClicked() {
-  Parameter *parameter=(Parameter*)parameterList->currentItem();
-  PropertyDialog::create(this, parameter->getPropertyWidget(),
-                         boost::bind(static_cast<TiXmlElement* (Parameter::*)(TiXmlNode*)>(&Parameter::writeXMLFile), parameter, _1),
-                         boost::bind(&Parameter::initializeUsingXML, parameter, _1));
+  else if(QApplication::mouseButtons()==Qt::LeftButton) {
+    Parameter *parameter=(Parameter*)parameterList->currentItem();
+    pagesWidget->insertWidget(0,parameter->getPropertyWidget());
+    pagesWidget->setCurrentWidget(parameter->getPropertyWidget());
+  }
 }
 
 //void MainWindow::parameterListClicked(const QPoint &pos) {
@@ -722,7 +738,8 @@ void MainWindow::mbsimxml(int task) {
 }
 
 void MainWindow::preview() {
-  mbsimxml(1);
+  inlineOpenMBV();
+  //mbsimxml(1);
 }
 
 void MainWindow::simulate() {
@@ -801,11 +818,6 @@ void MainWindow::selectElement(string ID) {
     elementList->setCurrentItem(it->second);
     elementListClicked();
   }
-}
-
-void MainWindow::openPropertyDialog(string ID) {
-  // note: the element is already selected by the first click which has called selectElement
-  elementListDoubleClicked();
 }
 
 void MainWindow::help() {
