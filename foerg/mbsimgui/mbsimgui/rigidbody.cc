@@ -102,14 +102,17 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
 
   weightArrow = new ExtXMLWidget("OpenMBV weight arrow",new OMBVArrowWidget("NOTSET"),true);
   weightArrow->setXMLName(MBSIMNS"openMBVWeightArrow",false);
+  ((OMBVArrowWidget*)weightArrow->getWidget())->setID(getID());
   properties->addToTab("Visualisation",weightArrow);
 
   jointForceArrow = new ExtXMLWidget("OpenMBV joint force arrow",new OMBVArrowWidget("NOTSET"),true);
   jointForceArrow->setXMLName(MBSIMNS"openMBVJointForceArrow",false);
+  ((OMBVArrowWidget*)jointForceArrow->getWidget())->setID(getID());
   properties->addToTab("Visualisation",jointForceArrow);
 
   jointMomentArrow = new ExtXMLWidget("OpenMBV joint moment arrow",new OMBVArrowWidget("NOTSET"),true);
   jointMomentArrow->setXMLName(MBSIMNS"openMBVJointMomentArrow",false);
+  ((OMBVArrowWidget*)jointMomentArrow->getWidget())->setID(getID());
   properties->addToTab("Visualisation",jointMomentArrow);
 
   input.clear();
