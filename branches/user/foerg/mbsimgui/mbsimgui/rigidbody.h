@@ -44,7 +44,7 @@ class RigidBody : public Body {
     void addPlane();
     void addSphere();
   protected:
-    ExtXMLWidget *frameForKinematics, *mass, *inertia, *translation, *rotation, *frameOfReference, *framePos, *contourPos, *ombvEditor, *weightArrow, *jointForceArrow, *jointMomentArrow;
+    ExtXMLWidget *frameForKinematics, *mass, *inertia, *translation, *rotation, *frameOfReference, *framePos, *contourPos, *ombvEditor, *weightArrow, *jointForceArrow, *jointMomentArrow, *isFrameOfBodyForRotation;
     bool constrained;
 };
 
