@@ -865,3 +865,89 @@ ParameterValueWidget::ParameterValueWidget(PhysicalStringWidget *var) {
 void ParameterValueWidget::parameterChanged() {
   emit parameterChanged(getValue().c_str());
 }
+
+SolverTolerances::SolverTolerances() {
+  QVBoxLayout *layout = new QVBoxLayout;
+  setLayout(layout);
+  layout->setMargin(0);
+
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-15"), MBSIMNS"projection", noUnitUnits(), 1));
+  projection = new ExtXMLWidget("Projection",new ExtPhysicalVarWidget(input),true);
+  layout->addWidget(projection);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-8"), MBSIMNS"g", noUnitUnits(), 1));
+  g = new ExtXMLWidget("g",new ExtPhysicalVarWidget(input),true);
+  layout->addWidget(g);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-10"), MBSIMNS"gd", noUnitUnits(), 1));
+  gd = new ExtXMLWidget("gd",new ExtPhysicalVarWidget(input),true);
+  layout->addWidget(gd);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-12"), MBSIMNS"gdd", noUnitUnits(), 1));
+  gdd = new ExtXMLWidget("gdd",new ExtPhysicalVarWidget(input),true);
+  layout->addWidget(gdd);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-12"), MBSIMNS"la", noUnitUnits(), 1));
+  la = new ExtXMLWidget("la",new ExtPhysicalVarWidget(input),true);
+  layout->addWidget(la);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-10"), MBSIMNS"La", noUnitUnits(), 1));
+  La = new ExtXMLWidget("La",new ExtPhysicalVarWidget(input),true);
+  layout->addWidget(La);
+}
+
+bool SolverTolerances::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e=element->FirstChildElement(MBSIMNS"tolerances");
+  if(e) {
+    projection->initializeUsingXML(e);
+    g->initializeUsingXML(e);
+    gd->initializeUsingXML(e);
+    gdd->initializeUsingXML(e);
+    la->initializeUsingXML(e);
+    La->initializeUsingXML(e);
+    return true;
+  }
+  return false;
+}
+
+TiXmlElement* SolverTolerances::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *e=new TiXmlElement(MBSIMNS"tolerances");
+  parent->LinkEndChild(e);
+  projection->writeXMLFile(e);
+  g->writeXMLFile(e);
+  gd->writeXMLFile(e);
+  gdd->writeXMLFile(e);
+  la->writeXMLFile(e);
+  La->writeXMLFile(e);
+  return e;
+}
+
+SolverParameters::SolverParameters() {
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+  tolerances = new ExtXMLWidget("Tolerances",new SolverTolerances,true);
+  layout->addWidget(tolerances);
+}
+
+bool SolverParameters::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e=element->FirstChildElement(MBSIMNS"solverParameters");
+  if(e) {
+    tolerances->initializeUsingXML(e);
+    return true;
+  }
+  return false;
+}
+
+TiXmlElement* SolverParameters::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *e=new TiXmlElement(MBSIMNS"solverParameters");
+  parent->LinkEndChild(e);
+  tolerances->writeXMLFile(e);
+  return e;
+}

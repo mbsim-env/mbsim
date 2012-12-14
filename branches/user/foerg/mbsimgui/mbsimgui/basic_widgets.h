@@ -35,6 +35,7 @@ class QListWidget;
 class FrameBrowser;
 class ContourBrowser;
 class RigidBodyBrowser;
+class ExtXMLWidget;
 
 class EmptyWidget : public XMLWidget {
 
@@ -341,6 +342,30 @@ class ParameterValueWidget : public XMLWidget {
     void parameterChanged();
   signals:
     void parameterChanged(const QString &str);
+};
+
+class SolverTolerances : public XMLWidget {
+
+  public:
+    SolverTolerances();
+
+   virtual bool initializeUsingXML(TiXmlElement *element);
+   virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+
+  protected:
+    ExtXMLWidget *projection, *g, *gd, *gdd, *la, *La;
+};
+
+class SolverParameters : public XMLWidget {
+
+  public:
+    SolverParameters();
+
+   virtual bool initializeUsingXML(TiXmlElement *element);
+   virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+
+  protected:
+    ExtXMLWidget *tolerances;
 };
 
 #endif

@@ -59,6 +59,7 @@ Solver::Solver(const QString &str, QTreeWidgetItem *parentItem, int ind) : Group
   Element::copiedElement = 0;
 
   properties->addTab("Environment");
+  properties->addTab("Solver parameters");
   properties->addTab("Extra");
 
   vector<PhysicalStringWidget*> input;
@@ -70,6 +71,9 @@ Solver::Solver(const QString &str, QTreeWidgetItem *parentItem, int ind) : Group
 
   environment = new ExtXMLWidget("Acceleration of gravity",new ExtPhysicalVarWidget(input));
   properties->addToTab("Environment", environment);
+
+  solverParameters = new ExtXMLWidget("Solver parameters",new SolverParameters,true); 
+  properties->addToTab("Solver parameters",solverParameters);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new BoolWidget("1"),MBSIMNS"inverseKinetics",QStringList(),1));
@@ -92,61 +96,9 @@ void Solver::initializeUsingXML(TiXmlElement *element) {
     e=e->NextSiblingElement();
   }
 
+  solverParameters->initializeUsingXML(element);
+
   inverseKinetics->initializeUsingXML(element);
-
-  //    e=element->FirstChildElement(MBSIMNS"solverParameters");
-  //    if (e) {
-  //      TiXmlElement * ee;
-  //      ee=e->FirstChildElement(MBSIMNS"constraintSolver");
-  //      if (ee) {
-  //        if (ee->FirstChildElement(MBSIMNS"FixedPointTotal"))
-  //          setConstraintSolver(FixedPointTotal);
-  //        else if (ee->FirstChildElement(MBSIMNS"FixedPointSingle"))
-  //          setConstraintSolver(FixedPointSingle);
-  //        else if (ee->FirstChildElement(MBSIMNS"GaussSeidel"))
-  //          setConstraintSolver(GaussSeidel);
-  //        else if (ee->FirstChildElement(MBSIMNS"LinearEquations"))
-  //          setConstraintSolver(LinearEquations);
-  //        else if (ee->FirstChildElement(MBSIMNS"RootFinding"))
-  //          setConstraintSolver(RootFinding);
-  //      }
-  //      ee=e->FirstChildElement(MBSIMNS"impactSolver");
-  //      if (ee) {
-  //        if (ee->FirstChildElement(MBSIMNS"FixedPointTotal"))
-  //          setImpactSolver(FixedPointTotal);
-  //        else if (ee->FirstChildElement(MBSIMNS"FixedPointSingle"))
-  //          setImpactSolver(FixedPointSingle);
-  //        else if (ee->FirstChildElement(MBSIMNS"GaussSeidel"))
-  //          setImpactSolver(GaussSeidel);
-  //        else if (ee->FirstChildElement(MBSIMNS"LinearEquations"))
-  //          setImpactSolver(LinearEquations);
-  //        else if (ee->FirstChildElement(MBSIMNS"RootFinding"))
-  //          setImpactSolver(RootFinding);
-  //      }
-  //      ee=e->FirstChildElement(MBSIMNS"numberOfMaximalIterations");
-  //      if (ee)
-  //        setMaxIter(atoi(ee->GetText()));
-  //      ee=e->FirstChildElement(MBSIMNS"tolerances");
-  //      if (ee) {
-  //        TiXmlElement * eee;
-  //        eee=ee->FirstChildElement(MBSIMNS"projection");
-  //        if (eee)
-  //          setProjectionTolerance(getDouble(eee));
-  //        eee=ee->FirstChildElement(MBSIMNS"gd");
-  //        if (eee)
-  //          setgdTol(getDouble(eee));
-  //        eee=ee->FirstChildElement(MBSIMNS"gdd");
-  //        if (eee)
-  //          setgddTol(getDouble(eee));
-  //        eee=ee->FirstChildElement(MBSIMNS"la");
-  //        if (eee)
-  //          setlaTol(getDouble(eee));
-  //        eee=ee->FirstChildElement(MBSIMNS"La");
-  //        if (eee)
-  //          setLaTol(getDouble(eee));
-  //      }
-  //    }
-
 }
 
 TiXmlElement* Solver::writeXMLFile(TiXmlNode *parent) {
@@ -159,6 +111,8 @@ TiXmlElement* Solver::writeXMLFile(TiXmlNode *parent) {
   environment->writeXMLFile(ele2);
   ele1->LinkEndChild( ele2 );
   ele0->LinkEndChild( ele1 );
+
+  solverParameters->writeXMLFile(ele0);
 
   inverseKinetics->writeXMLFile(ele0);
 
