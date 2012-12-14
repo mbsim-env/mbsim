@@ -36,6 +36,7 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
   properties->addTab("Frame positioning");
   properties->addTab("Contour positioning");
   properties->addTab("Visualisation");
+  properties->addTab("Extra");
 
   QColor color;
   color.setRgb(200,200,200);
@@ -110,6 +111,11 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
   jointMomentArrow = new ExtXMLWidget("OpenMBV joint moment arrow",new OMBVArrowWidget("NOTSET"),true);
   jointMomentArrow->setXMLName(MBSIMNS"openMBVJointMomentArrow",false);
   properties->addToTab("Visualisation",jointMomentArrow);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new BoolWidget("0"),MBSIMNS"isFrameOfBodyForRotation",QStringList(),1));
+  isFrameOfBodyForRotation = new ExtXMLWidget("Use body frame for rotation",new ExtPhysicalVarWidget(input),true); 
+  properties->addToTab("Extra", isFrameOfBodyForRotation);
 
   QAction *action=new QAction(Utils::QIconCached("newobject.svg"),"Add frame", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addFrame()));
@@ -281,6 +287,8 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
   //    }
   //    // END
 
+  isFrameOfBodyForRotation->initializeUsingXML(element);
+
   ombvEditor->initializeUsingXML(element);
 
   e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameC");
@@ -316,6 +324,8 @@ TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
   ele1 = new TiXmlElement( MBSIMNS"contours" );
   contourPos->writeXMLFile(ele1);
   ele0->LinkEndChild( ele1 );
+
+  isFrameOfBodyForRotation->writeXMLFile(ele0);
 
   ombvEditor->writeXMLFile(ele0);
 
