@@ -807,6 +807,8 @@
                     <xs:sequence>
                       <xs:element name="projection" type="pv:nounitScalar" minOccurs="0">
                       </xs:element>
+                      <xs:element name="g" type="pv:nounitScalar" minOccurs="0">
+                      </xs:element>
                       <xs:element name="gd" type="pv:nounitScalar" minOccurs="0">
                       </xs:element>
                       <xs:element name="gdd" type="pv:nounitScalar" minOccurs="0">
