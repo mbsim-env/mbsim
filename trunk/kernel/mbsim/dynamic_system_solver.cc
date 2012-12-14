@@ -1364,6 +1364,9 @@ namespace MBSim {
         eee=ee->FirstChildElement(MBSIMNS"projection");
         if (eee)
           setProjectionTolerance(getDouble(eee));
+        eee=ee->FirstChildElement(MBSIMNS"g");
+        if (eee)
+          setgTol(getDouble(eee));
         eee=ee->FirstChildElement(MBSIMNS"gd");
         if (eee)
           setgdTol(getDouble(eee));
