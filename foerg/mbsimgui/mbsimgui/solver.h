@@ -40,7 +40,7 @@ class Environment : public QObject {
 
 class Solver : public Group {
   protected:
-    ExtXMLWidget *environment, *inverseKinetics;
+    ExtXMLWidget *environment, *solverParameters, *inverseKinetics;
   public:
     Solver(const QString &str, QTreeWidgetItem *parentItem, int ind);
     virtual void initializeUsingXML(TiXmlElement *element);
