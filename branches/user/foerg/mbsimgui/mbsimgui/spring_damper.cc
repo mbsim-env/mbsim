@@ -43,6 +43,7 @@ SpringDamper::SpringDamper(const QString &str, QTreeWidgetItem *parentItem, int 
   properties->addToTab("Kinetics", forceDirection);
 
   coilSpring = new ExtXMLWidget("Coil spring",new OMBVCoilSpringWidget("NOTSET"),true);
+  ((OMBVCoilSpringWidget*)coilSpring->getWidget())->setID(getID());
   properties->addToTab("Visualisation", coilSpring);
 
   properties->addStretch();
