@@ -1146,6 +1146,11 @@
               </xs:choice>
             </xs:complexType>
           </xs:element>
+          <xs:element name="isFrameOfBodyForRotation" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert, ob die generalisierten Geschwindigkeitskoordinaten der Rotation sich
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:element name="openMBVRigidBody" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">

@@ -836,6 +836,11 @@ namespace MBSim {
       setDerivativeOfGuidingVelocityOfRotation(f);
       f->initializeUsingXML(e->FirstChildElement());
     }
+
+    e=element->FirstChildElement(MBSIMNS"isFrameOfBodyForRotation");
+    if(e)
+      isFrameOfBodyForRotation(getBool(e));
+
     // END
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=element->FirstChildElement(MBSIMNS"openMBVRigidBody");
