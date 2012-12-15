@@ -69,12 +69,6 @@ ConstantFunction1::ConstantFunction1(const QString &ext) : Function1(ext) {
   layout->addWidget(extXMLWidget);
 }
 
-int ConstantFunction1::getSize() const {
-  string str = evalOctaveExpression(c->getCurrentPhysicalStringWidget()->getValue());
-  vector<vector<string> > A = strToMat(str);
-  return A.size()?A[0].size():0;
-}
-
 void ConstantFunction1::resize(int m, int n) {
   if(((VecWidget*)c->getPhysicalStringWidget(0)->getWidget())->size() != m)
     ((VecWidget*)c->getPhysicalStringWidget(0)->getWidget())->resize(m);
@@ -113,12 +107,6 @@ QuadraticFunction1::QuadraticFunction1() {
   var.push_back(new ExtPhysicalVarWidget(input));
   widget.push_back(new ExtXMLWidget("a2",var[var.size()-1]));
   layout->addWidget(widget[widget.size()-1]);
-}
-
-int QuadraticFunction1::getSize() const {
-  string str = evalOctaveExpression(var[0]->getCurrentPhysicalStringWidget()->getValue());
-  vector<vector<string> > A = strToMat(str);
-  return A.size()?A[0].size():0;
 }
 
 void QuadraticFunction1::resize(int m, int n) {
@@ -170,12 +158,6 @@ SinusFunction1::SinusFunction1() {
   layout->addWidget(widget[widget.size()-1]);
 }
 
-int SinusFunction1::getSize() const {
-  string str = evalOctaveExpression(var[0]->getCurrentPhysicalStringWidget()->getValue());
-  vector<vector<string> > A = strToMat(str);
-  return A.size()?A[0].size():0;
-}
-
 void SinusFunction1::resize(int m, int n) {
   for(unsigned int i=0; i<var.size(); i++)
     if(((VecWidget*)var[i]->getPhysicalStringWidget(0)->getWidget())->size() != m)
@@ -219,29 +201,18 @@ TabularFunction1::TabularFunction1() {
   input.push_back(new PhysicalStringWidget(new MatFromFileWidget,MBSIMNS"xy",QStringList(),0));
   choiceWidget.push_back(new ExtXMLWidget("xy",new ExtPhysicalVarWidget(input)));
 
-  widget.push_back(new ExtXMLWidget("",new XMLWidgetChoiceWidget(name,choiceWidget)));
-  layout->addWidget(widget[widget.size()-1]);
-}
-
-int TabularFunction1::getSize() const {
-  string str = evalOctaveExpression(var[0]->getCurrentPhysicalStringWidget()->getValue());
-  vector<vector<string> > A = strToMat(str);
-  return A.size()?A[0].size():0;
-}
-
-void TabularFunction1::resize(int m, int n) {
+  widget = new XMLWidgetChoiceWidget(name,choiceWidget);
+  layout->addWidget(widget);
 }
 
 bool TabularFunction1::initializeUsingXML(TiXmlElement *element) {
   Function1::initializeUsingXML(element);
-  for(unsigned int i=0; i<widget.size(); i++)
-    widget[i]->initializeUsingXML(element);
+  widget->initializeUsingXML(element);
 }
 
 TiXmlElement* TabularFunction1::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Function1::writeXMLFile(parent);
-  for(unsigned int i=0; i<widget.size(); i++)
-    widget[i]->writeXMLFile(ele0);
+  widget->writeXMLFile(ele0);
   return ele0;
 }
 
