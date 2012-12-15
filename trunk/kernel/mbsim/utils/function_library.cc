@@ -34,7 +34,7 @@ namespace MBSim {
   }
 
 
-  QuadraticFunction1_VS::QuadraticFunction1_VS() : DifferentiableFunction1<Vec>(), ySize(0), a0(0), a1(0), a2(0) {
+  QuadraticFunction1_VS::QuadraticFunction1_VS() : DifferentiableFunction1<Vec>(), ySize(0), a0(), a1(), a2() {
     addDerivative(new QuadraticFunction1_VS::ZerothDerivative(this));
     addDerivative(new QuadraticFunction1_VS::FirstDerivative(this));
     addDerivative(new QuadraticFunction1_VS::SecondDerivative(this));
