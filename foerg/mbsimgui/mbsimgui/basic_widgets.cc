@@ -30,25 +30,6 @@
 
 using namespace std;
 
-EmptyWidget::EmptyWidget(const string &xmlName_) : xmlName(xmlName_) {
-  QVBoxLayout *layout = new QVBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
-}
-
-bool EmptyWidget::initializeUsingXML(TiXmlElement *parent) {
-  TiXmlElement *e = parent->FirstChildElement(xmlName);
-  if(e)
-    return true;
-  return false;
-}
-
-TiXmlElement* EmptyWidget::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele = new TiXmlElement(xmlName);
-  parent->LinkEndChild(ele);
-  return 0;
-}
-
 LocalFrameOfReferenceWidget::LocalFrameOfReferenceWidget(const string &xmlName_, Element *element_, Frame* omitFrame_) : element(element_), selectedFrame(0), omitFrame(omitFrame_), xmlName(xmlName_) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);

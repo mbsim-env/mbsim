@@ -61,6 +61,7 @@ Plane::Plane(const QString &str, QTreeWidgetItem *parentItem, int ind) : Contour
   properties->addTab("Visualisation");
 
   visu = new ExtXMLWidget("OpenMBV Plane",new OMBVPlaneWidget(MBSIMNS"enableOpenMBV"),true);
+  ((OMBVPlaneWidget*)visu->getWidget())->setID(getID());
   properties->addToTab("Visualisation", visu);
 
   properties->addStretch();
@@ -89,7 +90,8 @@ Sphere::Sphere(const QString &str, QTreeWidgetItem *parentItem, int ind) : Conto
   radius= new ExtXMLWidget("Radius",new ExtPhysicalVarWidget(input));
   properties->addToTab("General", radius);
 
-  visu= new ExtXMLWidget("OpenMBV Sphere",new EmptyWidget(MBSIMNS"enableOpenMBV"),true);
+  visu= new ExtXMLWidget("OpenMBV Sphere",new OMBVEmptyWidget(MBSIMNS"enableOpenMBV"),true);
+  ((OMBVEmptyWidget*)visu->getWidget())->setID(getID());
   properties->addToTab("Visualisation", visu);
 
   properties->addStretch();

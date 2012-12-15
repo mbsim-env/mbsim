@@ -201,12 +201,27 @@ class OMBVBodySelectionWidget : public XMLWidget {
     LocalFrameOfReferenceWidget *ref;
 };
 
-class OMBVPlaneWidget : public XMLWidget {
+class OMBVEmptyWidget : public OMBVObjectWidget {
+
+  public:
+    OMBVEmptyWidget(const std::string &xmlName);
+
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual QString getType() const { return "Empty"; }
+
+  protected:
+    std::string xmlName;
+};
+
+class OMBVPlaneWidget : public OMBVObjectWidget {
 
   public:
     OMBVPlaneWidget(const std::string &xmlName);
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element); 
+    virtual QString getType() const { return "Plane"; }
+
   protected:
     ExtXMLWidget *size, *numberOfLines;
     std::string xmlName;
