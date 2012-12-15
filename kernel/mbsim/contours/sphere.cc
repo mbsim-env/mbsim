@@ -45,8 +45,16 @@ namespace MBSim {
     setRadius(getDouble(e));
     e=e->NextSiblingElement();
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    if(e && e->ValueStr()==MBSIMNS"enableOpenMBV")
+    if(e && e->ValueStr()==MBSIMNS"enableOpenMBV") {
       enableOpenMBV();
+      for(TiXmlNode *child=e->FirstChild(); child; child=child->NextSibling()) {
+        TiXmlUnknown *unknown=child->ToUnknown();
+        const size_t length=strlen("?OPENMBV_ID ");
+        if(unknown && unknown->ValueStr().substr(0, length)=="?OPENMBV_ID ")
+          openMBVRigidBody->setID(unknown->ValueStr().substr(length, unknown->ValueStr().length()-length-1));
+      }
+    }
+
 #endif
   }
 
