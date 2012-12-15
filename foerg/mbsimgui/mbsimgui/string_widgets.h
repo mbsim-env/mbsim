@@ -176,6 +176,39 @@ class SymMatWidget : public StringWidget {
     bool validate(const std::string &str) const;
 };
 
+class VecSizeVarWidget : public StringWidget {
+
+  Q_OBJECT
+
+  private:
+    VecWidget *widget;
+    QComboBox* sizeCombo;
+    int minSize, maxSize;
+  public:
+    VecSizeVarWidget(int size, int minSize, int maxSize);
+    std::vector<std::string> getVec() const {return widget->getVec();}
+    void setVec(const std::vector<std::string> &x) {
+      sizeCombo->setCurrentIndex(sizeCombo->findText(QString::number(x.size())));
+      widget->setVec(x);
+    }
+    void resize(int size) {widget->resize(size);}
+    int size() const {return sizeCombo->currentText().toInt();}
+    std::string getValue() const {return toStr(getVec());}
+    void setValue(const std::string &str) {setVec(strToVec(str));}
+    void setReadOnly(bool flag) {widget->setReadOnly(flag);}
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual StringWidget* cloneStringWidget() {return new VecWidget(size());}
+    virtual std::string getType() const {return "Vector";}
+    bool validate(const std::string &str) const;
+
+  public slots:
+    void currentIndexChanged(int);
+  signals:
+    void sizeChanged(int);
+
+};
+
 class MatColsVarWidget : public StringWidget {
 
   Q_OBJECT
@@ -204,7 +237,6 @@ class MatColsVarWidget : public StringWidget {
     bool validate(const std::string &str) const;
 
   public slots:
-    //void resize(const QString &cols) {widget->resize(widget->rows(),cols.toInt());}
     void currentIndexChanged(int);
   signals:
     void sizeChanged(int);
@@ -255,6 +287,47 @@ class PhysicalStringWidget : public StringWidget {
     virtual std::string getType() const {return widget->getType();}
     bool validate(const std::string &str) const {return widget->validate(str);}
 };
+
+class VecFromFileWidget : public StringWidget {
+  Q_OBJECT
+
+  public:
+    VecFromFileWidget();
+    std::string getValue() const;
+    void setValue(const std::string &str) {}
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual std::string getType() const {return "File";}
+    virtual StringWidget* cloneStringWidget() {return new VecWidget(0);}
+
+  protected:
+    QLineEdit *fileName;
+
+  protected slots:
+    void selectFile();
+
+};
+
+class MatFromFileWidget : public StringWidget {
+  Q_OBJECT
+
+  public:
+    MatFromFileWidget();
+    std::string getValue() const; 
+    void setValue(const std::string &str) {}
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual std::string getType() const {return "File";}
+    virtual StringWidget* cloneStringWidget() {return new MatWidget(0,0);}
+
+  protected:
+    QLineEdit *fileName;
+
+  protected slots:
+    void selectFile();
+
+};
+
 
 #endif
 

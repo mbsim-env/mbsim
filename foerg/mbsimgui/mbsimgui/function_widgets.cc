@@ -91,6 +91,55 @@ TiXmlElement* ConstantFunction1::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 } 
 
+QuadraticFunction1::QuadraticFunction1() {
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new VecWidget(0,true),MBSIMNS"a0",QStringList(),0));
+  var.push_back(new ExtPhysicalVarWidget(input));
+  widget.push_back(new ExtXMLWidget("a0",var[var.size()-1]));
+  layout->addWidget(widget[widget.size()-1]);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new VecWidget(0,true),MBSIMNS"a1",QStringList(),0));
+  var.push_back(new ExtPhysicalVarWidget(input));
+  widget.push_back(new ExtXMLWidget("a1",var[var.size()-1]));
+  layout->addWidget(widget[widget.size()-1]);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new VecWidget(0,true),MBSIMNS"a2",QStringList(),0));
+  var.push_back(new ExtPhysicalVarWidget(input));
+  widget.push_back(new ExtXMLWidget("a2",var[var.size()-1]));
+  layout->addWidget(widget[widget.size()-1]);
+}
+
+int QuadraticFunction1::getSize() const {
+  string str = evalOctaveExpression(var[0]->getCurrentPhysicalStringWidget()->getValue());
+  vector<vector<string> > A = strToMat(str);
+  return A.size()?A[0].size():0;
+}
+
+void QuadraticFunction1::resize(int m, int n) {
+  for(unsigned int i=0; i<var.size(); i++)
+    if(((VecWidget*)var[i]->getPhysicalStringWidget(0)->getWidget())->size() != m)
+      ((VecWidget*)var[i]->getPhysicalStringWidget(0)->getWidget())->resize(m);
+}
+
+bool QuadraticFunction1::initializeUsingXML(TiXmlElement *element) {
+  DifferentiableFunction1::initializeUsingXML(element);
+  for(unsigned int i=0; i<var.size(); i++)
+    widget[i]->initializeUsingXML(element);
+}
+
+TiXmlElement* QuadraticFunction1::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = DifferentiableFunction1::writeXMLFile(parent);
+  for(unsigned int i=0; i<var.size(); i++)
+    widget[i]->writeXMLFile(ele0);
+  return ele0;
+}
+
 SinusFunction1::SinusFunction1() {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -142,6 +191,56 @@ bool SinusFunction1::initializeUsingXML(TiXmlElement *element) {
 TiXmlElement* SinusFunction1::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = DifferentiableFunction1::writeXMLFile(parent);
   for(unsigned int i=0; i<var.size(); i++)
+    widget[i]->writeXMLFile(ele0);
+  return ele0;
+}
+
+TabularFunction1::TabularFunction1() {
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
+  vector<QWidget*> choiceWidget;
+  vector<string> name;
+  name.push_back("x and y");
+  name.push_back("xy");
+  XMLWidgetContainer *widgetContainer = new XMLWidgetContainer;
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new VecFromFileWidget,MBSIMNS"x",QStringList(),0));
+  widgetContainer->addWidget(new ExtXMLWidget("x",new ExtPhysicalVarWidget(input)));
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new MatFromFileWidget,MBSIMNS"y",QStringList(),0));
+  widgetContainer->addWidget(new ExtXMLWidget("y",new ExtPhysicalVarWidget(input)));
+
+  choiceWidget.push_back(widgetContainer);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new MatFromFileWidget,MBSIMNS"xy",QStringList(),0));
+  choiceWidget.push_back(new ExtXMLWidget("xy",new ExtPhysicalVarWidget(input)));
+
+  widget.push_back(new ExtXMLWidget("",new XMLWidgetChoiceWidget(name,choiceWidget)));
+  layout->addWidget(widget[widget.size()-1]);
+}
+
+int TabularFunction1::getSize() const {
+  string str = evalOctaveExpression(var[0]->getCurrentPhysicalStringWidget()->getValue());
+  vector<vector<string> > A = strToMat(str);
+  return A.size()?A[0].size():0;
+}
+
+void TabularFunction1::resize(int m, int n) {
+}
+
+bool TabularFunction1::initializeUsingXML(TiXmlElement *element) {
+  Function1::initializeUsingXML(element);
+  for(unsigned int i=0; i<widget.size(); i++)
+    widget[i]->initializeUsingXML(element);
+}
+
+TiXmlElement* TabularFunction1::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = Function1::writeXMLFile(parent);
+  for(unsigned int i=0; i<widget.size(); i++)
     widget[i]->writeXMLFile(ele0);
   return ele0;
 }
@@ -280,7 +379,9 @@ Function1ChoiceWidget::Function1ChoiceWidget(const string &xmlName_) : function(
   comboBox = new QComboBox;
   //comboBox->addItem(tr("None"));
   comboBox->addItem(tr("Constant function"));
+  comboBox->addItem(tr("Quadratic function"));
   comboBox->addItem(tr("Sinus function"));
+  comboBox->addItem(tr("Tabular function"));
   layout->addWidget(comboBox);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineForceLaw(int)));
   defineForceLaw(0);
@@ -295,7 +396,11 @@ void Function1ChoiceWidget::defineForceLaw(int index) {
   if(index==0)
     function = new ConstantFunction1("VS");  
   else if(index==1)
+    function = new QuadraticFunction1;
+  else if(index==2)
     function = new SinusFunction1;
+  else if(index==3)
+    function = new TabularFunction1;
 
   if(function) {
     layout->addWidget(function);
@@ -312,8 +417,16 @@ bool Function1ChoiceWidget::initializeUsingXML(TiXmlElement *element) {
         comboBox->setCurrentIndex(0);
         function->initializeUsingXML(ee);
       }
-      else if(ee->ValueStr() == MBSIMNS"SinusFunction1_VS") {
+      else if(ee->ValueStr() == MBSIMNS"QuadraticFunction1_VS") {
         comboBox->setCurrentIndex(1);
+        function->initializeUsingXML(ee);
+      }
+      else if(ee->ValueStr() == MBSIMNS"SinusFunction1_VS") {
+        comboBox->setCurrentIndex(2);
+        function->initializeUsingXML(ee);
+      }
+      else if(ee->ValueStr() == MBSIMNS"TabularFunction1_VS") {
+        comboBox->setCurrentIndex(3);
         function->initializeUsingXML(ee);
       }
     }

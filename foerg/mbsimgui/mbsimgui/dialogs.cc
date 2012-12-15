@@ -28,10 +28,17 @@
 #include <QTreeWidget>
 
 EvalDialog::EvalDialog(StringWidget *var_) : var(var_) {
+  QScrollArea *tab = new QScrollArea;
+  tab->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+  tab->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+  tab->setWidgetResizable(true);
+
   var->setReadOnly(true);
+  tab->setWidget(var);
+
   QVBoxLayout *layout = new QVBoxLayout;
   setLayout(layout);
-  layout->addWidget(var);
+  layout->addWidget(tab);
   QWidget *extension = new QWidget;
 //  button = new QPushButton(tr("Assign to Schema 1"));
   button = new QPushButton(QString("Assign to ") + var->getType().c_str());

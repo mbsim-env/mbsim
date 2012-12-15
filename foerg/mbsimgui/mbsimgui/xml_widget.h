@@ -37,12 +37,16 @@
 class TiXmlElement;
 class TiXmlNode;
 
-class XMLWidget : public QWidget {
+class XMLInterface {
 
   public:
-    XMLWidget() {}
     virtual bool initializeUsingXML(TiXmlElement *element) = 0;
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element) = 0;
+};
+
+class XMLWidget : public QWidget, public XMLInterface {
+  public:
+    XMLWidget() {}
     virtual void initialize() {};
     virtual void update() {}
     virtual void resizeVariables() {}

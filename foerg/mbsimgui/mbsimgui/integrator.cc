@@ -137,7 +137,7 @@ DOPRI5Integrator::DOPRI5Integrator(const QString &str, QTreeWidgetItem *parentIt
   properties->addTab("Step size");
 
   vector<PhysicalStringWidget*> input;
-  vector<XMLWidget*> widget;
+  vector<QWidget*> widget;
   vector<string> name;
   name.push_back("Scalar");
   name.push_back("Vector");
@@ -213,7 +213,7 @@ RADAU5Integrator::RADAU5Integrator(const QString &str, QTreeWidgetItem *parentIt
   properties->addTab("Step size");
 
   vector<PhysicalStringWidget*> input;
-  vector<XMLWidget*> widget;
+  vector<QWidget*> widget;
   vector<string> name;
   name.push_back("Scalar");
   name.push_back("Vector");
@@ -289,7 +289,7 @@ LSODEIntegrator::LSODEIntegrator(const QString &str, QTreeWidgetItem *parentItem
   properties->addTab("Extra");
 
   vector<PhysicalStringWidget*> input;
-  vector<XMLWidget*> widget;
+  vector<QWidget*> widget;
   vector<string> name;
   name.push_back("Scalar");
   name.push_back("Vector");
@@ -370,7 +370,7 @@ LSODARIntegrator::LSODARIntegrator(const QString &str, QTreeWidgetItem *parentIt
   properties->addTab("Extra");
 
   vector<PhysicalStringWidget*> input;
-  vector<XMLWidget*> widget;
+  vector<QWidget*> widget;
   vector<string> name;
   name.push_back("Scalar");
   name.push_back("Vector");

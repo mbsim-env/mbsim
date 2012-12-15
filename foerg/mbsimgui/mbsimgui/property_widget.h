@@ -21,15 +21,15 @@
 #define _PROPERTY_WIDGET_H_
 
 #include <QScrollArea>
+#include <QTabWidget>
 #include <map>
 
 class ExtXMLWidget;
 class QVBoxLayout;
-class QTabWidget;
 class TiXmlElement;
 class TiXmlNode;
 
-class PropertyWidget : public QScrollArea {
+class PropertyWidget : public QTabWidget {
   Q_OBJECT
 
     friend class PropertyDialog;
@@ -46,10 +46,10 @@ class PropertyWidget : public QScrollArea {
     void resizeVariables();
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    using QTabWidget::addTab;
   protected:
     QObject* parentObject;
     std::map<QString,QVBoxLayout*> layout;
-    QVBoxLayout *mainLayout;
     std::vector<ExtXMLWidget*> widget;
     QTabWidget *tabWidget;
   signals:

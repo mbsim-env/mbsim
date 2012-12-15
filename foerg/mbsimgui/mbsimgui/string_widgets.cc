@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "string_widgets.h"
+#include "octaveutils.h"
 #include <vector>
 #include <QtGui>
 
@@ -541,6 +542,59 @@ bool SymMatWidget::validate(const string &str) const {
   return true;
 }
 
+VecSizeVarWidget::VecSizeVarWidget(int size, int minSize_, int maxSize_) : minSize(minSize_), maxSize(maxSize_) {
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  QWidget *box = new QWidget;
+  QHBoxLayout *hbox = new QHBoxLayout;
+  box->setLayout(hbox);
+  hbox->setMargin(0);
+  layout->addWidget(box);
+  sizeCombo = new QComboBox;
+  for(int j=minSize; j<=maxSize; j++)
+    sizeCombo->addItem(QString::number(j));
+  hbox->addWidget(sizeCombo);
+  hbox->addWidget(new QLabel("x"));
+  hbox->addWidget(new QLabel("1"));
+
+  hbox->addStretch(2);
+  widget = new VecWidget(size);
+  QObject::connect(sizeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(currentIndexChanged(int)));
+  layout->addWidget(widget);
+  sizeCombo->setCurrentIndex(0);
+
+  setLayout(layout);
+}
+
+void VecSizeVarWidget::currentIndexChanged(int i) {
+  int size = i+minSize;
+  widget->resize(size);
+  emit sizeChanged(size);
+}
+
+bool VecSizeVarWidget::initializeUsingXML(TiXmlElement *parent) {
+  if(!widget->initializeUsingXML(parent))
+    return false;
+  sizeCombo->blockSignals(true);
+  sizeCombo->setCurrentIndex(sizeCombo->findText(QString::number(widget->size())));
+  sizeCombo->blockSignals(false);
+  return true;
+}
+
+TiXmlElement* VecSizeVarWidget::writeXMLFile(TiXmlNode *parent) {
+  widget->writeXMLFile(parent);
+  return 0;
+}
+
+bool VecSizeVarWidget::validate(const string &str) const {
+  vector<string> x = strToVec(str);
+  if(x.size()<minSize || x.size()>maxSize)
+    return false;
+  if(x[0]=="")
+    return false;
+  return true;
+}
+
 MatColsVarWidget::MatColsVarWidget(int rows, int cols, int minCols_, int maxCols_) : minCols(minCols_), maxCols(maxCols_) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -558,7 +612,6 @@ MatColsVarWidget::MatColsVarWidget(int rows, int cols, int minCols_, int maxCols
   hbox->addWidget(colsCombo);
   hbox->addStretch(2);
   widget = new MatWidget(rows,cols);
-  //QObject::connect(colsCombo, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(resize(const QString&)));
   QObject::connect(colsCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(currentIndexChanged(int)));
   layout->addWidget(widget);
   colsCombo->setCurrentIndex(0);
@@ -708,3 +761,91 @@ TiXmlElement* PhysicalStringWidget::writeXMLFile(TiXmlNode *parent) {
   parent->LinkEndChild(ele);
   return 0;
 }
+
+VecFromFileWidget::VecFromFileWidget() {
+  QHBoxLayout *layout = new QHBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
+  fileName = new QLineEdit;
+  fileName->setReadOnly(true);
+  layout->addWidget(fileName);
+  QPushButton *button = new QPushButton("Browse");
+  layout->addWidget(button);
+  connect(button,SIGNAL(clicked(bool)),this,SLOT(selectFile()));
+}
+
+void VecFromFileWidget::selectFile() {
+  QString file=QFileDialog::getOpenFileName(0, "ASCII files", QString("./"), "all files (*.*)");
+  if(file!="")
+    fileName->setText(file);
+}
+
+string VecFromFileWidget::getValue() const {
+  return evalOctaveExpression(string("load('") + fileName->text().toStdString() + "')");
+}
+
+bool VecFromFileWidget::initializeUsingXML(TiXmlElement *element) {
+  TiXmlText* text = dynamic_cast<TiXmlText*>(element->FirstChild());
+  if(!text)
+    return false;
+  string str = text->Value();
+  if(str.substr(0,4)!="load")
+    return false;
+  int pos1 = str.find_first_of('\''); 
+  int pos2 = str.find_last_of('\''); 
+  fileName->setText(str.substr(pos1+1,pos2-pos1-1).c_str());
+  return true;
+}
+
+TiXmlElement* VecFromFileWidget::writeXMLFile(TiXmlNode *parent) {
+  string exp = string("load('") + fileName->text().toStdString() + "')"; 
+  TiXmlText *text = new TiXmlText(exp);
+  parent->LinkEndChild(text);
+  return 0;
+}
+
+MatFromFileWidget::MatFromFileWidget() {
+  QHBoxLayout *layout = new QHBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
+  fileName = new QLineEdit;
+  fileName->setReadOnly(true);
+  layout->addWidget(fileName);
+  QPushButton *button = new QPushButton("Browse");
+  layout->addWidget(button);
+  connect(button,SIGNAL(clicked(bool)),this,SLOT(selectFile()));
+}
+
+void MatFromFileWidget::selectFile() {
+  QString file=QFileDialog::getOpenFileName(0, "ASCII files", QString("./"), "all files (*.*)");
+  if(file!="")
+    fileName->setText(file);
+}
+
+string MatFromFileWidget::getValue() const {
+  return evalOctaveExpression(string("load('") + fileName->text().toStdString() + "')");
+}
+
+bool MatFromFileWidget::initializeUsingXML(TiXmlElement *element) {
+  TiXmlText* text = dynamic_cast<TiXmlText*>(element->FirstChild());
+  if(!text)
+    return false;
+  string str = text->Value();
+  if(str.substr(0,4)!="load")
+    return false;
+  int pos1 = str.find_first_of('\''); 
+  int pos2 = str.find_last_of('\''); 
+  fileName->setText(str.substr(pos1+1,pos2-pos1-1).c_str());
+  return true;
+}
+
+TiXmlElement* MatFromFileWidget::writeXMLFile(TiXmlNode *parent) {
+  string exp = string("load('") + fileName->text().toStdString() + "')"; 
+  TiXmlText *text = new TiXmlText(exp);
+  parent->LinkEndChild(text);
+  return 0;
+}
+
+

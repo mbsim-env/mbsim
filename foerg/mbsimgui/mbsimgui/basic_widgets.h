@@ -319,10 +319,10 @@ class ParameterValueWidget : public XMLWidget {
   public:
     ParameterValueWidget(PhysicalStringWidget *var);
 
-   ExtPhysicalVarWidget* getExtPhysicalWidget() {return widget;}
-   virtual std::string getValue() const { return widget->getValue(); }
-   virtual bool initializeUsingXML(TiXmlElement *element) {return true;}
-   virtual TiXmlElement* writeXMLFile(TiXmlNode *element) {return 0;}
+    ExtPhysicalVarWidget* getExtPhysicalWidget() {return widget;}
+    virtual std::string getValue() const { return widget->getValue(); }
+    virtual bool initializeUsingXML(TiXmlElement *element) {return true;}
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element) {return 0;}
 
   protected:
     ExtPhysicalVarWidget *widget;
@@ -337,8 +337,8 @@ class SolverTolerances : public XMLWidget {
   public:
     SolverTolerances();
 
-   virtual bool initializeUsingXML(TiXmlElement *element);
-   virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
 
   protected:
     ExtXMLWidget *projection, *g, *gd, *gdd, *la, *La;
@@ -349,8 +349,8 @@ class SolverParameters : public XMLWidget {
   public:
     SolverParameters();
 
-   virtual bool initializeUsingXML(TiXmlElement *element);
-   virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
 
   protected:
     ExtXMLWidget *tolerances;
