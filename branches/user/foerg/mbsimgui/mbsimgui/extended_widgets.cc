@@ -17,7 +17,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <config.h>
+//#include <config.h>
 #include "extended_widgets.h"
 #include "string_widgets.h"
 #include "dialogs.h"
@@ -130,7 +130,7 @@ TiXmlElement* ExtPhysicalVarWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-XMLWidgetChoiceWidget::XMLWidgetChoiceWidget(const vector<string> &name, const vector<XMLWidget*> &widget) { 
+XMLWidgetChoiceWidget::XMLWidgetChoiceWidget(const vector<string> &name, const vector<QWidget*> &widget) { 
   QHBoxLayout* layout = new QHBoxLayout;
   layout->setMargin(0);
   choice = new QComboBox;
@@ -157,7 +157,7 @@ void XMLWidgetChoiceWidget::changeCurrent(int idx) {
 
 bool XMLWidgetChoiceWidget::initializeUsingXML(TiXmlElement *element) {
   for(int i=0; i<stackedWidget->count(); i++)
-    if(((XMLWidget*)stackedWidget->widget(i))->initializeUsingXML(element)) {
+    if(dynamic_cast<XMLInterface*>(stackedWidget->widget(i))->initializeUsingXML(element)) {
       choice->setCurrentIndex(i);
       return true;
     }
@@ -165,7 +165,7 @@ bool XMLWidgetChoiceWidget::initializeUsingXML(TiXmlElement *element) {
 }
 
 TiXmlElement* XMLWidgetChoiceWidget::writeXMLFile(TiXmlNode *parent) {
-  return ((XMLWidget*)stackedWidget->currentWidget())->writeXMLFile(parent);
+  return dynamic_cast<XMLInterface*>(stackedWidget->currentWidget())->writeXMLFile(parent);
 }
 
 ExtXMLWidget::ExtXMLWidget(const QString &name, XMLWidget *widget_, bool disable) : QGroupBox(name), widget(widget_) {
@@ -214,4 +214,28 @@ TiXmlElement* ExtXMLWidget::writeXMLFile(TiXmlNode *parent) {
   }
   else
     return isActive()?widget->writeXMLFile(parent):0;
+}
+
+XMLWidgetContainer::XMLWidgetContainer() {
+  layout = new QVBoxLayout;
+  setLayout(layout);
+  layout->setMargin(0);
+}
+
+void XMLWidgetContainer::addWidget(QWidget *widget_) {
+  layout->addWidget(widget_); 
+  widget.push_back(widget_);
+}
+
+bool XMLWidgetContainer::initializeUsingXML(TiXmlElement *element) {
+  for(unsigned int i=0; i<widget.size(); i++)
+    if(!dynamic_cast<XMLInterface*>(widget[i])->initializeUsingXML(element))
+      return false;
+  return true;
+}
+
+TiXmlElement* XMLWidgetContainer::writeXMLFile(TiXmlNode *parent) {
+  for(unsigned int i=0; i<widget.size(); i++)
+    dynamic_cast<XMLInterface*>(widget[i])->writeXMLFile(parent);
+  return 0;
 }

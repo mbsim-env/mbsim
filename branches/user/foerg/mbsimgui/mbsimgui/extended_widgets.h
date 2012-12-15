@@ -28,6 +28,7 @@ class QStackedWidget;
 class StringWidget;
 class PhysicalStringWidget;
 class EvalDialog;
+class QVBoxLayout;
 
 class ExtPhysicalVarWidget : public XMLWidget {
   Q_OBJECT
@@ -61,7 +62,7 @@ class XMLWidgetChoiceWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    XMLWidgetChoiceWidget(const std::vector<std::string> &name, const std::vector<XMLWidget*> &widget);
+    XMLWidgetChoiceWidget(const std::vector<std::string> &name, const std::vector<QWidget*> &widget);
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
   protected slots:
@@ -71,7 +72,7 @@ class XMLWidgetChoiceWidget : public XMLWidget {
     QStackedWidget *stackedWidget;
 };
 
-class ExtXMLWidget : public QGroupBox {
+class ExtXMLWidget : public QGroupBox, public XMLInterface {
   Q_OBJECT
 
   public:
@@ -94,5 +95,17 @@ class ExtXMLWidget : public QGroupBox {
     void resize();
 };
 
+class XMLWidgetContainer : public XMLWidget {
+  public:
+    XMLWidgetContainer();
+
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void addWidget(QWidget *widget_);
+
+  protected:
+    QVBoxLayout *layout;
+    std::vector<QWidget*> widget;
+};
 
 #endif

@@ -25,11 +25,6 @@
 using namespace std;
 
 PropertyWidget::PropertyWidget(QObject *parentObject_) : parentObject(parentObject_) {
-  tabWidget = new QTabWidget;
-  setWidget(tabWidget);
-  mainLayout = new QVBoxLayout;
-  mainLayout->addWidget(tabWidget);
-  setLayout(mainLayout);
 
   setWindowTitle("Properties");
 }
@@ -78,7 +73,7 @@ void PropertyWidget::addTab(const QString &name) {
 
   widget->setLayout(hlo);
   tab->setWidget(widget);
-  tabWidget->addTab(tab, name);
+  addTab(tab, name);
 }
 
 void PropertyWidget::setParentObject(QObject *parentObject_) {

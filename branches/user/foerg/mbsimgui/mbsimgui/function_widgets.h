@@ -89,6 +89,20 @@ class ConstantFunction1 : public Function1 {
     ExtPhysicalVarWidget *c;
 };
 
+class QuadraticFunction1 : public DifferentiableFunction1 {
+  public:
+    QuadraticFunction1();
+    bool initializeUsingXML(TiXmlElement *element);
+    TiXmlElement* writeXMLFile(TiXmlNode *parent);
+    inline QString getType() const { return QString("QuadraticFunction1_VS"); }
+    void resize(int m, int n);
+    int getSize() const;
+
+  protected:
+    std::vector<ExtPhysicalVarWidget*> var;
+    std::vector<ExtXMLWidget*> widget;
+};
+
 class SinusFunction1 : public DifferentiableFunction1 {
   public:
     SinusFunction1();
@@ -122,7 +136,20 @@ class SinusFunction1 : public DifferentiableFunction1 {
  //       SinusFunction1 *parent;
  //   };
   protected:
-    int ySize;
+    std::vector<ExtPhysicalVarWidget*> var;
+    std::vector<ExtXMLWidget*> widget;
+};
+
+class TabularFunction1 : public Function1 {
+  public:
+    TabularFunction1();
+    bool initializeUsingXML(TiXmlElement *element);
+    TiXmlElement* writeXMLFile(TiXmlNode *parent);
+    inline QString getType() const { return QString("TabularFunction1_VS"); }
+    void resize(int m, int n);
+    int getSize() const;
+
+  protected:
     std::vector<ExtPhysicalVarWidget*> var;
     std::vector<ExtXMLWidget*> widget;
 };
