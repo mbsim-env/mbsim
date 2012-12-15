@@ -84,7 +84,6 @@ class ConstantFunction1 : public Function1 {
     TiXmlElement* writeXMLFile(TiXmlNode *parent);
     inline QString getType() const { return QString("ConstantFunction1_")+ext; }
     void resize(int m, int n);
-    int getSize() const;
   protected:
     ExtPhysicalVarWidget *c;
 };
@@ -96,7 +95,6 @@ class QuadraticFunction1 : public DifferentiableFunction1 {
     TiXmlElement* writeXMLFile(TiXmlNode *parent);
     inline QString getType() const { return QString("QuadraticFunction1_VS"); }
     void resize(int m, int n);
-    int getSize() const;
 
   protected:
     std::vector<ExtPhysicalVarWidget*> var;
@@ -110,7 +108,6 @@ class SinusFunction1 : public DifferentiableFunction1 {
     TiXmlElement* writeXMLFile(TiXmlNode *parent);
     inline QString getType() const { return QString("SinusFunction1_VS"); }
     void resize(int m, int n);
-    int getSize() const;
 
  //   class ZerothDerivative : public Function1 {
  //      public:
@@ -146,12 +143,9 @@ class TabularFunction1 : public Function1 {
     bool initializeUsingXML(TiXmlElement *element);
     TiXmlElement* writeXMLFile(TiXmlNode *parent);
     inline QString getType() const { return QString("TabularFunction1_VS"); }
-    void resize(int m, int n);
-    int getSize() const;
 
   protected:
-    std::vector<ExtPhysicalVarWidget*> var;
-    std::vector<ExtXMLWidget*> widget;
+    XMLWidget* widget;
 };
 
 class LinearSpringDamperForce : public Function2 {
