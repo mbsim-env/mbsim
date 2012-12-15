@@ -610,7 +610,27 @@ TiXmlElement* OMBVBodySelectionWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-OMBVPlaneWidget::OMBVPlaneWidget(const string &xmlName_) : xmlName(xmlName_) {
+OMBVEmptyWidget::OMBVEmptyWidget(const string &xmlName_) : OMBVObjectWidget("Empty"), xmlName(xmlName_) {
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+}
+
+bool OMBVEmptyWidget::initializeUsingXML(TiXmlElement *parent) {
+  TiXmlElement *e = parent->FirstChildElement(xmlName);
+  if(e)
+    return true;
+  return false;
+}
+
+TiXmlElement* OMBVEmptyWidget::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele = new TiXmlElement(xmlName);
+  writeXMLFileID(ele);
+  parent->LinkEndChild(ele);
+  return 0;
+}
+
+OMBVPlaneWidget::OMBVPlaneWidget(const string &xmlName_) : OMBVObjectWidget("Plane"), xmlName(xmlName_) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -638,6 +658,7 @@ bool OMBVPlaneWidget::initializeUsingXML(TiXmlElement *element) {
 
 TiXmlElement* OMBVPlaneWidget::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *e=new TiXmlElement(xmlName);
+  writeXMLFileID(e);
   parent->LinkEndChild(e);
   size->writeXMLFile(e);
   numberOfLines->writeXMLFile(e);
