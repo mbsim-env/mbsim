@@ -216,6 +216,89 @@ TiXmlElement* TabularFunction1::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
+SummationFunction1::SummationFunction1() {
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
+  functionList = new QListWidget;
+  functionList->setContextMenuPolicy (Qt::CustomContextMenu);
+  functionList->setMinimumWidth(functionList->sizeHint().width()/3);
+  functionList->setMaximumWidth(functionList->sizeHint().width()/3);
+  layout->addWidget(functionList);
+  stackedWidget = new QStackedWidget;
+  connect(functionList,SIGNAL(currentRowChanged(int)),stackedWidget,SLOT(setCurrentIndex(int)));
+  connect(functionList,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(openContextMenu(const QPoint &)));
+  layout->addWidget(stackedWidget,0,Qt::AlignTop);
+}
+
+void SummationFunction1::openContextMenu(const QPoint &pos) {
+  if(functionList->itemAt(pos)) {
+    QMenu menu(this);
+    QAction *add = new QAction(tr("Remove"), this);
+    connect(add, SIGNAL(triggered()), this, SLOT(removeFunction()));
+    menu.addAction(add);
+    menu.exec(QCursor::pos());
+  }
+  else {
+    QMenu menu(this);
+    QAction *add = new QAction(tr("Add"), this);
+    connect(add, SIGNAL(triggered()), this, SLOT(addFunction()));
+    menu.addAction(add);
+    menu.exec(QCursor::pos());
+  }
+}
+
+void SummationFunction1::resize(int m, int n) {
+  for(int i=0; i<functionChoice.size(); i++)
+   functionChoice[i]->resize(m,n);
+}
+
+void SummationFunction1::updateList() {
+  for(int i=0; i<functionList->count(); i++)
+    functionList->item(i)->setText(functionChoice[i]->getFunction()->getType());
+}
+
+void SummationFunction1::addFunction() {
+  int i = functionChoice.size();
+  functionChoice.push_back(new Function1ChoiceWidget("",true));
+  functionList->addItem("Undefined");
+  connect(functionChoice[i],SIGNAL(functionChanged()),this,SLOT(updateList()));
+  connect(functionChoice[i],SIGNAL(resize()),this,SIGNAL(resize()));
+  stackedWidget->addWidget(functionChoice[i]);
+  emit resize();
+  emit updateList();
+}
+
+void SummationFunction1::removeFunction() {
+  int i = functionList->currentRow();
+  stackedWidget->removeWidget(functionChoice[i]);
+  delete functionChoice[i];
+  functionChoice.erase(functionChoice.begin()+i);
+  delete functionList->takeItem(i);
+}
+
+bool SummationFunction1::initializeUsingXML(TiXmlElement *element) {
+  Function1::initializeUsingXML(element);
+  TiXmlElement *e = element->FirstChildElement(MBSIMNS"function");
+  while(e) {
+    addFunction();
+    functionChoice[functionChoice.size()-1]->initializeUsingXML(e);
+    e=e->NextSiblingElement();
+  }
+  return true;
+}
+
+TiXmlElement* SummationFunction1::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = Function1::writeXMLFile(parent);
+  for(int i=0; i<functionChoice.size(); i++) {
+    TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"function");
+    ele0->LinkEndChild(ele1);
+    functionChoice[i]->writeXMLFile(ele1);
+  }
+  return ele0;
+}
+
 LinearSpringDamperForce::LinearSpringDamperForce() {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -341,18 +424,25 @@ TiXmlElement* LinearRegularizedCoulombFriction::writeXMLFile(TiXmlNode *parent) 
   return ele0;
 }
 
-Function1ChoiceWidget::Function1ChoiceWidget(const string &xmlName_) : function(0), xmlName(xmlName_) {
+Function1ChoiceWidget::Function1ChoiceWidget(const string &xmlName_, bool withFactor) : function(0), xmlName(xmlName_), factor(0) {
 
   layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
+  if(withFactor) {
+    vector<PhysicalStringWidget*> input;
+    input.push_back(new PhysicalStringWidget(new ScalarWidget("1"),MBSIMNS"factor",noUnitUnits(),1));
+    factor = new ExtXMLWidget("Factor",new ExtPhysicalVarWidget(input));
+    layout->addWidget(factor);
+  }
+
   comboBox = new QComboBox;
-  //comboBox->addItem(tr("None"));
   comboBox->addItem(tr("Constant function"));
   comboBox->addItem(tr("Quadratic function"));
   comboBox->addItem(tr("Sinus function"));
   comboBox->addItem(tr("Tabular function"));
+  comboBox->addItem(tr("Summation function"));
   layout->addWidget(comboBox);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineForceLaw(int)));
   defineForceLaw(0);
@@ -361,9 +451,6 @@ Function1ChoiceWidget::Function1ChoiceWidget(const string &xmlName_) : function(
 void Function1ChoiceWidget::defineForceLaw(int index) {
   layout->removeWidget(function);
   delete function;
-//  if(index==0) {
-//    function = 0;
-//  }
   if(index==0)
     function = new ConstantFunction1("VS");  
   else if(index==1)
@@ -372,15 +459,17 @@ void Function1ChoiceWidget::defineForceLaw(int index) {
     function = new SinusFunction1;
   else if(index==3)
     function = new TabularFunction1;
-
-  if(function) {
-    layout->addWidget(function);
-    emit resize();
+  else if(index==4) {
+    function = new SummationFunction1;
+    connect(function,SIGNAL(resize()),this,SIGNAL(resize()));
   }
+  layout->addWidget(function);
+  emit functionChanged();
+  emit resize();
 }
 
 bool Function1ChoiceWidget::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=element->FirstChildElement(xmlName);
+  TiXmlElement *e=xmlName!=""?element->FirstChildElement(xmlName):element;
   if(e) {
     TiXmlElement* ee=e->FirstChildElement();
     if(ee) {
@@ -400,15 +489,30 @@ bool Function1ChoiceWidget::initializeUsingXML(TiXmlElement *element) {
         comboBox->setCurrentIndex(3);
         function->initializeUsingXML(ee);
       }
+      else if(ee->ValueStr() == MBSIMNS"SummationFunction1_VS") {
+        comboBox->setCurrentIndex(4);
+        function->initializeUsingXML(ee);
+      }
     }
+    if(factor)
+      factor->initializeUsingXML(e);
+    return true;
   }
+  return false;
 }
 
 TiXmlElement* Function1ChoiceWidget::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = new TiXmlElement(xmlName);
+  TiXmlNode *ele0;
+  if(xmlName!="") {
+    ele0 = new TiXmlElement(xmlName);
+    parent->LinkEndChild(ele0);
+  }
+  else
+    ele0 = parent;
   if(function)
     function->writeXMLFile(ele0);
-  parent->LinkEndChild(ele0);
+  if(factor)
+    factor->writeXMLFile(ele0);
 
   return 0;
 }

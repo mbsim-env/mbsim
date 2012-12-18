@@ -26,6 +26,9 @@ class ExtPhysicalVarWidget;
 class ExtXMLWidget;
 class QVBoxLayout;
 class QComboBox;
+class Function1ChoiceWidget;
+class QStackedWidget;
+class QListWidget;
 
 class Function1 : public XMLWidget {
   Q_OBJECT
@@ -148,6 +151,31 @@ class TabularFunction1 : public Function1 {
     XMLWidget* widget;
 };
 
+class SummationFunction1 : public Function1 {
+  Q_OBJECT
+
+  public:
+    SummationFunction1();
+    bool initializeUsingXML(TiXmlElement *element);
+    TiXmlElement* writeXMLFile(TiXmlNode *parent);
+    inline QString getType() const { return QString("SummationFunction1_VS"); }
+    void resize(int m, int n);
+
+  protected:
+    std::vector<Function1ChoiceWidget*> functionChoice;
+    std::vector<ExtXMLWidget*> factor;
+    QStackedWidget *stackedWidget; 
+    QListWidget *functionList; 
+
+  protected slots:
+    void updateList();
+    void addFunction();
+    void removeFunction();
+    void openContextMenu(const QPoint &pos);
+  signals:
+    void resize();
+};
+
 class LinearSpringDamperForce : public Function2 {
   public:
     LinearSpringDamperForce();
@@ -198,11 +226,12 @@ class Function1ChoiceWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    Function1ChoiceWidget(const std::string &xmlName);
+    Function1ChoiceWidget(const std::string &xmlName, bool withFactor=false);
 
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void resize(int m, int n) {if(function) function->resize(m,n);}
+    Function1* getFunction() {return function;}
 
   protected slots:
     void defineForceLaw(int);
@@ -212,8 +241,10 @@ class Function1ChoiceWidget : public XMLWidget {
     QVBoxLayout *layout;
     Function1 *function;
     std::string xmlName;
+    ExtXMLWidget *factor;
   signals:
     void resize();
+    void functionChanged();
 };
 
 class Function2ChoiceWidget : public XMLWidget {
