@@ -138,6 +138,7 @@ namespace MBSim {
       /**
        * \brief set the translation function
        */
+      Function1<fmatvec::Vec3, double>* getTranslationFunction() { return pos; }
       void setTranslationFunction(Function1<fmatvec::Vec3, double> *pos_) { pos = pos_; }
       /***************************************************/
 

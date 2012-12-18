@@ -70,6 +70,8 @@ namespace MBSim {
       void setUpInverseKinetics();
 
       void initializeUsingXML(TiXmlElement * element);
+
+      virtual std::string getType() const { return "GearConstraint"; }
     
     private:
       std::vector<RigidBody*> bi;
@@ -83,19 +85,35 @@ namespace MBSim {
   };
 
   /** 
-   * \brief example 3 for contraint 
+   * \brief example 4 for contraint 
    * \todo generalization of this class
    * \author Martin Foerg
    */
-  class Constraint3 : public Constraint {
-    private:
-      RigidBody *bd;
+  class KinematicConstraint : public Constraint {
 
     public:
-      Constraint3(const std::string &name, RigidBody* body);
+      KinematicConstraint(const std::string &name, RigidBody* body);
+      KinematicConstraint(const std::string &name);
+
+      void setKinematicFunction(Function1<fmatvec::VecV,double>* f_) { f = f_;}
+      void setFirstDerivativeOfKinematicFunction(Function1<fmatvec::VecV,double>* fd_) { fd = fd_;}
+      void setSecondDerivativeOfKinematicFunction(Function1<fmatvec::VecV,double>* fdd_) { fdd = fdd_;}
+      void setReferenceBody(RigidBody* body) {bd=body; }
+
+      void init(InitStage stage);
 
       void updateStateDependentVariables(double t);
       void updateJacobians(double t, int j=0);
+
+      void initializeUsingXML(TiXmlElement * element);
+
+      virtual std::string getType() const { return "KinematicConstraint"; }
+
+    private:
+      RigidBody *bd;
+      Function1<fmatvec::VecV,double> *f, *fd, *fdd;
+
+      std::string saved_ReferenceBody;
   };
 
   /** 

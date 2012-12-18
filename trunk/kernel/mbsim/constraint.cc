@@ -27,6 +27,7 @@
 #include "mbsim/gear.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/constitutive_laws.h"
+#include "mbsim/objectfactory.h"
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -71,11 +72,11 @@ namespace MBSim {
   Constraint::Constraint(const std::string &name) : Object(name) {
   }
 
-  GearConstraint::GearConstraint(const std::string &name, RigidBody* body) : Constraint(name), bd(body), frame(0) {
-    bd->addDependency(this);
+  GearConstraint::GearConstraint(const std::string &name, RigidBody* body) : Constraint(name), bd(body), frame(0), saved_ReferenceBody("") {
+    //bd->addDependency(this);
   }
 
-  GearConstraint::GearConstraint(const std::string &name) : Constraint(name), bd(NULL), saved_ReferenceBody("") {
+  GearConstraint::GearConstraint(const std::string &name) : Constraint(name), bd(NULL), frame(0), saved_ReferenceBody("") {
   }
 
   void GearConstraint::init(InitStage stage) {
@@ -146,17 +147,64 @@ namespace MBSim {
     }
   }
 
-  Constraint3::Constraint3(const std::string &name, RigidBody* body) : Constraint(name), bd(body) {
-    bd->addDependency(this);
+  KinematicConstraint::KinematicConstraint(const std::string &name) : Constraint(name), bd(0), f(0), fd(0), fdd(0), saved_ReferenceBody("") {
   }
 
-  void Constraint3::updateStateDependentVariables(double t) {
-    bd->getqRel().init(0);
-    bd->getuRel().init(0);
+  KinematicConstraint::KinematicConstraint(const std::string &name, RigidBody* body) : Constraint(name), bd(body), f(0), fd(0), fdd(0), saved_ReferenceBody("") {
   }
 
-  void Constraint3::updateJacobians(double t, int jj) {
-    bd->getJRel().init(0); 
+  void KinematicConstraint::init(InitStage stage) {
+    if(stage==resolveXMLPath) {
+      if (saved_ReferenceBody!="")
+        setReferenceBody(getByPath<RigidBody>(saved_ReferenceBody));
+      bd->addDependency(this);
+      Constraint::init(stage);
+    }
+    else if(stage==MBSim::unknownStage) {
+      Constraint::init(stage);
+      DifferentiableFunction1<fmatvec::VecV> *pos = dynamic_cast<DifferentiableFunction1<fmatvec::VecV> *>(f);
+      if(pos) {
+        if(fd==0) fd = &pos->getDerivative(1);
+        if(fdd==0) fdd = &pos->getDerivative(2);
+      }
+    }
+    else
+      Constraint::init(stage);
+  }
+
+  void KinematicConstraint::updateStateDependentVariables(double t) {
+    if(f) bd->getqRel() = (*f)(t);
+    if(fd) bd->getuRel() = (*fd)(t);
+  }
+
+  void KinematicConstraint::updateJacobians(double t, int jj) {
+    if(fdd) bd->getjRel() = (*fdd)(t);
+  }
+
+  void KinematicConstraint::initializeUsingXML(TiXmlElement* element) {
+    Constraint::initializeUsingXML(element);
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"referenceRigidBody");
+    saved_ReferenceBody=e->Attribute("ref");
+    e=element->FirstChildElement(MBSIMNS"kinematicFunction");
+    cout << "in initializeUsingXML " << e << endl;
+    if(e) {
+      Function1<VecV,double> *f=ObjectFactory::getInstance()->createFunction1_VVS(e->FirstChildElement());
+      cout << "kinematicFunction = " << f << endl;
+      setKinematicFunction(f);
+      f->initializeUsingXML(e->FirstChildElement());
+    }
+    e=element->FirstChildElement(MBSIMNS"firstDerivativeOfKinematicFunction");
+    if(e) {
+      Function1<VecV,double> *f=ObjectFactory::getInstance()->createFunction1_VVS(e->FirstChildElement());
+      setFirstDerivativeOfKinematicFunction(f);
+      f->initializeUsingXML(e->FirstChildElement());
+    }
+    e=element->FirstChildElement(MBSIMNS"secondDerivativeOfKinematicFunction");
+    if(e) {
+      Function1<VecV,double> *f=ObjectFactory::getInstance()->createFunction1_VVS(e->FirstChildElement());
+      setSecondDerivativeOfKinematicFunction(f);
+      f->initializeUsingXML(e->FirstChildElement());
+    }
   }
 
   JointConstraint::JointConstraint(const string &name) : Constraint(name), bi(NULL), frame1(0), frame2(0), nq(0), nu(0), nh(0), saved_ref1(""), saved_ref2("") {

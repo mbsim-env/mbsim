@@ -244,6 +244,13 @@ namespace MBSim {
         if(dynamic_cast<LinearTranslation*>(fPrPK)) {
           JT = dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors();
         }
+        else if(dynamic_cast<TimeDependentTranslation*>(fPrPK)) {
+          DifferentiableFunction1<fmatvec::Vec3> *pos = dynamic_cast<DifferentiableFunction1<fmatvec::Vec3> *>(dynamic_cast<TimeDependentTranslation*>(fPrPK)->getTranslationFunction());
+          if(pos) {
+            if(fPjT==0) fPjT = &pos->getDerivative(1);
+            if(fPdjT==0) fPdjT = &pos->getDerivative(2);
+          }
+        }
         PJT[0].set(Index(0,2), Index(0,JT.cols()-1),JT);
       }
       if(fPJR==0) {
