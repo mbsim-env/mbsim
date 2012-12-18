@@ -42,6 +42,7 @@ class ObjectFactoryBase {
     virtual Jacobian *createJacobian(TiXmlElement *element) { return NULL; }
     virtual Function1<double,double> *createFunction1_SS(TiXmlElement *element) { return NULL; }
     virtual Function1<fmatvec::Vec,double> *createFunction1_VS(TiXmlElement *element) { return NULL; }
+    virtual Function1<fmatvec::VecV,double> *createFunction1_VVS(TiXmlElement *element) { return NULL; }
     virtual Function1<fmatvec::Vec3,double> *createFunction1_V3S(TiXmlElement *element) { return NULL; }
     virtual Function2<double,double,double> *createFunction2_SSS(TiXmlElement *element) { return NULL; }
     virtual Function2<fmatvec::Vec,fmatvec::Vec,double> *createFunction2_VVS(TiXmlElement *element) { return NULL; }
@@ -81,6 +82,7 @@ class ObjectFactory : public ObjectFactoryBase {
     Jacobian *createJacobian(TiXmlElement *element);
     Function1<double,double> *createFunction1_SS(TiXmlElement *element);
     Function1<fmatvec::Vec,double> *createFunction1_VS(TiXmlElement *element);
+    Function1<fmatvec::VecV,double> *createFunction1_VVS(TiXmlElement *element);
     Function1<fmatvec::Vec3,double> *createFunction1_V3S(TiXmlElement *element);
     Function2<double,double,double> *createFunction2_SSS(TiXmlElement *element);
     Function2<fmatvec::Vec,fmatvec::Vec,double> *createFunction2_VVS(TiXmlElement *element);
@@ -114,6 +116,7 @@ class MBSimObjectFactory : protected ObjectFactoryBase {
     Jacobian *createJacobian(TiXmlElement *element);
     Function1<double,double> *createFunction1_SS(TiXmlElement *element);
     Function1<fmatvec::Vec,double> *createFunction1_VS(TiXmlElement *element);
+    Function1<fmatvec::VecV,double> *createFunction1_VVS(TiXmlElement *element);
     Function1<fmatvec::Vec3,double> *createFunction1_V3S(TiXmlElement *element);
     Function2<double,double,double> *createFunction2_SSS(TiXmlElement *element);
     Function2<fmatvec::Vec,fmatvec::Vec,double> *createFunction2_VVS(TiXmlElement *element);
