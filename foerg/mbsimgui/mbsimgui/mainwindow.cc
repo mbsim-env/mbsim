@@ -43,9 +43,6 @@
 using namespace std;
 namespace bfs=boost::filesystem;
 
-int digits;
-bool saveNumeric;
-
 int runProgramSyncronous(const vector<string> &arg) {
   char **argv=new char*[arg.size()+1];
   for(size_t i=0; i<arg.size(); i++)
@@ -79,14 +76,20 @@ int runProgramSyncronous(const vector<string> &arg) {
 
 MBXMLUtils::OctaveEvaluator *MainWindow::octEval=NULL;
 
-MainWindow::MainWindow() {
+MainWindow::MainWindow() : inlineOpenMBVMW(0) {
+#ifdef INLINE_OPENMBV
   initInlineOpenMBV();
+#endif
 
   MBSimObjectFactory::initialize();
   octEval=new MBXMLUtils::OctaveEvaluator;
 
-  digits = 10;
-  saveNumeric = false;
+//  QMenu *projectMenu=new QMenu("Project", menuBar());
+//  projectMenu->addAction("New", this, SLOT(newProject()));
+//  projectMenu->addAction("Load", this, SLOT(loadProject()));
+//  projectMenu->addAction("Save as", this, SLOT(saveProjectAs()));
+//  menuBar()->addMenu(projectMenu);
+
   QMenu *MBSMenu=new QMenu("MBS", menuBar());
   MBSMenu->addAction("New", this, SLOT(newMBS()));
   MBSMenu->addAction("Load", this, SLOT(loadMBS()));
@@ -172,8 +175,6 @@ MainWindow::MainWindow() {
 
   setWindowTitle("MBSim GUI");
 
-  //setCentralWidget(inlineOpenMBVMW);
-
   elementList = new QTreeWidget;
   elementList->setColumnCount(2);
   QStringList list;
@@ -194,9 +195,6 @@ MainWindow::MainWindow() {
   //connect(parameterList,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(parameterListClicked(const QPoint &)));
   //parameterList->header()->setContextMenuPolicy (Qt::CustomContextMenu);
   //connect(parameterList->header(),SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(parameterListClicked(const QPoint &)));
-
-  QDockWidget *dockWidget4 = new QDockWidget("OpenMBV");
-  addDockWidget(Qt::RightDockWidgetArea,dockWidget4);
 
   QDockWidget *dockWidget = new QDockWidget("MBS");
   addDockWidget(Qt::RightDockWidgetArea,dockWidget);
@@ -243,11 +241,13 @@ MainWindow::MainWindow() {
   QHBoxLayout *mainlayout = new QHBoxLayout;
   centralWidget->setLayout(mainlayout);
   pagesWidget = new QStackedWidget;
-//  mainlayout->addWidget(inlineOpenMBVMW);
-//  dockWidget4->setWidget(pagesWidget);
   mainlayout->addWidget(pagesWidget);
+#ifdef INLINE_OPENMBV
+  QDockWidget *dockWidget4 = new QDockWidget("OpenMBV");
+  addDockWidget(Qt::RightDockWidgetArea,dockWidget4);
   dockWidget4->setWidget(inlineOpenMBVMW);
-
+#endif
+  
   newDOPRI5Integrator();
   newMBS();
   QTreeWidgetItem* parentItem = new QTreeWidgetItem;
@@ -331,10 +331,12 @@ void MainWindow::elementListClicked() {
   }
 
   Element *element=dynamic_cast<Element*>(elementList->currentItem());
+#ifdef INLINE_OPENMBV
   if(element)
     emit inlineOpenMBVMW->highlightObject(element->getID());
   else
     emit inlineOpenMBVMW->highlightObject("");
+#endif
 }
 
 void MainWindow::integratorListClicked() {
@@ -395,7 +397,9 @@ void MainWindow::newMBS() {
   actionSaveMBSAs->setDisabled(false);
   fileMBS->setText("");
 
+#ifdef INLINE_OPENMBV
   inlineOpenMBV();
+#endif
 }
 
 void MainWindow::loadMBS(const QString &file) {
@@ -416,7 +420,9 @@ void MainWindow::loadMBS(const QString &file) {
     //}
   }
 
+#ifdef INLINE_OPENMBV
   inlineOpenMBV();
+#endif
 }
 
 void MainWindow::loadMBS() {
@@ -477,7 +483,9 @@ void MainWindow::newDOPRI5Integrator() {
   parentItem->addChild(integrator);
   fileIntegrator->setText("");
 
+#ifdef INLINE_OPENMBV
   inlineOpenMBV();
+#endif
 }
 
 void MainWindow::newRADAU5Integrator() {
@@ -489,7 +497,9 @@ void MainWindow::newRADAU5Integrator() {
   parentItem->addChild(integrator);
   fileIntegrator->setText("");
 
+#ifdef INLINE_OPENMBV
   inlineOpenMBV();
+#endif
 }
 
 void MainWindow::newLSODEIntegrator() {
@@ -500,7 +510,9 @@ void MainWindow::newLSODEIntegrator() {
   parentItem->addChild(integrator);
   fileIntegrator->setText("");
 
+#ifdef INLINE_OPENMBV
   inlineOpenMBV();
+#endif
 }
 
 void MainWindow::newLSODARIntegrator() {
@@ -511,7 +523,9 @@ void MainWindow::newLSODARIntegrator() {
   parentItem->addChild(integrator);
   fileIntegrator->setText("");
 
+#ifdef INLINE_OPENMBV
   inlineOpenMBV();
+#endif
 }
 
 void MainWindow::newTimeSteppingIntegrator() {
@@ -522,7 +536,9 @@ void MainWindow::newTimeSteppingIntegrator() {
   parentItem->addChild(integrator);
   fileIntegrator->setText("");
 
+#ifdef INLINE_OPENMBV
   inlineOpenMBV();
+#endif
 }
 
 void MainWindow::newEulerExplicitIntegrator() {
@@ -533,7 +549,9 @@ void MainWindow::newEulerExplicitIntegrator() {
   parentItem->addChild(integrator);
   fileIntegrator->setText("");
 
+#ifdef INLINE_OPENMBV
   inlineOpenMBV();
+#endif
 }
 
 void MainWindow::newRKSuiteIntegrator() {
@@ -544,7 +562,9 @@ void MainWindow::newRKSuiteIntegrator() {
   parentItem->addChild(integrator);
   fileIntegrator->setText("");
 
+#ifdef INLINE_OPENMBV
   inlineOpenMBV();
+#endif
 }
 
 void MainWindow::loadIntegrator(const QString &file) {
@@ -596,7 +616,9 @@ void MainWindow::newDoubleParameter() {
   connect(parameter,SIGNAL(parameterChanged(const QString&)),this,SLOT(updateOctaveParameters()));
   updateOctaveParameters();
 
+#ifdef INLINE_OPENMBV
   inlineOpenMBV();
+#endif
 }
 
 void MainWindow::newParameter() {
@@ -641,7 +663,9 @@ void MainWindow::loadParameter(const QString &file) {
     actionSaveParameter->setDisabled(false);
   }
 
+#ifdef INLINE_OPENMBV
   inlineOpenMBV();
+#endif
 }
 
 void MainWindow::loadParameter() {
@@ -738,8 +762,9 @@ void MainWindow::mbsimxml(int task) {
 }
 
 void MainWindow::preview() {
+#ifdef INLINE_OPENMBV
   inlineOpenMBV();
-  //mbsimxml(1);
+#endif
 }
 
 void MainWindow::simulate() {
@@ -812,7 +837,9 @@ void MainWindow::inlineOpenMBV() {
 }
 
 void MainWindow::selectElement(string ID) {
+#ifdef INLINE_OPENMBV
   emit inlineOpenMBVMW->highlightObject(ID);
+#endif
   map<string, Element*>::iterator it=Element::idEleMap.find(ID);
   if(it!=Element::idEleMap.end()) {
     elementList->setCurrentItem(it->second);

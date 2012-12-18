@@ -67,6 +67,10 @@ MKOCTFILE_LIBS="$(echo \
 AC_SUBST([MKOCTFILE_CFLAGS])
 AC_SUBST([MKOCTFILE_LIBS])
 
+AC_ARG_ENABLE([inlineombv],[  --disable-inlineombv  disable inline openmbv],[inlineombv="no"],[inlineombv="yes"]) if test "$inlineombv" = "yes"; then
+  AC_DEFINE([INLINE_OPENMBV],[1],[Use inline openmbv])
+fi
+
 dnl Include path for Boost
 AC_ARG_WITH([boost-inc],
   [  --with-boost-inc=PATH  The path Boost include directory.],
