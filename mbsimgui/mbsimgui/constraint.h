@@ -22,6 +22,8 @@
 
 #include "object.h"
 
+class RigidBody;
+
 class Constraint : public Object {
   private:
   public:
@@ -29,6 +31,27 @@ class Constraint : public Object {
     ~Constraint();
   protected:
     friend class MainWindow;
+};
+
+class KinematicConstraint : public Constraint {
+  Q_OBJECT
+
+  public:
+    KinematicConstraint(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    ~KinematicConstraint();
+
+    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+
+    virtual QString getType() const { return "KinematicConstraint"; }
+
+  protected:
+    RigidBody *refBody;
+    ExtXMLWidget *referenceBody, *kinematicFunction, *firstDerivativeOfKinematicFunction, *secondDerivativeOfKinematicFunction;
+
+  protected slots:
+    void resizeFunctions();
+    void updateReferenceBody();
 };
 
 class JointConstraint : public Constraint {
