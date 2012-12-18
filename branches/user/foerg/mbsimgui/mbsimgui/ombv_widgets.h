@@ -65,7 +65,7 @@ class OMBVArrowWidget : public OMBVObjectWidget {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element); 
     virtual QString getType() const { return "Arrow"; }
   protected:
-    ExtXMLWidget *diameter, *headDiameter, *headLength, *type, *scaleLength;
+    ExtXMLWidget *diameter, *headDiameter, *headLength, *type, *referencePoint, *scaleLength;
 };
 
 class OMBVCoilSpringWidget : public OMBVObjectWidget {
