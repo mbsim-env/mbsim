@@ -144,6 +144,9 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
   action=new QAction(Utils::QIconCached("newobject.svg"),"Rigid body", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addRigidBody()));
   submenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Kinematic constraint", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addKinematicConstraint()));
+  submenu->addAction(action);
   action=new QAction(Utils::QIconCached("newobject.svg"),"Joint constraint", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addJointConstraint()));
   submenu->addAction(action);
@@ -243,6 +246,11 @@ int Group::getxSize() {
 
 void Group::addRigidBody() {
   new RigidBody(newName(objects,"RigidBody"), objects, -1);
+  ((Element*)treeWidget()->topLevelItem(0))->update();
+}
+
+void Group::addKinematicConstraint() {
+  new KinematicConstraint(newName(objects,"KinematicConstraint"), objects, -1);
   ((Element*)treeWidget()->topLevelItem(0))->update();
 }
 
