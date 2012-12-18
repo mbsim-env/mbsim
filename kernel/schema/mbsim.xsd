@@ -1250,6 +1250,61 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="KinematicConstraint" substitutionGroup="Constraint" type="KinematicConstraintType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        TODO <br/>
+        Kinematische Zwangsbedingung durch Angabe einer Funktion.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="KinematicConstraintType">
+    <xs:complexContent>
+      <xs:extension base="ConstraintType">
+        <xs:sequence>
+          <xs:element name="referenceRigidBody">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Starrkörper, dessen Bewegungsfreiheitsgrad als Referenz dient.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="kinematicFunction" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              TODO
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function1_VS"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="firstDerivativeOfKinematicFunction" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              TODO
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function1_VS"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="secondDerivativeOfKinematicFunction" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              TODO
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function1_VS"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="GearConstraint" substitutionGroup="Constraint" type="GearConstraintType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
