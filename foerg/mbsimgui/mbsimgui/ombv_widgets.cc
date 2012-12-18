@@ -112,6 +112,15 @@ OMBVArrowWidget::OMBVArrowWidget(const string &name) : OMBVObjectWidget(name) {
   layout->addWidget(type);
 
   input.clear();
+  list.clear();
+  list.push_back(string("\"")+"toPoint"+"\"");
+  list.push_back(string("\"")+"fromPoint"+"\"");
+  list.push_back(string("\"")+"midPoint"+"\"");
+  input.push_back(new PhysicalStringWidget(new ChoiceWidget(list,0), OPENMBVNS"referencePoint", QStringList(), 0));
+  referencePoint = new ExtXMLWidget("Reference point",new ExtPhysicalVarWidget(input),true);
+  layout->addWidget(referencePoint);
+
+  input.clear();
   input.push_back(new PhysicalStringWidget(new ScalarWidget("1"), OPENMBVNS"scaleLength", noUnitUnits(), 1));
   scaleLength = new ExtXMLWidget("Scale length",new ExtPhysicalVarWidget(input));
   layout->addWidget(scaleLength);
@@ -124,6 +133,7 @@ bool OMBVArrowWidget::initializeUsingXML(TiXmlElement *element) {
     headDiameter->initializeUsingXML(e);
     headLength->initializeUsingXML(e);
     type->initializeUsingXML(e);
+    referencePoint->initializeUsingXML(e);
     scaleLength->initializeUsingXML(e);
     return true;
   }
@@ -139,6 +149,7 @@ TiXmlElement* OMBVArrowWidget::writeXMLFile(TiXmlNode *parent) {
   headDiameter->writeXMLFile(e);
   headLength->writeXMLFile(e);
   type->writeXMLFile(e);
+  referencePoint->writeXMLFile(e);
   scaleLength->writeXMLFile(e);
   return e;
 }
