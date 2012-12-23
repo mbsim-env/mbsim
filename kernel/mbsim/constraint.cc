@@ -72,11 +72,11 @@ namespace MBSim {
   Constraint::Constraint(const std::string &name) : Object(name) {
   }
 
-  GearConstraint::GearConstraint(const std::string &name, RigidBody* body) : Constraint(name), bd(body), frame(0), saved_ReferenceBody("") {
+  GearConstraint::GearConstraint(const std::string &name, RigidBody* body) : Constraint(name), bd(body), saved_ReferenceBody("") {
     //bd->addDependency(this);
   }
 
-  GearConstraint::GearConstraint(const std::string &name) : Constraint(name), bd(NULL), frame(0), saved_ReferenceBody("") {
+  GearConstraint::GearConstraint(const std::string &name) : Constraint(name), bd(NULL), saved_ReferenceBody("") {
   }
 
   void GearConstraint::init(InitStage stage) {
@@ -101,25 +101,24 @@ namespace MBSim {
       Constraint::init(stage);
   }
 
-  void GearConstraint::addDependency(RigidBody* body, double ratio1, double ratio2) {
+  void GearConstraint::addDependency(RigidBody* body, double ratio_) {
     bi.push_back(body); 
-    ratio[0].push_back(ratio1);
-    ratio[1].push_back((int)ratio2==0?ratio1:ratio2);
+    ratio.push_back(ratio_);
   }
 
   void GearConstraint::updateStateDependentVariables(double t){
     bd->getqRel().init(0);
     bd->getuRel().init(0);
     for(unsigned int i=0; i<bi.size(); i++) {
-      bd->getqRel() += bi[i]->getqRel()*ratio[0][i];
-      bd->getuRel() += bi[i]->getuRel()*ratio[0][i];
+      bd->getqRel() += bi[i]->getqRel()*ratio[i];
+      bd->getuRel() += bi[i]->getuRel()*ratio[i];
     }
   }
 
   void GearConstraint::updateJacobians(double t, int jj){
     bd->getJRel().init(0); 
     for(unsigned int i=0; i<bi.size(); i++) {
-      bd->getJRel()(Range<Var,Var>(0,bi[i]->getJRel().rows()-1),Range<Var,Var>(0,bi[i]->getJRel().cols()-1)) += bi[i]->getJRel()*ratio[0][i];
+      bd->getJRel()(Range<Var,Var>(0,bi[i]->getJRel().rows()-1),Range<Var,Var>(0,bi[i]->getJRel().cols()-1)) += bi[i]->getJRel()*ratio[i];
     }
   }
 
@@ -141,9 +140,8 @@ namespace MBSim {
     Gear *gear = new Gear(string("Gear")+name);
     ds->addInverseKineticsLink(gear);
     gear->setDependentBody(bd);
-    gear->connect(frame);
     for(unsigned int i=0; i<bi.size(); i++) {
-      gear->addDependency(bi[i],ratio[0][i],ratio[1][i]);
+      gear->addDependency(bi[i],ratio[i]);
     }
   }
 
