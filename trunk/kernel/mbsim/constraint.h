@@ -97,6 +97,7 @@ namespace MBSim {
       void setFirstDerivativeOfKinematicFunction(Function1<fmatvec::VecV,double>* fd_) { fd = fd_;}
       void setSecondDerivativeOfKinematicFunction(Function1<fmatvec::VecV,double>* fdd_) { fdd = fdd_;}
       void setReferenceBody(RigidBody* body) {bd=body; }
+      virtual void setUpInverseKinetics();
 
       void init(InitStage stage);
 

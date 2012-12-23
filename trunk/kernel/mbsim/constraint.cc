@@ -25,6 +25,7 @@
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/joint.h"
 #include "mbsim/gear.h"
+#include "mbsim/kinematic_excitation.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/objectfactory.h"
@@ -203,6 +204,15 @@ namespace MBSim {
       setSecondDerivativeOfKinematicFunction(f);
       f->initializeUsingXML(e->FirstChildElement());
     }
+  }
+
+  void KinematicConstraint::setUpInverseKinetics() {
+    KinematicExcitation *ke = new KinematicExcitation(string("KinematicExcitation")+name);
+    ds->addInverseKineticsLink(ke);
+    ke->setReferenceBody(bd);
+    ke->setKinematicFunction(f);
+    ke->setFirstDerivativeOfKinematicFunction(fd);
+    ke->setSecondDerivativeOfKinematicFunction(fdd);
   }
 
   JointConstraint::JointConstraint(const string &name) : Constraint(name), bi(NULL), frame1(0), frame2(0), nq(0), nu(0), nh(0), saved_ref1(""), saved_ref2("") {
