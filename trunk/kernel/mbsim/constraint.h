@@ -58,8 +58,7 @@ namespace MBSim {
       GearConstraint(const std::string &name, RigidBody* body);
       GearConstraint(const std::string &name);
 
-      void addDependency(RigidBody* body_, double ratio1, double ratio2=0);
-      void setFrame(Frame* frame_) {frame = frame_;}
+      void addDependency(RigidBody* body_, double ratio);
 
       void init(InitStage stage);
 
@@ -76,8 +75,7 @@ namespace MBSim {
     private:
       std::vector<RigidBody*> bi;
       RigidBody *bd;
-      std::vector<double> ratio[2];
-      Frame* frame;
+      std::vector<double> ratio;
       
       std::string saved_ReferenceBody;
       std::vector<std::string> saved_DependencyBodies;

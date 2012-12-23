@@ -43,13 +43,13 @@ namespace MBSim {
     P0 = P0_;
     P1 = P1_;
   }
-  void Gearing::calclaSize() {
+  void Gearing::calclaSize(int j) {
     laSize = 1;
   }
-  void Gearing::calcgSize() {
+  void Gearing::calcgSize(int j) {
     gSize = 1;
   }
-  void Gearing::calcgdSize() {
+  void Gearing::calcgdSize(int j) {
     gdSize = 1;
   }
 
@@ -105,8 +105,8 @@ namespace MBSim {
     //WrP1Z = Z->getPosition()-P1->getPosition();
     Vec3 WrP0P1 = P1->getPosition()-P0->getPosition();
     Vec3 dir =  WrP0P1/nrm2(WrP0P1);
-    WrP0Z = dir*r0;
-    WrP1Z = -dir*r1;
+    WrP0Z = (flag?-1.:1.)*dir*r0;
+    WrP1Z = -1.*dir*r1;
     //WrP0Z = WrP0P1/(1.+ratio);
     //WrP1Z = -WrP0P1*(ratio/(1.+ratio)); 
     //WrP1Z = WrP0Z - WrP0P1;
@@ -181,7 +181,7 @@ namespace MBSim {
     Kt2(2)=1;
     const Vec3 s2=P1->getOrientation()*Ks2;
     const Vec3 t2=P1->getOrientation()*Kt2;
-    Vec3 n2=(flag==false?1.:-1.)*crossProduct(s2, t2);
+    Vec3 n2=(flag?-1.:1.)*crossProduct(s2, t2);
     n2/=nrm2(n2);
     const Vec3 u2=s2/nrm2(s2);
     const Vec3 v2=crossProduct(n2, u2);
