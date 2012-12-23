@@ -114,7 +114,7 @@ namespace MBSim {
 
   void Gear::updatewb(double t, int j) {
     for(unsigned i=0; i<body.size(); i++)
-      wb += body[i]->getjRel().T()*ratio[i];
+      wb += body[i]->getjRel()*ratio[i];
   }
 
  void Gear::init(InitStage stage) {
