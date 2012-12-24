@@ -527,6 +527,13 @@ namespace MBSim {
       void buildListOfModels(std::vector<ModellingInterface*> &model, bool recursive = true);
 
       /**
+       * \brief build flat list of inverse kinetics links
+       * \param list of inverse kinetics links
+       * \param flag for recursive
+       */
+      virtual void buildListOfInverseKineticsLinks(std::vector<Link*> &lnk, bool recursive=false);
+
+      /**
        * \brief analyse constraints of dynamic systems for usage in inverse kinetics
        */
       void setUpInverseKinetics();

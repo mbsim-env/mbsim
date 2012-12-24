@@ -110,12 +110,16 @@ namespace MBSim {
           modellList[0]->processModellList(modellList,objList,lnkList);
         } while(modellList.size());
 
+      vector<Link*> iKlnkList;
+      buildListOfInverseKineticsLinks(iKlnkList,true);
+
       dynamicsystem.clear(); // delete old DynamicSystem list
       object.clear(); // delete old object list
       frame.clear(); // delete old frame list
       contour.clear(); // delete old contour list
       link.clear(); // delete old link list
       extraDynamic.clear(); // delete old ed list
+      inverseKineticsLink.clear(); // delete old link list
 
       /* rename system structure */
       if(INFO) cout << "object List:" << endl;
@@ -156,6 +160,14 @@ namespace MBSim {
         if(INFO) cout<<str.str()<<endl;
         edList[i]->setName(str.str());
         addExtraDynamic(edList[i]);
+      }
+      if(INFO) cout << "inverse kinetics link List:" << endl;
+      for(unsigned int i=0; i<iKlnkList.size(); i++) {
+        stringstream str;
+        str << iKlnkList[i]->getParent()->getPath('/') << "/" << iKlnkList[i]->getName();
+        if(INFO) cout<<str.str()<<endl;
+        iKlnkList[i]->setName(str.str());
+        addInverseKineticsLink(iKlnkList[i]);
       }
 
       /* matrix of body dependencies */
