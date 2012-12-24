@@ -139,7 +139,7 @@ namespace MBSim {
 
   void GearConstraint::setUpInverseKinetics() {
     Gear *gear = new Gear(string("Gear")+name);
-    ds->addInverseKineticsLink(gear);
+    static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(gear);
     gear->setDependentBody(bd);
     for(unsigned int i=0; i<bi.size(); i++) {
       gear->addDependency(bi[i],ratio[i]);
@@ -208,7 +208,7 @@ namespace MBSim {
 
   void KinematicConstraint::setUpInverseKinetics() {
     KinematicExcitation *ke = new KinematicExcitation(string("KinematicExcitation")+name);
-    ds->addInverseKineticsLink(ke);
+    static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(ke);
     ke->setReferenceBody(bd);
     ke->setKinematicFunction(f);
     ke->setFirstDerivativeOfKinematicFunction(fd);
@@ -407,7 +407,7 @@ namespace MBSim {
 
   void JointConstraint::setUpInverseKinetics() {
     InverseKineticsJoint *joint = new InverseKineticsJoint(string("Joint_")+name);
-    ds->addInverseKineticsLink(joint);
+    static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(joint);
     if(dT.cols())
       joint->setForceDirection(dT);
     if(dR.cols())
