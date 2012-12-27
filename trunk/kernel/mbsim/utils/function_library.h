@@ -283,9 +283,9 @@ namespace MBSim {
 
   template<class Col>
   QuadraticFunction1_VS<Col>::QuadraticFunction1_VS() : DifferentiableFunction1<fmatvec::Vector<Col,double> >(), ySize(0), a0(), a1(), a2() {
-    addDerivative(new QuadraticFunction1_VS::ZerothDerivative(this));
-    addDerivative(new QuadraticFunction1_VS::FirstDerivative(this));
-    addDerivative(new QuadraticFunction1_VS::SecondDerivative(this));
+    this->addDerivative(new QuadraticFunction1_VS::ZerothDerivative(this));
+    this->addDerivative(new QuadraticFunction1_VS::FirstDerivative(this));
+    this->addDerivative(new QuadraticFunction1_VS::SecondDerivative(this));
   }
 
   template<class Col>
