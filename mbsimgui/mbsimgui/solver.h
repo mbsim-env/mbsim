@@ -22,8 +22,6 @@
 
 #include "group.h"
 #include <string>
-#include <QtCore/QFileInfo>
-#include <QtCore/QDateTime>
 
 
 class Environment : public QObject {

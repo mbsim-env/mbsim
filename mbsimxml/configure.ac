@@ -16,6 +16,9 @@ if test "_$host_os" = "_mingw32" ; then
   AC_DEFINE([MBSIMXML_MINGW], [1], [Host System is MinGW/MSys])
 fi
 
+dnl boost
+AC_CHECK_HEADERS([boost/filesystem.hpp], [], [AC_MSG_ERROR(boost/filesystem.hpp not found.)])
+
 AC_MSG_CHECKING([for WEXITSTATUS])
 AC_COMPILE_IFELSE([
 #include <stdlib.h>
@@ -25,16 +28,6 @@ int main() {
   return 0;
 }
 ], [AC_MSG_RESULT([yes]); CPPFLAGS="$CPPFLAGS -DHAVE_WEXITSTATUS"], [AC_MSG_RESULT([no])])
-
-AC_MSG_CHECKING([for st_mtim element in struct time_t])
-AC_COMPILE_IFELSE([
-#include <sys/stat.h>
-int main() {
-  struct stat st;
-  time_t i=st.st_mtim.tv_nsec;
-  return 0;
-}
-], [AC_MSG_RESULT([yes]); CPPFLAGS="$CPPFLAGS -DHAVE_STAT_ST_MTIM"], [AC_MSG_RESULT([no])])
 
 dnl Check for xslt
 AC_ARG_WITH([xsltprocpath],
