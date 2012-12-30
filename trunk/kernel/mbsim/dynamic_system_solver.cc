@@ -19,6 +19,7 @@
  */
 
 #include<config.h>
+#include<unistd.h>
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/modelling_interface.h"
 #include "mbsim/frame.h"
