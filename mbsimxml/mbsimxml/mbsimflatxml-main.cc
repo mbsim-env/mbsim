@@ -71,6 +71,7 @@ int main(int argc, char *argv[]) {
   }
   catch (MBSimError error) {
     error.printExceptionMessage();
+    return 1;
   }
 
   return 0;
