@@ -3,21 +3,23 @@
 if [ "_$1" = "_-h" -o "_$1" = "_-?" -o "_$1" = "_--help" ]; then
   echo "Usage: $0 <args>"
   echo ""
-  echo "  <args> are passed to runexamples.sh"
+  echo "  <args> are passed to runexamples.py"
   exit
 fi
 
 # sleep execution at day; allow the script only to run at night
 allowOnlyAtNight() {
-  ALLOWFROM=2
-  ALLOWTO=7
-   
-  HOUR=$(date +%H)
-  if [ $HOUR -lt $ALLOWFROM ]; then
-    sleep $[$ALLOWFROM-$HOUR]h
-  fi
-  if [ $HOUR -gt $ALLOWTO ]; then
-    sleep $[24-$HOUR+$ALLOWFROM]h
+  if [ "_$NOSLEEP" != "_1" ]; then
+    ALLOWFROM=2
+    ALLOWTO=7
+     
+    HOUR=$(date +%H)
+    if [ $HOUR -lt $ALLOWFROM ]; then
+      sleep $[$ALLOWFROM-$HOUR]h
+    fi
+    if [ $HOUR -gt $ALLOWTO ]; then
+      sleep $[24-$HOUR+$ALLOWFROM]h
+    fi
   fi
 }
 
@@ -419,16 +421,7 @@ grep "$SVNGREPSTR" $TMPFILE
 MBSIMEXAMPLES_CHANGED=0
 if [ $? -ne 0 -o $RUNMBSIMEXAMPLES -eq 1 -o $FORCEBUILD = "yes" ]; then
   MBSIMEXAMPLES_CHANGED=1
-  # BEGIN: remove examples with very long simulation time
-#  rm -rf mechanics_flexible_body_planar_beam_with_large_deflections
-#  rm -rf mechanics_contacts_point_nurbsdisk
-#  rm -rf mechanics_contacts_woodpecker_flexible_planar
-#  rm -rf mechanics_flexible_body_rotor
-#  rm -rf mechanics_contacts_circle_nurbsdisk2s
-#  rm -rf mechanics_flexible_body_flexring_on_disk
-#  rm -rf mechanics_flexible_body_spatial_beam_with_large_deflection
-  # END: remove examples with very long simulation time
-  ./runexamples.sh "$@" >& /tmp/berlios-build.out; RET=$?; grep -v "^   t =" /tmp/berlios-build.out; test $RET -eq 0 || exit 6 # do not print "   t = ...\r" lines
+  ./runexamples.py . ^./mechanics/flexible_body ^./mechanics/contacts/circle_nurbsdisk2s ^./mechanics/contacts/point_nurbsdisk "$@"; RET=$?; test $RET -eq 0 || exit 6
 fi
 
 echo "END: $(date +%Y-%m-%d_%H:%M:%S):"
