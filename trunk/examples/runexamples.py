@@ -19,6 +19,7 @@ import functools
 import multiprocessing
 import math
 import traceback
+import tarfile
 
 # global variables
 htmlDir=os.getcwd()+"/html"
@@ -221,7 +222,7 @@ def printFinishedMessage(missingDirectories, result):
     etaStr=datetime.timedelta(0, round(eta/min(args.j, multiprocessing.cpu_count())))
   else:
     etaStr="unknown"
-  print("Finished example %d/%d: %.1f%%; ETA %s"%(curNumber, lenDirs, curNumber/lenDirs*100, etaStr))
+  print("Finished example %03d/%03d; %5.1f%%; ETA %s; %s"%(curNumber, lenDirs, curNumber/lenDirs*100, etaStr, result[0][0]))
 
 
 
@@ -536,7 +537,11 @@ def compareExample(example, compareFN):
 
 
 def copyToReference():
+  curNumber=0
+  lenDirs=len(directories)
   for example in directories:
+    curNumber+=1
+    print("Copying example %03d/%03d; %5.1f%%; %s"%(curNumber, lenDirs, curNumber/lenDirs*100, example[0]))
     savedDir=os.getcwd()
     os.chdir(example[0])
 
@@ -550,16 +555,29 @@ def copyToReference():
 
 
 def createReferenceTarBz2():
-  command=["tar", "-cjf", "reference.tar.bz2"]
+  tfFD=tarfile.open("reference.tar.bz2", "w:bz2")
+  curNumber=0
+  lenDirs=len(directories)
   for example in directories:
-    command.append(example[0]+"/reference")
-  subprocess.call(command)
+    curNumber+=1
+    print("Archive example %03d/%03d; %5.1f%%; %s"%(curNumber, lenDirs, curNumber/lenDirs*100, example[0]))
+    tfFD.add(example[0]+"/reference")
+  tfFD.close()
 
 
 
 def applyReferenceTarBz2():
-  command=["tar", "-xjf", "reference.tar.bz2"]
-  subprocess.call(command)
+  print("Appling the following files form the archive:")
+  tfFD=tarfile.open("reference.tar.bz2", "r:bz2")
+  toExtract=[]
+  for tarMember in tfFD.getmembers():
+    if tarMember.isfile():
+      for dir in directories:
+        if os.path.dirname(os.path.dirname(os.path.normpath(tarMember.name)))==os.path.normpath(dir[0]):
+          print(tarMember.name)
+          toExtract.append(tarMember)
+  tfFD.extractall(".", toExtract)
+  tfFD.close()
 
 
 
