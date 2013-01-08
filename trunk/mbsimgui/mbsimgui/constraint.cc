@@ -45,18 +45,15 @@ KinematicConstraint::KinematicConstraint(const QString &str, QTreeWidgetItem *pa
 
   kinematicFunction = new ExtXMLWidget("Kinematic function",new Function1ChoiceWidget(MBSIMNS"kinematicFunction"),true);
   properties->addToTab("General", kinematicFunction);
-  connect(kinematicFunction,SIGNAL(resize()),this,SLOT(resizeFunctions()));
-  connect((Function1ChoiceWidget*)kinematicFunction->getWidget(),SIGNAL(resize()),this,SLOT(resizeFunctions()));
+  connect((Function1ChoiceWidget*)kinematicFunction->getWidget(),SIGNAL(resize()),this,SLOT(resizeVariables()));
 
   firstDerivativeOfKinematicFunction = new ExtXMLWidget("First derivative of kinematic function",new Function1ChoiceWidget(MBSIMNS"firstDerivativeOfKinematicFunction"),true);
   properties->addToTab("General", firstDerivativeOfKinematicFunction);
-  connect(firstDerivativeOfKinematicFunction,SIGNAL(resize()),this,SLOT(resizeFunctions()));
-  connect((Function1ChoiceWidget*)firstDerivativeOfKinematicFunction->getWidget(),SIGNAL(resize()),this,SLOT(resizeFunctions()));
+  connect((Function1ChoiceWidget*)firstDerivativeOfKinematicFunction->getWidget(),SIGNAL(resize()),this,SLOT(resizeVariables()));
 
   secondDerivativeOfKinematicFunction = new ExtXMLWidget("Second derivative of kinematic function",new Function1ChoiceWidget(MBSIMNS"secondDerivativeOfKinematicFunction"),true);
   properties->addToTab("General", secondDerivativeOfKinematicFunction);
-  connect(secondDerivativeOfKinematicFunction,SIGNAL(resize()),this,SLOT(resizeFunctions()));
-  connect((Function1ChoiceWidget*)secondDerivativeOfKinematicFunction->getWidget(),SIGNAL(resize()),this,SLOT(resizeFunctions()));
+  connect((Function1ChoiceWidget*)secondDerivativeOfKinematicFunction->getWidget(),SIGNAL(resize()),this,SLOT(resizeVariables()));
 
   properties->addStretch();
 }
@@ -64,10 +61,11 @@ KinematicConstraint::KinematicConstraint(const QString &str, QTreeWidgetItem *pa
 KinematicConstraint::~KinematicConstraint() {
 }
 
-void KinematicConstraint::resizeFunctions() {
-  ((Function1ChoiceWidget*)kinematicFunction->getWidget())->resize(refBody?refBody->getUnconstrainedSize():0,1);
-  ((Function1ChoiceWidget*)firstDerivativeOfKinematicFunction->getWidget())->resize(refBody?refBody->getUnconstrainedSize():0,1);
-  ((Function1ChoiceWidget*)secondDerivativeOfKinematicFunction->getWidget())->resize(refBody?refBody->getUnconstrainedSize():0,1);
+void KinematicConstraint::resizeVariables() {
+  int size = refBody?refBody->getUnconstrainedSize():0;
+  ((Function1ChoiceWidget*)kinematicFunction->getWidget())->resize(size,1);
+  ((Function1ChoiceWidget*)firstDerivativeOfKinematicFunction->getWidget())->resize(size,1);
+  ((Function1ChoiceWidget*)secondDerivativeOfKinematicFunction->getWidget())->resize(size,1);
 }
 
 void KinematicConstraint::updateReferenceBody() {
@@ -80,17 +78,19 @@ void KinematicConstraint::updateReferenceBody() {
   refBody->setConstrained(true);
   refBody->resizeGeneralizedPosition();
   refBody->resizeGeneralizedVelocity();
-  connect(refBody,SIGNAL(sizeChanged()),this,SIGNAL(resizeFunctions()));
-  resizeFunctions();
+  connect(refBody,SIGNAL(sizeChanged()),this,SLOT(resizeVariables()));
+  resizeVariables();
 }
 
 void KinematicConstraint::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e, *ee;
+  blockSignals(true);
   Constraint::initializeUsingXML(element);
   referenceBody->initializeUsingXML(element);
   kinematicFunction->initializeUsingXML(element);
   firstDerivativeOfKinematicFunction->initializeUsingXML(element);
   secondDerivativeOfKinematicFunction->initializeUsingXML(element);
+  blockSignals(false);
 }
 
 TiXmlElement* KinematicConstraint::writeXMLFile(TiXmlNode *parent) {
@@ -151,7 +151,7 @@ void JointConstraint::resizeGeneralizedPosition() {
 }
 
 void JointConstraint::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e, *ee;
+  blockSignals(true);
   Constraint::initializeUsingXML(element);
   dependentBodiesFirstSide->initializeUsingXML(element);
   dependentBodiesSecondSide->initializeUsingXML(element);
@@ -160,6 +160,7 @@ void JointConstraint::initializeUsingXML(TiXmlElement *element) {
   force->initializeUsingXML(element);
   moment->initializeUsingXML(element);
   connections->initializeUsingXML(element);
+  blockSignals(false);
 }
 
 TiXmlElement* JointConstraint::writeXMLFile(TiXmlNode *parent) {

@@ -215,8 +215,10 @@ RigidBodyOfReferenceWidget::RigidBodyOfReferenceWidget(const string &xmlName_, E
 }
 
 void RigidBodyOfReferenceWidget::initialize() {
+  blockSignals(true);
   if(saved_bodyOfReference!="")
     setBody(element->getByPath<RigidBody>(saved_bodyOfReference));
+  blockSignals(false);
 }
 
 void RigidBodyOfReferenceWidget::update() {
@@ -766,11 +768,13 @@ bool DependenciesWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e = element->FirstChildElement(xmlName);
   if(e) {
     TiXmlElement *ee=e->FirstChildElement();
+    blockSignals(true);
     while(ee) {
       addDependency();
       refBody[refBody.size()-1]->setSavedBodyOfReference(ee->Attribute("ref"));
       ee=ee->NextSiblingElement();
     }
+    blockSignals(false);
     return true;
   }
   return false;

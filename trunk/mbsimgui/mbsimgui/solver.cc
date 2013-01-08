@@ -126,7 +126,6 @@ Solver* Solver::readXMLFile(const QString &filename, QTreeWidgetItem* parent) {
   assert(ret==true);
   TiXml_PostLoadFile(&doc);
   TiXmlElement *e=doc.FirstChildElement();
-  TiXml_setLineNrFromProcessingInstruction(e);
   map<string,string> dummy;
   incorporateNamespace(doc.FirstChildElement(), dummy);
   Solver *solver=dynamic_cast<Solver*>(ObjectFactory::getInstance()->createGroup(e, parent, 1));

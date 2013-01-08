@@ -38,9 +38,11 @@ mbsimgui_SOURCES = main.cc \
 		   contact.cc \
 		   spring_damper.cc \
 		   kinetic_excitation.cc \
+		   actuator.cc \
 		   constraint.cc \
 		   integrator.cc \
 		   parameter.cc \
+		   signal_.cc \
 		   octaveutils.cc \
 		   property_dialog.cc
 
@@ -70,9 +72,11 @@ QT_BUILT_SOURCES = mainwindow.moc.cc \
 		   contact.moc.cc \
 		   spring_damper.moc.cc \
 		   kinetic_excitation.moc.cc \
+		   actuator.moc.cc \
 		   constraint.moc.cc \
 		   integrator.moc.cc \
 		   parameter.moc.cc \
+		   signal_.moc.cc \
 		   property_dialog.moc.cc
 
 mbsimgui_HEADERS = 

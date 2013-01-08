@@ -32,7 +32,8 @@
 #define OPENMBVNS "{"OPENMBVNS_"}"
 #define MBSIMINTNS_ "http://mbsim.berlios.de/MBSimIntegrator"
 #define MBSIMINTNS "{"MBSIMINTNS_"}"
-
+#define MBSIMCONTROLNS_ "http://mbsim.berlios.de/MBSimControl"
+#define MBSIMCONTROLNS "{"MBSIMCONTROLNS_"}"
 
 class TiXmlElement;
 class TiXmlNode;

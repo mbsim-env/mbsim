@@ -29,7 +29,9 @@
 #include "spring_damper.h"
 #include "joint.h"
 #include "kinetic_excitation.h"
+#include "actuator.h"
 #include "contact.h"
+#include "signal_.h"
 #include "frame.h"
 #include "contour.h"
 #include "property_widget.h"
@@ -161,12 +163,19 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
   action=new QAction(Utils::QIconCached("newobject.svg"),"Kinetic excitation", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addKineticExcitation()));
   submenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Actuator", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addActuator()));
+  submenu->addAction(action);
   action=new QAction(Utils::QIconCached("newobject.svg"),"Spring damper", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addSpringDamper()));
   submenu->addAction(action);
   action=new QAction(Utils::QIconCached("newobject.svg"),"Contact", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addContact()));
   submenu->addAction(action);
+  QMenu *subsubmenu = submenu->addMenu("Add Sensor");
+  action=new QAction(Utils::QIconCached("newobject.svg"),"AbsolutePositionSensor", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addAbsolutePositionSensor()));
+  subsubmenu->addAction(action);
 
   action=new QAction(Utils::QIconCached("newobject.svg"),"Add from file", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addFromFile()));
@@ -269,6 +278,11 @@ void Group::addKineticExcitation() {
   ((Element*)treeWidget()->topLevelItem(0))->update();
 }
 
+void Group::addActuator() {
+  new Actuator(newName(links,"Actuator"), links, -1);
+  ((Element*)treeWidget()->topLevelItem(0))->update();
+}
+
 void Group::addSpringDamper() {
   new SpringDamper(newName(links,"SpringDamper"), links, -1);
   ((Element*)treeWidget()->topLevelItem(0))->update();
@@ -276,6 +290,11 @@ void Group::addSpringDamper() {
 
 void Group::addContact() {
   new Contact(newName(links,"Contact"), links, -1);
+  ((Element*)treeWidget()->topLevelItem(0))->update();
+}
+
+void Group::addAbsolutePositionSensor() {
+  new AbsolutePositionSensor(newName(links,"AbsolutePositionSensor"), links, -1);
   ((Element*)treeWidget()->topLevelItem(0))->update();
 }
 

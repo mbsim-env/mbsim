@@ -44,13 +44,14 @@ class KinematicConstraint : public Constraint {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
 
     virtual QString getType() const { return "KinematicConstraint"; }
+    //virtual void resizeVariables() {Element::resizeVariables();}
 
   protected:
     RigidBody *refBody;
     ExtXMLWidget *referenceBody, *kinematicFunction, *firstDerivativeOfKinematicFunction, *secondDerivativeOfKinematicFunction;
 
   protected slots:
-    void resizeFunctions();
+    void resizeVariables();
     void updateReferenceBody();
 };
 

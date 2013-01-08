@@ -26,9 +26,11 @@
 #include "rigidbody.h"
 #include "constraint.h"
 #include "kinetic_excitation.h"
+#include "actuator.h"
 #include "joint.h"
 #include "spring_damper.h"
 #include "contact.h"
+#include "signal_.h"
 #include "xml_widget.h"
 #include <string>
 
@@ -127,12 +129,16 @@ Link* MBSimObjectFactory::createLink(TiXmlElement *element, QTreeWidgetItem* par
   if(element==0) return 0;
   if(element->ValueStr()==MBSIMNS"KineticExcitation")
     return new KineticExcitation(element->Attribute("name"),parentItem,ind);
+  if(element->ValueStr()==MBSIMNS"Actuator")
+    return new Actuator(element->Attribute("name"),parentItem,ind);
   if(element->ValueStr()==MBSIMNS"SpringDamper")
     return new SpringDamper(element->Attribute("name"),parentItem,ind);
   if(element->ValueStr()==MBSIMNS"Joint")
     return new Joint(element->Attribute("name"),parentItem,ind);
   if(element->ValueStr()==MBSIMNS"Contact")
     return new Contact(element->Attribute("name"),parentItem,ind);
+  if(element->ValueStr()==MBSIMCONTROLNS"AbsolutePositionSensor")
+    return new AbsolutePositionSensor(element->Attribute("name"),parentItem,ind);
   //    if(element->ValueStr()==MBSIMNS"ExternGeneralizedIO")
   //      return new ExternGeneralizedIO(element->Attribute("name"));
   return 0;
