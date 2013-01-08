@@ -37,7 +37,7 @@ using namespace std;
 int Element::IDcounter=0;
 map<string, Element*> Element::idEleMap;
 
-Element::Element(const QString &str, QTreeWidgetItem *parentItem, int ind, bool grey) : QTreeWidgetItem(), drawThisPath(true), searchMatched(true), frames(0), contours(0), groups(0), objects(0), links(0), extraDynamics(0) {
+Element::Element(const QString &str, QTreeWidgetItem *parentItem, int ind, bool grey) : QTreeWidgetItem(), drawThisPath(true), searchMatched(true), frames(0), contours(0), groups(0), objects(0), links(0), extraDynamics(0), ns(MBSIMNS) {
   stringstream sstr;
   sstr<<IDcounter++;
   ID=sstr.str();
@@ -217,7 +217,7 @@ void Element::initializeUsingXML(TiXmlElement *element) {
 }
 
 TiXmlElement* Element::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType().toStdString());
+  TiXmlElement *ele0=new TiXmlElement(ns+getType().toStdString());
   name->writeXMLFile(ele0);
   parent->LinkEndChild(ele0);
   return ele0;

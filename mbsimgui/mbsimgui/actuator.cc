@@ -18,14 +18,14 @@
    */
 
 #include <config.h>
-#include "joint.h"
+#include "actuator.h"
 #include "kinetics_widgets.h"
 #include "extended_widgets.h"
 #include "ombv_widgets.h"
 
 using namespace std;
 
-Joint::Joint(const QString &str, QTreeWidgetItem *parentItem, int ind) : Link(str, parentItem, ind) {
+Actuator::Actuator(const QString &str, QTreeWidgetItem *parentItem, int ind) : Link(str, parentItem, ind) {
 
   setText(1,getType());
 
@@ -42,31 +42,34 @@ Joint::Joint(const QString &str, QTreeWidgetItem *parentItem, int ind) : Link(st
   properties->addToTab("Visualisation",momentArrow);
 
   connections = new ExtXMLWidget("Connections",new ConnectFramesWidget(2,this));
-  properties->addToTab("Kinetics", connections);
+  properties->addToTab("Kinetics",connections);
 
-  force = new ExtXMLWidget("Force",new GeneralizedForceChoiceWidget(MBSIMNS"force",forceArrow),true);
-  properties->addToTab("Kinetics", force);
+  ForceChoiceWidget *f = new ForceChoiceWidget(MBSIMNS"force", forceArrow);
+  force = new ExtXMLWidget("Force",f,true);
+  properties->addToTab("Kinetics",force);
 
-  moment = new ExtXMLWidget("Moment",new GeneralizedForceChoiceWidget(MBSIMNS"moment",momentArrow),true);
-  properties->addToTab("Kinetics", moment);
+  ForceChoiceWidget *m = new ForceChoiceWidget(MBSIMNS"moment", momentArrow);
+  moment = new ExtXMLWidget("Moment",m,true);
+  properties->addToTab("Kinetics",moment);
 
   properties->addStretch();
 }
 
-Joint::~Joint() {
+Actuator::~Actuator() {
 }
 
-void Joint::initializeUsingXML(TiXmlElement *element) {
+void Actuator::initializeUsingXML(TiXmlElement *element) {
   Link::initializeUsingXML(element);
   force->initializeUsingXML(element);
   moment->initializeUsingXML(element);
   connections->initializeUsingXML(element);
 }
 
-TiXmlElement* Joint::writeXMLFile(TiXmlNode *parent) {
+TiXmlElement* Actuator::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Link::writeXMLFile(parent);
   force->writeXMLFile(ele0);
   moment->writeXMLFile(ele0);
   connections->writeXMLFile(ele0);
   return ele0;
 }
+

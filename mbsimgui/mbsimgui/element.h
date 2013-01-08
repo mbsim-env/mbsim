@@ -55,7 +55,7 @@ class Element : public QObject, public QTreeWidgetItem {
     Element *parentElement;
     Container *frames, *contours, *groups, *objects, *links, *extraDynamics;
     static int IDcounter;
-    std::string ID;
+    std::string ns, ID;
   public:
     Element(const QString &str, QTreeWidgetItem *parentItem, int ind, bool grey=false);
     virtual ~Element();
