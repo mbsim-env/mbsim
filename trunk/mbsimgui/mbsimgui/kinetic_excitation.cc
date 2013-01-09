@@ -41,7 +41,15 @@ KineticExcitation::KineticExcitation(const QString &str, QTreeWidgetItem *parent
   ((OMBVArrowWidget*)momentArrow->getWidget())->setID(getID());
   properties->addToTab("Visualisation",momentArrow);
 
-  connections = new ExtXMLWidget("Connections",new ConnectFramesWidget(1,this));
+  vector<QWidget*> widget;
+  vector<string> name;
+  name.push_back("1 frame");
+  name.push_back("2 frames");
+  widget.push_back(new ConnectFramesWidget(1,this));
+  widget.push_back(new ConnectFramesWidget(2,this));
+
+  connections = new ExtXMLWidget("Connections",new XMLWidgetChoiceWidget(name,widget)); 
+//  connections = new ExtXMLWidget("Connections",new ConnectFramesWidget(1,this));
   properties->addToTab("Kinetics",connections);
 
   ForceChoiceWidget *f = new ForceChoiceWidget(MBSIMNS"force", forceArrow);

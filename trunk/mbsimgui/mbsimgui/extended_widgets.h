@@ -65,6 +65,8 @@ class XMLWidgetChoiceWidget : public XMLWidget {
     XMLWidgetChoiceWidget(const std::vector<std::string> &name, const std::vector<QWidget*> &widget);
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual void initialize();
+    virtual void update();
   protected slots:
     void changeCurrent(int idx);
   protected:
