@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2013 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -22,6 +22,7 @@
 
 #include <mbsim/link_mechanics.h>
 #include <mbsim/utils/function.h>
+#include "mbsim/frame.h"
 
 namespace MBSim {
 
@@ -29,6 +30,7 @@ namespace MBSim {
    * \brief kinetic excitations given by time dependent functions
    * \author Markus Friedrich
    * \date 2009-08-11 some comments (Thorsten Schindler)
+   * \date 2013-01-09 second frame for action-reaction law (Martin Förg)
    */
   class KineticExcitation : public LinkMechanics {
     public:
@@ -77,17 +79,26 @@ namespace MBSim {
        */
       void setFrameOfReference(Frame *ref_) { refFrame=ref_; }
 
+      using LinkMechanics::connect;
+
+      /**
+       * \param first frame to connect
+       * \param second frame to connect
+       */
+      void connect(MBSim::Frame *frame1, MBSim::Frame *frame2);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /** \brief Visualize a force arrow acting on the frame */
       void setOpenMBVForceArrow(OpenMBV::Arrow *arrow) {
-        std::vector<bool> which; which.resize(1, true);
+        std::vector<bool> which; which.resize(2, false);
+        which[1]=true;
         LinkMechanics::setOpenMBVForceArrow(arrow, which);
       }
 
       /** \brief Visualize a moment arrow acting on the frame */
       void setOpenMBVMomentArrow(OpenMBV::Arrow *arrow) {
-        std::vector<bool> which; which.resize(1, true);
+        std::vector<bool> which; which.resize(2, false);
+        which[1]=true;
         LinkMechanics::setOpenMBVMomentArrow(arrow, which);
       }
 #endif
@@ -113,8 +124,13 @@ namespace MBSim {
        */
       Function1<fmatvec::Vec,double> *F, *M;
 
+      /**
+       * \brief own frame located in second partner with same orientation as first partner 
+       */
+      Frame C;
+
     private:
-      std::string saved_frameOfReference, saved_ref;
+      std::string saved_frameOfReference, saved_ref, saved_ref1, saved_ref2;
   };
 
 }

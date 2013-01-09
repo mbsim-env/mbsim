@@ -1587,10 +1587,13 @@
           <xs:element name="connect">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Definiert den Angriffspunkt dieser kinetischen Anregung auf einen Körper. Als Angriffspunkt
-                muss dabei ein KOS des entsprechenden Körpers angegeben werden.
+                muss dabei ein KOS des entsprechenden Körpers angegeben werden. 
+                Bei inneren Kräften und Momenten können alternativ die KOS beider Schnittufer angegeben werden.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+              <xs:attribute name="ref" type="FrameReferenceType"/>
+              <xs:attribute name="ref1" type="FrameReferenceType"/>
+              <xs:attribute name="ref2" type="FrameReferenceType"/>
             </xs:complexType> 
           </xs:element>
         </xs:sequence> 
