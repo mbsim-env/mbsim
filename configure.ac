@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.57])
-AC_INIT([nurbs++],[3.0.11],[martin.o.foerg@googlemail.com],[nurbs++])
+AC_INIT([nurbs++],[3.0.12],[martin.o.foerg@googlemail.com],[nurbs++])
 AC_CONFIG_HEADER(include/plib_config.h)
 AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE
@@ -357,6 +357,7 @@ AC_SUBST(CPPUNIT_LIBS)
 PL_PROG_PERL
 
 #LDFLAGS="$LDFLAGS  -Wl,--no-undefined" #TODO: does not work woth -Wl,--no-undefined
+CXXFLAGS="$CXXFLAGS -fpermissive"
 
 dnl removed from list: nurbs++-config (and added nurbs++.pc to use pkg-config)
 
