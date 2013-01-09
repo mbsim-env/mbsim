@@ -4,7 +4,6 @@
 #include "mbsim/group.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/kinetic_excitation.h"
-#include "mbsim/actuator.h"
 #include "mbsim/spring_damper.h"
 #include "mbsim/extern_generalized_io.h"
 #include "mbsim/joint.h"
@@ -330,8 +329,6 @@ namespace MBSim {
       return new Contact(element->Attribute("name"));
     if(element->ValueStr()==MBSIMNS"ExternGeneralizedIO")
       return new ExternGeneralizedIO(element->Attribute("name"));
-    if(element->ValueStr()==MBSIMNS"Actuator")
-      return new Actuator(element->Attribute("name"));
     return 0;
   }
 

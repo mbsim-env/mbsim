@@ -26,7 +26,6 @@ extern_generalized_io.cc\
 link.cc\
 link_mechanics.cc\
 kinetic_excitation.cc\
-actuator.cc\
 kinematic_excitation.cc\
 mbsim_event.cc\
 object.cc\
@@ -70,7 +69,6 @@ extern_generalized_io.h\
 link.h\
 link_mechanics.h\
 kinetic_excitation.h\
-actuator.h\
 kinematic_excitation.h\
 mbsim_event.h\
 modelling_interface.h\
