@@ -8,5 +8,5 @@ Name: nurbs++
 Description: nurbs++ is a library for non uniform rational b-splines.
 Version: @VERSION@
 Libs: -L${libdir} -lnurbsd -lnurbsf -lmatrixN -lmatrixI -lmatrix 
-Cflags: -I${includedir} @DEFINES@
+Cflags: -I${includedir}
 
