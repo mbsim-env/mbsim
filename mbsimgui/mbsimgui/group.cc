@@ -29,7 +29,6 @@
 #include "spring_damper.h"
 #include "joint.h"
 #include "kinetic_excitation.h"
-#include "actuator.h"
 #include "contact.h"
 #include "signal_.h"
 #include "frame.h"
@@ -163,9 +162,6 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
   action=new QAction(Utils::QIconCached("newobject.svg"),"Kinetic excitation", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addKineticExcitation()));
   submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Actuator", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(addActuator()));
-  submenu->addAction(action);
   action=new QAction(Utils::QIconCached("newobject.svg"),"Spring damper", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addSpringDamper()));
   submenu->addAction(action);
@@ -275,11 +271,6 @@ void Group::addJoint() {
 
 void Group::addKineticExcitation() {
   new KineticExcitation(newName(links,"KineticExcitation"), links, -1);
-  ((Element*)treeWidget()->topLevelItem(0))->update();
-}
-
-void Group::addActuator() {
-  new Actuator(newName(links,"Actuator"), links, -1);
   ((Element*)treeWidget()->topLevelItem(0))->update();
 }
 

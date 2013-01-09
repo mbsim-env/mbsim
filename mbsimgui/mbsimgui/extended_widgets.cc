@@ -155,6 +155,16 @@ void XMLWidgetChoiceWidget::changeCurrent(int idx) {
   adjustSize();
 }
 
+void XMLWidgetChoiceWidget::initialize() {
+  for(int i=0; i<stackedWidget->count(); i++)
+    dynamic_cast<XMLInterface*>(stackedWidget->widget(i))->initialize();
+}
+
+void XMLWidgetChoiceWidget::update() {
+  for(int i=0; i<stackedWidget->count(); i++)
+    dynamic_cast<XMLInterface*>(stackedWidget->widget(i))->update();
+}
+
 bool XMLWidgetChoiceWidget::initializeUsingXML(TiXmlElement *element) {
   for(int i=0; i<stackedWidget->count(); i++)
     if(dynamic_cast<XMLInterface*>(stackedWidget->widget(i))->initializeUsingXML(element)) {

@@ -43,6 +43,9 @@ class XMLInterface {
   public:
     virtual bool initializeUsingXML(TiXmlElement *element) = 0;
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element) = 0;
+    virtual void initialize() = 0;
+    virtual void update() = 0;
+    virtual void resizeVariables() = 0;
 };
 
 class XMLWidget : public QWidget, public XMLInterface {

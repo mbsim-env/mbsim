@@ -596,9 +596,12 @@ bool ConnectFramesWidget::initializeUsingXML(TiXmlElement *element) {
       QString xmlName = "ref";
       if(widget.size()>1)
         xmlName += QString::number(i+1);
+      if(!e->Attribute(xmlName.toStdString()))
+        return false;
       widget[i]->setSavedFrameOfReference(e->Attribute(xmlName.toAscii().data()));
     }
   }
+  return true;
 }
 
 TiXmlElement* ConnectFramesWidget::writeXMLFile(TiXmlNode *parent) {

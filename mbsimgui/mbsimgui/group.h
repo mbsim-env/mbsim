@@ -51,7 +51,6 @@ class Group : public Element {
     void addKinematicConstraint();
     void addJoint();
     void addKineticExcitation();
-    void addActuator();
     void addSpringDamper();
     void addContact();
     void addAbsolutePositionSensor();
