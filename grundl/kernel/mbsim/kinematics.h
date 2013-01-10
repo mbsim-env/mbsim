@@ -373,6 +373,7 @@ namespace MBSim {
       virtual int getqSize() const { return 2; }
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {};
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
       /***************************************************/
   };
 
@@ -393,6 +394,7 @@ namespace MBSim {
       virtual int getqSize() const { return 2; }
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {};
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
       /***************************************************/
   };
 
@@ -429,6 +431,7 @@ namespace MBSim {
       virtual int getqSize() const { return 3; }
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {};
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
       /***************************************************/
   };
 
@@ -448,6 +451,7 @@ namespace MBSim {
       virtual int getqSize() const { return 3; }
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {};
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
       /***************************************************/
   };
 
@@ -468,6 +472,7 @@ namespace MBSim {
       virtual int getqSize() const { return 3; }
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {};
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
       /***************************************************/
   };
 

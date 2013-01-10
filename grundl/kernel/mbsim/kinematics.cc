@@ -194,6 +194,12 @@ namespace MBSim {
     return APK;
   }
 
+  TiXmlElement* RotationAboutAxesXY::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"RotationAboutAxesXY" );
+    parent->LinkEndChild(ele0);
+    return ele0;
+  }
+
   SqrMat3 RotationAboutAxesYZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     SqrMat3 APK(NONINIT);
 
@@ -214,6 +220,13 @@ namespace MBSim {
     return APK;
   }
 
+  TiXmlElement* RotationAboutAxesYZ::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"RotationAboutAxesYZ" );
+    parent->LinkEndChild(ele0);
+    return ele0;
+  }
+
+
   SqrMat3 CardanAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     SqrMat3 APK(NONINIT);
 
@@ -233,6 +246,12 @@ namespace MBSim {
     APK(2,2) = cos(a)*cos(b);
 
     return APK;
+  }
+
+  TiXmlElement* CardanAngles::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"CardanAngles" );
+    parent->LinkEndChild(ele0);
+    return ele0;
   }
 
   SqrMat3 EulerAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
@@ -262,6 +281,12 @@ namespace MBSim {
     return APK;
   }
 
+  TiXmlElement* EulerAngles::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"EulerAngles" );
+    parent->LinkEndChild(ele0);
+    return ele0;
+  }
+
   SqrMat3 RotationAboutAxesXYZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     SqrMat3 APK(NONINIT);
 
@@ -281,6 +306,12 @@ namespace MBSim {
     APK(2,2) = cos(a)*cos(b);
 
     return APK;
+  }
+
+  TiXmlElement* RotationAboutAxesXYZ::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"RotationAboutAxesXYZ" );
+    parent->LinkEndChild(ele0);
+    return ele0;
   }
 
   SqrMat3 TimeDependentCardanAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {

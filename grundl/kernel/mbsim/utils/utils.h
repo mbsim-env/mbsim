@@ -22,7 +22,7 @@
 
 #include <string>
 #include "fmatvec.h"
-#include "mbsimtinyxml/tinyxml-src/tinyxml.h"
+#include "mbxmlutilstinyxml/tinyxml.h"
 #include <limits>
 
 std::string numtostr(int i);   

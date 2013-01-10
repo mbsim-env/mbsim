@@ -160,6 +160,10 @@ namespace MBSim {
   }
 
   JointConstraint::JointConstraint(const string &name) : Constraint(name), bi(NULL), frame1(0), frame2(0), nq(0), nu(0), nh(0), saved_ref1(""), saved_ref2("") {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    FArrow = 0;
+    MArrow = 0;
+#endif
   }
 
   void JointConstraint::connect(Frame* frame1_, Frame* frame2_) {
@@ -353,6 +357,10 @@ namespace MBSim {
     if(dR.cols())
       joint->setMomentDirection(dR);
     joint->connect(frame1,frame2);
+    if(FArrow)
+      joint->setOpenMBVForceArrow(FArrow);
+    if(MArrow)
+      joint->setOpenMBVMomentArrow(MArrow);
   }
 
   void JointConstraint::initializeUsingXML(TiXmlElement *element) {
@@ -400,7 +408,7 @@ namespace MBSim {
     }
     ele0->LinkEndChild(ele1);
     ele1 = new TiXmlElement( MBSIMNS"dependentRigidBodiesSecondSide" );
-    for(unsigned int i=0; i<bd1.size(); i++) {
+    for(unsigned int i=0; i<bd2.size(); i++) {
       TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"dependentRigidBody" );
       ele2->SetAttribute("ref", bd2[i]->getXMLPath(this,true)); // relative path
       ele1->LinkEndChild(ele2);

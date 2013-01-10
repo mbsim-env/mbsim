@@ -20,7 +20,7 @@
 #ifndef FUNCTION_H_
 #define FUNCTION_H_
 
-#include <mbsimtinyxml/tinyxml-src/tinyxml.h>
+#include <mbxmlutilstinyxml/tinyxml.h>
 #include <mbsim/element.h>
 #include <mbsim/utils/utils.h>
 #include <mbsim/utils/eps.h>

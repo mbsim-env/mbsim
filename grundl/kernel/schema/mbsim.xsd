@@ -596,6 +596,31 @@
               </xs:choice>
             </xs:complexType>
           </xs:element>
+          <xs:element name="enableOpenMBVFrameI" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Aktiviert die Visualisierung des Koordinatensystems "I" dieser Gruppe in OpenMBV.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="size" type="pv:lengthScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Länge der Achsen des KOS in OpenMBV.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="offset" type="pv:nounitScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Relative Verschiebung der Achsen (0=Achsenkreuz, 1=Rechtssystem).
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType> 
+          </xs:element>
         </xs:sequence> 
         <xs:attribute ref="xml:base"/>
       </xs:extension>
@@ -795,6 +820,11 @@
                 </xs:element> 
               </xs:sequence>
             </xs:complexType>
+          </xs:element>
+          <xs:element name="inverseKinetics" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert, ob Gelenkreaktionen berechnet werden sollen.
+            </xs:documentation></xs:annotation>
           </xs:element>
         </xs:sequence>
       </xs:extension>
@@ -1247,6 +1277,13 @@
     <xs:complexContent>
       <xs:extension base="ConstraintType">
         <xs:sequence>
+          <xs:element name="initialGeneralizedPosition" minOccurs="0" type="pv:unknownVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Anfangswerte für Newton-Löser.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
           <xs:element name="dependentRigidBodiesFirstSide">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -1255,7 +1292,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence maxOccurs="unbounded">
-                <xs:element name="dependentRigidBody">
+                <xs:element name="dependentRigidBody" minOccurs="0">
                   <xs:complexType>
                     <xs:attribute name="ref" type="ObjectReferenceType" use="required">
                       <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -1275,7 +1312,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence maxOccurs="unbounded">
-                <xs:element name="dependentRigidBody">
+                <xs:element name="dependentRigidBody" minOccurs="0">
                   <xs:complexType>
                     <xs:attribute name="ref" type="ObjectReferenceType" use="required">
                       <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -2330,6 +2367,39 @@
   </xs:element>
   <xs:complexType name="RotationType"/>
 
+  <xs:element name="RotationAboutXAxis" substitutionGroup="Rotation" type="RotationAboutXAxisType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Definiert eine Rotation um die x-Achse für Starrkörper ausschließlich abhängig von generalisierten Kardan Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="RotationAboutXAxisType">
+    <xs:complexContent>
+      <xs:extension base="RotationType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="RotationAboutYAxis" substitutionGroup="Rotation" type="RotationAboutYAxisType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Definiert eine Rotation um die y-Achse für Starrkörper ausschließlich abhängig von generalisierten Kardan Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="RotationAboutYAxisType">
+    <xs:complexContent>
+      <xs:extension base="RotationType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="RotationAboutZAxis" substitutionGroup="Rotation" type="RotationAboutZAxisType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Definiert eine Rotation um die z-Achse für Starrkörper ausschließlich abhängig von generalisierten Kardan Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="RotationAboutZAxisType">
+    <xs:complexContent>
+      <xs:extension base="RotationType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="RotationAboutFixedAxis" substitutionGroup="Rotation" type="RotationAboutFixedAxisType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Definiert eine Rotation um eine feste Achse für Starrkörper ausschließlich abhängig von generalisierten Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
@@ -2379,6 +2449,28 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="RotationAboutAxesXY" substitutionGroup="Rotation" type="RotationAboutAxesXYType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Definiert eine Rotation um die x- und y-Achse für Starrkörper ausschließlich abhängig von generalisierten Kardan Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="RotationAboutAxesXYType">
+    <xs:complexContent>
+      <xs:extension base="RotationType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="RotationAboutAxesYZ" substitutionGroup="Rotation" type="RotationAboutAxesYZType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Definiert eine Rotation um die y- und z-Achse für Starrkörper ausschließlich abhängig von generalisierten Kardan Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="RotationAboutAxesYZType">
+    <xs:complexContent>
+      <xs:extension base="RotationType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="CardanAngles" substitutionGroup="Rotation" type="CardanAnglesType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Definiert eine Rotation für Starrkörper ausschließlich abhängig von generalisierten Kardan Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
@@ -2414,6 +2506,17 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+
+  <xs:element name="EulerAngles" substitutionGroup="Rotation" type="EulerAnglesType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Definiert eine Rotation für Starrkörper ausschließlich abhängig von generalisierten Kardan Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="EulerAnglesType">
+    <xs:complexContent>
+      <xs:extension base="RotationType"/>
+    </xs:complexContent>
+  </xs:complexType>   
 
   <xs:element name="GeneralizedForceLaw" abstract="true" type="GeneralizedForceLawType">
     <xs:annotation>

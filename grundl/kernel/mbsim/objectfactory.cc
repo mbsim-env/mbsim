@@ -297,6 +297,12 @@ namespace MBSim {
       return new TimeDependentRotationAboutFixedAxis;
     if(element->ValueStr()==MBSIMNS"CardanAngles")
       return new CardanAngles;
+    if(element->ValueStr()==MBSIMNS"RotationAboutAxesXY")
+      return new RotationAboutAxesXY;
+    if(element->ValueStr()==MBSIMNS"RotationAboutAxesYZ")
+      return new RotationAboutAxesYZ;
+    if(element->ValueStr()==MBSIMNS"EulerAngles")
+      return new EulerAngles;
     if(element->ValueStr()==MBSIMNS"TimeDependentCardanAngles")
       return new TimeDependentCardanAngles;
     return 0;

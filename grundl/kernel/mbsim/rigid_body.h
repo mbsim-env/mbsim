@@ -28,6 +28,7 @@
 #ifdef HAVE_OPENMBVCPPINTERFACE
 namespace OpenMBV {
   class RigidBody;
+  class Arrow;
 }
 #endif
 
@@ -242,6 +243,15 @@ namespace MBSim {
       void setOpenMBVRigidBody(OpenMBV::RigidBody* body);
       void setOpenMBVFrameOfReference(Frame * frame) {openMBVFrame=frame; }
       const Frame* getOpenMBVFrameOfReference() const {return openMBVFrame; }
+
+      /** \brief Visualize the weight */
+      void setOpenMBVWeightArrow(OpenMBV::Arrow *arrow) { FWeight = arrow; }
+
+      /** \brief Visualize the joint force */
+      void setOpenMBVForceArrow(OpenMBV::Arrow *arrow) { FArrow = arrow; }
+
+      /** \brief Visualize the joint moment */
+      void setOpenMBVMomentArrow(OpenMBV::Arrow *arrow) { MArrow = arrow; }
 #endif
 
       virtual void initializeUsingXML(TiXmlElement *element);
@@ -299,11 +309,6 @@ namespace MBSim {
        * guiding velocities of translation, rotation and their derivatives in parent system
        */
       fmatvec::Vec3 PjT, PjR, PdjT, PdjR;
-
-      /**
-       * \brief TODO
-       */
-      fmatvec::Mat3V PJR0;
 
       /**
        * \brief rotation matrix from kinematic Frame to parent Frame
@@ -446,6 +451,8 @@ namespace MBSim {
 
       int nu[2], nq;
 
+      Frame* frameForJacobianOfRotation;
+
       //fmatvec::Vec qRel0, uRel0;
 
     private:
@@ -457,6 +464,7 @@ namespace MBSim {
        * \brief Frame of reference for drawing openMBVBody
        */
       Frame * openMBVFrame;
+      OpenMBV::Arrow *FWeight, *FArrow, *MArrow;
 #endif
   };
 

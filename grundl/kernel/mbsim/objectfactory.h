@@ -1,7 +1,7 @@
 #ifndef _MBSIM_OBJECTFACTORY_H_
 #define _MBSIM_OBJECTFACTORY_H_
 
-#include "mbsimtinyxml/tinyxml-src/tinyxml.h"
+#include "mbxmlutilstinyxml/tinyxml.h"
 #include "mbsim/group.h"
 #include "mbsim/object.h"
 #include "mbsim/extra_dynamic.h"

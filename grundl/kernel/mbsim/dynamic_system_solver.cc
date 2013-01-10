@@ -361,8 +361,12 @@ namespace MBSim {
       if(INFO) cout << "  initialising modelBuildup ..." << endl;
       Group::init(stage);
       setDynamicSystemSolver(this);
+    }
+    else if(stage==MBSim::preInit) {
+      if(INFO) cout << "  initialising preInit ..." << endl;
       if(inverseKinetics)
-	setUpInverseKinetics(); // TODO for preinit
+	setUpInverseKinetics();
+      Group::init(stage);
     }
     else if(stage==MBSim::plot) {
       if(INFO) cout << "  initialising plot-files ..." << endl;
@@ -1375,6 +1379,9 @@ namespace MBSim {
           setLaTol(getDouble(eee));
       }
     }
+    e=element->FirstChildElement(MBSIMNS"inverseKinetics");
+    if (e)
+      setInverseKinetics(Element::getBool(e));
   }
 
   TiXmlElement* DynamicSystemSolver::writeXMLFile(TiXmlNode *parent) {
@@ -1389,7 +1396,8 @@ namespace MBSim {
   DynamicSystemSolver* DynamicSystemSolver::readXMLFile(const string &filename) {
     MBSimObjectFactory::initialize();
     TiXmlDocument doc;
-    assert(doc.LoadFile(filename)==true);
+    bool ret=doc.LoadFile(filename);
+    assert(ret==true);
     TiXml_PostLoadFile(&doc);
     TiXmlElement *e=doc.FirstChildElement();
     TiXml_setLineNrFromProcessingInstruction(e);
@@ -1397,7 +1405,6 @@ namespace MBSim {
     incorporateNamespace(doc.FirstChildElement(), dummy);
     DynamicSystemSolver *dss=dynamic_cast<DynamicSystemSolver*>(ObjectFactory::getInstance()->createGroup(e));
     dss->initializeUsingXML(doc.FirstChildElement());
-    dss->init(resolveXMLPath);
     return dss;
  }
 
