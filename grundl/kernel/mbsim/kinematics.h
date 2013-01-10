@@ -78,11 +78,11 @@ namespace MBSim {
        * \brief constructor
        * \param independent direction matrix of translation
        */
-      LinearTranslation(const fmatvec::Mat3V &PJT_) { PJT = PJT_; } 
+      LinearTranslation(const fmatvec::Mat3V &PJT_) { PJT = PJT_; }
 
       /* INTERFACE OF TRANSLATION */
       virtual int getqSize() const { throw; return 0; }
-      virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return PJT*q(0,PJT.cols()-1); } 
+      virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return PJT*q(0,PJT.cols()-1); }
       virtual void initializeUsingXML(TiXmlElement *element);
       virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
       /***************************************************/
@@ -212,7 +212,7 @@ namespace MBSim {
       RotationAboutXAxis();
 
       /* INTERFACE OF ROTATION */
-       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
+      virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {}
       virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
   };
@@ -269,7 +269,7 @@ namespace MBSim {
        * \brief constructor
        * \param axis of rotation
        */
-      RotationAboutFixedAxis(const fmatvec::Vec3 &a_) : RotationAboutOneAxis() { a = a_; } 
+      RotationAboutFixedAxis(const fmatvec::Vec3 &a_) : RotationAboutOneAxis() { a = a_; }
 
       /* INTERFACE OF ROTATION */
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
@@ -598,7 +598,7 @@ namespace MBSim {
 
       /* INTERFACE OF JACOBIAN */
       virtual int getuSize() const { return J.cols(); }
-      virtual fmatvec::Mat3V operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return J; } 
+      virtual fmatvec::Mat3V operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return J; }
       virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
 

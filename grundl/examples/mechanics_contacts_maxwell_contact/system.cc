@@ -11,8 +11,6 @@
 #endif
 
 #include <mbsim/environment.h>
-#include <mbsim/contour_pairing.h>
-#include <mbsim/maxwell_contact.h>
 #include <mbsim/rigid_body.h>
 #include <mbsim/contours/plane.h>
 #include <mbsim/contours/planewithfrustum.h>
@@ -42,7 +40,7 @@ class CountourCouplingCantileverBeam : public InfluenceFunction {
     virtual ~CountourCouplingCantileverBeam() {
     }
 
-    double operator()(const fmatvec::Vec &Arg1, const fmatvec::Vec &Arg2, const void * = NULL) {
+    virtual double operator()(const fmatvec::Vec2 &Arg1, const fmatvec::Vec2 &Arg2, const void * = NULL) {
       double i=Arg1(0);  // it is: i < j
       double j=Arg2(0);
       if(i > j)

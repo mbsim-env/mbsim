@@ -156,9 +156,11 @@ namespace MBSim {
 
   TiXmlElement* KineticExcitation::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0 = LinkMechanics::writeXMLFile(parent);
-    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"frameOfReference" );
-    ele1->SetAttribute("ref", refFrame->getXMLPath(this,true)); // relative path
-    ele0->LinkEndChild(ele1);
+    if(refFrame) {
+      TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"frameOfReference" );
+      ele1->SetAttribute("ref", refFrame->getXMLPath(this,true)); // relative path
+      ele0->LinkEndChild(ele1);
+    }
     if(forceDir.cols()) {
       TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"force");
       addElementText(ele1,MBSIMNS"directionVectors",forceDir);
@@ -175,7 +177,7 @@ namespace MBSim {
       ele1->LinkEndChild(ele2);
       ele0->LinkEndChild(ele1);
     }
-    ele1 = new TiXmlElement(MBSIMNS"connect");
+    TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"connect");
     ele1->SetAttribute("ref", frame[0]->getXMLPath(this,true)); // relative path
     ele0->LinkEndChild(ele1);
     return ele0;

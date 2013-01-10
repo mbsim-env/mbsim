@@ -24,6 +24,7 @@
 #include <fmatvec.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/utils/eps.h>
+#include <mbsim/utils/utils.h>
 #include "fortran_wrapper.h"
 #include "lsode_integrator.h"
 
@@ -157,8 +158,26 @@ namespace MBSim {
     setMinimalStepSize(Element::getDouble(e));
     e=element->FirstChildElement(MBSIMINTNS"numberOfMaximalSteps");
     setmaxSteps(Element::getInt(e));
-    setStiff(element->FirstChildElement(MBSIMINTNS"stiffModus"));
+    e=element->FirstChildElement(MBSIMINTNS"stiffModus");
+    setStiff(Element::getBool(e));
       
   }
+
+  TiXmlElement* LSODEIntegrator::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = Integrator::writeXMLFile(parent);
+    if(aTol.size() > 1) 
+      addElementText(ele0,MBSIMINTNS"absoluteTolerance",aTol);
+    else
+      addElementText(ele0,MBSIMINTNS"absoluteToleranceScalar",aTol(0));
+    addElementText(ele0,MBSIMINTNS"relativeToleranceScalar",rTol);
+    addElementText(ele0,MBSIMINTNS"initialStepSize",dt0);
+    addElementText(ele0,MBSIMINTNS"maximalStepSize",dtMax);
+    addElementText(ele0,MBSIMINTNS"minimalStepSize",dtMin);
+    if(maxSteps != 2000000000)
+      addElementText(ele0,MBSIMINTNS"numberOfMaximalSteps",maxSteps);
+    addElementText(ele0,MBSIMINTNS"stiffModus",stiff);
+    return ele0;
+  }
+
 
 }

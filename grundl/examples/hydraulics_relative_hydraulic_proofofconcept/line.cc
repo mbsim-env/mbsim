@@ -27,7 +27,7 @@ void Line::calcuSize(int j) {
 }
 
 void Line::updateM(double, int k) {
-  M[k]+=1*JTJ(J);
+  M[k]+=1.*JTJ(J);
 }
 
 void Line::updateJacobians(double, int k) {

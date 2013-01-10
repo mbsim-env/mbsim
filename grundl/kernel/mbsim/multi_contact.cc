@@ -184,6 +184,13 @@ namespace MBSim {
     }
   }
 
+  void MultiContact::updateresRef(const Vec& resParent) {
+    for (std::vector<std::vector<Contact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<Contact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
+        jter->updateresRef(resParent);
+    }
+  }
+
   void MultiContact::updaterFactorRef(const Vec& rFactorParent) {
     for (std::vector<std::vector<Contact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<Contact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)

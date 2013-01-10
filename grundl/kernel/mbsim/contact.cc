@@ -1020,36 +1020,41 @@ namespace MBSim {
       RowVec jp1 = Jprox.row(laInd);
       RowVec e1(jp1.size());
       e1(laInd) = 1;
-      Vec diff = fcl->diff(laN(0), gddN(0), rFactor(0));
 
-      jp1 = e1 - diff(0) * e1; // -diff(1)*G.row(laInd+laIndk)
-      for (int i = 0; i < G.size(); i++)
-        jp1(i) -= diff(1) * G(laInd, i);
+      int addIndexNormal = 0;
+      if(fcl->isSetValued()) {
+    	  addIndexNormal++;
+    	  Vec diff = fcl->diff(laN(0), gddN(0), rFactor(0));
+
+    	  jp1 = e1 - diff(0) * e1; // -diff(1)*G.row(laInd+laIndk)
+    	  for (int i = 0; i < G.size(); i++)
+    		  jp1(i) -= diff(1) * G(laInd, i);
+      }
 
       if (getFrictionDirections() == 1) {
         Mat diff = fdf->diff(laT, gddT(0, 0), laN(0), rFactor(1));
-        RowVec jp2 = Jprox.row(laInd + 1);
+        RowVec jp2 = Jprox.row(laInd + addIndexNormal);
         RowVec e2(jp2.size());
         e2(laInd + 1) = 1;
         Mat e(2, jp2.size());
         e(0, laInd) = 1;
-        e(1, laInd + 1) = 1;
+        e(1, laInd + addIndexNormal) = 1;
         jp2 = e2 - diff(0, 2) * e1 - diff(0, 0) * e2; // -diff(1)*G.row(laInd+laIndk)
         //jp2 = e2-diff.row(0)(0,1)*e; // -diff(1)*G.row(laInd+laIndk)
         for (int i = 0; i < G.size(); i++)
-          jp2(i) -= diff(0, 1) * G(laInd + 1, i);
+          jp2(i) -= diff(0, 1) * G(laInd + addIndexNormal, i);
 
       }
       else if (getFrictionDirections() == 2) {
         Mat diff = ftil->diff(laT, gddT, gdT, laN(0), rFactor(1));
-        Mat jp2 = Jprox(Index(laInd + 1, laInd + 2), Index(0, Jprox.cols() - 1));
+        Mat jp2 = Jprox(Index(laInd + addIndexNormal, laInd + addIndexNormal + 1), Index(0, Jprox.cols() - 1));
         Mat e2(2, jp2.cols());
-        e2(0, laInd + 1) = 1;
-        e2(1, laInd + 2) = 1;
+        e2(0, laInd + addIndexNormal) = 1;
+        e2(1, laInd + addIndexNormal + 1) = 1;
         jp2 = e2 - diff(Index(0, 1), Index(4, 4)) * e1 - diff(Index(0, 1), Index(0, 1)) * e2; // -diff(Index(0,1),Index(4,5))*G(Index(laInd+laIndk+1,laInd+laIndk+2),Index(0,G.size()-1))
         for (int i = 0; i < G.size(); i++) {
-          jp2(0, i) = diff(0, 2) * G(laInd + 1, i) + diff(0, 3) * G(laInd + 2, i);
-          jp2(1, i) = diff(1, 2) * G(laInd + 1, i) + diff(1, 3) * G(laInd + 2, i);
+          jp2(0, i) = diff(0, 2) * G(laInd + addIndexNormal, i) + diff(0, 3) * G(laInd + addIndexNormal + 1, i);
+          jp2(1, i) = diff(1, 2) * G(laInd + addIndexNormal, i) + diff(1, 3) * G(laInd + addIndexNormal + 1, i);
         }
       }
     }
@@ -1064,36 +1069,42 @@ namespace MBSim {
       RowVec jp1 = Jprox.row(laInd);
       RowVec e1(jp1.size());
       e1(laInd) = 1;
-      Vec diff = fnil->diff(laN(0), gdnN(0), gdN(0), rFactor(0));
 
-      jp1 = e1 - diff(0) * e1; // -diff(1)*G.row(laInd+laIndk)
-      for (int i = 0; i < G.size(); i++)
-        jp1(i) -= diff(1) * G(laInd, i);
+      int addIndexNormal = 0;
+      if (fcl->isSetValued()) {
+    	  addIndexNormal++;
+
+    	  Vec diff = fnil->diff(laN(0), gdnN(0), gdN(0), rFactor(0));
+
+    	  jp1 = e1 - diff(0) * e1; // -diff(1)*G.row(laInd+laIndk)
+    	  for (int i = 0; i < G.size(); i++)
+    		  jp1(i) -= diff(1) * G(laInd, i);
+      }
 
       if (getFrictionDirections() == 1) {
         Mat diff = ftil->diff(laT, gdnT, gdT, laN(0), rFactor(1));
-        RowVec jp2 = Jprox.row(laInd + 1);
+        RowVec jp2 = Jprox.row(laInd + addIndexNormal);
         RowVec e2(jp2.size());
-        e2(laInd + 1) = 1;
+        e2(laInd + addIndexNormal) = 1;
         Mat e(2, jp2.size());
         e(0, laInd) = 1;
-        e(1, laInd + 1) = 1;
+        e(1, laInd + addIndexNormal) = 1;
         jp2 = e2 - diff(0, 2) * e1 - diff(0, 0) * e2; // -diff(1)*G.row(laInd+laIndk)
         //jp2 = e2-diff.row(0)(0,1)*e; // -diff(1)*G.row(laInd+laIndk)
         for (int i = 0; i < G.size(); i++)
-          jp2(i) -= diff(0, 1) * G(laInd + 1, i);
+          jp2(i) -= diff(0, 1) * G(laInd + addIndexNormal, i);
 
       }
       else if (getFrictionDirections() == 2) {
         Mat diff = ftil->diff(laT, gdnT, gdT, laN(0), rFactor(1));
-        Mat jp2 = Jprox(Index(laInd + 1, laInd + 2), Index(0, Jprox.cols() - 1));
+        Mat jp2 = Jprox(Index(laInd + addIndexNormal, laInd + addIndexNormal + 1), Index(0, Jprox.cols() - 1));
         Mat e2(2, jp2.cols());
-        e2(0, laInd + 1) = 1;
-        e2(1, laInd + 2) = 1;
+        e2(0, laInd + addIndexNormal) = 1;
+        e2(1, laInd + addIndexNormal + 1) = 1;
         jp2 = e2 - diff(Index(0, 1), Index(4, 4)) * e1 - diff(Index(0, 1), Index(0, 1)) * e2; // -diff(Index(0,1),Index(4,5))*G(Index(laInd+laIndk+1,laInd+laIndk+2),Index(0,G.size()-1))
         for (int i = 0; i < G.size(); i++) {
-          jp2(0, i) = diff(0, 2) * G(laInd + 1, i) + diff(0, 3) * G(laInd + 2, i);
-          jp2(1, i) = diff(1, 2) * G(laInd + 1, i) + diff(1, 3) * G(laInd + 2, i);
+          jp2(0, i) = diff(0, 2) * G(laInd + addIndexNormal, i) + diff(0, 3) * G(laInd + addIndexNormal + 1, i);
+          jp2(1, i) = diff(1, 2) * G(laInd + addIndexNormal, i) + diff(1, 3) * G(laInd + addIndexNormal + 1, i);
         }
       }
     }

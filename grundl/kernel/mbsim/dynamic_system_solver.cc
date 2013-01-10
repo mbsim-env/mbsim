@@ -36,6 +36,7 @@
 #include <hdf5serie/fileserie.h>
 #include <hdf5serie/simpleattribute.h>
 #include <hdf5serie/simpledataset.h>
+#include <unistd.h>
 
 #ifdef HAVE_ANSICSIGNAL
 #  include <signal.h>
