@@ -387,4 +387,40 @@ namespace MBSim {
     saved_ref1=e->Attribute("ref1");
     saved_ref2=e->Attribute("ref2");
   }
+
+  TiXmlElement* JointConstraint::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = Constraint::writeXMLFile(parent);
+    if(q0.size()) 
+      addElementText(ele0,MBSIMNS"initialGeneralizedPosition",q0);
+    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"dependentRigidBodiesFirstSide" );
+    for(unsigned int i=0; i<bd1.size(); i++) {
+      TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"dependentRigidBody" );
+      ele2->SetAttribute("ref", bd1[i]->getXMLPath(this,true)); // relative path
+      ele1->LinkEndChild(ele2);
+    }
+    ele0->LinkEndChild(ele1);
+    ele1 = new TiXmlElement( MBSIMNS"dependentRigidBodiesSecondSide" );
+    for(unsigned int i=0; i<bd1.size(); i++) {
+      TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"dependentRigidBody" );
+      ele2->SetAttribute("ref", bd2[i]->getXMLPath(this,true)); // relative path
+      ele1->LinkEndChild(ele2);
+    }
+    ele0->LinkEndChild(ele1);
+
+    ele1 = new TiXmlElement( MBSIMNS"independentRigidBody" );
+    ele1->SetAttribute("ref", bi->getXMLPath(this,true)); // relative path
+    ele0->LinkEndChild(ele1);
+
+    if(dT.cols())
+      addElementText(ele0, MBSIMNS"forceDirection", dT);
+    if(dR.cols())
+      addElementText(ele0, MBSIMNS"momentDirection", dR);
+
+    ele1 = new TiXmlElement(MBSIMNS"connect");
+    ele1->SetAttribute("ref1", frame1->getXMLPath(this,true)); // relative path
+    ele1->SetAttribute("ref2", frame2->getXMLPath(this,true)); // relative path
+    ele0->LinkEndChild(ele1);
+
+    return ele0;
+  }
 }

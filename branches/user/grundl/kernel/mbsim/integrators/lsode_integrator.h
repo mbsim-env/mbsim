@@ -69,6 +69,11 @@ namespace MBSim {
       void integrate(DynamicSystemSolver& system);
       
       virtual void initializeUsingXML(TiXmlElement *element);
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+
+      using Integrator::writeXMLFile;
+
+      virtual std::string getType() const { return "LSODEIntegrator"; }
   };
 
 }

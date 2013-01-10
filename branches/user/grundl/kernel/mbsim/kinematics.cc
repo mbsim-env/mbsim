@@ -1,17 +1,17 @@
 /* Copyright (C) 2004-2009 MBSim Development Team
  *
- * This library is free software; you can redistribute it and/or 
- * modify it under the terms of the GNU Lesser General Public 
- * License as published by the Free Software Foundation; either 
- * version 2.1 of the License, or (at your option) any later version. 
- *  
- * This library is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
- * Lesser General Public License for more details. 
- *  
- * You should have received a copy of the GNU Lesser General Public 
- * License along with this library; if not, write to the Free Software 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
  * Contact: martin.o.foerg@googlemail.com
@@ -49,7 +49,7 @@ namespace MBSim {
     pos->initializeUsingXML(e->FirstChildElement());
   }
 
-  RotationAboutXAxis::RotationAboutXAxis() : RotationAboutOneAxis() {  
+  RotationAboutXAxis::RotationAboutXAxis() : RotationAboutOneAxis() {
     APK(0,0) = 1;
   }
 
@@ -73,7 +73,7 @@ namespace MBSim {
     return ele0;
   }
 
-  RotationAboutYAxis::RotationAboutYAxis() : RotationAboutOneAxis() {  
+  RotationAboutYAxis::RotationAboutYAxis() : RotationAboutOneAxis() {
     APK(1,1) = 1;
   }
 
@@ -97,7 +97,7 @@ namespace MBSim {
     return ele0;
   }
 
-  RotationAboutZAxis::RotationAboutZAxis() : RotationAboutOneAxis() {  
+  RotationAboutZAxis::RotationAboutZAxis() : RotationAboutOneAxis() {
     APK(2,2) = 1;
   }
 
@@ -239,9 +239,9 @@ namespace MBSim {
     SqrMat3 APK(NONINIT);
 
     int i = q.size()-1;
-    double psi=q(i-2); 
-    double theta=q(i-1); 
-    double phi=q(i); 
+    double psi=q(i-2);
+    double theta=q(i-1);
+    double phi=q(i);
     double spsi = sin(psi);
     double stheta = sin(theta);
     double sphi = sin(phi);
@@ -352,7 +352,7 @@ namespace MBSim {
     T(iq-2,iu) = -tan_beta*cos_alpha;
     T(iq-1,iu-1) = cos_alpha;
     T(iq-1,iu) = sin_alpha;
-    T(iq,iu-1) = -sin_alpha/cos_beta;           
+    T(iq,iu-1) = -sin_alpha/cos_beta;
     T(iq,iu) = cos_alpha/cos_beta;
 
     return T;
@@ -375,7 +375,7 @@ namespace MBSim {
     T(iq-1,iu-2) = cos_psi;
     T(iq-1,iu-1) = sin_psi;
     //T(iq-1,iu) = 0;
-    T(iq,iu-2) = sin_psi/sin_theta;           
+    T(iq,iu-2) = sin_psi/sin_theta;
     T(iq,iu-1) = -cos_psi/sin_theta;
     //T(iq,iu) = 0;
 
@@ -398,7 +398,7 @@ namespace MBSim {
     T(iq-1,iu-2) = sin_gamma;
     T(iq-1,iu-1) = cos_gamma;
     T(iq,iu-2) = -cos_gamma*tan_beta;
-    T(iq,iu-1) = sin_gamma*tan_beta;           
+    T(iq,iu-1) = sin_gamma*tan_beta;
     return T;
   }
 
@@ -419,7 +419,7 @@ namespace MBSim {
     T(iq-1,iu-2) = cos_phi;
     T(iq-1,iu-1) = -sin_phi;
     //T(iq-1,iu) = 0;
-    T(iq,iu-2) = -sin_phi/tan_theta;           
+    T(iq,iu-2) = -sin_phi/tan_theta;
     T(iq,iu-1) = -cos_phi/tan_theta;
     //T(iq,iu) = 1;
 
@@ -483,7 +483,7 @@ namespace MBSim {
 
 ////   Kinematics::Kinematics() : PjT(3,INIT,0.), PjR(3,INIT,0.), PdjT(3,INIT,0.), PdjR(3,INIT,0.), APK(3,EYE), PrPK(3,INIT,0.),  fT(0), fPrPK(0), fAPK(0), fPJT(0), fPJR(0), fPdJT(0), fPdJR(0), fPjT(0), fPjR(0), fPdjT(0), fPdjR(0) {
 ////   }
-//// 
+////
 //// //  void Kinematics::update(const Vec& uRel, const Vec& qRel, double t) {
 //// //    updateT(qRel,t);
 //// //    updateqdRel(uRel);
@@ -498,7 +498,7 @@ namespace MBSim {
 //// //    updatePdjT(t);
 //// //    updatePdjR(t);
 //// //  }
-//// 
+////
 ////   void Kinematics::calcqSize() {
 ////     int nqT=0, nqR=0;
 ////     if(dynamic_cast<LinearTranslation*>(fPrPK)) {
@@ -508,7 +508,7 @@ namespace MBSim {
 ////     else if(fPrPK)
 ////       nqT = fPrPK->getqSize();
 ////     if(dynamic_cast<RotationAboutOneAxis*>(fAPK)) {
-////       nqR += 1; 
+////       nqR += 1;
 ////       nqT = nqR;
 ////     }
 ////     else if(fAPK)
@@ -517,7 +517,7 @@ namespace MBSim {
 ////     assert(nqT == nqR);
 ////     qSize = nqT;
 ////   }
-//// 
+////
 ////   void Kinematics::calcuSize(int j) {
 ////     int nuT=0, nuR=0;
 ////     if(j==0) {
@@ -527,13 +527,13 @@ namespace MBSim {
 //// 	  nuR = nuT;
 //// 	} else
 //// 	  nuT = 0;
-////       } 
-//// 
+////       }
+////
 ////       if(fPJR==0) {
 //// 	if(dynamic_cast<RotationAboutOneAxis*>(fAPK)) {
-//// 	  nuR += 1; 
+//// 	  nuR += 1;
 //// 	  nuT = nuR;
-//// 	} 
+//// 	}
 ////       } else
 ////         nuR = fPJR->getuSize();
 ////       assert(nuT == nuR);
@@ -542,16 +542,16 @@ namespace MBSim {
 ////       uSize[j] = 6;
 ////     }
 ////   }
-//// 
+////
 ////   void Kinematics::init(InitStage stage) {
 ////     if(stage==resize) {
-//// 
+////
 ////       PJT[0].resize(3,uSize[0]);
 ////       PJR[0].resize(3,uSize[0]);
-//// 
+////
 ////       PdJT.resize(3,uSize[0]);
 ////       PdJR.resize(3,uSize[0]);
-//// 
+////
 ////       PJT[1].resize(3,uSize[1]);
 ////       PJR[1].resize(3,uSize[1]);
 ////       for(int i=0; i<3; i++)
@@ -560,24 +560,24 @@ namespace MBSim {
 //// 	PJR[1](i-3,i) = 1;
 ////     }
 ////     else if(stage==MBSim::unknownStage) {
-//// 
+////
 ////       if(fPJT==0) {
 ////         Mat JT(3,0);
 ////         if(dynamic_cast<LinearTranslation*>(fPrPK)) {
 ////           JT.resize() = dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors();
-////         } 
+////         }
 ////         PJT[0](Index(0,2), Index(0,JT.cols()-1)) = JT;
 ////       }
 ////       if(fPJR==0) {
 ////         Mat JR(3,0);
-//// 
-////         if(dynamic_cast<RotationAboutXAxis*>(fAPK)) 
+////
+////         if(dynamic_cast<RotationAboutXAxis*>(fAPK))
 ////           JR.resize() = Vec("[1;0;0]");
-//// 	else if(dynamic_cast<RotationAboutYAxis*>(fAPK)) 
+//// 	else if(dynamic_cast<RotationAboutYAxis*>(fAPK))
 ////           JR.resize() = Vec("[0;1;0]");
-//// 	else if(dynamic_cast<RotationAboutZAxis*>(fAPK)) 
+//// 	else if(dynamic_cast<RotationAboutZAxis*>(fAPK))
 ////           JR.resize() = Vec("[0;0;1]");
-////         else if(dynamic_cast<RotationAboutFixedAxis*>(fAPK)) 
+////         else if(dynamic_cast<RotationAboutFixedAxis*>(fAPK))
 ////           JR.resize() = dynamic_cast<RotationAboutFixedAxis*>(fAPK)->getAxisOfRotation();
 ////         else if(dynamic_cast<RotationAboutAxesYZ*>(fAPK)) {
 ////           fPJR = new JRotationAboutAxesYZ(uSize[0]);
@@ -595,13 +595,13 @@ namespace MBSim {
 ////           JR.resize() = DiagMat(3,INIT,1);
 //// 	  fT = new TEulerAngles(qSize,uSize[0]);
 ////         }
-//// 
+////
 ////         PJR[0](Index(0,2), Index(uSize[0]-JR.cols(),uSize[0]-1)) = JR;
 ////       }
-//// 
+////
 ////       T.resize(qSize,uSize[0]); // TODO: nach resize
-//// 
-////       for(int i=0; i<uSize[0]; i++) 
+////
+////       for(int i=0; i<uSize[0]; i++)
 ////         T(i,i) = 1;
 ////     }
 ////     //else
@@ -609,52 +609,52 @@ namespace MBSim {
 ////   }
 ////  // KinematicsTranslation::KinematicsTranslation() {
 ////  // }
-//// 
+////
 ////  // void KinematicsTranslation::update(const Vec& qdRel, const Vec& qRel, double t) {
 ////  //   //if(fPJT)
 ////  //     PJT = fPJT(qRel,t);
-//// 
+////
 ////  //   //if(fPjT)
 ////  //     PjT = fPjT(t);
-//// 
+////
 ////  //   //if(fPrPK)
 ////  //     PrPK = fPrPK(qRel,t);
-//// 
+////
 ////  //   //if(fPdJT)
 ////  //     PdJT = fPdJT(qdRel,qRel,t);
-//// 
+////
 ////  //   //if(fPdjT)
 ////  //     PdjT = fPdjT(t);
-//// 
+////
 ////  // }
-//// 
+////
 ////  // void KinematicsRotation::update(const Vec& qdRel, const Vec& qRel, double t) {
 ////  //   //if(fPJR)
 ////  //     PJR = fPJR(qRel,t);
-//// 
+////
 ////  //   //if(fPjR)
 ////  //     PjR = fPjR(t);
-//// 
+////
 ////  //   //if(fAPK)
 ////  //     APK = fAPK(qRel,t);
-//// 
+////
 ////  //   //if(fPdJR)
 ////  //     PdJR = fPdJR(qdRel,qRel,t);
-//// 
+////
 ////  //   //if(fPdjR)
 ////  //     PdjR = fPdjR(t);
 ////  // }
-//// 
+////
 ////  // void Kinematics::update(const Vec& uRel, const Vec& qRel, double t) {
-////  //   if(fT) 
-////  //     T = (*fT)(qRel,t); 
+////  //   if(fT)
+////  //     T = (*fT)(qRel,t);
 ////  //   Vec qdRel = T*uRel;
-////  //   translation->update(qdRel,qRel,t); 
+////  //   translation->update(qdRel,qRel,t);
 ////  //   rotation->update(qdRel,qRel,t);
 ////  // }
-//// 
+////
 ////  // SqrMat KinematicsRotationAboutFixedAxis::fAPK(const fmatvec::Vec &q, const double &t, const void *) {
-//// 
+////
 ////  //   int i = q.size()-1;
 ////  //   const double cosq=cos(q(i));
 ////  //   const double sinq=sin(q(i));
@@ -662,7 +662,7 @@ namespace MBSim {
 ////  //   const double a0a1=a(0)*a(1);
 ////  //   const double a0a2=a(0)*a(2);
 ////  //   const double a1a2=a(1)*a(2);
-//// 
+////
 ////  //   APK(0,0) = cosq+onemcosq*a(0)*a(0);
 ////  //   APK(1,0) = onemcosq*a0a1+a(2)*sinq;
 ////  //   APK(2,0) = onemcosq*a0a2-a(1)*sinq;
@@ -672,7 +672,7 @@ namespace MBSim {
 ////  //   APK(0,2) = onemcosq*a0a2+a(1)*sinq;
 ////  //   APK(1,2) = onemcosq*a1a2-a(0)*sinq;
 ////  //   APK(2,2) = cosq+onemcosq*a(2)*a(2);
-//// 
+////
 ////  //   return APK;
 ////  // }
 

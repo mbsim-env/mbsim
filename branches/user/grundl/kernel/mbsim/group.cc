@@ -239,7 +239,7 @@ namespace MBSim {
         //setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
       I->enableOpenMBV(getDouble(e->FirstChildElement(MBSIMNS"size")),
           getDouble(e->FirstChildElement(MBSIMNS"offset")));
-  }
+    }
 #endif
   }
 

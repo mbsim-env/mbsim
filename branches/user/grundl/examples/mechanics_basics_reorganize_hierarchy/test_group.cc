@@ -42,7 +42,7 @@ TestGroup::TestGroup(const string &projectName) : Group(projectName) {
   OpenMBV::IvBody* obj1=new OpenMBV::IvBody;
   obj1->setIvFileName("objects/pendel1.wrl");
   obj1->setScaleFactor(0.1*0.3);
-  obj1->setInitialRotation(Vec("[0;0;1]")*M_PI/2);
+  obj1->setInitialRotation(Vec("[0;0;1]")*M_PI/2.);
   stab1->setOpenMBVRigidBody(obj1);
   stab1->setOpenMBVFrameOfReference(stab1->getFrame("Ref"));
 #endif
@@ -68,7 +68,7 @@ TestGroup::TestGroup(const string &projectName) : Group(projectName) {
   OpenMBV::IvBody* obj2=new OpenMBV::IvBody;
   obj2->setIvFileName("objects/pendel2.wrl");
   obj2->setScaleFactor(0.1*0.3);
-  obj2->setInitialRotation(Vec("[0;0;1]")*M_PI/2);
+  obj2->setInitialRotation(Vec("[0;0;1]")*M_PI/2.);
   stab2->setOpenMBVRigidBody(obj2);
   stab2->setOpenMBVFrameOfReference(stab2->getFrame("R"));
 #endif

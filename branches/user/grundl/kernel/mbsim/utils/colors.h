@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef COLOR_VDT_H_
-#define COLOR_VDT_H_
+#ifndef COLOR_H_
+#define COLOR_H_
 
 #include <iostream>
 
@@ -46,4 +46,4 @@ const RGBColor LIGHTGRAY = {0.827, 0.827, 0.827};
 
 
 
-#endif /* UTLIS_VDT_H_ */
+#endif /* COLOR_H_ */

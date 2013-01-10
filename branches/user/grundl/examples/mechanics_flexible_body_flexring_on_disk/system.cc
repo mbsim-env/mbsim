@@ -51,7 +51,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   const Vec        massDisks = 1e-3*Vec("[1800]"); // masses of disks
   const Vec       radiiDisks = 1e-3*Vec("[180]"); // radius of disks
   const int           nDisks = massDisks.size();
-        Vector<int> sideInOut(nDisks);
+        VecInt sideInOut(nDisks);
         //Vec    inertiasDisks = Vec(nDisks,INIT,0.0);      // radius of ball
         Mat    positionDisks = Mat(3,nDisks);    // radius of ball
   assert(nDisks == radiiDisks.size() && nDisks == massDisks.size());
@@ -62,7 +62,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
 // frames for disk axes
   Vec mid(3,INIT,0.0);
-  for(int i=0;i<nDisks;i++) mid += positionDisks.col(i)/nDisks;
+  for(int i=0;i<nDisks;i++) mid += positionDisks.col(i)/double(nDisks);
   this->addFrame("OB",mid,SqrMat(3,EYE),this->getFrame("I"));
 
   double inc = 0.021;
@@ -144,7 +144,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     cDisk->setRadius(radiiDisks(i));
     Vec BR(3,INIT,0.);// BR(1)=-r;
     disk->addContour(cDisk,BR,SqrMat(3,EYE),disk->getFrame("C"));
-    disk->setInitialGeneralizedVelocity(-Vec("[1.0]")*v0*sideInOut(i)/radiiDisks(i));
+    disk->setInitialGeneralizedVelocity(-Vec("[1.0]")*v0*double(sideInOut(i))/radiiDisks(i));
     this->addObject(disk);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

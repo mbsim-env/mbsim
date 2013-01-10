@@ -128,7 +128,14 @@ namespace MBSim {
       int imatch=0;
       for(vector<Element*>::iterator i0 = e0.end()-1, i1 = e1.end()-1 ; (i0 != e0.begin()-1) && (i1 != e1.begin()-1) ; i0--, i1--) 
         if(*i0 == *i1) imatch++;
-      string str = getType()+ "[" + getName() + "]";
+      string type;
+      if(dynamic_cast<Group*>(this))
+        type = "Group";
+      else if(dynamic_cast<Object*>(this))
+        type = "Object";
+      else 
+        type = getType();
+      string str = type + "[" + getName() + "]";
       for(vector<Element*>::iterator i1 = e1.begin() ; i1 != e1.end()-imatch ; i1++) {
         if(dynamic_cast<Group*>(*i1))
           str = string("Group[") + (*i1)->getName() + "]/" + str;
@@ -141,7 +148,14 @@ namespace MBSim {
         str = "../" + str;
       return str;
     } else {
-      string str = getType()+ "[" + getName() + "]";
+      string type;
+      if(dynamic_cast<Group*>(this))
+        type = "Group";
+      else if(dynamic_cast<Object*>(this))
+        type = "Object";
+      else 
+        type = getType();
+      string str = type + "[" + getName() + "]";
       Element* element = getParent();
       while(!dynamic_cast<DynamicSystemSolver*>(element)) {
         if(dynamic_cast<Group*>(element))
