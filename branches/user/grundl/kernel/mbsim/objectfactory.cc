@@ -177,6 +177,13 @@ namespace MBSim {
     throw MBSimError(string("No Fucntion1_VS of type ")+element->ValueStr()+" exists.");
   }
 
+  Function1<VecV,double> *ObjectFactory::createFunction1_VVS(TiXmlElement *element) {
+    Function1<VecV,double> *obj;
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
+      if((obj=(*i)->createFunction1_VVS(element))) return obj;
+    return 0;
+  }
+
   Function1<Vec3,double> *ObjectFactory::createFunction1_V3S(TiXmlElement *element) {
     Function1<Vec3,double> *obj;
     for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
@@ -271,6 +278,8 @@ namespace MBSim {
       return new JointConstraint(element->Attribute("name"));
     else if(element->ValueStr()==MBSIMNS"GearConstraint")
       return new GearConstraint(element->Attribute("name"));
+    else if(element->ValueStr()==MBSIMNS"KinematicConstraint")
+      return new KinematicConstraint(element->Attribute("name"));
     return 0;
   }
 
@@ -445,7 +454,7 @@ namespace MBSim {
     if(element->ValueStr()==MBSIMNS"PiecewisePolynom1_VS")
       return new PPolynom<Ref,Ref>;
     if(element->ValueStr()==MBSIMNS"QuadraticFunction1_VS")
-      return new QuadraticFunction1_VS;
+      return new QuadraticFunction1_VS<Ref>;
     if(element->ValueStr()==MBSIMNS"SinusFunction1_VS")
       return new SinusFunction1_VS<Ref>;
     if(element->ValueStr()==MBSIMNS"PositiveSinusFunction1_VS")
@@ -463,9 +472,27 @@ namespace MBSim {
     return 0;
   }
 
+  Function1<VecV,double> *MBSimObjectFactory::createFunction1_VVS(TiXmlElement *element) {
+    if(element->ValueStr()==MBSIMNS"ConstantFunction1_VS")
+      return new ConstantFunction1<VecV,double>;
+    if(element->ValueStr()==MBSIMNS"QuadraticFunction1_VS")
+      return new QuadraticFunction1_VS<Var>;
+    if(element->ValueStr()==MBSIMNS"SinusFunction1_VS")
+      return new SinusFunction1_VS<Var>;
+    if(element->ValueStr()==MBSIMNS"TabularFunction1_VS")
+      return new TabularFunction1_VS<Var,Var>;
+    if(element->ValueStr()==MBSIMNS"PiecewisePolynom1_VS")
+      return new PPolynom<Var,Var>;
+    if(element->ValueStr()==MBSIMNS"Function1_VS_from_SS")
+      return new Function1_VS_from_SS<Var>;
+    return 0;
+  }
+
   Function1<Vec3,double> *MBSimObjectFactory::createFunction1_V3S(TiXmlElement *element) {
     if(element->ValueStr()==MBSIMNS"ConstantFunction1_VS")
       return new ConstantFunction1<Vec3,double>;
+    if(element->ValueStr()==MBSIMNS"QuadraticFunction1_VS")
+      return new QuadraticFunction1_VS<Fixed<3> >;
     if(element->ValueStr()==MBSIMNS"SinusFunction1_VS")
       return new SinusFunction1_VS<Fixed<3> >;
     if(element->ValueStr()==MBSIMNS"TabularFunction1_VS")

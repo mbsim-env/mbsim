@@ -57,38 +57,39 @@ namespace MBSim {
    * \date 2010-03-25 some comments (Thorsten Schindler)
    * \todo add deletes TODO
    */
-  class QuadraticFunction1_VS : public DifferentiableFunction1<fmatvec::Vec> {
+  template<class Col>
+  class QuadraticFunction1_VS : public DifferentiableFunction1<fmatvec::Vector<Col,double> > {
     public:
       QuadraticFunction1_VS();
-      QuadraticFunction1_VS(fmatvec::Vec a0_, fmatvec::Vec a1_, fmatvec::Vec a2_);
+      QuadraticFunction1_VS(fmatvec::Vector<Col,double> a0_, fmatvec::Vector<Col,double> a1_, fmatvec::Vector<Col,double> a2_);
       void initializeUsingXML(TiXmlElement *element);
 
-      class ZerothDerivative : public Function1<fmatvec::Vec,double> {
+      class ZerothDerivative : public Function1<fmatvec::Vector<Col,double>,double> {
          public:
-          ZerothDerivative(QuadraticFunction1_VS *f) : Function1<fmatvec::Vec,double>(), parent(f) {}
-          fmatvec::Vec operator()(const double& x, const void * =NULL);
+          ZerothDerivative(QuadraticFunction1_VS *f) : Function1<fmatvec::Vector<Col,double>,double>(), parent(f) {}
+          fmatvec::Vector<Col,double> operator()(const double& x, const void * =NULL);
         private:
           QuadraticFunction1_VS *parent;
       };
 
-      class FirstDerivative : public Function1<fmatvec::Vec,double> {
+      class FirstDerivative : public Function1<fmatvec::Vector<Col,double>,double> {
          public:
-          FirstDerivative(QuadraticFunction1_VS *f) : Function1<fmatvec::Vec,double>(), parent(f) {}
-          fmatvec::Vec operator()(const double& x, const void * =NULL);
+          FirstDerivative(QuadraticFunction1_VS *f) : Function1<fmatvec::Vector<Col,double>,double>(), parent(f) {}
+          fmatvec::Vector<Col,double> operator()(const double& x, const void * =NULL);
         private:
           QuadraticFunction1_VS *parent;
       };
       
-      class SecondDerivative : public Function1<fmatvec::Vec,double> {
+      class SecondDerivative : public Function1<fmatvec::Vector<Col,double>,double> {
          public:
-          SecondDerivative(QuadraticFunction1_VS *f) : Function1<fmatvec::Vec,double>(), parent(f) {}
-          fmatvec::Vec operator()(const double& x, const void * =NULL);
+          SecondDerivative(QuadraticFunction1_VS *f) : Function1<fmatvec::Vector<Col,double>,double>(), parent(f) {}
+          fmatvec::Vector<Col,double> operator()(const double& x, const void * =NULL);
         private:
           QuadraticFunction1_VS *parent;
       };
     protected:
       int ySize;
-      fmatvec::Vec a0, a1, a2;
+      fmatvec::Vector<Col,double> a0, a1, a2;
     private:
   };
 
@@ -142,10 +143,10 @@ namespace MBSim {
   class PositiveSinusFunction1_VS : public SinusFunction1_VS<fmatvec::Ref> {
     public:
       PositiveSinusFunction1_VS() {}
-      PositiveSinusFunction1_VS(fmatvec::Vec amplitude, fmatvec::Vec frequency, fmatvec::Vec phase, fmatvec::Vec offset) : SinusFunction1_VS(amplitude, frequency, phase, offset) {}
+      PositiveSinusFunction1_VS(fmatvec::Vec amplitude, fmatvec::Vec frequency, fmatvec::Vec phase, fmatvec::Vec offset) : SinusFunction1_VS<fmatvec::Ref>(amplitude, frequency, phase, offset) {}
       fmatvec::Vec operator()(const double& tVal, const void * =NULL);
       void initializeUsingXML(TiXmlElement *element) {
-        SinusFunction1_VS::initializeUsingXML(element);
+        SinusFunction1_VS<fmatvec::Ref>::initializeUsingXML(element);
       }
   };
 
@@ -186,7 +187,7 @@ namespace MBSim {
   class PeriodicTabularFunction1_VS : public TabularFunction1_VS<fmatvec::Ref,fmatvec::Ref> {
     public:
       PeriodicTabularFunction1_VS() {}
-      PeriodicTabularFunction1_VS(fmatvec::Vec x_, fmatvec::Mat y_) : TabularFunction1_VS(x_, y_) {
+      PeriodicTabularFunction1_VS(fmatvec::Vec x_, fmatvec::Mat y_) : TabularFunction1_VS<fmatvec::Ref,fmatvec::Ref>(x_, y_) {
         check();
       }
       fmatvec::Vec operator()(const double& xVal, const void * =NULL);
@@ -279,6 +280,58 @@ namespace MBSim {
 
 
   // ---------------------------------- Implementations ---------------------------------- 
+
+  template<class Col>
+  QuadraticFunction1_VS<Col>::QuadraticFunction1_VS() : DifferentiableFunction1<fmatvec::Vector<Col,double> >(), ySize(0), a0(), a1(), a2() {
+    this->addDerivative(new QuadraticFunction1_VS::ZerothDerivative(this));
+    this->addDerivative(new QuadraticFunction1_VS::FirstDerivative(this));
+    this->addDerivative(new QuadraticFunction1_VS::SecondDerivative(this));
+  }
+
+  template<class Col>
+  QuadraticFunction1_VS<Col>::QuadraticFunction1_VS(fmatvec::Vector<Col,double> a0_, fmatvec::Vector<Col,double> a1_, fmatvec::Vector<Col,double> a2_) : DifferentiableFunction1<fmatvec::Vector<Col,double> >(), a0(a0_), a1(a1_), a2(a2_) {
+    addDerivative(new QuadraticFunction1_VS::ZerothDerivative(this));
+    addDerivative(new QuadraticFunction1_VS::FirstDerivative(this));
+    addDerivative(new QuadraticFunction1_VS::SecondDerivative(this));
+    ySize=a0.size();
+  }
+  
+  template<class Col>
+  fmatvec::Vector<Col,double> QuadraticFunction1_VS<Col>::ZerothDerivative::operator()(const double& tVal, const void *) {
+    fmatvec::Vector<Col,double> y(parent->ySize, fmatvec::NONINIT);
+    for (int i=0; i<parent->ySize; i++)
+      y(i)=parent->a0(i)+tVal*(parent->a1(i)+parent->a2(i)*tVal);
+    return y;
+  }
+
+  template<class Col>
+  fmatvec::Vector<Col,double> QuadraticFunction1_VS<Col>::FirstDerivative::operator()(const double& tVal, const void *) {
+    fmatvec::Vector<Col,double> y(parent->ySize, fmatvec::NONINIT);
+    for (int i=0; i<parent->ySize; i++)
+      y(i)=parent->a1(i)+2.*parent->a2(i)*tVal;
+    return y;
+  }
+
+  template<class Col>
+  fmatvec::Vector<Col,double> QuadraticFunction1_VS<Col>::SecondDerivative::operator()(const double& tVal, const void *) {
+    fmatvec::Vector<Col,double> y(parent->ySize, fmatvec::NONINIT);
+    for (int i=0; i<parent->ySize; i++)
+      y(i)=2.*parent->a2(i);
+    return y;
+  }
+
+  template<class Col>
+  void QuadraticFunction1_VS<Col>::initializeUsingXML(TiXmlElement *element) {
+    DifferentiableFunction1<fmatvec::Vector<Col,double> >::initializeUsingXML(element);
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"a0");
+    a0=Element::getVec(e);
+    ySize=a0.size();
+    e=element->FirstChildElement(MBSIMNS"a1");
+    a1=Element::getVec(e, ySize);
+    e=element->FirstChildElement(MBSIMNS"a2");
+    a2=Element::getVec(e, ySize);
+    
+  }
 
   template<class Col>
   void Function1_VS_from_SS<Col>::initializeUsingXML(TiXmlElement * element) {

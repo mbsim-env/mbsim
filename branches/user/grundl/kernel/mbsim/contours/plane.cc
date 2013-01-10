@@ -59,6 +59,12 @@ namespace MBSim {
       ee=e->FirstChildElement(MBSIMNS"numberOfLines");
       int n=getInt(ee);
       enableOpenMBV(true, size, n);
+      for(TiXmlNode *child=e->FirstChild(); child; child=child->NextSibling()) {
+        TiXmlUnknown *unknown=child->ToUnknown();
+        const size_t length=strlen("?OPENMBV_ID ");
+        if(unknown && unknown->ValueStr().substr(0, length)=="?OPENMBV_ID ")
+          openMBVRigidBody->setID(unknown->ValueStr().substr(length, unknown->ValueStr().length()-length-1));
+      }
     }
 #endif
   }

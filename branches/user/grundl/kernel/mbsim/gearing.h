@@ -55,9 +55,9 @@ namespace MBSim {
       std::string getType() const { return "Gearing"; }
       void init(InitStage stage);
       bool isSetValued() const;
-      virtual void calclaSize();
-      virtual void calcgSize();
-      virtual void calcgdSize();
+      virtual void calclaSize(int j);
+      virtual void calcgSize(int j);
+      virtual void calcgdSize(int j);
 
       void setForceFunction(Function2<double,double,double> *func_) { func=func_; }
 

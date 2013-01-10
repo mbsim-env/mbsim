@@ -40,7 +40,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  LSODEIntegrator::LSODEIntegrator() : dtMax(0), dtMin(0), aTol(1,INIT,1e-6), rTol(1e-6), dt0(0), maxSteps(10000), stiff(false) {
+  LSODEIntegrator::LSODEIntegrator() : dtMax(0), dtMin(0), rTol(1e-6), dt0(0), maxSteps(10000), stiff(false) {
   }
 
   void LSODEIntegrator::fzdot(int* zSize, double* t, double* z_, double* zd_) {
@@ -69,6 +69,8 @@ namespace MBSim {
     double tPlot = min(tEnd,t + dtPlot);
 
     int iTol; 
+    if(aTol.size() == 0) 
+      aTol.resize(1,INIT,1e-6);
     if(aTol.size() == 1) {
       iTol = 1; // Skalar
     } else {
@@ -159,7 +161,8 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMINTNS"numberOfMaximalSteps");
     setmaxSteps(Element::getInt(e));
     e=element->FirstChildElement(MBSIMINTNS"stiffModus");
-    setStiff(Element::getBool(e));
+    if(e)
+      setStiff(Element::getBool(e));
       
   }
 

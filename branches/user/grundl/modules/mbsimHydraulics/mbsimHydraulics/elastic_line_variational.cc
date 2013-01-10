@@ -121,7 +121,7 @@ namespace MBSimHydraulics {
       CGes.row(1)=(-c1Ges+c2Ges)/Z0;
 
       // resort
-      SqrMat AA(2*n-1, 2*n-1, INIT, 0);
+      SqrMat AA(2*n-1, INIT, 0);
       Mat BB(2*n-1, 2, INIT, 0);
       Mat CC(2+n, 2*n-1, INIT, 0);
       AA(n-1, n-1)=AGes(0,0);

@@ -1,4 +1,4 @@
-#include "config.h"
+#include <config.h>
 #include "mbsimControl/objectfactory.h"
 #include "mbsimControl/signal_.h"
 #include "mbsimControl/sensor.h"
@@ -92,6 +92,19 @@ namespace MBSimControl {
     if(element->ValueStr()==MBSIMCONTROLNS"Actuator")
       return new Actuator(element->Attribute("name"));
     return 0;
+  }
+
+  MBSim::ObjectFactoryBase::MM_PRINSPRE& ObjectFactory::getPriorityNamespacePrefix() {
+    static MBSim::ObjectFactoryBase::MM_PRINSPRE priorityNamespacePrefix;
+
+    if(priorityNamespacePrefix.empty()) {
+      priorityNamespacePrefix.insert(P_PRINSPRE( 50, P_NSPRE(MBSIMCONTROLNS_, "")));
+      priorityNamespacePrefix.insert(P_PRINSPRE( 40, P_NSPRE(MBSIMCONTROLNS_, "ctl")));
+      priorityNamespacePrefix.insert(P_PRINSPRE( 30, P_NSPRE(MBSIMCONTROLNS_, "control")));
+      priorityNamespacePrefix.insert(P_PRINSPRE( 20, P_NSPRE(MBSIMCONTROLNS_, "mbsimcontrol")));
+    }
+
+    return priorityNamespacePrefix;
   }
 
 }

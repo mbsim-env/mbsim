@@ -25,8 +25,10 @@
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/joint.h"
 #include "mbsim/gear.h"
+#include "mbsim/kinematic_excitation.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/constitutive_laws.h"
+#include "mbsim/objectfactory.h"
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -71,8 +73,8 @@ namespace MBSim {
   Constraint::Constraint(const std::string &name) : Object(name) {
   }
 
-  GearConstraint::GearConstraint(const std::string &name, RigidBody* body) : Constraint(name), bd(body), frame(0) {
-    bd->addDependency(this);
+  GearConstraint::GearConstraint(const std::string &name, RigidBody* body) : Constraint(name), bd(body), saved_ReferenceBody("") {
+    //bd->addDependency(this);
   }
 
   GearConstraint::GearConstraint(const std::string &name) : Constraint(name), bd(NULL), saved_ReferenceBody("") {
@@ -100,25 +102,24 @@ namespace MBSim {
       Constraint::init(stage);
   }
 
-  void GearConstraint::addDependency(RigidBody* body, double ratio1, double ratio2) {
+  void GearConstraint::addDependency(RigidBody* body, double ratio_) {
     bi.push_back(body); 
-    ratio[0].push_back(ratio1);
-    ratio[1].push_back((int)ratio2==0?ratio1:ratio2);
+    ratio.push_back(ratio_);
   }
 
   void GearConstraint::updateStateDependentVariables(double t){
     bd->getqRel().init(0);
     bd->getuRel().init(0);
     for(unsigned int i=0; i<bi.size(); i++) {
-      bd->getqRel() += bi[i]->getqRel()*ratio[0][i];
-      bd->getuRel() += bi[i]->getuRel()*ratio[0][i];
+      bd->getqRel() += bi[i]->getqRel()*ratio[i];
+      bd->getuRel() += bi[i]->getuRel()*ratio[i];
     }
   }
 
   void GearConstraint::updateJacobians(double t, int jj){
     bd->getJRel().init(0); 
     for(unsigned int i=0; i<bi.size(); i++) {
-      bd->getJRel()(Range<Var,Var>(0,bi[i]->getJRel().rows()-1),Range<Var,Var>(0,bi[i]->getJRel().cols()-1)) += bi[i]->getJRel()*ratio[0][i];
+      bd->getJRel()(Range<Var,Var>(0,bi[i]->getJRel().rows()-1),Range<Var,Var>(0,bi[i]->getJRel().cols()-1)) += bi[i]->getJRel()*ratio[i];
     }
   }
 
@@ -138,25 +139,80 @@ namespace MBSim {
 
   void GearConstraint::setUpInverseKinetics() {
     Gear *gear = new Gear(string("Gear")+name);
-    ds->addInverseKineticsLink(gear);
+    static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(gear);
     gear->setDependentBody(bd);
-    gear->connect(frame);
     for(unsigned int i=0; i<bi.size(); i++) {
-      gear->addDependency(bi[i],ratio[0][i],ratio[1][i]);
+      gear->addDependency(bi[i],ratio[i]);
     }
   }
 
-  Constraint3::Constraint3(const std::string &name, RigidBody* body) : Constraint(name), bd(body) {
-    bd->addDependency(this);
+  KinematicConstraint::KinematicConstraint(const std::string &name) : Constraint(name), bd(0), f(0), fd(0), fdd(0), saved_ReferenceBody("") {
   }
 
-  void Constraint3::updateStateDependentVariables(double t) {
-    bd->getqRel().init(0);
-    bd->getuRel().init(0);
+  KinematicConstraint::KinematicConstraint(const std::string &name, RigidBody* body) : Constraint(name), bd(body), f(0), fd(0), fdd(0), saved_ReferenceBody("") {
   }
 
-  void Constraint3::updateJacobians(double t, int jj) {
-    bd->getJRel().init(0); 
+  void KinematicConstraint::init(InitStage stage) {
+    if(stage==resolveXMLPath) {
+      if (saved_ReferenceBody!="")
+        setReferenceBody(getByPath<RigidBody>(saved_ReferenceBody));
+      bd->addDependency(this);
+      Constraint::init(stage);
+    }
+    else if(stage==MBSim::unknownStage) {
+      Constraint::init(stage);
+      DifferentiableFunction1<fmatvec::VecV> *pos = dynamic_cast<DifferentiableFunction1<fmatvec::VecV> *>(f);
+      if(pos) {
+        if(fd==0) fd = &pos->getDerivative(1);
+        if(fdd==0) fdd = &pos->getDerivative(2);
+      }
+    }
+    else
+      Constraint::init(stage);
+  }
+
+  void KinematicConstraint::updateStateDependentVariables(double t) {
+    if(f) bd->getqRel() = (*f)(t);
+    if(fd) bd->getuRel() = (*fd)(t);
+  }
+
+  void KinematicConstraint::updateJacobians(double t, int jj) {
+    if(fdd) bd->getjRel() = (*fdd)(t);
+  }
+
+  void KinematicConstraint::initializeUsingXML(TiXmlElement* element) {
+    Constraint::initializeUsingXML(element);
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"referenceRigidBody");
+    saved_ReferenceBody=e->Attribute("ref");
+    e=element->FirstChildElement(MBSIMNS"kinematicFunction");
+    cout << "in initializeUsingXML " << e << endl;
+    if(e) {
+      Function1<VecV,double> *f=ObjectFactory::getInstance()->createFunction1_VVS(e->FirstChildElement());
+      cout << "kinematicFunction = " << f << endl;
+      setKinematicFunction(f);
+      f->initializeUsingXML(e->FirstChildElement());
+    }
+    e=element->FirstChildElement(MBSIMNS"firstDerivativeOfKinematicFunction");
+    if(e) {
+      Function1<VecV,double> *f=ObjectFactory::getInstance()->createFunction1_VVS(e->FirstChildElement());
+      setFirstDerivativeOfKinematicFunction(f);
+      f->initializeUsingXML(e->FirstChildElement());
+    }
+    e=element->FirstChildElement(MBSIMNS"secondDerivativeOfKinematicFunction");
+    if(e) {
+      Function1<VecV,double> *f=ObjectFactory::getInstance()->createFunction1_VVS(e->FirstChildElement());
+      setSecondDerivativeOfKinematicFunction(f);
+      f->initializeUsingXML(e->FirstChildElement());
+    }
+  }
+
+  void KinematicConstraint::setUpInverseKinetics() {
+    KinematicExcitation *ke = new KinematicExcitation(string("KinematicExcitation")+name);
+    static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(ke);
+    ke->setReferenceBody(bd);
+    ke->setKinematicFunction(f);
+    ke->setFirstDerivativeOfKinematicFunction(fd);
+    ke->setSecondDerivativeOfKinematicFunction(fdd);
   }
 
   JointConstraint::JointConstraint(const string &name) : Constraint(name), bi(NULL), frame1(0), frame2(0), nq(0), nu(0), nh(0), saved_ref1(""), saved_ref2("") {
@@ -351,7 +407,7 @@ namespace MBSim {
 
   void JointConstraint::setUpInverseKinetics() {
     InverseKineticsJoint *joint = new InverseKineticsJoint(string("Joint_")+name);
-    ds->addInverseKineticsLink(joint);
+    static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(joint);
     if(dT.cols())
       joint->setForceDirection(dT);
     if(dR.cols())

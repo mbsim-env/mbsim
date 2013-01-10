@@ -99,11 +99,11 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setNumberElements(int n);   	
-      void setLength(double L_);   	
-      void setEGModuls(double E_,double G_);    	
-      void setDensity(double rho_);	
-      void setCrossSectionalArea(double A_);    	
+      void setNumberElements(int n);
+      void setLength(double L_);
+      void setEGModuls(double E_,double G_);
+      void setDensity(double rho_);
+      void setCrossSectionalArea(double A_);
       void setMomentsInertia(double I1_,double I2_,double I0_);
       void setCurlRadius(double R1_,double R2_);
       void setMaterialDamping(double cEps0D_,double cEps1D_,double cEps2D_);
@@ -125,6 +125,12 @@ namespace MBSimFlexibleBody {
        * \param Lagrangian coordinate
        */
       fmatvec::Vec computeState(double s);
+
+      /**
+       * \brief compute angles at Lagrangian coordinate in local FE coordinates
+       * \param Lagrangian coordinate
+       */
+      fmatvec::Vec3 computeAngles(double s);
 
       /**
        * \brief initialise beam only for giving information with respect to state, number elements, length, (not for simulation)
@@ -185,7 +191,10 @@ namespace MBSimFlexibleBody {
       double A;
 
       /**
-       * \brief area moment of inertia 
+       * \brief area moments of inertia
+       * I0: around torsional axis
+       * I1: in t-b-plane
+       * I2: in t-n-plane
        */
       double I1, I2, I0;
 
@@ -196,6 +205,8 @@ namespace MBSimFlexibleBody {
 
       /**
        * \brief radius of undeformed shape
+       * R1: in t-b-plane
+       * R2: in t-n-plane
        */
       double R1, R2;
 

@@ -154,7 +154,7 @@ namespace MBSimHydraulics {
 
   void RigidLinePressureLoss::updateg(double t) {
     if (unilateral)
-      gd=line->getQIn();
+      gd<<line->getQIn();
   }
 
   void RigidLinePressureLoss::checkActive(int j) {
@@ -182,7 +182,7 @@ namespace MBSimHydraulics {
 
   void RigidLinePressureLoss::updategd(double t) {
     if (!unilateral)
-      gd=line->getQIn();
+      gd<<line->getQIn();
   }
 
   void RigidLinePressureLoss::updateStopVector(double t) {

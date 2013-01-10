@@ -29,36 +29,34 @@ namespace MBSim {
     protected:
       Function2<double,double,double> *func;
       std::vector<RigidBody*> body;
-      std::vector<double> ratio[2];
-      Frame *frame;
+      std::vector<double> ratio;
+      std::vector<Frame> C;
     public:
       Gear(const std::string &name);
       void updateh(double, int i=0);
       void updateW(double, int i=0);
       void updateg(double);
       void updategd(double);
+      void updateJacobians(double t, int j=0);
       void updatewb(double t, int i=0);
       void updatehRef(const fmatvec::Vec &hParent, int j=0);
       void updateWRef(const fmatvec::Mat &WParent, int j=0);
       void setDependentBody(RigidBody* body_) {body[0] = body_;}
-      void addDependency(RigidBody* body_, double ratio1, double ratio2=0);
-      void connect(Frame* frame_) {frame = frame_;}
-     // {LinkMechanics::connect(frame);}
+      void addDependency(RigidBody* body_, double ratio);
 
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
       std::string getType() const { return "Gear"; }
       void init(InitStage stage);
       bool isSetValued() const;
-      virtual void calclaSize();
-      virtual void calcgSize();
-      virtual void calcgdSize();
+      virtual void calclaSize(int j);
+      virtual void calcgSize(int j);
+      virtual void calcgdSize(int j);
 
       void setForceFunction(Function2<double,double,double> *func_) { func=func_; }
 
       void plot(double t, double dt=1);
 
-    private:
   };
 
 }

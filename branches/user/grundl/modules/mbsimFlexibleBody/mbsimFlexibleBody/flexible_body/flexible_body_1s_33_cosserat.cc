@@ -187,6 +187,13 @@ namespace MBSimFlexibleBody {
       curve->setNormalRotationGrid(frameOfReference->getOrientation()*angle->computen(q(6*currentElementTranslation+3,6*currentElementTranslation+5))); // normal
       curve->updateKinematicsForFrame(cp,ff);
 #endif
+      Vec3 phiTmp;
+      if(ff==firstTangent || ff==normal || ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all)
+        phiTmp = computeAngles(cp.getLagrangeParameterPosition()(0)); // interpolate angles linearly
+
+      if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(1, frameOfReference->getOrientation()*angle->computet(phiTmp)); // tangent
+      if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(0, frameOfReference->getOrientation()*angle->computen(phiTmp)); // normal
+      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(2, crossProduct(cp.getFrameOfReference().getOrientation().col(0),cp.getFrameOfReference().getOrientation().col(1))); // binormal (cartesian system)
     }
     else if(cp.getContourParameterType() == NODE) { // frame on node
       int node = cp.getNodeNumber(); // TODO open structure different?
@@ -443,18 +450,51 @@ namespace MBSimFlexibleBody {
   }
 
   Vec FlexibleBody1s33Cosserat::computeState(double sGlobal) {
-    double sLocalTranslation;
-    int currentElementTranslation;
-    BuildElementTranslation(sGlobal,sLocalTranslation,currentElementTranslation); // Lagrange parameter of translational element
-    Vec temp = static_cast<FiniteElement1s33CosseratTranslation*> (discretization[currentElementTranslation])->computeStateTranslation(qElement[currentElementTranslation],uElement[currentElementTranslation],sLocalTranslation); // TODO replace
-
+    Vec temp(12,INIT,0.);
     ContourPointData cp(sGlobal);
+
     updateKinematicsForFrame(cp,position);
     temp(0,2) = cp.getFrameOfReference().getPosition();
-    updateKinematicsForFrame(cp,velocity);
+    temp(3,5) = computeAngles(sGlobal);
+
+    updateKinematicsForFrame(cp,velocities);
     temp(6,8) = cp.getFrameOfReference().getVelocity();
+    temp(9,11) = cp.getFrameOfReference().getAngularVelocity();
 
     return temp.copy();
+  }
+
+  Vec3 FlexibleBody1s33Cosserat::computeAngles(double sGlobal) {
+    Vec3 phiTmp, phi_L, phi_R;
+    double sLocalRotation;
+    int currentElementRotation; // TODO openstructure
+
+    if(sGlobal < l0/2.) { // first rotation element (last half)
+      sLocalRotation = sGlobal + l0/2.;
+      phi_L = q(q.size()-3,q.size()-1).copy();
+      phi_R = q(3,5).copy();
+      if(phi_L(2) < phi_R(2))
+        phi_L(2) += 2.*M_PI;
+      else
+        phi_L(2) -= 2.*M_PI;
+    }
+    else if (sGlobal < L - l0/2.) {
+      BuildElementTranslation(sGlobal + l0/2.,sLocalRotation,currentElementRotation); // Lagrange parameter and number of rotational element (+l0/2)
+      phi_L = q(6*currentElementRotation-3,6*currentElementRotation-1).copy();
+      phi_R = q(6*currentElementRotation+3,6*currentElementRotation+5).copy();
+    }
+    else { // first rotation element (first half)
+      sLocalRotation = sGlobal - (L - l0/2.);
+      phi_L = q(q.size()-3,q.size()-1).copy();
+      phi_R = q(3,5).copy();
+      if(phi_L(2) < phi_R(2))
+        phi_L(2) += 2.*M_PI;
+      else
+        phi_L(2) -= 2.*M_PI;
+    }
+    phiTmp = phi_L + sLocalRotation / l0 * (phi_R - phi_L);
+
+    return phiTmp;
   }
 
   void FlexibleBody1s33Cosserat::initInfo() {
@@ -493,7 +533,7 @@ namespace MBSimFlexibleBody {
     assert(sLocal>-1e-8);
     assert(sLocal<l0+1e-8);
 
-    if(currentElementTranslation >= Elements && openStructure) { // contact solver computes to large sGlobal at the end of the entire beam is not considered only for open structure
+    if(currentElementTranslation >= Elements) { // contact solver computes to large sGlobal at the end of the entire beam (in open and closed structure)
       currentElementTranslation = Elements - 1;
       sLocal += l0;
     }
@@ -625,21 +665,26 @@ namespace MBSimFlexibleBody {
     l0 = L/Elements;
     Vec q0Dummy(q0.size(),INIT,0.);
     Vec u0Dummy(u0.size(),INIT,0.);
-    Point3Dd prevBinHalf;
+    Point3Dd refBinHalf;
 
     for(int i = 0; i < Elements; i++) {
-      Point3Dd posStart = curvePos.pointAt(i*l0);
-      Point3Dd tangHalf = curvePos.derive3D(i*l0 + l0/2., 1);
+      Point3Dd posStart, tangHalf, norHalf, binHalf;
+      posStart = curvePos.pointAt(i*l0);
+      tangHalf = curvePos.derive3D(i*l0 + l0/2., 1);
       tangHalf /= norm(tangHalf);
-      Point3Dd binHalf = curvePos.derive3D(i*l0 + l0/2., 2);
-      binHalf = crossProduct(binHalf,tangHalf);
-      binHalf /= norm(binHalf);
-      if (i>0) {
-        if (dot(prevBinHalf,binHalf)<0)
-          binHalf = -1. * binHalf;
+
+      if (i < 1) {
+        norHalf = curvePos.derive3D(i*l0 + l0/2., 2); // at START!!
+        norHalf /= norm(norHalf);
+        binHalf = crossProduct(norHalf,tangHalf);
+        norHalf = crossProduct(binHalf,tangHalf);
+        refBinHalf = binHalf; // set only in first element
       }
-      prevBinHalf = binHalf;
-      Point3Dd norHalf = crossProduct(binHalf,tangHalf);
+      else {
+        binHalf = refBinHalf;
+        norHalf = crossProduct(binHalf,tangHalf);
+        binHalf = crossProduct(tangHalf, norHalf);
+      }
 
       q0Dummy(i*6)   = posStart.x(); // x
       q0Dummy(i*6+1) = posStart.y(); // y

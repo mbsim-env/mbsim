@@ -807,6 +807,8 @@
                     <xs:sequence>
                       <xs:element name="projection" type="pv:nounitScalar" minOccurs="0">
                       </xs:element>
+                      <xs:element name="g" type="pv:nounitScalar" minOccurs="0">
+                      </xs:element>
                       <xs:element name="gd" type="pv:nounitScalar" minOccurs="0">
                       </xs:element>
                       <xs:element name="gdd" type="pv:nounitScalar" minOccurs="0">
@@ -1146,6 +1148,11 @@
               </xs:choice>
             </xs:complexType>
           </xs:element>
+          <xs:element name="isFrameOfBodyForRotation" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert, ob die generalisierten Geschwindigkeitskoordinaten der Rotation sich
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:element name="openMBVRigidBody" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -1195,6 +1202,36 @@
               </xs:sequence>
             </xs:complexType> 
           </xs:element>
+          <xs:element name="openMBVWeightArrow" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Wenn angegeben, wird die Gewichtskraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="ombv:Arrow"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="openMBVJointForceArrow" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Wenn angegeben, wird die Gelenkkraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="ombv:Arrow"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="openMBVJointMomentArrow" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Wenn angegeben, wird das Gelenkmoment durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="ombv:Arrow"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
@@ -1212,6 +1249,61 @@
       <xs:extension base="ObjectType"/>
     </xs:complexContent>
   </xs:complexType>   
+
+  <xs:element name="KinematicConstraint" substitutionGroup="Constraint" type="KinematicConstraintType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        TODO <br/>
+        Kinematische Zwangsbedingung durch Angabe einer Funktion.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="KinematicConstraintType">
+    <xs:complexContent>
+      <xs:extension base="ConstraintType">
+        <xs:sequence>
+          <xs:element name="referenceRigidBody">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Starrkörper, dessen Bewegungsfreiheitsgrad als Referenz dient.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="kinematicFunction" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              TODO
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function1_VS"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="firstDerivativeOfKinematicFunction" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              TODO
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function1_VS"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="secondDerivativeOfKinematicFunction" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              TODO
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function1_VS"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
   <xs:element name="GearConstraint" substitutionGroup="Constraint" type="GearConstraintType">
     <xs:annotation>
@@ -1495,10 +1587,102 @@
           <xs:element name="connect">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Definiert den Angriffspunkt dieser kinetischen Anregung auf einen Körper. Als Angriffspunkt
+                muss dabei ein KOS des entsprechenden Körpers angegeben werden. 
+                Bei inneren Kräften und Momenten können alternativ die KOS beider Schnittufer angegeben werden.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="FrameReferenceType"/>
+              <xs:attribute name="ref1" type="FrameReferenceType"/>
+              <xs:attribute name="ref2" type="FrameReferenceType"/>
+            </xs:complexType> 
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+
+  <xs:element name="Actuator" substitutionGroup="LinkMechanics" type="ActuatorType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Definiert eine externe, kinetische Anregung auf einen Körper.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="ActuatorType">
+    <xs:complexContent>
+      <xs:extension base="LinkMechanicsType">
+        <xs:sequence>
+          <xs:element name="force" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert eine Kraftanregung.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="directionVectors" type="pv:nounitMatrix">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Definiert die Wirkrichtung der Kraftanregung(en).
+                      Die Spalte i dieser Matrix definiert den Wirkrichtungsvektor des i-ten Eintrags der Kraftfunktion angegeben
+                      im KOS <tt>frameOfReference</tt>. Um eine Skalierung der skalaren Kraft (i-ter Eintrag der Kraftfunktion)
+                      zu umgehen, sollte jede Spalte dieser Matrix normiert sein.
+                  </xs:documentation></xs:annotation>
+                </xs:element>
+                <xs:element name="function">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Definiert die Kraftfunktion in Abhängigkeit der Zeit.
+                  </xs:documentation></xs:annotation>
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element ref="Function1_VS"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+                <xs:element ref="ombv:Arrow" minOccurs="0">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Wenn angegeben, wird die Kraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+                  </xs:documentation></xs:annotation>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="moment" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert eine Momentenanregung.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="directionVectors" type="pv:nounitMatrix">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Definiert die Wirkrichtung der Momentenanregung(en).
+                      Die Spalte i dieser Matrix definiert den Wirkrichtungsvektor des i-ten Eintrags der Momentfunktion angegeben
+                      im KOS <tt>frameOfReference</tt>. Um eine Skalierung des skalaren Moments (i-ter Eintrag der Momentfunktion)
+                      zu umgehen, sollte jede Spalte dieser Matrix normiert sein.
+                  </xs:documentation></xs:annotation>
+                </xs:element>
+                <xs:element name="function">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Definiert die Momentfunktion in Abhängigkeit der Zeit.
+                  </xs:documentation></xs:annotation>
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element ref="Function1_VS"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+                <xs:element ref="ombv:Arrow" minOccurs="0">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Wenn angegeben, wird das Moment durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+                  </xs:documentation></xs:annotation>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="connect">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert den Angriffspunkt dieser kinetischen Anregung auf einen Körper. Als Angriffspunkt
                 muss dabei ein KOS des entsprechenden Körpers angegeben werden.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+              <xs:attribute name="ref1" type="FrameReferenceType" use="required"/>
+              <xs:attribute name="ref2" type="FrameReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
         </xs:sequence> 
