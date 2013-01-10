@@ -197,7 +197,7 @@
                 Minimal zu verwendende Schrittweite.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="numberOfMaximalSteps" type="xs:unsignedLong">
+          <xs:element name="numberOfMaximalSteps" type="xs:nonNegativeInteger">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Maximale Anzahl von Integrationsschritten.
             </xs:documentation></xs:annotation>

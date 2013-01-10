@@ -22,6 +22,12 @@
 #include "object.h"
 #include "utils/function.h"
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
+namespace OpenMBV {
+  class Arrow;
+}
+#endif
+
 namespace MBSim {
 
   class RigidBody;
@@ -123,6 +129,16 @@ namespace MBSim {
 
       virtual std::string getType() const { return "JointConstraint"; }
 
+      /** \brief Visualize a force arrow acting on frame2 */
+      void setOpenMBVForceArrow(OpenMBV::Arrow *arrow) {
+        FArrow = arrow;
+      }
+
+      /** \brief Visualize a moment arrow acting on frame2 */
+      void setOpenMBVMomentArrow(OpenMBV::Arrow *arrow) {
+        MArrow = arrow;
+      }
+
     private:
       class Residuum : public Function1<fmatvec::Vec,fmatvec::Vec> {
         private:
@@ -157,6 +173,9 @@ namespace MBSim {
       std::string saved_ref1, saved_ref2;
       std::vector<std::string> saved_RigidBodyFirstSide, saved_RigidBodySecondSide;
       std::string saved_IndependentBody;
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::Arrow *FArrow, *MArrow;
+#endif
   };
 
 }
