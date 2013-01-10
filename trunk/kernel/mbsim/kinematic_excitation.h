@@ -22,6 +22,7 @@
 
 #include "mbsim/link_mechanics.h"
 #include "mbsim/rigid_body.h"
+#include "mbsim/frame.h"
 
 namespace MBSim {
 
@@ -30,12 +31,14 @@ namespace MBSim {
       Function1<fmatvec::VecV,double> *f, *fd, *fdd;
       Function2<fmatvec::VecV,fmatvec::VecV,fmatvec::VecV> *func;
       RigidBody* body;
+      Frame C;
     public:
       KinematicExcitation(const std::string &name);
       void updateh(double, int i=0);
       void updateW(double, int i=0);
       void updateg(double);
       void updategd(double);
+      void updateJacobians(double t, int j=0);
       void updatewb(double t, int i=0);
       void updatehRef(const fmatvec::Vec &hParent, int j=0);
       void updateWRef(const fmatvec::Mat &WParent, int j=0);

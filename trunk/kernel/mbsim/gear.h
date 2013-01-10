@@ -30,12 +30,14 @@ namespace MBSim {
       Function2<double,double,double> *func;
       std::vector<RigidBody*> body;
       std::vector<double> ratio;
+      std::vector<Frame> C;
     public:
       Gear(const std::string &name);
       void updateh(double, int i=0);
       void updateW(double, int i=0);
       void updateg(double);
       void updategd(double);
+      void updateJacobians(double t, int j=0);
       void updatewb(double t, int i=0);
       void updatehRef(const fmatvec::Vec &hParent, int j=0);
       void updateWRef(const fmatvec::Mat &WParent, int j=0);
