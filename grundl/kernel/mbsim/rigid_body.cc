@@ -244,6 +244,13 @@ namespace MBSim {
         if(dynamic_cast<LinearTranslation*>(fPrPK)) {
           JT = dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors();
         }
+        else if(dynamic_cast<TimeDependentTranslation*>(fPrPK)) {
+          DifferentiableFunction1<fmatvec::Vec3> *pos = dynamic_cast<DifferentiableFunction1<fmatvec::Vec3> *>(dynamic_cast<TimeDependentTranslation*>(fPrPK)->getTranslationFunction());
+          if(pos) {
+            if(fPjT==0) fPjT = &pos->getDerivative(1);
+            if(fPdjT==0) fPdjT = &pos->getDerivative(2);
+          }
+        }
         PJT[0].set(Index(0,2), Index(0,JT.cols()-1),JT);
       }
       if(fPJR==0) {
@@ -286,6 +293,7 @@ namespace MBSim {
 
         PJR[0].set(Index(0,2), Index(nu[0]-JR.cols(),nu[0]-1),JR);
 
+        // TODO: Alle Fälle überprüfen
         if(cb) {
           if(iKinematics == 0 && dynamic_cast<DynamicSystem*>(frameOfReference->getParent())) {
             updateM_ = &RigidBody::updateMConst;
@@ -339,7 +347,7 @@ namespace MBSim {
 
   void RigidBody::setUpInverseKinetics() {
     InverseKineticsJoint *joint = new InverseKineticsJoint(string("Joint_")+frameOfReference->getParent()->getName()+"_"+name);
-    ds->addInverseKineticsLink(joint);
+    static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(joint);
     joint->setForceDirection(Mat3V(3,EYE));
     joint->setMomentDirection(Mat3V(3,EYE));
     joint->connect(frameOfReference,frame[iKinematics]);
@@ -835,6 +843,11 @@ namespace MBSim {
       setDerivativeOfGuidingVelocityOfRotation(f);
       f->initializeUsingXML(e->FirstChildElement());
     }
+
+    e=element->FirstChildElement(MBSIMNS"isFrameOfBodyForRotation");
+    if(e)
+      isFrameOfBodyForRotation(getBool(e));
+
     // END
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=element->FirstChildElement(MBSIMNS"openMBVRigidBody");
@@ -853,6 +866,41 @@ namespace MBSim {
         setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
       C->enableOpenMBV(getDouble(e->FirstChildElement(MBSIMNS"size")),
           getDouble(e->FirstChildElement(MBSIMNS"offset")));
+
+      // pass a OPENMBV_ID processing instruction to the OpenMBV Frame object
+      for(TiXmlNode *child=e->FirstChild(); child; child=child->NextSibling()) {
+        TiXmlUnknown *unknown=child->ToUnknown();
+        const size_t length=strlen("?OPENMBV_ID ");
+        if(unknown && unknown->ValueStr().substr(0, length)=="?OPENMBV_ID ")
+          C->getOpenMBVFrame()->setID(unknown->ValueStr().substr(length, unknown->ValueStr().length()-length-1));
+      }
+    }
+
+    e=element->FirstChildElement(MBSIMNS"openMBVWeightArrow");
+    if(e) {
+      OpenMBV::Arrow *arrow=dynamic_cast<OpenMBV::Arrow*>(OpenMBV::ObjectFactory::createObject(e->FirstChildElement()));
+      if(!openMBVBody)
+        setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
+      arrow->initializeUsingXML(e->FirstChildElement());
+      setOpenMBVWeightArrow(arrow);
+    }
+
+    e=element->FirstChildElement(MBSIMNS"openMBVJointForceArrow");
+    if(e) {
+      OpenMBV::Arrow *arrow=dynamic_cast<OpenMBV::Arrow*>(OpenMBV::ObjectFactory::createObject(e->FirstChildElement()));
+      if(!openMBVBody)
+        setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
+      arrow->initializeUsingXML(e->FirstChildElement());
+      setOpenMBVJointForceArrow(arrow);
+    }
+
+    e=element->FirstChildElement(MBSIMNS"openMBVJointMomentArrow");
+    if(e) {
+      OpenMBV::Arrow *arrow=dynamic_cast<OpenMBV::Arrow*>(OpenMBV::ObjectFactory::createObject(e->FirstChildElement()));
+      if(!openMBVBody)
+        setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
+      arrow->initializeUsingXML(e->FirstChildElement());
+      setOpenMBVJointMomentArrow(arrow);
     }
 #endif
   }

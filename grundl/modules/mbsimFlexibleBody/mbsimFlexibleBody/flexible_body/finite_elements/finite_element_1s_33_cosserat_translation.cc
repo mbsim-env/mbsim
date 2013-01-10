@@ -132,7 +132,7 @@ namespace MBSimFlexibleBody {
     dTRdphitphi(1,2) = rho*l0*(-1.0*alphat*cbeta*I0+2.0*alphat*pow(cgamma,2.0)*cbeta*I0-2.0*alphat*pow(cgamma,2.0)*cbeta*I1+alphat*cbeta*I1+2.0*I0*betat*cgamma*sgamma-2.0*cgamma*I1*betat*sgamma);
     dTRdphitphi(2,1) = 0.1E1*rho*l0*alphat*cbeta*I2;
 
-    /* differentiation of 'strain dissipation' with respect to qG */
+    /* differentiation of 'strain dissipation' with respect to qGt */
     Vec dSDTdqGt(9); 
     dSDTdqGt(0,2) = -tangent.copy() ;
     dSDTdqGt(3) = -tangent.T()*dtangentdphi.col(0)*l0;
@@ -175,7 +175,7 @@ namespace MBSimFlexibleBody {
     double cgamma = cos(qG(5));
 
     /* inertia tensor */
-    SymMat Itilde(3,INIT,0.); 
+    SymMat Itilde(3,INIT,0.);
     Itilde(0,0) = (I0*cbeta*cbeta*cgamma*cgamma + I1*cbeta*cbeta*sgamma*sgamma + I2*sbeta*sbeta);
     Itilde(0,1) = (I0*cbeta*cgamma*sgamma - I1*cbeta*sgamma*cgamma);
     Itilde(0,2) = I2*sbeta;
@@ -183,7 +183,7 @@ namespace MBSimFlexibleBody {
     Itilde(2,2) = I2;
 
     /* rotational kinetic energy */
-    double TR = 0.5*rho*l0*qGt.T()(3,5)*Itilde*qGt(3,5); 
+    double TR = 0.5*rho*l0*qGt.T()(3,5)*Itilde*qGt(3,5);
 
     return TT + TR;
   }

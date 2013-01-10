@@ -43,7 +43,7 @@ namespace MBSimElectronics {
       fmatvec::Mat J[2];
       fmatvec::Vec Q, I;
       std::vector<Mesh*> mesh;
-      std::vector<int> vz;
+      std::vector<double> vz;
       Terminal *startTerminal, *endTerminal;
       std::vector<Branch*> connectedBranch;
       int flag;
@@ -60,7 +60,7 @@ namespace MBSimElectronics {
       fmatvec::Vec& getCurrent() {return I;}
       const fmatvec::Vec& getCharge() const {return Q;}
       fmatvec::Vec& getCharge() {return Q;}
-      void setvz(int vz_, Mesh* mesh);
+      void setvz(double vz_, Mesh* mesh);
       void connect(Mesh *mesh_) {mesh.push_back(mesh_);mesh_->addBranch(this);vz.push_back(0);}
       void clearMeshList() {mesh.clear();}
       int getNumberOfConnectedMeshes() const {return mesh.size();}

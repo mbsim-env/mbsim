@@ -58,8 +58,7 @@ namespace MBSim {
       GearConstraint(const std::string &name, RigidBody* body);
       GearConstraint(const std::string &name);
 
-      void addDependency(RigidBody* body_, double ratio1, double ratio2=0);
-      void setFrame(Frame* frame_) {frame = frame_;}
+      void addDependency(RigidBody* body_, double ratio);
 
       void init(InitStage stage);
 
@@ -70,12 +69,13 @@ namespace MBSim {
       void setUpInverseKinetics();
 
       void initializeUsingXML(TiXmlElement * element);
+
+      virtual std::string getType() const { return "GearConstraint"; }
     
     private:
       std::vector<RigidBody*> bi;
       RigidBody *bd;
-      std::vector<double> ratio[2];
-      Frame* frame;
+      std::vector<double> ratio;
       
       std::string saved_ReferenceBody;
       std::vector<std::string> saved_DependencyBodies;
@@ -83,19 +83,36 @@ namespace MBSim {
   };
 
   /** 
-   * \brief example 3 for contraint 
+   * \brief example 4 for contraint 
    * \todo generalization of this class
    * \author Martin Foerg
    */
-  class Constraint3 : public Constraint {
-    private:
-      RigidBody *bd;
+  class KinematicConstraint : public Constraint {
 
     public:
-      Constraint3(const std::string &name, RigidBody* body);
+      KinematicConstraint(const std::string &name, RigidBody* body);
+      KinematicConstraint(const std::string &name);
+
+      void setKinematicFunction(Function1<fmatvec::VecV,double>* f_) { f = f_;}
+      void setFirstDerivativeOfKinematicFunction(Function1<fmatvec::VecV,double>* fd_) { fd = fd_;}
+      void setSecondDerivativeOfKinematicFunction(Function1<fmatvec::VecV,double>* fdd_) { fdd = fdd_;}
+      void setReferenceBody(RigidBody* body) {bd=body; }
+      virtual void setUpInverseKinetics();
+
+      void init(InitStage stage);
 
       void updateStateDependentVariables(double t);
       void updateJacobians(double t, int j=0);
+
+      void initializeUsingXML(TiXmlElement * element);
+
+      virtual std::string getType() const { return "KinematicConstraint"; }
+
+    private:
+      RigidBody *bd;
+      Function1<fmatvec::VecV,double> *f, *fd, *fdd;
+
+      std::string saved_ReferenceBody;
   };
 
   /** 

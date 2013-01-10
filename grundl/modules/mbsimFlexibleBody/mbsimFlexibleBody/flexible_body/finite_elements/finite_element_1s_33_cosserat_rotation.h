@@ -119,7 +119,9 @@ namespace MBSimFlexibleBody {
       double I1, I2, I0;
 
       /**
-       * \brief predefined bending 
+       * \brief predefined bending
+       * k10: precurvature in t-b-plane
+       * k20: precurvature in t-n-plane
        */
       double k10, k20;
 

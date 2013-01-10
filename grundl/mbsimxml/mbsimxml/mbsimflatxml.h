@@ -10,11 +10,11 @@ namespace MBSim {
 
   class MBSimXML {
     public:
-      static int preInitDynamicSystemSolver(int argc, char *argv[], DynamicSystemSolver*& dss);
-      static int initDynamicSystemSolver(int argc, char *argv[], DynamicSystemSolver*& dss);
-      static int initIntegrator(int argc, char *argv[], Integrator *&integrator);
-      static int main(Integrator *&integrator, DynamicSystemSolver *&dss);
-      static int postMain(int argc, char *argv[], Integrator *&integrator, DynamicSystemSolver*& dss);
+      static void preInitDynamicSystemSolver(int argc, char *argv[], DynamicSystemSolver*& dss);
+      static void initDynamicSystemSolver(int argc, char *argv[], DynamicSystemSolver*& dss);
+      static void initIntegrator(int argc, char *argv[], Integrator *&integrator);
+      static void main(Integrator *&integrator, DynamicSystemSolver *&dss);
+      static void postMain(int argc, char *argv[], Integrator *&integrator, DynamicSystemSolver*& dss);
   };
 
 }

@@ -133,17 +133,15 @@ namespace MBSimPowertrain {
     if(model==1) {
       GearConstraint* constraint = new GearConstraint("C1",carrier);
       addObject(constraint);
-      constraint->addDependency(sun,0.5*rS/rT2,0.5*rS/rT2);
-      constraint->addDependency(annulus,0.5*rH/rT2,0.5*rH/rT2);
-      constraint->setFrame(housing->getFrame("C"));
+      constraint->addDependency(sun,0.5*rS/rT2);
+      constraint->addDependency(annulus,0.5*rH/rT2);
     } else if(model==0) {
       Gear *gear;
       gear = new Gear("Gear1");
       addLink(gear);
       gear->setDependentBody(carrier);
-      gear->addDependency(sun,0.5*rS/rT2,0.5*rS/rT2);
-      gear->addDependency(annulus,0.5*rH/rT2,0.5*rH/rT2);
-      gear->connect(housing->getFrame("C"));
+      gear->addDependency(sun,0.5*rS/rT2);
+      gear->addDependency(annulus,0.5*rH/rT2);
       //gear->setForceFunction(new LinearSpringDamperForce(5,0.5,0));
 
      // gear->setDependentBody(sun);
@@ -162,17 +160,15 @@ namespace MBSimPowertrain {
       if(model==1) {
         GearConstraint* constraint = new GearConstraint(string("C_")+shaftName.str(),planet[i]);
         addObject(constraint);
-        constraint->addDependency(sun,-0.5*(rS/rP+rS/rT2),-0.5*rS/rP);
-        constraint->addDependency(annulus,0.5*(rH/rP-rH/rT2),0.5*rH/rP);
-        constraint->setFrame(housing->getFrame("C"));
+        constraint->addDependency(sun,-0.5*(rS/rP+rS/rT2));
+        constraint->addDependency(annulus,0.5*(rH/rP-rH/rT2));
       } else if (model==0) {
         Gear *gear;
         gear = new Gear(string("Gear_")+shaftName.str());
         addLink(gear);
         gear->setDependentBody(planet[i]);
-        gear->addDependency(sun,-0.5*(rS/rP+rS/rT2),-0.5*rS/rP);
-        gear->addDependency(annulus,0.5*(rH/rP-rH/rT2),0.5*rH/rP);
-        gear->connect(housing->getFrame("C"));
+        gear->addDependency(sun,-0.5*(rS/rP+rS/rT2));
+        gear->addDependency(annulus,0.5*(rH/rP-rH/rT2));
         //gear->setForceFunction(new LinearSpringDamperForce(5,0.5,0));
 
         //gear->setDependentBody(annulus);
@@ -189,7 +185,7 @@ namespace MBSimPowertrain {
         gear->connect(rS,sun->getFrame("C"),rP,planet[i]->getFrame("C"));//,rS,sun->getFrame("C"));
         gear = new Gearing(string("A_")+shaftName.str(),true);
         addLink(gear);
-        gear->connect(rH,annulus->getFrame("C"),rP,planet[i]->getFrame("C"));
+        gear->connect(rP,planet[i]->getFrame("C"),rH,annulus->getFrame("C"));
       }
     }
 

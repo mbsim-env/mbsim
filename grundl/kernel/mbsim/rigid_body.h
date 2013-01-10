@@ -248,10 +248,10 @@ namespace MBSim {
       void setOpenMBVWeightArrow(OpenMBV::Arrow *arrow) { FWeight = arrow; }
 
       /** \brief Visualize the joint force */
-      void setOpenMBVForceArrow(OpenMBV::Arrow *arrow) { FArrow = arrow; }
+      void setOpenMBVJointForceArrow(OpenMBV::Arrow *arrow) { FArrow = arrow; }
 
       /** \brief Visualize the joint moment */
-      void setOpenMBVMomentArrow(OpenMBV::Arrow *arrow) { MArrow = arrow; }
+      void setOpenMBVJointMomentArrow(OpenMBV::Arrow *arrow) { MArrow = arrow; }
 #endif
 
       virtual void initializeUsingXML(TiXmlElement *element);

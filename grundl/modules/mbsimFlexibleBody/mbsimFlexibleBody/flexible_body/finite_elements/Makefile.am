@@ -4,6 +4,8 @@ noinst_LTLIBRARIES = libfe.la
 libfe_la_SOURCES = 	finite_element_1s_21_ancf.cc\
 			finite_element_1s_21_rcm.cc\
 			finite_element_1s_33_rcm.cc\
+			finite_element_1s_21_cosserat_translation.cc\
+			finite_element_1s_21_cosserat_rotation.cc\
 			finite_element_1s_33_cosserat_translation.cc\
 			finite_element_1s_33_cosserat_rotation.cc\
 			finite_element_1s_23_bta.cc\
@@ -22,6 +24,8 @@ LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 feinclude_HEADERS = finite_element_1s_21_ancf.h\
 			finite_element_1s_21_rcm.h\
 			finite_element_1s_33_rcm.h\
+			finite_element_1s_21_cosserat_translation.h\
+			finite_element_1s_21_cosserat_rotation.h\
 			finite_element_1s_33_cosserat_translation.h\
 			finite_element_1s_33_cosserat_rotation.h\
 			finite_element_1s_23_bta.h\

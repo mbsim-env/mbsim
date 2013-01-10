@@ -297,7 +297,7 @@ namespace MBSimHydraulics {
     QMecRot=0;
     for (unsigned int i=0; i<nRot; i++) {
       if (connectedRotFrames[i].considerVolumeChange) {
-        Vec WrRefF = 
+        Vec3 WrRefF = 
           -connectedRotFrames[i].fref->getPosition()
           +connectedRotFrames[i].frame->getPosition();
         double distance = nrm2(WrRefF);

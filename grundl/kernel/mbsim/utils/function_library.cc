@@ -34,55 +34,8 @@ namespace MBSim {
   }
 
 
-  QuadraticFunction1_VS::QuadraticFunction1_VS() : DifferentiableFunction1<Vec>(), ySize(0), a0(0), a1(0), a2(0) {
-    addDerivative(new QuadraticFunction1_VS::ZerothDerivative(this));
-    addDerivative(new QuadraticFunction1_VS::FirstDerivative(this));
-    addDerivative(new QuadraticFunction1_VS::SecondDerivative(this));
-  }
-
-  QuadraticFunction1_VS::QuadraticFunction1_VS(Vec a0_, Vec a1_, Vec a2_) : DifferentiableFunction1<Vec>(), a0(a0_), a1(a1_), a2(a2_) {
-    addDerivative(new QuadraticFunction1_VS::ZerothDerivative(this));
-    addDerivative(new QuadraticFunction1_VS::FirstDerivative(this));
-    addDerivative(new QuadraticFunction1_VS::SecondDerivative(this));
-    ySize=a0.size();
-  }
-  
-  Vec QuadraticFunction1_VS::ZerothDerivative::operator()(const double& tVal, const void *) {
-    Vec y(parent->ySize, NONINIT);
-    for (int i=0; i<parent->ySize; i++)
-      y(i)=parent->a0(i)+tVal*(parent->a1(i)+parent->a2(i)*tVal);
-    return y;
-  }
-
-  Vec QuadraticFunction1_VS::FirstDerivative::operator()(const double& tVal, const void *) {
-    Vec y(parent->ySize, NONINIT);
-    for (int i=0; i<parent->ySize; i++)
-      y(i)=parent->a1(i)+2.*parent->a2(i)*tVal;
-    return y;
-  }
-
-  Vec QuadraticFunction1_VS::SecondDerivative::operator()(const double& tVal, const void *) {
-    Vec y(parent->ySize, NONINIT);
-    for (int i=0; i<parent->ySize; i++)
-      y(i)=4.*parent->a2(i);
-    return y;
-  }
-
-  void QuadraticFunction1_VS::initializeUsingXML(TiXmlElement *element) {
-    DifferentiableFunction1<Vec>::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"a0");
-    a0=Element::getVec(e);
-    ySize=a0.size();
-    e=element->FirstChildElement(MBSIMNS"a1");
-    a1=Element::getVec(e, ySize);
-    e=element->FirstChildElement(MBSIMNS"a2");
-    a2=Element::getVec(e, ySize);
-    
-  }
-
-
   Vec PositiveSinusFunction1_VS::operator()(const double& tVal, const void *) {
-    Vec y=SinusFunction1_VS::operator()(tVal);
+    Vec y=SinusFunction1_VS<fmatvec::Ref>::operator()(tVal);
     for (int i=0; i<ySize; i++)
       if (y(i)<0)
         y(i)=0;
@@ -122,7 +75,7 @@ namespace MBSim {
       xValTmp+=xDelta;
     while (xValTmp>xMax)
       xValTmp-=xDelta;
-    return TabularFunction1_VS::operator()(xValTmp);
+    return TabularFunction1_VS<fmatvec::Ref,fmatvec::Ref>::operator()(xValTmp);
   }
 
 

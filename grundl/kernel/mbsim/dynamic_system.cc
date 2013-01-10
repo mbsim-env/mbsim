@@ -1037,7 +1037,17 @@ namespace MBSim {
         dynamicsystem[i]->buildListOfModels(modelList,recursive);
   }
 
+  void DynamicSystem::buildListOfInverseKineticsLinks(vector<Link*> &iklnk, bool recursive) {
+    for(unsigned int i=0; i<inverseKineticsLink.size(); i++)
+      iklnk.push_back(inverseKineticsLink[i]);
+    if(recursive)
+      for(unsigned int i=0; i<dynamicsystem.size(); i++)
+        dynamicsystem[i]->buildListOfInverseKineticsLinks(iklnk,recursive);
+  }
+
   void DynamicSystem::setUpInverseKinetics() {
+    for(unsigned int i=0; i<dynamicsystem.size(); i++) 
+      dynamicsystem[i]->setUpInverseKinetics();
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
       (*i)->setUpInverseKinetics();

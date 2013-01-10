@@ -4,18 +4,20 @@ AC_INIT([mbsimxml],[2.0.1],[friedrich.at.gc@googlemail.com])
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_SRCDIR([mbsimxml/mbsimflatxml.cc])
-AC_PROG_LIBTOOL
+LT_INIT([win32-dll])
 AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_LANG([C++])
 
-PKG_CHECK_MODULES(DEPS, mbsim openmbvcppinterface mbxmlutils)
-
-LDFLAGS="$LDFLAGS -Wl,--no-undefined"
+PKG_CHECK_MODULES(DEPS, mbsim openmbvcppinterface)
+PKG_CHECK_MODULES(NOLINK_DEPS, mbxmlutils)
 
 if test "_$host_os" = "_mingw32" ; then
   AC_DEFINE([MBSIMXML_MINGW], [1], [Host System is MinGW/MSys])
 fi
+
+dnl boost
+AC_CHECK_HEADERS([boost/filesystem.hpp], [], [AC_MSG_ERROR(boost/filesystem.hpp not found.)])
 
 AC_MSG_CHECKING([for WEXITSTATUS])
 AC_COMPILE_IFELSE([
@@ -26,16 +28,6 @@ int main() {
   return 0;
 }
 ], [AC_MSG_RESULT([yes]); CPPFLAGS="$CPPFLAGS -DHAVE_WEXITSTATUS"], [AC_MSG_RESULT([no])])
-
-AC_MSG_CHECKING([for st_mtim element in struct time_t])
-AC_COMPILE_IFELSE([
-#include <sys/stat.h>
-int main() {
-  struct stat st;
-  time_t i=st.st_mtim.tv_nsec;
-  return 0;
-}
-], [AC_MSG_RESULT([yes]); CPPFLAGS="$CPPFLAGS -DHAVE_STAT_ST_MTIM"], [AC_MSG_RESULT([no])])
 
 dnl Check for xslt
 AC_ARG_WITH([xsltprocpath],
@@ -63,17 +55,10 @@ dnl Helper functions to convert path to windows
 dirtowin() {
   echo $(cd $1 && pwd -W 2> /dev/null)
 }
-filetowin() {
-  echo $(cd $(dirname $1) && pwd -W 2> /dev/null)/$(basename $1)
-}
 dnl Convert to Windows path
 win_MBXMLUTILSSCHEMA=$(dirtowin $MBXMLUTILSSCHEMA)
 AC_SUBST([win_MBXMLUTILSSCHEMA])
-win_MBXMLUTILSBINDIR=$(dirtowin $MBXMLUTILSBINDIR)
-AC_SUBST([win_MBXMLUTILSBINDIR])
 mkdir -p $(eval echo $(eval echo $prefix/bin)) 2> /dev/null
-win_bindir=$(dirtowin $(eval echo $(eval echo $prefix/bin)))
-AC_SUBST([win_bindir])
 BINDIR=$(eval echo $(eval echo $prefix/bin))
 AC_SUBST([BINDIR])
 dnl Convert to native path
@@ -127,6 +112,8 @@ AC_SUBST([MBXMLUTILSDOCDIR],[$MBXMLUTILSDOCDIR])
 
 
 CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long"
+
+LDFLAGS="$LDFLAGS -no-undefined"
 
 AC_CONFIG_FILES([Makefile mbsimxml/Makefile schema/mbsimxml.xsd schema/Makefile xmldoc/Makefile mbsimxml.pc xmldoc/genContent.xsl mbsimxml/env.h])
 

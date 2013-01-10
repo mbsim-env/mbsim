@@ -172,4 +172,17 @@ namespace MBSimHydraulics {
     return 0;
   }
 
+  MBSim::ObjectFactoryBase::MM_PRINSPRE& ObjectFactory::getPriorityNamespacePrefix() {
+    static MBSim::ObjectFactoryBase::MM_PRINSPRE priorityNamespacePrefix;
+
+    if(priorityNamespacePrefix.empty()) {
+      priorityNamespacePrefix.insert(P_PRINSPRE( 50, P_NSPRE(MBSIMHYDRAULICSNS_, "")));
+      priorityNamespacePrefix.insert(P_PRINSPRE( 40, P_NSPRE(MBSIMHYDRAULICSNS_, "hyd")));
+      priorityNamespacePrefix.insert(P_PRINSPRE( 30, P_NSPRE(MBSIMHYDRAULICSNS_, "hydraulic")));
+      priorityNamespacePrefix.insert(P_PRINSPRE( 20, P_NSPRE(MBSIMHYDRAULICSNS_, "mbsimhydraulic")));
+    }
+
+    return priorityNamespacePrefix;
+  }
+
 }

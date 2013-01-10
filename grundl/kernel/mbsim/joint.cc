@@ -59,10 +59,10 @@ namespace MBSim {
   }
 
   void Joint::updateW(double t, int j) {
-    fF[0].set(Index(0,2),Index(0,Wf.cols()-1), -Wf);
-    fM[0].set(Index(0,2),Index(Wf.cols(),Wf.cols()+Wm.cols()-1), -Wm);
-    fF[1] = -fF[0];
-    fM[1] = -fM[0];
+    fF[1].set(Index(0,2),Index(0,Wf.cols()-1), Wf);
+    fM[1].set(Index(0,2),Index(Wf.cols(),Wf.cols()+Wm.cols()-1), Wm);
+    fF[0] = -fF[1];
+    fM[0] = -fM[1];
 
     W[j][0] += C.getJacobianOfTranslation(j).T()*fF[0] + C.getJacobianOfRotation(j).T()*fM[0];
     W[j][1] += frame[1]->getJacobianOfTranslation(j).T()*fF[1] + frame[1]->getJacobianOfRotation(j).T()*fM[1];

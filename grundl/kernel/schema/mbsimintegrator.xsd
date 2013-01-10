@@ -562,7 +562,7 @@
                 Grenzwert
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="initalStepsize" type="pv:timeScalar" minOccurs="0"> 
+          <xs:element name="initialStepSize" type="pv:timeScalar" minOccurs="0"> 
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Integrationsschrittweite. (t=0: automatische Detektion)
             </xs:documentation></xs:annotation>
