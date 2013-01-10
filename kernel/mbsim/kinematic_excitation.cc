@@ -46,7 +46,7 @@ namespace MBSim {
       W[j][0]-=body->getJRel(j).T();
     } else {
       W[j][0]-=body->getFrameForKinematics()->getJacobianOfTranslation(j).T()*(body->getFrameOfReference()->getOrientation()*body->getPJT()) + body->getFrameForKinematics()->getJacobianOfRotation(j).T()*(body->getFrameOfReference()->getOrientation()*body->getPJR());
-      W[j][1]+=body->getFrameOfReference()->getJacobianOfTranslation(j).T()*(body->getFrameOfReference()->getOrientation()*body->getPJT()) + body->getFrameOfReference()->getJacobianOfRotation(j).T()*(body->getFrameOfReference()->getOrientation()*body->getPJR());
+      W[j][1]+=C.getJacobianOfTranslation(j).T()*(body->getFrameOfReference()->getOrientation()*body->getPJT()) + C.getJacobianOfRotation(j).T()*(body->getFrameOfReference()->getOrientation()*body->getPJR());
     }
   }
 
@@ -56,7 +56,7 @@ namespace MBSim {
       h[j][0]-=body->getJRel(j).T()*la;
     } else {
       h[j][0]-=body->getFrameForKinematics()->getJacobianOfTranslation(j).T()*(body->getFrameOfReference()->getOrientation()*body->getPJT()*la) + body->getFrameForKinematics()->getJacobianOfRotation(j).T()*(body->getFrameOfReference()->getOrientation()*body->getPJR()*la);
-      h[j][1]+=body->getFrameOfReference()->getJacobianOfTranslation(j).T()*(body->getFrameOfReference()->getOrientation()*body->getPJT()*la) + body->getFrameOfReference()->getJacobianOfRotation(j).T()*(body->getFrameOfReference()->getOrientation()*body->getPJR()*la);
+      h[j][1]+=C.getJacobianOfTranslation(j).T()*(body->getFrameOfReference()->getOrientation()*body->getPJT()*la) + C.getJacobianOfRotation(j).T()*(body->getFrameOfReference()->getOrientation()*body->getPJR()*la);
     }
   }
 
@@ -75,6 +75,20 @@ namespace MBSim {
     I = Index(body->getFrameOfReference()->gethInd(j),body->getFrameOfReference()->gethInd(j)+body->getFrameOfReference()->getJacobianOfTranslation(j).cols()-1);
     h[j][1]>>hParent(I);
   } 
+
+  void KinematicExcitation::updateJacobians(double t, int j) {
+    Vec3 WrP0P1 = body->getFrameForKinematics()->getPosition()-body->getFrameOfReference()->getPosition();
+    Mat33 tWrP0P1 = tilde(WrP0P1);
+
+    C.setOrientation(body->getFrameOfReference()->getOrientation());
+    C.setPosition(body->getFrameOfReference()->getPosition() + WrP0P1);
+    C.setAngularVelocity(body->getFrameOfReference()->getAngularVelocity());
+    C.setVelocity(body->getFrameOfReference()->getVelocity() + crossProduct(body->getFrameOfReference()->getAngularVelocity(),WrP0P1));
+    C.setJacobianOfTranslation(body->getFrameOfReference()->getJacobianOfTranslation(j) - tWrP0P1*body->getFrameOfReference()->getJacobianOfRotation(j),j);
+    C.setJacobianOfRotation(body->getFrameOfReference()->getJacobianOfRotation(j),j);
+    C.setGyroscopicAccelerationOfTranslation(body->getFrameOfReference()->getGyroscopicAccelerationOfTranslation(j) - tWrP0P1*body->getFrameOfReference()->getGyroscopicAccelerationOfRotation(j) + crossProduct(body->getFrameOfReference()->getAngularVelocity(),crossProduct(body->getFrameOfReference()->getAngularVelocity(),WrP0P1)),j);
+    C.setGyroscopicAccelerationOfRotation(body->getFrameOfReference()->getGyroscopicAccelerationOfRotation(j),j);
+  }
 
   void KinematicExcitation::updateg(double t) {
     if(g.size())
@@ -106,6 +120,10 @@ namespace MBSim {
       h[1].push_back(Vec(6));
       W[0].push_back(Mat(body->getFrameOfReference()->getJacobianOfTranslation(0).cols(),laSize));
       W[1].push_back(Mat(6,laSize));
+      C.getJacobianOfTranslation(0).resize(body->getFrameOfReference()->getJacobianOfTranslation(0).cols());
+      C.getJacobianOfRotation(0).resize(body->getFrameOfReference()->getJacobianOfRotation(0).cols());
+      C.getJacobianOfTranslation(1).resize(body->getFrameOfReference()->getJacobianOfTranslation(1).cols());
+      C.getJacobianOfRotation(1).resize(body->getFrameOfReference()->getJacobianOfRotation(1).cols());
     }
     else if(stage==resize) {
       LinkMechanics::init(stage);

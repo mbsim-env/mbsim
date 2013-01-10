@@ -56,7 +56,7 @@ namespace MBSim {
     } else {
       for(unsigned i=0; i<body.size(); i++) {
         W[j][i]-=body[i]->getFrameForKinematics()->getJacobianOfTranslation(j).T()*(body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJT()*ratio[i]) + body[i]->getFrameForKinematics()->getJacobianOfRotation(j).T()*(body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJR()*ratio[i]);
-        W[j][body.size()+i]+=body[i]->getFrameOfReference()->getJacobianOfTranslation(j).T()*(body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJT()*ratio[i]) + body[i]->getFrameOfReference()->getJacobianOfRotation(j).T()*(body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJR()*ratio[i]);
+        W[j][body.size()+i]+=C[i].getJacobianOfTranslation(j).T()*(body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJT()*ratio[i]) + C[i].getJacobianOfRotation(j).T()*(body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJR()*ratio[i]);
       }
     }
   }
@@ -70,7 +70,7 @@ namespace MBSim {
     } else {
       for(unsigned i=0; i<body.size(); i++) {
         h[j][i]-=body[i]->getFrameForKinematics()->getJacobianOfTranslation(j).T()*(body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJT()*ratio[i]*la) + body[i]->getFrameForKinematics()->getJacobianOfRotation(j).T()*(body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJR()*ratio[i]*la);
-        h[j][body.size()+i]+=body[i]->getFrameOfReference()->getJacobianOfTranslation(j).T()*(body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJT()*ratio[i]*la) + body[i]->getFrameOfReference()->getJacobianOfRotation(j).T()*(body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJR()*ratio[i]*la);
+        h[j][body.size()+i]+=C[i].getJacobianOfTranslation(j).T()*(body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJT()*ratio[i]*la) + C[i].getJacobianOfRotation(j).T()*(body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJR()*ratio[i]*la);
       }
     }
   }
@@ -94,6 +94,22 @@ namespace MBSim {
       h[j][body.size()+i]>>hParent(I);
     }
   } 
+
+  void Gear::updateJacobians(double t, int j) {
+    for(unsigned i=0; i<body.size(); i++) {
+      Vec3 WrP0P1 = body[i]->getFrameForKinematics()->getPosition()-body[i]->getFrameOfReference()->getPosition();
+      Mat33 tWrP0P1 = tilde(WrP0P1);
+
+      C[i].setOrientation(body[i]->getFrameOfReference()->getOrientation());
+      C[i].setPosition(body[i]->getFrameOfReference()->getPosition() + WrP0P1);
+      C[i].setAngularVelocity(body[i]->getFrameOfReference()->getAngularVelocity());
+      C[i].setVelocity(body[i]->getFrameOfReference()->getVelocity() + crossProduct(body[i]->getFrameOfReference()->getAngularVelocity(),WrP0P1));
+      C[i].setJacobianOfTranslation(body[i]->getFrameOfReference()->getJacobianOfTranslation(j) - tWrP0P1*body[i]->getFrameOfReference()->getJacobianOfRotation(j),j);
+      C[i].setJacobianOfRotation(body[i]->getFrameOfReference()->getJacobianOfRotation(j),j);
+      C[i].setGyroscopicAccelerationOfTranslation(body[i]->getFrameOfReference()->getGyroscopicAccelerationOfTranslation(j) - tWrP0P1*body[i]->getFrameOfReference()->getGyroscopicAccelerationOfRotation(j) + crossProduct(body[i]->getFrameOfReference()->getAngularVelocity(),crossProduct(body[i]->getFrameOfReference()->getAngularVelocity(),WrP0P1)),j);
+      C[i].setGyroscopicAccelerationOfRotation(body[i]->getFrameOfReference()->getGyroscopicAccelerationOfRotation(j),j);
+    }
+  }
 
   void Gear::updateg(double) {
     g.init(0);
@@ -126,6 +142,11 @@ namespace MBSim {
         h[1].push_back(Vec(6));
         W[0].push_back(Mat(body[i]->getFrameForKinematics()->getJacobianOfTranslation(0).cols(),laSize));
         W[1].push_back(Mat(6,laSize));
+        C.push_back(Frame());
+        C[i].getJacobianOfTranslation(0).resize(body[i]->getFrameOfReference()->getJacobianOfTranslation(0).cols());
+        C[i].getJacobianOfRotation(0).resize(body[i]->getFrameOfReference()->getJacobianOfRotation(0).cols());
+        C[i].getJacobianOfTranslation(1).resize(body[i]->getFrameOfReference()->getJacobianOfTranslation(1).cols());
+        C[i].getJacobianOfRotation(1).resize(body[i]->getFrameOfReference()->getJacobianOfRotation(1).cols());
       }
       for(unsigned int i=0; i<body.size(); i++) {
         h[0].push_back(Vec(body[i]->getFrameOfReference()->getJacobianOfTranslation(0).cols()));
