@@ -30,6 +30,7 @@ class initLink : public Link {
     void updatedhdtRef(const fmatvec::Vec&, int){}
     void updaterRef(const fmatvec::Vec&, int) {}
     bool isActive() const {return false; }
+    virtual bool isSingleValued() const { return true; }
     bool gActiveChanged() {return false; }
     void init(InitStage stage) {
       if (stage==MBSim::calculateLocalInitialValues) {

@@ -11,14 +11,12 @@
 #endif
 
 #include <mbsim/environment.h>
-#include <mbsim/contour_pairing.h>
-#include <mbsim/maxwell_contact.h>
 #include <mbsim/rigid_body.h>
 #include <mbsim/contours/plane.h>
 #include <mbsim/contours/planewithfrustum.h>
 #include <mbsim/contours/point.h>
 #include <mbsim/contours/circle_solid.h>
-#include <mbsim/contact.h>
+#include <mbsim/multi_contact.h>
 #include <mbsim/constitutive_laws.h>
 #include <mbsim/utils/function.h>
 #include <mbsim/utils/rotarymatrices.h>
@@ -67,9 +65,6 @@ System::System(const string &projectName, int contactType, int firstBall, int la
   /*create reference frame for all objects with the given shift*/
   Frame* ReferenceFrame = new Frame(getName()+"RefFrame");
   this->addFrame(ReferenceFrame, ReferenceFrameShift, SqrMat(3,EYE));
-
-  /*General-Parameters*/
-  MaxwellContact *maxwellContact = new MaxwellContact("MaxwellContact");
 
   /*Print arrows for contacts*/
   OpenMBV::Arrow *normalArrow = new OpenMBV::Arrow();
@@ -197,81 +192,61 @@ System::System(const string &projectName, int contactType, int firstBall, int la
 //    }
   }
 
+  MultiContact* contact = new MultiContact("Contact");
+
+  //fancy stuff
+  contact->enableOpenMBVContactPoints(1.,false);
+  contact->setOpenMBVNormalForceArrow(normalArrow);
+  contact->setOpenMBVFrictionForceArrow(frArrow);
+
+
+  for (size_t contactIter = 0; contactIter < balls.size(); contactIter++) {
+    stringstream contactname;
+    contactname << "Contact_Beam-" << ballsContours[contactIter]->getName();
+
+    contact->connect(BeamContour, ballsContours[contactIter]);
+  }
+
+  addLink(contact);
+
   switch (contactType) {
     case 0: //Maxwell Contact
     {
+      MaxwellContactLaw* mcl = new MaxwellContactLaw();
+      contact->setContactForceLaw(mcl);
       //Debug features
-      maxwellContact->setDebuglevel(0);
+      mcl->setDebuglevel(0);
 
       CountourCouplingCantileverBeam* couplingBeam = new CountourCouplingCantileverBeam(BeamContour->getName(), E, I);
-      maxwellContact->addContourCoupling(BeamContour, BeamContour, couplingBeam);
+      mcl->addContourCoupling(BeamContour, BeamContour, couplingBeam);
 
-      for (size_t contactIter = 0; contactIter < balls.size(); contactIter++) {
-        stringstream contactname;
-        contactname << "Contact_Beam-" << ballsContours[contactIter]->getName();
+      //Force Law (friction)
+//      contact->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
+      contact->setFrictionForceLaw(new SpatialCoulombFriction(mu));
+      contact->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
 
-        ContourPairing* contourPairing = new ContourPairing(contactname.str(), BeamContour, ballsContours[contactIter]);
-        //contourPairing->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
-        maxwellContact->addContourPairing(contourPairing);
-
-        contourPairing->enableOpenMBVContactPoints(1.,false);
-        contourPairing->enableOpenMBVNormalForceArrow(normalArrow);
-        contourPairing->enableOpenMBVFrictionForceArrow(frArrow);
-      }
-
-
-
-      this->addLink(maxwellContact);
     }
     break;
 
     case 1: //regularized contact
-      for (size_t contactIter = 0; contactIter < balls.size(); contactIter++) {
-        stringstream contactname;
-        contactname << "Contact_Pyr-" << ballsContours[contactIter]->getName();
-
-        Contact* contact = new Contact(contactname.str());
-        //Force law (normal direction)
+    {
         double i = 2*(space+ 2*radius);  //this results in the stiffness of the first ball
         contact->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(3*E*I/ (i*i*i), 0)));
 
         //Force Law (friction)
         contact->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
-
-        contact->connect(BeamContour, ballsContours[contactIter]);
-
-        //fancy stuff
-        contact->enableOpenMBVContactPoints(1.,false);
-        contact->setOpenMBVNormalForceArrow(normalArrow);
-        contact->setOpenMBVFrictionArrow(frArrow);
-
-        this->addLink(contact);
-      }
+    }
     break;
 
     case 2:
-      for (size_t contactIter = 0; contactIter < balls.size(); contactIter++) {
-        stringstream contactname;
-        contactname << "Contact_Pyr-" << ballsContours[contactIter]->getName();
-
-        Contact* contact = new Contact(contactname.str());
-        //Force law (normal direction)
+    {
         contact->setContactForceLaw(new UnilateralConstraint);
         contact->setContactImpactLaw(new UnilateralNewtonImpact(1.));
 
         //Force Law (friction)
         contact->setFrictionForceLaw(new SpatialCoulombFriction(mu));
         contact->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
-
-        contact->connect(BeamContour, ballsContours[contactIter]);
-
-        //fancy stuff
-        contact->enableOpenMBVContactPoints(1.,false);
-        contact->setOpenMBVNormalForceArrow(normalArrow);
-        contact->setOpenMBVFrictionArrow(frArrow);
-
-        this->addLink(contact);
-      }
+    }
     break;
     default:
       throw MBSimError("No valid contactType chosen.");

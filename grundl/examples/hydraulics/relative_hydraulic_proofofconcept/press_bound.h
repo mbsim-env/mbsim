@@ -24,6 +24,7 @@ class PressBound : public Link {
     void updaterRef(const fmatvec::Vec&, int) {}
     void updaterRef(const fmatvec::Vec&) {}
     bool isActive() const { return false; }
+    virtual bool isSingleValued() const { return true; }
     bool gActiveChanged() { return false; }
     void setPressure(double p_) { p=p_; }
     void addInConnection(Line *l) { conIn.push_back(l); }
