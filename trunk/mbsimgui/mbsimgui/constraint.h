@@ -48,7 +48,7 @@ class KinematicConstraint : public Constraint {
 
   protected:
     RigidBody *refBody;
-    ExtXMLWidget *referenceBody, *kinematicFunction, *firstDerivativeOfKinematicFunction, *secondDerivativeOfKinematicFunction;
+    ExtXMLWidget *dependentBody, *kinematicFunction, *firstDerivativeOfKinematicFunction, *secondDerivativeOfKinematicFunction;
 
   protected slots:
     void resizeVariables();
