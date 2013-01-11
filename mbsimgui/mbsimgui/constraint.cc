@@ -39,9 +39,9 @@ KinematicConstraint::KinematicConstraint(const QString &str, QTreeWidgetItem *pa
 
 //  properties->addTab("Kinetics");
 
-  referenceBody = new ExtXMLWidget("Reference body",new RigidBodyOfReferenceWidget(MBSIMNS"referenceRigidBody",this,0));
-  connect((RigidBodyOfReferenceWidget*)referenceBody->getWidget(),SIGNAL(bodyChanged()),this,SLOT(updateReferenceBody()));
-  properties->addToTab("General", referenceBody);
+  dependentBody = new ExtXMLWidget("Dependent body",new RigidBodyOfReferenceWidget(MBSIMNS"dependentRigidBody",this,0));
+  connect((RigidBodyOfReferenceWidget*)dependentBody->getWidget(),SIGNAL(bodyChanged()),this,SLOT(updateReferenceBody()));
+  properties->addToTab("General", dependentBody);
 
   kinematicFunction = new ExtXMLWidget("Kinematic function",new Function1ChoiceWidget(MBSIMNS"kinematicFunction"),true);
   properties->addToTab("General", kinematicFunction);
@@ -74,7 +74,7 @@ void KinematicConstraint::updateReferenceBody() {
     refBody->resizeGeneralizedPosition();
     refBody->resizeGeneralizedVelocity();
   }
-  refBody = ((RigidBodyOfReferenceWidget*)referenceBody->getWidget())->getBody();
+  refBody = ((RigidBodyOfReferenceWidget*)dependentBody->getWidget())->getBody();
   refBody->setConstrained(true);
   refBody->resizeGeneralizedPosition();
   refBody->resizeGeneralizedVelocity();
@@ -86,7 +86,7 @@ void KinematicConstraint::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e, *ee;
   blockSignals(true);
   Constraint::initializeUsingXML(element);
-  referenceBody->initializeUsingXML(element);
+  dependentBody->initializeUsingXML(element);
   kinematicFunction->initializeUsingXML(element);
   firstDerivativeOfKinematicFunction->initializeUsingXML(element);
   secondDerivativeOfKinematicFunction->initializeUsingXML(element);
@@ -96,7 +96,7 @@ void KinematicConstraint::initializeUsingXML(TiXmlElement *element) {
 TiXmlElement* KinematicConstraint::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Constraint::writeXMLFile(parent);
 
-  referenceBody->writeXMLFile(ele0);
+  dependentBody->writeXMLFile(ele0);
   kinematicFunction->writeXMLFile(ele0);
   firstDerivativeOfKinematicFunction->writeXMLFile(ele0);
   secondDerivativeOfKinematicFunction->writeXMLFile(ele0);
