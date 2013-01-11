@@ -117,7 +117,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   //a_t->setDiameter(tP*0.02);
   //a_t->setScaleLength(tP*0.1);
   //a_t->setEnable(false);
-  contact->setOpenMBVFrictionArrow(a_t);
+  contact->setOpenMBVFrictionForceArrow(a_t);
   contact->enableOpenMBVContactPoints();
 
   this->addLink(contact);

@@ -74,7 +74,7 @@ System::System(const string &projectName)  : DynamicSystemSolver(projectName) {
   aC_N->setEnable(false);
   cr->setOpenMBVNormalForceArrow(aC_N);
   OpenMBV::Arrow *aC_T = new OpenMBV::Arrow;
-  cr->setOpenMBVFrictionArrow(aC_T);
+  cr->setOpenMBVFrictionForceArrow(aC_T);
   aC_T->setEnable(false);
 #endif
   this->addLink(cr);

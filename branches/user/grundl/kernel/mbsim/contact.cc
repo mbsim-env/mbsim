@@ -126,7 +126,8 @@ namespace MBSim {
   }
 
   void Contact::updateg(double t) {
-    contactKinematics->updateg(g, cpData);
+	  if (g.size())
+	    contactKinematics->updateg(g, cpData);
   }
 
   void Contact::updategd(double t) {
