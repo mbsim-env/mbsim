@@ -158,12 +158,12 @@
       </enableOpenMBVFrameC>
     </RigidBody>
     <GearConstraint xmlns="http://mbsim.berlios.de/MBSim" name="Constraint_Motor_Crank">
-      <referenceRigidBody ref="../Object[Crank]"/>
-      <dependentRigidBodies>
-        <dependentRigidBody ref="../Object[Motor]">
+      <dependentRigidBody ref="../Object[Crank]"/>
+      <independentRigidBodies>
+        <independentRigidBody ref="../Object[Motor]">
           <transmissionRatio>-motor_TransmissionRadius/crank_TransmissionRadius</transmissionRatio>
-        </dependentRigidBody>
-      </dependentRigidBodies>
+        </independentRigidBody>
+      </independentRigidBodies>
     </GearConstraint>
     <RigidBody xmlns="http://mbsim.berlios.de/MBSim" name="Rocker">
       <frameOfReference ref="../Object[Crank]/Frame[fRocker]"/>
