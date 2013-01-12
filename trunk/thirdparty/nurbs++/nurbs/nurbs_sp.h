@@ -84,7 +84,7 @@ public:
     { return maxAt_[i] ; }
 
   HPoint_nD<T,N> surfP(int i) const 
-    { return hpointAt(maxAt_[i]) ; }
+    { return this->hpointAt(maxAt_[i]) ; }
 
   void updateMaxU() ;
 
