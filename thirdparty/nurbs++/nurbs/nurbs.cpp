@@ -2438,7 +2438,7 @@ void NurbsCurve<T,N>::projectTo(const Point_nD<T,N>& p, T guess, T& u, Point_nD<
       r = c ;
       return ;
     }
-    c = pointAt(u) ;
+    c = this->pointAt(u) ;
     deriveAt(u,2,Cd) ;
     cd = Cd[1] ;
     cdd = Cd[2] ;
@@ -5382,7 +5382,7 @@ BasicList<Point_nD<T,N> > NurbsCurve<T,N>::tesselate(T tolerance,BasicList<T> *u
 
     for(i=0;i<n;++i){
       u = (U[U.n()-deg_-1]-U[deg_])*T(i)/T(n-1) + U[deg_] ;
-      list.add(pointAt(u)) ;
+      list.add(this->pointAt(u)) ;
       if(uk)
 	uk->add(u) ;
     }

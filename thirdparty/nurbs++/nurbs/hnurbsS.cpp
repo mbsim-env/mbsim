@@ -559,8 +559,8 @@ int HNurbsSurface<T,N>::modifies(T u, T v){
   if(v<(this->knotV())[0] || v>(this->knotU())[(this->knotV()).n()-1])
     return -1 ;
 
-  int su = findSpanU(u) ;
-  int sv = findSpanV(v) ;
+  int su = this->findSpanU(u) ;
+  int sv = this->findSpanV(v) ;
 
   for(int i=0;i<=this->degU;++i)
     for(int j=0;j<=this->degV;++j){

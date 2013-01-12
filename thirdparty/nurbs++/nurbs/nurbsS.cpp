@@ -4855,7 +4855,7 @@ int NurbsSurface<T,N>::writeOOGL(const char* filename,
   T u,v;
   for (u = fBu; u<fEu+fDu/2; u+=fDu)
     for (v = fBv; v<fEv+fDv/2; v+=fDv){
-      Sp = pointAt(u,v);
+      Sp = this->pointAt(u,v);
       Np = normal(u,v);
       Np = (norm(Np)!=0)?Np.unitLength():Point_nD<T,N>(0.0);
       fout << "\t" << Sp << "\t " << Np << endl;
@@ -4969,7 +4969,7 @@ int NurbsSurface<T,N>::writeDisplayQUADMESH(const char* filename, int iNu,int iN
     for (u = 0; u<1-fDu/2; u+=fDu){
       // The change in sign and the swap of y and z coordinates is
       // for conversion to MINC format.
-      Sp = -(T)1.0 * pointAt(u,v) ;
+      Sp = -(T)1.0 * this->pointAt(u,v) ;
       fout << Sp.x() << ' ' << Sp.z() << ' ' << Sp.y() << endl;
     }
 

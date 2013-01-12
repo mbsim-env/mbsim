@@ -90,7 +90,7 @@ namespace PLib {
     Vector<T> get(int i, int l);
     
     int minIndex() const ;
-    T minimum() const { return operator[](minIndex()) ; }  // returns the minimal value inside the vector
+    T minimum() const { return this->operator[](minIndex()) ; }  // returns the minimal value inside the vector
     
     void qSortStd() ;
     void qSort(int M=7) ; 
