@@ -9,6 +9,7 @@ if sys.version_info[0]==2 and sys.version_info[1]<=6 or sys.version_info[0]==3 a
 import argparse
 import fnmatch
 import os
+from os.path import join as pj
 import subprocess
 import datetime
 import fileinput
@@ -19,10 +20,14 @@ import multiprocessing
 import math
 import traceback
 import tarfile
+if sys.version_info[0]==2: # to unify python 2 and python 3
+  import urllib as myurllib
+else:
+  import urllib.request as myurllib
 
 # global variables
-htmlDir=os.getcwd()+"/html"
-mbsimBinDir=subprocess.Popen(["pkg-config", "mbsim", "--variable=bindir"], stdout=subprocess.PIPE).stdout.read().rstrip().decode("utf-8")
+htmlDir=None
+mbsimBinDir=None
 canCompare=True # True if numpy and h5py are found
 xmllint=None
 ombvSchema =None
@@ -54,10 +59,12 @@ argparser = argparse.ArgumentParser(
   '''
 )
 directories=list() # a list of all examples sorted in descending order (filled recursively (using the filter) by by --directories)
-argparser.add_argument("directories", nargs="*", default=".", help="A directory to run (recursively). If prefixed with '^' remove the directory form the current list")
-argparser.add_argument("-j", default=1, type=int, help="Number of jobs to run in parallel (applies only to the action report)")
-argparser.add_argument("--atol", default=1e-5, type=float, help="Absolute tolerance")
-argparser.add_argument("--rtol", default=1e-5, type=float, help="Relative tolerance")
+argparser.add_argument("directories", nargs="*", default=os.curdir, help="A directory to run (recursively). If prefixed with '^' remove the directory form the current list")
+argparser.add_argument("-j", default=1, type=int, help="Number of jobs to run in parallel (applies only to the action 'report')")
+argparser.add_argument("--atol", default=1e-5, type=float,
+  help="Absolute tolerance. Channel comparing failed if for at least ONE datapoint the abs. AND rel. toleranz is violated")
+argparser.add_argument("--rtol", default=1e-5, type=float,
+  help="Relative tolerance. Channel comparing failed if for at least ONE datapoint the abs. AND rel. toleranz is violated")
 argparser.add_argument("--filter", default="all",
   choices=["all",
            "allxml",
@@ -73,9 +80,9 @@ argparser.add_argument("--action", default="report",
            "downloadReferenceTarBz2"],
   help="The action of this script")
 argparser.add_argument("--debugDisableMultiprocessing", default=False, type=bool, nargs="?", const=True, help="internal debugging option")
-argparser.add_argument("--disableRun", default=False, type=bool, nargs="?", const=True, help="disable running the example on action report")
-argparser.add_argument("--disableCompare", default=False, type=bool, nargs="?", const=True, help="disable comparing the results on action report")
-argparser.add_argument("--disableValidate", default=False, type=bool, nargs="?", const=True, help="disable validating the XML files on action report")
+argparser.add_argument("--disableRun", default=False, type=bool, nargs="?", const=True, help="disable running the example on action 'report'")
+argparser.add_argument("--disableCompare", default=False, type=bool, nargs="?", const=True, help="disable comparing the results on action 'report'")
+argparser.add_argument("--disableValidate", default=False, type=bool, nargs="?", const=True, help="disable validating the XML files on action 'report'")
 
 # parse command line options
 args = argparser.parse_args()
@@ -94,20 +101,23 @@ def main():
     canCompare=False
   # get xmllint program
   global xmllint
-  xmllint=subprocess.Popen(["pkg-config", "mbxmlutils", "--variable=BINDIR"],
-    stdout=subprocess.PIPE).stdout.read().rstrip().decode("utf-8")+"/xmllint"
+  xmllint=pj(pkgconfig("mbxmlutils", ["--variable=BINDIR"]), "xmllint")
   if not os.path.isfile(xmllint):
     xmllint="xmllint"
   # get schema files
-  schemaDir=subprocess.Popen(["pkg-config", "mbxmlutils", "--variable=SCHEMADIR"], stdout=subprocess.PIPE).stdout.read().rstrip().decode("utf-8")
+  schemaDir=pkgconfig("mbxmlutils", ["--variable=SCHEMADIR"])
   global ombvSchema, mbsimSchema, intSchema
-  ombvSchema =schemaDir+"/http___openmbv_berlios_de_OpenMBV/openmbv.xsd"
-  mbsimSchema=schemaDir+"/http___mbsim_berlios_de_MBSimXML/mbsimxml.xsd"
-  intSchema  =schemaDir+"/http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd"
+  ombvSchema =pj(schemaDir, "http___openmbv_berlios_de_OpenMBV", "openmbv.xsd")
+  mbsimSchema=pj(schemaDir, "http___mbsim_berlios_de_MBSimXML", "mbsimxml.xsd")
+  intSchema  =pj(schemaDir, "http___mbsim_berlios_de_MBSim", "mbsimintegrator.xsd")
+  # set global dirs
+  global htmlDir, mbsimBinDir
+  htmlDir=pj(os.getcwd(), "html")
+  mbsimBinDir=pkgconfig("mbsim", ["--variable=bindir"])
 
   # if no directory is specified use the current dir (all examples) filter by --filter
   if len(args.directories)==0:
-    dirs=["."]
+    dirs=[os.curdir]
   else:
     dirs=args.directories
   # loop over all directories on command line and add subdir which match the filter
@@ -144,7 +154,7 @@ def main():
     return 0
 
   if not os.path.isdir(htmlDir): os.makedirs(htmlDir)
-  mainFD=open(htmlDir+"/index.html", "w")
+  mainFD=open(pj(htmlDir, "index.html"), "w")
   print('<html>', file=mainFD);
   print('<head>', file=mainFD)
   print('</head>', file=mainFD)
@@ -174,7 +184,7 @@ def main():
 
   # run examples in parallel
   print("Started running examples. Each example will print a message if finished.")
-  print("See the log file "+htmlDir+"/index.html for detailed results.\n")
+  print("See the log file "+pj(htmlDir, "index.html")+" for detailed results.\n")
 
   if not args.debugDisableMultiprocessing:
     # init mulitprocessing handling and run in parallel
@@ -208,13 +218,13 @@ def main():
   if len(failedExamples)>0:
     print('<p>', file=mainFD)
     print('<b>Rerun all failed examples:<br/></b>', file=mainFD)
-    print(sys.argv[0], end=" ", file=mainFD)
+    print('<tt>'+sys.argv[0], end=" ", file=mainFD)
     for arg in sys.argv[1:]:
       if not arg in set(args.directories):
         print(arg, end=" ", file=mainFD)
     for failedEx in failedExamples:
       print(failedEx, end=" ", file=mainFD);
-    print('</tt>', file=mainFD)
+    print('</tt><br/>', file=mainFD)
     print('</p>', file=mainFD)
 
   print('</body>', file=mainFD)
@@ -222,7 +232,7 @@ def main():
 
   mainFD.close()
   # relace @ENDTIME@ in index.html
-  for line in fileinput.FileInput(htmlDir+"/index.html",inplace=1):
+  for line in fileinput.FileInput(pj(htmlDir, "index.html"),inplace=1):
     line = line.replace("@ENDTIME@", str(datetime.datetime.now()))
     print(line)
 
@@ -238,6 +248,17 @@ def main():
 #####################################################################################
 # from now on only functions follow and at the end main is called
 #####################################################################################
+
+
+
+def pkgconfig(module, options):
+  comm=["pkg-config", module]
+  comm.extend(options)
+  try:
+    output=subprocess.check_output(comm)
+  except subprocess.CalledProcessError:
+    output=""
+  return output.rstrip().decode("utf-8")
 
 
 
@@ -259,8 +280,8 @@ def printFinishedMessage(missingDirectories, result):
 def sortDirectories(directoriesSet, dirs):
   unsortedDir=[]
   for example in directoriesSet:
-    if os.path.isfile(example+"/reference/time.dat"):
-      refTimeFD=open(example+"/reference/time.dat", "r")
+    if os.path.isfile(pj(example, "reference", "time.dat")):
+      refTimeFD=open(pj(example, "reference", "time.dat"), "r")
       refTime=float(refTimeFD.read())
       refTimeFD.close()
     else:
@@ -278,9 +299,9 @@ def addExamplesByFilter(baseDir, directoriesSet):
     baseDir=baseDir[1:] # remove the leading "^"
     addOrDiscard=directoriesSet.discard
   for root, _, _ in os.walk(baseDir):
-    foundXML=os.path.isfile(root+"/MBS.mbsim.xml")
-    foundFLATXML=os.path.isfile(root+"/MBS.mbsim.flat.xml")
-    foundSRC=os.path.isfile(root+"/Makefile")
+    foundXML=os.path.isfile(pj(root, "MBS.mbsim.xml"))
+    foundFLATXML=os.path.isfile(pj(root, "MBS.mbsim.flat.xml"))
+    foundSRC=os.path.isfile(pj(root, "Makefile"))
     add=False
     if args.filter=="xml"     and (foundXML)                            : add=True
     if args.filter=="flatxml" and (foundFLATXML)                        : add=True
@@ -300,11 +321,11 @@ def runExample(resultQueue, example):
 
     runExampleRet=0 # run ok
     # execute the example[0]
-    if not os.path.isdir(htmlDir+"/"+example[0]): os.makedirs(htmlDir+"/"+example[0])
-    executeFN=example[0]+"/execute.out"
+    if not os.path.isdir(pj(htmlDir, example[0])): os.makedirs(pj(htmlDir, example[0]))
+    executeFN=pj(example[0], "execute.out")
     executeRet=0
     if not args.disableRun:
-      executeFD=open(htmlDir+"/"+executeFN, "w")
+      executeFD=open(pj(htmlDir, executeFN), "w")
       dt=0
       if os.path.isfile("Makefile"):
         executeRet, dt=executeSrcExample(executeFD)
@@ -327,7 +348,7 @@ def runExample(resultQueue, example):
     if args.disableRun:
       resultStr+='<td><span style="color:orange">not run</span></td>'
     else:
-      resultStr+='<td><a href="'+executeFN+'"><span style="color:'+('green' if executeRet==0 else 'red')+'">'+('passed' if executeRet==0 else 'failed')+'</span></a></td>'
+      resultStr+='<td><a href="'+myurllib.pathname2url(executeFN)+'"><span style="color:'+('green' if executeRet==0 else 'red')+'">'+('passed' if executeRet==0 else 'failed')+'</span></a></td>'
     if args.disableRun:
       resultStr+='<td><span style="color:orange">not run</span></td>'
     else:
@@ -338,7 +359,7 @@ def runExample(resultQueue, example):
       resultStr+='<td><span style="color:orange">no reference<span></td>'
 
     compareRet=-1
-    compareFN=example[0]+"/compare.html"
+    compareFN=pj(example[0], "compare.html")
     if not args.disableCompare and canCompare:
       # compare the result with the reference
       compareRet, nrFailed, nrAll=compareExample(example[0], compareFN)
@@ -352,21 +373,21 @@ def runExample(resultQueue, example):
     # print result to resultStr
     if compareRet==-1:
       resultStr+='<td><span style="color:orange">not run</span></td>'
-      if os.path.isfile(htmlDir+"/"+compareFN): os.remove(htmlDir+"/"+compareFN)
+      if os.path.isfile(pj(htmlDir, compareFN)): os.remove(pj(htmlDir, compareFN))
     else:
       if nrFailed==0:
         if nrAll==0:
           resultStr+='<td><span style="color:orange">no reference<span></td>'
-          if os.path.isfile(htmlDir+"/"+compareFN): os.remove(htmlDir+"/"+compareFN)
+          if os.path.isfile(pj(htmlDir, compareFN)): os.remove(pj(htmlDir, compareFN))
         else:
-          resultStr+='<td><a href="'+compareFN+'"><span style="color:green">all '+str(nrAll)+' passed</span></a></td>'
+          resultStr+='<td><a href="'+myurllib.pathname2url(compareFN)+'"><span style="color:green">all '+str(nrAll)+' passed</span></a></td>'
       else:
-        resultStr+='<td><a href="'+compareFN+'"><span style="color:red">failed ('+str(nrFailed)+'/'+str(nrAll)+')</span></a></td>'
+        resultStr+='<td><a href="'+myurllib.pathname2url(compareFN)+'"><span style="color:red">failed ('+str(nrFailed)+'/'+str(nrAll)+')</span></a></td>'
 
     # validate XML
     if not args.disableValidate:
-      htmlOutputFN=example[0]+"/validateXML.html"
-      htmlOutputFD=open(htmlDir+"/"+htmlOutputFN, "w")
+      htmlOutputFN=pj(example[0], "validateXML.html")
+      htmlOutputFD=open(pj(htmlDir, htmlOutputFN), "w")
       # write header
       print('<html>', file=htmlOutputFD)
       print('<head>', file=htmlOutputFD)
@@ -381,9 +402,9 @@ def runExample(resultQueue, example):
 
       failed, total=validateXML(example, False, htmlOutputFD)
       if failed==0:
-        resultStr+='<td><a href="'+htmlOutputFN+'"><span style="color:green">all '+str(total)+' valid</span></a></td>'
+        resultStr+='<td><a href="'+myurllib.pathname2url(htmlOutputFN)+'"><span style="color:green">all '+str(total)+' valid</span></a></td>'
       else:
-        resultStr+='<td><a href="'+htmlOutputFN+'"><span style="color:red">'+str(failed)+"/"+str(total)+' failed</span></a></td>'
+        resultStr+='<td><a href="'+myurllib.pathname2url(htmlOutputFN)+'"><span style="color:red">'+str(failed)+"/"+str(total)+' failed</span></a></td>'
         runExampleRet=1
       # write footer
       print('</table>', file=htmlOutputFD)
@@ -410,13 +431,13 @@ def runExample(resultQueue, example):
 # execute the source code example in the current directory (write everything to fd executeFD)
 def executeSrcExample(executeFD):
   print("Running commands:", file=executeFD)
-  print("make clean && make && ./main", file=executeFD)
+  print("make clean && make && "+pj(os.curdir, "main"), file=executeFD)
   print("", file=executeFD)
   executeFD.flush()
   if subprocess.call(["make", "clean"], stderr=subprocess.STDOUT, stdout=executeFD)!=0: return 1, 0
   if subprocess.call(["make"], stderr=subprocess.STDOUT, stdout=executeFD)!=0: return 1, 0
   t0=datetime.datetime.now()
-  if subprocess.call(["./main"], stderr=subprocess.STDOUT, stdout=executeFD)!=0: return 1, 0
+  if subprocess.call([pj(os.curdir, "main")], stderr=subprocess.STDOUT, stdout=executeFD)!=0: return 1, 0
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
   return 0, dt
@@ -432,11 +453,11 @@ def executeXMLExample(executeFD):
   mpathOption=[]
   if os.path.isdir("mfiles"): mpathOption=["--mpath", "mfiles"]
   print("Running command:", file=executeFD)
-  list(map(lambda x: print(x, end=" ", file=executeFD), [mbsimBinDir+"/mbsimxml"]+parMBSimOption+parIntOption+mpathOption+["MBS.mbsim.xml", "Integrator.mbsimint.xml"]))
+  list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, "mbsimxml")]+parMBSimOption+parIntOption+mpathOption+["MBS.mbsim.xml", "Integrator.mbsimint.xml"]))
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  if subprocess.call([mbsimBinDir+"/mbsimxml"]+parMBSimOption+parIntOption+mpathOption+
+  if subprocess.call([pj(mbsimBinDir, "mbsimxml")]+parMBSimOption+parIntOption+mpathOption+
                      ["MBS.mbsim.xml", "Integrator.mbsimint.xml"], stderr=subprocess.STDOUT, stdout=executeFD)!=0: return 1, 0
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
@@ -447,11 +468,11 @@ def executeXMLExample(executeFD):
 # execute the soruce code example in the current directory (write everything to fd executeFD)
 def executeFlatXMLExample(executeFD):
   print("Running command:", file=executeFD)
-  list(map(lambda x: print(x, end=" ", file=executeFD), [mbsimBinDir+"/mbsimflatxml", "MBS.mbsim.flat.xml", "Integrator.mbsimint.xml"]))
+  list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, "mbsimflatxml"), "MBS.mbsim.flat.xml", "Integrator.mbsimint.xml"]))
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  if subprocess.call([mbsimBinDir+"/mbsimflatxml", "MBS.mbsim.flat.xml", "Integrator.mbsimint.xml"],
+  if subprocess.call([pj(mbsimBinDir, "mbsimflatxml"), "MBS.mbsim.flat.xml", "Integrator.mbsimint.xml"],
                      stderr=subprocess.STDOUT, stdout=executeFD)!=0: return 1, 0
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
@@ -462,7 +483,7 @@ def executeFlatXMLExample(executeFD):
 def createDiffPlot(diffHTMLFileName, example, filename, datasetName, label, dataArrayRef, dataArrayCur):
   import numpy
 
-  diffDir=diffHTMLFileName[0:diffHTMLFileName.rfind("/")]
+  diffDir=os.path.dirname(diffHTMLFileName)
   if not os.path.isdir(diffDir): os.makedirs(diffDir)
 
   # create html page
@@ -484,9 +505,9 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, label, data
   diffHTMLPlotFD.close()
 
   # create gnuplot file
-  diffGPFileName=diffDir+"/diffplot.gnuplot"
-  SVGFileName=diffDir+"/plot.svg"
-  dataFileName=diffDir+"/data.dat"
+  diffGPFileName=pj(diffDir, "diffplot.gnuplot")
+  SVGFileName=pj(diffDir, "plot.svg")
+  dataFileName=pj(diffDir, "data.dat")
   diffGPFD=open(diffGPFileName, "w")
   print("set terminal svg dynamic", file=diffGPFD)
   print("set output '"+SVGFileName+"'", file=diffGPFD)
@@ -568,7 +589,7 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
     # loop over all columns
     for column in range(refObj.shape[1]):
       printLabel=refLabels[column].decode("utf-8")
-      diffFilename=h5CurFile.filename+"/"+datasetName+"/"+str(column)+"/diffplot.html"
+      diffFilename=pj(h5CurFile.filename, datasetName, str(column), "diffplot.html")
       nrAll[0]+=1
       # if if curObj[:,column] does not exitst
       if column>=curObj.shape[1]:
@@ -586,15 +607,15 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
       else:
         print('<td><span style="color:orange">&lt;label for col. '+str(column+1)+' differ&gt;</span></td>', file=compareFD)
       if numpy.any(numpy.logical_and(delta>args.atol, delta>args.rtol*abs(refObj[:,column]))):
-        print('<td><a href="'+diffFilename+'"><span style="color:red">failed</span></a></td>', file=compareFD)
+        print('<td><a href="'+myurllib.pathname2url(diffFilename)+'"><span style="color:red">failed</span></a></td>', file=compareFD)
         nrFailed[0]+=1
         dataArrayRef=numpy.concatenate((refObj[:, 0:1], refObj[:, column:column+1]), axis=1)
         dataArrayCur=numpy.concatenate((curObj[:, 0:1], curObj[:, column:column+1]), axis=1)
-        createDiffPlot(htmlDir+"/"+example+"/"+diffFilename, example, h5CurFile.filename, datasetName,
+        createDiffPlot(pj(htmlDir, example, diffFilename), example, h5CurFile.filename, datasetName,
                        refLabels[column], dataArrayRef, dataArrayCur)
       else:
         print('<td><span style="color:green">passed</span></td>', file=compareFD)
-        if os.path.isfile(htmlDir+"/"+example+"/"+diffFilename): os.remove(htmlDir+"/"+example+"/"+diffFilename)
+        if os.path.isfile(pj(htmlDir, example, diffFilename)): os.remove(pj(htmlDir, example, diffFilename))
       print('</tr>', file=compareFD)
     # check for labels/columns in current but not in reference
     for label in curLabels[len(refLabels):]:
@@ -616,7 +637,7 @@ def appendDatasetName(curMemberNames, datasetName, curObj):
 def compareExample(example, compareFN):
   import h5py
 
-  compareFD=open(htmlDir+"/"+compareFN, "w")
+  compareFD=open(pj(htmlDir, compareFN), "w")
 
   # print html header
   print('<html>', file=compareFD)
@@ -632,7 +653,7 @@ def compareExample(example, compareFN):
 
   nrAll=[0]
   nrFailed=[0]
-  for h5RefFileName in glob.glob("reference/*.h5"):
+  for h5RefFileName in glob.glob(pj("reference", "*.h5")):
     # open h5 files
     h5RefFile=h5py.File(h5RefFileName, "r")
     try:
@@ -686,8 +707,8 @@ def copyToReference():
 
     if not os.path.isdir("reference"): os.makedirs("reference")
     for h5File in glob.glob("*.h5"):
-      shutil.copyfile(h5File, "reference/"+h5File)
-    shutil.copyfile("time.dat", "reference/time.dat")
+      shutil.copyfile(h5File, pj("reference", h5File))
+    shutil.copyfile("time.dat", pj("reference", "time.dat"))
 
     os.chdir(savedDir)
 
@@ -700,7 +721,7 @@ def createReferenceTarBz2():
   for example in directories:
     curNumber+=1
     print("Archive example %03d/%03d; %5.1f%%; %s"%(curNumber, lenDirs, curNumber/lenDirs*100, example[0]))
-    tfFD.add(example[0]+"/reference")
+    tfFD.add(pj(example[0], "reference"))
   tfFD.close()
 
 
@@ -715,7 +736,7 @@ def applyReferenceTarBz2():
         if os.path.dirname(os.path.dirname(os.path.normpath(tarMember.name)))==os.path.normpath(d[0]):
           print(tarMember.name)
           toExtract.append(tarMember)
-  tfFD.extractall(".", toExtract)
+  tfFD.extractall(os.curdir, toExtract)
   tfFD.close()
 
 
@@ -737,23 +758,23 @@ def validateXML(example, consoleOutput, htmlOutputFD):
          ["*.ombv.env.xml", ombvSchema],
          ["*.mbsim.xml",    mbsimSchema],
          ["*.mbsimint.xml", intSchema]]
-  for root, _, filenames in os.walk("."):
+  for root, _, filenames in os.walk(os.curdir):
     for curType in types:
       for filename in fnmatch.filter(filenames, curType[0]):
-        outputFN=example[0]+"/"+filename+".out"
-        outputFD=open(htmlDir+"/"+outputFN, "w")
+        outputFN=pj(example[0], filename+".out")
+        outputFD=open(pj(htmlDir, outputFN), "w")
         print('<tr>', file=htmlOutputFD)
         print('<td>'+filename+'</td>', file=htmlOutputFD)
         print("Running command:", file=outputFD)
-        list(map(lambda x: print(x, end=" ", file=outputFD), [xmllint, "--xinclude", "--noout", "--schema", curType[1], root+"/"+filename]))
+        list(map(lambda x: print(x, end=" ", file=outputFD), [xmllint, "--xinclude", "--noout", "--schema", curType[1], pj(root, filename)]))
         print("\n", file=outputFD)
         outputFD.flush()
-        if subprocess.call([xmllint, "--xinclude", "--noout", "--schema", curType[1], root+"/"+filename],
+        if subprocess.call([xmllint, "--xinclude", "--noout", "--schema", curType[1], pj(root, filename)],
                            stderr=subprocess.STDOUT, stdout=outputFD)!=0:
           nrFailed+=1
-          print('<td><a href="'+filename+'.out"><span style="color:red">failed</span></a></td>', file=htmlOutputFD)
+          print('<td><a href="'+myurllib.pathname2url(filename+".out")+'"><span style="color:red">failed</span></a></td>', file=htmlOutputFD)
         else:
-          print('<td><a href="'+filename+'.out"><span style="color:green">passed</span></a></td>', file=htmlOutputFD)
+          print('<td><a href="'+myurllib.pathname2url(filename+".out")+'"><span style="color:green">passed</span></a></td>', file=htmlOutputFD)
         print('</tr>', file=htmlOutputFD)
         nrTotal+=1
         outputFD.close()
