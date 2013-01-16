@@ -106,9 +106,9 @@ namespace MBSim {
 
   void MultiContact::updateg(double t) {
     for (size_t cK = 0; cK < contactKinematics.size(); cK++) {
-      for (int k = 0; k < contactKinematics[cK]->getNumberOfPotentialContactPoints(); ++k) {
-        contactKinematics[cK]->updateg(contacts[cK][k].getg(), contacts[cK][k].getcpData(), k);
-      }
+      //for (int k = 0; k < contactKinematics[cK]->getNumberOfPotentialContactPoints(); ++k) {
+        contactKinematics[cK]->updateg(contacts[cK]);
+      //}
     }
   }
 

@@ -22,6 +22,7 @@
 
 #include "fmatvec.h"
 #include "mbsim/mbsim_event.h"
+#include <mbsim/contact.h>
 #include <vector>
 
 namespace MBSim {
@@ -84,6 +85,12 @@ namespace MBSim {
        */
       virtual void updateg(std::vector<fmatvec::Vec>::iterator ig, std::vector<ContourPointData*>::iterator icpData) { if((*ig).size()) updateg(*ig,*icpData); }
       
+      /*!
+       * \brief compute normal distance, possible contact point positions and orientation for several possible contact points
+       * \param vector of single contacts used in the contact kinematics
+       */
+      virtual void updateg(std::vector<Contact> & contact) {updateg(contact[0].getg(), contact[0].getcpData());}
+
       /**
        * \brief compute acceleration in terms of contour parameters for event driven integration and several contact points
        * \param acceleration in terms of contour parameters
