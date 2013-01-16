@@ -18,8 +18,8 @@ libfe_la_LIBADD = finite_element_1s_33_rcm/libfe1s33rcm.la finite_element_2s_13_
 
 feincludedir = $(includedir)/mbsimFlexibleBody/flexible_body/finite_elements
 
-INCLUDES = $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
-LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
+INCLUDES = $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) $(NURBS_CFLAGS)
+LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) $(NURBS_LIBS)
 
 feinclude_HEADERS = finite_element_1s_21_ancf.h\
 			finite_element_1s_21_rcm.h\

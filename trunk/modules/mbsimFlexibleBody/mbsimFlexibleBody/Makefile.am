@@ -9,8 +9,8 @@ libmbsimFlexibleBody_la_LIBADD = flexible_body/libflexiblebody.la contours/libco
 
 libmbsimFlexibleBody_la_CPPFLAGS = -DTIXML_USE_STL
 
-INCLUDES = $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
-LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
+INCLUDES = $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) $(NURBS_CFLAGS)
+LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) $(NURBS_LIBS)
 
 mbsimFlexibleBodyincludedir = $(includedir)/mbsimFlexibleBody
 mbsimFlexibleBodyinclude_HEADERS = flexible_body.h\
