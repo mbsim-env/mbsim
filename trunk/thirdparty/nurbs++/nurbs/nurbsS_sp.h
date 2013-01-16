@@ -53,6 +53,8 @@ public:
   NurbsSurfaceSP(int DegU, int DegV, const Vector<T>& Uk, const Vector<T>& Vk, const Matrix< HPoint_nD<T,N> >& Cp);  
   NurbsSurfaceSP(int DegU, int DegV, Vector<T>& Uk, Vector<T>& Vk, Matrix< Point_nD<T,N> >& Cp, Matrix<T>& W)  ; 
 
+  virtual ~NurbsSurfaceSP() {};
+
 
   virtual NurbsSurface<T,N>& operator=(const NurbsSurface<T,N>& a) ;
   virtual NurbsSurfaceSP<T,N>& operator=(const NurbsSurfaceSP<T,N>& a) ;

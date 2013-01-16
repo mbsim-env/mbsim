@@ -3,7 +3,7 @@ EXTRA_DIST = rec_filter.cpp filter.cpp image.cpp
 MAGICK_INCLUDE =  @MAGICK_CPPFLAGS@
 INCLUDES = $(MAGICK_INCLUDE) -I@top_srcdir@/include -I@top_srcdir@/matrix
 
-CXXFLAGS = @CXXFLAGS@
+AM_CXXFLAGS = @CXXFLAGS@
 
 pkginclude_HEADERS = image.h rec_filter.h color.h filter.h
 
