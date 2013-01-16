@@ -10,8 +10,8 @@ INITIALIZEHEADER=mbsimFlexibleBody/objectfactory.h
 
 Name: mbsimFlexibleBody
 Description: mbsimFlexibleBody is an add-on for flexible bodies to the mbsim-kernel
-Requires: mbsim
+Requires: @requires@
 Version: @VERSION@
 Libs: -L${libdir} -lmbsimFlexibleBody @LIBS@
-Cflags: -I${includedir}
+Cflags: -I${includedir} @nurbs_compilerflag@
 

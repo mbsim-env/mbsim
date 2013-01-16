@@ -17,29 +17,40 @@ AC_CHECK_FUNCS([sqrt])
 AC_HEADER_STDBOOL
 
 PKG_CHECK_MODULES(DEPS, mbsim >= 3.0.0)
+requires="mbsim"
 
-dnl NURBS Package
-AC_ARG_WITH(nurbs-inc-prefix,[  --with-nurbs-inc-prefix=PFX  Prefix where nurbs includes are installed], [nurbs_inc_prefix="$withval"], [nurbs_inc_prefix="$prefix/include"])
+dnl check for optional module nurbs
+PKG_CHECK_MODULES([NURBS], [nurbs++ >= 3.0.12], 
+                  [requires="$requires nurbs++"; nurbs_compilerflag="-DHAVE_NURBS"; AC_DEFINE([HAVE_NURBS],[1],[linking with NURBS])], 
+                  [nurbsPKGCONF = "No"; AC_MSG_RESULT([No Nurbs-library found. Some flexible contours not possible.])])
+AM_CONDITIONAL([COND_NURBS], [test _$nurbs_compilerflag = _-DHAVE_NURBS])
+AC_SUBST([nurbs_compilerflag])
 
-AC_ARG_WITH(nurbs-lib-prefix,[  --with-nurbs-lib-prefix=PFX  Prefix where nurbs libraries are installed], [nurbs_lib_prefix="$withval"], [nurbs_lib_prefix="$prefix/lib"])
 
-AC_MSG_CHECKING([for library nurbs])
-CPPFLAGS_OLD="$CPPFLAGS"
-LDFLAGS_OLD="$LDFLAGS"
-LIBS_OLD="$LIBS"
-
-CPPFLAGS="$CPPFLAGS -I$nurbs_inc_prefix/nurbs++"
-LDFLAGS="$LDFLAGS -L$nurbs_lib_prefix"
-LIBS="$LIBS -lnurbsd -lnurbsf -lmatrixN -lmatrixI -lmatrix"
-
-AC_LINK_IFELSE([AC_LANG_PROGRAM([#include "nurbs.h"],[PlNurbsCurvef var1; PlNurbsCurved var2;])],[AC_MSG_RESULT([yes]); nurbs="yes"],[AC_MSG_RESULT([no]); nurbs="no"])
-
-if (test "$nurbs" = "yes"); then
-  AC_DEFINE([HAVE_NURBS],[1],[linking with NURBS])
-else
-  CPPFLAGS="$CPPFLAGS_OLD"
-  LDFLAGS="$LDFLAGS_OLD"
-  LIBS="$LIBS_OLD"
+dnl Old - check NURBS Package
+if (test "_$nurbsPKGCONF" = "_No"); then
+  AC_ARG_WITH(nurbs-inc-prefix,[  --with-nurbs-inc-prefix=PFX  Prefix where nurbs includes are installed], [nurbs_inc_prefix="$withval"], [nurbs_inc_prefix="$prefix/include"])
+  
+  AC_ARG_WITH(nurbs-lib-prefix,[  --with-nurbs-lib-prefix=PFX  Prefix where nurbs libraries are installed], [nurbs_lib_prefix="$withval"], [nurbs_lib_prefix="$prefix/lib"])
+  
+  AC_MSG_CHECKING([for library nurbs without pkg-config support])
+  CPPFLAGS_OLD="$CPPFLAGS"
+  LDFLAGS_OLD="$LDFLAGS"
+  LIBS_OLD="$LIBS"
+  
+  CPPFLAGS="$CPPFLAGS -I$nurbs_inc_prefix/nurbs++"
+  LDFLAGS="$LDFLAGS -L$nurbs_lib_prefix"
+  LIBS="$LIBS -lnurbsd -lnurbsf -lmatrixN -lmatrixI -lmatrix"
+  
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([#include "nurbs.h"],[PlNurbsCurvef var1; PlNurbsCurved var2;])],[AC_MSG_RESULT([yes]); nurbs="yes"],[AC_MSG_RESULT([no]); nurbs="no"])
+  
+  if (test "$nurbs" = "yes"); then
+    AC_DEFINE([HAVE_NURBS],[1],[linking with NURBS])
+  else
+    CPPFLAGS="$CPPFLAGS_OLD"
+    LDFLAGS="$LDFLAGS_OLD"
+    LIBS="$LIBS_OLD"
+  fi
 fi
 
 dnl versioning (see http://www.gnu.org/software/libtool/manual.html)
@@ -76,6 +87,8 @@ AC_PATH_PROG([doxygen],[doxygen],[no],[$doxygenpath:$PATH])
 if test $doxygen = "no" ; then
   AC_MSG_RESULT([can't generate documentation. 'doxygen' required.])
 fi
+
+AC_SUBST([requires])
 
 LDFLAGS="$LDFLAGS -no-undefined"
 

@@ -38,13 +38,13 @@
 #undef PACKAGE_VERSION
 #undef PACKAGE_TARNAME
 #undef PACKAGE_STRING
-#include "nurbs.h"
+#include "nurbs++/nurbs.h"
 #undef PACKAGE_BUGREPORT
 #undef PACKAGE_NAME
 #undef PACKAGE_VERSION
 #undef PACKAGE_TARNAME
 #undef PACKAGE_STRING
-#include "vector.h"
+#include "nurbs++/vector.h"
 #define PACKAGE_BUGREPORT MY_PACKAGE_BUGREPORT
 #define PACKAGE_NAME MY_PACKAGE_NAME
 #define PACKAGE_VERSION MY_PACKAGE_VERSION
