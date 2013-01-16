@@ -4,11 +4,11 @@ dnl
 dnl If the C++ compiler supports templates of templates,
 dnl define `HAVE_TEMPLATE_OF_TEMPLATE'.
 dnl
-AC_DEFUN(CXX_HAVE_TEMPLATE_OF_TEMPLATE,
+AC_DEFUN([CXX_HAVE_TEMPLATE_OF_TEMPLATE],
 [
 AC_REQUIRE([AC_PROG_CXX])
 AC_MSG_CHECKING(whether ${CXX} supports template of templates)
-AC_CACHE_VAL(cxx_have_template_of_template,
+AC_CACHE_VAL(_cv_cxx_have_template_of_template,
 [
 AC_LANG_SAVE
 AC_LANG_CPLUSPLUS
@@ -22,7 +22,7 @@ AC_LANG_RESTORE
 ])
 AC_MSG_RESULT($cxx_have_template_of_template)
 if test "$cxx_have_template_of_template" = yes; then
-AC_DEFINE(HAVE_TEMPLATE_OF_TEMPLATE)
+AC_DEFINE([HAVE_TEMPLATE_OF_TEMPLATE],[1],[Have template of template])
 fi
 ])dnl
 
@@ -32,11 +32,11 @@ dnl
 dnl If the C++ compiler supports templates of templates,
 dnl define `HAVE_NAMESPACE'.
 dnl
-AC_DEFUN(CXX_HAVE_NAMESPACE,
+AC_DEFUN([CXX_HAVE_NAMESPACE],
 [
 AC_REQUIRE([AC_PROG_CXX])
 AC_MSG_CHECKING(whether ${CXX} supports namespaces)
-AC_CACHE_VAL(cxx_have_namespace,
+AC_CACHE_VAL(_cv_cxx_have_namespace,
 [
 AC_LANG_SAVE
 AC_LANG_CPLUSPLUS
@@ -52,7 +52,7 @@ AC_LANG_RESTORE
 ])
 AC_MSG_RESULT($cxx_have_namespace)
 if test "$cxx_have_namespace" = yes; then
-AC_DEFINE(HAVE_NAMESPACE)
+AC_DEFINE(8HAVE_NAMESPACE],[1],[Have Namespace])
 fi
 ])dnl
 
@@ -63,11 +63,11 @@ dnl
 dnl If the C++ compiler supports templates of templates,
 dnl define `HAVE_NAMESPACE' and allow the program to continue
 dnl
-AC_DEFUN(CXX_MUST_HAVE_NAMESPACE,
+AC_DEFUN([CXX_MUST_HAVE_NAMESPACE],
 [
 AC_REQUIRE([AC_PROG_CXX])
 AC_MSG_CHECKING(whether ${CXX} supports namespaces)
-AC_CACHE_VAL(cxx_have_namespace,
+AC_CACHE_VAL(_cv_cxx_have_namespace,
 [
 AC_LANG_SAVE
 AC_LANG_CPLUSPLUS
@@ -84,7 +84,7 @@ AC_LANG_RESTORE
 ])
 AC_MSG_RESULT($cxx_have_namespace)
 if test "$cxx_have_namespace" = yes; then
-AC_DEFINE(HAVE_NAMESPACE)
+AC_DEFINE([HAVE_NAMESPACE],[1],[Have namespace])
 else
 echo "\nThis program requires a C++ compiler that can handle namespaces."
 echo "please upgrade your current compiler or talk to your vendor."
@@ -101,11 +101,11 @@ dnl
 dnl If the C++ compiler supports templates of templates,
 dnl define `HAVE_ISO_FRIEND_DECL'.
 dnl
-AC_DEFUN(CXX_HAVE_ISO_FRIEND_DECL,
+AC_DEFUN([CXX_HAVE_ISO_FRIEND_DECL],
 [
 AC_REQUIRE([AC_PROG_CXX])
 AC_MSG_CHECKING(whether ${CXX} uses ISO friend declarations)
-AC_CACHE_VAL(cxx_have_iso_friend_decl,
+AC_CACHE_VAL(_cv_cxx_have_iso_friend_decl,
 [
 AC_LANG_SAVE
 AC_LANG_CPLUSPLUS
@@ -122,7 +122,7 @@ AC_LANG_RESTORE
 ])
 AC_MSG_RESULT($cxx_have_iso_friend_decl)
 if test "$cxx_have_iso_friend_decl" = yes; then
-AC_DEFINE(HAVE_ISO_FRIEND_DECL)
+AC_DEFINE([HAVE_ISO_FRIEND_DECL],[1],[Have ISO friend declaration])
 fi
 ])dnl
 
@@ -132,14 +132,14 @@ dnl CXX_HAVE_ISO_FRIEND_DECL
 dnl ---------------------------------------
 dnl
 dnl If the C++ compiler supports templates of templates,
-dnl define `HAVE_ISO_FRIEND_DECL'.
+dnl define `HAVE_ISO_FRIEND_DECL´.
 dnl
-AC_DEFUN(CXX_HAVE_COMPLEX_FCNS,
+AC_DEFUN([CXX_HAVE_COMPLEX_FCNS],
 [
 AC_REQUIRE([AC_PROG_CXX])
 
 AC_MSG_CHECKING(whether ${CXX} defines abs for the Complex type)
-AC_CACHE_VAL(cxx_have_complex_abs,
+AC_CACHE_VAL(_cv_cxx_have_complex_abs,
 [
 AC_LANG_SAVE
 AC_LANG_CPLUSPLUS
@@ -158,11 +158,11 @@ AC_LANG_RESTORE
 ])
 AC_MSG_RESULT($cxx_have_complex_abs)
 if test "$cxx_have_complex_abs" = yes; then
-AC_DEFINE(HAS_COMPLEX_ABS)
+AC_DEFINE([HAS_COMPLEX_ABS],[1],[Has complex ABS])
 fi
 
 AC_MSG_CHECKING(whether ${CXX} defines conj for the Complex type)
-AC_CACHE_VAL(cxx_have_complex_conj,
+AC_CACHE_VAL(_cv_cxx_have_complex_conj,
 [
 AC_LANG_SAVE
 AC_LANG_CPLUSPLUS
@@ -181,7 +181,7 @@ AC_LANG_RESTORE
 ])
 AC_MSG_RESULT($cxx_have_complex_conj)
 if test "$cxx_have_complex_conj" = yes; then
-AC_DEFINE(HAS_COMPLEX_CONJ)
+AC_DEFINE([HAS_COMPLEX_CONJ],[1],[Has complex conj function])
 fi
 
 

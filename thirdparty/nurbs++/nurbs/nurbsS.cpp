@@ -224,12 +224,14 @@ struct AreaData {
   T knotUii;
   T knotVj;
   T knotVjj;
-  const NurbsSurface<T,N>& s ; 
-  const BasicArray<T>  w ; 
+  const NurbsSurface<T,N>& s ;
+  const BasicArray<T>  w ;
+
+  //Constuctor
   AreaData(const NurbsSurface<T,N>& surf,T e,
            const BasicArray<T>& ww): 
-    s(surf),v(T(0)),eps(e),w(ww),
-    knotUi(T(0)), knotUii(T(1)) {}
+    v(T(0)),eps(e),knotUi(T(0)), knotUii(T(1)),s(surf),w(ww){
+  }
 };
 
 template <class T, int N> 
@@ -342,9 +344,9 @@ T NurbsSurface<T,N>::area(T eps,int n) const {
 */
 template <class T, int N>
 T NurbsSurface<T,N>::areaIn(T us, T ue, T vs, T ve, T eps, int n) const {
-  T l = T() ;
+//  T l = T() ;
   T err ; 
-  T a ;
+  T a = 0;
   bool bLastU = false;
   bool bLastV = false;
   static Vector<T> bufFcn ;
@@ -3167,10 +3169,10 @@ void NurbsSurface<T,N>::makeFromRevolution(const NurbsCurve<T,N>& profile, const
       continue ;
     }
 
-    T b1 = X.norm2() ;
-    T b2 = X.norm() ;
-    T b3 = sqrt(b1) ;
-    T b4 = norm(X) ;
+//    T b1 = X.norm2() ;
+//    T b2 = X.norm() ;
+//    T b3 = sqrt(b1) ;
+//    T b4 = norm(X) ;
    
     X = X.unitLength() ;
     Y = crossProduct(Tvec,X) ;
@@ -3220,8 +3222,8 @@ void NurbsSurface<T,N>::makeFromRevolution(const NurbsCurve<T,N>& profile, const
 */
 template <class T, int N>
 void NurbsSurface<T,N>::makeFromRevolution(const NurbsCurve<T,N>& profile, const Point_nD<T,N>& S, const Point_nD<T,N>& Tvec){
-  double angle,dtheta ;
-  int narcs ;
+//  double angle,dtheta ;
+//  int narcs ;
   int i,j ;
 
   int n = 9 ; // n control points ;

@@ -13,6 +13,6 @@ ALLLIBS = @magick_libs@ $(EXTRALIBS)
 
 noinst_PROGRAMS = randomImg
 LDADD = ../../image/libmatrixI.la ../../matrix/libmatrix.la $(ALLLIBS)
-LDFLAGS = $(LIBSINC)
+AM_LDFLAGS = $(LIBSINC)
 
 randomImg_SOURCES = randomImg.cpp
