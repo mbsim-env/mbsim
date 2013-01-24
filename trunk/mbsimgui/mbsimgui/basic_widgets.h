@@ -36,6 +36,7 @@ class FrameBrowser;
 class ContourBrowser;
 class RigidBodyBrowser;
 class ExtXMLWidget;
+class QLabel;
 
 class LocalFrameOfReferenceWidget : public XMLWidget {
   Q_OBJECT
@@ -147,13 +148,14 @@ class FileWidget : public XMLWidget {
   Q_OBJECT
 
   public:
-    FileWidget(const std::string &xmlName);
+    FileWidget(const std::string &xmlName, const QString &description, const QString &extensions);
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
 
   protected:
     QLineEdit *fileName;
     std::string xmlName;
+    QString description, extensions;
 
   protected slots:
     void selectFile();
@@ -354,6 +356,17 @@ class SolverParameters : public XMLWidget {
 
   protected:
     ExtXMLWidget *tolerances;
+};
+
+class PlotFeature : public XMLWidget {
+  public:
+    PlotFeature(const std::string &name);
+
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+  protected:
+    std::string name;
+    QComboBox *status;
 };
 
 #endif

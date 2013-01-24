@@ -374,7 +374,7 @@ TiXmlElement* FrustumWidget::writeXMLFile(TiXmlNode *parent) {
 
 IvBodyWidget::IvBodyWidget(const string &name) : OMBVBodyWidget(name) {
 
-  ivFileName = new ExtXMLWidget("Iv file name",new FileWidget(OPENMBVNS"ivFileName"));
+  ivFileName = new ExtXMLWidget("Iv file name",new FileWidget(OPENMBVNS"ivFileName", "XML model files", "iv files (*.iv *.wrl)"));
   layout->addWidget(ivFileName);
 
   vector<PhysicalStringWidget*> input;
@@ -505,49 +505,22 @@ OMBVBodyChoiceWidget::OMBVBodyChoiceWidget(const string &name_, bool flag, const
 }
 
 void OMBVBodyChoiceWidget::ombvSelection(int index) {
-  if(index==0) {
-    layout->removeWidget(ombv);
-    delete ombv;
+  layout->removeWidget(ombv);
+  delete ombv;
+  if(index==0)
     ombv = new CubeWidget(name);  
-    layout->addWidget(ombv);
-    ombv->update();
-  }
-  if(index==1) {
-    layout->removeWidget(ombv);
-    delete ombv;
+  if(index==1)
     ombv = new CuboidWidget(name);  
-    layout->addWidget(ombv);
-    ombv->update();
-  }
-  else if(index==2) {
-    layout->removeWidget(ombv);
-    delete ombv;
+  else if(index==2)
     ombv = new FrustumWidget(name);  
-    layout->addWidget(ombv);
-    ombv->update();
-  }
-  else if(index==3) {
-    layout->removeWidget(ombv);
-    delete ombv;
+  else if(index==3)
     ombv = new SphereWidget(name);  
-    layout->addWidget(ombv);
-    ombv->update();
-  }
-  else if(index==4) {
-    layout->removeWidget(ombv);
-    delete ombv;
+  else if(index==4)
     ombv = new IvBodyWidget(name);  
-    layout->addWidget(ombv);
-    ombv->update();
-  }
-  else if(index==5) {
-    layout->removeWidget(ombv);
-    delete ombv;
+  else if(index==5)
     ombv = new CompoundRigidBodyWidget(name);  
-    layout->addWidget(ombv);
-    ombv->update();
-  }
-
+  layout->addWidget(ombv);
+  ombv->update();
   ombv->setID(ID);
 }
 
@@ -555,30 +528,24 @@ bool OMBVBodyChoiceWidget::initializeUsingXML(TiXmlElement *element) {
   //TiXmlElement *e1 = element->FirstChildElement();
   TiXmlElement *e1 = element;
   if(e1) {
-    if(e1->ValueStr() == OPENMBVNS"Cube") {
-      comboBox->setCurrentIndex(0);
-      ombv->initializeUsingXML(e1);
-    }
-    if(e1->ValueStr() == OPENMBVNS"Cuboid") {
-      comboBox->setCurrentIndex(1);
-      ombv->initializeUsingXML(e1);
-    }
-    else if(e1->ValueStr() == OPENMBVNS"Frustum") {
-      comboBox->setCurrentIndex(2);
-      ombv->initializeUsingXML(e1);
-    }
-    else if(e1->ValueStr() == OPENMBVNS"Sphere") {
-      comboBox->setCurrentIndex(3);
-      ombv->initializeUsingXML(e1);
-    }
-    else if(e1->ValueStr() == OPENMBVNS"IvBody") {
-      comboBox->setCurrentIndex(4);
-      ombv->initializeUsingXML(e1);
-    }
-    else if(e1->ValueStr() == OPENMBVNS"CompoundRigidBody") {
-      comboBox->setCurrentIndex(5);
-      ombv->initializeUsingXML(e1);
-    }
+    int index = 0;
+    if(e1->ValueStr() == OPENMBVNS"Cube")
+      index = 0;
+    if(e1->ValueStr() == OPENMBVNS"Cuboid")
+      index = 1;
+    else if(e1->ValueStr() == OPENMBVNS"Frustum")
+      index = 2;
+    else if(e1->ValueStr() == OPENMBVNS"Sphere")
+      index = 3;
+    else if(e1->ValueStr() == OPENMBVNS"IvBody")
+      index = 4;
+    else if(e1->ValueStr() == OPENMBVNS"CompoundRigidBody")
+      index = 5;
+    comboBox->blockSignals(true);
+    comboBox->setCurrentIndex(index);
+    comboBox->blockSignals(false);
+    ombvSelection(index);
+    ombv->initializeUsingXML(e1);
     return true;
   }
   return false;

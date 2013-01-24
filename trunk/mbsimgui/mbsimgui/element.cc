@@ -214,11 +214,15 @@ void Element::resizeVariables() {
 }
 
 void Element::initializeUsingXML(TiXmlElement *element) {
+  for(unsigned int i=0; i<plotFeature.size(); i++)
+    plotFeature[i]->initializeUsingXML(element);
 }
 
 TiXmlElement* Element::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0=new TiXmlElement(ns+getType().toStdString());
   name->writeXMLFile(ele0);
+  for(unsigned int i=0; i<plotFeature.size(); i++)
+    plotFeature[i]->writeXMLFile(ele0);
   parent->LinkEndChild(ele0);
   return ele0;
 }
