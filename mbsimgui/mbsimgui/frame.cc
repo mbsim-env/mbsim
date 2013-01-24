@@ -41,6 +41,12 @@ Frame::Frame(const QString &str, QTreeWidgetItem *parentItem, int ind, bool grey
   ((OMBVFrameWidget*)visu->getWidget())->setID(getID());
   properties->addToTab("Visualisation", visu);
 
+  properties->addTab("Plotting");
+  plotFeature.push_back(new ExtXMLWidget("Plot global position", new PlotFeature("globalPosition"),true));
+  properties->addToTab("Plotting",plotFeature[plotFeature.size()-1]);
+  plotFeature.push_back(new ExtXMLWidget("Plot global velocity", new PlotFeature("globalVelocity"),true));
+  properties->addToTab("Plotting",plotFeature[plotFeature.size()-1]);
+
   properties->addStretch();
 }
 

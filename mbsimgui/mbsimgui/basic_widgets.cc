@@ -258,7 +258,7 @@ TiXmlElement* RigidBodyOfReferenceWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-FileWidget::FileWidget(const string &xmlName_) : xmlName(xmlName_) {
+FileWidget::FileWidget(const string &xmlName_, const QString &description_, const QString &extensions_) : xmlName(xmlName_), description(description_), extensions(extensions_) {
   QHBoxLayout *layout = new QHBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -272,7 +272,7 @@ FileWidget::FileWidget(const string &xmlName_) : xmlName(xmlName_) {
 }
 
 void FileWidget::selectFile() {
-  QString file=QFileDialog::getOpenFileName(0, "XML model files", QString("./"), "iv files (*.iv)");
+  QString file=QFileDialog::getOpenFileName(0, description, QString("./"), extensions);
   if(file!="")
     fileName->setText(QString("\"")+file+"\"");
 }
@@ -937,5 +937,33 @@ TiXmlElement* SolverParameters::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *e=new TiXmlElement(MBSIMNS"solverParameters");
   parent->LinkEndChild(e);
   tolerances->writeXMLFile(e);
+  return e;
+}
+
+PlotFeature::PlotFeature(const string &name_) : name(name_) {
+  QHBoxLayout *layout = new QHBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+  status = new QComboBox;
+  status->addItem("enabled");
+  status->addItem("disabled");
+  layout->addWidget(status);
+}
+
+bool PlotFeature::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e=element->FirstChildElement(MBSIMNS"plotFeature");
+  if(e) {
+    if(string(e->Attribute("feature")).substr(1)==name) {
+      status->setCurrentIndex(e->Attribute("feature")[0]=='+'?0:1);
+      return true;
+    }
+  }
+  return false;
+}
+
+TiXmlElement* PlotFeature::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *e=new TiXmlElement(MBSIMNS"plotFeature");
+  parent->LinkEndChild(e);
+  e->SetAttribute("feature",(status->currentIndex()==0?"+":"-")+name);
   return e;
 }

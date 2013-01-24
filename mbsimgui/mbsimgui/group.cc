@@ -394,8 +394,10 @@ void Group::addFromFile() {
 }
 
 void Group::initializeUsingXML(TiXmlElement *element) {
+  cout << "Group::initializeUsingXML" << endl;
   TiXmlElement *e;
   Element::initializeUsingXML(element);
+  cout << getName().toStdString() << endl;
   e=element->FirstChildElement();
 
   if(frameOfReference)
@@ -433,7 +435,7 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   while(E && E->ValueStr()==MBSIMNS"contour") {
     TiXmlElement *ec=E->FirstChildElement();
     c=ObjectFactory::getInstance()->createContour(ec, contours, -1);
-    c->initializeUsingXML(ec);
+    if(c) c->initializeUsingXML(ec);
     E=E->NextSiblingElement();
   }
 
@@ -446,7 +448,7 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   Group *g;
   while(E) {
     g=ObjectFactory::getInstance()->createGroup(E, groups, -1);
-    g->initializeUsingXML(E);
+    if(g) g->initializeUsingXML(E);
     E=E->NextSiblingElement();
   }
 
@@ -455,7 +457,7 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   Object *o;
   while(E) {
     o=ObjectFactory::getInstance()->createObject(E, objects, -1);
-    o->initializeUsingXML(E);
+    if(o) o->initializeUsingXML(E);
     E=E->NextSiblingElement();
   }
 
@@ -476,7 +478,7 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   Link *l;
   while(E) {
     l=ObjectFactory::getInstance()->createLink(E, links, -1);
-    l->initializeUsingXML(E);
+    if(l) l->initializeUsingXML(E);
     E=E->NextSiblingElement();
   }
 
@@ -484,6 +486,7 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   if(e)
     getFrame(0)->initializeUsingXML2(e);
 
+  cout << "end Group::initializeUsingXML" << endl;
 }
 
 TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {

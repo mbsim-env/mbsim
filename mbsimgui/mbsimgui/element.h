@@ -51,6 +51,7 @@ class Element : public QObject, public QTreeWidgetItem {
     QAction *actionSave;
     QString file;
     ExtXMLWidget *name;
+    std::vector<ExtXMLWidget*> plotFeature;
     static TiXmlElement* copiedElement;
     Element *parentElement;
     Container *frames, *contours, *groups, *objects, *links, *extraDynamics;
