@@ -43,9 +43,11 @@ class FixedRelativeFrame : public Frame {
     ~FixedRelativeFrame();
     QString getType() const { return "FixedRelativeFrame"; }
     virtual void initializeUsingXML(TiXmlElement *element);
+    virtual void initializeUsingXML2(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual Element * getByPathSearch(std::string path);
   protected:
-    ExtXMLWidget *pos;
+    ExtXMLWidget *refFrame, *position, *orientation;
 };
 
 #endif

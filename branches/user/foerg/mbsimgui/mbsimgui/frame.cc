@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "frame.h"
+#include "string_widgets.h"
 #include "ombv_widgets.h"
 #include <QMenu>
 
@@ -79,8 +80,19 @@ FixedRelativeFrame::FixedRelativeFrame(const QString &str, QTreeWidgetItem *pare
 
   //properties->addTab("Position and orientation");
 
-  pos = new ExtXMLWidget("Position and orientation", new ElementPositionWidget2(this));
-  properties->addToTab("General", pos);
+  //pos = new ExtXMLWidget("Position and orientation", new ElementPositionWidget2(this));
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new VecWidget(3), MBSIMNS"position", lengthUnits(), 4));
+  position = new ExtXMLWidget("Position", new ExtPhysicalVarWidget(input));
+  properties->addToTab("General", position);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new MatWidget(getEye<string>(3,3,"1","0")),MBSIMNS"orientation",noUnitUnits(),1));
+  orientation = new ExtXMLWidget("Orientation",new ExtPhysicalVarWidget(input));
+  properties->addToTab("General", orientation);
+
+  refFrame = new ExtXMLWidget("Frame of reference",new FrameOfReferenceWidget(MBSIMNS"frameOfReference",this,getParentElement()->getFrame(0)));
+  properties->addToTab("General", refFrame);
 
   properties->addStretch();
 }
@@ -90,14 +102,39 @@ FixedRelativeFrame::~FixedRelativeFrame() {
 
 void FixedRelativeFrame::initializeUsingXML(TiXmlElement *element) {
   Frame::initializeUsingXML(element);
-  pos->initializeUsingXML(element);
+  refFrame->initializeUsingXML(element);
+  position->initializeUsingXML(element);
+  orientation->initializeUsingXML(element);
 }
 
 TiXmlElement* FixedRelativeFrame::writeXMLFile(TiXmlNode *parent) {
 
   TiXmlElement *ele0 = Frame::writeXMLFile(parent);
-  pos->writeXMLFile(ele0);
+  refFrame->writeXMLFile(ele0);
+  position->writeXMLFile(ele0);
+  orientation->writeXMLFile(ele0);
   return ele0;
 }
 
+void FixedRelativeFrame::initializeUsingXML2(TiXmlElement *element) {
+  refFrame->initializeUsingXML(element);
+  QString ref = ((FrameOfReferenceWidget*)refFrame->getWidget())->getSavedFrameOfReference();
+  if(ref[0]=='F')
+    ((FrameOfReferenceWidget*)refFrame->getWidget())->setSavedFrameOfReference(QString("../")+ref);
+  position->initializeUsingXML(element);
+  orientation->initializeUsingXML(element);
+}
+
+Element *FixedRelativeFrame::getByPathSearch(string path) {
+  if (path.substr(0, 1)=="/") // absolut path
+    if(getParentElement())
+      return getParentElement()->getByPathSearch(path);
+    else
+      return getByPathSearch(path.substr(1));
+  else if (path.substr(0, 3)=="../") // relative path
+    return getParentElement()->getByPathSearch(path.substr(3));
+  else { // local path
+    throw;
+  }
+}
 

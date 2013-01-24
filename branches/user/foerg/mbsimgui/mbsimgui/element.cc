@@ -252,6 +252,8 @@ QString Element::getXMLPath(Element *ref, bool rel) {
       type = "Object";
     else if(dynamic_cast<Contour*>(this))
       type = "Contour";
+    else if(dynamic_cast<Frame*>(this))
+      type = "Frame";
     else 
       type = getType();
     QString str = type + "[" + getName() + "]";
