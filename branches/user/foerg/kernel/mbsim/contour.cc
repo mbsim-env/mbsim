@@ -134,11 +134,8 @@ namespace MBSim {
 
   void Contour::initializeUsingXML(TiXmlElement *element) {
     Element::initializeUsingXML(element);
-    TiXmlElement *ec=element->FirstChildElement();
-    if(ec && ec->ValueStr()==MBSIMNS"frameOfReference") {
-      setFrameOfReference(ec->Attribute("ref"));
-      ec=ec->NextSiblingElement();
-    }
+    TiXmlElement *ec=element->FirstChildElement(MBSIMNS"frameOfReference");
+    if(ec) setFrameOfReference(ec->Attribute("ref"));
   }
 
   /* Rigid Contour */

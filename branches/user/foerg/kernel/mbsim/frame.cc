@@ -251,16 +251,12 @@ namespace MBSim {
   void FixedRelativeFrame::initializeUsingXML(TiXmlElement *element) {
     Frame::initializeUsingXML(element);
     TiXmlElement *ec=element->FirstChildElement();
-    if(ec && ec->ValueStr()==MBSIMNS"frameOfReference") {
-      setFrameOfReference(ec->Attribute("ref"));
-      ec=ec->NextSiblingElement();
-    }
-    if(ec && ec->ValueStr()==MBSIMNS"position") {
-      setRelativePosition(getVec3(ec));
-      ec=ec->NextSiblingElement();
-    }
-    if(ec && ec->ValueStr()==MBSIMNS"orientation") 
-      setRelativeOrientation(getSqrMat3(ec));
+    ec=element->FirstChildElement(MBSIMNS"frameOfReference");
+    if(ec) setFrameOfReference(ec->Attribute("ref"));
+    ec=element->FirstChildElement(MBSIMNS"position");
+    if(ec) setRelativePosition(getVec3(ec));
+    ec=element->FirstChildElement(MBSIMNS"orientation");
+    if(ec) setRelativeOrientation(getSqrMat3(ec));
   }
 
   TiXmlElement* FixedRelativeFrame::writeXMLFile(TiXmlNode *element) {
