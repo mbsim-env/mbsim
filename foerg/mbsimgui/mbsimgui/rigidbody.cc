@@ -210,8 +210,14 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
   e=element->FirstChildElement(MBSIMNS"frames")->FirstChildElement();
   while(e && e->ValueStr()==MBSIMNS"frame") {
     TiXmlElement *ec=e->FirstChildElement();
-    Frame *f=new Frame(ec->Attribute("name"), frames, -1);
+    FixedRelativeFrame *f=new FixedRelativeFrame(ec->Attribute("name"), frames, -1);
     f->initializeUsingXML(ec);
+    f->initializeUsingXML2(e);
+    e=e->NextSiblingElement();
+  }
+  while(e && e->ValueStr()==MBSIMNS"FixedRelativeFrame") {
+    FixedRelativeFrame *f=new FixedRelativeFrame(e->Attribute("name"), frames, -1);
+    f->initializeUsingXML(e);
     e=e->NextSiblingElement();
   }
 

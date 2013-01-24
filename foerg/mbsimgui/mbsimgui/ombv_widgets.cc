@@ -54,8 +54,7 @@ OMBVFrameWidget::OMBVFrameWidget(const string &name, const string &xmlName_) : O
 bool OMBVFrameWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=(xmlName=="")?element:element->FirstChildElement(xmlName);
   if(e) {
-    size->initializeUsingXML(element);
-    offset->initializeUsingXML(element);
+    offset->initializeUsingXML(e);
     return true;
   }
   return false;

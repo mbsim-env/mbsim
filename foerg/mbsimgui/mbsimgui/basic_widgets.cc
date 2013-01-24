@@ -344,50 +344,6 @@ TiXmlElement* NameWidget::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-ElementPositionWidget2::ElementPositionWidget2(Element *element_) : element(element_) {
-
-  QVBoxLayout *layout = new QVBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
-
-  Element *parentElement = element->getParentElement();
-
-  Frame *omitFrame = dynamic_cast<Frame*>(element);
-  refFrame = new FrameOfReferenceWidget(MBSIMNS"frameOfReference",element,0);
-  QWidget *refFrameWidget = new ExtXMLWidget("Frame of reference",refFrame);
-
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new VecWidget(3), MBSIMNS"position", lengthUnits(), 4));
-  position = new ExtPhysicalVarWidget(input);
-  QWidget *positionWidget = new ExtXMLWidget("Position",position);
-
-  input.clear();
-  input.push_back(new PhysicalStringWidget(new MatWidget(getEye<string>(3,3,"1","0")),MBSIMNS"orientation",noUnitUnits(),1));
-  //input.push_back(new PhysicalStringWidget(new CardanWidget,MBSIMNS"orientation",angleUnits(),0));
-  orientation = new ExtPhysicalVarWidget(input);
-  QWidget *orientationWidget = new ExtXMLWidget("Orientation",orientation);
-
-  layout->addWidget(positionWidget);
-  layout->addWidget(orientationWidget);
-  layout->addWidget(refFrameWidget);
-}
-
-bool ElementPositionWidget2::initializeUsingXML(TiXmlElement *ele) {
-  TiXmlElement *ec=ele->FirstChildElement();
-  refFrame->initializeUsingXML(ele);
-  position->initializeUsingXML(ele);
-  orientation->initializeUsingXML(ele);
-}
-
-TiXmlElement* ElementPositionWidget2::writeXMLFile(TiXmlNode *parent) {
-  Element *parentElement = element->getParentElement();
-  TiXmlElement *ele;
-  refFrame->writeXMLFile(parent);
-  position->writeXMLFile(parent);
-  orientation->writeXMLFile(parent);
-  return ele;
-}
-
 ElementPositionWidget::ElementPositionWidget(Element *element_) : element(element_) {
 
   QVBoxLayout *layout = new QVBoxLayout;
