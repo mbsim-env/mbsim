@@ -1355,7 +1355,7 @@ namespace MBSim {
     stringstream frameName;
     frameName << "ContourFrame" << contour.size();
     Frame *contourFrame;
-    if(fabs(RrRC(0))<1e-10 && fabs(RrRC(1))<1e-10 && fabs(RrRC(2))<1e-10 && 
+    if(!refFrame && fabs(RrRC(0))<1e-10 && fabs(RrRC(1))<1e-10 && fabs(RrRC(2))<1e-10 && 
       fabs(ARC(0,0)-1)<1e-10 && fabs(ARC(1,1)-1)<1e-10 && fabs(ARC(2,2)-1)<1e-10)
       contourFrame = frame[0];
     else {

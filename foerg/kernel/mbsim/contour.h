@@ -208,11 +208,16 @@ namespace MBSim {
 //      void setParent(ObjectInterface* parent_) { parent = parent_; }
       /***************************************************/
 
+      virtual Element * getByPathSearch(std::string path);
+
       void setFrameOfReference(Frame *frame) { R = frame; }
+      void setFrameOfReference(const std::string &frame) { saved_frameOfReference = frame; }
 
       virtual void updateStateDependentVariables(double t) {}
       virtual void updateJacobians(double t, int j=0) {}
       virtual void updateStateDerivativeDependentVariables(const fmatvec::Vec &ud, double t) {}
+
+      virtual void initializeUsingXML(TiXmlElement *element);
 
     protected:
 //      /**
@@ -229,6 +234,8 @@ namespace MBSim {
        * \brief coordinate system of contour
        */
       Frame *R;
+
+      std::string saved_frameOfReference;
   };
 
   /**

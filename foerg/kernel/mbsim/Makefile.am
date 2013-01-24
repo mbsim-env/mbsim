@@ -35,7 +35,7 @@ rigid_body.cc\
 graph.cc\
 constraint.cc
 
-libmbsim_la_LIBADD = integrators/libintegrators.la utils/libutils.la contact_kinematics/libcontactkinematics.la contours/libcontour.la numerics/libnumerics.la plot_elements/libplotelements.la -lgfortran
+libmbsim_la_LIBADD = integrators/libintegrators.la utils/libutils.la contact_kinematics/libcontactkinematics.la contours/libcontour.la numerics/libnumerics.la -lgfortran
 
 libmbsim_la_CPPFLAGS = -DTIXML_USE_STL
 
