@@ -1127,10 +1127,16 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
+              <xs:sequence>
               <xs:choice minOccurs="0" maxOccurs="unbounded">
                 <xs:element ref="frame"/>
                 <xs:element ref="pv:embed"/>
               </xs:choice>
+              <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="FixedRelativeFrame"/>
+                <xs:element ref="pv:embed"/>
+              </xs:choice>
+              </xs:sequence>
             </xs:complexType>
           </xs:element>
           <xs:element name="contours">
@@ -1142,10 +1148,16 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
+              <xs:sequence>
               <xs:choice minOccurs="0" maxOccurs="unbounded">
                 <xs:element ref="contour"/>
                 <xs:element ref="pv:embed"/>
               </xs:choice>
+              <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="Contour"/>
+                <xs:element ref="pv:embed"/>
+              </xs:choice>
+              </xs:sequence>
             </xs:complexType>
           </xs:element>
           <xs:element name="isFrameOfBodyForRotation" minOccurs="0">
@@ -2047,6 +2059,48 @@
     </xs:complexContent>
   </xs:complexType> 
 
+  <xs:element name="FixedRelativeFrame" substitutionGroup="Frame" type="FixedRelativeFrameType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Klasse zur Beschreibung von Koordinatensystemen.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="FixedRelativeFrameType">
+    <xs:complexContent>
+      <xs:extension base="FrameType">
+    <xs:sequence>
+      <xs:element name="frameOfReference">
+        <xs:annotation>
+          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            Koordinatensystem, in dem die Positionierung des KOS angegeben wird.<br/>
+            Standardmässig "I"-System der Gruppe bzw. "C"-System des RigidBody.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="position" type="pv:lengthVector">
+        <xs:annotation>
+          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            Relative Lage des Koordinatensystems.<br/>
+            Vektor von <tt>frameOfReference</tt> zum Ursprung des neuen KOS dargestellt
+            im KOS <tt>frameOfReference</tt>.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="orientation" type="pv:nounitMatrix">
+        <xs:annotation>
+          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            Relative Orientierung des Koordinatensystems.<br/>
+            Transformationsmatrix vom neuen KOS ins KOS <tt>frameOfReference</tt>.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType> 
+
   <xs:element name="Contour" abstract="true" substitutionGroup="Element" type="ContourType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -2056,7 +2110,21 @@
   </xs:element>
   <xs:complexType name="ContourType">
     <xs:complexContent>
-      <xs:extension base="ElementType"/>
+      <xs:extension base="ElementType">
+        <xs:sequence>
+      <xs:element name="frameOfReference" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            Koordinatensystem, in dem die Positionierung des KOS angegeben wird.<br/>
+            Standardmässig "I"-System der Gruppe bzw. "C"-System des RigidBody.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+        </xs:complexType>
+      </xs:element>
+        </xs:sequence>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
