@@ -781,6 +781,12 @@ namespace MBSim {
       }
       addContour(c);
     }
+    while(e) {
+      Contour *c=ObjectFactory::getInstance()->createContour(e);
+      addContour(c);
+      c->initializeUsingXML(e);
+      e=e->NextSiblingElement();
+    }
 
     e=element->FirstChildElement(MBSIMNS"frameForKinematics");
     setFrameForKinematics(getByPath<Frame>(e->Attribute("ref"))); // must be on of "Frame[X]" which allready exists
