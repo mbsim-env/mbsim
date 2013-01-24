@@ -227,11 +227,8 @@ namespace MBSim {
 
   void FixedRelativeFrame::init(InitStage stage) {
     if(stage==resolveXMLPath) {
-      if(saved_frameOfReference!="") {
-        cout << saved_frameOfReference << endl;
-        cout << getByPath<Frame>(saved_frameOfReference) << endl;
+      if(saved_frameOfReference!="")
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
-      }
       Frame::init(stage);
     }
     else
@@ -248,16 +245,6 @@ namespace MBSim {
       return parent->getByPathSearch(path.substr(3));
     else { // local path
       throw;
-//      size_t pos0=path.find_first_of("[", 0);
-//      string container=path.substr(0, pos0);
-//      size_t pos1=path.find_first_of("]", pos0);
-//      string searched_name=path.substr(pos0+1, pos1-pos0-1);
-//      if (container=="Frame")
-//        return getFrame(searched_name);
-//      else if (container=="Contour")
-//        return getContour(searched_name);
-//      else
-//        throw MBSimError("ERROR in "+getName()+" (Body::getByPathSearch): Unknown name of container!");
     }
   }
 

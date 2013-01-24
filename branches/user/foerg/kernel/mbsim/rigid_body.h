@@ -35,7 +35,7 @@ namespace OpenMBV {
 namespace MBSim {
 
   class Frame;
-  class RigidContour;
+  class Contour;
   class FixedRelativeFrame;
   class Constraint;
 
@@ -191,7 +191,7 @@ namespace MBSim {
 
       void addFrame(FixedRelativeFrame *frame); 
 
-      void addContour(RigidContour *contour);
+      void addContour(Contour *contour);
 
       /**
        * \param frame        specific Frame to add

@@ -535,7 +535,7 @@ namespace MBSim {
     ASF.push_back(SqrMat3());
   }
 
-  void RigidBody::addContour(RigidContour *contour) {
+  void RigidBody::addContour(Contour *contour) {
     Body::addContour(contour);
   }
 
@@ -563,7 +563,7 @@ namespace MBSim {
     stringstream frameName;
     frameName << "ContourFrame" << contour.size();
     Frame *contourFrame;
-    if(fabs(RrRC(0))<1e-10 && fabs(RrRC(1))<1e-10 && fabs(RrRC(2))<1e-10 && 
+    if(!refFrame && fabs(RrRC(0))<1e-10 && fabs(RrRC(1))<1e-10 && fabs(RrRC(2))<1e-10 && 
       fabs(ARC(0,0)-1)<1e-10 && fabs(ARC(1,1)-1)<1e-10 && fabs(ARC(2,2)-1)<1e-10)
       contourFrame = frame[0];
     else {
@@ -731,7 +731,6 @@ namespace MBSim {
       f->initializeUsingXML(ec);
       ec=ec->NextSiblingElement();
       if(ec->ValueStr()==MBSIMNS"frameOfReference") {
-        cout << ec->Attribute("ref") << endl;
         f->setFrameOfReference(string("../")+ec->Attribute("ref"));
         ec=ec->NextSiblingElement();
       }
@@ -746,43 +745,41 @@ namespace MBSim {
       f->initializeUsingXML(e);
       e=e->NextSiblingElement();
     }
-//    while(e && e->ValueStr()==MBSIMNS"frame") {
-//      TiXmlElement *ec=e->FirstChildElement();
-//      Frame *f=new Frame(ec->Attribute("name"));
-//      f->initializeUsingXML(ec);
-//      ec=ec->NextSiblingElement();
-//      string refF="C";
-//      if(ec->ValueStr()==MBSIMNS"frameOfReference") {
-//        refF=ec->Attribute("ref");
-//        refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
-//        ec=ec->NextSiblingElement();
-//      }
-//      Vec3 RrRF=getVec3(ec);
-//      ec=ec->NextSiblingElement();
-//      SqrMat3 ARF=getSqrMat3(ec);
-//      addFrame(f, RrRF, ARF, refF);
-//      e=e->NextSiblingElement();
-//    }
 
     // contours
     e=element->FirstChildElement(MBSIMNS"contours")->FirstChildElement();
     while(e && e->ValueStr()==MBSIMNS"contour") {
       TiXmlElement *ec=e->FirstChildElement();
       Contour *c=ObjectFactory::getInstance()->createContour(ec);
-      TiXmlElement *contourElement=ec; // save for later initialization
+      c->initializeUsingXML(ec);
       ec=ec->NextSiblingElement();
-      string refF="C";
-      if(ec->ValueStr()==MBSIMNS"frameOfReference") {
-        refF=ec->Attribute("ref");
-        refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
+      string refF;
+      if(ec) {
+        cout << c->getName() << endl;
+        if(ec->ValueStr()==MBSIMNS"frameOfReference") {
+          refF = string("../")+ec->Attribute("ref");
+          ec=ec->NextSiblingElement();
+        }
+        Vec3 RrRC = getVec3(ec);
         ec=ec->NextSiblingElement();
+        SqrMat3 ARC = getSqrMat3(ec);
+        e=e->NextSiblingElement();
+        stringstream frameName;
+        frameName << "ContourFrame" << contour.size();
+        Frame *contourFrame;
+        if(refF=="" && fabs(RrRC(0))<1e-10 && fabs(RrRC(1))<1e-10 && fabs(RrRC(2))<1e-10 && 
+            fabs(ARC(0,0)-1)<1e-10 && fabs(ARC(1,1)-1)<1e-10 && fabs(ARC(2,2)-1)<1e-10)
+          contourFrame = frame[0];
+        else {
+          contourFrame = new FixedRelativeFrame(frameName.str());
+          ((FixedRelativeFrame*)contourFrame)->setFrameOfReference(refF);
+          ((FixedRelativeFrame*)contourFrame)->setRelativePosition(RrRC);
+          ((FixedRelativeFrame*)contourFrame)->setRelativeOrientation(ARC);
+          addFrame((FixedRelativeFrame*)contourFrame);
+        }
+        c->setFrameOfReference(contourFrame);
       }
-      Vec3 RrRC=getVec3(ec);
-      ec=ec->NextSiblingElement();
-      SqrMat3 ARC=getSqrMat3(ec);
-      addContour(c, RrRC, ARC, refF);
-      c->initializeUsingXML(contourElement);
-      e=e->NextSiblingElement();
+      addContour(c);
     }
 
     e=element->FirstChildElement(MBSIMNS"frameForKinematics");

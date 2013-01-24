@@ -51,7 +51,12 @@ namespace MBSim {
   Contour::~Contour() {}
 
   void Contour::init(InitStage stage) {
-    if(stage==unknownStage) {
+    if(stage==resolveXMLPath) {
+      if(saved_frameOfReference!="")
+        setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
+      Element::init(stage);
+    }
+    else if(stage==unknownStage) {
       getFrame()->getJacobianOfTranslation(0).resize(hSize[0]);
       getFrame()->getJacobianOfRotation(0).resize(hSize[0]);
       getFrame()->getJacobianOfTranslation(1).resize(hSize[1]);
@@ -114,6 +119,27 @@ namespace MBSim {
     }
   }
 
+  Element *Contour::getByPathSearch(string path) {
+    if (path.substr(0, 1)=="/") // absolut path
+      if(parent)
+        return parent->getByPathSearch(path);
+      else
+        return getByPathSearch(path.substr(1));
+    else if (path.substr(0, 3)=="../") // relative path
+      return parent->getByPathSearch(path.substr(3));
+    else { // local path
+      throw;
+    }
+  }
+
+  void Contour::initializeUsingXML(TiXmlElement *element) {
+    Element::initializeUsingXML(element);
+    TiXmlElement *ec=element->FirstChildElement();
+    if(ec && ec->ValueStr()==MBSIMNS"frameOfReference") {
+      setFrameOfReference(ec->Attribute("ref"));
+      ec=ec->NextSiblingElement();
+    }
+  }
 
   /* Rigid Contour */
   RigidContour::~RigidContour() {
