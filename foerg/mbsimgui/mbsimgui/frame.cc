@@ -74,3 +74,30 @@ TiXmlElement* Frame::writeXMLFile2(TiXmlNode *parent) {
   visu->writeXMLFile(parent);
   return 0;
 }
+
+FixedRelativeFrame::FixedRelativeFrame(const QString &str, QTreeWidgetItem *parentItem, int ind) : Frame(str, parentItem, ind) {
+
+  //properties->addTab("Position and orientation");
+
+  pos = new ExtXMLWidget("Position and orientation", new ElementPositionWidget2(this));
+  properties->addToTab("General", pos);
+
+  properties->addStretch();
+}
+
+FixedRelativeFrame::~FixedRelativeFrame() {
+}
+
+void FixedRelativeFrame::initializeUsingXML(TiXmlElement *element) {
+  Frame::initializeUsingXML(element);
+  pos->initializeUsingXML(element);
+}
+
+TiXmlElement* FixedRelativeFrame::writeXMLFile(TiXmlNode *parent) {
+
+  TiXmlElement *ele0 = Frame::writeXMLFile(parent);
+  pos->writeXMLFile(ele0);
+  return ele0;
+}
+
+

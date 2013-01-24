@@ -33,7 +33,7 @@ using namespace std;
 RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) : Body(str, parentItem, ind), constrained(false) {
   setText(1,getType());
   properties->addTab("Kinematics");
-  properties->addTab("Frame positioning");
+  //properties->addTab("Frame positioning");
   properties->addTab("Contour positioning");
   properties->addTab("Visualisation");
   properties->addTab("Extra");
@@ -73,8 +73,8 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
   inertia = new ExtXMLWidget("Inertia tensor",new ExtPhysicalVarWidget(input));
   properties->addToTab("General", inertia);
 
-  framePos = new ExtXMLWidget("Position and orientation of frames",new FramePositionsWidget(this));
-  properties->addToTab("Frame positioning", framePos);
+  //framePos = new ExtXMLWidget("Position and orientation of frames",new FramePositionsWidget(this));
+  //properties->addToTab("Frame positioning", framePos);
 
   contourPos = new ExtXMLWidget("Position and orientation of contours",new ContourPositionsWidget(this));
   properties->addToTab("Contour positioning", contourPos);
@@ -154,7 +154,7 @@ int RigidBody::getUnconstrainedSize() const {
 void RigidBody::addFrame() {
   QString text = newName(frames,"P");
   if (!text.isEmpty()) {
-    new Frame(text, frames, -1);
+    new FixedRelativeFrame(text, frames, -1);
     ((Element*)treeWidget()->topLevelItem(0))->update();
   }
 }
@@ -215,7 +215,7 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
     e=e->NextSiblingElement();
   }
 
-  framePos->initializeUsingXML(element->FirstChildElement(MBSIMNS"frames"));
+  //framePos->initializeUsingXML(element->FirstChildElement(MBSIMNS"frames"));
 
   // contours
   e=element->FirstChildElement(MBSIMNS"contours")->FirstChildElement();
@@ -321,7 +321,8 @@ TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
   rotation->writeXMLFile(ele0);
 
   TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"frames" );
-  framePos->writeXMLFile(ele1);
+  for(int i=1; i<frames->childCount(); i++)
+    getFrame(i)->writeXMLFile(ele1);
   ele0->LinkEndChild( ele1 );
 
   ele1 = new TiXmlElement( MBSIMNS"contours" );

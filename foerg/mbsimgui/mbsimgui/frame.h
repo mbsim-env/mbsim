@@ -37,4 +37,15 @@ class Frame : public Element {
     ExtXMLWidget *visu;
 };
 
+class FixedRelativeFrame : public Frame {
+  public:
+    FixedRelativeFrame(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    ~FixedRelativeFrame();
+    QString getType() const { return "FixedRelativeFrame"; }
+    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+  protected:
+    ExtXMLWidget *pos;
+};
+
 #endif

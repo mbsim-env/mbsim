@@ -181,6 +181,22 @@ class NameWidget : public XMLWidget {
     void rename();
 };
 
+class ElementPositionWidget2 : public XMLWidget {
+
+  public:
+    ElementPositionWidget2(Element *element);
+
+    void update() {refFrame->update();}
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    Element *getElement() {return element;}
+
+  protected:
+    Element *element;
+    ExtPhysicalVarWidget *position, *orientation;
+    FrameOfReferenceWidget *refFrame;
+};
+
 class ElementPositionWidget : public XMLWidget {
 
   public:
