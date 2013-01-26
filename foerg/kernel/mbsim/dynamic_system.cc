@@ -485,7 +485,7 @@ namespace MBSim {
       for(unsigned int k=1; k<frame.size(); k++)
         for(unsigned int j=1; j<frame.size(); j++) {
           int i = 0;
-          FixedRelativeFrame *frame_ = static_cast<FixedRelativeFrame*>(frame[j]);
+          WorldFrame *frame_ = static_cast<WorldFrame*>(frame[j]);
           if(frame_->getFrameOfReference()) i = frameIndex(frame_->getFrameOfReference());
 
           IrOF[j]=IrOF[i] + AIF[i]*frame_->getRelativePosition();
@@ -1315,26 +1315,26 @@ namespace MBSim {
     cosy->setParent(this);
   }
 
-  void DynamicSystem::addFrame(FixedRelativeFrame *frame_) {
+  void DynamicSystem::addFrame(WorldFrame *frame_) {
     addFrame((Frame*)frame_);
 
     IrOF.push_back(Vec3());
     AIF.push_back(SqrMat3());
   }
 
-  void DynamicSystem::addFrame(Frame* frame_, const Vec3 &RrRF, const SqrMat3 &ARF, const string& refFrameName) {
-    addFrame(frame_,RrRF,ARF,refFrameName!=""?getFrame(refFrameName):frame[0]);
-  }
+//  void DynamicSystem::addFrame(Frame* frame_, const Vec3 &RrRF, const SqrMat3 &ARF, const string& refFrameName) {
+//    addFrame(frame_,RrRF,ARF,refFrameName!=""?getFrame(refFrameName):frame[0]);
+//  }
 
   void DynamicSystem::addFrame(Frame *frame_, const Vec3 &RrRF, const SqrMat3 &ARF, const Frame* refFrame) {
-    FixedRelativeFrame *environmentFrame = new FixedRelativeFrame(frame_->getName(),refFrame,RrRF,ARF);
+    WorldFrame *environmentFrame = new WorldFrame(frame_->getName(),RrRF,ARF,refFrame);
     if(frame_->getOpenMBVFrame())
       environmentFrame->enableOpenMBV(frame_->getOpenMBVFrame()->getSize(), frame_->getOpenMBVFrame()->getOffset());
     addFrame(environmentFrame);
   }
 
   void DynamicSystem::addFrame(const string &str, const Vec3 &RrRF, const SqrMat3 &ARF, const Frame* refFrame) {
-    FixedRelativeFrame *environmentFrame = new FixedRelativeFrame(str,refFrame,RrRF,ARF);
+    WorldFrame *environmentFrame = new WorldFrame(str,RrRF,ARF,refFrame);
     addFrame(environmentFrame);
   }
 
@@ -1347,9 +1347,9 @@ namespace MBSim {
     contour_->setParent(this);
   }
 
-  void DynamicSystem::addContour(Contour* contour_, const Vec3 &RrRC, const SqrMat3 &ARC, const string& refFrameName) {
-    addContour(contour_,RrRC,ARC,refFrameName!=""?getFrame(refFrameName):frame[0]);
-  }
+//  void DynamicSystem::addContour(Contour* contour_, const Vec3 &RrRC, const SqrMat3 &ARC, const string& refFrameName) {
+//    addContour(contour_,RrRC,ARC,refFrameName!=""?getFrame(refFrameName):frame[0]);
+//  }
 
   void DynamicSystem::addContour(Contour* contour_, const fmatvec::Vec3 &RrRC, const fmatvec::SqrMat3 &ARC, const Frame* refFrame) {
     stringstream frameName;
@@ -1359,8 +1359,8 @@ namespace MBSim {
       fabs(ARC(0,0)-1)<1e-10 && fabs(ARC(1,1)-1)<1e-10 && fabs(ARC(2,2)-1)<1e-10)
       contourFrame = frame[0];
     else {
-      contourFrame = new FixedRelativeFrame(frameName.str(),refFrame,RrRC,ARC);
-      addFrame((FixedRelativeFrame*)contourFrame);
+      contourFrame = new WorldFrame(frameName.str(),RrRC,ARC,refFrame);
+      addFrame((WorldFrame*)contourFrame);
     }
     contour_->setFrameOfReference(contourFrame);
     addContour(contour_);

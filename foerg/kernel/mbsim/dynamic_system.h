@@ -31,7 +31,7 @@ namespace H5 {
 
 namespace MBSim {
   class Frame;
-  class FixedRelativeFrame;
+  class WorldFrame;
   class Contour;
   class ExtraDynamic;
   class Object;
@@ -644,15 +644,15 @@ namespace MBSim {
        */
       void setrMax(double rMax);
 
-      void addFrame(FixedRelativeFrame *frame);
+      void addFrame(WorldFrame *frame);
 
-      /**
-       * \param frame to add
-       * \param relative position of frame
-       * \param relative orientation of frame
-       * \param relation frame name
-       */
-      void addFrame(Frame *frame, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const std::string& refFrameName);
+      ///**
+      // * \param frame to add
+      // * \param relative position of frame
+      // * \param relative orientation of frame
+      // * \param relation frame name
+      // */
+      //void addFrame(Frame *frame, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const std::string& refFrameName);
 
       /**
        * \param frame to add
@@ -670,13 +670,13 @@ namespace MBSim {
        */
       void addFrame(const std::string &str, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const Frame* refFrame=0);
 
-      /**
-       * \param contour to add
-       * \param relative position of contour
-       * \param relative orientation of contour
-       * \param relation frame name
-       */
-      void addContour(Contour* contour, const fmatvec::Vec3 &RrRC, const fmatvec::SqrMat3 &ARC, const std::string& refFrameName);
+      ///**
+      // * \param contour to add
+      // * \param relative position of contour
+      // * \param relative orientation of contour
+      // * \param relation frame name
+      // */
+      //void addContour(Contour* contour, const fmatvec::Vec3 &RrRC, const fmatvec::SqrMat3 &ARC, const std::string& refFrameName);
 
       /**
        * \param contour to add

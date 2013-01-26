@@ -21,7 +21,8 @@
 #include "mbsim/frame.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/rotarymatrices.h"
-//#include "mbsim/object_interface.h"
+#include "mbsim/rigid_body.h"
+#include "mbsim/dynamic_system.h"
 #include "mbsim/mbsim_event.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frame.h>
@@ -188,6 +189,19 @@ namespace MBSim {
     return ele0;
   }
 
+  Element *Frame::getByPathSearch(string path) {
+    if (path.substr(0, 1)=="/") // absolut path
+      if(parent)
+        return parent->getByPathSearch(path);
+      else
+        return getByPathSearch(path.substr(1));
+    else if (path.substr(0, 3)=="../") // relative path
+      return parent->getByPathSearch(path.substr(3));
+    else { // local path
+      throw;
+    }
+  }
+
   void FixedRelativeFrame::updatePosition(double t) {
     WrRP = frameOfReference->getOrientation()*RrRP;
     setPosition(frameOfReference->getPosition() + WrRP);
@@ -235,19 +249,6 @@ namespace MBSim {
       Frame::init(stage);
   }
 
-  Element *FixedRelativeFrame::getByPathSearch(string path) {
-    if (path.substr(0, 1)=="/") // absolut path
-      if(parent)
-        return parent->getByPathSearch(path);
-      else
-        return getByPathSearch(path.substr(1));
-    else if (path.substr(0, 3)=="../") // relative path
-      return parent->getByPathSearch(path.substr(3));
-    else { // local path
-      throw;
-    }
-  }
-
   void FixedRelativeFrame::initializeUsingXML(TiXmlElement *element) {
     Frame::initializeUsingXML(element);
     TiXmlElement *ec=element->FirstChildElement();
@@ -261,6 +262,26 @@ namespace MBSim {
 
   TiXmlElement* FixedRelativeFrame::writeXMLFile(TiXmlNode *element) {
     return 0;
+  }
+
+  void RigidBodyFrame::init(InitStage stage) {
+    if(stage==unknownStage) {
+      if(!frameOfReference)
+        frameOfReference = ((RigidBody*)parent)->getFrameC();
+      FixedRelativeFrame::init(stage);
+    }
+    else
+      FixedRelativeFrame::init(stage);
+  }
+
+  void WorldFrame::init(InitStage stage) {
+    if(stage==unknownStage) {
+      if(!frameOfReference)
+        frameOfReference = ((DynamicSystem*)parent)->getFrameI();
+      FixedRelativeFrame::init(stage);
+    }
+    else
+      FixedRelativeFrame::init(stage);
   }
 
 }

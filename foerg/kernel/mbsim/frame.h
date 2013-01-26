@@ -116,6 +116,8 @@ namespace MBSim {
       virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
       /***************************************************/
 
+      virtual Element * getByPathSearch(std::string path);
+
     protected:
       ///**
       // * \brief parent object for plot invocation
@@ -169,11 +171,9 @@ namespace MBSim {
   class FixedRelativeFrame : public Frame {
 
     public:
-      FixedRelativeFrame(const std::string &name = "dummy", const Frame *refFrame=0, const fmatvec::Vec3 &r=fmatvec::Vec3(), const fmatvec::SqrMat3 &A=fmatvec::SqrMat3(fmatvec::EYE)) : Frame(name), frameOfReference(refFrame), RrRP(r), ARP(A) {}
+      FixedRelativeFrame(const std::string &name = "dummy", const fmatvec::Vec3 &r=fmatvec::Vec3(), const fmatvec::SqrMat3 &A=fmatvec::SqrMat3(fmatvec::EYE), const Frame *refFrame=0) : Frame(name), frameOfReference(refFrame), RrRP(r), ARP(A) {}
 
       virtual void init(InitStage stage);
-
-      virtual Element * getByPathSearch(std::string path);
 
       void setRelativePosition(const fmatvec::Vec3 &r) { RrRP = r; }
       void setRelativeOrientation(const fmatvec::SqrMat3 &A) { ARP = A; }
@@ -202,23 +202,25 @@ namespace MBSim {
       std::string saved_frameOfReference;
   };
 
-//  /**
-//   * \brief cartesian frame on environment
-//   * \author Martin Foerg
-//   */
-//  class RigidBodyFrame : public FixedRelativeFrame {
-//    public:
-//      RigidBodyFrame(const std::string &name = "dummy", const Frame *refFrame=0, const fmatvec::Vec3 &r=fmatvec::Vec3(), const fmatvec::SqrMat3 &A=fmatvec::SqrMat3(fmatvec::EYE)) : FixedRelativeFrame(name,refFrame,r,A) {} 
-//  };
-//
-//  /**
-//   * \brief cartesian frame on environment
-//   * \author Martin Foerg
-//   */
-//  class EnvironmentFrame : public FixedRelativeFrame {
-//    public:
-//      EnvironmentFrame(const std::string &name = "dummy", const Frame *refFrame=0, const fmatvec::Vec3 &r=fmatvec::Vec3(), const fmatvec::SqrMat3 &A=fmatvec::SqrMat3(fmatvec::EYE)) : FixedRelativeFrame(name,refFrame,r,A) {} 
-//  };
+  /**
+   * \brief cartesian frame on rigid bodies
+   * \author Martin Foerg
+   */
+  class RigidBodyFrame : public FixedRelativeFrame {
+    public:
+      RigidBodyFrame(const std::string &name = "dummy", const fmatvec::Vec3 &r=fmatvec::Vec3(), const fmatvec::SqrMat3 &A=fmatvec::SqrMat3(fmatvec::EYE), const Frame *refFrame=0) : FixedRelativeFrame(name,r,A,refFrame) {} 
+      virtual void init(InitStage stage);
+  };
+
+  /**
+   * \brief cartesian frame on environment
+   * \author Martin Foerg
+   */
+  class WorldFrame : public FixedRelativeFrame {
+    public:
+      WorldFrame(const std::string &name = "dummy", const fmatvec::Vec3 &r=fmatvec::Vec3(), const fmatvec::SqrMat3 &A=fmatvec::SqrMat3(fmatvec::EYE), const Frame *refFrame=0) : FixedRelativeFrame(name,r,A,refFrame) {} 
+      virtual void init(InitStage stage);
+  };
 
 }
 
