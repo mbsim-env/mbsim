@@ -27,18 +27,36 @@
 using namespace std;
 
 Contour::Contour(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element(str,parentItem,ind) {
+  refFrame = new ExtXMLWidget("Frame of reference",new FrameOfReferenceWidget(MBSIMNS"frameOfReference",this,getParentElement()->getFrame(0)));
+  properties->addToTab("General", refFrame);
 }
 
 Contour::~Contour() {
 }
 
-//virtual void Contour::initializeUsingXML(TiXmlElement *element) {
-//  Element::initializeUsingXML(element);
-//}
-//
-//TiXmlElement* Contour::writeXMLFile(TiXmlNode *parent) {
-//  return Element::writeXMLFile(parent);
-//}
+void Contour::initializeUsingXML(TiXmlElement *element) {
+  Element::initializeUsingXML(element);
+  refFrame->initializeUsingXML(element);
+}
+
+TiXmlElement* Contour::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = Element::writeXMLFile(parent);
+  refFrame->writeXMLFile(ele0);
+  return ele0;
+}
+
+Element *Contour::getByPathSearch(string path) {
+  if (path.substr(0, 1)=="/") // absolut path
+    if(getParentElement())
+      return getParentElement()->getByPathSearch(path);
+    else
+      return getByPathSearch(path.substr(1));
+  else if (path.substr(0, 3)=="../") // relative path
+    return getParentElement()->getByPathSearch(path.substr(3));
+  else { // local path
+    throw;
+  }
+}
 
 Point::Point(const QString &str, QTreeWidgetItem *parentItem, int ind) : Contour(str,parentItem,ind) {
   setText(1,getType());

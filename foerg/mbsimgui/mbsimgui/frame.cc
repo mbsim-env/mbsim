@@ -76,11 +76,23 @@ TiXmlElement* Frame::writeXMLFile2(TiXmlNode *parent) {
   return 0;
 }
 
+Element *Frame::getByPathSearch(string path) {
+  if (path.substr(0, 1)=="/") // absolut path
+    if(getParentElement())
+      return getParentElement()->getByPathSearch(path);
+    else
+      return getByPathSearch(path.substr(1));
+  else if (path.substr(0, 3)=="../") // relative path
+    return getParentElement()->getByPathSearch(path.substr(3));
+  else { // local path
+    throw;
+  }
+}
+
 FixedRelativeFrame::FixedRelativeFrame(const QString &str, QTreeWidgetItem *parentItem, int ind) : Frame(str, parentItem, ind) {
 
   //properties->addTab("Position and orientation");
 
-  //pos = new ExtXMLWidget("Position and orientation", new ElementPositionWidget2(this));
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new VecWidget(3), MBSIMNS"position", lengthUnits(), 4));
   position = new ExtXMLWidget("Position", new ExtPhysicalVarWidget(input));
@@ -123,18 +135,5 @@ void FixedRelativeFrame::initializeUsingXML2(TiXmlElement *element) {
     ((FrameOfReferenceWidget*)refFrame->getWidget())->setSavedFrameOfReference(QString("../")+ref);
   position->initializeUsingXML(element);
   orientation->initializeUsingXML(element);
-}
-
-Element *FixedRelativeFrame::getByPathSearch(string path) {
-  if (path.substr(0, 1)=="/") // absolut path
-    if(getParentElement())
-      return getParentElement()->getByPathSearch(path);
-    else
-      return getByPathSearch(path.substr(1));
-  else if (path.substr(0, 3)=="../") // relative path
-    return getParentElement()->getByPathSearch(path.substr(3));
-  else { // local path
-    throw;
-  }
 }
 
