@@ -28,8 +28,11 @@ class Contour : public Element {
     Contour(const QString &str, QTreeWidgetItem *parentItem, int ind);
     ~Contour();
     QString getType() const { return "Contour"; }
-    //virtual void initializeUsingXML(TiXmlElement *element);
-    //virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual Element * getByPathSearch(std::string path);
+  protected:
+    ExtXMLWidget *refFrame;
 };
 
 class Point : public Contour {

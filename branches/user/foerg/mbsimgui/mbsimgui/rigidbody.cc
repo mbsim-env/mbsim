@@ -34,7 +34,7 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
   setText(1,getType());
   properties->addTab("Kinematics");
   //properties->addTab("Frame positioning");
-  properties->addTab("Contour positioning");
+  //properties->addTab("Contour positioning");
   properties->addTab("Visualisation");
   properties->addTab("Extra");
 
@@ -76,8 +76,8 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
   //framePos = new ExtXMLWidget("Position and orientation of frames",new FramePositionsWidget(this));
   //properties->addToTab("Frame positioning", framePos);
 
-  contourPos = new ExtXMLWidget("Position and orientation of contours",new ContourPositionsWidget(this));
-  properties->addToTab("Contour positioning", contourPos);
+  //contourPos = new ExtXMLWidget("Position and orientation of contours",new ContourPositionsWidget(this));
+  //properties->addToTab("Contour positioning", contourPos);
   
   TranslationChoiceWidget *translation_ = new TranslationChoiceWidget("");
   translation = new ExtXMLWidget("Translation",translation_,true);
@@ -232,8 +232,13 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
     c->initializeUsingXML(ec);
     e=e->NextSiblingElement();
   }
+  while(e) {
+    c=ObjectFactory::getInstance()->createContour(e, contours, -1);
+    c->initializeUsingXML(e);
+    e=e->NextSiblingElement();
+  }
 
-  contourPos->initializeUsingXML(element->FirstChildElement(MBSIMNS"contours"));
+  //contourPos->initializeUsingXML(element->FirstChildElement(MBSIMNS"contours"));
 
   frameOfReference->initializeUsingXML(element);
 
@@ -332,7 +337,8 @@ TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
   ele0->LinkEndChild( ele1 );
 
   ele1 = new TiXmlElement( MBSIMNS"contours" );
-  contourPos->writeXMLFile(ele1);
+  for(int i=0; i<contours->childCount(); i++)
+    getContour(i)->writeXMLFile(ele1);
   ele0->LinkEndChild( ele1 );
 
   isFrameOfBodyForRotation->writeXMLFile(ele0);
