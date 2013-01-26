@@ -66,17 +66,21 @@ class ParentFrameOfReferenceWidget : public XMLWidget {
   public:
     ParentFrameOfReferenceWidget(const std::string &xmlName, Element* element, Frame* omitFrame=0);
 
+    void initialize();
     void update();
     Frame* getFrame() {return selectedFrame;}
     void setFrame(Frame* frame_);
     virtual bool initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void setSavedFrameOfReference(const QString &str) {saved_frameOfReference = str;}
+    const QString& getSavedFrameOfReference() const {return saved_frameOfReference;}
 
   protected:
     QComboBox *frame;
     Element* element;
     Frame *selectedFrame, *omitFrame;
     std::string xmlName;
+    QString saved_frameOfReference;
 
   protected slots:
     void setFrame(const QString &str);
@@ -201,58 +205,6 @@ class NameWidget : public XMLWidget {
 
   protected slots:
     void rename();
-};
-
-class ElementPositionWidget : public XMLWidget {
-
-  public:
-    ElementPositionWidget(Element *element);
-
-    void update() {refFrame->update();}
-    virtual bool initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    Element *getElement() {return element;}
-
-  protected:
-    Element *element;
-    ExtPhysicalVarWidget *position, *orientation;
-    LocalFrameOfReferenceWidget *refFrame;
-};
-
-class FramePositionsWidget : public XMLWidget {
-  Q_OBJECT
-
-  public:
-    FramePositionsWidget(Element *element);
-
-    void update();
-    virtual bool initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-
-  protected:
-    Element *element;
-    QStackedWidget *stackedWidget; 
-    QListWidget *frameList; 
-  protected slots:
-    void changeCurrent(int idx);
-};
-
-class ContourPositionsWidget : public XMLWidget {
-  Q_OBJECT
-
-  public:
-    ContourPositionsWidget(Element *element);
-
-    void update();
-    virtual bool initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-
-  protected:
-    Element *element;
-    QStackedWidget *stackedWidget; 
-    QListWidget *contourList; 
-  protected slots:
-    void changeCurrent(int idx);
 };
 
 class ConnectFramesWidget : public XMLWidget {

@@ -91,8 +91,8 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
 
   QAction *action;
 
-  properties->addTab("Frame positioning");
-  properties->addTab("Contour positioning");
+  //properties->addTab("Frame positioning");
+  //properties->addTab("Contour positioning");
   if(parentItem != treeWidget()->invisibleRootItem()) {
     properties->addTab("Kinematics");
 
@@ -109,12 +109,6 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
     frameOfReference = new ExtXMLWidget("Frame of reference",new FrameOfReferenceWidget(MBSIMNS"frameOfReference",this,((Group*)getParentElement())->getFrame(0))); 
     properties->addToTab("Kinematics", frameOfReference);
   }
-
-  framePos = new ExtXMLWidget("Position and orientation of frames",new FramePositionsWidget(this)); 
-  properties->addToTab("Frame positioning", framePos);
-
-  contourPos = new ExtXMLWidget("Position and orientation of contours",new ContourPositionsWidget(this)); 
-  properties->addToTab("Contour positioning", contourPos);
 
   action=new QAction(Utils::QIconCached("newobject.svg"),"Add frame", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addFrame()));
@@ -290,7 +284,7 @@ void Group::addAbsolutePositionSensor() {
 }
 
 void Group::addFrame() {
-  new Frame(newName(frames,"P"), frames, -1);
+  new WorldFrame(newName(frames,"P"), frames, -1);
   ((Element*)treeWidget()->topLevelItem(0))->update();
 }
 
@@ -420,14 +414,16 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *E=element->FirstChildElement(MBSIMNS"frames")->FirstChildElement();
   while(E && E->ValueStr()==MBSIMNS"frame") {
     TiXmlElement *ec=E->FirstChildElement();
-    Frame *f=new Frame(ec->Attribute("name"), frames, -1);
+    WorldFrame *f=new WorldFrame(ec->Attribute("name"), frames, -1);
     f->initializeUsingXML(ec);
+    f->initializeUsingXML2(E);
     E=E->NextSiblingElement();
   }
-
-  framePos->initializeUsingXML(element->FirstChildElement(MBSIMNS"frames"));
-
-  e=e->NextSiblingElement();
+  while(E && E->ValueStr()==MBSIMNS"WorldFrame") {
+    WorldFrame *f=new WorldFrame(E->Attribute("name"), frames, -1);
+    f->initializeUsingXML(E);
+    E=E->NextSiblingElement();
+  }
 
   // contours
   E=element->FirstChildElement(MBSIMNS"contours")->FirstChildElement();
@@ -438,10 +434,11 @@ void Group::initializeUsingXML(TiXmlElement *element) {
     if(c) c->initializeUsingXML(ec);
     E=E->NextSiblingElement();
   }
-
-  contourPos->initializeUsingXML(element->FirstChildElement(MBSIMNS"contours"));
-
-  e=e->NextSiblingElement();
+  while(E) {
+    c=ObjectFactory::getInstance()->createContour(E, contours, -1);
+    c->initializeUsingXML(E);
+    E=E->NextSiblingElement();
+  }
 
   // groups
   E=element->FirstChildElement(MBSIMNS"groups")->FirstChildElement();
@@ -501,11 +498,13 @@ TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
   }
 
   ele1 = new TiXmlElement( MBSIMNS"frames" );
-  framePos->writeXMLFile(ele1);
+  for(int i=1; i<frames->childCount(); i++)
+    getFrame(i)->writeXMLFile(ele1);
   ele0->LinkEndChild( ele1 );
 
   ele1 = new TiXmlElement( MBSIMNS"contours" );
-  contourPos->writeXMLFile(ele1);
+  for(int i=0; i<contours->childCount(); i++)
+    getContour(i)->writeXMLFile(ele1);
   ele0->LinkEndChild( ele1 );
 
   ele1 = new TiXmlElement( MBSIMNS"groups" );

@@ -27,7 +27,7 @@ class Group : public Element {
   protected:
     QString getType() const { return "Group"; }
     QAction *actionPaste;
-    ExtXMLWidget *position, *orientation, *parameterFile, *frameOfReference, *framePos, *contourPos;
+    ExtXMLWidget *position, *orientation, *parameterFile, *frameOfReference; 
 
   public:
     Group(const QString &str, QTreeWidgetItem *parentItem, int ind);

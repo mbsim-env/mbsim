@@ -213,15 +213,13 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
     e=e->NextSiblingElement();
   }
 
-  //framePos->initializeUsingXML(element->FirstChildElement(MBSIMNS"frames"));
-
   // contours
   e=element->FirstChildElement(MBSIMNS"contours")->FirstChildElement();
   Contour *c;
   while(e && e->ValueStr()==MBSIMNS"contour") {
     TiXmlElement *ec=e->FirstChildElement();
     c=ObjectFactory::getInstance()->createContour(ec, contours, -1);
-    c->initializeUsingXML(ec);
+    if(c) c->initializeUsingXML(ec);
     e=e->NextSiblingElement();
   }
   while(e) {
@@ -229,8 +227,6 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
     c->initializeUsingXML(e);
     e=e->NextSiblingElement();
   }
-
-  //contourPos->initializeUsingXML(element->FirstChildElement(MBSIMNS"contours"));
 
   frameOfReference->initializeUsingXML(element);
 

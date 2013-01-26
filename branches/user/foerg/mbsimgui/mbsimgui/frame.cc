@@ -128,7 +128,7 @@ TiXmlElement* FixedRelativeFrame::writeXMLFile(TiXmlNode *parent) {
 
 void FixedRelativeFrame::initializeUsingXML2(TiXmlElement *element) {
   refFrame->initializeUsingXML(element);
-  QString ref = ((FrameOfReferenceWidget*)refFrame->getWidget())->getSavedFrameOfReference();
+  QString ref = ((ParentFrameOfReferenceWidget*)refFrame->getWidget())->getSavedFrameOfReference();
   if(ref[0]=='F')
     ((FrameOfReferenceWidget*)refFrame->getWidget())->setSavedFrameOfReference(QString("../")+ref);
   position->initializeUsingXML(element);

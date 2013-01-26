@@ -262,6 +262,8 @@ QString Element::getXMLPath(Element *ref, bool rel) {
         str = QString("Group[") + (*i1)->getName() + "]/" + str;
       else if(dynamic_cast<Object*>(*i1))
         str = QString("Object[") + (*i1)->getName() + "]/" + str;
+      else if(dynamic_cast<Frame*>(*i1))
+        str = QString("Frame[") + (*i1)->getName() + "]/" + str;
       else if(dynamic_cast<Contour*>(*i1))
         str = QString("Contour[") + (*i1)->getName() + "]/" + str;
       else
@@ -276,6 +278,8 @@ QString Element::getXMLPath(Element *ref, bool rel) {
       type = "Group";
     else if(dynamic_cast<Object*>(this))
       type = "Object";
+    else if(dynamic_cast<Frame*>(this))
+      type = "Frame";
     else if(dynamic_cast<Contour*>(this))
       type = "Contour";
     else 
