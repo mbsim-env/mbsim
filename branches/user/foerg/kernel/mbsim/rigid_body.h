@@ -36,7 +36,7 @@ namespace MBSim {
 
   class Frame;
   class Contour;
-  class FixedRelativeFrame;
+  class RigidBodyFrame;
   class Constraint;
 
   /**
@@ -170,6 +170,7 @@ namespace MBSim {
       void setMass(double m_) { m = m_; }
       double getMass() const { return m; }
       Frame* getFrameForKinematics() { return frame[iKinematics]; };
+      Frame* getFrameC() { return C; };
       void isFrameOfBodyForRotation(bool cb_) { cb = cb_; }
       std::vector<fmatvec::SqrMat3> getContainerForFrameOrientations() const { return ASF; }
       std::vector<fmatvec::Vec3> getContainerForFramePositions() const { return SrSF; }
@@ -189,17 +190,17 @@ namespace MBSim {
       const fmatvec::SymMat3& getInertiaTensor() const {return SThetaS;}
       fmatvec::SymMat3& getInertiaTensor() {return SThetaS;}
 
-      void addFrame(FixedRelativeFrame *frame); 
+      void addFrame(RigidBodyFrame *frame); 
 
       void addContour(Contour *contour);
 
-      /**
-       * \param frame        specific Frame to add
-       * \param RrRF         constant relative vector from reference Frame to specific Frame in reference system
-       * \param ARF          constant relative rotation from specific Frame to reference Frame
-       * \param refFrameName reference Frame name
-       */
-      void addFrame(Frame *frame, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const std::string& refFrameName); 
+//      /**
+//       * \param frame        specific Frame to add
+//       * \param RrRF         constant relative vector from reference Frame to specific Frame in reference system
+//       * \param ARF          constant relative rotation from specific Frame to reference Frame
+//       * \param refFrameName reference Frame name
+//       */
+//      void addFrame(Frame *frame, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const std::string& refFrameName); 
 
       /**
        * \param frame        specific Frame to add
@@ -217,13 +218,13 @@ namespace MBSim {
        */
       void addFrame(const std::string &str, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const Frame* refFrame=0);
 
-      /**
-       * \param contour      specific contour to add
-       * \param RrRC         constant relative vector from reference Frame to specific contour in reference system
-       * \param ARC          constant relative rotation from specific contour to reference Frame
-       * \param refFrameName reference Frame name
-       */
-      void addContour(Contour* contour, const fmatvec::Vec3 &RrRC, const fmatvec::SqrMat3 &ARC, const std::string& refFrameName);
+//      /**
+//       * \param contour      specific contour to add
+//       * \param RrRC         constant relative vector from reference Frame to specific contour in reference system
+//       * \param ARC          constant relative rotation from specific contour to reference Frame
+//       * \param refFrameName reference Frame name
+//       */
+//      void addContour(Contour* contour, const fmatvec::Vec3 &RrRC, const fmatvec::SqrMat3 &ARC, const std::string& refFrameName);
 
       /**
        * \param contour      specific contour to add

@@ -144,7 +144,7 @@ namespace MBSim {
     TiXmlElement *E=e->FirstChildElement();
     while(E && E->ValueStr()==MBSIMNS"frame") {
       TiXmlElement *ec=E->FirstChildElement();
-      FixedRelativeFrame *f=new FixedRelativeFrame(ec->Attribute("name"));
+      WorldFrame *f=new WorldFrame(ec->Attribute("name"));
       addFrame(f);
       f->initializeUsingXML(ec);
       ec=ec->NextSiblingElement();
@@ -157,8 +157,8 @@ namespace MBSim {
       f->setRelativeOrientation(getSqrMat3(ec));
       E=E->NextSiblingElement();
     }
-    while(E && E->ValueStr()==MBSIMNS"FixedRelativeFrame") {
-      FixedRelativeFrame *f=new FixedRelativeFrame(e->Attribute("name"));
+    while(E && E->ValueStr()==MBSIMNS"WorldFrame") {
+      WorldFrame *f=new WorldFrame(e->Attribute("name"));
       addFrame(f);
       f->initializeUsingXML(E);
       E=E->NextSiblingElement();
@@ -190,11 +190,11 @@ namespace MBSim {
             fabs(ARC(0,0)-1)<1e-10 && fabs(ARC(1,1)-1)<1e-10 && fabs(ARC(2,2)-1)<1e-10)
           contourFrame = frame[0];
         else {
-          contourFrame = new FixedRelativeFrame(frameName.str());
-          ((FixedRelativeFrame*)contourFrame)->setFrameOfReference(refF);
-          ((FixedRelativeFrame*)contourFrame)->setRelativePosition(RrRC);
-          ((FixedRelativeFrame*)contourFrame)->setRelativeOrientation(ARC);
-          addFrame((FixedRelativeFrame*)contourFrame);
+          contourFrame = new WorldFrame(frameName.str());
+          ((WorldFrame*)contourFrame)->setFrameOfReference(refF);
+          ((WorldFrame*)contourFrame)->setRelativePosition(RrRC);
+          ((WorldFrame*)contourFrame)->setRelativeOrientation(ARC);
+          addFrame((WorldFrame*)contourFrame);
         }
         c->setFrameOfReference(contourFrame);
       }

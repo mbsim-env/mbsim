@@ -181,7 +181,7 @@ namespace MBSim {
       for(unsigned int k=1; k<frame.size(); k++)
         for(unsigned int j=1; j<frame.size(); j++) {
           int i = 0;
-          FixedRelativeFrame *frame_ = static_cast<FixedRelativeFrame*>(frame[j]);
+          RigidBodyFrame *frame_ = static_cast<RigidBodyFrame*>(frame[j]);
           if(frame_->getFrameOfReference()) i = frameIndex(frame_->getFrameOfReference());
 
           SrSF[j]=SrSF[i] + ASF[i]*frame_->getRelativePosition();
@@ -527,7 +527,7 @@ namespace MBSim {
     if(!constraint) TRel>>T;
   }
 
-  void RigidBody::addFrame(FixedRelativeFrame *frame_) {
+  void RigidBody::addFrame(RigidBodyFrame *frame_) {
     Body::addFrame(frame_);
 
     SrSF.push_back(Vec3());
@@ -539,25 +539,25 @@ namespace MBSim {
     Body::addContour(contour);
   }
 
-  void RigidBody::addFrame(Frame *frame_, const Vec3 &RrRF, const SqrMat3 &ARF, const string& refFrameName) {
-    addFrame(frame_,RrRF,ARF,refFrameName!=""?getFrame(refFrameName):frame[0]);
-  }
+//  void RigidBody::addFrame(Frame *frame_, const Vec3 &RrRF, const SqrMat3 &ARF, const string& refFrameName) {
+//    addFrame(frame_,RrRF,ARF,refFrameName!=""?getFrame(refFrameName):frame[0]);
+//  }
 
   void RigidBody::addFrame(Frame *frame_, const Vec3 &RrRF, const SqrMat3 &ARF, const Frame* refFrame) {
-    FixedRelativeFrame *rigidBodyFrame = new FixedRelativeFrame(frame_->getName(),refFrame,RrRF,ARF);
+    RigidBodyFrame *rigidBodyFrame = new RigidBodyFrame(frame_->getName(),RrRF,ARF,refFrame);
     if(frame_->getOpenMBVFrame())
       rigidBodyFrame->enableOpenMBV(frame_->getOpenMBVFrame()->getSize(), frame_->getOpenMBVFrame()->getOffset());
     addFrame(rigidBodyFrame);
   }
 
   void RigidBody::addFrame(const string &str, const Vec3 &RrRF, const SqrMat3 &ARF, const Frame* refFrame) {
-    FixedRelativeFrame *rigidBodyFrame = new FixedRelativeFrame(str,refFrame,RrRF,ARF);
+    RigidBodyFrame *rigidBodyFrame = new RigidBodyFrame(str,RrRF,ARF,refFrame);
     addFrame(rigidBodyFrame);
   }
 
-  void RigidBody::addContour(Contour* contour_, const Vec3 &RrRC, const SqrMat3 &ARC, const string& refFrameName) {
-    addContour(contour_,RrRC,ARC,refFrameName!=""?getFrame(refFrameName):frame[0]);
-  }
+//  void RigidBody::addContour(Contour* contour_, const Vec3 &RrRC, const SqrMat3 &ARC, const string& refFrameName) {
+//    addContour(contour_,RrRC,ARC,refFrameName!=""?getFrame(refFrameName):frame[0]);
+//  }
 
   void RigidBody::addContour(Contour* contour_, const fmatvec::Vec3 &RrRC, const fmatvec::SqrMat3 &ARC, const Frame* refFrame) {
     stringstream frameName;
@@ -567,8 +567,8 @@ namespace MBSim {
       fabs(ARC(0,0)-1)<1e-10 && fabs(ARC(1,1)-1)<1e-10 && fabs(ARC(2,2)-1)<1e-10)
       contourFrame = frame[0];
     else {
-      contourFrame = new FixedRelativeFrame(frameName.str(),refFrame,RrRC,ARC);
-      addFrame((FixedRelativeFrame*)contourFrame);
+      contourFrame = new RigidBodyFrame(frameName.str(),RrRC,ARC,refFrame);
+      addFrame((RigidBodyFrame*)contourFrame);
     }
     contour_->setFrameOfReference(contourFrame);
     Body::addContour(contour_);
@@ -726,7 +726,7 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"frames")->FirstChildElement();
     while(e && e->ValueStr()==MBSIMNS"frame") {
       TiXmlElement *ec=e->FirstChildElement();
-      FixedRelativeFrame *f=new FixedRelativeFrame(ec->Attribute("name"));
+      RigidBodyFrame *f=new RigidBodyFrame(ec->Attribute("name"));
       addFrame(f);
       f->initializeUsingXML(ec);
       ec=ec->NextSiblingElement();
@@ -739,8 +739,8 @@ namespace MBSim {
       f->setRelativeOrientation(getSqrMat3(ec));
       e=e->NextSiblingElement();
     }
-    while(e && e->ValueStr()==MBSIMNS"FixedRelativeFrame") {
-      FixedRelativeFrame *f=new FixedRelativeFrame(e->Attribute("name"));
+    while(e && e->ValueStr()==MBSIMNS"RigidBodyFrame") {
+      RigidBodyFrame *f=new RigidBodyFrame(e->Attribute("name"));
       addFrame(f);
       f->initializeUsingXML(e);
       e=e->NextSiblingElement();
@@ -755,7 +755,6 @@ namespace MBSim {
       ec=ec->NextSiblingElement();
       string refF;
       if(ec) {
-        cout << c->getName() << endl;
         if(ec->ValueStr()==MBSIMNS"frameOfReference") {
           refF = string("../")+ec->Attribute("ref");
           ec=ec->NextSiblingElement();
@@ -771,11 +770,11 @@ namespace MBSim {
             fabs(ARC(0,0)-1)<1e-10 && fabs(ARC(1,1)-1)<1e-10 && fabs(ARC(2,2)-1)<1e-10)
           contourFrame = frame[0];
         else {
-          contourFrame = new FixedRelativeFrame(frameName.str());
-          ((FixedRelativeFrame*)contourFrame)->setFrameOfReference(refF);
-          ((FixedRelativeFrame*)contourFrame)->setRelativePosition(RrRC);
-          ((FixedRelativeFrame*)contourFrame)->setRelativeOrientation(ARC);
-          addFrame((FixedRelativeFrame*)contourFrame);
+          contourFrame = new RigidBodyFrame(frameName.str());
+          ((RigidBodyFrame*)contourFrame)->setFrameOfReference(refF);
+          ((RigidBodyFrame*)contourFrame)->setRelativePosition(RrRC);
+          ((RigidBodyFrame*)contourFrame)->setRelativeOrientation(ARC);
+          addFrame((RigidBodyFrame*)contourFrame);
         }
         c->setFrameOfReference(contourFrame);
       }
