@@ -158,7 +158,7 @@ namespace MBSim {
       E=E->NextSiblingElement();
     }
     while(E && E->ValueStr()==MBSIMNS"WorldFrame") {
-      WorldFrame *f=new WorldFrame(e->Attribute("name"));
+      WorldFrame *f=new WorldFrame(E->Attribute("name"));
       addFrame(f);
       f->initializeUsingXML(E);
       E=E->NextSiblingElement();
