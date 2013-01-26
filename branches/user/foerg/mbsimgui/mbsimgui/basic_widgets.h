@@ -60,6 +60,28 @@ class LocalFrameOfReferenceWidget : public XMLWidget {
     void setFrame(const QString &str);
 };
 
+class ParentFrameOfReferenceWidget : public XMLWidget {
+  Q_OBJECT
+
+  public:
+    ParentFrameOfReferenceWidget(const std::string &xmlName, Element* element, Frame* omitFrame=0);
+
+    void update();
+    Frame* getFrame() {return selectedFrame;}
+    void setFrame(Frame* frame_);
+    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+
+  protected:
+    QComboBox *frame;
+    Element* element;
+    Frame *selectedFrame, *omitFrame;
+    std::string xmlName;
+
+  protected slots:
+    void setFrame(const QString &str);
+};
+
 class FrameOfReferenceWidget : public XMLWidget {
   Q_OBJECT
 
