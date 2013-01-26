@@ -50,4 +50,20 @@ class FixedRelativeFrame : public Frame {
     ExtXMLWidget *refFrame, *position, *orientation;
 };
 
+class RigidBodyFrame : public FixedRelativeFrame {
+  public:
+    RigidBodyFrame(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    ~RigidBodyFrame();
+    QString getType() const { return "RigidBodyFrame"; }
+  protected:
+};
+
+class WorldFrame : public FixedRelativeFrame {
+  public:
+    WorldFrame(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    ~WorldFrame();
+    QString getType() const { return "WorldFrame"; }
+  protected:
+};
+
 #endif

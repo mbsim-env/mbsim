@@ -47,7 +47,7 @@ void LocalFrameOfReferenceWidget::update() {
   int oldindex = 0;
   for(int i=0, k=0; i<element->getContainerFrame()->childCount(); i++) {
     if(omitFrame!=element->getFrame(i)) {
-      frame->addItem(element->getFrame(i)->getName());
+      frame->addItem("Frame["+element->getFrame(i)->getName()+"]");
       if(element->getFrame(i) == selectedFrame)
         oldindex = k;
       k++;
@@ -62,7 +62,8 @@ void LocalFrameOfReferenceWidget::setFrame(Frame* frame_) {
 }
 
 void LocalFrameOfReferenceWidget::setFrame(const QString &str) {
-  selectedFrame = element->getFrame(str.toStdString());
+  string str_ = str.toStdString();
+  selectedFrame = element->getFrame(str_.substr(6, str_.length()-7));
 }
 
 bool LocalFrameOfReferenceWidget::initializeUsingXML(TiXmlElement *parent) {
@@ -78,6 +79,60 @@ bool LocalFrameOfReferenceWidget::initializeUsingXML(TiXmlElement *parent) {
 TiXmlElement* LocalFrameOfReferenceWidget::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele = new TiXmlElement(xmlName);
   QString str = QString("Frame[") + getFrame()->getName() + "]";
+  ele->SetAttribute("ref", str.toStdString());
+  parent->LinkEndChild(ele);
+  return 0;
+}
+
+ParentFrameOfReferenceWidget::ParentFrameOfReferenceWidget(const string &xmlName_, Element *element_, Frame* omitFrame_) : element(element_), selectedFrame(0), omitFrame(omitFrame_), xmlName(xmlName_) {
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
+  frame = new QComboBox;
+  layout->addWidget(frame);
+  selectedFrame = element->getParentElement()->getFrame(0);
+  connect(frame,SIGNAL(currentIndexChanged(const QString&)),this,SLOT(setFrame(const QString&)));
+}
+
+void ParentFrameOfReferenceWidget::update() {
+  frame->blockSignals(true);
+  frame->clear();
+  int oldindex = 0;
+  for(int i=0, k=0; i<element->getParentElement()->getContainerFrame()->childCount(); i++) {
+    if(omitFrame!=element->getParentElement()->getFrame(i)) {
+      frame->addItem("../Frame["+element->getParentElement()->getFrame(i)->getName()+"]");
+      if(element->getParentElement()->getFrame(i) == selectedFrame)
+        oldindex = k;
+      k++;
+    }
+  }
+  frame->setCurrentIndex(oldindex);
+  frame->blockSignals(false);
+}
+
+void ParentFrameOfReferenceWidget::setFrame(Frame* frame_) {
+  selectedFrame = frame_; 
+}
+
+void ParentFrameOfReferenceWidget::setFrame(const QString &str) {
+  string str_ = str.toStdString();
+  selectedFrame = element->getParentElement()->getFrame(str_.substr(9, str_.length()-10));
+}
+
+bool ParentFrameOfReferenceWidget::initializeUsingXML(TiXmlElement *parent) {
+  TiXmlElement *e = parent->FirstChildElement(xmlName);
+  if(e) {
+    string refF="";
+    refF=e->Attribute("ref");
+    refF=refF.substr(9, refF.length()-10);
+    setFrame(refF==""?element->getParentElement()->getFrame(0):element->getParentElement()->getFrame(refF));
+  }
+}
+
+TiXmlElement* ParentFrameOfReferenceWidget::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele = new TiXmlElement(xmlName);
+  QString str = QString("../Frame[") + getFrame()->getName() + "]";
   ele->SetAttribute("ref", str.toStdString());
   parent->LinkEndChild(ele);
   return 0;

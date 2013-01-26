@@ -91,8 +91,6 @@ Element *Frame::getByPathSearch(string path) {
 
 FixedRelativeFrame::FixedRelativeFrame(const QString &str, QTreeWidgetItem *parentItem, int ind) : Frame(str, parentItem, ind) {
 
-  //properties->addTab("Position and orientation");
-
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new VecWidget(3), MBSIMNS"position", lengthUnits(), 4));
   position = new ExtXMLWidget("Position", new ExtPhysicalVarWidget(input));
@@ -103,7 +101,7 @@ FixedRelativeFrame::FixedRelativeFrame(const QString &str, QTreeWidgetItem *pare
   orientation = new ExtXMLWidget("Orientation",new ExtPhysicalVarWidget(input));
   properties->addToTab("General", orientation);
 
-  refFrame = new ExtXMLWidget("Frame of reference",new FrameOfReferenceWidget(MBSIMNS"frameOfReference",this,getParentElement()->getFrame(0)));
+  refFrame = new ExtXMLWidget("Frame of reference",new ParentFrameOfReferenceWidget(MBSIMNS"frameOfReference",this,this),true);
   properties->addToTab("General", refFrame);
 
   properties->addStretch();
@@ -137,3 +135,14 @@ void FixedRelativeFrame::initializeUsingXML2(TiXmlElement *element) {
   orientation->initializeUsingXML(element);
 }
 
+RigidBodyFrame::RigidBodyFrame(const QString &str, QTreeWidgetItem *parentItem, int ind) : FixedRelativeFrame(str, parentItem, ind) {
+}
+
+RigidBodyFrame::~RigidBodyFrame() {
+}
+
+WorldFrame::WorldFrame(const QString &str, QTreeWidgetItem *parentItem, int ind) : FixedRelativeFrame(str, parentItem, ind) {
+}
+
+WorldFrame::~WorldFrame() {
+}
