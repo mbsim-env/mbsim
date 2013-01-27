@@ -26,13 +26,13 @@ else:
   import urllib.request as myurllib
 
 # global variables
-htmlDir=None
 mbsimBinDir=None
 canCompare=True # True if numpy and h5py are found
 xmllint=None
 ombvSchema =None
 mbsimSchema=None
 intSchema  =None
+directories=list() # a list of all examples sorted in descending order (filled recursively (using the filter) by by --directories)
 
 # command line option definition
 argparser = argparse.ArgumentParser(
@@ -58,20 +58,10 @@ argparser = argparse.ArgumentParser(
   using the --mpath option of mbsimxml.
   '''
 )
-directories=list() # a list of all examples sorted in descending order (filled recursively (using the filter) by by --directories)
-argparser.add_argument("directories", nargs="*", default=os.curdir, help="A directory to run (recursively). If prefixed with '^' remove the directory form the current list")
-argparser.add_argument("-j", default=1, type=int, help="Number of jobs to run in parallel (applies only to the action 'report')")
-argparser.add_argument("--atol", default=1e-5, type=float,
-  help="Absolute tolerance. Channel comparing failed if for at least ONE datapoint the abs. AND rel. toleranz is violated")
-argparser.add_argument("--rtol", default=1e-5, type=float,
-  help="Relative tolerance. Channel comparing failed if for at least ONE datapoint the abs. AND rel. toleranz is violated")
-argparser.add_argument("--filter", default="all",
-  choices=["all",
-           "allxml",
-           "flatxml",
-           "xml",
-           "src"], help="Filter the specified directories")
-argparser.add_argument("--action", default="report",
+
+mainOpts=argparser.add_argument_group('Main Options')
+mainOpts.add_argument("directories", nargs="*", default=os.curdir, help="A directory to run (recursively). If prefixed with '^' remove the directory form the current list")
+mainOpts.add_argument("--action", default="report",
   choices=["report",
            "copyToReference",
            "createReferenceTarBz2",
@@ -79,10 +69,30 @@ argparser.add_argument("--action", default="report",
            "uploadReferenceTarBz2",
            "downloadReferenceTarBz2"],
   help="The action of this script")
-argparser.add_argument("--debugDisableMultiprocessing", default=False, type=bool, nargs="?", const=True, help="internal debugging option")
-argparser.add_argument("--disableRun", default=False, type=bool, nargs="?", const=True, help="disable running the example on action 'report'")
-argparser.add_argument("--disableCompare", default=False, type=bool, nargs="?", const=True, help="disable comparing the results on action 'report'")
-argparser.add_argument("--disableValidate", default=False, type=bool, nargs="?", const=True, help="disable validating the XML files on action 'report'")
+mainOpts.add_argument("-j", default=1, type=int, help="Number of jobs to run in parallel (applies only to the action 'report')")
+mainOpts.add_argument("--filter", default="all",
+  choices=["all",
+           "allxml",
+           "flatxml",
+           "xml",
+           "src"], help="Filter the specified directories")
+
+cfgOpts=argparser.add_argument_group('Configuration Options')
+cfgOpts.add_argument("--atol", default=1e-5, type=float,
+  help="Absolute tolerance. Channel comparing failed if for at least ONE datapoint the abs. AND rel. toleranz is violated")
+cfgOpts.add_argument("--rtol", default=1e-5, type=float,
+  help="Relative tolerance. Channel comparing failed if for at least ONE datapoint the abs. AND rel. toleranz is violated")
+cfgOpts.add_argument("--disableRun", default=False, type=bool, nargs="?", const=True, help="disable running the example on action 'report'")
+cfgOpts.add_argument("--disableCompare", default=False, type=bool, nargs="?", const=True, help="disable comparing the results on action 'report'")
+cfgOpts.add_argument("--disableValidate", default=False, type=bool, nargs="?", const=True, help="disable validating the XML files on action 'report'")
+
+outOpts=argparser.add_argument_group('Output Options')
+outOpts.add_argument("--reportOutDir", default="html", type=str, help="the output directory of the report")
+outOpts.add_argument("--url", type=str, help="the URL where the report output is accessible (without the trailing '/index.html'. Only used for the RSS feed")
+
+debugOpts=argparser.add_argument_group('Debugging Options')
+debugOpts.add_argument("--debugDisableMultiprocessing", default=False, type=bool, nargs="?", const=True, help="disable the --job option and run always in a single process/thread")
+debugOpts.add_argument("--debugValidateHTMLOutput", default=False, type=bool, nargs="?", const=True, help="validate all generated html output files at the end")
 
 # parse command line options
 args = argparser.parse_args()
@@ -111,9 +121,10 @@ def main():
   mbsimSchema=pj(schemaDir, "http___mbsim_berlios_de_MBSimXML", "mbsimxml.xsd")
   intSchema  =pj(schemaDir, "http___mbsim_berlios_de_MBSim", "mbsimintegrator.xsd")
   # set global dirs
-  global htmlDir, mbsimBinDir
-  htmlDir=pj(os.getcwd(), "html")
+  global mbsimBinDir
   mbsimBinDir=pkgconfig("mbsim", ["--variable=bindir"])
+
+  args.reportOutDir=os.path.abspath(args.reportOutDir)
 
   # if no directory is specified use the current dir (all examples) filter by --filter
   if len(args.directories)==0:
@@ -153,10 +164,18 @@ def main():
     downloadReferenceTarBz2()
     return 0
 
-  if not os.path.isdir(htmlDir): os.makedirs(htmlDir)
-  mainFD=open(pj(htmlDir, "index.html"), "w")
-  print('<html>', file=mainFD);
+  if os.path.isdir(args.reportOutDir): shutil.rmtree(args.reportOutDir)
+  os.makedirs(args.reportOutDir)
+  # write empty RSS feed
+  writeRSSFeed(0, 1) # nrFailed == 0 => write empty RSS feed
+  # create index.html
+  mainFD=open(pj(args.reportOutDir, "index.html"), "w")
+  print('<?xml version="1.0" encoding="UTF-8"?>', file=mainFD)
+  print('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">', file=mainFD)
+  print('<html xmlns="http://www.w3.org/1999/xhtml">', file=mainFD)
   print('<head>', file=mainFD)
+  print('  <title>MBSim runexamples Results</title>', file=mainFD)
+  print('  <link rel="alternate" type="application/rss+xml" title="MBSim runexample.py Result" href="result.rss.xml"/>', file=mainFD)
   print('</head>', file=mainFD)
   print('<body>', file=mainFD)
 
@@ -165,8 +184,9 @@ def main():
   print('<b>Called command:</b> <tt>', file=mainFD)
   for argv in sys.argv: print(argv+' ', file=mainFD)
   print('</tt><br/>', file=mainFD)
-  print('   <b>Start time:</b> '+str(datetime.datetime.now())+'<br>', file=mainFD)
-  print('   <b>End time:</b> @ENDTIME@<br/>', file=mainFD)
+  print('   <b>RSS Feed:</b> Use the feed "auto-discovery" of this page or click <a href="result.rss.xml">here</a><br/>', file=mainFD)
+  print('   <b>Start time:</b> '+str(datetime.datetime.now())+'<br/>', file=mainFD)
+  print('   <b>End time:</b> @STILL_RUNNING_OR_ABORTED@<br/>', file=mainFD)
   print('</p>', file=mainFD)
 
   print('<table border="1">', file=mainFD)
@@ -184,7 +204,7 @@ def main():
 
   # run examples in parallel
   print("Started running examples. Each example will print a message if finished.")
-  print("See the log file "+pj(htmlDir, "index.html")+" for detailed results.\n")
+  print("See the log file "+pj(args.reportOutDir, "index.html")+" for detailed results.\n")
 
   if not args.debugDisableMultiprocessing:
     # init mulitprocessing handling and run in parallel
@@ -223,7 +243,7 @@ def main():
       if not arg in set(args.directories):
         print(arg, end=" ", file=mainFD)
     for failedEx in failedExamples:
-      print(failedEx, end=" ", file=mainFD);
+      print(failedEx, end=" ", file=mainFD)
     print('</tt><br/>', file=mainFD)
     print('</p>', file=mainFD)
 
@@ -231,15 +251,22 @@ def main():
   print('</html>', file=mainFD)
 
   mainFD.close()
-  # relace @ENDTIME@ in index.html
-  for line in fileinput.FileInput(pj(htmlDir, "index.html"),inplace=1):
-    line = line.replace("@ENDTIME@", str(datetime.datetime.now()))
+  # relace @STILL_RUNNING_OR_ABORTED@ in index.html
+  for line in fileinput.FileInput(pj(args.reportOutDir, "index.html"),inplace=1):
+    line = line.replace("@STILL_RUNNING_OR_ABORTED@", str(datetime.datetime.now()))
     print(line)
 
+  # write RSS feed
+  writeRSSFeed(len(failedExamples), len(retAll))
+
+  # print result summary to console and create rss feed on error
   if len(failedExamples)>0:
     print('\n'+str(len(failedExamples))+' examples have failed.')
   else:
     print('\nAll examples have passed.')
+
+  if args.debugValidateHTMLOutput:
+    validateHTMLOutput()
 
   return mainRet
 
@@ -256,8 +283,12 @@ def pkgconfig(module, options):
   comm.extend(options)
   try:
     output=subprocess.check_output(comm)
-  except subprocess.CalledProcessError:
-    output=""
+  except subprocess.CalledProcessError as ex:
+    if ex.returncode==0:
+      raise
+    else:
+      print("Error: pkg-config module "+module+" not found. Trying to continue.", file=sys.stderr)
+      output=bytes("pkg_config_"+module+"_not_found", "ascii")
   return output.rstrip().decode("utf-8")
 
 
@@ -321,11 +352,11 @@ def runExample(resultQueue, example):
 
     runExampleRet=0 # run ok
     # execute the example[0]
-    if not os.path.isdir(pj(htmlDir, example[0])): os.makedirs(pj(htmlDir, example[0]))
+    if not os.path.isdir(pj(args.reportOutDir, example[0])): os.makedirs(pj(args.reportOutDir, example[0]))
     executeFN=pj(example[0], "execute.out")
     executeRet=0
     if not args.disableRun:
-      executeFD=open(pj(htmlDir, executeFN), "w")
+      executeFD=open(pj(args.reportOutDir, executeFN), "w")
       dt=0
       if os.path.isfile("Makefile"):
         executeRet, dt=executeSrcExample(executeFD)
@@ -368,17 +399,15 @@ def runExample(resultQueue, example):
     # write time to time.dat for possible later copying it to the reference
     if not args.disableRun:
       refTimeFD=open("time.dat", "w")
-      print('%.3f'%dt, file=refTimeFD);
+      print('%.3f'%dt, file=refTimeFD)
       refTimeFD.close()
     # print result to resultStr
     if compareRet==-1:
       resultStr+='<td><span style="color:orange">not run</span></td>'
-      if os.path.isfile(pj(htmlDir, compareFN)): os.remove(pj(htmlDir, compareFN))
     else:
       if nrFailed==0:
         if nrAll==0:
           resultStr+='<td><span style="color:orange">no reference<span></td>'
-          if os.path.isfile(pj(htmlDir, compareFN)): os.remove(pj(htmlDir, compareFN))
         else:
           resultStr+='<td><a href="'+myurllib.pathname2url(compareFN)+'"><span style="color:green">all '+str(nrAll)+' passed</span></a></td>'
       else:
@@ -387,10 +416,13 @@ def runExample(resultQueue, example):
     # validate XML
     if not args.disableValidate:
       htmlOutputFN=pj(example[0], "validateXML.html")
-      htmlOutputFD=open(pj(htmlDir, htmlOutputFN), "w")
+      htmlOutputFD=open(pj(args.reportOutDir, htmlOutputFN), "w")
       # write header
-      print('<html>', file=htmlOutputFD)
+      print('<?xml version="1.0" encoding="UTF-8"?>', file=htmlOutputFD)
+      print('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">', file=htmlOutputFD)
+      print('<html xmlns="http://www.w3.org/1999/xhtml">', file=htmlOutputFD)
       print('<head>', file=htmlOutputFD)
+      print('  <title>Validate XML Files</title>', file=htmlOutputFD)
       print('</head>', file=htmlOutputFD)
       print('<body>', file=htmlOutputFD)
       print('<h1>Validate XML Files</h1>', file=htmlOutputFD)
@@ -488,8 +520,11 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, label, data
 
   # create html page
   diffHTMLPlotFD=open(diffHTMLFileName, "w")
-  print('<html>', file=diffHTMLPlotFD)
+  print('<?xml version="1.0" encoding="UTF-8"?>', file=diffHTMLPlotFD)
+  print('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">', file=diffHTMLPlotFD)
+  print('<html xmlns="http://www.w3.org/1999/xhtml">', file=diffHTMLPlotFD)
   print('<head>', file=diffHTMLPlotFD)
+  print('  <title>Difference Plot</title>', file=diffHTMLPlotFD)
   print('</head>', file=diffHTMLPlotFD)
   print('<body>', file=diffHTMLPlotFD)
   print('<h1>Difference Plot</h1>', file=diffHTMLPlotFD)
@@ -611,11 +646,10 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
         nrFailed[0]+=1
         dataArrayRef=numpy.concatenate((refObj[:, 0:1], refObj[:, column:column+1]), axis=1)
         dataArrayCur=numpy.concatenate((curObj[:, 0:1], curObj[:, column:column+1]), axis=1)
-        createDiffPlot(pj(htmlDir, example, diffFilename), example, h5CurFile.filename, datasetName,
+        createDiffPlot(pj(args.reportOutDir, example, diffFilename), example, h5CurFile.filename, datasetName,
                        refLabels[column], dataArrayRef, dataArrayCur)
       else:
         print('<td><span style="color:green">passed</span></td>', file=compareFD)
-        if os.path.isfile(pj(htmlDir, example, diffFilename)): os.remove(pj(htmlDir, example, diffFilename))
       print('</tr>', file=compareFD)
     # check for labels/columns in current but not in reference
     for label in curLabels[len(refLabels):]:
@@ -637,11 +671,14 @@ def appendDatasetName(curMemberNames, datasetName, curObj):
 def compareExample(example, compareFN):
   import h5py
 
-  compareFD=open(pj(htmlDir, compareFN), "w")
+  compareFD=open(pj(args.reportOutDir, compareFN), "w")
 
   # print html header
-  print('<html>', file=compareFD)
+  print('<?xml version="1.0" encoding="UTF-8"?>', file=compareFD)
+  print('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">', file=compareFD)
+  print('<html xmlns="http://www.w3.org/1999/xhtml">', file=compareFD)
   print('<head>', file=compareFD)
+  print('  <title>Compare Results</title>', file=compareFD)
   print('</head>', file=compareFD)
   print('<body>', file=compareFD)
   print('<h1>Compare Results</h1>', file=compareFD)
@@ -762,7 +799,7 @@ def validateXML(example, consoleOutput, htmlOutputFD):
     for curType in types:
       for filename in fnmatch.filter(filenames, curType[0]):
         outputFN=pj(example[0], filename+".out")
-        outputFD=open(pj(htmlDir, outputFN), "w")
+        outputFD=open(pj(args.reportOutDir, outputFN), "w")
         print('<tr>', file=htmlOutputFD)
         print('<td>'+filename+'</td>', file=htmlOutputFD)
         print("Running command:", file=outputFD)
@@ -780,6 +817,52 @@ def validateXML(example, consoleOutput, htmlOutputFD):
         outputFD.close()
   return nrFailed, nrTotal
 
+
+
+def writeRSSFeed(nrFailed, nrTotal):
+  rssFN="result.rss.xml"
+  rssFD=open(pj(args.reportOutDir, rssFN), "w")
+  print('''\
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>MBSim runexample.py Result</title>
+    <link>%s/index.html</link>
+    <description>Result RSS feed of the last runexample.py run of MBSim and Co.</description>
+    <language>en-us</language>
+    <managingEditor>friedrich.at.gc@googlemail.com</managingEditor>'''%(args.url), file=rssFD)
+  if nrFailed>0:
+    print('''\
+    <item>
+      <title>%d of %d examples failed</title>
+      <link>%s/index.html</link>
+      <guid>%s/rss_id_%s</guid>
+      <pubDate>%s</pubDate>
+    </item>'''%(nrFailed, nrTotal,
+           args.url,
+           args.url,
+           datetime.datetime.utcnow().strftime("%s"),
+           datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S +0000")), file=rssFD)
+  print('''\
+    <item>
+      <title>Dummy feed item. Just ignore it.</title>
+      <link>%s/index.html</link>
+      <guid>%s/rss_id_1359206848</guid>
+      <pubDate>Sat, 26 Jan 2013 14:27:28 +0000</pubDate>
+    </item>
+  </channel>
+</rss>'''%(args.url, args.url), file=rssFD)
+  rssFD.close()
+
+
+
+def validateHTMLOutput():
+  schema=pj(pkgconfig("mbxmlutils", ["--variable=SCHEMADIR"]), "http___openmbv_berlios_de_MBXMLUtils", "xhtml1-transitional.xsd")
+  for root, _, filenames in os.walk(args.reportOutDir):
+    for filename in filenames:
+      if os.path.splitext(filename)[1]==".html":
+        subprocess.call([xmllint, "--xinclude", "--noout", "--schema",
+          schema, pj(root, filename)])
 
 
 
