@@ -55,10 +55,10 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
 
   new Frame("C", frames, -1, true);
 
-  frameForKinematics = new ExtXMLWidget("Frame for kinematics",new LocalFrameOfReferenceWidget(MBSIMNS"frameForKinematics",this,0));
+  frameForKinematics = new ExtXMLWidget("Frame for kinematics",new LocalFrameOfReferenceWidget(MBSIMNS"frameForKinematics",this,0),true);
   properties->addToTab("Kinematics", frameForKinematics);
 
-  frameOfReference = new ExtXMLWidget("Frame of reference",new FrameOfReferenceWidget(MBSIMNS"frameOfReference",this,((Group*)getParentElement())->getFrame(0)));
+  frameOfReference = new ExtXMLWidget("Frame of reference",new FrameOfReferenceWidget(MBSIMNS"frameOfReference",this,((Group*)getParentElement())->getFrame(0)),true);
   properties->addToTab("Kinematics", frameOfReference);
 
   vector<PhysicalStringWidget*> input;
