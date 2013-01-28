@@ -236,10 +236,10 @@ namespace MBSim {
       /* GETTER / SETTER */
       void setPosition(const fmatvec::Vec3& PrPF_) { PrPF = PrPF_; }
       void setOrientation(const fmatvec::SqrMat3& APF_) { APF = APF_; }
-      void setFrameOfReference(Frame *frame) { frameParent = frame; };
+      void setFrameOfReference(Frame *frame) { frameOfReference = frame; };
       const fmatvec::Vec3& getPosition() const { return PrPF; }
       const fmatvec::SqrMat3& getOrientation() const { return APF; }
-      const Frame* getFrameOfReference() const { return frameParent; };
+      const Frame* getFrameOfReference() const { return frameOfReference; };
 
       const fmatvec::Vec& getxd() const { return xd; };
       fmatvec::Vec& getxd() { return xd; };
@@ -784,7 +784,7 @@ namespace MBSim {
       /**
        * \brief parent frame
        */
-      Frame *frameParent;
+      Frame *frameOfReference;
 
       /**
        * \brief relative translation with respect to parent frame
