@@ -788,7 +788,7 @@ namespace MBSim {
     }
 
     e=element->FirstChildElement(MBSIMNS"frameForKinematics");
-    setFrameForKinematics(getByPath<Frame>(e->Attribute("ref"))); // must be on of "Frame[X]" which allready exists
+    if(e) setFrameForKinematics(getByPath<Frame>(e->Attribute("ref"))); // must be on of "Frame[X]" which allready exists
     e=element->FirstChildElement(MBSIMNS"mass");
     setMass(getDouble(e));
     e=element->FirstChildElement(MBSIMNS"inertiaTensor");

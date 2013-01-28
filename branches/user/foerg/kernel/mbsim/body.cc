@@ -103,11 +103,11 @@ namespace MBSim {
     }
     if(stage==preInit) {
       Object::init(stage);
-      if(frameOfReference) {
-        Body* obj = dynamic_cast<Body*>(frameOfReference->getParent());
-        if(obj)
-          dependency.push_back(obj);
-      }
+      if(!frameOfReference)
+        frameOfReference = dynamic_cast<DynamicSystem*>(parent)->getFrameI();
+      Body* obj = dynamic_cast<Body*>(frameOfReference->getParent());
+      if(obj)
+        dependency.push_back(obj);
     }
     else if(stage==MBSim::plot) {
       updatePlotFeatures();
@@ -203,7 +203,7 @@ namespace MBSim {
     TiXmlElement *e;
     Object::initializeUsingXML(element);
     e=element->FirstChildElement(MBSIMNS"frameOfReference");
-    saved_frameOfReference=e->Attribute("ref");
+    if(e) saved_frameOfReference=e->Attribute("ref");
   }
 
   TiXmlElement* Body::writeXMLFile(TiXmlNode *parent) {
