@@ -73,7 +73,9 @@ bool LocalFrameOfReferenceWidget::initializeUsingXML(TiXmlElement *parent) {
     refF=e->Attribute("ref");
     refF=refF.substr(6, refF.length()-7);
     setFrame(refF==""?element->getFrame(0):element->getFrame(refF));
+    return true;
   }
+  return false;
 }
 
 TiXmlElement* LocalFrameOfReferenceWidget::writeXMLFile(TiXmlNode *parent) {
@@ -132,9 +134,9 @@ bool ParentFrameOfReferenceWidget::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *e = parent->FirstChildElement(xmlName);
   if(e) {
     saved_frameOfReference = e->Attribute("ref");
-    //setFrame(refF==""?element->getParentElement()->getFrame(0):element->getParentElement()->getFrame(refF));
     return true;
   }
+  return false;
 }
 
 TiXmlElement* ParentFrameOfReferenceWidget::writeXMLFile(TiXmlNode *parent) {
@@ -189,8 +191,11 @@ void FrameOfReferenceWidget::setFrame(Frame* frame_) {
 
 bool FrameOfReferenceWidget::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *e = parent->FirstChildElement(xmlName);
-  if(e)
+  if(e) {
     saved_frameOfReference=e->Attribute("ref");
+    return true;
+  }
+  return false;
 }
 
 TiXmlElement* FrameOfReferenceWidget::writeXMLFile(TiXmlNode *parent) {
