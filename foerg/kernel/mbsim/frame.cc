@@ -265,7 +265,7 @@ namespace MBSim {
   }
 
   void RigidBodyFrame::init(InitStage stage) {
-    if(stage==unknownStage) {
+    if(stage==preInit) {
       if(!frameOfReference)
         frameOfReference = ((RigidBody*)parent)->getFrameC();
       FixedRelativeFrame::init(stage);
@@ -275,7 +275,7 @@ namespace MBSim {
   }
 
   void WorldFrame::init(InitStage stage) {
-    if(stage==unknownStage) {
+    if(stage==preInit) {
       if(!frameOfReference)
         frameOfReference = ((DynamicSystem*)parent)->getFrameI();
       FixedRelativeFrame::init(stage);

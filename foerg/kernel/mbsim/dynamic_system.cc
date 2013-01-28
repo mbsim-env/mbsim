@@ -45,7 +45,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  DynamicSystem::DynamicSystem(const string &name) : Element(name), frameParent(0), PrPF(Vec3()), APF(SqrMat3(EYE)), q0(0), u0(0), x0(0), qSize(0), qInd(0), xSize(0), xInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0), LinkStatusSize(0), LinkStatusInd(0), LinkStatusRegSize(0), LinkStatusRegInd(0)
+  DynamicSystem::DynamicSystem(const string &name) : Element(name), frameOfReference(0), PrPF(Vec3()), APF(SqrMat3(EYE)), q0(0), u0(0), x0(0), qSize(0), qInd(0), xSize(0), xInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0), LinkStatusSize(0), LinkStatusInd(0), LinkStatusRegSize(0), LinkStatusRegInd(0)
 #ifdef HAVE_OPENMBVCPPINTERFACE                      
                                                      , openMBVGrp(0), corrInd(0)
 #endif
@@ -480,7 +480,14 @@ namespace MBSim {
   }
 
   void DynamicSystem::init(InitStage stage) {
-    if(stage==relativeFrameContourLocation) {
+    if(stage==preInit) {
+      if(!frameOfReference) {
+        DynamicSystem *sys = dynamic_cast<DynamicSystem*>(parent);
+        if(sys)
+          frameOfReference = sys->getFrameI();
+      }
+    }
+    else if(stage==relativeFrameContourLocation) {
       // This outer loop is nessesary because the frame hierarchy must not be in the correct order!
       for(unsigned int k=1; k<frame.size(); k++)
         for(unsigned int j=1; j<frame.size(); j++) {
@@ -493,9 +500,9 @@ namespace MBSim {
         }
     }
     else if(stage==worldFrameContourLocation) {
-      if(frameParent) {
-        I->setPosition(frameParent->getPosition() + frameParent->getOrientation()*PrPF);
-        I->setOrientation(frameParent->getOrientation()*APF);
+      if(frameOfReference) {
+        I->setPosition(frameOfReference->getPosition() + frameOfReference->getOrientation()*PrPF);
+        I->setOrientation(frameOfReference->getOrientation()*APF);
       }
       else {
         DynamicSystem* sys = dynamic_cast<DynamicSystem*>(parent);
