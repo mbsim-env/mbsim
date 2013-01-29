@@ -208,7 +208,7 @@ System::System(const string &projectName, int contactType, int firstBall, int la
 
       for (size_t contactIter = 0; contactIter < balls.size(); contactIter++) {
         stringstream contactname;
-        contactname << "Contact_Beam-" << ballsContours[contactIter]->getName();
+        contactname << "Contact_Beam_" << ballsContours[contactIter]->getName();
 
         ContourPairing* contourPairing = new ContourPairing(contactname.str(), BeamContour, ballsContours[contactIter]);
         //contourPairing->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mu)));
@@ -228,7 +228,7 @@ System::System(const string &projectName, int contactType, int firstBall, int la
     case 1: //regularized contact
       for (size_t contactIter = 0; contactIter < balls.size(); contactIter++) {
         stringstream contactname;
-        contactname << "Contact_Pyr-" << ballsContours[contactIter]->getName();
+        contactname << "Contact_Pyr_" << ballsContours[contactIter]->getName();
 
         Contact* contact = new Contact(contactname.str());
         //Force law (normal direction)
@@ -252,7 +252,7 @@ System::System(const string &projectName, int contactType, int firstBall, int la
     case 2:
       for (size_t contactIter = 0; contactIter < balls.size(); contactIter++) {
         stringstream contactname;
-        contactname << "Contact_Pyr-" << ballsContours[contactIter]->getName();
+        contactname << "Contact_Pyr_" << ballsContours[contactIter]->getName();
 
         Contact* contact = new Contact(contactname.str());
         //Force law (normal direction)
