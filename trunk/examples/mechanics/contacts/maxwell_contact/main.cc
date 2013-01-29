@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
           throw MBSimError("No valid contactType chosen");
       }
 
-      MBSName << "_CircNo=" << contactNums;
+      MBSName << "_" << contactNums << "Contacts";
 
       //stream output to a file
 //      freopen((MBSName.str()+"_Output.txt").c_str(), "w+", stdout);
