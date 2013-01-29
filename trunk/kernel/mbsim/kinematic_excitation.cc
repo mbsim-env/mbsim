@@ -78,7 +78,7 @@ namespace MBSim {
 
   void KinematicExcitation::updateJacobians(double t, int j) {
     Vec3 WrP0P1 = body->getFrameForKinematics()->getPosition()-body->getFrameOfReference()->getPosition();
-    Mat33 tWrP0P1 = tilde(WrP0P1);
+    Mat3x3 tWrP0P1 = tilde(WrP0P1);
 
     C.setOrientation(body->getFrameOfReference()->getOrientation());
     C.setPosition(body->getFrameOfReference()->getPosition() + WrP0P1);

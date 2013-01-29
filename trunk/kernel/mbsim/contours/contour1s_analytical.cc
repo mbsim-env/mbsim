@@ -62,7 +62,7 @@ namespace MBSim {
 
   void Contour1sAnalytical::updateJacobiansForFrame(ContourPointData &cp, int j) {
     Vec3 WrPC = cp.getFrameOfReference().getPosition() - R.getPosition();
-    Mat33 tWrPC = tilde(WrPC);
+    Mat3x3 tWrPC = tilde(WrPC);
 
     cp.getFrameOfReference().setJacobianOfTranslation(
         R.getJacobianOfTranslation(j) - tWrPC*R.getJacobianOfRotation(j),j);

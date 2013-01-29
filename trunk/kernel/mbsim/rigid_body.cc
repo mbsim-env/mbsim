@@ -273,7 +273,7 @@ namespace MBSim {
           fPdJR = new JdRotationAboutAxesXY(nu[0]);
         }
         else if(dynamic_cast<CardanAngles*>(fAPK)) {
-          JR = Mat33(EYE);
+          JR = Mat3x3(EYE);
           if(cb)
             fT = new TCardanAngles2(nq,nu[0]);
           else
@@ -284,7 +284,7 @@ namespace MBSim {
           fPdJR = new JdRotationAboutAxesXYZ(nu[0]);
         }
 	else if(dynamic_cast<EulerAngles*>(fAPK)) {
-          JR = Mat33(EYE);
+          JR = Mat3x3(EYE);
           if(cb)
             fT = new TEulerAngles2(nq,nu[0]);
           else
