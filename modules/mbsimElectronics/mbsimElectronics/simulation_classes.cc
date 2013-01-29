@@ -151,14 +151,14 @@ namespace MBSimElectronics {
   void Branch::updateStateDependentVariables(double t) {
     Q(0) = 0;
     I(0) = 0;
-    for(int i=0; i<mesh.size(); i++) {
+    for(size_t i=0; i<mesh.size(); i++) {
       Q(0) += J[0](0,mesh[i]->gethSize()-1)*mesh[i]->getq()(0);
       I(0) += J[0](0,mesh[i]->gethSize()-1)*mesh[i]->getu()(0);
     }
   }
 
   void Branch::setvz(double vz_, Mesh* mesh_) {
-    for(int i=0; i<mesh.size(); i++)
+    for(size_t i=0; i<mesh.size(); i++)
       if(mesh_ == mesh[i])
 	vz[i] = vz_;
   }
@@ -179,7 +179,7 @@ namespace MBSimElectronics {
     if(stage==MBSim::unknownStage) {
       if(J[0].cols() == 0) {
 	J[0].resize(1,gethSize(0));
-	for(int i=0; i<mesh.size(); i++)
+	for(size_t i=0; i<mesh.size(); i++)
 	  J[0](0,mesh[i]->gethSize()-1) = vz[i]; 
       }
       if(J[1].cols() == 0) {
@@ -219,7 +219,7 @@ namespace MBSimElectronics {
       setFlag(4);
     Terminal *sT;
     sT = callingTerminal == getEndTerminal() ? getStartTerminal() : getEndTerminal();
-    for(unsigned int i=0; i<sT->getNumberOfConnectedBranches(); i++) {
+    for(int i=0; i<sT->getNumberOfConnectedBranches(); i++) {
       if(sT->getBranch(i) != this) { // nur vorwärts laufen
 	if(sT->getBranch(i)->getFlag() == 3) // Branch ist TreeBranch
 	  sT->getBranch(i)->buildMeshes(sT, callingBranch, currentMesh, foundMesh);
@@ -277,10 +277,8 @@ namespace MBSimElectronics {
     }
 
     //cout <<endl<< gd(0) << " "<< gdn(0) <<" "  << la(0)  <<endl;
-    if(gdn(0) >= -gdTol && fabs(la(0)) <= LaTol)
-      ; 
-    else if(la(0) >= -LaTol && fabs(gdn(0)) <= gdTol)
-      ;
+    if(gdn(0) >= -gdTol && fabs(la(0)) <= LaTol);
+    else if(la(0) >= -LaTol && fabs(gdn(0)) <= gdTol);
     else {
       ds->setTermination(false);
       return;

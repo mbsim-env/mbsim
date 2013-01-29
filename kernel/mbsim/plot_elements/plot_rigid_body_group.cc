@@ -208,7 +208,7 @@ namespace MBSim {
         Vec3 psii = body[i]->getFrame("C")->getAngularAcceleration();
         double mi = body[i]->getMass();
         //L += (AIK*body[i]->getInertiaTensor()*AIK.T() - body[i]->getMass()*tilde(rRi)*tilde(rRi))*body[i]->getFrame("C")->getAngularVelocity();
-        Mat33 WThetaS = AIK*body[i]->getInertiaTensor()*AIK.T();
+        Mat3x3 WThetaS = AIK*body[i]->getInertiaTensor()*AIK.T();
         L += WThetaS*omi + crossProduct(rRSi,mi*vSi);
         Ld += WThetaS*psii + crossProduct(omi,WThetaS*omi) + crossProduct(rRSi,mi*aSi);
       }
