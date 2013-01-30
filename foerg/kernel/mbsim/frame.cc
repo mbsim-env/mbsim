@@ -202,43 +202,6 @@ namespace MBSim {
     }
   }
 
-  void FixedRelativeFrame::updatePosition(double t) {
-    WrRP = frameOfReference->getOrientation()*RrRP;
-    setPosition(frameOfReference->getPosition() + WrRP);
-  }
-  
-  void FixedRelativeFrame::updateOrientation(double t) {
-    setOrientation(frameOfReference->getOrientation()*ARP);
-  }
-
-  void FixedRelativeFrame::updateVelocity(double t) {
-    setVelocity(frameOfReference->getVelocity() + crossProduct(frameOfReference->getAngularVelocity(), WrRP));
-  }
-
-  void FixedRelativeFrame::updateAngularVelocity(double t) {
-    setAngularVelocity(frameOfReference->getAngularVelocity());
-  }
-
-  void FixedRelativeFrame::updateStateDependentVariables(double t) {
-    updatePosition(t);
-    updateOrientation(t);
-    updateVelocity(t);
-    updateAngularVelocity(t);
-  }
-
-  void FixedRelativeFrame::updateJacobians(double t, int j) {
-    SqrMat3 tWrRP = tilde(WrRP);
-    setJacobianOfTranslation(frameOfReference->getJacobianOfTranslation(j) - tWrRP*frameOfReference->getJacobianOfRotation(j),j);
-    setJacobianOfRotation(frameOfReference->getJacobianOfRotation(j),j);
-    setGyroscopicAccelerationOfTranslation(frameOfReference->getGyroscopicAccelerationOfTranslation(j) - tWrRP*frameOfReference->getGyroscopicAccelerationOfRotation(j) + crossProduct(frameOfReference->getAngularVelocity(),crossProduct(frameOfReference->getAngularVelocity(),WrRP)),j);
-    setGyroscopicAccelerationOfRotation(frameOfReference->getGyroscopicAccelerationOfRotation(j),j);
-  }
-
-  void FixedRelativeFrame::updateStateDerivativeDependentVariables(const Vec &ud, double t) {
-    setAcceleration(getJacobianOfTranslation()*ud + getGyroscopicAccelerationOfTranslation());
-    setAngularAcceleration(getJacobianOfRotation()*ud + getGyroscopicAccelerationOfRotation());
-  }
-
   void FixedRelativeFrame::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       if(saved_frameOfReference!="")

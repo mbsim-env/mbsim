@@ -115,17 +115,17 @@ namespace MBSim {
 
   void CompoundContour::updateStateDependentVariables(double t) {
     for(unsigned int i=0; i<element.size(); i++)
-      frame[i]->updateStateDependentVariables(t);
+      frame[i]->updateStateDependentVariables();
   }
 
   void CompoundContour::updateJacobians(double t, int j) {
     for(unsigned int i=0; i<element.size(); i++)
-      frame[i]->updateJacobians(t,j);
+      frame[i]->updateJacobians(j);
   }
 
   void CompoundContour::updateStateDerivativeDependentVariables(const Vec &ud, double t) {
     for(unsigned int i=0; i<element.size(); i++)
-      frame[i]->updateStateDerivativeDependentVariables(ud,t);
+      frame[i]->updateStateDerivativeDependentVariables(ud);
   }
 
 }

@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@gmail.com
  */
 
-#ifndef _PLOT_FRAME_H__
-#define _PLOT_FRAME_H__
+#ifndef _FRAME_OBSERVER_H__
+#define _FRAME_OBSERVER_H__
 #include "mbsim/element.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -33,7 +33,7 @@ namespace MBSim {
   class RigidBody;
   class Frame;
 
-  class PlotFrame : public Element {
+  class FrameObserver : public Element {
     private:
       Frame* frame;
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -44,7 +44,7 @@ namespace MBSim {
 #endif
 
     public:
-      PlotFrame(const std::string &name);
+      FrameObserver(const std::string &name);
       void setFrame(Frame *frame_) { frame = frame_; } 
 
       void init(InitStage stage);

@@ -183,14 +183,30 @@ namespace MBSim {
       const fmatvec::Vec3& getRelativePosition() const { return RrRP; }
       const fmatvec::SqrMat3& getRelativeOrientation() const { return ARP; }
       const Frame* getFrameOfReference() const { return frameOfReference; }
+      const fmatvec::Vec3& getWrRP() const { return WrRP; }
 
-      virtual void updatePosition(double t); 
-      virtual void updateOrientation(double t); 
-      virtual void updateVelocity(double t); 
-      virtual void updateAngularVelocity(double t); 
-      virtual void updateStateDependentVariables(double t);
-      virtual void updateJacobians(double t, int j=0); 
-      virtual void updateStateDerivativeDependentVariables(const fmatvec::Vec &ud, double t);
+      void updateRelativePosition() { WrRP = frameOfReference->getOrientation()*RrRP; }
+      void updatePosition() { updateRelativePosition(); setPosition(frameOfReference->getPosition() + WrRP); }
+      void updateOrientation() { setOrientation(frameOfReference->getOrientation()*ARP); }
+      void updateVelocity() { setVelocity(frameOfReference->getVelocity() + crossProduct(frameOfReference->getAngularVelocity(), WrRP)); } 
+      void updateAngularVelocity() { setAngularVelocity(frameOfReference->getAngularVelocity()); }
+      void updateStateDependentVariables() {
+        updatePosition();
+        updateOrientation();
+        updateVelocity();
+        updateAngularVelocity();
+      }
+      void updateJacobians(int j=0) {
+        fmatvec::SqrMat3 tWrRP = tilde(WrRP);
+        setJacobianOfTranslation(frameOfReference->getJacobianOfTranslation(j) - tWrRP*frameOfReference->getJacobianOfRotation(j),j);
+        setJacobianOfRotation(frameOfReference->getJacobianOfRotation(j),j);
+        setGyroscopicAccelerationOfTranslation(frameOfReference->getGyroscopicAccelerationOfTranslation(j) - tWrRP*frameOfReference->getGyroscopicAccelerationOfRotation(j) + crossProduct(frameOfReference->getAngularVelocity(),crossProduct(frameOfReference->getAngularVelocity(),WrRP)),j);
+        setGyroscopicAccelerationOfRotation(frameOfReference->getGyroscopicAccelerationOfRotation(j),j);
+      }
+      void updateStateDerivativeDependentVariables(const fmatvec::Vec &ud) { 
+        setAcceleration(getJacobianOfTranslation()*ud + getGyroscopicAccelerationOfTranslation()); 
+        setAngularAcceleration(getJacobianOfRotation()*ud + getGyroscopicAccelerationOfRotation());
+      }
 
       virtual void initializeUsingXML(TiXmlElement *element);
       virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
