@@ -82,17 +82,20 @@ cfgOpts.add_argument("--atol", default=1e-5, type=float,
   help="Absolute tolerance. Channel comparing failed if for at least ONE datapoint the abs. AND rel. toleranz is violated")
 cfgOpts.add_argument("--rtol", default=1e-5, type=float,
   help="Relative tolerance. Channel comparing failed if for at least ONE datapoint the abs. AND rel. toleranz is violated")
-cfgOpts.add_argument("--disableRun", default=False, type=bool, nargs="?", const=True, help="disable running the example on action 'report'")
-cfgOpts.add_argument("--disableCompare", default=False, type=bool, nargs="?", const=True, help="disable comparing the results on action 'report'")
-cfgOpts.add_argument("--disableValidate", default=False, type=bool, nargs="?", const=True, help="disable validating the XML files on action 'report'")
+cfgOpts.add_argument("--disableRun", action="store_true", help="disable running the example on action 'report'")
+cfgOpts.add_argument("--disableCompare", action="store_true", help="disable comparing the results on action 'report'")
+cfgOpts.add_argument("--disableValidate", action="store_true", help="disable validating the XML files on action 'report'")
 
 outOpts=argparser.add_argument_group('Output Options')
-outOpts.add_argument("--reportOutDir", default="html", type=str, help="the output directory of the report")
-outOpts.add_argument("--url", type=str, help="the URL where the report output is accessible (without the trailing '/index.html'. Only used for the RSS feed")
+outOpts.add_argument("--reportOutDir", default="runexamples_report", type=str, help="the output directory of the report")
+outOpts.add_argument("--url", type=str,
+  help="the URL where the report output is accessible (without the trailing '/index.html'. Only used for the RSS feed")
 
 debugOpts=argparser.add_argument_group('Debugging Options')
-debugOpts.add_argument("--debugDisableMultiprocessing", default=False, type=bool, nargs="?", const=True, help="disable the --job option and run always in a single process/thread")
-debugOpts.add_argument("--debugValidateHTMLOutput", default=False, type=bool, nargs="?", const=True, help="validate all generated html output files at the end")
+debugOpts.add_argument("--debugDisableMultiprocessing", action="store_true",
+  help="disable the -j option and run always in a single process/thread")
+debugOpts.add_argument("--debugValidateHTMLOutput", action="store_true",
+  help="validate all generated html output files at the end")
 
 # parse command line options
 args = argparser.parse_args()
