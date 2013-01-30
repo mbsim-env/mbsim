@@ -914,7 +914,7 @@
     <xs:complexContent>
       <xs:extension base="ObjectType">
         <xs:sequence>
-          <xs:element name="frameOfReference">
+          <xs:element name="frameOfReference" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Definiert das KOS bezüglich dessen die Bewegung (Kinematik; generalisierte Lagen) des Körpers angegeben wird.<br/>
@@ -946,7 +946,7 @@
     <xs:complexContent>
       <xs:extension base="BodyType">
         <xs:sequence>
-          <xs:element name="frameForKinematics">
+          <xs:element name="frameForKinematics" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Definiert das KOS, dessen relative Bewegung bezüglich des <tt>frameOfReference</tt>
