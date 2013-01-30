@@ -252,10 +252,10 @@ namespace MBSim {
       virtual void initializeUsingXML(TiXmlElement *element);
       virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
 
-      virtual void updatePositionAndOrientationOfFrame(double t, unsigned int i);
-      virtual void updateAccelerations(double t, unsigned int i);
-      virtual void updateRelativeJacobians(double t, unsigned int i);
-      virtual void updateRelativeJacobians(double t, unsigned int i, fmatvec::Mat3V &WJTrel, fmatvec::Mat3V &WJRrel);
+      virtual void updatePositionAndOrientationOfFrame(double t, Frame *P);
+      virtual void updateAccelerations(double t, Frame *P);
+      virtual void updateRelativeJacobians(double t, Frame *P);
+      virtual void updateRelativeJacobians(double t, Frame *P, fmatvec::Mat3V &WJTrel, fmatvec::Mat3V &WJRrel);
       const fmatvec::Mat3V& getWJTrel() const {return WJTrel;}
       const fmatvec::Mat3V& getWJRrel() const {return WJRrel;}
       fmatvec::Mat3V& getWJTrel() {return WJTrel;}
@@ -281,11 +281,6 @@ namespace MBSim {
       fmatvec::SymMat3 SThetaS, WThetaS;
 
       RigidBodyFrame *K;
-
-      /**
-       * \brief Frame indices for kinematics and inertia description
-       */
-      int iKinematics;
 
       /**
        * \brief TODO

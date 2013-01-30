@@ -46,7 +46,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  DynamicSystem::DynamicSystem(const string &name) : Element(name), frameOfReference(0), PrPF(Vec3()), APF(SqrMat3(EYE)), q0(0), u0(0), x0(0), qSize(0), qInd(0), xSize(0), xInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0), LinkStatusSize(0), LinkStatusInd(0), LinkStatusRegSize(0), LinkStatusRegInd(0)
+  DynamicSystem::DynamicSystem(const string &name) : Element(name), R(0), PrPF(Vec3()), APF(SqrMat3(EYE)), q0(0), u0(0), x0(0), qSize(0), qInd(0), xSize(0), xInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0), LinkStatusSize(0), LinkStatusInd(0), LinkStatusRegSize(0), LinkStatusRegInd(0)
 #ifdef HAVE_OPENMBVCPPINTERFACE                      
                                                      , openMBVGrp(0), corrInd(0)
 #endif
@@ -60,11 +60,8 @@ namespace MBSim {
                                                        hInd[0] = 0;
                                                        hInd[1] = 0;
 
-                                                       I=new Frame("I");
+                                                       I=new WorldFrame("I");
                                                        addFrame(I);
-
-                                                       IrOF.push_back(Vec3());
-                                                       AIF.push_back(SqrMat3(EYE));
                                                      }
 
   DynamicSystem::~DynamicSystem() {
@@ -480,28 +477,30 @@ namespace MBSim {
 
   void DynamicSystem::init(InitStage stage) {
     if(stage==preInit) {
-      if(!frameOfReference) {
+      if(!R) {
         DynamicSystem *sys = dynamic_cast<DynamicSystem*>(parent);
         if(sys)
-          frameOfReference = sys->getFrameI();
+          R = sys->getFrameI();
       }
     }
     else if(stage==relativeFrameContourLocation) {
-      // This outer loop is nessesary because the frame hierarchy must not be in the correct order!
-      for(unsigned int k=1; k<frame.size(); k++)
-        for(unsigned int j=1; j<frame.size(); j++) {
-          int i = 0;
-          WorldFrame *frame_ = static_cast<WorldFrame*>(frame[j]);
-          if(frame_->getFrameOfReference()) i = frameIndex(frame_->getFrameOfReference());
-
-          IrOF[j]=IrOF[i] + AIF[i]*frame_->getRelativePosition();
-          AIF[j]=AIF[i]*frame_->getRelativeOrientation();
-        }
+      for(unsigned int k=1; k<frame.size(); k++) {
+        WorldFrame *P = (WorldFrame*)frame[k];
+        cout << P->getName() << endl;
+        const WorldFrame *R = P;
+        do {
+          R = dynamic_cast<const WorldFrame*>(R->getFrameOfReference());
+          cout << R << endl;
+          P->setRelativePosition(R->getRelativePosition() + R->getRelativeOrientation()*P->getRelativePosition());
+          P->setRelativeOrientation(R->getRelativeOrientation()*P->getRelativeOrientation());
+        } while(R!=I);
+        P->setFrameOfReference(I);
+      }
     }
     else if(stage==worldFrameContourLocation) {
-      if(frameOfReference) {
-        I->setPosition(frameOfReference->getPosition() + frameOfReference->getOrientation()*PrPF);
-        I->setOrientation(frameOfReference->getOrientation()*APF);
+      if(R) {
+        I->setPosition(R->getPosition() + R->getOrientation()*PrPF);
+        I->setOrientation(R->getOrientation()*APF);
       }
       else {
         DynamicSystem* sys = dynamic_cast<DynamicSystem*>(parent);
@@ -515,8 +514,8 @@ namespace MBSim {
         }
       }
       for(unsigned int i=1; i<frame.size(); i++) { // kinematics of other frames can be updates from frame I 
-        frame[i]->setPosition(I->getPosition() + I->getOrientation()*IrOF[i]);
-        frame[i]->setOrientation(I->getOrientation()*AIF[i]);
+        ((WorldFrame*)frame[i])->updatePosition();
+        ((WorldFrame*)frame[i])->updateOrientation();
       }
     }
     else if(stage==MBSim::plot) {
@@ -1312,25 +1311,14 @@ namespace MBSim {
       (**i).setrMax(rMax);
   }
 
-  void DynamicSystem::addFrame(Frame* cosy) {
-    if(getFrame(cosy->getName(),false)) { 
-      throw MBSimError("The DynamicSystem \""+name+"\" can only comprises one Frame by the name \""+name+"\"!");
-      assert(getFrame(cosy->getName(),false)==NULL);
-    }
-    frame.push_back(cosy);
-    cosy->setParent(this);
-  }
-
   void DynamicSystem::addFrame(WorldFrame *frame_) {
-    addFrame((Frame*)frame_);
-
-    IrOF.push_back(Vec3());
-    AIF.push_back(SqrMat3());
+    if(getFrame(frame_->getName(),false)) { 
+      throw MBSimError("The DynamicSystem \""+name+"\" can only comprises one Frame by the name \""+name+"\"!");
+      assert(getFrame(frame_->getName(),false)==NULL);
+    }
+    frame.push_back(frame_);
+    frame_->setParent(this);
   }
-
-//  void DynamicSystem::addFrame(Frame* frame_, const Vec3 &RrRF, const SqrMat3 &ARF, const string& refFrameName) {
-//    addFrame(frame_,RrRF,ARF,refFrameName!=""?getFrame(refFrameName):frame[0]);
-//  }
 
   void DynamicSystem::addFrame(Frame *frame_, const Vec3 &RrRF, const SqrMat3 &ARF, const Frame* refFrame) {
     WorldFrame *environmentFrame = new WorldFrame(frame_->getName(),RrRF,ARF,refFrame);
@@ -1352,10 +1340,6 @@ namespace MBSim {
     contour.push_back(contour_);
     contour_->setParent(this);
   }
-
-//  void DynamicSystem::addContour(Contour* contour_, const Vec3 &RrRC, const SqrMat3 &ARC, const string& refFrameName) {
-//    addContour(contour_,RrRC,ARC,refFrameName!=""?getFrame(refFrameName):frame[0]);
-//  }
 
   void DynamicSystem::addContour(Contour* contour_, const fmatvec::Vec3 &RrRC, const fmatvec::SqrMat3 &ARC, const Frame* refFrame) {
     stringstream frameName;

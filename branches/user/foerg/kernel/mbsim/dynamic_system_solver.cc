@@ -136,7 +136,7 @@ namespace MBSim {
         str << frmList[i]->getParent()->getPath('/') << "/" << frmList[i]->getName();
         if(INFO) cout<<str.str()<<endl;
         frmList[i]->setName(str.str());
-        addFrame(frmList[i]);
+        addFrame((WorldFrame*)frmList[i]);
       }
       if(INFO) cout << "contour List:" << endl;
       for(unsigned int i=0; i<cntList.size(); i++) {

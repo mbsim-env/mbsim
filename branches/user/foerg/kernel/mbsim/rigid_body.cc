@@ -42,7 +42,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  RigidBody::RigidBody(const string &name) : Body(name), m(0), iKinematics(-1), cb(false), APK(EYE), fT(0), fPrPK(0), fAPK(0), fPJT(0), fPJR(0), fPdJT(0), fPdJR(0), fPjT(0), fPjR(0), fPdjT(0), fPdjR(0), constraint(0), frameForJacobianOfRotation(0) {
+  RigidBody::RigidBody(const string &name) : Body(name), m(0), cb(false), APK(EYE), fT(0), fPrPK(0), fAPK(0), fPJT(0), fPJR(0), fPdJT(0), fPdJR(0), fPjT(0), fPjR(0), fPdjT(0), fPdjR(0), constraint(0), frameForJacobianOfRotation(0) {
 
     C=new RigidBodyFrame("C");
     Body::addFrame(C);
@@ -103,10 +103,8 @@ namespace MBSim {
   }
 
   void RigidBody::updateStateDerivativeDependentVariables(double t) {
-    for(unsigned int i=0; i<frame.size(); i++) {
-      frame[i]->setAcceleration(frame[i]->getJacobianOfTranslation()*udall[0] + frame[i]->getGyroscopicAccelerationOfTranslation());
-      frame[i]->setAngularAcceleration(frame[i]->getJacobianOfRotation()*udall[0] + frame[i]->getGyroscopicAccelerationOfRotation());
-    }
+    for(unsigned int i=0; i<frame.size(); i++)
+      ((RigidBodyFrame*)frame[i])->updateStateDerivativeDependentVariables(udall[0]);
     for(unsigned int i=0; i<RBC.size(); i++)
       RBC[i]->updateStateDerivativeDependentVariables(udall[0],t);
   }
@@ -177,50 +175,23 @@ namespace MBSim {
     if(stage==preInit) {
       Body::init(stage);
 
-      iKinematics = frameIndex(K);
-      assert(iKinematics > -1);
-
       if(constraint)
         dependency.push_back(constraint);
     }
     else if(stage==relativeFrameContourLocation) {
 
-      //C->setFrameOfReference(0);
-      //if(K!=C) {
-      //  C->setFrameOfReference(K);
-      //  C->setRelativeOrientation(ASF[iKinematics].T());
-      //  C->setRelativePosition(-(C->getRelativeOrientation()*SrSF[iKinematics]));
-      //  RBF.push_back(K);
-      //}
-
       //RBF.push_back(C);
-      //RBF2.push_back(C);
-      //for(unsigned int k=1; k<frame.size(); k++) {
-      //  if(frame[k]!=K) {
-      //    RBF.push_back((RigidBodyFrame*)frame[k]);
-      //    RBF[RBF.size()-1]->setFrameOfReference(K);
-      //    RBF[RBF.size()-1]->setRelativePosition(C->getRelativeOrientation()*(SrSF[k]-SrSF[iKinematics]));
-      //    RBF[RBF.size()-1]->setRelativeOrientation(C->getRelativeOrientation()*ASF[k]);
-      //  }
-      //  RBF2.push_back((RigidBodyFrame*)frame[k]);
-      //}
-      //for(unsigned int k=0; k<contour.size(); k++) {
-      //  CompoundContour *c = dynamic_cast<CompoundContour*>(contour[k]);
-      //  if(c) RBC.push_back(c);
-      //}
-
-      C->setFrameOfReference(0);
-      RBF.push_back(C);
       for(unsigned int k=1; k<frame.size(); k++) {
         RigidBodyFrame *P = (RigidBodyFrame*)frame[k];
-        const RigidBodyFrame *R = dynamic_cast<const RigidBodyFrame*>(P->getFrameOfReference());
+        const RigidBodyFrame *R = P;
         do {
+          R = dynamic_cast<const RigidBodyFrame*>(R->getFrameOfReference());
           P->setRelativePosition(R->getRelativePosition() + R->getRelativeOrientation()*P->getRelativePosition());
           P->setRelativeOrientation(R->getRelativeOrientation()*P->getRelativeOrientation());
-          R = dynamic_cast<const RigidBodyFrame*>(R->getFrameOfReference());
-        } while(R);
+        } while(R!=C);
         P->setFrameOfReference(C);
-        RBF.push_back(P);
+        if(P!=K)
+          RBF.push_back(P);
       }
       if(K!=C) {
         C->setFrameOfReference(K);
@@ -329,7 +300,7 @@ namespace MBSim {
 
         // TODO: Alle Fälle überprüfen
         if(cb) {
-          if(iKinematics == 0 && dynamic_cast<DynamicSystem*>(R->getParent())) {
+          if(K != C && dynamic_cast<DynamicSystem*>(R->getParent())) {
             updateM_ = &RigidBody::updateMConst;
             Mbuf = m*JTJ(PJT[0]) + JTMJ(SThetaS,PJR[0]);
             LLM[0] = facLL(Mbuf);
@@ -487,10 +458,9 @@ namespace MBSim {
   }
 
   void RigidBody::updateKinematicsForRemainingFramesAndContours(double t) {
-    if(iKinematics != 0) RBF[0]->updateStateDependentVariables();
-    for(unsigned int i=1; i<RBF.size(); i++)
-      if(i!=unsigned(iKinematics))
-        RBF[i]->updateStateDependentVariables();
+    if(K != C) C->updateStateDependentVariables();
+    for(unsigned int i=0; i<RBF.size(); i++)
+      RBF[i]->updateStateDependentVariables();
     for(unsigned int i=0; i<RBC.size(); i++)
       RBC[i]->updateStateDependentVariables(t);
 
@@ -498,16 +468,17 @@ namespace MBSim {
   }
 
   void RigidBody::updateJacobiansForRemainingFramesAndContours(double t, int j) {
-    if(iKinematics != 0) RBF[0]->updateJacobians();
-    for(unsigned int i=1; i<RBF.size(); i++)
-      if(i!=unsigned(iKinematics))
-        RBF[i]->updateJacobians(j);
+    if(K != C) C->updateJacobians();
+    for(unsigned int i=0; i<RBF.size(); i++)
+      RBF[i]->updateJacobians(j);
     for(unsigned int i=0; i<RBC.size(); i++)
       RBC[i]->updateJacobians(t,j);
   }
 
   void RigidBody::updateJacobiansForRemainingFramesAndContours1(double t) {
-    for(unsigned int i=1; i<RBF.size(); i++) {
+    K->updateRelativePosition();
+    K->updateJacobians(1);
+    for(unsigned int i=0; i<RBF.size(); i++) {
       RBF[i]->updateRelativePosition();
       RBF[i]->updateJacobians(1);
     }
@@ -579,7 +550,7 @@ namespace MBSim {
     M[i] += m*JTJ(C->getJacobianOfTranslation(i)) + JTMJ(WThetaS,C->getJacobianOfRotation(i));
   }
 
-  void RigidBody::updatePositionAndOrientationOfFrame(double t, unsigned int i) {
+  void RigidBody::updatePositionAndOrientationOfFrame(double t, Frame *P) {
 
     if(fAPK)
       APK = (*fAPK)(qRel,t);
@@ -592,21 +563,19 @@ namespace MBSim {
 
     K->setPosition(WrPK + R->getPosition());
 
-    if(iKinematics != 0) {
-      RBF[0]->updateOrientation();
-      RBF[0]->updatePosition();
+    if(K != C) {
+      C->updateOrientation();
+      C->updatePosition();
       K->updateRelativePosition();
     }
 
-    if(i>0) {
-      if(i!=unsigned(iKinematics)) {
-        RBF[i]->updateOrientation();
-        RBF[i]->updatePosition();
-      }
+    if(P!=C && P!=K) {
+      ((RigidBodyFrame*)P)->updateOrientation();
+      ((RigidBodyFrame*)P)->updatePosition();
     }
   }
 
-  void RigidBody::updateRelativeJacobians(double t, unsigned int i) {
+  void RigidBody::updateRelativeJacobians(double t, Frame *P) {
 
     if(fPJT)
       PJT[0] = (*fPJT)(qRel,t);
@@ -624,22 +593,20 @@ namespace MBSim {
     K->setVelocity(R->getOrientation()*PjT+R->getVelocity() + crossProduct(R->getAngularVelocity(),WrPK));
     K->setAngularVelocity(frameForJacobianOfRotation->getOrientation()*PjR + R->getAngularVelocity());
 
-    if(iKinematics != 0) {
-      RBF[0]->updateAngularVelocity();
-      RBF[0]->updateVelocity();
-      WJTrel += tilde(RBF[iKinematics]->getWrRP())*WJRrel;
+    if(K != C) {
+      C->updateAngularVelocity();
+      C->updateVelocity();
+      WJTrel += tilde(K->getWrRP())*WJRrel;
     }
 
-    if(i>0) {
-      if(i!=unsigned(iKinematics)) {
-        RBF[i]->updateAngularVelocity();
-        RBF[i]->updateVelocity();
-        WJTrel -= tilde(RBF[i]->getWrRP())*WJRrel;
-      }
+    if(P!=C && P!=K) {
+      ((RigidBodyFrame*)P)->updateAngularVelocity();
+      ((RigidBodyFrame*)P)->updateVelocity();
+      WJTrel -= tilde(((RigidBodyFrame*)P)->getWrRP())*WJRrel;
     }
   }
 
-  void RigidBody::updateAccelerations(double t, unsigned int i) {
+  void RigidBody::updateAccelerations(double t, Frame *P) {
     K->getJacobianOfTranslation().init(0);
     K->getJacobianOfRotation().init(0);
     if(fPdJT)
@@ -654,7 +621,8 @@ namespace MBSim {
 
     WomPK = frameForJacobianOfRotation->getOrientation()*(PJR[0]*uRel + PjR);
     WvPKrel = R->getOrientation()*(PJT[0]*uRel + PjT);
-    frame[i]->setAngularVelocity(R->getAngularVelocity() + WomPK);
+
+    //frame[i]->setAngularVelocity(R->getAngularVelocity() + WomPK);
 
     // TODO prüfen ob Optimierungspotential
 
@@ -666,26 +634,20 @@ namespace MBSim {
     K->getJacobianOfTranslation().set(Index(0,2),Index(0,R->getJacobianOfTranslation().cols()-1), R->getJacobianOfTranslation() - tWrPK*R->getJacobianOfRotation());
     K->getJacobianOfRotation().set(Index(0,2),Index(0,R->getJacobianOfRotation().cols()-1), R->getJacobianOfRotation());
 
-   if(iKinematics != 0) RBF[0]->updateJacobians();
-   if(i>0) {
-     if(i!=unsigned(iKinematics)) {
-       RBF[i]->updateJacobians();
-     }
-   }
+   if(K != C) C->updateJacobians();
+   if(P!=C && P!=K)
+     ((RigidBodyFrame*)P)->updateJacobians();
   }
 
-  void RigidBody::updateRelativeJacobians(double t, unsigned int i, Mat3V &WJTrel0, Mat3V &WJRrel0) {
+  void RigidBody::updateRelativeJacobians(double t, Frame *P, Mat3V &WJTrel0, Mat3V &WJRrel0) {
 
-    if(iKinematics != 0) {
-      WJTrel0 += tilde(RBF[iKinematics]->getWrRP())*WJRrel0;
+    if(K != C) {
+      WJTrel0 += tilde(K->getWrRP())*WJRrel0;
     }
 
     // TODO: Zusammenfassen
-    if(i>0) {
-      if(i!=unsigned(iKinematics)) {
-        WJTrel0 -= tilde(RBF[i]->getWrRP())*WJRrel0;
-      }
-    }
+    if(P!=C && P!=K)
+      WJTrel0 -= tilde(((RigidBodyFrame*)P)->getWrRP())*WJRrel0;
   }
 
   void RigidBody::initializeUsingXML(TiXmlElement *element) {
