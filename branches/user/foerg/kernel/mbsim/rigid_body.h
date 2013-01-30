@@ -173,18 +173,12 @@ namespace MBSim {
       RigidBodyFrame* getFrameForKinematics() { return K; };
       RigidBodyFrame* getFrameC() { return C; };
       void isFrameOfBodyForRotation(bool cb_) { cb = cb_; }
-      std::vector<fmatvec::SqrMat3> getContainerForFrameOrientations() const { return ASF; }
-      std::vector<fmatvec::Vec3> getContainerForFramePositions() const { return SrSF; }
 
       /**
        * \param RThetaR  inertia tensor
        * \param refFrame optional reference Frame of inertia tensor, otherwise cog-Frame will be used as reference
        */
-      void setInertiaTensor(const fmatvec::SymMat3& RThetaR, const Frame* refFrame=0) {
-        if(refFrame)
-          iInertia = frameIndex(refFrame);
-        else
-          iInertia = 0;
+      void setInertiaTensor(const fmatvec::SymMat3& RThetaR) {
         SThetaS = RThetaR;
       }
 
@@ -291,7 +285,7 @@ namespace MBSim {
       /**
        * \brief Frame indices for kinematics and inertia description
        */
-      int iKinematics, iInertia;
+      int iKinematics;
 
       /**
        * \brief TODO
@@ -327,16 +321,6 @@ namespace MBSim {
        * \brief translational and angular velocity from parent to kinematic Frame in world system
        */
       fmatvec::Vec3 WvPKrel, WomPK;
-
-      /** 
-       * \brief vector of rotations from cog-Frame to specific Frame
-       */
-      std::vector<fmatvec::SqrMat3> ASF;
-
-      /** 
-       * \brief vector of translations from cog to specific Frame in cog- and world-system
-       */
-      std::vector<fmatvec::Vec3> SrSF;
 
       /**
        * \brief JACOBIAN for linear transformation between differentiated positions and velocities
