@@ -36,7 +36,7 @@ using namespace std;
 
 namespace MBSim {
 
-  JointConstraint::Residuum::Residuum(vector<RigidBody*> body1_, vector<RigidBody*> body2_, const Mat3V &dT_, const Mat3V &dR_,Frame *frame1_, Frame *frame2_,double t_,vector<int> i1_, vector<int> i2_) : body1(body1_),body2(body2_),dT(dT_),dR(dR_),frame1(frame1_), frame2(frame2_), t(t_), i1(i1_), i2(i2_) {}
+  JointConstraint::Residuum::Residuum(vector<RigidBody*> body1_, vector<RigidBody*> body2_, const Mat3V &dT_, const Mat3V &dR_,Frame *frame1_, Frame *frame2_,double t_,vector<Frame*> i1_, vector<Frame*> i2_) : body1(body1_),body2(body2_),dT(dT_),dR(dR_),frame1(frame1_), frame2(frame2_), t(t_), i1(i1_), i2(i2_) {}
   Vec JointConstraint::Residuum::operator()(const Vec &x, const void *) {
     Vec res(x.size(),NONINIT); 
     int nq = 0;
@@ -262,15 +262,15 @@ namespace MBSim {
         bd1[i]->addDependency(this);
       if(bd1.size()) {
         for(unsigned int i=0; i<bd1.size()-1; i++) 
-          if1.push_back(bd1[i]->frameIndex(bd1[i+1]->getFrameOfReference()));
-        if1.push_back(bd1[bd1.size()-1]->frameIndex(frame1));
+          if1.push_back(bd1[i+1]->getFrameOfReference());
+        if1.push_back(frame1);
       }
       for(unsigned int i=0; i<bd2.size(); i++)
         bd2[i]->addDependency(this);
       if(bd2.size()) {
         for(unsigned int i=0; i<bd2.size()-1; i++) 
-          if2.push_back(bd2[i]->frameIndex(bd2[i+1]->getFrameOfReference()));
-        if2.push_back(bd2[bd2.size()-1]->frameIndex(frame2));
+          if2.push_back(bd2[i+1]->getFrameOfReference());
+        if2.push_back(frame2);
       }
       Constraint::init(stage);
     }

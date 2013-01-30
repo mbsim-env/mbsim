@@ -237,10 +237,10 @@ namespace MBSim {
       /* GETTER / SETTER */
       void setPosition(const fmatvec::Vec3& PrPF_) { PrPF = PrPF_; }
       void setOrientation(const fmatvec::SqrMat3& APF_) { APF = APF_; }
-      void setFrameOfReference(Frame *frame) { frameOfReference = frame; };
+      void setFrameOfReference(Frame *frame) { R = frame; };
       const fmatvec::Vec3& getPosition() const { return PrPF; }
       const fmatvec::SqrMat3& getOrientation() const { return APF; }
-      const Frame* getFrameOfReference() const { return frameOfReference; };
+      const Frame* getFrameOfReference() const { return R; };
 
       const fmatvec::Vec& getxd() const { return xd; };
       fmatvec::Vec& getxd() { return xd; };
@@ -647,14 +647,6 @@ namespace MBSim {
 
       void addFrame(WorldFrame *frame);
 
-      ///**
-      // * \param frame to add
-      // * \param relative position of frame
-      // * \param relative orientation of frame
-      // * \param relation frame name
-      // */
-      //void addFrame(Frame *frame, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const std::string& refFrameName);
-
       /**
        * \param frame to add
        * \param relative position of frame
@@ -670,14 +662,6 @@ namespace MBSim {
        * \param relation frame
        */
       void addFrame(const std::string &str, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const Frame* refFrame=0);
-
-      ///**
-      // * \param contour to add
-      // * \param relative position of contour
-      // * \param relative orientation of contour
-      // * \param relation frame name
-      // */
-      //void addContour(Contour* contour, const fmatvec::Vec3 &RrRC, const fmatvec::SqrMat3 &ARC, const std::string& refFrameName);
 
       /**
        * \param contour to add
@@ -769,7 +753,7 @@ namespace MBSim {
       ModellingInterface* getModel(const std::string &name, bool check=true);
 
       /** Return frame "I" */
-      Frame *getFrameI() { return I; }
+      WorldFrame *getFrameI() { return I; }
 
       virtual Element *getByPathSearch(std::string path);
 
@@ -783,7 +767,7 @@ namespace MBSim {
       /**
        * \brief parent frame
        */
-      Frame *frameOfReference;
+      Frame *R;
 
       /**
        * \brief relative translation with respect to parent frame
@@ -951,16 +935,6 @@ namespace MBSim {
       int LinkStatusRegSize, LinkStatusRegInd;
       
       /**
-       * \brief inertial position of frames, contours (see group.h / tree.h)
-       */
-      std::vector<fmatvec::Vec3> IrOF;
-
-      /**
-       * \brief orientation to inertial frame of frames, contours (see group.h / tree.h)
-       */
-      std::vector<fmatvec::SqrMat3> AIF;
-
-      /**
        * \brief vector of frames and contours
        */
       std::vector<Frame*> frame;
@@ -971,17 +945,12 @@ namespace MBSim {
 #endif
 
       /**
-       * \param frame to add
-       */
-      void addFrame(Frame *frame_);
-
-      /**
        * \param contour to add
        */
       void addContour(Contour* contour);
 
       /** A pointer to frame "I" */
-      Frame *I;
+      WorldFrame *I;
 
       /** 
        * \brief size of contact force parameters of special links relative to parent
