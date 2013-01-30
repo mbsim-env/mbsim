@@ -33,7 +33,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  PlotFrame::PlotFrame(const std::string &name) : Element(name), frame(0), rscale(1), vscale(1), ascale(1) {
+  FrameObserver::FrameObserver(const std::string &name) : Element(name), frame(0), rscale(1), vscale(1), ascale(1) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     openMBVPosition=0;
     openMBVVelocity=0;
@@ -43,7 +43,7 @@ namespace MBSim {
 #endif
   }
 
-  void PlotFrame::init(InitStage stage) {
+  void FrameObserver::init(InitStage stage) {
     if(stage==MBSim::plot) {
       updatePlotFeatures();
 
@@ -84,7 +84,7 @@ namespace MBSim {
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  void PlotFrame::enableOpenMBVPosition(double scale, double diameter, double headDiameter, double headLength, double color, const Vec3& off) {
+  void FrameObserver::enableOpenMBVPosition(double scale, double diameter, double headDiameter, double headLength, double color, const Vec3& off) {
     openMBVPosition=new OpenMBV::Arrow;
     openMBVPosition->setDiameter(diameter);
     openMBVPosition->setHeadDiameter(headDiameter);
@@ -94,7 +94,7 @@ namespace MBSim {
     rscale = scale;
   }
 
-  void PlotFrame::enableOpenMBVVelocity(double scale, double diameter, double headDiameter, double headLength, double color, const Vec3& off) {
+  void FrameObserver::enableOpenMBVVelocity(double scale, double diameter, double headDiameter, double headLength, double color, const Vec3& off) {
     openMBVVelocity=new OpenMBV::Arrow;
     openMBVVelocity->setDiameter(diameter);
     openMBVVelocity->setHeadDiameter(headDiameter);
@@ -104,7 +104,7 @@ namespace MBSim {
     vscale = scale;
   }
 
-  void PlotFrame::enableOpenMBVAcceleration(double scale, double diameter, double headDiameter, double headLength, double color, const Vec3& off) {
+  void FrameObserver::enableOpenMBVAcceleration(double scale, double diameter, double headDiameter, double headLength, double color, const Vec3& off) {
     openMBVAcceleration=new OpenMBV::Arrow;
     openMBVAcceleration->setDiameter(diameter);
     openMBVAcceleration->setHeadDiameter(headDiameter);
@@ -114,7 +114,7 @@ namespace MBSim {
     ascale = scale;
   }
 
-  void PlotFrame::enableOpenMBVAngularVelocity(double diameter, double headDiameter, double headLength, double color) {
+  void FrameObserver::enableOpenMBVAngularVelocity(double diameter, double headDiameter, double headLength, double color) {
     openMBVAngularVelocity=new OpenMBV::Arrow;
     openMBVAngularVelocity->setDiameter(diameter);
     openMBVAngularVelocity->setHeadDiameter(headDiameter);
@@ -122,7 +122,7 @@ namespace MBSim {
     openMBVAngularVelocity->setStaticColor(color);
   }
 
-  void PlotFrame::enableOpenMBVAngularAcceleration(double diameter, double headDiameter, double headLength, double color) {
+  void FrameObserver::enableOpenMBVAngularAcceleration(double diameter, double headDiameter, double headLength, double color) {
     openMBVAngularAcceleration=new OpenMBV::Arrow;
     openMBVAngularAcceleration->setDiameter(diameter);
     openMBVAngularAcceleration->setHeadDiameter(headDiameter);
@@ -131,7 +131,7 @@ namespace MBSim {
   }
 #endif
 
-  void PlotFrame::plot(double t, double dt) {
+  void FrameObserver::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {

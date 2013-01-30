@@ -39,6 +39,7 @@ namespace MBSim {
   class ModellingInterface;
   class Contact;
   class InverseKineticsJoint;
+  class Observer;
 
   /**
    * \brief dynamic system as topmost hierarchical level
@@ -733,10 +734,8 @@ namespace MBSim {
        */
       void addInverseKineticsLink(Link *link);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      Element* getOpenMBVElement(const std::string &name,bool check=true);
-      void addPlotElement(Element *element);
-#endif
+      Observer* getObserver(const std::string &name,bool check=true);
+      void addObserver(Observer *element);
 
       /**
        * \param name of the link
@@ -809,9 +808,7 @@ namespace MBSim {
       std::vector<ModellingInterface*> model;
       std::vector<DynamicSystem*> dynamicsystem;
       std::vector<Link*> inverseKineticsLink;
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      std::vector<Element*> plotElement;
-#endif
+      std::vector<Observer*> observer;
 
       /** 
        * \brief linear relation matrix of position and velocity parameters

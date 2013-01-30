@@ -37,6 +37,7 @@ namespace MBSim {
   class Frame;
   class Contour;
   class RigidBodyFrame;
+  class CompoundContour;
   class Constraint;
 
   /**
@@ -169,8 +170,8 @@ namespace MBSim {
       void setDerivativeOfGuidingVelocityOfRotation(Function1<fmatvec::Vec3,double>* fPdjR_) { fPdjR = fPdjR_;}
       void setMass(double m_) { m = m_; }
       double getMass() const { return m; }
-      Frame* getFrameForKinematics() { return frame[iKinematics]; };
-      Frame* getFrameC() { return C; };
+      RigidBodyFrame* getFrameForKinematics() { return K; };
+      RigidBodyFrame* getFrameC() { return C; };
       void isFrameOfBodyForRotation(bool cb_) { cb = cb_; }
       std::vector<fmatvec::SqrMat3> getContainerForFrameOrientations() const { return ASF; }
       std::vector<fmatvec::Vec3> getContainerForFramePositions() const { return SrSF; }
@@ -237,10 +238,7 @@ namespace MBSim {
       /**
        * \param frame Frame to be used for kinematical description depending on reference Frame and generalised positions / velocities
        */
-      void setFrameForKinematics(Frame *frame) {
-        iKinematics = frameIndex(frame);
-        assert(iKinematics > -1);
-      }
+      void setFrameForKinematics(Frame *frame);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVRigidBody(OpenMBV::RigidBody* body);
@@ -287,6 +285,8 @@ namespace MBSim {
        * \brief inertia tensor with respect to centre of gravity in centre of gravity and world Frame
        */
       fmatvec::SymMat3 SThetaS, WThetaS;
+
+      RigidBodyFrame *K;
 
       /**
        * \brief Frame indices for kinematics and inertia description
@@ -336,7 +336,7 @@ namespace MBSim {
       /** 
        * \brief vector of translations from cog to specific Frame in cog- and world-system
        */
-      std::vector<fmatvec::Vec3> SrSF, WrSF;
+      std::vector<fmatvec::Vec3> SrSF;
 
       /**
        * \brief JACOBIAN for linear transformation between differentiated positions and velocities
@@ -426,7 +426,7 @@ namespace MBSim {
       void (RigidBody::*updateJacobians_[2])(double t); 
 
       /** a pointer to Frame "C" */
-      Frame *C;
+      RigidBodyFrame *C;
 
       fmatvec::Vec aT, aR;
 
@@ -444,6 +444,9 @@ namespace MBSim {
       int nu[2], nq;
 
       Frame* frameForJacobianOfRotation;
+
+      std::vector<RigidBodyFrame*> RBF;
+      std::vector<CompoundContour*> RBC;
 
       //fmatvec::Vec qRel0, uRel0;
 
