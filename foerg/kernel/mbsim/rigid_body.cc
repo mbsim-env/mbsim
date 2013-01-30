@@ -42,7 +42,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  RigidBody::RigidBody(const string &name) : Body(name), m(0), iKinematics(-1), iInertia(-1), cb(false), APK(EYE), fT(0), fPrPK(0), fAPK(0), fPJT(0), fPJR(0), fPdJT(0), fPdJR(0), fPjT(0), fPjR(0), fPdjT(0), fPdjR(0), constraint(0), frameForJacobianOfRotation(0) {
+  RigidBody::RigidBody(const string &name) : Body(name), m(0), iKinematics(-1), cb(false), APK(EYE), fT(0), fPrPK(0), fAPK(0), fPJT(0), fPJR(0), fPdJT(0), fPdJR(0), fPjT(0), fPjR(0), fPdjT(0), fPdjR(0), constraint(0), frameForJacobianOfRotation(0) {
 
     C=new RigidBodyFrame("C");
     Body::addFrame(C);
@@ -53,9 +53,6 @@ namespace MBSim {
     FArrow = 0;
     MArrow = 0;
 #endif
-
-    SrSF.push_back(Vec3());
-    ASF.push_back(SqrMat3(EYE));
 
     updateJacobians_[0] = &RigidBody::updateJacobians0;
     updateJacobians_[1] = &RigidBody::updateJacobians1;
@@ -187,16 +184,6 @@ namespace MBSim {
         dependency.push_back(constraint);
     }
     else if(stage==relativeFrameContourLocation) {
-      // This outer loop is nessesary because the frame hierarchy must not be in the correct order!
-      for(unsigned int k=1; k<frame.size(); k++)
-        for(unsigned int j=1; j<frame.size(); j++) {
-          int i = 0;
-          RigidBodyFrame *frame_ = static_cast<RigidBodyFrame*>(frame[j]);
-          if(frame_->getFrameOfReference()) i = frameIndex(frame_->getFrameOfReference());
-
-          SrSF[j]=SrSF[i] + ASF[i]*frame_->getRelativePosition();
-          ASF[j]=ASF[i]*frame_->getRelativeOrientation();
-        }
 
       //C->setFrameOfReference(0);
       //if(K!=C) {
@@ -223,19 +210,24 @@ namespace MBSim {
       //}
 
       C->setFrameOfReference(0);
-      if(K!=C) {
-        C->setFrameOfReference(K);
-        C->setRelativeOrientation(ASF[iKinematics].T());
-        C->setRelativePosition(-(C->getRelativeOrientation()*SrSF[iKinematics]));
-      }
-
       RBF.push_back(C);
       for(unsigned int k=1; k<frame.size(); k++) {
-        RBF.push_back((RigidBodyFrame*)frame[k]);
-        RBF[RBF.size()-1]->setFrameOfReference(C);
-        RBF[RBF.size()-1]->setRelativePosition(SrSF[k]);
-        RBF[RBF.size()-1]->setRelativeOrientation(ASF[k]);
+        RigidBodyFrame *P = (RigidBodyFrame*)frame[k];
+        const RigidBodyFrame *R = dynamic_cast<const RigidBodyFrame*>(P->getFrameOfReference());
+        do {
+          P->setRelativePosition(R->getRelativePosition() + R->getRelativeOrientation()*P->getRelativePosition());
+          P->setRelativeOrientation(R->getRelativeOrientation()*P->getRelativeOrientation());
+          R = dynamic_cast<const RigidBodyFrame*>(R->getFrameOfReference());
+        } while(R);
+        P->setFrameOfReference(C);
+        RBF.push_back(P);
       }
+      if(K!=C) {
+        C->setFrameOfReference(K);
+        C->setRelativeOrientation(K->getRelativeOrientation().T());
+        C->setRelativePosition(-(C->getRelativeOrientation()*K->getRelativePosition()));
+      }
+
       for(unsigned int k=0; k<contour.size(); k++) {
         CompoundContour *c = dynamic_cast<CompoundContour*>(contour[k]);
         if(c) RBC.push_back(c);
@@ -346,9 +338,6 @@ namespace MBSim {
         }
       }
       frameForJacobianOfRotation = cb?K:R;
-
-      if(iInertia != 0)
-        SThetaS = JMJT(ASF[iInertia],SThetaS) - m*JTJ(tilde(SrSF[iInertia]));
 
       if(constraint)
 	TRel.resize(nq,nu[0]);
@@ -543,9 +532,6 @@ namespace MBSim {
 
   void RigidBody::addFrame(RigidBodyFrame *frame_) {
     Body::addFrame(frame_);
-
-    SrSF.push_back(Vec3());
-    ASF.push_back(SqrMat3());
   }
 
   void RigidBody::addContour(Contour *contour) {
