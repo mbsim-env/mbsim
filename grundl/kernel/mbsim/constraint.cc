@@ -73,17 +73,17 @@ namespace MBSim {
   Constraint::Constraint(const std::string &name) : Object(name) {
   }
 
-  GearConstraint::GearConstraint(const std::string &name, RigidBody* body) : Constraint(name), bd(body), saved_ReferenceBody("") {
+  GearConstraint::GearConstraint(const std::string &name, RigidBody* body) : Constraint(name), bd(body), saved_DependentBody("") {
     //bd->addDependency(this);
   }
 
-  GearConstraint::GearConstraint(const std::string &name) : Constraint(name), bd(NULL), saved_ReferenceBody("") {
+  GearConstraint::GearConstraint(const std::string &name) : Constraint(name), bd(NULL), saved_DependentBody("") {
   }
 
   void GearConstraint::init(InitStage stage) {
     if(stage==resolveXMLPath) {
-      if (saved_ReferenceBody!="")
-        setReferenceBody(getByPath<RigidBody>(saved_ReferenceBody));
+      if (saved_DependentBody!="")
+        setDependentBody(getByPath<RigidBody>(saved_DependentBody));
       bd->addDependency(this);
       if (saved_DependencyBodies.size()>0) {
         for (unsigned int i=0; i<saved_DependencyBodies.size(); i++) {
@@ -126,9 +126,9 @@ namespace MBSim {
   void GearConstraint::initializeUsingXML(TiXmlElement* element) {
     Constraint::initializeUsingXML(element);
     TiXmlElement *e, *ee;
-    e=element->FirstChildElement(MBSIMNS"referenceRigidBody");
-    saved_ReferenceBody=e->Attribute("ref");
-    e=element->FirstChildElement(MBSIMNS"dependentRigidBodies");
+    e=element->FirstChildElement(MBSIMNS"dependentRigidBody");
+    saved_DependentBody=e->Attribute("ref");
+    e=element->FirstChildElement(MBSIMNS"independentRigidBodies");
     ee=e->FirstChildElement();
     while(ee) {
       saved_DependencyBodies.push_back(ee->Attribute("ref"));
@@ -146,16 +146,16 @@ namespace MBSim {
     }
   }
 
-  KinematicConstraint::KinematicConstraint(const std::string &name) : Constraint(name), bd(0), f(0), fd(0), fdd(0), saved_ReferenceBody("") {
+  KinematicConstraint::KinematicConstraint(const std::string &name) : Constraint(name), bd(0), f(0), fd(0), fdd(0), saved_DependentBody("") {
   }
 
-  KinematicConstraint::KinematicConstraint(const std::string &name, RigidBody* body) : Constraint(name), bd(body), f(0), fd(0), fdd(0), saved_ReferenceBody("") {
+  KinematicConstraint::KinematicConstraint(const std::string &name, RigidBody* body) : Constraint(name), bd(body), f(0), fd(0), fdd(0), saved_DependentBody("") {
   }
 
   void KinematicConstraint::init(InitStage stage) {
     if(stage==resolveXMLPath) {
-      if (saved_ReferenceBody!="")
-        setReferenceBody(getByPath<RigidBody>(saved_ReferenceBody));
+      if (saved_DependentBody!="")
+        setDependentBody(getByPath<RigidBody>(saved_DependentBody));
       bd->addDependency(this);
       Constraint::init(stage);
     }
@@ -182,8 +182,8 @@ namespace MBSim {
 
   void KinematicConstraint::initializeUsingXML(TiXmlElement* element) {
     Constraint::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"referenceRigidBody");
-    saved_ReferenceBody=e->Attribute("ref");
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"dependentRigidBody");
+    saved_DependentBody=e->Attribute("ref");
     e=element->FirstChildElement(MBSIMNS"kinematicFunction");
     cout << "in initializeUsingXML " << e << endl;
     if(e) {
@@ -209,7 +209,7 @@ namespace MBSim {
   void KinematicConstraint::setUpInverseKinetics() {
     KinematicExcitation *ke = new KinematicExcitation(string("KinematicExcitation")+name);
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(ke);
-    ke->setReferenceBody(bd);
+    ke->setDependentBody(bd);
     ke->setKinematicFunction(f);
     ke->setFirstDerivativeOfKinematicFunction(fd);
     ke->setSecondDerivativeOfKinematicFunction(fdd);

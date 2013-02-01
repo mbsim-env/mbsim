@@ -268,7 +268,7 @@ HNurbsSurfaceSP<T,N>* HNurbsSurfaceSP<T,N>::addLevel(int n, int s) {
 
   Vector<T> newU,newV ;
   
-  splitUV(n,s,n,s,newU,newV) ;
+  this->splitUV(n,s,n,s,newU,newV) ;
 
   newLevel = new HNurbsSurfaceSP<T,N>(this,newU,newV) ;
 

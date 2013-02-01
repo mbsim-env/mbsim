@@ -1,11 +1,11 @@
 dnl WITH_CPPUNIT
 dnl
 dnl Whether CppUnit is defined in this system.
-AC_DEFUN(WITH_CPPUNIT,
+AC_DEFUN([WITH_CPPUNIT],
 [
 AC_REQUIRE([AC_PROG_CXX])
 
-AC_CACHE_VAL(has_cppunit,
+AC_CACHE_VAL(_cv_has_cppunit,
 [
  AC_CHECK_PROG([has_cppunit],[cppunit-config],[yes],[no])
  if test "$has_cppunit" = no; then
@@ -39,7 +39,7 @@ AC_CACHE_VAL(has_cppunit,
 
 AC_MSG_RESULT($has_cppunit)
 if test x"$has_cppunit" = xyes; then
-   AC_DEFINE(HAS_CPPUNIT)
+   AC_DEFINE([HAS_CPPUNIT],[1],[Has Cpp unit])
    AC_SUBST(CPPUNIT_CPPFLAGS)
    AC_SUBST(CPPUNIT_LIBS)
 fi

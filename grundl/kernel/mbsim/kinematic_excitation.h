@@ -42,7 +42,7 @@ namespace MBSim {
       void updatewb(double t, int i=0);
       void updatehRef(const fmatvec::Vec &hParent, int j=0);
       void updateWRef(const fmatvec::Mat &WParent, int j=0);
-      void setReferenceBody(RigidBody* body_) {body = body_;}
+      void setDependentBody(RigidBody* body_) {body = body_;}
 
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }

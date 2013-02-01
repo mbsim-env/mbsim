@@ -1,12 +1,12 @@
 dnl WITH_IMAGE_MAGICK
 dnl
 dnl Wheter Image Magick is defined in this system.
-AC_DEFUN(WITH_IMAGE_MAGICK,
+AC_DEFUN([WITH_IMAGE_MAGICK],
 [
 AC_REQUIRE([AC_PROG_CXX])
 AC_MSG_CHECKING(whether Image Magick's Magick++ library is present)
 
-AC_CACHE_VAL(has_image_magick,
+AC_CACHE_VAL(_cv_has_image_magick,
 [
  AC_LANG_SAVE
  AC_LANG_CPLUSPLUS
@@ -34,9 +34,9 @@ AC_CACHE_VAL(has_image_magick,
 
 AC_MSG_RESULT($has_image_magick)
 if test "$has_image_magick" = yes; then
-   AC_DEFINE(MAGICK_CPPFLAGS)
-   AC_DEFINE(MAGICK_LDFLAGS)
-   AC_DEFINE(MAGICK_LIBS)
+   AC_DEFINE([MAGICK_CPPFLAGS],[1],[Magick CPPFlags])
+   AC_DEFINE([MAGICK_LDFLAGS],[1],[Magick LDFLAGS])
+   AC_DEFINE([MAGICK_LIBS],[1],[Magick LIBS])
 fi
 ])
 

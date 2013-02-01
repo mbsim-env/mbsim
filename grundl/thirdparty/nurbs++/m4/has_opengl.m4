@@ -20,7 +20,7 @@ dnl    Returns:
 dnl        values in GL_CFLAGS and GL_LIBS, or configure will stop on error
 dnl #########################################################################
 
-AC_DEFUN(AC_PATH_GL,
+AC_DEFUN([AC_PATH_GL],
 [
 AC_PROVIDE([$0])
 AC_REQUIRE([AC_PATH_XTRA])

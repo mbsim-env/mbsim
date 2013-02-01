@@ -9,8 +9,8 @@ libcontactkinematics_la_SOURCES = circlehollow_cylinderflexible.cc\
 
 contactkinematicsincludedir = $(includedir)/mbsimFlexibleBody/contact_kinematics
 
-INCLUDES = $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
-LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
+INCLUDES = $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) $(NURBS_CFLAGS)
+LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) $(NURBS_LIBS)
 
 contactkinematicsinclude_HEADERS = circlehollow_cylinderflexible.h\
 																	 circle_nurbsdisk2s.h\

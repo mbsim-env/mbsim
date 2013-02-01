@@ -62,7 +62,7 @@ namespace MBSim {
 
       void init(InitStage stage);
 
-      void setReferenceBody(RigidBody* body_) {bd=body_; }
+      void setDependentBody(RigidBody* body_) {bd=body_; }
 
       void updateStateDependentVariables(double t);
       void updateJacobians(double t, int j=0);
@@ -77,7 +77,7 @@ namespace MBSim {
       RigidBody *bd;
       std::vector<double> ratio;
       
-      std::string saved_ReferenceBody;
+      std::string saved_DependentBody;
       std::vector<std::string> saved_DependencyBodies;
       std::vector<double> saved_ratio;
   };
@@ -96,7 +96,7 @@ namespace MBSim {
       void setKinematicFunction(Function1<fmatvec::VecV,double>* f_) { f = f_;}
       void setFirstDerivativeOfKinematicFunction(Function1<fmatvec::VecV,double>* fd_) { fd = fd_;}
       void setSecondDerivativeOfKinematicFunction(Function1<fmatvec::VecV,double>* fdd_) { fdd = fdd_;}
-      void setReferenceBody(RigidBody* body) {bd=body; }
+      void setDependentBody(RigidBody* body) {bd=body; }
       virtual void setUpInverseKinetics();
 
       void init(InitStage stage);
@@ -112,7 +112,7 @@ namespace MBSim {
       RigidBody *bd;
       Function1<fmatvec::VecV,double> *f, *fd, *fdd;
 
-      std::string saved_ReferenceBody;
+      std::string saved_DependentBody;
   };
 
   /** 

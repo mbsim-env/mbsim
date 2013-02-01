@@ -1,83 +1,82 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(Makefile.am)
-
+AC_PREREQ([2.57])
+AC_INIT([nurbs++],[3.0.12],[martin.o.foerg@googlemail.com],[nurbs++])
+AC_CONFIG_HEADER(include/plib_config.h)
 AC_CANONICAL_SYSTEM
-
-AM_INIT_AUTOMAKE(nurbs++,3.0.11)
-
-dnl
-dnl  the prefix stuff
-dnl
-
-has_prefix=no
-
-if test "$prefix" != NONE; then
-  has_prefix=yes 
-else
- prefix="/usr/local"
-fi
-
-PLIB_INSIDE_MINDSEYE
-
-AM_PROG_LIBTOOL
-
+AM_INIT_AUTOMAKE
+AC_CONFIG_SRCDIR([nurbs/nurbs.h])
+LT_INIT([win32-dll])
 AC_PROG_CXX
 AC_PROG_CPP
 AC_PROG_INSTALL
+AC_LANG([C++])
+AC_C_CONST
 
-AM_CONFIG_HEADER(include/plib_config.h)
+AC_CONFIG_MACRO_DIR([m4])
 
+PLIB_INSIDE_MINDSEYE
+
+dnl Add support for the `--enable-shared' and `--disable-shared' configure flags. Invoke ltconfig with the correct arguments to configure the package
+AM_PROG_LIBTOOL
 
 dnl the user can use --enable-shared to enable this
 dnl AM_DISABLE_SHARED
 
 AC_PROG_MAKE_SET
 
-
-
 dnl 
 dnl Adding exception handling support
 dnl 
-AC_ARG_ENABLE(exception,[  --enable-exception          use exception handling instead of the Error class [default=yes]],
+AC_ARG_ENABLE(exception,
+  AS_HELP_STRING([--enable-exception],
+    [use exception handling instead of the Error class [default=yes]]),
 if test "$enable_exception" != no; then
-AC_DEFINE(USE_EXCEPTION)
-fi,AC_DEFINE(USE_EXCEPTION))
+  AC_DEFINE([USE_EXCEPTION],[1],[Use exeptions])
+fi, 
+AC_DEFINE([USE_EXCEPTION],[1],[Use exeptions])
+)
 
 dnl 
 dnl Adding exception handling support
 dnl 
-AC_ARG_ENABLE(verbose_exception,[  --enable-verbose-exception          will print an error message when an exception is thrown [default=no]],
-if test "$enable_verbose_exception" != no; then
-AC_DEFINE(USE_EXCEPTION)
-AC_DEFINE(VERBOSE_EXCEPTION)
-fi)
+AC_ARG_ENABLE(verbose_exception,
+  AS_HELP_STRING([--enable-verbose-exception],
+    [will print an error message when an exception is thrown [default=no]]),
+  if test "$enable_verbose_exception" != no; then
+  AC_DEFINE([USE_EXCEPTION],[1],[Use execptions])
+  AC_DEFINE([VERBOSE_EXCEPTION],[1],[Verbose exeptions])
+  fi
+)
 
 dnl
 dnl Adding debug information support
 dnl
 
-AC_ARG_ENABLE(debug,[  --enable-debug          adds range checking and other debugging information  
-                          to the library [default=yes]],
-if test "$enable_debug" != no; then
-AC_DEFINE(DEBUG_PLIB)
-fi,AC_DEFINE(DEBUG_PLIB))
+AC_ARG_ENABLE(debug,
+  AS_HELP_STRING([--enable-debug],
+     [adds range checking and other debugging information to the library [default=yes]]),
+  if test "$enable_debug" != no; then
+  AC_DEFINE([DEBUG_PLIB],[1],[Debugging functions like range validity checking and others])
+  fi,AC_DEFINE([DEBUG_PLIB],[1],[Debugging functions like range validity checking and others])
+)
 
 dnl 
-dnl Create a library or not ? 
+dnl Create a library or not ?
 dnl
 
 include_source=no
 
-AC_ARG_ENABLE(library,[ --enable-library       it generates explicitely instantiate the templates.
-                          This creates a library. If disabled, it will
-                          include the source files with the header files
-                          and the compiler will instantiate the templates
-                          as it needs them [default=yes]],
-if test "$enable_library" != no; then
-include_source=no
-else
-include_source=yes
-fi,include_source=no)
+AC_ARG_ENABLE(library,
+  AS_HELP_STRING([--enable-library],
+    [it generates explicitely instantiate the templates. This creates a library. If disabled, it will include the source files with the header files and the compiler will instantiate the templates as it needs them [default=yes]]),
+  if test "$enable_library" != no; then
+    include_source=no
+  else
+    include_source=yes
+  fi,
+
+  include_source=no
+)
 
 dnl
 dnl Setting the flags for different compilers to the proper settings
@@ -101,21 +100,21 @@ esac
 else
 if test "$GXX" = yes; then
  if test "$include_source" = yes; then
- AC_DEFINE(INCLUDE_TEMPLATE_SOURCE)
+ AC_DEFINE([INCLUDE_TEMPLATE_SOURCE],[1],[Include template source])
  CXXFLAGS=$CXXFLAGS" -frepo"
  else
- AC_DEFINE(NO_IMPLICIT_TEMPLATES)
+ AC_DEFINE([NO_IMPLICIT_TEMPLATES],[1],[Do not use implicit templates])
  CXXFLAGS=$CXXFLAGS" -fno-implicit-templates"
  fi
  case "$target_os" in
  solaris*)
-    AC_DEFINE(USING_GNU_SOLARIS)
+    AC_DEFINE([USING_GNU_SOLARIS],[1],[Use GNU Solaris])
  ;;
  linux*)
-    AC_DEFINE(USING_LINUX)
+    AC_DEFINE([USING_LINUX],[1],[Use Linux])
  ;;
  alpha*)
-    AC_DEFINE(USING_GNU_DECALPHA)
+    AC_DEFINE([USING_GNU_DECALPHA],[1],[Use GNU DEC-ALPHA])
  ;; 
  esac   
 fi
@@ -133,6 +132,8 @@ dnl Addin CppUnit Support
 dnl
 
 WITH_CPPUNIT
+
+AM_CONDITIONAL([BUILD_CPPUNIT_TESTS],[test x"$has_cppunit" = xyes])
 
 dnl
 dnl Adding Image Magick support
@@ -169,11 +170,15 @@ dnl
 
 user_defined_column_order=no
 
-AC_ARG_ENABLE(column-order,[  --enable-column-order         defines if the matrices are in row or column ordering [default=no]. This is always true if your are also compiling for OpenGL],
-if test "$enable_column-order" != no; then 
-AC_DEFINE(COLUMN_ORDER)
-user_defined_column_order=yes
-fi)
+AC_ARG_ENABLE(column-order,
+ AS_HELP_STRING([--enable-column-order], 
+   [defines if the matrices are in row or column ordering [default=no]. This is always true if your are also compiling for OpenGL]),
+  [if test "$enable_column-order" != no; then 
+  AC_DEFINE([COLUMN_ORDER],[1],[Storing matrices in column ordering])
+  user_defined_column_order=yes
+  fi],
+  AC_DEFINE([COLUMN_ORDER],[0],[Storing matrices in column ordering])
+)
 
 dnl
 dnl Adding OpenGL support
@@ -182,16 +187,19 @@ dnl
 AC_PATH_GL
 
 if test "$use_opengl" = yes; then
-AC_DEFINE(WITH_OPENGL)
-AC_DEFINE(COLUMN_ORDER)
+AC_DEFINE([WITH_OPENGL],[1],[Compile with OpenGL])
+AC_DEFINE([COLUMN_ORDER],[1],[Storing matrices in column ordering])
 option_libs=$option_libs' $(GL_LIBS)'
 option_include=$option_include' $(GL_CFLAGS)'
 fi
 
-AC_ARG_WITH(sunopengl,[  --with-sunopengl                Sun's version of OpenGL has some particularities...],
+AC_ARG_WITH(sunopengl,
+  AS_HELP_STRING([--with-sunopengl],
+    [Sun's version of OpenGL has some particularities...]),
 if test "$with_sunopengl" != no; then
 CXXFLAGS=$CXXFLAGS" -DSUNOPENGL"
-fi)
+fi
+)
 
 dnl 
 dnl adjusting the option information
@@ -260,14 +268,18 @@ dnl
 dnl creating a double floating point library
 dnl
 
-AC_ARG_ENABLE(float,[  --enable-float         creates a single floating point library [default=yes]],
+AC_ARG_ENABLE(float,
+  AS_HELP_STRING([--enable-float],
+    [creates a single floating point library [default=yes]]),
 if test "$enable_float" != no; then 
 build_float=yes
 else
 build_float=no
 fi,build_float=yes)
 
-AC_ARG_ENABLE(double,[  --enable-double         creates a double floating point library [default=yes]],
+AC_ARG_ENABLE(double,
+  AS_HELP_STRING([--enable-double],
+    [creates a double floating point library [default=yes]]),
 if test "$enable_double" != no; then 
 build_double=yes
 else
@@ -344,11 +356,15 @@ AC_SUBST(CPPUNIT_LIBS)
 
 PL_PROG_PERL
 
-AC_OUTPUT(Makefile 
-		   Doxyfile 
-		   nurbs++-config 
+#LDFLAGS="$LDFLAGS  -Wl,--no-undefined" #TODO: does not work woth -Wl,--no-undefined
+CXXFLAGS="$CXXFLAGS -fpermissive"
+
+dnl removed from list: nurbs++-config (and added nurbs++.pc to use pkg-config)
+
+AC_CONFIG_FILES([Makefile 
+		   Doxyfile		   
 		   include/Makefile 
-		   config/Makefile
+		   m4/Makefile
 		   matrix/Makefile 
 		   numerical/Makefile 
 		   image/Makefile 
@@ -361,7 +377,9 @@ AC_OUTPUT(Makefile
 		   tests/Makefile
 		   tests/matrix/Makefile
 		   tests/nurbs/Makefile
-		   )
+		   nurbs++.pc])
+		   
+AC_OUTPUT
 
 echo
 echo 'The package has now been configured. Type '

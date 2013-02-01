@@ -53,6 +53,8 @@ public:
   NurbsSurfaceSP(int DegU, int DegV, const Vector<T>& Uk, const Vector<T>& Vk, const Matrix< HPoint_nD<T,N> >& Cp);  
   NurbsSurfaceSP(int DegU, int DegV, Vector<T>& Uk, Vector<T>& Vk, Matrix< Point_nD<T,N> >& Cp, Matrix<T>& W)  ; 
 
+  virtual ~NurbsSurfaceSP() {};
+
 
   virtual NurbsSurface<T,N>& operator=(const NurbsSurface<T,N>& a) ;
   virtual NurbsSurfaceSP<T,N>& operator=(const NurbsSurfaceSP<T,N>& a) ;
@@ -94,7 +96,7 @@ public:
     { return maxAtV_[i] ; }
 
   HPoint_nD<T,N> surfP(int i,int j) const  //!< the surface point for the control point at i,j
-    { return hpointAt(maxAtU_[i],maxAtV_[j]); }
+    { return this->hpointAt(maxAtU_[i],maxAtV_[j]); }
 
   void updateMaxUV() //!< Updates both the maxU and maxV values
     { updateMaxU() ; updateMaxV() ; }
