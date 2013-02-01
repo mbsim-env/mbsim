@@ -281,6 +281,7 @@ class PhysicalStringWidget : public StringWidget {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual StringWidget* cloneStringWidget() {return widget->cloneStringWidget();}
     virtual StringWidget* getWidget() {return widget;}
+    void setXmlName(const std::string &name) {xmlName = name;}
     const std::string& getXmlName() const {return xmlName;}
     const QStringList& getUnitList() const {return units;}
     int getDefaultUnit() const {return defaultUnit;}
