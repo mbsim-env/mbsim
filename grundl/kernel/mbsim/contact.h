@@ -172,6 +172,8 @@ namespace MBSim {
        * \param first contour
        * \param second contour
        * \param specify the contact kinematics
+       *
+       * REMARK: The contact frame of the first contour is used to plot the contacts data in
        */
       void connect(Contour *contour1, Contour* contour2, ContactKinematics* contactKinematics = 0);
 

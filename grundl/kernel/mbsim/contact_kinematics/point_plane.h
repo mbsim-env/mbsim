@@ -26,7 +26,7 @@
 namespace MBSim {
 
   class Point;
-  class Plane; 
+  class Plane;
 
   /** 
    * \brief pairing point to plane
@@ -41,7 +41,7 @@ namespace MBSim {
       virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData *cpData);
       /***************************************************/
 
-    private:
+    protected:
       /**
        * \brief contour index
        */
