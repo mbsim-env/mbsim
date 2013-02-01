@@ -129,7 +129,8 @@ void Integrator::writeXMLFile(const QString &name) {
   writeXMLFile(&doc);
   map<string, string> nsprefix=ObjectFactory::getInstance()->getNamespacePrefixMapping();
   unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
-  doc.SaveFile((name+".mbsimint.xml").toAscii().data());
+  doc.SaveFile((name.right(13)==".mbsimint.xml"?name:name+".mbsimint.xml").toAscii().data());
+
 }
 
 DOPRI5Integrator::DOPRI5Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind) : Integrator(str,parentItem,ind) {

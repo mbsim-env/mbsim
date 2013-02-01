@@ -86,7 +86,6 @@ class MainWindow : public QMainWindow {
     void simulate();
     void openmbv();
     void h5plotserie();
-    void inlineOpenMBV();
     void help();
     void about();
     void updateOctaveParameters();
