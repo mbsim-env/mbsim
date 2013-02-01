@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<DynamicSystemSolver xmlns="http://mbsim.berlios.de/MBSim" name="TS">
+  <frames>
+</frames>
+  <contours>
+</contours>
+  <groups>
+    <embed xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable" href="./CrankMechanism.xml" count="1" counterName="n">
+      <localParameter>
+        <parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/parameter">
+          <scalarParameter name="fSize">.01</scalarParameter>
+          <scalarParameter name="carrier_Mass">8.5</scalarParameter>
+          <scalarParameter name="carrier_Inertia">5e-4</scalarParameter>
+          <scalarParameter name="motor_Mass">0.5</scalarParameter>
+          <scalarParameter name="motor_Inertia">5e-4</scalarParameter>
+          <scalarParameter name="motor_TransmissionRadius">.0033</scalarParameter>
+          <scalarParameter name="crank_Mass">0.5</scalarParameter>
+          <scalarParameter name="crank_Inertia">5e-4</scalarParameter>
+          <scalarParameter name="crank_Radius">.04</scalarParameter>
+          <scalarParameter name="crank_TransmissionRadius">.02</scalarParameter>
+          <scalarParameter name="rocker_Mass">.3</scalarParameter>
+          <scalarParameter name="rocker_Inertia">3e-4</scalarParameter>
+          <scalarParameter name="rocker_Length">.12</scalarParameter>
+          <scalarParameter name="piston_Mass">.1</scalarParameter>
+          <scalarParameter name="piston_Inertia">1e-5</scalarParameter>
+          <scalarParameter name="piston_Length">.03</scalarParameter>
+          <scalarParameter name="piston_Eccentricity">.06</scalarParameter>
+          <scalarParameter name="cylinder_Radius">.01</scalarParameter>
+        </parameter>
+      </localParameter>
+    </embed>
+  </groups>
+  <objects>
+</objects>
+  <links>
+</links>
+  <environments>
+    <MBSimEnvironment xmlns="http://mbsim.berlios.de/MBSim">
+      <accelerationOfGravity>[0 0 0]'</accelerationOfGravity>
+    </MBSimEnvironment>
+  </environments>
+</DynamicSystemSolver>

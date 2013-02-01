@@ -1,0 +1,140 @@
+<parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/parameter">
+  <scalarParameter name="fSize">.01</scalarParameter>
+
+  <!-- Geometry-Data of Swing -->
+  <scalarParameter name="swingL">.75</scalarParameter>
+  <scalarParameter name="swingB">.1</scalarParameter>
+  <scalarParameter name="swingH">.01</scalarParameter>
+  <!-- Geometry-Data of SwingSuspension -->
+  <!--<scalarParameter name="suspensionL">.396</scalarParameter>-->
+  <scalarParameter name="suspensionL">4.267e-01</scalarParameter>
+  <scalarParameter name="suspensionB">.01</scalarParameter>
+  <scalarParameter name="suspensionH">.005</scalarParameter>
+  <!-- Geometry-Data of PendulumBase -->
+  <scalarParameter name="baseL">.05</scalarParameter>
+  <scalarParameter name="baseB">.02</scalarParameter>
+  <scalarParameter name="baseH">.03</scalarParameter>
+  <!-- Geometry-Data of Pendulum -->
+  <scalarParameter name="pendulumL">.3</scalarParameter>
+  <scalarParameter name="pendulumD">.005</scalarParameter>
+  <!-- Geometry-Data of Sphere -->
+  <scalarParameter name="sphereD">.02</scalarParameter>
+
+  <!-- Material Data -->
+  <scalarParameter name="metronomeStiffness">.05</scalarParameter>
+  <scalarParameter name="rho">800</scalarParameter>
+
+  <!-- Initial Sizes of thw Swing -->
+  <scalarParameter name="phi0">0</scalarParameter>
+  <scalarParameter name="omega0">0</scalarParameter>
+
+  <!-- Height of the Pendulum-Sphere (EIGENFREQUENCY OF THE PENDULUM) -->
+  <vectorParameter name="sphereHeight">[.24 .241 .242]'</vectorParameter>
+  <!--<vectorParameter name="sphereHeight">[.24 .24 .24]</vectorParameter>-->
+
+  <!-- Derived Sizes -->
+  <scalarParameter name="swingMass">swingL*swingB*swingH*rho/5</scalarParameter>
+  <matrixParameter name="swingTheta">1/12*swingMass*diag([swingB*swingH; swingL*swingB; swingH*swingL])</matrixParameter>
+
+  <scalarParameter name="suspensionMass">suspensionL*suspensionB*suspensionH*rho</scalarParameter>
+  <matrixParameter name="suspensionTheta">1/12*suspensionMass*diag([suspensionB*suspensionH; suspensionL*suspensionB; suspensionH*suspensionL])</matrixParameter>
+
+  <scalarParameter name="baseMass">baseL*baseB*baseH*rho</scalarParameter>
+  <matrixParameter name="baseTheta">1/12*baseMass*diag([baseB*baseH; baseL*baseB; baseH*baseL])</matrixParameter>
+
+  <scalarParameter name="pendulumMass">pendulumL*pi*pendulumD^2/4*rho</scalarParameter>
+  <matrixParameter name="pendulumTheta">pendulumMass*diag([1/2*(pendulumD/2)^2; 1/4*(pendulumD/2)^2+1/12*pendulumL^2; 1/4*(pendulumD/2)^2+1/12*pendulumL^2])</matrixParameter>
+
+  <scalarParameter name="sphereMass">4/3*(sphereD/2)^3*pi*rho</scalarParameter>
+  <matrixParameter name="sphereTheta">2/5*sphereMass*(sphereD/2)^2*eye(3)</matrixParameter>
+
+  <!-- Simulatin Control -->
+  <vectorParameter name="tStart">[1 11.9 75]'</vectorParameter>
+  <vectorParameter name="tEnd">[105 110 115]'</vectorParameter>
+  <vectorParameter name="timalOffset">[0 6.9 70]'</vectorParameter>
+
+  <!-- Calculation of relevant sizes -->
+  <scalarParameter name="Calculations">
+    <![CDATA[
+    fprintf("\n\n= = = = = = = = = =\n\n");
+    MLin= 2*suspensionTheta(3,3) + (1/2*suspensionMass+swingMass)*suspensionL^2;
+    KLin= (suspensionMass+swingMass)*suspensionL*9.81;
+    fprintf("Swing:\n");
+    fprintf("  linearized Mass-Matrix: %6.3e\n", MLin);
+    fprintf("  linearized Stiffness-Matrix: %6.3e\n", KLin);
+    omega=sqrt(KLin/MLin);
+    fprintf("  Eigenfrequency: %6.3f [Hz] = %3.0f [bpm] \n\n", omega/2/pi, omega/2/pi*60);
+    
+    %desiredFrequency=(1.632+1.627+1.623)/3/2;
+    %omega2=(desiredFrequency*2*pi)^2;
+    %a=(1/2*suspensionMass+swingMass)*omega2;
+    %b=-(suspensionMass+swingMass)*9.81;
+    %c=2*suspensionTheta(3,3)*omega2;
+    %susL1=(-b+sqrt(b^2-4*a*c))/(2*a);
+    %susL2=(-b-sqrt(b^2-4*a*c))/(2*a);
+    %fprintf("desiredFrequency=%4.3f\nL1=%4.3e\nL2=%4.3e\n", desiredFrequency, susL1, susL2);
+
+    MM(1)=MLin;
+    KK(1)=KLin;
+
+    for i=1:3
+    theta=pendulumTheta(3,3)+pendulumMass*(pendulumL/2)^2+sphereTheta(3,3)+sphereMass*sphereHeight(i)^2;
+    c1=metronomeStiffness;
+    c2=-(pendulumMass*pendulumL/2 +  sphereMass*sphereHeight(i))*9.81;
+    fprintf("Metronom %i:\n", i);
+    fprintf("  linearized Mass-Matrix: %6.3e\n", theta);
+    fprintf("  linearized Stiffness-Matrix: %6.3e (springStiffness: %3.2e, massInfluence: %3.2e)\n", c1+c2, c1, c2);
+    omega=sqrt((c1+c2)/theta);
+    fprintf("  Eigenfrequency= %6.3f [Hz] = %3.0f [bpm]\n\n", omega/2/pi, omega/2/pi*60);
+    MM(i+1)=theta;
+    KK(i+1)=c1+c2;
+    end;
+
+    M(1,1)=sum(MM);   M(1,2)=MM(2);     M(1,3)=MM(3);     M(1,4)=MM(4);
+    M(2,1)=MM(1,2);   M(2,2)=MM(2);     M(2,3)=0;         M(2,4)=0;
+    M(3,1)=M(1,3);    M(3,2)=M(2,3);    M(3,3)=MM(3);     M(3,4)=0;
+    M(4,1)=M(1,4);    M(4,2)=M(2,4);    M(4,3)=M(3,4);    M(4,4)=MM(4);
+
+    K(1,1)=sum(KK);   K(1,2)=-KK(2);    K(1,3)=-KK(3);    K(1,4)=-KK(4);
+    K(2,1)=K(1,2);    K(2,2)=KK(2);     K(2,3)=0;         K(2,4)=0;
+    K(3,1)=K(1,3);    K(3,2)=K(2,3);    K(3,3)=KK(3);     K(3,4)=0;
+    K(4,1)=K(1,4);    K(4,2)=K(2,4);    K(4,3)=K(3,4);    K(4,4)=KK(4);
+
+    fprintf("M=[");
+    for i=1:4
+      for j=1:4
+        fprintf(" %e", M(i,j));
+      end
+      fprintf(";\n");
+    end
+    fprintf("]\n\n");
+    fprintf("K=[");
+      for i=1:4
+        for j=1:4
+          fprintf(" %e", K(i,j));
+        end
+        fprintf(";\n");
+      end
+    fprintf("]\n");
+
+    [v, lambda2]=eig(-inv(M)*K);
+    omega=imag(sqrt(diag(lambda2)));
+    f=omega/2/pi;
+
+    fprintf("\n\n");
+    for i=1:4
+      fprintf("Eigenform %i (%6.3f [Hz] = %3.0f [bpm])\n", i, f(i), f(i)*60);
+      fprintf("  v=[");
+      for j=1:4
+        fprintf("%f ", v(j,i));
+      end
+      fprintf("]\n\n");
+    end
+    
+    fprintf("\n\n= = = = = = = = = =\n\n");
+
+    ret=0;
+    ]]>
+  </scalarParameter>
+
+</parameter>
