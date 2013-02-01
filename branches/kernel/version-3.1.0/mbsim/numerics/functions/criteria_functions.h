@@ -264,12 +264,195 @@ namespace MBSim {
       fmatvec::Vec lastPoint;
   };
 
-  inline CriteriaFunction::~CriteriaFunction(){}
-  inline GlobalCriteriaFunction::~GlobalCriteriaFunction(){}
-  inline LocalCriteriaFunction::~LocalCriteriaFunction(){}
-  inline GlobalResidualCriteriaFunction::~GlobalResidualCriteriaFunction() {}
-  inline GlobalShiftCriteriaFunction::~GlobalShiftCriteriaFunction() {}
-  inline LocalResidualCriteriaFunction::~LocalResidualCriteriaFunction() {}
-  inline LocalShiftCriteriaFunction::~LocalShiftCriteriaFunction() {}
+  inline CriteriaFunction::~CriteriaFunction() {
+  }
+  inline GlobalCriteriaFunction::~GlobalCriteriaFunction() {
+  }
+  inline LocalCriteriaFunction::~LocalCriteriaFunction() {
+  }
+  inline GlobalResidualCriteriaFunction::~GlobalResidualCriteriaFunction() {
+  }
+  inline GlobalShiftCriteriaFunction::~GlobalShiftCriteriaFunction() {
+  }
+  inline LocalResidualCriteriaFunction::~LocalResidualCriteriaFunction() {
+  }
+  inline LocalShiftCriteriaFunction::~LocalShiftCriteriaFunction() {
+  }
 }
+
+namespace MBSim {
+
+  /*!
+   * \brief Mother class for different criterias that are fulfilled or not
+   */
+  template <int size>
+  class CFunction : public Function1<int, fmatvec::Vector<fmatvec::Fixed<size>, double> > {
+
+      typedef fmatvec::Vector<fmatvec::Fixed<size>, double> vctr;
+
+    public:
+      /**
+       * \brief Constructor
+       */
+      CFunction();
+
+      /**
+       * \brief Destructor
+       */
+      virtual ~CFunction();
+
+      /* GETTER / SETTER*/
+      void setFunction(Function1<vctr, vctr> * function_) {
+        function = function_;
+      }
+      /*****************/
+
+      /**
+       * \brief computes the criteria
+       *
+       * The criteria has to fulfill at least:
+       *   - result =  0: the criteria is fulfilled and should stop therefore
+       *   - result =  1: the algorithm should go on
+       *   - result =  2: the algorithm has slow convergence and should stop therefore
+       *   - result = -1: the algorithm diverges and should stop therefore
+       */
+      virtual int operator ()(const vctr & vector, const void * = NULL) = 0;
+
+      /*!
+       * \brief deletes the list of criteria results
+       */
+      virtual void clear() = 0;
+
+      /**
+       * \brief compares the result of given vector with the last result and returns if it got better (for damping)
+       */
+      virtual bool isBetter(const vctr & vector) = 0;
+
+    protected:
+      /**
+       * \brief function that computes the values
+       */
+      Function1<vctr, vctr> *function;
+
+  };
+
+  /*!
+   * \brief This criteria function class applies the infinity norm globally for complete vectors thus it has one tolerance and a list of "results" for each step
+   */
+  template <int size>
+  class GlobalCFunction : public CFunction<size> {
+
+      typedef fmatvec::Vector<fmatvec::Fixed<size>, double> vctr;
+
+    public:
+      /**
+       * \brief Constructor
+       */
+      GlobalCFunction(const double & tolerance_ = 1e-10);
+
+      /**
+       * \brief Destructor
+       */
+      virtual ~GlobalCFunction();
+
+      /* INHERITED INTERFACE */
+      virtual int operator ()(const vctr & vector, const void * = NULL);
+      virtual bool isBetter(const vctr & vector);
+      virtual void clear();
+      /*END - INHERITED INTERFACE*/
+
+      const std::vector<double> & getResults() {
+        return criteriaResults;
+      }
+
+    protected:
+      /*INHERITED INTERFACE*/
+      virtual double computeResults(const vctr & x) = 0;
+      /********************/
+
+      /**
+       * \brief tolerance value for the criteria results
+       */
+      double tolerance;
+
+      /**
+       * \brief saves the results of the criteria
+       */
+      std::vector<double> criteriaResults;
+  };
+
+  /*!
+   * \brief This criteria function class applies the infinity norm globally on the complete vector and compares it with zero (i.e. a residual criteria)
+   */
+  template <int size>
+  class GlobalResidualCFunction : public GlobalCFunction<size> {
+
+      typedef fmatvec::Vector<fmatvec::Fixed<size>, double> vctr;
+
+    public:
+      /**
+       * \brief Constructor
+       */
+      GlobalResidualCFunction(const double & tolerance_ = 1e-10);
+
+      /**
+       * \brief Destructor
+       */
+      virtual ~GlobalResidualCFunction();
+
+    protected:
+      /* INHERITED INTERFACE */
+      virtual double computeResults(const vctr & x);
+      /*END - INHERITED INTERFACE*/
+  };
+
+  template <int size>
+  CFunction<size>::CFunction() :
+      function(0) {
+  }
+
+  template <int size>
+  GlobalCFunction<size>::GlobalCFunction(const double & tolerance_) :
+      CFunction<size>(), tolerance(tolerance_), criteriaResults(0) {
+  }
+
+  template <int size>
+  int GlobalCFunction<size>::operator ()(const vctr & x, const void *) {
+    criteriaResults.push_back(computeResults(x));
+
+    if (criteriaResults.back() < tolerance)
+      return 0;
+
+    if (criteriaResults.size() > 1)
+      if (criteriaResults.back() > criteriaResults[criteriaResults.size() - 2])
+        return -1;
+
+    return 1;
+  }
+
+  template <int size>
+  bool GlobalCFunction<size>::isBetter(const vctr & x) {
+    if (criteriaResults.back() > fmatvec::nrmInf<size>((*CFunction<size>::function)(x)))
+      return true;
+
+    return false;
+  }
+
+  template <int size>
+  void GlobalCFunction<size>::clear() {
+    criteriaResults.clear();
+  }
+
+  template <int size>
+  GlobalResidualCFunction<size>::GlobalResidualCFunction(const double & tolerance_ /* = 1e-10*/) :
+      GlobalCFunction<size>(tolerance_) {
+  }
+
+  template <int size>
+  double GlobalResidualCFunction<size>::computeResults(const vctr & x) {
+    return fmatvec::nrmInf((*CFunction<size>::function)(x));
+  }
+
+}
+
 #endif //NUMERICSCRITERIAFUNCTIONS_H_
