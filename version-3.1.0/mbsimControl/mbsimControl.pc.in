@@ -1,0 +1,18 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+SCHEMA=../http___mbsim_berlios_de_MBSimControl/mbsimcontrol.xsd
+NAMESPACE=http://mbsim.berlios.de/MBSimControl
+INITIALIZEFUNC=MBSimControl::ObjectFactory::initialize()
+INITIALIZEHEADER=mbsimControl/objectfactory.h
+
+Name: mbsimControl
+Description: mbsimControl is an add-on for controlled systems to the mbsim-kernel.
+Requires: mbsim
+Version: @VERSION@
+Libs: -L${libdir} -lmbsimControl
+Cflags: -I${includedir}
+
+
