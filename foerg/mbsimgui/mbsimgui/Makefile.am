@@ -42,8 +42,7 @@ mbsimgui_SOURCES = main.cc \
 		   integrator.cc \
 		   parameter.cc \
 		   signal_.cc \
-		   octaveutils.cc \
-		   property_dialog.cc
+		   octaveutils.cc
 
 nodist_mbsimgui_SOURCES=$(QT_BUILT_SOURCES)
 
@@ -74,8 +73,7 @@ QT_BUILT_SOURCES = mainwindow.moc.cc \
 		   constraint.moc.cc \
 		   integrator.moc.cc \
 		   parameter.moc.cc \
-		   signal_.moc.cc \
-		   property_dialog.moc.cc
+		   signal_.moc.cc
 
 mbsimgui_HEADERS = 
 		   

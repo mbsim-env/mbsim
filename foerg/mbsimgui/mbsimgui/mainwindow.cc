@@ -31,7 +31,6 @@
 #include <openmbv/mainwindow.h>
 #include <mbxmlutilstinyxml/getinstallpath.h>
 #include <boost/bind.hpp>
-#include "property_dialog.h"
 #ifdef _WIN32 // Windows
 #  include <windows.h>
 #  include <process.h>
@@ -260,14 +259,14 @@ void MainWindow::initInlineOpenMBV() {
     uniqueTempDir=bfs::unique_path(bfs::temp_directory_path()/"mbsimgui_tmp_%%%%-%%%%-%%%%-%%%%");
   bfs::create_directories(uniqueTempDir);
   bfs::copy_file(MBXMLUtils::getInstallPath()+"/share/mbsimgui/empty.ombv.xml",
-                 uniqueTempDir/"openmbv.ombv.xml");
+                 uniqueTempDir/"openmbv1.ombv.xml");
   bfs::copy_file(MBXMLUtils::getInstallPath()+"/share/mbsimgui/empty.ombv.h5",
-                 uniqueTempDir/"openmbv.ombv.h5");
+                 uniqueTempDir/"openmbv1.ombv.h5");
   std::list<string> arg;
   arg.push_back("--wst");
   arg.push_back(MBXMLUtils::getInstallPath()+"/share/mbsimgui/inlineopenmbv.ombv.wst");
   arg.push_back("--autoreload");
-  arg.push_back((uniqueTempDir/"openmbv.ombv.xml").generic_string());
+  arg.push_back((uniqueTempDir/"openmbv1.ombv.xml").generic_string());
   inlineOpenMBVMW=new OpenMBVGUI::MainWindow(arg);
 
   connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, Object*)), this, SLOT(selectElement(std::string)));
@@ -398,11 +397,13 @@ void MainWindow::newMBS() {
   fileMBS->setText("");
 
 #ifdef INLINE_OPENMBV
-  inlineOpenMBV();
+  mbsimxml(1);
 #endif
 }
 
 void MainWindow::loadMBS(const QString &file) {
+  QDir dir;
+  cout << dir.relativeFilePath(file).toStdString() << endl;
   fileMBS->setText(file);
   actionOpenMBV->setDisabled(true);
   actionH5plotserie->setDisabled(true);
@@ -421,7 +422,7 @@ void MainWindow::loadMBS(const QString &file) {
   }
 
 #ifdef INLINE_OPENMBV
-  inlineOpenMBV();
+  mbsimxml(1);
 #endif
 }
 
@@ -435,7 +436,7 @@ void MainWindow::saveMBSAs() {
   if(elementList->topLevelItemCount()) {
     QString file=QFileDialog::getSaveFileName(0, "XML model files", QString("./")+((Solver*)elementList->topLevelItem(0))->getName()+".mbsim.xml", "XML files (*.mbsim.xml)");
     if(file!="") {
-      fileMBS->setText(file);
+      fileMBS->setText(file.right(10)==".mbsim.xml"?file:file+".mbsim.xml");
       actionSaveMBS->setDisabled(false);
       saveMBS();
     }
@@ -444,8 +445,6 @@ void MainWindow::saveMBSAs() {
 
 void MainWindow::saveMBS() {
   QString file = fileMBS->text();
-  if(file.contains(".mbsim.xml"))
-    file.chop(10);
   ((Solver*)elementList->topLevelItem(0))->writeXMLFile(file);
 }
 
@@ -484,7 +483,7 @@ void MainWindow::newDOPRI5Integrator() {
   fileIntegrator->setText("");
 
 #ifdef INLINE_OPENMBV
-  inlineOpenMBV();
+  mbsimxml(1);
 #endif
 }
 
@@ -498,7 +497,7 @@ void MainWindow::newRADAU5Integrator() {
   fileIntegrator->setText("");
 
 #ifdef INLINE_OPENMBV
-  inlineOpenMBV();
+  mbsimxml(1);
 #endif
 }
 
@@ -511,7 +510,7 @@ void MainWindow::newLSODEIntegrator() {
   fileIntegrator->setText("");
 
 #ifdef INLINE_OPENMBV
-  inlineOpenMBV();
+  mbsimxml(1);
 #endif
 }
 
@@ -524,7 +523,7 @@ void MainWindow::newLSODARIntegrator() {
   fileIntegrator->setText("");
 
 #ifdef INLINE_OPENMBV
-  inlineOpenMBV();
+  mbsimxml(1);
 #endif
 }
 
@@ -537,7 +536,7 @@ void MainWindow::newTimeSteppingIntegrator() {
   fileIntegrator->setText("");
 
 #ifdef INLINE_OPENMBV
-  inlineOpenMBV();
+  mbsimxml(1);
 #endif
 }
 
@@ -550,7 +549,7 @@ void MainWindow::newEulerExplicitIntegrator() {
   fileIntegrator->setText("");
 
 #ifdef INLINE_OPENMBV
-  inlineOpenMBV();
+  mbsimxml(1);
 #endif
 }
 
@@ -563,7 +562,7 @@ void MainWindow::newRKSuiteIntegrator() {
   fileIntegrator->setText("");
 
 #ifdef INLINE_OPENMBV
-  inlineOpenMBV();
+  mbsimxml(1);
 #endif
 }
 
@@ -588,9 +587,9 @@ void MainWindow::loadIntegrator() {
 
 void MainWindow::saveIntegratorAs() {
   if(integratorList->topLevelItemCount()) {
-    QString file=QFileDialog::getSaveFileName(0, "MBSim integrator files", QString("./")+((Integrator*)integratorList->topLevelItem(0))->getType()+".mbsimint.xml", "XML files (*.mbsimint.xml)");
+    QString file=QFileDialog::getSaveFileName(0, "MBSim integrator files", QString("./")+((Solver*)elementList->topLevelItem(0))->getName()+".mbsimint.xml", "XML files (*.mbsimint.xml)");
     if(file!="") {
-      fileIntegrator->setText(file);
+      fileIntegrator->setText(file.right(13)==".mbsimint.xml"?file:file+".mbsimint.xml");
       actionSaveIntegrator->setDisabled(false);
       saveIntegrator();
     }
@@ -599,8 +598,6 @@ void MainWindow::saveIntegratorAs() {
 
 void MainWindow::saveIntegrator() {
   QString file = fileIntegrator->text();
-  if(file.contains(".mbsimint.xml"))
-    file.chop(13);
   ((Integrator*)integratorList->topLevelItem(0))->writeXMLFile(file);
 }
 
@@ -617,7 +614,7 @@ void MainWindow::newDoubleParameter() {
   updateOctaveParameters();
 
 #ifdef INLINE_OPENMBV
-  inlineOpenMBV();
+  mbsimxml(1);
 #endif
 }
 
@@ -664,7 +661,7 @@ void MainWindow::loadParameter(const QString &file) {
   }
 
 #ifdef INLINE_OPENMBV
-  inlineOpenMBV();
+  mbsimxml(1);
 #endif
 }
 
@@ -677,9 +674,9 @@ void MainWindow::loadParameter() {
 
 void MainWindow::saveParameterAs() {
   if(parameterList->topLevelItemCount()) {
-    QString file=QFileDialog::getSaveFileName(0, "MBSim parameter files", QString("./")+"Parameter.mbsimparam.xml", "XML files (*.mbsimparam.xml)");
+    QString file=QFileDialog::getSaveFileName(0, "MBSim parameter files", QString("./")+((Solver*)elementList->topLevelItem(0))->getName()+".mbsimparam.xml", "XML files (*.mbsimparam.xml)");
     if(file!="") {
-    fileParameter->setText(file);
+      fileParameter->setText(file.right(15)==".mbsimparam.xml"?file:file+".mbsimparam.xml");
       actionSaveParameter->setDisabled(false);
       saveParameter();
     }
@@ -717,73 +714,69 @@ void MainWindow::updateOctaveParameters() {
 }
 
 void MainWindow::mbsimxml(int task) {
-  Solver *solver = ((Solver*)elementList->topLevelItem(0));
-  solver->writeXMLFile(".sim");
-  ((Integrator*)integratorList->topLevelItem(0))->writeXMLFile(".sim");
-  QString file = fileParameter->text();
-  fileParameter->setText(".sim.mbsimparam.xml");
-  saveParameter();
-  fileParameter->setText(file);
+  Solver *slv=(Solver*)elementList->topLevelItem(0);
+  Integrator *integ=(Integrator*)integratorList->topLevelItem(0);
+  if(!slv || !integ)
+    return;
 
-  string prog = "mbsimxml";
-  vector<string> command;
-  command.push_back(prog);
+  stringstream mbsimxmlName;
+  mbsimxmlName << "mbsim" << task;
+  stringstream openmbvName;
+  openmbvName << "openmbv" << task;
+  stringstream mbsimparamName;
+  mbsimparamName << "mbsim" << task << ".mbsimparam.xml";
+
+  QString mbsFile=(uniqueTempDir/mbsimxmlName.str()).c_str();
+  QString saveName=slv->getName();
+  slv->setName(openmbvName.str().c_str());
+  slv->writeXMLFile(mbsFile);
+  slv->setName(saveName);
+
+  QString mbsParamFile=(uniqueTempDir/mbsimparamName.str()).c_str();
+  saveParameter(mbsParamFile);
+
+  QString intFile=(uniqueTempDir/mbsimxmlName.str()).c_str();
+  integ->writeXMLFile(intFile);
+
+//  QString file = fileParameter->text();
+//  fileParameter->setText(".sim.mbsimparam.xml");
+//  saveParameter();
+//  fileParameter->setText(file);
+
+  vector<string> arg;
+  arg.push_back(MBXMLUtils::getInstallPath()+"/bin/mbsimxml");
   if(task==1)
-    command.push_back("--stopafterfirststep");
-  command.push_back("--mbsimparam");
-  command.push_back(".sim.mbsimparam.xml");
-  command.push_back(".sim.mbsim.xml");
-  command.push_back(".sim.mbsimint.xml");
-  string str = command[0];
-  for(unsigned int i=1; i<command.size(); i++)
-    str += " " + command[i];
+    arg.push_back("--stopafterfirststep");
+  arg.push_back("--mbsimparam");
+  arg.push_back(mbsParamFile.toStdString());
+  arg.push_back(mbsFile.toStdString()+".mbsim.xml");
+  arg.push_back(intFile.toStdString()+".mbsimint.xml");
+  bfs::path CURDIR(bfs::current_path());
+  bfs::current_path(uniqueTempDir);
+  runProgramSyncronous(arg);
+  bfs::current_path(CURDIR);
 
-  cout << str.c_str() << endl;
-  int ret = system(str.c_str());
-  cout << ret << endl;
-  //runProgramSyncronous(command);
-#if !defined MBSIMGUI_MINGW
-  {
-    QString name1 = ((Solver*)elementList->topLevelItem(0))->getName() + ".ombv.xml";
-    QString name2 = ((Solver*)elementList->topLevelItem(0))->getName() + ".ombv.h5";
-    //string dir = "/usr/bin/";
-    string prog = "touch";
-    vector<string> command;
-    command.push_back(prog);
-    command.push_back(name1.toStdString());
-    command.push_back(name2.toStdString());
-    cout << (command[0] + " " + command[1] + " " + command[2]).c_str()<< endl;
-    int ret = system((command[0] + " " + command[1] + " " + command[2]).c_str());
-    cout << ret << endl;
-  }
-#endif
-  actionOpenMBV->setDisabled(false);
-  actionH5plotserie->setDisabled(task==1);
 }
 
 void MainWindow::preview() {
 #ifdef INLINE_OPENMBV
-  inlineOpenMBV();
+  mbsimxml(1);
 #endif
 }
 
 void MainWindow::simulate() {
   mbsimxml(0);
+  actionOpenMBV->setDisabled(false);
 }
 
 void MainWindow::openmbv() {
-  if(elementList->topLevelItemCount()) {
-    QString name = ((Solver*)elementList->topLevelItem(0))->getName() + ".ombv.xml";
-    if(QFile::exists(name)) {
-      //string dir = "/home/foerg/Downloads/openmbv/bin/";
-      string prog = "openmbv";
-      vector<string> command;
-      //command.push_back(dir+prog);
-      command.push_back(prog);
-      command.push_back("--autoreload");
-      command.push_back(name.toStdString());
-      runProgramSyncronous(command);
-    }
+  const char *name = (uniqueTempDir/"openmbv0.ombv.xml").c_str();
+  if(QFile::exists(name)) {
+    vector<string> command;
+    command.push_back(MBXMLUtils::getInstallPath()+"/bin/openmbv");
+    command.push_back("--autoreload");
+    command.push_back(name);
+    runProgramSyncronous(command);
   }
 }
 
@@ -800,40 +793,6 @@ void MainWindow::h5plotserie() {
       //cout << ret << endl;
     }
   }
-}
-
-void MainWindow::inlineOpenMBV() {
-  Solver *slv=(Solver*)elementList->topLevelItem(0);
-  Integrator *integ=(Integrator*)integratorList->topLevelItem(0);
-  if(!slv || !integ)
-    return;
-
-  QString mbsFile=(uniqueTempDir/"mbsim").c_str();
-  // modify the top level element name to enforce a special filename of the openmbv xml file
-  QString saveName=slv->getName();
-  slv->setName("openmbv");
-  // write xml file
-  slv->writeXMLFile(mbsFile);
-  // restore element name
-  slv->setName(saveName);
-
-  QString mbsParamFile=(uniqueTempDir/"mbsim.param.xml").c_str();
-  saveParameter(mbsParamFile);
-
-  QString intFile=(uniqueTempDir/"mbsim").c_str();
-  integ->writeXMLFile(intFile);
-
-  vector<string> arg;
-  arg.push_back(MBXMLUtils::getInstallPath()+"/bin/mbsimxml");
-  arg.push_back("--stopafterfirststep");
-  arg.push_back("--mbsimparam");
-  arg.push_back(mbsParamFile.toStdString());
-  arg.push_back(mbsFile.toStdString()+".mbsim.xml");
-  arg.push_back(intFile.toStdString()+".mbsimint.xml");
-  bfs::path CURDIR(bfs::current_path());
-  bfs::current_path(uniqueTempDir);
-  runProgramSyncronous(arg);
-  bfs::current_path(CURDIR);
 }
 
 void MainWindow::selectElement(string ID) {
