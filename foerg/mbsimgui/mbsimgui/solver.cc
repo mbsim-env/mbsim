@@ -141,6 +141,5 @@ void Solver::writeXMLFile(const QString &name) {
   writeXMLFile(&doc);
   map<string, string> nsprefix=ObjectFactory::getInstance()->getNamespacePrefixMapping();
   unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
-  cout << name.right(10).toStdString() << endl;
   doc.SaveFile((name.right(10)==".mbsim.xml"?name:name+".mbsim.xml").toAscii().data());
 }

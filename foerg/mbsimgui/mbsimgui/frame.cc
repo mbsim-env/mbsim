@@ -94,12 +94,12 @@ FixedRelativeFrame::FixedRelativeFrame(const QString &str, QTreeWidgetItem *pare
   properties->addTab("Kinematics");
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new VecWidget(3), MBSIMNS"position", lengthUnits(), 4));
+  input.push_back(new PhysicalStringWidget(new VecWidget(3), MBSIMNS"relativePosition", lengthUnits(), 4));
   position = new ExtXMLWidget("Position", new ExtPhysicalVarWidget(input),true);
   properties->addToTab("Kinematics", position);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new MatWidget(getEye<string>(3,3,"1","0")),MBSIMNS"orientation",noUnitUnits(),1));
+  input.push_back(new PhysicalStringWidget(new MatWidget(getEye<string>(3,3,"1","0")),MBSIMNS"relativeOrientation",noUnitUnits(),1));
   orientation = new ExtXMLWidget("Orientation",new ExtPhysicalVarWidget(input),true);
   properties->addToTab("Kinematics", orientation);
 
@@ -133,8 +133,16 @@ void FixedRelativeFrame::initializeUsingXML2(TiXmlElement *element) {
   QString ref = ((ParentFrameOfReferenceWidget*)refFrame->getWidget())->getSavedFrameOfReference();
   if(ref[0]=='F')
     ((FrameOfReferenceWidget*)refFrame->getWidget())->setSavedFrameOfReference(QString("../")+ref);
+  ((PhysicalStringWidget*)((ExtPhysicalVarWidget*)position->getWidget())->getPhysicalStringWidget(0))->setXmlName(MBSIMNS"position");
+  ((PhysicalStringWidget*)((ExtPhysicalVarWidget*)position->getWidget())->getPhysicalStringWidget(1))->setXmlName(MBSIMNS"position");
+  ((PhysicalStringWidget*)((ExtPhysicalVarWidget*)orientation->getWidget())->getPhysicalStringWidget(0))->setXmlName(MBSIMNS"orientation");
+  ((PhysicalStringWidget*)((ExtPhysicalVarWidget*)orientation->getWidget())->getPhysicalStringWidget(1))->setXmlName(MBSIMNS"orientation");
   position->initializeUsingXML(element);
   orientation->initializeUsingXML(element);
+  ((PhysicalStringWidget*)((ExtPhysicalVarWidget*)position->getWidget())->getPhysicalStringWidget(0))->setXmlName(MBSIMNS"relativePosition");
+  ((PhysicalStringWidget*)((ExtPhysicalVarWidget*)position->getWidget())->getPhysicalStringWidget(1))->setXmlName(MBSIMNS"relativePosition");
+  ((PhysicalStringWidget*)((ExtPhysicalVarWidget*)orientation->getWidget())->getPhysicalStringWidget(0))->setXmlName(MBSIMNS"relativeOrientation");
+  ((PhysicalStringWidget*)((ExtPhysicalVarWidget*)orientation->getWidget())->getPhysicalStringWidget(1))->setXmlName(MBSIMNS"relativeOrientation");
 }
 
 RigidBodyFrame::RigidBodyFrame(const QString &str, QTreeWidgetItem *parentItem, int ind) : FixedRelativeFrame(str, parentItem, ind) {

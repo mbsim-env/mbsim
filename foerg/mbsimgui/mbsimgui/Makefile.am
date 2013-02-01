@@ -6,7 +6,7 @@ mbsimguidir = $(includedir)/mbsimgui
 
 INCLUDES = -DTIXML_USE_STL $(QT_CFLAGS) $(MKOCTFILE_CFLAGS) $(OPENMBV_CFLAGS)
 
-LDADD = $(QT_LIBS) $(MKOCTFILE_LIBS) $(OPENMBV_LIBS) -lboost_filesystem
+LDADD = $(QT_LIBS) $(MKOCTFILE_LIBS) $(OPENMBV_LIBS) 
 
 mbsimgui_CPPFLAGS = $(MBXMLUTILS_CFLAGS)
 

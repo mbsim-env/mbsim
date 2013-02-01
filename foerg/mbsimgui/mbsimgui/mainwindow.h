@@ -52,7 +52,7 @@ class MainWindow : public QMainWindow {
     void loadParameter(const QString &file);
     OpenMBVGUI::MainWindow *inlineOpenMBVMW;
     void initInlineOpenMBV();
-    boost::filesystem::path uniqueTempDir;
+    QString uniqueTempDir;
     void mbsimxml(int task);
   public:
     MainWindow();

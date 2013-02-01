@@ -30,7 +30,6 @@
 #include <mbxmlutils/utils.h>
 #include <openmbv/mainwindow.h>
 #include <mbxmlutilstinyxml/getinstallpath.h>
-#include <boost/bind.hpp>
 #ifdef _WIN32 // Windows
 #  include <windows.h>
 #  include <process.h>
@@ -40,7 +39,29 @@
 #endif
 
 using namespace std;
-namespace bfs=boost::filesystem;
+
+bool removeDir(const QString &dirName) {
+  bool result = true;
+  QDir dir(dirName);
+
+  if (dir.exists(dirName)) {
+    Q_FOREACH(QFileInfo info, dir.entryInfoList(QDir::NoDotAndDotDot | QDir::System | QDir::Hidden  | QDir::AllDirs | QDir::Files, QDir::DirsFirst)) {
+      if (info.isDir()) {
+        result = removeDir(info.absoluteFilePath());
+      }
+      else {
+        result = QFile::remove(info.absoluteFilePath());
+      }
+
+      if (!result) {
+        return result;
+      }
+    }
+    result = dir.rmdir(dirName);
+  }
+
+  return result;
+}
 
 int runProgramSyncronous(const vector<string> &arg) {
   char **argv=new char*[arg.size()+1];
@@ -250,23 +271,36 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   newDOPRI5Integrator();
   newMBS();
   QTreeWidgetItem* parentItem = new QTreeWidgetItem;
+
 }
 
 void MainWindow::initInlineOpenMBV() {
-  if(bfs::is_directory("/dev/shm"))
-    uniqueTempDir=bfs::unique_path("/dev/shm/mbsimgui_tmp_%%%%-%%%%-%%%%-%%%%");
-  else
-    uniqueTempDir=bfs::unique_path(bfs::temp_directory_path()/"mbsimgui_tmp_%%%%-%%%%-%%%%-%%%%");
-  bfs::create_directories(uniqueTempDir);
-  bfs::copy_file(MBXMLUtils::getInstallPath()+"/share/mbsimgui/empty.ombv.xml",
-                 uniqueTempDir/"openmbv1.ombv.xml");
-  bfs::copy_file(MBXMLUtils::getInstallPath()+"/share/mbsimgui/empty.ombv.h5",
-                 uniqueTempDir/"openmbv1.ombv.h5");
+//  uniqueTempDir = QDir::tempPath() + "/mbsim_XXXXXX"; 
+//  char *temp = new char[uniqueTempDir.size()];
+//  cout << uniqueTempDir.toStdString() << endl;
+//  for(unsigned int i=0; i<uniqueTempDir.size(); i++)
+//    temp[i] = uniqueTempDir[i].toAscii();
+//  cout << temp << endl;
+//  mkdtemp(temp);
+//  uniqueTempDir = temp;
+
+  QDir dir = QDir::temp();
+  for(int i=1; i<10000; i++) {
+    QString name = "mbsim_"+QString::number(i);
+    if(!dir.exists(name)) {
+      dir.mkdir(name);
+      uniqueTempDir = QDir::tempPath() + "/" + name;
+      break;
+    }
+  }
+
+  QFile::copy(QString::fromStdString(MBXMLUtils::getInstallPath()+"/share/mbsimgui/empty.ombv.xml"),uniqueTempDir+"/openmbv1.ombv.xml");
+  QFile::copy(QString::fromStdString(MBXMLUtils::getInstallPath()+"/share/mbsimgui/empty.ombv.h5"),uniqueTempDir+"/openmbv1.ombv.h5");
   std::list<string> arg;
   arg.push_back("--wst");
   arg.push_back(MBXMLUtils::getInstallPath()+"/share/mbsimgui/inlineopenmbv.ombv.wst");
   arg.push_back("--autoreload");
-  arg.push_back((uniqueTempDir/"openmbv1.ombv.xml").generic_string());
+  arg.push_back((uniqueTempDir+"/openmbv1.ombv.xml").toStdString());
   inlineOpenMBVMW=new OpenMBVGUI::MainWindow(arg);
 
   connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, Object*)), this, SLOT(selectElement(std::string)));
@@ -276,7 +310,7 @@ void MainWindow::initInlineOpenMBV() {
 MainWindow::~MainWindow() {
   delete inlineOpenMBVMW;
 
-  bfs::remove_all(uniqueTempDir);
+  removeDir(uniqueTempDir);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
@@ -402,8 +436,6 @@ void MainWindow::newMBS() {
 }
 
 void MainWindow::loadMBS(const QString &file) {
-  QDir dir;
-  cout << dir.relativeFilePath(file).toStdString() << endl;
   fileMBS->setText(file);
   actionOpenMBV->setDisabled(true);
   actionH5plotserie->setDisabled(true);
@@ -726,16 +758,16 @@ void MainWindow::mbsimxml(int task) {
   stringstream mbsimparamName;
   mbsimparamName << "mbsim" << task << ".mbsimparam.xml";
 
-  QString mbsFile=(uniqueTempDir/mbsimxmlName.str()).c_str();
+  QString mbsFile=uniqueTempDir+"/"+QString::fromStdString(mbsimxmlName.str());
   QString saveName=slv->getName();
   slv->setName(openmbvName.str().c_str());
   slv->writeXMLFile(mbsFile);
   slv->setName(saveName);
 
-  QString mbsParamFile=(uniqueTempDir/mbsimparamName.str()).c_str();
+  QString mbsParamFile=uniqueTempDir+"/"+QString::fromStdString(mbsimparamName.str());
   saveParameter(mbsParamFile);
 
-  QString intFile=(uniqueTempDir/mbsimxmlName.str()).c_str();
+  QString intFile=uniqueTempDir+"/"+QString::fromStdString(mbsimxmlName.str());
   integ->writeXMLFile(intFile);
 
 //  QString file = fileParameter->text();
@@ -751,11 +783,10 @@ void MainWindow::mbsimxml(int task) {
   arg.push_back(mbsParamFile.toStdString());
   arg.push_back(mbsFile.toStdString()+".mbsim.xml");
   arg.push_back(intFile.toStdString()+".mbsimint.xml");
-  bfs::path CURDIR(bfs::current_path());
-  bfs::current_path(uniqueTempDir);
+  QString currentPath = QDir::currentPath();
+  QDir::setCurrent(uniqueTempDir);
   runProgramSyncronous(arg);
-  bfs::current_path(CURDIR);
-
+  QDir::setCurrent(currentPath);
 }
 
 void MainWindow::preview() {
@@ -770,12 +801,12 @@ void MainWindow::simulate() {
 }
 
 void MainWindow::openmbv() {
-  const char *name = (uniqueTempDir/"openmbv0.ombv.xml").c_str();
+  QString name = uniqueTempDir+"/openmbv0.ombv.xml";
   if(QFile::exists(name)) {
     vector<string> command;
     command.push_back(MBXMLUtils::getInstallPath()+"/bin/openmbv");
     command.push_back("--autoreload");
-    command.push_back(name);
+    command.push_back(name.toStdString());
     runProgramSyncronous(command);
   }
 }
@@ -789,8 +820,6 @@ void MainWindow::h5plotserie() {
       command.push_back(prog);
       command.push_back(name.toStdString());
       runProgramSyncronous(command);
-      //int ret = system(prog.toAscii().data());
-      //cout << ret << endl;
     }
   }
 }
