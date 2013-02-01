@@ -217,9 +217,9 @@ namespace MBSim {
     TiXmlElement *ec=element->FirstChildElement();
     ec=element->FirstChildElement(MBSIMNS"frameOfReference");
     if(ec) setFrameOfReference(ec->Attribute("ref"));
-    ec=element->FirstChildElement(MBSIMNS"position");
+    ec=element->FirstChildElement(MBSIMNS"relativePosition");
     if(ec) setRelativePosition(getVec3(ec));
-    ec=element->FirstChildElement(MBSIMNS"orientation");
+    ec=element->FirstChildElement(MBSIMNS"relativeOrientation");
     if(ec) setRelativeOrientation(getSqrMat3(ec));
   }
 

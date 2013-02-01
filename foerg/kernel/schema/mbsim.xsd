@@ -2085,7 +2085,7 @@
               <xs:attribute name="ref" type="ParentFrameReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
-          <xs:element name="position" type="pv:lengthVector" minOccurs="0">
+          <xs:element name="relativePosition" type="pv:lengthVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Relative Lage des Koordinatensystems.<br/>
@@ -2094,7 +2094,7 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="orientation" type="pv:nounitMatrix" minOccurs="0">
+          <xs:element name="relativeOrientation" type="pv:nounitMatrix" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Relative Orientierung des Koordinatensystems.<br/>
@@ -2107,7 +2107,7 @@
     </xs:complexContent>
   </xs:complexType> 
 
-  <xs:element name="RigidBodyFrame" substitutionGroup="Frame" type="RigidBodyFrameType">
+  <xs:element name="RigidBodyFrame" substitutionGroup="FixedRelativeFrame" type="RigidBodyFrameType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Klasse zur Beschreibung von Koordinatensystemen.
     </xs:documentation></xs:annotation>
@@ -2118,7 +2118,7 @@
     </xs:complexContent>
   </xs:complexType> 
 
-  <xs:element name="WorldFrame" substitutionGroup="Frame" type="WorldFrameType">
+  <xs:element name="WorldFrame" substitutionGroup="FixedRelativeFrame" type="WorldFrameType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Klasse zur Beschreibung von Koordinatensystemen.
     </xs:documentation></xs:annotation>
