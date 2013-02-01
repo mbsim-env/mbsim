@@ -124,5 +124,173 @@ namespace MBSim {
       int info;
 
   };
+
+  template <int size>
+  class MDNM {
+
+      typedef fmatvec::Vector<fmatvec::Fixed<size>, double> vctr;
+
+    public:
+      /*!
+       * \brief plain constructor
+       */
+      MDNM();
+
+      virtual ~MDNM() {
+      }
+
+      /* GETTER / SETTER */
+      int getNumberOfIterations() const {
+        return iter;
+      }
+      int getNumberOfMaximalIterations() const {
+        return itermax;
+      }
+      int getInfo() const {
+        return info;
+      }
+      void setMaximumNumberOfIterations(int itmax_) {
+        itermax = itmax_;
+      }
+      void setFunction(Function1<vctr, vctr> *function_) {
+        function = function_;
+      }
+      void setJacobianFunction(NJacobianFunction<size> * jacobian_) {
+        jacobian = jacobian_;
+      }
+//      void setDampingFunction(DampingFunction * damping_) {
+//        damping = damping_;
+//      }
+      void setCriteriaFunction(CFunction<size> * criteria_) {
+        criteria = criteria_;
+      }
+      CFunction<size> * getCriteriaFunction() {
+        return criteria;
+      }
+      /***************************************************/
+
+      /**
+       * \brief solve nonlinear root function
+       * \param initialValue initial value
+       */
+      vctr solve(const vctr & initialValue);
+
+    private:
+
+      /**
+       * \brief root function
+       */
+      Function1<vctr, vctr> *function;
+
+      /**
+       * \brief Jacobian matrix
+       */
+      NJacobianFunction<size> *jacobian;
+
+      /*
+       * \brief damping function
+       */
+//      DampingFunction *damping;
+
+      /*
+       * \brief criteria function
+       *
+       * This function defines the criteria when to stop the Newton algorithm
+       */
+      CFunction<size> *criteria;
+
+      /**
+       * \brief maximum number of iterations, actual number of iterations, maximum number of damping steps, information about success
+       */
+      int itermax;
+
+      /*
+       * \brief number of iterations
+       */
+      int iter;
+
+      /*
+       * \brief information about the result of the method
+       */
+      int info;
+
+  };
+
+  template <int size>
+  MDNM<size>::MDNM() :
+      function(0), jacobian(0), criteria(0), itermax(300), iter(0), info(1) {
+
+  }
+
+  template <int size>
+  fmatvec::Vector<fmatvec::Fixed<size>, double> MDNM<size>::solve(const fmatvec::Vector<fmatvec::Fixed<size>, double> & initialValue) {
+    /*Reset for comparing*/
+    criteria->clear();
+    criteria->setFunction(function);
+    info = (*criteria)(initialValue);
+    if (info == 0)
+      return initialValue;
+
+//    if (damping) {
+//      damping->setCriteriaFunction(criteria);
+//      damping->setFunction(function);
+//    }
+
+    jacobian->setFunction(function);
+
+    info = 1;
+    iter = 0;
+    /*End - Reset*/
+
+    //current position in function
+    vctr x = initialValue;
+
+    //current value of function
+    vctr f = (*function)(x);
+
+    //step to next position
+    vctr dx = slvLU((*jacobian)(x), f, info);
+
+    //Damp the solution
+//    if (damping)
+//      x -= (*damping)(x, dx) * dx;
+//    else
+    x -= dx;
+
+    f = (*function)(x);
+
+    for (iter = 1; iter < itermax; iter++) {
+
+      //Get the information about the criteria
+      info = (*criteria)(x);
+
+      //Criteria with info = 1 means: go on  (else there might be a solution found (=0) or something else)
+      if (info != 1) {
+        if (info == -1) //new solution is worse than solution before --> return solution before
+          return x + dx;
+        else
+          return x;
+      }
+
+      //compute current value
+      f = (*function)(x);
+
+      //get step
+      dx = slvLU((*jacobian)(x), f, info);
+
+      //cout << "dxn[" << iter << "] = " << dx << endl;
+
+      //Damp the solution
+//      if (damping)
+//        x -= (*damping)(x, dx) * dx;
+//      else
+      x -= dx;
+
+    }
+
+    info = (*criteria)(x);
+    return x;
+  }
+
 }
 #endif /* NUMERICSMULTIDIMENSIONALNEWTONMETHOD_H_ */

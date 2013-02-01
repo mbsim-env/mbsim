@@ -122,5 +122,146 @@ namespace MBSim {
       /*INHERITED INTERFACE*/
       virtual fmatvec::SqrMat operator ()(const fmatvec::Vec & x, Function1<fmatvec::Vec, fmatvec::Vec> * function);
   };
+
+  /*!
+   * \brief base class for square Jacobians used for the newton method
+   */
+  template<int size>
+  class NJacobianFunction : public Function1<fmatvec::SquareMatrix<fmatvec::Fixed<size>, double >, fmatvec::Vector<fmatvec::Fixed<size>, double > > {
+    public:
+    /**
+     * \brief constructor
+     */
+      NJacobianFunction();
+
+    /*
+     * \brief destructor
+     */
+    virtual ~NJacobianFunction() {
+    }
+
+    /* GETTER / SETTER*/
+    virtual void setFunction(Function1<fmatvec::Vector<fmatvec::Fixed<size>, double >, fmatvec::Vector<fmatvec::Fixed<size>, double > > * function_) {
+      function = function_;
+    }
+    /*****************/
+
+    /*INHERITED INTERFACE*/
+    virtual fmatvec::SquareMatrix<fmatvec::Fixed<size>, double > operator ()(const fmatvec::Vector<fmatvec::Fixed<size>, double > & x, const void* = NULL) = 0;
+    /*********************/
+
+    protected:
+    Function1<fmatvec::Vector<fmatvec::Fixed<size>, double >, fmatvec::Vector<fmatvec::Fixed<size>, double> > * function;
+  };
+
+  /*!
+   * \brief class to compute the Jacobian matrix for the newton method numerically
+   */
+  template<int size>
+  class NumericalNJacobianFunction : public NJacobianFunction<size> {
+
+      typedef fmatvec::Vector<fmatvec::Fixed<size>,double > vctr;
+      typedef fmatvec::SquareMatrix<fmatvec::Fixed<size>,double > matr;
+
+    public:
+      /**
+       * \brief constructor
+       */
+      NumericalNJacobianFunction();
+
+      /*
+       * \brief destructor
+       */
+      virtual ~NumericalNJacobianFunction() {
+      }
+
+      /*INHERITED INTERFACE*/
+      virtual fmatvec::SquareMatrix<fmatvec::Fixed<size>, double > operator ()(const fmatvec::Vector<fmatvec::Fixed<size>, double> & x, const void* = NULL);
+
+
+  };
+
+  template<int size>
+  NJacobianFunction<size>::NJacobianFunction() :
+    function(0){
+  }
+
+  template <int size>
+  NumericalNJacobianFunction<size>::NumericalNJacobianFunction() :
+    NJacobianFunction<size>() {
+  }
+
+  template <int size>
+  fmatvec::SquareMatrix<fmatvec::Fixed<size>,double > NumericalNJacobianFunction<size>::operator ()(const vctr & x, const void*) {
+    matr J; // initialize size
+
+    double dx, xj;
+    vctr x2 = x;
+    vctr f = (*NJacobianFunction<size>::function)(x2);
+    vctr f2;
+
+    for (int j = 0; j < size; j++) {
+      xj = x2(j);
+
+      dx = (epsroot() * 0.5);
+      do {
+        dx += dx;
+      } while (fabs(xj + dx - x2(j)) < epsroot());
+
+      x2(j) += dx;
+      f2 = (*NJacobianFunction<size>::function)(x2);
+      x2(j) = xj;
+      vctr tmp = (f2 - f) / dx;
+      for (int i = 0; i < size; i++)
+        J(i,j) = tmp(i);
+    }
+
+    return J;
+  }
+
+//  /*!
+//   * \brief class to compute a Jacobian matrix once at the beginning and then uses it over and over again
+//   *
+//   * \todo: implement
+//   */
+//  class ConstantNewtonJacobianFunction : public NewtonJacobianFunction {
+//    public:
+//      /**
+//       * \brief constructor
+//       */
+//      ConstantNewtonJacobianFunction();
+//
+//      /*
+//       * \brief destructor
+//       */
+//      virtual ~ConstantNewtonJacobianFunction() {
+//      }
+//
+//      /*INHERITED INTERFACE*/
+//      virtual fmatvec::SqrMat operator ()(const fmatvec::Vec & x, Function1<fmatvec::Vec, fmatvec::Vec> * function);
+//
+//  };
+//
+//  /*!
+//   * \brief class use the identity matrix as Jacobian matrix in the newton method yields a fixpoint iteration
+//   *
+//   * \todo: implement
+//   */
+//  class FixpointNewtonJacobianFunction : public NewtonJacobianFunction {
+//    public:
+//      /**
+//       * \brief constructor
+//       */
+//      FixpointNewtonJacobianFunction();
+//
+//      /*
+//       * \brief destructor
+//       */
+//      virtual ~FixpointNewtonJacobianFunction() {
+//      }
+//
+//      /*INHERITED INTERFACE*/
+//      virtual fmatvec::SqrMat operator ()(const fmatvec::Vec & x, Function1<fmatvec::Vec, fmatvec::Vec> * function);
+//  };
 }
 #endif // NUMERICSNEWTONMEHTODFUNCTION_H_

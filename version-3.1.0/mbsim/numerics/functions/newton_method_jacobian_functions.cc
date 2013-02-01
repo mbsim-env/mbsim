@@ -34,7 +34,7 @@ namespace MBSim {
   }
 
   SqrMat NumericalNewtonJacobianFunction::operator ()(const fmatvec::Vec & x, const void*) {
-    SqrMat J = SqrMat(x.size()); // initialise size
+    SqrMat J = SqrMat(x.size()); // initialize size
 
     double dx, xj;
     Vec x2 = x;
