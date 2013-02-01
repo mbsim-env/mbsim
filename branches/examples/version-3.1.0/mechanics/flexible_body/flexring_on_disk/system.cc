@@ -105,7 +105,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   belt->setOpenMBVSpineExtrusion(cuboid);
 #endif
 
-  FlexibleBand *top = new FlexibleBand("Top");
+  FlexibleBand<Fixed<8> > *top = new FlexibleBand<Fixed<8> >("Top");
   int nNodes = (int)(nodesPerElement*elements + 1);
   Vec nodes(nNodes);
   for(int i=0;i<nNodes;i++) nodes(i) = i*beltLength/(nNodes-1);
