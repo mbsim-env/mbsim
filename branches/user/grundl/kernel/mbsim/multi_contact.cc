@@ -605,7 +605,7 @@ namespace MBSim {
       return 0;
   }
 
-  void MultiContact::connect(Contour *contour0, Contour* contour1, ContactKinematics* contactKinematics_ /*=0*/, const string & name) {
+  void MultiContact::connect(Contour *contour0, Contour* contour1, ContactKinematics* contactKinematics_ /*=0*/, const string & name_) {
     LinkMechanics::connect(contour0);
     LinkMechanics::connect(contour1);
     contactKinematics.push_back(contactKinematics_);
@@ -624,10 +624,10 @@ namespace MBSim {
       throw MBSimError("ERROR in " + getName() + " (Contact::init): Unknown contact pairing between Contour \"" + contour0->getType() + "\" and Contour\"" + contour1->getType() + "\"!");
 
     //Create a single contact(with all the information) for every sub contact of each contact kinematics that is part of the multiple contact
-    if (name == "")
-      ckNames.push_back(numtostr(cK));
+    if (name_ == "")
+      ckNames.push_back(name + numtostr(cK));
     else
-      ckNames.push_back(name);
+      ckNames.push_back(name_);
 
   }
 

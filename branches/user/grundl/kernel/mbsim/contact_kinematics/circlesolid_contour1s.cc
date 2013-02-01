@@ -147,8 +147,8 @@ namespace MBSim {
     b(1)=-v2.T()*(Om2-Om1);
     const Vec zetad = slvLU(A,b);
 
-    const Mat33 tOm1 = tilde(Om1);
-    const Mat33 tOm2 = tilde(Om2);
+    const Mat3x3 tOm1 = tilde(Om1);
+    const Mat3x3 tOm2 = tilde(Om2);
     
     wb(0) += ((vC2-vC1).T()*N1-n1.T()*tOm1*R1)*zetad(0)+n1.T()*tOm2*R2*zetad(1)-n1.T()*tOm1*(vC2-vC1);
     if (wb.size()>1) {

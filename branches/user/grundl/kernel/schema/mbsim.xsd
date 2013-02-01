@@ -1262,9 +1262,9 @@
     <xs:complexContent>
       <xs:extension base="ConstraintType">
         <xs:sequence>
-          <xs:element name="referenceRigidBody">
+          <xs:element name="dependentRigidBody">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Starrkörper, dessen Bewegungsfreiheitsgrad als Referenz dient.
+              Starrkörper, dessen generalisierte Koordinaten durch eine Zeitfunktion bestimmt werden kann.
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
@@ -1317,23 +1317,23 @@
     <xs:complexContent>
       <xs:extension base="ConstraintType">
         <xs:sequence>
-          <xs:element name="referenceRigidBody">
+          <xs:element name="dependentRigidBody">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Starrkörper, dessen Bewegungsfreiheitsgrad als Referenz dient.
+              Starrkörper, dessen generalisierte Koordinaten von den generalisierten Koordinaten anderer Körper abhängig ist.
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="dependentRigidBodies">
+          <xs:element name="independentRigidBodies">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Liste der abhängigen Starrkörper, deren Bewegungszustand aus dem Zustand des Referenzkörpers direkt bestimmt werden kann.
+                Liste der Starrkörper, von deren generalisierten Koordinaten die generalisierten Koordinaten des abhängigen Körpers direkt bestimmt werden können.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
               <xs:sequence minOccurs="0" maxOccurs="unbounded">
-                <xs:element name="dependentRigidBody">
+                <xs:element name="independentRigidBody">
                   <xs:complexType>
                     <xs:sequence>
                       <xs:element name="transmissionRatio" type="pv:unknownScalar">

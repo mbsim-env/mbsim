@@ -202,7 +202,7 @@ System::System(const string &projectName, int contactType, int firstBall, int la
 
   for (size_t contactIter = 0; contactIter < balls.size(); contactIter++) {
     stringstream contactname;
-    contactname << "Contact_Beam-" << ballsContours[contactIter]->getName();
+    contactname << "Contact_Beam_" << ballsContours[contactIter]->getName();
 
     contact->connect(BeamContour, ballsContours[contactIter]);
   }

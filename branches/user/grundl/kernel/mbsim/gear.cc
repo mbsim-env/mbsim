@@ -98,7 +98,7 @@ namespace MBSim {
   void Gear::updateJacobians(double t, int j) {
     for(unsigned i=0; i<body.size(); i++) {
       Vec3 WrP0P1 = body[i]->getFrameForKinematics()->getPosition()-body[i]->getFrameOfReference()->getPosition();
-      Mat33 tWrP0P1 = tilde(WrP0P1);
+      Mat3x3 tWrP0P1 = tilde(WrP0P1);
 
       C[i].setOrientation(body[i]->getFrameOfReference()->getOrientation());
       C[i].setPosition(body[i]->getFrameOfReference()->getPosition() + WrP0P1);

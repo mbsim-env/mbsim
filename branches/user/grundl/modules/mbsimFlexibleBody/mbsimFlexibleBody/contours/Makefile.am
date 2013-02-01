@@ -5,8 +5,8 @@ libcontour_la_SOURCES = flexible_band.cc\
 												nurbs_curve_1s.cc\
 												nurbs_disk_2s.cc
 
-libcontour_la_CPPFLAGS = -I.. -DTIXML_USE_STL $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
-libcontour_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
+libcontour_la_CPPFLAGS = -I.. -DTIXML_USE_STL $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) $(NURBS_CFLAGS)
+libcontour_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) $(NURBS_LIBS)
 
 contourincludedir = $(includedir)/mbsimFlexibleBody/contours
 contourinclude_HEADERS = contour1s_flexible.h\

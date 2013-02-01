@@ -76,7 +76,7 @@ namespace MBSim {
     Vec3 &t1 = v1;
 
     double r = sphere->getRadius();
-    Mat32 KR2(NONINIT);
+    Mat3x2 KR2(NONINIT);
     Vec3 Ks2(NONINIT);
     Ks2(0) = -r*sin(a2)*cos(b2);
     Ks2(1) = r*cos(a2)*cos(b2);
@@ -92,15 +92,15 @@ namespace MBSim {
     Vec3 u2 = s2/nrm2(s2);
     Vec3 v2 = crossProduct(n2,u2);
 
-    Mat32 R1;
+    Mat3x2 R1;
     R1.set(0, s1);
     R1.set(1, t1);
 
-    Mat32 R2;
+    Mat3x2 R2;
     R2.set(0, s2);
     R2.set(1, t2);
 
-    Mat32 KU2(NONINIT);
+    Mat3x2 KU2(NONINIT);
     KU2(0,0) = -cos(a2);
     KU2(1,0) = -sin(a2);
     KU2(2,0) = 0;
@@ -108,7 +108,7 @@ namespace MBSim {
     KU2(1,1) = 0;
     KU2(2,1) = 0;
 
-    Mat32 KV2(NONINIT);
+    Mat3x2 KV2(NONINIT);
     KV2(0,0) = sin(a2)*sin(b2);
     KV2(1,0) = -cos(a2)*sin(b2);
     KV2(2,0) = 0;
@@ -116,8 +116,8 @@ namespace MBSim {
     KV2(1,1) = -sin(a2)*cos(b2);
     KV2(2,1) = -sin(b2);
 
-    Mat32 U2 = sphere->getFrame()->getOrientation()*KU2;
-    Mat32 V2 = sphere->getFrame()->getOrientation()*KV2;
+    Mat3x2 U2 = sphere->getFrame()->getOrientation()*KU2;
+    Mat3x2 V2 = sphere->getFrame()->getOrientation()*KV2;
 
     SqrMat A(4,NONINIT);
     A(Index(0,0),Index(0,1)) = -u1.T()*R1;
@@ -138,8 +138,8 @@ namespace MBSim {
     Vec zetad1 = zetad(0,1);
     Vec zetad2 = zetad(2,3);
 
-    Mat33 tOm1 = tilde(Om1);
-    Mat33 tOm2 = tilde(Om2);
+    Mat3x3 tOm1 = tilde(Om1);
+    Mat3x3 tOm2 = tilde(Om2);
     wb(0) += n1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);
 
     if(wb.size() > 1) wb(1) += u1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);

@@ -38,13 +38,13 @@
 #undef PACKAGE_VERSION
 #undef PACKAGE_TARNAME
 #undef PACKAGE_STRING
-#include "nurbs.h"
+#include "nurbs++/nurbs.h"
 #undef PACKAGE_BUGREPORT
 #undef PACKAGE_NAME
 #undef PACKAGE_VERSION
 #undef PACKAGE_TARNAME
 #undef PACKAGE_STRING
-#include "vector.h"
+#include "nurbs++/vector.h"
 #define PACKAGE_BUGREPORT MY_PACKAGE_BUGREPORT
 #define PACKAGE_NAME MY_PACKAGE_NAME
 #define PACKAGE_VERSION MY_PACKAGE_VERSION
@@ -531,7 +531,9 @@ namespace MBSimFlexibleBody {
     currentElement = int(remainder/l0);
     sLocal = remainder - (0.5 + currentElement) * l0; // Lagrange-Parameter of the affected FE with sLocal==0 in the middle of the FE and sGlobal==0 at the beginning of the beam
 
-    if(currentElement >= Elements && openStructure) { // contact solver computes to large sGlobal at the end of the entire beam is not considered only for open structure
+    // contact solver computes too large sGlobal at the end of the entire beam is not considered only for open structure
+    // for closed structure even sGlobal < L (but sGlobal ~ L) values could lead - due to numerical problems - to a wrong currentElement computation
+    if(currentElement >= Elements) {
       currentElement =  Elements-1;
       sLocal += l0;
     }

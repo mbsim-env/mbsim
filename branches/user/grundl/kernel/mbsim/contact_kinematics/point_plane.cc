@@ -72,7 +72,7 @@ namespace MBSim {
       Vec3 &s1 = u1;
       Vec3 &t1 = v1;
 
-      Mat32 R1;
+      Mat3x2 R1;
       R1.set(0, s1);
       R1.set(1, t1);
 
@@ -85,7 +85,7 @@ namespace MBSim {
       b(1) = -v1.T()*(vC2-vC1);
       Vec zetad1 =  slvLU(A,b);
 
-      Mat33 tOm1 = tilde(Om1); // tilde operator
+      Mat3x3 tOm1 = tilde(Om1); // tilde operator
       wb(0) += n1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1); // acceleration in terms of contour parametrisation
 
       if(wb.size() > 1) {
