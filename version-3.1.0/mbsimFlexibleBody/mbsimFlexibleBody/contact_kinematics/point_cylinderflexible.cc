@@ -31,25 +31,28 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  ContactKinematicsPointCylinderFlexible::~ContactKinematicsPointCylinderFlexible() {
+  template<class Col>
+  ContactKinematicsPointCylinderFlexible<Col>::~ContactKinematicsPointCylinderFlexible() {
     delete func;
   }
 
-  void ContactKinematicsPointCylinderFlexible::assignContours(const vector<Contour*> &contour) {
+  template<class Col>
+  void ContactKinematicsPointCylinderFlexible<Col>::assignContours(const vector<Contour*> &contour) {
     if(dynamic_cast<Point*>(contour[0])) {
       ipoint = 0; icylinder = 1;
       point = static_cast<Point*>(contour[0]);
-      cylinder = static_cast<CylinderFlexible*>(contour[1]);
+      cylinder = static_cast<CylinderFlexible<Col>*>(contour[1]);
     }
     else {
       ipoint = 1; icylinder = 0;
       point = static_cast<Point*>(contour[1]);
-      cylinder = static_cast<CylinderFlexible*>(contour[0]);
+      cylinder = static_cast<CylinderFlexible<Col>*>(contour[0]);
     }
     func= new FuncPairContour1sPoint(point,cylinder);
   }
 
-  void ContactKinematicsPointCylinderFlexible::updateg(Vec &g, ContourPointData *cpData) {
+  template<class Col>
+  void ContactKinematicsPointCylinderFlexible<Col>::updateg(Vec &g, ContourPointData *cpData) {
 
     cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition());
 
@@ -62,13 +65,13 @@ namespace MBSimFlexibleBody {
     }
     else {
       search.setSearchAll(true);
-      cpData[icylinder].getLagrangeParameterPosition() = Vec(1,INIT,0.);
+      cpData[icylinder].getLagrangeParameterPosition() << VecV(1,INIT,0.);
     }
 
     cpData[icylinder].getLagrangeParameterPosition()(0) = search.slv();
 
     cylinder->updateKinematicsForFrame(cpData[icylinder],position_cosy); 
-    Vec WrD = cpData[ipoint].getFrameOfReference().getPosition() - cpData[icylinder].getFrameOfReference().getPosition();
+    Vec3 WrD = cpData[ipoint].getFrameOfReference().getPosition() - cpData[icylinder].getFrameOfReference().getPosition();
 
     // contact in estimated contact area? 
     if(cpData[icylinder].getLagrangeParameterPosition()(0) < cylinder->getAlphaStart() || cpData[icylinder].getLagrangeParameterPosition()(0) > cylinder->getAlphaEnd() ) g(0) = 1.;

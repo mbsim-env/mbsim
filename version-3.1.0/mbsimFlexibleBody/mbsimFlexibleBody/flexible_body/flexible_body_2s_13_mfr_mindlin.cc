@@ -63,7 +63,7 @@ namespace MBSimFlexibleBody {
     /* M_RR is constant */
     /* M_RTheta */
     Vec u_bar = (*R_compl) + (*N_compl)*qf;
-    SqrMat M_RTheta = (-A)*tilde(u_bar)*G;
+    SqrMat3 M_RTheta = (-A)*tilde(u_bar)*G;
 
     /* M_RF */
     Mat M_RF = Mat(3,Dofs-RefDofs,INIT,0.); //= A*(*N_compl);
@@ -78,7 +78,7 @@ namespace MBSimFlexibleBody {
     I(1,2) = -((*R_ij)(2,1)+((*NR_ij[2][1])+(*NR_ij[1][2]))*qf+qf.T()*(*N_ij[2][1])*qf);
     I(2,2) = (*R_ij)(1,1)+(*R_ij)(0,0)+2.*((*NR_ij[1][1])+(*NR_ij[0][0]))*qf+qf.T()*((*N_ij[1][1])+(*N_ij[0][0]))*qf;
 
-    Mat M_ThetaTheta = G.T()*(I+J0)*G;
+    Mat3x3 M_ThetaTheta = G.T()*(I+J0)*G;
 
     /* M_ThetaF */
     Mat qN(3,Dofs-RefDofs);
@@ -87,7 +87,7 @@ namespace MBSimFlexibleBody {
     qN(1,0,1,Dofs-RefDofs-1) =qf.T()*((*N_ij[2][0])-(*N_ij[0][2]));//+ (*NR_ij[2][0])-(*NR_ij[0][2]);
     qN(2,0,2,Dofs-RefDofs-1) =qf.T()*((*N_ij[0][1])-(*N_ij[1][0]));//+ (*NR_ij[0][1])-(*NR_ij[1][0]);
 
-    Mat M_ThetaF = G.T()*qN;
+    Mat3V M_ThetaF = G.T()*qN;
 
     /* M_FF is constant */
 
@@ -384,7 +384,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody2s13MFRMindlin::init(InitStage stage) {
     if(stage == resize) {
-      FlexibleBodyContinuum<Vec>::init(stage);
+      FlexibleBodyContinuum<Ref, Vec>::init(stage);
       assert(nr>0); // at least on radial row
       assert(nj>1); // at least two azimuthal elements
 
@@ -493,19 +493,19 @@ namespace MBSimFlexibleBody {
         }
 #endif
 #endif
-        FlexibleBodyContinuum<Vec>::init(stage);
+        FlexibleBodyContinuum<Ref, Vec>::init(stage);
       }
     }
     else
-      FlexibleBodyContinuum<Vec>::init(stage);
+      FlexibleBodyContinuum<Ref, Vec>::init(stage);
 
 #ifdef HAVE_NURBS
     contour->initContourFromBody(stage); // initialize contour
 #endif
   }
 
-  Vec FlexibleBody2s13MFRMindlin::transformCW(const Vec& WrPoint) {
-    Vec CrPoint = WrPoint.copy();
+  Vec3 FlexibleBody2s13MFRMindlin::transformCW(const Vec3& WrPoint) {
+    Vec3 CrPoint(WrPoint);
 
     CrPoint -= q(0,2);
     CrPoint = A.T()*CrPoint; // position in moving frame of reference

@@ -30,6 +30,7 @@ namespace MBSim {
 
 namespace MBSimFlexibleBody {
 
+  template<class Col>
   class CylinderFlexible;
 
   /**
@@ -37,6 +38,7 @@ namespace MBSimFlexibleBody {
    * \author: Roland Zander
    * \date 2009-03-19 changes for new kernel (Thorsten Schindler)
    */
+  template<class Col>
   class ContactKinematicsPointCylinderFlexible : public MBSim::ContactKinematics {
     public:
       /**
@@ -64,7 +66,7 @@ namespace MBSimFlexibleBody {
        * \brief pointer to point and cylinder
        */
       MBSim::Point *point;
-      CylinderFlexible *cylinder;
+      CylinderFlexible<Col> *cylinder;
 
       /**
        * \brief root function

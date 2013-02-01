@@ -22,6 +22,7 @@
 #define _FLEXIBLE_BODY_LINEAR_EXTERNAL_H_
 
 #include "mbsimFlexibleBody/flexible_body.h"
+#include <mbsim/contour_pdata.h>
 #include "mbsim/mbsim_event.h"
 #include <fstream>
 
@@ -40,30 +41,36 @@ namespace MBSimFlexibleBody {
    * \f[ \vM{\rm d}\vu = -( \vK \vq + \vD \vu){\rm d}t - \vW{\rm d}\vLambda \f]
    * with CONSTANT matrices \f$\vM,\vK,\vD\f$. The model uses n degrees of freedom (dimension of \f$\vq,\vu\f$) and d translational directions (dimension of Jacobi-matrizes \f$n\times d\f$)
    */
-  class FlexibleBodyLinearExternal : public FlexibleBody {
+  class FlexibleBodyLinearExternal : public FlexibleBody<fmatvec::Ref> {
     public:
-	  /*!
-	   * \brief constructor
-	   * \param name of body
-	   */
+      /*!
+       * \brief constructor
+       * \param name of body
+       */
       FlexibleBodyLinearExternal(const std::string &name);
 
       /*!
        * \brief destructor
        */
-      virtual ~FlexibleBodyLinearExternal() {}
+      virtual ~FlexibleBodyLinearExternal() {
+      }
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const { return "FlexibleBodyLinearExternal"; }
+      virtual std::string getType() const {
+        return "FlexibleBodyLinearExternal";
+      }
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
-      virtual void init(MBSim::InitStage stage) { new MBSim::MBSimError("ERROR(FlexibleBodyLinearExternal::init): Not implemented!"); }
-      virtual void facLLM() {}
+      virtual void init(MBSim::InitStage stage);
+      virtual void facLLM(int i);
+      virtual void plot(double t, double dt = 1);
       /***************************************************/
-      
+
       /* INHERITED INTERFACE OF FLEXIBLEBODY */
-      virtual void BuildElements() { new MBSim::MBSimError("ERROR(FlexibleBodyLinearExternal::BuildElements): Not implemented!"); } 
+      virtual void BuildElements() {
+        new MBSim::MBSimError("ERROR(FlexibleBodyLinearExternal::BuildElements): Not implemented!");
+      }
       virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
       virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
@@ -73,8 +80,8 @@ namespace MBSimFlexibleBody {
        * \param t time
        * \todo angular kinematics
        */
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff, MBSim::Frame *frame=0);
-      virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame=0);
+      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff, MBSim::Frame *frame = 0);
+      virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame = 0);
       /***************************************************/
 
       /*! 
@@ -84,25 +91,25 @@ namespace MBSimFlexibleBody {
        * 0.0 1.0]
        * \param massfilename name of file holding mass matrix
        */
-      void readMassMatrix(const std::string &massfilename); 
+      void readMassMatrix(const std::string &massfilename);
 
       /*! 
        * set mass matrix: 
        * \param mat mass matrix
        */
-      void setMassMatrix(const fmatvec::SymMat &mat); 
+      void setMassMatrix(const fmatvec::SymMat &mat);
 
       /*!
        * read stiffness matrix form given file readMassMatrix(const std::string &massfilename)
        * \param stiffnessfilename name of file holding stiffness matrix
        */
-      void readStiffnessMatrix(const std::string &stiffnessfilename); 
+      void readStiffnessMatrix(const std::string &stiffnessfilename);
 
       /*!
        * read stiffness matrix
        * \param mat stiffness matrix 
        */
-      void setStiffnessMatrix(const fmatvec::SqrMat &mat); 
+      void setStiffnessMatrix(const fmatvec::SqrMat &mat);
 
       /*!
        * set damping \f$\vD\f$ proportional to mass and stiffness
@@ -110,7 +117,7 @@ namespace MBSimFlexibleBody {
        * \param a_ \f$\alpha\f$
        * \param b_ \f$\beta \f$
        */
-	  void setProportionalDamping(const double &a, const double &b);
+      void setProportionalDamping(const double &a, const double &b);
 
 //      /*! plot parameters of "BodyFlexibleLinearExternal"
 //      */
@@ -126,7 +133,6 @@ namespace MBSimFlexibleBody {
        * \param jacobifilename name of file holding matrices
        */
 //      void addFrame(const std::string &name, const std::string &jacobifilename);
-
       /*!
        * add Port using JACOBIAN matrix and location of reference point
        * \param name of Port to 
@@ -134,14 +140,12 @@ namespace MBSimFlexibleBody {
        * \param r undeformed reference point in body coordinate system
        */
 //      void addFrame(const std::string &name, const fmatvec::Mat &J_, const fmatvec::Vec &r_);
-
       /*!
        * add Contour using information given in file for JACOBIAN matrix and location of reference point
        * \param contour Contour to add
        * \param jacobifilename name of file holding matrices
        */
 //      void addContour(Contour *contour, const std::string &jacobifilename);
-
       /*!
        * add Contour using JACOBIAN matrix and location of reference point
        * \param contour Contour to add
@@ -149,22 +153,45 @@ namespace MBSimFlexibleBody {
        * \param r undeformed reference point in body coordinate system
        */
 //      void addContour(Contour *contour, const fmatvec::Mat &J_, const fmatvec::Vec &r_);
-
       /*! add a ContourInterpolation, no additional information needed */
 //      void addContourInterpolation(ContourInterpolation *contour);
-
       /*! set origin BodyFlexibleLinearExternal::WrON00, \f$\rs{_W}[_K0]{\vr}\f$ of model
-      */
-      void setWrON00(const fmatvec::Vec &WrON00_) {WrON00 = WrON00_;}
+       */
+      void setWrON00(const fmatvec::Vec &WrON00_) {
+        WrON00 = WrON00_;
+      }
 
       /* geerbt */
       fmatvec::Mat computeJacobianMatrix(const MBSim::ContourPointData &CP);
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      void setOpenMBVBody(OpenMBV::Body * openMBVBody_);
+      /*!
+       * transformation matrix for plot
+       *
+       * \todo: efficient?
+       */
+      std::vector<fmatvec::Mat3V> CR;
+
+      /*!
+       * rigid node positions of points for plot
+       */
+      std::vector<fmatvec::Vec3> rConst;
+
+      /*!
+       * \brief add CR
+       *
+       * \todo give good names
+       */
+      void addVisualisationPoint(const fmatvec::Mat3V & CR_, const fmatvec::Vec3 & rConst_);
+
+#endif
+
     protected:
-      /** number of Contours directly asoziated to body */
+      /** number of Contours directly associated to body */
       int nContours;
-	  
-	  /** vector of ContourPointData controlling type of interface: node/interpolation */
+
+      /** vector of ContourPointData controlling type of interface: node/interpolation */
       std::vector<MBSim::ContourPointData> contourType;
 
       /** origin \f$\rs{_W}[_K0]{\vr}\f$ of model */
@@ -185,12 +212,13 @@ namespace MBSimFlexibleBody {
       void updateContours(double t);
 
       /*! create interface in form of ContourPointData based on file
-       * \return cpData for refering to Port or Contour added
+       * \return cpData for referring to Port or Contour added
        * \param jacbifilename file containing interface data
        */
       MBSim::ContourPointData addInterface(const std::string &jacbifilename);
+
       /*! create interface in form of ContourPointData based on Jacobian matrix and undeformed position
-       * \return cpData for refering to Port or Contour added
+       * \return cpData for referring to Port or Contour added
        * \param J Jacobian matrix
        * \param r undeformed position in body coordinate system
        */
@@ -198,7 +226,7 @@ namespace MBSimFlexibleBody {
 
       /* empty function since mass, damping and stiffness matrices are constant !!! */
       void updateJh_internal(double t);
-   };
+  };
 
 }
 

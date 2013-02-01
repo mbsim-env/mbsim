@@ -43,12 +43,14 @@ namespace MBSimFlexibleBody {
    * Zander, R.; Ulbrich, H.: Impacts on beam structures: Interaction of wave propagationand global dynamics, IUTAM Symposium on Multiscale Problems in Multibody System Contacts Stuttgart, Germany, 2006
    * Zander, R.; Ulbrich, H.: Free plain motion of flexible beams in MBS - A comparison of models, III European Conference on Computational Mechanics Lisbon, Portugal, 2006
    */
-  class FiniteElement1s21RCM : public MBSim::DiscretizationInterface {
+  class FiniteElement1s21RCM : public MBSim::DiscretizationInterface<fmatvec::Fixed<8> > {
     public:
       /**
        * \brief constructor
        */
-      FiniteElement1s21RCM() {};
+      FiniteElement1s21RCM() {
+      }
+      ;
 
       /*!
        * \brief constructor 
@@ -58,36 +60,59 @@ namespace MBSimFlexibleBody {
        * \param bending stiffness
        * \param vector of gravitational acceleration
        */
-      FiniteElement1s21RCM(double l0_, double  Arho_, double EA_, double EI_, fmatvec::Vec g_);
+      FiniteElement1s21RCM(double l0_, double Arho_, double EA_, double EI_, fmatvec::Vec g_);
 
       /**
        * \destructor
        */
-      virtual ~FiniteElement1s21RCM() {}
+      virtual ~FiniteElement1s21RCM() {
+      }
 
       /* INHERITED INTERFACE */
-      virtual const fmatvec::SymMat& getM() const { return M; }
-      virtual const fmatvec::Vec& geth() const { return h; }
-      virtual const fmatvec::SqrMat& getdhdq() const { return Dhq; }    
-      virtual const fmatvec::SqrMat& getdhdu() const { return Dhqp; }
-      virtual int getqSize() const { return 8; }
-      virtual int getuSize() const { return 8; }
-      virtual void computeM(const fmatvec::Vec& qElement);
-      virtual void computeh(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement);
-      virtual void computedhdz(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement);
-      virtual double computeKineticEnergy(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement);
-      virtual double computeGravitationalEnergy(const fmatvec::Vec& qElement);
-      virtual double computeElasticEnergy(const fmatvec::Vec& qElement);
-      virtual fmatvec::Vec computePosition(const fmatvec::Vec&q, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computePosition): not implemented!"); }
-      virtual fmatvec::SqrMat computeOrientation(const fmatvec::Vec&q, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeOrientation): not implemented!"); }
-      virtual fmatvec::Vec computeVelocity (const fmatvec::Vec&q, const fmatvec::Vec&u, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeVelocity): not implemented!"); }
-      virtual fmatvec::Vec computeAngularVelocity(const fmatvec::Vec&q, const fmatvec::Vec&u, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeAngularVelocity): not implemented!"); }
-      virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec&q, const MBSim::ContourPointData& cp) { return JGeneralized(q,cp.getLagrangeParameterPosition()(0)); }
+      virtual const fmatvec::Matrix<fmatvec::Symmetric, fmatvec::Fixed<8>, fmatvec::Fixed<8>, double>& getM() const {
+        return M;
+      }
+      virtual const fmatvec::Vec8& geth() const {
+        return h;
+      }
+      virtual const fmatvec::SqrMat8& getdhdq() const {
+        return Dhq;
+      }
+      virtual const fmatvec::SqrMat8& getdhdu() const {
+        return Dhqp;
+      }
+      virtual int getqSize() const {
+        return 8;
+      }
+      virtual int getuSize() const {
+        return 8;
+      }
+      virtual void computeM(const fmatvec::Vec8& qElement);
+      virtual void computeh(const fmatvec::Vec8& qElement, const fmatvec::Vec8& qpElement);
+      virtual void computedhdz(const fmatvec::Vec8& qElement, const fmatvec::Vec8& qpElement);
+      virtual double computeKineticEnergy(const fmatvec::Vec8& qElement, const fmatvec::Vec8& qpElement);
+      virtual double computeGravitationalEnergy(const fmatvec::Vec8& qElement);
+      virtual double computeElasticEnergy(const fmatvec::Vec8& qElement);
+      virtual fmatvec::Vec3 computePosition(const fmatvec::Vec8&q, const MBSim::ContourPointData& cp) {
+        throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computePosition): not implemented!");
+      }
+      virtual fmatvec::SqrMat3 computeOrientation(const fmatvec::Vec8&q, const MBSim::ContourPointData& cp) {
+        throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeOrientation): not implemented!");
+      }
+      virtual fmatvec::Vec3 computeVelocity(const fmatvec::Vec8&q, const fmatvec::Vec8&u, const MBSim::ContourPointData& cp) {
+        throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeVelocity): not implemented!");
+      }
+      virtual fmatvec::Vec3 computeAngularVelocity(const fmatvec::Vec8&q, const fmatvec::Vec8&u, const MBSim::ContourPointData& cp) {
+        throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeAngularVelocity): not implemented!");
+      }
+      virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec8&q, const MBSim::ContourPointData& cp) {
+        return fmatvec::Mat(JGeneralized(q, cp.getLagrangeParameterPosition()(0))); //TODO: is cast from Mat8x3 to Mat possible to be automatically? --> Or even better: template function computeJacobianOfMotion!
+      }
       /***************************************************/
       /*!
        * compute additional informations for element
        */
-      fmatvec::Vec computeAdditionalElementData(fmatvec::Vec &qElement, fmatvec::Vec &qpElement);
+      fmatvec::Vec8 computeAdditionalElementData(fmatvec::Vec8 &qElement, fmatvec::Vec8 &qpElement);
 
       /* GETTER / SETTER */
       void setCurlRadius(double);
@@ -100,7 +125,7 @@ namespace MBSimFlexibleBody {
        * \param contour point
        * \return positional beam state
        */
-      fmatvec::Vec LocateBeam(const fmatvec::Vec&q, const double &s);
+      fmatvec::Vec LocateBeam(const fmatvec::Vec8&q, const double &s);
 
       /**
        * \param global positions
@@ -108,21 +133,21 @@ namespace MBSimFlexibleBody {
        * \param contour point
        * \return beam state
        */
-      fmatvec::Vec StateBeam(const fmatvec::Vec&q, const fmatvec::Vec&u, const double &s);
+      fmatvec::Vec StateBeam(const fmatvec::Vec8&q, const fmatvec::Vec8&u, const double &s);
 
       /**
        * \param global positions
        * \param contour point
        * \return JACOBIAN of beam cross section position with respect to generalised position in global coordinates
        */
-      fmatvec::Mat JGeneralizedInternal(const fmatvec::Vec& qElement, const double& s);
+      fmatvec::Mat8x3 JGeneralizedInternal(const fmatvec::Vec8& qElement, const double& s);
 
       /**
        * \param global positions
        * \param contour point
        * \return JACOBIAN of beam cross section position with respect to generalised position in local coordinates
        */
-      fmatvec::Mat JGeneralized (const fmatvec::Vec& qElement, const double& s);
+      fmatvec::Mat8x3 JGeneralized(const fmatvec::Vec8& qElement, const double& s);
 
       /**
        * \param global positions
@@ -131,14 +156,14 @@ namespace MBSimFlexibleBody {
        * \param TODO
        * \return derivative of JACOBIAN of beam cross section position with respect to generalised position in local coordinates
        */
-      fmatvec::Mat JpGeneralized(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const double& s,const double& sp);
+      fmatvec::Mat8x3 JpGeneralized(const fmatvec::Vec8& qElement, const fmatvec::Vec8& qpElement, const double& s, const double& sp);
 
       /**
        * \param global positions
        * \param global velocities
        * \return elongation, elongational velocity, cog position, cog velocity, bending angle sum, bending velocity sum
        */
-      fmatvec::Vec ElementData(fmatvec::Vec qElement, fmatvec::Vec qpElement);
+      fmatvec::Vec ElementData(fmatvec::Vec8 qElement, fmatvec::Vec8 qpElement);
 
     protected:
       /** 
@@ -164,42 +189,42 @@ namespace MBSimFlexibleBody {
       /**
        * \brief mass matrix
        */
-      fmatvec::SymMat M;
+      fmatvec::Matrix<fmatvec::Symmetric, fmatvec::Fixed<8>, fmatvec::Fixed<8>, double> M;
 
       /**
        * \brief right hand side
        */
-      fmatvec::Vec h;
+      fmatvec::Vec8 h;
 
       /**
        * \brief derivative of right hand side with respect to positions and velocities
        */
-      fmatvec::SqrMat Dhq, Dhqp;
+      fmatvec::SqrMat8 Dhq, Dhqp;
 
       /**
        * \brief damping matrix
        */
-      fmatvec::SqrMat Damp;
+      fmatvec::SqrMat8 Damp;
 
       /**
        * \brief internal position and velocities as well as smooth right hand side
        */
-      fmatvec::Vec qLocal, qpLocal, hIntermediate;
+      fmatvec::Vec8 qLocal, qpLocal, hIntermediate;
 
       /**
        * \brief local mass matrix
        */
-      fmatvec::SymMat MLocal;
+      fmatvec::SymMat8 MLocal;
 
       /**
        * \brief transformation global -> internal coordinates coordinates and its derivative
        */
-      fmatvec::SqrMat Jeg, Jegp;
+      fmatvec::SqrMat8 Jeg, Jegp;
 
       /**
        * \brief global and local state of the last time step 
        */
-      fmatvec::Vec qElement_Old, qpElement_Old;
+      fmatvec::Vec8 qElement_Old, qpElement_Old;
 
       /**
        * \brief tolerance for comparison of state with old state 
@@ -212,14 +237,14 @@ namespace MBSimFlexibleBody {
        * \param global coordinates
        * \param local coordinates
        */
-      void BuildqLocal(const fmatvec::Vec& qGlobal, fmatvec::Vec& qLocal);
+      void BuildqLocal(const fmatvec::Vec& qGlobal, fmatvec::Vec8& qLocal);
 
       /**
        * \brief calculates the JACOBIAN of transformation
        * \param local beam coordinates
        * \param JACOBIAN ot transformation
        */
-      void BuildJacobi(const fmatvec::Vec& qLocal, fmatvec::SqrMat& Jeg);
+      void BuildJacobi(const fmatvec::Vec8& qLocal, fmatvec::SqrMat8& Jeg);
 
       /**
        * \brief calculates the JACOBIAN of transformation and its time derivative 
@@ -228,7 +253,7 @@ namespace MBSimFlexibleBody {
        * \param JACOBIAN of transformation
        * \param time derivative of JACOBIAN of transformation
        */
-      void BuildJacobi(const fmatvec::Vec& qLocal, const fmatvec::Vec& qpIntern, fmatvec::SqrMat& Jeg, fmatvec::SqrMat& Jegp);
+      void BuildJacobi(const fmatvec::Vec8& qLocal, const fmatvec::Vec8 & qpIntern, fmatvec::SqrMat8& Jeg, fmatvec::SqrMat8& Jegp);
 
       /** 
        * \param local positions
@@ -237,7 +262,7 @@ namespace MBSimFlexibleBody {
        * \param flag to calculate velocities
        * \return beam state
        */
-      fmatvec::Vec LocateLocalBeam(const fmatvec::Vec& qLocal, const fmatvec::Vec& qpLocal, const double& s, const bool calcAll=true);
+      fmatvec::Vec6 LocateLocalBeam(const fmatvec::Vec8& qLocal, const fmatvec::Vec8& qpLocal, const double& s, const bool calcAll = true);
 
       /**
        * \param global positions
@@ -250,7 +275,7 @@ namespace MBSimFlexibleBody {
        * \param local right hand side
        * \return JACOBIAN for implicit integration
        */
-      fmatvec::Mat hFullJacobi(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const fmatvec::Vec& qLocal, const fmatvec::Vec& qpLocal, const fmatvec::SqrMat& Jeg, const fmatvec::SqrMat& Jegp, const fmatvec::SymMat& MLocal, const fmatvec::Vec& hIntermediate);
+      fmatvec::Mat16x8 hFullJacobi(const fmatvec::Vec8& qElement, const fmatvec::Vec8& qpElement, const fmatvec::Vec8& qLocal, const fmatvec::Vec8& qpLocal, const fmatvec::SqrMat8& Jeg, const fmatvec::SqrMat8& Jegp, const fmatvec::SymMat8& MLocal, const fmatvec::Vec8& hIntermediate);
 
       /**
        * \brief powers of the beam length
@@ -258,8 +283,12 @@ namespace MBSimFlexibleBody {
       double l0h2, l0h3, l0h4, l0h5, l0h7, l0h8;
   };
 
-  inline double Sec(const double& alpha) { return 1.0/cos(alpha); }
-  inline double Power(double base, int exponent) { return pow(base,exponent); }
+  inline double Sec(const double& alpha) {
+    return 1.0 / cos(alpha);
+  }
+  inline double Power(double base, int exponent) {
+    return pow(base, exponent);
+  }
 
 }
 

@@ -57,7 +57,7 @@ namespace MBSimFlexibleBody {
    *    I. Romero: The interpolation of rotations and its application to finite element models of
    *    geometrically exact beams
    */
-  class FlexibleBody1s33Cosserat : public FlexibleBodyContinuum<double> {
+  class FlexibleBody1s33Cosserat : public FlexibleBodyContinuum<fmatvec::Ref, double> { //TODO: Fixed-col-size possible?
     public:
 
       /**
@@ -65,7 +65,7 @@ namespace MBSimFlexibleBody {
        * \param name of body
        * \param bool to specify open (cantilever) or closed (ring) structure
        */
-      FlexibleBody1s33Cosserat(const std::string &name, bool openStructure); 
+      FlexibleBody1s33Cosserat(const std::string &name, bool openStructure);
 
       /**
        * \brief destructor
@@ -77,47 +77,59 @@ namespace MBSimFlexibleBody {
       virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
       virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff, MBSim::Frame *frame=0);
-      virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame=0);
-      virtual void exportPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string( ), const int & deg = 3, const bool & writePsFile = false);
-      virtual void importPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string( ));
+      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff, MBSim::Frame *frame = 0);
+      virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame = 0);
+      virtual void exportPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string(), const int & deg = 3, const bool & writePsFile = false);
+      virtual void importPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string());
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
       virtual void init(MBSim::InitStage stage);
       virtual double computePotentialEnergy();
-      virtual void facLLM(int i=0);
+      virtual void facLLM(int i = 0);
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updateh(double t, int i=0);
+      virtual void updateh(double t, int i = 0);
       virtual void updateStateDependentVariables(double t);
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void plot(double t, double dt=1);
-      virtual std::string getType() const { return "FlexibleBody1s33Cosserat"; }
+      virtual void plot(double t, double dt = 1);
+      virtual std::string getType() const {
+        return "FlexibleBody1s33Cosserat";
+      }
       /***************************************************/
 
       /* GETTER / SETTER */
       void setNumberElements(int n);
       void setLength(double L_);
-      void setEGModuls(double E_,double G_);
+      void setEGModuls(double E_, double G_);
       void setDensity(double rho_);
       void setCrossSectionalArea(double A_);
-      void setMomentsInertia(double I1_,double I2_,double I0_);
-      void setCurlRadius(double R1_,double R2_);
-      void setMaterialDamping(double cEps0D_,double cEps1D_,double cEps2D_);
+      void setMomentsInertia(double I1_, double I2_, double I0_);
+      void setCurlRadius(double R1_, double R2_);
+      void setMaterialDamping(double cEps0D_, double cEps1D_, double cEps2D_);
       void setCylinder(double cylinderRadius_);
-      void setCuboid(double cuboidBreadth_,double cuboidHeight_);
+      void setCuboid(double cuboidBreadth_, double cuboidHeight_);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body) { openMBVBody=body; }
+      void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body) {
+        openMBVBody = body;
+      }
 #endif
 
-      int getNumberElements() const { return Elements; }   	
-      int getNumberDOFs() const { return qSize; }
-      double getLength() const { return L; }
-      bool isOpenStructure() const { return openStructure; }
+      int getNumberElements() const {
+        return Elements;
+      }
+      int getNumberDOFs() const {
+        return qSize;
+      }
+      double getLength() const {
+        return L;
+      }
+      bool isOpenStructure() const {
+        return openStructure;
+      }
       /***************************************************/
 
       /**
@@ -141,7 +153,7 @@ namespace MBSimFlexibleBody {
       /** 
        * \brief stl-vector of finite elements for rotation grid
        */
-      std::vector<MBSim::DiscretizationInterface*> rotationDiscretization;
+      std::vector<MBSim::DiscretizationInterface<fmatvec::Ref>*> rotationDiscretization;
 
       /** 
        * \brief stl-vector of finite element positions for rotation grid
@@ -156,9 +168,9 @@ namespace MBSimFlexibleBody {
       /**
        * \brief contours
        */
-      CylinderFlexible *cylinder;
-      FlexibleBand *top, *bottom, *left, *right;
-      Contour1sFlexible *neutralFibre;
+      CylinderFlexible<fmatvec::Ref> *cylinder;
+      FlexibleBand<fmatvec::Ref> *top, *bottom, *left, *right;
+      Contour1sFlexible<fmatvec::Ref> *neutralFibre;
 
       /**
        * \brief angle parametrisation
@@ -278,15 +290,46 @@ namespace MBSimFlexibleBody {
       void GlobalVectorContributionRotation(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
   };
 
-  inline void FlexibleBody1s33Cosserat::setLength(double L_) { L = L_; }
-  inline void FlexibleBody1s33Cosserat::setEGModuls(double E_,double G_) { E = E_; G = G_; }    	
-  inline void FlexibleBody1s33Cosserat::setDensity(double rho_) { rho = rho_;}     	
-  inline void FlexibleBody1s33Cosserat::setCrossSectionalArea(double A_) { A = A_; }    	
-  inline void FlexibleBody1s33Cosserat::setMomentsInertia(double I1_, double I2_, double I0_) { I1 = I1_; I2 = I2_; I0 = I0_; }    	
-  inline void FlexibleBody1s33Cosserat::setCurlRadius(double R1_,double R2_) { R1 = R1_; R2 = R2_; if(initialised) for(int i=0;i<Elements;i++) static_cast<FiniteElement1s33CosseratRotation*>(rotationDiscretization[i])->setCurlRadius(R1,R2); }    	
-  inline void FlexibleBody1s33Cosserat::setMaterialDamping(double cEps0D_,double cEps1D_,double cEps2D_) { cEps0D = cEps0D_; cEps1D = cEps1D_; cEps2D = cEps2D_; if(initialised) for(int i=0;i<Elements;i++) static_cast<FiniteElement1s33CosseratTranslation*>(discretization[i])->setMaterialDamping(Elements*cEps0D,cEps1D,cEps2D); }
-  inline void FlexibleBody1s33Cosserat::setCylinder(double cylinderRadius_) { cylinderRadius = cylinderRadius_; }
-  inline void FlexibleBody1s33Cosserat::setCuboid(double cuboidBreadth_,double cuboidHeight_) { cuboidBreadth = cuboidBreadth_; cuboidHeight = cuboidHeight_; }
+  inline void FlexibleBody1s33Cosserat::setLength(double L_) {
+    L = L_;
+  }
+  inline void FlexibleBody1s33Cosserat::setEGModuls(double E_, double G_) {
+    E = E_;
+    G = G_;
+  }
+  inline void FlexibleBody1s33Cosserat::setDensity(double rho_) {
+    rho = rho_;
+  }
+  inline void FlexibleBody1s33Cosserat::setCrossSectionalArea(double A_) {
+    A = A_;
+  }
+  inline void FlexibleBody1s33Cosserat::setMomentsInertia(double I1_, double I2_, double I0_) {
+    I1 = I1_;
+    I2 = I2_;
+    I0 = I0_;
+  }
+  inline void FlexibleBody1s33Cosserat::setCurlRadius(double R1_, double R2_) {
+    R1 = R1_;
+    R2 = R2_;
+    if (initialised)
+      for (int i = 0; i < Elements; i++)
+        static_cast<FiniteElement1s33CosseratRotation*>(rotationDiscretization[i])->setCurlRadius(R1, R2);
+  }
+  inline void FlexibleBody1s33Cosserat::setMaterialDamping(double cEps0D_, double cEps1D_, double cEps2D_) {
+    cEps0D = cEps0D_;
+    cEps1D = cEps1D_;
+    cEps2D = cEps2D_;
+    if (initialised)
+      for (int i = 0; i < Elements; i++)
+        static_cast<FiniteElement1s33CosseratTranslation*>(discretization[i])->setMaterialDamping(Elements * cEps0D, cEps1D, cEps2D);
+  }
+  inline void FlexibleBody1s33Cosserat::setCylinder(double cylinderRadius_) {
+    cylinderRadius = cylinderRadius_;
+  }
+  inline void FlexibleBody1s33Cosserat::setCuboid(double cuboidBreadth_, double cuboidHeight_) {
+    cuboidBreadth = cuboidBreadth_;
+    cuboidHeight = cuboidHeight_;
+  }
 
 }
 

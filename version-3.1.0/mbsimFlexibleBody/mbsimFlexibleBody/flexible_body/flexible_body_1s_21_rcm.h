@@ -49,7 +49,7 @@ namespace MBSimFlexibleBody {
    * Zander, R.; Ulbrich, H.: Impacts on beam structures: Interaction of wave propagationand global dynamics, IUTAM Symposium on Multiscale Problems in Multibody System Contacts Stuttgart, Germany, 2006 \n
    * Zander, R.; Ulbrich, H.: Free plain motion of flexible beams in MBS - A comparison of models, III European Conference on Computational Mechanics Lissbon, Portugal, 2006
    */
-  class FlexibleBody1s21RCM : public FlexibleBodyContinuum<double> {
+  class FlexibleBody1s21RCM : public FlexibleBodyContinuum<fmatvec::Fixed<8>, double> {
     public:
       /*!
        * \brief constructor:
@@ -67,7 +67,8 @@ namespace MBSimFlexibleBody {
       virtual void BuildElements();
       virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
-      virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
+      virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat8& locMat, fmatvec::SymMat& gloMat);
+      virtual void GlobalMatrixContribution(int n, const fmatvec::SqrMat8& locMat, fmatvec::Mat& gloMat);
       virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff, MBSim::Frame *frame=0);
       virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame=0);
       virtual void exportPositionVelocity(const std::string& filenamePos, const std::string& filenameVel = std::string( ), const int & deg = 3, const bool &writePsFile = false);
@@ -199,7 +200,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief contour of body
        */
-      Contour1sFlexible *contour1sFlexible;
+      Contour1sFlexible<fmatvec::Fixed<8> > *contour1sFlexible;
   };
 
 }

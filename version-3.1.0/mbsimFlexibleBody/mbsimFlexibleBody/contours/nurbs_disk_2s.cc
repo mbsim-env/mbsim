@@ -53,9 +53,9 @@ namespace MBSimFlexibleBody {
 
       switch(RefDofs) {
         case 2:
-        cp.getFrameOfReference().setPosition(R.getPosition() + R.getOrientation() * Vec("[0;0;1]") * static_cast<FlexibleBody2s13*>(parent)->getq()(0));
-        cp.getFrameOfReference().setVelocity( R.getOrientation() * Vec("[0;0;1]") * static_cast<FlexibleBody2s13*>(parent)->getu()(0));
-        cp.getFrameOfReference().setAngularVelocity(R.getOrientation() * Vec("[0;0;1]") * static_cast<FlexibleBody2s13*>(parent)->getu()(1));
+        cp.getFrameOfReference().setPosition(R.getPosition() + R.getOrientation() * Vec3("[0;0;1]") * static_cast<FlexibleBody2s13*>(parent)->getq()(0));
+        cp.getFrameOfReference().setVelocity( R.getOrientation() * Vec3("[0;0;1]") * static_cast<FlexibleBody2s13*>(parent)->getu()(0));
+        cp.getFrameOfReference().setAngularVelocity(R.getOrientation() * Vec3("[0;0;1]") * static_cast<FlexibleBody2s13*>(parent)->getu()(1));
         break;
         case 6:
         cp.getFrameOfReference().setPosition(R.getPosition() + R.getOrientation() * static_cast<FlexibleBody2s13*>(parent)->getq()(0,2));
@@ -171,7 +171,7 @@ namespace MBSimFlexibleBody {
   }
 #endif
 
-  Vec NurbsDisk2s::transformCW(const Vec& WrPoint) {
+  Vec3 NurbsDisk2s::transformCW(const Vec3& WrPoint) {
     return (static_cast<FlexibleBody2s13*>(parent))->transformCW(WrPoint);
   }
 
@@ -283,10 +283,10 @@ namespace MBSimFlexibleBody {
 
         ContourPointData cp(i*nj+j);
         (static_cast<FlexibleBody2s13*>(parent))->updateKinematicsForFrame(cp,position);
-        Vec InterpPoint = cp.getFrameOfReference().getPosition();
+        Vec3 InterpPoint = cp.getFrameOfReference().getPosition();
         cout << "Interpolationspunkt = " << InterpPoint(0) << " " << InterpPoint(1) << " " << InterpPoint(2) << endl << endl;
 
-        Vec error(3);
+        Vec3 error;
         error(0) = PointUV.x()-InterpPoint(0);
         error(1) = PointUV.y()-InterpPoint(1);
         error(2) = PointUV.z()-InterpPoint(2);
@@ -307,7 +307,7 @@ namespace MBSimFlexibleBody {
 
     cout << "TEST der Ableitungen:" << endl;
 
-    Vec test_pt(3);
+    Vec3 test_pt;
     test_pt(0) = ((*vvec)[vvec->size()-1]-(*vvec)[0])/2;
     test_pt(1) = 0;
     cout << "Punkt ist bei phi=0" << endl;
@@ -393,8 +393,8 @@ namespace MBSimFlexibleBody {
 #endif
 
 #ifdef HAVE_NURBS 
-  Vec NurbsDisk2s::getControlPoints(const int u, const int v) {
-    Vec TmpVec(3);
+  Vec3 NurbsDisk2s::getControlPoints(const int u, const int v) {
+    Vec3 TmpVec;
 
     TmpVec(0) = Surface->ctrlPnts(u,v).x();
     TmpVec(1) = Surface->ctrlPnts(u,v).y();
@@ -405,8 +405,8 @@ namespace MBSimFlexibleBody {
 #endif
 
 #ifdef HAVE_NURBS 
-  Vec NurbsDisk2s::getUVector() {
-    Vec TmpUVec(Surface->knotU().rows());
+  VecV NurbsDisk2s::getUVector() {
+    VecV TmpUVec(Surface->knotU().rows());
 
     for (int i=0;i<Surface->knotU().rows();i++)
     TmpUVec(i)=Surface->knotU(i);
@@ -416,8 +416,8 @@ namespace MBSimFlexibleBody {
 #endif
 
 #ifdef HAVE_NURBS 
-  Vec NurbsDisk2s::getVVector() {
-    Vec TmpVVec(Surface->knotV().rows());
+  VecV NurbsDisk2s::getVVector() {
+    VecV TmpVVec(Surface->knotV().rows());
 
     for (int i=0;i<Surface->knotV().rows();i++)
     TmpVVec(i)=Surface->knotV(i);
@@ -426,7 +426,7 @@ namespace MBSimFlexibleBody {
   }
 #endif
 
-  int NurbsDisk2s::testInsideBounds(const Vec &s) {
+  int NurbsDisk2s::testInsideBounds(const Vec2 &s) {
     if ((s(0) < Ri) || (s(0) > Ra))
       return 0;
 
@@ -436,7 +436,7 @@ namespace MBSimFlexibleBody {
     return 1;
   }
 
-  double NurbsDisk2s::computeError(const Vec &Vec1, const Vec &Vec2) {
+  double NurbsDisk2s::computeError(const Vec3 &Vec1, const Vec3 &Vec2) {
     return nrm2(Vec1 - Vec2);
   }
 }

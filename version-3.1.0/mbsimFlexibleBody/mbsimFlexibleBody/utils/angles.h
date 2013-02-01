@@ -88,7 +88,7 @@ namespace MBSimFlexibleBody {
        * \param angles
        * \return derivative of normal with respect to angles 
        */
-      virtual fmatvec::SqrMat computenq(const fmatvec::Vec& q) const = 0;		
+      virtual fmatvec::SqrMat computenq(const fmatvec::Vec& q) const = 0;
 
       /**
        * \param angles

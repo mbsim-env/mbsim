@@ -31,13 +31,16 @@ namespace MBSimFlexibleBody {
    * \date 2009-04-20 frame concept (Thorsten Schindler)
    * \date 2009-06-04 new file (Thorsten Schindler)
    */
-  class CylinderFlexible : public Contour1sFlexible {
+  template<class Col>
+  class CylinderFlexible : public Contour1sFlexible<Col> {
     public:
       /**
        * \brief constructor
        * \param name of contour
        */
-      CylinderFlexible(const std::string &name) : Contour1sFlexible(name) {}
+      CylinderFlexible(const std::string &name) : Contour1sFlexible<Col>(name) {}
+
+      virtual ~CylinderFlexible() {}
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const { return "CylinderFlexible"; }

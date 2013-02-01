@@ -94,7 +94,6 @@ namespace MBSimFlexibleBody {
     dat.close();
   }
 
-
   void MapleOutput(SymMat C, std::string MatName, std::string file) {
     ofstream dat(file.c_str(), ios::app);
     dat << MatName;
@@ -115,7 +114,8 @@ namespace MBSimFlexibleBody {
     dat.close();
   }
 
-  FlexibleBody2s13::FlexibleBody2s13(const string &name, const int & DEBUGLEVEL_) : FlexibleBodyContinuum<Vec>(name), Elements(0), NodeDofs(3), RefDofs(0), E(0.), nu(0.), rho(0.), d(3, INIT, 0.), Ri(0), Ra(0), dr(0), dj(0), m0(0), J0(3, INIT, 0.), degV(3), degU(3), drawDegree(0), currentElement(0), nr(0), nj(0), Nodes(0), Dofs(0), LType(innerring), A(3, EYE), G(3, EYE), DEBUGLEVEL(DEBUGLEVEL_) {
+  FlexibleBody2s13::FlexibleBody2s13(const string &name, const int & DEBUGLEVEL_) :
+      FlexibleBodyContinuum<Ref, Vec>(name), Elements(0), NodeDofs(3), RefDofs(0), E(0.), nu(0.), rho(0.), d(), Ri(0), Ra(0), dr(0), dj(0), m0(0), J0(), degV(3), degU(3), drawDegree(0), currentElement(0), nr(0), nj(0), Nodes(0), Dofs(0), LType(innerring), A(EYE), G(EYE), DEBUGLEVEL(DEBUGLEVEL_) {
 #ifdef HAVE_NURBS
     contour = new NurbsDisk2s("SurfaceContour");
     Body::addContour(contour);
@@ -139,13 +139,13 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody2s13::updatedhdz(double t) {
     updateh(t);
-    for(int i = 0; i < dhdq.cols(); i++)
-      for(int j = 0; j < dhdq.rows(); j++)
+    for (int i = 0; i < dhdq.cols(); i++)
+      for (int j = 0; j < dhdq.rows(); j++)
         dhdq(i, j) = -K(i, j);
   }
 
   void FlexibleBody2s13::updateStateDependentVariables(double t) {
-    FlexibleBodyContinuum<Vec>::updateStateDependentVariables(t);
+    FlexibleBodyContinuum<Ref, Vec>::updateStateDependentVariables(t);
 
     updateAG();
 
@@ -157,15 +157,15 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13::plot(double t, double dt) {
-    if(getPlotFeature(plotRecursive) == enabled) {
+    if (getPlotFeature(plotRecursive) == enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #ifdef HAVE_NURBS
-      if(getPlotFeature(openMBV) == enabled && openMBVBody) {
+      if (getPlotFeature(openMBV) == enabled && openMBVBody) {
         vector<double> data;
         data.push_back(t); //time
 
         ContourPointData cp;
-        cp.getLagrangeParameterPosition() = Vec(2, NONINIT);
+        cp.getLagrangeParameterPosition() = VecV(2, NONINIT);
 
         //center of gravity
         cp.getLagrangeParameterPosition()(0) = 0.;
@@ -178,14 +178,14 @@ namespace MBSimFlexibleBody {
         data.push_back(cp.getFrameOfReference().getPosition()(2)); //global z-coordinate
 
         //Rotation of COG
-        Vec AlphaBetaGamma = AIK2Cardan(cp.getFrameOfReference().getOrientation());
+        Vec3 AlphaBetaGamma = AIK2Cardan(cp.getFrameOfReference().getOrientation());
         data.push_back(AlphaBetaGamma(0));
         data.push_back(AlphaBetaGamma(1));
         data.push_back(AlphaBetaGamma(2));
 
         //Control-Point coordinates
-        for(int i = 0; i < nr + 1; i++) {
-          for(int j = 0; j < nj + degU; j++) {
+        for (int i = 0; i < nr + 1; i++) {
+          for (int j = 0; j < nj + degU; j++) {
             data.push_back(contour->getControlPoints(j, i)(0)); //global x-coordinate
             data.push_back(contour->getControlPoints(j, i)(1)); //global y-coordinate
             data.push_back(contour->getControlPoints(j, i)(2)); //global z-coordinate
@@ -193,12 +193,12 @@ namespace MBSimFlexibleBody {
         }
 
         //inner ring
-        for(int i = 0; i < nj; i++) {
-          for(int j = 0; j < drawDegree; j++) {
+        for (int i = 0; i < nj; i++) {
+          for (int j = 0; j < drawDegree; j++) {
             cp.getLagrangeParameterPosition()(0) = Ri;
             cp.getLagrangeParameterPosition()(1) = 2 * M_PI * (i * drawDegree + j) / (nj * drawDegree);
             contour->updateKinematicsForFrame(cp, position);
-            Vec pos = cp.getFrameOfReference().getPosition();
+            Vec3 pos = cp.getFrameOfReference().getPosition();
 
             data.push_back(pos(0)); //global x-coordinate
             data.push_back(pos(1)); //global y-coordinate
@@ -208,12 +208,12 @@ namespace MBSimFlexibleBody {
         }
 
         //outer Ring
-        for(int i = 0; i < nj; i++) {
-          for(int j = 0; j < drawDegree; j++) {
+        for (int i = 0; i < nj; i++) {
+          for (int j = 0; j < drawDegree; j++) {
             cp.getLagrangeParameterPosition()(0) = Ra;
             cp.getLagrangeParameterPosition()(1) = 2 * M_PI * (i * drawDegree + j) / (nj * drawDegree);
             contour->updateKinematicsForFrame(cp, position);
-            Vec pos = cp.getFrameOfReference().getPosition();
+            Vec3 pos = cp.getFrameOfReference().getPosition();
 
             data.push_back(pos(0)); //global x-coordinate
             data.push_back(pos(1)); //global y-coordinate
@@ -226,7 +226,7 @@ namespace MBSimFlexibleBody {
 #endif
 #endif
     }
-    FlexibleBodyContinuum<Vec>::plot(t, dt);
+    FlexibleBodyContinuum<Ref, Vec>::plot(t, dt);
   }
 
   void FlexibleBody2s13::setNumberElements(int nr_, int nj_) {
@@ -250,7 +250,7 @@ namespace MBSimFlexibleBody {
     u0.resize(uSize[0]);
   }
 
-  void FlexibleBody2s13::BuildElement(const Vec &s) {
+  void FlexibleBody2s13::BuildElement(const Vec2 &s) {
     assert(Ri <= s(0)); // is the input on the disk?
     assert(Ra >= s(0));
 

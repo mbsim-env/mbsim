@@ -77,7 +77,7 @@ namespace MBSimFlexibleBody {
    * The plate lies in the xy-plane of its reference frame. The z-vector is its "normal".
    * Thus the radial and the azimuthal component give the x- and y- coordinates where the z-coordinate is defined by the thickness parameterization. (neglecting the flexible dofs)
    */
-  class FlexibleBody2s13 : public FlexibleBodyContinuum<fmatvec::Vec> {
+  class FlexibleBody2s13 : public FlexibleBodyContinuum<fmatvec::Ref, fmatvec::Vec> {
     public:
       /**
        * \brief constructor
@@ -118,8 +118,8 @@ namespace MBSimFlexibleBody {
       double getOuterRadius() const { return Ra; }
       double getAzimuthalDegree() const { return degU; }
       double getRadialDegree() const { return degV; }
-      fmatvec::SqrMat getA() const { return A; }
-      fmatvec::SqrMat getG() const { return G; }
+      fmatvec::SqrMat3 getA() const { return A; }
+      fmatvec::SqrMat3 getG() const { return G; }
       void setReferenceInertia(double m0_, fmatvec::SymMat J0_) { m0 = m0_; J0 = J0_; }
       void setLockType(LockType LT_) { LType = LT_; }
       /***************************************************/
@@ -141,7 +141,7 @@ namespace MBSimFlexibleBody {
        * \param Cartesian vector in world system of plate
        * \return cylindrical coordinates
        */
-      virtual fmatvec::Vec transformCW(const fmatvec::Vec& WrPoint) = 0;
+      virtual fmatvec::Vec3 transformCW(const fmatvec::Vec3& WrPoint) = 0;
 
     protected:
       /**
@@ -176,10 +176,8 @@ namespace MBSimFlexibleBody {
 
       /**
        * \brief parameterization of thickness over radius function: d(0) + d(1)*r + d(2)*r*r
-       *
-       * \remark vector must have length 3
        */
-      fmatvec::Vec d;
+      fmatvec::Vec3 d;
 
       /**
        * \brief inner and outer radius of disk
@@ -199,7 +197,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief inertia of the attached shaft in local coordinates
        */
-      fmatvec::SymMat J0;
+      fmatvec::SymMat3 J0;
 
       /**
        * \brief degree of surface interpolation in radial and azimuthal direction
@@ -244,7 +242,7 @@ namespace MBSimFlexibleBody {
        * NodeCoordinates(GlobalNodeNumber,0) = radius (at the node)
        * NodeCoordinates(GlobalNodeNumber,1) = angle (at the node)
        */
-      fmatvec::Mat NodeCoordinates;
+      fmatvec::Matrix<fmatvec::General, fmatvec::Var, fmatvec::Fixed<2>, double > NodeCoordinates;
 
       /**
        * \brief matrix mapping elements and nodes (size number of elements x number of nodes per elements)
@@ -278,12 +276,12 @@ namespace MBSimFlexibleBody {
       /**
        * \brief transformation matrix of coordinates of the moving frame of reference into the reference frame
        */
-      fmatvec::SqrMat A;
+      fmatvec::SqrMat3 A;
 
       /**
        * \brief transformation matrix of the time derivates of the angles into tho angular velocity in reference coordinates
        */
-      fmatvec::SqrMat G;
+      fmatvec::SqrMat3 G;
 
       /*
        * \brief Jacobian for condensation with size Dofs x qSize
@@ -308,7 +306,7 @@ namespace MBSimFlexibleBody {
        * \brief detect involved element for contact description
        * \param parametrisation vector (radial / azimuthal)
        */
-      void BuildElement(const fmatvec::Vec &s);
+      void BuildElement(const fmatvec::Vec2 &s);
 
       /*!
        * \brief calculate the matrices for the first time

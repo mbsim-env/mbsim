@@ -22,6 +22,11 @@
 
 #include "mbsim/contact_kinematics/contact_kinematics.h"
 #include "mbsim/mbsim_event.h"
+#include "mbsimFlexibleBody/contact_kinematics/point_flexibleband.h"
+#include "mbsim/contour.h"
+#include "mbsimFlexibleBody/contours/flexible_band.h"
+#include "mbsim/contours/point.h"
+#include "mbsim/functions_contact.h"
 
 namespace MBSim {
   class Point;
@@ -29,6 +34,7 @@ namespace MBSim {
 
 namespace MBSimFlexibleBody {
 
+  template<class Col>
   class FlexibleBand;
 
   /**
@@ -38,6 +44,7 @@ namespace MBSimFlexibleBody {
    * \date 2009-04-17 initial commit kernel_dev (Thorsten Schindler)
    * \date 2010-04-15 bug fixed: different sign in Wd (Thomas Cebulla)
    */
+  template<class Col>
   class ContactKinematicsPointFlexibleBand : public MBSim::ContactKinematics {
     public:
       /**
@@ -66,8 +73,74 @@ namespace MBSimFlexibleBody {
        * \brief contour classes 
        */
       MBSim::Point *point;
-      FlexibleBand *band;
+      FlexibleBand<Col> *band;
   };
+
+  template <class Col>
+  inline ContactKinematicsPointFlexibleBand<Col>::ContactKinematicsPointFlexibleBand() :
+      ContactKinematics(), ipoint(0), icontour(0), point(0), band(0) {
+  }
+
+  template<class Col>
+  inline ContactKinematicsPointFlexibleBand<Col>::~ContactKinematicsPointFlexibleBand() {
+  }
+
+  template<class Col>
+  inline void ContactKinematicsPointFlexibleBand<Col>::assignContours(const std::vector<MBSim::Contour*>& contour) {
+    if (dynamic_cast<MBSim::Point*>(contour[0])) {
+      ipoint = 0;
+      icontour = 1;
+      point = static_cast<MBSim::Point*>(contour[0]);
+      band = static_cast<FlexibleBand<Col>*>(contour[1]);
+    }
+    else {
+      ipoint = 1;
+      icontour = 0;
+      point = static_cast<MBSim::Point*>(contour[1]);
+      band = static_cast<FlexibleBand<Col>*>(contour[0]);
+    }
+  }
+
+  template<class Col>
+  inline void ContactKinematicsPointFlexibleBand<Col>::updateg(fmatvec::Vec& g, MBSim::ContourPointData *cpData) {
+    cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition()); // position of point
+
+    MBSim::FuncPairContour1sPoint *func = new MBSim::FuncPairContour1sPoint(point, band); // root function for searching contact parameters
+    MBSim::Contact1sSearch search(func);
+    search.setNodes(band->getNodes()); // defining search areas for contacts
+
+    if (cpData[icontour].getLagrangeParameterPosition().size() != 0) { // select start value from last search
+      search.setInitialValue(cpData[icontour].getLagrangeParameterPosition()(0));
+    }
+    else { // define start search with regula falsi
+      search.setSearchAll(true);
+      cpData[icontour].getLagrangeParameterPosition() = fmatvec::VecV(2, fmatvec::NONINIT);
+    }
+
+    cpData[icontour].getLagrangeParameterPosition()(0) = search.slv(); // get contact parameter of neutral fibre
+    cpData[icontour].getLagrangeParameterPosition()(1) = 0.;
+
+    if (cpData[icontour].getLagrangeParameterPosition()(0) < band->getAlphaStart() || cpData[icontour].getLagrangeParameterPosition()(0) > band->getAlphaEnd())
+      g(0) = 1.;
+    else {
+      band->updateKinematicsForFrame(cpData[icontour], MBSim::position_cosy);
+      fmatvec::Vec3 Wd = cpData[ipoint].getFrameOfReference().getPosition() - cpData[icontour].getFrameOfReference().getPosition();
+      fmatvec::Vec3 Wb = cpData[icontour].getFrameOfReference().getOrientation().col(2);
+      cpData[icontour].getLagrangeParameterPosition()(1) = Wb.T() * Wd; // get contact parameter of second tangential direction
+
+      double width = band->getWidth();
+      if (cpData[icontour].getLagrangeParameterPosition()(1) > 0.5 * width || -cpData[icontour].getLagrangeParameterPosition()(1) > 0.5 * width)
+        g(0) = 1.;
+      else { // calculate the normal distance
+        cpData[icontour].getFrameOfReference().getPosition() += cpData[icontour].getLagrangeParameterPosition()(1) * Wb;
+        cpData[ipoint].getFrameOfReference().getOrientation().set(0, -cpData[icontour].getFrameOfReference().getOrientation().col(0));
+        cpData[ipoint].getFrameOfReference().getOrientation().set(1, -cpData[icontour].getFrameOfReference().getOrientation().col(1));
+        cpData[ipoint].getFrameOfReference().getOrientation().set(2, cpData[icontour].getFrameOfReference().getOrientation().col(2));
+        g(0) = cpData[icontour].getFrameOfReference().getOrientation().col(0).T() * (cpData[ipoint].getFrameOfReference().getPosition() - cpData[icontour].getFrameOfReference().getPosition());
+      }
+    }
+    delete func;
+  }
 
 }
 

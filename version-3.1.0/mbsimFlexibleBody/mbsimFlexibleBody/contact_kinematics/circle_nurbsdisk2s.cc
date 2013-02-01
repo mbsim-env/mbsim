@@ -59,7 +59,7 @@ namespace MBSimFlexibleBody {
     }
     else { // define start search with regula falsi (global search)
       search.setSearchAll(true);
-      cpData[icircle].getLagrangeParameterPosition() = Vec(1,NONINIT);
+      cpData[icircle].getLagrangeParameterPosition() = VecV(1,NONINIT);
     }
 
     int SEC = 16; // partition for regula falsi
@@ -69,7 +69,7 @@ namespace MBSimFlexibleBody {
     cpData[icircle].getLagrangeParameterPosition()(0) = search.slv(); // get contact parameter
 
     // point on the circle
-    fmatvec::Vec P_circle(3,fmatvec::INIT,0);
+    fmatvec::Vec3 P_circle;
     P_circle(0) = cos(cpData[icircle].getLagrangeParameterPosition()(0));   
     P_circle(1) = sin(cpData[icircle].getLagrangeParameterPosition()(0));
     P_circle = circle->getFrame()->getPosition() + circle->getRadius() * circle->getFrame()->getOrientation() * P_circle;  

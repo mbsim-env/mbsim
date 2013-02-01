@@ -52,7 +52,7 @@ namespace MBSimFlexibleBody {
    *    I. Romero: The interpolation of rotations and its application to finite element models of
    *    geometrically exact beams
    */
-  class FlexibleBody1s21Cosserat : public FlexibleBodyContinuum<double> {
+  class FlexibleBody1s21Cosserat : public FlexibleBodyContinuum<fmatvec::Ref, double> { //TODO: avoid Ref-type here (and elsewhere in class...)
     public:
 
       /**
@@ -136,7 +136,7 @@ namespace MBSimFlexibleBody {
       /** 
        * \brief stl-vector of finite elements for rotation grid
        */
-      std::vector<MBSim::DiscretizationInterface*> rotationDiscretization;
+      std::vector<MBSim::DiscretizationInterface<fmatvec::Ref>*> rotationDiscretization;
 
       /** 
        * \brief stl-vector of finite element positions for rotation grid
@@ -151,9 +151,9 @@ namespace MBSimFlexibleBody {
       /**
        * \brief contours
        */
-      CylinderFlexible *cylinder;
-      FlexibleBand *top, *bottom, *left, *right;
-      Contour1sFlexible *neutralFibre;
+      CylinderFlexible<fmatvec::Ref> *cylinder;
+      FlexibleBand<fmatvec::Ref> *top, *bottom, *left, *right;
+      Contour1sFlexible<fmatvec::Ref> *neutralFibre;
 
       /**
        * \brief angle parametrisation

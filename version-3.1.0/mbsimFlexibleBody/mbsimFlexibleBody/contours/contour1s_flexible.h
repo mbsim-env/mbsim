@@ -38,28 +38,48 @@ namespace MBSimFlexibleBody {
    * \date 2009-04-05 adapted to non-template FlexibleBody (Schindler / Zander)
    * \date 2009-06-04 new file (Thorsten Schindler)
    */
+  template <class Col>
   class Contour1sFlexible : public MBSim::Contour1s {
     public:
       /**
        * \brief constructor
        * \param name of contour
        */
-      Contour1sFlexible(const std::string &name) : Contour1s(name) {}
+      Contour1sFlexible(const std::string &name) :
+          Contour1s(name) {
+      }
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const { return "Contour1sFlexible"; }
+      virtual std::string getType() const {
+        fmatvec::Vector<Col, double>* vec = new fmatvec::Vector<Col, double>;
+        std::string appendix = fmatvec::getVectorTemplateType(vec);
+        delete vec;
+        return "Contour1sFlexible" + appendix;
+      }
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff) { static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp,ff); }
-      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j=0) { static_cast<FlexibleBody*>(parent)->updateJacobiansForFrame(cp); }
+      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff) {
+        static_cast<FlexibleBody<Col>*>(parent)->updateKinematicsForFrame(cp, ff);
+      }
+      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0) {
+        static_cast<FlexibleBody<Col>*>(parent)->updateJacobiansForFrame(cp);
+      }
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOURCONTINUUM */
-      virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) { updateKinematicsForFrame(cp, MBSim::position); }
-      virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) { updateKinematicsForFrame(cp, MBSim::firstTangent); }
-      virtual void computeRootFunctionNormal(MBSim::ContourPointData &cp) { updateKinematicsForFrame(cp, MBSim::normal); }
-      virtual void computeRootFunctionSecondTangent(MBSim::ContourPointData &cp) { updateKinematicsForFrame(cp, MBSim::secondTangent); }
+      virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) {
+        updateKinematicsForFrame(cp, MBSim::position);
+      }
+      virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) {
+        updateKinematicsForFrame(cp, MBSim::firstTangent);
+      }
+      virtual void computeRootFunctionNormal(MBSim::ContourPointData &cp) {
+        updateKinematicsForFrame(cp, MBSim::normal);
+      }
+      virtual void computeRootFunctionSecondTangent(MBSim::ContourPointData &cp) {
+        updateKinematicsForFrame(cp, MBSim::secondTangent);
+      }
       /***************************************************/
 
       MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1) {
