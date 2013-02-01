@@ -2,7 +2,6 @@ SUBDIRS = finite_elements .
 
 noinst_LTLIBRARIES = libflexiblebody.la
 libflexiblebody_la_SOURCES =	flexible_body_1s_21_rcm.cc\
-								flexible_body_1s_33_rcm.cc\
 								flexible_body_1s_21_cosserat.cc\
 								flexible_body_1s_33_cosserat.cc\
 								flexible_body_2s_13.cc\
@@ -22,7 +21,6 @@ INCLUDES = $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) $(NURBS_CFLAGS)
 LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) $(NURBS_LIBS)
 
 flexiblebodyinclude_HEADERS =	flexible_body_1s_21_rcm.h\
-								flexible_body_1s_33_rcm.h\
 								flexible_body_1s_21_cosserat.h\
 								flexible_body_1s_33_cosserat.h\
 								flexible_body_2s_13.h\

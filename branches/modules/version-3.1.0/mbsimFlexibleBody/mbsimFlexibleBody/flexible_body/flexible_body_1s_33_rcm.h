@@ -44,7 +44,7 @@ namespace MBSimFlexibleBody {
    * \todo gyroscopic accelerations TODO
    * \todo inverse kinetics TODO
    */
-  class FlexibleBody1s33RCM : public FlexibleBodyContinuum<double> {
+  class FlexibleBody1s33RCM : public FlexibleBodyContinuum<fmatvec::Fixed<16>, double> {
     public:
       /**
        * \brief constructor
@@ -115,9 +115,9 @@ namespace MBSimFlexibleBody {
       /**
        * \brief contours
        */
-      CylinderFlexible *cylinder;
-      FlexibleBand *top, *bottom, *left, *right;
-      Contour1sFlexible *neutralFibre;
+      CylinderFlexible<fmatvec::Fixed<16> > *cylinder;
+      FlexibleBand<fmatvec::Fixed<16> > *top, *bottom, *left, *right;
+      Contour1sFlexible<fmatvec::Fixed<16> > *neutralFibre;
 
       /**
        * \brief angle parametrisation

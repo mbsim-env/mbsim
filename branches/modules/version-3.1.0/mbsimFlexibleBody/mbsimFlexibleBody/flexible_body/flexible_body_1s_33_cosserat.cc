@@ -64,7 +64,8 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FlexibleBody1s33Cosserat::FlexibleBody1s33Cosserat(const string &name, bool openStructure_) : FlexibleBodyContinuum<double> (name), cylinder(new CylinderFlexible("Cylinder")), top(new FlexibleBand("Top")), bottom(new FlexibleBand("Bottom")), left(new FlexibleBand("Left")), right(new FlexibleBand("Right")), neutralFibre(new Contour1sFlexible("NeutralFibre")), angle(new Cardan()), Elements(0), rotationalElements(0), L(0.), l0(0.), E(0.), G(0.),A(0.), I1(0.), I2(0.), I0(0.), rho(0.), R1(0.), R2(0.), cEps0D(0.), cEps1D(0.), cEps2D(0.), openStructure(openStructure_), initialised(false), bound_ang_start(3,INIT,0.), bound_ang_end(3,INIT,0.), bound_ang_vel_start(3,INIT,0.), bound_ang_vel_end(3,INIT,0.), cuboidBreadth(0.), cuboidHeight(0.), cylinderRadius(0.), curve(new NurbsCurve1s("Curve")) {
+  FlexibleBody1s33Cosserat::FlexibleBody1s33Cosserat(const string &name, bool openStructure_) :
+      FlexibleBodyContinuum<Ref, double>(name), cylinder(new CylinderFlexible<Ref>("Cylinder")), top(new FlexibleBand<Ref>("Top")), bottom(new FlexibleBand<Ref>("Bottom")), left(new FlexibleBand<Ref>("Left")), right(new FlexibleBand<Ref>("Right")), neutralFibre(new Contour1sFlexible<Ref>("NeutralFibre")), angle(new Cardan()), Elements(0), rotationalElements(0), L(0.), l0(0.), E(0.), G(0.), A(0.), I1(0.), I2(0.), I0(0.), rho(0.), R1(0.), R2(0.), cEps0D(0.), cEps1D(0.), cEps2D(0.), openStructure(openStructure_), initialised(false), bound_ang_start(3, INIT, 0.), bound_ang_end(3, INIT, 0.), bound_ang_vel_start(3, INIT, 0.), bound_ang_vel_end(3, INIT, 0.), cuboidBreadth(0.), cuboidHeight(0.), cylinderRadius(0.), curve(new NurbsCurve1s("Curve")) {
     Body::addContour(cylinder);
     Body::addContour(top);
     Body::addContour(bottom);
@@ -253,7 +254,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s33Cosserat::init(InitStage stage) {
     if(stage == unknownStage) {
-      FlexibleBodyContinuum<double>::init(stage);
+      FlexibleBodyContinuum<Ref, double>::init(stage);
 
       initialised = true;
 
@@ -343,7 +344,7 @@ namespace MBSimFlexibleBody {
       initM();
     }
 
-    else FlexibleBodyContinuum<double>::init(stage);
+    else FlexibleBodyContinuum<Ref, double>::init(stage);
 
 #ifdef HAVE_NURBS
     curve->initContourFromBody(stage);
@@ -352,7 +353,7 @@ namespace MBSimFlexibleBody {
 
   double FlexibleBody1s33Cosserat::computePotentialEnergy() {
     /* translational elements */
-    double V = FlexibleBodyContinuum<double>::computePotentialEnergy();
+    double V = FlexibleBodyContinuum<Ref, double>::computePotentialEnergy();
 
     /* rotational elements */
     for(unsigned int i=0;i<rotationDiscretization.size();i++) {
@@ -371,7 +372,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s33Cosserat::updateh(double t, int k) {
     /* translational elements */
-    FlexibleBodyContinuum<double>::updateh(t);
+    FlexibleBodyContinuum<Ref, double>::updateh(t);
 
     /* rotational elements */
     for(int i=0;i<(int)rotationDiscretization.size();i++) {
@@ -382,7 +383,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33Cosserat::updateStateDependentVariables(double t) {
-    FlexibleBodyContinuum<double>::updateStateDependentVariables(t);
+    FlexibleBodyContinuum<Ref, double>::updateStateDependentVariables(t);
 
 #ifdef HAVE_NURBS
     curve->computeCurveTranslations();
@@ -412,7 +413,7 @@ namespace MBSimFlexibleBody {
       }
 #endif
     }
-    FlexibleBodyContinuum<double>::plot(t,dt);
+    FlexibleBodyContinuum<Ref, double>::plot(t,dt);
   }
 
   void FlexibleBody1s33Cosserat::setNumberElements(int n) {
@@ -498,7 +499,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33Cosserat::initInfo() {
-    FlexibleBodyContinuum<double>::init(unknownStage);
+    FlexibleBodyContinuum<Ref, double>::init(unknownStage);
     l0 = L/Elements;
     Vec g = Vec("[0.;0.;0.]");
 

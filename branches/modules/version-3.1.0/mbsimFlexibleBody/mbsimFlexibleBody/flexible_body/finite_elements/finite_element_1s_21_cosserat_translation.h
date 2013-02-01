@@ -46,7 +46,7 @@ namespace MBSimFlexibleBody {
    *    I. Romero: The interpolation of rotations and its application to finite element models of
    *    geometrically exact beams
    */
-  class FiniteElement1s21CosseratTranslation : public MBSim::DiscretizationInterface {
+  class FiniteElement1s21CosseratTranslation : public MBSim::DiscretizationInterface<fmatvec::Ref> { //TODO: avoid Ref type here
     public:
 
       /**
@@ -84,10 +84,10 @@ namespace MBSimFlexibleBody {
       virtual double computeGravitationalEnergy(const fmatvec::Vec& qG);
       virtual double computeElasticEnergy(const fmatvec::Vec& qG);
 
-      virtual fmatvec::Vec computePosition(const fmatvec::Vec& q, const MBSim::ContourPointData &data);
-      virtual fmatvec::SqrMat computeOrientation(const fmatvec::Vec& q, const MBSim::ContourPointData &data);
-      virtual fmatvec::Vec computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data);
-      virtual fmatvec::Vec computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data);
+      virtual fmatvec::Vec3 computePosition(const fmatvec::Vec& q, const MBSim::ContourPointData &data);
+      virtual fmatvec::SqrMat3 computeOrientation(const fmatvec::Vec& q, const MBSim::ContourPointData &data);
+      virtual fmatvec::Vec3 computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data);
+      virtual fmatvec::Vec3 computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data);
       virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec& qG, const MBSim::ContourPointData& data);
 
       /* GETTER / SETTER */
@@ -194,10 +194,10 @@ namespace MBSimFlexibleBody {
   inline int FiniteElement1s21CosseratTranslation::getqSize() const { return 9; }
   inline int FiniteElement1s21CosseratTranslation::getuSize() const { return 9; }
   inline void  FiniteElement1s21CosseratTranslation::computedhdz(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) { throw MBSim::MBSimError("Error(FiniteElement1s21CosseratTranslation::computedhdz): Not implemented"); }
-  inline fmatvec::Vec FiniteElement1s21CosseratTranslation::computePosition(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s21CosseratTranslation::computePosition): Not implemented!"); }
-  inline fmatvec::SqrMat FiniteElement1s21CosseratTranslation::computeOrientation(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s21CosseratTranslation::computeOrientation): Not implemented!"); }
-  inline fmatvec::Vec FiniteElement1s21CosseratTranslation::computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s21CosseratTranslation::computeVelocity): Not implemented!"); }
-  inline fmatvec::Vec FiniteElement1s21CosseratTranslation::computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s21CosseratTranslation::computeAngularVelocity): Not implemented!"); }
+  inline fmatvec::Vec3 FiniteElement1s21CosseratTranslation::computePosition(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s21CosseratTranslation::computePosition): Not implemented!"); }
+  inline fmatvec::SqrMat3 FiniteElement1s21CosseratTranslation::computeOrientation(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s21CosseratTranslation::computeOrientation): Not implemented!"); }
+  inline fmatvec::Vec3 FiniteElement1s21CosseratTranslation::computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s21CosseratTranslation::computeVelocity): Not implemented!"); }
+  inline fmatvec::Vec3 FiniteElement1s21CosseratTranslation::computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s21CosseratTranslation::computeAngularVelocity): Not implemented!"); }
   inline fmatvec::Mat FiniteElement1s21CosseratTranslation::computeJacobianOfMotion(const fmatvec::Vec& qG,const MBSim::ContourPointData& data) { return computeJXqG(qG,data.getLagrangeParameterPosition()(0)); }
   inline void FiniteElement1s21CosseratTranslation::setShearCorrectionFactors(double sigma1_, double sigma2_) { sigma1 = sigma1_; sigma2 = sigma2_; }
   inline double FiniteElement1s21CosseratTranslation::getl0() const { return l0; }

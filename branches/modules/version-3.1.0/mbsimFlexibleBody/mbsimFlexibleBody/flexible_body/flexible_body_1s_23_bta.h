@@ -36,7 +36,7 @@ namespace MBSimFlexibleBody {
    * \date 2009-11-22 initial commit kernel_dev
    * \todo gravity, handling for contour-node information, tangents and AWK TODO
    */
-  class FlexibleBody1s23BTA : public FlexibleBodyContinuum<double> {
+  class FlexibleBody1s23BTA : public FlexibleBodyContinuum<fmatvec::Ref, double> { //TODO: avoid Ref possible?
     public:
       /**
        * \brief constructor
@@ -54,6 +54,7 @@ namespace MBSimFlexibleBody {
       virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
       virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
+      virtual void GlobalMatrixContribution(int n, const fmatvec::SqrMat& locMat, fmatvec::Mat& gloMat);
       virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff, MBSim::Frame *frame=0);
       virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame=0);
       /***************************************************/
@@ -137,7 +138,7 @@ namespace MBSimFlexibleBody {
       /** 
        * \brief contour of body
        */
-      CylinderFlexible *cylinderFlexible;
+      CylinderFlexible<fmatvec::Ref> *cylinderFlexible;
   };
 
 }

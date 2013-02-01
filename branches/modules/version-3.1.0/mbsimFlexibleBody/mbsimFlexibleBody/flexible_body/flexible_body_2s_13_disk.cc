@@ -229,7 +229,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody2s13Disk::init(InitStage stage) {
     if(stage==resize) {
-      FlexibleBodyContinuum<Vec>::init(stage);
+      FlexibleBodyContinuum<Ref, Vec>::init(stage);
       assert(nr>0); // at least on radial row
       assert(nj>1); // at least two azimuthal elements
 
@@ -337,19 +337,19 @@ namespace MBSimFlexibleBody {
         }
 #endif
 #endif
-        FlexibleBodyContinuum<Vec>::init(stage);
+        FlexibleBodyContinuum<Ref, Vec>::init(stage);
       }
     }
     else
-      FlexibleBodyContinuum<Vec>::init(stage);
+      FlexibleBodyContinuum<Ref, Vec>::init(stage);
 
 #ifdef HAVE_NURBS
     contour->initContourFromBody(stage); // initialize contour
 #endif
   }
 
-  Vec FlexibleBody2s13Disk::transformCW(const Vec& WrPoint) {
-    Vec CrPoint(WrPoint.size());
+  Vec3 FlexibleBody2s13Disk::transformCW(const Vec3& WrPoint) {
+    Vec3 CrPoint;
 
     double &alpha = q(1);
 

@@ -35,74 +35,106 @@ namespace MBSimFlexibleBody {
    * \date 2009-07-16 fixed proportional damping (Thorsten Schindler)
    * \date 2009-07-23 implicit integration (Thorsten Schindler)
    */
-  class SuperElementLinearExternal : public MBSim::DiscretizationInterface {
+  class SuperElementLinearExternal : public MBSim::DiscretizationInterface<fmatvec::Ref> {
     public:
       SuperElementLinearExternal();
-	  void init(MBSim::InitStage stage);
+      void init(MBSim::InitStage stage);
 
-	  /*! set constant mass matrix \f$\vM\f$
-	   * \param M mass matrix
-	   * */
-	  void setM(const fmatvec::SymMat &M_);
-	  
+      /*! set constant mass matrix \f$\vM\f$
+       * \param M mass matrix
+       * */
+      void setM(const fmatvec::SymMat &M_);
+
       /*! set constant stiffness matrix \f$\vK\f$
-	   * \param K stiffness matrix
-	   * */
-	  void setK(const fmatvec::SqrMat &K_);
-	  
+       * \param K stiffness matrix
+       * */
+      void setK(const fmatvec::SqrMat &K_);
+
       /*! set coefficients \f$\alpha\f$ and \f$\beta\f$ for proportional damping:
-	   * constant damping matrix \f$\vD\f$ proportional to mass and stiffness
+       * constant damping matrix \f$\vD\f$ proportional to mass and stiffness
        * \f[ \vD = \alpha * \vM + \beta*\vK \f]
- 	   * \param alpha proportional coefficient for mass matrix
- 	   * \param beta  proportional coefficient for stiffness matrix
-	   * */
-	  void setProportionalDamping(double alpha_,double beta_) { alpha=alpha_; beta=beta_; }
+       * \param alpha proportional coefficient for mass matrix
+       * \param beta  proportional coefficient for stiffness matrix
+       * */
+      void setRayleighDamping(double alpha_, double beta_);
 
-      const fmatvec::SymMat& getM() const { return M; }
-      const fmatvec::Vec&    geth() const { return h; }
+      const fmatvec::SymMat& getM() const {
+        return M;
+      }
 
-      const fmatvec::SqrMat& getdhdq() const { return Dhq; }    
-      const fmatvec::SqrMat& getdhdu() const { return Dhqp; }
-	  int getqSize() const { return K.size(); }
-	  int getuSize() const { return M.size(); }
+      const fmatvec::SqrMat & getK() const {
+        return K;
+      }
 
-      void computeM(const fmatvec::Vec& qElement) {}
+      const fmatvec::Vec& geth() const {
+        return h;
+      }
+
+      const fmatvec::SqrMat& getdhdq() const {
+        return Dhq;
+      }
+      const fmatvec::SqrMat& getdhdu() const {
+        return Dhqp;
+      }
+      int getqSize() const {
+        return K.size();
+      }
+      int getuSize() const {
+        return M.size();
+      }
+
+      void computeM(const fmatvec::Vec& qElement) {
+      }
       /*! 
        * update \f$\vh= -(\vK \vq + \vD \vu)\f$, \f$\vM\f$ is constant
        */
-      void computeh(const fmatvec::Vec& qElement,const fmatvec::Vec& uElement) { h = - K * qElement - D * uElement; }
-      void computedhdz(const fmatvec::Vec& qElement,const fmatvec::Vec& uElement) {}
-      double computeKineticEnergy(const fmatvec::Vec& q,const fmatvec::Vec& u) { return 0.5*u.T()*M*u;}
-      double computeGravitationalEnergy(const fmatvec::Vec& q) { return 0.0;}
-      double computeElasticEnergy(const fmatvec::Vec& q) { return 0.5*q.T()*K*q;}
+      void computeh(const fmatvec::Vec& qElement, const fmatvec::Vec& uElement);
 
-      fmatvec::Vec computeVelocity(const fmatvec::Vec&q,const fmatvec::Vec&u,const MBSim::ContourPointData& cp) { return computeJacobianOfMotion(q,cp).T()*u;}
-      fmatvec::Vec computeAngularVelocity(const fmatvec::Vec&q,const fmatvec::Vec&u,const MBSim::ContourPointData& cp) { return computeJacobianOfMotion(q,cp).T()*u;}
-      fmatvec::Vec computePosition(const fmatvec::Vec&q,const MBSim::ContourPointData& cp);
-      fmatvec::SqrMat computeOrientation(const fmatvec::Vec&q,const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR(SuperElementLinearExternal::computeOrientation): Not Implemented");}
-      fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec&q,const MBSim::ContourPointData& cp);
+      void computedhdz(const fmatvec::Vec& qElement, const fmatvec::Vec& uElement) {
+      }
+      double computeKineticEnergy(const fmatvec::Vec& q, const fmatvec::Vec& u) {
+        return 0.5 * u.T() * M * u;
+      }
+      double computeGravitationalEnergy(const fmatvec::Vec& q) {
+        return 0.0;
+      }
+      double computeElasticEnergy(const fmatvec::Vec& q) {
+        return 0.5 * q.T() * K * q;
+      }
 
-	  MBSim::ContourPointData addInterface(fmatvec::Mat J_, fmatvec::Vec KrP_);
-    
+      fmatvec::Vec3 computeVelocity(const fmatvec::Vec&q, const fmatvec::Vec&u, const MBSim::ContourPointData& cp) {
+        return static_cast<fmatvec::RowVec3>(u * computeJacobianOfMotion(q, cp)).T();
+      }
+      fmatvec::Vec3 computeAngularVelocity(const fmatvec::Vec&q, const fmatvec::Vec&u, const MBSim::ContourPointData& cp) {
+        return static_cast<fmatvec::RowVec3>(u * computeJacobianOfMotion(q, cp)).T();
+      }
+      fmatvec::Vec3 computePosition(const fmatvec::Vec&q, const MBSim::ContourPointData& cp);
+      fmatvec::SqrMat3 computeOrientation(const fmatvec::Vec&q, const MBSim::ContourPointData& cp) {
+        throw MBSim::MBSimError("ERROR(SuperElementLinearExternal::computeOrientation): Not Implemented");
+      }
+      fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec&q, const MBSim::ContourPointData& cp);
+
+      MBSim::ContourPointData addInterface(fmatvec::Mat J_, fmatvec::Vec KrP_);
+
     protected:
-      /** constant mass matrix \f$\vM\f$*/ 
+      /** constant mass matrix \f$\vM\f$*/
       fmatvec::SymMat M;
       /** right hand side */
       fmatvec::Vec h;
-      /** constant stiffness matrix \f$\vK\f$*/ 
+      /** constant stiffness matrix \f$\vK\f$*/
       fmatvec::SqrMat K;
-      /** constant damping matrix \f$\vD\f$, see setProportionalDamping()*/ 
-      fmatvec::SqrMat D; 
-      /** constant for damping matrix, see setProportionalDamping*/ 
+      /** constant damping matrix \f$\vD\f$, see setProportionalDamping()*/
+      fmatvec::SqrMat D;
+      /** constant for damping matrix, see setProportionalDamping*/
       double alpha;
-      /** constant for damping matrix, see setProportionalDamping*/ 
+      /** constant for damping matrix, see setProportionalDamping*/
       double beta;
       /** constant Jacobians for implicit integration */
       fmatvec::SqrMat Dhq, Dhqp;
       /** container holding constant JACOBIAN-matrizes of all Frames and Contours */
       std::vector<fmatvec::Mat> J;
       /** container holding undeformed positions in body coordinate system of all Frames and Contours */
-      std::vector<fmatvec::Vec> KrP;
+      std::vector<fmatvec::Vec3> KrP;
   };
 
 }

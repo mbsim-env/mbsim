@@ -24,6 +24,8 @@
 
 namespace MBSimFlexibleBody {
 
+  typedef fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<3>, fmatvec::Fixed<6>, double> Mat3x6;
+
   /*! 
    * \brief reversed kardan parametrisation
    * \author Thorsten Schindler
@@ -52,7 +54,7 @@ namespace MBSimFlexibleBody {
       virtual fmatvec::Vec computentil(const fmatvec::Vec& q) const;		
       virtual fmatvec::Vec computebtil(const fmatvec::Vec& q) const;	
       virtual fmatvec::SqrMat computetq(const fmatvec::Vec& q) const;		
-      virtual fmatvec::SqrMat computenq(const fmatvec::Vec& q) const;		
+      virtual fmatvec::SqrMat computenq(const fmatvec::Vec& q) const;
       virtual fmatvec::SqrMat computebq(const fmatvec::Vec& q) const;
       virtual fmatvec::SqrMat computentilq(const fmatvec::Vec& q) const;		
       virtual fmatvec::SqrMat computebtilq(const fmatvec::Vec& q) const;

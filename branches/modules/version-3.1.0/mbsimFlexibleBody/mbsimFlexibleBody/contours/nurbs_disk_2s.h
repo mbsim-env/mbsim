@@ -120,7 +120,7 @@ namespace MBSimFlexibleBody {
        * \param cartesian vector in world system
        * \return cylindrical coordinates
        */
-      fmatvec::Vec transformCW(const fmatvec::Vec& WrPoint);
+      fmatvec::Vec3 transformCW(const fmatvec::Vec3& WrPoint);
 
 #ifdef HAVE_NURBS
       /*! 
@@ -184,35 +184,35 @@ namespace MBSimFlexibleBody {
        * \param u location
        * \param v location
        */
-      fmatvec::Vec getControlPoints(const int u, const int v);
+      fmatvec::Vec3 getControlPoints(const int u, const int v);
 #endif
 
 #ifdef HAVE_NURBS
       /*! 
        * return U-Vector of the surface (azimuthal direction)
        */
-      fmatvec::Vec getUVector();
+      fmatvec::VecV getUVector();
 #endif
 
 #ifdef HAVE_NURBS
       /*! 
        * return V-Vector of the surface (radial direction)
        */
-      fmatvec::Vec getVVector();
+      fmatvec::VecV getVVector();
 #endif
 
       /*! 
        * \return flag, whether the input radius is inside the bounds or the input angle is between 0 and 2 PI
        * \param parametrisation vector
        */
-      int testInsideBounds(const fmatvec::Vec &s);
+      int testInsideBounds(const fmatvec::Vec2 &s);
 
       /*! 
        * \return norm of the difference between two vectors
        * \param first vector
        * \param second vector
        */
-      double computeError(const fmatvec::Vec &Vec1, const fmatvec::Vec &Vec2);
+      double computeError(const fmatvec::Vec3 &Vec1, const fmatvec::Vec3 &Vec2);
 
     protected:
       /** 

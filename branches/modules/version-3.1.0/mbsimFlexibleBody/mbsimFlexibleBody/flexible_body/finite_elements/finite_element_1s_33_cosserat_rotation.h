@@ -24,6 +24,10 @@
 #include "mbsim/mbsim_event.h"
 #include "mbsim/contour_pdata.h"
 #include "mbsimFlexibleBody/pointer.h"
+#include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_cosserat_rotation.h"
+#include "mbsimFlexibleBody/utils/cardan.h"
+#include "mbsim/utils/eps.h"
+
 #include "fmatvec.h"
 
 namespace MBSimFlexibleBody {
@@ -45,7 +49,7 @@ namespace MBSimFlexibleBody {
    *    I. Romero: The interpolation of rotations and its application to finite element models of
    *    geometrically exact beams
    */
-  class FiniteElement1s33CosseratRotation : public MBSim::DiscretizationInterface {
+  class FiniteElement1s33CosseratRotation : public MBSim::DiscretizationInterface<fmatvec::Ref> {
     public:
 
       /**
@@ -63,7 +67,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief destructor
        */
-      virtual ~FiniteElement1s33CosseratRotation();		
+      virtual ~FiniteElement1s33CosseratRotation();
 
       /* INHERITED INTERFACE OF DISCRETIZATIONINTERFACE */ 
       virtual const fmatvec::SymMat& getM() const;		
@@ -80,10 +84,10 @@ namespace MBSimFlexibleBody {
       virtual double computeGravitationalEnergy(const fmatvec::Vec& qG);
       virtual double computeElasticEnergy(const fmatvec::Vec& qG);
 
-      virtual fmatvec::Vec computePosition(const fmatvec::Vec& q, const MBSim::ContourPointData &data);
-      virtual fmatvec::SqrMat computeOrientation(const fmatvec::Vec& q, const MBSim::ContourPointData &data);
-      virtual fmatvec::Vec computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data);
-      virtual fmatvec::Vec computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data);
+      virtual fmatvec::Vec3 computePosition(const fmatvec::Vec& q, const MBSim::ContourPointData &data);
+      virtual fmatvec::SqrMat3 computeOrientation(const fmatvec::Vec& q, const MBSim::ContourPointData &data);
+      virtual fmatvec::Vec3 computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data);
+      virtual fmatvec::Vec3 computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data);
       virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec& qG, const MBSim::ContourPointData& data);
 
       /* GETTER / SETTER */
@@ -160,13 +164,89 @@ namespace MBSimFlexibleBody {
   inline void  FiniteElement1s33CosseratRotation::computedhdz(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) { throw MBSim::MBSimError("Error(FiniteElement1s33CosseratRotation::computedhdz): Not implemented"); }
   inline double FiniteElement1s33CosseratRotation::computeKineticEnergy(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) { throw MBSim::MBSimError("Error(FiniteElement1s33CosseratRotation::computeKineticEnergy): Not implemented"); }
   inline double FiniteElement1s33CosseratRotation::computeGravitationalEnergy(const fmatvec::Vec& qG) { throw MBSim::MBSimError("Error(FiniteElement1s33CosseratRotation::computeGravitationalEnergy): Not implemented"); }
-  inline fmatvec::Vec FiniteElement1s33CosseratRotation::computePosition(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33CosseratRotation::computePosition): Not implemented!"); }
-  inline fmatvec::SqrMat FiniteElement1s33CosseratRotation::computeOrientation(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33CosseratRotation::computeOrientation): Not implemented!"); }
-  inline fmatvec::Vec FiniteElement1s33CosseratRotation::computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33CosseratRotation::computeVelocity): Not implemented!"); }
-  inline fmatvec::Vec FiniteElement1s33CosseratRotation::computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33CosseratRotation::computeAngularVelocity): Not implemented!"); }
+  inline fmatvec::Vec3 FiniteElement1s33CosseratRotation::computePosition(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33CosseratRotation::computePosition): Not implemented!"); }
+  inline fmatvec::SqrMat3 FiniteElement1s33CosseratRotation::computeOrientation(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33CosseratRotation::computeOrientation): Not implemented!"); }
+  inline fmatvec::Vec3 FiniteElement1s33CosseratRotation::computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33CosseratRotation::computeVelocity): Not implemented!"); }
+  inline fmatvec::Vec3 FiniteElement1s33CosseratRotation::computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33CosseratRotation::computeAngularVelocity): Not implemented!"); }
   inline fmatvec::Mat FiniteElement1s33CosseratRotation::computeJacobianOfMotion(const fmatvec::Vec& qG,const MBSim::ContourPointData& data) { return computeJXqG(qG,data.getLagrangeParameterPosition()(0)); }
   inline double FiniteElement1s33CosseratRotation::getl0() const { return l0; }
   inline fmatvec::Mat FiniteElement1s33CosseratRotation::computeJXqG(const fmatvec::Vec& qG,double x) { throw MBSim::MBSimError("ERROR (FiniteElement1s33CosseratRotation::computeJXqG): Not implemented!"); }
+
+  inline FiniteElement1s33CosseratRotation::FiniteElement1s33CosseratRotation(double l0_, double E_, double G_, double I1_, double I2_, double I0_, CardanPtr ag_) :
+      l0(l0_), E(E_), G(G_), I1(I1_), I2(I2_), I0(I0_), k10(0.), k20(0.), h(9, fmatvec::INIT, 0.), X(12, fmatvec::INIT, 0.), ag(ag_) {
+  }
+
+  inline FiniteElement1s33CosseratRotation::~FiniteElement1s33CosseratRotation() {
+  }
+
+  inline void FiniteElement1s33CosseratRotation::setCurlRadius(double R1, double R2) {
+    if (fabs(R1) > MBSim::epsroot())
+      k10 = 1. / R1;
+    if (fabs(R2) > MBSim::epsroot())
+      k20 = 1. / R2;
+  }
+
+  inline void FiniteElement1s33CosseratRotation::computeh(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) {
+    /* angles */
+    fmatvec::Vec phi = (qG(0, 2) + qG(6, 8)) / 2.;
+    fmatvec::Vec dphids = (qG(6, 8) - qG(0, 2)) / l0;
+
+    fmatvec::Vec tangent = ag->computet(phi);
+    fmatvec::Vec normal = ag->computen(phi);
+    fmatvec::Vec binormal = ag->computeb(phi);
+
+    fmatvec::SqrMat dtangentdphi = ag->computetq(phi);
+    fmatvec::SqrMat dnormaldphi = ag->computenq(phi);
+    fmatvec::SqrMat dbinormaldphi = ag->computebq(phi);
+
+    /* differentiation of 'bending and torsion energy' with respect to qG */
+    double GI0ktilde0 = G * I0 * binormal.T() * dnormaldphi * dphids;
+    fmatvec::Vec ktilde0_0 = 0.5 * dbinormaldphi.T() * dnormaldphi * dphids;
+    fmatvec::Vec ktilde0_1 = dnormaldphi.T() * binormal / l0;
+    fmatvec::Vec ktilde0_2 = 0.5 * (ag->computenqt(phi, dphids)).T() * binormal;
+    fmatvec::Vec dBTtorsiondqG(9, fmatvec::INIT, 0.);
+    dBTtorsiondqG(0, 2) = ktilde0_0 - ktilde0_1 + ktilde0_2;
+    dBTtorsiondqG(6, 8) = ktilde0_0 + ktilde0_1 + ktilde0_2;
+    dBTtorsiondqG *= GI0ktilde0;
+
+    double EI1ktilde1 = E * I1 * (tangent.T() * dbinormaldphi * dphids - k10);
+    fmatvec::Vec ktilde1_0 = 0.5 * dtangentdphi.T() * dbinormaldphi * dphids;
+    fmatvec::Vec ktilde1_1 = dbinormaldphi.T() * tangent / l0;
+    fmatvec::Vec ktilde1_2 = 0.5 * (ag->computebqt(phi, dphids)).T() * tangent;
+    fmatvec::Vec dBTbending1dqG(9, fmatvec::INIT, 0.);
+    dBTbending1dqG(0, 2) = ktilde1_0 - ktilde1_1 + ktilde1_2;
+    dBTbending1dqG(6, 8) = ktilde1_0 + ktilde1_1 + ktilde1_2;
+    dBTbending1dqG *= EI1ktilde1;
+
+    double EI2ktilde2 = E * I2 * (normal.T() * dtangentdphi * dphids - k20);
+    fmatvec::Vec ktilde2_0 = 0.5 * dnormaldphi.T() * dtangentdphi * dphids;
+    fmatvec::Vec ktilde2_1 = dtangentdphi.T() * normal / l0;
+    fmatvec::Vec ktilde2_2 = 0.5 * (ag->computetqt(phi, dphids)).T() * normal;
+    fmatvec::Vec dBTbending2dqG(9, fmatvec::INIT, 0.);
+    dBTbending2dqG(0, 2) = ktilde2_0 - ktilde2_1 + ktilde2_2;
+    dBTbending2dqG(6, 8) = ktilde2_0 + ktilde2_1 + ktilde2_2;
+    dBTbending2dqG *= EI2ktilde2;
+
+    /* generalized forces */
+    h = (dBTtorsiondqG + dBTbending1dqG + dBTbending2dqG) * (-l0);
+    //cout << h << endl;
+    //throw;
+  }
+
+  inline double FiniteElement1s33CosseratRotation::computeElasticEnergy(const fmatvec::Vec& qG) {
+    fmatvec::Vec phi = (qG(0, 2) + qG(6, 8)) / 2.;
+    fmatvec::Vec dphids = (qG(6, 8) - qG(0, 2)) / l0;
+
+    fmatvec::Vec tangent = ag->computet(phi);
+    fmatvec::Vec normal = ag->computen(phi);
+    fmatvec::Vec binormal = ag->computeb(phi);
+
+    fmatvec::SqrMat dtangentdphi = ag->computetq(phi);
+    fmatvec::SqrMat dnormaldphi = ag->computenq(phi);
+    fmatvec::SqrMat dbinormaldphi = ag->computebq(phi);
+
+    return 0.5 * l0 * (G * I0 * pow(binormal.T() * dnormaldphi * dphids, 2.) + E * I1 * pow(tangent.T() * dbinormaldphi * dphids - k10, 2.) + E * I2 * pow(normal.T() * dtangentdphi * dphids - k20, 2.));
+  }
 
 }
 
