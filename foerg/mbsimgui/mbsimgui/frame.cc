@@ -145,14 +145,3 @@ void FixedRelativeFrame::initializeUsingXML2(TiXmlElement *element) {
   ((PhysicalStringWidget*)((ExtPhysicalVarWidget*)orientation->getWidget())->getPhysicalStringWidget(1))->setXmlName(MBSIMNS"relativeOrientation");
 }
 
-RigidBodyFrame::RigidBodyFrame(const QString &str, QTreeWidgetItem *parentItem, int ind) : FixedRelativeFrame(str, parentItem, ind) {
-}
-
-RigidBodyFrame::~RigidBodyFrame() {
-}
-
-WorldFrame::WorldFrame(const QString &str, QTreeWidgetItem *parentItem, int ind) : FixedRelativeFrame(str, parentItem, ind) {
-}
-
-WorldFrame::~WorldFrame() {
-}
