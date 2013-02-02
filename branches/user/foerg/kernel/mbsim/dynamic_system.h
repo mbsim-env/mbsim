@@ -31,7 +31,7 @@ namespace H5 {
 
 namespace MBSim {
   class Frame;
-  class WorldFrame;
+  class FixedRelativeFrame;
   class Contour;
   class ExtraDynamic;
   class Object;
@@ -645,7 +645,7 @@ namespace MBSim {
        */
       void setrMax(double rMax);
 
-      void addFrame(WorldFrame *frame);
+      void addFrame(FixedRelativeFrame *frame);
 
       /**
        * \param frame to add
@@ -753,7 +753,7 @@ namespace MBSim {
       ModellingInterface* getModel(const std::string &name, bool check=true);
 
       /** Return frame "I" */
-      WorldFrame *getFrameI() { return I; }
+      FixedRelativeFrame *getFrameI() { return I; }
 
       virtual Element *getByPathSearch(std::string path);
 
@@ -950,7 +950,7 @@ namespace MBSim {
       void addContour(Contour* contour);
 
       /** A pointer to frame "I" */
-      WorldFrame *I;
+      FixedRelativeFrame *I;
 
       /** 
        * \brief size of contact force parameters of special links relative to parent

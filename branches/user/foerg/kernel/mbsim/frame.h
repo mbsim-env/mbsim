@@ -86,6 +86,7 @@ namespace MBSim {
       virtual void init(InitStage stage);
 #ifdef HAVE_OPENMBVCPPINTERFACE
       virtual void enableOpenMBV(double size=1, double offset=1);
+      void setOpenMBVFrame(OpenMBV::Frame* frame) { openMBVFrame = frame; }
       OpenMBV::Frame* getOpenMBVFrame() {return openMBVFrame; }
 #endif
       /***************************************************/
@@ -216,26 +217,6 @@ namespace MBSim {
       fmatvec::Vec3 RrRP, WrRP;
       fmatvec::SqrMat3 ARP;
       std::string saved_frameOfReference;
-  };
-
-  /**
-   * \brief cartesian frame on rigid bodies
-   * \author Martin Foerg
-   */
-  class RigidBodyFrame : public FixedRelativeFrame {
-    public:
-      RigidBodyFrame(const std::string &name = "dummy", const fmatvec::Vec3 &r=fmatvec::Vec3(), const fmatvec::SqrMat3 &A=fmatvec::SqrMat3(fmatvec::EYE), const Frame *refFrame=0) : FixedRelativeFrame(name,r,A,refFrame) {} 
-      virtual void init(InitStage stage);
-  };
-
-  /**
-   * \brief cartesian frame on environment
-   * \author Martin Foerg
-   */
-  class WorldFrame : public FixedRelativeFrame {
-    public:
-      WorldFrame(const std::string &name = "dummy", const fmatvec::Vec3 &r=fmatvec::Vec3(), const fmatvec::SqrMat3 &A=fmatvec::SqrMat3(fmatvec::EYE), const Frame *refFrame=0) : FixedRelativeFrame(name,r,A,refFrame) {} 
-      virtual void init(InitStage stage);
   };
 
 }

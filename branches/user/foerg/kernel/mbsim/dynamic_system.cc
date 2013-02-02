@@ -60,7 +60,7 @@ namespace MBSim {
                                                        hInd[0] = 0;
                                                        hInd[1] = 0;
 
-                                                       I=new WorldFrame("I");
+                                                       I=new FixedRelativeFrame("I");
                                                        addFrame(I);
                                                      }
 
@@ -485,12 +485,12 @@ namespace MBSim {
     }
     else if(stage==relativeFrameContourLocation) {
       for(unsigned int k=1; k<frame.size(); k++) {
-        WorldFrame *P = (WorldFrame*)frame[k];
-        cout << P->getName() << endl;
-        const WorldFrame *R = P;
+        FixedRelativeFrame *P = (FixedRelativeFrame*)frame[k];
+        if(!((FixedRelativeFrame*)frame[k])->getFrameOfReference())
+          ((FixedRelativeFrame*)frame[k])->setFrameOfReference(I);
+        const FixedRelativeFrame *R = P;
         do {
-          R = dynamic_cast<const WorldFrame*>(R->getFrameOfReference());
-          cout << R << endl;
+          R = static_cast<const FixedRelativeFrame*>(R->getFrameOfReference());
           P->setRelativePosition(R->getRelativePosition() + R->getRelativeOrientation()*P->getRelativePosition());
           P->setRelativeOrientation(R->getRelativeOrientation()*P->getRelativeOrientation());
         } while(R!=I);
@@ -514,8 +514,8 @@ namespace MBSim {
         }
       }
       for(unsigned int i=1; i<frame.size(); i++) { // kinematics of other frames can be updates from frame I 
-        ((WorldFrame*)frame[i])->updatePosition();
-        ((WorldFrame*)frame[i])->updateOrientation();
+        ((FixedRelativeFrame*)frame[i])->updatePosition();
+        ((FixedRelativeFrame*)frame[i])->updateOrientation();
       }
     }
     else if(stage==MBSim::plot) {
@@ -1311,7 +1311,7 @@ namespace MBSim {
       (**i).setrMax(rMax);
   }
 
-  void DynamicSystem::addFrame(WorldFrame *frame_) {
+  void DynamicSystem::addFrame(FixedRelativeFrame *frame_) {
     if(getFrame(frame_->getName(),false)) { 
       throw MBSimError("The DynamicSystem \""+name+"\" can only comprises one Frame by the name \""+name+"\"!");
       assert(getFrame(frame_->getName(),false)==NULL);
@@ -1321,14 +1321,14 @@ namespace MBSim {
   }
 
   void DynamicSystem::addFrame(Frame *frame_, const Vec3 &RrRF, const SqrMat3 &ARF, const Frame* refFrame) {
-    WorldFrame *environmentFrame = new WorldFrame(frame_->getName(),RrRF,ARF,refFrame);
+    FixedRelativeFrame *environmentFrame = new FixedRelativeFrame(frame_->getName(),RrRF,ARF,refFrame);
     if(frame_->getOpenMBVFrame())
       environmentFrame->enableOpenMBV(frame_->getOpenMBVFrame()->getSize(), frame_->getOpenMBVFrame()->getOffset());
     addFrame(environmentFrame);
   }
 
   void DynamicSystem::addFrame(const string &str, const Vec3 &RrRF, const SqrMat3 &ARF, const Frame* refFrame) {
-    WorldFrame *environmentFrame = new WorldFrame(str,RrRF,ARF,refFrame);
+    FixedRelativeFrame *environmentFrame = new FixedRelativeFrame(str,RrRF,ARF,refFrame);
     addFrame(environmentFrame);
   }
 
@@ -1349,8 +1349,8 @@ namespace MBSim {
       fabs(ARC(0,0)-1)<1e-10 && fabs(ARC(1,1)-1)<1e-10 && fabs(ARC(2,2)-1)<1e-10)
       contourFrame = frame[0];
     else {
-      contourFrame = new WorldFrame(frameName.str(),RrRC,ARC,refFrame);
-      addFrame((WorldFrame*)contourFrame);
+      contourFrame = new FixedRelativeFrame(frameName.str(),RrRC,ARC,refFrame);
+      addFrame((FixedRelativeFrame*)contourFrame);
     }
     contour_->setFrameOfReference(contourFrame);
     addContour(contour_);
