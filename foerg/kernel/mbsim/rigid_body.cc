@@ -44,7 +44,7 @@ namespace MBSim {
 
   RigidBody::RigidBody(const string &name) : Body(name), m(0), cb(false), APK(EYE), fT(0), fPrPK(0), fAPK(0), fPJT(0), fPJR(0), fPdJT(0), fPdJR(0), fPjT(0), fPjR(0), fPdjT(0), fPdjR(0), constraint(0), frameForJacobianOfRotation(0) {
 
-    C=new RigidBodyFrame("C");
+    C=new FixedRelativeFrame("C");
     Body::addFrame(C);
     K = C;
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -73,7 +73,7 @@ namespace MBSim {
   }
 
   void RigidBody::setFrameForKinematics(Frame *frame) { 
-    K = dynamic_cast<RigidBodyFrame*>(frame); 
+    K = dynamic_cast<FixedRelativeFrame*>(frame); 
     assert(K);
   }
 
@@ -104,7 +104,7 @@ namespace MBSim {
 
   void RigidBody::updateStateDerivativeDependentVariables(double t) {
     for(unsigned int i=0; i<frame.size(); i++)
-      ((RigidBodyFrame*)frame[i])->updateStateDerivativeDependentVariables(udall[0]);
+      ((FixedRelativeFrame*)frame[i])->updateStateDerivativeDependentVariables(udall[0]);
     for(unsigned int i=0; i<RBC.size(); i++)
       RBC[i]->updateStateDerivativeDependentVariables(udall[0],t);
   }
@@ -182,10 +182,12 @@ namespace MBSim {
 
       //RBF.push_back(C);
       for(unsigned int k=1; k<frame.size(); k++) {
-        RigidBodyFrame *P = (RigidBodyFrame*)frame[k];
-        const RigidBodyFrame *R = P;
+        FixedRelativeFrame *P = (FixedRelativeFrame*)frame[k];
+        if(!(P->getFrameOfReference()))
+          P->setFrameOfReference(C);
+        const FixedRelativeFrame *R = P;
         do {
-          R = dynamic_cast<const RigidBodyFrame*>(R->getFrameOfReference());
+          R = static_cast<const FixedRelativeFrame*>(R->getFrameOfReference());
           P->setRelativePosition(R->getRelativePosition() + R->getRelativeOrientation()*P->getRelativePosition());
           P->setRelativeOrientation(R->getRelativeOrientation()*P->getRelativeOrientation());
         } while(R!=C);
@@ -476,8 +478,10 @@ namespace MBSim {
   }
 
   void RigidBody::updateJacobiansForRemainingFramesAndContours1(double t) {
-    K->updateRelativePosition();
-    K->updateJacobians(1);
+    if(K != C) {
+      K->updateRelativePosition();
+      K->updateJacobians(1);
+    }
     for(unsigned int i=0; i<RBF.size(); i++) {
       RBF[i]->updateRelativePosition();
       RBF[i]->updateJacobians(1);
@@ -501,7 +505,7 @@ namespace MBSim {
     if(!constraint) TRel>>T;
   }
 
-  void RigidBody::addFrame(RigidBodyFrame *frame_) {
+  void RigidBody::addFrame(FixedRelativeFrame *frame_) {
     Body::addFrame(frame_);
   }
 
@@ -510,14 +514,14 @@ namespace MBSim {
   }
 
   void RigidBody::addFrame(Frame *frame_, const Vec3 &RrRF, const SqrMat3 &ARF, const Frame* refFrame) {
-    RigidBodyFrame *rigidBodyFrame = new RigidBodyFrame(frame_->getName(),RrRF,ARF,refFrame);
+    FixedRelativeFrame *rigidBodyFrame = new FixedRelativeFrame(frame_->getName(),RrRF,ARF,refFrame);
     if(frame_->getOpenMBVFrame())
       rigidBodyFrame->enableOpenMBV(frame_->getOpenMBVFrame()->getSize(), frame_->getOpenMBVFrame()->getOffset());
     addFrame(rigidBodyFrame);
   }
 
   void RigidBody::addFrame(const string &str, const Vec3 &RrRF, const SqrMat3 &ARF, const Frame* refFrame) {
-    RigidBodyFrame *rigidBodyFrame = new RigidBodyFrame(str,RrRF,ARF,refFrame);
+    FixedRelativeFrame *rigidBodyFrame = new FixedRelativeFrame(str,RrRF,ARF,refFrame);
     addFrame(rigidBodyFrame);
   }
 
@@ -529,8 +533,8 @@ namespace MBSim {
       fabs(ARC(0,0)-1)<1e-10 && fabs(ARC(1,1)-1)<1e-10 && fabs(ARC(2,2)-1)<1e-10)
       contourFrame = C;
     else {
-      contourFrame = new RigidBodyFrame(frameName.str(),RrRC,ARC,refFrame);
-      addFrame((RigidBodyFrame*)contourFrame);
+      contourFrame = new FixedRelativeFrame(frameName.str(),RrRC,ARC,refFrame);
+      addFrame((FixedRelativeFrame*)contourFrame);
     }
     contour_->setFrameOfReference(contourFrame);
     Body::addContour(contour_);
@@ -570,8 +574,8 @@ namespace MBSim {
     }
 
     if(P!=C && P!=K) {
-      ((RigidBodyFrame*)P)->updateOrientation();
-      ((RigidBodyFrame*)P)->updatePosition();
+      ((FixedRelativeFrame*)P)->updateOrientation();
+      ((FixedRelativeFrame*)P)->updatePosition();
     }
   }
 
@@ -600,9 +604,9 @@ namespace MBSim {
     }
 
     if(P!=C && P!=K) {
-      ((RigidBodyFrame*)P)->updateAngularVelocity();
-      ((RigidBodyFrame*)P)->updateVelocity();
-      WJTrel -= tilde(((RigidBodyFrame*)P)->getWrRP())*WJRrel;
+      ((FixedRelativeFrame*)P)->updateAngularVelocity();
+      ((FixedRelativeFrame*)P)->updateVelocity();
+      WJTrel -= tilde(((FixedRelativeFrame*)P)->getWrRP())*WJRrel;
     }
   }
 
@@ -636,7 +640,7 @@ namespace MBSim {
 
    if(K != C) C->updateJacobians();
    if(P!=C && P!=K)
-     ((RigidBodyFrame*)P)->updateJacobians();
+     ((FixedRelativeFrame*)P)->updateJacobians();
   }
 
   void RigidBody::updateRelativeJacobians(double t, Frame *P, Mat3V &WJTrel0, Mat3V &WJRrel0) {
@@ -647,7 +651,7 @@ namespace MBSim {
 
     // TODO: Zusammenfassen
     if(P!=C && P!=K)
-      WJTrel0 -= tilde(((RigidBodyFrame*)P)->getWrRP())*WJRrel0;
+      WJTrel0 -= tilde(((FixedRelativeFrame*)P)->getWrRP())*WJRrel0;
   }
 
   void RigidBody::initializeUsingXML(TiXmlElement *element) {
@@ -658,7 +662,7 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"frames")->FirstChildElement();
     while(e && e->ValueStr()==MBSIMNS"frame") {
       TiXmlElement *ec=e->FirstChildElement();
-      RigidBodyFrame *f=new RigidBodyFrame(ec->Attribute("name"));
+      FixedRelativeFrame *f=new FixedRelativeFrame(ec->Attribute("name"));
       addFrame(f);
       f->initializeUsingXML(ec);
       ec=ec->NextSiblingElement();
@@ -671,8 +675,8 @@ namespace MBSim {
       f->setRelativeOrientation(getSqrMat3(ec));
       e=e->NextSiblingElement();
     }
-    while(e && e->ValueStr()==MBSIMNS"RigidBodyFrame") {
-      RigidBodyFrame *f=new RigidBodyFrame(e->Attribute("name"));
+    while(e && e->ValueStr()==MBSIMNS"FixedRelativeFrame") {
+      FixedRelativeFrame *f=new FixedRelativeFrame(e->Attribute("name"));
       addFrame(f);
       f->initializeUsingXML(e);
       e=e->NextSiblingElement();
@@ -682,6 +686,7 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"contours")->FirstChildElement();
     while(e && e->ValueStr()==MBSIMNS"contour") {
       TiXmlElement *ec=e->FirstChildElement();
+
       Contour *c=ObjectFactory::getInstance()->createContour(ec);
       c->initializeUsingXML(ec);
       ec=ec->NextSiblingElement();
@@ -702,11 +707,11 @@ namespace MBSim {
             fabs(ARC(0,0)-1)<1e-10 && fabs(ARC(1,1)-1)<1e-10 && fabs(ARC(2,2)-1)<1e-10)
           contourFrame = C;
         else {
-          contourFrame = new RigidBodyFrame(frameName.str());
-          ((RigidBodyFrame*)contourFrame)->setFrameOfReference(refF);
-          ((RigidBodyFrame*)contourFrame)->setRelativePosition(RrRC);
-          ((RigidBodyFrame*)contourFrame)->setRelativeOrientation(ARC);
-          addFrame((RigidBodyFrame*)contourFrame);
+          contourFrame = new FixedRelativeFrame(frameName.str());
+          ((FixedRelativeFrame*)contourFrame)->setFrameOfReference(refF);
+          ((FixedRelativeFrame*)contourFrame)->setRelativePosition(RrRC);
+          ((FixedRelativeFrame*)contourFrame)->setRelativeOrientation(ARC);
+          addFrame((FixedRelativeFrame*)contourFrame);
         }
         c->setFrameOfReference(contourFrame);
       }

@@ -36,7 +36,7 @@ namespace MBSim {
 
   class Frame;
   class Contour;
-  class RigidBodyFrame;
+  class FixedRelativeFrame;
   class CompoundContour;
   class Constraint;
 
@@ -170,8 +170,8 @@ namespace MBSim {
       void setDerivativeOfGuidingVelocityOfRotation(Function1<fmatvec::Vec3,double>* fPdjR_) { fPdjR = fPdjR_;}
       void setMass(double m_) { m = m_; }
       double getMass() const { return m; }
-      RigidBodyFrame* getFrameForKinematics() { return K; };
-      RigidBodyFrame* getFrameC() { return C; };
+      FixedRelativeFrame* getFrameForKinematics() { return K; };
+      FixedRelativeFrame* getFrameC() { return C; };
       void isFrameOfBodyForRotation(bool cb_) { cb = cb_; }
 
       /**
@@ -185,7 +185,7 @@ namespace MBSim {
       const fmatvec::SymMat3& getInertiaTensor() const {return SThetaS;}
       fmatvec::SymMat3& getInertiaTensor() {return SThetaS;}
 
-      void addFrame(RigidBodyFrame *frame); 
+      void addFrame(FixedRelativeFrame *frame); 
 
       void addContour(Contour *contour);
 
@@ -280,7 +280,7 @@ namespace MBSim {
        */
       fmatvec::SymMat3 SThetaS, WThetaS;
 
-      RigidBodyFrame *K;
+      FixedRelativeFrame *K;
 
       /**
        * \brief TODO
@@ -405,7 +405,7 @@ namespace MBSim {
       void (RigidBody::*updateJacobians_[2])(double t); 
 
       /** a pointer to Frame "C" */
-      RigidBodyFrame *C;
+      FixedRelativeFrame *C;
 
       fmatvec::Vec aT, aR;
 
@@ -424,7 +424,7 @@ namespace MBSim {
 
       Frame* frameForJacobianOfRotation;
 
-      std::vector<RigidBodyFrame*> RBF;
+      std::vector<FixedRelativeFrame*> RBF;
       std::vector<CompoundContour*> RBC;
 
       //fmatvec::Vec qRel0, uRel0;

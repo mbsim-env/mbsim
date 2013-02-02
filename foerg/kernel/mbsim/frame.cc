@@ -171,6 +171,11 @@ namespace MBSim {
           openMBVFrame->setID(unknown->ValueStr().substr(length, unknown->ValueStr().length()-length-1));
       }
     }
+    if((ee=element->FirstChildElement(MBSIMNS"openMBVFrame"))) {
+      OpenMBV::Frame *f=new OpenMBV::Frame;
+      setOpenMBVFrame(f);
+      f->initializeUsingXML(ee->FirstChildElement());
+    }
 #endif
   }
 
@@ -225,26 +230,6 @@ namespace MBSim {
 
   TiXmlElement* FixedRelativeFrame::writeXMLFile(TiXmlNode *element) {
     return 0;
-  }
-
-  void RigidBodyFrame::init(InitStage stage) {
-    if(stage==preInit) {
-      if(!frameOfReference)
-        frameOfReference = ((RigidBody*)parent)->getFrameC();
-      FixedRelativeFrame::init(stage);
-    }
-    else
-      FixedRelativeFrame::init(stage);
-  }
-
-  void WorldFrame::init(InitStage stage) {
-    if(stage==preInit) {
-      if(!frameOfReference)
-        frameOfReference = ((DynamicSystem*)parent)->getFrameI();
-      FixedRelativeFrame::init(stage);
-    }
-    else
-      FixedRelativeFrame::init(stage);
   }
 
 }
