@@ -285,7 +285,7 @@ void Group::addAbsolutePositionSensor() {
 }
 
 void Group::addFrame() {
-  new WorldFrame(newName(frames,"P"), frames, -1);
+  new FixedRelativeFrame(newName(frames,"P"), frames, -1);
   ((Element*)treeWidget()->topLevelItem(0))->update();
 }
 
@@ -415,13 +415,13 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *E=element->FirstChildElement(MBSIMNS"frames")->FirstChildElement();
   while(E && E->ValueStr()==MBSIMNS"frame") {
     TiXmlElement *ec=E->FirstChildElement();
-    WorldFrame *f=new WorldFrame(ec->Attribute("name"), frames, -1);
+    FixedRelativeFrame *f=new FixedRelativeFrame(ec->Attribute("name"), frames, -1);
     f->initializeUsingXML(ec);
     f->initializeUsingXML2(E);
     E=E->NextSiblingElement();
   }
-  while(E && E->ValueStr()==MBSIMNS"WorldFrame") {
-    WorldFrame *f=new WorldFrame(E->Attribute("name"), frames, -1);
+  while(E && E->ValueStr()==MBSIMNS"FixedRelativeFrame") {
+    FixedRelativeFrame *f=new FixedRelativeFrame(E->Attribute("name"), frames, -1);
     f->initializeUsingXML(E);
     E=E->NextSiblingElement();
   }

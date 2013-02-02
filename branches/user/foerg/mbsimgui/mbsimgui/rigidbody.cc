@@ -146,7 +146,7 @@ int RigidBody::getUnconstrainedSize() const {
 void RigidBody::addFrame() {
   QString text = newName(frames,"P");
   if (!text.isEmpty()) {
-    new RigidBodyFrame(text, frames, -1);
+    new FixedRelativeFrame(text, frames, -1);
     ((Element*)treeWidget()->topLevelItem(0))->update();
   }
 }
@@ -202,13 +202,13 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
   e=element->FirstChildElement(MBSIMNS"frames")->FirstChildElement();
   while(e && e->ValueStr()==MBSIMNS"frame") {
     TiXmlElement *ec=e->FirstChildElement();
-    RigidBodyFrame *f=new RigidBodyFrame(ec->Attribute("name"), frames, -1);
+    FixedRelativeFrame *f=new FixedRelativeFrame(ec->Attribute("name"), frames, -1);
     f->initializeUsingXML(ec);
     f->initializeUsingXML2(e);
     e=e->NextSiblingElement();
   }
-  while(e && e->ValueStr()==MBSIMNS"RigidBodyFrame") {
-    RigidBodyFrame *f=new RigidBodyFrame(e->Attribute("name"), frames, -1);
+  while(e && e->ValueStr()==MBSIMNS"FixedRelativeFrame") {
+    FixedRelativeFrame *f=new FixedRelativeFrame(e->Attribute("name"), frames, -1);
     f->initializeUsingXML(e);
     e=e->NextSiblingElement();
   }
