@@ -30,7 +30,7 @@ namespace MBSimFlexibleBody {
 
   Cardan::~Cardan() {}
 
-  Vec Cardan::computet(const Vec& q) const {
+  Vec3 Cardan::computet(const Vec& q) const {
     double sq0 = sin(q(0));
     double sq1 = sin(q(1));
     double sq2 = sin(q(2));
@@ -45,7 +45,7 @@ namespace MBSimFlexibleBody {
     return t.copy();
   }
 
-  Vec Cardan::computen(const Vec& q) const {
+  Vec3 Cardan::computen(const Vec& q) const {
     double sq0 = sin(q(0));
     double sq1 = sin(q(1));
     double sq2 = sin(q(2));
@@ -60,7 +60,7 @@ namespace MBSimFlexibleBody {
     return n.copy();
   }
 
-  Vec Cardan::computeb(const Vec& q) const {
+  Vec3 Cardan::computeb(const Vec& q) const {
     double sq0 = sin(q(0));
     double sq1 = sin(q(1));
     double cq0 = cos(q(0));

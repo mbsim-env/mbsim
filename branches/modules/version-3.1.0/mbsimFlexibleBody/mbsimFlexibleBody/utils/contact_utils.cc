@@ -47,15 +47,21 @@ namespace MBSimFlexibleBody {
       return new ContactKinematicsCircleSolidFlexibleBand<Ref> ;
     else if (strcmp(contour0, "CircleSolid") == 0 && strcmp(contour1, "FlexibleBandFixed<8>") == 0)
       return new ContactKinematicsCircleSolidFlexibleBand<Fixed<8> > ;
+    else if (strcmp(contour0, "CircleSolid") == 0 && strcmp(contour1, "FlexibleBandFixed<16>") == 0)
+      return new ContactKinematicsCircleSolidFlexibleBand<Fixed<16> > ;
     
     else if (strcmp(contour0, "Point") == 0 && strcmp(contour1, "FlexibleBandRef") == 0)
       return new ContactKinematicsPointFlexibleBand<Ref> ;
     else if (strcmp(contour0, "Point") == 0 && strcmp(contour1, "FlexibleBandFixed<8>") == 0)
       return new ContactKinematicsPointFlexibleBand<Fixed<8> > ;
+    else if (strcmp(contour0, "Point") == 0 && strcmp(contour1, "FlexibleBandFixed<16>") == 0)
+      return new ContactKinematicsPointFlexibleBand<Fixed<16> > ;
     
     else if (strcmp(contour0, "Point") == 0 && strcmp(contour1, "Contour1sFlexibleRef") == 0)
       return new MBSim::ContactKinematicsPointContour1s;
     else if (strcmp(contour0, "Point") == 0 && strcmp(contour1, "Contour1sFlexibleFixed<8>") == 0)
+      return new MBSim::ContactKinematicsPointContour1s;
+    else if (strcmp(contour0, "Point") == 0 && strcmp(contour1, "Contour1sFlexibleFixed<16>") == 0)
       return new MBSim::ContactKinematicsPointContour1s;
 
     else if (strcmp(contour0, "Point") == 0 && strcmp(contour1, "NurbsDisk2s") == 0)

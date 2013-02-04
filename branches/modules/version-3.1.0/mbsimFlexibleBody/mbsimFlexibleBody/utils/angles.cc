@@ -37,22 +37,22 @@ namespace MBSimFlexibleBody {
     return AWK;
   }
 
-  Vec Angles::computett(const Vec& q,const Vec& qt) const {
-    SqrMat tq = computetq(q);
-    Vec tt = tq*qt;
-    return tt.copy();
+  Vec3 Angles::computett(const Vec& q,const Vec& qt) const {
+    SqrMat3 tq = computetq(q);
+    Vec3 tt = tq*qt;
+    return tt;
   }		
 
-  Vec Angles::computent(const Vec& q,const Vec& qt) const {
-    SqrMat nq = computenq(q);
-    Vec nt = nq*qt;
-    return nt.copy();
+  Vec3 Angles::computent(const Vec& q,const Vec& qt) const {
+    SqrMat3 nq = computenq(q);
+    Vec3 nt = nq*qt;
+    return nt;
   }		
 
-  Vec Angles::computebt(const Vec& q,const Vec& qt) const {
-    SqrMat bq = computebq(q);
-    Vec bt = bq*qt;
-    return bt.copy();
+  Vec3 Angles::computebt(const Vec& q,const Vec& qt) const {
+    SqrMat3 bq = computebq(q);
+    Vec3 bt = bq*qt;
+    return bt;
   }
 
   Vec Angles::computentilt(const Vec& q,const Vec& qt) const {
@@ -117,19 +117,19 @@ namespace MBSimFlexibleBody {
     return btilqt.copy();
   }
 
-  Vec Angles::computeOmega(const Vec& q,const Vec& qt) const {
-    Vec t = computet(q);
-    Vec n = computen(q);
-    Vec b = computeb(q); 
-    Vec tt = computett(q,qt);
-    Vec nt = computent(q,qt);
-    Vec bt = computebt(q,qt); 
+  Vec3 Angles::computeOmega(const Vec& q,const Vec& qt) const {
+    Vec3 t = computet(q);
+    Vec3 n = computen(q);
+    Vec3 b = computeb(q);
+    Vec3 tt = computett(q,qt);
+    Vec3 nt = computent(q,qt);
+    Vec3 bt = computebt(q,qt);
 
-    Vec omg(3);
+    Vec3 omg(NONINIT);
     omg(0) = t(1)*tt(2)+n(1)*nt(2)+b(1)*bt(2);
     omg(1) = t(2)*tt(0)+n(2)*nt(0)+b(2)*bt(0);
     omg(2) = t(0)*tt(1)+n(0)*nt(1)+b(0)*bt(1);
-    return omg.copy();
+    return omg;
   }
 
   SqrMat Angles::computeT(const Vec& q) const {

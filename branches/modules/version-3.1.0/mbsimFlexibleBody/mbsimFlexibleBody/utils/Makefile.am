@@ -2,7 +2,7 @@ noinst_LTLIBRARIES = libutils.la
 libutils_la_SOURCES = contact_utils.cc\
 			angles.cc\
 			cardan.cc\
-			#revcardan.cc
+			revcardan.cc
 
 utilsincludedir = $(includedir)/mbsimFlexibleBody/utils
 
@@ -13,4 +13,4 @@ libutils_la_CPPFLAGS = -DTIXML_USE_STL
 utilsinclude_HEADERS = contact_utils.h\
 			angles.h\
 			cardan.h\
-			#revcardan.h
+			revcardan.h

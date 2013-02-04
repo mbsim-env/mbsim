@@ -29,20 +29,20 @@ namespace MBSimFlexibleBody {
 
   RevCardan::~RevCardan() {}
 
-  Vec RevCardan::computet(const Vec& q) const {
+  Vec3 RevCardan::computet(const Vec& q) const {
     double sq1 = sin(q(1));
     double sq2 = sin(q(2));
     double cq1 = cos(q(1));
     double cq2 = cos(q(2));
 
-    Vec t(3);
+    Vec3 t(NONINIT);
     t(0) = cq2*cq1;
     t(1) = sq2*cq1;
     t(2) = -sq1;
-    return t.copy();
+    return t;
   }
 
-  Vec RevCardan::computen(const Vec& q) const {
+  Vec3 RevCardan::computen(const Vec& q) const {
     double sq0 = sin(q(0));
     double sq1 = sin(q(1));
     double sq2 = sin(q(2));
@@ -50,14 +50,14 @@ namespace MBSimFlexibleBody {
     double cq1 = cos(q(1));
     double cq2 = cos(q(2));
 
-    Vec n(3);
+    Vec3 n(NONINIT);
     n(0) = -sq2*cq0+cq2*sq1*sq0;
     n(1) = cq2*cq0+sq2*sq1*sq0;
     n(2) = cq1*sq0;
-    return n.copy();
+    return n;
   }
 
-  Vec RevCardan::computeb(const Vec& q) const {
+  Vec3 RevCardan::computeb(const Vec& q) const {
     double sq0 = sin(q(0));
     double sq1 = sin(q(1));
     double sq2 = sin(q(2));
@@ -65,11 +65,11 @@ namespace MBSimFlexibleBody {
     double cq1 = cos(q(1));
     double cq2 = cos(q(2));
 
-    Vec b(3);
+    Vec3 b(NONINIT);
     b(0) = sq2*sq0+cq2*sq1*cq0;
     b(1) = -cq2*sq0+sq2*sq1*cq0;
     b(2) = cq1*cq0;
-    return b.copy();
+    return b;
   }
 
   Vec RevCardan::computentil(const Vec& q) const {
@@ -97,13 +97,13 @@ namespace MBSimFlexibleBody {
     return btil.copy();
   }
 
-  SqrMat3 RevCardan::computetq(const Vec& q) const {
+  SqrMat RevCardan::computetq(const Vec& q) const {
     double sq1 = sin(q(1));
     double sq2 = sin(q(2));
     double cq1 = cos(q(1));
     double cq2 = cos(q(2));
 
-    SqrMat3 tq(NONINIT);
+    SqrMat tq(3,NONINIT);
     tq(0,0) = 0.;
     tq(0,1) = -cq2*sq1;
     tq(0,2) = -sq2*cq1;
@@ -118,7 +118,7 @@ namespace MBSimFlexibleBody {
     return tq.copy();
   }
 
-  SqrMat3 RevCardan::computenq(const Vec& q) const {
+  SqrMat RevCardan::computenq(const Vec& q) const {
     double sq0 = sin(q(0));
     double sq1 = sin(q(1));
     double sq2 = sin(q(2));
@@ -126,7 +126,7 @@ namespace MBSimFlexibleBody {
     double cq1 = cos(q(1));
     double cq2 = cos(q(2));
 
-    SqrMat3 nq;
+    SqrMat nq(3,NONINIT);
     nq(0,0) = sq2*sq0+cq2*sq1*cq0;
     nq(0,1) = cq2*cq1*sq0;
     nq(0,2) = -cq2*cq0-sq2*sq1*sq0;
@@ -141,7 +141,7 @@ namespace MBSimFlexibleBody {
     return nq.copy();
   }
 
-  SqrMat3 RevCardan::computebq(const Vec& q) const {
+  SqrMat RevCardan::computebq(const Vec& q) const {
     double sq0 = sin(q(0));
     double sq1 = sin(q(1));
     double sq2 = sin(q(2));
@@ -149,7 +149,7 @@ namespace MBSimFlexibleBody {
     double cq1 = cos(q(1));
     double cq2 = cos(q(2));
 
-    SqrMat3 bq;
+    SqrMat bq(3,NONINIT);
     bq(0,0) = sq2*cq0-cq2*sq1*sq0;
     bq(0,1) = cq2*cq1*cq0;
     bq(0,2) = cq2*sq0-sq2*sq1*cq0;
@@ -164,13 +164,13 @@ namespace MBSimFlexibleBody {
     return bq.copy();
   }
 
-  SqrMat3 RevCardan::computentilq(const Vec& q) const {
+  SqrMat RevCardan::computentilq(const Vec& q) const {
     double sq1 = sin(q(1));
     double sq2 = sin(q(2));
     double cq1 = cos(q(1));
     double cq2 = cos(q(2));
 
-    SqrMat3 ntilq;
+    SqrMat ntilq(3,NONINIT);
     ntilq(0,0) = 0.;
     ntilq(0,1) = -cq2*cq1;
     ntilq(0,2) = sq2*sq1;
@@ -185,13 +185,13 @@ namespace MBSimFlexibleBody {
     return ntilq.copy();
   }
 
-  SqrMat3 RevCardan::computebtilq(const Vec& q) const {
+  SqrMat RevCardan::computebtilq(const Vec& q) const {
     double sq1 = sin(q(1));
     double sq2 = sin(q(2));
     double cq1 = cos(q(1));
     double cq2 = cos(q(2));
 
-    SqrMat3 btilq;
+    SqrMat btilq(3,NONINIT);
     btilq(0,0) = 0.;
     btilq(0,1) = sq2*sq1;
     btilq(0,2) = -cq2*cq1;
@@ -274,7 +274,7 @@ namespace MBSimFlexibleBody {
     return nq2.copy();
   }
 
-  Mat3x6 RevCardan::computebq2(const Vec& q) const {
+  Mat RevCardan::computebq2(const Vec& q) const {
     double sq0 = sin(q(0));
     double sq1 = sin(q(1));
     double sq2 = sin(q(2));
@@ -282,7 +282,7 @@ namespace MBSimFlexibleBody {
     double cq1 = cos(q(1));
     double cq2 = cos(q(2));
 
-    Mat3x6 bq2;
+    Mat bq2(3,6,INIT,0.);
     bq2(0,0) = -sq2*sq0-cq2*sq1*cq0;
     bq2(1,0) = cq2*sq0-sq2*sq1*cq0;
     bq2(2,0) = -cq1*cq0;
@@ -309,13 +309,13 @@ namespace MBSimFlexibleBody {
     return bq2.copy();
   }
 
-  Mat3x6 RevCardan::computentilq2(const Vec& q) const {
+  Mat RevCardan::computentilq2(const Vec& q) const {
     double sq1 = sin(q(1));
     double sq2 = sin(q(2));
     double cq1 = cos(q(1));
     double cq2 = cos(q(2));
 
-    Mat3x6 ntilq2;
+    Mat ntilq2(3,6,INIT,0.);
     ntilq2(0,0) = 0.;
     ntilq2(1,0) = 0.;
     ntilq2(2,0) = 0.;
@@ -342,13 +342,13 @@ namespace MBSimFlexibleBody {
     return ntilq2.copy();
   }
 
-  Mat3x6 RevCardan::computebtilq2(const Vec& q) const {
+  Mat RevCardan::computebtilq2(const Vec& q) const {
     double sq1 = sin(q(1));
     double sq2 = sin(q(2));
     double cq1 = cos(q(1));
     double cq2 = cos(q(2));
 
-    Mat3x6 btilq2;
+    Mat btilq2(3,6,INIT,0.);
     btilq2(0,0) = 0.;
     btilq2(1,0) = 0.;
     btilq2(2,0) = 0.;
