@@ -32,7 +32,7 @@ using namespace std;
 
 RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) : Body(str, parentItem, ind), constrained(false) {
   setText(1,getType());
-  properties->addTab("Kinematics");
+  properties->addTab("Kinematics",1);
   properties->addTab("Visualisation");
   properties->addTab("Extra");
 
@@ -220,6 +220,10 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *ec=e->FirstChildElement();
     c=ObjectFactory::getInstance()->createContour(ec, contours, -1);
     if(c) c->initializeUsingXML(ec);
+    FixedRelativeFrame *f=new FixedRelativeFrame(QString("ContourFrame")+QString::number(contours->childCount()), frames, -1);
+    f->initializeUsingXML(ec);
+    f->initializeUsingXML2(e);
+    c->setSavedFrameOfReference(QString("../Frame[")+f->getName()+"]");
     e=e->NextSiblingElement();
   }
   while(e) {

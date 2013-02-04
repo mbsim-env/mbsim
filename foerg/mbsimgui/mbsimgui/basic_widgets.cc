@@ -62,16 +62,15 @@ void LocalFrameOfReferenceWidget::setFrame(Frame* frame_) {
 }
 
 void LocalFrameOfReferenceWidget::setFrame(const QString &str) {
-  string str_ = str.toStdString();
-  selectedFrame = element->getFrame(str_.substr(6, str_.length()-7));
+  selectedFrame = element->getFrame(str.mid(6, str.length()-7));
 }
 
 bool LocalFrameOfReferenceWidget::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *e = parent->FirstChildElement(xmlName);
   if(e) {
-    string refF="";
+    QString refF="";
     refF=e->Attribute("ref");
-    refF=refF.substr(6, refF.length()-7);
+    refF=refF.mid(6, refF.length()-7);
     setFrame(refF==""?element->getFrame(0):element->getFrame(refF));
     return true;
   }
@@ -115,8 +114,9 @@ void ParentFrameOfReferenceWidget::update() {
 
 void ParentFrameOfReferenceWidget::initialize() {
   if(saved_frameOfReference!="") {
-    string refF = saved_frameOfReference.toStdString();
-    refF=refF.substr(9, refF.length()-10);
+    QString refF = saved_frameOfReference;
+    refF=refF.mid(9, refF.length()-10);
+    //cout << refF.toStdString() << endl;
     setFrame(element->getParentElement()->getFrame(refF));
   }
 }
@@ -126,8 +126,7 @@ void ParentFrameOfReferenceWidget::setFrame(Frame* frame_) {
 }
 
 void ParentFrameOfReferenceWidget::setFrame(const QString &str) {
-  string str_ = str.toStdString();
-  selectedFrame = element->getParentElement()->getFrame(str_.substr(9, str_.length()-10));
+  selectedFrame = element->getParentElement()->getFrame(str.mid(9, str.length()-10));
 }
 
 bool ParentFrameOfReferenceWidget::initializeUsingXML(TiXmlElement *parent) {
@@ -387,7 +386,7 @@ void NameWidget::rename() {
     text = QInputDialog::getText(0, tr("Rename"), tr("Name:"), QLineEdit::Normal, getName());
     if(((QTreeWidgetItem*)element)->parent() == 0)
       break;
-    Element* ele = ((Container*)(((QTreeWidgetItem*)element)->parent()))->getChild(text.toStdString(),false);
+    Element* ele = ((Container*)(((QTreeWidgetItem*)element)->parent()))->getChild(text,false);
     if(ele==0 || ele==element) {
       break;
     } 

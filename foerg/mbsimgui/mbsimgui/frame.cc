@@ -76,14 +76,14 @@ TiXmlElement* Frame::writeXMLFile2(TiXmlNode *parent) {
   return 0;
 }
 
-Element *Frame::getByPathSearch(string path) {
-  if (path.substr(0, 1)=="/") // absolut path
+Element *Frame::getByPathSearch(QString path) {
+  if (path.mid(0, 1)=="/") // absolut path
     if(getParentElement())
       return getParentElement()->getByPathSearch(path);
     else
-      return getByPathSearch(path.substr(1));
-  else if (path.substr(0, 3)=="../") // relative path
-    return getParentElement()->getByPathSearch(path.substr(3));
+      return getByPathSearch(path.mid(1));
+  else if (path.mid(0, 3)=="../") // relative path
+    return getParentElement()->getByPathSearch(path.mid(3));
   else { // local path
     throw;
   }
@@ -91,16 +91,16 @@ Element *Frame::getByPathSearch(string path) {
 
 FixedRelativeFrame::FixedRelativeFrame(const QString &str, QTreeWidgetItem *parentItem, int ind) : Frame(str, parentItem, ind) {
 
-  properties->addTab("Kinematics");
+  properties->addTab("Kinematics",1);
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new VecWidget(3), MBSIMNS"relativePosition", lengthUnits(), 4));
-  position = new ExtXMLWidget("Position", new ExtPhysicalVarWidget(input),true);
+  position = new ExtXMLWidget("Relative position", new ExtPhysicalVarWidget(input),true);
   properties->addToTab("Kinematics", position);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new MatWidget(getEye<string>(3,3,"1","0")),MBSIMNS"relativeOrientation",noUnitUnits(),1));
-  orientation = new ExtXMLWidget("Orientation",new ExtPhysicalVarWidget(input),true);
+  orientation = new ExtXMLWidget("Relative orientation",new ExtPhysicalVarWidget(input),true);
   properties->addToTab("Kinematics", orientation);
 
   refFrame = new ExtXMLWidget("Frame of reference",new ParentFrameOfReferenceWidget(MBSIMNS"frameOfReference",this,this),true);

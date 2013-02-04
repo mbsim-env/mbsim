@@ -30,7 +30,8 @@ class Contour : public Element {
     QString getType() const { return "Contour"; }
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual Element * getByPathSearch(std::string path);
+    virtual Element *getByPathSearch(QString path);
+    void setSavedFrameOfReference(const QString &str);
   protected:
     ExtXMLWidget *refFrame;
 };

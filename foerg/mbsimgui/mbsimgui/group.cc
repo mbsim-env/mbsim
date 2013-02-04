@@ -137,6 +137,9 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
   //connect(action,SIGNAL(triggered()),this,SLOT(addObject()));
   //contextMenu->addAction(action);
   submenu = contextMenu->addMenu("Add object");
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Rigid bodies", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addRigidBodies()));
+  submenu->addAction(action);
   action=new QAction(Utils::QIconCached("newobject.svg"),"Rigid body", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addRigidBody()));
   submenu->addAction(action);
@@ -249,6 +252,20 @@ void Group::addRigidBody() {
   ((Element*)treeWidget()->topLevelItem(0))->update();
 }
 
+void Group::addRigidBodies() {
+  for(int i=0; i<1000; i++) {
+    cout <<"add Body" << i+1<< endl;
+    //new RigidBody(newName(objects,"Body"), objects, -1);
+    new FixedRelativeFrame(newName(frames,"P"), frames, -1);
+    //QTreeWidgetItem *item = new QTreeWidgetItem;
+    //addChild(item); //
+    //item->setText(0,newName(this,"P"));
+    //item->setText(1,"Type");
+    cout <<"end" << endl;
+  }
+  ((Element*)treeWidget()->topLevelItem(0))->update();
+}
+
 void Group::addKinematicConstraint() {
   new KinematicConstraint(newName(objects,"KinematicConstraint"), objects, -1);
   ((Element*)treeWidget()->topLevelItem(0))->update();
@@ -340,7 +357,7 @@ void Group::addFromFile() {
     map<string,string> dummy;
     incorporateNamespace(doc.FirstChildElement(), dummy);
     bool renameObject = false, renameGroup = false;
-    string name = e->Attribute("name");
+    QString name = e->Attribute("name");
     if(getObject(name,false))
       renameObject = true;
     if(getGroup(e->Attribute("name"),false))
@@ -351,14 +368,14 @@ void Group::addFromFile() {
         QString s = e->ValueStr().c_str();
         s.remove(MBSIMNS);
         s += QString::number(objects->childCount());
-        QString text = name.c_str();
+        QString text = name;
         do {
           QMessageBox msgBox;
           msgBox.setText(QString("The name ") + text + " does already exist in group.");
           msgBox.exec();
           text = QInputDialog::getText(0, tr("Rename"), tr("Name:"), QLineEdit::Normal, s);
 
-        } while(getObject(text.toStdString(),false));
+        } while(getObject(text,false));
         o->setName(text);
       }
       o->initializeUsingXML(e);
@@ -371,14 +388,14 @@ void Group::addFromFile() {
         QString s = e->ValueStr().c_str();
         s.remove(MBSIMNS);
         s += QString::number(groups->childCount());
-        QString text = name.c_str();
+        QString text = name;
         do {
           QMessageBox msgBox;
           msgBox.setText(QString("The name ") + text + " does already exist in group.");
           msgBox.exec();
           text = QInputDialog::getText(0, tr("Rename"), tr("Name:"), QLineEdit::Normal, s);
 
-        } while(getGroup(text.toStdString(),false));
+        } while(getGroup(text,false));
         g->setName(text);
       }
       g->initializeUsingXML(e);
@@ -433,6 +450,10 @@ void Group::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *ec=E->FirstChildElement();
     c=ObjectFactory::getInstance()->createContour(ec, contours, -1);
     if(c) c->initializeUsingXML(ec);
+    FixedRelativeFrame *f=new FixedRelativeFrame(QString("ContourFrame")+QString::number(contours->childCount()), frames, -1);
+    f->initializeUsingXML(ec);
+    f->initializeUsingXML2(E);
+    c->setSavedFrameOfReference(QString("../Frame[")+f->getName()+"]");
     E=E->NextSiblingElement();
   }
   while(E) {
@@ -536,22 +557,22 @@ TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
-Element * Group::getByPathSearch(string path) {
-  if (path.substr(0, 1)=="/") { // absolut path
+Element * Group::getByPathSearch(QString path) {
+  if (path.mid(0, 1)=="/") { // absolut path
     if(getParentElement())
       return getParentElement()->getByPathSearch(path);
     else
-      return getByPathSearch(path.substr(1));
+      return getByPathSearch(path.mid(1));
   }
-  else if (path.substr(0, 3)=="../") // relative path
-    return getParentElement()->getByPathSearch(path.substr(3));
+  else if (path.mid(0, 3)=="../") // relative path
+    return getParentElement()->getByPathSearch(path.mid(3));
   else { // local path
-    size_t pos0=path.find_first_of("[");
-    string container=path.substr(0, pos0);
-    size_t pos1=path.find_first_of("]", pos0);
-    string searched_name=path.substr(pos0+1, pos1-pos0-1);
+    size_t pos0=path.indexOf("[");
+    QString container=path.mid(0, pos0);
+    size_t pos1=path.indexOf("]", pos0);
+    QString searched_name=path.mid(pos0+1, pos1-pos0-1);
     if(path.length()>pos1+1) { // weiter absteigen
-      string rest=path.substr(pos1+2);
+      QString rest=path.mid(pos1+2);
       if (container=="Object")
         return getObject(searched_name)->getByPathSearch(rest);
       else if (container=="Link")
@@ -597,7 +618,7 @@ void Group::paste() {
   map<string,string> dummy;
   incorporateNamespace(copiedElement->FirstChildElement(), dummy);
   bool renameObject = false, renameGroup = false;
-  string name = e->Attribute("name");
+  QString name = e->Attribute("name");
   if(getObject(name,false))
     renameObject = true;
   if(getGroup(e->Attribute("name"),false))
@@ -608,14 +629,14 @@ void Group::paste() {
       QString s = e->ValueStr().c_str();
       s.remove(MBSIMNS);
       s += QString::number(objects->childCount());
-      QString text = name.c_str();
+      QString text = name;
       do {
         QMessageBox msgBox;
         msgBox.setText(QString("The name ") + text + " does already exist in group.");
         msgBox.exec();
         text = QInputDialog::getText(0, tr("Rename"), tr("Name:"), QLineEdit::Normal, s);
 
-      } while(getObject(text.toStdString(),false));
+      } while(getObject(text,false));
       o->setName(text);
     }
     o->initializeUsingXML(e);
@@ -629,14 +650,14 @@ void Group::paste() {
       QString s = e->ValueStr().c_str();
       s.remove(MBSIMNS);
       s += QString::number(groups->childCount());
-      QString text = name.c_str();
+      QString text = name;
       do {
         QMessageBox msgBox;
         msgBox.setText(QString("The name ") + text + " does already exist in group.");
         msgBox.exec();
         text = QInputDialog::getText(0, tr("Rename"), tr("Name:"), QLineEdit::Normal, s);
 
-      } while(getGroup(text.toStdString(),false));
+      } while(getGroup(text,false));
       g->setName(text);
     }
     g->initializeUsingXML(e);

@@ -82,7 +82,7 @@ inline std::string toStr(const std::vector<AT> &x) {
   std::stringstream s;
   s << "[";
   for(int i=0; i<x.size(); i++) {
-    s << std::setprecision(std::numeric_limits<double>::digits10) << x[i];
+    s << x[i];
     if(i<x.size()-1)
       s << ";";
   }
@@ -98,28 +98,12 @@ inline std::string toStr(const std::vector<std::vector<AT> > &A) {
   s << "[";
   for(int i=0; i<A.size(); i++) {
     for(int j=0; j<A[i].size(); j++) {
-      s << std::setprecision(std::numeric_limits<double>::digits10) << A[i][j];
+      s << A[i][j];
       if(j<A[i].size()-1)
         s << ",";
     }
     if(i<A.size()-1)
       s << ";";
-  }
-  s << "]";
-  return s.str();
-}
-
-template <class AT>
-inline std::string toStr2(const std::vector<std::vector<AT> > &A) {
-  std::stringstream s;
-  s << "[\n";
-  for(int i=0; i<A.size(); i++) {
-    for(int j=0; j<A[i].size(); j++) {
-      s << std::setprecision(std::numeric_limits<double>::digits10) << A[i][j];
-      if(j<A[i].size()-1)
-        s << " ";
-    }
-    s << "\n";
   }
   s << "]";
   return s.str();
@@ -176,49 +160,6 @@ inline std::vector<std::vector<std::string> > strToMat(const std::string &str) {
     A[i].resize(str2.size());
     for(unsigned int j=0; j<str2.size(); j++)
       A[i][j] = str2[j];
-  }
-  return A;
-}
-
-inline std::vector<std::vector<double> > strToDMat(const std::string &str) {
-  std::istringstream iss(str);
-  char c;
-  iss>>c;
-  if(c=='[') iss.str(str);
-  else iss.str(std::string("[")+str+"]");
-
-  int m=0,n=0;
-  int buf=0;
-  iss >> c;
-  double x;
-  do {
-    iss >> x;
-    iss >> c;
-    if(c==';') {
-      if(buf)
-        assert(buf == n);
-
-      buf=n;
-      n=0;
-      m++;
-    }
-    else if(c==',')
-      n++;
-    c='0';
-  } while(iss);
-
-  n++; m++;
-
-  iss.clear();
-  iss.seekg(0);
-  iss >> c;
-  std::vector<std::vector<double> > A(m);
-  for(int i=0; i<m; i++) {
-    A[i].resize(n);
-    for(int j=0; j<n; j++) {
-      iss >> A[i][j]; 
-      iss >> c;
-    }
   }
   return A;
 }

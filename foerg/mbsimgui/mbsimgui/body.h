@@ -28,7 +28,7 @@ class Body : public Object {
   public:
     Body(const QString &str, QTreeWidgetItem *parentItem, int ind);
     ~Body();
-    virtual Element* getByPathSearch(std::string path);
+    virtual Element* getByPathSearch(QString path);
 
   public slots:
   protected:
