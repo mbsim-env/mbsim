@@ -185,6 +185,7 @@ namespace MBSim {
 
       /* GETTER / SETTER */
       Frame* getFrame() { return R; }
+      Frame* getFrameOfReference() { return R; }
       const fmatvec::Vec3& getReferencePosition() const { return R->getPosition(); }
       const fmatvec::SqrMat3& getReferenceOrientation() const { return R->getOrientation(); }
       const fmatvec::Vec3& getReferenceVelocity() const { return R->getVelocity(); }

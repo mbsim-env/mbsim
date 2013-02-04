@@ -471,7 +471,7 @@
                   </xs:element>
                 </xs:choice>
                 <xs:choice minOccurs="0" maxOccurs="unbounded">
-                  <xs:element ref="WorldFrame"/>
+                  <xs:element ref="FixedRelativeFrame"/>
                   <xs:element ref="pv:embed"/>
                 </xs:choice>
               </xs:sequence>
@@ -484,22 +484,28 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="contour">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Lokale Definition.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-                <xs:element ref="pv:embed">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Definition in externer Datei.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-              </xs:choice>
+              <xs:sequence>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                  <xs:element ref="contour">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                        Lokale Definition.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                  <xs:element ref="pv:embed">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                        Definition in externer Datei.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                </xs:choice>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                  <xs:element ref="Contour"/>
+                  <xs:element ref="pv:embed"/>
+                </xs:choice>
+              </xs:sequence>
             </xs:complexType>
           </xs:element>
           <xs:element name="groups">
@@ -1139,7 +1145,7 @@
                   <xs:element ref="pv:embed"/>
                 </xs:choice>
                 <xs:choice minOccurs="0" maxOccurs="unbounded">
-                  <xs:element ref="RigidBodyFrame"/>
+                  <xs:element ref="FixedRelativeFrame"/>
                   <xs:element ref="pv:embed"/>
                 </xs:choice>
               </xs:sequence>
@@ -2040,26 +2046,40 @@
     <xs:complexContent>
       <xs:extension base="ElementType">
         <xs:sequence>
-          <xs:element name="enableOpenMBV" minOccurs="0">  
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element name="size" type="pv:lengthScalar">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Länge der Achsen des KOS.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-                <xs:element name="offset" type="pv:nounitScalar">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Relative Verschiebung der Achsen (0=Achsenkreuz, 1=Rechtssystem).
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-              </xs:sequence>
-            </xs:complexType> 
-          </xs:element>
+          <xs:choice>
+            <xs:element name="enableOpenMBV" minOccurs="0">  
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="size" type="pv:lengthScalar">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                        Länge der Achsen des KOS.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                  <xs:element name="offset" type="pv:nounitScalar">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                        Relative Verschiebung der Achsen (0=Achsenkreuz, 1=Rechtssystem).
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                </xs:sequence>
+              </xs:complexType> 
+            </xs:element>
+            <xs:element name="openMBVFrame" minOccurs="0">  
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                tbd
+                </xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="ombv:Frame"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
@@ -2104,28 +2124,6 @@
           </xs:element>
         </xs:sequence>
       </xs:extension>
-    </xs:complexContent>
-  </xs:complexType> 
-
-  <xs:element name="RigidBodyFrame" substitutionGroup="FixedRelativeFrame" type="RigidBodyFrameType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Klasse zur Beschreibung von Koordinatensystemen.
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="RigidBodyFrameType">
-    <xs:complexContent>
-      <xs:extension base="FixedRelativeFrameType"/>
-    </xs:complexContent>
-  </xs:complexType> 
-
-  <xs:element name="WorldFrame" substitutionGroup="FixedRelativeFrame" type="WorldFrameType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Klasse zur Beschreibung von Koordinatensystemen.
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="WorldFrameType">
-    <xs:complexContent>
-      <xs:extension base="FixedRelativeFrameType"/>
     </xs:complexContent>
   </xs:complexType> 
 

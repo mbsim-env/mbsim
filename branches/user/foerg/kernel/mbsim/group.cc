@@ -200,6 +200,12 @@ namespace MBSim {
       }
       addContour(c);
     }
+    while(E) {
+      Contour *c=ObjectFactory::getInstance()->createContour(E);
+      addContour(c);
+      c->initializeUsingXML(E);
+      E=E->NextSiblingElement();
+    }
     e=e->NextSiblingElement();
 
     // groups
