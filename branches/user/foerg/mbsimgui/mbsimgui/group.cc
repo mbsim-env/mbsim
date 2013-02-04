@@ -137,9 +137,9 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
   //connect(action,SIGNAL(triggered()),this,SLOT(addObject()));
   //contextMenu->addAction(action);
   submenu = contextMenu->addMenu("Add object");
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Rigid bodies", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(addRigidBodies()));
-  submenu->addAction(action);
+//  action=new QAction(Utils::QIconCached("newobject.svg"),"Rigid bodies", this);
+//  connect(action,SIGNAL(triggered()),this,SLOT(addRigidBodies()));
+//  submenu->addAction(action);
   action=new QAction(Utils::QIconCached("newobject.svg"),"Rigid body", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addRigidBody()));
   submenu->addAction(action);
