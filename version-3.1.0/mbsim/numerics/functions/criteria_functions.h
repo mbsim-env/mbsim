@@ -299,7 +299,8 @@ namespace MBSim {
       /**
        * \brief Destructor
        */
-      virtual ~CFunction();
+      virtual ~CFunction() {
+      }
 
       /* GETTER / SETTER*/
       void setFunction(Function1<vctr, vctr> * function_) {
@@ -353,7 +354,8 @@ namespace MBSim {
       /**
        * \brief Destructor
        */
-      virtual ~GlobalCFunction();
+      virtual ~GlobalCFunction() {
+      }
 
       /* INHERITED INTERFACE */
       virtual int operator ()(const vctr & vector, const void * = NULL);
@@ -398,7 +400,8 @@ namespace MBSim {
       /**
        * \brief Destructor
        */
-      virtual ~GlobalResidualCFunction();
+      virtual ~GlobalResidualCFunction() {
+      }
 
     protected:
       /* INHERITED INTERFACE */
@@ -407,17 +410,17 @@ namespace MBSim {
   };
 
   template <int size>
-  CFunction<size>::CFunction() :
+  inline CFunction<size>::CFunction() :
       function(0) {
   }
 
   template <int size>
-  GlobalCFunction<size>::GlobalCFunction(const double & tolerance_) :
+  inline GlobalCFunction<size>::GlobalCFunction(const double & tolerance_) :
       CFunction<size>(), tolerance(tolerance_), criteriaResults(0) {
   }
 
   template <int size>
-  int GlobalCFunction<size>::operator ()(const vctr & x, const void *) {
+  inline int GlobalCFunction<size>::operator ()(const vctr & x, const void *) {
     criteriaResults.push_back(computeResults(x));
 
     if (criteriaResults.back() < tolerance)
@@ -431,26 +434,26 @@ namespace MBSim {
   }
 
   template <int size>
-  bool GlobalCFunction<size>::isBetter(const vctr & x) {
-    if (criteriaResults.back() > fmatvec::nrmInf<size>((*CFunction<size>::function)(x)))
+  inline bool GlobalCFunction<size>::isBetter(const vctr & x) {
+    if (criteriaResults.back() > fmatvec::nrmInf<fmatvec::Fixed<size>, double>((*CFunction<size>::function)(x)))
       return true;
 
     return false;
   }
 
   template <int size>
-  void GlobalCFunction<size>::clear() {
+  inline void GlobalCFunction<size>::clear() {
     criteriaResults.clear();
   }
 
   template <int size>
-  GlobalResidualCFunction<size>::GlobalResidualCFunction(const double & tolerance_ /* = 1e-10*/) :
+  inline GlobalResidualCFunction<size>::GlobalResidualCFunction(const double & tolerance_ /* = 1e-10*/) :
       GlobalCFunction<size>(tolerance_) {
   }
 
   template <int size>
-  double GlobalResidualCFunction<size>::computeResults(const vctr & x) {
-    return fmatvec::nrmInf((*CFunction<size>::function)(x));
+  inline double GlobalResidualCFunction<size>::computeResults(const vctr & x) {
+    return fmatvec::nrmInf<fmatvec::Fixed<size>, double>((*CFunction<size>::function)(x));
   }
 
 }
