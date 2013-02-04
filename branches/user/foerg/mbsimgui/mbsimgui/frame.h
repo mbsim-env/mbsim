@@ -33,7 +33,7 @@ class Frame : public Element {
     virtual void initializeUsingXML2(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile2(TiXmlNode *element);
     bool openMBVFrame() const {return visu->isActive();}
-    virtual Element * getByPathSearch(std::string path);
+    virtual Element * getByPathSearch(QString path);
   protected:
     ExtXMLWidget *visu;
 };

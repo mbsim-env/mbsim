@@ -89,7 +89,7 @@ QString Element::getPath() {
 
 QString Element::getInfo() {
   return QString("<b>Path:</b> %1<br/>").arg(getPath())+
-         QString("<b>Class:</b> <img src=\"%1\" width=\"16\" height=\"16\"/> %2").arg(iconFile.c_str()).arg(metaObject()->className());
+         QString("<b>Class:</b> <img src=\"%1\" width=\"16\" height=\"16\"/> %2").arg(iconFile).arg(metaObject()->className());
 }
 
 void Element::updateTextColor() {
@@ -302,120 +302,15 @@ QString Element::getXMLPath(Element *ref, bool rel) {
   }
 }
 
-// some convenience function for XML
-double Element::getDouble(TiXmlElement *e) {
-  vector<vector<double> > m=strToDMat(e->GetText());
-  if(m.size()==1 && m[0].size()==1)
-    return m[0][0];
-  else {
-    ostringstream str;
-    str<<": Obtained matrix of size "<<m.size()<<"x"<<m[0].size()<<" ("<<e->GetText()<<") "<<
-      "where a scalar was requested for element "<<e->ValueStr();
-    TiXml_location(e, "", str.str());
-    throw MBSimError("Wrong type"+str.str());
-  }
-  return NAN;
-}
-
-int Element::getInt(TiXmlElement *e) {
-  vector<vector<double> > m=strToDMat(e->GetText());
-  if(m.size()==1 && m[0].size()==1)
-    return lround(m[0][0]);
-  else {
-    ostringstream str;
-    str<<": Obtained matrix of size "<<m.size()<<"x"<<m[0].size()<<" ("<<e->GetText()<<") "<<
-      "where a scalar integer was requested for element "<<e->ValueStr();
-    TiXml_location(e, "", str.str());
-    throw MBSimError("Wrong type"+str.str());
-  }
-  return 0;
-}
-
-bool Element::getBool(TiXmlElement *e) {
-  if(e->GetText()==string("true") || e->GetText()==string("1"))
-    return true;
-  else if(e->GetText()==string("false") || e->GetText()==string("0"))
-    return false;
-  else {
-    ostringstream str;
-    str<<": Obtained "<<e->GetText()<<" where a boolean was requested for element "<<e->ValueStr();
-    TiXml_location(e, "", str.str());
-    throw MBSimError("Wrong type"+str.str());
-  }
-  return 0;
-}
-
-vector<vector<double > > Element::getVec(TiXmlElement *e, int rows) {
-  vector<vector<double > > m=strToDMat(e->GetText());
-  if((rows==0 || m.size()==rows) && m[0].size()==1)
-    return m;
-  else {
-    ostringstream str;
-    str<<": Obtained matrix of size "<<m.size()<<"x"<<m[0].size()<<" ("<<e->GetText()<<") "<<
-      "where a vector of size "<<((rows==0)?-1:rows)<<" was requested for element "<<e->ValueStr();
-    TiXml_location(e, "", str.str());
-    throw MBSimError("Wrong type"+str.str());
-  }
-  return vector<vector<double > >();
-}
-
-vector<vector<double > > Element::getMat(TiXmlElement *e, int rows, int cols) {
-  vector<vector<double > > m=strToDMat(e->GetText());
-  if((rows==0 || m.size()==rows) && (cols==0 || m[0].size()==cols))
-    return m;
-  else {
-    ostringstream str;
-    str<<": Obtained matrix of size "<<m.size()<<"x"<<m[0].size()<<" ("<<e->GetText()<<") "<<
-      "where a matrix of size "<<((rows==0)?-1:rows)<<"x"<<((cols==0)?-1:cols)<<" was requested for element "<<e->ValueStr();
-    TiXml_location(e, "", str.str());
-    throw MBSimError("Wrong type"+str.str());
-  }
-  return vector<vector<double > >();
-}
-
-vector<vector<double > > Element::getSqrMat(TiXmlElement *e, int size) {
-  vector<vector<double > > m=strToDMat(e->GetText());
-  if((size==0 || m.size()==size) && (size==0 || m[0].size()==size) && m.size()==m[0].size())
-    return m;
-  else {
-    ostringstream str;
-    str<<": Obtained matrix of size "<<m.size()<<"x"<<m[0].size()<<" ("<<e->GetText()<<") "<<
-      "where a square matrix of size "<<size<<" was requested for element "<<e->ValueStr();
-    TiXml_location(e, "", str.str());
-    throw MBSimError("Wrong type"+str.str());
-  }
-  return vector<vector<double > >();
-}
-
-vector<vector<double > > Element::getSymMat(TiXmlElement *e, int size) {
-  vector<vector<double > > m=strToDMat(e->GetText());
-  bool isSym=true;
-  for(int i=0; i<min(m.size(),m[0].size()); i++) {
-    for(int j=0; j<min(m.size(),m[0].size()); j++)
-      if(fabs(m[i][j]-m[j][i])>1e-12) { isSym=false; break; }
-    if(isSym==false) break;
-  }
-  if((size==0 || m.size()==size) && (size==0 || m[0].size()==size) && m.size()==m[0].size() && isSym)
-    return m;
-  else {
-    ostringstream str;
-    str<<": Obtained matrix of size "<<m.size()<<"x"<<m[0].size()<<" ("<<e->GetText()<<") "<<
-      "where a symmetric matrix of size "<<size<<" was requested for element "<<e->ValueStr();
-    TiXml_location(e, "", str.str());
-    throw MBSimError("Wrong type"+str.str());
-  }
-  return vector<vector<double > >();
-}
-
-Element* Element::getChild(QTreeWidgetItem* container, const std::string &name, bool check) {
+Element* Element::getChild(QTreeWidgetItem* container, const QString &name, bool check) {
   int i;
   for(i=0; i<container->childCount(); i++) {
-    if(((Element*)container->child(i))->getName().toStdString() == name)
+    if(((Element*)container->child(i))->getName() == name)
       return (Element*)container->child(i);
   }
   if(check) {
     if(!(i<container->childCount()))
-      throw MBSimError("The object \""+((Element*)container->child(i))->getName().toStdString()+"\" comprises no frame \""+name+"\"!");
+      throw MBSimError("The object \""+((Element*)container->child(i))->getName().toStdString()+"\" comprises no frame \""+name.toStdString()+"\"!");
     assert(i<container->childCount());
   }
   return NULL;
@@ -426,7 +321,7 @@ QString Element::newName(QTreeWidgetItem* container, const QString &type) {
   QString str;
   for(int i=1; i<10000; i++) {
     str = type + QString::number(i);
-    if(!getChild(container,str.toStdString(),false))
+    if(!getChild(container,str,false))
       break;
   }
   QString text=str;
@@ -434,7 +329,7 @@ QString Element::newName(QTreeWidgetItem* container, const QString &type) {
     do {
       text = QInputDialog::getText(0, tr("Add"), tr("Name:"), QLineEdit::Normal, str);
 
-      if(getChild(container,text.toStdString(),false)) {
+      if(getChild(container,text,false)) {
         QMessageBox msgBox;
         msgBox.setText(QString("The name ") + text + " does already exist.");
         msgBox.exec();
@@ -449,15 +344,15 @@ Element* Container::getChild(int i) {
   return (Element*)child(i);
 }
 
-Element* Container::getChild(const std::string &name, bool check) {
+Element* Container::getChild(const QString &name, bool check) {
   int i;
   for(i=0; i<childCount(); i++) {
-    if(getChild(i)->getName().toStdString() == name)
+    if(getChild(i)->getName() == name)
       return (Element*)child(i);
   }
   if(check) {
     if(!(i<childCount()))
-      throw MBSimError("The object \""+getChild(i)->getName().toStdString()+"\" comprises no element \""+name+"\"!");
+      throw MBSimError("The object \""+getChild(i)->getName().toStdString()+"\" comprises no element \""+name.toStdString()+"\"!");
     assert(i<childCount());
   }
   return NULL;
@@ -471,71 +366,71 @@ void Element::remove() {
 }
 
 
-Link* Element::getLink(const std::string &name, bool check) {
+Link* Element::getLink(const QString &name, bool check) {
   int i;
   for(i=0; i<getContainerLink()->childCount(); i++) {
-    if(getLink(i)->getName().toStdString() == name)
+    if(getLink(i)->getName() == name)
       return getLink(i);
   }
   if(check) {
     if(!(i<getContainerLink()->childCount()))
-      throw MBSimError("The link \""+getLink(i)->getName().toStdString()+"\" comprises no frame \""+name+"\"!");
+      throw MBSimError("The link \""+getLink(i)->getName().toStdString()+"\" comprises no frame \""+name.toStdString()+"\"!");
     assert(i<getContainerLink()->childCount());
   }
   return NULL;
 }
 
-Group* Element::getGroup(const std::string &name, bool check) {
+Group* Element::getGroup(const QString &name, bool check) {
   int i;
   for(i=0; i<getContainerGroup()->childCount(); i++) {
-    if(getGroup(i)->getName().toStdString() == name)
+    if(getGroup(i)->getName() == name)
       return getGroup(i);
   }
   if(check) {
     if(!(i<getContainerGroup()->childCount()))
-      throw MBSimError("The group \""+getGroup(i)->getName().toStdString()+"\" comprises no frame \""+name+"\"!");
+      throw MBSimError("The group \""+getGroup(i)->getName().toStdString()+"\" comprises no frame \""+name.toStdString()+"\"!");
     assert(i<getContainerGroup()->childCount());
   }
   return NULL;
 }
 
-Object* Element::getObject(const std::string &name, bool check) {
+Object* Element::getObject(const QString &name, bool check) {
   int i;
   for(i=0; i<getContainerObject()->childCount(); i++) {
-    if(getObject(i)->getName().toStdString() == name)
+    if(getObject(i)->getName() == name)
       return getObject(i);
   }
   if(check) {
     if(!(i<getContainerObject()->childCount()))
-      throw MBSimError("The object \""+getObject(i)->getName().toStdString()+"\" comprises no frame \""+name+"\"!");
+      throw MBSimError("The object \""+getObject(i)->getName().toStdString()+"\" comprises no frame \""+name.toStdString()+"\"!");
     assert(i<getContainerObject()->childCount());
   }
   return NULL;
 }
 
-Frame* Element::getFrame(const std::string &name, bool check) {
+Frame* Element::getFrame(const QString &name, bool check) {
   int i;
   for(i=0; i<getContainerFrame()->childCount(); i++) {
-    if(getFrame(i)->getName().toStdString() == name)
+    if(getFrame(i)->getName() == name)
       return getFrame(i);
   }
   if(check) {
     if(!(i<getContainerFrame()->childCount()))
-      throw MBSimError("The frames \""+getFrame(i)->getName().toStdString()+"\" comprises no frame \""+name+"\"!");
+      throw MBSimError("The frames \""+getFrame(i)->getName().toStdString()+"\" comprises no frame \""+name.toStdString()+"\"!");
     assert(i<getContainerFrame()->childCount());
   }
   return NULL;
 }
 
-Contour* Element::getContour(const std::string &name, bool check) {
+Contour* Element::getContour(const QString &name, bool check) {
   int i;
   for(i=0; i<getContainerContour()->childCount(); i++) {
-    if(getContour(i)->getName().toStdString() == name)
+    if(getContour(i)->getName() == name)
       return getContour(i);
   }
   if(check) {
     if(!(i<getContainerContour()->childCount()))
-      throw MBSimError("The contours \""+getContour(i)->getName().toStdString()+"\" comprises no contour \""+name+"\"!");
+      throw MBSimError("The contours \""+getContour(i)->getName().toStdString()+"\" comprises no contour \""+name.toStdString()+"\"!");
     assert(i<getContainerContour()->childCount());
   }
   return NULL;

@@ -37,14 +37,14 @@ class TiXmlNode;
 class Container : public QTreeWidgetItem {
   public:
     Element* getChild(int i);
-    Element* getChild(const std::string &name, bool check=false);
+    Element* getChild(const QString &name, bool check=false);
 };
 
 class Element : public QObject, public QTreeWidgetItem {
   Q_OBJECT
   protected:
     bool drawThisPath;
-    std::string iconFile;
+    QString iconFile;
     bool searchMatched;
     PropertyWidget *properties;
     QMenu *contextMenu;
@@ -63,7 +63,7 @@ class Element : public QObject, public QTreeWidgetItem {
     Element* getParentElement() {return parentElement;}
     virtual QString getPath();
     QString getXMLPath(Element *ref=0, bool rel=false);
-    std::string &getIconFile() { return iconFile; }
+    QString &getIconFile() { return iconFile; }
     virtual QString getInfo();
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
@@ -82,16 +82,9 @@ class Element : public QObject, public QTreeWidgetItem {
     PropertyWidget* getPropertyWidget() { return properties; }
     QString getName() const {return text(0);}
     void setName(const QString &str);
-    static double getDouble(TiXmlElement *e);
-    static int getInt(TiXmlElement *e);
-    static bool getBool(TiXmlElement *e);
-    static std::vector<std::vector<double > > getVec(TiXmlElement *e, int rows=0);
-    static std::vector<std::vector<double > > getMat(TiXmlElement *e, int rows=0, int cols=0);
-    static std::vector<std::vector<double > > getSqrMat(TiXmlElement *e, int size=0);
-    static std::vector<std::vector<double > > getSymMat(TiXmlElement *e, int size=0);
     template<class T> T* getByPath(QString path);
-    virtual Element* getByPathSearch(std::string path) {return 0; }
-    Element* getChild(QTreeWidgetItem* container, const std::string &name, bool check=true);
+    virtual Element* getByPathSearch(QString path) {return 0; }
+    Element* getChild(QTreeWidgetItem* container, const QString &name, bool check=true);
     QString newName(QTreeWidgetItem* container, const QString &type);
     virtual Container* getContainerFrame() {return frames;}
     virtual Container* getContainerContour() {return contours;}
@@ -103,11 +96,11 @@ class Element : public QObject, public QTreeWidgetItem {
     virtual Group* getGroup(int i);
     virtual Object* getObject(int i);
     virtual Link* getLink(int i);
-    Frame* getFrame(const std::string &name, bool check=true);
-    Contour* getContour(const std::string &name, bool check=true);
-    Object* getObject(const std::string &name, bool check=true);
-    Group* getGroup(const std::string &name, bool check=true);
-    Link* getLink(const std::string &name, bool check=true);
+    Frame* getFrame(const QString &name, bool check=true);
+    Contour* getContour(const QString &name, bool check=true);
+    Object* getObject(const QString &name, bool check=true);
+    Group* getGroup(const QString &name, bool check=true);
+    Link* getLink(const QString &name, bool check=true);
     std::string getID() { return ID; }
     static std::map<std::string, Element*> idEleMap;
   public slots:
@@ -119,7 +112,7 @@ class Element : public QObject, public QTreeWidgetItem {
 
 template<class T>
 T* Element::getByPath(QString path) {
-  Element * e = getByPathSearch(path.toStdString());
+  Element * e = getByPathSearch(path);
   if (dynamic_cast<T*>(e))
     return (T*)(e);
   else
@@ -136,7 +129,7 @@ T* Element::getByPath(QString path) {
 //}
 //
 //template<class T>
-//T* Element::get(const std::string &name, bool check) {
+//T* Element::get(const QString &name, bool check) {
 //  unsigned int i;
 //  std::vector<T*> element = get<T>();
 //  for(i=0; i<element.size(); i++) {
