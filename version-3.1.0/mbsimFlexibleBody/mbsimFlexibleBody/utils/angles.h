@@ -52,19 +52,19 @@ namespace MBSimFlexibleBody {
       /**
        * \return tangent 
        */
-      virtual fmatvec::Vec computet(const fmatvec::Vec& q) const = 0;		
+      virtual fmatvec::Vec3 computet(const fmatvec::Vec& q) const = 0;
 
       /**
        * \param angles
        * \return normal
        */
-      virtual fmatvec::Vec computen(const fmatvec::Vec& q) const = 0;		
+      virtual fmatvec::Vec3 computen(const fmatvec::Vec& q) const = 0;
 
       /**
        * \param angles
        * \return binormal 
        */
-      virtual fmatvec::Vec computeb(const fmatvec::Vec& q) const = 0;
+      virtual fmatvec::Vec3 computeb(const fmatvec::Vec& q) const = 0;
 
       /**
        * \param angles
@@ -82,7 +82,7 @@ namespace MBSimFlexibleBody {
        * \param angles
        * \return derivative of tangent with respect to angles
        */
-      virtual fmatvec::SqrMat computetq(const fmatvec::Vec& q) const = 0;		
+      virtual fmatvec::SqrMat computetq(const fmatvec::Vec& q) const = 0;
 
       /**
        * \param angles
@@ -145,21 +145,21 @@ namespace MBSimFlexibleBody {
        * \param derivative of angles
        * \return time derivative of tangent 
        */
-      fmatvec::Vec computett(const fmatvec::Vec& q,const fmatvec::Vec& qt) const;		
+      fmatvec::Vec3 computett(const fmatvec::Vec& q,const fmatvec::Vec& qt) const;
 
       /**
        * \param angles
        * \param derivative of angles
        * \return time derivative of normal 
        */
-      fmatvec::Vec computent(const fmatvec::Vec& q,const fmatvec::Vec& qt) const;		
+      fmatvec::Vec3 computent(const fmatvec::Vec& q,const fmatvec::Vec& qt) const;
 
       /**
        * \param angles
        * \param derivative of angles
        * \return time derivative of binormal 
        */
-      fmatvec::Vec computebt(const fmatvec::Vec& q,const fmatvec::Vec& qt) const;
+      fmatvec::Vec3 computebt(const fmatvec::Vec& q,const fmatvec::Vec& qt) const;
 
       /**
        * \param angles
@@ -215,7 +215,7 @@ namespace MBSimFlexibleBody {
        * \param derivative of angles
        * \return angular velocity
        */
-      fmatvec::Vec computeOmega(const fmatvec::Vec& q,const fmatvec::Vec& qt) const;
+      fmatvec::Vec3 computeOmega(const fmatvec::Vec& q,const fmatvec::Vec& qt) const;
 
       /**
        * \param angles

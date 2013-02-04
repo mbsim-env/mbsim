@@ -68,15 +68,15 @@ namespace MBSimFlexibleBody {
     double cgamma = cos(qG(5));
 
     Vec tangent = ag->computet(Phi);
-    SqrMat dtangentdphi = ag->computetq(Phi);
+    SqrMat3 dtangentdphi = ag->computetq(Phi);
     Vec tangentt = dtangentdphi*Phit;
 
     Vec normal = ag->computen(Phi);
-    SqrMat dnormaldphi = ag->computenq(Phi);
+    SqrMat3 dnormaldphi = ag->computenq(Phi);
     Vec normaltt = dnormaldphi*Phit;
 
     Vec binormal = ag->computeb(Phi);
-    SqrMat dbinormaldphi = ag->computebq(Phi);
+    SqrMat3 dbinormaldphi = ag->computebq(Phi);
     Vec binormaltt = dbinormaldphi*Phit;
 
     /* position and velocity difference */

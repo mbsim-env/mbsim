@@ -195,9 +195,9 @@ namespace MBSimFlexibleBody {
     fmatvec::Vec normal = ag->computen(phi);
     fmatvec::Vec binormal = ag->computeb(phi);
 
-    fmatvec::SqrMat dtangentdphi = ag->computetq(phi);
-    fmatvec::SqrMat dnormaldphi = ag->computenq(phi);
-    fmatvec::SqrMat dbinormaldphi = ag->computebq(phi);
+    fmatvec::SqrMat3 dtangentdphi = ag->computetq(phi);
+    fmatvec::SqrMat3 dnormaldphi = ag->computenq(phi);
+    fmatvec::SqrMat3 dbinormaldphi = ag->computebq(phi);
 
     /* differentiation of 'bending and torsion energy' with respect to qG */
     double GI0ktilde0 = G * I0 * binormal.T() * dnormaldphi * dphids;
@@ -237,13 +237,13 @@ namespace MBSimFlexibleBody {
     fmatvec::Vec phi = (qG(0, 2) + qG(6, 8)) / 2.;
     fmatvec::Vec dphids = (qG(6, 8) - qG(0, 2)) / l0;
 
-    fmatvec::Vec tangent = ag->computet(phi);
-    fmatvec::Vec normal = ag->computen(phi);
-    fmatvec::Vec binormal = ag->computeb(phi);
+    fmatvec::Vec3 tangent = ag->computet(phi);
+    fmatvec::Vec3 normal = ag->computen(phi);
+    fmatvec::Vec3 binormal = ag->computeb(phi);
 
-    fmatvec::SqrMat dtangentdphi = ag->computetq(phi);
-    fmatvec::SqrMat dnormaldphi = ag->computenq(phi);
-    fmatvec::SqrMat dbinormaldphi = ag->computebq(phi);
+    fmatvec::SqrMat3 dtangentdphi = ag->computetq(phi);
+    fmatvec::SqrMat3 dnormaldphi = ag->computenq(phi);
+    fmatvec::SqrMat3 dbinormaldphi = ag->computebq(phi);
 
     return 0.5 * l0 * (G * I0 * pow(binormal.T() * dnormaldphi * dphids, 2.) + E * I1 * pow(tangent.T() * dbinormaldphi * dphids - k10, 2.) + E * I2 * pow(normal.T() * dtangentdphi * dphids - k20, 2.));
   }

@@ -39,9 +39,9 @@ namespace MBSimFlexibleBody {
    * \author Thorsten Schindler
    * \date 2009-04-17 initial commit kernel_dev (Thorsten Schindler)
    * \date 2009-07-27 implicit integration (Thorsten Schindler)
-   * \todo transform computeState to Position / Velocity / Orientation / AngularVelocity 
-   * \todo JacobianOfMotion 
-   * \todo computeM 
+   * \todo transform computeState to Position / Velocity / Orientation / AngularVelocity
+   * \todo JacobianOfMotion
+   * \todo computeM
    */
   class FiniteElement1s33RCM : public MBSim::DiscretizationInterface<fmatvec::Fixed<16> > {
     public:
@@ -58,12 +58,13 @@ namespace MBSimFlexibleBody {
        * \param acceleration of gravity
        * \param cardan object
        */
-      FiniteElement1s33RCM(double l0_,double rho_,double A_,double E_,double G_,double I1_,double I2_,double I0_,const fmatvec::Vec& g_,RevCardanPtr ag_);
+      FiniteElement1s33RCM(double l0_, double rho_, double A_, double E_, double G_, double I1_, double I2_, double I0_, const fmatvec::Vec& g_, RevCardanPtr ag_);
 
       /**
        * \brief destructor
        */
-      virtual ~FiniteElement1s33RCM() {}
+      virtual ~FiniteElement1s33RCM() {
+      }
 
       /* INHERITED INTERFACE OF DISCRETIZATIONINTERFACE */
       virtual const fmatvec::SymMat16& getM() const;
@@ -73,25 +74,25 @@ namespace MBSimFlexibleBody {
       virtual int getqSize() const;
       virtual int getuSize() const;
 
-      virtual void computeM(const fmatvec::Vec& qG);
-      virtual void computeh(const fmatvec::Vec& qG,const fmatvec::Vec& qGt);
-      virtual void computedhdz(const fmatvec::Vec& qG, const fmatvec::Vec& qGt);
-      virtual double computeKineticEnergy(const fmatvec::Vec& qG,const fmatvec::Vec& qGt);
-      virtual double computeGravitationalEnergy(const fmatvec::Vec& qG);
-      virtual double computeElasticEnergy(const fmatvec::Vec& qG);
+      virtual void computeM(const fmatvec::Vec16& qG);
+      virtual void computeh(const fmatvec::Vec16& qG, const fmatvec::Vec16& qGt);
+      virtual void computedhdz(const fmatvec::Vec16& qG, const fmatvec::Vec16& qGt);
+      virtual double computeKineticEnergy(const fmatvec::Vec16& qG, const fmatvec::Vec16& qGt);
+      virtual double computeGravitationalEnergy(const fmatvec::Vec16& qG);
+      virtual double computeElasticEnergy(const fmatvec::Vec16& qG);
 
-      virtual fmatvec::Vec computePosition(const fmatvec::Vec& q, const MBSim::ContourPointData &data);
-      virtual fmatvec::SqrMat computeOrientation(const fmatvec::Vec& q, const MBSim::ContourPointData &data);
-      virtual fmatvec::Vec computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data);
-      virtual fmatvec::Vec computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data);
-      virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec& qG,const MBSim::ContourPointData& data);
+      virtual fmatvec::Vec3 computePosition(const fmatvec::Vec16& q, const MBSim::ContourPointData &data);
+      virtual fmatvec::SqrMat3 computeOrientation(const fmatvec::Vec16& q, const MBSim::ContourPointData &data);
+      virtual fmatvec::Vec3 computeVelocity(const fmatvec::Vec16& q, const fmatvec::Vec16& u, const MBSim::ContourPointData &data);
+      virtual fmatvec::Vec3 computeAngularVelocity(const fmatvec::Vec16& q, const fmatvec::Vec16& u, const MBSim::ContourPointData &data);
+      virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec16& qG, const MBSim::ContourPointData& data);
       /*****************************************************/
 
       /* GETTER / SETTER */
       void setGauss(int nGauss);
-      void setCurlRadius(double R1,double R2);
-      void setMaterialDamping(double epstD_,double k0D_);
-      void setLehrDamping(double epstL,double k0L);
+      void setCurlRadius(double R1, double R2);
+      void setMaterialDamping(double epstD_, double k0D_);
+      void setLehrDamping(double epstL, double k0L);
       double getl0() const;
       /*****************************************************/
 
@@ -101,21 +102,21 @@ namespace MBSimFlexibleBody {
        * \param global velocities
        * \param LAGRANGIAN parameter
        */
-      const fmatvec::Vec12& computeState(const fmatvec::Vec& qG,const fmatvec::Vec& qGt,double x);
+      const fmatvec::Vec12& computeState(const fmatvec::Vec16& qG, const fmatvec::Vec16& qGt, double x);
 
       /**
        * \brief compute JACOBIAN of contact description in global coordinates
        * \param global coordinates
        * \param LAGRANGIAN parameter
        */
-      fmatvec::Mat computeJXqG(const fmatvec::Vec& qG,double x);
+      fmatvec::Mat16x6 computeJXqG(const fmatvec::Vec16& qG, double x);
 
       /**
-       * \brief compute interesting data 
+       * \brief compute interesting data
        * \param global coordinates
        * \param global velocities
        */
-      fmatvec::Vec computeData(const fmatvec::Vec& qG,const fmatvec::Vec& qGt);
+      fmatvec::Vec computeData(const fmatvec::Vec16& qG, const fmatvec::Vec16& qGt);
 
     private:
       /**
@@ -129,22 +130,22 @@ namespace MBSimFlexibleBody {
       double rho;
 
       /**
-       * \brief cross sectional area 
+       * \brief cross sectional area
        */
       double A;
 
       /**
-       * \brief Young's modulus 
+       * \brief Young's modulus
        */
       double E;
 
       /**
-       * \brief shear modulus 
+       * \brief shear modulus
        */
       double G;
 
       /**
-       * \brief geometrical moment of inertia 
+       * \brief geometrical moment of inertia
        */
       double I1, I2, I0;
 
@@ -154,7 +155,7 @@ namespace MBSimFlexibleBody {
       fmatvec::Vec g;
 
       /**
-       * \brief predefined bending 
+       * \brief predefined bending
        */
       double k10, k20;
 
@@ -164,18 +165,18 @@ namespace MBSimFlexibleBody {
       double epstD, k0D;
 
       /**
-       * \brief global system description 
+       * \brief global system description
        */
       fmatvec::SymMat16 M;
       fmatvec::Vec16 h;
 
       /**
-       * \brief matrices for implicit integration 
+       * \brief matrices for implicit integration
        */
       fmatvec::SqrMat16 dhdq, dhdu;
 
       /**
-       * \brief internal system description 
+       * \brief internal system description
        */
       fmatvec::SymMat16 MI;
 
@@ -185,12 +186,12 @@ namespace MBSimFlexibleBody {
       fmatvec::SqrMat16 Damp;
 
       /**
-       * \brief beam length powers 
+       * \brief beam length powers
        */
       double l0h2, l0h3;
 
       /**
-       * \brief last Lagrangian coordinate in state calculation 
+       * \brief last Lagrangian coordinate in state calculation
        */
       double x_Old;
 
@@ -200,12 +201,12 @@ namespace MBSimFlexibleBody {
       fmatvec::Vec12 X;
 
       /**
-       * \brief global and local state of the last time step 
+       * \brief global and local state of the last time step
        */
       fmatvec::Vec16 qG_Old, qGt_Old;
 
       /**
-       * \brief tolerance for comparison of state with old state 
+       * \brief tolerance for comparison of state with old state
        */
       double tol_comp;
 
@@ -217,7 +218,7 @@ namespace MBSimFlexibleBody {
       fmatvec::RowVec16 depstil, dk0;
 
       /**
-       * \brief reversed Cardan-object 
+       * \brief reversed Cardan-object
        */
       RevCardanPtr ag;
 
@@ -247,19 +248,45 @@ namespace MBSimFlexibleBody {
       void computedk0();
   };
 
-  inline void FiniteElement1s33RCM::setGauss(int nGauss) { wt->setGauss(nGauss); }
-  inline double FiniteElement1s33RCM::getl0() const { return l0; }
-  inline const fmatvec::SymMat16& FiniteElement1s33RCM::getM() const { return M; }
-  inline const fmatvec::Vec16& FiniteElement1s33RCM::geth() const { return h; }
-  inline const fmatvec::SqrMat16& FiniteElement1s33RCM::getdhdq() const { return dhdq; }
-  inline const fmatvec::SqrMat16& FiniteElement1s33RCM::getdhdu() const { return dhdu; }
-  inline int FiniteElement1s33RCM::getqSize() const { return 16; }
-  inline int FiniteElement1s33RCM::getuSize() const { return 16; }
-  inline fmatvec::Vec FiniteElement1s33RCM::computePosition(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33RCM::computePosition): Not implemented!"); }
-  inline fmatvec::SqrMat FiniteElement1s33RCM::computeOrientation(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33RCM::computeOrientation): Not implemented!"); }
-  inline fmatvec::Vec FiniteElement1s33RCM::computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33RCM::computeVelocity): Not implemented!"); }
-  inline fmatvec::Vec FiniteElement1s33RCM::computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33RCM::computeAngularVelocity): Not implemented!"); }
-  inline fmatvec::Mat FiniteElement1s33RCM::computeJacobianOfMotion(const fmatvec::Vec& qG,const MBSim::ContourPointData& data) { return computeJXqG(qG,data.getLagrangeParameterPosition()(0)); }
+  inline void FiniteElement1s33RCM::setGauss(int nGauss) {
+    wt->setGauss(nGauss);
+  }
+  inline double FiniteElement1s33RCM::getl0() const {
+    return l0;
+  }
+  inline const fmatvec::SymMat16& FiniteElement1s33RCM::getM() const {
+    return M;
+  }
+  inline const fmatvec::Vec16& FiniteElement1s33RCM::geth() const {
+    return h;
+  }
+  inline const fmatvec::SqrMat16& FiniteElement1s33RCM::getdhdq() const {
+    return dhdq;
+  }
+  inline const fmatvec::SqrMat16& FiniteElement1s33RCM::getdhdu() const {
+    return dhdu;
+  }
+  inline int FiniteElement1s33RCM::getqSize() const {
+    return 16;
+  }
+  inline int FiniteElement1s33RCM::getuSize() const {
+    return 16;
+  }
+  inline fmatvec::Vec3 FiniteElement1s33RCM::computePosition(const fmatvec::Vec16& q, const MBSim::ContourPointData &data) {
+    throw MBSim::MBSimError("ERROR (FiniteElement1s33RCM::computePosition): Not implemented!");
+  }
+  inline fmatvec::SqrMat3 FiniteElement1s33RCM::computeOrientation(const fmatvec::Vec16& q, const MBSim::ContourPointData &data) {
+    throw MBSim::MBSimError("ERROR (FiniteElement1s33RCM::computeOrientation): Not implemented!");
+  }
+  inline fmatvec::Vec3 FiniteElement1s33RCM::computeVelocity(const fmatvec::Vec16& q, const fmatvec::Vec16& u, const MBSim::ContourPointData &data) {
+    throw MBSim::MBSimError("ERROR (FiniteElement1s33RCM::computeVelocity): Not implemented!");
+  }
+  inline fmatvec::Vec3 FiniteElement1s33RCM::computeAngularVelocity(const fmatvec::Vec16& q, const fmatvec::Vec16& u, const MBSim::ContourPointData &data) {
+    throw MBSim::MBSimError("ERROR (FiniteElement1s33RCM::computeAngularVelocity): Not implemented!");
+  }
+  inline fmatvec::Mat FiniteElement1s33RCM::computeJacobianOfMotion(const fmatvec::Vec16& qG, const MBSim::ContourPointData& data) {
+    return static_cast<fmatvec::Mat>(computeJXqG(qG, data.getLagrangeParameterPosition()(0)));
+  }
 
   inline FiniteElement1s33RCM::FiniteElement1s33RCM(double l0_, double rho_, double A_, double E_, double G_, double I1_, double I2_, double I0_, const fmatvec::Vec& g_, RevCardanPtr ag_) :
       l0(l0_), rho(rho_), A(A_), E(E_), G(G_), I1(I1_), I2(I2_), I0(I0_), g(g_), k10(0.), k20(0.), epstD(0.), k0D(0.), M(), h(), dhdq(), dhdu(), Damp(), l0h2(l0 * l0), l0h3(l0h2 * l0), x_Old(-l0), X(), qG_Old(), qGt_Old(), tol_comp(1e-8), drS(), depstil(), dk0(), ag(ag_), tf(new Trafo33RCM(ag, l0)), wt(new Weight33RCM(l0, l0h2, l0h3, tf)) {
@@ -296,7 +323,7 @@ namespace MBSimFlexibleBody {
     Damp(15, 15) += -k0D;
   }
 
-  inline void FiniteElement1s33RCM::computeM(const fmatvec::Vec& qG) {
+  inline void FiniteElement1s33RCM::computeM(const fmatvec::Vec16& qG) {
     if (nrm2(qG - qG_Old) > tol_comp) {
       // /* symmetric mass matrix */
       // fmatvec::Mat Q = tf->gettS()*depstil+(1.+tf->getepstil())*wt->gettSqI();
@@ -325,14 +352,14 @@ namespace MBSimFlexibleBody {
     M = JTMJ(MI, tf->getJIG());
   }
 
-  inline void FiniteElement1s33RCM::computeh(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) {
+  inline void FiniteElement1s33RCM::computeh(const fmatvec::Vec16& qG, const fmatvec::Vec16& qGt) {
     if (nrm2(qG - qG_Old) > tol_comp || nrm2(qGt - qGt_Old) > tol_comp) {
       wt->computeintD(qG, qGt);
 
       /* preliminaries for EoM */
-      fmatvec::Mat3x16 tSqIH = wt->gettSqI().T();
-      fmatvec::Mat3x16 nSqIH = wt->getnSqI().T();
-      fmatvec::Mat3x16 bSqIH = wt->getbSqI().T();
+      fmatvec::Mat16x3 tSqIH = wt->gettSqI().T();
+      //fmatvec::Mat16x3 nSqIH = wt->getnSqI().T();
+      //fmatvec::Mat16x3 bSqIH = wt->getbSqI().T();
 
       /* gravitational part VgqI */
       fmatvec::RowVec16 VgqI = -rho * A * g.T() * (drS * l0 + tf->getnS() * wt->getvvt() * wt->getwh1coefqI() + wt->getIwh1() * wt->getnSqI() + tf->getbS() * wt->getvvt() * wt->getwh2coefqI() + wt->getIwh2() * wt->getbSqI());
@@ -354,19 +381,20 @@ namespace MBSimFlexibleBody {
       fmatvec::Mat3x16 Q = tf->gettS() * depstil + (1. + tf->getepstil()) * wt->gettSqI();
       fmatvec::Mat16x3 QH = Q.T();
 
-      MI = A * static_cast<fmatvec::SymMat>(drSH * (drS * l0 + tf->getnS() * wt->getvvt() * wt->getwh1coefqI() + wt->getnSqI() * wt->getIwh1() + tf->getbS() * wt->getvvt() * wt->getwh2coefqI() + wt->getbSqI() * wt->getIwh2()) + QH * (Q * l0h3 / 12. + tf->getnS() * wt->getxvvt() * wt->getwh1coefqI() + wt->getnSqI() * wt->getIxwh1() + tf->getbS() * wt->getxvvt() * wt->getwh2coefqI() + wt->getbSqI() * wt->getIxwh2()) + wt->getwh1coefqIH() * (wt->getvvtH() * tf->getnSH() * drS + wt->getxvvtH() * tf->getnSH() * Q + wt->getvvtwwt() * wt->getwh1coefqI() + wt->getIwh1wwtH() * tf->getnSH() * wt->getnSqI() +
-          wt->getIwh2wwtH() * tf->getnSH() * wt->getbSqI())
-          + wt->getnSqIH() * (drS * wt->getIwh1() + Q * wt->getIxwh1() + tf->getnS() * wt->getIwh1wwt() * wt->getwh1coefqI() + wt->getnSqI() * wt->getIwh1wh1() + tf->getbS() * wt->getIwh1wwt() * wt->getwh2coefqI() + wt->getbSqI() * wt->getIwh1wh2()) + wt->getwh2coefqIH() * (wt->getvvtH() * tf->getbSH() * drS + wt->getxvvtH() * tf->getbSH() * Q + wt->getvvtwwt() * wt->getwh2coefqI() + wt->getIwh1wwtH() * tf->getbSH() * wt->getnSqI() + wt->getIwh2wwtH() * tf->getbSH() * wt->getbSqI()) + wt->getbSqIH() * (drS * wt->getIwh2() + Q * wt->getIxwh2() + tf->getnS() * wt->getIwh2wwt() * wt->getwh1coefqI() + wt->getnSqI() * wt->getIwh1wh2() + tf->getbS() * wt->getIwh2wwt() * wt->getwh2coefqI() + wt->getbSqI() * wt->getIwh2wh2()));
+      MI = static_cast<fmatvec::SymMat16>(A * (drSH * (drS * l0 + tf->getnS() * wt->getvvt() * wt->getwh1coefqI() + wt->getnSqI() * wt->getIwh1() + tf->getbS() * wt->getvvt() * wt->getwh2coefqI() + wt->getbSqI() * wt->getIwh2()) + QH * (Q * l0h3 / 12. + tf->getnS() * wt->getxvvt() * wt->getwh1coefqI() + wt->getnSqI() * wt->getIxwh1() + tf->getbS() * wt->getxvvt() * wt->getwh2coefqI() + wt->getbSqI() * wt->getIxwh2()) + wt->getwh1coefqIH() * (wt->getvvtH() * tf->getnSH() * drS + wt->getxvvtH() * tf->getnSH() * Q + wt->getvvtwwt() * wt->getwh1coefqI() + wt->getIwh1wwtH() * tf->getnSH() * wt->getnSqI() + wt->getIwh2wwtH() * tf->getnSH() * wt->getbSqI()) + wt->getnSqIH() * (drS * wt->getIwh1() + Q * wt->getIxwh1() + tf->getnS() * wt->getIwh1wwt() * wt->getwh1coefqI() + wt->getnSqI() * wt->getIwh1wh1() + tf->getbS() * wt->getIwh1wwt() * wt->getwh2coefqI() + wt->getbSqI() * wt->getIwh1wh2()) + wt->getwh2coefqIH() * (wt->getvvtH() * tf->getbSH() * drS + wt->getxvvtH() * tf->getbSH() * Q + wt->getvvtwwt() * wt->getwh2coefqI() + wt->getIwh1wwtH() * tf->getbSH() * wt->getnSqI() + wt->getIwh2wwtH() * tf->getbSH() * wt->getbSqI()) + wt->getbSqIH() * (drS * wt->getIwh2() + Q * wt->getIxwh2() + tf->getnS() * wt->getIwh2wwt() * wt->getwh1coefqI() + wt->getnSqI() * wt->getIwh1wh2() + tf->getbS() * wt->getIwh2wwt() * wt->getwh2coefqI() + wt->getbSqI() * wt->getIwh2wh2())));
       MI += I0 * wt->getTtilqItqIt();
       MI = rho * MI;
 
       /* kinetic part TqItqIqIt */
       fmatvec::RowVec16 qItH = tf->getqIt().T();
-      fmatvec::Mat Qnunut = depstil.T() * qItH * tSqIH + tf->getepstilt() * tSqIH + (1. + tf->getepstil()) * wt->getdpSH() * tf->gettSpSt().T();
 
-      fmatvec::Vec TqItqIqIt = A * (drSH * (tf->getnS() * wt->getvvt() * wt->getwh1tcoefqI() + wt->getnSqI() * wt->getIwh1t() + tf->getnSt() * wt->getvvt() * wt->getwh1coefqI() + wt->getnStqI() * wt->getIwh1() + tf->getbS() * wt->getvvt() * wt->getwh2tcoefqI() + wt->getbSqI() * wt->getIwh2t() + tf->getbSt() * wt->getvvt() * wt->getwh2coefqI() + wt->getbStqI() * wt->getIwh2()) * tf->getqIt() + QH * (P * l0h3 / 12. + tf->getnS() * wt->getxvvt() * wt->getwh1tcoefqI() + wt->getnSqI() * wt->getIxwh1t() + tf->getnSt() * wt->getxvvt() * wt->getwh1coefqI() + wt->getnStqI() * wt->getIxwh1() + tf->getbS() * wt->getxvvt() * wt->getwh2tcoefqI() + wt->getbSqI() * wt->getIxwh2t() + tf->getbSt() * wt->getxvvt() * wt->getwh2coefqI() + wt->getbStqI() * wt->getIxwh2()) * tf->getqIt() + (tf->getnSH() * P * tf->getqIt()) * wt->getwh1coefqIH() * wt->getxvvtH() + (tf->getnSH() * wt->getnSqI() * tf->getqIt()) * wt->getwh1coefqIH() * wt->getIwh1twwtH() + (tf->getnSH() * tf->getnSt()) * wt->getwh1coefqIH() * wt->getvvtwwt() * wt->getwh1coefqI() * tf->getqIt() + (tf->getnSH() * wt->getnStqI() * tf->getqIt()) * wt->getwh1coefqIH() * wt->getIwh1wwtH() + (tf->getnSH() * wt->getbSqI() * tf->getqIt()) * wt->getwh1coefqIH() * wt->getIwh2twwtH() + (tf->getnSH() * tf->getbSt()) * wt->getwh1coefqIH() * wt->getvvtwwt() * wt->getwh2coefqI() * tf->getqIt() + (tf->getnSH() * wt->getbStqI() * tf->getqIt()) * wt->getwh1coefqIH() * wt->getIwh2wwtH() + wt->getwh1coefqIH() * wt->getvvtwwt() * wt->getwh1tcoefqI() * tf->getqIt() + wt->getnSqIH() * (P * wt->getIxwh1() + tf->getnS() * wt->getIwh1wwt() * wt->getwh1tcoefqI() + wt->getnSqI() * wt->getIwh1twh1() + tf->getnSt() * wt->getIwh1wwt() * wt->getwh1coefqI() + wt->getnStqI() * wt->getIwh1wh1() + tf->getbS() * wt->getIwh1wwt() * wt->getwh2tcoefqI() + wt->getbSqI() * wt->getIwh1wh2t() + tf->getbSt() * wt->getIwh1wwt() * wt->getwh2coefqI() + wt->getbStqI() * wt->getIwh1wh2()) * tf->getqIt() + (tf->getbSH() * P * tf->getqIt()) * wt->getwh2coefqIH() * wt->getxvvtH() + (tf->getbSH() * wt->getnSqI() * tf->getqIt()) * wt->getwh2coefqIH() * wt->getIwh1twwtH() + (tf->getbSH() * tf->getnSt()) * wt->getwh2coefqIH() * wt->getvvtwwt() * wt->getwh1coefqI() * tf->getqIt() + (tf->getbSH() * wt->getnStqI() * tf->getqIt()) * wt->getwh2coefqIH() * wt->getIwh1wwtH() + (tf->getbSH() * wt->getbSqI() * tf->getqIt()) * wt->getwh2coefqIH() * wt->getIwh2twwtH() + (tf->getbSH() * tf->getbSt()) * wt->getwh2coefqIH() * wt->getvvtwwt() * wt->getwh2coefqI() * tf->getqIt() + (tf->getbSH() * wt->getbStqI() * tf->getqIt()) * wt->getwh2coefqIH() * wt->getIwh2wwtH() + wt->getwh2coefqIH() * wt->getvvtwwt() * wt->getwh2tcoefqI() * tf->getqIt() + wt->getbSqIH() * (P * wt->getIxwh2() + tf->getnS() * wt->getIwh2wwt() * wt->getwh1tcoefqI() + wt->getnSqI() * wt->getIwh1twh2() + tf->getnSt() * wt->getIwh2wwt() * wt->getwh1coefqI() + wt->getnStqI() * wt->getIwh1wh2() + tf->getbS() * wt->getIwh2wwt() * wt->getwh2tcoefqI() + wt->getbSqI() * wt->getIwh2twh2() + tf->getbSt() * wt->getIwh2wwt() * wt->getwh2coefqI() + wt->getbStqI() * wt->getIwh2wh2()) * tf->getqIt()
+      fmatvec::Mat16x3 part1 = depstil.T() * qItH * tSqIH;
+      fmatvec::Mat16x3 part2 = tf->getepstilt() * tSqIH;
+      fmatvec::Mat16x3 part3 = (1. + tf->getepstil()) * wt->getdpSH() * tf->gettSpSt().T();
 
-      + Qnunut * (S * l0h3 / 12. + tf->getnS() * wt->getIxwh1t() + tf->getnSt() * wt->getIxwh1() + tf->getbS() * wt->getIxwh2t() + tf->getbSt() * wt->getIxwh2()) + (qItH * wt->getnSqIH() * tf->getrSt()) * wt->getwh1coefqIH() * wt->getvvtH() + (qItH * wt->getnSqIH() * S) * wt->getwh1coefqIH() * wt->getxvvtH() + (qItH * wt->getnSqIH() * tf->getnS()) * wt->getwh1coefqIH() * wt->getIwh1twwtH() + (qItH * wt->getnSqIH() * tf->getnSt()) * wt->getwh1coefqIH() * wt->getIwh1wwtH() + (qItH * wt->getnSqIH() * tf->getbS()) * wt->getwh1coefqIH() * wt->getIwh2twwtH() + (qItH * wt->getnSqIH() * tf->getbSt()) * wt->getwh1coefqIH() * wt->getIwh2wwtH() + wt->getwh1coefqInunutH() * ((tf->getnSH() * tf->getrSt()) * wt->getvvtH() + (tf->getnSH() * S) * wt->getxvvtH() + wt->getIwh1twwtH() + (tf->getnSH() * tf->getnSt()) * wt->getIwh1wwtH() + (tf->getnSH() * tf->getbSt()) * wt->getIwh2wwtH()) + wt->getnSqIH() * (tf->getrSt() * wt->getvvt() + S * wt->getxvvt() + tf->getnS() * wt->getIwh1twwt() + tf->getnSt() * wt->getIwh1wwt() + tf->getbS() * wt->getIwh2twwt() + tf->getbSt() * wt->getIwh2wwt()) * wt->getwh1coefqI() * tf->getqIt() + wt->getdpSH() * tf->getnSpSt().T() * (tf->getrSt() * wt->getIwh1() + S * wt->getIxwh1() + tf->getnS() * wt->getIwh1twh1() + tf->getnSt() * wt->getIwh1wh1() + tf->getbS() * wt->getIwh1wh2t() + tf->getbSt() * wt->getIwh1wh2()) + (qItH * wt->getbSqIH() * tf->getrSt()) * wt->getwh2coefqIH() * wt->getvvtH() + (qItH * wt->getbSqIH() * S) * wt->getwh2coefqIH() * wt->getxvvtH() + (qItH * wt->getbSqIH() * tf->getnS()) * wt->getwh2coefqIH() * wt->getIwh1twwtH() + (qItH * wt->getbSqIH() * tf->getnSt()) * wt->getwh2coefqIH() * wt->getIwh1wwtH() + (qItH * wt->getbSqIH() * tf->getbS()) * wt->getwh2coefqIH() * wt->getIwh2twwtH() + (qItH * wt->getbSqIH() * tf->getbSt()) * wt->getwh2coefqIH() * wt->getIwh2wwtH() + wt->getwh2coefqInunutH() * ((tf->getbSH() * tf->getrSt()) * wt->getvvtH() + (tf->getbSH() * S) * wt->getxvvtH() + (tf->getbSH() * tf->getnSt()) * wt->getIwh1wwtH() + wt->getIwh2twwtH() + (tf->getbSH() * tf->getbSt()) * wt->getIwh2wwtH()) + wt->getbSqIH() * (tf->getrSt() * wt->getvvt() + S * wt->getxvvt() + tf->getnS() * wt->getIwh1twwt() + tf->getnSt() * wt->getIwh1wwt() + tf->getbS() * wt->getIwh2twwt() + tf->getbSt() * wt->getIwh2wwt()) * wt->getwh2coefqI() * tf->getqIt() + wt->getdpSH() * tf->getbSpSt().T() * (tf->getrSt() * wt->getIwh2() + S * wt->getIxwh2() + tf->getnS() * wt->getIwh1twh2() + tf->getnSt() * wt->getIwh1wh2() + tf->getbS() * wt->getIwh2twh2() + tf->getbSt() * wt->getIwh2wh2()));
+      fmatvec::Mat16x3 Qnunut = part1 + part2 + part3;
+
+      fmatvec::Vec TqItqIqIt = A * (drSH * (tf->getnS() * wt->getvvt() * wt->getwh1tcoefqI() + wt->getnSqI() * wt->getIwh1t() + tf->getnSt() * wt->getvvt() * wt->getwh1coefqI() + wt->getnStqI() * wt->getIwh1() + tf->getbS() * wt->getvvt() * wt->getwh2tcoefqI() + wt->getbSqI() * wt->getIwh2t() + tf->getbSt() * wt->getvvt() * wt->getwh2coefqI() + wt->getbStqI() * wt->getIwh2()) * tf->getqIt() + QH * (P * l0h3 / 12. + tf->getnS() * wt->getxvvt() * wt->getwh1tcoefqI() + wt->getnSqI() * wt->getIxwh1t() + tf->getnSt() * wt->getxvvt() * wt->getwh1coefqI() + wt->getnStqI() * wt->getIxwh1() + tf->getbS() * wt->getxvvt() * wt->getwh2tcoefqI() + wt->getbSqI() * wt->getIxwh2t() + tf->getbSt() * wt->getxvvt() * wt->getwh2coefqI() + wt->getbStqI() * wt->getIxwh2()) * tf->getqIt() + (tf->getnSH() * P * tf->getqIt()) * wt->getwh1coefqIH() * wt->getxvvtH() + (tf->getnSH() * wt->getnSqI() * tf->getqIt()) * wt->getwh1coefqIH() * wt->getIwh1twwtH() + (tf->getnSH() * tf->getnSt()) * wt->getwh1coefqIH() * wt->getvvtwwt() * wt->getwh1coefqI() * tf->getqIt() + (tf->getnSH() * wt->getnStqI() * tf->getqIt()) * wt->getwh1coefqIH() * wt->getIwh1wwtH() + (tf->getnSH() * wt->getbSqI() * tf->getqIt()) * wt->getwh1coefqIH() * wt->getIwh2twwtH() + (tf->getnSH() * tf->getbSt()) * wt->getwh1coefqIH() * wt->getvvtwwt() * wt->getwh2coefqI() * tf->getqIt() + (tf->getnSH() * wt->getbStqI() * tf->getqIt()) * wt->getwh1coefqIH() * wt->getIwh2wwtH() + wt->getwh1coefqIH() * wt->getvvtwwt() * wt->getwh1tcoefqI() * tf->getqIt() + wt->getnSqIH() * (P * wt->getIxwh1() + tf->getnS() * wt->getIwh1wwt() * wt->getwh1tcoefqI() + wt->getnSqI() * wt->getIwh1twh1() + tf->getnSt() * wt->getIwh1wwt() * wt->getwh1coefqI() + wt->getnStqI() * wt->getIwh1wh1() + tf->getbS() * wt->getIwh1wwt() * wt->getwh2tcoefqI() + wt->getbSqI() * wt->getIwh1wh2t() + tf->getbSt() * wt->getIwh1wwt() * wt->getwh2coefqI() + wt->getbStqI() * wt->getIwh1wh2()) * tf->getqIt() + (tf->getbSH() * P * tf->getqIt()) * wt->getwh2coefqIH() * wt->getxvvtH() + (tf->getbSH() * wt->getnSqI() * tf->getqIt()) * wt->getwh2coefqIH() * wt->getIwh1twwtH() + (tf->getbSH() * tf->getnSt()) * wt->getwh2coefqIH() * wt->getvvtwwt() * wt->getwh1coefqI() * tf->getqIt() + (tf->getbSH() * wt->getnStqI() * tf->getqIt()) * wt->getwh2coefqIH() * wt->getIwh1wwtH() + (tf->getbSH() * wt->getbSqI() * tf->getqIt()) * wt->getwh2coefqIH() * wt->getIwh2twwtH() + (tf->getbSH() * tf->getbSt()) * wt->getwh2coefqIH() * wt->getvvtwwt() * wt->getwh2coefqI() * tf->getqIt() + (tf->getbSH() * wt->getbStqI() * tf->getqIt()) * wt->getwh2coefqIH() * wt->getIwh2wwtH() + wt->getwh2coefqIH() * wt->getvvtwwt() * wt->getwh2tcoefqI() * tf->getqIt() + wt->getbSqIH() * (P * wt->getIxwh2() + tf->getnS() * wt->getIwh2wwt() * wt->getwh1tcoefqI() + wt->getnSqI() * wt->getIwh1twh2() + tf->getnSt() * wt->getIwh2wwt() * wt->getwh1coefqI() + wt->getnStqI() * wt->getIwh1wh2() + tf->getbS() * wt->getIwh2wwt() * wt->getwh2tcoefqI() + wt->getbSqI() * wt->getIwh2twh2() + tf->getbSt() * wt->getIwh2wwt() * wt->getwh2coefqI() + wt->getbStqI() * wt->getIwh2wh2()) * tf->getqIt() + Qnunut * (S * l0h3 / 12. + tf->getnS() * wt->getIxwh1t() + tf->getnSt() * wt->getIxwh1() + tf->getbS() * wt->getIxwh2t() + tf->getbSt() * wt->getIxwh2()) + (qItH * wt->getnSqIH() * tf->getrSt()) * wt->getwh1coefqIH() * wt->getvvtH() + (qItH * wt->getnSqIH() * S) * wt->getwh1coefqIH() * wt->getxvvtH() + (qItH * wt->getnSqIH() * tf->getnS()) * wt->getwh1coefqIH() * wt->getIwh1twwtH() + (qItH * wt->getnSqIH() * tf->getnSt()) * wt->getwh1coefqIH() * wt->getIwh1wwtH() + (qItH * wt->getnSqIH() * tf->getbS()) * wt->getwh1coefqIH() * wt->getIwh2twwtH() + (qItH * wt->getnSqIH() * tf->getbSt()) * wt->getwh1coefqIH() * wt->getIwh2wwtH() + wt->getwh1coefqInunutH() * ((tf->getnSH() * tf->getrSt()) * wt->getvvtH() + (tf->getnSH() * S) * wt->getxvvtH() + wt->getIwh1twwtH() + (tf->getnSH() * tf->getnSt()) * wt->getIwh1wwtH() + (tf->getnSH() * tf->getbSt()) * wt->getIwh2wwtH()) + wt->getnSqIH() * (tf->getrSt() * wt->getvvt() + S * wt->getxvvt() + tf->getnS() * wt->getIwh1twwt() + tf->getnSt() * wt->getIwh1wwt() + tf->getbS() * wt->getIwh2twwt() + tf->getbSt() * wt->getIwh2wwt()) * wt->getwh1coefqI() * tf->getqIt() + wt->getdpSH() * tf->getnSpSt().T() * (tf->getrSt() * wt->getIwh1() + S * wt->getIxwh1() + tf->getnS() * wt->getIwh1twh1() + tf->getnSt() * wt->getIwh1wh1() + tf->getbS() * wt->getIwh1wh2t() + tf->getbSt() * wt->getIwh1wh2()) + (qItH * wt->getbSqIH() * tf->getrSt()) * wt->getwh2coefqIH() * wt->getvvtH() + (qItH * wt->getbSqIH() * S) * wt->getwh2coefqIH() * wt->getxvvtH() + (qItH * wt->getbSqIH() * tf->getnS()) * wt->getwh2coefqIH() * wt->getIwh1twwtH() + (qItH * wt->getbSqIH() * tf->getnSt()) * wt->getwh2coefqIH() * wt->getIwh1wwtH() + (qItH * wt->getbSqIH() * tf->getbS()) * wt->getwh2coefqIH() * wt->getIwh2twwtH() + (qItH * wt->getbSqIH() * tf->getbSt()) * wt->getwh2coefqIH() * wt->getIwh2wwtH() + wt->getwh2coefqInunutH() * ((tf->getbSH() * tf->getrSt()) * wt->getvvtH() + (tf->getbSH() * S) * wt->getxvvtH() + (tf->getbSH() * tf->getnSt()) * wt->getIwh1wwtH() + wt->getIwh2twwtH() + (tf->getbSH() * tf->getbSt()) * wt->getIwh2wwtH()) + wt->getbSqIH() * (tf->getrSt() * wt->getvvt() + S * wt->getxvvt() + tf->getnS() * wt->getIwh1twwt() + tf->getnSt() * wt->getIwh1wwt() + tf->getbS() * wt->getIwh2twwt() + tf->getbSt() * wt->getIwh2wwt()) * wt->getwh2coefqI() * tf->getqIt() + wt->getdpSH() * tf->getbSpSt().T() * (tf->getrSt() * wt->getIwh2() + S * wt->getIxwh2() + tf->getnS() * wt->getIwh1twh2() + tf->getnSt() * wt->getIwh1wh2() + tf->getbS() * wt->getIwh2twh2() + tf->getbSt() * wt->getIwh2wh2()));
       TqItqIqIt += I0 * wt->getTtilqItqIqIt();
       TqItqIqIt = rho * TqItqIqIt;
 
@@ -379,12 +407,12 @@ namespace MBSimFlexibleBody {
       /* global description */
       h = tf->getJIG().T() * hIZ;
 
-      qG_Old = qG.copy();
-      qGt_Old = qGt.copy();
+      qG_Old = qG;
+      qGt_Old = qGt;
     }
   }
 
-  inline void FiniteElement1s33RCM::computedhdz(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) {
+  inline void FiniteElement1s33RCM::computedhdz(const fmatvec::Vec16& qG, const fmatvec::Vec16& qGt) {
     fmatvec::Vec16 h0 = h;
 
     fmatvec::Vec16 qG_tmp = qG;
@@ -416,7 +444,7 @@ namespace MBSimFlexibleBody {
     computeh(qG, qGt);
   }
 
-  double FiniteElement1s33RCM::computeKineticEnergy(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) {
+  double FiniteElement1s33RCM::computeKineticEnergy(const fmatvec::Vec16& qG, const fmatvec::Vec16& qGt) {
     if (nrm2(qG - qG_Old) > tol_comp || nrm2(qGt - qGt_Old) > tol_comp)
       wt->computeint(qG, qGt);
     fmatvec::Vec S = tf->getepstilt() * tf->gettS() + (1. + tf->getepstil()) * tf->gettSt();
@@ -424,7 +452,7 @@ namespace MBSimFlexibleBody {
     return 0.5 * rho * (A * (tf->getrSt().T() * (tf->getrSt() * l0 + 2. * tf->getnS() * wt->getIwh1t() + 2. * tf->getnSt() * wt->getIwh1() + 2. * tf->getbS() * wt->getIwh2t() + 2. * tf->getbSt() * wt->getIwh2()) + S.T() * (S * l0h3 / 12. + 2. * tf->getnS() * wt->getIxwh1t() + 2. * tf->getnSt() * wt->getIxwh1() + 2. * tf->getbS() * wt->getIxwh2t() + 2. * tf->getbSt() * wt->getIxwh2()) + tf->getnSH() * (2. * tf->getnSt() * wt->getIwh1twh1() + 2. * tf->getbSt() * wt->getIwh1twh2()) + wt->getIwh1twh1t() + tf->getnStH() * (tf->getnSt() * wt->getIwh1wh1() + 2. * tf->getbS() * wt->getIwh1wh2t() + 2. * tf->getbSt() * wt->getIwh1wh2()) + tf->getbSH() * (2. * tf->getbSt() * wt->getIwh2twh2()) + wt->getIwh2twh2t() + tf->getbStH() * (tf->getbSt() * wt->getIwh2wh2())) + I0 * wt->getTtil());
   }
 
-  double FiniteElement1s33RCM::computeGravitationalEnergy(const fmatvec::Vec& qG) {
+  double FiniteElement1s33RCM::computeGravitationalEnergy(const fmatvec::Vec16& qG) {
     if (nrm2(qG - qG_Old) > tol_comp)
       wt->computewhcoefPos(qG);
 
@@ -434,7 +462,7 @@ namespace MBSimFlexibleBody {
     return -rho * A * g.T() * (l0 * tf->getrS() + Iwh1 * tf->getnS() + Iwh2 * tf->getbS());
   }
 
-  double FiniteElement1s33RCM::computeElasticEnergy(const fmatvec::Vec& qG) {
+  double FiniteElement1s33RCM::computeElasticEnergy(const fmatvec::Vec16& qG) {
     if (nrm2(qG - qG_Old) > tol_comp)
       wt->computewhcoefPos(qG);
 
@@ -447,8 +475,8 @@ namespace MBSimFlexibleBody {
     return 0.5 * (E * A * eps * eps * l0 + E * I1 * Iwh1xxwh1xx + E * I2 * Iwh2xxwh2xx + G * I0 * l0 * tf->getk0() * tf->getk0());
   }
 
-  fmatvec::Mat FiniteElement1s33RCM::computeJXqG(const fmatvec::Vec& qG, double x) {
-    fmatvec::Mat JXqG(16, 6);
+  fmatvec::Mat16x6 FiniteElement1s33RCM::computeJXqG(const fmatvec::Vec16& qG, double x) {
+    fmatvec::Mat16x6 JXqG;
 
     if (nrm2(qG - qG_Old) > tol_comp)
       wt->computewhcoefPosD(qG);
@@ -465,7 +493,8 @@ namespace MBSimFlexibleBody {
     fmatvec::Vec wh1 = wt->computew(wt->getwh1coef(), x);
     fmatvec::Vec wh2 = wt->computew(wt->getwh2coef(), x);
 
-    JXqG(0, 0, 15, 2) = (drS + (tf->gettS() * depstil + (1. + tf->getepstil()) * wt->gettSqI()) * x + tf->getnS() * wh1qI + wh1(0) * wt->getnSqI() + tf->getbS() * wh2qI + wh2(0) * wt->getbSqI()).T(); /* JT */
+    /* JT */
+    JXqG.set(fmatvec::Index(0, 15), fmatvec::Index(0, 2), (drS + (tf->gettS() * depstil + (1. + tf->getepstil()) * wt->gettSqI()) * x + tf->getnS() * wh1qI + wh1(0) * wt->getnSqI() + tf->getbS() * wh2qI + wh2(0) * wt->getbSqI()).T());
 
     fmatvec::Vec w1 = wt->computew(wt->getw1coef(), x);
     fmatvec::Vec w2 = wt->computew(wt->getw2coef(), x);
@@ -475,13 +504,13 @@ namespace MBSimFlexibleBody {
     p(1) += w1(1);
     p(2) += w2(1);
 
-    fmatvec::Vec t = ag->computet(p);
-    fmatvec::Vec n = ag->computen(p);
-    fmatvec::Vec b = ag->computeb(p);
+    fmatvec::Vec3 t = ag->computet(p);
+    fmatvec::Vec3 n = ag->computen(p);
+    fmatvec::Vec3 b = ag->computeb(p);
 
-    fmatvec::SqrMat tp = ag->computetq(p);
-    fmatvec::SqrMat np = ag->computenq(p);
-    fmatvec::SqrMat bp = ag->computebq(p);
+    fmatvec::SqrMat3 tp = ag->computetq(p);
+    fmatvec::SqrMat3 np = ag->computenq(p);
+    fmatvec::SqrMat3 bp = ag->computebq(p);
 
     fmatvec::RowVec dwxdwt(4);
     dwxdwt(3) = 2 * x;
@@ -500,16 +529,17 @@ namespace MBSimFlexibleBody {
     fmatvec::MatV16 ntqIt = np * ptqIt;
     fmatvec::MatV16 btqIt = bp * ptqIt;
 
-    JXqG(0, 3, 15, 3) = (t(1) * ttqIt(fmatvec::Index(2,2), fmatvec::Index(0,15)) + n(1) * ntqIt(fmatvec::Index(2,2), fmatvec::Index(0,15)) + b(1) * btqIt(fmatvec::Index(2,2), fmatvec::Index(0,15))).T();
-    JXqG(0, 4, 15, 4) = (t(2) * ttqIt(fmatvec::Index(0,0), fmatvec::Index(0,15)) + n(2) * ntqIt(fmatvec::Index(0,0), fmatvec::Index(0,15)) + b(2) * btqIt(fmatvec::Index(0,0), fmatvec::Index(0,15))).T();
-    JXqG(0, 5, 15, 5) = (t(0) * ttqIt(fmatvec::Index(1,1), fmatvec::Index(0,15)) + n(0) * ntqIt(fmatvec::Index(1,1), fmatvec::Index(0,15)) + b(0) * btqIt(fmatvec::Index(1,1), fmatvec::Index(0,15))).T(); /* JR */
+    /* JR */
+    JXqG.set(fmatvec::Index(0, 15), fmatvec::Index(3, 3), (t(1) * ttqIt(fmatvec::Index(2, 2), fmatvec::Index(0, 15)) + n(1) * ntqIt(fmatvec::Index(2, 2), fmatvec::Index(0, 15)) + b(1) * btqIt(fmatvec::Index(2, 2), fmatvec::Index(0, 15))).T());
+    JXqG.set(fmatvec::Index(0, 15), fmatvec::Index(4, 4), (t(2) * ttqIt(fmatvec::Index(0, 0), fmatvec::Index(0, 15)) + n(2) * ntqIt(fmatvec::Index(0, 0), fmatvec::Index(0, 15)) + b(2) * btqIt(fmatvec::Index(0, 0), fmatvec::Index(0, 15))).T());
+    JXqG.set(fmatvec::Index(0, 15), fmatvec::Index(5, 5), (t(0) * ttqIt(fmatvec::Index(1, 1), fmatvec::Index(0, 15)) + n(0) * ntqIt(fmatvec::Index(1, 1), fmatvec::Index(0, 15)) + b(0) * btqIt(fmatvec::Index(1, 1), fmatvec::Index(0, 15))).T());
 
     JXqG = tf->getJIG().T() * JXqG; /* transformation global coordinates */
 
-    return JXqG.copy();
+    return JXqG;
   }
 
-  const fmatvec::Vec12& FiniteElement1s33RCM::computeState(const fmatvec::Vec& qG, const fmatvec::Vec& qGt, double x) {
+  const fmatvec::Vec12& FiniteElement1s33RCM::computeState(const fmatvec::Vec16& qG, const fmatvec::Vec16& qGt, double x) {
     if (fmatvec::nrm2(qG - qG_Old) < tol_comp && nrm2(qGt - qGt_Old) < tol_comp && fabs(x - x_Old) < MBSim::epsroot())
       return X;
     else {
@@ -541,7 +571,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  fmatvec::Vec FiniteElement1s33RCM::computeData(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) {
+  fmatvec::Vec FiniteElement1s33RCM::computeData(const fmatvec::Vec16& qG, const fmatvec::Vec16& qGt) {
     if (nrm2(qG - qG_Old) > tol_comp || nrm2(qGt - qGt_Old) > tol_comp)
       tf->computezI(qG, qGt);
 
