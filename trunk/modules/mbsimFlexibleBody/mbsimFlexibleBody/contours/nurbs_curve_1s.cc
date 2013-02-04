@@ -20,7 +20,7 @@
 #include<config.h>
 
 #include "mbsimFlexibleBody/contours/nurbs_curve_1s.h"
-#include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_cosserat.h"
+#include "mbsimFlexibleBody/flexible_body/flexible_body_1s_cosserat.h"
 
 #ifdef HAVE_NURBS
 using namespace PLib;
@@ -109,10 +109,10 @@ namespace MBSimFlexibleBody {
   void NurbsCurve1s::initContourFromBody(InitStage stage) {
     if(stage==resize) {
       degU = 3;
-      Elements = (static_cast<FlexibleBody1s33Cosserat*>(parent))->getNumberElements();
-      qSize = (static_cast<FlexibleBody1s33Cosserat*>(parent))->getNumberDOFs();
-      openStructure = (static_cast<FlexibleBody1s33Cosserat*>(parent))->isOpenStructure();
-      L = (static_cast<FlexibleBody1s33Cosserat*>(parent))->getLength();
+      Elements = (static_cast<FlexibleBody1sCosserat*>(parent))->getNumberElements();
+      qSize = (static_cast<FlexibleBody1sCosserat*>(parent))->getNumberDOFs();
+      openStructure = (static_cast<FlexibleBody1sCosserat*>(parent))->isOpenStructure();
+      L = (static_cast<FlexibleBody1sCosserat*>(parent))->getLength();
 
       if(openStructure) computeUVector(Elements+1);
       else computeUVector(Elements+degU);
@@ -139,8 +139,8 @@ namespace MBSimFlexibleBody {
       computeCurveAngularVelocities();
     }
     else if(stage==worldFrameContourLocation) {
-      R.getOrientation() = (static_cast<FlexibleBody1s33Cosserat*>(parent))->getFrameOfReference()->getOrientation();
-      R.getPosition() = (static_cast<FlexibleBody1s33Cosserat*>(parent))->getFrameOfReference()->getPosition();
+      R.getOrientation() = (static_cast<FlexibleBody1sCosserat*>(parent))->getFrameOfReference()->getOrientation();
+      R.getPosition() = (static_cast<FlexibleBody1sCosserat*>(parent))->getFrameOfReference()->getPosition();
     }
   }
 #endif
@@ -181,7 +181,7 @@ namespace MBSimFlexibleBody {
       PLib::Vector<HPoint3Dd> Nodelist(Elements+1);
       for(int i=0; i<Elements+1; i++) {
         ContourPointData cp(i);
-        static_cast<FlexibleBody1s33Cosserat*>(parent)->updateKinematicsForFrame(cp,position);
+        static_cast<FlexibleBody1sCosserat*>(parent)->updateKinematicsForFrame(cp,position);
         Nodelist[i] = HPoint3Dd(cp.getFrameOfReference().getPosition()(0),cp.getFrameOfReference().getPosition()(1),cp.getFrameOfReference().getPosition()(2),1);
       }
       curveTranslations->globalInterpH(Nodelist, *uvec, *uVec, degU);
@@ -190,7 +190,7 @@ namespace MBSimFlexibleBody {
       PLib::Vector<HPoint3Dd> Nodelist(Elements+degU);
       for(int i=0; i<Elements; i++) {
         ContourPointData cp(i);
-        static_cast<FlexibleBody1s33Cosserat*>(parent)->updateKinematicsForFrame(cp,position);
+        static_cast<FlexibleBody1sCosserat*>(parent)->updateKinematicsForFrame(cp,position);
         Nodelist[i] = HPoint3Dd(cp.getFrameOfReference().getPosition()(0),cp.getFrameOfReference().getPosition()(1),cp.getFrameOfReference().getPosition()(2),1);
       }
       for(int i=0;i<degU;i++) {
@@ -207,7 +207,7 @@ namespace MBSimFlexibleBody {
       PLib::Vector<HPoint3Dd> Nodelist(Elements+1);
       for(int i=0; i<Elements+1; i++) {
         ContourPointData cp(i);
-        static_cast<FlexibleBody1s33Cosserat*>(parent)->updateKinematicsForFrame(cp,velocity);
+        static_cast<FlexibleBody1sCosserat*>(parent)->updateKinematicsForFrame(cp,velocity);
         Nodelist[i] = HPoint3Dd(cp.getFrameOfReference().getVelocity()(0),cp.getFrameOfReference().getVelocity()(1),cp.getFrameOfReference().getVelocity()(2),1);
       }
       curveVelocities->globalInterpH(Nodelist, *uvec, *uVec, degU);
@@ -216,7 +216,7 @@ namespace MBSimFlexibleBody {
       PLib::Vector<HPoint3Dd> Nodelist(Elements+degU);
       for(int i=0; i<Elements; i++) {
         ContourPointData cp(i);
-        static_cast<FlexibleBody1s33Cosserat*>(parent)->updateKinematicsForFrame(cp,velocity);
+        static_cast<FlexibleBody1sCosserat*>(parent)->updateKinematicsForFrame(cp,velocity);
         Nodelist[i] = HPoint3Dd(cp.getFrameOfReference().getVelocity()(0),cp.getFrameOfReference().getVelocity()(1),cp.getFrameOfReference().getVelocity()(2),1);
       }
       for(int i=0;i<degU;i++) {
@@ -233,7 +233,7 @@ namespace MBSimFlexibleBody {
       PLib::Vector<HPoint3Dd> Nodelist(Elements+1);
       for(int i=0; i<Elements+1; i++) {
         ContourPointData cp(i);
-        static_cast<FlexibleBody1s33Cosserat*>(parent)->updateKinematicsForFrame(cp,angularVelocity);
+        static_cast<FlexibleBody1sCosserat*>(parent)->updateKinematicsForFrame(cp,angularVelocity);
         Nodelist[i] = HPoint3Dd(cp.getFrameOfReference().getAngularVelocity()(0),cp.getFrameOfReference().getAngularVelocity()(1),cp.getFrameOfReference().getAngularVelocity()(2),1);
       }
       curveAngularVelocities->globalInterpH(Nodelist, *uvec, *uVec, degU);
@@ -242,7 +242,7 @@ namespace MBSimFlexibleBody {
       PLib::Vector<HPoint3Dd> Nodelist(Elements+degU);
       for(int i=0; i<Elements; i++) {
         ContourPointData cp(i);
-        static_cast<FlexibleBody1s33Cosserat*>(parent)->updateKinematicsForFrame(cp,angularVelocity);
+        static_cast<FlexibleBody1sCosserat*>(parent)->updateKinematicsForFrame(cp,angularVelocity);
         Nodelist[i] = HPoint3Dd(cp.getFrameOfReference().getAngularVelocity()(0),cp.getFrameOfReference().getAngularVelocity()(1),cp.getFrameOfReference().getAngularVelocity()(2),1);
       }
       for(int i=0;i<degU;i++) {
@@ -261,8 +261,8 @@ namespace MBSimFlexibleBody {
       PLib::Vector<HPoint3Dd> NodelistRot(Elements+degU);
 
       for(int i=0; i<Elements; i++) {
-        static_cast<FlexibleBody1s33Cosserat*>(parent)->updateJacobiansForFrame(jacobiansTrans[i]);
-        static_cast<FlexibleBody1s33Cosserat*>(parent)->updateJacobiansForFrame(jacobiansRot[i]); // jacobians of rotation are on staggered grid
+        static_cast<FlexibleBody1sCosserat*>(parent)->updateJacobiansForFrame(jacobiansTrans[i]);
+        static_cast<FlexibleBody1sCosserat*>(parent)->updateJacobiansForFrame(jacobiansRot[i]); // jacobians of rotation are on staggered grid
       }
       for(int k=0; k<qSize; k++) {
         for(int i=0; i<Elements; i++) {

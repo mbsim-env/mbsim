@@ -59,7 +59,7 @@ namespace MBSimFlexibleBody {
        * \param torsional moment of inertia
        * \param cardan object
        */
-      FiniteElement1s21CosseratRotation(double l0_,double E_,double G_,double I1_,double I2_,double I0_,CardanPtr ag_);
+      FiniteElement1s21CosseratRotation(double l0_,double E_,double G_,double I1_);
 
       /**
        * \brief destructor
@@ -88,7 +88,7 @@ namespace MBSimFlexibleBody {
       virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec& qG, const MBSim::ContourPointData& data);
 
       /* GETTER / SETTER */
-      void setCurlRadius(double R1,double R2);		
+      void setCurlRadius(double R1);
       double getl0() const;
 
       /**
@@ -117,14 +117,14 @@ namespace MBSimFlexibleBody {
       /**
        * \brief geometrical moment of inertia 
        */
-      double I1, I2, I0;
+      double I1;
 
       /**
        * \brief predefined bending
        * k10: precurvature in t-b-plane
        * k20: precurvature in t-n-plane
        */
-      double k10, k20;
+      double k10;
 
       /**
        * \brief global system description 
@@ -141,10 +141,6 @@ namespace MBSimFlexibleBody {
        */
       fmatvec::SqrMat dhdq, dhdu;
 
-      /**
-       * \brief Cardan-object 
-       */
-      CardanPtr ag;
 
       FiniteElement1s21CosseratRotation(); // standard constructor
       FiniteElement1s21CosseratRotation(const FiniteElement1s21CosseratRotation&); // copy constructor
@@ -155,8 +151,8 @@ namespace MBSimFlexibleBody {
   inline const fmatvec::Vec& FiniteElement1s21CosseratRotation::geth() const { return h; }
   inline const fmatvec::SqrMat& FiniteElement1s21CosseratRotation::getdhdq() const { return dhdq; }
   inline const fmatvec::SqrMat& FiniteElement1s21CosseratRotation::getdhdu() const { return dhdu; }
-  inline int FiniteElement1s21CosseratRotation::getqSize() const { return 9; }
-  inline int FiniteElement1s21CosseratRotation::getuSize() const { return 9; }
+  inline int FiniteElement1s21CosseratRotation::getqSize() const { return 4; }
+  inline int FiniteElement1s21CosseratRotation::getuSize() const { return 4; }
   inline void  FiniteElement1s21CosseratRotation::computeM(const fmatvec::Vec& qG) { throw MBSim::MBSimError("Error(FiniteElement1s21CosseratRotation::computeM): Not implemented"); }
   inline void  FiniteElement1s21CosseratRotation::computedhdz(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) { throw MBSim::MBSimError("Error(FiniteElement1s21CosseratRotation::computedhdz): Not implemented"); }
   inline double FiniteElement1s21CosseratRotation::computeKineticEnergy(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) { throw MBSim::MBSimError("Error(FiniteElement1s21CosseratRotation::computeKineticEnergy): Not implemented"); }

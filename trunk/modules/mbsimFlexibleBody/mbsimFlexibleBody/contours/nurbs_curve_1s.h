@@ -62,6 +62,7 @@ namespace MBSimFlexibleBody {
    * \author Thorsten Schindler
    * \date 2011-10-16 initial commit (Thorsten Schindler)
    * \date 2012-03-15 updateKinematicsForFrame and contact Jacobians (Cebulla / Schindler)
+   * \date 2013-02-04 contour now for 2D and 3D Cosserat beam (Zitzewitz / Cebulla / Schindler)
    */
   class NurbsCurve1s : public MBSim::Contour1s {
     public:
