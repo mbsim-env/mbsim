@@ -19,21 +19,24 @@
 
 #ifndef POLYNOMIAL_FRUSTUM_H_
 #define POLYNOMIAL_FRUSTUM_H_
+#include <iostream>
 
 #include <mbsim/contour.h>
+
+#include <mbsim/contours/area.h>
 
 #include <mbsim/utils/colors.h>
 
 #include <fmatvec.h>
 
-using namespace fmatvec;
+#include <mbsim/utils/function.h>
 
 namespace MBSim {
 
 
   /*!
    * \brief Frustum contour with a polynomial radius over height course
-   * \author Kilian Grundl
+   * \author Kilian Grundl, Tingting Sun
    * \date  09.10.2012
    */
 
@@ -41,9 +44,10 @@ namespace MBSim {
     public:
       /*!
        * \brief Constructor
-       * \param name Name of the contour
+       * \param name   Name of the contour
+       * \param param_
        */
-      PolynomialFrustum(const std::string & name);
+      PolynomialFrustum(const std::string & name, const fmatvec::Vec & param_);
 
       /*!
        * \brief Destructor
@@ -55,25 +59,13 @@ namespace MBSim {
       virtual void init(InitStage stage);
       /***************************************************/
 
-      /*!
-       * \brief Set polynomial parameters like a+bx+cx^2+dx^3+...
-       * \param parameters vector holding the parameters starting with a
-       */
-      void setPolynomialParameters(const std::vector<double> & parameters_);
 
       /*!
-       * \brief set hieght of frustum
-       * \param height height of the frustum
+       * \brief set height of frustum
+       * \para height height of the frustum
        */
       void setHeight(const double & height_);
-      double getHeight(){
-        return height;
-      }
-
-      /*!
-       * \brief get the radius of the circumsphere
-       */
-      double getRadiSphere();
+      double getHeight();
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /*!
@@ -95,17 +87,6 @@ namespace MBSim {
       void setTransparency(const double & transparency);
 #endif
 
-    protected:
-      /*!
-       * \brief vector holding our parameters of the polynom describing the frustum (radius over height)
-       */
-      std::vector<double> parameters;
-
-      /*!
-       * \brief height of the frustum
-       */
-      double height;
-
       /*!
        * \brief get value at position of 0 derivative
        */
@@ -126,11 +107,43 @@ namespace MBSim {
        */
       double getXPolyMax();
 
+      /*!
+       * \brief take the largest one among the distance from ((a+b)/2,0) to (a,f(a)),(b,f(b)) and (x,f(x)) where f(x) achieves maximum at x within[a,b]
+       * \return the radius of the circumsphere
+       */
+      double getRadiSphere();
 
       /*!
        * \brief get coefficient vector of the polynomial
        */
-      std::vector<double> getPolynomialParameters(){return parameters;};
+      const fmatvec::Vec & getPolynomialParameters();
+
+      /*!
+       * \brief in 2D plane, given a point outside a polynomial curve, search for the closest point on the curve to the point
+       * \para x_0: starting point of the polynomial domain
+       * \para x_end: end point of the polynomial domain
+       * \para P: the given point
+       * \return: a dimension 3 vector, vec[0] storing the dis, vec[1] and vec[2] for the 2D position of the closest point on the curve
+       */
+      fmatvec::Vec3 CP_toP_onPolycurve2D(double x_0, double x_end, fmatvec::Vec2 P);
+
+
+
+    protected:
+      /*!
+       * \brief vector holding our parameters of the polynom describing the frustum (radius over height)
+       * parameters=[a0,a1,a2,...an]
+       */
+      fmatvec::Vec parameters;
+
+      /*!
+       * \brief height of the frustum
+       */
+      double height;
+
+
+
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /*!
        * \brief color values for the iv-body
@@ -159,6 +172,44 @@ namespace MBSim {
 
 #endif
   };
+
+  /*!
+   * \brief this class denotes polynomial equation like this:a0+a1*x+a2*x^2+...+an*x^n=rhs
+   * \para para: coefficient vector of the left side
+   */
+
+  class ContactPolyfun: public MBSim::Function1<double, double>{
+      public:
+           ContactPolyfun(double ,const fmatvec::Vec  &);
+           virtual ~ContactPolyfun(){};
+           virtual double operator()(const double & x, const void * = NULL);
+           void initializeUsingXML() {};
+
+      protected:
+           double rhs;
+           fmatvec::Vec para;
+
+    };
+
+
+  //TODO: Do we need this class anymore?
+  /*!
+   * \brief this class denotes left hand side of the equation to be solved when find closest point on a polynomial curve  to a given point, as interpreted in function CP_toP_onPolycurve
+   *        The equation has the form: (f(x)-y_P)*f'(x)+x-x_p=0
+   */
+//  class Polyfun_in_cppc: public MBSim::Function1<double, double>{
+//      public:
+//           Polyfun_in_cppc(double ,const fmatvec::Vec  &);
+//           virtual ~Polyfun_in_cppc(){};
+//           virtual double operator()(const double & x, const void * = NULL);
+//           void initializeUsingXML() {};
+//
+//      protected:
+//           fmatvec::Vec para;
+//           fmatvec::Vec2 P;
+//
+//  };
+
 
 }
 

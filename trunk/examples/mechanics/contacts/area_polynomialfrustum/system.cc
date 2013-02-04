@@ -21,13 +21,12 @@ using namespace fmatvec;
 using namespace std;
 
 System::System(const string &projectName) :
-		    DynamicSystemSolver(projectName) {
+    DynamicSystemSolver(projectName) {
 
   //add in a gravity in x direction
   Vec3 g;
-  g(0) = 9.81;
+  g(1) = -9.81;
   MBSimEnvironment::getInstance()->setAccelerationOfGravity(g);
-
 
   /*Polynomial Frustum initialisation*/
 
@@ -37,83 +36,63 @@ System::System(const string &projectName) :
   polyfrustum->setRotation(new RotationAboutXAxis); //change from ZAxis, rotation,1 degree of freedom
   polyfrustum->setMass(1);
   polyfrustum->setInertiaTensor(SymMat3(EYE));
-  polyfrustum->setFrameOfReference(this->getFrameI());
+  Frame * rotPoly = new Frame("RotPoly");
+  this->addFrame(rotPoly, Vec3(), BasicRotAKIz(M_PI_2));
+  polyfrustum->setFrameOfReference(rotPoly);
 
   //Give degrees of freedom
-  polyfrustum->setInitialGeneralizedPosition(Vec("[0]"));
-  polyfrustum->setInitialGeneralizedVelocity(Vec("[1]"));
+  polyfrustum->setInitialGeneralizedPosition(Vec("[0]"));  //set position of the frustum,1 degree of freedom
+  polyfrustum->setInitialGeneralizedVelocity(Vec("[1]"));  //change from(0,0,0,0,0,0), now we have rotating velocity,1 degree of freedom
 
   this->addObject(polyfrustum);
 
   //CONTOUR
-  PolynomialFrustum* polyfrustumcontour = new PolynomialFrustum(
-      "PolyFrustumContour");
+  Vec polynomialparameters("[1;2;-1]");  //polynomial y=-x^2+2x+1
+  PolynomialFrustum* polyfrustumcontour = new PolynomialFrustum("PolyFrustumContour", polynomialparameters);
   polyfrustumcontour->setHeight(1);
 
-  vector<double> polynomialparameters;//polynomial y=-x^2+2x+1
-  polynomialparameters.push_back(2);
-  polynomialparameters.push_back(0);
-  polynomialparameters.push_back(-1);
-
-  polyfrustumcontour->setPolynomialParameters(polynomialparameters);
   polyfrustumcontour->enableOpenMBV();
 
-  polyfrustum->addContour(polyfrustumcontour, Vec3("[0;0;0]"), BasicRotAKIy(0));
-
-
+  polyfrustum->addContour(polyfrustumcontour, Vec3(), BasicRotAKIy(0));
 
   /*Area initialisation*/
 
   //CONTOUR
   Area* area = new Area("AREA");
-  area->setLimitY(0.5);
-  area->setLimitZ(0.25);
-  //area->enableOpenMBV();  //TODO: segmentation fault might appear for some versions of openmbv
+  area->setLimitY(3);
+  area->setLimitZ(2);
+  area->enableOpenMBV();
 
   //BODY
-  RigidBody* areapastedbody = new RigidBody("AreaPasteBody");
-  areapastedbody->setMass(1);
-  areapastedbody->setFrameOfReference(this->getFrameI());
-  areapastedbody->setInertiaTensor(SymMat3(EYE));
+  RigidBody* areaBody = new RigidBody("AreaBody");
+  areaBody->setMass(1);
+  areaBody->setFrameOfReference(this->getFrameI());
+  areaBody->setInertiaTensor(SymMat3(EYE));
 
-  //Enable kinematics
-  Mat3V translationDirections(3);
-  //enable movement in x-direction (first column)
-  translationDirections(0, 0) = 1;
-  translationDirections(1, 0) = 0;
-  translationDirections(2, 0) = 0;
-
-  //enable movement in y-direction (second column)
-  translationDirections(0, 1) = 0;
-  translationDirections(1, 1) = 1;
-  translationDirections(2, 1) = 0;
-
-  //enable movement in z-direction (third column)
-  translationDirections(0, 2) = 0;
-  translationDirections(1, 2) = 0;
-  translationDirections(2, 2) = 1;
-
-  areapastedbody->setTranslation(new LinearTranslation(translationDirections));
-  areapastedbody->setRotation(new CardanAngles);
+  areaBody->setTranslation(new LinearTranslation(Mat3x3(EYE)));
+  areaBody->setRotation(new CardanAngles);
   //give degrees of freedom
-  areapastedbody->setInitialGeneralizedPosition(Vec("[-1;1;-1.5;0;0;0]"));
-  areapastedbody->setInitialGeneralizedVelocity(Vec("[0;0;0;0;0;0]"));
+  areaBody->setInitialGeneralizedPosition(Vec("[-1.5;0.5;0;0;0;0]"));
+  areaBody->setInitialGeneralizedVelocity(Vec("[0;0;0;0;0;0]"));
 
-  this->addObject(areapastedbody);
+  this->addObject(areaBody);
 
-  areapastedbody->addContour(area, Vec3("[0;0;0]"), BasicRotAIKy(-M_PI_4));
+  areaBody->addContour(area, Vec3(), BasicRotAKIz(M_PI_4));
 
   //Add contact between frustum and area
   Contact* contact = new Contact("FrustumArea");
   contact->connect(area, polyfrustumcontour);
 
+  contact->setPlotFeature(openMBV, enabled);
+  contact->enableOpenMBVContactPoints();
+
   //Set contact law
   contact->setContactForceLaw(new UnilateralConstraint);
-  contact->setContactImpactLaw(new UnilateralNewtonImpact(0));
+  contact->setContactImpactLaw(new UnilateralNewtonImpact(0.3));
+  contact->setFrictionForceLaw(new SpatialCoulombFriction(0.5));
+  contact->setFrictionImpactLaw(new SpatialCoulombImpact(0.5));
 
   this->addLink(contact);
-
-
 
 }
 
