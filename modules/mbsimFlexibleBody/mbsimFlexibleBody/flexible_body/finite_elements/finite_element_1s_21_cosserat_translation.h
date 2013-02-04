@@ -62,7 +62,7 @@ namespace MBSimFlexibleBody {
        * \param acceleration of gravity
        * \param cardan object
        */
-      FiniteElement1s21CosseratTranslation(double l0_,double rho_,double A_,double E_,double G_,double I1_,double I2_,double I0_,const fmatvec::Vec& g_,CardanPtr ag_);
+      FiniteElement1s21CosseratTranslation(double l0_,double rho_,double A_,double E_,double G_,double I1_,const fmatvec::Vec& g_);
 
       /**
        * \brief destructor
@@ -91,8 +91,8 @@ namespace MBSimFlexibleBody {
       virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec& qG, const MBSim::ContourPointData& data);
 
       /* GETTER / SETTER */
-      void setMaterialDamping(double cEps0D_,double cEps1D_,double cEps2D_);		
-      void setShearCorrectionFactors(double sigma1_, double sigma2_);		
+      void setMaterialDamping(double cEps0D_,double cEps1D_);
+      void setShearCorrectionFactors(double sigma1_, double sigma2_);
       double getl0() const;
 
       /**
@@ -191,8 +191,8 @@ namespace MBSimFlexibleBody {
   inline const fmatvec::Vec& FiniteElement1s21CosseratTranslation::geth() const { return h; }
   inline const fmatvec::SqrMat& FiniteElement1s21CosseratTranslation::getdhdq() const { return dhdq; }
   inline const fmatvec::SqrMat& FiniteElement1s21CosseratTranslation::getdhdu() const { return dhdu; }
-  inline int FiniteElement1s21CosseratTranslation::getqSize() const { return 9; }
-  inline int FiniteElement1s21CosseratTranslation::getuSize() const { return 9; }
+  inline int FiniteElement1s21CosseratTranslation::getqSize() const { return 5; }
+  inline int FiniteElement1s21CosseratTranslation::getuSize() const { return 5; }
   inline void  FiniteElement1s21CosseratTranslation::computedhdz(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) { throw MBSim::MBSimError("Error(FiniteElement1s21CosseratTranslation::computedhdz): Not implemented"); }
   inline fmatvec::Vec FiniteElement1s21CosseratTranslation::computePosition(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s21CosseratTranslation::computePosition): Not implemented!"); }
   inline fmatvec::SqrMat FiniteElement1s21CosseratTranslation::computeOrientation(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s21CosseratTranslation::computeOrientation): Not implemented!"); }
