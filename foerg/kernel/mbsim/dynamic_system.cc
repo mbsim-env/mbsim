@@ -517,6 +517,10 @@ namespace MBSim {
         ((FixedRelativeFrame*)frame[i])->updatePosition();
         ((FixedRelativeFrame*)frame[i])->updateOrientation();
       }
+      for(unsigned int k=0; k<contour.size(); k++) {
+        if(!(contour[k]->getFrameOfReference()))
+          contour[k]->setFrameOfReference(I);
+      }
     }
     else if(stage==MBSim::plot) {
       if(parent)

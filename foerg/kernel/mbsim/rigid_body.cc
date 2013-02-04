@@ -202,6 +202,8 @@ namespace MBSim {
       }
 
       for(unsigned int k=0; k<contour.size(); k++) {
+        if(!(contour[k]->getFrameOfReference()))
+          contour[k]->setFrameOfReference(C);
         CompoundContour *c = dynamic_cast<CompoundContour*>(contour[k]);
         if(c) RBC.push_back(c);
       }
