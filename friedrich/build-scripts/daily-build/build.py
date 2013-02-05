@@ -1,5 +1,4 @@
 #! /usr/bin/python
-#MFMF remove version from all doxygen install path in all tools
 
 # imports
 from __future__ import print_function # to enable the print function for backward compatiblity with python2
@@ -106,7 +105,10 @@ def main():
         pj('mbsim', 'modules', 'mbsimControl')
       ]),
     pj('mbsim', 'modules', 'mbsimFlexibleBody'): set([ # depends on
-        pj('mbsim', 'kernel')
+        pj('mbsim', 'kernel'),
+        pj('mbsim', 'thirdparty', 'nurbs++')
+      ]),
+    pj('mbsim', 'thirdparty', 'nurbs++'): set([ # depends on
       ]),
     pj('mbsim', 'modules', 'mbsimPowertrain'): set([ # depends on
         pj('mbsim', 'kernel')
@@ -489,6 +491,8 @@ def make(tool, mainFD):
   try:
     if not args.disableMake:
       # make
+      print("\n\nRUNNING make clean\n", file=makeFD); makeFD.flush()
+      if subprocess.call(["make", "clean"], stderr=subprocess.STDOUT, stdout=makeFD)!=0: raise RuntimeError("make clean failed")
       print("\n\nRUNNING make\n", file=makeFD); makeFD.flush()
       if subprocess.call(["make", "-j", str(args.j)], stderr=subprocess.STDOUT, stdout=makeFD)!=0: raise RuntimeError("make failed")
       print("\n\nRUNNING make install\n", file=makeFD); makeFD.flush()
