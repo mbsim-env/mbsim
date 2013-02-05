@@ -184,7 +184,7 @@ dnl
 dnl Adding OpenGL support
 dnl
 
-AC_PATH_GL
+#AC_PATH_GL
 
 if test "$use_opengl" = yes; then
 AC_DEFINE([WITH_OPENGL],[1],[Compile with OpenGL])
