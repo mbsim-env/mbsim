@@ -493,7 +493,7 @@ namespace MBSimFlexibleBody {
       }
     }
 #else
-    throw MBSimError("No Nurbs-Library installed ...");
+    throw MBSim::MBSimError("No Nurbs-Library installed ...");
 #endif
   }
 
@@ -633,7 +633,7 @@ namespace MBSimFlexibleBody {
     }
 
 #else
-    throw MBSimError("No Nurbs-Library installed ...");
+    throw MBSim::MBSimError("No Nurbs-Library installed ...");
 #endif
   }
 
