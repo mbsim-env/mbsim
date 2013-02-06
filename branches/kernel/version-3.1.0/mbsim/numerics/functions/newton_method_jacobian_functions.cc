@@ -25,37 +25,6 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  NewtonJacobianFunction::NewtonJacobianFunction() :
-    function(0){
-  }
 
-  NumericalNewtonJacobianFunction::NumericalNewtonJacobianFunction() :
-    NewtonJacobianFunction() {
-  }
-
-  SqrMat NumericalNewtonJacobianFunction::operator ()(const fmatvec::Vec & x, const void*) {
-    SqrMat J = SqrMat(x.size()); // initialize size
-
-    double dx, xj;
-    Vec x2 = x;
-    Vec f = (*function)(x2);
-    Vec f2;
-
-    for (int j = 0; j < x2.size(); j++) {
-      xj = x2(j);
-
-      dx = (epsroot() * 0.5);
-      do {
-        dx += dx;
-      } while (fabs(xj + dx - x2(j)) < epsroot());
-
-      x2(j) += dx;
-      f2 = (*function)(x2);
-      x2(j) = xj;
-      J.col(j) = (f2 - f) / dx;
-    }
-
-    return J;
-  }
 
 }

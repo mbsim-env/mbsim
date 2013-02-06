@@ -38,6 +38,7 @@ namespace MBSim {
    * \brief Newton method for multidimensional root finding
    * \author Kilian Grundl (3.2.2012)
    */
+  template<class VecType, class AT>
   class MultiDimensionalNewtonMethod {
     public:
       /*!
@@ -61,20 +62,20 @@ namespace MBSim {
       void setMaximumNumberOfIterations(int itmax_) {
         itermax = itmax_;
       }
-      void setFunction(Function1<fmatvec::Vec, fmatvec::Vec> *function_) {
+      void setFunction(Function1<fmatvec::Vector<VecType, AT>, fmatvec::Vector<VecType, AT> > *function_) {
         function = function_;
       }
-      void setJacobianFunction(NewtonJacobianFunction * jacobian_) {
+      void setJacobianFunction(NewtonJacobianFunction<VecType, AT> * jacobian_) {
         jacobian = jacobian_;
       }
-      void setDampingFunction(DampingFunction * damping_) {
-        damping = damping_;
+      void setDampingFunction(DampingFunction<VecType, AT> * damping_) {
+        this->damping = damping_;
       }
-      void setCriteriaFunction(CriteriaFunction * criteria_) {
-        criteria = criteria_;
+      void setCriteriaFunction(CriteriaFunction<VecType, AT> * criteria_) {
+        this->criteria = criteria_;
       }
-      CriteriaFunction * getCriteriaFunction() {
-        return criteria;
+      CriteriaFunction<VecType, AT> * getCriteriaFunction() {
+        return this->criteria;
       }
       /***************************************************/
 
@@ -82,7 +83,7 @@ namespace MBSim {
        * \brief solve nonlinear root function
        * \param initialValue initial value
        */
-      fmatvec::Vec solve(const fmatvec::Vec & initialValue);
+      fmatvec::Vector<VecType, AT> solve(const fmatvec::Vector<VecType, AT> & initialValue);
 
     private:
 
@@ -94,19 +95,19 @@ namespace MBSim {
       /**
        * \brief Jacobian matrix
        */
-      NewtonJacobianFunction *jacobian;
+      NewtonJacobianFunction<VecType, AT> *jacobian;
 
       /*
        * \brief damping function
        */
-      DampingFunction *damping;
+      DampingFunction<VecType, AT> *damping;
 
       /*
        * \brief criteria function
        *
        * This function defines the criteria when to stop the Newton algorithm
        */
-      CriteriaFunction *criteria;
+      CriteriaFunction<VecType, AT> *criteria;
 
       /**
        * \brief maximum number of iterations, actual number of iterations, maximum number of damping steps, information about success
@@ -125,116 +126,24 @@ namespace MBSim {
 
   };
 
-  template <int size>
-  class MDNM {
-
-      typedef fmatvec::Vector<fmatvec::Fixed<size>, double> vctr;
-
-    public:
-      /*!
-       * \brief plain constructor
-       */
-      MDNM();
-
-      virtual ~MDNM() {
-      }
-
-      /* GETTER / SETTER */
-      int getNumberOfIterations() const {
-        return iter;
-      }
-      int getNumberOfMaximalIterations() const {
-        return itermax;
-      }
-      int getInfo() const {
-        return info;
-      }
-      void setMaximumNumberOfIterations(int itmax_) {
-        itermax = itmax_;
-      }
-      void setFunction(Function1<vctr, vctr> *function_) {
-        function = function_;
-      }
-      void setJacobianFunction(NJacobianFunction<size> * jacobian_) {
-        jacobian = jacobian_;
-      }
-//      void setDampingFunction(DampingFunction * damping_) {
-//        damping = damping_;
-//      }
-      void setCriteriaFunction(CFunction<size> * criteria_) {
-        criteria = criteria_;
-      }
-      CFunction<size> * getCriteriaFunction() {
-        return criteria;
-      }
-      /***************************************************/
-
-      /**
-       * \brief solve nonlinear root function
-       * \param initialValue initial value
-       */
-      vctr solve(const vctr & initialValue);
-
-    private:
-
-      /**
-       * \brief root function
-       */
-      Function1<vctr, vctr> *function;
-
-      /**
-       * \brief Jacobian matrix
-       */
-      NJacobianFunction<size> *jacobian;
-
-      /*
-       * \brief damping function
-       */
-//      DampingFunction *damping;
-
-      /*
-       * \brief criteria function
-       *
-       * This function defines the criteria when to stop the Newton algorithm
-       */
-      CFunction<size> *criteria;
-
-      /**
-       * \brief maximum number of iterations, actual number of iterations, maximum number of damping steps, information about success
-       */
-      int itermax;
-
-      /*
-       * \brief number of iterations
-       */
-      int iter;
-
-      /*
-       * \brief information about the result of the method
-       */
-      int info;
-
-  };
-
-  template <int size>
-  MDNM<size>::MDNM() :
-      function(0), jacobian(0), criteria(0), itermax(300), iter(0), info(1) {
-
+  template<class VecType, class AT>
+  MultiDimensionalNewtonMethod<VecType, AT>::MultiDimensionalNewtonMethod() :
+    function(0), jacobian(0), damping(0), criteria(0), itermax(300), iter(0), info(1){
   }
 
-  template <int size>
-  fmatvec::Vector<fmatvec::Fixed<size>, double> MDNM<size>::solve(const fmatvec::Vector<fmatvec::Fixed<size>, double> & initialValue) {
+  template<class VecType, class AT>
+  fmatvec::Vector<VecType, AT> MultiDimensionalNewtonMethod<VecType, AT>::solve(const fmatvec::Vector<VecType, AT> & initialValue) {
     /*Reset for comparing*/
     criteria->clear();
     criteria->setFunction(function);
     info = (*criteria)(initialValue);
-    if (info == 0)
+    if(info == 0)
       return initialValue;
 
-//    if (damping) {
-//      damping->setCriteriaFunction(criteria);
-//      damping->setFunction(function);
-//    }
+    if(damping) {
+      damping->setCriteriaFunction(criteria);
+      damping->setFunction(function);
+    }
 
     jacobian->setFunction(function);
 
@@ -243,19 +152,22 @@ namespace MBSim {
     /*End - Reset*/
 
     //current position in function
-    vctr x = initialValue;
+    fmatvec::Vector<VecType, AT> x = initialValue;
 
     //current value of function
-    vctr f = (*function)(x);
+    fmatvec::Vector<VecType, AT> f = (*function)(x);
+
+    //direction of function (derivative)
+    fmatvec::SquareMatrix<VecType, AT> J = (*jacobian)(x);
 
     //step to next position
-    vctr dx = slvLU((*jacobian)(x), f, info);
+    fmatvec::Vector<VecType, AT> dx = slvLU(J, f, info);
 
     //Damp the solution
-//    if (damping)
-//      x -= (*damping)(x, dx) * dx;
-//    else
-    x -= dx;
+    if(damping)
+      x -=  (*damping)(x, dx) * dx;
+    else
+      x -= dx;
 
     f = (*function)(x);
 
@@ -266,7 +178,7 @@ namespace MBSim {
 
       //Criteria with info = 1 means: go on  (else there might be a solution found (=0) or something else)
       if (info != 1) {
-        if (info == -1) //new solution is worse than solution before --> return solution before
+        if(info == -1) //new solution is worse than solution before --> return solution before
           return x + dx;
         else
           return x;
@@ -275,16 +187,19 @@ namespace MBSim {
       //compute current value
       f = (*function)(x);
 
+      //Compute Jacobian
+      J = (*jacobian)(x);
+
       //get step
-      dx = slvLU((*jacobian)(x), f, info);
+      dx = slvLU(J, f, info);
 
       //cout << "dxn[" << iter << "] = " << dx << endl;
 
       //Damp the solution
-//      if (damping)
-//        x -= (*damping)(x, dx) * dx;
-//      else
-      x -= dx;
+      if(damping)
+        x -=  (*damping)(x, dx) * dx;
+      else
+        x -= dx;
 
     }
 

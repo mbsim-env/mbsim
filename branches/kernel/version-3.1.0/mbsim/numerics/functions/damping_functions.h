@@ -24,7 +24,8 @@
 
 namespace MBSim {
 
-  class DampingFunction : public Function2<double, fmatvec::Vec, fmatvec::Vec> {
+  template<class VecType, class AT>
+  class DampingFunction : public Function2<double, fmatvec::Vector<VecType, AT>, fmatvec::Vector<VecType, AT> > {
     public:
     /**
      * \brief constructor
@@ -38,30 +39,31 @@ namespace MBSim {
     }
 
     /* GETTER / SETTER*/
-    void setFunction(Function1<fmatvec::Vec, fmatvec::Vec> * function_) {
+    void setFunction(Function1<fmatvec::Vector<VecType, AT>, fmatvec::Vector<VecType, AT> > * function_) {
       function = function_;
     }
-    void setCriteriaFunction(CriteriaFunction * criteria_) {
+    void setCriteriaFunction(CriteriaFunction<VecType, AT> * criteria_) {
       criteria = criteria_;
     }
     /******************/
 
-    virtual double operator ()(const fmatvec::Vec & x, const fmatvec::Vec & dx, const void * = NULL) = 0;
+    virtual double operator ()(const fmatvec::Vector<VecType, AT> & x, const fmatvec::Vector<VecType, AT> & dx, const void * = NULL) = 0;
 
     protected:
     /**
      * \brief function that computes the values
      */
-    Function1<fmatvec::Vec, fmatvec::Vec> *function;
+    Function1<fmatvec::Vector<VecType, AT>, fmatvec::Vector<VecType, AT> > *function;
 
     /**
      * \brief criteria that defines if a solution gets better
      */
-    CriteriaFunction * criteria;
+    CriteriaFunction<VecType, AT> * criteria;
 
   };
 
-  class StandardDampingFunction : public DampingFunction {
+  template<class VecType, class AT>
+  class StandardDampingFunction : public DampingFunction<VecType, AT> {
 
     public:
       /**
@@ -75,7 +77,7 @@ namespace MBSim {
       virtual ~StandardDampingFunction() {
       }
 
-      virtual double operator ()(const fmatvec::Vec & x, const fmatvec::Vec & dx, const void * = NULL);
+      virtual double operator ()(const fmatvec::Vector<VecType, AT> & x, const fmatvec::Vector<VecType, AT> & dx, const void * = NULL);
 
     protected:
       /**
@@ -83,5 +85,33 @@ namespace MBSim {
        */
       unsigned int kmax;
   };
+
+  template<class VecType, class AT>
+  DampingFunction<VecType, AT>::DampingFunction() :
+    function(0), criteria(0){
+
+  }
+
+  template<class VecType, class AT>
+  StandardDampingFunction<VecType, AT>::StandardDampingFunction(unsigned int kmax_ /* = 300*/) :
+      DampingFunction<VecType, AT>(), kmax(kmax_) {
+  }
+
+  template<class VecType, class AT>
+  double StandardDampingFunction<VecType, AT>::operator ()(const fmatvec::Vector<VecType, AT> & x, const fmatvec::Vector<VecType, AT> & dx, const void *) {
+    double alpha = 1;
+    fmatvec::Vector<VecType, AT> xnew = x;
+
+    for (unsigned int k = 0; k < kmax; k++) {
+      xnew = x - alpha * dx;
+      fmatvec::Vector<VecType, AT> f = (*this->function)(xnew);
+      if(this->criteria->isBetter(xnew)) {
+        return alpha;
+      }
+      alpha *= 0.5;
+    }
+
+    return 1;
+  }
 }
 #endif //NUMERICS_DAMPINGFUNCITONS_H_

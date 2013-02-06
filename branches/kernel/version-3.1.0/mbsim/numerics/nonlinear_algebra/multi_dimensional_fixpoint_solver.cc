@@ -25,44 +25,4 @@ using namespace std;
 
 namespace MBSim {
 
-  MultiDimensionalFixpointSolver::MultiDimensionalFixpointSolver() :
-    function(0), criteria(0), iter(0), itermax(1e3), norms(0), info(1){
-
-  }
-
-  MultiDimensionalFixpointSolver::MultiDimensionalFixpointSolver(Function1<Vec, Vec> *function_) :
-      function(function_), criteria(0), iter(0), itermax(1e3), norms(0), info(1) {
-  }
-
-  /*
-   * \brief finds a fixpoint starting on the initialGuess values
-   * \param intialGuess starting value for the fixpoint iteration
-   * \return vector after iteration (solution or currentGuess-value)
-   */
-  Vec MultiDimensionalFixpointSolver::solve(const Vec & initialGuess) {
-    /*Initialise*/
-    Vec currentGuess = initialGuess.copy();
-    info = 1;
-    criteria->setFunction(function);
-    criteria->clear();
-
-    for (iter = 0; iter < itermax; iter++) {
-      currentGuess = (*function)(currentGuess);
-
-      info = (*criteria)(currentGuess);
-
-      if(info != 1) {
-        if(info == -1) { //divergence case //TODO: a more clever structure (with multiple inheritage for shift-functions) might avoid the dynamic casting
-          if(dynamic_cast<LocalShiftCriteriaFunction*>(criteria))
-            return static_cast<LocalShiftCriteriaFunction*>(criteria)->getLastPoint();
-          else if(dynamic_cast<GlobalShiftCriteriaFunction*>(criteria))
-            return static_cast<GlobalShiftCriteriaFunction*>(criteria)->getLastPoint();
-        }
-
-        return currentGuess;
-      }
-    }
-    return currentGuess;
-  }
-
 } /* namespace MBSim */

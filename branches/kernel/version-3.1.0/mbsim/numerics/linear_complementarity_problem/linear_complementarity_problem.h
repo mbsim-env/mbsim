@@ -81,10 +81,10 @@ namespace MBSim {
       void setJacobianType(const JacobianType & jacobianType_) {
         jacobianType = jacobianType_;
       }
-      void setNewtonCriteriaFunction(CriteriaFunction * criteriaFunction_) {
+      void setNewtonCriteriaFunction(CriteriaFunction<fmatvec::Ref, double> * criteriaFunction_) {
         newtonSolver->setCriteriaFunction(criteriaFunction_);
       }
-      void setFixpointCriteriaFunction(CriteriaFunction * criteriaFunction_) {
+      void setFixpointCriteriaFunction(CriteriaFunction<fmatvec::Ref, double> * criteriaFunction_) {
         fixpointSolver->setCriteriaFunction(criteriaFunction_);
       }
       void setDebugLevel(const unsigned int & DEBUGLEVEL_) {
@@ -153,7 +153,7 @@ namespace MBSim {
       /*!
        * \brief NewtonSolver for reformulated system
        */
-      MultiDimensionalNewtonMethod * newtonSolver;
+      MultiDimensionalNewtonMethod<fmatvec::Ref, double> * newtonSolver;
 
       /*!
        * \brief reformulated LCP suited for a Newton Solver
@@ -163,17 +163,17 @@ namespace MBSim {
       /*!
        * \brief Jacobian Function for the reformulated LCP
        */
-      NewtonJacobianFunction * jacobianFunction;
+      NewtonJacobianFunction<fmatvec::Ref, double> * jacobianFunction;
 
       /*!
        * \brief criteria function for Newton solver
        */
-      CriteriaFunction * criteriaNewton;
+      CriteriaFunction<fmatvec::Ref, double> * criteriaNewton;
 
       /*!
        * \brief FixpointSolver for reformulated system
        */
-      MultiDimensionalFixpointSolver * fixpointSolver;
+      MultiDimensionalFixpointSolver<fmatvec::Ref, double> * fixpointSolver;
 
       /*!
        * \brief reformulated LCP suited for a FixpointSolver
@@ -183,7 +183,7 @@ namespace MBSim {
       /*!
        * \brief criteria function for Fixedpoint solver
        */
-      CriteriaFunction * criteriaFixedpoint;
+      CriteriaFunction<fmatvec::Ref, double> * criteriaFixedpoint;
 
       /**
        * \brief Output (information) level

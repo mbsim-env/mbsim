@@ -32,7 +32,7 @@ namespace MBSim {
        * \brief standard constructor
        */
       LCPReformulationFunction(const double &r_ = 10) :
-          r(r_), DEBUGLEVEL(0) {
+          dimension(0), r(r_), DEBUGLEVEL(0) {
       }
 
       /**
@@ -61,7 +61,7 @@ namespace MBSim {
         M = M_;
         q = q_;
         assert(M.rows() == q.rows());
-        NumberOfContacts = q.rows();
+        dimension = q.rows();
       }
       fmatvec::SqrMat getM(void) {
         return M;
@@ -78,7 +78,7 @@ namespace MBSim {
       /**
        * \brief Number of possible contact points (= dimension of the LCP)
        */
-      int NumberOfContacts;
+      int dimension;
 
       /**
        * \brief vector of all rigid body gaps
@@ -160,7 +160,7 @@ namespace MBSim {
       /***************************************************/
   };
 
-  class LinearComplementarityJacobianFunction : public NewtonJacobianFunction {
+  class LinearComplementarityJacobianFunction : public NewtonJacobianFunction<fmatvec::Ref, double> {
     public:
       /**
        * \brief constructor

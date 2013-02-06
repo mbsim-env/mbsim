@@ -29,10 +29,10 @@ using namespace std;
 namespace MBSim {
 
   LCPReformulationFunction::LCPReformulationFunction(const fmatvec::Vec & q_, const SqrMat &M_, const double &r_, const unsigned int & DEBUGLEVEL_) :
-      NumberOfContacts(q_.size()), q(q_), M(M_), r(r_), DEBUGLEVEL(DEBUGLEVEL_) {
+      dimension(q_.size()), q(q_), M(M_), r(r_), DEBUGLEVEL(DEBUGLEVEL_) {
 
     //dimensions have to be equal
-    assert(M_.size() == NumberOfContacts);
+    assert(M_.size() == dimension);
   }
 
   LCPReformulationFunction::~LCPReformulationFunction() {
@@ -49,15 +49,15 @@ namespace MBSim {
   Vec LCPNewtonReformulationFunction::operator ()(const Vec &currentSolution, const void *) {
 
     //check dimensions
-    assert(currentSolution.size() == 2 * NumberOfContacts);
+    assert(currentSolution.size() == 2 * dimension);
 
-    Vec returnVec(2 * NumberOfContacts, INIT, 0.);
+    Vec returnVec(2 * dimension, INIT, 0.);
 
     //reference to gap and lambda
     Vec w;
     Vec z;
-    w << currentSolution(0, NumberOfContacts - 1);
-    z << currentSolution(NumberOfContacts, 2 * NumberOfContacts - 1);
+    w << currentSolution(0, dimension - 1);
+    z << currentSolution(dimension, 2 * dimension - 1);
 
     if (DEBUGLEVEL >= 5) {
 
@@ -68,13 +68,13 @@ namespace MBSim {
     }
 
     //compute first part
-    returnVec(0, NumberOfContacts - 1) = q + M * z - w;
+    returnVec(0, dimension - 1) = q + M * z - w;
 
     //loop for the prox-functions
-    for (int contactIterator = 0; contactIterator < NumberOfContacts; contactIterator++) {
-      returnVec(NumberOfContacts + contactIterator) = proxCN(z(contactIterator) - r * w(contactIterator)) - z(contactIterator);
+    for (int contactIterator = 0; contactIterator < dimension; contactIterator++) {
+      returnVec(dimension + contactIterator) = proxCN(z(contactIterator) - r * w(contactIterator)) - z(contactIterator);
       if (DEBUGLEVEL >= 5) {
-        cout << "returnVec(" << NumberOfContacts + contactIterator << ")=" << proxCN(z(contactIterator) - r * w(contactIterator)) << "- " << z(contactIterator) << endl;
+        cout << "returnVec(" << dimension + contactIterator << ")=" << proxCN(z(contactIterator) - r * w(contactIterator)) << "- " << z(contactIterator) << endl;
         cout << "proxCN(lambda(i) - r * gap(i)) = proxCN( " << z(contactIterator) << "-" << r << "*" << w(contactIterator) << endl;
       }
     }
@@ -90,7 +90,7 @@ namespace MBSim {
       LCPReformulationFunction(q_, M_, r_, DEBUGLEVEL_) {
 
     //dimensions have to be equal
-    assert(M_.size() == NumberOfContacts);
+    assert(M_.size() == dimension);
   }
 
   LCPFixpointReformulationFunction::~LCPFixpointReformulationFunction() {
@@ -99,15 +99,15 @@ namespace MBSim {
   Vec LCPFixpointReformulationFunction::operator ()(const Vec &currentSolution, const void *) {
 
     //check dimensions
-    assert(currentSolution.size() == 2 * NumberOfContacts);
+    assert(currentSolution.size() == 2 * dimension);
 
-    Vec returnVec(2 * NumberOfContacts, INIT, 0.);
+    Vec returnVec(2 * dimension, INIT, 0.);
 
     //reference to gap and lambda
     Vec w;
     Vec z;
-    w << currentSolution(0, NumberOfContacts - 1);
-    z << currentSolution(NumberOfContacts, 2 * NumberOfContacts - 1);
+    w << currentSolution(0, dimension - 1);
+    z << currentSolution(dimension, 2 * dimension - 1);
 
     if (DEBUGLEVEL > 0) {
 
@@ -117,12 +117,12 @@ namespace MBSim {
       cout << "M is: " << M << endl;
     }
 
-    returnVec(0, NumberOfContacts - 1) = q + M * z;
+    returnVec(0, dimension - 1) = q + M * z;
     //loop for the prox-functions
-    for (int contactIterator = 0; contactIterator < NumberOfContacts; contactIterator++) {
-      returnVec(NumberOfContacts + contactIterator) = proxCN(z(contactIterator) - r * w(contactIterator));
+    for (int contactIterator = 0; contactIterator < dimension; contactIterator++) {
+      returnVec(dimension + contactIterator) = proxCN(z(contactIterator) - r * w(contactIterator));
       if (DEBUGLEVEL > 0) {
-        cout << "returnVec(" << NumberOfContacts + contactIterator << ")=" << proxCN(z(contactIterator) - r * w(contactIterator)) << "- " << z(contactIterator) << endl;
+        cout << "returnVec(" << dimension + contactIterator << ")=" << proxCN(z(contactIterator) - r * w(contactIterator)) << "- " << z(contactIterator) << endl;
         cout << "proxCN(lambda(i) - r * gap(i)) = proxCN( " << z(contactIterator) << "-" << r << "*" << w(contactIterator) << endl;
       }
     }
