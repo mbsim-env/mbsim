@@ -119,6 +119,8 @@ namespace MBSimFlexibleBody {
        * \param number of finite element
        * \param local vector
        * \param global vector
+       *
+       * \todo: use fixed-size here
        */
       virtual void GlobalVectorContribution(int CurrentElement, const fmatvec::Vec &locVec, fmatvec::Vec &gloVec) = 0;
 
@@ -127,6 +129,8 @@ namespace MBSimFlexibleBody {
        * \param CurrentElement number of current finite element
        * \param locMat local matrix
        * \param gloMat global matrix
+       *
+       * \todo: use fixed-size here
        */
       virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat &locMat, fmatvec::Mat &gloMat) = 0;
 
@@ -135,6 +139,8 @@ namespace MBSimFlexibleBody {
        * \param CurrentElement number of current finite element
        * \param locMat local matrix
        * \param gloMat global matrix
+       *
+       * \todo: use fixed-size here
        */
       virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::Matrix<fmatvec::Symmetric, Col, Col, double> &locMat, fmatvec::SymMat &gloMat) = 0;
 
@@ -143,8 +149,12 @@ namespace MBSimFlexibleBody {
        * \param CurrentElement number of current finite element
        * \param locMat local matrix
        * \param gloMat global matrix
+       *
+       * \todo: use fixed-size here
        */
-      virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::SquareMatrix<Col, double> &locMat, fmatvec::Mat &gloMat) = 0;
+      virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::SquareMatrix<Col, double> &locMat, fmatvec::Mat &gloMat) {
+        throw MBSim::MBSimError("ERROR: Not implemented --> to be done for every body!");
+      }
 
       /**
        * \brief cartesian kinematic for contour or external frame (normal, tangent, binormal) is set by implementation class

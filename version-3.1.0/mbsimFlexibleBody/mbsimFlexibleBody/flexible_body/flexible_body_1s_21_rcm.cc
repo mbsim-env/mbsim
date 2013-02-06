@@ -126,10 +126,6 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody1s21RCM::GlobalMatrixContribution(int n, const fmatvec::SqrMat8& locMat, fmatvec::Mat& gloMat) {
-    throw new MBSimError("ERROR: FlexibleBody1s21RCM::GlobalMatrixContribution: not implemented!");
-  }
-
   void FlexibleBody1s21RCM::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
     if (cp.getContourParameterType() == CONTINUUM) { // frame on continuum
       Vec X = computeState(cp.getLagrangeParameterPosition()(0));
