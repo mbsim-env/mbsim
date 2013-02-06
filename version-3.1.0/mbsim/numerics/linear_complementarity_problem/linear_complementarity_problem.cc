@@ -77,9 +77,9 @@ namespace MBSim {
 
     //set properties
 
-    newtonSolver = new MultiDimensionalNewtonMethod();
+    newtonSolver = new MultiDimensionalNewtonMethod<fmatvec::Ref, double>();
 
-    fixpointSolver = new MultiDimensionalFixpointSolver();
+    fixpointSolver = new MultiDimensionalFixpointSolver<fmatvec::Ref, double>();
 
     setSystem(M_, q_);
   }
@@ -106,7 +106,7 @@ namespace MBSim {
     if (jacobianType == LCPSpecial)
       jacobianFunction = new LinearComplementarityJacobianFunction();
     else
-      jacobianFunction = new NumericalNewtonJacobianFunction();
+      jacobianFunction = new NumericalNewtonJacobianFunction<fmatvec::Ref, double>();
 
     newtonSolver->setJacobianFunction(jacobianFunction);
 
@@ -114,7 +114,7 @@ namespace MBSim {
     newtonFunction->setSystem(M, q);
     newtonSolver->setFunction(newtonFunction);
 
-    criteriaNewton = new GlobalResidualCriteriaFunction();
+    criteriaNewton = new GlobalResidualCriteriaFunction<fmatvec::Ref, double>();
 
     newtonSolver->setCriteriaFunction(criteriaNewton);
 
@@ -123,7 +123,7 @@ namespace MBSim {
     fixpointFunction->setSystem(M, q);
     fixpointSolver->setFunction(fixpointFunction);
 
-    criteriaFixedpoint = new GlobalShiftCriteriaFunction();
+    criteriaFixedpoint = new GlobalShiftCriteriaFunction<fmatvec::Ref, double>();
 
     fixpointSolver->setCriteriaFunction(criteriaFixedpoint);
 

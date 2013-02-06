@@ -24,29 +24,6 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  DampingFunction::DampingFunction() :
-    function(0), criteria(0){
 
-  }
-
-  StandardDampingFunction::StandardDampingFunction(unsigned int kmax_ /* = 300*/) :
-      DampingFunction(), kmax(kmax_) {
-  }
-
-  double StandardDampingFunction::operator ()(const Vec & x, const fmatvec::Vec & dx, const void *) {
-    double alpha = 1;
-    Vec xnew = x.copy();
-
-    for (unsigned int k = 0; k < kmax; k++) {
-      xnew = x - alpha * dx;
-      Vec f = (*function)(xnew);
-      if(criteria->isBetter(xnew)) {
-        return alpha;
-      }
-      alpha *= 0.5;
-    }
-
-    return 1;
-  }
 
 }

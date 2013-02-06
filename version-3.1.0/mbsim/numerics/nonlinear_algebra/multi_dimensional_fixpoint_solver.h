@@ -31,6 +31,7 @@ namespace MBSim {
    * \author Kilian Grundl
    * \date 2012-02-07 copied from mbsim/utils/nonlinear_algebra
    */
+  template <class VecType, class AT>
   class MultiDimensionalFixpointSolver {
     public:
       /*!
@@ -42,9 +43,11 @@ namespace MBSim {
        * \brief constructor
        * \param fct pointer to used fix-point-function
        */
-      MultiDimensionalFixpointSolver(Function1<fmatvec::Vec, fmatvec::Vec> *function_);
+      MultiDimensionalFixpointSolver(Function1<VecType, VecType> *function_);
 
-      virtual ~MultiDimensionalFixpointSolver(){};
+      virtual ~MultiDimensionalFixpointSolver() {
+      }
+      ;
 
       /* GETTER / SETTER */
       /*!
@@ -53,7 +56,9 @@ namespace MBSim {
        * info == -1:  no converge
        * info == 1:   process (seems to) converge but hasn't finished
        */
-      void setFunction(Function1<fmatvec::Vec, fmatvec::Vec> *function_) {function = function_;}
+      void setFunction(Function1<fmatvec::Vector<VecType, AT>, fmatvec::Vector<VecType, AT> > *function_) {
+        this->function = function_;
+      }
       int getInfo() {
         return info;
       }
@@ -69,25 +74,25 @@ namespace MBSim {
       void setNumberOfMaximalIterations(int itermax_) {
         itermax = itermax_;
       }
-      void setCriteriaFunction(CriteriaFunction * criteria_) {
-        criteria = criteria_;
+      void setCriteriaFunction(CriteriaFunction<VecType, AT> * criteria_) {
+        this->criteria = criteria_;
       }
       /*******************/
 
-      fmatvec::Vec solve(const fmatvec::Vec &initialGuess);
+      fmatvec::Vector<VecType, AT> solve(const fmatvec::Vector<VecType, AT> &initialGuess);
 
     private:
       /**
        * \brief fixpoint function
        */
-      Function1<fmatvec::Vec, fmatvec::Vec> *function;
+      Function1<fmatvec::Vector<VecType, AT>, fmatvec::Vector<VecType, AT> > *function;
 
       /*
        * \brief criteria function
        *
        * This function defines the criteria when to stop the fixpoint iteration
        */
-      CriteriaFunction *criteria;
+      CriteriaFunction<VecType, AT> *criteria;
 
       /**
        *  \brief number of iterations
@@ -109,6 +114,49 @@ namespace MBSim {
        */
       int info;
   };
+
+  template <class VecType, class AT>
+  MultiDimensionalFixpointSolver<VecType, AT>::MultiDimensionalFixpointSolver() :
+      function(0), criteria(0), iter(0), itermax(1e3), norms(0), info(1) {
+
+  }
+
+  template <class VecType, class AT>
+  MultiDimensionalFixpointSolver<VecType, AT>::MultiDimensionalFixpointSolver(Function1<VecType, VecType> *function_) :
+      function(function_), criteria(0), iter(0), itermax(1e3), norms(0), info(1) {
+  }
+
+  /*
+   * \brief finds a fixpoint starting on the initialGuess values
+   * \param intialGuess starting value for the fixpoint iteration
+   * \return vector after iteration (solution or currentGuess-value)
+   */
+  template <class VecType, class AT>
+  fmatvec::Vector<VecType, AT> MultiDimensionalFixpointSolver<VecType, AT>::solve(const fmatvec::Vector<VecType, AT> & initialGuess) {
+    /*Initialise*/
+    fmatvec::Vector<VecType, AT> currentGuess = initialGuess;
+    info = 1;
+    criteria->setFunction(function);
+    criteria->clear();
+
+    for (iter = 0; iter < itermax; iter++) {
+      currentGuess = (*function)(currentGuess);
+
+      info = (*criteria)(currentGuess);
+
+      if (info != 1) {
+        if (info == -1) { //divergence case //TODO: a more clever structure (with multiple inheritage for shift-functions) might avoid the dynamic casting
+          if (dynamic_cast<LocalShiftCriteriaFunction<VecType, AT>*>(criteria))
+            return static_cast<LocalShiftCriteriaFunction<VecType, AT>*>(criteria)->getLastPoint();
+          else if (dynamic_cast<GlobalShiftCriteriaFunction<VecType, AT>*>(criteria))
+            return static_cast<GlobalShiftCriteriaFunction<VecType, AT>*>(criteria)->getLastPoint();
+        }
+
+        return currentGuess;
+      }
+    }
+    return currentGuess;
+  }
 
 } /* namespace MBSim */
 #endif /* MULTI_DIMENSIONAL_FIXPOINT_SOLVER_H_ */
