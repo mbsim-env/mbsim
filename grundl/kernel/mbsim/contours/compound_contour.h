@@ -39,7 +39,13 @@ namespace MBSim {
       CompoundContour(const std::string &name);
 
       /* INHERITED INTERFACE OF ELEMENT */
-      std::string getType() const { return "CompoundContour"; }
+      std::string getType() const {
+        return "CompoundContour";
+      }
+      virtual void plot(double t, double dt);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  OpenMBV::Group* getOpenMBVGrp() { return openMBVGroup; }
+#endif
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
@@ -54,16 +60,41 @@ namespace MBSim {
       /***************************************************/
 
       void init(InitStage stage);
-      Contour* getContourElement(int i) { return element[i]; }
-      void addContourElement(Contour* ce, const fmatvec::Vec3& re);
-      unsigned int getNumberOfElements() { return element.size(); }
+      Contour* getContourElement(int i) {
+        return element[i];
+      }
+      void addContourElement(Contour* ce, const fmatvec::Vec3& re, const fmatvec::SqrMat3& AIK = fmatvec::SqrMat3(fmatvec::EYE));
+      unsigned int getNumberOfElements() {
+        return element.size();
+      }
 
       void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff);
       void updateJacobiansForFrame(ContourPointData &cp);
 
-    private:
+    protected:
+      /*!
+       * \brief list of all subelements
+       */
       std::vector<Contour*> element;
-      std::vector<fmatvec::Vec3> Kr, Wr;
+
+      /*!
+       * \brief positions of the single elements in the contour frame
+       */
+      std::vector<fmatvec::Vec3> Kr;
+
+      /*!
+       * \brief positions of the single elements in the world frame
+       */
+      std::vector<fmatvec::Vec3> Wr;
+
+      /*!
+       * \brief Orientations of the single elements in the contour frame
+       */
+      std::vector<fmatvec::SqrMat3> AIK;
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::Group* openMBVGroup;
+#endif
   };
 }
 

@@ -88,6 +88,8 @@ namespace MBSim {
       /*!
        * \brief compute normal distance, possible contact point positions and orientation for several possible contact points
        * \param vector of single contacts used in the contact kinematics
+       *
+       * REMARK: The given vector of Contacts is ordered by the possible contact points (cp. multi-contact preINIT-stage)
        */
       virtual void updateg(std::vector<Contact> & contact) {updateg(contact[0].getg(), contact[0].getcpData());}
 

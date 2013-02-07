@@ -14,6 +14,7 @@ libcontour_la_SOURCES = face.cc\
 			plane.cc\
 			planewithfrustum.cc\
 			polynomial_frustum.cc\
+			room.cc\
 			sphere.cc\
 			line_segment.cc
 
@@ -42,5 +43,6 @@ contourinclude_HEADERS = face.h\
 			 planewithfrustum.h\
 			 point.h\
 			 polynomial_frustum.h\
+			 room.h
 			 sphere.h\
 			 line_segment.h
