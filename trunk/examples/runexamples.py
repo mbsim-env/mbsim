@@ -486,7 +486,7 @@ def executeSrcExample(executeFD):
   if subprocess.call(["make", "clean"], stderr=subprocess.STDOUT, stdout=executeFD)!=0: return 1, 0
   if subprocess.call(["make"], stderr=subprocess.STDOUT, stdout=executeFD)!=0: return 1, 0
   # append $prefix/lib to LD_LIBRARY_PATH/PATH to find lib by main of the example
-  if on.name=="posix":
+  if os.name=="posix":
     NAME="LD_LIBRARY_PATH"
     SUBDIR="lib"
   elif os.name=="nt":
