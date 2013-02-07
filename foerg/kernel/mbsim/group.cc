@@ -143,6 +143,7 @@ namespace MBSim {
     // frames
     TiXmlElement *E=e->FirstChildElement();
     while(E && E->ValueStr()==MBSIMNS"frame") {
+      Deprecated::registerMessage("Using the <mbsim:frame> element is deprecated, use the <mbsim:Frame> element instead.", E);
       TiXmlElement *ec=E->FirstChildElement();
       FixedRelativeFrame *f=new FixedRelativeFrame(ec->Attribute("name"));
       addFrame(f);
@@ -168,6 +169,7 @@ namespace MBSim {
     // contours
     E=e->FirstChildElement();
     while(E && E->ValueStr()==MBSIMNS"contour") {
+      Deprecated::registerMessage("Using the <mbsim:contour> element is deprecated, use the <mbsim:Contour> element instead.", E);
       TiXmlElement *ec=E->FirstChildElement();
       Contour *c=ObjectFactory::getInstance()->createContour(ec);
       c->initializeUsingXML(ec);
