@@ -46,8 +46,8 @@ namespace MBSim {
   void Area::enableOpenMBV(bool enable, int number) {
     if(enable) {
       openMBVRigidBody=new OpenMBV::Grid;
-      ((OpenMBV::Grid*)openMBVRigidBody)->setXSize(limy);
-      ((OpenMBV::Grid*)openMBVRigidBody)->setYSize(limz);
+      ((OpenMBV::Grid*)openMBVRigidBody)->setYSize(limy);
+      ((OpenMBV::Grid*)openMBVRigidBody)->setXSize(limz);
       ((OpenMBV::Grid*)openMBVRigidBody)->setXNumber(number);
       ((OpenMBV::Grid*)openMBVRigidBody)->setYNumber(number);
       ((OpenMBV::Grid*)openMBVRigidBody)->setInitialRotation(0.,M_PI/2.,0.);

@@ -34,8 +34,12 @@ namespace MBSim {
 
     numberOfPotentialContactPoints = 0;
     for(unsigned int i=0; i<contour0->getNumberOfElements(); i++) {
-      for(unsigned int j=0; i<contour1->getNumberOfElements(); j++) {
+      for(unsigned int j=0; j<contour1->getNumberOfElements(); j++) {
         ContactKinematics *tmp = findContactPairingRigidRigid(contour0->getContourElement(i)->getType().c_str(), contour1->getContourElement(j)->getType().c_str());
+        if (tmp == 0)
+          tmp = findContactPairingRigidRigid(contour1->getContourElement(j)->getType().c_str(), contour0->getContourElement(i)->getType().c_str());
+        if (tmp == 0)
+          throw MBSimError("ERROR: No Contact Kinematics found for pairing between" + contour1->getContourElement(j)->getType() + " and " + contour0->getContourElement(i)->getType());
         if(tmp) {
           contactKinematics.push_back(tmp); 
           tmp->assignContours(contour0->getContourElement(i),contour1->getContourElement(j));
@@ -51,6 +55,11 @@ namespace MBSim {
       ig += contactKinematics[i]->getNumberOfPotentialContactPoints();
       icpData += contactKinematics[i]->getNumberOfPotentialContactPoints();
     }
+  }
+
+  void ContactKinematicsCompoundContourCompoundContour::updateg(std::vector<Contact> & contact) {
+    for(size_t i = 0; i < contact.size(); i++)
+      contactKinematics[i]->updateg(contact[i].getg(), contact[i].getcpData());
   }
 
   void ContactKinematicsCompoundContourCompoundContour::updatewb(std::vector<fmatvec::Vec>::iterator iwb, std::vector<fmatvec::Vec>::iterator ig, std::vector<ContourPointData*>::iterator icpData) {
