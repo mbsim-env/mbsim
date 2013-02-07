@@ -128,6 +128,7 @@ namespace MBSim {
   void Contact::updateg(double t) {
 	  if (g.size())
 	    contactKinematics->updateg(g, cpData);
+
   }
 
   void Contact::updategd(double t) {
@@ -631,8 +632,13 @@ namespace MBSim {
       }
 
     }
-    else
+    else if(stage == LASTINITSTAGE) {
+      if(contactKinematics->getNumberOfPotentialContactPoints() > 1)
+        throw new MBSimError("ERROR: Contact has contact kinematics with more than one possible contact point. Use Multi-Contact for that!");
+    }
+    else {
       LinkMechanics::init(stage);
+    }
   }
 
   bool Contact::isSetValued() const {
