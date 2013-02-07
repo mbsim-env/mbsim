@@ -511,11 +511,8 @@ namespace MBSim {
     Body::addFrame(frame_);
   }
 
-  void RigidBody::addContour(Contour *contour) {
-    Body::addContour(contour);
-  }
-
   void RigidBody::addFrame(Frame *frame_, const Vec3 &RrRF, const SqrMat3 &ARF, const Frame* refFrame) {
+    Deprecated::registerMessage("Using RigidBody::addFrame(Frame*, const Vec3&, const SqrMat3&, const Frame*) is deprecated, create a FixedRelativeFrame instead and add is using addFrame(FixedRelativeFrame*).");
     FixedRelativeFrame *rigidBodyFrame = new FixedRelativeFrame(frame_->getName(),RrRF,ARF,refFrame);
     if(frame_->getOpenMBVFrame())
       rigidBodyFrame->enableOpenMBV(frame_->getOpenMBVFrame()->getSize(), frame_->getOpenMBVFrame()->getOffset());
@@ -523,11 +520,13 @@ namespace MBSim {
   }
 
   void RigidBody::addFrame(const string &str, const Vec3 &RrRF, const SqrMat3 &ARF, const Frame* refFrame) {
+    Deprecated::registerMessage("Using RigidBody::addFrame(const string&, const Vec3&, const SqrMat3&, const Frame*) is deprecated, create a FixedRelativeFrame instead and add is using addFrame(FixedRelativeFrame*).");
     FixedRelativeFrame *rigidBodyFrame = new FixedRelativeFrame(str,RrRF,ARF,refFrame);
     addFrame(rigidBodyFrame);
   }
 
   void RigidBody::addContour(Contour* contour_, const fmatvec::Vec3 &RrRC, const fmatvec::SqrMat3 &ARC, const Frame* refFrame) {
+    Deprecated::registerMessage("Using RigidBody::addCongour(Contour*, const Vec3&, const SqrMat3&, const Frame*) is deprecated, create a Contour instead and add is using addContour(Contour*).");
     stringstream frameName;
     frameName << "ContourFrame" << contour.size();
     Frame *contourFrame;
@@ -663,6 +662,7 @@ namespace MBSim {
     // frames
     e=element->FirstChildElement(MBSIMNS"frames")->FirstChildElement();
     while(e && e->ValueStr()==MBSIMNS"frame") {
+      Deprecated::registerMessage("Using the <mbsim:frame> element is deprecated, use the <mbsim:Frame> element instead.", e);
       TiXmlElement *ec=e->FirstChildElement();
       FixedRelativeFrame *f=new FixedRelativeFrame(ec->Attribute("name"));
       addFrame(f);
@@ -687,6 +687,7 @@ namespace MBSim {
     // contours
     e=element->FirstChildElement(MBSIMNS"contours")->FirstChildElement();
     while(e && e->ValueStr()==MBSIMNS"contour") {
+      Deprecated::registerMessage("Using the <mbsim:contour> element is deprecated, use the <mbsim:Contour> element instead.", e);
       TiXmlElement *ec=e->FirstChildElement();
 
       Contour *c=ObjectFactory::getInstance()->createContour(ec);

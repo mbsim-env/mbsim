@@ -44,6 +44,10 @@ AC_CHECK_TYPES([ptrdiff_t])
 AC_FUNC_ERROR_AT_LINE 
 AC_TYPE_SIZE_T 
 
+AC_CHECK_HEADERS([libunwind.h])
+AC_CHECK_LIB(unwind-x86_64, main)
+AC_CHECK_HEADERS([cxxabi.h])
+
 dnl Check for ANSI C Signal Handling
 AC_SUBST([DEFINES])
 AC_MSG_CHECKING([for ANSI c signal SIGINT]); AC_COMPILE_IFELSE([

@@ -1325,6 +1325,7 @@ namespace MBSim {
   }
 
   void DynamicSystem::addFrame(Frame *frame_, const Vec3 &RrRF, const SqrMat3 &ARF, const Frame* refFrame) {
+    Deprecated::registerMessage("Using DynamicSystem::addFrame(Frame*, const Vec3&, const SqrMat3&, const Frame*) is deprecated, create a FixedRelativeFrame instead and add is using addFrame(FixedRelativeFrame*).");
     FixedRelativeFrame *environmentFrame = new FixedRelativeFrame(frame_->getName(),RrRF,ARF,refFrame);
     if(frame_->getOpenMBVFrame())
       environmentFrame->enableOpenMBV(frame_->getOpenMBVFrame()->getSize(), frame_->getOpenMBVFrame()->getOffset());
@@ -1332,6 +1333,7 @@ namespace MBSim {
   }
 
   void DynamicSystem::addFrame(const string &str, const Vec3 &RrRF, const SqrMat3 &ARF, const Frame* refFrame) {
+    Deprecated::registerMessage("Using DynamicSystem::addFrame(const string&, const Vec3&, const SqrMat3&, const Frame*) is deprecated, create a FixedRelativeFrame instead and add is using addFrame(FixedRelativeFrame*).");
     FixedRelativeFrame *environmentFrame = new FixedRelativeFrame(str,RrRF,ARF,refFrame);
     addFrame(environmentFrame);
   }
@@ -1346,6 +1348,7 @@ namespace MBSim {
   }
 
   void DynamicSystem::addContour(Contour* contour_, const fmatvec::Vec3 &RrRC, const fmatvec::SqrMat3 &ARC, const Frame* refFrame) {
+    Deprecated::registerMessage("Using DynamicSystem::addContour(Contour*, const Vec3&, const SqrMat3&, const Frame*) is deprecated, create a Contour instead and add is using addContour(Contour*).");
     stringstream frameName;
     frameName << "ContourFrame" << contour.size();
     Frame *contourFrame;

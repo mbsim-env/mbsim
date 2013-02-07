@@ -187,7 +187,7 @@ namespace MBSim {
 
       void addFrame(FixedRelativeFrame *frame); 
 
-      void addContour(Contour *contour);
+      using Body::addContour;
 
 //      /**
 //       * \param frame        specific Frame to add
