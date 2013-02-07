@@ -229,6 +229,8 @@ def main():
   updatedTools=buildTools.copy()
 
   # force build
+  for i, value in enumerate(args.forceBuild): # normalize all given path
+    args.forceBuild[i]=os.path.normpath(value)
   if len(args.forceBuild)==0:
     args.forceBuild.extend(list(toolDependencies))
   buildTools.update(args.forceBuild)
