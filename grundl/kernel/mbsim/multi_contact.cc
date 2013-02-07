@@ -106,9 +106,7 @@ namespace MBSim {
 
   void MultiContact::updateg(double t) {
     for (size_t cK = 0; cK < contactKinematics.size(); cK++) {
-      //for (int k = 0; k < contactKinematics[cK]->getNumberOfPotentialContactPoints(); ++k) {
-        contactKinematics[cK]->updateg(contacts[cK]);
-      //}
+      contactKinematics[cK]->updateg(contacts[cK]);
     }
   }
 
@@ -175,7 +173,6 @@ namespace MBSim {
       }
     }
   }
-
 
   void MultiContact::updategdRef(const Vec& gdParent) {
     for (std::vector<std::vector<Contact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
@@ -306,8 +303,8 @@ namespace MBSim {
         for (int k = 0; k < contactKinematics[cK]->getNumberOfPotentialContactPoints(); ++k) {
           stringstream contactName;
           contactName << ckNames[cK];
-          if(contactKinematics[cK]->getNumberOfPotentialContactPoints() > 1)
-            contactName << "_" <<  k;
+          if (contactKinematics[cK]->getNumberOfPotentialContactPoints() > 1)
+            contactName << "_" << k;
           contacts[cK].push_back(Contact(contactName.str()));
           contacts[cK][k].setContactKinematics(contactKinematics[cK]);
           contacts[cK][k].connect(contour0);
@@ -373,9 +370,9 @@ namespace MBSim {
           jter->init(stage);
       }
     }
-
     else
       LinkMechanics::init(stage);
+    //Don't call init()-routines for "sub"-contacts with stage "LASTINITSTAGE" as here is checked if contactKinematics has more than one possible contact point, which is only possible in multi-contact
   }
 
   bool MultiContact::isSetValued() const {
@@ -634,7 +631,7 @@ namespace MBSim {
   void MultiContact::setPlotFeature(PlotFeature pf, PlotFeatureStatus value, size_t indexKinematics) {
     assert(indexKinematics >= 0);
     assert(indexKinematics < contactKinematics.size());
-    for(int i = 0; i < contactKinematics[indexKinematics]->getNumberOfPotentialContactPoints(); ++i)
+    for (int i = 0; i < contactKinematics[indexKinematics]->getNumberOfPotentialContactPoints(); ++i)
       contacts[indexKinematics][i].setPlotFeature(pf, value);
   }
 
