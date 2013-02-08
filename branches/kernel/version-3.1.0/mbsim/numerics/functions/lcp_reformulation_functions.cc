@@ -157,13 +157,12 @@ namespace MBSim {
       throw; //TODO: use error message
   }
 
-  SqrMat LinearComplementarityJacobianFunction::operator ()(const Vec & x, const void*) {
-    updateJacobian(x);
-
-    return J;
+  void LinearComplementarityJacobianFunction::operator ()(const Vec & x, fmatvec::SqrMat & J, const void*) {
+    updateJacobian(x, J);
   }
 
-  void LinearComplementarityJacobianFunction::updateJacobian(const Vec & x) {
+  void LinearComplementarityJacobianFunction::updateJacobian(const Vec & x, fmatvec::SqrMat & J) {
+    J = this->J;
     int dim = J.size();
     double r = static_cast<LCPNewtonReformulationFunction*>(function)->getr();
     Vec w(0);

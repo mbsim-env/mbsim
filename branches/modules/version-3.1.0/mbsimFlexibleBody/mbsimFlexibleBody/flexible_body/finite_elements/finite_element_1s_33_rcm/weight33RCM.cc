@@ -21,6 +21,7 @@
 #include "weight33RCM.h"
 
 using namespace std;
+using namespace fmatvec;
 
 namespace MBSimFlexibleBody {
 
@@ -49,8 +50,8 @@ namespace MBSimFlexibleBody {
   }
 
   void Weight33RCM::setGauss(int nGauss) {
-    gp = fmatvec::Vec(nGauss); // Gauss weights
-    xip = fmatvec::Vec(nGauss); // Gauss points
+    gp = Vec(nGauss); // Gauss weights
+    xip = Vec(nGauss); // Gauss points
 
     switch (nGauss) {
       case 1:
@@ -103,7 +104,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void Weight33RCM::computeint(const fmatvec::Vec16& qG, const fmatvec::Vec16& qGt) {
+  void Weight33RCM::computeint(const Vec16& qG, const Vec16& qGt) {
     computewhcoefVel(qG, qGt);
     computeint();
   }
@@ -137,7 +138,7 @@ namespace MBSimFlexibleBody {
     Iwh1twh2t = intvw(wh1tcoef, wh2tcoef);
   }
 
-  void Weight33RCM::computeintD(const fmatvec::Vec16& qG, const fmatvec::Vec16& qGt) {
+  void Weight33RCM::computeintD(const Vec16& qG, const Vec16& qGt) {
     tf->computeTrafo(qG, qGt);
     computewhcoefVelD();
     computeint();
@@ -157,41 +158,41 @@ namespace MBSimFlexibleBody {
     Iwh2xwxwt = intvxwxwt(wh2coef);
   }
 
-  fmatvec::Vec2 Weight33RCM::computew(const fmatvec::Vec4& wt, double x) const {
-    fmatvec::Vec2 W;
+  Vec2 Weight33RCM::computew(const Vec4& wt, double x) const {
+    Vec2 W;
     W(0) = (((wt(0) * x + wt(1)) * x + wt(2)) * x + wt(3)) * pow(x, 2);
     W(1) = (((5 * wt(0) * x + 4 * wt(1)) * x + 3 * wt(2)) * x + 2 * wt(3)) * x;
 
     return W;
   }
 
-  void Weight33RCM::computewcoefPos(const fmatvec::Vec16& qG) {
+  void Weight33RCM::computewcoefPos(const Vec16& qG) {
     tf->computeqI(qG);
     computewcoefPos();
   }
 
   void Weight33RCM::computewcoefPos() {
     // REQUIRED trafo->computeqI()
-    fmatvec::Vec11 be = tf->getbe();
+    Vec11 be = tf->getbe();
 
     w1coef = computewcoef(be(3), be(4), be(5), be(6));
     w2coef = computewcoef(be(7), be(8), be(9), be(10));
   }
 
-  void Weight33RCM::computewcoefVel(const fmatvec::Vec16& qG, const fmatvec::Vec16& qGt) {
+  void Weight33RCM::computewcoefVel(const Vec16& qG, const Vec16& qGt) {
     tf->computezI(qG, qGt);
     computewcoefVel();
   }
 
   void Weight33RCM::computewcoefVel() {
     // REQUIRED trafo->computezI()
-    fmatvec::Vec11 bet = tf->getbet();
+    Vec11 bet = tf->getbet();
 
     w1tcoef = computewcoef(bet(3), bet(4), bet(5), bet(6));
     w2tcoef = computewcoef(bet(7), bet(8), bet(9), bet(10));
   }
 
-  void Weight33RCM::computewhcoefPos(const fmatvec::Vec16& qG) {
+  void Weight33RCM::computewhcoefPos(const Vec16& qG) {
     tf->computeqI(qG);
     computewhcoefPos();
   }
@@ -204,7 +205,7 @@ namespace MBSimFlexibleBody {
     wh2coef = tf->getetantil() * w1coef + tf->getetabtil() * w2coef;
   }
 
-  void Weight33RCM::computewhcoefVel(const fmatvec::Vec16& qG, const fmatvec::Vec16& qGt) {
+  void Weight33RCM::computewhcoefVel(const Vec16& qG, const Vec16& qGt) {
     tf->computeCOSYt(qG, qGt);
     computewhcoefPos();
     computewcoefVel();
@@ -221,11 +222,11 @@ namespace MBSimFlexibleBody {
   }
 
   void Weight33RCM::computewcoefPosD() {
-    w1coefqI.set(fmatvec::Index(0, 3), fmatvec::Index(7, 10), tf->getV());
-    w2coefqI.set(fmatvec::Index(0, 3), fmatvec::Index(11, 14), tf->getV());
+    w1coefqI.set(Index(0, 3), Index(7, 10), tf->getV());
+    w2coefqI.set(Index(0, 3), Index(11, 14), tf->getV());
   }
 
-  void Weight33RCM::computewhcoefPosD(const fmatvec::Vec16& qG) {
+  void Weight33RCM::computewhcoefPosD(const Vec16& qG) {
     tf->computeJIG(qG);
     computewhcoefPosD();
   }
@@ -255,20 +256,20 @@ namespace MBSimFlexibleBody {
     computewcoefVel();
     computewhcoefVel();
 
-    tStqI.set(fmatvec::Index(0, 2), fmatvec::Index(3, 5), tf->gettSpSt());
-    nStqI.set(fmatvec::Index(0, 2), fmatvec::Index(3, 5), tf->getnSpSt());
-    bStqI.set(fmatvec::Index(0, 2), fmatvec::Index(3, 5), tf->getbSpSt());
+    tStqI.set(Index(0, 2), Index(3, 5), tf->gettSpSt());
+    nStqI.set(Index(0, 2), Index(3, 5), tf->getnSpSt());
+    bStqI.set(Index(0, 2), Index(3, 5), tf->getbSpSt());
 
-    fmatvec::Mat3x16 ntilStqI;
-    ntilStqI.set(fmatvec::Index(0, 2), fmatvec::Index(3, 5), tf->getntilSpSt());
+    Mat3x16 ntilStqI;
+    ntilStqI.set(Index(0, 2), Index(3, 5), tf->getntilSpSt());
 
-    fmatvec::Mat3x16 btilStqI;
-    btilStqI.set(fmatvec::Index(0, 2), fmatvec::Index(3, 5), tf->getbtilSpSt());
+    Mat3x16 btilStqI;
+    btilStqI.set(Index(0, 2), Index(3, 5), tf->getbtilSpSt());
 
-    fmatvec::RowVec16 xintiltqI = tf->getntilSH() * nStqI + tf->getnStH() * ntilSqI + tf->getntilStH() * nSqI + tf->getnSH() * ntilStqI;
-    fmatvec::RowVec16 xibtiltqI = tf->getbtilSH() * nStqI + tf->getnStH() * btilSqI + tf->getbtilStH() * nSqI + tf->getnSH() * btilStqI;
-    fmatvec::RowVec16 etantiltqI = tf->getntilSH() * bStqI + tf->getbStH() * ntilSqI + tf->getntilStH() * bSqI + tf->getbSH() * ntilStqI;
-    fmatvec::RowVec16 etabtiltqI = tf->getbtilSH() * bStqI + tf->getbStH() * btilSqI + tf->getbtilStH() * bSqI + tf->getbSH() * btilStqI;
+    RowVec16 xintiltqI = tf->getntilSH() * nStqI + tf->getnStH() * ntilSqI + tf->getntilStH() * nSqI + tf->getnSH() * ntilStqI;
+    RowVec16 xibtiltqI = tf->getbtilSH() * nStqI + tf->getnStH() * btilSqI + tf->getbtilStH() * nSqI + tf->getnSH() * btilStqI;
+    RowVec16 etantiltqI = tf->getntilSH() * bStqI + tf->getbStH() * ntilSqI + tf->getntilStH() * bSqI + tf->getbSH() * ntilStqI;
+    RowVec16 etabtiltqI = tf->getbtilSH() * bStqI + tf->getbStH() * btilSqI + tf->getbtilStH() * bSqI + tf->getbSH() * btilStqI;
 
     wh1tcoefqI = w1coef * xintiltqI + w2coef * xibtiltqI + tf->getxintilt() * w1coefqI + tf->getxibtilt() * w2coefqI + w1tcoef * xintilqI + w2tcoef * xibtilqI;
     wh2tcoefqI = w1coef * etantiltqI + w2coef * etabtiltqI + tf->getetantilt() * w1coefqI + tf->getetabtilt() * w2coefqI + w1tcoef * etantilqI + w2tcoef * etabtilqI;
@@ -276,25 +277,25 @@ namespace MBSimFlexibleBody {
     nSqIH = nSqI.T();
     bSqIH = bSqI.T();
 
-    fmatvec::Mat16x3 ntilSqIH = ntilSqI.T();
-    fmatvec::Mat16x3 btilSqIH = btilSqI.T();
+    Mat16x3 ntilSqIH = ntilSqI.T();
+    Mat16x3 btilSqIH = btilSqI.T();
 
-    fmatvec::RowVec16 xintilqInunut = (nSqIH * ntilSqI * tf->getqIt() + dpSH * tf->getnSpSt().T() * tf->getntilS() + ntilSqIH * nSqI * tf->getqIt() + dpSH * tf->getntilSpSt().T() * tf->getnS()).T();
-    fmatvec::RowVec16 xibtilqInunut = (nSqIH * btilSqI * tf->getqIt() + dpSH * tf->getnSpSt().T() * tf->getbtilS() + btilSqIH * nSqI * tf->getqIt() + dpSH * tf->getbtilSpSt().T() * tf->getnS()).T();
-    fmatvec::RowVec16 etantilqInunut = (bSqIH * ntilSqI * tf->getqIt() + dpSH * tf->getbSpSt().T() * tf->getntilS() + ntilSqIH * bSqI * tf->getqIt() + dpSH * tf->getntilSpSt().T() * tf->getbS()).T();
-    fmatvec::RowVec16 etabtilqInunut = (bSqIH * btilSqI * tf->getqIt() + dpSH * tf->getbSpSt().T() * tf->getbtilS() + btilSqIH * bSqI * tf->getqIt() + dpSH * tf->getbtilSpSt().T() * tf->getbS()).T();
+    RowVec16 xintilqInunut = (nSqIH * ntilSqI * tf->getqIt() + dpSH * tf->getnSpSt().T() * tf->getntilS() + ntilSqIH * nSqI * tf->getqIt() + dpSH * tf->getntilSpSt().T() * tf->getnS()).T();
+    RowVec16 xibtilqInunut = (nSqIH * btilSqI * tf->getqIt() + dpSH * tf->getnSpSt().T() * tf->getbtilS() + btilSqIH * nSqI * tf->getqIt() + dpSH * tf->getbtilSpSt().T() * tf->getnS()).T();
+    RowVec16 etantilqInunut = (bSqIH * ntilSqI * tf->getqIt() + dpSH * tf->getbSpSt().T() * tf->getntilS() + ntilSqIH * bSqI * tf->getqIt() + dpSH * tf->getntilSpSt().T() * tf->getbS()).T();
+    RowVec16 etabtilqInunut = (bSqIH * btilSqI * tf->getqIt() + dpSH * tf->getbSpSt().T() * tf->getbtilS() + btilSqIH * bSqI * tf->getqIt() + dpSH * tf->getbtilSpSt().T() * tf->getbS()).T();
 
     wh1coefqInunutH = (w1coefqI * tf->getqIt() * xintilqI + w2coefqI * tf->getqIt() * xibtilqI + xintilqI * tf->getqIt() * w1coefqI + xibtilqI * tf->getqIt() * w2coefqI + w1coef * xintilqInunut + w2coef * xibtilqInunut).T();
     wh2coefqInunutH = (w1coefqI * tf->getqIt() * etantilqI + w2coefqI * tf->getqIt() * etabtilqI + etantilqI * tf->getqIt() * w1coefqI + etabtilqI * tf->getqIt() * w2coefqI + w1coef * etantilqInunut + w2coef * etabtilqInunut).T();
   }
 
-  fmatvec::Vec4 Weight33RCM::computewcoef(double dL, double dR, double bL, double bR) const {
+  Vec4 Weight33RCM::computewcoef(double dL, double dR, double bL, double bR) const {
     double dLdRp = dL + dR;
     double dLdRm = dL - dR;
     double bLbRp = bL + bR;
     double bLbRm = bL - bR;
 
-    fmatvec::Vec4 wcoef(fmatvec::NONINIT);
+    Vec4 wcoef(NONINIT);
     wcoef(0) = (4. * l0 * bLbRp + 24. * dLdRm) / l0h5;
     wcoef(1) = (-2. * l0 * bLbRm - 8. * dLdRp) / l0h4;
     wcoef(2) = (-l0 * bLbRp - 10. * dLdRm) / l0h3;
@@ -308,24 +309,24 @@ namespace MBSimFlexibleBody {
     // REQUIRED computewcoef_Pos()
     // REQUIRED computewcoef_Vel()
 
-    fmatvec::Vec3 pS = tf->getpS();
-    fmatvec::Vec3 pSt = tf->getpSt();
+    Vec3 pS = tf->getpS();
+    Vec3 pSt = tf->getpSt();
 
     double spS1 = sin(pS(1));
     double cpS1 = cos(pS(1));
 
-    fmatvec::Vec2 w1 = computew(w1coef, x);
-    fmatvec::Vec2 w2 = computew(w2coef, x);
-    fmatvec::Vec2 w2t = computew(w2tcoef, x);
+    Vec2 w1 = computew(w1coef, x);
+    Vec2 w2 = computew(w2coef, x);
+    Vec2 w2t = computew(w2tcoef, x);
 
-    fmatvec::RowVec4 dwxdwt;
+    RowVec4 dwxdwt;
     dwxdwt(3) = 2 * x;
     dwxdwt(2) = x * x * 3.;
     dwxdwt(1) = x * x * x * 4.;
     dwxdwt(0) = x * x * x * x * 5.;
 
-    fmatvec::RowVec16 w1xqI = dwxdwt * w1coefqI;
-    fmatvec::RowVec16 w2xqI = dwxdwt * w2coefqI;
+    RowVec16 w1xqI = dwxdwt * w1coefqI;
+    RowVec16 w2xqI = dwxdwt * w2coefqI;
 
     omgt = pSt(0) + tf->getk0t() * x + cpS1 * pSt(1) * w2(1) + spS1 * w2t(1) - (spS1 + cpS1 * w1(1)) * (pSt(2) + w2t(1));
 
@@ -356,15 +357,15 @@ namespace MBSimFlexibleBody {
     // REQUIRED computewcoef_Vel()
 
     Ttil = 0.;
-    TtilqI = fmatvec::RowVec16();
-    TtilqItqIt = fmatvec::SymMat16();
-    TtilqItqIqIt = fmatvec::Vec16();
+    TtilqI = RowVec16();
+    TtilqItqIt = SymMat16();
+    TtilqItqIqIt = Vec16();
 
     for (int i = 0; i < gp.size(); i++) {
       computeomgt(bam * xip(i));
       Ttil += bam * gp(i) * omgt * omgt;
       TtilqI += bam * gp(i) * omgt * omgtqI;
-      TtilqItqIt += static_cast<fmatvec::SymMat16>(bam * gp(i) * omgtqIt.T() * omgtqIt); //TODO: works casting?
+      TtilqItqIt += static_cast<SymMat16>(bam * gp(i) * omgtqIt.T() * omgtqIt); //TODO: works casting?
       TtilqItqIqIt += bam * gp(i) * (omgtqIt.T() * omgtqI * tf->getqIt() + omgt * omgtqItqIqIt);
     }
   }
@@ -376,35 +377,35 @@ namespace MBSimFlexibleBody {
     dpSH = dpS.T();
   }
 
-  double Weight33RCM::intv(const fmatvec::Vec4& vt) const {
+  double Weight33RCM::intv(const Vec4& vt) const {
     const double& bv = vt(1);
     const double& dv = vt(3);
 
     return bv / 80. * l0h5 + dv / 12. * l0h3;
   }
 
-  double Weight33RCM::intvx(const fmatvec::Vec4& vt) const {
+  double Weight33RCM::intvx(const Vec4& vt) const {
     const double& av = vt(0);
     const double& cv = vt(2);
 
     return av * l0h5 / 16. + cv * l0h3 / 4.;
   }
 
-  double Weight33RCM::intxv(const fmatvec::Vec4& vt) const {
+  double Weight33RCM::intxv(const Vec4& vt) const {
     const double& av = vt(0);
     const double& cv = vt(2);
 
     return av / 448. * l0h7 + cv / 80. * l0h5;
   }
 
-  double Weight33RCM::intxvx(const fmatvec::Vec4& vt) const {
+  double Weight33RCM::intxvx(const Vec4& vt) const {
     const double& bv = vt(1);
     const double& dv = vt(3);
 
     return bv * l0h5 / 20. + dv * l0h3 / 6.;
   }
 
-  double Weight33RCM::intvw(const fmatvec::Vec4& vt, const fmatvec::Vec4& wt) const {
+  double Weight33RCM::intvw(const Vec4& vt, const Vec4& wt) const {
     const double& av = vt(0);
     const double& bv = vt(1);
     const double& cv = vt(2);
@@ -417,7 +418,7 @@ namespace MBSimFlexibleBody {
     return av * aw / 11264. * l0h11 + (av * cw + aw * cv + bv * bw) / 2304. * l0h9 + (bv * dw + bw * dv + cv * cw) / 448. * l0h7 + dv * dw / 80. * l0h5;
   }
 
-  double Weight33RCM::intvxwx(const fmatvec::Vec4& vt, const fmatvec::Vec4& wt) const {
+  double Weight33RCM::intvxwx(const Vec4& vt, const Vec4& wt) const {
     const double& av = vt(0);
     const double& bv = vt(1);
     const double& cv = vt(2);
@@ -430,7 +431,7 @@ namespace MBSimFlexibleBody {
     return 25. * av * aw / 2304. * l0h9 + (15. * cv * aw / 448. + bv * bw / 28. + 15. * av * cw / 448.) * l0h7 + (dv * bw / 10. + 9. * cv * cw / 80. + bv * dw / 10.) * l0h5 + dv * dw / 3. * l0h3;
   }
 
-  double Weight33RCM::intvxxvxx(const fmatvec::Vec4& vt, double C) const {
+  double Weight33RCM::intvxxvxx(const Vec4& vt, double C) const {
     const double& av = vt(0);
     const double& bv = vt(1);
     const double& cv = vt(2);
@@ -459,13 +460,13 @@ namespace MBSimFlexibleBody {
     Ixvxvt(3) = l0h3 / 6.;
   }
 
-  fmatvec::RowVec4 Weight33RCM::intvwwt(const fmatvec::Vec4& vt) const {
+  RowVec4 Weight33RCM::intvwwt(const Vec4& vt) const {
     const double& av = vt(0);
     const double& bv = vt(1);
     const double& cv = vt(2);
     const double& dv = vt(3);
 
-    fmatvec::RowVec4 Ivwwt(fmatvec::NONINIT);
+    RowVec4 Ivwwt(NONINIT);
     Ivwwt(0) = av / 11264. * l0h11 + cv / 2304. * l0h9;
     Ivwwt(1) = bv / 2304. * l0h9 + dv / 448. * l0h7;
     Ivwwt(2) = av / 2304. * l0h9 + cv / 448. * l0h7;
@@ -473,13 +474,13 @@ namespace MBSimFlexibleBody {
     return Ivwwt;
   }
 
-  fmatvec::RowVec4 Weight33RCM::intvxwxwt(const fmatvec::Vec4& vt) const {
+  RowVec4 Weight33RCM::intvxwxwt(const Vec4& vt) const {
     const double& av = vt(0);
     const double& bv = vt(1);
     const double& cv = vt(2);
     const double& dv = vt(3);
 
-    fmatvec::RowVec4 Ivxwxwt(fmatvec::NONINIT);
+    RowVec4 Ivxwxwt(NONINIT);
     Ivxwxwt(0) = 25. * av / 2304. * l0h9 + 15. * cv / 448. * l0h7;
     Ivxwxwt(1) = bv / 28. * l0h7 + dv / 10. * l0h5;
     Ivxwxwt(2) = 15. * av / 448. * l0h7 + 9. * cv / 80. * l0h5;
@@ -487,13 +488,13 @@ namespace MBSimFlexibleBody {
     return Ivxwxwt;
   }
 
-  fmatvec::RowVec4 Weight33RCM::intvxxwxxwt(const fmatvec::Vec4& vt, double C) const {
+  RowVec4 Weight33RCM::intvxxwxxwt(const Vec4& vt, double C) const {
     const double& av = vt(0);
     const double& bv = vt(1);
     const double& cv = vt(2);
     const double& dv = vt(3);
 
-    fmatvec::RowVec4 Ivxxwxxwt(fmatvec::NONINIT);
+    RowVec4 Ivxxwxxwt(NONINIT);
     Ivxxwxxwt(0) = 25. * av / 28. * l0h7 + 3. * cv / 2. * l0h5;
     Ivxxwxxwt(1) = 9. * bv / 5. * l0h5 + (2. * dv - C) * l0h3;
     Ivxxwxxwt(2) = 3. * av / 2. * l0h5 + 3. * cv * l0h3;

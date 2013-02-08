@@ -172,11 +172,11 @@ namespace MBSim {
        */
       virtual ~LinearComplementarityJacobianFunction();
 
-      virtual fmatvec::SqrMat operator ()(const fmatvec::Vec & x, const void* = NULL);
+      virtual void operator ()(const fmatvec::Vec & x, fmatvec::SqrMat & J, const void* = NULL);
 
       virtual void setFunction(Function1<fmatvec::Vec, fmatvec::Vec> * function_);
 
-      void updateJacobian(const fmatvec::Vec & x);
+      void updateJacobian(const fmatvec::Vec & x, fmatvec::SqrMat & J);
 
     protected:
       /**

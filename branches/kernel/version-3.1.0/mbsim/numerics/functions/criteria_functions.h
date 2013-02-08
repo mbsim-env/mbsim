@@ -394,7 +394,7 @@ namespace MBSim {
     fmatvec::Vector<VecType, AT> functionValues = (*this->function)(x);
     std::vector<double> results;
     for (std::map<fmatvec::Index, double>::iterator iter = this->tolerances.begin(); iter != this->tolerances.end(); ++iter) {
-      results.push_back(fmatvec::nrmInf(functionValues(iter->first)));
+      results.push_back(fmatvec::nrmInf<fmatvec::Var, AT>(functionValues(iter->first)));
     }
 
     return results;

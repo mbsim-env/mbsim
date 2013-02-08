@@ -68,7 +68,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rod->setOpenMBVSpineExtrusion(cuboid);
 #endif
 
-  FlexibleBand *top = new FlexibleBand("Top");
+  FlexibleBand<Fixed<8> > *top = new FlexibleBand<Fixed<8> >("Top");
   Vec nodes(elements+1);
   for(int i=0;i<=elements;i++) nodes(i) = i*l0/elements;
   top->setNodes(nodes);
