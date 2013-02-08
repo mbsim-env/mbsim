@@ -116,7 +116,7 @@ namespace MBSimFlexibleBody {
        * \param global coordinates
        * \param global velocities
        */
-      fmatvec::Vec computeData(const fmatvec::Vec16& qG, const fmatvec::Vec16& qGt);
+      fmatvec::Vec16 computeData(const fmatvec::Vec16& qG, const fmatvec::Vec16& qGt);
 
     private:
       /**

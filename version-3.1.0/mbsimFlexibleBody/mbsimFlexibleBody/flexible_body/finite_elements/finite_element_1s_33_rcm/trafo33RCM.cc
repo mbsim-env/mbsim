@@ -27,26 +27,26 @@ using namespace MBSim;
 namespace MBSimFlexibleBody {
 
   /* Class PositionFunction */
-  PositionFunction::PositionFunction(RevCardanPtr angle_, double l0_, const fmatvec::Vec3& pL_, const fmatvec::Vec3& pR_, double cL1_, double cR1_, double cL2_, double cR2_, const fmatvec::RowVec3& rRrLmH_) :
+  PositionFunction::PositionFunction(RevCardanPtr angle_, double l0_, const Vec3& pL_, const Vec3& pR_, double cL1_, double cR1_, double cL2_, double cR2_, const RowVec3& rRrLmH_) :
       angle(angle_), l0(l0_), pL(pL_), pR(pR_), cL1(cL1_), cR1(cR1_), cL2(cL2_), cR2(cR2_), rRrLmH(rRrLmH_) {
   }
 
   PositionFunction::~PositionFunction() {
   }
 
-  fmatvec::Vec11 PositionFunction::operator()(const fmatvec::Vec11& pos, const void *) {
-    fmatvec::Vec3 pS = pos(fmatvec::Range0x2()); //TODO: Test Range-Operators
+  Vec11 PositionFunction::operator()(const Vec11& pos, const void *) {
+    Vec3 pS = pos(Range0x2());
 
-    fmatvec::Vec3 nS = angle->computen(pS);
-    fmatvec::Vec3 bS = angle->computeb(pS);
-    fmatvec::RowVec3 ntilSH = angle->computentil(pS).T();
-    fmatvec::RowVec3 btilSH = angle->computebtil(pS).T();
+    Vec3 nS = angle->computen(pS);
+    Vec3 bS = angle->computeb(pS);
+    RowVec3 ntilSH = angle->computentil(pS).T();
+    RowVec3 btilSH = angle->computebtil(pS).T();
     double xibtil = btilSH * nS;
     double xintil = ntilSH * nS;
     double etabtil = btilSH * bS;
     double etantil = ntilSH * bS;
 
-    fmatvec::Vec11 F;
+    Vec11 F;
     F(0) = pos(0) - 0.5 * (pR(0) + pL(0) - sin(pos(1)) * (pos(9) + pos(10)));
     F(1) = pos(1) - 0.5 * (pR(1) + pL(1) - pos(5) - pos(6));
     F(2) = pos(2) - 0.5 * (pR(2) + pL(2) - pos(9) - pos(10));
@@ -63,36 +63,35 @@ namespace MBSimFlexibleBody {
   /*******************************************************************/
 
   /* Class PositionJacobian */
-  PositionJacobian::PositionJacobian(RevCardanPtr angle_, double l0_, const fmatvec::RowVec3 &rRrLmH_, const fmatvec::Mat3x11 &pSbE_) :
+  PositionJacobian::PositionJacobian(RevCardanPtr angle_, double l0_, const RowVec3 &rRrLmH_, const Mat3x11 &pSbE_) :
       angle(angle_), l0(l0_), rRrLmH(rRrLmH_), pSbE(pSbE_) {
   }
 
   PositionJacobian::~PositionJacobian() {
   }
 
-  fmatvec::SqrMat11 PositionJacobian::operator()(const fmatvec::Vec11& pos, const void *) {
-    fmatvec::Vec3 pS = pos(fmatvec::Range0x2());
+  void PositionJacobian::operator()(const Vec11& pos,   SqrMat11 & SMRHS_Jac, const void *) {
+    Vec3 pS = pos(Range0x2());
 
-    fmatvec::Vec3 nS = angle->computen(pS);
-    fmatvec::Vec3 bS = angle->computeb(pS);
-    fmatvec::RowVec3 ntilSH = angle->computentil(pS).T();
-    fmatvec::RowVec3 btilSH = angle->computebtil(pS).T();
+    Vec3 nS = angle->computen(pS);
+    Vec3 bS = angle->computeb(pS);
+    RowVec3 ntilSH = angle->computentil(pS).T();
+    RowVec3 btilSH = angle->computebtil(pS).T();
     double xibtil = btilSH * nS;
     double xintil = ntilSH * nS;
     double etabtil = btilSH * bS;
     double etantil = ntilSH * bS;
 
-    fmatvec::Mat3x11 nSbE = angle->computenq(pS) * pSbE;
-    fmatvec::Mat3x11 bSbE = angle->computebq(pS) * pSbE;
-    fmatvec::Mat11V ntilSbEH = (angle->computentilq(pS) * pSbE).T(); //TODO:_size okay??
-    fmatvec::Mat11V btilSbEH = (angle->computebtilq(pS) * pSbE).T(); //TODO:_size okay??
+    Mat3x11 nSbE = angle->computenq(pS) * pSbE;
+    Mat3x11 bSbE = angle->computebq(pS) * pSbE;
+    Mat11V ntilSbEH = (angle->computentilq(pS) * pSbE).T(); //TODO:_size okay??
+    Mat11V btilSbEH = (angle->computebtilq(pS) * pSbE).T(); //TODO:_size okay??
 
-    fmatvec::RowVec11 xibtilbE = (btilSbEH * nS).T() + btilSH * nSbE;
-    fmatvec::RowVec11 xintilbE = (ntilSbEH * nS).T() + ntilSH * nSbE;
-    fmatvec::RowVec11 etabtilbE = (btilSbEH * bS).T() + btilSH * bSbE;
-    fmatvec::RowVec11 etantilbE = (ntilSbEH * bS).T() + ntilSH * bSbE;
+    RowVec11 xibtilbE = (btilSbEH * nS).T() + btilSH * nSbE;
+    RowVec11 xintilbE = (ntilSbEH * nS).T() + ntilSH * nSbE;
+    RowVec11 etabtilbE = (btilSbEH * bS).T() + btilSH * bSbE;
+    RowVec11 etantilbE = (ntilSbEH * bS).T() + ntilSH * bSbE;
 
-    fmatvec::SqrMat11 SMRHS_Jac;
     SMRHS_Jac(0, 0) = 1.;
     SMRHS_Jac(0, 1) = 0.5 * cos(pS(1)) * (pos(9) + pos(10));
     SMRHS_Jac(0, 9) = 0.5 * sin(pS(1));
@@ -113,15 +112,15 @@ namespace MBSimFlexibleBody {
     SMRHS_Jac(4, 10) = 1.;
 
     //TODO: Test set/add functions
-    SMRHS_Jac.set(fmatvec::Index(5, 5), fmatvec::Index(0, 10), -rRrLmH * nSbE);
-    SMRHS_Jac.add(fmatvec::Index(5, 5), fmatvec::Index(0, 10), xintilbE * (pos(4) - pos(3)) + xibtilbE * (pos(8) - pos(7)));
+    SMRHS_Jac.set(Index(5, 5), Index(0, 10), -rRrLmH * nSbE);
+    SMRHS_Jac.add(Index(5, 5), Index(0, 10), xintilbE * (pos(4) - pos(3)) + xibtilbE * (pos(8) - pos(7)));
     SMRHS_Jac(5, 3) -= xintil;
     SMRHS_Jac(5, 4) += xintil;
     SMRHS_Jac(5, 7) -= xibtil;
     SMRHS_Jac(5, 8) += xibtil;
 
-    SMRHS_Jac.set(fmatvec::Index(6, 6), fmatvec::Index(0, 10), -rRrLmH * bSbE);
-    SMRHS_Jac.add(fmatvec::Index(6, 6), fmatvec::Index(0, 10), etantilbE * (pos(4) - pos(3)) + etabtilbE * (pos(8) - pos(7)));
+    SMRHS_Jac.set(Index(6, 6), Index(0, 10), -rRrLmH * bSbE);
+    SMRHS_Jac.add(Index(6, 6), Index(0, 10), etantilbE * (pos(4) - pos(3)) + etabtilbE * (pos(8) - pos(7)));
     SMRHS_Jac(6, 3) -= etantil;
     SMRHS_Jac(6, 4) += etantil;
     SMRHS_Jac(6, 7) -= etabtil;
@@ -147,7 +146,6 @@ namespace MBSimFlexibleBody {
     SMRHS_Jac(10, 9) = -3. * l0 / 128.;
     SMRHS_Jac(10, 10) = -3. * l0 / 128.;
 
-    return SMRHS_Jac;
   }
   /*******************************************************************/
 
@@ -192,10 +190,10 @@ namespace MBSimFlexibleBody {
     SMRHS_Jac(4, 10) = 1.;
     SMRHS_Jac(4, 9) = -1.;
     //TODO: check values
-    SMRHS_Jac.set(fmatvec::Index(7, 7), fmatvec::Index(3, 6), 2. * xstarh2 * (V(fmatvec::Index(1, 1), fmatvec::Index(0, 3)) * xstarh2 + V(fmatvec::Index(3, 3), fmatvec::Index(0, 3))));
-    SMRHS_Jac.set(fmatvec::Index(8, 8), fmatvec::Index(3, 6), 2. * xstarh3 * (V(fmatvec::Index(0, 0), fmatvec::Index(0, 3)) * xstarh2 + V(fmatvec::Index(2, 2), fmatvec::Index(0, 3))));
-    SMRHS_Jac.set(fmatvec::Index(9, 9), fmatvec::Index(7, 10), 2. * xstarh2 * (V(fmatvec::Index(1, 1), fmatvec::Index(0, 3)) * xstarh2 + V(fmatvec::Index(3, 3), fmatvec::Index(0, 3))));
-    SMRHS_Jac.set(fmatvec::Index(10, 10), fmatvec::Index(7, 10), 2. * xstarh3 * (V(fmatvec::Index(0, 0), fmatvec::Index(0, 3)) * xstarh2 + V(fmatvec::Index(2, 2), fmatvec::Index(0, 3))));
+    SMRHS_Jac.set(Index(7, 7), Index(3, 6), 2. * xstarh2 * (V(Index(1, 1), Index(0, 3)) * xstarh2 + V(Index(3, 3), Index(0, 3))));
+    SMRHS_Jac.set(Index(8, 8), Index(3, 6), 2. * xstarh3 * (V(Index(0, 0), Index(0, 3)) * xstarh2 + V(Index(2, 2), Index(0, 3))));
+    SMRHS_Jac.set(Index(9, 9), Index(7, 10), 2. * xstarh2 * (V(Index(1, 1), Index(0, 3)) * xstarh2 + V(Index(3, 3), Index(0, 3))));
+    SMRHS_Jac.set(Index(10, 10), Index(7, 10), 2. * xstarh3 * (V(Index(0, 0), Index(0, 3)) * xstarh2 + V(Index(2, 2), Index(0, 3))));
 
     SMRHS_Jac(0, 14) = 0.5;
     SMRHS_Jac(0, 24) = 0.5;
@@ -226,28 +224,28 @@ namespace MBSimFlexibleBody {
   Trafo33RCM::~Trafo33RCM() {
   }
 
-  void Trafo33RCM::computeprelim(const fmatvec::Vec16& qG) {
-    rRrLmH = (qG(fmatvec::Range10x12()) - qG(fmatvec::Range0x2())).T();
+  void Trafo33RCM::computeprelim(const Vec16& qG) {
+    rRrLmH = (qG(Range10x12()) - qG(Range0x2())).T();
   }
 
-  fmatvec::Vec Trafo33RCM::computes0(const fmatvec::Vec16& qG) {
+  Vec Trafo33RCM::computes0(const Vec16& qG) {
 
-    fmatvec::Vec3 pM = 0.5 * (qG(fmatvec::Range3x5()) + qG(fmatvec::Range13x15()));
+    Vec3 pM = 0.5 * (qG(Range3x5()) + qG(Range13x15()));
 
-    fmatvec::Vec3 tM = angle->computet(pM);
-    fmatvec::Vec3 nM = angle->computen(pM);
-    fmatvec::Vec3 bM = angle->computeb(pM);
-    fmatvec::Vec nMtil = angle->computentil(pM);
-    fmatvec::Vec bMtil = angle->computebtil(pM);
-    fmatvec::SqrMat3 nMpM = angle->computenq(pM);
-    fmatvec::SqrMat3 bMpM = angle->computebq(pM);
+    Vec3 tM = angle->computet(pM);
+    Vec3 nM = angle->computen(pM);
+    Vec3 bM = angle->computeb(pM);
+    Vec nMtil = angle->computentil(pM);
+    Vec bMtil = angle->computebtil(pM);
+    SqrMat3 nMpM = angle->computenq(pM);
+    SqrMat3 bMpM = angle->computebq(pM);
 
     double xinMtil = nM.T() * nMtil;
     double xibMtil = nM.T() * bMtil;
     double etanMtil = bM.T() * nMtil;
     double etabMtil = bM.T() * bMtil;
 
-    fmatvec::RowVec3 rRrLmnMpM = 0.5 * rRrLmH * nMpM;
+    RowVec3 rRrLmnMpM = 0.5 * rRrLmH * nMpM;
     SMRHS(2, 0) = -xinMtil;
     SMRHS(2, 1) = xinMtil;
     SMRHS(2, 4) = -xibMtil;
@@ -257,7 +255,7 @@ namespace MBSimFlexibleBody {
     SMRHS(2, 6) = rRrLmnMpM(0) * sin(pM(1)) + rRrLmnMpM(2);
     SMRHS(2, 7) = rRrLmnMpM(0) * sin(pM(1)) + rRrLmnMpM(2);
 
-    fmatvec::RowVec3 rRrLmbMpM = 0.5 * rRrLmH * bMpM;
+    RowVec3 rRrLmbMpM = 0.5 * rRrLmH * bMpM;
     SMRHS(3, 0) = -etanMtil;
     SMRHS(3, 1) = etanMtil;
     SMRHS(3, 4) = -etabMtil;
@@ -277,9 +275,9 @@ namespace MBSimFlexibleBody {
     SMRHS(7, 8) = qG(9) - qG(8);
 
     //TODO: check slvLU here
-    fmatvec::Vec sol = slvLU(static_cast<fmatvec::SqrMat>(SMRHS(fmatvec::Index(0, 7), fmatvec::Index(0, 7))), static_cast<fmatvec::Vec>(SMRHS(fmatvec::Index(0, 7), fmatvec::Index(8, 8))));
-    fmatvec::Vec11 s0(fmatvec::NONINIT);
-    s0.set(fmatvec::Index(3, 10), sol);
+    Vec sol = slvLU(static_cast<SqrMat>(SMRHS(Index(0, 7), Index(0, 7))), static_cast<Vec>(SMRHS(Index(0, 7), Index(8, 8))));
+    Vec11 s0(NONINIT);
+    s0.set(Index(3, 10), sol);
 
     s0(1) = 0.5 * ((qG(4) + qG(14)) - (sol(2) + sol(3)));
     s0(2) = 0.5 * ((qG(5) + qG(15)) - (sol(6) + sol(7)));
@@ -288,23 +286,25 @@ namespace MBSimFlexibleBody {
     return s0;
   }
 
-  void Trafo33RCM::computebe(const fmatvec::Vec16& qG) {
+  void Trafo33RCM::computebe(const Vec16& qG) {
     // REQUIRED computeprelim()
 
-    fmatvec::Vec3 pL = qG(fmatvec::Range3x5());
-    fmatvec::Vec3 pR = qG(fmatvec::Range13x15());
+    Vec3 pL = qG(Range3x5());
+    Vec3 pR = qG(Range13x15());
 
     PositionFunction fun(angle, l0, pL, pR, qG(6), qG(7), qG(8), qG(9), rRrLmH); // (object itself no reference)
     PositionJacobian jac(angle, l0, rRrLmH, pSbE);
     GlobalResidualCriteriaFunction<Fixed<11>, double> crit;
+    StandardDampingFunction<Fixed<11>, double > damp;
     MultiDimensionalNewtonMethod<Fixed<11>, double> rf;
     rf.setFunction(&fun);
     rf.setJacobianFunction(&jac);
     rf.setCriteriaFunction(&crit);
+    rf.setDampingFunction(&damp);
     rf.setMaximumNumberOfIterations(10);
 
     if (nrm2(be) < MBSim::epsroot()) {
-      fmatvec::Vec11 s0 = computes0(qG); // initial value
+      Vec11 s0 = computes0(qG); // initial value
 
       be = rf.solve(s0);
     }
@@ -319,7 +319,7 @@ namespace MBSimFlexibleBody {
   void Trafo33RCM::computeCOSY() {
     // REQUIRED computebe()
 
-    pS = be(fmatvec::Range0x2());
+    pS = be(Range0x2());
     tS = angle->computet(pS);
     nS = angle->computen(pS);
     bS = angle->computeb(pS);
@@ -341,17 +341,17 @@ namespace MBSimFlexibleBody {
     etantil = bSH * ntilS;
   }
 
-  void Trafo33RCM::computerSepstk0(const fmatvec::Vec16& qG) {
+  void Trafo33RCM::computerSepstk0(const Vec16& qG) {
     // REQUIRED computeCOSY()
 
-    fmatvec::Vec3 rRrLp = qG(fmatvec::Range10x12()) + qG(fmatvec::Range0x2());
+    Vec3 rRrLp = qG(Range10x12()) + qG(Range0x2());
 
     rS = 0.5 * (rRrLp - (xintil * (be(3) + be(4)) + xibtil * (be(7) + be(8))) * nS - (etantil * (be(3) + be(4)) + etabtil * (be(7) + be(8))) * bS);
     epstil = rRrLmH * tS / l0 - 1.;
     k0 = (qG(13) - qG(3) - sin(pS(1)) * (be(10) - be(9))) / l0;
   }
 
-  void Trafo33RCM::computeqI(const fmatvec::Vec16& qG) {
+  void Trafo33RCM::computeqI(const Vec16& qG) {
     computeprelim(qG);
     computebe(qG);
     computeCOSY();
@@ -412,35 +412,35 @@ namespace MBSimFlexibleBody {
     SMRHS_Jac(0, 1) = 0.5 * cos(pS(1)) * (be(9) + be(10));
     SMRHS_Jac(0, 9) = 0.5 * sin(pS(1));
     SMRHS_Jac(0, 10) = 0.5 * sin(pS(1));
-    SMRHS_Jac.set(fmatvec::Index(5, 5), fmatvec::Index(0, 10), -rRrLmH * nSbE);
-    SMRHS_Jac.add(fmatvec::Index(5, 5), fmatvec::Index(0, 10), xintilbE * (be(4) - be(3)) + xibtilbE * (be(8) - be(7)));
+    SMRHS_Jac.set(Index(5, 5), Index(0, 10), -rRrLmH * nSbE);
+    SMRHS_Jac.add(Index(5, 5), Index(0, 10), xintilbE * (be(4) - be(3)) + xibtilbE * (be(8) - be(7)));
     SMRHS_Jac(5, 4) += xintil;
     SMRHS_Jac(5, 3) -= xintil;
     SMRHS_Jac(5, 8) += xibtil;
     SMRHS_Jac(5, 7) -= xibtil;
 
-    SMRHS_Jac.set(fmatvec::Index(6, 6), fmatvec::Index(0, 10), -rRrLmH * bSbE);
-    SMRHS_Jac.add(fmatvec::Index(6, 6), fmatvec::Index(0, 10), etantilbE * (be(4) - be(3)) + etabtilbE * (be(8) - be(7)));
+    SMRHS_Jac.set(Index(6, 6), Index(0, 10), -rRrLmH * bSbE);
+    SMRHS_Jac.add(Index(6, 6), Index(0, 10), etantilbE * (be(4) - be(3)) + etabtilbE * (be(8) - be(7)));
     SMRHS_Jac(6, 4) += etantil;
     SMRHS_Jac(6, 3) -= etantil;
     SMRHS_Jac(6, 8) += etabtil;
     SMRHS_Jac(6, 7) -= etabtil;
 
-    SMRHS_Jac.set(fmatvec::Index(5, 5), fmatvec::Index(11, 26), nSH * drRdrLm);
-    SMRHS_Jac.set(fmatvec::Index(6, 6), fmatvec::Index(11, 26), bSH * drRdrLm);
+    SMRHS_Jac.set(Index(5, 5), Index(11, 26), nSH * drRdrLm);
+    SMRHS_Jac.set(Index(6, 6), Index(11, 26), bSH * drRdrLm);
 
     //TODO: Is this done every timestep --> use different solver
-    beqG = slvLU(static_cast<fmatvec::SqrMat>(SMRHS_Jac(fmatvec::Index(0, 10), fmatvec::Index(0, 10))), static_cast<fmatvec::Mat>(SMRHS_Jac(fmatvec::Index(0, 10), fmatvec::Index(11, 26)))); //TODO??
+    beqG = slvLU(static_cast<SqrMat>(SMRHS_Jac(Index(0, 10), Index(0, 10))), static_cast<Mat>(SMRHS_Jac(Index(0, 10), Index(11, 26)))); //TODO??
   }
 
   void Trafo33RCM::computeCOSYqG() {
     // REQUIRED computebeqG()
 
-    tSqG = tSpS * beqG(fmatvec::Index(0, 2), fmatvec::Index(0, 15));
-    nSqG = nSpS * beqG(fmatvec::Index(0, 2), fmatvec::Index(0, 15));
-    bSqG = bSpS * beqG(fmatvec::Index(0, 2), fmatvec::Index(0, 15));
-    ntilSqG = ntilSpS * beqG(fmatvec::Index(0, 2), fmatvec::Index(0, 15));
-    btilSqG = btilSpS * beqG(fmatvec::Index(0, 2), fmatvec::Index(0, 15));
+    tSqG = tSpS * beqG(Index(0, 2), Index(0, 15));
+    nSqG = nSpS * beqG(Index(0, 2), Index(0, 15));
+    bSqG = bSpS * beqG(Index(0, 2), Index(0, 15));
+    ntilSqG = ntilSpS * beqG(Index(0, 2), Index(0, 15));
+    btilSqG = btilSpS * beqG(Index(0, 2), Index(0, 15));
 
     xintilqG = nSH * ntilSqG + ntilSH * nSqG;
     xibtilqG = nSH * btilSqG + btilSH * nSqG;
@@ -448,14 +448,14 @@ namespace MBSimFlexibleBody {
     etabtilqG = bSH * btilSqG + btilSH * bSqG;
   }
 
-  void Trafo33RCM::computeJIG(const fmatvec::Vec16& qG) {
+  void Trafo33RCM::computeJIG(const Vec16& qG) {
     computeqI(qG);
     computebeqG();
     computeCOSYqG();
 
-    fmatvec::RowVec3 tSH = tS.T();
+    RowVec3 tSH = tS.T();
 
-    JIG.set(fmatvec::Index(0, 2), fmatvec::Index(0, 15), drRdrLp);
+    JIG.set(Index(0, 2), Index(0, 15), drRdrLp);
     /*Scheint zu passen;
      cout << nS << endl;
      cout << xintilqG << endl;
@@ -465,45 +465,45 @@ namespace MBSimFlexibleBody {
      cout << xibtil << endl;
      cout << beqG << endl;
 
-     cout << beqG(fmatvec::Index(3, 3), fmatvec::Index(0, 15)) << endl;
-     cout << beqG(fmatvec::Index(4, 4), fmatvec::Index(0, 15)) << endl;
-     cout << beqG(fmatvec::Index(7, 7), fmatvec::Index(0, 15)) << endl;
-     cout << beqG(fmatvec::Index(8, 8), fmatvec::Index(0, 15)) << endl;*/
+     cout << beqG(Index(3, 3), Index(0, 15)) << endl;
+     cout << beqG(Index(4, 4), Index(0, 15)) << endl;
+     cout << beqG(Index(7, 7), Index(0, 15)) << endl;
+     cout << beqG(Index(8, 8), Index(0, 15)) << endl;*/
 
-    JIG.add(fmatvec::Index(0, 2), fmatvec::Index(0, 15), -(nS * (xintilqG * (be(3) + be(4)) + xibtilqG * (be(7) + be(8)) + xintil * (beqG(fmatvec::Index(3, 3), fmatvec::Index(0, 15)) + beqG(fmatvec::Index(4, 4), fmatvec::Index(0, 15))) + xibtil * (beqG(fmatvec::Index(7, 7), fmatvec::Index(0, 15)) + beqG(fmatvec::Index(8, 8), fmatvec::Index(0, 15))))));
-    JIG.add(fmatvec::Index(0, 2), fmatvec::Index(0, 15), -((xintil * (be(3) + be(4)) + xibtil * (be(7) + be(8))) * nSqG));
-    JIG.add(fmatvec::Index(0, 2), fmatvec::Index(0, 15), -(bS * (etantilqG * (be(3) + be(4)) + etabtilqG * (be(7) + be(8)) + etantil * (beqG(fmatvec::Index(3, 3), fmatvec::Index(0, 15)) + beqG(fmatvec::Index(4, 4), fmatvec::Index(0, 15))) + etabtil * (beqG(fmatvec::Index(7, 7), fmatvec::Index(0, 15)) + beqG(fmatvec::Index(8, 8), fmatvec::Index(0, 15))))));
-    JIG.add(fmatvec::Index(0, 2), fmatvec::Index(0, 15), -((etantil * (be(3) + be(4)) + etabtil * (be(7) + be(8))) * bSqG));
-    JIG.mult(fmatvec::Index(0, 2), fmatvec::Index(0, 15), 0.5);
-    JIG.set(fmatvec::Index(3, 5), fmatvec::Index(0, 15), beqG(fmatvec::Index(0, 2), fmatvec::Index(0, 15)));
-    JIG.set(fmatvec::Index(6, 6), fmatvec::Index(0, 15), (tSH * drRdrLm + rRrLmH * tSqG) / l0);
-    JIG.set(fmatvec::Index(7, 14), fmatvec::Index(0, 15), beqG(fmatvec::Index(3, 10), fmatvec::Index(0, 15)));
-    JIG.set(fmatvec::Index(15, 15), fmatvec::Index(0, 15), -sin(pS(1)) * (beqG(fmatvec::Index(10, 10), fmatvec::Index(0, 15)) - beqG(fmatvec::Index(9, 9), fmatvec::Index(0, 15))) - (be(10) - be(9)) * cos(pS(1)) * beqG(fmatvec::Index(1, 1), fmatvec::Index(0, 15)));
+    JIG.add(Index(0, 2), Index(0, 15), -(nS * (xintilqG * (be(3) + be(4)) + xibtilqG * (be(7) + be(8)) + xintil * (beqG(Index(3, 3), Index(0, 15)) + beqG(Index(4, 4), Index(0, 15))) + xibtil * (beqG(Index(7, 7), Index(0, 15)) + beqG(Index(8, 8), Index(0, 15))))));
+    JIG.add(Index(0, 2), Index(0, 15), -((xintil * (be(3) + be(4)) + xibtil * (be(7) + be(8))) * nSqG));
+    JIG.add(Index(0, 2), Index(0, 15), -(bS * (etantilqG * (be(3) + be(4)) + etabtilqG * (be(7) + be(8)) + etantil * (beqG(Index(3, 3), Index(0, 15)) + beqG(Index(4, 4), Index(0, 15))) + etabtil * (beqG(Index(7, 7), Index(0, 15)) + beqG(Index(8, 8), Index(0, 15))))));
+    JIG.add(Index(0, 2), Index(0, 15), -((etantil * (be(3) + be(4)) + etabtil * (be(7) + be(8))) * bSqG));
+    JIG.mult(Index(0, 2), Index(0, 15), 0.5);
+    JIG.set(Index(3, 5), Index(0, 15), beqG(Index(0, 2), Index(0, 15)));
+    JIG.set(Index(6, 6), Index(0, 15), (tSH * drRdrLm + rRrLmH * tSqG) / l0);
+    JIG.set(Index(7, 14), Index(0, 15), beqG(Index(3, 10), Index(0, 15)));
+    JIG.set(Index(15, 15), Index(0, 15), -sin(pS(1)) * (beqG(Index(10, 10), Index(0, 15)) - beqG(Index(9, 9), Index(0, 15))) - (be(10) - be(9)) * cos(pS(1)) * beqG(Index(1, 1), Index(0, 15)));
     JIG(15, 3) -= 1.;
     JIG(15, 13) += 1.;
-    JIG.div(fmatvec::Index(15, 15), fmatvec::Index(0, 15), l0);
+    JIG.div(Index(15, 15), Index(0, 15), l0);
   }
 
-  void Trafo33RCM::computezI(const fmatvec::Vec16& qG, const fmatvec::Vec16& qGt) {
+  void Trafo33RCM::computezI(const Vec16& qG, const Vec16& qGt) {
     computeJIG(qG);
 
     qIt = JIG * qGt;
-    rSt = qIt(fmatvec::Range0x2());
-    pSt = qIt(fmatvec::Range3x5());
+    rSt = qIt(Range0x2());
+    pSt = qIt(Range3x5());
     epstilt = qIt(6);
-    bet.set(fmatvec::Range0x2(), pSt(fmatvec::Range0x2()));
-    bet.set(fmatvec::Range3x10(), qIt(fmatvec::Range7x14()));
+    bet.set(Range0x2(), pSt(Range0x2()));
+    bet.set(Range3x10(), qIt(Range7x14()));
     k0t = qIt(15);
   }
 
-  void Trafo33RCM::computeCOSYt(const fmatvec::Vec16& qG, const fmatvec::Vec16& qGt) {
+  void Trafo33RCM::computeCOSYt(const Vec16& qG, const Vec16& qGt) {
     computezI(qG, qGt);
 
     tSt = tSpS * pSt;
     nSt = nSpS * pSt;
     bSt = bSpS * pSt;
-    fmatvec::Vec3 ntilSt = ntilSpS * pSt;
-    fmatvec::Vec3 btilSt = btilSpS * pSt;
+    Vec3 ntilSt = ntilSpS * pSt;
+    Vec3 btilSt = btilSpS * pSt;
 
     nStH = nSt.T();
     bStH = bSt.T();
@@ -522,89 +522,89 @@ namespace MBSimFlexibleBody {
     etantilt = bStH * ntilS + ntilStH * bS;
   }
 
-  void Trafo33RCM::computeJIGt(const fmatvec::Vec16& qGt) {
+  void Trafo33RCM::computeJIGt(const Vec16& qGt) {
     // REQUIRED computeCOSYt()
 
-    fmatvec::RowVec3 rRrLtmH = (qGt(fmatvec::Range10x12()) - qGt(fmatvec::Range0x2())).T();
-    fmatvec::RowVec3 tStH = tSt.T();
+    RowVec3 rRrLtmH = (qGt(Range10x12()) - qGt(Range0x2())).T();
+    RowVec3 tStH = tSt.T();
 
-    fmatvec::Mat3x11 nSbEt = nSpSt * pSbE;
-    fmatvec::Mat3x11 bSbEt = bSpSt * pSbE;
-    fmatvec::Mat3x11 ntilSbEt = ntilSpSt * pSbE;
-    fmatvec::Mat3x11 btilSbEt = btilSpSt * pSbE;
+    Mat3x11 nSbEt = nSpSt * pSbE;
+    Mat3x11 bSbEt = bSpSt * pSbE;
+    Mat3x11 ntilSbEt = ntilSpSt * pSbE;
+    Mat3x11 btilSbEt = btilSpSt * pSbE;
 
-    fmatvec::RowVec11 xibtilbEt = nStH * btilSbE + btilStH * nSbE + nSH * btilSbEt + btilSH * nSbEt;
-    fmatvec::RowVec11 xintilbEt = nStH * ntilSbE + ntilStH * nSbE + nSH * ntilSbEt + ntilSH * nSbEt;
-    fmatvec::RowVec11 etabtilbEt = bStH * btilSbE + btilStH * bSbE + bSH * btilSbEt + btilSH * bSbEt;
-    fmatvec::RowVec11 etantilbEt = bStH * ntilSbE + ntilStH * bSbE + bSH * ntilSbEt + ntilSH * bSbEt;
+    RowVec11 xibtilbEt = nStH * btilSbE + btilStH * nSbE + nSH * btilSbEt + btilSH * nSbEt;
+    RowVec11 xintilbEt = nStH * ntilSbE + ntilStH * nSbE + nSH * ntilSbEt + ntilSH * nSbEt;
+    RowVec11 etabtilbEt = bStH * btilSbE + btilStH * bSbE + bSH * btilSbEt + btilSH * bSbEt;
+    RowVec11 etantilbEt = bStH * ntilSbE + ntilStH * bSbE + bSH * ntilSbEt + ntilSH * bSbEt;
 
-    fmatvec::Mat3V tSqGt = tSpSt * beqG(fmatvec::Index(0, 2), fmatvec::Index(0, 15)) + tSpS * JIGt(fmatvec::Index(3, 5), fmatvec::Index(0, 15));
-    fmatvec::Mat3V nSqGt = nSpSt * beqG(fmatvec::Index(0, 2), fmatvec::Index(0, 15)) + nSpS * JIGt(fmatvec::Index(3, 5), fmatvec::Index(0, 15));
-    fmatvec::Mat3V bSqGt = bSpSt * beqG(fmatvec::Index(0, 2), fmatvec::Index(0, 15)) + bSpS * JIGt(fmatvec::Index(3, 5), fmatvec::Index(0, 15));
-    fmatvec::Mat3V ntilSqGt = ntilSpSt * beqG(fmatvec::Index(0, 2), fmatvec::Index(0, 15)) + ntilSpS * JIGt(fmatvec::Index(3, 5), fmatvec::Index(0, 15));
-    fmatvec::Mat3V btilSqGt = btilSpSt * beqG(fmatvec::Index(0, 2), fmatvec::Index(0, 15)) + btilSpS * JIGt(fmatvec::Index(3, 5), fmatvec::Index(0, 15));
+    Mat3V tSqGt = tSpSt * beqG(Index(0, 2), Index(0, 15)) + tSpS * JIGt(Index(3, 5), Index(0, 15));
+    Mat3V nSqGt = nSpSt * beqG(Index(0, 2), Index(0, 15)) + nSpS * JIGt(Index(3, 5), Index(0, 15));
+    Mat3V bSqGt = bSpSt * beqG(Index(0, 2), Index(0, 15)) + bSpS * JIGt(Index(3, 5), Index(0, 15));
+    Mat3V ntilSqGt = ntilSpSt * beqG(Index(0, 2), Index(0, 15)) + ntilSpS * JIGt(Index(3, 5), Index(0, 15));
+    Mat3V btilSqGt = btilSpSt * beqG(Index(0, 2), Index(0, 15)) + btilSpS * JIGt(Index(3, 5), Index(0, 15));
 
-    fmatvec::RowVec16 xibtilqGt = nStH * btilSqG + btilStH * nSqG + nSH * btilSqGt + btilSH * nSqGt;
-    fmatvec::RowVec16 xintilqGt = nStH * ntilSqG + ntilStH * nSqG + nSH * ntilSqGt + ntilSH * nSqGt;
-    fmatvec::RowVec16 etabtilqGt = bStH * btilSqG + btilStH * bSqG + bSH * btilSqGt + btilSH * bSqGt;
-    fmatvec::RowVec16 etantilqGt = bStH * ntilSqG + ntilStH * bSqG + bSH * ntilSqGt + ntilSH * bSqGt;
+    RowVec16 xibtilqGt = nStH * btilSqG + btilStH * nSqG + nSH * btilSqGt + btilSH * nSqGt;
+    RowVec16 xintilqGt = nStH * ntilSqG + ntilStH * nSqG + nSH * ntilSqGt + ntilSH * nSqGt;
+    RowVec16 etabtilqGt = bStH * btilSqG + btilStH * bSqG + bSH * btilSqGt + btilSH * bSqGt;
+    RowVec16 etantilqGt = bStH * ntilSqG + ntilStH * bSqG + bSH * ntilSqGt + ntilSH * bSqGt;
 
-    fmatvec::SqrMat11 SMt;
+    SqrMat11 SMt;
     SMt(0, 1) = 0.5 * (-sin(pS(1)) * pSt(1) * (be(9) + be(10)) + cos(pS(1)) * (bet(9) + bet(10)));
     SMt(0, 9) = 0.5 * cos(pS(1)) * pSt(1);
     SMt(0, 10) = 0.5 * cos(pS(1)) * pSt(1);
 
-    SMt.set(fmatvec::Index(5, 5), fmatvec::Index(0, 10), -rRrLtmH * nSbE - rRrLmH * nSbEt);
-    SMt.add(fmatvec::Index(5, 5), fmatvec::Index(0, 10), xintilbEt * (be(4) - be(3)) + xibtilbEt * (be(8) - be(7)));
-    SMt.add(fmatvec::Index(5, 5), fmatvec::Index(0, 10), xintilbE * (bet(4) - bet(3)) + xibtilbE * (bet(8) - bet(7)));
+    SMt.set(Index(5, 5), Index(0, 10), -rRrLtmH * nSbE - rRrLmH * nSbEt);
+    SMt.add(Index(5, 5), Index(0, 10), xintilbEt * (be(4) - be(3)) + xibtilbEt * (be(8) - be(7)));
+    SMt.add(Index(5, 5), Index(0, 10), xintilbE * (bet(4) - bet(3)) + xibtilbE * (bet(8) - bet(7)));
     SMt(5, 4) += xintilt;
     SMt(5, 3) -= xintilt;
     SMt(5, 8) += xibtilt;
     SMt(5, 7) -= xibtilt;
 
-    SMt.set(fmatvec::Index(6, 6), fmatvec::Index(0, 10), -rRrLtmH * bSbE - rRrLmH * bSbEt);
-    SMt.add(fmatvec::Index(6, 6), fmatvec::Index(0, 10), etantilbEt * (be(4) - be(3)) + etabtilbEt * (be(8) - be(7)));
-    SMt.add(fmatvec::Index(6, 6), fmatvec::Index(0, 10), etantilbE * (bet(4) - bet(3)) + etabtilbE * (bet(8) - bet(7)));
+    SMt.set(Index(6, 6), Index(0, 10), -rRrLtmH * bSbE - rRrLmH * bSbEt);
+    SMt.add(Index(6, 6), Index(0, 10), etantilbEt * (be(4) - be(3)) + etabtilbEt * (be(8) - be(7)));
+    SMt.add(Index(6, 6), Index(0, 10), etantilbE * (bet(4) - bet(3)) + etabtilbE * (bet(8) - bet(7)));
     SMt(6, 4) += etantilt;
     SMt(6, 3) -= etantilt;
     SMt(6, 8) += etabtilt;
     SMt(6, 7) -= etabtilt;
 
-    fmatvec::MatV16 RHS_JIGt = -SMt * beqG;
-    RHS_JIGt.add(fmatvec::Index(5, 5), fmatvec::Index(0, 15), nStH * drRdrLm);
-    RHS_JIGt.add(fmatvec::Index(6, 6), fmatvec::Index(0, 15), bStH * drRdrLm);
+    MatV16 RHS_JIGt = -SMt * beqG;
+    RHS_JIGt.add(Index(5, 5), Index(0, 15), nStH * drRdrLm);
+    RHS_JIGt.add(Index(6, 6), Index(0, 15), bStH * drRdrLm);
 
-    fmatvec::Mat beqGt = slvLU(static_cast<fmatvec::SqrMat>(SMRHS_Jac(fmatvec::Index(0, 10), fmatvec::Index(0, 10))), static_cast<fmatvec::Mat>(RHS_JIGt)); //TODO??
+    Mat beqGt = slvLU(static_cast<SqrMat>(SMRHS_Jac(Index(0, 10), Index(0, 10))), static_cast<Mat>(RHS_JIGt)); //TODO??
 
-    JIGt.set(fmatvec::Index(3, 5), fmatvec::Index(0, 15), beqGt(fmatvec::Index(0, 2), fmatvec::Index(0, 15)));
-    JIGt.set(fmatvec::Index(7, 14), fmatvec::Index(0, 15), beqGt(fmatvec::Index(3, 10), fmatvec::Index(0, 15)));
+    JIGt.set(Index(3, 5), Index(0, 15), beqGt(Index(0, 2), Index(0, 15)));
+    JIGt.set(Index(7, 14), Index(0, 15), beqGt(Index(3, 10), Index(0, 15)));
 
-    JIGt.set(fmatvec::Index(6, 6), fmatvec::Index(0, 15), (tStH * drRdrLm + rRrLtmH * tSqG + rRrLmH * tSqGt) / l0);
+    JIGt.set(Index(6, 6), Index(0, 15), (tStH * drRdrLm + rRrLtmH * tSqG + rRrLmH * tSqGt) / l0);
 
-    JIGt.set(fmatvec::Index(0, 2), fmatvec::Index(0, 15), -nSt * (xintilqG * (be(3) + be(4)) + xibtilqG * (be(7) + be(8)) + xintil * (beqG(fmatvec::Index(3, 3), fmatvec::Index(0, 15)) + beqG(fmatvec::Index(4, 4), fmatvec::Index(0, 15))) + xibtil * (beqG(fmatvec::Index(7, 7), fmatvec::Index(0, 15)) + beqG(fmatvec::Index(8, 8), fmatvec::Index(0, 15)))));
-    JIGt.add(fmatvec::Index(0, 2), fmatvec::Index(0, 15), -(nS * (xintilqGt * (be(3) + be(4)) + xibtilqGt * (be(7) + be(8)) + xintilt * (beqG(fmatvec::Index(3, 3), fmatvec::Index(0, 15)) + beqG(fmatvec::Index(4, 4), fmatvec::Index(0, 15))) + xibtilt * (beqG(fmatvec::Index(7, 7), fmatvec::Index(0, 15)) + beqG(fmatvec::Index(8, 8), fmatvec::Index(0, 15))))));
-    JIGt.add(fmatvec::Index(0, 2), fmatvec::Index(0, 15), -(nS * (xintilqG * (bet(3) + bet(4)) + xibtilqG * (bet(7) + bet(8)) + xintil * (beqGt(fmatvec::Index(3, 3), fmatvec::Index(0, 15)) + beqGt(fmatvec::Index(4, 4), fmatvec::Index(0, 15))) + xibtil * (beqGt(fmatvec::Index(7, 7), fmatvec::Index(0, 15)) + beqGt(fmatvec::Index(8, 8), fmatvec::Index(0, 15))))));
+    JIGt.set(Index(0, 2), Index(0, 15), -nSt * (xintilqG * (be(3) + be(4)) + xibtilqG * (be(7) + be(8)) + xintil * (beqG(Index(3, 3), Index(0, 15)) + beqG(Index(4, 4), Index(0, 15))) + xibtil * (beqG(Index(7, 7), Index(0, 15)) + beqG(Index(8, 8), Index(0, 15)))));
+    JIGt.add(Index(0, 2), Index(0, 15), -(nS * (xintilqGt * (be(3) + be(4)) + xibtilqGt * (be(7) + be(8)) + xintilt * (beqG(Index(3, 3), Index(0, 15)) + beqG(Index(4, 4), Index(0, 15))) + xibtilt * (beqG(Index(7, 7), Index(0, 15)) + beqG(Index(8, 8), Index(0, 15))))));
+    JIGt.add(Index(0, 2), Index(0, 15), -(nS * (xintilqG * (bet(3) + bet(4)) + xibtilqG * (bet(7) + bet(8)) + xintil * (beqGt(Index(3, 3), Index(0, 15)) + beqGt(Index(4, 4), Index(0, 15))) + xibtil * (beqGt(Index(7, 7), Index(0, 15)) + beqGt(Index(8, 8), Index(0, 15))))));
 
-    JIGt.add(fmatvec::Index(0, 2), fmatvec::Index(0, 15), -((xintil * (be(3) + be(4)) + xibtil * (be(7) + be(8))) * nSqGt));
-    JIGt.add(fmatvec::Index(0, 2), fmatvec::Index(0, 15), -((xintilt * (be(3) + be(4)) + xibtilt * (be(7) + be(8))) * nSqG));
-    JIGt.add(fmatvec::Index(0, 2), fmatvec::Index(0, 15), -((xintil * (bet(3) + bet(4)) + xibtil * (bet(7) + bet(8))) * nSqG));
+    JIGt.add(Index(0, 2), Index(0, 15), -((xintil * (be(3) + be(4)) + xibtil * (be(7) + be(8))) * nSqGt));
+    JIGt.add(Index(0, 2), Index(0, 15), -((xintilt * (be(3) + be(4)) + xibtilt * (be(7) + be(8))) * nSqG));
+    JIGt.add(Index(0, 2), Index(0, 15), -((xintil * (bet(3) + bet(4)) + xibtil * (bet(7) + bet(8))) * nSqG));
 
-    JIGt.add(fmatvec::Index(0, 2), fmatvec::Index(0, 15), -(bSt * (etantilqG * (be(3) + be(4)) + etabtilqG * (be(7) + be(8)) + etantil * (beqG(fmatvec::Index(3, 3), fmatvec::Index(0, 15)) + beqG(fmatvec::Index(4, 4), fmatvec::Index(0, 15))) + etabtil * (beqG(fmatvec::Index(7, 7), fmatvec::Index(0, 15)) + beqG(fmatvec::Index(8, 8), fmatvec::Index(0, 15))))));
-    JIGt.add(fmatvec::Index(0, 2), fmatvec::Index(0, 15), -(bS * (etantilqGt * (be(3) + be(4)) + etabtilqGt * (be(7) + be(8)) + etantilt * (beqG(fmatvec::Index(3, 3), fmatvec::Index(0, 15)) + beqG(fmatvec::Index(4, 4), fmatvec::Index(0, 15))) + etabtilt * (beqG(fmatvec::Index(7, 7), fmatvec::Index(0, 15)) + beqG(fmatvec::Index(8, 8), fmatvec::Index(0, 15))))));
-    JIGt.add(fmatvec::Index(0, 2), fmatvec::Index(0, 15), -(bS * (etantilqG * (bet(3) + bet(4)) + etabtilqG * (bet(7) + bet(8)) + etantil * (beqGt(fmatvec::Index(3, 3), fmatvec::Index(0, 15)) + beqGt(fmatvec::Index(4, 4), fmatvec::Index(0, 15))) + etabtil * (beqGt(fmatvec::Index(7, 7), fmatvec::Index(0, 15)) + beqGt(fmatvec::Index(8, 8), fmatvec::Index(0, 15))))));
+    JIGt.add(Index(0, 2), Index(0, 15), -(bSt * (etantilqG * (be(3) + be(4)) + etabtilqG * (be(7) + be(8)) + etantil * (beqG(Index(3, 3), Index(0, 15)) + beqG(Index(4, 4), Index(0, 15))) + etabtil * (beqG(Index(7, 7), Index(0, 15)) + beqG(Index(8, 8), Index(0, 15))))));
+    JIGt.add(Index(0, 2), Index(0, 15), -(bS * (etantilqGt * (be(3) + be(4)) + etabtilqGt * (be(7) + be(8)) + etantilt * (beqG(Index(3, 3), Index(0, 15)) + beqG(Index(4, 4), Index(0, 15))) + etabtilt * (beqG(Index(7, 7), Index(0, 15)) + beqG(Index(8, 8), Index(0, 15))))));
+    JIGt.add(Index(0, 2), Index(0, 15), -(bS * (etantilqG * (bet(3) + bet(4)) + etabtilqG * (bet(7) + bet(8)) + etantil * (beqGt(Index(3, 3), Index(0, 15)) + beqGt(Index(4, 4), Index(0, 15))) + etabtil * (beqGt(Index(7, 7), Index(0, 15)) + beqGt(Index(8, 8), Index(0, 15))))));
 
-    JIGt.add(fmatvec::Index(0, 2), fmatvec::Index(0, 15), -((etantil * (be(3) + be(4)) + etabtil * (be(7) + be(8))) * bSqGt));
-    JIGt.add(fmatvec::Index(0, 2), fmatvec::Index(0, 15), -((etantilt * (be(3) + be(4)) + etabtilt * (be(7) + be(8))) * bSqG));
-    JIGt.add(fmatvec::Index(0, 2), fmatvec::Index(0, 15), -((etantil * (bet(3) + bet(4)) + etabtil * (bet(7) + bet(8))) * bSqG));
+    JIGt.add(Index(0, 2), Index(0, 15), -((etantil * (be(3) + be(4)) + etabtil * (be(7) + be(8))) * bSqGt));
+    JIGt.add(Index(0, 2), Index(0, 15), -((etantilt * (be(3) + be(4)) + etabtilt * (be(7) + be(8))) * bSqG));
+    JIGt.add(Index(0, 2), Index(0, 15), -((etantil * (bet(3) + bet(4)) + etabtil * (bet(7) + bet(8))) * bSqG));
 
-    JIGt.mult(fmatvec::Index(0, 2), fmatvec::Index(0, 15), 0.5);
+    JIGt.mult(Index(0, 2), Index(0, 15), 0.5);
 
-    JIGt.set(fmatvec::Index(15, 15), fmatvec::Index(0, 15), -cos(pS(1)) * pSt(1) * (beqG(fmatvec::Index(10, 10), fmatvec::Index(0, 15)) - beqG(fmatvec::Index(9, 9), fmatvec::Index(0, 15))) - ((bet(10) - bet(9)) * cos(pS(1)) - (be(10) - be(9)) * sin(pS(1)) * pSt(1)) * beqG(fmatvec::Index(1, 1), fmatvec::Index(0, 15)));
-    JIGt.add(fmatvec::Index(15, 15), fmatvec::Index(0, 15), -sin(pS(1)) * (beqGt(fmatvec::Index(10, 10), fmatvec::Index(0, 15)) - beqGt(fmatvec::Index(9, 9), fmatvec::Index(0, 15))) - (be(10) - be(9)) * cos(pS(1)) * beqGt(fmatvec::Index(1, 1), fmatvec::Index(0, 15)));
-    JIGt.div(fmatvec::Index(15, 15), fmatvec::Index(0, 15), l0);
+    JIGt.set(Index(15, 15), Index(0, 15), -cos(pS(1)) * pSt(1) * (beqG(Index(10, 10), Index(0, 15)) - beqG(Index(9, 9), Index(0, 15))) - ((bet(10) - bet(9)) * cos(pS(1)) - (be(10) - be(9)) * sin(pS(1)) * pSt(1)) * beqG(Index(1, 1), Index(0, 15)));
+    JIGt.add(Index(15, 15), Index(0, 15), -sin(pS(1)) * (beqGt(Index(10, 10), Index(0, 15)) - beqGt(Index(9, 9), Index(0, 15))) - (be(10) - be(9)) * cos(pS(1)) * beqGt(Index(1, 1), Index(0, 15)));
+    JIGt.div(Index(15, 15), Index(0, 15), l0);
   }
 
-  void Trafo33RCM::computeTrafo(const fmatvec::Vec16& qG, const fmatvec::Vec16& qGt) {
+  void Trafo33RCM::computeTrafo(const Vec16& qG, const Vec16& qGt) {
     computeCOSYt(qG, qGt);
     computeJIGt(qGt);
   }

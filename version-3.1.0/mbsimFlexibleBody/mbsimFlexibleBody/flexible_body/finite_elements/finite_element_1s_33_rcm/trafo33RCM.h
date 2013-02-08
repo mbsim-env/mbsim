@@ -113,7 +113,7 @@ namespace MBSimFlexibleBody {
       virtual ~PositionJacobian();
 
       /* INHERITED INTERFACE */
-      fmatvec::SqrMat11 operator()(const fmatvec::Vec11 &pos, const void * = NULL);
+      void operator()(const fmatvec::Vec11 &pos, fmatvec::SqrMat11 & J, const void * = NULL);
       /***************************************************/
 
     private:
