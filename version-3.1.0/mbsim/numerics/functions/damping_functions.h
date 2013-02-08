@@ -100,7 +100,7 @@ namespace MBSim {
   template<class VecType, class AT>
   double StandardDampingFunction<VecType, AT>::operator ()(const fmatvec::Vector<VecType, AT> & x, const fmatvec::Vector<VecType, AT> & dx, const void *) {
     double alpha = 1;
-    fmatvec::Vector<VecType, AT> xnew = x;
+    fmatvec::Vector<VecType, AT> xnew(x.size(), fmatvec::NONINIT);
 
     for (unsigned int k = 0; k < kmax; k++) {
       xnew = x - alpha * dx;

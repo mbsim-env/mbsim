@@ -90,7 +90,7 @@ namespace MBSim {
       /**
        * \brief root function
        */
-      Function1<fmatvec::Vec, fmatvec::Vec> *function;
+      Function1<fmatvec::Vector<VecType, AT>, fmatvec::Vector<VecType, AT> > *function;
 
       /**
        * \brief Jacobian matrix
@@ -158,14 +158,16 @@ namespace MBSim {
     fmatvec::Vector<VecType, AT> f = (*function)(x);
 
     //direction of function (derivative)
-    fmatvec::SquareMatrix<VecType, AT> J = (*jacobian)(x);
+    fmatvec::SquareMatrix<VecType, AT> J(x.size(), fmatvec::INIT, 0.);
+    (*jacobian)(x, J);
 
     //step to next position
     fmatvec::Vector<VecType, AT> dx = slvLU(J, f, info);
 
     //Damp the solution
-    if(damping)
+    if(damping) {
       x -=  (*damping)(x, dx) * dx;
+    }
     else
       x -= dx;
 
@@ -175,6 +177,7 @@ namespace MBSim {
 
       //Get the information about the criteria
       info = (*criteria)(x);
+
 
       //Criteria with info = 1 means: go on  (else there might be a solution found (=0) or something else)
       if (info != 1) {
@@ -188,7 +191,7 @@ namespace MBSim {
       f = (*function)(x);
 
       //Compute Jacobian
-      J = (*jacobian)(x);
+      (*jacobian)(x, J);
 
       //get step
       dx = slvLU(J, f, info);

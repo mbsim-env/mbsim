@@ -30,9 +30,7 @@ namespace MBSim {
    * \brief base class for square Jacobians used for the newton method
    */
   template <class VecType, class AT>
-  class NewtonJacobianFunction : public Function1<fmatvec::SquareMatrix<VecType, AT>, fmatvec::Vector<VecType, AT> > {
-      typedef fmatvec::Vector<VecType, AT> vctr;
-      typedef fmatvec::SquareMatrix<VecType, AT> matr;
+  class NewtonJacobianFunction {
 
     public:
       /**
@@ -47,17 +45,17 @@ namespace MBSim {
       }
 
       /* GETTER / SETTER*/
-      virtual void setFunction(Function1<vctr, vctr> * function_) {
+      virtual void setFunction(Function1<fmatvec::Vector<VecType, AT> , fmatvec::Vector<VecType, AT>  > * function_) {
         function = function_;
       }
       /*****************/
 
       /*INHERITED INTERFACE*/
-      virtual matr operator ()(const vctr & x, const void* = NULL) = 0;
+      virtual void operator ()(const fmatvec::Vector<VecType, AT>  & x, fmatvec::SquareMatrix<VecType, AT> & J, const void* = NULL) = 0;
       /*********************/
 
     protected:
-      Function1<vctr, vctr> * function;
+      Function1<fmatvec::Vector<VecType, AT> , fmatvec::Vector<VecType, AT> > * function;
   };
 
   /*!
@@ -78,7 +76,7 @@ namespace MBSim {
       }
 
       /*INHERITED INTERFACE*/
-      virtual fmatvec::SquareMatrix<VecType, AT> operator ()(const fmatvec::Vector<VecType, AT> & x, const void* = NULL);
+      virtual void operator ()(const fmatvec::Vector<VecType, AT> & x, fmatvec::SquareMatrix<VecType, AT> & J, const void* = NULL);
 
   };
 
@@ -140,13 +138,12 @@ namespace MBSim {
   }
 
   template <class VecType, class AT>
-  fmatvec::SquareMatrix<VecType, AT> NumericalNewtonJacobianFunction<VecType, AT>::operator ()(const fmatvec::Vector<VecType, AT> & x, const void*) {
-    fmatvec::SquareMatrix<VecType, AT> J = fmatvec::SquareMatrix<VecType, AT>(x.size()); // initialize size
+  void NumericalNewtonJacobianFunction<VecType, AT>::operator ()(const fmatvec::Vector<VecType, AT> & x, fmatvec::SquareMatrix<VecType, AT> & J, const void*) {
 
     double dx, xj;
     fmatvec::Vector<VecType, AT> x2 = x;
     fmatvec::Vector<VecType, AT> f = (*this->function)(x2);
-    fmatvec::Vector<VecType, AT> f2;
+    fmatvec::Vector<VecType, AT> f2(x2.size(), fmatvec::NONINIT);
 
     for (int j = 0; j < x2.size(); j++) {
       xj = x2(j);
@@ -159,10 +156,8 @@ namespace MBSim {
       x2(j) += dx;
       f2 = (*this->function)(x2);
       x2(j) = xj;
-      J.col(j) = (f2 - f) / dx;
+      J.set(j, (f2 - f) / dx);
     }
-
-    return J;
   }
 
 }
