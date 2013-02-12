@@ -34,7 +34,7 @@ int main (int argc, char* argv[])
     sys->setgdTol(1e-8);
     TimeSteppingIntegrator integrator;
     integrator.setStepSize(dt);
-    integrator.setPlotStepSize(dt);
+    integrator.setPlotStepSize(100*dt);
     integrator.setEndTime(2);
     integrator.integrate(*sys);
   }
