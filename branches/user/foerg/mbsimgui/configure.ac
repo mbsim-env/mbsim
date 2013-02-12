@@ -72,9 +72,9 @@ AC_ARG_ENABLE([inlineombv],[  --disable-inlineombv  disable inline openmbv],[inl
 fi
 
 dnl Include path for Boost
-AC_ARG_WITH([boost-inc],
-  [  --with-boost-inc=PATH  The path Boost include directory.],
-  [CPPFLAGS="$CPPFLAGS -I$withval"; DEFINES="$DEFINES -I$withval"])
+dnl AC_ARG_WITH([boost-inc],
+dnl   [  --with-boost-inc=PATH  The path Boost include directory.],
+dnl   [CPPFLAGS="$CPPFLAGS -I$withval"; DEFINES="$DEFINES -I$withval"])
 
 dnl Check for doxygen
 AC_ARG_WITH([doxygenpath],

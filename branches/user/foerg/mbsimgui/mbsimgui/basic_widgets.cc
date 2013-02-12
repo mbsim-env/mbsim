@@ -30,6 +30,9 @@
 
 using namespace std;
 
+extern bool absolutePath;
+extern QDir mbsDir;
+
 LocalFrameOfReferenceWidget::LocalFrameOfReferenceWidget(const string &xmlName_, Element *element_, Frame* omitFrame_) : element(element_), selectedFrame(0), omitFrame(omitFrame_), xmlName(xmlName_) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -116,7 +119,6 @@ void ParentFrameOfReferenceWidget::initialize() {
   if(saved_frameOfReference!="") {
     QString refF = saved_frameOfReference;
     refF=refF.mid(9, refF.length()-10);
-    //cout << refF.toStdString() << endl;
     setFrame(element->getParentElement()->getFrame(refF));
   }
 }
@@ -338,9 +340,12 @@ FileWidget::FileWidget(const string &xmlName_, const QString &description_, cons
 }
 
 void FileWidget::selectFile() {
-  QString file=QFileDialog::getOpenFileName(0, description, QString("./"), extensions);
-  if(file!="")
-    fileName->setText(QString("\"")+file+"\"");
+  QString file = QFileDialog::getOpenFileName(0, description, absoluteFilePath, extensions);
+  if(file!="") {
+    absoluteFilePath = file;
+    fileName->setText(QString("\"")+mbsDir.relativeFilePath(absoluteFilePath)+"\"");
+  }
+    //fileName->setText(QFileInfo(absoluteFilePath).fileName());
 }
 
 bool FileWidget::initializeUsingXML(TiXmlElement *element) {
@@ -348,7 +353,11 @@ bool FileWidget::initializeUsingXML(TiXmlElement *element) {
   if(e) {
     TiXmlText *text = dynamic_cast<TiXmlText*>(e->FirstChild());
     if(text) {
-      fileName->setText(text->Value());
+      QString file = text->Value();
+      fileName->setText(file);
+      file = file.mid(1,file.length()-2);
+      absoluteFilePath=mbsDir.absoluteFilePath(file);
+      //fileName->setText(QFileInfo(absoluteFilePath).fileName());
       return true;
     }
   }
@@ -357,7 +366,8 @@ bool FileWidget::initializeUsingXML(TiXmlElement *element) {
 
 TiXmlElement* FileWidget::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = new TiXmlElement(xmlName);
-  TiXmlText *text = new TiXmlText(fileName->text().toStdString());
+  QString filePath = QString("\"")+(absolutePath?absoluteFilePath:mbsDir.relativeFilePath(absoluteFilePath))+"\"";
+  TiXmlText *text = new TiXmlText(filePath.toStdString());
   ele0->LinkEndChild(text);
   parent->LinkEndChild(ele0);
 

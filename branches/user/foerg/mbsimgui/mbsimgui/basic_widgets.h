@@ -181,7 +181,7 @@ class FileWidget : public XMLWidget {
   protected:
     QLineEdit *fileName;
     std::string xmlName;
-    QString description, extensions;
+    QString absoluteFilePath, description, extensions;
 
   protected slots:
     void selectFile();

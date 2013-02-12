@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
   setlocale(LC_ALL, "C");
   MainWindow *mainwindow = new MainWindow;
   mainwindow->show();
-  mainwindow->resize(1100, 700);
+  mainwindow->resize(1400, 900);
   int ret=app.exec();
   do_octave_atexit(); // do_octave_atexit must be called before leaving (to prevent crashed in atexit())
   delete mainwindow;

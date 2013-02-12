@@ -43,11 +43,13 @@ Element::Element(const QString &str, QTreeWidgetItem *parentItem, int ind, bool 
   ID=sstr.str();
   idEleMap.insert(make_pair(ID, this));
 
+  if(parentItem) {
   if(ind==-1 || ind>=parentItem->childCount())
     parentItem->addChild(this); // insert as last element
   else
     parentItem->insertChild(ind, this); // insert at position ind
   parentElement = static_cast<Element*>(parentItem->parent());
+  }
 
   setText(0, str);
 
