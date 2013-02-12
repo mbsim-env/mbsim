@@ -47,26 +47,32 @@ int main(int argc, char *argv[]) {
     bool doNotIntegrate=false;
     if(argc>=2 && strcmp(argv[1],"--donotintegrate")==0)
       doNotIntegrate=true;
+    bool stopAfterFirstStep=false;
+    if(argc>=2 && strcmp(argv[1],"--stopafterfirststep")==0)
+      stopAfterFirstStep=true;
   
     MBSimXML::preInitDynamicSystemSolver(argc, argv, dss);
   
     MBSimXML::initDynamicSystemSolver(argc, argv, dss);
   
     MBSimXML::initIntegrator(argc, argv, integrator);
-  
+
     if(doNotIntegrate==false) {
-      MBSimXML::main(integrator, dss);
+      if(stopAfterFirstStep)
+        MBSimXML::plotInitialState(integrator, dss);
+      else
+        MBSimXML::main(integrator, dss);
+      // Remove the following block if --lastframe works in OpenMBV.
+      // If this is removed openmbv should be opened with the --lastframe option.
+      // Currently we use this block if --stopafterfirststep is given to reload the XML/H5 file in OpenMBV again
+      // after the first step has been written since this is not possible by the file locking mechanism in OpenMBVCppInterface.
+      if(stopAfterFirstStep) {
+        // touch the OpenMBV files
+        boost::myfilesystem::last_write_time((dss->getName()+".ombv.xml").c_str(), boost::posix_time::microsec_clock::local_time());
+        boost::myfilesystem::last_write_time((dss->getName()+".ombv.h5" ).c_str(), boost::posix_time::microsec_clock::local_time());
+      }
     }
-    // Remove the following block if --lastframe works in OpenMBV.
-    // If this is removed openmbv should be opened with the --lastframe option.
-    // Currently we use this block if --stopafterfirststep is given to reload the XML/H5 file in OpenMBV again
-    // after the first step has been written since this is not possible by the file locking mechanism in OpenMBVCppInterface.
-    if(strcmp(argv[1],"--stopafterfirststep")==0) {
-      // touch the OpenMBV files
-      boost::myfilesystem::last_write_time((dss->getName()+".ombv.xml").c_str(), boost::posix_time::microsec_clock::local_time());
-      boost::myfilesystem::last_write_time((dss->getName()+".ombv.h5" ).c_str(), boost::posix_time::microsec_clock::local_time());
-    }
-  
+
     MBSimXML::postMain(argc, argv, integrator, dss);
   }
   catch (MBSimError error) {
