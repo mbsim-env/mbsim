@@ -118,16 +118,16 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
 
   QMenu *submenu = new QMenu("Add contour");
   contextMenu->insertMenu(actionSaveAs,submenu);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Add point", this);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Point", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addPoint()));
   submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Add line", this);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Line", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addLine()));
   submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Add plane", this);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Plane", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addPlane()));
   submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Add sphere", this);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Sphere", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addSphere()));
   submenu->addAction(action);
 

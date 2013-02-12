@@ -23,6 +23,7 @@
 #include <QtGui/QInputDialog>
 #include <QtGui/QFileDialog>
 #include <QtGui/QMessageBox>
+#include <QVBoxLayout>
 #include "objectfactory.h"
 #include "rigidbody.h"
 #include "constraint.h"
@@ -116,16 +117,16 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
   contextMenu->addAction(action);
 
   QMenu *submenu = contextMenu->addMenu("Add contour");
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Add point", this);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Point", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addPoint()));
   submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Add line", this);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Line", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addLine()));
   submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Add plane", this);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Plane", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addPlane()));
   submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Add sphere", this);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Sphere", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addSphere()));
   submenu->addAction(action);
 
@@ -166,7 +167,7 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
   action=new QAction(Utils::QIconCached("newobject.svg"),"Contact", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addContact()));
   submenu->addAction(action);
-  QMenu *subsubmenu = submenu->addMenu("Add Sensor");
+  QMenu *subsubmenu = submenu->addMenu("Sensor");
   action=new QAction(Utils::QIconCached("newobject.svg"),"AbsolutePositionSensor", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addAbsolutePositionSensor()));
   subsubmenu->addAction(action);
@@ -253,17 +254,6 @@ void Group::addRigidBody() {
 }
 
 void Group::addRigidBodies() {
-  for(int i=0; i<1000; i++) {
-    cout <<"add Body" << i+1<< endl;
-    //new RigidBody(newName(objects,"Body"), objects, -1);
-    new FixedRelativeFrame(newName(frames,"P"), frames, -1);
-    //QTreeWidgetItem *item = new QTreeWidgetItem;
-    //addChild(item); //
-    //item->setText(0,newName(this,"P"));
-    //item->setText(1,"Type");
-    cout <<"end" << endl;
-  }
-  ((Element*)treeWidget()->topLevelItem(0))->update();
 }
 
 void Group::addKinematicConstraint() {
@@ -406,10 +396,8 @@ void Group::addFromFile() {
 }
 
 void Group::initializeUsingXML(TiXmlElement *element) {
-  cout << "Group::initializeUsingXML" << endl;
   TiXmlElement *e;
   Element::initializeUsingXML(element);
-  cout << getName().toStdString() << endl;
   e=element->FirstChildElement();
 
   if(frameOfReference)
@@ -504,8 +492,6 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameI");
   if(e)
     getFrame(0)->initializeUsingXML2(e);
-
-  cout << "end Group::initializeUsingXML" << endl;
 }
 
 TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {

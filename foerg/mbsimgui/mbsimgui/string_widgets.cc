@@ -24,6 +24,8 @@
 #include <QtGui>
 
 using namespace std;
+extern bool absolutePath;
+extern QDir mbsDir;
 
 OctaveHighlighter::OctaveHighlighter(QTextDocument *parent) : QSyntaxHighlighter(parent) {
   QPlainTextEdit dummy;
@@ -777,8 +779,11 @@ VecFromFileWidget::VecFromFileWidget() {
 
 void VecFromFileWidget::selectFile() {
   QString file=QFileDialog::getOpenFileName(0, "ASCII files", QString("./"), "all files (*.*)");
-  if(file!="")
-    fileName->setText(file);
+  if(file!="") {
+    absoluteFilePath = file;
+    fileName->setText(mbsDir.relativeFilePath(absoluteFilePath));
+    //fileName->setText(file);
+  }
 }
 
 string VecFromFileWidget::getValue() const {
@@ -795,12 +800,15 @@ bool VecFromFileWidget::initializeUsingXML(TiXmlElement *element) {
   int pos1 = str.find_first_of('\''); 
   int pos2 = str.find_last_of('\''); 
   fileName->setText(str.substr(pos1+1,pos2-pos1-1).c_str());
+  absoluteFilePath=mbsDir.absoluteFilePath(str.substr(pos1+1,pos2-pos1-1).c_str());
+
   return true;
 }
 
 TiXmlElement* VecFromFileWidget::writeXMLFile(TiXmlNode *parent) {
-  string exp = string("load('") + fileName->text().toStdString() + "')"; 
-  TiXmlText *text = new TiXmlText(exp);
+  QString filePath = QString("load('")+(absolutePath?absoluteFilePath:mbsDir.relativeFilePath(absoluteFilePath))+"')";
+ //string exp = string("load('") + fileName->text().toStdString() + "')"; 
+  TiXmlText *text = new TiXmlText(filePath.toStdString());
   parent->LinkEndChild(text);
   return 0;
 }
@@ -820,8 +828,11 @@ MatFromFileWidget::MatFromFileWidget() {
 
 void MatFromFileWidget::selectFile() {
   QString file=QFileDialog::getOpenFileName(0, "ASCII files", QString("./"), "all files (*.*)");
-  if(file!="")
-    fileName->setText(file);
+  if(file!="") {
+    absoluteFilePath = file;
+    fileName->setText(mbsDir.relativeFilePath(absoluteFilePath));
+    //fileName->setText(file);
+  }
 }
 
 string MatFromFileWidget::getValue() const {
@@ -838,12 +849,14 @@ bool MatFromFileWidget::initializeUsingXML(TiXmlElement *element) {
   int pos1 = str.find_first_of('\''); 
   int pos2 = str.find_last_of('\''); 
   fileName->setText(str.substr(pos1+1,pos2-pos1-1).c_str());
+  absoluteFilePath=mbsDir.absoluteFilePath(str.substr(pos1+1,pos2-pos1-1).c_str());
   return true;
 }
 
 TiXmlElement* MatFromFileWidget::writeXMLFile(TiXmlNode *parent) {
-  string exp = string("load('") + fileName->text().toStdString() + "')"; 
-  TiXmlText *text = new TiXmlText(exp);
+  QString filePath = QString("load('")+(absolutePath?absoluteFilePath:mbsDir.relativeFilePath(absoluteFilePath))+"')";
+ //string exp = string("load('") + fileName->text().toStdString() + "')"; 
+  TiXmlText *text = new TiXmlText(filePath.toStdString());
   parent->LinkEndChild(text);
   return 0;
 }

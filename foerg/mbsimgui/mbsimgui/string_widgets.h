@@ -303,6 +303,7 @@ class VecFromFileWidget : public StringWidget {
 
   protected:
     QLineEdit *fileName;
+    QString absoluteFilePath;
 
   protected slots:
     void selectFile();
@@ -323,6 +324,7 @@ class MatFromFileWidget : public StringWidget {
 
   protected:
     QLineEdit *fileName;
+    QString absoluteFilePath; 
 
   protected slots:
     void selectFile();

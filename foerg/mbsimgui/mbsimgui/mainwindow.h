@@ -22,8 +22,6 @@
 
 #include <QMainWindow>
 #include <mbxmlutilstinyxml/tinyxml.h>
-#include <boost/function.hpp>
-#include <boost/filesystem.hpp>
 
 class QTreeWidget;
 class QStackedWidget;
@@ -46,13 +44,14 @@ class MainWindow : public QMainWindow {
     QTreeWidget *elementList, *integratorList, *parameterList;
     QStackedWidget *pagesWidget;
     QLineEdit *fileMBS, *fileIntegrator, *fileParameter;
-    QAction *actionSaveMBSAs, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameter;
+    QAction *actionSaveProj, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameter;
+    void loadProj(const QString &file);
     void loadMBS(const QString &file);
     void loadIntegrator(const QString &file);
     void loadParameter(const QString &file);
     OpenMBVGUI::MainWindow *inlineOpenMBVMW;
     void initInlineOpenMBV();
-    QString uniqueTempDir;
+    QString uniqueTempDir, absoluteMBSFilePath;
     void mbsimxml(int task);
   public:
     MainWindow();
@@ -63,6 +62,9 @@ class MainWindow : public QMainWindow {
     void parameterListClicked();
     void integratorListClicked();
 //    void parameterListClicked(const QPoint &pos);
+    void loadProj();
+    void saveProjAs();
+    void saveProj();
     void newMBS();
     void loadMBS();
     void saveMBSAs();
@@ -92,6 +94,7 @@ class MainWindow : public QMainWindow {
     void resizeVariables();
   protected slots:
     void selectElement(std::string);
+    void changeWorkingDir();
   protected:
     void closeEvent ( QCloseEvent * event );
 };

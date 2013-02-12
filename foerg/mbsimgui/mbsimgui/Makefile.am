@@ -83,3 +83,8 @@ mbsimguisharedir = @datadir@/mbsimgui
 dist_mbsimguishare_DATA = inlineopenmbv.ombv.wst \
 			  empty.ombv.xml \
 			  empty.ombv.h5
+
+mbsimguiicondir = @datadir@/mbsimgui/icons
+dist_mbsimguiicon_DATA = icons/exit.svg \
+			 icons/sim.svg
+

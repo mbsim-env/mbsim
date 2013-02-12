@@ -36,7 +36,7 @@ ExtPhysicalVarWidget::ExtPhysicalVarWidget(std::vector<PhysicalStringWidget*> in
   QPushButton *evalButton = new QPushButton("Eval");
   connect(evalButton,SIGNAL(clicked(bool)),this,SLOT(openEvalDialog()));
   evalDialog = new EvalDialog(((StringWidget*)inputWidget[0])->cloneStringWidget());
-  connect(evalDialog,SIGNAL(clicked(bool)),this,SLOT(updateInput()));
+  //connect(evalDialog,SIGNAL(clicked(bool)),this,SLOT(updateInput()));
 
   inputCombo = new QComboBox;
   stackedWidget = new QStackedWidget;
@@ -110,7 +110,7 @@ void ExtPhysicalVarWidget::openEvalDialog() {
   }
   evalDialog->setValue(str);
   evalDialog->show();
-  evalDialog->setButtonDisabled(evalInput != (inputCombo->count()-1));
+  //evalDialog->setButtonDisabled(evalInput != (inputCombo->count()-1));
 }
 
 bool ExtPhysicalVarWidget::initializeUsingXML(TiXmlElement *element) {

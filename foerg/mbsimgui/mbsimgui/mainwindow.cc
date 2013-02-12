@@ -40,6 +40,9 @@
 
 using namespace std;
 
+bool absolutePath = false;
+QDir mbsDir;
+
 bool removeDir(const QString &dirName) {
   bool result = true;
   QDir dir(dirName);
@@ -104,17 +107,29 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   MBSimObjectFactory::initialize();
   octEval=new MBXMLUtils::OctaveEvaluator;
 
-//  QMenu *projectMenu=new QMenu("Project", menuBar());
-//  projectMenu->addAction("New", this, SLOT(newProject()));
-//  projectMenu->addAction("Load", this, SLOT(loadProject()));
-//  projectMenu->addAction("Save as", this, SLOT(saveProjectAs()));
-//  menuBar()->addMenu(projectMenu);
+  statusBar()->showMessage(tr("Ready"));
+
+  QMenu *GUIMenu=new QMenu("GUI", menuBar());
+  QAction *action = GUIMenu->addAction("Workdir", this, SLOT(changeWorkingDir()));
+  action->setStatusTip(tr("Change working directory"));
+  GUIMenu->addSeparator();
+  action = GUIMenu->addAction(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/exit.svg"), "E&xit", this, SLOT(close()));
+  action->setShortcuts(QKeySequence::Quit);
+  action->setStatusTip(tr("Exit the application"));
+  menuBar()->addMenu(GUIMenu);
+
+  QMenu *ProjMenu=new QMenu("Project", menuBar());
+  ProjMenu->addAction("New", this, SLOT(saveProjAs()));
+  ProjMenu->addAction("Load", this, SLOT(loadProj()));
+  //ProjMenu->addAction("Save as", this, SLOT(saveProjAs()));
+  actionSaveProj = ProjMenu->addAction("Save all", this, SLOT(saveProj()));
+  actionSaveProj->setDisabled(true);
+  menuBar()->addMenu(ProjMenu);
 
   QMenu *MBSMenu=new QMenu("MBS", menuBar());
   MBSMenu->addAction("New", this, SLOT(newMBS()));
   MBSMenu->addAction("Load", this, SLOT(loadMBS()));
-  actionSaveMBSAs = MBSMenu->addAction("Save as", this, SLOT(saveMBSAs()));
-  actionSaveMBSAs->setDisabled(true);
+  MBSMenu->addAction("Save as", this, SLOT(saveMBSAs()));
   actionSaveMBS = MBSMenu->addAction("Save", this, SLOT(saveMBS()));
   actionSaveMBS->setDisabled(true);
   menuBar()->addMenu(MBSMenu);
@@ -122,7 +137,7 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   QMenu *integratorMenu=new QMenu("Integrator", menuBar());
   QMenu *submenu = integratorMenu->addMenu("New");
 
-  QAction *action=new QAction(Utils::QIconCached("newobject.svg"),"DOPRI5", this);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"DOPRI5", this);
   connect(action,SIGNAL(triggered()),this,SLOT(newDOPRI5Integrator()));
   submenu->addAction(action);
   
@@ -178,7 +193,8 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   action = toolBar->addAction("Preview");
   connect(action,SIGNAL(triggered()),this,SLOT(preview()));
   toolBar->addAction(action);
-  actionSimulate = toolBar->addAction("Simulate");
+  actionSimulate = toolBar->addAction(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/sim.svg"),"Simulate");
+  actionSimulate->setStatusTip(tr("Simulate the multibody system"));
   connect(actionSimulate,SIGNAL(triggered()),this,SLOT(simulate()));
   toolBar->addAction(actionSimulate);
   actionOpenMBV = toolBar->addAction("OpenMBV");
@@ -197,6 +213,7 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
 
   elementList = new QTreeWidget;
   elementList->setColumnCount(2);
+  elementList->setColumnWidth(0,200);
   QStringList list;
   list << "Name" << "Type";
   elementList->setHeaderLabels(list);
@@ -252,9 +269,11 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   gl->addWidget(fileParameter,0,1);
   gl->addWidget(parameterList,1,0,1,2);
 
-
   tabifyDockWidget(dockWidget,dockWidget2);
   tabifyDockWidget(dockWidget2,dockWidget3);
+  QList<QTabBar *> tabList = findChildren<QTabBar *>();
+  QTabBar *tabBar = tabList.at(0);
+  tabBar->setCurrentIndex(0);
 
   QWidget *centralWidget = new QWidget;  
   setCentralWidget(centralWidget);
@@ -266,6 +285,8 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   QDockWidget *dockWidget4 = new QDockWidget("OpenMBV");
   addDockWidget(Qt::RightDockWidgetArea,dockWidget4);
   dockWidget4->setWidget(inlineOpenMBVMW);
+  inlineOpenMBVMW->setMinimumWidth(300);
+  inlineOpenMBVMW->setMinimumHeight(300);
 #endif
   
   newDOPRI5Integrator();
@@ -294,13 +315,13 @@ void MainWindow::initInlineOpenMBV() {
     }
   }
 
-  QFile::copy(QString::fromStdString(MBXMLUtils::getInstallPath()+"/share/mbsimgui/empty.ombv.xml"),uniqueTempDir+"/openmbv1.ombv.xml");
-  QFile::copy(QString::fromStdString(MBXMLUtils::getInstallPath()+"/share/mbsimgui/empty.ombv.h5"),uniqueTempDir+"/openmbv1.ombv.h5");
+  QFile::copy(QString::fromStdString(MBXMLUtils::getInstallPath()+"/share/mbsimgui/empty.ombv.xml"),uniqueTempDir+"/out1.ombv.xml");
+  QFile::copy(QString::fromStdString(MBXMLUtils::getInstallPath()+"/share/mbsimgui/empty.ombv.h5"),uniqueTempDir+"/out1.ombv.h5");
   std::list<string> arg;
   arg.push_back("--wst");
   arg.push_back(MBXMLUtils::getInstallPath()+"/share/mbsimgui/inlineopenmbv.ombv.wst");
   arg.push_back("--autoreload");
-  arg.push_back((uniqueTempDir+"/openmbv1.ombv.xml").toStdString());
+  arg.push_back((uniqueTempDir+"/out1.ombv.xml").toStdString());
   inlineOpenMBVMW=new OpenMBVGUI::MainWindow(arg);
 
   connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, Object*)), this, SLOT(selectElement(std::string)));
@@ -311,6 +332,14 @@ MainWindow::~MainWindow() {
   delete inlineOpenMBVMW;
 
   removeDir(uniqueTempDir);
+}
+
+void MainWindow::changeWorkingDir() {
+  QString dir = QFileDialog::getExistingDirectory (0, "Working directory", ".");
+  if(dir != "") {
+    QDir::setCurrent(dir);
+    fileMBS->setText(QDir::current().relativeFilePath(absoluteMBSFilePath));
+  }
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
@@ -417,7 +446,46 @@ void MainWindow::resizeVariables() {
     integrator->resizeVariables();
 }
 
+void MainWindow::loadProj(const QString &file) {
+  loadParameter(file+"/MBS.mbsimparam.xml");
+  loadIntegrator(file+"/MBS.mbsimint.xml");
+  loadMBS(file+"/MBS.mbsim.xml");
+  actionSaveProj->setDisabled(false);
+}
+
+void MainWindow::loadProj() {
+  QString file=QFileDialog::getExistingDirectory(0, "Project directory");
+  if(file!="") {
+    loadProj(file);
+  }
+}
+
+void MainWindow::saveProjAs() {
+  if(elementList->topLevelItemCount()) {
+    QString file=QFileDialog::getExistingDirectory(0, "Project directory");
+    if(file!="") {
+      fileMBS->setText(file+"/MBS.mbsim.xml");
+      actionSaveMBS->setDisabled(false);
+  //    saveMBS();
+      fileIntegrator->setText(file+"/MBS.mbsimint.xml");
+      actionSaveIntegrator->setDisabled(false);
+  //    saveIntegrator();
+      fileParameter->setText(file+"/MBS.mbsimparam.xml");
+      actionSaveParameter->setDisabled(false);
+  //    saveParameter();
+      actionSaveProj->setDisabled(false);
+    }
+  }
+}
+
+void MainWindow::saveProj() {
+  saveMBS();
+  saveIntegrator();
+  saveParameter();
+}
+
 void MainWindow::newMBS() {
+  mbsDir = QDir::current();
   actionOpenMBV->setDisabled(true);
   actionH5plotserie->setDisabled(true);
   elementList->clear();
@@ -427,8 +495,8 @@ void MainWindow::newMBS() {
   ((Integrator*)integratorList->topLevelItem(0))->setSolver(sys);
 
   actionSaveMBS->setDisabled(true);
-  actionSaveMBSAs->setDisabled(false);
   fileMBS->setText("");
+  absoluteMBSFilePath="";
 
 #ifdef INLINE_OPENMBV
   mbsimxml(1);
@@ -436,7 +504,10 @@ void MainWindow::newMBS() {
 }
 
 void MainWindow::loadMBS(const QString &file) {
-  fileMBS->setText(file);
+  mbsDir = QFileInfo(file).absolutePath();
+  absoluteMBSFilePath=file;
+  fileMBS->setText(QDir::current().relativeFilePath(absoluteMBSFilePath));
+  //fileMBS->setText(QDir::current().relativeFilePath(file));
   actionOpenMBV->setDisabled(true);
   actionH5plotserie->setDisabled(true);
   actionSaveMBS->setDisabled(true);
@@ -447,10 +518,6 @@ void MainWindow::loadMBS(const QString &file) {
     sys->update();
     ((Integrator*)integratorList->topLevelItem(0))->setSolver(sys);
     actionSaveMBS->setDisabled(false);
-    actionSaveMBSAs->setDisabled(false);
-    //if(QFile::exists("Parameter.mbsimparam.xml")) {
-      //loadParameter("Parameter.mbsimparam.xml");
-    //}
   }
 
 #ifdef INLINE_OPENMBV
@@ -460,7 +527,7 @@ void MainWindow::loadMBS(const QString &file) {
 
 void MainWindow::loadMBS() {
   QString file=QFileDialog::getOpenFileName(0, "XML model files", ".", "XML files (*.mbsim.xml)");
-  if(file!="") 
+  if(file!="")
     loadMBS(file);
 }
 
@@ -477,6 +544,7 @@ void MainWindow::saveMBSAs() {
 
 void MainWindow::saveMBS() {
   QString file = fileMBS->text();
+  mbsDir = QFileInfo(file).absolutePath();
   ((Solver*)elementList->topLevelItem(0))->writeXMLFile(file);
 }
 
@@ -746,34 +814,24 @@ void MainWindow::updateOctaveParameters() {
 }
 
 void MainWindow::mbsimxml(int task) {
+  absolutePath = true;
   Solver *slv=(Solver*)elementList->topLevelItem(0);
   Integrator *integ=(Integrator*)integratorList->topLevelItem(0);
   if(!slv || !integ)
     return;
 
-  stringstream mbsimxmlName;
-  mbsimxmlName << "mbsim" << task;
-  stringstream openmbvName;
-  openmbvName << "openmbv" << task;
-  stringstream mbsimparamName;
-  mbsimparamName << "mbsim" << task << ".mbsimparam.xml";
-
-  QString mbsFile=uniqueTempDir+"/"+QString::fromStdString(mbsimxmlName.str());
+  QString sTask = QString::number(task); 
+  QString mbsFile=uniqueTempDir+"/in"+sTask+".mbsim.xml";
   QString saveName=slv->getName();
-  slv->setName(openmbvName.str().c_str());
+  slv->setName(QString("out")+sTask);
   slv->writeXMLFile(mbsFile);
   slv->setName(saveName);
 
-  QString mbsParamFile=uniqueTempDir+"/"+QString::fromStdString(mbsimparamName.str());
+  QString mbsParamFile=uniqueTempDir+"/in"+sTask+".mbsimparam.xml";
   saveParameter(mbsParamFile);
 
-  QString intFile=uniqueTempDir+"/"+QString::fromStdString(mbsimxmlName.str());
+  QString intFile=uniqueTempDir+"/in"+sTask+".mbsimint.xml";
   integ->writeXMLFile(intFile);
-
-//  QString file = fileParameter->text();
-//  fileParameter->setText(".sim.mbsimparam.xml");
-//  saveParameter();
-//  fileParameter->setText(file);
 
   vector<string> arg;
   arg.push_back(MBXMLUtils::getInstallPath()+"/bin/mbsimxml");
@@ -781,12 +839,13 @@ void MainWindow::mbsimxml(int task) {
     arg.push_back("--stopafterfirststep");
   arg.push_back("--mbsimparam");
   arg.push_back(mbsParamFile.toStdString());
-  arg.push_back(mbsFile.toStdString()+".mbsim.xml");
-  arg.push_back(intFile.toStdString()+".mbsimint.xml");
+  arg.push_back(mbsFile.toStdString());
+  arg.push_back(intFile.toStdString());
   QString currentPath = QDir::currentPath();
   QDir::setCurrent(uniqueTempDir);
   runProgramSyncronous(arg);
   QDir::setCurrent(currentPath);
+  absolutePath = false;
 }
 
 void MainWindow::preview() {
@@ -798,10 +857,11 @@ void MainWindow::preview() {
 void MainWindow::simulate() {
   mbsimxml(0);
   actionOpenMBV->setDisabled(false);
+  actionH5plotserie->setDisabled(false);
 }
 
 void MainWindow::openmbv() {
-  QString name = uniqueTempDir+"/openmbv0.ombv.xml";
+  QString name = uniqueTempDir+"/out0.ombv.xml";
   if(QFile::exists(name)) {
     vector<string> command;
     command.push_back(MBXMLUtils::getInstallPath()+"/bin/openmbv");
@@ -812,15 +872,12 @@ void MainWindow::openmbv() {
 }
 
 void MainWindow::h5plotserie() {
-  if(elementList->topLevelItemCount()) {
-    QString name = ((Solver*)elementList->topLevelItem(0))->getName() + ".mbsim.h5";
-    if(QFile::exists(name)) {
-      string prog = "h5plotserie";
-      vector<string> command;
-      command.push_back(prog);
-      command.push_back(name.toStdString());
-      runProgramSyncronous(command);
-    }
+  QString name = uniqueTempDir+"/out0.mbsim.h5";
+  if(QFile::exists(name)) {
+    vector<string> command;
+    command.push_back(MBXMLUtils::getInstallPath()+"/bin/h5plotserie");
+    command.push_back(name.toStdString());
+    runProgramSyncronous(command);
   }
 }
 
