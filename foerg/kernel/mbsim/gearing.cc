@@ -54,8 +54,8 @@ namespace MBSim {
   }
 
   void Gearing::updateJacobians(double t, int j) {
-    Mat33 tWrP0Z = tilde(WrP0Z);
-    Mat33 tWrP1Z = tilde(WrP1Z);
+    Mat3x3 tWrP0Z = tilde(WrP0Z);
+    Mat3x3 tWrP1Z = tilde(WrP1Z);
 
     Z0.setJacobianOfTranslation(P0->getJacobianOfTranslation(j) - tWrP0Z*P0->getJacobianOfRotation(j),j);
     Z0.setJacobianOfRotation(P0->getJacobianOfRotation(j),j);
@@ -207,8 +207,8 @@ namespace MBSim {
     b(1)=-v2.T()*(Om2-Om1);
     const Vec zetad = slvLU(A,b);
 
-    const Mat33 tOm1 = tilde(Om1);
-    const Mat33 tOm2 = tilde(Om2);
+    const Mat3x3 tOm1 = tilde(Om1);
+    const Mat3x3 tOm2 = tilde(Om2);
     
     wb(0) += Wt.T()*(Z1.getGyroscopicAccelerationOfTranslation(j) - Z0.getGyroscopicAccelerationOfTranslation(j)); 
     wb(0) += ((vC2-vC1).T()*U1-u1.T()*tOm1*R1)*zetad(0)+u1.T()*tOm2*R2*zetad(1)-u1.T()*tOm1*(vC2-vC1);

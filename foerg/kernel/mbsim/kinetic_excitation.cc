@@ -79,7 +79,7 @@ namespace MBSim {
 
   void KineticExcitation::updateh(double t, int j) {
     Vec3 WrP0P1 = frame[1]->getPosition()-frame[0]->getPosition();
-    Mat33 tWrP0P1 = tilde(WrP0P1);
+    Mat3x3 tWrP0P1 = tilde(WrP0P1);
 
     C.setOrientation(frame[0]->getOrientation());
     C.setPosition(frame[0]->getPosition() + WrP0P1);
