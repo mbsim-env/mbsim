@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+bindir=${exec_prefix}/bin
+
+Name: mbsimxml
+Description: mbsimxml is a multi-body simulation software.
+Requires: mbsim @MBSIMMODULES_NAME@
+Version: @VERSION@
+Libs: -L${libdir} -lmbsimflatxml
+Cflags: -I${includedir}
