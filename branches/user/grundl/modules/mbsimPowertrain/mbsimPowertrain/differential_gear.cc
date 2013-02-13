@@ -1,9 +1,8 @@
 #include "differential_gear.h"
+#include "shaft.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/constraint.h"
-#include "mbsim/rigid_body.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
-#include "mbsim/frame.h"
 #include "openmbvcppinterface/frustum.h"
 #include "openmbvcppinterface/cube.h"
 #include "openmbvcppinterface/compoundrigidbody.h"
@@ -31,7 +30,7 @@ namespace MBSimPowertrain {
     lengthPlanet = radiusPlanet*2;
   }
 
-  DifferentialGear::DifferentialGear(const std::string &name, Data param, bool planetIndependent) : Group(name), data(param) {
+  DifferentialGear::DifferentialGear(const std::string &name, Data param) : Group(name), data(param) {
     double density = 785;
 
     if(data.massInputShaft == -1) 
@@ -117,12 +116,18 @@ namespace MBSimPowertrain {
     shaft4->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
     r(2) = -data.lengthLeftOutputShaft/2;
     shaft4->addFrame("Q",r,BasicRotAKIy(M_PI));
-#ifdef HAVE_OPENMBVCPPINTERFACE
     shaft4->getFrame("Q")->enableOpenMBV(0.3);
-#endif
 
     shaft4->setMass(data.massLeftOutputShaft);
     shaft4->setInertiaTensor(data.inertiaTensorLeftOutputShaft);
+
+    Constraint2 *constraint = new Constraint2("C1",shaft4);
+    addObject(constraint);
+    constraint->addDependency(shaft2,1);
+    constraint->addDependency(planet,data.radiusPlanet/data.radiusLeftOutputShaft);
+
+    //shaft4->addDependecy(shaft2,1);
+    //shaft4->addDependecy(planet,data.radiusPlanet/data.radiusLeftOutputShaft);
 
     shaft5 = new RigidBody("RightOutputShaft");
     addObject(shaft5);
@@ -135,37 +140,18 @@ namespace MBSimPowertrain {
     shaft5->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
     r(2) = data.lengthRightOutputShaft/2;
     shaft5->addFrame("Q",r,SqrMat(3,EYE));
-#ifdef HAVE_OPENMBVCPPINTERFACE
     shaft5->getFrame("Q")->enableOpenMBV(0.3);
-#endif
 
     shaft5->setMass(data.massRightOutputShaft);
     shaft5->setInertiaTensor(data.inertiaTensorRightOutputShaft);
 
-    if(planetIndependent) {
-      GearConstraint *constraint = new GearConstraint("C1",shaft4); 	 
-      addObject(constraint); 	 
-      constraint->addDependency(shaft2,1); 	 
-      constraint->addDependency(planet,data.radiusPlanet/data.radiusLeftOutputShaft);
+    constraint = new Constraint2("C2",shaft5);
+    addObject(constraint);
+    constraint->addDependency(shaft2,1);
+    constraint->addDependency(planet,-data.radiusPlanet/data.radiusRightOutputShaft);
 
-      constraint = new GearConstraint("C2",shaft5);
-      addObject(constraint);
-      constraint->addDependency(shaft2,1);
-      constraint->addDependency(planet,-data.radiusPlanet/data.radiusRightOutputShaft);
-    }
-    else {
-      double c1 = data.radiusLeftOutputShaft + data.radiusRightOutputShaft;
-      double c2 = data.radiusLeftOutputShaft*data.radiusRightOutputShaft;
-      GearConstraint *constraint = new GearConstraint("C1",shaft2);
-      addObject(constraint);
-      constraint->addDependency(shaft4,data.radiusLeftOutputShaft/c1);
-      constraint->addDependency(shaft5,data.radiusRightOutputShaft/c1);
-
-      constraint = new GearConstraint("C2",planet);
-      addObject(constraint);
-      constraint->addDependency(shaft4,c2/(data.radiusPlanet*c1));
-      constraint->addDependency(shaft5,-c2/(data.radiusPlanet*c1));
-    }
+    //shaft5->addDependecy(shaft2,1);
+    //shaft5->addDependecy(planet,-data.radiusPlanet/data.radiusRightOutputShaft);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
     OpenMBV::Cube *cube=new OpenMBV::Cube;
