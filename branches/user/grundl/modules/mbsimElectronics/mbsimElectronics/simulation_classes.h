@@ -107,7 +107,7 @@ namespace MBSimElectronics {
       bool gActiveChanged() {return true;}
       void init(MBSim::InitStage stage);
       void updatehRef(const fmatvec::Vec &hParent, const fmatvec::Vec &hLinkParent, int j=0);
-      void updaterRef(const fmatvec::Vec &rParent);
+      void updaterRef(const fmatvec::Vec &rParent, int j=0);
       virtual double computeVoltage(double t) {return 0;}
 
       /* INHERITED INTERFACE OF LINKINTERFACE */

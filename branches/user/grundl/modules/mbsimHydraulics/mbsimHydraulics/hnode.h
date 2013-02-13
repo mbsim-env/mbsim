@@ -73,6 +73,7 @@ namespace MBSimHydraulics {
       virtual void updateVRef(const fmatvec::Mat& VRef, int i=0);
       virtual void updatehRef(const fmatvec::Vec& hRef, int i=0);
       virtual void updaterRef(const fmatvec::Vec& rRef, int i=0);
+      virtual void updaterRef(const fmatvec::Vec& rRef, int i=0);
       virtual void updatedhdqRef(const fmatvec::Mat& dhdqRef, int i=0);
       virtual void updatedhduRef(const fmatvec::SqrMat& dhduRef, int i=0);
       virtual void updatedhdtRef(const fmatvec::Vec& dhdtRef, int i=0);
