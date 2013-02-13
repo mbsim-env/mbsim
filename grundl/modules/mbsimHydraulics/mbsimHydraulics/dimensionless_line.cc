@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: markus.ms.schneider@gmail.com
+ * Contact: schneidm@users.berlios.de
  */
 
 #include "mbsimHydraulics/dimensionless_line.h"
@@ -37,23 +37,23 @@ namespace MBSimHydraulics {
   void DimensionlessLine::init(InitStage stage) {
     if(stage==MBSim::preInit) {
       if (dynamic_cast<RigidNode*>(nFrom) || dynamic_cast<RigidNodeMec*>(nFrom))
-        throw MBSimError("pFrom is of setValued type. not valid for dimensionless lines.");
+        throw new MBSimError("pFrom is of setValued type. not valid for dimensionless lines.");
       if (dynamic_cast<RigidNode*>(nTo) || dynamic_cast<RigidNodeMec*>(nTo))
-        throw MBSimError("pTo is of setValued type. not valid for dimensionless lines.");
+        throw new MBSimError("pTo is of setValued type. not valid for dimensionless lines.");
       HLine::init(stage);
     }
     else if(stage==MBSim::plot) {
-      updatePlotFeatures();
+      updatePlotFeatures(parent);
       if(getPlotFeature(plotRecursive)==enabled) {
-        plotColumns.push_back("Volume flow [l/min]");
-        plotColumns.push_back("Mass flow [kg/min]");
+        plotColumns.push_back("Fluidflow [l/min]");
+        plotColumns.push_back("Massflow [kg/min]");
         HLine::init(stage);
       }
     }
     else
       HLine::init(stage);
   }
-
+  
   void DimensionlessLine::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
       plotVector.push_back(Q(0)*6e4);
@@ -68,7 +68,7 @@ namespace MBSimHydraulics {
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"length");
     setLength(getDouble(e));
   }
-
+  
 
   double Leakage0DOF::getGapLength() const {
     return ((glSignal)?glSignal->getSignal()(0):length);
