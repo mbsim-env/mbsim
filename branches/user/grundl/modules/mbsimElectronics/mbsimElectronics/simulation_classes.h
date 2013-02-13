@@ -12,9 +12,11 @@
 
 namespace MBSimElectronics {
 
+  class Branch;
   class Mesh : public MBSim::Object {
     protected:
       Object* precessor;
+      std::vector<Branch*> branch;
     public:
       Mesh(const std::string &name) : MBSim::Object(name), precessor(0) {}
       void calcqSize() { qSize = 1;}
@@ -25,6 +27,9 @@ namespace MBSimElectronics {
       void init(MBSim::InitStage stage);
       Object* getObjectDependingOn() const {return precessor;}
       void setPrecessor(Object* obj) {precessor = obj;}
+      void addBranch(Branch* branch_) {branch.push_back(branch_);}
+      int getNumberOfBranches() {return branch.size();}
+      Branch* getBranch(int i) {return branch[i];}
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::Group* getOpenMBVGrp() { return 0; }
 #endif
@@ -35,6 +40,7 @@ namespace MBSimElectronics {
       fmatvec::Mat J;
       fmatvec::Vec Q, I;
       std::vector<Mesh*> mesh;
+      std::vector<int> vz;
       Terminal *startTerminal, *endTerminal;
       std::vector<Branch*> connectedBranch;
       int flag;
@@ -50,7 +56,8 @@ namespace MBSimElectronics {
       fmatvec::Vec& getCurrent() {return I;}
       const fmatvec::Vec& getCharge() const {return Q;}
       fmatvec::Vec& getCharge() {return Q;}
-      void connect(Mesh *mesh_) {mesh.push_back(mesh_);}
+      void setvz(int vz_, Mesh* mesh);
+      void connect(Mesh *mesh_) {mesh.push_back(mesh_);mesh_->addBranch(this);vz.push_back(0);}
       void clearMeshList() {mesh.clear();}
       int getNumberOfConnectedMeshes() const {return mesh.size();}
       Mesh* getMesh(int i) {return mesh[i];}
@@ -61,8 +68,8 @@ namespace MBSimElectronics {
       Terminal* getEndTerminal() {return endTerminal;}
       void addConnectedBranch(Branch* branch);
       void buildTreeBranches(Branch* callingBranch, std::vector<Branch*> &treeBranch, unsigned int nmax);
-      //    std::vector<Mesh*> buildMeshes(Branch* callingBranch, Mesh* currentMesh, bool &flag);
       void buildMeshes(Terminal* callingTerminal, Branch* callingBranch, Mesh* currentMesh, bool &foundMesh);
+
       void setFlag(int f) { flag = f; }
       int getFlag() const { return flag; }
       Object* getObjectDependingOn() const {return precessor;}
@@ -111,8 +118,6 @@ namespace MBSimElectronics {
       void updateh(double t);
       void setResistance(double R_) { R = R_;}
       double computeU(double t);
-      void init(MBSim::InitStage stage);
-      void plot(double t, double dt);
   };
 
   class Capacitor : public ElectronicLink {
@@ -175,6 +180,7 @@ namespace MBSimElectronics {
       Inductor(const std::string &name);
       void updateM(double t); 
       void setInductance(double L_) { L = L_;}
+      void updateStateDependentVariables(double t);
   };
 
 }

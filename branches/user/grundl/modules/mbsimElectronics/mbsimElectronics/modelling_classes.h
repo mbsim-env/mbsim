@@ -27,8 +27,8 @@ namespace MBSimElectronics {
     void addConnectedBranch(Branch* branch);
     void setFlag(int f) { flag = f; }
     int getFlag() const { return flag; }
-    //void setParent(ElectronicComponent* p) { parent = p; }
-    //ElectronicComponent* getParent() const { return parent; }
+    void setParent(ElectronicComponent* p) { parent = p; }
+    ElectronicComponent* getParent() const { return parent; }
     int getNumberOfConnectedTerminals() const {return connectedTerminal.size();}
     int getNumberOfConnectedBranches() const {return connectedBranch.size();}
     Branch* getBranch(int i) {return connectedBranch[i];}
@@ -43,18 +43,18 @@ namespace MBSimElectronics {
     protected:
       std::vector<Terminal*> terminal;
       Branch* branch;
-      double vz;
-      double Q,I;
+      int vz;
+      double U,Q,I;
     public:
-      ElectronicComponent();
+      ElectronicComponent() : branch(0), vz(0), U(0), Q(0), I(0) {}
       void addTerminal(Terminal *terminal);
       void addTerminal(const std::string &str);
       Terminal* getTerminal(const std::string &name, bool check=true);
       void buildListOfTerminals(std::vector<Terminal*> &terminal);
-      void connect(Branch *branch_,double vz=0);
+      void connect(Branch *branch_,int vz=0);
       Branch* getBranch() {return branch;}
       void processModellList(std::vector<ModellingInterface*> &modellList, std::vector<MBSim::Object*> &objectList, std::vector<MBSim::Link*> &linkList);
-      double getvz() const { return vz;}
+      int getvz() const { return vz;}
   };
 
 }
