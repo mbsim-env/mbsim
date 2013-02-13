@@ -133,6 +133,8 @@ namespace MBSimHydraulics {
       return new RigidNodeMec(element->Attribute("name"));
     if(element->ValueStr()==MBSIMHYDRAULICSNS"FlowSensor")
       return new FlowSensor(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMHYDRAULICSNS"PressureSensor")
+      return new PressureSensor(element->Attribute("name"));
     if(element->ValueStr()==MBSIMHYDRAULICSNS"TemperatureSensor")
       return new TemperatureSensor(element->Attribute("name"));
     if(element->ValueStr()==MBSIMHYDRAULICSNS"KinematicViscositySensor")

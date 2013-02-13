@@ -446,7 +446,7 @@ namespace MBSimHydraulics {
       initialized=true;
     }
     const double pressureLoss=c*Q*abs(Q);
-    const double pressureLossMin=-((const UnidirectionalRigidLine*)(line))->getMinimalPressureDrop();
+    const double pressureLossMin=((const UnidirectionalRigidLine*)(line))->getMinimalPressureDrop();
     return pressureLoss<pressureLossMin?pressureLoss:0;
   }
 

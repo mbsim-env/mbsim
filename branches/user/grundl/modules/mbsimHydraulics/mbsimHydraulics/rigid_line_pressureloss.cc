@@ -23,6 +23,7 @@
 #include "mbsimHydraulics/pressure_loss.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/constitutive_laws.h"
+#include "mbsim/utils/eps.h"
 #include "mbsimControl/signal_.h"
 
 using namespace std;
@@ -45,7 +46,7 @@ namespace MBSimHydraulics {
     if (unilateral) {
       gfl=new UnilateralConstraint();
       gil=new UnilateralNewtonImpact();
-      dpMin=((UnidirectionalRigidLine*)(line))->getMinimalPressureDrop();
+      dpMin=-((UnidirectionalRigidLine*)(line))->getMinimalPressureDrop();
     }
     else if (bilateral) {
       gfl=new BilateralConstraint();
@@ -162,9 +163,13 @@ namespace MBSimHydraulics {
   void RigidLinePressureLoss::checkActiveg() {
     if (bilateral)
       active=(((ClosableRigidLine*)line)->getSignal()->getSignal()(0)<((ClosableRigidLine*)line)->getMinimalValue());
-    else if (unilateral) {
-      active=gd(0)<=(active?gdTol:0);
-    }
+    else if (unilateral)
+      active=(gd(0)<=(active?gdTol:0));
+  }
+
+  void RigidLinePressureLoss::checkActivegdn() {
+    if (unilateral && active)
+      active=(gdn<=0);
   }
 
   bool RigidLinePressureLoss::gActiveChanged() {
@@ -184,7 +189,7 @@ namespace MBSimHydraulics {
     if (bilateral)
       sv(0)=((ClosableRigidLine*)(line))->getSignal()->getSignal()(0)-((ClosableRigidLine*)(line))->getMinimalValue();
     else if (unilateral)
-      sv(0)=isActive()?la(0)*1e-5:-gd(0)*6e4;
+      sv(0)=isActive()?(la(0)-dpMin)*1e-5:-gd(0)*6e4;
   }
 
   void RigidLinePressureLoss::updateh(double t) {
@@ -194,14 +199,107 @@ namespace MBSimHydraulics {
       la(0)=(*closablePressureLoss)(line->getQIn(t)(0), line);
     else if (leakagePressureLoss)
       la(0)=(*leakagePressureLoss)(line->getQIn(t)(0), line);
-    else if (unidirectionalPressureLoss)
-      la(0)=(*unidirectionalPressureLoss)(gd(0), line);
+    else if (unilateral || unidirectionalPressureLoss) {
+      la(0)=0*dpMin+(unilateral ? 0 : (*unidirectionalPressureLoss)(gd(0), line));
+    }
     h[0]-=trans(line->getJacobian())*la(0);
     hLink[0]-=trans(line->getJacobian())*la(0);
   }
 
   void RigidLinePressureLoss::updateW(double t) {
     W[0]=trans(line->getJacobian())*Mat(1,1,INIT,1.);
+  }
+
+  void RigidLinePressureLoss::updatedhdz(double t) {
+    const unsigned int nLines=1;
+    vector<Vec> hLink0, h0;
+
+    for(unsigned int i=0; i<nLines; i++) { // save old values
+      hLink0.push_back(hLink[i].copy());
+      h0.push_back(h[i].copy());
+    }
+    if(nLines)
+      updateh(t); 
+    vector<Vec> hLinkEnd, hEnd;
+    for(unsigned int i=0; i<nLines; i++) { // save with correct state
+      hLinkEnd.push_back(hLink[i].copy());
+      hEnd.push_back(h[i].copy());
+    }
+
+    /****************** velocity dependent calculations ***********************/
+    for(unsigned int i=0; i<nLines; i++) 
+      for(unsigned int l=0; l<nLines; l++) {
+        for(int j=0; j<1; j++) {
+          hLink[i] = hLink0[i].copy(); // set to old values
+          h[i] = h0[i].copy();
+
+          double uParentj = line->getu()(j); // save correct position
+
+          line->getu()(j) += epsroot(); // update with disturbed positions assuming same active links
+          line->updateStateDependentVariables(t); 
+          updategd(t);
+          updateh(t);
+
+          dhdu[i*nLines+l].col(j) += (hLink[i]-hLinkEnd[i])/epsroot();
+          line->getu()(j) = uParentj;
+          line->updateStateDependentVariables(t); 
+        }
+      }
+
+    /****************** position dependent calculations ***********************/
+    for(unsigned int i=0; i<nLines; i++) 
+      for(unsigned int l=0; l<nLines; l++) {
+        for(int j=0; j<0; j++) {
+          hLink[i] = hLink0[i].copy(); // set to old values
+          h[i] = h0[i].copy();
+
+          double qParentj = line->getq()(j); // save correct position
+
+          line->getq()(j) += epsroot(); // update with disturbed positions assuming same active links
+          line->updateStateDependentVariables(t); 
+          updateg(t);
+          updategd(t);
+          line->updateT(t); 
+          updateJacobians(t);
+          updateh(t);
+
+          dhdq[i*nLines+l].col(j) += (hLink[i]-hLinkEnd[i])/epsroot();
+          line->getq()(j) = qParentj;
+          line->updateStateDependentVariables(t); 
+          line->updateT(t); 
+        }
+      }
+
+    /******************** time dependent calculations ***************************/
+    // for(unsigned int i=0; i<nLines; i++) 
+    //   for(unsigned int l=0; l<nLines; l++) {
+    //     hLink[i] = hLink0[i].copy(); // set to old values
+    //     h[i] = h0[i].copy();
+
+    //     double t0 = t; // save correct position
+
+    //     t += epsroot(); // update with disturbed positions assuming same active links
+    //     line->updateStateDependentVariables(t); 
+    //     updateg(t);
+    //     updategd(t);
+    //     line->updateT(t); 
+    //     updateJacobians(t);
+    //     updateh(t);
+
+    //     dhdt[i] += (hLink[i]-hLinkEnd[i])/epsroot();
+    //     t = t0;
+    //   }
+
+    /************************ back to initial state ******************************/
+    for(unsigned int i=0; i<nLines; i++) {
+      line->updateStateDependentVariables(t); 
+      updateg(t);
+      updategd(t);
+      line->updateT(t); 
+      updateJacobians(t);
+      hLink[i] = hLinkEnd[i].copy();
+      h[i] = hEnd[i].copy();
+    }
   }
 
   void RigidLinePressureLoss::updateCondition() {

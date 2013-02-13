@@ -34,8 +34,10 @@ LIBMBSIMHYDRAULICS_VERSION_INFO=$LIBMBSIMHYDRAULICS_CURRENT:$LIBMBSIMHYDRAULICS_
 AC_SUBST([LIBMBSIMHYDRAULICS_VERSION_INFO])
 
 dnl needed for XML
-AC_SUBST([MBXMLUTILSSCHEMA],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
-AM_CONDITIONAL([COND_XML], [test "_$MBXMLUTILSSCHEMA" != "_"])
+AC_SUBST([MBXMLUTILSBINDIR],[$(pkg-config mbxmlutils --variable BINDIR)])
+AC_SUBST([MBXMLUTILSDOCDIR],[$(pkg-config mbxmlutils --variable DOCDIR)])
+AC_SUBST([MBXMLUTILSSCHEMADIR],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
+AM_CONDITIONAL([COND_XML], [test "_$MBXMLUTILSSCHEMADIR" != "_"])
 
 CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long -Wfloat-equal"
 AC_MSG_CHECKING([for -Wno-strict-overflow compiler flag])

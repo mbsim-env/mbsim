@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: markus.ms.schneider@gmail.com
+ * Contact: schneidm@users.berlios.de
  */
 
 #include "mbsimHydraulics/hydraulic_sensor.h"
@@ -30,11 +30,10 @@ using namespace fmatvec;
 namespace MBSimHydraulics {
 
   Vec FlowSensor::getSignal() {
-    return line->getQIn(); 
+    return line->getQIn(0); 
   }
 
   void FlowSensor::initializeUsingXML(TiXmlElement * element) {
-    Sensor::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"hline");
     lineString=e->Attribute("ref");
@@ -55,7 +54,6 @@ namespace MBSimHydraulics {
   }
 
   void PressureSensor::initializeUsingXML(TiXmlElement * element) {
-    Sensor::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"hnode");
     nodeString=e->Attribute("ref");
