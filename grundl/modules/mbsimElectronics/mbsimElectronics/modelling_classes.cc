@@ -5,10 +5,7 @@ using namespace fmatvec;
 using namespace std;
 using namespace MBSim;
 
-
 namespace MBSimElectronics {
-
-  Branch tmpbranch("Dummy");
   
   void connectTerminal(Terminal *terminal1, Terminal *terminal2) {
     terminal1->addConnectedTerminal(terminal2);
@@ -28,54 +25,82 @@ namespace MBSimElectronics {
     connectedBranch.push_back(branch);
   }
 
+  int Terminal::searchForBranches(Terminal* callingTerminal) {
+    int k = 0;
+    for(unsigned int i=0; i<connectedTerminal.size(); i++)
+      if(connectedTerminal[i] != callingTerminal) {
+        if(connectedTerminal[i]->getFlag()==0) {
+          connectedTerminal[i]->setFlag(1);
+          //cout << "   try terminal " << connectedTerminal[i]->getName() << " of parent " << connectedTerminal[i]->getParent()->getName() << endl;
+          k += connectedTerminal[i]->searchForBranches(this);
+        }
+        else if(connectedTerminal[i]->getFlag()==2) {
+          //cout << "found branch" << endl;
+          k++;
+        }
+      }
+    return k;
+  }
+
   void Terminal::findEndOfBranch(Terminal* callingTerminal, Branch* currentBranch) {
+    cout << "starte findEndOfBranch of " << getName() << " of " << getParent()->getName() << " with flag " << getFlag()<< endl;
     for(unsigned int i=0; i<connectedTerminal.size(); i++) {
       if(callingTerminal != connectedTerminal[i]) {
         if(connectedTerminal[i]->getFlag() == 0)
           connectedTerminal[i]->findEndOfBranch(this,currentBranch);
         else if(connectedTerminal[i]->getFlag() == 2) {
           currentBranch->setEndTerminal(connectedTerminal[i]);
+          cout << "set end terminal with flag" << connectedTerminal[i]->getFlag() << endl;
+          cout << "\t found branch " << endl;
         }
         else {
           cout << "Fehler wegen flag = "<< (connectedTerminal[i]->getFlag()) << endl;
           throw 5;
         }
 
-        if(getParent() == connectedTerminal[i]->getParent()) {
-     	  int vz = name=="A" ? 1 : -1;
-	  dynamic_cast<ElectronicComponent*>(getParent())->connect(currentBranch,vz);
+        if(this->getParent() == connectedTerminal[i]->getParent()) {
+          this->getParent()->connect(currentBranch);
         }
       }
     }
     setFlag(1);
+    cout << "end of findEndOfBranch of " << getName() << " of " << getParent()->getName() << " with flag " << getFlag()<< endl;
   }
 
   vector<Branch*> Terminal::buildBranches(Branch* currentBranch) {
     vector<Branch*> branch;
+    cout << "starte buildBranches of " << getName() << " of " << getParent()->getName() << " with flag " << getFlag()<< endl;
     for(unsigned int i=0; i<connectedTerminal.size(); i++) {
+      //cout << "\tcalling Terminal " << callingTerminal << endl;
+      cout <<"\t"<<i <<" " << connectedTerminal[i]->getName() << " " << connectedTerminal[i]->getParent()->getName() <<" " << connectedTerminal[i]->getFlag()<<endl;
       if(connectedTerminal[i]->getFlag()==0) {
+        cout << "\tbuild new Branch" << endl;
         currentBranch = new Branch("Name");
         branch.push_back(currentBranch);
         currentBranch->setStartTerminal(this);
+        cout << "set start terminal with flag" << this->getFlag() << endl;
         if(getParent() == connectedTerminal[i]->getParent()) {
-	  int vz = name=="A" ? 1 : -1;
-          dynamic_cast<ElectronicComponent*>(getParent())->connect(currentBranch,vz);
+          getParent()->connect(currentBranch);
         }
         connectedTerminal[i]->findEndOfBranch(this,currentBranch);
       }
       else if(connectedTerminal[i]->getFlag()==2) {
+        cout << "\tbuild new Branch" << endl;
         currentBranch = new Branch("Name");
         branch.push_back(currentBranch);
         currentBranch->setStartTerminal(this);
+        cout << "set start terminal with flag" << this->getFlag() << endl;
         currentBranch->setEndTerminal(connectedTerminal[i]);
+        cout << "set end terminal with flag" << connectedTerminal[i]->getFlag() << endl;
         if(getParent() == connectedTerminal[i]->getParent()) {
-	  int vz = name=="A" ? 1 : -1;
-          dynamic_cast<ElectronicComponent*>(getParent())->connect(currentBranch,vz);
+          getParent()->connect(currentBranch);
         }
+        cout << "\t found branch " << endl;
       }
 
     }
     setFlag(4);
+    cout << "end buildBranches of " << getName() << " of " << getParent()->getName() << " with flag " << getFlag()<< endl;
     return branch;
   }
 
@@ -86,8 +111,7 @@ namespace MBSimElectronics {
       assert(getTerminal(terminal_->getName(),false) == NULL); 
     }
     terminal.push_back(terminal_);
-    //terminal_->setParent(this);
-    terminal_->setParent(dynamic_cast<Element*>(this));
+    terminal_->setParent(this);
   }
 
   void ElectronicComponent::addTerminal(const string &str) {
@@ -124,6 +148,10 @@ namespace MBSimElectronics {
         remainingModells.push_back(modellList[i]);
     }
 
+    cout << "Electronic Components: " << endl;
+    for(unsigned int i=0; i<compList.size(); i++) {
+      cout<< compList[i]->getName() << endl;
+    }
     modellList.clear();
     for(unsigned int i=0; i<remainingModells.size(); i++) {
       modellList.push_back(remainingModells[i]);
@@ -135,14 +163,18 @@ namespace MBSimElectronics {
 
     vector<Terminal*> nodeList;
     for(unsigned int i=0; i<terminalList.size(); i++) {
+      //cout << terminalList[i]->getName()<< " " << terminalList[i]->getFlag() << " " << terminalList[i]->getNumberOfConnectedTerminals() << endl;
       if(terminalList[i]->getNumberOfConnectedTerminals() > 2) {
         nodeList.push_back(terminalList[i]);
         terminalList[i]->setFlag(2); // root
       }
     }
+    cout << "number of nodes " << nodeList.size() <<endl;
     vector<Branch*> branchList;
     int k=0;
     for(unsigned int i=0; i<nodeList.size(); i++) {
+      cout << nodeList[i]->getName()<< " " << nodeList[i]->getFlag() << " " << nodeList[i]->getNumberOfConnectedTerminals() << " " <<nodeList[i]->getParent()->getName() << endl;
+      //cout << "number of branches " << nodeList[i]->searchForBranches(0)<<endl;
       vector<Branch*> branchs_tmp = nodeList[i]->buildBranches(0);
       for(int j=0; j<branchs_tmp.size(); j++) {
         branchList.push_back(branchs_tmp[j]);
@@ -151,17 +183,24 @@ namespace MBSimElectronics {
         branchs_tmp[j]->setName(str.str());
       }
     }
+    cout << "number of branches " << branchList.size() <<endl;
+    cout << "number of meshes " << branchList.size() - nodeList.size()+1 <<endl;
 
     for(unsigned int i=0; i<branchList.size(); i++) {
+      cout <<branchList[i]->getName()<< " with " << branchList[i]->getStartTerminal()->getName() <<"  of "<< branchList[i]->getStartTerminal()->getParent()->getName() << endl;
+      cout <<" and with " << branchList[i]->getEndTerminal()->getName() <<"  of "<< branchList[i]->getEndTerminal()->getParent()->getName() << endl;
       for(unsigned int j=0; j<i; j++) {
         //if(i!=j)
         if((branchList[i]->getStartTerminal() == branchList[j]->getStartTerminal() || branchList[i]->getEndTerminal() == branchList[j]->getEndTerminal()) || (branchList[i]->getStartTerminal() == branchList[j]->getEndTerminal() || branchList[i]->getEndTerminal() == branchList[j]->getStartTerminal())) {
           connectBranch(branchList[i],branchList[j]);
+          cout << "connect "<< branchList[i]->getName()<< " with "<< branchList[j]->getName() << endl;
         }
       }
     }
     vector<Branch*> treeBranch, linkBranch;
     unsigned int numberOfTreeBranches = nodeList.size() - 1;
+    cout<< "numberOfTreeBranches " << numberOfTreeBranches << endl;
+    // TODO 0->4
     branchList[0]->buildTreeBranches(0, treeBranch, numberOfTreeBranches);
     for(unsigned int i=0; i<branchList.size(); i++) {
       bool flag = false;
@@ -173,8 +212,11 @@ namespace MBSimElectronics {
         linkBranch.push_back(branchList[i]);
     }
     for(unsigned int j=0; j<treeBranch.size(); j++) {
+      cout << "treeBranch " << treeBranch[j]->getName() << endl;
       treeBranch[j]->setFlag(3);
     }
+    for(unsigned int j=0; j<linkBranch.size(); j++) 
+      cout << "linkBranch " << linkBranch[j]->getName() << endl;
 
     vector<Mesh*> meshList;
     k=0;
@@ -188,52 +230,98 @@ namespace MBSimElectronics {
     }
 
     for(unsigned int i=0; i<meshList.size(); i++) {
-      meshList[i]->getBranch(0)->setvz(1,meshList[i]);
-      for(unsigned int j=1; j<meshList[i]->getNumberOfBranches(); j++) {
-	if(meshList[i]->getBranch(j)->getEndTerminal() == meshList[i]->getBranch(j-1)->getStartTerminal())
-	  meshList[i]->getBranch(j)->setvz(1,meshList[i]);
-	else if(meshList[i]->getBranch(j)->getStartTerminal() == meshList[i]->getBranch(j-1)->getStartTerminal())
-	  meshList[i]->getBranch(j)->setvz(-1,meshList[i]);
-	else if(meshList[i]->getBranch(j)->getStartTerminal() == meshList[i]->getBranch(j-1)->getEndTerminal())
-	  meshList[i]->getBranch(j)->setvz(1,meshList[i]);
-	else if(meshList[i]->getBranch(j)->getEndTerminal() == meshList[i]->getBranch(j-1)->getEndTerminal())
-	  meshList[i]->getBranch(j)->setvz(-1,meshList[i]);
-	else
-	  throw 5;
-      }
       objectList.push_back(meshList[i]);
     }
 
     for(unsigned int i=0; i<branchList.size(); i++) {
       objectList.push_back(branchList[i]);
       for(unsigned j=0; j<branchList[i]->getNumberOfConnectedMeshes(); j++)
-	branchList[i]->addDependency(branchList[i]->getMesh(j));
+        branchList[i]->addDependency(branchList[i]->getMesh(j));
     }
 
     for(unsigned int i=0; i<compList.size(); i++) {
       Object* objectcomp = dynamic_cast<Object*>(compList[i]);
       Link* linkcomp = dynamic_cast<Link*>(compList[i]);
       if(objectcomp) {
-	objectList.push_back(objectcomp);
+        objectList.push_back(objectcomp);
 	objectcomp->addDependency(compList[i]->getBranch());
       }
       else if(linkcomp) {
-	linkList.push_back(linkcomp);
+        linkList.push_back(linkcomp);
       }
       else {
-	cout << "Fehler" << endl;
-	throw 5;
+        cout << "Fehler" << endl;
+        throw 5;
       }
     }
+    int mode = 2;
+    if(mode == 0) {
+      branchList[0]->clearMeshList();
+      branchList[0]->connect(meshList[0]);
+
+      branchList[1]->clearMeshList();
+      branchList[1]->connect(meshList[0]);
+      branchList[1]->connect(meshList[1]);
+
+      branchList[2]->clearMeshList();
+      branchList[2]->connect(meshList[1]);
+
+      branchList[3]->clearMeshList();
+      branchList[3]->connect(meshList[1]);
+
+      branchList[4]->clearMeshList();
+      branchList[4]->connect(meshList[1]);
+      branchList[4]->connect(meshList[2]);
+
+      branchList[5]->clearMeshList();
+      branchList[5]->connect(meshList[2]);
+    } else if(mode ==1) {
+
+      branchList[0]->clearMeshList();
+      branchList[0]->connect(meshList[0]);
+
+      branchList[1]->clearMeshList();
+      //branchList[1]->connect(meshList[0]);
+      branchList[1]->connect(meshList[1]);
+
+      branchList[2]->clearMeshList();
+      branchList[2]->connect(meshList[0]);
+      branchList[2]->connect(meshList[1]);
+
+      branchList[3]->clearMeshList();
+      branchList[3]->connect(meshList[0]);
+      branchList[3]->connect(meshList[1]);
+
+      branchList[4]->clearMeshList();
+      branchList[4]->connect(meshList[0]);
+      branchList[4]->connect(meshList[1]);
+      branchList[4]->connect(meshList[2]);
+
+      branchList[5]->clearMeshList();
+      branchList[5]->connect(meshList[2]);
+    } else if(mode == 2) {
+      //branchList[2]->clearMeshList();
+      //branchList[2]->connect(meshList[1]);
+    }
+
+    if(mode<=1) {
+      compList[0]->connect(branchList[0]);
+      compList[1]->connect(branchList[0]);
+      compList[2]->connect(branchList[0]);
+      compList[3]->connect(branchList[1]);
+      compList[4]->connect(branchList[2]);
+      compList[5]->connect(branchList[4]);
+      compList[6]->connect(branchList[5]);
+      compList[7]->connect(branchList[5]);
+    }
+
+    //branchList[0]->getJacobian() = Mat("[1,0,0]");
+    //branchList[1]->getJacobian() = Mat("[0,1,0]");
+    //branchList[2]->getJacobian() = Mat("[1,1,0]");
+    //branchList[3]->getJacobian() = Mat("[1,1,0]");
+    //branchList[4]->getJacobian() = Mat("[1,1,-1]");
+
   }
 
-  ElectronicComponent::ElectronicComponent() : branch(0), vz(0), Q(0), I(0) {
-    branch = &tmpbranch;
-  }
-
-  void ElectronicComponent::connect(Branch *branch_, double vz_) {
-    vz = vz_;
-    branch=branch_;
-  }
 }
 
