@@ -34,7 +34,7 @@ namespace MBSimPowertrain {
       MBSim::RigidBody *shaft2, *shaft4, *shaft5;
 
     public:
-      DifferentialGear(const std::string &name, Data data=Data());
+      DifferentialGear(const std::string &name, Data data=Data(), bool planetIndependent=false);
       double getRadiusInputShaft() const {return data.radiusInputShaft;}
       MBSim::RigidBody* getInputShaft() {return shaft2;}
       MBSim::RigidBody* getRightOutputShaft() {return shaft5;}

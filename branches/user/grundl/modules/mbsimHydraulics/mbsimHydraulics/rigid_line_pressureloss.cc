@@ -318,10 +318,10 @@ namespace MBSimHydraulics {
     const int *ia = ds->getGs().Ip();
 
     double sum = 0;
-    for(int j=ia[laIndDS]+1; j<ia[laIndDS+1]; j++)
+    for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
       sum += fabs(a[j]);
 
-    const double ai = a[ia[laIndDS]];
+    const double ai = a[ia[laInd]];
     if(ai > sum) {
       rFactorUnsure(0) = 0;
       rFactor(0) = 1./ai;
@@ -339,8 +339,8 @@ namespace MBSimHydraulics {
     const Vec &laMBS = ds->getla();
     const Vec &b = ds->getb();
 
-    gdn = b(laIndDS);
-    for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
+    gdn = b(laInd);
+    for(int j=ia[laInd]; j<ia[laInd+1]; j++)
       gdn += a[j]*laMBS(ja[j]);
 
     la(0) = gil->project(la(0), gdn, gd(0), rFactor(0), dpMin*dt);
@@ -353,8 +353,8 @@ namespace MBSimHydraulics {
     const Vec &laMBS = ds->getla();
     const Vec &b = ds->getb();
 
-    gdd = b(laIndDS);
-    for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
+    gdd = b(laInd);
+    for(int j=ia[laInd]; j<ia[laInd+1]; j++)
       gdd += a[j]*laMBS(ja[j]);
 
     la(0) = gfl->project(la(0), gdd, rFactor(0), dpMin);
@@ -367,11 +367,11 @@ namespace MBSimHydraulics {
     const Vec &laMBS = ds->getla();
     const Vec &b = ds->getb();
 
-    gdn = b(laIndDS);
-    for(int j=ia[laIndDS]+1; j<ia[laIndDS+1]; j++)
+    gdn = b(laInd);
+    for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
       gdn += a[j]*laMBS(ja[j]);
 
-    la(0) = gil->solve(a[ia[laIndDS]], gdn, gd(0));
+    la(0) = gil->solve(a[ia[laInd]], gdn, gd(0));
     if (unilateral && (la(0) < dpMin*dt))
       la(0) = dpMin*dt;
   }
@@ -383,11 +383,11 @@ namespace MBSimHydraulics {
     const Vec &laMBS = ds->getla();
     const Vec &b = ds->getb();
 
-    gdd = b(laIndDS);
-    for(int j=ia[laIndDS]+1; j<ia[laIndDS+1]; j++)
+    gdd = b(laInd);
+    for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
       gdd += a[j]*laMBS(ja[j]);
 
-    la(0) = gfl->solve(a[ia[laIndDS]], gdd);
+    la(0) = gfl->solve(a[ia[laInd]], gdd);
     if (unilateral && (la(0) < dpMin))
       la(0) = dpMin;
   }
@@ -399,8 +399,8 @@ namespace MBSimHydraulics {
     const Vec &laMBS = ds->getla();
     const Vec &b = ds->getb();
 
-    gdn = b(laIndDS);
-    for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
+    gdn = b(laInd);
+    for(int j=ia[laInd]; j<ia[laInd+1]; j++)
       gdn += a[j]*laMBS(ja[j]);
 
     res(0) = la(0) - gil->project(la(0), gdn, gd(0), rFactor(0), dpMin*dt);
@@ -413,8 +413,8 @@ namespace MBSimHydraulics {
     const Vec &laMBS = ds->getla();
     const Vec &b = ds->getb();
 
-    gdd = b(laIndDS);
-    for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
+    gdd = b(laInd);
+    for(int j=ia[laInd]; j<ia[laInd+1]; j++)
       gdd += a[j]*laMBS(ja[j]);
 
     res(0) = la(0) - gfl->project(la(0), gdd, rFactor(0), dpMin);
@@ -424,28 +424,28 @@ namespace MBSimHydraulics {
     const SqrMat Jprox = ds->getJprox();
     const SqrMat G = ds->getG();
 
-    RowVec jp1=Jprox.row(laIndDS);
+    RowVec jp1=Jprox.row(laInd);
     RowVec e1(jp1.size());
-    e1(laIndDS) = 1;
+    e1(laInd) = 1;
     Vec diff = gil->diff(la(0), gdn, gd(0), rFactor(0));
 
     jp1 = e1-diff(0)*e1;
     for(int j=0; j<G.size(); j++) 
-      jp1(j) -= diff(1)*G(laIndDS,j);
+      jp1(j) -= diff(1)*G(laInd,j);
   }
 
   void RigidLinePressureLoss::jacobianConstraints() {
     const SqrMat Jprox = ds->getJprox();
     const SqrMat G = ds->getG();
 
-    RowVec jp1=Jprox.row(laIndDS);
+    RowVec jp1=Jprox.row(laInd);
     RowVec e1(jp1.size());
-    e1(laIndDS) = 1;
+    e1(laInd) = 1;
     Vec diff = gfl->diff(la(0), gdd, rFactor(0));
 
     jp1 = e1-diff(0)*e1;
     for(int j=0; j<G.size(); j++) 
-      jp1(j) -= diff(1)*G(laIndDS,j);
+      jp1(j) -= diff(1)*G(laInd,j);
   }
 
   void RigidLinePressureLoss::checkImpactsForTermination(double dt) {
@@ -455,8 +455,8 @@ namespace MBSimHydraulics {
     const Vec &laMBS = ds->getla();
     const Vec &b = ds->getb();
 
-    gdn = b(laIndDS);
-    for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
+    gdn = b(laInd);
+    for(int j=ia[laInd]; j<ia[laInd+1]; j++)
       gdn += a[j]*laMBS(ja[j]);
 
     if(!gil->isFulfilled(la(0),gdn,gd(0),LaTol,gdTol,dpMin*dt))
@@ -470,8 +470,8 @@ namespace MBSimHydraulics {
     const Vec &laMBS = ds->getla();
     const Vec &b = ds->getb();
     
-    gdd = b(laIndDS);
-    for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
+    gdd = b(laInd);
+    for(int j=ia[laInd]; j<ia[laInd+1]; j++)
       gdd += a[j]*laMBS(ja[j]);
 
     if(!gfl->isFulfilled(la(0),gdd,laTol,gddTol,dpMin))
