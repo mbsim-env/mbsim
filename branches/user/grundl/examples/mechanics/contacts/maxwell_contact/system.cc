@@ -212,7 +212,7 @@ System::System(const string &projectName, int contactType, int firstBall, int la
   switch (contactType) {
     case 0: //Maxwell Contact
     {
-      MaxwellContactLaw* mcl = new MaxwellContactLaw();
+      MaxwellUnilateralConstraint* mcl = new MaxwellUnilateralConstraint();
       contact->setContactForceLaw(mcl);
       //Debug features
       mcl->setDebuglevel(0);

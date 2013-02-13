@@ -708,12 +708,20 @@ namespace MBSim {
     }
   }
 
-  MaxwellContactLaw::MaxwellContactLaw(const double & damping, const double & gapLimit) :
+  MaxwellUnilateralConstraint::MaxwellUnilateralConstraint(const double & damping, const double & gapLimit) :
       lcpSolvingStrategy(Standard), dampingCoefficient(damping), gLim(gapLimit), matConst(0), matConstSetted(false), DEBUGLEVEL(0) {
 
   }
 
-  void MaxwellContactLaw::addContourCoupling(Contour *contour1, Contour *contour2, InfluenceFunction *fct) {
+  void MaxwellUnilateralConstraint::initializeContourCouplings(MultiContact* parent) {
+    for(size_t i = 0; i < referenceXML.size(); i++) {
+      Contour* contour1 = parent->getByPath<Contour>(referenceXML[i].name1);
+      Contour* contour2 = parent->getByPath<Contour>(referenceXML[i].name2);
+      addContourCoupling(contour1, contour2, referenceXML[i].function);
+    }
+  }
+
+  void MaxwellUnilateralConstraint::addContourCoupling(Contour *contour1, Contour *contour2, InfluenceFunction *fct) {
     pair<Contour*, Contour*> Pair(contour1, contour2);
     if (contour2 < contour1)
       Pair = pair<Contour*, Contour*>(contour2, contour1);
@@ -727,7 +735,7 @@ namespace MBSim {
 
   }
 
-  void MaxwellContactLaw::computeSmoothForces(std::vector<std::vector<Contact> > & contacts) {
+  void MaxwellUnilateralConstraint::computeSmoothForces(std::vector<std::vector<Contact> > & contacts) {
     updatePossibleContactPoints(contacts);
 
     //Apply damping force
@@ -770,7 +778,25 @@ namespace MBSim {
     }
   }
 
-  void MaxwellContactLaw::updatePossibleContactPoints(const std::vector<std::vector<Contact> > & contacts) {
+  void MaxwellUnilateralConstraint::initializeUsingXML(TiXmlElement* element) {
+    TiXmlElement *e;
+    e = element->FirstChildElement(MBSIMNS"InfluenceFunction");
+    while(e) {
+      xmlInfo info;
+      info.function = ObjectFactory::getInstance()->createInfluenceFunction(e->FirstChildElement());
+      info.name1 = e->FirstChildElement()->Attribute("contourName1");
+      info.name2 = e->FirstChildElement()->Attribute("contourName2");
+
+      info.function->initializeUsingXML(e->FirstChildElement());
+
+      referenceXML.push_back(info);
+
+      e = e->NextSiblingElement();
+    }
+
+  }
+
+void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<std::vector<Contact> > & contacts) {
     possibleContactPoints.clear();
     for (size_t i = 0; i < contacts.size(); ++i) {
       for (size_t j = 0; j < contacts[i].size(); ++j) {
@@ -781,7 +807,7 @@ namespace MBSim {
     }
   }
 
-  void MaxwellContactLaw::updateInfluenceMatrix(std::vector<std::vector<Contact> > & contacts) {
+  void MaxwellUnilateralConstraint::updateInfluenceMatrix(std::vector<std::vector<Contact> > & contacts) {
     C.resize(possibleContactPoints.size());
 
     for (size_t i = 0; i < possibleContactPoints.size(); i++) {
@@ -804,7 +830,7 @@ namespace MBSim {
     }
   }
 
-  void MaxwellContactLaw::updateRigidBodyGap(const std::vector<std::vector<Contact> > & contacts) {
+  void MaxwellUnilateralConstraint::updateRigidBodyGap(const std::vector<std::vector<Contact> > & contacts) {
     /*save rigidBodyGaps in vector*/
     rigidBodyGap.resize(possibleContactPoints.size());
     for (size_t i = 0; i < possibleContactPoints.size(); i++) {
@@ -815,7 +841,7 @@ namespace MBSim {
       cout << "rigidBodyGap: " << rigidBodyGap << endl;
   }
 
-  double MaxwellContactLaw::computeInfluenceCoefficient(std::vector<std::vector<Contact> > & contacts, const std::pair<int, int> & contactIndex) {
+  double MaxwellUnilateralConstraint::computeInfluenceCoefficient(std::vector<std::vector<Contact> > & contacts, const std::pair<int, int> & contactIndex) {
     double FactorC = 0.;
 
     for (int i = 0; i < 2; i++) {
@@ -844,7 +870,7 @@ namespace MBSim {
     return FactorC;
   }
 
-  double MaxwellContactLaw::computeInfluenceCoefficient(std::vector<std::vector<Contact> > & contacts, const std::pair<int, int> & contactIndex, const std::pair<int, int> & coupledContactIndex) {
+  double MaxwellUnilateralConstraint::computeInfluenceCoefficient(std::vector<std::vector<Contact> > & contacts, const std::pair<int, int> & contactIndex, const std::pair<int, int> & coupledContactIndex) {
     double FactorC = 0;
 
     for (int affectedContourIterator = 0; affectedContourIterator < 2; affectedContourIterator++) {
@@ -879,7 +905,7 @@ namespace MBSim {
     return FactorC;
   }
 
-  void MaxwellContactLaw::computeMaterialConstant() {
+  void MaxwellUnilateralConstraint::computeMaterialConstant() {
     if (!matConstSetted and possibleContactPoints.size()) {
       /*update Material constant*/
       Vec Eigvals = eigval(C);

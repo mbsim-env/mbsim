@@ -2011,6 +2011,113 @@
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
+  </xs:complexType> 
+
+  <xs:element name="MultiContact" substitutionGroup="LinkMechanics" type="MultiContactType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Definiert einen Kontakt als Interaktion zwischen mehreren Körpern.<br/>
+        Bei der Simulation von Mehrkörpersystemen kann es aufgrund der Bewegung der Körper zu Kontakten zwischen einzelnen Körpern, aber auch zwischen einem Körper und der Umwelt kommen. Kommen zwei Körper in Kontakt, bildet sich an den sich berührenden Konturen (siehe <a class="link" href="mbsim:Contour">&lt;Contour&gt;</a>) eine Kontaktfläche aus, in der die Kontaktkräfte zwischen den Kontaktpartnern übertragen werden.<br/>
+        Idealisiert wird davon ausgegangen, dass nur punktförmige Kontakte existieren; dies ist für eine Vielzahl von Problemstellungen ausreichend. Bei flächenhaften Kontakten muss die Oberfläche durch eine endliche Anzahl von Punkten diskretisiert werden.<br/>
+        Es wird zwischen Kontaktkinematik und -kinetik unterschieden. In der Kontaktkinematik wird die relative Lage und Bewegung von zwei Konturen, also potentielle Kontaktpunkte, Abstand, relative Geschwindigkeiten in Konturnormalenrichtung und in der Tangentialebene der Kontur sowie u.U. auch Beschleunigungsgrößen bestimmt. Sie sind Eingangsgrößen der Kontaktkinetik und bestimmen somit anschließend die Kontaktkräfte über konstitutive Gesetze.
+        <object class="figure" standby="4cm" data="contact" title="Kinematik einer Kontaktpaarung"></object>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="MultiContactType">
+    <xs:complexContent>
+      <xs:extension base="LinkMechanicsType">
+        <xs:sequence>
+          <xs:element name="contactForceLaw">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert das konstitutive Gesetz bez. der Kontaktkräfte auf Beschleunigungsebene in Konturnormalenrichtung (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird).
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="GeneralizedForceLaw"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="contactImpactLaw">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert das konstitutive Gesetz bez. der Kontaktkräfte auf Geschwindigkeitsebene in Konturnormalenrichtung (nötig wenn Stöße im System auftreten oder das System mit Timestepping-Verfahren integriert wird).
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="GeneralizedImpactLaw" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="frictionForceLaw">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert das konstitutive Reibgesetz bez. der Kontaktkräfte auf Beschleunigungssebene (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird).
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="FrictionForceLaw" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="frictionImpactLaw">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert das konstitutive Reibgesetz bez. der Kontaktkräfte auf Geschwindigkeitssebene (nötig wenn Stöße im System auftreten oder das System mit Timestepping-Verfahren integriert wird).
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="FrictionImpactLaw" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="connect">
+            <xs:complexType>
+             <xs:annotation>
+               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                 Bindet zwei Konturen an einen Kontakt. 
+               </xs:documentation>
+             </xs:annotation>
+             <xs:sequence>
+               <xs:element name="ContourPair" maxOccurs="unbounded">
+                 <xs:complexType>  
+                    <xs:sequence>                    
+                       <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                     </xs:sequence>
+                   <xs:attribute name="ref1" type="ContourReferenceType" use="required"/>
+                   <xs:attribute name="ref2" type="ContourReferenceType" use="required"/>
+                 </xs:complexType>
+               </xs:element>
+             </xs:sequence>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="enableOpenMBVContactPoints" type="pv:lengthScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Aktiviert die Visualisierung von zwei OpenMBV Koordinatensystemen in den jeweiligen Kontaktpunkten zur Repräsentation der begleitenden Dreibeine <object class="inlineeqn">\left(\boldsymbol{n},\boldsymbol{t}_1,\boldsymbol{t}_2\right)</object> bestehend aus Normale und den beiden Tangenten.<br/>
+                Bei geschlossenem Kontakt fallen die Kontaktpunkte zusammen.<br/>
+                Bei offenem Kontakt liegen die Kontaktpunkte auf den Konturen und haben minimalen Abstand.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="openMBVNormalForceArrow" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Wenn angegeben, wird die Kontaktkraft in Normalenrichtung durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="ombv:Arrow"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="openMBVFrictionForceArrow" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="ombv:Arrow"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>   
 
   <xs:element name="Frame" substitutionGroup="Element" type="FrameType">
@@ -2821,6 +2928,27 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
+
+  <xs:element name="MaxwellUnilateralConstraint" substitutionGroup="GeneralizedForceLaw" type="MaxwellUnilateralConstraintType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Konstitutives Gesetz zur Beschreibung einer mit anderen Kontakten gekoppeleten, einseitigen Bindung. 
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="MaxwellUnilateralConstraintType">
+    <xs:complexContent>
+      <xs:extension base="GeneralizedForceLawType">
+        <xs:sequence>
+          <xs:element name="InfluenceFunction">
+            <xs:complexType>
+              <xs:sequence>
+               <xs:element ref="InfluenceFunction" maxOccurs="unbounded"/>             
+              </xs:sequence> 
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>  
 
   <xs:element name="FrictionForceLaw" abstract="true" type="FrictionForceLawType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -3790,5 +3918,70 @@
 
   <xs:element name="Function3_MVVS" abstract="true" type="Function3_MVVSType"/>
   <xs:complexType name="Function3_MVVSType"/>
+  
+  <xs:element name="Function2_SVV" abstract="true" type="Function2_SVVType"/>
+  <xs:complexType name="Function2_SVVType"/>
+
+  <xs:element name="InfluenceFunction" abstract="true" type="InfluenceFunctionType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+         Koppelt den Einfluss zwischen zwei Kontouren durch eine Einflussfunktion.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element> 
+  <xs:complexType name="InfluenceFunctionType">
+    <xs:complexContent>
+      <xs:extension base="Function2_SVVType">
+        <xs:attribute name="contourName1" type="ContourReferenceType" use="required"/>
+        <xs:attribute name="contourName2" type="ContourReferenceType" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:element name="FlexibilityInfluenceFunction" substitutionGroup="InfluenceFunction" type="FlexibilityInfluenceFunctionType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+         Koppelt den Einfluss auf nur einer Kontur durch ihre Felxibilität.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>  
+  <xs:complexType name="FlexibilityInfluenceFunctionType">
+    <xs:complexContent>
+      <xs:extension base="InfluenceFunctionType">
+        <xs:sequence>
+          <xs:element name="Flexibility" type="pv:unknownScalar"> <!-- Einheit eigentlich m/N -->
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Flexibilität (Kehrwert der Steifigkeit) der Kontur.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>            
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType> 
+
+  <xs:element name="ConstantInfluenceFunction" substitutionGroup="InfluenceFunction" type="ConstantInfluenceFunctionType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+         Koppelt den Einfluss zweier Konturen konsant.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element> 
+  <xs:complexType name="ConstantInfluenceFunctionType">
+    <xs:complexContent>
+      <xs:extension base="InfluenceFunctionType">
+        <xs:sequence>
+          <xs:element name="CouplingValue" type="pv:unknownScalar"> <!-- Einheit eigentlich m/N -->
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Kopplungswert zwischen zwei Konturen.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>            
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType> 
 
 </xs:schema>

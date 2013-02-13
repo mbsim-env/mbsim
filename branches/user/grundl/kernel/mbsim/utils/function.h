@@ -633,36 +633,11 @@ namespace MBSim {
    */
   class InfluenceFunction : public Function2<double, fmatvec::Vec2,  fmatvec::Vec2 > {
     public:
-      InfluenceFunction(const std::string& firstContourName_, const std::string& secondContourName_) :
-          firstContourName(firstContourName_), secondContourName(secondContourName_) {
-      }
+      InfluenceFunction(){}
       /* INHERITED INTERFACE OF FUNCTION2 */
       virtual double operator()(const fmatvec::Vec2& firstContourLagrangeParameter, const fmatvec::Vec2& secondContourLagrangeParameter, const void * = NULL)=0;
-      virtual void initializeUsingXML(TiXmlElement *element) {
-        throw MBSimError("InfluenceFuntion::initializeUsingXML : Method not implemented");
-      }
+      virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
-
-      /* GETTER / SETTER */
-      std::string getFirstContourName() {
-        return firstContourName;
-      }
-      std::string getSecondContourName() {
-        return secondContourName;
-      }
-      /***************************************************/
-
-    protected:
-      /**
-       * \brief name of the first contour (to assign the Lagrange parameter, i.e. the contour parameter, to the contour)
-       */
-      std::string firstContourName;
-
-      /**
-       * \brief name of the second contour (to assign the Lagrange parameter, i.e. the contour parameter, to the contour)
-       */
-      std::string secondContourName;
-
   };
 
   /*
@@ -670,8 +645,10 @@ namespace MBSim {
    */
   class FlexibilityInfluenceFunction : public InfluenceFunction {
     public:
+      FlexibilityInfluenceFunction() : flexibility(0) {
+      }
       FlexibilityInfluenceFunction(const std::string& ContourName_, const double & flexibility_) :
-          InfluenceFunction(ContourName_, ContourName_), flexibility(flexibility_) {
+          flexibility(flexibility_) {
       }
       virtual ~FlexibilityInfluenceFunction() {}
       /* INHERITED INTERFACE OF FUNCTION2 */
@@ -681,6 +658,7 @@ namespace MBSim {
         else
           return 0;
       }
+      virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
 
     protected:
@@ -692,14 +670,17 @@ namespace MBSim {
    */
   class ConstantInfluenceFunction : public InfluenceFunction {
     public:
-      ConstantInfluenceFunction(const std::string& firstContourName_, const std::string& secondContourName_, const double & couplingValue_) :
-          InfluenceFunction(firstContourName_, secondContourName_), couplingValue(couplingValue_) {
+      ConstantInfluenceFunction() : couplingValue(0) {
+    }
+      ConstantInfluenceFunction(const double & couplingValue_) :
+          couplingValue(couplingValue_) {
       }
       virtual ~ConstantInfluenceFunction() {}
       /* INHERITED INTERFACE OF FUNCTION2 */
       virtual double operator()(const fmatvec::Vec2& firstContourLagrangeParameter, const fmatvec::Vec2& secondContourLagrangeParameter, const void * = NULL) {
         return couplingValue;
       }
+      virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
 
     protected:
