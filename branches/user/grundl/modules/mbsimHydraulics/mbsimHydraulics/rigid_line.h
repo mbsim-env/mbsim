@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: markus.ms.schneider@gmail.com
+ * Contact: schneidm@users.berlios.de
  */
 
 #ifndef  _RIGID_LINE_H_
@@ -57,7 +57,7 @@ namespace MBSimHydraulics {
   /*! ClosableRigidLine */
   class ClosableRigidLine : public RigidLine {
     public:
-      ClosableRigidLine(const std::string &name) : RigidLine(name), cpL(NULL), cpLSignal(NULL), cpLMinValue(0), cpLBilateral(false), refSignalString("") {}
+      ClosableRigidLine(const std::string &name) : RigidLine(name), cpL(NULL), cpLSignal(NULL), cpLMinValue(0), cpLUnilateral(false), cpLBilateral(false), refSignalString("") {}
       virtual std::string getType() const { return "ClosableRigidLine"; }
 
       void setClosablePressureLoss(ClosablePressureLoss * cpL_) {cpL=cpL_; }
@@ -66,6 +66,7 @@ namespace MBSimHydraulics {
       MBSimControl::Signal * getSignal() const {return cpLSignal; }
       void setMinimalValue(double v) {cpLMinValue=v; }
       double getMinimalValue() const {return cpLMinValue; }
+      void setUnilateral(bool u=true) {cpLUnilateral=u; }
       void setBilateral(bool b=true) {cpLBilateral=b; }
       bool isClosed() const;
       double getRegularizedValue() const;
@@ -77,32 +78,9 @@ namespace MBSimHydraulics {
       ClosablePressureLoss * cpL;
       MBSimControl::Signal * cpLSignal;
       double cpLMinValue;
-      bool cpLBilateral;
+      bool cpLUnilateral, cpLBilateral;
       std::string refSignalString;
   };
-
-
-  class UnidirectionalPressureLoss;
-
-  /*! UnidirectionalRigidLine */
-  class UnidirectionalRigidLine : public RigidLine {
-    public:
-      UnidirectionalRigidLine(const std::string &name) : RigidLine(name), upL(NULL), dpMin(0) {}
-      virtual std::string getType() const { return "UnidirectionalRigidLine"; }
-
-      void setUnidirectionalPressureLoss(UnidirectionalPressureLoss * upL_) {upL=upL_; }
-      UnidirectionalPressureLoss * getUnidirectionalPressureLoss() const {return upL; }
-      void setMinimalPressureDrop(double v) {dpMin=v; }
-      double getMinimalPressureDrop() const {return dpMin; }
-
-      void init(MBSim::InitStage stage);
-
-      void initializeUsingXML(TiXmlElement *element);
-    private:
-      UnidirectionalPressureLoss * upL;
-      double dpMin;
-  };
-
 }
 
 #endif   /* ----- #ifndef _RIGID_LINE_H_  ----- */

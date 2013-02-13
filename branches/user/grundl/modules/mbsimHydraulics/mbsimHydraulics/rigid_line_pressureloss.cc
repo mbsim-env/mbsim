@@ -114,7 +114,7 @@ namespace MBSimHydraulics {
   void RigidLinePressureLoss::updaterRef(const Vec& rParent, int i) {
     int hInd = line->gethInd(parent, i);
     Index I=Index(hInd, hInd+line->getJacobian().cols()-1);
-    r[0] >> rParent(I);
+    r[0].resize() >> rParent(I);
   }
 
   void RigidLinePressureLoss::updatedhduRef(const SqrMat& dhduParent, int i) {
@@ -192,7 +192,7 @@ namespace MBSimHydraulics {
   }
 
   void RigidLinePressureLoss::updateW(double t) {
-    W[0]=Mat(1,1,INIT,1.);
+    W[0]=trans(line->getJacobian())*Mat(1,1,INIT,1.);
   }
 
   void RigidLinePressureLoss::updaterFactors() {
@@ -260,7 +260,6 @@ namespace MBSimHydraulics {
           gdn(0) += epsilon*gd(0);
         double buf = (gdn(0) >= 0) ? 0 : -gdn(0)/a[ia[laIndDS+0]];
         la(0) += om*(buf - la(0));
-
       }
     }
   }
@@ -280,7 +279,7 @@ namespace MBSimHydraulics {
       res = rFactor(0)*gdn;
     }
     else
-      throw(123);
+      throw new MBSimError(name+": Error in solveImpactsRootFinding()");
   }
 
   void RigidLinePressureLoss::jacobianImpacts() {
@@ -293,7 +292,7 @@ namespace MBSimHydraulics {
       jp1(j) = rFactor(0) * G(laIndDS, j);
     }
     else
-      throw(123);
+      throw new MBSimError(name+": Error in jacobianImpacts()");
   }
 
   void RigidLinePressureLoss::checkImpactsForTermination() {

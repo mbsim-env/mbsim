@@ -254,9 +254,7 @@ namespace MBSimHydraulics {
 
   void RelativeAreaZetaClosablePressureLoss::initializeUsingXML(TiXmlElement * element) {
     ClosablePressureLoss::initializeUsingXML(element);
-    TiXmlElement * e;
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"zeta");
-    setZeta(Element::getDouble(e));
+    setZeta(Element::getDouble(element->FirstChildElement(MBSIMHYDRAULICSNS"zeta")));
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"zetaNegative");
     if (e)
       setZetaNegative(Element::getDouble(e));

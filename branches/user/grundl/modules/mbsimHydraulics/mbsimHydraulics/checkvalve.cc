@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: markus.ms.schneider@gmail.com
+ * Contact: schneidm@users.berlios.de
  */
 
 #include "checkvalve.h"
@@ -51,14 +51,13 @@ namespace MBSimHydraulics {
       colorLink(const std::string &name, OpenMBV::DynamicColoredBody * body_, ClosableRigidLine * l_) : Link(name), body(body_), l(l_) {}
       void updateWRef(const fmatvec::Mat&, int){}
       void updateVRef(const fmatvec::Mat&, int){}
-      void updatehRef(const fmatvec::Vec&, int){}
+      void updatehRef(const fmatvec::Vec&, const fmatvec::Vec&, int){}
       void updatedhdqRef(const fmatvec::Mat&, int){}
       void updatedhduRef(const fmatvec::SqrMat&, int){}
       void updatedhdtRef(const fmatvec::Vec&, int){}
       void updaterRef(const fmatvec::Vec&, int) {}
       bool isActive() const {return false; }
       bool gActiveChanged() {return false; }
-      virtual bool isSingleValued() const { return true; }
       void init(InitStage stage) {}
       void updateg(double t) {}
       void updategd(double t) {body->setDynamicColor((l->isClosed())?.9:.1); }
@@ -181,9 +180,9 @@ namespace MBSimHydraulics {
       Group::init(stage);
 
       if (!dynamic_cast<HNodeMec*>(line->getFromNode()))
-        throw MBSimError("ERROR! Hydraulic Node \""+line->getFromNode()->getName()+"\" connected to Checkvalve \""+name+"\" has to be of Type \"HNodeMec\"!");
+        throw new MBSimError("ERROR! Hydraulic Node \""+line->getFromNode()->getName()+"\" connected to Checkvalve \""+name+"\" has to be of Type \"HNodeMec\"!");
       if (!dynamic_cast<HNodeMec*>(line->getToNode()))
-        throw MBSimError("ERROR! Hydraulic Node \""+line->getToNode()->getName()+"\" connected to Checkvalve \""+name+"\" has to be of Type \"HNodeMec\"!");
+        throw new MBSimError("ERROR! Hydraulic Node \""+line->getToNode()->getName()+"\" connected to Checkvalve \""+name+"\" has to be of Type \"HNodeMec\"!");
       
       double ballForceArea=((CheckvalveClosablePressureLoss*)(line->getClosablePressureLoss()))->calcBallForceArea();
       if (ballForceArea<0) {
