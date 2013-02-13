@@ -120,7 +120,7 @@ namespace MBSimHydraulics {
           plotColumns.push_back("interface force on area " + numtostr(int(i)));
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if (openMBVArrowSize>0) {
-          for (int i=0; i<nTrans+nRot; i++) {
+          for (int i=0; i<int(nTrans+nRot); i++) {
             openMBVArrows.push_back(new OpenMBV::Arrow);
             openMBVArrows.back()->setArrowHead(openMBVArrowSize/4., openMBVArrowSize/4.);
             openMBVArrows.back()->setDiameter(openMBVArrowSize/10.);
@@ -402,8 +402,7 @@ namespace MBSimHydraulics {
     while (e && (e->ValueStr()==MBSIMHYDRAULICSNS"translatorialBoundarySourface" || e->ValueStr()==MBSIMHYDRAULICSNS"rotatorialBoundarySourface")) {
       if (e->ValueStr()==MBSIMHYDRAULICSNS"translatorialBoundarySourface") {
         TiXmlElement *ee=e->FirstChildElement(MBSIMHYDRAULICSNS"frameOfReference");
-        Frame *ref=getFrameByPath(ee->Attribute("ref"));
-        if(!ref) { cerr<<"ERROR! Cannot find frame: "<<ee->Attribute("ref")<<endl; _exit(1); }
+        Frame *ref=getByPath<Frame>(ee->Attribute("ref"));
         ee=e->FirstChildElement(MBSIMHYDRAULICSNS"normal");
         Vec normal=getVec(ee);
         ee=e->FirstChildElement(MBSIMHYDRAULICSNS"area");
@@ -413,15 +412,13 @@ namespace MBSimHydraulics {
       }
       else {
         TiXmlElement *ee=e->FirstChildElement(MBSIMHYDRAULICSNS"frameOfReference");
-        Frame *ref=getFrameByPath(ee->Attribute("ref"));
-        if(!ref) { cerr<<"ERROR! Cannot find frame: "<<ee->Attribute("ref")<<endl; _exit(1); }
+        Frame *ref=getByPath<Frame>(ee->Attribute("ref"));
         ee=e->FirstChildElement(MBSIMHYDRAULICSNS"normal");
         Vec normal=getVec(ee);
         ee=e->FirstChildElement(MBSIMHYDRAULICSNS"area");
         double area=getDouble(ee);
         ee=e->FirstChildElement(MBSIMHYDRAULICSNS"frameOfRotationCenter");
-        Frame *center=getFrameByPath(ee->Attribute("ref"));
-        if(!center) { cerr<<"ERROR! Cannot find frame: "<<ee->Attribute("ref")<<endl; _exit(1); }
+        Frame *center=getByPath<Frame>(ee->Attribute("ref"));
         bool noVolumeChange=e->FirstChildElement(MBSIMHYDRAULICSNS"noVolumeChange");
         addRotMecArea(ref, normal, area, center, !noVolumeChange);
       }

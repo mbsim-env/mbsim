@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: markus.ms.schneider@gmail.com
+ * Contact: schneidm@users.berlios.de
  */
 
 #include "config.h"
@@ -28,8 +28,6 @@
 #include "mbsimHydraulics/leakage_line.h"
 #include "mbsimHydraulics/dimensionless_line.h"
 #include "mbsimHydraulics/hydraulic_sensor.h"
-#include "mbsimHydraulics/elastic_line_galerkin.h"
-#include "mbsimHydraulics/elastic_line_variational.h"
 
 using namespace std;
 using namespace MBSim;
@@ -55,22 +53,14 @@ namespace MBSimHydraulics {
       return new ParallelResistanceLinePressureLoss();
     if (element->ValueStr()==MBSIMHYDRAULICSNS"ZetaLinePressureLoss")
       return new ZetaLinePressureLoss();
-    if (element->ValueStr()==MBSIMHYDRAULICSNS"ZetaPosNegLinePressureLoss")
-      return new ZetaPosNegLinePressureLoss();
     if (element->ValueStr()==MBSIMHYDRAULICSNS"LaminarTubeFlowLinePressureLoss")
       return new LaminarTubeFlowLinePressureLoss();
     if (element->ValueStr()==MBSIMHYDRAULICSNS"TurbulentTubeFlowLinePressureLoss")
       return new TurbulentTubeFlowLinePressureLoss();
     if (element->ValueStr()==MBSIMHYDRAULICSNS"CurveFittedLinePressureLoss")
       return new CurveFittedLinePressureLoss();
-    if (element->ValueStr()==MBSIMHYDRAULICSNS"TabularLinePressureLoss")
-      return new TabularLinePressureLoss();
     if (element->ValueStr()==MBSIMHYDRAULICSNS"RelativeAreaZetaClosablePressureLoss")
       return new RelativeAreaZetaClosablePressureLoss();
-    if (element->ValueStr()==MBSIMHYDRAULICSNS"GapHeightClosablePressureLoss")
-      return new GapHeightClosablePressureLoss();
-    if (element->ValueStr()==MBSIMHYDRAULICSNS"ReynoldsClosablePressureLoss")
-      return new ReynoldsClosablePressureLoss();
     if (element->ValueStr()==MBSIMHYDRAULICSNS"RelativeAlphaClosablePressureLoss")
       return new RelativeAlphaClosablePressureLoss();
     if (element->ValueStr()==MBSIMHYDRAULICSNS"GammaCheckvalveClosablePressureLoss")
@@ -85,8 +75,6 @@ namespace MBSimHydraulics {
       return new EccentricCircularLeakagePressureLoss();
     if (element->ValueStr()==MBSIMHYDRAULICSNS"RealCircularLeakagePressureLoss")
       return new RealCircularLeakagePressureLoss();
-    if (element->ValueStr()==MBSIMHYDRAULICSNS"UnidirectionalZetaPressureLoss")
-      return new UnidirectionalZetaPressureLoss();
     return 0;
   }
 
@@ -97,8 +85,6 @@ namespace MBSimHydraulics {
       return new RigidLine(element->Attribute("name"));
     if (element->ValueStr()==MBSIMHYDRAULICSNS"ClosableRigidLine")
       return new ClosableRigidLine(element->Attribute("name"));
-    if (element->ValueStr()==MBSIMHYDRAULICSNS"UnidirectionalRigidLine")
-      return new UnidirectionalRigidLine(element->Attribute("name"));
     if (element->ValueStr()==MBSIMHYDRAULICSNS"PlaneLeakageLine")
       return new PlaneLeakageLine(element->Attribute("name"));
     if (element->ValueStr()==MBSIMHYDRAULICSNS"CircularLeakageLine")
@@ -111,12 +97,6 @@ namespace MBSimHydraulics {
       return new ConstrainedLine(element->Attribute("name"));
     if (element->ValueStr()==MBSIMHYDRAULICSNS"FluidPump")
       return new FluidPump(element->Attribute("name"));
-    if (element->ValueStr()==MBSIMHYDRAULICSNS"StatelessOrifice")
-      return new StatelessOrifice(element->Attribute("name"));
-    if (element->ValueStr()==MBSIMHYDRAULICSNS"ElasticLineGalerkin")
-      return new ElasticLineGalerkin(element->Attribute("name"));
-    if (element->ValueStr()==MBSIMHYDRAULICSNS"ElasticLineVariational")
-      return new ElasticLineVariational(element->Attribute("name"));
     return 0;
   }
 
@@ -131,10 +111,6 @@ namespace MBSimHydraulics {
       return new ElasticNode(element->Attribute("name"));
     if(element->ValueStr()==MBSIMHYDRAULICSNS"RigidNode")
       return new RigidNode(element->Attribute("name"));
-    if(element->ValueStr()==MBSIMHYDRAULICSNS"RigidCavitationNode")
-      return new RigidCavitationNode(element->Attribute("name"));
-    if(element->ValueStr()==MBSIMHYDRAULICSNS"PressurePump")
-      return new PressurePump(element->Attribute("name"));
     if(element->ValueStr()==MBSIMHYDRAULICSNS"ConstrainedNodeMec")
       return new ConstrainedNodeMec(element->Attribute("name"));
     if(element->ValueStr()==MBSIMHYDRAULICSNS"EnvironmentNodeMec")
@@ -145,8 +121,6 @@ namespace MBSimHydraulics {
       return new RigidNodeMec(element->Attribute("name"));
     if(element->ValueStr()==MBSIMHYDRAULICSNS"FlowSensor")
       return new FlowSensor(element->Attribute("name"));
-    if(element->ValueStr()==MBSIMHYDRAULICSNS"PressureSensor")
-      return new PressureSensor(element->Attribute("name"));
     if(element->ValueStr()==MBSIMHYDRAULICSNS"TemperatureSensor")
       return new TemperatureSensor(element->Attribute("name"));
     if(element->ValueStr()==MBSIMHYDRAULICSNS"KinematicViscositySensor")
@@ -167,22 +141,9 @@ namespace MBSimHydraulics {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMHYDRAULICSNS"Controlvalve43")
       return new Controlvalve43(element->Attribute("name"));
-    if(element->ValueStr()==MBSIMHYDRAULICSNS"Checkvalve")
+    if(element->ValueStr()==MBSIMHYDRAULICSNS"BallCheckvalve")
       return new Checkvalve(element->Attribute("name"));
     return 0;
-  }
-
-  MBSim::ObjectFactoryBase::MM_PRINSPRE& ObjectFactory::getPriorityNamespacePrefix() {
-    static MBSim::ObjectFactoryBase::MM_PRINSPRE priorityNamespacePrefix;
-
-    if(priorityNamespacePrefix.empty()) {
-      priorityNamespacePrefix.insert(P_PRINSPRE( 50, P_NSPRE(MBSIMHYDRAULICSNS_, "")));
-      priorityNamespacePrefix.insert(P_PRINSPRE( 40, P_NSPRE(MBSIMHYDRAULICSNS_, "hyd")));
-      priorityNamespacePrefix.insert(P_PRINSPRE( 30, P_NSPRE(MBSIMHYDRAULICSNS_, "hydraulic")));
-      priorityNamespacePrefix.insert(P_PRINSPRE( 20, P_NSPRE(MBSIMHYDRAULICSNS_, "mbsimhydraulic")));
-    }
-
-    return priorityNamespacePrefix;
   }
 
 }
