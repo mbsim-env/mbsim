@@ -38,6 +38,8 @@ namespace MBSimHydraulics {
       if(saved_frameOfReference!="")
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
       Object::init(stage);
+      
+      dependency.clear(); // no hydraulic-objects in tree structure
     }
     else if (stage==preInit) {
       Object::init(stage);
