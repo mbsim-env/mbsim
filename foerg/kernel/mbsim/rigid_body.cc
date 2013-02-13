@@ -73,7 +73,9 @@ namespace MBSim {
   }
 
   void RigidBody::setFrameForKinematics(Frame *frame) { 
+    cout << frame->getName() << endl;
     K = dynamic_cast<FixedRelativeFrame*>(frame); 
+    cout << K << endl;
     assert(K);
   }
 

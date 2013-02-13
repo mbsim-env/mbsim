@@ -20,6 +20,7 @@
 #include <config.h>
 
 #include "polynomial_frustum.h"
+#include "mbsim/utils/nonlinear_algebra.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -31,10 +32,10 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  PolynomialFrustum::PolynomialFrustum(const std::string & name) :
-		        RigidContour(name), parameters(0), height(0.)
+  PolynomialFrustum::PolynomialFrustum(const std::string & name, const Vec & param_) :
+      RigidContour(name), parameters(param_), height(0.)
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  , color(LIGHTGRAY), transparency(0.), polynomialPoints(0), circularPoints(25)
+          , color(LIGHTGRAY), transparency(0.), polynomialPoints(0), circularPoints(25)
 #endif
   {
 
@@ -50,28 +51,28 @@ namespace MBSim {
 
       if (getPlotFeature(plotRecursive) == enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
-        if(openMBVRigidBody) {
+        if (openMBVRigidBody) {
           static_cast<OpenMBV::IvBody*>(openMBVRigidBody)->setIvFileName((this->name + ".iv").c_str());
           static_cast<OpenMBV::IvBody*>(openMBVRigidBody)->setBoundaryEdges(true);
-          static_cast<OpenMBV::IvBody*>(openMBVRigidBody)->setInitialTranslation(0.,0.,0.);
-          static_cast<OpenMBV::IvBody*>(openMBVRigidBody)->setInitialRotation(0.,0.,0.);
+          static_cast<OpenMBV::IvBody*>(openMBVRigidBody)->setInitialTranslation(0., 0., 0.);
+          static_cast<OpenMBV::IvBody*>(openMBVRigidBody)->setInitialRotation(0., 0., 0.);
 
           createInventorFile();
         }
 #endif
         RigidContour::init(stage);
       }
-    } else
+    }
+    else
       RigidContour::init(stage);
-  }
-
-  void PolynomialFrustum::setPolynomialParameters(
-      const vector<double> & parameters_) {
-    parameters = parameters_;
   }
 
   void PolynomialFrustum::setHeight(const double & height_) {
     height = height_;
+  }
+
+  double PolynomialFrustum::getHeight() {
+    return height;
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -79,17 +80,18 @@ namespace MBSim {
     if (enable) {
       openMBVRigidBody = new OpenMBV::IvBody;
 
-      if(circularPoints_ <= 0)
+      if (circularPoints_ <= 0)
         circularPoints = 25;
       else
         circularPoints = circularPoints_;
 
-      if(polynomialPoints_ <= 0)
+      if (polynomialPoints_ <= 0)
         polynomialPoints = 4 * parameters.size();
       else
         polynomialPoints = polynomialPoints_;
 
-    } else {
+    }
+    else {
       //TODO: destructor of OpenMBV::RigidBody is private (not public...)
       //      if(openMBVRigidBody)
       //        delete openMBVRigidBody;
@@ -108,24 +110,24 @@ namespace MBSim {
 
   double PolynomialFrustum::getValue(const double & x) {
     double val = 0;
-    for (size_t i = 0; i < parameters.size(); i++) {
-      val += parameters[i] * pow(x, i);
+    for (int i = 0; i < parameters.size(); i++) {
+      val += parameters(i) * pow(x, i);
     }
     return val;
   }
 
   double PolynomialFrustum::getValueD1(const double & x) {
     double val = 0;
-    for (size_t i = 1; i < parameters.size(); i++) {
-      val += i * parameters[i] * pow(x, (i - 1));
+    for (int i = 1; i < parameters.size(); i++) {
+      val += i * parameters(i) * pow(x, (i - 1));
     }
     return val;
   }
 
   double PolynomialFrustum::getValueD2(const double & x) {
     double val = 0;
-    for (size_t i = 2; i < parameters.size(); i++) {
-      val += i * (i - 1) * parameters[i] * pow(x, (i - 2));
+    for (int i = 2; i < parameters.size(); i++) {
+      val += i * (i - 1) * parameters(i) * pow(x, (i - 2));
     }
     return val;
   }
@@ -133,12 +135,13 @@ namespace MBSim {
   double PolynomialFrustum::getXPolyMax() {
     double x = height / 2;
     int iter = 1;
-    while (iter < 1000 && fabs(getValueD1(x)) > 1e-6) {
+    while (iter < 500 && fabs(getValueD1(x)) > 1e-6) {
       x = x - getValueD1(x) / getValueD2(x);
       iter++;
     }
     return x;
   }
+
 
   double PolynomialFrustum::getRadiSphere() {
     double rad = 0.;
@@ -146,21 +149,101 @@ namespace MBSim {
     double fb = getValue(height);
     double fda = getValueD1(0); //f'(a)
     double fdb = getValueD1(height); //f'(b)
-    double temp1 = sqrt(pow(fb , 2) + pow(height , 2) / 4);
-    double temp2 = sqrt(pow(fa , 2) + pow(height , 2) / 4);
-    temp2 = (temp1 > temp2) ? temp1 : temp2;
-    if (fda * fdb >= 0) {
-      temp1 = 0;
-    } else {
+    double temp1 = sqrt(pow(fb, 2) + pow(height, 2) / 4);
+    double temp2 = sqrt(pow(fa, 2) + pow(height, 2) / 4);
+    double temp = (temp1 > temp2) ? temp1 : temp2;
+    if (fda * fdb < 0) {
       double x = getXPolyMax();
       double fmax = getValue(x);
-      temp1 = sqrt(pow(fmax , 2) + pow((x - height / 2) , 2));
+      temp1 = sqrt(pow(fmax, 2) + pow((x - height / 2), 2));
     }
 
-    rad = (temp1 > temp2) ? temp1 : temp2;
+    rad = (temp1 > temp) ? temp1 : temp;
 
     return rad;
   }
+
+  const fmatvec::Vec & PolynomialFrustum::getPolynomialParameters() {
+    return parameters;
+  }
+
+  //TODO: Do we need these functions?
+  //The position of the given point has 3 situations:
+  //1st: above the curve and in the "middle" area. In this situation, the tangent through the closest point on the curve is perpendicular to the line pass through the itself and the given point;
+  //2nd: left area. The given point is either on the left side of the domain or on the left side of a line which passes through the left end point of the curve and perpendicular to the tangent on that end point. In this situation, the closest point on the curve is its left end point.
+  //3rd: right area. Similar to left area. In this situation, the closest point is the right end point of the curve.
+//  fmatvec::Vec3 PolynomialFrustum::CP_toP_onPolycurve2D(double x_0, double x_end, fmatvec::Vec2 P){
+//
+//    Vec3 closeP;//the first element stores the smallest distance, the second and third ones for the position of corresponding point on the frustum surface
+//    int succeed=0;//1 for succeed; 0 for not
+//
+//    Polyfun_in_cppc *Funleft = new Polyfun_in_cppc(parameters,P);
+//    NewtonMethod *solver3= new NewtonMethod(Funleft);
+//    int itmax=200, kmax=200;//maximum iteration, maximum damping steps, information of success
+//    double tol=1e-10;
+//    solver3->setMaximumNumberOfIterations(itmax);
+//    solver3->setMaximumDampingSteps(kmax);
+//    solver3->setTolerance(tol);
+//    int status;
+//    double root;
+//    Vec2 temp;
+//
+//    double midP = (x_0+x_end)/2;
+//    //if the given point lies in the left area, the closest point is the left end point on the curve
+//    if(P(0) <= midP){
+//      //check if P lies in the left area
+//      double temp1 = getValue(x_0)-(P(0)-x_0)/getValueD1(x_0);
+//      if(P(1) < temp1){//2nd situation
+//        closeP(1) = x_0;
+//        closeP(2) = getValue(x_0);
+//        temp(0) = P(0)-closeP(1);
+//        temp(1) = P(1)-closeP(2);
+//        closeP(0) = nrm2(temp);
+//        succeed=1;
+//      }else{//1st situation
+//        root = solver3->solve(midP);//initial guess x=(x_0+x_end)/2
+//        status = solver3->getInfo();
+//        if(status == 0 && ((root-x_0)*(root-x_end)<=0)){
+//          closeP(1) = root;
+//          closeP(2) = getValue(root);
+//          temp(0) = P(0)-closeP(1);
+//          temp(1) = P(1)-closeP(2);
+//          closeP(0) = nrm2(temp);
+//          succeed=1;
+//        }
+//      }
+//    }else{
+//      double temp2 = getValue(x_end)-(P(0)-x_end)/getValueD1(x_end);
+//      if(P(1) < temp2){//3rd situation
+//              closeP(1) = x_end;
+//              closeP(2) = getValue(x_end);
+//              temp(0) = P(0)-closeP(1);
+//              temp(1) = P(1)-closeP(2);
+//              closeP(0) = nrm2(temp);
+//              succeed=1;
+//      }else{//1st situation
+//        root = solver3->solve(midP);
+//        status = solver3->getInfo();
+//        if(status == 0 && ((root-x_0)*(root-x_end)<=0)){
+//          closeP(1) = root;
+//          closeP(2) = getValue(root);
+//          temp(0) = P(0)-closeP(1);
+//          temp(1) = P(1)-closeP(2);
+//          closeP(0) = nrm2(temp);
+//          succeed=1;
+//        }
+//      }
+//
+//    }
+//
+//    if(succeed == 1){
+//      return closeP;
+//    }else{
+//      cout<<"CP_toP_onPolycurve failed";
+//      exit(EXIT_FAILURE);
+//    }
+//  }
+
 
   void PolynomialFrustum::createInventorFile() {
 
@@ -178,7 +261,7 @@ namespace MBSim {
     /*MATERIAL*/
     ivFile << "Material" << endl << "{" << endl;
 
-    ivFile << "diffuseColor " <<  color.red << " " << color.green << " " << color.blue << endl;
+    ivFile << "diffuseColor " << color.red << " " << color.green << " " << color.blue << endl;
 
     ivFile << "  transparency " << transparency << endl;
     ivFile << "}" << endl;
@@ -187,10 +270,10 @@ namespace MBSim {
     ivFile << "  Coordinate3" << endl << "  {" << endl;
     ivFile << "    point [" << endl;
 
-    for(int i = 0; i < polynomialPoints + 1; i++) {
+    for (int i = 0; i < polynomialPoints + 1; i++) {
       double x = (height * i) / polynomialPoints;
       double r = getValue(x);
-      for(int j = 0; j < circularPoints; j++) {
+      for (int j = 0; j < circularPoints; j++) {
         double phi = j * 2. * M_PI / circularPoints;
         double y = r * cos(phi);
         double z = r * sin(phi);
@@ -203,7 +286,6 @@ namespace MBSim {
     ivFile << "  }" << endl << endl;
 
     /*Vertices END*/
-
 
     ivFile << "  ShapeHints" << endl << "  {" << endl; // hints BEGIN
     ivFile << "    vertexOrdering COUNTERCLOCKWISE" << endl; //  CLOCKWISE means look inside
@@ -221,10 +303,10 @@ namespace MBSim {
     int secondInd = 1;
     int thirdInd = circularPoints - 1;
 
-    for(int i = 0; i < circularPoints - 2; i++) {
+    for (int i = 0; i < circularPoints - 2; i++) {
       ivFile << firstInd << ", " << secondInd << ", " << thirdInd << "-1" << endl;
       int newThirdInd = secondInd + 1;
-      if(thirdInd < secondInd)
+      if (thirdInd < secondInd)
         newThirdInd = secondInd - 1;
       firstInd = secondInd;
       secondInd = thirdInd;
@@ -241,12 +323,12 @@ namespace MBSim {
 
     firstInd = circularPoints * polynomialPoints;
     secondInd = circularPoints * polynomialPoints + 1;
-    thirdInd = circularPoints * (polynomialPoints +1) - 1;
+    thirdInd = circularPoints * (polynomialPoints + 1) - 1;
 
-    for(int i = 0; i < circularPoints - 2; i++) {
+    for (int i = 0; i < circularPoints - 2; i++) {
       ivFile << firstInd << ", " << secondInd << ", " << thirdInd << "-1" << endl;
       int newThirdInd = secondInd + 1;
-      if(thirdInd < secondInd)
+      if (thirdInd < secondInd)
         newThirdInd = secondInd - 1;
       firstInd = secondInd;
       secondInd = thirdInd;
@@ -260,18 +342,18 @@ namespace MBSim {
     ivFile << "  IndexedFaceSet" << endl << "  {" << endl;
     ivFile << "    coordIndex [" << endl;
 
-    for(int i = 0; i < circularPoints; i++) {
+    for (int i = 0; i < circularPoints; i++) {
       int ind = i + 1;
 
       //ring closure
-      if(i >= circularPoints -1) {
+      if (i >= circularPoints - 1) {
         ind = 0;
       }
 
       //move up current polynomial line
-      for(int j = 0; j < polynomialPoints ; j++) {
-        ivFile << "      " << i + j * circularPoints << ", " << i + (j+1) * circularPoints << ", " << ind + j * circularPoints << "-1" << endl;
-        ivFile << "      " << i + (j+1) * circularPoints << ", " << ind + (j+1) * circularPoints << ", " << ind + j * circularPoints << "-1" << endl;
+      for (int j = 0; j < polynomialPoints; j++) {
+        ivFile << "      " << i + j * circularPoints << ", " << i + (j + 1) * circularPoints << ", " << ind + j * circularPoints << "-1" << endl;
+        ivFile << "      " << i + (j + 1) * circularPoints << ", " << ind + (j + 1) * circularPoints << ", " << ind + j * circularPoints << "-1" << endl;
       }
 
     }
@@ -286,5 +368,41 @@ namespace MBSim {
 
     ivFile.close();
   }
+  ContactPolyfun::ContactPolyfun(double rhs_, const Vec & para_) {
+    rhs = rhs_;
+    para = para_;
+  }
+
+  double ContactPolyfun::operator()(const double & x, const void *) {
+    int n = para.size();
+    double f = 0.;
+    for (int i = 0; i < n; i++) {
+      f = f + para(i) * pow(x, i);
+    }
+    f = f - rhs;
+    return f;
+  }
+
+
+  //TODO: Do we need these functions?
+//  Polyfun_in_cppc::Polyfun_in_cppc(const Vec & para_, const Vec2 & P_){
+//    para = para_;
+//    P = P_;
+//  }
+//  double Polyfun_in_cppc::operator ()(const double &x, const void *){
+//    int n = para.size();
+//    double f = 0;
+//    double fprime = 0;
+//    double result = 0;
+//    for (int i = 0; i < n; i++) {
+//      f = f + para(i) * pow(x, i);
+//    }
+//    for (int j = 1; j < para.size(); j++) {
+//      fprime += j * para(j) * pow(x, (j - 1));
+//    }
+//    result = (f-P(1))*fprime+x-P(0);
+//    return result;
+//  }
+
 
 }
