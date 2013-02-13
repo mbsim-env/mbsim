@@ -5,10 +5,14 @@
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/object.h"
 #include "mbsim/link.h"
-#include "mbsim/userfunction.h"
 #include "mbsim/mbsim_event.h"
 #include "modelling_classes.h"
 #include <string>
+//#include <mbsim/utils/function.h>
+
+namespace MBSimControl {
+class Signal;
+}
 
 namespace MBSimElectronics {
 
@@ -81,11 +85,19 @@ namespace MBSimElectronics {
 
   class ElectronicLink : public MBSim::Link, public ElectronicComponent {
     protected:
+      fmatvec::Vec gdn, gdd;
     public:
       ElectronicLink(const std::string &name) : Link(name) {}
 
-      void updateg(double t) {}
-      void updategd(double t) {}
+      void calcgSize();
+      void calcgdSize();
+      void calclaSize();
+      void calclaSizeForActiveg();
+      void calcgSizeActive();
+      void calcgdSizeActive();
+      void updateg(double t);
+      void updategd(double t);
+      void updateW(double t);
       void plot(double t, double dt = 1); 
       virtual std::string getName() const {return Link::getName();}
       virtual void setName(std::string name) {Link::setName(name);}
@@ -95,15 +107,16 @@ namespace MBSimElectronics {
       bool gActiveChanged() {return true;}
       void init(MBSim::InitStage stage);
       void updatehRef(const fmatvec::Vec &hParent, const fmatvec::Vec &hLinkParent, int j=0);
+      void updaterRef(const fmatvec::Vec &rParent);
+      virtual double computeVoltage(double t) {return 0;}
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updater(double t) { throw new MBSim::MBSimError("ERROR (ElectronicLink::updater): Not implemented!"); }
       /*****************************************************/
 
       /* INHERITED INTERFACE OF LINK */
-      virtual void updateWRef(const fmatvec::Mat& ref, int j) { throw new MBSim::MBSimError("ERROR (ElectronicLink::updateWRef): Not implemented!"); }
-      virtual void updateVRef(const fmatvec::Mat& ref, int j) { throw new MBSim::MBSimError("ERROR (ElectronicLink::updateVRef): Not implemented!"); }
-      virtual void updaterRef(const fmatvec::Vec& ref) { throw new MBSim::MBSimError("ERROR (ElectronicLink::updaterRef): Not implemented!"); }
+      virtual void updateWRef(const fmatvec::Mat& ref, int j); 
+      virtual void updateVRef(const fmatvec::Mat& ref, int j);
       virtual void updatedhdqRef(const fmatvec::Mat& ref, int i=0) {}
       virtual void updatedhduRef(const fmatvec::SqrMat& ref, int i=0) {}
       virtual void updatedhdtRef(const fmatvec::Vec& ref, int i=0) {}
@@ -117,7 +130,7 @@ namespace MBSimElectronics {
       Resistor(const std::string &name);
       void updateh(double t);
       void setResistance(double R_) { R = R_;}
-      double computeU(double t);
+      double computeVoltage(double t);
   };
 
   class Capacitor : public ElectronicLink {
@@ -131,27 +144,43 @@ namespace MBSimElectronics {
 
   class VoltageSource : public ElectronicLink {
     protected:
-      MBSim::UserFunction *voltageSignal;
+      //MBSim::Function1<fmatvec::Vec,double> *voltageSignal;
+      MBSimControl::Signal *voltageSignal;
     public:
       VoltageSource(const std::string &name);
       void updateh(double t);
-      void setVoltageSignal(MBSim::UserFunction* f) {voltageSignal = f;}
+      void setVoltageSignal(MBSimControl::Signal *signal) {voltageSignal = signal; }
+      //void setVoltageSignal(MBSim::Function1<fmatvec::Vec,double> *func) {voltageSignal = func;}
   };
 
   class Diode : public ElectronicLink {
     protected:
-    public:
+      bool sv;
+   public:
       Diode(const std::string &name);
+      void setSetValued(bool flag) {sv = flag;}
       void updateh(double t);
+      bool isSetValued() const {return sv;}
+      void checkImpactsForTermination();
+      void solveImpactsGaussSeidel();
   };
 
   class Switch : public ElectronicLink {
     protected:
-      MBSim::UserFunction *voltageSignal;
+      //MBSim::Function1<fmatvec::Vec,double> *voltageSignal;
+      MBSimControl::Signal *voltageSignal;
+      double U0;
+      bool sv;
     public:
       Switch(const std::string &name);
+      void setSetValued(bool flag) {sv = flag;}
+      bool isSetValued() const {return sv;}
       void updateh(double t);
-      void setVoltageSignal(MBSim::UserFunction* f) {voltageSignal = f;}
+      void updateW(double t);
+      void checkImpactsForTermination();
+      void solveImpactsGaussSeidel();
+      void setVoltageSignal(MBSimControl::Signal *signal) {voltageSignal = signal; }
+      //void setVoltageSignal(MBSim::Function1<fmatvec::Vec,double> *func) {voltageSignal = func;}
   };
 
   class ElectronicObject : public MBSim::Object, public ElectronicComponent {
