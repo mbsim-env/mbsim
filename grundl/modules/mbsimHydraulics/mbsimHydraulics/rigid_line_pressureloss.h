@@ -44,7 +44,7 @@ namespace MBSimHydraulics {
       virtual std::string getType() const { return "RigidLinePressureLoss"; }
       void plot(double t, double dt);
 
-      bool hasSmoothPart() const {return bilateral; }
+      bool hasSmoothPart() const {return (bilateral || (unilateral && (fabs(dpMin)>1e-6))); }
 
       void init(MBSim::InitStage stage);
       // ================================
@@ -68,6 +68,7 @@ namespace MBSimHydraulics {
       // ================================
       void updateg(double t); /* zdotStandard */
       void checkActiveg(); /* update */
+      void checkActivegdn(); // event-driven
       bool gActiveChanged(); /* update */
       bool isActive() const {return active; }
       void calcgdSizeActive() {gdSize=1; }
@@ -78,6 +79,7 @@ namespace MBSimHydraulics {
       void updateStopVector(double t); // event-driven
       void updateh(double t); /* zdotStandard */
       void updateW(double t); /* zdotStandard */
+      void updatedhdz(double t);
       // ==== END Methods for update-Process ===
 
       // ================================
