@@ -51,7 +51,7 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
           , openMBVGrp(0), openMBVContactFrameSize(0), openMBVContactFrameEnabled(false), contactArrow(NULL), frictionArrow(NULL)
 #endif
-          , saved_ref1(""), saved_ref2("") {
+          , saved_ref(0) {
   }
 
   MultiContact::~MultiContact() {
@@ -71,8 +71,6 @@ namespace MBSim {
   void MultiContact::updatewb(double t, int j) {
     for (std::vector<std::vector<Contact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<Contact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        for (std::vector<Contact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-          for (std::vector<Contact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
             jter->updatewb(t, j);  //TODO: contact kinematics in sub-contact!!
     }
   }
@@ -287,10 +285,18 @@ namespace MBSim {
 
   void MultiContact::init(InitStage stage) {
     if (stage == resolveXMLPath) {
-      //TODO XMLinitialize for multi-contact
-//      if (saved_ref1 != "" && saved_ref2 != "")
-//        connect(getByPath<Contour>(saved_ref1), getByPath<Contour>(saved_ref2));
-//      LinkMechanics::init(stage);
+      //connect all contours given in xml file
+      for (size_t i = 0; i < saved_ref.size(); i++) {
+        if (saved_ref[i].name1 != "" && saved_ref[i].name2 != "")
+          connect(getByPath<Contour>(saved_ref[i].name1), getByPath<Contour>(saved_ref[i].name2));
+      }
+
+      //initialize all contour couplings if generalized force law is of maxwell-type
+      if(dynamic_cast<MaxwellUnilateralConstraint*>(fcl)) {
+        static_cast<MaxwellUnilateralConstraint*>(fcl)->initializeContourCouplings(this);
+      }
+
+      LinkMechanics::init(stage);
     }
     else if (stage == preInit) {
       for (size_t cK = 0; cK < contactKinematics.size(); cK++) {
@@ -602,7 +608,7 @@ namespace MBSim {
       return 0;
   }
 
-  void MultiContact::connect(Contour *contour0, Contour* contour1, ContactKinematics* contactKinematics_ /*=0*/, const string & name_) {
+  void MultiContact::connect(Contour *contour0, Contour* contour1, ContactKinematics* contactKinematics_ /*=0*/, const string & name_ /* ="" */) {
     LinkMechanics::connect(contour0);
     LinkMechanics::connect(contour1);
     contactKinematics.push_back(contactKinematics_);
@@ -618,7 +624,7 @@ namespace MBSim {
     if (contactKinematics[cK] == 0)
       contactKinematics[cK] = contour1->findContactPairingWith(contour0->getType(), contour1->getType());
     if (contactKinematics[cK] == 0)
-      throw MBSimError("ERROR in " + getName() + " (Contact::init): Unknown contact pairing between Contour \"" + contour0->getType() + "\" and Contour\"" + contour1->getType() + "\"!");
+      throw MBSimError("ERROR in " + getName() + " (Contact::init): Unknown contact pairing between Contour \"" + contour0->getType() + "\" and Contour \"" + contour1->getType() + "\"!");
 
     //Create a single contact(with all the information) for every sub contact of each contact kinematics that is part of the multiple contact
     if (name_ == "")
@@ -655,13 +661,19 @@ namespace MBSim {
   }
 
   void MultiContact::initializeUsingXML(TiXmlElement *element) {
-    throw; //TODO?!
+    //TODO: more or less the same as in Contact (avoid redundancy)
     LinkMechanics::initializeUsingXML(element);
     TiXmlElement *e;
+
+    /*Read Contact Force Law*/
     e = element->FirstChildElement(MBSIMNS"contactForceLaw");
+
+    //Get contact force law
     GeneralizedForceLaw *gfl = ObjectFactory::getInstance()->createGeneralizedForceLaw(e->FirstChildElement());
     setContactForceLaw(gfl);
     gfl->initializeUsingXML(e->FirstChildElement());
+
+    //Get Impact law
     e = e->NextSiblingElement();
     GeneralizedImpactLaw *gifl = ObjectFactory::getInstance()->createGeneralizedImpactLaw(e->FirstChildElement());
     if (gifl) {
@@ -669,21 +681,44 @@ namespace MBSim {
       gifl->initializeUsingXML(e->FirstChildElement());
       e = e->NextSiblingElement();
     }
+
+    //Get Friction Force Law
     FrictionForceLaw *ffl = ObjectFactory::getInstance()->createFrictionForceLaw(e->FirstChildElement());
     if (ffl) {
       setFrictionForceLaw(ffl);
       ffl->initializeUsingXML(e->FirstChildElement());
       e = e->NextSiblingElement();
     }
+
+    //Get Friction Impact Law
     FrictionImpactLaw *fil = ObjectFactory::getInstance()->createFrictionImpactLaw(e->FirstChildElement());
     if (fil) {
       setFrictionImpactLaw(fil);
       fil->initializeUsingXML(e->FirstChildElement());
     }
+
+    /*Read all contour pairings*/
+    //Get all contours, that should be connected
     e = element->FirstChildElement(MBSIMNS"connect");
-    saved_ref1 = e->Attribute("ref1");
-    saved_ref2 = e->Attribute("ref2");
+    e = e->FirstChildElement(); //first contour pair
+    //TODO: loop should be exported to sub-structure?
+    while(e) { //As long as there are siblings read them and save them
+      saved_references ref;
+      ref.name1 = e->Attribute("ref1");
+      ref.name2 = e->Attribute("ref2");
+      TiXmlElement* e2 = e->FirstChildElement();
+      //TODO: add possibility of defining own contactKinematics? (also in Contact-class)
+      if(e2)
+        ref.contourPairingName = e2->ValueStr();
+      else
+        ref.contourPairingName = "";
+
+      saved_ref.push_back(ref);
+      e = e->NextSiblingElement();
+    }
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
+    //Get all drawing thingies
     if (element->FirstChildElement(MBSIMNS"enableOpenMBVContactPoints"))
       enableOpenMBVContactPoints(getDouble(element->FirstChildElement(MBSIMNS"enableOpenMBVContactPoints")));
     e = element->FirstChildElement(MBSIMNS"openMBVNormalForceArrow");
@@ -693,7 +728,7 @@ namespace MBSim {
       setOpenMBVNormalForceArrow(arrow);
       e = e->NextSiblingElement();
     }
-    e = element->FirstChildElement(MBSIMNS"openMBVFrictionArrow");
+    e = element->FirstChildElement(MBSIMNS"openMBVFrictionForceArrow");
     if (e) {
       OpenMBV::Arrow *arrow = dynamic_cast<OpenMBV::Arrow*>(OpenMBV::ObjectFactory::createObject(e->FirstChildElement()));
       arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow

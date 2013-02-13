@@ -47,6 +47,7 @@ class ObjectFactoryBase {
     virtual Function2<double,double,double> *createFunction2_SSS(TiXmlElement *element) { return NULL; }
     virtual Function2<fmatvec::Vec,fmatvec::Vec,double> *createFunction2_VVS(TiXmlElement *element) { return NULL; }
     virtual Function3<fmatvec::Mat3V,fmatvec::Vec,fmatvec::Vec,double> *createFunction3_MVVS(TiXmlElement *element) { return NULL; }
+    virtual InfluenceFunction* createInfluenceFunction(TiXmlElement * element) { return NULL; }
     virtual ContourFunction1s * createContourFunction1s(TiXmlElement * element) { return NULL; }
     virtual MM_PRINSPRE& getPriorityNamespacePrefix() {
       static MM_PRINSPRE ret;
@@ -87,6 +88,7 @@ class ObjectFactory : public ObjectFactoryBase {
     Function2<double,double,double> *createFunction2_SSS(TiXmlElement *element);
     Function2<fmatvec::Vec,fmatvec::Vec,double> *createFunction2_VVS(TiXmlElement *element);
     Function3<fmatvec::Mat3V,fmatvec::Vec,fmatvec::Vec,double> *createFunction3_MVVS(TiXmlElement *element);
+    InfluenceFunction* createInfluenceFunction(TiXmlElement * element);
     ContourFunction1s * createContourFunction1s(TiXmlElement * element);
     M_NSPRE getNamespacePrefixMapping();
 };
@@ -121,6 +123,7 @@ class MBSimObjectFactory : protected ObjectFactoryBase {
     Function2<double,double,double> *createFunction2_SSS(TiXmlElement *element);
     Function2<fmatvec::Vec,fmatvec::Vec,double> *createFunction2_VVS(TiXmlElement *element);
     Function3<fmatvec::Mat3V,fmatvec::Vec,fmatvec::Vec,double> *createFunction3_MVVS(TiXmlElement *element);
+    InfluenceFunction* createInfluenceFunction(TiXmlElement * element);
     ContourFunction1s * createContourFunction1s(TiXmlElement * element) {return 0; }
     MM_PRINSPRE& getPriorityNamespacePrefix();
 };

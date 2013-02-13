@@ -1436,37 +1436,52 @@ namespace MBSim {
   }
 
   void Contact::initializeUsingXML(TiXmlElement *element) {
-    //TODO?!
     LinkMechanics::initializeUsingXML(element);
     TiXmlElement *e;
+
+    //Set contact law
     e = element->FirstChildElement(MBSIMNS"contactForceLaw");
     GeneralizedForceLaw *gfl = ObjectFactory::getInstance()->createGeneralizedForceLaw(e->FirstChildElement());
     setContactForceLaw(gfl);
     gfl->initializeUsingXML(e->FirstChildElement());
+
+    //Set impact law (if given)
     e = e->NextSiblingElement();
     GeneralizedImpactLaw *gifl = ObjectFactory::getInstance()->createGeneralizedImpactLaw(e->FirstChildElement());
     if (gifl) {
       setContactImpactLaw(gifl);
       gifl->initializeUsingXML(e->FirstChildElement());
     }
+
+    //Set friction law (if given)
     e = e->NextSiblingElement();
     FrictionForceLaw *ffl = ObjectFactory::getInstance()->createFrictionForceLaw(e->FirstChildElement());
     if (ffl) {
       setFrictionForceLaw(ffl);
       ffl->initializeUsingXML(e->FirstChildElement());
     }
+
+    //Set friction impact law (if given)
     e = e->NextSiblingElement();
     FrictionImpactLaw *fil = ObjectFactory::getInstance()->createFrictionImpactLaw(e->FirstChildElement());
     if (fil) {
       setFrictionImpactLaw(fil);
       fil->initializeUsingXML(e->FirstChildElement());
     }
+
+    //Save contour names for initialization
     e = element->FirstChildElement(MBSIMNS"connect");
     saved_ref1 = e->Attribute("ref1");
     saved_ref2 = e->Attribute("ref2");
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
+    //test what should be drawn to OpenMBV
+
+    //Contact points
     if (element->FirstChildElement(MBSIMNS"enableOpenMBVContactPoints"))
       enableOpenMBVContactPoints(getDouble(element->FirstChildElement(MBSIMNS"enableOpenMBVContactPoints")));
+
+    //Normal force
     e = element->FirstChildElement(MBSIMNS"openMBVNormalForceArrow");
     if (e) {
       OpenMBV::Arrow *arrow = dynamic_cast<OpenMBV::Arrow*>(OpenMBV::ObjectFactory::createObject(e->FirstChildElement()));
@@ -1474,6 +1489,8 @@ namespace MBSim {
       setOpenMBVNormalForceArrow(arrow);
       e = e->NextSiblingElement();
     }
+
+    //Friction force
     e = element->FirstChildElement(MBSIMNS"openMBVFrictionForceArrow");
     if (e) {
       OpenMBV::Arrow *arrow = dynamic_cast<OpenMBV::Arrow*>(OpenMBV::ObjectFactory::createObject(e->FirstChildElement()));

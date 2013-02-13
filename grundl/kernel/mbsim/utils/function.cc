@@ -25,96 +25,112 @@ using namespace fmatvec;
 namespace MBSim {
 
   void LinearSpringDamperForce::initializeUsingXML(TiXmlElement *element) {
-    Function2<double,double,double>::initializeUsingXML(element);
+    Function2<double, double, double>::initializeUsingXML(element);
     TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"stiffnessCoefficient");
-    c=Element::getDouble(e);
-    e=element->FirstChildElement(MBSIMNS"dampingCoefficient");
-    d=Element::getDouble(e);
-    e=element->FirstChildElement(MBSIMNS"unloadedLength");
-    l0=Element::getDouble(e);
+    e = element->FirstChildElement(MBSIMNS"stiffnessCoefficient");
+    c = Element::getDouble(e);
+    e = element->FirstChildElement(MBSIMNS"dampingCoefficient");
+    d = Element::getDouble(e);
+    e = element->FirstChildElement(MBSIMNS"unloadedLength");
+    l0 = Element::getDouble(e);
   }
 
   void NonlinearSpringDamperForce::initializeUsingXML(TiXmlElement *element) {
-    Function2<double,double,double>::initializeUsingXML(element);
+    Function2<double, double, double>::initializeUsingXML(element);
     TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"distanceForce");
-    gForceFun=ObjectFactory::getInstance()->getInstance()->createFunction1_VS(e->FirstChildElement());
+    e = element->FirstChildElement(MBSIMNS"distanceForce");
+    gForceFun = ObjectFactory::getInstance()->getInstance()->createFunction1_VS(e->FirstChildElement());
     gForceFun->initializeUsingXML(e->FirstChildElement());
-    e=element->FirstChildElement(MBSIMNS"velocityForce");
-    gdForceFun=ObjectFactory::getInstance()->getInstance()->createFunction1_VS(e->FirstChildElement());
+    e = element->FirstChildElement(MBSIMNS"velocityForce");
+    gdForceFun = ObjectFactory::getInstance()->getInstance()->createFunction1_VS(e->FirstChildElement());
     gdForceFun->initializeUsingXML(e->FirstChildElement());
   }
 
   void LinearRegularizedUnilateralConstraint::initializeUsingXML(TiXmlElement *element) {
-    Function2<double,double,double>::initializeUsingXML(element);
+    Function2<double, double, double>::initializeUsingXML(element);
     TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"stiffnessCoefficient");
-    c=Element::getDouble(e);
-    e=element->FirstChildElement(MBSIMNS"dampingCoefficient");
-    d=Element::getDouble(e);
+    e = element->FirstChildElement(MBSIMNS"stiffnessCoefficient");
+    c = Element::getDouble(e);
+    e = element->FirstChildElement(MBSIMNS"dampingCoefficient");
+    d = Element::getDouble(e);
   }
 
   void LinearRegularizedBilateralConstraint::initializeUsingXML(TiXmlElement *element) {
-    Function2<double,double,double>::initializeUsingXML(element);
+    Function2<double, double, double>::initializeUsingXML(element);
     TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"stiffnessCoefficient");
-    c=Element::getDouble(e);
-    e=element->FirstChildElement(MBSIMNS"dampingCoefficient");
-    d=Element::getDouble(e);
+    e = element->FirstChildElement(MBSIMNS"stiffnessCoefficient");
+    c = Element::getDouble(e);
+    e = element->FirstChildElement(MBSIMNS"dampingCoefficient");
+    d = Element::getDouble(e);
   }
 
   TiXmlElement* LinearRegularizedBilateralConstraint::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = Function2<double,double,double>::writeXMLFile(parent);
+    TiXmlElement *ele0 = Function2<double, double, double>::writeXMLFile(parent);
     addElementText(ele0, MBSIMNS"stiffnessCoefficient", c);
     addElementText(ele0, MBSIMNS"dampingCoefficient", d);
     return ele0;
   }
 
-  Vec LinearRegularizedCoulombFriction::operator()(const Vec &gd, const double& laN, const void *) { 
+  Vec LinearRegularizedCoulombFriction::operator()(const Vec &gd, const double& laN, const void *) {
     int nFric = gd.size();
-    Vec la(nFric,NONINIT);
-    double normgd = nrm2(gd(0,nFric-1));
-    if(normgd < gdLim)
-      la(0,nFric-1) = gd(0,nFric-1)*(-laN*mu/gdLim);
+    Vec la(nFric, NONINIT);
+    double normgd = nrm2(gd(0, nFric - 1));
+    if (normgd < gdLim)
+      la(0, nFric - 1) = gd(0, nFric - 1) * (-laN * mu / gdLim);
     else
-      la(0,nFric-1) = gd(0,nFric-1)*(-laN*mu/normgd);
+      la(0, nFric - 1) = gd(0, nFric - 1) * (-laN * mu / normgd);
     return la;
   }
 
   void LinearRegularizedCoulombFriction::initializeUsingXML(TiXmlElement *element) {
-    Function2<Vec,Vec,double>::initializeUsingXML(element);
+    Function2<Vec, Vec, double>::initializeUsingXML(element);
     TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"marginalVelocity");
-    if(e) gdLim=Element::getDouble(e);
-    e=element->FirstChildElement(MBSIMNS"frictionCoefficient");
-    mu=Element::getDouble(e);
+    e = element->FirstChildElement(MBSIMNS"marginalVelocity");
+    if (e)
+      gdLim = Element::getDouble(e);
+    e = element->FirstChildElement(MBSIMNS"frictionCoefficient");
+    mu = Element::getDouble(e);
   }
 
-  Vec LinearRegularizedStribeckFriction::operator()(const Vec &gd, const double& laN, const void *) { 
+  Vec LinearRegularizedStribeckFriction::operator()(const Vec &gd, const double& laN, const void *) {
     int nFric = gd.size();
-    Vec la(nFric,NONINIT);
-    double normgd = nrm2(gd(0,nFric-1));
-    if(normgd < gdLim) {
+    Vec la(nFric, NONINIT);
+    double normgd = nrm2(gd(0, nFric - 1));
+    if (normgd < gdLim) {
       double mu0 = (*fmu)(0);
-      la(0,nFric-1) = gd(0,nFric-1)*(-laN*mu0/gdLim);
-    } 
+      la(0, nFric - 1) = gd(0, nFric - 1) * (-laN * mu0 / gdLim);
+    }
     else {
-      double mu = (*fmu)(nrm2(gd(0,nFric-1))-gdLim);
-      la(0,nFric-1) = gd(0,nFric-1)*(-laN*mu/normgd);
+      double mu = (*fmu)(nrm2(gd(0, nFric - 1)) - gdLim);
+      la(0, nFric - 1) = gd(0, nFric - 1) * (-laN * mu / normgd);
     }
     return la;
   }
 
   void LinearRegularizedStribeckFriction::initializeUsingXML(TiXmlElement *element) {
-    Function2<Vec,Vec,double>::initializeUsingXML(element);
+    Function2<Vec, Vec, double>::initializeUsingXML(element);
     TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"marginalVelocity");
-    if(e) gdLim=Element::getDouble(e);
-    e=element->FirstChildElement(MBSIMNS"frictionFunction");
-    Function1<double,double> *f=ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement());
+    e = element->FirstChildElement(MBSIMNS"marginalVelocity");
+    if (e)
+      gdLim = Element::getDouble(e);
+    e = element->FirstChildElement(MBSIMNS"frictionFunction");
+    Function1<double, double> *f = ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement());
     setFrictionFunction(f);
     f->initializeUsingXML(e->FirstChildElement());
+  }
+
+  void InfluenceFunction::initializeUsingXML(TiXmlElement *element) {
+    Function2<double, Vec2, Vec2>::initializeUsingXML(element);
+  }
+
+  void FlexibilityInfluenceFunction::initializeUsingXML(TiXmlElement *element) {
+    InfluenceFunction::initializeUsingXML(element);
+    flexibility = Element::getDouble(element->FirstChildElement(MBSIMNS"Flexibility"));
+  }
+
+  void ConstantInfluenceFunction::initializeUsingXML(TiXmlElement *element) {
+    InfluenceFunction::initializeUsingXML(element);
+    couplingValue = Element::getDouble(element->FirstChildElement(MBSIMNS"CouplingValue"));
   }
 
 }

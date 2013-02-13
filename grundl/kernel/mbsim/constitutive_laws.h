@@ -26,6 +26,7 @@
 
 #include <mbsim/numerics/linear_complementarity_problem/linear_complementarity_problem.h>
 #include <mbsim/contour.h>
+#include <mbsim/multi_contact.h>
 #include "mbsim/utils/function.h"
 
 namespace MBSim {
@@ -713,17 +714,17 @@ namespace MBSim {
    * \author Kilian Grundl
    * \date 30-07-2012 start of development
    */
-  class MaxwellContactLaw : public GeneralizedForceLaw {
+  class MaxwellUnilateralConstraint : public GeneralizedForceLaw {
     public:
       /*!
        * \brief constructor
        */
-      MaxwellContactLaw(const double & damping = 0, const double & gapLimit = 0);
+      MaxwellUnilateralConstraint(const double & damping = 0, const double & gapLimit = 0);
 
       /*!
        * \brief destructor
        */
-      virtual ~MaxwellContactLaw() {};
+      virtual ~MaxwellUnilateralConstraint() {};
 
       /* INHERITED INTERFACE */
       virtual bool isActive(double g, double gTol) { return g < gTol ? true : false; }
@@ -731,6 +732,15 @@ namespace MBSim {
       virtual bool isSetValued() const { return false; }
       virtual void computeSmoothForces(std::vector<std::vector<Contact> > & contacts);
       /***************************************************/
+
+      virtual void initializeUsingXML(TiXmlElement *element);
+
+      /*!
+       * \brief initialize all saved contour couplings in the map
+       *
+       * \todo: pointer to parent class is probably not optimal (friend class maybe?)
+       */
+      virtual void initializeContourCouplings(MultiContact* parent);
 
       /*GETTER - SETTER*/
       void setDebuglevel(int debuglevel) {
@@ -854,6 +864,13 @@ namespace MBSim {
        * \todo wouldn't a logger for MBSim be nice
        */
       int DEBUGLEVEL;
+
+      struct xmlInfo {
+          InfluenceFunction * function;
+          std::string name1;
+          std::string name2;
+      };
+      std::vector<xmlInfo> referenceXML;
 
   };
 

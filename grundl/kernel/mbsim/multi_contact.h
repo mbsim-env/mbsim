@@ -54,12 +54,12 @@ namespace MBSim {
    * Remarks:
    * - constitutive laws on acceleration and velocity level have to be set pairwise
    */
-  class MultiContact: public LinkMechanics {
+  class MultiContact : public LinkMechanics {
     public:
       /*!
        * \brief constructor
        * \param name of contact
-       */      
+       */
       MultiContact(const std::string &name);
 
       /**
@@ -75,20 +75,20 @@ namespace MBSim {
       /********************************/
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      virtual void updatewb(double t, int i=0);
-      virtual void updateW(double t, int i=0);
-      virtual void updateV(double t, int i=0);
-      virtual void updateh(double t, int i=0);
+      virtual void updatewb(double t, int i = 0);
+      virtual void updateW(double t, int i = 0);
+      virtual void updateV(double t, int i = 0);
+      virtual void updateh(double t, int i = 0);
       virtual void updateg(double t);
       virtual void updategd(double t);
       virtual void updateStopVector(double t);
-      virtual void updateJacobians(double t, int j=0);
+      virtual void updateJacobians(double t, int j = 0);
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */
-      virtual void updateWRef(const fmatvec::Mat &ref, int j=0);
-      virtual void updateVRef(const fmatvec::Mat &ref, int j=0);
-      virtual void updatehRef(const fmatvec::Vec &hRef, int j=0);
+      virtual void updateWRef(const fmatvec::Mat &ref, int j = 0);
+      virtual void updateVRef(const fmatvec::Mat &ref, int j = 0);
+      virtual void updatehRef(const fmatvec::Vec &hRef, int j = 0);
       virtual void updatewbRef(const fmatvec::Vec &ref);
       virtual void updatelaRef(const fmatvec::Vec& ref);
       virtual void updategRef(const fmatvec::Vec& ref);
@@ -125,13 +125,15 @@ namespace MBSim {
       virtual void checkImpactsForTermination(double dt);
       using LinkMechanics::connect;
       virtual void checkActive(int j);
-      virtual void LinearImpactEstimation(fmatvec::Vec &gInActive_,fmatvec::Vec &gdInActive_,int *IndInActive_,fmatvec::Vec &gAct_,int *IndActive_);
+      virtual void LinearImpactEstimation(fmatvec::Vec &gInActive_, fmatvec::Vec &gdInActive_, int *IndInActive_, fmatvec::Vec &gAct_, int *IndActive_);
       virtual void SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_);
- 
+
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const { return "MultiContact"; }
+      virtual std::string getType() const {
+        return "MultiContact";
+      }
       virtual void plot(double t, double dt = 1);
       virtual void closePlot();
       /***************************************************/
@@ -143,14 +145,14 @@ namespace MBSim {
        * If the contact is not closed, then the two contact point lie on the contours with minimal distance in between.
        * The x-axis of this frames are orientated to the other frame origin (normal vector).
        */
-      void enableOpenMBVContactPoints(double size=1.,bool enable=true) { openMBVContactFrameSize=size; openMBVContactFrameEnabled=enable; }
+      void enableOpenMBVContactPoints(double size=1.,bool enable=true) {openMBVContactFrameSize=size; openMBVContactFrameEnabled=enable;}
 
       /** 
        * \brief Sets the OpenMBV::Arrow to be used for drawing the normal force vector.
        * This vector is the force which is applied on the second contour.
        * The reactio (not drawn) is applied on the first contour.
        */
-      void setOpenMBVNormalForceArrow(OpenMBV::Arrow *arrow) { contactArrow=arrow; }
+      void setOpenMBVNormalForceArrow(OpenMBV::Arrow *arrow) {contactArrow=arrow;}
 
       /** 
        * \brief Sets the OpenMBV::Arrow to be used for drawing the friction force vector.
@@ -159,7 +161,7 @@ namespace MBSim {
        * If using a set-valued friction law, then the arrow is drawn in green if the contact
        * is in slip and in red, if the contact is in stick.
        */
-      void setOpenMBVFrictionForceArrow(OpenMBV::Arrow *arrow) { frictionArrow=arrow; }
+      void setOpenMBVFrictionForceArrow(OpenMBV::Arrow *arrow) {frictionArrow=arrow;}
 #endif
 
       /* GETTER / SETTER */
@@ -167,13 +169,27 @@ namespace MBSim {
       void setgdInd(int gdInd_);
       void setlaInd(int laInd_);
       void setrFactorInd(int rFactorInd_);
-      void setContactForceLaw(GeneralizedForceLaw *fcl_) { fcl = fcl_; }
-      GeneralizedForceLaw * getContactForceLaw() const {return fcl; }
-      void setContactImpactLaw(GeneralizedImpactLaw *fnil_) { fnil = fnil_; }
-      void setFrictionForceLaw(FrictionForceLaw *fdf_) { fdf = fdf_; }
-      void setFrictionImpactLaw(FrictionImpactLaw *ftil_) { ftil = ftil_; }
-      void setContactKinematics(ContactKinematics* ck, int index) { contactKinematics[index] = ck; }
-      ContactKinematics* getContactKinematics(int index) const { return contactKinematics[index]; }
+      void setContactForceLaw(GeneralizedForceLaw *fcl_) {
+        fcl = fcl_;
+      }
+      GeneralizedForceLaw * getContactForceLaw() const {
+        return fcl;
+      }
+      void setContactImpactLaw(GeneralizedImpactLaw *fnil_) {
+        fnil = fnil_;
+      }
+      void setFrictionForceLaw(FrictionForceLaw *fdf_) {
+        fdf = fdf_;
+      }
+      void setFrictionImpactLaw(FrictionImpactLaw *ftil_) {
+        ftil = ftil_;
+      }
+      void setContactKinematics(ContactKinematics* ck, int index) {
+        contactKinematics[index] = ck;
+      }
+      ContactKinematics* getContactKinematics(int index) const {
+        return contactKinematics[index];
+      }
       /***************************************************/
 
       /**
@@ -235,15 +251,15 @@ namespace MBSim {
        * \brief force law defining relation between tangential velocities and tangential forces
        */
       FrictionForceLaw *fdf;
-      
+
       /**
        * \brief force law defining relation between penetration velocity and resulting normal impulses
-      */
+       */
       GeneralizedImpactLaw *fnil;
-      
+
       /** 
        * \brief force law defining relation between tangential velocities and forces impulses
-      */
+       */
       FrictionImpactLaw *ftil;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -269,7 +285,12 @@ namespace MBSim {
 #endif
 
     private:
-      std::string saved_ref1, saved_ref2;
+      struct saved_references {
+          std::string name1;
+          std::string name2;
+          std::string contourPairingName;
+      };
+      std::vector<saved_references> saved_ref;
   };
 
 }

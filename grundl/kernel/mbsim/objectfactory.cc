@@ -8,6 +8,7 @@
 #include "mbsim/extern_generalized_io.h"
 #include "mbsim/joint.h"
 #include "mbsim/contact.h"
+#include "mbsim/multi_contact.h"
 #include "mbsim/contours/sphere.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/line.h"
@@ -215,6 +216,14 @@ namespace MBSim {
     throw MBSimError(string("No Function2_MVVS of type ")+element->ValueStr()+" exists.");
   }
 
+  InfluenceFunction* ObjectFactory::createInfluenceFunction(TiXmlElement *element) {
+    if(element==NULL) return NULL;
+    InfluenceFunction * u;
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
+      if((u=(*i)->createInfluenceFunction(element))) return u;
+    throw MBSimError(string("No InfluenceFunction of type ")+element->ValueStr()+" exists.");
+  }
+
   ContourFunction1s *ObjectFactory::createContourFunction1s(TiXmlElement *element) {
     if(element==NULL) return NULL;
     ContourFunction1s * u;
@@ -327,6 +336,8 @@ namespace MBSim {
       return new Joint(element->Attribute("name"));
     if(element->ValueStr()==MBSIMNS"Contact")
       return new Contact(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMNS"MultiContact")
+      return new MultiContact(element->Attribute("name"));
     if(element->ValueStr()==MBSIMNS"ExternGeneralizedIO")
       return new ExternGeneralizedIO(element->Attribute("name"));
     return 0;
@@ -365,6 +376,8 @@ namespace MBSim {
       return new RegularizedBilateralConstraint;
     if(element->ValueStr()==MBSIMNS"RegularizedUnilateralConstraint")
       return new RegularizedUnilateralConstraint;
+    if(element->ValueStr()==MBSIMNS"MaxwellUnilateralConstraint")
+      return new MaxwellUnilateralConstraint;
     return 0;
   }
 
@@ -531,6 +544,15 @@ namespace MBSim {
   }
 
   Function3<Mat3V,Vec,Vec,double> *MBSimObjectFactory::createFunction3_MVVS(TiXmlElement *element) {
+    return 0;
+  }
+
+  InfluenceFunction *MBSimObjectFactory::createInfluenceFunction(TiXmlElement *element) {
+    if(element==0) return 0;
+    if(element->ValueStr()==MBSIMNS"FlexibilityInfluenceFunction")
+      return new FlexibilityInfluenceFunction;
+    if(element->ValueStr()==MBSIMNS"ConstantInfluenceFunction")
+      return new ConstantInfluenceFunction;
     return 0;
   }
 

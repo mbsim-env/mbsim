@@ -97,7 +97,7 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
   if(contactlaw == 0) { //Maxwell Contact
     //Normal force
     InfluenceFunction* infl = new FlexibilityInfluenceFunction(ground->getShortName(), 1/stiffness);
-    MaxwellContactLaw* mfl = new MaxwellContactLaw(damping);
+    MaxwellUnilateralConstraint* mfl = new MaxwellUnilateralConstraint(damping);
     mfl->addContourCoupling(ground, ground, infl);
     contact->setContactForceLaw(mfl);
 
