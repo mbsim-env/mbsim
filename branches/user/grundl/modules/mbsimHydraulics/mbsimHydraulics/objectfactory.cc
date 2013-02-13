@@ -117,6 +117,8 @@ namespace MBSimHydraulics {
       return new ElasticNode(element->Attribute("name"));
     if(element->ValueStr()==MBSIMHYDRAULICSNS"RigidNode")
       return new RigidNode(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMHYDRAULICSNS"RigidCavitationNode")
+      return new RigidCavitationNode(element->Attribute("name"));
     if(element->ValueStr()==MBSIMHYDRAULICSNS"ConstrainedNodeMec")
       return new ConstrainedNodeMec(element->Attribute("name"));
     if(element->ValueStr()==MBSIMHYDRAULICSNS"EnvironmentNodeMec")
