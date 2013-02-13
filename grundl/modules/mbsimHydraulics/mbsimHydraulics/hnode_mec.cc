@@ -159,17 +159,17 @@ namespace MBSimHydraulics {
   void HNodeMec::updateWRef(const Mat &WParent, int j) {
     HNode::updateWRef(WParent, j);
     for (unsigned int i=0; i<nTrans; i++) {
-      int laI = laInd;
-      int laJ = laInd;
-      int hI = connectedTransFrames[i].frame->getParent()->gethInd(parent, j);
-      int hJ = hI + connectedTransFrames[i].frame->getJacobianOfTranslation().cols() -1;
+      const int laI = laInd;
+      const int laJ = laInd;
+      const int hI = connectedTransFrames[i].frame->getParent()->gethInd(parent, j);
+      const int hJ = hI + connectedTransFrames[i].frame->getJacobianOfTranslation().cols() -1;
       W[nLines+i].resize()>>WParent(Index(hI, hJ), Index(laI, laJ));
     }
     for (unsigned int i=0; i<nRot; i++) {
-      int laI = laInd;
-      int laJ = laInd;
-      int hI = connectedRotFrames[i].frame->getParent()->gethInd(parent, j);
-      int hJ = hI + connectedRotFrames[i].frame->getJacobianOfRotation().cols() -1;
+      const int laI = laInd;
+      const int laJ = laInd;
+      const int hI = connectedRotFrames[i].frame->getParent()->gethInd(parent, j);
+      const int hJ = hI + connectedRotFrames[i].frame->getJacobianOfRotation().cols() -1;
       W[nTrans+nLines+i].resize()>>WParent(Index(hI, hJ), Index(laI, laJ));
     }
   }
@@ -177,17 +177,17 @@ namespace MBSimHydraulics {
   void HNodeMec::updateVRef(const Mat &VParent, int j) {
     HNode::updateVRef(VParent, j);
     for (unsigned int i=0; i<nTrans; i++) {
-      int laI = laInd;
-      int laJ = laInd;
-      int hI = connectedTransFrames[i].frame->getParent()->gethInd(parent, j);
-      int hJ = hI + connectedTransFrames[i].frame->getJacobianOfTranslation().cols() -1;
+      const int laI = laInd;
+      const int laJ = laInd;
+      const int hI = connectedTransFrames[i].frame->getParent()->gethInd(parent, j);
+      const int hJ = hI + connectedTransFrames[i].frame->getJacobianOfTranslation().cols() -1;
       V[nLines+i].resize()>>VParent(Index(hI, hJ), Index(laI, laJ));
     }
     for (unsigned int i=0; i<nRot; i++) {
-      int laI = laInd;
-      int laJ = laInd;
-      int hI = connectedRotFrames[i].frame->getParent()->gethInd(parent, j);
-      int hJ = hI + connectedRotFrames[i].frame->getJacobianOfRotation().cols() -1;
+      const int laI = laInd;
+      const int laJ = laInd;
+      const int hI = connectedRotFrames[i].frame->getParent()->gethInd(parent, j);
+      const int hJ = hI + connectedRotFrames[i].frame->getJacobianOfRotation().cols() -1;
       V[nTrans+nLines+i].resize()>>VParent(Index(hI, hJ), Index(laI, laJ));
     }
   }
@@ -195,14 +195,14 @@ namespace MBSimHydraulics {
   void HNodeMec::updatehRef(const Vec &hParent, const Vec& hLinkParent, int j) {
     HNode::updatehRef(hParent, hLinkParent, j);
     for (unsigned int i=0; i<nTrans; i++) {
-      int hI = connectedTransFrames[i].frame->getParent()->gethInd(parent, j);
-      int hJ = hI + connectedTransFrames[i].frame->getJacobianOfTranslation().cols()-1;
+      const int hI = connectedTransFrames[i].frame->getParent()->gethInd(parent, j);
+      const int hJ = hI + connectedTransFrames[i].frame->getJacobianOfTranslation().cols()-1;
       h[nLines+i].resize() >> hParent(Index(hI, hJ));
       hLink[nLines+i].resize() >> hLinkParent(Index(hI, hJ));
     }
     for (unsigned int i=0; i<nRot; i++) {
-      int hI = connectedRotFrames[i].frame->getParent()->gethInd(parent, j);
-      int hJ = hI + connectedRotFrames[i].frame->getJacobianOfRotation().cols()-1;
+      const int hI = connectedRotFrames[i].frame->getParent()->gethInd(parent, j);
+      const int hJ = hI + connectedRotFrames[i].frame->getJacobianOfRotation().cols()-1;
       h[nTrans+nLines+i].resize() >> hParent(Index(hI, hJ));
       hLink[nTrans+nLines+i].resize() >> hLinkParent(Index(hI, hJ));
     }
@@ -235,13 +235,13 @@ namespace MBSimHydraulics {
   void HNodeMec::updaterRef(const Vec &rParent, int j) {
     HNode::updaterRef(rParent, j);
     for (unsigned int i=0; i<nTrans; i++) {
-      int rI = connectedTransFrames[i].frame->getParent()->gethInd(parent, j);
-      int rJ = rI + connectedTransFrames[i].frame->getJacobianOfTranslation().cols()-1;
+      const int rI = connectedTransFrames[i].frame->getParent()->gethInd(parent, j);
+      const int rJ = rI + connectedTransFrames[i].frame->getJacobianOfTranslation().cols()-1;
       r[nLines+i] >> rParent(Index(rI, rJ));
     }
     for (unsigned int i=0; i<nRot; i++) {
-      int rI = connectedRotFrames[i].frame->getParent()->gethInd(parent, j);
-      int rJ = rI + connectedRotFrames[i].frame->getJacobianOfRotation().cols()-1;
+      const int rI = connectedRotFrames[i].frame->getParent()->gethInd(parent, j);
+      const int rJ = rI + connectedRotFrames[i].frame->getJacobianOfRotation().cols()-1;
       r[nTrans+nLines+i] >> rParent(Index(rI, rJ));
     }
   }
@@ -464,6 +464,7 @@ namespace MBSimHydraulics {
 
   ElasticNodeMec::~ElasticNodeMec() {
     delete bulkModulus;
+    bulkModulus=NULL;
   }
 
   void ElasticNodeMec::init(InitStage stage) {
@@ -533,6 +534,20 @@ namespace MBSimHydraulics {
   }
 
 
+  RigidNodeMec::RigidNodeMec(const string &name) : HNodeMec(name), gdn(0), gdd(0), gfl(new BilateralConstraint), gil(new BilateralImpact) {
+  }
+
+  RigidNodeMec::~RigidNodeMec() {
+    if (gfl) {
+      delete gfl;
+      gfl=NULL;
+    }
+    if (gil) {
+      delete gil;
+      gil=NULL;
+    }
+  }
+
   void RigidNodeMec::init(InitStage stage) {
     if (stage==MBSim::unknownStage) {
       HNodeMec::init(stage);
@@ -592,11 +607,11 @@ namespace MBSimHydraulics {
 
   void RigidNodeMec::updateW(double t) {
     for (unsigned int i=0; i<nLines; i++) {
-      int hJ=connectedLines[i].sign.cols()-1;
+      const int hJ=connectedLines[i].sign.cols()-1;
       W[i](Index(0,hJ), Index(0, 0)) += connectedLines[i].sign;
     }
     for (unsigned int i=0; i<nTrans; i++) {
-      int hJ=connectedTransFrames[i].frame->getJacobianOfTranslation().cols()-1;
+      const int hJ=connectedTransFrames[i].frame->getJacobianOfTranslation().cols()-1;
       W[nLines+i](Index(0,hJ), Index(0, 0)) +=
         connectedTransFrames[i].area * 
         trans(connectedTransFrames[i].frame->getJacobianOfTranslation()) * 
@@ -606,7 +621,7 @@ namespace MBSimHydraulics {
         );
     }
     for (unsigned int i=0; i<nRot; i++) {
-      int hJ=connectedRotFrames[i].frame->getJacobianOfTranslation().cols()-1;
+      const int hJ=connectedRotFrames[i].frame->getJacobianOfTranslation().cols()-1;
       W[nTrans+nLines+i](Index(0,hJ), Index(0, 0)) += 
         connectedRotFrames[i].area * 
         trans(connectedRotFrames[i].frame->getJacobianOfTranslation()) * 
@@ -617,74 +632,15 @@ namespace MBSimHydraulics {
     }
   }
 
-  void RigidNodeMec::solveImpactsFixpointSingle() {
-    double *a = ds->getGs()();
-    int *ia = ds->getGs().Ip();
-    int *ja = ds->getGs().Jp();
-    Vec &laMBS = ds->getla();
-    Vec &b = ds->getb();
-
-    gdn = b(laIndDS);
-    for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
-      gdn += a[j]*laMBS(ja[j]);
-
-    la(0) -= rFactor(0)*gdn;
-  }
-
-  void RigidNodeMec::solveImpactsGaussSeidel() {
-    double *a = ds->getGs()();
-    int *ia = ds->getGs().Ip();
-    int *ja = ds->getGs().Jp();
-    Vec &laMBS = ds->getla();
-    Vec &b = ds->getb();
-
-    gdn = b(laIndDS);
-    for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
-      gdn += a[j]*laMBS(ja[j]);
-
-    la(0) -= gdn/a[ia[laIndDS+0]];
-  }
-
-  void RigidNodeMec::solveImpactsRootFinding() {
-    double *a = ds->getGs()();
-    int *ia = ds->getGs().Ip();
-    int *ja = ds->getGs().Jp();
-    Vec &laMBS = ds->getla();
-    Vec &b = ds->getb();
-
-    gdn = b(laIndDS);
-    for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
-      gdn += a[j]*laMBS(ja[j]);
-
-    res(0) = rFactor(0)*gdn;
-  }
-
-  void RigidNodeMec::jacobianImpacts() {
-    SqrMat Jprox = ds->getJprox();
-    SqrMat G = ds->getG();
-
-    RowVec jp1=Jprox.row(laIndDS);
-    RowVec e1(jp1.size());
-    e1(laIndDS) = 1;
-    // Vec diff = fifl->diff(la(0), gdn(0), gd(0), rFactor(0));
-    Vec diff(2, NONINIT);
-    diff(0)=1.;
-    diff(1)=-rFactor(0);
-
-    jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laIndDS+i)
-    for(int j=0; j<G.size(); j++) 
-      jp1(j) -= diff(1)*G(laIndDS,j);
-  }
-
   void RigidNodeMec::updaterFactors() {
-    double *a = ds->getGs()();
-    int *ia = ds->getGs().Ip();
+    const double *a = ds->getGs()();
+    const int *ia = ds->getGs().Ip();
 
     double sum = 0;
     for(int j=ia[laIndDS]+1; j<ia[laIndDS+1]; j++)
       sum += fabs(a[j]);
 
-    double ai = a[ia[laIndDS]];
+    const double ai = a[ia[laIndDS]];
     if(ai > sum) {
       rFactorUnsure(0) = 0;
       rFactor(0) = 1./ai;
@@ -695,18 +651,145 @@ namespace MBSimHydraulics {
     }
   }
 
-  void RigidNodeMec::checkImpactsForTermination() {
-    double *a = ds->getGs()();
-    int *ia = ds->getGs().Ip();
-    int *ja = ds->getGs().Jp();
-    Vec &laMBS = ds->getla();
-    Vec &b = ds->getb();
+  void RigidNodeMec::solveImpactsFixpointSingle(double dt) {
+    const double *a = ds->getGs()();
+    const int *ia = ds->getGs().Ip();
+    const int *ja = ds->getGs().Jp();
+    const Vec &laMBS = ds->getla();
+    const Vec &b = ds->getb();
 
     gdn = b(laIndDS);
     for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
       gdn += a[j]*laMBS(ja[j]);
 
-    if(!(fabs(gdn)<gdTol))
+    la(0) = gil->project(la(0), gdn, gd(0), rFactor(0));
+  }
+
+  void RigidNodeMec::solveConstraintsFixpointSingle() {
+    const double *a = ds->getGs()();
+    const int *ia = ds->getGs().Ip();
+    const int *ja = ds->getGs().Jp();
+    const Vec &laMBS = ds->getla();
+    const Vec &b = ds->getb();
+
+    gdd = b(laIndDS);
+    for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
+      gdd += a[j]*laMBS(ja[j]);
+
+    la(0) = gfl->project(la(0), gdd, rFactor(0));
+  }
+
+  void RigidNodeMec::solveImpactsGaussSeidel(double dt) {
+    const double *a = ds->getGs()();
+    const int *ia = ds->getGs().Ip();
+    const int *ja = ds->getGs().Jp();
+    const Vec &laMBS = ds->getla();
+    const Vec &b = ds->getb();
+
+    gdn = b(laIndDS);
+    for(int j=ia[laIndDS]+1; j<ia[laIndDS+1]; j++)
+      gdn += a[j]*laMBS(ja[j]);
+
+    la(0) = gil->solve(a[ia[laIndDS]], gdn, gd(0));
+  }
+
+  void RigidNodeMec::solveConstraintsGaussSeidel() {
+    const double *a = ds->getGs()();
+    const int *ia = ds->getGs().Ip();
+    const int *ja = ds->getGs().Jp();
+    const Vec &laMBS = ds->getla();
+    const Vec &b = ds->getb();
+
+    gdd = b(laIndDS);
+    for(int j=ia[laIndDS]+1; j<ia[laIndDS+1]; j++)
+      gdd += a[j]*laMBS(ja[j]);
+
+    la(0) = gfl->solve(a[ia[laIndDS]], gdd);
+  }
+
+  void RigidNodeMec::solveImpactsRootFinding(double dt) {
+    const double *a = ds->getGs()();
+    const int *ia = ds->getGs().Ip();
+    const int *ja = ds->getGs().Jp();
+    const Vec &laMBS = ds->getla();
+    const Vec &b = ds->getb();
+
+    gdn = b(laIndDS);
+    for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
+      gdn += a[j]*laMBS(ja[j]);
+
+    res(0) = la(0) - gil->project(la(0), gdn, gd(0), rFactor(0));
+  }
+
+  void RigidNodeMec::solveConstraintsRootFinding() {
+    const double *a = ds->getGs()();
+    const int *ia = ds->getGs().Ip();
+    const int *ja = ds->getGs().Jp();
+    const Vec &laMBS = ds->getla();
+    const Vec &b = ds->getb();
+
+    gdd = b(laIndDS);
+    for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
+      gdd += a[j]*laMBS(ja[j]);
+
+    res(0) = la(0) - gfl->project(la(0), gdd, rFactor(0));
+  }
+
+  void RigidNodeMec::jacobianImpacts() {
+    const SqrMat Jprox = ds->getJprox();
+    const SqrMat G = ds->getG();
+
+    RowVec jp1=Jprox.row(laIndDS);
+    RowVec e1(jp1.size());
+    e1(laIndDS) = 1;
+    Vec diff = gil->diff(la(0), gdn, gd(0), rFactor(0));
+
+    jp1 = e1-diff(0)*e1;
+    for(int j=0; j<G.size(); j++) 
+      jp1(j) -= diff(1)*G(laIndDS,j);
+  }
+
+  void RigidNodeMec::jacobianConstraints() {
+    const SqrMat Jprox = ds->getJprox();
+    const SqrMat G = ds->getG();
+
+    RowVec jp1=Jprox.row(laIndDS);
+    RowVec e1(jp1.size());
+    e1(laIndDS) = 1;
+    Vec diff = gfl->diff(la(0), gdd, rFactor(0));
+
+    jp1 = e1-diff(0)*e1;
+    for(int j=0; j<G.size(); j++)
+      jp1(j) -= diff(1)*G(laIndDS,j);
+  }
+
+  void RigidNodeMec::checkImpactsForTermination(double dt) {
+    const double *a = ds->getGs()();
+    const int *ia = ds->getGs().Ip();
+    const int *ja = ds->getGs().Jp();
+    const Vec &laMBS = ds->getla();
+    const Vec &b = ds->getb();
+
+    gdn = b(laIndDS);
+    for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
+      gdn += a[j]*laMBS(ja[j]);
+
+    if(!gil->isFulfilled(la(0),gdn,gd(0),LaTol,gdTol))
+      ds->setTermination(false);
+  }
+
+  void RigidNodeMec::checkConstraintsForTermination() {
+    const double *a = ds->getGs()();
+    const int *ia = ds->getGs().Ip();
+    const int *ja = ds->getGs().Jp();
+    const Vec &laMBS = ds->getla();
+    const Vec &b = ds->getb();
+
+    gdd = b(laIndDS);
+    for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
+      gdd += a[j]*laMBS(ja[j]);
+
+    if(!gfl->isFulfilled(la(0),gdn,laTol,gddTol))
       ds->setTermination(false);
   }
 

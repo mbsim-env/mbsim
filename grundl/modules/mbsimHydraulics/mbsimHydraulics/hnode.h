@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: markus.ms.schneider@gmail.com
+ * Contact: schneidm@users.berlios.de
  */
 
 #ifndef  _HNODE_H_
@@ -33,10 +33,6 @@ namespace OpenMBV {
 namespace MBSim {
   class GeneralizedForceLaw;
   class GeneralizedImpactLaw;
-}
-
-namespace MBSimControl {
-  class Signal;
 }
 
 namespace MBSimHydraulics {
@@ -65,27 +61,26 @@ namespace MBSimHydraulics {
       void addInFlow(HLine * in);
       void addOutFlow(HLine * out);
 
-      void calcgdSize(int j) {gdSize=1; }
+      void calcgdSize() {gdSize=1; }
+      void calcgdSizeActive() {calcgdSize(); }
 
       void init(MBSim::InitStage stage);
 
       virtual void updateWRef(const fmatvec::Mat& WRef, int i=0);
       virtual void updateVRef(const fmatvec::Mat& VRef, int i=0);
-      virtual void updatehRef(const fmatvec::Vec& hRef, int i=0);
-      virtual void updaterRef(const fmatvec::Vec& rRef, int i=0);
+      virtual void updatehRef(const fmatvec::Vec& hRef, const fmatvec::Vec& hLinkRef, int i=0);
       virtual void updaterRef(const fmatvec::Vec& rRef, int i=0);
       virtual void updatedhdqRef(const fmatvec::Mat& dhdqRef, int i=0);
       virtual void updatedhduRef(const fmatvec::SqrMat& dhduRef, int i=0);
       virtual void updatedhdtRef(const fmatvec::Vec& dhdtRef, int i=0);
 
-      void updateh(double t, int j=0);
+      void updateh(double t);
       void updatedhdz(double t);
-      virtual void updater(double t, int j);
+      virtual void updater(double t) {std::cout << "HNode \"" << name << "\": updater()" << std::endl; }
       virtual void updateg(double t) {};
       virtual void updategd(double t);
-      virtual bool isActive() const {return false; }
+      virtual bool isActive() const {return true; }
       virtual bool gActiveChanged() {return false; }
-      virtual bool isSingleValued() const { return true; }
 
       void plot(double t, double dt);
 
@@ -172,14 +167,17 @@ namespace MBSimHydraulics {
       virtual std::string getType() const { return "RigidNode"; }
 
       bool isSetValued() const {return true; }
-      virtual bool isActive() const {return true; }
 
-      void calclaSize(int j) {laSize=1; }
-      //void calclaSizeForActiveg() {laSize=0; }
-      void calcrFactorSize(int j) {rFactorSize=1; }
+      void calclaSize() {laSize=1; }
+      void calclaSizeForActiveg() {laSize=0; }
+      void calcrFactorSize() {rFactorSize=1; }
+
+      void init(MBSim::InitStage stage);
+
+      void updatewbRef(const fmatvec::Vec& wbParent);
 
       void updategd(double t);
-      void updateW(double t, int j=0);
+      void updateW(double t);
 
       void updaterFactors();
       void solveImpactsFixpointSingle(double dt);
@@ -209,32 +207,29 @@ namespace MBSimHydraulics {
       void setCavitationPressure(double pCav_) {pCav=pCav_; }
 
       bool isSetValued() const {return true; }
-      bool hasSmoothPart() const {return true; }
-      virtual bool isActive() const {return active; }
 
       void calcxSize() {xSize=1; }
-      void calcgSize(int j) {gSize=1; }
-      //void calcgSizeActive() {gSize=0; }
-      void calclaSize(int j) {laSize=1; }
-      //void calclaSizeForActiveg() {laSize=0; }
-      void calcrFactorSize(int j) {rFactorSize=1; }
-      void calcsvSize() {svSize=1; }
+      void calcgSize() {gSize=1; }
+      void calcgSizeActive() {gSize=0; }
+      void calclaSize() {laSize=1; }
+      void calclaSizeForActiveg() {laSize=0; }
+      void calcrFactorSize() {rFactorSize=1; }
+      //void calcsvSize() {svSize=1; }
 
       void init(MBSim::InitStage stage);
       void initializeUsingXML(TiXmlElement *element);
-      void plot(double t, double dt);
 
-      void checkActive(int j);
-      //void checkActivegdn();
+      void updatewbRef(const fmatvec::Vec& wbParent);
+
+      void checkActiveg();
       bool gActiveChanged();
 
       void updateg(double t);
-      void updateh(double t, int j=0);
-      void updateStopVector(double t);
-      void updateW(double t, int j=0);
+      //void updateStopVector(double t);
+      void updateW(double t);
       void updatexd(double t);
       void updatedx(double t, double dt);
-      void checkRoot();
+      //void updateCondition();
 
       void updaterFactors();
       void solveImpactsFixpointSingle(double dt);
@@ -255,25 +250,6 @@ namespace MBSimHydraulics {
       MBSim::GeneralizedForceLaw * gfl;
       MBSim::GeneralizedImpactLaw * gil;
   };
-
-
-  /*! PressurePump */
-  class PressurePump : public HNode {
-    public:
-      PressurePump(const std::string &name) : HNode(name), pSignal(NULL), pSignalString("") {}
-      virtual std::string getType() const { return "PressurePump"; }
-
-      void setpSignal(MBSimControl::Signal * pSignal_) {pSignal=pSignal_; }
-
-      void updateg(double t);
-      void init(MBSim::InitStage stage);
-      void initializeUsingXML(TiXmlElement *element);
-
-    private:
-      MBSimControl::Signal * pSignal;
-      std::string pSignalString;
-  };
-
 }
 
 #endif   /* ----- #ifndef _HYDNODE_H_  ----- */
