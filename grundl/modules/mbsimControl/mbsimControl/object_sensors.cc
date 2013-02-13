@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: markus.ms.schneider@gmail.com
+ * Contact: schneidm@users.berlios.de
  */
 
 #include "mbsimControl/object_sensors.h"
@@ -28,17 +28,19 @@ using namespace MBSim;
 namespace MBSimControl {
 
   void GeneralizedCoordinateSensor::initializeUsingXML(TiXmlElement *element) {
-    Sensor::initializeUsingXML(element);
     TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"object");
     objectString=e->Attribute("ref");
     e=element->FirstChildElement(MBSIMCONTROLNS"index");
-    index=getInt(e);
+    index=(int)getDouble(e);
   }
 
   void GeneralizedCoordinateSensor::init(InitStage stage) {
     if (stage==MBSim::resolveXMLPath) {
-      if (objectString!="")
-        setObject(getByPath<Object>(objectString));
+      if (objectString!="") {
+        Object * o = getObjectByPath(objectString);
+        if(!o) { std::cerr<<"ERROR! Cannot find object: "<<objectString<<std::endl; _exit(1); }
+        setObject(o);
+      }
       Sensor::init(stage);
     }
     else

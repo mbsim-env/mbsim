@@ -5,7 +5,10 @@ using namespace fmatvec;
 using namespace std;
 using namespace MBSim;
 
+
 namespace MBSimElectronics {
+
+  Branch tmpbranch("Dummy");
   
   void connectTerminal(Terminal *terminal1, Terminal *terminal2) {
     terminal1->addConnectedTerminal(terminal2);
@@ -221,6 +224,10 @@ namespace MBSimElectronics {
 	throw 5;
       }
     }
+  }
+
+  ElectronicComponent::ElectronicComponent() : branch(0), vz(0), Q(0), I(0) {
+    branch = &tmpbranch;
   }
 
   void ElectronicComponent::connect(Branch *branch_, int vz_) {
