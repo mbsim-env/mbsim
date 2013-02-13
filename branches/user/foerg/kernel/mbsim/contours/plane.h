@@ -24,7 +24,6 @@
 
 namespace MBSim {
 
-
   /** 
    * \brief plane without borders
    * \author Martin Foerg
@@ -39,18 +38,22 @@ namespace MBSim {
        * \brief constructor
        * \param name of contour
        */
-      Plane(const std::string &name) : RigidContour(name) {}
+      Plane(const std::string &name) :
+          RigidContour(name) {
+      }
       
       /* INHERITED INTERFACE OF ELEMENT */
-      std::string getType() const { return "Plane"; }
+      std::string getType() const {
+        return "Plane";
+      }
       /***************************************************/
-      
+
       /* INTERFACE OF CONTOUR */
       virtual fmatvec::Vec2 computeLagrangeParameter(const fmatvec::Vec3 &WrPoint);
       /***************************************************/
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      void enableOpenMBV(bool enable=true, double size=1., int number=10);
+      virtual void enableOpenMBV(bool enable=true, double size=1., int number=10);
 #endif
 
       virtual void initializeUsingXML(TiXmlElement *element);

@@ -172,25 +172,25 @@ namespace MBSim {
   class FixedRelativeFrame : public Frame {
 
     public:
-      FixedRelativeFrame(const std::string &name = "dummy", const fmatvec::Vec3 &r=fmatvec::Vec3(), const fmatvec::SqrMat3 &A=fmatvec::SqrMat3(fmatvec::EYE), const Frame *refFrame=0) : Frame(name), frameOfReference(refFrame), RrRP(r), ARP(A) {}
+      FixedRelativeFrame(const std::string &name = "dummy", const fmatvec::Vec3 &r=fmatvec::Vec3(), const fmatvec::SqrMat3 &A=fmatvec::SqrMat3(fmatvec::EYE), const Frame *refFrame=0) : Frame(name), R(refFrame), RrRP(r), ARP(A) {}
 
       virtual void init(InitStage stage);
 
       void setRelativePosition(const fmatvec::Vec3 &r) { RrRP = r; }
       void setRelativeOrientation(const fmatvec::SqrMat3 &A) { ARP = A; }
-      void setFrameOfReference(const Frame *frame) { frameOfReference = frame; }
+      void setFrameOfReference(const Frame *frame) { R = frame; }
       void setFrameOfReference(const std::string &frame) { saved_frameOfReference = frame; }
 
       const fmatvec::Vec3& getRelativePosition() const { return RrRP; }
       const fmatvec::SqrMat3& getRelativeOrientation() const { return ARP; }
-      const Frame* getFrameOfReference() const { return frameOfReference; }
+      const Frame* getFrameOfReference() const { return R; }
       const fmatvec::Vec3& getWrRP() const { return WrRP; }
 
-      void updateRelativePosition() { WrRP = frameOfReference->getOrientation()*RrRP; }
-      void updatePosition() { updateRelativePosition(); setPosition(frameOfReference->getPosition() + WrRP); }
-      void updateOrientation() { setOrientation(frameOfReference->getOrientation()*ARP); }
-      void updateVelocity() { setVelocity(frameOfReference->getVelocity() + crossProduct(frameOfReference->getAngularVelocity(), WrRP)); } 
-      void updateAngularVelocity() { setAngularVelocity(frameOfReference->getAngularVelocity()); }
+      void updateRelativePosition() { WrRP = R->getOrientation()*RrRP; }
+      void updatePosition() { updateRelativePosition(); setPosition(R->getPosition() + WrRP); }
+      void updateOrientation() { setOrientation(R->getOrientation()*ARP); }
+      void updateVelocity() { setVelocity(R->getVelocity() + crossProduct(R->getAngularVelocity(), WrRP)); } 
+      void updateAngularVelocity() { setAngularVelocity(R->getAngularVelocity()); }
       void updateStateDependentVariables() {
         updatePosition();
         updateOrientation();
@@ -199,10 +199,10 @@ namespace MBSim {
       }
       void updateJacobians(int j=0) {
         fmatvec::SqrMat3 tWrRP = tilde(WrRP);
-        setJacobianOfTranslation(frameOfReference->getJacobianOfTranslation(j) - tWrRP*frameOfReference->getJacobianOfRotation(j),j);
-        setJacobianOfRotation(frameOfReference->getJacobianOfRotation(j),j);
-        setGyroscopicAccelerationOfTranslation(frameOfReference->getGyroscopicAccelerationOfTranslation(j) - tWrRP*frameOfReference->getGyroscopicAccelerationOfRotation(j) + crossProduct(frameOfReference->getAngularVelocity(),crossProduct(frameOfReference->getAngularVelocity(),WrRP)),j);
-        setGyroscopicAccelerationOfRotation(frameOfReference->getGyroscopicAccelerationOfRotation(j),j);
+        setJacobianOfTranslation(R->getJacobianOfTranslation(j) - tWrRP*R->getJacobianOfRotation(j),j);
+        setJacobianOfRotation(R->getJacobianOfRotation(j),j);
+        setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(j) - tWrRP*R->getGyroscopicAccelerationOfRotation(j) + crossProduct(R->getAngularVelocity(),crossProduct(R->getAngularVelocity(),WrRP)),j);
+        setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation(j),j);
       }
       void updateStateDerivativeDependentVariables(const fmatvec::Vec &ud) { 
         setAcceleration(getJacobianOfTranslation()*ud + getGyroscopicAccelerationOfTranslation()); 
@@ -213,7 +213,7 @@ namespace MBSim {
       virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
 
     protected:
-      const Frame *frameOfReference;
+      const Frame *R;
       fmatvec::Vec3 RrRP, WrRP;
       fmatvec::SqrMat3 ARP;
       std::string saved_frameOfReference;

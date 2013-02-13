@@ -96,11 +96,11 @@ namespace MBSim {
   }
 
   void Frame::init(InitStage stage) {
-    if(stage==unknownStage) {
-      getJacobianOfTranslation(0).resize(hSize[0]);
-      getJacobianOfRotation(0).resize(hSize[0]);
-      getJacobianOfTranslation(1).resize(hSize[1]);
-      getJacobianOfRotation(1).resize(hSize[1]);
+    if(stage==resize) {
+      WJP[0].resize(hSize[0]);
+      WJR[0].resize(hSize[0]);
+      WJP[1].resize(hSize[1]);
+      WJR[1].resize(hSize[1]);
     }
     else if(stage==MBSim::plot) {
       updatePlotFeatures();

@@ -79,7 +79,7 @@ namespace MBSim {
     SqrMat J = (*jacobian)(x);
 
     //step to next position
-    Vec dx = slvLU(J, f);
+    Vec dx = slvLU(J, f, info);
 
     //Damp the solution
     if(damping)
@@ -109,7 +109,7 @@ namespace MBSim {
       J = (*jacobian)(x);
 
       //get step
-      dx = slvLU(J, f);
+      dx = slvLU(J, f, info);
 
       //cout << "dxn[" << iter << "] = " << dx << endl;
 
