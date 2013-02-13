@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: martin.o.foerg@googlemail.com
+ * Contact: mfoerg@users.berlios.de
  */
 
 #include "mbsimControl/actuator.h"
@@ -31,7 +31,7 @@ namespace MBSimControl {
   Actuator::Actuator(const string &name) : LinkMechanics(name), signal(0), KOSYID(1) {
   }
 
-  void Actuator::updateh(double t, int j) {
+  void Actuator::updateh(double t) {
     la = signal->getSignal();
     if(KOSYID) { // calculation of force / moment direction
       Wf = frame[KOSYID-1]->getOrientation()*forceDir;
@@ -42,8 +42,10 @@ namespace MBSimControl {
     WM[0] = Wm*la(IR);
     WM[1] = -WM[0];
 
-    h[j][0] += frame[0]->getJacobianOfTranslation(j).T()*WF[0] + frame[0]->getJacobianOfRotation(j).T()*WM[0];
-    h[j][1] += frame[1]->getJacobianOfTranslation(j).T()*WF[1] + frame[1]->getJacobianOfRotation(j).T()*WM[1];
+    h[0] += frame[0]->getJacobianOfTranslation().T()*WF[0] + frame[0]->getJacobianOfRotation().T()*WM[0];
+    h[1] += frame[1]->getJacobianOfTranslation().T()*WF[1] + frame[1]->getJacobianOfRotation().T()*WM[1];
+    hLink[0] += frame[0]->getJacobianOfTranslation().T()*WF[0] + frame[0]->getJacobianOfRotation().T()*WM[0];
+    hLink[1] += frame[1]->getJacobianOfTranslation().T()*WF[1] + frame[1]->getJacobianOfRotation().T()*WM[1];
   }
 
   void Actuator::init(InitStage stage) {
@@ -75,8 +77,8 @@ namespace MBSimControl {
       LinkMechanics::init(stage);
   }
 
-  void Actuator::calclaSize(int j) {
-    LinkMechanics::calclaSize(j);
+  void Actuator::calclaSize() {
+    LinkMechanics::calclaSize();
     laSize = forceDir.cols()+momentDir.cols(); // cols = columns
   }
 

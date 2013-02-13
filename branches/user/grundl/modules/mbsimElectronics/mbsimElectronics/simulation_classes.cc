@@ -114,7 +114,7 @@ namespace MBSimElectronics {
 
   void ElectronicLink::updateW(double t) {
 
-    W[0] += trans(branch->getJacobian())*vz;
+    W[0] += branch->getJacobian().T()*vz;
   }
 
   void ElectronicLink::updatehRef(const fmatvec::Vec &hParent, const fmatvec::Vec &hLinkParent, int j) {
@@ -253,8 +253,8 @@ namespace MBSimElectronics {
   void Diode::updateh(double t) {
     double slope=1e4;
     la(0) = (I >= 0) ? 0 : -slope*I;
-    h[0] += trans(branch->getJacobian())*la(0)*vz; 
-    hLink[0] += trans(branch->getJacobian())*la(0)*vz; 
+    h[0] += branch->getJacobian().T()*la(0)*vz; 
+    hLink[0] += branch->getJacobian().T()*la(0)*vz; 
   }
 
   void Diode::checkImpactsForTermination() {
@@ -317,8 +317,8 @@ namespace MBSimElectronics {
       la(0) = -U0*I/gdLim;
     else
       la(0) = I>0?-U0:U0;
-    h[0] += trans(branch->getJacobian())*la(0)*vz; 
-    hLink[0] += trans(branch->getJacobian())*la(0)*vz; 
+    h[0] += branch->getJacobian().T()*la(0)*vz; 
+    hLink[0] += branch->getJacobian().T()*la(0)*vz; 
   }
 
   void Switch::checkImpactsForTermination() {
@@ -372,8 +372,8 @@ namespace MBSimElectronics {
   void Resistor::updateh(double t) {
     la(0) = -R*I; 
 
-    h[0] += trans(branch->getJacobian())*la(0)*vz; 
-    hLink[0] += trans(branch->getJacobian())*la(0)*vz; 
+    h[0] += branch->getJacobian().T()*la(0)*vz; 
+    hLink[0] += branch->getJacobian().T()*la(0)*vz; 
   }
 
   double Resistor::computeVoltage(double t) {
@@ -388,8 +388,8 @@ namespace MBSimElectronics {
 
   void Capacitor::updateh(double t) {
     la(0) = -Q/C; 
-    h[0] += trans(branch->getJacobian())*la(0)*vz;
-    hLink[0] += trans(branch->getJacobian())*la(0)*vz;
+    h[0] += branch->getJacobian().T()*la(0)*vz;
+    hLink[0] += branch->getJacobian().T()*la(0)*vz;
   }
 
   VoltageSource::VoltageSource(const string &name) : ElectronicLink(name) {
@@ -400,8 +400,8 @@ namespace MBSimElectronics {
 
   void VoltageSource::updateh(double t) {
     la(0) = voltageSignal->getSignal(t)(0);
-    h[0] += trans(branch->getJacobian())*la(0)*vz;
-    hLink[0] += trans(branch->getJacobian())*la(0)*vz;
+    h[0] += branch->getJacobian().T()*la(0)*vz;
+    hLink[0] += branch->getJacobian().T()*la(0)*vz;
   }
 
 }

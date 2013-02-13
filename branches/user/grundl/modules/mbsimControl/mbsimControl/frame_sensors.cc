@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: markus.ms.schneider@gmail.com
+ * Contact: schneidm@users.berlios.de
  */
 
 #include "mbsimControl/frame_sensors.h"
@@ -29,7 +29,6 @@ using namespace MBSim;
 namespace MBSimControl {
 
   void AbsolutCoordinateSensor::initializeUsingXML(TiXmlElement * element) {
-    Sensor::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMCONTROLNS"frame");
     frameString=e->Attribute("ref");
@@ -49,32 +48,31 @@ namespace MBSimControl {
       Sensor::init(stage);
   }
 
-  Vec AbsolutePositionSensor::getSignal() {
+  Vec AbsolutPositionSensor::getSignal() {
     return direction.T()*frame->getPosition();
   }
 
 
-  Vec AbsoluteVelocitySensor::getSignal() {
+  Vec AbsolutVelocitySensor::getSignal() {
     return direction.T()*frame->getVelocity();
   }
 
 
-  void AbsoluteAngularPositionSensor::updategd(double t) {
+  void AbsolutAngularPositionSensor::updategd(double t) {
     gd=direction.T()*frame->getAngularVelocity();
   }
 
-  Vec AbsoluteAngularPositionSensor::getSignal() {
+  Vec AbsolutAngularPositionSensor::getSignal() {
     return g;
   }
 
 
-  Vec AbsoluteAngularVelocitySensor::getSignal() {
+  Vec AbsolutAngularVelocitySensor::getSignal() {
     return direction.T()*frame->getAngularVelocity();
   }
   
 
   void RelativeCoordinateSensor::initializeUsingXML(TiXmlElement * element) {
-    Sensor::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMCONTROLNS"frame");
     refFrameString=e->Attribute("ref");
