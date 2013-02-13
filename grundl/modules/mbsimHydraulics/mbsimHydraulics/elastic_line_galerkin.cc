@@ -14,11 +14,10 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: markus.ms.schneider@gmail.com
+ * Contact: schneidm@users.berlios.de
  */
 
 #include "mbsimHydraulics/elastic_line_galerkin.h"
-#include "mbsimHydraulics/objectfactory.h"
 #include "environment.h"
 #include "mbsim/utils/ansatz_functions.h"
 #include "mbsim/utils/utils.h"
@@ -31,12 +30,14 @@ using namespace MBSim;
 
 namespace MBSimHydraulics {
 
-  ElasticLineGalerkin::ElasticLineGalerkin(const string &name) : HLine(name), mdim(0), plotdim(0), g(0), E(0), k(0), WInt(), wA(), wE(), lambda(0), MatIntWWT(), MatIntWSWST(), K(), D(), N(), Omega(), phi(), ansatz(NULL), plotVecW(), plotVecWS(), QIn(1), QOut(1), l(0), d(0), Area(0), Flow2D(false), nAnsatz(0), p0(0), Q0(0), fracAir(0), delta_h(0), DLehr(0), relPlotPoints() {
+  ElasticLineGalerkin::ElasticLineGalerkin(const string &name) : HLine(name), mdim(0), plotdim(0), g(0), E(0), k(0), WInt(Vec(0)), wA(Vec(0)), wE(Vec(0)), lambda(0), MatIntWWT(SymMat(0)), MatIntWSWST(SymMat(0)), K(SymMat(0)), D(SymMat(0)), N(SymMat(0)), Omega(SymMat(0)), phi(SqrMat(0,0)), ansatz(NULL), plotVecW(Mat(0,0)), plotVecWS(Mat(0,0)), QIn(1), QOut(1), l(0), d(0), Area(0), Flow2D(false), nAnsatz(0), p0(0), Q0(0), fracAir(0), delta_h(0), DLehr(0), relPlotPoints(Vec(0)) {
   }
 
   void ElasticLineGalerkin::setAnsatzFunction(AnsatzTypes method_, int nAnsatz_) {
-    if (l<=1e-4)
-      throw MBSimError("set length first");
+    if (l<=1e-4) {
+      cout << "set length first!" << endl;
+      throw(123);
+    }
     switch (method_) {
       case BSplineOrd4:
         ansatz = new ansatz_function_BSplineOrd4(nAnsatz_, l);
@@ -65,7 +66,7 @@ namespace MBSimHydraulics {
       HLine::init(stage);
       Area=M_PI*d*d/4.;
       if (direction.size()>0)
-        g=trans(((DynamicSystem*)parent)->getFrame("I")->getOrientation()*MBSimEnvironment::getInstance()->getAccelerationOfGravity())*direction;
+        g=trans(parent->getFrame("I")->getOrientation()*MBSimEnvironment::getInstance()->getAccelerationOfGravity())*direction;
       else
         g=0;
       double E0=HydraulicEnvironment::getInstance()->getBasicBulkModulus();
@@ -82,15 +83,13 @@ namespace MBSimHydraulics {
       HLine::init(stage);
       double nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
       double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
-      phi.resize(mdim);
+      phi.resize(mdim, mdim);
       lambda.resize(mdim);
-      
-      Jacobian.resize(mdim, mdim, INIT, 0);
-      for (int i=0; i<mdim; i++)
-        Jacobian(i, i)=1.;
-      
-      if (eigvec(K, MFac, phi, lambda))
-        throw MBSimError(name+": Fehler bei Eigenvektorberechnung!");
+      Jacobian.resize(1, mdim, INIT, 1.);
+      if (eigvec(K, MFac, phi, lambda)) {
+        cout << getName() << ": Fehler bei Eigenvektorberechnung!" << endl;
+        throw 821;
+      }
       Omega.resize(mdim, INIT, 0);
       for (int i=1; i<mdim; i++) // analytische Loesung unabhaengig vom Ansatztyp --> omega(0)=0
         Omega(i,i)=sqrt(lambda(i));
@@ -114,11 +113,7 @@ namespace MBSimHydraulics {
           D(i,j)=DTmp(i,j);
     }
     else if (stage==MBSim::plot) {
-      if (relPlotPoints.size()>0) {
-        setPlotFeature(globalPosition, enabled);
-        setPlotFeature(globalVelocity, enabled);
-      }
-      updatePlotFeatures();
+      updatePlotFeatures(parent);
       if(getPlotFeature(plotRecursive)==enabled) {
         plotdim=relPlotPoints.size();
         plotVecW.resize(mdim, plotdim);
@@ -128,10 +123,8 @@ namespace MBSimHydraulics {
           plotVecWS.col(i)=ansatz->VecWS(relPlotPoints(i));
         }
         delete ansatz;
-      if (getPlotFeature(globalVelocity)==enabled)
         for (int i=0; i<plotdim; i++)
           plotColumns.push_back("Q(x="+numtostr(relPlotPoints(i)*l)+") [l/min]");
-      if (getPlotFeature(globalPosition)==enabled)
         for (int i=0; i<plotdim; i++)
           plotColumns.push_back("p(x="+numtostr(relPlotPoints(i)*l)+") [bar]");
         HLine::init(stage);
@@ -144,15 +137,14 @@ namespace MBSimHydraulics {
     }
     else
       HLine::init(stage);
-
   }
 
   void ElasticLineGalerkin::updateT(double t) {
     T=SqrMat(mdim, EYE);
   }
 
-  void ElasticLineGalerkin::updateM(double t, int j) {
-    M[j]=MFac;
+  void ElasticLineGalerkin::updateM(double t) {
+    M=MFac;
   }
 
   void ElasticLineGalerkin::updateStateDependentVariables(double t) {
@@ -160,19 +152,17 @@ namespace MBSimHydraulics {
     QOut(0)=-Area*trans(wE)*u;
   }
 
-  void ElasticLineGalerkin::updateh(double t, int j) {
+  void ElasticLineGalerkin::updateh(double t) {
     HLine::updateh(t);
-    h[j] = (-k*WInt + p0*(wE-wA))*Area - D*u - K*q;
+    h = (-k*WInt + p0*(wE-wA))*Area - D*u - K*q;
   }
 
   void ElasticLineGalerkin::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      if (getPlotFeature(globalVelocity)==enabled)
-        for (int i=0; i<plotdim; i++)
-          plotVector.push_back(Area*trans(u)*plotVecW.col(i)*6e4);
-      if (getPlotFeature(globalPosition)==enabled)
-        for (int i=0; i<plotdim; i++)
-          plotVector.push_back((-E*trans(q)*plotVecWS.col(i)+p0)*1e-5);
+      for (int i=0; i<plotdim; i++)
+        plotVector.push_back(Area*trans(u)*plotVecW.col(i)*6e4);
+      for (int i=0; i<plotdim; i++)
+        plotVector.push_back((-E*trans(q)*plotVecWS.col(i)+p0)*1e-5);
       HLine::plot(t,dt);
     }
   }
@@ -196,38 +186,6 @@ namespace MBSimHydraulics {
     cout << "N=" << N << endl;
     cout << "plotVecW=" << plotVecW << endl;
     cout << "plotVecWS=" << plotVecWS << endl;
-  }
-
-  void ElasticLineGalerkin::initializeUsingXML(TiXmlElement * element) {
-    HLine::initializeUsingXML(element);
-    TiXmlElement * e;
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"initialPressure");
-    setp0(getDouble(e));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"fracAir");
-    setFracAir(getDouble(e));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"heightDifference");
-    setdh(getDouble(e));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"dLehr");
-    setDLehr(getDouble(e));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
-    setDiameter(getDouble(e));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"length");
-    setLength(getDouble(e));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"AnsatzFunction");
-    TiXmlElement * ee = e->FirstChildElement();
-    if (ee->ValueStr()==MBSIMHYDRAULICSNS"BSplineOrder3")
-      setAnsatzFunction(BSplineOrd3, getInt(ee->NextSiblingElement()));
-    else if (ee->ValueStr()==MBSIMHYDRAULICSNS"BSplineOrder4")
-      setAnsatzFunction(BSplineOrd4, getInt(ee->NextSiblingElement()));
-    else if (ee->ValueStr()==MBSIMHYDRAULICSNS"Polynom")
-      setAnsatzFunction(Polynom, getInt(ee->NextSiblingElement()));
-    else if (ee->ValueStr()==MBSIMHYDRAULICSNS"Harmonic")
-      setAnsatzFunction(Harmonic, getInt(ee->NextSiblingElement()));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"flow2d");
-    if (e)
-      setFlow2D(true);
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"relativePlotPoints");
-    setRelativePlotPoints(getVec(e));
   }
 
 }

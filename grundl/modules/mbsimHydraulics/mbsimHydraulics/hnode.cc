@@ -23,6 +23,7 @@
 #include "mbsimHydraulics/objectfactory.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/dynamic_system_solver.h"
+#include "mbsimHydraulics/obsolet_hint.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/group.h"
@@ -55,19 +56,6 @@ namespace MBSimHydraulics {
       openMBVSphere=0;
   }
 #endif
-
-  HLine * HNode::getHLineByPath(string path) {
-    int pos=path.find("HLine");
-    path.erase(pos, 5);
-    path.insert(pos, "Object");
-    Object * h = getObjectByPath(path);
-    if (dynamic_cast<HLine *>(h))
-      return static_cast<HLine *>(h);
-    else {
-      std::cerr << "ERROR! \"" << path << "\" is not of HLine-Type." << std::endl; 
-      _exit(1);
-    }
-  }
 
 
   void HNode::initializeUsingXML(TiXmlElement *element) {
@@ -124,9 +112,9 @@ namespace MBSimHydraulics {
   void HNode::init(InitStage stage) {
     if (stage==MBSim::resolveXMLPath) {
       for (unsigned int i=0; i<refInflowString.size(); i++)
-        addInFlow(getHLineByPath(refInflowString[i]));
+        addInFlow(getByPath<HLine>(process_hline_string(refInflowString[i])));
       for (unsigned int i=0; i<refOutflowString.size(); i++)
-        addOutFlow(getHLineByPath(refOutflowString[i]));
+        addOutFlow(getByPath<HLine>(process_hline_string(refOutflowString[i])));
       Link::init(stage);
     }
     else if (stage==MBSim::resize) {
@@ -201,7 +189,7 @@ namespace MBSimHydraulics {
   void HNode::updatehRef(const Vec& hParent, const Vec& hLinkParent, int j) {
     for (unsigned int i=0; i<nLines; i++) {
       int hInd=connectedLines[i].line->gethInd(parent, j);
-      Index I(hInd, hInd+connectedLines[i].sign.size()-1);
+      Index I(hInd, hInd+connectedLines[i].line->getJacobian().cols()-1);
       h[i].resize() >> hParent(I);
       hLink[i].resize() >> hLinkParent(I);
     }
@@ -262,8 +250,18 @@ namespace MBSimHydraulics {
 
   void HNode::updateh(double t) {
     for (unsigned int i=0; i<nLines; i++) {
-      h[i] += connectedLines[i].sign * la;
-      hLink[i] += connectedLines[i].sign * la;
+      if (connectedLines[i].sign.size()>1) {
+        const Vec J=trans(connectedLines[i].line->getJacobian().row(0));
+        Matrix<Diagonal, double> JM(J.size(), NONINIT);
+        for (int j=0; j<J.size(); j++)
+          JM(j)=J(j);
+        h[i] += JM * connectedLines[i].sign * la;
+        hLink[i] += JM * connectedLines[i].sign * la;
+      }
+      else {
+        h[i] += trans(connectedLines[i].line->getJacobian()) * connectedLines[i].sign * la;
+        hLink[i] += trans(connectedLines[i].line->getJacobian()) * connectedLines[i].sign * la;
+      }
     }
   }
 
@@ -390,7 +388,6 @@ namespace MBSimHydraulics {
     TiXmlElement *e=element->FirstChildElement(MBSIMHYDRAULICSNS"function");
     pFun=MBSim::ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()); 
     pFun->initializeUsingXML(e->FirstChildElement());
-    //    e=element->FirstChildElement("function");
   }
 
 

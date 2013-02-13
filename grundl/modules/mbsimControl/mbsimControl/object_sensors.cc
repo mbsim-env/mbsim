@@ -31,16 +31,13 @@ namespace MBSimControl {
     TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"object");
     objectString=e->Attribute("ref");
     e=element->FirstChildElement(MBSIMCONTROLNS"index");
-    index=(int)getDouble(e);
+    index=getInt(e);
   }
 
   void GeneralizedCoordinateSensor::init(InitStage stage) {
     if (stage==MBSim::resolveXMLPath) {
-      if (objectString!="") {
-        Object * o = getObjectByPath(objectString);
-        if(!o) { std::cerr<<"ERROR! Cannot find object: "<<objectString<<std::endl; _exit(1); }
-        setObject(o);
-      }
+      if (objectString!="")
+        setObject(getByPath<Object>(objectString));
       Sensor::init(stage);
     }
     else
