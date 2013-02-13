@@ -33,8 +33,8 @@ using namespace fmatvec;
  */
 class CountourCouplingCantileverBeam : public InfluenceFunction {
   public:
-    CountourCouplingCantileverBeam(const std::string& ContourName_, double E_, double I_ ) :
-        InfluenceFunction(ContourName_, ContourName_), E(E_), I(I_) {
+    CountourCouplingCantileverBeam(double E_, double I_ ) :
+        E(E_), I(I_) {
     }
 
     virtual ~CountourCouplingCantileverBeam() {
@@ -217,7 +217,7 @@ System::System(const string &projectName, int contactType, int firstBall, int la
       //Debug features
       mcl->setDebuglevel(0);
 
-      CountourCouplingCantileverBeam* couplingBeam = new CountourCouplingCantileverBeam(BeamContour->getName(), E, I);
+      CountourCouplingCantileverBeam* couplingBeam = new CountourCouplingCantileverBeam(E, I);
       mcl->addContourCoupling(BeamContour, BeamContour, couplingBeam);
 
       //Force Law (friction)
