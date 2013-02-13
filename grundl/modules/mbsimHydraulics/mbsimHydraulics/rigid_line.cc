@@ -92,13 +92,10 @@ namespace MBSimHydraulics {
       RigidLine::init(stage);
     }
     else if (stage==MBSim::modelBuildup) {
-      if (cpL)
-        parent->addLink(new RigidLinePressureLoss(name+"/ClosablePressureLoss", this, cpL, false,false));
-      assert(!(cpLUnilateral && cpLBilateral));
-      if (cpLUnilateral)
-        parent->addLink(new RigidLinePressureLoss(name+"/UnilateralClosablePressureLoss", this, cpL, false,true));
       if (cpLBilateral)
-        parent->addLink(new RigidLinePressureLoss(name+"/BilateralClosablePressureLoss", this, cpL, true, false));
+         parent->addLink(new RigidLinePressureLoss(name+"/BilateralClosablePressureLoss", this, cpL, true, false));
+     else
+        parent->addLink(new RigidLinePressureLoss(name+"/ClosablePressureLoss", this, cpL, false,false));
 
       RigidLine::init(stage);
     }
@@ -121,5 +118,32 @@ namespace MBSimHydraulics {
     if (ee)
       setBilateral(true);
   }
+
+
+  void UnidirectionalRigidLine::init(InitStage stage) {
+    if (stage==MBSim::modelBuildup) {
+      if (upL)
+        parent->addLink(new RigidLinePressureLoss(name+"/RegularizedUnidirectionalPressureLoss", this, upL, false,false));
+      else
+        parent->addLink(new RigidLinePressureLoss(name+"/UnilateralUnidirectionalPressureLoss", this, NULL, false, true));
+      RigidLine::init(stage);
+    }
+    else
+      RigidLine::init(stage);
+  }
+
+  void UnidirectionalRigidLine::initializeUsingXML(TiXmlElement * element) {
+    RigidLine::initializeUsingXML(element);
+    TiXmlElement * e=element->FirstChildElement(MBSIMHYDRAULICSNS"unidirectionalPressureLoss");
+    TiXmlElement * ee=e->FirstChildElement();
+    UnidirectionalPressureLoss *p=(UnidirectionalPressureLoss*)(MBSim::ObjectFactory::getInstance()->createFunction1_SS(ee));
+    if (p) {
+      setUnidirectionalPressureLoss(p);
+      p->initializeUsingXML(ee);
+    }
+    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"minimalPressureDrop");
+    setMinimalPressureDrop(getDouble(ee));
+  }
+
 }
 

@@ -332,7 +332,7 @@ namespace MBSimHydraulics {
 
   void HNode::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      plotVector.push_back(la(0)*1e-5/(isSetValued()?dt:1.));
+      plotVector.push_back(la(0)*1e-5/(isActive()?dt:1.));
       plotVector.push_back(QHyd*6e4);
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled && openMBVSphere) {
@@ -464,28 +464,6 @@ namespace MBSimHydraulics {
       delete gil;
       gil=NULL;
     }
-  }
-
-  void RigidNode::init(InitStage stage) {
-    if (stage==MBSim::unknownStage) {
-      HNode::init(stage);
-      for (unsigned int i=0; i<nLines; i++) {
-        Vec u0=connectedLines[i].line->getu0();
-        bool zero=true;
-        for (int j=0; j<u0.size(); j++)
-          if (fabs(u0(j))>epsroot())
-            zero=false;
-        if (!zero)
-          cout << "WARNING in RigidNode \"" << getName() << "\": HydraulicLine \"" << connectedLines[i].line->getName() << "\" has an initialGeneralizedVelocity not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
-      }
-    }
-    else
-      HNode::init(stage);
-  }
-
-  void RigidNode::updatewbRef(const Vec &wbParent) {
-    Link::updatewbRef(wbParent);
-    gd >> wb;
   }
 
   void RigidNode::updategd(double t) {
@@ -684,11 +662,25 @@ namespace MBSimHydraulics {
       HNode::init(stage);
       g.resize(1, INIT, 0);
       x.resize(1, INIT, 0);
-      //sv.resize(1, INIT, 0);
+      sv.resize(1, INIT, 0);
       x0=Vec(1, INIT, 0);
+    }
+    else if (stage==MBSim::plot) {
+      updatePlotFeatures(parent);
+      if(getPlotFeature(plotRecursive)==enabled) {
+        plotColumns.push_back("active");
+        HNode::init(stage);
+      }
     }
     else
       HNode::init(stage);
+  }
+
+  void RigidCavitationNode::plot(double t, double dt) {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      plotVector.push_back(active);
+      HNode::plot(t, dt);
+    }
   }
 
   void RigidCavitationNode::initializeUsingXML(TiXmlElement * element) {
@@ -698,13 +690,17 @@ namespace MBSimHydraulics {
     setCavitationPressure(getDouble(e));
   }
 
-  void RigidCavitationNode::updatewbRef(const Vec &wbParent) {
-    Link::updatewbRef(wbParent);
-    gd >> wb;
-  }
-  
   void RigidCavitationNode::checkActiveg() {
     active=(g(0)<=0);
+  }
+
+  void RigidCavitationNode::checkActivegdn() {
+    if (active) {
+      if (gdn <= gdTol)
+        active = true;
+      else
+        active = false;
+    }
   }
 
   bool RigidCavitationNode::gActiveChanged() {
@@ -716,7 +712,17 @@ namespace MBSimHydraulics {
   }
 
   void RigidCavitationNode::updateg(double t) {
-    g(0)=x(0);
+    if (g.size())
+      g(0)=x(0);
+  }
+
+  void RigidCavitationNode::updateh(double t) {
+    la(0) = pCav;
+    HNode::updateh(t);
+  }
+
+  void RigidCavitationNode::updateStopVector(double t) {
+    sv(0) = isActive() ? (la(0)-pCav)*1e-5 : -x(0)*6e4;
   }
 
   void RigidCavitationNode::updateW(double t) {
@@ -727,12 +733,27 @@ namespace MBSimHydraulics {
   }
 
   void RigidCavitationNode::updatexd(double t) {
-    xd(0) = (fabs(gdn)>(gdTol)?gdn:0);
+    xd(0) = isActive() ? (fabs(gdn)>(gdTol)?gdn:0) : -QHyd;
   }
 
   void RigidCavitationNode::updatedx(double t, double dt) {
-    xd(0) = (fabs(gdn)>(gdTol)?gdn:0)*dt;
+    xd(0) = isActive() ? (fabs(gdn)>(gdTol)?gdn:0)*dt : -QHyd*dt;
   }
+
+  void RigidCavitationNode::updateCondition() {
+    if(jsv(0)) {
+      if(active) {
+        active = false;
+        return;
+      }
+      else {
+        active = true;
+        ds->setImpact(true);
+        return;
+      }
+    }
+  }
+
 
   void RigidCavitationNode::updaterFactors() {
     const double *a = ds->getGs()();
@@ -764,7 +785,7 @@ namespace MBSimHydraulics {
     for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
       gdn += a[j]*laMBS(ja[j]);
     
-    la(0) = active ? gil->project(la(0), gdn, gd(0), rFactor(0), pCav*dt) : pCav*dt;
+    la(0) = gil->project(la(0), gdn, gd(0), rFactor(0), pCav*dt);
   }
 
   void RigidCavitationNode::solveConstraintsFixpointSingle() {
@@ -778,7 +799,7 @@ namespace MBSimHydraulics {
     for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
       gdd += a[j]*laMBS(ja[j]);
 
-    la(0) = active ? gfl->project(la(0), gdd, rFactor(0), pCav) : pCav;
+    la(0) = gfl->project(la(0), gdd, rFactor(0), pCav);
   }
 
   void RigidCavitationNode::solveImpactsGaussSeidel(double dt) {
@@ -792,14 +813,10 @@ namespace MBSimHydraulics {
     for(int j=ia[laIndDS]+1; j<ia[laIndDS+1]; j++)
       gdn += a[j]*laMBS(ja[j]);
 
-    if (active) {
-      const double om = 1.0;
-      const double buf = gil->solve(a[ia[laIndDS]], gdn, gd(0));
-      la(0) += om*(buf - la(0));
-      if (la(0)<pCav*dt)
-        la(0) = pCav*dt;
-    }
-    else
+    const double om = 1.0;
+    const double buf = gil->solve(a[ia[laIndDS]], gdn, gd(0));
+    la(0) += om*(buf - la(0));
+    if (la(0)<pCav*dt)
       la(0) = pCav*dt;
   }
 
@@ -814,14 +831,9 @@ namespace MBSimHydraulics {
     for(int j=ia[laIndDS]+1; j<ia[laIndDS+1]; j++)
       gdd += a[j]*laMBS(ja[j]);
 
-    if (active) {
-      la(0) = gfl->solve(a[ia[laIndDS]], gdd);
-      if (la(0)<pCav)
-        la(0) = pCav;
-    }
-    else
+    la(0) = gfl->solve(a[ia[laIndDS]], gdd);
+    if (la(0)<pCav)
       la(0) = pCav;
-
   }
 
   void RigidCavitationNode::solveImpactsRootFinding(double dt) {
@@ -835,7 +847,7 @@ namespace MBSimHydraulics {
     for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
       gdn += a[j]*laMBS(ja[j]);
     
-    res(0) = active ? la(0)-gil->project(la(0), gdn, gd(0), rFactor(0), pCav*dt) : 0;
+    res(0) = la(0)-gil->project(la(0), gdn, gd(0), rFactor(0), pCav*dt);
   }
 
   void RigidCavitationNode::solveConstraintsRootFinding() {
@@ -849,7 +861,7 @@ namespace MBSimHydraulics {
     for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
       gdd += a[j]*laMBS(ja[j]);
 
-    res(0) = active ? la(0) - gfl->project(la(0), gdd, rFactor(0), pCav) : 0;
+    res(0) = la(0) - gfl->project(la(0), gdd, rFactor(0), pCav);
   }
 
   void RigidCavitationNode::jacobianImpacts() {
@@ -891,7 +903,7 @@ namespace MBSimHydraulics {
     for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
       gdn += a[j]*laMBS(ja[j]);
 
-    if(active&&!gil->isFulfilled(la(0), gdn, gd(0), LaTol, gdTol, pCav*dt))
+    if(!gil->isFulfilled(la(0), gdn, gd(0), LaTol, gdTol, pCav*dt))
       ds->setTermination(false);
   }
 
@@ -906,7 +918,7 @@ namespace MBSimHydraulics {
     for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
       gdd += a[j]*laMBS(ja[j]);
 
-    if(active&&!gfl->isFulfilled(la(0), gdd, laTol, gddTol, pCav))
+    if(!gfl->isFulfilled(la(0), gdd, laTol, gddTol, pCav))
       ds->setTermination(false);
   }
 

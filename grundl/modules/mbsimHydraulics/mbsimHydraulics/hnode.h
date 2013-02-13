@@ -79,7 +79,7 @@ namespace MBSimHydraulics {
       virtual void updater(double t) {std::cout << "HNode \"" << name << "\": updater()" << std::endl; }
       virtual void updateg(double t) {};
       virtual void updategd(double t);
-      virtual bool isActive() const {return true; }
+      virtual bool isActive() const {return false; }
       virtual bool gActiveChanged() {return false; }
 
       void plot(double t, double dt);
@@ -167,14 +167,11 @@ namespace MBSimHydraulics {
       virtual std::string getType() const { return "RigidNode"; }
 
       bool isSetValued() const {return true; }
+      virtual bool isActive() const {return true; }
 
       void calclaSize() {laSize=1; }
       void calclaSizeForActiveg() {laSize=0; }
       void calcrFactorSize() {rFactorSize=1; }
-
-      void init(MBSim::InitStage stage);
-
-      void updatewbRef(const fmatvec::Vec& wbParent);
 
       void updategd(double t);
       void updateW(double t);
@@ -207,6 +204,8 @@ namespace MBSimHydraulics {
       void setCavitationPressure(double pCav_) {pCav=pCav_; }
 
       bool isSetValued() const {return true; }
+      bool hasSmoothPart() const {return true; }
+      virtual bool isActive() const {return active; }
 
       void calcxSize() {xSize=1; }
       void calcgSize() {gSize=1; }
@@ -214,22 +213,23 @@ namespace MBSimHydraulics {
       void calclaSize() {laSize=1; }
       void calclaSizeForActiveg() {laSize=0; }
       void calcrFactorSize() {rFactorSize=1; }
-      //void calcsvSize() {svSize=1; }
+      void calcsvSize() {svSize=1; }
 
       void init(MBSim::InitStage stage);
       void initializeUsingXML(TiXmlElement *element);
-
-      void updatewbRef(const fmatvec::Vec& wbParent);
+      void plot(double t, double dt);
 
       void checkActiveg();
+      void checkActivegdn();
       bool gActiveChanged();
 
       void updateg(double t);
-      //void updateStopVector(double t);
+      void updateh(double t);
+      void updateStopVector(double t);
       void updateW(double t);
       void updatexd(double t);
       void updatedx(double t, double dt);
-      //void updateCondition();
+      void updateCondition();
 
       void updaterFactors();
       void solveImpactsFixpointSingle(double dt);
