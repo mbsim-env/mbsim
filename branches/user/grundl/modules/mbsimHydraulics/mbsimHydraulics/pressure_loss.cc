@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: markus.ms.schneider@gmail.com
+ * Contact: schneidm@users.berlios.de
  */
 
 #include "mbsimHydraulics/pressure_loss.h"
@@ -85,27 +85,6 @@ namespace MBSimHydraulics {
   }
 
 
-  double ZetaPosNegLinePressureLoss::operator()(const double& Q, const void * line) {
-    if (!initialized) {
-      double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
-      double d=((const RigidLine*)(line))->getDiameter();
-      double A=M_PI*d*d/4.;
-      cPos*=rho/2./A/A;
-      cNeg*=rho/2./A/A;
-      initialized=true;
-    }
-    return (Q>=0?cPos:cNeg)*Q*abs(Q);
-  }
-
-  void ZetaPosNegLinePressureLoss::initializeUsingXML(TiXmlElement * element) {
-    TiXmlElement * e;
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"zetaPos");
-    setZetaPos(Element::getDouble(e));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"zetaNeg");
-    setZetaNeg(Element::getDouble(e));
-  }
-
-
   double LaminarTubeFlowLinePressureLoss::operator()(const double& Q, const void * line) {
     if (!initialized) {
       double eta=HydraulicEnvironment::getInstance()->getDynamicViscosity();
@@ -164,7 +143,7 @@ namespace MBSimHydraulics {
         ReValues(i)=re[i];
         lambdaValues(i)=la[i];
       }
-      lambdaTabular = new TabularFunction1_VS<Ref,Ref>(ReValues, lambdaValues);
+      lambdaTabular = new TabularFunction1_VS(ReValues, lambdaValues);
       initialized=true;
     }
     const double Re=Q*((Q>0)?ReynoldsFactor:ReynoldsFactorNeg);
@@ -220,93 +199,21 @@ namespace MBSimHydraulics {
     bNeg=Element::getDouble(element->FirstChildElement(MBSIMHYDRAULICSNS"bNegative"));
   }
 
-
-  double TabularLinePressureLoss::operator()(const double& Q, const void * line) {
-    return ((*zetaTabular)(Q));
-  }
-
-  void TabularLinePressureLoss::initializeUsingXML(TiXmlElement * element) {
-    TiXmlElement * e;
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"function");
-    zetaTabular=MBSim::ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement());
-    zetaTabular->initializeUsingXML(e->FirstChildElement());
-  }
-
-
   double RelativeAreaZetaClosablePressureLoss::operator()(const double& Q, const void * line) {
     if (!initialized) {
       double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
       double d=((const RigidLine*)(line))->getDiameter();
       double A=M_PI*d*d/4.;
       c*=rho/2./A/A;
-      if (cNeg<0)
-        cNeg=c;
-      else
-        cNeg*=rho/2./A/A;
       initialized=true;
     }
     const double areaRel=((const ClosableRigidLine*)(line))->getRegularizedValue();
-    if (Q<0)
-      return cNeg*Q*abs(Q)/areaRel/areaRel;
-    else
-      return c*Q*abs(Q)/areaRel/areaRel;
+    return c*Q*abs(Q)/areaRel/areaRel;
   }
 
   void RelativeAreaZetaClosablePressureLoss::initializeUsingXML(TiXmlElement * element) {
     ClosablePressureLoss::initializeUsingXML(element);
     setZeta(Element::getDouble(element->FirstChildElement(MBSIMHYDRAULICSNS"zeta")));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"zetaNegative");
-    if (e)
-      setZetaNegative(Element::getDouble(e));
-  }
-
-
-  double GapHeightClosablePressureLoss::operator()(const double& Q, const void * line) {
-    if (!initialized) {
-      double eta=HydraulicEnvironment::getInstance()->getDynamicViscosity();
-      c=12.*eta*l/b;
-      initialized=true;
-    }
-    const double h=((const ClosableRigidLine*)(line))->getRegularizedValue();
-    return c/h/h/h*Q;
-  }
-
-  void GapHeightClosablePressureLoss::initializeUsingXML(TiXmlElement * element) {
-    ClosablePressureLoss::initializeUsingXML(element);
-    setLength(Element::getDouble(element->FirstChildElement(MBSIMHYDRAULICSNS"length")));
-    setWidth(Element::getDouble(element->FirstChildElement(MBSIMHYDRAULICSNS"width")));
-  }
-
-
-  double ReynoldsClosablePressureLoss::operator()(const double& Q, const void * line) {
-    if (!initialized) {
-      nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
-      double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
-      const double x0=1404.;
-      const double x1=2320.;
-      const double y0=64./1404.;
-      const double y1=.3164/pow(2320, .25);
-      lambdaSlope=(y1-y0)/(x1-x0);
-      lambdaOffset=y0-lambdaSlope*x0;
-      zetaFactor=rho/2.*((const RigidLine*)(line))->getLength();
-      initialized=true;
-    }
-    const double diameter=((const ClosableRigidLine*)(line))->getRegularizedValue();
-    const double area=M_PI*diameter*diameter/4.;
-    const double Re=fabs(Q)*diameter/area/nu;
-    double lambda=0;
-    
-    const double ReCritical = .1;
-    if (Re<ReCritical) {
-      const double lambdaCritical = .3164 * pow(ReCritical, -.25);
-      const double lambdaSlope = .3164 * (-.25) * pow(ReCritical, -.25-1.);
-      const double lambdaOffset = lambdaCritical - lambdaSlope * ReCritical;
-      lambda = lambdaSlope * Re + lambdaOffset;
-    }
-    else
-      lambda=.3164 * pow(Re, -.25);
-    
-    return zetaFactor * lambda/diameter * Q * fabs(Q) / area /area;
   }
 
 
@@ -409,7 +316,7 @@ namespace MBSimHydraulics {
 
   double PlaneLeakagePressureLoss::operator()(const double& pVorQ, const void * line) {
     if (!initialized) {
-      if (((HLine*)(line))->getJacobian().rows())
+      if (((const Object*)(line))->getuSize(0))
         stateless=false;
       double h;
       double w;
@@ -446,7 +353,7 @@ namespace MBSimHydraulics {
 
   double EccentricCircularLeakagePressureLoss::operator()(const double& pVorQ, const void * line) {
     if (!initialized) {
-      if (((HLine*)(line))->getJacobian().rows())
+      if (((const Object*)(line))->getuSize(0))
         stateless=false;
       double rI;
       double rO;
@@ -494,7 +401,7 @@ namespace MBSimHydraulics {
 
   double RealCircularLeakagePressureLoss::operator()(const double& pVorQ, const void * line) {
     if (!initialized) {
-      if (((HLine*)(line))->getJacobian().rows())
+      if (((const Object*)(line))->getuSize(0))
         stateless=false;
       double rI;
       double rA;
@@ -539,7 +446,7 @@ namespace MBSimHydraulics {
       initialized=true;
     }
     const double pressureLoss=c*Q*abs(Q);
-    const double pressureLossMin=((const UnidirectionalRigidLine*)(line))->getMinimalPressureDrop();
+    const double pressureLossMin=-((const UnidirectionalRigidLine*)(line))->getMinimalPressureDrop();
     return pressureLoss<pressureLossMin?pressureLoss:0;
   }
 
