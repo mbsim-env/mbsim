@@ -257,7 +257,7 @@ namespace MBSimElectronics {
     hLink[0] += branch->getJacobian().T()*la(0)*vz; 
   }
 
-  void Diode::checkImpactsForTermination() {
+  void Diode::checkImpactsForTermination(double dt) {
 
     double *a = ds->getGs()();
     int *ia = ds->getGs().Ip();
@@ -265,9 +265,9 @@ namespace MBSimElectronics {
     Vec &laMBS = ds->getla();
     Vec &b = ds->getb();
 
-    gdn(0) = b(laIndDS);
+    gdn(0) = b(laInd);
     //cout << gd(0) << " " << gdn(0) << endl;
-    for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++) {
+    for(int j=ia[laInd]; j<ia[laInd+1]; j++) {
       gdn(0) += a[j]*laMBS(ja[j]);
     }
 
@@ -282,21 +282,21 @@ namespace MBSimElectronics {
     }
   }
 
-  void Diode::solveImpactsGaussSeidel() {
+  void Diode::solveImpactsGaussSeidel(double dt) {
     double *a = ds->getGs()();
     int *ia = ds->getGs().Ip();
     int *ja = ds->getGs().Jp();
     Vec &laMBS = ds->getla();
     Vec &b = ds->getb();
 
-      gdn(0) = b(laIndDS);
-      for(int j=ia[laIndDS]+1; j<ia[laIndDS+1]; j++)
+      gdn(0) = b(laInd);
+      for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
         gdn(0) += a[j]*laMBS(ja[j]);
 
       if(gdn(0) >= 0)
 	la(0) = 0;
       else 
-	la(0) = -gdn(0)/a[ia[laIndDS]];
+	la(0) = -gdn(0)/a[ia[laInd]];
   }
 
   Switch::Switch(const string &name) : ElectronicLink(name), sv(false) {
@@ -321,7 +321,7 @@ namespace MBSimElectronics {
     hLink[0] += branch->getJacobian().T()*la(0)*vz; 
   }
 
-  void Switch::checkImpactsForTermination() {
+  void Switch::checkImpactsForTermination(double dt) {
 
     double *a = ds->getGs()();
     int *ia = ds->getGs().Ip();
@@ -331,8 +331,8 @@ namespace MBSimElectronics {
 
     //double U0 = voltageSignal->getSignal(t)(0);
 
-    gdn(0) = b(laIndDS);
-    for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
+    gdn(0) = b(laInd);
+    for(int j=ia[laInd]; j<ia[laInd+1]; j++)
       gdn(0) += a[j]*laMBS(ja[j]);
 
      if(fabs(la(0) + gdn(0)/fabs(gdn(0))*fabs(U0)) <= laTol)
@@ -345,18 +345,18 @@ namespace MBSimElectronics {
     }
   }
 
-  void Switch::solveImpactsGaussSeidel() {
+  void Switch::solveImpactsGaussSeidel(double dt) {
     double *a = ds->getGs()();
     int *ia = ds->getGs().Ip();
     int *ja = ds->getGs().Jp();
     Vec &laMBS = ds->getla();
     Vec &b = ds->getb();
 
-      gdn(0) = b(laIndDS);
-      for(int j=ia[laIndDS]+1; j<ia[laIndDS+1]; j++)
+      gdn(0) = b(laInd);
+      for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
         gdn(0) += a[j]*laMBS(ja[j]);
 
-      double sdG = -gdn(0)/a[ia[laIndDS]];
+      double sdG = -gdn(0)/a[ia[laInd]];
       if(fabs(sdG)<=U0) 
 	la(0) = sdG;
       else 

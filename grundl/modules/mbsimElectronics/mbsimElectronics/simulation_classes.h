@@ -161,8 +161,8 @@ namespace MBSimElectronics {
       void setSetValued(bool flag) {sv = flag;}
       void updateh(double t);
       bool isSetValued() const {return sv;}
-      void checkImpactsForTermination();
-      void solveImpactsGaussSeidel();
+      void checkImpactsForTermination(double dt);
+      void solveImpactsGaussSeidel(double dt);
   };
 
   class Switch : public ElectronicLink {
@@ -177,8 +177,8 @@ namespace MBSimElectronics {
       bool isSetValued() const {return sv;}
       void updateh(double t);
       void updateW(double t);
-      void checkImpactsForTermination();
-      void solveImpactsGaussSeidel();
+      void checkImpactsForTermination(double dt);
+      void solveImpactsGaussSeidel(double dt);
       void setVoltageSignal(MBSimControl::Signal *signal) {voltageSignal = signal; }
       //void setVoltageSignal(MBSim::Function1<fmatvec::Vec,double> *func) {voltageSignal = func;}
   };
