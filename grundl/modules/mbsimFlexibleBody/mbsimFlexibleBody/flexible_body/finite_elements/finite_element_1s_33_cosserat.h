@@ -253,10 +253,10 @@ namespace MBSimFlexibleBody {
 //  inline const fmatvec::SqrMat& FiniteElement1s33RCM::getdhdu() const { return dhdu; }
 //  inline int FiniteElement1s33RCM::getqSize() const { return 16; }
 //  inline int FiniteElement1s33RCM::getuSize() const { return 16; }
-//  inline fmatvec::Vec FiniteElement1s33RCM::computePosition(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw new MBSim::MBSimError("ERROR (FiniteElement1s33RCM::computePosition): Not implemented!"); }
-//  inline fmatvec::SqrMat FiniteElement1s33RCM::computeOrientation(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw new MBSim::MBSimError("ERROR (FiniteElement1s33RCM::computeOrientation): Not implemented!"); }
-//  inline fmatvec::Vec FiniteElement1s33RCM::computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw new MBSim::MBSimError("ERROR (FiniteElement1s33RCM::computeVelocity): Not implemented!"); }
-//  inline fmatvec::Vec FiniteElement1s33RCM::computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw new MBSim::MBSimError("ERROR (FiniteElement1s33RCM::computeAngularVelocity): Not implemented!"); }
+//  inline fmatvec::Vec FiniteElement1s33RCM::computePosition(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33RCM::computePosition): Not implemented!"); }
+//  inline fmatvec::SqrMat FiniteElement1s33RCM::computeOrientation(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33RCM::computeOrientation): Not implemented!"); }
+//  inline fmatvec::Vec FiniteElement1s33RCM::computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33RCM::computeVelocity): Not implemented!"); }
+//  inline fmatvec::Vec FiniteElement1s33RCM::computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33RCM::computeAngularVelocity): Not implemented!"); }
 //  inline fmatvec::Mat FiniteElement1s33RCM::computeJacobianOfMotion(const fmatvec::Vec& qG,const MBSim::ContourPointData& data) { return computeJXqG(qG,data.getLagrangeParameterPosition()(0)); }
 
 }

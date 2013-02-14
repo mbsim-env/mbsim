@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: markus.ms.schneider@gmail.com
+ * Contact: schneidm@users.berlios.de
  */
 
 #include "mbsimControl/signal_manipulation.h"
@@ -175,7 +175,7 @@ namespace MBSimControl {
     if (stage==resolveXMLPath) {
       for (unsigned int i=0; i<signalString.size(); i++) {
         Vec tmp=indizesTmp[i];
-        fmatvec::VecInt tmpI(tmp.size(), INIT, 0);
+        fmatvec::Vector<int> tmpI(tmp.size(), INIT, 0);
         for (int j=0; j<tmp.size(); j++)
           tmpI(j)=int(tmp(j));
         addSignal(getByPath<Signal>(process_signal_string(signalString[i])), tmpI);

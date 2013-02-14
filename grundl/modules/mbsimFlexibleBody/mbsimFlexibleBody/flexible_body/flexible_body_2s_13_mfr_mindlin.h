@@ -26,11 +26,13 @@
 namespace MBSimFlexibleBody {
 
   /*! 
-   * \brief plate according to Reissner-Mindlin with moving frame of reference
+   * \brief plate according to Reissner-Mindlin with moving frame of reference and small tilting assumption
    * \author Kilian Grundl
    * \author Thorsten Schindler
    * \date 2009-12-23 initial commit (Schindler / Grundl)
    * \date 2010-04-21 parent class (Schindler / Grundl)
+   * \date 2010-08-19 check (Schindler / Grundl)
+   * \todo gravity TODO
    */
   class FlexibleBody2s13MFRMindlin : public FlexibleBody2s13 {
     public:
@@ -80,6 +82,16 @@ namespace MBSimFlexibleBody {
       virtual void updateAG();
       /***************************************************/
 
+      /*!
+       * \brief calculate constant stiffness matrix
+       */
+      void computeStiffnessMatrix();
+
+      /*! 
+       * \brief calculate constant parts of the mass matrix
+       */
+      void computeConstantMassMatrixParts();
+      
       /**
        * \brief matrix for the computation of the mass-matrix (assembled part of the element matrix)
        */
@@ -104,21 +116,11 @@ namespace MBSimFlexibleBody {
        * \brief matrix for the computation of the mass-matrix (assembled part of the element matrix)
        */
       fmatvec::SymMat* R_ij;
-
-      /*!
-       * \brief calculate constant stiffness matrix
-       */
-      void computeStiffnessMatrix();
-
-      /*! 
-       * \brief calculate constant parts of the mass matrix
-       */
-      void computeConstantMassMatrixParts();
   };
 
-  inline void FlexibleBody2s13MFRMindlin::GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) { throw new MBSim::MBSimError("ERROR(FlexibleBody2s13MFRMindlin::GlobalVectorContribution): Not implemented!"); }
-  inline void FlexibleBody2s13MFRMindlin::GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat) { throw new MBSim::MBSimError("ERROR(FlexibleBody2s13MFRMindlin::GlobalMatrixContribution): Not implemented!"); }
-  inline void FlexibleBody2s13MFRMindlin::GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat) { throw new MBSim::MBSimError("ERROR(FlexibleBody2s13MFRMindlin::GlobalMatrixContribution): Not implemented!"); }
+  inline void FlexibleBody2s13MFRMindlin::GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) { throw MBSim::MBSimError("ERROR(FlexibleBody2s13MFRMindlin::GlobalVectorContribution): Not implemented!"); }
+  inline void FlexibleBody2s13MFRMindlin::GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat) { throw MBSim::MBSimError("ERROR(FlexibleBody2s13MFRMindlin::GlobalMatrixContribution): Not implemented!"); }
+  inline void FlexibleBody2s13MFRMindlin::GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat) { throw MBSim::MBSimError("ERROR(FlexibleBody2s13MFRMindlin::GlobalMatrixContribution): Not implemented!"); }
 
 }
 
