@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2011 MBSim Development Team
+/* Copyright (C) 2004-2010 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: thorsten.schindler@mytum.de
+ * Contact: thschindler@users.berlios.de
  */
 
 #ifndef NURBSDISK2S_H_
@@ -23,7 +23,6 @@
 #include "fmatvec.h"
 #include "mbsim/mbsim_event.h"
 #include "mbsim/contours/contour2s.h"
-#include "mbsimFlexibleBody/utils/contact_utils.h"
 
 #ifdef HAVE_NURBS
 #define MY_PACKAGE_BUGREPORT PACKAGE_BUGREPORT
@@ -36,19 +35,19 @@
 #undef PACKAGE_VERSION
 #undef PACKAGE_TARNAME
 #undef PACKAGE_STRING
-#include "nurbs++/nurbs.h"
+#include "nurbs.h"
 #undef PACKAGE_BUGREPORT
 #undef PACKAGE_NAME
 #undef PACKAGE_VERSION
 #undef PACKAGE_TARNAME
 #undef PACKAGE_STRING
-#include "nurbs++/nurbsS.h"
+#include "nurbsS.h"
 #undef PACKAGE_BUGREPORT
 #undef PACKAGE_NAME
 #undef PACKAGE_VERSION
 #undef PACKAGE_TARNAME
 #undef PACKAGE_STRING
-#include "nurbs++/vector.h"
+#include "vector.h"
 #define PACKAGE_BUGREPORT MY_PACKAGE_BUGREPORT
 #define PACKAGE_NAME MY_PACKAGE_NAME
 #define PACKAGE_VERSION MY_PACKAGE_VERSION
@@ -79,7 +78,7 @@ namespace MBSimFlexibleBody {
        */
       NurbsDisk2s(const std::string &name) : MBSim::Contour2s(name), nj(0), nr(0), degU(0), degV(0), Ri(0.), Ra(0.) {
 #ifndef HAVE_NURBS
-        throw MBSim::MBSimError("ERROR(NurbsDisk2s::NurbsDisk2s): External NURBS library not implemented!");
+        throw new MBSim::MBSimError("ERROR(NurbsDisk2s::NurbsDisk2s): External NURBS library not implemented!");
 #endif
       }
 
@@ -93,18 +92,15 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOURCONTINUUM */
-      virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) { throw MBSim::MBSimError("ERROR(NurbsDisk2s::computeRootFunctionPosition): Not implemented!"); }
-      virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) { throw MBSim::MBSimError("ERROR(NurbsDisk2s::computeRootFunctionFirstTangent): Not implemented!"); }
-      virtual void computeRootFunctionNormal(MBSim::ContourPointData &cp) { throw MBSim::MBSimError("ERROR(NurbsDisk2s::computeRootFunctionNormal): Not implemented!"); }
-      virtual void computeRootFunctionSecondTangent(MBSim::ContourPointData &cp) { throw MBSim::MBSimError("ERROR(NurbsDisk2s::computeRootFunctionSecondTangent): Not implemented!"); }
+      virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) { throw new MBSim::MBSimError("ERROR(NurbsDisk2s::computeRootFunctionPosition): Not implemented!"); }
+      virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) { throw new MBSim::MBSimError("ERROR(NurbsDisk2s::computeRootFunctionFirstTangent): Not implemented!"); }
+      virtual void computeRootFunctionNormal(MBSim::ContourPointData &cp) { throw new MBSim::MBSimError("ERROR(NurbsDisk2s::computeRootFunctionNormal): Not implemented!"); }
+      virtual void computeRootFunctionSecondTangent(MBSim::ContourPointData &cp) { throw new MBSim::MBSimError("ERROR(NurbsDisk2s::computeRootFunctionSecondTangent): Not implemented!"); }
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
       virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff);
-      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
-      virtual MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1) {
-        return findContactPairingFlexible(type0.c_str(), type1.c_str());
-      }
+      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp);
       /***************************************************/
 
 #ifdef HAVE_NURBS
@@ -257,7 +253,7 @@ namespace MBSimFlexibleBody {
       std::vector<PlNurbsSurfaced> SurfaceJacobiansOfTranslation; // size = number of generalized coordinates
 
       /**
-       * \brief interpolated Jacobians of Rotation on the surface
+       * \brief interpolated Jacobians of Translation on the surface
        */
       std::vector<PlNurbsSurfaced> SurfaceJacobiansOfRotation; // size = number of generalized coordinates
 

@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: markus.ms.schneider@gmail.com
+ * Contact: schneidm@users.berlios.de
  */
 
 #include "mbsimControl/function_sensor.h"
@@ -59,8 +59,7 @@ namespace MBSimControl {
 
   void Function1_SSEvaluation::init(InitStage stage) {
     if (stage==MBSim::resolveXMLPath) {
-      if (signalString!="")
-        setSignal(getByPath<Signal>(process_signal_string(signalString)));
+      setSignal(getByPath<Signal>(process_signal_string(signalString)));
       Signal::init(stage);
     }
     else
@@ -89,8 +88,7 @@ namespace MBSimControl {
 
   void Function2_SSSEvaluation::init(InitStage stage) {
     if (stage==MBSim::resolveXMLPath) {
-      if (signal1String!="")
-        setSignals(getByPath<Signal>(process_signal_string(signal1String)), getByPath<Signal>(process_signal_string(signal2String)));
+      setSignals(getByPath<Signal>(process_signal_string(signal1String)), getByPath<Signal>(process_signal_string(signal2String)));
       Signal::init(stage);
     }
     else

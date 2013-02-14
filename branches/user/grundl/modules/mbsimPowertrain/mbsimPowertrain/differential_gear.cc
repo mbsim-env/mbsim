@@ -1,7 +1,9 @@
 #include "differential_gear.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/constraint.h"
+#include "mbsim/rigid_body.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
+#include "mbsim/frame.h"
 #include "openmbvcppinterface/frustum.h"
 #include "openmbvcppinterface/cube.h"
 #include "openmbvcppinterface/compoundrigidbody.h"
@@ -115,7 +117,9 @@ namespace MBSimPowertrain {
     shaft4->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
     r(2) = -data.lengthLeftOutputShaft/2;
     shaft4->addFrame("Q",r,BasicRotAKIy(M_PI));
+#ifdef HAVE_OPENMBVCPPINTERFACE
     shaft4->getFrame("Q")->enableOpenMBV(0.3);
+#endif
 
     shaft4->setMass(data.massLeftOutputShaft);
     shaft4->setInertiaTensor(data.inertiaTensorLeftOutputShaft);
@@ -131,7 +135,9 @@ namespace MBSimPowertrain {
     shaft5->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
     r(2) = data.lengthRightOutputShaft/2;
     shaft5->addFrame("Q",r,SqrMat(3,EYE));
+#ifdef HAVE_OPENMBVCPPINTERFACE
     shaft5->getFrame("Q")->enableOpenMBV(0.3);
+#endif
 
     shaft5->setMass(data.massRightOutputShaft);
     shaft5->setInertiaTensor(data.inertiaTensorRightOutputShaft);

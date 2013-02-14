@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2011 MBSim Development Team
+/* Copyright (C) 2004-2010 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -14,13 +14,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: thorsten.schindler@mytum.de
+ * Contact: thschindler@users.berlios.de
  */
 
 #ifndef FLEXIBLEBODY2S13_H_
 #define FLEXIBLEBODY2S13_H_
 
-#include "mbsimFlexibleBody/flexible_body.h"
+#include "mbsim/flexible_body.h"
 
 namespace MBSimFlexibleBody {
 
@@ -56,16 +56,18 @@ namespace MBSimFlexibleBody {
   fmatvec::SymMat condenseMatrix(fmatvec::SymMat A,fmatvec::Index I);
 
   /*!
-   * \brief generates an output for a matrix for the input in maple - just for testing
-   * \param matrix for the output
+   * \brief calculates planar angle in [0,2\pi] with respect to Cartesian coordinates
+   * \param Cartesian x-coordinate
+   * \param Cartesian y-coordinate
+   * \return angle
    */
-  void MapleOutput(fmatvec::Mat A, std::string MatName, std::string file);
+  double ArcTan(double x,double y);
 
   /*!
    * \brief generates an output for a matrix for the input in maple - just for testing
    * \param matrix for the output
    */
-  void MapleOutput(fmatvec::SymMat C, std::string MatName, std::string file);
+  void MapleOutput(fmatvec::SymMat A, std::string MatName, std::string file);
 
   /*!
    * \brief plate according to Reissner-Mindlin with moving frame of reference
@@ -73,17 +75,14 @@ namespace MBSimFlexibleBody {
    * \author Thorsten Schindler
    * \date 2010-04-23 initial commit (Schindler / Grundl)
    * \date 2010-08-12 revision (Schindler)
-   *
-   * The plate lies in the xy-plane of its reference frame. The z-vector is its "normal".
-   * Thus the radial and the azimuthal component give the x- and y- coordinates where the z-coordinate is defined by the thickness parameterization. (neglecting the flexible dofs)
    */
-  class FlexibleBody2s13 : public FlexibleBodyContinuum<fmatvec::Vec> {
+  class FlexibleBody2s13 : public MBSim::FlexibleBodyContinuum<fmatvec::Vec> {
     public:
       /**
        * \brief constructor
        * \param name of body
        */
-      FlexibleBody2s13(const std::string &name, const int & DEBUGLEVEL_=0);
+      FlexibleBody2s13(const std::string &name);
 
       /**
        * \brief destructor
@@ -91,7 +90,7 @@ namespace MBSimFlexibleBody {
       virtual ~FlexibleBody2s13() {}
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updateh(double t, int j=0);
+      virtual void updateh(double t);
       virtual void updatedhdz(double t);
       virtual void updateStateDependentVariables(double t);
       /******************************************/
@@ -109,7 +108,6 @@ namespace MBSimFlexibleBody {
       void setEModul(double E_) { E = E_; }
       void setPoissonRatio(double nu_) { nu = nu_; }
       void setThickness(const fmatvec::Vec &d_) { d = d_; }
-      fmatvec::Vec getThickness() const { return d; }
       void setDensity(double rho_) { rho = rho_; }
       int getReferenceDegreesOfFreedom() const { return RefDofs; }
       int getRadialNumberOfElements() const { return nr; }
@@ -175,9 +173,7 @@ namespace MBSimFlexibleBody {
       double rho;
 
       /**
-       * \brief parameterization of thickness over radius function: d(0) + d(1)*r + d(2)*r*r
-       *
-       * \remark vector must have length 3
+       * \brief inner and outer thickness
        */
       fmatvec::Vec d;
 
@@ -197,7 +193,7 @@ namespace MBSimFlexibleBody {
       double m0;
 
       /**
-       * \brief inertia of the attached shaft in local coordinates
+       * \brief inertia of the attached shaft
        */
       fmatvec::SymMat J0;
 
@@ -251,7 +247,7 @@ namespace MBSimFlexibleBody {
        *
        * ElementNodeList(Element,LocalNodeNumber) = globalNodeNumber;
        */
-      fmatvec::Matrix<fmatvec::General,fmatvec::Ref,fmatvec::Ref,int> ElementNodeList;
+      fmatvec::Matrix<fmatvec::General,int> ElementNodeList;
 
       /**
        * \brief total dof of disk with reference movement and elastic deformation but without including bearing
@@ -295,16 +291,7 @@ namespace MBSimFlexibleBody {
        */
       NurbsDisk2s *contour;
 
-      /*
-       * \brief Debug-Output-Level
-       *
-       * 0 = no Debug output
-       * 1 = console Debug Output
-       * 2 = File Debug Output
-       */
-      int DEBUGLEVEL;
-
-      /*!
+      /*! 
        * \brief detect involved element for contact description
        * \param parametrisation vector (radial / azimuthal)
        */
@@ -319,6 +306,12 @@ namespace MBSimFlexibleBody {
        * \brief update the transformation matrices A and G
        */
       virtual void updateAG() = 0;
+
+      /*!
+       * \brief rotation matrix about z-axis
+       * \param angle of rotation
+       */
+      fmatvec::SqrMat TransformationMatrix(const double &phi);
 
       /*!
        * \return thickness of disk at radial coordinate

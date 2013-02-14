@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: markus.ms.schneider@gmail.com
+ * Contact: schneidm@users.berlios.de
  */
 
 #ifndef _SIGNAL_MANIPULATION_H_
@@ -48,7 +48,7 @@ namespace MBSimControl {
    */
   class SignalOffset : public Signal {
     public:
-      SignalOffset(const std::string &name) : Signal(name), signal(0), offset(0, fmatvec::NONINIT), signalString("") {}
+      SignalOffset(const std::string &name) : Signal(name), offset(0, fmatvec::NONINIT), signalString("") {}
       void initializeUsingXML(TiXmlElement *element);
       void init(MBSim::InitStage stage);
       void setSignal(Signal * s) {signal=s; }
@@ -97,32 +97,12 @@ namespace MBSimControl {
 
 
   /*!
-   * \brief SignalDemux
-   * \author Markus Schneider
-   */
-  class SignalDemux : public Signal {  
-    public:
-      SignalDemux(const std::string &name) : Signal(name), totalSignalSize(0) {}
-      void initializeUsingXML(TiXmlElement *element);
-      void init(MBSim::InitStage stage);
-      void addSignal(Signal * signal, fmatvec::VecInt index) {signals.push_back(signal); indizes.push_back(index); }
-      fmatvec::Vec getSignal();
-    private:
-      std::vector<Signal *> signals;
-      std::vector<fmatvec::VecInt > indizes;
-      std::vector<fmatvec::Vec> indizesTmp;
-      std::vector<std::string> signalString;
-      int totalSignalSize;
-  };
-
-
-  /*!
    * \brief SignalLimitation
    * \author Markus Schneider
    */
   class SignalLimitation : public Signal {  
     public:
-      SignalLimitation(const std::string &name) : Signal(name), s(NULL), minValue(), maxValue(), signalString("") {}
+      SignalLimitation(const std::string &name) : Signal(name), s(NULL), minValue(0), maxValue(0), signalString("") {}
       void initializeUsingXML(TiXmlElement *element);
       void init(MBSim::InitStage stage);
       void setMinimalValue(fmatvec::Vec minValue_) {minValue=minValue_; }
@@ -142,7 +122,7 @@ namespace MBSimControl {
    */
   class SignalTimeDiscretization : public Signal {  
     public:
-      SignalTimeDiscretization(const std::string &name) : Signal(name), s(NULL), y(), tOld(-99e99), signalString("") {}
+      SignalTimeDiscretization(const std::string &name) : Signal(name), s(NULL), y(0), tOld(-99e99), signalString("") {}
       void initializeUsingXML(TiXmlElement *element);
       void init(MBSim::InitStage stage);
       void setSignal(Signal * signal_) {s=signal_; }

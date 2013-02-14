@@ -306,13 +306,13 @@ namespace MBSimElectronics {
   }
 
   void Switch::updateW(double t) {
-    U0 = voltageSignal->getSignal(t)(0);
+    U0 = voltageSignal->getSignal()(0);
     ElectronicLink::updateW(t);
   }
 
   void Switch::updateh(double t) {
     double gdLim = 0.01;
-    U0 = voltageSignal->getSignal(t)(0);
+    U0 = voltageSignal->getSignal()(0);
     if(fabs(I) < gdLim)
       la(0) = -U0*I/gdLim;
     else
@@ -376,7 +376,7 @@ namespace MBSimElectronics {
     hLink[0] += branch->getJacobian().T()*la(0)*vz; 
   }
 
-  double Resistor::computeVoltage(double t) {
+  double Resistor::computeVoltage() {
     return -R*I;  
   }
 
@@ -399,7 +399,7 @@ namespace MBSimElectronics {
   }
 
   void VoltageSource::updateh(double t) {
-    la(0) = voltageSignal->getSignal(t)(0);
+    la(0) = voltageSignal->getSignal()(0);
     h[0] += branch->getJacobian().T()*la(0)*vz;
     hLink[0] += branch->getJacobian().T()*la(0)*vz;
   }
