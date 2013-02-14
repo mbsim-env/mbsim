@@ -2,7 +2,10 @@
 #define DIFFERENTIAL_GEAR_H_
 
 #include "mbsim/group.h"
-#include "mbsim/rigid_body.h"
+
+namespace MBSim {
+  class RigidBody;
+}
 
 namespace MBSimPowertrain {
 

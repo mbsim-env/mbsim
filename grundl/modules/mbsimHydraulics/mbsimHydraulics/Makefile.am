@@ -21,8 +21,9 @@ libmbsimHydraulics_la_SOURCES = \
 	obsolet_hint.cc
 
 libmbsimHydraulics_la_CPPFLAGS = -DTIXML_USE_STL
-libmbsimHydraulics_la_LIBADD = $(DEPS_LIBS)
+libmbsimHydraulics_la_LIBADD = 
 INCLUDES = $(DEPS_CFLAGS)
+LDADD = $(DEPS_LIBS)
 
 mbsimHydraulicsincludedir = $(includedir)/mbsimHydraulics
 mbsimHydraulicsinclude_HEADERS = \

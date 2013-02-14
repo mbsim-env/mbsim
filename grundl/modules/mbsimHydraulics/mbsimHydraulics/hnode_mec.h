@@ -23,9 +23,11 @@
 #include "hnode.h"
 #include "mbsim/utils/function.h"
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
 namespace OpenMBV {
   class Arrow;
 }
+#endif
 
 namespace MBSim {
   class Frame;
@@ -84,7 +86,7 @@ namespace MBSimHydraulics {
 
       void updateh(double t);
       void updatedhdz(double t);
-      virtual void updater(double t) {std::cout << "HNodeMec \"" << name << "\": updater()" << std::endl; }
+      virtual void updater(double t);
       void updategd(double t);
       void updatexd(double t);
       void updatedx(double t, double dt);

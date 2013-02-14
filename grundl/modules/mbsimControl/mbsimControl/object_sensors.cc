@@ -28,6 +28,7 @@ using namespace MBSim;
 namespace MBSimControl {
 
   void GeneralizedCoordinateSensor::initializeUsingXML(TiXmlElement *element) {
+    Sensor::initializeUsingXML(element);
     TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"object");
     objectString=e->Attribute("ref");
     e=element->FirstChildElement(MBSIMCONTROLNS"index");

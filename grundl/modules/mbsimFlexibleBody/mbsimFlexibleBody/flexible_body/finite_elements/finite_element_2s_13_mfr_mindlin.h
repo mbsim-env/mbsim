@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2011 MBSim Development Team
+/* Copyright (C) 2004-2010 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: thorsten.schindler@mytum.de
+ * Contact: thschindler@users.berlios.de
  */
 
 #ifndef _FINITE_ELEMENT_2S_13_MFR_MINDLIN_H_
@@ -33,7 +33,12 @@ namespace MBSimFlexibleBody {
    * \author Thorsten Schindler
    * \date 2009-12-23 initial commit (Grundl / Schindler)
    * \date 2010-04-23 check (Schindler)
-   * \date 2010-08-18 check (Schindler)
+   * \todo transform computeState to Position / Orientation / Velocity / AngularVelocity
+   * \todo JacobianMinimalRepresentation
+   * \todo energy
+   * \todo right hand side
+   * \todo equations of motion
+   * \todo implicit integration
    */
   class FiniteElement2s13MFRMindlin : public MBSim::DiscretizationInterface {
     public:
@@ -43,14 +48,13 @@ namespace MBSimFlexibleBody {
        * \param Poisson ratio
        * \param density
        * \param thickness parametrisation
-       * \param radial and azimuthal coordinates of corner nodes
        */
-      FiniteElement2s13MFRMindlin(double E_,double nu_,double rho_,double d0_,double d1_,double d2_,const fmatvec::Vec &NodeCoordinates);
+      FiniteElement2s13MFRMindlin(double E_,double nu_,double rho_,double d0_,double d1_,double d2_, const fmatvec::Vec &NodeCoordinates);
 
       /**
        * \brief destructor
        */
-      virtual ~FiniteElement2s13MFRMindlin();    
+      virtual ~FiniteElement2s13MFRMindlin() {}    
 
       /* INTERFACE OF DISCRETIZATIONINTERFACE */
       virtual const fmatvec::Vec& geth() const;
@@ -58,7 +62,6 @@ namespace MBSimFlexibleBody {
       virtual const fmatvec::SqrMat& getdhdu() const;
       virtual int getqSize() const;
       virtual int getuSize() const;
-      virtual void computeM(const fmatvec::Vec& q);
       virtual void computeh(const fmatvec::Vec& q,const fmatvec::Vec& u);
       virtual void computedhdz(const fmatvec::Vec& q,const fmatvec::Vec& u);
       virtual double computeKineticEnergy(const fmatvec::Vec& q,const fmatvec::Vec& u);
@@ -96,24 +99,35 @@ namespace MBSimFlexibleBody {
       void freeR_ij();
       /***************************************************/
 
+
       /*!
        * \brief computes stiffnes matrix
+       * \param radial and azimuthal coordinates of corner nodes
        */
-      void computeStiffnessMatrix();
+      void computeStiffnesMatrix(const fmatvec::Vec &NodeCoordinates);
+      void computeStiffnesMatrix();
+
+      /*!
+       * \brief computes mass matrix
+       * \param radial and azimuthal coordinates of corner nodes
+       */
+      void computeM(const fmatvec::Vec &NodeCoordinates);    
 
       /*!
        * \brief computes a part of the mass matrix
+       * \param radial and azimuthal coordinates of corner nodes
        */
       void computeM_RR();
 
       /*!
        * \brief computes a part of the mass matrix
+       * \param radial and azimuthal coordinates of corner nodes
        */
       void computeN_compl();
 
       /*!
        * \brief computes a part of the mass matrix
-       * \param index of ansatz functions
+       * \param radial and azimuthal coordinates of corner nodes
        */
       void computeN_ij(int i, int j);
       void computeN_11();
@@ -128,7 +142,7 @@ namespace MBSimFlexibleBody {
 
       /*!
        * \brief computes a part of the mass matrix
-       * \param index of ansatz functions
+       * \param radial and azimuthal coordinates of corner nodes
        */
       void computeNR_ij(int i, int j);
       void computeNR_11();
@@ -141,23 +155,29 @@ namespace MBSimFlexibleBody {
       void computeNR_32();
       void computeNR_33();
 
+
       /*!
        * \brief computes a part of the mass matrix
+       * \param radial and azimuthal coordinates of corner nodes
        */
       void computeR_compl();
 
       /*!
        * \brief computes a part of the mass matrix
+       * \param radial and azimuthal coordinates of corner nodes
        */
       void computeR_ij();
 
+
+
+      //TODO:
       /*!
        * \param radial and azimuthal coordinates of corner nodes
        * \param generalised coordinates
        * \param generalised velocities
        * \param Lagrangian position of contour point
        * \param inner thickness of whole disk
-       * \param outer thickness of whole disk
+       * \oaram outer thickness of whole disk
        * \return state at contour point 
        */
       fmatvec::Vec computeState(const fmatvec::Vec &NodeCoordinates,const fmatvec::Vec &qElement,const fmatvec::Vec &qpElement,const fmatvec::Vec &s,double d1,double d2);
@@ -216,7 +236,7 @@ namespace MBSimFlexibleBody {
       int Nodes;
 
       /**
-       * \brief radial and azimuthal coordinates of corner nodes
+       * \brief number of nodes
        */
       fmatvec::Vec NodeCoordinates;
 
@@ -254,45 +274,39 @@ namespace MBSimFlexibleBody {
        * \brief part of the mass matrix
        */
       fmatvec::SymMat *R_ij;
+
   };
 
-  inline const fmatvec::Vec& FiniteElement2s13MFRMindlin::geth() const { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::geth): Not implemented!"); } 
-  inline const fmatvec::SqrMat& FiniteElement2s13MFRMindlin::getdhdq() const { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::getdhdq): Not implemented!"); } 
-  inline const fmatvec::SqrMat& FiniteElement2s13MFRMindlin::getdhdu() const { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::getdhdu): Not implemented!"); } 
+  inline const fmatvec::SymMat& FiniteElement2s13MFRMindlin::getM() const { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::getM): Not implemented!"); }
+  inline void FiniteElement2s13MFRMindlin::computeM(const fmatvec::Vec& NodeCoordinates){ throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeM): Not implemented!"); }
+  inline void FiniteElement2s13MFRMindlin::computeStiffnesMatrix(const fmatvec::Vec& NodeCoordinates){ throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeStiffnessMatrix): Not implemented!"); }
+  inline const fmatvec::Vec& FiniteElement2s13MFRMindlin::geth() const { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::geth): Not implemented!"); } 
+  inline const fmatvec::SqrMat& FiniteElement2s13MFRMindlin::getdhdq() const { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::getdhdq): Not implemented!"); } 
+  inline const fmatvec::SqrMat& FiniteElement2s13MFRMindlin::getdhdu() const { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::getdhdu): Not implemented!"); } 
   inline int FiniteElement2s13MFRMindlin::getqSize() const { return RefDofs + 4*NodeDofs; }
   inline int FiniteElement2s13MFRMindlin::getuSize() const { return RefDofs + 4*NodeDofs; }
-  inline void FiniteElement2s13MFRMindlin::computeM(const fmatvec::Vec& q) { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeM): Not implemented!"); } 
-  inline void FiniteElement2s13MFRMindlin::computeh(const fmatvec::Vec& q,const fmatvec::Vec& u) { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeh): Not implemented!"); } 
-  inline void FiniteElement2s13MFRMindlin::computedhdz(const fmatvec::Vec& q,const fmatvec::Vec& u) { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computedhdz): Not implemented!"); } 
-  inline double FiniteElement2s13MFRMindlin::computeKineticEnergy(const fmatvec::Vec& q,const fmatvec::Vec& u) { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeKineticEnergy): Not implemented!"); } 
-  inline double FiniteElement2s13MFRMindlin::computeGravitationalEnergy(const fmatvec::Vec& q) { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeGravitationalEnergy): Not implemented!"); } 
-  inline double FiniteElement2s13MFRMindlin::computeElasticEnergy(const fmatvec::Vec& q) { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeElasticEnergy): Not implemented!"); } 
-  inline fmatvec::Vec FiniteElement2s13MFRMindlin::computePosition(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computePosition): Not implemented!"); } 
-  inline fmatvec::SqrMat FiniteElement2s13MFRMindlin::computeOrientation(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeOrientation): Not implemented!"); } 
-  inline fmatvec::Vec FiniteElement2s13MFRMindlin::computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeVelocity): Not implemented!"); } 
-  inline fmatvec::Vec FiniteElement2s13MFRMindlin::computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeAngularVelocity): Not implemented!"); } 
-  inline fmatvec::Mat FiniteElement2s13MFRMindlin::computeJacobianOfMotion(const fmatvec::Vec& qG,const MBSim::ContourPointData& data) { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeJacobianOfMotion): Not implemented!"); } 
+  inline void FiniteElement2s13MFRMindlin::computeh(const fmatvec::Vec& q,const fmatvec::Vec& u) { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeh): Not implemented!"); } 
+  inline void FiniteElement2s13MFRMindlin::computedhdz(const fmatvec::Vec& q,const fmatvec::Vec& u) { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computedhdz): Not implemented!"); } 
+  inline double FiniteElement2s13MFRMindlin::computeKineticEnergy(const fmatvec::Vec& q,const fmatvec::Vec& u) { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeKineticEnergy): Not implemented!"); } 
+  inline double FiniteElement2s13MFRMindlin::computeGravitationalEnergy(const fmatvec::Vec& q) { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeGravitationalEnergy): Not implemented!"); } 
+  inline double FiniteElement2s13MFRMindlin::computeElasticEnergy(const fmatvec::Vec& q) { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeElasticEnergy): Not implemented!"); } 
+  inline fmatvec::Vec FiniteElement2s13MFRMindlin::computePosition(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computePosition): Not implemented!"); } 
+  inline fmatvec::SqrMat FiniteElement2s13MFRMindlin::computeOrientation(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeOrientation): Not implemented!"); } 
+  inline fmatvec::Vec FiniteElement2s13MFRMindlin::computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeVelocity): Not implemented!"); } 
+  inline fmatvec::Vec FiniteElement2s13MFRMindlin::computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeAngularVelocity): Not implemented!"); } 
+  inline fmatvec::Mat FiniteElement2s13MFRMindlin::computeJacobianOfMotion(const fmatvec::Vec& qG,const MBSim::ContourPointData& data) { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeJacobianOfMotion): Not implemented!"); } 
+
   inline const fmatvec::SymMat& FiniteElement2s13MFRMindlin::getK() const { return *K; }
-  inline const fmatvec::SymMat& FiniteElement2s13MFRMindlin::getM() const { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::getM): Not implemented!"); }
   inline const fmatvec::SymMat& FiniteElement2s13MFRMindlin::getM_RR() const { return *M_RR; }
   inline const fmatvec::Mat& FiniteElement2s13MFRMindlin::getN_compl() const { return *N_compl; }
   inline const fmatvec::SqrMat& FiniteElement2s13MFRMindlin::getN_ij(int i, int j) const { return *(N_ij[i][j]); }
-  inline const fmatvec::RowVec& FiniteElement2s13MFRMindlin::getNR_ij(int i, int j) const { return *(NR_ij[i][j]); }
+  inline const fmatvec::RowVec& FiniteElement2s13MFRMindlin::getNR_ij(int i, int j) const {return *(NR_ij[i][j]); }
   inline const fmatvec::Vec& FiniteElement2s13MFRMindlin::getR_compl() const { return *R_compl; }
   inline const fmatvec::SymMat& FiniteElement2s13MFRMindlin::getR_ij() const { return *R_ij; }
   inline void FiniteElement2s13MFRMindlin::setEModul(double E_) { E = E_; }
   inline void FiniteElement2s13MFRMindlin::setPoissonRatio(double nu_) { nu = nu_; }
   inline void FiniteElement2s13MFRMindlin::setDensity(double rho_) { rho = rho_; }
   inline void FiniteElement2s13MFRMindlin::setShearCorrectionFactor(double alphaS_) { alphaS = alphaS_; }
-  inline void FiniteElement2s13MFRMindlin::freeK() { delete K; K=0; }
-  inline void FiniteElement2s13MFRMindlin::freeM_RR() { delete M_RR; M_RR=0; }
-  inline void FiniteElement2s13MFRMindlin::freeN_ij(int i, int j) { delete N_ij[i][j]; N_ij[i][j]=0; }
-  inline void FiniteElement2s13MFRMindlin::freeN_compl() { delete N_compl; N_compl=0; }
-  inline void FiniteElement2s13MFRMindlin::freeNR_ij(int i, int j) { delete NR_ij[i][j]; NR_ij[i][j]=0; }
-  inline void FiniteElement2s13MFRMindlin::freeR_compl() { delete R_compl; R_compl=0; }
-  inline void FiniteElement2s13MFRMindlin::freeR_ij() { delete R_ij; R_ij=0; }
-  inline fmatvec::Vec FiniteElement2s13MFRMindlin::computeState(const fmatvec::Vec &NodeCoordinates,const fmatvec::Vec &qElement,const fmatvec::Vec &qpElement,const fmatvec::Vec &s,double d1,double d2) { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeState): Not implemented!"); }
-  inline fmatvec::Mat FiniteElement2s13MFRMindlin::JGeneralized(const fmatvec::Vec &NodeCoordinates,const fmatvec::Vec &s) { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::JGeneralized): Not implemented!"); }
 }
 
 #endif /* _FINITE_ELEMENT_2S_13_MFR_MINDLIN_H_ */
