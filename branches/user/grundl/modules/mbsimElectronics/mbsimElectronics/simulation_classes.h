@@ -1,7 +1,6 @@
 #ifndef _SIMULATION_CLASSES_H
 #define _SIMULATION_CLASSES_H
 
-#include "mbsim/tree.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/object.h"
 #include "mbsim/link.h"
@@ -24,9 +23,9 @@ namespace MBSimElectronics {
     public:
       Mesh(const std::string &name) : MBSim::Object(name), precessor(0) {}
       void calcqSize() { qSize = 1;}
-      void calcuSize(int j) { uSize[0] = 1; uSize[1] = 1;}
+      void calcuSize(int j) { uSize[j] = (j==0) ? 1 : 0;}
       void updateStateDependentVariables(double t) {};
-      void updateJacobians(double t) {};
+      void updateJacobians(double t, int j=0) {};
       void updateInverseKineticsJacobians(double t) {};
       void init(MBSim::InitStage stage);
       Object* getObjectDependingOn() const {return precessor;}
@@ -41,26 +40,27 @@ namespace MBSimElectronics {
 
   class Branch : public MBSim::Object {
     protected:
-      fmatvec::Mat J;
+      fmatvec::Mat J[2];
       fmatvec::Vec Q, I;
       std::vector<Mesh*> mesh;
-      std::vector<int> vz;
+      std::vector<double> vz;
       Terminal *startTerminal, *endTerminal;
       std::vector<Branch*> connectedBranch;
       int flag;
       Object* precessor;
     public:
       Branch(const std::string &name) : Object(name), Q(1), I(1), flag(0), precessor(0) {}
+      void calcuSize(int j) { uSize[j] = (j==0) ? 0 : 1;}
       void updateStateDependentVariables(double t);
-      void updateJacobians(double t) {};
+      void updateJacobians(double t, int j=0) {};
       void updateInverseKineticsJacobians(double t) {};
-      const fmatvec::Mat& getJacobian() const {return J;}
-      fmatvec::Mat& getJacobian() {return J;}
+      const fmatvec::Mat& getJacobian(int j) const {return J[j];}
+      fmatvec::Mat& getJacobian(int j) {return J[j];}
       const fmatvec::Vec& getCurrent() const {return I;}
       fmatvec::Vec& getCurrent() {return I;}
       const fmatvec::Vec& getCharge() const {return Q;}
       fmatvec::Vec& getCharge() {return Q;}
-      void setvz(int vz_, Mesh* mesh);
+      void setvz(double vz_, Mesh* mesh);
       void connect(Mesh *mesh_) {mesh.push_back(mesh_);mesh_->addBranch(this);vz.push_back(0);}
       void clearMeshList() {mesh.clear();}
       int getNumberOfConnectedMeshes() const {return mesh.size();}
@@ -78,6 +78,9 @@ namespace MBSimElectronics {
       int getFlag() const { return flag; }
       Object* getObjectDependingOn() const {return precessor;}
       void setPrecessor(Object* obj) {precessor = obj;}
+      void updateh0Fromh1(double t); 
+      void updateW0FromW1(double t); 
+      void updateV0FromV1(double t);
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::Group* getOpenMBVGrp() { return 0; }
 #endif
@@ -88,30 +91,29 @@ namespace MBSimElectronics {
       fmatvec::Vec gdn, gdd;
     public:
       ElectronicLink(const std::string &name) : Link(name) {}
+      virtual Element* getParent() {return parent;}
+      virtual const Element* getParent() const {return parent;}
+      virtual void setParent(Element* parent_) {parent = parent_;}
 
-      void calcgSize();
-      void calcgdSize();
-      void calclaSize();
-      void calclaSizeForActiveg();
-      void calcgSizeActive();
-      void calcgdSizeActive();
+      void calcgSize(int j);
+      void calcgdSize(int j);
+      void calclaSize(int j);
       void updateg(double t);
       void updategd(double t);
-      void updateW(double t);
+      void updateW(double t, int j=0);
       void plot(double t, double dt = 1); 
       virtual std::string getName() const {return Link::getName();}
       virtual void setName(std::string name) {Link::setName(name);}
-      MBSim::DynamicSystem* getParent() { return Link::getParent(); }
-      void setParent(MBSim::DynamicSystem* sys) { Link::setParent(sys); }
       bool isActive() const {return true;}
       bool gActiveChanged() {return true;}
+      virtual bool isSingleValued() const { return true; }
       void init(MBSim::InitStage stage);
-      void updatehRef(const fmatvec::Vec &hParent, const fmatvec::Vec &hLinkParent, int j=0);
+      void updatehRef(const fmatvec::Vec &hParent, int j=0);
       void updaterRef(const fmatvec::Vec &rParent, int j=0);
       virtual double computeVoltage() {return 0;}
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      virtual void updater(double t) { throw new MBSim::MBSimError("ERROR (ElectronicLink::updater): Not implemented!"); }
+      virtual void updater(double t) { throw MBSim::MBSimError("ERROR (ElectronicLink::updater): Not implemented!"); }
       /*****************************************************/
 
       /* INHERITED INTERFACE OF LINK */
@@ -128,7 +130,7 @@ namespace MBSimElectronics {
       double R;
     public:
       Resistor(const std::string &name);
-      void updateh(double t);
+      void updateh(double t, int j=0);
       void setResistance(double R_) { R = R_;}
       double computeVoltage();
   };
@@ -138,7 +140,7 @@ namespace MBSimElectronics {
       double C;
     public:
       Capacitor(const std::string &name);
-      void updateh(double t);
+      void updateh(double t, int j=0);
       void setCapacity(double C_) { C = C_;}
   };
 
@@ -148,7 +150,7 @@ namespace MBSimElectronics {
       MBSimControl::Signal *voltageSignal;
     public:
       VoltageSource(const std::string &name);
-      void updateh(double t);
+      void updateh(double t, int j=0);
       void setVoltageSignal(MBSimControl::Signal *signal) {voltageSignal = signal; }
       //void setVoltageSignal(MBSim::Function1<fmatvec::Vec,double> *func) {voltageSignal = func;}
   };
@@ -159,7 +161,7 @@ namespace MBSimElectronics {
    public:
       Diode(const std::string &name);
       void setSetValued(bool flag) {sv = flag;}
-      void updateh(double t);
+      void updateh(double t, int j=0);
       bool isSetValued() const {return sv;}
       void checkImpactsForTermination(double dt);
       void solveImpactsGaussSeidel(double dt);
@@ -175,8 +177,8 @@ namespace MBSimElectronics {
       Switch(const std::string &name);
       void setSetValued(bool flag) {sv = flag;}
       bool isSetValued() const {return sv;}
-      void updateh(double t);
-      void updateW(double t);
+      void updateh(double t, int j=0);
+      void updateW(double t, int j=0);
       void checkImpactsForTermination(double dt);
       void solveImpactsGaussSeidel(double dt);
       void setVoltageSignal(MBSimControl::Signal *signal) {voltageSignal = signal; }
@@ -188,14 +190,15 @@ namespace MBSimElectronics {
     public:
       ElectronicObject(const std::string &name) : Object(name) {}
       void init(MBSim::InitStage stage);
+      virtual Element* getParent() {return parent;}
+      virtual const Element* getParent() const {return parent;}
+      virtual void setParent(Element* parent_) {parent = parent_;}
       void plot(double t, double dt = 1); 
       void updateStateDependentVariables(double t) {};
-      void updateJacobians(double t) {};
+      void updateJacobians(double t, int j=0) {};
       void updateInverseKineticsJacobians(double t) {};
       virtual std::string getName() const {return Object::getName();}
       virtual void setName(std::string name) {Object::setName(name);}
-      MBSim::DynamicSystem* getParent() { return Object::getParent(); }
-      void setParent(MBSim::DynamicSystem* sys) { Object::setParent(sys); }     
       Object* getObjectDependingOn() const {return branch;}
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::Group* getOpenMBVGrp() { return 0; }
@@ -207,7 +210,7 @@ namespace MBSimElectronics {
       double L;
     public:
       Inductor(const std::string &name);
-      void updateM(double t); 
+      void updateM(double t, int j=0); 
       void setInductance(double L_) { L = L_;}
       void updateStateDependentVariables(double t);
   };

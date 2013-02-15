@@ -60,7 +60,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   stab2->setFrameForKinematics(stab2->getFrame("R"));
   stab2->setMass(mStab);
   Theta(2,2) = JStab;
-  stab2->setInertiaTensor(Theta,stab2->getFrame("C"));
+  stab2->setInertiaTensor(Theta);
   stab2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
   stab2->setInitialGeneralizedPosition(Vec("[-1.6]"));
 
@@ -84,7 +84,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   stab3->setFrameForKinematics(stab3->getFrame("R"));
   stab3->setMass(mStab);
   Theta(2,2) = JStab;
-  stab3->setInertiaTensor(Theta,stab3->getFrame("C"));
+  stab3->setInertiaTensor(Theta);
   stab3->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
   stab3->setInitialGeneralizedPosition(Vec("[-1.6]"));
 
@@ -106,7 +106,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   stab4->setFrameForKinematics(stab4->getFrame("C"));
   stab4->setMass(mStab);
   Theta(2,2) = JStab;
-  stab4->setInertiaTensor(Theta,stab4->getFrame("C"));
+  stab4->setInertiaTensor(Theta);
   stab4->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
   stab4->setInitialGeneralizedVelocity(Vec("[-1.6]"));
 

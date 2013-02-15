@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: schneidm@users.berlios.de
+ * Contact: markus.ms.schneider@gmail.com
  */
 
 #ifndef  _HNODE_MEC_H_
@@ -78,15 +78,15 @@ namespace MBSimHydraulics {
 
       virtual void updateWRef(const fmatvec::Mat& Wref, int i=0);
       virtual void updateVRef(const fmatvec::Mat& Vref, int i=0);
-      virtual void updatehRef(const fmatvec::Vec& href, const fmatvec::Vec& hLinkRef, int i=0);
+      virtual void updatehRef(const fmatvec::Vec& href, int i=0);
       virtual void updatedhdqRef(const fmatvec::Mat& dhdqRef, int i=0);
       virtual void updatedhduRef(const fmatvec::SqrMat& dhduRef, int i=0);
       virtual void updatedhdtRef(const fmatvec::Vec& dhdtRef, int i=0);
       virtual void updaterRef(const fmatvec::Vec& ref, int i=0);
 
-      void updateh(double t);
+      void updateh(double t, int j=0);
       void updatedhdz(double t);
-      virtual void updater(double t);
+      virtual void updater(double t, int j=0);
       void updategd(double t);
       void updatexd(double t);
       void updatedx(double t, double dt);
@@ -103,6 +103,12 @@ namespace MBSimHydraulics {
       std::vector<OpenMBV::Arrow *> openMBVArrows;
       double openMBVArrowSize;
 #endif
+
+    private:
+      std::vector<std::string> saved_translatorial_frameOfReference, saved_rotatorial_frameOfReference, saved_rotatorial_frameOfRotationCenter;
+      std::vector<fmatvec::Vec> saved_translatorial_normal, saved_rotatorial_normal;
+      std::vector<double> saved_translatorial_area, saved_rotatorial_area;
+      std::vector<bool> saved_translatorial_noVolumeChange, saved_rotatorial_noVolumeChange;
   };
 
   /*! ConstrainedNodeMec */
@@ -174,17 +180,18 @@ namespace MBSimHydraulics {
       virtual std::string getType() const { return "RigidNodeMec"; }
 
       bool isSetValued() const {return true; }
+      bool isActive() const {return true; }
 
-      void calclaSize() {laSize=1; }
-      void calclaSizeForActiveg() {laSize=0; }
-      void calcrFactorSize() {rFactorSize=1; }
+      void calclaSize(int j) {laSize=1; }
+      //void calclaSizeForActiveg() {laSize=0; }
+      void calcrFactorSize(int j) {rFactorSize=1; }
 
       void init(MBSim::InitStage stage);
 
       void updatewbRef(const fmatvec::Vec& wbParent);
 
       void updategd(double t);
-      void updateW(double t);
+      void updateW(double t, int j=0);
 
       void updaterFactors();
       void solveImpactsFixpointSingle(double dt);

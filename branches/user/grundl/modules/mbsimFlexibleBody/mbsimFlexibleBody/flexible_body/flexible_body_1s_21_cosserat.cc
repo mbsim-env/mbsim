@@ -64,7 +64,7 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FlexibleBody1s21Cosserat::FlexibleBody1s21Cosserat(const string &name, bool openStructure_) : FlexibleBodyContinuum<double> (name), cylinder(new CylinderFlexible("Cylinder")), top(new FlexibleBand("Top")), bottom(new FlexibleBand("Bottom")), left(new FlexibleBand("Left")), right(new FlexibleBand("Right")), neutralFibre(new Contour1sFlexible("NeutralFibre")), angle(new Cardan()), Elements(0), rotationalElements(0), L(0.), l0(0.), E(0.), G(0.),A(0.), I1(0.), I2(0.), I0(0.), rho(0.), R1(0.), R2(0.), cEps0D(0.), cEps1D(0.), cEps2D(0.), openStructure(openStructure_), initialised(false), bound_ang_start(3,INIT,0.), bound_ang_end(3,INIT,0.), bound_ang_vel_start(3,INIT,0.), bound_ang_vel_end(3,INIT,0.), cuboidBreadth(0.), cuboidHeight(0.), cylinderRadius(0.), curve(new NurbsCurve1s("Curve")) {
+  FlexibleBody1s21Cosserat::FlexibleBody1s21Cosserat(const string &name, bool openStructure_) : FlexibleBody1sCosserat(name, openStructure) {
     Body::addContour(cylinder);
     Body::addContour(top);
     Body::addContour(bottom);
@@ -83,17 +83,17 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s21Cosserat::BuildElements() {
     /* translational elements */
     for(int i=0;i<Elements;i++) {
-      int j = 6*i; // start index in entire beam coordinates
+      int j = 3*i; // start index in entire beam coordinates
 
       if(i<Elements-1 || openStructure) {
-        qElement[i] = q(j,j+8);
-        uElement[i] = u(j,j+8);
+        qElement[i] = q(j,j+4);
+        uElement[i] = u(j,j+4);
       }
       else { // last FE-Beam for closed structure	
-        qElement[i](0,5) = q(j,j+5);
-        uElement[i](0,5) = u(j,j+5);
-        qElement[i](6,8) = q(0,2);
-        uElement[i](6,8) = u(0,2);
+        qElement[i](0,2) = q(j,j+2);
+        uElement[i](0,2) = u(j,j+2);
+        qElement[i](3,4) = q(0,1);
+        uElement[i](3,4) = u(0,1);
       }
     }
 
@@ -102,11 +102,11 @@ namespace MBSimFlexibleBody {
       computeBoundaryCondition();
 
     for(int i=0;i<rotationalElements;i++) {
-      int j = 6*i; // start index in entire beam coordinates
+      int j = 3*i; // start index in entire beam coordinates
 
       if(i>0 && i<rotationalElements-1) { // no problem case
-        qRotationElement[i] = q(j-3,j+5); // staggered grid -> rotation offset 
-        uRotationElement[i] = u(j-3,j+5);
+        qRotationElement[i] = q(j-1,j+2); // staggered grid -> rotation offset
+        uRotationElement[i] = u(j-1,j+2);
       }
       else if(i==0) { // first element
         if(openStructure) { // open structure
@@ -116,12 +116,12 @@ namespace MBSimFlexibleBody {
           uRotationElement[i](3,8) = u(j,j+5);
         }
         else { // closed structure concerning gamma
-          qRotationElement[i](0,2) = q(q.size()-3,q.size()-1); 
-          uRotationElement[i](0,2) = u(u.size()-3,u.size()-1); 
-          qRotationElement[i](3,8) = q(j,j+5);
-          uRotationElement[i](3,8) = u(j,j+5);
-          if(q(j+5)<q(q.size()-1)) qRotationElement[i](2) -= 2.*M_PI;
-          else qRotationElement[i](2) += 2.*M_PI;
+          qRotationElement[i](0) = q(q.size()-1);
+          uRotationElement[i](0) = u(u.size()-1);
+          qRotationElement[i](1,3) = q(j,j+2);
+          uRotationElement[i](1,3) = u(j,j+2);
+          if(q(j+2)<q(q.size()-1)) qRotationElement[i](0) -= 2.*M_PI;
+          else qRotationElement[i](0) += 2.*M_PI;
         }
       }
       else if(i==rotationalElements-1) { // last element
@@ -132,49 +132,72 @@ namespace MBSimFlexibleBody {
           uRotationElement[i](6,8) = bound_ang_vel_end;
         }
         else { // closed structure concerning gamma
-          qRotationElement[i] = q(j-3,j+5);
-          uRotationElement[i] = u(j-3,j+5);
+          qRotationElement[i] = q(j-1,j+2);
+          uRotationElement[i] = u(j-1,j+2);
         }
       }
     }
   }
 
   void FlexibleBody1s21Cosserat::GlobalVectorContribution(int n, const Vec& locVec,Vec& gloVec) {
-    int j = 6*n; // start index in entire beam coordinates
+    int j = 3*n; // start index in entire beam coordinates
 
     if(n<Elements-1 || openStructure) {
-      gloVec(j,j+8) += locVec;
+      gloVec(j,j+4) += locVec;
     }
     else { // last FE for closed structure
-      gloVec(j,j+5) += locVec(0,5);
-      gloVec(0,2) += locVec(6,8);
+      gloVec(j,j+2) += locVec(0,2);
+      gloVec(0,1) += locVec(3,4);
+    }
+  }
+
+  void FlexibleBody1s21Cosserat::GlobalVectorContributionRotation(int n, const Vec& locVec,Vec& gloVec) {
+    int j = 3*n; // start index in entire beam coordinates
+    if(n>0 && n<rotationalElements-1) { // no problem case
+      gloVec(j-1,j+2) += locVec; // staggered grid -> rotation offset
+    }
+    else if(n==0) { // first element
+      if(openStructure) { // open structure
+        gloVec(j,j+5) += locVec(3,8);
+        gloVec(j+3,j+5) += locVec(0,2); // TODO depends on computeBoundaryConditions()
+      }
+      else { // closed structure
+        gloVec(j,j+2) += locVec(1,3);
+        gloVec(q.size()-1) += locVec(0);
+      }
+    }
+    else if(n==rotationalElements-1) { // last element
+      if(openStructure) { // open structure
+        gloVec(j-3,j+2) += locVec(0,5);
+        gloVec(j-3,j-1) += locVec(6,8); // TODO depends on computeBoundaryConditions()
+      }
+      else { // closed structure
+        gloVec(j-1,j+2) += locVec;
+      }
     }
   }
 
   void FlexibleBody1s21Cosserat::GlobalMatrixContribution(int n, const Mat& locMat, Mat& gloMat) {
-    int j = 6*n; // start index in entire beam coordinates
+    int j = 3*n; // start index in entire beam coordinates
 
     if(n<Elements-1 || openStructure) {
-      gloMat(Index(j,j+8),Index(j,j+8)) += locMat;
+      gloMat(Index(j,j+4),Index(j,j+4)) += locMat;
     }
     else { // last FE for closed structure
-      gloMat(Index(j,j+5),Index(j,j+5)) += locMat(Index(0,5),Index(0,5)); 
-      gloMat(Index(j,j+5),Index(0,2)) += locMat(Index(0,5),Index(6,8));
-      gloMat(Index(0,2),Index(j,j+5)) += locMat(Index(6,8),Index(0,5));
-      gloMat(Index(0,2),Index(0,2)) += locMat(Index(6,8),Index(6,8));
+      gloMat(Index(j,j+2),Index(j,j+2)) += locMat(Index(0,2),Index(0,2));	// normaler Anteil mit überschneidung vorheriges Element
+      gloMat(Index(0,1),Index(0,1)) += locMat(Index(3,4),Index(3,4));
     }
   }
 
   void FlexibleBody1s21Cosserat::GlobalMatrixContribution(int n, const SymMat& locMat, SymMat& gloMat) {
-    int j = 6*n; // start index in entire beam coordinates
+    int j = 3*n; // start index in entire beam coordinates
 
     if(n<Elements-1 || openStructure) {
-      gloMat(Index(j,j+8)) += locMat;
+      gloMat(Index(j,j+4)) += locMat;
     }
     else { // last FE for closed structure
-      gloMat(Index(j,j+5)) += locMat(Index(0,5)); 
-      gloMat(Index(j,j+5),Index(0,2)) += locMat(Index(0,5),Index(6,8));
-      gloMat(Index(0,2)) += locMat(Index(6,8));
+      gloMat(Index(j,j+2)) += locMat(Index(0,2));		// normaler Anteil mit überschneidung vorheriges Element
+      gloMat(Index(0,1)) += locMat(Index(3,4));			// überschneidung letztes und erstes element
     }
   }
 
@@ -183,27 +206,55 @@ namespace MBSimFlexibleBody {
 #ifdef HAVE_NURBS
       double sLocalTranslation;
       int currentElementTranslation;
+
       BuildElementTranslation(cp.getLagrangeParameterPosition()(0),sLocalTranslation,currentElementTranslation); // Lagrange parameter and number of translational element
-      curve->setNormalRotationGrid(frameOfReference->getOrientation()*angle->computen(q(6*currentElementTranslation+3,6*currentElementTranslation+5))); // normal
+
+      Vec qTmpCONT(3,INIT,0.);
+      qTmpCONT(2) = q(3*currentElementTranslation+2);
+
+      curve->setNormalRotationGrid(frameOfReference->getOrientation()*angle->computen(qTmpCONT));  // normal
       curve->updateKinematicsForFrame(cp,ff);
 #endif
       Vec3 phiTmp;
       if(ff==firstTangent || ff==normal || ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all)
         phiTmp = computeAngles(cp.getLagrangeParameterPosition()(0)); // interpolate angles linearly
 
-      if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(1, frameOfReference->getOrientation()*angle->computet(phiTmp)); // tangent
-      if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(0, frameOfReference->getOrientation()*angle->computen(phiTmp)); // normal
-      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(2, crossProduct(cp.getFrameOfReference().getOrientation().col(0),cp.getFrameOfReference().getOrientation().col(1))); // binormal (cartesian system)
+      if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all)
+        cp.getFrameOfReference().getOrientation().set(1, frameOfReference->getOrientation()*angle->computet(phiTmp)); // tangent
+      if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all)
+        cp.getFrameOfReference().getOrientation().set(0, frameOfReference->getOrientation()*angle->computen(phiTmp)); // normal
+      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all)
+        cp.getFrameOfReference().getOrientation().set(2, crossProduct(cp.getFrameOfReference().getOrientation().col(0),cp.getFrameOfReference().getOrientation().col(1))); // binormal (cartesian system)
     }
     else if(cp.getContourParameterType() == NODE) { // frame on node
       int node = cp.getNodeNumber(); // TODO open structure different?
+      Vec qTmpNODE(3,INIT,0.);
+      qTmpNODE(0,1) = q(3*node+0,3*node+1);
+      Vec qTmpANGLE(3,INIT,0.);
+      qTmpANGLE(2) = q(3*node+2);
+      Vec uTmp(3,INIT,0.);
+      uTmp(0,1) = u(3*node+0,3*node+1);
+      Vec uTmpANGLE(3,INIT,0.);
+      uTmpANGLE(2) = u(3*node+2);
 
-      if(ff==position || ff==position_cosy || ff==all) cp.getFrameOfReference().setPosition(frameOfReference->getPosition() + frameOfReference->getOrientation()*q(6*node+0,6*node+2));
-      if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(1, frameOfReference->getOrientation()*angle->computet(q(6*node+3,6*node+5))); // tangent
-      if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(0, frameOfReference->getOrientation()*angle->computen(q(6*node+3,6*node+5))); // normal
-      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(2, crossProduct(cp.getFrameOfReference().getOrientation().col(0),cp.getFrameOfReference().getOrientation().col(1))); // binormal (cartesian system)
-      if(ff==velocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) cp.getFrameOfReference().setVelocity(frameOfReference->getOrientation()*u(6*node+0,6*node+2));
-      if(ff==angularVelocity || ff==velocities || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().setAngularVelocity(frameOfReference->getOrientation()*angle->computeOmega(q(6*node+3,6*node+5),u(6*node+3,6*node+5)));
+
+      if(ff==position || ff==position_cosy || ff==all)
+        cp.getFrameOfReference().setPosition(frameOfReference->getPosition() + frameOfReference->getOrientation()*qTmpNODE);
+
+      if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) 
+        cp.getFrameOfReference().getOrientation().set(1, frameOfReference->getOrientation()*angle->computet(qTmpANGLE)); // tangent
+
+      if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) 
+        cp.getFrameOfReference().getOrientation().set(0, frameOfReference->getOrientation()*angle->computen(qTmpANGLE)); // normal
+
+      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all)
+        cp.getFrameOfReference().getOrientation().set(2, crossProduct(cp.getFrameOfReference().getOrientation().col(0),cp.getFrameOfReference().getOrientation().col(1))); // binormal (cartesian system)
+
+      if(ff==velocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all)
+        cp.getFrameOfReference().setVelocity(frameOfReference->getOrientation()*uTmp);
+
+      if(ff==angularVelocity || ff==velocities || ff==velocity_cosy || ff==velocities_cosy || ff==all)
+        cp.getFrameOfReference().setAngularVelocity(frameOfReference->getOrientation()*angle->computeOmega(qTmpANGLE,uTmpANGLE));
     }
     else throw MBSimError("ERROR(FlexibleBody1s21Cosserat::updateKinematicsForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
 
@@ -223,7 +274,9 @@ namespace MBSimFlexibleBody {
     }
     else if(cp.getContourParameterType() == NODE) { // force on node
       int node = cp.getNodeNumber();
-      Mat Jacobian_trans(qSize,3,INIT,0.);
+      int qSizeTmp;
+      qSizeTmp = qSize*2;
+      Mat Jacobian_trans(qSizeTmp,3,INIT,0.);
 
       Jacobian_trans(Index(6*node,6*node+2),Index(0,2)) << SqrMat(3,EYE); // translation
 
@@ -231,11 +284,13 @@ namespace MBSimFlexibleBody {
     }
     else if(cp.getContourParameterType() == STAGGEREDNODE) { // force on staggered node
       int node = cp.getNodeNumber();
-      Mat Jacobian_rot(qSize,3,INIT,0.); // TODO open structure
-      Vec p = q(6*node+3,6*node+5);
+      int qSizeTmpRot;
+      qSizeTmpRot = qSize*2;
+      Vec pTmp(3,INIT,0.);
 
-      Jacobian_rot(Index(6*node+3,6*node+5),Index(0,2)) = angle->computeT(p); // rotation
-
+      Mat Jacobian_rot(qSizeTmpRot,3,INIT,0.); // TODO open structure
+      pTmp(2) = q(3*node+2);
+      Jacobian_rot(Index(6*node+3,6*node+5),Index(0,2)) = angle->computeT(pTmp);
       cp.getFrameOfReference().setJacobianOfRotation(frameOfReference->getOrientation()*Jacobian_rot.T());
     }
     else throw MBSimError("ERROR(FlexibleBody1s21Cosserat::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'STAGGEREDNODE' or 'CONTINUUM'");
@@ -326,18 +381,18 @@ namespace MBSimFlexibleBody {
 
       /* translational elements */
       for(int i=0;i<Elements;i++) {
-        discretization.push_back(new FiniteElement1s21CosseratTranslation(l0,rho,A,E,G,I1,I2,I0,g,angle));
+        discretization.push_back(new FiniteElement1s21CosseratTranslation(l0,rho,A,E,G,I1,g));
         qElement.push_back(Vec(discretization[i]->getqSize(),INIT,0.));
         uElement.push_back(Vec(discretization[i]->getuSize(),INIT,0.));
-        static_cast<FiniteElement1s21CosseratTranslation*>(discretization[i])->setMaterialDamping(Elements*cEps0D,cEps1D,cEps2D);
+        static_cast<FiniteElement1s21CosseratTranslation*>(discretization[i])->setMaterialDamping(Elements*cEps0D,cEps1D);
       }
 
       /* rotational elements */
       for(int i=0;i<rotationalElements;i++) {
-        rotationDiscretization.push_back(new FiniteElement1s21CosseratRotation(l0,E,G,I1,I2,I0,angle));
+        rotationDiscretization.push_back(new FiniteElement1s21CosseratRotation(l0,E,G,I1));
         qRotationElement.push_back(Vec(rotationDiscretization[i]->getqSize(),INIT,0.));
         uRotationElement.push_back(Vec(rotationDiscretization[i]->getuSize(),INIT,0.));
-        if(fabs(R1)>epsroot() || fabs(R2)>epsroot()) static_cast<FiniteElement1s21CosseratRotation*>(rotationDiscretization[i])->setCurlRadius(R1,R2);
+        if(fabs(R1)>epsroot()) static_cast<FiniteElement1s21CosseratRotation*>(rotationDiscretization[i])->setCurlRadius(R1);
       }
 
       initM();
@@ -363,10 +418,6 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21Cosserat::facLLM(int k) {
-    for(int i=0;i<(int)discretization.size();i++) {
-      int j = 6*i; 
-      LLM[k](Index(j+3,j+5)) = facLL(discretization[i]->getM()(Index(3,5)));
-    }
   }
 
   void FlexibleBody1s21Cosserat::updateh(double t, int k) {
@@ -422,7 +473,7 @@ namespace MBSimFlexibleBody {
       qSize = 6*n+3;
       rotationalElements += 1;
     }
-    else qSize = 6*n;
+    else qSize = 3*n;
 
     Vec q0Tmp;
     if(q0.size())
@@ -471,8 +522,9 @@ namespace MBSimFlexibleBody {
 
     if(sGlobal < l0/2.) { // first rotation element (last half)
       sLocalRotation = sGlobal + l0/2.;
-      phi_L = q(q.size()-3,q.size()-1).copy();
-      phi_R = q(3,5).copy();
+      phi_L(2) = q(q.size()-1);
+      phi_R(2) = q(2);
+
       if(phi_L(2) < phi_R(2))
         phi_L(2) += 2.*M_PI;
       else
@@ -480,13 +532,14 @@ namespace MBSimFlexibleBody {
     }
     else if (sGlobal < L - l0/2.) {
       BuildElementTranslation(sGlobal + l0/2.,sLocalRotation,currentElementRotation); // Lagrange parameter and number of rotational element (+l0/2)
-      phi_L = q(6*currentElementRotation-3,6*currentElementRotation-1).copy();
-      phi_R = q(6*currentElementRotation+3,6*currentElementRotation+5).copy();
+      phi_L(2) = q(3*currentElementRotation-1);//.copy();
+      phi_R(2) = q(3*currentElementRotation+2);//.copy();
     }
     else { // first rotation element (first half)
       sLocalRotation = sGlobal - (L - l0/2.);
-      phi_L = q(q.size()-3,q.size()-1).copy();
-      phi_R = q(3,5).copy();
+      phi_L(2) = q(q.size()-1);
+      phi_R(2) = q(2);
+
       if(phi_L(2) < phi_R(2))
         phi_L(2) += 2.*M_PI;
       else
@@ -504,14 +557,14 @@ namespace MBSimFlexibleBody {
 
     /* translational elements */
     for(int i=0;i<Elements;i++) {
-      discretization.push_back(new FiniteElement1s21CosseratTranslation(l0,rho,A,E,G,I1,I2,I0,g,angle));
+      discretization.push_back(new FiniteElement1s21CosseratTranslation(l0,rho,A,E,G,I1,g));
       qElement.push_back(Vec(discretization[0]->getqSize(),INIT,0.));
       uElement.push_back(Vec(discretization[0]->getuSize(),INIT,0.));
     }
 
     /* rotational elements */
     for(int i=0;i<rotationalElements;i++) {
-      rotationDiscretization.push_back(new FiniteElement1s21CosseratRotation(l0,E,G,I1,I2,I0,angle));
+      rotationDiscretization.push_back(new FiniteElement1s21CosseratRotation(l0,E,G,I1));
       qRotationElement.push_back(Vec(rotationDiscretization[0]->getqSize(),INIT,0.));
       uRotationElement.push_back(Vec(rotationDiscretization[0]->getuSize(),INIT,0.));
     }
@@ -546,10 +599,10 @@ namespace MBSimFlexibleBody {
     }
     for(int i=0;i<(int)discretization.size();i++) GlobalMatrixContribution(i,discretization[i]->getM(),M[0]); // assemble
     for(int i=0;i<(int)discretization.size();i++) {
-      int j = 6*i; 
+      int j = 3*i;
       LLM[0](Index(j,j+2)) = facLL(M[0](Index(j,j+2)));
       if(openStructure && i==(int)discretization.size()-1)
-        LLM[0](Index(j+6,j+8)) = facLL(M[0](Index(j+6,j+8)));
+        LLM[0](Index(j+3,j+4)) = facLL(M[0](Index(j+3,j+4)));
     }
   }
 
@@ -557,31 +610,7 @@ namespace MBSimFlexibleBody {
     // TODO
   }
 
-  void FlexibleBody1s21Cosserat::GlobalVectorContributionRotation(int n, const Vec& locVec,Vec& gloVec) {
-    int j = 6*n; // start index in entire beam coordinates
-    if(n>0 && n<rotationalElements-1) { // no problem case
-      gloVec(j-3,j+5) += locVec; // staggered grid -> rotation offset
-    }
-    else if(n==0) { // first element 
-      if(openStructure) { // open structure
-        gloVec(j,j+5) += locVec(3,8);
-        gloVec(j+3,j+5) += locVec(0,2); // TODO depends on computeBoundaryConditions()
-      }
-      else { // closed structure 
-        gloVec(j,j+5) += locVec(3,8);
-        gloVec(q.size()-3,q.size()-1) += locVec(0,2);
-      }
-    }
-    else if(n==rotationalElements-1) { // last element
-      if(openStructure) { // open structure
-        gloVec(j-3,j+2) += locVec(0,5);
-        gloVec(j-3,j-1) += locVec(6,8); // TODO depends on computeBoundaryConditions()
-      }
-      else { // closed structure
-        gloVec(j-3,j+5) += locVec;
-      }
-    }
-  }
+
 
   void FlexibleBody1s21Cosserat::exportPositionVelocity(const string & filenamePos, const string & filenameVel /*= string( )*/, const int & deg /* = 3*/, const bool &writePsFile /*= false*/) {
 #ifdef HAVE_NURBS

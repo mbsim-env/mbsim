@@ -12,19 +12,18 @@ libmbsimControl_la_SOURCES = \
 														 signal_processing_system.cc\
 														 signal_processing_system_sensor.cc\
 														 linear_transfer_system.cc\
+														 massless_spring_damper.cc\
 														 actuator.cc\
 														 objectfactory.cc\
 														 obsolet_hint.cc
 
 
 libmbsimControl_la_CPPFLAGS = -DTIXML_USE_STL
-libmbsimControl_la_LIBADD = 
+libmbsimControl_la_LIBADD = $(DEPS_LIBS)
 INCLUDES = $(DEPS_CFLAGS)
-LDADD = $(DEPS_LIBS)
 
 mbsimControlincludedir = $(includedir)/mbsimControl
 mbsimControlinclude_HEADERS = \
-															signal_interface.h\
 															signal_.h\
 														  extern_signal_source.h\
 															sensor.h\
@@ -36,6 +35,7 @@ mbsimControlinclude_HEADERS = \
 															signal_processing_system.h\
 															signal_processing_system_sensor.h\
 															linear_transfer_system.h\
+														  massless_spring_damper.h\
 															actuator.h\
 															objectfactory.h
 

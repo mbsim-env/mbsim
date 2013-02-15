@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: schneidm@users.berlios.de
+ * Contact: markus.ms.schneider@gmail.com
  */
 
 #include "mbsimHydraulics/rigid_line.h"
@@ -38,11 +38,11 @@ namespace MBSimHydraulics {
   void RigidLine::init(InitStage stage) {
     if (stage==MBSim::modelBuildup) {
       if (pL)
-        parent->addLink(new RigidLinePressureLoss(name+"/LinePressureLoss", this, pL, false,false));
+        ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"/LinePressureLoss", this, pL, false,false));
       RigidHLine::init(stage);
     }
     else if (stage==MBSim::plot) {
-      updatePlotFeatures(parent);
+      updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
         plotColumns.push_back("Reynolds number [-]");
         RigidHLine::init(stage);
@@ -93,9 +93,9 @@ namespace MBSimHydraulics {
     }
     else if (stage==MBSim::modelBuildup) {
       if (cpLBilateral)
-         parent->addLink(new RigidLinePressureLoss(name+"/BilateralClosablePressureLoss", this, cpL, true, false));
+         ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"/BilateralClosablePressureLoss", this, cpL, true, false));
      else
-        parent->addLink(new RigidLinePressureLoss(name+"/ClosablePressureLoss", this, cpL, false,false));
+        ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"/ClosablePressureLoss", this, cpL, false,false));
 
       RigidLine::init(stage);
     }
@@ -123,9 +123,9 @@ namespace MBSimHydraulics {
   void UnidirectionalRigidLine::init(InitStage stage) {
     if (stage==MBSim::modelBuildup) {
       if (upL)
-        parent->addLink(new RigidLinePressureLoss(name+"/RegularizedUnidirectionalPressureLoss", this, upL, false,false));
+        ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"/RegularizedUnidirectionalPressureLoss", this, upL, false,false));
       else
-        parent->addLink(new RigidLinePressureLoss(name+"/UnilateralUnidirectionalPressureLoss", this, NULL, false, true));
+        ((DynamicSystem*)parent)->addLink(new RigidLinePressureLoss(name+"/UnilateralUnidirectionalPressureLoss", this, NULL, false, true));
       RigidLine::init(stage);
     }
     else

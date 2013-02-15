@@ -20,6 +20,7 @@
 #ifndef _FLEXIBLE_BODY_1S_33_COSSERAT_H_
 #define _FLEXIBLE_BODY_1S_33_COSSERAT_H_
 
+#include "flexible_body_1s_cosserat.h"
 #include "mbsimFlexibleBody/flexible_body.h"
 #include "mbsimFlexibleBody/pointer.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"
@@ -57,7 +58,7 @@ namespace MBSimFlexibleBody {
    *    I. Romero: The interpolation of rotations and its application to finite element models of
    *    geometrically exact beams
    */
-  class FlexibleBody1s33Cosserat : public FlexibleBodyContinuum<double> {
+  class FlexibleBody1s33Cosserat : public FlexibleBody1sCosserat {
     public:
 
       /**
@@ -100,15 +101,12 @@ namespace MBSimFlexibleBody {
 
       /* GETTER / SETTER */
       void setNumberElements(int n);
-      void setLength(double L_);
-      void setEGModuls(double E_,double G_);
-      void setDensity(double rho_);
-      void setCrossSectionalArea(double A_);
-      void setMomentsInertia(double I1_,double I2_,double I0_);
+
+      void setMomentsInertia(double I1_, double I2_, double I0_);
+
       void setCurlRadius(double R1_,double R2_);
       void setMaterialDamping(double cEps0D_,double cEps1D_,double cEps2D_);
-      void setCylinder(double cylinderRadius_);
-      void setCuboid(double cuboidBreadth_,double cuboidHeight_);
+
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body) { openMBVBody=body; }
@@ -138,57 +136,6 @@ namespace MBSimFlexibleBody {
       void initInfo();
 
     private:
-      /** 
-       * \brief stl-vector of finite elements for rotation grid
-       */
-      std::vector<MBSim::DiscretizationInterface*> rotationDiscretization;
-
-      /** 
-       * \brief stl-vector of finite element positions for rotation grid
-       */
-      std::vector<fmatvec::Vec> qRotationElement;
-
-      /** 
-       * \brief stl-vector of finite element wise velocities for rotation grid
-       */
-      std::vector<fmatvec::Vec> uRotationElement;
-
-      /**
-       * \brief contours
-       */
-      CylinderFlexible *cylinder;
-      FlexibleBand *top, *bottom, *left, *right;
-      Contour1sFlexible *neutralFibre;
-
-      /**
-       * \brief angle parametrisation
-       */
-      CardanPtr angle;
-
-      /**
-       * \brief number of translational elements
-       */
-      int Elements;
-
-      /**
-       * \brief number of rotational elements =Elements (for a closed structure) or =Elements+1 (for an open structure)
-       */
-      int rotationalElements;
-
-      /**
-       * \brief length of entire beam and finite elements
-       */
-      double L, l0;
-
-      /**
-       * \brief elastic modules
-       */
-      double E, G;
-
-      /**
-       * \brief area of cross-section
-       */
-      double A;
 
       /**
        * \brief area moments of inertia
@@ -196,54 +143,20 @@ namespace MBSimFlexibleBody {
        * I1: in t-b-plane
        * I2: in t-n-plane
        */
-      double I1, I2, I0;
-
-      /**
-       * \brief density 
-       */
-      double rho;
+      double  I2, I0;
 
       /**
        * \brief radius of undeformed shape
        * R1: in t-b-plane
        * R2: in t-n-plane
        */
-      double R1, R2;
+      double R2;
 
       /**
        * \brief strain damping 
        */
-      double cEps0D, cEps1D, cEps2D;
+      double cEps2D;
 
-      /**
-       * \brief open or closed beam structure
-       */
-      bool openStructure;
-
-      /**
-       * \brief initialised FLAG 
-       */
-      bool initialised;
-
-      /**
-       * \brief boundary conditions for rotation grid
-       * first and last finite difference rotation beam element refer to values not directly given by dof in open structure
-       * they have to be estimated by the following values calculated in computeBoundaryCondition() 
-       */
-      fmatvec::Vec bound_ang_start;
-      fmatvec::Vec bound_ang_end;
-      fmatvec::Vec bound_ang_vel_start;
-      fmatvec::Vec bound_ang_vel_end;
-
-      /**
-       * \brief contour data 
-       */
-      double cuboidBreadth, cuboidHeight, cylinderRadius;
-
-      /**
-       * \brief contour for state description
-       */
-      NurbsCurve1s *curve;
 
       FlexibleBody1s33Cosserat(); // standard constructor
       FlexibleBody1s33Cosserat(const FlexibleBody1s33Cosserat&); // copy constructor
@@ -278,15 +191,10 @@ namespace MBSimFlexibleBody {
       void GlobalVectorContributionRotation(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
   };
 
-  inline void FlexibleBody1s33Cosserat::setLength(double L_) { L = L_; }
-  inline void FlexibleBody1s33Cosserat::setEGModuls(double E_,double G_) { E = E_; G = G_; }    	
-  inline void FlexibleBody1s33Cosserat::setDensity(double rho_) { rho = rho_;}     	
-  inline void FlexibleBody1s33Cosserat::setCrossSectionalArea(double A_) { A = A_; }    	
-  inline void FlexibleBody1s33Cosserat::setMomentsInertia(double I1_, double I2_, double I0_) { I1 = I1_; I2 = I2_; I0 = I0_; }    	
-  inline void FlexibleBody1s33Cosserat::setCurlRadius(double R1_,double R2_) { R1 = R1_; R2 = R2_; if(initialised) for(int i=0;i<Elements;i++) static_cast<FiniteElement1s33CosseratRotation*>(rotationDiscretization[i])->setCurlRadius(R1,R2); }    	
+  inline void FlexibleBody1s33Cosserat::setMomentsInertia(double I1_, double I2_, double I0_) { I1 = I1_; I2 = I2_; I0 = I0_; }
+
+  inline void FlexibleBody1s33Cosserat::setCurlRadius(double R1_,double R2_) { R1 = R1_; R2 = R2_; if(initialised) for(int i=0;i<Elements;i++) static_cast<FiniteElement1s33CosseratRotation*>(rotationDiscretization[i])->setCurlRadius(R1,R2); }
   inline void FlexibleBody1s33Cosserat::setMaterialDamping(double cEps0D_,double cEps1D_,double cEps2D_) { cEps0D = cEps0D_; cEps1D = cEps1D_; cEps2D = cEps2D_; if(initialised) for(int i=0;i<Elements;i++) static_cast<FiniteElement1s33CosseratTranslation*>(discretization[i])->setMaterialDamping(Elements*cEps0D,cEps1D,cEps2D); }
-  inline void FlexibleBody1s33Cosserat::setCylinder(double cylinderRadius_) { cylinderRadius = cylinderRadius_; }
-  inline void FlexibleBody1s33Cosserat::setCuboid(double cuboidBreadth_,double cuboidHeight_) { cuboidBreadth = cuboidBreadth_; cuboidHeight = cuboidHeight_; }
 
 }
 

@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2010 MBSim Development Team
+/* Copyright (C) 2004-2011 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: thschindler@users.berlios.de
+ * Contact: thorsten.schindler@mytum.de
  */
 
 #ifndef _FLEXIBLE_BODY_2S_13_MFR_MINDLIN_H_
@@ -40,7 +40,7 @@ namespace MBSimFlexibleBody {
        * \brief constructor
        * \param name of body
        */
-      FlexibleBody2s13MFRMindlin(const std::string &name);
+      FlexibleBody2s13MFRMindlin(const std::string &name, const int & DEBUGLEVEL_ = 0);
 
       /**
        * \brief destructor
@@ -48,11 +48,11 @@ namespace MBSimFlexibleBody {
       virtual ~FlexibleBody2s13MFRMindlin();
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY CONTINUUM */
-      using MBSim::FlexibleBodyContinuum<fmatvec::Vec>::addFrame;
+      using FlexibleBodyContinuum<fmatvec::Vec>::addFrame;
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updateM(double t);
+      virtual void updateM(double t, int k=0);
       /***************************************************/
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */

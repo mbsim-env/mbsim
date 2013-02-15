@@ -352,6 +352,38 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="ZetaPosNegLinePressureLoss" substitutionGroup="LinePressureLoss" type="ZetaPosNegLinePressureLossType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Druckverluste aufgrund Ein-/Auslaufverluste sowie Umlenkverluste mit Berücksichtigung der Flussrichtung. Mit diesem Element können unilaterale Element wie etwa Rückflusssperrventile angenähert werden.<br/>
+        Die Berechnung erfolgt gemäß
+        <object class="eqn">\Delta p = \frac{\rho}{2} \, \begin{cases} \zeta_{Pos} &amp; Q\geq0 \\ \zeta_{Neg} &amp; Q&lt;0 \end{cases} \, \frac{Q \, |Q|}{A^2}</object>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ZetaPosNegLinePressureLossType">
+    <xs:complexContent>
+      <xs:extension base="LinePressureLossType">
+        <xs:sequence>
+          <xs:element name="zetaPos" type="pv:nounitScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Druckverlustzahl <object class="inlineeqn">\zeta_{Pos}</object>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="zetaNeg" type="pv:nounitScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Druckverlustzahl <object class="inlineeqn">\zeta_{Neg}</object>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="LaminarTubeFlowLinePressureLoss" substitutionGroup="LinePressureLoss" type="LaminarTubeFlowLinePressureLossType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -462,6 +494,35 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="TabularLinePressureLoss" substitutionGroup="LinePressureLoss" type="TabularLinePressureLossType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Der auftretende Druckverlust wird direkt aus einer Tabelle abgelesen: <object class="inlineeqn">\Delta p=f \left( Q \right)</object>.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="TabularLinePressureLossType">
+    <xs:complexContent>
+      <xs:extension base="LinePressureLossType">
+        <xs:sequence>
+          <xs:element name="function">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function1_SS">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Angabe der Druckverlustwerte.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="ClosablePressureLoss" abstract="true" substitutionGroup="PressureLoss" type="ClosablePressureLossType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -500,8 +561,76 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
+          <xs:element name="zetaNegative" type="pv:nounitScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Druckverlustzahl <object class="inlineeqn">\zeta_{negative}</object>
+                Falls dieser Wert gesetzt wird, erfolgt bei der Berechnung des Druckverlustes eine Unterscheidung gemäß der Strömungsrichtung des Fluids.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="GapHeightClosablePressureLoss" substitutionGroup="ClosablePressureLoss" type="GapHeightClosablePressureLossType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Berechnung des Druckverlustes mittels einer laminaren Spaltströmung mit veränderlicher Höhe.
+        <object class="eqn">
+          <![CDATA[p_V=\frac{12 \, \eta \l}{b \, h^3} \, Q]]>
+        </object>
+        mit <object class="inlineeqn">h>0</object>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="GapHeightClosablePressureLossType">
+    <xs:complexContent>
+      <xs:extension base="ClosablePressureLossType">
+        <xs:sequence>
+          <xs:element name="length" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Länge des Spalts <object class="inlineeqn">l</object>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="width" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Breite des Spalts <object class="inlineeqn">b</object>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="ReynoldsClosablePressureLoss" substitutionGroup="ClosablePressureLoss" type="ReynoldsClosablePressureLossType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Berechnung des Druckverlustes in einem Ventil mit verstellbarem Durchmesser mittels der <object class="inlineeqn">Re</object>-Zahl.<br/>
+        Der Druckverlust bestimmt sich zu
+        <object class="eqn">
+          <![CDATA[p_V=\frac{\rho}{2} \, \lambda \, \frac{l}{d \left(x\right)} \, \frac{Q \, \left| Q \right|}{A\left(x\right)^2}]]>
+        </object>
+        Der Druckverlustkoeffizient <object class="inlineeqn">\lambda</object> wird darin in Abhängigkeit der <object class="inlineeqn">Re</object>-Zahl
+        <object class="eqn">
+          <![CDATA[Re = \frac{d(x)}{A(x)} \, \frac{Q}{\nu}]]>
+        </object>
+        bestimmt.
+        Die Fläche <object class="inlineeqn">A(x)</object> wird aus dem Durchmesser <object class="inlineeqn">d(x)</object> berechnet; der Druckverlust wird somit unabhängig vom Leitungsdurchmesser berechnet.
+        Die Druckverlustzahl <object class="inlineeqn">\lambda</object> wird nach Blasius unter Annahme eines glatten Rohres und eines turbulenten Strömungszustandes zu
+        <object class="eqn">\lambda = \frac{0.3164}{Re^{0.25}}</object>
+        bestimmt, wobei für <object class="inlineeqn">0 &lt; Re &lt; 0.1 </object> eine lineare Extrapolation des <object class="inlineeqn">\lambda</object>-Wertes erfolgt.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ReynoldsClosablePressureLossType">
+    <xs:complexContent>
+      <xs:extension base="ClosablePressureLossType"/>
     </xs:complexContent>
   </xs:complexType>
 
@@ -943,6 +1072,60 @@
             <xs:complexType>
               <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
             </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:element name="StatelessOrifice" substitutionGroup="HLine" type="StatelessOrificeType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Dummymodell zur Berechnung einer zustandslosen Blende.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="StatelessOrificeType">
+    <xs:complexContent>
+      <xs:extension base="HLineType">
+        <xs:sequence>
+          <xs:element name="inflowPressureSignal">
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="outflowPressureSignal">
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="openingSignal">
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="diameter" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                d=dF*dSignal
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="alpha" type="pv:nounitScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                alpha
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="areaModus" type="pv:nounitScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Berechnung der Öffnungsfläche; <br/>
+                0: wie GammaCheckvalveClosablePressureLoss <br/>
+                1: Zylinderfläche
+              </xs:documentation>
+            </xs:annotation>
           </xs:element>
         </xs:sequence>
       </xs:extension>
@@ -1950,20 +2133,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="Checkvalve" abstract="true" substitutionGroup="mbsim:EmptyGroup" type="CheckvalveType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Abstrakte Klasse eines Rückschlagventils
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="CheckvalveType">
-    <xs:complexContent>
-      <xs:extension base="mbsim:EmptyGroupType"/>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:element name="BallCheckvalve" substitutionGroup="Checkvalve" type="BallCheckvalveType">
+  <xs:element name="Checkvalve" substitutionGroup="mbsim:EmptyGroup" type="CheckvalveType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Modell eines Rückschlagventils mit Berücksichtigung der Trägheit der Ventilkugel.<br/>
@@ -1973,9 +2143,9 @@
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="BallCheckvalveType">
+  <xs:complexType name="CheckvalveType">
     <xs:complexContent>
-      <xs:extension base="CheckvalveType">
+      <xs:extension base="mbsim:EmptyGroupType">
         <xs:sequence>
           <xs:element name="basisFrame">
             <xs:annotation>

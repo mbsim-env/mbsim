@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: schneidm@users.berlios.de
+ * Contact: markus.ms.schneider@gmail.com
  */
 
 #include "mbsimHydraulics/controlvalve43.h"
@@ -96,9 +96,9 @@ namespace MBSimHydraulics {
     if (alphaBack<epsroot())
       alphaBack=alpha;
     if ((alpha<0)||(alpha>1))
-      throw new MBSimError("Error in \""+name+"\": alpha must be in the range of 0..1!");
+      throw MBSimError("Error in \""+name+"\": alpha must be in the range of 0..1!");
     if ((alphaBack<0)||(alphaBack>1))
-      throw new MBSimError("Error in \""+name+"\": alphaBack must be in the range of 0..1!");
+      throw MBSimError("Error in \""+name+"\": alphaBack must be in the range of 0..1!");
     RelativeAlphaClosablePressureLoss * plPA = new RelativeAlphaClosablePressureLoss();
     RelativeAlphaClosablePressureLoss * plPB = new RelativeAlphaClosablePressureLoss();
     RelativeAlphaClosablePressureLoss * plAT = new RelativeAlphaClosablePressureLoss();

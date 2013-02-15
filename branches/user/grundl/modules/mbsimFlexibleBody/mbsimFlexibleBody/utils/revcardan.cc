@@ -19,7 +19,6 @@
 
 #include<config.h>
 #include "mbsimFlexibleBody/utils/revcardan.h"
-
 using namespace fmatvec;
 using namespace MBSim;
 
