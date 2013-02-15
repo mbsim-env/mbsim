@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: schneidm@users.berlios.de
+ * Contact: markus.ms.schneider@gmail.com
  */
 
 #include "mbsimControl/frame_sensors.h"
@@ -49,26 +49,26 @@ namespace MBSimControl {
       Sensor::init(stage);
   }
 
-  Vec AbsolutPositionSensor::getSignal() {
+  Vec AbsolutePositionSensor::getSignal() {
     return direction.T()*frame->getPosition();
   }
 
 
-  Vec AbsolutVelocitySensor::getSignal() {
+  Vec AbsoluteVelocitySensor::getSignal() {
     return direction.T()*frame->getVelocity();
   }
 
 
-  void AbsolutAngularPositionSensor::updategd(double t) {
+  void AbsoluteAngularPositionSensor::updategd(double t) {
     gd=direction.T()*frame->getAngularVelocity();
   }
 
-  Vec AbsolutAngularPositionSensor::getSignal() {
+  Vec AbsoluteAngularPositionSensor::getSignal() {
     return g;
   }
 
 
-  Vec AbsolutAngularVelocitySensor::getSignal() {
+  Vec AbsoluteAngularVelocitySensor::getSignal() {
     return direction.T()*frame->getAngularVelocity();
   }
   

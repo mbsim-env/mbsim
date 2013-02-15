@@ -20,6 +20,7 @@ import multiprocessing
 import math
 import traceback
 import tarfile
+import re
 if sys.version_info[0]==2: # to unify python 2 and python 3
   import urllib as myurllib
 else:
@@ -199,6 +200,7 @@ def main():
   print('<th>Time [s]</th>', file=mainFD)
   print('<th>Ref. Time [s]</th>', file=mainFD)
   print('<th>Reference</th>', file=mainFD)
+  print('<th>Deprecated</th>', file=mainFD)
   print('<th>XML output</th>', file=mainFD)
   print('</tr>', file=mainFD)
   mainFD.flush()
@@ -343,7 +345,7 @@ def addExamplesByFilter(baseDir, directoriesSet):
     if args.filter=="allxml"  and (foundXML or foundFLATXML)            : add=True
     if args.filter=="all"     and (foundXML or foundFLATXML or foundSRC): add=True
     if add:
-      addOrDiscard(root)
+      addOrDiscard(os.path.normpath(root))
 
 
 
@@ -416,6 +418,18 @@ def runExample(resultQueue, example):
       else:
         resultStr+='<td><a href="'+myurllib.pathname2url(compareFN)+'"><span style="color:red">failed ('+str(nrFailed)+'/'+str(nrAll)+')</span></a></td>'
 
+    # check for deprecated features
+    nrDeprecated=0
+    for line in fileinput.FileInput(pj(args.reportOutDir, executeFN)):
+      match=re.search("WARNING: ([0-9]+) deprecated features were called during simulation:", line)
+      if match!=None:
+        nrDeprecated=match.expand("\\1")
+        break
+    if nrDeprecated==0:
+      resultStr+='<td><span style="color:green">none</span></td>'
+    else:
+      resultStr+='<td><a href="'+myurllib.pathname2url(executeFN)+'"><span style="color:orange">'+str(nrDeprecated)+' found</span></a></td>'
+
     # validate XML
     if not args.disableValidate:
       htmlOutputFN=pj(example[0], "validateXML.html")
@@ -471,8 +485,22 @@ def executeSrcExample(executeFD):
   executeFD.flush()
   if subprocess.call(["make", "clean"], stderr=subprocess.STDOUT, stdout=executeFD)!=0: return 1, 0
   if subprocess.call(["make"], stderr=subprocess.STDOUT, stdout=executeFD)!=0: return 1, 0
+  # append $prefix/lib to LD_LIBRARY_PATH/PATH to find lib by main of the example
+  if os.name=="posix":
+    NAME="LD_LIBRARY_PATH"
+    SUBDIR="lib"
+  elif os.name=="nt":
+    NAME="PATH"
+    SUBDIR="bin"
+  mainEnv=os.environ
+  libDir=pj(mbsimBinDir, os.pardir, SUBDIR)
+  if NAME in mainEnv:
+    mainEnv[NAME]=mainEnv[NAME]+os.pathsep+libDir
+  else:
+    mainEnv[NAME]=libDir
+  # run main
   t0=datetime.datetime.now()
-  if subprocess.call([pj(os.curdir, "main")], stderr=subprocess.STDOUT, stdout=executeFD)!=0: return 1, 0
+  if subprocess.call([pj(os.curdir, "main")], stderr=subprocess.STDOUT, stdout=executeFD, env=mainEnv)!=0: return 1, 0
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
   return 0, dt

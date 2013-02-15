@@ -92,7 +92,7 @@ namespace MBSim {
 
       for (int i = 0; i < 6; i++) {
         stringstream s;
-        s << i + 1;
+        s << "Face_" <<  i + 1;
         Area * area = new Area(s.str());
         area->setLimitY(limit[i](0));
         area->setLimitZ(limit[i](1));

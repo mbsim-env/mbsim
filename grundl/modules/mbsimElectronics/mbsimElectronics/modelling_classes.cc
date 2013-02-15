@@ -43,7 +43,7 @@ namespace MBSimElectronics {
 
         if(getParent() == connectedTerminal[i]->getParent()) {
      	  int vz = name=="A" ? 1 : -1;
-	  getParent()->connect(currentBranch,vz);
+	  dynamic_cast<ElectronicComponent*>(getParent())->connect(currentBranch,vz);
         }
       }
     }
@@ -59,7 +59,7 @@ namespace MBSimElectronics {
         currentBranch->setStartTerminal(this);
         if(getParent() == connectedTerminal[i]->getParent()) {
 	  int vz = name=="A" ? 1 : -1;
-          getParent()->connect(currentBranch,vz);
+          dynamic_cast<ElectronicComponent*>(getParent())->connect(currentBranch,vz);
         }
         connectedTerminal[i]->findEndOfBranch(this,currentBranch);
       }
@@ -70,7 +70,7 @@ namespace MBSimElectronics {
         currentBranch->setEndTerminal(connectedTerminal[i]);
         if(getParent() == connectedTerminal[i]->getParent()) {
 	  int vz = name=="A" ? 1 : -1;
-          getParent()->connect(currentBranch,vz);
+          dynamic_cast<ElectronicComponent*>(getParent())->connect(currentBranch,vz);
         }
       }
 
@@ -86,7 +86,8 @@ namespace MBSimElectronics {
       assert(getTerminal(terminal_->getName(),false) == NULL); 
     }
     terminal.push_back(terminal_);
-    terminal_->setParent(this);
+    //terminal_->setParent(this);
+    terminal_->setParent(dynamic_cast<Element*>(this));
   }
 
   void ElectronicComponent::addTerminal(const string &str) {
@@ -143,7 +144,7 @@ namespace MBSimElectronics {
     int k=0;
     for(unsigned int i=0; i<nodeList.size(); i++) {
       vector<Branch*> branchs_tmp = nodeList[i]->buildBranches(0);
-      for(int j=0; j<branchs_tmp.size(); j++) {
+      for(size_t j=0; j<branchs_tmp.size(); j++) {
         branchList.push_back(branchs_tmp[j]);
         stringstream str;
         str << "Branch" << k++;
@@ -188,7 +189,7 @@ namespace MBSimElectronics {
 
     for(unsigned int i=0; i<meshList.size(); i++) {
       meshList[i]->getBranch(0)->setvz(1,meshList[i]);
-      for(unsigned int j=1; j<meshList[i]->getNumberOfBranches(); j++) {
+      for(int j=1; j<meshList[i]->getNumberOfBranches(); j++) {
 	if(meshList[i]->getBranch(j)->getEndTerminal() == meshList[i]->getBranch(j-1)->getStartTerminal())
 	  meshList[i]->getBranch(j)->setvz(1,meshList[i]);
 	else if(meshList[i]->getBranch(j)->getStartTerminal() == meshList[i]->getBranch(j-1)->getStartTerminal())
@@ -205,7 +206,7 @@ namespace MBSimElectronics {
 
     for(unsigned int i=0; i<branchList.size(); i++) {
       objectList.push_back(branchList[i]);
-      for(unsigned j=0; j<branchList[i]->getNumberOfConnectedMeshes(); j++)
+      for(int j=0; j<branchList[i]->getNumberOfConnectedMeshes(); j++)
 	branchList[i]->addDependency(branchList[i]->getMesh(j));
     }
 
@@ -230,7 +231,7 @@ namespace MBSimElectronics {
     branch = &tmpbranch;
   }
 
-  void ElectronicComponent::connect(Branch *branch_, int vz_) {
+  void ElectronicComponent::connect(Branch *branch_, double vz_) {
     vz = vz_;
     branch=branch_;
   }

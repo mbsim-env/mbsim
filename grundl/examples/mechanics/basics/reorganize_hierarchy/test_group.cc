@@ -60,7 +60,7 @@ TestGroup::TestGroup(const string &projectName) : Group(projectName) {
   stab2->setFrameForKinematics(stab2->getFrame("R"));
   stab2->setMass(mStab);
   Theta(2,2) = JStab;
-  stab2->setInertiaTensor(Theta,stab2->getFrame("C"));
+  stab2->setInertiaTensor(Theta);
   stab2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
   stab2->setInitialGeneralizedPosition(Vec("[-1.6]"));
 

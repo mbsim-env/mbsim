@@ -598,6 +598,7 @@ namespace MBSim {
        */
 
       fmatvec::VecInt LinkStatusRegParent;
+
       /**
        * \brief sparse mass action matrix
        */
