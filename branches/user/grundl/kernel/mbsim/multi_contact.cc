@@ -71,7 +71,7 @@ namespace MBSim {
   void MultiContact::updatewb(double t, int j) {
     for (std::vector<std::vector<Contact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<Contact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-            jter->updatewb(t, j);  //TODO: contact kinematics in sub-contact!!
+        jter->updatewb(t, j);  //TODO: contact kinematics in sub-contact!!
     }
   }
 
@@ -158,6 +158,7 @@ namespace MBSim {
   }
 
   void MultiContact::updatelaRef(const Vec& laParent) {
+    LinkMechanics::updatelaRef(laParent);
     for (std::vector<std::vector<Contact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<Contact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
         jter->updatelaRef(laParent);
@@ -292,7 +293,7 @@ namespace MBSim {
       }
 
       //initialize all contour couplings if generalized force law is of maxwell-type
-      if(dynamic_cast<MaxwellUnilateralConstraint*>(fcl)) {
+      if (dynamic_cast<MaxwellUnilateralConstraint*>(fcl)) {
         static_cast<MaxwellUnilateralConstraint*>(fcl)->initializeContourCouplings(this);
       }
 
@@ -601,6 +602,48 @@ namespace MBSim {
     }
   }
 
+  void MultiContact::setlaTol(double tol) {
+    for (std::vector<std::vector<Contact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<Contact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
+        jter->setlaTol(tol);
+    }
+  }
+
+  void MultiContact::setLaTol(double tol) {
+    for (std::vector<std::vector<Contact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<Contact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
+        jter->setLaTol(tol);
+    }
+  }
+
+  void MultiContact::setgTol(double tol) {
+    for (std::vector<std::vector<Contact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<Contact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
+        jter->setgTol(tol);
+    }
+  }
+
+  void MultiContact::setgdTol(double tol) {
+    for (std::vector<std::vector<Contact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<Contact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
+        jter->setgdTol(tol);
+    }
+  }
+
+  void MultiContact::setgddTol(double tol) {
+    for (std::vector<std::vector<Contact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<Contact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
+        jter->setgddTol(tol);
+    }
+  }
+
+  void MultiContact::setrMax(double rMax_) {
+    for (std::vector<std::vector<Contact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<Contact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
+        jter->setrMax(rMax_);
+    }
+  }
+
   int MultiContact::getFrictionDirections() {
     if (fdf)
       return fdf->getFrictionDirections();
@@ -702,13 +745,13 @@ namespace MBSim {
     e = element->FirstChildElement(MBSIMNS"connect");
     e = e->FirstChildElement(); //first contour pair
     //TODO: loop should be exported to sub-structure?
-    while(e) { //As long as there are siblings read them and save them
+    while (e) { //As long as there are siblings read them and save them
       saved_references ref;
       ref.name1 = e->Attribute("ref1");
       ref.name2 = e->Attribute("ref2");
       TiXmlElement* e2 = e->FirstChildElement();
       //TODO: add possibility of defining own contactKinematics? (also in Contact-class)
-      if(e2)
+      if (e2)
         ref.contourPairingName = e2->ValueStr();
       else
         ref.contourPairingName = "";
