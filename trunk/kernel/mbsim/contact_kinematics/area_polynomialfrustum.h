@@ -24,8 +24,112 @@
 
 #include <mbsim/contours/polynomial_frustum.h>
 #include <mbsim/contours/area.h>
+#include <mbsim/numerics/nonlinear_algebra/multi_dimensional_newton_method.h>
 
 namespace MBSim {
+
+  class edgePolyFrustum : public Function1<fmatvec::Vec, fmatvec::Vec> {
+    public:
+      edgePolyFrustum(const PolynomialFrustum * frustum);
+
+      virtual ~edgePolyFrustum();
+
+      void setAdir(const fmatvec::Vec3 & A, const fmatvec::Vec3 & dir);
+
+      fmatvec::Vec operator()(const fmatvec::Vec &x, const void* = NULL);
+
+    protected:
+      /*!
+       * \brief polynomials of frustum contour
+       */
+      const PolynomialFrustum * frustum;
+
+      /*!
+       * \brief position of starting point on the line
+       */
+      fmatvec::Vec A;
+
+      /*!
+       * \brief direction of edge
+       */
+      fmatvec::Vec dir;
+  };
+
+  class edgePolyFrustumCriteria : public CriteriaFunction {
+    public:
+      /**
+       * \brief Constructor
+       */
+      edgePolyFrustumCriteria(const double & tolerance_ = 1e-10);
+
+      /**
+       * \brief Destructor
+       */
+      virtual ~edgePolyFrustumCriteria(){};
+
+      /*!
+       * \brief set frustum height
+       */
+      void setFrustumHeight(const double & frustumHeight_) {
+        frustumHeight = frustumHeight_;
+      }
+
+      /*!
+       * \brief set starting x coordinate
+       */
+      void setStartingXCoordinate(const double & ax_) {
+        ax = ax_;
+      }
+
+      /*!
+       * \brief set starting x coordinate
+       */
+      void setdirectionXCoordinate(const double & dx_) {
+        dx = dx_;
+      }
+
+      /* INHERITED INTERFACE */
+      virtual int operator ()(const fmatvec::Vec & x, const void * = NULL);
+      virtual bool isBetter(const fmatvec::Vec & x);
+      virtual void clear(){criteriaResults.clear();}
+      /*END - INHERITED INTERFACE*/
+
+      const std::vector<double> & getResults() {
+        return criteriaResults;
+      }
+
+    protected:
+      /*!
+       * \brief checks if current point fullfills the boundary conditions
+       */
+      bool inBounds(const double & t);
+      /**
+       * \brief tolerance value for the criteria results
+       */
+      double tolerance;
+
+      /*!
+       * \brief height of frustum
+       */
+      double frustumHeight;
+
+      /**
+       * \brief saves the results of the criteria
+       */
+      std::vector<double> criteriaResults;
+
+      /*!
+       * \brief xPosition of starting Point
+       */
+      double ax;
+
+      /*!
+       * \brief xdirection
+       */
+      double dx;
+  };
+
+
 
   /*!
    * \brief class for contact kinematics between convex frustum and an area
@@ -44,13 +148,35 @@ namespace MBSim {
       virtual void updatewb(fmatvec::Vec& wb, const fmatvec::Vec &g, ContourPointData *cpData) {
         throw MBSimError("ERROR (ContactKinematicsAreaPolynomialFrustum::updatewb): not implemented!");
       }
+
+    protected:
+      /*!
+       * \brief set the values for the contact kinematics for the frustum due to the given x and phi
+       */
+      void setFrustumOrienationKinematics(const double & x, const double & phi, fmatvec::Vec & g, ContourPointData * cpData);
+
       /***************************************************/
       /*!
        * \brief check if there is a contact point within the area between the frustum and the area
-       * \return the position of contact point on the frustum, if it exists, info_cp=1, if not, info_cp=0
-       * if contact point located, set g(0),cpdata_OrientationMatrix
+       * \return true (if) or false (if there is no contact within the area)
+       *
+       * If there is contact the position and the cpData information is setted right away
        */
       bool cpLocationInArea(fmatvec::Vec & g, ContourPointData * cpData);
+
+      /*!
+       * \brief checks if there is a contact point at one of the corner points
+       * \return true (if) or false (if there is no contact at one of the corner points)
+       */
+      bool cornerContact(fmatvec::Vec & g, ContourPointData * cpData);
+
+      /*!
+       * \brief checks if there is a contact on one edge of the area
+       * \return true (if) or false (if there is no contact at one of the corner points)
+       *
+       * \todo: unefficient and only finding (one) intersection point --> There should always be two intersection points and then using the middle or something
+       */
+      bool edgeContact(fmatvec::Vec & g, ContourPointData * cpData);
 
       /*!
        * \brief given two vectors x and v, this function is used to generate the rotation matrix which rotating the current reference frame to a new one
@@ -76,15 +202,13 @@ namespace MBSim {
        *        smallest distance, discretize the neighboring part with much denser points and then calculate the distance again.
        */
 
-    protected:
       /*!
-       * \brief computes the point on the contour of the frustum due to the height-coordinate x and the normal
+       * \brief computes the point on the contour of the frustum due to the height-coordinate x and the normal in world coordinates
        * \param x height coordinate
        * \param n normal of the frustum
        * \return contour point in world coordinates of the contour point on the frustum
        */
       fmatvec::Vec3 computeContourPoint(const double & x, const fmatvec::Vec3 & n);
-
 
       /*!
        * \brief check if frustum point identified by coordinate x is possible contact point
@@ -98,7 +222,6 @@ namespace MBSim {
        * \param point Given point in world coordinates
        */
       double distance2Area(const fmatvec::Vec3 & point);
-
 
       /**
        * \brief contour index of area (in cpData)
@@ -120,11 +243,60 @@ namespace MBSim {
        */
       PolynomialFrustum *frustum;
 
-  };
+      /*!
+       * \brief save last value to use it again as starting value for equation 1
+       */
+      double x1;
 
-  /*!
-   * \brief this class stores information about contact points both on the surface of frustum and the other item as well as the smallest distance
-   */
+      /*!
+       * \brief save last value to use it again as starting value for equation 2
+       */
+      double x2;
+
+      /*!
+       * \brief array of the four corner points of the area in the frame of the frustum
+       */
+      fmatvec::Vec3 cornerPoints[4];
+
+      /*!
+       * \brief function for intersection point
+       */
+      edgePolyFrustum * funcAB;
+
+      /*!
+       * \brief newton method for solving the edge contact
+       */
+      MultiDimensionalNewtonMethod newtonedge;
+
+      /*!
+       * \brief Jacobian for newton method
+       */
+      NumericalNewtonJacobianFunction jacobian;
+
+      /*!
+       * \brief criteria for newton method
+       */
+      edgePolyFrustumCriteria criteria;
+
+      /*!
+       * \brief damping function for newton method
+       */
+      StandardDampingFunction damping;
+
+      /*!
+       * \brief index of last edge contact
+       */
+      int ilast;
+
+      /*!
+       * \brief last position of edge contact
+       */
+      fmatvec::Vec xi;
+
+  };
+/*!
+ * \brief this class stores information about contact points both on the surface of frustum and the other item as well as the smallest distance
+ */
 //  class CP_item_frustum {
 //    private:
 //      fmatvec::Vec3 P_fru;
@@ -139,6 +311,5 @@ namespace MBSim {
 //      ;
 //      ~CP_item_frustum();
 //  };
-
 } /* namespace MBSim */
 #endif /* AREA_POLYNOMIALFRUSTUM_H_ */

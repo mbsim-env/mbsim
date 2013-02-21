@@ -33,7 +33,7 @@ using namespace fmatvec;
 namespace MBSim {
 
   PolynomialFrustum::PolynomialFrustum(const std::string & name, const Vec & param_) :
-      RigidContour(name), parameters(param_), height(0.)
+      RigidContour(name), parameters(param_), height(0.), sphereRadius(0.)
 #ifdef HAVE_OPENMBVCPPINTERFACE
           , color(LIGHTGRAY), transparency(0.), polynomialPoints(0), circularPoints(25)
 #endif
@@ -46,7 +46,11 @@ namespace MBSim {
 
   void PolynomialFrustum::init(InitStage stage) {
 
-    if (stage == MBSim::plot) {
+    if (stage == MBSim::preInit) {
+      computeEnclosingSphere();
+    }
+
+    else if (stage == MBSim::plot) {
       updatePlotFeatures();
 
       if (getPlotFeature(plotRecursive) == enabled) {
@@ -72,6 +76,10 @@ namespace MBSim {
   }
 
   double PolynomialFrustum::getHeight() {
+    return height;
+  }
+
+  double PolynomialFrustum::getHeight() const {
     return height;
   }
 
@@ -116,6 +124,14 @@ namespace MBSim {
     return val;
   }
 
+  double PolynomialFrustum::getValue(const double & x) const {
+    double val = 0;
+    for (int i = 0; i < parameters.size(); i++) {
+      val += parameters(i) * pow(x, i);
+    }
+    return val;
+  }
+
   double PolynomialFrustum::getValueD1(const double & x) {
     double val = 0;
     for (int i = 1; i < parameters.size(); i++) {
@@ -124,7 +140,23 @@ namespace MBSim {
     return val;
   }
 
+  double PolynomialFrustum::getValueD1(const double & x) const {
+    double val = 0;
+    for (int i = 1; i < parameters.size(); i++) {
+      val += i * parameters(i) * pow(x, (i - 1));
+    }
+    return val;
+  }
+
   double PolynomialFrustum::getValueD2(const double & x) {
+    double val = 0;
+    for (int i = 2; i < parameters.size(); i++) {
+      val += i * (i - 1) * parameters(i) * pow(x, (i - 2));
+    }
+    return val;
+  }
+
+  double PolynomialFrustum::getValueD2(const double & x) const {
     double val = 0;
     for (int i = 2; i < parameters.size(); i++) {
       val += i * (i - 1) * parameters(i) * pow(x, (i - 2));
@@ -142,9 +174,53 @@ namespace MBSim {
     return x;
   }
 
+  double PolynomialFrustum::getEnclosingSphereRadius() {
+    return sphereRadius;
+  }
 
-  double PolynomialFrustum::getRadiSphere() {
-    double rad = 0.;
+  Vec3 PolynomialFrustum::getEnclosingSphereCenter() {
+    Vec3 center;
+    center(0) = height / 2;
+    return R.getOrientation() * center;
+  }
+
+  const fmatvec::Vec & PolynomialFrustum::getPolynomialParameters() {
+    return parameters;
+  }
+
+  Vec3 PolynomialFrustum::computePoint(const double & x, const double & phi) {
+    Vec3 point(NONINIT);
+    point(0) = x;
+    point(1) = getValue(x) * cos(phi);
+    point(2) = getValue(x) * sin(phi);
+    return point;
+  }
+
+  Vec3 PolynomialFrustum::computeNormal(const double & x, const double & phi) {
+    Vec3 normal(NONINIT);
+    normal(0) = getValue(x) * getValueD1(x);
+    normal(1) = - getValue(x) * cos(phi);
+    normal(2) = - getValue(x) * sin(phi);
+    return -normal/nrm2(normal);
+  }
+
+  Vec3 PolynomialFrustum::computeTangentRadial(const double & x, const double & phi) {
+    Vec3 tangent(NONINIT);
+    tangent(0) = 1;
+    tangent(1) = getValueD1(x) * cos(phi);
+    tangent(2) = getValueD1(x) * sin(phi);
+    return tangent/nrm2(tangent);
+  }
+
+  Vec3 PolynomialFrustum::computeTangentAzimuthal(const double & x, const double & phi) {
+    Vec3 tangent(NONINIT);
+    tangent(0) = 0;
+    tangent(1) = - getValue(x) * sin(phi);
+    tangent(2) = getValue(x) * cos(phi);
+    return tangent/nrm2(tangent);
+  }
+
+  void PolynomialFrustum::computeEnclosingSphere() {
     double fa = getValue(0);
     double fb = getValue(height);
     double fda = getValueD1(0); //f'(a)
@@ -158,13 +234,7 @@ namespace MBSim {
       temp1 = sqrt(pow(fmax, 2) + pow((x - height / 2), 2));
     }
 
-    rad = (temp1 > temp) ? temp1 : temp;
-
-    return rad;
-  }
-
-  const fmatvec::Vec & PolynomialFrustum::getPolynomialParameters() {
-    return parameters;
+    sphereRadius = (temp1 > temp) ? temp1 : temp;
   }
 
   //TODO: Do we need these functions?
@@ -243,7 +313,6 @@ namespace MBSim {
 //      exit(EXIT_FAILURE);
 //    }
 //  }
-
 
   void PolynomialFrustum::createInventorFile() {
 
@@ -383,8 +452,7 @@ namespace MBSim {
     return f;
   }
 
-
-  //TODO: Do we need these functions?
+//TODO: Do we need these functions?
 //  Polyfun_in_cppc::Polyfun_in_cppc(const Vec & para_, const Vec2 & P_){
 //    para = para_;
 //    P = P_;
@@ -403,6 +471,5 @@ namespace MBSim {
 //    result = (f-P(1))*fprime+x-P(0);
 //    return result;
 //  }
-
 
 }
