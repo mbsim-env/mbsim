@@ -77,8 +77,6 @@ namespace MBSim {
 
   };
 
-  typedef AbsoluteKinematicsObserver FrameObserver;
-
 }  
 
 #endif

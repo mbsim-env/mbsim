@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2011 MBSim Development Team
+/* Copyright (C) 2004-2013 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -19,28 +19,20 @@
 
 #ifndef _FRAME_OBSERVER_H__
 #define _FRAME_OBSERVER_H__
-#include "mbsim/element.h"
+#include "mbsim/observer/observer.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-namespace OpenMBV {
-  //class Frame;
-  class Arrow;
-  class Frame;
-}
+#include <openmbvcppinterface/arrow.h>
 #endif
 
 namespace MBSim {
-  class RigidBody;
   class Frame;
 
-  class FrameObserver : public Element {
+  class FrameObserver : public Observer {
     private:
       Frame* frame;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Group* openMBVGrp;
-      OpenMBV::Arrow *openMBVPosition, *openMBVVelocity, *openMBVAcceleration, *openMBVAngularVelocity, *openMBVAngularAcceleration;
-      fmatvec::Vec3 roff, voff, aoff;
-      double rscale, vscale, ascale;
+      OpenMBV::Arrow *openMBVPositionArrow, *openMBVVelocityArrow, *openMBVAngularVelocityArrow, *openMBVAccelerationArrow, *openMBVAngularAccelerationArrow;
 #endif
 
     public:
@@ -51,12 +43,14 @@ namespace MBSim {
       virtual void plot(double t, double dt);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Group* getOpenMBVGrp() { return openMBVGrp; }
-      virtual void enableOpenMBVPosition(double scale=1, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5, const fmatvec::Vec3& off=fmatvec::Vec3());
-      virtual void enableOpenMBVVelocity(double scale=1, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5, const fmatvec::Vec3& off=fmatvec::Vec3());
-      virtual void enableOpenMBVAcceleration(double scale=1, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5, const fmatvec::Vec3& off=fmatvec::Vec3());
-      virtual void enableOpenMBVAngularVelocity(double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
-      virtual void enableOpenMBVAngularAcceleration(double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
+      //void setOpenMBVPositionArrow(OpenMBV::Arrow *arrow) { openMBVPositionArrow = arrow; }
+      //void setOpenMBVVelocityArrow(OpenMBV::Arrow *arrow) { openMBVVelocityArrow = arrow; }
+
+      virtual void enableOpenMBVPosition(double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
+      virtual void enableOpenMBVVelocity(double scale=1, OpenMBV::Arrow::ReferencePoint refPoint=OpenMBV::Arrow::fromPoint, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
+      virtual void enableOpenMBVAngularVelocity(double scale=1, OpenMBV::Arrow::ReferencePoint refPoint=OpenMBV::Arrow::fromPoint, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
+      virtual void enableOpenMBVAcceleration(double scale=1, OpenMBV::Arrow::ReferencePoint refPoint=OpenMBV::Arrow::fromPoint, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
+      virtual void enableOpenMBVAngularAcceleration(double scale=1, OpenMBV::Arrow::ReferencePoint refPoint=OpenMBV::Arrow::fromPoint, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
 #endif
 
   };

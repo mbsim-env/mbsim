@@ -17,14 +17,13 @@
  * Contact: martin.o.foerg@gmail.com
  */
 
-#ifndef _PLOT_NATURAL_COORDINATES_H__
-#define _PLOT_NATURAL_COORDINATES_H__
-#include "mbsim/element.h"
+#ifndef _RIGID_BODY_OBSERVER_H__
+#define _RIGID_BODY_OBSERVER_H__
+#include "mbsim/observer/observer.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/arrow.h>
 namespace OpenMBV {
-  //class Frame;
-  class Arrow;
   class Frame;
 }
 #endif
@@ -33,31 +32,23 @@ namespace MBSim {
   class RigidBody;
   class Frame;
 
-  class PlotNaturalCoordinates : public Element {
+  class RigidBodyObserver: public Observer {
     private:
-      Frame* frame;
+      RigidBody* body;
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::Group* openMBVGrp;
-      OpenMBV::Arrow *openMBVPosition, *openMBVVelocity, *openMBVTangentialVelocity, *openMBVNormalVelocity, *openMBVBinormalVelocity, *openMBVAcceleration, *openMBVTangentialAcceleration, *openMBVNormalAcceleration, *openMBVBinormalAcceleration;
-      OpenMBV::Frame* openMBVFrame;
-      fmatvec::Vec roff, voff, aoff;
-      double rscale, vscale, ascale;
+      OpenMBV::Arrow *openMBVAxisOfRotation;
 #endif
 
     public:
-      PlotNaturalCoordinates(const std::string &name);
-      void setFrame(Frame *frame_) { frame = frame_; } 
+      RigidBodyObserver(const std::string &name);
+      void setRigidBody(RigidBody *body_) { body = body_; } 
 
       void init(InitStage stage);
       virtual void plot(double t, double dt);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-     OpenMBV::Group* getOpenMBVGrp() { return openMBVGrp; }
-     virtual void enableOpenMBVPosition(double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
-     virtual void enableOpenMBVVelocity(double scale=1, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
-     virtual void enableOpenMBVAcceleration(double scale=1, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
-     virtual void enableOpenMBVFrame(double size=1, double offset=1);
-
+      void enableOpenMBVAxisOfRotation(double scale=1, OpenMBV::Arrow::ReferencePoint refPoint=OpenMBV::Arrow::fromPoint, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
 #endif
 
   };

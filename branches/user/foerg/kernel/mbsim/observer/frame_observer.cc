@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2011 MBSim Development Team
+/* Copyright (C) 2004-2013 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -18,28 +18,21 @@
  */
 
 #include <config.h>
-#include "mbsim/plot_elements/plot_frame.h"
-#include "mbsim/rigid_body.h"
+#include "mbsim/observer/frame_observer.h"
 #include "mbsim/frame.h"
-#include "mbsim/environment.h"
-#include "mbsim/utils/rotarymatrices.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#include <openmbvcppinterface/arrow.h>
-#include <openmbvcppinterface/frame.h>
-#endif
 
 using namespace std;
 using namespace fmatvec;
 
 namespace MBSim {
 
-  FrameObserver::FrameObserver(const std::string &name) : Element(name), frame(0), rscale(1), vscale(1), ascale(1) {
+  FrameObserver::FrameObserver(const std::string &name) : Observer(name), frame(0) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    openMBVPosition=0;
-    openMBVVelocity=0;
-    openMBVAcceleration=0;
-    openMBVAngularVelocity=0;
-    openMBVAngularAcceleration=0;
+    openMBVPositionArrow=0;
+    openMBVVelocityArrow=0;
+    openMBVAngularVelocityArrow=0;
+    openMBVAccelerationArrow=0;
+    openMBVAngularAccelerationArrow=0;
 #endif
   }
 
@@ -47,87 +40,84 @@ namespace MBSim {
     if(stage==MBSim::plot) {
       updatePlotFeatures();
 
+      Observer::init(stage);
       if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
-          openMBVGrp=new OpenMBV::Group();
-          openMBVGrp->setName(name+"_Group");
-          openMBVGrp->setExpand(false);
-          parent->getOpenMBVGrp()->addObject(openMBVGrp);
-          if(openMBVPosition) {
-            openMBVPosition->setName(name+"_Position");
-            getOpenMBVGrp()->addObject(openMBVPosition);
+          if(openMBVPositionArrow) {
+            openMBVPositionArrow->setName("Position");
+            getOpenMBVGrp()->addObject(openMBVPositionArrow);
           }
-          if(openMBVVelocity) {
-            openMBVVelocity->setName(name+"_Velocity");
-            getOpenMBVGrp()->addObject(openMBVVelocity);
+          if(openMBVVelocityArrow) {
+            openMBVVelocityArrow->setName("Velocity");
+            getOpenMBVGrp()->addObject(openMBVVelocityArrow);
           }
-          if(openMBVAcceleration) {
-            openMBVAcceleration->setName(name+"_Acceleration");
-            getOpenMBVGrp()->addObject(openMBVAcceleration);
+          if(openMBVAngularVelocityArrow) {
+            openMBVAngularVelocityArrow->setName("AngularVelocity");
+            getOpenMBVGrp()->addObject(openMBVAngularVelocityArrow);
           }
-          if(openMBVAngularVelocity) {
-            openMBVAngularVelocity->setName(name+"_AngularVelocity");
-            getOpenMBVGrp()->addObject(openMBVAngularVelocity);
+          if(openMBVAccelerationArrow) {
+            openMBVAccelerationArrow->setName("Acceleration");
+            getOpenMBVGrp()->addObject(openMBVAccelerationArrow);
           }
-          if(openMBVAngularAcceleration) {
-            openMBVAngularAcceleration->setName(name+"_AngularAcceleration");
-            getOpenMBVGrp()->addObject(openMBVAngularAcceleration);
+          if(openMBVAngularAccelerationArrow) {
+            openMBVAngularAccelerationArrow->setName("AngularAcceleration");
+            getOpenMBVGrp()->addObject(openMBVAngularAccelerationArrow);
           }
         }
 #endif
       }
-      Element::init(stage);
     }
     else
-      Element::init(stage);
+      Observer::init(stage);
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  void FrameObserver::enableOpenMBVPosition(double scale, double diameter, double headDiameter, double headLength, double color, const Vec3& off) {
-    openMBVPosition=new OpenMBV::Arrow;
-    openMBVPosition->setDiameter(diameter);
-    openMBVPosition->setHeadDiameter(headDiameter);
-    openMBVPosition->setHeadLength(headLength);
-    openMBVPosition->setStaticColor(color);
-    roff = off;
-    rscale = scale;
+  void FrameObserver::enableOpenMBVPosition(double diameter, double headDiameter, double headLength, double color) {
+    openMBVPositionArrow=new OpenMBV::Arrow;
+    openMBVPositionArrow->setReferencePoint(OpenMBV::Arrow::fromPoint);
+    openMBVPositionArrow->setDiameter(diameter);
+    openMBVPositionArrow->setHeadDiameter(headDiameter);
+    openMBVPositionArrow->setHeadLength(headLength);
+    openMBVPositionArrow->setStaticColor(color);
   }
-
-  void FrameObserver::enableOpenMBVVelocity(double scale, double diameter, double headDiameter, double headLength, double color, const Vec3& off) {
-    openMBVVelocity=new OpenMBV::Arrow;
-    openMBVVelocity->setDiameter(diameter);
-    openMBVVelocity->setHeadDiameter(headDiameter);
-    openMBVVelocity->setHeadLength(headLength);
-    openMBVVelocity->setStaticColor(color);
-    voff = off;
-    vscale = scale;
+  void FrameObserver::enableOpenMBVVelocity(double scale, OpenMBV::Arrow::ReferencePoint refPoint, double diameter, double headDiameter, double headLength, double color) {
+    openMBVVelocityArrow=new OpenMBV::Arrow;
+    openMBVVelocityArrow->setScaleLength(scale);
+    openMBVVelocityArrow->setReferencePoint(refPoint);
+    openMBVVelocityArrow->setDiameter(diameter);
+    openMBVVelocityArrow->setHeadDiameter(headDiameter);
+    openMBVVelocityArrow->setHeadLength(headLength);
+    openMBVVelocityArrow->setStaticColor(color);
   }
-
-  void FrameObserver::enableOpenMBVAcceleration(double scale, double diameter, double headDiameter, double headLength, double color, const Vec3& off) {
-    openMBVAcceleration=new OpenMBV::Arrow;
-    openMBVAcceleration->setDiameter(diameter);
-    openMBVAcceleration->setHeadDiameter(headDiameter);
-    openMBVAcceleration->setHeadLength(headLength);
-    openMBVAcceleration->setStaticColor(color);
-    aoff = off;
-    ascale = scale;
+  void FrameObserver::enableOpenMBVAngularVelocity(double scale, OpenMBV::Arrow::ReferencePoint refPoint, double diameter, double headDiameter, double headLength, double color) {
+    openMBVAngularVelocityArrow=new OpenMBV::Arrow;
+    openMBVAngularVelocityArrow->setScaleLength(scale);
+    openMBVAngularVelocityArrow->setType(OpenMBV::Arrow::toDoubleHead);
+    openMBVAngularVelocityArrow->setReferencePoint(refPoint);
+    openMBVAngularVelocityArrow->setDiameter(diameter);
+    openMBVAngularVelocityArrow->setHeadDiameter(headDiameter);
+    openMBVAngularVelocityArrow->setHeadLength(headLength);
+    openMBVAngularVelocityArrow->setStaticColor(color);
   }
-
-  void FrameObserver::enableOpenMBVAngularVelocity(double diameter, double headDiameter, double headLength, double color) {
-    openMBVAngularVelocity=new OpenMBV::Arrow;
-    openMBVAngularVelocity->setDiameter(diameter);
-    openMBVAngularVelocity->setHeadDiameter(headDiameter);
-    openMBVAngularVelocity->setHeadLength(headLength);
-    openMBVAngularVelocity->setStaticColor(color);
+  void FrameObserver::enableOpenMBVAcceleration(double scale, OpenMBV::Arrow::ReferencePoint refPoint, double diameter, double headDiameter, double headLength, double color) {
+    openMBVAccelerationArrow=new OpenMBV::Arrow;
+    openMBVAccelerationArrow->setScaleLength(scale);
+    openMBVAccelerationArrow->setReferencePoint(refPoint);
+    openMBVAccelerationArrow->setDiameter(diameter);
+    openMBVAccelerationArrow->setHeadDiameter(headDiameter);
+    openMBVAccelerationArrow->setHeadLength(headLength);
+    openMBVAccelerationArrow->setStaticColor(color);
   }
-
-  void FrameObserver::enableOpenMBVAngularAcceleration(double diameter, double headDiameter, double headLength, double color) {
-    openMBVAngularAcceleration=new OpenMBV::Arrow;
-    openMBVAngularAcceleration->setDiameter(diameter);
-    openMBVAngularAcceleration->setHeadDiameter(headDiameter);
-    openMBVAngularAcceleration->setHeadLength(headLength);
-    openMBVAngularAcceleration->setStaticColor(color);
+  void FrameObserver::enableOpenMBVAngularAcceleration(double scale, OpenMBV::Arrow::ReferencePoint refPoint, double diameter, double headDiameter, double headLength, double color) {
+    openMBVAngularAccelerationArrow=new OpenMBV::Arrow;
+    openMBVAngularAccelerationArrow->setScaleLength(scale);
+    openMBVAngularAccelerationArrow->setType(OpenMBV::Arrow::toDoubleHead);
+    openMBVAngularAccelerationArrow->setReferencePoint(refPoint);
+    openMBVAngularAccelerationArrow->setDiameter(diameter);
+    openMBVAngularAccelerationArrow->setHeadDiameter(headDiameter);
+    openMBVAngularAccelerationArrow->setHeadLength(headLength);
+    openMBVAngularAccelerationArrow->setStaticColor(color);
   }
 #endif
 
@@ -135,47 +125,31 @@ namespace MBSim {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
-        if(openMBVPosition && !openMBVPosition->isHDF5Link()) {
+        if(openMBVPositionArrow && !openMBVPositionArrow->isHDF5Link()) {
           vector<double> data;
           data.push_back(t);
-          data.push_back(frame->getPosition()(0)+roff(0));
-          data.push_back(frame->getPosition()(1)+roff(1));
-          data.push_back(frame->getPosition()(2)+roff(2));
-          data.push_back(frame->getPosition()(0)+roff(0));
-          data.push_back(frame->getPosition()(1)+roff(1));
-          data.push_back(frame->getPosition()(2)+roff(2));
+          data.push_back(0);
+          data.push_back(0);
+          data.push_back(0);
+          data.push_back(frame->getPosition()(0));
+          data.push_back(frame->getPosition()(1));
+          data.push_back(frame->getPosition()(2));
           data.push_back(0.5);
-          openMBVPosition->append(data);
+          openMBVPositionArrow->append(data);
         }
-        if(openMBVVelocity && !openMBVVelocity->isHDF5Link()) {
+        if(openMBVVelocityArrow && !openMBVVelocityArrow->isHDF5Link()) {
           vector<double> data;
           data.push_back(t);
-          Vec3 vframe = frame->getVelocity()*vscale;
-          Vec3 off = voff + vframe;
-          data.push_back(frame->getPosition()(0)+off(0));
-          data.push_back(frame->getPosition()(1)+off(1));
-          data.push_back(frame->getPosition()(2)+off(2));
-          data.push_back(vframe(0));
-          data.push_back(vframe(1));
-          data.push_back(vframe(2));
+          data.push_back(frame->getPosition()(0));
+          data.push_back(frame->getPosition()(1));
+          data.push_back(frame->getPosition()(2));
+          data.push_back(frame->getVelocity()(0));
+          data.push_back(frame->getVelocity()(1));
+          data.push_back(frame->getVelocity()(2));
           data.push_back(0.5);
-          openMBVVelocity->append(data);
+          openMBVVelocityArrow->append(data);
         }
-        if(openMBVAcceleration && !openMBVAcceleration->isHDF5Link()) {
-          vector<double> data;
-          data.push_back(t);
-          Vec3 aframe = frame->getAcceleration()*ascale;
-          Vec3 off = aoff + aframe;
-          data.push_back(frame->getPosition()(0)+off(0));
-          data.push_back(frame->getPosition()(1)+off(1));
-          data.push_back(frame->getPosition()(2)+off(2));
-          data.push_back(aframe(0));
-          data.push_back(aframe(1));
-          data.push_back(aframe(2));
-          data.push_back(0.5);
-          openMBVAcceleration->append(data);
-        }
-        if(openMBVAngularVelocity && !openMBVAngularVelocity->isHDF5Link()) {
+        if(openMBVAngularVelocityArrow && !openMBVAngularVelocityArrow->isHDF5Link()) {
           vector<double> data;
           data.push_back(t);
           data.push_back(frame->getPosition()(0));
@@ -185,9 +159,21 @@ namespace MBSim {
           data.push_back(frame->getAngularVelocity()(1));
           data.push_back(frame->getAngularVelocity()(2));
           data.push_back(0.5);
-          openMBVAngularVelocity->append(data);
+          openMBVAngularVelocityArrow->append(data);
         }
-        if(openMBVAngularAcceleration && !openMBVAngularAcceleration->isHDF5Link()) {
+        if(openMBVAccelerationArrow && !openMBVAccelerationArrow->isHDF5Link()) {
+          vector<double> data;
+          data.push_back(t);
+          data.push_back(frame->getPosition()(0));
+          data.push_back(frame->getPosition()(1));
+          data.push_back(frame->getPosition()(2));
+          data.push_back(frame->getAcceleration()(0));
+          data.push_back(frame->getAcceleration()(1));
+          data.push_back(frame->getAcceleration()(2));
+          data.push_back(0.5);
+          openMBVAccelerationArrow->append(data);
+        }
+        if(openMBVAngularAccelerationArrow && !openMBVAngularAccelerationArrow->isHDF5Link()) {
           vector<double> data;
           data.push_back(t);
           data.push_back(frame->getPosition()(0));
@@ -197,12 +183,13 @@ namespace MBSim {
           data.push_back(frame->getAngularAcceleration()(1));
           data.push_back(frame->getAngularAcceleration()(2));
           data.push_back(0.5);
-          openMBVAngularAcceleration->append(data);
+          openMBVAngularAccelerationArrow->append(data);
         }
       }
 #endif
 
-      Element::plot(t,dt);
+      Observer::plot(t,dt);
     }
   }
+
 }
