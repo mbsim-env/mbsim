@@ -4,7 +4,7 @@
 #include "mbsim/joint.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/line.h"
-#include "mbsim/contact.h"
+#include "mbsim/multi_contact.h"
 #include "mbsim/constitutive_laws.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

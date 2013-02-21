@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "mbsim/constitutive_laws.h"
-#include "mbsim/contact.h"
+#include "mbsim/multi_contact.h"
 #include "mbsim/element.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/utils/nonsmooth_algebra.h"
@@ -700,9 +700,9 @@ namespace MBSim {
     f->initializeUsingXML(e->FirstChildElement());
   }
 
-  void RegularizedUnilateralConstraint::computeSmoothForces(std::vector<std::vector<Contact> > & contacts) {
-    for (std::vector<std::vector<Contact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<Contact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
+  void RegularizedUnilateralConstraint::computeSmoothForces(std::vector<std::vector<SingleContact> > & contacts) {
+    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
         (*jter).getlaN()(0) = (*forceFunc)((*jter).getg()(0), (*jter).getgdN()(0));
       }
     }
@@ -735,13 +735,13 @@ namespace MBSim {
 
   }
 
-  void MaxwellUnilateralConstraint::computeSmoothForces(std::vector<std::vector<Contact> > & contacts) {
+  void MaxwellUnilateralConstraint::computeSmoothForces(std::vector<std::vector<SingleContact> > & contacts) {
     updatePossibleContactPoints(contacts);
 
     //Apply damping force
     //TODO: use damping function for that (to be more flexible...)
-    for (std::vector<std::vector<Contact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<Contact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
+    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
         if ((*jter).getg()(0) < gLim and (*jter).getgdN()(0) < 0)
           (*jter).getlaN()(0) = -dampingCoefficient * (*jter).getgdN()(0);
         else
@@ -796,7 +796,7 @@ namespace MBSim {
 
   }
 
-void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<std::vector<Contact> > & contacts) {
+void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<std::vector<SingleContact> > & contacts) {
     possibleContactPoints.clear();
     for (size_t i = 0; i < contacts.size(); ++i) {
       for (size_t j = 0; j < contacts[i].size(); ++j) {
@@ -807,7 +807,7 @@ void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<
     }
   }
 
-  void MaxwellUnilateralConstraint::updateInfluenceMatrix(std::vector<std::vector<Contact> > & contacts) {
+  void MaxwellUnilateralConstraint::updateInfluenceMatrix(std::vector<std::vector<SingleContact> > & contacts) {
     C.resize(possibleContactPoints.size());
 
     for (size_t i = 0; i < possibleContactPoints.size(); i++) {
@@ -830,7 +830,7 @@ void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<
     }
   }
 
-  void MaxwellUnilateralConstraint::updateRigidBodyGap(const std::vector<std::vector<Contact> > & contacts) {
+  void MaxwellUnilateralConstraint::updateRigidBodyGap(const std::vector<std::vector<SingleContact> > & contacts) {
     /*save rigidBodyGaps in vector*/
     rigidBodyGap.resize(possibleContactPoints.size());
     for (size_t i = 0; i < possibleContactPoints.size(); i++) {
@@ -841,7 +841,7 @@ void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<
       cout << "rigidBodyGap: " << rigidBodyGap << endl;
   }
 
-  double MaxwellUnilateralConstraint::computeInfluenceCoefficient(std::vector<std::vector<Contact> > & contacts, const std::pair<int, int> & contactIndex) {
+  double MaxwellUnilateralConstraint::computeInfluenceCoefficient(std::vector<std::vector<SingleContact> > & contacts, const std::pair<int, int> & contactIndex) {
     double FactorC = 0.;
 
     for (int i = 0; i < 2; i++) {
@@ -870,7 +870,7 @@ void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<
     return FactorC;
   }
 
-  double MaxwellUnilateralConstraint::computeInfluenceCoefficient(std::vector<std::vector<Contact> > & contacts, const std::pair<int, int> & contactIndex, const std::pair<int, int> & coupledContactIndex) {
+  double MaxwellUnilateralConstraint::computeInfluenceCoefficient(std::vector<std::vector<SingleContact> > & contacts, const std::pair<int, int> & contactIndex, const std::pair<int, int> & coupledContactIndex) {
     double FactorC = 0;
 
     for (int affectedContourIterator = 0; affectedContourIterator < 2; affectedContourIterator++) {
@@ -927,9 +927,9 @@ void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<
     f->initializeUsingXML(e->FirstChildElement());
   }
 
-  void RegularizedBilateralConstraint::computeSmoothForces(std::vector<std::vector<Contact> > & contacts) {
-    for (std::vector<std::vector<Contact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<Contact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
+  void RegularizedBilateralConstraint::computeSmoothForces(std::vector<std::vector<SingleContact> > & contacts) {
+    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
         (*jter).getlaN()(0) = (*forceFunc)((*jter).getg()(0), (*jter).getgdN()(0));
       }
     }

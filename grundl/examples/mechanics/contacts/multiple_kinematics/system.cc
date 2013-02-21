@@ -72,7 +72,7 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
   groundBase->addContour(ground,Vec(3,INIT,0.),SqrMat(3,EYE));
 
   /* contact */
-  MultiContact *contact = new MultiContact("Contact");
+  Contact *contact = new Contact("Contact");
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   /*Print arrows for contacts*/

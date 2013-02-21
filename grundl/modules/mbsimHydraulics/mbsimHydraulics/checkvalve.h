@@ -26,7 +26,7 @@
 namespace MBSim {
   class Frame;
   class RigidBody;
-  class Contact;
+  class SingleContact;
   class SpringDamper;
   class GeneralizedImpactLaw;
   class GeneralizedForceLaw;
@@ -69,8 +69,8 @@ namespace MBSimHydraulics {
       ClosableRigidLine * getLine() {return line; }
       MBSim::RigidBody * getBallSeat() {return ballSeat; }
       MBSim::RigidBody * getBall() {return ball; }
-      MBSim::Contact * getSeatContact() {return seatContact; }
-      MBSim::Contact * getMaximalContact() {return maxContact; }
+      MBSim::SingleContact * getSeatContact() {return seatContact; }
+      MBSim::SingleContact * getMaximalContact() {return maxContact; }
       MBSim::SpringDamper * getSpring() {return spring; }
       MBSimControl::GeneralizedCoordinateSensor * getXOpen() {return xOpen; }
       
@@ -82,8 +82,8 @@ namespace MBSimHydraulics {
       ClosableRigidLine * line;
       MBSim::RigidBody * ballSeat;
       MBSim::RigidBody * ball;
-      MBSim::Contact * seatContact;
-      MBSim::Contact * maxContact;
+      MBSim::SingleContact * seatContact;
+      MBSim::SingleContact * maxContact;
       MBSim::SpringDamper * spring;
       MBSimControl::GeneralizedCoordinateSensor * xOpen;
       unsigned int fromNodeAreaIndex, toNodeAreaIndex;

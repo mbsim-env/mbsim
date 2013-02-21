@@ -2,7 +2,7 @@
 
 #include "mbsim/rigid_body.h"
 #include "mbsim/kinematics.h"
-#include "mbsim/contact.h"
+#include "mbsim/multi_contact.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/contours/circle_solid.h"
 #include "mbsim/contours/contour1s_analytical.h"

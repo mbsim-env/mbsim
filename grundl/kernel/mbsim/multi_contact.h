@@ -22,7 +22,7 @@
 
 #include <mbsim/link_mechanics.h>
 
-#include <mbsim/contact.h>
+#include <mbsim/single_contact.h>
 
 #include <map>
 
@@ -97,6 +97,8 @@ namespace MBSim {
       virtual void updaterFactorRef(const fmatvec::Vec &ref);
       virtual void updatesvRef(const fmatvec::Vec &ref);
       virtual void updatejsvRef(const fmatvec::VecInt &ref);
+      virtual void updateLinkStatusRef(const fmatvec::VecInt &LinkStatusParent);
+      virtual void updateLinkStatusRegRef(const fmatvec::VecInt &LinkStatusRegParent);
       virtual void calcxSize();
       virtual void calclaSize(int j);
       virtual void calcgSize(int j);
@@ -150,14 +152,19 @@ namespace MBSim {
        * If the contact is not closed, then the two contact point lie on the contours with minimal distance in between.
        * The x-axis of this frames are orientated to the other frame origin (normal vector).
        */
-      void enableOpenMBVContactPoints(double size=1.,bool enable=true) {openMBVContactFrameSize=size; openMBVContactFrameEnabled=enable;}
+      void enableOpenMBVContactPoints(double size = 1., bool enable = true) {
+        openMBVContactFrameSize = size;
+        openMBVContactFrameEnabled = enable;
+      }
 
       /** 
        * \brief Sets the OpenMBV::Arrow to be used for drawing the normal force vector.
        * This vector is the force which is applied on the second contour.
        * The reactio (not drawn) is applied on the first contour.
        */
-      void setOpenMBVNormalForceArrow(OpenMBV::Arrow *arrow) {contactArrow=arrow;}
+      void setOpenMBVNormalForceArrow(OpenMBV::Arrow *arrow) {
+        contactArrow = arrow;
+      }
 
       /** 
        * \brief Sets the OpenMBV::Arrow to be used for drawing the friction force vector.
@@ -166,7 +173,9 @@ namespace MBSim {
        * If using a set-valued friction law, then the arrow is drawn in green if the contact
        * is in slip and in red, if the contact is in stick.
        */
-      void setOpenMBVFrictionForceArrow(OpenMBV::Arrow *arrow) {frictionArrow=arrow;}
+      void setOpenMBVFrictionForceArrow(OpenMBV::Arrow *arrow) {
+        frictionArrow = arrow;
+      }
 #endif
 
       /* GETTER / SETTER */
@@ -174,6 +183,7 @@ namespace MBSim {
       void setgdInd(int gdInd_);
       void setlaInd(int laInd_);
       void setrFactorInd(int rFactorInd_);
+      void setcorrInd(int corrInd_);
       void setContactForceLaw(GeneralizedForceLaw *fcl_) {
         fcl = fcl_;
       }
@@ -189,10 +199,12 @@ namespace MBSim {
       void setFrictionImpactLaw(FrictionImpactLaw *ftil_) {
         ftil = ftil_;
       }
-      void setContactKinematics(ContactKinematics* ck, int index) {
+      void setContactKinematics(ContactKinematics* ck, size_t index = 0) {
+        assert(index < contactKinematics.size());
         contactKinematics[index] = ck;
       }
-      ContactKinematics* getContactKinematics(int index) const {
+      ContactKinematics* getContactKinematics(size_t index = 0) const {
+        assert(index < contactKinematics.size());
         return contactKinematics[index];
       }
       /***************************************************/
@@ -211,14 +223,6 @@ namespace MBSim {
        */
       void connect(Contour *contour1, Contour* contour2, ContactKinematics* contactKinematics = 0, const std::string & name = "");
 
-      /*!
-       * \brief set the plot feature for a specific contact point (or the complete contact kinematic)
-       * \param pf                   PlotFeature
-       * \param value                the status of the plot feature
-       * \param indexKinematics      the index of the kinematics that should be changed
-       */
-      virtual void setPlotFeature(PlotFeature pf, PlotFeatureStatus value, size_t indexKinematics);
-
       void computeCurvatures(fmatvec::Vec & r, int contactKinematicsIndex) const;
 
       virtual void initializeUsingXML(TiXmlElement *element);
@@ -233,8 +237,8 @@ namespace MBSim {
       /**
        * \brief list of the single sub-contact(-points)
        */
-      std::vector<std::vector<Contact> > contacts;
-
+      std::vector<std::vector<SingleContact> > contacts;
+      
       /**
        * \brief list of the single contact kinematics
        */
@@ -297,6 +301,8 @@ namespace MBSim {
       };
       std::vector<saved_references> saved_ref;
   };
+
+  typedef MultiContact Contact;
 
 }
 

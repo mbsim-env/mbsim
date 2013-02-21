@@ -63,7 +63,7 @@ namespace MBSim {
     contactKinematics[index]->updateg(g, cpData);
   }
 
-  void ContactKinematicsCompoundContourContour::updateg(std::vector<Contact> & contact) {
+  void ContactKinematicsCompoundContourContour::updateg(std::vector<SingleContact> & contact) {
     for(size_t i = 0; i < contact.size(); i++)
       contactKinematics[i]->updateg(contact[i].getg(), contact[i].getcpData());
   }
