@@ -97,10 +97,9 @@ namespace MBSim {
         }
 #endif
       }
-      Element::init(stage);
     }
     else
-      Element::init(stage);
+      Observer::init(stage);
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -338,7 +337,7 @@ namespace MBSim {
       }
 #endif
 
-      Element::plot(t,dt);
+      Observer::plot(t,dt);
     }
   }
 

@@ -98,10 +98,9 @@ namespace MBSim {
         }
 #endif
       }
-      Element::init(stage);
     }
     else
-      Element::init(stage);
+      Observer::init(stage);
   }
 
   void RigidBodyGroupObserver::enableOpenMBVWeight(double scale, OpenMBV::Arrow::ReferencePoint refPoint, double diameter, double headDiameter, double headLength, double color) {
@@ -253,7 +252,7 @@ namespace MBSim {
           openMBVDerivativeOfAngularMomentum->append(data);
         }
       }
-      Element::plot(t,dt);
+      Observer::plot(t,dt);
     }
   }
 }
