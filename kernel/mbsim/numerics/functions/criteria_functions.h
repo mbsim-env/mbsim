@@ -54,10 +54,10 @@ namespace MBSim {
        * \brief computes the criteria
        *
        * The criteria has to fulfill at least:
-       *   - result =  0: the criteria is fulfilled and should stop therefore
+       *   - result =  0: the criteria is fulfilled and should stop
        *   - result =  1: the algorithm should go on
-       *   - result =  2: the algorithm has slow convergence and should stop therefore
-       *   - result = -1: the algorithm diverges and should stop therefore
+       *   - result =  2: the algorithm has slow convergence and should stop
+       *   - result = -1: the algorithm diverges and should stop
        */
       virtual int operator ()(const fmatvec::Vec & vector, const void * = NULL) = 0;
 

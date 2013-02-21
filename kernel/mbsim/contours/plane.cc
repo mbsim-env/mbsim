@@ -30,13 +30,12 @@ using namespace fmatvec;
 namespace MBSim {
 
   Vec2 Plane::computeLagrangeParameter(const fmatvec::Vec3 &WrPoint) {
-    return (R.getOrientation().T() *(WrPoint - R.getPosition()) )(Range<Fixed<1>,Fixed<2> >()); //TODO: proof correctness (till now just implemented for convenience)
+    return (R.getOrientation().T() *(WrPoint - R.getPosition()) )(Range<Fixed<1>,Fixed<2> >());
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   void Plane::enableOpenMBV(bool enable, double size, int number) {
     if(enable) {
-      cout << "WARNING: Plane::enableOpenMBV() --> It doesn't work..." << endl;
       openMBVRigidBody=new OpenMBV::Grid;
       ((OpenMBV::Grid*)openMBVRigidBody)->setXSize(size);
       ((OpenMBV::Grid*)openMBVRigidBody)->setYSize(size);

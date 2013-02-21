@@ -58,41 +58,81 @@ System::System(const string &projectName) :
   /*Area initialisation*/
 
   //CONTOUR
-  Area* area = new Area("AREA");
-  area->setLimitY(3);
-  area->setLimitZ(2);
-  area->enableOpenMBV();
+  { // Area1
+    Area* area = new Area("AREA1");
+    area->setLimitY(1);
+    area->setLimitZ(1);
+    area->enableOpenMBV();
 
-  //BODY
-  RigidBody* areaBody = new RigidBody("AreaBody");
-  areaBody->setMass(1);
-  areaBody->setFrameOfReference(this->getFrameI());
-  areaBody->setInertiaTensor(SymMat3(EYE));
+    //BODY
+    RigidBody* areaBody = new RigidBody("AreaBody1");
+    areaBody->setMass(1);
+    areaBody->setFrameOfReference(this->getFrameI());
+    areaBody->setInertiaTensor(SymMat3(EYE));
 
-  areaBody->setTranslation(new LinearTranslation(Mat3x3(EYE)));
-  areaBody->setRotation(new CardanAngles);
-  //give degrees of freedom
-  areaBody->setInitialGeneralizedPosition(Vec("[-1.5;0.5;0;0;0;0]"));
-  areaBody->setInitialGeneralizedVelocity(Vec("[0;0;0;0;0;0]"));
+    areaBody->setTranslation(new LinearTranslation(Mat3x3(EYE)));
+    areaBody->setRotation(new CardanAngles);
+    //give degrees of freedom
+    areaBody->setInitialGeneralizedPosition(Vec("[-1.5;0.5;0;0;0;0]"));
+    areaBody->setInitialGeneralizedVelocity(Vec("[0;0;0;0;0;0]"));
 
-  this->addObject(areaBody);
+    this->addObject(areaBody);
 
-  areaBody->addContour(area, Vec3(), BasicRotAKIz(M_PI_4));
+    areaBody->addContour(area, Vec3(), BasicRotAKIx(M_2_PI));
 
-  //Add contact between frustum and area
-  Contact* contact = new Contact("FrustumArea");
-  contact->connect(area, polyfrustumcontour);
+    //Add contact between frustum and area
+    Contact* contact = new Contact("FrustumArea1");
+    contact->connect(area, polyfrustumcontour);
 
-  contact->setPlotFeature(openMBV, enabled);
-  contact->enableOpenMBVContactPoints();
+    contact->setPlotFeature(openMBV, enabled);
+    contact->enableOpenMBVContactPoints();
 
-  //Set contact law
-  contact->setContactForceLaw(new UnilateralConstraint);
-  contact->setContactImpactLaw(new UnilateralNewtonImpact(0.3));
-  contact->setFrictionForceLaw(new SpatialCoulombFriction(0.5));
-  contact->setFrictionImpactLaw(new SpatialCoulombImpact(0.5));
+    //Set contact law
+    contact->setContactForceLaw(new UnilateralConstraint);
+    contact->setContactImpactLaw(new UnilateralNewtonImpact(0.3));
+    contact->setFrictionForceLaw(new SpatialCoulombFriction(0.5));
+    contact->setFrictionImpactLaw(new SpatialCoulombImpact(0.5));
 
-  this->addLink(contact);
+    this->addLink(contact);
+  }
+
+  { // Area2
+    Area* area = new Area("AREA2");
+    area->setLimitY(2);
+    area->setLimitZ(2);
+    area->enableOpenMBV();
+
+    //BODY
+    RigidBody* areaBody = new RigidBody("AreaBody2");
+    areaBody->setMass(1);
+    areaBody->setFrameOfReference(this->getFrameI());
+    areaBody->setInertiaTensor(SymMat3(EYE));
+
+    areaBody->setTranslation(new LinearTranslation(Mat3x3(EYE)));
+    areaBody->setRotation(new CardanAngles);
+    //give degrees of freedom
+    areaBody->setInitialGeneralizedPosition(Vec("[1.5;0.9;0;0;0;0]"));
+    areaBody->setInitialGeneralizedVelocity(Vec("[0;0;0;0;0;0]"));
+
+    this->addObject(areaBody);
+
+    areaBody->addContour(area, Vec3(), BasicRotAKIz(M_PI));
+
+    //Add contact between frustum and area
+    Contact* contact = new Contact("FrustumArea2");
+    contact->connect(area, polyfrustumcontour);
+
+    contact->setPlotFeature(openMBV, enabled);
+    contact->enableOpenMBVContactPoints();
+
+    //Set contact law
+    contact->setContactForceLaw(new UnilateralConstraint);
+    contact->setContactImpactLaw(new UnilateralNewtonImpact(0.3));
+    contact->setFrictionForceLaw(new SpatialCoulombFriction(0.5));
+    contact->setFrictionImpactLaw(new SpatialCoulombImpact(0.5));
+
+    this->addLink(contact);
+  }
 
 }
 
