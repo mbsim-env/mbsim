@@ -80,7 +80,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cuboid->setDepth(b);
   body->addContour(cuboid,Vec(3),SqrMat(3,EYE));
 
-  MultiContact *cnf = new MultiContact("Kontakt_Wuerfel");
+  Contact *cnf = new Contact("Kontakt_Wuerfel");
   cnf->setContactForceLaw(new UnilateralConstraint);
   cnf->setContactImpactLaw(new UnilateralNewtonImpact(1));
 //  cnf->setFrictionForceLaw(new SpatialCoulombFriction(0.3));

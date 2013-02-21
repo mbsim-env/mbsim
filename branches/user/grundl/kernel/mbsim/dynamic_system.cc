@@ -24,7 +24,7 @@
 #include "mbsim/contour.h"
 #include "mbsim/object.h"
 #include "mbsim/frame.h"
-#include "mbsim/contact.h"
+#include "mbsim/multi_contact.h"
 #include "mbsim/joint.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "hdf5serie/fileserie.h"

@@ -18,7 +18,7 @@
  */
 
 #include <config.h> 
-#include <mbsim/contact.h>
+#include <mbsim/multi_contact.h>
 #include <mbsim/contour.h>
 #include <mbsim/contour_pdata.h>
 #include <mbsim/dynamic_system_solver.h>
@@ -44,7 +44,7 @@ namespace MBSim {
   extern double tP;
   extern bool gflag;
 
-  Contact::Contact(const string &name) :
+  SingleContact::SingleContact(const string &name) :
       LinkMechanics(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), cpData(0), gActive(0), gActive0(0), gdActive(0), gddActive(0)
 #ifdef HAVE_OPENMBVCPPINTERFACE
           , openMBVContactGrp(0), openMBVContactFrameSize(0), openMBVContactFrameEnabled(true), contactArrow(NULL), frictionArrow(NULL)
@@ -52,7 +52,7 @@ namespace MBSim {
           , saved_ref1(""), saved_ref2("") {
   }
 
-  Contact::~Contact() {
+  SingleContact::~SingleContact() {
 
     //TODO: who deletes contactKinamtics if contact is used in a multi-contact?
 //    if (contactKinematics) {
@@ -74,7 +74,7 @@ namespace MBSim {
       delete[] gddActive;
   }
 
-  void Contact::updatewb(double t, int j) {
+  void SingleContact::updatewb(double t, int j) {
     if (gdActive[j]) {
       for (unsigned i = 0; i < 2; ++i) //TODO: only two contours are interacting
         wb += fF[i](Range<Fixed<0>,Fixed<2> >(), Range<Var,Var>(0,laSize-1)).T() * cpData[i].getFrameOfReference().getGyroscopicAccelerationOfTranslation(j);
@@ -83,7 +83,7 @@ namespace MBSim {
     }
   }
 
-  void Contact::updateW(double t, int j) {
+  void SingleContact::updateW(double t, int j) {
     if (gActive) {
 
       int fFTangCol = 1;
@@ -107,7 +107,7 @@ namespace MBSim {
     }
   }
 
-  void Contact::updateV(double t, int j) {
+  void SingleContact::updateV(double t, int j) {
     if (getFrictionDirections()) {
       if (fdf->isSetValued()) {
         if (gdActive[0] and not gdActive[1]) {
@@ -119,19 +119,19 @@ namespace MBSim {
     }
   }
 
-  void Contact::updateh(double t, int j) {
+  void SingleContact::updateh(double t, int j) {
     laN(0) = (*fcl)(g(0), gdN(0));
 
     applyh(t, j);
   }
 
-  void Contact::updateg(double t) {
+  void SingleContact::updateg(double t) {
 	  if (g.size())
 	    contactKinematics->updateg(g, cpData);
 
   }
 
-  void Contact::updategd(double t) {
+  void SingleContact::updategd(double t) {
     if ((fcl->isSetValued() and gdActive[0]) or (not fcl->isSetValued() and fcl->isActive(g(0), 0))) { // TODO: nicer implementation
       for (unsigned int i = 0; i < 2; i++)
         contour[i]->updateKinematicsForFrame(cpData[i], velocities); // angular velocity necessary e.g. see ContactKinematicsSpherePlane::updatewb
@@ -153,7 +153,7 @@ namespace MBSim {
     }
   }
 
-  void Contact::updateStopVector(double t) {
+  void SingleContact::updateStopVector(double t) {
     if (gActive != gdActive[0])
       throw;
     if (gActive) {
@@ -182,13 +182,13 @@ namespace MBSim {
     }
   }
 
-  void Contact::updateJacobians(double t, int j) {
+  void SingleContact::updateJacobians(double t, int j) {
     if (gActive)
       for (unsigned int i = 0; i < 2; i++)
         contour[i]->updateJacobiansForFrame(cpData[i], j);
   }
 
-  void Contact::updateWRef(const Mat& WParent, int j) {
+  void SingleContact::updateWRef(const Mat& WParent, int j) {
     for (unsigned i = 0; i < 2; i++) { //only two contours for one contactKinematic
       int hInd = contour[i]->gethInd(j);
       Index I = Index(hInd, hInd + contour[i]->gethSize(j) - 1);
@@ -197,7 +197,7 @@ namespace MBSim {
     }
   }
 
-  void Contact::updateVRef(const Mat& VParent, int j) {
+  void SingleContact::updateVRef(const Mat& VParent, int j) {
     for (unsigned i = 0; i < 2; i++) { //only two contours for one contactKinematic
       int hInd = contour[i]->gethInd(j);
       Index I = Index(hInd, hInd + contour[i]->gethSize(j) - 1);
@@ -206,7 +206,7 @@ namespace MBSim {
     }
   }
 
-  void Contact::updatehRef(const Vec& hParent, int j) {
+  void SingleContact::updatehRef(const Vec& hParent, int j) {
     for (unsigned i = 0; i < 2; i++) { //only two contours for one contactKinematic
       int hInd = contour[i]->gethInd(j);
       Index I = Index(hInd, hInd + contour[i]->gethSize(j) - 1);
@@ -214,7 +214,7 @@ namespace MBSim {
     }
   }
 
-  void Contact::updatelaRef(const Vec& laParent) {
+  void SingleContact::updatelaRef(const Vec& laParent) {
     LinkMechanics::updatelaRef(laParent);
     if (laSize) {
       int laIndSizeNormal = 0;
@@ -229,7 +229,7 @@ namespace MBSim {
     }
   }
 
-  void Contact::updategdRef(const Vec& gdParent) {
+  void SingleContact::updategdRef(const Vec& gdParent) {
     LinkMechanics::updategdRef(gdParent);
     if (gdSize) {
       int gdIndSizeNormal = 0;
@@ -243,12 +243,12 @@ namespace MBSim {
     }
   }
 
-  void Contact::calcxSize() {
+  void SingleContact::calcxSize() {
     LinkMechanics::calcxSize();
     xSize = 0;
   }
 
-  void Contact::calclaSize(int j) {
+  void SingleContact::calclaSize(int j) {
     LinkMechanics::calclaSize(j);
     if (j == 0) { // IA
       //Add 1 to lambda size if normal force law is setValued
@@ -322,7 +322,7 @@ namespace MBSim {
       throw;
   }
 
-  void Contact::calcgSize(int j) {
+  void SingleContact::calcgSize(int j) {
     LinkMechanics::calcgSize(j);
     if (j == 0) { // IA
       gSize = 1;
@@ -337,7 +337,7 @@ namespace MBSim {
       throw;
   }
 
-  void Contact::calcgdSize(int j) {
+  void SingleContact::calcgdSize(int j) {
     LinkMechanics::calcgdSize(j);
     if (j == 0) { // IA
       //Add 1 to gd size if normal force law is setValued
@@ -401,7 +401,7 @@ namespace MBSim {
       throw;
   }
 
-  void Contact::calcrFactorSize(int j) {
+  void SingleContact::calcrFactorSize(int j) {
     LinkMechanics::calcrFactorSize(j);
     if (j == 0) { // IA
       rFactorSize = 1 + min(getFrictionDirections(), 1);
@@ -417,7 +417,7 @@ namespace MBSim {
     }
   }
 
-  void Contact::calcsvSize() {
+  void SingleContact::calcsvSize() {
     LinkMechanics::calcsvSize();
 
     //Add length due to normal direction
@@ -428,21 +428,21 @@ namespace MBSim {
       svSize += fdf->isSetValued() ? min(getFrictionDirections(), 1) : 0;
   }
 
-  void Contact::calcLinkStatusSize() {
+  void SingleContact::calcLinkStatusSize() {
     LinkMechanics::calcLinkStatusSize();
-    assert(contactKinematics->getNumberOfPotentialContactPoints() == 1);
+    //assert(contactKinematics->getNumberOfPotentialContactPoints() == 1); //not necessary anymore as SingleContact has only one contact point
     LinkStatusSize = 1;
     LinkStatus.resize(LinkStatusSize);
   }
 
-  void Contact::calcLinkStatusRegSize() {
+  void SingleContact::calcLinkStatusRegSize() {
     LinkMechanics::calcLinkStatusRegSize();
-    assert(contactKinematics->getNumberOfPotentialContactPoints() == 1);
+    //assert(contactKinematics->getNumberOfPotentialContactPoints() == 1); //not necessary anymore as SingleContact has only one contact point
     LinkStatusRegSize = 1;
     LinkStatusReg.resize(LinkStatusRegSize);
   }
 
-  void Contact::init(InitStage stage) {
+  void SingleContact::init(InitStage stage) {
     if (stage == resolveXMLPath) {
       if (saved_ref1 != "" && saved_ref2 != "")
         connect(getByPath<Contour>(saved_ref1), getByPath<Contour>(saved_ref2));
@@ -641,14 +641,14 @@ namespace MBSim {
     }
   }
 
-  bool Contact::isSetValued() const {
+  bool SingleContact::isSetValued() const {
     bool flag = fcl->isSetValued();
     if (fdf)
       flag |= fdf->isSetValued();
     return flag;
   }
 
-  bool Contact::isSingleValued() const {
+  bool SingleContact::isSingleValued() const {
     if (fcl->isSetValued()) {
       if (fdf) {
         return not fdf->isSetValued();
@@ -658,7 +658,7 @@ namespace MBSim {
     return true;
   }
 
-  void Contact::updateLinkStatus(double t) {
+  void SingleContact::updateLinkStatus(double t) {
     if (gActive) {
       LinkStatus(0) = 2;
       if (ftil) {
@@ -672,7 +672,7 @@ namespace MBSim {
       LinkStatus(0) = 1;
   }
 
-  void Contact::updateLinkStatusReg(double t) {
+  void SingleContact::updateLinkStatusReg(double t) {
     if (gActive) {
       LinkStatusReg(0) = 2;
     }
@@ -681,17 +681,17 @@ namespace MBSim {
     }
   }
 
-  bool Contact::isActive() const {
+  bool SingleContact::isActive() const {
     return gActive ? true : false;
   }
 
-  bool Contact::gActiveChanged() {
+  bool SingleContact::gActiveChanged() {
     bool changed = (gActive0 != gActive ? true : false);
     gActive0 = gActive;
     return changed;
   }
 
-  void Contact::plot(double t, double dt) {
+  void SingleContact::plot(double t, double dt) {
     if (getPlotFeature(plotRecursive) == enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if (getPlotFeature(openMBV) == enabled && (openMBVContactFrameSize > epsroot() || contactArrow || frictionArrow)) {
@@ -805,13 +805,13 @@ namespace MBSim {
     }
   }
 
-  void Contact::closePlot() {
+  void SingleContact::closePlot() {
     if (getPlotFeature(plotRecursive) == enabled) {
       LinkMechanics::closePlot();
     }
   }
 
-  void Contact::solveImpactsFixpointSingle(double dt) {
+  void SingleContact::solveImpactsFixpointSingle(double dt) {
     if (gActive) {
       const double *a = ds->getGs()();
       const int *ia = ds->getGs().Ip();
@@ -844,7 +844,7 @@ namespace MBSim {
     }
   }
 
-  void Contact::solveConstraintsFixpointSingle() {
+  void SingleContact::solveConstraintsFixpointSingle() {
     if (gdActive[0]) {
 
       const double *a = ds->getGs()();
@@ -877,7 +877,7 @@ namespace MBSim {
     }
   }
 
-  void Contact::solveImpactsGaussSeidel(double dt) {
+  void SingleContact::solveImpactsGaussSeidel(double dt) {
     assert(getFrictionDirections() <= 1);
     if (gActive) {
 
@@ -911,7 +911,7 @@ namespace MBSim {
     }
   }
 
-  void Contact::solveConstraintsGaussSeidel() {
+  void SingleContact::solveConstraintsGaussSeidel() {
     assert(getFrictionDirections() <= 1);
 
     if (gdActive[0]) {
@@ -948,7 +948,7 @@ namespace MBSim {
     }
   }
 
-  void Contact::solveImpactsRootFinding(double dt) {
+  void SingleContact::solveImpactsRootFinding(double dt) {
     if (gActive) {
 
       const double *a = ds->getGs()();
@@ -981,7 +981,7 @@ namespace MBSim {
     }
   }
 
-  void Contact::solveConstraintsRootFinding() {
+  void SingleContact::solveConstraintsRootFinding() {
     if (gdActive[0]) {
 
       const double *a = ds->getGs()();
@@ -1016,7 +1016,7 @@ namespace MBSim {
     }
   }
 
-  void Contact::jacobianConstraints() {
+  void SingleContact::jacobianConstraints() {
     if (gdActive[0]) {
 
       const SqrMat Jprox = ds->getJprox();
@@ -1067,7 +1067,7 @@ namespace MBSim {
     }
   }
 
-  void Contact::jacobianImpacts() {
+  void SingleContact::jacobianImpacts() {
     if (gActive) {
 
       const SqrMat Jprox = ds->getJprox();
@@ -1117,7 +1117,7 @@ namespace MBSim {
     }
   }
 
-  void Contact::updaterFactors() {
+  void SingleContact::updaterFactors() {
     if (gdActive[0]) {
 
       const double *a = ds->getGs()();
@@ -1182,7 +1182,7 @@ namespace MBSim {
     }
   }
 
-  void Contact::checkConstraintsForTermination() {
+  void SingleContact::checkConstraintsForTermination() {
     if (gdActive[0]) {
 
       const double *a = ds->getGs()();
@@ -1221,7 +1221,7 @@ namespace MBSim {
     }
   }
 
-  void Contact::checkImpactsForTermination(double dt) {
+  void SingleContact::checkImpactsForTermination(double dt) {
     if (gActive) {
 
       const double *a = ds->getGs()();
@@ -1258,7 +1258,7 @@ namespace MBSim {
     }
   }
 
-  void Contact::checkActive(int j) {
+  void SingleContact::checkActive(int j) {
     if (j == 1) { // formerly checkActiveg()
       gActive = fcl->isActive(g(0), gTol) ? 1 : 0;
       gdActive[0] = gActive;
@@ -1366,14 +1366,14 @@ namespace MBSim {
       throw;
   }
 
-  int Contact::getFrictionDirections() {
+  int SingleContact::getFrictionDirections() {
     if (fdf)
       return fdf->getFrictionDirections();
     else
       return 0;
   }
 
-  void Contact::connect(Contour *contour0, Contour* contour1, ContactKinematics* contactKinematics_ /*=0*/) {
+  void SingleContact::connect(Contour *contour0, Contour* contour1, ContactKinematics* contactKinematics_ /*=0*/) {
     LinkMechanics::connect(contour0);
     LinkMechanics::connect(contour1);
     contactKinematics = contactKinematics_;
@@ -1391,7 +1391,7 @@ namespace MBSim {
 
   }
 
-  void Contact::applyh(int t, int j) {
+  void SingleContact::applyh(int t, int j) {
     WF[1] = cpData[0].getFrameOfReference().getOrientation().col(0) * laN(0);
 
     if (fdf)
@@ -1408,11 +1408,11 @@ namespace MBSim {
     }
   }
 
-  void Contact::computeCurvatures(Vec & r) const {
+  void SingleContact::computeCurvatures(Vec & r) const {
     contactKinematics->computeCurvatures(r, cpData);
   }
 
-  void Contact::LinearImpactEstimation(Vec &gInActive_, Vec &gdInActive_, int *IndInActive_, Vec &gAct_, int *IndActive_) {
+  void SingleContact::LinearImpactEstimation(Vec &gInActive_, Vec &gdInActive_, int *IndInActive_, Vec &gAct_, int *IndActive_) {
     if (gActive) {
       gAct_(*IndActive_) = g(0);
       (*IndActive_)++;
@@ -1428,14 +1428,14 @@ namespace MBSim {
     }
   }
 
-  void Contact::SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_) {
+  void SingleContact::SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_) {
     if (gActive)
       (*sizeActive_)++;
     else
       (*sizeInActive_)++;
   }
 
-  void Contact::initializeUsingXML(TiXmlElement *element) {
+  void SingleContact::initializeUsingXML(TiXmlElement *element) {
     LinkMechanics::initializeUsingXML(element);
     TiXmlElement *e;
 
@@ -1501,7 +1501,7 @@ namespace MBSim {
 #endif
   }
 
-  void Contact::updatecorr(int j) {
+  void SingleContact::updatecorr(int j) {
     if (j == 1) { // IG position
       if (gActive) { // Contact was closed
         if (gdActive[0])
@@ -1548,7 +1548,7 @@ namespace MBSim {
       throw;
   }
 
-  void Contact::calccorrSize(int j) {
+  void SingleContact::calccorrSize(int j) {
     LinkMechanics::calccorrSize(j);
     if (j == 1) { // IG
       corrSize += gActive;
@@ -1570,7 +1570,7 @@ namespace MBSim {
       throw;
   }
 
-  void Contact::checkRoot() {
+  void SingleContact::checkRoot() {
     rootID = 0;
     if (jsv(0)) {
       if (gActive)

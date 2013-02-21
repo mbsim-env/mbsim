@@ -3,7 +3,7 @@
 #include "mbsim/spring_damper.h"
 #include "mbsim/environment.h"
 #include "mbsim/contours/sphere.h"
-#include "mbsim/contact.h"
+#include "mbsim/multi_contact.h"
 #include "mbsim/constitutive_laws.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -65,7 +65,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   sphere2->setRadius(0.2);
   sphere2->enableOpenMBV();
   mass2->addContour(sphere2,Vec(3,INIT,0.),SqrMat(3,EYE));
-  MultiContact *contact = new MultiContact("Contact");
+  Contact *contact = new Contact("Contact");
   contact->connect(sphere1,sphere2);
   contact->setContactForceLaw(new UnilateralConstraint());
   contact->setContactImpactLaw(new UnilateralNewtonImpact(0.3));

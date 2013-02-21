@@ -157,7 +157,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     //  ContactKinematicsCircleSolidFlexibleBand *ck = new ContactKinematicsCircleSolidFlexibleBand();
     name.clear();
     name << "Contact" << i;
-    MultiContact *contact = new MultiContact(name.str());
+    Contact *contact = new Contact(name.str());
     //  contact->setContactKinematics(ck);
     //contact->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(c,d)));
     cout << name.str() << " is ";

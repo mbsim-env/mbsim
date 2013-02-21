@@ -61,7 +61,7 @@ namespace MBSimFlexibleBody {
   }
 
   //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  void ContactKinematicsCircleSolidFlexibleBand::updateg(std::vector<Contact> & contacts) {
+  void ContactKinematicsCircleSolidFlexibleBand::updateg(std::vector<SingleContact> & contacts) {
     //Vector of lagrange parameters for contact positions
     Vec contactPositions(numberOfPotentialContactPoints,NONINIT);
     int inContact = 0;

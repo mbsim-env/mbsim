@@ -192,7 +192,7 @@ System::System(const string &projectName, int contactType, int firstBall, int la
 //    }
   }
 
-  MultiContact* contact = new MultiContact("Contact");
+  Contact* contact = new Contact("Contact");
 
   //fancy stuff
   contact->enableOpenMBVContactPoints(1.,false);

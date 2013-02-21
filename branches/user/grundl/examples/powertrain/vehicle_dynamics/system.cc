@@ -1,6 +1,6 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
-#include "mbsim/contact.h"
+#include "mbsim/multi_contact.h"
 #include "mbsimControl/actuator.h"
 #include "mbsim/utils/function_library.h"
 #include "mbsim/environment.h"

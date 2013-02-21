@@ -3,7 +3,7 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/joint.h"
 #include "mbsim/contour.h"
-#include "mbsim/contact.h"
+#include "mbsim/multi_contact.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/line.h"
 #include "mbsim/contact_kinematics/point_line.h"

@@ -2,7 +2,7 @@
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_rcm.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/joint.h"
-#include "mbsim/contact.h"
+#include "mbsim/multi_contact.h"
 #include "mbsim/contour.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/constitutive_laws.h"

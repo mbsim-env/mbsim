@@ -22,7 +22,7 @@
 
 #include "fmatvec.h"
 #include "mbsim/mbsim_event.h"
-#include <mbsim/contact.h>
+#include <mbsim/single_contact.h>
 #include <vector>
 
 namespace MBSim {
@@ -91,7 +91,7 @@ namespace MBSim {
        *
        * REMARK: The given vector of Contacts is ordered by the possible contact points (cp. multi-contact preINIT-stage)
        */
-      virtual void updateg(std::vector<Contact> & contact) {updateg(contact[0].getg(), contact[0].getcpData());}
+      virtual void updateg(std::vector<SingleContact> & contact) {if(contact[0].getg().size()) updateg(contact[0].getg(), contact[0].getcpData());}
 
       /**
        * \brief compute acceleration in terms of contour parameters for event driven integration and several contact points

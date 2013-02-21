@@ -2,7 +2,7 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/frustum.h"
-#include "mbsim/contact.h"
+#include "mbsim/multi_contact.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"
 

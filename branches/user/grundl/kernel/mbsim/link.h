@@ -407,7 +407,7 @@ namespace MBSim {
       virtual void updatecorr(int j) { corr.init(0); }
       virtual void updatecorrRef(const fmatvec::Vec &ref);
       virtual void calccorrSize(int j) { corrSize = 0; }
-      void setcorrInd(int corrInd_) { corrInd = corrInd_; } 
+      virtual void setcorrInd(int corrInd_) { corrInd = corrInd_; }
       int getcorrSize() const { return corrSize; } 
       virtual void checkRoot() {};
 
@@ -449,7 +449,7 @@ namespace MBSim {
              
       /**
        * for set valued links with piecewise link equation (e.g. unilateral contacts or coulomb friction)
-       * \brief status of link (default 0) describing which pice of the equation is valid (e.g. stick or slip)
+       * \brief status of link (default 0) describing which piece of the equation is valid (e.g. stick or slip)
        */
       fmatvec::VecInt LinkStatus;
 

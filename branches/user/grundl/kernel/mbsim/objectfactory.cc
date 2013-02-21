@@ -7,7 +7,6 @@
 #include "mbsim/spring_damper.h"
 #include "mbsim/extern_generalized_io.h"
 #include "mbsim/joint.h"
-#include "mbsim/contact.h"
 #include "mbsim/multi_contact.h"
 #include "mbsim/contours/sphere.h"
 #include "mbsim/contours/point.h"
@@ -335,7 +334,7 @@ namespace MBSim {
     if(element->ValueStr()==MBSIMNS"Joint")
       return new Joint(element->Attribute("name"));
     if(element->ValueStr()==MBSIMNS"Contact")
-      return new Contact(element->Attribute("name"));
+      return new SingleContact(element->Attribute("name"));
     if(element->ValueStr()==MBSIMNS"MultiContact")
       return new MultiContact(element->Attribute("name"));
     if(element->ValueStr()==MBSIMNS"ExternGeneralizedIO")

@@ -2,7 +2,7 @@
 
 #include "mbsim/rigid_body.h"
 #include "mbsim/kinematics.h"
-#include "mbsim/contact.h"
+#include "mbsim/multi_contact.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/contours/circle_solid.h"
 #include "mbsim/contours/contour1s_analytical.h"
@@ -21,7 +21,7 @@ using namespace fmatvec;
 
 class initLink : public Link {
   public:
-    initLink(const std::string &name, RigidBody * rocker_, Contact * contactCamRocker_) : Link(name), rocker(rocker_), contactCamRocker(contactCamRocker_) {}    
+    initLink(const std::string &name, RigidBody * rocker_, Contact * contactCamRocker_) : Link(name), rocker(rocker_), contactCamRocker(contactCamRocker_) {}
     void updateWRef(const fmatvec::Mat&, int){}
     void updateVRef(const fmatvec::Mat&, int){}
     void updatehRef(const fmatvec::Vec&, int){}

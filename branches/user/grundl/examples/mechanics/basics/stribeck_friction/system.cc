@@ -1,7 +1,7 @@
 #include "system.h"
 #include "stribeck_friction.h"
 #include "mbsim/rigid_body.h"
-#include "mbsim/contact.h"
+#include "mbsim/multi_contact.h"
 #include "mbsim/environment.h"
 #include "mbsim/contours/sphere.h"
 #include "mbsim/contours/plane.h"

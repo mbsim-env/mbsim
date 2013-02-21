@@ -5,7 +5,7 @@
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/line_segment.h"
 #include "mbsim/contours/line.h"
-#include "mbsim/contact.h"
+#include "mbsim/multi_contact.h"
 #include "mbsim/joint.h"
 #include "mbsim/kinetic_excitation.h"
 #include "mbsim/utils/function.h"

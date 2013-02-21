@@ -40,7 +40,7 @@ namespace MBSim {
       virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData* cpData) { throw MBSimError("ERROR (ContactKinematicsCompoundContourCompoundContour::updatewb): Not implemented!"); };
       virtual void updateg(std::vector<fmatvec::Vec>::iterator ig, std::vector<ContourPointData*>::iterator icpData);
       virtual void updatewb(std::vector<fmatvec::Vec>::iterator iwb, std::vector<fmatvec::Vec>::iterator ig, std::vector<ContourPointData*>::iterator icpData);
-      virtual void updateg(std::vector<Contact> & contact);
+      virtual void updateg(std::vector<SingleContact> & contact);
       /***************************************************/
 
     private:

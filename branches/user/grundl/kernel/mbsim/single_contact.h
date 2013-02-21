@@ -53,18 +53,18 @@ namespace MBSim {
    * Remarks:
    * - constitutive laws on acceleration and velocity level have to be set pairwise
    */
-  class Contact: public LinkMechanics {
+  class SingleContact: public LinkMechanics {
     public:
       /*!
        * \brief constructor
        * \param name of contact
        */      
-      Contact(const std::string &name);
+      SingleContact(const std::string &name);
 
       /**
        * \brief destructor
        */
-      virtual ~Contact();
+      virtual ~SingleContact();
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updatewb(double t, int i=0);
