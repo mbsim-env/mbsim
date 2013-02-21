@@ -18,13 +18,12 @@
  */
 
 #include <config.h>
-#include "mbsim/plot_elements/plot_rigid_body_group.h"
+#include "mbsim/observer/rigid_body_group_observer.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/frame.h"
 #include "mbsim/environment.h"
 #include "mbsim/utils/rotarymatrices.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
-#include <openmbvcppinterface/arrow.h>
 #include <openmbvcppinterface/frame.h>
 #endif
 
@@ -33,7 +32,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  PlotRigidBodyGroup::PlotRigidBodyGroup(const std::string &name) : Element(name), ref(0) {
+  RigidBodyGroupObserver::RigidBodyGroupObserver(const std::string &name) : Observer(name), ref(0) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     openMBVPosition=0;
     openMBVVelocity=0;
@@ -48,55 +47,52 @@ namespace MBSim {
 #endif
   }
 
-  void PlotRigidBodyGroup::init(InitStage stage) {
+  void RigidBodyGroupObserver::init(InitStage stage) {
     if(stage==MBSim::plot) {
       updatePlotFeatures();
 
+      Observer::init(stage);
       if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
-          openMBVGrp=new OpenMBV::Group();
-          openMBVGrp->setName(name+"_Group");
-          openMBVGrp->setExpand(false);
-          parent->getOpenMBVGrp()->addObject(openMBVGrp);
           if(openMBVPosition) {
-            openMBVPosition->setName(name+"_Position");
+            openMBVPosition->setName("Position");
             getOpenMBVGrp()->addObject(openMBVPosition);
           }
           if(openMBVVelocity) {
-            openMBVVelocity->setName(name+"_Velocity");
+            openMBVVelocity->setName("Velocity");
             getOpenMBVGrp()->addObject(openMBVVelocity);
           }
           if(openMBVAcceleration) {
-            openMBVAcceleration->setName(name+"_Acceleration");
+            openMBVAcceleration->setName("Acceleration");
             getOpenMBVGrp()->addObject(openMBVAcceleration);
           }
           if(openMBVAngularVelocity) {
-            openMBVAngularVelocity->setName(name+"_AngularVelocity");
+            openMBVAngularVelocity->setName("AngularVelocity");
             getOpenMBVGrp()->addObject(openMBVAngularVelocity);
           }
           if(openMBVAngularAcceleration) {
-            openMBVAngularAcceleration->setName(name+"_AngularAcceleration");
+            openMBVAngularAcceleration->setName("AngularAcceleration");
             getOpenMBVGrp()->addObject(openMBVAngularAcceleration);
           }
           if(openMBVWeight) {
-            openMBVWeight->setName(name+"_Weight");
+            openMBVWeight->setName("Weight");
             getOpenMBVGrp()->addObject(openMBVWeight);
           }
           if(openMBVMomentum) {
-            openMBVMomentum->setName(name+"_Momentum");
+            openMBVMomentum->setName("Momentum");
             getOpenMBVGrp()->addObject(openMBVMomentum);
           }
           if(openMBVAngularMomentum) {
-            openMBVAngularMomentum->setName(name+"_AngularMomentum");
+            openMBVAngularMomentum->setName("AngularMomentum");
             getOpenMBVGrp()->addObject(openMBVAngularMomentum);
           }
           if(openMBVDerivativeOfMomentum) {
-            openMBVDerivativeOfMomentum->setName(name+"_DerivativeOfMomentum");
+            openMBVDerivativeOfMomentum->setName("DerivativeOfMomentum");
             getOpenMBVGrp()->addObject(openMBVDerivativeOfMomentum);
           }
           if(openMBVDerivativeOfAngularMomentum) {
-            openMBVDerivativeOfAngularMomentum->setName(name+"_DerivativeOfAngularMomentum");
+            openMBVDerivativeOfAngularMomentum->setName("DerivativeOfAngularMomentum");
             getOpenMBVGrp()->addObject(openMBVDerivativeOfAngularMomentum);
           }
         }
@@ -108,77 +104,59 @@ namespace MBSim {
       Element::init(stage);
   }
 
-  void PlotRigidBodyGroup::enableOpenMBVWeight(double scaleLength, double diameter, double headDiameter, double headLength, double color) {
-    if(scaleLength>=0) {
-      openMBVWeight=new OpenMBV::Arrow;
-      openMBVWeight->setScaleLength(scaleLength);
-      openMBVWeight->setDiameter(diameter);
-      openMBVWeight->setHeadDiameter(headDiameter);
-      openMBVWeight->setHeadLength(headLength);
-      openMBVWeight->setStaticColor(color);
-    }
-    else {
-      openMBVWeight=0;
-    }
+  void RigidBodyGroupObserver::enableOpenMBVWeight(double scale, OpenMBV::Arrow::ReferencePoint refPoint, double diameter, double headDiameter, double headLength, double color) {
+    openMBVWeight=new OpenMBV::Arrow;
+    openMBVWeight->setScaleLength(scale);
+    openMBVWeight->setReferencePoint(refPoint);
+    openMBVWeight->setDiameter(diameter);
+    openMBVWeight->setHeadDiameter(headDiameter);
+    openMBVWeight->setHeadLength(headLength);
+    openMBVWeight->setStaticColor(color);
   }
 
-  void PlotRigidBodyGroup::enableOpenMBVMomentum(double scaleLength, double diameter, double headDiameter, double headLength, double color) {
-    if(scaleLength>=0) {
-      openMBVMomentum=new OpenMBV::Arrow;
-      openMBVMomentum->setScaleLength(scaleLength);
-      openMBVMomentum->setDiameter(diameter);
-      openMBVMomentum->setHeadDiameter(headDiameter);
-      openMBVMomentum->setHeadLength(headLength);
-      openMBVMomentum->setStaticColor(color);
-    }
-    else {
-      openMBVMomentum=0;
-    }
+  void RigidBodyGroupObserver::enableOpenMBVMomentum(double scale, OpenMBV::Arrow::ReferencePoint refPoint, double diameter, double headDiameter, double headLength, double color) {
+    openMBVMomentum=new OpenMBV::Arrow;
+    openMBVMomentum->setScaleLength(scale);
+    openMBVMomentum->setReferencePoint(refPoint);
+    openMBVMomentum->setDiameter(diameter);
+    openMBVMomentum->setHeadDiameter(headDiameter);
+    openMBVMomentum->setHeadLength(headLength);
+    openMBVMomentum->setStaticColor(color);
   }
 
-  void PlotRigidBodyGroup::enableOpenMBVAngularMomentum(double scaleLength, double diameter, double headDiameter, double headLength, double color) {
-    if(scaleLength>=0) {
-      openMBVAngularMomentum=new OpenMBV::Arrow;
-      openMBVAngularMomentum->setScaleLength(scaleLength);
-      openMBVAngularMomentum->setDiameter(diameter);
-      openMBVAngularMomentum->setHeadDiameter(headDiameter);
-      openMBVAngularMomentum->setHeadLength(headLength);
-      openMBVAngularMomentum->setStaticColor(color);
-    }
-    else {
-      openMBVAngularMomentum=0;
-    }
+  void RigidBodyGroupObserver::enableOpenMBVAngularMomentum(double scale, OpenMBV::Arrow::ReferencePoint refPoint, double diameter, double headDiameter, double headLength, double color) {
+    openMBVAngularMomentum=new OpenMBV::Arrow;
+    openMBVAngularMomentum->setScaleLength(scale);
+    openMBVAngularMomentum->setReferencePoint(refPoint);
+    openMBVAngularMomentum->setType(OpenMBV::Arrow::toDoubleHead);
+    openMBVAngularMomentum->setDiameter(diameter);
+    openMBVAngularMomentum->setHeadDiameter(headDiameter);
+    openMBVAngularMomentum->setHeadLength(headLength);
+    openMBVAngularMomentum->setStaticColor(color);
   }
 
-  void PlotRigidBodyGroup::enableOpenMBVDerivativeOfMomentum(double scaleLength, double diameter, double headDiameter, double headLength, double color) {
-    if(scaleLength>=0) {
-      openMBVDerivativeOfMomentum=new OpenMBV::Arrow;
-      openMBVDerivativeOfMomentum->setScaleLength(scaleLength);
-      openMBVDerivativeOfMomentum->setDiameter(diameter);
-      openMBVDerivativeOfMomentum->setHeadDiameter(headDiameter);
-      openMBVDerivativeOfMomentum->setHeadLength(headLength);
-      openMBVDerivativeOfMomentum->setStaticColor(color);
-    }
-    else {
-      openMBVDerivativeOfMomentum=0;
-    }
+  void RigidBodyGroupObserver::enableOpenMBVDerivativeOfMomentum(double scale, OpenMBV::Arrow::ReferencePoint refPoint, double diameter, double headDiameter, double headLength, double color) {
+    openMBVDerivativeOfMomentum=new OpenMBV::Arrow;
+    openMBVDerivativeOfMomentum->setScaleLength(scale);
+    openMBVDerivativeOfMomentum->setReferencePoint(refPoint);
+    openMBVDerivativeOfMomentum->setDiameter(diameter);
+    openMBVDerivativeOfMomentum->setHeadDiameter(headDiameter);
+    openMBVDerivativeOfMomentum->setHeadLength(headLength);
+    openMBVDerivativeOfMomentum->setStaticColor(color);
   }
 
-  void PlotRigidBodyGroup::enableOpenMBVDerivativeOfAngularMomentum(double scaleLength, double diameter, double headDiameter, double headLength, double color) {
-    if(scaleLength>=0) {
-      openMBVDerivativeOfAngularMomentum=new OpenMBV::Arrow;
-      openMBVDerivativeOfAngularMomentum->setScaleLength(scaleLength);
-      openMBVDerivativeOfAngularMomentum->setDiameter(diameter);
-      openMBVDerivativeOfAngularMomentum->setHeadDiameter(headDiameter);
-      openMBVDerivativeOfAngularMomentum->setHeadLength(headLength);
-      openMBVDerivativeOfAngularMomentum->setStaticColor(color);
-    }
-    else {
-      openMBVDerivativeOfAngularMomentum=0;
-    }
+  void RigidBodyGroupObserver::enableOpenMBVDerivativeOfAngularMomentum(double scale, OpenMBV::Arrow::ReferencePoint refPoint, double diameter, double headDiameter, double headLength, double color) {
+    openMBVDerivativeOfAngularMomentum=new OpenMBV::Arrow;
+    openMBVDerivativeOfAngularMomentum->setScaleLength(scale);
+    openMBVDerivativeOfAngularMomentum->setReferencePoint(refPoint);
+    openMBVDerivativeOfAngularMomentum->setType(OpenMBV::Arrow::toDoubleHead);
+    openMBVDerivativeOfAngularMomentum->setDiameter(diameter);
+    openMBVDerivativeOfAngularMomentum->setHeadDiameter(headDiameter);
+    openMBVDerivativeOfAngularMomentum->setHeadLength(headLength);
+    openMBVDerivativeOfAngularMomentum->setStaticColor(color);
   }
 
-  void PlotRigidBodyGroup::plot(double t, double dt) {
+  void RigidBodyGroupObserver::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
       double m = 0;
       for(unsigned int i=0; i<body.size(); i++) {
@@ -208,7 +186,7 @@ namespace MBSim {
         Vec3 psii = body[i]->getFrame("C")->getAngularAcceleration();
         double mi = body[i]->getMass();
         //L += (AIK*body[i]->getInertiaTensor()*AIK.T() - body[i]->getMass()*tilde(rRi)*tilde(rRi))*body[i]->getFrame("C")->getAngularVelocity();
-        Mat33 WThetaS = AIK*body[i]->getInertiaTensor()*AIK.T();
+        Mat3x3 WThetaS = AIK*body[i]->getInertiaTensor()*AIK.T();
         L += WThetaS*omi + crossProduct(rRSi,mi*vSi);
         Ld += WThetaS*psii + crossProduct(omi,WThetaS*omi) + crossProduct(rRSi,mi*aSi);
       }

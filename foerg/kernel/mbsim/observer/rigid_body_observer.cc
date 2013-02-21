@@ -18,13 +18,12 @@
  */
 
 #include <config.h>
-#include "mbsim/plot_elements/plot_rigid_body.h"
+#include "mbsim/observer/rigid_body_observer.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/frame.h"
 #include "mbsim/environment.h"
 #include "mbsim/utils/rotarymatrices.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
-#include <openmbvcppinterface/arrow.h>
 #include <openmbvcppinterface/frame.h>
 #endif
 
@@ -33,23 +32,20 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  PlotRigidBody::PlotRigidBody(const std::string &name) : Element(name) {
+  RigidBodyObserver::RigidBodyObserver(const std::string &name) : Observer(name) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     openMBVAxisOfRotation=0;
 #endif
   }
 
-  void PlotRigidBody::init(InitStage stage) {
+  void RigidBodyObserver::init(InitStage stage) {
     if(stage==MBSim::plot) {
       updatePlotFeatures();
 
+      Observer::init(stage);
       if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
-          openMBVGrp=new OpenMBV::Group();
-          openMBVGrp->setName(name+"_Group");
-          openMBVGrp->setExpand(false);
-          parent->getOpenMBVGrp()->addObject(openMBVGrp);
           if(openMBVAxisOfRotation) {
             openMBVAxisOfRotation->setName(name+"_AxisOfRotation");
             getOpenMBVGrp()->addObject(openMBVAxisOfRotation);
@@ -63,21 +59,18 @@ namespace MBSim {
       Element::init(stage);
   }
 
-  void PlotRigidBody::enableOpenMBVAxisOfRotation(double scaleLength, double diameter, double headDiameter, double headLength, double color) {
-    if(scaleLength>=0) {
-      openMBVAxisOfRotation=new OpenMBV::Arrow;
-      openMBVAxisOfRotation->setScaleLength(scaleLength);
-      openMBVAxisOfRotation->setDiameter(diameter);
-      openMBVAxisOfRotation->setHeadDiameter(headDiameter);
-      openMBVAxisOfRotation->setHeadLength(headLength);
-      openMBVAxisOfRotation->setStaticColor(color);
-    }
-    else {
-      openMBVAxisOfRotation=0;
-    }
+  void RigidBodyObserver::enableOpenMBVAxisOfRotation(double scale, OpenMBV::Arrow::ReferencePoint refPoint, double diameter, double headDiameter, double headLength, double color) {
+    openMBVAxisOfRotation=new OpenMBV::Arrow;
+    openMBVAxisOfRotation->setScaleLength(scale);
+    openMBVAxisOfRotation->setReferencePoint(refPoint);
+    openMBVAxisOfRotation->setType(OpenMBV::Arrow::toDoubleHead);
+    openMBVAxisOfRotation->setDiameter(diameter);
+    openMBVAxisOfRotation->setHeadDiameter(headDiameter);
+    openMBVAxisOfRotation->setHeadLength(headLength);
+    openMBVAxisOfRotation->setStaticColor(color);
   }
 
-  void PlotRigidBody::plot(double t, double dt) {
+  void RigidBodyObserver::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
       Vec3 r = body->getFrame("C")->getPosition();
       Vec3 om = body->getFrame("C")->getAngularVelocity();

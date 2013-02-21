@@ -20,8 +20,6 @@
 #include <config.h>
 #include "mbsim/observer/kinematics_observer.h"
 #include "mbsim/frame.h"
-#include "mbsim/environment.h"
-#include "mbsim/utils/rotarymatrices.h"
 
 using namespace std;
 using namespace fmatvec;

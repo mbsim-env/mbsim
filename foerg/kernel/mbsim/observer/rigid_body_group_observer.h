@@ -17,14 +17,13 @@
  * Contact: martin.o.foerg@gmail.com
  */
 
-#ifndef _PLOT_RIGID_BODY_GROUP_H__
-#define _PLOT_RIGID_BODY_GROUP_H__
-#include "mbsim/element.h"
+#ifndef _RIGID_BODY_GROUP_OBSERVER_H__
+#define _RIGID_BODY_GROUP_OBSERVER_H__
+#include "mbsim/observer/observer.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/arrow.h>
 namespace OpenMBV {
-  //class Frame;
-  class Arrow;
   class Frame;
 }
 #endif
@@ -33,17 +32,16 @@ namespace MBSim {
   class RigidBody;
   class Frame;
 
-  class PlotRigidBodyGroup : public Element {
+  class RigidBodyGroupObserver : public Observer {
     private:
       std::vector<RigidBody*> body;
       Frame* ref;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Group* openMBVGrp;
       OpenMBV::Arrow *openMBVPosition, *openMBVVelocity, *openMBVAcceleration, *openMBVAngularVelocity, *openMBVAngularAcceleration, *openMBVWeight, *openMBVMomentum, *openMBVAngularMomentum, *openMBVDerivativeOfMomentum, *openMBVDerivativeOfAngularMomentum;
 #endif
 
     public:
-      PlotRigidBodyGroup(const std::string &name);
+      RigidBodyGroupObserver(const std::string &name);
       void addBody(RigidBody *body_) { body.push_back(body_); } 
       void setFrameOfReference(Frame* frame) { ref = frame; } 
 
@@ -51,12 +49,11 @@ namespace MBSim {
       virtual void plot(double t, double dt);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Group* getOpenMBVGrp() { return openMBVGrp; }
-      void enableOpenMBVWeight(double scaleLength, double diameter, double headDiameter, double headLength, double color=0.5); 
-      void enableOpenMBVMomentum(double scaleLength, double diameter, double headDiameter, double headLength, double color=0.5); 
-      void enableOpenMBVAngularMomentum(double scaleLength, double diameter, double headDiameter, double headLength, double color=0.5);
-      void enableOpenMBVDerivativeOfMomentum(double scaleLength, double diameter, double headDiameter, double headLength, double color=0.5);
-      void enableOpenMBVDerivativeOfAngularMomentum(double scaleLength, double diameter, double headDiameter, double headLength, double color=0.5);
+      void enableOpenMBVWeight(double scale=1, OpenMBV::Arrow::ReferencePoint refPoint=OpenMBV::Arrow::fromPoint, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
+      void enableOpenMBVMomentum(double scale=1, OpenMBV::Arrow::ReferencePoint refPoint=OpenMBV::Arrow::fromPoint, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
+      void enableOpenMBVAngularMomentum(double scale=1, OpenMBV::Arrow::ReferencePoint refPoint=OpenMBV::Arrow::fromPoint, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
+      void enableOpenMBVDerivativeOfMomentum(double scale=1, OpenMBV::Arrow::ReferencePoint refPoint=OpenMBV::Arrow::fromPoint, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
+      void enableOpenMBVDerivativeOfAngularMomentum(double scale=1, OpenMBV::Arrow::ReferencePoint refPoint=OpenMBV::Arrow::fromPoint, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
 #endif
 
   };
