@@ -110,7 +110,7 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   statusBar()->showMessage(tr("Ready"));
 
   QMenu *GUIMenu=new QMenu("GUI", menuBar());
-  QAction *action = GUIMenu->addAction("Workdir", this, SLOT(changeWorkingDir()));
+  QAction *action = GUIMenu->addAction(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/workdir.svg"),"Workdir", this, SLOT(changeWorkingDir()));
   action->setStatusTip(tr("Change working directory"));
   GUIMenu->addSeparator();
   action = GUIMenu->addAction(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/exit.svg"), "E&xit", this, SLOT(close()));
@@ -190,22 +190,22 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   menuBar()->addMenu(helpMenu);
 
   QToolBar *toolBar = addToolBar("Tasks");
-  action = toolBar->addAction("Preview");
+  action = toolBar->addAction(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/preview.svg"),"Preview");
   connect(action,SIGNAL(triggered()),this,SLOT(preview()));
   toolBar->addAction(action);
-  actionSimulate = toolBar->addAction(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/sim.svg"),"Simulate");
+  actionSimulate = toolBar->addAction(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/simulate.svg"),"Simulate");
   actionSimulate->setStatusTip(tr("Simulate the multibody system"));
   connect(actionSimulate,SIGNAL(triggered()),this,SLOT(simulate()));
   toolBar->addAction(actionSimulate);
-  actionOpenMBV = toolBar->addAction("OpenMBV");
+  actionOpenMBV = toolBar->addAction(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/openmbv.svg"),"OpenMBV");
   actionOpenMBV->setDisabled(true);
   connect(actionOpenMBV,SIGNAL(triggered()),this,SLOT(openmbv()));
   toolBar->addAction(actionOpenMBV);
-  actionH5plotserie = toolBar->addAction("H5plotserie");
+  actionH5plotserie = toolBar->addAction(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/h5plotserie.svg"),"H5plotserie");
   actionH5plotserie->setDisabled(true);
   connect(actionH5plotserie,SIGNAL(triggered()),this,SLOT(h5plotserie()));
   toolBar->addAction(actionH5plotserie);
-  action= toolBar->addAction("Resize");
+  action= toolBar->addAction(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/resize.svg"),"Resize");
   connect(action,SIGNAL(triggered()),this,SLOT(resizeVariables()));
   toolBar->addAction(action);
 
