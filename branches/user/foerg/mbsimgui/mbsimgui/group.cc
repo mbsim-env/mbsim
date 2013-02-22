@@ -254,6 +254,19 @@ void Group::addRigidBody() {
 }
 
 void Group::addRigidBodies() {
+  for(int i=0; i<3000; i++) {
+    cout <<"add Body" << i+1<< endl;
+    //new RigidBody(newName(objects,"Body"), objects, -1);
+    //new FixedRelativeFrame(newName(frames,"P"), frames, -1);
+    //new Frame("P", 0, -1);
+    //QTreeWidgetItem *item = new Element2();
+    //QTreeWidgetItem *item = new QTreeWidgetItem;
+    //addChild(item); //
+    //item->setText(0,newName(this,"P"));
+    //item->setText(0,"Name");
+    cout <<"end" << endl;
+  }
+  ((Element*)treeWidget()->topLevelItem(0))->update();
 }
 
 void Group::addKinematicConstraint() {
