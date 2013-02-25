@@ -26,7 +26,6 @@ using namespace std;
 using namespace fmatvec;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-//#include <openmbvcppinterface/frustum.h>
 #include <openmbvcppinterface/ivbody.h>
 #endif
 
@@ -69,6 +68,17 @@ namespace MBSim {
     }
     else
       RigidContour::init(stage);
+  }
+
+  Vec2 PolynomialFrustum::computeLagrangeParameter(const Vec3 & WrPoint) {
+    Vec2 returnVal(NONINIT);
+    Vec3 inFramePoint = -R.getPosition() + R.getOrientation().T() * WrPoint;
+
+    returnVal(0) = inFramePoint(0); //height coordinate
+    returnVal(1) = ArcTan(inFramePoint(1), inFramePoint(2));
+
+    return returnVal;
+
   }
 
   void PolynomialFrustum::setHeight(const double & height_) {
@@ -181,7 +191,7 @@ namespace MBSim {
   Vec3 PolynomialFrustum::getEnclosingSphereCenter() {
     Vec3 center;
     center(0) = height / 2;
-    return R.getOrientation() * center;
+    return R.getPosition() + R.getOrientation() * center;
   }
 
   const fmatvec::Vec & PolynomialFrustum::getPolynomialParameters() {
@@ -228,7 +238,7 @@ namespace MBSim {
     double temp1 = sqrt(pow(fb, 2) + pow(height, 2) / 4);
     double temp2 = sqrt(pow(fa, 2) + pow(height, 2) / 4);
     double temp = (temp1 > temp2) ? temp1 : temp2;
-    if (fda * fdb < 0) {
+    if (fda * fdb < 0) { //only of derivative turns around there is a maximum between the two sides
       double x = getXPolyMax();
       double fmax = getValue(x);
       temp1 = sqrt(pow(fmax, 2) + pow((x - height / 2), 2));
