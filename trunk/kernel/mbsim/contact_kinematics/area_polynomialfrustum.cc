@@ -79,15 +79,15 @@ namespace MBSim {
 
   bool ContactKinematicsAreaPolynomialFrustum::cpLocationInArea(Vec & g, ContourPointData * cpData) {
 
-    double rhs1 = 0., rhs2 = 0.;
-    int status1 = 0, status2 = 0;
+    double rhs = 0.; //, rhs2 = 0.;
+    int status = 0; // status2 = 0;
 
     //normal of the area under the frustum reference frame
     Vec3 v = frustum->getReferenceOrientation().T() * area->getReferenceOrientation().col(0);
 
     //right sides of the two equations
-    rhs1 = sqrt(v(0) * v(0) / (v(1) * v(1) + v(2) * v(2)));
-    rhs2 = -rhs1;
+    rhs = sqrt(v(0) * v(0) / (v(1) * v(1) + v(2) * v(2)));
+    //rhs2 = -rhs;
 
     const Vec & para = frustum->getPolynomialParameters(); //para = (a0,a1 ... an)
 
@@ -97,12 +97,12 @@ namespace MBSim {
     }
     para1d(para.size() - 1) = 0;
 
-    ContactPolyfun *Polyfun1 = new ContactPolyfun(rhs1, para1d);
-    ContactPolyfun *Polyfun2 = new ContactPolyfun(rhs2, para1d);
+    ContactPolyfun *Polyfun1 = new ContactPolyfun(rhs, para1d);
+    //ContactPolyfun *Polyfun2 = new ContactPolyfun(rhs2, para1d);
 
     //Use newton method to solve 2 equations
     NewtonMethod *solver1 = new NewtonMethod(Polyfun1);
-    NewtonMethod *solver2 = new NewtonMethod(Polyfun2);
+    //NewtonMethod *solver2 = new NewtonMethod(Polyfun2);
 
     int itmax = 200, kmax = 200; //maximum iteration, maximum damping steps, information of success
     double tol = 1e-10;
@@ -113,17 +113,11 @@ namespace MBSim {
     //x (=height-direction of frustum) -coordinate in equation one
     x1 = solver1->solve(x1); //initial guess x=height/2
 
-    solver2->setMaximumNumberOfIterations(itmax);
-    solver2->setMaximumDampingSteps(kmax);
-    solver2->setTolerance(tol);
-    //x (=height-direction of frustum) -coordinate in equation two
-    x2 = solver2->solve(x2);
-
-    //if neither equation has a root, we should use numerical method
-    if ((solver1->getInfo() != 0) && (solver2->getInfo() != 0)) {
-      cout << "There is no normal on the frustum contour parallel to the normal of the area!" << endl;
-      return false; //TODO: Here should be some numerical method
-    }
+//    solver2->setMaximumNumberOfIterations(itmax);
+//    solver2->setMaximumDampingSteps(kmax);
+//    solver2->setTolerance(tol);
+//    //x (=height-direction of frustum) -coordinate in equation two
+//    x2 = solver2->solve(x2);
 
     //Check x1 and x2, and for each solution
     //Check if the solution is successful
@@ -131,31 +125,32 @@ namespace MBSim {
     //2.Check if the corresponding point is within the area
     //3.Find the corresponding point on the plane, check if it is in the area
     if ((solver1->getInfo() == 0) && x1 >= 0 && x1 <= frustum->getHeight())
-      status1 = checkPossibleContactPoint(x1, v);
+      status = checkPossibleContactPoint(x1, v);
 
     //same thing with the other solution x2
-    if ((solver2->getInfo() == 0) && x2 >= 0 && x2 <= frustum->getHeight()) {
-      status2 = checkPossibleContactPoint(x2, v);
-    }
+//    if ((solver2->getInfo() == 0) && x2 >= 0 && x2 <= frustum->getHeight()) {
+//      status2 = checkPossibleContactPoint(x2, v);
+//    }
 
     //If both solvers find a solution check, which has the smaller distance
-    if (status1 && status2) {
-      //TODO: Is this case possible at all?
-      if (distance2Area(computeContourPoint(x1, v)) < distance2Area(computeContourPoint(x2, v)))
-        status2 = 0;
-      else
-        status1 = 0;
+//    if (status && status2) {
+//      //TODO: Is this case possible at all?
+//      if (distance2Area(computeContourPoint(x1, v)) < distance2Area(computeContourPoint(x2, v)))
+//        status2 = 0;
+//      else
+//        status = 0;
+//
+//    }
 
-    }
-
-    if (status1) {
+    if (status) {
       cpData[ifrustum].getFrameOfReference().getPosition() = computeContourPoint(x1, v);
       return true;
     }
-    else if (status2) {
-      cpData[ifrustum].getFrameOfReference().getPosition() = computeContourPoint(x2, v);
-      return true;
-    }
+//    else if (status2) {
+//      cpData[ifrustum].getFrameOfReference().getPosition() = computeContourPoint(x2, v);
+//      cout << "Solution 2 found " << endl;
+//      return true;
+//    }
 
     return 0;
   }
@@ -165,32 +160,48 @@ namespace MBSim {
     cornerPoints[1] = area->getB();
     cornerPoints[2] = area->getC();
     cornerPoints[3] = area->getD();
+    double gaps[4];
 
     for (int i = 0; i < 4; i++) {
       cornerPoints[i] = frustum->getFrame()->getOrientation().T() * (area->getFrame()->getPosition() + area->getFrame()->getOrientation() * cornerPoints[i] - frustum->getFrame()->getPosition());
-      double r = sqrt(pow(cornerPoints[i](1), 2) + pow(cornerPoints[i](2), 2)); //radial position of point
       const double & x = cornerPoints[i](0);
-      if (x >= 0 and x <= frustum->getHeight() and r <= frustum->getValue(x)) {
-        double phi = ArcTan(cornerPoints[i](1), cornerPoints[i](2));
-        //Contact point found --> assumed to be at x-position of corner point
-        g(0) = r - frustum->getValue(x);
-        if (g(0) < 0.) {
-
-          //Frustum
-          cpData[ifrustum].getFrameOfReference().getPosition() = frustum->getFrame()->getPosition() + frustum->getFrame()->getOrientation() * frustum->computePoint(x, phi);
-          setFrustumOrienationKinematics(x, phi, g, cpData);
-
-          //Area
-          cpData[iarea].getFrameOfReference().getPosition() = frustum->getFrame()->getPosition() + frustum->getFrame()->getOrientation() * cornerPoints[i];
-
-          cpData[iarea].getFrameOfReference().getOrientation().set(0, -cpData[ifrustum].getFrameOfReference().getOrientation().col(0));
-          cpData[iarea].getFrameOfReference().getOrientation().set(1, -cpData[ifrustum].getFrameOfReference().getOrientation().col(1));
-          cpData[iarea].getFrameOfReference().getOrientation().set(2, cpData[ifrustum].getFrameOfReference().getOrientation().col(2));
-
-          return true;
-        }
+      //radial position of point
+      const double r = sqrt(pow(cornerPoints[i](1), 2) + pow(cornerPoints[i](2), 2));
+      const double R = frustum->getValue(x);
+      if (x >= 0 and x <= frustum->getHeight() and r <= R) {
+        //Possible contact point found --> assumed to be at x-position of corner point
+        gaps[i] = r - R;
       }
+      else
+        gaps[i] = 1.;
     }
+
+    int deepestCornerIndex = 0;
+    for (int i = 1; i < 4; i++) {
+      if (gaps[i] < gaps[deepestCornerIndex])
+        deepestCornerIndex = i;
+    }
+
+    g(0) = gaps[deepestCornerIndex];
+
+    if (g(0) < 0.) {
+      const double phi = ArcTan(cornerPoints[deepestCornerIndex](1), cornerPoints[deepestCornerIndex](2));
+      const double & x = cornerPoints[deepestCornerIndex](0);
+
+      //Frustum
+      cpData[ifrustum].getFrameOfReference().getPosition() = frustum->getFrame()->getPosition() + frustum->getFrame()->getOrientation() * frustum->computePoint(x, phi);
+      setFrustumOrienationKinematics(x, phi, g, cpData);
+
+      //Area
+      cpData[iarea].getFrameOfReference().getPosition() = frustum->getFrame()->getPosition() + frustum->getFrame()->getOrientation() * cornerPoints[deepestCornerIndex];
+
+      cpData[iarea].getFrameOfReference().getOrientation().set(0, -cpData[ifrustum].getFrameOfReference().getOrientation().col(0));
+      cpData[iarea].getFrameOfReference().getOrientation().set(1, -cpData[ifrustum].getFrameOfReference().getOrientation().col(1));
+      cpData[iarea].getFrameOfReference().getOrientation().set(2, cpData[ifrustum].getFrameOfReference().getOrientation().col(2));
+
+      return true;
+    }
+
     return false;
   }
 
@@ -261,11 +272,12 @@ namespace MBSim {
     /*Geometry*/
     //area
     Vec3 R_cen_A = area->getFrame()->getPosition(); //center of area
-    Vec3 NormAxis_A = area->getReferenceOrientation().col(0); // normal of area in inertial FR
+    Vec3 NormAxis_A = area->getFrame()->getOrientation().col(0); // normal of area in inertial FR
 
     /*construct the sphere enclosing the frustum*/
     //take center of the frustum as center of the sphere
     Vec3 R_cen_S = frustum->getEnclosingSphereCenter();
+
     //search the radius of the circumsphere
     double rad_sph = frustum->getEnclosingSphereRadius();
 
