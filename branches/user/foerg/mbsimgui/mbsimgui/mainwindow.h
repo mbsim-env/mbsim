@@ -53,6 +53,7 @@ class MainWindow : public QMainWindow {
     void initInlineOpenMBV();
     QString uniqueTempDir, absoluteMBSFilePath;
     void mbsimxml(int task);
+    int openmbvID, h5plotserieID;
   public:
     MainWindow();
     ~MainWindow();

@@ -99,7 +99,7 @@ int runProgramSyncronous(const vector<string> &arg) {
 
 MBXMLUtils::OctaveEvaluator *MainWindow::octEval=NULL;
 
-MainWindow::MainWindow() : inlineOpenMBVMW(0) {
+MainWindow::MainWindow() : inlineOpenMBVMW(0), openmbvID(0), h5plotserieID(0) {
 #ifdef INLINE_OPENMBV
   initInlineOpenMBV();
 #endif
@@ -374,6 +374,8 @@ void MainWindow::closeEvent(QCloseEvent *event) {
   //  } else {
   //    event->ignore();
   //  }
+  kill(openmbvID,SIGQUIT);
+  kill(h5plotserieID,SIGQUIT);
 }
 
 void MainWindow::elementListClicked() {
@@ -867,7 +869,7 @@ void MainWindow::openmbv() {
     command.push_back(MBXMLUtils::getInstallPath()+"/bin/openmbv");
     command.push_back("--autoreload");
     command.push_back(name.toStdString());
-    runProgramSyncronous(command);
+    openmbvID = runProgramSyncronous(command);
   }
 }
 
@@ -877,7 +879,7 @@ void MainWindow::h5plotserie() {
     vector<string> command;
     command.push_back(MBXMLUtils::getInstallPath()+"/bin/h5plotserie");
     command.push_back(name.toStdString());
-    runProgramSyncronous(command);
+    h5plotserieID = runProgramSyncronous(command);
   }
 }
 

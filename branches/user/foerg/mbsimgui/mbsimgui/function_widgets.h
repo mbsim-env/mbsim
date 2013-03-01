@@ -35,7 +35,7 @@ class Function1 : public XMLWidget {
   public:
     Function1(const QString& ext_="") : ext(ext_) {}
     virtual ~Function1() {}
-    virtual bool initializeUsingXML(TiXmlElement *element) {}
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
     virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
     virtual QString getType() const { return "Function1_"+ext; }
     virtual QString getExt() const { return ext; }
@@ -50,7 +50,7 @@ class Function2 : public XMLWidget {
   public:
     Function2(const QString& ext_="") : ext(ext_) {}
     virtual ~Function2() {}
-    virtual bool initializeUsingXML(TiXmlElement *element) {}
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
     virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
     virtual QString getType() const { return "Function2_"+ext; }
     virtual QString getExt() const { return ext; }
@@ -71,7 +71,7 @@ class DifferentiableFunction1 : public Function1 {
 
     void setOrderOfDerivative(int i) { order=i; }
 
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     TiXmlElement* writeXMLFile(TiXmlNode *parent);
     QString getType() const { return "DifferentiableFunction1"; }
 
@@ -83,7 +83,7 @@ class DifferentiableFunction1 : public Function1 {
 class ConstantFunction1 : public Function1 {
   public:
     ConstantFunction1(const QString &ext);
-    bool initializeUsingXML(TiXmlElement *element);
+    TiXmlElement* initializeUsingXML(TiXmlElement *element);
     TiXmlElement* writeXMLFile(TiXmlNode *parent);
     inline QString getType() const { return QString("ConstantFunction1_")+ext; }
     void resize(int m, int n);
@@ -94,7 +94,7 @@ class ConstantFunction1 : public Function1 {
 class QuadraticFunction1 : public DifferentiableFunction1 {
   public:
     QuadraticFunction1();
-    bool initializeUsingXML(TiXmlElement *element);
+    TiXmlElement* initializeUsingXML(TiXmlElement *element);
     TiXmlElement* writeXMLFile(TiXmlNode *parent);
     inline QString getType() const { return QString("QuadraticFunction1_VS"); }
     void resize(int m, int n);
@@ -107,7 +107,7 @@ class QuadraticFunction1 : public DifferentiableFunction1 {
 class SinusFunction1 : public DifferentiableFunction1 {
   public:
     SinusFunction1();
-    bool initializeUsingXML(TiXmlElement *element);
+    TiXmlElement* initializeUsingXML(TiXmlElement *element);
     TiXmlElement* writeXMLFile(TiXmlNode *parent);
     inline QString getType() const { return QString("SinusFunction1_VS"); }
     void resize(int m, int n);
@@ -143,7 +143,7 @@ class SinusFunction1 : public DifferentiableFunction1 {
 class TabularFunction1 : public Function1 {
   public:
     TabularFunction1();
-    bool initializeUsingXML(TiXmlElement *element);
+    TiXmlElement* initializeUsingXML(TiXmlElement *element);
     TiXmlElement* writeXMLFile(TiXmlNode *parent);
     inline QString getType() const { return QString("TabularFunction1_VS"); }
 
@@ -156,7 +156,7 @@ class SummationFunction1 : public Function1 {
 
   public:
     SummationFunction1();
-    bool initializeUsingXML(TiXmlElement *element);
+    TiXmlElement* initializeUsingXML(TiXmlElement *element);
     TiXmlElement* writeXMLFile(TiXmlNode *parent);
     inline QString getType() const { return QString("SummationFunction1_VS"); }
     void resize(int m, int n);
@@ -179,7 +179,7 @@ class SummationFunction1 : public Function1 {
 class LinearSpringDamperForce : public Function2 {
   public:
     LinearSpringDamperForce();
-    bool initializeUsingXML(TiXmlElement *element);
+    TiXmlElement* initializeUsingXML(TiXmlElement *element);
     TiXmlElement* writeXMLFile(TiXmlNode *parent);
     inline QString getType() const { return QString("LinearSpringDamperForce")+ext; }
   protected:
@@ -190,7 +190,7 @@ class LinearRegularizedBilateralConstraint: public Function2 {
   public:
     LinearRegularizedBilateralConstraint(); 
 
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
     virtual QString getType() const { return "LinearRegularizedBilateralConstraint"; }
 
@@ -202,7 +202,7 @@ class LinearRegularizedUnilateralConstraint: public Function2 {
   public:
     LinearRegularizedUnilateralConstraint(); 
 
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
     virtual QString getType() const { return "LinearRegularizedUnilateralConstraint"; }
 
@@ -214,7 +214,7 @@ class LinearRegularizedCoulombFriction: public Function2 {
   public:
     LinearRegularizedCoulombFriction(); 
 
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
     virtual QString getType() const { return "LinearRegularizedCoulombFriction"; }
 
@@ -228,7 +228,7 @@ class Function1ChoiceWidget : public XMLWidget {
   public:
     Function1ChoiceWidget(const std::string &xmlName, bool withFactor=false);
 
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void resize(int m, int n) {if(function) function->resize(m,n);}
     Function1* getFunction() {return function;}
@@ -253,7 +253,7 @@ class Function2ChoiceWidget : public XMLWidget {
   public:
     Function2ChoiceWidget(const std::string &xmlName);
 
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void resize(int m, int n) {if(function) function->resize(m,n);}
 

@@ -51,13 +51,10 @@ OMBVFrameWidget::OMBVFrameWidget(const string &name, const string &xmlName_) : O
   layout->addWidget(offset);
 }
 
-bool OMBVFrameWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* OMBVFrameWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=(xmlName=="")?element:element->FirstChildElement(xmlName);
-  if(e) {
-    offset->initializeUsingXML(e);
-    return true;
-  }
-  return false;
+  if(e) offset->initializeUsingXML(e);
+  return e;
 }
 
 TiXmlElement* OMBVFrameWidget::writeXMLFile(TiXmlNode *parent) {
@@ -77,10 +74,49 @@ TiXmlElement* OMBVFrameWidget::writeXMLFile(TiXmlNode *parent) {
   }
 }
 
-OMBVArrowWidget::OMBVArrowWidget(const string &name) : OMBVObjectWidget(name) {
-  QVBoxLayout *layout = new QVBoxLayout;
+OMBVDynamicColoredObjectWidget::OMBVDynamicColoredObjectWidget(const string &name) : OMBVObjectWidget(name) {
+  layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
+
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"), OPENMBVNS"minimalColorValue", noUnitUnits(), 1));
+  minimalColorValue = new ExtXMLWidget("Minimal color value",new ExtPhysicalVarWidget(input),true);
+  layout->addWidget(minimalColorValue);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1"), OPENMBVNS"maximalColorValue", noUnitUnits(), 1));
+  maximalColorValue = new ExtXMLWidget("Maximal color value",new ExtPhysicalVarWidget(input),true);
+  layout->addWidget(maximalColorValue);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"), OPENMBVNS"staticColor", noUnitUnits(), 1));
+  staticColor = new ExtXMLWidget("Static color",new ExtPhysicalVarWidget(input),true);
+  layout->addWidget(staticColor);
+}
+
+TiXmlElement* OMBVDynamicColoredObjectWidget::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e=element->FirstChildElement(OPENMBVNS+getType().toStdString());
+  if(e) {
+    minimalColorValue->initializeUsingXML(e);
+    maximalColorValue->initializeUsingXML(e);
+    staticColor->initializeUsingXML(e);
+  }
+  return e;
+}
+
+TiXmlElement* OMBVDynamicColoredObjectWidget::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *e=new TiXmlElement(OPENMBVNS+getType().toStdString());
+  parent->LinkEndChild(e);
+  e->SetAttribute("name", "dummy");
+  writeXMLFileID(e);
+  minimalColorValue->writeXMLFile(e);
+  maximalColorValue->writeXMLFile(e);
+  staticColor->writeXMLFile(e);
+  return e;
+}
+
+OMBVArrowWidget::OMBVArrowWidget(const string &name, bool fromPoint) : OMBVDynamicColoredObjectWidget(name) {
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new ScalarWidget("0.1"), OPENMBVNS"diameter", lengthUnits(), 4));
@@ -115,8 +151,10 @@ OMBVArrowWidget::OMBVArrowWidget(const string &name) : OMBVObjectWidget(name) {
   list.push_back(string("\"")+"toPoint"+"\"");
   list.push_back(string("\"")+"fromPoint"+"\"");
   list.push_back(string("\"")+"midPoint"+"\"");
-  input.push_back(new PhysicalStringWidget(new ChoiceWidget(list,0), OPENMBVNS"referencePoint", QStringList(), 0));
+  input.push_back(new PhysicalStringWidget(new ChoiceWidget(list,fromPoint?1:0), OPENMBVNS"referencePoint", QStringList(), 0));
   referencePoint = new ExtXMLWidget("Reference point",new ExtPhysicalVarWidget(input),true);
+  if(fromPoint)
+    referencePoint->setChecked(true);
   layout->addWidget(referencePoint);
 
   input.clear();
@@ -125,8 +163,8 @@ OMBVArrowWidget::OMBVArrowWidget(const string &name) : OMBVObjectWidget(name) {
   layout->addWidget(scaleLength);
 }
 
-bool OMBVArrowWidget::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=element->FirstChildElement(OPENMBVNS+getType().toStdString());
+TiXmlElement* OMBVArrowWidget::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e = OMBVDynamicColoredObjectWidget::initializeUsingXML(element);
   if(e) {
     diameter->initializeUsingXML(e);
     headDiameter->initializeUsingXML(e);
@@ -134,16 +172,12 @@ bool OMBVArrowWidget::initializeUsingXML(TiXmlElement *element) {
     type->initializeUsingXML(e);
     referencePoint->initializeUsingXML(e);
     scaleLength->initializeUsingXML(e);
-    return true;
   }
-  return false;
+  return e;
 }
 
 TiXmlElement* OMBVArrowWidget::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *e=new TiXmlElement(OPENMBVNS+getType().toStdString());
-  parent->LinkEndChild(e);
-  e->SetAttribute("name", "dummy");
-  writeXMLFileID(e);
+  TiXmlElement *e=OMBVDynamicColoredObjectWidget::writeXMLFile(parent);
   diameter->writeXMLFile(e);
   headDiameter->writeXMLFile(e);
   headLength->writeXMLFile(e);
@@ -193,7 +227,7 @@ OMBVCoilSpringWidget::OMBVCoilSpringWidget(const string &name) : OMBVObjectWidge
   layout->addWidget(scaleFactor);
 }
 
-bool OMBVCoilSpringWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* OMBVCoilSpringWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=element->FirstChildElement(OPENMBVNS+getType().toStdString());
   if(e) {
     type->initializeUsingXML(e);
@@ -202,9 +236,8 @@ bool OMBVCoilSpringWidget::initializeUsingXML(TiXmlElement *element) {
     crossSectionRadius->initializeUsingXML(e);
     nominalLength->initializeUsingXML(e);
     scaleFactor->initializeUsingXML(e);
-    return true;
   }
-  return false;
+  return e;
 }
 
 TiXmlElement* OMBVCoilSpringWidget::writeXMLFile(TiXmlNode *parent) {
@@ -247,11 +280,12 @@ OMBVBodyWidget::OMBVBodyWidget(const string &name) : OMBVObjectWidget(name) {
   layout->addWidget(scale);
 }
 
-bool OMBVBodyWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* OMBVBodyWidget::initializeUsingXML(TiXmlElement *element) {
   color->initializeUsingXML(element);
   trans->initializeUsingXML(element);
   rot->initializeUsingXML(element);
   scale->initializeUsingXML(element);
+  return element;
 }
 
 TiXmlElement* OMBVBodyWidget::writeXMLFile(TiXmlNode *parent) {
@@ -274,9 +308,10 @@ CubeWidget::CubeWidget(const string &name) : OMBVBodyWidget(name) {
   layout->addWidget(length);
 }
 
-bool CubeWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* CubeWidget::initializeUsingXML(TiXmlElement *element) {
   OMBVBodyWidget::initializeUsingXML(element);
   length->initializeUsingXML(element);
+  return element;
 }
 
 TiXmlElement* CubeWidget::writeXMLFile(TiXmlNode *parent) {
@@ -293,9 +328,10 @@ CuboidWidget::CuboidWidget(const string &name) : OMBVBodyWidget(name) {
   layout->addWidget(length);
 }
 
-bool CuboidWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* CuboidWidget::initializeUsingXML(TiXmlElement *element) {
   OMBVBodyWidget::initializeUsingXML(element);
   length->initializeUsingXML(element);
+  return element;
 }
 
 TiXmlElement* CuboidWidget::writeXMLFile(TiXmlNode *parent) {
@@ -312,9 +348,10 @@ SphereWidget::SphereWidget(const string &name) : OMBVBodyWidget(name) {
   layout->addWidget(radius);
 }
 
-bool SphereWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* SphereWidget::initializeUsingXML(TiXmlElement *element) {
   OMBVBodyWidget::initializeUsingXML(element);
   radius->initializeUsingXML(element);
+  return element;
 }
 
 TiXmlElement* SphereWidget::writeXMLFile(TiXmlNode *parent) {
@@ -351,7 +388,7 @@ FrustumWidget::FrustumWidget(const string &name) : OMBVBodyWidget(name) {
   layout->addWidget(innerBase);
 }
 
-bool FrustumWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* FrustumWidget::initializeUsingXML(TiXmlElement *element) {
   OMBVBodyWidget::initializeUsingXML(element);
   TiXmlElement *e;
   base->initializeUsingXML(element);
@@ -359,6 +396,7 @@ bool FrustumWidget::initializeUsingXML(TiXmlElement *element) {
   height->initializeUsingXML(element);
   innerBase->initializeUsingXML(element);
   innerTop->initializeUsingXML(element);
+  return element;
 }
 
 TiXmlElement* FrustumWidget::writeXMLFile(TiXmlNode *parent) {
@@ -387,12 +425,12 @@ IvBodyWidget::IvBodyWidget(const string &name) : OMBVBodyWidget(name) {
   layout->addWidget(boundaryEdges);
 }
 
-bool IvBodyWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* IvBodyWidget::initializeUsingXML(TiXmlElement *element) {
   OMBVBodyWidget::initializeUsingXML(element);
-  TiXmlElement *e;
   ivFileName->initializeUsingXML(element);
   creaseEdges->initializeUsingXML(element);
   boundaryEdges->initializeUsingXML(element);
+  return element;
 }
 
 TiXmlElement* IvBodyWidget::writeXMLFile(TiXmlNode *parent) {
@@ -466,7 +504,7 @@ void CompoundRigidBodyWidget::removeBody() {
   }
 }
 
-bool CompoundRigidBodyWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* CompoundRigidBodyWidget::initializeUsingXML(TiXmlElement *element) {
   OMBVBodyWidget::initializeUsingXML(element);
   TiXmlElement *e=element->FirstChildElement(OPENMBVNS"scaleFactor");
   e=e->NextSiblingElement();
@@ -475,6 +513,7 @@ bool CompoundRigidBodyWidget::initializeUsingXML(TiXmlElement *element) {
     body[body.size()-1]->initializeUsingXML(e);
     e=e->NextSiblingElement();
   }
+  return e;
 }
 
 TiXmlElement* CompoundRigidBodyWidget::writeXMLFile(TiXmlNode *parent) {
@@ -524,7 +563,7 @@ void OMBVBodyChoiceWidget::ombvSelection(int index) {
   ombv->setID(ID);
 }
 
-bool OMBVBodyChoiceWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* OMBVBodyChoiceWidget::initializeUsingXML(TiXmlElement *element) {
   //TiXmlElement *e1 = element->FirstChildElement();
   TiXmlElement *e1 = element;
   if(e1) {
@@ -546,9 +585,8 @@ bool OMBVBodyChoiceWidget::initializeUsingXML(TiXmlElement *element) {
     comboBox->blockSignals(false);
     ombvSelection(index);
     ombv->initializeUsingXML(e1);
-    return true;
   }
-  return false;
+  return e1;
 }
 
 TiXmlElement* OMBVBodyChoiceWidget::writeXMLFile(TiXmlNode *parent) {
@@ -569,14 +607,13 @@ OMBVBodySelectionWidget::OMBVBodySelectionWidget(RigidBody *body) : ombv(0), ref
   layout->addWidget(widget);
 }
 
-bool OMBVBodySelectionWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* OMBVBodySelectionWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=element->FirstChildElement(MBSIMNS"openMBVRigidBody");
   if(e) {
     ombv->initializeUsingXML(e->FirstChildElement());
     ref->initializeUsingXML(e);
-    return true;
   }
-  return false;
+  return e;
 }
 
 TiXmlElement* OMBVBodySelectionWidget::writeXMLFile(TiXmlNode *parent) {
@@ -594,11 +631,8 @@ OMBVEmptyWidget::OMBVEmptyWidget(const string &xmlName_) : OMBVObjectWidget("Emp
   setLayout(layout);
 }
 
-bool OMBVEmptyWidget::initializeUsingXML(TiXmlElement *parent) {
-  TiXmlElement *e = parent->FirstChildElement(xmlName);
-  if(e)
-    return true;
-  return false;
+TiXmlElement* OMBVEmptyWidget::initializeUsingXML(TiXmlElement *parent) {
+  return parent->FirstChildElement(xmlName);
 }
 
 TiXmlElement* OMBVEmptyWidget::writeXMLFile(TiXmlNode *parent) {
@@ -624,14 +658,13 @@ OMBVPlaneWidget::OMBVPlaneWidget(const string &xmlName_) : OMBVObjectWidget("Pla
   layout->addWidget(numberOfLines);
 }
 
-bool OMBVPlaneWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* OMBVPlaneWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=element->FirstChildElement(xmlName);
   if(e) {
     size->initializeUsingXML(e);
     numberOfLines->initializeUsingXML(e);
-    return true;
   }
-  return false;
+  return e;
 }
 
 TiXmlElement* OMBVPlaneWidget::writeXMLFile(TiXmlNode *parent) {

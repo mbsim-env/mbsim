@@ -50,12 +50,12 @@ TiXmlElement* DifferentiableFunction1::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
-bool DifferentiableFunction1::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* DifferentiableFunction1::initializeUsingXML(TiXmlElement *element) {
   Function1::initializeUsingXML(element);
   TiXmlElement * e;
   e=element->FirstChildElement(MBSIMNS"orderOfDerivative");
-  if (e)
-    setOrderOfDerivative(atoi(e->GetText()));
+  if (e) setOrderOfDerivative(atoi(e->GetText()));
+  return e;
 }
 
 ConstantFunction1::ConstantFunction1(const QString &ext) : Function1(ext) {
@@ -74,9 +74,10 @@ void ConstantFunction1::resize(int m, int n) {
     ((VecWidget*)c->getPhysicalStringWidget(0)->getWidget())->resize(m);
 }
 
-bool ConstantFunction1::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* ConstantFunction1::initializeUsingXML(TiXmlElement *element) {
   Function1::initializeUsingXML(element);
   c->initializeUsingXML(element);
+  return element;
 }
 
 TiXmlElement* ConstantFunction1::writeXMLFile(TiXmlNode *parent) {
@@ -115,10 +116,11 @@ void QuadraticFunction1::resize(int m, int n) {
       ((VecWidget*)var[i]->getPhysicalStringWidget(0)->getWidget())->resize(m);
 }
 
-bool QuadraticFunction1::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* QuadraticFunction1::initializeUsingXML(TiXmlElement *element) {
   DifferentiableFunction1::initializeUsingXML(element);
   for(unsigned int i=0; i<var.size(); i++)
     widget[i]->initializeUsingXML(element);
+  return element;
 }
 
 TiXmlElement* QuadraticFunction1::writeXMLFile(TiXmlNode *parent) {
@@ -164,10 +166,11 @@ void SinusFunction1::resize(int m, int n) {
       ((VecWidget*)var[i]->getPhysicalStringWidget(0)->getWidget())->resize(m);
 }
 
-bool SinusFunction1::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* SinusFunction1::initializeUsingXML(TiXmlElement *element) {
   DifferentiableFunction1::initializeUsingXML(element);
   for(unsigned int i=0; i<var.size(); i++)
     widget[i]->initializeUsingXML(element);
+  return element;
 }
 
 TiXmlElement* SinusFunction1::writeXMLFile(TiXmlNode *parent) {
@@ -205,9 +208,10 @@ TabularFunction1::TabularFunction1() {
   layout->addWidget(widget);
 }
 
-bool TabularFunction1::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* TabularFunction1::initializeUsingXML(TiXmlElement *element) {
   Function1::initializeUsingXML(element);
   widget->initializeUsingXML(element);
+  return element;
 }
 
 TiXmlElement* TabularFunction1::writeXMLFile(TiXmlNode *parent) {
@@ -278,7 +282,7 @@ void SummationFunction1::removeFunction() {
   delete functionList->takeItem(i);
 }
 
-bool SummationFunction1::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* SummationFunction1::initializeUsingXML(TiXmlElement *element) {
   Function1::initializeUsingXML(element);
   TiXmlElement *e = element->FirstChildElement(MBSIMNS"function");
   while(e) {
@@ -286,7 +290,7 @@ bool SummationFunction1::initializeUsingXML(TiXmlElement *element) {
     functionChoice[functionChoice.size()-1]->initializeUsingXML(e);
     e=e->NextSiblingElement();
   }
-  return true;
+  return e;
 }
 
 TiXmlElement* SummationFunction1::writeXMLFile(TiXmlNode *parent) {
@@ -322,10 +326,11 @@ LinearSpringDamperForce::LinearSpringDamperForce() {
   extXMLWidget = new ExtXMLWidget("Unloaded length",var[var.size()-1]);
   layout->addWidget(extXMLWidget);
 }
-bool LinearSpringDamperForce::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* LinearSpringDamperForce::initializeUsingXML(TiXmlElement *element) {
   Function2::initializeUsingXML(element);
   for(unsigned int i=0; i<var.size(); i++)
     var[i]->initializeUsingXML(element);
+  return element;
 }
 TiXmlElement* LinearSpringDamperForce::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Function2::writeXMLFile(parent);
@@ -351,10 +356,11 @@ LinearRegularizedBilateralConstraint::LinearRegularizedBilateralConstraint() {
   layout->addWidget(var[1]);
 }
 
-bool LinearRegularizedBilateralConstraint::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* LinearRegularizedBilateralConstraint::initializeUsingXML(TiXmlElement *element) {
   Function2::initializeUsingXML(element);
   for(unsigned int i=0; i<var.size(); i++)
     var[i]->initializeUsingXML(element);
+  return element;
 }
 
 TiXmlElement* LinearRegularizedBilateralConstraint::writeXMLFile(TiXmlNode *parent) {
@@ -381,10 +387,11 @@ LinearRegularizedUnilateralConstraint::LinearRegularizedUnilateralConstraint() {
   layout->addWidget(var[1]);
 }
 
-bool LinearRegularizedUnilateralConstraint::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* LinearRegularizedUnilateralConstraint::initializeUsingXML(TiXmlElement *element) {
   Function2::initializeUsingXML(element);
   for(unsigned int i=0; i<var.size(); i++)
     var[i]->initializeUsingXML(element);
+  return element;
 }
 
 TiXmlElement* LinearRegularizedUnilateralConstraint::writeXMLFile(TiXmlNode *parent) {
@@ -411,10 +418,11 @@ LinearRegularizedCoulombFriction::LinearRegularizedCoulombFriction() {
   layout->addWidget(var[1]);
 }
 
-bool LinearRegularizedCoulombFriction::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* LinearRegularizedCoulombFriction::initializeUsingXML(TiXmlElement *element) {
   Function2::initializeUsingXML(element);
   for(unsigned int i=0; i<var.size(); i++)
     var[i]->initializeUsingXML(element);
+  return element;
 }
 
 TiXmlElement* LinearRegularizedCoulombFriction::writeXMLFile(TiXmlNode *parent) {
@@ -468,7 +476,7 @@ void Function1ChoiceWidget::defineForceLaw(int index) {
   emit resize();
 }
 
-bool Function1ChoiceWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* Function1ChoiceWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=xmlName!=""?element->FirstChildElement(xmlName):element;
   if(e) {
     TiXmlElement* ee=e->FirstChildElement();
@@ -496,9 +504,8 @@ bool Function1ChoiceWidget::initializeUsingXML(TiXmlElement *element) {
     }
     if(factor)
       factor->initializeUsingXML(e);
-    return true;
   }
-  return false;
+  return e;
 }
 
 TiXmlElement* Function1ChoiceWidget::writeXMLFile(TiXmlNode *parent) {
@@ -546,7 +553,7 @@ void Function2ChoiceWidget::defineForceLaw(int index) {
   }
 }
 
-bool Function2ChoiceWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* Function2ChoiceWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=element->FirstChildElement(xmlName);
   if(e) {
     TiXmlElement* ee=e->FirstChildElement();
@@ -557,6 +564,7 @@ bool Function2ChoiceWidget::initializeUsingXML(TiXmlElement *element) {
       }
     }
   }
+  return e;
 }
 
 TiXmlElement* Function2ChoiceWidget::writeXMLFile(TiXmlNode *parent) {

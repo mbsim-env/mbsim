@@ -68,16 +68,15 @@ void LocalFrameOfReferenceWidget::setFrame(const QString &str) {
   selectedFrame = element->getFrame(str.mid(6, str.length()-7));
 }
 
-bool LocalFrameOfReferenceWidget::initializeUsingXML(TiXmlElement *parent) {
+TiXmlElement* LocalFrameOfReferenceWidget::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *e = parent->FirstChildElement(xmlName);
   if(e) {
     QString refF="";
     refF=e->Attribute("ref");
     refF=refF.mid(6, refF.length()-7);
     setFrame(refF==""?element->getFrame(0):element->getFrame(refF));
-    return true;
   }
-  return false;
+  return e;
 }
 
 TiXmlElement* LocalFrameOfReferenceWidget::writeXMLFile(TiXmlNode *parent) {
@@ -131,13 +130,10 @@ void ParentFrameOfReferenceWidget::setFrame(const QString &str) {
   selectedFrame = element->getParentElement()->getFrame(str.mid(9, str.length()-10));
 }
 
-bool ParentFrameOfReferenceWidget::initializeUsingXML(TiXmlElement *parent) {
+TiXmlElement* ParentFrameOfReferenceWidget::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *e = parent->FirstChildElement(xmlName);
-  if(e) {
-    saved_frameOfReference = e->Attribute("ref");
-    return true;
-  }
-  return false;
+  if(e) saved_frameOfReference = e->Attribute("ref");
+  return e;
 }
 
 TiXmlElement* ParentFrameOfReferenceWidget::writeXMLFile(TiXmlNode *parent) {
@@ -190,13 +186,10 @@ void FrameOfReferenceWidget::setFrame(Frame* frame_) {
   frame->setText(selectedFrame->getXMLPath());
 }
 
-bool FrameOfReferenceWidget::initializeUsingXML(TiXmlElement *parent) {
+TiXmlElement* FrameOfReferenceWidget::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *e = parent->FirstChildElement(xmlName);
-  if(e) {
-    saved_frameOfReference=e->Attribute("ref");
-    return true;
-  }
-  return false;
+  if(e) saved_frameOfReference=e->Attribute("ref");
+  return e;
 }
 
 TiXmlElement* FrameOfReferenceWidget::writeXMLFile(TiXmlNode *parent) {
@@ -250,10 +243,10 @@ void ContourOfReferenceWidget::setContour(Contour* contour_) {
   contour->setText(selectedContour->getXMLPath());
 }
 
-bool ContourOfReferenceWidget::initializeUsingXML(TiXmlElement *parent) {
+TiXmlElement* ContourOfReferenceWidget::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *e = parent->FirstChildElement(xmlName);
-  if(e)
-    saved_contourOfReference=e->Attribute("ref");
+  if(e) saved_contourOfReference=e->Attribute("ref");
+  return e;
 }
 
 TiXmlElement* ContourOfReferenceWidget::writeXMLFile(TiXmlNode *parent) {
@@ -311,10 +304,10 @@ void RigidBodyOfReferenceWidget::setBody(RigidBody* body_) {
   emit bodyChanged();
 }
 
-bool RigidBodyOfReferenceWidget::initializeUsingXML(TiXmlElement *parent) {
+TiXmlElement* RigidBodyOfReferenceWidget::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *e = parent->FirstChildElement(xmlName);
-  if(e)
-    saved_bodyOfReference=e->Attribute("ref");
+  if(e) saved_bodyOfReference=e->Attribute("ref");
+  return e;
 }
 
 TiXmlElement* RigidBodyOfReferenceWidget::writeXMLFile(TiXmlNode *parent) {
@@ -348,7 +341,7 @@ void FileWidget::selectFile() {
     //fileName->setText(QFileInfo(absoluteFilePath).fileName());
 }
 
-bool FileWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* FileWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=element->FirstChildElement(xmlName);
   if(e) {
     TiXmlText *text = dynamic_cast<TiXmlText*>(e->FirstChild());
@@ -358,10 +351,10 @@ bool FileWidget::initializeUsingXML(TiXmlElement *element) {
       file = file.mid(1,file.length()-2);
       absoluteFilePath=mbsDir.absoluteFilePath(file);
       //fileName->setText(QFileInfo(absoluteFilePath).fileName());
-      return true;
+      return e;
     }
   }
-  return false;
+  return 0;
 }
 
 TiXmlElement* FileWidget::writeXMLFile(TiXmlNode *parent) {
@@ -411,8 +404,8 @@ void NameWidget::rename() {
   ((Element*)element->treeWidget()->topLevelItem(0))->update();
 }
 
-bool NameWidget::initializeUsingXML(TiXmlElement *parent) {
-  return true;
+TiXmlElement* NameWidget::initializeUsingXML(TiXmlElement *parent) {
+  return parent;
 }
 
 TiXmlElement* NameWidget::writeXMLFile(TiXmlNode *parent) {
@@ -450,7 +443,7 @@ void ConnectFramesWidget::update() {
     widget[i]->update();
 }
 
-bool ConnectFramesWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* ConnectFramesWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e = element->FirstChildElement(MBSIMNS"connect");
   if(e) {
     for(unsigned int i=0; i<widget.size(); i++) {
@@ -458,11 +451,11 @@ bool ConnectFramesWidget::initializeUsingXML(TiXmlElement *element) {
       if(widget.size()>1)
         xmlName += QString::number(i+1);
       if(!e->Attribute(xmlName.toStdString()))
-        return false;
+        return 0;
       widget[i]->setSavedFrameOfReference(e->Attribute(xmlName.toAscii().data()));
     }
   }
-  return true;
+  return e;
 }
 
 TiXmlElement* ConnectFramesWidget::writeXMLFile(TiXmlNode *parent) {
@@ -508,7 +501,7 @@ void ConnectContoursWidget::update() {
     widget[i]->update();
 }
 
-bool ConnectContoursWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* ConnectContoursWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e = element->FirstChildElement(MBSIMNS"connect");
   if(e) {
     for(unsigned int i=0; i<widget.size(); i++) {
@@ -518,6 +511,7 @@ bool ConnectContoursWidget::initializeUsingXML(TiXmlElement *element) {
       widget[i]->setSavedContourOfReference(e->Attribute(xmlName.toAscii().data()));
     }
   }
+  return e;
 }
 
 TiXmlElement* ConnectContoursWidget::writeXMLFile(TiXmlNode *parent) {
@@ -628,7 +622,7 @@ void DependenciesWidget::removeDependency() {
   updateList();
 }
 
-bool DependenciesWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* DependenciesWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e = element->FirstChildElement(xmlName);
   if(e) {
     TiXmlElement *ee=e->FirstChildElement();
@@ -639,9 +633,8 @@ bool DependenciesWidget::initializeUsingXML(TiXmlElement *element) {
       ee=ee->NextSiblingElement();
     }
     blockSignals(false);
-    return true;
   }
-  return false;
+  return e;
 }
 
 TiXmlElement* DependenciesWidget::writeXMLFile(TiXmlNode *parent) {
@@ -687,8 +680,8 @@ void ParameterNameWidget::rename() {
   //((Parameter*)parameter->treeWidget()->topLevelItem(0))->update();
 }
 
-bool ParameterNameWidget::initializeUsingXML(TiXmlElement *parent) {
-  return true;
+TiXmlElement* ParameterNameWidget::initializeUsingXML(TiXmlElement *parent) {
+  return parent;
 }
 
 TiXmlElement* ParameterNameWidget::writeXMLFile(TiXmlNode *parent) {
@@ -751,7 +744,7 @@ SolverTolerances::SolverTolerances() {
   layout->addWidget(La);
 }
 
-bool SolverTolerances::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* SolverTolerances::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=element->FirstChildElement(MBSIMNS"tolerances");
   if(e) {
     projection->initializeUsingXML(e);
@@ -760,9 +753,8 @@ bool SolverTolerances::initializeUsingXML(TiXmlElement *element) {
     gdd->initializeUsingXML(e);
     la->initializeUsingXML(e);
     La->initializeUsingXML(e);
-    return true;
   }
-  return false;
+  return e;
 }
 
 TiXmlElement* SolverTolerances::writeXMLFile(TiXmlNode *parent) {
@@ -785,13 +777,10 @@ SolverParameters::SolverParameters() {
   layout->addWidget(tolerances);
 }
 
-bool SolverParameters::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* SolverParameters::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=element->FirstChildElement(MBSIMNS"solverParameters");
-  if(e) {
-    tolerances->initializeUsingXML(e);
-    return true;
-  }
-  return false;
+  if(e) tolerances->initializeUsingXML(e);
+  return e;
 }
 
 TiXmlElement* SolverParameters::writeXMLFile(TiXmlNode *parent) {
@@ -811,15 +800,15 @@ PlotFeature::PlotFeature(const string &name_) : name(name_) {
   layout->addWidget(status);
 }
 
-bool PlotFeature::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* PlotFeature::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=element->FirstChildElement(MBSIMNS"plotFeature");
   if(e) {
     if(string(e->Attribute("feature")).substr(1)==name) {
       status->setCurrentIndex(e->Attribute("feature")[0]=='+'?0:1);
-      return true;
+      return e;
     }
   }
-  return false;
+  return 0;
 }
 
 TiXmlElement* PlotFeature::writeXMLFile(TiXmlNode *parent) {

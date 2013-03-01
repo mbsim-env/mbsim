@@ -46,8 +46,8 @@ int LinearTranslation::getSize() const {
   return A.size()?A[0].size():0;
 }
 
-bool LinearTranslation::initializeUsingXML(TiXmlElement *element) {
-  mat->initializeUsingXML(element);
+TiXmlElement* LinearTranslation::initializeUsingXML(TiXmlElement *element) {
+  return mat->initializeUsingXML(element);
 }
 
 TiXmlElement* LinearTranslation::writeXMLFile(TiXmlNode *parent) {
@@ -84,7 +84,7 @@ void TranslationChoiceWidget::defineTranslation(int index) {
   emit translationChanged();
 }
 
-bool TranslationChoiceWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* TranslationChoiceWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=(xmlName=="")?element:element->FirstChildElement(xmlName);
   if(e) {
     TiXmlElement* ee=e->FirstChildElement();
@@ -92,10 +92,10 @@ bool TranslationChoiceWidget::initializeUsingXML(TiXmlElement *element) {
       if(ee->ValueStr() == MBSIMNS"LinearTranslation")
         comboBox->setCurrentIndex(0);
       translation->initializeUsingXML(ee);
-      return true;
+      return e;
     }
   }
-  return false;
+  return 0;
 }
 
 TiXmlElement* TranslationChoiceWidget::writeXMLFile(TiXmlNode *parent) {
@@ -147,8 +147,8 @@ TiXmlElement* RotationAboutFixedAxis::writeXMLFile(TiXmlNode *parent) {
   return ele2;
 }
 
-bool RotationAboutFixedAxis::initializeUsingXML(TiXmlElement *element) {
-  vec->initializeUsingXML(element);
+TiXmlElement* RotationAboutFixedAxis::initializeUsingXML(TiXmlElement *element) {
+  return vec->initializeUsingXML(element);
 }
 
 TiXmlElement* RotationAboutAxesXY::writeXMLFile(TiXmlNode *parent) {
@@ -226,7 +226,7 @@ void RotationChoiceWidget::defineRotation(int index) {
   emit rotationChanged();
 }
 
-bool RotationChoiceWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* RotationChoiceWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=(xmlName=="")?element:element->FirstChildElement(xmlName);
   if(e) {
     TiXmlElement *ee = e->FirstChildElement();
@@ -244,10 +244,10 @@ bool RotationChoiceWidget::initializeUsingXML(TiXmlElement *element) {
       else if(ee->ValueStr() == MBSIMNS"RotationAboutAxesXY")
         comboBox->setCurrentIndex(5);
       rotation->initializeUsingXML(ee);
-      return true;
+      return e;
     }
   }
-  return false;
+  return 0;
 }
 
 TiXmlElement* RotationChoiceWidget::writeXMLFile(TiXmlNode *parent) {
