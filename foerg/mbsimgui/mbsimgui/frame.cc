@@ -47,6 +47,8 @@ Frame::Frame(const QString &str, QTreeWidgetItem *parentItem, int ind, bool grey
   properties->addToTab("Plotting",plotFeature[plotFeature.size()-1]);
   plotFeature.push_back(new ExtXMLWidget("Plot global velocity", new PlotFeature("globalVelocity"),true));
   properties->addToTab("Plotting",plotFeature[plotFeature.size()-1]);
+  plotFeature.push_back(new ExtXMLWidget("Plot global acceleration", new PlotFeature("globalAcceleration"),true));
+  properties->addToTab("Plotting",plotFeature[plotFeature.size()-1]);
 
   properties->addStretch();
 }
