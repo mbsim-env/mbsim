@@ -22,6 +22,7 @@
 #include "solver.h"
 #include "integrator.h"
 #include "parameter.h"
+#include "observer.h"
 #include <set>
 
 //Element *ObjectFactory(MBSim::Element *obj, QTreeWidgetItem* parentItem, int ind);
@@ -42,6 +43,7 @@ class ObjectFactoryBase {
   //  virtual Translation* createTranslation(TiXmlElement *element) { return NULL; }
   //  virtual Rotation* createRotation(TiXmlElement *element) { return NULL; }
   virtual Link* createLink(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind) { return NULL; }
+  virtual Observer* createObserver(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind) { return NULL; }
   virtual Integrator* createIntegrator(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind) { return NULL; }
   virtual Parameter* createParameter(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind) { return NULL; }
   //  virtual GeneralizedForceLaw *createGeneralizedForceLaw(TiXmlElement *element) { return NULL; }
@@ -83,6 +85,7 @@ class ObjectFactory : public ObjectFactoryBase {
 //    Translation* createTranslation(TiXmlElement *element);
 //    Rotation* createRotation(TiXmlElement *element);
     Link* createLink(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind);
+    Observer* createObserver(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind);
     Integrator* createIntegrator(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind);
     Parameter* createParameter(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind);
 //    GeneralizedForceLaw *createGeneralizedForceLaw(TiXmlElement *element);
@@ -118,6 +121,7 @@ class MBSimObjectFactory : protected ObjectFactoryBase  {
 //    Translation* createTranslation(TiXmlElement *element);
 //    Rotation* createRotation(TiXmlElement *element);
     Link* createLink(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind);
+    Observer* createObserver(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind);
     Integrator* createIntegrator(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind);
     Parameter* createParameter(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind);
 //    GeneralizedForceLaw *createGeneralizedForceLaw(TiXmlElement *element);

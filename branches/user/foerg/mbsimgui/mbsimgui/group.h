@@ -55,6 +55,7 @@ class Group : public Element {
     void addSpringDamper();
     void addContact();
     void addAbsolutePositionSensor();
+    void addAbsoluteKinematicsObserver();
     //void remove();
 
   public slots:

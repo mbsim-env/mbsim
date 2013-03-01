@@ -84,6 +84,11 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
   links->setForeground(0,brush);
   links->setBackground(0,brush2);
   addChild(links);
+  observers = new Container;
+  observers->setText(0, "observers");
+  observers->setForeground(0,brush);
+  observers->setBackground(0,brush2);
+  addChild(observers);
 
   //if(parentItem != treeWidget()->invisibleRootItem())
     //new Frame("I", frames, -1, false);
@@ -171,6 +176,11 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
   action=new QAction(Utils::QIconCached("newobject.svg"),"AbsolutePositionSensor", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addAbsolutePositionSensor()));
   subsubmenu->addAction(action);
+
+  submenu = contextMenu->addMenu("Add observer");
+  action=new QAction(Utils::QIconCached("newobject.svg"),"AbsoluteKinematicsObserver", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addAbsoluteKinematicsObserver()));
+  submenu->addAction(action);
 
   action=new QAction(Utils::QIconCached("newobject.svg"),"Add from file", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addFromFile()));
@@ -301,6 +311,11 @@ void Group::addContact() {
 
 void Group::addAbsolutePositionSensor() {
   new AbsolutePositionSensor(newName(links,"AbsolutePositionSensor"), links, -1);
+  ((Element*)treeWidget()->topLevelItem(0))->update();
+}
+
+void Group::addAbsoluteKinematicsObserver() {
+  new AbsoluteKinematicsObserver(newName(observers,"AbsoluteKinematicsObserver"), observers, -1);
   ((Element*)treeWidget()->topLevelItem(0))->update();
 }
 
@@ -468,6 +483,7 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   Group *g;
   while(E) {
     g=ObjectFactory::getInstance()->createGroup(E, groups, -1);
+    cout << g->getName().toStdString() << endl;
     if(g) g->initializeUsingXML(E);
     E=E->NextSiblingElement();
   }
@@ -500,6 +516,17 @@ void Group::initializeUsingXML(TiXmlElement *element) {
     l=ObjectFactory::getInstance()->createLink(E, links, -1);
     if(l) l->initializeUsingXML(E);
     E=E->NextSiblingElement();
+  }
+
+  // observers
+  if(element->FirstChildElement(MBSIMNS"observers")) {
+    E=element->FirstChildElement(MBSIMNS"observers")->FirstChildElement();
+    Observer *obsrv;
+    while(E) {
+      obsrv=ObjectFactory::getInstance()->createObserver(E, observers, -1);
+      if(obsrv) obsrv->initializeUsingXML(E);
+      E=E->NextSiblingElement();
+    }
   }
 
   e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameI");
@@ -546,6 +573,11 @@ TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
     getLink(i)->writeXMLFile(ele1);
   ele0->LinkEndChild( ele1 );
 
+  ele1 = new TiXmlElement( MBSIMNS"observers" );
+  for(int i=0; i<observers->childCount(); i++)
+    getObserver(i)->writeXMLFile(ele1);
+  ele0->LinkEndChild( ele1 );
+
   Frame *I = getFrame(0);
   if(I->openMBVFrame()) {
     ele1 = new TiXmlElement( MBSIMNS"enableOpenMBVFrameI" );
@@ -578,6 +610,8 @@ Element * Group::getByPathSearch(QString path) {
         return getLink(searched_name)->getByPathSearch(rest);
       //else if (container=="ExtraDynamic")
       //return getExtraDynamic(searched_name)->getByPathSearch(rest);
+      else if (container=="Observer")
+        return getObserver(searched_name)->getByPathSearch(rest);
       else if (container=="Group")
         return getGroup(searched_name)->getByPathSearch(rest);
       else {
@@ -592,6 +626,8 @@ Element * Group::getByPathSearch(QString path) {
         return getLink(searched_name);
       //        else if (container=="ExtraDynamic")
       //          return getExtraDynamic(searched_name);
+      else if (container=="Observer")
+        return getObserver(searched_name);
       else if (container=="Group")
         return getGroup(searched_name);
       else if (container=="Frame")

@@ -31,13 +31,14 @@
 #include "frame.h"
 #include "contour.h"
 #include "link.h"
+#include "observer.h"
 
 using namespace std;
 
 int Element::IDcounter=0;
 map<string, Element*> Element::idEleMap;
 
-Element::Element(const QString &str, QTreeWidgetItem *parentItem, int ind, bool grey) : QTreeWidgetItem(), drawThisPath(true), searchMatched(true), frames(0), contours(0), groups(0), objects(0), links(0), extraDynamics(0), ns(MBSIMNS) {
+Element::Element(const QString &str, QTreeWidgetItem *parentItem, int ind, bool grey) : QTreeWidgetItem(), drawThisPath(true), searchMatched(true), frames(0), contours(0), groups(0), objects(0), links(0), extraDynamics(0), observers(0), ns(MBSIMNS) {
   stringstream sstr;
   sstr<<IDcounter++;
   ID=sstr.str();
@@ -165,6 +166,10 @@ void Element::update() {
     for(int i=0; i<getContainerLink()->childCount(); i++)
       getLink(i)->update();
   }
+  if(getContainerObserver()) {
+    for(int i=0; i<getContainerObserver()->childCount(); i++)
+      getObserver(i)->update();
+  }
 }
 
 void Element::initialize() {
@@ -189,6 +194,10 @@ void Element::initialize() {
     for(int i=0; i<getContainerLink()->childCount(); i++)
       getLink(i)->initialize();
   }
+  if(getContainerObserver()) {
+    for(int i=0; i<getContainerObserver()->childCount(); i++)
+      getObserver(i)->initialize();
+  }
 }
 
 void Element::resizeVariables() {
@@ -212,6 +221,10 @@ void Element::resizeVariables() {
   if(getContainerLink()) {
     for(int i=0; i<getContainerLink()->childCount(); i++)
       getLink(i)->resizeVariables();
+  }
+  if(getContainerObserver()) {
+    for(int i=0; i<getContainerObserver()->childCount(); i++)
+      getObserver(i)->resizeVariables();
   }
 }
 
@@ -382,6 +395,20 @@ Link* Element::getLink(const QString &name, bool check) {
   return NULL;
 }
 
+Observer* Element::getObserver(const QString &name, bool check) {
+  int i;
+  for(i=0; i<getContainerObserver()->childCount(); i++) {
+    if(getObserver(i)->getName() == name)
+      return getObserver(i);
+  }
+  if(check) {
+    if(!(i<getContainerObserver()->childCount()))
+      throw MBSimError("The observer \""+getObserver(i)->getName().toStdString()+"\" comprises no frame \""+name.toStdString()+"\"!");
+    assert(i<getContainerObserver()->childCount());
+  }
+  return NULL;
+}
+
 Group* Element::getGroup(const QString &name, bool check) {
   int i;
   for(i=0; i<getContainerGroup()->childCount(); i++) {
@@ -452,6 +479,10 @@ Object* Element::getObject(int i) {
 
 Link* Element::getLink(int i) {
   return (Link*)links->child(i); 
+}
+
+Observer* Element::getObserver(int i) {
+  return (Observer*)observers->child(i); 
 }
 
 Group* Element::getGroup(int i) {
