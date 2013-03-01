@@ -60,7 +60,7 @@ void RegularizedBilateralConstraint::defineFunction(int index) {
   }
 }
 
-bool RegularizedBilateralConstraint::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* RegularizedBilateralConstraint::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e;
   e=element->FirstChildElement(MBSIMNS"forceFunction");
   TiXmlElement *e1 = e->FirstChildElement();
@@ -68,6 +68,7 @@ bool RegularizedBilateralConstraint::initializeUsingXML(TiXmlElement *element) {
     funcList->setCurrentIndex(0);
     forceFunc->initializeUsingXML(e->FirstChildElement());
   }
+  return e;
 }
 
 RegularizedUnilateralConstraint::RegularizedUnilateralConstraint() {
@@ -92,7 +93,7 @@ void RegularizedUnilateralConstraint::defineFunction(int index) {
   }
 }
 
-bool RegularizedUnilateralConstraint::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* RegularizedUnilateralConstraint::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e;
   e=element->FirstChildElement(MBSIMNS"forceFunction");
   TiXmlElement *e1 = e->FirstChildElement();
@@ -100,6 +101,7 @@ bool RegularizedUnilateralConstraint::initializeUsingXML(TiXmlElement *element) 
     funcList->setCurrentIndex(0);
     forceFunc->initializeUsingXML(e->FirstChildElement());
   }
+  return e;
 }
 
 TiXmlElement* GeneralizedImpactLawWidget::writeXMLFile(TiXmlNode *parent) {
@@ -117,9 +119,10 @@ UnilateralNewtonImpact::UnilateralNewtonImpact() {
   layout->addWidget(restitutionCoefficient);
 }
 
-bool UnilateralNewtonImpact::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* UnilateralNewtonImpact::initializeUsingXML(TiXmlElement *element) {
   GeneralizedImpactLawWidget::initializeUsingXML(element);
   restitutionCoefficient->initializeUsingXML(element);
+  return element;
 }
 
 TiXmlElement* UnilateralNewtonImpact::writeXMLFile(TiXmlNode *parent) {
@@ -148,9 +151,10 @@ PlanarCoulombFriction::PlanarCoulombFriction() {
   layout->addWidget(frictionCoefficient);
 }
 
-bool PlanarCoulombFriction::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* PlanarCoulombFriction::initializeUsingXML(TiXmlElement *element) {
   FrictionForceLawWidget::initializeUsingXML(element);
   frictionCoefficient->initializeUsingXML(element);
+  return element;
 }
 
 TiXmlElement* PlanarCoulombFriction::writeXMLFile(TiXmlNode *parent) {
@@ -168,9 +172,10 @@ SpatialCoulombFriction::SpatialCoulombFriction() {
   layout->addWidget(frictionCoefficient);
 }
 
-bool SpatialCoulombFriction::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* SpatialCoulombFriction::initializeUsingXML(TiXmlElement *element) {
   FrictionForceLawWidget::initializeUsingXML(element);
   frictionCoefficient->initializeUsingXML(element);
+  return element;
 }
 
 TiXmlElement* SpatialCoulombFriction::writeXMLFile(TiXmlNode *parent) {
@@ -201,7 +206,7 @@ void RegularizedPlanarFriction::defineFunction(int index) {
   }
 }
 
-bool RegularizedPlanarFriction::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* RegularizedPlanarFriction::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e;
   e=element->FirstChildElement(MBSIMNS"frictionForceFunction");
   TiXmlElement *e1 = e->FirstChildElement();
@@ -209,6 +214,7 @@ bool RegularizedPlanarFriction::initializeUsingXML(TiXmlElement *element) {
     funcList->setCurrentIndex(0);
     frictionForceFunc->initializeUsingXML(e->FirstChildElement());
   }
+  return e;
 }
 
 RegularizedSpatialFriction::RegularizedSpatialFriction() {
@@ -233,7 +239,7 @@ void RegularizedSpatialFriction::defineFunction(int index) {
   }
 }
 
-bool RegularizedSpatialFriction::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* RegularizedSpatialFriction::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e;
   e=element->FirstChildElement(MBSIMNS"frictionForceFunction");
   TiXmlElement *e1 = e->FirstChildElement();
@@ -241,6 +247,7 @@ bool RegularizedSpatialFriction::initializeUsingXML(TiXmlElement *element) {
     funcList->setCurrentIndex(0);
     frictionForceFunc->initializeUsingXML(e->FirstChildElement());
   }
+  return e;
 }
 
 TiXmlElement* FrictionImpactLawWidget::writeXMLFile(TiXmlNode *parent) {
@@ -258,9 +265,10 @@ PlanarCoulombImpact::PlanarCoulombImpact() {
   layout->addWidget(frictionCoefficient);
 }
 
-bool PlanarCoulombImpact::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* PlanarCoulombImpact::initializeUsingXML(TiXmlElement *element) {
   FrictionImpactLawWidget::initializeUsingXML(element);
   frictionCoefficient->initializeUsingXML(element);
+  return element;
 }
 
 TiXmlElement* PlanarCoulombImpact::writeXMLFile(TiXmlNode *parent) {
@@ -278,9 +286,10 @@ SpatialCoulombImpact::SpatialCoulombImpact() {
   layout->addWidget(frictionCoefficient);
 }
 
-bool SpatialCoulombImpact::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* SpatialCoulombImpact::initializeUsingXML(TiXmlElement *element) {
   FrictionImpactLawWidget::initializeUsingXML(element);
   frictionCoefficient->initializeUsingXML(element);
+  return element;
 }
 
 TiXmlElement* SpatialCoulombImpact::writeXMLFile(TiXmlNode *parent) {
@@ -319,7 +328,7 @@ void GeneralizedForceLawChoiceWidget::defineForceLaw(int index) {
   layout->addWidget(generalizedForceLaw);
 }
 
-bool GeneralizedForceLawChoiceWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* GeneralizedForceLawChoiceWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement  *e=element->FirstChildElement(xmlName);
   if(e) {
     TiXmlElement* ee=e->FirstChildElement();
@@ -334,9 +343,8 @@ bool GeneralizedForceLawChoiceWidget::initializeUsingXML(TiXmlElement *element) 
         comboBox->setCurrentIndex(3);
       generalizedForceLaw->initializeUsingXML(ee);
     }
-    return true;
   }
-  return false;
+  return e;
 }
 
 TiXmlElement* GeneralizedForceLawChoiceWidget::writeXMLFile(TiXmlNode *parent) {
@@ -372,7 +380,7 @@ void GeneralizedImpactLawChoiceWidget::defineImpactLaw(int index) {
   layout->addWidget(generalizedImpactLaw);
 }
 
-bool GeneralizedImpactLawChoiceWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* GeneralizedImpactLawChoiceWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=(xmlName=="")?element:element->FirstChildElement(xmlName);
   if(e) {
     TiXmlElement* ee=e->FirstChildElement();
@@ -382,10 +390,10 @@ bool GeneralizedImpactLawChoiceWidget::initializeUsingXML(TiXmlElement *element)
       if(ee->ValueStr() == MBSIMNS"UnilateralNewtonImpact")
         comboBox->setCurrentIndex(1);
       generalizedImpactLaw->initializeUsingXML(ee);
-      return true;
+      return e;
     }
   }
-  return false;
+  return 0;
 }
 
 TiXmlElement* GeneralizedImpactLawChoiceWidget::writeXMLFile(TiXmlNode *parent) {
@@ -431,7 +439,7 @@ void FrictionForceLawChoiceWidget::defineFrictionLaw(int index) {
   layout->addWidget(frictionForceLaw);
 }
 
-bool FrictionForceLawChoiceWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* FrictionForceLawChoiceWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=(xmlName=="")?element:element->FirstChildElement(xmlName);
   if(e) {
     TiXmlElement* ee=e->FirstChildElement();
@@ -445,10 +453,10 @@ bool FrictionForceLawChoiceWidget::initializeUsingXML(TiXmlElement *element) {
       else if(ee->ValueStr() == MBSIMNS"RegularizedSpatialFriction")
         comboBox->setCurrentIndex(3);
       frictionForceLaw->initializeUsingXML(ee);
-      return true;
+      return e;
     }
   }
-  return false;
+  return 0;
 }
 
 TiXmlElement* FrictionForceLawChoiceWidget::writeXMLFile(TiXmlNode *parent) {
@@ -488,7 +496,7 @@ void FrictionImpactLawChoiceWidget::defineFrictionImpactLaw(int index) {
   layout->addWidget(frictionImpactLaw);
 }
 
-bool FrictionImpactLawChoiceWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* FrictionImpactLawChoiceWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=(xmlName=="")?element:element->FirstChildElement(xmlName);
   if(e) {
     TiXmlElement* ee=e->FirstChildElement();
@@ -498,10 +506,10 @@ bool FrictionImpactLawChoiceWidget::initializeUsingXML(TiXmlElement *element) {
       else if(ee->ValueStr() == MBSIMNS"SpatialCoulombImpact")
         comboBox->setCurrentIndex(1);
       frictionImpactLaw->initializeUsingXML(ee);
-      return true;
+      return e;
     }
   }
-  return false;
+  return 0;
 }
 
 TiXmlElement* FrictionImpactLawChoiceWidget::writeXMLFile(TiXmlNode *parent) {
@@ -545,16 +553,15 @@ int GeneralizedForceChoiceWidget::getSize() const {
   return A.size()?A[0].size():0;
 }
 
-bool GeneralizedForceChoiceWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* GeneralizedForceChoiceWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement  *e=element->FirstChildElement(xmlName);
   if(e) {
     mat->initializeUsingXML(e);
     generalizedForceLaw->initializeUsingXML(e);
     generalizedImpactLaw->initializeUsingXML(e);
     arrow->initializeUsingXML(e);
-    return true;
   }
-  return false;
+  return e;
 }
 
 TiXmlElement* GeneralizedForceChoiceWidget::writeXMLFile(TiXmlNode *parent) {
@@ -604,15 +611,14 @@ int ForceChoiceWidget::getSize() const {
   return A.size()?A[0].size():0;
 }
 
-bool ForceChoiceWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* ForceChoiceWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=element->FirstChildElement(xmlName);
   if(e) {
     widget->initializeUsingXML(e);
     forceLaw->initializeUsingXML(e);
     arrow->initializeUsingXML(e);
-    return true;
   }
-  return false;
+  return e;
 }
 
 TiXmlElement* ForceChoiceWidget::writeXMLFile(TiXmlNode *parent) {
@@ -652,12 +658,13 @@ ForceDirectionWidget::ForceDirectionWidget(const string &xmlName_, Element *elem
   refFrame->update();
 }
 
-bool ForceDirectionWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* ForceDirectionWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=element->FirstChildElement(xmlName);
   if(e) {
     refFrame->initializeUsingXML(e);
     mat->initializeUsingXML(e);
   }
+  return e;
 }
 
 TiXmlElement* ForceDirectionWidget::writeXMLFile(TiXmlNode *parent) {
@@ -688,8 +695,8 @@ int GeneralizedForceDirectionWidget::getSize() const {
   return A.size()?A[0].size():0;
 }
 
-bool GeneralizedForceDirectionWidget::initializeUsingXML(TiXmlElement *element) {
-  mat->initializeUsingXML(element);
+TiXmlElement* GeneralizedForceDirectionWidget::initializeUsingXML(TiXmlElement *element) {
+  return mat->initializeUsingXML(element);
 }
 
 TiXmlElement* GeneralizedForceDirectionWidget::writeXMLFile(TiXmlNode *parent) {

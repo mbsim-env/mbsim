@@ -44,7 +44,7 @@ class StringWidget : public XMLWidget {
     virtual void setReadOnly(bool flag) {}
     virtual std::string getValue() const = 0;
     virtual void setValue(const std::string &str) = 0;
-    virtual bool initializeUsingXML(TiXmlElement *element) = 0;
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) = 0;
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element) = 0;
     virtual StringWidget* cloneStringWidget() {return 0;}
     virtual std::string getType() const = 0;
@@ -57,7 +57,7 @@ class BoolWidget : public StringWidget {
     BoolWidget(const std::string &b="0");
     std::string getValue() const {return value->checkState()==Qt::Checked?"1":"0";}
     void setValue(const std::string &str) {value->setCheckState((str=="0"||str=="false")?Qt::Unchecked:Qt::Checked);}
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual StringWidget* cloneStringWidget() {return new BoolWidget;}
     virtual std::string getType() const {return "Boolean";}
@@ -72,7 +72,7 @@ class ChoiceWidget : public StringWidget {
     ChoiceWidget(const std::vector<std::string> &list, int num);
     std::string getValue() const {return value->currentText().toStdString();}
     void setValue(const std::string &str) {value->setCurrentIndex(value->findText(str.c_str()));}
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual StringWidget* cloneStringWidget() {ChoiceWidget *widget=new ChoiceWidget(list,value->currentIndex());widget->setDisabled(true);return widget;}
     virtual std::string getType() const {return "Choice";}
@@ -89,7 +89,7 @@ class OctaveExpressionWidget : public StringWidget {
     OctaveExpressionWidget();
     std::string getValue() const { return value->toPlainText().toStdString(); }
     void setValue(const std::string &str) { value->setPlainText(str.c_str()); }
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual std::string getType() const {return "Editor";}
 
@@ -105,7 +105,7 @@ class ScalarWidget : public StringWidget {
     void setReadOnly(bool flag) {box->setReadOnly(flag);}
     std::string getValue() const {return box->text().toStdString();}
     void setValue(const std::string &str) {box->setText(str.c_str());}
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual StringWidget* cloneStringWidget() {return new ScalarWidget;}
     virtual std::string getType() const {return "Scalar";}
@@ -125,7 +125,7 @@ class VecWidget : public StringWidget {
     std::string getValue() const {return toStr(getVec());}
     void setValue(const std::string &str) {setVec(strToVec(str));}
     int size() const {return box.size();}
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual StringWidget* cloneStringWidget() {return new VecWidget(size());}
     virtual std::string getType() const {return "Vector";}
@@ -147,7 +147,7 @@ class MatWidget : public StringWidget {
     void setValue(const std::string &str) {setMat(strToMat(str));}
     int rows() const {return box.size();}
     int cols() const {return box[0].size();}
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual StringWidget* cloneStringWidget() {return new MatWidget(rows(),cols());}
     virtual std::string getType() const {return "Matrix";}
@@ -167,7 +167,7 @@ class SymMatWidget : public StringWidget {
     void setReadOnly(bool flag);
     std::string getValue() const {return toStr(getMat());}
     void setValue(const std::string &str) {setMat(strToMat(str));}
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual StringWidget* cloneStringWidget() {return new SymMatWidget(rows());}
     int rows() const {return box.size();}
@@ -196,7 +196,7 @@ class VecSizeVarWidget : public StringWidget {
     std::string getValue() const {return toStr(getVec());}
     void setValue(const std::string &str) {setVec(strToVec(str));}
     void setReadOnly(bool flag) {widget->setReadOnly(flag);}
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual StringWidget* cloneStringWidget() {return new VecWidget(size());}
     virtual std::string getType() const {return "Vector";}
@@ -230,7 +230,7 @@ class MatColsVarWidget : public StringWidget {
     std::string getValue() const {return toStr(getMat());}
     void setValue(const std::string &str) {setMat(strToMat(str));}
     void setReadOnly(bool flag) {widget->setReadOnly(flag);}
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual StringWidget* cloneStringWidget() {return new MatWidget(rows(),cols());}
     virtual std::string getType() const {return "Matrix";}
@@ -256,7 +256,7 @@ class CardanWidget : public StringWidget {
     void setReadOnly(bool flag);
     std::string getValue() const {return toStr(getCardan());}
     void setValue(const std::string &str) {setCardan(strToVec(str));}
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual StringWidget* cloneStringWidget() {return new CardanWidget;}
     virtual std::string getType() const {return "Cardan";}
@@ -277,7 +277,7 @@ class PhysicalStringWidget : public StringWidget {
     std::string getValue() const {return widget->getValue();}
     void setValue(const std::string &str) {widget->setValue(str);}
     void setReadOnly(bool flag) {widget->setReadOnly(flag);}
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual StringWidget* cloneStringWidget() {return widget->cloneStringWidget();}
     virtual StringWidget* getWidget() {return widget;}
@@ -296,7 +296,7 @@ class VecFromFileWidget : public StringWidget {
     VecFromFileWidget();
     std::string getValue() const;
     void setValue(const std::string &str) {}
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual std::string getType() const {return "File";}
     virtual StringWidget* cloneStringWidget() {return new VecWidget(0);}
@@ -317,7 +317,7 @@ class MatFromFileWidget : public StringWidget {
     MatFromFileWidget();
     std::string getValue() const; 
     void setValue(const std::string &str) {}
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual std::string getType() const {return "File";}
     virtual StringWidget* cloneStringWidget() {return new MatWidget(0,0);}

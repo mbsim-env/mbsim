@@ -31,7 +31,7 @@ class TranslationWidget : public XMLWidget {
 
   public:
     TranslationWidget() {}
-    virtual bool initializeUsingXML(TiXmlElement *element) = 0;
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) = 0;
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element) = 0;
     virtual int getSize() const = 0;
    protected:
@@ -42,7 +42,7 @@ class LinearTranslation : public TranslationWidget {
 
   public:
     LinearTranslation();
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     int getSize() const;
   protected:
@@ -57,7 +57,7 @@ class TranslationChoiceWidget : public XMLWidget {
   public:
     TranslationChoiceWidget(const std::string &xmlName);
 
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     int getSize() const { return translation->getSize(); }
 
@@ -77,7 +77,7 @@ class RotationWidget : public XMLWidget {
 
   public:
     RotationWidget() {}
-    virtual bool initializeUsingXML(TiXmlElement *element) = 0;
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) = 0;
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element) = 0;
     virtual int getSize() const = 0;
 };
@@ -86,7 +86,7 @@ class RotationAboutXAxis : public RotationWidget {
 
   public:
     RotationAboutXAxis() {}
-    virtual bool initializeUsingXML(TiXmlElement *element) {}
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual int getSize() const {return 1;}
 };
@@ -95,7 +95,7 @@ class RotationAboutYAxis : public RotationWidget {
 
   public:
     RotationAboutYAxis() {}
-    virtual bool initializeUsingXML(TiXmlElement *element) {}
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual int getSize() const {return 1;}
 };
@@ -104,7 +104,7 @@ class RotationAboutZAxis : public RotationWidget {
 
   public:
     RotationAboutZAxis() {}
-    virtual bool initializeUsingXML(TiXmlElement *element) {}
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual int getSize() const {return 1;}
 };
@@ -113,7 +113,7 @@ class RotationAboutFixedAxis : public RotationWidget {
 
   public:
     RotationAboutFixedAxis();
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual int getSize() const {return 1;}
    protected:
@@ -124,7 +124,7 @@ class RotationAboutAxesXY : public RotationWidget {
 
   public:
     RotationAboutAxesXY() {}
-    virtual bool initializeUsingXML(TiXmlElement *element) {}
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual int getSize() const {return 2;}
 };
@@ -133,7 +133,7 @@ class CardanAngles : public RotationWidget {
 
   public:
     CardanAngles() {}
-    virtual bool initializeUsingXML(TiXmlElement *element) {}
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual int getSize() const {return 3;}
 };
@@ -144,7 +144,7 @@ class RotationChoiceWidget : public XMLWidget {
   public:
     RotationChoiceWidget(const std::string &xmlName);
 
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     int getSize() const { return rotation->getSize(); }
 

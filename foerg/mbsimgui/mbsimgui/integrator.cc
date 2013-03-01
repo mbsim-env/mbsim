@@ -451,7 +451,7 @@ class RKSuiteTypeWidget : public XMLWidget {
       comboBox->addItem("Method 67");
       layout->addWidget(comboBox);
     }
-    virtual bool initializeUsingXML(TiXmlElement *element) {}
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element) {
       vector<string> str;
       str.push_back(MBSIMINTNS"method23");
