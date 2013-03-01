@@ -167,20 +167,29 @@ def main():
   # extend the dependencies recursively
   addAllDepencencies()
 
+  # set docDir
+  global docDir
+  if args.prefix==None:
+    output=subprocess.check_output([pj(args.sourceDir, "openmbv", "mbxmlutils", "config.status"), "--config"]).decode("utf-8")
+    for opt in output.split():
+      match=re.search("'?--prefix[= ]([^']*)'?", opt)
+      if match!=None:
+        docDir=pj(match.expand("\\1"), "share", "mbxmlutils", "doc")
+        break
+  else:
+    docDir=pj(args.prefix, "share", "mbxmlutils", "doc")
+  # append path to PKG_CONFIG_PATH to find mbxmlutils and co. by runexmaples.py
+  pkgConfigDir=os.path.normpath(pj(docDir, os.pardir, os.pardir, os.pardir, "lib", "pkgconfig"))
+  if "PKG_CONFIG_PATH" in os.environ:
+    os.environ["PKG_CONFIG_PATH"]=pkgConfigDir+os.pathsep+os.environ["PKG_CONFIG_PATH"]
+  else:
+    os.environ["PKG_CONFIG_PATH"]=pkgConfigDir
+
+  # write main doc file
   if args.docOutDir!=None:
     args.docOutDir=os.path.abspath(args.docOutDir)
     if not os.path.isdir(pj(args.docOutDir, "xmldoc")): os.makedirs(pj(args.docOutDir, "xmldoc"))
     if not os.path.isdir(pj(args.docOutDir, "doc")): os.makedirs(pj(args.docOutDir, "doc"))
-    global docDir
-    if args.prefix==None:
-      output=subprocess.check_output([pj(args.sourceDir, "openmbv", "mbxmlutils", "config.status"), "--config"]).decode("utf-8")
-      for opt in output.split():
-        match=re.search("'?--prefix[= ]([^']*)'?", opt)
-        if match!=None:
-          docDir=pj(match.expand("\\1"), "share", "mbxmlutils", "doc")
-          break
-    else:
-      docDir=pj(args.prefix, "share", "mbxmlutils", "doc")
     # create doc entry html
     docFD=open(pj(args.docOutDir, "index.html"), "w")
     print('<?xml version="1.0" encoding="UTF-8"?>', file=docFD)
@@ -582,19 +591,12 @@ def runexamples(mainFD):
     command.extend(["--url", args.url+"/runexamples_report"])
   command.extend(["--reportOutDir", pj(args.reportOutDir, "runexamples_report")])
   command.extend(args.passToRunexamples)
-  # append path to PKG_CONFIG_PATH to find mbxmlutils and co. by runexmaples.py
-  runExamplesEnv=os.environ
-  pkgConfigDir=os.path.normpath(pj(docDir, os.pardir, os.pardir, os.pardir, "lib", "pkgconfig"))
-  if "PKG_CONFIG_PATH" in runExamplesEnv:
-    runExamplesEnv["PKG_CONFIG_PATH"]=pkgConfigDir+os.pathsep+runExamplesEnv["PKG_CONFIG_PATH"]
-  else:
-    runExamplesEnv["PKG_CONFIG_PATH"]=pkgConfigDir
 
   print("")
   print("")
   print("Output of runexamples.py")
   print("")
-  ret=subprocess.call(command, stderr=subprocess.STDOUT, env=runExamplesEnv)
+  ret=subprocess.call(command, stderr=subprocess.STDOUT)
 
   if ret==0:
     print('<td colspan="4"><a href="'+myurllib.pathname2url(pj("runexamples_report", "index.html"))+
