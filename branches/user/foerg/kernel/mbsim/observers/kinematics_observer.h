@@ -66,6 +66,9 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVPositionArrow(OpenMBV::Arrow *arrow) { openMBVPositionArrow = arrow; }
       void setOpenMBVVelocityArrow(OpenMBV::Arrow *arrow) { openMBVVelocityArrow = arrow; }
+      void setOpenMBVAngularVelocityArrow(OpenMBV::Arrow *arrow) { openMBVAngularVelocityArrow = arrow; }
+      void setOpenMBVAccelerationArrow(OpenMBV::Arrow *arrow) { openMBVAccelerationArrow = arrow; }
+      void setOpenMBVAngularAccelerationArrow(OpenMBV::Arrow *arrow) { openMBVAngularAccelerationArrow = arrow; }
 
       virtual void enableOpenMBVPosition(double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
       virtual void enableOpenMBVVelocity(double scale=1, OpenMBV::Arrow::ReferencePoint refPoint=OpenMBV::Arrow::fromPoint, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);

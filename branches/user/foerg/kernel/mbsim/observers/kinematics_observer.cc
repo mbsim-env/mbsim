@@ -259,7 +259,6 @@ namespace MBSim {
   }
 
   void AbsoluteKinematicsObserver::initializeUsingXML(TiXmlElement *element) {
-    cout << "AbsoluteKinematicsObserver" << endl;
     Observer::initializeUsingXML(element);
     TiXmlElement *e=element->FirstChildElement(MBSIMNS"frame");
     if(e) saved_frame=e->Attribute("ref");
@@ -280,6 +279,24 @@ namespace MBSim {
     if(e) {
       OpenMBV::Arrow *a=new OpenMBV::Arrow;
       setOpenMBVVelocityArrow(a);
+      a->initializeUsingXML(e->FirstChildElement());
+    }
+    e=element->FirstChildElement(MBSIMNS"openMBVAngularVelocityArrow");
+    if(e) {
+      OpenMBV::Arrow *a=new OpenMBV::Arrow;
+      setOpenMBVAngularVelocityArrow(a);
+      a->initializeUsingXML(e->FirstChildElement());
+    }
+    e=element->FirstChildElement(MBSIMNS"openMBVAccelerationArrow");
+    if(e) {
+      OpenMBV::Arrow *a=new OpenMBV::Arrow;
+      setOpenMBVAccelerationArrow(a);
+      a->initializeUsingXML(e->FirstChildElement());
+    }
+    e=element->FirstChildElement(MBSIMNS"openMBVAngularAccelerationArrow");
+    if(e) {
+      OpenMBV::Arrow *a=new OpenMBV::Arrow;
+      setOpenMBVAngularAccelerationArrow(a);
       a->initializeUsingXML(e->FirstChildElement());
     }
   }
