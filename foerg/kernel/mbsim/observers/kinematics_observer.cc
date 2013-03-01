@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/observer/kinematics_observer.h"
+#include "mbsim/observers/kinematics_observer.h"
 #include "mbsim/frame.h"
 
 using namespace std;
@@ -98,7 +98,12 @@ namespace MBSim {
   }
 
   void AbsoluteKinematicsObserver::init(InitStage stage) {
-    if(stage==MBSim::plot) {
+    if(stage==resolveXMLPath) {
+      if(saved_frame!="")
+        setFrame(getByPath<Frame>(saved_frame));
+      Observer::init(stage);
+    }
+    else if(stage==MBSim::plot) {
       updatePlotFeatures();
 
       Observer::init(stage);
@@ -250,6 +255,20 @@ namespace MBSim {
 #endif
 
       Observer::plot(t,dt);
+    }
+  }
+
+  void AbsoluteKinematicsObserver::initializeUsingXML(TiXmlElement *element) {
+    cout << "AbsoluteKinematicsObserver" << endl;
+    Observer::initializeUsingXML(element);
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"frame");
+    if(e) saved_frame=e->Attribute("ref");
+    e=element->FirstChildElement(MBSIMNS"enableOpenMBVPosition");
+    if(e) {
+      enableOpenMBVPosition(getDouble(e->FirstChildElement(MBSIMNS"diameter")),
+          getDouble(e->FirstChildElement(MBSIMNS"headDiameter")),
+          getDouble(e->FirstChildElement(MBSIMNS"headLength")),
+          getDouble(e->FirstChildElement(MBSIMNS"staticColor")));
     }
   }
 

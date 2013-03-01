@@ -536,6 +536,13 @@ namespace MBSim {
       virtual void buildListOfInverseKineticsLinks(std::vector<Link*> &lnk, bool recursive=false);
 
       /**
+       * \brief build flat list of observers
+       * \param list of observers
+       * \param flag for recursive
+       */
+      virtual void buildListOfObservers(std::vector<Observer*> &obsrv, bool recursive=false);
+
+      /**
        * \brief analyse constraints of dynamic systems for usage in inverse kinetics
        */
       void setUpInverseKinetics();

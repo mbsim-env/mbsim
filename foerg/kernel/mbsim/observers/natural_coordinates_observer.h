@@ -17,13 +17,12 @@
  * Contact: martin.o.foerg@gmail.com
  */
 
-#ifndef _CYLINDER_COORDINATES_OBSERVER_H__
-#define _CYLINDER_COORDINATES_OBSERVER_H__
-#include "mbsim/observer/observer.h"
+#ifndef _NATURAL_COORDINATES_OBSERVER_H__
+#define _NATURAL_COORDINATES_OBSERVER_H__
+#include "mbsim/observer.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/arrow.h>
-
 namespace OpenMBV {
   class Frame;
 }
@@ -32,19 +31,17 @@ namespace OpenMBV {
 namespace MBSim {
   class Frame;
 
-  class CylinderCoordinatesObserver : public Observer {
+  class NaturalCoordinatesObserver : public Observer {
     private:
       Frame* frame;
-      fmatvec::Vec3 ez;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Arrow *openMBVPosition, *openMBVRadialPosition, *openMBVZPosition, *openMBVVelocity, *openMBVRadialVelocity, *openMBVCircularVelocity, *openMBVZVelocity, *openMBVAcceleration, *openMBVRadialAcceleration, *openMBVCircularAcceleration, *openMBVZAcceleration; 
+      OpenMBV::Arrow *openMBVPosition, *openMBVVelocity, *openMBVTangentialVelocity, *openMBVNormalVelocity, *openMBVBinormalVelocity, *openMBVAcceleration, *openMBVTangentialAcceleration, *openMBVNormalAcceleration, *openMBVBinormalAcceleration;
       OpenMBV::Frame* openMBVFrame;
 #endif
 
     public:
-      CylinderCoordinatesObserver(const std::string &name);
+      NaturalCoordinatesObserver(const std::string &name);
       void setFrame(Frame *frame_) { frame = frame_; } 
-      void setez(const fmatvec::Vec3 &ez_) {ez = ez_/nrm2(ez_);}
 
       void init(InitStage stage);
       virtual void plot(double t, double dt);
@@ -54,6 +51,7 @@ namespace MBSim {
       virtual void enableOpenMBVVelocity(double scale=1, OpenMBV::Arrow::ReferencePoint refPoint=OpenMBV::Arrow::fromPoint, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
       virtual void enableOpenMBVAcceleration(double scale=1, OpenMBV::Arrow::ReferencePoint refPoint=OpenMBV::Arrow::fromPoint, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
       virtual void enableOpenMBVFrame(double size=1, double offset=1);
+
 #endif
 
   };

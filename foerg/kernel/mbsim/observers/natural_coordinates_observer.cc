@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/observer/natural_coordinates_observer.h"
+#include "mbsim/observers/natural_coordinates_observer.h"
 #include "mbsim/frame.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/utils/eps.h"

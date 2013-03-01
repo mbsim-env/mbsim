@@ -19,7 +19,7 @@
 
 #ifndef _RIGID_BODY_OBSERVER_H__
 #define _RIGID_BODY_OBSERVER_H__
-#include "mbsim/observer/observer.h"
+#include "mbsim/observer.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/arrow.h>

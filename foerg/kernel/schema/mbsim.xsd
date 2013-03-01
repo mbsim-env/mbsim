@@ -608,6 +608,31 @@
               </xs:choice>
             </xs:complexType>
           </xs:element>
+          <xs:element name="observers" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              tbd.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="Observer">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Lokale Definition.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element ref="pv:embed">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Definition in externer Datei.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+              </xs:choice>
+            </xs:complexType>
+          </xs:element>
           <xs:element name="enableOpenMBVFrameI" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -3884,5 +3909,74 @@
 
   <xs:element name="Function3_MVVS" abstract="true" type="Function3_MVVSType"/>
   <xs:complexType name="Function3_MVVSType"/>
+
+  <xs:element name="Observer" substitutionGroup="Element" type="ObserverType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+    tbd.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="ObserverType">
+    <xs:complexContent>
+      <xs:extension base="ElementType"/>
+    </xs:complexContent>
+  </xs:complexType> 
+
+  <xs:element name="AbsoluteKinematicsObserver" substitutionGroup="Observer" type="AbsoluteKinematicsObserverType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+    tbd.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="AbsoluteKinematicsObserverType">
+    <xs:complexContent>
+      <xs:extension base="ObserverType">
+        <xs:sequence>
+          <xs:element name="frame">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              tbd.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVPosition" minOccurs="0">  
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="diameter" type="pv:lengthScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                    tbd.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="headDiameter" type="pv:lengthScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                    tbd.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="headLength" type="pv:lengthScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                    tbd.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="staticColor" type="pv:nounitScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                    tbd.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType> 
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType> 
 
 </xs:schema>

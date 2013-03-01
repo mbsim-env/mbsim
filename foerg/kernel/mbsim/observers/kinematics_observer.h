@@ -19,7 +19,7 @@
 
 #ifndef _KINEMATICS_OBSERVER_H__
 #define _KINEMATICS_OBSERVER_H__
-#include "mbsim/observer/observer.h"
+#include "mbsim/observer.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/arrow.h>
@@ -38,7 +38,6 @@ namespace MBSim {
     public:
       AbsoluteVelocityObserver(const std::string &name);
       void setFrame(Frame *frame_) { frame = frame_; } 
-
       void init(InitStage stage);
       virtual void plot(double t, double dt);
 
@@ -60,9 +59,9 @@ namespace MBSim {
     public:
       AbsoluteKinematicsObserver(const std::string &name);
       void setFrame(Frame *frame_) { frame = frame_; } 
-
       void init(InitStage stage);
       virtual void plot(double t, double dt);
+      virtual void initializeUsingXML(TiXmlElement *element);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       //void setOpenMBVPositionArrow(OpenMBV::Arrow *arrow) { openMBVPositionArrow = arrow; }
@@ -75,6 +74,8 @@ namespace MBSim {
       virtual void enableOpenMBVAngularAcceleration(double scale=1, OpenMBV::Arrow::ReferencePoint refPoint=OpenMBV::Arrow::fromPoint, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
 #endif
 
+    private:
+      std::string saved_frame;
   };
 
   class RelativeKinematicsObserver : public Observer {
