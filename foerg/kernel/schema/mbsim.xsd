@@ -3940,39 +3940,67 @@
               <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
-          <xs:element name="enableOpenMBVPosition" minOccurs="0">  
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element name="diameter" type="pv:lengthScalar">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                    tbd.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-                <xs:element name="headDiameter" type="pv:lengthScalar">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                    tbd.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-                <xs:element name="headLength" type="pv:lengthScalar">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                    tbd.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-                <xs:element name="staticColor" type="pv:nounitScalar">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                    tbd.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-              </xs:sequence>
-            </xs:complexType> 
+          <xs:sequence>
+            <xs:choice>
+              <xs:element name="enableOpenMBVPosition" minOccurs="0">  
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="diameter" type="pv:lengthScalar">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                        tbd.
+                        </xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element name="headDiameter" type="pv:lengthScalar">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                        tbd.
+                        </xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element name="headLength" type="pv:lengthScalar">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                        tbd.
+                        </xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element name="staticColor" type="pv:nounitScalar">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                        tbd.
+                        </xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType> 
+              </xs:element>
+              <xs:element name="openMBVPositionArrow" minOccurs="0">  
+                 <xs:annotation>
+                   <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                   tbd
+                   </xs:documentation>
+                 </xs:annotation>
+                 <xs:complexType>
+                   <xs:sequence>
+                     <xs:element ref="ombv:Arrow"/>
+                   </xs:sequence>
+                 </xs:complexType>
+              </xs:element>
+            </xs:choice>
+          </xs:sequence>
+          <xs:element name="openMBVVelocityArrow" minOccurs="0">  
+             <xs:annotation>
+               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+               tbd
+               </xs:documentation>
+             </xs:annotation>
+             <xs:complexType>
+               <xs:sequence>
+                 <xs:element ref="ombv:Arrow"/>
+               </xs:sequence>
+             </xs:complexType>
           </xs:element>
         </xs:sequence> 
       </xs:extension>

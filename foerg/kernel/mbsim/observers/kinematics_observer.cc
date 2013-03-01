@@ -270,6 +270,18 @@ namespace MBSim {
           getDouble(e->FirstChildElement(MBSIMNS"headLength")),
           getDouble(e->FirstChildElement(MBSIMNS"staticColor")));
     }
+    e=element->FirstChildElement(MBSIMNS"openMBVPositionArrow");
+    if(e) {
+      OpenMBV::Arrow *a=new OpenMBV::Arrow;
+      setOpenMBVPositionArrow(a);
+      a->initializeUsingXML(e->FirstChildElement());
+    }
+    e=element->FirstChildElement(MBSIMNS"openMBVVelocityArrow");
+    if(e) {
+      OpenMBV::Arrow *a=new OpenMBV::Arrow;
+      setOpenMBVVelocityArrow(a);
+      a->initializeUsingXML(e->FirstChildElement());
+    }
   }
 
   RelativeKinematicsObserver::RelativeKinematicsObserver(const std::string &name) : Observer(name) {
