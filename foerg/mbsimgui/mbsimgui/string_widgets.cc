@@ -28,10 +28,10 @@ extern bool absolutePath;
 extern QDir mbsDir;
 
 OctaveHighlighter::OctaveHighlighter(QTextDocument *parent) : QSyntaxHighlighter(parent) {
-  QPlainTextEdit dummy;
+//  QPlainTextEdit dummy;
   bool dark=false;
-  if(dummy.palette().brush(dummy.backgroundRole()).color().value()<128)
-    dark=true;
+//  if(dummy.palette().brush(dummy.backgroundRole()).color().value()<128)
+//    dark=true;
 
   { // numbers
     QTextCharFormat format;

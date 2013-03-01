@@ -506,6 +506,7 @@ OMBVBodyChoiceWidget::OMBVBodyChoiceWidget(const string &name_, bool flag, const
 void OMBVBodyChoiceWidget::ombvSelection(int index) {
   layout->removeWidget(ombv);
   delete ombv;
+  //ombv->deleteLater();
   if(index==0)
     ombv = new CubeWidget(name);  
   if(index==1)

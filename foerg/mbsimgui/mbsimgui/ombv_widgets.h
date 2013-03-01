@@ -177,7 +177,7 @@ class OMBVBodyChoiceWidget : public XMLWidget {
     void setName(const std::string &name) {ombv->setName(name);}
 
   protected slots:
-      void ombvSelection(int index);
+    void ombvSelection(int index);
 
   protected:
     QComboBox *comboBox;

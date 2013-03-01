@@ -31,6 +31,7 @@ class Group;
 class Object;
 class Link;
 class ExtraDynamic;
+class Observer;
 class TiXmlElement;
 class TiXmlNode;
 
@@ -54,7 +55,7 @@ class Element : public QObject, public QTreeWidgetItem {
     std::vector<ExtXMLWidget*> plotFeature;
     static TiXmlElement* copiedElement;
     Element *parentElement;
-    Container *frames, *contours, *groups, *objects, *links, *extraDynamics;
+    Container *frames, *contours, *groups, *objects, *links, *extraDynamics, *observers;
     static int IDcounter;
     std::string ns, ID;
   public:
@@ -91,16 +92,19 @@ class Element : public QObject, public QTreeWidgetItem {
     virtual Container* getContainerGroup() {return groups;}
     virtual Container* getContainerObject() {return objects;}
     virtual Container* getContainerLink() {return links;}
+    virtual Container* getContainerObserver() {return observers;}
     virtual Frame* getFrame(int i);
     virtual Contour* getContour(int i);
     virtual Group* getGroup(int i);
     virtual Object* getObject(int i);
     virtual Link* getLink(int i);
+    virtual Observer* getObserver(int i);
     Frame* getFrame(const QString &name, bool check=true);
     Contour* getContour(const QString &name, bool check=true);
     Object* getObject(const QString &name, bool check=true);
     Group* getGroup(const QString &name, bool check=true);
     Link* getLink(const QString &name, bool check=true);
+    Observer* getObserver(const QString &name, bool check=true);
     std::string getID() { return ID; }
     static std::map<std::string, Element*> idEleMap;
   public slots:
