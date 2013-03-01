@@ -27,7 +27,7 @@
 #include "mbsim/contact.h"
 #include "mbsim/joint.h"
 #include "mbsim/dynamic_system_solver.h"
-#include "mbsim/observer/observer.h"
+#include "mbsim/observer.h"
 #include "hdf5serie/fileserie.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -1048,6 +1048,14 @@ namespace MBSim {
     if(recursive)
       for(unsigned int i=0; i<dynamicsystem.size(); i++)
         dynamicsystem[i]->buildListOfInverseKineticsLinks(iklnk,recursive);
+  }
+
+  void DynamicSystem::buildListOfObservers(vector<Observer*> &obsrv, bool recursive) {
+    for(unsigned int i=0; i<observer.size(); i++)
+      obsrv.push_back(observer[i]);
+    if(recursive)
+      for(unsigned int i=0; i<dynamicsystem.size(); i++)
+        dynamicsystem[i]->buildListOfObservers(obsrv,recursive);
   }
 
   void DynamicSystem::setUpInverseKinetics() {

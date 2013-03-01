@@ -27,6 +27,7 @@
 #include "mbsim/dynamic_system_solver.h"
 #include "hdf5serie/simpleattribute.h"
 #include "mbsim/objectfactory.h"
+#include "mbsim/observer.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frame.h>
@@ -253,6 +254,19 @@ namespace MBSim {
       addLink(l);
       l->initializeUsingXML(E);
       E=E->NextSiblingElement();
+    }
+    e=e->NextSiblingElement();
+
+    // observers
+    if (e && e->ValueStr()==MBSIMNS"observers") {
+      E=e->FirstChildElement();
+      Observer *obsrv;
+      while(E) {
+        obsrv=ObjectFactory::getInstance()->createObserver(E);
+        addObserver(obsrv);
+        obsrv->initializeUsingXML(E);
+        E=E->NextSiblingElement();
+      }
     }
 #ifdef HAVE_OPENMBVCPPINTERFACE
 

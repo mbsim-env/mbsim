@@ -17,9 +17,10 @@
  * Contact: martin.o.foerg@gmail.com
  */
 
-#ifndef _CARTESIAN_COORDINATES_OBSERVER_H__
-#define _CARTESIAN_COORDINATES_OBSERVER_H__
-#include "mbsim/observer/observer.h"
+#ifndef _CYLINDER_COORDINATES_OBSERVER_H__
+#define _CYLINDER_COORDINATES_OBSERVER_H__
+#include "mbsim/observer.h"
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/arrow.h>
 
@@ -31,20 +32,19 @@ namespace OpenMBV {
 namespace MBSim {
   class Frame;
 
-  class CartesianCoordinatesObserver : public Observer {
+  class CylinderCoordinatesObserver : public Observer {
     private:
       Frame* frame;
-      fmatvec::Vec3 ex, ey, ez;
-      fmatvec::SqrMat3 A;
+      fmatvec::Vec3 ez;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Arrow *openMBVPosition,*openMBVXPosition, *openMBVYPosition, *openMBVZPosition, *openMBVVelocity, *openMBVXVelocity, *openMBVYVelocity, *openMBVZVelocity, *openMBVAcceleration, *openMBVXAcceleration, *openMBVYAcceleration, *openMBVZAcceleration; 
+      OpenMBV::Arrow *openMBVPosition, *openMBVRadialPosition, *openMBVZPosition, *openMBVVelocity, *openMBVRadialVelocity, *openMBVCircularVelocity, *openMBVZVelocity, *openMBVAcceleration, *openMBVRadialAcceleration, *openMBVCircularAcceleration, *openMBVZAcceleration; 
       OpenMBV::Frame* openMBVFrame;
 #endif
 
     public:
-      CartesianCoordinatesObserver(const std::string &name);
+      CylinderCoordinatesObserver(const std::string &name);
       void setFrame(Frame *frame_) { frame = frame_; } 
-      void setOrientation(const fmatvec::SqrMat3 &A_) { A = A_; } 
+      void setez(const fmatvec::Vec3 &ez_) {ez = ez_/nrm2(ez_);}
 
       void init(InitStage stage);
       virtual void plot(double t, double dt);

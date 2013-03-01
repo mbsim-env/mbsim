@@ -18,10 +18,9 @@
  */
 
 #include <config.h>
-#include "mbsim/observer/cylinder_coordinates_observer.h"
+#include "mbsim/observers/cartesian_coordinates_observer.h"
 #include "mbsim/frame.h"
 #include "mbsim/utils/rotarymatrices.h"
-#include "mbsim/utils/eps.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frame.h>
 #endif
@@ -31,31 +30,34 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  CylinderCoordinatesObserver::CylinderCoordinatesObserver(const std::string &name) : Observer(name), frame(0) {
+  CartesianCoordinatesObserver::CartesianCoordinatesObserver(const std::string &name) : Observer(name), frame(0), A(EYE) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     openMBVPosition=0;
-    openMBVRadialPosition=0;
+    openMBVXPosition=0;
+    openMBVYPosition=0;
     openMBVZPosition=0;
     openMBVVelocity=0;
-    openMBVRadialVelocity=0;
-    openMBVCircularVelocity=0;
+    openMBVXVelocity=0;
+    openMBVYVelocity=0;
     openMBVZVelocity=0;
     openMBVAcceleration=0;
-    openMBVRadialAcceleration=0;
-    openMBVCircularAcceleration=0;
+    openMBVXAcceleration=0;
+    openMBVYAcceleration=0;
     openMBVZAcceleration=0;
     openMBVFrame=0;
 #endif
-    ez(2) = 1;
   }
 
-  void CylinderCoordinatesObserver::init(InitStage stage) {
+  void CartesianCoordinatesObserver::init(InitStage stage) {
     if(stage==MBSim::plot) {
       updatePlotFeatures();
 
       Observer::init(stage);
       if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
+	ex = A.col(0);
+	ey = A.col(1);
+	ez = A.col(2);
         if(getPlotFeature(openMBV)==enabled) {
           if(openMBVPosition) {
             OpenMBV::Group *openMBVGrp=new OpenMBV::Group();
@@ -64,10 +66,10 @@ namespace MBSim {
             getOpenMBVGrp()->addObject(openMBVGrp);
             openMBVPosition->setName("Position");
             openMBVGrp->addObject(openMBVPosition);
-            openMBVRadialPosition->setName("RadialPosition");
-            openMBVGrp->addObject(openMBVRadialPosition);
-            //openMBVYPosition->setName("YPosition");
-            //openMBVGrp->addObject(openMBVYPosition);
+            openMBVXPosition->setName("XPosition");
+            openMBVGrp->addObject(openMBVXPosition);
+            openMBVYPosition->setName("YPosition");
+            openMBVGrp->addObject(openMBVYPosition);
             openMBVZPosition->setName("ZPosition");
             openMBVGrp->addObject(openMBVZPosition);
           }
@@ -78,10 +80,10 @@ namespace MBSim {
             getOpenMBVGrp()->addObject(openMBVGrp);
             openMBVVelocity->setName("Velocity");
             openMBVGrp->addObject(openMBVVelocity);
-            openMBVRadialVelocity->setName("RadialVelocity");
-            openMBVGrp->addObject(openMBVRadialVelocity);
-            openMBVCircularVelocity->setName("CircularVelocity");
-            openMBVGrp->addObject(openMBVCircularVelocity);
+            openMBVXVelocity->setName("XVelocity");
+            openMBVGrp->addObject(openMBVXVelocity);
+            openMBVYVelocity->setName("YVelocity");
+            openMBVGrp->addObject(openMBVYVelocity);
             openMBVZVelocity->setName("ZVelocity");
             openMBVGrp->addObject(openMBVZVelocity);
           }
@@ -92,10 +94,10 @@ namespace MBSim {
             getOpenMBVGrp()->addObject(openMBVGrp);
             openMBVAcceleration->setName("Acceleration");
             openMBVGrp->addObject(openMBVAcceleration);
-            openMBVRadialAcceleration->setName("RadialAcceleration");
-            openMBVGrp->addObject(openMBVRadialAcceleration);
-            openMBVCircularAcceleration->setName("CircularAcceleration");
-            openMBVGrp->addObject(openMBVCircularAcceleration);
+            openMBVXAcceleration->setName("XAcceleration");
+            openMBVGrp->addObject(openMBVXAcceleration);
+            openMBVYAcceleration->setName("YAcceleration");
+            openMBVGrp->addObject(openMBVYAcceleration);
             openMBVZAcceleration->setName("ZAcceleration");
             openMBVGrp->addObject(openMBVZAcceleration);
           }
@@ -112,19 +114,25 @@ namespace MBSim {
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  void CylinderCoordinatesObserver::enableOpenMBVPosition(double diameter, double headDiameter, double headLength, double color) {
+  void CartesianCoordinatesObserver::enableOpenMBVPosition(double diameter, double headDiameter, double headLength, double color) {
     openMBVPosition=new OpenMBV::Arrow;
     openMBVPosition->setReferencePoint(OpenMBV::Arrow::fromPoint);
     openMBVPosition->setDiameter(diameter);
     openMBVPosition->setHeadDiameter(headDiameter);
     openMBVPosition->setHeadLength(headLength);
     openMBVPosition->setStaticColor(color);
-    openMBVRadialPosition=new OpenMBV::Arrow;
-    openMBVRadialPosition->setReferencePoint(OpenMBV::Arrow::fromPoint);
-    openMBVRadialPosition->setDiameter(diameter);
-    openMBVRadialPosition->setHeadDiameter(headDiameter);
-    openMBVRadialPosition->setHeadLength(headLength);
-    openMBVRadialPosition->setStaticColor(color);
+    openMBVXPosition=new OpenMBV::Arrow;
+    openMBVXPosition->setReferencePoint(OpenMBV::Arrow::fromPoint);
+    openMBVXPosition->setDiameter(diameter);
+    openMBVXPosition->setHeadDiameter(headDiameter);
+    openMBVXPosition->setHeadLength(headLength);
+    openMBVXPosition->setStaticColor(color);
+    openMBVYPosition=new OpenMBV::Arrow;
+    openMBVYPosition->setReferencePoint(OpenMBV::Arrow::fromPoint);
+    openMBVYPosition->setDiameter(diameter);
+    openMBVYPosition->setHeadDiameter(headDiameter);
+    openMBVYPosition->setHeadLength(headLength);
+    openMBVYPosition->setStaticColor(color);
     openMBVZPosition=new OpenMBV::Arrow;
     openMBVZPosition->setReferencePoint(OpenMBV::Arrow::fromPoint);
     openMBVZPosition->setDiameter(diameter);
@@ -133,7 +141,7 @@ namespace MBSim {
     openMBVZPosition->setStaticColor(color);
   }
 
-  void CylinderCoordinatesObserver::enableOpenMBVVelocity(double scale, OpenMBV::Arrow::ReferencePoint refPoint, double diameter, double headDiameter, double headLength, double color) {
+  void CartesianCoordinatesObserver::enableOpenMBVVelocity(double scale, OpenMBV::Arrow::ReferencePoint refPoint, double diameter, double headDiameter, double headLength, double color) {
     openMBVVelocity=new OpenMBV::Arrow;
     openMBVVelocity->setScaleLength(scale);
     openMBVVelocity->setReferencePoint(refPoint);
@@ -141,20 +149,20 @@ namespace MBSim {
     openMBVVelocity->setHeadDiameter(headDiameter);
     openMBVVelocity->setHeadLength(headLength);
     openMBVVelocity->setStaticColor(color);
-    openMBVRadialVelocity=new OpenMBV::Arrow;
-    openMBVRadialVelocity->setScaleLength(scale);
-    openMBVRadialVelocity->setReferencePoint(refPoint);
-    openMBVRadialVelocity->setDiameter(diameter);
-    openMBVRadialVelocity->setHeadDiameter(headDiameter);
-    openMBVRadialVelocity->setHeadLength(headLength);
-    openMBVRadialVelocity->setStaticColor(color);
-    openMBVCircularVelocity=new OpenMBV::Arrow;
-    openMBVCircularVelocity->setScaleLength(scale);
-    openMBVCircularVelocity->setReferencePoint(refPoint);
-    openMBVCircularVelocity->setDiameter(diameter);
-    openMBVCircularVelocity->setHeadDiameter(headDiameter);
-    openMBVCircularVelocity->setHeadLength(headLength);
-    openMBVCircularVelocity->setStaticColor(color);
+    openMBVXVelocity=new OpenMBV::Arrow;
+    openMBVXVelocity->setScaleLength(scale);
+    openMBVXVelocity->setReferencePoint(refPoint);
+    openMBVXVelocity->setDiameter(diameter);
+    openMBVXVelocity->setHeadDiameter(headDiameter);
+    openMBVXVelocity->setHeadLength(headLength);
+    openMBVXVelocity->setStaticColor(color);
+    openMBVYVelocity=new OpenMBV::Arrow;
+    openMBVYVelocity->setScaleLength(scale);
+    openMBVYVelocity->setReferencePoint(refPoint);
+    openMBVYVelocity->setDiameter(diameter);
+    openMBVYVelocity->setHeadDiameter(headDiameter);
+    openMBVYVelocity->setHeadLength(headLength);
+    openMBVYVelocity->setStaticColor(color);
     openMBVZVelocity=new OpenMBV::Arrow;
     openMBVZVelocity->setScaleLength(scale);
     openMBVZVelocity->setReferencePoint(refPoint);
@@ -164,7 +172,7 @@ namespace MBSim {
     openMBVZVelocity->setStaticColor(color);
   }
 
-  void CylinderCoordinatesObserver::enableOpenMBVAcceleration(double scale, OpenMBV::Arrow::ReferencePoint refPoint, double diameter, double headDiameter, double headLength, double color) {
+  void CartesianCoordinatesObserver::enableOpenMBVAcceleration(double scale, OpenMBV::Arrow::ReferencePoint refPoint, double diameter, double headDiameter, double headLength, double color) {
     openMBVAcceleration=new OpenMBV::Arrow;
     openMBVAcceleration->setScaleLength(scale);
     openMBVAcceleration->setReferencePoint(refPoint);
@@ -172,20 +180,20 @@ namespace MBSim {
     openMBVAcceleration->setHeadDiameter(headDiameter);
     openMBVAcceleration->setHeadLength(headLength);
     openMBVAcceleration->setStaticColor(color);
-    openMBVRadialAcceleration=new OpenMBV::Arrow;
-    openMBVRadialAcceleration->setScaleLength(scale);
-    openMBVRadialAcceleration->setReferencePoint(refPoint);
-    openMBVRadialAcceleration->setDiameter(diameter);
-    openMBVRadialAcceleration->setHeadDiameter(headDiameter);
-    openMBVRadialAcceleration->setHeadLength(headLength);
-    openMBVRadialAcceleration->setStaticColor(color);
-    openMBVCircularAcceleration=new OpenMBV::Arrow;
-    openMBVCircularAcceleration->setScaleLength(scale);
-    openMBVCircularAcceleration->setReferencePoint(refPoint);
-    openMBVCircularAcceleration->setDiameter(diameter);
-    openMBVCircularAcceleration->setHeadDiameter(headDiameter);
-    openMBVCircularAcceleration->setHeadLength(headLength);
-    openMBVCircularAcceleration->setStaticColor(color);
+    openMBVXAcceleration=new OpenMBV::Arrow;
+    openMBVXAcceleration->setScaleLength(scale);
+    openMBVXAcceleration->setReferencePoint(refPoint);
+    openMBVXAcceleration->setDiameter(diameter);
+    openMBVXAcceleration->setHeadDiameter(headDiameter);
+    openMBVXAcceleration->setHeadLength(headLength);
+    openMBVXAcceleration->setStaticColor(color);
+    openMBVYAcceleration=new OpenMBV::Arrow;
+    openMBVYAcceleration->setScaleLength(scale);
+    openMBVYAcceleration->setReferencePoint(refPoint);
+    openMBVYAcceleration->setDiameter(diameter);
+    openMBVYAcceleration->setHeadDiameter(headDiameter);
+    openMBVYAcceleration->setHeadLength(headLength);
+    openMBVYAcceleration->setStaticColor(color);
     openMBVZAcceleration=new OpenMBV::Arrow;
     openMBVZAcceleration->setScaleLength(scale);
     openMBVZAcceleration->setReferencePoint(refPoint);
@@ -195,37 +203,20 @@ namespace MBSim {
     openMBVZAcceleration->setStaticColor(color);
   }
 
-  void CylinderCoordinatesObserver::enableOpenMBVFrame(double size, double offset) {
+  void CartesianCoordinatesObserver::enableOpenMBVFrame(double size, double offset) {
     openMBVFrame=new OpenMBV::Frame;
     openMBVFrame->setSize(size);
     openMBVFrame->setOffset(offset);
   }
 #endif
 
-  void CylinderCoordinatesObserver::plot(double t, double dt) {
+  void CartesianCoordinatesObserver::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
         Vec3 r = frame->getPosition();
         Vec3 v = frame->getVelocity();
         Vec3 a = frame->getAcceleration();
-        Vec3 ep = crossProduct(ez,r);
-        double nrmep = nrm2(ep);
-        if(nrmep<epsroot()) {
-          if(fabs(ez(0))<epsroot() && fabs(ez(1))<epsroot()) {
-            ep(0) = 1.;
-            ep(1) = 0.;
-            ep(2) = 0.;
-          }
-          else {
-            ep(0) = -ez(1);
-            ep(1) = ez(0);
-            ep(2) = 0.0;
-          }
-        }
-        else
-          ep = ep/nrmep;
-        Vec3 er = crossProduct(ep,ez);
 
         if(openMBVPosition && !openMBVPosition->isHDF5Link()) {
           vector<double> data;
@@ -239,16 +230,27 @@ namespace MBSim {
           data.push_back(0.5);
           openMBVPosition->append(data);
           data.clear();
-          Vec3 rr =  (r.T()*er)*er;
+          Vec3 rx =  (r.T()*ex)*ex;
           data.push_back(t);
           data.push_back(0);
           data.push_back(0);
           data.push_back(0);
-          data.push_back(rr(0));
-          data.push_back(rr(1));
-          data.push_back(rr(2));
+          data.push_back(rx(0));
+          data.push_back(rx(1));
+          data.push_back(rx(2));
           data.push_back(0.5);
-          openMBVRadialPosition->append(data);
+          openMBVXPosition->append(data);
+          data.clear();
+          Vec3 ry =  (r.T()*ey)*ey;
+          data.push_back(t);
+          data.push_back(0);
+          data.push_back(0);
+          data.push_back(0);
+          data.push_back(ry(0));
+          data.push_back(ry(1));
+          data.push_back(ry(2));
+          data.push_back(0.5);
+          openMBVYPosition->append(data);
           data.clear();
           Vec3 rz =  (r.T()*ez)*ez;
           data.push_back(t);
@@ -274,27 +276,27 @@ namespace MBSim {
           data.push_back(0.5);
           openMBVVelocity->append(data);
           data.clear();
-          Vec3 vr =  (v.T()*er)*er;
+          Vec3 vx =  (v.T()*ex)*ex;
           data.push_back(t);
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
-          data.push_back(vr(0));
-          data.push_back(vr(1));
-          data.push_back(vr(2));
+          data.push_back(vx(0));
+          data.push_back(vx(1));
+          data.push_back(vx(2));
           data.push_back(0.5);
-          openMBVRadialVelocity->append(data);
+          openMBVXVelocity->append(data);
           data.clear();
-          Vec3 vp =  (v.T()*ep)*ep;
+          Vec3 vy =  (v.T()*ey)*ey;
           data.push_back(t);
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
-          data.push_back(vp(0));
-          data.push_back(vp(1));
-          data.push_back(vp(2));
+          data.push_back(vy(0));
+          data.push_back(vy(1));
+          data.push_back(vy(2));
           data.push_back(0.5);
-          openMBVCircularVelocity->append(data);
+          openMBVYVelocity->append(data);
           data.clear();
           Vec3 vz =  (v.T()*ez)*ez;
           data.push_back(t);
@@ -320,27 +322,27 @@ namespace MBSim {
           data.push_back(0.5);
           openMBVAcceleration->append(data);
           data.clear();
-          Vec3 ar =  (a.T()*er)*er;
+          Vec3 ax =  (a.T()*ex)*ex;
           data.push_back(t);
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
-          data.push_back(ar(0));
-          data.push_back(ar(1));
-          data.push_back(ar(2));
+          data.push_back(ax(0));
+          data.push_back(ax(1));
+          data.push_back(ax(2));
           data.push_back(0.5);
-          openMBVRadialAcceleration->append(data);
+          openMBVXAcceleration->append(data);
           data.clear();
-          Vec3 ap =  (a.T()*ep)*ep;
+          Vec3 ay =  (a.T()*ey)*ey;
           data.push_back(t);
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
-          data.push_back(ap(0));
-          data.push_back(ap(1));
-          data.push_back(ap(2));
+          data.push_back(ay(0));
+          data.push_back(ay(1));
+          data.push_back(ay(2));
           data.push_back(0.5);
-          openMBVCircularAcceleration->append(data);
+          openMBVYAcceleration->append(data);
           data.clear();
           Vec3 az =  (a.T()*ez)*ez;
           data.push_back(t);
@@ -357,8 +359,8 @@ namespace MBSim {
         if(openMBVFrame && !openMBVFrame->isHDF5Link()) {
           vector<double> data;
           SqrMat3 AWP;
-          AWP.set(0, er);
-          AWP.set(1, ep);
+          AWP.set(0, ex);
+          AWP.set(1, ey);
           AWP.set(2, ez);
           data.push_back(t);
           data.push_back(0);

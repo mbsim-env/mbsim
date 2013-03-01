@@ -27,6 +27,7 @@
 #include "mbsim/link.h"
 #include "mbsim/graph.h"
 #include "mbsim/extra_dynamic.h"
+#include "mbsim/observer.h"
 #include "mbsim/integrators/integrator.h"
 #include "mbsim/utils/eps.h"
 #include "dirent.h"
@@ -114,6 +115,9 @@ namespace MBSim {
       vector<Link*> iKlnkList;
       buildListOfInverseKineticsLinks(iKlnkList,true);
 
+      vector<Observer*> obsrvList;
+      buildListOfObservers(obsrvList,true);
+
       dynamicsystem.clear(); // delete old DynamicSystem list
       object.clear(); // delete old object list
       frame.clear(); // delete old frame list
@@ -121,6 +125,7 @@ namespace MBSim {
       link.clear(); // delete old link list
       extraDynamic.clear(); // delete old ed list
       inverseKineticsLink.clear(); // delete old link list
+      observer.clear(); // delete old link list
 
       /* rename system structure */
       if(INFO) cout << "object List:" << endl;
@@ -169,6 +174,14 @@ namespace MBSim {
         if(INFO) cout<<str.str()<<endl;
         iKlnkList[i]->setName(str.str());
         addInverseKineticsLink(iKlnkList[i]);
+      }
+      if(INFO) cout << "observer List:" << endl;
+      for(unsigned int i=0; i<obsrvList.size(); i++) {
+        stringstream str;
+        str << obsrvList[i]->getParent()->getPath('/') << "/" << obsrvList[i]->getName();
+        if(INFO) cout<<str.str()<<endl;
+        obsrvList[i]->setName(str.str());
+        addObserver(obsrvList[i]);
       }
 
       /* matrix of body dependencies */

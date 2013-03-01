@@ -35,6 +35,11 @@ namespace MBSim {
       void init(InitStage stage);
       virtual void plot(double t, double dt);
 
+      /**
+       * \return a general element access
+       */
+      virtual Element* getByPathSearch(std::string path);
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::Group* getOpenMBVGrp() { return openMBVGrp; }
 #endif

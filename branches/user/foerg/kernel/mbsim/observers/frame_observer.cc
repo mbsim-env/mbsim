@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/observer/frame_observer.h"
+#include "mbsim/observers/frame_observer.h"
 #include "mbsim/frame.h"
 
 using namespace std;
