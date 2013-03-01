@@ -349,6 +349,14 @@ namespace MBSim {
           //Applies the plot feature to all children (make it possible to set only some children...)
           for(int i = MBSim::plotRecursive; i !=  MBSim::LASTPLOTFEATURE; i++)
             contacts[cK][k].setPlotFeature(static_cast<MBSim::PlotFeature>(i), getPlotFeature(static_cast<MBSim::PlotFeature>(i)));
+
+          //set the tolerances for the single contacts
+          contacts[cK][k].setgTol(gTol);
+          contacts[cK][k].setgdTol(gdTol);
+          contacts[cK][k].setgddTol(gddTol);
+          contacts[cK][k].setlaTol(laTol);
+          contacts[cK][k].setLaTol(LaTol);
+          contacts[cK][k].setrMax(rMax);
         }
       }
 
@@ -620,48 +628,6 @@ namespace MBSim {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
         jter->checkActive(j);
-    }
-  }
-
-  void MultiContact::setlaTol(double tol) {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->setlaTol(tol);
-    }
-  }
-
-  void MultiContact::setLaTol(double tol) {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->setLaTol(tol);
-    }
-  }
-
-  void MultiContact::setgTol(double tol) {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->setgTol(tol);
-    }
-  }
-
-  void MultiContact::setgdTol(double tol) {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->setgdTol(tol);
-    }
-  }
-
-  void MultiContact::setgddTol(double tol) {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->setgddTol(tol);
-    }
-  }
-
-  void MultiContact::setrMax(double rMax_) {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
-      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->setrMax(rMax_);
     }
   }
 
