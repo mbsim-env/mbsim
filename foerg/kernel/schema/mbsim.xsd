@@ -92,6 +92,8 @@
       <xs:enumeration value="-globalPosition"/>
       <xs:enumeration value="+globalVelocity"/>
       <xs:enumeration value="-globalVelocity"/>
+      <xs:enumeration value="+globalAcceleration"/>
+      <xs:enumeration value="-globalAcceleration"/>
       <xs:enumeration value="+energy"/>
       <xs:enumeration value="-energy"/>
       <xs:enumeration value="+openMBV"/>
@@ -3991,6 +3993,42 @@
             </xs:choice>
           </xs:sequence>
           <xs:element name="openMBVVelocityArrow" minOccurs="0">  
+             <xs:annotation>
+               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+               tbd
+               </xs:documentation>
+             </xs:annotation>
+             <xs:complexType>
+               <xs:sequence>
+                 <xs:element ref="ombv:Arrow"/>
+               </xs:sequence>
+             </xs:complexType>
+          </xs:element>
+          <xs:element name="openMBVAngularVelocityArrow" minOccurs="0">  
+             <xs:annotation>
+               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+               tbd
+               </xs:documentation>
+             </xs:annotation>
+             <xs:complexType>
+               <xs:sequence>
+                 <xs:element ref="ombv:Arrow"/>
+               </xs:sequence>
+             </xs:complexType>
+          </xs:element>
+          <xs:element name="openMBVAccelerationArrow" minOccurs="0">  
+             <xs:annotation>
+               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+               tbd
+               </xs:documentation>
+             </xs:annotation>
+             <xs:complexType>
+               <xs:sequence>
+                 <xs:element ref="ombv:Arrow"/>
+               </xs:sequence>
+             </xs:complexType>
+          </xs:element>
+          <xs:element name="openMBVAngularAccelerationArrow" minOccurs="0">  
              <xs:annotation>
                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                tbd
