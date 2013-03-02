@@ -375,24 +375,30 @@ def update(nr, tool, buildTools):
   savedDir=os.getcwd()
   os.chdir(pj(args.sourceDir, tool))
 
+  # write svn output to report dir
+  if not os.path.isdir(pj(args.reportOutDir, tool)): os.makedirs(pj(args.reportOutDir, tool))
+  svnFD=open(pj(args.reportOutDir, tool, "svn.out"), "w")
+  print("stderr output:", file=svnFD)
+  print("", file=svnFD)
+
   ret=0
   if not args.disableUpdate:
     print("Updating "+str(nr)+"/"+str(len(toolDependencies))+": "+tool)
 
     try:
-      output=subprocess.check_output(["svn", "update"])
+      output=subprocess.check_output(["svn", "update"], stderr=svnFD)
     except subprocess.CalledProcessError as ex:
-      output=b"error"
+      output=b""
       ret=1
     if re.search("\nUpdated to revision [0-9]+.\n$", output.decode("utf-8"))!=None:
       buildTools.add(tool)
   else:
     output=b"Update disabled"
     
-
-  # write svn output to report dir
-  if not os.path.isdir(pj(args.reportOutDir, tool)): os.makedirs(pj(args.reportOutDir, tool))
-  svnFD=open(pj(args.reportOutDir, tool, "svn.out"), "w")
+  print("", file=svnFD)
+  print("", file=svnFD)
+  print("stdout output:", file=svnFD)
+  print("", file=svnFD)
   print(output.decode("utf-8"), file=svnFD)
   svnFD.close()
 
