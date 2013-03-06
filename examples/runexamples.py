@@ -855,19 +855,20 @@ def writeRSSFeed(nrFailed, nrTotal):
   rssFD=open(pj(args.reportOutDir, rssFN), "w")
   print('''\
 <?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>MBSim runexample.py Result</title>
     <link>%s/index.html</link>
     <description>Result RSS feed of the last runexample.py run of MBSim and Co.</description>
     <language>en-us</language>
-    <managingEditor>friedrich.at.gc@googlemail.com</managingEditor>'''%(args.url), file=rssFD)
+    <managingEditor>friedrich.at.gc@googlemail.com (friedrich)</managingEditor>
+    <atom:link href="%s/result.rss.xml" rel="self" type="application/rss+xml"/>'''%(args.url, args.url), file=rssFD)
   if nrFailed>0:
     print('''\
     <item>
       <title>%d of %d examples failed</title>
       <link>%s/index.html</link>
-      <guid>%s/rss_id_%s</guid>
+      <guid isPermaLink="false">%s/rss_id_%s</guid>
       <pubDate>%s</pubDate>
     </item>'''%(nrFailed, nrTotal,
            args.url,
@@ -878,7 +879,7 @@ def writeRSSFeed(nrFailed, nrTotal):
     <item>
       <title>Dummy feed item. Just ignore it.</title>
       <link>%s/index.html</link>
-      <guid>%s/rss_id_1359206848</guid>
+      <guid isPermaLink="false">%s/rss_id_1359206848</guid>
       <pubDate>Sat, 26 Jan 2013 14:27:28 +0000</pubDate>
     </item>
   </channel>
