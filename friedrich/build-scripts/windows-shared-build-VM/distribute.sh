@@ -72,6 +72,9 @@ done
 # dist dir
 DISTDIR=$DISTBASEDIR/mbsim
 
+# PKG config
+export PKG_CONFIG_PATH=/home/user/MBSimWindows/local/lib/pkgconfig
+
 # clear previout dist dir
 if [ $NOCLEAN -eq 0 ]; then
   rm -rf $DISTDIR
@@ -306,7 +309,7 @@ if %CXX%!==! goto skipgcc
   if ERRORLEVEL 1 goto end
   main.exe
   if ERRORLEVEL 1 goto end
-  cd ..
+  cd ..\..\..
   echo DONE
 :skipgcc
 
@@ -314,14 +317,14 @@ echo XMLFLAT_HIERACHICAL_MODELLING
 cd xmlflat\hierachical_modelling
 "%INSTDIR%\bin\mbsimflatxml.exe" MBS.mbsim.flat.xml Integrator.mbsimint.xml
 if ERRORLEVEL 1 goto end
-cd ..
+cd ..\..
 echo DONE
 
 echo XML_HIERACHICAL_MODELLING
 cd xml\hierachical_modelling
 "%INSTDIR%\bin\mbsimxml.exe" --mbsimparam parameter.mbsim.xml MBS.mbsim.xml Integrator.mbsimint.xml --mpath mfiles
 if ERRORLEVEL 1 goto end
-cd ..
+cd ..\..
 echo DONE
 
 echo STARTING H5PLOTSERIE
