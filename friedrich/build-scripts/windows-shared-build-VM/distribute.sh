@@ -1,4 +1,7 @@
-#! /bin/sh
+#! /bin/bash
+
+set -e 
+set -o pipefail
 
 # Usage:
 # Call this script from everywhere!
@@ -44,6 +47,7 @@ doc
 hdf5serie
 mbxmlutils
 openmbv
+mbsimgui
 "
 
 OCTAVEVERSION=$($PREFIX/bin/octave-config.exe --version | dos2unix)
@@ -117,8 +121,8 @@ RERUN=1
 while [ $RERUN -ge 1 ]; do
   cp $TMPDLLFILESOUT $TMPDLLFILESIN
   getdlls
-  diff $TMPDLLFILESOUT $TMPDLLFILESIN &> /dev/null
-  if [ $? -ne 0 ]; then
+  
+  if ! diff $TMPDLLFILESOUT $TMPDLLFILESIN &> /dev/null; then
     RERUN=1
   else
     RERUN=0
@@ -137,8 +141,8 @@ for F in $(find $PREFIX/include -type f | grep "/fmatvec/\|/hdf5serie/\|/mbsim/\
 done
 for FSRC in $(i686-w64-mingw32-g++ -M -MT 'DUMMY' $TMPINCFILE $(pkg-config --cflags fmatvec hdf5serie mbsimControl mbsimElectronics mbsimFlexibleBody mbsimHydraulics mbsim mbsimPowertrain mbsimxml mbxmlutils openmbvcppinterface) | sed -re "s+^ *DUMMY *: *$TMPINCFILE *++;s+\\\++"); do
   FDST=$(echo $FSRC | sed -re "s+^.*/include/++")
-  echo $FDST | grep "^/" > /dev/null
-  if [ $? -eq 0 ]; then
+  
+  if echo $FDST | grep "^/" > /dev/null; then
     echo "WARNING: not copying $FSRC (no '/include/' in path)"
   else
     mkdir -p $(dirname $DISTDIR/include/$FDST)
@@ -209,13 +213,13 @@ Using of the MBSim and Co. Package:
   is unpacked does not contain any spaces.)
 - Test the installation:
   1)Run the program <install-dir>/mbsim/bin/mbsim-test.bat to check the
-    installation. This will run the MBSim example xmlflat_hierachical_modelling,
-    the xml_hierachical_modelling example, the h5plotserie program as well as
+    installation. This will run the MBSim example xmlflat/hierachical_modelling,
+    the xml/hierachical_modelling example, the h5plotserie program as well as
     the openmbv program.
   2)If you have a compiler installed you can also run
     <install-dir>/mbsim/bin/mbsim-test.bat <path-to-my-c++-compiler>.
     This will first try to compile a simple MBSim test program including all
-    MBSim modules. Afterwards the mechanics_basics_hierachical_modelling
+    MBSim modules. Afterwards the mechanics/basics/hierachical_modelling
     example will be compiled and executed. At least the same as in 1) is run.
     NOTE: You have to use the MinGW-w64 compiler from
           http://mingw-w64.sourceforg.net NOT the MinGW compiler from
@@ -233,9 +237,9 @@ EOF
 
 # Add some examples
 mkdir -p $DISTDIR/examples
-(cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/mechanics_basics_hierachical_modelling)
-(cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/xmlflat_hierachical_modelling)
-(cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/xml_hierachical_modelling)
+(cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/mechanics/basics/hierachical_modelling mechanics/basics/hierachical_modelling)
+(cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/xmlflat/hierachical_modelling xmlflat/hierachical_modelling)
+(cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/xml/hierachical_modelling xml/hierachical_modelling)
 mkdir -p $DISTDIR/examples/compile_test_all
 cat << EOF > $DISTDIR/examples/compile_test_all/main.cc
 #include <openmbvcppinterface/cube.h>
@@ -289,7 +293,7 @@ if %CXX%!==! goto skipgcc
   echo DONE
   
   echo MECHANICS_BASICS_HIERACHICAL_MODELLING
-  cd mechanics_basics_hierachical_modelling
+  cd mechanics\basics\hierachical_modelling
   "%CXX%" -c -o group1.o group1.cc %CFLAGS%
   if ERRORLEVEL 1 goto end
   "%CXX%" -c -o group2.o group2.cc %CFLAGS%
@@ -307,26 +311,26 @@ if %CXX%!==! goto skipgcc
 :skipgcc
 
 echo XMLFLAT_HIERACHICAL_MODELLING
-cd xmlflat_hierachical_modelling
-"%INSTDIR%\bin\mbsimflatxml.exe" TS.mbsim.xml Integrator.mbsimint.xml
+cd xmlflat\hierachical_modelling
+"%INSTDIR%\bin\mbsimflatxml.exe" MBS.mbsim.flat.xml Integrator.mbsimint.xml
 if ERRORLEVEL 1 goto end
 cd ..
 echo DONE
 
 echo XML_HIERACHICAL_MODELLING
-cd xml_hierachical_modelling
-"%INSTDIR%\bin\mbsimxml.exe" --mbsimparam parameter.xml TS.mbsim.xml Integrator.mbsimint.xml --mpath mfiles
+cd xml\hierachical_modelling
+"%INSTDIR%\bin\mbsimxml.exe" --mbsimparam parameter.mbsim.xml MBS.mbsim.xml Integrator.mbsimint.xml --mpath mfiles
 if ERRORLEVEL 1 goto end
 cd ..
 echo DONE
 
 echo STARTING H5PLOTSERIE
-"%INSTDIR%\bin\h5plotserie.exe" xml_hierachical_modelling\TS.mbsim.h5
+"%INSTDIR%\bin\h5plotserie.exe" xml\hierachical_modelling\TS.mbsim.h5
 if ERRORLEVEL 1 goto end
 echo DONE
 
 echo STARTING OPENMBV
-"%INSTDIR%\bin\openmbv.exe" xml_hierachical_modelling\TS.ombv.xml
+"%INSTDIR%\bin\openmbv.exe" xml\hierachical_modelling\TS.ombv.xml
 if ERRORLEVEL 1 goto end
 echo DONE
 
@@ -419,8 +423,7 @@ RERUN=1
 while [ $RERUN -ge 1 ]; do
   cp $TMPDLLFILESOUT $TMPDLLFILESIN
   getdlls
-  diff $TMPDLLFILESOUT $TMPDLLFILESIN &> /dev/null
-  if [ $? -ne 0 ]; then
+  if ! diff $TMPDLLFILESOUT $TMPDLLFILESIN &> /dev/null; then
     RERUN=1
   else
     RERUN=0

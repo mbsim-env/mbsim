@@ -1,4 +1,7 @@
-#! /bin/sh
+#! /bin/bash
+
+set -e 
+set -o pipefail
 
 # Usage:
 # Call this script from everywhere!
@@ -41,6 +44,7 @@ doc
 hdf5serie
 mbxmlutils
 openmbv
+mbsimgui
 "
 
 OCTAVEMDIR="/usr/share/octave/$(octave-config --version)/m"
@@ -63,6 +67,9 @@ done
 
 # dist dir
 DISTDIR=$DISTBASEDIR/mbsim
+
+# PKG config
+export PKG_CONFIG_PATH=/home/user/MBSimLinux/local/lib/pkgconfig
 
 # clear previout dist dir
 if [ $NOCLEAN -eq 0 ]; then
@@ -88,7 +95,7 @@ for F in $(cat $TMPSOFILE); do
 done
 
 # check bin in dist for correct rpath
-echo "The following executables have not the required rpaht set. Creating a wrapper script:"
+echo "The following executables have not the required rpath set. Creating a wrapper script:"
 mkdir -p $DISTDIR/bin/.wrapper
 cat << EOF > $DISTDIR/bin/.wrapper/ld_library_path_wrapper.sh
 #! /bin/sh
@@ -100,8 +107,7 @@ EOF
 chmod +x $DISTDIR/bin/.wrapper/ld_library_path_wrapper.sh
 for F in $DISTDIR/bin/*; do
   ldd $F &> /dev/null || continue
-  readelf -d $F | grep "Library rpath: \[.*\$ORIGIN/../lib.*" &> /dev/null
-  if [ $? -ne 0 ]; then
+  if ! readelf -d $F | grep "Library rpath: \[.*\$ORIGIN/../lib.*" &> /dev/null; then
     echo "$F"
     mv $F $DISTDIR/bin/.wrapper/$(basename $F)
     (cd $DISTDIR/bin; ln -s .wrapper/ld_library_path_wrapper.sh $F)
@@ -109,8 +115,7 @@ for F in $DISTDIR/bin/*; do
 done
 echo "Done"
 # octave needs a special handling
-grep -I LD_LIBRARY_PATH $DISTDIR/bin/octave &> /dev/null
-if [ $? -eq 0 ]; then # is a script
+if grep -I LD_LIBRARY_PATH $DISTDIR/bin/octave &> /dev/null; then # is a script
   rm $DISTDIR/bin/octave
   cat << EOF > $DISTDIR/bin/.wrapper/octave_ld_library_path_wrapper.sh
 #! /bin/sh
@@ -138,8 +143,8 @@ for F in $(find $PREFIX/include -type f | grep "/fmatvec/\|/hdf5serie/\|/mbsim/\
 done
 for FSRC in $(g++ -M -MT 'DUMMY' $TMPINCFILE $(pkg-config --cflags fmatvec hdf5serie mbsimControl mbsimElectronics mbsimFlexibleBody mbsimHydraulics mbsim mbsimPowertrain mbsimxml mbxmlutils openmbvcppinterface) | sed -re "s+^ *DUMMY *: *$TMPINCFILE *++;s+\\\++"); do
   FDST=$(echo $FSRC | sed -re "s+^.*/include/++")
-  echo $FDST | grep "^/" > /dev/null
-  if [ $? -eq 0 ]; then
+  
+  if echo $FDST | grep "^/" > /dev/null; then
     echo "WARNING: not copying $FSRC (no '/include/' in path)"
   else
     mkdir -p $(dirname $DISTDIR/include/$FDST)
@@ -232,13 +237,13 @@ This binary Linux build requires a Linux distribution with glibc >= 2.15.
   is unpacked does not contain any spaces.)
 - Test the installation:
   1)Run the program <install-dir>/mbsim/bin/mbsim-test to check the
-    installation. This will run the MBSim example xmlflat_hierachical_modelling,
-    the xml_hierachical_modelling example, the h5plotserie program as well as
+    installation. This will run the MBSim example xmlflat/hierachical_modelling,
+    the xml/hierachical_modelling example, the h5plotserie program as well as
     the openmbv program.
   2)If you have a compiler (GNU gcc) installed you can also run
     <install-dir>/mbsim/bin/mbsim-test <path-to-my-c++-compiler>.
     This will first try to compile a simple MBSim test program including all
-    MBSim modules. Afterwards the mechanics_basics_hierachical_modelling
+    MBSim modules. Afterwards the mechanics/basics/hierachical_modelling
     example will be compiled and executed. At least the same as in 1) is run.
 - Try any of the programs in <install-dir>/mbsim/bin
 - Build your own models using XML and run it with
@@ -253,9 +258,9 @@ EOF
 
 # Add some examples
 mkdir -p $DISTDIR/examples
-(cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/mechanics_basics_hierachical_modelling)
-(cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/xmlflat_hierachical_modelling)
-(cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/xml_hierachical_modelling)
+(cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/mechanics/basics/hierachical_modelling mechanics/basics/hierachical_modelling)
+(cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/xmlflat/hierachical_modelling xmlflat/hierachical_modelling)
+(cd $DISTDIR/examples; svn checkout https://mbsim-env.googlecode.com/svn/trunk/examples/xml/hierachical_modelling xml/hierachical_modelling)
 mkdir -p $DISTDIR/examples/compile_test_all
 cat << EOF > $DISTDIR/examples/compile_test_all/main.cc
 #include <openmbvcppinterface/cube.h>
@@ -299,35 +304,35 @@ if [ "_\$CXX" != "_" ]; then
   echo "DONE"
   
   echo "MECHANICS_BASICS_HIERACHICAL_MODELLING"
-  cd mechanics_basics_hierachical_modelling
+  cd mechanics/basics/hierachical_modelling
   \$CXX -c -o group1.o group1.cc \$(\$INSTDIR/bin/mbsim-config --cflags) || exit
   \$CXX -c -o group2.o group2.cc \$(\$INSTDIR/bin/mbsim-config --cflags) || exit
   \$CXX -c -o system.o system.cc \$(\$INSTDIR/bin/mbsim-config --cflags) || exit
   \$CXX -c -o main.o main.cc \$(\$INSTDIR/bin/mbsim-config --cflags) || exit
   \$CXX -o main main.o system.o group1.o group2.o \$(\$INSTDIR/bin/mbsim-config --libs) || exit
   ./main || exit
-  cd ..
+  cd ../../..
   echo "DONE"
 fi
 
 echo "XMLFLAT_HIERACHICAL_MODELLING"
-cd xmlflat_hierachical_modelling
-\$INSTDIR/bin/mbsimflatxml TS.mbsim.xml Integrator.mbsimint.xml || exit
-cd ..
+cd xmlflat/hierachical_modelling
+\$INSTDIR/bin/mbsimflatxml MBS.mbsim.flat.xml Integrator.mbsimint.xml || exit
+cd ../..
 echo "DONE"
 
 echo "XML_HIERACHICAL_MODELLING"
-cd xml_hierachical_modelling
-\$INSTDIR/bin/mbsimxml --mbsimparam parameter.xml TS.mbsim.xml Integrator.mbsimint.xml --mpath mfiles || exit
-cd ..
+cd xml/hierachical_modelling
+\$INSTDIR/bin/mbsimxml --mbsimparam parameter.mbsim.xml MBS.mbsim.xml Integrator.mbsimint.xml --mpath mfiles || exit
+cd ../..
 echo "DONE"
 
 echo "STARTING H5PLOTSERIE"
-\$INSTDIR/bin/h5plotserie xml_hierachical_modelling/TS.mbsim.h5 || exit
+\$INSTDIR/bin/h5plotserie xml/hierachical_modelling/TS.mbsim.h5 || exit
 echo "DONE"
 
 echo "STARTING OPENMBV"
-\$INSTDIR/bin/openmbv xml_hierachical_modelling/TS.ombv.xml || exit
+\$INSTDIR/bin/openmbv xml/hierachical_modelling/TS.ombv.xml || exit
 echo "DONE"
 
 echo "STARTING MBSIMGUI"
