@@ -389,9 +389,9 @@ namespace MBSim {
     }
     else if(stage==MBSim::preInit) {
       if(INFO) cout << "  initialising preInit ..." << endl;
+      Group::init(stage);
       if(inverseKinetics)
 	setUpInverseKinetics();
-      Group::init(stage);
     }
     else if(stage==MBSim::plot) {
       if(INFO) cout << "  initialising plot-files ..." << endl;
