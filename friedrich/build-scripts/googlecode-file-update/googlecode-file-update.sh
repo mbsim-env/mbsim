@@ -1,24 +1,19 @@
 #! /bin/sh
 
-FILE=$1
+USER=friedrich.at.gc
 
-TMPDIR=/tmp/google-code-upload
+# check
 
-# check args
-if [ "_$FILE" = "_" ]; then
-  echo "Usage: $0 .../mbsimxml-linux-static.tar.bz2|.../mbsimxml-windows-static.zip"
-  exit 1
-fi
-if [ ! -e $FILE ]; then
-  echo "$FILE not found"
+if [ ! -e mbsim-linux-shared-build-xxx.tar.bz2 -a ! -e mbsim-windows-shared-build-xxx.zip -a ! -e openmbv-linux-shared-build-xxx.tar.bz2 -a ! -e openmbv-windows-shared-build-xxx.zip ]; then
+  echo "Usage: None of the distribution files where found in the current directory"
   exit 1
 fi
 
 # get inputs
-echo -n "Enter Build Number: "
+echo -n "Enter Build Number (format e.g. 004): "
 read BUILDNR
 
-echo -n "Enter the googlecode.com Passwort (SVN Passwort) for User friedrich.at.gc: "
+echo -n "Enter GoogleCode SVN Passwort for User $USER: "
 STTY_ORG=$(stty -g)
 stty -echo
 read PASSWORD
@@ -27,55 +22,35 @@ stty $STTY_ORG
 echo
 
 # run
-rm -rf $TMPDIR
-mkdir -p $TMPDIR
-if [ $(basename $FILE) = "mbsimxml-linux-static.tar.bz2" ]; then
-  echo "* Copy $FILE to temp dir"
-  cp $FILE $TMPDIR/mbsimxml-linux-static-build-$BUILDNR.tar.bz2
-  echo "* Extract $FILE to temp dir"
-  tar -xjf $FILE -C $TMPDIR
-  echo "* Pack openmbv"
-  ( cd $TMPDIR/mbsimxml/bin; tar -cjf $TMPDIR/openmbv-build-$BUILDNR.tar.bz2 openmbv; )
-  echo "* Pack h5plotserie"
-  ( cd $TMPDIR/mbsimxml/bin; tar -cjf $TMPDIR/h5plotserie-build-$BUILDNR.tar.bz2 h5plotserie; )
-  echo "* Pack h5lsserie"
-  ( cd $TMPDIR/mbsimxml/bin; tar -cjf $TMPDIR/h5lsserie-build-$BUILDNR.tar.bz2 h5lsserie; )
-  echo "* Pack h5dumpserie"
-  ( cd $TMPDIR/mbsimxml/bin; tar -cjf $TMPDIR/h5dumpserie-build-$BUILDNR.tar.bz2 h5dumpserie; )
-  echo "* Upload h5dumpserie"
-  python2 googlecode_upload.py -s "h5dumpserie-linux32-binary-release-build-$BUILDNR" -p hdf5serie -u friedrich.at.gc -w "$PASSWORD" -l "OpSys-Linux,Type-Archive" $TMPDIR/h5dumpserie-build-$BUILDNR.tar.bz2
-  echo "* Upload h5lsserie"
-  python2 googlecode_upload.py -s "h5lsserie-linux32-binary-release-build-$BUILDNR" -p hdf5serie -u friedrich.at.gc -w "$PASSWORD" -l "OpSys-Linux,Type-Archive" $TMPDIR/h5lsserie-build-$BUILDNR.tar.bz2
-  echo "* Upload h5plotserie"
-  python2 googlecode_upload.py -s "h5plotserie-linux32-binary-release-build-$BUILDNR" -p hdf5serie -u friedrich.at.gc -w "$PASSWORD" -l "OpSys-Linux,Type-Archive" $TMPDIR/h5plotserie-build-$BUILDNR.tar.bz2
-  echo "* Upload openmbv"
-  python2 googlecode_upload.py -s "openmbv-linux32-binary-release-build-$BUILDNR" -p openmbv -u friedrich.at.gc -w "$PASSWORD" -l "OpSys-Linux,Type-Archive" $TMPDIR/openmbv-build-$BUILDNR.tar.bz2
-  echo "* Upload mbsimxml"
-  python2 googlecode_upload.py -s "mbsimxml-linux32-binary-release-build-$BUILDNR" -p mbsim-env -u friedrich.at.gc -w "$PASSWORD" -l "OpSys-Linux,Type-Archive" $TMPDIR/mbsimxml-linux-static-build-$BUILDNR.tar.bz2
-elif [ $(basename $FILE) = "mbsimxml-windows-static.zip" ]; then
-  echo "* Copy $FILE to temp dir"
-  cp $FILE $TMPDIR/mbsimxml-windows-static-build-$BUILDNR.zip
-  echo "* Extract $FILE to temp dir"
-  unzip $FILE -d $TMPDIR
-  echo "* Pack openmbv"
-  ( cd $TMPDIR/mbsimxml/bin; zip $TMPDIR/openmbv-build-$BUILDNR.zip openmbv.exe; )
-  echo "* Pack h5plotserie"
-  ( cd $TMPDIR/mbsimxml/bin; zip $TMPDIR/h5plotserie-build-$BUILDNR.zip h5plotserie.exe; )
-  echo "* Pack h5lsserie"
-  ( cd $TMPDIR/mbsimxml/bin; zip $TMPDIR/h5lsserie-build-$BUILDNR.zip h5lsserie.exe; )
-  echo "* Pack h5dumpserie"
-  ( cd $TMPDIR/mbsimxml/bin; zip $TMPDIR/h5dumpserie-build-$BUILDNR.zip h5dumpserie.exe; )
-  echo "* Upload h5dumpserie"
-  python2 googlecode_upload.py -s "h5dumpserie-windows32-binary-release-build-$BUILDNR" -p hdf5serie -u friedrich.at.gc -w "$PASSWORD" -l "OpSys-Windows,Type-Archive" $TMPDIR/h5dumpserie-build-$BUILDNR.zip
-  echo "* Upload h5lsserie"
-  python2 googlecode_upload.py -s "h5lsserie-windows32-binary-release-build-$BUILDNR" -p hdf5serie -u friedrich.at.gc -w "$PASSWORD" -l "OpSys-Windows,Type-Archive" $TMPDIR/h5lsserie-build-$BUILDNR.zip
-  echo "* Upload h5plotserie"
-  python2 googlecode_upload.py -s "h5plotserie-windows32-binary-release-build-$BUILDNR" -p hdf5serie -u friedrich.at.gc -w "$PASSWORD" -l "OpSys-Windows,Type-Archive" $TMPDIR/h5plotserie-build-$BUILDNR.zip
-  echo "* Upload openmbv"
-  python2 googlecode_upload.py -s "openmbv-windows32-binary-release-build-$BUILDNR" -p openmbv -u friedrich.at.gc -w "$PASSWORD" -l "OpSys-Windows,Type-Archive" $TMPDIR/openmbv-build-$BUILDNR.zip
-  echo "* Upload mbsimxml"
-  python2 googlecode_upload.py -s "mbsimxml-windows32-binary-release-build-$BUILDNR" -p mbsim-env -u friedrich.at.gc -w "$PASSWORD" -l "OpSys-Windows,Type-Archive" $TMPDIR/mbsimxml-windows-static-build-$BUILDNR.zip
-else
-  exit 1
+
+if [ -e mbsim-linux-shared-build-xxx.tar.bz2 ]; then
+  SUMMARY="MBSim (inc. OpenMBV, HDF5Serie, ...) shared Linux build $BUILDNR"
+  PROJECT=mbsim-env
+  OS=Linux
+  FILE=mbsim-linux-shared-build-xxx.tar.bz2
 fi
-rm -rf $TMPDIR
+if [ -e mbsim-windows-shared-build-xxx.zip ]; then
+  SUMMARY="MBSim (inc. OpenMBV, HDF5Serie, ...) shared Windows build $BUILDNR"
+  PROJECT=mbsim-env
+  OS=Windows
+  FILE=mbsim-windows-shared-build-xxx.zip
+fi
+if [ -e openmbv-linux-shared-build-xxx.tar.bz2 ]; then
+  SUMMARY="OpenMBV shared Linux build $BUILDNR"
+  PROJECT=openmbv
+  OS=Linux
+  FILE=openmbv-linux-shared-build-xxx.tar.bz2
+fi
+if [ -e openmbv-windows-shared-build-xxx.zip ]; then
+  SUMMARY="OpenMBV shared Windows build $BUILDNR"
+  PROJECT=openmbv
+  OS=Windows
+  FILE=openmbv-windows-shared-build-xxx.zip
+fi
+
+FILEBUILDNR=$(echo $FILE | sed -re "s/^(.*-)xxx(\..*)$/\1$BUILDNR\2/")
+ln -s $FILE $FILEBUILDNR
+
+echo "Upload $FILEBUILDNR"
+python2 $(dirname $0)/googlecode_upload.py -s "$SUMMARY" -p "$PROJECT" -u "$USER" -w "$PASSWORD" -l "OpSys-$OS,Type-Archive" $FILEBUILDNR
+rm -f $FILEBUILDNR
