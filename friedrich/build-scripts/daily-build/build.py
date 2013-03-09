@@ -57,6 +57,7 @@ outOpts.add_argument("--reportOutDir", default="build_report", type=str, help="t
 outOpts.add_argument("--docOutDir", type=str,
   help="Copy the documention to this directory. If not given do not copy")
 outOpts.add_argument("--url", type=str, help="the URL where the report output is accessible (without the trailing '/index.html'. Only used for the RSS feed")
+outOpts.add_argument("--buildType", type=str, help="A description of the build type (e.g: 'Daily Build: '))
 
 passOpts=argparser.add_argument_group('Options beeing passed to other commands')
 passOpts.add_argument("--passToRunexamples", default=list(), nargs=argparse.REMAINDER,
@@ -624,32 +625,32 @@ def writeRSSFeed(nrFailed):
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>MBSim, OpenMBV, ... Build Results</title>
+    <title>%sMBSim, OpenMBV, ... Build Results</title>
     <link>%s/index.html</link>
-    <description>Result RSS feed of the last build of MBSim and Co.</description>
+    <description>%sResult RSS feed of the last build of MBSim and Co.</description>
     <language>en-us</language>
     <managingEditor>friedrich.at.gc@googlemail.com (friedrich)</managingEditor>
-    <atom:link href="%s/result.rss.xml" rel="self" type="application/rss+xml"/>'''%(args.url, args.url), file=rssFD)
+    <atom:link href="%s/result.rss.xml" rel="self" type="application/rss+xml"/>'''%(args.buildType, args.url, args.buildType, args.url), file=rssFD)
   if nrFailed>0:
     print('''\
     <item>
-      <title>Build failed</title>
+      <title>%sBuild failed</title>
       <link>%s/index.html</link>
       <guid isPermaLink="false">%s/rss_id_%s</guid>
       <pubDate>%s</pubDate>
-    </item>'''%(args.url,
+    </item>'''%(args.buildType, args.url,
            args.url,
            datetime.datetime.utcnow().strftime("%s"),
            datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S +0000")), file=rssFD)
   print('''\
     <item>
-      <title>Dummy feed item. Just ignore it.</title>
+      <title>%sDummy feed item. Just ignore it.</title>
       <link>%s/index.html</link>
       <guid isPermaLink="false">%s/rss_id_1359206848</guid>
       <pubDate>Sat, 26 Jan 2013 14:27:28 +0000</pubDate>
     </item>
   </channel>
-</rss>'''%(args.url, args.url), file=rssFD)
+</rss>'''%(args.buildType, args.url, args.url), file=rssFD)
   rssFD.close()
 
 
