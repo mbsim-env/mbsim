@@ -596,6 +596,8 @@ def runexamples(mainFD):
   command=["./runexamples.py", "-j", str(args.j)]
   if args.url!=None:
     command.extend(["--url", args.url+"/runexamples_report"])
+  if args.buildType!=None:
+    command.extend(["--buildType", args.buildType])
   command.extend(["--reportOutDir", pj(args.reportOutDir, "runexamples_report")])
   command.extend(args.passToRunexamples)
 
