@@ -86,6 +86,7 @@ cfgOpts.add_argument("--rtol", default=1e-5, type=float,
 cfgOpts.add_argument("--disableRun", action="store_true", help="disable running the example on action 'report'")
 cfgOpts.add_argument("--disableCompare", action="store_true", help="disable comparing the results on action 'report'")
 cfgOpts.add_argument("--disableValidate", action="store_true", help="disable validating the XML files on action 'report'")
+cfgOpts.add_argument("--buildType", type=str, help="Description of the build type (e.g: 'Daily Build: ')")
 
 outOpts=argparser.add_argument_group('Output Options')
 outOpts.add_argument("--reportOutDir", default="runexamples_report", type=str, help="the output directory of the report")
@@ -857,33 +858,33 @@ def writeRSSFeed(nrFailed, nrTotal):
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>MBSim runexample.py Result</title>
+    <title>%sMBSim runexample.py Result</title>
     <link>%s/index.html</link>
-    <description>Result RSS feed of the last runexample.py run of MBSim and Co.</description>
+    <description>%sResult RSS feed of the last runexample.py run of MBSim and Co.</description>
     <language>en-us</language>
     <managingEditor>friedrich.at.gc@googlemail.com (friedrich)</managingEditor>
-    <atom:link href="%s/result.rss.xml" rel="self" type="application/rss+xml"/>'''%(args.url, args.url), file=rssFD)
+    <atom:link href="%s/result.rss.xml" rel="self" type="application/rss+xml"/>'''%(args.buildType, args.url, args.buildType, args.url), file=rssFD)
   if nrFailed>0:
     print('''\
     <item>
-      <title>%d of %d examples failed</title>
+      <title>%s%d of %d examples failed</title>
       <link>%s/index.html</link>
       <guid isPermaLink="false">%s/rss_id_%s</guid>
       <pubDate>%s</pubDate>
-    </item>'''%(nrFailed, nrTotal,
+    </item>'''%(args.buildType, nrFailed, nrTotal,
            args.url,
            args.url,
            datetime.datetime.utcnow().strftime("%s"),
            datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S +0000")), file=rssFD)
   print('''\
     <item>
-      <title>Dummy feed item. Just ignore it.</title>
+      <title>%sDummy feed item. Just ignore it.</title>
       <link>%s/index.html</link>
       <guid isPermaLink="false">%s/rss_id_1359206848</guid>
       <pubDate>Sat, 26 Jan 2013 14:27:28 +0000</pubDate>
     </item>
   </channel>
-</rss>'''%(args.url, args.url), file=rssFD)
+</rss>'''%(args.buildType, args.url, args.url), file=rssFD)
   rssFD.close()
 
 
