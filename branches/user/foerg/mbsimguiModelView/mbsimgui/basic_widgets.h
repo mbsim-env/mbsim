@@ -176,25 +176,6 @@ class FileWidget : public Widget {
 
 };
 
-class NameWidget : public Widget {
-  Q_OBJECT
-
-  public:
-    NameWidget(Element* ele, bool renaming=true);
-
-    QString getName() const {return ename->text();}
-    void setName(const QString &name) {ename->setText(name);}
-    virtual void updateWidget() {}
-    virtual void resizeVariables() {}
-
-  protected:
-    QLineEdit *ename;
-    Element* element;
-
-  protected slots:
-    void rename();
-};
-
 class TextWidget : public Widget {
 
   public:
@@ -264,44 +245,6 @@ class DependenciesWidget : public Widget {
 
   signals:
     void bodyChanged();
-};
-
-class ParameterNameWidget : public Widget {
-  Q_OBJECT
-
-  public:
-    ParameterNameWidget(Parameter* ele, bool renaming=true);
-
-    QString getName() const {return ename->text();}
-    void setName(const QString &name) {ename->setText(name);}
-    virtual void updateWidget() {}
-    virtual void resizeVariables() {}
-
-  protected:
-    QLineEdit *ename;
-    Parameter* parameter;
-
-  protected slots:
-    void rename();
-};
-
-class ParameterValueWidget : public Widget {
-  Q_OBJECT
-
-  public:
-    ParameterValueWidget(PhysicalStringWidget *var);
-
-    ExtPhysicalVarWidget* getExtPhysicalWidget() {return widget;}
-    virtual std::string getValue() const { return widget->getValue(); }
-    virtual void updateWidget() {}
-    virtual void resizeVariables() {}
-
-  protected:
-    ExtPhysicalVarWidget *widget;
-  protected slots:
-    void parameterChanged();
-  signals:
-    void parameterChanged(const QString &str);
 };
 
 class SolverTolerancesWidget : public Widget {

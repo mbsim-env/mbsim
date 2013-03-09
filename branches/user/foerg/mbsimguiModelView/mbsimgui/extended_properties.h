@@ -59,6 +59,7 @@ class ExtProperty : Property {
   public:
     ExtProperty(Property *property_=0, bool active_=true) : property(property_), active(active_) {}
     Property* getProperty() {return property;}
+    const Property* getProperty() const {return property;}
     void setProperty(Property *property_) {property = property_;}
     void setXMLName(const std::string &name, bool flag=true) {xmlName = name; alwaysWriteXMLName=flag;}
 
