@@ -84,14 +84,13 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
 
   K.setProperty(new LocalFrameOfReferenceProperty(getFrame(0),this,MBSIMNS"frameForKinematics"));
 
-  vector<PhysicalStringProperty*> inputProperty;
-  inputProperty.clear();
-  inputProperty.push_back(new PhysicalStringProperty(new ScalarProperty("1"),"kg",MBSIMNS"mass"));
-  mass.setProperty(new ExtPhysicalVarProperty(inputProperty));
+  vector<PhysicalStringProperty*> input;
+  input.push_back(new PhysicalStringProperty(new ScalarProperty("1"),"kg",MBSIMNS"mass"));
+  mass.setProperty(new ExtPhysicalVarProperty(input));
 
-  inputProperty.clear();
-  inputProperty.push_back(new PhysicalStringProperty(new MatProperty(getEye<string>(3,3,"0.01","0")),"kg*m^2",MBSIMNS"inertiaTensor"));
-  inertia.setProperty(new ExtPhysicalVarProperty(inputProperty));
+  input.clear();
+  input.push_back(new PhysicalStringProperty(new MatProperty(getEye<string>(3,3,"0.01","0")),"kg*m^2",MBSIMNS"inertiaTensor"));
+  inertia.setProperty(new ExtPhysicalVarProperty(input));
 
   translation.setProperty(new TranslationChoiceProperty(new LinearTranslationProperty,""));
   translation.setXMLName(MBSIMNS"translation");
@@ -113,9 +112,9 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
   jointMomentArrow.setXMLName(MBSIMNS"openMBVJointMomentArrow",false);
   ((OMBVArrowProperty*)jointMomentArrow.getProperty())->setID(getID());
 
-  inputProperty.clear();
-  inputProperty.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"",MBSIMNS"isFrameOfBodyForRotation"));
-  isFrameOfBodyForRotation.setProperty(new ExtPhysicalVarProperty(inputProperty)); 
+  input.clear();
+  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"",MBSIMNS"isFrameOfBodyForRotation"));
+  isFrameOfBodyForRotation.setProperty(new ExtPhysicalVarProperty(input)); 
 }
 
 RigidBody::~RigidBody() {

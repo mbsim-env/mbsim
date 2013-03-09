@@ -238,43 +238,6 @@ void FileWidget::selectFile() {
     //fileName->setText(QFileInfo(absoluteFilePath).fileName());
 }
 
-NameWidget::NameWidget(Element* ele, bool renaming) : element(ele) {
-  QHBoxLayout *layout = new QHBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
-
-  ename = new QLineEdit;
-  ename->setReadOnly(true);
-  ename->setText(element->getName());
-  layout->addWidget(ename);
-  if(renaming) {
-    QPushButton *button = new QPushButton("Rename");
-    layout->addWidget(button);
-    connect(button,SIGNAL(clicked(bool)),this,SLOT(rename()));
-  }
-}
-
-void NameWidget::rename() {
-  QString text;
-  do {
-    text = QInputDialog::getText(0, tr("Rename"), tr("Name:"), QLineEdit::Normal, getName());
-    if(((QTreeWidgetItem*)element)->parent() == 0)
-      break;
-    Element* ele = ((Container*)(((QTreeWidgetItem*)element)->parent()))->getChild(text,false);
-    if(ele==0 || ele==element) {
-      break;
-    } 
-    else {
-      QMessageBox msgBox;
-      msgBox.setText(QString("The name ") + text + " does already exist.");
-      msgBox.exec();
-    }
-  } while(true);
-  if(text!="")
-    element->setName(text);
-  ((Element*)element->treeWidget()->topLevelItem(0))->updateWidget();
-}
-
 TextWidget::TextWidget(bool readOnly) {
   QHBoxLayout *layout = new QHBoxLayout;
   layout->setMargin(0);
@@ -419,58 +382,6 @@ void DependenciesWidget::removeDependency() {
   delete bodyList->takeItem(i);
 
   updateList();
-}
-
-ParameterNameWidget::ParameterNameWidget(Parameter* parameter_, bool renaming) : parameter(parameter_) {
-  QHBoxLayout *layout = new QHBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
-
-  ename = new QLineEdit;
-  ename->setReadOnly(true);
-  ename->setText(parameter->getName());
-  layout->addWidget(ename);
-  if(renaming) {
-    QPushButton *button = new QPushButton("Rename");
-    layout->addWidget(button);
-    connect(button,SIGNAL(clicked(bool)),this,SLOT(rename()));
-  }
-}
-
-void ParameterNameWidget::rename() {
-  QString text;
-  do {
-    text = QInputDialog::getText(0, tr("Rename"), tr("Name:"), QLineEdit::Normal, getName());
-    if(!getChild(parameter->treeWidget()->invisibleRootItem(), text))
-      break;
-    else {
-      QMessageBox msgBox;
-      msgBox.setText(QString("The name ") + text + " does already exist.");
-      msgBox.exec();
-    }
-  } while(true);
-  if(text!="")
-    parameter->setName(text);
-  //((Parameter*)parameter->treeWidget()->topLevelItem(0))->updateWidget();
-}
-
-ParameterValueWidget::ParameterValueWidget(PhysicalStringWidget *var) {
-  QHBoxLayout *layout = new QHBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
-
-  vector<PhysicalStringWidget*> input;
-  input.push_back(var);
-  widget = new ExtPhysicalVarWidget(input);
-  QPushButton *button = new QPushButton("Set");
-
-  layout->addWidget(widget);
-  layout->addWidget(button);
-  connect(button,SIGNAL(clicked(bool)),this,SLOT(parameterChanged()));
-}
-
-void ParameterValueWidget::parameterChanged() {
-  emit parameterChanged(getValue().c_str());
 }
 
 SolverTolerancesWidget::SolverTolerancesWidget() {
