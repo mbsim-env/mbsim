@@ -424,6 +424,7 @@ def build(nr, nrAll, tool, mainFD, updatedTools, updateFailed):
       print('<td><a href="'+myurllib.pathname2url(pj(tool, "svn.out"))+'"><span style="color:green">updated, rebuild required</span></a></td>', file=mainFD)
     else:
       print('<td><a href="'+myurllib.pathname2url(pj(tool, "svn.out"))+'"><span style="color:green">up to date, rebuild required</span></a></td>', file=mainFD)
+  mainFD.flush()
 
   ret=0
   retRunExamples=0
