@@ -86,7 +86,9 @@ cfgOpts.add_argument("--rtol", default=1e-5, type=float,
 cfgOpts.add_argument("--disableRun", action="store_true", help="disable running the example on action 'report'")
 cfgOpts.add_argument("--disableCompare", action="store_true", help="disable comparing the results on action 'report'")
 cfgOpts.add_argument("--disableValidate", action="store_true", help="disable validating the XML files on action 'report'")
-cfgOpts.add_argument("--buildType", type=str, help="Description of the build type (e.g: 'Daily Build: ')")
+cfgOpts.add_argument("--buildType", default=None, type=str, help="Description of the build type (e.g: 'Daily Build: ')")
+cfgOpts.add_argument("--prefixSimulation", default=None, type=str,
+  help="prefix the simulation command (./main, mbsimflatxml, mbsimxml) with this string: e.g. 'valgrind --tool=callgrind'")
 
 outOpts=argparser.add_argument_group('Output Options')
 outOpts.add_argument("--reportOutDir", default="runexamples_report", type=str, help="the output directory of the report")
@@ -129,7 +131,12 @@ def main():
   global mbsimBinDir
   mbsimBinDir=pkgconfig("mbsim", ["--variable=bindir"])
 
+  # fix arguments
   args.reportOutDir=os.path.abspath(args.reportOutDir)
+  if args.prefixSimulation!=None:
+    args.prefixSimulation=args.prefixSimulation.split(' ');
+  else:
+    args.prefixSimulation=[];
 
   # if no directory is specified use the current dir (all examples) filter by --filter
   if len(args.directories)==0:
@@ -501,7 +508,7 @@ def executeSrcExample(executeFD):
     mainEnv[NAME]=libDir
   # run main
   t0=datetime.datetime.now()
-  if subprocess.call([pj(os.curdir, "main")], stderr=subprocess.STDOUT, stdout=executeFD, env=mainEnv)!=0: return 1, 0
+  if subprocess.call(args.prefixSimulation+[pj(os.curdir, "main")], stderr=subprocess.STDOUT, stdout=executeFD, env=mainEnv)!=0: return 1, 0
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
   return 0, dt
@@ -521,7 +528,7 @@ def executeXMLExample(executeFD):
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  if subprocess.call([pj(mbsimBinDir, "mbsimxml")]+parMBSimOption+parIntOption+mpathOption+
+  if subprocess.call(args.prefixSimulation+[pj(mbsimBinDir, "mbsimxml")]+parMBSimOption+parIntOption+mpathOption+
                      ["MBS.mbsim.xml", "Integrator.mbsimint.xml"], stderr=subprocess.STDOUT, stdout=executeFD)!=0: return 1, 0
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
@@ -536,7 +543,7 @@ def executeFlatXMLExample(executeFD):
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  if subprocess.call([pj(mbsimBinDir, "mbsimflatxml"), "MBS.mbsim.flat.xml", "Integrator.mbsimint.xml"],
+  if subprocess.call(args.prefixSimulation+[pj(mbsimBinDir, "mbsimflatxml"), "MBS.mbsim.flat.xml", "Integrator.mbsimint.xml"],
                      stderr=subprocess.STDOUT, stdout=executeFD)!=0: return 1, 0
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
