@@ -57,7 +57,7 @@ outOpts.add_argument("--reportOutDir", default="build_report", type=str, help="t
 outOpts.add_argument("--docOutDir", type=str,
   help="Copy the documention to this directory. If not given do not copy")
 outOpts.add_argument("--url", type=str, help="the URL where the report output is accessible (without the trailing '/index.html'. Only used for the RSS feed")
-outOpts.add_argument("--buildType", type=str, help="A description of the build type (e.g: 'Daily Build: '))
+outOpts.add_argument("--buildType", type=str, help="A description of the build type (e.g: 'Daily Build: ')")
 
 passOpts=argparser.add_argument_group('Options beeing passed to other commands')
 passOpts.add_argument("--passToRunexamples", default=list(), nargs=argparse.REMAINDER,
