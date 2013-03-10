@@ -84,10 +84,13 @@ fi
 mkdir -p $DISTDIR/lib/pkgconfig
 cp -ruL $PREFIX/lib/pkgconfig/* $DISTDIR/lib/pkgconfig/
 for F in $PREFIX/lib/*; do
-  echo $F | grep "libCoin.a$" > /dev/null && continue
-  echo $F | grep "libCoin.la$" > /dev/null && continue
-  echo $F | grep "libSoQt.a$" > /dev/null && continue
-  echo $F | grep "libSoQt.la$" > /dev/null && continue
+  echo $F | grep "/libCoin.a$" > /dev/null && continue
+  echo $F | grep "/libCoin.la$" > /dev/null && continue
+  echo $F | grep "/libSoQt.a$" > /dev/null && continue
+  echo $F | grep "/libSoQt.la$" > /dev/null && continue
+  echo $F | grep "/cmake$" > /dev/null && continue
+  echo $F | grep "/octave$" > /dev/null && continue
+  echo $F | grep "/pkgconfig$" > /dev/null && continue
   cp -uL $F $DISTDIR/lib
 done
 
@@ -110,8 +113,8 @@ getdlls() {
   mv $TMPDLLFILESOUT.uniq $TMPDLLFILESOUT
   rm -f $TMPDLLFILESOUT.abs
   for F in $(cat $TMPDLLFILESOUT); do
-    locate $F | grep "$F$" | grep -v "/wine" | grep -v "/\.wine/" | grep -v "/dist_mbsim/" >> $TMPDLLFILESOUT.abs
-    find $PREFIX -name $(basename $F) | grep "$F$" | grep -v "/wine" | grep -v "/\.wine/" | grep -v "/dist_mbsim/" >> $TMPDLLFILESOUT.abs
+    locate $F | grep "$F$" | grep -v "/wine" | grep -v "/\.wine/" | grep -v "/dist_mbsim/" >> $TMPDLLFILESOUT.abs || DUMMYVAR=0
+    find $PREFIX -name $(basename $F) | grep "$F$" | grep -v "/wine" | grep -v "/\.wine/" | grep -v "/dist_mbsim/" >> $TMPDLLFILESOUT.abs || DUMMYVAR=0
   done
   sort $TMPDLLFILESOUT.abs | uniq > $TMPDLLFILESOUT.uniq
   rm -f $TMPDLLFILESOUT
@@ -412,8 +415,8 @@ getdlls() {
   mv $TMPDLLFILESOUT.uniq $TMPDLLFILESOUT
   rm -f $TMPDLLFILESOUT.abs
   for F in $(cat $TMPDLLFILESOUT); do
-    locate $F | grep "$F$" | grep -v "/wine" | grep -v "/\.wine/" | grep -v "/dist_openmbv/" >> $TMPDLLFILESOUT.abs
-    find $PREFIX -name $(basename $F) | grep "$F$" | grep -v "/wine" | grep -v "/\.wine/" | grep -v "/dist_openmbv/" >> $TMPDLLFILESOUT.abs
+    locate $F | grep "$F$" | grep -v "/wine" | grep -v "/\.wine/" | grep -v "/dist_openmbv/" >> $TMPDLLFILESOUT.abs || DUMMYVAR=0
+    find $PREFIX -name $(basename $F) | grep "$F$" | grep -v "/wine" | grep -v "/\.wine/" | grep -v "/dist_openmbv/" >> $TMPDLLFILESOUT.abs || DUMMYVAR=0
   done
   sort $TMPDLLFILESOUT.abs | uniq > $TMPDLLFILESOUT.uniq
   rm -f $TMPDLLFILESOUT
