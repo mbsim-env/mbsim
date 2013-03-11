@@ -808,7 +808,7 @@ void MainWindow::inlineOpenMBV() {
   if(!slv || !integ)
     return;
 
-  QString mbsFile=(uniqueTempDir/"mbsim").c_str();
+  QString mbsFile=(uniqueTempDir/"mbsim").generic_string().c_str();
   // modify the top level element name to enforce a special filename of the openmbv xml file
   QString saveName=slv->getName();
   slv->setName("openmbv");
@@ -817,10 +817,10 @@ void MainWindow::inlineOpenMBV() {
   // restore element name
   slv->setName(saveName);
 
-  QString mbsParamFile=(uniqueTempDir/"mbsim.param.xml").c_str();
+  QString mbsParamFile=(uniqueTempDir/"mbsim.param.xml").generic_string().c_str();
   saveParameter(mbsParamFile);
 
-  QString intFile=(uniqueTempDir/"mbsim").c_str();
+  QString intFile=(uniqueTempDir/"mbsim").generic_string().c_str();
   integ->writeXMLFile(intFile);
 
   vector<string> arg;
