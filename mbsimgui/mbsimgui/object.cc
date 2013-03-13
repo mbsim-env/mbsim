@@ -85,14 +85,14 @@ TiXmlElement* Object::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
-Element * Object::getByPathSearch(string path) {
-  if (path.substr(0, 1)=="/") // absolut path
+Element * Object::getByPathSearch(QString path) {
+  if (path.mid(0, 1)=="/") // absolut path
     if(getParentElement())
       return getParentElement()->getByPathSearch(path);
     else
-      return getByPathSearch(path.substr(1));
-  else if (path.substr(0, 3)=="../") // relative path
-    return getParentElement()->getByPathSearch(path.substr(3));
+      return getByPathSearch(path.mid(1));
+  else if (path.mid(0, 3)=="../") // relative path
+    return getParentElement()->getByPathSearch(path.mid(3));
   else  // local path
     throw MBSimError("Unknown identifier of container");
 }

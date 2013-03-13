@@ -17,35 +17,30 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _RIGIDBODY__H_
-#define _RIGIDBODY__H_
+#ifndef _OBSERVER__H_
+#define _OBSERVER__H_
 
-#include "body.h"
+#include "element.h"
 
-class RigidBody : public Body {
-  Q_OBJECT
+class Observer : public Element {
   public:
-    RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind);
-    ~RigidBody();
-    virtual int getqSize() {return getSize();}
-    virtual int getuSize() {return getSize();}
+    Observer(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    ~Observer();
+    virtual int getxSize() {return 0;}
+    virtual Element* getByPathSearch(QString path);
+};
+
+class AbsoluteKinematicsObserver : public Observer {
+  public:
+    AbsoluteKinematicsObserver(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    ~AbsoluteKinematicsObserver();
+
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    QString getType() const { return "RigidBody"; }
-    void setConstrained(bool b) {constrained = b;}
-    int getSize() const {return constrained ? 0 : getUnconstrainedSize();}
-    int getUnconstrainedSize() const; 
-    void resizeGeneralizedPosition();
-    void resizeGeneralizedVelocity();
-  public slots:
-    void addFrame();
-    void addPoint();
-    void addLine();
-    void addPlane();
-    void addSphere();
+
+    virtual QString getType() const { return "AbsoluteKinematicsObserver"; }
   protected:
-    ExtXMLWidget *frameForKinematics, *mass, *inertia, *translation, *rotation, *frameOfReference, *ombvEditor, *weightArrow, *jointForceArrow, *jointMomentArrow, *isFrameOfBodyForRotation;
-    bool constrained;
+    ExtXMLWidget *frame, *position, *velocity, *angularVelocity, *acceleration, *angularAcceleration; //*diameter, *headDiameter, *headLength, *color;
 };
 
 #endif
