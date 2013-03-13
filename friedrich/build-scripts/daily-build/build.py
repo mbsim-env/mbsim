@@ -57,7 +57,7 @@ outOpts.add_argument("--reportOutDir", default="build_report", type=str, help="t
 outOpts.add_argument("--docOutDir", type=str,
   help="Copy the documention to this directory. If not given do not copy")
 outOpts.add_argument("--url", type=str, help="the URL where the report output is accessible (without the trailing '/index.html'. Only used for the RSS feed")
-outOpts.add_argument("--buildType", type=str, help="A description of the build type (e.g: 'Daily Build: ')")
+outOpts.add_argument("--buildType", default="", type=str, help="A description of the build type (e.g: 'Daily Build: ')")
 
 passOpts=argparser.add_argument_group('Options beeing passed to other commands')
 passOpts.add_argument("--passToRunexamples", default=list(), nargs=argparse.REMAINDER,
@@ -80,47 +80,48 @@ def main():
   global toolDoxyDocCopyDir
 
   toolDependencies={
-    pj('fmatvec'): set([ # depends on
-      ]),
-    pj('hdf5serie', 'h5plotserie'): set([ # depends on
+    #   |ToolName   |WillFail (if WillFail is true no RSS Feed error is reported if this Tool fails somehow)
+    pj('fmatvec'): [False, set([ # depends on
+      ])],
+    pj('hdf5serie', 'h5plotserie'): [False, set([ # depends on
         pj('hdf5serie', 'hdf5serie')
-      ]),
-    pj('hdf5serie', 'hdf5serie'): set([ # depends on
-      ]),
-    pj('openmbv', 'mbxmlutils'): set([ # depends on
-      ]),
-    pj('openmbv', 'openmbv'): set([ # depends on
+      ])],
+    pj('hdf5serie', 'hdf5serie'): [False, set([ # depends on
+      ])],
+    pj('openmbv', 'mbxmlutils'): [False, set([ # depends on
+      ])],
+    pj('openmbv', 'openmbv'): [False, set([ # depends on
         pj('openmbv', 'openmbvcppinterface'),
         pj('hdf5serie', 'hdf5serie')
-      ]),
-    pj('openmbv', 'openmbvcppinterface'): set([ # depends on
+      ])],
+    pj('openmbv', 'openmbvcppinterface'): [False, set([ # depends on
         pj('hdf5serie', 'hdf5serie'),
         pj('openmbv', 'mbxmlutils')
-      ]),
-    pj('mbsim', 'kernel'): set([ # depends on
+      ])],
+    pj('mbsim', 'kernel'): [False, set([ # depends on
         pj('fmatvec'),
         pj('openmbv', 'openmbvcppinterface')
-      ]),
-    pj('mbsim', 'modules', 'mbsimHydraulics'): set([ # depends on
+      ])],
+    pj('mbsim', 'modules', 'mbsimHydraulics'): [False, set([ # depends on
         pj('mbsim', 'kernel'),
         pj('mbsim', 'modules', 'mbsimControl')
-      ]),
-    pj('mbsim', 'modules', 'mbsimFlexibleBody'): set([ # depends on
+      ])],
+    pj('mbsim', 'modules', 'mbsimFlexibleBody'): [False, set([ # depends on
         pj('mbsim', 'kernel'),
         pj('mbsim', 'thirdparty', 'nurbs++')
-      ]),
-    pj('mbsim', 'thirdparty', 'nurbs++'): set([ # depends on
-      ]),
-    pj('mbsim', 'modules', 'mbsimPowertrain'): set([ # depends on
+      ])],
+    pj('mbsim', 'thirdparty', 'nurbs++'): [True, set([ # depends on
+      ])],
+    pj('mbsim', 'modules', 'mbsimPowertrain'): [False, set([ # depends on
         pj('mbsim', 'kernel')
-      ]),
-    pj('mbsim', 'modules', 'mbsimElectronics'): set([ # depends on
+      ])],
+    pj('mbsim', 'modules', 'mbsimElectronics'): [False, set([ # depends on
         pj('mbsim', 'kernel')
-      ]),
-    pj('mbsim', 'modules', 'mbsimControl'): set([ # depends on
+      ])],
+    pj('mbsim', 'modules', 'mbsimControl'): [False, set([ # depends on
         pj('mbsim', 'kernel')
-      ]),
-    pj('mbsim', 'mbsimxml'): set([ # depends on
+      ])],
+    pj('mbsim', 'mbsimxml'): [False, set([ # depends on
         pj('mbsim', 'kernel'),
         pj('openmbv', 'openmbvcppinterface'),
         pj('openmbv', 'mbxmlutils'),
@@ -129,20 +130,20 @@ def main():
         pj('mbsim', 'modules', 'mbsimPowertrain'),
         pj('mbsim', 'modules', 'mbsimElectronics'),
         pj('mbsim', 'modules', 'mbsimControl')
-      ]),
-    pj('mbsim', 'mbsimgui'): set([ # depends on
+      ])],
+    pj('mbsim', 'mbsimgui'): [False, set([ # depends on
         pj('openmbv', 'openmbv'),
         pj('openmbv', 'mbxmlutils')
-      ]),
-    pj('mbsim', 'examples'): set([ # depends on
-          pj('mbsim', 'mbsimxml'),
-          pj('mbsim', 'kernel'),
-          pj('mbsim', 'modules', 'mbsimHydraulics'),
-          pj('mbsim', 'modules', 'mbsimFlexibleBody'),
-          pj('mbsim', 'modules', 'mbsimPowertrain'),
-          pj('mbsim', 'modules', 'mbsimElectronics'),
-          pj('mbsim', 'modules', 'mbsimControl')
-        ])
+      ])],
+    pj('mbsim', 'examples'): [False, set([ # depends on
+        pj('mbsim', 'mbsimxml'),
+        pj('mbsim', 'kernel'),
+        pj('mbsim', 'modules', 'mbsimHydraulics'),
+        pj('mbsim', 'modules', 'mbsimFlexibleBody'),
+        pj('mbsim', 'modules', 'mbsimPowertrain'),
+        pj('mbsim', 'modules', 'mbsimElectronics'),
+        pj('mbsim', 'modules', 'mbsimControl')
+      ])]
   }
   toolXMLDocCopyDir={
     pj("mbsim", "kernel"):                       set(["http___mbsim_berlios_de_MBSim", "http___mbsim_berlios_de_MBSimIntegrator"]),
@@ -277,6 +278,7 @@ def main():
   print('</p>', file=mainFD)
 
   print('<p>Failures in the following table should be fixed from top to bottom since a error in one tool may cause errors on dependent tools.</p>', file=mainFD)
+  print('<p>A tool name in gray color is a tool which may fail and is therefore not reported as an error in the RSS feed.</p>', file=mainFD)
   print('<table border="1">', file=mainFD)
   print('<tr>', file=mainFD)
   print('<th>Tool</th>', file=mainFD)
@@ -305,8 +307,9 @@ def main():
   nr=1
   for tool in orderedBuildTools:
     r1, r2=build(nr, len(orderedBuildTools), tool, mainFD, updatedTools, updateFailed)
-    ret+=r1
-    retRunExamples+=r2
+    if toolDependencies[tool][0]==False:
+      ret+=r1
+      retRunExamples+=r2
     nr+=1
 
   print('</table>', file=mainFD)
@@ -336,13 +339,13 @@ def addAllDepencencies():
   rec=False
   for t in toolDependencies:
     add=set()
-    oldLength=len(toolDependencies[t])
-    for d in toolDependencies[t]:
-      for a in toolDependencies[d]:
+    oldLength=len(toolDependencies[t][1])
+    for d in toolDependencies[t][1]:
+      for a in toolDependencies[d][1]:
         add.add(a)
     for a in add:
-      toolDependencies[t].add(a)
-    newLength=len(toolDependencies[t])
+      toolDependencies[t][1].add(a)
+    newLength=len(toolDependencies[t][1])
     if newLength>oldLength:
       rec=True
   if rec:
@@ -354,7 +357,7 @@ def allBuildTools(buildTools):
   add=set()
   for bt in buildTools:
     for t in toolDependencies:
-      if bt in toolDependencies[t]:
+      if bt in toolDependencies[t][1]:
         add.add(t)
   buildTools.update(add)
 
@@ -363,7 +366,7 @@ def allBuildTools(buildTools):
 def sortBuildTools(buildTools, orderedBuildTools):
   upToDate=set(toolDependencies)-buildTools
   for bt in buildTools:
-    if len(toolDependencies[bt]-upToDate)==0:
+    if len(toolDependencies[bt][1]-upToDate)==0:
       orderedBuildTools.append(bt)
       upToDate.add(bt)
   buildTools-=set(orderedBuildTools)
@@ -416,7 +419,10 @@ def build(nr, nrAll, tool, mainFD, updatedTools, updateFailed):
 
   # print svn update
   print('<tr>', file=mainFD)
-  print('<td>'+tool+'</td>', file=mainFD)
+  if toolDependencies[tool][0]==False:
+    print('<td>'+tool+'</td>', file=mainFD)
+  else:
+    print('<td><span style="color:gray">'+tool+'</span></td>', file=mainFD)
   if tool in updateFailed:
     print('<td><a href="'+myurllib.pathname2url(pj(tool, "svn.out"))+'"><span style="color:red">failed</span></a></td>', file=mainFD)
   else:
@@ -597,7 +603,7 @@ def runexamples(mainFD):
   command=["./runexamples.py", "-j", str(args.j)]
   if args.url!=None:
     command.extend(["--url", args.url+"/runexamples_report"])
-  if args.buildType!=None:
+  if args.buildType!="":
     command.extend(["--buildType", args.buildType])
   command.extend(["--reportOutDir", pj(args.reportOutDir, "runexamples_report")])
   command.extend(args.passToRunexamples)
