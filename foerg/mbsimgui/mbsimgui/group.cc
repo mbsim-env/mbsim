@@ -113,7 +113,6 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
     properties->addToTab("Kinematics", orientation);
 
     frameOfReference = new ExtXMLWidget("Frame of reference",new ParentFrameOfReferenceWidget(MBSIMNS"frameOfReference",((Group*)getParentElement())->getFrame(0),0),true);
-//    frameOfReference = new ExtXMLWidget("Frame of reference",new FrameOfReferenceWidget(MBSIMNS"frameOfReference",this,((Group*)getParentElement())->getFrame(0)),true); 
     properties->addToTab("Kinematics", frameOfReference);
   }
 
@@ -483,7 +482,6 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   Group *g;
   while(E) {
     g=ObjectFactory::getInstance()->createGroup(E, groups, -1);
-    cout << g->getName().toStdString() << endl;
     if(g) g->initializeUsingXML(E);
     E=E->NextSiblingElement();
   }
