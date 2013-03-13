@@ -118,7 +118,7 @@ namespace MBSim {
        *
        * \remark: a vector length of 2 is necessary (Vec(2,INIT,0.))
        */
-      virtual fmatvec::Vec2 computeLagrangeParameter(const fmatvec::Vec3 &WrPoint) {throw MBSimError("ERROR computeLagrangeParameter(const fmatvec::Vec &WrPoint): Not implemented for this contour: \"" + this->getType() + "\"."); return 0; }
+      virtual fmatvec::Vec2 computeLagrangeParameter(const fmatvec::Vec3 &WrPoint) {throw MBSimError("ERROR computeLagrangeParameter(const fmatvec::Vec3 &WrPoint): Not implemented for this contour: \"" + this->getType() + "\"."); return 0; }
 
       /**
        * \param position of contour in inertial frame

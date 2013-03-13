@@ -42,7 +42,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  RigidBody::RigidBody(const string &name) : Body(name), m(0), cb(false), APK(EYE), fT(0), fPrPK(0), fAPK(0), fPJT(0), fPJR(0), fPdJT(0), fPdJR(0), fPjT(0), fPjR(0), fPdjT(0), fPdjR(0), constraint(0), frameForJacobianOfRotation(0) {
+  RigidBody::RigidBody(const string &name) : Body(name), m(0), cb(false), APK(EYE), fT(0), fPrPK(0), fAPK(0), fPJT(0), fPJR(0), fPdJT(0), fPdJR(0), fPjT(0), fPjR(0), fPdjT(0), fPdjR(0), constraint(0), frameForJacobianOfRotation(0), frameForInertiaTensor(0) {
 
     C=new FixedRelativeFrame("C");
     Body::addFrame(C);
@@ -313,6 +313,9 @@ namespace MBSim {
         }
       }
       frameForJacobianOfRotation = cb?K:R;
+
+      if(frameForInertiaTensor && frameForInertiaTensor!=C)
+        SThetaS = JMJT(static_cast<FixedRelativeFrame*>(frameForInertiaTensor)->getRelativeOrientation(),SThetaS) - m*JTJ(tilde(static_cast<FixedRelativeFrame*>(frameForInertiaTensor)->getRelativePosition()));
 
       if(constraint)
 	TRel.resize(nq,nu[0]);
@@ -858,68 +861,68 @@ namespace MBSim {
 
   TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0 = Body::writeXMLFile(parent);
-//
-//    TiXmlElement * ele1 = new TiXmlElement( MBSIMNS"frameForKinematics" );
-//    string str = string("Frame[") + getFrameForKinematics()->getName() + "]";
-//    ele1->SetAttribute("ref", str);
-//    ele0->LinkEndChild(ele1);
-//
-//    addElementText(ele0,MBSIMNS"mass",getMass());
-//    addElementText(ele0,MBSIMNS"inertiaTensor",getInertiaTensor());
-//
-//    ele1 = new TiXmlElement( MBSIMNS"translation" );
-//    if(getTranslation()) 
-//      getTranslation()->writeXMLFile(ele1);
-//    ele0->LinkEndChild(ele1);
-//
-//    ele1 = new TiXmlElement( MBSIMNS"rotation" );
-//    if(getRotation()) 
-//      getRotation()->writeXMLFile(ele1);
-//    ele0->LinkEndChild(ele1);
-//
-//    ele1 = new TiXmlElement( MBSIMNS"frames" );
-//    for(unsigned int i=1; i<frame.size(); i++) {
-//      TiXmlElement* ele2 = new TiXmlElement( MBSIMNS"frame" );
-//      ele1->LinkEndChild( ele2 );
-//      frame[i]->writeXMLFile(ele2);
-//      if(saved_refFrameF[i-1] != "C") {
-//        TiXmlElement *ele3 = new TiXmlElement( MBSIMNS"frameOfReference" );
-//        string str = string("Frame[") + saved_refFrameF[i-1] + "]";
-//        ele3->SetAttribute("ref", str);
-//        ele2->LinkEndChild(ele3);
-//      }
-//
-//      addElementText(ele2,MBSIMNS"position",saved_RrRF[i-1]);
-//      addElementText(ele2,MBSIMNS"orientation",saved_ARF[i-1]);
-//    }
-//    ele0->LinkEndChild( ele1 );
-//
-//    ele1 = new TiXmlElement( MBSIMNS"contours" );
-//    for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i) 
-//      (*i)->writeXMLFile(ele1);
-//    ele0->LinkEndChild( ele1 );
-//
-//#ifdef HAVE_OPENMBVCPPINTERFACE
-//    if(getOpenMBVBody()) {
-//      ele1 = new TiXmlElement( MBSIMNS"openMBVRigidBody" );
-//      getOpenMBVBody()->writeXMLFile(ele1);
-//
-//      if(getOpenMBVFrameOfReference()) {
-//        TiXmlElement * ele2 = new TiXmlElement( MBSIMNS"frameOfReference" );
-//        string str = string("Frame[") + getOpenMBVFrameOfReference()->getName() + "]";
-//        ele2->SetAttribute("ref", str);
-//        ele1->LinkEndChild(ele2);
-//      }
-//      ele0->LinkEndChild(ele1);
-//    }
-//
-//    if(C->getOpenMBVFrame()) {
-//      ele1 = new TiXmlElement( MBSIMNS"enableOpenMBVFrameC" );
-//      addElementText(ele1,MBSIMNS"size",C->getOpenMBVFrame()->getSize());
-//      addElementText(ele1,MBSIMNS"offset",C->getOpenMBVFrame()->getOffset());
-//      ele0->LinkEndChild(ele1);
-//    }
-//#endif
+
+    TiXmlElement * ele1 = new TiXmlElement( MBSIMNS"frameForKinematics" );
+    string str = string("Frame[") + getFrameForKinematics()->getName() + "]";
+    ele1->SetAttribute("ref", str);
+    ele0->LinkEndChild(ele1);
+
+    addElementText(ele0,MBSIMNS"mass",getMass());
+    addElementText(ele0,MBSIMNS"inertiaTensor",getInertiaTensor());
+
+    ele1 = new TiXmlElement( MBSIMNS"translation" );
+    if(getTranslation()) 
+      getTranslation()->writeXMLFile(ele1);
+    ele0->LinkEndChild(ele1);
+
+    ele1 = new TiXmlElement( MBSIMNS"rotation" );
+    if(getRotation()) 
+      getRotation()->writeXMLFile(ele1);
+    ele0->LinkEndChild(ele1);
+
+    ele1 = new TiXmlElement( MBSIMNS"frames" );
+    for(unsigned int i=1; i<frame.size(); i++) {
+      TiXmlElement* ele2 = new TiXmlElement( MBSIMNS"frame" );
+      ele1->LinkEndChild( ele2 );
+      frame[i]->writeXMLFile(ele2);
+      if(static_cast<FixedRelativeFrame*>(frame[i])->getFrameOfReference() && static_cast<FixedRelativeFrame*>(frame[i])->getFrameOfReference() != C) {
+        TiXmlElement *ele3 = new TiXmlElement( MBSIMNS"frameOfReference" );
+        string str = string("Frame[") + static_cast<FixedRelativeFrame*>(frame[i])->getFrameOfReference()->getName() + "]";
+        ele3->SetAttribute("ref", str);
+        ele2->LinkEndChild(ele3);
+      }
+
+      addElementText(ele2,MBSIMNS"position",static_cast<FixedRelativeFrame*>(frame[i])->getRelativePosition());
+      addElementText(ele2,MBSIMNS"orientation",static_cast<FixedRelativeFrame*>(frame[i])->getRelativeOrientation());
+    }
+    ele0->LinkEndChild( ele1 );
+
+    ele1 = new TiXmlElement( MBSIMNS"contours" );
+    for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i) 
+      (*i)->writeXMLFile(ele1);
+    ele0->LinkEndChild( ele1 );
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    if(getOpenMBVBody()) {
+      ele1 = new TiXmlElement( MBSIMNS"openMBVRigidBody" );
+      getOpenMBVBody()->writeXMLFile(ele1);
+
+      if(getOpenMBVFrameOfReference()) {
+        TiXmlElement * ele2 = new TiXmlElement( MBSIMNS"frameOfReference" );
+        string str = string("Frame[") + getOpenMBVFrameOfReference()->getName() + "]";
+        ele2->SetAttribute("ref", str);
+        ele1->LinkEndChild(ele2);
+      }
+      ele0->LinkEndChild(ele1);
+    }
+
+    if(C->getOpenMBVFrame()) {
+      ele1 = new TiXmlElement( MBSIMNS"enableOpenMBVFrameC" );
+      addElementText(ele1,MBSIMNS"size",C->getOpenMBVFrame()->getSize());
+      addElementText(ele1,MBSIMNS"offset",C->getOpenMBVFrame()->getOffset());
+      ele0->LinkEndChild(ele1);
+    }
+#endif
 
     return ele0;
   }

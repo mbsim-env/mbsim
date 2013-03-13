@@ -176,10 +176,11 @@ namespace MBSim {
 
       /**
        * \param RThetaR  inertia tensor
-       * \param refFrame optional reference Frame of inertia tensor, otherwise cog-Frame will be used as reference
+       * \param frame optional reference Frame of inertia tensor, otherwise cog-Frame will be used as reference
        */
-      void setInertiaTensor(const fmatvec::SymMat3& RThetaR) {
+      void setInertiaTensor(const fmatvec::SymMat3& RThetaR, Frame *frame=0) {
         SThetaS = RThetaR;
+        frameForInertiaTensor = frame;
       }
 
       const fmatvec::SymMat3& getInertiaTensor() const {return SThetaS;}
@@ -422,12 +423,12 @@ namespace MBSim {
 
       int nu[2], nq;
 
-      Frame* frameForJacobianOfRotation;
+      Frame *frameForJacobianOfRotation;
 
       std::vector<FixedRelativeFrame*> RBF;
       std::vector<CompoundContour*> RBC;
 
-      //fmatvec::Vec qRel0, uRel0;
+      Frame *frameForInertiaTensor;
 
     private:
 #ifdef HAVE_OPENMBVCPPINTERFACE

@@ -101,7 +101,8 @@ namespace MBSim {
 
       /*!
        * \brief check if this area(rectangle) intersect with a circle,
-       * \param radi:radius of the circle; CenCir: center of the circle
+       * \param radius radius of the circle
+       * \param CenCir center of the circle in world coordinates
        * \return true: this area intersects the circle
        * \attention: the circle is the intersection circle between the sphere and the plane, thus the center of the
        * circle is different from the center of the sphere.

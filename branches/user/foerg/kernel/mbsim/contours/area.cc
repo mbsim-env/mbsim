@@ -34,7 +34,7 @@ namespace MBSim {
   }
 
   void Area::init(InitStage stage) {
-    if(stage == calculateLocalInitialValues)
+    if (stage == calculateLocalInitialValues)
       setVertices();
 
     Plane::init(stage);
@@ -67,8 +67,7 @@ namespace MBSim {
     Vec3 P_inA = this->getFrame()->getOrientation().T() * (Point - this->getFrame()->getPosition());
 
     // Here we suppose that the area in our codes has axis x parallel to its normal
-    double y = this->limy, z = this->limz;
-    if ((P_inA(1) <= y / 2) && (P_inA(1) >= (-y / 2)) && (P_inA(2) <= z / 2) && (P_inA(2) >= (-z / 2))) {
+    if ((P_inA(1) <= limy / 2) && (P_inA(1) >= (-limy / 2)) && (P_inA(2) <= limz / 2) && (P_inA(2) >= (-limz / 2))) {
       return true;
     }
     return false;
@@ -83,7 +82,7 @@ namespace MBSim {
   }
 
   // this algorithm comes from http://doswa.com/2009/07/13/circle-segment-intersectioncollision.html
-  fmatvec::Vec3 Area::Point_closest_toCircle_onLineseg(const fmatvec::Vec3 & EndP1, const fmatvec::Vec3 & EndP2, const fmatvec::Vec3& CenCir) {
+  Vec3 Area::Point_closest_toCircle_onLineseg(const Vec3 & EndP1, const Vec3 & EndP2, const Vec3& CenCir) {
     //vector of the line segment
     Vec3 SegV = EndP2 - EndP1;
     //vector from end point 1 to center of the circle
@@ -98,48 +97,45 @@ namespace MBSim {
     if (proj >= nrm2(SegV)) {
       return EndP2;
     }
-    Vec3 Vproj = SegV_unit * proj;
-    Vec3 Closest = Vproj + EndP1;
-    return Closest;
+    return EndP1 + proj * SegV_unit;
   }
 
-  bool Area::Intersect_Circle(const double & radi, const fmatvec::Vec3& CenCir) {
-    //vertices under inertial frame
-    Vec3 IrA(NONINIT), IrB(NONINIT), IrC(NONINIT), IrD(NONINIT);
-    //closest point on the line segment
-    Vec3 Closest(NONINIT);
-    //center of area
-    Vec3 C_A = this->getFrame()->getPosition();
-    //orientation matrix
-    SqrMat3 OriMat = this->getFrame()->getOrientation();
-
-    //translate the coordinates under the inertial frame
-    IrA = C_A + OriMat * RrA;
-    IrB = C_A + OriMat * RrB;
-    IrC = C_A + OriMat * RrC;
-    IrD = C_A + OriMat * RrD;
-
+  bool Area::Intersect_Circle(const double & radi, const Vec3& CenCir) {
     //if CenCir lies in the square, intersect
     if (PointInArea(CenCir)) {
       return true;
     }
 
-    //if any of the vertices lies in the circle, intersect
-    if (PointInCircle(IrA, CenCir, radi)) {
-      return true;
-    }
-    if (PointInCircle(IrB, CenCir, radi)) {
-      return true;
-    }
-    if (PointInCircle(IrC, CenCir, radi)) {
-      return true;
-    }
-    if (PointInCircle(IrD, CenCir, radi)) {
-      return true;
-    }
+    //center of area
+    Vec3 C_A = this->getFrame()->getPosition();
+    //orientation matrix
+    SqrMat3 OriMat = this->getFrame()->getOrientation();
 
-    //check if any of the 4 edges of the area(AB,BC,CD,DA) intersect with the square
-    //firstly select the nearest point to the circle on the line segment
+    //vertices in world frame
+    Vec3 IrA = C_A + OriMat * RrA;
+    Vec3 IrB = C_A + OriMat * RrB;
+    Vec3 IrC = C_A + OriMat * RrC;
+    Vec3 IrD = C_A + OriMat * RrD;
+
+    //closest point on the line segment
+    Vec3 Closest(NONINIT);
+
+//    //if any of the vertices lies in the circle, intersect --> Check is done due to Closest point on linesegment check already!
+//    if (PointInCircle(IrA, CenCir, radi)) {
+//      return true;
+//    }
+//    if (PointInCircle(IrB, CenCir, radi)) {
+//      return true;
+//    }
+//    if (PointInCircle(IrC, CenCir, radi)) {
+//      return true;
+//    }
+//    if (PointInCircle(IrD, CenCir, radi)) {
+//      return true;
+//    }
+
+//check if any of the 4 edges of the area(AB,BC,CD,DA) intersect with the square
+//firstly select the nearest point to the circle on the line segment
     Closest = Point_closest_toCircle_onLineseg(IrA, IrB, CenCir);
     if (PointInCircle(Closest, CenCir, radi)) {
       return true;
@@ -162,13 +158,9 @@ namespace MBSim {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   void Area::enableOpenMBV(bool enable, int number) {
+    Plane::enableOpenMBV(enable, limy, number);
     if (enable) {
-      openMBVRigidBody = new OpenMBV::Grid;
-      ((OpenMBV::Grid*) openMBVRigidBody)->setXSize(limy);
-      ((OpenMBV::Grid*) openMBVRigidBody)->setYSize(limz);
-      ((OpenMBV::Grid*) openMBVRigidBody)->setXNumber(number);
-      ((OpenMBV::Grid*) openMBVRigidBody)->setYNumber(number);
-      ((OpenMBV::Grid*) openMBVRigidBody)->setInitialRotation(0., M_PI / 2., 0.);
+      ((OpenMBV::Grid*) openMBVRigidBody)->setXSize(limz);
     }
     else
       openMBVRigidBody = 0;
