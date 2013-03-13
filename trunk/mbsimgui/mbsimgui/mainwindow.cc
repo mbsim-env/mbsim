@@ -343,7 +343,7 @@ void MainWindow::changeWorkingDir() {
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
-  //if(actionSaveMBS->isEnabled() || actionSaveMBS->isEnabled() || actionSaveParameter->isEnabled()) {
+  //if(actionSaveMBS->isEnabled() || actionSaveMBS->isEnabled() || actionSaveParameter->isEnabled()) {}
   QMessageBox::StandardButton ret;
   ret = QMessageBox::warning(this, tr("Application"),
       tr("A document may has been modified.\n"
@@ -374,8 +374,8 @@ void MainWindow::closeEvent(QCloseEvent *event) {
   //  } else {
   //    event->ignore();
   //  }
-  kill(openmbvID,SIGQUIT);
-  kill(h5plotserieID,SIGQUIT);
+  //kill(openmbvID,SIGQUIT); Not working in windows and openmbvID (return value of runProgramSyncronous is NOT the pid
+  //kill(h5plotserieID,SIGQUIT); Not working in windows and openmbvID (return value of runProgramSyncronous is NOT the pid
 }
 
 void MainWindow::elementListClicked() {
