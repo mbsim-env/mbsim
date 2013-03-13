@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2013 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -86,6 +86,7 @@ namespace MBSim {
       virtual void init(InitStage stage);
 #ifdef HAVE_OPENMBVCPPINTERFACE
       virtual void enableOpenMBV(double size=1, double offset=1);
+      void setOpenMBVFrame(OpenMBV::Frame* frame) { openMBVFrame = frame; }
       OpenMBV::Frame* getOpenMBVFrame() {return openMBVFrame; }
 #endif
       /***************************************************/
@@ -115,6 +116,8 @@ namespace MBSim {
       virtual void initializeUsingXML(TiXmlElement *element);
       virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
       /***************************************************/
+
+      virtual Element * getByPathSearch(std::string path);
 
     protected:
       ///**
@@ -160,6 +163,60 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::Frame* openMBVFrame;
 #endif
+  };
+
+  /**
+   * \brief cartesian frame on rigid bodies 
+   * \author Martin Foerg
+   */
+  class FixedRelativeFrame : public Frame {
+
+    public:
+      FixedRelativeFrame(const std::string &name = "dummy", const fmatvec::Vec3 &r=fmatvec::Vec3(), const fmatvec::SqrMat3 &A=fmatvec::SqrMat3(fmatvec::EYE), const Frame *refFrame=0) : Frame(name), R(refFrame), RrRP(r), ARP(A) {}
+
+      virtual void init(InitStage stage);
+
+      void setRelativePosition(const fmatvec::Vec3 &r) { RrRP = r; }
+      void setRelativeOrientation(const fmatvec::SqrMat3 &A) { ARP = A; }
+      void setFrameOfReference(const Frame *frame) { R = frame; }
+      void setFrameOfReference(const std::string &frame) { saved_frameOfReference = frame; }
+
+      const fmatvec::Vec3& getRelativePosition() const { return RrRP; }
+      const fmatvec::SqrMat3& getRelativeOrientation() const { return ARP; }
+      const Frame* getFrameOfReference() const { return R; }
+      const fmatvec::Vec3& getWrRP() const { return WrRP; }
+
+      void updateRelativePosition() { WrRP = R->getOrientation()*RrRP; }
+      void updatePosition() { updateRelativePosition(); setPosition(R->getPosition() + WrRP); }
+      void updateOrientation() { setOrientation(R->getOrientation()*ARP); }
+      void updateVelocity() { setVelocity(R->getVelocity() + crossProduct(R->getAngularVelocity(), WrRP)); } 
+      void updateAngularVelocity() { setAngularVelocity(R->getAngularVelocity()); }
+      void updateStateDependentVariables() {
+        updatePosition();
+        updateOrientation();
+        updateVelocity();
+        updateAngularVelocity();
+      }
+      void updateJacobians(int j=0) {
+        fmatvec::SqrMat3 tWrRP = tilde(WrRP);
+        setJacobianOfTranslation(R->getJacobianOfTranslation(j) - tWrRP*R->getJacobianOfRotation(j),j);
+        setJacobianOfRotation(R->getJacobianOfRotation(j),j);
+        setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation(j) - tWrRP*R->getGyroscopicAccelerationOfRotation(j) + crossProduct(R->getAngularVelocity(),crossProduct(R->getAngularVelocity(),WrRP)),j);
+        setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation(j),j);
+      }
+      void updateStateDerivativeDependentVariables(const fmatvec::Vec &ud) { 
+        setAcceleration(getJacobianOfTranslation()*ud + getGyroscopicAccelerationOfTranslation()); 
+        setAngularAcceleration(getJacobianOfRotation()*ud + getGyroscopicAccelerationOfRotation());
+      }
+
+      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+
+    protected:
+      const Frame *R;
+      fmatvec::Vec3 RrRP, WrRP;
+      fmatvec::SqrMat3 ARP;
+      std::string saved_frameOfReference;
   };
 
 }

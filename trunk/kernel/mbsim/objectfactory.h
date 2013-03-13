@@ -32,6 +32,7 @@ class ObjectFactoryBase {
     virtual Translation* createTranslation(TiXmlElement *element) { return NULL; }
     virtual Rotation* createRotation(TiXmlElement *element) { return NULL; }
     virtual Link* createLink(TiXmlElement *element) { return NULL; }
+    virtual Observer* createObserver(TiXmlElement *element) { return NULL; }
     virtual Integrator* createIntegrator(TiXmlElement *element) { return NULL; }
     virtual GeneralizedForceLaw *createGeneralizedForceLaw(TiXmlElement *element) { return NULL; }
     virtual GeneralizedImpactLaw *createGeneralizedImpactLaw(TiXmlElement *element) { return NULL; }
@@ -72,6 +73,7 @@ class ObjectFactory : public ObjectFactoryBase {
     Translation* createTranslation(TiXmlElement *element);
     Rotation* createRotation(TiXmlElement *element);
     Link* createLink(TiXmlElement *element);
+    Observer* createObserver(TiXmlElement *element);
     Integrator* createIntegrator(TiXmlElement *element);
     GeneralizedForceLaw *createGeneralizedForceLaw(TiXmlElement *element);
     GeneralizedImpactLaw *createGeneralizedImpactLaw(TiXmlElement *element);
@@ -106,6 +108,7 @@ class MBSimObjectFactory : protected ObjectFactoryBase {
     Translation* createTranslation(TiXmlElement *element);
     Rotation* createRotation(TiXmlElement *element);
     Link* createLink(TiXmlElement *element);
+    Observer* createObserver(TiXmlElement *element);
     Integrator* createIntegrator(TiXmlElement *element);
     GeneralizedForceLaw *createGeneralizedForceLaw(TiXmlElement *element);
     GeneralizedImpactLaw *createGeneralizedImpactLaw(TiXmlElement *element);

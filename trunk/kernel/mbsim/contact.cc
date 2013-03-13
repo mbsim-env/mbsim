@@ -480,6 +480,9 @@ namespace MBSim {
         cpData[i][1].getFrameOfReference().sethSize(contour[1]->gethSize(0),0);
         cpData[i][1].getFrameOfReference().sethSize(contour[1]->gethSize(1),1);
 
+        cpData[i][0].getFrameOfReference().init(stage);
+        cpData[i][1].getFrameOfReference().init(stage);
+
         int laSizek = gdActive[i][0]+gdActive[i][1]*getFrictionDirections();
 
         Wk[0].push_back(new Mat[2]);
@@ -511,14 +514,6 @@ namespace MBSim {
       iT = Range<Var,Var>(1,getFrictionDirections());
 
       for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
-        cpData[k][0].getFrameOfReference().getJacobianOfTranslation(0).resize(contour[0]->getReferenceJacobianOfTranslation(0).cols());
-        cpData[k][0].getFrameOfReference().getJacobianOfTranslation(1).resize(contour[0]->getReferenceJacobianOfTranslation(1).cols());
-        cpData[k][0].getFrameOfReference().getJacobianOfRotation(0).resize(contour[0]->getReferenceJacobianOfRotation(0).cols());
-        cpData[k][0].getFrameOfReference().getJacobianOfRotation(1).resize(contour[0]->getReferenceJacobianOfRotation(1).cols());
-        cpData[k][1].getFrameOfReference().getJacobianOfTranslation(0).resize(contour[1]->getReferenceJacobianOfTranslation(0).cols());
-        cpData[k][1].getFrameOfReference().getJacobianOfTranslation(1).resize(contour[1]->getReferenceJacobianOfTranslation(1).cols());
-        cpData[k][1].getFrameOfReference().getJacobianOfRotation(0).resize(contour[1]->getReferenceJacobianOfRotation(0).cols());
-        cpData[k][1].getFrameOfReference().getJacobianOfRotation(1).resize(contour[1]->getReferenceJacobianOfRotation(1).cols());
 	lak[k] >> la(k*(1+getFrictionDirections()),(k+1)*(1+getFrictionDirections())-1);
 	gdk[k] >> gd(k*(1+getFrictionDirections()),(k+1)*(1+getFrictionDirections())-1);
         gdnk[k] >> gdn(k*(1+getFrictionDirections()),(k+1)*(1+getFrictionDirections())-1);

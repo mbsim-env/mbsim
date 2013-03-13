@@ -92,6 +92,8 @@
       <xs:enumeration value="-globalPosition"/>
       <xs:enumeration value="+globalVelocity"/>
       <xs:enumeration value="-globalVelocity"/>
+      <xs:enumeration value="+globalAcceleration"/>
+      <xs:enumeration value="-globalAcceleration"/>
       <xs:enumeration value="+energy"/>
       <xs:enumeration value="-energy"/>
       <xs:enumeration value="+openMBV"/>
@@ -453,22 +455,28 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="frame">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Lokale Definition.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-                <xs:element ref="pv:embed">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Definition in externer Datei.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-              </xs:choice>
+              <xs:sequence>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                  <xs:element ref="frame">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                        Lokale Definition.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                  <xs:element ref="pv:embed">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                        Definition in externer Datei.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                </xs:choice>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                  <xs:element ref="FixedRelativeFrame"/>
+                  <xs:element ref="pv:embed"/>
+                </xs:choice>
+              </xs:sequence>
             </xs:complexType>
           </xs:element>
           <xs:element name="contours">
@@ -478,22 +486,28 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="contour">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Lokale Definition.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-                <xs:element ref="pv:embed">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Definition in externer Datei.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-              </xs:choice>
+              <xs:sequence>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                  <xs:element ref="contour">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                        Lokale Definition.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                  <xs:element ref="pv:embed">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                        Definition in externer Datei.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                </xs:choice>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                  <xs:element ref="Contour"/>
+                  <xs:element ref="pv:embed"/>
+                </xs:choice>
+              </xs:sequence>
             </xs:complexType>
           </xs:element>
           <xs:element name="groups">
@@ -580,6 +594,31 @@
             <xs:complexType>
               <xs:choice minOccurs="0" maxOccurs="unbounded">
                 <xs:element ref="Link">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Lokale Definition.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element ref="pv:embed">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Definition in externer Datei.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+              </xs:choice>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="observers" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              tbd.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="Observer">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Lokale Definition.
@@ -908,7 +947,7 @@
     <xs:complexContent>
       <xs:extension base="ObjectType">
         <xs:sequence>
-          <xs:element name="frameOfReference">
+          <xs:element name="frameOfReference" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Definiert das KOS bezüglich dessen die Bewegung (Kinematik; generalisierte Lagen) des Körpers angegeben wird.<br/>
@@ -940,7 +979,7 @@
     <xs:complexContent>
       <xs:extension base="BodyType">
         <xs:sequence>
-          <xs:element name="frameForKinematics">
+          <xs:element name="frameForKinematics" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Definiert das KOS, dessen relative Bewegung bezüglich des <tt>frameOfReference</tt>
@@ -1127,10 +1166,16 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="frame"/>
-                <xs:element ref="pv:embed"/>
-              </xs:choice>
+              <xs:sequence>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                  <xs:element ref="frame"/>
+                  <xs:element ref="pv:embed"/>
+                </xs:choice>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                  <xs:element ref="FixedRelativeFrame"/>
+                  <xs:element ref="pv:embed"/>
+                </xs:choice>
+              </xs:sequence>
             </xs:complexType>
           </xs:element>
           <xs:element name="contours">
@@ -1142,10 +1187,16 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
+              <xs:sequence>
               <xs:choice minOccurs="0" maxOccurs="unbounded">
                 <xs:element ref="contour"/>
                 <xs:element ref="pv:embed"/>
               </xs:choice>
+              <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="Contour"/>
+                <xs:element ref="pv:embed"/>
+              </xs:choice>
+              </xs:sequence>
             </xs:complexType>
           </xs:element>
           <xs:element name="isFrameOfBodyForRotation" minOccurs="0">
@@ -2022,27 +2073,83 @@
     <xs:complexContent>
       <xs:extension base="ElementType">
         <xs:sequence>
-          <xs:element name="enableOpenMBV" minOccurs="0">  
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element name="size" type="pv:lengthScalar">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Länge der Achsen des KOS.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-                <xs:element name="offset" type="pv:nounitScalar">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Relative Verschiebung der Achsen (0=Achsenkreuz, 1=Rechtssystem).
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-              </xs:sequence>
-            </xs:complexType> 
-          </xs:element>
+          <xs:choice>
+            <xs:element name="enableOpenMBV" minOccurs="0">  
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="size" type="pv:lengthScalar">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                        Länge der Achsen des KOS.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                  <xs:element name="offset" type="pv:nounitScalar">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                        Relative Verschiebung der Achsen (0=Achsenkreuz, 1=Rechtssystem).
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                </xs:sequence>
+              </xs:complexType> 
+            </xs:element>
+            <xs:element name="openMBVFrame" minOccurs="0">  
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                tbd
+                </xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="ombv:Frame"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
         </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType> 
+
+  <xs:element name="FixedRelativeFrame" substitutionGroup="Frame" type="FixedRelativeFrameType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Klasse zur Beschreibung von Koordinatensystemen.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="FixedRelativeFrameType">
+    <xs:complexContent>
+      <xs:extension base="FrameType">
+        <xs:sequence>
+          <xs:element name="frameOfReference" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Koordinatensystem, in dem die Positionierung des KOS angegeben wird.<br/>
+                Standardmässig "I"-System der Gruppe bzw. "C"-System des RigidBody.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="ParentFrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="relativePosition" type="pv:lengthVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Relative Lage des Koordinatensystems.<br/>
+                Vektor von <tt>frameOfReference</tt> zum Ursprung des neuen KOS dargestellt
+                im KOS <tt>frameOfReference</tt>.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="relativeOrientation" type="pv:nounitMatrix" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Relative Orientierung des Koordinatensystems.<br/>
+                Transformationsmatrix vom neuen KOS ins KOS <tt>frameOfReference</tt>.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType> 
@@ -2056,7 +2163,21 @@
   </xs:element>
   <xs:complexType name="ContourType">
     <xs:complexContent>
-      <xs:extension base="ElementType"/>
+      <xs:extension base="ElementType">
+        <xs:sequence>
+      <xs:element name="frameOfReference" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            Koordinatensystem, in dem die Positionierung des KOS angegeben wird.<br/>
+            Standardmässig "I"-System der Gruppe bzw. "C"-System des RigidBody.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+        </xs:complexType>
+      </xs:element>
+        </xs:sequence>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
@@ -3790,5 +3911,138 @@
 
   <xs:element name="Function3_MVVS" abstract="true" type="Function3_MVVSType"/>
   <xs:complexType name="Function3_MVVSType"/>
+
+  <xs:element name="Observer" substitutionGroup="Element" type="ObserverType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+    tbd.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="ObserverType">
+    <xs:complexContent>
+      <xs:extension base="ElementType"/>
+    </xs:complexContent>
+  </xs:complexType> 
+
+  <xs:element name="AbsoluteKinematicsObserver" substitutionGroup="Observer" type="AbsoluteKinematicsObserverType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+    tbd.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="AbsoluteKinematicsObserverType">
+    <xs:complexContent>
+      <xs:extension base="ObserverType">
+        <xs:sequence>
+          <xs:element name="frame">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              tbd.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:sequence>
+            <xs:choice>
+              <xs:element name="enableOpenMBVPosition" minOccurs="0">  
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="diameter" type="pv:lengthScalar">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                        tbd.
+                        </xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element name="headDiameter" type="pv:lengthScalar">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                        tbd.
+                        </xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element name="headLength" type="pv:lengthScalar">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                        tbd.
+                        </xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element name="staticColor" type="pv:nounitScalar">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                        tbd.
+                        </xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType> 
+              </xs:element>
+              <xs:element name="openMBVPositionArrow" minOccurs="0">  
+                 <xs:annotation>
+                   <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                   tbd
+                   </xs:documentation>
+                 </xs:annotation>
+                 <xs:complexType>
+                   <xs:sequence>
+                     <xs:element ref="ombv:Arrow"/>
+                   </xs:sequence>
+                 </xs:complexType>
+              </xs:element>
+            </xs:choice>
+          </xs:sequence>
+          <xs:element name="openMBVVelocityArrow" minOccurs="0">  
+             <xs:annotation>
+               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+               tbd
+               </xs:documentation>
+             </xs:annotation>
+             <xs:complexType>
+               <xs:sequence>
+                 <xs:element ref="ombv:Arrow"/>
+               </xs:sequence>
+             </xs:complexType>
+          </xs:element>
+          <xs:element name="openMBVAngularVelocityArrow" minOccurs="0">  
+             <xs:annotation>
+               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+               tbd
+               </xs:documentation>
+             </xs:annotation>
+             <xs:complexType>
+               <xs:sequence>
+                 <xs:element ref="ombv:Arrow"/>
+               </xs:sequence>
+             </xs:complexType>
+          </xs:element>
+          <xs:element name="openMBVAccelerationArrow" minOccurs="0">  
+             <xs:annotation>
+               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+               tbd
+               </xs:documentation>
+             </xs:annotation>
+             <xs:complexType>
+               <xs:sequence>
+                 <xs:element ref="ombv:Arrow"/>
+               </xs:sequence>
+             </xs:complexType>
+          </xs:element>
+          <xs:element name="openMBVAngularAccelerationArrow" minOccurs="0">  
+             <xs:annotation>
+               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+               tbd
+               </xs:documentation>
+             </xs:annotation>
+             <xs:complexType>
+               <xs:sequence>
+                 <xs:element ref="ombv:Arrow"/>
+               </xs:sequence>
+             </xs:complexType>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType> 
 
 </xs:schema>

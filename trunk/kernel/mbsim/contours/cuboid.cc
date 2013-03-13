@@ -68,7 +68,13 @@ namespace MBSim {
       for(int i=0; i<8; i++) {
         stringstream s;
         s << i+1;
-        addContourElement(new Point(s.str()),Kr[i]);
+        FixedRelativeFrame *frame = new FixedRelativeFrame("R");
+        frame->setRelativePosition(Kr[i]);
+        frame->setFrameOfReference(R);
+        addFrame(frame);
+        Point *point = new Point(s.str());
+        point->setFrameOfReference(frame);
+        addContour(point);
       }
     }
     else

@@ -72,7 +72,7 @@ namespace MBSim {
 
   Vec2 PolynomialFrustum::computeLagrangeParameter(const Vec3 & WrPoint) {
     Vec2 returnVal(NONINIT);
-    Vec3 inFramePoint = -R.getPosition() + R.getOrientation().T() * WrPoint;
+    Vec3 inFramePoint = -R->getPosition() + R->getOrientation().T() * WrPoint;
 
     returnVal(0) = inFramePoint(0); //height coordinate
     returnVal(1) = ArcTan(inFramePoint(1), inFramePoint(2));
@@ -191,7 +191,7 @@ namespace MBSim {
   Vec3 PolynomialFrustum::getEnclosingSphereCenter() {
     Vec3 center;
     center(0) = height / 2;
-    return R.getPosition() + R.getOrientation() * center;
+    return R->getPosition() + R->getOrientation() * center;
   }
 
   const fmatvec::Vec & PolynomialFrustum::getPolynomialParameters() {

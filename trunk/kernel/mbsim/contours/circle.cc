@@ -46,8 +46,8 @@ namespace MBSim {
 
     Vec3 CrPoint = WrPoint;
 
-    CrPoint -= R.getPosition();
-    CrPoint = R.getOrientation().T() * CrPoint; // position in moving frame of reference
+    CrPoint -= R->getPosition();
+    CrPoint = R->getOrientation().T() * CrPoint; // position in moving frame of reference
 
     LagrangeParameter(0) = ArcTan(CrPoint(0), CrPoint(1));
 
