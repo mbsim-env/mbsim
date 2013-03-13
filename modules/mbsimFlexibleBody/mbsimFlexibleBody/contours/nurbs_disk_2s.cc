@@ -49,18 +49,18 @@ namespace MBSimFlexibleBody {
   void NurbsDisk2s::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) {
 #ifdef HAVE_NURBS
     if(nrm2(cp.getLagrangeParameterPosition()) < epsroot()) { // center of gravity
-      cp.getFrameOfReference().setOrientation(R.getOrientation() * static_cast<FlexibleBody2s13*>(parent)->getA());
+      cp.getFrameOfReference().setOrientation(R->getOrientation() * static_cast<FlexibleBody2s13*>(parent)->getA());
 
       switch(RefDofs) {
         case 2:
-        cp.getFrameOfReference().setPosition(R.getPosition() + R.getOrientation() * Vec("[0;0;1]") * static_cast<FlexibleBody2s13*>(parent)->getq()(0));
-        cp.getFrameOfReference().setVelocity( R.getOrientation() * Vec("[0;0;1]") * static_cast<FlexibleBody2s13*>(parent)->getu()(0));
-        cp.getFrameOfReference().setAngularVelocity(R.getOrientation() * Vec("[0;0;1]") * static_cast<FlexibleBody2s13*>(parent)->getu()(1));
+        cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * Vec("[0;0;1]") * static_cast<FlexibleBody2s13*>(parent)->getq()(0));
+        cp.getFrameOfReference().setVelocity( R->getOrientation() * Vec("[0;0;1]") * static_cast<FlexibleBody2s13*>(parent)->getu()(0));
+        cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * Vec("[0;0;1]") * static_cast<FlexibleBody2s13*>(parent)->getu()(1));
         break;
         case 6:
-        cp.getFrameOfReference().setPosition(R.getPosition() + R.getOrientation() * static_cast<FlexibleBody2s13*>(parent)->getq()(0,2));
-        cp.getFrameOfReference().setVelocity( R.getOrientation() * static_cast<FlexibleBody2s13*>(parent)->getu()(0,2));
-        cp.getFrameOfReference().setAngularVelocity(R.getOrientation() * static_cast<FlexibleBody2s13*>(parent)->getA() * static_cast<FlexibleBody2s13*>(parent)->getG() * static_cast<FlexibleBody2s13*>(parent)->getu()(3,5));
+        cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * static_cast<FlexibleBody2s13*>(parent)->getq()(0,2));
+        cp.getFrameOfReference().setVelocity( R->getOrientation() * static_cast<FlexibleBody2s13*>(parent)->getu()(0,2));
+        cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * static_cast<FlexibleBody2s13*>(parent)->getA() * static_cast<FlexibleBody2s13*>(parent)->getG() * static_cast<FlexibleBody2s13*>(parent)->getu()(3,5));
         break;
         default:
         throw MBSimError("ERROR(NurbsDisk2s::updateKinematicsForFrame): Unknown number of reference dofs!");
@@ -165,8 +165,8 @@ namespace MBSimFlexibleBody {
     }
     else if(stage==worldFrameContourLocation)
     {
-      R.getOrientation() = (static_cast<FlexibleBody2s13*>(parent))->getFrameOfReference()->getOrientation();
-      R.getPosition() = (static_cast<FlexibleBody2s13*>(parent))->getFrameOfReference()->getPosition();
+      R->getOrientation() = (static_cast<FlexibleBody2s13*>(parent))->getFrameOfReference()->getOrientation();
+      R->getPosition() = (static_cast<FlexibleBody2s13*>(parent))->getFrameOfReference()->getPosition();
     }
   }
 #endif

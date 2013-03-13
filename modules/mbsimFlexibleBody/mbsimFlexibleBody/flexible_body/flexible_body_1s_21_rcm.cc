@@ -62,7 +62,7 @@ namespace MBSimFlexibleBody {
 
   FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure_) : FlexibleBodyContinuum<double>(name), L(0), l0(0), E(0), A(0), I(0), rho(0), rc(0), dm(0), dl(0), openStructure(openStructure_), initialized(false) {
     contour1sFlexible = new Contour1sFlexible("Contour1sFlexible");
-    Body::addContour(contour1sFlexible);
+    addContour(contour1sFlexible);
   }
 
   void FlexibleBody1s21RCM::BuildElements() {
@@ -130,26 +130,26 @@ namespace MBSimFlexibleBody {
       Vec tmp(3,NONINIT);
       if(ff==position || ff==position_cosy || ff==all) {
         tmp(0) = X(0); tmp(1) = X(1); tmp(2) = 0.; // temporary vector used for compensating planar description
-        cp.getFrameOfReference().setPosition(frameOfReference->getPosition() + frameOfReference->getOrientation() * tmp);
+        cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * tmp);
       }
       if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
         tmp(0) = cos(X(2)); tmp(1) = sin(X(2)); tmp(2) = 0.;
-        cp.getFrameOfReference().getOrientation().set(1, frameOfReference->getOrientation() * tmp); // tangent
+        cp.getFrameOfReference().getOrientation().set(1, R->getOrientation() * tmp); // tangent
       }
       if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
         tmp(0) = -sin(X(2)); tmp(1) = cos(X(2)); tmp(2) = 0.;
-        cp.getFrameOfReference().getOrientation().set(0, frameOfReference->getOrientation() * tmp); // normal
+        cp.getFrameOfReference().getOrientation().set(0, R->getOrientation() * tmp); // normal
       }
-      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(2, -frameOfReference->getOrientation().col(2)); // binormal (cartesian system)
+      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(2, -R->getOrientation().col(2)); // binormal (cartesian system)
 
       if(ff==velocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) {
         tmp(0) = X(3); tmp(1) = X(4); tmp(2) = 0.;
-        cp.getFrameOfReference().setVelocity(frameOfReference->getOrientation() * tmp);
+        cp.getFrameOfReference().setVelocity(R->getOrientation() * tmp);
       }
 
       if(ff==angularVelocity || ff==velocities || ff==velocities_cosy || ff==all) {
         tmp(0) = 0.; tmp(1) = 0.; tmp(2) = X(5);
-        cp.getFrameOfReference().setAngularVelocity(frameOfReference->getOrientation() * tmp);
+        cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * tmp);
       }
     }
     else if(cp.getContourParameterType() == NODE) { // frame on node
@@ -159,27 +159,27 @@ namespace MBSimFlexibleBody {
 
       if(ff==position || ff==position_cosy || ff==all) {
         tmp(0) = q(5*node+0); tmp(1) = q(5*node+1); tmp(2) = 0.; // temporary vector used for compensating planar description
-        cp.getFrameOfReference().setPosition(frameOfReference->getPosition() + frameOfReference->getOrientation() * tmp);
+        cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * tmp);
       }
 
       if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
         tmp(0) =  cos(q(5*node+2)); tmp(1) = sin(q(5*node+2)); tmp(2) = 0.;
-        cp.getFrameOfReference().getOrientation().set(1, frameOfReference->getOrientation() * tmp); // tangent
+        cp.getFrameOfReference().getOrientation().set(1, R->getOrientation() * tmp); // tangent
       }
       if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
         tmp(0) = -sin(q(5*node+2)); tmp(1) = cos(q(5*node+2)); tmp(2) = 0.;
-        cp.getFrameOfReference().getOrientation().set(0, frameOfReference->getOrientation() * tmp); // normal
+        cp.getFrameOfReference().getOrientation().set(0, R->getOrientation() * tmp); // normal
       }
-      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(2, -frameOfReference->getOrientation().col(2)); // binormal (cartesian system)
+      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(2, -R->getOrientation().col(2)); // binormal (cartesian system)
 
       if(ff==velocity || ff==velocities || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
         tmp(0) = u(5*node+0); tmp(1) = u(5*node+1); tmp(2) = 0.;
-        cp.getFrameOfReference().setVelocity(frameOfReference->getOrientation() * tmp);
+        cp.getFrameOfReference().setVelocity(R->getOrientation() * tmp);
       }
 
       if(ff==angularVelocity || ff==velocities || ff==velocities_cosy || ff==all) {
         tmp(0) = 0.; tmp(1) = 0.; tmp(2) = u(5*node+2);
-        cp.getFrameOfReference().setAngularVelocity(frameOfReference->getOrientation() * tmp);
+        cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * tmp);
       }
     }
     else throw MBSimError("ERROR(FlexibleBody1s21RCM::updateKinematicsForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
@@ -215,8 +215,8 @@ namespace MBSimFlexibleBody {
     }
     else throw MBSimError("ERROR(FlexibleBody1s21RCM::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
 
-    cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation()(Index(0,2),Index(0,1))*Jacobian(Index(0,qSize-1),Index(0,1)).T());
-    cp.getFrameOfReference().setJacobianOfRotation   (frameOfReference->getOrientation()(Index(0,2),Index(2,2))*Jacobian(Index(0,qSize-1),Index(2,2)).T());
+    cp.getFrameOfReference().setJacobianOfTranslation(R->getOrientation()(Index(0,2),Index(0,1))*Jacobian(Index(0,qSize-1),Index(0,1)).T());
+    cp.getFrameOfReference().setJacobianOfRotation   (R->getOrientation()(Index(0,2),Index(2,2))*Jacobian(Index(0,qSize-1),Index(2,2)).T());
 
     // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
     // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
@@ -235,7 +235,7 @@ namespace MBSimFlexibleBody {
 
       initialized = true;
 
-      contour1sFlexible->getFrame()->setOrientation(frameOfReference->getOrientation());
+      contour1sFlexible->getFrame()->setOrientation(R->getOrientation());
       contour1sFlexible->setAlphaStart(0); contour1sFlexible->setAlphaEnd(L);
       if(userContourNodes.size()==0) {
         Vec contourNodes(Elements+1);
@@ -245,7 +245,7 @@ namespace MBSimFlexibleBody {
       else contour1sFlexible->setNodes(userContourNodes);
 
       l0 = L/Elements;
-      Vec g = frameOfReference->getOrientation()(Index(0,2),Index(0,1)).T()*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
+      Vec g = R->getOrientation()(Index(0,2),Index(0,1)).T()*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
       for(int i=0;i<Elements;i++) {
         qElement.push_back(Vec(8,INIT,0.));
         uElement.push_back(Vec(8,INIT,0.));
@@ -282,7 +282,7 @@ namespace MBSimFlexibleBody {
         for(int i=0; i<((OpenMBV::SpineExtrusion*)openMBVBody)->getNumberOfSpinePoints(); i++) {
           Vec X = computeState(ds*i);
           Vec tmp(3,NONINIT); tmp(0) = X(0); tmp(1) = X(1); tmp(2) = 0.; // temporary vector used for compensating planar description
-          Vec pos = frameOfReference->getPosition() + frameOfReference->getOrientation() * tmp;
+          Vec pos = R->getPosition() + R->getOrientation() * tmp;
           data.push_back(pos(0)); // global x-position
           data.push_back(pos(1)); // global y-position
           data.push_back(pos(2)); // global z-position
@@ -500,7 +500,7 @@ namespace MBSimFlexibleBody {
         Point3Dd velStart = curveVel.pointAt(i*l0);
 
         Vec velK(3,INIT,0.); velK(0) = velStart.x(); velK(1) = velStart.y(); velK(2) = velStart.z();
-        Vec velI = trans(frameOfReference->getOrientation())*AIK*velK;
+        Vec velI = trans(R->getOrientation())*AIK*velK;
 
         u0Dummy(i*5) = velI(0);
         u0Dummy(i*5+1) = velI(1);
