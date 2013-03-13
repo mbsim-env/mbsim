@@ -28,6 +28,7 @@ class ExtPhysicalVarProperty : public Property {
     ExtPhysicalVarProperty(std::vector<PhysicalStringProperty*> inputProperty);
     PhysicalStringProperty* getPhysicalStringProperty(int i) {return inputProperty[i];}
     PhysicalStringProperty* getCurrentPhysicalStringProperty() {return inputProperty[currentInput];}
+    const PhysicalStringProperty* getCurrentPhysicalStringProperty() const {return inputProperty[currentInput];}
     int getNumberOfInputs() const {return inputProperty.size();}
     std::string getValue() const {return inputProperty[currentInput]->getValue();}
     void setValue(const std::string &str) {inputProperty[currentInput]->setValue(str);}
@@ -45,6 +46,7 @@ class PropertyChoiceProperty : public Property {
 
   public:
     PropertyChoiceProperty(const std::vector<Property*> &property_) : property(property_), index(0) {}
+    void initialize();
     TiXmlElement* initializeUsingXML(TiXmlElement *element);
     TiXmlElement* writeXMLFile(TiXmlNode *element);
     void fromWidget(QWidget *widget);
@@ -54,10 +56,9 @@ class PropertyChoiceProperty : public Property {
     int index;
 };
 
-
-class ExtProperty : Property {
+class ExtProperty : public Property {
   public:
-    ExtProperty(Property *property_=0, bool active_=true) : property(property_), active(active_) {}
+    ExtProperty(Property *property_=0, bool active_=true, const std::string &name="", bool flag=true) : property(property_), active(active_), xmlName(name), alwaysWriteXMLName(flag) {}
     Property* getProperty() {return property;}
     const Property* getProperty() const {return property;}
     void setProperty(Property *property_) {property = property_;}
@@ -75,6 +76,22 @@ class ExtProperty : Property {
     Property *property;
     std::string xmlName;
     bool active, alwaysWriteXMLName;
+};
+
+class PropertyContainer : public Property {
+  public:
+    PropertyContainer() {}
+    PropertyContainer(const std::vector<Property*> &property_) : property(property_) {}
+
+    void initialize();
+    void addProperty(Property *property_) {property.push_back(property_);}
+    TiXmlElement* initializeUsingXML(TiXmlElement *element);
+    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+
+  protected:
+    std::vector<Property*> property;
 };
 
 #endif

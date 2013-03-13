@@ -24,10 +24,15 @@
 #include "string_widgets.h"
 #include "kinematics_widgets.h"
 #include "extended_widgets.h"
+#include "octaveutils.h"
+#include <QDir>
 #include <mbxmlutilstinyxml/tinyxml.h>
 #include <mbxmlutilstinyxml/tinynamespace.h>
 
 using namespace std;
+
+extern QDir mbsDir;
+extern bool absolutePath;
 
 void StringProperty::fromWidget(QWidget *widget) {
   setValue(static_cast<StringWidget*>(widget)->getValue());
@@ -154,15 +159,10 @@ TiXmlElement* MatProperty::writeXMLFile(TiXmlNode *parent) {
 }
 
 void MatProperty::fromWidget(QWidget *widget) {
-  cout << "fromWidget"<<endl;
-  cout << dynamic_cast<BasicMatWidget*>(widget) << endl;
   setMat(static_cast<BasicMatWidget*>(widget)->getMat());
 }
 
 void MatProperty::toWidget(QWidget *widget) {
-  cout << "toWidget"<<endl;
-  cout << dynamic_cast<BasicMatWidget*>(widget) << endl;
-  cout << getValue() << endl;
   static_cast<BasicMatWidget*>(widget)->setMat(getMat());
 }
 
@@ -248,4 +248,75 @@ void PhysicalStringProperty::toWidget(QWidget *widget) {
   static_cast<PhysicalStringWidget*>(widget)->setUnit(getUnit());
 }
 
+string VecFromFileProperty::getValue() const {
+  return evalOctaveExpression(string("load('") + fileName.toStdString() + "')");
+}
 
+TiXmlElement* VecFromFileProperty::initializeUsingXML(TiXmlElement *element) {
+  TiXmlText* text = dynamic_cast<TiXmlText*>(element->FirstChild());
+  if(!text)
+    return 0;
+  string str = text->Value();
+  if(str.substr(0,4)!="load")
+    return 0;
+  int pos1 = str.find_first_of('\''); 
+  int pos2 = str.find_last_of('\''); 
+  fileName = str.substr(pos1+1,pos2-pos1-1).c_str();
+  absoluteFilePath=mbsDir.absoluteFilePath(str.substr(pos1+1,pos2-pos1-1).c_str());
+
+  return element;
+}
+
+TiXmlElement* VecFromFileProperty::writeXMLFile(TiXmlNode *parent) {
+  QString filePath = QString("load('")+(absolutePath?absoluteFilePath:mbsDir.relativeFilePath(absoluteFilePath))+"')";
+ //string exp = string("load('") + fileName.toStdString() + "')"; 
+  TiXmlText *text = new TiXmlText(filePath.toStdString());
+  parent->LinkEndChild(text);
+  return 0;
+}
+
+void VecFromFileProperty::fromWidget(QWidget *widget) {
+  fileName = static_cast<VecFromFileWidget*>(widget)->fileName->text();
+  absoluteFilePath = static_cast<VecFromFileWidget*>(widget)->absoluteFilePath;
+}
+
+void VecFromFileProperty::toWidget(QWidget *widget) {
+  static_cast<VecFromFileWidget*>(widget)->fileName->setText(fileName);
+  static_cast<VecFromFileWidget*>(widget)->absoluteFilePath = absoluteFilePath;
+}
+
+string MatFromFileProperty::getValue() const {
+  return evalOctaveExpression(string("load('") + fileName.toStdString() + "')");
+}
+
+TiXmlElement* MatFromFileProperty::initializeUsingXML(TiXmlElement *element) {
+  TiXmlText* text = dynamic_cast<TiXmlText*>(element->FirstChild());
+  if(!text)
+    return 0;
+  string str = text->Value();
+  if(str.substr(0,4)!="load")
+    return 0;
+  int pos1 = str.find_first_of('\''); 
+  int pos2 = str.find_last_of('\''); 
+  fileName = str.substr(pos1+1,pos2-pos1-1).c_str();
+  absoluteFilePath=mbsDir.absoluteFilePath(str.substr(pos1+1,pos2-pos1-1).c_str());
+  return element;
+}
+
+TiXmlElement* MatFromFileProperty::writeXMLFile(TiXmlNode *parent) {
+  QString filePath = QString("load('")+(absolutePath?absoluteFilePath:mbsDir.relativeFilePath(absoluteFilePath))+"')";
+ //string exp = string("load('") + fileName->text().toStdString() + "')"; 
+  TiXmlText *text = new TiXmlText(filePath.toStdString());
+  parent->LinkEndChild(text);
+  return 0;
+}
+
+void MatFromFileProperty::fromWidget(QWidget *widget) {
+  fileName = static_cast<MatFromFileWidget*>(widget)->fileName->text();
+  absoluteFilePath = static_cast<MatFromFileWidget*>(widget)->absoluteFilePath;
+}
+
+void MatFromFileProperty::toWidget(QWidget *widget) {
+  static_cast<MatFromFileWidget*>(widget)->fileName->setText(fileName);
+  static_cast<MatFromFileWidget*>(widget)->absoluteFilePath = absoluteFilePath;
+}

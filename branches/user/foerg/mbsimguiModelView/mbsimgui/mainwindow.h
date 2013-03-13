@@ -96,6 +96,7 @@ class MainWindow : public QMainWindow {
   protected slots:
     void selectElement(std::string);
     void changeWorkingDir();
+    void openPropertyDialog(std::string);
   protected:
     void closeEvent ( QCloseEvent * event );
 };

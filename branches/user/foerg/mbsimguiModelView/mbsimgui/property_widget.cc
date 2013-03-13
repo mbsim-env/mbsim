@@ -80,18 +80,17 @@ void PropertyWidget::setParentObject(QObject *parentObject_) {
 
 PropertyDialog::PropertyDialog(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,f) {
 
-  setWindowTitle("Properties");
   QVBoxLayout *layout = new QVBoxLayout;
   setLayout(layout);
   tabWidget = new QTabWidget(this);
   layout->addWidget(tabWidget);
-   buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel);
+  buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel);
 
-    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
-    connect(buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(clicked(QAbstractButton*)));
-    layout->addWidget(buttonBox);
-    setWindowTitle(tr("Tab Dialog"));
+  connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+  connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+  connect(buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(clicked(QAbstractButton*)));
+  layout->addWidget(buttonBox);
+  setWindowTitle(QString("Properties"));
 }
 
 PropertyDialog::~PropertyDialog() {
@@ -124,20 +123,20 @@ void PropertyDialog::resizeVariables() {
 
 void PropertyDialog::addTab(const QString &name, int i) {  
   QScrollArea *tab = new QScrollArea;
-  tab->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-  tab->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
   tab->setWidgetResizable(true);
-  QWidget *widget = new QWidget;
-  QHBoxLayout *hlo = new QHBoxLayout;
+  //QWidget *widget = new QWidget;
+  //QHBoxLayout *hlo = new QHBoxLayout;
 
   QWidget *box = new QWidget;
   QVBoxLayout *layout_ = new QVBoxLayout;
   box->setLayout(layout_);
   layout[name] = layout_;
-  hlo->addWidget(box);
-
-  widget->setLayout(hlo);
-  tab->setWidget(widget);
+  //hlo->addWidget(box); 
+                       
+  //widget->setLayout(hlo);
+  //tab->setWidget(widget);
+  tab->setWidget(box);
+  //tab->setLayout(layout_);
   if(i==-1)
     tabWidget->addTab(tab, name);
   else 

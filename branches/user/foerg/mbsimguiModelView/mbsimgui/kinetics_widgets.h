@@ -24,7 +24,7 @@
 #include "basic_widgets.h"
 #include <QComboBox>
 
-class Function2;
+class Function2Widget;
 class QVBoxLayout;
 class ExtWidget;
 class ExtPhysicalVarWidget;
@@ -39,21 +39,23 @@ class GeneralizedForceLawWidget : public Widget {
     void updateWidget() {}
     void resizeVariables() {}
    protected:
-    Function2 *forceFunc;
+    Function2Widget *forceFunc;
 };
 
-class BilateralConstraint : public GeneralizedForceLawWidget {
+class BilateralConstraintWidget : public GeneralizedForceLawWidget {
 
   public:
-    BilateralConstraint() {}
+    BilateralConstraintWidget() {}
     virtual QString getType() const { return "BilateralConstraint"; }
 };
 
-class RegularizedBilateralConstraint : public GeneralizedForceLawWidget {
+class RegularizedBilateralConstraintWidget : public GeneralizedForceLawWidget {
   Q_OBJECT
 
+  friend class RegularizedBilateralConstraintProperty;
+
   public:
-    RegularizedBilateralConstraint(); 
+    RegularizedBilateralConstraintWidget(); 
     virtual QString getType() const { return "RegularizedBilateralConstraint"; }
   protected:
     QVBoxLayout *layout;
@@ -62,18 +64,20 @@ class RegularizedBilateralConstraint : public GeneralizedForceLawWidget {
     void defineFunction(int);
 };
 
-class UnilateralConstraint : public GeneralizedForceLawWidget {
+class UnilateralConstraintWidget : public GeneralizedForceLawWidget {
 
   public:
-    UnilateralConstraint() {}
+    UnilateralConstraintWidget() {}
     virtual QString getType() const { return "UnilateralConstraint"; }
 };
 
-class RegularizedUnilateralConstraint : public GeneralizedForceLawWidget {
+class RegularizedUnilateralConstraintWidget : public GeneralizedForceLawWidget {
   Q_OBJECT
 
+  friend class RegularizedUnilateralConstraintProperty;
+
   public:
-    RegularizedUnilateralConstraint(); 
+    RegularizedUnilateralConstraintWidget(); 
     virtual QString getType() const { return "RegularizedUnilateralConstraint"; }
   protected:
     QVBoxLayout *layout;
@@ -91,17 +95,19 @@ class GeneralizedImpactLawWidget : public Widget {
     void resizeVariables() {}
 };
 
-class BilateralImpact : public GeneralizedImpactLawWidget {
+class BilateralImpactWidget : public GeneralizedImpactLawWidget {
 
   public:
-    BilateralImpact() {}
+    BilateralImpactWidget() {}
     virtual QString getType() const { return "BilateralImpact"; }
 };
 
-class UnilateralNewtonImpact : public GeneralizedImpactLawWidget {
+class UnilateralNewtonImpactWidget : public GeneralizedImpactLawWidget {
+
+  friend class UnilateralNewtonImpactProperty;
 
   public:
-    UnilateralNewtonImpact();
+    UnilateralNewtonImpactWidget();
     virtual QString getType() const { return "UnilateralNewtonImpact"; }
   protected:
     ExtWidget* restitutionCoefficient;
@@ -115,32 +121,32 @@ class FrictionForceLawWidget : public Widget {
     void updateWidget() {}
     void resizeVariables() {}
    protected:
-    Function2 *frictionForceFunc;
+    Function2Widget *frictionForceFunc;
 };
 
-class PlanarCoulombFriction : public FrictionForceLawWidget {
+class PlanarCoulombFrictionWidget : public FrictionForceLawWidget {
 
   public:
-    PlanarCoulombFriction();
+    PlanarCoulombFrictionWidget();
     virtual QString getType() const { return "PlanarCoulombFriction"; }
   protected:
     ExtWidget* frictionCoefficient;
 };
 
-class SpatialCoulombFriction : public FrictionForceLawWidget {
+class SpatialCoulombFrictionWidget : public FrictionForceLawWidget {
 
   public:
-    SpatialCoulombFriction();
+    SpatialCoulombFrictionWidget();
     virtual QString getType() const { return "SpatialCoulombFriction"; }
   protected:
     ExtWidget* frictionCoefficient;
 };
 
-class RegularizedPlanarFriction : public FrictionForceLawWidget {
+class RegularizedPlanarFrictionWidget : public FrictionForceLawWidget {
   Q_OBJECT
 
   public:
-    RegularizedPlanarFriction(); 
+    RegularizedPlanarFrictionWidget(); 
     virtual QString getType() const { return "RegularizedPlanarFriction"; }
   protected:
     QVBoxLayout *layout;
@@ -149,11 +155,11 @@ class RegularizedPlanarFriction : public FrictionForceLawWidget {
     void defineFunction(int);
 };
 
-class RegularizedSpatialFriction : public FrictionForceLawWidget {
+class RegularizedSpatialFrictionWidget : public FrictionForceLawWidget {
   Q_OBJECT
 
   public:
-    RegularizedSpatialFriction(); 
+    RegularizedSpatialFrictionWidget(); 
     virtual QString getType() const { return "RegularizedSpatialFriction"; }
   protected:
     QVBoxLayout *layout;
@@ -171,19 +177,19 @@ class FrictionImpactLawWidget : public Widget {
     void resizeVariables() {}
 };
 
-class PlanarCoulombImpact : public FrictionImpactLawWidget {
+class PlanarCoulombImpactWidget : public FrictionImpactLawWidget {
 
   public:
-    PlanarCoulombImpact();
+    PlanarCoulombImpactWidget();
     virtual QString getType() const { return "PlanarCoulombImpact"; }
   protected:
     ExtWidget* frictionCoefficient;
 };
 
-class SpatialCoulombImpact : public FrictionImpactLawWidget {
+class SpatialCoulombImpactWidget : public FrictionImpactLawWidget {
 
   public:
-    SpatialCoulombImpact();
+    SpatialCoulombImpactWidget();
     virtual QString getType() const { return "SpatialCoulombImpact"; }
   protected:
     ExtWidget* frictionCoefficient;
@@ -191,6 +197,8 @@ class SpatialCoulombImpact : public FrictionImpactLawWidget {
 
 class GeneralizedForceLawChoiceWidget : public Widget {
   Q_OBJECT
+
+  friend class GeneralizedForceLawChoiceProperty;
 
   public:
     GeneralizedForceLawChoiceWidget();
@@ -210,6 +218,8 @@ class GeneralizedForceLawChoiceWidget : public Widget {
 
 class GeneralizedImpactLawChoiceWidget : public Widget {
   Q_OBJECT
+
+  friend class GeneralizedImpactLawChoiceProperty;
 
   public:
     GeneralizedImpactLawChoiceWidget();
@@ -267,8 +277,10 @@ class FrictionImpactLawChoiceWidget : public Widget {
 
 class GeneralizedForceChoiceWidget : public Widget {
 
+  friend class GeneralizedForceChoiceProperty;
+
   public:
-    GeneralizedForceChoiceWidget(ExtWidget* arrow);
+    GeneralizedForceChoiceWidget();
 
     int getSize() const; 
     void updateWidget() {}
@@ -276,18 +288,16 @@ class GeneralizedForceChoiceWidget : public Widget {
 
   protected:
     QVBoxLayout *layout;
-    GeneralizedForceLawChoiceWidget *generalizedForceLaw_;
-    GeneralizedImpactLawChoiceWidget *generalizedImpactLaw_;
-    ExtPhysicalVarWidget *mat_;
     ExtWidget *generalizedForceLaw, *generalizedImpactLaw, *mat;
-    ExtWidget *arrow;
 };
 
 class ForceChoiceWidget : public Widget {
   Q_OBJECT
 
+  friend class ForceChoiceProperty;
+
   public:
-    ForceChoiceWidget(ExtWidget* arrow);
+    ForceChoiceWidget();
 
     int getSize() const; 
     void updateWidget() {}
@@ -297,9 +307,7 @@ class ForceChoiceWidget : public Widget {
 
   protected:
     QVBoxLayout *layout;
-    ExtPhysicalVarWidget *widget;
-    ExtWidget *arrow;
-    Function1ChoiceWidget* forceLaw;
+    ExtWidget *forceLaw, *mat;
 };
 
 class ForceDirectionWidget : public Widget {
@@ -319,6 +327,8 @@ class ForceDirectionWidget : public Widget {
 
 class GeneralizedForceDirectionWidget : public Widget {
 
+  friend class GeneralizedForceDirectionProperty;
+
   public:
     GeneralizedForceDirectionWidget();
 
@@ -327,7 +337,7 @@ class GeneralizedForceDirectionWidget : public Widget {
     void resizeVariables() {}
 
   protected:
-    ExtPhysicalVarWidget *mat;
+    ExtWidget *mat;
 };
 
 #endif

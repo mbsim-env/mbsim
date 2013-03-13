@@ -27,7 +27,7 @@
 
 using namespace std;
 
-RegularizedBilateralConstraint::RegularizedBilateralConstraint() {
+RegularizedBilateralConstraintWidget::RegularizedBilateralConstraintWidget() {
 
   layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -36,20 +36,20 @@ RegularizedBilateralConstraint::RegularizedBilateralConstraint() {
   layout->addWidget(funcList);
   setLayout(layout);
   connect(funcList, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFunction(int)));
-  forceFunc = new LinearRegularizedBilateralConstraint;  
+  forceFunc = new LinearRegularizedBilateralConstraintWidget;  
   layout->addWidget(forceFunc);
 }
 
-void RegularizedBilateralConstraint::defineFunction(int index) {
+void RegularizedBilateralConstraintWidget::defineFunction(int index) {
   if(index==0) {
     layout->removeWidget(forceFunc);
     delete forceFunc;
-    forceFunc = new LinearRegularizedBilateralConstraint;  
+    forceFunc = new LinearRegularizedBilateralConstraintWidget;  
     layout->addWidget(forceFunc);
   }
 }
 
-RegularizedUnilateralConstraint::RegularizedUnilateralConstraint() {
+RegularizedUnilateralConstraintWidget::RegularizedUnilateralConstraintWidget() {
 
   layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -58,20 +58,20 @@ RegularizedUnilateralConstraint::RegularizedUnilateralConstraint() {
   layout->addWidget(funcList);
   setLayout(layout);
   connect(funcList, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFunction(int)));
-  forceFunc = new LinearRegularizedUnilateralConstraint;  
+  forceFunc = new LinearRegularizedUnilateralConstraintWidget;  
   layout->addWidget(forceFunc);
 }
 
-void RegularizedUnilateralConstraint::defineFunction(int index) {
+void RegularizedUnilateralConstraintWidget::defineFunction(int index) {
   if(index==0) {
     layout->removeWidget(forceFunc);
     delete forceFunc;
-    forceFunc = new LinearRegularizedUnilateralConstraint;  
+    forceFunc = new LinearRegularizedUnilateralConstraintWidget;  
     layout->addWidget(forceFunc);
   }
 }
 
-UnilateralNewtonImpact::UnilateralNewtonImpact() {
+UnilateralNewtonImpactWidget::UnilateralNewtonImpactWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   setLayout(layout);
   vector<PhysicalStringWidget*> input;
@@ -80,7 +80,7 @@ UnilateralNewtonImpact::UnilateralNewtonImpact() {
   layout->addWidget(restitutionCoefficient);
 }
 
-PlanarCoulombFriction::PlanarCoulombFriction() {
+PlanarCoulombFrictionWidget::PlanarCoulombFrictionWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   setLayout(layout);
   vector<PhysicalStringWidget*> input;
@@ -89,7 +89,7 @@ PlanarCoulombFriction::PlanarCoulombFriction() {
   layout->addWidget(frictionCoefficient);
 }
 
-SpatialCoulombFriction::SpatialCoulombFriction() {
+SpatialCoulombFrictionWidget::SpatialCoulombFrictionWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   setLayout(layout);
   vector<PhysicalStringWidget*> input;
@@ -98,7 +98,7 @@ SpatialCoulombFriction::SpatialCoulombFriction() {
   layout->addWidget(frictionCoefficient);
 }
 
-RegularizedPlanarFriction::RegularizedPlanarFriction() {
+RegularizedPlanarFrictionWidget::RegularizedPlanarFrictionWidget() {
 
   layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -107,20 +107,20 @@ RegularizedPlanarFriction::RegularizedPlanarFriction() {
   layout->addWidget(funcList);
   setLayout(layout);
   connect(funcList, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFunction(int)));
-  frictionForceFunc = new LinearRegularizedCoulombFriction;  
+  frictionForceFunc = new LinearRegularizedCoulombFrictionWidget;  
   layout->addWidget(frictionForceFunc);
 }
 
-void RegularizedPlanarFriction::defineFunction(int index) {
+void RegularizedPlanarFrictionWidget::defineFunction(int index) {
   if(index==0) {
     layout->removeWidget(frictionForceFunc);
     delete frictionForceFunc;
-    frictionForceFunc = new LinearRegularizedCoulombFriction;  
+    frictionForceFunc = new LinearRegularizedCoulombFrictionWidget;  
     layout->addWidget(frictionForceFunc);
   }
 }
 
-RegularizedSpatialFriction::RegularizedSpatialFriction() {
+RegularizedSpatialFrictionWidget::RegularizedSpatialFrictionWidget() {
 
   layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -129,20 +129,20 @@ RegularizedSpatialFriction::RegularizedSpatialFriction() {
   layout->addWidget(funcList);
   setLayout(layout);
   connect(funcList, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFunction(int)));
-  frictionForceFunc = new LinearRegularizedCoulombFriction;  
+  frictionForceFunc = new LinearRegularizedCoulombFrictionWidget;  
   layout->addWidget(frictionForceFunc);
 }
 
-void RegularizedSpatialFriction::defineFunction(int index) {
+void RegularizedSpatialFrictionWidget::defineFunction(int index) {
   if(index==0) {
     layout->removeWidget(frictionForceFunc);
     delete frictionForceFunc;
-    frictionForceFunc = new LinearRegularizedCoulombFriction;  
+    frictionForceFunc = new LinearRegularizedCoulombFrictionWidget;  
     layout->addWidget(frictionForceFunc);
   }
 }
 
-PlanarCoulombImpact::PlanarCoulombImpact() {
+PlanarCoulombImpactWidget::PlanarCoulombImpactWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   setLayout(layout);
   vector<PhysicalStringWidget*> input;
@@ -151,7 +151,7 @@ PlanarCoulombImpact::PlanarCoulombImpact() {
   layout->addWidget(frictionCoefficient);
 }
 
-SpatialCoulombImpact::SpatialCoulombImpact() {
+SpatialCoulombImpactWidget::SpatialCoulombImpactWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   setLayout(layout);
   vector<PhysicalStringWidget*> input;
@@ -180,13 +180,13 @@ void GeneralizedForceLawChoiceWidget::defineForceLaw(int index) {
   layout->removeWidget(generalizedForceLaw);
   delete generalizedForceLaw;
   if(index==0)
-    generalizedForceLaw = new BilateralConstraint;  
+    generalizedForceLaw = new BilateralConstraintWidget;  
   else if(index==1)
-    generalizedForceLaw = new RegularizedBilateralConstraint;  
+    generalizedForceLaw = new RegularizedBilateralConstraintWidget;  
   else if(index==2)
-    generalizedForceLaw = new UnilateralConstraint;  
+    generalizedForceLaw = new UnilateralConstraintWidget;  
   else if(index==3)
-    generalizedForceLaw = new RegularizedUnilateralConstraint;  
+    generalizedForceLaw = new RegularizedUnilateralConstraintWidget;  
   layout->addWidget(generalizedForceLaw);
 }
 
@@ -208,9 +208,9 @@ void GeneralizedImpactLawChoiceWidget::defineImpactLaw(int index) {
   layout->removeWidget(generalizedImpactLaw);
   delete generalizedImpactLaw;
   if(index==0)
-    generalizedImpactLaw = new BilateralImpact;  
+    generalizedImpactLaw = new BilateralImpactWidget;  
   else if(index==1)
-    generalizedImpactLaw = new UnilateralNewtonImpact;  
+    generalizedImpactLaw = new UnilateralNewtonImpactWidget;  
   layout->addWidget(generalizedImpactLaw);
 }
 
@@ -234,13 +234,13 @@ void FrictionForceLawChoiceWidget::defineFrictionLaw(int index) {
   layout->removeWidget(frictionForceLaw);
   delete frictionForceLaw;
   if(index==0)
-    frictionForceLaw = new PlanarCoulombFriction;  
+    frictionForceLaw = new PlanarCoulombFrictionWidget;  
   if(index==1)
-    frictionForceLaw = new RegularizedPlanarFriction;  
+    frictionForceLaw = new RegularizedPlanarFrictionWidget;  
   if(index==2)
-    frictionForceLaw = new SpatialCoulombFriction;  
+    frictionForceLaw = new SpatialCoulombFrictionWidget;  
   if(index==3)
-    frictionForceLaw = new RegularizedSpatialFriction;  
+    frictionForceLaw = new RegularizedSpatialFrictionWidget;  
   layout->addWidget(frictionForceLaw);
 }
 
@@ -262,13 +262,13 @@ void FrictionImpactLawChoiceWidget::defineFrictionImpactLaw(int index) {
   layout->removeWidget(frictionImpactLaw);
   delete frictionImpactLaw;
   if(index==0)
-    frictionImpactLaw = new PlanarCoulombImpact;  
+    frictionImpactLaw = new PlanarCoulombImpactWidget;  
   else if(index==1)
-    frictionImpactLaw = new SpatialCoulombImpact;  
+    frictionImpactLaw = new SpatialCoulombImpactWidget;  
   layout->addWidget(frictionImpactLaw);
 }
 
-GeneralizedForceChoiceWidget::GeneralizedForceChoiceWidget(ExtWidget* arrow_) : arrow(arrow_) {
+GeneralizedForceChoiceWidget::GeneralizedForceChoiceWidget() {
 
   layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -276,55 +276,50 @@ GeneralizedForceChoiceWidget::GeneralizedForceChoiceWidget(ExtWidget* arrow_) : 
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new MatColsVarWidget(3,1,1,3),noUnitUnits(),1));
-  mat_ = new ExtPhysicalVarWidget(input);  
-  mat = new ExtWidget("Direction vectors",mat_);
+  mat = new ExtWidget("Direction vectors",new ExtPhysicalVarWidget(input));
   layout->addWidget(mat);
 
-  generalizedForceLaw_ = new GeneralizedForceLawChoiceWidget;
-  generalizedForceLaw = new ExtWidget("Generalized force law",generalizedForceLaw_);
+  generalizedForceLaw = new ExtWidget("Generalized force law",new GeneralizedForceLawChoiceWidget);
   layout->addWidget(generalizedForceLaw);
 
-  generalizedImpactLaw_ = new GeneralizedImpactLawChoiceWidget;
-  generalizedImpactLaw = new ExtWidget("Generalized impact law",generalizedImpactLaw_,true);
+  generalizedImpactLaw = new ExtWidget("Generalized impact law",new GeneralizedImpactLawChoiceWidget,true);
   layout->addWidget(generalizedImpactLaw);
 }
 
 int GeneralizedForceChoiceWidget::getSize() const {
-  string str = evalOctaveExpression(mat_->getCurrentPhysicalStringWidget()->getValue());
+  string str = evalOctaveExpression(static_cast<ExtPhysicalVarWidget*>(mat->getWidget())->getCurrentPhysicalStringWidget()->getValue());
   vector<vector<string> > A = strToMat(str);
   return A.size()?A[0].size():0;
 }
 
-ForceChoiceWidget::ForceChoiceWidget(ExtWidget* arrow_) : arrow(arrow_) {
+ForceChoiceWidget::ForceChoiceWidget() {
   layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
   vector<PhysicalStringWidget*> input;
-  PhysicalStringWidget *mat = new PhysicalStringWidget(new MatColsVarWidget(3,1,1,3),noUnitUnits(),1);
-  input.push_back(mat);
-  widget = new ExtPhysicalVarWidget(input);  
-  ExtWidget *extWidget = new ExtWidget("Direction vectors",widget);
+  MatColsVarWidget *mat_ = new MatColsVarWidget(3,1,1,3);
+  input.push_back(new PhysicalStringWidget(mat_,noUnitUnits(),1));
+  mat = new ExtWidget("Direction vectors",new ExtPhysicalVarWidget(input));
+  layout->addWidget(mat);
 
-  connect(widget,SIGNAL(inputDialogChanged(int)),this,SLOT(resizeVariables()));
-  connect((MatColsVarWidget*)mat->getWidget(), SIGNAL(sizeChanged(int)), this, SLOT(resizeVariables()));
-  layout->addWidget(extWidget);
+  connect(mat->getWidget(),SIGNAL(inputDialogChanged(int)),this,SLOT(resizeVariables()));
+  connect(mat_, SIGNAL(sizeChanged(int)), this, SLOT(resizeVariables()));
 
-  forceLaw = new Function1ChoiceWidget;
-  forceLaw->resize(1,1);
-  extWidget = new ExtWidget("Function",forceLaw);
+  Function1ChoiceWidget *forceLaw_ = new Function1ChoiceWidget;
+  forceLaw_->resize(1,1);
+  forceLaw = new ExtWidget("Function",forceLaw_);
+  layout->addWidget(forceLaw);
 
-  layout->addWidget(extWidget);
-  connect(forceLaw,SIGNAL(resize()),this,SLOT(resizeVariables()));
+  connect(forceLaw_,SIGNAL(resize()),this,SLOT(resizeVariables()));
 }
 
 void ForceChoiceWidget::resizeVariables() {
-  forceLaw->resize(getSize(),1);
-  //((Function1ChoiceWidget*)forceLaw->getWidget())->resize(getSize(),1);
+  static_cast<Function1ChoiceWidget*>(forceLaw->getWidget())->resize(getSize(),1);
 }
 
 int ForceChoiceWidget::getSize() const {
-  string str = evalOctaveExpression(widget->getCurrentPhysicalStringWidget()->getValue());
+  string str = evalOctaveExpression(static_cast<ExtPhysicalVarWidget*>(mat->getWidget())->getCurrentPhysicalStringWidget()->getValue());
   vector<vector<string> > A = strToMat(str);
   return A.size()?A[0].size():0;
 }
@@ -361,14 +356,13 @@ GeneralizedForceDirectionWidget::GeneralizedForceDirectionWidget() {
   setLayout(layout);
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new MatColsVarWidget(3,0,0,3),noUnitUnits(),1));
-  mat = new ExtPhysicalVarWidget(input);  
-  ExtWidget *extWidget = new ExtWidget("Direction vectors",mat);
-  layout->addWidget(extWidget);
+  input.push_back(new PhysicalStringWidget(new MatColsVarWidget(3,1,1,3),noUnitUnits(),1));
+  mat = new ExtWidget("Direction vectors",new ExtPhysicalVarWidget(input));
+  layout->addWidget(mat);
 }
 
 int GeneralizedForceDirectionWidget::getSize() const {
-  string str = evalOctaveExpression(mat->getCurrentPhysicalStringWidget()->getValue());
+  string str = evalOctaveExpression(static_cast<ExtPhysicalVarWidget*>(mat->getWidget())->getCurrentPhysicalStringWidget()->getValue());
   vector<vector<string> > A = strToMat(str);
   return A.size()?A[0].size():0;
 }

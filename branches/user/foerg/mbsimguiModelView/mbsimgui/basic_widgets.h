@@ -192,6 +192,8 @@ class TextWidget : public Widget {
 
 class ConnectFramesWidget : public Widget {
 
+  friend class ConnectFramesProperty;
+
   public:
     ConnectFramesWidget(int n, Element* element);
 
@@ -219,6 +221,8 @@ class ConnectContoursWidget : public Widget {
 class DependenciesWidget : public Widget {
   Q_OBJECT
 
+  friend class DependenciesProperty;
+
   public:
     DependenciesWidget(Element* element);
 
@@ -228,6 +232,7 @@ class DependenciesWidget : public Widget {
     RigidBody* getBody(int i) {return refBody[i]->getBody();}
     void addBody(int i, RigidBody* body_);
     int getSize() const {return refBody.size();}
+    void setNumberOfBodies(int n);
 
   protected:
     Element* element;

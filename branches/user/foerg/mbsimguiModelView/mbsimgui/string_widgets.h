@@ -281,6 +281,8 @@ class PhysicalStringWidget : public StringWidget {
 class VecFromFileWidget : public StringWidget {
   Q_OBJECT
 
+  friend class VecFromFileProperty;
+
   public:
     VecFromFileWidget();
     std::string getValue() const;
@@ -299,6 +301,8 @@ class VecFromFileWidget : public StringWidget {
 
 class MatFromFileWidget : public StringWidget {
   Q_OBJECT
+
+  friend class MatFromFileProperty;
 
   public:
     MatFromFileWidget();

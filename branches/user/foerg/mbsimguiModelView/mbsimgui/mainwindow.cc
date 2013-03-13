@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "mainwindow.h"
-#include "element.h"
+#include "solver.h"
 #include "integrator.h"
 #include "objectfactory.h"
 #include <QtGui>
@@ -332,6 +332,7 @@ void MainWindow::initInlineOpenMBV() {
   inlineOpenMBVMW=new OpenMBVGUI::MainWindow(arg);
 
   connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, Object*)), this, SLOT(selectElement(std::string)));
+  connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, Object*)), this, SLOT(openPropertyDialog(std::string)));
   connect(inlineOpenMBVMW, SIGNAL(fileReloaded()), this, SLOT(elementListClicked()));
 }
 
@@ -383,6 +384,12 @@ void MainWindow::closeEvent(QCloseEvent *event) {
   //  }
   //kill(openmbvID,SIGQUIT);
   //kill(h5plotserieID,SIGQUIT);
+}
+
+void MainWindow::openPropertyDialog(string ID) {
+  Element *element=dynamic_cast<Element*>(elementList->currentItem());
+  if(element)
+    element->openPropertyDialog();
 }
 
 void MainWindow::elementListClicked() {
@@ -513,6 +520,7 @@ void MainWindow::newMBS() {
 }
 
 void MainWindow::loadMBS(const QString &file) {
+  cout << "begin loadMBS" << endl;
   mbsDir = QFileInfo(file).absolutePath();
   absoluteMBSFilePath=file;
   fileMBS->setText(QDir::current().relativeFilePath(absoluteMBSFilePath));
@@ -528,10 +536,13 @@ void MainWindow::loadMBS(const QString &file) {
     ((Integrator*)integratorList->topLevelItem(0))->setSolver(sys);
     actionSaveMBS->setDisabled(false);
   }
+  cout << "end loadMBS" << endl;
 
+  cout << "begin mbsimxml" << endl;
 #ifdef INLINE_OPENMBV
   mbsimxml(1);
 #endif
+  cout << "end mbsimxml" << endl;
 }
 
 void MainWindow::loadMBS() {

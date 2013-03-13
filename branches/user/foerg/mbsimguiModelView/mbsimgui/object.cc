@@ -25,7 +25,7 @@
 
 using namespace std;
 
-Object::Object(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element(str, parentItem, ind), q0Property(0,false), u0Property(0,false) {
+Object::Object(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element(str, parentItem, ind), q0(0), u0(0), q0Property(0,false), u0Property(0,false) {
 
   actionSaveAs=new QAction(Utils::QIconCached("newobject.svg"),"Save as", this);
   connect(actionSaveAs,SIGNAL(triggered()),this,SLOT(saveAs()));

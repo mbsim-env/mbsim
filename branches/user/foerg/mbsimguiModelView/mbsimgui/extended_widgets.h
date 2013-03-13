@@ -96,6 +96,9 @@ class ExtWidget : public QGroupBox, public WidgetInterface {
 };
 
 class WidgetContainer : public Widget {
+
+  friend class PropertyContainer;
+
   public:
     WidgetContainer();
 

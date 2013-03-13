@@ -35,17 +35,19 @@
 #include "frame.h"
 #include "contour.h"
 #include "property_widget.h"
+#include "basic_properties.h"
 #include "basic_widgets.h"
 #include "string_widgets.h"
 #include <string>
 #include "utils.h"
 #include "mainwindow.h"
+#include "observer.h"
 
 using namespace std;
 
 extern MainWindow *mw;
 
-Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element(str, parentItem, ind), frameOfReference(0), position(0), orientation(0) {
+Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element(str, parentItem, ind), positionWidget(0), orientationWidget(0), frameOfReferenceWidget(0), position(0,false), orientation(0,false), frameOfReference(0,false) {
 
   setText(1,getType());
 
@@ -100,24 +102,18 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
 
   QAction *action;
 
-  //properties->addTab("Frame positioning");
-  //properties->addTab("Contour positioning");
   if(parentItem != treeWidget()->invisibleRootItem()) {
     properties->addTab("Kinematics");
 
-    vector<PhysicalStringWidget*> input;
-    input.push_back(new PhysicalStringWidget(new VecWidget(3),lengthUnits(),4));
-    position = new ExtWidget("Position",new ExtPhysicalVarWidget(input),true); 
-    properties->addToTab("Kinematics", position);
+    vector<PhysicalStringProperty*> input;
+    input.push_back(new PhysicalStringProperty(new VecProperty(3),"m",MBSIMNS"position"));
+    position.setProperty(new ExtPhysicalVarProperty(input));
 
     input.clear();
-    input.push_back(new PhysicalStringWidget(new MatWidget(getEye<string>(3,3,"1","0")),noUnitUnits(),1));
-    orientation = new ExtWidget("Orientation",new ExtPhysicalVarWidget(input),true); 
-    properties->addToTab("Kinematics", orientation);
+    input.push_back(new PhysicalStringProperty(new MatProperty(getEye<string>(3,3,"1","0")),"-",MBSIMNS"orientation"));
+    orientation.setProperty(new ExtPhysicalVarProperty(input));
 
-    frameOfReference = new ExtWidget("Frame of reference",new ParentFrameOfReferenceWidget(((Group*)getParentElement())->getFrame(0),0),true);
-//    frameOfReference = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(MBSIMNS"frameOfReference",this,((Group*)getParentElement())->getFrame(0)),true); 
-    properties->addToTab("Kinematics", frameOfReference);
+    frameOfReference.setProperty(new ParentFrameOfReferenceProperty(getParentElement()->getFrame(0),this,MBSIMNS"frameOfReference"));
   }
 
   action=new QAction(Utils::QIconCached("newobject.svg"),"Add frame", this);
@@ -220,6 +216,50 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
   }
 
   properties->addStretch();
+}
+
+void Group::initialize() {
+  Element::initialize();
+  if(frameOfReference.getProperty())
+    frameOfReference.initialize();
+}
+
+void Group::initializeDialog() {
+  Element::initializeDialog();
+  if(position.getProperty()) {
+    dialog->addTab("Kinematics");
+
+    vector<PhysicalStringWidget*> input;
+    input.push_back(new PhysicalStringWidget(new VecWidget(3),lengthUnits(),4));
+    positionWidget = new ExtWidget("Position",new ExtPhysicalVarWidget(input),true); 
+    dialog->addToTab("Kinematics", positionWidget);
+
+    input.clear();
+    input.push_back(new PhysicalStringWidget(new MatWidget(getEye<string>(3,3,"1","0")),noUnitUnits(),1));
+    orientationWidget = new ExtWidget("Orientation",new ExtPhysicalVarWidget(input),true); 
+    dialog->addToTab("Kinematics", orientationWidget);
+
+    frameOfReferenceWidget = new ExtWidget("Frame of reference",new ParentFrameOfReferenceWidget(this,0),true);
+    dialog->addToTab("Kinematics", frameOfReferenceWidget);
+  }
+}
+
+void Group::toWidget() {
+  Element::toWidget();
+  if(position.getProperty()) {
+    position.toWidget(positionWidget);
+    orientation.toWidget(orientationWidget);
+    frameOfReference.toWidget(frameOfReferenceWidget);
+  }
+}
+
+void Group::fromWidget() {
+  Element::fromWidget();
+  if(position.getProperty()) {
+    position.fromWidget(positionWidget);
+    orientation.fromWidget(orientationWidget);
+    frameOfReference.fromWidget(frameOfReferenceWidget);
+  }
 }
 
 int Group::getqSize() {
@@ -433,8 +473,8 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   Element::initializeUsingXML(element);
   e=element->FirstChildElement();
 
-  if(frameOfReference)
-    frameOfReference->initializeUsingXML(element);
+  if(frameOfReference.getProperty())
+    frameOfReference.initializeUsingXML(element);
 
   // search first element known by Group
   while(e && 
@@ -443,11 +483,11 @@ void Group::initializeUsingXML(TiXmlElement *element) {
       e->ValueStr()!=MBSIMNS"frames")
     e=e->NextSiblingElement();
 
-  if(position)
-    position->initializeUsingXML(element);
+  if(position.getProperty())
+    position.initializeUsingXML(element);
 
-  if(orientation)
-    orientation->initializeUsingXML(element);
+  if(orientation.getProperty())
+    orientation.initializeUsingXML(element);
 
   // frames
   TiXmlElement *E=element->FirstChildElement(MBSIMNS"frames")->FirstChildElement();
@@ -488,7 +528,6 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   Group *g;
   while(E) {
     g=ObjectFactory::getInstance()->createGroup(E, groups, -1);
-    cout << g->getName().toStdString() << endl;
     if(g) g->initializeUsingXML(E);
     E=E->NextSiblingElement();
   }
@@ -546,10 +585,10 @@ TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
 
   TiXmlElement *ele1;
 
-  if(position) {
-    frameOfReference->writeXMLFile(ele0);
-    position->writeXMLFile(ele0);
-    orientation->writeXMLFile(ele0);
+  if(position.getProperty()) {
+    frameOfReference.writeXMLFile(ele0);
+    position.writeXMLFile(ele0);
+    orientation.writeXMLFile(ele0);
   }
 
   ele1 = new TiXmlElement( MBSIMNS"frames" );

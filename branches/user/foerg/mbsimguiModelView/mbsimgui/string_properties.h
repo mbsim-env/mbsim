@@ -147,5 +147,35 @@ class PhysicalStringProperty : public Property {
     void toWidget(QWidget *widget);
 };
 
+class VecFromFileProperty : public StringProperty {
+
+  public:
+    VecFromFileProperty(const QString &fileName_="", const QString &absoluteFilePath_="") : fileName(fileName_), absoluteFilePath(absoluteFilePath_) {}
+    std::string getValue() const;
+    void setValue(const std::string &str) {}
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+
+  protected:
+    QString fileName, absoluteFilePath;
+};
+
+class MatFromFileProperty : public StringProperty {
+
+  public:
+    MatFromFileProperty(const QString &fileName_="", const QString &absoluteFilePath_="") : fileName(fileName_), absoluteFilePath(absoluteFilePath_) {}
+    std::string getValue() const; 
+    void setValue(const std::string &str) {}
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+
+  protected:
+    QString fileName, absoluteFilePath;
+};
+
 #endif
 

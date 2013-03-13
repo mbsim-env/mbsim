@@ -23,7 +23,6 @@
 #include "frame.h"
 #include "contour.h"
 #include "group.h"
-#include "parameter.h"
 #include "dialogs.h"
 #include <string>
 #include <QtGui>
@@ -137,7 +136,7 @@ void FrameOfReferenceWidget::setFrame() {
 
 void FrameOfReferenceWidget::setFrame(Frame* frame_) {
   selectedFrame = frame_; 
-  frame->setText(selectedFrame->getXMLPath());
+  frame->setText(selectedFrame?selectedFrame->getXMLPath():"");
 }
 
 ContourOfReferenceWidget::ContourOfReferenceWidget(Element *element_, Contour* selectedContour_) : element(element_), selectedContour(selectedContour_) {
@@ -212,7 +211,7 @@ void RigidBodyOfReferenceWidget::setBody() {
 
 void RigidBodyOfReferenceWidget::setBody(RigidBody* body_) {
   selectedBody = body_;
-  body->setText(selectedBody->getXMLPath());
+  body->setText(selectedBody?selectedBody->getXMLPath():"");
   emit bodyChanged();
 }
 
@@ -326,6 +325,23 @@ void DependenciesWidget::openContextMenu(const QPoint &pos) {
    menu.addAction(add);
    menu.exec(QCursor::pos());
  }
+}
+
+void DependenciesWidget::setNumberOfBodies(int n) {
+  if(refBody.size() != n) {
+    for(unsigned int i=0; i<refBody.size(); i++)
+      stackedWidget->removeWidget(refBody[i]);
+    selectedBody.clear();
+    refBody.clear();
+    bodyList->clear();
+    for(unsigned int i=0; i<n; i++) {
+      selectedBody.push_back(0);
+      refBody.push_back(new RigidBodyOfReferenceWidget(element,0));
+      connect(refBody[i],SIGNAL(bodyChanged()),this,SLOT(updateList()));
+      bodyList->addItem("Undefined");
+      stackedWidget->addWidget(refBody[i]);
+    }
+  }
 }
 
 void DependenciesWidget::updateWidget() {

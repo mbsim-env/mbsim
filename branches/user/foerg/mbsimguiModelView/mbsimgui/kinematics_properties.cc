@@ -153,18 +153,18 @@ TiXmlElement* RotationChoiceProperty::initializeUsingXML(TiXmlElement *element) 
     TiXmlElement *ee = e->FirstChildElement();
     if(ee) {
       if(ee->ValueStr() == MBSIMNS"RotationAboutXAxis")
-        rotationIndex = 0;
+        index = 0;
       else if(ee->ValueStr() == MBSIMNS"RotationAboutYAxis")
-        rotationIndex = 1;
+        index = 1;
       else if(ee->ValueStr() == MBSIMNS"RotationAboutZAxis")
-        rotationIndex = 2;
+        index = 2;
       else if(ee->ValueStr() == MBSIMNS"RotationAboutFixedAxis")
-        rotationIndex = 3;
+        index = 3;
       else if(ee->ValueStr() == MBSIMNS"CardanAngles")
-        rotationIndex = 4;
+        index = 4;
       else if(ee->ValueStr() == MBSIMNS"RotationAboutAxesXY")
-        rotationIndex = 5;
-      defineRotation(rotationIndex);
+        index = 5;
+      defineRotation(index);
       rotation->initializeUsingXML(ee);
       return e;
     }
@@ -184,7 +184,8 @@ TiXmlElement* RotationChoiceProperty::writeXMLFile(TiXmlNode *parent) {
  return 0;
 }
 
-void RotationChoiceProperty::defineRotation(int index) {
+void RotationChoiceProperty::defineRotation(int index_) {
+  index = index_;
   delete rotation;
   if(index==0)
     rotation = new RotationAboutXAxisProperty;  
@@ -198,7 +199,6 @@ void RotationChoiceProperty::defineRotation(int index) {
     rotation = new CardanAnglesProperty;  
   else if(index==5)
     rotation = new RotationAboutAxesXYProperty;  
-  rotationIndex = index;
 }
 
 void RotationChoiceProperty::fromWidget(QWidget *widget) {
@@ -207,6 +207,6 @@ void RotationChoiceProperty::fromWidget(QWidget *widget) {
 }
 
 void RotationChoiceProperty::toWidget(QWidget *widget) {
-  static_cast<RotationChoiceWidget*>(widget)->comboBox->setCurrentIndex(rotationIndex);
+  static_cast<RotationChoiceWidget*>(widget)->comboBox->setCurrentIndex(index);
   rotation->toWidget(static_cast<RotationChoiceWidget*>(widget)->rotation);
 }

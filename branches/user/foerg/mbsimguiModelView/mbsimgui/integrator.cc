@@ -22,7 +22,7 @@
 #include "property_widget.h"
 #include "string_widgets.h"
 #include "extended_widgets.h"
-#include "element.h"
+#include "solver.h"
 #include "objectfactory.h"
 #include <QtGui/QMenu>
 #include <QtGui/QFileDialog>
