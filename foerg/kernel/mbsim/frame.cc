@@ -228,8 +228,9 @@ namespace MBSim {
     if(ec) setRelativeOrientation(getSqrMat3(ec));
   }
 
-  TiXmlElement* FixedRelativeFrame::writeXMLFile(TiXmlNode *element) {
-    return 0;
+  TiXmlElement* FixedRelativeFrame::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = Frame::writeXMLFile(parent);
+    return ele0;
   }
 
 }

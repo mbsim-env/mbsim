@@ -1444,7 +1444,7 @@ namespace MBSim {
     writeXMLFile(&doc);
     map<string, string> nsprefix=ObjectFactory::getInstance()->getNamespacePrefixMapping();
     unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
-    doc.SaveFile(name.substr(name.length()-10,10)==".mbsim.xml"?name:name+".mbsim.xml");
+    doc.SaveFile((name.length()>10 && name.substr(name.length()-10,10)==".mbsim.xml")?name:name+".mbsim.xml");
   }
 
   void DynamicSystemSolver::addToGraph(Graph* graph, SqrMat &A, int i, vector<Object*>& objList) {
