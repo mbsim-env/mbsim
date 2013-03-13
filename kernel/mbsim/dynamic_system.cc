@@ -27,10 +27,12 @@
 #include "mbsim/contact.h"
 #include "mbsim/joint.h"
 #include "mbsim/dynamic_system_solver.h"
+#include "mbsim/observer.h"
 #include "hdf5serie/fileserie.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/group.h"
+#include <openmbvcppinterface/frame.h>
 #endif
 
 //#ifdef _OPENMP
@@ -44,7 +46,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  DynamicSystem::DynamicSystem(const string &name) : Element(name), frameParent(0), PrPF(Vec3()), APF(SqrMat3(EYE)), q0(0), u0(0), x0(0), qSize(0), qInd(0), xSize(0), xInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0), LinkStatusSize(0), LinkStatusInd(0), LinkStatusRegSize(0), LinkStatusRegInd(0)
+  DynamicSystem::DynamicSystem(const string &name) : Element(name), R(0), PrPF(Vec3()), APF(SqrMat3(EYE)), q0(0), u0(0), x0(0), qSize(0), qInd(0), xSize(0), xInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0), LinkStatusSize(0), LinkStatusInd(0), LinkStatusRegSize(0), LinkStatusRegInd(0)
 #ifdef HAVE_OPENMBVCPPINTERFACE                      
                                                      , openMBVGrp(0), corrInd(0)
 #endif
@@ -58,11 +60,8 @@ namespace MBSim {
                                                        hInd[0] = 0;
                                                        hInd[1] = 0;
 
-                                                       I=new Frame("I");
+                                                       I=new FixedRelativeFrame("I");
                                                        addFrame(I);
-
-                                                       IrOF.push_back(Vec3());
-                                                       AIF.push_back(SqrMat3(EYE));
                                                      }
 
   DynamicSystem::~DynamicSystem() {
@@ -434,10 +433,8 @@ namespace MBSim {
         contour[i]->plot(t,dt);
       for(unsigned i=0; i<inverseKineticsLink.size(); i++)
         inverseKineticsLink[i]->plot(t,dt);
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      for(unsigned i=0; i<plotElement.size(); i++)
-        plotElement[i]->plot(t,dt);
-#endif
+      for(unsigned i=0; i<observer.size(); i++)
+        observer[i]->plot(t,dt);
     }
   }
   
@@ -479,28 +476,31 @@ namespace MBSim {
   }
 
   void DynamicSystem::init(InitStage stage) {
-    if(stage==relativeFrameContourLocation) {
-      // This outer loop is nessesary because the frame hierarchy must not be in the correct order!
-      for(size_t k=0; k<saved_refFrameF.size(); k++)
-        for(size_t j=0; j<saved_refFrameF.size(); j++) {
-          int i = 0;
-          if(saved_refFrameF[j]!="") i = frameIndex(getFrame(saved_refFrameF[j]));
-
-          IrOF[j+1]=IrOF[i] + AIF[i]*saved_RrRF[j];
-          AIF[j+1]=AIF[i]*saved_ARF[j];
-        }
-      for(size_t j=0; j<saved_refFrameC.size(); j++) {
-        int i = 0;
-        if(saved_refFrameC[j]!="") i = frameIndex(getFrame(saved_refFrameC[j]));
-
-        IrOC[j]=IrOF[i] + AIF[i]*saved_RrRC[j];
-        AIC[j]=AIF[i]*saved_ARC[j];
+    if(stage==preInit) {
+      if(!R) {
+        DynamicSystem *sys = dynamic_cast<DynamicSystem*>(parent);
+        if(sys)
+          R = sys->getFrameI();
+      }
+    }
+    else if(stage==relativeFrameContourLocation) {
+      for(unsigned int k=1; k<frame.size(); k++) {
+        FixedRelativeFrame *P = (FixedRelativeFrame*)frame[k];
+        if(!((FixedRelativeFrame*)frame[k])->getFrameOfReference())
+          ((FixedRelativeFrame*)frame[k])->setFrameOfReference(I);
+        const FixedRelativeFrame *R = P;
+        do {
+          R = static_cast<const FixedRelativeFrame*>(R->getFrameOfReference());
+          P->setRelativePosition(R->getRelativePosition() + R->getRelativeOrientation()*P->getRelativePosition());
+          P->setRelativeOrientation(R->getRelativeOrientation()*P->getRelativeOrientation());
+        } while(R!=I);
+        P->setFrameOfReference(I);
       }
     }
     else if(stage==worldFrameContourLocation) {
-      if(frameParent) {
-        I->setPosition(frameParent->getPosition() + frameParent->getOrientation()*PrPF);
-        I->setOrientation(frameParent->getOrientation()*APF);
+      if(R) {
+        I->setPosition(R->getPosition() + R->getOrientation()*PrPF);
+        I->setOrientation(R->getOrientation()*APF);
       }
       else {
         DynamicSystem* sys = dynamic_cast<DynamicSystem*>(parent);
@@ -514,12 +514,12 @@ namespace MBSim {
         }
       }
       for(unsigned int i=1; i<frame.size(); i++) { // kinematics of other frames can be updates from frame I 
-        frame[i]->setPosition(I->getPosition() + I->getOrientation()*IrOF[i]);
-        frame[i]->setOrientation(I->getOrientation()*AIF[i]);
+        ((FixedRelativeFrame*)frame[i])->updatePosition();
+        ((FixedRelativeFrame*)frame[i])->updateOrientation();
       }
-      for(unsigned int i=0; i<contour.size(); i++) { // kinematics of other contours can be updates from frame I
-        contour[i]->setReferencePosition(I->getPosition() + I->getOrientation()*IrOC[i]);
-        contour[i]->setReferenceOrientation(I->getOrientation()*AIC[i]);
+      for(unsigned int k=0; k<contour.size(); k++) {
+        if(!(contour[k]->getFrameOfReference()))
+          contour[k]->setFrameOfReference(I);
       }
     }
     else if(stage==MBSim::plot) {
@@ -570,8 +570,8 @@ namespace MBSim {
       model[i]->init(stage);
     for(unsigned i=0; i<inverseKineticsLink.size(); i++)
       inverseKineticsLink[i]->init(stage);
-    for(unsigned i=0; i<plotElement.size(); i++)
-      plotElement[i]->init(stage);
+    for(unsigned i=0; i<observer.size(); i++)
+      observer[i]->init(stage);
   }
 
   int DynamicSystem::solveConstraintsFixpointSingle() {
@@ -1050,6 +1050,14 @@ namespace MBSim {
         dynamicsystem[i]->buildListOfInverseKineticsLinks(iklnk,recursive);
   }
 
+  void DynamicSystem::buildListOfObservers(vector<Observer*> &obsrv, bool recursive) {
+    for(unsigned int i=0; i<observer.size(); i++)
+      obsrv.push_back(observer[i]);
+    if(recursive)
+      for(unsigned int i=0; i<dynamicsystem.size(); i++)
+        dynamicsystem[i]->buildListOfObservers(obsrv,recursive);
+  }
+
   void DynamicSystem::setUpInverseKinetics() {
     for(unsigned int i=0; i<dynamicsystem.size(); i++) 
       dynamicsystem[i]->setUpInverseKinetics();
@@ -1315,31 +1323,27 @@ namespace MBSim {
       (**i).setrMax(rMax);
   }
 
-  void DynamicSystem::addFrame(Frame* cosy) {
-    if(getFrame(cosy->getName(),false)) { 
+  void DynamicSystem::addFrame(FixedRelativeFrame *frame_) {
+    if(getFrame(frame_->getName(),false)) { 
       throw MBSimError("The DynamicSystem \""+name+"\" can only comprises one Frame by the name \""+name+"\"!");
-      assert(getFrame(cosy->getName(),false)==NULL);
+      assert(getFrame(frame_->getName(),false)==NULL);
     }
-    frame.push_back(cosy);
-    cosy->setParent(this);
+    frame.push_back(frame_);
+    frame_->setParent(this);
   }
 
-  void DynamicSystem::addFrame(Frame* cosy, const Vec3 &RrRF, const SqrMat3 &ARF, const string& refFrameName) {
-    addFrame(cosy);
-
-    saved_refFrameF.push_back(refFrameName);
-    saved_RrRF.push_back(RrRF); 
-    saved_ARF.push_back(ARF); 
-    IrOF.push_back(Vec3());
-    AIF.push_back(SqrMat3());
-  }
-
-  void DynamicSystem::addFrame(Frame *frame_, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const Frame* refFrame) {
-    addFrame(frame_, RrRF, ARF, refFrame?refFrame->getName():"I");
+  void DynamicSystem::addFrame(Frame *frame_, const Vec3 &RrRF, const SqrMat3 &ARF, const Frame* refFrame) {
+    Deprecated::registerMessage("Using DynamicSystem::addFrame(Frame*, const Vec3&, const SqrMat3&, const Frame*) is deprecated, create a FixedRelativeFrame instead and add is using addFrame(FixedRelativeFrame*).");
+    FixedRelativeFrame *environmentFrame = new FixedRelativeFrame(frame_->getName(),RrRF,ARF,refFrame);
+    if(frame_->getOpenMBVFrame())
+      environmentFrame->enableOpenMBV(frame_->getOpenMBVFrame()->getSize(), frame_->getOpenMBVFrame()->getOffset());
+    addFrame(environmentFrame);
   }
 
   void DynamicSystem::addFrame(const string &str, const Vec3 &RrRF, const SqrMat3 &ARF, const Frame* refFrame) {
-    addFrame(new Frame(str),RrRF,ARF,refFrame);
+    Deprecated::registerMessage("Using DynamicSystem::addFrame(const string&, const Vec3&, const SqrMat3&, const Frame*) is deprecated, create a FixedRelativeFrame instead and add is using addFrame(FixedRelativeFrame*).");
+    FixedRelativeFrame *environmentFrame = new FixedRelativeFrame(str,RrRF,ARF,refFrame);
+    addFrame(environmentFrame);
   }
 
   void DynamicSystem::addContour(Contour* contour_) {
@@ -1351,18 +1355,20 @@ namespace MBSim {
     contour_->setParent(this);
   }
 
-  void DynamicSystem::addContour(Contour* contour, const Vec3 &RrRC, const SqrMat3 &ARC, const string& refFrameName) {
-    addContour(contour);
-
-    saved_refFrameC.push_back(refFrameName);
-    saved_RrRC.push_back(RrRC); 
-    saved_ARC.push_back(ARC); 
-    IrOC.push_back(Vec3());
-    AIC.push_back(SqrMat3());
-  }
-
-  void DynamicSystem::addContour(Contour* contour, const fmatvec::Vec3 &RrRC, const fmatvec::SqrMat3 &ARC, const Frame* refFrame) {
-    addContour(contour, RrRC, ARC, refFrame?refFrame->getName():"I");
+  void DynamicSystem::addContour(Contour* contour_, const fmatvec::Vec3 &RrRC, const fmatvec::SqrMat3 &ARC, const Frame* refFrame) {
+    Deprecated::registerMessage("Using DynamicSystem::addContour(Contour*, const Vec3&, const SqrMat3&, const Frame*) is deprecated, create a Contour instead and add is using addContour(Contour*).");
+    stringstream frameName;
+    frameName << "ContourFrame" << contour.size();
+    Frame *contourFrame;
+    if(!refFrame && fabs(RrRC(0))<1e-10 && fabs(RrRC(1))<1e-10 && fabs(RrRC(2))<1e-10 && 
+      fabs(ARC(0,0)-1)<1e-10 && fabs(ARC(1,1)-1)<1e-10 && fabs(ARC(2,2)-1)<1e-10)
+      contourFrame = frame[0];
+    else {
+      contourFrame = new FixedRelativeFrame(frameName.str(),RrRC,ARC,refFrame);
+      addFrame((FixedRelativeFrame*)contourFrame);
+    }
+    contour_->setFrameOfReference(contourFrame);
+    addContour(contour_);
   }
 
   int DynamicSystem::frameIndex(const Frame *frame_) const {
@@ -1544,30 +1550,28 @@ namespace MBSim {
     }
   }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
-  Element* DynamicSystem::getOpenMBVElement(const string &name, bool check) {
+  Observer* DynamicSystem::getObserver(const string &name, bool check) {
     unsigned int i;
-    for(i=0; i<plotElement.size(); i++) {
-      if(plotElement[i]->getName() == name)
-        return plotElement[i];
+    for(i=0; i<observer.size(); i++) {
+      if(observer[i]->getName() == name)
+        return observer[i];
     }
     if(check){
-      if(!(i<plotElement.size()))
-        throw MBSimError("The DynamicSystem \""+this->name+"\" comprises no OpenMBVElement \""+name+"\"!");
-      assert(i<plotElement.size());
+      if(!(i<observer.size()))
+        throw MBSimError("The DynamicSystem \""+this->name+"\" comprises no Observer \""+name+"\"!");
+      assert(i<observer.size());
     }
     return NULL;
   }
 
-  void DynamicSystem::addPlotElement(Element *ele) {
-    if(getOpenMBVElement(ele->getName(),false)) {
-      throw MBSimError("The DynamicSystem \""+name+"\" can only comprise one OpenMBVElement by the name \""+ele->getName()+"\"!");
-      assert(getOpenMBVElement(ele->getName(),false) == NULL); 
+  void DynamicSystem::addObserver(Observer *ele) {
+    if(getObserver(ele->getName(),false)) {
+      throw MBSimError("The DynamicSystem \""+name+"\" can only comprise one Observer by the name \""+ele->getName()+"\"!");
+      assert(getObserver(ele->getName(),false) == NULL); 
     }
-    plotElement.push_back(ele);
+    observer.push_back(ele);
     ele->setParent(this);
   }
-#endif
 
   void DynamicSystem::updatecorr(int j) {
 

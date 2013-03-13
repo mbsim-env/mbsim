@@ -27,6 +27,7 @@
 #include "mbsim/link.h"
 #include "mbsim/graph.h"
 #include "mbsim/extra_dynamic.h"
+#include "mbsim/observer.h"
 #include "mbsim/integrators/integrator.h"
 #include "mbsim/utils/eps.h"
 #include "dirent.h"
@@ -114,6 +115,9 @@ namespace MBSim {
       vector<Link*> iKlnkList;
       buildListOfInverseKineticsLinks(iKlnkList,true);
 
+      vector<Observer*> obsrvList;
+      buildListOfObservers(obsrvList,true);
+
       dynamicsystem.clear(); // delete old DynamicSystem list
       object.clear(); // delete old object list
       frame.clear(); // delete old frame list
@@ -121,6 +125,7 @@ namespace MBSim {
       link.clear(); // delete old link list
       extraDynamic.clear(); // delete old ed list
       inverseKineticsLink.clear(); // delete old link list
+      observer.clear(); // delete old link list
 
       /* rename system structure */
       if(INFO) cout << "object List:" << endl;
@@ -136,7 +141,7 @@ namespace MBSim {
         str << frmList[i]->getParent()->getPath('/') << "/" << frmList[i]->getName();
         if(INFO) cout<<str.str()<<endl;
         frmList[i]->setName(str.str());
-        addFrame(frmList[i]);
+        addFrame((FixedRelativeFrame*)frmList[i]);
       }
       if(INFO) cout << "contour List:" << endl;
       for(unsigned int i=0; i<cntList.size(); i++) {
@@ -169,6 +174,14 @@ namespace MBSim {
         if(INFO) cout<<str.str()<<endl;
         iKlnkList[i]->setName(str.str());
         addInverseKineticsLink(iKlnkList[i]);
+      }
+      if(INFO) cout << "observer List:" << endl;
+      for(unsigned int i=0; i<obsrvList.size(); i++) {
+        stringstream str;
+        str << obsrvList[i]->getParent()->getPath('/') << "/" << obsrvList[i]->getName();
+        if(INFO) cout<<str.str()<<endl;
+        obsrvList[i]->setName(str.str());
+        addObserver(obsrvList[i]);
       }
 
       /* matrix of body dependencies */
@@ -376,9 +389,9 @@ namespace MBSim {
     }
     else if(stage==MBSim::preInit) {
       if(INFO) cout << "  initialising preInit ..." << endl;
+      Group::init(stage);
       if(inverseKinetics)
 	setUpInverseKinetics();
-      Group::init(stage);
     }
     else if(stage==MBSim::plot) {
       if(INFO) cout << "  initialising plot-files ..." << endl;
@@ -1431,7 +1444,7 @@ namespace MBSim {
     writeXMLFile(&doc);
     map<string, string> nsprefix=ObjectFactory::getInstance()->getNamespacePrefixMapping();
     unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
-    doc.SaveFile(name+".mbsim.xml");
+    doc.SaveFile((name.length()>10 && name.substr(name.length()-10,10)==".mbsim.xml")?name:name+".mbsim.xml");
   }
 
   void DynamicSystemSolver::addToGraph(Graph* graph, SqrMat &A, int i, vector<Object*>& objList) {

@@ -50,35 +50,35 @@ namespace MBSim {
       cp.getFrameOfReference().getOrientation().set(0, funcCrPC->computeN(cp.getLagrangeParameterPosition()(0)));
       cp.getFrameOfReference().getOrientation().set(1, funcCrPC->computeT(cp.getLagrangeParameterPosition()(0)));
       cp.getFrameOfReference().getOrientation().set(2, funcCrPC->computeB(cp.getLagrangeParameterPosition()(0)));
-      cp.getFrameOfReference().getOrientation() = R.getOrientation() * cp.getFrameOfReference().getOrientation();
+      cp.getFrameOfReference().getOrientation() = R->getOrientation() * cp.getFrameOfReference().getOrientation();
     }
     if(ff==position || ff==position_cosy || ff==all) 
-      cp.getFrameOfReference().getPosition() = R.getPosition() + R.getOrientation()*(*funcCrPC)(cp.getLagrangeParameterPosition()(0));
+      cp.getFrameOfReference().getPosition() = R->getPosition() + R->getOrientation()*(*funcCrPC)(cp.getLagrangeParameterPosition()(0));
     if(ff==velocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) 
-      cp.getFrameOfReference().getVelocity() = R.getVelocity() + crossProduct(R.getAngularVelocity(),R.getOrientation()*(*funcCrPC)(cp.getLagrangeParameterPosition()(0)));
+      cp.getFrameOfReference().getVelocity() = R->getVelocity() + crossProduct(R->getAngularVelocity(),R->getOrientation()*(*funcCrPC)(cp.getLagrangeParameterPosition()(0)));
     if(ff==angularVelocity || ff==velocities || ff==velocities_cosy || ff==all) 
-      cp.getFrameOfReference().setAngularVelocity(R.getAngularVelocity());
+      cp.getFrameOfReference().setAngularVelocity(R->getAngularVelocity());
   }
 
   void Contour1sAnalytical::updateJacobiansForFrame(ContourPointData &cp, int j) {
-    Vec3 WrPC = cp.getFrameOfReference().getPosition() - R.getPosition();
+    Vec3 WrPC = cp.getFrameOfReference().getPosition() - R->getPosition();
     Mat3x3 tWrPC = tilde(WrPC);
 
     cp.getFrameOfReference().setJacobianOfTranslation(
-        R.getJacobianOfTranslation(j) - tWrPC*R.getJacobianOfRotation(j),j);
+        R->getJacobianOfTranslation(j) - tWrPC*R->getJacobianOfRotation(j),j);
     cp.getFrameOfReference().setJacobianOfRotation(
-        R.getJacobianOfRotation(j),j);
+        R->getJacobianOfRotation(j),j);
     cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(
-        R.getGyroscopicAccelerationOfTranslation() - tWrPC*R.getGyroscopicAccelerationOfRotation() + 
-        crossProduct(R.getAngularVelocity(),crossProduct(R.getAngularVelocity(),WrPC)));
+        R->getGyroscopicAccelerationOfTranslation() - tWrPC*R->getGyroscopicAccelerationOfRotation() + 
+        crossProduct(R->getAngularVelocity(),crossProduct(R->getAngularVelocity(),WrPC)));
     cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(
-        R.getGyroscopicAccelerationOfRotation());
+        R->getGyroscopicAccelerationOfRotation());
 
     // adapt dimensions if necessary
     if(cp.getFrameOfReference().getJacobianOfTranslation(j).rows() == 0)
-      cp.getFrameOfReference().getJacobianOfTranslation(j).resize(R.getJacobianOfTranslation(j).cols());
+      cp.getFrameOfReference().getJacobianOfTranslation(j).resize(R->getJacobianOfTranslation(j).cols());
     if(cp.getFrameOfReference().getJacobianOfRotation(j).rows() == 0)
-      cp.getFrameOfReference().getJacobianOfRotation(j).resize(R.getJacobianOfRotation(j).cols());
+      cp.getFrameOfReference().getJacobianOfRotation(j).resize(R->getJacobianOfRotation(j).cols());
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -162,10 +162,10 @@ namespace MBSim {
       if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
         vector<double> data;
         data.push_back(t);
-        data.push_back(R.getPosition()(0));
-        data.push_back(R.getPosition()(1));
-        data.push_back(R.getPosition()(2));
-        Vec3 cardan=AIK2Cardan(R.getOrientation());
+        data.push_back(R->getPosition()(0));
+        data.push_back(R->getPosition()(1));
+        data.push_back(R->getPosition()(2));
+        Vec3 cardan=AIK2Cardan(R->getOrientation());
         data.push_back(cardan(0));
         data.push_back(cardan(1));
         data.push_back(cardan(2));

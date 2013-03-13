@@ -43,27 +43,32 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      void setReferencePosition(const fmatvec::Vec3 &WrOP);
-      void setReferenceOrientation(const fmatvec::SqrMat3 &AWC);
-      void setReferenceVelocity(const fmatvec::Vec3 &WvP);
-      void setReferenceAngularVelocity(const fmatvec::Vec3 &WomegaC);
-      void setReferenceJacobianOfTranslation(const fmatvec::Mat3V &WJP);
-      void setReferenceGyroscopicAccelerationOfTranslation(const fmatvec::Vec3 &WjP);
-      void setReferenceJacobianOfRotation(const fmatvec::Mat3V &WJR);
-      void setReferenceGyroscopicAccelerationOfRotation(const fmatvec::Vec3 &WjR);
+//      void setReferencePosition(const fmatvec::Vec3 &WrOP);
+//      void setReferenceOrientation(const fmatvec::SqrMat3 &AWC);
+//      void setReferenceVelocity(const fmatvec::Vec3 &WvP);
+//      void setReferenceAngularVelocity(const fmatvec::Vec3 &WomegaC);
+//      void setReferenceJacobianOfTranslation(const fmatvec::Mat3V &WJP);
+//      void setReferenceGyroscopicAccelerationOfTranslation(const fmatvec::Vec3 &WjP);
+//      void setReferenceJacobianOfRotation(const fmatvec::Mat3V &WJR);
+//      void setReferenceGyroscopicAccelerationOfRotation(const fmatvec::Vec3 &WjR);
       /***************************************************/
 
       void init(InitStage stage);
-      Contour* getContourElement(int i) { return element[i]; }
-      void addContourElement(Contour* ce, const fmatvec::Vec3& re);
+      Contour* getContour(int i) { return element[i]; }
+      void addContour(RigidContour* ce);
+      void addFrame(FixedRelativeFrame* f);
       unsigned int getNumberOfElements() { return element.size(); }
 
       void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff);
       void updateJacobiansForFrame(ContourPointData &cp);
 
+      virtual void updateStateDependentVariables(double t);
+      virtual void updateJacobians(double t, int j=0); 
+      virtual void updateStateDerivativeDependentVariables(const fmatvec::Vec &ud, double t);
+
     private:
-      std::vector<Contour*> element;
-      std::vector<fmatvec::Vec3> Kr, Wr;
+      std::vector<RigidContour*> element;
+      std::vector<FixedRelativeFrame*> frame;
   };
 }
 

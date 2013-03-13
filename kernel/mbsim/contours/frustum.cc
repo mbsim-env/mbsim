@@ -58,8 +58,8 @@ namespace MBSim {
   Vec2 Frustum::computeLagrangeParameter(const Vec3 &WrPoint) {
     Vec3 CrPoint = WrPoint;
 
-    CrPoint -= R.getPosition();
-    CrPoint = R.getOrientation().T() * CrPoint; // position in moving frame of reference
+    CrPoint -= R->getPosition();
+    CrPoint = R->getOrientation().T() * CrPoint; // position in moving frame of reference
 
     const double xt = CrPoint(0);
     const double yt = CrPoint(2);

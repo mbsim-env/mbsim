@@ -35,6 +35,9 @@ namespace OpenMBV {
 namespace MBSim {
 
   class Frame;
+  class Contour;
+  class FixedRelativeFrame;
+  class CompoundContour;
   class Constraint;
 
   /**
@@ -167,37 +170,33 @@ namespace MBSim {
       void setDerivativeOfGuidingVelocityOfRotation(Function1<fmatvec::Vec3,double>* fPdjR_) { fPdjR = fPdjR_;}
       void setMass(double m_) { m = m_; }
       double getMass() const { return m; }
-      Frame* getFrameForKinematics() { return frame[iKinematics]; };
-      Frame* getFrameOfReference() { return frameOfReference; };
+      FixedRelativeFrame* getFrameForKinematics() { return K; };
+      FixedRelativeFrame* getFrameC() { return C; };
       void isFrameOfBodyForRotation(bool cb_) { cb = cb_; }
-      std::vector<fmatvec::SqrMat3> getContainerForFrameOrientations() const { return ASF; }
-      std::vector<fmatvec::Vec3> getContainerForFramePositions() const { return SrSF; }
-      std::vector<fmatvec::SqrMat3> getContainerForContourOrientations() const { return ASC; }
-      std::vector<fmatvec::Vec3> getContainerForContourPositions() const { return SrSC; }
-      /*****************************************************/
 
       /**
        * \param RThetaR  inertia tensor
-       * \param refFrame optional reference Frame of inertia tensor, otherwise cog-Frame will be used as reference
+       * \param frame optional reference Frame of inertia tensor, otherwise cog-Frame will be used as reference
        */
-      void setInertiaTensor(const fmatvec::SymMat3& RThetaR, const Frame* refFrame=0) {
-        if(refFrame)
-          iInertia = frameIndex(refFrame);
-        else
-          iInertia = 0;
+      void setInertiaTensor(const fmatvec::SymMat3& RThetaR, Frame *frame=0) {
         SThetaS = RThetaR;
+        frameForInertiaTensor = frame;
       }
 
       const fmatvec::SymMat3& getInertiaTensor() const {return SThetaS;}
       fmatvec::SymMat3& getInertiaTensor() {return SThetaS;}
 
-      /**
-       * \param frame        specific Frame to add
-       * \param RrRF         constant relative vector from reference Frame to specific Frame in reference system
-       * \param ARF          constant relative rotation from specific Frame to reference Frame
-       * \param refFrameName reference Frame name
-       */
-      void addFrame(Frame *frame_, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const std::string& refFrameName); 
+      void addFrame(FixedRelativeFrame *frame); 
+
+      using Body::addContour;
+
+//      /**
+//       * \param frame        specific Frame to add
+//       * \param RrRF         constant relative vector from reference Frame to specific Frame in reference system
+//       * \param ARF          constant relative rotation from specific Frame to reference Frame
+//       * \param refFrameName reference Frame name
+//       */
+//      void addFrame(Frame *frame, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const std::string& refFrameName); 
 
       /**
        * \param frame        specific Frame to add
@@ -205,7 +204,7 @@ namespace MBSim {
        * \param ARF          constant relative rotation from specific Frame to reference Frame
        * \param refFrameName optional reference Frame, otherwise cog-Frame will be used as reference
        */
-      void addFrame(Frame *frame_, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const Frame* refFrame=0);
+      void addFrame(Frame *frame, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const Frame* refFrame=0);
 
       /**
        * \param str          name of Frame to add
@@ -215,13 +214,13 @@ namespace MBSim {
        */
       void addFrame(const std::string &str, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const Frame* refFrame=0);
 
-      /**
-       * \param contour      specific contour to add
-       * \param RrRC         constant relative vector from reference Frame to specific contour in reference system
-       * \param ARC          constant relative rotation from specific contour to reference Frame
-       * \param refFrameName reference Frame name
-       */
-      void addContour(Contour* contour, const fmatvec::Vec3 &RrRC, const fmatvec::SqrMat3 &ARC, const std::string& refFrameName);
+//      /**
+//       * \param contour      specific contour to add
+//       * \param RrRC         constant relative vector from reference Frame to specific contour in reference system
+//       * \param ARC          constant relative rotation from specific contour to reference Frame
+//       * \param refFrameName reference Frame name
+//       */
+//      void addContour(Contour* contour, const fmatvec::Vec3 &RrRC, const fmatvec::SqrMat3 &ARC, const std::string& refFrameName);
 
       /**
        * \param contour      specific contour to add
@@ -234,10 +233,7 @@ namespace MBSim {
       /**
        * \param frame Frame to be used for kinematical description depending on reference Frame and generalised positions / velocities
        */
-      void setFrameForKinematics(Frame *frame) {
-        iKinematics = frameIndex(frame);
-        assert(iKinematics > -1);
-      }
+      void setFrameForKinematics(Frame *frame);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVRigidBody(OpenMBV::RigidBody* body);
@@ -257,10 +253,10 @@ namespace MBSim {
       virtual void initializeUsingXML(TiXmlElement *element);
       virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
 
-      virtual void updatePositionAndOrientationOfFrame(double t, unsigned int i);
-      virtual void updateAccelerations(double t, unsigned int i);
-      virtual void updateRelativeJacobians(double t, unsigned int i);
-      virtual void updateRelativeJacobians(double t, unsigned int i, fmatvec::Mat3V &WJTrel, fmatvec::Mat3V &WJRrel);
+      virtual void updatePositionAndOrientationOfFrame(double t, Frame *P);
+      virtual void updateAccelerations(double t, Frame *P);
+      virtual void updateRelativeJacobians(double t, Frame *P);
+      virtual void updateRelativeJacobians(double t, Frame *P, fmatvec::Mat3V &WJTrel, fmatvec::Mat3V &WJRrel);
       const fmatvec::Mat3V& getWJTrel() const {return WJTrel;}
       const fmatvec::Mat3V& getWJRrel() const {return WJRrel;}
       fmatvec::Mat3V& getWJTrel() {return WJTrel;}
@@ -285,10 +281,7 @@ namespace MBSim {
        */
       fmatvec::SymMat3 SThetaS, WThetaS;
 
-      /**
-       * \brief Frame indices for kinematics and inertia description
-       */
-      int iKinematics, iInertia;
+      FixedRelativeFrame *K;
 
       /**
        * \brief TODO
@@ -324,27 +317,6 @@ namespace MBSim {
        * \brief translational and angular velocity from parent to kinematic Frame in world system
        */
       fmatvec::Vec3 WvPKrel, WomPK;
-
-      /** 
-       * \brief vector of rotations from cog-Frame to specific Frame
-       */
-      std::vector<fmatvec::SqrMat3> ASF;
-
-      /** 
-       * \brief vector of translations from cog to specific Frame in cog- and world-system
-       */
-      std::vector<fmatvec::Vec3> SrSF, WrSF;
-
-
-      /** 
-       * \brief vector of rotations from cog-Frame to specific contour
-       */
-      std::vector<fmatvec::SqrMat3> ASC;
-
-      /** 
-       * \brief vector of translations from cog to specific contour in cog- and world-system
-       */
-      std::vector<fmatvec::Vec3> SrSC, WrSC;
 
       /**
        * \brief JACOBIAN for linear transformation between differentiated positions and velocities
@@ -434,7 +406,7 @@ namespace MBSim {
       void (RigidBody::*updateJacobians_[2])(double t); 
 
       /** a pointer to Frame "C" */
-      Frame *C;
+      FixedRelativeFrame *C;
 
       fmatvec::Vec aT, aR;
 
@@ -451,14 +423,14 @@ namespace MBSim {
 
       int nu[2], nq;
 
-      Frame* frameForJacobianOfRotation;
+      Frame *frameForJacobianOfRotation;
 
-      //fmatvec::Vec qRel0, uRel0;
+      std::vector<FixedRelativeFrame*> RBF;
+      std::vector<CompoundContour*> RBC;
+
+      Frame *frameForInertiaTensor;
 
     private:
-      std::vector<std::string> saved_refFrameF, saved_refFrameC;
-      std::vector<fmatvec::Vec3> saved_RrRF, saved_RrRC;
-      std::vector<fmatvec::SqrMat3> saved_ARF, saved_ARC;
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /**
        * \brief Frame of reference for drawing openMBVBody

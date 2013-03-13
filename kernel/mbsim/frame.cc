@@ -21,7 +21,8 @@
 #include "mbsim/frame.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/rotarymatrices.h"
-//#include "mbsim/object_interface.h"
+#include "mbsim/rigid_body.h"
+#include "mbsim/dynamic_system.h"
 #include "mbsim/mbsim_event.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frame.h>
@@ -95,11 +96,11 @@ namespace MBSim {
   }
 
   void Frame::init(InitStage stage) {
-    if(stage==unknownStage) {
-      getJacobianOfTranslation(0).resize(hSize[0]);
-      getJacobianOfRotation(0).resize(hSize[0]);
-      getJacobianOfTranslation(1).resize(hSize[1]);
-      getJacobianOfRotation(1).resize(hSize[1]);
+    if(stage==resize) {
+      WJP[0].resize(hSize[0]);
+      WJR[0].resize(hSize[0]);
+      WJP[1].resize(hSize[1]);
+      WJR[1].resize(hSize[1]);
     }
     else if(stage==MBSim::plot) {
       updatePlotFeatures();
@@ -170,6 +171,11 @@ namespace MBSim {
           openMBVFrame->setID(unknown->ValueStr().substr(length, unknown->ValueStr().length()-length-1));
       }
     }
+    if((ee=element->FirstChildElement(MBSIMNS"openMBVFrame"))) {
+      OpenMBV::Frame *f=new OpenMBV::Frame;
+      setOpenMBVFrame(f);
+      f->initializeUsingXML(ee->FirstChildElement());
+    }
 #endif
   }
 
@@ -185,6 +191,45 @@ namespace MBSim {
       ele0->LinkEndChild(ele1);
     }
 #endif
+    return ele0;
+  }
+
+  Element *Frame::getByPathSearch(string path) {
+    if (path.substr(0, 1)=="/") // absolut path
+      if(parent)
+        return parent->getByPathSearch(path);
+      else
+        return getByPathSearch(path.substr(1));
+    else if (path.substr(0, 3)=="../") // relative path
+      return parent->getByPathSearch(path.substr(3));
+    else { // local path
+      throw;
+    }
+  }
+
+  void FixedRelativeFrame::init(InitStage stage) {
+    if(stage==resolveXMLPath) {
+      if(saved_frameOfReference!="")
+        setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
+      Frame::init(stage);
+    }
+    else
+      Frame::init(stage);
+  }
+
+  void FixedRelativeFrame::initializeUsingXML(TiXmlElement *element) {
+    Frame::initializeUsingXML(element);
+    TiXmlElement *ec=element->FirstChildElement();
+    ec=element->FirstChildElement(MBSIMNS"frameOfReference");
+    if(ec) setFrameOfReference(ec->Attribute("ref"));
+    ec=element->FirstChildElement(MBSIMNS"relativePosition");
+    if(ec) setRelativePosition(getVec3(ec));
+    ec=element->FirstChildElement(MBSIMNS"relativeOrientation");
+    if(ec) setRelativeOrientation(getSqrMat3(ec));
+  }
+
+  TiXmlElement* FixedRelativeFrame::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = Frame::writeXMLFile(parent);
     return ele0;
   }
 
