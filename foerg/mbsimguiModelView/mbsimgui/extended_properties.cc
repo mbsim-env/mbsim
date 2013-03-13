@@ -61,6 +61,11 @@ void ExtPhysicalVarProperty::toWidget(QWidget *widget) {
     inputProperty[i]->toWidget(static_cast<ExtPhysicalVarWidget*>(widget)->getPhysicalStringWidget(i));
 }
 
+void PropertyChoiceProperty::initialize() {
+  for(unsigned int i=0; i<property.size(); i++)
+    property[i]->initialize();
+}
+
 TiXmlElement* PropertyChoiceProperty::initializeUsingXML(TiXmlElement *element) {
   for(int i=0; i<property.size(); i++)
     if(property[i]->initializeUsingXML(element)) {
@@ -75,6 +80,9 @@ TiXmlElement* PropertyChoiceProperty::writeXMLFile(TiXmlNode *parent) {
 }
 
 void PropertyChoiceProperty::fromWidget(QWidget *widget) {
+  cout << dynamic_cast<WidgetChoiceWidget*>(widget) <<endl;
+  cout << dynamic_cast<WidgetChoiceWidget*>(widget)->stackedWidget <<endl;
+  cout << "end" << endl;
   index = static_cast<WidgetChoiceWidget*>(widget)->stackedWidget->currentIndex();
   property[index]->fromWidget(static_cast<WidgetChoiceWidget*>(widget)->stackedWidget->currentWidget());
 }
@@ -125,3 +133,33 @@ void ExtProperty::toWidget(QWidget *widget) {
   static_cast<ExtWidget*>(widget)->setActive(active);
   property->toWidget(static_cast<ExtWidget*>(widget)->widget);
 }
+
+void PropertyContainer::initialize() {
+  for(unsigned int i=0; i<property.size(); i++)
+    property[i]->initialize();
+}
+
+TiXmlElement* PropertyContainer::initializeUsingXML(TiXmlElement *element) {
+  for(unsigned int i=0; i<property.size(); i++)
+    if(property[i]->initializeUsingXML(element))
+      return 0;
+  return element;
+}
+
+TiXmlElement* PropertyContainer::writeXMLFile(TiXmlNode *parent) {
+  for(unsigned int i=0; i<property.size(); i++)
+    property[i]->writeXMLFile(parent);
+  return 0;
+}
+
+void PropertyContainer::fromWidget(QWidget *widget) {
+  for(unsigned int i=0; i<property.size(); i++)
+    property[i]->fromWidget(static_cast<WidgetContainer*>(widget)->widget[i]);
+}
+
+void PropertyContainer::toWidget(QWidget *widget) {
+  for(unsigned int i=0; i<property.size(); i++)
+    property[i]->toWidget(static_cast<WidgetContainer*>(widget)->widget[i]);
+}
+
+

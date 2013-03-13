@@ -46,9 +46,13 @@ mbsimgui_SOURCES = main.cc \
 		   basic_properties.cc \
 		   string_properties.cc \
 		   kinematics_properties.cc \
+		   kinetics_properties.cc \
+		   function_properties.cc \
 		   ombv_properties.cc \
 		   extended_properties.cc \
-		   mainwindow.cc
+		   mainwindow.cc \
+		   treemodel.cc \
+		   treeitem.cc
 
 nodist_mbsimgui_SOURCES=$(QT_BUILT_SOURCES)
 
@@ -80,7 +84,8 @@ QT_BUILT_SOURCES = mainwindow.moc.cc \
 		   integrator.moc.cc \
 		   parameter.moc.cc \
 		   signal_.moc.cc \
-		   observer.moc.cc
+		   observer.moc.cc \
+		   treemodel.moc.cc
 
 mbsimgui_HEADERS = 
 		   

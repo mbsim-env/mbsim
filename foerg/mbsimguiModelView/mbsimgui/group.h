@@ -21,13 +21,15 @@
 #define _GROUP__H_
 
 #include "element.h"
+#include "extended_properties.h"
 
 class Group : public Element {
   Q_OBJECT
   protected:
     QString getType() const { return "Group"; }
     QAction *actionPaste;
-    ExtWidget *position, *orientation, *parameterFile, *frameOfReference; 
+    ExtWidget *positionWidget, *orientationWidget, *frameOfReferenceWidget; 
+    ExtProperty position, orientation, frameOfReference; 
 
   public:
     Group(const QString &str, QTreeWidgetItem *parentItem, int ind);
@@ -38,6 +40,10 @@ class Group : public Element {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual Element *getByPathSearch(QString path);
     void setActionPasteDisabled(bool flag);
+    void initializeDialog();
+    virtual void fromWidget();
+    virtual void toWidget();
+    void initialize();
 
   protected slots:
     void addGroup();

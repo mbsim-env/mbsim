@@ -21,6 +21,7 @@
 #define _CONSTRAINT__H_
 
 #include "object.h"
+#include "extended_properties.h"
 
 class RigidBody;
 
@@ -67,8 +68,14 @@ class JointConstraint : public Constraint {
 
     virtual QString getType() const { return "JointConstraint"; }
 
+    virtual void initializeDialog();
+    virtual void fromWidget();
+    virtual void toWidget();
+    void initialize();
+
   protected:
-    ExtWidget *force, *moment, *connections, *independentBody, *dependentBodiesFirstSide, *dependentBodiesSecondSide;
+    ExtWidget *forceWidget, *momentWidget, *connectionsWidget, *independentBodyWidget, *dependentBodiesFirstSideWidget, *dependentBodiesSecondSideWidget;
+    ExtProperty force, moment, connections, independentBody, dependentBodiesFirstSide, dependentBodiesSecondSide;
 
     void resizeGeneralizedPosition();
 };

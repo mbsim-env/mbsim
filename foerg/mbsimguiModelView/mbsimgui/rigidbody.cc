@@ -261,13 +261,13 @@ void RigidBody::addSphere() {
 
 void RigidBody::resizeGeneralizedPosition() {
   int size = getSize();
-  if(q0->size() != size)
+  if(q0 && q0->size() != size)
     q0->resize(size);
 }
 
 void RigidBody::resizeGeneralizedVelocity() {
   int size = getSize();
-  if(u0->size() != size)
+  if(u0 && u0->size() != size)
     u0->resize(size);
 }
 

@@ -26,6 +26,7 @@
 
 class Element;
 class Frame;
+class RigidBody;
 class TiXmlElement;
 class TiXmlNode;
 
@@ -80,6 +81,29 @@ class FrameOfReferenceProperty : public Property {
     TiXmlElement* writeXMLFile(TiXmlNode *element); 
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
+    void setSavedFrameOfReference(const QString &str) {saved_frameOfReference = str;}
+    const QString& getSavedFrameOfReference() const {return saved_frameOfReference;}
+};
+
+class RigidBodyOfReferenceProperty : public Property {
+
+  public:
+    RigidBodyOfReferenceProperty(RigidBody *body_=0, Element *element_=0, const std::string &xmlName_="") : body(body_), element(element_), xmlName(xmlName_) {}
+    RigidBody* getBody() const {return body;}
+    void setBody(RigidBody* body_) {body = body_;}
+    void initialize();
+    TiXmlElement* initializeUsingXML(TiXmlElement *element);
+    TiXmlElement* writeXMLFile(TiXmlNode *element); 
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+    void setSavedBodyOfReference(const QString &str) {saved_bodyOfReference = str;}
+    const QString& getSavedBodyOfReference() const {return saved_bodyOfReference;}
+
+  protected:
+    RigidBody* body;
+    Element* element;
+    std::string xmlName;
+    QString saved_bodyOfReference;
 };
 
 class FileProperty : public Property {
@@ -95,6 +119,42 @@ class FileProperty : public Property {
     QString fileName;
     std::string xmlName;
     QString absoluteFilePath;
+};
+
+class DependenciesProperty : public Property {
+
+  public:
+    DependenciesProperty(Element* element_, const std::string &xmlName_) : element(element_), xmlName(xmlName_) {}
+
+    void initialize();
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+
+  protected:
+    Element* element;
+    std::string xmlName;
+    std::vector<RigidBodyOfReferenceProperty*> refBody;
+
+    void addDependency();
+    void updateGeneralizedCoordinatesOfBodies();
+};
+
+class ConnectFramesProperty : public Property {
+
+  public:
+    ConnectFramesProperty(int n, Element* element);
+
+    void initialize();
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+
+  protected:
+    std::vector<FrameOfReferenceProperty*> frame;
+    Element* element;
 };
 
 class SolverTolerancesProperty : public Property {

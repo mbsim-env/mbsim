@@ -132,7 +132,7 @@ class CardanAnglesProperty : public RotationProperty {
 class RotationChoiceProperty : public Property {
 
   public:
-    RotationChoiceProperty(RotationProperty* rotation_, const std::string &xmlName_): rotation(rotation_), xmlName(xmlName_), rotationIndex(0) {}
+    RotationChoiceProperty(RotationProperty* rotation_, const std::string &xmlName_): rotation(rotation_), xmlName(xmlName_), index(0) {}
 
     TiXmlElement* initializeUsingXML(TiXmlElement *element);
     TiXmlElement* writeXMLFile(TiXmlNode *element);
@@ -143,7 +143,7 @@ class RotationChoiceProperty : public Property {
   protected:
     RotationProperty *rotation;
     std::string xmlName;
-    int rotationIndex;
+    int index;
 };
 
 #endif
