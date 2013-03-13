@@ -475,8 +475,11 @@ def runExample(resultQueue, example):
     resultStr+='</tr>'
 
   except:
-    print("\nException from example "+str(example[0])+" raised:\n"+traceback.format_exc())
-    resultStr='<tr><td>'+example[0]+'</td><td><span style="color:red;text-decoration:blink">fatal script error</span></td><td>-</td><td>-</td><td>-</td></tr>'
+    fatalScriptErrorFN=pj(example[0], "fatalScriptError.out")
+    fatalScriptErrorFD=open(pj(args.reportOutDir, fatalScriptErrorFN), "w")
+    print(traceback.format_exc(), file=fatalScriptErrorFD)
+    fatalScriptErrorFD.close()
+    resultStr='<tr><td>'+example[0]+'</td><td><a href="'+myurllib.pathname2url(fatalScriptErrorFN)+'"><span style="color:red;text-decoration:blink">fatal script error</span></a></td><td>-</td><td>-</td><td>-</td></tr>'
     runExampleRet=1
   finally:
     os.chdir(savedDir)
@@ -669,10 +672,11 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
       if column>=curObj.shape[1]:
         printLabel='<span style="color:orange">&lt;label '+printLabel+' not in cur.&gt;</span>'
       # compare
-      if refObj[:,column].shape==curObj[:,column].shape:
-        delta=abs(refObj[:,column]-curObj[:,column])
-      else:
-        delta=float("inf") # very large => error
+      if curObj.shape[0]>0 and curObj.shape[0]>0: # only if curObj and refObj contains data (rows)
+        if refObj[:,column].shape==curObj[:,column].shape:
+          delta=abs(refObj[:,column]-curObj[:,column])
+        else:
+          delta=float("inf") # very large => error
       print('<tr>', file=compareFD)
       print('<td>'+h5CurFile.filename+'</td>', file=compareFD)
       print('<td>'+datasetName+'</td>', file=compareFD)
@@ -680,15 +684,18 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
         print('<td>'+printLabel+'</td>', file=compareFD)
       else:
         print('<td><span style="color:orange">&lt;label for col. '+str(column+1)+' differ&gt;</span></td>', file=compareFD)
-      if numpy.any(numpy.logical_and(delta>args.atol, delta>args.rtol*abs(refObj[:,column]))):
-        print('<td><a href="'+myurllib.pathname2url(diffFilename)+'"><span style="color:red">failed</span></a></td>', file=compareFD)
-        nrFailed[0]+=1
-        dataArrayRef=numpy.concatenate((refObj[:, 0:1], refObj[:, column:column+1]), axis=1)
-        dataArrayCur=numpy.concatenate((curObj[:, 0:1], curObj[:, column:column+1]), axis=1)
-        createDiffPlot(pj(args.reportOutDir, example, diffFilename), example, h5CurFile.filename, datasetName,
-                       refLabels[column], dataArrayRef, dataArrayCur)
-      else:
-        print('<td><span style="color:green">passed</span></td>', file=compareFD)
+      if curObj.shape[0]>0 and curObj.shape[0]>0: # only if curObj and refObj contains data (rows)
+        if numpy.any(numpy.logical_and(delta>args.atol, delta>args.rtol*abs(refObj[:,column]))):
+          print('<td><a href="'+myurllib.pathname2url(diffFilename)+'"><span style="color:red">failed</span></a></td>', file=compareFD)
+          nrFailed[0]+=1
+          dataArrayRef=numpy.concatenate((refObj[:, 0:1], refObj[:, column:column+1]), axis=1)
+          dataArrayCur=numpy.concatenate((curObj[:, 0:1], curObj[:, column:column+1]), axis=1)
+          createDiffPlot(pj(args.reportOutDir, example, diffFilename), example, h5CurFile.filename, datasetName,
+                         refLabels[column], dataArrayRef, dataArrayCur)
+        else:
+          print('<td><span style="color:green">passed</span></td>', file=compareFD)
+      else: # not row in curObj or refObj
+        print('<td><span style="color:red">no data row in cur. or ref.</span></td>', file=compareFD)
       print('</tr>', file=compareFD)
     # check for labels/columns in current but not in reference
     for label in curLabels[len(refLabels):]:
