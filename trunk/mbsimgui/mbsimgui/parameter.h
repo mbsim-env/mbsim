@@ -21,7 +21,6 @@
 #define _PARAMETER__H_
 
 #include <QtGui/QTreeWidgetItem>
-#include <string>
 
 class PropertyWidget;
 class ExtXMLWidget;
@@ -35,7 +34,7 @@ class Parameter : public QObject, public QTreeWidgetItem {
   protected:
     QString newName(const QString &type);
     bool drawThisPath;
-    std::string iconFile;
+    QString iconFile;
     bool searchMatched;
     PropertyWidget *properties;
     QMenu *contextMenu;
@@ -43,7 +42,7 @@ class Parameter : public QObject, public QTreeWidgetItem {
   public:
     Parameter(const QString &str, QTreeWidgetItem *parentItem, int ind);
     virtual ~Parameter();
-    std::string &getIconFile() { return iconFile; }
+    QString &getIconFile() { return iconFile; }
     virtual QString getInfo();
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);

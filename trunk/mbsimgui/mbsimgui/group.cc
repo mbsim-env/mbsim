@@ -23,6 +23,7 @@
 #include <QtGui/QInputDialog>
 #include <QtGui/QFileDialog>
 #include <QtGui/QMessageBox>
+#include <QVBoxLayout>
 #include "objectfactory.h"
 #include "rigidbody.h"
 #include "constraint.h"
@@ -83,6 +84,11 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
   links->setForeground(0,brush);
   links->setBackground(0,brush2);
   addChild(links);
+  observers = new Container;
+  observers->setText(0, "observers");
+  observers->setForeground(0,brush);
+  observers->setBackground(0,brush2);
+  addChild(observers);
 
   //if(parentItem != treeWidget()->invisibleRootItem())
     //new Frame("I", frames, -1, false);
@@ -91,46 +97,40 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
 
   QAction *action;
 
-  properties->addTab("Frame positioning");
-  properties->addTab("Contour positioning");
+  //properties->addTab("Frame positioning");
+  //properties->addTab("Contour positioning");
   if(parentItem != treeWidget()->invisibleRootItem()) {
     properties->addTab("Kinematics");
 
     vector<PhysicalStringWidget*> input;
     input.push_back(new PhysicalStringWidget(new VecWidget(3),MBSIMNS"position",lengthUnits(),4));
-    position = new ExtXMLWidget("Position",new ExtPhysicalVarWidget(input)); 
+    position = new ExtXMLWidget("Position",new ExtPhysicalVarWidget(input),true); 
     properties->addToTab("Kinematics", position);
 
     input.clear();
     input.push_back(new PhysicalStringWidget(new MatWidget(getEye<string>(3,3,"1","0")),MBSIMNS"orientation",noUnitUnits(),1));
-    orientation = new ExtXMLWidget("Orientation",new ExtPhysicalVarWidget(input)); 
+    orientation = new ExtXMLWidget("Orientation",new ExtPhysicalVarWidget(input),true); 
     properties->addToTab("Kinematics", orientation);
 
-    frameOfReference = new ExtXMLWidget("Frame of reference",new FrameOfReferenceWidget(MBSIMNS"frameOfReference",this,((Group*)getParentElement())->getFrame(0))); 
+    frameOfReference = new ExtXMLWidget("Frame of reference",new ParentFrameOfReferenceWidget(MBSIMNS"frameOfReference",((Group*)getParentElement())->getFrame(0),0),true);
     properties->addToTab("Kinematics", frameOfReference);
   }
-
-  framePos = new ExtXMLWidget("Position and orientation of frames",new FramePositionsWidget(this)); 
-  properties->addToTab("Frame positioning", framePos);
-
-  contourPos = new ExtXMLWidget("Position and orientation of contours",new ContourPositionsWidget(this)); 
-  properties->addToTab("Contour positioning", contourPos);
 
   action=new QAction(Utils::QIconCached("newobject.svg"),"Add frame", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addFrame()));
   contextMenu->addAction(action);
 
   QMenu *submenu = contextMenu->addMenu("Add contour");
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Add point", this);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Point", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addPoint()));
   submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Add line", this);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Line", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addLine()));
   submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Add plane", this);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Plane", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addPlane()));
   submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Add sphere", this);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Sphere", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addSphere()));
   submenu->addAction(action);
 
@@ -142,6 +142,9 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
   //connect(action,SIGNAL(triggered()),this,SLOT(addObject()));
   //contextMenu->addAction(action);
   submenu = contextMenu->addMenu("Add object");
+//  action=new QAction(Utils::QIconCached("newobject.svg"),"Rigid bodies", this);
+//  connect(action,SIGNAL(triggered()),this,SLOT(addRigidBodies()));
+//  submenu->addAction(action);
   action=new QAction(Utils::QIconCached("newobject.svg"),"Rigid body", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addRigidBody()));
   submenu->addAction(action);
@@ -168,10 +171,15 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
   action=new QAction(Utils::QIconCached("newobject.svg"),"Contact", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addContact()));
   submenu->addAction(action);
-  QMenu *subsubmenu = submenu->addMenu("Add Sensor");
+  QMenu *subsubmenu = submenu->addMenu("Sensor");
   action=new QAction(Utils::QIconCached("newobject.svg"),"AbsolutePositionSensor", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addAbsolutePositionSensor()));
   subsubmenu->addAction(action);
+
+  submenu = contextMenu->addMenu("Add observer");
+  action=new QAction(Utils::QIconCached("newobject.svg"),"AbsoluteKinematicsObserver", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addAbsoluteKinematicsObserver()));
+  submenu->addAction(action);
 
   action=new QAction(Utils::QIconCached("newobject.svg"),"Add from file", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addFromFile()));
@@ -254,6 +262,22 @@ void Group::addRigidBody() {
   ((Element*)treeWidget()->topLevelItem(0))->update();
 }
 
+void Group::addRigidBodies() {
+  for(int i=0; i<3000; i++) {
+    cout <<"add Body" << i+1<< endl;
+    //new RigidBody(newName(objects,"Body"), objects, -1);
+    //new FixedRelativeFrame(newName(frames,"P"), frames, -1);
+    //new Frame("P", 0, -1);
+    //QTreeWidgetItem *item = new Element2();
+    //QTreeWidgetItem *item = new QTreeWidgetItem;
+    //addChild(item); //
+    //item->setText(0,newName(this,"P"));
+    //item->setText(0,"Name");
+    cout <<"end" << endl;
+  }
+  ((Element*)treeWidget()->topLevelItem(0))->update();
+}
+
 void Group::addKinematicConstraint() {
   new KinematicConstraint(newName(objects,"KinematicConstraint"), objects, -1);
   ((Element*)treeWidget()->topLevelItem(0))->update();
@@ -289,8 +313,13 @@ void Group::addAbsolutePositionSensor() {
   ((Element*)treeWidget()->topLevelItem(0))->update();
 }
 
+void Group::addAbsoluteKinematicsObserver() {
+  new AbsoluteKinematicsObserver(newName(observers,"AbsoluteKinematicsObserver"), observers, -1);
+  ((Element*)treeWidget()->topLevelItem(0))->update();
+}
+
 void Group::addFrame() {
-  new Frame(newName(frames,"P"), frames, -1);
+  new FixedRelativeFrame(newName(frames,"P"), frames, -1);
   ((Element*)treeWidget()->topLevelItem(0))->update();
 }
 
@@ -345,7 +374,7 @@ void Group::addFromFile() {
     map<string,string> dummy;
     incorporateNamespace(doc.FirstChildElement(), dummy);
     bool renameObject = false, renameGroup = false;
-    string name = e->Attribute("name");
+    QString name = e->Attribute("name");
     if(getObject(name,false))
       renameObject = true;
     if(getGroup(e->Attribute("name"),false))
@@ -356,14 +385,14 @@ void Group::addFromFile() {
         QString s = e->ValueStr().c_str();
         s.remove(MBSIMNS);
         s += QString::number(objects->childCount());
-        QString text = name.c_str();
+        QString text = name;
         do {
           QMessageBox msgBox;
           msgBox.setText(QString("The name ") + text + " does already exist in group.");
           msgBox.exec();
           text = QInputDialog::getText(0, tr("Rename"), tr("Name:"), QLineEdit::Normal, s);
 
-        } while(getObject(text.toStdString(),false));
+        } while(getObject(text,false));
         o->setName(text);
       }
       o->initializeUsingXML(e);
@@ -376,14 +405,14 @@ void Group::addFromFile() {
         QString s = e->ValueStr().c_str();
         s.remove(MBSIMNS);
         s += QString::number(groups->childCount());
-        QString text = name.c_str();
+        QString text = name;
         do {
           QMessageBox msgBox;
           msgBox.setText(QString("The name ") + text + " does already exist in group.");
           msgBox.exec();
           text = QInputDialog::getText(0, tr("Rename"), tr("Name:"), QLineEdit::Normal, s);
 
-        } while(getGroup(text.toStdString(),false));
+        } while(getGroup(text,false));
         g->setName(text);
       }
       g->initializeUsingXML(e);
@@ -394,10 +423,8 @@ void Group::addFromFile() {
 }
 
 void Group::initializeUsingXML(TiXmlElement *element) {
-  cout << "Group::initializeUsingXML" << endl;
   TiXmlElement *e;
   Element::initializeUsingXML(element);
-  cout << getName().toStdString() << endl;
   e=element->FirstChildElement();
 
   if(frameOfReference)
@@ -420,14 +447,16 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *E=element->FirstChildElement(MBSIMNS"frames")->FirstChildElement();
   while(E && E->ValueStr()==MBSIMNS"frame") {
     TiXmlElement *ec=E->FirstChildElement();
-    Frame *f=new Frame(ec->Attribute("name"), frames, -1);
+    FixedRelativeFrame *f=new FixedRelativeFrame(ec->Attribute("name"), frames, -1);
     f->initializeUsingXML(ec);
+    f->initializeUsingXML2(E);
     E=E->NextSiblingElement();
   }
-
-  framePos->initializeUsingXML(element->FirstChildElement(MBSIMNS"frames"));
-
-  e=e->NextSiblingElement();
+  while(E && E->ValueStr()==MBSIMNS"FixedRelativeFrame") {
+    FixedRelativeFrame *f=new FixedRelativeFrame(E->Attribute("name"), frames, -1);
+    f->initializeUsingXML(E);
+    E=E->NextSiblingElement();
+  }
 
   // contours
   E=element->FirstChildElement(MBSIMNS"contours")->FirstChildElement();
@@ -436,12 +465,17 @@ void Group::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *ec=E->FirstChildElement();
     c=ObjectFactory::getInstance()->createContour(ec, contours, -1);
     if(c) c->initializeUsingXML(ec);
+    FixedRelativeFrame *f=new FixedRelativeFrame(QString("ContourFrame")+QString::number(contours->childCount()), frames, -1);
+    f->initializeUsingXML(ec);
+    f->initializeUsingXML2(E);
+    c->setSavedFrameOfReference(QString("../Frame[")+f->getName()+"]");
     E=E->NextSiblingElement();
   }
-
-  contourPos->initializeUsingXML(element->FirstChildElement(MBSIMNS"contours"));
-
-  e=e->NextSiblingElement();
+  while(E) {
+    c=ObjectFactory::getInstance()->createContour(E, contours, -1);
+    c->initializeUsingXML(E);
+    E=E->NextSiblingElement();
+  }
 
   // groups
   E=element->FirstChildElement(MBSIMNS"groups")->FirstChildElement();
@@ -482,11 +516,20 @@ void Group::initializeUsingXML(TiXmlElement *element) {
     E=E->NextSiblingElement();
   }
 
+  // observers
+  if(element->FirstChildElement(MBSIMNS"observers")) {
+    E=element->FirstChildElement(MBSIMNS"observers")->FirstChildElement();
+    Observer *obsrv;
+    while(E) {
+      obsrv=ObjectFactory::getInstance()->createObserver(E, observers, -1);
+      if(obsrv) obsrv->initializeUsingXML(E);
+      E=E->NextSiblingElement();
+    }
+  }
+
   e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameI");
   if(e)
     getFrame(0)->initializeUsingXML2(e);
-
-  cout << "end Group::initializeUsingXML" << endl;
 }
 
 TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
@@ -501,11 +544,13 @@ TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
   }
 
   ele1 = new TiXmlElement( MBSIMNS"frames" );
-  framePos->writeXMLFile(ele1);
+  for(int i=1; i<frames->childCount(); i++)
+    getFrame(i)->writeXMLFile(ele1);
   ele0->LinkEndChild( ele1 );
 
   ele1 = new TiXmlElement( MBSIMNS"contours" );
-  contourPos->writeXMLFile(ele1);
+  for(int i=0; i<contours->childCount(); i++)
+    getContour(i)->writeXMLFile(ele1);
   ele0->LinkEndChild( ele1 );
 
   ele1 = new TiXmlElement( MBSIMNS"groups" );
@@ -526,6 +571,11 @@ TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
     getLink(i)->writeXMLFile(ele1);
   ele0->LinkEndChild( ele1 );
 
+  ele1 = new TiXmlElement( MBSIMNS"observers" );
+  for(int i=0; i<observers->childCount(); i++)
+    getObserver(i)->writeXMLFile(ele1);
+  ele0->LinkEndChild( ele1 );
+
   Frame *I = getFrame(0);
   if(I->openMBVFrame()) {
     ele1 = new TiXmlElement( MBSIMNS"enableOpenMBVFrameI" );
@@ -536,28 +586,30 @@ TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
-Element * Group::getByPathSearch(string path) {
-  if (path.substr(0, 1)=="/") { // absolut path
+Element * Group::getByPathSearch(QString path) {
+  if (path.mid(0, 1)=="/") { // absolut path
     if(getParentElement())
       return getParentElement()->getByPathSearch(path);
     else
-      return getByPathSearch(path.substr(1));
+      return getByPathSearch(path.mid(1));
   }
-  else if (path.substr(0, 3)=="../") // relative path
-    return getParentElement()->getByPathSearch(path.substr(3));
+  else if (path.mid(0, 3)=="../") // relative path
+    return getParentElement()->getByPathSearch(path.mid(3));
   else { // local path
-    size_t pos0=path.find_first_of("[");
-    string container=path.substr(0, pos0);
-    size_t pos1=path.find_first_of("]", pos0);
-    string searched_name=path.substr(pos0+1, pos1-pos0-1);
+    size_t pos0=path.indexOf("[");
+    QString container=path.mid(0, pos0);
+    size_t pos1=path.indexOf("]", pos0);
+    QString searched_name=path.mid(pos0+1, pos1-pos0-1);
     if(path.length()>pos1+1) { // weiter absteigen
-      string rest=path.substr(pos1+2);
+      QString rest=path.mid(pos1+2);
       if (container=="Object")
         return getObject(searched_name)->getByPathSearch(rest);
       else if (container=="Link")
         return getLink(searched_name)->getByPathSearch(rest);
       //else if (container=="ExtraDynamic")
       //return getExtraDynamic(searched_name)->getByPathSearch(rest);
+      else if (container=="Observer")
+        return getObserver(searched_name)->getByPathSearch(rest);
       else if (container=="Group")
         return getGroup(searched_name)->getByPathSearch(rest);
       else {
@@ -572,6 +624,8 @@ Element * Group::getByPathSearch(string path) {
         return getLink(searched_name);
       //        else if (container=="ExtraDynamic")
       //          return getExtraDynamic(searched_name);
+      else if (container=="Observer")
+        return getObserver(searched_name);
       else if (container=="Group")
         return getGroup(searched_name);
       else if (container=="Frame")
@@ -597,7 +651,7 @@ void Group::paste() {
   map<string,string> dummy;
   incorporateNamespace(copiedElement->FirstChildElement(), dummy);
   bool renameObject = false, renameGroup = false;
-  string name = e->Attribute("name");
+  QString name = e->Attribute("name");
   if(getObject(name,false))
     renameObject = true;
   if(getGroup(e->Attribute("name"),false))
@@ -608,14 +662,14 @@ void Group::paste() {
       QString s = e->ValueStr().c_str();
       s.remove(MBSIMNS);
       s += QString::number(objects->childCount());
-      QString text = name.c_str();
+      QString text = name;
       do {
         QMessageBox msgBox;
         msgBox.setText(QString("The name ") + text + " does already exist in group.");
         msgBox.exec();
         text = QInputDialog::getText(0, tr("Rename"), tr("Name:"), QLineEdit::Normal, s);
 
-      } while(getObject(text.toStdString(),false));
+      } while(getObject(text,false));
       o->setName(text);
     }
     o->initializeUsingXML(e);
@@ -629,14 +683,14 @@ void Group::paste() {
       QString s = e->ValueStr().c_str();
       s.remove(MBSIMNS);
       s += QString::number(groups->childCount());
-      QString text = name.c_str();
+      QString text = name;
       do {
         QMessageBox msgBox;
         msgBox.setText(QString("The name ") + text + " does already exist in group.");
         msgBox.exec();
         text = QInputDialog::getText(0, tr("Rename"), tr("Name:"), QLineEdit::Normal, s);
 
-      } while(getGroup(text.toStdString(),false));
+      } while(getGroup(text,false));
       g->setName(text);
     }
     g->initializeUsingXML(e);

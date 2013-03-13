@@ -35,7 +35,7 @@ class Object : public Element {
     virtual int getuSize() {return 0;}
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual Element* getByPathSearch(std::string path);
+    virtual Element* getByPathSearch(QString path);
     virtual void resizeGeneralizedPosition() {}
     virtual void resizeGeneralizedVelocity() {}
   public slots:

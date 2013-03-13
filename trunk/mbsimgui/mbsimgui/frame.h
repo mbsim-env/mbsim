@@ -33,8 +33,21 @@ class Frame : public Element {
     virtual void initializeUsingXML2(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile2(TiXmlNode *element);
     bool openMBVFrame() const {return visu->isActive();}
+    virtual Element * getByPathSearch(QString path);
   protected:
     ExtXMLWidget *visu;
+};
+
+class FixedRelativeFrame : public Frame {
+  public:
+    FixedRelativeFrame(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    ~FixedRelativeFrame();
+    QString getType() const { return "FixedRelativeFrame"; }
+    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual void initializeUsingXML2(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+  protected:
+    ExtXMLWidget *refFrame, *position, *orientation;
 };
 
 #endif

@@ -114,7 +114,7 @@ void Parameter::writeXMLFile(const QString &name) {
   writeXMLFile(&doc);
   map<string, string> nsprefix;
   unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
-  doc.SaveFile((name+".mbsimparam.xml").toAscii().data());
+  doc.SaveFile((name.right(15)==".mbsimparam.xml"?name:name+".mbsimparam.xml").toAscii().data());
 }
 
 void Parameter::updateTreeWidgetItem(const QString &str) {
