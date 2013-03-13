@@ -576,7 +576,7 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, label, data
   print('<b>Dataset:</b> '+datasetName+'<br/>', file=diffHTMLPlotFD)
   print('<b>Label:</b> '+label.decode("utf-8")+'<br/>', file=diffHTMLPlotFD)
   print('</p>', file=diffHTMLPlotFD)
-  print('<p><embed src="plot.svg" type="image/svg+xml"/></p>', file=diffHTMLPlotFD)
+  print('<p><embed src="plot.svg" height="95%" type="image/svg+xml"/></p>', file=diffHTMLPlotFD)
   print('</body>', file=diffHTMLPlotFD)
   print('</html>', file=diffHTMLPlotFD)
   diffHTMLPlotFD.close()
