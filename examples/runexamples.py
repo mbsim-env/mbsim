@@ -34,6 +34,14 @@ ombvSchema =None
 mbsimSchema=None
 intSchema  =None
 directories=list() # a list of all examples sorted in descending order (filled recursively (using the filter) by by --directories)
+# the following examples will fail: do not report them in the RSS feed as errors
+willFail=set([
+  pj('mechanics', 'flexible_body', 'spatial_beam_cosserat'),
+  pj('mechanics', 'flexible_body', 'mfr_mindlin'),
+  pj('mechanics', 'contacts', 'point_nurbsdisk'),
+  pj('mechanics', 'contacts', 'circle_nurbsdisk2s'),
+  pj('mechanics', 'flexible_body', 'perlchain_cosserat')
+])
 
 # command line option definition
 argparser = argparse.ArgumentParser(
@@ -86,7 +94,7 @@ cfgOpts.add_argument("--rtol", default=1e-5, type=float,
 cfgOpts.add_argument("--disableRun", action="store_true", help="disable running the example on action 'report'")
 cfgOpts.add_argument("--disableCompare", action="store_true", help="disable comparing the results on action 'report'")
 cfgOpts.add_argument("--disableValidate", action="store_true", help="disable validating the XML files on action 'report'")
-cfgOpts.add_argument("--buildType", default=None, type=str, help="Description of the build type (e.g: 'Daily Build: ')")
+cfgOpts.add_argument("--buildType", default="", type=str, help="Description of the build type (e.g: 'Daily Build: ')")
 cfgOpts.add_argument("--prefixSimulation", default=None, type=str,
   help="prefix the simulation command (./main, mbsimflatxml, mbsimxml) with this string: e.g. 'valgrind --tool=callgrind'")
 
@@ -200,6 +208,7 @@ def main():
   print('   <b>Start time:</b> '+str(datetime.datetime.now())+'<br/>', file=mainFD)
   print('   <b>End time:</b> @STILL_RUNNING_OR_ABORTED@<br/>', file=mainFD)
   print('</p>', file=mainFD)
+  print('<p>A example name in gray color is a example which may fail and is therefore not reported as an error in the RSS feed.</p>', file=mainFD)
 
   print('<table border="1">', file=mainFD)
   print('<tr>', file=mainFD)
@@ -240,9 +249,9 @@ def main():
     printFinishedMessage(missingDirectories, result)
   # wait for pool to finish and get result
   retAll=poolResult.get()
-  # set globla result and add failedExamples
+  # set global result and add failedExamples
   for index in range(len(retAll)):
-    if retAll[index]!=0:
+    if retAll[index]!=0 and not directories[index][0] in willFail:
       mainRet=1
       failedExamples.append(directories[index][0])
 
@@ -272,7 +281,7 @@ def main():
   # write RSS feed
   writeRSSFeed(len(failedExamples), len(retAll))
 
-  # print result summary to console and create rss feed on error
+  # print result summary to console
   if len(failedExamples)>0:
     print('\n'+str(len(failedExamples))+' examples have failed.')
   else:
@@ -388,7 +397,10 @@ def runExample(resultQueue, example):
     # print result to resultStr
     resultStr=""
     resultStr+='<tr>'
-    resultStr+='<td>'+example[0]+'</td>'
+    if not example[0] in willFail:
+      resultStr+='<td>'+example[0]+'</td>'
+    else:
+      resultStr+='<td><span style="color:gray">'+example[0]+'</span></td>'
     if args.disableRun:
       resultStr+='<td><span style="color:orange">not run</span></td>'
     else:
