@@ -80,9 +80,6 @@ TiXmlElement* PropertyChoiceProperty::writeXMLFile(TiXmlNode *parent) {
 }
 
 void PropertyChoiceProperty::fromWidget(QWidget *widget) {
-  cout << dynamic_cast<WidgetChoiceWidget*>(widget) <<endl;
-  cout << dynamic_cast<WidgetChoiceWidget*>(widget)->stackedWidget <<endl;
-  cout << "end" << endl;
   index = static_cast<WidgetChoiceWidget*>(widget)->stackedWidget->currentIndex();
   property[index]->fromWidget(static_cast<WidgetChoiceWidget*>(widget)->stackedWidget->currentWidget());
 }
