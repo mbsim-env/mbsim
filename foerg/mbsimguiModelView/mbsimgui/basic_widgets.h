@@ -207,6 +207,8 @@ class ConnectFramesWidget : public Widget {
 
 class ConnectContoursWidget : public Widget {
 
+  friend class ConnectContoursProperty;
+
   public:
     ConnectContoursWidget(int n, Element* element);
 

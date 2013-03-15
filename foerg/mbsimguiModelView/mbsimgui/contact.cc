@@ -19,6 +19,10 @@
 
 #include <config.h>
 #include "contact.h"
+#include "basic_properties.h"
+#include "function_properties.h"
+#include "kinetics_properties.h"
+#include "ombv_properties.h"
 #include "kinetics_widgets.h"
 #include "string_widgets.h"
 #include "extended_widgets.h"
@@ -26,68 +30,121 @@
 
 using namespace std;
 
-Contact::Contact(const QString &str, QTreeWidgetItem *parentItem, int ind) : Link(str, parentItem, ind) {
+Contact::Contact(const QString &str, QTreeWidgetItem *parentItem, int ind) : Link(str, parentItem, ind), contactImpactLaw(0,false), frictionForceLaw(0,false), frictionImpactLaw(0,false), enableOpenMBVContactPoints(0,false), normalForceArrow(0,false), frictionArrow(0,false) {
 
   setText(1,getType());
 
-  properties->addTab("Kinetics");
-  //properties->addTab("Constitutive laws");
-  properties->addTab("Visualisation");
+  connections.setProperty(new ConnectContoursProperty(2,this));
 
-  connections = new ExtWidget("Connections",new ConnectContoursWidget(2,this));
-  properties->addToTab("Kinetics", connections);
+  contactForceLaw.setProperty(new GeneralizedForceLawChoiceProperty(MBSIMNS"contactForceLaw"));
 
-  contactForceLaw = new ExtWidget("Contact force law",new GeneralizedForceLawChoiceWidget);
-  properties->addToTab("Kinetics", contactForceLaw);
+  contactImpactLaw.setProperty(new GeneralizedImpactLawChoiceProperty(""));
+  contactImpactLaw.setXMLName(MBSIMNS"contactImpactLaw");
 
-  contactImpactLaw = new ExtWidget("Contact impact law",new GeneralizedImpactLawChoiceWidget,true);
-  properties->addToTab("Kinetics", contactImpactLaw);
+  frictionForceLaw.setProperty(new FrictionForceLawChoiceProperty(""));
+  frictionForceLaw.setXMLName(MBSIMNS"frictionForceLaw");
 
-  frictionForceLaw = new ExtWidget("Friction force law",new FrictionForceLawChoiceWidget,true);
-  properties->addToTab("Kinetics", frictionForceLaw);
+  frictionImpactLaw.setProperty(new FrictionImpactLawChoiceProperty(""));
+  frictionImpactLaw.setXMLName(MBSIMNS"frictionImpactLaw");
 
-  frictionImpactLaw = new ExtWidget("Friction impact law",new FrictionImpactLawChoiceWidget,true);
-  properties->addToTab("Kinetics", frictionImpactLaw);
+  vector<PhysicalStringProperty*> input;
+  input.push_back(new PhysicalStringProperty(new ScalarProperty("0.1"),"m",MBSIMNS"enableOpenMBVContactPoints"));
+  enableOpenMBVContactPoints.setProperty(new ExtPhysicalVarProperty(input)); 
 
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0.1"),lengthUnits(),4));
-  enableOpenMBVContactPoints = new ExtWidget("OpenMBV contact points",new ExtPhysicalVarWidget(input),true); 
-  properties->addToTab("Visualisation",enableOpenMBVContactPoints);
+  normalForceArrow.setProperty(new OMBVArrowProperty("NOTSET"));
+  normalForceArrow.setXMLName(MBSIMNS"openMBVNormalForceArrow",false);
 
-  normalForceArrow = new ExtWidget("OpenMBV normal force arrow",new OMBVArrowWidget("NOTSET"),true);
-  properties->addToTab("Visualisation",normalForceArrow);
-
-  frictionArrow = new ExtWidget("OpenMBV friction arrow",new OMBVArrowWidget("NOTSET"),true);
-  properties->addToTab("Visualisation",frictionArrow);
-
-  properties->addStretch();
+  frictionArrow.setProperty(new OMBVArrowProperty("NOTSET"));
+  frictionArrow.setXMLName(MBSIMNS"openMBVFrictionArrow",false);
 }
 
 Contact::~Contact() {
 }
 
+void Contact::initialize() {
+  Link::initialize();
+  connections.initialize();
+}
+
+void Contact::initializeDialog() {
+  Link::initializeDialog();
+
+  dialog->addTab("Kinetics");
+  dialog->addTab("Visualisation");
+
+  connectionsWidget = new ExtWidget("Connections",new ConnectContoursWidget(2,this));
+  dialog->addToTab("Kinetics", connectionsWidget);
+
+  contactForceLawWidget = new ExtWidget("Contact force law",new GeneralizedForceLawChoiceWidget);
+  dialog->addToTab("Kinetics", contactForceLawWidget);
+
+  contactImpactLawWidget = new ExtWidget("Contact impact law",new GeneralizedImpactLawChoiceWidget,true);
+  dialog->addToTab("Kinetics", contactImpactLawWidget);
+
+  frictionForceLawWidget = new ExtWidget("Friction force law",new FrictionForceLawChoiceWidget,true);
+  dialog->addToTab("Kinetics", frictionForceLawWidget);
+
+  frictionImpactLawWidget = new ExtWidget("Friction impact law",new FrictionImpactLawChoiceWidget,true);
+  dialog->addToTab("Kinetics", frictionImpactLawWidget);
+
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0.1"),lengthUnits(),4));
+  enableOpenMBVContactPointsWidget = new ExtWidget("OpenMBV contact points",new ExtPhysicalVarWidget(input),true); 
+  dialog->addToTab("Visualisation",enableOpenMBVContactPointsWidget);
+
+  normalForceArrowWidget = new ExtWidget("OpenMBV normal force arrow",new OMBVArrowWidget("NOTSET"),true);
+  dialog->addToTab("Visualisation",normalForceArrowWidget);
+
+  frictionArrowWidget = new ExtWidget("OpenMBV friction arrow",new OMBVArrowWidget("NOTSET"),true);
+  dialog->addToTab("Visualisation",frictionArrowWidget);
+}
+
+void Contact::toWidget() {
+  Link::toWidget();
+  contactForceLaw.toWidget(contactForceLawWidget);
+  contactImpactLaw.toWidget(contactImpactLawWidget);
+  frictionForceLaw.toWidget(frictionForceLawWidget);
+  frictionImpactLaw.toWidget(frictionImpactLawWidget);
+  connections.toWidget(connectionsWidget);
+  enableOpenMBVContactPoints.toWidget(enableOpenMBVContactPointsWidget);
+  normalForceArrow.toWidget(normalForceArrowWidget);
+  frictionArrow.toWidget(frictionArrowWidget);
+}
+
+void Contact::fromWidget() {
+  Link::fromWidget();
+  contactForceLaw.fromWidget(contactForceLawWidget);
+  contactImpactLaw.fromWidget(contactImpactLawWidget);
+  frictionForceLaw.fromWidget(frictionForceLawWidget);
+  frictionImpactLaw.fromWidget(frictionImpactLawWidget);
+  connections.fromWidget(connectionsWidget);
+  enableOpenMBVContactPoints.fromWidget(enableOpenMBVContactPointsWidget);
+  normalForceArrow.fromWidget(normalForceArrowWidget);
+  frictionArrow.fromWidget(frictionArrowWidget);
+}
+
 void Contact::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e;
   Link::initializeUsingXML(element);
-  contactForceLaw->initializeUsingXML(element);
-  contactImpactLaw->initializeUsingXML(element);
-  frictionForceLaw->initializeUsingXML(element);
-  frictionImpactLaw->initializeUsingXML(element);
-  connections->initializeUsingXML(element);
-  enableOpenMBVContactPoints->initializeUsingXML(element);
-  normalForceArrow->initializeUsingXML(element);
-  frictionArrow->initializeUsingXML(element);
+  contactForceLaw.initializeUsingXML(element);
+  contactImpactLaw.initializeUsingXML(element);
+  frictionForceLaw.initializeUsingXML(element);
+  frictionImpactLaw.initializeUsingXML(element);
+  connections.initializeUsingXML(element);
+  enableOpenMBVContactPoints.initializeUsingXML(element);
+  normalForceArrow.initializeUsingXML(element);
+  frictionArrow.initializeUsingXML(element);
 }
 
 TiXmlElement* Contact::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Link::writeXMLFile(parent);
-  contactForceLaw->writeXMLFile(ele0);
-  contactImpactLaw->writeXMLFile(ele0);
-  frictionForceLaw->writeXMLFile(ele0);
-  frictionImpactLaw->writeXMLFile(ele0);
-  connections->writeXMLFile(ele0);
-  enableOpenMBVContactPoints->writeXMLFile(ele0);
-  normalForceArrow->writeXMLFile(ele0);
-  frictionArrow->writeXMLFile(ele0);
+  contactForceLaw.writeXMLFile(ele0);
+  contactImpactLaw.writeXMLFile(ele0);
+  frictionForceLaw.writeXMLFile(ele0);
+  frictionImpactLaw.writeXMLFile(ele0);
+  connections.writeXMLFile(ele0);
+  enableOpenMBVContactPoints.writeXMLFile(ele0);
+  normalForceArrow.writeXMLFile(ele0);
+  frictionArrow.writeXMLFile(ele0);
   return ele0;
 }

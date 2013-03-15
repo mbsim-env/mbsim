@@ -83,7 +83,9 @@ class OMBVCoilSpringProperty : public OMBVObjectProperty {
     OMBVCoilSpringProperty(const std::string &name);
     virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element); 
-    virtual QString getType() const { return "CoilSpring"; }
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+   virtual QString getType() const { return "CoilSpring"; }
   protected:
     ExtProperty type, numberOfCoils, springRadius, crossSectionRadius, nominalLength, scaleFactor;
 };
@@ -221,6 +223,8 @@ class OMBVEmptyProperty : public OMBVObjectProperty {
 
     virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void fromWidget(QWidget *widget) {}
+    void toWidget(QWidget *widget) {}
     virtual QString getType() const { return "Empty"; }
 
   protected:

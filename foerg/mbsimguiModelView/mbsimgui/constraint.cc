@@ -23,6 +23,7 @@
 #include "rigidbody.h"
 #include "basic_properties.h"
 #include "kinetics_properties.h"
+#include "function_properties.h"
 #include "string_widgets.h"
 #include "function_widgets.h"
 #include "kinetics_widgets.h"
@@ -35,39 +36,69 @@ Constraint::Constraint(const QString &str, QTreeWidgetItem *parentItem, int ind)
 Constraint::~Constraint() {
 }
 
-KinematicConstraint::KinematicConstraint(const QString &str, QTreeWidgetItem *parentItem, int ind) : Constraint(str, parentItem, ind), refBody(0) {
+KinematicConstraint::KinematicConstraint(const QString &str, QTreeWidgetItem *parentItem, int ind) : Constraint(str, parentItem, ind), refBody(0), kinematicFunction(0,false), firstDerivativeOfKinematicFunction(0,false), secondDerivativeOfKinematicFunction(0,false) {
 
   setText(1,getType());
 
-//  properties->addTab("Kinetics");
+  dependentBody.setProperty(new RigidBodyOfReferenceProperty(0,this,MBSIMNS"dependentRigidBody"));
 
-  dependentBody = new ExtWidget("Dependent body",new RigidBodyOfReferenceWidget(this,0));
-  connect((RigidBodyOfReferenceWidget*)dependentBody->getWidget(),SIGNAL(bodyChanged()),this,SLOT(updateReferenceBody()));
-  properties->addToTab("General", dependentBody);
+  kinematicFunction.setProperty(new Function1ChoiceProperty(MBSIMNS"kinematicFunction"));
 
-  kinematicFunction = new ExtWidget("Kinematic function",new Function1ChoiceWidget,true);
-  properties->addToTab("General", kinematicFunction);
-  connect((Function1ChoiceWidget*)kinematicFunction->getWidget(),SIGNAL(resize()),this,SLOT(resizeVariables()));
+  firstDerivativeOfKinematicFunction.setProperty(new Function1ChoiceProperty(MBSIMNS"firstDerivativeOfKinematicFunction"));
 
-  firstDerivativeOfKinematicFunction = new ExtWidget("First derivative of kinematic function",new Function1ChoiceWidget(MBSIMNS"firstDerivativeOfKinematicFunction"),true);
-  properties->addToTab("General", firstDerivativeOfKinematicFunction);
-  connect((Function1ChoiceWidget*)firstDerivativeOfKinematicFunction->getWidget(),SIGNAL(resize()),this,SLOT(resizeVariables()));
+  secondDerivativeOfKinematicFunction.setProperty(new Function1ChoiceProperty(MBSIMNS"secondDerivativeOfKinematicFunction"));
 
-  secondDerivativeOfKinematicFunction = new ExtWidget("Second derivative of kinematic function",new Function1ChoiceWidget(MBSIMNS"secondDerivativeOfKinematicFunction"),true);
-  properties->addToTab("General", secondDerivativeOfKinematicFunction);
-  connect((Function1ChoiceWidget*)secondDerivativeOfKinematicFunction->getWidget(),SIGNAL(resize()),this,SLOT(resizeVariables()));
-
-  properties->addStretch();
 }
 
 KinematicConstraint::~KinematicConstraint() {
 }
 
+void KinematicConstraint::initialize() {
+  Constraint::initialize();
+  dependentBody.initialize();
+}
+
+void KinematicConstraint::initializeDialog() {
+  Constraint::initializeDialog();
+
+  dependentBodyWidget = new ExtWidget("Dependent body",new RigidBodyOfReferenceWidget(this,0));
+  connect((RigidBodyOfReferenceWidget*)dependentBodyWidget->getWidget(),SIGNAL(bodyChanged()),this,SLOT(updateReferenceBody()));
+  dialog->addToTab("General", dependentBodyWidget);
+
+  kinematicFunctionWidget = new ExtWidget("Kinematic function",new Function1ChoiceWidget,true);
+  dialog->addToTab("General", kinematicFunctionWidget);
+  connect((Function1ChoiceWidget*)kinematicFunctionWidget->getWidget(),SIGNAL(resize()),this,SLOT(resizeVariables()));
+
+  firstDerivativeOfKinematicFunctionWidget = new ExtWidget("First derivative of kinematic function",new Function1ChoiceWidget(MBSIMNS"firstDerivativeOfKinematicFunction"),true);
+  dialog->addToTab("General", firstDerivativeOfKinematicFunctionWidget);
+  connect((Function1ChoiceWidget*)firstDerivativeOfKinematicFunctionWidget->getWidget(),SIGNAL(resize()),this,SLOT(resizeVariables()));
+
+  secondDerivativeOfKinematicFunctionWidget = new ExtWidget("Second derivative of kinematic function",new Function1ChoiceWidget(MBSIMNS"secondDerivativeOfKinematicFunction"),true);
+  dialog->addToTab("General", secondDerivativeOfKinematicFunctionWidget);
+  connect((Function1ChoiceWidget*)secondDerivativeOfKinematicFunctionWidget->getWidget(),SIGNAL(resize()),this,SLOT(resizeVariables()));
+}
+
+void KinematicConstraint::toWidget() {
+  Constraint::toWidget();
+  dependentBody.toWidget(dependentBodyWidget);
+  kinematicFunction.toWidget(kinematicFunctionWidget);
+  firstDerivativeOfKinematicFunction.toWidget(firstDerivativeOfKinematicFunctionWidget);
+  secondDerivativeOfKinematicFunction.toWidget(secondDerivativeOfKinematicFunctionWidget);
+}
+
+void KinematicConstraint::fromWidget() {
+  Constraint::fromWidget();
+  dependentBody.fromWidget(dependentBodyWidget);
+  kinematicFunction.fromWidget(kinematicFunctionWidget);
+  firstDerivativeOfKinematicFunction.fromWidget(firstDerivativeOfKinematicFunctionWidget);
+  secondDerivativeOfKinematicFunction.fromWidget(secondDerivativeOfKinematicFunctionWidget);
+}
+
 void KinematicConstraint::resizeVariables() {
   int size = refBody?refBody->getUnconstrainedSize():0;
-  ((Function1ChoiceWidget*)kinematicFunction->getWidget())->resize(size,1);
-  ((Function1ChoiceWidget*)firstDerivativeOfKinematicFunction->getWidget())->resize(size,1);
-  ((Function1ChoiceWidget*)secondDerivativeOfKinematicFunction->getWidget())->resize(size,1);
+  ((Function1ChoiceWidget*)kinematicFunctionWidget->getWidget())->resize(size,1);
+  ((Function1ChoiceWidget*)firstDerivativeOfKinematicFunctionWidget->getWidget())->resize(size,1);
+  ((Function1ChoiceWidget*)secondDerivativeOfKinematicFunctionWidget->getWidget())->resize(size,1);
 }
 
 void KinematicConstraint::updateReferenceBody() {
@@ -76,32 +107,34 @@ void KinematicConstraint::updateReferenceBody() {
     refBody->resizeGeneralizedPosition();
     refBody->resizeGeneralizedVelocity();
   }
-  refBody = ((RigidBodyOfReferenceWidget*)dependentBody->getWidget())->getBody();
-  refBody->setConstrained(true);
-  refBody->resizeGeneralizedPosition();
-  refBody->resizeGeneralizedVelocity();
-  connect(refBody,SIGNAL(sizeChanged()),this,SLOT(resizeVariables()));
-  resizeVariables();
+  refBody = ((RigidBodyOfReferenceWidget*)dependentBodyWidget->getWidget())->getBody();
+  if(refBody) {
+    refBody->setConstrained(true);
+    refBody->resizeGeneralizedPosition();
+    refBody->resizeGeneralizedVelocity();
+    connect(refBody,SIGNAL(sizeChanged()),this,SLOT(resizeVariables()));
+    resizeVariables();
+  }
 }
 
 void KinematicConstraint::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e, *ee;
   blockSignals(true);
   Constraint::initializeUsingXML(element);
-  dependentBody->initializeUsingXML(element);
-  kinematicFunction->initializeUsingXML(element);
-  firstDerivativeOfKinematicFunction->initializeUsingXML(element);
-  secondDerivativeOfKinematicFunction->initializeUsingXML(element);
+  dependentBody.initializeUsingXML(element);
+  kinematicFunction.initializeUsingXML(element);
+  firstDerivativeOfKinematicFunction.initializeUsingXML(element);
+  secondDerivativeOfKinematicFunction.initializeUsingXML(element);
   blockSignals(false);
 }
 
 TiXmlElement* KinematicConstraint::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Constraint::writeXMLFile(parent);
 
-  dependentBody->writeXMLFile(ele0);
-  kinematicFunction->writeXMLFile(ele0);
-  firstDerivativeOfKinematicFunction->writeXMLFile(ele0);
-  secondDerivativeOfKinematicFunction->writeXMLFile(ele0);
+  dependentBody.writeXMLFile(ele0);
+  kinematicFunction.writeXMLFile(ele0);
+  firstDerivativeOfKinematicFunction.writeXMLFile(ele0);
+  secondDerivativeOfKinematicFunction.writeXMLFile(ele0);
 
   return ele0;
 }

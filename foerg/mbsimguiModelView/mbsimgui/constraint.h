@@ -47,9 +47,15 @@ class KinematicConstraint : public Constraint {
     virtual QString getType() const { return "KinematicConstraint"; }
     //virtual void resizeVariables() {Element::resizeVariables();}
 
+    virtual void initializeDialog();
+    virtual void fromWidget();
+    virtual void toWidget();
+    void initialize();
+
   protected:
     RigidBody *refBody;
-    ExtWidget *dependentBody, *kinematicFunction, *firstDerivativeOfKinematicFunction, *secondDerivativeOfKinematicFunction;
+    ExtWidget *dependentBodyWidget, *kinematicFunctionWidget, *firstDerivativeOfKinematicFunctionWidget, *secondDerivativeOfKinematicFunctionWidget;
+    ExtProperty dependentBody, kinematicFunction, firstDerivativeOfKinematicFunction, secondDerivativeOfKinematicFunction;
 
   protected slots:
     void resizeVariables();

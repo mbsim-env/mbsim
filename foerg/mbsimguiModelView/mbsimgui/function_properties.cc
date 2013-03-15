@@ -451,6 +451,7 @@ void Function1ChoiceProperty::toWidget(QWidget *widget) {
 }
 
 Function2ChoiceProperty::Function2ChoiceProperty(const string &xmlName_) : function(0), index(0), xmlName(xmlName_) {
+  defineForceLaw(0);
 }
 
 void Function2ChoiceProperty::defineForceLaw(int index_) {

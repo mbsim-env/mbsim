@@ -237,6 +237,24 @@ TiXmlElement* OMBVCoilSpringProperty::writeXMLFile(TiXmlNode *parent) {
   return e;
 }
 
+void OMBVCoilSpringProperty::fromWidget(QWidget *widget) {
+  type.fromWidget(static_cast<OMBVCoilSpringWidget*>(widget)->type);
+  numberOfCoils.fromWidget(static_cast<OMBVCoilSpringWidget*>(widget)->numberOfCoils);
+  springRadius.fromWidget(static_cast<OMBVCoilSpringWidget*>(widget)->springRadius);
+  crossSectionRadius.fromWidget(static_cast<OMBVCoilSpringWidget*>(widget)->crossSectionRadius);
+  nominalLength.fromWidget(static_cast<OMBVCoilSpringWidget*>(widget)->nominalLength);
+  scaleFactor.fromWidget(static_cast<OMBVCoilSpringWidget*>(widget)->scaleFactor);
+}
+
+void OMBVCoilSpringProperty::toWidget(QWidget *widget) {
+  type.toWidget(static_cast<OMBVCoilSpringWidget*>(widget)->type);
+  numberOfCoils.toWidget(static_cast<OMBVCoilSpringWidget*>(widget)->numberOfCoils);
+  springRadius.toWidget(static_cast<OMBVCoilSpringWidget*>(widget)->springRadius);
+  crossSectionRadius.toWidget(static_cast<OMBVCoilSpringWidget*>(widget)->crossSectionRadius);
+  nominalLength.toWidget(static_cast<OMBVCoilSpringWidget*>(widget)->nominalLength);
+  scaleFactor.toWidget(static_cast<OMBVCoilSpringWidget*>(widget)->scaleFactor);
+}
+
 OMBVBodyProperty::OMBVBodyProperty(const string &name) : OMBVObjectProperty(name) {
 
   vector<PhysicalStringProperty*> input;

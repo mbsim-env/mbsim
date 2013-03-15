@@ -126,6 +126,8 @@ class FrictionForceLawWidget : public Widget {
 
 class PlanarCoulombFrictionWidget : public FrictionForceLawWidget {
 
+  friend class PlanarCoulombFrictionProperty;
+
   public:
     PlanarCoulombFrictionWidget();
     virtual QString getType() const { return "PlanarCoulombFriction"; }
@@ -134,6 +136,8 @@ class PlanarCoulombFrictionWidget : public FrictionForceLawWidget {
 };
 
 class SpatialCoulombFrictionWidget : public FrictionForceLawWidget {
+
+  friend class SpatialCoulombFrictionProperty;
 
   public:
     SpatialCoulombFrictionWidget();
@@ -144,6 +148,8 @@ class SpatialCoulombFrictionWidget : public FrictionForceLawWidget {
 
 class RegularizedPlanarFrictionWidget : public FrictionForceLawWidget {
   Q_OBJECT
+
+  friend class RegularizedPlanarFrictionProperty;
 
   public:
     RegularizedPlanarFrictionWidget(); 
@@ -157,6 +163,8 @@ class RegularizedPlanarFrictionWidget : public FrictionForceLawWidget {
 
 class RegularizedSpatialFrictionWidget : public FrictionForceLawWidget {
   Q_OBJECT
+
+  friend class RegularizedSpatialFrictionProperty;
 
   public:
     RegularizedSpatialFrictionWidget(); 
@@ -179,6 +187,8 @@ class FrictionImpactLawWidget : public Widget {
 
 class PlanarCoulombImpactWidget : public FrictionImpactLawWidget {
 
+  friend class PlanarCoulombImpactProperty;
+
   public:
     PlanarCoulombImpactWidget();
     virtual QString getType() const { return "PlanarCoulombImpact"; }
@@ -187,6 +197,8 @@ class PlanarCoulombImpactWidget : public FrictionImpactLawWidget {
 };
 
 class SpatialCoulombImpactWidget : public FrictionImpactLawWidget {
+
+  friend class SpatialCoulombImpactProperty;
 
   public:
     SpatialCoulombImpactWidget();
@@ -240,6 +252,8 @@ class GeneralizedImpactLawChoiceWidget : public Widget {
 class FrictionForceLawChoiceWidget : public Widget {
   Q_OBJECT
 
+  friend class FrictionForceLawChoiceProperty;
+
   public:
     FrictionForceLawChoiceWidget();
 
@@ -258,6 +272,8 @@ class FrictionForceLawChoiceWidget : public Widget {
 
 class FrictionImpactLawChoiceWidget : public Widget {
   Q_OBJECT
+
+  friend class FrictionImpactLawChoiceProperty;
 
   public:
     FrictionImpactLawChoiceWidget();
@@ -312,6 +328,8 @@ class ForceChoiceWidget : public Widget {
 
 class ForceDirectionWidget : public Widget {
 
+  friend class ForceDirectionProperty;
+
   public:
     ForceDirectionWidget(Element *element);
 
@@ -320,9 +338,8 @@ class ForceDirectionWidget : public Widget {
 
   protected:
     QWidget *forceDirWidget;
-    FrameOfReferenceWidget* refFrame;
     Element *element;
-    ExtPhysicalVarWidget *mat;
+    ExtWidget *refFrame, *mat;
 };
 
 class GeneralizedForceDirectionWidget : public Widget {

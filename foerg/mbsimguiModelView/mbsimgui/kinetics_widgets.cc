@@ -337,12 +337,10 @@ ForceDirectionWidget::ForceDirectionWidget(Element *element_) : element(element_
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new VecWidget(3),noUnitUnits(),1));
-  mat = new ExtPhysicalVarWidget(input);
-  ExtWidget *extWidget = new ExtWidget("Direction vector",mat);
-  hlayout->addWidget(extWidget);
-  refFrame = new FrameOfReferenceWidget(element,0);
-  extWidget = new ExtWidget("Frame of reference",refFrame);
-  hlayout->addWidget(extWidget);
+  mat = new ExtWidget("Direction vector",new ExtPhysicalVarWidget(input));
+  hlayout->addWidget(mat);
+  refFrame = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(element,0));
+  hlayout->addWidget(refFrame);
 
   layout->addWidget(forceDirWidget);
 
