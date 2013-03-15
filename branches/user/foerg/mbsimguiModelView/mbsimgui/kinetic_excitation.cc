@@ -27,7 +27,7 @@
 
 using namespace std;
 
-KineticExcitation::KineticExcitation(const QString &str, QTreeWidgetItem *parentItem, int ind) : Link(str, parentItem, ind), forceArrow(0,false), momentArrow(0,false), force(0,false), moment(0,false), frameOfReference(0,false) {
+KineticExcitation::KineticExcitation(const QString &str, QTreeWidgetItem *parentItem, int ind) : Link(str, parentItem, ind), forceArrow(0,true), momentArrow(0,true), force(0,false), moment(0,false), frameOfReference(0,false) {
 
   setText(1,getType());
 

@@ -19,6 +19,10 @@
 
 #include <config.h>
 #include "spring_damper.h"
+#include "basic_properties.h"
+#include "function_properties.h"
+#include "kinetics_properties.h"
+#include "ombv_properties.h"
 #include "kinetics_widgets.h"
 #include "function_widgets.h"
 #include "extended_widgets.h"
@@ -26,46 +30,77 @@
 
 using namespace std;
 
-SpringDamper::SpringDamper(const QString &str, QTreeWidgetItem *parentItem, int ind) : Link(str, parentItem, ind) {
+SpringDamper::SpringDamper(const QString &str, QTreeWidgetItem *parentItem, int ind) : Link(str, parentItem, ind), forceDirection(0,false), coilSpring(0,true) {
 
   setText(1,getType());
 
-  properties->addTab("Kinetics");
-  properties->addTab("Visualisation");
+  connections.setProperty(new ConnectFramesProperty(2,this));
 
-  connections = new ExtWidget("Connections",new ConnectFramesWidget(2,this));
-  properties->addToTab("Kinetics", connections);
+  forceFunction.setProperty(new Function2ChoiceProperty(MBSIMNS"forceFunction"));
 
-  forceFunction = new ExtWidget("Force function",new Function2ChoiceWidget);
-  properties->addToTab("Kinetics", forceFunction);
+  forceDirection.setProperty(new ForceDirectionProperty(this,MBSIMNS"projectionDirection"));
 
-  forceDirection = new ExtWidget("Force direction",new ForceDirectionWidget(this),true);
-  properties->addToTab("Kinetics", forceDirection);
-
-  coilSpring = new ExtWidget("Coil spring",new OMBVCoilSpringWidget("NOTSET"),true);
-  ((OMBVCoilSpringWidget*)coilSpring->getWidget())->setID(getID());
-  properties->addToTab("Visualisation", coilSpring);
-
-  properties->addStretch();
+  coilSpring.setProperty(new OMBVCoilSpringProperty("NOTSET"));
+  ((OMBVCoilSpringProperty*)coilSpring.getProperty())->setID(getID());
 }
 
 SpringDamper::~SpringDamper() {
 }
 
+void SpringDamper::initialize() {
+  Link::initialize();
+  connections.initialize();
+}
+
+void SpringDamper::initializeDialog() {
+  Link::initializeDialog();
+
+  dialog->addTab("Kinetics");
+  dialog->addTab("Visualisation");
+
+  connectionsWidget = new ExtWidget("Connections",new ConnectFramesWidget(2,this));
+  dialog->addToTab("Kinetics", connectionsWidget);
+
+  forceFunctionWidget = new ExtWidget("Force function",new Function2ChoiceWidget);
+  dialog->addToTab("Kinetics", forceFunctionWidget);
+
+  forceDirectionWidget = new ExtWidget("Force direction",new ForceDirectionWidget(this),true);
+  dialog->addToTab("Kinetics", forceDirectionWidget);
+
+  coilSpringWidget = new ExtWidget("Coil spring",new OMBVCoilSpringWidget("NOTSET"),true);
+  dialog->addToTab("Visualisation", coilSpringWidget);
+}
+
+void SpringDamper::toWidget() {
+  Link::toWidget();
+  connections.toWidget(connectionsWidget);
+  forceFunction.toWidget(forceFunctionWidget);
+  forceDirection.toWidget(forceDirectionWidget);
+  coilSpring.toWidget(coilSpringWidget);
+}
+
+void SpringDamper::fromWidget() {
+  Link::fromWidget();
+  connections.fromWidget(connectionsWidget);
+  forceFunction.fromWidget(forceFunctionWidget);
+  forceDirection.fromWidget(forceDirectionWidget);
+  coilSpring.fromWidget(coilSpringWidget);
+}
+
 void SpringDamper::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e;
   Link::initializeUsingXML(element);
-  forceFunction->initializeUsingXML(element);
-  forceDirection->initializeUsingXML(element);
-  connections->initializeUsingXML(element);
-  coilSpring->initializeUsingXML(element);
+  forceFunction.initializeUsingXML(element);
+  forceDirection.initializeUsingXML(element);
+  connections.initializeUsingXML(element);
+  coilSpring.initializeUsingXML(element);
 }
 
 TiXmlElement* SpringDamper::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Link::writeXMLFile(parent);
-  forceFunction->writeXMLFile(ele0);
-  forceDirection->writeXMLFile(ele0);
-  connections->writeXMLFile(ele0);
-  coilSpring->writeXMLFile(ele0);
+  forceFunction.writeXMLFile(ele0);
+  forceDirection.writeXMLFile(ele0);
+  connections.writeXMLFile(ele0);
+  coilSpring.writeXMLFile(ele0);
   return ele0;
 }

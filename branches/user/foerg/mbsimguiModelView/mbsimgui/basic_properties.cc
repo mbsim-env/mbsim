@@ -20,6 +20,7 @@
 #include <config.h>
 #include "basic_properties.h"
 #include "frame.h"
+#include "contour.h"
 #include "rigidbody.h"
 #include "basic_widgets.h"
 #include "string_widgets.h"
@@ -120,6 +121,35 @@ void FrameOfReferenceProperty::fromWidget(QWidget *widget) {
 void FrameOfReferenceProperty::toWidget(QWidget *widget) {
   static_cast<FrameOfReferenceWidget*>(widget)->setFrame(getFrame());
   static_cast<FrameOfReferenceWidget*>(widget)->updateWidget();
+}
+
+void ContourOfReferenceProperty::initialize() {
+  if(saved_contourOfReference!="")
+    setContour(element->getByPath<Contour>(saved_contourOfReference));
+}
+
+TiXmlElement* ContourOfReferenceProperty::initializeUsingXML(TiXmlElement *parent) {
+  TiXmlElement *e = parent->FirstChildElement(xmlName);
+  if(e) saved_contourOfReference=e->Attribute("ref");
+  return e;
+}
+
+TiXmlElement* ContourOfReferenceProperty::writeXMLFile(TiXmlNode *parent) {
+  if(getContour()) {
+    TiXmlElement *ele = new TiXmlElement(xmlName);
+    ele->SetAttribute("ref", getContour()->getXMLPath(element,true).toStdString());
+    parent->LinkEndChild(ele);
+  }
+  return 0;
+}
+
+void ContourOfReferenceProperty::fromWidget(QWidget *widget) {
+  setContour(static_cast<ContourOfReferenceWidget*>(widget)->getContour());
+}
+
+void ContourOfReferenceProperty::toWidget(QWidget *widget) {
+  static_cast<ContourOfReferenceWidget*>(widget)->setContour(getContour());
+  static_cast<ContourOfReferenceWidget*>(widget)->updateWidget();
 }
 
 void RigidBodyOfReferenceProperty::initialize() {
@@ -291,6 +321,60 @@ void ConnectFramesProperty::toWidget(QWidget *widget) {
   for(unsigned int i=0; i<frame.size(); i++)
     frame[i]->toWidget(static_cast<ConnectFramesWidget*>(widget)->widget[i]);
   static_cast<ConnectFramesWidget*>(widget)->update();
+}
+
+ConnectContoursProperty::ConnectContoursProperty(int n, Element *element_) : element(element_) {
+
+  for(int i=0; i<n; i++) {
+    QString xmlName = MBSIMNS"ref";
+    if(n>1)
+      xmlName += QString::number(i+1);
+    contour.push_back(new ContourOfReferenceProperty(0,element,xmlName.toStdString()));
+  }
+}
+
+void ConnectContoursProperty::initialize() {
+  for(unsigned int i=0; i<contour.size(); i++)
+    contour[i]->initialize();
+}
+
+TiXmlElement* ConnectContoursProperty::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e = element->FirstChildElement(MBSIMNS"connect");
+  if(e) {
+    for(unsigned int i=0; i<contour.size(); i++) {
+      QString xmlName = "ref";
+      if(contour.size()>1)
+        xmlName += QString::number(i+1);
+      if(!e->Attribute(xmlName.toStdString()))
+        return 0;
+      contour[i]->setSavedContourOfReference(e->Attribute(xmlName.toAscii().data()));
+    }
+  }
+  return e;
+}
+
+TiXmlElement* ConnectContoursProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele = new TiXmlElement(MBSIMNS"connect");
+  for(unsigned int i=0; i<contour.size(); i++) {
+    QString xmlName = "ref";
+    if(contour.size()>1)
+      xmlName += QString::number(i+1);
+    if(contour[i]->getContour())
+      ele->SetAttribute(xmlName.toAscii().data(), contour[i]->getContour()->getXMLPath(element,true).toStdString()); 
+  }
+  parent->LinkEndChild(ele);
+  return ele;
+}
+
+void ConnectContoursProperty::fromWidget(QWidget *widget) {
+  for(unsigned int i=0; i<contour.size(); i++)
+    contour[i]->fromWidget(static_cast<ConnectContoursWidget*>(widget)->widget[i]);
+}
+
+void ConnectContoursProperty::toWidget(QWidget *widget) {
+  for(unsigned int i=0; i<contour.size(); i++)
+    contour[i]->toWidget(static_cast<ConnectContoursWidget*>(widget)->widget[i]);
+  static_cast<ConnectContoursWidget*>(widget)->update();
 }
 
 SolverTolerancesProperty::SolverTolerancesProperty() : g(0,false), gd(0,false), gdd(0,false), la(0,false), La(0,false) {

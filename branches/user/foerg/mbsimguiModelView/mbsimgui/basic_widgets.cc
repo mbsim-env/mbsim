@@ -173,7 +173,7 @@ void ContourOfReferenceWidget::setContour() {
 
 void ContourOfReferenceWidget::setContour(Contour* contour_) {
   selectedContour = contour_; 
-  contour->setText(selectedContour->getXMLPath());
+  contour->setText(selectedContour?selectedContour->getXMLPath():"");
 }
 
 RigidBodyOfReferenceWidget::RigidBodyOfReferenceWidget(Element *element_, RigidBody* selectedBody_) : element(element_), selectedBody(selectedBody_) {

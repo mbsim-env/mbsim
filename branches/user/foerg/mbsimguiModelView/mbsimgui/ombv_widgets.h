@@ -79,6 +79,8 @@ class OMBVArrowWidget : public OMBVDynamicColoredObjectWidget {
 
 class OMBVCoilSpringWidget : public OMBVObjectWidget {
 
+  friend class OMBVCoilSpringProperty;
+
   public:
     OMBVCoilSpringWidget(const std::string &name);
     virtual QString getType() const { return "CoilSpring"; }

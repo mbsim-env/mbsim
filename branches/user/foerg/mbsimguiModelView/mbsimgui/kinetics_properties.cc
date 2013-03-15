@@ -62,7 +62,10 @@ void RegularizedBilateralConstraintProperty::fromWidget(QWidget *widget) {
 }
 
 void RegularizedBilateralConstraintProperty::toWidget(QWidget *widget) {
+  static_cast<RegularizedBilateralConstraintWidget*>(widget)->funcList->blockSignals(true);;
   static_cast<RegularizedBilateralConstraintWidget*>(widget)->funcList->setCurrentIndex(index);
+  static_cast<RegularizedBilateralConstraintWidget*>(widget)->funcList->blockSignals(false);;
+  static_cast<RegularizedBilateralConstraintWidget*>(widget)->defineFunction(index);
   forceFunc->toWidget(static_cast<RegularizedBilateralConstraintWidget*>(widget)->forceFunc);
 }
 
@@ -91,7 +94,10 @@ void RegularizedUnilateralConstraintProperty::fromWidget(QWidget *widget) {
 }
 
 void RegularizedUnilateralConstraintProperty::toWidget(QWidget *widget) {
+  static_cast<RegularizedUnilateralConstraintWidget*>(widget)->funcList->blockSignals(true);;
   static_cast<RegularizedUnilateralConstraintWidget*>(widget)->funcList->setCurrentIndex(index);
+  static_cast<RegularizedUnilateralConstraintWidget*>(widget)->funcList->blockSignals(false);;
+  static_cast<RegularizedUnilateralConstraintWidget*>(widget)->defineFunction(index);;
   forceFunc->toWidget(static_cast<RegularizedUnilateralConstraintWidget*>(widget)->forceFunc);
 }
 
@@ -126,85 +132,184 @@ void UnilateralNewtonImpactProperty::toWidget(QWidget *widget) {
   restitutionCoefficient.toWidget(static_cast<UnilateralNewtonImpactWidget*>(widget)->restitutionCoefficient);
 }
 
-//PlanarCoulombFriction::PlanarCoulombFriction() {
-//  QVBoxLayout *layout = new QVBoxLayout;
-//  setLayout(layout);
-//  vector<PhysicalStringWidget*> input;
-//  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),noUnitUnits(),1));
-//  frictionCoefficient = new ExtWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
-//  layout->addWidget(frictionCoefficient);
-//}
-//
-//SpatialCoulombFriction::SpatialCoulombFriction() {
-//  QVBoxLayout *layout = new QVBoxLayout;
-//  setLayout(layout);
-//  vector<PhysicalStringWidget*> input;
-//  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),noUnitUnits(),1));
-//  frictionCoefficient = new ExtWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
-//  layout->addWidget(frictionCoefficient);
-//}
-//
-//RegularizedPlanarFriction::RegularizedPlanarFriction() {
-//
-//  layout = new QVBoxLayout;
-//  layout->setMargin(0);
-//  funcList = new QComboBox;
-//  funcList->addItem(tr("Linear regularized coulomb friction"));
-//  layout->addWidget(funcList);
-//  setLayout(layout);
-//  connect(funcList, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFunction(int)));
-//  frictionForceFunc = new LinearRegularizedCoulombFriction;  
-//  layout->addWidget(frictionForceFunc);
-//}
-//
-//void RegularizedPlanarFriction::defineFunction(int index) {
-//  if(index==0) {
-//    layout->removeWidget(frictionForceFunc);
-//    delete frictionForceFunc;
-//    frictionForceFunc = new LinearRegularizedCoulombFriction;  
-//    layout->addWidget(frictionForceFunc);
-//  }
-//}
-//
-//RegularizedSpatialFriction::RegularizedSpatialFriction() {
-//
-//  layout = new QVBoxLayout;
-//  layout->setMargin(0);
-//  funcList = new QComboBox;
-//  funcList->addItem(tr("Linear regularized coulomb friction"));
-//  layout->addWidget(funcList);
-//  setLayout(layout);
-//  connect(funcList, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFunction(int)));
-//  frictionForceFunc = new LinearRegularizedCoulombFriction;  
-//  layout->addWidget(frictionForceFunc);
-//}
-//
-//void RegularizedSpatialFriction::defineFunction(int index) {
-//  if(index==0) {
-//    layout->removeWidget(frictionForceFunc);
-//    delete frictionForceFunc;
-//    frictionForceFunc = new LinearRegularizedCoulombFriction;  
-//    layout->addWidget(frictionForceFunc);
-//  }
-//}
-//
-//PlanarCoulombImpact::PlanarCoulombImpact() {
-//  QVBoxLayout *layout = new QVBoxLayout;
-//  setLayout(layout);
-//  vector<PhysicalStringWidget*> input;
-//  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),noUnitUnits(),1));
-//  frictionCoefficient = new ExtWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
-//  layout->addWidget(frictionCoefficient);
-//}
-//
-//SpatialCoulombImpact::SpatialCoulombImpact() {
-//  QVBoxLayout *layout = new QVBoxLayout;
-//  setLayout(layout);
-//  vector<PhysicalStringWidget*> input;
-//  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),noUnitUnits(),1));
-//  frictionCoefficient = new ExtWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
-//  layout->addWidget(frictionCoefficient);
-//}
+TiXmlElement* FrictionForceLawProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType().toStdString());
+  if(frictionForceFunc) {
+    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"frictionForceFunction" );
+    frictionForceFunc->writeXMLFile(ele1);
+    ele0->LinkEndChild(ele1);
+  }
+  parent->LinkEndChild(ele0);
+  return ele0;
+}
+
+PlanarCoulombFrictionProperty::PlanarCoulombFrictionProperty() {
+  vector<PhysicalStringProperty*> input;
+  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"-",MBSIMNS"frictionCoefficient"));
+  frictionCoefficient.setProperty(new ExtPhysicalVarProperty(input));
+}
+
+TiXmlElement* PlanarCoulombFrictionProperty::initializeUsingXML(TiXmlElement *element) {
+  frictionCoefficient.initializeUsingXML(element);
+  return element;
+}
+
+TiXmlElement* PlanarCoulombFrictionProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele = FrictionForceLawProperty::writeXMLFile(parent);
+  frictionCoefficient.writeXMLFile(ele);
+  return ele;
+}
+
+void PlanarCoulombFrictionProperty::fromWidget(QWidget *widget) {
+  frictionCoefficient.fromWidget(static_cast<PlanarCoulombFrictionWidget*>(widget)->frictionCoefficient);
+}
+
+void PlanarCoulombFrictionProperty::toWidget(QWidget *widget) {
+  frictionCoefficient.toWidget(static_cast<PlanarCoulombFrictionWidget*>(widget)->frictionCoefficient);
+}
+
+SpatialCoulombFrictionProperty::SpatialCoulombFrictionProperty() {
+  vector<PhysicalStringProperty*> input;
+  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"-",MBSIMNS"frictionCoefficient"));
+  frictionCoefficient.setProperty(new ExtPhysicalVarProperty(input));
+}
+
+TiXmlElement* SpatialCoulombFrictionProperty::initializeUsingXML(TiXmlElement *element) {
+  frictionCoefficient.initializeUsingXML(element);
+  return element;
+}
+
+TiXmlElement* SpatialCoulombFrictionProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele = FrictionForceLawProperty::writeXMLFile(parent);
+  frictionCoefficient.writeXMLFile(ele);
+  return ele;
+}
+
+void SpatialCoulombFrictionProperty::fromWidget(QWidget *widget) {
+  frictionCoefficient.fromWidget(static_cast<SpatialCoulombFrictionWidget*>(widget)->frictionCoefficient);
+}
+
+void SpatialCoulombFrictionProperty::toWidget(QWidget *widget) {
+  frictionCoefficient.toWidget(static_cast<SpatialCoulombFrictionWidget*>(widget)->frictionCoefficient);
+}
+
+void RegularizedPlanarFrictionProperty::defineFunction(int index_) {
+  index = index_;
+  delete frictionForceFunc;
+  if(index==0)
+    frictionForceFunc = new LinearRegularizedCoulombFrictionProperty;  
+}
+
+TiXmlElement* RegularizedPlanarFrictionProperty::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e;
+  e=element->FirstChildElement(MBSIMNS"frictionForceFunction");
+  TiXmlElement *e1 = e->FirstChildElement();
+  if(e1 && e1->ValueStr() == MBSIMNS"LinearRegularizedCoulombFriction")
+    index = 0;
+  defineFunction(0);
+  frictionForceFunc->initializeUsingXML(e->FirstChildElement());
+  return e;
+}
+
+void RegularizedPlanarFrictionProperty::fromWidget(QWidget *widget) {
+  defineFunction(static_cast<RegularizedPlanarFrictionWidget*>(widget)->funcList->currentIndex());
+  frictionForceFunc->fromWidget(static_cast<RegularizedPlanarFrictionWidget*>(widget)->frictionForceFunc);
+}
+
+void RegularizedPlanarFrictionProperty::toWidget(QWidget *widget) {
+  static_cast<RegularizedPlanarFrictionWidget*>(widget)->funcList->blockSignals(true);;
+  static_cast<RegularizedPlanarFrictionWidget*>(widget)->funcList->setCurrentIndex(index);
+  static_cast<RegularizedPlanarFrictionWidget*>(widget)->funcList->blockSignals(false);;
+  static_cast<RegularizedPlanarFrictionWidget*>(widget)->defineFunction(index);
+  frictionForceFunc->toWidget(static_cast<RegularizedPlanarFrictionWidget*>(widget)->frictionForceFunc);
+}
+
+void RegularizedSpatialFrictionProperty::defineFunction(int index_) {
+  index = index_;
+  delete frictionForceFunc;
+  if(index==0)
+    frictionForceFunc = new LinearRegularizedCoulombFrictionProperty;  
+}
+
+TiXmlElement* RegularizedSpatialFrictionProperty::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e;
+  e=element->FirstChildElement(MBSIMNS"frictionForceFunction");
+  TiXmlElement *e1 = e->FirstChildElement();
+  if(e1 && e1->ValueStr() == MBSIMNS"LinearRegularizedCoulombFriction")
+    index = 0;
+  defineFunction(0);
+  frictionForceFunc->initializeUsingXML(e->FirstChildElement());
+  return e;
+}
+
+void RegularizedSpatialFrictionProperty::fromWidget(QWidget *widget) {
+  defineFunction(static_cast<RegularizedSpatialFrictionWidget*>(widget)->funcList->currentIndex());
+  frictionForceFunc->fromWidget(static_cast<RegularizedSpatialFrictionWidget*>(widget)->frictionForceFunc);
+}
+
+void RegularizedSpatialFrictionProperty::toWidget(QWidget *widget) {
+  static_cast<RegularizedSpatialFrictionWidget*>(widget)->funcList->blockSignals(true);;
+  static_cast<RegularizedSpatialFrictionWidget*>(widget)->funcList->setCurrentIndex(index);
+  static_cast<RegularizedSpatialFrictionWidget*>(widget)->funcList->blockSignals(false);;
+  static_cast<RegularizedSpatialFrictionWidget*>(widget)->defineFunction(index);
+  frictionForceFunc->toWidget(static_cast<RegularizedSpatialFrictionWidget*>(widget)->frictionForceFunc);
+}
+
+TiXmlElement* FrictionImpactLawProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType().toStdString());
+  parent->LinkEndChild(ele0);
+  return ele0;
+}
+
+PlanarCoulombImpactProperty::PlanarCoulombImpactProperty() {
+  vector<PhysicalStringProperty*> input;
+  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"-",MBSIMNS"frictionCoefficient"));
+  frictionCoefficient.setProperty(new ExtPhysicalVarProperty(input));
+}
+
+TiXmlElement* PlanarCoulombImpactProperty::initializeUsingXML(TiXmlElement *element) {
+  frictionCoefficient.initializeUsingXML(element);
+  return element;
+}
+
+TiXmlElement* PlanarCoulombImpactProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele = FrictionImpactLawProperty::writeXMLFile(parent);
+  frictionCoefficient.writeXMLFile(ele);
+  return ele;
+}
+
+void PlanarCoulombImpactProperty::fromWidget(QWidget *widget) {
+  frictionCoefficient.fromWidget(static_cast<PlanarCoulombImpactWidget*>(widget)->frictionCoefficient);
+}
+
+void PlanarCoulombImpactProperty::toWidget(QWidget *widget) {
+  frictionCoefficient.toWidget(static_cast<PlanarCoulombImpactWidget*>(widget)->frictionCoefficient);
+}
+
+SpatialCoulombImpactProperty::SpatialCoulombImpactProperty() {
+  vector<PhysicalStringProperty*> input;
+  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"-",MBSIMNS"frictionCoefficient"));
+  frictionCoefficient.setProperty(new ExtPhysicalVarProperty(input));
+}
+
+TiXmlElement* SpatialCoulombImpactProperty::initializeUsingXML(TiXmlElement *element) {
+  frictionCoefficient.initializeUsingXML(element);
+  return element;
+}
+
+TiXmlElement* SpatialCoulombImpactProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele = FrictionImpactLawProperty::writeXMLFile(parent);
+  frictionCoefficient.writeXMLFile(ele);
+  return ele;
+}
+
+void SpatialCoulombImpactProperty::fromWidget(QWidget *widget) {
+  frictionCoefficient.fromWidget(static_cast<SpatialCoulombImpactWidget*>(widget)->frictionCoefficient);
+}
+
+void SpatialCoulombImpactProperty::toWidget(QWidget *widget) {
+  frictionCoefficient.toWidget(static_cast<SpatialCoulombImpactWidget*>(widget)->frictionCoefficient);
+}
 
 void GeneralizedForceLawChoiceProperty::defineForceLaw(int index_) {
   index = index_;
@@ -254,7 +359,10 @@ void GeneralizedForceLawChoiceProperty::fromWidget(QWidget *widget) {
 }
 
 void GeneralizedForceLawChoiceProperty::toWidget(QWidget *widget) {
+  static_cast<GeneralizedForceLawChoiceWidget*>(widget)->comboBox->blockSignals(true);
   static_cast<GeneralizedForceLawChoiceWidget*>(widget)->comboBox->setCurrentIndex(index);
+  static_cast<GeneralizedForceLawChoiceWidget*>(widget)->comboBox->blockSignals(false);
+  static_cast<GeneralizedForceLawChoiceWidget*>(widget)->defineForceLaw(index);
   generalizedForceLaw->toWidget(static_cast<GeneralizedForceLawChoiceWidget*>(widget)->generalizedForceLaw);
 }
 
@@ -303,64 +411,125 @@ void GeneralizedImpactLawChoiceProperty::fromWidget(QWidget *widget) {
 }
 
 void GeneralizedImpactLawChoiceProperty::toWidget(QWidget *widget) {
+  static_cast<GeneralizedImpactLawChoiceWidget*>(widget)->comboBox->blockSignals(true);
   static_cast<GeneralizedImpactLawChoiceWidget*>(widget)->comboBox->setCurrentIndex(index);
+  static_cast<GeneralizedImpactLawChoiceWidget*>(widget)->comboBox->blockSignals(false);
+  static_cast<GeneralizedImpactLawChoiceWidget*>(widget)->defineImpactLaw(index);
   generalizedImpactLaw->toWidget(static_cast<GeneralizedImpactLawChoiceWidget*>(widget)->generalizedImpactLaw);
 }
 
+void FrictionForceLawChoiceProperty::defineFrictionLaw(int index_) {
+  index = index_;
+  delete frictionForceLaw;
+  if(index==0)
+    frictionForceLaw = new PlanarCoulombFrictionProperty;  
+  if(index==1)
+    frictionForceLaw = new RegularizedPlanarFrictionProperty;  
+  if(index==2)
+    frictionForceLaw = new SpatialCoulombFrictionProperty;  
+  if(index==3)
+    frictionForceLaw = new RegularizedSpatialFrictionProperty;  
+}
 
-//FrictionForceLawChoiceWidget::FrictionForceLawChoiceWidget() : frictionForceLaw(0) {
-//
-//  layout = new QVBoxLayout;
-//  layout->setMargin(0);
-//  setLayout(layout);
-//
-//  comboBox = new QComboBox;
-//  comboBox->addItem(tr("Planar coulomb friction"));
-//  comboBox->addItem(tr("Regularized planar friction"));
-//  comboBox->addItem(tr("Spatial coulomb friction"));
-//  comboBox->addItem(tr("Regularized spatial friction"));
-//  layout->addWidget(comboBox);
-//  connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFrictionLaw(int)));
-//  defineFrictionLaw(0);
-//}
-//
-//void FrictionForceLawChoiceWidget::defineFrictionLaw(int index) {
-//  layout->removeWidget(frictionForceLaw);
-//  delete frictionForceLaw;
-//  if(index==0)
-//    frictionForceLaw = new PlanarCoulombFriction;  
-//  if(index==1)
-//    frictionForceLaw = new RegularizedPlanarFriction;  
-//  if(index==2)
-//    frictionForceLaw = new SpatialCoulombFriction;  
-//  if(index==3)
-//    frictionForceLaw = new RegularizedSpatialFriction;  
-//  layout->addWidget(frictionForceLaw);
-//}
-//
-//FrictionImpactLawChoiceWidget::FrictionImpactLawChoiceWidget() : frictionImpactLaw(0) {
-//
-//  layout = new QVBoxLayout;
-//  layout->setMargin(0);
-//  setLayout(layout);
-//
-//  comboBox = new QComboBox;
-//  comboBox->addItem(tr("Planar coloumb impact"));
-//  comboBox->addItem(tr("Spatial coloumb impact"));
-//  layout->addWidget(comboBox);
-//  connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFrictionImpactLaw(int)));
-//  defineFrictionImpactLaw(0);
-//}
-//
-//void FrictionImpactLawChoiceWidget::defineFrictionImpactLaw(int index) {
-//  layout->removeWidget(frictionImpactLaw);
-//  delete frictionImpactLaw;
-//  if(index==0)
-//    frictionImpactLaw = new PlanarCoulombImpact;  
-//  else if(index==1)
-//    frictionImpactLaw = new SpatialCoulombImpact;  
-//  layout->addWidget(frictionImpactLaw);
-//}
+TiXmlElement* FrictionForceLawChoiceProperty::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e=(xmlName=="")?element:element->FirstChildElement(xmlName);
+  if(e) {
+    TiXmlElement* ee=e->FirstChildElement();
+    if(ee) {
+      if(ee->ValueStr() == MBSIMNS"PlanarCoulombFriction")
+        index = 0;
+      else if(ee->ValueStr() == MBSIMNS"RegularizedPlanarFriction")
+        index = 1;
+      else if(ee->ValueStr() == MBSIMNS"SpatialCoulombFriction")
+        index = 2;
+      else if(ee->ValueStr() == MBSIMNS"RegularizedSpatialFriction")
+        index = 3;
+      defineFrictionLaw(index);
+      frictionForceLaw->initializeUsingXML(ee);
+      return e;
+    }
+  }
+  return 0;
+}
+
+TiXmlElement* FrictionForceLawChoiceProperty::writeXMLFile(TiXmlNode *parent) {
+  if(xmlName!="") {
+    TiXmlElement *ele0 = new TiXmlElement(xmlName);
+    if(frictionForceLaw)
+      frictionForceLaw->writeXMLFile(ele0);
+    parent->LinkEndChild(ele0);
+  }
+  else
+    frictionForceLaw->writeXMLFile(parent);
+
+  return 0;
+}
+
+void FrictionForceLawChoiceProperty::fromWidget(QWidget *widget) {
+  defineFrictionLaw(static_cast<FrictionForceLawChoiceWidget*>(widget)->comboBox->currentIndex());
+  frictionForceLaw->fromWidget(static_cast<FrictionForceLawChoiceWidget*>(widget)->frictionForceLaw);
+}
+
+void FrictionForceLawChoiceProperty::toWidget(QWidget *widget) {
+  static_cast<FrictionForceLawChoiceWidget*>(widget)->comboBox->blockSignals(true);;
+  static_cast<FrictionForceLawChoiceWidget*>(widget)->comboBox->setCurrentIndex(index);
+  static_cast<FrictionForceLawChoiceWidget*>(widget)->comboBox->blockSignals(false);;
+  static_cast<FrictionForceLawChoiceWidget*>(widget)->defineFrictionLaw(index);
+  frictionForceLaw->toWidget(static_cast<FrictionForceLawChoiceWidget*>(widget)->frictionForceLaw);
+}
+
+void FrictionImpactLawChoiceProperty::defineFrictionImpactLaw(int index_) {
+  index = index_;
+  delete frictionImpactLaw;
+  if(index==0)
+    frictionImpactLaw = new PlanarCoulombImpactProperty;  
+  else if(index==1)
+    frictionImpactLaw = new SpatialCoulombImpactProperty;  
+}
+
+TiXmlElement* FrictionImpactLawChoiceProperty::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e=(xmlName=="")?element:element->FirstChildElement(xmlName);
+  if(e) {
+    TiXmlElement* ee=e->FirstChildElement();
+    if(ee) {
+      if(ee->ValueStr() == MBSIMNS"PlanarCoulombImpact")
+        index = 0;
+      else if(ee->ValueStr() == MBSIMNS"SpatialCoulombImpact")
+        index = 1;
+      defineFrictionImpactLaw(index);
+      frictionImpactLaw->initializeUsingXML(ee);
+      return e;
+    }
+  }
+  return 0;
+}
+
+TiXmlElement* FrictionImpactLawChoiceProperty::writeXMLFile(TiXmlNode *parent) {
+  if(xmlName!="") {
+    TiXmlElement *ele0 = new TiXmlElement(xmlName);
+    if(frictionImpactLaw)
+      frictionImpactLaw->writeXMLFile(ele0);
+    parent->LinkEndChild(ele0);
+  }
+  else
+    frictionImpactLaw->writeXMLFile(parent);
+
+  return 0;
+}
+
+void FrictionImpactLawChoiceProperty::fromWidget(QWidget *widget) {
+  defineFrictionImpactLaw(static_cast<FrictionImpactLawChoiceWidget*>(widget)->comboBox->currentIndex());
+  frictionImpactLaw->fromWidget(static_cast<FrictionImpactLawChoiceWidget*>(widget)->frictionImpactLaw);
+}
+
+void FrictionImpactLawChoiceProperty::toWidget(QWidget *widget) {
+  static_cast<FrictionImpactLawChoiceWidget*>(widget)->comboBox->blockSignals(true);;
+  static_cast<FrictionImpactLawChoiceWidget*>(widget)->comboBox->setCurrentIndex(index);
+  static_cast<FrictionImpactLawChoiceWidget*>(widget)->comboBox->blockSignals(false);;
+  static_cast<FrictionImpactLawChoiceWidget*>(widget)->defineFrictionImpactLaw(index);
+  frictionImpactLaw->toWidget(static_cast<FrictionImpactLawChoiceWidget*>(widget)->frictionImpactLaw);
+}
+
 
 GeneralizedForceChoiceProperty::GeneralizedForceChoiceProperty(ExtProperty &arrow_, const std::string &xmlName_) : arrow(arrow_), generalizedImpactLaw(0,false), xmlName(xmlName_) {
 
@@ -447,32 +616,40 @@ void ForceChoiceProperty::toWidget(QWidget *widget) {
   forceLaw.toWidget(static_cast<ForceChoiceWidget*>(widget)->forceLaw);
 }
 
+ForceDirectionProperty::ForceDirectionProperty(Element *element_, const string &xmlName_) : element(element_), xmlName(xmlName_) {
 
-//
-//ForceDirectionWidget::ForceDirectionWidget(Element *element_) : element(element_) {
-//
-//  QVBoxLayout *layout = new QVBoxLayout;
-//  layout->setMargin(0);
-//  setLayout(layout);
-//
-//  forceDirWidget = new QWidget;
-//  QVBoxLayout *hlayout = new QVBoxLayout;
-//  hlayout->setMargin(0);
-//  forceDirWidget->setLayout(hlayout);
-//
-//  vector<PhysicalStringWidget*> input;
-//  input.push_back(new PhysicalStringWidget(new VecWidget(3),noUnitUnits(),1));
-//  mat = new ExtPhysicalVarWidget(input);
-//  ExtWidget *extWidget = new ExtWidget("Direction vector",mat);
-//  hlayout->addWidget(extWidget);
-//  refFrame = new FrameOfReferenceWidget(element,0);
-//  extWidget = new ExtWidget("Frame of reference",refFrame);
-//  hlayout->addWidget(extWidget);
-//
-//  layout->addWidget(forceDirWidget);
-//
-//  refFrame->updateWidget();
-//}
+  vector<PhysicalStringProperty*> input;
+  input.push_back(new PhysicalStringProperty(new VecProperty(3),"-",MBSIMNS"direction"));
+  mat.setProperty(new ExtPhysicalVarProperty(input));
+  refFrame.setProperty(new FrameOfReferenceProperty(0,element,MBSIMNS"frameOfReference"));
+}
+TiXmlElement* ForceDirectionProperty::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e=element->FirstChildElement(xmlName);
+  if(e) {
+    refFrame.initializeUsingXML(e);
+    mat.initializeUsingXML(e);
+  }
+  return e;
+}
+
+TiXmlElement* ForceDirectionProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = new TiXmlElement(xmlName);
+  refFrame.writeXMLFile(ele0);
+  mat.writeXMLFile(ele0);
+  parent->LinkEndChild(ele0);
+
+  return 0;
+}
+
+void ForceDirectionProperty::fromWidget(QWidget *widget) {
+  mat.fromWidget(static_cast<ForceDirectionWidget*>(widget)->mat);
+  refFrame.fromWidget(static_cast<ForceDirectionWidget*>(widget)->refFrame);
+}
+
+void ForceDirectionProperty::toWidget(QWidget *widget) {
+  mat.toWidget(static_cast<ForceDirectionWidget*>(widget)->mat);
+  refFrame.toWidget(static_cast<ForceDirectionWidget*>(widget)->refFrame);
+}
 
 GeneralizedForceDirectionProperty::GeneralizedForceDirectionProperty(const string &xmlName) {
 

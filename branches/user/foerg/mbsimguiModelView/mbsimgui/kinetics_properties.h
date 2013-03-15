@@ -113,85 +113,107 @@ class UnilateralNewtonImpactProperty : public GeneralizedImpactLawProperty {
     ExtProperty restitutionCoefficient;
 };
 
-//class FrictionForceLawWidget : public Widget {
-//
-//  public:
-//    FrictionForceLawWidget() : frictionForceFunc(0) {}
-//    QString getType() const { return "FrictionForceLaw"; }
-//    void updateWidget() {}
-//    void resizeVariables() {}
-//   protected:
-//    Function2 *frictionForceFunc;
-//};
-//
-//class PlanarCoulombFriction : public FrictionForceLawWidget {
-//
-//  public:
-//    PlanarCoulombFriction();
-//    QString getType() const { return "PlanarCoulombFriction"; }
-//  protected:
-//    ExtProperty frictionCoefficient;
-//};
-//
-//class SpatialCoulombFriction : public FrictionForceLawWidget {
-//
-//  public:
-//    SpatialCoulombFriction();
-//    QString getType() const { return "SpatialCoulombFriction"; }
-//  protected:
-//    ExtProperty frictionCoefficient;
-//};
-//
-//class RegularizedPlanarFriction : public FrictionForceLawWidget {
-//
-//  public:
-//    RegularizedPlanarFriction(); 
-//    QString getType() const { return "RegularizedPlanarFriction"; }
-//  protected:
-//    QVBoxLayout *layout;
-//    QComboBox *funcList;
-//  protected slots:
-//    void defineFunction(int);
-//};
-//
-//class RegularizedSpatialFriction : public FrictionForceLawWidget {
-//
-//  public:
-//    RegularizedSpatialFriction(); 
-//    QString getType() const { return "RegularizedSpatialFriction"; }
-//  protected:
-//    QVBoxLayout *layout;
-//    QComboBox *funcList;
-//  protected slots:
-//    void defineFunction(int);
-//};
-//
-//class FrictionImpactLawWidget : public Widget {
-//
-//  public:
-//    FrictionImpactLawWidget() {}
-//    QString getType() const { return "FrictionImpactLaw"; }
-//    void updateWidget() {}
-//    void resizeVariables() {}
-//};
-//
-//class PlanarCoulombImpact : public FrictionImpactLawWidget {
-//
-//  public:
-//    PlanarCoulombImpact();
-//    QString getType() const { return "PlanarCoulombImpact"; }
-//  protected:
-//    ExtProperty frictionCoefficient;
-//};
-//
-//class SpatialCoulombImpact : public FrictionImpactLawWidget {
-//
-//  public:
-//    SpatialCoulombImpact();
-//    QString getType() const { return "SpatialCoulombImpact"; }
-//  protected:
-//    ExtProperty frictionCoefficient;
-//};
+class FrictionForceLawProperty : public Property {
+
+  public:
+    FrictionForceLawProperty() : frictionForceFunc(0) {}
+    QString getType() const { return "FrictionForceLaw"; }
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+   protected:
+    Function2Property *frictionForceFunc;
+};
+
+class PlanarCoulombFrictionProperty : public FrictionForceLawProperty {
+
+  public:
+    PlanarCoulombFrictionProperty();
+    QString getType() const { return "PlanarCoulombFriction"; }
+    TiXmlElement* initializeUsingXML(TiXmlElement *element); 
+    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+
+  protected:
+    ExtProperty frictionCoefficient;
+};
+
+class SpatialCoulombFrictionProperty : public FrictionForceLawProperty {
+
+  public:
+    SpatialCoulombFrictionProperty();
+    QString getType() const { return "SpatialCoulombFriction"; }
+    TiXmlElement* initializeUsingXML(TiXmlElement *element); 
+    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+
+  protected:
+    ExtProperty frictionCoefficient;
+};
+
+class RegularizedPlanarFrictionProperty : public FrictionForceLawProperty {
+
+  public:
+    RegularizedPlanarFrictionProperty() : index(0) {defineFunction(0);}
+    QString getType() const { return "RegularizedPlanarFriction"; }
+    TiXmlElement* initializeUsingXML(TiXmlElement *element); 
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+
+  protected:
+    void defineFunction(int);
+    int index;
+};
+
+class RegularizedSpatialFrictionProperty : public FrictionForceLawProperty {
+
+  public:
+    RegularizedSpatialFrictionProperty() : index(0) {defineFunction(0);}
+    QString getType() const { return "RegularizedSpatialFriction"; }
+    TiXmlElement* initializeUsingXML(TiXmlElement *element); 
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+
+  protected:
+    void defineFunction(int);
+    int index;
+};
+
+class FrictionImpactLawProperty : public Property {
+
+  public:
+    FrictionImpactLawProperty() {}
+    QString getType() const { return "FrictionImpactLaw"; }
+    TiXmlElement* writeXMLFile(TiXmlNode *element);
+};
+
+class PlanarCoulombImpactProperty : public FrictionImpactLawProperty {
+
+  public:
+    PlanarCoulombImpactProperty();
+    QString getType() const { return "PlanarCoulombImpact"; }
+    TiXmlElement* initializeUsingXML(TiXmlElement *element); 
+    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+
+  protected:
+    ExtProperty frictionCoefficient;
+};
+
+class SpatialCoulombImpactProperty : public FrictionImpactLawProperty {
+
+  public:
+    SpatialCoulombImpactProperty();
+    QString getType() const { return "SpatialCoulombImpact"; }
+    TiXmlElement* initializeUsingXML(TiXmlElement *element); 
+    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+
+  protected:
+    ExtProperty frictionCoefficient;
+};
 
 class GeneralizedForceLawChoiceProperty : public Property {
 
@@ -226,42 +248,40 @@ class GeneralizedImpactLawChoiceProperty : public Property {
     int index;
     std::string xmlName;
 };
-//
-//class FrictionForceLawChoiceWidget : public Widget {
-//
-//  public:
-//    FrictionForceLawChoiceWidget();
-//
-//    int getForceLaw() {return comboBox->currentIndex();}
-//    void updateWidget() {}
-//    void resizeVariables() {}
-//
-//  protected slots:
-//    void defineFrictionLaw(int);
-//
-//  protected:
-//    QComboBox *comboBox;
-//    QVBoxLayout *layout;
-//    FrictionForceLawWidget *frictionForceLaw;
-//};
-//
-//class FrictionImpactLawChoiceWidget : public Widget {
-//
-//  public:
-//    FrictionImpactLawChoiceWidget();
-//
-//    int getImpactLaw() {return comboBox->currentIndex();}
-//    void updateWidget() {}
-//    void resizeVariables() {}
-//
-//  protected slots:
-//    void defineFrictionImpactLaw(int);
-//
-//  protected:
-//    QComboBox *comboBox;
-//    QVBoxLayout *layout;
-//    FrictionImpactLawWidget *frictionImpactLaw;
-//};
+
+class FrictionForceLawChoiceProperty : public Property {
+
+  public:
+    FrictionForceLawChoiceProperty(const std::string &xmlName_) : frictionForceLaw(0), index(0), xmlName(xmlName_) {defineFrictionLaw(0);}
+    TiXmlElement* initializeUsingXML(TiXmlElement *element);
+    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+
+    void defineFrictionLaw(int);
+
+  protected:
+    FrictionForceLawProperty *frictionForceLaw;
+    int index;
+    std::string xmlName;
+};
+
+class FrictionImpactLawChoiceProperty : public Property {
+
+  public:
+    FrictionImpactLawChoiceProperty(const std::string &xmlName_) : frictionImpactLaw(0), index(0), xmlName(xmlName_) {defineFrictionImpactLaw(0);}
+
+    void defineFrictionImpactLaw(int);
+    TiXmlElement* initializeUsingXML(TiXmlElement *element);
+    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+
+  protected:
+    FrictionImpactLawProperty *frictionImpactLaw;
+    int index;
+    std::string xmlName;
+};
 
 class GeneralizedForceChoiceProperty : public Property {
 
@@ -293,20 +313,20 @@ class ForceChoiceProperty : public Property {
     std::string xmlName;
 };
 
-//class ForceDirectionWidget : public Widget {
-//
-//  public:
-//    ForceDirectionWidget(Element *element);
-//
-//    void updateWidget() {}
-//    void resizeVariables() {}
-//
-//  protected:
-//    QWidget *forceDirWidget;
-//    FrameOfReferenceWidget* refFrame;
-//    Element *element;
-//    ExtPhysicalVarWidget *mat;
-//};
+class ForceDirectionProperty : public Property {
+
+  public:
+    ForceDirectionProperty(Element *element, const std::string &xmlName);
+    TiXmlElement* initializeUsingXML(TiXmlElement *element);
+    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+
+  protected:
+    Element *element;
+    ExtProperty refFrame, mat;
+    std::string xmlName;
+};
 
 class GeneralizedForceDirectionProperty : public Property {
 

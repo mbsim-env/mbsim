@@ -26,6 +26,7 @@
 
 class Element;
 class Frame;
+class Contour;
 class RigidBody;
 class TiXmlElement;
 class TiXmlNode;
@@ -83,6 +84,25 @@ class FrameOfReferenceProperty : public Property {
     void toWidget(QWidget *widget);
     void setSavedFrameOfReference(const QString &str) {saved_frameOfReference = str;}
     const QString& getSavedFrameOfReference() const {return saved_frameOfReference;}
+
+};
+class ContourOfReferenceProperty : public Property {
+  protected:
+    Contour *contour;
+    Element* element;
+    std::string xmlName;
+    QString saved_contourOfReference;
+  public:
+    ContourOfReferenceProperty(Contour* contour_=0, Element* element_=0, const std::string &xmlName_="") : contour(contour_), element(element_), xmlName(xmlName_) {}
+    Contour* getContour() const {return contour;}
+    void setContour(Contour *contour_) {contour = contour_;}
+    void initialize();
+    TiXmlElement* initializeUsingXML(TiXmlElement *element);
+    TiXmlElement* writeXMLFile(TiXmlNode *element); 
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+    void setSavedContourOfReference(const QString &str) {saved_contourOfReference = str;}
+    const QString& getSavedContourOfReference() const {return saved_contourOfReference;}
 };
 
 class RigidBodyOfReferenceProperty : public Property {
@@ -154,6 +174,22 @@ class ConnectFramesProperty : public Property {
 
   protected:
     std::vector<FrameOfReferenceProperty*> frame;
+    Element* element;
+};
+
+class ConnectContoursProperty : public Property {
+
+  public:
+    ConnectContoursProperty(int n, Element* element);
+
+    void initialize();
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+
+  protected:
+    std::vector<ContourOfReferenceProperty*> contour;
     Element* element;
 };
 

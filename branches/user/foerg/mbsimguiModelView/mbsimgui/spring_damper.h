@@ -21,6 +21,7 @@
 #define _SPRING_DAMPER__H_
 
 #include "link.h"
+#include "extended_properties.h"
 
 class SpringDamper : public Link {
   public:
@@ -29,8 +30,14 @@ class SpringDamper : public Link {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     QString getType() const { return "SpringDamper"; }
+    void initializeDialog();
+    virtual void fromWidget();
+    virtual void toWidget();
+    void initialize();
+
   protected:
-    ExtWidget *forceFunction, *connections, *forceDirection, *coilSpring;
+    ExtWidget *forceFunctionWidget, *connectionsWidget, *forceDirectionWidget, *coilSpringWidget;
+    ExtProperty forceFunction, connections, forceDirection, coilSpring;
 };
 
 #endif
