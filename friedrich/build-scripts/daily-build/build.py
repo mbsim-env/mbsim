@@ -480,6 +480,8 @@ def configure(tool, mainFD):
       if subprocess.call(["automake", "-a", "-c"], stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("automake failed")
       print("\n\nRUNNING autoconf\n", file=configureFD); configureFD.flush()
       if subprocess.call(["autoconf"], stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("autoconf failed")
+      print("\n\nRUNNING autoreconf\n", file=configureFD); configureFD.flush()
+      if subprocess.call(["autoreconf"], stderr=subprocess.STDOUT, stdout=configureFD)!=0: raise RuntimeError("autoreconf failed")
       # configure
       copyConfigLog=True
       print("\n\nRUNNING configure\n", file=configureFD); configureFD.flush()
