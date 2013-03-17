@@ -3,7 +3,7 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/contours/area.h"
 #include "mbsim/contours/polynomial_frustum.h"
-#include "mbsim/multi_contact.h"
+#include "mbsim/contact.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"
 

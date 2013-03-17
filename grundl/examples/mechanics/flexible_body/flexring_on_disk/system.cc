@@ -2,7 +2,7 @@
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_21_rcm.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/joint.h"
-#include "mbsim/multi_contact.h"
+#include "mbsim/contact.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/circle_solid.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"
@@ -180,7 +180,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     aC_T->setDiameter (0.5);
     aC_T->setScaleLength(0.01);
     contact->setOpenMBVNormalForceArrow(aC_N);
-    contact->setOpenMBVFrictionForceArrow(aC_T);
+    contact->setopenMBVFrictionArrow(aC_T);
     contact->enableOpenMBVContactPoints(0.02,true);
 #endif
     this->addLink(contact);

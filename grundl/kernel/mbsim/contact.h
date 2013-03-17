@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _MULTI_CONTACT_H_
-#define _MULTI_CONTACT_H_
+#ifndef _CONTACT_H_
+#define _CONTACT_H_
 
 #include <mbsim/link_mechanics.h>
 
@@ -54,18 +54,18 @@ namespace MBSim {
    * Remarks:
    * - constitutive laws on acceleration and velocity level have to be set pairwise
    */
-  class MultiContact : public LinkMechanics {
+  class Contact : public LinkMechanics {
     public:
       /*!
        * \brief constructor
        * \param name of contact
        */
-      MultiContact(const std::string &name);
+      Contact(const std::string &name);
 
       /**
        * \brief destructor
        */
-      virtual ~MultiContact();
+      virtual ~Contact();
 
       /*INHERITED INTERFACE OF ELEMENT*/
       virtual void setDynamicSystemSolver(DynamicSystemSolver *sys);
@@ -133,7 +133,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const {
-        return "MultiContact";
+        return "Contact";
       }
       virtual void plot(double t, double dt = 1);
       virtual void closePlot();
@@ -167,7 +167,7 @@ namespace MBSim {
        * If using a set-valued friction law, then the arrow is drawn in green if the contact
        * is in slip and in red, if the contact is in stick.
        */
-      void setOpenMBVFrictionForceArrow(OpenMBV::Arrow *arrow) {
+      void setopenMBVFrictionArrow(OpenMBV::Arrow *arrow) {
         frictionArrow = arrow;
       }
 #endif
@@ -296,9 +296,7 @@ namespace MBSim {
       std::vector<saved_references> saved_ref;
   };
 
-  typedef MultiContact Contact;
-
 }
 
-#endif /* _MULTI_CONTACT_H_ */
+#endif /* _CONTACT_H_ */
 

@@ -4,7 +4,7 @@
 #include "mbsimFlexibleBody/contact_kinematics/point_nurbsdisk2s.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/joint.h"
-#include "mbsim/multi_contact.h"
+#include "mbsim/contact.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"

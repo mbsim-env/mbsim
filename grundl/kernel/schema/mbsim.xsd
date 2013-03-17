@@ -1968,7 +1968,7 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="Contact" substitutionGroup="LinkMechanics" type="ContactType">
+  <xs:element name="SingleContact" substitutionGroup="LinkMechanics" type="SingleContactType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Definiert einen Kontakt als Interaktion zwischen zwei Körpern oder zwischen Körper und Umwelt.<br/>
@@ -1979,7 +1979,7 @@
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="ContactType">
+  <xs:complexType name="SingleContactType">
     <xs:complexContent>
       <xs:extension base="LinkMechanicsType">
         <xs:sequence>
@@ -2064,7 +2064,7 @@
     </xs:complexContent>
   </xs:complexType> 
 
-  <xs:element name="MultiContact" substitutionGroup="LinkMechanics" type="MultiContactType">
+  <xs:element name="Contact" substitutionGroup="LinkMechanics" type="ContactType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Definiert einen Kontakt als Interaktion zwischen mehreren Körpern.<br/>
@@ -2075,7 +2075,7 @@
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="MultiContactType">
+  <xs:complexType name="ContactType">
     <xs:complexContent>
       <xs:extension base="LinkMechanicsType">
         <xs:sequence>
@@ -2156,7 +2156,7 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="openMBVFrictionForceArrow" minOccurs="0">
+          <xs:element name="openMBVFrictionArrow" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>

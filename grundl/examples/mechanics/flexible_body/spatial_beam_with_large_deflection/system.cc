@@ -2,7 +2,7 @@
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_rcm.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/joint.h"
-#include "mbsim/multi_contact.h"
+#include "mbsim/contact.h"
 #include "mbsim/contour.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/constitutive_laws.h"
@@ -117,7 +117,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   //a_t->setDiameter(tP*0.02);
   //a_t->setScaleLength(tP*0.1);
   //a_t->setEnable(false);
-  contact->setOpenMBVFrictionForceArrow(a_t);
+  contact->setopenMBVFrictionArrow(a_t);
   contact->enableOpenMBVContactPoints();
 
   this->addLink(contact);

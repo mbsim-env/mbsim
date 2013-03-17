@@ -26,7 +26,7 @@
 
 #include <mbsim/numerics/linear_complementarity_problem/linear_complementarity_problem.h>
 #include <mbsim/contour.h>
-#include <mbsim/multi_contact.h>
+#include <mbsim/contact.h>
 #include "mbsim/utils/function.h"
 
 namespace MBSim {
@@ -740,7 +740,7 @@ namespace MBSim {
        *
        * \todo: pointer to parent class is probably not optimal (friend class maybe?)
        */
-      virtual void initializeContourCouplings(MultiContact* parent);
+      virtual void initializeContourCouplings(Contact* parent);
 
       /*GETTER - SETTER*/
       void setDebuglevel(int debuglevel) {

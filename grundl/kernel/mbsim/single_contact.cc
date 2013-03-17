@@ -18,7 +18,7 @@
  */
 
 #include <config.h> 
-#include <mbsim/multi_contact.h>
+#include <mbsim/contact.h>
 #include <mbsim/contour.h>
 #include <mbsim/contour_pdata.h>
 #include <mbsim/dynamic_system_solver.h>
@@ -546,9 +546,9 @@ namespace MBSim {
             openMBVContactGrp->addObject(openMBVNormalForceArrow);
           }
           if (frictionArrow && getFrictionDirections() > 0) { // friction force
-            openMBVFrictionForceArrow = new OpenMBV::Arrow(*frictionArrow);
-            openMBVFrictionForceArrow->setName("FrictionForce_B");
-            openMBVContactGrp->addObject(openMBVFrictionForceArrow);
+            openMBVFrictionArrow = new OpenMBV::Arrow(*frictionArrow);
+            openMBVFrictionArrow->setName("FrictionForce_B");
+            openMBVContactGrp->addObject(openMBVFrictionArrow);
           }
         }
 #endif
@@ -698,7 +698,7 @@ namespace MBSim {
           data.push_back(F(1));
           data.push_back(F(2));
           data.push_back((fdf->isSetValued() && laT.size()) ? 1 : 0.5); // draw in green if slipping and draw in red if sticking
-          openMBVFrictionForceArrow->append(data);
+          openMBVFrictionArrow->append(data);
         }
       }
 #endif
@@ -1431,11 +1431,11 @@ namespace MBSim {
     }
 
     //Friction force
-    e = element->FirstChildElement(MBSIMNS"openMBVFrictionForceArrow");
+    e = element->FirstChildElement(MBSIMNS"openMBVFrictionArrow");
     if (e) {
       OpenMBV::Arrow *arrow = dynamic_cast<OpenMBV::Arrow*>(OpenMBV::ObjectFactory::createObject(e->FirstChildElement()));
       arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-      setOpenMBVFrictionForceArrow(arrow);
+      setopenMBVFrictionArrow(arrow);
       e = e->NextSiblingElement();
     }
 #endif

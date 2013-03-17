@@ -1,7 +1,7 @@
 #include "system.h"
 #include "stribeck_friction.h"
 #include "mbsim/rigid_body.h"
-#include "mbsim/multi_contact.h"
+#include "mbsim/contact.h"
 #include "mbsim/environment.h"
 #include "mbsim/contours/sphere.h"
 #include "mbsim/contours/plane.h"
@@ -74,7 +74,7 @@ System::System(const string &projectName)  : DynamicSystemSolver(projectName) {
   aC_N->setEnable(false);
   cr->setOpenMBVNormalForceArrow(aC_N);
   OpenMBV::Arrow *aC_T = new OpenMBV::Arrow;
-  cr->setOpenMBVFrictionForceArrow(aC_T);
+  cr->setopenMBVFrictionArrow(aC_T);
   aC_T->setEnable(false);
 #endif
   this->addLink(cr);

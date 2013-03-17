@@ -1,7 +1,7 @@
 #include "system.h"
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_23_bta.h"
 #include "mbsim/rigid_body.h"
-#include "mbsim/multi_contact.h"
+#include "mbsim/contact.h"
 #include "mbsim/environment.h"
 #include "mbsim/joint.h"
 #include "mbsim/constitutive_laws.h"
