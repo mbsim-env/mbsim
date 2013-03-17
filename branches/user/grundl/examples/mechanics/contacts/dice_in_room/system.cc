@@ -2,7 +2,7 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/contour.h"
 #include "mbsim/constitutive_laws.h"
-#include "mbsim/multi_contact.h"
+#include "mbsim/contact.h"
 #include "mbsim/contours/room.h"
 #include "mbsim/contours/cuboid.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -66,14 +66,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 //  body->setOpenMBVRigidBody(sphere);
 //  sphere->setRadius(0.01);
 //#endif
-
-//  MultiContact * crommpoint = new MultiContact("Raum_Punkt_Kontakt");
-//  crommpoint->setContactForceLaw(new UnilateralConstraint);
-//  crommpoint->setContactImpactLaw(new UnilateralNewtonImpact(1));
-//  crommpoint->setFrictionForceLaw(new SpatialCoulombFriction(0.3));
-//  crommpoint->setFrictionImpactLaw(new SpatialCoulombImpact(0.3));
-//  crommpoint->connect(roomBody->getContour("Raum"), body->getContour("Punkt"));
-//  addLink(crommpoint);
 
   Cuboid *cuboid = new Cuboid("Wuerfel");
   cuboid->setLength(l);

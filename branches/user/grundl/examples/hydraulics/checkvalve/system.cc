@@ -3,7 +3,7 @@
 #include "mbsimHydraulics/rigid_line.h"
 #include "mbsimHydraulics/hnode.h"
 #include "mbsimHydraulics/hnode_mec.h"
-#include "mbsim/multi_contact.h"
+#include "mbsim/contact.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsimHydraulics/checkvalve.h"
 #include "mbsim/rigid_body.h"

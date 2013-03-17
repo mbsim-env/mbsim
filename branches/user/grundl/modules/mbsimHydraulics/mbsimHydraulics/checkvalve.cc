@@ -20,7 +20,7 @@
 #include "checkvalve.h"
 #include "mbsim/frame.h"
 #include "mbsim/rigid_body.h"
-#include "mbsim/multi_contact.h"
+#include "mbsim/contact.h"
 #include "mbsim/contours/line.h"
 #include "mbsim/contours/circle_solid.h"
 #include "mbsim/spring_damper.h"

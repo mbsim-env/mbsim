@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _CONTACT_H_
-#define _CONTACT_H_
+#ifndef _SINGLE_CONTACT_H_
+#define _SINGLE_CONTACT_H_
 
 #include <mbsim/link_mechanics.h>
 
@@ -145,7 +145,7 @@ namespace MBSim {
        * If using a set-valued friction law, then the arrow is drawn in green if the contact
        * is in slip and in red, if the contact is in stick.
        */
-      void setOpenMBVFrictionForceArrow(OpenMBV::Arrow *arrow) { frictionArrow=arrow; }
+      void setopenMBVFrictionArrow(OpenMBV::Arrow *arrow) { frictionArrow=arrow; }
 #endif
 
       /* GETTER / SETTER */
@@ -305,7 +305,7 @@ namespace MBSim {
       /**
        * \brief container of tangential forces to draw
        */
-      OpenMBV::Arrow * openMBVFrictionForceArrow;
+      OpenMBV::Arrow * openMBVFrictionArrow;
 
       /**
        * \brief size of ContactFrames to draw
@@ -334,5 +334,5 @@ namespace MBSim {
 
 }
 
-#endif /* _CONTACT_H_ */
+#endif /* _SINGLE_CONTACT_H_ */
 

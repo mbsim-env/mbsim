@@ -1,6 +1,6 @@
 #include "system.h"
 #include "mbsim/joint.h"
-#include "mbsim/multi_contact.h"
+#include "mbsim/contact.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/plane.h"
 #include "mbsim/constitutive_laws.h"

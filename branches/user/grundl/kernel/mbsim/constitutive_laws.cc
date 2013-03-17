@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "mbsim/constitutive_laws.h"
-#include "mbsim/multi_contact.h"
+#include "mbsim/contact.h"
 #include "mbsim/element.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/utils/nonsmooth_algebra.h"
@@ -713,7 +713,7 @@ namespace MBSim {
 
   }
 
-  void MaxwellUnilateralConstraint::initializeContourCouplings(MultiContact* parent) {
+  void MaxwellUnilateralConstraint::initializeContourCouplings(Contact* parent) {
     for(size_t i = 0; i < referenceXML.size(); i++) {
       Contour* contour1 = parent->getByPath<Contour>(referenceXML[i].name1);
       Contour* contour2 = parent->getByPath<Contour>(referenceXML[i].name2);

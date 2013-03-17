@@ -80,7 +80,7 @@
   </objects>
   
   <links>
-   <MultiContact name="MultiContact" xmlns="http://mbsim.berlios.de/MBSim">
+   <Contact name="Contact" xmlns="http://mbsim.berlios.de/MBSim">
       <!--
      <contactForceLaw>
       <UnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim"/>
@@ -121,7 +121,7 @@
           <scaleLength>.01</scaleLength>
         </Arrow>   
      </openMBVNormalForceArrow>
-     <openMBVFrictionForceArrow>
+     <openMBVFrictionArrow>
         <Arrow name="XXX" xmlns="http://openmbv.berlios.de/OpenMBV">
           <minimalColorValue>0</minimalColorValue> <!-- optional -->
           <maximalColorValue>100</maximalColorValue> <!-- optional -->
@@ -131,8 +131,8 @@
           <type>"toHead"</type>
           <scaleLength>.01</scaleLength>
         </Arrow>       
-     </openMBVFrictionForceArrow> 
-   </MultiContact>   
+     </openMBVFrictionArrow> 
+   </Contact>   
   </links>
   
   <environments>

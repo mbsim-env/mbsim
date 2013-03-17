@@ -3,7 +3,7 @@
 #include "mbsim/spring_damper.h"
 #include "mbsim/environment.h"
 #include "mbsim/contours/sphere.h"
-#include "mbsim/multi_contact.h"
+#include "mbsim/contact.h"
 #include "mbsim/constitutive_laws.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
