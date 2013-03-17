@@ -24,6 +24,8 @@
 #include "fmatvec.h"
 #include "mbxmlutilstinyxml/tinyxml.h"
 #include <limits>
+#include <vector>
+#include <set>
 
 std::string numtostr(int i);   
 std::string numtostr(double d);   
@@ -116,5 +118,18 @@ void addElementText(TiXmlElement *parent, std::string name, T value) {
   oss << std::setprecision(std::numeric_limits<double>::digits10) << toStr(value);
   parent->LinkEndChild(new TiXmlElement(name))->LinkEndChild(new TiXmlText(oss.str()));
 }
+
+
+
+class Deprecated {
+  public:
+    /*! register a deprecated feature with name message.
+     * If e is NULL a stack trace is printed if available if e it not NULL TiXml_location is printed. */
+    static void registerMessage(const std::string &message, TiXmlElement *e=NULL);
+  private:
+    static void printAllMessages();
+    static std::set<std::vector<std::string> > allMessages;
+    static bool atExitRegistred;
+};
 
 #endif

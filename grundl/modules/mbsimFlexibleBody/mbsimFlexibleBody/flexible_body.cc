@@ -22,6 +22,7 @@
 #include <mbsimFlexibleBody/flexible_body.h>
 #include <mbsim/dynamic_system.h>
 #include <mbsim/frame.h>
+#include <mbsim/contour.h>
 #include <mbsim/utils/function.h>
 #include <mbsim/mbsim_event.h>
 #include <mbsim/contour_pdata.h>
@@ -134,7 +135,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody::setFrameOfReference(Frame *frame) { 
     if(dynamic_cast<DynamicSystem*>(frame->getParent())) 
-      frameOfReference = frame; 
+      R = frame; 
     else 
       throw MBSimError("ERROR (FlexibleBody::setFrameOfReference): Only stationary reference frames are implemented at the moment!"); 
   }
@@ -157,6 +158,16 @@ namespace MBSimFlexibleBody {
   void FlexibleBody::addFrame(Frame *frame, const  int &id) {
     ContourPointData cp(id);
     addFrame(frame,cp);
+  }
+
+  void FlexibleBody::addContour(Contour *contour_) {
+    cout << frame.size() << endl;
+    stringstream frameName;
+    frameName << "ContourFrame" << contour.size();
+    Frame *contourFrame = new Frame(frameName.str());
+//    addFrame(contourFrame,0);
+    contour_->setFrameOfReference(contourFrame);
+    Body::addContour(contour_);
   }
 
   void FlexibleBody::initializeUsingXML(TiXmlElement *element) {

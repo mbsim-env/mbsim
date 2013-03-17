@@ -60,6 +60,15 @@ namespace MBSim {
       virtual void init(InitStage stage);
       /***************************************************/
 
+      /* INHERITED INTERFACE OF CONTOUR*/
+      /*!
+       * \brief returns the two lagrange parameters
+       *    index 0: x,   height coordinate of frustum
+       *    index 1: phi, angle of point
+       */
+      virtual fmatvec::Vec2 computeLagrangeParameter(const fmatvec::Vec3 &WrPoint);
+      /*********************************/
+
       /*!
        * \brief set height of frustum
        * \para height height of the frustum

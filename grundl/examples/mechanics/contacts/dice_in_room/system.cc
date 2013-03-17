@@ -24,10 +24,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   room->setLength(.3); //X
   room->setDepth(.2); //Y
   room->setHeight(0.1); //Z
+  room->setFrameOfReference(I);
 #ifdef HAVE_OPENMBVCPPINTERFACE
   room->enableOpenMBV(true, 2);
 #endif
-  roomBody->addContour(room, Vec3(), SqrMat3(EYE));
+  roomBody->addContour(room);
 
 
   RigidBody* body = new RigidBody("Wuerfel");
@@ -78,7 +79,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cuboid->setLength(l);
   cuboid->setHeight(h);
   cuboid->setDepth(b);
-  body->addContour(cuboid,Vec(3),SqrMat(3,EYE));
+  cuboid->setFrameOfReference(body->getFrameC());
+  body->addContour(cuboid);
 
   Contact *cnf = new Contact("Kontakt_Wuerfel");
   cnf->setContactForceLaw(new UnilateralConstraint);

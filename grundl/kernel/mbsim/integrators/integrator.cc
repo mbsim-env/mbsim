@@ -80,7 +80,7 @@ namespace MBSim {
     writeXMLFile(&doc);
     map<string, string> nsprefix=ObjectFactory::getInstance()->getNamespacePrefixMapping();
     unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
-    doc.SaveFile(name+".mbsimint.xml");
+    doc.SaveFile(name.substr(name.length()-13,13)==".mbsimint.xml"?name:name+".mbsimint.xml");
   }
 
 }

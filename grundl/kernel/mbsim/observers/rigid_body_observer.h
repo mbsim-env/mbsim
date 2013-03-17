@@ -17,14 +17,13 @@
  * Contact: martin.o.foerg@gmail.com
  */
 
-#ifndef _PLOT_RIGID_BODY_H__
-#define _PLOT_RIGID_BODY_H__
-#include "mbsim/element.h"
+#ifndef _RIGID_BODY_OBSERVER_H__
+#define _RIGID_BODY_OBSERVER_H__
+#include "mbsim/observer.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/arrow.h>
 namespace OpenMBV {
-  //class Frame;
-  class Arrow;
   class Frame;
 }
 #endif
@@ -33,7 +32,7 @@ namespace MBSim {
   class RigidBody;
   class Frame;
 
-  class PlotRigidBody: public Element {
+  class RigidBodyObserver: public Observer {
     private:
       RigidBody* body;
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -42,15 +41,14 @@ namespace MBSim {
 #endif
 
     public:
-      PlotRigidBody(const std::string &name);
-      void setBody(RigidBody *body_) { body = body_; } 
+      RigidBodyObserver(const std::string &name);
+      void setRigidBody(RigidBody *body_) { body = body_; } 
 
       void init(InitStage stage);
       virtual void plot(double t, double dt);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Group* getOpenMBVGrp() { return openMBVGrp; }
-      void enableOpenMBVAxisOfRotation(double scaleLength, double diameter, double headDiameter, double headLength, double color=0.5);
+      void enableOpenMBVAxisOfRotation(double scale=1, OpenMBV::Arrow::ReferencePoint refPoint=OpenMBV::Arrow::fromPoint, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
 #endif
 
   };

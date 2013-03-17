@@ -31,6 +31,7 @@ namespace H5 {
 
 namespace MBSim {
   class Frame;
+  class FixedRelativeFrame;
   class Contour;
   class ExtraDynamic;
   class Object;
@@ -38,6 +39,7 @@ namespace MBSim {
   class ModellingInterface;
   class MultiContact;
   class InverseKineticsJoint;
+  class Observer;
 
   /**
    * \brief dynamic system as topmost hierarchical level
@@ -235,10 +237,10 @@ namespace MBSim {
       /* GETTER / SETTER */
       void setPosition(const fmatvec::Vec3& PrPF_) { PrPF = PrPF_; }
       void setOrientation(const fmatvec::SqrMat3& APF_) { APF = APF_; }
-      void setFrameOfReference(Frame *frame) { frameParent = frame; };
+      void setFrameOfReference(Frame *frame) { R = frame; };
       const fmatvec::Vec3& getPosition() const { return PrPF; }
       const fmatvec::SqrMat3& getOrientation() const { return APF; }
-      const Frame* getFrameOfReference() const { return frameParent; };
+      const Frame* getFrameOfReference() const { return R; };
 
       const fmatvec::Vec& getxd() const { return xd; };
       fmatvec::Vec& getxd() { return xd; };
@@ -534,6 +536,13 @@ namespace MBSim {
       virtual void buildListOfInverseKineticsLinks(std::vector<Link*> &lnk, bool recursive=false);
 
       /**
+       * \brief build flat list of observers
+       * \param list of observers
+       * \param flag for recursive
+       */
+      virtual void buildListOfObservers(std::vector<Observer*> &obsrv, bool recursive=false);
+
+      /**
        * \brief analyse constraints of dynamic systems for usage in inverse kinetics
        */
       void setUpInverseKinetics();
@@ -643,13 +652,7 @@ namespace MBSim {
        */
       void setrMax(double rMax);
 
-      /**
-       * \param frame to add
-       * \param relative position of frame
-       * \param relative orientation of frame
-       * \param relation frame name
-       */
-      void addFrame(Frame *frame_, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const std::string& refFrameName);
+      void addFrame(FixedRelativeFrame *frame);
 
       /**
        * \param frame to add
@@ -657,7 +660,7 @@ namespace MBSim {
        * \param relative orientation of frame
        * \param relation frame
        */
-      void addFrame(Frame *frame_, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const Frame* refFrame=0);
+      void addFrame(Frame *frame, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const Frame* refFrame=0);
 
       /**
        * \param name of frame to add
@@ -666,14 +669,6 @@ namespace MBSim {
        * \param relation frame
        */
       void addFrame(const std::string &str, const fmatvec::Vec3 &RrRF, const fmatvec::SqrMat3 &ARF, const Frame* refFrame=0);
-
-      /**
-       * \param contour to add
-       * \param relative position of contour
-       * \param relative orientation of contour
-       * \param relation frame name
-       */
-      void addContour(Contour* contour, const fmatvec::Vec3 &RrRC, const fmatvec::SqrMat3 &ARC, const std::string& refFrameName);
 
       /**
        * \param contour to add
@@ -730,10 +725,8 @@ namespace MBSim {
        */
       void addInverseKineticsLink(Link *link);
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      Element* getOpenMBVElement(const std::string &name,bool check=true);
-      void addPlotElement(Element *element);
-#endif
+      Observer* getObserver(const std::string &name,bool check=true);
+      void addObserver(Observer *element);
 
       /**
        * \param name of the link
@@ -767,7 +760,7 @@ namespace MBSim {
       ModellingInterface* getModel(const std::string &name, bool check=true);
 
       /** Return frame "I" */
-      Frame *getFrameI() { return I; }
+      FixedRelativeFrame *getFrameI() { return I; }
 
       virtual Element *getByPathSearch(std::string path);
 
@@ -781,7 +774,7 @@ namespace MBSim {
       /**
        * \brief parent frame
        */
-      Frame *frameParent;
+      Frame *R;
 
       /**
        * \brief relative translation with respect to parent frame
@@ -806,9 +799,7 @@ namespace MBSim {
       std::vector<ModellingInterface*> model;
       std::vector<DynamicSystem*> dynamicsystem;
       std::vector<Link*> inverseKineticsLink;
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      std::vector<Element*> plotElement;
-#endif
+      std::vector<Observer*> observer;
 
       /** 
        * \brief linear relation matrix of position and velocity parameters
@@ -951,16 +942,6 @@ namespace MBSim {
       int LinkStatusRegSize, LinkStatusRegInd;
       
       /**
-       * \brief inertial position of frames, contours (see group.h / tree.h)
-       */
-      std::vector<fmatvec::Vec3> IrOF, IrOC;
-
-      /**
-       * \brief orientation to inertial frame of frames, contours (see group.h / tree.h)
-       */
-      std::vector<fmatvec::SqrMat3> AIF, AIC;
-
-      /**
        * \brief vector of frames and contours
        */
       std::vector<Frame*> frame;
@@ -971,17 +952,12 @@ namespace MBSim {
 #endif
 
       /**
-       * \param frame to add
-       */
-      void addFrame(Frame *frame_);
-
-      /**
        * \param contour to add
        */
       void addContour(Contour* contour);
 
       /** A pointer to frame "I" */
-      Frame *I;
+      FixedRelativeFrame *I;
 
       /** 
        * \brief size of contact force parameters of special links relative to parent
@@ -993,11 +969,6 @@ namespace MBSim {
 
       int corrSize, corrInd;
       fmatvec::Vec corr;
-
-    protected:
-      std::vector<std::string> saved_refFrameF, saved_refFrameC;
-      std::vector<fmatvec::Vec3> saved_RrRF, saved_RrRC;
-      std::vector<fmatvec::SqrMat3> saved_ARF, saved_ARC;
   };
 }
 

@@ -27,7 +27,7 @@ class Group : public Element {
   protected:
     QString getType() const { return "Group"; }
     QAction *actionPaste;
-    ExtXMLWidget *position, *orientation, *parameterFile, *frameOfReference, *framePos, *contourPos;
+    ExtXMLWidget *position, *orientation, *parameterFile, *frameOfReference; 
 
   public:
     Group(const QString &str, QTreeWidgetItem *parentItem, int ind);
@@ -36,7 +36,7 @@ class Group : public Element {
     int getxSize();
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual Element *getByPathSearch(std::string path);
+    virtual Element *getByPathSearch(QString path);
     void setActionPasteDisabled(bool flag);
 
   protected slots:
@@ -47,6 +47,7 @@ class Group : public Element {
     void addPlane();
     void addSphere();
     void addRigidBody();
+    void addRigidBodies();
     void addJointConstraint();
     void addKinematicConstraint();
     void addJoint();
@@ -54,6 +55,7 @@ class Group : public Element {
     void addSpringDamper();
     void addContact();
     void addAbsolutePositionSensor();
+    void addAbsoluteKinematicsObserver();
     //void remove();
 
   public slots:

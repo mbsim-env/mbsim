@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
   double endTime = 5e-2;
 
   for (int contactType =0; contactType <= 2; contactType++) {
-    for (int contactNums = 2; contactNums <= 2; contactNums+=20) {
+    for (int contactNums = 0; contactNums <= 0; contactNums+=20) {
       stringstream MBSName;
       MBSName << "MBS_";
 

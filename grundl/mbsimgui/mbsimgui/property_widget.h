@@ -38,7 +38,7 @@ class PropertyWidget : public QTabWidget {
     ~PropertyWidget();
     void setParentObject(QObject *obj);
     void addToTab(const QString &name, ExtXMLWidget* widget_);
-    void addTab(const QString &name);
+    void addTab(const QString &name, int i=-1);
     QObject* getParentObject() { return parentObject; }
     void addStretch();
     void update();

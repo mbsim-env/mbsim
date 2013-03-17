@@ -24,12 +24,14 @@
 #include <QtGui>
 
 using namespace std;
+extern bool absolutePath;
+extern QDir mbsDir;
 
 OctaveHighlighter::OctaveHighlighter(QTextDocument *parent) : QSyntaxHighlighter(parent) {
-  QPlainTextEdit dummy;
+//  QPlainTextEdit dummy;
   bool dark=false;
-  if(dummy.palette().brush(dummy.backgroundRole()).color().value()<128)
-    dark=true;
+//  if(dummy.palette().brush(dummy.backgroundRole()).color().value()<128)
+//    dark=true;
 
   { // numbers
     QTextCharFormat format;
@@ -130,12 +132,12 @@ BoolWidget::BoolWidget(const std::string &b) {
   layout->addWidget(value);
 }
 
-bool BoolWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* BoolWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlText* text = dynamic_cast<TiXmlText*>(element->FirstChild());
   if(!text)
-    return false;
+    return 0;
   setValue(text->Value());
-  return true;
+  return element;
 }
 
 TiXmlElement* BoolWidget::writeXMLFile(TiXmlNode *parent) {
@@ -155,12 +157,12 @@ ChoiceWidget::ChoiceWidget(const vector<string> &list_, int num) : list(list_) {
   layout->addWidget(value);
 }
 
-bool ChoiceWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* ChoiceWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlText* text = dynamic_cast<TiXmlText*>(element->FirstChild());
   if(!text)
-    return false;
+    return 0;
   setValue(text->Value());
-  return true;
+  return element;
 }
 
 TiXmlElement* ChoiceWidget::writeXMLFile(TiXmlNode *parent) {
@@ -185,12 +187,12 @@ OctaveExpressionWidget::OctaveExpressionWidget() {
   layout->addWidget(value);
 }
 
-bool OctaveExpressionWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* OctaveExpressionWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlText* text = dynamic_cast<TiXmlText*>(element->FirstChild());
   if(!text)
-    return false;
+    return 0;
   setValue(text->Value());
-  return true;
+  return element;
 }
 
 TiXmlElement* OctaveExpressionWidget::writeXMLFile(TiXmlNode *parent) {
@@ -211,12 +213,12 @@ ScalarWidget::ScalarWidget(const std::string &d) {
   //connect(box,SIGNAL(textEdited(const QString&)),this,SIGNAL(valueChanged(const QString&)));
 }
 
-bool ScalarWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* ScalarWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlText* text = dynamic_cast<TiXmlText*>(element->FirstChild());
   if(!text)
-    return false;
+    return 0;
   setValue(text->Value());
-  return true;
+  return element;
 }
 
 TiXmlElement* ScalarWidget::writeXMLFile(TiXmlNode *parent) {
@@ -278,10 +280,10 @@ void VecWidget::setReadOnly(bool flag) {
   }
 }
 
-bool VecWidget::initializeUsingXML(TiXmlElement *parent) {
+TiXmlElement* VecWidget::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *element=parent->FirstChildElement();
   if(!element || element->ValueStr() != (PVNS"xmlVector"))
-    return false;
+    return 0;
   vector<string> x;
   TiXmlElement *ei=element->FirstChildElement();
   int i=0;
@@ -291,7 +293,7 @@ bool VecWidget::initializeUsingXML(TiXmlElement *parent) {
     i++;
   }
   setVec(x);
-  return true;
+  return element;
 }
 
 TiXmlElement* VecWidget::writeXMLFile(TiXmlNode *parent) {
@@ -377,10 +379,10 @@ void MatWidget::setReadOnly(bool flag) {
   }
 }
 
-bool MatWidget::initializeUsingXML(TiXmlElement *parent) {
+TiXmlElement* MatWidget::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *element=parent->FirstChildElement();
   if(!element || element->ValueStr() != (PVNS"xmlMatrix"))
-    return false;
+    return 0;
   vector<vector<string> > A;
   TiXmlElement *ei=element->FirstChildElement();
   int i=0;
@@ -397,7 +399,7 @@ bool MatWidget::initializeUsingXML(TiXmlElement *parent) {
     i++;
   }
   setMat(A);
-  return true;
+  return element;
 }
 
 TiXmlElement* MatWidget::writeXMLFile(TiXmlNode *parent) {
@@ -488,10 +490,10 @@ void SymMatWidget::setReadOnly(bool flag) {
   }
 }
 
-bool SymMatWidget::initializeUsingXML(TiXmlElement *parent) {
+TiXmlElement* SymMatWidget::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *element=parent->FirstChildElement();
   if(!element || element->ValueStr() != (PVNS"xmlMatrix"))
-    return false;
+    return 0;
   vector<vector<string> > A;
   TiXmlElement *ei=element->FirstChildElement();
   int i=0;
@@ -508,7 +510,7 @@ bool SymMatWidget::initializeUsingXML(TiXmlElement *parent) {
     ei=ei->NextSiblingElement();
   }
   setMat(A);
-  return true;
+  return element;
 }
 
 TiXmlElement* SymMatWidget::writeXMLFile(TiXmlNode *parent) {
@@ -572,13 +574,13 @@ void VecSizeVarWidget::currentIndexChanged(int i) {
   emit sizeChanged(size);
 }
 
-bool VecSizeVarWidget::initializeUsingXML(TiXmlElement *parent) {
+TiXmlElement* VecSizeVarWidget::initializeUsingXML(TiXmlElement *parent) {
   if(!widget->initializeUsingXML(parent))
-    return false;
+    return 0;
   sizeCombo->blockSignals(true);
   sizeCombo->setCurrentIndex(sizeCombo->findText(QString::number(widget->size())));
   sizeCombo->blockSignals(false);
-  return true;
+  return parent;
 }
 
 TiXmlElement* VecSizeVarWidget::writeXMLFile(TiXmlNode *parent) {
@@ -625,13 +627,13 @@ void MatColsVarWidget::currentIndexChanged(int i) {
   emit sizeChanged(cols);
 }
 
-bool MatColsVarWidget::initializeUsingXML(TiXmlElement *parent) {
+TiXmlElement* MatColsVarWidget::initializeUsingXML(TiXmlElement *parent) {
   if(!widget->initializeUsingXML(parent))
-    return false;
+    return 0;
   colsCombo->blockSignals(true);
   colsCombo->setCurrentIndex(colsCombo->findText(QString::number(widget->cols())));
   colsCombo->blockSignals(false);
-  return true;
+  return parent;
 }
 
 TiXmlElement* MatColsVarWidget::writeXMLFile(TiXmlNode *parent) {
@@ -701,10 +703,10 @@ void CardanWidget::setReadOnly(bool flag) {
   }
 }
 
-bool CardanWidget::initializeUsingXML(TiXmlElement *parent) {
+TiXmlElement* CardanWidget::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *element=parent->FirstChildElement();
   if(!element || element->ValueStr() != (PVNS"xmlCardan"))
-    return false;
+    return 0;
   vector<string> x;
   TiXmlElement *ei=element->FirstChildElement();
   int i=0;
@@ -714,7 +716,7 @@ bool CardanWidget::initializeUsingXML(TiXmlElement *parent) {
     i++;
   }
   setCardan(x);
-  return true;
+  return element;
 }
 
 TiXmlElement* CardanWidget::writeXMLFile(TiXmlNode *parent) {
@@ -741,16 +743,16 @@ PhysicalStringWidget::PhysicalStringWidget(StringWidget *widget_, const string &
   layout->addWidget(unit);
 }
 
-bool PhysicalStringWidget::initializeUsingXML(TiXmlElement *parent) {
+TiXmlElement* PhysicalStringWidget::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *e = parent->FirstChildElement(xmlName);
   if(e) {
     if(widget->initializeUsingXML(e)) {
       if(e->Attribute("unit"))
         unit->setCurrentIndex(unit->findText(e->Attribute("unit")));
-      return true;
+      return e;
     }
   } 
-  return false;
+  return 0;
 }
 
 TiXmlElement* PhysicalStringWidget::writeXMLFile(TiXmlNode *parent) {
@@ -777,30 +779,36 @@ VecFromFileWidget::VecFromFileWidget() {
 
 void VecFromFileWidget::selectFile() {
   QString file=QFileDialog::getOpenFileName(0, "ASCII files", QString("./"), "all files (*.*)");
-  if(file!="")
-    fileName->setText(file);
+  if(file!="") {
+    absoluteFilePath = file;
+    fileName->setText(mbsDir.relativeFilePath(absoluteFilePath));
+    //fileName->setText(file);
+  }
 }
 
 string VecFromFileWidget::getValue() const {
   return evalOctaveExpression(string("load('") + fileName->text().toStdString() + "')");
 }
 
-bool VecFromFileWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* VecFromFileWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlText* text = dynamic_cast<TiXmlText*>(element->FirstChild());
   if(!text)
-    return false;
+    return 0;
   string str = text->Value();
   if(str.substr(0,4)!="load")
-    return false;
+    return 0;
   int pos1 = str.find_first_of('\''); 
   int pos2 = str.find_last_of('\''); 
   fileName->setText(str.substr(pos1+1,pos2-pos1-1).c_str());
-  return true;
+  absoluteFilePath=mbsDir.absoluteFilePath(str.substr(pos1+1,pos2-pos1-1).c_str());
+
+  return element;
 }
 
 TiXmlElement* VecFromFileWidget::writeXMLFile(TiXmlNode *parent) {
-  string exp = string("load('") + fileName->text().toStdString() + "')"; 
-  TiXmlText *text = new TiXmlText(exp);
+  QString filePath = QString("load('")+(absolutePath?absoluteFilePath:mbsDir.relativeFilePath(absoluteFilePath))+"')";
+ //string exp = string("load('") + fileName->text().toStdString() + "')"; 
+  TiXmlText *text = new TiXmlText(filePath.toStdString());
   parent->LinkEndChild(text);
   return 0;
 }
@@ -820,30 +828,35 @@ MatFromFileWidget::MatFromFileWidget() {
 
 void MatFromFileWidget::selectFile() {
   QString file=QFileDialog::getOpenFileName(0, "ASCII files", QString("./"), "all files (*.*)");
-  if(file!="")
-    fileName->setText(file);
+  if(file!="") {
+    absoluteFilePath = file;
+    fileName->setText(mbsDir.relativeFilePath(absoluteFilePath));
+    //fileName->setText(file);
+  }
 }
 
 string MatFromFileWidget::getValue() const {
   return evalOctaveExpression(string("load('") + fileName->text().toStdString() + "')");
 }
 
-bool MatFromFileWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* MatFromFileWidget::initializeUsingXML(TiXmlElement *element) {
   TiXmlText* text = dynamic_cast<TiXmlText*>(element->FirstChild());
   if(!text)
-    return false;
+    return 0;
   string str = text->Value();
   if(str.substr(0,4)!="load")
-    return false;
+    return 0;
   int pos1 = str.find_first_of('\''); 
   int pos2 = str.find_last_of('\''); 
   fileName->setText(str.substr(pos1+1,pos2-pos1-1).c_str());
-  return true;
+  absoluteFilePath=mbsDir.absoluteFilePath(str.substr(pos1+1,pos2-pos1-1).c_str());
+  return element;
 }
 
 TiXmlElement* MatFromFileWidget::writeXMLFile(TiXmlNode *parent) {
-  string exp = string("load('") + fileName->text().toStdString() + "')"; 
-  TiXmlText *text = new TiXmlText(exp);
+  QString filePath = QString("load('")+(absolutePath?absoluteFilePath:mbsDir.relativeFilePath(absoluteFilePath))+"')";
+ //string exp = string("load('") + fileName->text().toStdString() + "')"; 
+  TiXmlText *text = new TiXmlText(filePath.toStdString());
   parent->LinkEndChild(text);
   return 0;
 }

@@ -101,7 +101,7 @@ namespace MBSimFlexibleBody {
         tmp(1) = sin(qext(1))*tmp_add(0) + cos(qext(1))*tmp_add(1);
 
         tmp(2) = qext(0) + qext(RefDofs+node*NodeDofs) + (computeThickness(NodeCoordinates(node,0)))/2.; 
-        cp.getFrameOfReference().setPosition(frameOfReference->getPosition() + frameOfReference->getOrientation() * tmp);
+        cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * tmp);
       }
 
       if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) throw MBSimError("ERROR(FlexibleBody2s13Disk::updateKinematicsForFrame): Not implemented!");
@@ -137,14 +137,14 @@ namespace MBSimFlexibleBody {
         tmp(1) += tmp_add_2(1);
 
         tmp(2) = uext(0) + uext(RefDofs+node*NodeDofs);
-        cp.getFrameOfReference().setVelocity(frameOfReference->getOrientation() * tmp);
+        cp.getFrameOfReference().setVelocity(R->getOrientation() * tmp);
       }
 
       if(ff==angularVelocity || ff==velocities || ff==velocities_cosy || ff==all) {
         tmp(0) = uext(RefDofs+(node+1)*NodeDofs-2) * (-cos(NodeCoordinates(node,1)) * sin(qext(1)) - cos(qext(1)) * sin(NodeCoordinates(node,1))) + uext(RefDofs+(node+1)*NodeDofs-1) * (cos(qext(1)) * cos(NodeCoordinates(node,1)) - sin(qext(1)) * sin(NodeCoordinates(node,1)));
         tmp(1) = uext(RefDofs+(node+1)*NodeDofs-1) * (cos(NodeCoordinates(node,1)) * sin(qext(1)) + cos(qext(1)) * sin(NodeCoordinates(node,1))) + uext(RefDofs+(node+1)*NodeDofs-2) * (cos(qext(1)) * cos(NodeCoordinates(node,1)) - sin(qext(1)) * sin(NodeCoordinates(node,1)));
         tmp(2) = uext(1);
-        cp.getFrameOfReference().setAngularVelocity(frameOfReference->getOrientation() * tmp);
+        cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * tmp);
       }
     }
     else throw MBSimError("ERROR(FlexibleBody2s13Disk::updateKinematicsForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
@@ -213,8 +213,8 @@ namespace MBSimFlexibleBody {
     Mat Jacobian = condenseMatrixRows(Wext,ILocked);
 
     // transformation
-    cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation().col(2)*Jacobian(0,0,qSize-1,0).T());
-    cp.getFrameOfReference().setJacobianOfRotation   (frameOfReference->getOrientation()*Jacobian(0,1,qSize-1,3).T());
+    cp.getFrameOfReference().setJacobianOfTranslation(R->getOrientation().col(2)*Jacobian(0,0,qSize-1,0).T());
+    cp.getFrameOfReference().setJacobianOfRotation   (R->getOrientation()*Jacobian(0,1,qSize-1,3).T());
 
     // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
     // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)

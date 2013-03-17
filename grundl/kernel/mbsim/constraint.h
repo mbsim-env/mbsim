@@ -163,16 +163,16 @@ namespace MBSim {
           fmatvec::Mat3V dT, dR;
           Frame *frame1, *frame2;
           double t;
-          std::vector<int> i1,i2;
+          std::vector<Frame*> i1,i2;
         public:
-          Residuum(std::vector<RigidBody*> body1_, std::vector<RigidBody*> body2_, const fmatvec::Mat3V &dT_, const fmatvec::Mat3V &dR_,Frame *frame1_, Frame *frame2_,double t_,std::vector<int> i1_, std::vector<int> i2_);
+          Residuum(std::vector<RigidBody*> body1_, std::vector<RigidBody*> body2_, const fmatvec::Mat3V &dT_, const fmatvec::Mat3V &dR_,Frame *frame1_, Frame *frame2_,double t_,std::vector<Frame*> i1_, std::vector<Frame*> i2_);
           fmatvec::Vec operator()(const fmatvec::Vec &x, const void * =NULL);
       };
       std::vector<RigidBody*> bd1;
       std::vector<RigidBody*> bd2;
       RigidBody *bi;
-      std::vector<int> if1;
-      std::vector<int> if2;
+      std::vector<Frame*> if1;
+      std::vector<Frame*> if2;
 
       Frame *frame1,*frame2;
 

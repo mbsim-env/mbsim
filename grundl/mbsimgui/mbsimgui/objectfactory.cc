@@ -141,6 +141,19 @@ Link* MBSimObjectFactory::createLink(TiXmlElement *element, QTreeWidgetItem* par
   return 0;
 }  
 
+Observer* ObjectFactory::createObserver(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind) {
+  if(element==NULL) return NULL;
+  for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
+    return (*i)->createObserver(element,parentItem,ind);
+  return 0;
+}
+Observer* MBSimObjectFactory::createObserver(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind) {
+  if(element==0) return 0;
+  if(element->ValueStr()==MBSIMNS"AbsoluteKinematicsObserver")
+    return new AbsoluteKinematicsObserver(element->Attribute("name"),parentItem,ind);
+  return 0;
+}  
+
 Integrator* ObjectFactory::createIntegrator(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind) {
   if(element==NULL) return NULL;
   for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)

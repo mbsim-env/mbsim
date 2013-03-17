@@ -40,23 +40,27 @@ using namespace std;
 namespace MBSim {
 
   /* Contour */
-  Contour::Contour(const string &name) : Element(name), R("R") {
+  Contour::Contour(const string &name) : Element(name), R(0) {
     // no canonic output...
     hSize[0] = 0;
     hSize[1] = 0;
     hInd[0] = 0;
     hInd[1] = 0;
-    R.setParent(this);
   }
 
   Contour::~Contour() {}
 
   void Contour::init(InitStage stage) {
-    if(stage==unknownStage) {
-      getFrame()->getJacobianOfTranslation(0).resize(hSize[0]);
-      getFrame()->getJacobianOfRotation(0).resize(hSize[0]);
-      getFrame()->getJacobianOfTranslation(1).resize(hSize[1]);
-      getFrame()->getJacobianOfRotation(1).resize(hSize[1]);
+    if(stage==resolveXMLPath) {
+      if(saved_frameOfReference!="")
+        setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
+      Element::init(stage);
+    }
+    else if(stage==unknownStage) {
+//      getFrame()->getJacobianOfTranslation(0).resize(hSize[0]);
+//      getFrame()->getJacobianOfRotation(0).resize(hSize[0]);
+//      getFrame()->getJacobianOfTranslation(1).resize(hSize[1]);
+//      getFrame()->getJacobianOfRotation(1).resize(hSize[1]);
     }
     else if(stage==MBSim::plot) {
       updatePlotFeatures();
@@ -79,7 +83,7 @@ namespace MBSim {
 //
 	// 
 	Element::init(stage);
-R.init(stage);
+        //R.init(stage);
 	//if(plotGroup) {
 	//H5::Group *plotGroup = new H5::Group(getPlotGroup()->createGroup(R.getName()));
 	// H5::SimpleAttribute<string>::setData(*plotGroup, "Description", "Object of class: "+getType());
@@ -103,7 +107,7 @@ R.init(stage);
   void Contour::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
       Element::plot(t,dt);
-      R.plot(t,dt);
+      //R.plot(t,dt);
       //if(getPlotFeature(plotRecursive)==enabled) {
       //  if(plotColumns.size()>1) {
       //    plotVector.insert(plotVector.begin(), t);
@@ -115,6 +119,24 @@ R.init(stage);
     }
   }
 
+  Element *Contour::getByPathSearch(string path) {
+    if (path.substr(0, 1)=="/") // absolut path
+      if(parent)
+        return parent->getByPathSearch(path);
+      else
+        return getByPathSearch(path.substr(1));
+    else if (path.substr(0, 3)=="../") // relative path
+      return parent->getByPathSearch(path.substr(3));
+    else { // local path
+      throw;
+    }
+  }
+
+  void Contour::initializeUsingXML(TiXmlElement *element) {
+    Element::initializeUsingXML(element);
+    TiXmlElement *ec=element->FirstChildElement(MBSIMNS"frameOfReference");
+    if(ec) setFrameOfReference(ec->Attribute("ref"));
+  }
 
   /* Rigid Contour */
   RigidContour::~RigidContour() {
@@ -122,26 +144,26 @@ R.init(stage);
 
   void RigidContour::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) {
     if(ff==velocity || ff==velocities) {
-      Vec3 WrPC = cp.getFrameOfReference().getPosition() - R.getPosition();
-      cp.getFrameOfReference().setVelocity(R.getVelocity() + crossProduct(R.getAngularVelocity(),WrPC));
+      Vec3 WrPC = cp.getFrameOfReference().getPosition() - R->getPosition();
+      cp.getFrameOfReference().setVelocity(R->getVelocity() + crossProduct(R->getAngularVelocity(),WrPC));
     }
     if(ff==angularVelocity || ff==velocities)
-      cp.getFrameOfReference().setAngularVelocity(R.getAngularVelocity());
+      cp.getFrameOfReference().setAngularVelocity(R->getAngularVelocity());
     if(ff!=velocity && ff!=angularVelocity && ff!=velocities) throw MBSimError("ERROR (RigidContour::updateKinematicsForFrame): FrameFeature not implemented!");
   }
 
   void RigidContour::updateJacobiansForFrame(ContourPointData &cp, int j) {
-    Vec3 WrPC = cp.getFrameOfReference().getPosition() - R.getPosition();
+    Vec3 WrPC = cp.getFrameOfReference().getPosition() - R->getPosition();
     SqrMat3 tWrPC = tilde(WrPC);
 
-    cp.getFrameOfReference().setJacobianOfTranslation(R.getJacobianOfTranslation(j) - tWrPC*R.getJacobianOfRotation(j),j);
-    cp.getFrameOfReference().setJacobianOfRotation(R.getJacobianOfRotation(j),j);
-    cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(R.getGyroscopicAccelerationOfTranslation() - tWrPC*R.getGyroscopicAccelerationOfRotation() + crossProduct(R.getAngularVelocity(),crossProduct(R.getAngularVelocity(),WrPC)));
-    cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(R.getGyroscopicAccelerationOfRotation());
+    cp.getFrameOfReference().setJacobianOfTranslation(R->getJacobianOfTranslation(j) - tWrPC*R->getJacobianOfRotation(j),j);
+    cp.getFrameOfReference().setJacobianOfRotation(R->getJacobianOfRotation(j),j);
+    cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation() - tWrPC*R->getGyroscopicAccelerationOfRotation() + crossProduct(R->getAngularVelocity(),crossProduct(R->getAngularVelocity(),WrPC)));
+    cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation());
 
     // adapt dimensions if necessary
-    if(cp.getFrameOfReference().getJacobianOfTranslation(j).rows() == 0) cp.getFrameOfReference().getJacobianOfTranslation(j).resize(R.getJacobianOfTranslation(j).cols());
-    if(cp.getFrameOfReference().getJacobianOfRotation(j).rows() == 0) cp.getFrameOfReference().getJacobianOfRotation(j).resize(R.getJacobianOfRotation(j).cols());
+    if(cp.getFrameOfReference().getJacobianOfTranslation(j).rows() == 0) cp.getFrameOfReference().getJacobianOfTranslation(j).resize(R->getJacobianOfTranslation(j).cols());
+    if(cp.getFrameOfReference().getJacobianOfRotation(j).rows() == 0) cp.getFrameOfReference().getJacobianOfRotation(j).resize(R->getJacobianOfRotation(j).cols());
   }
 
   void RigidContour::init(InitStage stage) {
@@ -170,10 +192,10 @@ R.init(stage);
       if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
         vector<double> data;
         data.push_back(t);
-        data.push_back(R.getPosition()(0));
-        data.push_back(R.getPosition()(1));
-        data.push_back(R.getPosition()(2));
-        Vec3 cardan=AIK2Cardan(R.getOrientation());
+        data.push_back(R->getPosition()(0));
+        data.push_back(R->getPosition()(1));
+        data.push_back(R->getPosition()(2));
+        Vec3 cardan=AIK2Cardan(R->getOrientation());
         data.push_back(cardan(0));
         data.push_back(cardan(1));
         data.push_back(cardan(2));

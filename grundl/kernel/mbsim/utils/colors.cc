@@ -19,9 +19,14 @@
 
 #include "colors.h"
 
-std::ostream& operator<<( std::ostream& ofstream, RGBColor& rgbColor) {
+using namespace MBSim;
+
+std::ostream& MBSim::operator<<( std::ostream& ofstream, const RGBColor & rgbColor)  {
   ofstream << "R" << rgbColor.red << "G" << rgbColor.green << "B" << rgbColor.blue;
   return ofstream;
 }
+
+
+
 
 

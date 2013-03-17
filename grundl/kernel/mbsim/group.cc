@@ -27,6 +27,7 @@
 #include "mbsim/dynamic_system_solver.h"
 #include "hdf5serie/simpleattribute.h"
 #include "mbsim/objectfactory.h"
+#include "mbsim/observer.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frame.h>
@@ -143,20 +144,25 @@ namespace MBSim {
     // frames
     TiXmlElement *E=e->FirstChildElement();
     while(E && E->ValueStr()==MBSIMNS"frame") {
+      Deprecated::registerMessage("Using the <mbsim:frame> element is deprecated, use the <mbsim:Frame> element instead.", E);
       TiXmlElement *ec=E->FirstChildElement();
-      Frame *f=new Frame(ec->Attribute("name"));
+      FixedRelativeFrame *f=new FixedRelativeFrame(ec->Attribute("name"));
+      addFrame(f);
       f->initializeUsingXML(ec);
       ec=ec->NextSiblingElement();
-      string refF="I";
       if(ec->ValueStr()==MBSIMNS"frameOfReference") {
-        refF=ec->Attribute("ref");
-        refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
+        f->setFrameOfReference(string("../")+ec->Attribute("ref"));
         ec=ec->NextSiblingElement();
       }
-      Vec3 RrRF=getVec3(ec);
+      f->setRelativePosition(getVec3(ec));
       ec=ec->NextSiblingElement();
-      SqrMat3 ARF=getSqrMat3(ec);
-      addFrame(f, RrRF, ARF, refF);
+      f->setRelativeOrientation(getSqrMat3(ec));
+      E=E->NextSiblingElement();
+    }
+    while(E && E->ValueStr()==MBSIMNS"FixedRelativeFrame") {
+      FixedRelativeFrame *f=new FixedRelativeFrame(E->Attribute("name"));
+      addFrame(f);
+      f->initializeUsingXML(E);
       E=E->NextSiblingElement();
     }
     e=e->NextSiblingElement();
@@ -164,21 +170,43 @@ namespace MBSim {
     // contours
     E=e->FirstChildElement();
     while(E && E->ValueStr()==MBSIMNS"contour") {
+      Deprecated::registerMessage("Using the <mbsim:contour> element is deprecated, use the <mbsim:Contour> element instead.", E);
       TiXmlElement *ec=E->FirstChildElement();
       Contour *c=ObjectFactory::getInstance()->createContour(ec);
-      TiXmlElement *contourElement=ec; // save for later initialization
+      c->initializeUsingXML(ec);
       ec=ec->NextSiblingElement();
-      string refF="I";
-      if(ec->ValueStr()==MBSIMNS"frameOfReference") {
-        refF=ec->Attribute("ref");
-        refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
+      string refF;
+      if(ec) {
+        cout << c->getName() << endl;
+        if(ec->ValueStr()==MBSIMNS"frameOfReference") {
+          refF = string("../")+ec->Attribute("ref");
+          ec=ec->NextSiblingElement();
+        }
+        Vec3 RrRC = getVec3(ec);
         ec=ec->NextSiblingElement();
+        SqrMat3 ARC = getSqrMat3(ec);
+        E=E->NextSiblingElement();
+        stringstream frameName;
+        frameName << "ContourFrame" << contour.size();
+        Frame *contourFrame;
+        if(refF=="" && fabs(RrRC(0))<1e-10 && fabs(RrRC(1))<1e-10 && fabs(RrRC(2))<1e-10 && 
+            fabs(ARC(0,0)-1)<1e-10 && fabs(ARC(1,1)-1)<1e-10 && fabs(ARC(2,2)-1)<1e-10)
+          contourFrame = frame[0];
+        else {
+          contourFrame = new FixedRelativeFrame(frameName.str());
+          ((FixedRelativeFrame*)contourFrame)->setFrameOfReference(refF);
+          ((FixedRelativeFrame*)contourFrame)->setRelativePosition(RrRC);
+          ((FixedRelativeFrame*)contourFrame)->setRelativeOrientation(ARC);
+          addFrame((FixedRelativeFrame*)contourFrame);
+        }
+        c->setFrameOfReference(contourFrame);
       }
-      Vec3 RrRC=getVec3(ec);
-      ec=ec->NextSiblingElement();
-      SqrMat3 ARC=getSqrMat3(ec);
-      addContour(c, RrRC, ARC, refF);
-      c->initializeUsingXML(contourElement);
+      addContour(c);
+    }
+    while(E) {
+      Contour *c=ObjectFactory::getInstance()->createContour(E);
+      addContour(c);
+      c->initializeUsingXML(E);
       E=E->NextSiblingElement();
     }
     e=e->NextSiblingElement();
@@ -227,6 +255,19 @@ namespace MBSim {
       l->initializeUsingXML(E);
       E=E->NextSiblingElement();
     }
+    e=e->NextSiblingElement();
+
+    // observers
+    if (e && e->ValueStr()==MBSIMNS"observers") {
+      E=e->FirstChildElement();
+      Observer *obsrv;
+      while(E) {
+        obsrv=ObjectFactory::getInstance()->createObserver(E);
+        addObserver(obsrv);
+        obsrv->initializeUsingXML(E);
+        E=E->NextSiblingElement();
+      }
+    }
 #ifdef HAVE_OPENMBVCPPINTERFACE
 
     e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameI");
@@ -254,7 +295,7 @@ namespace MBSim {
 
     if(getFrameOfReference()) {
       ele1 = new TiXmlElement( MBSIMNS"frameOfReference" );
-      ele1->SetAttribute("ref", frameParent->getXMLPath(this,true));
+      ele1->SetAttribute("ref", R->getXMLPath(this,true));
       ele0->LinkEndChild(ele1);
     }
 
@@ -266,15 +307,15 @@ namespace MBSim {
       TiXmlElement* ele2 = new TiXmlElement( MBSIMNS"frame" );
       ele1->LinkEndChild( ele2 );
       frame[i]->writeXMLFile(ele2);
-      if(saved_refFrameF[i-1] != "I") {
+      if(static_cast<FixedRelativeFrame*>(frame[i])->getFrameOfReference() != I) {
         TiXmlElement *ele3 = new TiXmlElement( MBSIMNS"frameOfReference" );
-        string str = string("Frame[") + saved_refFrameF[i-1] + "]";
+        string str = string("Frame[") + static_cast<FixedRelativeFrame*>(frame[i])->getName() + "]";
         ele3->SetAttribute("ref", str);
         ele2->LinkEndChild(ele3);
       }
 
-      addElementText(ele2,MBSIMNS"position",saved_RrRF[i-1]);
-      addElementText(ele2,MBSIMNS"orientation",saved_ARF[i-1]);
+      addElementText(ele2,MBSIMNS"position", static_cast<FixedRelativeFrame*>(frame[i])->getRelativePosition());
+      addElementText(ele2,MBSIMNS"orientation", static_cast<FixedRelativeFrame*>(frame[i])->getRelativeOrientation());
     }
     ele0->LinkEndChild( ele1 );
 

@@ -108,7 +108,7 @@ JointConstraint::JointConstraint(const QString &str, QTreeWidgetItem *parentItem
 
   setText(1,getType());
 
-  properties->addTab("Kinetics");
+  properties->addTab("Kinetics",1);
 
   independentBody = new ExtXMLWidget("Independent body",new RigidBodyOfReferenceWidget(MBSIMNS"independentRigidBody",this,0));
   properties->addToTab("General", independentBody);

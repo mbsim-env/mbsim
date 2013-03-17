@@ -206,7 +206,7 @@ namespace MBSimFlexibleBody {
         r_ref = BasicRotAIKz(NodeCoordinates(node,1))*r_ref; //transformation into local frame
         r_ref = A*r_ref; //transformation into moving frame of reference
         r_ref += qext(0,2); //translation of moving frame of reference relative to frame of reference
-        cp.getFrameOfReference().setPosition(frameOfReference->getPosition()+frameOfReference->getOrientation()*r_ref); //at last step: transformation into world frame
+        cp.getFrameOfReference().setPosition(R->getPosition()+R->getOrientation()*r_ref); //at last step: transformation into world frame
       }
 
       if(ff == firstTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all) throw MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Not implemented!");
@@ -229,7 +229,7 @@ namespace MBSimFlexibleBody {
         Vec u_ref_2 = A*(-tilde(r_ref)*G*uext(3,5)+BasicRotAIKz(NodeCoordinates(node,1))*u_ref_1);
         u_ref_2 += uext(0,2);
 
-        cp.getFrameOfReference().setVelocity(frameOfReference->getOrientation()*u_ref_2);
+        cp.getFrameOfReference().setVelocity(R->getOrientation()*u_ref_2);
       }
 
       if(ff == angularVelocity || ff == velocities || ff == velocities_cosy || ff == all) {
@@ -239,7 +239,7 @@ namespace MBSimFlexibleBody {
 
         Vec w_ref_2 = A*(G*uext(3,5)+BasicRotAIKz(NodeCoordinates(node,1))*w_ref_1);
 
-        cp.getFrameOfReference().setAngularVelocity(frameOfReference->getOrientation()*w_ref_2);
+        cp.getFrameOfReference().setAngularVelocity(R->getOrientation()*w_ref_2);
       }
     }
     else throw MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
@@ -267,8 +267,8 @@ namespace MBSimFlexibleBody {
         Mat Jacobian_rot = condenseMatrixCols(Jacext_rot,ILocked);
 
         // transformation
-        cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation() * Jacobian_trans);
-        cp.getFrameOfReference().setJacobianOfRotation(frameOfReference->getOrientation() * Jacobian_rot);
+        cp.getFrameOfReference().setJacobianOfTranslation(R->getOrientation() * Jacobian_trans);
+        cp.getFrameOfReference().setJacobianOfRotation(R->getOrientation() * Jacobian_rot);
       }
       else { // on the disk
         contour->updateJacobiansForFrame(cp);
@@ -365,8 +365,8 @@ namespace MBSimFlexibleBody {
       Mat Jacobian_rot = condenseMatrixCols(Jacext_rot,ILocked);
 
       // transformation
-      cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation() * Jacobian_trans);
-      cp.getFrameOfReference().setJacobianOfRotation(frameOfReference->getOrientation() * Jacobian_rot);
+      cp.getFrameOfReference().setJacobianOfTranslation(R->getOrientation() * Jacobian_trans);
+      cp.getFrameOfReference().setJacobianOfRotation(R->getOrientation() * Jacobian_rot);
 
     }
     else throw MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");

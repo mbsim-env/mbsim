@@ -79,15 +79,6 @@ namespace MBSim {
       /*******************************************************/ 
 
       /* INTERFACE FOR DERIVED CLASSES */
-      /**
-       * \param contour to add
-       */
-      virtual void addContour(Contour* contour);
-
-      /**
-       * \param frame to add
-       */
-      virtual void addFrame(Frame * frame);
 
       /**
        * \param name of the contour
@@ -106,17 +97,17 @@ namespace MBSim {
       /**
        * \return frame of reference
        */
-      virtual Frame *getFrameOfReference() { return frameOfReference; }
+      virtual Frame *getFrameOfReference() { return R; }
 
       /**
        * \return frame of reference
        */
-      virtual const Frame *getFrameOfReference() const { return frameOfReference; }
+      virtual const Frame *getFrameOfReference() const { return R; }
 
       /**
        * \param frame of reference
        */
-      virtual void setFrameOfReference(Frame *frame) { frameOfReference = frame; }
+      virtual void setFrameOfReference(Frame *frame) { R = frame; }
       /*******************************************************/ 
 
       /* GETTER / SETTER */
@@ -147,6 +138,16 @@ namespace MBSim {
 
     protected:
       /**
+       * \param frame to add
+       */
+      virtual void addFrame(Frame * frame);
+
+      /**
+       * \param contour to add
+       */
+      virtual void addContour(Contour* contour);
+
+      /**
        * \brief vector of frames and contours
        */
       std::vector<Frame*> frame;
@@ -155,7 +156,7 @@ namespace MBSim {
       /**
        * \brief frame of reference of the object
        */
-      Frame * frameOfReference;
+      Frame *R;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::Body* openMBVBody;

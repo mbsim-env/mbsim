@@ -45,8 +45,8 @@ namespace MBSim {
       double getLimit() const { return lim; }
       /***************************************************/
 
-      fmatvec::Vec3 computeWe() { return R.getOrientation()*Ce; }
-      fmatvec::Vec3 computeWd() { return R.getOrientation()*Cd; }
+      fmatvec::Vec3 computeWe() { return R->getOrientation()*Ce; }
+      fmatvec::Vec3 computeWd() { return R->getOrientation()*Cd; }
 
     private:
       double lim;
