@@ -293,7 +293,7 @@ def main():
   for tool in set(toolDependencies)-set(orderedBuildTools):
     print('<tr>', file=mainFD)
     print('<td>'+tool+'</td>', file=mainFD)
-    print('<td><a href="'+myurllib.pathname2url(pj(tool, "svn.out"))+'"><span style="color:green">up to date, no rebuild required</span></a></td>', file=mainFD)
+    print('<td><a href="'+myurllib.pathname2url(pj(tool, "svn.txt"))+'"><span style="color:green">up to date, no rebuild required</span></a></td>', file=mainFD)
     print('<td>-</td>', file=mainFD)
     print('<td>-</td>', file=mainFD)
     print('<td>-</td>', file=mainFD)
@@ -381,7 +381,7 @@ def update(nr, tool, buildTools):
 
   # write svn output to report dir
   if not os.path.isdir(pj(args.reportOutDir, tool)): os.makedirs(pj(args.reportOutDir, tool))
-  svnFD=open(pj(args.reportOutDir, tool, "svn.out"), "w")
+  svnFD=open(pj(args.reportOutDir, tool, "svn.txt"), "w")
   print("stderr output:", file=svnFD)
   print("", file=svnFD)
 
@@ -424,12 +424,12 @@ def build(nr, nrAll, tool, mainFD, updatedTools, updateFailed):
   else:
     print('<td><span style="color:gray">'+tool+'</span></td>', file=mainFD)
   if tool in updateFailed:
-    print('<td><a href="'+myurllib.pathname2url(pj(tool, "svn.out"))+'"><span style="color:red">failed</span></a></td>', file=mainFD)
+    print('<td><a href="'+myurllib.pathname2url(pj(tool, "svn.txt"))+'"><span style="color:red">failed</span></a></td>', file=mainFD)
   else:
     if tool in updatedTools:
-      print('<td><a href="'+myurllib.pathname2url(pj(tool, "svn.out"))+'"><span style="color:green">updated, rebuild required</span></a></td>', file=mainFD)
+      print('<td><a href="'+myurllib.pathname2url(pj(tool, "svn.txt"))+'"><span style="color:green">updated, rebuild required</span></a></td>', file=mainFD)
     else:
-      print('<td><a href="'+myurllib.pathname2url(pj(tool, "svn.out"))+'"><span style="color:green">up to date, rebuild required</span></a></td>', file=mainFD)
+      print('<td><a href="'+myurllib.pathname2url(pj(tool, "svn.txt"))+'"><span style="color:green">up to date, rebuild required</span></a></td>', file=mainFD)
   mainFD.flush()
 
   ret=0
@@ -465,7 +465,7 @@ def build(nr, nrAll, tool, mainFD, updatedTools, updateFailed):
 
 
 def configure(tool, mainFD):
-  configureFD=open(pj(args.reportOutDir, tool, "configure.out"), "w")
+  configureFD=open(pj(args.reportOutDir, tool, "configure.txt"), "w")
   copyConfigLog=False
   try:
     if not args.disableConfigure:
@@ -496,11 +496,11 @@ def configure(tool, mainFD):
   except RuntimeError as ex:
     result=str(ex)
   print('<td>', file=mainFD)
-  print('  <a href="'+myurllib.pathname2url(pj(tool, "configure.out"))+'"><span style="color:'+
+  print('  <a href="'+myurllib.pathname2url(pj(tool, "configure.txt"))+'"><span style="color:'+
                        ('green' if result=="done" else 'red')+'">'+result+'</span></a>', file=mainFD)
   if copyConfigLog:
-    shutil.copyfile("config.log", pj(args.reportOutDir, tool, "config.log"))
-    print('  <a href="'+myurllib.pathname2url(pj(tool, "config.log"))+'"><span style="color:green">config.log</span></a>', file=mainFD)
+    shutil.copyfile("config.log", pj(args.reportOutDir, tool, "config.log.txt"))
+    print('  <a href="'+myurllib.pathname2url(pj(tool, "config.log.txt"))+'"><span style="color:green">config.log</span></a>', file=mainFD)
   print('</td>', file=mainFD)
   configureFD.close()
   mainFD.flush()
@@ -512,7 +512,7 @@ def configure(tool, mainFD):
 
 
 def make(tool, mainFD):
-  makeFD=open(pj(args.reportOutDir, tool, "make.out"), "w")
+  makeFD=open(pj(args.reportOutDir, tool, "make.txt"), "w")
   try:
     if not args.disableMake:
       # make
@@ -529,7 +529,7 @@ def make(tool, mainFD):
   except RuntimeError as ex:
     result=str(ex)
   print('<td>', file=mainFD)
-  print('  <a href="'+myurllib.pathname2url(pj(tool, "make.out"))+'"><span style="color:'+
+  print('  <a href="'+myurllib.pathname2url(pj(tool, "make.txt"))+'"><span style="color:'+
                        ('green' if result=="done" else 'red')+'">'+result+'</span></a>', file=mainFD)
   print('</td>', file=mainFD)
   makeFD.close()
@@ -547,7 +547,7 @@ def doc(tool, mainFD, disabled, docDirName, toolDocCopyDir):
     mainFD.flush()
     return 0
 
-  docFD=open(pj(args.reportOutDir, tool, docDirName+".out"), "w")
+  docFD=open(pj(args.reportOutDir, tool, docDirName+".txt"), "w")
   savedDir=os.getcwd()
   os.chdir(docDirName)
   try:
@@ -581,7 +581,7 @@ def doc(tool, mainFD, disabled, docDirName, toolDocCopyDir):
   finally:
     os.chdir(savedDir)
   print('<td>', file=mainFD)
-  print('  <a href="'+myurllib.pathname2url(pj(tool, docDirName+".out"))+'"><span style="color:'+
+  print('  <a href="'+myurllib.pathname2url(pj(tool, docDirName+".txt"))+'"><span style="color:'+
                        ('green' if result=="done" else 'red')+'">'+result+'</span></a>', file=mainFD)
   print('</td>', file=mainFD)
   docFD.close()
