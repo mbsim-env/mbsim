@@ -408,7 +408,12 @@ def runExample(resultQueue, example):
     if args.disableRun:
       resultStr+='<td><span style="color:orange">not run</span></td>'
     else:
-      resultStr+='<td>%.3f</td>'%dt
+      # if not reference time or time is nearly equal refTime => display time in black color
+      if math.isinf(refTime) or abs(dt-refTime)<0.1*refTime:
+        resultStr+='<td>%.3f</td>'%dt
+      # dt differs more then 10% from refTime => display in yellow color
+      else:
+        resultStr+='<td><span style="color:orange">%.3f</span></td>'%dt
     if not math.isinf(refTime):
       resultStr+='<td>%.3f</td>'%refTime
     else:
@@ -604,6 +609,7 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, label, data
       [dataArrayCur[0,0], singleYValue+1]
     ])
     dataArrayCur=numpy.concatenate((dataArrayCur, add), axis=0)
+    dataArrayRef=numpy.concatenate((dataArrayRef, add), axis=0)
 
   # create gnuplot file
   diffGPFileName=pj(diffDir, "diffplot.gnuplot")
