@@ -110,7 +110,7 @@ def main():
         pj('mbsim', 'kernel'),
         pj('mbsim', 'thirdparty', 'nurbs++')
       ])],
-    pj('mbsim', 'thirdparty', 'nurbs++'): [True, set([ # depends on
+    pj('mbsim', 'thirdparty', 'nurbs++'): [False, set([ # depends on
       ])],
     pj('mbsim', 'modules', 'mbsimPowertrain'): [False, set([ # depends on
         pj('mbsim', 'kernel')
