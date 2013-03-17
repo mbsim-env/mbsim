@@ -10,3 +10,4 @@ pkginclude_HEADERS = image.h rec_filter.h color.h filter.h
 lib_LTLIBRARIES = libmatrixI.la
 libmatrixI_la_SOURCES = color.cpp image_.cpp  rec_filter_.cpp filter_.cpp
 libmatrixI_la_LDFLAGS = -version-info 1:0:0
+libmatrixI_la_LIBADD = ../matrix/libmatrix.la
