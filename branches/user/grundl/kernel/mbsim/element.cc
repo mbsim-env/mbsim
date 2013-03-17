@@ -174,6 +174,7 @@ namespace MBSim {
       if(string(e->Attribute("feature")).substr(1)=="rightHandSide") feature=rightHandSide;
       if(string(e->Attribute("feature")).substr(1)=="globalPosition") feature=globalPosition;
       if(string(e->Attribute("feature")).substr(1)=="globalVelocity") feature=globalVelocity;
+      if(string(e->Attribute("feature")).substr(1)=="globalAcceleration") feature=globalAcceleration;
       if(string(e->Attribute("feature")).substr(1)=="energy") feature=energy;
       if(string(e->Attribute("feature")).substr(1)=="openMBV") feature=openMBV;
       if(string(e->Attribute("feature")).substr(1)=="generalizedLinkForce") feature=generalizedLinkForce;
@@ -246,7 +247,7 @@ namespace MBSim {
     Mat m=Mat(e->GetText());
     if((rows==0 || m.rows()==rows) && m.cols()==1)
       return m.col(0);
-    else {
+    else if(m.rows()) {
       ostringstream str;
       str<<": Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
            "where a vector of size "<<((rows==0)?-1:rows)<<" was requested for element "<<e->ValueStr();

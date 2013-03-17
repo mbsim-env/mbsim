@@ -27,7 +27,7 @@ class Link : public Element {
     Link(const QString &str, QTreeWidgetItem *parentItem, int ind);
     ~Link();
     virtual int getxSize() {return 0;}
-    virtual Element* getByPathSearch(std::string path);
+    virtual Element* getByPathSearch(QString path);
 };
 
 #endif

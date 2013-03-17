@@ -35,7 +35,7 @@ class GeneralizedForceLawWidget : public XMLWidget {
 
   public:
     GeneralizedForceLawWidget() : forceFunc(0) {}
-    virtual bool initializeUsingXML(TiXmlElement *element) {};
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) {};
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "GeneralizedForceLaw"; }
    protected:
@@ -54,7 +54,7 @@ class RegularizedBilateralConstraint : public GeneralizedForceLawWidget {
 
   public:
     RegularizedBilateralConstraint(); 
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual QString getType() const { return "RegularizedBilateralConstraint"; }
   protected:
     QVBoxLayout *layout;
@@ -75,7 +75,7 @@ class RegularizedUnilateralConstraint : public GeneralizedForceLawWidget {
 
   public:
     RegularizedUnilateralConstraint(); 
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual QString getType() const { return "RegularizedUnilateralConstraint"; }
   protected:
     QVBoxLayout *layout;
@@ -88,7 +88,7 @@ class GeneralizedImpactLawWidget : public XMLWidget {
 
   public:
     GeneralizedImpactLawWidget() {}
-    virtual bool initializeUsingXML(TiXmlElement *element) {};
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) {};
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "GeneralizedImpactLaw"; }
 };
@@ -105,7 +105,7 @@ class UnilateralNewtonImpact : public GeneralizedImpactLawWidget {
   public:
     UnilateralNewtonImpact();
     virtual QString getType() const { return "UnilateralNewtonImpact"; }
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
   protected:
     ExtXMLWidget* restitutionCoefficient;
@@ -115,7 +115,7 @@ class FrictionForceLawWidget : public XMLWidget {
 
   public:
     FrictionForceLawWidget() : frictionForceFunc(0) {}
-    virtual bool initializeUsingXML(TiXmlElement *element) {};
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) {};
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "FrictionForceLaw"; }
    protected:
@@ -127,7 +127,7 @@ class PlanarCoulombFriction : public FrictionForceLawWidget {
   public:
     PlanarCoulombFriction();
     virtual QString getType() const { return "PlanarCoulombFriction"; }
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
   protected:
     ExtXMLWidget* frictionCoefficient;
@@ -138,7 +138,7 @@ class SpatialCoulombFriction : public FrictionForceLawWidget {
   public:
     SpatialCoulombFriction();
     virtual QString getType() const { return "SpatialCoulombFriction"; }
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
   protected:
     ExtXMLWidget* frictionCoefficient;
@@ -149,7 +149,7 @@ class RegularizedPlanarFriction : public FrictionForceLawWidget {
 
   public:
     RegularizedPlanarFriction(); 
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual QString getType() const { return "RegularizedPlanarFriction"; }
   protected:
     QVBoxLayout *layout;
@@ -163,7 +163,7 @@ class RegularizedSpatialFriction : public FrictionForceLawWidget {
 
   public:
     RegularizedSpatialFriction(); 
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual QString getType() const { return "RegularizedSpatialFriction"; }
   protected:
     QVBoxLayout *layout;
@@ -176,7 +176,7 @@ class FrictionImpactLawWidget : public XMLWidget {
 
   public:
     FrictionImpactLawWidget() {}
-    virtual bool initializeUsingXML(TiXmlElement *element) {};
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) {};
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "FrictionImpactLaw"; }
 };
@@ -186,7 +186,7 @@ class PlanarCoulombImpact : public FrictionImpactLawWidget {
   public:
     PlanarCoulombImpact();
     virtual QString getType() const { return "PlanarCoulombImpact"; }
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
   protected:
     ExtXMLWidget* frictionCoefficient;
@@ -197,7 +197,7 @@ class SpatialCoulombImpact : public FrictionImpactLawWidget {
   public:
     SpatialCoulombImpact();
     virtual QString getType() const { return "SpatialCoulombImpact"; }
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
   protected:
     ExtXMLWidget* frictionCoefficient;
@@ -209,7 +209,7 @@ class GeneralizedForceLawChoiceWidget : public XMLWidget {
   public:
     GeneralizedForceLawChoiceWidget(const std::string &xmlName);
 
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     int getForceLaw() {return comboBox->currentIndex();}
 
@@ -229,7 +229,7 @@ class GeneralizedImpactLawChoiceWidget : public XMLWidget {
   public:
     GeneralizedImpactLawChoiceWidget(const std::string &xmlName);
 
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     int getImpactLaw() {return comboBox->currentIndex();}
 
@@ -249,7 +249,7 @@ class FrictionForceLawChoiceWidget : public XMLWidget {
   public:
     FrictionForceLawChoiceWidget(const std::string &xmlName);
 
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     int getForceLaw() {return comboBox->currentIndex();}
 
@@ -269,7 +269,7 @@ class FrictionImpactLawChoiceWidget : public XMLWidget {
   public:
     FrictionImpactLawChoiceWidget(const std::string &xmlName);
 
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     int getImpactLaw() {return comboBox->currentIndex();}
 
@@ -288,7 +288,7 @@ class GeneralizedForceChoiceWidget : public XMLWidget {
   public:
     GeneralizedForceChoiceWidget(const std::string &xmlName, ExtXMLWidget* arrow);
 
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     int getSize() const; 
 
@@ -308,7 +308,7 @@ class ForceChoiceWidget : public XMLWidget {
   public:
     ForceChoiceWidget(const std::string &xmlName, ExtXMLWidget* arrow);
 
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     int getSize() const; 
 
@@ -328,7 +328,7 @@ class ForceDirectionWidget : public XMLWidget {
   public:
     ForceDirectionWidget(const std::string &xmlName, Element *element);
 
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void initialize() {refFrame->initialize();}
 
@@ -345,7 +345,7 @@ class GeneralizedForceDirectionWidget : public XMLWidget {
   public:
     GeneralizedForceDirectionWidget(const std::string &xmlName);
 
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     int getSize() const;
 

@@ -37,7 +37,7 @@ namespace MBSimFlexibleBody {
 
   FlexibleBody1s23BTA::FlexibleBody1s23BTA(const string &name) : FlexibleBodyContinuum<double>(name), L(0), l0(0.), E(0), A(0), Iyy(0), Izz(0), rho(0), rc(0) { 
     cylinderFlexible = new CylinderFlexible("CylinderFlexible");
-    Body::addContour(cylinderFlexible);
+    addContour(cylinderFlexible);
   }
 
   void FlexibleBody1s23BTA::BuildElements() {
@@ -80,11 +80,11 @@ namespace MBSimFlexibleBody {
       }
       SqrMat3 AWK;
       if(ff==firstTangent || ff==normal || ff==cosy || ff==secondTangent || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
-        AWK = frameOfReference->getOrientation()*static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->AWK(qElement[currentElement],sLocal);
+        AWK = R->getOrientation()*static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->AWK(qElement[currentElement],sLocal);
       }
 
       if(ff==position || ff==position_cosy || ff==all) {
-        cp.getFrameOfReference().setPosition(frameOfReference->getPosition() + frameOfReference->getOrientation() * X(0,2));
+        cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * X(0,2));
       }
       if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
         cp.getFrameOfReference().getOrientation().set(1, AWK.col(0)); // tangent
@@ -94,10 +94,10 @@ namespace MBSimFlexibleBody {
       }
       if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().set(2, -AWK.col(2)); // binormal (cartesian system)
       if(ff==velocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) {
-        cp.getFrameOfReference().setVelocity(frameOfReference->getOrientation() * X(6,8));
+        cp.getFrameOfReference().setVelocity(R->getOrientation() * X(6,8));
       }
       if(ff==angularVelocity || ff==velocities || ff==velocities_cosy || ff==all) {
-        cp.getFrameOfReference().setAngularVelocity(frameOfReference->getOrientation() * X(9,11));
+        cp.getFrameOfReference().setAngularVelocity(R->getOrientation() * X(9,11));
       }
     }
     else throw MBSimError("ERROR(FlexibleBody1s23BTA::updateKinematicsForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
@@ -129,8 +129,8 @@ namespace MBSimFlexibleBody {
     }
     else throw MBSimError("ERROR(FlexibleBody1s23BTA::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
 
-    cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation()(Index(0,2),Index(1,2))*Jacobian(Index(0,qSize-1),Index(0,1)).T());
-    cp.getFrameOfReference().setJacobianOfRotation   (frameOfReference->getOrientation()*Jacobian(Index(0,qSize-1),Index(2,4)).T());
+    cp.getFrameOfReference().setJacobianOfTranslation(R->getOrientation()(Index(0,2),Index(1,2))*Jacobian(Index(0,qSize-1),Index(0,1)).T());
+    cp.getFrameOfReference().setJacobianOfRotation   (R->getOrientation()*Jacobian(Index(0,qSize-1),Index(2,4)).T());
 
     // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
     // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
@@ -149,7 +149,7 @@ namespace MBSimFlexibleBody {
 
       assert(0<Elements);
 
-      cylinderFlexible->getFrame()->setOrientation(frameOfReference->getOrientation());
+      cylinderFlexible->getFrame()->setOrientation(R->getOrientation());
       cylinderFlexible->setAlphaStart(0);  cylinderFlexible->setAlphaEnd(L);
       if(userContourNodes.size()==0) {
         Vec contourNodes(Elements+1);
@@ -159,7 +159,7 @@ namespace MBSimFlexibleBody {
       else cylinderFlexible->setNodes(userContourNodes);
 
       l0 = L/Elements;
-      Vec g = frameOfReference->getOrientation().T()*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
+      Vec g = R->getOrientation().T()*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
       for(int i=0; i<Elements; i++) {
         discretization.push_back(new FiniteElement1s23BTA(l0, A*rho, E*Iyy, E*Izz, It*rho, G*It, g ));
         qElement.push_back(Vec(discretization[0]->getqSize(),INIT,0.));
@@ -184,7 +184,7 @@ namespace MBSimFlexibleBody {
           BuildElement(ds*i,sLocal,currentElement);
           Vec X = static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->StateAxis(qElement[currentElement],uElement[currentElement],sLocal); 
           X(0) = ds*i;
-          Vec pos = frameOfReference->getPosition() + frameOfReference->getOrientation() * X(0,2);
+          Vec pos = R->getPosition() + R->getOrientation() * X(0,2);
           data.push_back(pos(0)); // global x-position
           data.push_back(pos(1)); // global y-position
           data.push_back(pos(2)); // global z-position

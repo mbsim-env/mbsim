@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.57])
-AC_INIT([mbsim],[3.0.3],[martin.o.foerg@googlemail.com])
+AC_INIT([mbsim],[3.1.0],[martin.o.foerg@googlemail.com])
 AC_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([mbsim/element.h])
@@ -43,6 +43,10 @@ AC_CHECK_HEADERS([sys/time.h])
 AC_CHECK_TYPES([ptrdiff_t]) 
 AC_FUNC_ERROR_AT_LINE 
 AC_TYPE_SIZE_T 
+
+AC_CHECK_HEADERS([libunwind.h])
+AC_CHECK_LIB(unwind-x86_64, main)
+AC_CHECK_HEADERS([cxxabi.h])
 
 dnl Check for ANSI C Signal Handling
 AC_SUBST([DEFINES])
@@ -97,7 +101,7 @@ AM_CONDITIONAL([COND_XML], [test "_$MBXMLUTILSSCHEMADIR" != "_"])
 
 LDFLAGS="$LDFLAGS -no-undefined"
 
-AC_CONFIG_FILES([Makefile mbsim/Makefile mbsim/integrators/Makefile mbsim/contact_kinematics/Makefile mbsim/contours/Makefile mbsim/plot_elements/Makefile mbsim/numerics/Makefile mbsim/numerics/functions/Makefile mbsim/numerics/linear_complementarity_problem/Makefile mbsim/numerics/nonlinear_algebra/Makefile mbsim/utils/Makefile doc/doxyfile doc/Makefile mbsim.pc schema/Makefile xmldoc/Makefile])
+AC_CONFIG_FILES([Makefile mbsim/Makefile mbsim/integrators/Makefile mbsim/contact_kinematics/Makefile mbsim/contours/Makefile mbsim/numerics/Makefile mbsim/numerics/functions/Makefile mbsim/numerics/linear_complementarity_problem/Makefile mbsim/numerics/nonlinear_algebra/Makefile mbsim/observers/Makefile mbsim/utils/Makefile doc/doxyfile doc/Makefile mbsim.pc schema/Makefile xmldoc/Makefile]) 
 
 AC_OUTPUT
 

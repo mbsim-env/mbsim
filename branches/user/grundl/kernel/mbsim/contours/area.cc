@@ -120,7 +120,7 @@ namespace MBSim {
     //closest point on the line segment
     Vec3 Closest(NONINIT);
 
-    //if any of the vertices lies in the circle, intersect --> Check is done due to Closest point on linesegment check already!
+//    //if any of the vertices lies in the circle, intersect --> Check is done due to Closest point on linesegment check already!
 //    if (PointInCircle(IrA, CenCir, radi)) {
 //      return true;
 //    }

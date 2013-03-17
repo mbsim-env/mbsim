@@ -57,7 +57,7 @@ void PropertyWidget::resizeVariables() {
     widget[i]->resizeVariables();
 }
 
-void PropertyWidget::addTab(const QString &name) {  
+void PropertyWidget::addTab(const QString &name, int i) {  
   QScrollArea *tab = new QScrollArea;
   tab->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
   tab->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -73,7 +73,10 @@ void PropertyWidget::addTab(const QString &name) {
 
   widget->setLayout(hlo);
   tab->setWidget(widget);
-  addTab(tab, name);
+  if(i==-1)
+    addTab(tab, name);
+  else 
+    insertTab(i,tab,name);
 }
 
 void PropertyWidget::setParentObject(QObject *parentObject_) {

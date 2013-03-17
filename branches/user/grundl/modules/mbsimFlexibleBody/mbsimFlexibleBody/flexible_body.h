@@ -164,6 +164,8 @@ namespace MBSimFlexibleBody {
        */
       void addFrame(MBSim::Frame *frame, const  int &id);
 
+      void addContour(MBSim::Contour *contour);
+
       /**
        * \brief interpolates the position and optional the velocity coordinates of the flexible body with Nurbs-package and exports the nurbs curve in the specified file
        * \param filenamePos    Name of the exported position curve file

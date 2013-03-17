@@ -17,52 +17,42 @@
  * Contact: martin.o.foerg@gmail.com
  */
 
-#ifndef _PLOT_CYLINDER_COORDINATES_H__
-#define _PLOT_CYLINDER_COORDINATES_H__
-#include "mbsim/element.h"
+#ifndef _CYLINDER_COORDINATES_OBSERVER_H__
+#define _CYLINDER_COORDINATES_OBSERVER_H__
+#include "mbsim/observer.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/arrow.h>
+
 namespace OpenMBV {
-  //class Frame;
-  class Arrow;
   class Frame;
-  class Group;
 }
 #endif
 
 namespace MBSim {
-  class RigidBody;
   class Frame;
 
-  class PlotCartesianCoordinates : public Element {
+  class CylinderCoordinatesObserver : public Observer {
     private:
       Frame* frame;
+      fmatvec::Vec3 ez;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Group* openMBVGrp;
-      OpenMBV::Arrow *openMBVPosition, *openMBVVelocity, *openMBVXVelocity, *openMBVYVelocity, *openMBVZVelocity, *openMBVAcceleration, *openMBVXAcceleration, *openMBVYAcceleration, *openMBVZAcceleration; 
+      OpenMBV::Arrow *openMBVPosition, *openMBVRadialPosition, *openMBVZPosition, *openMBVVelocity, *openMBVRadialVelocity, *openMBVCircularVelocity, *openMBVZVelocity, *openMBVAcceleration, *openMBVRadialAcceleration, *openMBVCircularAcceleration, *openMBVZAcceleration; 
       OpenMBV::Frame* openMBVFrame;
-      fmatvec::Vec3 roff, voff, aoff;
-      double rscale, vscale, ascale;
-      fmatvec::Vec3 ex, ey, ez;
-      fmatvec::SqrMat3 A;
 #endif
 
     public:
-      PlotCartesianCoordinates(const std::string &name);
+      CylinderCoordinatesObserver(const std::string &name);
       void setFrame(Frame *frame_) { frame = frame_; } 
-      void setOrientation(const fmatvec::SqrMat3 &A_) { A = A_; } 
+      void setez(const fmatvec::Vec3 &ez_) {ez = ez_/nrm2(ez_);}
 
       void init(InitStage stage);
-      void setez(const fmatvec::Vec3 &ez_) {ez = ez_/nrm2(ez_);}
       virtual void plot(double t, double dt);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Group* getOpenMBVGrp() { return openMBVGrp; }
-      //void setvscale(double scale) { vscale = scale; }
-      //void setascale(double scale) { ascale = scale; }
       virtual void enableOpenMBVPosition(double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
-      virtual void enableOpenMBVVelocity(double scale=1, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
-      virtual void enableOpenMBVAcceleration(double scale=1, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
+      virtual void enableOpenMBVVelocity(double scale=1, OpenMBV::Arrow::ReferencePoint refPoint=OpenMBV::Arrow::fromPoint, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
+      virtual void enableOpenMBVAcceleration(double scale=1, OpenMBV::Arrow::ReferencePoint refPoint=OpenMBV::Arrow::fromPoint, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
       virtual void enableOpenMBVFrame(double size=1, double offset=1);
 #endif
 

@@ -38,6 +38,7 @@
 #include "mbsim/integrators/rksuite_integrator.h"
 #include "mbsim/utils/contour_functions.h"
 #include "mbsim/constraint.h"
+#include "mbsim/observers/kinematics_observer.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #  include "openmbvcppinterface/objectfactory.h"
 #endif
@@ -95,6 +96,14 @@ namespace MBSim {
     for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->createLink(element))) return obj;
     throw MBSimError(string("No Link of type ")+element->ValueStr()+" exists.");
+  }
+
+  Observer* ObjectFactory::createObserver(TiXmlElement *element) {
+    if(element==NULL) return NULL;
+    Observer *obj;
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
+      if((obj=(*i)->createObserver(element))) return obj;
+    throw MBSimError(string("No Observer of type ")+element->ValueStr()+" exists.");
   }
 
   Integrator* ObjectFactory::createIntegrator(TiXmlElement *element) {
@@ -339,6 +348,13 @@ namespace MBSim {
       return new MultiContact(element->Attribute("name"));
     if(element->ValueStr()==MBSIMNS"ExternGeneralizedIO")
       return new ExternGeneralizedIO(element->Attribute("name"));
+    return 0;
+  }
+
+  Observer* MBSimObjectFactory::createObserver(TiXmlElement *element) {
+    if(element==0) return 0;
+    if(element->ValueStr()==MBSIMNS"AbsoluteKinematicsObserver")
+      return new AbsoluteKinematicsObserver(element->Attribute("name"));
     return 0;
   }
 

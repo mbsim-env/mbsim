@@ -139,8 +139,8 @@ namespace MBSimFlexibleBody {
       computeCurveAngularVelocities();
     }
     else if(stage==worldFrameContourLocation) {
-      R.getOrientation() = (static_cast<FlexibleBody1sCosserat*>(parent))->getFrameOfReference()->getOrientation();
-      R.getPosition() = (static_cast<FlexibleBody1sCosserat*>(parent))->getFrameOfReference()->getPosition();
+      R->getOrientation() = (static_cast<FlexibleBody1sCosserat*>(parent))->getFrameOfReference()->getOrientation();
+      R->getPosition() = (static_cast<FlexibleBody1sCosserat*>(parent))->getFrameOfReference()->getPosition();
     }
   }
 #endif

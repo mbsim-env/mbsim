@@ -36,7 +36,7 @@ class ExtPhysicalVarWidget : public XMLWidget {
   public:
     ExtPhysicalVarWidget(std::vector<PhysicalStringWidget*> inputWidget);
 
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     PhysicalStringWidget* getPhysicalStringWidget(int i) {return inputWidget[i];}
     PhysicalStringWidget* getCurrentPhysicalStringWidget() {return inputWidget[inputCombo->currentIndex()];}
@@ -63,7 +63,7 @@ class XMLWidgetChoiceWidget : public XMLWidget {
 
   public:
     XMLWidgetChoiceWidget(const std::vector<std::string> &name, const std::vector<QWidget*> &widget);
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual void initialize();
     virtual void update();
@@ -81,7 +81,7 @@ class ExtXMLWidget : public QGroupBox, public XMLInterface {
     ExtXMLWidget(const QString &name, XMLWidget *widget, bool disable=false);
     void setXMLName(const std::string &name, bool flag=true) {xmlName = name; alwaysWriteXMLName=flag;}
 
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     XMLWidget* getWidget() {return widget;}
     virtual void initialize() {widget->initialize();}
@@ -101,7 +101,7 @@ class XMLWidgetContainer : public XMLWidget {
   public:
     XMLWidgetContainer();
 
-    virtual bool initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void addWidget(QWidget *widget_);
 

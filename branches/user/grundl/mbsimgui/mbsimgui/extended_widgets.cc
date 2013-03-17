@@ -36,7 +36,7 @@ ExtPhysicalVarWidget::ExtPhysicalVarWidget(std::vector<PhysicalStringWidget*> in
   QPushButton *evalButton = new QPushButton("Eval");
   connect(evalButton,SIGNAL(clicked(bool)),this,SLOT(openEvalDialog()));
   evalDialog = new EvalDialog(((StringWidget*)inputWidget[0])->cloneStringWidget());
-  connect(evalDialog,SIGNAL(clicked(bool)),this,SLOT(updateInput()));
+  //connect(evalDialog,SIGNAL(clicked(bool)),this,SLOT(updateInput()));
 
   inputCombo = new QComboBox;
   stackedWidget = new QStackedWidget;
@@ -110,19 +110,19 @@ void ExtPhysicalVarWidget::openEvalDialog() {
   }
   evalDialog->setValue(str);
   evalDialog->show();
-  evalDialog->setButtonDisabled(evalInput != (inputCombo->count()-1));
+  //evalDialog->setButtonDisabled(evalInput != (inputCombo->count()-1));
 }
 
-bool ExtPhysicalVarWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* ExtPhysicalVarWidget::initializeUsingXML(TiXmlElement *element) {
   for(int i=0; i< inputWidget.size(); i++) {
     if(inputWidget[i]->initializeUsingXML(element)) { 
       blockSignals(true);
       inputCombo->setCurrentIndex(i);
       blockSignals(false);
-      return true;
+      return element;
     }
   }
-  return false;
+  return 0;
 }
 
 TiXmlElement* ExtPhysicalVarWidget::writeXMLFile(TiXmlNode *parent) {
@@ -165,13 +165,13 @@ void XMLWidgetChoiceWidget::update() {
     dynamic_cast<XMLInterface*>(stackedWidget->widget(i))->update();
 }
 
-bool XMLWidgetChoiceWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* XMLWidgetChoiceWidget::initializeUsingXML(TiXmlElement *element) {
   for(int i=0; i<stackedWidget->count(); i++)
     if(dynamic_cast<XMLInterface*>(stackedWidget->widget(i))->initializeUsingXML(element)) {
       choice->setCurrentIndex(i);
-      return true;
+      return element;
     }
-  return false;
+  return 0;
 }
 
 TiXmlElement* XMLWidgetChoiceWidget::writeXMLFile(TiXmlNode *parent) {
@@ -192,7 +192,7 @@ ExtXMLWidget::ExtXMLWidget(const QString &name, XMLWidget *widget_, bool disable
   layout->addWidget(widget);
 }
 
-bool ExtXMLWidget::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* ExtXMLWidget::initializeUsingXML(TiXmlElement *element) {
   bool flag = false;
   if(xmlName!="") {
     TiXmlElement *e=element->FirstChildElement(xmlName);
@@ -204,7 +204,7 @@ bool ExtXMLWidget::initializeUsingXML(TiXmlElement *element) {
   }
   if(isCheckable())
     setChecked(flag);
-  return flag;
+  return flag?element:0;
 }
 
 TiXmlElement* ExtXMLWidget::writeXMLFile(TiXmlNode *parent) {
@@ -237,11 +237,11 @@ void XMLWidgetContainer::addWidget(QWidget *widget_) {
   widget.push_back(widget_);
 }
 
-bool XMLWidgetContainer::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* XMLWidgetContainer::initializeUsingXML(TiXmlElement *element) {
   for(unsigned int i=0; i<widget.size(); i++)
     if(!dynamic_cast<XMLInterface*>(widget[i])->initializeUsingXML(element))
-      return false;
-  return true;
+      return 0;
+  return element;
 }
 
 TiXmlElement* XMLWidgetContainer::writeXMLFile(TiXmlNode *parent) {

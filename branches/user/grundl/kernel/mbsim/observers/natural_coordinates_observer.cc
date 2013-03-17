@@ -18,13 +18,11 @@
  */
 
 #include <config.h>
-#include "mbsim/plot_elements/plot_natural_coordinates.h"
-#include "mbsim/rigid_body.h"
+#include "mbsim/observers/natural_coordinates_observer.h"
 #include "mbsim/frame.h"
-#include "mbsim/environment.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/utils/eps.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
-#include <openmbvcppinterface/arrow.h>
 #include <openmbvcppinterface/frame.h>
 #endif
 
@@ -33,7 +31,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  PlotNaturalCoordinates::PlotNaturalCoordinates(const std::string &name) : Element(name), frame(0), roff(3), voff(3), aoff(3), rscale(1), vscale(1), ascale(1) {
+  NaturalCoordinatesObserver::NaturalCoordinatesObserver(const std::string &name) : Observer(name), frame(0) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     openMBVPosition=0;
     openMBVVelocity=0;
@@ -48,52 +46,49 @@ namespace MBSim {
 #endif
   }
 
-  void PlotNaturalCoordinates::init(InitStage stage) {
+  void NaturalCoordinatesObserver::init(InitStage stage) {
     if(stage==MBSim::plot) {
       updatePlotFeatures();
 
+      Observer::init(stage);
       if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
-          openMBVGrp=new OpenMBV::Group();
-          openMBVGrp->setName(name+"_Group");
-          openMBVGrp->setExpand(false);
-          parent->getOpenMBVGrp()->addObject(openMBVGrp);
           if(openMBVPosition) {
+            OpenMBV::Group *openMBVGrp=new OpenMBV::Group();
+            openMBVGrp->setName("Position_Group");
+            openMBVGrp->setExpand(false);
+            getOpenMBVGrp()->addObject(openMBVGrp);
             openMBVPosition->setName("Position");
-            getOpenMBVGrp()->addObject(openMBVPosition);
+            openMBVGrp->addObject(openMBVPosition);
           }
           if(openMBVVelocity) {
+            OpenMBV::Group *openMBVGrp=new OpenMBV::Group();
+            openMBVGrp->setName("Velocity_Group");
+            openMBVGrp->setExpand(false);
+            getOpenMBVGrp()->addObject(openMBVGrp);
             openMBVVelocity->setName("Velocity");
-            getOpenMBVGrp()->addObject(openMBVVelocity);
-          }
-          if(openMBVTangentialVelocity) {
+            openMBVGrp->addObject(openMBVVelocity);
             openMBVTangentialVelocity->setName("TangentialVelocity");
-            getOpenMBVGrp()->addObject(openMBVTangentialVelocity);
-          }
-          if(openMBVNormalVelocity) {
+            openMBVGrp->addObject(openMBVTangentialVelocity);
             openMBVNormalVelocity->setName("NormalVelocity");
-            getOpenMBVGrp()->addObject(openMBVNormalVelocity);
-          }
-          if(openMBVBinormalVelocity) {
+            openMBVGrp->addObject(openMBVNormalVelocity);
             openMBVBinormalVelocity->setName("BinormalVelocity");
-            getOpenMBVGrp()->addObject(openMBVBinormalVelocity);
+            openMBVGrp->addObject(openMBVBinormalVelocity);
           }
           if(openMBVAcceleration) {
+            OpenMBV::Group *openMBVGrp=new OpenMBV::Group();
+            openMBVGrp->setName("Acceleration_Group");
+            openMBVGrp->setExpand(false);
+            getOpenMBVGrp()->addObject(openMBVGrp);
             openMBVAcceleration->setName("Acceleration");
-            getOpenMBVGrp()->addObject(openMBVAcceleration);
-          }
-          if(openMBVTangentialAcceleration) {
+            openMBVGrp->addObject(openMBVAcceleration);
             openMBVTangentialAcceleration->setName("TangentialAcceleration");
-            getOpenMBVGrp()->addObject(openMBVTangentialAcceleration);
-          }
-          if(openMBVNormalAcceleration) {
+            openMBVGrp->addObject(openMBVTangentialAcceleration);
             openMBVNormalAcceleration->setName("NormalAcceleration");
-            getOpenMBVGrp()->addObject(openMBVNormalAcceleration);
-          }
-          if(openMBVBinormalAcceleration) {
+            openMBVGrp->addObject(openMBVNormalAcceleration);
             openMBVBinormalAcceleration->setName("BinormalAcceleration");
-            getOpenMBVGrp()->addObject(openMBVBinormalAcceleration);
+            openMBVGrp->addObject(openMBVBinormalAcceleration);
           }
           if(openMBVFrame) {
             openMBVFrame->setName("Frame");
@@ -102,77 +97,91 @@ namespace MBSim {
         }
 #endif
       }
-      Element::init(stage);
     }
     else
-      Element::init(stage);
+      Observer::init(stage);
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  void PlotNaturalCoordinates::enableOpenMBVPosition(double diameter, double headDiameter, double headLength, double color) {
+  void NaturalCoordinatesObserver::enableOpenMBVPosition(double diameter, double headDiameter, double headLength, double color) {
     openMBVPosition=new OpenMBV::Arrow;
+    openMBVPosition->setReferencePoint(OpenMBV::Arrow::fromPoint);
     openMBVPosition->setDiameter(diameter);
     openMBVPosition->setHeadDiameter(headDiameter);
     openMBVPosition->setHeadLength(headLength);
     openMBVPosition->setStaticColor(color);
   }
 
-  void PlotNaturalCoordinates::enableOpenMBVVelocity(double scale, double diameter, double headDiameter, double headLength, double color) {
+  void NaturalCoordinatesObserver::enableOpenMBVVelocity(double scale, OpenMBV::Arrow::ReferencePoint refPoint, double diameter, double headDiameter, double headLength, double color) {
     openMBVVelocity=new OpenMBV::Arrow;
+    openMBVVelocity->setScaleLength(scale);
+    openMBVVelocity->setReferencePoint(refPoint);
     openMBVVelocity->setDiameter(diameter);
     openMBVVelocity->setHeadDiameter(headDiameter);
     openMBVVelocity->setHeadLength(headLength);
     openMBVVelocity->setStaticColor(color);
     openMBVTangentialVelocity=new OpenMBV::Arrow;
+    openMBVTangentialVelocity->setScaleLength(scale);
+    openMBVTangentialVelocity->setReferencePoint(refPoint);
     openMBVTangentialVelocity->setDiameter(diameter);
     openMBVTangentialVelocity->setHeadDiameter(headDiameter);
     openMBVTangentialVelocity->setHeadLength(headLength);
     openMBVTangentialVelocity->setStaticColor(color);
     openMBVNormalVelocity=new OpenMBV::Arrow;
+    openMBVNormalVelocity->setScaleLength(scale);
+    openMBVNormalVelocity->setReferencePoint(refPoint);
     openMBVNormalVelocity->setDiameter(diameter);
     openMBVNormalVelocity->setHeadDiameter(headDiameter);
     openMBVNormalVelocity->setHeadLength(headLength);
     openMBVNormalVelocity->setStaticColor(color);
     openMBVBinormalVelocity=new OpenMBV::Arrow;
+    openMBVBinormalVelocity->setScaleLength(scale);
+    openMBVBinormalVelocity->setReferencePoint(refPoint);
     openMBVBinormalVelocity->setDiameter(diameter);
     openMBVBinormalVelocity->setHeadDiameter(headDiameter);
     openMBVBinormalVelocity->setHeadLength(headLength);
     openMBVBinormalVelocity->setStaticColor(color);
-    vscale = scale;
   }
 
-  void PlotNaturalCoordinates::enableOpenMBVAcceleration(double scale, double diameter, double headDiameter, double headLength, double color) {
+  void NaturalCoordinatesObserver::enableOpenMBVAcceleration(double scale, OpenMBV::Arrow::ReferencePoint refPoint, double diameter, double headDiameter, double headLength, double color) {
     openMBVAcceleration=new OpenMBV::Arrow;
+    openMBVAcceleration->setScaleLength(scale);
+    openMBVAcceleration->setReferencePoint(refPoint);
     openMBVAcceleration->setDiameter(diameter);
     openMBVAcceleration->setHeadDiameter(headDiameter);
     openMBVAcceleration->setHeadLength(headLength);
     openMBVAcceleration->setStaticColor(color);
     openMBVTangentialAcceleration=new OpenMBV::Arrow;
+    openMBVTangentialAcceleration->setScaleLength(scale);
+    openMBVTangentialAcceleration->setReferencePoint(refPoint);
     openMBVTangentialAcceleration->setDiameter(diameter);
     openMBVTangentialAcceleration->setHeadDiameter(headDiameter);
     openMBVTangentialAcceleration->setHeadLength(headLength);
     openMBVTangentialAcceleration->setStaticColor(color);
     openMBVNormalAcceleration=new OpenMBV::Arrow;
+    openMBVNormalAcceleration->setScaleLength(scale);
+    openMBVNormalAcceleration->setReferencePoint(refPoint);
     openMBVNormalAcceleration->setDiameter(diameter);
     openMBVNormalAcceleration->setHeadDiameter(headDiameter);
     openMBVNormalAcceleration->setHeadLength(headLength);
     openMBVNormalAcceleration->setStaticColor(color);
     openMBVBinormalAcceleration=new OpenMBV::Arrow;
+    openMBVBinormalAcceleration->setScaleLength(scale);
+    openMBVBinormalAcceleration->setReferencePoint(refPoint);
     openMBVBinormalAcceleration->setDiameter(diameter);
     openMBVBinormalAcceleration->setHeadDiameter(headDiameter);
     openMBVBinormalAcceleration->setHeadLength(headLength);
     openMBVBinormalAcceleration->setStaticColor(color);
-    ascale = scale;
   }
 
-  void PlotNaturalCoordinates::enableOpenMBVFrame(double size, double offset) {
+  void NaturalCoordinatesObserver::enableOpenMBVFrame(double size, double offset) {
     openMBVFrame=new OpenMBV::Frame;
     openMBVFrame->setSize(size);
     openMBVFrame->setOffset(offset);
   }
 #endif
 
-  void PlotNaturalCoordinates::plot(double t, double dt) {
+  void NaturalCoordinatesObserver::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {
@@ -203,14 +212,12 @@ namespace MBSim {
           eb = eb/nrmeb;
         Vec3 en = -crossProduct(et,eb);
 
-        v *= vscale;
-        a *= ascale;
         if(openMBVPosition && !openMBVPosition->isHDF5Link()) {
           vector<double> data;
           data.push_back(t);
-          data.push_back(r(0));
-          data.push_back(r(1));
-          data.push_back(r(2));
+          data.push_back(0);
+          data.push_back(0);
+          data.push_back(0);
           data.push_back(r(0));
           data.push_back(r(1));
           data.push_back(r(2));
@@ -221,55 +228,42 @@ namespace MBSim {
         if(openMBVVelocity && !openMBVVelocity->isHDF5Link()) {
           vector<double> data;
           data.push_back(t);
-          Vec3 off = v;
-          data.push_back(r(0)+off(0));
-          data.push_back(r(1)+off(1));
-          data.push_back(r(2)+off(2));
+          data.push_back(r(0));
+          data.push_back(r(1));
+          data.push_back(r(2));
           data.push_back(v(0));
           data.push_back(v(1));
           data.push_back(v(2));
           data.push_back(0.5);
           openMBVVelocity->append(data);
-        }
-
-        if(openMBVTangentialVelocity && !openMBVTangentialVelocity->isHDF5Link()) {
-          vector<double> data;
+          data.clear();
           Vec3 vt =  (v.T()*et)*et;
-          Vec3 off = vt;
           data.push_back(t);
-          data.push_back(r(0)+off(0));
-          data.push_back(r(1)+off(1));
-          data.push_back(r(2)+off(2));
+          data.push_back(r(0));
+          data.push_back(r(1));
+          data.push_back(r(2));
           data.push_back(vt(0));
           data.push_back(vt(1));
           data.push_back(vt(2));
           data.push_back(0.5);
           openMBVTangentialVelocity->append(data);
-        }
-
-        if(openMBVNormalVelocity && !openMBVNormalVelocity->isHDF5Link()) {
-          vector<double> data;
+          data.clear();
           Vec3 vn =  (v.T()*en)*en;
-          Vec3 off = vn;
           data.push_back(t);
-          data.push_back(r(0)+off(0));
-          data.push_back(r(1)+off(1));
-          data.push_back(r(2)+off(2));
+          data.push_back(r(0));
+          data.push_back(r(1));
+          data.push_back(r(2));
           data.push_back(vn(0));
           data.push_back(vn(1));
           data.push_back(vn(2));
           data.push_back(0.5);
           openMBVNormalVelocity->append(data);
-        }
-
-        if(openMBVBinormalVelocity && !openMBVBinormalVelocity->isHDF5Link()) {
-          vector<double> data;
+          data.clear();
           Vec3 vb =  (v.T()*eb)*eb;
-          Vec3 off = vb;
           data.push_back(t);
-          data.push_back(r(0)+off(0));
-          data.push_back(r(1)+off(1));
-          data.push_back(r(2)+off(2));
+          data.push_back(r(0));
+          data.push_back(r(1));
+          data.push_back(r(2));
           data.push_back(vb(0));
           data.push_back(vb(1));
           data.push_back(vb(2));
@@ -280,55 +274,42 @@ namespace MBSim {
         if(openMBVAcceleration && !openMBVAcceleration->isHDF5Link()) {
           vector<double> data;
           data.push_back(t);
-          Vec3 off = a;
-          data.push_back(r(0)+off(0));
-          data.push_back(r(1)+off(1));
-          data.push_back(r(2)+off(2));
+          data.push_back(r(0));
+          data.push_back(r(1));
+          data.push_back(r(2));
           data.push_back(a(0));
           data.push_back(a(1));
           data.push_back(a(2));
           data.push_back(0.5);
           openMBVAcceleration->append(data);
-        }
-
-        if(openMBVTangentialAcceleration && !openMBVTangentialAcceleration->isHDF5Link()) {
-          vector<double> data;
+          data.clear();
           Vec3 at =  (a.T()*et)*et;
-          Vec3 off = at;
           data.push_back(t);
-          data.push_back(r(0)+off(0));
-          data.push_back(r(1)+off(1));
-          data.push_back(r(2)+off(2));
+          data.push_back(r(0));
+          data.push_back(r(1));
+          data.push_back(r(2));
           data.push_back(at(0));
           data.push_back(at(1));
           data.push_back(at(2));
           data.push_back(0.5);
           openMBVTangentialAcceleration->append(data);
-        }
-
-        if(openMBVNormalAcceleration && !openMBVNormalAcceleration->isHDF5Link()) {
-          vector<double> data;
+          data.clear();
           Vec3 an =  (a.T()*en)*en;
-          Vec3 off = an;
           data.push_back(t);
-          data.push_back(r(0)+off(0));
-          data.push_back(r(1)+off(1));
-          data.push_back(r(2)+off(2));
+          data.push_back(r(0));
+          data.push_back(r(1));
+          data.push_back(r(2));
           data.push_back(an(0));
           data.push_back(an(1));
           data.push_back(an(2));
           data.push_back(0.5);
           openMBVNormalAcceleration->append(data);
-        }
-
-        if(openMBVBinormalAcceleration && !openMBVBinormalAcceleration->isHDF5Link()) {
-          vector<double> data;
+          data.clear();
           Vec3 ab =  (a.T()*eb)*eb;
-          Vec3 off = ab;
           data.push_back(t);
-          data.push_back(r(0)+off(0));
-          data.push_back(r(1)+off(1));
-          data.push_back(r(2)+off(2));
+          data.push_back(r(0));
+          data.push_back(r(1));
+          data.push_back(r(2));
           data.push_back(ab(0));
           data.push_back(ab(1));
           data.push_back(ab(2));
@@ -356,7 +337,7 @@ namespace MBSim {
       }
 #endif
 
-      Element::plot(t,dt);
+      Observer::plot(t,dt);
     }
   }
 

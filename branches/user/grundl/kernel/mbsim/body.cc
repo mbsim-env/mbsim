@@ -32,7 +32,7 @@ using namespace std;
 
 namespace MBSim {
 
-  Body::Body(const string &name) : Object(name), frameOfReference(0),
+  Body::Body(const string &name) : Object(name), R(0),
 #ifdef HAVE_OPENMBVCPPINTERFACE
                                      openMBVBody(0), openMBVGrp(0), 
 #endif
@@ -103,11 +103,11 @@ namespace MBSim {
     }
     if(stage==preInit) {
       Object::init(stage);
-      if(frameOfReference) {
-        Body* obj = dynamic_cast<Body*>(frameOfReference->getParent());
-        if(obj)
-          dependency.push_back(obj);
-      }
+      if(!R)
+        R = dynamic_cast<DynamicSystem*>(parent)->getFrameI();
+      Body* obj = dynamic_cast<Body*>(R->getParent());
+      if(obj)
+        dependency.push_back(obj);
     }
     else if(stage==MBSim::plot) {
       updatePlotFeatures();
@@ -203,14 +203,14 @@ namespace MBSim {
     TiXmlElement *e;
     Object::initializeUsingXML(element);
     e=element->FirstChildElement(MBSIMNS"frameOfReference");
-    saved_frameOfReference=e->Attribute("ref");
+    if(e) saved_frameOfReference=e->Attribute("ref");
   }
 
   TiXmlElement* Body::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0 = Object::writeXMLFile(parent);
     TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"frameOfReference" );
     // ele1->SetAttribute("ref", getFrameOfReference()->getXMLPath()); // absolute path
-    ele1->SetAttribute("ref", frameOfReference->getXMLPath(this,true)); // relative path
+    ele1->SetAttribute("ref", R->getXMLPath(this,true)); // relative path
     ele0->LinkEndChild(ele1);
     return ele0;
   }

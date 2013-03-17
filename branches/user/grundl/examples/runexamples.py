@@ -34,6 +34,14 @@ ombvSchema =None
 mbsimSchema=None
 intSchema  =None
 directories=list() # a list of all examples sorted in descending order (filled recursively (using the filter) by by --directories)
+# the following examples will fail: do not report them in the RSS feed as errors
+willFail=set([
+  pj('mechanics', 'flexible_body', 'spatial_beam_cosserat'),
+  pj('mechanics', 'flexible_body', 'mfr_mindlin'),
+  pj('mechanics', 'contacts', 'point_nurbsdisk'),
+  pj('mechanics', 'contacts', 'circle_nurbsdisk2s'),
+  pj('mechanics', 'flexible_body', 'perlchain_cosserat')
+])
 
 # command line option definition
 argparser = argparse.ArgumentParser(
@@ -86,6 +94,9 @@ cfgOpts.add_argument("--rtol", default=1e-5, type=float,
 cfgOpts.add_argument("--disableRun", action="store_true", help="disable running the example on action 'report'")
 cfgOpts.add_argument("--disableCompare", action="store_true", help="disable comparing the results on action 'report'")
 cfgOpts.add_argument("--disableValidate", action="store_true", help="disable validating the XML files on action 'report'")
+cfgOpts.add_argument("--buildType", default="", type=str, help="Description of the build type (e.g: 'Daily Build: ')")
+cfgOpts.add_argument("--prefixSimulation", default=None, type=str,
+  help="prefix the simulation command (./main, mbsimflatxml, mbsimxml) with this string: e.g. 'valgrind --tool=callgrind'")
 
 outOpts=argparser.add_argument_group('Output Options')
 outOpts.add_argument("--reportOutDir", default="runexamples_report", type=str, help="the output directory of the report")
@@ -128,7 +139,12 @@ def main():
   global mbsimBinDir
   mbsimBinDir=pkgconfig("mbsim", ["--variable=bindir"])
 
+  # fix arguments
   args.reportOutDir=os.path.abspath(args.reportOutDir)
+  if args.prefixSimulation!=None:
+    args.prefixSimulation=args.prefixSimulation.split(' ');
+  else:
+    args.prefixSimulation=[];
 
   # if no directory is specified use the current dir (all examples) filter by --filter
   if len(args.directories)==0:
@@ -192,6 +208,7 @@ def main():
   print('   <b>Start time:</b> '+str(datetime.datetime.now())+'<br/>', file=mainFD)
   print('   <b>End time:</b> @STILL_RUNNING_OR_ABORTED@<br/>', file=mainFD)
   print('</p>', file=mainFD)
+  print('<p>A example name in gray color is a example which may fail and is therefore not reported as an error in the RSS feed.</p>', file=mainFD)
 
   print('<table border="1">', file=mainFD)
   print('<tr>', file=mainFD)
@@ -232,9 +249,9 @@ def main():
     printFinishedMessage(missingDirectories, result)
   # wait for pool to finish and get result
   retAll=poolResult.get()
-  # set globla result and add failedExamples
+  # set global result and add failedExamples
   for index in range(len(retAll)):
-    if retAll[index]!=0:
+    if retAll[index]!=0 and not directories[index][0] in willFail:
       mainRet=1
       failedExamples.append(directories[index][0])
 
@@ -264,7 +281,7 @@ def main():
   # write RSS feed
   writeRSSFeed(len(failedExamples), len(retAll))
 
-  # print result summary to console and create rss feed on error
+  # print result summary to console
   if len(failedExamples)>0:
     print('\n'+str(len(failedExamples))+' examples have failed.')
   else:
@@ -380,7 +397,10 @@ def runExample(resultQueue, example):
     # print result to resultStr
     resultStr=""
     resultStr+='<tr>'
-    resultStr+='<td>'+example[0]+'</td>'
+    if not example[0] in willFail:
+      resultStr+='<td>'+example[0]+'</td>'
+    else:
+      resultStr+='<td><span style="color:gray">'+example[0]+'</span></td>'
     if args.disableRun:
       resultStr+='<td><span style="color:orange">not run</span></td>'
     else:
@@ -467,8 +487,11 @@ def runExample(resultQueue, example):
     resultStr+='</tr>'
 
   except:
-    print("\nException from example "+str(example[0])+" raised:\n"+traceback.format_exc())
-    resultStr='<tr><td>'+example[0]+'</td><td><span style="color:red;text-decoration:blink">fatal script error</span></td><td>-</td><td>-</td><td>-</td></tr>'
+    fatalScriptErrorFN=pj(example[0], "fatalScriptError.out")
+    fatalScriptErrorFD=open(pj(args.reportOutDir, fatalScriptErrorFN), "w")
+    print(traceback.format_exc(), file=fatalScriptErrorFD)
+    fatalScriptErrorFD.close()
+    resultStr='<tr><td>'+example[0]+'</td><td><a href="'+myurllib.pathname2url(fatalScriptErrorFN)+'"><span style="color:red;text-decoration:blink">fatal script error</span></a></td><td>-</td><td>-</td><td>-</td></tr>'
     runExampleRet=1
   finally:
     os.chdir(savedDir)
@@ -500,7 +523,7 @@ def executeSrcExample(executeFD):
     mainEnv[NAME]=libDir
   # run main
   t0=datetime.datetime.now()
-  if subprocess.call([pj(os.curdir, "main")], stderr=subprocess.STDOUT, stdout=executeFD, env=mainEnv)!=0: return 1, 0
+  if subprocess.call(args.prefixSimulation+[pj(os.curdir, "main")], stderr=subprocess.STDOUT, stdout=executeFD, env=mainEnv)!=0: return 1, 0
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
   return 0, dt
@@ -520,7 +543,7 @@ def executeXMLExample(executeFD):
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  if subprocess.call([pj(mbsimBinDir, "mbsimxml")]+parMBSimOption+parIntOption+mpathOption+
+  if subprocess.call(args.prefixSimulation+[pj(mbsimBinDir, "mbsimxml")]+parMBSimOption+parIntOption+mpathOption+
                      ["MBS.mbsim.xml", "Integrator.mbsimint.xml"], stderr=subprocess.STDOUT, stdout=executeFD)!=0: return 1, 0
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
@@ -535,7 +558,7 @@ def executeFlatXMLExample(executeFD):
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  if subprocess.call([pj(mbsimBinDir, "mbsimflatxml"), "MBS.mbsim.flat.xml", "Integrator.mbsimint.xml"],
+  if subprocess.call(args.prefixSimulation+[pj(mbsimBinDir, "mbsimflatxml"), "MBS.mbsim.flat.xml", "Integrator.mbsimint.xml"],
                      stderr=subprocess.STDOUT, stdout=executeFD)!=0: return 1, 0
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
@@ -565,7 +588,7 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, label, data
   print('<b>Dataset:</b> '+datasetName+'<br/>', file=diffHTMLPlotFD)
   print('<b>Label:</b> '+label.decode("utf-8")+'<br/>', file=diffHTMLPlotFD)
   print('</p>', file=diffHTMLPlotFD)
-  print('<p><embed src="plot.svg" type="image/svg+xml"/></p>', file=diffHTMLPlotFD)
+  print('<p><embed src="plot.svg" height="95%" type="image/svg+xml"/></p>', file=diffHTMLPlotFD)
   print('</body>', file=diffHTMLPlotFD)
   print('</html>', file=diffHTMLPlotFD)
   diffHTMLPlotFD.close()
@@ -661,10 +684,11 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
       if column>=curObj.shape[1]:
         printLabel='<span style="color:orange">&lt;label '+printLabel+' not in cur.&gt;</span>'
       # compare
-      if refObj[:,column].shape==curObj[:,column].shape:
-        delta=abs(refObj[:,column]-curObj[:,column])
-      else:
-        delta=float("inf") # very large => error
+      if curObj.shape[0]>0 and curObj.shape[0]>0: # only if curObj and refObj contains data (rows)
+        if refObj[:,column].shape==curObj[:,column].shape:
+          delta=abs(refObj[:,column]-curObj[:,column])
+        else:
+          delta=float("inf") # very large => error
       print('<tr>', file=compareFD)
       print('<td>'+h5CurFile.filename+'</td>', file=compareFD)
       print('<td>'+datasetName+'</td>', file=compareFD)
@@ -672,15 +696,18 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
         print('<td>'+printLabel+'</td>', file=compareFD)
       else:
         print('<td><span style="color:orange">&lt;label for col. '+str(column+1)+' differ&gt;</span></td>', file=compareFD)
-      if numpy.any(numpy.logical_and(delta>args.atol, delta>args.rtol*abs(refObj[:,column]))):
-        print('<td><a href="'+myurllib.pathname2url(diffFilename)+'"><span style="color:red">failed</span></a></td>', file=compareFD)
-        nrFailed[0]+=1
-        dataArrayRef=numpy.concatenate((refObj[:, 0:1], refObj[:, column:column+1]), axis=1)
-        dataArrayCur=numpy.concatenate((curObj[:, 0:1], curObj[:, column:column+1]), axis=1)
-        createDiffPlot(pj(args.reportOutDir, example, diffFilename), example, h5CurFile.filename, datasetName,
-                       refLabels[column], dataArrayRef, dataArrayCur)
-      else:
-        print('<td><span style="color:green">passed</span></td>', file=compareFD)
+      if curObj.shape[0]>0 and curObj.shape[0]>0: # only if curObj and refObj contains data (rows)
+        if numpy.any(numpy.logical_and(delta>args.atol, delta>args.rtol*abs(refObj[:,column]))):
+          print('<td><a href="'+myurllib.pathname2url(diffFilename)+'"><span style="color:red">failed</span></a></td>', file=compareFD)
+          nrFailed[0]+=1
+          dataArrayRef=numpy.concatenate((refObj[:, 0:1], refObj[:, column:column+1]), axis=1)
+          dataArrayCur=numpy.concatenate((curObj[:, 0:1], curObj[:, column:column+1]), axis=1)
+          createDiffPlot(pj(args.reportOutDir, example, diffFilename), example, h5CurFile.filename, datasetName,
+                         refLabels[column], dataArrayRef, dataArrayCur)
+        else:
+          print('<td><span style="color:green">passed</span></td>', file=compareFD)
+      else: # not row in curObj or refObj
+        print('<td><span style="color:red">no data row in cur. or ref.</span></td>', file=compareFD)
       print('</tr>', file=compareFD)
     # check for labels/columns in current but not in reference
     for label in curLabels[len(refLabels):]:
@@ -855,34 +882,35 @@ def writeRSSFeed(nrFailed, nrTotal):
   rssFD=open(pj(args.reportOutDir, rssFN), "w")
   print('''\
 <?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>MBSim runexample.py Result</title>
+    <title>%sMBSim runexample.py Result</title>
     <link>%s/index.html</link>
-    <description>Result RSS feed of the last runexample.py run of MBSim and Co.</description>
+    <description>%sResult RSS feed of the last runexample.py run of MBSim and Co.</description>
     <language>en-us</language>
-    <managingEditor>friedrich.at.gc@googlemail.com</managingEditor>'''%(args.url), file=rssFD)
+    <managingEditor>friedrich.at.gc@googlemail.com (friedrich)</managingEditor>
+    <atom:link href="%s/result.rss.xml" rel="self" type="application/rss+xml"/>'''%(args.buildType, args.url, args.buildType, args.url), file=rssFD)
   if nrFailed>0:
     print('''\
     <item>
-      <title>%d of %d examples failed</title>
+      <title>%s%d of %d examples failed</title>
       <link>%s/index.html</link>
-      <guid>%s/rss_id_%s</guid>
+      <guid isPermaLink="false">%s/rss_id_%s</guid>
       <pubDate>%s</pubDate>
-    </item>'''%(nrFailed, nrTotal,
+    </item>'''%(args.buildType, nrFailed, nrTotal,
            args.url,
            args.url,
            datetime.datetime.utcnow().strftime("%s"),
            datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S +0000")), file=rssFD)
   print('''\
     <item>
-      <title>Dummy feed item. Just ignore it.</title>
+      <title>%sDummy feed item. Just ignore it.</title>
       <link>%s/index.html</link>
-      <guid>%s/rss_id_1359206848</guid>
+      <guid isPermaLink="false">%s/rss_id_1359206848</guid>
       <pubDate>Sat, 26 Jan 2013 14:27:28 +0000</pubDate>
     </item>
   </channel>
-</rss>'''%(args.url, args.url), file=rssFD)
+</rss>'''%(args.buildType, args.url, args.url), file=rssFD)
   rssFD.close()
 
 

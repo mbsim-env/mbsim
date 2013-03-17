@@ -17,51 +17,41 @@
  * Contact: martin.o.foerg@gmail.com
  */
 
-#ifndef _PLOT_CYLINDER_COORDINATES_H__
-#define _PLOT_CYLINDER_COORDINATES_H__
-#include "mbsim/element.h"
+#ifndef _NATURAL_COORDINATES_OBSERVER_H__
+#define _NATURAL_COORDINATES_OBSERVER_H__
+#include "mbsim/observer.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/arrow.h>
 namespace OpenMBV {
-  //class Frame;
-  class Arrow;
   class Frame;
-  class Group;
 }
 #endif
 
 namespace MBSim {
-  class RigidBody;
   class Frame;
 
-  class PlotCylinderCoordinates : public Element {
+  class NaturalCoordinatesObserver : public Observer {
     private:
       Frame* frame;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Group* openMBVGrp;
-      OpenMBV::Arrow *openMBVPosition, *openMBVVelocity, *openMBVRadialVelocity, *openMBVCircularVelocity, *openMBVZVelocity, *openMBVAcceleration, *openMBVRadialAcceleration, *openMBVCircularAcceleration, *openMBVZAcceleration; 
+      OpenMBV::Arrow *openMBVPosition, *openMBVVelocity, *openMBVTangentialVelocity, *openMBVNormalVelocity, *openMBVBinormalVelocity, *openMBVAcceleration, *openMBVTangentialAcceleration, *openMBVNormalAcceleration, *openMBVBinormalAcceleration;
       OpenMBV::Frame* openMBVFrame;
-      fmatvec::Vec3 roff, voff, aoff;
-      double rscale, vscale, ascale;
-      fmatvec::Vec3 ez;
 #endif
 
     public:
-      PlotCylinderCoordinates(const std::string &name);
+      NaturalCoordinatesObserver(const std::string &name);
       void setFrame(Frame *frame_) { frame = frame_; } 
 
       void init(InitStage stage);
-      void setez(const fmatvec::Vec3 &ez_) {ez = ez_/nrm2(ez_);}
       virtual void plot(double t, double dt);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Group* getOpenMBVGrp() { return openMBVGrp; }
-      //void setvscale(double scale) { vscale = scale; }
-      //void setascale(double scale) { ascale = scale; }
       virtual void enableOpenMBVPosition(double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
-      virtual void enableOpenMBVVelocity(double scale=1, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
-      virtual void enableOpenMBVAcceleration(double scale=1, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
+      virtual void enableOpenMBVVelocity(double scale=1, OpenMBV::Arrow::ReferencePoint refPoint=OpenMBV::Arrow::fromPoint, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
+      virtual void enableOpenMBVAcceleration(double scale=1, OpenMBV::Arrow::ReferencePoint refPoint=OpenMBV::Arrow::fromPoint, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
       virtual void enableOpenMBVFrame(double size=1, double offset=1);
+
 #endif
 
   };

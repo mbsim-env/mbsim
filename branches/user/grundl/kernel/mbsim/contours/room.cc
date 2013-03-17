@@ -93,10 +93,18 @@ namespace MBSim {
       for (int i = 0; i < 6; i++) {
         stringstream s;
         s << "Face_" <<  i + 1;
+
+        FixedRelativeFrame *frame = new FixedRelativeFrame("R");
+        frame->setRelativePosition(Kr[i]);
+        frame->setRelativeOrientation(AIK[i]);
+        frame->setFrameOfReference(R);
+        addFrame(frame);
+
         Area * area = new Area(s.str());
         area->setLimitY(limit[i](0));
         area->setLimitZ(limit[i](1));
-        addContourElement(area, Kr[i], AIK[i]);
+        area->setFrameOfReference(frame);
+        addContour(area);
       }
     }
     else if (stage == MBSim::plot) {

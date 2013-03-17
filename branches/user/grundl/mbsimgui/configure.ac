@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.57])
-AC_INIT([mbsimgui],[1.0.0],[martin.o.foerg@googlemail.com])
+AC_INIT([mbsimgui],[1.1.0],[martin.o.foerg@googlemail.com])
 AC_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([mbsimgui/body.h])
@@ -72,9 +72,18 @@ AC_ARG_ENABLE([inlineombv],[  --disable-inlineombv  disable inline openmbv],[inl
 fi
 
 dnl Include path for Boost
-AC_ARG_WITH([boost-inc],
-  [  --with-boost-inc=PATH  The path Boost include directory.],
-  [CPPFLAGS="$CPPFLAGS -I$withval"; DEFINES="$DEFINES -I$withval"])
+dnl AC_ARG_WITH([boost-inc],
+dnl   [  --with-boost-inc=PATH  The path Boost include directory.],
+dnl   [CPPFLAGS="$CPPFLAGS -I$withval"; DEFINES="$DEFINES -I$withval"])
+
+AC_ARG_WITH([boost-filesystem-lib],
+  [  --with-boost-filesystem-lib=LIBNAME  The library name of boost filesystem excluding prefix/suffix (Default: boost_filesystem).],
+  [BOOST_FILESYSTEM_LIB="$withval"], [BOOST_FILESYSTEM_LIB="boost_filesystem"])
+AC_SUBST([BOOST_FILESYSTEM_LIB])
+AC_ARG_WITH([boost-system-lib],
+  [  --with-boost-system-lib=LIBNAME  The library name of boost system excluding prefix/suffix (Default: boost_system).],
+  [BOOST_SYSTEM_LIB="$withval"], [BOOST_SYSTEM_LIB="boost_system"])
+AC_SUBST([BOOST_SYSTEM_LIB])
 
 dnl Check for doxygen
 AC_ARG_WITH([doxygenpath],

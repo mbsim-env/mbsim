@@ -33,6 +33,11 @@ namespace MBSim {
     contour1 = static_cast<CompoundContour*>(contour[1]);
 
     numberOfPotentialContactPoints = 0;
+
+    for(size_t i = 0; i < contactKinematics.size(); i++)
+      delete contactKinematics[i];
+    contactKinematics.clear();
+
     for(unsigned int i=0; i<contour0->getNumberOfElements(); i++) {
       for(unsigned int j=0; j<contour1->getNumberOfElements(); j++) {
         ContactKinematics *tmp = findContactPairingRigidRigid(contour0->getContourElement(i)->getType().c_str(), contour1->getContourElement(j)->getType().c_str());

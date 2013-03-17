@@ -39,17 +39,17 @@ class ElementItem : public QTreeWidgetItem {
 };
 
 class EvalDialog : public QDialog {
-  Q_OBJECT
+//  Q_OBJECT
   public:
     EvalDialog(StringWidget *var);
     void setValue(const std::string &str) {var->setValue(str);}
     std::string getValue() const {return var->getValue();}
-    void setButtonDisabled(bool flag) {button->setDisabled(flag);}
+    //void setButtonDisabled(bool flag) {button->setDisabled(flag);}
   protected:
     StringWidget *var;
-    QPushButton *button;
-  signals:
-    void clicked(bool);
+//    QPushButton *button;
+//  signals:
+//    void clicked(bool);
 };
 
 class RigidBodyBrowser : public QDialog {

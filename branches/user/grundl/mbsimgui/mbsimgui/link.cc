@@ -35,14 +35,14 @@ Link::Link(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element(s
 Link::~Link() {
 }
 
-Element * Link::getByPathSearch(string path) {
-  if (path.substr(0, 3)=="../") // relative path
-    return getParentElement()->getByPathSearch(path.substr(3));
+Element * Link::getByPathSearch(QString path) {
+  if (path.mid(0, 3)=="../") // relative path
+    return getParentElement()->getByPathSearch(path.mid(3));
   else // absolut path
     if(getParentElement())
       return getParentElement()->getByPathSearch(path);
     else
-      return getByPathSearch(path.substr(1));
+      return getByPathSearch(path.mid(1));
 }
 
 //void Link::initializeUsingXML(TiXmlElement *element) {

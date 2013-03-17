@@ -471,19 +471,14 @@ namespace MBSim {
 
       cpData[0].getFrameOfReference().setName("0");
       cpData[1].getFrameOfReference().setName("1");
-      cpData[0].getFrameOfReference().getJacobianOfTranslation(0).resize();
-      cpData[0].getFrameOfReference().getJacobianOfTranslation(1).resize();
-      cpData[0].getFrameOfReference().getJacobianOfRotation(1).resize();
-      cpData[0].getFrameOfReference().getJacobianOfRotation(0).resize();
-      cpData[1].getFrameOfReference().getJacobianOfTranslation(0).resize();
-      cpData[1].getFrameOfReference().getJacobianOfTranslation(1).resize();
-      cpData[1].getFrameOfReference().getJacobianOfRotation(0).resize();
-      cpData[1].getFrameOfReference().getJacobianOfRotation(1).resize();
 
       cpData[0].getFrameOfReference().sethSize(contour[0]->gethSize(0), 0);
       cpData[0].getFrameOfReference().sethSize(contour[0]->gethSize(1), 1);
       cpData[1].getFrameOfReference().sethSize(contour[1]->gethSize(0), 0);
       cpData[1].getFrameOfReference().sethSize(contour[1]->gethSize(1), 1);
+
+      cpData[0].getFrameOfReference().init(stage);
+      cpData[1].getFrameOfReference().init(stage);
     }
     else if (stage == unknownStage) {
       LinkMechanics::init(stage);
@@ -523,61 +518,6 @@ namespace MBSim {
       for (int j = 1 + min(1, getFrictionDirections()); j < 2; j++)
         gddActive[j] = 0;
 
-      //TODO: check which calls of the following is not necessary
-
-//      g = Vec(1);
-//
-//      gd =Vec(1);
-//
-//      gdT = Vec(getFrictionDirections());
-//
-//      gdnN = Vec(1);
-//
-//      gdnT = Vec(getFrictionDirections());
-//
-//      gddN  = Vec(1);
-//
-//      gddNBuf = Vec(1);
-//
-//      laN = Vec(1);
-//
-//      laT = Vec(getFrictionDirections());
-//
-//      wb = Vec();
-//
-//      sv = Vec();
-//
-//      jsv = Vector<int>();
-//
-//      rFactor = Vec();
-//
-//      laSize = 0;
-//
-//      laInd = 0;
-//
-//      gSize = 0;
-//
-//      gInd = 0;
-//
-//      gdSize = 0;
-//
-//      gdInd = 0;
-//
-//      svSize = 0;
-//
-//      svInd = 0;
-//
-//      rFactorSize = 0;
-//
-//      rFactorInd = 0;
-//
-//      corr = Vec(1);
-//
-//      corrSize = 0;
-//
-//      corrInd = 0;
-//
-//      rootID = 0;
     }
     else if (stage == MBSim::plot) {
       updatePlotFeatures();
