@@ -419,15 +419,17 @@ void MainWindow::elementListClicked() {
 
 void MainWindow::integratorListClicked() {
   if(QApplication::mouseButtons()==Qt::RightButton) {
-//    Element *element=(Element*)elementList->currentItem();
-//    QMenu* menu=element->getContextMenu();
-//    menu->exec(QCursor::pos());
-  } 
-  else if(QApplication::mouseButtons()==Qt::LeftButton) {
     Integrator *integrator=(Integrator*)integratorList->currentItem();
-    pagesWidget->insertWidget(0,integrator->getPropertyWidget());
-    pagesWidget->setCurrentWidget(integrator->getPropertyWidget());
-  }
+    if(integrator) {
+      QMenu* menu=integrator->getContextMenu();
+      menu->exec(QCursor::pos());
+    }
+  } 
+//  else if(QApplication::mouseButtons()==Qt::LeftButton) {
+//    Integrator *integrator=(Integrator*)integratorList->currentItem();
+//    pagesWidget->insertWidget(0,integrator->getPropertyWidget());
+//    pagesWidget->setCurrentWidget(integrator->getPropertyWidget());
+//  }
 }
 
 void MainWindow::parameterListClicked() {
@@ -438,11 +440,11 @@ void MainWindow::parameterListClicked() {
       menu->exec(QCursor::pos());
     }
   } 
-  else if(QApplication::mouseButtons()==Qt::LeftButton) {
-    Parameter *parameter=(Parameter*)parameterList->currentItem();
-    pagesWidget->insertWidget(0,parameter->getPropertyWidget());
-    pagesWidget->setCurrentWidget(parameter->getPropertyWidget());
-  }
+//  else if(QApplication::mouseButtons()==Qt::LeftButton) {
+//    Parameter *parameter=(Parameter*)parameterList->currentItem();
+//    pagesWidget->insertWidget(0,parameter->getPropertyWidget());
+//    pagesWidget->setCurrentWidget(parameter->getPropertyWidget());
+//  }
 }
 
 //void MainWindow::parameterListClicked(const QPoint &pos) {

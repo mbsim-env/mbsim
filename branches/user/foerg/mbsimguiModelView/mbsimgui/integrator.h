@@ -67,6 +67,7 @@ class Integrator : public QObject, public QTreeWidgetItem {
   public slots:
     void saveAs();
     void openPropertyDialog();
+    void updateElement();
 };
 
 class DOPRI5Integrator : public Integrator {
@@ -127,8 +128,12 @@ class TimeSteppingIntegrator : public Integrator {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "TimeSteppingIntegrator"; }
+    virtual void fromWidget();
+    virtual void toWidget();
+    virtual void initializeDialog();
   protected:
-    ExtWidget *stepSize;
+    ExtWidget *stepSizeWidget;
+    ExtProperty stepSize;
 };
 
 class EulerExplicitIntegrator : public Integrator {

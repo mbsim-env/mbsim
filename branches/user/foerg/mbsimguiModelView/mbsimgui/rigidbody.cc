@@ -297,7 +297,7 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
     c=ObjectFactory::getInstance()->createContour(ec, contours, -1);
     if(c) c->initializeUsingXML(ec);
     FixedRelativeFrame *f=new FixedRelativeFrame(QString("ContourFrame")+QString::number(contours->childCount()), frames, -1);
-    f->initializeUsingXML(ec);
+//    f->initializeUsingXML(ec);
     f->initializeUsingXML2(e);
     c->setSavedFrameOfReference(QString("../Frame[")+f->getName()+"]");
     e=e->NextSiblingElement();
