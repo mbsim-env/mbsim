@@ -721,19 +721,24 @@ namespace MBSim {
 
     /*Read all contour pairings*/
     //Get all contours, that should be connected
-    e = element->FirstChildElement(MBSIMNS"connect");
-    while (string(e->Value()) == string(MBSIMNS"connect")) { //As long as there are siblings read them and save them
-      saved_references ref;
-      ref.name1 = e->Attribute("ref1");
-      ref.name2 = e->Attribute("ref2");
-      if (e->Attribute("name"))
-        ref.contourPairingName = e->Attribute("name");
-      else
-        ref.contourPairingName = "";
-      //TODO: add possibility of defining own contactKinematics? (also in Contact-class)
+    e = element->FirstChildElement(MBSIMNS"connect"); //TODO: all connects must be in a row (is that okay?)
+    while (e) { //As long as there are siblings read them and save them
+      if (string(e->Value()) == string(MBSIMNS"connect")) {
+        saved_references ref;
+        ref.name1 = e->Attribute("ref1");
+        ref.name2 = e->Attribute("ref2");
+        if (e->Attribute("name"))
+          ref.contourPairingName = e->Attribute("name");
+        else
+          ref.contourPairingName = "";
+        //TODO: add possibility of defining own contactKinematics? (also in Contact-class)
 
-      saved_ref.push_back(ref);
-      e = e->NextSiblingElement();
+        saved_ref.push_back(ref);
+        e = e->NextSiblingElement();
+      }
+      else {
+        break;
+      }
     }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
