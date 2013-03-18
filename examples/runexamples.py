@@ -625,23 +625,31 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, label, data
   print("plot \\", file=diffGPFD)
   print("  '"+dataFileName+"' u ($1):($2) binary format='%double%double%double%double' title 'ref' w l lw 2, \\", file=diffGPFD)
   print("  '"+dataFileName+"' u ($3):($4) binary format='%double%double%double%double' title 'cur' w l", file=diffGPFD)
-  print("set title 'Absolute Tolerance'", file=diffGPFD)
-  print("set xlabel 'Time'", file=diffGPFD)
-  print("set ylabel 'cur-ref'", file=diffGPFD)
-  print("plot [:] [%g:%g] \\"%(-3*args.atol, 3*args.atol), file=diffGPFD)
-  print("  '"+dataFileName+"' u ($1):($4-$2) binary format='%double%double%double%double' title 'cur-ref' w l, \\", file=diffGPFD)
-  print("  %g title 'atol' lt 2 lw 1, \\"%(args.atol), file=diffGPFD)
-  print("  %g notitle lt 2 lw 1"%(-args.atol), file=diffGPFD)
-  print("set title 'Relative Tolerance'", file=diffGPFD)
-  print("set xlabel 'Time'", file=diffGPFD)
-  print("set ylabel '(cur-ref)/ref'", file=diffGPFD)
-  print("plot [:] [%g:%g] \\"%(-3*args.rtol, 3*args.rtol), file=diffGPFD)
-  print("  '"+dataFileName+"' u ($1):(($4-$2)/$2) binary format='%double%double%double%double' title '(cur-ref)/ref' w l, \\", file=diffGPFD)
-  print("  %g title 'rtol' lt 2 lw 1, \\"%(args.rtol), file=diffGPFD)
-  print("  %g notitle lt 2 lw 1"%(-args.rtol), file=diffGPFD)
+  if dataArrayRef.shape==dataArrayCur.shape:
+    print("set title 'Absolute Tolerance'", file=diffGPFD)
+    print("set xlabel 'Time'", file=diffGPFD)
+    print("set ylabel 'cur-ref'", file=diffGPFD)
+    print("plot [:] [%g:%g] \\"%(-3*args.atol, 3*args.atol), file=diffGPFD)
+    print("  '"+dataFileName+"' u ($1):($4-$2) binary format='%double%double%double%double' title 'cur-ref' w l, \\", file=diffGPFD)
+    print("  %g title 'atol' lt 2 lw 1, \\"%(args.atol), file=diffGPFD)
+    print("  %g notitle lt 2 lw 1"%(-args.atol), file=diffGPFD)
+    print("set title 'Relative Tolerance'", file=diffGPFD)
+    print("set xlabel 'Time'", file=diffGPFD)
+    print("set ylabel '(cur-ref)/ref'", file=diffGPFD)
+    print("plot [:] [%g:%g] \\"%(-3*args.rtol, 3*args.rtol), file=diffGPFD)
+    print("  '"+dataFileName+"' u ($1):(($4-$2)/$2) binary format='%double%double%double%double' title '(cur-ref)/ref' w l, \\", file=diffGPFD)
+    print("  %g title 'rtol' lt 2 lw 1, \\"%(args.rtol), file=diffGPFD)
+    print("  %g notitle lt 2 lw 1"%(-args.rtol), file=diffGPFD)
   diffGPFD.close()
 
   # create datafile
+  nradd=dataArrayRef.shape[0]-dataArrayCur.shape[0]
+  add=numpy.empty([abs(nradd), 2])
+  add[:]=float("NaN");
+  if nradd<0:
+    dataArrayRef=numpy.concatenate((dataArrayRef, add), axis=0)
+  if nradd>0:
+    dataArrayCur=numpy.concatenate((dataArrayCur, add), axis=0)
   dataArrayRefCur=numpy.concatenate((dataArrayRef, dataArrayCur), axis=1)
   dataArrayRefCur.tofile(dataFileName)
 
