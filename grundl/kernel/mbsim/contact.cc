@@ -137,7 +137,7 @@ namespace MBSim {
   }
 
   void Contact::updateVRef(const Mat& VParent, int j) {
-    LinkMechanics::updateVRef(VParent, j);;
+    LinkMechanics::updateVRef(VParent, j);
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
         jter->updateVRef(VParent, j);
@@ -318,7 +318,8 @@ namespace MBSim {
       //connect all contours given in xml file
       for (size_t i = 0; i < saved_ref.size(); i++) {
         if (saved_ref[i].name1 != "" && saved_ref[i].name2 != "")
-          connect(getByPath<Contour>(saved_ref[i].name1), getByPath<Contour>(saved_ref[i].name2));
+          connect(getByPath<Contour>(saved_ref[i].name1), getByPath<Contour>(saved_ref[i].name2), 0, saved_ref[i].contourPairingName);
+        //TODO: add option to specifiy contact_kinematics
       }
 
       //initialize all contour couplings if generalized force law is of maxwell-type
@@ -346,7 +347,7 @@ namespace MBSim {
           contacts[cK][k].connect(contour0);
           contacts[cK][k].connect(contour1);
           //Applies the plot feature to all children (make it possible to set only some children...)
-          for(int i = MBSim::plotRecursive; i !=  MBSim::LASTPLOTFEATURE; i++)
+          for (int i = MBSim::plotRecursive; i != MBSim::LASTPLOTFEATURE; i++)
             contacts[cK][k].setPlotFeature(static_cast<MBSim::PlotFeature>(i), getPlotFeature(static_cast<MBSim::PlotFeature>(i)));
 
           //set the tolerances for the single contacts
@@ -683,7 +684,6 @@ namespace MBSim {
   }
 
   void Contact::initializeUsingXML(TiXmlElement *element) {
-    //TODO: more or less the same as in Contact (avoid redundancy)
     LinkMechanics::initializeUsingXML(element);
     TiXmlElement *e;
 
@@ -722,18 +722,15 @@ namespace MBSim {
     /*Read all contour pairings*/
     //Get all contours, that should be connected
     e = element->FirstChildElement(MBSIMNS"connect");
-    e = e->FirstChildElement(); //first contour pair
-    //TODO: loop should be exported to sub-structure?
-    while (e) { //As long as there are siblings read them and save them
+    while (string(e->Value()) == string(MBSIMNS"connect")) { //As long as there are siblings read them and save them
       saved_references ref;
       ref.name1 = e->Attribute("ref1");
       ref.name2 = e->Attribute("ref2");
-      TiXmlElement* e2 = e->FirstChildElement();
-      //TODO: add possibility of defining own contactKinematics? (also in Contact-class)
-      if (e2)
-        ref.contourPairingName = e2->ValueStr();
+      if (e->Attribute("name"))
+        ref.contourPairingName = e->Attribute("name");
       else
         ref.contourPairingName = "";
+      //TODO: add possibility of defining own contactKinematics? (also in Contact-class)
 
       saved_ref.push_back(ref);
       e = e->NextSiblingElement();
