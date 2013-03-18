@@ -65,8 +65,9 @@ System::System(const string &projectName, int contactType, int firstBall, int la
   srand((unsigned) time(0));
 
   /*create reference frame for all objects with the given shift*/
-  Frame* ReferenceFrame = new Frame(getName()+"RefFrame");
-  this->addFrame(ReferenceFrame, ReferenceFrameShift, SqrMat(3,EYE));
+  FixedRelativeFrame* ReferenceFrame = new FixedRelativeFrame(getName()+"RefFrame");
+  ReferenceFrame->setRelativePosition(ReferenceFrameShift);
+  this->addFrame(ReferenceFrame);
 
   /*General-Parameters*/
   MaxwellContact *maxwellContact = new MaxwellContact("MaxwellContact");
@@ -142,9 +143,14 @@ System::System(const string &projectName, int contactType, int firstBall, int la
 
     SqrMat BallRot(3, EYE);
 
-    this->addFrame(ballname.str(), BallInitialTranslation, BallRot, ReferenceFrame);
+    FixedRelativeFrame * R = new FixedRelativeFrame(ballname.str());
+    R->setFrameOfReference(ReferenceFrame);
+    R->setRelativePosition(BallInitialTranslation);
+    R->setRelativeOrientation(BallRot);
 
-    balls[ballIter]->setFrameOfReference(this->getFrame(ballname.str(), true));
+    this->addFrame(R);
+
+    balls[ballIter]->setFrameOfReference(R);
     balls[ballIter]->setMass(1.);
     balls[ballIter]->setInertiaTensor(SymMat(3,EYE));
     balls[ballIter]->setTranslation(new LinearTranslation(SqrMat(3, EYE)));
