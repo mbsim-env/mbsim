@@ -2119,25 +2119,17 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="connect">
-            <xs:complexType>
-             <xs:annotation>
-               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                 Bindet zwei Konturen an einen Kontakt. 
-               </xs:documentation>
-             </xs:annotation>
-             <xs:sequence>
-               <xs:element name="ContourPair" maxOccurs="unbounded">
-                 <xs:complexType>  
-                    <xs:sequence>                    
-                       <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
-                     </xs:sequence>
-                   <xs:attribute name="ref1" type="ContourReferenceType" use="required"/>
-                   <xs:attribute name="ref2" type="ContourReferenceType" use="required"/>
-                 </xs:complexType>
-               </xs:element>
-             </xs:sequence>
-            </xs:complexType> 
+          <xs:element name="connect" maxOccurs="unbounded">
+           <xs:annotation>
+             <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+               Bindet zwei Konturen an einen Kontakt. 
+             </xs:documentation>
+           </xs:annotation>
+             <xs:complexType>  
+               <xs:attribute name="ref1" type="ContourReferenceType" use="required"/>
+               <xs:attribute name="ref2" type="ContourReferenceType" use="required"/>
+               <xs:attribute name="name" type="pv:name" use="optional"/>
+             </xs:complexType>
           </xs:element>
           <xs:element name="enableOpenMBVContactPoints" type="pv:lengthScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
