@@ -24,13 +24,16 @@
 #include "extended_widgets.h"
 #include "solver.h"
 #include "objectfactory.h"
+#include "mainwindow.h"
 #include <QtGui/QMenu>
 #include <QtGui/QFileDialog>
 #include <QtGui/QHBoxLayout>
 
 using namespace std;
 
-Integrator::Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind) : QTreeWidgetItem(), drawThisPath(true), searchMatched(true), initialState(0,false) {
+extern MainWindow *mw;
+
+Integrator::Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind) : QTreeWidgetItem(), drawThisPath(true), searchMatched(true), initialState(0,false), dialog(0) {
   if(ind==-1 || ind>=parentItem->childCount())
     parentItem->addChild(this); // insert as last element
   else
@@ -57,11 +60,16 @@ Integrator::Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind)
   initialState.setProperty(new ExtPhysicalVarProperty(input));
 
   contextMenu=new QMenu("Context Menu");
+
+  QAction *action=new QAction(Utils::QIconCached("newobject.svg"),"Properties", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(openPropertyDialog()));
+  contextMenu->addAction(action);
 }
 
 Integrator::~Integrator() {
   delete properties;
 }
+
 void Integrator::openPropertyDialog() {
   if(!dialog) {
     dialog = new PropertyDialog;
@@ -111,6 +119,11 @@ void Integrator::fromWidget() {
   endTime.fromWidget(endTimeWidget);
   plotStepSize.fromWidget(plotStepSizeWidget);
   initialState.fromWidget(initialStateWidget);
+}
+
+void Integrator::updateElement() {
+  fromWidget();
+  mw->mbsimxml(1);
 }
 
 void Integrator::setEndTime(double t) {
@@ -212,6 +225,7 @@ DOPRI5Integrator::DOPRI5Integrator(const QString &str, QTreeWidgetItem *parentIt
 }
 
 void DOPRI5Integrator::initializeDialog() {
+  Integrator::initializeDialog();
 
   dialog->addTab("Tolerances");
   dialog->addTab("Step size");
@@ -563,24 +577,41 @@ class RKSuiteTypeWidget : public Widget {
 };
 
 TimeSteppingIntegrator::TimeSteppingIntegrator(const QString &str, QTreeWidgetItem *parentItem, int ind) : Integrator(str,parentItem,ind) {
-  properties->addTab("Step size");
+
+  vector<PhysicalStringProperty*> input;
+  input.push_back(new PhysicalStringProperty(new ScalarProperty("1e-3"),"s",MBSIMINTNS"stepSize"));
+  stepSize.setProperty(new ExtPhysicalVarProperty(input)); 
+}
+
+void TimeSteppingIntegrator::initializeDialog() {
+  Integrator::initializeDialog();
+
+  dialog->addTab("Step size");
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-3"),timeUnits(),2));
-  stepSize = new ExtWidget("Time step size",new ExtPhysicalVarWidget(input)); 
-  properties->addToTab("Step size", stepSize);
+  stepSizeWidget = new ExtWidget("Time step size",new ExtPhysicalVarWidget(input)); 
+  dialog->addToTab("Step size", stepSizeWidget);
+}
 
-  properties->addStretch();
+void TimeSteppingIntegrator::toWidget() {
+  Integrator::toWidget();
+  stepSize.toWidget(stepSizeWidget);
+}
+
+void TimeSteppingIntegrator::fromWidget() {
+  Integrator::fromWidget();
+  stepSize.fromWidget(stepSizeWidget);
 }
 
 void TimeSteppingIntegrator::initializeUsingXML(TiXmlElement *element) {
   Integrator::initializeUsingXML(element);
-  stepSize->initializeUsingXML(element);
+  stepSize.initializeUsingXML(element);
 }
 
 TiXmlElement* TimeSteppingIntegrator::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Integrator::writeXMLFile(parent);
-  stepSize->writeXMLFile(ele0);
+  stepSize.writeXMLFile(ele0);
   return ele0;
 }
 

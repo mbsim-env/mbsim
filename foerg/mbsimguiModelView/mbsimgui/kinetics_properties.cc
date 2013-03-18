@@ -109,7 +109,7 @@ TiXmlElement* GeneralizedImpactLawProperty::writeXMLFile(TiXmlNode *parent) {
 
 UnilateralNewtonImpactProperty::UnilateralNewtonImpactProperty() {
   vector<PhysicalStringProperty*> input;
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"-",""));
+  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"-",MBSIMNS"restitutionCoefficient"));
   restitutionCoefficient.setProperty(new ExtPhysicalVarProperty(input));
 }
 
