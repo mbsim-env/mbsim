@@ -59,11 +59,9 @@ void Joint::initializeDialog() {
   dialog->addTab("Visualisation");
 
   forceArrowWidget = new ExtWidget("OpenMBV force arrow",new OMBVArrowWidget("NOTSET"),true);
-  ((OMBVArrowWidget*)forceArrowWidget->getWidget())->setID(getID());
   dialog->addToTab("Visualisation",forceArrowWidget);
 
   momentArrowWidget = new ExtWidget("OpenMBV moment arrow",new OMBVArrowWidget("NOTSET"),true);
-  ((OMBVArrowWidget*)momentArrowWidget->getWidget())->setID(getID());
   dialog->addToTab("Visualisation",momentArrowWidget);
 
   connectionsWidget = new ExtWidget("Connections",new ConnectFramesWidget(2,this));

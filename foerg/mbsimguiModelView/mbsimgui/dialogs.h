@@ -109,5 +109,4 @@ class ContourBrowser : public QDialog {
     void checkForContour(QTreeWidgetItem* item_,int);
 };
 
-
 #endif

@@ -19,6 +19,8 @@
 
 #include <config.h>
 #include "signal_.h"
+#include "basic_properties.h"
+#include "kinetics_properties.h"
 #include "basic_widgets.h"
 #include "kinetics_widgets.h"
 #include "extended_widgets.h"
@@ -40,26 +42,48 @@ Sensor::~Sensor() {
 }
 
 AbsolutCoordinateSensor::AbsolutCoordinateSensor(const QString &str, QTreeWidgetItem *parentItem, int ind) : Sensor(str, parentItem, ind) {
-  frame = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(this,0));
-  properties->addToTab("General", frame);
-  direction = new ExtWidget("Direction",new GeneralizedForceDirectionWidget);
-  properties->addToTab("General", direction);
+  frame.setProperty(new FrameOfReferenceProperty(0,this,MBSIMCONTROLNS"frame"));
+  direction.setProperty(new GeneralizedForceDirectionProperty(MBSIMCONTROLNS"direction"));
+}
+
+void AbsolutCoordinateSensor::initialize() {
+  Sensor::initialize();
+  frame.initialize();
+}
+
+void AbsolutCoordinateSensor::initializeDialog() {
+  Sensor::initializeDialog();
+
+  frameWidget = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(this,0));
+  dialog->addToTab("General", frameWidget);
+  directionWidget = new ExtWidget("Direction",new GeneralizedForceDirectionWidget);
+  dialog->addToTab("General", directionWidget);
+}
+void AbsolutCoordinateSensor::toWidget() {
+  Sensor::toWidget();
+  frame.toWidget(frameWidget);
+  direction.toWidget(directionWidget);
+}
+
+void AbsolutCoordinateSensor::fromWidget() {
+  Sensor::fromWidget();
+  frame.fromWidget(frameWidget);
+  direction.fromWidget(directionWidget);
 }
 
 void AbsolutCoordinateSensor::initializeUsingXML(TiXmlElement *element) {
   Sensor::initializeUsingXML(element);
-  frame->initializeUsingXML(element);
-  direction->initializeUsingXML(element);
+  frame.initializeUsingXML(element);
+  direction.initializeUsingXML(element);
 }
 
 TiXmlElement* AbsolutCoordinateSensor::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Sensor::writeXMLFile(parent);
-  frame->writeXMLFile(ele0);
-  direction->writeXMLFile(ele0);
+  frame.writeXMLFile(ele0);
+  direction.writeXMLFile(ele0);
   return ele0;
 }
 
 AbsolutePositionSensor::AbsolutePositionSensor(const QString &str, QTreeWidgetItem *parentItem, int ind) : AbsolutCoordinateSensor(str, parentItem, ind) {
   setText(1,getType());
-  properties->addStretch();
 }

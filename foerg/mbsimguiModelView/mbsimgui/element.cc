@@ -57,9 +57,6 @@ Element::Element(const QString &str, QTreeWidgetItem *parentItem, int ind, bool 
 
   setName(str);
 
-  properties=new PropertyWidget(this);
-//  properties->addTab("General");
-
   if(grey) {
     QColor color;
     color.setRgb(200,200,200);
@@ -69,9 +66,6 @@ Element::Element(const QString &str, QTreeWidgetItem *parentItem, int ind, bool 
   }
   else {
   }
-
-//  name=new ExtWidget("Name",new NameWidget(this,!grey));
-//  properties->addToTab("General",name);
 
   contextMenu=new QMenu("Context Menu");
 
@@ -84,7 +78,7 @@ Element::Element(const QString &str, QTreeWidgetItem *parentItem, int ind, bool 
 Element::~Element() {
   idEleMap.erase(ID);
   // delete scene graph
-  delete properties;
+  delete dialog;
   //objects.erase(this);
 }
 
@@ -240,7 +234,7 @@ void Element::initialize() {
 }
 
 void Element::resizeVariables() {
-  properties->resizeVariables();
+  dialog->resizeVariables();
   if(getContainerGroup()) {
     for(int i=0; i<getContainerGroup()->childCount(); i++)
       getGroup(i)->resizeVariables();

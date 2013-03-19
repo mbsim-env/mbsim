@@ -446,7 +446,10 @@ void Function1ChoiceProperty::fromWidget(QWidget *widget) {
 }
 
 void Function1ChoiceProperty::toWidget(QWidget *widget) {
+  static_cast<Function1ChoiceWidget*>(widget)->comboBox->blockSignals(true);
   static_cast<Function1ChoiceWidget*>(widget)->comboBox->setCurrentIndex(index);
+  static_cast<Function1ChoiceWidget*>(widget)->comboBox->blockSignals(false);
+  static_cast<Function1ChoiceWidget*>(widget)->defineForceLaw(index);
   function->toWidget(static_cast<Function1ChoiceWidget*>(widget)->function);
 }
 
@@ -490,6 +493,9 @@ void Function2ChoiceProperty::fromWidget(QWidget *widget) {
 }
 
 void Function2ChoiceProperty::toWidget(QWidget *widget) {
+  static_cast<Function2ChoiceWidget*>(widget)->comboBox->blockSignals(true);
   static_cast<Function2ChoiceWidget*>(widget)->comboBox->setCurrentIndex(index);
+  static_cast<Function2ChoiceWidget*>(widget)->comboBox->blockSignals(false);
+  static_cast<Function2ChoiceWidget*>(widget)->defineForceLaw(index);
   function->toWidget(static_cast<Function2ChoiceWidget*>(widget)->function);
 }

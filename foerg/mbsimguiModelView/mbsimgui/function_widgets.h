@@ -38,8 +38,6 @@ class Function1Widget : public Widget {
     virtual ~Function1Widget() {}
     virtual QString getType() const { return "Function1_"+ext; }
     virtual QString getExt() const { return ext; }
-    void updateWidget() {}
-    void resizeVariables() {}
   public slots:
     virtual void resize(int m, int n) {}
   protected:
@@ -53,8 +51,6 @@ class Function2Widget : public Widget {
     virtual ~Function2Widget() {}
     virtual QString getType() const { return "Function2_"+ext; }
     virtual QString getExt() const { return ext; }
-    void updateWidget() {}
-    void resizeVariables() {}
   public slots:
     virtual void resize(int m, int n) {}
   protected:
@@ -237,8 +233,6 @@ class Function1ChoiceWidget : public Widget {
 
     void resize(int m, int n) {if(function) function->resize(m,n);}
     Function1Widget* getFunction() {return function;}
-    void updateWidget() {}
-    void resizeVariables() {}
 
   protected slots:
     void defineForceLaw(int);
@@ -262,8 +256,6 @@ class Function2ChoiceWidget : public Widget {
     Function2ChoiceWidget();
 
     void resize(int m, int n) {if(function) function->resize(m,n);}
-    void updateWidget() {}
-    void resizeVariables() {}
 
   protected slots:
       void defineForceLaw(int);

@@ -27,14 +27,6 @@
 
 using namespace std;
 
-void OMBVObjectWidget::writeXMLFileID(TiXmlNode *parent) {
-  if(!ID.empty()) {
-    TiXmlUnknown *id=new TiXmlUnknown;
-    id->SetValue("?OPENMBV_ID "+ID+"?");
-    parent->LinkEndChild(id);
-  }
-}
-
 OMBVFrameWidget::OMBVFrameWidget(const string &name) : OMBVObjectWidget(name) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -316,7 +308,7 @@ void CompoundRigidBodyWidget::removeBody() {
   }
 }
 
-OMBVBodyChoiceWidget::OMBVBodyChoiceWidget(const string &name_, bool flag, const string &ID_) : ombv(0), name(name_), ID(ID_) {
+OMBVBodyChoiceWidget::OMBVBodyChoiceWidget(const string &name_, bool flag) : ombv(0), name(name_) {
 
   layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -353,7 +345,6 @@ void OMBVBodyChoiceWidget::ombvSelection(int index) {
     ombv = new CompoundRigidBodyWidget(name);  
   layout->addWidget(ombv);
   ombv->updateWidget();
-  ombv->setID(ID);
 }
 
 OMBVBodySelectionWidget::OMBVBodySelectionWidget(RigidBody *body) : ombv(0), ref(0) {
@@ -362,7 +353,7 @@ OMBVBodySelectionWidget::OMBVBodySelectionWidget(RigidBody *body) : ombv(0), ref
   layout->setMargin(0);
   setLayout(layout);
 
-  ombv = new OMBVBodyChoiceWidget("NOTSET", true, body->getID());
+  ombv = new OMBVBodyChoiceWidget("NOTSET", true);
   ref=new LocalFrameOfReferenceWidget(body);
   ExtWidget *widget = new ExtWidget("Frame of reference",ref);
   layout->addWidget(ombv);

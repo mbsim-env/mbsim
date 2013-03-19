@@ -48,7 +48,6 @@ class Element : public QObject, public QTreeWidgetItem {
     bool drawThisPath;
     QString iconFile;
     bool searchMatched;
-    PropertyWidget *properties;
     QMenu *contextMenu;
     QAction *actionSave;
     QString file;
@@ -83,7 +82,6 @@ class Element : public QObject, public QTreeWidgetItem {
     bool getSearchMatched() { return searchMatched; }
     void setSearchMatched(bool m) { searchMatched=m; }
     QMenu* getContextMenu() { return contextMenu; }
-    PropertyWidget* getPropertyWidget() { return properties; }
     QString getName() const {return name;}
     void setName(const QString &str);
     template<class T> T* getByPath(QString path);

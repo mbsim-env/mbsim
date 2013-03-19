@@ -39,7 +39,6 @@ class Integrator : public QObject, public QTreeWidgetItem {
     bool drawThisPath;
     std::string iconFile;
     bool searchMatched;
-    PropertyWidget *properties;
     QMenu *contextMenu;
     VecWidget *z0;
     ExtWidget *startTimeWidget, *endTimeWidget, *plotStepSizeWidget, *initialStateWidget;
@@ -58,7 +57,6 @@ class Integrator : public QObject, public QTreeWidgetItem {
     virtual void writeXMLFile() { writeXMLFile(getType()); }
     virtual QString getType() const { return "Integrator"; }
     QMenu* getContextMenu() { return contextMenu; }
-    PropertyWidget* getPropertyWidget() { return properties; }
     void setEndTime(double t);
     virtual void initializeDialog();
     virtual void fromWidget();

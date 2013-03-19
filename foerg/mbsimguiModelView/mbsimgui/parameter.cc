@@ -40,12 +40,6 @@ Parameter::Parameter(const QString &str, QTreeWidgetItem *parentItem, int ind) :
 
   setName(str);
 
-  properties=new PropertyWidget(this);
-  properties->addTab("General");
-
-//  name = new ExtWidget("Name",new ParameterNameWidget(this));
-//  properties->addToTab("General", name);
-
   contextMenu=new QMenu("Context Menu");
 
   connect(this,SIGNAL(parameterChanged(const QString&)),this,SLOT(updateTreeWidgetItem(const QString&)));
@@ -60,7 +54,7 @@ Parameter::Parameter(const QString &str, QTreeWidgetItem *parentItem, int ind) :
 }
 
 Parameter::~Parameter() {
-  delete properties;
+  delete dialog;
 }
 
 void Parameter::openPropertyDialog() {

@@ -164,15 +164,12 @@ void RigidBody::initializeDialog() {
   dialog->addToTab("Visualisation", ombvEditorWidget);
 
   weightArrowWidget = new ExtWidget("OpenMBV weight arrow",new OMBVArrowWidget("NOTSET"),true);
-  ((OMBVArrowWidget*)weightArrowWidget->getWidget())->setID(getID());
   dialog->addToTab("Visualisation",weightArrowWidget);
 
   jointForceArrowWidget = new ExtWidget("OpenMBV joint force arrow",new OMBVArrowWidget("NOTSET"),true);
-  ((OMBVArrowWidget*)jointForceArrowWidget->getWidget())->setID(getID());
   dialog->addToTab("Visualisation",jointForceArrowWidget);
 
   jointMomentArrowWidget = new ExtWidget("OpenMBV joint moment arrow",new OMBVArrowWidget("NOTSET"),true);
-  ((OMBVArrowWidget*)jointMomentArrowWidget->getWidget())->setID(getID());
   dialog->addToTab("Visualisation",jointMomentArrowWidget);
 
   input.clear();

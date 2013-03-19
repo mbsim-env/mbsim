@@ -32,8 +32,6 @@ class TranslationWidget : public Widget {
   public:
     TranslationWidget() {}
     virtual int getSize() const = 0;
-    void updateWidget() {}
-    void resizeVariables() {}
    protected:
 };
 
@@ -60,8 +58,6 @@ class TranslationChoiceWidget : public Widget {
     TranslationChoiceWidget(const std::string &xmlName);
 
     int getSize() const { return translation->getSize(); }
-    void updateWidget() {}
-    void resizeVariables() {}
 
   protected slots:
     void defineTranslation(int);
@@ -80,8 +76,6 @@ class RotationWidget : public Widget {
   public:
     RotationWidget() {}
     virtual int getSize() const = 0;
-    void updateWidget() {}
-    void resizeVariables() {}
 };
 
 class RotationAboutXAxisWidget : public RotationWidget {
@@ -139,8 +133,6 @@ class RotationChoiceWidget : public Widget {
     RotationChoiceWidget(const std::string &xmlName);
 
     int getSize() const { return rotation->getSize(); }
-    void updateWidget() {}
-    void resizeVariables() {}
 
   public slots:
     void defineRotation(int);

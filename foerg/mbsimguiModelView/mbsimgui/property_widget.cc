@@ -24,60 +24,6 @@
 
 using namespace std;
 
-PropertyWidget::PropertyWidget(QObject *parentObject_) : parentObject(parentObject_) {
-
-  setWindowTitle("Properties");
-}
-
-PropertyWidget::~PropertyWidget() {
-}
-
-void PropertyWidget::addToTab(const QString &name, ExtWidget* widget_) {
-  layout[name]->addWidget(widget_);
-  widget.push_back(widget_);
-}
-
-void PropertyWidget::addStretch() {
-  for ( std::map<QString,QVBoxLayout*>::iterator it=layout.begin() ; it != layout.end(); it++ )
-    (*it).second->addStretch(1);
-}
-
-void PropertyWidget::updateWidget() {
-  for(unsigned int i=0; i<widget.size(); i++)
-    widget[i]->updateWidget();
-}
-
-void PropertyWidget::resizeVariables() {
-  for(unsigned int i=0; i<widget.size(); i++)
-    widget[i]->resizeVariables();
-}
-
-void PropertyWidget::addTab(const QString &name, int i) {  
-  QScrollArea *tab = new QScrollArea;
-  tab->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-  tab->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-  tab->setWidgetResizable(true);
-  QWidget *widget = new QWidget;
-  QHBoxLayout *hlo = new QHBoxLayout;
-
-  QWidget *box = new QWidget;
-  QVBoxLayout *layout_ = new QVBoxLayout;
-  box->setLayout(layout_);
-  layout[name] = layout_;
-  hlo->addWidget(box);
-
-  widget->setLayout(hlo);
-  tab->setWidget(widget);
-  if(i==-1)
-    addTab(tab, name);
-  else 
-    insertTab(i,tab,name);
-}
-
-void PropertyWidget::setParentObject(QObject *parentObject_) {
-  parentObject=parentObject_;
-}
-
 PropertyDialog::PropertyDialog(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,f) {
 
   QVBoxLayout *layout = new QVBoxLayout;

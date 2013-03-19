@@ -41,8 +41,6 @@ Integrator::Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind)
 
   setText(0, str);
 
-  properties=new PropertyWidget(this);
-
   vector<PhysicalStringProperty*> input;
   input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"s",MBSIMINTNS"startTime"));
   startTime.setProperty(new ExtPhysicalVarProperty(input)); 
@@ -67,7 +65,7 @@ Integrator::Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind)
 }
 
 Integrator::~Integrator() {
-  delete properties;
+  delete dialog;
 }
 
 void Integrator::openPropertyDialog() {

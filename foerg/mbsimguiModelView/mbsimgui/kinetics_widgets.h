@@ -36,8 +36,6 @@ class GeneralizedForceLawWidget : public Widget {
   public:
     GeneralizedForceLawWidget() : forceFunc(0) {}
     virtual QString getType() const { return "GeneralizedForceLaw"; }
-    void updateWidget() {}
-    void resizeVariables() {}
    protected:
     Function2Widget *forceFunc;
 };
@@ -91,8 +89,6 @@ class GeneralizedImpactLawWidget : public Widget {
   public:
     GeneralizedImpactLawWidget() {}
     virtual QString getType() const { return "GeneralizedImpactLaw"; }
-    void updateWidget() {}
-    void resizeVariables() {}
 };
 
 class BilateralImpactWidget : public GeneralizedImpactLawWidget {
@@ -118,8 +114,6 @@ class FrictionForceLawWidget : public Widget {
   public:
     FrictionForceLawWidget() : frictionForceFunc(0) {}
     virtual QString getType() const { return "FrictionForceLaw"; }
-    void updateWidget() {}
-    void resizeVariables() {}
    protected:
     Function2Widget *frictionForceFunc;
 };
@@ -181,8 +175,6 @@ class FrictionImpactLawWidget : public Widget {
   public:
     FrictionImpactLawWidget() {}
     virtual QString getType() const { return "FrictionImpactLaw"; }
-    void updateWidget() {}
-    void resizeVariables() {}
 };
 
 class PlanarCoulombImpactWidget : public FrictionImpactLawWidget {
@@ -216,8 +208,6 @@ class GeneralizedForceLawChoiceWidget : public Widget {
     GeneralizedForceLawChoiceWidget();
 
     int getForceLaw() {return comboBox->currentIndex();}
-    void updateWidget() {}
-    void resizeVariables() {}
 
   protected slots:
     void defineForceLaw(int);
@@ -237,8 +227,6 @@ class GeneralizedImpactLawChoiceWidget : public Widget {
     GeneralizedImpactLawChoiceWidget();
 
     int getImpactLaw() {return comboBox->currentIndex();}
-    void updateWidget() {}
-    void resizeVariables() {}
 
   protected slots:
     void defineImpactLaw(int);
@@ -258,8 +246,6 @@ class FrictionForceLawChoiceWidget : public Widget {
     FrictionForceLawChoiceWidget();
 
     int getForceLaw() {return comboBox->currentIndex();}
-    void updateWidget() {}
-    void resizeVariables() {}
 
   protected slots:
     void defineFrictionLaw(int);
@@ -279,8 +265,6 @@ class FrictionImpactLawChoiceWidget : public Widget {
     FrictionImpactLawChoiceWidget();
 
     int getImpactLaw() {return comboBox->currentIndex();}
-    void updateWidget() {}
-    void resizeVariables() {}
 
   protected slots:
     void defineFrictionImpactLaw(int);
@@ -299,8 +283,6 @@ class GeneralizedForceChoiceWidget : public Widget {
     GeneralizedForceChoiceWidget();
 
     int getSize() const; 
-    void updateWidget() {}
-    void resizeVariables() {}
 
   protected:
     QVBoxLayout *layout;
@@ -316,7 +298,6 @@ class ForceChoiceWidget : public Widget {
     ForceChoiceWidget();
 
     int getSize() const; 
-    void updateWidget() {}
 
   public slots:
     void resizeVariables();
@@ -333,9 +314,6 @@ class ForceDirectionWidget : public Widget {
   public:
     ForceDirectionWidget(Element *element);
 
-    void updateWidget() {}
-    void resizeVariables() {}
-
   protected:
     QWidget *forceDirWidget;
     Element *element;
@@ -350,8 +328,6 @@ class GeneralizedForceDirectionWidget : public Widget {
     GeneralizedForceDirectionWidget();
 
     int getSize() const;
-    void updateWidget() {}
-    void resizeVariables() {}
 
   protected:
     ExtWidget *mat;
