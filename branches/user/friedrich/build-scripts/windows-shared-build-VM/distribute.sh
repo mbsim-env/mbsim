@@ -124,6 +124,9 @@ getdlls() {
 }
 
 echo $BINFILES > $TMPDLLFILESOUT
+# get dependent libs for Qt plugins
+echo /usr/i686-w64-mingw32/sys-root/mingw/lib/qt4/plugins/imageformats/qsvg4.dll >> $TMPDLLFILESOUT
+echo /usr/i686-w64-mingw32/sys-root/mingw/lib/qt4/plugins/iconengines/qsvgicon4.dll >> $TMPDLLFILESOUT
 
 RERUN=1
 while [ $RERUN -ge 1 ]; do
@@ -428,6 +431,9 @@ getdlls() {
 }
 
 echo $BINFILES > $TMPDLLFILESOUT
+# get dependent libs for Qt plugins
+echo /usr/i686-w64-mingw32/sys-root/mingw/lib/qt4/plugins/imageformats/qsvg4.dll >> $TMPDLLFILESOUT
+echo /usr/i686-w64-mingw32/sys-root/mingw/lib/qt4/plugins/iconengines/qsvgicon4.dll >> $TMPDLLFILESOUT
 
 RERUN=1
 while [ $RERUN -ge 1 ]; do

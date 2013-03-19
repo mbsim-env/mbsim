@@ -88,6 +88,9 @@ for F in $BINFILES; do
   cp -uL $F $DISTDIR/bin
   ldd $F | sed -rne "/=>/s/^.*=> ([^(]+) .*$/\1/p" >> $TMPSOFILE
 done
+# get dependent libs for Qt plugins
+ldd /usr/lib/qt4/plugins/imageformats/libqsvg.so | sed -rne "/=>/s/^.*=> ([^(]+) .*$/\1/p" >> $TMPSOFILE
+ldd /usr/lib/qt4/plugins/iconengines/libqsvgicon.so | sed -rne "/=>/s/^.*=> ([^(]+) .*$/\1/p" >> $TMPSOFILE
 # copy dependent libs
 sort $TMPSOFILE | uniq > $TMPSOFILE.uniq
 for F in $(cat $TMPSOFILE); do
@@ -397,6 +400,9 @@ for F in $BINFILES; do
   cp -uL $F $DISTDIR/bin
   ldd $F | sed -rne "/=>/s/^.*=> ([^(]+) .*$/\1/p" >> $TMPSOFILE
 done
+# get dependent libs for Qt plugins
+ldd /usr/lib/qt4/plugins/imageformats/libqsvg.so | sed -rne "/=>/s/^.*=> ([^(]+) .*$/\1/p" >> $TMPSOFILE
+ldd /usr/lib/qt4/plugins/iconengines/libqsvgicon.so | sed -rne "/=>/s/^.*=> ([^(]+) .*$/\1/p" >> $TMPSOFILE
 # copy dependent libs
 sort $TMPSOFILE | uniq > $TMPSOFILE.uniq
 for F in $(cat $TMPSOFILE); do
