@@ -60,10 +60,10 @@ class Integrator : public QObject, public QTreeWidgetItem {
     QMenu* getContextMenu() { return contextMenu; }
     PropertyWidget* getPropertyWidget() { return properties; }
     void setEndTime(double t);
-    virtual void resizeVariables(); 
+    virtual void initializeDialog();
     virtual void fromWidget();
     virtual void toWidget();
-    virtual void initializeDialog();
+    virtual void resizeVariables(); 
   public slots:
     void saveAs();
     void openPropertyDialog();
@@ -76,10 +76,10 @@ class DOPRI5Integrator : public Integrator {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "DOPRI5Integrator"; }
-    virtual void resizeVariables();
+    virtual void initializeDialog();
     virtual void fromWidget();
     virtual void toWidget();
-    virtual void initializeDialog();
+    virtual void resizeVariables();
   protected:
     VecWidget *aTol, *rTol;
     ExtWidget *absTolWidget, *relTolWidget, *initialStepSizeWidget, *maximalStepSizeWidget, *maxStepsWidget;
@@ -92,10 +92,14 @@ class RADAU5Integrator : public Integrator {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "RADAU5Integrator"; }
+    virtual void initializeDialog();
+    virtual void fromWidget();
+    virtual void toWidget();
     virtual void resizeVariables();
   protected:
     VecWidget *aTol, *rTol;
-    ExtWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *maxSteps;
+    ExtWidget *absTolWidget, *relTolWidget, *initialStepSizeWidget, *maximalStepSizeWidget, *maxStepsWidget;
+    ExtProperty absTol, relTol, initialStepSize, maximalStepSize, maxSteps;
 };
 
 class LSODEIntegrator : public Integrator {
@@ -104,10 +108,14 @@ class LSODEIntegrator : public Integrator {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "LSODEIntegrator"; }
+    virtual void initializeDialog();
+    virtual void fromWidget();
+    virtual void toWidget();
     virtual void resizeVariables();
   protected:
     VecWidget *aTol;
-    ExtWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *minimalStepSize, *maxSteps, *stiff;
+    ExtWidget *absTolWidget, *relTolWidget, *initialStepSizeWidget, *maximalStepSizeWidget, *minimalStepSizeWidget, *maxStepsWidget, *stiffWidget;
+    ExtProperty absTol, relTol, initialStepSize, maximalStepSize, minimalStepSize, maxSteps, stiff;
 };
 
 class LSODARIntegrator : public Integrator {
@@ -116,10 +124,14 @@ class LSODARIntegrator : public Integrator {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "LSODARIntegrator"; }
+    virtual void initializeDialog();
+    virtual void fromWidget();
+    virtual void toWidget();
     virtual void resizeVariables();
   protected:
     VecWidget *aTol;
-    ExtWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *minimalStepSize, *plotOnRoot;
+    ExtWidget *absTolWidget, *relTolWidget, *initialStepSizeWidget, *maximalStepSizeWidget, *minimalStepSizeWidget, *plotOnRootWidget;
+    ExtProperty absTol, relTol, initialStepSize, maximalStepSize, minimalStepSize, plotOnRoot;
 };
 
 class TimeSteppingIntegrator : public Integrator {
@@ -142,8 +154,12 @@ class EulerExplicitIntegrator : public Integrator {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "EulerExplicitIntegrator"; }
+    virtual void fromWidget();
+    virtual void toWidget();
+    virtual void initializeDialog();
   protected:
-    ExtWidget *stepSize;
+    ExtWidget *stepSizeWidget;
+    ExtProperty stepSize;
 };
 
 class RKSuiteIntegrator : public Integrator {
@@ -152,8 +168,12 @@ class RKSuiteIntegrator : public Integrator {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "RKSuiteIntegrator"; }
+    virtual void fromWidget();
+    virtual void toWidget();
+    virtual void initializeDialog();
   protected:
-    ExtWidget *type, *relTol, *threshold, *initialStepSize;
+    ExtWidget *typeWidget, *relTolWidget, *thresholdWidget, *initialStepSizeWidget;
+    ExtProperty type, relTol, threshold, initialStepSize;
 };
 
 

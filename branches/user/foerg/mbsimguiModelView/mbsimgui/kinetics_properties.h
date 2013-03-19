@@ -117,7 +117,7 @@ class FrictionForceLawProperty : public Property {
 
   public:
     FrictionForceLawProperty() : frictionForceFunc(0) {}
-    QString getType() const { return "FrictionForceLaw"; }
+    virtual QString getType() const { return "FrictionForceLaw"; }
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
    protected:
     Function2Property *frictionForceFunc;
@@ -183,7 +183,7 @@ class FrictionImpactLawProperty : public Property {
 
   public:
     FrictionImpactLawProperty() {}
-    QString getType() const { return "FrictionImpactLaw"; }
+    virtual QString getType() const { return "FrictionImpactLaw"; }
     TiXmlElement* writeXMLFile(TiXmlNode *element);
 };
 
