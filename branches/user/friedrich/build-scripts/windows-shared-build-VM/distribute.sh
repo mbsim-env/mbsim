@@ -78,7 +78,9 @@ export PKG_CONFIG_PATH=/home/user/MBSimWindows/local/lib/pkgconfig
 # clear previout dist dir
 if [ $NOCLEAN -eq 0 ]; then
   rm -rf $DISTDIR
+  rm -rf $DISTBASEDIR/tmp
 fi
+mkdir -p $DISTBASEDIR/tmp
 
 # copy libs
 mkdir -p $DISTDIR/lib/pkgconfig
@@ -101,8 +103,8 @@ for F in $BINFILES; do
 done
 
 #get dependent dlls and copy to bindir
-TMPDLLFILESOUT=/tmp/distribute.sh.sofile.out
-TMPDLLFILESIN=/tmp/distribute.sh.sofile.in
+TMPDLLFILESOUT=$DISTBASEDIR/tmp/distribute.sh.sofile.out
+TMPDLLFILESIN=$DISTBASEDIR/tmp/distribute.sh.sofile.in
 
 getdlls() {
   for F in $(cat $TMPDLLFILESIN); do
@@ -140,7 +142,7 @@ for F in $(grep -i "\.dll$" $TMPDLLFILESOUT); do
 done
 
 # copy includes
-TMPINCFILE=/tmp/distribute.inc.cc
+TMPINCFILE=$DISTBASEDIR/tmp/distribute.inc.cc
 rm -f $TMPINCFILE
 for F in $(find $PREFIX/include -type f | grep "/fmatvec/\|/hdf5serie/\|/mbsim/\|/mbsimControl/\|/mbsimElectronics/\|/mbsimFlexibleBody/\|/mbsimHydraulics/\|/mbsimPowertrain/\|/mbsimtinyxml/\|/mbsimxml/\|/mbxmlutilstinyxml/\|/openmbvcppinterface/\|/openmbvcppinterfacetinyxml/"); do
   echo "#include <$F>" >> $TMPINCFILE
@@ -392,7 +394,9 @@ DISTDIR=$DISTBASEDIR/openmbv
 # clear previout dist dir
 if [ $NOCLEAN -eq 0 ]; then
   rm -rf $DISTDIR
+  rm -rf $DISTBASEDIR/tmp
 fi
+mkdir -p $DISTBASEDIR/tmp
 
 mkdir -p $DISTDIR/bin
 
@@ -403,8 +407,8 @@ for F in $BINFILES; do
 done
 
 #get dependent dlls and copy to bindir
-TMPDLLFILESOUT=/tmp/distribute.sh.sofile.out
-TMPDLLFILESIN=/tmp/distribute.sh.sofile.in
+TMPDLLFILESOUT=$DISTBASEDIR/tmp/distribute.sh.sofile.out
+TMPDLLFILESIN=$DISTBASEDIR/tmp/distribute.sh.sofile.in
 
 getdlls() {
   for F in $(cat $TMPDLLFILESIN); do

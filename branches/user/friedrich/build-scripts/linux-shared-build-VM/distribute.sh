@@ -81,7 +81,7 @@ mkdir -p $DISTDIR/lib
 cp -ru $PREFIX/lib/* $DISTDIR/lib
 
 # copy bin and get dependent libs
-TMPSOFILE=/tmp/distribute.sh.sofile
+TMPSOFILE=$DISTBASEDIR/distribute.sh.sofile
 rm -f $TMPSOFILE
 mkdir -p $DISTDIR/bin
 for F in $BINFILES; do
@@ -136,7 +136,7 @@ else # is not a script
 fi
 
 # copy includes
-TMPINCFILE=/tmp/distribute.inc.cc
+TMPINCFILE=$DISTBASEDIR/distribute.inc.cc
 rm -f $TMPINCFILE
 for F in $(find $PREFIX/include -type f | grep "/fmatvec/\|/hdf5serie/\|/mbsim/\|/mbsimControl/\|/mbsimElectronics/\|/mbsimFlexibleBody/\|/mbsimHydraulics/\|/mbsimPowertrain/\|/mbsimtinyxml/\|/mbsimxml/\|/mbxmlutilstinyxml/\|/openmbvcppinterface/\|/openmbvcppinterfacetinyxml/"); do
   echo "#include <$F>" >> $TMPINCFILE
@@ -390,7 +390,7 @@ mkdir -p $DISTDIR/bin
 mkdir -p $DISTDIR/lib
 
 # copy bin and get dependent libs
-TMPSOFILE=/tmp/distribute.sh.sofile
+TMPSOFILE=$DISTBASEDIR/distribute.sh.sofile
 rm -f $TMPSOFILE
 mkdir -p $DISTDIR/bin
 for F in $BINFILES; do
