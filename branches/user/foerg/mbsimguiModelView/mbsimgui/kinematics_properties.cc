@@ -207,6 +207,9 @@ void RotationChoiceProperty::fromWidget(QWidget *widget) {
 }
 
 void RotationChoiceProperty::toWidget(QWidget *widget) {
+  static_cast<RotationChoiceWidget*>(widget)->comboBox->blockSignals(true);
   static_cast<RotationChoiceWidget*>(widget)->comboBox->setCurrentIndex(index);
+  static_cast<RotationChoiceWidget*>(widget)->comboBox->blockSignals(false);
+  static_cast<RotationChoiceWidget*>(widget)->defineRotation(index);
   rotation->toWidget(static_cast<RotationChoiceWidget*>(widget)->rotation);
 }

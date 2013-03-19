@@ -44,7 +44,6 @@ class LocalFrameOfReferenceWidget : public Widget {
     LocalFrameOfReferenceWidget(Element* element, Frame* omitFrame=0);
 
     void updateWidget();
-    void resizeVariables() {}
     Frame* getFrame() {return selectedFrame;}
     void setFrame(Frame* frame_);
 
@@ -64,7 +63,6 @@ class ParentFrameOfReferenceWidget : public Widget {
     ParentFrameOfReferenceWidget(Element* element, Frame* omitFrame=0);
 
     void updateWidget();
-    void resizeVariables() {}
     Frame* getFrame() {return selectedFrame;}
     void setFrame(Frame* frame_);
     void setSavedFrameOfReference(const QString &str) {saved_frameOfReference = str;}
@@ -87,7 +85,6 @@ class FrameOfReferenceWidget : public Widget {
     FrameOfReferenceWidget(Element* element, Frame* selectedFrame);
 
     void updateWidget();
-    void resizeVariables() {}
     Frame* getFrame() {return selectedFrame;}
     void setFrame(Frame* frame_);
     void setSavedFrameOfReference(const QString &str) {saved_frameOfReference = str;}
@@ -111,7 +108,6 @@ class ContourOfReferenceWidget : public Widget {
     ContourOfReferenceWidget(Element* element, Contour* selectedContour);
 
     void updateWidget();
-    void resizeVariables() {};
     Contour* getContour() {return selectedContour;}
     void setContour(Contour* contour_);
     void setSavedContourOfReference(const QString &str) {saved_contourOfReference = str;}
@@ -135,7 +131,6 @@ class RigidBodyOfReferenceWidget : public Widget {
     RigidBodyOfReferenceWidget(Element* element, RigidBody* selectedBody);
 
     void updateWidget();
-    void resizeVariables() {};
     RigidBody* getBody() {return selectedBody;}
     void setBody(RigidBody* body_);
     void setSavedBodyOfReference(const QString &str) {saved_bodyOfReference = str;}
@@ -164,8 +159,6 @@ class FileWidget : public Widget {
     void setFileName(const QString &str) {fileName->setText(str);}
     QString getAbsoluteFilePath() const {return absoluteFilePath;}
     void setAbsoluteFilePath(const QString &str) {absoluteFilePath = str;}
-    virtual void updateWidget() {}
-    virtual void resizeVariables() {}
 
   protected:
     QLineEdit *fileName;
@@ -183,8 +176,6 @@ class TextWidget : public Widget {
 
     QString getName() const {return ename->text();}
     void setName(const QString &name) {ename->setText(name);}
-    virtual void updateWidget() {}
-    virtual void resizeVariables() {}
 
   protected:
     QLineEdit *ename;
@@ -198,7 +189,6 @@ class ConnectFramesWidget : public Widget {
     ConnectFramesWidget(int n, Element* element);
 
     void updateWidget();
-    virtual void resizeVariables() {}
 
   protected:
     std::vector<FrameOfReferenceWidget*> widget;
@@ -213,7 +203,6 @@ class ConnectContoursWidget : public Widget {
     ConnectContoursWidget(int n, Element* element);
 
     void updateWidget();
-    virtual void resizeVariables() {}
 
   protected:
     std::vector<ContourOfReferenceWidget*> widget;
@@ -229,7 +218,6 @@ class DependenciesWidget : public Widget {
     DependenciesWidget(Element* element);
 
     void updateWidget(); 
-    virtual void resizeVariables() {}
 
     RigidBody* getBody(int i) {return refBody[i]->getBody();}
     void addBody(int i, RigidBody* body_);
@@ -260,9 +248,6 @@ class SolverTolerancesWidget : public Widget {
   public:
     SolverTolerancesWidget();
 
-    virtual void updateWidget() {}
-    virtual void resizeVariables() {}
-
   protected:
     ExtWidget *projection, *g, *gd, *gdd, *la, *La;
 };
@@ -274,9 +259,6 @@ class SolverParametersWidget : public Widget {
   public:
     SolverParametersWidget();
 
-    virtual void updateWidget() {}
-    virtual void resizeVariables() {}
-
   protected:
     ExtWidget *tolerances;
 };
@@ -285,8 +267,6 @@ class PlotFeature : public Widget {
   public:
     PlotFeature(const std::string &name);
 
-    virtual void updateWidget() {}
-    virtual void resizeVariables() {}
   protected:
     std::string name;
     QComboBox *status;

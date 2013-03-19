@@ -32,25 +32,6 @@ class TiXmlNode;
 class QDialogButtonBox;
 class QAbstractButton;
 
-class PropertyWidget : public QTabWidget {
-
-  public:
-    PropertyWidget(QObject *obj);
-    ~PropertyWidget();
-    void setParentObject(QObject *obj);
-    void addToTab(const QString &name, ExtWidget* widget_);
-    void addTab(const QString &name, int i=-1);
-    QObject* getParentObject() { return parentObject; }
-    void addStretch();
-    void updateWidget();
-    void resizeVariables();
-    using QTabWidget::addTab;
-  protected:
-    QObject* parentObject;
-    std::map<QString,QVBoxLayout*> layout;
-    std::vector<ExtWidget*> widget;
-};
-
 class PropertyDialog : public QDialog {
   Q_OBJECT
 

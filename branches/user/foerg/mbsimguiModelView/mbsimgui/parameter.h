@@ -39,7 +39,6 @@ class Parameter : public QObject, public QTreeWidgetItem {
     bool drawThisPath;
     QString iconFile;
     bool searchMatched;
-    PropertyWidget *properties;
     PropertyDialog *dialog;
     QMenu *contextMenu;
     QString name;
@@ -56,7 +55,6 @@ class Parameter : public QObject, public QTreeWidgetItem {
     virtual void writeXMLFile() { writeXMLFile(getType()); }
     virtual QString getType() const { return "Parameter"; }
     QMenu* getContextMenu() { return contextMenu; }
-    PropertyWidget* getPropertyWidget() { return properties; }
     QString getName() const {return name;}
     void setName(const QString &str);
     virtual std::string getValue() const = 0;

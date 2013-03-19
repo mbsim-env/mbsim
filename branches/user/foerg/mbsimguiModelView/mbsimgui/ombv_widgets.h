@@ -36,13 +36,8 @@ class OMBVObjectWidget : public Widget {
     OMBVObjectWidget(const std::string &name_) : name(name_) {}
     virtual QString getType() const = 0;
     void setName(const std::string &name_) {name = name_;}
-    void setID(const std::string &_ID) { ID=_ID; }
-    virtual void updateWidget() {}
-    virtual void resizeVariables() {}
   protected:
     std::string name;
-    std::string ID;
-    void writeXMLFileID(TiXmlNode *parent);
 };
 
 class OMBVFrameWidget : public OMBVObjectWidget {
@@ -183,11 +178,9 @@ class OMBVBodyChoiceWidget : public Widget {
 
   public:
 
-    OMBVBodyChoiceWidget(const std::string &name, bool flag=true, const std::string &ID="");
+    OMBVBodyChoiceWidget(const std::string &name, bool flag=true);
 
     void setName(const std::string &name) {ombv->setName(name);}
-    virtual void updateWidget() {}
-    virtual void resizeVariables() {}
 
   protected slots:
     void ombvSelection(int index);
@@ -197,7 +190,6 @@ class OMBVBodyChoiceWidget : public Widget {
     QVBoxLayout *layout;
     OMBVBodyWidget *ombv;
     std::string name;
-    std::string ID;
 };
 
 class OMBVBodySelectionWidget : public Widget {
@@ -209,7 +201,6 @@ class OMBVBodySelectionWidget : public Widget {
     OMBVBodySelectionWidget(RigidBody* body);
 
     virtual void updateWidget() {ref->updateWidget();}
-    virtual void resizeVariables() {}
 
   protected:
     OMBVBodyChoiceWidget *ombv;

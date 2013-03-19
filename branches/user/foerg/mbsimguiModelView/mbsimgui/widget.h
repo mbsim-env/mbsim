@@ -28,11 +28,8 @@ class TiXmlNode;
 class WidgetInterface {
 
   public:
-    virtual void updateWidget() = 0;
-    virtual void resizeVariables() = 0;
-    // TODO: remove following lines
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element) {}
+    virtual void updateWidget() {}
+    virtual void resizeVariables() {}
 };
 
 class Widget : public QWidget, public WidgetInterface {

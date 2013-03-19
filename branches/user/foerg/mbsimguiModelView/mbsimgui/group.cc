@@ -103,7 +103,6 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
   QAction *action;
 
   if(parentItem != treeWidget()->invisibleRootItem()) {
-    properties->addTab("Kinematics");
 
     vector<PhysicalStringProperty*> input;
     input.push_back(new PhysicalStringProperty(new VecProperty(3),"m",MBSIMNS"position"));
@@ -214,8 +213,6 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
   connect(action,SIGNAL(triggered()),this,SLOT(remove()));
   contextMenu->addAction(action);
   }
-
-  properties->addStretch();
 }
 
 void Group::initialize() {

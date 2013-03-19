@@ -47,8 +47,6 @@ class StringWidget : public Widget {
     virtual StringWidget* cloneStringWidget() {return 0;}
     virtual std::string getType() const = 0;
     virtual bool validate(const std::string &str) const {return true;}
-    virtual void updateWidget() {}
-    virtual void resizeVariables() {}
 };
 
 class BoolWidget : public StringWidget {

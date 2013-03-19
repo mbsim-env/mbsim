@@ -593,7 +593,10 @@ void OMBVBodyChoiceProperty::fromWidget(QWidget *widget) {
 }
 
 void OMBVBodyChoiceProperty::toWidget(QWidget *widget) {
+  static_cast<OMBVBodyChoiceWidget*>(widget)->comboBox->blockSignals(true);
   static_cast<OMBVBodyChoiceWidget*>(widget)->comboBox->setCurrentIndex(index);
+  static_cast<OMBVBodyChoiceWidget*>(widget)->comboBox->blockSignals(false);
+  static_cast<OMBVBodyChoiceWidget*>(widget)->ombvSelection(index);
   ombv->toWidget(static_cast<OMBVBodyChoiceWidget*>(widget)->ombv);
 }
 
