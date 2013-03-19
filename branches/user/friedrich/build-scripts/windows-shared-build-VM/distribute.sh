@@ -115,7 +115,7 @@ getdlls() {
   mv $TMPDLLFILESOUT.uniq $TMPDLLFILESOUT
   rm -f $TMPDLLFILESOUT.abs
   for F in $(cat $TMPDLLFILESOUT); do
-    locate $F | grep "/$F$" | grep -v "/wine" | grep -v "/\.wine/" | grep -v "/dist_mbsim/" | grep -v "^/home/" >> $TMPDLLFILESOUT.abs || DUMMYVAR=0
+    locate $F | grep "/$F$" | grep "^/usr/i686-w64-mingw32/sys-root/mingw" >> $TMPDLLFILESOUT.abs || DUMMYVAR=0
     find $PREFIX -name $(basename $F) | grep "$F$" | grep -v "/wine" | grep -v "/\.wine/" | grep -v "/dist_mbsim/" >> $TMPDLLFILESOUT.abs || DUMMYVAR=0
   done
   sort $TMPDLLFILESOUT.abs | uniq > $TMPDLLFILESOUT.uniq
@@ -419,7 +419,7 @@ getdlls() {
   mv $TMPDLLFILESOUT.uniq $TMPDLLFILESOUT
   rm -f $TMPDLLFILESOUT.abs
   for F in $(cat $TMPDLLFILESOUT); do
-    locate $F | grep "/$F$" | grep -v "/wine" | grep -v "/\.wine/" | grep -v "/dist_openmbv/" | grep -v "^/home/" >> $TMPDLLFILESOUT.abs || DUMMYVAR=0
+    locate $F | grep "/$F$" | grep "^/usr/i686-w64-mingw32/sys-root/mingw" >> $TMPDLLFILESOUT.abs || DUMMYVAR=0
     find $PREFIX -name $(basename $F) | grep "$F$" | grep -v "/wine" | grep -v "/\.wine/" | grep -v "/dist_openmbv/" >> $TMPDLLFILESOUT.abs || DUMMYVAR=0
   done
   sort $TMPDLLFILESOUT.abs | uniq > $TMPDLLFILESOUT.uniq
