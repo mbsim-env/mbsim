@@ -196,9 +196,6 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0), openmbvID(0), h5plotserieID(0) {
   menuBar()->addMenu(helpMenu);
 
   QToolBar *toolBar = addToolBar("Tasks");
-  action = toolBar->addAction(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/preview.svg"),"Preview");
-  connect(action,SIGNAL(triggered()),this,SLOT(preview()));
-  toolBar->addAction(action);
   actionSimulate = toolBar->addAction(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/simulate.svg"),"Simulate");
   actionSimulate->setStatusTip(tr("Simulate the multibody system"));
   connect(actionSimulate,SIGNAL(triggered()),this,SLOT(simulate()));
@@ -868,12 +865,6 @@ void MainWindow::mbsimxml(int task) {
   runProgramSyncronous(arg);
   QDir::setCurrent(currentPath);
   absolutePath = false;
-}
-
-void MainWindow::preview() {
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
 }
 
 void MainWindow::simulate() {

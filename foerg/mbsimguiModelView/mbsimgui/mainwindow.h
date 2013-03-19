@@ -85,7 +85,6 @@ class MainWindow : public QMainWindow {
     void saveParameterAs();
     void saveParameter(QString filename="");
     void newDoubleParameter();
-    void preview();
     void simulate();
     void openmbv();
     void h5plotserie();
