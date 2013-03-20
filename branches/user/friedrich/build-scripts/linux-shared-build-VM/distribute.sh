@@ -194,6 +194,10 @@ rm -f $DISTDIR/include/features.h
 (cd $DISTDIR/lib; ln -s libcblas.so.3 libcblas.so)
 (cd $DISTDIR/lib; ln -s libatlas.so.3 libatlas.so)
 (cd $DISTDIR/lib; ln -s libstdc++.so.6 libstdc++.so)
+# modifie all ELF rpath in lib/*.so*
+for F in $DISTDIR/lib/*.so $DISTDIR/lib/*.so.*; do
+  chrpath -r '$ORIGIN/../lib' $F &> /dev/null || chrpath -d $F &> /dev/null || DUMMYVAR=0
+done
 
 # create mbsim-config
 cat << EOF > $DISTDIR/bin/mbsim-config
@@ -433,6 +437,10 @@ cp -uL /usr/lib/libQtXml.so.4 $DISTDIR/lib/. # required by QSvg-plugin
 (cd $DISTDIR/lib; ln -s libstdc++.so.6 libstdc++.so)
 mkdir -p $DISTDIR/share/hdf5serie/octave/
 cp -uL $PREFIX/share/hdf5serie/octave/hdf5serieappenddataset.m $DISTDIR/share/hdf5serie/octave/
+# modifie all ELF rpath in lib/*.so*
+for F in $DISTDIR/lib/*.so $DISTDIR/lib/*.so.*; do
+  chrpath -r '$ORIGIN/../lib' $F &> /dev/null || chrpath -d $F &> /dev/null || DUMMYVAR=0
+done
 
 # Qt plugins
 mkdir -p $DISTDIR/bin/imageformats
