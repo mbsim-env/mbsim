@@ -113,12 +113,6 @@ void MBSimXML::initIntegrator(int argc, char *argv[], Integrator *&integrator) {
     throw MBSimError("ERROR! Cannot create the integrator object!");
   integrator->initializeUsingXML(e);
   delete doc;
-
-  // handle command line options
-  if(strcmp(argv[1],"--stopafterfirststep")==0) {
-    // reset integrator end time to start time to force only one output
-    integrator->setEndTime(integrator->getStartTime());
-  }
 }
 
 void MBSimXML::main(Integrator *&integrator, DynamicSystemSolver *&dss) {
