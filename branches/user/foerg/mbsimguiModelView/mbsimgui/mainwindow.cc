@@ -408,9 +408,9 @@ void MainWindow::elementListClicked() {
   Element *element=dynamic_cast<Element*>(elementList->currentItem());
 #ifdef INLINE_OPENMBV
   if(element)
-    emit inlineOpenMBVMW->highlightObject(element->getID());
+    inlineOpenMBVMW->highlightObject(element->getID());
   else
-    emit inlineOpenMBVMW->highlightObject("");
+    inlineOpenMBVMW->highlightObject("");
 #endif
 }
 
@@ -523,7 +523,6 @@ void MainWindow::loadMBS(const QString &file) {
   mbsDir = QFileInfo(file).absolutePath();
   absoluteMBSFilePath=file;
   fileMBS->setText(QDir::current().relativeFilePath(absoluteMBSFilePath));
-  //fileMBS->setText(QDir::current().relativeFilePath(file));
   actionOpenMBV->setDisabled(true);
   actionH5plotserie->setDisabled(true);
   actionSaveMBS->setDisabled(true);
@@ -895,14 +894,12 @@ void MainWindow::h5plotserie() {
 }
 
 void MainWindow::selectElement(string ID) {
-#ifdef INLINE_OPENMBV
-  emit inlineOpenMBVMW->highlightObject(ID);
-#endif
   map<string, Element*>::iterator it=Element::idEleMap.find(ID);
-  if(it!=Element::idEleMap.end()) {
+  if(it!=Element::idEleMap.end())
     elementList->setCurrentItem(it->second);
-    elementListClicked();
-  }
+#ifdef INLINE_OPENMBV
+  inlineOpenMBVMW->highlightObject(ID);
+#endif
 }
 
 void MainWindow::help() {
