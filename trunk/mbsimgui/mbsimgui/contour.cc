@@ -98,7 +98,7 @@ Line::Line(const QString &str, QTreeWidgetItem *parentItem, int ind) : Contour(s
 Line::~Line() {
 }
 
-Plane::Plane(const QString &str, QTreeWidgetItem *parentItem, int ind) : Contour(str,parentItem,ind), visu(0,false) {
+Plane::Plane(const QString &str, QTreeWidgetItem *parentItem, int ind) : Contour(str,parentItem,ind) {
   setText(1,getType());
 
   visu.setProperty(new OMBVPlaneProperty(MBSIMNS"enableOpenMBV"));
@@ -138,7 +138,7 @@ void Plane::fromWidget() {
   visu.fromWidget(visuWidget);
 }
 
-Sphere::Sphere(const QString &str, QTreeWidgetItem *parentItem, int ind) : Contour(str,parentItem,ind), visu(0,false) {
+Sphere::Sphere(const QString &str, QTreeWidgetItem *parentItem, int ind) : Contour(str,parentItem,ind) {
   setText(1,getType());
  
   vector<PhysicalStringProperty*> input;

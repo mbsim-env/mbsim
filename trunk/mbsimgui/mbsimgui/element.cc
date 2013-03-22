@@ -85,6 +85,7 @@ Element::~Element() {
 void Element::openPropertyDialog() {
   if(!dialog) {
     dialog = new PropertyDialog;
+    dialog->setParentObject(this);
     connect(dialog,SIGNAL(apply()),this,SLOT(updateElement()));
     initializeDialog();
   }
@@ -230,34 +231,6 @@ void Element::initialize() {
   if(getContainerObserver()) {
     for(int i=0; i<getContainerObserver()->childCount(); i++)
       getObserver(i)->initialize();
-  }
-}
-
-void Element::resizeVariables() {
-  dialog->resizeVariables();
-  if(getContainerGroup()) {
-    for(int i=0; i<getContainerGroup()->childCount(); i++)
-      getGroup(i)->resizeVariables();
-  }
-  if(getContainerObject()) {
-    for(int i=0; i<getContainerObject()->childCount(); i++)
-      getObject(i)->resizeVariables();
-  }
-  if(getContainerFrame()) {
-    for(int i=0; i<getContainerFrame()->childCount(); i++)
-      getFrame(i)->resizeVariables();
-  }
-  if(getContainerContour()) {
-    for(int i=0; i<getContainerContour()->childCount(); i++)
-      getContour(i)->resizeVariables();
-  }
-  if(getContainerLink()) {
-    for(int i=0; i<getContainerLink()->childCount(); i++)
-      getLink(i)->resizeVariables();
-  }
-  if(getContainerObserver()) {
-    for(int i=0; i<getContainerObserver()->childCount(); i++)
-      getObserver(i)->resizeVariables();
   }
 }
 

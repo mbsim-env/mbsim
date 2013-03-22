@@ -208,9 +208,6 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0), openmbvID(0), h5plotserieID(0) {
   actionH5plotserie->setDisabled(true);
   connect(actionH5plotserie,SIGNAL(triggered()),this,SLOT(h5plotserie()));
   toolBar->addAction(actionH5plotserie);
-  action= toolBar->addAction(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/resize.svg"),"Resize");
-  connect(action,SIGNAL(triggered()),this,SLOT(resizeVariables()));
-  toolBar->addAction(action);
 
   setWindowTitle("MBSim GUI");
 
@@ -449,17 +446,6 @@ void MainWindow::parameterListClicked() {
 //  menu.addMenu(newParameterMenu);
 //  menu.exec(QCursor::pos());
 //}
-
-void MainWindow::resizeVariables() {
-//  Solver *solver = (Solver*)elementList->topLevelItem(0);
-  Element *element=dynamic_cast<Element*>(elementList->currentItem());
-  if(element)
-    element->resizeVariables();
-//  Integrator *integrator = (Integrator*)integratorList->topLevelItem(0);
-  Integrator *integrator=(Integrator*)integratorList->currentItem();
-  if(integrator)
-    integrator->resizeVariables();
-}
 
 void MainWindow::loadProj(const QString &file) {
   loadParameter(file+"/MBS.mbsimparam.xml");

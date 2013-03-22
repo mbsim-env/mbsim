@@ -230,6 +230,7 @@ void RigidBody::addPoint() {
     new Point(text, contours, -1);
     ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
   }
+  mw->mbsimxml(1);
 }
 
 void RigidBody::addLine() {
@@ -238,6 +239,7 @@ void RigidBody::addLine() {
     new Line(text, contours, -1);
     ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
   }
+  mw->mbsimxml(1);
 }
 
 void RigidBody::addPlane() {
@@ -246,6 +248,7 @@ void RigidBody::addPlane() {
     new Plane(text, contours, -1);
     ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
   }
+  mw->mbsimxml(1);
 }
 
 void RigidBody::addSphere() {
@@ -254,6 +257,7 @@ void RigidBody::addSphere() {
     new Sphere(text, contours, -1);
     ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
   }
+  mw->mbsimxml(1);
 }
 
 void RigidBody::resizeGeneralizedPosition() {

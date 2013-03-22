@@ -74,7 +74,6 @@ class Element : public QObject, public QTreeWidgetItem {
     virtual void writeXMLFile() { writeXMLFile(getName()); }
     virtual void updateWidget();
     virtual void initialize();
-    virtual void resizeVariables();
     virtual QString getType() const { return "Element"; }
     //QString newName(const QString &type);
     virtual QString getFileExtension() const { return ".xml"; }

@@ -20,6 +20,8 @@
 #include <config.h>
 #include "property_widget.h"
 #include "extended_widgets.h"
+#include "object.h"
+#include <iostream>
 #include <QtGui>
 
 using namespace std;
@@ -31,6 +33,7 @@ PropertyDialog::PropertyDialog(QWidget *parent, Qt::WindowFlags f) : QDialog(par
   tabWidget = new QTabWidget(this);
   layout->addWidget(tabWidget);
   buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel);
+  buttonBox->addButton("Resize", QDialogButtonBox::ActionRole);
 
   connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
   connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
@@ -47,6 +50,8 @@ void PropertyDialog::clicked(QAbstractButton *button) {
     //buttonBox->button(QDialogButtonBox::Cancel)->setDisabled(true);
     emit apply();
   }
+  else if(button == buttonBox->buttons()[2])
+    resizeVariables();
 }
   
 void PropertyDialog::addToTab(const QString &name, QWidget* widget_) {
@@ -65,24 +70,24 @@ void PropertyDialog::updateWidget() {
 }
 
 void PropertyDialog::resizeVariables() {
+  cout << parentObject << endl;
+  Object *obj = dynamic_cast<Object*>(parentObject);
+  cout << obj<<endl;
+  if(obj) obj->resizeVariables();
+  for(unsigned int i=0; i<widget.size(); i++)
+    dynamic_cast<WidgetInterface*>(widget[i])->resizeVariables();
 }
 
 void PropertyDialog::addTab(const QString &name, int i) {  
   QScrollArea *tab = new QScrollArea;
   tab->setWidgetResizable(true);
-  //QWidget *widget = new QWidget;
-  //QHBoxLayout *hlo = new QHBoxLayout;
 
   QWidget *box = new QWidget;
   QVBoxLayout *layout_ = new QVBoxLayout;
   box->setLayout(layout_);
   layout[name] = layout_;
-  //hlo->addWidget(box); 
                        
-  //widget->setLayout(hlo);
-  //tab->setWidget(widget);
   tab->setWidget(box);
-  //tab->setLayout(layout_);
   if(i==-1)
     tabWidget->addTab(tab, name);
   else 

@@ -91,7 +91,6 @@ class MainWindow : public QMainWindow {
     void help();
     void about();
     void updateOctaveParameters();
-    void resizeVariables();
   protected slots:
     void selectElement(std::string);
     void changeWorkingDir();

@@ -323,41 +323,49 @@ void Group::addRigidBodies() {
 void Group::addKinematicConstraint() {
   new KinematicConstraint(newName(objects,"KinematicConstraint"), objects, -1);
   ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+  mw->mbsimxml(1);
 }
 
 void Group::addJointConstraint() {
   new JointConstraint(newName(objects,"JointConstraint"), objects, -1);
   ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+  mw->mbsimxml(1);
 }
 
 void Group::addJoint() {
   new Joint(newName(links,"Joint"), links, -1);
   ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+  mw->mbsimxml(1);
 }
 
 void Group::addKineticExcitation() {
   new KineticExcitation(newName(links,"KineticExcitation"), links, -1);
   ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+  mw->mbsimxml(1);
 }
 
 void Group::addSpringDamper() {
   new SpringDamper(newName(links,"SpringDamper"), links, -1);
   ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+  mw->mbsimxml(1);
 }
 
 void Group::addContact() {
   new Contact(newName(links,"Contact"), links, -1);
   ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+  mw->mbsimxml(1);
 }
 
 void Group::addAbsolutePositionSensor() {
   new AbsolutePositionSensor(newName(links,"AbsolutePositionSensor"), links, -1);
   ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+  mw->mbsimxml(1);
 }
 
 void Group::addAbsoluteKinematicsObserver() {
   new AbsoluteKinematicsObserver(newName(observers,"AbsoluteKinematicsObserver"), observers, -1);
   ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+  mw->mbsimxml(1);
 }
 
 void Group::addFrame() {
@@ -371,6 +379,7 @@ void Group::addPoint() {
   if (!text.isEmpty()) {
     new Point(text, contours, -1);
     ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+    mw->mbsimxml(1);
   }
 }
 
@@ -379,6 +388,7 @@ void Group::addLine() {
   if (!text.isEmpty()) {
     new Line(text, contours, -1);
     ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+    mw->mbsimxml(1);
   }
 }
 
@@ -387,6 +397,7 @@ void Group::addPlane() {
   if (!text.isEmpty()) {
     new Plane(text, contours, -1);
     ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+    mw->mbsimxml(1);
   }
 }
 
@@ -395,12 +406,14 @@ void Group::addSphere() {
   if (!text.isEmpty()) {
     new Sphere(text, contours, -1);
     ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+    mw->mbsimxml(1);
   }
 }
 
 void Group::addGroup() {
   new Group(newName(groups,"Group"), groups, -1);
   ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+  mw->mbsimxml(1);
 }
 
 void Group::addFromFile() {
@@ -440,6 +453,7 @@ void Group::addFromFile() {
       }
       o->initializeUsingXML(e);
       ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+      mw->mbsimxml(1);
       return;
     }
     Group *g=ObjectFactory::getInstance()->createGroup(e, groups, -1);
@@ -460,6 +474,7 @@ void Group::addFromFile() {
       }
       g->initializeUsingXML(e);
       ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+      mw->mbsimxml(1);
       return;
     }
   }

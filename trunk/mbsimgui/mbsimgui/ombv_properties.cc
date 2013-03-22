@@ -646,7 +646,7 @@ TiXmlElement* OMBVEmptyProperty::writeXMLFile(TiXmlNode *parent) {
 OMBVPlaneProperty::OMBVPlaneProperty(const string &xmlName_) : OMBVObjectProperty("Plane"), xmlName(xmlName_) {
 
   vector<PhysicalStringProperty*> input;
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0.1"), "m", MBSIMNS"size"));
+  input.push_back(new PhysicalStringProperty(new ScalarProperty("1"), "m", MBSIMNS"size"));
   size.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
