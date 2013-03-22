@@ -26,7 +26,7 @@ namespace boost {
       time+=boost::posix_time::microsec(st.st_mtim.tv_nsec/1000);
       return time;
 #else
-      HANDLE f=CreateFile(p.generic_string().c_str(), GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+      HANDLE f=CreateFile(p.generic_string().c_str(), GENERIC_READ, FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
       if(f==INVALID_HANDLE_VALUE)
         throw boost::filesystem::filesystem_error("CreateFile failed", p, boost::system::error_code());
       FILETIME create, lastAccess, lastWrite;
@@ -53,7 +53,7 @@ namespace boost {
       if(utimes(p.generic_string().c_str(), times)!=0)
         throw boost::filesystem::filesystem_error("system utimes call failed", p, boost::system::error_code());
 #else
-      HANDLE f=CreateFile(p.generic_string().c_str(), FILE_WRITE_ATTRIBUTES, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+      HANDLE f=CreateFile(p.generic_string().c_str(), FILE_WRITE_ATTRIBUTES, FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
       if(f==INVALID_HANDLE_VALUE)
         throw boost::filesystem::filesystem_error("CreateFile failed", p, boost::system::error_code());
       boost::posix_time::time_period since1601(boost::posix_time::ptime(boost::gregorian::date(1601, boost::gregorian::Jan, 1)), time);
