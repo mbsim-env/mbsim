@@ -136,7 +136,7 @@ void FixedRelativeFrame::initializeDialog() {
   orientationWidget = new ExtWidget("Relative orientation",new ExtPhysicalVarWidget(input),true);
   dialog->addToTab("Kinematics", orientationWidget);
 
-  refFrameWidget = new ExtWidget("Frame of reference",new ParentFrameOfReferenceWidget(this,0),true);
+  refFrameWidget = new ExtWidget("Frame of reference",new ParentFrameOfReferenceWidget(this,this),true);
   dialog->addToTab("Kinematics", refFrameWidget);
 }
 
