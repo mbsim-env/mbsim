@@ -72,6 +72,7 @@ void Parameter::openPropertyDialog() {
 void Parameter::updateElement() {
   fromWidget();
   updateTreeWidgetItem(getValue().c_str());
+  mw->updateOctaveParameters();
   mw->mbsimxml(1);
 }
 

@@ -213,7 +213,7 @@ vector<string> VecWidget::getVec() const {
 void VecWidget::setVec(const vector<string> &x) {
   if(x.size() != box.size())
     resize(x.size());
-  for(unsigned int i=0; i<box.size(); i++) 
+  for(unsigned int i=0; i<box.size(); i++)
     box[i]->setText(x[i].c_str());
 }
 
