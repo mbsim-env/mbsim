@@ -14,6 +14,9 @@
 #  include <spawn.h>
 #  include <sys/types.h>
 #  include <sys/wait.h>
+#else
+#  include <process.h>
+#  include <windows.h>
 #endif
 
 using namespace std;
@@ -42,7 +45,7 @@ int runProgram(const vector<string> &arg) {
 #else
   int ret;
   extern char **_environ;
-  ret=_spawnve(_P_WAIT, argv[0], argv, _environ;);
+  ret=_spawnve(_P_WAIT, argv[0], argv, _environ);
   delete[]argv;
   if(ret==-1)
     throw runtime_error("Unable to spawn process.");

@@ -61,15 +61,12 @@ map<string, string>& Utils::getMBSimNamespacePrefixMapping() {
     arg.push_back("--printNamespacePrefixMapping");
     FILE *f=popen((arg[0]+" "+arg[1]).c_str(), "r");
     if(f==NULL) throw runtime_error("Unable to create piped process.");
-    char ns[1024], prefix[1024];
+    char ns[1024], prefix[1024], line[2048];
     while(1) {
-      char *line=NULL;
-      size_t n;
-      if(getline(&line, &n, f)==-1) break;
+      if(fgets(line, 2048, f)==NULL) break;
       int nrRead=sscanf(line, "%s %s", &ns, &prefix);
       if(nrRead<2)
         strcpy(prefix, "");
-      free(line);
       nsprefix[ns]=prefix;
     }
     pclose(f);
