@@ -85,6 +85,7 @@ class ExtWidget : public QGroupBox, public WidgetInterface {
     virtual void resizeVariables() {widget->resizeVariables();}
     bool isActive() const {return (isCheckable() && !isChecked())?0:1;}
     void setActive(bool flag) {if(isCheckable()) setChecked(flag);}
+    void setWidgetVisible(bool flag) {if(isCheckable()) widget->setVisible(flag);}
 
   protected:
     Widget *widget;
