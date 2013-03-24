@@ -40,21 +40,16 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
 
   setText(1,getType());
 
-  QColor color;
-  color.setRgb(200,200,200);
-  QBrush brush(color);
-  color.setRgb(255,255,255);
-  QBrush brush2(color);
+  QPalette palette;
+  QBrush brush=palette.brush(QPalette::Disabled, QPalette::Text);
 
   frames = new Container;
   frames->setText(0, "frames");
   frames->setForeground(0,brush);
-  frames->setBackground(0,brush2);
   addChild(frames);
   contours = new Container;
   contours->setText(0, "contours");
   contours->setForeground(0,brush);
-  contours->setBackground(0,brush2);
   addChild(contours);
 
   new Frame("C", frames, -1, true);

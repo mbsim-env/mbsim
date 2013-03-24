@@ -181,8 +181,7 @@ void Integrator::writeXMLFile(const QString &name) {
   TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
   doc.LinkEndChild( decl );
   writeXMLFile(&doc);
-  map<string, string> nsprefix=ObjectFactory::getInstance()->getNamespacePrefixMapping();
-  unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
+  unIncorporateNamespace(doc.FirstChildElement(), Utils::getMBSimNamespacePrefixMapping());  
   doc.SaveFile((name.right(13)==".mbsimint.xml"?name:name+".mbsimint.xml").toAscii().data());
 
 }

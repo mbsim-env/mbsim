@@ -31,13 +31,6 @@
 #include <openmbv/mainwindow.h>
 #include <mbxmlutilstinyxml/getinstallpath.h>
 #include "widget.h"
-#ifdef _WIN32 // Windows
-#  include <windows.h>
-#  include <process.h>
-#else
-#  include <spawn.h>
-#  include <sys/wait.h>
-#endif
 
 using namespace std;
 
@@ -70,40 +63,9 @@ bool removeDir(const QString &dirName) {
   return result;
 }
 
-int runProgramSyncronous(const vector<string> &arg) {
-  char **argv=new char*[arg.size()+1];
-  for(size_t i=0; i<arg.size(); i++)
-    argv[i]=const_cast<char*>(arg[i].c_str());
-  argv[arg.size()]=NULL;
-
-#if !defined _WIN32
-  pid_t child;
-  int ret;
-  extern char** environ;
-  ret=posix_spawnp(&child, argv[0], NULL, NULL, argv, environ);
-  delete[]argv;
-  return ret;
-//  if(ret!=0)
-//    return -1;
-//
-//  int status;
-//  waitpid(child, &status, 0);
-//
-//  if(WIFEXITED(status))
-//    return WEXITSTATUS(status);
-//  else
-//    return -1;
-#else
-  int ret;
-  ret=_spawnvp(_P_NOWAIT, argv[0], argv);
-  delete[]argv;
-  return ret;
-#endif
-}
-
 MBXMLUtils::OctaveEvaluator *MainWindow::octEval=NULL;
 
-MainWindow::MainWindow() : inlineOpenMBVMW(0), openmbvID(0), h5plotserieID(0) {
+MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   mw = this;
 
 #ifdef INLINE_OPENMBV
@@ -376,8 +338,6 @@ void MainWindow::closeEvent(QCloseEvent *event) {
   //  } else {
   //    event->ignore();
   //  }
-  //kill(openmbvID,SIGQUIT);
-  //kill(h5plotserieID,SIGQUIT);
 }
 
 void MainWindow::openPropertyDialog(string ID) {
@@ -796,8 +756,7 @@ void MainWindow::saveParameter(QString fileName) {
     ((Parameter*)parameterList->topLevelItem(i))->writeXMLFile(ele0);
   }
   doc.LinkEndChild(ele0);
-  map<string, string> nsprefix;
-  unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
+  unIncorporateNamespace(doc.FirstChildElement(), Utils::getMBSimNamespacePrefixMapping());  
   QString file = fileParameter->text();
   doc.SaveFile(fileName.isEmpty()?file.toAscii().data():fileName.toStdString());
 }
@@ -837,18 +796,14 @@ void MainWindow::mbsimxml(int task) {
   QString intFile=uniqueTempDir+"/in"+sTask+".mbsimint.xml";
   integ->writeXMLFile(intFile);
 
-  vector<string> arg;
-  arg.push_back(MBXMLUtils::getInstallPath()+"/bin/mbsimxml");
+  QStringList arg;
   if(task==1)
-    arg.push_back("--stopafterfirststep");
-  arg.push_back("--mbsimparam");
-  arg.push_back(mbsParamFile.toStdString());
-  arg.push_back(mbsFile.toStdString());
-  arg.push_back(intFile.toStdString());
-  QString currentPath = QDir::currentPath();
-  QDir::setCurrent(uniqueTempDir);
-  runProgramSyncronous(arg);
-  QDir::setCurrent(currentPath);
+    arg.append("--stopafterfirststep");
+  arg.append("--mbsimparam");
+  arg.append(mbsParamFile);
+  arg.append(mbsFile);
+  arg.append(intFile);
+  QProcess::startDetached((MBXMLUtils::getInstallPath()+"/bin/mbsimxml").c_str(), arg, uniqueTempDir);
   absolutePath = false;
 }
 
@@ -861,21 +816,19 @@ void MainWindow::simulate() {
 void MainWindow::openmbv() {
   QString name = uniqueTempDir+"/out0.ombv.xml";
   if(QFile::exists(name)) {
-    vector<string> command;
-    command.push_back(MBXMLUtils::getInstallPath()+"/bin/openmbv");
-    command.push_back("--autoreload");
-    command.push_back(name.toStdString());
-    openmbvID = runProgramSyncronous(command);
+    QStringList arg;
+    arg.append("--autoreload");
+    arg.append(name);
+    QProcess::startDetached((MBXMLUtils::getInstallPath()+"/bin/openmbv").c_str(), arg);
   }
 }
 
 void MainWindow::h5plotserie() {
   QString name = uniqueTempDir+"/out0.mbsim.h5";
   if(QFile::exists(name)) {
-    vector<string> command;
-    command.push_back(MBXMLUtils::getInstallPath()+"/bin/h5plotserie");
-    command.push_back(name.toStdString());
-    h5plotserieID = runProgramSyncronous(command);
+    QStringList arg;
+    arg.append(name);
+    QProcess::startDetached((MBXMLUtils::getInstallPath()+"/bin/h5plotserie").c_str(), arg);
   }
 }
 

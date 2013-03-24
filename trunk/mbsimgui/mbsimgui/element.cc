@@ -58,9 +58,8 @@ Element::Element(const QString &str, QTreeWidgetItem *parentItem, int ind, bool 
   setName(str);
 
   if(grey) {
-    QColor color;
-    color.setRgb(200,200,200);
-    QBrush brush(color);
+    QPalette palette;
+    QBrush brush=palette.brush(QPalette::Disabled, QPalette::Text);
     //setForeground(0,brush);
     //setForeground(1,brush);
   }
@@ -163,8 +162,7 @@ void Element::copy() {
   delete copiedElement;
   copiedElement = new TiXmlElement("Node");
   writeXMLFile(copiedElement);
-  map<string, string> nsprefix;
-  unIncorporateNamespace(copiedElement->FirstChildElement(), nsprefix);  
+  unIncorporateNamespace(copiedElement->FirstChildElement(), Utils::getMBSimNamespacePrefixMapping());  
   ((Solver*)treeWidget()->topLevelItem(0))->setActionPasteDisabled(false);
 }
 
@@ -173,8 +171,7 @@ void Element::writeXMLFile(const QString &name) {
   TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
   doc.LinkEndChild( decl );
   writeXMLFile(&doc);
-  map<string, string> nsprefix;
-  unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
+  unIncorporateNamespace(doc.FirstChildElement(), Utils::getMBSimNamespacePrefixMapping());  
   doc.SaveFile((name+".xml").toAscii().data());
 }
 

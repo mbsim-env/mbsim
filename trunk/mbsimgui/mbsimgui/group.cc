@@ -53,46 +53,36 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
 
   iconFile="group.svg";
 
-  QColor color;
-  color.setRgb(200,200,200);
-  QBrush brush(color);
-  color.setRgb(255,255,255);
-  QBrush brush2(color);
+  QPalette palette;
+  QBrush brush=palette.brush(QPalette::Disabled, QPalette::Text);
 
   frames = new Container;
   frames->setText(0, "frames");
   frames->setForeground(0,brush);
-  frames->setBackground(0,brush2);
   addChild(frames);
   contours = new Container;
   contours->setText(0, "contours");
   contours->setForeground(0,brush);
-  contours->setBackground(0,brush2);
   addChild(contours);
   groups = new Container;
   groups->setText(0, "groups");
   groups->setForeground(0,brush);
-  groups->setBackground(0,brush2);
   addChild(groups);
   objects = new Container;
   objects->setText(0, "objects");
   objects->setForeground(0,brush);
-  objects->setBackground(0,brush2);
   addChild(objects);
   extraDynamics = new Container;
   extraDynamics->setText(0, "extraDynamics");
   extraDynamics->setForeground(0,brush);
-  extraDynamics->setBackground(0,brush2);
   addChild(extraDynamics);
   links = new Container;
   links->setText(0, "links");
   links->setForeground(0,brush);
-  links->setBackground(0,brush2);
   addChild(links);
   observers = new Container;
   observers->setText(0, "observers");
   observers->setForeground(0,brush);
-  observers->setBackground(0,brush2);
   addChild(observers);
 
   //if(parentItem != treeWidget()->invisibleRootItem())

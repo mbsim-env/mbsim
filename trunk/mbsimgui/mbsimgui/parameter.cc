@@ -147,8 +147,7 @@ void Parameter::writeXMLFile(const QString &name) {
   TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
   doc.LinkEndChild( decl );
   writeXMLFile(&doc);
-  map<string, string> nsprefix;
-  unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
+  unIncorporateNamespace(doc.FirstChildElement(), Utils::getMBSimNamespacePrefixMapping());  
   doc.SaveFile((name.right(15)==".mbsimparam.xml"?name:name+".mbsimparam.xml").toAscii().data());
 }
 

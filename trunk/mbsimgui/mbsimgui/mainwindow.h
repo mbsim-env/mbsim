@@ -52,7 +52,6 @@ class MainWindow : public QMainWindow {
     OpenMBVGUI::MainWindow *inlineOpenMBVMW;
     void initInlineOpenMBV();
     QString uniqueTempDir, absoluteMBSFilePath;
-    int openmbvID, h5plotserieID;
   public:
     MainWindow();
     ~MainWindow();

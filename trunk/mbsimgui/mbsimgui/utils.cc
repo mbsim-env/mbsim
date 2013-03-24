@@ -28,6 +28,8 @@
 #include <iostream>
 #include <cmath>
 #include <QtGui/QTreeWidgetItem>
+#include <mbxmlutilstinyxml/getinstallpath.h>
+#include <stdexcept>
 
 using namespace std;
 
@@ -46,6 +48,35 @@ const QIcon& Utils::QIconCached(const QString& filename) {
     return ins.first->second=QIcon(filename);
   return ins.first->second;
 } 
+
+// This routine is the same as MBSim::ObjectFactory::getNamespacePrefixMapping()
+// However since MBSimGUI does not link to MBSim we can not call this function and therefore call
+// "mbsimflatxml --printNamespacePrefixMapping" which print the content to console and reread it here.
+map<string, string>& Utils::getMBSimNamespacePrefixMapping() {
+  static bool firstRun=true;
+  static map<string, string> nsprefix;
+  if(firstRun) {
+    vector<string> arg;
+    arg.push_back(MBXMLUtils::getInstallPath()+"/bin/mbsimflatxml");
+    arg.push_back("--printNamespacePrefixMapping");
+    FILE *f=popen((arg[0]+" "+arg[1]).c_str(), "r");
+    if(f==NULL) throw runtime_error("Unable to create piped process.");
+    char ns[1024], prefix[1024];
+    while(1) {
+      char *line=NULL;
+      size_t n;
+      if(getline(&line, &n, f)==-1) break;
+      int nrRead=sscanf(line, "%s %s", &ns, &prefix);
+      if(nrRead<2)
+        strcpy(prefix, "");
+      free(line);
+      nsprefix[ns]=prefix;
+    }
+    pclose(f);
+    firstRun=false;
+  }
+  return nsprefix;
+}
 
 vector<vector<double> > mult(const vector<vector<double> > &A, const vector<vector<double> > &B) {
   vector<vector<double> > C(A.size());
@@ -143,14 +174,6 @@ MBSimError::MBSimError(const std::string &mbsim_error_message_) : MBSimException
     cout << endl;
     cout << endl;
   }
-
-string evaluateOctave(const std::string &program) {
-  static int mfmf=0;
-  mfmf++;
-  stringstream s;
-  s<<"MFMF "<<mfmf;// use type to check result for correct scalar/vector/matrix and set to red font on error
-  return s.str();
-}
 
 QTreeWidgetItem* getChild(QTreeWidgetItem *parentItem, const QString &str) {
   for(int i=0; i<parentItem->childCount(); i++) {
