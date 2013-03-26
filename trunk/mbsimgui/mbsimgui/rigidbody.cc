@@ -58,20 +58,22 @@ RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) :
   connect(action,SIGNAL(triggered()),this,SLOT(addFrame()));
   contextMenu->insertAction(actionSaveAs,action);
 
-  QMenu *submenu = new QMenu("Add contour");
-  contextMenu->insertMenu(actionSaveAs,submenu);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Point", this);
+  contourContextMenu=new QMenu("Contour context menu");
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add contour", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addContour()));
+  contextMenu->insertAction(actionSaveAs,action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add point", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addPoint()));
-  submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Line", this);
+  contourContextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add line", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addLine()));
-  submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Plane", this);
+  contourContextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add plane", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addPlane()));
-  submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Sphere", this);
+  contourContextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add sphere", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addSphere()));
-  submenu->addAction(action);
+  contourContextMenu->addAction(action);
 
   contextMenu->insertSeparator(actionSaveAs);
 
@@ -218,6 +220,10 @@ void RigidBody::addFrame() {
     ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
   }
   mw->mbsimxml(1);
+}
+
+void RigidBody::addContour() {
+  contourContextMenu->exec(QCursor::pos());
 }
 
 void RigidBody::addPoint() {

@@ -28,6 +28,7 @@ class Group : public Element {
   protected:
     QString getType() const { return "Group"; }
     QAction *actionPaste;
+    QMenu *contourContextMenu, *objectContextMenu, *linkContextMenu, *sensorContextMenu, *observerContextMenu;
     ExtWidget *positionWidget, *orientationWidget, *frameOfReferenceWidget; 
     ExtProperty position, orientation, frameOfReference; 
 
@@ -48,19 +49,23 @@ class Group : public Element {
   protected slots:
     void addGroup();
     void addFrame();
+    void addContour();
     void addPoint();
     void addLine();
     void addPlane();
     void addSphere();
+    void addObject();
     void addRigidBody();
-    void addRigidBodies();
     void addJointConstraint();
     void addKinematicConstraint();
+    void addLink();
     void addJoint();
     void addKineticExcitation();
     void addSpringDamper();
     void addContact();
+    void addSensor();
     void addAbsolutePositionSensor();
+    void addObserver();
     void addAbsoluteKinematicsObserver();
     //void remove();
 

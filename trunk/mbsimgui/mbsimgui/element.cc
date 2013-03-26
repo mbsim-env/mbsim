@@ -72,6 +72,7 @@ Element::Element(const QString &str, QTreeWidgetItem *parentItem, int ind, bool 
   connect(action,SIGNAL(triggered()),this,SLOT(openPropertyDialog()));
   contextMenu->addAction(action);
 
+  contextMenu->addSeparator();
 }
 
 Element::~Element() {

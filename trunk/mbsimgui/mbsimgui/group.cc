@@ -109,66 +109,72 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
   connect(action,SIGNAL(triggered()),this,SLOT(addFrame()));
   contextMenu->addAction(action);
 
-  QMenu *submenu = contextMenu->addMenu("Add contour");
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Point", this);
+  contourContextMenu=new QMenu("Contour context menu");
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add contour", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addContour()));
+  contextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add point", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addPoint()));
-  submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Line", this);
+  contourContextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add line", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addLine()));
-  submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Plane", this);
+  contourContextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add plane", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addPlane()));
-  submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Sphere", this);
+  contourContextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add sphere", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addSphere()));
-  submenu->addAction(action);
+  contourContextMenu->addAction(action);
 
   action=new QAction(Utils::QIconCached("newobject.svg"),"Add group", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addGroup()));
   contextMenu->addAction(action);
 
-  //action=new QAction(Utils::QIconCached("newobject.svg"),"Add object", this);
-  //connect(action,SIGNAL(triggered()),this,SLOT(addObject()));
-  //contextMenu->addAction(action);
-  submenu = contextMenu->addMenu("Add object");
-//  action=new QAction(Utils::QIconCached("newobject.svg"),"Rigid bodies", this);
-//  connect(action,SIGNAL(triggered()),this,SLOT(addRigidBodies()));
-//  submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Rigid body", this);
+  objectContextMenu=new QMenu("Object context menu");
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add object", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addObject()));
+  contextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add rigid body", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addRigidBody()));
-  submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Kinematic constraint", this);
+  objectContextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add kinematic constraint", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addKinematicConstraint()));
-  submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Joint constraint", this);
+  objectContextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add joint constraint", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addJointConstraint()));
-  submenu->addAction(action);
+  objectContextMenu->addAction(action);
 
-  //action=new QAction(Utils::QIconCached("newobject.svg"),"Add link", this);
-  //connect(action,SIGNAL(triggered()),this,SLOT(addLink()));
-  //contextMenu->addAction(action);
-  submenu = contextMenu->addMenu("Add link");
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Joint", this);
+  linkContextMenu=new QMenu("Link context menu");
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add link", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addLink()));
+  contextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add joint", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addJoint()));
-  submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Kinetic excitation", this);
+  linkContextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add kinetic excitation", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addKineticExcitation()));
-  submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Spring damper", this);
+  linkContextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add spring damper", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addSpringDamper()));
-  submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Contact", this);
+  linkContextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add contact", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addContact()));
-  submenu->addAction(action);
-  QMenu *subsubmenu = submenu->addMenu("Sensor");
-  action=new QAction(Utils::QIconCached("newobject.svg"),"AbsolutePositionSensor", this);
+  linkContextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add sensor", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addSensor()));
+  linkContextMenu->addAction(action);
+  sensorContextMenu=new QMenu("Sensor context menu");
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add absolute position sensor", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addAbsolutePositionSensor()));
-  subsubmenu->addAction(action);
+  sensorContextMenu->addAction(action);
 
-  submenu = contextMenu->addMenu("Add observer");
-  action=new QAction(Utils::QIconCached("newobject.svg"),"AbsoluteKinematicsObserver", this);
+  observerContextMenu=new QMenu("Observer context menu");
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add observer", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addObserver()));
+  contextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add absolute kinematics observer", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addAbsoluteKinematicsObserver()));
-  submenu->addAction(action);
+  observerContextMenu->addAction(action);
 
   action=new QAction(Utils::QIconCached("newobject.svg"),"Add from file", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addFromFile()));
@@ -176,14 +182,14 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
 
   contextMenu->addSeparator();
 
-    action=new QAction(Utils::QIconCached("newobject.svg"),"Save as", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(saveAs()));
-    contextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Save as", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(saveAs()));
+  contextMenu->addAction(action);
 
-    actionSave=new QAction(Utils::QIconCached("newobject.svg"),"Save", this);
-    actionSave->setDisabled(true);
-    connect(actionSave,SIGNAL(triggered()),this,SLOT(save()));
-    contextMenu->addAction(actionSave);
+  actionSave=new QAction(Utils::QIconCached("newobject.svg"),"Save", this);
+  actionSave->setDisabled(true);
+  connect(actionSave,SIGNAL(triggered()),this,SLOT(save()));
+  contextMenu->addAction(actionSave);
 
   if(parentItem != treeWidget()->invisibleRootItem()) {
     action=new QAction(Utils::QIconCached("newobject.svg"),"Copy", this);
@@ -199,9 +205,9 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
   contextMenu->addSeparator();
 
   if(parentItem != treeWidget()->invisibleRootItem()) {
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Remove", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(remove()));
-  contextMenu->addAction(action);
+    action=new QAction(Utils::QIconCached("newobject.svg"),"Remove", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(remove()));
+    contextMenu->addAction(action);
   }
 }
 
@@ -288,26 +294,22 @@ int Group::getxSize() {
   return xSize;
 }
 
+void Group::addContour() {
+  contourContextMenu->exec(QCursor::pos());
+}
+
+void Group::addObject() {
+  objectContextMenu->exec(QCursor::pos());
+}
+
+void Group::addLink() {
+  linkContextMenu->exec(QCursor::pos());
+}
+
 void Group::addRigidBody() {
   new RigidBody(newName(objects,"RigidBody"), objects, -1);
   ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
   mw->mbsimxml(1);
-}
-
-void Group::addRigidBodies() {
-  for(int i=0; i<3000; i++) {
-    cout <<"add Body" << i+1<< endl;
-    //new RigidBody(newName(objects,"Body"), objects, -1);
-    //new FixedRelativeFrame(newName(frames,"P"), frames, -1);
-    //new Frame("P", 0, -1);
-    //QTreeWidgetItem *item = new Element2();
-    //QTreeWidgetItem *item = new QTreeWidgetItem;
-    //addChild(item); //
-    //item->setText(0,newName(this,"P"));
-    //item->setText(0,"Name");
-    cout <<"end" << endl;
-  }
-  ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
 }
 
 void Group::addKinematicConstraint() {
@@ -346,10 +348,18 @@ void Group::addContact() {
   mw->mbsimxml(1);
 }
 
+void Group::addSensor() {
+  sensorContextMenu->exec(QCursor::pos());
+}
+
 void Group::addAbsolutePositionSensor() {
   new AbsolutePositionSensor(newName(links,"AbsolutePositionSensor"), links, -1);
   ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
   mw->mbsimxml(1);
+}
+
+void Group::addObserver() {
+  observerContextMenu->exec(QCursor::pos());
 }
 
 void Group::addAbsoluteKinematicsObserver() {

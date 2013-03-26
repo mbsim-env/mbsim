@@ -44,11 +44,13 @@ class RigidBody : public Body {
     void initialize();
   public slots:
     void addFrame();
+    void addContour();
     void addPoint();
     void addLine();
     void addPlane();
     void addSphere();
   protected:
+    QMenu *contourContextMenu;
     bool constrained;
     ExtWidget *RWidget, *KWidget, *massWidget, *inertiaWidget, *translationWidget, *rotationWidget, *ombvEditorWidget, *weightArrowWidget, *jointForceArrowWidget, *jointMomentArrowWidget, *isFrameOfBodyForRotationWidget;
     ExtProperty R, K, mass, inertia, translation, rotation, ombvEditor, weightArrow, jointForceArrow, jointMomentArrow, isFrameOfBodyForRotation;
