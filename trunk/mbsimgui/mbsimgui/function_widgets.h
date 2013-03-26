@@ -80,7 +80,7 @@ class ConstantFunction1Widget : public Function1Widget {
   friend class ConstantFunction1Property;
 
   public:
-    ConstantFunction1Widget(const QString &ext);
+    ConstantFunction1Widget(const QString &ext, int n);
     inline QString getType() const { return QString("ConstantFunction1_")+ext; }
     void resize(int m, int n);
   protected:
@@ -92,7 +92,7 @@ class QuadraticFunction1Widget : public DifferentiableFunction1Widget {
   friend class QuadraticFunction1Property;
 
   public:
-    QuadraticFunction1Widget();
+    QuadraticFunction1Widget(int n);
     inline QString getType() const { return QString("QuadraticFunction1_VS"); }
     void resize(int m, int n);
 
@@ -105,7 +105,7 @@ class SinusFunction1Widget : public DifferentiableFunction1Widget {
   friend class SinusFunction1Property;
 
   public:
-    SinusFunction1Widget();
+    SinusFunction1Widget(int n);
     inline QString getType() const { return QString("SinusFunction1_VS"); }
     void resize(int m, int n);
 
@@ -141,7 +141,7 @@ class TabularFunction1Widget : public Function1Widget {
   friend class TabularFunction1Property;
 
   public:
-    TabularFunction1Widget();
+    TabularFunction1Widget(int n);
     inline QString getType() const { return QString("TabularFunction1_VS"); }
 
   protected:
@@ -154,7 +154,7 @@ class SummationFunction1Widget : public Function1Widget {
   friend class SummationFunction1Property;
 
   public:
-    SummationFunction1Widget();
+    SummationFunction1Widget(int n);
     inline QString getType() const { return QString("SummationFunction1_VS"); }
     void resize(int m, int n);
 
@@ -163,6 +163,7 @@ class SummationFunction1Widget : public Function1Widget {
     std::vector<ExtWidget*> factor;
     QStackedWidget *stackedWidget; 
     QListWidget *functionList; 
+    int n;
 
   protected slots:
     void updateList();
@@ -229,7 +230,7 @@ class Function1ChoiceWidget : public Widget {
   friend class Function1ChoiceProperty;
 
   public:
-    Function1ChoiceWidget(bool withFactor=false);
+    Function1ChoiceWidget(bool withFactor=false, int n=0);
 
     void resize(int m, int n) {if(function) function->resize(m,n);}
     Function1Widget* getFunction() {return function;}
@@ -242,6 +243,7 @@ class Function1ChoiceWidget : public Widget {
     QVBoxLayout *layout;
     Function1Widget *function;
     ExtWidget *factor;
+    int n;
   signals:
     void resize();
     void functionChanged();

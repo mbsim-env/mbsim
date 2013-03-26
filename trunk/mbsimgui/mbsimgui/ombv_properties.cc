@@ -521,7 +521,6 @@ TiXmlElement* CompoundRigidBodyProperty::writeXMLFile(TiXmlNode *parent) {
 
 void CompoundRigidBodyProperty::fromWidget(QWidget *widget) {
   OMBVBodyProperty::fromWidget(widget);
-  throw;
   for(unsigned int i=0; i<static_cast<CompoundRigidBodyWidget*>(widget)->body.size(); i++) {
     body.push_back(new OMBVBodyChoiceProperty((QString("Body")+QString::number(body.size()+1)).toStdString(),false));
     body[i]->fromWidget(static_cast<CompoundRigidBodyWidget*>(widget)->body[i]);
@@ -530,7 +529,6 @@ void CompoundRigidBodyProperty::fromWidget(QWidget *widget) {
 
 void CompoundRigidBodyProperty::toWidget(QWidget *widget) {
   OMBVBodyProperty::toWidget(widget);
-  throw;
   for(unsigned int i=0; i<body.size(); i++) {
     static_cast<CompoundRigidBodyWidget*>(widget)->addBody();
     body[i]->toWidget(static_cast<CompoundRigidBodyWidget*>(widget)->body[i]);

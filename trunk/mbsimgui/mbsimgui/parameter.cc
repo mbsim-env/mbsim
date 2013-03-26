@@ -48,6 +48,8 @@ Parameter::Parameter(const QString &str, QTreeWidgetItem *parentItem, int ind) :
   connect(action,SIGNAL(triggered()),this,SLOT(openPropertyDialog()));
   contextMenu->addAction(action);
 
+  contextMenu->addSeparator();
+
   action=new QAction(Utils::QIconCached("newobject.svg"),"Remove", this);
   connect(action,SIGNAL(triggered()),this,SLOT(remove()));
   contextMenu->addAction(action);

@@ -48,10 +48,24 @@ class LinearTranslationProperty : public TranslationProperty {
     ExtProperty mat;
 };
 
+class TimeDependentTranslationProperty : public TranslationProperty {
+
+  public:
+    TimeDependentTranslationProperty();
+    int getSize() const {return 0;}
+    TiXmlElement* initializeUsingXML(TiXmlElement *element);
+    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+
+  protected:
+    ExtProperty function;
+};
+
 class TranslationChoiceProperty : public Property {
 
   public:
-    TranslationChoiceProperty(TranslationProperty* translation_, const std::string &xmlName_): translation(translation_), xmlName(xmlName_) {}
+    TranslationChoiceProperty(TranslationProperty* translation_, const std::string &xmlName_): translation(translation_), xmlName(xmlName_), index(0) {}
 
     int getSize() const { return translation->getSize(); }
 
@@ -59,10 +73,12 @@ class TranslationChoiceProperty : public Property {
     TiXmlElement* writeXMLFile(TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
+    void defineTranslation(int);
 
   protected:
     TranslationProperty *translation;
     std::string xmlName;
+    int index;
 };
 
 class RotationProperty : public Property {

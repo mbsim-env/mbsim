@@ -32,12 +32,12 @@ void DifferentiableFunction1Widget::setDerivative(Function1Widget *diff,size_t d
   derivatives[degree]=diff; 
 }
 
-ConstantFunction1Widget::ConstantFunction1Widget(const QString &ext) : Function1Widget(ext) {
+ConstantFunction1Widget::ConstantFunction1Widget(const QString &ext, int n) : Function1Widget(ext) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new VecWidget(0,true),QStringList(),0));
+  input.push_back(new PhysicalStringWidget(new VecWidget(n,true),QStringList(),0));
   c = new ExtWidget("Value",new ExtPhysicalVarWidget(input));
   layout->addWidget(c);
 }
@@ -47,23 +47,23 @@ void ConstantFunction1Widget::resize(int m, int n) {
     ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(c->getWidget())->getPhysicalStringWidget(0)->getWidget())->resize(m);
 }
 
-QuadraticFunction1Widget::QuadraticFunction1Widget() {
+QuadraticFunction1Widget::QuadraticFunction1Widget(int n) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new VecWidget(0,true),QStringList(),0));
+  input.push_back(new PhysicalStringWidget(new VecWidget(n,true),QStringList(),0));
   a0 = new ExtWidget("a0",new ExtPhysicalVarWidget(input));
   layout->addWidget(a0);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new VecWidget(0,true),QStringList(),0));
+  input.push_back(new PhysicalStringWidget(new VecWidget(n,true),QStringList(),0));
   a1 = new ExtWidget("a1",new ExtPhysicalVarWidget(input));
   layout->addWidget(a1);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new VecWidget(0,true),QStringList(),0));
+  input.push_back(new PhysicalStringWidget(new VecWidget(n,true),QStringList(),0));
   a2 = new ExtWidget("a2",new ExtPhysicalVarWidget(input));
   layout->addWidget(a2);
 }
@@ -76,28 +76,28 @@ void QuadraticFunction1Widget::resize(int m, int n) {
   }
 }
 
-SinusFunction1Widget::SinusFunction1Widget() {
+SinusFunction1Widget::SinusFunction1Widget(int n) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new VecWidget(0,true),QStringList(),0));
+  input.push_back(new PhysicalStringWidget(new VecWidget(n,true),QStringList(),0));
   a = new ExtWidget("Amplitude",new ExtPhysicalVarWidget(input));
   layout->addWidget(a);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new VecWidget(0,true),QStringList(),0));
+  input.push_back(new PhysicalStringWidget(new VecWidget(n,true),QStringList(),0));
   f = new ExtWidget("Frequency",new ExtPhysicalVarWidget(input));
   layout->addWidget(f);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new VecWidget(0,true),QStringList(),0));
+  input.push_back(new PhysicalStringWidget(new VecWidget(n,true),QStringList(),0));
   p = new ExtWidget("Phase",new ExtPhysicalVarWidget(input));
   layout->addWidget(p);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new VecWidget(0,true),QStringList(),0));
+  input.push_back(new PhysicalStringWidget(new VecWidget(n,true),QStringList(),0));
   o = new ExtWidget("Offset",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(o);
 }
@@ -111,7 +111,7 @@ void SinusFunction1Widget::resize(int m, int n) {
   }
 }
 
-TabularFunction1Widget::TabularFunction1Widget() {
+TabularFunction1Widget::TabularFunction1Widget(int n) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -139,7 +139,7 @@ TabularFunction1Widget::TabularFunction1Widget() {
   layout->addWidget(choice);
 }
 
-SummationFunction1Widget::SummationFunction1Widget() {
+SummationFunction1Widget::SummationFunction1Widget(int n_) : n(n_) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -184,7 +184,7 @@ void SummationFunction1Widget::updateList() {
 
 void SummationFunction1Widget::addFunction() {
   int i = functionChoice.size();
-  functionChoice.push_back(new Function1ChoiceWidget(true));
+  functionChoice.push_back(new Function1ChoiceWidget(true,n));
   functionList->addItem("Undefined");
   connect(functionChoice[i],SIGNAL(functionChanged()),this,SLOT(updateList()));
   connect(functionChoice[i],SIGNAL(resize()),this,SIGNAL(resize()));
@@ -270,7 +270,7 @@ LinearRegularizedCoulombFrictionWidget::LinearRegularizedCoulombFrictionWidget()
   layout->addWidget(mu);
 }
 
-Function1ChoiceWidget::Function1ChoiceWidget(bool withFactor) : function(0), factor(0) {
+Function1ChoiceWidget::Function1ChoiceWidget(bool withFactor, int n_) : function(0), factor(0), n(n_) {
 
   layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -298,15 +298,15 @@ void Function1ChoiceWidget::defineForceLaw(int index) {
   layout->removeWidget(function);
   delete function;
   if(index==0)
-    function = new ConstantFunction1Widget("VS");  
+    function = new ConstantFunction1Widget("VS",n);  
   else if(index==1)
-    function = new QuadraticFunction1Widget;
+    function = new QuadraticFunction1Widget(n);
   else if(index==2)
-    function = new SinusFunction1Widget;
+    function = new SinusFunction1Widget(n);
   else if(index==3)
-    function = new TabularFunction1Widget;
+    function = new TabularFunction1Widget(n);
   else if(index==4) {
-    function = new SummationFunction1Widget;
+    function = new SummationFunction1Widget(n);
     connect(function,SIGNAL(resize()),this,SIGNAL(resize()));
   }
   layout->addWidget(function);

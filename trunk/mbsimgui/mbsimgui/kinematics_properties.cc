@@ -21,6 +21,7 @@
 #include "kinematics_properties.h"
 #include "frame.h"
 #include "string_properties.h"
+#include "function_properties.h"
 #include "extended_properties.h"
 #include "basic_widgets.h"
 #include "string_widgets.h"
@@ -63,13 +64,48 @@ void LinearTranslationProperty::toWidget(QWidget *widget) {
   mat.toWidget(static_cast<LinearTranslationWidget*>(widget)->mat);
 }
 
+TimeDependentTranslationProperty::TimeDependentTranslationProperty() {
+  function.setProperty(new Function1ChoiceProperty(MBSIMNS"position"));
+}
+
+TiXmlElement* TimeDependentTranslationProperty::initializeUsingXML(TiXmlElement *element) {
+  return function.initializeUsingXML(element);
+}
+
+TiXmlElement* TimeDependentTranslationProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"TimeDependentTranslation" );
+  function.writeXMLFile(ele2);
+  parent->LinkEndChild(ele2);
+  return ele2;
+}
+
+void TimeDependentTranslationProperty::fromWidget(QWidget *widget) {
+  function.fromWidget(static_cast<TimeDependentTranslationWidget*>(widget)->function);
+}
+
+void TimeDependentTranslationProperty::toWidget(QWidget *widget) {
+  function.toWidget(static_cast<TimeDependentTranslationWidget*>(widget)->function);
+}
+
+void TranslationChoiceProperty::defineTranslation(int index_) {
+  index = index_;
+  delete translation;
+  if(index==0)
+    translation = new LinearTranslationProperty;  
+  else if(index==1)
+    translation = new TimeDependentTranslationProperty;  
+}
+
 TiXmlElement* TranslationChoiceProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=(xmlName=="")?element:element->FirstChildElement(xmlName);
+   TiXmlElement *e=(xmlName=="")?element:element->FirstChildElement(xmlName);
   if(e) {
-    TiXmlElement* ee=e->FirstChildElement();
+    TiXmlElement *ee = e->FirstChildElement();
     if(ee) {
-//      if(ee->ValueStr() == MBSIMNS"LinearTranslation")
-//        translation = new LinearTranslationProperty;
+      if(ee->ValueStr() == MBSIMNS"LinearTranslation")
+        index = 0;
+      else if(ee->ValueStr() == MBSIMNS"TimeDependentTranslation")
+        index = 1;
+      defineTranslation(index);
       translation->initializeUsingXML(ee);
       return e;
     }
@@ -92,10 +128,17 @@ TiXmlElement* TranslationChoiceProperty::writeXMLFile(TiXmlNode *parent) {
 }
 
 void TranslationChoiceProperty::fromWidget(QWidget *widget) {
+  defineTranslation(static_cast<TranslationChoiceWidget*>(widget)->comboBox->currentIndex());
   translation->fromWidget(static_cast<TranslationChoiceWidget*>(widget)->translation);
 }
 
 void TranslationChoiceProperty::toWidget(QWidget *widget) {
+  static_cast<TranslationChoiceWidget*>(widget)->comboBox->blockSignals(true);
+  static_cast<TranslationChoiceWidget*>(widget)->comboBox->setCurrentIndex(index);
+  static_cast<TranslationChoiceWidget*>(widget)->comboBox->blockSignals(false);
+  static_cast<TranslationChoiceWidget*>(widget)->blockSignals(true);
+  static_cast<TranslationChoiceWidget*>(widget)->defineTranslation(index);
+  static_cast<TranslationChoiceWidget*>(widget)->blockSignals(false);
   translation->toWidget(static_cast<TranslationChoiceWidget*>(widget)->translation);
 }
 
@@ -217,6 +260,8 @@ void RotationChoiceProperty::toWidget(QWidget *widget) {
   static_cast<RotationChoiceWidget*>(widget)->comboBox->blockSignals(true);
   static_cast<RotationChoiceWidget*>(widget)->comboBox->setCurrentIndex(index);
   static_cast<RotationChoiceWidget*>(widget)->comboBox->blockSignals(false);
+  static_cast<RotationChoiceWidget*>(widget)->blockSignals(true);
   static_cast<RotationChoiceWidget*>(widget)->defineRotation(index);
+  static_cast<RotationChoiceWidget*>(widget)->blockSignals(false);
   rotation->toWidget(static_cast<RotationChoiceWidget*>(widget)->rotation);
 }

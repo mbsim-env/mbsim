@@ -223,11 +223,19 @@ TiXmlElement* SummationFunction1Property::writeXMLFile(TiXmlNode *parent) {
 }
 
 void SummationFunction1Property::fromWidget(QWidget *widget) {
-  throw;
+  for(unsigned int i=0; i<static_cast<SummationFunction1Widget*>(widget)->functionChoice.size(); i++) {
+    functionChoice.push_back(new Function1ChoiceProperty("",true));
+    functionChoice[i]->fromWidget(static_cast<SummationFunction1Widget*>(widget)->functionChoice[i]);
+  }
 }
 
 void SummationFunction1Property::toWidget(QWidget *widget) {
-  throw;
+  for(unsigned int i=0; i<functionChoice.size(); i++) {
+    static_cast<SummationFunction1Widget*>(widget)->blockSignals(true);
+    static_cast<SummationFunction1Widget*>(widget)->addFunction();
+    static_cast<SummationFunction1Widget*>(widget)->blockSignals(false);
+    functionChoice[i]->toWidget(static_cast<SummationFunction1Widget*>(widget)->functionChoice[i]);
+  }
 }
 
 LinearSpringDamperForceProperty::LinearSpringDamperForceProperty() {
@@ -443,6 +451,8 @@ TiXmlElement* Function1ChoiceProperty::writeXMLFile(TiXmlNode *parent) {
 void Function1ChoiceProperty::fromWidget(QWidget *widget) {
   defineForceLaw(static_cast<Function1ChoiceWidget*>(widget)->comboBox->currentIndex());
   function->fromWidget(static_cast<Function1ChoiceWidget*>(widget)->function);
+  if(factor.getProperty())
+    factor.fromWidget(static_cast<Function1ChoiceWidget*>(widget)->factor);
 }
 
 void Function1ChoiceProperty::toWidget(QWidget *widget) {
@@ -453,6 +463,8 @@ void Function1ChoiceProperty::toWidget(QWidget *widget) {
   static_cast<Function1ChoiceWidget*>(widget)->defineForceLaw(index);
   static_cast<Function1ChoiceWidget*>(widget)->blockSignals(false);
   function->toWidget(static_cast<Function1ChoiceWidget*>(widget)->function);
+  if(factor.getProperty())
+    factor.toWidget(static_cast<Function1ChoiceWidget*>(widget)->factor);
 }
 
 Function2ChoiceProperty::Function2ChoiceProperty(const string &xmlName_) : function(0), index(0), xmlName(xmlName_) {

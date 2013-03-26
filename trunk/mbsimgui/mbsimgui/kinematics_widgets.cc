@@ -20,6 +20,7 @@
 #include <config.h>
 #include "kinematics_widgets.h"
 #include "string_widgets.h"
+#include "function_widgets.h"
 #include "extended_widgets.h"
 #include "octaveutils.h"
 #include <QtGui>
@@ -46,30 +47,36 @@ int LinearTranslationWidget::getSize() const {
   return A.size()?A[0].size():0;
 }
 
+TimeDependentTranslationWidget::TimeDependentTranslationWidget() {
+  function = new ExtWidget("Kinematic function",new Function1ChoiceWidget(false,3));
+
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+  layout->addWidget(function);
+}
+
 TranslationChoiceWidget::TranslationChoiceWidget(const string &xmlName_) : translation(0), xmlName(xmlName_) {
   layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
   comboBox = new QComboBox;
-  //comboBox->addItem(tr("None"));
-  comboBox->addItem(tr("LinearTranslation"));
+  comboBox->addItem(tr("Linear translation"));
+  comboBox->addItem(tr("Time dependent translation"));
   layout->addWidget(comboBox);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineTranslation(int)));
   defineTranslation(0);
 }
 
 void TranslationChoiceWidget::defineTranslation(int index) {
-//  if(index==0) {
-//    layout->removeWidget(translation);
-//    delete translation;
-//    translation = 0;
-//  } 
-  if(index==0) {
+  layout->removeWidget(translation);
+  delete translation;
+  if(index==0)
     translation = new LinearTranslationWidget;  
-    connect((LinearTranslationWidget*)translation, SIGNAL(translationChanged()), this, SIGNAL(translationChanged()));
+  else if(index==1)
+    translation = new TimeDependentTranslationWidget;  
   layout->addWidget(translation);
-  }
   emit translationChanged();
 }
 
@@ -90,7 +97,6 @@ RotationChoiceWidget::RotationChoiceWidget(const string &xmlName_) : rotation(0)
   setLayout(layout);
 
   comboBox = new QComboBox;
-  //comboBox->addItem(tr("None"));
   comboBox->addItem(tr("Rotation about x-axis"));
   comboBox->addItem(tr("Rotation about y-axis"));
   comboBox->addItem(tr("Rotation about z-axis"));

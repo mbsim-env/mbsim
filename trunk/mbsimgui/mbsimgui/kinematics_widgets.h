@@ -49,6 +49,18 @@ class LinearTranslationWidget : public TranslationWidget {
     void translationChanged();
 };
 
+class TimeDependentTranslationWidget : public TranslationWidget {
+
+  friend class TimeDependentTranslationProperty;
+
+  public:
+    TimeDependentTranslationWidget();
+    int getSize() const {return 0;}
+  protected:
+    ExtWidget *function;
+};
+
+
 class TranslationChoiceWidget : public Widget {
   Q_OBJECT
 
