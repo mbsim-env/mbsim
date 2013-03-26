@@ -435,7 +435,7 @@ namespace MBSim {
       }
       e=element->FirstChildElement(MBSIMNS"xy");
       if (e) {
-        fmatvec::Matrix<fmatvec::General,Row,Col,double> xy=Element::getMat(e);
+        fmatvec::MatV xy=Element::getMat(e);
         assert(xy.cols()>1);
         x=xy.col(0);
         y=xy(fmatvec::Range<fmatvec::Var,fmatvec::Var>(0, xy.rows()-1), fmatvec::Range<fmatvec::Var,fmatvec::Var>(1, xy.cols()-1));
