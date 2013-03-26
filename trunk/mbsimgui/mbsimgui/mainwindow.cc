@@ -40,7 +40,6 @@ QDir mbsDir;
 MainWindow *mw;
 
 bool removeDir(const QString &dirName) {
-  cout << "removeDir " << dirName.toStdString() << endl;
   bool result = true;
   QDir dir(dirName);
 
@@ -180,6 +179,7 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   list << "Name" << "Type";
   elementList->setHeaderLabels(list);
   connect(elementList,SIGNAL(pressed(QModelIndex)), this, SLOT(elementListClicked()));
+  connect(elementList,SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(elementListDoubleClicked()));
 
   integratorList = new QTreeWidget;
   integratorList->setHeaderLabel("Type");
@@ -371,6 +371,12 @@ void MainWindow::elementListClicked() {
 #endif
 }
 
+void MainWindow::elementListDoubleClicked() {
+  Element *element=dynamic_cast<Element*>(elementList->currentItem());
+  if(element)
+    element->openPropertyDialog();
+}
+
 void MainWindow::integratorListClicked() {
   if(QApplication::mouseButtons()==Qt::RightButton) {
     Integrator *integrator=(Integrator*)integratorList->currentItem();
@@ -465,7 +471,6 @@ void MainWindow::newMBS() {
 }
 
 void MainWindow::loadMBS(const QString &file) {
-  cout << "begin loadMBS" << endl;
   mbsDir = QFileInfo(file).absolutePath();
   absoluteMBSFilePath=file;
   fileMBS->setText(QDir::current().relativeFilePath(absoluteMBSFilePath));
@@ -480,13 +485,10 @@ void MainWindow::loadMBS(const QString &file) {
     ((Integrator*)integratorList->topLevelItem(0))->setSolver(sys);
     actionSaveMBS->setDisabled(false);
   }
-  cout << "end loadMBS" << endl;
 
-  cout << "begin mbsimxml" << endl;
 #ifdef INLINE_OPENMBV
   mbsimxml(1);
 #endif
-  cout << "end mbsimxml" << endl;
 }
 
 void MainWindow::loadMBS() {

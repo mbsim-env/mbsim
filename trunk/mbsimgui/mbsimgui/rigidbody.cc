@@ -207,7 +207,8 @@ void RigidBody::fromWidget() {
 int RigidBody::getUnconstrainedSize() const {
   if(translationWidget)
     return (translationWidget->isActive()?((TranslationChoiceWidget*)translationWidget->getWidget())->getSize():0) + (rotationWidget->isActive()?((RotationChoiceWidget*)rotationWidget->getWidget())->getSize():0);
-  return 0;
+  else
+    return (translation.isActive()?((TranslationChoiceProperty*)translation.getProperty())->getSize():0) + (rotation.isActive()?((RotationChoiceProperty*)rotation.getProperty())->getSize():0);
 }
 
 void RigidBody::addFrame() {

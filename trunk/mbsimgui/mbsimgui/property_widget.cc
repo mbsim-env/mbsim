@@ -70,9 +70,7 @@ void PropertyDialog::updateWidget() {
 }
 
 void PropertyDialog::resizeVariables() {
-  cout << parentObject << endl;
   Object *obj = dynamic_cast<Object*>(parentObject);
-  cout << obj<<endl;
   if(obj) obj->resizeVariables();
   for(unsigned int i=0; i<widget.size(); i++)
     dynamic_cast<WidgetInterface*>(widget[i])->resizeVariables();

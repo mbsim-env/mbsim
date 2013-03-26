@@ -59,6 +59,7 @@ class MainWindow : public QMainWindow {
     void mbsimxml(int task);
   public slots:
     void elementListClicked();
+    void elementListDoubleClicked();
     void parameterListClicked();
     void integratorListClicked();
 //    void parameterListClicked(const QPoint &pos);

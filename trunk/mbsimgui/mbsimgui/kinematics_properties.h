@@ -31,12 +31,14 @@ class TranslationProperty : public Property {
 
   public:
     TranslationProperty() {}
+    virtual int getSize() const = 0;
 };
 
 class LinearTranslationProperty : public TranslationProperty {
 
   public:
     LinearTranslationProperty();
+    int getSize() const;
     TiXmlElement* initializeUsingXML(TiXmlElement *element);
     TiXmlElement* writeXMLFile(TiXmlNode *element);
     void fromWidget(QWidget *widget);
@@ -50,6 +52,8 @@ class TranslationChoiceProperty : public Property {
 
   public:
     TranslationChoiceProperty(TranslationProperty* translation_, const std::string &xmlName_): translation(translation_), xmlName(xmlName_) {}
+
+    int getSize() const { return translation->getSize(); }
 
     TiXmlElement* initializeUsingXML(TiXmlElement *element);
     TiXmlElement* writeXMLFile(TiXmlNode *element);
@@ -65,12 +69,14 @@ class RotationProperty : public Property {
 
   public:
     RotationProperty() {}
+    virtual int getSize() const = 0;
 };
 
 class RotationAboutXAxisProperty : public RotationProperty {
 
   public:
     RotationAboutXAxisProperty() {}
+    int getSize() const {return 1;}
     TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
     TiXmlElement* writeXMLFile(TiXmlNode *element);
     void fromWidget(QWidget *widget) {}
@@ -81,6 +87,7 @@ class RotationAboutYAxisProperty : public RotationProperty {
 
   public:
     RotationAboutYAxisProperty() {}
+    int getSize() const {return 1;}
     TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
     TiXmlElement* writeXMLFile(TiXmlNode *element);
     void fromWidget(QWidget *widget) {}
@@ -91,6 +98,7 @@ class RotationAboutZAxisProperty : public RotationProperty {
 
   public:
     RotationAboutZAxisProperty() {}
+    int getSize() const {return 1;}
     TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
     TiXmlElement* writeXMLFile(TiXmlNode *element);
     void fromWidget(QWidget *widget) {}
@@ -101,6 +109,7 @@ class RotationAboutFixedAxisProperty : public RotationProperty {
 
   public:
     RotationAboutFixedAxisProperty();
+    int getSize() const {return 1;}
     TiXmlElement* initializeUsingXML(TiXmlElement *element);
     TiXmlElement* writeXMLFile(TiXmlNode *element);
     void fromWidget(QWidget *widget); 
@@ -113,6 +122,7 @@ class RotationAboutAxesXYProperty : public RotationProperty {
 
   public:
     RotationAboutAxesXYProperty() {}
+    int getSize() const {return 2;}
     TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
     TiXmlElement* writeXMLFile(TiXmlNode *element);
     void fromWidget(QWidget *widget) {}
@@ -123,6 +133,7 @@ class CardanAnglesProperty : public RotationProperty {
 
   public:
     CardanAnglesProperty() {}
+    int getSize() const {return 2;}
     TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
     TiXmlElement* writeXMLFile(TiXmlNode *element);
     void fromWidget(QWidget *widget) {}
@@ -133,6 +144,8 @@ class RotationChoiceProperty : public Property {
 
   public:
     RotationChoiceProperty(RotationProperty* rotation_, const std::string &xmlName_): rotation(rotation_), xmlName(xmlName_), index(0) {}
+
+    int getSize() const { return rotation->getSize(); }
 
     TiXmlElement* initializeUsingXML(TiXmlElement *element);
     TiXmlElement* writeXMLFile(TiXmlNode *element);

@@ -26,6 +26,7 @@
 #include "string_widgets.h"
 #include "kinematics_widgets.h"
 #include "extended_widgets.h"
+#include "octaveutils.h"
 #include <mbxmlutilstinyxml/tinyxml.h>
 #include <mbxmlutilstinyxml/tinynamespace.h>
 
@@ -35,6 +36,12 @@ LinearTranslationProperty::LinearTranslationProperty() {
   vector<PhysicalStringProperty*> input;
   input.push_back(new PhysicalStringProperty(new MatProperty(3,1),"-",MBSIMNS"translationVectors"));
   mat.setProperty(new ExtPhysicalVarProperty(input));
+}
+
+int LinearTranslationProperty::getSize() const {
+  string str = evalOctaveExpression(static_cast<const ExtPhysicalVarProperty*>(mat.getProperty())->getCurrentPhysicalStringProperty()->getValue());
+  vector<vector<string> > A = strToMat(str);
+  return A.size()?A[0].size():0;
 }
 
 TiXmlElement* LinearTranslationProperty::initializeUsingXML(TiXmlElement *element) {

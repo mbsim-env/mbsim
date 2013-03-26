@@ -119,13 +119,11 @@ void KinematicConstraint::updateReferenceBody() {
 
 void KinematicConstraint::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e, *ee;
-  blockSignals(true);
   Constraint::initializeUsingXML(element);
   dependentBody.initializeUsingXML(element);
   kinematicFunction.initializeUsingXML(element);
   firstDerivativeOfKinematicFunction.initializeUsingXML(element);
   secondDerivativeOfKinematicFunction.initializeUsingXML(element);
-  blockSignals(false);
 }
 
 TiXmlElement* KinematicConstraint::writeXMLFile(TiXmlNode *parent) {
