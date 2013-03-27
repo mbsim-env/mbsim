@@ -21,12 +21,16 @@
 #define __MAINWINDOW_H_
 
 #include <QMainWindow>
+#include <QTabWidget>
 #include <mbxmlutilstinyxml/tinyxml.h>
 
 class QTreeWidget;
 class QStackedWidget;
 class QAction;
 class QLineEdit;
+class QTextBrowser;
+class QProcess;
+class Process;
 
 namespace OpenMBVGUI {
   class MainWindow;
@@ -44,6 +48,7 @@ class MainWindow : public QMainWindow {
     QTreeWidget *elementList, *integratorList, *parameterList;
     QStackedWidget *pagesWidget;
     QLineEdit *fileMBS, *fileIntegrator, *fileParameter;
+    Process *mbsim;
     QAction *actionSaveProj, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameter;
     void loadProj(const QString &file);
     void loadMBS(const QString &file);
@@ -97,6 +102,24 @@ class MainWindow : public QMainWindow {
     void openPropertyDialog(std::string);
   protected:
     void closeEvent ( QCloseEvent * event );
+};
+
+class Process : public QTabWidget {
+  Q_OBJECT
+  public:
+    Process(QWidget *parent);
+    void setWorkingDirectory(const QString &dir);
+    void start(const QString &program, const QStringList &arguments);
+    QSize sizeHint() const;
+    QSize minimumSizeHint() const;
+  private:
+    QProcess *process;
+    QTextBrowser *out, *err;
+    QString outText, errText;
+    void convertToHtml(QString &text);
+  private slots:
+    void output();
+    void error();
 };
 
 #endif

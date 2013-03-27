@@ -31,6 +31,7 @@
 #include <openmbv/mainwindow.h>
 #include <mbxmlutilstinyxml/getinstallpath.h>
 #include "widget.h"
+#include <QTextBrowser>
 
 using namespace std;
 
@@ -251,6 +252,13 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   mainlayout->addWidget(inlineOpenMBVMW);
 #endif
   //mainlayout->addWidget(pagesWidget);
+
+  QDockWidget *mbsimDW = new QDockWidget("MBSim Echo Area", this);
+  addDockWidget(Qt::BottomDockWidgetArea, mbsimDW);
+  mbsim=new Process(this);
+  mbsimDW->setWidget(mbsim); 
+
+  setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
   
   newDOPRI5Integrator();
   newMBS();
@@ -805,7 +813,8 @@ void MainWindow::mbsimxml(int task) {
   arg.append(mbsParamFile);
   arg.append(mbsFile);
   arg.append(intFile);
-  QProcess::startDetached((MBXMLUtils::getInstallPath()+"/bin/mbsimxml").c_str(), arg, uniqueTempDir);
+  mbsim->setWorkingDirectory(uniqueTempDir);
+  mbsim->start((MBXMLUtils::getInstallPath()+"/bin/mbsimxml").c_str(), arg);
   absolutePath = false;
 }
 
@@ -870,4 +879,61 @@ void MainWindow::about() {
       //"  <li>...</li>"
       "</ul>"
       );
+}
+
+Process::Process(QWidget *parent) : QTabWidget(parent) {
+  process=new QProcess(this);
+  out=new QTextBrowser(this);
+  err=new QTextBrowser(this);
+  addTab(out, "Out");
+  addTab(err, "Err");
+  setCurrentIndex(1);
+  setMinimumHeight(80);
+  setTabPosition(QTabWidget::West);
+  connect(process, SIGNAL(readyReadStandardOutput()), this, SLOT(output()));
+  connect(process, SIGNAL(readyReadStandardError()), this, SLOT(error()));
+}
+
+void Process::setWorkingDirectory(const QString &dir) {
+  process->setWorkingDirectory(dir);
+}
+
+void Process::start(const QString &program, const QStringList &arguments) {
+  process->start(program, arguments);
+  outText="";
+  errText="";
+}
+
+void Process::output() {
+  QString newText=process->readAllStandardOutput().data();
+  convertToHtml(newText);
+  outText+=newText;
+  out->setHtml(outText);
+  out->moveCursor(QTextCursor::End);
+}
+
+void Process::error() {
+  QString newText=process->readAllStandardError().data();
+  convertToHtml(newText);
+  errText+=newText;
+  err->setHtml(errText);
+  err->moveCursor(QTextCursor::Start);
+}
+
+void Process::convertToHtml(QString &text) {
+  // newlines to html
+  text.replace("\n", "<br/>");
+  // MISSING: convert <filename>:<linenr> to a hyperlink which opens the <filename> and jumps to <linenr>
+}
+
+QSize Process::sizeHint() const {
+  QSize size=QTabWidget::sizeHint();
+  size.setHeight(80);
+  return size;
+}
+
+QSize Process::minimumSizeHint() const {
+  QSize size=QTabWidget::minimumSizeHint();
+  size.setHeight(80);
+  return size;
 }
