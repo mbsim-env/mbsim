@@ -11,10 +11,11 @@ bin_PROGRAMS = mbsimflatxml mbsimxml
 
 mbsimflatxml_CPPFLAGS = $(DEPS_CFLAGS) $(MBSIMMODULES_CFLAGS)
 mbsimflatxml_LDFLAGS = -L. -Wl,-rpath -Wl,\$$ORIGIN/../lib
-mbsimflatxml_LDADD = ./libmbsimflatxml.la -lmbsim -l@BOOST_FILESYSTEM_LIB@ -l@BOOST_SYSTEM_LIB@
+mbsimflatxml_LDADD = ./libmbsimflatxml.la -lmbsim -l@BOOST_FILESYSTEM_LIB@ -l@BOOST_SYSTEM_LIB@ -lmbxmlutilstinyxml
 mbsimflatxml_SOURCES = mbsimflatxml-main.cc
 
+mbsimxml_CPPFLAGS = $(DEPS_CFLAGS)
 mbsimxml_LDFLAGS = -Wl,-rpath -Wl,\$$ORIGIN/../lib
-mbsimxml_LDADD = -l@BOOST_FILESYSTEM_LIB@ -l@BOOST_SYSTEM_LIB@
+mbsimxml_LDADD = $(DEPS_LIBS) -l@BOOST_FILESYSTEM_LIB@ -l@BOOST_SYSTEM_LIB@
 mbsimxml_SOURCES = mbsimxml.cc
 

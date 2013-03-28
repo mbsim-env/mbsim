@@ -21,12 +21,16 @@
 #define __MAINWINDOW_H_
 
 #include <QMainWindow>
+#include <QTabWidget>
 #include <mbxmlutilstinyxml/tinyxml.h>
 
 class QTreeWidget;
 class QStackedWidget;
 class QAction;
 class QLineEdit;
+class QTextBrowser;
+class QProcess;
+class Process;
 
 namespace OpenMBVGUI {
   class MainWindow;
@@ -44,6 +48,7 @@ class MainWindow : public QMainWindow {
     QTreeWidget *elementList, *integratorList, *parameterList;
     QStackedWidget *pagesWidget;
     QLineEdit *fileMBS, *fileIntegrator, *fileParameter;
+    Process *mbsim;
     QAction *actionSaveProj, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameter;
     void loadProj(const QString &file);
     void loadMBS(const QString &file);
@@ -52,14 +57,14 @@ class MainWindow : public QMainWindow {
     OpenMBVGUI::MainWindow *inlineOpenMBVMW;
     void initInlineOpenMBV();
     QString uniqueTempDir, absoluteMBSFilePath;
-    void mbsimxml(int task);
-    int openmbvID, h5plotserieID;
   public:
     MainWindow();
     ~MainWindow();
     static MBXMLUtils::OctaveEvaluator *octEval;
+    void mbsimxml(int task);
   public slots:
     void elementListClicked();
+    void elementListDoubleClicked();
     void parameterListClicked();
     void integratorListClicked();
 //    void parameterListClicked(const QPoint &pos);
@@ -85,19 +90,36 @@ class MainWindow : public QMainWindow {
     void saveParameterAs();
     void saveParameter(QString filename="");
     void newDoubleParameter();
-    void preview();
     void simulate();
     void openmbv();
     void h5plotserie();
     void help();
     void about();
     void updateOctaveParameters();
-    void resizeVariables();
   protected slots:
     void selectElement(std::string);
     void changeWorkingDir();
+    void openPropertyDialog(std::string);
   protected:
     void closeEvent ( QCloseEvent * event );
+};
+
+class Process : public QTabWidget {
+  Q_OBJECT
+  public:
+    Process(QWidget *parent);
+    void setWorkingDirectory(const QString &dir);
+    void start(const QString &program, const QStringList &arguments);
+    QSize sizeHint() const;
+    QSize minimumSizeHint() const;
+  private:
+    QProcess *process;
+    QTextBrowser *out, *err;
+    QString outText, errText;
+    void convertToHtml(QString &text);
+  private slots:
+    void output();
+    void error();
 };
 
 #endif

@@ -27,160 +27,91 @@
 
 using namespace std;
 
-TiXmlElement* Function1::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType().toStdString());
-  parent->LinkEndChild(ele0);
-  return ele0;
-}
-
-TiXmlElement* Function2::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType().toStdString());
-  parent->LinkEndChild(ele0);
-  return ele0;
-}
-
-void DifferentiableFunction1::setDerivative(Function1 *diff,size_t degree) { 
+void DifferentiableFunction1Widget::setDerivative(Function1Widget *diff,size_t degree) { 
   derivatives.resize(max(derivatives.size(),degree+1)); 
   derivatives[degree]=diff; 
 }
 
-TiXmlElement* DifferentiableFunction1::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Function1::writeXMLFile(parent);
-  addElementText(ele0,MBSIMNS"orderOfDerivative",order);
-  return ele0;
-}
-
-TiXmlElement* DifferentiableFunction1::initializeUsingXML(TiXmlElement *element) {
-  Function1::initializeUsingXML(element);
-  TiXmlElement * e;
-  e=element->FirstChildElement(MBSIMNS"orderOfDerivative");
-  if (e) setOrderOfDerivative(atoi(e->GetText()));
-  return e;
-}
-
-ConstantFunction1::ConstantFunction1(const QString &ext) : Function1(ext) {
+ConstantFunction1Widget::ConstantFunction1Widget(const QString &ext, int n) : Function1Widget(ext) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new VecWidget(0,true),MBSIMNS"value",QStringList(),0));
-  c = new ExtPhysicalVarWidget(input),"VS";  
-  ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Value",c);
-  layout->addWidget(extXMLWidget);
+  input.push_back(new PhysicalStringWidget(new VecWidget(n,true),QStringList(),0));
+  c = new ExtWidget("Value",new ExtPhysicalVarWidget(input));
+  layout->addWidget(c);
 }
 
-void ConstantFunction1::resize(int m, int n) {
-  if(((VecWidget*)c->getPhysicalStringWidget(0)->getWidget())->size() != m)
-    ((VecWidget*)c->getPhysicalStringWidget(0)->getWidget())->resize(m);
+void ConstantFunction1Widget::resize(int m, int n) {
+  if(((VecWidget*)static_cast<ExtPhysicalVarWidget*>(c->getWidget())->getPhysicalStringWidget(0)->getWidget())->size() != m)
+    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(c->getWidget())->getPhysicalStringWidget(0)->getWidget())->resize(m);
 }
 
-TiXmlElement* ConstantFunction1::initializeUsingXML(TiXmlElement *element) {
-  Function1::initializeUsingXML(element);
-  c->initializeUsingXML(element);
-  return element;
-}
-
-TiXmlElement* ConstantFunction1::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Function1::writeXMLFile(parent);
-  c->writeXMLFile(ele0);
-  return ele0;
-} 
-
-QuadraticFunction1::QuadraticFunction1() {
+QuadraticFunction1Widget::QuadraticFunction1Widget(int n) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new VecWidget(0,true),MBSIMNS"a0",QStringList(),0));
-  var.push_back(new ExtPhysicalVarWidget(input));
-  widget.push_back(new ExtXMLWidget("a0",var[var.size()-1]));
-  layout->addWidget(widget[widget.size()-1]);
+  input.push_back(new PhysicalStringWidget(new VecWidget(n,true),QStringList(),0));
+  a0 = new ExtWidget("a0",new ExtPhysicalVarWidget(input));
+  layout->addWidget(a0);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new VecWidget(0,true),MBSIMNS"a1",QStringList(),0));
-  var.push_back(new ExtPhysicalVarWidget(input));
-  widget.push_back(new ExtXMLWidget("a1",var[var.size()-1]));
-  layout->addWidget(widget[widget.size()-1]);
+  input.push_back(new PhysicalStringWidget(new VecWidget(n,true),QStringList(),0));
+  a1 = new ExtWidget("a1",new ExtPhysicalVarWidget(input));
+  layout->addWidget(a1);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new VecWidget(0,true),MBSIMNS"a2",QStringList(),0));
-  var.push_back(new ExtPhysicalVarWidget(input));
-  widget.push_back(new ExtXMLWidget("a2",var[var.size()-1]));
-  layout->addWidget(widget[widget.size()-1]);
+  input.push_back(new PhysicalStringWidget(new VecWidget(n,true),QStringList(),0));
+  a2 = new ExtWidget("a2",new ExtPhysicalVarWidget(input));
+  layout->addWidget(a2);
 }
 
-void QuadraticFunction1::resize(int m, int n) {
-  for(unsigned int i=0; i<var.size(); i++)
-    if(((VecWidget*)var[i]->getPhysicalStringWidget(0)->getWidget())->size() != m)
-      ((VecWidget*)var[i]->getPhysicalStringWidget(0)->getWidget())->resize(m);
+void QuadraticFunction1Widget::resize(int m, int n) {
+  if(((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a0->getWidget())->getPhysicalStringWidget(0)->getWidget())->size() != m) {
+    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a0->getWidget())->getPhysicalStringWidget(0)->getWidget())->resize(m);
+    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a1->getWidget())->getPhysicalStringWidget(0)->getWidget())->resize(m);
+    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a2->getWidget())->getPhysicalStringWidget(0)->getWidget())->resize(m);
+  }
 }
 
-TiXmlElement* QuadraticFunction1::initializeUsingXML(TiXmlElement *element) {
-  DifferentiableFunction1::initializeUsingXML(element);
-  for(unsigned int i=0; i<var.size(); i++)
-    widget[i]->initializeUsingXML(element);
-  return element;
-}
-
-TiXmlElement* QuadraticFunction1::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = DifferentiableFunction1::writeXMLFile(parent);
-  for(unsigned int i=0; i<var.size(); i++)
-    widget[i]->writeXMLFile(ele0);
-  return ele0;
-}
-
-SinusFunction1::SinusFunction1() {
+SinusFunction1Widget::SinusFunction1Widget(int n) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new VecWidget(0,true),MBSIMNS"amplitude",QStringList(),0));
-  var.push_back(new ExtPhysicalVarWidget(input));
-  widget.push_back(new ExtXMLWidget("Amplitude",var[var.size()-1]));
-  layout->addWidget(widget[widget.size()-1]);
+  input.push_back(new PhysicalStringWidget(new VecWidget(n,true),QStringList(),0));
+  a = new ExtWidget("Amplitude",new ExtPhysicalVarWidget(input));
+  layout->addWidget(a);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new VecWidget(0,true),MBSIMNS"frequency",QStringList(),0));
-  var.push_back(new ExtPhysicalVarWidget(input));
-  widget.push_back(new ExtXMLWidget("Frequency",var[var.size()-1]));
-  layout->addWidget(widget[widget.size()-1]);
+  input.push_back(new PhysicalStringWidget(new VecWidget(n,true),QStringList(),0));
+  f = new ExtWidget("Frequency",new ExtPhysicalVarWidget(input));
+  layout->addWidget(f);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new VecWidget(0,true),MBSIMNS"phase",QStringList(),0));
-  var.push_back(new ExtPhysicalVarWidget(input));
-  widget.push_back(new ExtXMLWidget("Phase",var[var.size()-1]));
-  layout->addWidget(widget[widget.size()-1]);
+  input.push_back(new PhysicalStringWidget(new VecWidget(n,true),QStringList(),0));
+  p = new ExtWidget("Phase",new ExtPhysicalVarWidget(input));
+  layout->addWidget(p);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new VecWidget(0,true),MBSIMNS"offset",QStringList(),0));
-  var.push_back(new ExtPhysicalVarWidget(input));  
-  widget.push_back(new ExtXMLWidget("Offset",var[var.size()-1],true));
-  layout->addWidget(widget[widget.size()-1]);
+  input.push_back(new PhysicalStringWidget(new VecWidget(n,true),QStringList(),0));
+  o = new ExtWidget("Offset",new ExtPhysicalVarWidget(input),true);
+  layout->addWidget(o);
 }
 
-void SinusFunction1::resize(int m, int n) {
-  for(unsigned int i=0; i<var.size(); i++)
-    if(((VecWidget*)var[i]->getPhysicalStringWidget(0)->getWidget())->size() != m)
-      ((VecWidget*)var[i]->getPhysicalStringWidget(0)->getWidget())->resize(m);
+void SinusFunction1Widget::resize(int m, int n) {
+  if(((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a->getWidget())->getPhysicalStringWidget(0)->getWidget())->size() != m) {
+    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a->getWidget())->getPhysicalStringWidget(0)->getWidget())->resize(m);
+    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(f->getWidget())->getPhysicalStringWidget(0)->getWidget())->resize(m);
+    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(p->getWidget())->getPhysicalStringWidget(0)->getWidget())->resize(m);
+    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(o->getWidget())->getPhysicalStringWidget(0)->getWidget())->resize(m);
+  }
 }
 
-TiXmlElement* SinusFunction1::initializeUsingXML(TiXmlElement *element) {
-  DifferentiableFunction1::initializeUsingXML(element);
-  for(unsigned int i=0; i<var.size(); i++)
-    widget[i]->initializeUsingXML(element);
-  return element;
-}
-
-TiXmlElement* SinusFunction1::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = DifferentiableFunction1::writeXMLFile(parent);
-  for(unsigned int i=0; i<var.size(); i++)
-    widget[i]->writeXMLFile(ele0);
-  return ele0;
-}
-
-TabularFunction1::TabularFunction1() {
+TabularFunction1Widget::TabularFunction1Widget(int n) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -189,38 +120,26 @@ TabularFunction1::TabularFunction1() {
   vector<string> name;
   name.push_back("x and y");
   name.push_back("xy");
-  XMLWidgetContainer *widgetContainer = new XMLWidgetContainer;
+  WidgetContainer *widgetContainer = new WidgetContainer;
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new VecFromFileWidget,MBSIMNS"x",QStringList(),0));
-  widgetContainer->addWidget(new ExtXMLWidget("x",new ExtPhysicalVarWidget(input)));
+  input.push_back(new PhysicalStringWidget(new VecFromFileWidget,QStringList(),0));
+  widgetContainer->addWidget(new ExtWidget("x",new ExtPhysicalVarWidget(input)));
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new MatFromFileWidget,MBSIMNS"y",QStringList(),0));
-  widgetContainer->addWidget(new ExtXMLWidget("y",new ExtPhysicalVarWidget(input)));
+  input.push_back(new PhysicalStringWidget(new MatFromFileWidget,QStringList(),0));
+  widgetContainer->addWidget(new ExtWidget("y",new ExtPhysicalVarWidget(input)));
 
   choiceWidget.push_back(widgetContainer);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new MatFromFileWidget,MBSIMNS"xy",QStringList(),0));
-  choiceWidget.push_back(new ExtXMLWidget("xy",new ExtPhysicalVarWidget(input)));
+  input.push_back(new PhysicalStringWidget(new MatFromFileWidget,QStringList(),0));
+  choiceWidget.push_back(new ExtWidget("xy",new ExtPhysicalVarWidget(input)));
 
-  widget = new XMLWidgetChoiceWidget(name,choiceWidget);
-  layout->addWidget(widget);
+  choice = new WidgetChoiceWidget(name,choiceWidget);
+  layout->addWidget(choice);
 }
 
-TiXmlElement* TabularFunction1::initializeUsingXML(TiXmlElement *element) {
-  Function1::initializeUsingXML(element);
-  widget->initializeUsingXML(element);
-  return element;
-}
-
-TiXmlElement* TabularFunction1::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Function1::writeXMLFile(parent);
-  widget->writeXMLFile(ele0);
-  return ele0;
-}
-
-SummationFunction1::SummationFunction1() {
+SummationFunction1Widget::SummationFunction1Widget(int n_) : n(n_) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -236,7 +155,7 @@ SummationFunction1::SummationFunction1() {
   layout->addWidget(stackedWidget,0,Qt::AlignTop);
 }
 
-void SummationFunction1::openContextMenu(const QPoint &pos) {
+void SummationFunction1Widget::openContextMenu(const QPoint &pos) {
   if(functionList->itemAt(pos)) {
     QMenu menu(this);
     QAction *add = new QAction(tr("Remove"), this);
@@ -253,19 +172,19 @@ void SummationFunction1::openContextMenu(const QPoint &pos) {
   }
 }
 
-void SummationFunction1::resize(int m, int n) {
+void SummationFunction1Widget::resize(int m, int n) {
   for(int i=0; i<functionChoice.size(); i++)
    functionChoice[i]->resize(m,n);
 }
 
-void SummationFunction1::updateList() {
+void SummationFunction1Widget::updateList() {
   for(int i=0; i<functionList->count(); i++)
     functionList->item(i)->setText(functionChoice[i]->getFunction()->getType());
 }
 
-void SummationFunction1::addFunction() {
+void SummationFunction1Widget::addFunction() {
   int i = functionChoice.size();
-  functionChoice.push_back(new Function1ChoiceWidget("",true));
+  functionChoice.push_back(new Function1ChoiceWidget(true,n));
   functionList->addItem("Undefined");
   connect(functionChoice[i],SIGNAL(functionChanged()),this,SLOT(updateList()));
   connect(functionChoice[i],SIGNAL(resize()),this,SIGNAL(resize()));
@@ -274,7 +193,7 @@ void SummationFunction1::addFunction() {
   emit updateList();
 }
 
-void SummationFunction1::removeFunction() {
+void SummationFunction1Widget::removeFunction() {
   int i = functionList->currentRow();
   stackedWidget->removeWidget(functionChoice[i]);
   delete functionChoice[i];
@@ -282,157 +201,76 @@ void SummationFunction1::removeFunction() {
   delete functionList->takeItem(i);
 }
 
-TiXmlElement* SummationFunction1::initializeUsingXML(TiXmlElement *element) {
-  Function1::initializeUsingXML(element);
-  TiXmlElement *e = element->FirstChildElement(MBSIMNS"function");
-  while(e) {
-    addFunction();
-    functionChoice[functionChoice.size()-1]->initializeUsingXML(e);
-    e=e->NextSiblingElement();
-  }
-  return e;
-}
-
-TiXmlElement* SummationFunction1::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Function1::writeXMLFile(parent);
-  for(int i=0; i<functionChoice.size(); i++) {
-    TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"function");
-    ele0->LinkEndChild(ele1);
-    functionChoice[i]->writeXMLFile(ele1);
-  }
-  return ele0;
-}
-
-LinearSpringDamperForce::LinearSpringDamperForce() {
+LinearSpringDamperForceWidget::LinearSpringDamperForceWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),MBSIMNS"stiffnessCoefficient",stiffnessUnits(),1));
-  var.push_back(new ExtPhysicalVarWidget(input));
-  ExtXMLWidget *extXMLWidget = new ExtXMLWidget("Stiffness coefficient",var[var.size()-1]);
-  layout->addWidget(extXMLWidget);
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),stiffnessUnits(),1));
+  c = new ExtWidget("Stiffness coefficient",new ExtPhysicalVarWidget(input));
+  layout->addWidget(c);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),MBSIMNS"dampingCoefficient",dampingUnits(),0));
-  var.push_back(new ExtPhysicalVarWidget(input));
-  extXMLWidget = new ExtXMLWidget("Damping coefficient",var[var.size()-1]);
-  layout->addWidget(extXMLWidget);
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),dampingUnits(),0));
+  d = new ExtWidget("Damping coefficient",new ExtPhysicalVarWidget(input));
+  layout->addWidget(d);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),MBSIMNS"unloadedLength",lengthUnits(),4));
-  var.push_back(new ExtPhysicalVarWidget(input));
-  extXMLWidget = new ExtXMLWidget("Unloaded length",var[var.size()-1]);
-  layout->addWidget(extXMLWidget);
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),lengthUnits(),4));
+  l0 = new ExtWidget("Unloaded length",new ExtPhysicalVarWidget(input));
+  layout->addWidget(l0);
 }
-TiXmlElement* LinearSpringDamperForce::initializeUsingXML(TiXmlElement *element) {
-  Function2::initializeUsingXML(element);
-  for(unsigned int i=0; i<var.size(); i++)
-    var[i]->initializeUsingXML(element);
-  return element;
-}
-TiXmlElement* LinearSpringDamperForce::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Function2::writeXMLFile(parent);
-  for(unsigned int i=0; i<var.size(); i++)
-    var[i]->writeXMLFile(ele0);
-  return ele0;
-} 
 
-LinearRegularizedBilateralConstraint::LinearRegularizedBilateralConstraint() {
+LinearRegularizedBilateralConstraintWidget::LinearRegularizedBilateralConstraintWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),MBSIMNS"stiffnessCoefficient",stiffnessUnits(),1));
-  var.push_back(new ExtXMLWidget("Stiffness coefficient",new ExtPhysicalVarWidget(input)));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),stiffnessUnits(),1));
+  c = new ExtWidget("Stiffness coefficient",new ExtPhysicalVarWidget(input));
+  layout->addWidget(c);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),MBSIMNS"dampingCoefficient",dampingUnits(),0));
-  var.push_back(new ExtXMLWidget("Damping coefficient",new ExtPhysicalVarWidget(input)));
-
-  layout->addWidget(var[0]);
-  layout->addWidget(var[1]);
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),dampingUnits(),0));
+  d = new ExtWidget("Damping coefficient",new ExtPhysicalVarWidget(input));
+  layout->addWidget(d);
 }
 
-TiXmlElement* LinearRegularizedBilateralConstraint::initializeUsingXML(TiXmlElement *element) {
-  Function2::initializeUsingXML(element);
-  for(unsigned int i=0; i<var.size(); i++)
-    var[i]->initializeUsingXML(element);
-  return element;
-}
-
-TiXmlElement* LinearRegularizedBilateralConstraint::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Function2::writeXMLFile(parent);
-  for(unsigned int i=0; i<var.size(); i++)
-    var[i]->writeXMLFile(ele0);
-  return ele0;
-}
-
-LinearRegularizedUnilateralConstraint::LinearRegularizedUnilateralConstraint() {
+LinearRegularizedUnilateralConstraintWidget::LinearRegularizedUnilateralConstraintWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),MBSIMNS"stiffnessCoefficient",stiffnessUnits(),1));
-  var.push_back(new ExtXMLWidget("Stiffness coefficient",new ExtPhysicalVarWidget(input)));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),stiffnessUnits(),1));
+  c = new ExtWidget("Stiffness coefficient",new ExtPhysicalVarWidget(input));
+  layout->addWidget(c);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),MBSIMNS"dampingCoefficient",dampingUnits(),0));
-  var.push_back(new ExtXMLWidget("Damping coefficient",new ExtPhysicalVarWidget(input)));
-
-  layout->addWidget(var[0]);
-  layout->addWidget(var[1]);
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),dampingUnits(),0));
+  d = new ExtWidget("Damping coefficient",new ExtPhysicalVarWidget(input));
+  layout->addWidget(d);
 }
 
-TiXmlElement* LinearRegularizedUnilateralConstraint::initializeUsingXML(TiXmlElement *element) {
-  Function2::initializeUsingXML(element);
-  for(unsigned int i=0; i<var.size(); i++)
-    var[i]->initializeUsingXML(element);
-  return element;
-}
-
-TiXmlElement* LinearRegularizedUnilateralConstraint::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Function2::writeXMLFile(parent);
-  for(unsigned int i=0; i<var.size(); i++)
-    var[i]->writeXMLFile(ele0);
-  return ele0;
-}
-
-LinearRegularizedCoulombFriction::LinearRegularizedCoulombFriction() {
+LinearRegularizedCoulombFrictionWidget::LinearRegularizedCoulombFrictionWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0.01"),MBSIMNS"marginalVelocity",velocityUnits(),0));
-  var.push_back(new ExtXMLWidget("Marginal velocity",new ExtPhysicalVarWidget(input),true));
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0.01"),velocityUnits(),0));
+  gd = new ExtWidget("Marginal velocity",new ExtPhysicalVarWidget(input),true);
+  layout->addWidget(gd);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),MBSIMNS"frictionCoefficient",noUnitUnits(),1));
-  var.push_back(new ExtXMLWidget("Friction coefficient",new ExtPhysicalVarWidget(input)));
-
-  layout->addWidget(var[0]);
-  layout->addWidget(var[1]);
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  mu = new ExtWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
+  layout->addWidget(mu);
 }
 
-TiXmlElement* LinearRegularizedCoulombFriction::initializeUsingXML(TiXmlElement *element) {
-  Function2::initializeUsingXML(element);
-  for(unsigned int i=0; i<var.size(); i++)
-    var[i]->initializeUsingXML(element);
-  return element;
-}
-
-TiXmlElement* LinearRegularizedCoulombFriction::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Function2::writeXMLFile(parent);
-  for(unsigned int i=0; i<var.size(); i++)
-    var[i]->writeXMLFile(ele0);
-  return ele0;
-}
-
-Function1ChoiceWidget::Function1ChoiceWidget(const string &xmlName_, bool withFactor) : function(0), xmlName(xmlName_), factor(0) {
+Function1ChoiceWidget::Function1ChoiceWidget(bool withFactor, int n_) : function(0), factor(0), n(n_) {
 
   layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -440,8 +278,8 @@ Function1ChoiceWidget::Function1ChoiceWidget(const string &xmlName_, bool withFa
 
   if(withFactor) {
     vector<PhysicalStringWidget*> input;
-    input.push_back(new PhysicalStringWidget(new ScalarWidget("1"),MBSIMNS"factor",noUnitUnits(),1));
-    factor = new ExtXMLWidget("Factor",new ExtPhysicalVarWidget(input));
+    input.push_back(new PhysicalStringWidget(new ScalarWidget("1"),noUnitUnits(),1));
+    factor = new ExtWidget("Factor",new ExtPhysicalVarWidget(input));
     layout->addWidget(factor);
   }
 
@@ -460,15 +298,15 @@ void Function1ChoiceWidget::defineForceLaw(int index) {
   layout->removeWidget(function);
   delete function;
   if(index==0)
-    function = new ConstantFunction1("VS");  
+    function = new ConstantFunction1Widget("VS",n);  
   else if(index==1)
-    function = new QuadraticFunction1;
+    function = new QuadraticFunction1Widget(n);
   else if(index==2)
-    function = new SinusFunction1;
+    function = new SinusFunction1Widget(n);
   else if(index==3)
-    function = new TabularFunction1;
+    function = new TabularFunction1Widget(n);
   else if(index==4) {
-    function = new SummationFunction1;
+    function = new SummationFunction1Widget(n);
     connect(function,SIGNAL(resize()),this,SIGNAL(resize()));
   }
   layout->addWidget(function);
@@ -476,55 +314,7 @@ void Function1ChoiceWidget::defineForceLaw(int index) {
   emit resize();
 }
 
-TiXmlElement* Function1ChoiceWidget::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=xmlName!=""?element->FirstChildElement(xmlName):element;
-  if(e) {
-    TiXmlElement* ee=e->FirstChildElement();
-    if(ee) {
-      if(ee->ValueStr() == MBSIMNS"ConstantFunction1_VS") {
-        comboBox->setCurrentIndex(0);
-        function->initializeUsingXML(ee);
-      }
-      else if(ee->ValueStr() == MBSIMNS"QuadraticFunction1_VS") {
-        comboBox->setCurrentIndex(1);
-        function->initializeUsingXML(ee);
-      }
-      else if(ee->ValueStr() == MBSIMNS"SinusFunction1_VS") {
-        comboBox->setCurrentIndex(2);
-        function->initializeUsingXML(ee);
-      }
-      else if(ee->ValueStr() == MBSIMNS"TabularFunction1_VS") {
-        comboBox->setCurrentIndex(3);
-        function->initializeUsingXML(ee);
-      }
-      else if(ee->ValueStr() == MBSIMNS"SummationFunction1_VS") {
-        comboBox->setCurrentIndex(4);
-        function->initializeUsingXML(ee);
-      }
-    }
-    if(factor)
-      factor->initializeUsingXML(e);
-  }
-  return e;
-}
-
-TiXmlElement* Function1ChoiceWidget::writeXMLFile(TiXmlNode *parent) {
-  TiXmlNode *ele0;
-  if(xmlName!="") {
-    ele0 = new TiXmlElement(xmlName);
-    parent->LinkEndChild(ele0);
-  }
-  else
-    ele0 = parent;
-  if(function)
-    function->writeXMLFile(ele0);
-  if(factor)
-    factor->writeXMLFile(ele0);
-
-  return 0;
-}
-
-Function2ChoiceWidget::Function2ChoiceWidget(const string &xmlName_) : function(0), xmlName(xmlName_) {
+Function2ChoiceWidget::Function2ChoiceWidget() : function(0) {
   layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -544,7 +334,7 @@ void Function2ChoiceWidget::defineForceLaw(int index) {
 //  if(index==0)
 //    function = 0;
   if(index==0) {
-    function = new LinearSpringDamperForce;  
+    function = new LinearSpringDamperForceWidget;  
     layout->addWidget(function);
   } 
   if(function) {
@@ -552,28 +342,3 @@ void Function2ChoiceWidget::defineForceLaw(int index) {
     //connect(function,SIGNAL(resize()),this,SIGNAL(resize()));
   }
 }
-
-TiXmlElement* Function2ChoiceWidget::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=element->FirstChildElement(xmlName);
-  if(e) {
-    TiXmlElement* ee=e->FirstChildElement();
-    if(ee) {
-      if(ee->ValueStr() == MBSIMNS"LinearSpringDamperForce") {
-        comboBox->setCurrentIndex(0);
-        function->initializeUsingXML(ee);
-      }
-    }
-  }
-  return e;
-}
-
-TiXmlElement* Function2ChoiceWidget::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = new TiXmlElement(xmlName);
-  if(function)
-    function->writeXMLFile(ele0);
-  parent->LinkEndChild(ele0);
-
-  return 0;
-}
-
-

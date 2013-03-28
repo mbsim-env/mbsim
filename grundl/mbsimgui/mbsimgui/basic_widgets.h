@@ -20,7 +20,6 @@
 #ifndef _BASIC_WIDGETS_H_
 #define _BASIC_WIDGETS_H_
 
-#include "xml_widget.h"
 #include "extended_widgets.h"
 #include <QLineEdit>
 
@@ -35,43 +34,37 @@ class QListWidget;
 class FrameBrowser;
 class ContourBrowser;
 class RigidBodyBrowser;
-class ExtXMLWidget;
+class ExtWidget;
 class QLabel;
 
-class LocalFrameOfReferenceWidget : public XMLWidget {
+class LocalFrameOfReferenceWidget : public Widget {
   Q_OBJECT
 
   public:
-    LocalFrameOfReferenceWidget(const std::string &xmlName, Element* element, Frame* omitFrame=0);
+    LocalFrameOfReferenceWidget(Element* element, Frame* omitFrame=0);
 
-    void update();
+    void updateWidget();
     Frame* getFrame() {return selectedFrame;}
     void setFrame(Frame* frame_);
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
 
   protected:
     QComboBox *frame;
     Element* element;
     Frame *selectedFrame, *omitFrame;
-    std::string xmlName;
 
   protected slots:
     void setFrame(const QString &str);
 };
 
-class ParentFrameOfReferenceWidget : public XMLWidget {
+class ParentFrameOfReferenceWidget : public Widget {
   Q_OBJECT
 
   public:
-    ParentFrameOfReferenceWidget(const std::string &xmlName, Element* element, Frame* omitFrame=0);
+    ParentFrameOfReferenceWidget(Element* element, Frame* omitFrame=0);
 
-    void initialize();
-    void update();
+    void updateWidget();
     Frame* getFrame() {return selectedFrame;}
     void setFrame(Frame* frame_);
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void setSavedFrameOfReference(const QString &str) {saved_frameOfReference = str;}
     const QString& getSavedFrameOfReference() const {return saved_frameOfReference;}
 
@@ -79,25 +72,21 @@ class ParentFrameOfReferenceWidget : public XMLWidget {
     QComboBox *frame;
     Element* element;
     Frame *selectedFrame, *omitFrame;
-    std::string xmlName;
     QString saved_frameOfReference;
 
   protected slots:
     void setFrame(const QString &str);
 };
 
-class FrameOfReferenceWidget : public XMLWidget {
+class FrameOfReferenceWidget : public Widget {
   Q_OBJECT
 
   public:
-    FrameOfReferenceWidget(const std::string &xmlName, Element* element, Frame* selectedFrame);
+    FrameOfReferenceWidget(Element* element, Frame* selectedFrame);
 
-    void initialize();
-    void update();
+    void updateWidget();
     Frame* getFrame() {return selectedFrame;}
     void setFrame(Frame* frame_);
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void setSavedFrameOfReference(const QString &str) {saved_frameOfReference = str;}
     const QString& getSavedFrameOfReference() const {return saved_frameOfReference;}
 
@@ -106,25 +95,21 @@ class FrameOfReferenceWidget : public XMLWidget {
     Element* element;
     FrameBrowser *frameBrowser;
     Frame *selectedFrame;
-    std::string xmlName;
     QString saved_frameOfReference;
 
   public slots:
     void setFrame();
 };
 
-class ContourOfReferenceWidget : public XMLWidget {
+class ContourOfReferenceWidget : public Widget {
   Q_OBJECT
 
   public:
-    ContourOfReferenceWidget(const std::string &xmlName, Element* element, Contour* selectedContour);
+    ContourOfReferenceWidget(Element* element, Contour* selectedContour);
 
-    void initialize();
-    void update();
+    void updateWidget();
     Contour* getContour() {return selectedContour;}
     void setContour(Contour* contour_);
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void setSavedContourOfReference(const QString &str) {saved_contourOfReference = str;}
     const QString& getSavedContourOfReference() const {return saved_contourOfReference;}
 
@@ -133,25 +118,21 @@ class ContourOfReferenceWidget : public XMLWidget {
     Element* element;
     ContourBrowser *contourBrowser;
     Contour *selectedContour;
-    std::string xmlName;
     QString saved_contourOfReference;
 
   public slots:
     void setContour();
 };
 
-class RigidBodyOfReferenceWidget : public XMLWidget {
+class RigidBodyOfReferenceWidget : public Widget {
   Q_OBJECT
 
   public:
-    RigidBodyOfReferenceWidget(const std::string &xmlName, Element* element, RigidBody* selectedBody);
+    RigidBodyOfReferenceWidget(Element* element, RigidBody* selectedBody);
 
-    void initialize();
-    void update();
+    void updateWidget();
     RigidBody* getBody() {return selectedBody;}
     void setBody(RigidBody* body_);
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void setSavedBodyOfReference(const QString &str) {saved_bodyOfReference = str;}
     const QString& getSavedBodyOfReference() const {return saved_bodyOfReference;}
 
@@ -160,7 +141,6 @@ class RigidBodyOfReferenceWidget : public XMLWidget {
     Element* element;
     RigidBodyBrowser* bodyBrowser;
     RigidBody* selectedBody;
-    std::string xmlName;
     QString saved_bodyOfReference;
 
   public slots:
@@ -170,17 +150,18 @@ class RigidBodyOfReferenceWidget : public XMLWidget {
     void bodyChanged();
 };
 
-class FileWidget : public XMLWidget {
+class FileWidget : public Widget {
   Q_OBJECT
 
   public:
-    FileWidget(const std::string &xmlName, const QString &description, const QString &extensions);
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    FileWidget(const QString &description, const QString &extensions);
+    QString getFileName() const {return fileName->text();}
+    void setFileName(const QString &str) {fileName->setText(str);}
+    QString getAbsoluteFilePath() const {return absoluteFilePath;}
+    void setAbsoluteFilePath(const QString &str) {absoluteFilePath = str;}
 
   protected:
     QLineEdit *fileName;
-    std::string xmlName;
     QString absoluteFilePath, description, extensions;
 
   protected slots:
@@ -188,72 +169,63 @@ class FileWidget : public XMLWidget {
 
 };
 
-class NameWidget : public XMLWidget {
-  Q_OBJECT
+class TextWidget : public Widget {
 
   public:
-    NameWidget(Element* ele, bool renaming=true);
+    TextWidget(bool readOnly=false);
 
     QString getName() const {return ename->text();}
     void setName(const QString &name) {ename->setText(name);}
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
 
   protected:
     QLineEdit *ename;
-    Element* element;
-
-  protected slots:
-    void rename();
 };
 
-class ConnectFramesWidget : public XMLWidget {
+class ConnectFramesWidget : public Widget {
+
+  friend class ConnectFramesProperty;
 
   public:
     ConnectFramesWidget(int n, Element* element);
 
-    void initialize();
-    void update();
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void updateWidget();
 
   protected:
     std::vector<FrameOfReferenceWidget*> widget;
     Element* element;
 };
 
-class ConnectContoursWidget : public XMLWidget {
+class ConnectContoursWidget : public Widget {
+
+  friend class ConnectContoursProperty;
 
   public:
     ConnectContoursWidget(int n, Element* element);
 
-    void initialize();
-    void update();
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void updateWidget();
 
   protected:
     std::vector<ContourOfReferenceWidget*> widget;
     Element* element;
 };
 
-class DependenciesWidget : public XMLWidget {
+class DependenciesWidget : public Widget {
   Q_OBJECT
 
-  public:
-    DependenciesWidget(const std::string &xmlName, Element* element);
+  friend class DependenciesProperty;
 
-    void update(); 
-    void initialize();
+  public:
+    DependenciesWidget(Element* element);
+
+    void updateWidget(); 
+
     RigidBody* getBody(int i) {return refBody[i]->getBody();}
     void addBody(int i, RigidBody* body_);
     int getSize() const {return refBody.size();}
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void setNumberOfBodies(int n);
 
   protected:
     Element* element;
-    std::string xmlName;
     std::vector<RigidBody*> selectedBody;
     std::vector<RigidBodyOfReferenceWidget*> refBody;
     QStackedWidget *stackedWidget; 
@@ -270,74 +242,31 @@ class DependenciesWidget : public XMLWidget {
     void bodyChanged();
 };
 
-class ParameterNameWidget : public XMLWidget {
-  Q_OBJECT
+class SolverTolerancesWidget : public Widget {
+  friend class SolverTolerancesProperty;
 
   public:
-    ParameterNameWidget(Parameter* ele, bool renaming=true);
-
-    QString getName() const {return ename->text();}
-    void setName(const QString &name) {ename->setText(name);}
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    SolverTolerancesWidget();
 
   protected:
-    QLineEdit *ename;
-    Parameter* parameter;
-
-  protected slots:
-    void rename();
+    ExtWidget *projection, *g, *gd, *gdd, *la, *La;
 };
 
-class ParameterValueWidget : public XMLWidget {
-  Q_OBJECT
+class SolverParametersWidget : public Widget {
+
+  friend class SolverParametersProperty;
 
   public:
-    ParameterValueWidget(PhysicalStringWidget *var);
-
-    ExtPhysicalVarWidget* getExtPhysicalWidget() {return widget;}
-    virtual std::string getValue() const { return widget->getValue(); }
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) {return element;}
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element) {return 0;}
+    SolverParametersWidget();
 
   protected:
-    ExtPhysicalVarWidget *widget;
-  protected slots:
-    void parameterChanged();
-  signals:
-    void parameterChanged(const QString &str);
+    ExtWidget *tolerances;
 };
 
-class SolverTolerances : public XMLWidget {
-
-  public:
-    SolverTolerances();
-
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-
-  protected:
-    ExtXMLWidget *projection, *g, *gd, *gdd, *la, *La;
-};
-
-class SolverParameters : public XMLWidget {
-
-  public:
-    SolverParameters();
-
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-
-  protected:
-    ExtXMLWidget *tolerances;
-};
-
-class PlotFeature : public XMLWidget {
+class PlotFeature : public Widget {
   public:
     PlotFeature(const std::string &name);
 
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
   protected:
     std::string name;
     QComboBox *status;

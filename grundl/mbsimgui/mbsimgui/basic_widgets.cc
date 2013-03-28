@@ -23,7 +23,6 @@
 #include "frame.h"
 #include "contour.h"
 #include "group.h"
-#include "parameter.h"
 #include "dialogs.h"
 #include <string>
 #include <QtGui>
@@ -33,7 +32,7 @@ using namespace std;
 extern bool absolutePath;
 extern QDir mbsDir;
 
-LocalFrameOfReferenceWidget::LocalFrameOfReferenceWidget(const string &xmlName_, Element *element_, Frame* omitFrame_) : element(element_), selectedFrame(0), omitFrame(omitFrame_), xmlName(xmlName_) {
+LocalFrameOfReferenceWidget::LocalFrameOfReferenceWidget(Element *element_, Frame* omitFrame_) : element(element_), selectedFrame(0), omitFrame(omitFrame_) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -44,7 +43,7 @@ LocalFrameOfReferenceWidget::LocalFrameOfReferenceWidget(const string &xmlName_,
   connect(frame,SIGNAL(currentIndexChanged(const QString&)),this,SLOT(setFrame(const QString&)));
 }
 
-void LocalFrameOfReferenceWidget::update() {
+void LocalFrameOfReferenceWidget::updateWidget() {
   frame->blockSignals(true);
   frame->clear();
   int oldindex = 0;
@@ -68,26 +67,7 @@ void LocalFrameOfReferenceWidget::setFrame(const QString &str) {
   selectedFrame = element->getFrame(str.mid(6, str.length()-7));
 }
 
-TiXmlElement* LocalFrameOfReferenceWidget::initializeUsingXML(TiXmlElement *parent) {
-  TiXmlElement *e = parent->FirstChildElement(xmlName);
-  if(e) {
-    QString refF="";
-    refF=e->Attribute("ref");
-    refF=refF.mid(6, refF.length()-7);
-    setFrame(refF==""?element->getFrame(0):element->getFrame(refF));
-  }
-  return e;
-}
-
-TiXmlElement* LocalFrameOfReferenceWidget::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele = new TiXmlElement(xmlName);
-  QString str = QString("Frame[") + getFrame()->getName() + "]";
-  ele->SetAttribute("ref", str.toStdString());
-  parent->LinkEndChild(ele);
-  return 0;
-}
-
-ParentFrameOfReferenceWidget::ParentFrameOfReferenceWidget(const string &xmlName_, Element *element_, Frame* omitFrame_) : element(element_), selectedFrame(0), omitFrame(omitFrame_), xmlName(xmlName_) {
+ParentFrameOfReferenceWidget::ParentFrameOfReferenceWidget(Element *element_, Frame* omitFrame_) : element(element_), selectedFrame(0), omitFrame(omitFrame_) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -98,7 +78,7 @@ ParentFrameOfReferenceWidget::ParentFrameOfReferenceWidget(const string &xmlName
   connect(frame,SIGNAL(currentIndexChanged(const QString&)),this,SLOT(setFrame(const QString&)));
 }
 
-void ParentFrameOfReferenceWidget::update() {
+void ParentFrameOfReferenceWidget::updateWidget() {
   frame->blockSignals(true);
   frame->clear();
   int oldindex = 0;
@@ -114,14 +94,6 @@ void ParentFrameOfReferenceWidget::update() {
   frame->blockSignals(false);
 }
 
-void ParentFrameOfReferenceWidget::initialize() {
-  if(saved_frameOfReference!="") {
-    QString refF = saved_frameOfReference;
-    refF=refF.mid(9, refF.length()-10);
-    setFrame(element->getParentElement()->getFrame(refF));
-  }
-}
-
 void ParentFrameOfReferenceWidget::setFrame(Frame* frame_) {
   selectedFrame = frame_; 
 }
@@ -130,21 +102,7 @@ void ParentFrameOfReferenceWidget::setFrame(const QString &str) {
   selectedFrame = element->getParentElement()->getFrame(str.mid(9, str.length()-10));
 }
 
-TiXmlElement* ParentFrameOfReferenceWidget::initializeUsingXML(TiXmlElement *parent) {
-  TiXmlElement *e = parent->FirstChildElement(xmlName);
-  if(e) saved_frameOfReference = e->Attribute("ref");
-  return e;
-}
-
-TiXmlElement* ParentFrameOfReferenceWidget::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele = new TiXmlElement(xmlName);
-  QString str = QString("../Frame[") + getFrame()->getName() + "]";
-  ele->SetAttribute("ref", str.toStdString());
-  parent->LinkEndChild(ele);
-  return 0;
-}
-
-FrameOfReferenceWidget::FrameOfReferenceWidget(const string &xmlName_, Element *element_, Frame* selectedFrame_) : element(element_), selectedFrame(selectedFrame_), xmlName(xmlName_) {
+FrameOfReferenceWidget::FrameOfReferenceWidget(Element *element_, Frame* selectedFrame_) : element(element_), selectedFrame(selectedFrame_) {
   QHBoxLayout *layout = new QHBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -161,13 +119,8 @@ FrameOfReferenceWidget::FrameOfReferenceWidget(const string &xmlName_, Element *
   layout->addWidget(button);
 }
 
-void FrameOfReferenceWidget::initialize() {
-  if(saved_frameOfReference!="")
-    setFrame(element->getByPath<Frame>(saved_frameOfReference));
-}
-
-void FrameOfReferenceWidget::update() {
-  frameBrowser->update(selectedFrame);
+void FrameOfReferenceWidget::updateWidget() {
+  frameBrowser->updateWidget(selectedFrame);
   if(selectedFrame) {
     setFrame();
   }
@@ -183,25 +136,10 @@ void FrameOfReferenceWidget::setFrame() {
 
 void FrameOfReferenceWidget::setFrame(Frame* frame_) {
   selectedFrame = frame_; 
-  frame->setText(selectedFrame->getXMLPath());
+  frame->setText(selectedFrame?selectedFrame->getXMLPath():"");
 }
 
-TiXmlElement* FrameOfReferenceWidget::initializeUsingXML(TiXmlElement *parent) {
-  TiXmlElement *e = parent->FirstChildElement(xmlName);
-  if(e) saved_frameOfReference=e->Attribute("ref");
-  return e;
-}
-
-TiXmlElement* FrameOfReferenceWidget::writeXMLFile(TiXmlNode *parent) {
-  if(getFrame()) {
-    TiXmlElement *ele = new TiXmlElement(xmlName);
-    ele->SetAttribute("ref", getFrame()->getXMLPath(element,true).toStdString());
-    parent->LinkEndChild(ele);
-  }
-  return 0;
-}
-
-ContourOfReferenceWidget::ContourOfReferenceWidget(const string &xmlName_, Element *element_, Contour* selectedContour_) : element(element_), selectedContour(selectedContour_), xmlName(xmlName_) {
+ContourOfReferenceWidget::ContourOfReferenceWidget(Element *element_, Contour* selectedContour_) : element(element_), selectedContour(selectedContour_) {
   QHBoxLayout *layout = new QHBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -218,13 +156,8 @@ ContourOfReferenceWidget::ContourOfReferenceWidget(const string &xmlName_, Eleme
   layout->addWidget(button);
 }
 
-void ContourOfReferenceWidget::initialize() {
-  if(saved_contourOfReference!="")
-    setContour(element->getByPath<Contour>(saved_contourOfReference));
-}
-
-void ContourOfReferenceWidget::update() {
-  contourBrowser->update(selectedContour);
+void ContourOfReferenceWidget::updateWidget() {
+  contourBrowser->updateWidget(selectedContour);
   if(selectedContour) {
     setContour();
   }
@@ -240,25 +173,10 @@ void ContourOfReferenceWidget::setContour() {
 
 void ContourOfReferenceWidget::setContour(Contour* contour_) {
   selectedContour = contour_; 
-  contour->setText(selectedContour->getXMLPath());
+  contour->setText(selectedContour?selectedContour->getXMLPath():"");
 }
 
-TiXmlElement* ContourOfReferenceWidget::initializeUsingXML(TiXmlElement *parent) {
-  TiXmlElement *e = parent->FirstChildElement(xmlName);
-  if(e) saved_contourOfReference=e->Attribute("ref");
-  return e;
-}
-
-TiXmlElement* ContourOfReferenceWidget::writeXMLFile(TiXmlNode *parent) {
-  if(getContour()) {
-    TiXmlElement *ele = new TiXmlElement(xmlName);
-    ele->SetAttribute("ref", getContour()->getXMLPath(element,true).toStdString());
-    parent->LinkEndChild(ele);
-  }
-  return 0;
-}
-
-RigidBodyOfReferenceWidget::RigidBodyOfReferenceWidget(const string &xmlName_, Element *element_, RigidBody* selectedBody_) : element(element_), selectedBody(selectedBody_), xmlName(xmlName_) {
+RigidBodyOfReferenceWidget::RigidBodyOfReferenceWidget(Element *element_, RigidBody* selectedBody_) : element(element_), selectedBody(selectedBody_) {
   QHBoxLayout *layout = new QHBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -275,15 +193,8 @@ RigidBodyOfReferenceWidget::RigidBodyOfReferenceWidget(const string &xmlName_, E
   layout->addWidget(button);
 }
 
-void RigidBodyOfReferenceWidget::initialize() {
-  blockSignals(true);
-  if(saved_bodyOfReference!="")
-    setBody(element->getByPath<RigidBody>(saved_bodyOfReference));
-  blockSignals(false);
-}
-
-void RigidBodyOfReferenceWidget::update() {
-  bodyBrowser->update(selectedBody); 
+void RigidBodyOfReferenceWidget::updateWidget() {
+  bodyBrowser->updateWidget(selectedBody); 
   if(selectedBody) {
     setBody();
   }
@@ -300,26 +211,11 @@ void RigidBodyOfReferenceWidget::setBody() {
 
 void RigidBodyOfReferenceWidget::setBody(RigidBody* body_) {
   selectedBody = body_;
-  body->setText(selectedBody->getXMLPath());
+  body->setText(selectedBody?selectedBody->getXMLPath():"");
   emit bodyChanged();
 }
 
-TiXmlElement* RigidBodyOfReferenceWidget::initializeUsingXML(TiXmlElement *parent) {
-  TiXmlElement *e = parent->FirstChildElement(xmlName);
-  if(e) saved_bodyOfReference=e->Attribute("ref");
-  return e;
-}
-
-TiXmlElement* RigidBodyOfReferenceWidget::writeXMLFile(TiXmlNode *parent) {
-  if(getBody()) {
-    TiXmlElement *ele = new TiXmlElement(xmlName);
-    ele->SetAttribute("ref", getBody()->getXMLPath(element,true).toStdString());
-    parent->LinkEndChild(ele);
-  }
-  return 0;
-}
-
-FileWidget::FileWidget(const string &xmlName_, const QString &description_, const QString &extensions_) : xmlName(xmlName_), description(description_), extensions(extensions_) {
+FileWidget::FileWidget(const QString &description_, const QString &extensions_) : description(description_), extensions(extensions_) {
   QHBoxLayout *layout = new QHBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -341,76 +237,14 @@ void FileWidget::selectFile() {
     //fileName->setText(QFileInfo(absoluteFilePath).fileName());
 }
 
-TiXmlElement* FileWidget::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=element->FirstChildElement(xmlName);
-  if(e) {
-    TiXmlText *text = dynamic_cast<TiXmlText*>(e->FirstChild());
-    if(text) {
-      QString file = text->Value();
-      fileName->setText(file);
-      file = file.mid(1,file.length()-2);
-      absoluteFilePath=mbsDir.absoluteFilePath(file);
-      //fileName->setText(QFileInfo(absoluteFilePath).fileName());
-      return e;
-    }
-  }
-  return 0;
-}
-
-TiXmlElement* FileWidget::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = new TiXmlElement(xmlName);
-  QString filePath = QString("\"")+(absolutePath?absoluteFilePath:mbsDir.relativeFilePath(absoluteFilePath))+"\"";
-  TiXmlText *text = new TiXmlText(filePath.toStdString());
-  ele0->LinkEndChild(text);
-  parent->LinkEndChild(ele0);
-
-  return 0;
-}
-
-NameWidget::NameWidget(Element* ele, bool renaming) : element(ele) {
+TextWidget::TextWidget(bool readOnly) {
   QHBoxLayout *layout = new QHBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
   ename = new QLineEdit;
-  ename->setReadOnly(true);
-  ename->setText(element->getName());
+  ename->setReadOnly(readOnly);
   layout->addWidget(ename);
-  if(renaming) {
-    QPushButton *button = new QPushButton("Rename");
-    layout->addWidget(button);
-    connect(button,SIGNAL(clicked(bool)),this,SLOT(rename()));
-  }
-}
-
-void NameWidget::rename() {
-  QString text;
-  do {
-    text = QInputDialog::getText(0, tr("Rename"), tr("Name:"), QLineEdit::Normal, getName());
-    if(((QTreeWidgetItem*)element)->parent() == 0)
-      break;
-    Element* ele = ((Container*)(((QTreeWidgetItem*)element)->parent()))->getChild(text,false);
-    if(ele==0 || ele==element) {
-      break;
-    } 
-    else {
-      QMessageBox msgBox;
-      msgBox.setText(QString("The name ") + text + " does already exist.");
-      msgBox.exec();
-    }
-  } while(true);
-  if(text!="")
-    element->setName(text);
-  ((Element*)element->treeWidget()->topLevelItem(0))->update();
-}
-
-TiXmlElement* NameWidget::initializeUsingXML(TiXmlElement *parent) {
-  return parent;
-}
-
-TiXmlElement* NameWidget::writeXMLFile(TiXmlNode *parent) {
-  ((TiXmlElement*)parent)->SetAttribute("name", getName().toStdString());
-  return 0;
 }
 
 ConnectFramesWidget::ConnectFramesWidget(int n, Element *element_) : element(element_) {
@@ -420,55 +254,20 @@ ConnectFramesWidget::ConnectFramesWidget(int n, Element *element_) : element(ele
   setLayout(layout);
 
   for(int i=0; i<n; i++) {
-    QString xmlName = MBSIMNS"ref";
     QString subname = "Frame";
     if(n>1) {
       subname += QString::number(i+1);
       //layout->addWidget(new QLabel(QString("Frame") + QString::number(i+1) +":"));
-      xmlName += QString::number(i+1);
     }
-    widget.push_back(new FrameOfReferenceWidget(xmlName.toStdString(),element,0));
-    QWidget *subwidget = new ExtXMLWidget(subname,widget[i]);
+    widget.push_back(new FrameOfReferenceWidget(element,0));
+    QWidget *subwidget = new ExtWidget(subname,widget[i]);
     layout->addWidget(subwidget);
   }
 }
 
-void ConnectFramesWidget::initialize() {
+void ConnectFramesWidget::updateWidget() {
   for(unsigned int i=0; i<widget.size(); i++)
-    widget[i]->initialize();
-}
-
-void ConnectFramesWidget::update() {
-  for(unsigned int i=0; i<widget.size(); i++)
-    widget[i]->update();
-}
-
-TiXmlElement* ConnectFramesWidget::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e = element->FirstChildElement(MBSIMNS"connect");
-  if(e) {
-    for(unsigned int i=0; i<widget.size(); i++) {
-      QString xmlName = "ref";
-      if(widget.size()>1)
-        xmlName += QString::number(i+1);
-      if(!e->Attribute(xmlName.toStdString()))
-        return 0;
-      widget[i]->setSavedFrameOfReference(e->Attribute(xmlName.toAscii().data()));
-    }
-  }
-  return e;
-}
-
-TiXmlElement* ConnectFramesWidget::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele = new TiXmlElement(MBSIMNS"connect");
-  for(unsigned int i=0; i<widget.size(); i++) {
-      QString xmlName = "ref";
-      if(widget.size()>1)
-        xmlName += QString::number(i+1);
-    if(widget[i]->getFrame())
-      ele->SetAttribute(xmlName.toAscii().data(), widget[i]->getFrame()->getXMLPath(element,true).toStdString()); 
-  }
-  parent->LinkEndChild(ele);
-  return ele;
+    widget[i]->updateWidget();
 }
 
 ConnectContoursWidget::ConnectContoursWidget(int n, Element *element_) : element(element_) {
@@ -478,56 +277,23 @@ ConnectContoursWidget::ConnectContoursWidget(int n, Element *element_) : element
   setLayout(layout);
 
   for(int i=0; i<n; i++) {
-    QString xmlName = MBSIMNS"ref";
     QString subname = "Contour";
     if(n>1) {
       subname += QString::number(i+1);
       //layout->addWidget(new QLabel(QString("Contour") + QString::number(i+1) +":"));
-      xmlName += QString::number(i+1);
     }
-    widget.push_back(new ContourOfReferenceWidget(xmlName.toStdString(),element,0));
-    QWidget *subwidget = new ExtXMLWidget(subname,widget[i]);
+    widget.push_back(new ContourOfReferenceWidget(element,0));
+    QWidget *subwidget = new ExtWidget(subname,widget[i]);
     layout->addWidget(subwidget);
   }
 }
 
-void ConnectContoursWidget::initialize() {
+void ConnectContoursWidget::updateWidget() {
   for(unsigned int i=0; i<widget.size(); i++)
-    widget[i]->initialize();
+    widget[i]->updateWidget();
 }
 
-void ConnectContoursWidget::update() {
-  for(unsigned int i=0; i<widget.size(); i++)
-    widget[i]->update();
-}
-
-TiXmlElement* ConnectContoursWidget::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e = element->FirstChildElement(MBSIMNS"connect");
-  if(e) {
-    for(unsigned int i=0; i<widget.size(); i++) {
-      QString xmlName = "ref";
-      if(widget.size()>1)
-        xmlName += QString::number(i+1);
-      widget[i]->setSavedContourOfReference(e->Attribute(xmlName.toAscii().data()));
-    }
-  }
-  return e;
-}
-
-TiXmlElement* ConnectContoursWidget::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele = new TiXmlElement(MBSIMNS"connect");
-  for(unsigned int i=0; i<widget.size(); i++) {
-      QString xmlName = "ref";
-      if(widget.size()>1)
-        xmlName += QString::number(i+1);
-    if(widget[i]->getContour())
-      ele->SetAttribute(xmlName.toAscii().data(), widget[i]->getContour()->getXMLPath(element,true).toStdString()); 
-  }
-  parent->LinkEndChild(ele);
-  return ele;
-}
-
-DependenciesWidget::DependenciesWidget(const string &xmlName_, Element *element_) : element(element_), xmlName(xmlName_) {
+DependenciesWidget::DependenciesWidget(Element *element_) : element(element_) {
   QHBoxLayout *layout = new QHBoxLayout;
   setLayout(layout);
   layout->setMargin(0);
@@ -561,14 +327,26 @@ void DependenciesWidget::openContextMenu(const QPoint &pos) {
  }
 }
 
-void DependenciesWidget::initialize() {
-  for(unsigned int i=0; i<refBody.size(); i++)
-    refBody[i]->initialize();
+void DependenciesWidget::setNumberOfBodies(int n) {
+  if(refBody.size() != n) {
+    for(unsigned int i=0; i<refBody.size(); i++)
+      stackedWidget->removeWidget(refBody[i]);
+    selectedBody.clear();
+    refBody.clear();
+    bodyList->clear();
+    for(unsigned int i=0; i<n; i++) {
+      selectedBody.push_back(0);
+      refBody.push_back(new RigidBodyOfReferenceWidget(element,0));
+      connect(refBody[i],SIGNAL(bodyChanged()),this,SLOT(updateList()));
+      bodyList->addItem("Undefined");
+      stackedWidget->addWidget(refBody[i]);
+    }
+  }
 }
 
-void DependenciesWidget::update() {
+void DependenciesWidget::updateWidget() {
   for(unsigned int i=0; i<refBody.size(); i++)
-    refBody[i]->update();
+    refBody[i]->updateWidget();
 }
 
 void DependenciesWidget::updateGeneralizedCoordinatesOfBodies() {
@@ -598,11 +376,11 @@ void DependenciesWidget::updateList() {
 void DependenciesWidget::addDependency() {
   int i = refBody.size();
   selectedBody.push_back(0);
-  refBody.push_back(new RigidBodyOfReferenceWidget(MBSIMNS"dependentRigidBody",element,0));
+  refBody.push_back(new RigidBodyOfReferenceWidget(element,0));
   connect(refBody[i],SIGNAL(bodyChanged()),this,SLOT(updateList()));
   bodyList->addItem("Undefined");
   stackedWidget->addWidget(refBody[i]);
-  update();
+  updateWidget();
 }
 
 void DependenciesWidget::removeDependency() {
@@ -622,172 +400,48 @@ void DependenciesWidget::removeDependency() {
   updateList();
 }
 
-TiXmlElement* DependenciesWidget::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e = element->FirstChildElement(xmlName);
-  if(e) {
-    TiXmlElement *ee=e->FirstChildElement();
-    blockSignals(true);
-    while(ee) {
-      addDependency();
-      refBody[refBody.size()-1]->setSavedBodyOfReference(ee->Attribute("ref"));
-      ee=ee->NextSiblingElement();
-    }
-    blockSignals(false);
-  }
-  return e;
-}
-
-TiXmlElement* DependenciesWidget::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele = new TiXmlElement(xmlName);
-  for(int i=0; i<getSize(); i++) {
-    if(getBody(i))
-      refBody[i]->writeXMLFile(ele);
-  }
-  parent->LinkEndChild(ele);
-  return ele;
-}
-
-ParameterNameWidget::ParameterNameWidget(Parameter* parameter_, bool renaming) : parameter(parameter_) {
-  QHBoxLayout *layout = new QHBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
-
-  ename = new QLineEdit;
-  ename->setReadOnly(true);
-  ename->setText(parameter->getName());
-  layout->addWidget(ename);
-  if(renaming) {
-    QPushButton *button = new QPushButton("Rename");
-    layout->addWidget(button);
-    connect(button,SIGNAL(clicked(bool)),this,SLOT(rename()));
-  }
-}
-
-void ParameterNameWidget::rename() {
-  QString text;
-  do {
-    text = QInputDialog::getText(0, tr("Rename"), tr("Name:"), QLineEdit::Normal, getName());
-    if(!getChild(parameter->treeWidget()->invisibleRootItem(), text))
-      break;
-    else {
-      QMessageBox msgBox;
-      msgBox.setText(QString("The name ") + text + " does already exist.");
-      msgBox.exec();
-    }
-  } while(true);
-  if(text!="")
-    parameter->setName(text);
-  //((Parameter*)parameter->treeWidget()->topLevelItem(0))->update();
-}
-
-TiXmlElement* ParameterNameWidget::initializeUsingXML(TiXmlElement *parent) {
-  return parent;
-}
-
-TiXmlElement* ParameterNameWidget::writeXMLFile(TiXmlNode *parent) {
-  ((TiXmlElement*)parent)->SetAttribute("name", getName().toStdString());
-  return 0;
-}
-
-ParameterValueWidget::ParameterValueWidget(PhysicalStringWidget *var) {
-  QHBoxLayout *layout = new QHBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
-
-  vector<PhysicalStringWidget*> input;
-  input.push_back(var);
-  widget = new ExtPhysicalVarWidget(input);
-  QPushButton *button = new QPushButton("Set");
-
-  layout->addWidget(widget);
-  layout->addWidget(button);
-  connect(button,SIGNAL(clicked(bool)),this,SLOT(parameterChanged()));
-}
-
-void ParameterValueWidget::parameterChanged() {
-  emit parameterChanged(getValue().c_str());
-}
-
-SolverTolerances::SolverTolerances() {
+SolverTolerancesWidget::SolverTolerancesWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   setLayout(layout);
   layout->setMargin(0);
 
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-15"), MBSIMNS"projection", noUnitUnits(), 1));
-  projection = new ExtXMLWidget("Projection",new ExtPhysicalVarWidget(input),true);
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-15"), noUnitUnits(), 1));
+  projection = new ExtWidget("Projection",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(projection);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-8"), MBSIMNS"g", noUnitUnits(), 1));
-  g = new ExtXMLWidget("g",new ExtPhysicalVarWidget(input),true);
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-8"), noUnitUnits(), 1));
+  g = new ExtWidget("g",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(g);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-10"), MBSIMNS"gd", noUnitUnits(), 1));
-  gd = new ExtXMLWidget("gd",new ExtPhysicalVarWidget(input),true);
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-10"), noUnitUnits(), 1));
+  gd = new ExtWidget("gd",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(gd);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-12"), MBSIMNS"gdd", noUnitUnits(), 1));
-  gdd = new ExtXMLWidget("gdd",new ExtPhysicalVarWidget(input),true);
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-12"), noUnitUnits(), 1));
+  gdd = new ExtWidget("gdd",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(gdd);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-12"), MBSIMNS"la", noUnitUnits(), 1));
-  la = new ExtXMLWidget("la",new ExtPhysicalVarWidget(input),true);
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-12"), noUnitUnits(), 1));
+  la = new ExtWidget("la",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(la);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-10"), MBSIMNS"La", noUnitUnits(), 1));
-  La = new ExtXMLWidget("La",new ExtPhysicalVarWidget(input),true);
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-10"), noUnitUnits(), 1));
+  La = new ExtWidget("La",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(La);
 }
 
-TiXmlElement* SolverTolerances::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=element->FirstChildElement(MBSIMNS"tolerances");
-  if(e) {
-    projection->initializeUsingXML(e);
-    g->initializeUsingXML(e);
-    gd->initializeUsingXML(e);
-    gdd->initializeUsingXML(e);
-    la->initializeUsingXML(e);
-    La->initializeUsingXML(e);
-  }
-  return e;
-}
-
-TiXmlElement* SolverTolerances::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *e=new TiXmlElement(MBSIMNS"tolerances");
-  parent->LinkEndChild(e);
-  projection->writeXMLFile(e);
-  g->writeXMLFile(e);
-  gd->writeXMLFile(e);
-  gdd->writeXMLFile(e);
-  la->writeXMLFile(e);
-  La->writeXMLFile(e);
-  return e;
-}
-
-SolverParameters::SolverParameters() {
+SolverParametersWidget::SolverParametersWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
-  tolerances = new ExtXMLWidget("Tolerances",new SolverTolerances,true);
+  tolerances = new ExtWidget("Tolerances",new SolverTolerancesWidget,true);
   layout->addWidget(tolerances);
-}
-
-TiXmlElement* SolverParameters::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=element->FirstChildElement(MBSIMNS"solverParameters");
-  if(e) tolerances->initializeUsingXML(e);
-  return e;
-}
-
-TiXmlElement* SolverParameters::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *e=new TiXmlElement(MBSIMNS"solverParameters");
-  parent->LinkEndChild(e);
-  tolerances->writeXMLFile(e);
-  return e;
 }
 
 PlotFeature::PlotFeature(const string &name_) : name(name_) {
@@ -798,22 +452,4 @@ PlotFeature::PlotFeature(const string &name_) : name(name_) {
   status->addItem("enabled");
   status->addItem("disabled");
   layout->addWidget(status);
-}
-
-TiXmlElement* PlotFeature::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=element->FirstChildElement(MBSIMNS"plotFeature");
-  if(e) {
-    if(string(e->Attribute("feature")).substr(1)==name) {
-      status->setCurrentIndex(e->Attribute("feature")[0]=='+'?0:1);
-      return e;
-    }
-  }
-  return 0;
-}
-
-TiXmlElement* PlotFeature::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *e=new TiXmlElement(MBSIMNS"plotFeature");
-  parent->LinkEndChild(e);
-  e->SetAttribute("feature",(status->currentIndex()==0?"+":"-")+name);
-  return e;
 }

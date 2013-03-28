@@ -250,6 +250,9 @@ namespace MBSim {
     priorityNSPrefix.insert(OpenMBV::ObjectFactory::getPriorityNamespacePrefix().begin(),
                             OpenMBV::ObjectFactory::getPriorityNamespacePrefix().end());
 #endif
+    // add the physical variabale and parameter mapping (this namespace is not exported by MBXMLUtils but may be used e.g. in MBSimGUI)
+    priorityNSPrefix.insert(make_pair(50, make_pair("http://openmbv.berlios.de/MBXMLUtils/physicalvariable", "pv")));
+    priorityNSPrefix.insert(make_pair(50, make_pair("http://openmbv.berlios.de/MBXMLUtils/parameter", "param")));
     
     // generate the namespace-prefix mapping considering the priority
     M_NSPRE nsprefix;

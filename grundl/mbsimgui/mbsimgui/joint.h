@@ -21,6 +21,7 @@
 #define _JOINT__H_
 
 #include "link.h"
+#include "extended_properties.h"
 
 class Joint : public Link {
   public:
@@ -29,8 +30,14 @@ class Joint : public Link {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     QString getType() const { return "Joint"; }
+    void initializeDialog();
+    virtual void fromWidget();
+    virtual void toWidget();
+    void initialize();
+
   protected:
-    ExtXMLWidget *force, *moment, *connections, *forceArrow, *momentArrow;
+    ExtWidget *forceWidget, *momentWidget, *connectionsWidget, *forceArrowWidget, *momentArrowWidget;
+    ExtProperty force, moment, connections, forceArrow, momentArrow;
 };
 
 #endif

@@ -7,115 +7,48 @@
 #include <fstream>
 #include "env.h"
 #include <boost/filesystem.hpp>
-#ifdef MBSIMXML_MINGW // Windows
-#  include <windows.h>
-#  include <process.h>
-#else
-#  include <unistd.h>
+#include <mbxmlutilstinyxml/getinstallpath.h>
+#include <mbxmlutilstinyxml/last_write_time.h>
+#include <stdio.h>
+#if !defined _WIN32
 #  include <spawn.h>
+#  include <sys/types.h>
 #  include <sys/wait.h>
-#endif
-
-/* This is a varaint of the boost::filesystem::last_write_time functions.
- * It only differs in the argument/return value being here a boost::posix_time::ptime instead of a time_t.
- * This enables file timestamps on microsecond level. */
-#include <boost/filesystem.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <sys/stat.h>
-#ifdef _WIN32
-#include <windows.h>
-#endif
-namespace boost {
-  namespace myfilesystem {
-    boost::posix_time::ptime last_write_time(const boost::filesystem::path &p) {
-#ifndef _WIN32
-      struct stat st;
-      if(stat(p.generic_string().c_str(), &st)!=0)
-        throw boost::filesystem::filesystem_error("system stat call failed", p, boost::system::error_code());
-      boost::posix_time::ptime time;
-      time=boost::posix_time::from_time_t(st.st_mtime);
-      time+=boost::posix_time::microsec(st.st_mtim.tv_nsec/1000);
-      return time;
 #else
-      HANDLE f=CreateFile(p.generic_string().c_str(), GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-      if(f==INVALID_HANDLE_VALUE)
-        throw boost::filesystem::filesystem_error("CreateFile failed", p, boost::system::error_code());
-      FILETIME create, lastAccess, lastWrite;
-      if(GetFileTime(f, &create, &lastAccess, &lastWrite)==0) {
-        CloseHandle(f);
-        throw boost::filesystem::filesystem_error("GetFileTime failed", p, boost::system::error_code());
-      }
-      CloseHandle(f);
-      uint64_t microSecSince1601=((((uint64_t)(lastWrite.dwHighDateTime))<<32)+lastWrite.dwLowDateTime)/10;
-      uint64_t hoursSince1601=microSecSince1601/1000000/60/60;
-      return boost::posix_time::ptime(boost::gregorian::date(1601,boost::gregorian::Jan,1),
-                                      boost::posix_time::hours(hoursSince1601)+
-                                      boost::posix_time::microseconds(microSecSince1601-hoursSince1601*60*60*1000000));
+#  include <process.h>
+#  include <windows.h>
 #endif
-    }
-    void last_write_time(const boost::filesystem::path &p, const boost::posix_time::ptime &time) {
-#ifndef _WIN32
-      struct timeval times[2];
-      boost::posix_time::time_period sinceEpoch(boost::posix_time::ptime(boost::gregorian::date(1970, boost::gregorian::Jan, 1)), time);
-      times[0].tv_sec =sinceEpoch.length().total_seconds();
-      times[0].tv_usec=sinceEpoch.length().total_microseconds()-1000000*times[0].tv_sec;
-      times[1].tv_sec =times[0].tv_sec;
-      times[1].tv_usec=times[0].tv_usec;
-      if(utimes(p.generic_string().c_str(), times)!=0)
-        throw boost::filesystem::filesystem_error("system utimes call failed", p, boost::system::error_code());
-#else
-      HANDLE f=CreateFile(p.generic_string().c_str(), FILE_WRITE_ATTRIBUTES, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-      if(f==INVALID_HANDLE_VALUE)
-        throw boost::filesystem::filesystem_error("CreateFile failed", p, boost::system::error_code());
-      boost::posix_time::time_period since1601(boost::posix_time::ptime(boost::gregorian::date(1601, boost::gregorian::Jan, 1)), time);
-      boost::posix_time::time_duration dt=since1601.length();
-      uint64_t winTime=((uint64_t)(dt.hours()))*60*60*10000000;
-      dt-=boost::posix_time::hours(dt.hours());
-      winTime+=dt.total_microseconds()*10;
-      FILETIME changeTime;
-      changeTime.dwHighDateTime=(winTime>>32);
-      changeTime.dwLowDateTime=(winTime & ((((uint64_t)1)<<32)-1));
-      if(SetFileTime(f, NULL, &changeTime, &changeTime)==0) {
-        CloseHandle(f);
-        throw boost::filesystem::filesystem_error("SetFileTime failed", p, boost::system::error_code());
-      }
-      CloseHandle(f);
-#endif
-    }
-  }
-}
 
 using namespace std;
 namespace bfs=boost::filesystem;
 
-// run the program in arg[0] with the options arg[1], arg[2], ...
-// asyncronously (wait for arg[0] to finish) and
-// return -1 or error or the exit code of arg[0].
-int runProgramSyncronous(const vector<string> &arg) {
+int runProgram(const vector<string> &arg) {
+  // convert arg to c style
   char **argv=new char*[arg.size()+1];
   for(size_t i=0; i<arg.size(); i++)
     argv[i]=const_cast<char*>(arg[i].c_str());
   argv[arg.size()]=NULL;
 
-#if !defined MBSIMXML_MINGW
+#if !defined _WIN32
   pid_t child;
-  int ret;
-  ret=posix_spawn(&child, argv[0], NULL, NULL, argv, environ);
+  int spawnRet;
+  spawnRet=posix_spawn(&child, argv[0], NULL, NULL, argv, environ);
   delete[]argv;
-  if(ret!=0)
-    return -1;
-
+  if(spawnRet!=0)
+    throw runtime_error("Unable to spawn process.");
   int status;
   waitpid(child, &status, 0);
-
   if(WIFEXITED(status))
     return WEXITSTATUS(status);
   else
-    return -1;
+    throw runtime_error("Spawn process terminated abnormally.");
 #else
   int ret;
-  ret=_spawnv(_P_WAIT, argv[0], argv);
+  extern char **_environ;
+  ret=_spawnve(_P_WAIT, argv[0], argv, _environ);
   delete[]argv;
+  if(ret==-1)
+    throw runtime_error("Unable to spawn process.");
   return ret;
 #endif
 }
@@ -139,29 +72,6 @@ string basename(const string &filename) {
 // create filename if it does not exist or touch it if if exists (OS-independent)
 void createOrTouch(const string &filename) {
   ofstream f(filename.c_str()); // Note: ofstream use precise file timestamp
-}
-
-string getInstallPath() {
-  // get path of this executable
-  static char exePath[4096]="";
-  if(strcmp(exePath, "")!=0) return string(exePath)+"/..";
-
-#ifdef _WIN32 // Windows
-  GetModuleFileName(NULL, exePath, sizeof(exePath));
-  for(size_t i=0; i<strlen(exePath); i++) if(exePath[i]=='\\') exePath[i]='/'; // convert '\' to '/'
-  *strrchr(exePath, '/')=0; // remove the program name
-#else // Linux
-#ifdef DEVELOPER_HACK_EXEPATH
-  // use hardcoded exePath
-  strcpy(exePath, DEVELOPER_HACK_EXEPATH);
-#else
-  int exePathLength=readlink("/proc/self/exe", exePath, sizeof(exePath)); // get abs path to this executable
-  exePath[exePathLength]=0; // null terminate
-  *strrchr(exePath, '/')=0; // remove the program name
-#endif
-#endif
-
-  return string(exePath)+"/..";
 }
 
 int main(int argc, char *argv[]) {
@@ -216,14 +126,14 @@ int main(int argc, char *argv[]) {
   string MBSIMXMLBIN;
   char *env;
   MBXMLUTILSBIN=MBXMLUTILSBIN_DEFAULT; // default: from build configuration
-  if(!bfs::exists((MBXMLUTILSBIN+"/mbxmlutilspp"+EXEEXT).c_str())) MBXMLUTILSBIN=getInstallPath()+"/bin"; // use rel path if build configuration dose not work
-  if(!bfs::exists((MBXMLUTILSBIN+"/mbxmlutilspp"+EXEEXT).c_str())) MBXMLUTILSBIN=getInstallPath()+"/bin"; // use rel path if build configuration dose not work
+  if(!bfs::exists((MBXMLUTILSBIN+"/mbxmlutilspp"+EXEEXT).c_str())) MBXMLUTILSBIN=MBXMLUtils::getInstallPath()+"/bin"; // use rel path if build configuration dose not work
+  if(!bfs::exists((MBXMLUTILSBIN+"/mbxmlutilspp"+EXEEXT).c_str())) MBXMLUTILSBIN=MBXMLUtils::getInstallPath()+"/bin"; // use rel path if build configuration dose not work
   if((env=getenv("MBXMLUTILSBINDIR"))) MBXMLUTILSBIN=env; // overwrite with envvar if exist
   MBXMLUTILSSCHEMA=MBXMLUTILSSCHEMA_DEFAULT; // default: from build configuration
-  if(!bfs::exists((MBXMLUTILSSCHEMA+"/http___mbsim_berlios_de_MBSimXML/mbsimxml.xsd").c_str())) MBXMLUTILSSCHEMA=getInstallPath()+"/share/mbxmlutils/schema"; // use rel path if build configuration dose not work
+  if(!bfs::exists((MBXMLUTILSSCHEMA+"/http___mbsim_berlios_de_MBSimXML/mbsimxml.xsd").c_str())) MBXMLUTILSSCHEMA=MBXMLUtils::getInstallPath()+"/share/mbxmlutils/schema"; // use rel path if build configuration dose not work
   if((env=getenv("MBXMLUTILSSCHEMADIR"))) MBXMLUTILSSCHEMA=env; // overwrite with envvar if exist
   MBSIMXMLBIN=MBSIMXMLBIN_DEFAULT; // default: from build configuration
-  if(!bfs::exists((MBSIMXMLBIN+"/mbsimflatxml"+EXEEXT).c_str())) MBSIMXMLBIN=getInstallPath()+"/bin"; // use rel path if build configuration dose not work
+  if(!bfs::exists((MBSIMXMLBIN+"/mbsimflatxml"+EXEEXT).c_str())) MBSIMXMLBIN=MBXMLUtils::getInstallPath()+"/bin"; // use rel path if build configuration dose not work
   if((env=getenv("MBSIMXMLBINDIR"))) MBSIMXMLBIN=env; // overwrite with envvar if exist
 
   // parse parameters
@@ -319,7 +229,7 @@ int main(int argc, char *argv[]) {
     command.push_back(PARAMINT);
     command.push_back(MBSIMINT);
     command.push_back(MBXMLUTILSSCHEMA+"/http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd");
-    ret=runProgramSyncronous(command);
+    ret=runProgram(command);
 
     if(!ONLYPP && ret==0) {
       vector<string> command;
@@ -328,7 +238,7 @@ int main(int argc, char *argv[]) {
       if(ONLY1OUT!="") command.push_back(ONLY1OUT);
       command.push_back(PPMBSIM);
       command.push_back(PPMBSIMINT);
-      ret=runProgramSyncronous(command);
+      ret=runProgram(command);
     }
 
     if(ret!=0) createOrTouch(ERRFILE);

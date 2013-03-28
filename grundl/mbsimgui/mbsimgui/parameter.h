@@ -21,11 +21,14 @@
 #define _PARAMETER__H_
 
 #include <QtGui/QTreeWidgetItem>
+#include "extended_properties.h"
 
 class PropertyWidget;
-class ExtXMLWidget;
+class PropertyDialog;
+class ExtWidget;
 class TiXmlElement;
 class TiXmlNode;
+class TextWidget;
 
 class Parameter : public QObject, public QTreeWidgetItem {
   Q_OBJECT
@@ -36,9 +39,10 @@ class Parameter : public QObject, public QTreeWidgetItem {
     bool drawThisPath;
     QString iconFile;
     bool searchMatched;
-    PropertyWidget *properties;
+    PropertyDialog *dialog;
     QMenu *contextMenu;
-    ExtXMLWidget *name;
+    QString name;
+    TextWidget *textWidget;
   public:
     Parameter(const QString &str, QTreeWidgetItem *parentItem, int ind);
     virtual ~Parameter();
@@ -51,12 +55,16 @@ class Parameter : public QObject, public QTreeWidgetItem {
     virtual void writeXMLFile() { writeXMLFile(getType()); }
     virtual QString getType() const { return "Parameter"; }
     QMenu* getContextMenu() { return contextMenu; }
-    PropertyWidget* getPropertyWidget() { return properties; }
-    QString getName() const {return text(0);}
+    QString getName() const {return name;}
     void setName(const QString &str);
     virtual std::string getValue() const = 0;
+    virtual void fromWidget();
+    virtual void toWidget();
+    virtual void initializeDialog();
   public slots:
     void saveAs();
+    void openPropertyDialog();
+    void updateElement();
   protected slots:
     void updateTreeWidgetItem(const QString &str);
     void remove();
@@ -71,8 +79,12 @@ class DoubleParameter : public Parameter {
     virtual QString getType() const { return "scalarParameter"; }
     virtual std::string getValue() const;
     virtual void initializeUsingXML(TiXmlElement *element);
+    virtual void fromWidget();
+    virtual void toWidget();
+    virtual void initializeDialog();
   protected:
-    ExtXMLWidget *value;
+    ExtWidget *valueWidget;
+    ExtProperty value;
 };
 
 #endif

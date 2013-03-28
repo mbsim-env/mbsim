@@ -21,6 +21,7 @@
 #define _CONTACT__H_
 
 #include "link.h"
+#include "extended_properties.h"
 
 class Contact : public Link {
   public:
@@ -29,8 +30,14 @@ class Contact : public Link {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     QString getType() const { return "Contact"; }
+   void initializeDialog();
+    virtual void fromWidget();
+    virtual void toWidget();
+    void initialize();
+
   protected:
-    ExtXMLWidget *contactForceLaw, *contactImpactLaw, *frictionForceLaw, *frictionImpactLaw, *connections, *enableOpenMBVContactPoints, *normalForceArrow, *frictionArrow;
+    ExtWidget *contactForceLawWidget, *contactImpactLawWidget, *frictionForceLawWidget, *frictionImpactLawWidget, *connectionsWidget, *enableOpenMBVContactPointsWidget, *normalForceArrowWidget, *frictionArrowWidget;
+    ExtProperty contactForceLaw, contactImpactLaw, frictionForceLaw, frictionImpactLaw, connections, enableOpenMBVContactPoints, normalForceArrow, frictionArrow;
 };
 
 #endif

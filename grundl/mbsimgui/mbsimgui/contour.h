@@ -21,7 +21,7 @@
 #define _CONTOUR__H_
 
 #include "element.h"
-#include "extended_widgets.h"
+#include "extended_properties.h"
 
 class Contour : public Element {
   public:
@@ -32,8 +32,13 @@ class Contour : public Element {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual Element *getByPathSearch(QString path);
     void setSavedFrameOfReference(const QString &str);
+    virtual void initialize();
+    virtual void initializeDialog();
+    virtual void fromWidget();
+    virtual void toWidget();
   protected:
-    ExtXMLWidget *refFrame;
+    ExtWidget *refFrameWidget;
+    ExtProperty refFrame;
 };
 
 class Point : public Contour {
@@ -57,8 +62,12 @@ class Plane : public Contour {
     QString getType() const { return "Plane"; }
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual void initializeDialog();
+    virtual void fromWidget();
+    virtual void toWidget();
   protected:
-    ExtXMLWidget *visu;
+    ExtWidget *visuWidget;
+    ExtProperty visu;
 };
 
 class Sphere : public Contour {
@@ -68,8 +77,12 @@ class Sphere : public Contour {
     QString getType() const { return "Sphere"; }
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual void initializeDialog();
+    virtual void fromWidget();
+    virtual void toWidget();
   protected:
-    ExtXMLWidget *radius, *visu;
+    ExtWidget *radiusWidget, *visuWidget;
+    ExtProperty radius, visu;
 };
 
 

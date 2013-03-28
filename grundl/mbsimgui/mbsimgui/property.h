@@ -17,10 +17,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _XML_WIDGETS_H_
-#define _XML_WIDGETS_H_
-
-#include <QWidget>
+#ifndef _PROPERTIES_H_
+#define _PROPERTIES_H_
 
 #define MBSIMNS_ "http://mbsim.berlios.de/MBSim"
 #define MBSIMNS "{"MBSIMNS_"}"
@@ -35,25 +33,18 @@
 #define MBSIMCONTROLNS_ "http://mbsim.berlios.de/MBSimControl"
 #define MBSIMCONTROLNS "{"MBSIMCONTROLNS_"}"
 
-class TiXmlElement;
-class TiXmlNode;
-
-class XMLInterface {
-
+class PropertyInterface {
   public:
     virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) = 0;
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element) = 0;
-    virtual void initialize() = 0;
-    virtual void update() = 0;
-    virtual void resizeVariables() = 0;
+    virtual void fromWidget(QWidget *widget) = 0;
+    virtual void toWidget(QWidget *widget) = 0;
+    virtual void initialize() {}
 };
 
-class XMLWidget : public QWidget, public XMLInterface {
+class Property : public PropertyInterface {
   public:
-    XMLWidget() {}
-    virtual void initialize() {};
-    virtual void update() {}
-    virtual void resizeVariables() {}
+    Property() {}
 };
 
 #endif

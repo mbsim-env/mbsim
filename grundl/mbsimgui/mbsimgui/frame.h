@@ -21,7 +21,9 @@
 #define _FRAME__H_
 
 #include "element.h"
-#include "extended_widgets.h"
+#include "extended_properties.h"
+
+class ExtWidget;
 
 class Frame : public Element {
   public:
@@ -32,10 +34,15 @@ class Frame : public Element {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual void initializeUsingXML2(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile2(TiXmlNode *element);
-    bool openMBVFrame() const {return visu->isActive();}
+    bool openMBVFrame() const {return visuProperty.isActive();}
+    void setOpenMBVFrame(bool flag) {visuProperty.setActive(flag);}
     virtual Element * getByPathSearch(QString path);
+    virtual void initializeDialog();
+    virtual void fromWidget();
+    virtual void toWidget();
   protected:
-    ExtXMLWidget *visu;
+    ExtWidget *visuWidget;
+    ExtProperty visuProperty;
 };
 
 class FixedRelativeFrame : public Frame {
@@ -46,8 +53,13 @@ class FixedRelativeFrame : public Frame {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual void initializeUsingXML2(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual void initialize();
+    virtual void initializeDialog();
+    virtual void fromWidget();
+    virtual void toWidget();
   protected:
-    ExtXMLWidget *refFrame, *position, *orientation;
+    ExtWidget *refFrameWidget, *positionWidget, *orientationWidget;
+    ExtProperty refFrameProperty, positionProperty, orientationProperty;
 };
 
 #endif

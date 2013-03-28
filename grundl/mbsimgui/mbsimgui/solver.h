@@ -21,8 +21,8 @@
 #define _SOLVER__H_
 
 #include "group.h"
+#include "extended_properties.h"
 #include <string>
-
 
 class Environment : public QObject {
   public:
@@ -38,7 +38,8 @@ class Environment : public QObject {
 
 class Solver : public Group {
   protected:
-    ExtXMLWidget *environment, *solverParameters, *inverseKinetics;
+    ExtWidget *environmentWidget, *solverParametersWidget, *inverseKineticsWidget;
+    ExtProperty environmentProperty, solverParametersProperty, inverseKineticsProperty;
   public:
     Solver(const QString &str, QTreeWidgetItem *parentItem, int ind);
     virtual void initializeUsingXML(TiXmlElement *element);
@@ -49,6 +50,9 @@ class Solver : public Group {
     static Solver* readXMLFile(const QString &filename, QTreeWidgetItem *parent);
     void writeXMLFile(const QString &name);
     void writeXMLFile() { writeXMLFile(getName()); }
+    virtual void initializeDialog();
+    virtual void fromWidget();
+    virtual void toWidget();
 };
 
 #endif

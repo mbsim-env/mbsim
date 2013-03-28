@@ -20,45 +20,55 @@
 #ifndef _KINEMATICS_WIDGETS_H_
 #define _KINEMATICS_WIDGETS_H_
 
-#include "xml_widget.h"
+#include "widget.h"
+#include <QComboBox>
 
 class ExtPhysicalVarWidget;
-class ExtXMLWidget;
+class ExtWidget;
 class QVBoxLayout;
-class QComboBox;
 
-class TranslationWidget : public XMLWidget {
+class TranslationWidget : public Widget {
 
   public:
     TranslationWidget() {}
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) = 0;
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element) = 0;
     virtual int getSize() const = 0;
    protected:
 };
 
-class LinearTranslation : public TranslationWidget {
+class LinearTranslationWidget : public TranslationWidget {
   Q_OBJECT
 
+  friend class LinearTranslationProperty;
+
   public:
-    LinearTranslation();
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    LinearTranslationWidget();
     int getSize() const;
   protected:
-    ExtPhysicalVarWidget *mat;
+    ExtWidget *mat;
   signals:
     void translationChanged();
 };
 
-class TranslationChoiceWidget : public XMLWidget {
+class TimeDependentTranslationWidget : public TranslationWidget {
+
+  friend class TimeDependentTranslationProperty;
+
+  public:
+    TimeDependentTranslationWidget();
+    int getSize() const {return 0;}
+  protected:
+    ExtWidget *function;
+};
+
+
+class TranslationChoiceWidget : public Widget {
   Q_OBJECT
+
+  friend class TranslationChoiceProperty;
 
   public:
     TranslationChoiceWidget(const std::string &xmlName);
 
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     int getSize() const { return translation->getSize(); }
 
   protected slots:
@@ -73,83 +83,71 @@ class TranslationChoiceWidget : public XMLWidget {
     void translationChanged();
 };
 
-class RotationWidget : public XMLWidget {
+class RotationWidget : public Widget {
 
   public:
     RotationWidget() {}
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) = 0;
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element) = 0;
     virtual int getSize() const = 0;
 };
 
-class RotationAboutXAxis : public RotationWidget {
+class RotationAboutXAxisWidget : public RotationWidget {
 
   public:
-    RotationAboutXAxis() {}
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    RotationAboutXAxisWidget() {}
     virtual int getSize() const {return 1;}
 };
 
-class RotationAboutYAxis : public RotationWidget {
+class RotationAboutYAxisWidget : public RotationWidget {
 
   public:
-    RotationAboutYAxis() {}
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    RotationAboutYAxisWidget() {}
     virtual int getSize() const {return 1;}
 };
 
-class RotationAboutZAxis : public RotationWidget {
+class RotationAboutZAxisWidget : public RotationWidget {
 
   public:
-    RotationAboutZAxis() {}
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    RotationAboutZAxisWidget() {}
     virtual int getSize() const {return 1;}
 };
 
-class RotationAboutFixedAxis : public RotationWidget {
+class RotationAboutFixedAxisWidget : public RotationWidget {
+
+  friend class RotationAboutFixedAxisProperty;
 
   public:
-    RotationAboutFixedAxis();
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    RotationAboutFixedAxisWidget();
     virtual int getSize() const {return 1;}
-   protected:
-    ExtXMLWidget *vec;
+  protected:
+    ExtWidget *vec;
 };
 
-class RotationAboutAxesXY : public RotationWidget {
+class RotationAboutAxesXYWidget : public RotationWidget {
 
   public:
-    RotationAboutAxesXY() {}
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    RotationAboutAxesXYWidget() {}
     virtual int getSize() const {return 2;}
 };
 
-class CardanAngles : public RotationWidget {
+class CardanAnglesWidget : public RotationWidget {
 
   public:
-    CardanAngles() {}
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    CardanAnglesWidget() {}
     virtual int getSize() const {return 3;}
 };
 
-class RotationChoiceWidget : public XMLWidget {
+class RotationChoiceWidget : public Widget {
   Q_OBJECT
+
+  friend class RotationChoiceProperty;
 
   public:
     RotationChoiceWidget(const std::string &xmlName);
 
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     int getSize() const { return rotation->getSize(); }
 
-  protected slots:
-   void defineRotation(int);
+  public slots:
+    void defineRotation(int);
 
   protected:
     QComboBox *comboBox;

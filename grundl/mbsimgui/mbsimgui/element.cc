@@ -32,13 +32,16 @@
 #include "contour.h"
 #include "link.h"
 #include "observer.h"
+#include "mainwindow.h"
 
 using namespace std;
+
+extern MainWindow *mw;
 
 int Element::IDcounter=0;
 map<string, Element*> Element::idEleMap;
 
-Element::Element(const QString &str, QTreeWidgetItem *parentItem, int ind, bool grey) : QTreeWidgetItem(), drawThisPath(true), searchMatched(true), frames(0), contours(0), groups(0), objects(0), links(0), extraDynamics(0), observers(0), ns(MBSIMNS) {
+Element::Element(const QString &str, QTreeWidgetItem *parentItem, int ind, bool grey) : QTreeWidgetItem(), drawThisPath(true), searchMatched(true), frames(0), contours(0), groups(0), objects(0), links(0), extraDynamics(0), observers(0), ns(MBSIMNS), dialog(0) {
   stringstream sstr;
   sstr<<IDcounter++;
   ID=sstr.str();
@@ -52,38 +55,69 @@ Element::Element(const QString &str, QTreeWidgetItem *parentItem, int ind, bool 
   parentElement = static_cast<Element*>(parentItem->parent());
   }
 
-  setText(0, str);
-
-  properties=new PropertyWidget(this);
-  properties->addTab("General");
+  setName(str);
 
   if(grey) {
-    QColor color;
-    color.setRgb(200,200,200);
-    QBrush brush(color);
+    QPalette palette;
+    QBrush brush=palette.brush(QPalette::Disabled, QPalette::Text);
     //setForeground(0,brush);
     //setForeground(1,brush);
   }
   else {
   }
 
-  name=new ExtXMLWidget("Name",new NameWidget(this,!grey));
-  properties->addToTab("General",name);
-
   contextMenu=new QMenu("Context Menu");
 
+  QAction *action=new QAction(Utils::QIconCached("newobject.svg"),"Properties", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(openPropertyDialog()));
+  contextMenu->addAction(action);
+
+  contextMenu->addSeparator();
 }
 
 Element::~Element() {
   idEleMap.erase(ID);
   // delete scene graph
-  delete properties;
+  delete dialog;
   //objects.erase(this);
+}
+
+void Element::openPropertyDialog() {
+  if(!dialog) {
+    dialog = new PropertyDialog;
+    dialog->setParentObject(this);
+    connect(dialog,SIGNAL(apply()),this,SLOT(updateElement()));
+    initializeDialog();
+  }
+  toWidget();
+  dialog->show();
+  //if (dialog->exec())
+  //  updateElement();
+}
+
+void Element::initializeDialog() {
+  dialog->addTab("General");
+  textWidget = new TextWidget;
+  ExtWidget *name=new ExtWidget("Name",textWidget);
+  dialog->addToTab("General",name);
+}
+
+void Element::toWidget() {
+  textWidget->setName(getName());
+}
+
+void Element::fromWidget() {
+  setName(textWidget->getName());
+}
+
+void Element::updateElement() {
+  fromWidget();
+  mw->mbsimxml(1);
 }
 
 void Element::setName(const QString &str) {
   setText(0,str);
-  ((NameWidget*)name->getWidget())->setName(str);
+  name = str;
 }
 
 QString Element::getPath() {
@@ -129,8 +163,7 @@ void Element::copy() {
   delete copiedElement;
   copiedElement = new TiXmlElement("Node");
   writeXMLFile(copiedElement);
-  map<string, string> nsprefix;
-  unIncorporateNamespace(copiedElement->FirstChildElement(), nsprefix);  
+  unIncorporateNamespace(copiedElement->FirstChildElement(), Utils::getMBSimNamespacePrefixMapping());  
   ((Solver*)treeWidget()->topLevelItem(0))->setActionPasteDisabled(false);
 }
 
@@ -139,41 +172,40 @@ void Element::writeXMLFile(const QString &name) {
   TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
   doc.LinkEndChild( decl );
   writeXMLFile(&doc);
-  map<string, string> nsprefix;
-  unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
+  unIncorporateNamespace(doc.FirstChildElement(), Utils::getMBSimNamespacePrefixMapping());  
   doc.SaveFile((name+".xml").toAscii().data());
 }
 
-void Element::update() {
-  properties->update();
+void Element::updateWidget() {
+  if(dialog && dialog->isVisible())
+    dialog->updateWidget();
   if(getContainerGroup()) {
     for(int i=0; i<getContainerGroup()->childCount(); i++)
-      getGroup(i)->update();
+      getGroup(i)->updateWidget();
   }
   if(getContainerObject()) {
     for(int i=0; i<getContainerObject()->childCount(); i++)
-      getObject(i)->update();
+      getObject(i)->updateWidget();
   }
   if(getContainerFrame()) {
     for(int i=0; i<getContainerFrame()->childCount(); i++)
-      getFrame(i)->update();
+      getFrame(i)->updateWidget();
   }
   if(getContainerContour()) {
     for(int i=0; i<getContainerContour()->childCount(); i++)
-      getContour(i)->update();
+      getContour(i)->updateWidget();
   }
   if(getContainerLink()) {
     for(int i=0; i<getContainerLink()->childCount(); i++)
-      getLink(i)->update();
+      getLink(i)->updateWidget();
   }
   if(getContainerObserver()) {
     for(int i=0; i<getContainerObserver()->childCount(); i++)
-      getObserver(i)->update();
+      getObserver(i)->updateWidget();
   }
 }
 
 void Element::initialize() {
-  properties->initialize();
   if(getContainerGroup()) {
     for(int i=0; i<getContainerGroup()->childCount(); i++)
       getGroup(i)->initialize();
@@ -200,44 +232,17 @@ void Element::initialize() {
   }
 }
 
-void Element::resizeVariables() {
-  properties->resizeVariables();
-  if(getContainerGroup()) {
-    for(int i=0; i<getContainerGroup()->childCount(); i++)
-      getGroup(i)->resizeVariables();
-  }
-  if(getContainerObject()) {
-    for(int i=0; i<getContainerObject()->childCount(); i++)
-      getObject(i)->resizeVariables();
-  }
-  if(getContainerFrame()) {
-    for(int i=0; i<getContainerFrame()->childCount(); i++)
-      getFrame(i)->resizeVariables();
-  }
-  if(getContainerContour()) {
-    for(int i=0; i<getContainerContour()->childCount(); i++)
-      getContour(i)->resizeVariables();
-  }
-  if(getContainerLink()) {
-    for(int i=0; i<getContainerLink()->childCount(); i++)
-      getLink(i)->resizeVariables();
-  }
-  if(getContainerObserver()) {
-    for(int i=0; i<getContainerObserver()->childCount(); i++)
-      getObserver(i)->resizeVariables();
-  }
-}
-
 void Element::initializeUsingXML(TiXmlElement *element) {
-  for(unsigned int i=0; i<plotFeature.size(); i++)
-    plotFeature[i]->initializeUsingXML(element);
+//  for(unsigned int i=0; i<plotFeature.size(); i++)
+//    plotFeature[i]->initializeUsingXML(element);
 }
 
 TiXmlElement* Element::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0=new TiXmlElement(ns+getType().toStdString());
-  name->writeXMLFile(ele0);
-  for(unsigned int i=0; i<plotFeature.size(); i++)
-    plotFeature[i]->writeXMLFile(ele0);
+  //name->writeXMLFile(ele0);
+  ele0->SetAttribute("name", getName().toStdString());
+//  for(unsigned int i=0; i<plotFeature.size(); i++)
+//    plotFeature[i]->writeXMLFile(ele0);
   parent->LinkEndChild(ele0);
   return ele0;
 }
@@ -377,7 +382,7 @@ void Element::remove() {
 
   QTreeWidget *tree = treeWidget();
   QTreeWidgetItem::parent()->removeChild(this);
-  ((Element*)tree->topLevelItem(0))->update();
+  ((Element*)tree->topLevelItem(0))->updateWidget();
 }
 
 

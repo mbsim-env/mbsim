@@ -23,175 +23,254 @@
 #include "frame.h"
 #include "contour.h"
 #include "group.h"
+#include "basic_properties.h"
+#include "kinematics_properties.h"
+#include "ombv_properties.h"
 #include "string_widgets.h"
 #include "kinematics_widgets.h"
 #include "ombv_widgets.h"
+#include "mainwindow.h"
 #include <QMenu>
 
 using namespace std;
 
-RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) : Body(str, parentItem, ind), constrained(false) {
-  setText(1,getType());
-  properties->addTab("Kinematics",1);
-  properties->addTab("Visualisation");
-  properties->addTab("Extra");
+extern MainWindow *mw;
 
-  QColor color;
-  color.setRgb(200,200,200);
-  QBrush brush(color);
-  color.setRgb(255,255,255);
-  QBrush brush2(color);
+RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) : Body(str, parentItem, ind), constrained(false), RWidget(0), KWidget(0), massWidget(0), inertiaWidget(0), translationWidget(0), rotationWidget(0), ombvEditorWidget(0), weightArrowWidget(0), jointForceArrowWidget(0), jointMomentArrowWidget(0), isFrameOfBodyForRotationWidget(0), R(0,false), K(0,false), translation(0,false), rotation(0,false), ombvEditor(0,true), weightArrow(0,false), jointForceArrow(0,false), jointMomentArrow(0,false), isFrameOfBodyForRotation(0,false) {
+
+  setText(1,getType());
+
+  QPalette palette;
+  QBrush brush=palette.brush(QPalette::Disabled, QPalette::Text);
 
   frames = new Container;
   frames->setText(0, "frames");
   frames->setForeground(0,brush);
-  frames->setBackground(0,brush2);
   addChild(frames);
   contours = new Container;
   contours->setText(0, "contours");
   contours->setForeground(0,brush);
-  contours->setBackground(0,brush2);
   addChild(contours);
 
   new Frame("C", frames, -1, true);
-
-  frameForKinematics = new ExtXMLWidget("Frame for kinematics",new LocalFrameOfReferenceWidget(MBSIMNS"frameForKinematics",this,0),true);
-  properties->addToTab("Kinematics", frameForKinematics);
-
-  frameOfReference = new ExtXMLWidget("Frame of reference",new FrameOfReferenceWidget(MBSIMNS"frameOfReference",this,((Group*)getParentElement())->getFrame(0)),true);
-  properties->addToTab("Kinematics", frameOfReference);
-
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1"),MBSIMNS"mass",massUnits(),2));
-  mass = new ExtXMLWidget("Mass",new ExtPhysicalVarWidget(input));
-  properties->addToTab("General", mass);
-
-  input.clear();
-  input.push_back(new PhysicalStringWidget(new SymMatWidget(getEye<string>(3,3,"0.01","0")),MBSIMNS"inertiaTensor",inertiaUnits(),2));
-  inertia = new ExtXMLWidget("Inertia tensor",new ExtPhysicalVarWidget(input));
-  properties->addToTab("General", inertia);
-
-  TranslationChoiceWidget *translation_ = new TranslationChoiceWidget("");
-  translation = new ExtXMLWidget("Translation",translation_,true);
-  translation->setXMLName(MBSIMNS"translation");
-  properties->addToTab("Kinematics", translation);
-  connect(translation_,SIGNAL(translationChanged()),this,SLOT(resizeVariables()));
-  //connect(translation_,SIGNAL(translationChanged()),this,SLOT(resizeGeneralizedVelocity()));
-  //connect(translation,SIGNAL(resize()),this,SLOT(resizeGeneralizedPosition()));
-  connect(translation,SIGNAL(resize()),this,SLOT(resizeVariables()));
-
-  RotationChoiceWidget *rotation_ = new RotationChoiceWidget("");
-  rotation = new ExtXMLWidget("Rotation",rotation_,true);
-  rotation->setXMLName(MBSIMNS"rotation");
-  properties->addToTab("Kinematics", rotation);
-  connect(rotation_,SIGNAL(rotationChanged()),this,SLOT(resizeVariables()));
-//  connect(rotation_,SIGNAL(rotationChanged()),this,SLOT(resizeGeneralizedVelocity()));
-//  connect(rotation,SIGNAL(resize()),this,SLOT(resizeGeneralizedPosition()));
-  connect(rotation,SIGNAL(resize()),this,SLOT(resizeVariables()));
- 
-  ombvEditor = new ExtXMLWidget("OpenMBV body",new OMBVBodySelectionWidget(this),true);
-  properties->addToTab("Visualisation", ombvEditor);
-
-  weightArrow = new ExtXMLWidget("OpenMBV weight arrow",new OMBVArrowWidget("NOTSET"),true);
-  weightArrow->setXMLName(MBSIMNS"openMBVWeightArrow",false);
-  ((OMBVArrowWidget*)weightArrow->getWidget())->setID(getID());
-  properties->addToTab("Visualisation",weightArrow);
-
-  jointForceArrow = new ExtXMLWidget("OpenMBV joint force arrow",new OMBVArrowWidget("NOTSET"),true);
-  jointForceArrow->setXMLName(MBSIMNS"openMBVJointForceArrow",false);
-  ((OMBVArrowWidget*)jointForceArrow->getWidget())->setID(getID());
-  properties->addToTab("Visualisation",jointForceArrow);
-
-  jointMomentArrow = new ExtXMLWidget("OpenMBV joint moment arrow",new OMBVArrowWidget("NOTSET"),true);
-  jointMomentArrow->setXMLName(MBSIMNS"openMBVJointMomentArrow",false);
-  ((OMBVArrowWidget*)jointMomentArrow->getWidget())->setID(getID());
-  properties->addToTab("Visualisation",jointMomentArrow);
-
-  input.clear();
-  input.push_back(new PhysicalStringWidget(new BoolWidget("0"),MBSIMNS"isFrameOfBodyForRotation",QStringList(),1));
-  isFrameOfBodyForRotation = new ExtXMLWidget("Use body frame for rotation",new ExtPhysicalVarWidget(input),true); 
-  properties->addToTab("Extra", isFrameOfBodyForRotation);
 
   QAction *action=new QAction(Utils::QIconCached("newobject.svg"),"Add frame", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addFrame()));
   contextMenu->insertAction(actionSaveAs,action);
 
-  QMenu *submenu = new QMenu("Add contour");
-  contextMenu->insertMenu(actionSaveAs,submenu);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Point", this);
+  contourContextMenu=new QMenu("Contour context menu");
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add contour", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addContour()));
+  contextMenu->insertAction(actionSaveAs,action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add point", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addPoint()));
-  submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Line", this);
+  contourContextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add line", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addLine()));
-  submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Plane", this);
+  contourContextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add plane", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addPlane()));
-  submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Sphere", this);
+  contourContextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add sphere", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addSphere()));
-  submenu->addAction(action);
+  contourContextMenu->addAction(action);
 
   contextMenu->insertSeparator(actionSaveAs);
 
-  properties->addStretch();
+  R.setProperty(new FrameOfReferenceProperty(((Group*)getParentElement())->getFrame(0),this,MBSIMNS"frameOfReference"));
+
+  K.setProperty(new LocalFrameOfReferenceProperty(getFrame(0),this,MBSIMNS"frameForKinematics"));
+
+  vector<PhysicalStringProperty*> input;
+  input.push_back(new PhysicalStringProperty(new ScalarProperty("1"),"kg",MBSIMNS"mass"));
+  mass.setProperty(new ExtPhysicalVarProperty(input));
+
+  input.clear();
+  input.push_back(new PhysicalStringProperty(new MatProperty(getEye<string>(3,3,"0.01","0")),"kg*m^2",MBSIMNS"inertiaTensor"));
+  inertia.setProperty(new ExtPhysicalVarProperty(input));
+
+  translation.setProperty(new TranslationChoiceProperty(new LinearTranslationProperty,""));
+  translation.setXMLName(MBSIMNS"translation");
+
+  rotation.setProperty(new RotationChoiceProperty(new RotationAboutZAxisProperty,""));
+  rotation.setXMLName(MBSIMNS"rotation");
+
+  ombvEditor.setProperty(new OMBVBodySelectionProperty(this));
+
+  weightArrow.setProperty(new OMBVArrowProperty("NOTSET"));
+  weightArrow.setXMLName(MBSIMNS"openMBVWeightArrow",false);
+  ((OMBVArrowProperty*)weightArrow.getProperty())->setID(getID());
+
+  jointForceArrow.setProperty(new OMBVArrowProperty("NOTSET"));
+  jointForceArrow.setXMLName(MBSIMNS"openMBVJointForceArrow",false);
+  ((OMBVArrowProperty*)jointForceArrow.getProperty())->setID(getID());
+
+  jointMomentArrow.setProperty(new OMBVArrowProperty("NOTSET"));
+  jointMomentArrow.setXMLName(MBSIMNS"openMBVJointMomentArrow",false);
+  ((OMBVArrowProperty*)jointMomentArrow.getProperty())->setID(getID());
+
+  input.clear();
+  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"",MBSIMNS"isFrameOfBodyForRotation"));
+  isFrameOfBodyForRotation.setProperty(new ExtPhysicalVarProperty(input)); 
 }
 
 RigidBody::~RigidBody() {
 }
 
+void RigidBody::initialize() {
+  Body::initialize();
+  R.initialize();
+}
+
+void RigidBody::initializeDialog() {
+  Body::initializeDialog();
+
+  dialog->addTab("Kinematics");
+  dialog->addTab("Visualisation");
+  dialog->addTab("Extra");
+
+  RWidget = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(this,0),true);
+  dialog->addToTab("Kinematics",RWidget);
+
+  KWidget = new ExtWidget("Frame for kinematics",new LocalFrameOfReferenceWidget(this,0),true);
+  dialog->addToTab("Kinematics",KWidget);
+
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1"),massUnits(),2));
+  massWidget = new ExtWidget("Mass",new ExtPhysicalVarWidget(input));
+  dialog->addToTab("General", massWidget);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new SymMatWidget(getEye<string>(3,3,"0.01","0")),inertiaUnits(),2));
+  inertiaWidget = new ExtWidget("Inertia tensor",new ExtPhysicalVarWidget(input));
+  dialog->addToTab("General", inertiaWidget);
+
+  TranslationChoiceWidget *translationWidget_ = new TranslationChoiceWidget("");
+  translationWidget = new ExtWidget("Translation",translationWidget_,true);
+  dialog->addToTab("Kinematics", translationWidget);
+  connect(translationWidget_,SIGNAL(translationChanged()),this,SLOT(resizeVariables()));
+  connect(translationWidget,SIGNAL(resize()),this,SLOT(resizeVariables()));
+
+  RotationChoiceWidget *rotationWidget_ = new RotationChoiceWidget("");
+  rotationWidget = new ExtWidget("Rotation",rotationWidget_,true);
+  dialog->addToTab("Kinematics", rotationWidget);
+  connect(rotationWidget_,SIGNAL(rotationChanged()),this,SLOT(resizeVariables()));
+  connect(rotationWidget,SIGNAL(resize()),this,SLOT(resizeVariables()));
+
+  ombvEditorWidget = new ExtWidget("OpenMBV body",new OMBVBodySelectionWidget(this),true);
+  dialog->addToTab("Visualisation", ombvEditorWidget);
+
+  weightArrowWidget = new ExtWidget("OpenMBV weight arrow",new OMBVArrowWidget("NOTSET"),true);
+  dialog->addToTab("Visualisation",weightArrowWidget);
+
+  jointForceArrowWidget = new ExtWidget("OpenMBV joint force arrow",new OMBVArrowWidget("NOTSET"),true);
+  dialog->addToTab("Visualisation",jointForceArrowWidget);
+
+  jointMomentArrowWidget = new ExtWidget("OpenMBV joint moment arrow",new OMBVArrowWidget("NOTSET"),true);
+  dialog->addToTab("Visualisation",jointMomentArrowWidget);
+
+  input.clear();
+  input.push_back(new PhysicalStringWidget(new BoolWidget("0"),QStringList(),1));
+  isFrameOfBodyForRotationWidget = new ExtWidget("Use body frame for rotation",new ExtPhysicalVarWidget(input),true); 
+  dialog->addToTab("Extra", isFrameOfBodyForRotationWidget);
+
+}
+
+void RigidBody::toWidget() {
+  Body::toWidget();
+  R.toWidget(RWidget);
+  K.toWidget(KWidget);
+  mass.toWidget(massWidget);
+  inertia.toWidget(inertiaWidget);
+  translation.toWidget(translationWidget);
+  rotation.toWidget(rotationWidget);
+  ombvEditor.toWidget(ombvEditorWidget);
+  weightArrow.toWidget(weightArrowWidget);
+  jointForceArrow.toWidget(jointForceArrowWidget);
+  jointMomentArrow.toWidget(jointMomentArrowWidget);
+  isFrameOfBodyForRotation.toWidget(isFrameOfBodyForRotationWidget);
+}
+
+void RigidBody::fromWidget() {
+  Body::fromWidget();
+  R.fromWidget(RWidget);
+  K.fromWidget(KWidget);
+  mass.fromWidget(massWidget);
+  inertia.fromWidget(inertiaWidget);
+  translation.fromWidget(translationWidget);
+  rotation.fromWidget(rotationWidget);
+  weightArrow.fromWidget(weightArrowWidget);
+  jointForceArrow.fromWidget(jointForceArrowWidget);
+  jointMomentArrow.fromWidget(jointMomentArrowWidget);
+  ombvEditor.fromWidget(ombvEditorWidget);
+  isFrameOfBodyForRotation.fromWidget(isFrameOfBodyForRotationWidget);
+}
+
 int RigidBody::getUnconstrainedSize() const {
-  return (translation->isActive()?((TranslationChoiceWidget*)translation->getWidget())->getSize():0) + (rotation->isActive()?((RotationChoiceWidget*)rotation->getWidget())->getSize():0);
+  if(translationWidget)
+    return (translationWidget->isActive()?((TranslationChoiceWidget*)translationWidget->getWidget())->getSize():0) + (rotationWidget->isActive()?((RotationChoiceWidget*)rotationWidget->getWidget())->getSize():0);
+  else
+    return (translation.isActive()?((TranslationChoiceProperty*)translation.getProperty())->getSize():0) + (rotation.isActive()?((RotationChoiceProperty*)rotation.getProperty())->getSize():0);
 }
 
 void RigidBody::addFrame() {
   QString text = newName(frames,"P");
   if (!text.isEmpty()) {
     new FixedRelativeFrame(text, frames, -1);
-    ((Element*)treeWidget()->topLevelItem(0))->update();
+    ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
   }
+  mw->mbsimxml(1);
+}
+
+void RigidBody::addContour() {
+  contourContextMenu->exec(QCursor::pos());
 }
 
 void RigidBody::addPoint() {
   QString text = newName(contours,"Point");
   if (!text.isEmpty()) {
     new Point(text, contours, -1);
-    ((Element*)treeWidget()->topLevelItem(0))->update();
+    ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
   }
+  mw->mbsimxml(1);
 }
 
 void RigidBody::addLine() {
   QString text = newName(contours,"Line");
   if (!text.isEmpty()) {
     new Line(text, contours, -1);
-    ((Element*)treeWidget()->topLevelItem(0))->update();
+    ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
   }
+  mw->mbsimxml(1);
 }
 
 void RigidBody::addPlane() {
   QString text = newName(contours,"Plane");
   if (!text.isEmpty()) {
     new Plane(text, contours, -1);
-    ((Element*)treeWidget()->topLevelItem(0))->update();
+    ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
   }
+  mw->mbsimxml(1);
 }
 
 void RigidBody::addSphere() {
   QString text = newName(contours,"Sphere");
   if (!text.isEmpty()) {
     new Sphere(text, contours, -1);
-    ((Element*)treeWidget()->topLevelItem(0))->update();
+    ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
   }
+  mw->mbsimxml(1);
 }
 
 void RigidBody::resizeGeneralizedPosition() {
   int size = getSize();
-  if(q0->size() != size)
+  if(q0 && q0->size() != size)
     q0->resize(size);
 }
 
 void RigidBody::resizeGeneralizedVelocity() {
   int size = getSize();
-  if(u0->size() != size)
+  if(u0 && u0->size() != size)
     u0->resize(size);
 }
 
@@ -221,7 +300,7 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
     c=ObjectFactory::getInstance()->createContour(ec, contours, -1);
     if(c) c->initializeUsingXML(ec);
     FixedRelativeFrame *f=new FixedRelativeFrame(QString("ContourFrame")+QString::number(contours->childCount()), frames, -1);
-    f->initializeUsingXML(ec);
+//    f->initializeUsingXML(ec);
     f->initializeUsingXML2(e);
     c->setSavedFrameOfReference(QString("../Frame[")+f->getName()+"]");
     e=e->NextSiblingElement();
@@ -232,79 +311,29 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
     e=e->NextSiblingElement();
   }
 
-  frameOfReference->initializeUsingXML(element);
+  R.initializeUsingXML(element);
+  K.initializeUsingXML(element);
 
-  frameForKinematics->initializeUsingXML(element);
+  mass.initializeUsingXML(element);
+  inertia.initializeUsingXML(element);
 
-  mass->initializeUsingXML(element);
-  inertia->initializeUsingXML(element);
+  translation.initializeUsingXML(element);
+  rotation.initializeUsingXML(element);
 
-  translation->initializeUsingXML(element);
-  rotation->initializeUsingXML(element);
+  isFrameOfBodyForRotation.initializeUsingXML(element);
 
-  //    // BEGIN The following elements are rarly used. That is why they are optional
-  //    e=element->FirstChildElement(MBSIMNS"jacobianOfTranslation");
-  //    if(e) {
-  //      Jacobian *jac=ObjectFactory::getInstance()->createJacobian(e->FirstChildElement());
-  //      setJacobianOfTranslation(jac);
-  //      jac->initializeUsingXML(e->FirstChildElement());
-  //    }
-  //    e=element->FirstChildElement(MBSIMNS"jacobianOfRotation");
-  //    if(e) {
-  //      Jacobian *jac=ObjectFactory::getInstance()->createJacobian(e->FirstChildElement());
-  //      setJacobianOfRotation(jac);
-  //      jac->initializeUsingXML(e->FirstChildElement());
-  //    }
-  //    e=element->FirstChildElement(MBSIMNS"derivativeOfJacobianOfTranslation");
-  //    if(e) {
-  //      Function3<Mat3V,Vec,Vec,double> *f=ObjectFactory::getInstance()->createFunction3_MVVS(e->FirstChildElement());
-  //      setDerivativeOfJacobianOfTranslation(f);
-  //      f->initializeUsingXML(e->FirstChildElement());
-  //    }
-  //    e=element->FirstChildElement(MBSIMNS"derivativeOfJacobianOfRotation");
-  //    if(e) {
-  //      Function3<Mat3V,Vec,Vec,double> *f=ObjectFactory::getInstance()->createFunction3_MVVS(e->FirstChildElement());
-  //      setDerivativeOfJacobianOfRotation(f);
-  //      f->initializeUsingXML(e->FirstChildElement());
-  //    }
-  //    e=element->FirstChildElement(MBSIMNS"guidingVelocityOfTranslation");
-  //    if(e) {
-  //      Function1<Vec3,double> *f=ObjectFactory::getInstance()->createFunction1_V3S(e->FirstChildElement());
-  //      setGuidingVelocityOfTranslation(f);
-  //      f->initializeUsingXML(e->FirstChildElement());
-  //    }
-  //    e=element->FirstChildElement(MBSIMNS"guidingVelocityOfRotation");
-  //    if(e) {
-  //      Function1<Vec3,double> *f=ObjectFactory::getInstance()->createFunction1_V3S(e->FirstChildElement());
-  //      setGuidingVelocityOfRotation(f);
-  //      f->initializeUsingXML(e->FirstChildElement());
-  //    }
-  //    e=element->FirstChildElement(MBSIMNS"derivativeOfGuidingVelocityOfTranslation");
-  //    if(e) {
-  //      Function1<Vec3,double> *f=ObjectFactory::getInstance()->createFunction1_V3S(e->FirstChildElement());
-  //      setDerivativeOfGuidingVelocityOfTranslation(f);
-  //      f->initializeUsingXML(e->FirstChildElement());
-  //    }
-  //    e=element->FirstChildElement(MBSIMNS"derivativeOfGuidingVelocityOfRotation");
-  //    if(e) {
-  //      Function1<Vec3,double> *f=ObjectFactory::getInstance()->createFunction1_V3S(e->FirstChildElement());
-  //      setDerivativeOfGuidingVelocityOfRotation(f);
-  //      f->initializeUsingXML(e->FirstChildElement());
-  //    }
-  //    // END
-
-  isFrameOfBodyForRotation->initializeUsingXML(element);
-
-  ombvEditor->initializeUsingXML(element);
+  ombvEditor.initializeUsingXML(element);
 
   e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameC");
   if(e)
     getFrame(0)->initializeUsingXML2(e);
+  else
+    getFrame(0)->setOpenMBVFrame(false);
 
-  weightArrow->initializeUsingXML(element);
+  weightArrow.initializeUsingXML(element);
 
-  jointForceArrow->initializeUsingXML(element);
-  jointMomentArrow->initializeUsingXML(element);
+  jointForceArrow.initializeUsingXML(element);
+  jointMomentArrow.initializeUsingXML(element);
 
   Body::initializeUsingXML(element);
 }
@@ -312,18 +341,18 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
 TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
 
   TiXmlElement *ele0 = Body::writeXMLFile(parent);
+  TiXmlElement *ele1;
 
-  frameOfReference->writeXMLFile(ele0);
+  R.writeXMLFile(ele0);
+  K.writeXMLFile(ele0);
 
-  frameForKinematics->writeXMLFile(ele0);
+  mass.writeXMLFile(ele0);
+  inertia.writeXMLFile(ele0);
 
-  mass->writeXMLFile(ele0);
-  inertia->writeXMLFile(ele0);
+  translation.writeXMLFile(ele0);
+  rotation.writeXMLFile(ele0);
 
-  translation->writeXMLFile(ele0);
-  rotation->writeXMLFile(ele0);
-
-  TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"frames" );
+  ele1 = new TiXmlElement( MBSIMNS"frames" );
   for(int i=1; i<frames->childCount(); i++)
     getFrame(i)->writeXMLFile(ele1);
   ele0->LinkEndChild( ele1 );
@@ -333,9 +362,9 @@ TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
     getContour(i)->writeXMLFile(ele1);
   ele0->LinkEndChild( ele1 );
 
-  isFrameOfBodyForRotation->writeXMLFile(ele0);
+  isFrameOfBodyForRotation.writeXMLFile(ele0);
 
-  ombvEditor->writeXMLFile(ele0);
+  ombvEditor.writeXMLFile(ele0);
 
   Frame *C = getFrame(0);
   if(C->openMBVFrame()) {
@@ -344,10 +373,10 @@ TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
     ele0->LinkEndChild(ele1);
   }
 
-  weightArrow->writeXMLFile(ele0);
+  weightArrow.writeXMLFile(ele0);
 
-  jointForceArrow->writeXMLFile(ele0);
-  jointMomentArrow->writeXMLFile(ele0);
+  jointForceArrow.writeXMLFile(ele0);
+  jointMomentArrow.writeXMLFile(ele0);
 
   return ele0;
 }

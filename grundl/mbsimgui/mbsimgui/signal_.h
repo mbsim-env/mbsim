@@ -21,6 +21,7 @@
 #define _SIGNAL__H_
 
 #include "link.h"
+#include "extended_properties.h"
 
 class Signal : public Link {
   public:
@@ -42,9 +43,13 @@ class AbsolutCoordinateSensor : public Sensor {
     virtual QString getType() const { return "AbsolutCoordinateSensor"; }
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void initializeDialog();
+    virtual void fromWidget();
+    virtual void toWidget();
+    void initialize();
   protected:
-    ExtXMLWidget *frame, *direction;
-    //std::string frameString;
+    ExtWidget *frameWidget, *directionWidget;
+    ExtProperty frame, direction;
 };
 
 class AbsolutePositionSensor : public AbsolutCoordinateSensor {

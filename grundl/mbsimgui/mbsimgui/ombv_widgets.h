@@ -20,50 +20,46 @@
 #ifndef _OMBV_WIDGETS_H_
 #define _OMBV_WIDGETS_H_
 
-#include "xml_widget.h"
+#include "widget.h"
 #include "basic_widgets.h"
 
-class ExtXMLWidget;
+class ExtWidget;
 class QVBoxLayout;
 class QStackedWidget;
 class QListWidget;
 class QComboBox;
 class RigidBody;
 
-class OMBVObjectWidget : public XMLWidget {
+class OMBVObjectWidget : public Widget {
 
   public:
     OMBVObjectWidget(const std::string &name_) : name(name_) {}
     virtual QString getType() const = 0;
     void setName(const std::string &name_) {name = name_;}
-    void setID(const std::string &_ID) { ID=_ID; }
   protected:
     std::string name;
-    std::string ID;
-    void writeXMLFileID(TiXmlNode *parent);
 };
 
 class OMBVFrameWidget : public OMBVObjectWidget {
 
+  friend class OMBVFrameProperty;
+
   public:
-    OMBVFrameWidget(const std::string &name, const std::string &xmlName);
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element); 
+    OMBVFrameWidget(const std::string &name);
     virtual QString getType() const { return "Frame"; }
   protected:
-    ExtXMLWidget *size, *offset;
-    std::string xmlName;
+    ExtWidget *size, *offset;
 };
 
 class OMBVDynamicColoredObjectWidget : public OMBVObjectWidget {
 
+  friend class OMBVDynamicColoredObjectProperty;
+
   public:
     OMBVDynamicColoredObjectWidget(const std::string &name);
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element); 
   protected:
     QVBoxLayout *layout;
-    ExtXMLWidget *minimalColorValue, *maximalColorValue, *staticColor;
+    ExtWidget *minimalColorValue, *maximalColorValue, *staticColor;
 };
 
 
@@ -71,97 +67,97 @@ class OMBVArrowWidget : public OMBVDynamicColoredObjectWidget {
 
   public:
     OMBVArrowWidget(const std::string &name, bool fromPoint=false);
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element); 
     virtual QString getType() const { return "Arrow"; }
   protected:
-    ExtXMLWidget *diameter, *headDiameter, *headLength, *type, *referencePoint, *scaleLength;
+    ExtWidget *diameter, *headDiameter, *headLength, *type, *referencePoint, *scaleLength;
 };
 
 class OMBVCoilSpringWidget : public OMBVObjectWidget {
 
+  friend class OMBVCoilSpringProperty;
+
   public:
     OMBVCoilSpringWidget(const std::string &name);
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element); 
     virtual QString getType() const { return "CoilSpring"; }
   protected:
-    ExtXMLWidget *type, *numberOfCoils, *springRadius, *crossSectionRadius, *nominalLength, *scaleFactor;
+    ExtWidget *type, *numberOfCoils, *springRadius, *crossSectionRadius, *nominalLength, *scaleFactor;
 };
 
 class OMBVBodyWidget : public OMBVObjectWidget {
 
+  friend class OMBVBodyProperty;
+
   public:
     OMBVBodyWidget(const std::string &name);
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element); 
     virtual QString getType() const = 0;
   protected:
     QVBoxLayout *layout;
-    ExtXMLWidget *trans, *rot, *color, *scale;
+    ExtWidget *trans, *rot, *color, *scale;
 };
 
 class CubeWidget : public OMBVBodyWidget {
 
+  friend class CubeProperty;
+
   public:
     CubeWidget(const std::string &name);
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "Cube"; }
   protected:
-    ExtXMLWidget *length;
+    ExtWidget *length;
 };
 
 class CuboidWidget : public OMBVBodyWidget {
 
+  friend class CuboidProperty;
+
   public:
     CuboidWidget(const std::string &name);
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "Cuboid"; }
   protected:
-    ExtXMLWidget *length;
+    ExtWidget *length;
 };
 
 class SphereWidget : public OMBVBodyWidget {
 
+  friend class SphereProperty;
+
   public:
     SphereWidget(const std::string &name);
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "Sphere"; }
   protected:
-    ExtXMLWidget *radius;
+    ExtWidget *radius;
 };
 
 class FrustumWidget : public OMBVBodyWidget {
+
+  friend class FrustumProperty;
+
   public:
     FrustumWidget(const std::string &name);
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "Frustum"; }
   protected:
-    ExtXMLWidget *top, *base, *height, *innerBase, *innerTop;
+    ExtWidget *top, *base, *height, *innerBase, *innerTop;
 };
 
 class IvBodyWidget : public OMBVBodyWidget {
+
+  friend class IvBodyProperty;
+
   public:
     IvBodyWidget(const std::string &name);
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "IvBody"; }
   protected:
-    ExtXMLWidget *ivFileName, *creaseEdges, *boundaryEdges;
+    ExtWidget *ivFileName, *creaseEdges, *boundaryEdges;
 };
 class OMBVBodyChoiceWidget;
 
 class CompoundRigidBodyWidget : public OMBVBodyWidget {
   Q_OBJECT
 
+  friend class CompoundRigidBodyProperty;
+
   public:
     CompoundRigidBodyWidget(const std::string &name);
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "CompoundRigidBody"; }
   protected:
     std::vector<OMBVBodyChoiceWidget*> body;
@@ -175,15 +171,15 @@ class CompoundRigidBodyWidget : public OMBVBodyWidget {
     void removeBody();
 };
 
-class OMBVBodyChoiceWidget : public XMLWidget {
+class OMBVBodyChoiceWidget : public Widget {
   Q_OBJECT
+
+  friend class OMBVBodyChoiceProperty;
 
   public:
 
-    OMBVBodyChoiceWidget(const std::string &name, bool flag=true, const std::string &ID="");
+    OMBVBodyChoiceWidget(const std::string &name, bool flag=true);
 
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void setName(const std::string &name) {ombv->setName(name);}
 
   protected slots:
@@ -194,17 +190,17 @@ class OMBVBodyChoiceWidget : public XMLWidget {
     QVBoxLayout *layout;
     OMBVBodyWidget *ombv;
     std::string name;
-    std::string ID;
 };
 
-class OMBVBodySelectionWidget : public XMLWidget {
+class OMBVBodySelectionWidget : public Widget {
+
+  friend class OMBVBodySelectionProperty;
+
   public:
 
     OMBVBodySelectionWidget(RigidBody* body);
 
-    virtual void update() {ref->update();}
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual void updateWidget() {ref->updateWidget();}
 
   protected:
     OMBVBodyChoiceWidget *ombv;
@@ -214,27 +210,21 @@ class OMBVBodySelectionWidget : public XMLWidget {
 class OMBVEmptyWidget : public OMBVObjectWidget {
 
   public:
-    OMBVEmptyWidget(const std::string &xmlName);
+    OMBVEmptyWidget();
 
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "Empty"; }
-
-  protected:
-    std::string xmlName;
 };
 
 class OMBVPlaneWidget : public OMBVObjectWidget {
 
+  friend class OMBVPlaneProperty;
+
   public:
-    OMBVPlaneWidget(const std::string &xmlName);
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element); 
+    OMBVPlaneWidget();
     virtual QString getType() const { return "Plane"; }
 
   protected:
-    ExtXMLWidget *size, *numberOfLines;
-    std::string xmlName;
+    ExtWidget *size, *numberOfLines;
 };
 
 #endif

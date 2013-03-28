@@ -20,7 +20,7 @@
 #ifndef _EXTENDED_WIDGETS_H_
 #define _EXTENDED_WIDGETS_H_
 
-#include "xml_widget.h"
+#include "widget.h"
 #include <QComboBox>
 #include <QGroupBox>
 
@@ -30,17 +30,17 @@ class PhysicalStringWidget;
 class EvalDialog;
 class QVBoxLayout;
 
-class ExtPhysicalVarWidget : public XMLWidget {
+class ExtPhysicalVarWidget : public Widget {
   Q_OBJECT
 
   public:
     ExtPhysicalVarWidget(std::vector<PhysicalStringWidget*> inputWidget);
 
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     PhysicalStringWidget* getPhysicalStringWidget(int i) {return inputWidget[i];}
     PhysicalStringWidget* getCurrentPhysicalStringWidget() {return inputWidget[inputCombo->currentIndex()];}
     int getNumberOfInputs() const {return inputWidget.size();}
+    int getCurrentInput() const {return inputCombo->currentIndex();}
+    void setCurrentInput(int i) {inputCombo->setCurrentIndex(i);}
     virtual std::string getValue() const;
     void setValue(const std::string &str);
 
@@ -58,15 +58,14 @@ class ExtPhysicalVarWidget : public XMLWidget {
     void inputDialogChanged(int);
 };
 
-class XMLWidgetChoiceWidget : public XMLWidget {
+class WidgetChoiceWidget : public Widget {
   Q_OBJECT
 
+  friend class PropertyChoiceProperty;
+
   public:
-    XMLWidgetChoiceWidget(const std::vector<std::string> &name, const std::vector<QWidget*> &widget);
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual void initialize();
-    virtual void update();
+    WidgetChoiceWidget(const std::vector<std::string> &name, const std::vector<QWidget*> &widget);
+    virtual void updateWidget();
   protected slots:
     void changeCurrent(int idx);
   protected:
@@ -74,35 +73,33 @@ class XMLWidgetChoiceWidget : public XMLWidget {
     QStackedWidget *stackedWidget;
 };
 
-class ExtXMLWidget : public QGroupBox, public XMLInterface {
+class ExtWidget : public QGroupBox, public WidgetInterface {
   Q_OBJECT
 
-  public:
-    ExtXMLWidget(const QString &name, XMLWidget *widget, bool disable=false);
-    void setXMLName(const std::string &name, bool flag=true) {xmlName = name; alwaysWriteXMLName=flag;}
+  friend class ExtProperty;
 
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    XMLWidget* getWidget() {return widget;}
-    virtual void initialize() {widget->initialize();}
-    virtual void update() {widget->update();}
+  public:
+    ExtWidget(const QString &name, Widget *widget, bool deactivatable=false, bool active=false);
+    Widget* getWidget() {return widget;}
+    virtual void updateWidget() {widget->updateWidget();}
     virtual void resizeVariables() {widget->resizeVariables();}
     bool isActive() const {return (isCheckable() && !isChecked())?0:1;}
+    void setActive(bool flag) {if(isCheckable()) setChecked(flag);}
+    void setWidgetVisible(bool flag) {if(isCheckable()) widget->setVisible(flag);}
 
   protected:
-    XMLWidget *widget;
-    std::string xmlName;
-    bool alwaysWriteXMLName;
+    Widget *widget;
   signals:
     void resize();
 };
 
-class XMLWidgetContainer : public XMLWidget {
-  public:
-    XMLWidgetContainer();
+class WidgetContainer : public Widget {
 
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+  friend class PropertyContainer;
+
+  public:
+    WidgetContainer();
+
     void addWidget(QWidget *widget_);
 
   protected:

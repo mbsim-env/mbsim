@@ -20,41 +20,40 @@
 #include <config.h>
 #include "kinematics_widgets.h"
 #include "string_widgets.h"
+#include "function_widgets.h"
 #include "extended_widgets.h"
 #include "octaveutils.h"
 #include <QtGui>
 
 using namespace std;
 
-LinearTranslation::LinearTranslation() {
+LinearTranslationWidget::LinearTranslationWidget() {
   vector<PhysicalStringWidget*> input;
   MatColsVarWidget* m = new MatColsVarWidget(3,1,1,3);
-  input.push_back(new PhysicalStringWidget(m,MBSIMNS"translationVectors",noUnitUnits(),1));
-  mat = new ExtPhysicalVarWidget(input);
-  QWidget *widget = new ExtXMLWidget("Translation vectors",mat);
+  input.push_back(new PhysicalStringWidget(m,noUnitUnits(),1));
+  ExtPhysicalVarWidget *mat_ = new ExtPhysicalVarWidget(input);
+  mat = new ExtWidget("Translation vectors",mat_);
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
-  layout->addWidget(widget);
+  layout->addWidget(mat);
   QObject::connect(m, SIGNAL(sizeChanged(int)), this, SIGNAL(translationChanged()));
-  QObject::connect(mat, SIGNAL(inputDialogChanged(int)), this, SIGNAL(translationChanged()));
+  QObject::connect(mat_, SIGNAL(inputDialogChanged(int)), this, SIGNAL(translationChanged()));
 }
 
-int LinearTranslation::getSize() const {
-  string str = evalOctaveExpression(mat->getCurrentPhysicalStringWidget()->getValue());
+int LinearTranslationWidget::getSize() const {
+  string str = evalOctaveExpression(static_cast<ExtPhysicalVarWidget*>(mat->getWidget())->getCurrentPhysicalStringWidget()->getValue());
   vector<vector<string> > A = strToMat(str);
   return A.size()?A[0].size():0;
 }
 
-TiXmlElement* LinearTranslation::initializeUsingXML(TiXmlElement *element) {
-  return mat->initializeUsingXML(element);
-}
+TimeDependentTranslationWidget::TimeDependentTranslationWidget() {
+  function = new ExtWidget("Kinematic function",new Function1ChoiceWidget(false,3));
 
-TiXmlElement* LinearTranslation::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"LinearTranslation" );
-  mat->writeXMLFile(ele2);
-  parent->LinkEndChild(ele2);
-  return ele2;
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+  layout->addWidget(function);
 }
 
 TranslationChoiceWidget::TranslationChoiceWidget(const string &xmlName_) : translation(0), xmlName(xmlName_) {
@@ -63,104 +62,33 @@ TranslationChoiceWidget::TranslationChoiceWidget(const string &xmlName_) : trans
   setLayout(layout);
 
   comboBox = new QComboBox;
-  //comboBox->addItem(tr("None"));
-  comboBox->addItem(tr("LinearTranslation"));
+  comboBox->addItem(tr("Linear translation"));
+  comboBox->addItem(tr("Time dependent translation"));
   layout->addWidget(comboBox);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineTranslation(int)));
   defineTranslation(0);
 }
 
 void TranslationChoiceWidget::defineTranslation(int index) {
-//  if(index==0) {
-//    layout->removeWidget(translation);
-//    delete translation;
-//    translation = 0;
-//  } 
-  if(index==0) {
-    translation = new LinearTranslation;  
-    connect((LinearTranslation*)translation, SIGNAL(translationChanged()), this, SIGNAL(translationChanged()));
+  layout->removeWidget(translation);
+  delete translation;
+  if(index==0)
+    translation = new LinearTranslationWidget;  
+  else if(index==1)
+    translation = new TimeDependentTranslationWidget;  
   layout->addWidget(translation);
-  }
   emit translationChanged();
 }
 
-TiXmlElement* TranslationChoiceWidget::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=(xmlName=="")?element:element->FirstChildElement(xmlName);
-  if(e) {
-    TiXmlElement* ee=e->FirstChildElement();
-    if(ee) {
-      if(ee->ValueStr() == MBSIMNS"LinearTranslation")
-        comboBox->setCurrentIndex(0);
-      translation->initializeUsingXML(ee);
-      return e;
-    }
-  }
-  return 0;
-}
-
-TiXmlElement* TranslationChoiceWidget::writeXMLFile(TiXmlNode *parent) {
-  if(xmlName!="") {
-    TiXmlElement *ele0 = new TiXmlElement(xmlName);
-    //if(getTranslation()==1) {
-    translation->writeXMLFile(ele0);
-    //}
-    parent->LinkEndChild(ele0);
-  }
-  else
-    translation->writeXMLFile(parent);
-
- return 0;
-}
-
-TiXmlElement* RotationAboutXAxis::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"RotationAboutXAxis" );
-  parent->LinkEndChild(ele2);
-  return ele2;
-}
-
-TiXmlElement* RotationAboutYAxis::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"RotationAboutYAxis" );
-  parent->LinkEndChild(ele2);
-  return ele2;
-}
-
-TiXmlElement* RotationAboutZAxis::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"RotationAboutZAxis" );
-  parent->LinkEndChild(ele2);
-  return ele2;
-}
-
-RotationAboutFixedAxis::RotationAboutFixedAxis() {
+RotationAboutFixedAxisWidget::RotationAboutFixedAxisWidget() {
   vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new VecWidget(3),MBSIMNS"axisOfRotation",noUnitUnits(),1));
-  vec = new ExtXMLWidget("Axis of rotation",new ExtPhysicalVarWidget(input));  
+  input.push_back(new PhysicalStringWidget(new VecWidget(3),noUnitUnits(),1));
+  ExtPhysicalVarWidget *vec_ = new ExtPhysicalVarWidget(input);
+  vec = new ExtWidget("Translation vectors",vec_);
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
   layout->addWidget(vec);
-}
-
-TiXmlElement* RotationAboutFixedAxis::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"RotationAboutFixedAxis" );
-  vec->writeXMLFile(ele2);
-  parent->LinkEndChild(ele2);
-  return ele2;
-}
-
-TiXmlElement* RotationAboutFixedAxis::initializeUsingXML(TiXmlElement *element) {
-  return vec->initializeUsingXML(element);
-}
-
-TiXmlElement* RotationAboutAxesXY::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"RotationAboutAxesXY" );
-  parent->LinkEndChild(ele2);
-  return ele2;
-}
-
-TiXmlElement* CardanAngles::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"CardanAngles" );
-  parent->LinkEndChild(ele2);
-  return ele2;
 }
 
 RotationChoiceWidget::RotationChoiceWidget(const string &xmlName_) : rotation(0), xmlName(xmlName_) {
@@ -169,7 +97,6 @@ RotationChoiceWidget::RotationChoiceWidget(const string &xmlName_) : rotation(0)
   setLayout(layout);
 
   comboBox = new QComboBox;
-  //comboBox->addItem(tr("None"));
   comboBox->addItem(tr("Rotation about x-axis"));
   comboBox->addItem(tr("Rotation about y-axis"));
   comboBox->addItem(tr("Rotation about z-axis"));
@@ -182,82 +109,21 @@ RotationChoiceWidget::RotationChoiceWidget(const string &xmlName_) : rotation(0)
 }
 
 void RotationChoiceWidget::defineRotation(int index) {
-//  if(index==0) {
-//    layout->removeWidget(rotation);
-//    delete rotation;
-//    rotation = 0;
-//  } 
-  if(index==0) {
-    layout->removeWidget(rotation);
-    delete rotation;
-    rotation = new RotationAboutXAxis;  
-    layout->addWidget(rotation);
-  }
-  else if(index==1) {
-    layout->removeWidget(rotation);
-    delete rotation;
-    rotation = new RotationAboutYAxis;  
-    layout->addWidget(rotation);
-  }
-  else if(index==2) {
-    layout->removeWidget(rotation);
-    delete rotation;
-    rotation = new RotationAboutZAxis;  
-    layout->addWidget(rotation);
-  }
-  else if(index==3) {
-    layout->removeWidget(rotation);
-    delete rotation;
-    rotation = new RotationAboutFixedAxis;  
-    layout->addWidget(rotation);
-  }
-  else if(index==4) {
-    layout->removeWidget(rotation);
-    delete rotation;
-    rotation = new CardanAngles;  
-    layout->addWidget(rotation);
-  }
-  else if(index==5) {
-    layout->removeWidget(rotation);
-    delete rotation;
-    rotation = new RotationAboutAxesXY;  
-    layout->addWidget(rotation);
-  }
+  layout->removeWidget(rotation);
+  delete rotation;
+  if(index==0)
+    rotation = new RotationAboutXAxisWidget;  
+  else if(index==1)
+    rotation = new RotationAboutYAxisWidget;  
+  else if(index==2)
+    rotation = new RotationAboutZAxisWidget;  
+  else if(index==3)
+    rotation = new RotationAboutFixedAxisWidget;  
+  else if(index==4)
+    rotation = new CardanAnglesWidget;  
+  else if(index==5)
+    rotation = new RotationAboutAxesXYWidget;  
+  layout->addWidget(rotation);
   emit rotationChanged();
 }
 
-TiXmlElement* RotationChoiceWidget::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=(xmlName=="")?element:element->FirstChildElement(xmlName);
-  if(e) {
-    TiXmlElement *ee = e->FirstChildElement();
-    if(ee) {
-      if(ee->ValueStr() == MBSIMNS"RotationAboutXAxis")
-        comboBox->setCurrentIndex(0);
-      else if(ee->ValueStr() == MBSIMNS"RotationAboutYAxis")
-        comboBox->setCurrentIndex(1);
-      else if(ee->ValueStr() == MBSIMNS"RotationAboutZAxis")
-        comboBox->setCurrentIndex(2);
-      else if(ee->ValueStr() == MBSIMNS"RotationAboutFixedAxis")
-        comboBox->setCurrentIndex(3);
-      else if(ee->ValueStr() == MBSIMNS"CardanAngles")
-        comboBox->setCurrentIndex(4);
-      else if(ee->ValueStr() == MBSIMNS"RotationAboutAxesXY")
-        comboBox->setCurrentIndex(5);
-      rotation->initializeUsingXML(ee);
-      return e;
-    }
-  }
-  return 0;
-}
-
-TiXmlElement* RotationChoiceWidget::writeXMLFile(TiXmlNode *parent) {
-  if(xmlName!="") {
-    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"rotation" );
-    rotation->writeXMLFile(ele0);
-    parent->LinkEndChild(ele0);
-  }
-  else
-    rotation->writeXMLFile(parent);
-
- return 0;
-}

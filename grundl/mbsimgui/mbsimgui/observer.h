@@ -21,6 +21,7 @@
 #define _OBSERVER__H_
 
 #include "element.h"
+#include "extended_properties.h"
 
 class Observer : public Element {
   public:
@@ -37,10 +38,15 @@ class AbsoluteKinematicsObserver : public Observer {
 
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void initializeDialog();
+    virtual void fromWidget();
+    virtual void toWidget();
+    void initialize();
 
     virtual QString getType() const { return "AbsoluteKinematicsObserver"; }
   protected:
-    ExtXMLWidget *frame, *position, *velocity, *angularVelocity, *acceleration, *angularAcceleration; //*diameter, *headDiameter, *headLength, *color;
+    ExtWidget *frameWidget, *positionWidget, *velocityWidget, *angularVelocityWidget, *accelerationWidget, *angularAccelerationWidget;
+    ExtProperty frame, position, velocity, angularVelocity, acceleration, angularAcceleration;
 };
 
 #endif

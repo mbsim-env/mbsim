@@ -25,24 +25,7 @@
 
 using namespace std;
 
-Object::Object(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element(str, parentItem, ind) {
-  properties->addTab("Initial conditions");
-
-  vector<PhysicalStringWidget*> input;
-  q0 = new VecWidget(0);
-  input.push_back(new PhysicalStringWidget(q0,MBSIMNS"initialGeneralizedPosition",QStringList(),1));
-  ExtPhysicalVarWidget *var = new ExtPhysicalVarWidget(input);  
-  initialGeneralizedPosition = new ExtXMLWidget("Initial generalized position",var,true);
-  properties->addToTab("Initial conditions", initialGeneralizedPosition);
-  //connect(initialGeneralizedPosition,SIGNAL(resize()),this,SLOT(resizeVariables()));
-
-  input.clear();
-  u0 = new VecWidget(0);
-  input.push_back(new PhysicalStringWidget(u0,MBSIMNS"initialGeneralizedVelocity",QStringList(),1));
-  var = new ExtPhysicalVarWidget(input);  
-  initialGeneralizedVelocity = new ExtXMLWidget("Initial generalized velocity",var,true);
-  properties->addToTab("Initial conditions", initialGeneralizedVelocity);
-  //connect(initialGeneralizedVelocity,SIGNAL(resize()),this,SLOT(resizeVariables()));
+Object::Object(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element(str, parentItem, ind), q0(0), u0(0), q0Property(0,false), u0Property(0,false) {
 
   actionSaveAs=new QAction(Utils::QIconCached("newobject.svg"),"Save as", this);
   connect(actionSaveAs,SIGNAL(triggered()),this,SLOT(saveAs()));
@@ -63,25 +46,59 @@ Object::Object(const QString &str, QTreeWidgetItem *parentItem, int ind) : Eleme
 
   contextMenu->addSeparator();
 
+  vector<PhysicalStringProperty*> input;
+  input.push_back(new PhysicalStringProperty(new VecProperty(0),"",MBSIMNS"initialGeneralizedPosition"));
+  q0Property.setProperty(new ExtPhysicalVarProperty(input));
+
+  input.clear();
+  u0 = new VecWidget(0);
+  input.push_back(new PhysicalStringProperty(new VecProperty(0),"",MBSIMNS"initialGeneralizedVelocity"));
+  u0Property.setProperty(new ExtPhysicalVarProperty(input));
 }
 
 Object::~Object() {
 }
 
-void Object::update() {
-  Element::update();
+void Object::initializeDialog() {
+  Element::initializeDialog();
+  dialog->addTab("Initial conditions");
+  vector<PhysicalStringWidget*> input;
+  q0 = new VecWidget(0);
+  input.push_back(new PhysicalStringWidget(q0,QStringList(),1));
+  ExtPhysicalVarWidget *var = new ExtPhysicalVarWidget(input);  
+  q0Widget = new ExtWidget("Initial generalized position",var,true);
+  dialog->addToTab("Initial conditions", q0Widget);
+
+  input.clear();
+  u0 = new VecWidget(0);
+  input.push_back(new PhysicalStringWidget(u0,QStringList(),1));
+  var = new ExtPhysicalVarWidget(input);  
+  u0Widget = new ExtWidget("Initial generalized velocity",var,true);
+  dialog->addToTab("Initial conditions", u0Widget);
+}
+
+void Object::toWidget() {
+  Element::toWidget();
+  q0Property.toWidget(q0Widget);
+  u0Property.toWidget(u0Widget);
+}
+
+void Object::fromWidget() {
+  Element::fromWidget();
+  q0Property.fromWidget(q0Widget);
+  u0Property.fromWidget(u0Widget);
 }
 
 void Object::initializeUsingXML(TiXmlElement *element) {
   Element::initializeUsingXML(element);
-  initialGeneralizedPosition->initializeUsingXML(element);
-  initialGeneralizedVelocity->initializeUsingXML(element);
+  q0Property.initializeUsingXML(element);
+  u0Property.initializeUsingXML(element);
 }
 
 TiXmlElement* Object::writeXMLFile(TiXmlNode *parent) {    
   TiXmlElement *ele0 = Element::writeXMLFile(parent);
-  initialGeneralizedPosition->writeXMLFile(ele0);
-  initialGeneralizedVelocity->writeXMLFile(ele0);
+  q0Property.writeXMLFile(ele0);
+  u0Property.writeXMLFile(ele0);
   return ele0;
 }
 

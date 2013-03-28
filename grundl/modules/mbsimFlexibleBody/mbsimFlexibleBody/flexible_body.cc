@@ -161,7 +161,6 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody::addContour(Contour *contour_) {
-    cout << frame.size() << endl;
     stringstream frameName;
     frameName << "ContourFrame" << contour.size();
     Frame *contourFrame = new Frame(frameName.str());

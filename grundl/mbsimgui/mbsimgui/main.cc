@@ -24,18 +24,6 @@
 #include <H5Cpp.h>
 #include <QLocale>
 
-class App : public QApplication {
-  public:
-    App( int & argc, char ** argv ) : QApplication(argc,argv) {}
-    bool compressEvent(QEvent *e, QObject *r, QPostEventList *p) {
-      //std::cout << "begin compress" << std::endl;
-      //bool flag =  QApplication::compressEvent(e,r,p);
-      bool flag = false;
-      //std::cout << "end compress" << std::endl;
-      return flag;
-    }
-};
-
 int main(int argc, char *argv[]) {
   // environment variables
   // Disalbe COIN VBO per default (see --help)
@@ -46,15 +34,17 @@ int main(int argc, char *argv[]) {
   H5::Exception::dontPrint();
 
   initializeOctave();
-  App app(argc, argv);
+  QApplication app(argc, argv);
   QLocale::setDefault(QLocale::C);
   setlocale(LC_ALL, "C");
   MainWindow *mainwindow = new MainWindow;
-  //mainwindow->show();
-  mainwindow->showMaximized();
+  mainwindow->show();
+  //mainwindow->showMaximized();
   //mainwindow->resize(1400, 900);
+  mainwindow->resize(1100, 700);
   int ret=app.exec();
   do_octave_atexit(); // do_octave_atexit must be called before leaving (to prevent crashed in atexit())
+  std::cout << "deleting" << std::endl;
   delete mainwindow;
   return ret;
 }

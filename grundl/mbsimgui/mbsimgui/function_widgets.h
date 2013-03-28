@@ -20,23 +20,22 @@
 #ifndef _FUNCTION_WIDGETS_H_
 #define _FUNCTION_WIDGETS_H_
 
-#include "xml_widget.h"
+#include "widget.h"
 
 class ExtPhysicalVarWidget;
-class ExtXMLWidget;
+class ExtWidget;
 class QVBoxLayout;
 class QComboBox;
 class Function1ChoiceWidget;
+class WidgetChoiceWidget;
 class QStackedWidget;
 class QListWidget;
 
-class Function1 : public XMLWidget {
+class Function1Widget : public Widget {
   Q_OBJECT
   public:
-    Function1(const QString& ext_="") : ext(ext_) {}
-    virtual ~Function1() {}
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+    Function1Widget(const QString& ext_="") : ext(ext_) {}
+    virtual ~Function1Widget() {}
     virtual QString getType() const { return "Function1_"+ext; }
     virtual QString getExt() const { return ext; }
   public slots:
@@ -45,13 +44,11 @@ class Function1 : public XMLWidget {
     QString ext;
 };
 
-class Function2 : public XMLWidget {
+class Function2Widget : public Widget {
   Q_OBJECT
   public:
-    Function2(const QString& ext_="") : ext(ext_) {}
-    virtual ~Function2() {}
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+    Function2Widget(const QString& ext_="") : ext(ext_) {}
+    virtual ~Function2Widget() {}
     virtual QString getType() const { return "Function2_"+ext; }
     virtual QString getExt() const { return ext; }
   public slots:
@@ -60,55 +57,55 @@ class Function2 : public XMLWidget {
     QString ext;
 };
 
-class DifferentiableFunction1 : public Function1 {
+class DifferentiableFunction1Widget : public Function1Widget {
   public:
-    DifferentiableFunction1(const QString &ext="") : Function1(ext), order(0) {}
+    DifferentiableFunction1Widget(const QString &ext="") : Function1Widget(ext), order(0) {}
     //virtual ~DifferentiableFunction1() { delete derivatives[0]; derivatives.erase(derivatives.begin()); }
-    const Function1& getDerivative(int degree) const { return *(derivatives[degree]); }
-    Function1& getDerivative(int degree) { return *(derivatives[degree]); }
-    void addDerivative(Function1 *diff) { derivatives.push_back(diff); }
-    void setDerivative(Function1 *diff,size_t degree);
+    const Function1Widget& getDerivative(int degree) const { return *(derivatives[degree]); }
+    Function1Widget& getDerivative(int degree) { return *(derivatives[degree]); }
+    void addDerivative(Function1Widget *diff) { derivatives.push_back(diff); }
+    void setDerivative(Function1Widget *diff,size_t degree);
 
     void setOrderOfDerivative(int i) { order=i; }
 
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *parent);
     QString getType() const { return "DifferentiableFunction1"; }
 
   protected:
-    std::vector<Function1*> derivatives;
+    std::vector<Function1Widget*> derivatives;
     int order;
 };
 
-class ConstantFunction1 : public Function1 {
+class ConstantFunction1Widget : public Function1Widget {
+
+  friend class ConstantFunction1Property;
+
   public:
-    ConstantFunction1(const QString &ext);
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *parent);
+    ConstantFunction1Widget(const QString &ext, int n);
     inline QString getType() const { return QString("ConstantFunction1_")+ext; }
     void resize(int m, int n);
   protected:
-    ExtPhysicalVarWidget *c;
+    ExtWidget *c;
 };
 
-class QuadraticFunction1 : public DifferentiableFunction1 {
+class QuadraticFunction1Widget : public DifferentiableFunction1Widget {
+
+  friend class QuadraticFunction1Property;
+
   public:
-    QuadraticFunction1();
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *parent);
+    QuadraticFunction1Widget(int n);
     inline QString getType() const { return QString("QuadraticFunction1_VS"); }
     void resize(int m, int n);
 
   protected:
-    std::vector<ExtPhysicalVarWidget*> var;
-    std::vector<ExtXMLWidget*> widget;
+    ExtWidget *a0, *a1, *a2;
 };
 
-class SinusFunction1 : public DifferentiableFunction1 {
+class SinusFunction1Widget : public DifferentiableFunction1Widget {
+
+  friend class SinusFunction1Property;
+
   public:
-    SinusFunction1();
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *parent);
+    SinusFunction1Widget(int n);
     inline QString getType() const { return QString("SinusFunction1_VS"); }
     void resize(int m, int n);
 
@@ -136,36 +133,37 @@ class SinusFunction1 : public DifferentiableFunction1 {
  //       SinusFunction1 *parent;
  //   };
   protected:
-    std::vector<ExtPhysicalVarWidget*> var;
-    std::vector<ExtXMLWidget*> widget;
+    ExtWidget *a, *f, *p, *o;
 };
 
-class TabularFunction1 : public Function1 {
+class TabularFunction1Widget : public Function1Widget {
+
+  friend class TabularFunction1Property;
+
   public:
-    TabularFunction1();
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *parent);
+    TabularFunction1Widget(int n);
     inline QString getType() const { return QString("TabularFunction1_VS"); }
 
   protected:
-    XMLWidget* widget;
+    WidgetChoiceWidget* choice;
 };
 
-class SummationFunction1 : public Function1 {
+class SummationFunction1Widget : public Function1Widget {
   Q_OBJECT
 
+  friend class SummationFunction1Property;
+
   public:
-    SummationFunction1();
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *parent);
+    SummationFunction1Widget(int n);
     inline QString getType() const { return QString("SummationFunction1_VS"); }
     void resize(int m, int n);
 
   protected:
     std::vector<Function1ChoiceWidget*> functionChoice;
-    std::vector<ExtXMLWidget*> factor;
+    std::vector<ExtWidget*> factor;
     QStackedWidget *stackedWidget; 
     QListWidget *functionList; 
+    int n;
 
   protected slots:
     void updateList();
@@ -176,62 +174,66 @@ class SummationFunction1 : public Function1 {
     void resize();
 };
 
-class LinearSpringDamperForce : public Function2 {
+class LinearSpringDamperForceWidget : public Function2Widget {
+
+  friend class LinearSpringDamperForceProperty;
+
   public:
-    LinearSpringDamperForce();
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *parent);
+    LinearSpringDamperForceWidget();
     inline QString getType() const { return QString("LinearSpringDamperForce")+ext; }
   protected:
-    std::vector<ExtPhysicalVarWidget*> var;
+    ExtWidget *c, *d, *l0;
 };
 
-class LinearRegularizedBilateralConstraint: public Function2 {
-  public:
-    LinearRegularizedBilateralConstraint(); 
+class LinearRegularizedBilateralConstraintWidget: public Function2Widget {
 
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+  friend class LinearRegularizedBilateralConstraintProperty;
+
+  public:
+    LinearRegularizedBilateralConstraintWidget(); 
+
     virtual QString getType() const { return "LinearRegularizedBilateralConstraint"; }
 
   private:
-    std::vector<ExtXMLWidget*> var;
+    ExtWidget *c, *d;
 };
 
-class LinearRegularizedUnilateralConstraint: public Function2 {
-  public:
-    LinearRegularizedUnilateralConstraint(); 
+class LinearRegularizedUnilateralConstraintWidget: public Function2Widget {
 
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+  friend class LinearRegularizedUnilateralConstraintProperty;
+
+  public:
+    LinearRegularizedUnilateralConstraintWidget(); 
+
     virtual QString getType() const { return "LinearRegularizedUnilateralConstraint"; }
 
   private:
-    std::vector<ExtXMLWidget*> var;
+    ExtWidget *c, *d;
 };
 
-class LinearRegularizedCoulombFriction: public Function2 {
-  public:
-    LinearRegularizedCoulombFriction(); 
+class LinearRegularizedCoulombFrictionWidget: public Function2Widget {
 
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+  friend class LinearRegularizedCoulombFrictionProperty;
+
+  public:
+    LinearRegularizedCoulombFrictionWidget(); 
+
     virtual QString getType() const { return "LinearRegularizedCoulombFriction"; }
 
   private:
-    std::vector<ExtXMLWidget*> var;
+    ExtWidget *gd, *mu;
 };
 
-class Function1ChoiceWidget : public XMLWidget {
+class Function1ChoiceWidget : public Widget {
   Q_OBJECT
 
-  public:
-    Function1ChoiceWidget(const std::string &xmlName, bool withFactor=false);
+  friend class Function1ChoiceProperty;
 
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+  public:
+    Function1ChoiceWidget(bool withFactor=false, int n=0);
+
     void resize(int m, int n) {if(function) function->resize(m,n);}
-    Function1* getFunction() {return function;}
+    Function1Widget* getFunction() {return function;}
 
   protected slots:
     void defineForceLaw(int);
@@ -239,22 +241,22 @@ class Function1ChoiceWidget : public XMLWidget {
   protected:
     QComboBox *comboBox;
     QVBoxLayout *layout;
-    Function1 *function;
-    std::string xmlName;
-    ExtXMLWidget *factor;
+    Function1Widget *function;
+    ExtWidget *factor;
+    int n;
   signals:
     void resize();
     void functionChanged();
 };
 
-class Function2ChoiceWidget : public XMLWidget {
+class Function2ChoiceWidget : public Widget {
   Q_OBJECT
 
-  public:
-    Function2ChoiceWidget(const std::string &xmlName);
+  friend class Function2ChoiceProperty;
 
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+  public:
+    Function2ChoiceWidget();
+
     void resize(int m, int n) {if(function) function->resize(m,n);}
 
   protected slots:
@@ -263,8 +265,7 @@ class Function2ChoiceWidget : public XMLWidget {
   protected:
     QComboBox *comboBox;
     QVBoxLayout *layout;
-    Function2 *function;
-    std::string xmlName;
+    Function2Widget *function;
   signals:
     void resize();
 };

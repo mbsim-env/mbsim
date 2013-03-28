@@ -30,7 +30,10 @@
 #include "spring_damper.h"
 #include "contact.h"
 #include "signal_.h"
-#include "xml_widget.h"
+#include "widget.h"
+#include "parameter.h"
+#include "observer.h"
+#include "integrator.h"
 #include <string>
 
 using namespace std;

@@ -20,75 +20,78 @@
 #include <config.h>
 #include "property_widget.h"
 #include "extended_widgets.h"
+#include "object.h"
+#include <iostream>
 #include <QtGui>
 
 using namespace std;
 
-PropertyWidget::PropertyWidget(QObject *parentObject_) : parentObject(parentObject_) {
+PropertyDialog::PropertyDialog(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,f) {
 
-  setWindowTitle("Properties");
+  QVBoxLayout *layout = new QVBoxLayout;
+  setLayout(layout);
+  tabWidget = new QTabWidget(this);
+  layout->addWidget(tabWidget);
+  buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel);
+  buttonBox->addButton("Resize", QDialogButtonBox::ActionRole);
+
+  connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+  connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+  connect(buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(clicked(QAbstractButton*)));
+  layout->addWidget(buttonBox);
+  setWindowTitle(QString("Properties"));
 }
 
-PropertyWidget::~PropertyWidget() {
+PropertyDialog::~PropertyDialog() {
 }
 
-void PropertyWidget::addToTab(const QString &name, ExtXMLWidget* widget_) {
+void PropertyDialog::clicked(QAbstractButton *button) {
+  if(button == buttonBox->button(QDialogButtonBox::Apply) || button == buttonBox->button(QDialogButtonBox::Ok)) {
+    //buttonBox->button(QDialogButtonBox::Cancel)->setDisabled(true);
+    emit apply();
+  }
+  else if(button == buttonBox->buttons()[2])
+    resizeVariables();
+}
+  
+void PropertyDialog::addToTab(const QString &name, QWidget* widget_) {
   layout[name]->addWidget(widget_);
   widget.push_back(widget_);
 }
 
-void PropertyWidget::addStretch() {
+void PropertyDialog::addStretch() {
   for ( std::map<QString,QVBoxLayout*>::iterator it=layout.begin() ; it != layout.end(); it++ )
     (*it).second->addStretch(1);
 }
 
-void PropertyWidget::update() {
+void PropertyDialog::updateWidget() {
   for(unsigned int i=0; i<widget.size(); i++)
-    widget[i]->update();
+    dynamic_cast<WidgetInterface*>(widget[i])->updateWidget();
 }
 
-void PropertyWidget::initialize() {
+void PropertyDialog::resizeVariables() {
+  Object *obj = dynamic_cast<Object*>(parentObject);
+  if(obj) obj->resizeVariables();
   for(unsigned int i=0; i<widget.size(); i++)
-    widget[i]->initialize();
+    dynamic_cast<WidgetInterface*>(widget[i])->resizeVariables();
 }
 
-void PropertyWidget::resizeVariables() {
-  for(unsigned int i=0; i<widget.size(); i++)
-    widget[i]->resizeVariables();
-}
-
-void PropertyWidget::addTab(const QString &name, int i) {  
+void PropertyDialog::addTab(const QString &name, int i) {  
   QScrollArea *tab = new QScrollArea;
-  tab->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-  tab->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
   tab->setWidgetResizable(true);
-  QWidget *widget = new QWidget;
-  QHBoxLayout *hlo = new QHBoxLayout;
 
   QWidget *box = new QWidget;
   QVBoxLayout *layout_ = new QVBoxLayout;
   box->setLayout(layout_);
   layout[name] = layout_;
-  hlo->addWidget(box);
-
-  widget->setLayout(hlo);
-  tab->setWidget(widget);
+                       
+  tab->setWidget(box);
   if(i==-1)
-    addTab(tab, name);
+    tabWidget->addTab(tab, name);
   else 
-    insertTab(i,tab,name);
+    tabWidget->insertTab(i,tab,name);
 }
 
-void PropertyWidget::setParentObject(QObject *parentObject_) {
+void PropertyDialog::setParentObject(QObject *parentObject_) {
   parentObject=parentObject_;
-}
-
-void PropertyWidget::initializeUsingXML(TiXmlElement *element) {
-  for(unsigned int i=0; i<widget.size(); i++)
-    widget[i]->initializeUsingXML(element);
-}
-
-TiXmlElement* PropertyWidget::writeXMLFile(TiXmlNode *parent) {
-  for(unsigned int i=0; i<widget.size(); i++)
-    widget[i]->writeXMLFile(parent);
 }

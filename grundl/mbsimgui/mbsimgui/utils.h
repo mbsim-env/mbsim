@@ -52,6 +52,7 @@ class Utils {
 //    /** Convenienc function to convert a rotation matrix to cardan angles */
 //    static SbVec3f rotation2Cardan(const SbRotation& r);
 
+    static std::map<std::string, std::string>& getMBSimNamespacePrefixMapping();
 
 
   private:
@@ -313,9 +314,18 @@ inline std::vector<std::vector<AT> > getEye(int m, int n, const AT &d, const AT 
     A[i].resize(n);
     for(int j=0; j<n; j++)
       A[i][j] = z;
-    A[i][i] = d;
+    if(i<n)
+      A[i][i] = d;
   }
   return A;
+}
+
+template <class AT>
+inline std::vector<AT> getVec(int m, const AT &d) {
+  std::vector<AT> x(m);
+  for(int i=0; i<m; i++)
+    x[i] = d;
+  return x;
 }
 
 template <class AT>

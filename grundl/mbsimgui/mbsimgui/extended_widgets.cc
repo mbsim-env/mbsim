@@ -31,7 +31,7 @@ ExtPhysicalVarWidget::ExtPhysicalVarWidget(std::vector<PhysicalStringWidget*> in
   layout->setMargin(0);
   setLayout(layout);
 
-  inputWidget.push_back(new PhysicalStringWidget(new OctaveExpressionWidget, inputWidget[0]->getXmlName(), inputWidget[0]->getUnitList(), inputWidget[0]->getDefaultUnit()));
+  inputWidget.push_back(new PhysicalStringWidget(new OctaveExpressionWidget, inputWidget[0]->getUnitList(), inputWidget[0]->getDefaultUnit()));
 
   QPushButton *evalButton = new QPushButton("Eval");
   connect(evalButton,SIGNAL(clicked(bool)),this,SLOT(openEvalDialog()));
@@ -82,7 +82,7 @@ string ExtPhysicalVarWidget::getValue() const {
 }
 
 void ExtPhysicalVarWidget::setValue(const string &str) { 
-  return inputWidget[inputCombo->currentIndex()]->setValue(str);
+  inputWidget[inputCombo->currentIndex()]->setValue(str);
 }
 
 void ExtPhysicalVarWidget::updateInput() {
@@ -109,28 +109,11 @@ void ExtPhysicalVarWidget::openEvalDialog() {
     return;
   }
   evalDialog->setValue(str);
-  evalDialog->show();
+  evalDialog->exec();
   //evalDialog->setButtonDisabled(evalInput != (inputCombo->count()-1));
 }
 
-TiXmlElement* ExtPhysicalVarWidget::initializeUsingXML(TiXmlElement *element) {
-  for(int i=0; i< inputWidget.size(); i++) {
-    if(inputWidget[i]->initializeUsingXML(element)) { 
-      blockSignals(true);
-      inputCombo->setCurrentIndex(i);
-      blockSignals(false);
-      return element;
-    }
-  }
-  return 0;
-}
-
-TiXmlElement* ExtPhysicalVarWidget::writeXMLFile(TiXmlNode *parent) {
-  inputWidget[inputCombo->currentIndex()]->writeXMLFile(parent);
-  return 0;
-}
-
-XMLWidgetChoiceWidget::XMLWidgetChoiceWidget(const vector<string> &name, const vector<QWidget*> &widget) { 
+WidgetChoiceWidget::WidgetChoiceWidget(const vector<string> &name, const vector<QWidget*> &widget) { 
   QHBoxLayout* layout = new QHBoxLayout;
   layout->setMargin(0);
   choice = new QComboBox;
@@ -147,7 +130,7 @@ XMLWidgetChoiceWidget::XMLWidgetChoiceWidget(const vector<string> &name, const v
   layout->addWidget(stackedWidget);
 }
 
-void XMLWidgetChoiceWidget::changeCurrent(int idx) {
+void WidgetChoiceWidget::changeCurrent(int idx) {
   if (stackedWidget->currentWidget() !=0)
     stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
   stackedWidget->setCurrentIndex(idx);
@@ -155,97 +138,32 @@ void XMLWidgetChoiceWidget::changeCurrent(int idx) {
   adjustSize();
 }
 
-void XMLWidgetChoiceWidget::initialize() {
+void WidgetChoiceWidget::updateWidget() {
   for(int i=0; i<stackedWidget->count(); i++)
-    dynamic_cast<XMLInterface*>(stackedWidget->widget(i))->initialize();
+    dynamic_cast<WidgetInterface*>(stackedWidget->widget(i))->updateWidget();
 }
 
-void XMLWidgetChoiceWidget::update() {
-  for(int i=0; i<stackedWidget->count(); i++)
-    dynamic_cast<XMLInterface*>(stackedWidget->widget(i))->update();
-}
-
-TiXmlElement* XMLWidgetChoiceWidget::initializeUsingXML(TiXmlElement *element) {
-  for(int i=0; i<stackedWidget->count(); i++)
-    if(dynamic_cast<XMLInterface*>(stackedWidget->widget(i))->initializeUsingXML(element)) {
-      choice->setCurrentIndex(i);
-      return element;
-    }
-  return 0;
-}
-
-TiXmlElement* XMLWidgetChoiceWidget::writeXMLFile(TiXmlNode *parent) {
-  return dynamic_cast<XMLInterface*>(stackedWidget->currentWidget())->writeXMLFile(parent);
-}
-
-ExtXMLWidget::ExtXMLWidget(const QString &name, XMLWidget *widget_, bool disable) : QGroupBox(name), widget(widget_) {
+ExtWidget::ExtWidget(const QString &name, Widget *widget_, bool deactivatable, bool active) : QGroupBox(name), widget(widget_) {
 
   QHBoxLayout *layout = new QHBoxLayout;
 
-  if(disable) {
+  if(deactivatable) {
     setCheckable(true);
     connect(this,SIGNAL(toggled(bool)),this,SIGNAL(resize()));
     connect(this,SIGNAL(toggled(bool)),widget,SLOT(setVisible(bool)));
-    setChecked(false);
+    setChecked(active);
   }
   setLayout(layout);
   layout->addWidget(widget);
 }
 
-TiXmlElement* ExtXMLWidget::initializeUsingXML(TiXmlElement *element) {
-  bool flag = false;
-  if(xmlName!="") {
-    TiXmlElement *e=element->FirstChildElement(xmlName);
-    if(e)
-      flag = widget->initializeUsingXML(e);
-  }
-  else {
-    flag = widget->initializeUsingXML(element);
-  }
-  if(isCheckable())
-    setChecked(flag);
-  return flag?element:0;
-}
-
-TiXmlElement* ExtXMLWidget::writeXMLFile(TiXmlNode *parent) {
-  if(xmlName!="") {
-    if(alwaysWriteXMLName) {
-      TiXmlElement *ele0 = new TiXmlElement(xmlName);
-      if(isActive()) widget->writeXMLFile(ele0);
-      parent->LinkEndChild(ele0);
-      return ele0;
-    }
-    else if(isActive()) {
-      TiXmlElement *ele0 = new TiXmlElement(xmlName);
-      widget->writeXMLFile(ele0);
-      parent->LinkEndChild(ele0);
-      return ele0;
-    }
-  }
-  else
-    return isActive()?widget->writeXMLFile(parent):0;
-}
-
-XMLWidgetContainer::XMLWidgetContainer() {
+WidgetContainer::WidgetContainer() {
   layout = new QVBoxLayout;
   setLayout(layout);
   layout->setMargin(0);
 }
 
-void XMLWidgetContainer::addWidget(QWidget *widget_) {
+void WidgetContainer::addWidget(QWidget *widget_) {
   layout->addWidget(widget_); 
   widget.push_back(widget_);
-}
-
-TiXmlElement* XMLWidgetContainer::initializeUsingXML(TiXmlElement *element) {
-  for(unsigned int i=0; i<widget.size(); i++)
-    if(!dynamic_cast<XMLInterface*>(widget[i])->initializeUsingXML(element))
-      return 0;
-  return element;
-}
-
-TiXmlElement* XMLWidgetContainer::writeXMLFile(TiXmlNode *parent) {
-  for(unsigned int i=0; i<widget.size(); i++)
-    dynamic_cast<XMLInterface*>(widget[i])->writeXMLFile(parent);
-  return 0;
 }
