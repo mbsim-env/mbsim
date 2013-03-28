@@ -197,7 +197,9 @@ namespace MBSim {
       protected:
         std::vector<DifferentiableFunction<double>*> f;
       public:
+        VectorFunction() {}
         VectorFunction(std::vector<DifferentiableFunction<double>*> f_) : f(f_) {}
+        void addFunction(DifferentiableFunction<double> *f_) {f.push_back(f_);}
         virtual fmatvec::Vector<Col,double> operator()(const double& x, const void * =NULL) {
           fmatvec::Vector<Col,double> r(f.size(),fmatvec::NONINIT);
           for(int i=0; i<r.size(); i++)
