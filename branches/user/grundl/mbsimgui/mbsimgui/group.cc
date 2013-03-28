@@ -35,59 +35,54 @@
 #include "frame.h"
 #include "contour.h"
 #include "property_widget.h"
+#include "basic_properties.h"
 #include "basic_widgets.h"
 #include "string_widgets.h"
 #include <string>
 #include "utils.h"
+#include "mainwindow.h"
+#include "observer.h"
 
 using namespace std;
 
-Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element(str, parentItem, ind), frameOfReference(0), position(0), orientation(0) {
+extern MainWindow *mw;
+
+Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element(str, parentItem, ind), positionWidget(0), orientationWidget(0), frameOfReferenceWidget(0), position(0,false), orientation(0,false), frameOfReference(0,false) {
 
   setText(1,getType());
 
   iconFile="group.svg";
 
-  QColor color;
-  color.setRgb(200,200,200);
-  QBrush brush(color);
-  color.setRgb(255,255,255);
-  QBrush brush2(color);
+  QPalette palette;
+  QBrush brush=palette.brush(QPalette::Disabled, QPalette::Text);
 
   frames = new Container;
   frames->setText(0, "frames");
   frames->setForeground(0,brush);
-  frames->setBackground(0,brush2);
   addChild(frames);
   contours = new Container;
   contours->setText(0, "contours");
   contours->setForeground(0,brush);
-  contours->setBackground(0,brush2);
   addChild(contours);
   groups = new Container;
   groups->setText(0, "groups");
   groups->setForeground(0,brush);
-  groups->setBackground(0,brush2);
   addChild(groups);
   objects = new Container;
   objects->setText(0, "objects");
   objects->setForeground(0,brush);
-  objects->setBackground(0,brush2);
   addChild(objects);
   extraDynamics = new Container;
   extraDynamics->setText(0, "extraDynamics");
   extraDynamics->setForeground(0,brush);
-  extraDynamics->setBackground(0,brush2);
   addChild(extraDynamics);
   links = new Container;
   links->setText(0, "links");
   links->setForeground(0,brush);
-  links->setBackground(0,brush2);
   addChild(links);
   observers = new Container;
   observers->setText(0, "observers");
   observers->setForeground(0,brush);
-  observers->setBackground(0,brush2);
   addChild(observers);
 
   //if(parentItem != treeWidget()->invisibleRootItem())
@@ -97,89 +92,89 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
 
   QAction *action;
 
-  //properties->addTab("Frame positioning");
-  //properties->addTab("Contour positioning");
   if(parentItem != treeWidget()->invisibleRootItem()) {
-    properties->addTab("Kinematics");
 
-    vector<PhysicalStringWidget*> input;
-    input.push_back(new PhysicalStringWidget(new VecWidget(3),MBSIMNS"position",lengthUnits(),4));
-    position = new ExtXMLWidget("Position",new ExtPhysicalVarWidget(input),true); 
-    properties->addToTab("Kinematics", position);
+    vector<PhysicalStringProperty*> input;
+    input.push_back(new PhysicalStringProperty(new VecProperty(3),"m",MBSIMNS"position"));
+    position.setProperty(new ExtPhysicalVarProperty(input));
 
     input.clear();
-    input.push_back(new PhysicalStringWidget(new MatWidget(getEye<string>(3,3,"1","0")),MBSIMNS"orientation",noUnitUnits(),1));
-    orientation = new ExtXMLWidget("Orientation",new ExtPhysicalVarWidget(input),true); 
-    properties->addToTab("Kinematics", orientation);
+    input.push_back(new PhysicalStringProperty(new MatProperty(getEye<string>(3,3,"1","0")),"-",MBSIMNS"orientation"));
+    orientation.setProperty(new ExtPhysicalVarProperty(input));
 
-    frameOfReference = new ExtXMLWidget("Frame of reference",new ParentFrameOfReferenceWidget(MBSIMNS"frameOfReference",((Group*)getParentElement())->getFrame(0),0),true);
-    properties->addToTab("Kinematics", frameOfReference);
+    frameOfReference.setProperty(new ParentFrameOfReferenceProperty(getParentElement()->getFrame(0),this,MBSIMNS"frameOfReference"));
   }
 
   action=new QAction(Utils::QIconCached("newobject.svg"),"Add frame", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addFrame()));
   contextMenu->addAction(action);
 
-  QMenu *submenu = contextMenu->addMenu("Add contour");
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Point", this);
+  contourContextMenu=new QMenu("Contour context menu");
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add contour", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addContour()));
+  contextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add point", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addPoint()));
-  submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Line", this);
+  contourContextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add line", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addLine()));
-  submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Plane", this);
+  contourContextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add plane", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addPlane()));
-  submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Sphere", this);
+  contourContextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add sphere", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addSphere()));
-  submenu->addAction(action);
+  contourContextMenu->addAction(action);
 
   action=new QAction(Utils::QIconCached("newobject.svg"),"Add group", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addGroup()));
   contextMenu->addAction(action);
 
-  //action=new QAction(Utils::QIconCached("newobject.svg"),"Add object", this);
-  //connect(action,SIGNAL(triggered()),this,SLOT(addObject()));
-  //contextMenu->addAction(action);
-  submenu = contextMenu->addMenu("Add object");
-//  action=new QAction(Utils::QIconCached("newobject.svg"),"Rigid bodies", this);
-//  connect(action,SIGNAL(triggered()),this,SLOT(addRigidBodies()));
-//  submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Rigid body", this);
+  objectContextMenu=new QMenu("Object context menu");
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add object", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addObject()));
+  contextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add rigid body", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addRigidBody()));
-  submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Kinematic constraint", this);
+  objectContextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add kinematic constraint", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addKinematicConstraint()));
-  submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Joint constraint", this);
+  objectContextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add joint constraint", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addJointConstraint()));
-  submenu->addAction(action);
+  objectContextMenu->addAction(action);
 
-  //action=new QAction(Utils::QIconCached("newobject.svg"),"Add link", this);
-  //connect(action,SIGNAL(triggered()),this,SLOT(addLink()));
-  //contextMenu->addAction(action);
-  submenu = contextMenu->addMenu("Add link");
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Joint", this);
+  linkContextMenu=new QMenu("Link context menu");
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add link", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addLink()));
+  contextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add joint", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addJoint()));
-  submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Kinetic excitation", this);
+  linkContextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add kinetic excitation", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addKineticExcitation()));
-  submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Spring damper", this);
+  linkContextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add spring damper", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addSpringDamper()));
-  submenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Contact", this);
+  linkContextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add contact", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addContact()));
-  submenu->addAction(action);
-  QMenu *subsubmenu = submenu->addMenu("Sensor");
-  action=new QAction(Utils::QIconCached("newobject.svg"),"AbsolutePositionSensor", this);
+  linkContextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add sensor", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addSensor()));
+  linkContextMenu->addAction(action);
+  sensorContextMenu=new QMenu("Sensor context menu");
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add absolute position sensor", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addAbsolutePositionSensor()));
-  subsubmenu->addAction(action);
+  sensorContextMenu->addAction(action);
 
-  submenu = contextMenu->addMenu("Add observer");
-  action=new QAction(Utils::QIconCached("newobject.svg"),"AbsoluteKinematicsObserver", this);
+  observerContextMenu=new QMenu("Observer context menu");
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add observer", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addObserver()));
+  contextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add absolute kinematics observer", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addAbsoluteKinematicsObserver()));
-  submenu->addAction(action);
+  observerContextMenu->addAction(action);
 
   action=new QAction(Utils::QIconCached("newobject.svg"),"Add from file", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addFromFile()));
@@ -187,14 +182,14 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
 
   contextMenu->addSeparator();
 
-    action=new QAction(Utils::QIconCached("newobject.svg"),"Save as", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(saveAs()));
-    contextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Save as", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(saveAs()));
+  contextMenu->addAction(action);
 
-    actionSave=new QAction(Utils::QIconCached("newobject.svg"),"Save", this);
-    actionSave->setDisabled(true);
-    connect(actionSave,SIGNAL(triggered()),this,SLOT(save()));
-    contextMenu->addAction(actionSave);
+  actionSave=new QAction(Utils::QIconCached("newobject.svg"),"Save", this);
+  actionSave->setDisabled(true);
+  connect(actionSave,SIGNAL(triggered()),this,SLOT(save()));
+  contextMenu->addAction(actionSave);
 
   if(parentItem != treeWidget()->invisibleRootItem()) {
     action=new QAction(Utils::QIconCached("newobject.svg"),"Copy", this);
@@ -210,12 +205,54 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
   contextMenu->addSeparator();
 
   if(parentItem != treeWidget()->invisibleRootItem()) {
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Remove", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(remove()));
-  contextMenu->addAction(action);
+    action=new QAction(Utils::QIconCached("newobject.svg"),"Remove", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(remove()));
+    contextMenu->addAction(action);
   }
+}
 
-  properties->addStretch();
+void Group::initialize() {
+  Element::initialize();
+  if(frameOfReference.getProperty())
+    frameOfReference.initialize();
+}
+
+void Group::initializeDialog() {
+  Element::initializeDialog();
+  if(position.getProperty()) {
+    dialog->addTab("Kinematics");
+
+    vector<PhysicalStringWidget*> input;
+    input.push_back(new PhysicalStringWidget(new VecWidget(3),lengthUnits(),4));
+    positionWidget = new ExtWidget("Position",new ExtPhysicalVarWidget(input),true); 
+    dialog->addToTab("Kinematics", positionWidget);
+
+    input.clear();
+    input.push_back(new PhysicalStringWidget(new MatWidget(getEye<string>(3,3,"1","0")),noUnitUnits(),1));
+    orientationWidget = new ExtWidget("Orientation",new ExtPhysicalVarWidget(input),true); 
+    dialog->addToTab("Kinematics", orientationWidget);
+
+    frameOfReferenceWidget = new ExtWidget("Frame of reference",new ParentFrameOfReferenceWidget(this,0),true);
+    dialog->addToTab("Kinematics", frameOfReferenceWidget);
+  }
+}
+
+void Group::toWidget() {
+  Element::toWidget();
+  if(position.getProperty()) {
+    position.toWidget(positionWidget);
+    orientation.toWidget(orientationWidget);
+    frameOfReference.toWidget(frameOfReferenceWidget);
+  }
+}
+
+void Group::fromWidget() {
+  Element::fromWidget();
+  if(position.getProperty()) {
+    position.fromWidget(positionWidget);
+    orientation.fromWidget(orientationWidget);
+    frameOfReference.fromWidget(frameOfReferenceWidget);
+  }
 }
 
 int Group::getqSize() {
@@ -257,77 +294,92 @@ int Group::getxSize() {
   return xSize;
 }
 
-void Group::addRigidBody() {
-  new RigidBody(newName(objects,"RigidBody"), objects, -1);
-  ((Element*)treeWidget()->topLevelItem(0))->update();
+void Group::addContour() {
+  contourContextMenu->exec(QCursor::pos());
 }
 
-void Group::addRigidBodies() {
-  for(int i=0; i<3000; i++) {
-    cout <<"add Body" << i+1<< endl;
-    //new RigidBody(newName(objects,"Body"), objects, -1);
-    //new FixedRelativeFrame(newName(frames,"P"), frames, -1);
-    //new Frame("P", 0, -1);
-    //QTreeWidgetItem *item = new Element2();
-    //QTreeWidgetItem *item = new QTreeWidgetItem;
-    //addChild(item); //
-    //item->setText(0,newName(this,"P"));
-    //item->setText(0,"Name");
-    cout <<"end" << endl;
-  }
-  ((Element*)treeWidget()->topLevelItem(0))->update();
+void Group::addObject() {
+  objectContextMenu->exec(QCursor::pos());
+}
+
+void Group::addLink() {
+  linkContextMenu->exec(QCursor::pos());
+}
+
+void Group::addRigidBody() {
+  new RigidBody(newName(objects,"RigidBody"), objects, -1);
+  ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+  mw->mbsimxml(1);
 }
 
 void Group::addKinematicConstraint() {
   new KinematicConstraint(newName(objects,"KinematicConstraint"), objects, -1);
-  ((Element*)treeWidget()->topLevelItem(0))->update();
+  ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+  mw->mbsimxml(1);
 }
 
 void Group::addJointConstraint() {
   new JointConstraint(newName(objects,"JointConstraint"), objects, -1);
-  ((Element*)treeWidget()->topLevelItem(0))->update();
+  ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+  mw->mbsimxml(1);
 }
 
 void Group::addJoint() {
   new Joint(newName(links,"Joint"), links, -1);
-  ((Element*)treeWidget()->topLevelItem(0))->update();
+  ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+  mw->mbsimxml(1);
 }
 
 void Group::addKineticExcitation() {
   new KineticExcitation(newName(links,"KineticExcitation"), links, -1);
-  ((Element*)treeWidget()->topLevelItem(0))->update();
+  ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+  mw->mbsimxml(1);
 }
 
 void Group::addSpringDamper() {
   new SpringDamper(newName(links,"SpringDamper"), links, -1);
-  ((Element*)treeWidget()->topLevelItem(0))->update();
+  ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+  mw->mbsimxml(1);
 }
 
 void Group::addContact() {
   new Contact(newName(links,"Contact"), links, -1);
-  ((Element*)treeWidget()->topLevelItem(0))->update();
+  ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+  mw->mbsimxml(1);
+}
+
+void Group::addSensor() {
+  sensorContextMenu->exec(QCursor::pos());
 }
 
 void Group::addAbsolutePositionSensor() {
   new AbsolutePositionSensor(newName(links,"AbsolutePositionSensor"), links, -1);
-  ((Element*)treeWidget()->topLevelItem(0))->update();
+  ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+  mw->mbsimxml(1);
+}
+
+void Group::addObserver() {
+  observerContextMenu->exec(QCursor::pos());
 }
 
 void Group::addAbsoluteKinematicsObserver() {
   new AbsoluteKinematicsObserver(newName(observers,"AbsoluteKinematicsObserver"), observers, -1);
-  ((Element*)treeWidget()->topLevelItem(0))->update();
+  ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+  mw->mbsimxml(1);
 }
 
 void Group::addFrame() {
   new FixedRelativeFrame(newName(frames,"P"), frames, -1);
-  ((Element*)treeWidget()->topLevelItem(0))->update();
+  ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+  mw->mbsimxml(1);
 }
 
 void Group::addPoint() {
   QString text = newName(contours,"Point");
   if (!text.isEmpty()) {
     new Point(text, contours, -1);
-    ((Element*)treeWidget()->topLevelItem(0))->update();
+    ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+    mw->mbsimxml(1);
   }
 }
 
@@ -335,7 +387,8 @@ void Group::addLine() {
   QString text = newName(contours,"Line");
   if (!text.isEmpty()) {
     new Line(text, contours, -1);
-    ((Element*)treeWidget()->topLevelItem(0))->update();
+    ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+    mw->mbsimxml(1);
   }
 }
 
@@ -343,7 +396,8 @@ void Group::addPlane() {
   QString text = newName(contours,"Plane");
   if (!text.isEmpty()) {
     new Plane(text, contours, -1);
-    ((Element*)treeWidget()->topLevelItem(0))->update();
+    ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+    mw->mbsimxml(1);
   }
 }
 
@@ -351,13 +405,15 @@ void Group::addSphere() {
   QString text = newName(contours,"Sphere");
   if (!text.isEmpty()) {
     new Sphere(text, contours, -1);
-    ((Element*)treeWidget()->topLevelItem(0))->update();
+    ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+    mw->mbsimxml(1);
   }
 }
 
 void Group::addGroup() {
   new Group(newName(groups,"Group"), groups, -1);
-  ((Element*)treeWidget()->topLevelItem(0))->update();
+  ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+  mw->mbsimxml(1);
 }
 
 void Group::addFromFile() {
@@ -396,7 +452,8 @@ void Group::addFromFile() {
         o->setName(text);
       }
       o->initializeUsingXML(e);
-      ((Element*)treeWidget()->topLevelItem(0))->update();
+      ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+      mw->mbsimxml(1);
       return;
     }
     Group *g=ObjectFactory::getInstance()->createGroup(e, groups, -1);
@@ -416,7 +473,8 @@ void Group::addFromFile() {
         g->setName(text);
       }
       g->initializeUsingXML(e);
-      ((Element*)treeWidget()->topLevelItem(0))->update();
+      ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+      mw->mbsimxml(1);
       return;
     }
   }
@@ -427,8 +485,8 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   Element::initializeUsingXML(element);
   e=element->FirstChildElement();
 
-  if(frameOfReference)
-    frameOfReference->initializeUsingXML(element);
+  if(frameOfReference.getProperty())
+    frameOfReference.initializeUsingXML(element);
 
   // search first element known by Group
   while(e && 
@@ -437,11 +495,11 @@ void Group::initializeUsingXML(TiXmlElement *element) {
       e->ValueStr()!=MBSIMNS"frames")
     e=e->NextSiblingElement();
 
-  if(position)
-    position->initializeUsingXML(element);
+  if(position.getProperty())
+    position.initializeUsingXML(element);
 
-  if(orientation)
-    orientation->initializeUsingXML(element);
+  if(orientation.getProperty())
+    orientation.initializeUsingXML(element);
 
   // frames
   TiXmlElement *E=element->FirstChildElement(MBSIMNS"frames")->FirstChildElement();
@@ -530,6 +588,8 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameI");
   if(e)
     getFrame(0)->initializeUsingXML2(e);
+  else
+    getFrame(0)->setOpenMBVFrame(false);
 }
 
 TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
@@ -537,10 +597,10 @@ TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
 
   TiXmlElement *ele1;
 
-  if(position) {
-    frameOfReference->writeXMLFile(ele0);
-    position->writeXMLFile(ele0);
-    orientation->writeXMLFile(ele0);
+  if(position.getProperty()) {
+    frameOfReference.writeXMLFile(ele0);
+    position.writeXMLFile(ele0);
+    orientation.writeXMLFile(ele0);
   }
 
   ele1 = new TiXmlElement( MBSIMNS"frames" );
@@ -674,7 +734,7 @@ void Group::paste() {
     }
     o->initializeUsingXML(e);
     o->initialize();
-    ((Element*)treeWidget()->topLevelItem(0))->update();
+    ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
     return;
   }
   Group *g=ObjectFactory::getInstance()->createGroup(e, groups, -1);
@@ -695,7 +755,7 @@ void Group::paste() {
     }
     g->initializeUsingXML(e);
     g->initialize();
-    ((Element*)treeWidget()->topLevelItem(0))->update();
+    ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
     return;
   }
 }

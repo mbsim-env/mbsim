@@ -22,9 +22,12 @@
 
 #include <QtGui/QTreeWidgetItem>
 
+#include "extended_properties.h"
+
 class Solver;
 class PropertyWidget;
-class ExtXMLWidget;
+class PropertyDialog;
+class ExtWidget;
 class VecWidget;
 class TiXmlElement;
 class TiXmlNode;
@@ -36,11 +39,12 @@ class Integrator : public QObject, public QTreeWidgetItem {
     bool drawThisPath;
     std::string iconFile;
     bool searchMatched;
-    PropertyWidget *properties;
     QMenu *contextMenu;
     VecWidget *z0;
-    ExtXMLWidget *startTime, *endTime, *plotStepSize, *initialState;
+    ExtWidget *startTimeWidget, *endTimeWidget, *plotStepSizeWidget, *initialStateWidget;
+    ExtProperty startTime, endTime, plotStepSize, initialState;
     Solver *solver;
+    PropertyDialog *dialog;
   public:
     Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind);
     virtual ~Integrator();
@@ -53,11 +57,15 @@ class Integrator : public QObject, public QTreeWidgetItem {
     virtual void writeXMLFile() { writeXMLFile(getType()); }
     virtual QString getType() const { return "Integrator"; }
     QMenu* getContextMenu() { return contextMenu; }
-    PropertyWidget* getPropertyWidget() { return properties; }
     void setEndTime(double t);
+    virtual void initializeDialog();
+    virtual void fromWidget();
+    virtual void toWidget();
     virtual void resizeVariables(); 
   public slots:
     void saveAs();
+    void openPropertyDialog();
+    void updateElement();
 };
 
 class DOPRI5Integrator : public Integrator {
@@ -66,10 +74,14 @@ class DOPRI5Integrator : public Integrator {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "DOPRI5Integrator"; }
+    virtual void initializeDialog();
+    virtual void fromWidget();
+    virtual void toWidget();
     virtual void resizeVariables();
   protected:
     VecWidget *aTol, *rTol;
-    ExtXMLWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *maxSteps;
+    ExtWidget *absTolWidget, *relTolWidget, *initialStepSizeWidget, *maximalStepSizeWidget, *maxStepsWidget;
+    ExtProperty absTol, relTol, initialStepSize, maximalStepSize, maxSteps;
 };
 
 class RADAU5Integrator : public Integrator {
@@ -78,10 +90,14 @@ class RADAU5Integrator : public Integrator {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "RADAU5Integrator"; }
+    virtual void initializeDialog();
+    virtual void fromWidget();
+    virtual void toWidget();
     virtual void resizeVariables();
   protected:
     VecWidget *aTol, *rTol;
-    ExtXMLWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *maxSteps;
+    ExtWidget *absTolWidget, *relTolWidget, *initialStepSizeWidget, *maximalStepSizeWidget, *maxStepsWidget;
+    ExtProperty absTol, relTol, initialStepSize, maximalStepSize, maxSteps;
 };
 
 class LSODEIntegrator : public Integrator {
@@ -90,10 +106,14 @@ class LSODEIntegrator : public Integrator {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "LSODEIntegrator"; }
+    virtual void initializeDialog();
+    virtual void fromWidget();
+    virtual void toWidget();
     virtual void resizeVariables();
   protected:
     VecWidget *aTol;
-    ExtXMLWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *minimalStepSize, *maxSteps, *stiff;
+    ExtWidget *absTolWidget, *relTolWidget, *initialStepSizeWidget, *maximalStepSizeWidget, *minimalStepSizeWidget, *maxStepsWidget, *stiffWidget;
+    ExtProperty absTol, relTol, initialStepSize, maximalStepSize, minimalStepSize, maxSteps, stiff;
 };
 
 class LSODARIntegrator : public Integrator {
@@ -102,10 +122,14 @@ class LSODARIntegrator : public Integrator {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "LSODARIntegrator"; }
+    virtual void initializeDialog();
+    virtual void fromWidget();
+    virtual void toWidget();
     virtual void resizeVariables();
   protected:
     VecWidget *aTol;
-    ExtXMLWidget *absTol, *relTol, *initialStepSize, *maximalStepSize, *minimalStepSize, *plotOnRoot;
+    ExtWidget *absTolWidget, *relTolWidget, *initialStepSizeWidget, *maximalStepSizeWidget, *minimalStepSizeWidget, *plotOnRootWidget;
+    ExtProperty absTol, relTol, initialStepSize, maximalStepSize, minimalStepSize, plotOnRoot;
 };
 
 class TimeSteppingIntegrator : public Integrator {
@@ -114,8 +138,12 @@ class TimeSteppingIntegrator : public Integrator {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "TimeSteppingIntegrator"; }
+    virtual void fromWidget();
+    virtual void toWidget();
+    virtual void initializeDialog();
   protected:
-    ExtXMLWidget *stepSize;
+    ExtWidget *stepSizeWidget;
+    ExtProperty stepSize;
 };
 
 class EulerExplicitIntegrator : public Integrator {
@@ -124,8 +152,12 @@ class EulerExplicitIntegrator : public Integrator {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "EulerExplicitIntegrator"; }
+    virtual void fromWidget();
+    virtual void toWidget();
+    virtual void initializeDialog();
   protected:
-    ExtXMLWidget *stepSize;
+    ExtWidget *stepSizeWidget;
+    ExtProperty stepSize;
 };
 
 class RKSuiteIntegrator : public Integrator {
@@ -134,8 +166,12 @@ class RKSuiteIntegrator : public Integrator {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "RKSuiteIntegrator"; }
+    virtual void fromWidget();
+    virtual void toWidget();
+    virtual void initializeDialog();
   protected:
-    ExtXMLWidget *type, *relTol, *threshold, *initialStepSize;
+    ExtWidget *typeWidget, *relTolWidget, *thresholdWidget, *initialStepSizeWidget;
+    ExtProperty type, relTol, threshold, initialStepSize;
 };
 
 

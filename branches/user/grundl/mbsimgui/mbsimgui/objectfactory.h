@@ -17,13 +17,27 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "object.h"
-#include "link.h"
-#include "solver.h"
-#include "integrator.h"
-#include "parameter.h"
-#include "observer.h"
+//#include "object.h"
+//#include "link.h"
+//#include "solver.h"
+//#include "integrator.h"
+//#include "parameter.h"
+//#include "observer.h"
 #include <set>
+#include <iostream>
+#include <map>
+class Frame;
+class Contour;
+class Object;
+class Link;
+class Group;
+class Observer;
+class Integrator;
+class Parameter;
+class Environment;
+class TiXmlElement;
+class QTreeWidgetItem;
+class TreeItem;
 
 //Element *ObjectFactory(MBSim::Element *obj, QTreeWidgetItem* parentItem, int ind);
 

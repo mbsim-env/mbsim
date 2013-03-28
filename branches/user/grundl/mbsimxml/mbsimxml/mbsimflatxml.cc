@@ -13,11 +13,26 @@ using namespace std;
 
 namespace MBSim {
 
-void MBSimXML::preInitDynamicSystemSolver(int argc, char *argv[], DynamicSystemSolver*& dss) {
+int MBSimXML::preInitDynamicSystemSolver(int argc, char *argv[], DynamicSystemSolver*& dss) {
+  // initialize the ObjectFactory
+  MBSimObjectFactory::initialize();
+# include "initmodules.def"
+
+
+  // print namespace-prefix mapping
+  if(argc==2 && strcmp(argv[1], "--printNamespacePrefixMapping")==0) {
+    map<string, string> nsprefix=ObjectFactory::getInstance()->getNamespacePrefixMapping();
+    for(map<string, string>::iterator it=nsprefix.begin(); it!=nsprefix.end(); it++)
+      cout<<it->first<<" "<<it->second<<endl;
+    return 1;
+  }
+
+
   // help
   if(argc<3 || argc>4) {
     cout<<"Usage: mbsimflatxml [--donotintegrate|--savestatevector|--stopafterfirststep]"<<endl;
     cout<<"                    <mbsimfile> <mbsimintegratorfile>"<<endl;
+    cout<<"   or: mbsimflatxml --printNamespacePrefixMapping"<<endl;
     cout<<endl;
     cout<<"Copyright (C) 2004-2009 MBSim Development Team"<<endl;
     cout<<"This is free software; see the source for copying conditions. There is NO"<<endl;
@@ -25,19 +40,15 @@ void MBSimXML::preInitDynamicSystemSolver(int argc, char *argv[], DynamicSystemS
     cout<<endl;
     cout<<"Licensed under the GNU Lesser General Public License (LGPL)"<<endl;
     cout<<endl;
-    cout<<"--donotintegrate        Stop after the initialization stage, do not integrate"<<endl;
-    cout<<"--stopafterfirststep    Stop after outputting the first step (usually at t=0)"<<endl;
-    cout<<"                        This generates a HDF5 output file with only one time serie"<<endl;
-    cout<<"--savefinalstatevector  Save the state vector to the file \"statevector.asc\" after integration"<<endl;
-    cout<<"<mbsimfile>             The preprocessed mbsim xml file"<<endl;
-    cout<<"<mbsimintegratorfile>   The preprocessed mbsim integrator xml file"<<endl;
-    exit(0);
+    cout<<"--donotintegrate               Stop after the initialization stage, do not integrate"<<endl;
+    cout<<"--stopafterfirststep           Stop after outputting the first step (usually at t=0)"<<endl;
+    cout<<"                               This generates a HDF5 output file with only one time serie"<<endl;
+    cout<<"--savefinalstatevector         Save the state vector to the file \"statevector.asc\" after integration"<<endl;
+    cout<<"--printNamespacePrefixMapping  Print the recommended mapping of XML namespaces to XML prefix"<<endl;
+    cout<<"<mbsimfile>                    The preprocessed mbsim xml file"<<endl;
+    cout<<"<mbsimintegratorfile>          The preprocessed mbsim integrator xml file"<<endl;
+    return 1;
   }
-
-
-  // initialize the ObjectFactory
-  MBSimObjectFactory::initialize();
-# include "initmodules.def"
 
 
   int startArg=1;
@@ -70,6 +81,8 @@ void MBSimXML::preInitDynamicSystemSolver(int argc, char *argv[], DynamicSystemS
     throw MBSimError("ERROR! The root element of the MBSim main file must be of type 'DynamicSystemSolver'");
   dss->initializeUsingXML(e);
   delete doc;
+
+  return 0;
 }
 
 void MBSimXML::initDynamicSystemSolver(int argc, char *argv[], DynamicSystemSolver*& dss) {
@@ -77,6 +90,17 @@ void MBSimXML::initDynamicSystemSolver(int argc, char *argv[], DynamicSystemSolv
     dss->setTruncateSimulationFiles(false);
 
   dss->initialize();
+}
+
+void MBSimXML::plotInitialState(Integrator*& integrator, DynamicSystemSolver*& dss) {
+  int zSize=dss->getzSize();
+  fmatvec::Vec z(zSize);
+  if(integrator->getInitialState().size())
+    z = integrator->getInitialState();
+  else
+    dss->initz(z);          
+  dss->computeInitialCondition();
+  dss->plot(z, 0);
 }
 
 void MBSimXML::initIntegrator(int argc, char *argv[], Integrator *&integrator) {
@@ -102,12 +126,6 @@ void MBSimXML::initIntegrator(int argc, char *argv[], Integrator *&integrator) {
     throw MBSimError("ERROR! Cannot create the integrator object!");
   integrator->initializeUsingXML(e);
   delete doc;
-
-  // handle command line options
-  if(strcmp(argv[1],"--stopafterfirststep")==0) {
-    // reset integrator end time to start time to force only one output
-    integrator->setEndTime(integrator->getStartTime());
-  }
 }
 
 void MBSimXML::main(Integrator *&integrator, DynamicSystemSolver *&dss) {

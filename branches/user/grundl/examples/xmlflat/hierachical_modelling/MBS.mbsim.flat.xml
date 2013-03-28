@@ -29,22 +29,19 @@
               </translation>
               <rotation/>
               <frames>
-                <frame>
-                  <Frame name="P1">
-                    <enableOpenMBV>
-                      <size>0.5</size>
-                      <offset>1</offset>
-                    </enableOpenMBV>
-                  </Frame>
-                  <frameOfReference ref="Frame[C]"/>
-                  <position>[0;-0.25;0]</position>
-                  <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
-                </frame>
-                <frame>
-                  <Frame name="P2"/>
-                  <position>[0;0.25;0]</position>
-                  <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
-                </frame>
+                <FixedRelativeFrame name="P1">
+                  <enableOpenMBV>
+                    <size>0.5</size>
+                    <offset>1</offset>
+                  </enableOpenMBV>
+                  <frameOfReference ref="../Frame[C]"/>
+                  <relativePosition>[0;-0.25;0]</relativePosition>
+                  <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+                </FixedRelativeFrame>
+                <FixedRelativeFrame name="P2">
+                  <relativePosition>[0;0.25;0]</relativePosition>
+                  <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+                </FixedRelativeFrame>
               </frames>
               <contours/>
               <openMBVRigidBody>
@@ -71,16 +68,14 @@
               </translation>
               <rotation/>
               <frames>
-                <frame>
-                  <Frame name="P1">
-                    <enableOpenMBV>
-                      <size>0.5</size>
-                      <offset>1</offset>
-                    </enableOpenMBV>
-                  </Frame>
-                  <position>[0;-0.25;0]</position>
-                  <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
-                </frame>
+                <FixedRelativeFrame name="P1">
+                  <enableOpenMBV>
+                    <size>0.5</size>
+                    <offset>1</offset>
+                  </enableOpenMBV>
+                  <relativePosition>[0;-0.25;0]</relativePosition>
+                  <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+                </FixedRelativeFrame>
               </frames>
               <contours/>
               <openMBVRigidBody>
@@ -191,21 +186,18 @@
               </translation>
               <rotation/>
               <frames>
-                <frame>
-                  <Frame name="P1">
-                    <enableOpenMBV>
-                      <size>0.5</size>
-                      <offset>1</offset>
-                    </enableOpenMBV>
-                  </Frame>
-                  <position>[0;-0.25;0]</position>
-                  <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
-                </frame>
-                <frame>
-                  <Frame name="P2"/>
-                  <position>[0;0.25;0]</position>
-                  <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
-                </frame>
+                <FixedRelativeFrame name="P1">
+                  <enableOpenMBV>
+                    <size>0.5</size>
+                    <offset>1</offset>
+                  </enableOpenMBV>
+                  <relativePosition>[0;-0.25;0]</relativePosition>
+                  <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+                </FixedRelativeFrame>
+                <FixedRelativeFrame name="P2">
+                  <relativePosition>[0;0.25;0]</relativePosition>
+                  <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+                </FixedRelativeFrame>
               </frames>
               <contours/>
               <openMBVRigidBody>
@@ -232,16 +224,14 @@
               </translation>
               <rotation/>
               <frames>
-                <frame>
-                  <Frame name="P1">
-                    <enableOpenMBV>
-                      <size>0.5</size>
-                      <offset>1</offset>
-                    </enableOpenMBV>
-                  </Frame>
-                  <position>[0;-0.25;0]</position>
-                  <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
-                </frame>
+                <FixedRelativeFrame name="P1">
+                  <enableOpenMBV>
+                    <size>0.5</size>
+                    <offset>1</offset>
+                  </enableOpenMBV>
+                  <relativePosition>[0;-0.25;0]</relativePosition>
+                  <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+                </FixedRelativeFrame>
               </frames>
               <contours/>
               <openMBVRigidBody>

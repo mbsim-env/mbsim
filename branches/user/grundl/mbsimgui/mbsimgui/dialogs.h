@@ -59,7 +59,7 @@ class RigidBodyBrowser : public QDialog {
     RigidBodyBrowser(QTreeWidget* tree, RigidBody* selection, QWidget *obj);
     ~RigidBodyBrowser() {}
     QTreeWidget* getRigidBodyList() const {return rigidBodyList;}
-    void update(RigidBody *rigidBody);
+    void updateWidget(RigidBody *rigidBody);
   protected:
     QPushButton *okButton;
     QTreeWidget *rigidBodyList;
@@ -78,7 +78,7 @@ class FrameBrowser : public QDialog {
     FrameBrowser(QTreeWidget* tree, Frame* selection, QWidget *obj);
     ~FrameBrowser() {}
     QTreeWidget* getFrameList() const {return frameList;}
-    void update(Frame *frame);
+    void updateWidget(Frame *frame);
   protected:
     QPushButton *okButton;
     QTreeWidget *frameList;
@@ -97,7 +97,7 @@ class ContourBrowser : public QDialog {
     ContourBrowser(QTreeWidget* tree, Contour* selection, QWidget *obj);
     ~ContourBrowser() {}
     QTreeWidget* getContourList() const {return contourList;}
-    void update(Contour *contour);
+    void updateWidget(Contour *contour);
   protected:
     QPushButton *okButton;
     QTreeWidget *contourList;
@@ -108,6 +108,5 @@ class ContourBrowser : public QDialog {
   protected slots:
     void checkForContour(QTreeWidgetItem* item_,int);
 };
-
 
 #endif

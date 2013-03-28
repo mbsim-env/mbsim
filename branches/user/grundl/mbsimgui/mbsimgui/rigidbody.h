@@ -21,6 +21,7 @@
 #define _RIGIDBODY__H_
 
 #include "body.h"
+#include "extended_properties.h"
 
 class RigidBody : public Body {
   Q_OBJECT
@@ -37,15 +38,22 @@ class RigidBody : public Body {
     int getUnconstrainedSize() const; 
     void resizeGeneralizedPosition();
     void resizeGeneralizedVelocity();
+    virtual void initializeDialog();
+    virtual void fromWidget();
+    virtual void toWidget();
+    void initialize();
   public slots:
     void addFrame();
+    void addContour();
     void addPoint();
     void addLine();
     void addPlane();
     void addSphere();
   protected:
-    ExtXMLWidget *frameForKinematics, *mass, *inertia, *translation, *rotation, *frameOfReference, *ombvEditor, *weightArrow, *jointForceArrow, *jointMomentArrow, *isFrameOfBodyForRotation;
+    QMenu *contourContextMenu;
     bool constrained;
+    ExtWidget *RWidget, *KWidget, *massWidget, *inertiaWidget, *translationWidget, *rotationWidget, *ombvEditorWidget, *weightArrowWidget, *jointForceArrowWidget, *jointMomentArrowWidget, *isFrameOfBodyForRotationWidget;
+    ExtProperty R, K, mass, inertia, translation, rotation, ombvEditor, weightArrow, jointForceArrow, jointMomentArrow, isFrameOfBodyForRotation;
 };
 
 #endif

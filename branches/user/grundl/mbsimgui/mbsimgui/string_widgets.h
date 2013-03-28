@@ -20,7 +20,7 @@
 #ifndef _STRING_WIDGETS_H_
 #define _STRING_WIDGETS_H_
 
-#include "xml_widget.h"
+#include "widget.h"
 #include "utils.h"
 #include <QCheckBox>
 #include <QComboBox>
@@ -38,14 +38,12 @@ class OctaveHighlighter : public QSyntaxHighlighter {
     std::vector<std::pair<QRegExp, QTextCharFormat> > rule;
 };
 
-class StringWidget : public XMLWidget {
+class StringWidget : public Widget {
 
   public:
     virtual void setReadOnly(bool flag) {}
     virtual std::string getValue() const = 0;
     virtual void setValue(const std::string &str) = 0;
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) = 0;
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element) = 0;
     virtual StringWidget* cloneStringWidget() {return 0;}
     virtual std::string getType() const = 0;
     virtual bool validate(const std::string &str) const {return true;}
@@ -57,8 +55,6 @@ class BoolWidget : public StringWidget {
     BoolWidget(const std::string &b="0");
     std::string getValue() const {return value->checkState()==Qt::Checked?"1":"0";}
     void setValue(const std::string &str) {value->setCheckState((str=="0"||str=="false")?Qt::Unchecked:Qt::Checked);}
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual StringWidget* cloneStringWidget() {return new BoolWidget;}
     virtual std::string getType() const {return "Boolean";}
 
@@ -72,8 +68,6 @@ class ChoiceWidget : public StringWidget {
     ChoiceWidget(const std::vector<std::string> &list, int num);
     std::string getValue() const {return value->currentText().toStdString();}
     void setValue(const std::string &str) {value->setCurrentIndex(value->findText(str.c_str()));}
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual StringWidget* cloneStringWidget() {ChoiceWidget *widget=new ChoiceWidget(list,value->currentIndex());widget->setDisabled(true);return widget;}
     virtual std::string getType() const {return "Choice";}
     void setDisabled(bool flag) {value->setDisabled(flag);}
@@ -89,8 +83,6 @@ class OctaveExpressionWidget : public StringWidget {
     OctaveExpressionWidget();
     std::string getValue() const { return value->toPlainText().toStdString(); }
     void setValue(const std::string &str) { value->setPlainText(str.c_str()); }
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual std::string getType() const {return "Editor";}
 
   private:
@@ -105,13 +97,17 @@ class ScalarWidget : public StringWidget {
     void setReadOnly(bool flag) {box->setReadOnly(flag);}
     std::string getValue() const {return box->text().toStdString();}
     void setValue(const std::string &str) {box->setText(str.c_str());}
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual StringWidget* cloneStringWidget() {return new ScalarWidget;}
     virtual std::string getType() const {return "Scalar";}
 };
 
-class VecWidget : public StringWidget {
+class BasicVecWidget : public StringWidget {
+  public:
+    virtual std::vector<std::string> getVec() const = 0;
+    virtual void setVec(const std::vector<std::string> &x) = 0;
+};
+
+class VecWidget : public BasicVecWidget {
   private:
     std::vector<QLineEdit*> box;
     bool transpose;
@@ -125,14 +121,18 @@ class VecWidget : public StringWidget {
     std::string getValue() const {return toStr(getVec());}
     void setValue(const std::string &str) {setVec(strToVec(str));}
     int size() const {return box.size();}
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual StringWidget* cloneStringWidget() {return new VecWidget(size());}
     virtual std::string getType() const {return "Vector";}
     bool validate(const std::string &str) const;
 };
 
-class MatWidget : public StringWidget {
+class BasicMatWidget : public StringWidget {
+  public:
+    virtual std::vector<std::vector<std::string> > getMat() const = 0;
+    virtual void setMat(const std::vector<std::vector<std::string> > &A) = 0;
+};
+
+class MatWidget : public BasicMatWidget {
 
   private:
     std::vector<std::vector<QLineEdit*> > box;
@@ -147,14 +147,12 @@ class MatWidget : public StringWidget {
     void setValue(const std::string &str) {setMat(strToMat(str));}
     int rows() const {return box.size();}
     int cols() const {return box[0].size();}
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual StringWidget* cloneStringWidget() {return new MatWidget(rows(),cols());}
     virtual std::string getType() const {return "Matrix";}
     bool validate(const std::string &str) const;
 };
 
-class SymMatWidget : public StringWidget {
+class SymMatWidget : public BasicMatWidget {
 
   private:
     std::vector<std::vector<QLineEdit*> > box;
@@ -167,8 +165,6 @@ class SymMatWidget : public StringWidget {
     void setReadOnly(bool flag);
     std::string getValue() const {return toStr(getMat());}
     void setValue(const std::string &str) {setMat(strToMat(str));}
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual StringWidget* cloneStringWidget() {return new SymMatWidget(rows());}
     int rows() const {return box.size();}
     int cols() const {return box[0].size();}
@@ -176,7 +172,7 @@ class SymMatWidget : public StringWidget {
     bool validate(const std::string &str) const;
 };
 
-class VecSizeVarWidget : public StringWidget {
+class VecSizeVarWidget : public BasicVecWidget {
 
   Q_OBJECT
 
@@ -196,8 +192,6 @@ class VecSizeVarWidget : public StringWidget {
     std::string getValue() const {return toStr(getVec());}
     void setValue(const std::string &str) {setVec(strToVec(str));}
     void setReadOnly(bool flag) {widget->setReadOnly(flag);}
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual StringWidget* cloneStringWidget() {return new VecWidget(size());}
     virtual std::string getType() const {return "Vector";}
     bool validate(const std::string &str) const;
@@ -209,7 +203,7 @@ class VecSizeVarWidget : public StringWidget {
 
 };
 
-class MatColsVarWidget : public StringWidget {
+class MatColsVarWidget : public BasicMatWidget {
 
   Q_OBJECT
 
@@ -230,8 +224,6 @@ class MatColsVarWidget : public StringWidget {
     std::string getValue() const {return toStr(getMat());}
     void setValue(const std::string &str) {setMat(strToMat(str));}
     void setReadOnly(bool flag) {widget->setReadOnly(flag);}
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual StringWidget* cloneStringWidget() {return new MatWidget(rows(),cols());}
     virtual std::string getType() const {return "Matrix";}
     bool validate(const std::string &str) const;
@@ -256,8 +248,6 @@ class CardanWidget : public StringWidget {
     void setReadOnly(bool flag);
     std::string getValue() const {return toStr(getCardan());}
     void setValue(const std::string &str) {setCardan(strToVec(str));}
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual StringWidget* cloneStringWidget() {return new CardanWidget;}
     virtual std::string getType() const {return "Cardan";}
 };
@@ -269,35 +259,32 @@ class PhysicalStringWidget : public StringWidget {
   private:
     StringWidget *widget;
     QComboBox* unit;
-    std::string xmlName;
     QStringList units;
     int defaultUnit;
   public:
-    PhysicalStringWidget(StringWidget *widget, const std::string &xmlname,  const QStringList &units, int defaultUnit);
+    PhysicalStringWidget(StringWidget *widget, const QStringList &units, int defaultUnit);
     std::string getValue() const {return widget->getValue();}
     void setValue(const std::string &str) {widget->setValue(str);}
     void setReadOnly(bool flag) {widget->setReadOnly(flag);}
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual StringWidget* cloneStringWidget() {return widget->cloneStringWidget();}
     virtual StringWidget* getWidget() {return widget;}
-    void setXmlName(const std::string &name) {xmlName = name;}
-    const std::string& getXmlName() const {return xmlName;}
     const QStringList& getUnitList() const {return units;}
     int getDefaultUnit() const {return defaultUnit;}
     virtual std::string getType() const {return widget->getType();}
     bool validate(const std::string &str) const {return widget->validate(str);}
+    std::string getUnit() const {return unit->currentText().toStdString();}
+    void setUnit(const std::string &unit_) {unit->setCurrentIndex(unit->findText(unit_.c_str()));}
 };
 
 class VecFromFileWidget : public StringWidget {
   Q_OBJECT
 
+  friend class VecFromFileProperty;
+
   public:
     VecFromFileWidget();
     std::string getValue() const;
     void setValue(const std::string &str) {}
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual std::string getType() const {return "File";}
     virtual StringWidget* cloneStringWidget() {return new VecWidget(0);}
 
@@ -313,12 +300,12 @@ class VecFromFileWidget : public StringWidget {
 class MatFromFileWidget : public StringWidget {
   Q_OBJECT
 
+  friend class MatFromFileProperty;
+
   public:
     MatFromFileWidget();
     std::string getValue() const; 
     void setValue(const std::string &str) {}
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual std::string getType() const {return "File";}
     virtual StringWidget* cloneStringWidget() {return new MatWidget(0,0);}
 

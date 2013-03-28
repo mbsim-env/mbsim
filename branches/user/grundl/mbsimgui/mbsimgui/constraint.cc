@@ -21,6 +21,9 @@
 #include "constraint.h"
 #include "frame.h"
 #include "rigidbody.h"
+#include "basic_properties.h"
+#include "kinetics_properties.h"
+#include "function_properties.h"
 #include "string_widgets.h"
 #include "function_widgets.h"
 #include "kinetics_widgets.h"
@@ -33,39 +36,69 @@ Constraint::Constraint(const QString &str, QTreeWidgetItem *parentItem, int ind)
 Constraint::~Constraint() {
 }
 
-KinematicConstraint::KinematicConstraint(const QString &str, QTreeWidgetItem *parentItem, int ind) : Constraint(str, parentItem, ind), refBody(0) {
+KinematicConstraint::KinematicConstraint(const QString &str, QTreeWidgetItem *parentItem, int ind) : Constraint(str, parentItem, ind), refBody(0), kinematicFunction(0,false), firstDerivativeOfKinematicFunction(0,false), secondDerivativeOfKinematicFunction(0,false) {
 
   setText(1,getType());
 
-//  properties->addTab("Kinetics");
+  dependentBody.setProperty(new RigidBodyOfReferenceProperty(0,this,MBSIMNS"dependentRigidBody"));
 
-  dependentBody = new ExtXMLWidget("Dependent body",new RigidBodyOfReferenceWidget(MBSIMNS"dependentRigidBody",this,0));
-  connect((RigidBodyOfReferenceWidget*)dependentBody->getWidget(),SIGNAL(bodyChanged()),this,SLOT(updateReferenceBody()));
-  properties->addToTab("General", dependentBody);
+  kinematicFunction.setProperty(new Function1ChoiceProperty(MBSIMNS"kinematicFunction"));
 
-  kinematicFunction = new ExtXMLWidget("Kinematic function",new Function1ChoiceWidget(MBSIMNS"kinematicFunction"),true);
-  properties->addToTab("General", kinematicFunction);
-  connect((Function1ChoiceWidget*)kinematicFunction->getWidget(),SIGNAL(resize()),this,SLOT(resizeVariables()));
+  firstDerivativeOfKinematicFunction.setProperty(new Function1ChoiceProperty(MBSIMNS"firstDerivativeOfKinematicFunction"));
 
-  firstDerivativeOfKinematicFunction = new ExtXMLWidget("First derivative of kinematic function",new Function1ChoiceWidget(MBSIMNS"firstDerivativeOfKinematicFunction"),true);
-  properties->addToTab("General", firstDerivativeOfKinematicFunction);
-  connect((Function1ChoiceWidget*)firstDerivativeOfKinematicFunction->getWidget(),SIGNAL(resize()),this,SLOT(resizeVariables()));
+  secondDerivativeOfKinematicFunction.setProperty(new Function1ChoiceProperty(MBSIMNS"secondDerivativeOfKinematicFunction"));
 
-  secondDerivativeOfKinematicFunction = new ExtXMLWidget("Second derivative of kinematic function",new Function1ChoiceWidget(MBSIMNS"secondDerivativeOfKinematicFunction"),true);
-  properties->addToTab("General", secondDerivativeOfKinematicFunction);
-  connect((Function1ChoiceWidget*)secondDerivativeOfKinematicFunction->getWidget(),SIGNAL(resize()),this,SLOT(resizeVariables()));
-
-  properties->addStretch();
 }
 
 KinematicConstraint::~KinematicConstraint() {
 }
 
+void KinematicConstraint::initialize() {
+  Constraint::initialize();
+  dependentBody.initialize();
+}
+
+void KinematicConstraint::initializeDialog() {
+  Constraint::initializeDialog();
+
+  dependentBodyWidget = new ExtWidget("Dependent body",new RigidBodyOfReferenceWidget(this,0));
+  connect((RigidBodyOfReferenceWidget*)dependentBodyWidget->getWidget(),SIGNAL(bodyChanged()),this,SLOT(updateReferenceBody()));
+  dialog->addToTab("General", dependentBodyWidget);
+
+  kinematicFunctionWidget = new ExtWidget("Kinematic function",new Function1ChoiceWidget,true);
+  dialog->addToTab("General", kinematicFunctionWidget);
+  connect((Function1ChoiceWidget*)kinematicFunctionWidget->getWidget(),SIGNAL(resize()),this,SLOT(resizeVariables()));
+
+  firstDerivativeOfKinematicFunctionWidget = new ExtWidget("First derivative of kinematic function",new Function1ChoiceWidget(MBSIMNS"firstDerivativeOfKinematicFunction"),true);
+  dialog->addToTab("General", firstDerivativeOfKinematicFunctionWidget);
+  connect((Function1ChoiceWidget*)firstDerivativeOfKinematicFunctionWidget->getWidget(),SIGNAL(resize()),this,SLOT(resizeVariables()));
+
+  secondDerivativeOfKinematicFunctionWidget = new ExtWidget("Second derivative of kinematic function",new Function1ChoiceWidget(MBSIMNS"secondDerivativeOfKinematicFunction"),true);
+  dialog->addToTab("General", secondDerivativeOfKinematicFunctionWidget);
+  connect((Function1ChoiceWidget*)secondDerivativeOfKinematicFunctionWidget->getWidget(),SIGNAL(resize()),this,SLOT(resizeVariables()));
+}
+
+void KinematicConstraint::toWidget() {
+  Constraint::toWidget();
+  dependentBody.toWidget(dependentBodyWidget);
+  kinematicFunction.toWidget(kinematicFunctionWidget);
+  firstDerivativeOfKinematicFunction.toWidget(firstDerivativeOfKinematicFunctionWidget);
+  secondDerivativeOfKinematicFunction.toWidget(secondDerivativeOfKinematicFunctionWidget);
+}
+
+void KinematicConstraint::fromWidget() {
+  Constraint::fromWidget();
+  dependentBody.fromWidget(dependentBodyWidget);
+  kinematicFunction.fromWidget(kinematicFunctionWidget);
+  firstDerivativeOfKinematicFunction.fromWidget(firstDerivativeOfKinematicFunctionWidget);
+  secondDerivativeOfKinematicFunction.fromWidget(secondDerivativeOfKinematicFunctionWidget);
+}
+
 void KinematicConstraint::resizeVariables() {
   int size = refBody?refBody->getUnconstrainedSize():0;
-  ((Function1ChoiceWidget*)kinematicFunction->getWidget())->resize(size,1);
-  ((Function1ChoiceWidget*)firstDerivativeOfKinematicFunction->getWidget())->resize(size,1);
-  ((Function1ChoiceWidget*)secondDerivativeOfKinematicFunction->getWidget())->resize(size,1);
+  ((Function1ChoiceWidget*)kinematicFunctionWidget->getWidget())->resize(size,1);
+  ((Function1ChoiceWidget*)firstDerivativeOfKinematicFunctionWidget->getWidget())->resize(size,1);
+  ((Function1ChoiceWidget*)secondDerivativeOfKinematicFunctionWidget->getWidget())->resize(size,1);
 }
 
 void KinematicConstraint::updateReferenceBody() {
@@ -74,107 +107,149 @@ void KinematicConstraint::updateReferenceBody() {
     refBody->resizeGeneralizedPosition();
     refBody->resizeGeneralizedVelocity();
   }
-  refBody = ((RigidBodyOfReferenceWidget*)dependentBody->getWidget())->getBody();
-  refBody->setConstrained(true);
-  refBody->resizeGeneralizedPosition();
-  refBody->resizeGeneralizedVelocity();
-  connect(refBody,SIGNAL(sizeChanged()),this,SLOT(resizeVariables()));
-  resizeVariables();
+  refBody = ((RigidBodyOfReferenceWidget*)dependentBodyWidget->getWidget())->getBody();
+  if(refBody) {
+    refBody->setConstrained(true);
+    refBody->resizeGeneralizedPosition();
+    refBody->resizeGeneralizedVelocity();
+    connect(refBody,SIGNAL(sizeChanged()),this,SLOT(resizeVariables()));
+    resizeVariables();
+  }
 }
 
 void KinematicConstraint::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e, *ee;
-  blockSignals(true);
   Constraint::initializeUsingXML(element);
-  dependentBody->initializeUsingXML(element);
-  kinematicFunction->initializeUsingXML(element);
-  firstDerivativeOfKinematicFunction->initializeUsingXML(element);
-  secondDerivativeOfKinematicFunction->initializeUsingXML(element);
-  blockSignals(false);
+  dependentBody.initializeUsingXML(element);
+  kinematicFunction.initializeUsingXML(element);
+  firstDerivativeOfKinematicFunction.initializeUsingXML(element);
+  secondDerivativeOfKinematicFunction.initializeUsingXML(element);
 }
 
 TiXmlElement* KinematicConstraint::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Constraint::writeXMLFile(parent);
 
-  dependentBody->writeXMLFile(ele0);
-  kinematicFunction->writeXMLFile(ele0);
-  firstDerivativeOfKinematicFunction->writeXMLFile(ele0);
-  secondDerivativeOfKinematicFunction->writeXMLFile(ele0);
+  dependentBody.writeXMLFile(ele0);
+  kinematicFunction.writeXMLFile(ele0);
+  firstDerivativeOfKinematicFunction.writeXMLFile(ele0);
+  secondDerivativeOfKinematicFunction.writeXMLFile(ele0);
 
   return ele0;
 }
 
-JointConstraint::JointConstraint(const QString &str, QTreeWidgetItem *parentItem, int ind) : Constraint(str, parentItem, ind) {
+JointConstraint::JointConstraint(const QString &str, QTreeWidgetItem *parentItem, int ind) : Constraint(str, parentItem, ind), force(0,false), moment(0,false) {
 
   setText(1,getType());
 
-  properties->addTab("Kinetics",1);
+  independentBody.setProperty(new RigidBodyOfReferenceProperty(0,this,MBSIMNS"independentRigidBody"));
 
-  independentBody = new ExtXMLWidget("Independent body",new RigidBodyOfReferenceWidget(MBSIMNS"independentRigidBody",this,0));
-  properties->addToTab("General", independentBody);
+  DependenciesProperty *dependentBodiesFirstSide_ = new DependenciesProperty(this, MBSIMNS"dependentRigidBodiesFirstSide");
+  dependentBodiesFirstSide.setProperty(dependentBodiesFirstSide_);
 
-  DependenciesWidget *dependentBodiesFirstSide_ = new DependenciesWidget(MBSIMNS"dependentRigidBodiesFirstSide",this);
-  dependentBodiesFirstSide = new ExtXMLWidget("Dependendent bodies first side",dependentBodiesFirstSide_);
-  properties->addToTab("General", dependentBodiesFirstSide);
-  connect(dependentBodiesFirstSide_,SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
+  DependenciesProperty *dependentBodiesSecondSide_ = new DependenciesProperty(this, MBSIMNS"dependentRigidBodiesSecondSide");
+  dependentBodiesSecondSide.setProperty(dependentBodiesSecondSide_);
 
-  DependenciesWidget *dependentBodiesSecondSide_ = new DependenciesWidget(MBSIMNS"dependentRigidBodiesSecondSide",this);
-  dependentBodiesSecondSide = new ExtXMLWidget("Dependendent bodies second side",dependentBodiesSecondSide_);
-  properties->addToTab("General", dependentBodiesSecondSide);
-  connect(dependentBodiesSecondSide_,SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
+  connections.setProperty(new ConnectFramesProperty(2,this));
 
-  connections = new ExtXMLWidget("Connections",new ConnectFramesWidget(2,this));
-  properties->addToTab("Kinetics", connections);
+  force.setProperty(new GeneralizedForceDirectionProperty(MBSIMNS"forceDirection"));
 
-  force = new ExtXMLWidget("Force",new GeneralizedForceDirectionWidget(MBSIMNS"forceDirection"));
-  properties->addToTab("Kinetics", force);
-
-  moment = new ExtXMLWidget("Moment",new GeneralizedForceDirectionWidget(MBSIMNS"momentDirection"));
-  properties->addToTab("Kinetics", moment);
-
-  properties->addStretch();
+  moment.setProperty(new GeneralizedForceDirectionProperty(MBSIMNS"momentDirection"));
 }
 
 JointConstraint::~JointConstraint() {
 }
 
+void JointConstraint::initialize() {
+  Constraint::initialize();
+  independentBody.initialize();
+  dependentBodiesFirstSide.initialize();
+  dependentBodiesSecondSide.initialize();
+  connections.initialize();
+}
+
+void JointConstraint::initializeDialog() {
+  Constraint::initializeDialog();
+
+  dialog->addTab("Kinetics",1);
+
+  independentBodyWidget = new ExtWidget("Independent body",new RigidBodyOfReferenceWidget(this,0));
+  dialog->addToTab("General", independentBodyWidget);
+
+  DependenciesWidget *dependentBodiesFirstSide_ = new DependenciesWidget(this);
+  dependentBodiesFirstSideWidget = new ExtWidget("Dependendent bodies first side",dependentBodiesFirstSide_);
+  dialog->addToTab("General", dependentBodiesFirstSideWidget);
+  connect(dependentBodiesFirstSide_,SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
+
+  DependenciesWidget *dependentBodiesSecondSide_ = new DependenciesWidget(this);
+  dependentBodiesSecondSideWidget = new ExtWidget("Dependendent bodies second side",dependentBodiesSecondSide_);
+  dialog->addToTab("General", dependentBodiesSecondSideWidget);
+  connect(dependentBodiesSecondSide_,SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
+
+  connectionsWidget = new ExtWidget("Connections",new ConnectFramesWidget(2,this));
+  dialog->addToTab("Kinetics", connectionsWidget);
+
+  forceWidget = new ExtWidget("Force",new GeneralizedForceDirectionWidget,true);
+  dialog->addToTab("Kinetics", forceWidget);
+
+  momentWidget = new ExtWidget("Moment",new GeneralizedForceDirectionWidget,true);
+  dialog->addToTab("Kinetics", momentWidget);
+}
+
+void JointConstraint::toWidget() {
+  Constraint::toWidget();
+  independentBody.toWidget(independentBodyWidget);
+  dependentBodiesFirstSide.toWidget(dependentBodiesFirstSideWidget);
+  dependentBodiesSecondSide.toWidget(dependentBodiesSecondSideWidget);
+  connections.toWidget(connectionsWidget);
+  force.toWidget(forceWidget);
+  moment.toWidget(momentWidget);
+}
+
+void JointConstraint::fromWidget() {
+  Constraint::fromWidget();
+  independentBody.fromWidget(independentBodyWidget);
+  dependentBodiesFirstSide.fromWidget(dependentBodiesFirstSideWidget);
+  dependentBodiesSecondSide.fromWidget(dependentBodiesSecondSideWidget);
+  connections.fromWidget(connectionsWidget);
+  force.fromWidget(forceWidget);
+  moment.fromWidget(momentWidget);
+}
+
 void JointConstraint::resizeGeneralizedPosition() {
   int size = 0;
-  for(int i=0; i<((DependenciesWidget*)dependentBodiesFirstSide->getWidget())->getSize(); i++)
-    if(((DependenciesWidget*)dependentBodiesFirstSide->getWidget())->getBody(i))
-    size += ((DependenciesWidget*)dependentBodiesFirstSide->getWidget())->getBody(i)->getUnconstrainedSize();
-  for(int i=0; i<((DependenciesWidget*)dependentBodiesSecondSide->getWidget())->getSize(); i++)
-    if(((DependenciesWidget*)dependentBodiesSecondSide->getWidget())->getBody(i))
-      size += ((DependenciesWidget*)dependentBodiesSecondSide->getWidget())->getBody(i)->getUnconstrainedSize();
+  for(int i=0; i<((DependenciesWidget*)dependentBodiesFirstSideWidget->getWidget())->getSize(); i++)
+    if(((DependenciesWidget*)dependentBodiesFirstSideWidget->getWidget())->getBody(i))
+    size += ((DependenciesWidget*)dependentBodiesFirstSideWidget->getWidget())->getBody(i)->getUnconstrainedSize();
+  for(int i=0; i<((DependenciesWidget*)dependentBodiesSecondSideWidget->getWidget())->getSize(); i++)
+    if(((DependenciesWidget*)dependentBodiesSecondSideWidget->getWidget())->getBody(i))
+      size += ((DependenciesWidget*)dependentBodiesSecondSideWidget->getWidget())->getBody(i)->getUnconstrainedSize();
   if(q0->size() != size)
     q0->resize(size);
 }
 
 void JointConstraint::initializeUsingXML(TiXmlElement *element) {
-  blockSignals(true);
   Constraint::initializeUsingXML(element);
-  dependentBodiesFirstSide->initializeUsingXML(element);
-  dependentBodiesSecondSide->initializeUsingXML(element);
-  independentBody->initializeUsingXML(element);
+  dependentBodiesFirstSide.initializeUsingXML(element);
+  dependentBodiesSecondSide.initializeUsingXML(element);
+  independentBody.initializeUsingXML(element);
 
-  force->initializeUsingXML(element);
-  moment->initializeUsingXML(element);
-  connections->initializeUsingXML(element);
-  blockSignals(false);
+  force.initializeUsingXML(element);
+  moment.initializeUsingXML(element);
+  connections.initializeUsingXML(element);
 }
 
 TiXmlElement* JointConstraint::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Constraint::writeXMLFile(parent);
 
-  dependentBodiesFirstSide->writeXMLFile(ele0);
-  dependentBodiesSecondSide->writeXMLFile(ele0);
+  dependentBodiesFirstSide.writeXMLFile(ele0);
+  dependentBodiesSecondSide.writeXMLFile(ele0);
 
-  independentBody->writeXMLFile(ele0);
+  independentBody.writeXMLFile(ele0);
 
-  force->writeXMLFile(ele0);
-  moment->writeXMLFile(ele0);
+  force.writeXMLFile(ele0);
+  moment.writeXMLFile(ele0);
 
-  connections->writeXMLFile(ele0);
+  connections.writeXMLFile(ele0);
 
   return ele0;
 }

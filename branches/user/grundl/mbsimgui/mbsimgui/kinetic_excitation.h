@@ -21,6 +21,7 @@
 #define _KINETIC_EXCITATION__H_
 
 #include "link.h"
+#include "extended_properties.h"
 
 class KineticExcitation : public Link {
   public:
@@ -29,8 +30,13 @@ class KineticExcitation : public Link {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     QString getType() const { return "KineticExcitation"; }
+    void initializeDialog(); virtual void fromWidget();
+    virtual void toWidget();
+    void initialize();
+
   protected:
-    ExtXMLWidget *force, *moment, *connections, *frameOfReference, *forceArrow, *momentArrow;
+    ExtWidget *forceWidget, *momentWidget, *connectionsWidget, *frameOfReferenceWidget, *forceArrowWidget, *momentArrowWidget;
+    ExtProperty force, moment, connections, frameOfReference, forceArrow, momentArrow;
 };
 
 #endif

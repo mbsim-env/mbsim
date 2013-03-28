@@ -21,13 +21,13 @@
 #define _OBJECT__H_
 
 #include "element.h"
+#include "extended_properties.h"
 
 class QAction;
 class VecWidget;
 
 class Object : public Element {
   Q_OBJECT
-  private:
   public:
     Object(const QString &str, QTreeWidgetItem *parentItem, int ind);
     ~Object();
@@ -38,12 +38,15 @@ class Object : public Element {
     virtual Element* getByPathSearch(QString path);
     virtual void resizeGeneralizedPosition() {}
     virtual void resizeGeneralizedVelocity() {}
+    virtual void initializeDialog();
+    virtual void fromWidget();
+    virtual void toWidget();
   public slots:
-    void update();
     virtual void resizeVariables() {resizeGeneralizedPosition();resizeGeneralizedVelocity();emit sizeChanged();}
   protected:
     QAction *actionSaveAs;
-    ExtXMLWidget *initialGeneralizedPosition, *initialGeneralizedVelocity;
+    ExtWidget *q0Widget, *u0Widget;
+    ExtProperty q0Property, u0Property;
     VecWidget *q0, *u0;
   signals:
     void sizeChanged();

@@ -19,54 +19,90 @@
 
 #include <config.h>
 #include "joint.h"
+#include "kinetics_properties.h"
+#include "ombv_properties.h"
 #include "kinetics_widgets.h"
 #include "extended_widgets.h"
 #include "ombv_widgets.h"
 
 using namespace std;
 
-Joint::Joint(const QString &str, QTreeWidgetItem *parentItem, int ind) : Link(str, parentItem, ind) {
+Joint::Joint(const QString &str, QTreeWidgetItem *parentItem, int ind) : Link(str, parentItem, ind), forceArrow(0,false), momentArrow(0,false), force(0,false), moment(0,false) {
 
   setText(1,getType());
 
-  properties->addTab("Kinetics");
-  //properties->addTab("Constitutive laws");
-  properties->addTab("Visualisation");
+  forceArrow.setProperty(new OMBVArrowProperty("NOTSET"));
+  ((OMBVArrowProperty*)forceArrow.getProperty())->setID(getID());
 
-  forceArrow = new ExtXMLWidget("OpenMBV force arrow",new OMBVArrowWidget("NOTSET"),true);
-  ((OMBVArrowWidget*)forceArrow->getWidget())->setID(getID());
-  properties->addToTab("Visualisation",forceArrow);
+  momentArrow.setProperty(new OMBVArrowProperty("NOTSET"));
+  ((OMBVArrowProperty*)momentArrow.getProperty())->setID(getID());
 
-  momentArrow = new ExtXMLWidget("OpenMBV moment arrow",new OMBVArrowWidget("NOTSET"),true);
-  ((OMBVArrowWidget*)momentArrow->getWidget())->setID(getID());
-  properties->addToTab("Visualisation",momentArrow);
+  connections.setProperty(new ConnectFramesProperty(2,this));
 
-  connections = new ExtXMLWidget("Connections",new ConnectFramesWidget(2,this));
-  properties->addToTab("Kinetics", connections);
+  force.setProperty(new GeneralizedForceChoiceProperty(forceArrow,MBSIMNS"force"));
 
-  force = new ExtXMLWidget("Force",new GeneralizedForceChoiceWidget(MBSIMNS"force",forceArrow),true);
-  properties->addToTab("Kinetics", force);
-
-  moment = new ExtXMLWidget("Moment",new GeneralizedForceChoiceWidget(MBSIMNS"moment",momentArrow),true);
-  properties->addToTab("Kinetics", moment);
-
-  properties->addStretch();
+  moment.setProperty(new GeneralizedForceChoiceProperty(momentArrow,MBSIMNS"moment"));
 }
 
 Joint::~Joint() {
 }
 
+void Joint::initialize() {
+  Link::initialize();
+  connections.initialize();
+}
+
+void Joint::initializeDialog() {
+  Link::initializeDialog();
+
+  dialog->addTab("Kinetics");
+  dialog->addTab("Visualisation");
+
+  forceArrowWidget = new ExtWidget("OpenMBV force arrow",new OMBVArrowWidget("NOTSET"),true);
+  dialog->addToTab("Visualisation",forceArrowWidget);
+
+  momentArrowWidget = new ExtWidget("OpenMBV moment arrow",new OMBVArrowWidget("NOTSET"),true);
+  dialog->addToTab("Visualisation",momentArrowWidget);
+
+  connectionsWidget = new ExtWidget("Connections",new ConnectFramesWidget(2,this));
+  dialog->addToTab("Kinetics", connectionsWidget);
+
+  forceWidget = new ExtWidget("Force",new GeneralizedForceChoiceWidget,true);
+  dialog->addToTab("Kinetics", forceWidget);
+
+  momentWidget = new ExtWidget("Moment",new GeneralizedForceChoiceWidget,true);
+  dialog->addToTab("Kinetics", momentWidget);
+}
+
+void Joint::toWidget() {
+  Link::toWidget();
+  forceArrow.toWidget(forceArrowWidget);
+  momentArrow.toWidget(momentArrowWidget);
+  connections.toWidget(connectionsWidget);
+  force.toWidget(forceWidget);
+  moment.toWidget(momentWidget);
+}
+
+void Joint::fromWidget() {
+  Link::fromWidget();
+  forceArrow.fromWidget(forceArrowWidget);
+  momentArrow.fromWidget(momentArrowWidget);
+  connections.fromWidget(connectionsWidget);
+  force.fromWidget(forceWidget);
+  moment.fromWidget(momentWidget);
+}
+
 void Joint::initializeUsingXML(TiXmlElement *element) {
   Link::initializeUsingXML(element);
-  force->initializeUsingXML(element);
-  moment->initializeUsingXML(element);
-  connections->initializeUsingXML(element);
+  force.initializeUsingXML(element);
+ // moment.initializeUsingXML(element);
+  connections.initializeUsingXML(element);
 }
 
 TiXmlElement* Joint::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Link::writeXMLFile(parent);
-  force->writeXMLFile(ele0);
-  moment->writeXMLFile(ele0);
-  connections->writeXMLFile(ele0);
+  force.writeXMLFile(ele0);
+ // moment.writeXMLFile(ele0);
+  connections.writeXMLFile(ele0);
   return ele0;
 }

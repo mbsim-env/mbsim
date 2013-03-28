@@ -12,8 +12,13 @@ mbsimgui_CPPFLAGS = $(MBXMLUTILS_CFLAGS)
 
 mbsimgui_LDFLAGS = $(HDF5SERIE_LIBS) $(MBXMLUTILS_LIBS) -Wl,-rpath -Wl,\$$ORIGIN/../lib
 
-mbsimgui_SOURCES = main.cc \
-		   mainwindow.cc \
+mbsimgui_SOURCES = basic_properties.cc \
+		   string_properties.cc \
+		   kinematics_properties.cc \
+		   kinetics_properties.cc \
+		   function_properties.cc \
+		   ombv_properties.cc \
+		   extended_properties.cc \
 		   basic_widgets.cc \
 		   string_widgets.cc \
 		   function_widgets.cc \
@@ -39,17 +44,19 @@ mbsimgui_SOURCES = main.cc \
 		   spring_damper.cc \
 		   kinetic_excitation.cc \
 		   constraint.cc \
+		   observer.cc \
+		   signal_.cc \
 		   integrator.cc \
 		   parameter.cc \
-		   signal_.cc \
 		   octaveutils.cc \
-		   observer.cc
+		   mainwindow.cc \
+		   main.cc
+		   
 
 nodist_mbsimgui_SOURCES=$(QT_BUILT_SOURCES)
 
 # C++ source file to build automatically (e.g. abc.moc.cc by abc.h)
-QT_BUILT_SOURCES = mainwindow.moc.cc \
-		   basic_widgets.moc.cc \
+QT_BUILT_SOURCES = basic_widgets.moc.cc \
 		   string_widgets.moc.cc \
 		   function_widgets.moc.cc \
 		   kinematics_widgets.moc.cc \
@@ -72,10 +79,11 @@ QT_BUILT_SOURCES = mainwindow.moc.cc \
 		   spring_damper.moc.cc \
 		   kinetic_excitation.moc.cc \
 		   constraint.moc.cc \
+		   observer.moc.cc \
 		   integrator.moc.cc \
 		   parameter.moc.cc \
 		   signal_.moc.cc \
-		   observer.moc.cc
+		   mainwindow.moc.cc
 
 mbsimgui_HEADERS = 
 		   

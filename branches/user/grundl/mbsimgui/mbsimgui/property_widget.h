@@ -22,38 +22,39 @@
 
 #include <QScrollArea>
 #include <QTabWidget>
+#include <QDialog>
 #include <map>
 
-class ExtXMLWidget;
+class ExtWidget;
 class QVBoxLayout;
 class TiXmlElement;
 class TiXmlNode;
+class QDialogButtonBox;
+class QAbstractButton;
 
-class PropertyWidget : public QTabWidget {
+class PropertyDialog : public QDialog {
   Q_OBJECT
 
-    friend class PropertyDialog;
   public:
-    PropertyWidget(QObject *obj);
-    ~PropertyWidget();
+    PropertyDialog(QWidget * parent = 0, Qt::WindowFlags f = 0);
+    ~PropertyDialog();
     void setParentObject(QObject *obj);
-    void addToTab(const QString &name, ExtXMLWidget* widget_);
+    void addToTab(const QString &name, QWidget* widget_);
     void addTab(const QString &name, int i=-1);
     QObject* getParentObject() { return parentObject; }
     void addStretch();
-    void update();
-    void initialize();
+    void updateWidget();
     void resizeVariables();
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    using QTabWidget::addTab;
   protected:
     QObject* parentObject;
     std::map<QString,QVBoxLayout*> layout;
-    std::vector<ExtXMLWidget*> widget;
+    std::vector<QWidget*> widget;
     QTabWidget *tabWidget;
+    QDialogButtonBox *buttonBox;
+  public slots:
+    void clicked(QAbstractButton *button);
   signals:
-    void dataAccepted();
+    void apply();
 };
 
 #endif

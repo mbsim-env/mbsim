@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "mainwindow.h"
-#include "element.h"
+#include "solver.h"
 #include "integrator.h"
 #include "objectfactory.h"
 #include <QtGui>
@@ -30,18 +30,15 @@
 #include <mbxmlutils/utils.h>
 #include <openmbv/mainwindow.h>
 #include <mbxmlutilstinyxml/getinstallpath.h>
-#ifdef _WIN32 // Windows
-#  include <windows.h>
-#  include <process.h>
-#else
-#  include <spawn.h>
-#  include <sys/wait.h>
-#endif
+#include "widget.h"
+#include <QTextBrowser>
 
 using namespace std;
 
 bool absolutePath = false;
 QDir mbsDir;
+
+MainWindow *mw;
 
 bool removeDir(const QString &dirName) {
   bool result = true;
@@ -66,40 +63,11 @@ bool removeDir(const QString &dirName) {
   return result;
 }
 
-int runProgramSyncronous(const vector<string> &arg) {
-  char **argv=new char*[arg.size()+1];
-  for(size_t i=0; i<arg.size(); i++)
-    argv[i]=const_cast<char*>(arg[i].c_str());
-  argv[arg.size()]=NULL;
-
-#if !defined _WIN32
-  pid_t child;
-  int ret;
-  extern char** environ;
-  ret=posix_spawnp(&child, argv[0], NULL, NULL, argv, environ);
-  delete[]argv;
-  return ret;
-//  if(ret!=0)
-//    return -1;
-//
-//  int status;
-//  waitpid(child, &status, 0);
-//
-//  if(WIFEXITED(status))
-//    return WEXITSTATUS(status);
-//  else
-//    return -1;
-#else
-  int ret;
-  ret=_spawnvp(_P_NOWAIT, argv[0], argv);
-  delete[]argv;
-  return ret;
-#endif
-}
-
 MBXMLUtils::OctaveEvaluator *MainWindow::octEval=NULL;
 
-MainWindow::MainWindow() : inlineOpenMBVMW(0), openmbvID(0), h5plotserieID(0) {
+MainWindow::MainWindow() : inlineOpenMBVMW(0) {
+  mw = this;
+
 #ifdef INLINE_OPENMBV
   initInlineOpenMBV();
 #endif
@@ -190,9 +158,6 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0), openmbvID(0), h5plotserieID(0) {
   menuBar()->addMenu(helpMenu);
 
   QToolBar *toolBar = addToolBar("Tasks");
-  action = toolBar->addAction(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/preview.svg"),"Preview");
-  connect(action,SIGNAL(triggered()),this,SLOT(preview()));
-  toolBar->addAction(action);
   actionSimulate = toolBar->addAction(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/simulate.svg"),"Simulate");
   actionSimulate->setStatusTip(tr("Simulate the multibody system"));
   connect(actionSimulate,SIGNAL(triggered()),this,SLOT(simulate()));
@@ -205,9 +170,6 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0), openmbvID(0), h5plotserieID(0) {
   actionH5plotserie->setDisabled(true);
   connect(actionH5plotserie,SIGNAL(triggered()),this,SLOT(h5plotserie()));
   toolBar->addAction(actionH5plotserie);
-  action= toolBar->addAction(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/resize.svg"),"Resize");
-  connect(action,SIGNAL(triggered()),this,SLOT(resizeVariables()));
-  toolBar->addAction(action);
 
   setWindowTitle("MBSim GUI");
 
@@ -218,6 +180,7 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0), openmbvID(0), h5plotserieID(0) {
   list << "Name" << "Type";
   elementList->setHeaderLabels(list);
   connect(elementList,SIGNAL(pressed(QModelIndex)), this, SLOT(elementListClicked()));
+  connect(elementList,SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(elementListDoubleClicked()));
 
   integratorList = new QTreeWidget;
   integratorList->setHeaderLabel("Type");
@@ -234,7 +197,7 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0), openmbvID(0), h5plotserieID(0) {
   //connect(parameterList->header(),SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(parameterListClicked(const QPoint &)));
 
   QDockWidget *dockWidget = new QDockWidget("MBS");
-  addDockWidget(Qt::RightDockWidgetArea,dockWidget);
+  addDockWidget(Qt::LeftDockWidgetArea,dockWidget);
   QWidget *box = new QWidget;
   dockWidget->setWidget(box);
   QGridLayout* gl = new QGridLayout;
@@ -246,7 +209,7 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0), openmbvID(0), h5plotserieID(0) {
   gl->addWidget(elementList,1,0,1,2);
 
   QDockWidget *dockWidget2 = new QDockWidget("Integrator");
-  addDockWidget(Qt::RightDockWidgetArea,dockWidget2);
+  addDockWidget(Qt::LeftDockWidgetArea,dockWidget2);
   box = new QWidget;
   dockWidget2->setWidget(box);
   gl = new QGridLayout;
@@ -258,7 +221,7 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0), openmbvID(0), h5plotserieID(0) {
   gl->addWidget(integratorList,1,0,1,2);
 
   QDockWidget *dockWidget3 = new QDockWidget("Parameter");
-  addDockWidget(Qt::RightDockWidgetArea,dockWidget3);
+  addDockWidget(Qt::LeftDockWidgetArea,dockWidget3);
   box = new QWidget;
   dockWidget3->setWidget(box);
   gl = new QGridLayout;
@@ -280,14 +243,22 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0), openmbvID(0), h5plotserieID(0) {
   QHBoxLayout *mainlayout = new QHBoxLayout;
   centralWidget->setLayout(mainlayout);
   pagesWidget = new QStackedWidget;
-  mainlayout->addWidget(pagesWidget);
 #ifdef INLINE_OPENMBV
-  QDockWidget *dockWidget4 = new QDockWidget("OpenMBV");
-  addDockWidget(Qt::RightDockWidgetArea,dockWidget4);
-  dockWidget4->setWidget(inlineOpenMBVMW);
-  inlineOpenMBVMW->setMinimumWidth(300);
-  inlineOpenMBVMW->setMinimumHeight(300);
+  //QDockWidget *dockWidget4 = new QDockWidget("OpenMBV");
+  //addDockWidget(Qt::RightDockWidgetArea,dockWidget4);
+  //dockWidget4->setWidget(inlineOpenMBVMW);
+  //inlineOpenMBVMW->setMinimumWidth(300);
+  //inlineOpenMBVMW->setMinimumHeight(300);
+  mainlayout->addWidget(inlineOpenMBVMW);
 #endif
+  //mainlayout->addWidget(pagesWidget);
+
+  QDockWidget *mbsimDW = new QDockWidget("MBSim Echo Area", this);
+  addDockWidget(Qt::BottomDockWidgetArea, mbsimDW);
+  mbsim=new Process(this);
+  mbsimDW->setWidget(mbsim); 
+
+  setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
   
   newDOPRI5Integrator();
   newMBS();
@@ -325,6 +296,7 @@ void MainWindow::initInlineOpenMBV() {
   inlineOpenMBVMW=new OpenMBVGUI::MainWindow(arg);
 
   connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, Object*)), this, SLOT(selectElement(std::string)));
+  connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, Object*)), this, SLOT(openPropertyDialog(std::string)));
   connect(inlineOpenMBVMW, SIGNAL(fileReloaded()), this, SLOT(elementListClicked()));
 }
 
@@ -343,7 +315,7 @@ void MainWindow::changeWorkingDir() {
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
-  //if(actionSaveMBS->isEnabled() || actionSaveMBS->isEnabled() || actionSaveParameter->isEnabled()) {}
+  //if(actionSaveMBS->isEnabled() || actionSaveMBS->isEnabled() || actionSaveParameter->isEnabled()) {
   QMessageBox::StandardButton ret;
   ret = QMessageBox::warning(this, tr("Application"),
       tr("A document may has been modified.\n"
@@ -374,8 +346,12 @@ void MainWindow::closeEvent(QCloseEvent *event) {
   //  } else {
   //    event->ignore();
   //  }
-  //kill(openmbvID,SIGQUIT); Not working in windows and openmbvID (return value of runProgramSyncronous is NOT the pid
-  //kill(h5plotserieID,SIGQUIT); Not working in windows and openmbvID (return value of runProgramSyncronous is NOT the pid
+}
+
+void MainWindow::openPropertyDialog(string ID) {
+  Element *element=dynamic_cast<Element*>(elementList->currentItem());
+  if(element)
+    element->openPropertyDialog();
 }
 
 void MainWindow::elementListClicked() {
@@ -386,34 +362,42 @@ void MainWindow::elementListClicked() {
       menu->exec(QCursor::pos());
     }
   } 
-  else if(QApplication::mouseButtons()==Qt::LeftButton) {
-    Element *element=dynamic_cast<Element*>(elementList->currentItem());
-    if(element) {
-      pagesWidget->insertWidget(0,element->getPropertyWidget());
-      pagesWidget->setCurrentWidget(element->getPropertyWidget());
-    }
-  }
+//  else if(QApplication::mouseButtons()==Qt::LeftButton) {
+//    Element *element=dynamic_cast<Element*>(elementList->currentItem());
+//    if(element) {
+//      pagesWidget->insertWidget(0,element->getPropertyWidget());
+//      pagesWidget->setCurrentWidget(element->getPropertyWidget());
+//    }
+//  }
 
   Element *element=dynamic_cast<Element*>(elementList->currentItem());
 #ifdef INLINE_OPENMBV
   if(element)
-    emit inlineOpenMBVMW->highlightObject(element->getID());
+    inlineOpenMBVMW->highlightObject(element->getID());
   else
-    emit inlineOpenMBVMW->highlightObject("");
+    inlineOpenMBVMW->highlightObject("");
 #endif
+}
+
+void MainWindow::elementListDoubleClicked() {
+  Element *element=dynamic_cast<Element*>(elementList->currentItem());
+  if(element)
+    element->openPropertyDialog();
 }
 
 void MainWindow::integratorListClicked() {
   if(QApplication::mouseButtons()==Qt::RightButton) {
-//    Element *element=(Element*)elementList->currentItem();
-//    QMenu* menu=element->getContextMenu();
-//    menu->exec(QCursor::pos());
-  } 
-  else if(QApplication::mouseButtons()==Qt::LeftButton) {
     Integrator *integrator=(Integrator*)integratorList->currentItem();
-    pagesWidget->insertWidget(0,integrator->getPropertyWidget());
-    pagesWidget->setCurrentWidget(integrator->getPropertyWidget());
-  }
+    if(integrator) {
+      QMenu* menu=integrator->getContextMenu();
+      menu->exec(QCursor::pos());
+    }
+  } 
+//  else if(QApplication::mouseButtons()==Qt::LeftButton) {
+//    Integrator *integrator=(Integrator*)integratorList->currentItem();
+//    pagesWidget->insertWidget(0,integrator->getPropertyWidget());
+//    pagesWidget->setCurrentWidget(integrator->getPropertyWidget());
+//  }
 }
 
 void MainWindow::parameterListClicked() {
@@ -424,11 +408,11 @@ void MainWindow::parameterListClicked() {
       menu->exec(QCursor::pos());
     }
   } 
-  else if(QApplication::mouseButtons()==Qt::LeftButton) {
-    Parameter *parameter=(Parameter*)parameterList->currentItem();
-    pagesWidget->insertWidget(0,parameter->getPropertyWidget());
-    pagesWidget->setCurrentWidget(parameter->getPropertyWidget());
-  }
+//  else if(QApplication::mouseButtons()==Qt::LeftButton) {
+//    Parameter *parameter=(Parameter*)parameterList->currentItem();
+//    pagesWidget->insertWidget(0,parameter->getPropertyWidget());
+//    pagesWidget->setCurrentWidget(parameter->getPropertyWidget());
+//  }
 }
 
 //void MainWindow::parameterListClicked(const QPoint &pos) {
@@ -436,17 +420,6 @@ void MainWindow::parameterListClicked() {
 //  menu.addMenu(newParameterMenu);
 //  menu.exec(QCursor::pos());
 //}
-
-void MainWindow::resizeVariables() {
-//  Solver *solver = (Solver*)elementList->topLevelItem(0);
-  Element *element=dynamic_cast<Element*>(elementList->currentItem());
-  if(element)
-    element->resizeVariables();
-//  Integrator *integrator = (Integrator*)integratorList->topLevelItem(0);
-  Integrator *integrator=(Integrator*)integratorList->currentItem();
-  if(integrator)
-    integrator->resizeVariables();
-}
 
 void MainWindow::loadProj(const QString &file) {
   loadParameter(file+"/MBS.mbsimparam.xml");
@@ -509,7 +482,6 @@ void MainWindow::loadMBS(const QString &file) {
   mbsDir = QFileInfo(file).absolutePath();
   absoluteMBSFilePath=file;
   fileMBS->setText(QDir::current().relativeFilePath(absoluteMBSFilePath));
-  //fileMBS->setText(QDir::current().relativeFilePath(file));
   actionOpenMBV->setDisabled(true);
   actionH5plotserie->setDisabled(true);
   actionSaveMBS->setDisabled(true);
@@ -517,7 +489,7 @@ void MainWindow::loadMBS(const QString &file) {
     elementList->clear();
     QTreeWidgetItem* parentItem = elementList->invisibleRootItem();
     Solver *sys = Solver::readXMLFile(file,parentItem);
-    sys->update();
+    sys->updateWidget();
     ((Integrator*)integratorList->topLevelItem(0))->setSolver(sys);
     actionSaveMBS->setDisabled(false);
   }
@@ -753,7 +725,7 @@ void MainWindow::loadParameter(const QString &file) {
       Parameter *parameter=ObjectFactory::getInstance()->createParameter(E, parentItem, -1);
       //Parameter *parameter = new DoubleParameter(E->Attribute("name"),parentItem,-1);
 
-//    connect(parameter,SIGNAL(valueChanged()),(Solver*)elementList->topLevelItem(0),SLOT(update()));
+//    connect(parameter,SIGNAL(valueChanged()),(Solver*)elementList->topLevelItem(0),SLOT(updateWidget()));
       parameter->initializeUsingXML(E);
       connect(parameter,SIGNAL(parameterChanged(const QString&)),this,SLOT(updateOctaveParameters()));
       E=E->NextSiblingElement();
@@ -794,8 +766,7 @@ void MainWindow::saveParameter(QString fileName) {
     ((Parameter*)parameterList->topLevelItem(i))->writeXMLFile(ele0);
   }
   doc.LinkEndChild(ele0);
-  map<string, string> nsprefix;
-  unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
+  unIncorporateNamespace(doc.FirstChildElement(), Utils::getMBSimNamespacePrefixMapping());  
   QString file = fileParameter->text();
   doc.SaveFile(fileName.isEmpty()?file.toAscii().data():fileName.toStdString());
 }
@@ -835,25 +806,16 @@ void MainWindow::mbsimxml(int task) {
   QString intFile=uniqueTempDir+"/in"+sTask+".mbsimint.xml";
   integ->writeXMLFile(intFile);
 
-  vector<string> arg;
-  arg.push_back(MBXMLUtils::getInstallPath()+"/bin/mbsimxml");
+  QStringList arg;
   if(task==1)
-    arg.push_back("--stopafterfirststep");
-  arg.push_back("--mbsimparam");
-  arg.push_back(mbsParamFile.toStdString());
-  arg.push_back(mbsFile.toStdString());
-  arg.push_back(intFile.toStdString());
-  QString currentPath = QDir::currentPath();
-  QDir::setCurrent(uniqueTempDir);
-  runProgramSyncronous(arg);
-  QDir::setCurrent(currentPath);
+    arg.append("--stopafterfirststep");
+  arg.append("--mbsimparam");
+  arg.append(mbsParamFile);
+  arg.append(mbsFile);
+  arg.append(intFile);
+  mbsim->setWorkingDirectory(uniqueTempDir);
+  mbsim->start((MBXMLUtils::getInstallPath()+"/bin/mbsimxml").c_str(), arg);
   absolutePath = false;
-}
-
-void MainWindow::preview() {
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
 }
 
 void MainWindow::simulate() {
@@ -865,33 +827,29 @@ void MainWindow::simulate() {
 void MainWindow::openmbv() {
   QString name = uniqueTempDir+"/out0.ombv.xml";
   if(QFile::exists(name)) {
-    vector<string> command;
-    command.push_back(MBXMLUtils::getInstallPath()+"/bin/openmbv");
-    command.push_back("--autoreload");
-    command.push_back(name.toStdString());
-    openmbvID = runProgramSyncronous(command);
+    QStringList arg;
+    arg.append("--autoreload");
+    arg.append(name);
+    QProcess::startDetached((MBXMLUtils::getInstallPath()+"/bin/openmbv").c_str(), arg);
   }
 }
 
 void MainWindow::h5plotserie() {
   QString name = uniqueTempDir+"/out0.mbsim.h5";
   if(QFile::exists(name)) {
-    vector<string> command;
-    command.push_back(MBXMLUtils::getInstallPath()+"/bin/h5plotserie");
-    command.push_back(name.toStdString());
-    h5plotserieID = runProgramSyncronous(command);
+    QStringList arg;
+    arg.append(name);
+    QProcess::startDetached((MBXMLUtils::getInstallPath()+"/bin/h5plotserie").c_str(), arg);
   }
 }
 
 void MainWindow::selectElement(string ID) {
-#ifdef INLINE_OPENMBV
-  emit inlineOpenMBVMW->highlightObject(ID);
-#endif
   map<string, Element*>::iterator it=Element::idEleMap.find(ID);
-  if(it!=Element::idEleMap.end()) {
+  if(it!=Element::idEleMap.end())
     elementList->setCurrentItem(it->second);
-    elementListClicked();
-  }
+#ifdef INLINE_OPENMBV
+  inlineOpenMBVMW->highlightObject(ID);
+#endif
 }
 
 void MainWindow::help() {
@@ -921,4 +879,61 @@ void MainWindow::about() {
       //"  <li>...</li>"
       "</ul>"
       );
+}
+
+Process::Process(QWidget *parent) : QTabWidget(parent) {
+  process=new QProcess(this);
+  out=new QTextBrowser(this);
+  err=new QTextBrowser(this);
+  addTab(out, "Out");
+  addTab(err, "Err");
+  setCurrentIndex(1);
+  setMinimumHeight(80);
+  setTabPosition(QTabWidget::West);
+  connect(process, SIGNAL(readyReadStandardOutput()), this, SLOT(output()));
+  connect(process, SIGNAL(readyReadStandardError()), this, SLOT(error()));
+}
+
+void Process::setWorkingDirectory(const QString &dir) {
+  process->setWorkingDirectory(dir);
+}
+
+void Process::start(const QString &program, const QStringList &arguments) {
+  process->start(program, arguments);
+  outText="";
+  errText="";
+}
+
+void Process::output() {
+  QString newText=process->readAllStandardOutput().data();
+  convertToHtml(newText);
+  outText+=newText;
+  out->setHtml(outText);
+  out->moveCursor(QTextCursor::End);
+}
+
+void Process::error() {
+  QString newText=process->readAllStandardError().data();
+  convertToHtml(newText);
+  errText+=newText;
+  err->setHtml(errText);
+  err->moveCursor(QTextCursor::Start);
+}
+
+void Process::convertToHtml(QString &text) {
+  // newlines to html
+  text.replace("\n", "<br/>");
+  // MISSING: convert <filename>:<linenr> to a hyperlink which opens the <filename> and jumps to <linenr>
+}
+
+QSize Process::sizeHint() const {
+  QSize size=QTabWidget::sizeHint();
+  size.setHeight(80);
+  return size;
+}
+
+QSize Process::minimumSizeHint() const {
+  QSize size=QTabWidget::minimumSizeHint();
+  size.setHeight(80);
+  return size;
 }

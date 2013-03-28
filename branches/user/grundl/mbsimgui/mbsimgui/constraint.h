@@ -21,6 +21,7 @@
 #define _CONSTRAINT__H_
 
 #include "object.h"
+#include "extended_properties.h"
 
 class RigidBody;
 
@@ -46,9 +47,15 @@ class KinematicConstraint : public Constraint {
     virtual QString getType() const { return "KinematicConstraint"; }
     //virtual void resizeVariables() {Element::resizeVariables();}
 
+    virtual void initializeDialog();
+    virtual void fromWidget();
+    virtual void toWidget();
+    void initialize();
+
   protected:
     RigidBody *refBody;
-    ExtXMLWidget *dependentBody, *kinematicFunction, *firstDerivativeOfKinematicFunction, *secondDerivativeOfKinematicFunction;
+    ExtWidget *dependentBodyWidget, *kinematicFunctionWidget, *firstDerivativeOfKinematicFunctionWidget, *secondDerivativeOfKinematicFunctionWidget;
+    ExtProperty dependentBody, kinematicFunction, firstDerivativeOfKinematicFunction, secondDerivativeOfKinematicFunction;
 
   protected slots:
     void resizeVariables();
@@ -67,8 +74,14 @@ class JointConstraint : public Constraint {
 
     virtual QString getType() const { return "JointConstraint"; }
 
+    virtual void initializeDialog();
+    virtual void fromWidget();
+    virtual void toWidget();
+    void initialize();
+
   protected:
-    ExtXMLWidget *force, *moment, *connections, *independentBody, *dependentBodiesFirstSide, *dependentBodiesSecondSide;
+    ExtWidget *forceWidget, *momentWidget, *connectionsWidget, *independentBodyWidget, *dependentBodiesFirstSideWidget, *dependentBodiesSecondSideWidget;
+    ExtProperty force, moment, connections, independentBody, dependentBodiesFirstSide, dependentBodiesSecondSide;
 
     void resizeGeneralizedPosition();
 };

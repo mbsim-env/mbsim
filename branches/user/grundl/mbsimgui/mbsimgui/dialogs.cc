@@ -86,7 +86,7 @@ RigidBodyBrowser::RigidBodyBrowser(QTreeWidget* tree_, RigidBody* rigidBody, QWi
   setWindowTitle("RigidBody browser");
 }
 
-void RigidBodyBrowser::update(RigidBody *sel) {
+void RigidBodyBrowser::updateWidget(RigidBody *sel) {
   selection = sel;
   rigidBodyList->clear();
   savedItem = 0;
@@ -149,7 +149,7 @@ FrameBrowser::FrameBrowser(QTreeWidget* tree_, Frame* frame, QWidget *parentObje
   setWindowTitle("Frame browser");
 }
 
-void FrameBrowser::update(Frame *sel) {
+void FrameBrowser::updateWidget(Frame *sel) {
   selection = sel;
   frameList->clear();
   savedItem = 0;
@@ -212,7 +212,7 @@ ContourBrowser::ContourBrowser(QTreeWidget* tree_, Contour* contour, QWidget *pa
   setWindowTitle("Contour browser");
 }
 
-void ContourBrowser::update(Contour *sel) {
+void ContourBrowser::updateWidget(Contour *sel) {
   selection = sel;
   contourList->clear();
   savedItem = 0;

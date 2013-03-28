@@ -356,7 +356,7 @@ AC_SUBST(CPPUNIT_LIBS)
 
 PL_PROG_PERL
 
-#LDFLAGS="$LDFLAGS  -Wl,--no-undefined" #TODO: does not work woth -Wl,--no-undefined
+LDFLAGS="$LDFLAGS -no-undefined"
 CXXFLAGS="$CXXFLAGS -fpermissive"
 
 dnl removed from list: nurbs++-config (and added nurbs++.pc to use pkg-config)

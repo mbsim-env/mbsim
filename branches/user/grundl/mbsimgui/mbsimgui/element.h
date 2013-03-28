@@ -34,6 +34,7 @@ class ExtraDynamic;
 class Observer;
 class TiXmlElement;
 class TiXmlNode;
+class TextWidget;
 
 class Container : public QTreeWidgetItem {
   public:
@@ -47,17 +48,18 @@ class Element : public QObject, public QTreeWidgetItem {
     bool drawThisPath;
     QString iconFile;
     bool searchMatched;
-    PropertyWidget *properties;
     QMenu *contextMenu;
     QAction *actionSave;
     QString file;
-    ExtXMLWidget *name;
-    std::vector<ExtXMLWidget*> plotFeature;
+    std::vector<ExtWidget*> plotFeature;
     static TiXmlElement* copiedElement;
     Element *parentElement;
     Container *frames, *contours, *groups, *objects, *links, *extraDynamics, *observers;
     static int IDcounter;
     std::string ns, ID;
+    QString name;
+    PropertyDialog *dialog;
+    TextWidget *textWidget;
   public:
     Element(const QString &str, QTreeWidgetItem *parentItem, int ind, bool grey=false);
     virtual ~Element();
@@ -70,9 +72,8 @@ class Element : public QObject, public QTreeWidgetItem {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual void writeXMLFile(const QString &name);
     virtual void writeXMLFile() { writeXMLFile(getName()); }
-    virtual void update();
+    virtual void updateWidget();
     virtual void initialize();
-    virtual void resizeVariables();
     virtual QString getType() const { return "Element"; }
     //QString newName(const QString &type);
     virtual QString getFileExtension() const { return ".xml"; }
@@ -80,8 +81,7 @@ class Element : public QObject, public QTreeWidgetItem {
     bool getSearchMatched() { return searchMatched; }
     void setSearchMatched(bool m) { searchMatched=m; }
     QMenu* getContextMenu() { return contextMenu; }
-    PropertyWidget* getPropertyWidget() { return properties; }
-    QString getName() const {return text(0);}
+    QString getName() const {return name;}
     void setName(const QString &str);
     template<class T> T* getByPath(QString path);
     virtual Element* getByPathSearch(QString path) {return 0; }
@@ -107,11 +107,16 @@ class Element : public QObject, public QTreeWidgetItem {
     Observer* getObserver(const QString &name, bool check=true);
     std::string getID() { return ID; }
     static std::map<std::string, Element*> idEleMap;
+    virtual void fromWidget();
+    virtual void toWidget();
+    virtual void initializeDialog();
   public slots:
     void remove();
     virtual void saveAs();
     virtual void save();
     void copy();
+    void openPropertyDialog();
+    void updateElement();
 };
 
 template<class T>

@@ -19,6 +19,8 @@
 
 #include <config.h>
 #include "contour.h"
+#include "basic_properties.h"
+#include "ombv_properties.h"
 #include "basic_widgets.h"
 #include "string_widgets.h"
 #include "ombv_widgets.h"
@@ -26,28 +28,46 @@
 
 using namespace std;
 
-Contour::Contour(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element(str,parentItem,ind) {
-  //refFrame = new ExtXMLWidget("Frame of reference",new FrameOfReferenceWidget(MBSIMNS"frameOfReference",this,getParentElement()->getFrame(0)));
-  refFrame = new ExtXMLWidget("Frame of reference",new ParentFrameOfReferenceWidget(MBSIMNS"frameOfReference",this,0),true);
-  properties->addToTab("General", refFrame);
+Contour::Contour(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element(str,parentItem,ind), refFrame(0,false) {
+  refFrame.setProperty(new ParentFrameOfReferenceProperty(0,this,MBSIMNS"frameOfReference"));
 }
 
 Contour::~Contour() {
 }
 
+void Contour::initialize() {
+  Element::initialize();
+  refFrame.initialize();
+}
+
+void Contour::initializeDialog() {
+  Element::initializeDialog();
+  refFrameWidget = new ExtWidget("Frame of reference",new ParentFrameOfReferenceWidget(this,0),true);
+  dialog->addToTab("General", refFrameWidget);
+}
+
+void Contour::toWidget() {
+  Element::toWidget();
+  refFrame.toWidget(refFrameWidget);
+}
+
+void Contour::fromWidget() {
+  Element::fromWidget();
+  refFrame.fromWidget(refFrameWidget);
+}
+
 void Contour::setSavedFrameOfReference(const QString &str) {
-  ((ParentFrameOfReferenceWidget*)(refFrame->getWidget()))->setSavedFrameOfReference(str);
-  refFrame->setChecked(true);
+  ((ParentFrameOfReferenceProperty*)(refFrame.getProperty()))->setSavedFrameOfReference(str);
 }
 
 void Contour::initializeUsingXML(TiXmlElement *element) {
   Element::initializeUsingXML(element);
-  refFrame->initializeUsingXML(element);
+  refFrame.initializeUsingXML(element);
 }
 
 TiXmlElement* Contour::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Element::writeXMLFile(parent);
-  refFrame->writeXMLFile(ele0);
+  refFrame.writeXMLFile(ele0);
   return ele0;
 }
 
@@ -66,7 +86,6 @@ Element *Contour::getByPathSearch(QString path) {
 
 Point::Point(const QString &str, QTreeWidgetItem *parentItem, int ind) : Contour(str,parentItem,ind) {
   setText(1,getType());
-  properties->addStretch();
 }
 
 Point::~Point() {
@@ -74,7 +93,6 @@ Point::~Point() {
 
 Line::Line(const QString &str, QTreeWidgetItem *parentItem, int ind) : Contour(str,parentItem,ind) {
   setText(1,getType());
-  properties->addStretch();
 }
 
 Line::~Line() {
@@ -82,58 +100,94 @@ Line::~Line() {
 
 Plane::Plane(const QString &str, QTreeWidgetItem *parentItem, int ind) : Contour(str,parentItem,ind) {
   setText(1,getType());
-  properties->addTab("Visualisation");
 
-  visu = new ExtXMLWidget("OpenMBV Plane",new OMBVPlaneWidget(MBSIMNS"enableOpenMBV"),true);
-  ((OMBVPlaneWidget*)visu->getWidget())->setID(getID());
-  properties->addToTab("Visualisation", visu);
-
-  properties->addStretch();
+  visu.setProperty(new OMBVPlaneProperty(MBSIMNS"enableOpenMBV"));
+  ((OMBVPlaneProperty*)visu.getProperty())->setID(getID());
 }
 
 Plane::~Plane() {
 }
 
+void Plane::initializeDialog() {
+  Contour::initializeDialog();
+
+  dialog->addTab("Visualisation");
+
+  visuWidget = new ExtWidget("OpenMBV Plane",new OMBVPlaneWidget,true);
+  dialog->addToTab("Visualisation", visuWidget);
+}
+
 void Plane::initializeUsingXML(TiXmlElement *element) {
   Contour::initializeUsingXML(element);
-  visu->initializeUsingXML(element);
+  visu.initializeUsingXML(element);
 }
 
 TiXmlElement* Plane::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *e = Contour::writeXMLFile(parent);
-  visu->writeXMLFile(e);
+  visu.writeXMLFile(e);
   return e;
+}
+
+void Plane::toWidget() {
+  Contour::toWidget();
+  visu.toWidget(visuWidget);
+}
+
+void Plane::fromWidget() {
+  Contour::fromWidget();
+  visu.fromWidget(visuWidget);
 }
 
 Sphere::Sphere(const QString &str, QTreeWidgetItem *parentItem, int ind) : Contour(str,parentItem,ind) {
   setText(1,getType());
-  properties->addTab("Visualisation");
  
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1"), MBSIMNS"radius", lengthUnits(), 4));
-  radius= new ExtXMLWidget("Radius",new ExtPhysicalVarWidget(input));
-  properties->addToTab("General", radius);
+  vector<PhysicalStringProperty*> input;
+  input.push_back(new PhysicalStringProperty(new ScalarProperty("1"), "m", MBSIMNS"radius"));
+  radius.setProperty(new ExtPhysicalVarProperty(input));
 
-  visu= new ExtXMLWidget("OpenMBV Sphere",new OMBVEmptyWidget(MBSIMNS"enableOpenMBV"),true);
-  ((OMBVEmptyWidget*)visu->getWidget())->setID(getID());
-  properties->addToTab("Visualisation", visu);
+  visu.setProperty(new OMBVEmptyProperty(MBSIMNS"enableOpenMBV"));
+  ((OMBVEmptyProperty*)visu.getProperty())->setID(getID());
 
-  properties->addStretch();
 }
 
 Sphere::~Sphere() {
 }
 
+void Sphere::initializeDialog() {
+  Contour::initializeDialog();
+
+  dialog->addTab("Visualisation");
+ 
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1"), lengthUnits(), 4));
+  radiusWidget = new ExtWidget("Radius",new ExtPhysicalVarWidget(input));
+  dialog->addToTab("General", radiusWidget);
+
+  visuWidget = new ExtWidget("OpenMBV Sphere",new OMBVEmptyWidget,true);
+  dialog->addToTab("Visualisation", visuWidget);
+}
+
 void Sphere::initializeUsingXML(TiXmlElement *element) {
   Contour::initializeUsingXML(element);
-  radius->initializeUsingXML(element);
-  visu->initializeUsingXML(element);
+  radius.initializeUsingXML(element);
+  visu.initializeUsingXML(element);
 }
 
 TiXmlElement* Sphere::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *e = Contour::writeXMLFile(parent);
-  radius->writeXMLFile(e);
-  visu->writeXMLFile(e);
+  radius.writeXMLFile(e);
+  visu.writeXMLFile(e);
   return e;
 }
 
+void Sphere::toWidget() {
+  Contour::toWidget();
+  radius.toWidget(radiusWidget);
+  visu.toWidget(visuWidget);
+}
+
+void Sphere::fromWidget() {
+  Contour::fromWidget();
+  radius.fromWidget(radiusWidget);
+  visu.fromWidget(visuWidget);
+}
