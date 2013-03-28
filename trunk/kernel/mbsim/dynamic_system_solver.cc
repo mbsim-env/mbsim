@@ -556,7 +556,7 @@ namespace MBSim {
       double nrmf = 1;
       for (int k=0; k<maxDampingSteps; k++) {
         la = La_old - alpha*dx;
-        solveConstraintsRootFinding();
+        Group::solveConstraintsRootFinding();
         nrmf = nrm2(res);
         if(nrmf < nrmf0) break;
 
@@ -624,7 +624,7 @@ namespace MBSim {
       double nrmf = 1;
       for (int k=0; k<maxDampingSteps; k++) {
         la = La_old - alpha*dx;
-        solveImpactsRootFinding(dt);
+        Group::solveImpactsRootFinding(dt);
         nrmf = nrm2(res);
         if(nrmf < nrmf0) break;
         alpha *= .5;  
