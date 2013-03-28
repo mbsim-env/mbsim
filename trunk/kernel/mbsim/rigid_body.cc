@@ -28,6 +28,7 @@
 #include "mbsim/environment.h"
 #include "mbsim/constraint.h"
 #include "mbsim/utils/utils.h"
+#include "mbsim/utils/differentiable_function_library.h"
 #include "mbsim/contours/compound_contour.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/rigidbody.h>
@@ -254,10 +255,10 @@ namespace MBSim {
           JT = dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors();
         }
         else if(dynamic_cast<TimeDependentTranslation*>(fPrPK)) {
-          DifferentiableFunction1<fmatvec::Vec3> *pos = dynamic_cast<DifferentiableFunction1<fmatvec::Vec3> *>(dynamic_cast<TimeDependentTranslation*>(fPrPK)->getTranslationFunction());
+          DifferentiableFunction<fmatvec::Vec3> *pos = dynamic_cast<DifferentiableFunction<fmatvec::Vec3> *>(dynamic_cast<TimeDependentTranslation*>(fPrPK)->getTranslationFunction());
           if(pos) {
-            if(fPjT==0) fPjT = &pos->getDerivative(1);
-            if(fPdjT==0) fPdjT = &pos->getDerivative(2);
+            if(fPjT==0) fPjT = pos->getFirstDerivative();
+            if(fPdjT==0) fPdjT = pos->getSecondDerivative();
           }
         }
         PJT[0].set(Index(0,2), Index(0,JT.cols()-1),JT);

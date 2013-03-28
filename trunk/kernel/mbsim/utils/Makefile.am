@@ -23,6 +23,7 @@ utilsinclude_HEADERS = colors.h\
                        nonlinear_algebra.h\
                        nonsmooth_algebra.h\
                        function.h\
+                       differentiable_function_library.h\
                        function_library.h\
                        ppolynom.h\
                        contact_utils.h\
