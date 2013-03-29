@@ -256,6 +256,9 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   QDockWidget *mbsimDW = new QDockWidget("MBSim Echo Area", this);
   addDockWidget(Qt::BottomDockWidgetArea, mbsimDW);
   mbsim=new Process(this);
+  QProcessEnvironment env=QProcessEnvironment::systemEnvironment();
+  env.insert("MBXMLUTILS_XMLOUTPUT", "1");
+  mbsim->getProcess()->setProcessEnvironment(env);
   mbsimDW->setWidget(mbsim); 
 
   setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
@@ -813,8 +816,8 @@ void MainWindow::mbsimxml(int task) {
   arg.append(mbsParamFile);
   arg.append(mbsFile);
   arg.append(intFile);
-  mbsim->setWorkingDirectory(uniqueTempDir);
-  mbsim->start((MBXMLUtils::getInstallPath()+"/bin/mbsimxml").c_str(), arg);
+  mbsim->getProcess()->setWorkingDirectory(uniqueTempDir);
+  mbsim->clearOutputAndStart((MBXMLUtils::getInstallPath()+"/bin/mbsimxml").c_str(), arg);
   absolutePath = false;
 }
 
@@ -885,6 +888,10 @@ Process::Process(QWidget *parent) : QTabWidget(parent) {
   process=new QProcess(this);
   out=new QTextBrowser(this);
   err=new QTextBrowser(this);
+  out->setOpenLinks(false);
+  err->setOpenLinks(false);
+  connect(out, SIGNAL(anchorClicked(const QUrl &)), this, SLOT(outLinkClicked(const QUrl &)));
+  connect(err, SIGNAL(anchorClicked(const QUrl &)), this, SLOT(errLinkClicked(const QUrl &)));
   addTab(out, "Out");
   addTab(err, "Err");
   setCurrentIndex(1);
@@ -894,11 +901,7 @@ Process::Process(QWidget *parent) : QTabWidget(parent) {
   connect(process, SIGNAL(readyReadStandardError()), this, SLOT(error()));
 }
 
-void Process::setWorkingDirectory(const QString &dir) {
-  process->setWorkingDirectory(dir);
-}
-
-void Process::start(const QString &program, const QStringList &arguments) {
+void Process::clearOutputAndStart(const QString &program, const QStringList &arguments) {
   process->start(program, arguments);
   outText="";
   errText="";
@@ -923,7 +926,9 @@ void Process::error() {
 void Process::convertToHtml(QString &text) {
   // newlines to html
   text.replace("\n", "<br/>");
-  // MISSING: convert <filename>:<linenr> to a hyperlink which opens the <filename> and jumps to <linenr>
+  // replace <FILE ...>
+  static QRegExp fileRE("<FILE path=\"(.+)\" line=\"([0-9]+)\">(.+)</FILE>");
+  text.replace(fileRE, "<a href=\"\\1?line=\\2\">\\3</a>");
 }
 
 QSize Process::sizeHint() const {
@@ -936,4 +941,21 @@ QSize Process::minimumSizeHint() const {
   QSize size=QTabWidget::minimumSizeHint();
   size.setHeight(80);
   return size;
+}
+
+void Process::linkClicked(const QUrl &link, QTextBrowser *std) {
+  static QString editorCommand=QProcessEnvironment::systemEnvironment().value("MBSIMGUI_EDITOR", "gvim -R %1 +%2");
+  cout<<"Opening file using command '"<<editorCommand.toStdString()<<"'. "<<
+        "Where %1 is replaced by the filename and %2 by the line number. "<<
+        "Use the environment variable MBSIMGUI_EDITOR to overwrite this command."<<endl;
+  QString comm=editorCommand.arg(link.path()).arg(link.queryItemValue("line").toInt());
+  QProcess::startDetached(comm);
+}
+
+void Process::outLinkClicked(const QUrl &link) {
+  linkClicked(link, out);
+}
+
+void Process::errLinkClicked(const QUrl &link) {
+  linkClicked(link, err);
 }

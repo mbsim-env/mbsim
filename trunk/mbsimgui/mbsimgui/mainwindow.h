@@ -30,6 +30,7 @@ class QAction;
 class QLineEdit;
 class QTextBrowser;
 class QProcess;
+class QUrl;
 class Process;
 
 namespace OpenMBVGUI {
@@ -108,8 +109,8 @@ class Process : public QTabWidget {
   Q_OBJECT
   public:
     Process(QWidget *parent);
-    void setWorkingDirectory(const QString &dir);
-    void start(const QString &program, const QStringList &arguments);
+    QProcess *getProcess() { return process; }
+    void clearOutputAndStart(const QString &program, const QStringList &arguments);
     QSize sizeHint() const;
     QSize minimumSizeHint() const;
   private:
@@ -117,9 +118,12 @@ class Process : public QTabWidget {
     QTextBrowser *out, *err;
     QString outText, errText;
     void convertToHtml(QString &text);
+    void linkClicked(const QUrl &link, QTextBrowser *std);
   private slots:
     void output();
     void error();
+    void outLinkClicked(const QUrl &link);
+    void errLinkClicked(const QUrl &link);
 };
 
 #endif
