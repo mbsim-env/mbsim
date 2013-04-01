@@ -7,6 +7,8 @@
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"
 
+#include <mbsim/utils/colors.h>
+
 #include <fmatvec.h>
 
 #include <mbsim/frame.h>
@@ -36,13 +38,13 @@ System::System(const string &projectName) :
   polyfrustum->setRotation(new RotationAboutXAxis); //change from ZAxis, rotation,1 degree of freedom
   polyfrustum->setMass(1);
   polyfrustum->setInertiaTensor(SymMat3(EYE));
-  Frame * rotPoly = new Frame("RotPoly");
-  this->addFrame(rotPoly, Vec3(), BasicRotAKIz(M_PI_2));
+  FixedRelativeFrame* rotPoly = new FixedRelativeFrame("RotPoly", Vec3(), BasicRotAKIz(M_PI_2));
+  addFrame(rotPoly);
   polyfrustum->setFrameOfReference(rotPoly);
 
   //Give degrees of freedom
   polyfrustum->setInitialGeneralizedPosition(Vec("[0]"));  //set position of the frustum,1 degree of freedom
-  polyfrustum->setInitialGeneralizedVelocity(Vec("[1]"));  //change from(0,0,0,0,0,0), now we have rotating velocity,1 degree of freedom
+  polyfrustum->setInitialGeneralizedVelocity(Vec("[0]"));  //change from(0,0,0,0,0,0), now we have rotating velocity,1 degree of freedom
 
   this->addObject(polyfrustum);
 
@@ -53,7 +55,10 @@ System::System(const string &projectName) :
 
   polyfrustumcontour->enableOpenMBV();
 
-  polyfrustum->addContour(polyfrustumcontour, Vec3(), BasicRotAKIy(0));
+  FixedRelativeFrame * polyFrustumFrame = new FixedRelativeFrame("RelPolyFrame", Vec3(), BasicRotAKIy(0));
+  polyfrustum->addFrame(polyFrustumFrame);
+  polyfrustumcontour->setFrameOfReference(polyFrustumFrame);
+  polyfrustum->addContour(polyfrustumcontour);
 
   /*Area initialisation*/
 
@@ -78,7 +83,10 @@ System::System(const string &projectName) :
 
     this->addObject(areaBody);
 
-    areaBody->addContour(area, Vec3(), BasicRotAKIx(M_2_PI));
+    FixedRelativeFrame * areaFrame = new FixedRelativeFrame("AreaFrame", Vec3(), BasicRotAKIx(M_2_PI));
+    areaBody->addFrame(areaFrame);
+    area->setFrameOfReference(areaFrame);
+    areaBody->addContour(area);
 
     //Add contact between frustum and area
     Contact* contact = new Contact("FrustumArea1");
@@ -88,10 +96,10 @@ System::System(const string &projectName) :
     contact->enableOpenMBVContactPoints();
 
     //Set contact law
-    contact->setContactForceLaw(new UnilateralConstraint);
-    contact->setContactImpactLaw(new UnilateralNewtonImpact(0.3));
-    contact->setFrictionForceLaw(new SpatialCoulombFriction(0.5));
-    contact->setFrictionImpactLaw(new SpatialCoulombImpact(0.5));
+    contact->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e6, 10000)));
+    //contact->setContactImpactLaw(new UnilateralNewtonImpact(0.3));
+    contact->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(0.5)));
+    //contact->setFrictionImpactLaw(new SpatialCoulombImpact(0.5));
 
     this->addLink(contact);
   }
@@ -111,12 +119,15 @@ System::System(const string &projectName) :
     areaBody->setTranslation(new LinearTranslation(Mat3x3(EYE)));
     areaBody->setRotation(new CardanAngles);
     //give degrees of freedom
-    areaBody->setInitialGeneralizedPosition(Vec("[1.5;0.9;0;0;0;0]"));
+    areaBody->setInitialGeneralizedPosition(Vec("[1.5;0.8;0;0;0;0]"));
     areaBody->setInitialGeneralizedVelocity(Vec("[0;0;0;0;0;0]"));
 
     this->addObject(areaBody);
 
-    areaBody->addContour(area, Vec3(), BasicRotAKIz(M_PI));
+    FixedRelativeFrame * areaFrame = new FixedRelativeFrame("AreaFrame", Vec3(), BasicRotAKIz(M_PI));
+    areaBody->addFrame(areaFrame);
+    area->setFrameOfReference(areaFrame);
+    areaBody->addContour(area);
 
     //Add contact between frustum and area
     Contact* contact = new Contact("FrustumArea2");
@@ -126,10 +137,53 @@ System::System(const string &projectName) :
     contact->enableOpenMBVContactPoints();
 
     //Set contact law
-    contact->setContactForceLaw(new UnilateralConstraint);
-    contact->setContactImpactLaw(new UnilateralNewtonImpact(0.3));
-    contact->setFrictionForceLaw(new SpatialCoulombFriction(0.5));
-    contact->setFrictionImpactLaw(new SpatialCoulombImpact(0.5));
+    //Set contact law
+    contact->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e6, 10000)));
+    //contact->setContactImpactLaw(new UnilateralNewtonImpact(0.3));
+    contact->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(0.5)));
+    //contact->setFrictionImpactLaw(new SpatialCoulombImpact(0.5));
+
+    this->addLink(contact);
+  }
+
+  { // Area3
+    Area* area = new Area("AREA3");
+    area->setLimitY(0.5);
+    area->setLimitZ(1);
+    area->enableOpenMBV();
+
+    //BODY
+    RigidBody* areaBody = new RigidBody("AreaBody3");
+    areaBody->setMass(1);
+    areaBody->setFrameOfReference(this->getFrameI());
+    areaBody->setInertiaTensor(SymMat3(EYE));
+
+    areaBody->setTranslation(new LinearTranslation(Mat3x3(EYE)));
+    areaBody->setRotation(new CardanAngles);
+    //give degrees of freedom
+    areaBody->setInitialGeneralizedPosition(Vec("[0.;-0.3;1.5;0;0;0]"));
+    areaBody->setInitialGeneralizedVelocity(Vec("[0;0;0;0;0;0]"));
+
+    this->addObject(areaBody);
+
+    FixedRelativeFrame * areaFrame = new FixedRelativeFrame("AreaFrame", Vec3(), BasicRotAKIz(M_PI) * BasicRotAIKy(M_PI_2));
+    areaBody->addFrame(areaFrame);
+    area->setFrameOfReference(areaFrame);
+    areaBody->addContour(area);
+
+    //Add contact between frustum and area
+    Contact* contact = new Contact("FrustumArea3");
+    contact->connect(area, polyfrustumcontour);
+
+    contact->setPlotFeature(openMBV, enabled);
+    contact->enableOpenMBVContactPoints();
+
+    //Set contact law
+    //Set contact law
+    contact->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e3, 10)));
+    //contact->setContactImpactLaw(new UnilateralNewtonImpact(0.3));
+    contact->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(0.5)));
+    //contact->setFrictionImpactLaw(new SpatialCoulombImpact(0.5));
 
     this->addLink(contact);
   }
