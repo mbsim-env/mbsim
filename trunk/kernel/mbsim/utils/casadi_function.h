@@ -20,8 +20,6 @@
 #ifndef DIFFERENTIABLE_FUNCTION_LIBRARY_H_
 #define DIFFERENTIABLE_FUNCTION_LIBRARY_H_
 
-#ifdef HAVE_SYMBOLIC_SX_SX_HPP
-
 #include <mbsim/utils/function.h>
 #include <symbolic/fx/sx_function.hpp>
 
@@ -112,7 +110,5 @@ namespace MBSim {
 //  };
 
 }
-
-#endif
 
 #endif

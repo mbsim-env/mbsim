@@ -23,11 +23,11 @@ dnl Check for casadi
 AC_ARG_WITH(casadi_inc_prefix,
   [  --with-casadi-inc-prefix=PFX  Prefix where casadi includes are installed],
   [CASADICPPFLAGS="-I$withval"],
-  [CASADICPPFLAGS="-I$prefix"])
+  [CASADICPPFLAGS=""])
 AC_ARG_WITH(casadi_lib_prefix,
   [  --with-casadi-lib-prefix=PFX  Prefix where casadi lib is installed],
   [ CASADILDFLAGS="-L$withval" ],
-  [ CASADILDFLAGS="-L$prefix" ])
+  [ CASADILDFLAGS="" ])
 CPPFLAGS="$CPPFLAGS $CASADICPPFLAGS"
 casadi="no"
 AC_CHECK_HEADERS([symbolic/sx/sx.hpp], [casadi="yes"],
@@ -96,7 +96,6 @@ LIBMBSIM_VERSION_INFO=$LIBMBSIM_CURRENT:$LIBMBSIM_REVISION:$LIBMBSIM_AGE
 AC_SUBST([LIBMBSIM_VERSION_INFO])
 
 if test $casadi = "yes" ; then
-  DEFINES="$DEFINES -DHAVE_SYMBOLIC_SX_SX_HPP"
   CASADILIB="-lcasadi"
   AC_SUBST([CASADILIB])
   AC_SUBST([CASADICPPFLAGS])
