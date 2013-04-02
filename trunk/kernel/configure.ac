@@ -23,20 +23,20 @@ dnl Check for casadi
 AC_ARG_WITH(casadi_inc_prefix,
   [  --with-casadi-inc-prefix=PFX  Prefix where casadi includes are installed],
   [CASADICPPFLAGS="-I$withval"],
-  [CASADICPPFLAGS=""])
+  [CASADICPPFLAGS="-I$prefix/include"])
 AC_ARG_WITH(casadi_lib_prefix,
   [  --with-casadi-lib-prefix=PFX  Prefix where casadi lib is installed],
   [ CASADILDFLAGS="-L$withval" ],
-  [ CASADILDFLAGS="" ])
+  [ CASADILDFLAGS="-L$prefix/lib" ])
 CPPFLAGS="$CPPFLAGS $CASADICPPFLAGS"
 casadi="no"
-AC_CHECK_HEADERS([symbolic/sx/sx.hpp], [casadi="yes"],
-  [AC_MSG_RESULT([Can not find casadi c++ header symbolic/sx/sx.hpp])])
+AC_CHECK_HEADERS([casadi/symbolic/sx/sx.hpp], [casadi="yes"],
+  [AC_MSG_RESULT([Can not find casadi c++ header casadi/symbolic/sx/sx.hpp])])
 AC_MSG_CHECKING([for casadi c++ library])
 if test $casadi = "yes" ; then
 LDFLAGS="$LDFLAGS $CASADILDFLAGS"
 LIBS="$LIBS -lcasadi"
-AC_TRY_LINK([#include <symbolic/sx/sx.hpp>],[CasADi::SX x],[AC_MSG_RESULT([yes])],
+AC_TRY_LINK([#include <casadi/symbolic/sx/sx.hpp>],[CasADi::SX x],[AC_MSG_RESULT([yes])],
   [casadi="no"; AC_MSG_RESULT([no]); AC_MSG_ERROR([Can not link with casadi c++ library])])
 fi
 

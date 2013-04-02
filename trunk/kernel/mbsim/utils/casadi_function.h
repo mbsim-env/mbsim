@@ -21,7 +21,7 @@
 #define DIFFERENTIABLE_FUNCTION_LIBRARY_H_
 
 #include <mbsim/utils/function.h>
-#include <symbolic/fx/sx_function.hpp>
+#include <casadi/symbolic/fx/sx_function.hpp>
 
 namespace MBSim {
 

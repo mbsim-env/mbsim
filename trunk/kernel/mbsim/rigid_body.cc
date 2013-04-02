@@ -28,7 +28,7 @@
 #include "mbsim/environment.h"
 #include "mbsim/constraint.h"
 #include "mbsim/utils/utils.h"
-#ifdef HAVE_SYMBOLIC_SX_SX_HPP
+#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
 #include "mbsim/utils/casadi_function.h"
 #endif
 #include "mbsim/contours/compound_contour.h"
@@ -257,7 +257,7 @@ namespace MBSim {
           JT = dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors();
         }
         else if(dynamic_cast<TimeDependentTranslation*>(fPrPK)) {
-#ifdef HAVE_SYMBOLIC_SX_SX_HPP
+#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
           CasadiFunction1<Vec3> *pos = dynamic_cast<CasadiFunction1<Vec3>*>(static_cast<TimeDependentTranslation*>(fPrPK)->getTranslationFunction());
           if(pos) {
             if(fPjT==0) fPjT = new CasadiFunction1<Vec3>(pos->getSXFunction().jacobian());
@@ -310,7 +310,7 @@ namespace MBSim {
             fT = new TEulerAngles(nq,nu[0]);
         }
         else if(dynamic_cast<TimeDependentRotationAboutFixedAxis*>(fAPK)) {
-#ifdef HAVE_SYMBOLIC_SX_SX_HPP
+#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
           CasadiFunction1<double> *angle = dynamic_cast<CasadiFunction1<double>*>(static_cast<TimeDependentRotationAboutFixedAxis*>(fAPK)->getRotationalFunction());
           if(angle) {
             Vec3 axis = static_cast<TimeDependentRotationAboutFixedAxis*>(fAPK)->getAxisOfRotation();
