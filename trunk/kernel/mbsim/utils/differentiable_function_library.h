@@ -20,207 +20,99 @@
 #ifndef DIFFERENTIABLE_FUNCTION_LIBRARY_H_
 #define DIFFERENTIABLE_FUNCTION_LIBRARY_H_
 
+#ifdef HAVE_SYMBOLIC_SX_SX_HPP
+
 #include <mbsim/utils/function.h>
+#include <symbolic/fx/sx_function.hpp>
 
 namespace MBSim {
 
-  template<class Ret> class FirstDerivative;
-  template<class Ret> class SecondDerivative;
-
-  template<class Ret>
-    class DifferentiableFunction : public Function1<Ret,double> {
-      protected:
-        DifferentiableFunction *firstDerivative, *secondDerivative;
-      public:
-        DifferentiableFunction() : firstDerivative(0), secondDerivative(0) {}
-
-        virtual ~DifferentiableFunction() {
-          delete firstDerivative;
-          delete secondDerivative;
-        }
-
-        std::string getType() const { return "DifferentiableFunction"; }
-
-        DifferentiableFunction* getFirstDerivative() {
-          return firstDerivative ? firstDerivative : new FirstDerivative<Ret>(this);
-        }
-
-        DifferentiableFunction* getSecondDerivative() {
-          return secondDerivative ? secondDerivative : new SecondDerivative<Ret>(this);
-        }
-
-        virtual Ret diff1(const double& x, const void * =NULL) {
-          double dx = epsroot();
-          return ((*this)(x+dx) - (*this)(x-dx))/(2.*dx);
-        }
-        virtual Ret diff2(const double& x, const void * =NULL) {
-          double dx = epsroot();
-          return ((*this).diff1(x+dx) - (*this).diff1(x-dx))/(2.*dx);
-        }
-    };
-
   template <class Ret>
-    class FirstDerivative : public DifferentiableFunction<Ret> {
-      protected:
-        DifferentiableFunction<Ret> *f;
-      public:
-        FirstDerivative(DifferentiableFunction<Ret> *f_) : f(f_) {}
-        Ret operator()(const double& x, const void * =NULL) {
-          return (*f).diff1(x);
-        }
-        Ret diff1(const double& x, const void * =NULL) {
-          return (*f).diff2(x);
-        }
-    };
-
-  template <class Ret>
-    class SecondDerivative : public DifferentiableFunction<Ret> {
-      protected:
-        DifferentiableFunction<Ret> *f;
-      public:
-        SecondDerivative(DifferentiableFunction<Ret> *f_) : f(f_) {}
-        Ret operator()(const double& x, const void * =NULL) {
-          return (*f).diff2(x);
-        }
-    };
-
-  class Variable : public DifferentiableFunction<double> {
-    public:
-      Variable() {}
-      double operator()(const double& x, const void * =NULL) {
-        return x;
-      }
-      double diff1(const double& x, const void * =NULL) {
-        return 1;
-      }
-      double diff2(const double& x, const void * =NULL) {
-        return 0;
-      }
-  };
-
-  class Zero : public DifferentiableFunction<double> {
-    public:
-      Zero() {}
-      double operator()(const double& x, const void * =NULL) {
-        return 0;
-      }
-      double diff1(const double& x, const void * =NULL) {
-        return 0;
-      }
-      double diff2(const double& x, const void * =NULL) {
-        return 0;
-      }
-  };
-
-  class Constant : public DifferentiableFunction<double> {
-    protected:
-      double a;
-    public:
-      Constant(double a_) : a(a_) {}
-      double operator()(const double& x, const void * =NULL) {
-        return a;
-      }
-      double diff1(const double& x, const void * =NULL) {
-        return 0;
-      }
-      double diff2(const double& x, const void * =NULL) {
-        return 0;
-      }
-  };
-
-  class Sinus : public DifferentiableFunction<double> {
-    protected:
-      DifferentiableFunction<double> *f;
-    public:
-      Sinus(DifferentiableFunction<double> *f_) : f(f_) {}
-      double operator()(const double& x, const void * =NULL) {
-        return sin((*f)(x));
-      }
-      double diff1(const double& x, const void * =NULL) {
-        return cos((*f)(x))*(*f).diff1(x);
-      }
-      double diff2(const double& x, const void * =NULL) {
-        return -sin((*f)(x))*(*f).diff1(x)*(*f).diff1(x) + cos((*f)(x))*(*f).diff2(x);
-      }
-  };
-
-  class Product : public DifferentiableFunction<double> {
-    protected:
-      DifferentiableFunction<double> *f1, *f2;
-    public:
-      Product(DifferentiableFunction<double> *f1_, DifferentiableFunction<double> *f2_) : f1(f1_), f2(f2_){}
-      double operator()(const double& x, const void * =NULL) {
-        return (*f1)(x)*(*f2)(x);
-      }
-      double diff1(const double& x, const void * =NULL) {
-        return (*f1).diff1(x)*(*f2)(x) + (*f1)(x)*(*f2).diff1(x);
-      }
-      double diff2(const double& x, const void * =NULL) {
-        return (*f1).diff2(x)*(*f2)(x) + 2*(*f1).diff1(x)*(*f2).diff1(x) + (*f1)(x)*(*f2).diff2(x) ;
-      }
-  };
-
-  class Sum : public DifferentiableFunction<double> {
-    protected:
-      DifferentiableFunction<double> *f1, *f2;
-    public:
-      Sum(DifferentiableFunction<double> *f1_, DifferentiableFunction<double> *f2_) : f1(f1_), f2(f2_){}
-      double operator()(const double& x, const void * =NULL) {
-        return (*f1)(x)+(*f2)(x);
-      }
-      double diff1(const double& x, const void * =NULL) {
-        return (*f1).diff1(x)+(*f2).diff1(x);
-      }
-      double diff2(const double& x, const void * =NULL) {
-        return (*f1).diff2(x)+(*f2).diff2(x);
-      }
-  };
-
-  class LinearFunction : public DifferentiableFunction<double> {
-    protected:
-      double a, b;
-    public:
-      LinearFunction(double a_, double b_) : a(a_), b(b_) {}
-      double operator()(const double& x, const void * =NULL) {
-        return a*x+b;
-      }
-      double diff1(const double& x, const void * =NULL) {
-        return a;
-      }
-      double diff2(const double& x, const void * =NULL) {
-        return 0;
-      }
+  class Casadi {
   };
 
   template <class Col>
-    class VectorFunction : public DifferentiableFunction<fmatvec::Vector<Col,double> > {
-      protected:
-        std::vector<DifferentiableFunction<double>*> f;
-      public:
-        VectorFunction() {}
-        VectorFunction(std::vector<DifferentiableFunction<double>*> f_) : f(f_) {}
-        void addFunction(DifferentiableFunction<double> *f_) {f.push_back(f_);}
-        virtual fmatvec::Vector<Col,double> operator()(const double& x, const void * =NULL) {
-          fmatvec::Vector<Col,double> r(f.size(),fmatvec::NONINIT);
-          for(int i=0; i<r.size(); i++)
-            r(i) = (*f[i])(x);
-          return r;
-        };
-        virtual fmatvec::Vector<Col,double> diff1(const double& x, const void * =NULL) {
-          fmatvec::Vector<Col,double> r(f.size(),fmatvec::NONINIT);
-          for(int i=0; i<r.size(); i++)
-            r(i) = (*f[i]).diff1(x);
-          return r;
-        }
-        virtual fmatvec::Vector<Col,double> diff2(const double& x, const void * =NULL) {
-          fmatvec::Vector<Col,double> r(f.size(),fmatvec::NONINIT);
-          for(int i=0; i<r.size(); i++)
-            r(i) = (*f[i]).diff2(x);
-          return r;
-        }
-    };
+  class Casadi<fmatvec::Vector<Col,double> > {
+    public:
+      static fmatvec::Vector<Col,double> cast(const CasADi::Matrix<double> &x) {
+        fmatvec::Vector<Col,double> y(x.size1(),fmatvec::NONINIT);
+        for(int i=0; i<x.size1(); i++)
+          y.e(i) = x(i,0).toScalar();
+        return y;
+      }
+  };
+
+  template <>
+  class Casadi<double> {
+    public:
+      static double cast(const CasADi::Matrix<double> &x) {
+        return x.toScalar();
+      }
+  };
+
+  template <class Ret>
+  class CasadiFunction1 : public Function1<Ret,double> {
+    CasADi::SXFunction f;
+    public:
+    CasadiFunction1(const CasADi::SXFunction &f_) : f(f_) {
+      f.init();
+    }
+    CasadiFunction1(const CasADi::FX &f_) : f(CasADi::SXFunction(f_)) {
+      f.init();
+    }
+    CasADi::SXFunction& getSXFunction() {return f;} 
+
+    std::string getType() const { return "CasadiFunction1"; }
+
+    Ret operator()(const double& x_, const void * =NULL) {
+      f.setInput(x_);
+      f.evaluate();
+      return Casadi<Ret>::cast(f.output());
+    }
+  };
+
+  // The following classes may be faster when calculating the function value
+  // together with the first and second derivative
+ 
+//  template <class Ret>
+//  class CasadiFunctionDerivatives1 : public Function1<Ret,double> {
+//    private:
+//      CasADi::SXFunction f;
+//      CasADi::FX fder1, fder2;
+//    public:
+//    CasadiFunctionDerivatives1(const CasADi::SXFunction &f_) : f(f_) {
+//      f.init();
+//      fder1 = f.jacobian();
+//      fder1.init();
+//      fder2 = fder1.jacobian();
+//      fder2.init();
+//    }
+//    std::string getType() const { return "CasadiDiffFunction"; }
+//
+//    CasADi::FX& getFXFunction() {return fder2;} 
+//
+//    Ret operator()(const double& x_, const void * =NULL) {
+//      fder2.setInput(x_);
+//      fder2.evaluate();
+//      return Casadi<Ret>::cast(fder2.output(2));
+//    }
+//  };
+//
+//  template <class Ret>
+//  class CasadiFXFunction : public Function1<Ret,double> {
+//    private:
+//    CasADi::FX &f;
+//    int index;
+//    public:
+//    CasadiFXFunction(CasADi::FX &f_, int index_=0) : f(f_), index(index_) {}
+//
+//    Ret operator()(const double& x_, const void * =NULL) {
+//      return Casadi<Ret>::cast(f.output(2-index));
+//    }
+//  };
 
 }
 
+#endif
 
 #endif

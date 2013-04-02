@@ -19,6 +19,27 @@ PKG_CHECK_MODULES(DEPS, fmatvec >= 1.0.1 hdf5serie mbxmlutilstinyxml)
 
 AC_SUBST([requires])
 
+dnl Check for casadi 
+AC_ARG_WITH(casadi_inc_prefix,
+  [  --with-casadi-inc-prefix=PFX  Prefix where casadi includes are installed],
+  [CASADICPPFLAGS="-I$withval"],
+  [CASADICPPFLAGS="-I$prefix"])
+AC_ARG_WITH(casadi_lib_prefix,
+  [  --with-casadi-lib-prefix=PFX  Prefix where casadi lib is installed],
+  [ CASADILDFLAGS="-L$withval" ],
+  [ CASADILDFLAGS="-L$prefix" ])
+CPPFLAGS="$CPPFLAGS $CASADICPPFLAGS"
+casadi="no"
+AC_CHECK_HEADERS([symbolic/sx/sx.hpp], [casadi="yes"],
+  [AC_MSG_RESULT([Can not find casadi c++ header symbolic/sx/sx.hpp])])
+AC_MSG_CHECKING([for casadi c++ library])
+if test $casadi = "yes" ; then
+LDFLAGS="$LDFLAGS $CASADILDFLAGS"
+LIBS="$LIBS -lcasadi"
+AC_TRY_LINK([#include <symbolic/sx/sx.hpp>],[CasADi::SX x],[AC_MSG_RESULT([yes])],
+  [casadi="no"; AC_MSG_RESULT([no]); AC_MSG_ERROR([Can not link with casadi c++ library])])
+fi
+
 dnl check for numerics library
 dnl PKG_CHECK_MODULES(MBSIMNUMERICS, numerics ,[requires="$requires numerics"; numerics_compilerflag="-DHAVE_MBSIMNUMERICS";AC_DEFINE([HAVE_MBSIMNUMERICS],[1],[linking with MBSimNumerics-library])], [echo No numerics package is used. Consider to install it...])
 dnl AM_CONDITIONAL([COND_NUMERICS], [test _$numerics_compilerflag = _-DHAVE_MBSIMNUMERICS])
@@ -74,7 +95,16 @@ AC_SUBST([LIBMBSIM_AGE])
 LIBMBSIM_VERSION_INFO=$LIBMBSIM_CURRENT:$LIBMBSIM_REVISION:$LIBMBSIM_AGE
 AC_SUBST([LIBMBSIM_VERSION_INFO])
 
-CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long -Wfloat-equal"
+if test $casadi = "yes" ; then
+  DEFINES="$DEFINES -DHAVE_SYMBOLIC_SX_SX_HPP"
+  CASADILIB="-lcasadi"
+  AC_SUBST([CASADILIB])
+  AC_SUBST([CASADICPPFLAGS])
+  AC_SUBST([CASADILDFLAGS])
+  CPPFLAGS="$CPPFLAGS -Wall -Wno-unknown-pragmas -Wno-long-long"
+else
+  CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long -Wfloat-equal"
+fi
 AC_MSG_CHECKING([for -Wno-strict-overflow compiler flag])
 CPPFLAGS_OLD=$CPPFLAGS
 CPPFLAGS="$CPPFLAGS -Wno-strict-overflow"

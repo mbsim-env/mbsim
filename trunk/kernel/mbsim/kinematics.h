@@ -316,7 +316,6 @@ namespace MBSim {
        */
       virtual ~TimeDependentRotationAboutFixedAxis() { delete rot; rot = 0; delete angle; angle = 0; }
 
-
       /* INTERFACE OF ROTATION */
       virtual int getqSize() const { return 0; }
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
@@ -324,6 +323,7 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
+      Function1<double, double>* getRotationalFunction() { return angle; }
       void setRotationalFunction(Function1<double, double> *angle_) { angle = angle_; }
       const fmatvec::Vec3& getAxisOfRotation() const { return rot->getAxisOfRotation(); }
       void setAxisOfRotation(const fmatvec::Vec3& a_) { rot->setAxisOfRotation(a_); }

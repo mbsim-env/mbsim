@@ -255,11 +255,18 @@ namespace MBSim {
           JT = dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors();
         }
         else if(dynamic_cast<TimeDependentTranslation*>(fPrPK)) {
-          DifferentiableFunction<fmatvec::Vec3> *pos = dynamic_cast<DifferentiableFunction<fmatvec::Vec3> *>(dynamic_cast<TimeDependentTranslation*>(fPrPK)->getTranslationFunction());
+#ifdef HAVE_SYMBOLIC_SX_SX_HPP
+          CasadiFunction1<Vec3> *pos = dynamic_cast<CasadiFunction1<Vec3>*>(static_cast<TimeDependentTranslation*>(fPrPK)->getTranslationFunction());
           if(pos) {
-            if(fPjT==0) fPjT = pos->getFirstDerivative();
-            if(fPdjT==0) fPdjT = pos->getSecondDerivative();
+            if(fPjT==0) fPjT = new CasadiFunction1<Vec3>(pos->getSXFunction().jacobian());
+            if(fPdjT==0) fPdjT = new CasadiFunction1<Vec3>(static_cast<CasadiFunction1<Vec3>*>(fPjT)->getSXFunction().jacobian());
           }
+          //Casadi2DiffFunction<Vec3> *pos = dynamic_cast<Casadi2DiffFunction<Vec3>*>(static_cast<TimeDependentTranslation*>(fPrPK)->getTranslationFunction());
+          //if(pos) {
+          //  if(fPjT==0) fPjT = new CasadiFXFunction<Vec3>(pos->getFXFunction(),1);
+          //  if(fPdjT==0) fPdjT = new CasadiFXFunction<Vec3>(pos->getFXFunction(),2);
+          //}
+#endif
         }
         PJT[0].set(Index(0,2), Index(0,JT.cols()-1),JT);
       }
@@ -299,6 +306,21 @@ namespace MBSim {
             fT = new TEulerAngles2(nq,nu[0]);
           else
             fT = new TEulerAngles(nq,nu[0]);
+        }
+        else if(dynamic_cast<TimeDependentRotationAboutFixedAxis*>(fAPK)) {
+#ifdef HAVE_SYMBOLIC_SX_SX_HPP
+          CasadiFunction1<double> *angle = dynamic_cast<CasadiFunction1<double>*>(static_cast<TimeDependentRotationAboutFixedAxis*>(fAPK)->getRotationalFunction());
+          if(angle) {
+            Vec3 axis = static_cast<TimeDependentRotationAboutFixedAxis*>(fAPK)->getAxisOfRotation();
+            CasADi::SXMatrix der1(axis.size(),1);
+            for(int i=0; i<axis.size(); i++)
+              der1.elem(i,0) = axis.e(i)*angle->getSXFunction().outputExpr(0).elem(0,0);
+            CasADi::SXFunction foo(angle->getSXFunction().inputExpr(0),der1);
+            foo.init();
+            if(fPjR==0) fPjR = new CasadiFunction1<Vec3>(foo.jacobian());
+            if(fPdjR==0) fPdjR = new CasadiFunction1<Vec3>(static_cast<CasadiFunction1<Vec3>*>(fPjR)->getSXFunction().jacobian());
+          }
+#endif
         }
 
         PJR[0].set(Index(0,2), Index(nu[0]-JR.cols(),nu[0]-1),JR);
@@ -414,6 +436,11 @@ namespace MBSim {
   }
 
   void RigidBody::updateKinematicsForSelectedFrame(double t) {
+    if(fAPK)
+      APK = (*fAPK)(qRel,t);
+    if(fPrPK)
+      PrPK = (*fPrPK)(qRel,t);
+
     if(fPJT)
       PJT[0] = (*fPJT)(qRel,t);
     if(fPJR)
@@ -423,11 +450,6 @@ namespace MBSim {
       PjT = (*fPjT)(t);
     if(fPjR)
       PjR = (*fPjR)(t);
-
-    if(fAPK)
-      APK = (*fAPK)(qRel,t);
-    if(fPrPK)
-      PrPK = (*fPrPK)(qRel,t);
 
     K->setOrientation(R->getOrientation()*APK);
 
