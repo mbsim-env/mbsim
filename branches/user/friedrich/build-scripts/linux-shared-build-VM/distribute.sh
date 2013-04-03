@@ -194,6 +194,10 @@ rm -f $DISTDIR/include/features.h
 (cd $DISTDIR/lib; ln -s libcblas.so.3 libcblas.so)
 (cd $DISTDIR/lib; ln -s libatlas.so.3 libatlas.so)
 (cd $DISTDIR/lib; ln -s libstdc++.so.6 libstdc++.so)
+# copy openmbvcppinterface SWIG files
+cp -uL $PREFIX/bin/OpenMBV.oct $DISTDIR/bin
+cp -uL $PREFIX/bin/OpenMBV.py $DISTDIR/bin
+cp -uL $PREFIX/bin/_OpenMBV.so $DISTDIR/bin
 # modifie all ELF rpath in lib/*.so*
 for F in $DISTDIR/lib/*.so $DISTDIR/lib/*.so.*; do
   chrpath -r '$ORIGIN/../lib' $F &> /dev/null || chrpath -d $F &> /dev/null || DUMMYVAR=0

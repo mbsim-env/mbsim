@@ -177,6 +177,10 @@ cp -ruL $OCTAVEOCTDIR/* $DISTDIR/lib/octave/$OCTAVEVERSION/oct
 
 # SPECIAL handling
 cp -uL /usr/i686-w64-mingw32/sys-root/mingw/bin/iconv.dll $DISTDIR/bin
+# copy openmbvcppinterface SWIG files
+cp -uL $PREFIX/bin/OpenMBV.oct $DISTDIR/bin
+cp -uL $PREFIX/bin/OpenMBV.py $DISTDIR/bin
+cp -uL $PREFIX/bin/_OpenMBV.pyd $DISTDIR/bin
 
 # create mbsim-config.bat
 cat << EOF > $DISTDIR/bin/mbsim-config.bat
