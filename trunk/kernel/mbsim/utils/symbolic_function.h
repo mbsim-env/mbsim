@@ -25,12 +25,69 @@
 
 namespace MBSim {
 
-  template <class Ret>
-  class Casadi {
+  template <class Arg>
+  class ToCasadi1 {
+  };
+
+  template <>
+  class ToCasadi1<double> {
+    public:
+      static double cast(const double &x) {
+        return x;
+      }
   };
 
   template <class Col>
-  class Casadi<fmatvec::Vector<Col,double> > {
+  class ToCasadi1<fmatvec::Vector<Col,double> > {
+    public:
+      static std::vector<double> cast(const fmatvec::Vector<Col,double> &x) {
+        std::vector<double> y(x.size());
+        for(int i=0; i<x.size(); i++)
+          y[i] = x.e(i);
+        return y; 
+      }
+  };
+
+  template <class Arg1, class Arg2>
+  class ToCasadi2 {
+  };
+
+  template <class Col>
+  class ToCasadi2<fmatvec::Vector<Col,double>,double> {
+    public:
+      static std::vector<double> cast(const fmatvec::Vector<Col,double> &x1, const double &x2) {
+        std::vector<double> y(x1.size()+1);
+        for(int i=0; i<x1.size(); i++)
+          y[i] = x1.e(i);
+        y[x1.size()] = x2;
+        return y; 
+      }
+  };
+
+  template <class Arg1, class Arg2, class Arg3>
+  class ToCasadi3 {
+  };
+
+  template <class Col>
+  class ToCasadi3<fmatvec::Vector<Col,double>,fmatvec::Vector<Col,double>,double> {
+    public:
+      static std::vector<double> cast(const fmatvec::Vector<Col,double> &x1, const fmatvec::Vector<Col,double> &x2, const double &x3) {
+        std::vector<double> y(x1.size()+x2.size()+1);
+        for(int i=0; i<x1.size(); i++)
+          y[i] = x1.e(i);
+        for(int i=0; i<x2.size(); i++)
+          y[i+x1.size()] = x2.e(i);
+        y[x1.size()+x2.size()] = x3;
+        return y; 
+      }
+  };
+
+  template <class Ret>
+  class FromCasadi {
+  };
+
+  template <class Col>
+  class FromCasadi<fmatvec::Vector<Col,double> > {
     public:
       static fmatvec::Vector<Col,double> cast(const CasADi::Matrix<double> &x) {
         fmatvec::Vector<Col,double> y(x.size1(),fmatvec::NONINIT);
@@ -40,8 +97,20 @@ namespace MBSim {
       }
   };
 
+  template <class Row>
+  class FromCasadi<fmatvec::Matrix<fmatvec::General,Row,fmatvec::Var,double> > {
+    public:
+      static fmatvec::Matrix<fmatvec::General,Row,fmatvec::Var,double> cast(const CasADi::Matrix<double> &A) {
+        fmatvec::Matrix<fmatvec::General,Row,fmatvec::Var,double> B(A.size1(),A.size2(),fmatvec::NONINIT);
+        for(int i=0; i<A.size1(); i++)
+          for(int j=0; j<A.size2(); j++)
+            B.e(i,j) = A(i,j).toScalar();
+        return B;
+      }
+  };
+
   template <>
-  class Casadi<double> {
+  class FromCasadi<double> {
     public:
       static double cast(const CasADi::Matrix<double> &x) {
         return x.toScalar();
@@ -62,10 +131,52 @@ namespace MBSim {
 
     std::string getType() const { return "SymbolicFunction1"; }
 
-    Ret operator()(const Arg& x_, const void * =NULL) {
-      f.setInput(x_);
+    Ret operator()(const Arg& x, const void * =NULL) {
+      f.setInput(ToCasadi1<Arg>::cast(x));
       f.evaluate();
-      return Casadi<Ret>::cast(f.output());
+      return FromCasadi<Ret>::cast(f.output());
+    }
+  };
+
+  template <class Ret, class Arg1, class Arg2>
+  class SymbolicFunction2 : public Function2<Ret,Arg1,Arg2> {
+    CasADi::SXFunction f;
+    public:
+    SymbolicFunction2(const CasADi::SXFunction &f_) : f(f_) {
+      f.init();
+    }
+    SymbolicFunction2(const CasADi::FX &f_) : f(CasADi::SXFunction(f_)) {
+      f.init();
+    }
+    CasADi::SXFunction& getSXFunction() {return f;} 
+
+    std::string getType() const { return "SymbolicFunction3"; }
+
+    Ret operator()(const Arg1& x1, const Arg2& x2, const void * =NULL) {
+      f.setInput(ToCasadi2<Arg1,Arg2>::cast(x1,x2));
+      f.evaluate();
+      return FromCasadi<Ret>::cast(f.output());
+    }
+  };
+
+  template <class Ret, class Arg1, class Arg2, class Arg3>
+  class SymbolicFunction3 : public Function3<Ret,Arg1,Arg2,Arg3> {
+    CasADi::SXFunction f;
+    public:
+    SymbolicFunction3(const CasADi::SXFunction &f_) : f(f_) {
+      f.init();
+    }
+    SymbolicFunction3(const CasADi::FX &f_) : f(CasADi::SXFunction(f_)) {
+      f.init();
+    }
+    CasADi::SXFunction& getSXFunction() {return f;} 
+
+    std::string getType() const { return "SymbolicFunction3"; }
+
+    Ret operator()(const Arg1& x1, const Arg2& x2, const Arg3& x3, const void * =NULL) {
+      f.setInput(ToCasadi3<Arg1,Arg2,Arg3>::cast(x1,x2,x3));
+      f.evaluate();
+      return FromCasadi<Ret>::cast(f.output());
     }
   };
 
@@ -92,7 +203,7 @@ namespace MBSim {
 //    Ret operator()(const double& x_, const void * =NULL) {
 //      fder2.setInput(x_);
 //      fder2.evaluate();
-//      return Casadi<Ret>::cast(fder2.output(2));
+//      return FromCasadi<Ret>::cast(fder2.output(2));
 //    }
 //  };
 //
@@ -105,7 +216,7 @@ namespace MBSim {
 //    SymbolicFXFunction(CasADi::FX &f_, int index_=0) : f(f_), index(index_) {}
 //
 //    Ret operator()(const double& x_, const void * =NULL) {
-//      return Casadi<Ret>::cast(f.output(2-index));
+//      return FromCasadi<Ret>::cast(f.output(2-index));
 //    }
 //  };
 

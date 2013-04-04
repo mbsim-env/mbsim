@@ -154,7 +154,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      GeneralTranslation(int qSize_, Function1<fmatvec::Vec3,fmatvec::Vec> *pos_) : qSize(qSize_), pos(pos_) {}
+      GeneralTranslation(int qSize_, Function2<fmatvec::Vec3,fmatvec::Vec,double> *pos_) : qSize(qSize_), pos(pos_) {}
 
       /**
        * \brief destructor
@@ -172,7 +172,7 @@ namespace MBSim {
        * \param time
        * \return translational vector as a function of generalized position and time, r=r(q,t)
        */
-      virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return (*pos)(q); }
+      virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return (*pos)(q,t); }
 
       virtual void initializeUsingXML(TiXmlElement *element) {}
       virtual TiXmlElement* writeXMLFile(TiXmlNode *parent) { return 0; }
@@ -180,7 +180,7 @@ namespace MBSim {
 
     private:
       int qSize;
-      Function1<fmatvec::Vec3,fmatvec::Vec> *pos;
+      Function2<fmatvec::Vec3,fmatvec::Vec,double> *pos;
   };
 
   /**
@@ -654,7 +654,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      GeneralJacobian(int uSize_, Function1<fmatvec::Mat3V,fmatvec::Vec> *J_) : uSize(uSize_), J(J_) {}
+      GeneralJacobian(int uSize_, Function2<fmatvec::Mat3V,fmatvec::Vec,double> *J_) : uSize(uSize_), J(J_) {}
 
       /**
        * \brief destructor
@@ -673,14 +673,14 @@ namespace MBSim {
        * \return Jacobian matrix as a function of generalized position and time,
        * J=J(q,t)
        */
-      virtual fmatvec::Mat3V operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return (*J)(q); }
+      virtual fmatvec::Mat3V operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return (*J)(q,t); }
 
       virtual void initializeUsingXML(TiXmlElement *element) {};
       /***************************************************/
 
     private:
       int uSize;
-      Function1<fmatvec::Mat3V,fmatvec::Vec> *J;
+      Function2<fmatvec::Mat3V,fmatvec::Vec,double> *J;
   };
 
   /**
