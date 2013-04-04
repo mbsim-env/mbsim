@@ -48,8 +48,8 @@ namespace MBSim {
       }
   };
 
-  template <class Ret>
-  class SymbolicFunction1 : public Function1<Ret,double> {
+  template <class Ret, class Arg>
+  class SymbolicFunction1 : public Function1<Ret,Arg> {
     CasADi::SXFunction f;
     public:
     SymbolicFunction1(const CasADi::SXFunction &f_) : f(f_) {
@@ -62,7 +62,7 @@ namespace MBSim {
 
     std::string getType() const { return "SymbolicFunction1"; }
 
-    Ret operator()(const double& x_, const void * =NULL) {
+    Ret operator()(const Arg& x_, const void * =NULL) {
       f.setInput(x_);
       f.evaluate();
       return Casadi<Ret>::cast(f.output());
