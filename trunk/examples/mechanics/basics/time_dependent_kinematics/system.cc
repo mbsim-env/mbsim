@@ -2,7 +2,7 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/frame.h"
 #include "mbsim/environment.h"
-#include "mbsim/utils/casadi_function.h"
+#include "mbsim/utils/symbolic_function.h"
 #include "mbsim/observers/frame_observer.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -48,13 +48,13 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   fexp[2] = 0; 
   SXFunction foo(x,fexp);
 
-  CasadiFunction1<Vec3> *f = new CasadiFunction1<Vec3>(foo);
+  SymbolicFunction1<Vec3,double> *f = new SymbolicFunction1<Vec3,double>(foo);
   body1->setTranslation(new TimeDependentTranslation(f));
 
   SX fexp2 = 5*sin(freq2*x);
   SXFunction foo2(x,fexp2);
 
-  CasadiFunction1<double> *f2 = new CasadiFunction1<double>(foo2);
+  SymbolicFunction1<double,double> *f2 = new SymbolicFunction1<double,double>(foo2);
   body1->setRotation(new TimeDependentRotationAboutFixedAxis(f2,"[0;0;1]"));
 
   body1->getFrame("C")->setPlotFeature(globalPosition,enabled);
@@ -64,8 +64,16 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   FrameObserver *o = new FrameObserver("Observer");
   addObserver(o);
   o->setFrame(body1->getFrame("C"));
-  o->enableOpenMBVVelocity();
-  o->enableOpenMBVAngularVelocity();
+  OpenMBV::Arrow *arrow = new OpenMBV::Arrow;
+  arrow->setReferencePoint(OpenMBV::Arrow::fromPoint);
+  arrow->setStaticColor(0.5);
+  o->setOpenMBVVelocityArrow(arrow);
+
+  arrow = new OpenMBV::Arrow;
+  arrow->setReferencePoint(OpenMBV::Arrow::fromPoint);
+  arrow->setType(OpenMBV::Arrow::toDoubleHead);
+  arrow->setStaticColor(0.4);
+  o->setOpenMBVAngularVelocityArrow(arrow);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   // ----------------------- Visualisierung in OpenMBV --------------------  
