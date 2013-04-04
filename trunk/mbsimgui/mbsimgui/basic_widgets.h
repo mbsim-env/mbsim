@@ -272,4 +272,51 @@ class PlotFeature : public Widget {
     QComboBox *status;
 };
 
+class GearDependencyWidget : public Widget {
+
+  friend class GearDependencyProperty;
+
+  public:
+    GearDependencyWidget(Element* element);
+    RigidBody* getBody() {return refBody->getBody();}
+    RigidBodyOfReferenceWidget* getRigidBodyOfReferenceWidget() {return refBody;}
+    void updateWidget() {refBody->updateWidget();}
+  protected:
+   RigidBodyOfReferenceWidget* refBody;
+   ExtWidget *ratio;
+};
+
+class GearDependenciesWidget : public Widget {
+  Q_OBJECT
+
+  friend class GearDependenciesProperty;
+
+  public:
+    GearDependenciesWidget(Element* element);
+
+    void updateWidget(); 
+
+    RigidBody* getBody(int i) {return refBody[i]->getBody();}
+    void addBody(int i, RigidBody* body_);
+    int getSize() const {return refBody.size();}
+    void setNumberOfBodies(int n);
+
+  protected:
+    Element* element;
+    std::vector<RigidBody*> selectedBody;
+    std::vector<GearDependencyWidget*> refBody;
+    QStackedWidget *stackedWidget; 
+    QListWidget *bodyList; 
+
+  protected slots:
+    void updateList();
+    void addDependency();
+    void removeDependency();
+    void updateGeneralizedCoordinatesOfBodies();
+    void openContextMenu(const QPoint &pos);
+
+  signals:
+    void bodyChanged();
+};
+
 #endif

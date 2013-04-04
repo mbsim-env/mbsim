@@ -73,6 +73,8 @@ class OMBVArrowProperty : public OMBVDynamicColoredObjectProperty {
     virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element); 
     virtual QString getType() const { return "Arrow"; }
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
   protected:
     ExtProperty diameter, headDiameter, headLength, type, referencePoint, scaleLength;
 };

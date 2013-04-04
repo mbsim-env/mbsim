@@ -65,6 +65,8 @@ class OMBVDynamicColoredObjectWidget : public OMBVObjectWidget {
 
 class OMBVArrowWidget : public OMBVDynamicColoredObjectWidget {
 
+  friend class OMBVArrowProperty;
+
   public:
     OMBVArrowWidget(const std::string &name, bool fromPoint=false);
     virtual QString getType() const { return "Arrow"; }

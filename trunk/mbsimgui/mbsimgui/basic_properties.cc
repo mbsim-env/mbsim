@@ -472,3 +472,87 @@ void SolverParametersProperty::toWidget(QWidget *widget) {
   tolerances.toWidget(static_cast<SolverParametersWidget*>(widget)->tolerances);
 }
 
+GearDependencyProperty::GearDependencyProperty(Element* element_) : element(element_), refBody(0,element) {
+  vector<PhysicalStringProperty*> input;
+  input.push_back(new PhysicalStringProperty(new ScalarProperty("1"), "", MBSIMNS"transmissionRatio"));
+  ratio.setProperty(new ExtPhysicalVarProperty(input));
+} 
+
+TiXmlElement* GearDependencyProperty::initializeUsingXML(TiXmlElement *ele) {
+  ratio.initializeUsingXML(ele);
+  refBody.setSavedBodyOfReference(ele->Attribute("ref"));
+  return ele;
+}
+
+TiXmlElement* GearDependencyProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele = new TiXmlElement(MBSIMNS"independentRigidBody");
+  ratio.writeXMLFile(ele);
+  if(refBody.getBody())
+    ele->SetAttribute("ref", refBody.getBody()->getXMLPath(element,true).toStdString());
+  parent->LinkEndChild(ele);
+  return ele;
+}
+
+void GearDependencyProperty::fromWidget(QWidget *widget) {
+  ratio.fromWidget(static_cast<GearDependencyWidget*>(widget)->ratio);
+  refBody.fromWidget(static_cast<GearDependencyWidget*>(widget)->refBody);
+}
+
+void GearDependencyProperty::toWidget(QWidget *widget) {
+  ratio.toWidget(static_cast<GearDependencyWidget*>(widget)->ratio);
+  refBody.toWidget(static_cast<GearDependencyWidget*>(widget)->refBody);
+}
+
+void GearDependenciesProperty::initialize() {
+  for(unsigned int i=0; i<refBody.size(); i++)
+    refBody[i]->initialize();
+}
+
+void GearDependenciesProperty::addDependency() {
+}
+
+TiXmlElement* GearDependenciesProperty::initializeUsingXML(TiXmlElement *ele) {
+  TiXmlElement *e = ele->FirstChildElement(xmlName);
+  if(e) {
+    TiXmlElement *ee=e->FirstChildElement();
+    while(ee) {
+      refBody.push_back(new GearDependencyProperty(element));
+      refBody[refBody.size()-1]->initializeUsingXML(ee);
+      ee=ee->NextSiblingElement();
+    }
+  }
+  return e;
+}
+
+TiXmlElement* GearDependenciesProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele = new TiXmlElement(xmlName);
+  for(int i=0; i<refBody.size(); i++) {
+    if(refBody[i])
+      refBody[i]->writeXMLFile(ele);
+  }
+  parent->LinkEndChild(ele);
+  return ele;
+}
+
+void GearDependenciesProperty::fromWidget(QWidget *widget) {
+  if(refBody.size()!=static_cast<GearDependenciesWidget*>(widget)->refBody.size()) {
+    refBody.clear();
+    for(int i=0; i<static_cast<GearDependenciesWidget*>(widget)->refBody.size(); i++)
+      refBody.push_back(new GearDependencyProperty(element));
+  }
+  for(int i=0; i<static_cast<GearDependenciesWidget*>(widget)->refBody.size(); i++) {
+    if(static_cast<GearDependenciesWidget*>(widget)->refBody[i])
+      refBody[i]->fromWidget(static_cast<GearDependenciesWidget*>(widget)->refBody[i]);
+  }
+}
+
+void GearDependenciesProperty::toWidget(QWidget *widget) {
+  static_cast<GearDependenciesWidget*>(widget)->setNumberOfBodies(refBody.size());
+  for(int i=0; i<refBody.size(); i++) {
+    if(refBody[i]) {
+      refBody[i]->toWidget(static_cast<GearDependenciesWidget*>(widget)->refBody[i]);
+    }
+  }
+  static_cast<GearDependenciesWidget*>(widget)->updateWidget();
+}
+

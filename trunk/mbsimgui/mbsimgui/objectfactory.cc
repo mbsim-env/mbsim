@@ -110,14 +110,12 @@ Object* MBSimObjectFactory::createObject(TiXmlElement *element, QTreeWidgetItem*
   if(element==0) return 0;
   if(element->ValueStr()==MBSIMNS"RigidBody")
     return new RigidBody(element->Attribute("name"),parentItem,ind);
+  else if(element->ValueStr()==MBSIMNS"GearConstraint")
+    return new GearConstraint(element->Attribute("name"),parentItem,ind);
+  else if(element->ValueStr()==MBSIMNS"KinematicConstraint")
+    return new KinematicConstraint(element->Attribute("name"),parentItem,ind);
   else if(element->ValueStr()==MBSIMNS"JointConstraint")
     return new JointConstraint(element->Attribute("name"),parentItem,ind);
-  else if(element->ValueStr()==MBSIMNS"KinematicConstraint")
-    return new KinematicConstraint(element->Attribute("name"),parentItem,ind);
-  //else if(element->ValueStr()==MBSIMNS"GearConstraint")
-  //  return new GearConstraint(element->Attribute("name"));
-  else if(element->ValueStr()==MBSIMNS"KinematicConstraint")
-    return new KinematicConstraint(element->Attribute("name"),parentItem,ind);
   return 0;
 }
 

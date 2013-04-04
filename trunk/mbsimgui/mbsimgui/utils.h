@@ -256,8 +256,6 @@ std::vector<std::vector<double> > AIK2Cardan(const std::vector<std::vector<doubl
 
   };
 
-std::string evaluateOctave(const std::string &program);
-
 template<class T>
 inline std::string funcExt() {
   return "V";

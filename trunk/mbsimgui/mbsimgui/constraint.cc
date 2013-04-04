@@ -36,6 +36,84 @@ Constraint::Constraint(const QString &str, QTreeWidgetItem *parentItem, int ind)
 Constraint::~Constraint() {
 }
 
+GearConstraint::GearConstraint(const QString &str, QTreeWidgetItem *parentItem, int ind) : Constraint(str, parentItem, ind), refBody(0) {
+
+  setText(1,getType());
+
+  dependentBody.setProperty(new RigidBodyOfReferenceProperty(0,this,MBSIMNS"dependentRigidBody"));
+
+  independentBodies.setProperty(new GearDependenciesProperty(this,MBSIMNS"independentRigidBodies"));
+
+}
+
+GearConstraint::~GearConstraint() {
+}
+
+void GearConstraint::initialize() {
+  Constraint::initialize();
+  dependentBody.initialize();
+  independentBodies.initialize();
+}
+
+void GearConstraint::initializeDialog() {
+  Constraint::initializeDialog();
+
+  dependentBodyWidget = new ExtWidget("Dependent body",new RigidBodyOfReferenceWidget(this,0));
+  connect((RigidBodyOfReferenceWidget*)dependentBodyWidget->getWidget(),SIGNAL(bodyChanged()),this,SLOT(updateReferenceBody()));
+  dialog->addToTab("General", dependentBodyWidget);
+
+  independentBodiesWidget = new ExtWidget("Independent bodies",new GearDependenciesWidget(this));
+  //connect(dependentBodiesFirstSide_,SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
+  dialog->addToTab("General", independentBodiesWidget);
+}
+
+void GearConstraint::toWidget() {
+  Constraint::toWidget();
+  dependentBody.toWidget(dependentBodyWidget);
+  independentBodies.toWidget(independentBodiesWidget);
+}
+
+void GearConstraint::fromWidget() {
+  Constraint::fromWidget();
+  dependentBody.fromWidget(dependentBodyWidget);
+  independentBodies.fromWidget(independentBodiesWidget);
+}
+
+void GearConstraint::resizeVariables() {
+  int size = refBody?refBody->getUnconstrainedSize():0;
+//  ((Function1ChoiceWidget*)firstDerivativeOfKinematicFunctionWidget->getWidget())->resize(size,1);
+}
+
+void GearConstraint::updateReferenceBody() {
+  if(refBody) {
+    refBody->setConstrained(false);
+    refBody->resizeGeneralizedPosition();
+    refBody->resizeGeneralizedVelocity();
+  }
+  refBody = ((RigidBodyOfReferenceWidget*)dependentBodyWidget->getWidget())->getBody();
+  if(refBody) {
+    refBody->setConstrained(true);
+    refBody->resizeGeneralizedPosition();
+    refBody->resizeGeneralizedVelocity();
+    connect(refBody,SIGNAL(sizeChanged()),this,SLOT(resizeVariables()));
+    resizeVariables();
+  }
+}
+
+void GearConstraint::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e, *ee;
+  Constraint::initializeUsingXML(element);
+  dependentBody.initializeUsingXML(element);
+  independentBodies.initializeUsingXML(element);
+}
+
+TiXmlElement* GearConstraint::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = Constraint::writeXMLFile(parent);
+  dependentBody.writeXMLFile(ele0);
+  independentBodies.writeXMLFile(ele0);
+  return ele0;
+}
+
 KinematicConstraint::KinematicConstraint(const QString &str, QTreeWidgetItem *parentItem, int ind) : Constraint(str, parentItem, ind), refBody(0), kinematicFunction(0,false), firstDerivativeOfKinematicFunction(0,false), secondDerivativeOfKinematicFunction(0,false) {
 
   setText(1,getType());

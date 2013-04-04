@@ -34,6 +34,33 @@ class Constraint : public Object {
     friend class MainWindow;
 };
 
+class GearConstraint : public Constraint {
+  Q_OBJECT
+
+  public:
+    GearConstraint(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    ~GearConstraint();
+
+    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+
+    virtual QString getType() const { return "GearConstraint"; }
+
+    virtual void initializeDialog();
+    virtual void fromWidget();
+    virtual void toWidget();
+    void initialize();
+
+  protected:
+    RigidBody *refBody;
+    ExtWidget *dependentBodyWidget, *independentBodiesWidget;
+    ExtProperty dependentBody, independentBodies;
+
+  protected slots:
+    void resizeVariables();
+    void updateReferenceBody();
+};
+
 class KinematicConstraint : public Constraint {
   Q_OBJECT
 
@@ -63,7 +90,6 @@ class KinematicConstraint : public Constraint {
 };
 
 class JointConstraint : public Constraint {
-  Q_OBJECT
 
   public:
     JointConstraint(const QString &str, QTreeWidgetItem *parentItem, int ind);

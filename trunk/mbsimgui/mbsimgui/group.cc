@@ -137,6 +137,9 @@ Group::Group(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element
   action=new QAction(Utils::QIconCached("newobject.svg"),"Add rigid body", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addRigidBody()));
   objectContextMenu->addAction(action);
+  action=new QAction(Utils::QIconCached("newobject.svg"),"Add gear constraint", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addGearConstraint()));
+  objectContextMenu->addAction(action);
   action=new QAction(Utils::QIconCached("newobject.svg"),"Add kinematic constraint", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addKinematicConstraint()));
   objectContextMenu->addAction(action);
@@ -308,6 +311,12 @@ void Group::addLink() {
 
 void Group::addRigidBody() {
   new RigidBody(newName(objects,"RigidBody"), objects, -1);
+  ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
+  mw->mbsimxml(1);
+}
+
+void Group::addGearConstraint() {
+  new GearConstraint(newName(objects,"GearConstraint"), objects, -1);
   ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
   mw->mbsimxml(1);
 }

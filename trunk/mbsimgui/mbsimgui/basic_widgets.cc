@@ -453,3 +453,125 @@ PlotFeature::PlotFeature(const string &name_) : name(name_) {
   status->addItem("disabled");
   layout->addWidget(status);
 }
+
+GearDependencyWidget::GearDependencyWidget(Element *element) {
+  QVBoxLayout *layout = new QVBoxLayout;
+  setLayout(layout);
+  layout->setMargin(0);
+
+  refBody = new RigidBodyOfReferenceWidget(element,0);
+  layout->addWidget(refBody);
+
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1"), QStringList(), 1));
+  ratio = new ExtWidget("Projection",new ExtPhysicalVarWidget(input));
+  layout->addWidget(ratio);
+}
+
+GearDependenciesWidget::GearDependenciesWidget(Element *element_) : element(element_) {
+  QHBoxLayout *layout = new QHBoxLayout;
+  setLayout(layout);
+  layout->setMargin(0);
+  bodyList = new QListWidget;
+  bodyList->setContextMenuPolicy (Qt::CustomContextMenu);
+  bodyList->setMinimumWidth(bodyList->sizeHint().width()/3);
+  bodyList->setMaximumWidth(bodyList->sizeHint().width()/3);
+  layout->addWidget(bodyList);
+  stackedWidget = new QStackedWidget;
+  //connect(bodyList,SIGNAL(currentRowChanged(int)),this,SLOT(changeCurrent(int)));
+  connect(bodyList,SIGNAL(currentRowChanged(int)),stackedWidget,SLOT(setCurrentIndex(int)));
+  connect(bodyList,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(openContextMenu(const QPoint &)));
+  connect(this,SIGNAL(bodyChanged()),this,SLOT(updateGeneralizedCoordinatesOfBodies()));
+  layout->addWidget(stackedWidget,0,Qt::AlignTop);
+}
+
+void GearDependenciesWidget::openContextMenu(const QPoint &pos) {
+ if(bodyList->itemAt(pos)) {
+   QMenu menu(this);
+   QAction *add = new QAction(tr("Remove"), this);
+   connect(add, SIGNAL(triggered()), this, SLOT(removeDependency()));
+   menu.addAction(add);
+   menu.exec(QCursor::pos());
+ }
+ else {
+   QMenu menu(this);
+   QAction *add = new QAction(tr("Add"), this);
+   connect(add, SIGNAL(triggered()), this, SLOT(addDependency()));
+   menu.addAction(add);
+   menu.exec(QCursor::pos());
+ }
+}
+
+void GearDependenciesWidget::setNumberOfBodies(int n) {
+  if(refBody.size() != n) {
+    for(unsigned int i=0; i<refBody.size(); i++)
+      stackedWidget->removeWidget(refBody[i]);
+    selectedBody.clear();
+    refBody.clear();
+    bodyList->clear();
+    for(unsigned int i=0; i<n; i++) {
+      selectedBody.push_back(0);
+      refBody.push_back(new GearDependencyWidget(element));
+      connect(refBody[i]->getRigidBodyOfReferenceWidget(),SIGNAL(bodyChanged()),this,SLOT(updateList()));
+      bodyList->addItem("Undefined");
+      stackedWidget->addWidget(refBody[i]);
+    }
+  }
+}
+
+void GearDependenciesWidget::updateWidget() {
+  for(unsigned int i=0; i<refBody.size(); i++)
+    refBody[i]->updateWidget();
+}
+
+void GearDependenciesWidget::updateGeneralizedCoordinatesOfBodies() {
+  for(unsigned int i=0; i<refBody.size(); i++) {
+    if(selectedBody[i]) {
+      selectedBody[i]->setConstrained(false);
+      selectedBody[i]->resizeGeneralizedPosition();
+      selectedBody[i]->resizeGeneralizedVelocity();
+    }
+    selectedBody[i] = refBody[i]->getBody();
+    if(selectedBody[i]) {
+      selectedBody[i]->setConstrained(true);
+      selectedBody[i]->resizeGeneralizedPosition();
+      selectedBody[i]->resizeGeneralizedVelocity();
+      connect(selectedBody[i],SIGNAL(sizeChanged()),this,SIGNAL(bodyChanged()));
+    }
+  }
+}
+
+void GearDependenciesWidget::updateList() {
+  emit bodyChanged();
+  for(int i=0; i<bodyList->count(); i++)
+    if(refBody[i]->getBody())
+      bodyList->item(i)->setText(refBody[i]->getBody()->getName());
+}
+
+void GearDependenciesWidget::addDependency() {
+  int i = refBody.size();
+  selectedBody.push_back(0);
+  refBody.push_back(new GearDependencyWidget(element));
+  connect(refBody[i]->getRigidBodyOfReferenceWidget(),SIGNAL(bodyChanged()),this,SLOT(updateList()));
+  bodyList->addItem("Undefined");
+  stackedWidget->addWidget(refBody[i]);
+  updateWidget();
+}
+
+void GearDependenciesWidget::removeDependency() {
+  int i = bodyList->currentRow();
+  if(selectedBody[i]) {
+    selectedBody[i]->setConstrained(false);
+    selectedBody[i]->resizeGeneralizedPosition();
+    selectedBody[i]->resizeGeneralizedVelocity();
+  }
+  selectedBody.pop_back();
+
+  stackedWidget->removeWidget(refBody[i]);
+  delete refBody[i];
+  refBody.erase(refBody.begin()+i);
+  delete bodyList->takeItem(i);
+
+  updateList();
+}
+

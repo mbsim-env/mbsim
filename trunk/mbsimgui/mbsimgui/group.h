@@ -56,8 +56,9 @@ class Group : public Element {
     void addSphere();
     void addObject();
     void addRigidBody();
-    void addJointConstraint();
+    void addGearConstraint();
     void addKinematicConstraint();
+    void addJointConstraint();
     void addLink();
     void addJoint();
     void addKineticExcitation();

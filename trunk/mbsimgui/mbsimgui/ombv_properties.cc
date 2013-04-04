@@ -183,6 +183,24 @@ TiXmlElement* OMBVArrowProperty::writeXMLFile(TiXmlNode *parent) {
   return e;
 }
 
+void OMBVArrowProperty::fromWidget(QWidget *widget) {
+  diameter.fromWidget(static_cast<OMBVArrowWidget*>(widget)->diameter);
+  headDiameter.fromWidget(static_cast<OMBVArrowWidget*>(widget)->headDiameter);
+  headLength.fromWidget(static_cast<OMBVArrowWidget*>(widget)->headLength);
+  type.fromWidget(static_cast<OMBVArrowWidget*>(widget)->type);
+  referencePoint.fromWidget(static_cast<OMBVArrowWidget*>(widget)->referencePoint);
+  scaleLength.fromWidget(static_cast<OMBVArrowWidget*>(widget)->scaleLength);
+}
+
+void OMBVArrowProperty::toWidget(QWidget *widget) {
+  diameter.toWidget(static_cast<OMBVArrowWidget*>(widget)->diameter);
+  headDiameter.toWidget(static_cast<OMBVArrowWidget*>(widget)->headDiameter);
+  headLength.toWidget(static_cast<OMBVArrowWidget*>(widget)->headLength);
+  type.toWidget(static_cast<OMBVArrowWidget*>(widget)->type);
+  referencePoint.toWidget(static_cast<OMBVArrowWidget*>(widget)->referencePoint);
+  scaleLength.toWidget(static_cast<OMBVArrowWidget*>(widget)->scaleLength);
+}
+
 OMBVCoilSpringProperty::OMBVCoilSpringProperty(const string &name) : OMBVObjectProperty(name), crossSectionRadius(0,false), nominalLength(0,false) {
 
   vector<PhysicalStringProperty*> input;

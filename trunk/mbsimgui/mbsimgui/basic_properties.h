@@ -221,5 +221,39 @@ class SolverParametersProperty : public Property {
     ExtProperty tolerances;
 };
 
+class GearDependencyProperty : public Property {
+  public:
+    GearDependencyProperty(Element* element);
+    void initialize() {refBody.initialize();}
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+  protected:
+    Element* element;
+    RigidBodyOfReferenceProperty refBody;
+    ExtProperty ratio;
+};
+
+class GearDependenciesProperty : public Property {
+
+  public:
+    GearDependenciesProperty(Element* element_, const std::string &xmlName_) : element(element_), xmlName(xmlName_) {}
+
+    void initialize();
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+
+  protected:
+    Element* element;
+    std::string xmlName;
+    std::vector<GearDependencyProperty*> refBody;
+
+    void addDependency();
+    void updateGeneralizedCoordinatesOfBodies();
+};
+
 #endif
 
