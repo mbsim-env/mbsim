@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef DIFFERENTIABLE_FUNCTION_LIBRARY_H_
-#define DIFFERENTIABLE_FUNCTION_LIBRARY_H_
+#ifndef SYMBOLIC_FUNCTION_H_
+#define SYMBOLIC_FUNCTION_H_
 
 #include <mbsim/utils/function.h>
 #include <casadi/symbolic/fx/sx_function.hpp>
@@ -49,18 +49,18 @@ namespace MBSim {
   };
 
   template <class Ret>
-  class CasadiFunction1 : public Function1<Ret,double> {
+  class SymbolicFunction1 : public Function1<Ret,double> {
     CasADi::SXFunction f;
     public:
-    CasadiFunction1(const CasADi::SXFunction &f_) : f(f_) {
+    SymbolicFunction1(const CasADi::SXFunction &f_) : f(f_) {
       f.init();
     }
-    CasadiFunction1(const CasADi::FX &f_) : f(CasADi::SXFunction(f_)) {
+    SymbolicFunction1(const CasADi::FX &f_) : f(CasADi::SXFunction(f_)) {
       f.init();
     }
     CasADi::SXFunction& getSXFunction() {return f;} 
 
-    std::string getType() const { return "CasadiFunction1"; }
+    std::string getType() const { return "SymbolicFunction1"; }
 
     Ret operator()(const double& x_, const void * =NULL) {
       f.setInput(x_);
@@ -73,12 +73,12 @@ namespace MBSim {
   // together with the first and second derivative
  
 //  template <class Ret>
-//  class CasadiFunctionDerivatives1 : public Function1<Ret,double> {
+//  class SymbolicFunctionDerivatives1 : public Function1<Ret,double> {
 //    private:
 //      CasADi::SXFunction f;
 //      CasADi::FX fder1, fder2;
 //    public:
-//    CasadiFunctionDerivatives1(const CasADi::SXFunction &f_) : f(f_) {
+//    SymbolicFunctionDerivatives1(const CasADi::SXFunction &f_) : f(f_) {
 //      f.init();
 //      fder1 = f.jacobian();
 //      fder1.init();
@@ -97,12 +97,12 @@ namespace MBSim {
 //  };
 //
 //  template <class Ret>
-//  class CasadiFXFunction : public Function1<Ret,double> {
+//  class SymbolicFXFunction : public Function1<Ret,double> {
 //    private:
 //    CasADi::FX &f;
 //    int index;
 //    public:
-//    CasadiFXFunction(CasADi::FX &f_, int index_=0) : f(f_), index(index_) {}
+//    SymbolicFXFunction(CasADi::FX &f_, int index_=0) : f(f_), index(index_) {}
 //
 //    Ret operator()(const double& x_, const void * =NULL) {
 //      return Casadi<Ret>::cast(f.output(2-index));

@@ -149,6 +149,40 @@ namespace MBSim {
       Function1<fmatvec::Vec3, double> *pos;
   };
 
+  class GeneralTranslation : public Translation {
+    public:
+      /**
+       * \brief constructor
+       */
+      GeneralTranslation(int qSize_, Function1<fmatvec::Vec3,fmatvec::Vec> *pos_) : qSize(qSize_), pos(pos_) {}
+
+      /**
+       * \brief destructor
+       */
+      virtual ~GeneralTranslation() {}
+
+      /* INTERFACE FOR DERIVED CLASSES */
+      /**
+       * \return degree of freedom of translation
+       */
+      virtual int getqSize() const {return qSize;}
+
+      /**
+       * \param generalized position
+       * \param time
+       * \return translational vector as a function of generalized position and time, r=r(q,t)
+       */
+      virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return (*pos)(q); }
+
+      virtual void initializeUsingXML(TiXmlElement *element) {}
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent) { return 0; }
+      /***************************************************/
+
+    private:
+      int qSize;
+      Function1<fmatvec::Vec3,fmatvec::Vec> *pos;
+  };
+
   /**
    * \brief base class to describe rotation along a path
    * \author Martin Foerg
@@ -613,6 +647,40 @@ namespace MBSim {
        * \brief constant Jacobian
        */
       fmatvec::Mat3V J;
+  };
+
+  class GeneralJacobian : public Jacobian {
+    public:
+      /**
+       * \brief constructor
+       */
+      GeneralJacobian(int uSize_, Function1<fmatvec::Mat3V,fmatvec::Vec> *J_) : uSize(uSize_), J(J_) {}
+
+      /**
+       * \brief destructor
+       */
+      virtual ~GeneralJacobian() {}
+
+      /* INTERFACE FOR DERIVED CLASSES */
+      /**
+       * \return column size of Jacobian
+       */
+      virtual int getuSize() const {return uSize;}
+
+      /**
+       * \param generalized position
+       * \param time
+       * \return Jacobian matrix as a function of generalized position and time,
+       * J=J(q,t)
+       */
+      virtual fmatvec::Mat3V operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return (*J)(q); }
+
+      virtual void initializeUsingXML(TiXmlElement *element) {};
+      /***************************************************/
+
+    private:
+      int uSize;
+      Function1<fmatvec::Mat3V,fmatvec::Vec> *J;
   };
 
   /**

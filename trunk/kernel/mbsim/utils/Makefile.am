@@ -23,7 +23,7 @@ utilsinclude_HEADERS = colors.h\
                        nonlinear_algebra.h\
                        nonsmooth_algebra.h\
                        function.h\
-                       casadi_function.h\
+                       symbolic_function.h\
                        function_library.h\
                        ppolynom.h\
                        contact_utils.h\
