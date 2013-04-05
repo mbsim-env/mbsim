@@ -158,10 +158,10 @@ void FuncCrPC::enableTabularFit(double tabularFitLength) {
     a.push_back(solver.solve(a.back(), a.back()+M_PI/4.));
   }
   Vec phi(a.size(), INIT, 0);
-  MatV3 O(a.size(), INIT, 0);
-  MatV3 T(a.size(), INIT, 0);
-  MatV3 B(a.size(), INIT, 0);
-  MatV3 N(a.size(), INIT, 0);
+  MatVx3 O(a.size(), INIT, 0);
+  MatVx3 T(a.size(), INIT, 0);
+  MatVx3 B(a.size(), INIT, 0);
+  MatVx3 N(a.size(), INIT, 0);
   Vec curve(a.size(), INIT, 0);
   for (unsigned int i=0; i<a.size(); i++) {
     double alp=a[i]/a.back()*2.*M_PI;
