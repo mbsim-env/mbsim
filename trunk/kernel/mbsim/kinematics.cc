@@ -29,7 +29,7 @@ namespace MBSim {
   void LinearTranslation::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"translationVectors");
-    setTranslationVectors(Element::getMat3V(e,0));
+    setTranslationVectors(Element::getMat3xV(e,0));
   }
 
   TiXmlElement* LinearTranslation::writeXMLFile(TiXmlNode *parent) {
@@ -325,7 +325,7 @@ namespace MBSim {
     angle->initializeUsingXML(e->FirstChildElement());
   }
 
-  Mat3V JRotationAboutAxesXY::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  Mat3xV JRotationAboutAxesXY::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     int iq = q.size()-1;
     int iu = uSize-1;
     double a = q(iq-1);
@@ -338,7 +338,7 @@ namespace MBSim {
     return J;
   }
 
-  Mat3V JRotationAboutAxesYZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  Mat3xV JRotationAboutAxesYZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     int iq = q.size()-1;
     int iu = uSize-1;
     double beta = q(iq-1);
@@ -351,7 +351,7 @@ namespace MBSim {
     return J;
   }
 
-  Mat3V JRotationAboutAxesXYZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  Mat3xV JRotationAboutAxesXYZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     int iq = q.size()-1;
     int iu = uSize-1;
     double a = q(iq-2);
@@ -463,7 +463,7 @@ namespace MBSim {
     J=Element::getMat(e);
   }
 
-  Mat3V JdRotationAboutAxesXY::operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
+  Mat3xV JdRotationAboutAxesXY::operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
     int iq = q.size()-1;
     int iu = uSize-1;
     double a = q(iq-1);
@@ -478,7 +478,7 @@ namespace MBSim {
     return Jd;
   }
 
-  Mat3V JdRotationAboutAxesYZ::operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
+  Mat3xV JdRotationAboutAxesYZ::operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
     int iq = q.size()-1;
     int iu = uSize-1;
     double beta = q(iq-1);
@@ -492,7 +492,7 @@ namespace MBSim {
     return Jd;
   }
 
-  Mat3V JdRotationAboutAxesXYZ::operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
+  Mat3xV JdRotationAboutAxesXYZ::operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
     int iq = q.size()-1;
     int iu = uSize-1;
     double a = q(iq-2);

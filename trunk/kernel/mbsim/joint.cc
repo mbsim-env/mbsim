@@ -51,7 +51,7 @@ namespace MBSim {
   }
 
   void Joint::updatewb(double t, int j) {
-    Mat3V WJT = frame[0]->getOrientation()*JT;
+    Mat3xV WJT = frame[0]->getOrientation()*JT;
     VecV sdT = WJT.T()*(WvP0P1);
 
     wb(0,Wf.cols()-1) += Wf.T()*(frame[1]->getGyroscopicAccelerationOfTranslation(j) - C.getGyroscopicAccelerationOfTranslation(j) - crossProduct(C.getAngularVelocity(),WvP0P1+WJT*sdT));
@@ -507,7 +507,7 @@ namespace MBSim {
     }
   }
 
-  void Joint::setForceDirection(const Mat3V &fd) {
+  void Joint::setForceDirection(const Mat3xV &fd) {
 
     forceDir = fd;
 
@@ -515,7 +515,7 @@ namespace MBSim {
       forceDir.set(i, forceDir.col(i)/nrm2(fd.col(i)));
   }
 
-  void Joint::setMomentDirection(const Mat3V &md) {
+  void Joint::setMomentDirection(const Mat3xV &md) {
 
     momentDir = md;
 
@@ -554,7 +554,7 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"force");
     if(e) {
       ee=e->FirstChildElement(MBSIMNS"direction");
-      setForceDirection(getMat3V(ee,0));
+      setForceDirection(getMat3xV(ee,0));
       ee=ee->NextSiblingElement();
       GeneralizedForceLaw *gfl=ObjectFactory::getInstance()->createGeneralizedForceLaw(ee->FirstChildElement());
       setForceLaw(gfl);
@@ -578,7 +578,7 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"moment");
     if(e) {
       ee=e->FirstChildElement(MBSIMNS"direction");
-      setMomentDirection(getMat3V(ee,0));
+      setMomentDirection(getMat3xV(ee,0));
       ee=ee->NextSiblingElement();
       GeneralizedForceLaw *gfl=ObjectFactory::getInstance()->createGeneralizedForceLaw(ee->FirstChildElement());
       setMomentLaw(gfl);

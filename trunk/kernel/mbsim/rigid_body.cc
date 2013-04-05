@@ -197,10 +197,10 @@ namespace MBSim {
         if(pos) {
           if(fPJT==0) {
             CasADi::SXFunction jac(pos->getSXFunction().inputExpr(),pos->getSXFunction().jac(0));
-            fPJT = new GeneralJacobian(nq,new SymbolicFunction2<Mat3V,Vec,double>(jac));
+            fPJT = new GeneralJacobian(nq,new SymbolicFunction2<Mat3xV,Vec,double>(jac));
           }
           if(fPdJT==0) {
-            SymbolicFunction2<Mat3V,Vec,double> *jac = static_cast<SymbolicFunction2<Mat3V,Vec,double>*>(static_cast<GeneralJacobian*>(fPJT)->getJacobianFunction());
+            SymbolicFunction2<Mat3xV,Vec,double> *jac = static_cast<SymbolicFunction2<Mat3xV,Vec,double>*>(static_cast<GeneralJacobian*>(fPJT)->getJacobianFunction());
             vector<CasADi::SX> sqd(nq);
             for(int i=0; i<nq; i++) {
               stringstream stream;
@@ -217,7 +217,7 @@ namespace MBSim {
               Jd(CasADi::Slice(0,3),CasADi::Slice(j,j+1)) += jac->getSXFunction().jac(1)(CasADi::Slice(j,nq*3,nq),CasADi::Slice(0,1));
             }
             CasADi::SXFunction derJac(input2,Jd);
-            fPdJT = new SymbolicFunction3<Mat3V,Vec,Vec,double>(derJac);
+            fPdJT = new SymbolicFunction3<Mat3xV,Vec,Vec,double>(derJac);
           }
           if(fPjT==0) {
             CasADi::SXFunction j(pos->getSXFunction().inputExpr(1),pos->getSXFunction().jac(1));
@@ -305,7 +305,7 @@ namespace MBSim {
       C->getJacobianOfRotation(1) = PJR[1];
 
       if(fPJT==0) {
-        Mat3V JT;
+        Mat3xV JT;
 
         LinearTranslation *trans = dynamic_cast<LinearTranslation*>(fPrPK);
         if(trans)
@@ -314,7 +314,7 @@ namespace MBSim {
         PJT[0].set(Index(0,2), Index(0,JT.cols()-1),JT);
       }
       if(fPJR==0) {
-        Mat3V JR;
+        Mat3xV JR;
 
         if(dynamic_cast<RotationAboutXAxis*>(fAPK))
           JR = Vec3("[1;0;0]");
@@ -423,8 +423,8 @@ namespace MBSim {
   void RigidBody::setUpInverseKinetics() {
     InverseKineticsJoint *joint = new InverseKineticsJoint(string("Joint_")+R->getParent()->getName()+"_"+name);
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(joint);
-    joint->setForceDirection(Mat3V(3,EYE));
-    joint->setMomentDirection(Mat3V(3,EYE));
+    joint->setForceDirection(Mat3xV(3,EYE));
+    joint->setMomentDirection(Mat3xV(3,EYE));
     joint->connect(R,K);
     joint->setBody(this);
     if(FArrow)
@@ -713,7 +713,7 @@ namespace MBSim {
      ((FixedRelativeFrame*)P)->updateJacobians();
   }
 
-  void RigidBody::updateRelativeJacobians(double t, Frame *P, Mat3V &WJTrel0, Mat3V &WJRrel0) {
+  void RigidBody::updateRelativeJacobians(double t, Frame *P, Mat3xV &WJTrel0, Mat3xV &WJRrel0) {
 
     if(K != C) {
       WJTrel0 += tilde(K->getWrRP())*WJRrel0;
@@ -829,13 +829,13 @@ namespace MBSim {
     }
     e=element->FirstChildElement(MBSIMNS"derivativeOfJacobianOfTranslation");
     if(e) {
-      Function3<Mat3V,Vec,Vec,double> *f=ObjectFactory::getInstance()->createFunction3_MVVS(e->FirstChildElement());
+      Function3<Mat3xV,Vec,Vec,double> *f=ObjectFactory::getInstance()->createFunction3_MVVS(e->FirstChildElement());
       setDerivativeOfJacobianOfTranslation(f);
       f->initializeUsingXML(e->FirstChildElement());
     }
     e=element->FirstChildElement(MBSIMNS"derivativeOfJacobianOfRotation");
     if(e) {
-      Function3<Mat3V,Vec,Vec,double> *f=ObjectFactory::getInstance()->createFunction3_MVVS(e->FirstChildElement());
+      Function3<Mat3xV,Vec,Vec,double> *f=ObjectFactory::getInstance()->createFunction3_MVVS(e->FirstChildElement());
       setDerivativeOfJacobianOfRotation(f);
       f->initializeUsingXML(e->FirstChildElement());
     }

@@ -83,7 +83,7 @@ namespace MBSim {
       gdk(0) = Wn.T() * WvD;
 
       if (gdk.size() > 1) { //are there more velocity-directions needed?
-        Mat3V Wt(gdk.size() - 1);
+        Mat3xV Wt(gdk.size() - 1);
         Wt.set(0,cpData[0][0].getFrameOfReference().getOrientation().col(1));
         if (gdk.size() > 2)
           Wt.set(1,cpData[0][0].getFrameOfReference().getOrientation().col(2));

@@ -216,9 +216,9 @@ namespace MBSim {
     throw MBSimError(string("No Function2_VVS of type ")+element->ValueStr()+" exists.");
   }
 
-  Function3<Mat3V,Vec,Vec,double> *ObjectFactory::createFunction3_MVVS(TiXmlElement *element) {
+  Function3<Mat3xV,Vec,Vec,double> *ObjectFactory::createFunction3_MVVS(TiXmlElement *element) {
     if(element==NULL) return NULL;
-    Function3<Mat3V,Vec,Vec,double> *obj;
+    Function3<Mat3xV,Vec,Vec,double> *obj;
     for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->createFunction3_MVVS(element))) return obj;
     throw MBSimError(string("No Function2_MVVS of type ")+element->ValueStr()+" exists.");
@@ -549,7 +549,7 @@ namespace MBSim {
     return 0;
   }
 
-  Function3<Mat3V,Vec,Vec,double> *MBSimObjectFactory::createFunction3_MVVS(TiXmlElement *element) {
+  Function3<Mat3xV,Vec,Vec,double> *MBSimObjectFactory::createFunction3_MVVS(TiXmlElement *element) {
     return 0;
   }
 

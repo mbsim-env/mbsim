@@ -77,8 +77,8 @@ namespace MBSim {
       virtual void setOrientation(const fmatvec::SqrMat3 &AWP_) { AWP = AWP_; }
       virtual const fmatvec::Vec3& getVelocity() const { return WvP; } 
       virtual const fmatvec::Vec3& getAngularVelocity() const { return WomegaP; }
-      virtual const fmatvec::Mat3V& getJacobianOfTranslation(int j=0) const { return WJP[j]; }
-      virtual const fmatvec::Mat3V& getJacobianOfRotation(int j=0) const { return WJR[j]; }
+      virtual const fmatvec::Mat3xV& getJacobianOfTranslation(int j=0) const { return WJP[j]; }
+      virtual const fmatvec::Mat3xV& getJacobianOfRotation(int j=0) const { return WJR[j]; }
       virtual const fmatvec::Vec3& getGyroscopicAccelerationOfTranslation(int j=0) const { return WjP[j]; }
       virtual const fmatvec::Vec3& getGyroscopicAccelerationOfRotation(int j=0) const { return WjR[j]; }
       virtual const fmatvec::Vec3& getAcceleration() const { return WaP; } 
@@ -100,12 +100,12 @@ namespace MBSim {
       void setVelocity(const fmatvec::Vec3 &v) { WvP = v; } 
       void setAngularVelocity(const fmatvec::Vec3 &omega) { WomegaP = omega; }
 
-      void setJacobianOfTranslation(const fmatvec::Mat3V &WJP_, int j=0) { WJP[j]=WJP_; }
+      void setJacobianOfTranslation(const fmatvec::Mat3xV &WJP_, int j=0) { WJP[j]=WJP_; }
       void setGyroscopicAccelerationOfTranslation(const fmatvec::Vec3 &WjP_, int j=0) { WjP[j]=WjP_; }
-      void setJacobianOfRotation(const fmatvec::Mat3V &WJR_, int j=0) { WJR[j]=WJR_; }
+      void setJacobianOfRotation(const fmatvec::Mat3xV &WJR_, int j=0) { WJR[j]=WJR_; }
       void setGyroscopicAccelerationOfRotation(const fmatvec::Vec3 &WjR_, int j=0) { WjR[j]=WjR_; }
-      fmatvec::Mat3V& getJacobianOfTranslation(int j=0) { return WJP[j]; }
-      fmatvec::Mat3V& getJacobianOfRotation(int j=0) { return WJR[j]; }
+      fmatvec::Mat3xV& getJacobianOfTranslation(int j=0) { return WJP[j]; }
+      fmatvec::Mat3xV& getJacobianOfRotation(int j=0) { return WJR[j]; }
       fmatvec::Vec3& getGyroscopicAccelerationOfTranslation(int j=0) { return WjP[j]; }
       fmatvec::Vec3& getGyroscopicAccelerationOfRotation(int j=0) { return WjR[j]; }
       fmatvec::Vec3& getAcceleration() { return WaP; } 
@@ -148,7 +148,7 @@ namespace MBSim {
       /** 
        * \brief Jacobians of translation and rotation from coordinate system to inertial frame
        */
-      fmatvec::Mat3V WJP[2], WJR[2];
+      fmatvec::Mat3xV WJP[2], WJR[2];
 
       /**
        * translational and rotational acceleration not linear in the generalised velocity derivatives

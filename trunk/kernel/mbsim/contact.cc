@@ -67,7 +67,7 @@ namespace MBSim {
       delete[] *i;
     for(vector<Mat*>::iterator i = Vk[0].begin(); i != Vk[0].end(); ++i)
       delete[] *i;
-    for(vector<Mat3V*>::iterator i = fF.begin(); i != fF.end(); ++i)
+    for(vector<Mat3xV*>::iterator i = fF.begin(); i != fF.end(); ++i)
       delete[] *i;
     for(vector<Vec3*>::iterator i = WF.begin(); i != WF.end(); ++i)
       delete[] *i;
@@ -151,7 +151,7 @@ namespace MBSim {
         gdk[k](0) = Wn.T()*WvD;
 
         if(gdk[k].size()>1) {
-          Mat3V Wt(gdk[k].size()-1);
+          Mat3xV Wt(gdk[k].size()-1);
           Wt.set(0, cpData[k][0].getFrameOfReference().getOrientation().col(1));
           if(gdk[k].size() > 2)
             Wt.set(1, cpData[k][0].getFrameOfReference().getOrientation().col(2));
@@ -501,7 +501,7 @@ namespace MBSim {
         Vk[1][i][0].resize(contour[0]->gethSize(1),laSizek);
         Vk[1][i][1].resize(contour[1]->gethSize(1),laSizek);
 
-        fF.push_back(new Mat3V[2]);
+        fF.push_back(new Mat3xV[2]);
         fF[i][0].resize(laSizek);
         fF[i][1].resize(laSizek);
 

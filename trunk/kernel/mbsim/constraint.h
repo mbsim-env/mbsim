@@ -134,8 +134,8 @@ namespace MBSim {
       void setIndependentBody(RigidBody* bi);
 
       virtual void setUpInverseKinetics();
-      void setForceDirection(const fmatvec::Mat3V& d_) {dT = d_;}
-      void setMomentDirection(const fmatvec::Mat3V& d_) {dR = d_;}
+      void setForceDirection(const fmatvec::Mat3xV& d_) {dT = d_;}
+      void setMomentDirection(const fmatvec::Mat3xV& d_) {dR = d_;}
       void setq0(const fmatvec::Vec& q0_) {q0 = q0_;}
 
       fmatvec::Vec res(const fmatvec::Vec& q, const double& t);
@@ -160,12 +160,12 @@ namespace MBSim {
       class Residuum : public Function1<fmatvec::Vec,fmatvec::Vec> {
         private:
           std::vector<RigidBody*> body1, body2;
-          fmatvec::Mat3V dT, dR;
+          fmatvec::Mat3xV dT, dR;
           Frame *frame1, *frame2;
           double t;
           std::vector<Frame*> i1,i2;
         public:
-          Residuum(std::vector<RigidBody*> body1_, std::vector<RigidBody*> body2_, const fmatvec::Mat3V &dT_, const fmatvec::Mat3V &dR_,Frame *frame1_, Frame *frame2_,double t_,std::vector<Frame*> i1_, std::vector<Frame*> i2_);
+          Residuum(std::vector<RigidBody*> body1_, std::vector<RigidBody*> body2_, const fmatvec::Mat3xV &dT_, const fmatvec::Mat3xV &dR_,Frame *frame1_, Frame *frame2_,double t_,std::vector<Frame*> i1_, std::vector<Frame*> i2_);
           fmatvec::Vec operator()(const fmatvec::Vec &x, const void * =NULL);
       };
       std::vector<RigidBody*> bd1;
@@ -176,8 +176,8 @@ namespace MBSim {
 
       Frame *frame1,*frame2;
 
-      fmatvec::Mat3V dT;
-      fmatvec::Mat3V dR;
+      fmatvec::Mat3xV dT;
+      fmatvec::Mat3xV dR;
 
       std::vector<fmatvec::Index> Iq1, Iq2, Iu1, Iu2, Ih1, Ih2;
       int nq, nu, nh;

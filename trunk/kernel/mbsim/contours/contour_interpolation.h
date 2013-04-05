@@ -87,13 +87,13 @@ namespace MBSim {
 
        fmatvec::Vec3 computeWrOC(const fmatvec::VecV& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWrOC(cp);};
        fmatvec::Vec3 computeWvC (const fmatvec::VecV& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWvC (cp);};
-       fmatvec::Mat3V computeWt  (const fmatvec::VecV& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWt  (cp);};
+       fmatvec::Mat3xV computeWt  (const fmatvec::VecV& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWt  (cp);};
        fmatvec::Vec3 computeWn  (const fmatvec::VecV& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWn  (cp);};
 
        fmatvec::Vec3 computeWrOC(const ContourPointData &cp);
        fmatvec::Vec3 computeWvC (const ContourPointData &cp);
 
-       fmatvec::Mat3V computeWt  (const ContourPointData &cp);
+       fmatvec::Mat3xV computeWt  (const ContourPointData &cp);
        virtual fmatvec::Vec3 computeWn  (const ContourPointData &cp) = 0;
 
     protected:

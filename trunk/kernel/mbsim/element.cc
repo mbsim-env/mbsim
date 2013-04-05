@@ -271,9 +271,9 @@ namespace MBSim {
     return Vec();
   }
 
-  Mat3V Element::getMat3V(TiXmlElement *e, int cols) {
+  Mat3xV Element::getMat3xV(TiXmlElement *e, int cols) {
     Mat A = getMat(e,3,cols);
-    return Mat3V(A);
+    return Mat3xV(A);
   }
 
   Mat Element::getMat(TiXmlElement *e, int rows, int cols) {
