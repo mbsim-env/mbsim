@@ -176,6 +176,13 @@ namespace MBSim {
 
       virtual void initializeUsingXML(TiXmlElement *element) {}
       virtual TiXmlElement* writeXMLFile(TiXmlNode *parent) { return 0; }
+
+      /* GETTER / SETTER */
+      /**
+       * \brief set the translation function
+       */
+      Function2<fmatvec::Vec3,fmatvec::Vec,double>* getTranslationFunction() { return pos; }
+      void setTranslationFunction(Function2<fmatvec::Vec3,fmatvec::Vec,double> *pos_) { pos = pos_; }
       /***************************************************/
 
     private:
@@ -676,6 +683,13 @@ namespace MBSim {
       virtual fmatvec::Mat3V operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return (*J)(q,t); }
 
       virtual void initializeUsingXML(TiXmlElement *element) {};
+
+      /* GETTER / SETTER */
+      /**
+       * \brief set the Jacobian function
+       */
+      Function2<fmatvec::Mat3V,fmatvec::Vec,double>* getJacobianFunction() { return J; }
+      void setJacobianFunction(Function2<fmatvec::Mat3V,fmatvec::Vec,double> *J_) { J = J_; }
       /***************************************************/
 
     private:

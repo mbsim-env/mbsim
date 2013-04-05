@@ -26,11 +26,11 @@
 namespace MBSim {
 
   template <class Arg>
-  class ToCasadi1 {
+  class ToCasadi {
   };
 
   template <>
-  class ToCasadi1<double> {
+  class ToCasadi<double> {
     public:
       static double cast(const double &x) {
         return x;
@@ -38,46 +38,12 @@ namespace MBSim {
   };
 
   template <class Col>
-  class ToCasadi1<fmatvec::Vector<Col,double> > {
+  class ToCasadi<fmatvec::Vector<Col,double> > {
     public:
       static std::vector<double> cast(const fmatvec::Vector<Col,double> &x) {
         std::vector<double> y(x.size());
         for(int i=0; i<x.size(); i++)
           y[i] = x.e(i);
-        return y; 
-      }
-  };
-
-  template <class Arg1, class Arg2>
-  class ToCasadi2 {
-  };
-
-  template <class Col>
-  class ToCasadi2<fmatvec::Vector<Col,double>,double> {
-    public:
-      static std::vector<double> cast(const fmatvec::Vector<Col,double> &x1, const double &x2) {
-        std::vector<double> y(x1.size()+1);
-        for(int i=0; i<x1.size(); i++)
-          y[i] = x1.e(i);
-        y[x1.size()] = x2;
-        return y; 
-      }
-  };
-
-  template <class Arg1, class Arg2, class Arg3>
-  class ToCasadi3 {
-  };
-
-  template <class Col>
-  class ToCasadi3<fmatvec::Vector<Col,double>,fmatvec::Vector<Col,double>,double> {
-    public:
-      static std::vector<double> cast(const fmatvec::Vector<Col,double> &x1, const fmatvec::Vector<Col,double> &x2, const double &x3) {
-        std::vector<double> y(x1.size()+x2.size()+1);
-        for(int i=0; i<x1.size(); i++)
-          y[i] = x1.e(i);
-        for(int i=0; i<x2.size(); i++)
-          y[i+x1.size()] = x2.e(i);
-        y[x1.size()+x2.size()] = x3;
         return y; 
       }
   };
@@ -132,7 +98,7 @@ namespace MBSim {
     std::string getType() const { return "SymbolicFunction1"; }
 
     Ret operator()(const Arg& x, const void * =NULL) {
-      f.setInput(ToCasadi1<Arg>::cast(x));
+      f.setInput(ToCasadi<Arg>::cast(x));
       f.evaluate();
       return FromCasadi<Ret>::cast(f.output());
     }
@@ -150,10 +116,11 @@ namespace MBSim {
     }
     CasADi::SXFunction& getSXFunction() {return f;} 
 
-    std::string getType() const { return "SymbolicFunction3"; }
+    std::string getType() const { return "SymbolicFunction2"; }
 
     Ret operator()(const Arg1& x1, const Arg2& x2, const void * =NULL) {
-      f.setInput(ToCasadi2<Arg1,Arg2>::cast(x1,x2));
+      f.setInput(ToCasadi<Arg1>::cast(x1),0);
+      f.setInput(ToCasadi<Arg2>::cast(x2),1);
       f.evaluate();
       return FromCasadi<Ret>::cast(f.output());
     }
@@ -174,7 +141,9 @@ namespace MBSim {
     std::string getType() const { return "SymbolicFunction3"; }
 
     Ret operator()(const Arg1& x1, const Arg2& x2, const Arg3& x3, const void * =NULL) {
-      f.setInput(ToCasadi3<Arg1,Arg2,Arg3>::cast(x1,x2,x3));
+      f.setInput(ToCasadi<Arg1>::cast(x1),0);
+      f.setInput(ToCasadi<Arg2>::cast(x2),1);
+      f.setInput(ToCasadi<Arg3>::cast(x3),2);
       f.evaluate();
       return FromCasadi<Ret>::cast(f.output());
     }
