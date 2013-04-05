@@ -104,6 +104,50 @@ namespace MBSim {
       fmatvec::Mat3V PJT;
   };
 
+  class TimeDependentLinearTranslation: public Translation {
+    public:
+      /**
+       * \brief constructor
+       */
+      TimeDependentLinearTranslation() : Translation(), pos(NULL) {}
+
+      /**
+       * \brief constructor
+       * \param independent generalized position function
+       * \param independent direction matrix of translation
+       */
+      TimeDependentLinearTranslation(Function1<fmatvec::VecV, double> *pos_, const fmatvec::Mat3V &PJT_) : Translation(), PJT(PJT_), pos(pos_) {}
+
+      /**
+       * \brief destructor
+       */
+      virtual ~TimeDependentLinearTranslation() { delete pos; pos = 0; }
+
+      /* INTERFACE OF ROTATION */
+      virtual int getqSize() const { return 0; }
+      virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return PJT*(*pos)(t); }
+      //virtual void initializeUsingXML(TiXmlElement *element);
+      /***************************************************/
+
+      /* GETTER / SETTER */
+      Function1<fmatvec::VecV, double>* getTranslationalFunction() { return pos; }
+      void setTranslationalFunction(Function1<fmatvec::VecV, double> *pos_) { pos = pos_; }
+      const fmatvec::Mat3V& getTranslationVectors() const { return PJT; }
+      void setTranslationVectors(const fmatvec::Mat3V& PJT_) { PJT = PJT_; }
+      /***************************************************/
+
+    private:
+      /**
+       * independent direction matrix of translation
+       */
+      fmatvec::Mat3V PJT;
+
+      /**
+       * \brief time dependent generalized position
+       */
+      Function1<fmatvec::VecV, double> *pos;
+  };
+
   /**
    * \brief class to describe time dependent translations
    * \author Markus Schneider
@@ -159,7 +203,7 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~GeneralTranslation() {}
+      virtual ~GeneralTranslation() { delete pos; pos = 0; }
 
       /* INTERFACE FOR DERIVED CLASSES */
       /**
@@ -666,7 +710,7 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~GeneralJacobian() {}
+      virtual ~GeneralJacobian() { delete J; J = 0; }
 
       /* INTERFACE FOR DERIVED CLASSES */
       /**
