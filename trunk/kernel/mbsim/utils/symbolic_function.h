@@ -22,6 +22,7 @@
 
 #include <mbsim/utils/function.h>
 #include <casadi/symbolic/fx/sx_function.hpp>
+#include "casadi/symbolic/matrix/matrix_tools.hpp"
 
 namespace MBSim {
 

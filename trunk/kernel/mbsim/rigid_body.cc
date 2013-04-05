@@ -178,6 +178,59 @@ namespace MBSim {
     if(stage==preInit) {
       Body::init(stage);
 
+#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
+      if(dynamic_cast<TimeDependentTranslation*>(fPrPK)) {
+        SymbolicFunction1<Vec3,double> *pos = dynamic_cast<SymbolicFunction1<Vec3,double>*>(static_cast<TimeDependentTranslation*>(fPrPK)->getTranslationFunction());
+        if(pos) {
+          if(fPjT==0) fPjT = new SymbolicFunction1<Vec3,double>(pos->getSXFunction().jacobian());
+          if(fPdjT==0) fPdjT = new SymbolicFunction1<Vec3,double>(static_cast<SymbolicFunction1<Vec3,double>*>(fPjT)->getSXFunction().jacobian());
+        }
+        //Casadi2DiffFunction<Vec3> *pos = dynamic_cast<Casadi2DiffFunction<Vec3>*>(static_cast<TimeDependentTranslation*>(fPrPK)->getTranslationFunction());
+        //if(pos) {
+        //  if(fPjT==0) fPjT = new SymbolicFXFunction<Vec3>(pos->getFXFunction(),1);
+        //  if(fPdjT==0) fPdjT = new SymbolicFXFunction<Vec3>(pos->getFXFunction(),2);
+        //}
+      }
+      else if(dynamic_cast<GeneralTranslation*>(fPrPK)) {
+        SymbolicFunction2<Vec3,Vec,double> *pos = dynamic_cast<SymbolicFunction2<Vec3,Vec,double>*>(static_cast<GeneralTranslation*>(fPrPK)->getTranslationFunction());
+        int nq = fPrPK->getqSize();
+        if(pos) {
+          if(fPJT==0) {
+            CasADi::SXFunction jac(pos->getSXFunction().inputExpr(),pos->getSXFunction().jac(0));
+            fPJT = new GeneralJacobian(nq,new SymbolicFunction2<Mat3V,Vec,double>(jac));
+          }
+          if(fPdJT==0) {
+            SymbolicFunction2<Mat3V,Vec,double> *jac = static_cast<SymbolicFunction2<Mat3V,Vec,double>*>(static_cast<GeneralJacobian*>(fPJT)->getJacobianFunction());
+            vector<CasADi::SX> sqd(nq);
+            for(int i=0; i<nq; i++) {
+              stringstream stream;
+              stream << "qd" << i;
+              sqd[i] = CasADi::SX(stream.str());
+            }
+            vector<CasADi::SXMatrix> input2(3);
+            input2[0] = sqd;
+            input2[1] = pos->getSXFunction().inputExpr(0);
+            input2[2] = pos->getSXFunction().inputExpr(1);
+            CasADi::SXMatrix Jd(3,nq);
+            for(int j=0; j<nq; j++) {
+              Jd(CasADi::Slice(0,3),CasADi::Slice(j,j+1)) = jac->getSXFunction().jac(0)(CasADi::Slice(j,nq*3,nq),CasADi::Slice(0,nq)).mul(sqd);
+              Jd(CasADi::Slice(0,3),CasADi::Slice(j,j+1)) += jac->getSXFunction().jac(1)(CasADi::Slice(j,nq*3,nq),CasADi::Slice(0,1));
+            }
+            CasADi::SXFunction derJac(input2,Jd);
+            fPdJT = new SymbolicFunction3<Mat3V,Vec,Vec,double>(derJac);
+          }
+          if(fPjT==0) {
+            CasADi::SXFunction j(pos->getSXFunction().inputExpr(1),pos->getSXFunction().jac(1));
+            fPjT = new SymbolicFunction1<fmatvec::Vec3,double>(j);
+          }
+          if(fPdjT==0) {
+            CasADi::SXFunction jd(static_cast<SymbolicFunction1<Vec3,double>*>(fPjT)->getSXFunction().jacobian());
+            fPdjT = new SymbolicFunction1<fmatvec::Vec3,double>(jd);
+          }
+        }
+      }
+#endif
+
       if(constraint)
         dependency.push_back(constraint);
     }
@@ -253,23 +306,11 @@ namespace MBSim {
 
       if(fPJT==0) {
         Mat3V JT;
-        if(dynamic_cast<LinearTranslation*>(fPrPK)) {
-          JT = dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors();
-        }
-        else if(dynamic_cast<TimeDependentTranslation*>(fPrPK)) {
-#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
-          SymbolicFunction1<Vec3,double> *pos = dynamic_cast<SymbolicFunction1<Vec3,double>*>(static_cast<TimeDependentTranslation*>(fPrPK)->getTranslationFunction());
-          if(pos) {
-            if(fPjT==0) fPjT = new SymbolicFunction1<Vec3,double>(pos->getSXFunction().jacobian());
-            if(fPdjT==0) fPdjT = new SymbolicFunction1<Vec3,double>(static_cast<SymbolicFunction1<Vec3,double>*>(fPjT)->getSXFunction().jacobian());
-          }
-          //Casadi2DiffFunction<Vec3> *pos = dynamic_cast<Casadi2DiffFunction<Vec3>*>(static_cast<TimeDependentTranslation*>(fPrPK)->getTranslationFunction());
-          //if(pos) {
-          //  if(fPjT==0) fPjT = new SymbolicFXFunction<Vec3>(pos->getFXFunction(),1);
-          //  if(fPdjT==0) fPdjT = new SymbolicFXFunction<Vec3>(pos->getFXFunction(),2);
-          //}
-#endif
-        }
+
+        LinearTranslation *trans = dynamic_cast<LinearTranslation*>(fPrPK);
+        if(trans)
+          JT = trans->getTranslationVectors();
+        
         PJT[0].set(Index(0,2), Index(0,JT.cols()-1),JT);
       }
       if(fPJR==0) {
@@ -317,7 +358,7 @@ namespace MBSim {
             CasADi::SXMatrix der1(axis.size(),1);
             for(int i=0; i<axis.size(); i++)
               der1.elem(i,0) = axis.e(i)*angle->getSXFunction().outputExpr(0).elem(0,0);
-            CasADi::SXFunction foo(angle->getSXFunction().inputExpr(0),der1);
+            CasADi::SXFunction foo(angle->getSXFunction().inputExpr(),der1);
             foo.init();
             if(fPjR==0) fPjR = new SymbolicFunction1<Vec3,double>(foo.jacobian());
             if(fPdjR==0) fPdjR = new SymbolicFunction1<Vec3,double>(static_cast<SymbolicFunction1<Vec3,double>*>(fPjR)->getSXFunction().jacobian());
