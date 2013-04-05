@@ -193,6 +193,47 @@ namespace MBSim {
       Function1<fmatvec::Vec3, double> *pos;
   };
 
+  class StateDependentTranslation : public Translation {
+    public:
+      /**
+       * \brief constructor
+       */
+      StateDependentTranslation(int qSize_, Function1<fmatvec::Vec3,fmatvec::Vec> *pos_) : qSize(qSize_), pos(pos_) {}
+
+      /**
+       * \brief destructor
+       */
+      virtual ~StateDependentTranslation() { delete pos; pos = 0; }
+
+      /* INTERFACE FOR DERIVED CLASSES */
+      /**
+       * \return degree of freedom of translation
+       */
+      virtual int getqSize() const {return qSize;}
+
+      /**
+       * \param generalized position
+       * \param time
+       * \return translational vector as a function of generalized position and time, r=r(q,t)
+       */
+      virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return (*pos)(q); }
+
+      virtual void initializeUsingXML(TiXmlElement *element) {}
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent) { return 0; }
+
+      /* GETTER / SETTER */
+      /**
+       * \brief set the translation function
+       */
+      Function1<fmatvec::Vec3,fmatvec::Vec>* getTranslationFunction() { return pos; }
+      void setTranslationFunction(Function1<fmatvec::Vec3,fmatvec::Vec> *pos_) { pos = pos_; }
+      /***************************************************/
+
+    private:
+      int qSize;
+      Function1<fmatvec::Vec3,fmatvec::Vec> *pos;
+  };
+
   class GeneralTranslation : public Translation {
     public:
       /**
@@ -698,6 +739,47 @@ namespace MBSim {
        * \brief constant Jacobian
        */
       fmatvec::Mat3xV J;
+  };
+
+  class StateDependentJacobian : public Jacobian {
+    public:
+      /**
+       * \brief constructor
+       */
+      StateDependentJacobian(int uSize_, Function1<fmatvec::Mat3xV,fmatvec::Vec> *J_) : uSize(uSize_), J(J_) {}
+
+      /**
+       * \brief destructor
+       */
+      virtual ~StateDependentJacobian() { delete J; J = 0; }
+
+      /* INTERFACE FOR DERIVED CLASSES */
+      /**
+       * \return column size of Jacobian
+       */
+      virtual int getuSize() const {return uSize;}
+
+      /**
+       * \param generalized position
+       * \param time
+       * \return Jacobian matrix as a function of generalized position and time,
+       * J=J(q,t)
+       */
+      virtual fmatvec::Mat3xV operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return (*J)(q); }
+
+      virtual void initializeUsingXML(TiXmlElement *element) {};
+
+      /* GETTER / SETTER */
+      /**
+       * \brief set the Jacobian function
+       */
+      Function1<fmatvec::Mat3xV,fmatvec::Vec>* getJacobianFunction() { return J; }
+      void setJacobianFunction(Function1<fmatvec::Mat3xV,fmatvec::Vec> *J_) { J = J_; }
+      /***************************************************/
+
+    private:
+      int uSize;
+      Function1<fmatvec::Mat3xV,fmatvec::Vec> *J;
   };
 
   class GeneralJacobian : public Jacobian {
