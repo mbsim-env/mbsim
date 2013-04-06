@@ -2787,12 +2787,12 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="TimeDependentCardanAngles" substitutionGroup="Rotation" type="TimeDependentCardanAngles">
+  <xs:element name="TimeDependentCardanAngles" substitutionGroup="Rotation" type="TimeDependentCardanAnglesType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Parametrisiert eine zeitabhängige Rotation bez. Kardanwinkeln für Starrkörper (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
     </xs:documentation></xs:annotation>
   </xs:element>
-  <xs:complexType name="TimeDependentCardanAngles">
+  <xs:complexType name="TimeDependentCardanAnglesType">
     <xs:complexContent>
       <xs:extension base="RotationType">
         <xs:sequence>
@@ -3183,6 +3183,31 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="SymbolicFunction1_SS" substitutionGroup="Function1_SS" type="SymbolicFunction1_SSType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Benutzerdefinierte skalare Funktion in Abhängigkeit eines Skalars.<br/>
+        Ableitungen werden automatisch mittels CasADi berechnet.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="SymbolicFunction1_SSType">
+    <xs:complexContent>
+      <xs:extension base="Function1_SSType">
+        <xs:sequence>
+          <xs:any namespace="http://openmbv.berlios.de/MBXMLUtils/CasADi" processContents="lax"/>
+        </xs:sequence> 
+        <xs:attribute name="argname" use="required">
+          <xs:simpleType>
+            <xs:restriction base="xs:token">
+              <xs:pattern value="[a-zA-Z_][a-zA-Z0-9_]*"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="Polynom1_SS" substitutionGroup="DifferentiableFunction1_SS" type="Polynom1_SSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -3428,7 +3453,7 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="DifferentiableFunction1_VS" substitutionGroup="Function1_VS" type="DifferentiableFunction1_VS" abstract="true">
+  <xs:element name="DifferentiableFunction1_VS" substitutionGroup="Function1_VS" type="DifferentiableFunction1_VSType" abstract="true">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Abstrakte Klasse von stetig differenzierbaren Funktionen.<br/>
@@ -3436,7 +3461,7 @@
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="DifferentiableFunction1_VS">
+  <xs:complexType name="DifferentiableFunction1_VSType">
     <xs:complexContent>
       <xs:extension base="Function1_VSType">
         <xs:sequence>
@@ -3452,6 +3477,31 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="SymbolicFunction1_VS" substitutionGroup="Function1_VS" type="SymbolicFunction1_VSType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Benutzerdefinierte vektorwertige Funktion in Abhängigkeit eines Skalars.<br/>
+        Ableitungen werden automatisch mittels CasADi berechnet.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="SymbolicFunction1_VSType">
+    <xs:complexContent>
+      <xs:extension base="Function1_VSType">
+        <xs:sequence>
+          <xs:any namespace="http://openmbv.berlios.de/MBXMLUtils/CasADi" processContents="lax"/>
+        </xs:sequence> 
+        <xs:attribute name="argname" use="required">
+          <xs:simpleType>
+            <xs:restriction base="xs:token">
+              <xs:pattern value="[a-zA-Z_][a-zA-Z0-9_]*"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="QuadraticFunction1_VS" substitutionGroup="DifferentiableFunction1_VS" type="QuadraticFunction1_VSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -3461,7 +3511,7 @@
   </xs:element>
   <xs:complexType name="QuadraticFunction1_VSType">
     <xs:complexContent>
-      <xs:extension base="DifferentiableFunction1_VS">
+      <xs:extension base="DifferentiableFunction1_VSType">
         <xs:sequence>
           <xs:element name="a0" type="pv:unknownVector">
             <xs:annotation>
@@ -3498,7 +3548,7 @@
   </xs:element>
   <xs:complexType name="SinusFunction1_VSType">
     <xs:complexContent>
-      <xs:extension base="DifferentiableFunction1_VS">
+      <xs:extension base="DifferentiableFunction1_VSType">
         <xs:sequence>
           <xs:element name="amplitude" type="pv:unknownVector">
             <xs:annotation>
@@ -3544,7 +3594,7 @@
   </xs:element>
   <xs:complexType name="PiecewisePolynom1_VSType">
     <xs:complexContent>
-      <xs:extension base="DifferentiableFunction1_VS">
+      <xs:extension base="DifferentiableFunction1_VSType">
         <xs:sequence>
           <xs:choice>
             <xs:sequence>

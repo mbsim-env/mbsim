@@ -878,10 +878,11 @@ def downloadReferenceTarBz2():
 def validateXML(example, consoleOutput, htmlOutputFD):
   nrFailed=0
   nrTotal=0
-  types=[["*.ombv.xml",     ombvSchema],
-         ["*.ombv.env.xml", ombvSchema],
-         ["*.mbsim.xml",    mbsimSchema],
-         ["*.mbsimint.xml", intSchema]]
+  types=[["*.ombv.xml",       ombvSchema],
+         ["*.ombv.env.xml",   ombvSchema],
+         ["*.mbsim.xml",      mbsimSchema],
+         ["*.mbsim.flat.xml", mbsimSchema],
+         ["*.mbsimint.xml",   intSchema]]
   for root, _, filenames in os.walk(os.curdir):
     for curType in types:
       for filename in fnmatch.filter(filenames, curType[0]):
