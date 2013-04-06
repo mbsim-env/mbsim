@@ -95,14 +95,14 @@ void Joint::fromWidget() {
 void Joint::initializeUsingXML(TiXmlElement *element) {
   Link::initializeUsingXML(element);
   force.initializeUsingXML(element);
- // moment.initializeUsingXML(element);
+  moment.initializeUsingXML(element);
   connections.initializeUsingXML(element);
 }
 
 TiXmlElement* Joint::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Link::writeXMLFile(parent);
   force.writeXMLFile(ele0);
- // moment.writeXMLFile(ele0);
+  moment.writeXMLFile(ele0);
   connections.writeXMLFile(ele0);
   return ele0;
 }
