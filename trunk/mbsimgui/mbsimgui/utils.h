@@ -168,14 +168,14 @@ inline std::vector<std::vector<std::string> > strToMat(const std::string &str) {
 template <class T>
 void addElementText(TiXmlElement *parent, std::string name, T value) {
   std::ostringstream oss;
-  oss << std::setprecision(std::numeric_limits<double>::digits10+2) << toStr(value);
+  oss << std::setprecision(std::numeric_limits<double>::digits10+1) << toStr(value);
   parent->LinkEndChild(new TiXmlElement(name))->LinkEndChild(new TiXmlText(oss.str()));
 }
 
 template <class T>
 void addElementAttributeAndText(TiXmlElement *parent, std::string name, std::string attribute, std::string attributeName, T value) {
   std::ostringstream oss;
-  oss << std::setprecision(std::numeric_limits<double>::digits10+2) << toStr(value);
+  oss << std::setprecision(std::numeric_limits<double>::digits10+1) << toStr(value);
   TiXmlElement* ele = new TiXmlElement(name);
   ele->SetAttribute(attribute,attributeName);
   ele->LinkEndChild(new TiXmlText(oss.str()));

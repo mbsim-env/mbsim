@@ -80,7 +80,7 @@ inline std::string toStr(const fmatvec::Matrix<Type,Row,Col,AT> &A) {
   s << "[";
   for(int i=0; i<A.rows(); i++) {
     for(int j=0; j<A.cols(); j++) {
-      s << std::setprecision(std::numeric_limits<double>::digits10+2) << A(i,j);
+      s << std::setprecision(std::numeric_limits<double>::digits10+1) << A(i,j);
       if(j<A.cols()-1)
         s << ",";
     }
@@ -115,7 +115,7 @@ inline double fromMatStr(const std::string &str) {
 template <class T>
 void addElementText(TiXmlElement *parent, std::string name, T value) {
   std::ostringstream oss;
-  oss << std::setprecision(std::numeric_limits<double>::digits10+2) << toStr(value);
+  oss << std::setprecision(std::numeric_limits<double>::digits10+1) << toStr(value);
   parent->LinkEndChild(new TiXmlElement(name))->LinkEndChild(new TiXmlText(oss.str()));
 }
 

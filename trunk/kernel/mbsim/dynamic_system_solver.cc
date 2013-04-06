@@ -1253,7 +1253,7 @@ namespace MBSim {
     else {
       ofstream file(fileName.c_str());
       file.setf(ios::scientific);
-      file.precision(numeric_limits<double>::digits10+2);
+      file.precision(numeric_limits<double>::digits10+1);
       for (int i=0; i<q.size(); i++)
         file << q(i) << endl;
       for (int i=0; i<u.size(); i++)

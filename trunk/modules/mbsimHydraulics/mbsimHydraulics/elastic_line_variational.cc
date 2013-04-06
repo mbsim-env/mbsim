@@ -281,7 +281,7 @@ namespace MBSimHydraulics {
       lname.replace(lname.find_first_of("/"), 1, "_");
     ofstream s(("stateSpace_" + lname + ".out").c_str()); 
 
-    s.precision(numeric_limits<double>::digits10+2);
+    s.precision(numeric_limits<double>::digits10+1);
     s.setf(ios::scientific); 
 
     s << "Window=" << window_function_type << endl;
