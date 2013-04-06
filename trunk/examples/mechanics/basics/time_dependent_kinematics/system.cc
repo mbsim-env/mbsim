@@ -41,18 +41,18 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body1->setFrameOfReference(getFrame("I"));
   body1->setFrameForKinematics(body1->getFrame("C"));
 
-  SX x("x");
+  SX t("t");
   vector<SX> fexp(3);
-  fexp[0] = sin(freq1*x + M_PI/2);
-  fexp[1] = v0y*x; 
+  fexp[0] = sin(freq1*t + M_PI/2);
+  fexp[1] = v0y*t; 
   fexp[2] = 0; 
-  SXFunction foo(x,fexp);
+  SXFunction foo(t,fexp);
 
   SymbolicFunction1<Vec3,double> *f = new SymbolicFunction1<Vec3,double>(foo);
   body1->setTranslation(new TimeDependentTranslation(f));
 
-  SX fexp2 = 5*sin(freq2*x);
-  SXFunction foo2(x,fexp2);
+  SX fexp2 = 5*sin(freq2*t);
+  SXFunction foo2(t,fexp2);
 
   SymbolicFunction1<double,double> *f2 = new SymbolicFunction1<double,double>(foo2);
   body1->setRotation(new TimeDependentRotationAboutFixedAxis(f2,"[0;0;1]"));
