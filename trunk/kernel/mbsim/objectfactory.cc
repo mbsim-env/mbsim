@@ -37,6 +37,7 @@
 #include "mbsim/integrators/euler_explicit_integrator.h"
 #include "mbsim/integrators/rksuite_integrator.h"
 #include "mbsim/utils/contour_functions.h"
+#include "mbsim/utils/symbolic_function.h"
 #include "mbsim/constraint.h"
 #include "mbsim/observers/kinematics_observer.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -464,6 +465,8 @@ namespace MBSim {
       return new Function1_SS_from_VS();
     if(element->ValueStr()==MBSIMNS"Polynom1_SS")
       return new Polynom1_SS();
+    if(element->ValueStr()==MBSIMNS"SymbolicFunction1_SS")
+      return new SymbolicFunction1<double, double>;
     return 0;
   }
 
@@ -520,6 +523,8 @@ namespace MBSim {
       return new PPolynom<Var,Fixed<3> >;
     if(element->ValueStr()==MBSIMNS"Function1_VS_from_SS")
       return new Function1_VS_from_SS<Fixed<3> >;
+    if(element->ValueStr()==MBSIMNS"SymbolicFunction1_VS")
+      return new SymbolicFunction1<Vec3, double>;
     return 0;
   }
 

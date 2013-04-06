@@ -32,3 +32,6 @@ utilsinclude_HEADERS = colors.h\
                        stopwatch.h\
                        ansatz_functions.h\
                        contour_functions.h
+
+noinst_PROGRAMS = cppCasADiToXML
+cppCasADiToXML_SOURCES = cppCasADiToXML.cc

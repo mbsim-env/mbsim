@@ -23,6 +23,7 @@
 #include <mbsim/utils/function.h>
 #include <casadi/symbolic/fx/sx_function.hpp>
 #include "casadi/symbolic/matrix/matrix_tools.hpp"
+#include "mbxmlutilstinyxml/casadiXML.h"
 
 namespace MBSim {
 
@@ -88,6 +89,7 @@ namespace MBSim {
   class SymbolicFunction1 : public Function1<Ret,Arg> {
     CasADi::SXFunction f;
     public:
+    SymbolicFunction1() {}
     SymbolicFunction1(const CasADi::SXFunction &f_) : f(f_) {
       f.init();
     }
@@ -102,6 +104,11 @@ namespace MBSim {
       f.setInput(ToCasadi<Arg>::cast(x));
       f.evaluate();
       return FromCasadi<Ret>::cast(f.output());
+    }
+
+    void initializeUsingXML(TiXmlElement *element) {
+      f=CasADi::createCasADiSXFunctionFromXML(element->FirstChildElement());
+      f.init();
     }
   };
 
