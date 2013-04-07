@@ -33,5 +33,8 @@ utilsinclude_HEADERS = colors.h\
                        ansatz_functions.h\
                        contour_functions.h
 
-noinst_PROGRAMS = cppCasADiToXML
+if COND_CASADI
+  MAYBE_CPPCASADITOXML = cppCasADiToXML
+endif
+noinst_PROGRAMS = $(MAYBE_CPPCASADITOXML)
 cppCasADiToXML_SOURCES = cppCasADiToXML.cc
