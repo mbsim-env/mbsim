@@ -27,27 +27,10 @@
 #include <sys/stat.h>
 #include "mainwindow.h"
 #include <mbxmlutils/utils.h>
-#include "env.h"
-
 using namespace std;
 
 void initializeOctave() {
-  // check for environment variables (none default installation)
-  string OCTAVEDIR;
-  struct stat st;
-  char *env;
-  OCTAVEDIR=OCTAVEDIR_DEFAULT; // default: from build configuration
-  if(stat(OCTAVEDIR.c_str(), &st)!=0) OCTAVEDIR=MBXMLUtils::getInstallPath()+"/share/mbxmlutils/octave"; // use rel path if build configuration dose not work
-  if((env=getenv("MBSIMOCTAVEDIR"))) OCTAVEDIR=env; // overwrite with envvar if exist
-
-  // initialize octave
-  char **octave_argv=(char**)malloc(2*sizeof(char*));
-  octave_argv[0]=(char*)malloc(6*sizeof(char*)); strcpy(octave_argv[0], "dummy");
-  octave_argv[1]=(char*)malloc(3*sizeof(char*)); strcpy(octave_argv[1], "-q");
-  octave_main(2, octave_argv, 1);
-  int dummy;
-  eval_string("warning('error','Octave:divide-by-zero');",true,dummy,0); // statement list
-  eval_string("addpath('"+OCTAVEDIR+"');",true,dummy,0); // statement list
+  MBXMLUtils::OctaveEvaluator::initialize();
 
   // preserve whitespace and newline in TiXmlText nodes
   TiXmlBase::SetCondenseWhiteSpace(false);
