@@ -26,15 +26,7 @@
 
 using namespace std;
 
-Frame::Frame(const QString &str, QTreeWidgetItem *parentItem, int ind, bool grey) : Element(str, parentItem, ind, grey), visuProperty(0,true) {
-
-  setText(1,getType());
-
-  if(!grey) {
-    QAction *action=new QAction(Utils::QIconCached("newobject.svg"),"Remove", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(remove()));
-    contextMenu->addAction(action);
-  }
+Frame::Frame(const string &str, Element *parent, bool grey) : Element(str,parent), visuProperty(0,true) {
 
  // properties->addTab("Plotting");
  // plotFeature.push_back(new ExtWidget("Plot global position", new PlotFeature("globalPosition"),true));
@@ -49,23 +41,6 @@ Frame::Frame(const QString &str, QTreeWidgetItem *parentItem, int ind, bool grey
 }
 
 Frame::~Frame() {
-}
-
-void Frame::initializeDialog() {
-  Element::initializeDialog();
-  dialog->addTab("Visualisation");
-  visuWidget = new ExtWidget("OpenMBV frame",new OMBVFrameWidget("NOTSET"),true,true);
-  dialog->addToTab("Visualisation", visuWidget);
-}
-
-void Frame::toWidget() {
-  Element::toWidget();
-  visuProperty.toWidget(visuWidget);
-}
-
-void Frame::fromWidget() {
-  Element::fromWidget();
-  visuProperty.fromWidget(visuWidget);
 }
 
 void Frame::initializeUsingXML(TiXmlElement *element) {
@@ -88,20 +63,20 @@ TiXmlElement* Frame::writeXMLFile2(TiXmlNode *parent) {
   return 0;
 }
 
-Element *Frame::getByPathSearch(QString path) {
-  if (path.mid(0, 1)=="/") // absolut path
-    if(getParentElement())
-      return getParentElement()->getByPathSearch(path);
+Element *Frame::getByPathSearch(string path) {
+  if (path.substr(0, 1)=="/") // absolut path
+    if(getParent())
+      return getParent()->getByPathSearch(path);
     else
-      return getByPathSearch(path.mid(1));
-  else if (path.mid(0, 3)=="../") // relative path
-    return getParentElement()->getByPathSearch(path.mid(3));
+      return getByPathSearch(path.substr(1));
+  else if (path.substr(0, 3)=="../") // relative path
+    return getParent()->getByPathSearch(path.substr(3));
   else { // local path
     throw;
   }
 }
 
-FixedRelativeFrame::FixedRelativeFrame(const QString &str, QTreeWidgetItem *parentItem, int ind) : Frame(str, parentItem, ind), refFrameProperty(0,false), positionProperty(0,false), orientationProperty(0,false) {
+FixedRelativeFrame::FixedRelativeFrame(const string &str, Element *parent) : Frame(str,parent,false), refFrameProperty(0,false), positionProperty(0,false), orientationProperty(0,false) {
 
   vector<PhysicalStringProperty*> input;
   input.push_back(new PhysicalStringProperty(new VecProperty(3), "m", MBSIMNS"relativePosition"));
@@ -111,7 +86,7 @@ FixedRelativeFrame::FixedRelativeFrame(const QString &str, QTreeWidgetItem *pare
   input.push_back(new PhysicalStringProperty(new MatProperty(getEye<string>(3,3,"1","0")),"-",MBSIMNS"relativeOrientation"));
   orientationProperty.setProperty(new ExtPhysicalVarProperty(input));
 
-  refFrameProperty.setProperty(new ParentFrameOfReferenceProperty(getParentElement()->getFrame(0),this,MBSIMNS"frameOfReference"));
+  refFrameProperty.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0),this,MBSIMNS"frameOfReference"));
 }
 
 FixedRelativeFrame::~FixedRelativeFrame() {
@@ -120,38 +95,6 @@ FixedRelativeFrame::~FixedRelativeFrame() {
 void FixedRelativeFrame::initialize() {
   Frame::initialize();
   refFrameProperty.initialize();
-}
-
-void FixedRelativeFrame::initializeDialog() {
-  Frame::initializeDialog();
-  dialog->addTab("Kinematics",1);
-
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new VecWidget(3), lengthUnits(), 4));
-  positionWidget = new ExtWidget("Relative position", new ExtPhysicalVarWidget(input),true);
-  dialog->addToTab("Kinematics", positionWidget);
-
-  input.clear();
-  input.push_back(new PhysicalStringWidget(new MatWidget(getEye<string>(3,3,"1","0")),noUnitUnits(),1));
-  orientationWidget = new ExtWidget("Relative orientation",new ExtPhysicalVarWidget(input),true);
-  dialog->addToTab("Kinematics", orientationWidget);
-
-  refFrameWidget = new ExtWidget("Frame of reference",new ParentFrameOfReferenceWidget(this,this),true);
-  dialog->addToTab("Kinematics", refFrameWidget);
-}
-
-void FixedRelativeFrame::toWidget() {
-  Frame::toWidget();
-  positionProperty.toWidget(positionWidget);
-  orientationProperty.toWidget(orientationWidget);
-  refFrameProperty.toWidget(refFrameWidget);
-}
-
-void FixedRelativeFrame::fromWidget() {
-  Frame::fromWidget();
-  positionProperty.fromWidget(positionWidget);
-  orientationProperty.fromWidget(orientationWidget);
-  refFrameProperty.fromWidget(refFrameWidget);
 }
 
 void FixedRelativeFrame::initializeUsingXML(TiXmlElement *element) {
@@ -172,9 +115,9 @@ TiXmlElement* FixedRelativeFrame::writeXMLFile(TiXmlNode *parent) {
 
 void FixedRelativeFrame::initializeUsingXML2(TiXmlElement *element) {
   refFrameProperty.initializeUsingXML(element);
-  QString ref = ((ParentFrameOfReferenceProperty*)refFrameProperty.getProperty())->getSavedFrameOfReference();
+  string ref = ((ParentFrameOfReferenceProperty*)refFrameProperty.getProperty())->getSavedFrameOfReference();
   if(ref[0]=='F')
-    ((ParentFrameOfReferenceProperty*)refFrameProperty.getProperty())->setSavedFrameOfReference(QString("../")+ref);
+    ((ParentFrameOfReferenceProperty*)refFrameProperty.getProperty())->setSavedFrameOfReference(string("../")+ref);
   ((PhysicalStringProperty*)((ExtPhysicalVarProperty*)positionProperty.getProperty())->getPhysicalStringProperty(0))->setXmlName(MBSIMNS"position");
   ((PhysicalStringProperty*)((ExtPhysicalVarProperty*)positionProperty.getProperty())->getPhysicalStringProperty(1))->setXmlName(MBSIMNS"position");
   ((PhysicalStringProperty*)((ExtPhysicalVarProperty*)orientationProperty.getProperty())->getPhysicalStringProperty(0))->setXmlName(MBSIMNS"orientation");

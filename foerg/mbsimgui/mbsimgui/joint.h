@@ -25,18 +25,13 @@
 
 class Joint : public Link {
   public:
-    Joint(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    Joint(const std::string &str, TreeItem *parentItem);
     ~Joint();
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    QString getType() const { return "Joint"; }
-    void initializeDialog();
-    virtual void fromWidget();
-    virtual void toWidget();
     void initialize();
 
   protected:
-    ExtWidget *forceWidget, *momentWidget, *connectionsWidget, *forceArrowWidget, *momentArrowWidget;
     ExtProperty force, moment, connections, forceArrow, momentArrow;
 };
 

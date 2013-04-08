@@ -46,7 +46,7 @@ class Integrator : public QObject, public QTreeWidgetItem {
     Solver *solver;
     PropertyDialog *dialog;
   public:
-    Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    Integrator(const QString &str, QTreeWidgetItem *parentItem);
     virtual ~Integrator();
     std::string &getIconFile() { return iconFile; }
     void setSolver(Solver *solver_) {solver = solver_;}
@@ -70,7 +70,7 @@ class Integrator : public QObject, public QTreeWidgetItem {
 
 class DOPRI5Integrator : public Integrator {
   public:
-    DOPRI5Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    DOPRI5Integrator(const QString &str, QTreeWidgetItem *parentItem);
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "DOPRI5Integrator"; }
@@ -86,7 +86,7 @@ class DOPRI5Integrator : public Integrator {
 
 class RADAU5Integrator : public Integrator {
   public:
-    RADAU5Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    RADAU5Integrator(const QString &str, QTreeWidgetItem *parentItem);
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "RADAU5Integrator"; }
@@ -102,7 +102,7 @@ class RADAU5Integrator : public Integrator {
 
 class LSODEIntegrator : public Integrator {
   public:
-    LSODEIntegrator(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    LSODEIntegrator(const QString &str, QTreeWidgetItem *parentItem);
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "LSODEIntegrator"; }
@@ -118,7 +118,7 @@ class LSODEIntegrator : public Integrator {
 
 class LSODARIntegrator : public Integrator {
   public:
-    LSODARIntegrator(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    LSODARIntegrator(const QString &str, QTreeWidgetItem *parentItem);
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "LSODARIntegrator"; }
@@ -134,7 +134,7 @@ class LSODARIntegrator : public Integrator {
 
 class TimeSteppingIntegrator : public Integrator {
   public:
-    TimeSteppingIntegrator(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    TimeSteppingIntegrator(const QString &str, QTreeWidgetItem *parentItem);
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "TimeSteppingIntegrator"; }
@@ -148,7 +148,7 @@ class TimeSteppingIntegrator : public Integrator {
 
 class EulerExplicitIntegrator : public Integrator {
   public:
-    EulerExplicitIntegrator(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    EulerExplicitIntegrator(const QString &str, QTreeWidgetItem *parentItem);
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "EulerExplicitIntegrator"; }
@@ -162,7 +162,7 @@ class EulerExplicitIntegrator : public Integrator {
 
 class RKSuiteIntegrator : public Integrator {
   public:
-    RKSuiteIntegrator(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    RKSuiteIntegrator(const QString &str, QTreeWidgetItem *parentItem);
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual QString getType() const { return "RKSuiteIntegrator"; }

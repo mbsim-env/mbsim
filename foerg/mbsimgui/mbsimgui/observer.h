@@ -25,15 +25,15 @@
 
 class Observer : public Element {
   public:
-    Observer(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    Observer(const std::string &str, QTreeWidgetItem *parentItem, int ind);
     ~Observer();
     virtual int getxSize() {return 0;}
-    virtual Element* getByPathSearch(QString path);
+    virtual Element* getByPathSearch(std::string path);
 };
 
 class AbsoluteKinematicsObserver : public Observer {
   public:
-    AbsoluteKinematicsObserver(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    AbsoluteKinematicsObserver(const std::string &str, QTreeWidgetItem *parentItem, int ind);
     ~AbsoluteKinematicsObserver();
 
     virtual void initializeUsingXML(TiXmlElement *element);
@@ -43,9 +43,7 @@ class AbsoluteKinematicsObserver : public Observer {
     virtual void toWidget();
     void initialize();
 
-    virtual QString getType() const { return "AbsoluteKinematicsObserver"; }
   protected:
-    ExtWidget *frameWidget, *positionWidget, *velocityWidget, *angularVelocityWidget, *accelerationWidget, *angularAccelerationWidget;
     ExtProperty frame, position, velocity, angularVelocity, acceleration, angularAcceleration;
 };
 

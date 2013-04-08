@@ -25,22 +25,19 @@
 
 class Signal : public Link {
   public:
-    Signal(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    Signal(const std::string &str, QTreeWidgetItem *parentItem, int ind);
     ~Signal(); 
-    virtual QString getType() const { return "Signal"; }
 };
 
 class Sensor : public Signal {
   public:
-    Sensor(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    Sensor(const std::string &str, QTreeWidgetItem *parentItem, int ind);
     ~Sensor(); 
-    virtual QString getType() const { return "Sensor"; }
 };
 
 class AbsolutCoordinateSensor : public Sensor {
   public:
-    AbsolutCoordinateSensor(const QString &str, QTreeWidgetItem *parentItem, int ind); 
-    virtual QString getType() const { return "AbsolutCoordinateSensor"; }
+    AbsolutCoordinateSensor(const std::string &str, QTreeWidgetItem *parentItem, int ind); 
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void initializeDialog();
@@ -48,14 +45,12 @@ class AbsolutCoordinateSensor : public Sensor {
     virtual void toWidget();
     void initialize();
   protected:
-    ExtWidget *frameWidget, *directionWidget;
     ExtProperty frame, direction;
 };
 
 class AbsolutePositionSensor : public AbsolutCoordinateSensor {
   public:
-    AbsolutePositionSensor(const QString &str, QTreeWidgetItem *parentItem, int ind); 
-    virtual QString getType() const { return "AbsolutePositionSensor"; }
+    AbsolutePositionSensor(const std::string &str, QTreeWidgetItem *parentItem, int ind); 
 };
 
 

@@ -47,9 +47,9 @@ void LocalFrameOfReferenceWidget::updateWidget() {
   frame->blockSignals(true);
   frame->clear();
   int oldindex = 0;
-  for(int i=0, k=0; i<element->getContainerFrame()->childCount(); i++) {
+  for(int i=0, k=0; i<element->getNumberOfFrames(); i++) {
     if(omitFrame!=element->getFrame(i)) {
-      frame->addItem("Frame["+element->getFrame(i)->getName()+"]");
+      frame->addItem("Frame["+QString::fromStdString(element->getFrame(i)->getName())+"]");
       if(element->getFrame(i) == selectedFrame)
         oldindex = k;
       k++;
@@ -64,7 +64,7 @@ void LocalFrameOfReferenceWidget::setFrame(Frame* frame_) {
 }
 
 void LocalFrameOfReferenceWidget::setFrame(const QString &str) {
-  selectedFrame = element->getFrame(str.mid(6, str.length()-7));
+  selectedFrame = element->getFrame(str.mid(6, str.length()-7).toStdString());
 }
 
 ParentFrameOfReferenceWidget::ParentFrameOfReferenceWidget(Element *element_, Frame* omitFrame_) : element(element_), selectedFrame(0), omitFrame(omitFrame_) {
@@ -74,7 +74,7 @@ ParentFrameOfReferenceWidget::ParentFrameOfReferenceWidget(Element *element_, Fr
 
   frame = new QComboBox;
   layout->addWidget(frame);
-  selectedFrame = element->getParentElement()->getFrame(0);
+  selectedFrame = element->getParent()->getFrame(0);
   connect(frame,SIGNAL(currentIndexChanged(const QString&)),this,SLOT(setFrame(const QString&)));
 }
 
@@ -82,10 +82,10 @@ void ParentFrameOfReferenceWidget::updateWidget() {
   frame->blockSignals(true);
   frame->clear();
   int oldindex = 0;
-  for(int i=0, k=0; i<element->getParentElement()->getContainerFrame()->childCount(); i++) {
-    if(omitFrame!=element->getParentElement()->getFrame(i)) {
-      frame->addItem("../Frame["+element->getParentElement()->getFrame(i)->getName()+"]");
-      if(element->getParentElement()->getFrame(i) == selectedFrame)
+  for(int i=0, k=0; i<element->getParent()->getNumberOfFrames(); i++) {
+    if(omitFrame!=element->getParent()->getFrame(i)) {
+      frame->addItem("../Frame["+QString::fromStdString(element->getParent()->getFrame(i)->getName())+"]");
+      if(element->getParent()->getFrame(i) == selectedFrame)
         oldindex = k;
       k++;
     }
@@ -99,7 +99,7 @@ void ParentFrameOfReferenceWidget::setFrame(Frame* frame_) {
 }
 
 void ParentFrameOfReferenceWidget::setFrame(const QString &str) {
-  selectedFrame = element->getParentElement()->getFrame(str.mid(9, str.length()-10));
+  selectedFrame = element->getParent()->getFrame(str.mid(9, str.length()-10).toStdString());
 }
 
 FrameOfReferenceWidget::FrameOfReferenceWidget(Element *element_, Frame* selectedFrame_) : element(element_), selectedFrame(selectedFrame_) {
@@ -110,8 +110,8 @@ FrameOfReferenceWidget::FrameOfReferenceWidget(Element *element_, Frame* selecte
   frame = new QLineEdit;
   frame->setReadOnly(true);
   if(selectedFrame)
-    frame->setText(selectedFrame->getXMLPath());
-  frameBrowser = new FrameBrowser(element->treeWidget(),selectedFrame,this);
+    frame->setText(QString::fromStdString(selectedFrame->getXMLPath()));
+//  frameBrowser = new FrameBrowser(element->treeWidget(),selectedFrame,this);
   connect(frameBrowser,SIGNAL(accepted()),this,SLOT(setFrame()));
   layout->addWidget(frame);
   QPushButton *button = new QPushButton(tr("Browse"));
@@ -130,13 +130,13 @@ void FrameOfReferenceWidget::setFrame() {
   if(frameBrowser->getFrameList()->currentItem())
     selectedFrame = (Frame*)static_cast<ElementItem*>(frameBrowser->getFrameList()->currentItem())->getElement();
   else
-    selectedFrame = ((Group*)element->getParentElement())->getFrame(0);
-  frame->setText(selectedFrame->getXMLPath());
+    selectedFrame = ((Group*)element->getParent())->getFrame(0);
+  frame->setText(QString::fromStdString(selectedFrame->getXMLPath()));
 }
 
 void FrameOfReferenceWidget::setFrame(Frame* frame_) {
   selectedFrame = frame_; 
-  frame->setText(selectedFrame?selectedFrame->getXMLPath():"");
+  frame->setText(selectedFrame?QString::fromStdString(selectedFrame->getXMLPath()):"");
 }
 
 ContourOfReferenceWidget::ContourOfReferenceWidget(Element *element_, Contour* selectedContour_) : element(element_), selectedContour(selectedContour_) {
@@ -147,8 +147,8 @@ ContourOfReferenceWidget::ContourOfReferenceWidget(Element *element_, Contour* s
   contour = new QLineEdit;
   contour->setReadOnly(true);
   if(selectedContour)
-    contour->setText(selectedContour->getXMLPath());
-  contourBrowser = new ContourBrowser(element->treeWidget(),selectedContour,this);
+    contour->setText(QString::fromStdString(selectedContour->getXMLPath()));
+  //contourBrowser = new ContourBrowser(element->treeWidget(),selectedContour,this);
   connect(contourBrowser,SIGNAL(accepted()),this,SLOT(setContour()));
   layout->addWidget(contour);
   QPushButton *button = new QPushButton(tr("Browse"));
@@ -167,13 +167,13 @@ void ContourOfReferenceWidget::setContour() {
   if(contourBrowser->getContourList()->currentItem())
     selectedContour = (Contour*)static_cast<ElementItem*>(contourBrowser->getContourList()->currentItem())->getElement();
   else
-    selectedContour = ((Group*)element->getParentElement())->getContour(0);
-  contour->setText(selectedContour->getXMLPath());
+    selectedContour = ((Group*)element->getParent())->getContour(0);
+  contour->setText(QString::fromStdString(selectedContour->getXMLPath()));
 }
 
 void ContourOfReferenceWidget::setContour(Contour* contour_) {
   selectedContour = contour_; 
-  contour->setText(selectedContour?selectedContour->getXMLPath():"");
+  contour->setText(selectedContour?QString::fromStdString(selectedContour->getXMLPath()):"");
 }
 
 RigidBodyOfReferenceWidget::RigidBodyOfReferenceWidget(Element *element_, RigidBody* selectedBody_) : element(element_), selectedBody(selectedBody_) {
@@ -184,8 +184,8 @@ RigidBodyOfReferenceWidget::RigidBodyOfReferenceWidget(Element *element_, RigidB
   body = new QLineEdit;
   body->setReadOnly(true);
   if(selectedBody)
-    body->setText(selectedBody->getXMLPath());
-  bodyBrowser = new RigidBodyBrowser(element->treeWidget(),0,this);
+    body->setText(QString::fromStdString(selectedBody->getXMLPath()));
+  //bodyBrowser = new RigidBodyBrowser(element->treeWidget(),0,this);
   connect(bodyBrowser,SIGNAL(accepted()),this,SLOT(setBody()));
   layout->addWidget(body);
   QPushButton *button = new QPushButton(tr("Browse"));
@@ -205,13 +205,13 @@ void RigidBodyOfReferenceWidget::setBody() {
     selectedBody = static_cast<RigidBody*>(static_cast<ElementItem*>(bodyBrowser->getRigidBodyList()->currentItem())->getElement());
   else
     selectedBody = 0;
-  body->setText(selectedBody?selectedBody->getXMLPath():"");
+  body->setText(selectedBody?QString::fromStdString(selectedBody->getXMLPath()):"");
   emit bodyChanged();
 }
 
 void RigidBodyOfReferenceWidget::setBody(RigidBody* body_) {
   selectedBody = body_;
-  body->setText(selectedBody?selectedBody->getXMLPath():"");
+  body->setText(selectedBody?QString::fromStdString(selectedBody->getXMLPath()):"");
   emit bodyChanged();
 }
 
@@ -361,7 +361,7 @@ void DependenciesWidget::updateGeneralizedCoordinatesOfBodies() {
       selectedBody[i]->setConstrained(true);
       selectedBody[i]->resizeGeneralizedPosition();
       selectedBody[i]->resizeGeneralizedVelocity();
-      connect(selectedBody[i],SIGNAL(sizeChanged()),this,SIGNAL(bodyChanged()));
+      //connect(selectedBody[i],SIGNAL(sizeChanged()),this,SIGNAL(bodyChanged()));
     }
   }
 }
@@ -370,7 +370,7 @@ void DependenciesWidget::updateList() {
   emit bodyChanged();
   for(int i=0; i<bodyList->count(); i++)
     if(refBody[i]->getBody())
-      bodyList->item(i)->setText(refBody[i]->getBody()->getName());
+      bodyList->item(i)->setText(QString::fromStdString(refBody[i]->getBody()->getName()));
 }
 
 void DependenciesWidget::addDependency() {
@@ -536,7 +536,7 @@ void GearDependenciesWidget::updateGeneralizedCoordinatesOfBodies() {
       selectedBody[i]->setConstrained(true);
       selectedBody[i]->resizeGeneralizedPosition();
       selectedBody[i]->resizeGeneralizedVelocity();
-      connect(selectedBody[i],SIGNAL(sizeChanged()),this,SIGNAL(bodyChanged()));
+      //connect(selectedBody[i],SIGNAL(sizeChanged()),this,SIGNAL(bodyChanged()));
     }
   }
 }
@@ -545,7 +545,7 @@ void GearDependenciesWidget::updateList() {
   emit bodyChanged();
   for(int i=0; i<bodyList->count(); i++)
     if(refBody[i]->getBody())
-      bodyList->item(i)->setText(refBody[i]->getBody()->getName());
+      bodyList->item(i)->setText(QString::fromStdString(refBody[i]->getBody()->getName()));
 }
 
 void GearDependenciesWidget::addDependency() {

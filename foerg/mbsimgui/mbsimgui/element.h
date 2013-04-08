@@ -20,9 +20,10 @@
 #ifndef _ELEMENT__H_
 #define _ELEMENT__H_
 
-#include <QtGui/QTreeWidgetItem>
-#include "property_widget.h"
+#include "treeitemdata.h"
 #include "utils.h"
+#include "extended_properties.h"
+#include "property_widget.h"
 
 class Element;
 class Frame;
@@ -36,122 +37,71 @@ class TiXmlElement;
 class TiXmlNode;
 class TextWidget;
 
-class Container : public QTreeWidgetItem {
-  public:
-    Element* getChild(int i);
-    Element* getChild(const QString &name, bool check=false);
-};
-
-class Element : public QObject, public QTreeWidgetItem {
-  Q_OBJECT
+class Element : public TreeItemData {
   protected:
     bool drawThisPath;
-    QString iconFile;
+    std::string iconFile;
     bool searchMatched;
-    QMenu *contextMenu;
-    QAction *actionSave;
-    QString file;
-    std::vector<ExtWidget*> plotFeature;
+    std::string file;
     static TiXmlElement* copiedElement;
-    Element *parentElement;
-    Container *frames, *contours, *groups, *objects, *links, *extraDynamics, *observers;
     static int IDcounter;
     std::string ns, ID;
-    QString name;
-    PropertyDialog *dialog;
-    TextWidget *textWidget;
+    std::string name;
+    Element *parent;
   public:
-    Element(const QString &str, QTreeWidgetItem *parentItem, int ind, bool grey=false);
+    Element(const std::string &name, Element *parent);
     virtual ~Element();
-    Element* getParentElement() {return parentElement;}
-    virtual QString getPath();
-    QString getXMLPath(Element *ref=0, bool rel=false);
-    QString &getIconFile() { return iconFile; }
-    virtual QString getInfo();
+    virtual std::string getPath();
+    std::string getXMLPath(Element *ref=0, bool rel=false);
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual void writeXMLFile(const QString &name);
+    virtual void writeXMLFile(const std::string &name);
     virtual void writeXMLFile() { writeXMLFile(getName()); }
-    virtual void updateWidget();
     virtual void initialize();
-    virtual QString getType() const { return "Element"; }
-    //QString newName(const QString &type);
-    virtual QString getFileExtension() const { return ".xml"; }
-    void updateTextColor();
+    const std::string& getName() const {return name;}
+    void setName(const std::string &str) {name = str;}
+    const std::string getType() const { return "Element"; }
+    //std::string newName(const std::string &type);
+    virtual std::string getFileExtension() const { return ".xml"; }
     bool getSearchMatched() { return searchMatched; }
     void setSearchMatched(bool m) { searchMatched=m; }
-    QMenu* getContextMenu() { return contextMenu; }
-    QString getName() const {return name;}
-    void setName(const QString &str);
-    template<class T> T* getByPath(QString path);
-    virtual Element* getByPathSearch(QString path) {return 0; }
-    Element* getChild(QTreeWidgetItem* container, const QString &name, bool check=true);
-    QString newName(QTreeWidgetItem* container, const QString &type);
-    virtual Container* getContainerFrame() {return frames;}
-    virtual Container* getContainerContour() {return contours;}
-    virtual Container* getContainerGroup() {return groups;}
-    virtual Container* getContainerObject() {return objects;}
-    virtual Container* getContainerLink() {return links;}
-    virtual Container* getContainerObserver() {return observers;}
-    virtual Frame* getFrame(int i);
-    virtual Contour* getContour(int i);
-    virtual Group* getGroup(int i);
-    virtual Object* getObject(int i);
-    virtual Link* getLink(int i);
-    virtual Observer* getObserver(int i);
-    Frame* getFrame(const QString &name, bool check=true);
-    Contour* getContour(const QString &name, bool check=true);
-    Object* getObject(const QString &name, bool check=true);
-    Group* getGroup(const QString &name, bool check=true);
-    Link* getLink(const QString &name, bool check=true);
-    Observer* getObserver(const QString &name, bool check=true);
+    template<class T> T* getByPath(std::string path);
+    virtual Element* getByPathSearch(std::string path) {return 0; }
+    //Element* getChild(TreeItem* container, const std::string &name, bool check=true);
+    //virtual Container* getContainerFrame() {return frames;}
+    //virtual Container* getContainerContour() {return contours;}
+    //virtual Container* getContainerGroup() {return groups;}
+    //virtual Container* getContainerObject() {return objects;}
+    //virtual Container* getContainerLink() {return links;}
+    //virtual Container* getContainerObserver() {return observers;}
+    virtual int getNumberOfFrames() {return 0;}
+    virtual Frame* getFrame(int i) {return 0;}
+    //virtual Contour* getContour(int i);
+    //virtual Group* getGroup(int i);
+    //virtual Object* getObject(int i);
+    //virtual Link* getLink(int i);
+    //virtual Observer* getObserver(int i);
+    virtual Frame* getFrame(const std::string &name, bool check=true) {return 0;}
+    //Contour* getContour(const std::string &name, bool check=true);
+    //Object* getObject(const std::string &name, bool check=true);
+    //Group* getGroup(const std::string &name, bool check=true);
+    //Link* getLink(const std::string &name, bool check=true);
+    //Observer* getObserver(const std::string &name, bool check=true);
+    virtual void addFrame(Frame *frame) {}
     std::string getID() { return ID; }
     static std::map<std::string, Element*> idEleMap;
-    virtual void fromWidget();
-    virtual void toWidget();
-    virtual void initializeDialog();
-  public slots:
-    void remove();
-    virtual void saveAs();
-    virtual void save();
-    void copy();
-    void openPropertyDialog();
-    void updateElement();
+    virtual Element* getParent() {return parent;}
+    virtual void setParent(Element* parent_) {parent = parent_;}
+    PropertyDialog* createPropertyDialog() {return new ElementPropertyDialog;}
 };
 
 template<class T>
-T* Element::getByPath(QString path) {
+T* Element::getByPath(std::string path) {
   Element * e = getByPathSearch(path);
   if (dynamic_cast<T*>(e))
     return (T*)(e);
   else
-    throw MBSimError("ERROR in "+getName().toStdString()+" (Element::getByPath): Element \""+path.toStdString()+"\" not found or not of wanted type!");
+    throw MBSimError("ERROR in "+getName()+" (Element::getByPath): Element \""+path+"\" not found or not of wanted type!");
 }
-
-//template<class T>
-//std::vector<T*> Element::get() const {
-//  std::vector<T*> elements;
-//  for(int i=0; i<childCount(); i++)
-//    if(dynamic_cast<T*>(child(i)))
-//      elements.push_back((T*)child(i));
-//  return elements;
-//}
-//
-//template<class T>
-//T* Element::get(const QString &name, bool check) {
-//  unsigned int i;
-//  std::vector<T*> element = get<T>();
-//  for(i=0; i<element.size(); i++) {
-//    if(element[i]->getName().toStdString() == name)
-//      return element[i];
-//  }
-//  if(check) {
-//    if(!(i<element.size()))
-//      throw MBSimError("The object \""+element[i]->getName().toStdString()+"\" comprises no element \""+name+"\"!");
-//    assert(i<element.size());
-//  }
-//  return NULL;
-//}
-
 
 #endif

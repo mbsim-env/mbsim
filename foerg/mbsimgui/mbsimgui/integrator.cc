@@ -33,11 +33,9 @@ using namespace std;
 
 extern MainWindow *mw;
 
-Integrator::Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind) : QTreeWidgetItem(), drawThisPath(true), searchMatched(true), initialState(0,false), dialog(0) {
-  if(ind==-1 || ind>=parentItem->childCount())
-    parentItem->addChild(this); // insert as last element
-  else
-    parentItem->insertChild(ind, this); // insert at position ind
+Integrator::Integrator(const QString &str, QTreeWidgetItem *parentItem) : QTreeWidgetItem(), drawThisPath(true), searchMatched(true), initialState(0,false), dialog(0) {
+
+  parentItem->addChild(this);
 
   setText(0, str);
 
@@ -171,7 +169,7 @@ Integrator* Integrator::readXMLFile(const QString &filename, QTreeWidgetItem* pa
   TiXml_setLineNrFromProcessingInstruction(e);
   map<string,string> dummy;
   incorporateNamespace(e, dummy);
-  Integrator *integrator=ObjectFactory::getInstance()->createIntegrator(e, parent, 1);
+  Integrator *integrator=ObjectFactory::getInstance()->createIntegrator(e, parent);
   integrator->initializeUsingXML(doc.FirstChildElement());
   return integrator;
 }
@@ -186,7 +184,7 @@ void Integrator::writeXMLFile(const QString &name) {
 
 }
 
-DOPRI5Integrator::DOPRI5Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind) : Integrator(str,parentItem,ind), maxSteps(0,false) {
+DOPRI5Integrator::DOPRI5Integrator(const QString &str, QTreeWidgetItem *parentItem) : Integrator(str,parentItem), maxSteps(0,false) {
   vector<PhysicalStringProperty*> input;
   vector<Property*> property;
   vector<string> name;
@@ -313,7 +311,7 @@ TiXmlElement* DOPRI5Integrator::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
-RADAU5Integrator::RADAU5Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind) : Integrator(str,parentItem,ind) {
+RADAU5Integrator::RADAU5Integrator(const QString &str, QTreeWidgetItem *parentItem) : Integrator(str,parentItem) {
   vector<PhysicalStringProperty*> input;
   vector<Property*> property;
   vector<string> name;
@@ -440,7 +438,7 @@ TiXmlElement* RADAU5Integrator::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
-LSODEIntegrator::LSODEIntegrator(const QString &str, QTreeWidgetItem *parentItem, int ind) : Integrator(str,parentItem,ind), stiff(0,false) {
+LSODEIntegrator::LSODEIntegrator(const QString &str, QTreeWidgetItem *parentItem) : Integrator(str,parentItem), stiff(0,false) {
   vector<PhysicalStringProperty*> input;
   vector<Property*> property;
   vector<string> name;
@@ -579,7 +577,7 @@ TiXmlElement* LSODEIntegrator::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
-LSODARIntegrator::LSODARIntegrator(const QString &str, QTreeWidgetItem *parentItem, int ind) : Integrator(str,parentItem,ind) {
+LSODARIntegrator::LSODARIntegrator(const QString &str, QTreeWidgetItem *parentItem) : Integrator(str,parentItem) {
   vector<PhysicalStringProperty*> input;
   vector<Property*> property;
   vector<string> name;
@@ -705,7 +703,7 @@ TiXmlElement* LSODARIntegrator::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
-TimeSteppingIntegrator::TimeSteppingIntegrator(const QString &str, QTreeWidgetItem *parentItem, int ind) : Integrator(str,parentItem,ind) {
+TimeSteppingIntegrator::TimeSteppingIntegrator(const QString &str, QTreeWidgetItem *parentItem) : Integrator(str,parentItem) {
 
   vector<PhysicalStringProperty*> input;
   input.push_back(new PhysicalStringProperty(new ScalarProperty("1e-3"),"s",MBSIMINTNS"stepSize"));
@@ -745,7 +743,7 @@ TiXmlElement* TimeSteppingIntegrator::writeXMLFile(TiXmlNode *parent) {
 }
 
 
-EulerExplicitIntegrator::EulerExplicitIntegrator(const QString &str, QTreeWidgetItem *parentItem, int ind) : Integrator(str,parentItem,ind) {
+EulerExplicitIntegrator::EulerExplicitIntegrator(const QString &str, QTreeWidgetItem *parentItem) : Integrator(str,parentItem) {
   vector<PhysicalStringProperty*> input;
   input.push_back(new PhysicalStringProperty(new ScalarProperty("1e-3"),"s",MBSIMINTNS"stepSize"));
   stepSize.setProperty(new ExtPhysicalVarProperty(input)); 
@@ -840,7 +838,7 @@ class RKSuiteTypeProperty : public Property {
 };
 
 
-RKSuiteIntegrator::RKSuiteIntegrator(const QString &str, QTreeWidgetItem *parentItem, int ind) : Integrator(str,parentItem,ind), initialStepSize(0,false) {
+RKSuiteIntegrator::RKSuiteIntegrator(const QString &str, QTreeWidgetItem *parentItem) : Integrator(str,parentItem), initialStepSize(0,false) {
 
   type.setProperty(new RKSuiteTypeProperty);
 

@@ -44,7 +44,7 @@ class Parameter : public QObject, public QTreeWidgetItem {
     QString name;
     TextWidget *textWidget;
   public:
-    Parameter(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    Parameter(const QString &str, QTreeWidgetItem *parentItem);
     virtual ~Parameter();
     QString &getIconFile() { return iconFile; }
     virtual QString getInfo();
@@ -75,7 +75,7 @@ class Parameter : public QObject, public QTreeWidgetItem {
 
 class DoubleParameter : public Parameter {
   public:
-    DoubleParameter(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    DoubleParameter(const QString &str, QTreeWidgetItem *parentItem);
     virtual QString getType() const { return "scalarParameter"; }
     virtual std::string getValue() const;
     virtual void initializeUsingXML(TiXmlElement *element);

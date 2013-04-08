@@ -27,9 +27,7 @@
 
 using namespace std;
 
-Joint::Joint(const QString &str, QTreeWidgetItem *parentItem, int ind) : Link(str, parentItem, ind), forceArrow(0,false), momentArrow(0,false), force(0,false), moment(0,false) {
-
-  setText(1,getType());
+Joint::Joint(const QString &str, TreeItem *parentItem) : Link(str, parentItem), forceArrow(0,false), momentArrow(0,false), force(0,false), moment(0,false) {
 
   forceArrow.setProperty(new OMBVArrowProperty("NOTSET"));
   ((OMBVArrowProperty*)forceArrow.getProperty())->setID(getID());
@@ -52,57 +50,17 @@ void Joint::initialize() {
   connections.initialize();
 }
 
-void Joint::initializeDialog() {
-  Link::initializeDialog();
-
-  dialog->addTab("Kinetics");
-  dialog->addTab("Visualisation");
-
-  forceArrowWidget = new ExtWidget("OpenMBV force arrow",new OMBVArrowWidget("NOTSET"),true);
-  dialog->addToTab("Visualisation",forceArrowWidget);
-
-  momentArrowWidget = new ExtWidget("OpenMBV moment arrow",new OMBVArrowWidget("NOTSET"),true);
-  dialog->addToTab("Visualisation",momentArrowWidget);
-
-  connectionsWidget = new ExtWidget("Connections",new ConnectFramesWidget(2,this));
-  dialog->addToTab("Kinetics", connectionsWidget);
-
-  forceWidget = new ExtWidget("Force",new GeneralizedForceChoiceWidget,true);
-  dialog->addToTab("Kinetics", forceWidget);
-
-  momentWidget = new ExtWidget("Moment",new GeneralizedForceChoiceWidget,true);
-  dialog->addToTab("Kinetics", momentWidget);
-}
-
-void Joint::toWidget() {
-  Link::toWidget();
-  forceArrow.toWidget(forceArrowWidget);
-  momentArrow.toWidget(momentArrowWidget);
-  connections.toWidget(connectionsWidget);
-  force.toWidget(forceWidget);
-  moment.toWidget(momentWidget);
-}
-
-void Joint::fromWidget() {
-  Link::fromWidget();
-  forceArrow.fromWidget(forceArrowWidget);
-  momentArrow.fromWidget(momentArrowWidget);
-  connections.fromWidget(connectionsWidget);
-  force.fromWidget(forceWidget);
-  moment.fromWidget(momentWidget);
-}
-
 void Joint::initializeUsingXML(TiXmlElement *element) {
   Link::initializeUsingXML(element);
   force.initializeUsingXML(element);
- // moment.initializeUsingXML(element);
+  moment.initializeUsingXML(element);
   connections.initializeUsingXML(element);
 }
 
 TiXmlElement* Joint::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Link::writeXMLFile(parent);
   force.writeXMLFile(ele0);
- // moment.writeXMLFile(ele0);
+  moment.writeXMLFile(ele0);
   connections.writeXMLFile(ele0);
   return ele0;
 }

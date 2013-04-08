@@ -25,18 +25,13 @@
 
 class SpringDamper : public Link {
   public:
-    SpringDamper(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    SpringDamper(const std::string &str, TreeItem *parentItem);
     ~SpringDamper();
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    QString getType() const { return "SpringDamper"; }
-    void initializeDialog();
-    virtual void fromWidget();
-    virtual void toWidget();
     void initialize();
 
   protected:
-    ExtWidget *forceFunctionWidget, *connectionsWidget, *forceDirectionWidget, *coilSpringWidget;
     ExtProperty forceFunction, connections, forceDirection, coilSpring;
 };
 

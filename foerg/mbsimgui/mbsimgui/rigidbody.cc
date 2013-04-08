@@ -36,48 +36,11 @@ using namespace std;
 
 extern MainWindow *mw;
 
-RigidBody::RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind) : Body(str, parentItem, ind), constrained(false), RWidget(0), KWidget(0), massWidget(0), inertiaWidget(0), translationWidget(0), rotationWidget(0), ombvEditorWidget(0), weightArrowWidget(0), jointForceArrowWidget(0), jointMomentArrowWidget(0), isFrameOfBodyForRotationWidget(0), R(0,false), K(0,false), translation(0,false), rotation(0,false), ombvEditor(0,true), weightArrow(0,false), jointForceArrow(0,false), jointMomentArrow(0,false), isFrameOfBodyForRotation(0,false) {
+RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), constrained(false), R(0,false), K(0,false), translation(0,false), rotation(0,false), ombvEditor(0,true), weightArrow(0,false), jointForceArrow(0,false), jointMomentArrow(0,false), isFrameOfBodyForRotation(0,false) {
+  Frame *C = new Frame("C",this);
+  addFrame(C);
 
-  setText(1,getType());
-
-  QPalette palette;
-  QBrush brush=palette.brush(QPalette::Disabled, QPalette::Text);
-
-  frames = new Container;
-  frames->setText(0, "frames");
-  frames->setForeground(0,brush);
-  addChild(frames);
-  contours = new Container;
-  contours->setText(0, "contours");
-  contours->setForeground(0,brush);
-  addChild(contours);
-
-  new Frame("C", frames, -1, true);
-
-  QAction *action=new QAction(Utils::QIconCached("newobject.svg"),"Add frame", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(addFrame()));
-  contextMenu->insertAction(actionSaveAs,action);
-
-  contourContextMenu=new QMenu("Contour context menu");
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Add contour", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(addContour()));
-  contextMenu->insertAction(actionSaveAs,action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Add point", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(addPoint()));
-  contourContextMenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Add line", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(addLine()));
-  contourContextMenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Add plane", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(addPlane()));
-  contourContextMenu->addAction(action);
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Add sphere", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(addSphere()));
-  contourContextMenu->addAction(action);
-
-  contextMenu->insertSeparator(actionSaveAs);
-
-  R.setProperty(new FrameOfReferenceProperty(((Group*)getParentElement())->getFrame(0),this,MBSIMNS"frameOfReference"));
+  R.setProperty(new FrameOfReferenceProperty(getParent()->getFrame(0),this,MBSIMNS"frameOfReference"));
 
   K.setProperty(new LocalFrameOfReferenceProperty(getFrame(0),this,MBSIMNS"frameForKinematics"));
 
@@ -119,159 +82,8 @@ RigidBody::~RigidBody() {
 
 void RigidBody::initialize() {
   Body::initialize();
+
   R.initialize();
-}
-
-void RigidBody::initializeDialog() {
-  Body::initializeDialog();
-
-  dialog->addTab("Kinematics");
-  dialog->addTab("Visualisation");
-  dialog->addTab("Extra");
-
-  RWidget = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(this,0),true);
-  dialog->addToTab("Kinematics",RWidget);
-
-  KWidget = new ExtWidget("Frame for kinematics",new LocalFrameOfReferenceWidget(this,0),true);
-  dialog->addToTab("Kinematics",KWidget);
-
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1"),massUnits(),2));
-  massWidget = new ExtWidget("Mass",new ExtPhysicalVarWidget(input));
-  dialog->addToTab("General", massWidget);
-
-  input.clear();
-  input.push_back(new PhysicalStringWidget(new SymMatWidget(getEye<string>(3,3,"0.01","0")),inertiaUnits(),2));
-  inertiaWidget = new ExtWidget("Inertia tensor",new ExtPhysicalVarWidget(input));
-  dialog->addToTab("General", inertiaWidget);
-
-  TranslationChoiceWidget *translationWidget_ = new TranslationChoiceWidget("");
-  translationWidget = new ExtWidget("Translation",translationWidget_,true);
-  dialog->addToTab("Kinematics", translationWidget);
-  connect(translationWidget_,SIGNAL(translationChanged()),this,SLOT(resizeVariables()));
-  connect(translationWidget,SIGNAL(resize()),this,SLOT(resizeVariables()));
-
-  RotationChoiceWidget *rotationWidget_ = new RotationChoiceWidget("");
-  rotationWidget = new ExtWidget("Rotation",rotationWidget_,true);
-  dialog->addToTab("Kinematics", rotationWidget);
-  connect(rotationWidget_,SIGNAL(rotationChanged()),this,SLOT(resizeVariables()));
-  connect(rotationWidget,SIGNAL(resize()),this,SLOT(resizeVariables()));
-
-  ombvEditorWidget = new ExtWidget("OpenMBV body",new OMBVBodySelectionWidget(this),true);
-  dialog->addToTab("Visualisation", ombvEditorWidget);
-
-  weightArrowWidget = new ExtWidget("OpenMBV weight arrow",new OMBVArrowWidget("NOTSET"),true);
-  dialog->addToTab("Visualisation",weightArrowWidget);
-
-  jointForceArrowWidget = new ExtWidget("OpenMBV joint force arrow",new OMBVArrowWidget("NOTSET"),true);
-  dialog->addToTab("Visualisation",jointForceArrowWidget);
-
-  jointMomentArrowWidget = new ExtWidget("OpenMBV joint moment arrow",new OMBVArrowWidget("NOTSET"),true);
-  dialog->addToTab("Visualisation",jointMomentArrowWidget);
-
-  input.clear();
-  input.push_back(new PhysicalStringWidget(new BoolWidget("0"),QStringList(),1));
-  isFrameOfBodyForRotationWidget = new ExtWidget("Use body frame for rotation",new ExtPhysicalVarWidget(input),true); 
-  dialog->addToTab("Extra", isFrameOfBodyForRotationWidget);
-
-}
-
-void RigidBody::toWidget() {
-  Body::toWidget();
-  R.toWidget(RWidget);
-  K.toWidget(KWidget);
-  mass.toWidget(massWidget);
-  inertia.toWidget(inertiaWidget);
-  translation.toWidget(translationWidget);
-  rotation.toWidget(rotationWidget);
-  ombvEditor.toWidget(ombvEditorWidget);
-  weightArrow.toWidget(weightArrowWidget);
-  jointForceArrow.toWidget(jointForceArrowWidget);
-  jointMomentArrow.toWidget(jointMomentArrowWidget);
-  isFrameOfBodyForRotation.toWidget(isFrameOfBodyForRotationWidget);
-}
-
-void RigidBody::fromWidget() {
-  Body::fromWidget();
-  R.fromWidget(RWidget);
-  K.fromWidget(KWidget);
-  mass.fromWidget(massWidget);
-  inertia.fromWidget(inertiaWidget);
-  translation.fromWidget(translationWidget);
-  rotation.fromWidget(rotationWidget);
-  weightArrow.fromWidget(weightArrowWidget);
-  jointForceArrow.fromWidget(jointForceArrowWidget);
-  jointMomentArrow.fromWidget(jointMomentArrowWidget);
-  ombvEditor.fromWidget(ombvEditorWidget);
-  isFrameOfBodyForRotation.fromWidget(isFrameOfBodyForRotationWidget);
-}
-
-int RigidBody::getUnconstrainedSize() const {
-  if(translationWidget)
-    return (translationWidget->isActive()?((TranslationChoiceWidget*)translationWidget->getWidget())->getSize():0) + (rotationWidget->isActive()?((RotationChoiceWidget*)rotationWidget->getWidget())->getSize():0);
-  else
-    return (translation.isActive()?((TranslationChoiceProperty*)translation.getProperty())->getSize():0) + (rotation.isActive()?((RotationChoiceProperty*)rotation.getProperty())->getSize():0);
-}
-
-void RigidBody::addFrame() {
-  QString text = newName(frames,"P");
-  if (!text.isEmpty()) {
-    new FixedRelativeFrame(text, frames, -1);
-    ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
-  }
-  mw->mbsimxml(1);
-}
-
-void RigidBody::addContour() {
-  contourContextMenu->exec(QCursor::pos());
-}
-
-void RigidBody::addPoint() {
-  QString text = newName(contours,"Point");
-  if (!text.isEmpty()) {
-    new Point(text, contours, -1);
-    ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
-  }
-  mw->mbsimxml(1);
-}
-
-void RigidBody::addLine() {
-  QString text = newName(contours,"Line");
-  if (!text.isEmpty()) {
-    new Line(text, contours, -1);
-    ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
-  }
-  mw->mbsimxml(1);
-}
-
-void RigidBody::addPlane() {
-  QString text = newName(contours,"Plane");
-  if (!text.isEmpty()) {
-    new Plane(text, contours, -1);
-    ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
-  }
-  mw->mbsimxml(1);
-}
-
-void RigidBody::addSphere() {
-  QString text = newName(contours,"Sphere");
-  if (!text.isEmpty()) {
-    new Sphere(text, contours, -1);
-    ((Element*)treeWidget()->topLevelItem(0))->updateWidget();
-  }
-  mw->mbsimxml(1);
-}
-
-void RigidBody::resizeGeneralizedPosition() {
-  int size = getSize();
-  if(q0 && q0->size() != size)
-    q0->resize(size);
-}
-
-void RigidBody::resizeGeneralizedVelocity() {
-  int size = getSize();
-  if(u0 && u0->size() != size)
-    u0->resize(size);
 }
 
 void RigidBody::initializeUsingXML(TiXmlElement *element) {
@@ -281,13 +93,15 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
   e=element->FirstChildElement(MBSIMNS"frames")->FirstChildElement();
   while(e && e->ValueStr()==MBSIMNS"frame") {
     TiXmlElement *ec=e->FirstChildElement();
-    FixedRelativeFrame *f=new FixedRelativeFrame(ec->Attribute("name"), frames, -1);
+    FixedRelativeFrame *f=new FixedRelativeFrame(ec->Attribute("name"),this);
+    addFrame(f);
     f->initializeUsingXML(ec);
     f->initializeUsingXML2(e);
     e=e->NextSiblingElement();
   }
   while(e && e->ValueStr()==MBSIMNS"FixedRelativeFrame") {
-    FixedRelativeFrame *f=new FixedRelativeFrame(e->Attribute("name"), frames, -1);
+    FixedRelativeFrame *f=new FixedRelativeFrame(e->Attribute("name"),this);
+    addFrame(f);
     f->initializeUsingXML(e);
     e=e->NextSiblingElement();
   }
@@ -297,16 +111,21 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
   Contour *c;
   while(e && e->ValueStr()==MBSIMNS"contour") {
     TiXmlElement *ec=e->FirstChildElement();
-    c=ObjectFactory::getInstance()->createContour(ec, contours, -1);
-    if(c) c->initializeUsingXML(ec);
-    FixedRelativeFrame *f=new FixedRelativeFrame(QString("ContourFrame")+QString::number(contours->childCount()), frames, -1);
-//    f->initializeUsingXML(ec);
+    c=ObjectFactory::getInstance()->createContour(ec,this);
+    if(c) {
+      addContour(c);
+      c->initializeUsingXML(ec);
+    }
+    stringstream stream;
+    stream << "ContourFrame" << contour.size();
+    FixedRelativeFrame *f=new FixedRelativeFrame(stream.str(),this);
+    addFrame(f);
     f->initializeUsingXML2(e);
-    c->setSavedFrameOfReference(QString("../Frame[")+f->getName()+"]");
+    c->setSavedFrameOfReference(string("../Frame[")+f->getName()+"]");
     e=e->NextSiblingElement();
   }
   while(e) {
-    c=ObjectFactory::getInstance()->createContour(e, contours, -1);
+    c=ObjectFactory::getInstance()->createContour(e,this);
     c->initializeUsingXML(e);
     e=e->NextSiblingElement();
   }
@@ -353,13 +172,13 @@ TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
   rotation.writeXMLFile(ele0);
 
   ele1 = new TiXmlElement( MBSIMNS"frames" );
-  for(int i=1; i<frames->childCount(); i++)
-    getFrame(i)->writeXMLFile(ele1);
+  for(int i=1; i<frame.size(); i++)
+    frame[i]->writeXMLFile(ele1);
   ele0->LinkEndChild( ele1 );
 
   ele1 = new TiXmlElement( MBSIMNS"contours" );
-  for(int i=0; i<contours->childCount(); i++)
-    getContour(i)->writeXMLFile(ele1);
+  for(int i=0; i<contour.size(); i++)
+    contour[i]->writeXMLFile(ele1);
   ele0->LinkEndChild( ele1 );
 
   isFrameOfBodyForRotation.writeXMLFile(ele0);

@@ -26,6 +26,7 @@
 #include <set>
 #include <iostream>
 #include <map>
+class Element;
 class Frame;
 class Contour;
 class Object;
@@ -39,7 +40,7 @@ class TiXmlElement;
 class QTreeWidgetItem;
 class TreeItem;
 
-//Element *ObjectFactory(MBSim::Element *obj, QTreeWidgetItem* parentItem, int ind);
+//Element *ObjectFactory(MBSim::Element *obj, QTreeWidgetItem* parentItem);
 
 class ObjectFactoryBase {
   protected:
@@ -50,16 +51,16 @@ class ObjectFactoryBase {
     typedef std::pair<double, P_NSPRE> P_PRINSPRE;
   public:
     typedef std::multimap<double, P_NSPRE> MM_PRINSPRE;
-    virtual Contour* createContour(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind) { return NULL; }
-    virtual Group* createGroup(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind) { return NULL; }
-    virtual Object* createObject(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind) { return NULL; }
+    virtual Contour* createContour(TiXmlElement *element, Element *parent) { return NULL; }
+    virtual Group* createGroup(TiXmlElement *element, Element *parent) { return NULL; }
+    virtual Object* createObject(TiXmlElement *element, Element *parent) { return NULL; }
   //  virtual ExtraDynamic * createExtraDynamic(TiXmlElement *element) { return NULL; }
   //  virtual Translation* createTranslation(TiXmlElement *element) { return NULL; }
   //  virtual Rotation* createRotation(TiXmlElement *element) { return NULL; }
-  virtual Link* createLink(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind) { return NULL; }
-  virtual Observer* createObserver(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind) { return NULL; }
-  virtual Integrator* createIntegrator(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind) { return NULL; }
-  virtual Parameter* createParameter(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind) { return NULL; }
+  virtual Link* createLink(TiXmlElement *element, Element *parent) { return NULL; }
+  virtual Observer* createObserver(TiXmlElement *element, Element *parent) { return NULL; }
+  virtual Integrator* createIntegrator(TiXmlElement *element, QTreeWidgetItem* parentItem) { return NULL; }
+  virtual Parameter* createParameter(TiXmlElement *element, QTreeWidgetItem* parentItem) { return NULL; }
   //  virtual GeneralizedForceLaw *createGeneralizedForceLaw(TiXmlElement *element) { return NULL; }
   //  virtual GeneralizedImpactLaw *createGeneralizedImpactLaw(TiXmlElement *element) { return NULL; }
   //  virtual FrictionForceLaw *createFrictionForceLaw(TiXmlElement *element) { return NULL; }
@@ -92,16 +93,16 @@ class ObjectFactory : public ObjectFactoryBase {
     void registerObjectFactory(ObjectFactoryBase *fac) { factories.insert(fac); }
     void unregisterObjectFactory(ObjectFactory *fac) { factories.erase(fac); }
 
-    Contour* createContour(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind);
-    Group* createGroup(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind);
-    Object* createObject(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind);
+    Contour* createContour(TiXmlElement *element, Element *parent);
+    Group* createGroup(TiXmlElement *element, Element *parent);
+    Object* createObject(TiXmlElement *element, Element *parent);
 //    ExtraDynamic * createExtraDynamic(TiXmlElement *element);
 //    Translation* createTranslation(TiXmlElement *element);
 //    Rotation* createRotation(TiXmlElement *element);
-    Link* createLink(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind);
-    Observer* createObserver(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind);
-    Integrator* createIntegrator(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind);
-    Parameter* createParameter(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind);
+    Link* createLink(TiXmlElement *element, Element *parent);
+    Observer* createObserver(TiXmlElement *element, Element *parent);
+    Integrator* createIntegrator(TiXmlElement *element, QTreeWidgetItem* parentItem);
+    Parameter* createParameter(TiXmlElement *element, QTreeWidgetItem* parentItem);
 //    GeneralizedForceLaw *createGeneralizedForceLaw(TiXmlElement *element);
 //    GeneralizedImpactLaw *createGeneralizedImpactLaw(TiXmlElement *element);
 //    FrictionForceLaw *createFrictionForceLaw(TiXmlElement *element);
@@ -128,16 +129,16 @@ class MBSimObjectFactory : protected ObjectFactoryBase  {
     // objects from MBSimObjectFactory
     static void initialize();
   protected:
-    Contour* createContour(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind);
-    Group* createGroup(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind);
-    Object* createObject(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind);
+    Contour* createContour(TiXmlElement *element, Element *parent);
+    Group* createGroup(TiXmlElement *element, Element *parent);
+    Object* createObject(TiXmlElement *element, Element *parent);
 //    ExtraDynamic * createExtraDynamic(TiXmlElement *element) {return 0; }
 //    Translation* createTranslation(TiXmlElement *element);
 //    Rotation* createRotation(TiXmlElement *element);
-    Link* createLink(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind);
-    Observer* createObserver(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind);
-    Integrator* createIntegrator(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind);
-    Parameter* createParameter(TiXmlElement *element, QTreeWidgetItem* parentItem, int ind);
+    Link* createLink(TiXmlElement *element, Element *parent);
+    Observer* createObserver(TiXmlElement *element, Element *parent);
+    Integrator* createIntegrator(TiXmlElement *element, QTreeWidgetItem* parentItem);
+    Parameter* createParameter(TiXmlElement *element, QTreeWidgetItem* parentItem);
 //    GeneralizedForceLaw *createGeneralizedForceLaw(TiXmlElement *element);
 //    GeneralizedImpactLaw *createGeneralizedImpactLaw(TiXmlElement *element);
 //    FrictionForceLaw *createFrictionForceLaw(TiXmlElement *element);

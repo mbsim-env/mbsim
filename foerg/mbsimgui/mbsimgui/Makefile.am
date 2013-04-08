@@ -12,7 +12,22 @@ mbsimgui_CPPFLAGS = $(MBXMLUTILS_CFLAGS)
 
 mbsimgui_LDFLAGS = $(HDF5SERIE_LIBS) $(MBXMLUTILS_LIBS) -Wl,-rpath -Wl,\$$ORIGIN/../lib
 
-mbsimgui_SOURCES = basic_properties.cc \
+mbsimgui_SOURCES = element.cc \
+		   object.cc \
+		   body.cc \
+		   rigidbody.cc \
+		   group.cc \
+		   objectfactory.cc \
+		   solver.cc \
+		   frame.cc \
+		   contour.cc \
+		   integrator.cc \
+		   parameter.cc \
+		   octaveutils.cc \
+		   treeitem.cc \
+		   treemodel.cc \
+		   delegate.cc \
+		   basic_properties.cc \
 		   string_properties.cc \
 		   kinematics_properties.cc \
 		   kinetics_properties.cc \
@@ -29,26 +44,6 @@ mbsimgui_SOURCES = basic_properties.cc \
 		   property_widget.cc\
 		   dialogs.cc  \
 		   utils.cc \
-		   element.cc \
-		   object.cc \
-		   body.cc \
-		   rigidbody.cc \
-		   group.cc \
-		   objectfactory.cc \
-		   solver.cc \
-		   frame.cc \
-		   contour.cc \
-		   link.cc \
-		   joint.cc \
-		   contact.cc \
-		   spring_damper.cc \
-		   kinetic_excitation.cc \
-		   constraint.cc \
-		   observer.cc \
-		   signal_.cc \
-		   integrator.cc \
-		   parameter.cc \
-		   octaveutils.cc \
 		   mainwindow.cc \
 		   main.cc
 		   
@@ -63,26 +58,13 @@ QT_BUILT_SOURCES = basic_widgets.moc.cc \
 		   kinetics_widgets.moc.cc \
 		   ombv_widgets.moc.cc \
 		   extended_widgets.moc.cc \
-		   body.moc.cc \
 		   frame.moc.cc \
 		   contour.moc.cc \
-		   object.moc.cc \
 		   property_widget.moc.cc  \
 		   dialogs.moc.cc  \
-		   group.moc.cc \
-		   rigidbody.moc.cc\
-		   element.moc.cc \
-		   solver.moc.cc \
-		   link.moc.cc \
-		   joint.moc.cc \
-		   contact.moc.cc \
-		   spring_damper.moc.cc \
-		   kinetic_excitation.moc.cc \
-		   constraint.moc.cc \
-		   observer.moc.cc \
 		   integrator.moc.cc \
+		   delegate.moc.cc \
 		   parameter.moc.cc \
-		   signal_.moc.cc \
 		   mainwindow.moc.cc
 
 mbsimgui_HEADERS = 

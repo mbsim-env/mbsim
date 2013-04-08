@@ -25,17 +25,13 @@
 
 class KineticExcitation : public Link {
   public:
-    KineticExcitation(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    KineticExcitation(const std::string &str, TreeItem *parentItem);
     ~KineticExcitation();
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    QString getType() const { return "KineticExcitation"; }
-    void initializeDialog(); virtual void fromWidget();
-    virtual void toWidget();
     void initialize();
 
   protected:
-    ExtWidget *forceWidget, *momentWidget, *connectionsWidget, *frameOfReferenceWidget, *forceArrowWidget, *momentArrowWidget;
     ExtProperty force, moment, connections, frameOfReference, forceArrow, momentArrow;
 };
 

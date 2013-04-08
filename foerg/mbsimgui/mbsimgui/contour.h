@@ -25,63 +25,46 @@
 
 class Contour : public Element {
   public:
-    Contour(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    Contour(const std::string &str, Element *parent);
     ~Contour();
-    QString getType() const { return "Contour"; }
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual Element *getByPathSearch(QString path);
-    void setSavedFrameOfReference(const QString &str);
+    virtual Element *getByPathSearch(std::string path);
+    void setSavedFrameOfReference(const std::string &str);
     virtual void initialize();
-    virtual void initializeDialog();
-    virtual void fromWidget();
-    virtual void toWidget();
   protected:
-    ExtWidget *refFrameWidget;
     ExtProperty refFrame;
 };
 
 class Point : public Contour {
   public:
-    Point(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    Point(const std::string &str, Element *parent);
     ~Point();
-    QString getType() const { return "Point"; }
 };
 
 class Line : public Contour {
   public:
-    Line(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    Line(const std::string &str, Element *parent);
     ~Line();
-    QString getType() const { return "Line"; }
 };
 
 class Plane : public Contour {
   public:
-    Plane(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    Plane(const std::string &str, Element *parent);
     ~Plane();
-    QString getType() const { return "Plane"; }
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual void initializeDialog();
-    virtual void fromWidget();
-    virtual void toWidget();
   protected:
-    ExtWidget *visuWidget;
     ExtProperty visu;
 };
 
 class Sphere : public Contour {
   public:
-    Sphere(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    Sphere(const std::string &str, Element *parent);
     ~Sphere();
-    QString getType() const { return "Sphere"; }
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual void initializeDialog();
-    virtual void fromWidget();
-    virtual void toWidget();
   protected:
-    ExtWidget *radiusWidget, *visuWidget;
     ExtProperty radius, visu;
 };
 
