@@ -27,29 +27,21 @@ class QAction;
 class VecWidget;
 
 class Object : public Element {
-  Q_OBJECT
   public:
-    Object(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    Object(const std::string &str, Element *parent);
     ~Object();
     virtual int getqSize() {return 0;}
     virtual int getuSize() {return 0;}
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual Element* getByPathSearch(QString path);
+    virtual Element* getByPathSearch(std::string path);
     virtual void resizeGeneralizedPosition() {}
     virtual void resizeGeneralizedVelocity() {}
-    virtual void initializeDialog();
-    virtual void fromWidget();
-    virtual void toWidget();
-  public slots:
-    virtual void resizeVariables() {resizeGeneralizedPosition();resizeGeneralizedVelocity();emit sizeChanged();}
   protected:
     QAction *actionSaveAs;
-    ExtWidget *q0Widget, *u0Widget;
+    //ExtWidget *q0Widget, *u0Widget;
     ExtProperty q0Property, u0Property;
-    VecWidget *q0, *u0;
-  signals:
-    void sizeChanged();
+    //VecWidget *q0, *u0;
 
 };
 

@@ -25,6 +25,7 @@
 #include <mbxmlutilstinyxml/tinyxml.h>
 
 class QTreeWidget;
+class QTreeView;
 class QStackedWidget;
 class QAction;
 class QLineEdit;
@@ -32,6 +33,7 @@ class QTextBrowser;
 class QProcess;
 class QUrl;
 class Process;
+class QModelIndex;
 
 namespace OpenMBVGUI {
   class MainWindow;
@@ -46,7 +48,8 @@ class MainWindow : public QMainWindow {
   Q_OBJECT
 
   private:
-    QTreeWidget *elementList, *integratorList, *parameterList;
+    QTreeView *elementList;
+    QTreeWidget *integratorList, *parameterList;
     QStackedWidget *pagesWidget;
     QLineEdit *fileMBS, *fileIntegrator, *fileParameter;
     Process *mbsim;
@@ -58,6 +61,8 @@ class MainWindow : public QMainWindow {
     OpenMBVGUI::MainWindow *inlineOpenMBVMW;
     void initInlineOpenMBV();
     QString uniqueTempDir, absoluteMBSFilePath;
+    QAction *propertiesAction, *addFrameAction, *addGroupAction, *addObjectAction, *addRigidBodyAction, *addLinkAction, *removeRowAction;
+
   public:
     MainWindow();
     ~MainWindow();
@@ -65,7 +70,7 @@ class MainWindow : public QMainWindow {
     void mbsimxml(int task);
   public slots:
     void elementListClicked();
-    void elementListDoubleClicked();
+    void elementListDoubleClicked(const QModelIndex &index);
     void parameterListClicked();
     void integratorListClicked();
 //    void parameterListClicked(const QPoint &pos);
@@ -97,6 +102,11 @@ class MainWindow : public QMainWindow {
     void help();
     void about();
     void updateOctaveParameters();
+    void removeRow();
+    void addGroup();
+    void addObject();
+    void addRigidBody();
+    void addFrame();
   protected slots:
     void selectElement(std::string);
     void changeWorkingDir();

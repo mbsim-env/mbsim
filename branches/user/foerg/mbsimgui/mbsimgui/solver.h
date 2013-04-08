@@ -37,22 +37,21 @@ class Environment : public QObject {
 };
 
 class Solver : public Group {
+  friend class SolverPropertyDialog;
   protected:
-    ExtWidget *environmentWidget, *solverParametersWidget, *inverseKineticsWidget;
     ExtProperty environmentProperty, solverParametersProperty, inverseKineticsProperty;
   public:
-    Solver(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    Solver(const std::string &str, Element *parent);
+    const std::string getType() const { return "DynamicSystemSolver"; }
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    QString getType() const { return "DynamicSystemSolver"; }
-    QString getFileExtension() const { return ".mbsim.xml"; }
+    std::string getFileExtension() const { return ".mbsim.xml"; }
 
-    static Solver* readXMLFile(const QString &filename, QTreeWidgetItem *parent);
-    void writeXMLFile(const QString &name);
+    static Solver* readXMLFile(const std::string &filename);
+    void writeXMLFile(const std::string &name);
     void writeXMLFile() { writeXMLFile(getName()); }
-    virtual void initializeDialog();
-    virtual void fromWidget();
-    virtual void toWidget();
+
+    PropertyDialog* createPropertyDialog() {return new SolverPropertyDialog(this);}
 };
 
 #endif

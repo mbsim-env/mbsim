@@ -51,7 +51,7 @@ class ParentFrameOfReferenceProperty : public Property {
     Frame *frame;
     Element* element;
     std::string xmlName;
-    QString saved_frameOfReference;
+    std::string saved_frameOfReference;
 
   public:
     ParentFrameOfReferenceProperty(Frame* frame_=0, Element* element_=0, const std::string &xmlName_="") : frame(frame_), element(element_), xmlName(xmlName_) {}
@@ -61,8 +61,8 @@ class ParentFrameOfReferenceProperty : public Property {
     void setFrame(Frame *frame_) {frame = frame_;}
     virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    void setSavedFrameOfReference(const QString &str) {saved_frameOfReference = str;}
-    const QString& getSavedFrameOfReference() const {return saved_frameOfReference;}
+    void setSavedFrameOfReference(const std::string &str) {saved_frameOfReference = str;}
+    const std::string& getSavedFrameOfReference() const {return saved_frameOfReference;}
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 };
@@ -72,7 +72,7 @@ class FrameOfReferenceProperty : public Property {
     Frame *frame;
     Element* element;
     std::string xmlName;
-    QString saved_frameOfReference;
+    std::string saved_frameOfReference;
   public:
     FrameOfReferenceProperty(Frame* frame_=0, Element* element_=0, const std::string &xmlName_="") : frame(frame_), element(element_), xmlName(xmlName_) {}
     Frame* getFrame() const {return frame;}
@@ -82,8 +82,8 @@ class FrameOfReferenceProperty : public Property {
     TiXmlElement* writeXMLFile(TiXmlNode *element); 
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    void setSavedFrameOfReference(const QString &str) {saved_frameOfReference = str;}
-    const QString& getSavedFrameOfReference() const {return saved_frameOfReference;}
+    void setSavedFrameOfReference(const std::string &str) {saved_frameOfReference = str;}
+    const std::string& getSavedFrameOfReference() const {return saved_frameOfReference;}
 
 };
 class ContourOfReferenceProperty : public Property {
@@ -91,7 +91,7 @@ class ContourOfReferenceProperty : public Property {
     Contour *contour;
     Element* element;
     std::string xmlName;
-    QString saved_contourOfReference;
+    std::string saved_contourOfReference;
   public:
     ContourOfReferenceProperty(Contour* contour_=0, Element* element_=0, const std::string &xmlName_="") : contour(contour_), element(element_), xmlName(xmlName_) {}
     Contour* getContour() const {return contour;}
@@ -101,8 +101,8 @@ class ContourOfReferenceProperty : public Property {
     TiXmlElement* writeXMLFile(TiXmlNode *element); 
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    void setSavedContourOfReference(const QString &str) {saved_contourOfReference = str;}
-    const QString& getSavedContourOfReference() const {return saved_contourOfReference;}
+    void setSavedContourOfReference(const std::string &str) {saved_contourOfReference = str;}
+    const std::string& getSavedContourOfReference() const {return saved_contourOfReference;}
 };
 
 class RigidBodyOfReferenceProperty : public Property {
@@ -116,14 +116,14 @@ class RigidBodyOfReferenceProperty : public Property {
     TiXmlElement* writeXMLFile(TiXmlNode *element); 
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    void setSavedBodyOfReference(const QString &str) {saved_bodyOfReference = str;}
-    const QString& getSavedBodyOfReference() const {return saved_bodyOfReference;}
+    void setSavedBodyOfReference(const std::string &str) {saved_bodyOfReference = str;}
+    const std::string& getSavedBodyOfReference() const {return saved_bodyOfReference;}
 
   protected:
     RigidBody* body;
     Element* element;
     std::string xmlName;
-    QString saved_bodyOfReference;
+    std::string saved_bodyOfReference;
 };
 
 class FileProperty : public Property {
@@ -136,9 +136,9 @@ class FileProperty : public Property {
     void toWidget(QWidget *widget);
 
   protected:
-    QString fileName;
+    std::string fileName;
     std::string xmlName;
-    QString absoluteFilePath;
+    std::string absoluteFilePath;
 };
 
 class DependenciesProperty : public Property {

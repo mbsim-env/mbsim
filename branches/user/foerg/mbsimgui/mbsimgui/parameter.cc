@@ -32,11 +32,9 @@ using namespace std;
 
 extern MainWindow *mw;
 
-Parameter::Parameter(const QString &str, QTreeWidgetItem *parentItem, int ind) : QTreeWidgetItem(), drawThisPath(true), searchMatched(true), dialog(0) {
-  if(ind==-1 || ind>=parentItem->childCount())
-    parentItem->addChild(this); // insert as last element
-  else
-    parentItem->insertChild(ind, this); // insert at position ind
+Parameter::Parameter(const QString &str, QTreeWidgetItem *parentItem) : QTreeWidgetItem(), drawThisPath(true), searchMatched(true), dialog(0) {
+
+  parentItem->addChild(this);
 
   setName(str);
 
@@ -139,7 +137,7 @@ Parameter* Parameter::readXMLFile(const QString &filename, QTreeWidgetItem* pare
   TiXml_setLineNrFromProcessingInstruction(e);
   map<string,string> dummy;
   incorporateNamespace(e, dummy);
-  Parameter *parameter=ObjectFactory::getInstance()->createParameter(e, parent, 1);
+  Parameter *parameter=ObjectFactory::getInstance()->createParameter(e, parent);
   parameter->initializeUsingXML(doc.FirstChildElement());
   return parameter;
 }
@@ -157,7 +155,7 @@ void Parameter::updateTreeWidgetItem(const QString &str) {
   setText(1, str);
 }
 
-DoubleParameter::DoubleParameter(const QString &str, QTreeWidgetItem *parentItem, int ind) : Parameter(str,parentItem,ind) {
+DoubleParameter::DoubleParameter(const QString &str, QTreeWidgetItem *parentItem) : Parameter(str,parentItem) {
 
 //  ParameterValueWidget *value_ = new ParameterValueWidget(new PhysicalStringWidget(new ScalarWidget("1"),QStringList(),0));
 //  value.setProperty(value_);

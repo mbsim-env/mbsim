@@ -28,7 +28,7 @@
 
 using namespace std;
 
-Contour::Contour(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element(str,parentItem,ind), refFrame(0,false) {
+Contour::Contour(const string &str, Element *parent) : Element(str,parent), refFrame(0,false) {
   refFrame.setProperty(new ParentFrameOfReferenceProperty(0,this,MBSIMNS"frameOfReference"));
 }
 
@@ -40,23 +40,7 @@ void Contour::initialize() {
   refFrame.initialize();
 }
 
-void Contour::initializeDialog() {
-  Element::initializeDialog();
-  refFrameWidget = new ExtWidget("Frame of reference",new ParentFrameOfReferenceWidget(this,0),true);
-  dialog->addToTab("General", refFrameWidget);
-}
-
-void Contour::toWidget() {
-  Element::toWidget();
-  refFrame.toWidget(refFrameWidget);
-}
-
-void Contour::fromWidget() {
-  Element::fromWidget();
-  refFrame.fromWidget(refFrameWidget);
-}
-
-void Contour::setSavedFrameOfReference(const QString &str) {
+void Contour::setSavedFrameOfReference(const string &str) {
   ((ParentFrameOfReferenceProperty*)(refFrame.getProperty()))->setSavedFrameOfReference(str);
 }
 
@@ -71,50 +55,38 @@ TiXmlElement* Contour::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
-Element *Contour::getByPathSearch(QString path) {
-  if (path.mid(0, 1)=="/") // absolut path
-    if(getParentElement())
-      return getParentElement()->getByPathSearch(path);
+Element *Contour::getByPathSearch(string path) {
+  if (path.substr(0, 1)=="/") // absolut path
+    if(getParent())
+      return getParent()->getByPathSearch(path);
     else
-      return getByPathSearch(path.mid(1));
-  else if (path.mid(0, 3)=="../") // relative path
-    return getParentElement()->getByPathSearch(path.mid(3));
+      return getByPathSearch(path.substr(1));
+  else if (path.substr(0, 3)=="../") // relative path
+    return getParent()->getByPathSearch(path.substr(3));
   else { // local path
     throw;
   }
 }
 
-Point::Point(const QString &str, QTreeWidgetItem *parentItem, int ind) : Contour(str,parentItem,ind) {
-  setText(1,getType());
+Point::Point(const string &str, Element *parent) : Contour(str,parent) {
 }
 
 Point::~Point() {
 }
 
-Line::Line(const QString &str, QTreeWidgetItem *parentItem, int ind) : Contour(str,parentItem,ind) {
-  setText(1,getType());
+Line::Line(const string &str, Element *parent) : Contour(str,parent) {
 }
 
 Line::~Line() {
 }
 
-Plane::Plane(const QString &str, QTreeWidgetItem *parentItem, int ind) : Contour(str,parentItem,ind) {
-  setText(1,getType());
+Plane::Plane(const string &str, Element *parent) : Contour(str,parent) {
 
   visu.setProperty(new OMBVPlaneProperty(MBSIMNS"enableOpenMBV"));
   ((OMBVPlaneProperty*)visu.getProperty())->setID(getID());
 }
 
 Plane::~Plane() {
-}
-
-void Plane::initializeDialog() {
-  Contour::initializeDialog();
-
-  dialog->addTab("Visualisation");
-
-  visuWidget = new ExtWidget("OpenMBV Plane",new OMBVPlaneWidget,true);
-  dialog->addToTab("Visualisation", visuWidget);
 }
 
 void Plane::initializeUsingXML(TiXmlElement *element) {
@@ -128,18 +100,7 @@ TiXmlElement* Plane::writeXMLFile(TiXmlNode *parent) {
   return e;
 }
 
-void Plane::toWidget() {
-  Contour::toWidget();
-  visu.toWidget(visuWidget);
-}
-
-void Plane::fromWidget() {
-  Contour::fromWidget();
-  visu.fromWidget(visuWidget);
-}
-
-Sphere::Sphere(const QString &str, QTreeWidgetItem *parentItem, int ind) : Contour(str,parentItem,ind) {
-  setText(1,getType());
+Sphere::Sphere(const string &str, Element *parent) : Contour(str,parent) {
  
   vector<PhysicalStringProperty*> input;
   input.push_back(new PhysicalStringProperty(new ScalarProperty("1"), "m", MBSIMNS"radius"));
@@ -153,20 +114,6 @@ Sphere::Sphere(const QString &str, QTreeWidgetItem *parentItem, int ind) : Conto
 Sphere::~Sphere() {
 }
 
-void Sphere::initializeDialog() {
-  Contour::initializeDialog();
-
-  dialog->addTab("Visualisation");
- 
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1"), lengthUnits(), 4));
-  radiusWidget = new ExtWidget("Radius",new ExtPhysicalVarWidget(input));
-  dialog->addToTab("General", radiusWidget);
-
-  visuWidget = new ExtWidget("OpenMBV Sphere",new OMBVEmptyWidget,true);
-  dialog->addToTab("Visualisation", visuWidget);
-}
-
 void Sphere::initializeUsingXML(TiXmlElement *element) {
   Contour::initializeUsingXML(element);
   radius.initializeUsingXML(element);
@@ -178,16 +125,4 @@ TiXmlElement* Sphere::writeXMLFile(TiXmlNode *parent) {
   radius.writeXMLFile(e);
   visu.writeXMLFile(e);
   return e;
-}
-
-void Sphere::toWidget() {
-  Contour::toWidget();
-  radius.toWidget(radiusWidget);
-  visu.toWidget(visuWidget);
-}
-
-void Sphere::fromWidget() {
-  Contour::fromWidget();
-  radius.fromWidget(radiusWidget);
-  visu.fromWidget(visuWidget);
 }

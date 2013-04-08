@@ -23,15 +23,23 @@
 #include "object.h"
 
 class Body : public Object {
-  Q_OBJECT
-  private:
   public:
-    Body(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    Body(const std::string &str, Element *parent);
     ~Body();
-    virtual Element* getByPathSearch(QString path);
+    virtual Element* getByPathSearch(std::string path);
 
-  public slots:
+    int getNumberOfFrames() {return frame.size();}
+
+    Frame* getFrame(const std::string &name, bool check=true);
+    Contour* getContour(const std::string &name, bool check=true);
+
+    void addFrame(Frame *frame);
+    void addContour(Contour *contour);
+
+    virtual Frame* getFrame(int i) {return frame[i];}
   protected:
+    std::vector<Frame*> frame;
+    std::vector<Contour*> contour;
 };
 
 #endif

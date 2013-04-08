@@ -26,11 +26,17 @@
 #include <map>
 
 class ExtWidget;
+class TextWidget;
 class QVBoxLayout;
 class TiXmlElement;
 class TiXmlNode;
 class QDialogButtonBox;
 class QAbstractButton;
+class Element;
+class Frame;
+class FixedRelativeFrame;
+class Group;
+class Solver;
 
 class PropertyDialog : public QDialog {
   Q_OBJECT
@@ -45,6 +51,8 @@ class PropertyDialog : public QDialog {
     void addStretch();
     void updateWidget();
     void resizeVariables();
+    virtual void toWidget(Element *element) {}
+    virtual void fromWidget(Element *element) {}
   protected:
     QObject* parentObject;
     std::map<QString,QVBoxLayout*> layout;
@@ -54,7 +62,59 @@ class PropertyDialog : public QDialog {
   public slots:
     void clicked(QAbstractButton *button);
   signals:
-    void apply();
+    void apply(QWidget *editor);
+    void ok(QWidget *editor);
+    void cancel(QWidget *editor);
+};
+
+class ElementPropertyDialog : public PropertyDialog {
+
+  public:
+    ElementPropertyDialog(QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+    TextWidget *textWidget;
+};
+
+class FramePropertyDialog : public ElementPropertyDialog {
+
+  public:
+    FramePropertyDialog(Frame *frame, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+    ExtWidget *visuWidget;
+};
+
+class FixedRelativeFramePropertyDialog : public FramePropertyDialog {
+
+  public:
+    FixedRelativeFramePropertyDialog(FixedRelativeFrame *frame, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+    ExtWidget *refFrameWidget, *positionWidget, *orientationWidget;
+};
+
+class GroupPropertyDialog : public ElementPropertyDialog {
+
+  public:
+    GroupPropertyDialog(Group *group, QWidget * parent = 0, Qt::WindowFlags f = 0, bool disabled=false);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+    ExtWidget *positionWidget, *orientationWidget, *frameOfReferenceWidget; 
+};
+
+class SolverPropertyDialog : public GroupPropertyDialog {
+  protected:
+    ExtWidget *environmentWidget, *solverParametersWidget, *inverseKineticsWidget;
+
+  public:
+    SolverPropertyDialog(Solver *solver, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
 };
 
 #endif

@@ -25,18 +25,13 @@
 
 class Contact : public Link {
   public:
-    Contact(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    Contact(const std::string &str, TreeItem *parentItem);
     ~Contact();
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    QString getType() const { return "Contact"; }
-   void initializeDialog();
-    virtual void fromWidget();
-    virtual void toWidget();
     void initialize();
 
   protected:
-    ExtWidget *contactForceLawWidget, *contactImpactLawWidget, *frictionForceLawWidget, *frictionImpactLawWidget, *connectionsWidget, *enableOpenMBVContactPointsWidget, *normalForceArrowWidget, *frictionArrowWidget;
     ExtProperty contactForceLaw, contactImpactLaw, frictionForceLaw, frictionImpactLaw, connections, enableOpenMBVContactPoints, normalForceArrow, frictionArrow;
 };
 

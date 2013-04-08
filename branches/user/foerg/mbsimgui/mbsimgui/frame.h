@@ -26,39 +26,35 @@
 class ExtWidget;
 
 class Frame : public Element {
+  friend class FramePropertyDialog;
   public:
-    Frame(const QString &str, QTreeWidgetItem *parentItem, int ind, bool grey=false);
+    Frame(const std::string &str, Element *parent, bool grey=true);
     ~Frame();
-    QString getType() const { return "Frame"; }
+    const std::string getType() const { return "Frame"; }
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual void initializeUsingXML2(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile2(TiXmlNode *element);
     bool openMBVFrame() const {return visuProperty.isActive();}
     void setOpenMBVFrame(bool flag) {visuProperty.setActive(flag);}
-    virtual Element * getByPathSearch(QString path);
-    virtual void initializeDialog();
-    virtual void fromWidget();
-    virtual void toWidget();
+    virtual Element * getByPathSearch(std::string path);
+    PropertyDialog* createPropertyDialog() {return new FramePropertyDialog(this);}
   protected:
-    ExtWidget *visuWidget;
     ExtProperty visuProperty;
 };
 
 class FixedRelativeFrame : public Frame {
+  friend class FixedRelativeFramePropertyDialog;
   public:
-    FixedRelativeFrame(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    FixedRelativeFrame(const std::string &str, Element *parent);
     ~FixedRelativeFrame();
-    QString getType() const { return "FixedRelativeFrame"; }
+    const std::string getType() const { return "FixedRelativeFrame"; }
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual void initializeUsingXML2(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual void initialize();
-    virtual void initializeDialog();
-    virtual void fromWidget();
-    virtual void toWidget();
+    PropertyDialog* createPropertyDialog() {return new FixedRelativeFramePropertyDialog(this);}
   protected:
-    ExtWidget *refFrameWidget, *positionWidget, *orientationWidget;
     ExtProperty refFrameProperty, positionProperty, orientationProperty;
 };
 

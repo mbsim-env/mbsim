@@ -25,68 +25,18 @@
 
 using namespace std;
 
-Object::Object(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element(str, parentItem, ind), q0(0), u0(0), q0Property(0,false), u0Property(0,false) {
-
-  actionSaveAs=new QAction(Utils::QIconCached("newobject.svg"),"Save as", this);
-  connect(actionSaveAs,SIGNAL(triggered()),this,SLOT(saveAs()));
-  contextMenu->addAction(actionSaveAs);
-
-  actionSave=new QAction(Utils::QIconCached("newobject.svg"),"Save", this);
-  actionSave->setDisabled(true);
-  connect(actionSave,SIGNAL(triggered()),this,SLOT(save()));
-  contextMenu->addAction(actionSave);
-
-  QAction *action=new QAction(Utils::QIconCached("newobject.svg"),"Copy", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(copy()));
-  contextMenu->addAction(action);
-
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Remove", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(remove()));
-  contextMenu->addAction(action);
-
-  contextMenu->addSeparator();
+Object::Object(const string &str, Element *parent) : Element(str,parent), q0Property(0,false), u0Property(0,false) {
 
   vector<PhysicalStringProperty*> input;
   input.push_back(new PhysicalStringProperty(new VecProperty(0),"",MBSIMNS"initialGeneralizedPosition"));
   q0Property.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  u0 = new VecWidget(0);
   input.push_back(new PhysicalStringProperty(new VecProperty(0),"",MBSIMNS"initialGeneralizedVelocity"));
   u0Property.setProperty(new ExtPhysicalVarProperty(input));
 }
 
 Object::~Object() {
-}
-
-void Object::initializeDialog() {
-  Element::initializeDialog();
-  dialog->addTab("Initial conditions");
-  vector<PhysicalStringWidget*> input;
-  q0 = new VecWidget(0);
-  input.push_back(new PhysicalStringWidget(q0,QStringList(),1));
-  ExtPhysicalVarWidget *var = new ExtPhysicalVarWidget(input);  
-  q0Widget = new ExtWidget("Initial generalized position",var,true);
-  dialog->addToTab("Initial conditions", q0Widget);
-
-  input.clear();
-  u0 = new VecWidget(0);
-  input.push_back(new PhysicalStringWidget(u0,QStringList(),1));
-  var = new ExtPhysicalVarWidget(input);  
-  u0Widget = new ExtWidget("Initial generalized velocity",var,true);
-  dialog->addToTab("Initial conditions", u0Widget);
-}
-
-void Object::toWidget() {
-  Element::toWidget();
-  q0Property.toWidget(q0Widget);
-  u0Property.toWidget(u0Widget);
-}
-
-void Object::fromWidget() {
-  Element::fromWidget();
-  q0Property.fromWidget(q0Widget);
-  u0Property.fromWidget(u0Widget);
 }
 
 void Object::initializeUsingXML(TiXmlElement *element) {
@@ -102,14 +52,14 @@ TiXmlElement* Object::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
-Element * Object::getByPathSearch(QString path) {
-  if (path.mid(0, 1)=="/") // absolut path
-    if(getParentElement())
-      return getParentElement()->getByPathSearch(path);
+Element * Object::getByPathSearch(string path) {
+  if (path.substr(0, 1)=="/") // absolut path
+    if(getParent())
+      return getParent()->getByPathSearch(path);
     else
-      return getByPathSearch(path.mid(1));
-  else if (path.mid(0, 3)=="../") // relative path
-    return getParentElement()->getByPathSearch(path.mid(3));
+      return getByPathSearch(path.substr(1));
+  else if (path.substr(0, 3)=="../") // relative path
+    return getParent()->getByPathSearch(path.substr(3));
   else  // local path
     throw MBSimError("Unknown identifier of container");
 }
