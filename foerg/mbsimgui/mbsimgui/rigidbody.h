@@ -24,6 +24,7 @@
 #include "extended_properties.h"
 
 class RigidBody : public Body {
+  friend class RigidBodyPropertyDialog;
   public:
     RigidBody(const std::string &str, Element *parent);
     ~RigidBody();
@@ -32,6 +33,7 @@ class RigidBody : public Body {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void setConstrained(bool b) {constrained = b;}
     void initialize();
+    PropertyDialog* createPropertyDialog() {return new RigidBodyPropertyDialog(this);}
   protected:
     bool constrained;
     ExtProperty R, K, mass, inertia, translation, rotation, ombvEditor, weightArrow, jointForceArrow, jointMomentArrow, isFrameOfBodyForRotation;

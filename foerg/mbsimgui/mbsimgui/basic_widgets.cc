@@ -111,7 +111,7 @@ FrameOfReferenceWidget::FrameOfReferenceWidget(Element *element_, Frame* selecte
   frame->setReadOnly(true);
   if(selectedFrame)
     frame->setText(QString::fromStdString(selectedFrame->getXMLPath()));
-//  frameBrowser = new FrameBrowser(element->treeWidget(),selectedFrame,this);
+  frameBrowser = new FrameBrowser(element->getRoot(),selectedFrame,this);
   connect(frameBrowser,SIGNAL(accepted()),this,SLOT(setFrame()));
   layout->addWidget(frame);
   QPushButton *button = new QPushButton(tr("Browse"));
@@ -148,7 +148,7 @@ ContourOfReferenceWidget::ContourOfReferenceWidget(Element *element_, Contour* s
   contour->setReadOnly(true);
   if(selectedContour)
     contour->setText(QString::fromStdString(selectedContour->getXMLPath()));
-  //contourBrowser = new ContourBrowser(element->treeWidget(),selectedContour,this);
+  contourBrowser = new ContourBrowser(element->getRoot(),selectedContour,this);
   connect(contourBrowser,SIGNAL(accepted()),this,SLOT(setContour()));
   layout->addWidget(contour);
   QPushButton *button = new QPushButton(tr("Browse"));
@@ -185,7 +185,7 @@ RigidBodyOfReferenceWidget::RigidBodyOfReferenceWidget(Element *element_, RigidB
   body->setReadOnly(true);
   if(selectedBody)
     body->setText(QString::fromStdString(selectedBody->getXMLPath()));
-  //bodyBrowser = new RigidBodyBrowser(element->treeWidget(),0,this);
+  bodyBrowser = new RigidBodyBrowser(element->getRoot(),0,this);
   connect(bodyBrowser,SIGNAL(accepted()),this,SLOT(setBody()));
   layout->addWidget(body);
   QPushButton *button = new QPushButton(tr("Browse"));

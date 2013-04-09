@@ -56,7 +56,7 @@ class RigidBodyBrowser : public QDialog {
   Q_OBJECT
 
   public:
-    RigidBodyBrowser(QTreeWidget* tree, RigidBody* selection, QWidget *obj);
+    RigidBodyBrowser(Element* element, RigidBody* selection, QWidget *obj);
     ~RigidBodyBrowser() {}
     QTreeWidget* getRigidBodyList() const {return rigidBodyList;}
     void updateWidget(RigidBody *rigidBody);
@@ -65,7 +65,7 @@ class RigidBodyBrowser : public QDialog {
     QTreeWidget *rigidBodyList;
     RigidBody *selection;
     ElementItem *savedItem;
-    QTreeWidget* tree;
+    Element* element;
     void mbs2RigidBodyTree(Element* item, QTreeWidgetItem* parentItem);
   protected slots:
     void checkForRigidBody(QTreeWidgetItem* item_,int);
@@ -75,7 +75,7 @@ class FrameBrowser : public QDialog {
   Q_OBJECT
 
   public:
-    FrameBrowser(QTreeWidget* tree, Frame* selection, QWidget *obj);
+    FrameBrowser(Element* element, Frame* selection, QWidget *obj);
     ~FrameBrowser() {}
     QTreeWidget* getFrameList() const {return frameList;}
     void updateWidget(Frame *frame);
@@ -84,7 +84,7 @@ class FrameBrowser : public QDialog {
     QTreeWidget *frameList;
     Frame *selection;
     ElementItem *savedItem;
-    QTreeWidget* tree;
+    Element* element;
     void mbs2FrameTree(Element* item, QTreeWidgetItem* parentItem);
   protected slots:
     void checkForFrame(QTreeWidgetItem* item_,int);
@@ -94,7 +94,7 @@ class ContourBrowser : public QDialog {
   Q_OBJECT
 
   public:
-    ContourBrowser(QTreeWidget* tree, Contour* selection, QWidget *obj);
+    ContourBrowser(Element* element, Contour* selection, QWidget *obj);
     ~ContourBrowser() {}
     QTreeWidget* getContourList() const {return contourList;}
     void updateWidget(Contour *contour);
@@ -103,7 +103,7 @@ class ContourBrowser : public QDialog {
     QTreeWidget *contourList;
     Contour *selection;
     ElementItem *savedItem;
-    QTreeWidget* tree;
+    Element* element;
     void mbs2ContourTree(Element* item, QTreeWidgetItem* parentItem);
   protected slots:
     void checkForContour(QTreeWidgetItem* item_,int);

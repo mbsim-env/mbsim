@@ -267,14 +267,8 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   centralWidget->setLayout(mainlayout);
   pagesWidget = new QStackedWidget;
 #ifdef INLINE_OPENMBV
-  QDockWidget *dockWidget4 = new QDockWidget("OpenMBV");
-  addDockWidget(Qt::RightDockWidgetArea,dockWidget4);
-  dockWidget4->setWidget(inlineOpenMBVMW);
-  inlineOpenMBVMW->setMinimumWidth(300);
-  inlineOpenMBVMW->setMinimumHeight(300);
   mainlayout->addWidget(inlineOpenMBVMW);
 #endif
-  //mainlayout->addWidget(pagesWidget);
 
   QDockWidget *mbsimDW = new QDockWidget("MBSim Echo Area", this);
   addDockWidget(Qt::BottomDockWidgetArea, mbsimDW);
@@ -383,40 +377,33 @@ void MainWindow::openPropertyDialog(string ID) {
 }
 
 void MainWindow::elementListClicked() {
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  TreeModel *model = static_cast<TreeModel*>(elementList->model());
   if(QApplication::mouseButtons()==Qt::RightButton) {
-    QModelIndex index = elementList->selectionModel()->currentIndex();
     if(index.column()==0) {
-    TreeModel *model = static_cast<TreeModel*>(elementList->model());
-    QMenu menu("Context Menu");
-    menu.addAction(propertiesAction);
-    if(dynamic_cast<Group*>(model->getItem(index)->getItemData())) {
+      QMenu menu("Context Menu");
+      menu.addAction(propertiesAction);
+      if(dynamic_cast<Group*>(model->getItem(index)->getItemData())) {
+        menu.addSeparator();
+        menu.addAction(addGroupAction);
+        menu.addAction(addObjectAction);
+        menu.addAction(addFrameAction);
+      }
+      else if(dynamic_cast<Body*>(model->getItem(index)->getItemData()))
+        menu.addAction(addFrameAction);
       menu.addSeparator();
-      menu.addAction(addGroupAction);
-      menu.addAction(addObjectAction);
-      menu.addAction(addFrameAction);
-    }
-    else if(dynamic_cast<Body*>(model->getItem(index)->getItemData()))
-      menu.addAction(addFrameAction);
-    menu.addSeparator();
-    menu.addAction(removeRowAction);
-    menu.exec(QCursor::pos());
-  } 
+      menu.addAction(removeRowAction);
+      menu.exec(QCursor::pos());
+    } 
   }
-//  else if(QApplication::mouseButtons()==Qt::LeftButton) {
-//    Element *element=dynamic_cast<Element*>(elementList->currentItem());
-//    if(element) {
-//      pagesWidget->insertWidget(0,element->getPropertyWidget());
-//      pagesWidget->setCurrentWidget(element->getPropertyWidget());
-//    }
-//  }
 
-//  Element *element=dynamic_cast<Element*>(elementList->currentItem());
-//#ifdef INLINE_OPENMBV
-//  if(element)
-//    inlineOpenMBVMW->highlightObject(element->getID());
-//  else
-//    inlineOpenMBVMW->highlightObject("");
-//#endif
+  Element *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
+#ifdef INLINE_OPENMBV
+  if(element)
+    inlineOpenMBVMW->highlightObject(element->getID());
+  else
+    inlineOpenMBVMW->highlightObject("");
+#endif
 }
 
 void MainWindow::elementListDoubleClicked(const QModelIndex &index) {
@@ -503,13 +490,9 @@ void MainWindow::newMBS() {
   mbsDir = QDir::current();
   actionOpenMBV->setDisabled(true);
   actionH5plotserie->setDisabled(true);
-//  elementList->clear();
-
-  //QTreeWidgetItem* parentItem = elementList->invisibleRootItem();
-  //Solver *sys=new Solver("MBS", parentItem,1);
-  //parentItem->addChild(sys);
   TreeModel *model = static_cast<TreeModel*>(elementList->model());
-  //QModelIndex index = elementList->selectionModel()->currentIndex();
+  QModelIndex index = model->index(0,0);
+  model->removeRow(index.row(), index.parent());
   model->addSolver();
 
   ((Integrator*)integratorList->topLevelItem(0))->setSolver(0);
@@ -534,13 +517,12 @@ void MainWindow::loadMBS(const QString &file) {
     TreeModel *model = static_cast<TreeModel*>(elementList->model());
     QModelIndex index = model->index(0,0);
     model->removeRow(index.row(), index.parent());
-    //Solver *solver = new Solver("MBS",0);
     Solver *sys = Solver::readXMLFile(file.toStdString());
     model->createGroupItem(sys);
     //QTreeWidgetItem* parentItem = elementList->invisibleRootItem();
     //sys->updateWidget();
     //((Integrator*)integratorList->topLevelItem(0))->setSolver(sys);
-    //actionSaveMBS->setDisabled(false);
+    actionSaveMBS->setDisabled(false);
   }
 
 #ifdef INLINE_OPENMBV
@@ -839,7 +821,6 @@ void MainWindow::mbsimxml(int task) {
   absolutePath = true;
   QModelIndex index = elementList->model()->index(0,0);
   Solver *slv=dynamic_cast<Solver*>(static_cast<TreeModel*>(elementList->model())->getItem(index)->getItemData());
-  cout << slv << endl;
   Integrator *integ=(Integrator*)integratorList->topLevelItem(0);
   if(!slv || !integ)
     return;
@@ -895,12 +876,17 @@ void MainWindow::h5plotserie() {
 }
 
 void MainWindow::selectElement(string ID) {
-//  map<string, Element*>::iterator it=Element::idEleMap.find(ID);
-//  if(it!=Element::idEleMap.end())
-//    elementList->setCurrentItem(it->second);
-//#ifdef INLINE_OPENMBV
-//  inlineOpenMBVMW->highlightObject(ID);
-//#endif
+  //map<string, Element*>::iterator it=Element::idEleMap.find(ID);
+  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  map<string, QModelIndex>::iterator it=model->idEleMap.find(ID);
+  if(it!=model->idEleMap.end()) {
+   //QModelIndex index = elementList->selectionModel()->currentIndex();
+   elementList->selectionModel()->setCurrentIndex(it->second,QItemSelectionModel::ClearAndSelect);
+   elementList->selectionModel()->setCurrentIndex(it->second.sibling(it->second.row(),1),QItemSelectionModel::Select);
+  }
+#ifdef INLINE_OPENMBV
+  inlineOpenMBVMW->highlightObject(ID);
+#endif
 }
 
 void MainWindow::help() {
@@ -1008,8 +994,7 @@ void Process::errLinkClicked(const QUrl &link) {
   linkClicked(link, err);
 }
 
-void MainWindow::removeRow()
-{
+void MainWindow::removeRow() {
   QModelIndex index = elementList->selectionModel()->currentIndex();
   QAbstractItemModel *model = elementList->model();
   model->removeRow(index.row(), index.parent());
@@ -1018,8 +1003,10 @@ void MainWindow::removeRow()
 void MainWindow::addGroup() {
   TreeModel *model = static_cast<TreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
-
   model->addGroup(index);
+#ifdef INLINE_OPENMBV
+  mbsimxml(1);
+#endif
 }
 
 void MainWindow::addObject() {
@@ -1031,14 +1018,18 @@ void MainWindow::addObject() {
 void MainWindow::addRigidBody() {
   TreeModel *model = static_cast<TreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
-
   model->addRigidBody(index);
+#ifdef INLINE_OPENMBV
+  mbsimxml(1);
+#endif
 }
 
 void MainWindow::addFrame() {
   TreeModel *model = static_cast<TreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
-
   model->addFrame(index);
+#ifdef INLINE_OPENMBV
+  mbsimxml(1);
+#endif
 }
 

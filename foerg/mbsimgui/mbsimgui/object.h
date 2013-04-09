@@ -27,6 +27,7 @@ class QAction;
 class VecWidget;
 
 class Object : public Element {
+  friend class ObjectPropertyDialog;
   public:
     Object(const std::string &str, Element *parent);
     ~Object();
@@ -37,11 +38,10 @@ class Object : public Element {
     virtual Element* getByPathSearch(std::string path);
     virtual void resizeGeneralizedPosition() {}
     virtual void resizeGeneralizedVelocity() {}
+    PropertyDialog* createPropertyDialog() {return new ObjectPropertyDialog(this);}
   protected:
     QAction *actionSaveAs;
-    //ExtWidget *q0Widget, *u0Widget;
     ExtProperty q0Property, u0Property;
-    //VecWidget *q0, *u0;
 
 };
 

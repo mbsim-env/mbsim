@@ -11,7 +11,7 @@
 
 using namespace std;
 
-TreeModel::TreeModel(const QStringList &headers, QObject *parent) : QAbstractItemModel(parent) {
+TreeModel::TreeModel(const QStringList &headers, QObject *parent) : QAbstractItemModel(parent), IDcounter(0) {
 
   QVector<QVariant> rootData;
   foreach (QString header, headers)
@@ -108,11 +108,13 @@ void TreeModel::addSolver(const QModelIndex &parent) {
 
 void TreeModel::addGroup(const QModelIndex &parent) {
   Group *group = new Group("Group1",static_cast<Element*>(getItem(parent)->getItemData()));
+  static_cast<Element*>(getItem(parent)->getItemData())->addGroup(group);
   createGroupItem(group,parent.child(2,0));
 }
 
 void TreeModel::addRigidBody(const QModelIndex &parent) {
   RigidBody *rigidbody = new RigidBody("RigidBody1",static_cast<Element*>(getItem(parent)->getItemData()));
+  static_cast<Element*>(getItem(parent)->getItemData())->addObject(rigidbody);
   createObjectItem(rigidbody,parent.child(3,0));
 }
 
@@ -157,6 +159,8 @@ void TreeModel::createObjectItem(Object *object, const QModelIndex &parent) {
   parentItem->insertChildren(item,1);
   endInsertRows();
 
+  idEleMap.insert(make_pair(object->getID(), parent.child(i,0)));
+
   QModelIndex index;
   if(parent.row()==-1)
     index = this->index(0,0,parent);
@@ -200,6 +204,7 @@ void TreeModel::createObjectItem(Object *object, const QModelIndex &parent) {
 //}
 
 void TreeModel::createFrameItem(Frame *frame, const QModelIndex &parent) {
+
   TreeItem *parentItem = getItem(parent);
 
   int i = rowCount(parent);
@@ -207,6 +212,8 @@ void TreeModel::createFrameItem(Frame *frame, const QModelIndex &parent) {
   TreeItem *item = new TreeItem(frame,parentItem);
   parentItem->insertChildren(item,1);
   endInsertRows();
+
+  idEleMap.insert(make_pair(frame->getID(), parent.child(i,0)));
 }
 
 QModelIndex TreeModel::parent(const QModelIndex &index) const {

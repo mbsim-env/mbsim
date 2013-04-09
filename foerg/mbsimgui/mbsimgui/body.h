@@ -23,6 +23,7 @@
 #include "object.h"
 
 class Body : public Object {
+  friend class BodyPropertyDialog;
   public:
     Body(const std::string &str, Element *parent);
     ~Body();
@@ -37,6 +38,7 @@ class Body : public Object {
     void addContour(Contour *contour);
 
     virtual Frame* getFrame(int i) {return frame[i];}
+    PropertyDialog* createPropertyDialog() {return new BodyPropertyDialog(this);}
   protected:
     std::vector<Frame*> frame;
     std::vector<Contour*> contour;
