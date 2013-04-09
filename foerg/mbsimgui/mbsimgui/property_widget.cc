@@ -22,11 +22,13 @@
 #include "basic_widgets.h"
 #include "string_widgets.h"
 #include "kinematics_widgets.h"
+#include "kinetics_widgets.h"
 #include "ombv_widgets.h"
 #include "extended_widgets.h"
 #include "frame.h"
 #include "rigidbody.h"
 #include "solver.h"
+#include "joint.h"
 #include <iostream>
 #include <QtGui>
 
@@ -276,7 +278,7 @@ void BodyPropertyDialog::fromWidget(Element *element) {
   ObjectPropertyDialog::fromWidget(element);
 }
 
-RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body, QWidget *parent, Qt::WindowFlags f) : BodyPropertyDialog(body,parent,f) {
+RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *parent, Qt::WindowFlags f) : BodyPropertyDialog(body_,parent,f), body(body_) {
   addTab("Kinematics");
   addTab("Visualisation");
   addTab("Extra");
@@ -300,14 +302,14 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body, QWidget *paren
   TranslationChoiceWidget *translationWidget_ = new TranslationChoiceWidget("");
   translationWidget = new ExtWidget("Translation",translationWidget_,true);
   addToTab("Kinematics", translationWidget);
-//  connect(translationWidget_,SIGNAL(translationChanged()),body,SLOT(resizeVariables()));
-//  connect(translationWidget,SIGNAL(resize()),body,SLOT(resizeVariables()));
+  connect(translationWidget_,SIGNAL(translationChanged()),this,SLOT(resizeVariables()));
+  connect(translationWidget,SIGNAL(resize()),this,SLOT(resizeVariables()));
 
   RotationChoiceWidget *rotationWidget_ = new RotationChoiceWidget("");
   rotationWidget = new ExtWidget("Rotation",rotationWidget_,true);
   addToTab("Kinematics", rotationWidget);
-//  connect(rotationWidget_,SIGNAL(rotationChanged()),body,SLOT(resizeVariables()));
-//  connect(rotationWidget,SIGNAL(resize()),body,SLOT(resizeVariables()));
+  connect(rotationWidget_,SIGNAL(rotationChanged()),this,SLOT(resizeVariables()));
+  connect(rotationWidget,SIGNAL(resize()),this,SLOT(resizeVariables()));
 
   ombvEditorWidget = new ExtWidget("OpenMBV body",new OMBVBodySelectionWidget(body),true);
   addToTab("Visualisation", ombvEditorWidget);
@@ -353,5 +355,70 @@ void RigidBodyPropertyDialog::fromWidget(Element *element) {
   static_cast<RigidBody*>(element)->jointForceArrow.fromWidget(jointForceArrowWidget);
   static_cast<RigidBody*>(element)->jointMomentArrow.fromWidget(jointMomentArrowWidget);
   static_cast<RigidBody*>(element)->isFrameOfBodyForRotation.fromWidget(isFrameOfBodyForRotationWidget);
+}
+
+int RigidBodyPropertyDialog::getSize() const {
+  return (translationWidget->isActive()?((TranslationChoiceWidget*)translationWidget->getWidget())->getSize():0) + (rotationWidget->isActive()?((RotationChoiceWidget*)rotationWidget->getWidget())->getSize():0);
+}
+
+void RigidBodyPropertyDialog::resizeGeneralizedPosition() {
+  int size =  body->isConstrained() ? 0 : getSize();
+  if(q0 && q0->size() != size)
+    q0->resize(size);
+}
+
+void RigidBodyPropertyDialog::resizeGeneralizedVelocity() {
+  int size = getSize();
+  if(u0 && u0->size() != size)
+    u0->resize(size);
+}
+
+LinkPropertyDialog::LinkPropertyDialog(Link *link, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(parent,f) {
+}
+
+void LinkPropertyDialog::toWidget(Element *element) {
+  ElementPropertyDialog::toWidget(element);
+}
+
+void LinkPropertyDialog::fromWidget(Element *element) {
+  ElementPropertyDialog::fromWidget(element);
+}
+
+JointPropertyDialog::JointPropertyDialog(Joint *joint, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(joint,parent,f) {
+  addTab("Kinetics");
+  addTab("Visualisation");
+
+  forceArrowWidget = new ExtWidget("OpenMBV force arrow",new OMBVArrowWidget("NOTSET"),true);
+  addToTab("Visualisation",forceArrowWidget);
+
+  momentArrowWidget = new ExtWidget("OpenMBV moment arrow",new OMBVArrowWidget("NOTSET"),true);
+  addToTab("Visualisation",momentArrowWidget);
+
+  connectionsWidget = new ExtWidget("Connections",new ConnectFramesWidget(2,joint));
+  addToTab("Kinetics", connectionsWidget);
+
+  forceWidget = new ExtWidget("Force",new GeneralizedForceChoiceWidget,true);
+  addToTab("Kinetics", forceWidget);
+
+  momentWidget = new ExtWidget("Moment",new GeneralizedForceChoiceWidget,true);
+  addToTab("Kinetics", momentWidget);
+}
+
+void JointPropertyDialog::toWidget(Element *element) {
+  ElementPropertyDialog::toWidget(element);
+  static_cast<Joint*>(element)->forceArrow.toWidget(forceArrowWidget);
+  static_cast<Joint*>(element)->momentArrow.toWidget(momentArrowWidget);
+  static_cast<Joint*>(element)->connections.toWidget(connectionsWidget);
+  static_cast<Joint*>(element)->force.toWidget(forceWidget);
+  static_cast<Joint*>(element)->moment.toWidget(momentWidget);
+}
+
+void JointPropertyDialog::fromWidget(Element *element) {
+  ElementPropertyDialog::fromWidget(element);
+  static_cast<Joint*>(element)->forceArrow.fromWidget(forceArrowWidget);
+  static_cast<Joint*>(element)->momentArrow.fromWidget(momentArrowWidget);
+  static_cast<Joint*>(element)->connections.fromWidget(connectionsWidget);
+  static_cast<Joint*>(element)->force.fromWidget(forceWidget);
+  static_cast<Joint*>(element)->moment.fromWidget(momentWidget);
 }
 

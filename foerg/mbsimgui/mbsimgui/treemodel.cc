@@ -6,6 +6,7 @@
 #include "group.h"
 #include "frame.h"
 #include "rigidbody.h"
+#include "joint.h"
 
 #include <iostream>
 
@@ -37,16 +38,6 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const {
     }
   }
   return QVariant();
-
-  //    if (!index.isValid())
-  //        return QVariant();
-  //
-  //    if (role != Qt::DisplayRole && role != Qt::EditRole)
-  //        return QVariant();
-  //
-  //    TreeItem *item = getItem(index);
-  //
-  //    return item->data(index.column());
 }
 
 Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const {
@@ -139,6 +130,7 @@ void TreeModel::createGroupItem(Group *group, const QModelIndex &parent) {
   item->insertChildren(new TreeItem(new BasicItemData("contours",""),item),1);
   item->insertChildren(new TreeItem(new BasicItemData("groups",""),item),1);
   item->insertChildren(new TreeItem(new BasicItemData("objects",""),item),1);
+  item->insertChildren(new TreeItem(new BasicItemData("links",""),item),1);
   item->insertChildren(new TreeItem(new BasicItemData("observers",""),item),1);
   endInsertRows();
   i = rowCount(index);
@@ -147,6 +139,8 @@ void TreeModel::createGroupItem(Group *group, const QModelIndex &parent) {
     createFrameItem(group->getFrame(i),index.child(0,0));
   for(int i=0; i<group->getNumberOfObjects(); i++)
     createObjectItem(group->getObject(i),index.child(3,0));
+  for(int i=0; i<group->getNumberOfLinks(); i++)
+    createLinkItem(group->getLink(i),index.child(4,0));
 }
 
 void TreeModel::createObjectItem(Object *object, const QModelIndex &parent) {
@@ -161,11 +155,7 @@ void TreeModel::createObjectItem(Object *object, const QModelIndex &parent) {
 
   idEleMap.insert(make_pair(object->getID(), parent.child(i,0)));
 
-  QModelIndex index;
-  if(parent.row()==-1)
-    index = this->index(0,0,parent);
-  else
-    index = parent.child(i,0);
+  QModelIndex index = parent.child(i,0);
   i = rowCount(index);
   beginInsertRows(index, i, i+1);
   item->insertChildren(new TreeItem(new BasicItemData("frames",""),item),1);
@@ -177,31 +167,18 @@ void TreeModel::createObjectItem(Object *object, const QModelIndex &parent) {
     createFrameItem(object->getFrame(i),index.child(0,0));
 }
 
-//void TreeModel::createRigidBodyItem(RigidBody *rigidBody, const QModelIndex &parent) {
-//
-//  TreeItem *parentItem = getItem(parent);
-//
-//  int i = rowCount(parent);
-//  beginInsertRows(parent, i, i);
-//  TreeItem *item = new TreeItem(rigidBody,parentItem);
-//  parentItem->insertChildren(item,1);
-//  endInsertRows();
-//
-//  QModelIndex index;
-//  if(parent.row()==-1)
-//    index = this->index(0,0,parent);
-//  else
-//    index = parent.child(i,0);
-//  i = rowCount(index);
-//  beginInsertRows(index, i, i+1);
-//  item->insertChildren(new TreeItem(new BasicItemData("frames",""),item),1);
-//  item->insertChildren(new TreeItem(new BasicItemData("contours",""),item),1);
-//  endInsertRows();
-//  i = rowCount(index);
-//
-//  for(int i=0; i<rigidBody->getNumberOfFrames(); i++)
-//    createFrameItem(rigidBody->getFrame(i),index.child(0,0));
-//}
+void TreeModel::createLinkItem(Link *link, const QModelIndex &parent) {
+
+  TreeItem *parentItem = getItem(parent);
+
+  int i = rowCount(parent);
+  beginInsertRows(parent, i, i);
+  TreeItem *item = new TreeItem(link,parentItem);
+  parentItem->insertChildren(item,1);
+  endInsertRows();
+
+  idEleMap.insert(make_pair(link->getID(), parent.child(i,0)));
+}
 
 void TreeModel::createFrameItem(Frame *frame, const QModelIndex &parent) {
 

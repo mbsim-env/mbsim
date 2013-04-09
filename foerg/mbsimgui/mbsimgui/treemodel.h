@@ -7,6 +7,7 @@
 
 class Frame;
 class Object;
+class Link;
 class Group;
 class RigidBody;
 class TreeItem;
@@ -40,6 +41,7 @@ class TreeModel : public QAbstractItemModel {
     void addFrame(const QModelIndex &parent = QModelIndex());
     void createGroupItem(Group *group, const QModelIndex &parent = QModelIndex());
     void createObjectItem(Object *object, const QModelIndex &parent = QModelIndex());
+    void createLinkItem(Link *link, const QModelIndex &parent = QModelIndex());
     void createFrameItem(Frame *frame, const QModelIndex &parent = QModelIndex());
 
     void updateView(const QModelIndex &index) {emit dataChanged(index,index);}

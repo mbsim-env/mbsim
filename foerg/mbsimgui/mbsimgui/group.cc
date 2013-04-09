@@ -179,6 +179,7 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   while(E && E->ValueStr()==MBSIMNS"frame") {
     TiXmlElement *ec=E->FirstChildElement();
     FixedRelativeFrame *f=new FixedRelativeFrame(ec->Attribute("name"),this);
+    addFrame(f);
     f->initializeUsingXML(ec);
     f->initializeUsingXML2(E);
     E=E->NextSiblingElement();
@@ -217,8 +218,10 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   Group *g;
   while(E) {
     g=ObjectFactory::getInstance()->createGroup(E,this);
-    addGroup(g);
-    if(g) g->initializeUsingXML(E);
+    if(g) {
+      addGroup(g);
+      g->initializeUsingXML(E);
+    }
     E=E->NextSiblingElement();
   }
 
@@ -227,8 +230,10 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   Object *o;
   while(E) {
     o=ObjectFactory::getInstance()->createObject(E,this);
-    addObject(o);
-    if(o) o->initializeUsingXML(E);
+    if(o) {
+      addObject(o);
+      o->initializeUsingXML(E);
+    }
     E=E->NextSiblingElement();
   }
 
@@ -249,8 +254,10 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   Link *l;
   while(E) {
     l=ObjectFactory::getInstance()->createLink(E,this);
-    addLink(l);
-    if(l) l->initializeUsingXML(E);
+    if(l) {
+      addLink(l);
+      l->initializeUsingXML(E);
+    }
     E=E->NextSiblingElement();
   }
 
@@ -260,8 +267,10 @@ void Group::initializeUsingXML(TiXmlElement *element) {
     Observer *obsrv;
     while(E) {
       obsrv=ObjectFactory::getInstance()->createObserver(E,this);
-      addObserver(obsrv);
-      if(obsrv) obsrv->initializeUsingXML(E);
+      if(obsrv) {
+        addObserver(obsrv);
+        obsrv->initializeUsingXML(E);
+      }
       E=E->NextSiblingElement();
     }
   }

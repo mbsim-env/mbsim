@@ -131,8 +131,8 @@ Link* MBSimObjectFactory::createLink(TiXmlElement *element, Element *parent) {
 //    return new KineticExcitation(element->Attribute("name"),parent);
 //  if(element->ValueStr()==MBSIMNS"SpringDamper")
 //    return new SpringDamper(element->Attribute("name"),parent);
-//  if(element->ValueStr()==MBSIMNS"Joint")
-//    return new Joint(element->Attribute("name"),parent);
+  if(element->ValueStr()==MBSIMNS"Joint")
+    return new Joint(element->Attribute("name"),parent);
 //  if(element->ValueStr()==MBSIMNS"Contact")
 //    return new Contact(element->Attribute("name"),parent);
 //  if(element->ValueStr()==MBSIMCONTROLNS"AbsolutePositionSensor")

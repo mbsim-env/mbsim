@@ -30,7 +30,7 @@ class Frame : public Element {
   public:
     Frame(const std::string &str, Element *parent, bool grey=true);
     ~Frame();
-    const std::string getType() const { return "Frame"; }
+    std::string getType() const { return "Frame"; }
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual void initializeUsingXML2(TiXmlElement *element);
@@ -48,7 +48,7 @@ class FixedRelativeFrame : public Frame {
   public:
     FixedRelativeFrame(const std::string &str, Element *parent);
     ~FixedRelativeFrame();
-    const std::string getType() const { return "FixedRelativeFrame"; }
+    std::string getType() const { return "FixedRelativeFrame"; }
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual void initializeUsingXML2(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);

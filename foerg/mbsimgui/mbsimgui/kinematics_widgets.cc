@@ -77,6 +77,7 @@ void TranslationChoiceWidget::defineTranslation(int index) {
   else if(index==1)
     translation = new TimeDependentTranslationWidget;  
   layout->addWidget(translation);
+  connect(translation, SIGNAL(translationChanged()), this, SIGNAL(translationChanged()));
   emit translationChanged();
 }
 
