@@ -11,10 +11,10 @@ class BasicItemData : public TreeItemData {
     std::string name, type;
   public:
     BasicItemData(const std::string &name_, const std::string &type_) : name(name_), type(type_) {}
-    virtual const std::string& getName() const {return name;}
-    virtual const std::string getType() const {return type;}
-    virtual void setName(const std::string &name_) {name = name_;}
-    virtual void setType(const std::string &type_) {type = type_;}
+    const std::string& getName() const {return name;}
+    std::string getType() const {return type;}
+    void setName(const std::string &name_) {name = name_;}
+    void setType(const std::string &type_) {type = type_;}
 };
 
 class TreeItem {

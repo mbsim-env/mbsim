@@ -42,7 +42,7 @@ class Solver : public Group {
     ExtProperty environmentProperty, solverParametersProperty, inverseKineticsProperty;
   public:
     Solver(const std::string &str, Element *parent);
-    const std::string getType() const { return "DynamicSystemSolver"; }
+    std::string getType() const { return "DynamicSystemSolver"; }
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     std::string getFileExtension() const { return ".mbsim.xml"; }

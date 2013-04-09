@@ -21,6 +21,8 @@ mbsimgui_SOURCES = element.cc \
 		   solver.cc \
 		   frame.cc \
 		   contour.cc \
+		   link.cc \
+		   joint.cc \
 		   integrator.cc \
 		   parameter.cc \
 		   octaveutils.cc \
@@ -58,8 +60,6 @@ QT_BUILT_SOURCES = basic_widgets.moc.cc \
 		   kinetics_widgets.moc.cc \
 		   ombv_widgets.moc.cc \
 		   extended_widgets.moc.cc \
-		   frame.moc.cc \
-		   contour.moc.cc \
 		   property_widget.moc.cc  \
 		   dialogs.moc.cc  \
 		   integrator.moc.cc \

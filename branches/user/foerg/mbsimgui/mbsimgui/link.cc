@@ -25,20 +25,20 @@
 using namespace std;
 
 
-Link::Link(const QString &str, TreeItem *parentItem) : Element(str, parentItem) {
+Link::Link(const string &str, Element *parent) : Element(str, parent) {
 }
 
 Link::~Link() {
 }
 
-Element * Link::getByPathSearch(QString path) {
-  if (path.mid(0, 3)=="../") // relative path
-    return getParentElement()->getByPathSearch(path.mid(3));
+Element * Link::getByPathSearch(string path) {
+  if (path.substr(0, 3)=="../") // relative path
+    return getParent()->getByPathSearch(path.substr(3));
   else // absolut path
-    if(getParentElement())
-      return getParentElement()->getByPathSearch(path);
+    if(getParent())
+      return getParent()->getByPathSearch(path);
     else
-      return getByPathSearch(path.mid(1));
+      return getByPathSearch(path.substr(1));
 }
 
 //void Link::initializeUsingXML(TiXmlElement *element) {

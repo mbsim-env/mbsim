@@ -24,13 +24,15 @@
 #include "extended_properties.h"
 
 class Joint : public Link {
+  friend class JointPropertyDialog;
   public:
-    Joint(const std::string &str, TreeItem *parentItem);
+    Joint(const std::string &str, Element *parent);
     ~Joint();
+    std::string getType() const { return "Joint"; }
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void initialize();
-
+    PropertyDialog* createPropertyDialog() {return new JointPropertyDialog(this);}
   protected:
     ExtProperty force, moment, connections, forceArrow, momentArrow;
 };

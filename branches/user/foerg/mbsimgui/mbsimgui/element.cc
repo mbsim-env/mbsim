@@ -39,17 +39,14 @@ using namespace std;
 extern MainWindow *mw;
 
 int Element::IDcounter=0;
-map<string, Element*> Element::idEleMap;
 
 Element::Element(const string &name_, Element *parent_) : name(name_), parent(parent_), drawThisPath(true), searchMatched(true), ns(MBSIMNS) {
   stringstream sstr;
   sstr<<IDcounter++;
   ID=sstr.str();
-  idEleMap.insert(make_pair(ID, this));
 }
 
 Element::~Element() {
-  idEleMap.erase(ID);
 }
 
 string Element::getPath() {

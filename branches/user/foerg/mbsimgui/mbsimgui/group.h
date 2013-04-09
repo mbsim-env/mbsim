@@ -45,7 +45,7 @@ class Group : public Element {
 
   public:
     Group(const std::string &str, Element *parent);
-    const std::string getType() const { return "Group"; }
+    std::string getType() const { return "Group"; }
     int getqSize();
     int getuSize();
     int getxSize();
@@ -57,11 +57,12 @@ class Group : public Element {
     int getNumberOfFrames() {return frame.size();}
     int getNumberOfGroups() {return group.size();}
     int getNumberOfObjects() {return object.size();}
+    int getNumberOfLinks() {return link.size();}
     Frame* getFrame(int i) {return frame[i];}
+//    Contour* getContour(int i);
     Object* getObject(int i) {return object[i];}
     Group* getGroup(int i) {return group[i];}
-//    Contour* getContour(int i);
-//    Link* getLink(int i);
+    Link* getLink(int i) {return link[i];}
 //    Observer* getObserver(int i);
     Frame* getFrame(const std::string &name, bool check=true);
     Contour* getContour(const std::string &name, bool check=true);

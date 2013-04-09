@@ -60,28 +60,22 @@ class Element : public TreeItemData {
     virtual void initialize();
     const std::string& getName() const {return name;}
     void setName(const std::string &str) {name = str;}
-    const std::string getType() const { return "Element"; }
+    std::string getType() const { return "Element"; }
     //std::string newName(const std::string &type);
     virtual std::string getFileExtension() const { return ".xml"; }
     bool getSearchMatched() { return searchMatched; }
     void setSearchMatched(bool m) { searchMatched=m; }
     template<class T> T* getByPath(std::string path);
     virtual Element* getByPathSearch(std::string path) {return 0; }
-    //Element* getChild(TreeItem* container, const std::string &name, bool check=true);
-    //virtual Container* getContainerFrame() {return frames;}
-    //virtual Container* getContainerContour() {return contours;}
-    //virtual Container* getContainerGroup() {return groups;}
-    //virtual Container* getContainerObject() {return objects;}
-    //virtual Container* getContainerLink() {return links;}
-    //virtual Container* getContainerObserver() {return observers;}
     virtual int getNumberOfFrames() {return 0;}
     virtual int getNumberOfGroups() {return 0;}
     virtual int getNumberOfObjects() {return 0;}
+    virtual int getNumberOfLinks() {return 0;}
     virtual Frame* getFrame(int i) {return 0;}
     //virtual Contour* getContour(int i);
     virtual Group* getGroup(int i) {return 0;}
     virtual Object* getObject(int i) {return 0;}
-    //virtual Link* getLink(int i);
+    virtual Link* getLink(int i) {return 0;}
     //virtual Observer* getObserver(int i);
     virtual Frame* getFrame(const std::string &name, bool check=true) {return 0;}
     //Contour* getContour(const std::string &name, bool check=true);
@@ -93,7 +87,6 @@ class Element : public TreeItemData {
     virtual void addGroup(Group *group) {}
     virtual void addObject(Object *object) {}
     const std::string& getID() const { return ID; }
-    static std::map<std::string, Element*> idEleMap;
     virtual Element* getParent() {return parent;}
     virtual void setParent(Element* parent_) {parent = parent_;}
     PropertyDialog* createPropertyDialog() {return new ElementPropertyDialog;}

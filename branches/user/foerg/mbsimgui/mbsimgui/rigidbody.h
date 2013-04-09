@@ -28,9 +28,10 @@ class RigidBody : public Body {
   public:
     RigidBody(const std::string &str, Element *parent);
     ~RigidBody();
-    const std::string getType() const { return "RigidBody"; }
+    std::string getType() const { return "RigidBody"; }
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    bool isConstrained() const {return constrained;} 
     void setConstrained(bool b) {constrained = b;}
     void initialize();
     PropertyDialog* createPropertyDialog() {return new RigidBodyPropertyDialog(this);}

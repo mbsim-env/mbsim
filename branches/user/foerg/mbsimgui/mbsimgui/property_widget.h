@@ -41,6 +41,8 @@ class Solver;
 class Object;
 class Body;
 class RigidBody;
+class Link;
+class Joint;
 
 class PropertyDialog : public QDialog {
   Q_OBJECT
@@ -122,11 +124,16 @@ class SolverPropertyDialog : public GroupPropertyDialog {
 };
 
 class ObjectPropertyDialog : public ElementPropertyDialog {
+  Q_OBJECT;
 
   public:
     ObjectPropertyDialog(Object *object, QWidget * parent = 0, Qt::WindowFlags f = 0);
     void toWidget(Element *element);
     void fromWidget(Element *element);
+    virtual void resizeGeneralizedPosition() {}
+    virtual void resizeGeneralizedVelocity() {}
+  public slots:
+    void resizeVariables() {resizeGeneralizedPosition();resizeGeneralizedVelocity();}
   protected:
     ExtWidget *q0Widget, *u0Widget;
     VecWidget *q0, *u0;
@@ -147,8 +154,32 @@ class RigidBodyPropertyDialog : public BodyPropertyDialog {
     RigidBodyPropertyDialog(RigidBody *body, QWidget * parent = 0, Qt::WindowFlags f = 0);
     void toWidget(Element *element);
     void fromWidget(Element *element);
+    void resizeGeneralizedPosition();
+    void resizeGeneralizedVelocity();
+    int getSize() const; 
   protected:
     ExtWidget *RWidget, *KWidget, *massWidget, *inertiaWidget, *translationWidget, *rotationWidget, *ombvEditorWidget, *weightArrowWidget, *jointForceArrowWidget, *jointMomentArrowWidget, *isFrameOfBodyForRotationWidget;
+    RigidBody *body;
 };
+
+class LinkPropertyDialog : public ElementPropertyDialog {
+
+  public:
+    LinkPropertyDialog(Link *link, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+};
+
+class JointPropertyDialog : public LinkPropertyDialog {
+
+  public:
+    JointPropertyDialog(Joint *joint, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+    ExtWidget *forceWidget, *momentWidget, *connectionsWidget, *forceArrowWidget, *momentArrowWidget;
+};
+
 
 #endif

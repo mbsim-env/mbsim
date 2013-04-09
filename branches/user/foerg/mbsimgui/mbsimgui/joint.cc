@@ -27,7 +27,7 @@
 
 using namespace std;
 
-Joint::Joint(const QString &str, TreeItem *parentItem) : Link(str, parentItem), forceArrow(0,false), momentArrow(0,false), force(0,false), moment(0,false) {
+Joint::Joint(const string &str, Element *parent) : Link(str, parent), forceArrow(0,false), momentArrow(0,false), force(0,false), moment(0,false) {
 
   forceArrow.setProperty(new OMBVArrowProperty("NOTSET"));
   ((OMBVArrowProperty*)forceArrow.getProperty())->setID(getID());
