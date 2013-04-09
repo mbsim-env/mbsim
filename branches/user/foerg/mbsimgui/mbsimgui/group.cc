@@ -63,6 +63,10 @@ Group::Group(const string &str, Element *parent) : Element(str,parent), position
 
     frameOfReference.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0),this,MBSIMNS"frameOfReference"));
   }
+}
+
+void Group::initialize() {
+  Element::initialize();
 
   for(int i=0; i<frame.size(); i++)
     frame[i]->initialize();
@@ -81,11 +85,6 @@ Group::Group(const string &str, Element *parent) : Element(str,parent), position
 
   for(int i=0; i<observer.size(); i++)
     observer[i]->initialize();
-}
-
-void Group::initialize() {
-  Element::initialize();
-
 
   if(frameOfReference.getProperty())
     frameOfReference.initialize();

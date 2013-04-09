@@ -75,10 +75,12 @@ class Element : public TreeItemData {
     //virtual Container* getContainerLink() {return links;}
     //virtual Container* getContainerObserver() {return observers;}
     virtual int getNumberOfFrames() {return 0;}
+    virtual int getNumberOfGroups() {return 0;}
+    virtual int getNumberOfObjects() {return 0;}
     virtual Frame* getFrame(int i) {return 0;}
     //virtual Contour* getContour(int i);
-    //virtual Group* getGroup(int i);
-    //virtual Object* getObject(int i);
+    virtual Group* getGroup(int i) {return 0;}
+    virtual Object* getObject(int i) {return 0;}
     //virtual Link* getLink(int i);
     //virtual Observer* getObserver(int i);
     virtual Frame* getFrame(const std::string &name, bool check=true) {return 0;}
@@ -88,11 +90,14 @@ class Element : public TreeItemData {
     //Link* getLink(const std::string &name, bool check=true);
     //Observer* getObserver(const std::string &name, bool check=true);
     virtual void addFrame(Frame *frame) {}
-    std::string getID() { return ID; }
+    virtual void addGroup(Group *group) {}
+    virtual void addObject(Object *object) {}
+    const std::string& getID() const { return ID; }
     static std::map<std::string, Element*> idEleMap;
     virtual Element* getParent() {return parent;}
     virtual void setParent(Element* parent_) {parent = parent_;}
     PropertyDialog* createPropertyDialog() {return new ElementPropertyDialog;}
+    Element* getRoot() {return parent?parent->getRoot():this;}
 };
 
 template<class T>

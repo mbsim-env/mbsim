@@ -32,7 +32,7 @@ class OMBVObjectProperty : public Property {
     OMBVObjectProperty(const std::string &name_) : name(name_) {}
     virtual QString getType() const = 0;
     void setName(const std::string &name_) {name = name_;}
-    void setID(const std::string &_ID) { ID=_ID; }
+    void setID(const std::string &ID_) { ID = ID_; }
   protected:
     std::string name;
     std::string ID;

@@ -26,6 +26,7 @@
 #include <map>
 
 class ExtWidget;
+class VecWidget;
 class TextWidget;
 class QVBoxLayout;
 class TiXmlElement;
@@ -37,6 +38,9 @@ class Frame;
 class FixedRelativeFrame;
 class Group;
 class Solver;
+class Object;
+class Body;
+class RigidBody;
 
 class PropertyDialog : public QDialog {
   Q_OBJECT
@@ -115,6 +119,36 @@ class SolverPropertyDialog : public GroupPropertyDialog {
     SolverPropertyDialog(Solver *solver, QWidget * parent = 0, Qt::WindowFlags f = 0);
     void toWidget(Element *element);
     void fromWidget(Element *element);
+};
+
+class ObjectPropertyDialog : public ElementPropertyDialog {
+
+  public:
+    ObjectPropertyDialog(Object *object, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+    ExtWidget *q0Widget, *u0Widget;
+    VecWidget *q0, *u0;
+};
+
+class BodyPropertyDialog : public ObjectPropertyDialog {
+
+  public:
+    BodyPropertyDialog(Body *body, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+};
+
+class RigidBodyPropertyDialog : public BodyPropertyDialog {
+
+  public:
+    RigidBodyPropertyDialog(RigidBody *body, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+    ExtWidget *RWidget, *KWidget, *massWidget, *inertiaWidget, *translationWidget, *rotationWidget, *ombvEditorWidget, *weightArrowWidget, *jointForceArrowWidget, *jointMomentArrowWidget, *isFrameOfBodyForRotationWidget;
 };
 
 #endif

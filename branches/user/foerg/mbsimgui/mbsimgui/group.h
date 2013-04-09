@@ -55,12 +55,12 @@ class Group : public Element {
     void setActionPasteDisabled(bool flag);
     void initialize();
     int getNumberOfFrames() {return frame.size();}
+    int getNumberOfGroups() {return group.size();}
     int getNumberOfObjects() {return object.size();}
     Frame* getFrame(int i) {return frame[i];}
     Object* getObject(int i) {return object[i];}
+    Group* getGroup(int i) {return group[i];}
 //    Contour* getContour(int i);
-//    Group* getGroup(int i);
-//    Object* getObject(int i);
 //    Link* getLink(int i);
 //    Observer* getObserver(int i);
     Frame* getFrame(const std::string &name, bool check=true);

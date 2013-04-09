@@ -43,7 +43,10 @@ class TreeModel : public QAbstractItemModel {
     void createFrameItem(Frame *frame, const QModelIndex &parent = QModelIndex());
 
     void updateView(const QModelIndex &index) {emit dataChanged(index,index);}
-  private:
+
+    std::map<std::string, QModelIndex> idEleMap;
+    int IDcounter;
+ private:
     TreeItem *rootItem;
 };
 

@@ -83,6 +83,11 @@ RigidBody::~RigidBody() {
 void RigidBody::initialize() {
   Body::initialize();
 
+  for(int i=0; i<frame.size(); i++)
+    frame[i]->initialize();
+  for(int i=0; i<contour.size(); i++)
+    contour[i]->initialize();
+
   R.initialize();
 }
 
