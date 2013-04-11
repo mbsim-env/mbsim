@@ -39,6 +39,7 @@ class Frame : public Element {
     void setOpenMBVFrame(bool flag) {visuProperty.setActive(flag);}
     virtual Element * getByPathSearch(std::string path);
     PropertyDialog* createPropertyDialog() {return new FramePropertyDialog(this);}
+    bool isRemovable() {return false;}
   protected:
     ExtProperty visuProperty;
 };
@@ -54,6 +55,7 @@ class FixedRelativeFrame : public Frame {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual void initialize();
     PropertyDialog* createPropertyDialog() {return new FixedRelativeFramePropertyDialog(this);}
+    bool isRemovable() {return true;}
   protected:
     ExtProperty refFrameProperty, positionProperty, orientationProperty;
 };

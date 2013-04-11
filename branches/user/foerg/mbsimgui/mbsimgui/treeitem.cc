@@ -5,8 +5,15 @@
 
 using namespace std;
 
+BasicItemData::~BasicItemData() {
+  cout << "destroy BasicItemData" << endl;
+}
+
 TreeItem::~TreeItem() {
-    qDeleteAll(childItems);
+  cout << "destroy TreeItem data" << endl; 
+  delete itemData;
+  cout << "destroy TreeItem" << endl; 
+  qDeleteAll(childItems);
 }
 
 int TreeItem::childNumber() const {

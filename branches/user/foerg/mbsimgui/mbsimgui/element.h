@@ -86,6 +86,8 @@ class Element : public TreeItemData {
     virtual void addFrame(Frame *frame) {}
     virtual void addGroup(Group *group) {}
     virtual void addObject(Object *object) {}
+    virtual void addLink(Link *link) {}
+    virtual void removeElement(Element *element) {}
     const std::string& getID() const { return ID; }
     virtual Element* getParent() {return parent;}
     virtual void setParent(Element* parent_) {parent = parent_;}

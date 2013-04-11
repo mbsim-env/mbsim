@@ -45,6 +45,7 @@ class Group : public Element {
 
   public:
     Group(const std::string &str, Element *parent);
+    ~Group();
     std::string getType() const { return "Group"; }
     int getqSize();
     int getuSize();
@@ -77,6 +78,7 @@ class Group : public Element {
     void addObject(Object *object);
     void addLink(Link *link);
     void addObserver(Observer *observer);
+    void removeElement(Element *element);
     PropertyDialog* createPropertyDialog() {return new GroupPropertyDialog(this);}
 };
 

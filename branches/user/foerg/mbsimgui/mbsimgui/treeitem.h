@@ -11,10 +11,12 @@ class BasicItemData : public TreeItemData {
     std::string name, type;
   public:
     BasicItemData(const std::string &name_, const std::string &type_) : name(name_), type(type_) {}
+    ~BasicItemData(); 
     const std::string& getName() const {return name;}
     std::string getType() const {return type;}
     void setName(const std::string &name_) {name = name_;}
     void setType(const std::string &type_) {type = type_;}
+    bool isRemovable() {return false;}
 };
 
 class TreeItem {
@@ -31,14 +33,10 @@ class TreeItem {
     TreeItem *child(int number) {return childItems.value(number);}
     int childCount() const {return childItems.count();}
 
-    bool insertChildren(TreeItem *item, int count);
     TreeItem *parent() {return parentItem;}
+    bool insertChildren(TreeItem *item, int count);
     bool removeChildren(int position, int count);
     int childNumber() const;
-    //void setName(const QString &value) {itemData->setName(value.toStdString());}
-    //void setType(const QString &value) {itemData->setType(value.toStdString());}
-    //QString getName() const {return QString::fromStdString(itemData->getName());}
-    //QString getType() const {return QString::fromStdString(itemData->getType());}
     void setItemData(TreeItemData *data_) {itemData = data_;}
     TreeItemData* getItemData() const {return itemData;}
     QVariant getData0() const {return QString::fromStdString(itemData->getName());}
@@ -49,34 +47,12 @@ class TreeItem {
     void (TreeItem::*setData_[2])(const QVariant &value);
     QVariant getData(int column) const {return (this->*getData_[column])();}
     void setData(int column, const QVariant &value) {(this->*setData_[column])(value);}
+    bool isRemovable() {return itemData->isRemovable();}
 
   protected:
     QList<TreeItem*> childItems;
     TreeItemData *itemData;
     TreeItem *parentItem;
 };
-
-//class Container : public TreeItem {
-//  public:
-//    Container(const QString &name, TreeItem *parent = 0);
-//};
-//
-//class Group : public TreeItem {
-//  public:
-//    Group(const QString &name, TreeItem *parent = 0);
-//    Container* getObjectContainer() {return objects;}
-//  protected:
-//    Container *objects;
-//};
-//
-//class Object : public TreeItem {
-//  public:
-//    Object(const QString &name, TreeItem *parent = 0);
-//};
-//
-//class Link : public TreeItem {
-//  public:
-//    Link(const QString &name, TreeItem *parent = 0);
-//};
 
 #endif

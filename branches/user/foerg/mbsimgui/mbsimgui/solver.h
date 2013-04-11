@@ -52,6 +52,8 @@ class Solver : public Group {
     void writeXMLFile() { writeXMLFile(getName()); }
 
     PropertyDialog* createPropertyDialog() {return new SolverPropertyDialog(this);}
+
+    bool isRemovable() {return false;}
 };
 
 #endif

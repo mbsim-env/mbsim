@@ -25,7 +25,7 @@
 
 class Observer : public Element {
   public:
-    Observer(const std::string &str, QTreeWidgetItem *parentItem, int ind);
+    Observer(const std::string &str, Element *parent);
     ~Observer();
     virtual int getxSize() {return 0;}
     virtual Element* getByPathSearch(std::string path);
@@ -33,14 +33,11 @@ class Observer : public Element {
 
 class AbsoluteKinematicsObserver : public Observer {
   public:
-    AbsoluteKinematicsObserver(const std::string &str, QTreeWidgetItem *parentItem, int ind);
+    AbsoluteKinematicsObserver(const std::string &str, Element *parent);
     ~AbsoluteKinematicsObserver();
 
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    void initializeDialog();
-    virtual void fromWidget();
-    virtual void toWidget();
     void initialize();
 
   protected:

@@ -78,6 +78,7 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
 }
 
 RigidBody::~RigidBody() {
+  cout << "destroy rigid body" << endl;
 }
 
 void RigidBody::initialize() {

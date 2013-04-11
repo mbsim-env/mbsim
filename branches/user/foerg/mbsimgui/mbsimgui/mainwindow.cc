@@ -100,10 +100,12 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   connect(addRigidBodyAction,SIGNAL(triggered()),this,SLOT(addRigidBody()));
   addLinkAction=new QAction("Add link", this);
   connect(addLinkAction,SIGNAL(triggered()),this,SLOT(addLink()));
+  addJointAction=new QAction("Add joint", this);
+  connect(addJointAction,SIGNAL(triggered()),this,SLOT(addJoint()));
   removeRowAction = new QAction(this);
   removeRowAction->setObjectName(QString::fromUtf8("removeRowAction"));
   connect(removeRowAction, SIGNAL(triggered()), this, SLOT(removeRow()));
- removeRowAction->setText(QApplication::translate("MainWindow", "Remove Row", 0, QApplication::UnicodeUTF8));
+ removeRowAction->setText(QApplication::translate("MainWindow", "Remove", 0, QApplication::UnicodeUTF8));
   removeRowAction->setShortcut(QApplication::translate("MainWindow", "Ctrl+R, R", 0, QApplication::UnicodeUTF8));
 
  QMenu *ProjMenu=new QMenu("Project", menuBar());
@@ -317,7 +319,7 @@ void MainWindow::initInlineOpenMBV() {
 
   connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, Object*)), this, SLOT(selectElement(std::string)));
   connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, Object*)), this, SLOT(openPropertyDialog(std::string)));
-  connect(inlineOpenMBVMW, SIGNAL(fileReloaded()), this, SLOT(elementListClicked()));
+  //connect(inlineOpenMBVMW, SIGNAL(fileReloaded()), this, SLOT(elementListClicked()));
 }
 
 MainWindow::~MainWindow() {
@@ -379,31 +381,34 @@ void MainWindow::openPropertyDialog(string ID) {
 void MainWindow::elementListClicked() {
   QModelIndex index = elementList->selectionModel()->currentIndex();
   TreeModel *model = static_cast<TreeModel*>(elementList->model());
-  if(QApplication::mouseButtons()==Qt::RightButton) {
-    if(index.column()==0) {
-      QMenu menu("Context Menu");
-      menu.addAction(propertiesAction);
-      if(dynamic_cast<Group*>(model->getItem(index)->getItemData())) {
-        menu.addSeparator();
-        menu.addAction(addGroupAction);
-        menu.addAction(addObjectAction);
-        menu.addAction(addFrameAction);
-      }
-      else if(dynamic_cast<Body*>(model->getItem(index)->getItemData()))
-        menu.addAction(addFrameAction);
-      menu.addSeparator();
-      menu.addAction(removeRowAction);
-      menu.exec(QCursor::pos());
-    } 
-  }
-
   Element *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
 #ifdef INLINE_OPENMBV
   if(element)
     inlineOpenMBVMW->highlightObject(element->getID());
-  else
-    inlineOpenMBVMW->highlightObject("");
+  //else
+    //inlineOpenMBVMW->highlightObject("");
 #endif
+  if(QApplication::mouseButtons()==Qt::RightButton) {
+    if(index.column()==0) {
+      QMenu menu("Context Menu");
+      if(dynamic_cast<Group*>(model->getItem(index)->getItemData())) {
+        menu.addSeparator();
+        menu.addAction(addFrameAction);
+        menu.addAction(addGroupAction);
+        menu.addAction(addObjectAction);
+        menu.addAction(addLinkAction);
+      }
+      else if(dynamic_cast<Body*>(model->getItem(index)->getItemData()))
+        menu.addAction(addFrameAction);
+      menu.addSeparator();
+      if(model->getItem(index)->isRemovable()) {
+        //menu.insertAction(propertiesAction);
+        menu.addAction(removeRowAction);
+      }
+      menu.exec(QCursor::pos());
+    } 
+  }
+
 }
 
 void MainWindow::elementListDoubleClicked(const QModelIndex &index) {
@@ -936,9 +941,11 @@ Process::Process(QWidget *parent) : QTabWidget(parent) {
 }
 
 void Process::clearOutputAndStart(const QString &program, const QStringList &arguments) {
-  process->start(program, arguments);
   outText="";
   errText="";
+  out->clear();
+  err->clear();
+  process->start(program, arguments);
 }
 
 void Process::output() {
@@ -995,9 +1002,14 @@ void Process::errLinkClicked(const QUrl &link) {
 }
 
 void MainWindow::removeRow() {
+  TreeModel *model = static_cast<TreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
-  QAbstractItemModel *model = elementList->model();
-  model->removeRow(index.row(), index.parent());
+  model->removeElement(index);
+  //elementList->selectionModel()->setCurrentIndex(index,QItemSelectionModel::Deselect);
+  //elementList->selectionModel()->setCurrentIndex(index.sibling(index.row(),1),QItemSelectionModel::Deselect);
+#ifdef INLINE_OPENMBV
+  mbsimxml(1);
+#endif
 }
 
 void MainWindow::addGroup() {
@@ -1015,6 +1027,12 @@ void MainWindow::addObject() {
     menu.exec(QCursor::pos());
 }
 
+void MainWindow::addLink() {
+    QMenu menu("Context Menu");
+    menu.addAction(addJointAction);
+    menu.exec(QCursor::pos());
+}
+
 void MainWindow::addRigidBody() {
   TreeModel *model = static_cast<TreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
@@ -1028,6 +1046,15 @@ void MainWindow::addFrame() {
   TreeModel *model = static_cast<TreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
   model->addFrame(index);
+#ifdef INLINE_OPENMBV
+  mbsimxml(1);
+#endif
+}
+
+void MainWindow::addJoint() {
+  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  model->addJoint(index);
 #ifdef INLINE_OPENMBV
   mbsimxml(1);
 #endif

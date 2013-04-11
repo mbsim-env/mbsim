@@ -61,7 +61,7 @@ class MainWindow : public QMainWindow {
     OpenMBVGUI::MainWindow *inlineOpenMBVMW;
     void initInlineOpenMBV();
     QString uniqueTempDir, absoluteMBSFilePath;
-    QAction *propertiesAction, *addFrameAction, *addGroupAction, *addObjectAction, *addRigidBodyAction, *addLinkAction, *removeRowAction;
+    QAction *propertiesAction, *addFrameAction, *addGroupAction, *addObjectAction, *addRigidBodyAction, *addLinkAction, *addJointAction, *removeRowAction;
 
   public:
     MainWindow();
@@ -105,6 +105,8 @@ class MainWindow : public QMainWindow {
     void removeRow();
     void addGroup();
     void addObject();
+    void addLink();
+    void addJoint();
     void addRigidBody();
     void addFrame();
   protected slots:

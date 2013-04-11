@@ -41,6 +41,7 @@ Frame::Frame(const string &str, Element *parent, bool grey) : Element(str,parent
 }
 
 Frame::~Frame() {
+  cout << "destroy frame" << endl;
 }
 
 void Frame::initializeUsingXML(TiXmlElement *element) {
