@@ -26,6 +26,7 @@ class ExtPhysicalVarProperty : public Property {
 
   public:
     ExtPhysicalVarProperty(std::vector<PhysicalStringProperty*> inputProperty);
+    ~ExtPhysicalVarProperty();
     PhysicalStringProperty* getPhysicalStringProperty(int i) {return inputProperty[i];}
     PhysicalStringProperty* getCurrentPhysicalStringProperty() {return inputProperty[currentInput];}
     const PhysicalStringProperty* getCurrentPhysicalStringProperty() const {return inputProperty[currentInput];}
@@ -46,6 +47,7 @@ class PropertyChoiceProperty : public Property {
 
   public:
     PropertyChoiceProperty(const std::vector<Property*> &property_) : property(property_), index(0) {}
+    ~PropertyChoiceProperty();
     void initialize();
     TiXmlElement* initializeUsingXML(TiXmlElement *element);
     TiXmlElement* writeXMLFile(TiXmlNode *element);
@@ -59,6 +61,7 @@ class PropertyChoiceProperty : public Property {
 class ExtProperty : public Property {
   public:
     ExtProperty(Property *property_=0, bool active_=true, const std::string &name="", bool flag=true) : property(property_), active(active_), xmlName(name), alwaysWriteXMLName(flag) {}
+    ~ExtProperty() {delete property;}
     Property* getProperty() {return property;}
     const Property* getProperty() const {return property;}
     void setProperty(Property *property_) {property = property_;}
@@ -82,6 +85,7 @@ class PropertyContainer : public Property {
   public:
     PropertyContainer() {}
     PropertyContainer(const std::vector<Property*> &property_) : property(property_) {}
+    ~PropertyContainer();
 
     void initialize();
     void addProperty(Property *property_) {property.push_back(property_);}

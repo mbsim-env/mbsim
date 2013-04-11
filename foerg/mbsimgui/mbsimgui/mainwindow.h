@@ -22,6 +22,7 @@
 
 #include <QMainWindow>
 #include <QTabWidget>
+#include <QModelIndex>
 #include <mbxmlutilstinyxml/tinyxml.h>
 
 class QTreeWidget;
@@ -70,10 +71,8 @@ class MainWindow : public QMainWindow {
     void mbsimxml(int task);
   public slots:
     void elementListClicked();
-    void elementListDoubleClicked(const QModelIndex &index);
     void parameterListClicked();
     void integratorListClicked();
-//    void parameterListClicked(const QPoint &pos);
     void loadProj();
     void saveProjAs();
     void saveProj();
@@ -112,7 +111,7 @@ class MainWindow : public QMainWindow {
   protected slots:
     void selectElement(std::string);
     void changeWorkingDir();
-    void openPropertyDialog(std::string);
+    void selectionChanged();
   protected:
     void closeEvent ( QCloseEvent * event );
 };

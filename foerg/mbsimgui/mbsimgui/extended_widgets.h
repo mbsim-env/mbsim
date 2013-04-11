@@ -35,6 +35,7 @@ class ExtPhysicalVarWidget : public Widget {
 
   public:
     ExtPhysicalVarWidget(std::vector<PhysicalStringWidget*> inputWidget);
+    ~ExtPhysicalVarWidget();
 
     PhysicalStringWidget* getPhysicalStringWidget(int i) {return inputWidget[i];}
     PhysicalStringWidget* getCurrentPhysicalStringWidget() {return inputWidget[inputCombo->currentIndex()];}

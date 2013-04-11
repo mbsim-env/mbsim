@@ -70,10 +70,12 @@ TiXmlElement* ScalarProperty::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-VecProperty::VecProperty(int size) {
-  value.resize(size);
+VecProperty::VecProperty(int size) : value(size) {
   for(int i=0; i<size; i++)
     value[i] = "0";
+}
+
+VecProperty::~VecProperty() {
 }
 
 TiXmlElement* VecProperty::initializeUsingXML(TiXmlElement *parent) {

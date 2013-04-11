@@ -6,13 +6,10 @@
 using namespace std;
 
 BasicItemData::~BasicItemData() {
-  cout << "destroy BasicItemData" << endl;
 }
 
 TreeItem::~TreeItem() {
-  cout << "destroy TreeItem data" << endl; 
   delete itemData;
-  cout << "destroy TreeItem" << endl; 
   qDeleteAll(childItems);
 }
 

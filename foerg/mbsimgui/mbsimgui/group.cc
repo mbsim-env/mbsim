@@ -170,7 +170,7 @@ void Group::removeElement(Element* element) {
   if(dynamic_cast<Frame*>(element)) {
     for (vector<Frame*>::iterator it = frame.begin() ; it != frame.end(); ++it)
       if(*it==element) {
-        cout << "erase " << (*it)->getName() << endl;
+        //cout << "erase " << (*it)->getName() << endl;
         frame.erase(it);
         //delete (*it);
         break;
@@ -179,7 +179,7 @@ void Group::removeElement(Element* element) {
   else if(dynamic_cast<Contour*>(element)) {
     for (vector<Contour*>::iterator it = contour.begin() ; it != contour.end(); ++it)
       if(*it==element) {
-        cout << "erase " << (*it)->getName() << endl;
+        //cout << "erase " << (*it)->getName() << endl;
         contour.erase(it);
         //delete (*it);
         break;
@@ -188,7 +188,7 @@ void Group::removeElement(Element* element) {
   else if(dynamic_cast<Group*>(element)) {
     for (vector<Group*>::iterator it = group.begin() ; it != group.end(); ++it)
       if(*it==element) {
-        cout << "erase " << (*it)->getName() << endl;
+        //cout << "erase " << (*it)->getName() << endl;
         group.erase(it);
         //delete (*it);
         break;
@@ -197,7 +197,7 @@ void Group::removeElement(Element* element) {
   else if(dynamic_cast<Object*>(element)) {
     for (vector<Object*>::iterator it = object.begin() ; it != object.end(); ++it)
       if(*it==element) {
-        cout << "erase " << (*it)->getName() << endl;
+        //cout << "erase " << (*it)->getName() << endl;
         object.erase(it);
         //delete (*it);
         break;
@@ -206,7 +206,7 @@ void Group::removeElement(Element* element) {
   else if(dynamic_cast<Link*>(element)) {
     for (vector<Link*>::iterator it = link.begin() ; it != link.end(); ++it)
       if(*it==element) {
-        cout << "erase " << (*it)->getName() << endl;
+        //cout << "erase " << (*it)->getName() << endl;
         link.erase(it);
         //delete (*it);
         break;
@@ -215,7 +215,7 @@ void Group::removeElement(Element* element) {
   else if(dynamic_cast<Observer*>(element)) {
     for (vector<Observer*>::iterator it = observer.begin() ; it != observer.end(); ++it)
       if(*it==element) {
-        cout << "erase " << (*it)->getName() << endl;
+        //cout << "erase " << (*it)->getName() << endl;
         observer.erase(it);
         //delete (*it);
         break;
