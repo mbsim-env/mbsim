@@ -69,6 +69,10 @@ ExtPhysicalVarWidget::ExtPhysicalVarWidget(std::vector<PhysicalStringWidget*> in
  // layout->addWidget(inputCombo,2,1);
 }
 
+ExtPhysicalVarWidget::~ExtPhysicalVarWidget() {
+  delete evalDialog;
+}
+
 void ExtPhysicalVarWidget::changeCurrent(int idx) {
   if (stackedWidget->currentWidget() !=0)
     stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);

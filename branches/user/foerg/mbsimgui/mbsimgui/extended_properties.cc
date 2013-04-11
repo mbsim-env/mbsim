@@ -44,6 +44,11 @@ TiXmlElement* ExtPhysicalVarProperty::initializeUsingXML(TiXmlElement *element) 
   return 0;
 }
 
+ExtPhysicalVarProperty::~ExtPhysicalVarProperty() {
+  for(vector<PhysicalStringProperty*>::iterator i = inputProperty.begin(); i != inputProperty.end(); ++i)
+    delete *i;
+}
+
 TiXmlElement* ExtPhysicalVarProperty::writeXMLFile(TiXmlNode *parent) {
   inputProperty[currentInput]->writeXMLFile(parent);
   return 0;
@@ -59,6 +64,11 @@ void ExtPhysicalVarProperty::toWidget(QWidget *widget) {
   static_cast<ExtPhysicalVarWidget*>(widget)->setCurrentInput(currentInput);
   for(int i=0; i< inputProperty.size(); i++)
     inputProperty[i]->toWidget(static_cast<ExtPhysicalVarWidget*>(widget)->getPhysicalStringWidget(i));
+}
+
+PropertyChoiceProperty::~PropertyChoiceProperty() {
+  for(vector<Property*>::iterator i = property.begin(); i != property.end(); ++i)
+    delete *i;
 }
 
 void PropertyChoiceProperty::initialize() {
@@ -132,6 +142,11 @@ void ExtProperty::toWidget(QWidget *widget) {
   static_cast<ExtWidget*>(widget)->setWidgetVisible(active);
   static_cast<ExtWidget*>(widget)->blockSignals(false);
   property->toWidget(static_cast<ExtWidget*>(widget)->widget);
+}
+
+PropertyContainer::~PropertyContainer() {
+  for(vector<Property*>::iterator i = property.begin(); i != property.end(); ++i)
+    delete *i;
 }
 
 void PropertyContainer::initialize() {

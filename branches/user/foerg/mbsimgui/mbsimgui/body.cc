@@ -46,7 +46,7 @@ void Body::removeElement(Element* element) {
   if(dynamic_cast<Frame*>(element)) {
     for (vector<Frame*>::iterator it = frame.begin() ; it != frame.end(); ++it)
       if(*it==element) {
-        cout << "erase " << (*it)->getName() << endl;
+        //cout << "erase " << (*it)->getName() << endl;
         frame.erase(it);
         //delete (*it);
         break;
@@ -55,7 +55,7 @@ void Body::removeElement(Element* element) {
   else if(dynamic_cast<Contour*>(element)) {
     for (vector<Contour*>::iterator it = contour.begin() ; it != contour.end(); ++it)
       if(*it==element) {
-        cout << "erase " << (*it)->getName() << endl;
+        //cout << "erase " << (*it)->getName() << endl;
         contour.erase(it);
         //delete (*it);
         break;

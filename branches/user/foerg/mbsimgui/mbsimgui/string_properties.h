@@ -79,6 +79,7 @@ class VecProperty : public StringProperty {
   public:
     VecProperty(int size);
     VecProperty(const std::vector<std::string> &x) : value(x) {}
+    ~VecProperty();
     std::vector<std::string> getVec() const {return value;}
     void setVec(const std::vector<std::string> &x) {value = x;}
     std::string getValue() const {return toStr(getVec());}
@@ -134,6 +135,7 @@ class PhysicalStringProperty : public Property {
     std::string unit, xmlName;
   public:
     PhysicalStringProperty(StringProperty *value_=0, const std::string &unit_="", const std::string &xmlName_="") : value(value_), unit(unit_), xmlName(xmlName_) {}
+    ~PhysicalStringProperty() {delete value;}
     std::string getValue() const {return value->getValue();}
     void setValue(const std::string &str) {value->setValue(str);}
     std::string getUnit() const {return unit;}

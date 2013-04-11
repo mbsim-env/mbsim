@@ -45,6 +45,7 @@ class PropertyInterface {
 class Property : public PropertyInterface {
   public:
     Property() {}
+    virtual ~Property() {}
 };
 
 #endif

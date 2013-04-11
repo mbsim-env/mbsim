@@ -105,10 +105,10 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   removeRowAction = new QAction(this);
   removeRowAction->setObjectName(QString::fromUtf8("removeRowAction"));
   connect(removeRowAction, SIGNAL(triggered()), this, SLOT(removeRow()));
- removeRowAction->setText(QApplication::translate("MainWindow", "Remove", 0, QApplication::UnicodeUTF8));
+  removeRowAction->setText(QApplication::translate("MainWindow", "Remove", 0, QApplication::UnicodeUTF8));
   removeRowAction->setShortcut(QApplication::translate("MainWindow", "Ctrl+R, R", 0, QApplication::UnicodeUTF8));
 
- QMenu *ProjMenu=new QMenu("Project", menuBar());
+  QMenu *ProjMenu=new QMenu("Project", menuBar());
   ProjMenu->addAction("New", this, SLOT(saveProjAs()));
   ProjMenu->addAction("Load", this, SLOT(loadProj()));
   //ProjMenu->addAction("Save as", this, SLOT(saveProjAs()));
@@ -205,8 +205,6 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   elementList->setItemDelegate(delegate);
 
   connect(elementList,SIGNAL(pressed(QModelIndex)), this, SLOT(elementListClicked()));
-  //connect(elementList,SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(elementListDoubleClicked(const QModelIndex&)));
-
   integratorList = new QTreeWidget;
   integratorList->setHeaderLabel("Type");
   connect(integratorList,SIGNAL(pressed(QModelIndex)), this, SLOT(integratorListClicked()));
@@ -217,9 +215,6 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   headers << "Name" << "Value";
   parameterList->setHeaderLabels(headers);
   connect(parameterList,SIGNAL(pressed(QModelIndex)), this, SLOT(parameterListClicked()));
-  //connect(parameterList,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(parameterListClicked(const QPoint &)));
-  //parameterList->header()->setContextMenuPolicy (Qt::CustomContextMenu);
-  //connect(parameterList->header(),SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(parameterListClicked(const QPoint &)));
 
   QDockWidget *dockWidget = new QDockWidget("MBS");
   addDockWidget(Qt::LeftDockWidgetArea,dockWidget);
@@ -319,7 +314,7 @@ void MainWindow::initInlineOpenMBV() {
 
   connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, Object*)), this, SLOT(selectElement(std::string)));
   connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, Object*)), this, SLOT(openPropertyDialog(std::string)));
-  //connect(inlineOpenMBVMW, SIGNAL(fileReloaded()), this, SLOT(elementListClicked()));
+  connect(inlineOpenMBVMW, SIGNAL(fileReloaded()), this, SLOT(selectionChanged()));
 }
 
 MainWindow::~MainWindow() {
@@ -370,26 +365,24 @@ void MainWindow::closeEvent(QCloseEvent *event) {
   //  }
 }
 
-void MainWindow::openPropertyDialog(string ID) {
- QModelIndex index = elementList->selectionModel()->currentIndex();
- elementList->edit(index);
-//  Element *element=dynamic_cast<Element*>(elementList->currentItem());
-//  if(element)
-//    element->openPropertyDialog();
-}
-
-void MainWindow::elementListClicked() {
+void MainWindow::selectionChanged() {
   QModelIndex index = elementList->selectionModel()->currentIndex();
   TreeModel *model = static_cast<TreeModel*>(elementList->model());
   Element *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
 #ifdef INLINE_OPENMBV
   if(element)
     inlineOpenMBVMW->highlightObject(element->getID());
-  //else
-    //inlineOpenMBVMW->highlightObject("");
+  else
+    inlineOpenMBVMW->highlightObject("");
 #endif
+}
+
+void MainWindow::elementListClicked() {
+  selectionChanged();
   if(QApplication::mouseButtons()==Qt::RightButton) {
+    QModelIndex index = elementList->selectionModel()->currentIndex();
     if(index.column()==0) {
+      TreeModel *model = static_cast<TreeModel*>(elementList->model());
       QMenu menu("Context Menu");
       if(dynamic_cast<Group*>(model->getItem(index)->getItemData())) {
         menu.addSeparator();
@@ -409,12 +402,6 @@ void MainWindow::elementListClicked() {
     } 
   }
 
-}
-
-void MainWindow::elementListDoubleClicked(const QModelIndex &index) {
- // Element *element=dynamic_cast<Element*>(elementList->currentItem());
- // if(element)
- //   element->openPropertyDialog();
 }
 
 void MainWindow::integratorListClicked() {
@@ -1005,8 +992,6 @@ void MainWindow::removeRow() {
   TreeModel *model = static_cast<TreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
   model->removeElement(index);
-  //elementList->selectionModel()->setCurrentIndex(index,QItemSelectionModel::Deselect);
-  //elementList->selectionModel()->setCurrentIndex(index.sibling(index.row(),1),QItemSelectionModel::Deselect);
 #ifdef INLINE_OPENMBV
   mbsimxml(1);
 #endif
@@ -1019,6 +1004,10 @@ void MainWindow::addGroup() {
 #ifdef INLINE_OPENMBV
   mbsimxml(1);
 #endif
+  QModelIndex containerIndex = model->index(2, 0, index);
+  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
+  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
 }
 
 void MainWindow::addObject() {
@@ -1040,6 +1029,10 @@ void MainWindow::addRigidBody() {
 #ifdef INLINE_OPENMBV
   mbsimxml(1);
 #endif
+  QModelIndex containerIndex = model->index(3, 0, index);
+  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
+  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
 }
 
 void MainWindow::addFrame() {
@@ -1049,6 +1042,10 @@ void MainWindow::addFrame() {
 #ifdef INLINE_OPENMBV
   mbsimxml(1);
 #endif
+  QModelIndex containerIndex = model->index(0, 0, index);
+  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
+  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
 }
 
 void MainWindow::addJoint() {
@@ -1058,5 +1055,9 @@ void MainWindow::addJoint() {
 #ifdef INLINE_OPENMBV
   mbsimxml(1);
 #endif
+  QModelIndex containerIndex = model->index(4, 0, index);
+  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
+  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
 }
 
