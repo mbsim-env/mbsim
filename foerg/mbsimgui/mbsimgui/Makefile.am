@@ -23,6 +23,7 @@ mbsimgui_SOURCES = element.cc \
 		   contour.cc \
 		   link.cc \
 		   joint.cc \
+		   observer.cc \
 		   integrator.cc \
 		   parameter.cc \
 		   octaveutils.cc \

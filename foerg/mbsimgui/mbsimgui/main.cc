@@ -44,7 +44,6 @@ int main(int argc, char *argv[]) {
   mainwindow->resize(1100, 700);
   int ret=app.exec();
   do_octave_atexit(); // do_octave_atexit must be called before leaving (to prevent crashed in atexit())
-  std::cout << "deleting" << std::endl;
   delete mainwindow;
   return ret;
 }

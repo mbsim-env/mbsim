@@ -75,19 +75,8 @@ QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent) con
     return QModelIndex();
 }
 
-bool TreeModel::insertRows(TreeItem *item, int rows, const QModelIndex &parent) {
-  TreeItem *parentItem = getItem(parent);
-  bool success;
-
-  beginInsertRows(parent, 0, 0 + rows - 1);
-  success = parentItem->insertChildren(item, rows);
-  endInsertRows();
-
-  return success;
-}
-
 void TreeModel::addFrame(const QModelIndex &parent) {
-  FixedRelativeFrame *frame = new FixedRelativeFrame("P1",static_cast<Element*>(getItem(parent)->getItemData()));
+  FixedRelativeFrame *frame = new FixedRelativeFrame("P"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addFrame(frame);
   createFrameItem(frame,parent.child(0,0));
 }
@@ -98,15 +87,27 @@ void TreeModel::addSolver(const QModelIndex &parent) {
 }
 
 void TreeModel::addGroup(const QModelIndex &parent) {
-  Group *group = new Group("Group1",static_cast<Element*>(getItem(parent)->getItemData()));
+  Group *group = new Group("Group"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addGroup(group);
   createGroupItem(group,parent.child(2,0));
 }
 
 void TreeModel::addRigidBody(const QModelIndex &parent) {
-  RigidBody *rigidbody = new RigidBody("RigidBody1",static_cast<Element*>(getItem(parent)->getItemData()));
+  RigidBody *rigidbody = new RigidBody("RigidBody"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addObject(rigidbody);
   createObjectItem(rigidbody,parent.child(3,0));
+}
+
+void TreeModel::addJoint(const QModelIndex &parent) {
+  Joint *joint = new Joint("Joint"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
+  static_cast<Element*>(getItem(parent)->getItemData())->addLink(joint);
+  createLinkItem(joint,parent.child(4,0));
+}
+
+void TreeModel::removeElement(const QModelIndex &index) {
+  Element *element = static_cast<Element*>(getItem(index)->getItemData());
+  element->getParent()->removeElement(element);
+  removeRow(index.row(), index.parent());
 }
 
 void TreeModel::createGroupItem(Group *group, const QModelIndex &parent) {

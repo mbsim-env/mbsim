@@ -30,27 +30,23 @@
 
 using namespace std;
 
-Observer::Observer(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element(str, parentItem, ind) {
-
-  QAction *action=new QAction(Utils::QIconCached("newobject.svg"),"Remove", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(remove()));
-  contextMenu->addAction(action);
+Observer::Observer(const string &str, Element *parent) : Element(str, parent) {
 }
 
 Observer::~Observer() {
 }
 
-Element * Observer::getByPathSearch(QString path) {
-  if (path.mid(0, 3)=="../") // relative path
-    return getParentElement()->getByPathSearch(path.mid(3));
+Element * Observer::getByPathSearch(string path) {
+  if (path.substr(0, 3)=="../") // relative path
+    return getParent()->getByPathSearch(path.substr(3));
   else // absolut path
-    if(getParentElement())
-      return getParentElement()->getByPathSearch(path);
+    if(getParent())
+      return getParent()->getByPathSearch(path);
     else
-      return getByPathSearch(path.mid(1));
+      return getByPathSearch(path.substr(1));
 }
 
-AbsoluteKinematicsObserver::AbsoluteKinematicsObserver(const QString &str, QTreeWidgetItem *parentItem, int ind) : Observer(str, parentItem, ind), position(0,false), velocity(0,false), angularVelocity(0,false), acceleration(0,false), angularAcceleration(0,false) {
+AbsoluteKinematicsObserver::AbsoluteKinematicsObserver(const string &str, Element *parent) : Observer(str, parent), position(0,false), velocity(0,false), angularVelocity(0,false), acceleration(0,false), angularAcceleration(0,false) {
 
   frame.setProperty(new FrameOfReferenceProperty(0,this,MBSIMNS"frame"));
 
@@ -81,50 +77,6 @@ AbsoluteKinematicsObserver::~AbsoluteKinematicsObserver() {
 void AbsoluteKinematicsObserver::initialize() {
   Observer::initialize();
   frame.initialize();
-}
-
-void AbsoluteKinematicsObserver::initializeDialog() {
-  Observer::initializeDialog();
-
-  dialog->addTab("Visualisation");
-
-  frameWidget = new ExtWidget("Frame",new FrameOfReferenceWidget(this,0));
-  dialog->addToTab("General", frameWidget);
-
-  positionWidget = new ExtWidget("OpenMBV position arrow",new OMBVArrowWidget("NOTSET",true),true);
-  dialog->addToTab("Visualisation",positionWidget);
-
-  velocityWidget = new ExtWidget("OpenMBV velocity arrow",new OMBVArrowWidget("NOTSET",true),true);
-  dialog->addToTab("Visualisation",velocityWidget);
-
-  angularVelocityWidget = new ExtWidget("OpenMBV angular velocity arrow",new OMBVArrowWidget("NOTSET",true),true);
-  dialog->addToTab("Visualisation",angularVelocityWidget);
-
-  accelerationWidget = new ExtWidget("OpenMBV acceleration arrow",new OMBVArrowWidget("NOTSET",true),true);
-  dialog->addToTab("Visualisation",accelerationWidget);
-
-  angularAccelerationWidget = new ExtWidget("OpenMBV angular acceleration arrow",new OMBVArrowWidget("NOTSET",true),true);
-  dialog->addToTab("Visualisation",angularAccelerationWidget);
-}
-
-void AbsoluteKinematicsObserver::toWidget() {
-  Observer::toWidget();
-  frame.toWidget(frameWidget);
-  position.toWidget(positionWidget);
-  velocity.toWidget(velocityWidget);
-  angularVelocity.toWidget(angularVelocityWidget);
-  acceleration.toWidget(accelerationWidget);
-  angularAcceleration.toWidget(angularAccelerationWidget);
-}
-
-void AbsoluteKinematicsObserver::fromWidget() {
-  Observer::fromWidget();
-  frame.fromWidget(frameWidget);
-  position.fromWidget(positionWidget);
-  velocity.fromWidget(velocityWidget);
-  angularVelocity.fromWidget(angularVelocityWidget);
-  acceleration.fromWidget(accelerationWidget);
-  angularAcceleration.fromWidget(angularAccelerationWidget);
 }
 
 void AbsoluteKinematicsObserver::initializeUsingXML(TiXmlElement *element) {

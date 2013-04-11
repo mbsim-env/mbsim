@@ -36,6 +36,7 @@ class Body : public Object {
 
     void addFrame(Frame *frame);
     void addContour(Contour *contour);
+    void removeElement(Element* element);
 
     virtual Frame* getFrame(int i) {return frame[i];}
     PropertyDialog* createPropertyDialog() {return new BodyPropertyDialog(this);}

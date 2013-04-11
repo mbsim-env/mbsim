@@ -30,15 +30,16 @@ class TreeModel : public QAbstractItemModel {
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
     bool setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role = Qt::EditRole);
 
-    bool insertRows(TreeItem *item, int rows, const QModelIndex &parent = QModelIndex());
     bool removeRows(int position, int rows, const QModelIndex &parent = QModelIndex());
 
     TreeItem *getItem(const QModelIndex &index) const;
 
+    void removeElement(const QModelIndex &parent = QModelIndex());
     void addSolver(const QModelIndex &parent = QModelIndex());
     void addGroup(const QModelIndex &parent = QModelIndex());
     void addRigidBody(const QModelIndex &parent = QModelIndex());
     void addFrame(const QModelIndex &parent = QModelIndex());
+    void addJoint(const QModelIndex &parent = QModelIndex());
     void createGroupItem(Group *group, const QModelIndex &parent = QModelIndex());
     void createObjectItem(Object *object, const QModelIndex &parent = QModelIndex());
     void createLinkItem(Link *link, const QModelIndex &parent = QModelIndex());
