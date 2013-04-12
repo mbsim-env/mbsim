@@ -22,7 +22,6 @@
 #include "basic_properties.h"
 #include "ombv_properties.h"
 #include <QtGui/QMenu>
-#include "mainwindow.h"
 
 using namespace std;
 

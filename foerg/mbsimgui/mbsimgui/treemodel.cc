@@ -12,18 +12,13 @@
 #include "joint.h"
 #include "contact.h"
 #include "observer.h"
+#include "parameter.h"
 
 #include <iostream>
 
 using namespace std;
 
-TreeModel::TreeModel(const QStringList &headers, QObject *parent) : QAbstractItemModel(parent), IDcounter(0) {
-
-  QVector<QVariant> rootData;
-  foreach (QString header, headers)
-    rootData << header;
-
-  rootItem = new TreeItem(new BasicItemData("Name","Type"));
+TreeModel::TreeModel(QObject *parent) : QAbstractItemModel(parent), rootItem(0), IDcounter(0) {
 }
 
 TreeModel::~TreeModel() {
@@ -46,142 +41,204 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const {
 }
 
 Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const {
-  if (!index.isValid())
+  if(!index.isValid())
     return 0;
 
   return Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
 
 TreeItem *TreeModel::getItem(const QModelIndex &index) const {
-  if (index.isValid()) {
+  if(index.isValid()) {
     TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
-    if (item) return item;
+    if(item) return item;
   }
   return rootItem;
 }
 
 QVariant TreeModel::headerData(int section, Qt::Orientation orientation, int role) const {
-  if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
+  if(orientation == Qt::Horizontal && role == Qt::DisplayRole)
     return rootItem->getData(section);
 
   return QVariant();
 }
 
 QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent) const {
-  if (parent.isValid() && parent.column() != 0)
+  if(parent.isValid() && parent.column() != 0)
     return QModelIndex();
 
   TreeItem *parentItem = getItem(parent);
 
   TreeItem *childItem = parentItem->child(row);
-  if (childItem)
+  if(childItem)
     return createIndex(row, column, childItem);
   else
     return QModelIndex();
 }
 
-void TreeModel::addSolver(const QModelIndex &parent) {
+QModelIndex TreeModel::parent(const QModelIndex &index) const {
+  if(!index.isValid())
+    return QModelIndex();
+
+  TreeItem *childItem = getItem(index);
+  TreeItem *parentItem = childItem->parent();
+
+  if(parentItem == rootItem)
+    return QModelIndex();
+
+  return createIndex(parentItem->childNumber(), 0, parentItem);
+}
+
+bool TreeModel::removeRows(int position, int rows, const QModelIndex &parent) {
+  TreeItem *parentItem = getItem(parent);
+  bool success = true;
+
+  beginRemoveRows(parent, position, position + rows - 1);
+  success = parentItem->removeChildren(position, rows);
+  endRemoveRows();
+
+  return success;
+}
+
+int TreeModel::rowCount(const QModelIndex &parent) const {
+  return getItem(parent)->childCount();
+}
+
+bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int role) {
+  if(role != Qt::EditRole)
+    return false;
+
+  TreeItem *item = getItem(index);
+  if(index.column()==0)
+    item->setData0(value);
+
+  emit dataChanged(index, index);
+
+  return true;
+}
+
+bool TreeModel::setHeaderData(int section, Qt::Orientation orientation,
+    const QVariant &value, int role)
+{
+  if(role != Qt::EditRole || orientation != Qt::Horizontal)
+    return false;
+
+  if(section==0)
+    rootItem->setData0(value);
+  else
+    rootItem->setData1(value);
+
+  emit headerDataChanged(orientation, section, section);
+
+  return true;
+}
+
+ElementTreeModel::ElementTreeModel(QObject *parent) : TreeModel(parent) {
+
+  rootItem = new TreeItem(new BasicItemData("Name","Type"));
+}
+
+void ElementTreeModel::addSolver(const QModelIndex &parent) {
   Solver *solver = new Solver("MBS",0);
   createGroupItem(solver,parent);
 }
 
-void TreeModel::addFrame(const QModelIndex &parent) {
+void ElementTreeModel::addFrame(const QModelIndex &parent) {
   FixedRelativeFrame *frame = new FixedRelativeFrame("P"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addFrame(frame);
   createFrameItem(frame,parent.child(0,0));
 }
 
-void TreeModel::addPoint(const QModelIndex &parent) {
+void ElementTreeModel::addPoint(const QModelIndex &parent) {
   Point *point = new Point("Point"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addContour(point);
   createContourItem(point,parent.child(1,0));
 }
 
-void TreeModel::addLine(const QModelIndex &parent) {
+void ElementTreeModel::addLine(const QModelIndex &parent) {
   Line *line = new Line("Line"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addContour(line);
   createContourItem(line,parent.child(1,0));
 }
 
-void TreeModel::addPlane(const QModelIndex &parent) {
+void ElementTreeModel::addPlane(const QModelIndex &parent) {
   Plane *plane = new Plane("Plane"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addContour(plane);
   createContourItem(plane,parent.child(1,0));
 }
 
-void TreeModel::addSphere(const QModelIndex &parent) {
+void ElementTreeModel::addSphere(const QModelIndex &parent) {
   Sphere *sphere = new Sphere("Sphere"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addContour(sphere);
   createContourItem(sphere,parent.child(1,0));
 }
 
-void TreeModel::addGroup(const QModelIndex &parent) {
+void ElementTreeModel::addGroup(const QModelIndex &parent) {
   Group *group = new Group("Group"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addGroup(group);
   createGroupItem(group,parent.child(2,0));
 }
 
-void TreeModel::addRigidBody(const QModelIndex &parent) {
+void ElementTreeModel::addRigidBody(const QModelIndex &parent) {
   RigidBody *rigidbody = new RigidBody("RigidBody"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addObject(rigidbody);
   createObjectItem(rigidbody,parent.child(3,0));
 }
 
-void TreeModel::addKinematicConstraint(const QModelIndex &parent) {
+void ElementTreeModel::addKinematicConstraint(const QModelIndex &parent) {
   KinematicConstraint *constraint = new KinematicConstraint("KinematicConstraint"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addObject(constraint);
   createObjectItem(constraint,parent.child(3,0));
 }
 
-void TreeModel::addGearConstraint(const QModelIndex &parent) {
+void ElementTreeModel::addGearConstraint(const QModelIndex &parent) {
   GearConstraint *constraint = new GearConstraint("GearConstraint"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addObject(constraint);
   createObjectItem(constraint,parent.child(3,0));
 }
 
-void TreeModel::addKineticExcitation(const QModelIndex &parent) {
+void ElementTreeModel::addKineticExcitation(const QModelIndex &parent) {
   KineticExcitation *kineticExcitation = new KineticExcitation("KineticExcitation"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addLink(kineticExcitation);
   createLinkItem(kineticExcitation,parent.child(4,0));
 }
 
-void TreeModel::addJointConstraint(const QModelIndex &parent) {
+void ElementTreeModel::addJointConstraint(const QModelIndex &parent) {
   JointConstraint *constraint = new JointConstraint("JointConstraint"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addObject(constraint);
   createObjectItem(constraint,parent.child(3,0));
 }
 
-void TreeModel::addSpringDamper(const QModelIndex &parent) {
+void ElementTreeModel::addSpringDamper(const QModelIndex &parent) {
   SpringDamper *springDamper = new SpringDamper("SpringDamper"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addLink(springDamper);
   createLinkItem(springDamper,parent.child(4,0));
 }
 
-void TreeModel::addJoint(const QModelIndex &parent) {
+void ElementTreeModel::addJoint(const QModelIndex &parent) {
   Joint *joint = new Joint("Joint"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addLink(joint);
   createLinkItem(joint,parent.child(4,0));
 }
 
-void TreeModel::addContact(const QModelIndex &parent) {
+void ElementTreeModel::addContact(const QModelIndex &parent) {
   Contact *contact = new Contact("Contact"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addLink(contact);
   createLinkItem(contact,parent.child(4,0));
 }
 
-void TreeModel::addAbsoluteKinematicsObserver(const QModelIndex &parent) {
+void ElementTreeModel::addAbsoluteKinematicsObserver(const QModelIndex &parent) {
   AbsoluteKinematicsObserver *observer = new AbsoluteKinematicsObserver("AbsoluteKinematicsObserver"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addObserver(observer);
   createObserverItem(observer,parent.child(5,0));
 }
 
-void TreeModel::removeElement(const QModelIndex &index) {
+void ElementTreeModel::removeElement(const QModelIndex &index) {
   Element *element = static_cast<Element*>(getItem(index)->getItemData());
   element->getParent()->removeElement(element);
   removeRow(index.row(), index.parent());
 }
 
-void TreeModel::createFrameItem(Frame *frame, const QModelIndex &parent) {
+void ElementTreeModel::createFrameItem(Frame *frame, const QModelIndex &parent) {
 
   TreeItem *parentItem = getItem(parent);
 
@@ -194,7 +251,7 @@ void TreeModel::createFrameItem(Frame *frame, const QModelIndex &parent) {
   idEleMap.insert(make_pair(frame->getID(), parent.child(i,0)));
 }
 
-void TreeModel::createContourItem(Contour *contour, const QModelIndex &parent) {
+void ElementTreeModel::createContourItem(Contour *contour, const QModelIndex &parent) {
 
   TreeItem *parentItem = getItem(parent);
 
@@ -207,7 +264,7 @@ void TreeModel::createContourItem(Contour *contour, const QModelIndex &parent) {
   idEleMap.insert(make_pair(contour->getID(), parent.child(i,0)));
 }
 
-void TreeModel::createGroupItem(Group *group, const QModelIndex &parent) {
+void ElementTreeModel::createGroupItem(Group *group, const QModelIndex &parent) {
 
   TreeItem *parentItem = getItem(parent);
 
@@ -247,7 +304,7 @@ void TreeModel::createGroupItem(Group *group, const QModelIndex &parent) {
     createObserverItem(group->getObserver(i),index.child(4,0));
 }
 
-void TreeModel::createObjectItem(Object *object, const QModelIndex &parent) {
+void ElementTreeModel::createObjectItem(Object *object, const QModelIndex &parent) {
 
   TreeItem *parentItem = getItem(parent);
 
@@ -273,7 +330,7 @@ void TreeModel::createObjectItem(Object *object, const QModelIndex &parent) {
     createContourItem(object->getContour(i),index.child(1,0));
 }
 
-void TreeModel::createLinkItem(Link *link, const QModelIndex &parent) {
+void ElementTreeModel::createLinkItem(Link *link, const QModelIndex &parent) {
 
   TreeItem *parentItem = getItem(parent);
 
@@ -286,7 +343,7 @@ void TreeModel::createLinkItem(Link *link, const QModelIndex &parent) {
   idEleMap.insert(make_pair(link->getID(), parent.child(i,0)));
 }
 
-void TreeModel::createObserverItem(Observer *link, const QModelIndex &parent) {
+void ElementTreeModel::createObserverItem(Observer *link, const QModelIndex &parent) {
 
   TreeItem *parentItem = getItem(parent);
 
@@ -299,59 +356,24 @@ void TreeModel::createObserverItem(Observer *link, const QModelIndex &parent) {
   idEleMap.insert(make_pair(link->getID(), parent.child(i,0)));
 }
 
-QModelIndex TreeModel::parent(const QModelIndex &index) const {
-  if (!index.isValid())
-    return QModelIndex();
+ParameterListModel::ParameterListModel(QObject *parent) : TreeModel(parent) {
 
-  TreeItem *childItem = getItem(index);
-  TreeItem *parentItem = childItem->parent();
-
-  if (parentItem == rootItem)
-    return QModelIndex();
-
-  return createIndex(parentItem->childNumber(), 0, parentItem);
+  rootItem = new TreeItem(new BasicItemData("Name","Value"));
 }
 
-bool TreeModel::removeRows(int position, int rows, const QModelIndex &parent) {
+void ParameterListModel::addScalarParameter(const QModelIndex &parent) {
+  ScalarParameter *parameter = new ScalarParameter("a"+toStr(IDcounter++));
+  createParameterItem(parameter,parent);
+}
+
+void ParameterListModel::createParameterItem(Parameter *parameter, const QModelIndex &parent) {
+
   TreeItem *parentItem = getItem(parent);
-  bool success = true;
 
-  beginRemoveRows(parent, position, position + rows - 1);
-  success = parentItem->removeChildren(position, rows);
-  endRemoveRows();
-
-  return success;
+  int i = rowCount(parent);
+  beginInsertRows(parent, i, i);
+  TreeItem *item = new TreeItem(parameter,parentItem);
+  parentItem->insertChildren(item,1);
+  endInsertRows();
 }
 
-int TreeModel::rowCount(const QModelIndex &parent) const {
-  return getItem(parent)->childCount();
-}
-
-bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int role) {
-  if (role != Qt::EditRole)
-    return false;
-
-  TreeItem *item = getItem(index);
-  if(index.column()==0)
-    item->setData0(value);
-
-  emit dataChanged(index, index);
-
-  return true;
-}
-
-bool TreeModel::setHeaderData(int section, Qt::Orientation orientation,
-    const QVariant &value, int role)
-{
-  if (role != Qt::EditRole || orientation != Qt::Horizontal)
-    return false;
-
-  if(section==0)
-    rootItem->setData0(value);
-  else
-    rootItem->setData1(value);
-
-  emit headerDataChanged(orientation, section, section);
-
-  return true;
-}

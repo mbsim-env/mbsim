@@ -60,7 +60,7 @@ class ObjectFactoryBase {
   virtual Link* createLink(TiXmlElement *element, Element *parent) { return NULL; }
   virtual Observer* createObserver(TiXmlElement *element, Element *parent) { return NULL; }
   virtual Integrator* createIntegrator(TiXmlElement *element, QTreeWidgetItem* parentItem) { return NULL; }
-  virtual Parameter* createParameter(TiXmlElement *element, QTreeWidgetItem* parentItem) { return NULL; }
+  virtual Parameter* createParameter(TiXmlElement *element) { return NULL; }
   //  virtual GeneralizedForceLaw *createGeneralizedForceLaw(TiXmlElement *element) { return NULL; }
   //  virtual GeneralizedImpactLaw *createGeneralizedImpactLaw(TiXmlElement *element) { return NULL; }
   //  virtual FrictionForceLaw *createFrictionForceLaw(TiXmlElement *element) { return NULL; }
@@ -102,7 +102,7 @@ class ObjectFactory : public ObjectFactoryBase {
     Link* createLink(TiXmlElement *element, Element *parent);
     Observer* createObserver(TiXmlElement *element, Element *parent);
     Integrator* createIntegrator(TiXmlElement *element, QTreeWidgetItem* parentItem);
-    Parameter* createParameter(TiXmlElement *element, QTreeWidgetItem* parentItem);
+    Parameter* createParameter(TiXmlElement *element);
 //    GeneralizedForceLaw *createGeneralizedForceLaw(TiXmlElement *element);
 //    GeneralizedImpactLaw *createGeneralizedImpactLaw(TiXmlElement *element);
 //    FrictionForceLaw *createFrictionForceLaw(TiXmlElement *element);
@@ -138,7 +138,7 @@ class MBSimObjectFactory : protected ObjectFactoryBase  {
     Link* createLink(TiXmlElement *element, Element *parent);
     Observer* createObserver(TiXmlElement *element, Element *parent);
     Integrator* createIntegrator(TiXmlElement *element, QTreeWidgetItem* parentItem);
-    Parameter* createParameter(TiXmlElement *element, QTreeWidgetItem* parentItem);
+    Parameter* createParameter(TiXmlElement *element);
 //    GeneralizedForceLaw *createGeneralizedForceLaw(TiXmlElement *element);
 //    GeneralizedImpactLaw *createGeneralizedImpactLaw(TiXmlElement *element);
 //    FrictionForceLaw *createFrictionForceLaw(TiXmlElement *element);

@@ -20,10 +20,8 @@
 #include <config.h>
 #include "link.h"
 #include <QtGui/QMenu>
-#include "mainwindow.h"
 
 using namespace std;
-
 
 Link::Link(const string &str, Element *parent) : Element(str, parent) {
 }

@@ -21,7 +21,6 @@
 #define _ELEMENT__H_
 
 #include "treeitemdata.h"
-#include "utils.h"
 #include "extended_properties.h"
 #include "property_widget.h"
 
@@ -39,11 +38,6 @@ class TextWidget;
 
 class Element : public TreeItemData {
   protected:
-    bool drawThisPath;
-    std::string iconFile;
-    bool searchMatched;
-    std::string file;
-    static TiXmlElement* copiedElement;
     static int IDcounter;
     std::string ns, ID;
     std::string name;
@@ -60,11 +54,10 @@ class Element : public TreeItemData {
     virtual void initialize();
     const std::string& getName() const {return name;}
     void setName(const std::string &str) {name = str;}
-    std::string getType() const { return "Element"; }
+    virtual std::string getType() const { return "Element"; }
+    std::string getValue() const { return getType(); }
     //std::string newName(const std::string &type);
     virtual std::string getFileExtension() const { return ".xml"; }
-    bool getSearchMatched() { return searchMatched; }
-    void setSearchMatched(bool m) { searchMatched=m; }
     template<class T> T* getByPath(std::string path);
     virtual Element* getByPathSearch(std::string path) {return 0; }
     virtual int getNumberOfFrames() {return 0;}

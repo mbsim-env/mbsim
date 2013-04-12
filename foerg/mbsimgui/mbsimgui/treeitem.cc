@@ -5,9 +5,6 @@
 
 using namespace std;
 
-BasicItemData::~BasicItemData() {
-}
-
 TreeItem::~TreeItem() {
   delete itemData;
   qDeleteAll(childItems);
@@ -37,23 +34,3 @@ bool TreeItem::removeChildren(int position, int count) {
 
   return true;
 }
-
-//Container::Container(const QString &name, TreeItem *parent) : TreeItem(parent) {
-//  itemData[0] = name;
-//}
-//
-//Group::Group(const QString &name, TreeItem *parent) : TreeItem(parent) {
-//  itemData[0] = name;
-//  itemData[1] = "Group";
-//}
-//
-//Object::Object(const QString &name, TreeItem *parent) : TreeItem(parent) {
-//  itemData[0] = name;
-//  itemData[1] = "Object";
-//}
-//
-//Link::Link(const QString &name, TreeItem *parent) : TreeItem(parent) {
-//  itemData[0] = name;
-//  itemData[1] = "Link";
-//}
-//

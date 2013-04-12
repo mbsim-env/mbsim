@@ -181,17 +181,17 @@ Integrator* MBSimObjectFactory::createIntegrator(TiXmlElement *element, QTreeWid
   return 0;
 }
 
-Parameter* ObjectFactory::createParameter(TiXmlElement *element, QTreeWidgetItem* parentItem) {
+Parameter* ObjectFactory::createParameter(TiXmlElement *element) {
   if(element==NULL) return NULL;
   for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
-    return (*i)->createParameter(element,parentItem);
+    return (*i)->createParameter(element);
   return 0;
 }
 
-Parameter* MBSimObjectFactory::createParameter(TiXmlElement *element, QTreeWidgetItem* parentItem) {
+Parameter* MBSimObjectFactory::createParameter(TiXmlElement *element) {
   if(element==0) return 0;
   if(element->ValueStr()==PARAMNS"scalarParameter")
-    return new DoubleParameter(element->Attribute("name"),parentItem);
+    return new ScalarParameter(element->Attribute("name"));
   return 0;
 }
 

@@ -26,8 +26,6 @@
 
 using namespace std;
 
-TiXmlElement* Element::copiedElement;
-
 void Environment::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e;
   e=element->FirstChildElement(MBSIMNS"accelerationOfGravity");
@@ -51,8 +49,6 @@ Environment::~Environment() {}
 Environment *Environment::instance=NULL;
 
 Solver::Solver(const string &str, Element *parent) : Group(str,parent), solverParameters(0,false), inverseKinetics(0,false) {
-
-  Element::copiedElement = 0;
 
   vector<PhysicalStringProperty*> input;
   vector<string> g(3);

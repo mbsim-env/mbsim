@@ -30,15 +30,12 @@
 #include "contour.h"
 #include "link.h"
 #include "observer.h"
-#include "mainwindow.h"
 
 using namespace std;
 
-extern MainWindow *mw;
-
 int Element::IDcounter=0;
 
-Element::Element(const string &name_, Element *parent_) : name(name_), parent(parent_), drawThisPath(true), searchMatched(true), ns(MBSIMNS) {
+Element::Element(const string &name_, Element *parent_) : name(name_), parent(parent_), ns(MBSIMNS) {
   stringstream sstr;
   sstr<<IDcounter++;
   ID=sstr.str();

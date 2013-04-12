@@ -20,8 +20,9 @@
 #ifndef _PARAMETER__H_
 #define _PARAMETER__H_
 
-#include <QtGui/QTreeWidgetItem>
+#include "treeitemdata.h"
 #include "extended_properties.h"
+#include "property_widget.h"
 
 class PropertyWidget;
 class PropertyDialog;
@@ -30,60 +31,32 @@ class TiXmlElement;
 class TiXmlNode;
 class TextWidget;
 
-class Parameter : public QObject, public QTreeWidgetItem {
-  Q_OBJECT
-  friend class Editor;
-  friend class MainWindow;
+class Parameter : public TreeItemData {
   protected:
-    QString newName(const QString &type);
-    bool drawThisPath;
-    QString iconFile;
-    bool searchMatched;
-    PropertyDialog *dialog;
-    QMenu *contextMenu;
-    QString name;
-    TextWidget *textWidget;
+    std::string name;
   public:
-    Parameter(const QString &str, QTreeWidgetItem *parentItem);
+    Parameter(const std::string &name);
     virtual ~Parameter();
-    QString &getIconFile() { return iconFile; }
-    virtual QString getInfo();
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    static Parameter* readXMLFile(const QString &filename, QTreeWidgetItem *parent);
-    virtual void writeXMLFile(const QString &name);
+    static Parameter* readXMLFile(const std::string &filename);
+    virtual void writeXMLFile(const std::string &name);
     virtual void writeXMLFile() { writeXMLFile(getType()); }
-    virtual QString getType() const { return "Parameter"; }
-    QMenu* getContextMenu() { return contextMenu; }
-    QString getName() const {return name;}
-    void setName(const QString &str);
-    virtual std::string getValue() const = 0;
-    virtual void fromWidget();
-    virtual void toWidget();
-    virtual void initializeDialog();
-  public slots:
-    void saveAs();
-    void openPropertyDialog();
-    void updateElement();
-  protected slots:
-    void updateTreeWidgetItem(const QString &str);
-    void remove();
-  signals:
-    void parameterChanged(const QString &str);
-
+    virtual std::string getType() const { return "Parameter"; }
+    const std::string& getName() const {return name;}
+    void setName(const std::string &str) {name = str;}
+    PropertyDialog* createPropertyDialog() {return new ParameterPropertyDialog;}
 };
 
-class DoubleParameter : public Parameter {
+class ScalarParameter : public Parameter {
+  friend class ScalarParameterPropertyDialog;
   public:
-    DoubleParameter(const QString &str, QTreeWidgetItem *parentItem);
-    virtual QString getType() const { return "scalarParameter"; }
-    virtual std::string getValue() const;
+    ScalarParameter(const std::string &str);
+    virtual std::string getType() const { return "scalarParameter"; }
+    std::string getValue() const;
     virtual void initializeUsingXML(TiXmlElement *element);
-    virtual void fromWidget();
-    virtual void toWidget();
-    virtual void initializeDialog();
+    PropertyDialog* createPropertyDialog() {return new ScalarParameterPropertyDialog;}
   protected:
-    ExtWidget *valueWidget;
     ExtProperty value;
 };
 
