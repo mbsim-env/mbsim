@@ -30,7 +30,7 @@
 
 using namespace std;
 
-SpringDamper::SpringDamper(const QString &str, TreeItem *parentItem) : Link(str, parentItem), forceDirection(0,false), coilSpring(0,true) {
+SpringDamper::SpringDamper(const string &str, Element *parent) : Link(str, parent), forceDirection(0,false), coilSpring(0,true) {
 
   connections.setProperty(new ConnectFramesProperty(2,this));
 

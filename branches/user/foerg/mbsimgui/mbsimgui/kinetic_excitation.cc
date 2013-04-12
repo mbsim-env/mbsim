@@ -27,7 +27,7 @@
 
 using namespace std;
 
-KineticExcitation::KineticExcitation(const QString &str, TreeItem *parentItem) : Link(str, parentItem), forceArrow(0,true), momentArrow(0,true), force(0,false), moment(0,false), frameOfReference(0,false) {
+KineticExcitation::KineticExcitation(const string &str, Element *parent) : Link(str, parent), forceArrow(0,true), momentArrow(0,true), force(0,false), moment(0,false), frameOfReference(0,false) {
 
   forceArrow.setProperty(new OMBVArrowProperty("NOTSET"));
   ((OMBVArrowProperty*)forceArrow.getProperty())->setID(getID());

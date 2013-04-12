@@ -23,11 +23,14 @@
 #include "string_widgets.h"
 #include "kinematics_widgets.h"
 #include "kinetics_widgets.h"
+#include "function_widgets.h"
 #include "ombv_widgets.h"
 #include "extended_widgets.h"
+#include "solver.h"
 #include "frame.h"
 #include "rigidbody.h"
-#include "solver.h"
+#include "kinetic_excitation.h"
+#include "spring_damper.h"
 #include "joint.h"
 #include <iostream>
 #include <QtGui>
@@ -41,12 +44,11 @@ PropertyDialog::PropertyDialog(QWidget *parent, Qt::WindowFlags f) : QDialog(par
   tabWidget = new QTabWidget(this);
   layout->addWidget(tabWidget);
   buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Apply | QDialogButtonBox::Cancel);
-  buttonBox->addButton("Resize", QDialogButtonBox::ActionRole);
-
-  //connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-  //connect(buttonBox, SIGNAL(rejected()), this, SLOT(close()));
   connect(buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(clicked(QAbstractButton*)));
   layout->addWidget(buttonBox);
+  buttonResize = new QPushButton("Resize");
+  //connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
+  layout->addWidget(buttonResize);
   setWindowTitle(QString("Properties"));
 }
 
@@ -60,8 +62,6 @@ void PropertyDialog::clicked(QAbstractButton *button) {
     emit apply(this);
   else if(button == buttonBox->button(QDialogButtonBox::Cancel))
     emit cancel(this);
-  else if(button == buttonBox->buttons()[2])
-    resizeVariables();
 }
 
 void PropertyDialog::addToTab(const QString &name, QWidget* widget_) {
@@ -79,13 +79,6 @@ void PropertyDialog::updateWidget() {
     dynamic_cast<WidgetInterface*>(widget[i])->updateWidget();
 }
 
-void PropertyDialog::resizeVariables() {
-  Object *obj = dynamic_cast<Object*>(parentObject);
-  //if(obj) obj->resizeVariables();
-  for(unsigned int i=0; i<widget.size(); i++)
-    dynamic_cast<WidgetInterface*>(widget[i])->resizeVariables();
-}
-
 void PropertyDialog::addTab(const QString &name, int i) {  
   QScrollArea *tab = new QScrollArea;
   tab->setWidgetResizable(true);
@@ -100,10 +93,6 @@ void PropertyDialog::addTab(const QString &name, int i) {
     tabWidget->addTab(tab, name);
   else 
     tabWidget->insertTab(i,tab,name);
-}
-
-void PropertyDialog::setParentObject(QObject *parentObject_) {
-  parentObject=parentObject_;
 }
 
 ElementPropertyDialog::ElementPropertyDialog(QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f) {
@@ -253,6 +242,8 @@ ObjectPropertyDialog::ObjectPropertyDialog(Object *object, QWidget *parent, Qt::
   var = new ExtPhysicalVarWidget(input);  
   u0Widget = new ExtWidget("Initial generalized velocity",var,true);
   addToTab("Initial conditions", u0Widget);
+
+  connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
 }
 
 void ObjectPropertyDialog::toWidget(Element *element) {
@@ -382,6 +373,96 @@ void LinkPropertyDialog::toWidget(Element *element) {
 
 void LinkPropertyDialog::fromWidget(Element *element) {
   ElementPropertyDialog::fromWidget(element);
+}
+
+KineticExcitationPropertyDialog::KineticExcitationPropertyDialog(KineticExcitation *kineticExcitation, QWidget *parent, Qt::WindowFlags wf) : LinkPropertyDialog(kineticExcitation,parent,wf) {
+
+  addTab("Kinetics");
+  addTab("Visualisation");
+
+  forceArrowWidget = new ExtWidget("OpenMBV force arrow",new OMBVArrowWidget("NOTSET"),true);
+  addToTab("Visualisation",forceArrowWidget);
+
+  momentArrowWidget = new ExtWidget("OpenMBV moment arrow",new OMBVArrowWidget("NOTSET"),true);
+  addToTab("Visualisation",momentArrowWidget);
+
+  vector<QWidget*> widget;
+  vector<string> name;
+  name.push_back("1 frame");
+  name.push_back("2 frames");
+  widget.push_back(new ConnectFramesWidget(1,kineticExcitation));
+  widget.push_back(new ConnectFramesWidget(2,kineticExcitation));
+
+  connectionsWidget = new ExtWidget("Connections",new WidgetChoiceWidget(name,widget)); 
+  addToTab("Kinetics",connectionsWidget);
+
+  ForceChoiceWidget *f = new ForceChoiceWidget;
+  connect(buttonResize, SIGNAL(clicked(bool)), f, SLOT(resizeVariables()));
+  forceWidget = new ExtWidget("Force",f,true);
+  addToTab("Kinetics",forceWidget);
+
+  ForceChoiceWidget *m = new ForceChoiceWidget;
+  momentWidget = new ExtWidget("Moment",m,true);
+  addToTab("Kinetics",momentWidget);
+
+  FrameOfReferenceWidget* ref = new FrameOfReferenceWidget(kineticExcitation,0);
+  frameOfReferenceWidget = new ExtWidget("Frame of reference",ref,true);
+  addToTab("Kinetics",frameOfReferenceWidget);
+}
+
+void KineticExcitationPropertyDialog::resizeVariables() {
+  forceWidget->resizeVariables();
+}
+
+void KineticExcitationPropertyDialog::toWidget(Element *element) {
+  ElementPropertyDialog::toWidget(element);
+  static_cast<KineticExcitation*>(element)->forceArrow.toWidget(forceArrowWidget);
+  static_cast<KineticExcitation*>(element)->momentArrow.toWidget(momentArrowWidget);
+  static_cast<KineticExcitation*>(element)->connections.toWidget(connectionsWidget);
+  static_cast<KineticExcitation*>(element)->force.toWidget(forceWidget);
+  static_cast<KineticExcitation*>(element)->moment.toWidget(momentWidget);
+}
+
+void KineticExcitationPropertyDialog::fromWidget(Element *element) {
+  ElementPropertyDialog::fromWidget(element);
+  static_cast<KineticExcitation*>(element)->forceArrow.fromWidget(forceArrowWidget);
+  static_cast<KineticExcitation*>(element)->momentArrow.fromWidget(momentArrowWidget);
+  static_cast<KineticExcitation*>(element)->connections.fromWidget(connectionsWidget);
+  static_cast<KineticExcitation*>(element)->force.fromWidget(forceWidget);
+  static_cast<KineticExcitation*>(element)->moment.fromWidget(momentWidget);
+}
+
+SpringDamperPropertyDialog::SpringDamperPropertyDialog(SpringDamper *springDamper, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(springDamper,parent,f) {
+  addTab("Kinetics");
+  addTab("Visualisation");
+
+  connectionsWidget = new ExtWidget("Connections",new ConnectFramesWidget(2,springDamper));
+  addToTab("Kinetics", connectionsWidget);
+
+  forceFunctionWidget = new ExtWidget("Force function",new Function2ChoiceWidget);
+  addToTab("Kinetics", forceFunctionWidget);
+
+  forceDirectionWidget = new ExtWidget("Force direction",new ForceDirectionWidget(springDamper),true);
+  addToTab("Kinetics", forceDirectionWidget);
+
+  coilSpringWidget = new ExtWidget("Coil spring",new OMBVCoilSpringWidget("NOTSET"),true);
+  addToTab("Visualisation", coilSpringWidget);
+}
+
+void SpringDamperPropertyDialog::toWidget(Element *element) {
+  ElementPropertyDialog::toWidget(element);
+  static_cast<SpringDamper*>(element)->connections.toWidget(connectionsWidget);
+  static_cast<SpringDamper*>(element)->forceFunction.toWidget(forceFunctionWidget);
+  static_cast<SpringDamper*>(element)->forceDirection.toWidget(forceDirectionWidget);
+  static_cast<SpringDamper*>(element)->coilSpring.toWidget(coilSpringWidget);
+}
+
+void SpringDamperPropertyDialog::fromWidget(Element *element) {
+  ElementPropertyDialog::fromWidget(element);
+  static_cast<SpringDamper*>(element)->connections.fromWidget(connectionsWidget);
+  static_cast<SpringDamper*>(element)->forceFunction.fromWidget(forceFunctionWidget);
+  static_cast<SpringDamper*>(element)->forceDirection.fromWidget(forceDirectionWidget);
+  static_cast<SpringDamper*>(element)->coilSpring.fromWidget(coilSpringWidget);
 }
 
 JointPropertyDialog::JointPropertyDialog(Joint *joint, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(joint,parent,f) {

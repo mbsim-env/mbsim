@@ -2,11 +2,14 @@
 
 #include "treeitem.h"
 #include "treemodel.h"
-#include "solver.h"
-#include "group.h"
 #include "frame.h"
+#include "contour.h"
+#include "solver.h"
 #include "rigidbody.h"
+#include "kinetic_excitation.h"
+#include "spring_damper.h"
 #include "joint.h"
+#include "observer.h"
 
 #include <iostream>
 
@@ -75,15 +78,15 @@ QModelIndex TreeModel::index(int row, int column, const QModelIndex &parent) con
     return QModelIndex();
 }
 
+void TreeModel::addSolver(const QModelIndex &parent) {
+  Solver *solver = new Solver("MBS",0);
+  createGroupItem(solver,parent);
+}
+
 void TreeModel::addFrame(const QModelIndex &parent) {
   FixedRelativeFrame *frame = new FixedRelativeFrame("P"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addFrame(frame);
   createFrameItem(frame,parent.child(0,0));
-}
-
-void TreeModel::addSolver(const QModelIndex &parent) {
-  Solver *solver = new Solver("MBS",0);
-  createGroupItem(solver,parent);
 }
 
 void TreeModel::addGroup(const QModelIndex &parent) {
@@ -98,16 +101,54 @@ void TreeModel::addRigidBody(const QModelIndex &parent) {
   createObjectItem(rigidbody,parent.child(3,0));
 }
 
+void TreeModel::addSpringDamper(const QModelIndex &parent) {
+  SpringDamper *springDamper = new SpringDamper("SpringDamper"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
+  static_cast<Element*>(getItem(parent)->getItemData())->addLink(springDamper);
+  createLinkItem(springDamper,parent.child(4,0));
+}
+
 void TreeModel::addJoint(const QModelIndex &parent) {
   Joint *joint = new Joint("Joint"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addLink(joint);
   createLinkItem(joint,parent.child(4,0));
 }
 
+void TreeModel::addKineticExcitation(const QModelIndex &parent) {
+  KineticExcitation *kineticExcitation = new KineticExcitation("KineticExcitation"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
+  static_cast<Element*>(getItem(parent)->getItemData())->addLink(kineticExcitation);
+  createLinkItem(kineticExcitation,parent.child(4,0));
+}
+
 void TreeModel::removeElement(const QModelIndex &index) {
   Element *element = static_cast<Element*>(getItem(index)->getItemData());
   element->getParent()->removeElement(element);
   removeRow(index.row(), index.parent());
+}
+
+void TreeModel::createFrameItem(Frame *frame, const QModelIndex &parent) {
+
+  TreeItem *parentItem = getItem(parent);
+
+  int i = rowCount(parent);
+  beginInsertRows(parent, i, i);
+  TreeItem *item = new TreeItem(frame,parentItem);
+  parentItem->insertChildren(item,1);
+  endInsertRows();
+
+  idEleMap.insert(make_pair(frame->getID(), parent.child(i,0)));
+}
+
+void TreeModel::createContourItem(Contour *contour, const QModelIndex &parent) {
+
+  TreeItem *parentItem = getItem(parent);
+
+  int i = rowCount(parent);
+  beginInsertRows(parent, i, i);
+  TreeItem *item = new TreeItem(contour,parentItem);
+  parentItem->insertChildren(item,1);
+  endInsertRows();
+
+  idEleMap.insert(make_pair(contour->getID(), parent.child(i,0)));
 }
 
 void TreeModel::createGroupItem(Group *group, const QModelIndex &parent) {
@@ -138,10 +179,16 @@ void TreeModel::createGroupItem(Group *group, const QModelIndex &parent) {
 
   for(int i=0; i<group->getNumberOfFrames(); i++)
     createFrameItem(group->getFrame(i),index.child(0,0));
+  for(int i=0; i<group->getNumberOfContours(); i++)
+    createContourItem(group->getContour(i),index.child(1,0));
+  for(int i=0; i<group->getNumberOfGroups(); i++)
+    createGroupItem(group->getGroup(i),index.child(2,0));
   for(int i=0; i<group->getNumberOfObjects(); i++)
     createObjectItem(group->getObject(i),index.child(3,0));
   for(int i=0; i<group->getNumberOfLinks(); i++)
     createLinkItem(group->getLink(i),index.child(4,0));
+  for(int i=0; i<group->getNumberOfObservers(); i++)
+    createObserverItem(group->getObserver(i),index.child(4,0));
 }
 
 void TreeModel::createObjectItem(Object *object, const QModelIndex &parent) {
@@ -181,17 +228,17 @@ void TreeModel::createLinkItem(Link *link, const QModelIndex &parent) {
   idEleMap.insert(make_pair(link->getID(), parent.child(i,0)));
 }
 
-void TreeModel::createFrameItem(Frame *frame, const QModelIndex &parent) {
+void TreeModel::createObserverItem(Observer *link, const QModelIndex &parent) {
 
   TreeItem *parentItem = getItem(parent);
 
   int i = rowCount(parent);
   beginInsertRows(parent, i, i);
-  TreeItem *item = new TreeItem(frame,parentItem);
+  TreeItem *item = new TreeItem(link,parentItem);
   parentItem->insertChildren(item,1);
   endInsertRows();
 
-  idEleMap.insert(make_pair(frame->getID(), parent.child(i,0)));
+  idEleMap.insert(make_pair(link->getID(), parent.child(i,0)));
 }
 
 QModelIndex TreeModel::parent(const QModelIndex &index) const {

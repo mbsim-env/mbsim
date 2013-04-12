@@ -62,7 +62,7 @@ class MainWindow : public QMainWindow {
     OpenMBVGUI::MainWindow *inlineOpenMBVMW;
     void initInlineOpenMBV();
     QString uniqueTempDir, absoluteMBSFilePath;
-    QAction *propertiesAction, *addFrameAction, *addGroupAction, *addObjectAction, *addRigidBodyAction, *addLinkAction, *addJointAction, *removeRowAction;
+    QAction *addFrameAction, *addGroupAction, *addObjectAction, *addRigidBodyAction, *addLinkAction, *addSpringDamperAction, *addJointAction, *addKineticExcitationAction, *removeRowAction;
 
   public:
     MainWindow();
@@ -105,13 +105,16 @@ class MainWindow : public QMainWindow {
     void addGroup();
     void addObject();
     void addLink();
+    void addSpringDamper();
     void addJoint();
+    void addKineticExcitation();
     void addRigidBody();
     void addFrame();
   protected slots:
     void selectElement(std::string);
     void changeWorkingDir();
     void selectionChanged();
+    void openPropertyDialog();
   protected:
     void closeEvent ( QCloseEvent * event );
 };

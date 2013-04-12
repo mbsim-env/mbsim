@@ -30,6 +30,10 @@ class Body : public Object {
     virtual Element* getByPathSearch(std::string path);
 
     int getNumberOfFrames() {return frame.size();}
+    int getNumberOfContours() {return contour.size();}
+
+    Frame* getFrame(int i) {return frame[i];}
+    Contour* getContour(int i) {return contour[i];}
 
     Frame* getFrame(const std::string &name, bool check=true);
     Contour* getContour(const std::string &name, bool check=true);
@@ -38,7 +42,6 @@ class Body : public Object {
     void addContour(Contour *contour);
     void removeElement(Element* element);
 
-    virtual Frame* getFrame(int i) {return frame[i];}
     PropertyDialog* createPropertyDialog() {return new BodyPropertyDialog(this);}
   protected:
     std::vector<Frame*> frame;

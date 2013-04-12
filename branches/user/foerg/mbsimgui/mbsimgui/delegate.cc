@@ -14,7 +14,7 @@ using namespace std;
 
 extern MainWindow *mw;
 
-Delegate::Delegate(QObject *parent) : QStyledItemDelegate(parent) {
+Delegate::Delegate(QObject *parent) : QItemDelegate(parent) {
 //  QItemEditorFactory *factory = new QItemEditorFactory;
 //
 //  QItemEditorCreatorBase *elementEditor =
@@ -28,10 +28,6 @@ Delegate::Delegate(QObject *parent) : QStyledItemDelegate(parent) {
 void Delegate::commitDataAndcloseEditor(QWidget *editor) {
   emit commitData(editor);
   emit closeEditor(editor);
-}
-
-bool Delegate::eventFilter(QObject *object, QEvent *event) {
-  return false;
 }
 
 QWidget *Delegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const {

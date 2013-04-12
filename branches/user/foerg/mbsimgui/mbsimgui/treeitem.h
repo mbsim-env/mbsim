@@ -1,5 +1,5 @@
-#ifndef TREEITEM_H
-#define TREEITEM_H
+#ifndef _TREEITEM_H
+#define _TREEITEM_H
 
 #include "treeitemdata.h"
 #include <QList>

@@ -1,15 +1,16 @@
-#ifndef TREEMODEL_H
-#define TREEMODEL_H
+#ifndef _TREEMODEL_H
+#define _TREEMODEL_H
 
 #include <QAbstractItemModel>
 #include <QModelIndex>
 #include <QVariant>
 
 class Frame;
+class Contour;
+class Group;
 class Object;
 class Link;
-class Group;
-class RigidBody;
+class Observer;
 class TreeItem;
 
 class TreeModel : public QAbstractItemModel {
@@ -36,14 +37,18 @@ class TreeModel : public QAbstractItemModel {
 
     void removeElement(const QModelIndex &parent = QModelIndex());
     void addSolver(const QModelIndex &parent = QModelIndex());
+    void addFrame(const QModelIndex &parent = QModelIndex());
     void addGroup(const QModelIndex &parent = QModelIndex());
     void addRigidBody(const QModelIndex &parent = QModelIndex());
-    void addFrame(const QModelIndex &parent = QModelIndex());
+    void addKineticExcitation(const QModelIndex &parent = QModelIndex());
+    void addSpringDamper(const QModelIndex &parent = QModelIndex());
     void addJoint(const QModelIndex &parent = QModelIndex());
+    void createFrameItem(Frame *frame, const QModelIndex &parent = QModelIndex());
+    void createContourItem(Contour *contour, const QModelIndex &parent = QModelIndex());
     void createGroupItem(Group *group, const QModelIndex &parent = QModelIndex());
     void createObjectItem(Object *object, const QModelIndex &parent = QModelIndex());
     void createLinkItem(Link *link, const QModelIndex &parent = QModelIndex());
-    void createFrameItem(Frame *frame, const QModelIndex &parent = QModelIndex());
+    void createObserverItem(Observer *observer, const QModelIndex &parent = QModelIndex());
 
     void updateView(const QModelIndex &index) {emit dataChanged(index,index);}
 

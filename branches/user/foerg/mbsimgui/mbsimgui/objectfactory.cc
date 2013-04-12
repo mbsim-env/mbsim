@@ -127,10 +127,10 @@ Link* ObjectFactory::createLink(TiXmlElement *element, Element *parent) {
 }
 Link* MBSimObjectFactory::createLink(TiXmlElement *element, Element *parent) {
   if(element==0) return 0;
-//  if(element->ValueStr()==MBSIMNS"KineticExcitation")
-//    return new KineticExcitation(element->Attribute("name"),parent);
-//  if(element->ValueStr()==MBSIMNS"SpringDamper")
-//    return new SpringDamper(element->Attribute("name"),parent);
+  if(element->ValueStr()==MBSIMNS"KineticExcitation")
+    return new KineticExcitation(element->Attribute("name"),parent);
+  if(element->ValueStr()==MBSIMNS"SpringDamper")
+    return new SpringDamper(element->Attribute("name"),parent);
   if(element->ValueStr()==MBSIMNS"Joint")
     return new Joint(element->Attribute("name"),parent);
 //  if(element->ValueStr()==MBSIMNS"Contact")

@@ -56,15 +56,17 @@ class Group : public Element {
     void setActionPasteDisabled(bool flag);
     void initialize();
     int getNumberOfFrames() {return frame.size();}
+    int getNumberOfContours() {return contour.size();}
     int getNumberOfGroups() {return group.size();}
     int getNumberOfObjects() {return object.size();}
     int getNumberOfLinks() {return link.size();}
+    int getNumberOfObservers() {return observer.size();}
     Frame* getFrame(int i) {return frame[i];}
-//    Contour* getContour(int i);
+    Contour* getContour(int i) {return contour[i];}
     Object* getObject(int i) {return object[i];}
     Group* getGroup(int i) {return group[i];}
     Link* getLink(int i) {return link[i];}
-//    Observer* getObserver(int i);
+    Observer* getObserver(int i) {return observer[i];}
     Frame* getFrame(const std::string &name, bool check=true);
     Contour* getContour(const std::string &name, bool check=true);
     Object* getObject(const std::string &name, bool check=true);

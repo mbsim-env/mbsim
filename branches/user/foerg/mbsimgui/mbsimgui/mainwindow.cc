@@ -88,8 +88,6 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   action->setStatusTip(tr("Exit the application"));
   menuBar()->addMenu(GUIMenu);
 
-  propertiesAction=new QAction("Properties", this);
-  connect(propertiesAction,SIGNAL(triggered()),this,SLOT(openPropertyDialog()));
   addFrameAction=new QAction("Add frame", this);
   connect(addFrameAction,SIGNAL(triggered()),this,SLOT(addFrame()));
   addGroupAction=new QAction("Add group", this);
@@ -100,8 +98,12 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   connect(addRigidBodyAction,SIGNAL(triggered()),this,SLOT(addRigidBody()));
   addLinkAction=new QAction("Add link", this);
   connect(addLinkAction,SIGNAL(triggered()),this,SLOT(addLink()));
+  addSpringDamperAction=new QAction("Add spring damper", this);
+  connect(addSpringDamperAction,SIGNAL(triggered()),this,SLOT(addSpringDamper()));
   addJointAction=new QAction("Add joint", this);
   connect(addJointAction,SIGNAL(triggered()),this,SLOT(addJoint()));
+  addKineticExcitationAction=new QAction("Add kinetic excitation", this);
+  connect(addKineticExcitationAction,SIGNAL(triggered()),this,SLOT(addKineticExcitation()));
   removeRowAction = new QAction(this);
   removeRowAction->setObjectName(QString::fromUtf8("removeRowAction"));
   connect(removeRowAction, SIGNAL(triggered()), this, SLOT(removeRow()));
@@ -283,6 +285,11 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
 
 }
 
+void MainWindow::openPropertyDialog() {
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  elementList->edit(index);
+}
+
 void MainWindow::initInlineOpenMBV() {
 //  uniqueTempDir = QDir::tempPath() + "/mbsim_XXXXXX"; 
 //  char *temp = new char[uniqueTempDir.size()];
@@ -313,7 +320,7 @@ void MainWindow::initInlineOpenMBV() {
   inlineOpenMBVMW=new OpenMBVGUI::MainWindow(arg);
 
   connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, Object*)), this, SLOT(selectElement(std::string)));
-  connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, Object*)), this, SLOT(openPropertyDialog(std::string)));
+  connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, Object*)), this, SLOT(openPropertyDialog()));
   connect(inlineOpenMBVMW, SIGNAL(fileReloaded()), this, SLOT(selectionChanged()));
 }
 
@@ -529,20 +536,25 @@ void MainWindow::loadMBS() {
 }
 
 void MainWindow::saveMBSAs() {
-//  if(elementList->topLevelItemCount()) {
-//    QString file=QFileDialog::getSaveFileName(0, "XML model files", QString("./")+((Solver*)elementList->topLevelItem(0))->getName()+".mbsim.xml", "XML files (*.mbsim.xml)");
-//    if(file!="") {
-//      fileMBS->setText(file.right(10)==".mbsim.xml"?file:file+".mbsim.xml");
-//      actionSaveMBS->setDisabled(false);
-//      saveMBS();
-//    }
+  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  QModelIndex index = model->index(0,0);
+//  if(index.isValid()) {
+    QString file=QFileDialog::getSaveFileName(0, "XML model files", QString("./")+QString::fromStdString(model->getItem(index)->getItemData()->getName())+".mbsim.xml", "XML files (*.mbsim.xml)");
+    if(file!="") {
+      fileMBS->setText(file.right(10)==".mbsim.xml"?file:file+".mbsim.xml");
+      actionSaveMBS->setDisabled(false);
+      saveMBS();
+    }
 //  }
 }
 
 void MainWindow::saveMBS() {
-//  QString file = fileMBS->text();
-//  mbsDir = QFileInfo(file).absolutePath();
-//  ((Solver*)elementList->topLevelItem(0))->writeXMLFile(file);
+  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  QModelIndex index = model->index(0,0);
+  Solver *solver = static_cast<Solver*>(model->getItem(index)->getItemData());
+  QString file = fileMBS->text();
+  mbsDir = QFileInfo(file).absolutePath();
+  solver->writeXMLFile(file.toStdString());
 }
 
 //void MainWindow::newIntegrator(const QString &str) {
@@ -1018,6 +1030,8 @@ void MainWindow::addObject() {
 
 void MainWindow::addLink() {
     QMenu menu("Context Menu");
+    menu.addAction(addKineticExcitationAction);
+    menu.addAction(addSpringDamperAction);
     menu.addAction(addJointAction);
     menu.exec(QCursor::pos());
 }
@@ -1043,6 +1057,32 @@ void MainWindow::addFrame() {
   mbsimxml(1);
 #endif
   QModelIndex containerIndex = model->index(0, 0, index);
+  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
+  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+}
+
+void MainWindow::addKineticExcitation() {
+  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  model->addKineticExcitation(index);
+#ifdef INLINE_OPENMBV
+  mbsimxml(1);
+#endif
+  QModelIndex containerIndex = model->index(4, 0, index);
+  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
+  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+}
+
+void MainWindow::addSpringDamper() {
+  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  model->addSpringDamper(index);
+#ifdef INLINE_OPENMBV
+  mbsimxml(1);
+#endif
+  QModelIndex containerIndex = model->index(4, 0, index);
   QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
   elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
