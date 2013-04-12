@@ -36,12 +36,14 @@ class QAbstractButton;
 class Element;
 class Frame;
 class FixedRelativeFrame;
-class Group;
 class Solver;
+class Group;
 class Object;
 class Body;
 class RigidBody;
 class Link;
+class KineticExcitation;
+class SpringDamper;
 class Joint;
 
 class PropertyDialog : public QDialog {
@@ -53,18 +55,16 @@ class PropertyDialog : public QDialog {
     void setParentObject(QObject *obj);
     void addToTab(const QString &name, QWidget* widget_);
     void addTab(const QString &name, int i=-1);
-    QObject* getParentObject() { return parentObject; }
     void addStretch();
     void updateWidget();
-    void resizeVariables();
     virtual void toWidget(Element *element) {}
     virtual void fromWidget(Element *element) {}
   protected:
-    QObject* parentObject;
     std::map<QString,QVBoxLayout*> layout;
     std::vector<QWidget*> widget;
     QTabWidget *tabWidget;
     QDialogButtonBox *buttonBox;
+    QPushButton *buttonResize;
   public slots:
     void clicked(QAbstractButton *button);
   signals:
@@ -132,11 +132,11 @@ class ObjectPropertyDialog : public ElementPropertyDialog {
     void fromWidget(Element *element);
     virtual void resizeGeneralizedPosition() {}
     virtual void resizeGeneralizedVelocity() {}
-  public slots:
-    void resizeVariables() {resizeGeneralizedPosition();resizeGeneralizedVelocity();}
   protected:
     ExtWidget *q0Widget, *u0Widget;
     VecWidget *q0, *u0;
+  public slots:
+    void resizeVariables() {resizeGeneralizedPosition();resizeGeneralizedVelocity();}
 };
 
 class BodyPropertyDialog : public ObjectPropertyDialog {
@@ -171,6 +171,27 @@ class LinkPropertyDialog : public ElementPropertyDialog {
   protected:
 };
 
+class KineticExcitationPropertyDialog : public LinkPropertyDialog {
+
+  public:
+    KineticExcitationPropertyDialog(KineticExcitation *kineticExcitation, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+    ExtWidget *forceWidget, *momentWidget, *connectionsWidget, *frameOfReferenceWidget, *forceArrowWidget, *momentArrowWidget;
+    void resizeVariables();
+};
+
+class SpringDamperPropertyDialog : public LinkPropertyDialog {
+
+  public:
+    SpringDamperPropertyDialog(SpringDamper *springDamper, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+    ExtWidget *forceFunctionWidget, *connectionsWidget, *forceDirectionWidget, *coilSpringWidget;
+};
+
 class JointPropertyDialog : public LinkPropertyDialog {
 
   public:
@@ -180,6 +201,5 @@ class JointPropertyDialog : public LinkPropertyDialog {
   protected:
     ExtWidget *forceWidget, *momentWidget, *connectionsWidget, *forceArrowWidget, *momentArrowWidget;
 };
-
 
 #endif

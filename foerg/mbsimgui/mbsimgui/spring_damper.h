@@ -24,13 +24,15 @@
 #include "extended_properties.h"
 
 class SpringDamper : public Link {
+  friend class SpringDamperPropertyDialog;
   public:
-    SpringDamper(const std::string &str, TreeItem *parentItem);
+    SpringDamper(const std::string &str, Element *element);
     ~SpringDamper();
+    std::string getType() const { return "SpringDamper"; }
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void initialize();
-
+    PropertyDialog* createPropertyDialog() {return new SpringDamperPropertyDialog(this);}
   protected:
     ExtProperty forceFunction, connections, forceDirection, coilSpring;
 };

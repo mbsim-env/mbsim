@@ -68,15 +68,17 @@ class Element : public TreeItemData {
     template<class T> T* getByPath(std::string path);
     virtual Element* getByPathSearch(std::string path) {return 0; }
     virtual int getNumberOfFrames() {return 0;}
+    virtual int getNumberOfContours() {return 0;}
     virtual int getNumberOfGroups() {return 0;}
     virtual int getNumberOfObjects() {return 0;}
     virtual int getNumberOfLinks() {return 0;}
+    virtual int getNumberOfObservers() {return 0;}
     virtual Frame* getFrame(int i) {return 0;}
-    //virtual Contour* getContour(int i);
+    virtual Contour* getContour(int i) {return 0;}
     virtual Group* getGroup(int i) {return 0;}
     virtual Object* getObject(int i) {return 0;}
     virtual Link* getLink(int i) {return 0;}
-    //virtual Observer* getObserver(int i);
+    virtual Observer* getObserver(int i) {return 0;}
     virtual Frame* getFrame(const std::string &name, bool check=true) {return 0;}
     //Contour* getContour(const std::string &name, bool check=true);
     //Object* getObject(const std::string &name, bool check=true);

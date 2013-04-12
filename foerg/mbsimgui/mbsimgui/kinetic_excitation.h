@@ -24,13 +24,15 @@
 #include "extended_properties.h"
 
 class KineticExcitation : public Link {
+  friend class KineticExcitationPropertyDialog;
   public:
-    KineticExcitation(const std::string &str, TreeItem *parentItem);
+    KineticExcitation(const std::string &str, Element *parent);
     ~KineticExcitation();
+    std::string getType() const { return "KineticExcitation"; }
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void initialize();
-
+    PropertyDialog* createPropertyDialog() {return new KineticExcitationPropertyDialog(this);}
   protected:
     ExtProperty force, moment, connections, frameOfReference, forceArrow, momentArrow;
 };

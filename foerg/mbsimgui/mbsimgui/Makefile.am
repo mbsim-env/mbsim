@@ -22,6 +22,8 @@ mbsimgui_SOURCES = element.cc \
 		   frame.cc \
 		   contour.cc \
 		   link.cc \
+		   kinetic_excitation.cc \
+		   spring_damper.cc \
 		   joint.cc \
 		   observer.cc \
 		   integrator.cc \
