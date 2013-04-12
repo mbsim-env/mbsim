@@ -36,12 +36,10 @@ class Object : public Element {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual Element* getByPathSearch(std::string path);
-    virtual void resizeGeneralizedPosition() {}
-    virtual void resizeGeneralizedVelocity() {}
     PropertyDialog* createPropertyDialog() {return new ObjectPropertyDialog(this);}
   protected:
     QAction *actionSaveAs;
-    ExtProperty q0Property, u0Property;
+    ExtProperty q0, u0;
 
 };
 

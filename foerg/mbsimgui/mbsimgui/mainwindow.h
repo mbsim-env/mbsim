@@ -62,7 +62,7 @@ class MainWindow : public QMainWindow {
     OpenMBVGUI::MainWindow *inlineOpenMBVMW;
     void initInlineOpenMBV();
     QString uniqueTempDir, absoluteMBSFilePath;
-    QAction *addFrameAction, *addGroupAction, *addObjectAction, *addRigidBodyAction, *addLinkAction, *addSpringDamperAction, *addJointAction, *addKineticExcitationAction, *removeRowAction;
+    QAction *addFrameAction, *addContourAction, *addGroupAction, *addObjectAction, *addLinkAction, *addObserverAction, *addPointAction, *addLineAction, *addPlaneAction, *addSphereAction, *addRigidBodyAction, *addGearConstraintAction, *addKinematicConstraintAction, *addJointConstraintAction, *addKineticExcitationAction, *addSpringDamperAction, *addJointAction, *addContactAction, *addAbsoluteKinematicsObserverAction, *removeRowAction;
 
   public:
     MainWindow();
@@ -102,14 +102,25 @@ class MainWindow : public QMainWindow {
     void about();
     void updateOctaveParameters();
     void removeRow();
+    void addFrame();
+    void addContour();
     void addGroup();
     void addObject();
     void addLink();
-    void addSpringDamper();
-    void addJoint();
-    void addKineticExcitation();
+    void addObserver();
+    void addPoint();
+    void addLine();
+    void addPlane();
+    void addSphere();
     void addRigidBody();
-    void addFrame();
+    void addGearConstraint();
+    void addKinematicConstraint();
+    void addJointConstraint();
+    void addSpringDamper();
+    void addKineticExcitation();
+    void addJoint();
+    void addContact();
+    void addAbsoluteKinematicsObserver();
   protected slots:
     void selectElement(std::string);
     void changeWorkingDir();

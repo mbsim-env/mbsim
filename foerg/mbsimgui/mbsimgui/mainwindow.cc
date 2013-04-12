@@ -80,7 +80,7 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   statusBar()->showMessage(tr("Ready"));
 
   QMenu *GUIMenu=new QMenu("GUI", menuBar());
-  QAction *action = GUIMenu->addAction(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/workdir.svg"),"Workdir", this, SLOT(changeWorkingDir()));
+  QAction *action = GUIMenu->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_DirHomeIcon)),"Workdir", this, SLOT(changeWorkingDir()));
   action->setStatusTip(tr("Change working directory"));
   GUIMenu->addSeparator();
   action = GUIMenu->addAction(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/exit.svg"), "E&xit", this, SLOT(close()));
@@ -90,20 +90,42 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
 
   addFrameAction=new QAction("Add frame", this);
   connect(addFrameAction,SIGNAL(triggered()),this,SLOT(addFrame()));
+  addContourAction=new QAction("Add contour", this);
+  connect(addContourAction,SIGNAL(triggered()),this,SLOT(addContour()));
+  addPointAction=new QAction("Add point", this);
+  connect(addPointAction,SIGNAL(triggered()),this,SLOT(addPoint()));
+  addLineAction=new QAction("Add line", this);
+  connect(addLineAction,SIGNAL(triggered()),this,SLOT(addLine()));
+  addPlaneAction=new QAction("Add plane", this);
+  connect(addPlaneAction,SIGNAL(triggered()),this,SLOT(addPlane()));
+  addSphereAction=new QAction("Add sphere", this);
+  connect(addSphereAction,SIGNAL(triggered()),this,SLOT(addSphere()));
   addGroupAction=new QAction("Add group", this);
   connect(addGroupAction,SIGNAL(triggered()),this,SLOT(addGroup()));
   addObjectAction=new QAction("Add object", this);
   connect(addObjectAction,SIGNAL(triggered()),this,SLOT(addObject()));
   addRigidBodyAction=new QAction("Add rigid body", this);
   connect(addRigidBodyAction,SIGNAL(triggered()),this,SLOT(addRigidBody()));
+  addKinematicConstraintAction=new QAction("Add kinematic constraint", this);
+  connect(addKinematicConstraintAction,SIGNAL(triggered()),this,SLOT(addKinematicConstraint()));
+  addGearConstraintAction=new QAction("Add gear constraint", this);
+  connect(addGearConstraintAction,SIGNAL(triggered()),this,SLOT(addGearConstraint()));
+  addJointConstraintAction=new QAction("Add joint constraint", this);
+  connect(addJointConstraintAction,SIGNAL(triggered()),this,SLOT(addJointConstraint()));
   addLinkAction=new QAction("Add link", this);
   connect(addLinkAction,SIGNAL(triggered()),this,SLOT(addLink()));
+  addKineticExcitationAction=new QAction("Add kinetic excitation", this);
+  connect(addKineticExcitationAction,SIGNAL(triggered()),this,SLOT(addKineticExcitation()));
   addSpringDamperAction=new QAction("Add spring damper", this);
   connect(addSpringDamperAction,SIGNAL(triggered()),this,SLOT(addSpringDamper()));
   addJointAction=new QAction("Add joint", this);
   connect(addJointAction,SIGNAL(triggered()),this,SLOT(addJoint()));
-  addKineticExcitationAction=new QAction("Add kinetic excitation", this);
-  connect(addKineticExcitationAction,SIGNAL(triggered()),this,SLOT(addKineticExcitation()));
+  addContactAction=new QAction("Add contact", this);
+  connect(addContactAction,SIGNAL(triggered()),this,SLOT(addContact()));
+  addObserverAction=new QAction("Add observer", this);
+  connect(addObserverAction,SIGNAL(triggered()),this,SLOT(addObserver()));
+  addAbsoluteKinematicsObserverAction=new QAction("Add absolute kinematics observer", this);
+  connect(addAbsoluteKinematicsObserverAction,SIGNAL(triggered()),this,SLOT(addAbsoluteKinematicsObserver()));
   removeRowAction = new QAction(this);
   removeRowAction->setObjectName(QString::fromUtf8("removeRowAction"));
   connect(removeRowAction, SIGNAL(triggered()), this, SLOT(removeRow()));
@@ -112,7 +134,7 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
 
   QMenu *ProjMenu=new QMenu("Project", menuBar());
   ProjMenu->addAction("New", this, SLOT(saveProjAs()));
-  ProjMenu->addAction("Load", this, SLOT(loadProj()));
+  ProjMenu->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_DirOpenIcon)),"Load", this, SLOT(loadProj()));
   //ProjMenu->addAction("Save as", this, SLOT(saveProjAs()));
   actionSaveProj = ProjMenu->addAction("Save all", this, SLOT(saveProj()));
   actionSaveProj->setDisabled(true);
@@ -394,12 +416,16 @@ void MainWindow::elementListClicked() {
       if(dynamic_cast<Group*>(model->getItem(index)->getItemData())) {
         menu.addSeparator();
         menu.addAction(addFrameAction);
+        menu.addAction(addContourAction);
         menu.addAction(addGroupAction);
         menu.addAction(addObjectAction);
         menu.addAction(addLinkAction);
+        menu.addAction(addObserverAction);
       }
-      else if(dynamic_cast<Body*>(model->getItem(index)->getItemData()))
+      else if(dynamic_cast<Body*>(model->getItem(index)->getItemData())) {
         menu.addAction(addFrameAction);
+        menu.addAction(addContourAction);
+      }
       menu.addSeparator();
       if(model->getItem(index)->isRemovable()) {
         //menu.insertAction(propertiesAction);
@@ -1022,18 +1048,37 @@ void MainWindow::addGroup() {
   elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
 }
 
+void MainWindow::addContour() {
+  QMenu menu("Context Menu");
+  menu.addAction(addPointAction);
+  menu.addAction(addLineAction);
+  menu.addAction(addPlaneAction);
+  menu.addAction(addSphereAction);
+  menu.exec(QCursor::pos());
+}
+
 void MainWindow::addObject() {
-    QMenu menu("Context Menu");
-    menu.addAction(addRigidBodyAction);
-    menu.exec(QCursor::pos());
+  QMenu menu("Context Menu");
+  menu.addAction(addRigidBodyAction);
+  menu.addAction(addGearConstraintAction);
+  menu.addAction(addKinematicConstraintAction);
+  menu.addAction(addJointConstraintAction);
+  menu.exec(QCursor::pos());
 }
 
 void MainWindow::addLink() {
-    QMenu menu("Context Menu");
-    menu.addAction(addKineticExcitationAction);
-    menu.addAction(addSpringDamperAction);
-    menu.addAction(addJointAction);
-    menu.exec(QCursor::pos());
+  QMenu menu("Context Menu");
+  menu.addAction(addKineticExcitationAction);
+  menu.addAction(addSpringDamperAction);
+  menu.addAction(addJointAction);
+  menu.addAction(addContactAction);
+  menu.exec(QCursor::pos());
+}
+
+void MainWindow::addObserver() {
+  QMenu menu("Context Menu");
+  menu.addAction(addAbsoluteKinematicsObserverAction);
+  menu.exec(QCursor::pos());
 }
 
 void MainWindow::addRigidBody() {
@@ -1049,6 +1094,46 @@ void MainWindow::addRigidBody() {
   elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
 }
 
+void MainWindow::addGearConstraint() {
+  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  model->addGearConstraint(index);
+#ifdef INLINE_OPENMBV
+  mbsimxml(1);
+#endif
+  QModelIndex containerIndex = model->index(3, 0, index);
+  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
+  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+}
+
+void MainWindow::addKinematicConstraint() {
+  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  model->addKinematicConstraint(index);
+#ifdef INLINE_OPENMBV
+  mbsimxml(1);
+#endif
+  QModelIndex containerIndex = model->index(3, 0, index);
+  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
+  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+}
+
+void MainWindow::addJointConstraint() {
+  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  model->addJointConstraint(index);
+#ifdef INLINE_OPENMBV
+  mbsimxml(1);
+#endif
+  QModelIndex containerIndex = model->index(3, 0, index);
+  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
+  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+}
+
+
 void MainWindow::addFrame() {
   TreeModel *model = static_cast<TreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
@@ -1057,6 +1142,58 @@ void MainWindow::addFrame() {
   mbsimxml(1);
 #endif
   QModelIndex containerIndex = model->index(0, 0, index);
+  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
+  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+}
+
+void MainWindow::addPoint() {
+  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  model->addPoint(index);
+#ifdef INLINE_OPENMBV
+  mbsimxml(1);
+#endif
+  QModelIndex containerIndex = model->index(1, 0, index);
+  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
+  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+}
+
+void MainWindow::addLine() {
+  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  model->addLine(index);
+#ifdef INLINE_OPENMBV
+  mbsimxml(1);
+#endif
+  QModelIndex containerIndex = model->index(1, 0, index);
+  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
+  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+}
+
+void MainWindow::addPlane() {
+  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  model->addPlane(index);
+#ifdef INLINE_OPENMBV
+  mbsimxml(1);
+#endif
+  QModelIndex containerIndex = model->index(1, 0, index);
+  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
+  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+}
+
+void MainWindow::addSphere() {
+  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  model->addSphere(index);
+#ifdef INLINE_OPENMBV
+  mbsimxml(1);
+#endif
+  QModelIndex containerIndex = model->index(1, 0, index);
   QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
   elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
@@ -1101,3 +1238,28 @@ void MainWindow::addJoint() {
   elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
 }
 
+void MainWindow::addContact() {
+  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  model->addContact(index);
+#ifdef INLINE_OPENMBV
+  mbsimxml(1);
+#endif
+  QModelIndex containerIndex = model->index(4, 0, index);
+  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
+  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+}
+
+void MainWindow::addAbsoluteKinematicsObserver() {
+  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  model->addAbsoluteKinematicsObserver(index);
+#ifdef INLINE_OPENMBV
+  mbsimxml(1);
+#endif
+  QModelIndex containerIndex = model->index(5, 0, index);
+  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
+  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+}

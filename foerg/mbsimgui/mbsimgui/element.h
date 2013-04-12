@@ -86,9 +86,11 @@ class Element : public TreeItemData {
     //Link* getLink(const std::string &name, bool check=true);
     //Observer* getObserver(const std::string &name, bool check=true);
     virtual void addFrame(Frame *frame) {}
+    virtual void addContour(Contour *contour) {}
     virtual void addGroup(Group *group) {}
     virtual void addObject(Object *object) {}
     virtual void addLink(Link *link) {}
+    virtual void addObserver(Observer *observer) {}
     virtual void removeElement(Element *element) {}
     const std::string& getID() const { return ID; }
     virtual Element* getParent() {return parent;}

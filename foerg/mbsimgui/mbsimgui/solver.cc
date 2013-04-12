@@ -23,9 +23,6 @@
 #include "objectfactory.h"
 #include <string>
 #include "basic_properties.h"
-#include "basic_widgets.h"
-#include "string_widgets.h"
-#include "extended_widgets.h"
 
 using namespace std;
 
@@ -53,7 +50,7 @@ Environment::~Environment() {}
 
 Environment *Environment::instance=NULL;
 
-Solver::Solver(const string &str, Element *parent) : Group(str,parent), solverParametersProperty(0,false), inverseKineticsProperty(0,false) {
+Solver::Solver(const string &str, Element *parent) : Group(str,parent), solverParameters(0,false), inverseKinetics(0,false) {
 
   Element::copiedElement = 0;
 
@@ -63,13 +60,13 @@ Solver::Solver(const string &str, Element *parent) : Group(str,parent), solverPa
   g[1] = "-9.81";
   g[2] = "0";
   input.push_back(new PhysicalStringProperty(new VecProperty(g),"m/s^2",MBSIMNS"accelerationOfGravity"));
-  environmentProperty.setProperty(new ExtPhysicalVarProperty(input));
+  environment.setProperty(new ExtPhysicalVarProperty(input));
 
-  solverParametersProperty.setProperty(new SolverParametersProperty); 
+  solverParameters.setProperty(new SolverParametersProperty); 
 
   input.clear();
   input.push_back(new PhysicalStringProperty(new ScalarProperty("1"),"",MBSIMNS"inverseKinetics"));
-  inverseKineticsProperty.setProperty(new ExtPhysicalVarProperty(input));
+  inverseKinetics.setProperty(new ExtPhysicalVarProperty(input));
 }
 
 void Solver::initializeUsingXML(TiXmlElement *element) {
@@ -81,13 +78,13 @@ void Solver::initializeUsingXML(TiXmlElement *element) {
   Environment *env;
   while((env=ObjectFactory::getInstance()->getEnvironment(e))) {
     env->initializeUsingXML(e);
-    environmentProperty.initializeUsingXML(e);
+    environment.initializeUsingXML(e);
     e=e->NextSiblingElement();
   }
 
-  solverParametersProperty.initializeUsingXML(element);
+  solverParameters.initializeUsingXML(element);
 
-  inverseKineticsProperty.initializeUsingXML(element);
+  inverseKinetics.initializeUsingXML(element);
 }
 
 TiXmlElement* Solver::writeXMLFile(TiXmlNode *parent) {
@@ -97,13 +94,13 @@ TiXmlElement* Solver::writeXMLFile(TiXmlNode *parent) {
 
   TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"environments" );
   TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"MBSimEnvironment" );
-  environmentProperty.writeXMLFile(ele2);
+  environment.writeXMLFile(ele2);
   ele1->LinkEndChild( ele2 );
   ele0->LinkEndChild( ele1 );
 
-  solverParametersProperty.writeXMLFile(ele0);
+  solverParameters.writeXMLFile(ele0);
 
-  inverseKineticsProperty.writeXMLFile(ele0);
+  inverseKinetics.writeXMLFile(ele0);
 
   return ele0;
 }

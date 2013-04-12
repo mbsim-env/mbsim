@@ -21,10 +21,6 @@
 #include "contour.h"
 #include "basic_properties.h"
 #include "ombv_properties.h"
-#include "basic_widgets.h"
-#include "string_widgets.h"
-#include "ombv_widgets.h"
-#include <QMenu>
 
 using namespace std;
 

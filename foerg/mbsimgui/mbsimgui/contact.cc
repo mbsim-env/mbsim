@@ -23,14 +23,10 @@
 #include "function_properties.h"
 #include "kinetics_properties.h"
 #include "ombv_properties.h"
-#include "kinetics_widgets.h"
-#include "string_widgets.h"
-#include "extended_widgets.h"
-#include "ombv_widgets.h"
 
 using namespace std;
 
-Contact::Contact(const QString &str, TreeItem *parentItem) : Link(str, parentItem), contactImpactLaw(0,false), frictionForceLaw(0,false), frictionImpactLaw(0,false), enableOpenMBVContactPoints(0,false), normalForceArrow(0,false), frictionArrow(0,false) {
+Contact::Contact(const string &str, Element *parent) : Link(str, parent), contactImpactLaw(0,false), frictionForceLaw(0,false), frictionImpactLaw(0,false), enableOpenMBVContactPoints(0,false), normalForceArrow(0,false), frictionArrow(0,false) {
 
   connections.setProperty(new ConnectContoursProperty(2,this));
 

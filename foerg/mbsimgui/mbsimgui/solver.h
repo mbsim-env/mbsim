@@ -39,7 +39,7 @@ class Environment : public QObject {
 class Solver : public Group {
   friend class SolverPropertyDialog;
   protected:
-    ExtProperty environmentProperty, solverParametersProperty, inverseKineticsProperty;
+    ExtProperty environment, solverParameters, inverseKinetics;
   public:
     Solver(const std::string &str, Element *parent);
     std::string getType() const { return "DynamicSystemSolver"; }

@@ -42,10 +42,16 @@ class Body : public Object {
     void addContour(Contour *contour);
     void removeElement(Element* element);
 
+    void initialize();
+
+    void initializeUsingXML(TiXmlElement *element);
+    TiXmlElement* writeXMLFile(TiXmlNode *element);
+
     PropertyDialog* createPropertyDialog() {return new BodyPropertyDialog(this);}
   protected:
     std::vector<Frame*> frame;
     std::vector<Contour*> contour;
+    ExtProperty R;
 };
 
 #endif

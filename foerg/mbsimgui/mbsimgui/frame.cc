@@ -20,13 +20,11 @@
 #include <config.h>
 #include "frame.h"
 #include "ombv_properties.h"
-#include "string_widgets.h"
-#include "ombv_widgets.h"
 #include <QMenu>
 
 using namespace std;
 
-Frame::Frame(const string &str, Element *parent, bool grey) : Element(str,parent), visuProperty(0,true) {
+Frame::Frame(const string &str, Element *parent, bool grey) : Element(str,parent), visu(0,true) {
 
  // properties->addTab("Plotting");
  // plotFeature.push_back(new ExtWidget("Plot global position", new PlotFeature("globalPosition"),true));
@@ -36,8 +34,8 @@ Frame::Frame(const string &str, Element *parent, bool grey) : Element(str,parent
  // plotFeature.push_back(new ExtWidget("Plot global acceleration", new PlotFeature("globalAcceleration"),true));
  // properties->addToTab("Plotting",plotFeature[plotFeature.size()-1]);
 
-  visuProperty.setProperty(new OMBVFrameProperty("NOTSET",grey?"":MBSIMNS"enableOpenMBV"));
-  ((OMBVFrameProperty*)visuProperty.getProperty())->setID(getID());
+  visu.setProperty(new OMBVFrameProperty("NOTSET",grey?"":MBSIMNS"enableOpenMBV"));
+  ((OMBVFrameProperty*)visu.getProperty())->setID(getID());
 }
 
 Frame::~Frame() {
@@ -46,21 +44,21 @@ Frame::~Frame() {
 
 void Frame::initializeUsingXML(TiXmlElement *element) {
   Element::initializeUsingXML(element);
-  visuProperty.initializeUsingXML(element);
+  visu.initializeUsingXML(element);
 }
 
 TiXmlElement* Frame::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Element::writeXMLFile(parent);
-  visuProperty.writeXMLFile(ele0);
+  visu.writeXMLFile(ele0);
   return ele0;
 }
 
 void Frame::initializeUsingXML2(TiXmlElement *element) {
-  visuProperty.initializeUsingXML(element);
+  visu.initializeUsingXML(element);
 }
 
 TiXmlElement* Frame::writeXMLFile2(TiXmlNode *parent) {
-  visuProperty.writeXMLFile(parent);
+  visu.writeXMLFile(parent);
   return 0;
 }
 
@@ -77,17 +75,17 @@ Element *Frame::getByPathSearch(string path) {
   }
 }
 
-FixedRelativeFrame::FixedRelativeFrame(const string &str, Element *parent) : Frame(str,parent,false), refFrameProperty(0,false), positionProperty(0,false), orientationProperty(0,false) {
+FixedRelativeFrame::FixedRelativeFrame(const string &str, Element *parent) : Frame(str,parent,false), refFrame(0,false), position(0,false), orientation(0,false) {
 
   vector<PhysicalStringProperty*> input;
   input.push_back(new PhysicalStringProperty(new VecProperty(3), "m", MBSIMNS"relativePosition"));
-  positionProperty.setProperty(new ExtPhysicalVarProperty(input));
+  position.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
   input.push_back(new PhysicalStringProperty(new MatProperty(getEye<string>(3,3,"1","0")),"-",MBSIMNS"relativeOrientation"));
-  orientationProperty.setProperty(new ExtPhysicalVarProperty(input));
+  orientation.setProperty(new ExtPhysicalVarProperty(input));
 
-  refFrameProperty.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0),this,MBSIMNS"frameOfReference"));
+  refFrame.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0),this,MBSIMNS"frameOfReference"));
 }
 
 FixedRelativeFrame::~FixedRelativeFrame() {
@@ -95,39 +93,39 @@ FixedRelativeFrame::~FixedRelativeFrame() {
 
 void FixedRelativeFrame::initialize() {
   Frame::initialize();
-  refFrameProperty.initialize();
+  refFrame.initialize();
 }
 
 void FixedRelativeFrame::initializeUsingXML(TiXmlElement *element) {
   Frame::initializeUsingXML(element);
-  refFrameProperty.initializeUsingXML(element);
-  positionProperty.initializeUsingXML(element);
-  orientationProperty.initializeUsingXML(element);
+  refFrame.initializeUsingXML(element);
+  position.initializeUsingXML(element);
+  orientation.initializeUsingXML(element);
 }
 
 TiXmlElement* FixedRelativeFrame::writeXMLFile(TiXmlNode *parent) {
 
   TiXmlElement *ele0 = Frame::writeXMLFile(parent);
-  refFrameProperty.writeXMLFile(ele0);
-  positionProperty.writeXMLFile(ele0);
-  orientationProperty.writeXMLFile(ele0);
+  refFrame.writeXMLFile(ele0);
+  position.writeXMLFile(ele0);
+  orientation.writeXMLFile(ele0);
   return ele0;
 }
 
 void FixedRelativeFrame::initializeUsingXML2(TiXmlElement *element) {
-  refFrameProperty.initializeUsingXML(element);
-  string ref = ((ParentFrameOfReferenceProperty*)refFrameProperty.getProperty())->getSavedFrameOfReference();
+  refFrame.initializeUsingXML(element);
+  string ref = ((ParentFrameOfReferenceProperty*)refFrame.getProperty())->getSavedFrameOfReference();
   if(ref[0]=='F')
-    ((ParentFrameOfReferenceProperty*)refFrameProperty.getProperty())->setSavedFrameOfReference(string("../")+ref);
-  ((PhysicalStringProperty*)((ExtPhysicalVarProperty*)positionProperty.getProperty())->getPhysicalStringProperty(0))->setXmlName(MBSIMNS"position");
-  ((PhysicalStringProperty*)((ExtPhysicalVarProperty*)positionProperty.getProperty())->getPhysicalStringProperty(1))->setXmlName(MBSIMNS"position");
-  ((PhysicalStringProperty*)((ExtPhysicalVarProperty*)orientationProperty.getProperty())->getPhysicalStringProperty(0))->setXmlName(MBSIMNS"orientation");
-  ((PhysicalStringProperty*)((ExtPhysicalVarProperty*)orientationProperty.getProperty())->getPhysicalStringProperty(1))->setXmlName(MBSIMNS"orientation");
-  positionProperty.initializeUsingXML(element);
-  orientationProperty.initializeUsingXML(element);
-  ((PhysicalStringProperty*)((ExtPhysicalVarProperty*)positionProperty.getProperty())->getPhysicalStringProperty(0))->setXmlName(MBSIMNS"relativePosition");
-  ((PhysicalStringProperty*)((ExtPhysicalVarProperty*)positionProperty.getProperty())->getPhysicalStringProperty(1))->setXmlName(MBSIMNS"relativePosition");
-  ((PhysicalStringProperty*)((ExtPhysicalVarProperty*)orientationProperty.getProperty())->getPhysicalStringProperty(0))->setXmlName(MBSIMNS"relativeOrientation");
-  ((PhysicalStringProperty*)((ExtPhysicalVarProperty*)orientationProperty.getProperty())->getPhysicalStringProperty(1))->setXmlName(MBSIMNS"relativeOrientation");
+    ((ParentFrameOfReferenceProperty*)refFrame.getProperty())->setSavedFrameOfReference(string("../")+ref);
+  ((PhysicalStringProperty*)((ExtPhysicalVarProperty*)position.getProperty())->getPhysicalStringProperty(0))->setXmlName(MBSIMNS"position");
+  ((PhysicalStringProperty*)((ExtPhysicalVarProperty*)position.getProperty())->getPhysicalStringProperty(1))->setXmlName(MBSIMNS"position");
+  ((PhysicalStringProperty*)((ExtPhysicalVarProperty*)orientation.getProperty())->getPhysicalStringProperty(0))->setXmlName(MBSIMNS"orientation");
+  ((PhysicalStringProperty*)((ExtPhysicalVarProperty*)orientation.getProperty())->getPhysicalStringProperty(1))->setXmlName(MBSIMNS"orientation");
+  position.initializeUsingXML(element);
+  orientation.initializeUsingXML(element);
+  ((PhysicalStringProperty*)((ExtPhysicalVarProperty*)position.getProperty())->getPhysicalStringProperty(0))->setXmlName(MBSIMNS"relativePosition");
+  ((PhysicalStringProperty*)((ExtPhysicalVarProperty*)position.getProperty())->getPhysicalStringProperty(1))->setXmlName(MBSIMNS"relativePosition");
+  ((PhysicalStringProperty*)((ExtPhysicalVarProperty*)orientation.getProperty())->getPhysicalStringProperty(0))->setXmlName(MBSIMNS"relativeOrientation");
+  ((PhysicalStringProperty*)((ExtPhysicalVarProperty*)orientation.getProperty())->getPhysicalStringProperty(1))->setXmlName(MBSIMNS"relativeOrientation");
 }
 

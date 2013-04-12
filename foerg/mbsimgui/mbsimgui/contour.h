@@ -40,30 +40,38 @@ class Point : public Contour {
   public:
     Point(const std::string &str, Element *parent);
     ~Point();
+    std::string getType() const { return "Point"; }
 };
 
 class Line : public Contour {
   public:
     Line(const std::string &str, Element *parent);
     ~Line();
+    std::string getType() const { return "Line"; }
 };
 
 class Plane : public Contour {
+  friend class PlanePropertyDialog;
   public:
     Plane(const std::string &str, Element *parent);
     ~Plane();
+    std::string getType() const { return "Plane"; }
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    PropertyDialog* createPropertyDialog() {return new PlanePropertyDialog(this);}
   protected:
     ExtProperty visu;
 };
 
 class Sphere : public Contour {
+  friend class SpherePropertyDialog;
   public:
     Sphere(const std::string &str, Element *parent);
     ~Sphere();
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    std::string getType() const { return "Sphere"; }
+    PropertyDialog* createPropertyDialog() {return new SpherePropertyDialog(this);}
   protected:
     ExtProperty radius, visu;
 };

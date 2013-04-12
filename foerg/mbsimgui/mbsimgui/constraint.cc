@@ -24,19 +24,16 @@
 #include "basic_properties.h"
 #include "kinetics_properties.h"
 #include "function_properties.h"
-#include "string_widgets.h"
-#include "function_widgets.h"
-#include "kinetics_widgets.h"
 
 using namespace std;
 
-Constraint::Constraint(const QString &str, TreeItem *parentItem) : Object(str, parentItem) {
+Constraint::Constraint(const string &str, Element *parent) : Object(str, parent) {
 }
 
 Constraint::~Constraint() {
 }
 
-GearConstraint::GearConstraint(const QString &str, TreeItem *parentItem) : Constraint(str, parentItem), refBody(0) {
+GearConstraint::GearConstraint(const string &str, Element *parent) : Constraint(str, parent) {
 
   dependentBody.setProperty(new RigidBodyOfReferenceProperty(0,this,MBSIMNS"dependentRigidBody"));
 
@@ -68,7 +65,7 @@ TiXmlElement* GearConstraint::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
-KinematicConstraint::KinematicConstraint(const QString &str, TreeItem *parentItem) : Constraint(str, parentItem), refBody(0), kinematicFunction(0,false), firstDerivativeOfKinematicFunction(0,false), secondDerivativeOfKinematicFunction(0,false) {
+KinematicConstraint::KinematicConstraint(const string &str, Element *parent) : Constraint(str, parent), kinematicFunction(0,false), firstDerivativeOfKinematicFunction(0,false), secondDerivativeOfKinematicFunction(0,false) {
 
   dependentBody.setProperty(new RigidBodyOfReferenceProperty(0,this,MBSIMNS"dependentRigidBody"));
 
@@ -108,7 +105,7 @@ TiXmlElement* KinematicConstraint::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
-JointConstraint::JointConstraint(const QString &str, TreeItem *parentItem) : Constraint(str, parentItem), force(0,false), moment(0,false) {
+JointConstraint::JointConstraint(const string &str, Element *parent) : Constraint(str, parent), force(0,false), moment(0,false) {
 
   independentBody.setProperty(new RigidBodyOfReferenceProperty(0,this,MBSIMNS"independentRigidBody"));
 

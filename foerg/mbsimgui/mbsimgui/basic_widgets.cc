@@ -351,18 +351,11 @@ void DependenciesWidget::updateWidget() {
 
 void DependenciesWidget::updateGeneralizedCoordinatesOfBodies() {
   for(unsigned int i=0; i<refBody.size(); i++) {
-    if(selectedBody[i]) {
+    if(selectedBody[i])
       selectedBody[i]->setConstrained(false);
-      selectedBody[i]->resizeGeneralizedPosition();
-      selectedBody[i]->resizeGeneralizedVelocity();
-    }
     selectedBody[i] = refBody[i]->getBody();
-    if(selectedBody[i]) {
+    if(selectedBody[i])
       selectedBody[i]->setConstrained(true);
-      selectedBody[i]->resizeGeneralizedPosition();
-      selectedBody[i]->resizeGeneralizedVelocity();
-      //connect(selectedBody[i],SIGNAL(sizeChanged()),this,SIGNAL(bodyChanged()));
-    }
   }
 }
 
@@ -385,11 +378,8 @@ void DependenciesWidget::addDependency() {
 
 void DependenciesWidget::removeDependency() {
   int i = bodyList->currentRow();
-  if(selectedBody[i]) {
+  if(selectedBody[i])
     selectedBody[i]->setConstrained(false);
-    selectedBody[i]->resizeGeneralizedPosition();
-    selectedBody[i]->resizeGeneralizedVelocity();
-  }
   selectedBody.pop_back();
 
   stackedWidget->removeWidget(refBody[i]);
@@ -464,7 +454,7 @@ GearDependencyWidget::GearDependencyWidget(Element *element) {
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new ScalarWidget("1"), QStringList(), 1));
-  ratio = new ExtWidget("Projection",new ExtPhysicalVarWidget(input));
+  ratio = new ExtWidget("Transmission ratio",new ExtPhysicalVarWidget(input));
   layout->addWidget(ratio);
 }
 
@@ -526,18 +516,11 @@ void GearDependenciesWidget::updateWidget() {
 
 void GearDependenciesWidget::updateGeneralizedCoordinatesOfBodies() {
   for(unsigned int i=0; i<refBody.size(); i++) {
-    if(selectedBody[i]) {
+    if(selectedBody[i])
       selectedBody[i]->setConstrained(false);
-      selectedBody[i]->resizeGeneralizedPosition();
-      selectedBody[i]->resizeGeneralizedVelocity();
-    }
     selectedBody[i] = refBody[i]->getBody();
-    if(selectedBody[i]) {
+    if(selectedBody[i])
       selectedBody[i]->setConstrained(true);
-      selectedBody[i]->resizeGeneralizedPosition();
-      selectedBody[i]->resizeGeneralizedVelocity();
-      //connect(selectedBody[i],SIGNAL(sizeChanged()),this,SIGNAL(bodyChanged()));
-    }
   }
 }
 
@@ -560,11 +543,8 @@ void GearDependenciesWidget::addDependency() {
 
 void GearDependenciesWidget::removeDependency() {
   int i = bodyList->currentRow();
-  if(selectedBody[i]) {
+  if(selectedBody[i])
     selectedBody[i]->setConstrained(false);
-    selectedBody[i]->resizeGeneralizedPosition();
-    selectedBody[i]->resizeGeneralizedVelocity();
-  }
   selectedBody.pop_back();
 
   stackedWidget->removeWidget(refBody[i]);

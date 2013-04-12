@@ -19,21 +19,19 @@
 
 #include <config.h>
 #include "object.h"
-#include "string_widgets.h"
-#include "extended_widgets.h"
 #include <QtGui/QMenu>
 
 using namespace std;
 
-Object::Object(const string &str, Element *parent) : Element(str,parent), q0Property(0,false), u0Property(0,false) {
+Object::Object(const string &str, Element *parent) : Element(str,parent), q0(0,false), u0(0,false) {
 
   vector<PhysicalStringProperty*> input;
   input.push_back(new PhysicalStringProperty(new VecProperty(0),"",MBSIMNS"initialGeneralizedPosition"));
-  q0Property.setProperty(new ExtPhysicalVarProperty(input));
+  q0.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
   input.push_back(new PhysicalStringProperty(new VecProperty(0),"",MBSIMNS"initialGeneralizedVelocity"));
-  u0Property.setProperty(new ExtPhysicalVarProperty(input));
+  u0.setProperty(new ExtPhysicalVarProperty(input));
 }
 
 Object::~Object() {
@@ -41,14 +39,14 @@ Object::~Object() {
 
 void Object::initializeUsingXML(TiXmlElement *element) {
   Element::initializeUsingXML(element);
-  q0Property.initializeUsingXML(element);
-  u0Property.initializeUsingXML(element);
+  q0.initializeUsingXML(element);
+  u0.initializeUsingXML(element);
 }
 
 TiXmlElement* Object::writeXMLFile(TiXmlNode *parent) {    
   TiXmlElement *ele0 = Element::writeXMLFile(parent);
-  q0Property.writeXMLFile(ele0);
-  u0Property.writeXMLFile(ele0);
+  q0.writeXMLFile(ele0);
+  u0.writeXMLFile(ele0);
   return ele0;
 }
 

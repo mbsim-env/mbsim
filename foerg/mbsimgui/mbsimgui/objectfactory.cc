@@ -110,12 +110,12 @@ Object* MBSimObjectFactory::createObject(TiXmlElement *element, Element *parent)
   if(element==0) return 0;
   if(element->ValueStr()==MBSIMNS"RigidBody")
     return new RigidBody(element->Attribute("name"),parent);
-//  else if(element->ValueStr()==MBSIMNS"GearConstraint")
-//    return new GearConstraint(element->Attribute("name"),parent);
-//  else if(element->ValueStr()==MBSIMNS"KinematicConstraint")
-//    return new KinematicConstraint(element->Attribute("name"),parent);
-//  else if(element->ValueStr()==MBSIMNS"JointConstraint")
-//    return new JointConstraint(element->Attribute("name"),parent);
+  else if(element->ValueStr()==MBSIMNS"GearConstraint")
+    return new GearConstraint(element->Attribute("name"),parent);
+  else if(element->ValueStr()==MBSIMNS"KinematicConstraint")
+    return new KinematicConstraint(element->Attribute("name"),parent);
+  else if(element->ValueStr()==MBSIMNS"JointConstraint")
+    return new JointConstraint(element->Attribute("name"),parent);
   return 0;
 }
 
@@ -133,12 +133,12 @@ Link* MBSimObjectFactory::createLink(TiXmlElement *element, Element *parent) {
     return new SpringDamper(element->Attribute("name"),parent);
   if(element->ValueStr()==MBSIMNS"Joint")
     return new Joint(element->Attribute("name"),parent);
-//  if(element->ValueStr()==MBSIMNS"Contact")
-//    return new Contact(element->Attribute("name"),parent);
-//  if(element->ValueStr()==MBSIMCONTROLNS"AbsolutePositionSensor")
-//    return new AbsolutePositionSensor(element->Attribute("name"),parent);
-  //    if(element->ValueStr()==MBSIMNS"ExternGeneralizedIO")
-  //      return new ExternGeneralizedIO(element->Attribute("name"));
+  if(element->ValueStr()==MBSIMNS"Contact")
+    return new Contact(element->Attribute("name"),parent);
+  //if(element->ValueStr()==MBSIMCONTROLNS"AbsolutePositionSensor")
+  //  return new AbsolutePositionSensor(element->Attribute("name"),parent);
+  //if(element->ValueStr()==MBSIMNS"ExternGeneralizedIO")
+  //  return new ExternGeneralizedIO(element->Attribute("name"));
   return 0;
 }  
 
@@ -150,8 +150,8 @@ Observer* ObjectFactory::createObserver(TiXmlElement *element, Element *parent) 
 }
 Observer* MBSimObjectFactory::createObserver(TiXmlElement *element, Element *parent) {
   if(element==0) return 0;
-//  if(element->ValueStr()==MBSIMNS"AbsoluteKinematicsObserver")
-//    return new AbsoluteKinematicsObserver(element->Attribute("name"),parent);
+  if(element->ValueStr()==MBSIMNS"AbsoluteKinematicsObserver")
+    return new AbsoluteKinematicsObserver(element->Attribute("name"),parent);
   return 0;
 }  
 

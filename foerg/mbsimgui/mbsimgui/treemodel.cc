@@ -6,9 +6,11 @@
 #include "contour.h"
 #include "solver.h"
 #include "rigidbody.h"
+#include "constraint.h"
 #include "kinetic_excitation.h"
 #include "spring_damper.h"
 #include "joint.h"
+#include "contact.h"
 #include "observer.h"
 
 #include <iostream>
@@ -89,6 +91,30 @@ void TreeModel::addFrame(const QModelIndex &parent) {
   createFrameItem(frame,parent.child(0,0));
 }
 
+void TreeModel::addPoint(const QModelIndex &parent) {
+  Point *point = new Point("Point"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
+  static_cast<Element*>(getItem(parent)->getItemData())->addContour(point);
+  createContourItem(point,parent.child(1,0));
+}
+
+void TreeModel::addLine(const QModelIndex &parent) {
+  Line *line = new Line("Line"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
+  static_cast<Element*>(getItem(parent)->getItemData())->addContour(line);
+  createContourItem(line,parent.child(1,0));
+}
+
+void TreeModel::addPlane(const QModelIndex &parent) {
+  Plane *plane = new Plane("Plane"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
+  static_cast<Element*>(getItem(parent)->getItemData())->addContour(plane);
+  createContourItem(plane,parent.child(1,0));
+}
+
+void TreeModel::addSphere(const QModelIndex &parent) {
+  Sphere *sphere = new Sphere("Sphere"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
+  static_cast<Element*>(getItem(parent)->getItemData())->addContour(sphere);
+  createContourItem(sphere,parent.child(1,0));
+}
+
 void TreeModel::addGroup(const QModelIndex &parent) {
   Group *group = new Group("Group"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addGroup(group);
@@ -99,6 +125,30 @@ void TreeModel::addRigidBody(const QModelIndex &parent) {
   RigidBody *rigidbody = new RigidBody("RigidBody"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addObject(rigidbody);
   createObjectItem(rigidbody,parent.child(3,0));
+}
+
+void TreeModel::addKinematicConstraint(const QModelIndex &parent) {
+  KinematicConstraint *constraint = new KinematicConstraint("KinematicConstraint"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
+  static_cast<Element*>(getItem(parent)->getItemData())->addObject(constraint);
+  createObjectItem(constraint,parent.child(3,0));
+}
+
+void TreeModel::addGearConstraint(const QModelIndex &parent) {
+  GearConstraint *constraint = new GearConstraint("GearConstraint"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
+  static_cast<Element*>(getItem(parent)->getItemData())->addObject(constraint);
+  createObjectItem(constraint,parent.child(3,0));
+}
+
+void TreeModel::addKineticExcitation(const QModelIndex &parent) {
+  KineticExcitation *kineticExcitation = new KineticExcitation("KineticExcitation"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
+  static_cast<Element*>(getItem(parent)->getItemData())->addLink(kineticExcitation);
+  createLinkItem(kineticExcitation,parent.child(4,0));
+}
+
+void TreeModel::addJointConstraint(const QModelIndex &parent) {
+  JointConstraint *constraint = new JointConstraint("JointConstraint"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
+  static_cast<Element*>(getItem(parent)->getItemData())->addObject(constraint);
+  createObjectItem(constraint,parent.child(3,0));
 }
 
 void TreeModel::addSpringDamper(const QModelIndex &parent) {
@@ -113,10 +163,16 @@ void TreeModel::addJoint(const QModelIndex &parent) {
   createLinkItem(joint,parent.child(4,0));
 }
 
-void TreeModel::addKineticExcitation(const QModelIndex &parent) {
-  KineticExcitation *kineticExcitation = new KineticExcitation("KineticExcitation"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
-  static_cast<Element*>(getItem(parent)->getItemData())->addLink(kineticExcitation);
-  createLinkItem(kineticExcitation,parent.child(4,0));
+void TreeModel::addContact(const QModelIndex &parent) {
+  Contact *contact = new Contact("Contact"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
+  static_cast<Element*>(getItem(parent)->getItemData())->addLink(contact);
+  createLinkItem(contact,parent.child(4,0));
+}
+
+void TreeModel::addAbsoluteKinematicsObserver(const QModelIndex &parent) {
+  AbsoluteKinematicsObserver *observer = new AbsoluteKinematicsObserver("AbsoluteKinematicsObserver"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
+  static_cast<Element*>(getItem(parent)->getItemData())->addObserver(observer);
+  createObserverItem(observer,parent.child(5,0));
 }
 
 void TreeModel::removeElement(const QModelIndex &index) {
@@ -213,6 +269,8 @@ void TreeModel::createObjectItem(Object *object, const QModelIndex &parent) {
 
   for(int i=0; i<object->getNumberOfFrames(); i++)
     createFrameItem(object->getFrame(i),index.child(0,0));
+  for(int i=0; i<object->getNumberOfContours(); i++)
+    createContourItem(object->getContour(i),index.child(1,0));
 }
 
 void TreeModel::createLinkItem(Link *link, const QModelIndex &parent) {

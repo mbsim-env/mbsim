@@ -21,9 +21,6 @@
 #include "kinetic_excitation.h"
 #include "ombv_properties.h"
 #include "kinetics_properties.h"
-#include "kinetics_widgets.h"
-#include "extended_widgets.h"
-#include "ombv_widgets.h"
 
 using namespace std;
 

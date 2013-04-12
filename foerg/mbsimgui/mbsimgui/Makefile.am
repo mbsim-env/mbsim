@@ -13,22 +13,24 @@ mbsimgui_CPPFLAGS = $(MBXMLUTILS_CFLAGS)
 mbsimgui_LDFLAGS = $(HDF5SERIE_LIBS) $(MBXMLUTILS_LIBS) -Wl,-rpath -Wl,\$$ORIGIN/../lib
 
 mbsimgui_SOURCES = element.cc \
+		   frame.cc \
+		   contour.cc \
+		   group.cc \
+		   solver.cc \
 		   object.cc \
 		   body.cc \
 		   rigidbody.cc \
-		   group.cc \
-		   objectfactory.cc \
-		   solver.cc \
-		   frame.cc \
-		   contour.cc \
+		   constraint.cc \
 		   link.cc \
 		   kinetic_excitation.cc \
 		   spring_damper.cc \
 		   joint.cc \
+		   contact.cc \
 		   observer.cc \
 		   integrator.cc \
 		   parameter.cc \
 		   octaveutils.cc \
+		   objectfactory.cc \
 		   treeitem.cc \
 		   treemodel.cc \
 		   delegate.cc \

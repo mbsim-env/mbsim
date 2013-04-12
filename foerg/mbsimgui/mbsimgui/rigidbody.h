@@ -29,6 +29,8 @@ class RigidBody : public Body {
     RigidBody(const std::string &str, Element *parent);
     ~RigidBody();
     std::string getType() const { return "RigidBody"; }
+    int getqSize() const {return constrained?0:getqRelSize();}
+    int getqRelSize() const;
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     bool isConstrained() const {return constrained;} 
@@ -37,7 +39,7 @@ class RigidBody : public Body {
     PropertyDialog* createPropertyDialog() {return new RigidBodyPropertyDialog(this);}
   protected:
     bool constrained;
-    ExtProperty R, K, mass, inertia, translation, rotation, ombvEditor, weightArrow, jointForceArrow, jointMomentArrow, isFrameOfBodyForRotation;
+    ExtProperty K, mass, inertia, translation, rotation, ombvEditor, weightArrow, jointForceArrow, jointMomentArrow, isFrameOfBodyForRotation;
 };
 
 #endif
