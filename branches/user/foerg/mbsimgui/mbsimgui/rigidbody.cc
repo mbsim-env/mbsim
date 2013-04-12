@@ -26,9 +26,6 @@
 #include "basic_properties.h"
 #include "kinematics_properties.h"
 #include "ombv_properties.h"
-#include "string_widgets.h"
-#include "kinematics_widgets.h"
-#include "ombv_widgets.h"
 #include "mainwindow.h"
 #include <QMenu>
 
@@ -36,11 +33,9 @@ using namespace std;
 
 extern MainWindow *mw;
 
-RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), constrained(false), R(0,false), K(0,false), translation(0,false), rotation(0,false), ombvEditor(0,true), weightArrow(0,false), jointForceArrow(0,false), jointMomentArrow(0,false), isFrameOfBodyForRotation(0,false) {
+RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), constrained(false), K(0,false), translation(0,false), rotation(0,false), ombvEditor(0,true), weightArrow(0,false), jointForceArrow(0,false), jointMomentArrow(0,false), isFrameOfBodyForRotation(0,false) {
   Frame *C = new Frame("C",this);
   addFrame(C);
-
-  R.setProperty(new FrameOfReferenceProperty(getParent()->getFrame(0),this,MBSIMNS"frameOfReference"));
 
   K.setProperty(new LocalFrameOfReferenceProperty(getFrame(0),this,MBSIMNS"frameForKinematics"));
 
@@ -80,6 +75,10 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
 RigidBody::~RigidBody() {
 }
 
+int RigidBody::getqRelSize() const {
+  return (translation.isActive()?((TranslationChoiceProperty*)translation.getProperty())->getSize():0) + (rotation.isActive()?((RotationChoiceProperty*)rotation.getProperty())->getSize():0);
+}
+
 void RigidBody::initialize() {
   Body::initialize();
 
@@ -87,12 +86,11 @@ void RigidBody::initialize() {
     frame[i]->initialize();
   for(int i=0; i<contour.size(); i++)
     contour[i]->initialize();
-
-  R.initialize();
 }
 
 void RigidBody::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e;
+  Body::initializeUsingXML(element);
 
   // frames
   e=element->FirstChildElement(MBSIMNS"frames")->FirstChildElement();
@@ -131,11 +129,13 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
   }
   while(e) {
     c=ObjectFactory::getInstance()->createContour(e,this);
-    c->initializeUsingXML(e);
+    if(c) {
+      addContour(c);
+      c->initializeUsingXML(e);
+    }
     e=e->NextSiblingElement();
   }
 
-  R.initializeUsingXML(element);
   K.initializeUsingXML(element);
 
   mass.initializeUsingXML(element);
@@ -167,7 +167,6 @@ TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Body::writeXMLFile(parent);
   TiXmlElement *ele1;
 
-  R.writeXMLFile(ele0);
   K.writeXMLFile(ele0);
 
   mass.writeXMLFile(ele0);

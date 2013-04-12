@@ -21,10 +21,12 @@
 #include "body.h"
 #include "frame.h"
 #include "contour.h"
+#include "basic_properties.h"
 
 using namespace std;
 
-Body::Body(const string &str, Element *parent) : Object(str,parent) {
+Body::Body(const string &str, Element *parent) : Object(str,parent), R(0,false) {
+  R.setProperty(new FrameOfReferenceProperty(getParent()->getFrame(0),this,MBSIMNS"frameOfReference"));
 }
 
 Body::~Body() {
@@ -32,6 +34,10 @@ Body::~Body() {
 //    delete *i;
 //  for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i) 
 //    delete *i;
+}
+
+void Body::initialize() {
+  R.initialize();
 }
 
 void Body::addFrame(Frame* frame_) {
@@ -89,6 +95,17 @@ Contour* Body::getContour(const string &name, bool check) {
     assert(i<getContainerContour()->childCount());
   }
   return NULL;
+}
+
+void Body::initializeUsingXML(TiXmlElement *element) {
+  Object::initializeUsingXML(element);
+  R.initializeUsingXML(element);
+}
+
+TiXmlElement* Body::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = Object::writeXMLFile(parent);
+  R.writeXMLFile(ele0);
+  return ele0;
 }
 
 Element * Body::getByPathSearch(string path) {

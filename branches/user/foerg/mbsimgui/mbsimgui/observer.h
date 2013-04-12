@@ -32,14 +32,15 @@ class Observer : public Element {
 };
 
 class AbsoluteKinematicsObserver : public Observer {
+  friend class AbsoluteKinematicsObserverPropertyDialog;
   public:
     AbsoluteKinematicsObserver(const std::string &str, Element *parent);
     ~AbsoluteKinematicsObserver();
-
+    std::string getType() const { return "AbsoluteKinematicsObserver"; }
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void initialize();
-
+    PropertyDialog* createPropertyDialog() {return new AbsoluteKinematicsObserverPropertyDialog(this);}
   protected:
     ExtProperty frame, position, velocity, angularVelocity, acceleration, angularAcceleration;
 };

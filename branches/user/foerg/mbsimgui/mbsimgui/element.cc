@@ -24,8 +24,6 @@
 #include <QtGui/QInputDialog>
 #include <QtGui/QMessageBox>
 #include <cmath>
-#include "property_widget.h"
-#include "basic_widgets.h"
 #include "solver.h"
 #include "object.h"
 #include "frame.h"

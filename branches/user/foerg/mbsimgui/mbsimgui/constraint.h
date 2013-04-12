@@ -27,55 +27,49 @@ class RigidBody;
 
 class Constraint : public Object {
   public:
-    Constraint(const std::string &str, TreeItem *parentItem);
+    Constraint(const std::string &str, Element *parent);
     ~Constraint();
 };
 
 class GearConstraint : public Constraint {
-
+  friend class GearConstraintPropertyDialog;
   public:
-    GearConstraint(const std::string &str, TreeItem *parentItem);
+    GearConstraint(const std::string &str, Element *parent);
     ~GearConstraint();
-
+    std::string getType() const { return "GearConstraint"; }
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-
     void initialize();
-
+    PropertyDialog* createPropertyDialog() {return new GearConstraintPropertyDialog(this);}
   protected:
-    RigidBody *refBody;
-    //ExtWidget *dependentBodyWidget, *independentBodiesWidget;
     ExtProperty dependentBody, independentBodies;
 };
 
 class KinematicConstraint : public Constraint {
-
+  friend class KinematicConstraintPropertyDialog;
   public:
-    KinematicConstraint(const std::string &str, TreeItem *parentItem);
+    KinematicConstraint(const std::string &str, Element *parent);
     ~KinematicConstraint();
-
+    std::string getType() const { return "KinematicConstraint"; }
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-
     void initialize();
-
+    PropertyDialog* createPropertyDialog() {return new KinematicConstraintPropertyDialog(this);}
   protected:
-    RigidBody *refBody;
     ExtProperty dependentBody, kinematicFunction, firstDerivativeOfKinematicFunction, secondDerivativeOfKinematicFunction;
 
 };
 
 class JointConstraint : public Constraint {
-
+  friend class JointConstraintPropertyDialog;
   public:
-    JointConstraint(const std::string &str, TreeItem *parentItem);
+    JointConstraint(const std::string &str, Element *parent);
     ~JointConstraint();
-
+    std::string getType() const { return "JointConstraint"; }
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-
     void initialize();
-
+    PropertyDialog* createPropertyDialog() {return new JointConstraintPropertyDialog(this);}
   protected:
     ExtProperty force, moment, connections, independentBody, dependentBodiesFirstSide, dependentBodiesSecondSide;
 

@@ -21,10 +21,6 @@
 #include "observer.h"
 #include "basic_properties.h"
 #include "ombv_properties.h"
-#include "basic_widgets.h"
-#include "string_widgets.h"
-#include "extended_widgets.h"
-#include "ombv_widgets.h"
 #include <QtGui/QMenu>
 #include "mainwindow.h"
 

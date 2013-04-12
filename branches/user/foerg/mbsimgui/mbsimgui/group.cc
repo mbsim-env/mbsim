@@ -34,10 +34,7 @@
 #include "signal_.h"
 #include "frame.h"
 #include "contour.h"
-#include "property_widget.h"
 #include "basic_properties.h"
-#include "basic_widgets.h"
-#include "string_widgets.h"
 #include <string>
 #include "utils.h"
 #include "mainwindow.h"
@@ -267,7 +264,10 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   while(E && E->ValueStr()==MBSIMNS"contour") {
     TiXmlElement *ec=E->FirstChildElement();
     c=ObjectFactory::getInstance()->createContour(ec,this);
-    if(c) c->initializeUsingXML(ec);
+    if(c) {
+      addContour(c);
+      c->initializeUsingXML(ec);
+    }
     stringstream stream;
     stream << "ContourFrame" << contour.size();
     FixedRelativeFrame *f=new FixedRelativeFrame(stream.str(),this);
@@ -279,7 +279,10 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   }
   while(E) {
     c=ObjectFactory::getInstance()->createContour(E,this);
-    c->initializeUsingXML(E);
+    if(c) {
+      addContour(c);
+      c->initializeUsingXML(E);
+    }
     E=E->NextSiblingElement();
   }
 

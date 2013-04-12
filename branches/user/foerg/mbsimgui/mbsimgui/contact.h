@@ -24,13 +24,15 @@
 #include "extended_properties.h"
 
 class Contact : public Link {
+  friend class ContactPropertyDialog;
   public:
-    Contact(const std::string &str, TreeItem *parentItem);
+    Contact(const std::string &str, Element *parent);
     ~Contact();
+    std::string getType() const { return "Contact"; }
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void initialize();
-
+    PropertyDialog* createPropertyDialog() {return new ContactPropertyDialog(this);}
   protected:
     ExtProperty contactForceLaw, contactImpactLaw, frictionForceLaw, frictionImpactLaw, connections, enableOpenMBVContactPoints, normalForceArrow, frictionArrow;
 };

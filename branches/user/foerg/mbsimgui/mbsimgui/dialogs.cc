@@ -96,29 +96,21 @@ void RigidBodyBrowser::updateWidget(RigidBody *sel) {
 }
 
 void RigidBodyBrowser::mbs2RigidBodyTree(Element* ele, QTreeWidgetItem* parentItem) {
-//  if(dynamic_cast<Group*>(ele) || dynamic_cast<RigidBody*>(ele) || dynamic_cast<RigidBody*>(ele)) {
-//
-//    ElementItem *item = new ElementItem(ele);
-//    item->setText(0,QString::fromStdString(ele->getName()));
-//
-//    if(ele == selection)
-//      savedItem = item;
-//
-//    parentItem->addChild(item);
-//
-//    if(ele->getContainerFrame())
-//      for(int i=0; i<ele->getContainerFrame()->childCount(); i++) {
-//        mbs2RigidBodyTree((Element*)ele->getContainerFrame()->child(i),item);
-//      }
-//    if(ele->getContainerGroup())
-//      for(int i=0; i<ele->getContainerGroup()->childCount(); i++) {
-//        mbs2RigidBodyTree((Element*)ele->getContainerGroup()->child(i),item);
-//      }
-//    if(ele->getContainerObject())
-//      for(int i=0; i<ele->getContainerObject()->childCount(); i++) {
-//        mbs2RigidBodyTree((Element*)ele->getContainerObject()->child(i),item);
-//      }
-//  }
+  if(dynamic_cast<Group*>(ele) || dynamic_cast<RigidBody*>(ele) || dynamic_cast<RigidBody*>(ele)) {
+
+    ElementItem *item = new ElementItem(ele);
+    item->setText(0,QString::fromStdString(ele->getName()));
+
+    if(ele == selection)
+      savedItem = item;
+
+    parentItem->addChild(item);
+
+    for(int i=0; i<ele->getNumberOfGroups(); i++)
+      mbs2RigidBodyTree(ele->getGroup(i),item);
+    for(int i=0; i<ele->getNumberOfObjects(); i++)
+      mbs2RigidBodyTree(ele->getObject(i),item);
+  }
 }
 
 void RigidBodyBrowser::checkForRigidBody(QTreeWidgetItem* item_,int) {
@@ -216,29 +208,23 @@ void ContourBrowser::updateWidget(Contour *sel) {
 }
 
 void ContourBrowser::mbs2ContourTree(Element* ele, QTreeWidgetItem* parentItem) {
-//  if(dynamic_cast<Group*>(ele) || dynamic_cast<RigidBody*>(ele) || dynamic_cast<Contour*>(ele)) {
-//
-//    ElementItem *item = new ElementItem(ele);
-//    item->setText(0,ele->getName());
-//
-//    if(ele == selection)
-//      savedItem = item;
-//
-//    parentItem->addChild(item);
-//
-//    if(ele->getContainerContour())
-//      for(int i=0; i<ele->getContainerContour()->childCount(); i++) {
-//        mbs2ContourTree((Element*)ele->getContainerContour()->child(i),item);
-//      }
-//    if(ele->getContainerGroup())
-//      for(int i=0; i<ele->getContainerGroup()->childCount(); i++) {
-//        mbs2ContourTree((Element*)ele->getContainerGroup()->child(i),item);
-//      }
-//    if(ele->getContainerObject())
-//      for(int i=0; i<ele->getContainerObject()->childCount(); i++) {
-//        mbs2ContourTree((Element*)ele->getContainerObject()->child(i),item);
-//      }
-//  }
+  if(dynamic_cast<Group*>(ele) || dynamic_cast<RigidBody*>(ele) || dynamic_cast<Contour*>(ele)) {
+
+    ElementItem *item = new ElementItem(ele);
+    item->setText(0,QString::fromStdString(ele->getName()));
+
+    if(ele == selection)
+      savedItem = item;
+
+    parentItem->addChild(item);
+
+    for(int i=0; i<ele->getNumberOfContours(); i++)
+      mbs2ContourTree(ele->getContour(i),item);
+    for(int i=0; i<ele->getNumberOfGroups(); i++)
+      mbs2ContourTree(ele->getGroup(i),item);
+    for(int i=0; i<ele->getNumberOfObjects(); i++)
+      mbs2ContourTree(ele->getObject(i),item);
+  }
 }
 
 void ContourBrowser::checkForContour(QTreeWidgetItem* item_,int) {
