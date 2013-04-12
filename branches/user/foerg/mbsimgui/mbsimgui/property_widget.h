@@ -33,7 +33,7 @@ class TiXmlElement;
 class TiXmlNode;
 class QDialogButtonBox;
 class QAbstractButton;
-class Element;
+class TreeItemData;
 class Frame;
 class FixedRelativeFrame;
 class Contour;
@@ -55,6 +55,8 @@ class Joint;
 class Contact;
 class Observer;
 class AbsoluteKinematicsObserver;
+class Parameter;
+class ScalarParameter;
 
 class PropertyDialog : public QDialog {
   Q_OBJECT
@@ -67,8 +69,8 @@ class PropertyDialog : public QDialog {
     void addTab(const QString &name, int i=-1);
     void addStretch();
     void updateWidget();
-    virtual void toWidget(Element *element) {}
-    virtual void fromWidget(Element *element) {}
+    virtual void toWidget(TreeItemData *item) {}
+    virtual void fromWidget(TreeItemData *item) {}
   protected:
     std::map<QString,QVBoxLayout*> layout;
     std::vector<QWidget*> widget;
@@ -87,8 +89,8 @@ class ElementPropertyDialog : public PropertyDialog {
 
   public:
     ElementPropertyDialog(QWidget * parent = 0, Qt::WindowFlags f = 0);
-    void toWidget(Element *element);
-    void fromWidget(Element *element);
+    void toWidget(TreeItemData *element);
+    void fromWidget(TreeItemData *element);
   protected:
     TextWidget *name;
 };
@@ -97,8 +99,8 @@ class FramePropertyDialog : public ElementPropertyDialog {
 
   public:
     FramePropertyDialog(Frame *frame, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    void toWidget(Element *element);
-    void fromWidget(Element *element);
+    void toWidget(TreeItemData *element);
+    void fromWidget(TreeItemData *element);
   protected:
     ExtWidget *visu;
 };
@@ -107,8 +109,8 @@ class FixedRelativeFramePropertyDialog : public FramePropertyDialog {
 
   public:
     FixedRelativeFramePropertyDialog(FixedRelativeFrame *frame, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    void toWidget(Element *element);
-    void fromWidget(Element *element);
+    void toWidget(TreeItemData *element);
+    void fromWidget(TreeItemData *element);
   protected:
     ExtWidget *refFrame, *position, *orientation;
 };
@@ -123,8 +125,8 @@ class PlanePropertyDialog : public ContourPropertyDialog {
 
   public:
     PlanePropertyDialog(Plane *plane, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    void toWidget(Element *element);
-    void fromWidget(Element *element);
+    void toWidget(TreeItemData *element);
+    void fromWidget(TreeItemData *element);
   protected:
     ExtWidget *radius, *visu;
 };
@@ -133,8 +135,8 @@ class SpherePropertyDialog : public ContourPropertyDialog {
 
   public:
     SpherePropertyDialog(Sphere *sphere, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    void toWidget(Element *element);
-    void fromWidget(Element *element);
+    void toWidget(TreeItemData *element);
+    void fromWidget(TreeItemData *element);
   protected:
     ExtWidget *radius, *visu;
 };
@@ -144,8 +146,8 @@ class GroupPropertyDialog : public ElementPropertyDialog {
 
   public:
     GroupPropertyDialog(Group *group, QWidget * parent = 0, Qt::WindowFlags f = 0, bool disabled=false);
-    void toWidget(Element *element);
-    void fromWidget(Element *element);
+    void toWidget(TreeItemData *element);
+    void fromWidget(TreeItemData *element);
   protected:
     ExtWidget *position, *orientation, *frameOfReference; 
 };
@@ -156,8 +158,8 @@ class SolverPropertyDialog : public GroupPropertyDialog {
 
   public:
     SolverPropertyDialog(Solver *solver, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    void toWidget(Element *element);
-    void fromWidget(Element *element);
+    void toWidget(TreeItemData *element);
+    void fromWidget(TreeItemData *element);
 };
 
 class ObjectPropertyDialog : public ElementPropertyDialog {
@@ -165,8 +167,8 @@ class ObjectPropertyDialog : public ElementPropertyDialog {
 
   public:
     ObjectPropertyDialog(Object *object, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    void toWidget(Element *element);
-    void fromWidget(Element *element);
+    void toWidget(TreeItemData *element);
+    void fromWidget(TreeItemData *element);
     virtual void resizeGeneralizedPosition() {}
     virtual void resizeGeneralizedVelocity() {}
   protected:
@@ -180,8 +182,8 @@ class BodyPropertyDialog : public ObjectPropertyDialog {
 
   public:
     BodyPropertyDialog(Body *body, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    void toWidget(Element *element);
-    void fromWidget(Element *element);
+    void toWidget(TreeItemData *element);
+    void fromWidget(TreeItemData *element);
   protected:
     ExtWidget *R;
 };
@@ -190,8 +192,8 @@ class RigidBodyPropertyDialog : public BodyPropertyDialog {
 
   public:
     RigidBodyPropertyDialog(RigidBody *body, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    void toWidget(Element *element);
-    void fromWidget(Element *element);
+    void toWidget(TreeItemData *element);
+    void fromWidget(TreeItemData *element);
     void resizeGeneralizedPosition();
     void resizeGeneralizedVelocity();
     int getSize() const; 
@@ -211,8 +213,8 @@ class GearConstraintPropertyDialog : public ConstraintPropertyDialog {
 
   public:
     GearConstraintPropertyDialog(GearConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    void toWidget(Element *element);
-    void fromWidget(Element *element);
+    void toWidget(TreeItemData *element);
+    void fromWidget(TreeItemData *element);
   protected:
     ExtWidget *dependentBody, *independentBodies;
     RigidBody *refBody;
@@ -225,8 +227,8 @@ class KinematicConstraintPropertyDialog : public ConstraintPropertyDialog {
 
   public:
     KinematicConstraintPropertyDialog(KinematicConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    void toWidget(Element *element);
-    void fromWidget(Element *element);
+    void toWidget(TreeItemData *element);
+    void fromWidget(TreeItemData *element);
   protected:
     ExtWidget *dependentBody, *kinematicFunction, *firstDerivativeOfKinematicFunction, *secondDerivativeOfKinematicFunction;
     RigidBody *refBody;
@@ -239,8 +241,8 @@ class JointConstraintPropertyDialog : public ConstraintPropertyDialog {
 
   public:
     JointConstraintPropertyDialog(JointConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    void toWidget(Element *element);
-    void fromWidget(Element *element);
+    void toWidget(TreeItemData *element);
+    void fromWidget(TreeItemData *element);
     void resizeGeneralizedPosition();
   protected:
     ExtWidget *force, *moment, *connections, *independentBody, *dependentBodiesFirstSide, *dependentBodiesSecondSide;
@@ -251,8 +253,8 @@ class LinkPropertyDialog : public ElementPropertyDialog {
 
   public:
     LinkPropertyDialog(Link *link, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    void toWidget(Element *element);
-    void fromWidget(Element *element);
+    void toWidget(TreeItemData *element);
+    void fromWidget(TreeItemData *element);
   protected:
 };
 
@@ -260,8 +262,8 @@ class KineticExcitationPropertyDialog : public LinkPropertyDialog {
 
   public:
     KineticExcitationPropertyDialog(KineticExcitation *kineticExcitation, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    void toWidget(Element *element);
-    void fromWidget(Element *element);
+    void toWidget(TreeItemData *element);
+    void fromWidget(TreeItemData *element);
   protected:
     ExtWidget *force, *moment, *connections, *frameOfReference, *forceArrow, *momentArrow;
 };
@@ -270,8 +272,8 @@ class SpringDamperPropertyDialog : public LinkPropertyDialog {
 
   public:
     SpringDamperPropertyDialog(SpringDamper *springDamper, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    void toWidget(Element *element);
-    void fromWidget(Element *element);
+    void toWidget(TreeItemData *element);
+    void fromWidget(TreeItemData *element);
   protected:
     ExtWidget *forceFunction, *connections, *forceDirection, *coilSpring;
 };
@@ -280,8 +282,8 @@ class JointPropertyDialog : public LinkPropertyDialog {
 
   public:
     JointPropertyDialog(Joint *joint, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    void toWidget(Element *element);
-    void fromWidget(Element *element);
+    void toWidget(TreeItemData *element);
+    void fromWidget(TreeItemData *element);
   protected:
     ExtWidget *force, *moment, *connections, *forceArrow, *momentArrow;
 };
@@ -290,8 +292,8 @@ class ContactPropertyDialog : public LinkPropertyDialog {
 
   public:
     ContactPropertyDialog(Contact *contact, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    void toWidget(Element *element);
-    void fromWidget(Element *element);
+    void toWidget(TreeItemData *element);
+    void fromWidget(TreeItemData *element);
   protected:
     ExtWidget *contactForceLaw, *contactImpactLaw, *frictionForceLaw, *frictionImpactLaw, *connections, *enableOpenMBVContactPoints, *normalForceArrow, *frictionArrow;
 };
@@ -306,10 +308,31 @@ class AbsoluteKinematicsObserverPropertyDialog : public ObserverPropertyDialog {
 
   public:
     AbsoluteKinematicsObserverPropertyDialog(AbsoluteKinematicsObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    void toWidget(Element *element);
-    void fromWidget(Element *element);
+    void toWidget(TreeItemData *element);
+    void fromWidget(TreeItemData *element);
   protected:
     ExtWidget *frame, *position, *velocity, *angularVelocity, *acceleration, *angularAcceleration;
 };
+
+class ParameterPropertyDialog : public PropertyDialog {
+
+  public:
+    ParameterPropertyDialog(QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(TreeItemData *parameter);
+    void fromWidget(TreeItemData *parameter);
+  protected:
+    TextWidget *name;
+};
+
+class ScalarParameterPropertyDialog : public ParameterPropertyDialog {
+
+  public:
+    ScalarParameterPropertyDialog(QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(TreeItemData *parameter);
+    void fromWidget(TreeItemData *parameter);
+  protected:
+    ExtWidget *value;
+};
+
 
 #endif

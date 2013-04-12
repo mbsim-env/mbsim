@@ -8,14 +8,14 @@
 
 class BasicItemData : public TreeItemData {
   private:
-    std::string name, type;
+    std::string name, value;
   public:
-    BasicItemData(const std::string &name_, const std::string &type_) : name(name_), type(type_) {}
-    ~BasicItemData(); 
+    BasicItemData(const std::string &name_, const std::string &value_) : name(name_), value(value_) {}
+    ~BasicItemData() {}
     const std::string& getName() const {return name;}
-    std::string getType() const {return type;}
+    std::string getValue() const {return value;}
     void setName(const std::string &name_) {name = name_;}
-    void setType(const std::string &type_) {type = type_;}
+    void setValue(const std::string &value_) {value = value_;}
     bool isRemovable() {return false;}
 };
 
@@ -40,9 +40,9 @@ class TreeItem {
     void setItemData(TreeItemData *data_) {itemData = data_;}
     TreeItemData* getItemData() const {return itemData;}
     QVariant getData0() const {return QString::fromStdString(itemData->getName());}
-    QVariant getData1() const {return QString::fromStdString(itemData->getType());}
+    QVariant getData1() const {return QString::fromStdString(itemData->getValue());}
     void setData0(const QVariant &value) {itemData->setName(value.toString().toStdString());}
-    void setData1(const QVariant &value) {itemData->setType(value.toString().toStdString());}
+    void setData1(const QVariant &value) {itemData->setValue(value.toString().toStdString());}
     QVariant (TreeItem::*getData_[2])() const;
     void (TreeItem::*setData_[2])(const QVariant &value);
     QVariant getData(int column) const {return (this->*getData_[column])();}

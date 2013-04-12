@@ -27,6 +27,7 @@
 
 class QTreeWidget;
 class QTreeView;
+class QListView;
 class QStackedWidget;
 class QAction;
 class QLineEdit;
@@ -49,8 +50,8 @@ class MainWindow : public QMainWindow {
   Q_OBJECT
 
   private:
-    QTreeView *elementList;
-    QTreeWidget *integratorList, *parameterList;
+    QTreeView *elementList, *parameterList;
+    QTreeWidget *integratorList;
     QStackedWidget *pagesWidget;
     QLineEdit *fileMBS, *fileIntegrator, *fileParameter;
     Process *mbsim;
@@ -63,6 +64,7 @@ class MainWindow : public QMainWindow {
     void initInlineOpenMBV();
     QString uniqueTempDir, absoluteMBSFilePath;
     QAction *addFrameAction, *addContourAction, *addGroupAction, *addObjectAction, *addLinkAction, *addObserverAction, *addPointAction, *addLineAction, *addPlaneAction, *addSphereAction, *addRigidBodyAction, *addGearConstraintAction, *addKinematicConstraintAction, *addJointConstraintAction, *addKineticExcitationAction, *addSpringDamperAction, *addJointAction, *addContactAction, *addAbsoluteKinematicsObserverAction, *removeRowAction;
+    QAction *addScalarParameterAction;
 
   public:
     MainWindow();
@@ -94,7 +96,7 @@ class MainWindow : public QMainWindow {
     void loadParameter();
     void saveParameterAs();
     void saveParameter(QString filename="");
-    void newDoubleParameter();
+    void addScalarParameter();
     void simulate();
     void openmbv();
     void h5plotserie();

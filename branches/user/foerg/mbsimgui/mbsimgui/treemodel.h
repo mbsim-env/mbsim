@@ -11,11 +11,12 @@ class Group;
 class Object;
 class Link;
 class Observer;
+class Parameter;
 class TreeItem;
 
 class TreeModel : public QAbstractItemModel {
   public:
-    TreeModel(const QStringList &headers, QObject *parent = 0);
+    TreeModel(QObject *parent = 0);
     ~TreeModel();
 
     QVariant data(const QModelIndex &index, int role) const;
@@ -34,6 +35,17 @@ class TreeModel : public QAbstractItemModel {
     bool removeRows(int position, int rows, const QModelIndex &parent = QModelIndex());
 
     TreeItem *getItem(const QModelIndex &index) const;
+
+    void updateView(const QModelIndex &index) {emit dataChanged(index,index);}
+
+ protected:
+    TreeItem *rootItem;
+    int IDcounter;
+};
+
+class ElementTreeModel : public TreeModel {
+  public:
+    ElementTreeModel(QObject *parent = 0);
 
     void removeElement(const QModelIndex &parent = QModelIndex());
     void addSolver(const QModelIndex &parent = QModelIndex());
@@ -59,12 +71,16 @@ class TreeModel : public QAbstractItemModel {
     void createLinkItem(Link *link, const QModelIndex &parent = QModelIndex());
     void createObserverItem(Observer *observer, const QModelIndex &parent = QModelIndex());
 
-    void updateView(const QModelIndex &index) {emit dataChanged(index,index);}
-
     std::map<std::string, QModelIndex> idEleMap;
-    int IDcounter;
- private:
-    TreeItem *rootItem;
+};
+
+class ParameterListModel : public TreeModel {
+  public:
+    ParameterListModel(QObject *parent = 0);
+
+   // void removeParameter(const QModelIndex &parent = QModelIndex());
+    void addScalarParameter(const QModelIndex &parent = QModelIndex());
+    void createParameterItem(Parameter *parameter, const QModelIndex &parent = QModelIndex());
 };
 
 #endif

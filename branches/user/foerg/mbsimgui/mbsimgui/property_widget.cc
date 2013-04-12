@@ -36,6 +36,7 @@
 #include "joint.h"
 #include "contact.h"
 #include "observer.h"
+#include "parameter.h"
 #include <iostream>
 #include <QtGui>
 #include <mbxmlutilstinyxml/getinstallpath.h>
@@ -107,11 +108,11 @@ ElementPropertyDialog::ElementPropertyDialog(QWidget *parent, Qt::WindowFlags f)
   addToTab("General",name_);
 }
 
-void ElementPropertyDialog::toWidget(Element *element) {
+void ElementPropertyDialog::toWidget(TreeItemData *element) {
   name->setName(QString::fromStdString(element->getName()));
 }
 
-void ElementPropertyDialog::fromWidget(Element *element) {
+void ElementPropertyDialog::fromWidget(TreeItemData *element) {
   element->setName(name->getName().toStdString());
 }
 
@@ -121,12 +122,12 @@ FramePropertyDialog::FramePropertyDialog(Frame *frame, QWidget *parent, Qt::Wind
   addToTab("Visualisation", visu);
 }
 
-void FramePropertyDialog::toWidget(Element *element) {
+void FramePropertyDialog::toWidget(TreeItemData *element) {
   ElementPropertyDialog::toWidget(element);
   static_cast<Frame*>(element)->visu.toWidget(visu);
 }
 
-void FramePropertyDialog::fromWidget(Element *element) {
+void FramePropertyDialog::fromWidget(TreeItemData *element) {
   ElementPropertyDialog::fromWidget(element);
   static_cast<Frame*>(element)->visu.fromWidget(visu);
 }
@@ -148,14 +149,14 @@ FixedRelativeFramePropertyDialog::FixedRelativeFramePropertyDialog(FixedRelative
   addToTab("Kinematics", refFrame);
 }
 
-void FixedRelativeFramePropertyDialog::toWidget(Element *element) {
+void FixedRelativeFramePropertyDialog::toWidget(TreeItemData *element) {
   FramePropertyDialog::toWidget(element);
   static_cast<FixedRelativeFrame*>(element)->position.toWidget(position);
   static_cast<FixedRelativeFrame*>(element)->orientation.toWidget(orientation);
   static_cast<FixedRelativeFrame*>(element)->refFrame.toWidget(refFrame);
 }
 
-void FixedRelativeFramePropertyDialog::fromWidget(Element *element) {
+void FixedRelativeFramePropertyDialog::fromWidget(TreeItemData *element) {
   FramePropertyDialog::fromWidget(element);
   static_cast<FixedRelativeFrame*>(element)->position.fromWidget(position);
   static_cast<FixedRelativeFrame*>(element)->orientation.fromWidget(orientation);
@@ -169,12 +170,12 @@ PlanePropertyDialog::PlanePropertyDialog(Plane *plane, QWidget *parent, Qt::Wind
   addToTab("Visualisation", visu);
 }
 
-void PlanePropertyDialog::toWidget(Element *element) {
+void PlanePropertyDialog::toWidget(TreeItemData *element) {
   ContourPropertyDialog::toWidget(element);
   static_cast<Plane*>(element)->visu.toWidget(visu);
 }
 
-void PlanePropertyDialog::fromWidget(Element *element) {
+void PlanePropertyDialog::fromWidget(TreeItemData *element) {
   ContourPropertyDialog::fromWidget(element);
   static_cast<Plane*>(element)->visu.fromWidget(visu);
 }
@@ -191,13 +192,13 @@ SpherePropertyDialog::SpherePropertyDialog(Sphere *sphere, QWidget *parent, Qt::
   addToTab("Visualisation", visu);
 }
 
-void SpherePropertyDialog::toWidget(Element *element) {
+void SpherePropertyDialog::toWidget(TreeItemData *element) {
   ContourPropertyDialog::toWidget(element);
   static_cast<Sphere*>(element)->radius.toWidget(radius);
   static_cast<Sphere*>(element)->visu.toWidget(visu);
 }
 
-void SpherePropertyDialog::fromWidget(Element *element) {
+void SpherePropertyDialog::fromWidget(TreeItemData *element) {
   ContourPropertyDialog::fromWidget(element);
   static_cast<Sphere*>(element)->radius.fromWidget(radius);
   static_cast<Sphere*>(element)->visu.fromWidget(visu);
@@ -222,7 +223,7 @@ GroupPropertyDialog::GroupPropertyDialog(Group *group, QWidget *parent, Qt::Wind
   }
 }
 
-void GroupPropertyDialog::toWidget(Element *element) {
+void GroupPropertyDialog::toWidget(TreeItemData *element) {
   ElementPropertyDialog::toWidget(element);
   if(position) {
     static_cast<Group*>(element)->position.toWidget(position);
@@ -231,7 +232,7 @@ void GroupPropertyDialog::toWidget(Element *element) {
   }
 }
 
-void GroupPropertyDialog::fromWidget(Element *element) {
+void GroupPropertyDialog::fromWidget(TreeItemData *element) {
   ElementPropertyDialog::fromWidget(element);
   if(position) {
     static_cast<Group*>(element)->position.fromWidget(position);
@@ -259,14 +260,14 @@ SolverPropertyDialog::SolverPropertyDialog(Solver *solver, QWidget *parent, Qt::
   addToTab("Extra", inverseKinetics);
 }
 
-void SolverPropertyDialog::toWidget(Element *element) {
+void SolverPropertyDialog::toWidget(TreeItemData *element) {
   GroupPropertyDialog::toWidget(element);
   static_cast<Solver*>(element)->environment.toWidget(environment);
   static_cast<Solver*>(element)->solverParameters.toWidget(solverParameters);
   static_cast<Solver*>(element)->inverseKinetics.toWidget(inverseKinetics);
 }
 
-void SolverPropertyDialog::fromWidget(Element *element) {
+void SolverPropertyDialog::fromWidget(TreeItemData *element) {
   GroupPropertyDialog::fromWidget(element);
   static_cast<Solver*>(element)->environment.fromWidget(environment);
   static_cast<Solver*>(element)->solverParameters.fromWidget(solverParameters);
@@ -292,13 +293,13 @@ ObjectPropertyDialog::ObjectPropertyDialog(Object *object, QWidget *parent, Qt::
   connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
 }
 
-void ObjectPropertyDialog::toWidget(Element *element) {
+void ObjectPropertyDialog::toWidget(TreeItemData *element) {
   ElementPropertyDialog::toWidget(element);
   static_cast<Object*>(element)->q0.toWidget(q0);
   static_cast<Object*>(element)->u0.toWidget(u0);
 }
 
-void ObjectPropertyDialog::fromWidget(Element *element) {
+void ObjectPropertyDialog::fromWidget(TreeItemData *element) {
   ElementPropertyDialog::fromWidget(element);
   static_cast<Object*>(element)->q0.fromWidget(q0);
   static_cast<Object*>(element)->u0.fromWidget(u0);
@@ -310,12 +311,12 @@ BodyPropertyDialog::BodyPropertyDialog(Body *body, QWidget *parent, Qt::WindowFl
   addToTab("Kinematics",R);
 }
 
-void BodyPropertyDialog::toWidget(Element *element) {
+void BodyPropertyDialog::toWidget(TreeItemData *element) {
   ObjectPropertyDialog::toWidget(element);
   static_cast<Body*>(element)->R.toWidget(R);
 }
 
-void BodyPropertyDialog::fromWidget(Element *element) {
+void BodyPropertyDialog::fromWidget(TreeItemData *element) {
   ObjectPropertyDialog::fromWidget(element);
   static_cast<Body*>(element)->R.fromWidget(R);
 }
@@ -367,7 +368,7 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   addToTab("Extra", isFrameOfBodyForRotation);
 }
 
-void RigidBodyPropertyDialog::toWidget(Element *element) {
+void RigidBodyPropertyDialog::toWidget(TreeItemData *element) {
   BodyPropertyDialog::toWidget(element);
   static_cast<RigidBody*>(element)->K.toWidget(K);
   static_cast<RigidBody*>(element)->mass.toWidget(mass);
@@ -380,7 +381,7 @@ void RigidBodyPropertyDialog::toWidget(Element *element) {
   static_cast<RigidBody*>(element)->isFrameOfBodyForRotation.toWidget(isFrameOfBodyForRotation);
 }
 
-void RigidBodyPropertyDialog::fromWidget(Element *element) {
+void RigidBodyPropertyDialog::fromWidget(TreeItemData *element) {
   BodyPropertyDialog::fromWidget(element);
   static_cast<RigidBody*>(element)->K.fromWidget(K);
   static_cast<RigidBody*>(element)->mass.fromWidget(mass);
@@ -433,13 +434,13 @@ void GearConstraintPropertyDialog::updateReferenceBody() {
     refBody->setConstrained(true);
 }
 
-void GearConstraintPropertyDialog::toWidget(Element *element) {
+void GearConstraintPropertyDialog::toWidget(TreeItemData *element) {
   ConstraintPropertyDialog::toWidget(element);
   static_cast<GearConstraint*>(element)->dependentBody.toWidget(dependentBody);
   static_cast<GearConstraint*>(element)->independentBodies.toWidget(independentBodies);
 }
 
-void GearConstraintPropertyDialog::fromWidget(Element *element) {
+void GearConstraintPropertyDialog::fromWidget(TreeItemData *element) {
   ConstraintPropertyDialog::fromWidget(element);
   static_cast<GearConstraint*>(element)->dependentBody.fromWidget(dependentBody);
   static_cast<GearConstraint*>(element)->independentBodies.fromWidget(independentBodies);
@@ -483,7 +484,7 @@ void KinematicConstraintPropertyDialog::updateReferenceBody() {
   }
 }
 
-void KinematicConstraintPropertyDialog::toWidget(Element *element) {
+void KinematicConstraintPropertyDialog::toWidget(TreeItemData *element) {
   ConstraintPropertyDialog::toWidget(element);
   static_cast<KinematicConstraint*>(element)->dependentBody.toWidget(dependentBody);
   static_cast<KinematicConstraint*>(element)->kinematicFunction.toWidget(kinematicFunction);
@@ -491,7 +492,7 @@ void KinematicConstraintPropertyDialog::toWidget(Element *element) {
   static_cast<KinematicConstraint*>(element)->secondDerivativeOfKinematicFunction.toWidget(secondDerivativeOfKinematicFunction);
 }
 
-void KinematicConstraintPropertyDialog::fromWidget(Element *element) {
+void KinematicConstraintPropertyDialog::fromWidget(TreeItemData *element) {
   ConstraintPropertyDialog::fromWidget(element);
   static_cast<KinematicConstraint*>(element)->dependentBody.fromWidget(dependentBody);
   static_cast<KinematicConstraint*>(element)->kinematicFunction.fromWidget(kinematicFunction);
@@ -538,7 +539,7 @@ void JointConstraintPropertyDialog::resizeGeneralizedPosition() {
     q0_->resize(size);
 }
 
-void JointConstraintPropertyDialog::toWidget(Element *element) {
+void JointConstraintPropertyDialog::toWidget(TreeItemData *element) {
   ConstraintPropertyDialog::toWidget(element);
   static_cast<JointConstraint*>(element)->independentBody.toWidget(independentBody);
   static_cast<JointConstraint*>(element)->dependentBodiesFirstSide.toWidget(dependentBodiesFirstSide);
@@ -548,7 +549,7 @@ void JointConstraintPropertyDialog::toWidget(Element *element) {
   static_cast<JointConstraint*>(element)->moment.toWidget(moment);
 }
 
-void JointConstraintPropertyDialog::fromWidget(Element *element) {
+void JointConstraintPropertyDialog::fromWidget(TreeItemData *element) {
   ConstraintPropertyDialog::fromWidget(element);
   static_cast<JointConstraint*>(element)->independentBody.fromWidget(independentBody);
   static_cast<JointConstraint*>(element)->dependentBodiesFirstSide.fromWidget(dependentBodiesFirstSide);
@@ -561,11 +562,11 @@ void JointConstraintPropertyDialog::fromWidget(Element *element) {
 LinkPropertyDialog::LinkPropertyDialog(Link *link, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(parent,f) {
 }
 
-void LinkPropertyDialog::toWidget(Element *element) {
+void LinkPropertyDialog::toWidget(TreeItemData *element) {
   ElementPropertyDialog::toWidget(element);
 }
 
-void LinkPropertyDialog::fromWidget(Element *element) {
+void LinkPropertyDialog::fromWidget(TreeItemData *element) {
   ElementPropertyDialog::fromWidget(element);
 }
 
@@ -604,7 +605,7 @@ KineticExcitationPropertyDialog::KineticExcitationPropertyDialog(KineticExcitati
   addToTab("Kinetics",frameOfReference);
 }
 
-void KineticExcitationPropertyDialog::toWidget(Element *element) {
+void KineticExcitationPropertyDialog::toWidget(TreeItemData *element) {
   LinkPropertyDialog::toWidget(element);
   static_cast<KineticExcitation*>(element)->forceArrow.toWidget(forceArrow);
   static_cast<KineticExcitation*>(element)->momentArrow.toWidget(momentArrow);
@@ -614,7 +615,7 @@ void KineticExcitationPropertyDialog::toWidget(Element *element) {
   static_cast<KineticExcitation*>(element)->frameOfReference.toWidget(frameOfReference);
 }
 
-void KineticExcitationPropertyDialog::fromWidget(Element *element) {
+void KineticExcitationPropertyDialog::fromWidget(TreeItemData *element) {
   LinkPropertyDialog::fromWidget(element);
   static_cast<KineticExcitation*>(element)->forceArrow.fromWidget(forceArrow);
   static_cast<KineticExcitation*>(element)->momentArrow.fromWidget(momentArrow);
@@ -641,7 +642,7 @@ SpringDamperPropertyDialog::SpringDamperPropertyDialog(SpringDamper *springDampe
   addToTab("Visualisation", coilSpring);
 }
 
-void SpringDamperPropertyDialog::toWidget(Element *element) {
+void SpringDamperPropertyDialog::toWidget(TreeItemData *element) {
   LinkPropertyDialog::toWidget(element);
   static_cast<SpringDamper*>(element)->connections.toWidget(connections);
   static_cast<SpringDamper*>(element)->forceFunction.toWidget(forceFunction);
@@ -649,7 +650,7 @@ void SpringDamperPropertyDialog::toWidget(Element *element) {
   static_cast<SpringDamper*>(element)->coilSpring.toWidget(coilSpring);
 }
 
-void SpringDamperPropertyDialog::fromWidget(Element *element) {
+void SpringDamperPropertyDialog::fromWidget(TreeItemData *element) {
   LinkPropertyDialog::fromWidget(element);
   static_cast<SpringDamper*>(element)->connections.fromWidget(connections);
   static_cast<SpringDamper*>(element)->forceFunction.fromWidget(forceFunction);
@@ -677,7 +678,7 @@ JointPropertyDialog::JointPropertyDialog(Joint *joint, QWidget *parent, Qt::Wind
   addToTab("Kinetics", moment);
 }
 
-void JointPropertyDialog::toWidget(Element *element) {
+void JointPropertyDialog::toWidget(TreeItemData *element) {
   LinkPropertyDialog::toWidget(element);
   static_cast<Joint*>(element)->forceArrow.toWidget(forceArrow);
   static_cast<Joint*>(element)->momentArrow.toWidget(momentArrow);
@@ -686,7 +687,7 @@ void JointPropertyDialog::toWidget(Element *element) {
   static_cast<Joint*>(element)->moment.toWidget(moment);
 }
 
-void JointPropertyDialog::fromWidget(Element *element) {
+void JointPropertyDialog::fromWidget(TreeItemData *element) {
   LinkPropertyDialog::fromWidget(element);
   static_cast<Joint*>(element)->forceArrow.fromWidget(forceArrow);
   static_cast<Joint*>(element)->momentArrow.fromWidget(momentArrow);
@@ -727,7 +728,7 @@ ContactPropertyDialog::ContactPropertyDialog(Contact *contact, QWidget *parent, 
   addToTab("Visualisation",frictionArrow);
 }
 
-void ContactPropertyDialog::toWidget(Element *element) {
+void ContactPropertyDialog::toWidget(TreeItemData *element) {
   LinkPropertyDialog::toWidget(element);
   static_cast<Contact*>(element)->contactForceLaw.toWidget(contactForceLaw);
   static_cast<Contact*>(element)->contactImpactLaw.toWidget(contactImpactLaw);
@@ -739,7 +740,7 @@ void ContactPropertyDialog::toWidget(Element *element) {
   static_cast<Contact*>(element)->frictionArrow.toWidget(frictionArrow);
 }
 
-void ContactPropertyDialog::fromWidget(Element *element) {
+void ContactPropertyDialog::fromWidget(TreeItemData *element) {
   LinkPropertyDialog::fromWidget(element);
   static_cast<Contact*>(element)->contactForceLaw.fromWidget(contactForceLaw);
   static_cast<Contact*>(element)->contactImpactLaw.fromWidget(contactImpactLaw);
@@ -774,7 +775,7 @@ AbsoluteKinematicsObserverPropertyDialog::AbsoluteKinematicsObserverPropertyDial
   addToTab("Visualisation",angularAcceleration);
 }
 
-void AbsoluteKinematicsObserverPropertyDialog::toWidget(Element *element) {
+void AbsoluteKinematicsObserverPropertyDialog::toWidget(TreeItemData *element) {
   ObserverPropertyDialog::toWidget(element);
   static_cast<AbsoluteKinematicsObserver*>(element)->frame.toWidget(frame);
   static_cast<AbsoluteKinematicsObserver*>(element)->position.toWidget(position);
@@ -784,7 +785,7 @@ void AbsoluteKinematicsObserverPropertyDialog::toWidget(Element *element) {
   static_cast<AbsoluteKinematicsObserver*>(element)->angularAcceleration.toWidget(angularAcceleration);
 }
 
-void AbsoluteKinematicsObserverPropertyDialog::fromWidget(Element *element) {
+void AbsoluteKinematicsObserverPropertyDialog::fromWidget(TreeItemData *element) {
   ObserverPropertyDialog::fromWidget(element);
   static_cast<AbsoluteKinematicsObserver*>(element)->frame.fromWidget(frame);
   static_cast<AbsoluteKinematicsObserver*>(element)->position.fromWidget(position);
@@ -792,5 +793,38 @@ void AbsoluteKinematicsObserverPropertyDialog::fromWidget(Element *element) {
   static_cast<AbsoluteKinematicsObserver*>(element)->angularVelocity.fromWidget(angularVelocity);
   static_cast<AbsoluteKinematicsObserver*>(element)->acceleration.fromWidget(acceleration);
   static_cast<AbsoluteKinematicsObserver*>(element)->angularAcceleration.fromWidget(angularAcceleration);
+}
+
+ParameterPropertyDialog::ParameterPropertyDialog(QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f) {
+  addTab("General");
+  name = new TextWidget;
+  ExtWidget *name_=new ExtWidget("Name",name);
+  addToTab("General",name_);
+}
+
+void ParameterPropertyDialog::toWidget(TreeItemData *element) {
+  name->setName(QString::fromStdString(element->getName()));
+}
+
+void ParameterPropertyDialog::fromWidget(TreeItemData *element) {
+  element->setName(name->getName().toStdString());
+}
+
+ScalarParameterPropertyDialog::ScalarParameterPropertyDialog(QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parent,f) {
+
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("1"),QStringList(),0));
+  value = new ExtWidget("Value",new ExtPhysicalVarWidget(input));
+  addToTab("General", value);
+}
+
+void ScalarParameterPropertyDialog::toWidget(TreeItemData *parameter) {
+  ParameterPropertyDialog::toWidget(parameter);
+  static_cast<ScalarParameter*>(parameter)->value.toWidget(value);
+}
+
+void ScalarParameterPropertyDialog::fromWidget(TreeItemData *parameter) {
+  ParameterPropertyDialog::fromWidget(parameter);
+  static_cast<ScalarParameter*>(parameter)->value.fromWidget(value);
 }
 

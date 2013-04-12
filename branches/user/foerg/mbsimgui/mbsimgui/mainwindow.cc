@@ -132,6 +132,9 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   removeRowAction->setText(QApplication::translate("MainWindow", "Remove", 0, QApplication::UnicodeUTF8));
   removeRowAction->setShortcut(QApplication::translate("MainWindow", "Ctrl+R, R", 0, QApplication::UnicodeUTF8));
 
+  addScalarParameterAction=new QAction("Add parameter", this);
+  connect(addScalarParameterAction,SIGNAL(triggered()),this,SLOT(addScalarParameter()));
+
   QMenu *ProjMenu=new QMenu("Project", menuBar());
   ProjMenu->addAction("New", this, SLOT(saveProjAs()));
   ProjMenu->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_DirOpenIcon)),"Load", this, SLOT(loadProj()));
@@ -191,10 +194,8 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   parameterMenu->addAction("Save as", this, SLOT(saveParameterAs()));
   actionSaveParameter = parameterMenu->addAction("Save", this, SLOT(saveParameter()));
   actionSaveParameter->setDisabled(true);
-  submenu = parameterMenu->addMenu("New parameter");
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Scalar", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(newDoubleParameter()));
-  submenu->addAction(action);
+  submenu = parameterMenu->addMenu("Add parameter");
+  submenu->addAction(addScalarParameterAction);
   menuBar()->addMenu(parameterMenu);
 
   menuBar()->addSeparator();
@@ -220,24 +221,18 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   setWindowTitle("MBSim GUI");
 
   elementList = new QTreeView;
+  elementList->setModel(new ElementTreeModel);
+  elementList->setItemDelegate(new ElementDelegate);
 
-  QStringList headers;
-  TreeModel *model = new TreeModel(headers);
-  elementList->setModel(model);
-
-  Delegate *delegate = new Delegate;
-  elementList->setItemDelegate(delegate);
-
-  connect(elementList,SIGNAL(pressed(QModelIndex)), this, SLOT(elementListClicked()));
   integratorList = new QTreeWidget;
   integratorList->setHeaderLabel("Type");
   connect(integratorList,SIGNAL(pressed(QModelIndex)), this, SLOT(integratorListClicked()));
 
-  parameterList = new QTreeWidget;
-  parameterList->setColumnCount(2);
-  headers.clear();
-  headers << "Name" << "Value";
-  parameterList->setHeaderLabels(headers);
+  parameterList = new QTreeView;
+  parameterList->setModel(new ParameterListModel);
+  parameterList->setItemDelegate(new ParameterDelegate);
+
+  connect(elementList,SIGNAL(pressed(QModelIndex)), this, SLOT(elementListClicked()));
   connect(parameterList,SIGNAL(pressed(QModelIndex)), this, SLOT(parameterListClicked()));
 
   QDockWidget *dockWidget = new QDockWidget("MBS");
@@ -303,8 +298,6 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   
   newDOPRI5Integrator();
   newMBS();
-  QTreeWidgetItem* parentItem = new QTreeWidgetItem;
-
 }
 
 void MainWindow::openPropertyDialog() {
@@ -396,7 +389,7 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 
 void MainWindow::selectionChanged() {
   QModelIndex index = elementList->selectionModel()->currentIndex();
-  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   Element *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
 #ifdef INLINE_OPENMBV
   if(element)
@@ -411,7 +404,7 @@ void MainWindow::elementListClicked() {
   if(QApplication::mouseButtons()==Qt::RightButton) {
     QModelIndex index = elementList->selectionModel()->currentIndex();
     if(index.column()==0) {
-      TreeModel *model = static_cast<TreeModel*>(elementList->model());
+      ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
       QMenu menu("Context Menu");
       if(dynamic_cast<Group*>(model->getItem(index)->getItemData())) {
         menu.addSeparator();
@@ -453,13 +446,13 @@ void MainWindow::integratorListClicked() {
 }
 
 void MainWindow::parameterListClicked() {
-  if(QApplication::mouseButtons()==Qt::RightButton) {
-    Parameter *parameter=dynamic_cast<Parameter*>(parameterList->currentItem());
-    if(parameter) {
-      QMenu* menu=parameter->getContextMenu();
-      menu->exec(QCursor::pos());
-    }
-  } 
+//  if(QApplication::mouseButtons()==Qt::RightButton) {
+//    Parameter *parameter=dynamic_cast<Parameter*>(parameterList->currentItem());
+//    if(parameter) {
+//      QMenu* menu=parameter->getContextMenu();
+//      menu->exec(QCursor::pos());
+//    }
+//  } 
 //  else if(QApplication::mouseButtons()==Qt::LeftButton) {
 //    Parameter *parameter=(Parameter*)parameterList->currentItem();
 //    pagesWidget->insertWidget(0,parameter->getPropertyWidget());
@@ -515,7 +508,7 @@ void MainWindow::newMBS() {
   mbsDir = QDir::current();
   actionOpenMBV->setDisabled(true);
   actionH5plotserie->setDisabled(true);
-  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = model->index(0,0);
   model->removeRow(index.row(), index.parent());
   model->addSolver();
@@ -539,7 +532,7 @@ void MainWindow::loadMBS(const QString &file) {
   actionH5plotserie->setDisabled(true);
   actionSaveMBS->setDisabled(true);
   if(file!="") {
-    TreeModel *model = static_cast<TreeModel*>(elementList->model());
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = model->index(0,0);
     model->removeRow(index.row(), index.parent());
     Solver *sys = Solver::readXMLFile(file.toStdString());
@@ -562,7 +555,7 @@ void MainWindow::loadMBS() {
 }
 
 void MainWindow::saveMBSAs() {
-  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = model->index(0,0);
 //  if(index.isValid()) {
     QString file=QFileDialog::getSaveFileName(0, "XML model files", QString("./")+QString::fromStdString(model->getItem(index)->getItemData()->getName())+".mbsim.xml", "XML files (*.mbsim.xml)");
@@ -575,7 +568,7 @@ void MainWindow::saveMBSAs() {
 }
 
 void MainWindow::saveMBS() {
-  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = model->index(0,0);
   Solver *solver = static_cast<Solver*>(model->getItem(index)->getItemData());
   QString file = fileMBS->text();
@@ -736,38 +729,35 @@ void MainWindow::saveIntegrator() {
   ((Integrator*)integratorList->topLevelItem(0))->writeXMLFile(file);
 }
 
-void MainWindow::newDoubleParameter() {
-  QTreeWidgetItem* parentItem = parameterList->invisibleRootItem();
-  QString str;
-  for(int i=1; i<10000; i++) {
-    str = "a" + QString::number(i);
-    if(!getChild(parentItem, str))
-      break;
-  }
-  Parameter *parameter = new DoubleParameter(str, parentItem);
-  connect(parameter,SIGNAL(parameterChanged(const QString&)),this,SLOT(updateOctaveParameters()));
-  updateOctaveParameters();
-
+void MainWindow::addScalarParameter() {
+  ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
+  model->addScalarParameter();
+//  Parameter *parameter = new DoubleParameter(str, parentItem);
+//  connect(parameter,SIGNAL(parameterChanged(const QString&)),this,SLOT(updateOctaveParameters()));
+//  updateOctaveParameters();
 #ifdef INLINE_OPENMBV
   mbsimxml(1);
 #endif
+//  QModelIndex containerIndex = model->index(3, 0, index);
+//  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
+//  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+//  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+
 }
 
 void MainWindow::newParameter() {
-  parameterList->clear();
-  actionSaveParameter->setDisabled(true);
-  //actionSaveParameterAs->setDisabled(false);
-  fileParameter->setText("");
+//  parameterList->clear();
+//  actionSaveParameter->setDisabled(true);
+//  fileParameter->setText("");
 }
 
 void MainWindow::loadParameter(const QString &file) {
   fileParameter->setText(file);
   actionSaveParameter->setDisabled(true);
   if(file!="") {
-    //((Solver*)elementList->topLevelItem(0))->setParameterFile(file);
-    parameterList->clear();
-    QTreeWidgetItem* parentItem = 0;
-    if(parentItem==NULL) parentItem=parameterList->invisibleRootItem();
+    ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
+    QModelIndex index = model->index(0,0);
+    model->removeRow(index.row(), index.parent());
 
     MBSimObjectFactory::initialize();
     TiXmlDocument doc;
@@ -780,15 +770,11 @@ void MainWindow::loadParameter(const QString &file) {
     incorporateNamespace(doc.FirstChildElement(), dummy);
     TiXmlElement *E=e->FirstChildElement();
     vector<QString> refFrame;
-    //for(int i=0; i<2; i++) {
     while(E) {
-      //TiXmlElement *E=e->FirstChildElement();
-      Parameter *parameter=ObjectFactory::getInstance()->createParameter(E, parentItem);
-      //Parameter *parameter = new DoubleParameter(E->Attribute("name"),parentItem,-1);
-
-//    connect(parameter,SIGNAL(valueChanged()),(Solver*)elementList->topLevelItem(0),SLOT(updateWidget()));
+      Parameter *parameter=ObjectFactory::getInstance()->createParameter(E);
       parameter->initializeUsingXML(E);
-      connect(parameter,SIGNAL(parameterChanged(const QString&)),this,SLOT(updateOctaveParameters()));
+      model->createParameterItem(parameter);
+      //connect(parameter,SIGNAL(parameterChanged(const QString&)),this,SLOT(updateOctaveParameters()));
       E=E->NextSiblingElement();
     }
     updateOctaveParameters();
@@ -819,13 +805,15 @@ void MainWindow::saveParameterAs() {
 }
 
 void MainWindow::saveParameter(QString fileName) {
+  ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
+  QModelIndex index = model->index(0,0);
+
   TiXmlDocument doc;
   TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
   doc.LinkEndChild( decl );
   TiXmlElement *ele0=new TiXmlElement(PARAMNS+string("parameter"));
-  for(int i=0; i<parameterList->topLevelItemCount(); i++) {
-    ((Parameter*)parameterList->topLevelItem(i))->writeXMLFile(ele0);
-  }
+  for(int i=0; i<model->rowCount(QModelIndex()); i++)
+    static_cast<Parameter*>(model->getItem(index.sibling(i,0))->getItemData())->writeXMLFile(ele0);
   doc.LinkEndChild(ele0);
   unIncorporateNamespace(doc.FirstChildElement(), Utils::getMBSimNamespacePrefixMapping());  
   QString file = fileParameter->text();
@@ -834,9 +822,11 @@ void MainWindow::saveParameter(QString fileName) {
 
 void MainWindow::updateOctaveParameters() {
   vector<MBXMLUtils::OctaveEvaluator::Param> param;
-  for(int i=0; i<parameterList->topLevelItemCount(); i++) {
-    Parameter *p=static_cast<Parameter*>(parameterList->invisibleRootItem()->child(i));
-    param.push_back(MBXMLUtils::OctaveEvaluator::Param(p->getName().toStdString(), toStr(p->getValue()), 0));
+  ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
+  QModelIndex index = model->index(0,0);
+  for(int i=0; i<model->rowCount(QModelIndex()); i++) {
+    Parameter *p=static_cast<Parameter*>(model->getItem(index.sibling(i,0))->getItemData());
+    param.push_back(MBXMLUtils::OctaveEvaluator::Param(p->getName(), toStr(p->getValue()), 0));
   }
   try {
     octEval->saveAndClearCurrentParam();
@@ -850,7 +840,7 @@ void MainWindow::updateOctaveParameters() {
 void MainWindow::mbsimxml(int task) {
   absolutePath = true;
   QModelIndex index = elementList->model()->index(0,0);
-  Solver *slv=dynamic_cast<Solver*>(static_cast<TreeModel*>(elementList->model())->getItem(index)->getItemData());
+  Solver *slv=dynamic_cast<Solver*>(static_cast<ElementTreeModel*>(elementList->model())->getItem(index)->getItemData());
   Integrator *integ=(Integrator*)integratorList->topLevelItem(0);
   if(!slv || !integ)
     return;
@@ -907,7 +897,7 @@ void MainWindow::h5plotserie() {
 
 void MainWindow::selectElement(string ID) {
   //map<string, Element*>::iterator it=Element::idEleMap.find(ID);
-  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   map<string, QModelIndex>::iterator it=model->idEleMap.find(ID);
   if(it!=model->idEleMap.end()) {
    //QModelIndex index = elementList->selectionModel()->currentIndex();
@@ -1027,7 +1017,7 @@ void Process::errLinkClicked(const QUrl &link) {
 }
 
 void MainWindow::removeRow() {
-  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
   model->removeElement(index);
 #ifdef INLINE_OPENMBV
@@ -1036,7 +1026,7 @@ void MainWindow::removeRow() {
 }
 
 void MainWindow::addGroup() {
-  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
   model->addGroup(index);
 #ifdef INLINE_OPENMBV
@@ -1082,7 +1072,7 @@ void MainWindow::addObserver() {
 }
 
 void MainWindow::addRigidBody() {
-  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
   model->addRigidBody(index);
 #ifdef INLINE_OPENMBV
@@ -1095,7 +1085,7 @@ void MainWindow::addRigidBody() {
 }
 
 void MainWindow::addGearConstraint() {
-  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
   model->addGearConstraint(index);
 #ifdef INLINE_OPENMBV
@@ -1108,7 +1098,7 @@ void MainWindow::addGearConstraint() {
 }
 
 void MainWindow::addKinematicConstraint() {
-  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
   model->addKinematicConstraint(index);
 #ifdef INLINE_OPENMBV
@@ -1121,7 +1111,7 @@ void MainWindow::addKinematicConstraint() {
 }
 
 void MainWindow::addJointConstraint() {
-  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
   model->addJointConstraint(index);
 #ifdef INLINE_OPENMBV
@@ -1135,7 +1125,7 @@ void MainWindow::addJointConstraint() {
 
 
 void MainWindow::addFrame() {
-  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
   model->addFrame(index);
 #ifdef INLINE_OPENMBV
@@ -1148,7 +1138,7 @@ void MainWindow::addFrame() {
 }
 
 void MainWindow::addPoint() {
-  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
   model->addPoint(index);
 #ifdef INLINE_OPENMBV
@@ -1161,7 +1151,7 @@ void MainWindow::addPoint() {
 }
 
 void MainWindow::addLine() {
-  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
   model->addLine(index);
 #ifdef INLINE_OPENMBV
@@ -1174,7 +1164,7 @@ void MainWindow::addLine() {
 }
 
 void MainWindow::addPlane() {
-  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
   model->addPlane(index);
 #ifdef INLINE_OPENMBV
@@ -1187,7 +1177,7 @@ void MainWindow::addPlane() {
 }
 
 void MainWindow::addSphere() {
-  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
   model->addSphere(index);
 #ifdef INLINE_OPENMBV
@@ -1200,7 +1190,7 @@ void MainWindow::addSphere() {
 }
 
 void MainWindow::addKineticExcitation() {
-  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
   model->addKineticExcitation(index);
 #ifdef INLINE_OPENMBV
@@ -1213,7 +1203,7 @@ void MainWindow::addKineticExcitation() {
 }
 
 void MainWindow::addSpringDamper() {
-  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
   model->addSpringDamper(index);
 #ifdef INLINE_OPENMBV
@@ -1226,7 +1216,7 @@ void MainWindow::addSpringDamper() {
 }
 
 void MainWindow::addJoint() {
-  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
   model->addJoint(index);
 #ifdef INLINE_OPENMBV
@@ -1239,7 +1229,7 @@ void MainWindow::addJoint() {
 }
 
 void MainWindow::addContact() {
-  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
   model->addContact(index);
 #ifdef INLINE_OPENMBV
@@ -1252,7 +1242,7 @@ void MainWindow::addContact() {
 }
 
 void MainWindow::addAbsoluteKinematicsObserver() {
-  TreeModel *model = static_cast<TreeModel*>(elementList->model());
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
   model->addAbsoluteKinematicsObserver(index);
 #ifdef INLINE_OPENMBV

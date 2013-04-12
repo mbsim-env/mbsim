@@ -37,12 +37,9 @@
 #include "basic_properties.h"
 #include <string>
 #include "utils.h"
-#include "mainwindow.h"
 #include "observer.h"
 
 using namespace std;
-
-extern MainWindow *mw;
 
 Group::Group(const string &str, Element *parent) : Element(str,parent), position(0,false), orientation(0,false), frameOfReference(0,false) {
 
