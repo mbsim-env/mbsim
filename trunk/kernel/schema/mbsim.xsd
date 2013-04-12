@@ -3191,19 +3191,11 @@
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="SymbolicFunction1_SSType">
+  <xs:complexType name="SymbolicFunction1_SSType" mixed="true">
     <xs:complexContent>
       <xs:extension base="Function1_SSType">
-        <xs:sequence>
-          <xs:any namespace="http://openmbv.berlios.de/MBXMLUtils/CasADi" processContents="lax"/>
-        </xs:sequence> 
-        <xs:attribute name="argname" use="required">
-          <xs:simpleType>
-            <xs:restriction base="xs:token">
-              <xs:pattern value="[a-zA-Z_][a-zA-Z0-9_]*"/>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
+        <xs:group ref="pv:symbolicFunctionXMLElement"/>
+        <xs:attribute name="arg1name" use="required" type="pv:symbolicFunctionArgNameType"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
@@ -3485,19 +3477,11 @@
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="SymbolicFunction1_VSType">
+  <xs:complexType name="SymbolicFunction1_VSType" mixed="true">
     <xs:complexContent>
       <xs:extension base="Function1_VSType">
-        <xs:sequence>
-          <xs:any namespace="http://openmbv.berlios.de/MBXMLUtils/CasADi" processContents="lax"/>
-        </xs:sequence> 
-        <xs:attribute name="argname" use="required">
-          <xs:simpleType>
-            <xs:restriction base="xs:token">
-              <xs:pattern value="[a-zA-Z_][a-zA-Z0-9_]*"/>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
+        <xs:group ref="pv:symbolicFunctionXMLElement"/>
+        <xs:attribute name="arg1name" use="required" type="pv:symbolicFunctionArgNameType"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   

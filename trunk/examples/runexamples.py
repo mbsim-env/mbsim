@@ -40,7 +40,8 @@ willFail=set([
   pj('mechanics', 'basics', 'general_kinematics_symbolic'),
   pj('xmlflat', 'time_dependent_kinematics'),
   pj('mechanics', 'contacts', 'area_polynomialfrustum'),
-  pj('mechanics', 'flexible_body', 'perlchain_cosserat')
+  pj('mechanics', 'flexible_body', 'perlchain_cosserat'),
+  pj('xml', 'time_dependent_kinematics')
 ])
 
 # command line option definition

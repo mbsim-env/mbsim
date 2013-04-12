@@ -14,27 +14,19 @@
             <translation>
                 <TimeDependentTranslation>
                     <position>
-                        <SymbolicFunction1_VS arg1name="dummyforflatxml">
-                            <SXFunction xmlns="http://openmbv.berlios.de/MBXMLUtils/CasADi">
-                                <inputs>
-                                    <SymbolicSX id="0">t</SymbolicSX>
-                                </inputs>
-                                <outputs>
-                                    <SXMatrix columnVector="true">
-                                        <UnarySX op="11" id="1">
-                                            <BinarySX op="1" id="2">
-                                                <BinarySX op="3" id="3">
-                                                    <RealtypeSX id="4">3.14159265358979312</RealtypeSX>
-                                                    <reference refid="0" />
-                                                </BinarySX>
-                                                <RealtypeSX id="5">1.57079632679489656</RealtypeSX>
-                                            </BinarySX>
-                                        </UnarySX>
-                                        <reference refid="0" />
-                                        <ZeroSX id="6" />
-                                    </SXMatrix>
-                                </outputs>
-                            </SXFunction>
+                        <!--<SymbolicFunction1_VS arg1name="t">
+                            The below line is the code we want to write here for returning a 3x1 matrix.
+                            But this code generates a lot of octave/casadi valgrind errors and
+                            or even crashes. However the below code works fine, without any valgrind
+                            error.
+
+                            [sin(freq1*t + pi/2); v0y*t; 0]
+                        </SymbolicFunction1_VS>-->
+                        <SymbolicFunction1_VS arg1name="t">
+                            ret=casadi.ssym('ret', 3, 1);
+                            ret(1)=sin(freq1*t + pi/2);
+                            ret(2)=v0y*t;
+                            ret(3)=0;
                         </SymbolicFunction1_VS>
                     </position>
                 </TimeDependentTranslation>
@@ -43,23 +35,8 @@
                 <TimeDependentRotationAboutFixedAxis>
                     <axisOfRotation>[0;0;1]</axisOfRotation>
                     <position>
-                        <SymbolicFunction1_SS arg1name="dummyforflatxml">
-                            <SXFunction xmlns="http://openmbv.berlios.de/MBXMLUtils/CasADi">
-                                <inputs>
-                                    <SymbolicSX id="0">t</SymbolicSX>
-                                </inputs>
-                                <outputs>
-                                    <BinarySX op="3" id="1">
-                                        <IntegerSX id="2">5</IntegerSX>
-                                        <UnarySX op="11" id="3">
-                                            <BinarySX op="3" id="4">
-                                                <RealtypeSX id="5">1.04719755119659763</RealtypeSX>
-                                                <reference refid="0" />
-                                            </BinarySX>
-                                        </UnarySX>
-                                    </BinarySX>
-                                </outputs>
-                            </SXFunction>
+                        <SymbolicFunction1_SS arg1name="t">
+                            5*sin(freq2*t)
                         </SymbolicFunction1_SS>
                     </position>
                 </TimeDependentRotationAboutFixedAxis>
