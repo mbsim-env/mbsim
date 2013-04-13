@@ -46,7 +46,7 @@ EOF
 
 rss 0
 
-$SRCDIR/build-scripts/daily-build/build.py --forceBuild "$@" --sourceDir $SRCDIR --prefix $SRCDIR/local --reportOutDir $OUTDIR/report --url $URL/report --disableRunExamples --buildType "Linux Release Build: " --passToConfigure --enable-shared --disable-static --with-qwt-inc-prefix=/usr/include/qwt
+$SRCDIR/build-scripts/daily-build/build.py --forceBuild "$@" --sourceDir $SRCDIR --prefix $SRCDIR/local --reportOutDir $OUTDIR/report --url $URL/report --buildType "Linux Release Build: " --passToConfigure --enable-shared --disable-static --with-qwt-inc-prefix=/usr/include/qwt --passToRunexamples xmlflat/hierachical_modelling xmlflat/time_dependent_kinematics xml/hierachical_modelling xml/time_dependent_kinematics
 
 RET=0
 
