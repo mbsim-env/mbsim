@@ -27,6 +27,7 @@ $PREFIX/bin/mbsimxml
 $PREFIX/bin/mbsimgui
 $PREFIX/bin/mbxmlutilspp
 $PREFIX/bin/openmbv
+$PREFIX/bin/casadi_interface.oct
 /usr/bin/h5copy
 /usr/bin/h5diff
 /usr/bin/h5dump
@@ -198,6 +199,10 @@ rm -f $DISTDIR/include/features.h
 cp -uL $PREFIX/bin/OpenMBV.oct $DISTDIR/bin
 cp -uL $PREFIX/bin/OpenMBV.py $DISTDIR/bin
 cp -uL $PREFIX/bin/_OpenMBV.so $DISTDIR/bin
+# copy casadi SWIG files for octave
+cp -uL $PREFIX/bin/casadi.m $DISTDIR/bin
+cp -uL $PREFIX/bin/casadi_helpers.m $DISTDIR/bin
+cp -ruL $PREFIX/bin/@swig_ref $DISTDIR/bin
 # modifie all ELF rpath in lib/*.so*
 for F in $DISTDIR/lib/*.so $DISTDIR/lib/*.so.*; do
   chrpath -r '$ORIGIN/../lib' $F &> /dev/null || chrpath -d $F &> /dev/null || DUMMYVAR=0
@@ -357,7 +362,7 @@ chmod +x $DISTDIR/bin/mbsim-test
 # archive dist dir
 if [ $NOARCHIVE -eq 0 ]; then
   rm -f $DISTBASEDIR/mbsim-linux-shared-build-xxx.tar.bz2
-  (cd $DISTBASEDIR; tar -cjf $DISTBASEDIR/mbsim-linux-shared-build-xxx.tar.bz2 mbsim)
+  (cd $DISTBASEDIR; tar -cvjf $DISTBASEDIR/mbsim-linux-shared-build-xxx.tar.bz2 mbsim)
   echo "Create MBSim archive at $DISTBASEDIR/mbsim-linux-shared-build-xxx.tar.bz2"
 fi
 
@@ -464,6 +469,6 @@ EOF
 # archive dist dir
 if [ $NOARCHIVE -eq 0 ]; then
   rm -f $DISTBASEDIR/openmbv-linux-shared-build-xxx.tar.bz2
-  (cd $DISTBASEDIR; tar -cjf $DISTBASEDIR/openmbv-linux-shared-build-xxx.tar.bz2 openmbv)
+  (cd $DISTBASEDIR; tar -cvjf $DISTBASEDIR/openmbv-linux-shared-build-xxx.tar.bz2 openmbv)
   echo "Create OpenMBV archive at $DISTBASEDIR/openmbv-linux-shared-build-xxx.tar.bz2"
 fi
