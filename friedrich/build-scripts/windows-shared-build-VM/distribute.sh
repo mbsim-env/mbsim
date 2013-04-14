@@ -28,6 +28,7 @@ $PREFIX/bin/mbsimxml.exe
 $PREFIX/bin/mbsimgui.exe
 $PREFIX/bin/mbxmlutilspp.exe
 $PREFIX/bin/openmbv.exe
+$PREFIX/bin/casadi_interface.oct
 $PREFIX/bin/tools/h5copy.exe
 $PREFIX/bin/tools/h5diff.exe
 $PREFIX/bin/tools/h5dump.exe
@@ -181,6 +182,10 @@ cp -uL /usr/i686-w64-mingw32/sys-root/mingw/bin/iconv.dll $DISTDIR/bin
 cp -uL $PREFIX/bin/OpenMBV.oct $DISTDIR/bin
 cp -uL $PREFIX/bin/OpenMBV.py $DISTDIR/bin
 cp -uL $PREFIX/bin/_OpenMBV.pyd $DISTDIR/bin
+# copy casadi SWIG files for octave
+cp -uL $PREFIX/bin/casadi.m $DISTDIR/bin
+cp -uL $PREFIX/bin/casadi_helpers.m $DISTDIR/bin
+cp -ruL $PREFIX/bin/@swig_ref $DISTDIR/bin
 
 # create mbsim-config.bat
 cat << EOF > $DISTDIR/bin/mbsim-config.bat
