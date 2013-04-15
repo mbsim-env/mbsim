@@ -32,7 +32,7 @@ class SpringDamper : public Link {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void initialize();
-    PropertyDialog* createPropertyDialog() {return new SpringDamperPropertyDialog(this);}
+    ElementPropertyDialog* createPropertyDialog() {return new SpringDamperPropertyDialog(this);}
   protected:
     ExtProperty forceFunction, connections, forceDirection, coilSpring;
 };

@@ -51,7 +51,7 @@ class Solver : public Group {
     void writeXMLFile(const std::string &name);
     void writeXMLFile() { writeXMLFile(getName()); }
 
-    PropertyDialog* createPropertyDialog() {return new SolverPropertyDialog(this);}
+    ElementPropertyDialog* createPropertyDialog() {return new SolverPropertyDialog(this);}
 
     bool isRemovable() {return false;}
 };

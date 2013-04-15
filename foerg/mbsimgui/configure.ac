@@ -10,16 +10,11 @@ AC_PROG_CXXCPP
 AC_LANG([C++])
 
 if test "_$host_os" = "_mingw32" ; then
-  AC_DEFINE([MBSIMGUI_MINGW], [1], [Host System is MinGW/MSys])
   # -fno-keep-inline-dllexport: requires gcc >= 4.6; and is reauired by Qt to avoid the generatoin of
   # code for inline functions which causes undefines symbols on linkage.
   CPPFLAGS="-fno-keep-inline-dllexport $CPPFLAGS"
   LDFLAGS="-mwindows $LDFLAGS"
 fi
-
-AC_SUBST([DATADIR], ["$(eval echo $(eval echo $datadir))"])
-
-AC_SUBST([DEFINES])
 
 dnl Qt
 PKG_CHECK_MODULES(QT, [QtCore >= 4.4 QtGui >= 4.4 QtXml >= 4.4])
@@ -36,72 +31,12 @@ PKG_CHECK_MODULES(OPENMBV, [openmbv])
 
 PKG_CHECK_MODULES(MBXMLUTILS, [mbxmlutils])
 
-dnl Check for octave
-# user supplied mkoctfile program
-AC_ARG_WITH([mkoctfile],
-  [  --with-mkoctfile=PATHTOMKOCTFILE  The 'mkoctfile' program.],
-  [mkoctfile="$withval"],[mkoctfile="no"])
-# get mkoctfile program
-if test "$mkoctfile" == "no"; then
-  AC_PATH_PROG([mkoctfile],[mkoctfile],[no],[$prefix/bin:$PATH])
-fi
-test $mkoctfile = "no" && AC_MSG_ERROR([mkoctfile not found])
-AC_SUBST([MKOCTFILE],[$mkoctfile])
-# get mkoctfile compiler flags
-DOS2UNIX="cat"
-if test "$cross_compiling" == "yes"; then
-  DOS2UNIX="dos2unix"
-fi
-MKOCTFILE_CFLAGS="$(echo $($MKOCTFILE -p INCFLAGS | $DOS2UNIX) | sed -re 's|\\|/|g')"
-MKOCTFILE_LIBS="$(echo \
-  $(unset RLD_FLAG; $MKOCTFILE -p RLD_FLAG | $DOS2UNIX) \
-  $(unset LFLAGS; $MKOCTFILE -p LFLAGS | $DOS2UNIX) \
-  $(unset LIBOCTINTERP; $MKOCTFILE -p LIBOCTINTERP | $DOS2UNIX) \
-  $(unset LIBOCTAVE; $MKOCTFILE -p LIBOCTAVE | $DOS2UNIX) \
-  $(unset LIBCRUFT; $MKOCTFILE -p LIBCRUFT | $DOS2UNIX) \
-  $(unset FFTW_LIBS; $MKOCTFILE -p FFTW_LIBS | $DOS2UNIX) \
-  $(unset BLAS_LIBS; $MKOCTFILE -p BLAS_LIBS | $DOS2UNIX) \
-  $(unset FLIBS; $MKOCTFILE -p FLIBS | $DOS2UNIX) \
-  $(unset LIBS; $MKOCTFILE -p LIBS | $DOS2UNIX) \
-  | sed -re 's|\\|/|g')"
-AC_SUBST([MKOCTFILE_CFLAGS])
-AC_SUBST([MKOCTFILE_LIBS])
-
 AC_ARG_ENABLE([inlineombv],[  --disable-inlineombv  disable inline openmbv],[inlineombv="no"],[inlineombv="yes"]) if test "$inlineombv" = "yes"; then
   AC_DEFINE([INLINE_OPENMBV],[1],[Use inline openmbv])
 fi
 
-dnl Include path for Boost
-dnl AC_ARG_WITH([boost-inc],
-dnl   [  --with-boost-inc=PATH  The path Boost include directory.],
-dnl   [CPPFLAGS="$CPPFLAGS -I$withval"; DEFINES="$DEFINES -I$withval"])
-
-dnl Check for doxygen
-AC_ARG_WITH([doxygenpath],
-  [  --with-doxygenpath=PATH  The path to the 'doxygen' program.],
-  [doxygenpath="$withval"],[doxygenpath=""])
-AC_PATH_PROG([doxygen],[doxygen],[no],[$doxygenpath:$PATH])
-if test $doxygen = "no" ; then
-  AC_MSG_RESULT([cannot generate API documentation. 'doxygen' is required.])
-fi
-
-AC_SUBST([MBXMLUTILSSCHEMA],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
-AM_CONDITIONAL([COND_XML], [test "_$MBXMLUTILSSCHEMA" != "_"])
-
-AC_SUBST([OCTAVEDIR],[$(pkg-config mbxmlutils --variable OCTAVEDIR)])
-dnl AM_CONDITIONAL([COND_XML], [test "_$MBXMLUTILSSCHEMA" != "_"])
-
-dnl Helper functions to convert path to windows
-dirtowin() {
-  echo $(cd $1 && pwd -W 2> /dev/null)
-}
-if test "_$host_os" = "_mingw32" ; then
-  MBXMLUTILSSCHEMA=$(dirtowin $MBXMLUTILSSCHEMA)
-  OCTAVEDIR=$(dirtowin $OCTAVEDIR)
-fi
-
 LDFLAGS="$LDFLAGS -no-undefined"
 
-AC_CONFIG_FILES([Makefile mbsimgui/Makefile mbsimgui/env.h])
+AC_CONFIG_FILES([Makefile mbsimgui/Makefile])
 
 AC_OUTPUT

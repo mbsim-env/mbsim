@@ -45,7 +45,7 @@ class Parameter : public TreeItemData {
     virtual std::string getType() const { return "Parameter"; }
     const std::string& getName() const {return name;}
     void setName(const std::string &str) {name = str;}
-    PropertyDialog* createPropertyDialog() {return new ParameterPropertyDialog;}
+    virtual ParameterPropertyDialog* createPropertyDialog() {return new ParameterPropertyDialog;}
 };
 
 class ScalarParameter : public Parameter {
@@ -55,7 +55,7 @@ class ScalarParameter : public Parameter {
     virtual std::string getType() const { return "scalarParameter"; }
     std::string getValue() const;
     virtual void initializeUsingXML(TiXmlElement *element);
-    PropertyDialog* createPropertyDialog() {return new ScalarParameterPropertyDialog;}
+    ParameterPropertyDialog* createPropertyDialog() {return new ScalarParameterPropertyDialog;}
   protected:
     ExtProperty value;
 };

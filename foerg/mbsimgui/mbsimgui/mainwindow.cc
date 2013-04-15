@@ -42,6 +42,80 @@ QDir mbsDir;
 
 MainWindow *mw;
 
+class IntegratorView : public QLineEdit {
+  public:
+    IntegratorView() : integrator(0) {}
+    ~IntegratorView() {
+      delete integrator;
+    }
+    void newDOPRI5Integrator() {
+      delete integrator;
+      integrator = new DOPRI5Integrator;
+      setText("DOPRI5");
+    }
+    void newRADAU5Integrator() {
+      delete integrator;
+      integrator = new RADAU5Integrator;
+      setText("RADAU5");
+    }
+    void newLSODEIntegrator() {
+      delete integrator;
+      integrator = new LSODEIntegrator;
+      setText("LSODE");
+    }
+    void newLSODARIntegrator() {
+      delete integrator;
+      integrator = new LSODARIntegrator;
+      setText("LSODAR");
+    }
+    void newTimeSteppingIntegrator() {
+      delete integrator;
+      integrator = new TimeSteppingIntegrator;
+      setText("Time stepping");
+    }
+    void newEulerExplicitIntegrator() {
+      delete integrator;
+      integrator = new EulerExplicitIntegrator;
+      setText("Euler explicit");
+    }
+    void newRKSuiteIntegrator() {
+      delete integrator;
+      integrator = new RKSuiteIntegrator;
+      setText("RKSuite");
+    }
+    Integrator* getIntegrator() {return integrator;}
+    void setIntegrator(Integrator *integrator_) {integrator = integrator_;}
+  protected:
+    Integrator *integrator;
+};
+
+bool IntegratorMouseEvent::eventFilter(QObject *obj, QEvent *event) {
+  if (event->type() == QEvent::MouseButtonDblClick) {
+    dialog = view->getIntegrator()->createPropertyDialog();
+    dialog->toWidget(view->getIntegrator());
+    connect(dialog,SIGNAL(ok(QWidget*)),this,SLOT(commitDataAndClose()));
+    connect(dialog,SIGNAL(apply(QWidget*)),this,SLOT(commitData()));
+    connect(dialog,SIGNAL(cancel(QWidget*)),this,SLOT(rejectDataAndClose()));
+    dialog->exec();
+    delete dialog;
+    return true;
+  } else
+    return QObject::eventFilter(obj, event);
+}
+
+void IntegratorMouseEvent::commitData() {
+  dialog->fromWidget(view->getIntegrator());
+}
+
+void IntegratorMouseEvent::commitDataAndClose() {
+  dialog->fromWidget(view->getIntegrator());
+  dialog->accept();
+}
+
+void IntegratorMouseEvent::rejectDataAndClose() {
+  dialog->reject();
+}
+
 bool removeDir(const QString &dirName) {
   bool result = true;
   QDir dir(dirName);
@@ -69,6 +143,16 @@ MBXMLUtils::OctaveEvaluator *MainWindow::octEval=NULL;
 
 MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   mw = this;
+
+  QDir dir = QDir::temp();
+  for(int i=1; i<10000; i++) {
+    QString name = "mbsim_"+QString::number(i);
+    if(!dir.exists(name)) {
+      dir.mkdir(name);
+      uniqueTempDir = QDir::tempPath() + "/" + name;
+      break;
+    }
+  }
 
 #ifdef INLINE_OPENMBV
   initInlineOpenMBV();
@@ -126,14 +210,18 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   connect(addObserverAction,SIGNAL(triggered()),this,SLOT(addObserver()));
   addAbsoluteKinematicsObserverAction=new QAction("Add absolute kinematics observer", this);
   connect(addAbsoluteKinematicsObserverAction,SIGNAL(triggered()),this,SLOT(addAbsoluteKinematicsObserver()));
-  removeRowAction = new QAction(this);
-  removeRowAction->setObjectName(QString::fromUtf8("removeRowAction"));
-  connect(removeRowAction, SIGNAL(triggered()), this, SLOT(removeRow()));
-  removeRowAction->setText(QApplication::translate("MainWindow", "Remove", 0, QApplication::UnicodeUTF8));
-  removeRowAction->setShortcut(QApplication::translate("MainWindow", "Ctrl+R, R", 0, QApplication::UnicodeUTF8));
+  removeElementAction = new QAction(this);
+  removeElementAction->setObjectName(QString::fromUtf8("removeElementAction"));
+  connect(removeElementAction, SIGNAL(triggered()), this, SLOT(removeElement()));
+  removeElementAction->setText(QApplication::translate("MainWindow", "Remove", 0, QApplication::UnicodeUTF8));
+  removeElementAction->setShortcut(QApplication::translate("MainWindow", "Ctrl+R, R", 0, QApplication::UnicodeUTF8));
 
-  addScalarParameterAction=new QAction("Add parameter", this);
+  addScalarParameterAction=new QAction("Add scalar", this);
   connect(addScalarParameterAction,SIGNAL(triggered()),this,SLOT(addScalarParameter()));
+  removeParameterAction = new QAction(this);
+  connect(removeParameterAction, SIGNAL(triggered()), this, SLOT(removeParameter()));
+  removeParameterAction->setText(QApplication::translate("MainWindow", "Remove", 0, QApplication::UnicodeUTF8));
+  removeParameterAction->setShortcut(QApplication::translate("MainWindow", "Ctrl+R, R", 0, QApplication::UnicodeUTF8));
 
   QMenu *ProjMenu=new QMenu("Project", menuBar());
   ProjMenu->addAction("New", this, SLOT(saveProjAs()));
@@ -154,33 +242,33 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   QMenu *integratorMenu=new QMenu("Integrator", menuBar());
   QMenu *submenu = integratorMenu->addMenu("New");
 
-  action=new QAction(Utils::QIconCached("newobject.svg"),"DOPRI5", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(newDOPRI5Integrator()));
-  submenu->addAction(action);
+  newDOPRI5IntegratorAction=new QAction(Utils::QIconCached("newobject.svg"),"DOPRI5 integrator", this);
+  connect(newDOPRI5IntegratorAction,SIGNAL(triggered()),this,SLOT(newDOPRI5Integrator()));
+  submenu->addAction(newDOPRI5IntegratorAction);
   
-  action=new QAction(Utils::QIconCached("newobject.svg"),"RADAU5", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(newRADAU5Integrator()));
-  submenu->addAction(action);
+  newRADAU5IntegratorAction=new QAction(Utils::QIconCached("newobject.svg"),"RADAU5 integrator", this);
+  connect(newRADAU5IntegratorAction,SIGNAL(triggered()),this,SLOT(newRADAU5Integrator()));
+  submenu->addAction(newRADAU5IntegratorAction);
 
-  action=new QAction(Utils::QIconCached("newobject.svg"),"LSODE", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(newLSODEIntegrator()));
-  submenu->addAction(action);
+  newLSODEIntegratorAction=new QAction(Utils::QIconCached("newobject.svg"),"LSODE integrator", this);
+  connect(newLSODEIntegratorAction,SIGNAL(triggered()),this,SLOT(newLSODEIntegrator()));
+  submenu->addAction(newLSODEIntegratorAction);
 
-  action=new QAction(Utils::QIconCached("newobject.svg"),"LSODAR", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(newLSODARIntegrator()));
-  submenu->addAction(action);
+  newLSODARIntegratorAction=new QAction(Utils::QIconCached("newobject.svg"),"LSODAR integrator", this);
+  connect(newLSODARIntegratorAction,SIGNAL(triggered()),this,SLOT(newLSODARIntegrator()));
+  submenu->addAction(newLSODARIntegratorAction);
 
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Time stepping", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(newTimeSteppingIntegrator()));
-  submenu->addAction(action);
+  newTimeSteppingIntegratorAction=new QAction(Utils::QIconCached("newobject.svg"),"Time stepping integrator", this);
+  connect(newTimeSteppingIntegratorAction,SIGNAL(triggered()),this,SLOT(newTimeSteppingIntegrator()));
+  submenu->addAction(newTimeSteppingIntegratorAction);
 
-  action=new QAction(Utils::QIconCached("newobject.svg"),"Euler explicit", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(newEulerExplicitIntegrator()));
-  submenu->addAction(action);
+  newEulerExplicitIntegratorAction=new QAction(Utils::QIconCached("newobject.svg"),"Euler explicit integrator", this);
+  connect(newEulerExplicitIntegratorAction,SIGNAL(triggered()),this,SLOT(newEulerExplicitIntegrator()));
+  submenu->addAction(newEulerExplicitIntegratorAction);
 
-  action=new QAction(Utils::QIconCached("newobject.svg"),"RKSuite", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(newRKSuiteIntegrator()));
-  submenu->addAction(action);
+  newRKSuiteIntegratorAction=new QAction(Utils::QIconCached("newobject.svg"),"RKSuite integrator", this);
+  connect(newRKSuiteIntegratorAction,SIGNAL(triggered()),this,SLOT(newRKSuiteIntegrator()));
+  submenu->addAction(newRKSuiteIntegratorAction);
 
   integratorMenu->addAction("Load", this, SLOT(loadIntegrator()));
   integratorMenu->addAction("Save as", this, SLOT(saveIntegratorAs()));
@@ -223,59 +311,62 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   elementList = new QTreeView;
   elementList->setModel(new ElementTreeModel);
   elementList->setItemDelegate(new ElementDelegate);
-
-  integratorList = new QTreeWidget;
-  integratorList->setHeaderLabel("Type");
-  connect(integratorList,SIGNAL(pressed(QModelIndex)), this, SLOT(integratorListClicked()));
+  elementList->setColumnWidth(0,250);
+  elementList->setColumnWidth(1,200);
 
   parameterList = new QTreeView;
   parameterList->setModel(new ParameterListModel);
   parameterList->setItemDelegate(new ParameterDelegate);
+  parameterList->setColumnWidth(0,75);
+  parameterList->setColumnWidth(1,125);
+
+  parameterList->insertAction(0,addScalarParameterAction);
+  parameterList->setContextMenuPolicy(Qt::ActionsContextMenu);
 
   connect(elementList,SIGNAL(pressed(QModelIndex)), this, SLOT(elementListClicked()));
   connect(parameterList,SIGNAL(pressed(QModelIndex)), this, SLOT(parameterListClicked()));
 
-  QDockWidget *dockWidget = new QDockWidget("MBS");
-  addDockWidget(Qt::LeftDockWidgetArea,dockWidget);
+  QDockWidget *dockWidget1 = new QDockWidget("MBS");
+  addDockWidget(Qt::LeftDockWidgetArea,dockWidget1);
   QWidget *box = new QWidget;
-  dockWidget->setWidget(box);
-  QGridLayout* gl = new QGridLayout;
-  box->setLayout(gl);
+  dockWidget1->setWidget(box);
   fileMBS = new QLineEdit("");
   fileMBS->setReadOnly(true);
-  gl->addWidget(new QLabel("File:"),0,0);
-  gl->addWidget(fileMBS,0,1);
-  gl->addWidget(elementList,1,0,1,2);
-
-  QDockWidget *dockWidget2 = new QDockWidget("Integrator");
-  addDockWidget(Qt::LeftDockWidgetArea,dockWidget2);
-  box = new QWidget;
-  dockWidget2->setWidget(box);
-  gl = new QGridLayout;
+  QVBoxLayout *gl = new QVBoxLayout;
   box->setLayout(gl);
-  fileIntegrator = new QLineEdit("");
-  fileIntegrator->setReadOnly(true);
-  gl->addWidget(new QLabel("File:"),0,0);
-  gl->addWidget(fileIntegrator,0,1);
-  gl->addWidget(integratorList,1,0,1,2);
+  gl->addWidget(elementList);
 
   QDockWidget *dockWidget3 = new QDockWidget("Parameter");
   addDockWidget(Qt::LeftDockWidgetArea,dockWidget3);
   box = new QWidget;
   dockWidget3->setWidget(box);
-  gl = new QGridLayout;
+  gl = new QVBoxLayout;
   box->setLayout(gl);
   fileParameter = new QLineEdit("");
   fileParameter->setReadOnly(true);
-  gl->addWidget(new QLabel("File:"),0,0);
-  gl->addWidget(fileParameter,0,1);
-  gl->addWidget(parameterList,1,0,1,2);
+  gl->addWidget(parameterList);
 
-  tabifyDockWidget(dockWidget,dockWidget2);
-  tabifyDockWidget(dockWidget2,dockWidget3);
-  QList<QTabBar *> tabList = findChildren<QTabBar *>();
-  QTabBar *tabBar = tabList.at(0);
-  tabBar->setCurrentIndex(0);
+  QDockWidget *dockWidget2 = new QDockWidget("Integrator");
+  addDockWidget(Qt::BottomDockWidgetArea,dockWidget2);
+  box = new QWidget;
+  dockWidget2->setWidget(box);
+  gl = new QVBoxLayout;
+  box->setLayout(gl);
+  fileIntegrator = new QLineEdit("");
+  fileIntegrator->setReadOnly(true);
+  integratorList = new IntegratorView;
+  integratorList->installEventFilter(new IntegratorMouseEvent(integratorList));
+  QList<QAction*> actionList;
+  actionList << newDOPRI5IntegratorAction << newRADAU5IntegratorAction << newLSODEIntegratorAction << newLSODARIntegratorAction << newTimeSteppingIntegratorAction << newEulerExplicitIntegratorAction << newRKSuiteIntegratorAction;
+  integratorList->insertActions(0,actionList);
+  integratorList->setContextMenuPolicy(Qt::ActionsContextMenu);
+  integratorList->setReadOnly(true);
+  gl->addWidget(integratorList);
+ 
+  //tabifyDockWidget(dockWidget1,dockWidget2);
+  //tabifyDockWidget(dockWidget2,dockWidget3);
+  //QList<QTabBar *> tabList = findChildren<QTabBar *>();
+  //tabBar = tabList.at(0);
 
   QWidget *centralWidget = new QWidget;  
   setCentralWidget(centralWidget);
@@ -315,16 +406,6 @@ void MainWindow::initInlineOpenMBV() {
 //  mkdtemp(temp);
 //  uniqueTempDir = temp;
 
-  QDir dir = QDir::temp();
-  for(int i=1; i<10000; i++) {
-    QString name = "mbsim_"+QString::number(i);
-    if(!dir.exists(name)) {
-      dir.mkdir(name);
-      uniqueTempDir = QDir::tempPath() + "/" + name;
-      break;
-    }
-  }
-
   QFile::copy(QString::fromStdString(MBXMLUtils::getInstallPath()+"/share/mbsimgui/empty.ombv.xml"),uniqueTempDir+"/out1.ombv.xml");
   QFile::copy(QString::fromStdString(MBXMLUtils::getInstallPath()+"/share/mbsimgui/empty.ombv.h5"),uniqueTempDir+"/out1.ombv.h5");
   std::list<string> arg;
@@ -340,7 +421,7 @@ void MainWindow::initInlineOpenMBV() {
 }
 
 MainWindow::~MainWindow() {
-  delete inlineOpenMBVMW;
+  //delete inlineOpenMBVMW;
 
   removeDir(uniqueTempDir);
 }
@@ -422,22 +503,22 @@ void MainWindow::elementListClicked() {
       menu.addSeparator();
       if(model->getItem(index)->isRemovable()) {
         //menu.insertAction(propertiesAction);
-        menu.addAction(removeRowAction);
+        menu.addAction(removeElementAction);
       }
       menu.exec(QCursor::pos());
     } 
   }
-
 }
 
 void MainWindow::integratorListClicked() {
-  if(QApplication::mouseButtons()==Qt::RightButton) {
-    Integrator *integrator=(Integrator*)integratorList->currentItem();
-    if(integrator) {
-      QMenu* menu=integrator->getContextMenu();
-      menu->exec(QCursor::pos());
-    }
-  } 
+  cout << "integratorListClicked" << endl;
+//  if(QApplication::mouseButtons()==Qt::RightButton) {
+//    Integrator *integrator=(Integrator*)integratorList->currentItem();
+//    if(integrator) {
+//      QMenu* menu=integrator->getContextMenu();
+//      menu->exec(QCursor::pos());
+//    }
+//  } 
 //  else if(QApplication::mouseButtons()==Qt::LeftButton) {
 //    Integrator *integrator=(Integrator*)integratorList->currentItem();
 //    pagesWidget->insertWidget(0,integrator->getPropertyWidget());
@@ -446,18 +527,15 @@ void MainWindow::integratorListClicked() {
 }
 
 void MainWindow::parameterListClicked() {
-//  if(QApplication::mouseButtons()==Qt::RightButton) {
-//    Parameter *parameter=dynamic_cast<Parameter*>(parameterList->currentItem());
-//    if(parameter) {
-//      QMenu* menu=parameter->getContextMenu();
-//      menu->exec(QCursor::pos());
-//    }
-//  } 
-//  else if(QApplication::mouseButtons()==Qt::LeftButton) {
-//    Parameter *parameter=(Parameter*)parameterList->currentItem();
-//    pagesWidget->insertWidget(0,parameter->getPropertyWidget());
-//    pagesWidget->setCurrentWidget(parameter->getPropertyWidget());
-//  }
+  if(QApplication::mouseButtons()==Qt::RightButton) {
+    QModelIndex index = parameterList->selectionModel()->currentIndex();
+    if(index.column()==0) {
+      ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
+      QMenu menu("Context Menu");
+      menu.addAction(removeParameterAction);
+      menu.exec(QCursor::pos());
+    } 
+  }
 }
 
 //void MainWindow::parameterListClicked(const QPoint &pos) {
@@ -505,6 +583,7 @@ void MainWindow::saveProj() {
 }
 
 void MainWindow::newMBS() {
+  //tabBar->setCurrentIndex(0);
   mbsDir = QDir::current();
   actionOpenMBV->setDisabled(true);
   actionH5plotserie->setDisabled(true);
@@ -513,7 +592,7 @@ void MainWindow::newMBS() {
   model->removeRow(index.row(), index.parent());
   model->addSolver();
 
-  ((Integrator*)integratorList->topLevelItem(0))->setSolver(0);
+  //((Integrator*)integratorList->topLevelItem(0))->setSolver(0);
 
   actionSaveMBS->setDisabled(true);
   fileMBS->setText("");
@@ -525,6 +604,7 @@ void MainWindow::newMBS() {
 }
 
 void MainWindow::loadMBS(const QString &file) {
+  //tabBar->setCurrentIndex(0);
   mbsDir = QFileInfo(file).absolutePath();
   absoluteMBSFilePath=file;
   fileMBS->setText(QDir::current().relativeFilePath(absoluteMBSFilePath));
@@ -603,106 +683,58 @@ void MainWindow::saveMBS() {
 
 void MainWindow::newDOPRI5Integrator() {
   actionSaveIntegrator->setDisabled(true);
-  integratorList->clear();
-  QTreeWidgetItem* parentItem = integratorList->invisibleRootItem();
-  Integrator *integrator = new DOPRI5Integrator("DOPRI5",parentItem);
+//  integratorList->clear();
+//  QTreeWidgetItem* parentItem = integratorList->invisibleRootItem();
+//  delete integrator;
+//  integrator = new DOPRI5Integrator;
+//  cout << integrator << endl;
   //integrator->setSolver(((Solver*)elementList->topLevelItem(0)));
-  parentItem->addChild(integrator);
+  //parentItem->addChild(integrator);
+  integratorList->newDOPRI5Integrator();
   fileIntegrator->setText("");
-
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
 }
 
 void MainWindow::newRADAU5Integrator() {
   actionSaveIntegrator->setDisabled(true);
-  integratorList->clear();
-  QTreeWidgetItem* parentItem = integratorList->invisibleRootItem();
-  Integrator *integrator = new RADAU5Integrator("RADAU5",parentItem);
-  //integrator->setSolver(((Solver*)elementList->topLevelItem(0)));
-  parentItem->addChild(integrator);
+  integratorList->newRADAU5Integrator();
   fileIntegrator->setText("");
-
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
 }
 
 void MainWindow::newLSODEIntegrator() {
-  integratorList->clear();
-  QTreeWidgetItem* parentItem = integratorList->invisibleRootItem();
-  Integrator *integrator = new LSODEIntegrator("LSODE",parentItem);
-  //integrator->setSolver(((Solver*)elementList->topLevelItem(0)));
-  parentItem->addChild(integrator);
+  actionSaveIntegrator->setDisabled(true);
+  integratorList->newLSODEIntegrator();
   fileIntegrator->setText("");
-
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
 }
 
 void MainWindow::newLSODARIntegrator() {
-  integratorList->clear();
-  QTreeWidgetItem* parentItem = integratorList->invisibleRootItem();
-  Integrator *integrator = new LSODARIntegrator("LSODAR",parentItem);
-  //integrator->setSolver(((Solver*)elementList->topLevelItem(0)));
-  parentItem->addChild(integrator);
+  actionSaveIntegrator->setDisabled(true);
+  integratorList->newLSODARIntegrator();
   fileIntegrator->setText("");
-
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
 }
 
 void MainWindow::newTimeSteppingIntegrator() {
-  integratorList->clear();
-  QTreeWidgetItem* parentItem = integratorList->invisibleRootItem();
-  Integrator *integrator = new TimeSteppingIntegrator("Time stepping",parentItem);
-  //integrator->setSolver(((Solver*)elementList->topLevelItem(0)));
-  parentItem->addChild(integrator);
+  actionSaveIntegrator->setDisabled(true);
+  integratorList->newTimeSteppingIntegrator();
   fileIntegrator->setText("");
-
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
 }
 
 void MainWindow::newEulerExplicitIntegrator() {
-  integratorList->clear();
-  QTreeWidgetItem* parentItem = integratorList->invisibleRootItem();
-  Integrator *integrator = new EulerExplicitIntegrator("Euler explicit",parentItem);
-  //integrator->setSolver(((Solver*)elementList->topLevelItem(0)));
-  parentItem->addChild(integrator);
+  actionSaveIntegrator->setDisabled(true);
+  integratorList->newEulerExplicitIntegrator();
   fileIntegrator->setText("");
-
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
 }
 
 void MainWindow::newRKSuiteIntegrator() {
-  integratorList->clear();
-  QTreeWidgetItem* parentItem = integratorList->invisibleRootItem();
-  Integrator *integrator = new RKSuiteIntegrator("RKSuite",parentItem);
-  //integrator->setSolver(((Solver*)elementList->topLevelItem(0)));
-  parentItem->addChild(integrator);
+  actionSaveIntegrator->setDisabled(true);
+  integratorList->newRKSuiteIntegrator();
   fileIntegrator->setText("");
-
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
 }
 
 void MainWindow::loadIntegrator(const QString &file) {
   fileIntegrator->setText(file);
   actionSaveIntegrator->setDisabled(true);
   if(file!="") {
-    integratorList->clear();
-    QTreeWidgetItem* parentItem = 0;
-    if(parentItem==NULL) parentItem=integratorList->invisibleRootItem();
-    Integrator *integrator = Integrator::readXMLFile(file,parentItem);
-    //integrator->setSolver(((Solver*)elementList->topLevelItem(0)));
+    integratorList->setIntegrator(Integrator::readXMLFile(file.toStdString()));
     actionSaveIntegrator->setDisabled(false);
   }
 }
@@ -714,44 +746,43 @@ void MainWindow::loadIntegrator() {
 }
 
 void MainWindow::saveIntegratorAs() {
-//  if(integratorList->topLevelItemCount()) {
-//    QString file=QFileDialog::getSaveFileName(0, "MBSim integrator files", QString("./")+((Solver*)elementList->topLevelItem(0))->getName()+".mbsimint.xml", "XML files (*.mbsimint.xml)");
-//    if(file!="") {
-//      fileIntegrator->setText(file.right(13)==".mbsimint.xml"?file:file+".mbsimint.xml");
-//      actionSaveIntegrator->setDisabled(false);
-//      saveIntegrator();
-//    }
-//  }
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+  QModelIndex index = model->index(0,0);
+  QString file=QFileDialog::getSaveFileName(0, "MBSim integrator files", QString("./")+QString::fromStdString(model->getItem(index)->getItemData()->getName())+".mbsimint.xml", "XML files (*.mbsimint.xml)");
+  if(file!="") {
+    fileIntegrator->setText(file.right(13)==".mbsimint.xml"?file:file+".mbsimint.xml");
+    actionSaveIntegrator->setDisabled(false);
+    saveIntegrator();
+  }
 }
 
 void MainWindow::saveIntegrator() {
   QString file = fileIntegrator->text();
-  ((Integrator*)integratorList->topLevelItem(0))->writeXMLFile(file);
+  //((Integrator*)integratorList->topLevelItem(0))->writeXMLFile(file);
+  integratorList->getIntegrator()->writeXMLFile(file.toStdString());
+}
+
+void MainWindow::removeParameter() {
+  ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
+  QModelIndex index = parameterList->selectionModel()->currentIndex();
+  model->removeParameter(index);
 }
 
 void MainWindow::addScalarParameter() {
+  //tabBar->setCurrentIndex(2);
   ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
   model->addScalarParameter();
-//  Parameter *parameter = new DoubleParameter(str, parentItem);
-//  connect(parameter,SIGNAL(parameterChanged(const QString&)),this,SLOT(updateOctaveParameters()));
-//  updateOctaveParameters();
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
-//  QModelIndex containerIndex = model->index(3, 0, index);
-//  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
-//  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-//  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
-
 }
 
 void MainWindow::newParameter() {
+  //tabBar->setCurrentIndex(2);
 //  parameterList->clear();
 //  actionSaveParameter->setDisabled(true);
 //  fileParameter->setText("");
 }
 
 void MainWindow::loadParameter(const QString &file) {
+  //tabBar->setCurrentIndex(2);
   fileParameter->setText(file);
   actionSaveParameter->setDisabled(true);
   if(file!="") {
@@ -841,7 +872,8 @@ void MainWindow::mbsimxml(int task) {
   absolutePath = true;
   QModelIndex index = elementList->model()->index(0,0);
   Solver *slv=dynamic_cast<Solver*>(static_cast<ElementTreeModel*>(elementList->model())->getItem(index)->getItemData());
-  Integrator *integ=(Integrator*)integratorList->topLevelItem(0);
+  //Integrator *integ=(Integrator*)integratorList->topLevelItem(0);
+  Integrator *integ=integratorList->getIntegrator();
   if(!slv || !integ)
     return;
 
@@ -856,7 +888,7 @@ void MainWindow::mbsimxml(int task) {
   saveParameter(mbsParamFile);
 
   QString intFile=uniqueTempDir+"/in"+sTask+".mbsimint.xml";
-  integ->writeXMLFile(intFile);
+  integ->writeXMLFile(intFile.toStdString());
 
   QStringList arg;
   if(task==1)
@@ -902,7 +934,7 @@ void MainWindow::selectElement(string ID) {
   if(it!=model->idEleMap.end()) {
    //QModelIndex index = elementList->selectionModel()->currentIndex();
    elementList->selectionModel()->setCurrentIndex(it->second,QItemSelectionModel::ClearAndSelect);
-   elementList->selectionModel()->setCurrentIndex(it->second.sibling(it->second.row(),1),QItemSelectionModel::Select);
+   //elementList->selectionModel()->setCurrentIndex(it->second.sibling(it->second.row(),1),QItemSelectionModel::Select);
   }
 #ifdef INLINE_OPENMBV
   inlineOpenMBVMW->highlightObject(ID);
@@ -1016,7 +1048,7 @@ void Process::errLinkClicked(const QUrl &link) {
   linkClicked(link, err);
 }
 
-void MainWindow::removeRow() {
+void MainWindow::removeElement() {
   ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
   model->removeElement(index);
@@ -1035,7 +1067,7 @@ void MainWindow::addGroup() {
   QModelIndex containerIndex = model->index(2, 0, index);
   QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
 }
 
 void MainWindow::addContour() {
@@ -1081,7 +1113,7 @@ void MainWindow::addRigidBody() {
   QModelIndex containerIndex = model->index(3, 0, index);
   QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
 }
 
 void MainWindow::addGearConstraint() {
@@ -1094,7 +1126,7 @@ void MainWindow::addGearConstraint() {
   QModelIndex containerIndex = model->index(3, 0, index);
   QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
 }
 
 void MainWindow::addKinematicConstraint() {
@@ -1107,7 +1139,7 @@ void MainWindow::addKinematicConstraint() {
   QModelIndex containerIndex = model->index(3, 0, index);
   QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
 }
 
 void MainWindow::addJointConstraint() {
@@ -1120,7 +1152,7 @@ void MainWindow::addJointConstraint() {
   QModelIndex containerIndex = model->index(3, 0, index);
   QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
 }
 
 
@@ -1134,7 +1166,7 @@ void MainWindow::addFrame() {
   QModelIndex containerIndex = model->index(0, 0, index);
   QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
 }
 
 void MainWindow::addPoint() {
@@ -1147,7 +1179,7 @@ void MainWindow::addPoint() {
   QModelIndex containerIndex = model->index(1, 0, index);
   QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
 }
 
 void MainWindow::addLine() {
@@ -1160,7 +1192,7 @@ void MainWindow::addLine() {
   QModelIndex containerIndex = model->index(1, 0, index);
   QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
 }
 
 void MainWindow::addPlane() {
@@ -1173,7 +1205,7 @@ void MainWindow::addPlane() {
   QModelIndex containerIndex = model->index(1, 0, index);
   QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
 }
 
 void MainWindow::addSphere() {
@@ -1186,7 +1218,7 @@ void MainWindow::addSphere() {
   QModelIndex containerIndex = model->index(1, 0, index);
   QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
 }
 
 void MainWindow::addKineticExcitation() {
@@ -1199,7 +1231,7 @@ void MainWindow::addKineticExcitation() {
   QModelIndex containerIndex = model->index(4, 0, index);
   QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
 }
 
 void MainWindow::addSpringDamper() {
@@ -1212,7 +1244,7 @@ void MainWindow::addSpringDamper() {
   QModelIndex containerIndex = model->index(4, 0, index);
   QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
 }
 
 void MainWindow::addJoint() {
@@ -1225,7 +1257,7 @@ void MainWindow::addJoint() {
   QModelIndex containerIndex = model->index(4, 0, index);
   QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
 }
 
 void MainWindow::addContact() {
@@ -1238,7 +1270,7 @@ void MainWindow::addContact() {
   QModelIndex containerIndex = model->index(4, 0, index);
   QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
 }
 
 void MainWindow::addAbsoluteKinematicsObserver() {
@@ -1251,5 +1283,5 @@ void MainWindow::addAbsoluteKinematicsObserver() {
   QModelIndex containerIndex = model->index(5, 0, index);
   QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
 }

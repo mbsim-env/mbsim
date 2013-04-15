@@ -40,7 +40,7 @@ class AbsoluteKinematicsObserver : public Observer {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void initialize();
-    PropertyDialog* createPropertyDialog() {return new AbsoluteKinematicsObserverPropertyDialog(this);}
+    ElementPropertyDialog* createPropertyDialog() {return new AbsoluteKinematicsObserverPropertyDialog(this);}
   protected:
     ExtProperty frame, position, velocity, angularVelocity, acceleration, angularAcceleration;
 };

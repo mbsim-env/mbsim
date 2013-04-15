@@ -361,6 +361,11 @@ ParameterListModel::ParameterListModel(QObject *parent) : TreeModel(parent) {
   rootItem = new TreeItem(new BasicItemData("Name","Value"));
 }
 
+void ParameterListModel::removeParameter(const QModelIndex &index) {
+  Element *element = static_cast<Element*>(getItem(index)->getItemData());
+  removeRow(index.row(), index.parent());
+}
+
 void ParameterListModel::addScalarParameter(const QModelIndex &parent) {
   ScalarParameter *parameter = new ScalarParameter("a"+toStr(IDcounter++));
   createParameterItem(parameter,parent);

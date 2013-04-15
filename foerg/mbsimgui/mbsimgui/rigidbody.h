@@ -36,7 +36,7 @@ class RigidBody : public Body {
     bool isConstrained() const {return constrained;} 
     void setConstrained(bool b) {constrained = b;}
     void initialize();
-    PropertyDialog* createPropertyDialog() {return new RigidBodyPropertyDialog(this);}
+    ElementPropertyDialog* createPropertyDialog() {return new RigidBodyPropertyDialog(this);}
   protected:
     bool constrained;
     ExtProperty K, mass, inertia, translation, rotation, ombvEditor, weightArrow, jointForceArrow, jointMomentArrow, isFrameOfBodyForRotation;
