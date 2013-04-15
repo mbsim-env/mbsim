@@ -58,7 +58,7 @@ class Plane : public Contour {
     std::string getType() const { return "Plane"; }
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    PropertyDialog* createPropertyDialog() {return new PlanePropertyDialog(this);}
+    ElementPropertyDialog* createPropertyDialog() {return new PlanePropertyDialog(this);}
   protected:
     ExtProperty visu;
 };
@@ -71,7 +71,7 @@ class Sphere : public Contour {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     std::string getType() const { return "Sphere"; }
-    PropertyDialog* createPropertyDialog() {return new SpherePropertyDialog(this);}
+    ElementPropertyDialog* createPropertyDialog() {return new SpherePropertyDialog(this);}
   protected:
     ExtProperty radius, visu;
 };

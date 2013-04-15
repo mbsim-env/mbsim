@@ -155,29 +155,29 @@ Observer* MBSimObjectFactory::createObserver(TiXmlElement *element, Element *par
   return 0;
 }  
 
-Integrator* ObjectFactory::createIntegrator(TiXmlElement *element, QTreeWidgetItem* parentItem) {
+Integrator* ObjectFactory::createIntegrator(TiXmlElement *element) {
   if(element==NULL) return NULL;
   for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
-    return (*i)->createIntegrator(element,parentItem);
+    return (*i)->createIntegrator(element);
   return 0;
 }
 
-Integrator* MBSimObjectFactory::createIntegrator(TiXmlElement *element, QTreeWidgetItem* parentItem) {
+Integrator* MBSimObjectFactory::createIntegrator(TiXmlElement *element) {
   if(element==0) return 0;
   if(element->ValueStr()==MBSIMINTNS"DOPRI5Integrator")
-    return new DOPRI5Integrator("DOPRI5",parentItem);
+    return new DOPRI5Integrator;
   else if(element->ValueStr()==MBSIMINTNS"RADAU5Integrator")
-    return new RADAU5Integrator("RADAU5",parentItem);
+    return new RADAU5Integrator;
   else if(element->ValueStr()==MBSIMINTNS"LSODEIntegrator")
-    return new LSODEIntegrator("LSODE",parentItem);
+    return new LSODEIntegrator;
   else if(element->ValueStr()==MBSIMINTNS"LSODARIntegrator")
-    return new LSODARIntegrator("LSODAR",parentItem);
+    return new LSODARIntegrator;
   else if(element->ValueStr()==MBSIMINTNS"TimeSteppingIntegrator")
-    return new TimeSteppingIntegrator("TimeStepping",parentItem);
+    return new TimeSteppingIntegrator;
   else if(element->ValueStr()==MBSIMINTNS"EulerExplicitIntegrator")
-    return new EulerExplicitIntegrator("EulerExplicit",parentItem);
+    return new EulerExplicitIntegrator;
   else if(element->ValueStr()==MBSIMINTNS"RKSuiteIntegrator")
-    return new RKSuiteIntegrator("RKSuite",parentItem);
+    return new RKSuiteIntegrator;
   return 0;
 }
 

@@ -37,10 +37,7 @@ class Integrator;
 class Parameter;
 class Environment;
 class TiXmlElement;
-class QTreeWidgetItem;
 class TreeItem;
-
-//Element *ObjectFactory(MBSim::Element *obj, QTreeWidgetItem* parentItem);
 
 class ObjectFactoryBase {
   protected:
@@ -59,7 +56,7 @@ class ObjectFactoryBase {
   //  virtual Rotation* createRotation(TiXmlElement *element) { return NULL; }
   virtual Link* createLink(TiXmlElement *element, Element *parent) { return NULL; }
   virtual Observer* createObserver(TiXmlElement *element, Element *parent) { return NULL; }
-  virtual Integrator* createIntegrator(TiXmlElement *element, QTreeWidgetItem* parentItem) { return NULL; }
+  virtual Integrator* createIntegrator(TiXmlElement *element) { return NULL; }
   virtual Parameter* createParameter(TiXmlElement *element) { return NULL; }
   //  virtual GeneralizedForceLaw *createGeneralizedForceLaw(TiXmlElement *element) { return NULL; }
   //  virtual GeneralizedImpactLaw *createGeneralizedImpactLaw(TiXmlElement *element) { return NULL; }
@@ -101,7 +98,7 @@ class ObjectFactory : public ObjectFactoryBase {
 //    Rotation* createRotation(TiXmlElement *element);
     Link* createLink(TiXmlElement *element, Element *parent);
     Observer* createObserver(TiXmlElement *element, Element *parent);
-    Integrator* createIntegrator(TiXmlElement *element, QTreeWidgetItem* parentItem);
+    Integrator* createIntegrator(TiXmlElement *element);
     Parameter* createParameter(TiXmlElement *element);
 //    GeneralizedForceLaw *createGeneralizedForceLaw(TiXmlElement *element);
 //    GeneralizedImpactLaw *createGeneralizedImpactLaw(TiXmlElement *element);
@@ -137,7 +134,7 @@ class MBSimObjectFactory : protected ObjectFactoryBase  {
 //    Rotation* createRotation(TiXmlElement *element);
     Link* createLink(TiXmlElement *element, Element *parent);
     Observer* createObserver(TiXmlElement *element, Element *parent);
-    Integrator* createIntegrator(TiXmlElement *element, QTreeWidgetItem* parentItem);
+    Integrator* createIntegrator(TiXmlElement *element);
     Parameter* createParameter(TiXmlElement *element);
 //    GeneralizedForceLaw *createGeneralizedForceLaw(TiXmlElement *element);
 //    GeneralizedImpactLaw *createGeneralizedImpactLaw(TiXmlElement *element);

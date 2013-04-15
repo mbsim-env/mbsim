@@ -36,6 +36,9 @@ class QProcess;
 class QUrl;
 class Process;
 class QModelIndex;
+class Integrator;
+class IntegratorView;
+class IntegratorPropertyDialog;
 
 namespace OpenMBVGUI {
   class MainWindow;
@@ -45,17 +48,31 @@ namespace MBXMLUtils {
   class OctaveEvaluator;
 }
 
+class IntegratorMouseEvent : public QObject {
+  Q_OBJECT
+  public:
+    IntegratorMouseEvent(IntegratorView* view_) : view(view_) {}
+  protected:
+    IntegratorView *view;
+    IntegratorPropertyDialog *dialog;
+    bool eventFilter(QObject *obj, QEvent *event);
+  protected slots:
+    void commitDataAndClose();
+    void commitData();
+    void rejectDataAndClose();
+};
+
 class MainWindow : public QMainWindow {
 
   Q_OBJECT
 
   private:
     QTreeView *elementList, *parameterList;
-    QTreeWidget *integratorList;
+    IntegratorView *integratorList;
     QStackedWidget *pagesWidget;
+    QTabBar *tabBar;
     QLineEdit *fileMBS, *fileIntegrator, *fileParameter;
     Process *mbsim;
-    QAction *actionSaveProj, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameter;
     void loadProj(const QString &file);
     void loadMBS(const QString &file);
     void loadIntegrator(const QString &file);
@@ -63,8 +80,10 @@ class MainWindow : public QMainWindow {
     OpenMBVGUI::MainWindow *inlineOpenMBVMW;
     void initInlineOpenMBV();
     QString uniqueTempDir, absoluteMBSFilePath;
-    QAction *addFrameAction, *addContourAction, *addGroupAction, *addObjectAction, *addLinkAction, *addObserverAction, *addPointAction, *addLineAction, *addPlaneAction, *addSphereAction, *addRigidBodyAction, *addGearConstraintAction, *addKinematicConstraintAction, *addJointConstraintAction, *addKineticExcitationAction, *addSpringDamperAction, *addJointAction, *addContactAction, *addAbsoluteKinematicsObserverAction, *removeRowAction;
-    QAction *addScalarParameterAction;
+    QAction *actionSaveProj, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameter;
+    QAction *addFrameAction, *addContourAction, *addGroupAction, *addObjectAction, *addLinkAction, *addObserverAction, *addPointAction, *addLineAction, *addPlaneAction, *addSphereAction, *addRigidBodyAction, *addGearConstraintAction, *addKinematicConstraintAction, *addJointConstraintAction, *addKineticExcitationAction, *addSpringDamperAction, *addJointAction, *addContactAction, *addAbsoluteKinematicsObserverAction, *removeElementAction;
+    QAction *addScalarParameterAction, *removeParameterAction;
+    QAction *newDOPRI5IntegratorAction, *newRADAU5IntegratorAction, *newLSODEIntegratorAction, *newLSODARIntegratorAction, *newTimeSteppingIntegratorAction, *newEulerExplicitIntegratorAction, *newRKSuiteIntegratorAction;
 
   public:
     MainWindow();
@@ -96,6 +115,7 @@ class MainWindow : public QMainWindow {
     void loadParameter();
     void saveParameterAs();
     void saveParameter(QString filename="");
+    void removeParameter();
     void addScalarParameter();
     void simulate();
     void openmbv();
@@ -103,7 +123,7 @@ class MainWindow : public QMainWindow {
     void help();
     void about();
     void updateOctaveParameters();
-    void removeRow();
+    void removeElement();
     void addFrame();
     void addContour();
     void addGroup();

@@ -40,7 +40,7 @@ class GearConstraint : public Constraint {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void initialize();
-    PropertyDialog* createPropertyDialog() {return new GearConstraintPropertyDialog(this);}
+    ElementPropertyDialog* createPropertyDialog() {return new GearConstraintPropertyDialog(this);}
   protected:
     ExtProperty dependentBody, independentBodies;
 };
@@ -54,7 +54,7 @@ class KinematicConstraint : public Constraint {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void initialize();
-    PropertyDialog* createPropertyDialog() {return new KinematicConstraintPropertyDialog(this);}
+    ElementPropertyDialog* createPropertyDialog() {return new KinematicConstraintPropertyDialog(this);}
   protected:
     ExtProperty dependentBody, kinematicFunction, firstDerivativeOfKinematicFunction, secondDerivativeOfKinematicFunction;
 
@@ -69,7 +69,7 @@ class JointConstraint : public Constraint {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void initialize();
-    PropertyDialog* createPropertyDialog() {return new JointConstraintPropertyDialog(this);}
+    ElementPropertyDialog* createPropertyDialog() {return new JointConstraintPropertyDialog(this);}
   protected:
     ExtProperty force, moment, connections, independentBody, dependentBodiesFirstSide, dependentBodiesSecondSide;
 

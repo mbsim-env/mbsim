@@ -32,7 +32,7 @@ class Joint : public Link {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void initialize();
-    PropertyDialog* createPropertyDialog() {return new JointPropertyDialog(this);}
+    ElementPropertyDialog* createPropertyDialog() {return new JointPropertyDialog(this);}
   protected:
     ExtProperty force, moment, connections, forceArrow, momentArrow;
 };

@@ -32,7 +32,7 @@ class Contact : public Link {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void initialize();
-    PropertyDialog* createPropertyDialog() {return new ContactPropertyDialog(this);}
+    ElementPropertyDialog* createPropertyDialog() {return new ContactPropertyDialog(this);}
   protected:
     ExtProperty contactForceLaw, contactImpactLaw, frictionForceLaw, frictionImpactLaw, connections, enableOpenMBVContactPoints, normalForceArrow, frictionArrow;
 };

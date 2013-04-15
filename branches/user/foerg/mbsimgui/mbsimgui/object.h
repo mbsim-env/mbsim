@@ -36,7 +36,7 @@ class Object : public Element {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual Element* getByPathSearch(std::string path);
-    PropertyDialog* createPropertyDialog() {return new ObjectPropertyDialog(this);}
+    ElementPropertyDialog* createPropertyDialog() {return new ObjectPropertyDialog(this);}
   protected:
     QAction *actionSaveAs;
     ExtProperty q0, u0;

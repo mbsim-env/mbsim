@@ -47,7 +47,7 @@ class Body : public Object {
     void initializeUsingXML(TiXmlElement *element);
     TiXmlElement* writeXMLFile(TiXmlNode *element);
 
-    PropertyDialog* createPropertyDialog() {return new BodyPropertyDialog(this);}
+    ElementPropertyDialog* createPropertyDialog() {return new BodyPropertyDialog(this);}
   protected:
     std::vector<Frame*> frame;
     std::vector<Contour*> contour;

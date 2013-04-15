@@ -3,8 +3,6 @@
 
 #include <string>
 
-class PropertyDialog;
-
 class TreeItemData {
   public:
     virtual ~TreeItemData() {}
@@ -12,7 +10,6 @@ class TreeItemData {
     virtual std::string getValue() const = 0;
     virtual void setName(const std::string &data) = 0;
     virtual void setValue(const std::string &data) {}
-    virtual PropertyDialog* createPropertyDialog() {return 0;}
     virtual bool isRemovable() {return true;}
 };
 

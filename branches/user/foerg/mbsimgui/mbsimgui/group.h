@@ -81,7 +81,7 @@ class Group : public Element {
     void addLink(Link *link);
     void addObserver(Observer *observer);
     void removeElement(Element *element);
-    PropertyDialog* createPropertyDialog() {return new GroupPropertyDialog(this);}
+    ElementPropertyDialog* createPropertyDialog() {return new GroupPropertyDialog(this);}
 };
 
 #endif

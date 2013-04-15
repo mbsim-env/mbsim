@@ -88,7 +88,7 @@ class Element : public TreeItemData {
     const std::string& getID() const { return ID; }
     virtual Element* getParent() {return parent;}
     virtual void setParent(Element* parent_) {parent = parent_;}
-    PropertyDialog* createPropertyDialog() {return new ElementPropertyDialog;}
+    virtual ElementPropertyDialog* createPropertyDialog() {return new ElementPropertyDialog;}
     Element* getRoot() {return parent?parent->getRoot():this;}
 };
 

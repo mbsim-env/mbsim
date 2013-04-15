@@ -32,7 +32,7 @@ class KineticExcitation : public Link {
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void initialize();
-    PropertyDialog* createPropertyDialog() {return new KineticExcitationPropertyDialog(this);}
+    ElementPropertyDialog* createPropertyDialog() {return new KineticExcitationPropertyDialog(this);}
   protected:
     ExtProperty force, moment, connections, frameOfReference, forceArrow, momentArrow;
 };
