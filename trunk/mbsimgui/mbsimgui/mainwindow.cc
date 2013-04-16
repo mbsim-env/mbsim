@@ -219,6 +219,9 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   addScalarParameterAction=new QAction("Add scalar", this);
   connect(addScalarParameterAction,SIGNAL(triggered()),this,SLOT(addScalarParameter()));
   removeParameterAction = new QAction(this);
+  addVectorParameterAction=new QAction("Add vector", this);
+  connect(addVectorParameterAction,SIGNAL(triggered()),this,SLOT(addVectorParameter()));
+  removeParameterAction = new QAction(this);
   connect(removeParameterAction, SIGNAL(triggered()), this, SLOT(removeParameter()));
   removeParameterAction->setText(QApplication::translate("MainWindow", "Remove", 0, QApplication::UnicodeUTF8));
   removeParameterAction->setShortcut(QApplication::translate("MainWindow", "Ctrl+R, R", 0, QApplication::UnicodeUTF8));
@@ -284,6 +287,7 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   actionSaveParameter->setDisabled(true);
   submenu = parameterMenu->addMenu("Add parameter");
   submenu->addAction(addScalarParameterAction);
+  submenu->addAction(addVectorParameterAction);
   menuBar()->addMenu(parameterMenu);
 
   menuBar()->addSeparator();
@@ -321,6 +325,7 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   parameterList->setColumnWidth(1,125);
 
   parameterList->insertAction(0,addScalarParameterAction);
+  parameterList->insertAction(0,addVectorParameterAction);
   parameterList->setContextMenuPolicy(Qt::ActionsContextMenu);
 
   connect(elementList,SIGNAL(pressed(QModelIndex)), this, SLOT(elementListClicked()));
@@ -738,15 +743,23 @@ void MainWindow::addScalarParameter() {
   updateOctaveParameters();
 }
 
+void MainWindow::addVectorParameter() {
+  ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
+  model->addVectorParameter();
+  updateOctaveParameters();
+}
+
 void MainWindow::newParameter() {
-  //tabBar->setCurrentIndex(2);
-//  parameterList->clear();
-//  actionSaveParameter->setDisabled(true);
-//  fileParameter->setText("");
+  ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
+  QModelIndex index = model->index(0,0);
+  model->removeRows(index.row(), model->rowCount(QModelIndex()), index.parent());
 }
 
 void MainWindow::loadParameter(const QString &file) {
   //tabBar->setCurrentIndex(2);
+  ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
+  QModelIndex index = model->index(0,0);
+  model->removeRows(index.row(), model->rowCount(QModelIndex()), index.parent());
   fileParameter->setText(file);
   actionSaveParameter->setDisabled(true);
   if(file!="") {

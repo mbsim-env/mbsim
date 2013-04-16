@@ -830,6 +830,24 @@ void ScalarParameterPropertyDialog::fromWidget(Parameter *parameter) {
   static_cast<ScalarParameter*>(parameter)->value.fromWidget(value);
 }
 
+VectorParameterPropertyDialog::VectorParameterPropertyDialog(QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parent,f) {
+
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new VecSizeVarWidget(3,1,6),QStringList(),0));
+  value = new ExtWidget("Value",new ExtPhysicalVarWidget(input));
+  addToTab("General", value);
+}
+
+void VectorParameterPropertyDialog::toWidget(Parameter *parameter) {
+  ParameterPropertyDialog::toWidget(parameter);
+  static_cast<VectorParameter*>(parameter)->value.toWidget(value);
+}
+
+void VectorParameterPropertyDialog::fromWidget(Parameter *parameter) {
+  ParameterPropertyDialog::fromWidget(parameter);
+  static_cast<VectorParameter*>(parameter)->value.fromWidget(value);
+}
+
 IntegratorPropertyDialog::IntegratorPropertyDialog(QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f) {
   addTab("General");
   addTab("Initial conditions");

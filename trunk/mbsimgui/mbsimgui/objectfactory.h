@@ -17,12 +17,6 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-//#include "object.h"
-//#include "link.h"
-//#include "solver.h"
-//#include "integrator.h"
-//#include "parameter.h"
-//#include "observer.h"
 #include <set>
 #include <iostream>
 #include <map>

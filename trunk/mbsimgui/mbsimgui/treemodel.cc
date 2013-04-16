@@ -1,7 +1,25 @@
-#include <QtGui>
+/*
+    MBSimGUI - A fronted for MBSim.
+    Copyright (C) 2013 Martin Förg
 
-#include "treeitem.h"
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
+#include <config.h>
 #include "treemodel.h"
+#include "treeitem.h"
 #include "frame.h"
 #include "contour.h"
 #include "solver.h"
@@ -13,7 +31,6 @@
 #include "contact.h"
 #include "observer.h"
 #include "parameter.h"
-
 #include <iostream>
 
 using namespace std;
@@ -143,91 +160,91 @@ void ElementTreeModel::addSolver(const QModelIndex &parent) {
 }
 
 void ElementTreeModel::addFrame(const QModelIndex &parent) {
-  FixedRelativeFrame *frame = new FixedRelativeFrame("P"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
+  FixedRelativeFrame *frame = new FixedRelativeFrame("P"+toStr(IDcounter),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addFrame(frame);
   createFrameItem(frame,parent.child(0,0));
 }
 
 void ElementTreeModel::addPoint(const QModelIndex &parent) {
-  Point *point = new Point("Point"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
+  Point *point = new Point("Point"+toStr(IDcounter),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addContour(point);
   createContourItem(point,parent.child(1,0));
 }
 
 void ElementTreeModel::addLine(const QModelIndex &parent) {
-  Line *line = new Line("Line"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
+  Line *line = new Line("Line"+toStr(IDcounter),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addContour(line);
   createContourItem(line,parent.child(1,0));
 }
 
 void ElementTreeModel::addPlane(const QModelIndex &parent) {
-  Plane *plane = new Plane("Plane"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
+  Plane *plane = new Plane("Plane"+toStr(IDcounter),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addContour(plane);
   createContourItem(plane,parent.child(1,0));
 }
 
 void ElementTreeModel::addSphere(const QModelIndex &parent) {
-  Sphere *sphere = new Sphere("Sphere"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
+  Sphere *sphere = new Sphere("Sphere"+toStr(IDcounter),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addContour(sphere);
   createContourItem(sphere,parent.child(1,0));
 }
 
 void ElementTreeModel::addGroup(const QModelIndex &parent) {
-  Group *group = new Group("Group"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
+  Group *group = new Group("Group"+toStr(IDcounter),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addGroup(group);
   createGroupItem(group,parent.child(2,0));
 }
 
 void ElementTreeModel::addRigidBody(const QModelIndex &parent) {
-  RigidBody *rigidbody = new RigidBody("RigidBody"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
+  RigidBody *rigidbody = new RigidBody("RigidBody"+toStr(IDcounter),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addObject(rigidbody);
   createObjectItem(rigidbody,parent.child(3,0));
 }
 
 void ElementTreeModel::addKinematicConstraint(const QModelIndex &parent) {
-  KinematicConstraint *constraint = new KinematicConstraint("KinematicConstraint"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
+  KinematicConstraint *constraint = new KinematicConstraint("KinematicConstraint"+toStr(IDcounter),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addObject(constraint);
   createObjectItem(constraint,parent.child(3,0));
 }
 
 void ElementTreeModel::addGearConstraint(const QModelIndex &parent) {
-  GearConstraint *constraint = new GearConstraint("GearConstraint"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
+  GearConstraint *constraint = new GearConstraint("GearConstraint"+toStr(IDcounter),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addObject(constraint);
   createObjectItem(constraint,parent.child(3,0));
 }
 
 void ElementTreeModel::addKineticExcitation(const QModelIndex &parent) {
-  KineticExcitation *kineticExcitation = new KineticExcitation("KineticExcitation"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
+  KineticExcitation *kineticExcitation = new KineticExcitation("KineticExcitation"+toStr(IDcounter),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addLink(kineticExcitation);
   createLinkItem(kineticExcitation,parent.child(4,0));
 }
 
 void ElementTreeModel::addJointConstraint(const QModelIndex &parent) {
-  JointConstraint *constraint = new JointConstraint("JointConstraint"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
+  JointConstraint *constraint = new JointConstraint("JointConstraint"+toStr(IDcounter),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addObject(constraint);
   createObjectItem(constraint,parent.child(3,0));
 }
 
 void ElementTreeModel::addSpringDamper(const QModelIndex &parent) {
-  SpringDamper *springDamper = new SpringDamper("SpringDamper"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
+  SpringDamper *springDamper = new SpringDamper("SpringDamper"+toStr(IDcounter),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addLink(springDamper);
   createLinkItem(springDamper,parent.child(4,0));
 }
 
 void ElementTreeModel::addJoint(const QModelIndex &parent) {
-  Joint *joint = new Joint("Joint"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
+  Joint *joint = new Joint("Joint"+toStr(IDcounter),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addLink(joint);
   createLinkItem(joint,parent.child(4,0));
 }
 
 void ElementTreeModel::addContact(const QModelIndex &parent) {
-  Contact *contact = new Contact("Contact"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
+  Contact *contact = new Contact("Contact"+toStr(IDcounter),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addLink(contact);
   createLinkItem(contact,parent.child(4,0));
 }
 
 void ElementTreeModel::addAbsoluteKinematicsObserver(const QModelIndex &parent) {
-  AbsoluteKinematicsObserver *observer = new AbsoluteKinematicsObserver("AbsoluteKinematicsObserver"+toStr(IDcounter++),static_cast<Element*>(getItem(parent)->getItemData()));
+  AbsoluteKinematicsObserver *observer = new AbsoluteKinematicsObserver("AbsoluteKinematicsObserver"+toStr(IDcounter),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addObserver(observer);
   createObserverItem(observer,parent.child(5,0));
 }
@@ -239,6 +256,7 @@ void ElementTreeModel::removeElement(const QModelIndex &index) {
 }
 
 void ElementTreeModel::createFrameItem(Frame *frame, const QModelIndex &parent) {
+  IDcounter++;
 
   TreeItem *parentItem = getItem(parent);
 
@@ -252,6 +270,7 @@ void ElementTreeModel::createFrameItem(Frame *frame, const QModelIndex &parent) 
 }
 
 void ElementTreeModel::createContourItem(Contour *contour, const QModelIndex &parent) {
+  IDcounter++;
 
   TreeItem *parentItem = getItem(parent);
 
@@ -265,6 +284,7 @@ void ElementTreeModel::createContourItem(Contour *contour, const QModelIndex &pa
 }
 
 void ElementTreeModel::createGroupItem(Group *group, const QModelIndex &parent) {
+  IDcounter++;
 
   TreeItem *parentItem = getItem(parent);
 
@@ -305,6 +325,7 @@ void ElementTreeModel::createGroupItem(Group *group, const QModelIndex &parent) 
 }
 
 void ElementTreeModel::createObjectItem(Object *object, const QModelIndex &parent) {
+  IDcounter++;
 
   TreeItem *parentItem = getItem(parent);
 
@@ -331,6 +352,7 @@ void ElementTreeModel::createObjectItem(Object *object, const QModelIndex &paren
 }
 
 void ElementTreeModel::createLinkItem(Link *link, const QModelIndex &parent) {
+  IDcounter++;
 
   TreeItem *parentItem = getItem(parent);
 
@@ -344,6 +366,7 @@ void ElementTreeModel::createLinkItem(Link *link, const QModelIndex &parent) {
 }
 
 void ElementTreeModel::createObserverItem(Observer *link, const QModelIndex &parent) {
+  IDcounter++;
 
   TreeItem *parentItem = getItem(parent);
 
@@ -362,16 +385,21 @@ ParameterListModel::ParameterListModel(QObject *parent) : TreeModel(parent) {
 }
 
 void ParameterListModel::removeParameter(const QModelIndex &index) {
-  Element *element = static_cast<Element*>(getItem(index)->getItemData());
   removeRow(index.row(), index.parent());
 }
 
 void ParameterListModel::addScalarParameter(const QModelIndex &parent) {
-  ScalarParameter *parameter = new ScalarParameter("a"+toStr(IDcounter++));
+  ScalarParameter *parameter = new ScalarParameter("a"+toStr(IDcounter));
+  createParameterItem(parameter,parent);
+}
+
+void ParameterListModel::addVectorParameter(const QModelIndex &parent) {
+  VectorParameter *parameter = new VectorParameter("a"+toStr(IDcounter));
   createParameterItem(parameter,parent);
 }
 
 void ParameterListModel::createParameterItem(Parameter *parameter, const QModelIndex &parent) {
+  IDcounter++;
 
   TreeItem *parentItem = getItem(parent);
 

@@ -220,7 +220,7 @@ void MatProperty::toWidget(QWidget *widget) {
 //}
 
 TiXmlElement* PhysicalStringProperty::initializeUsingXML(TiXmlElement *parent) {
-  TiXmlElement *e = parent->FirstChildElement(xmlName);
+  TiXmlElement *e = (xmlName=="")?parent:parent->FirstChildElement(xmlName);
   if(e) {
     if(value->initializeUsingXML(e)) {
       if(e->Attribute("unit"))

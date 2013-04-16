@@ -333,6 +333,16 @@ class ScalarParameterPropertyDialog : public ParameterPropertyDialog {
     ExtWidget *value;
 };
 
+class VectorParameterPropertyDialog : public ParameterPropertyDialog {
+
+  public:
+    VectorParameterPropertyDialog(QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Parameter *parameter);
+    void fromWidget(Parameter *parameter);
+  protected:
+    ExtWidget *value;
+};
+
 class IntegratorPropertyDialog : public PropertyDialog {
 
   public:

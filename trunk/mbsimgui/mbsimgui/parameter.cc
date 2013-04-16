@@ -67,8 +67,6 @@ void Parameter::writeXMLFile(const string &name) {
 
 ScalarParameter::ScalarParameter(const string &str) : Parameter(str) {
 
-//  ParameterValueWidget *value_ = new ParameterValueWidget(new PhysicalStringWidget(new ScalarWidget("1"),QStringList(),0));
-//  value.setProperty(value_);
   vector<PhysicalStringProperty*> input;
   input.push_back(new PhysicalStringProperty(new ScalarProperty("1"),"",""));
   value.setProperty(new ExtPhysicalVarProperty(input));
@@ -81,14 +79,21 @@ string ScalarParameter::getValue() const {
 void ScalarParameter::initializeUsingXML(TiXmlElement *element) {
   ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
   val->initializeUsingXML(element);
-  TiXmlText *text = dynamic_cast<TiXmlText*>(element->FirstChild());
-  if(text) {
-    val->getPhysicalStringProperty(0)->setValue(text->Value());
-    val->getPhysicalStringProperty(1)->setValue(text->Value());
-  } 
-  else if(element) {
-    val->getPhysicalStringProperty(0)->initializeUsingXML(element);
-    val->getPhysicalStringProperty(1)->setValue(val->getPhysicalStringProperty(0)->getValue().c_str());
-  } 
+}
+
+VectorParameter::VectorParameter(const string &str) : Parameter(str) {
+
+  vector<PhysicalStringProperty*> input;
+  input.push_back(new PhysicalStringProperty(new VecProperty(3),"",""));
+  value.setProperty(new ExtPhysicalVarProperty(input));
+}
+
+string VectorParameter::getValue() const { 
+  return static_cast<const ExtPhysicalVarProperty*>(value.getProperty())->getValue();
+}
+
+void VectorParameter::initializeUsingXML(TiXmlElement *element) {
+  ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
+  val->initializeUsingXML(element);
 }
 
