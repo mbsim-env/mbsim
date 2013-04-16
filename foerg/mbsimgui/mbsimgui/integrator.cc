@@ -19,9 +19,7 @@
 
 #include <config.h>
 #include "integrator.h"
-#include "property_widget.h"
-#include "string_widgets.h"
-#include "extended_widgets.h"
+#include "integrator_properties.h"
 #include "solver.h"
 #include "objectfactory.h"
 #include "mainwindow.h"
@@ -357,63 +355,6 @@ TiXmlElement* EulerExplicitIntegrator::writeXMLFile(TiXmlNode *parent) {
   stepSize.writeXMLFile(ele0);
   return ele0;
 }
-
-class RKSuiteTypeWidget : public Widget {
-
-  friend class RKSuiteTypeProperty;
-
-  public:
-    RKSuiteTypeWidget() {
-      QHBoxLayout *layout = new QHBoxLayout;
-      layout->setMargin(0);
-      setLayout(layout);
-      comboBox = new QComboBox;
-      comboBox->addItem("Method 23");
-      comboBox->addItem("Method 45");
-      comboBox->addItem("Method 67");
-      layout->addWidget(comboBox);
-    }
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element) {
-      vector<string> str;
-      str.push_back(MBSIMINTNS"method23");
-      str.push_back(MBSIMINTNS"method45");
-      str.push_back(MBSIMINTNS"method67");
-      TiXmlElement *ele = new TiXmlElement(str[comboBox->currentIndex()]);
-      element->LinkEndChild(ele);
-      return 0;
-    }
-    virtual void initializeWidget() {}
-    virtual void updateWidget() {}
-    virtual void resizeVariables() {}
-  protected:
-    QComboBox *comboBox;
-};
-
-class RKSuiteTypeProperty : public Property {
-  public:
-    RKSuiteTypeProperty() : index(0) {
-      method.push_back(MBSIMINTNS"method23");
-      method.push_back(MBSIMINTNS"method45");
-      method.push_back(MBSIMINTNS"method67");
-    }
-    void fromWidget(QWidget *widget) {
-      index = static_cast<RKSuiteTypeWidget*>(widget)->comboBox->currentIndex();
-    }
-    void toWidget(QWidget *widget) {
-      static_cast<RKSuiteTypeWidget*>(widget)->comboBox->setCurrentIndex(index);
-    }
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element) {
-      TiXmlElement *ele = new TiXmlElement(method[index]);
-      element->LinkEndChild(ele);
-      return 0;
-    }
-  protected:
-    int index;
-    vector<string> method;
-};
-
 
 RKSuiteIntegrator::RKSuiteIntegrator() : initialStepSize(0,false) {
 
