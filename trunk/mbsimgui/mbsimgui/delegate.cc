@@ -23,7 +23,7 @@
 #include "treeitem.h"
 #include "element.h"
 #include "parameter.h"
-#include "property_widget.h"
+#include "property_dialog.h"
 #include "mainwindow.h"
 
 using namespace std;

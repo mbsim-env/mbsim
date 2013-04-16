@@ -382,6 +382,7 @@ bool SymMatWidget::validate(const string &str) const {
 }
 
 VecSizeVarWidget::VecSizeVarWidget(int size, int minSize_, int maxSize_) : minSize(minSize_), maxSize(maxSize_) {
+
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   QWidget *box = new QWidget;
@@ -389,24 +390,20 @@ VecSizeVarWidget::VecSizeVarWidget(int size, int minSize_, int maxSize_) : minSi
   box->setLayout(hbox);
   hbox->setMargin(0);
   layout->addWidget(box);
-  sizeCombo = new QComboBox;
-  for(int j=minSize; j<=maxSize; j++)
-    sizeCombo->addItem(QString::number(j));
+  sizeCombo = new QSpinBox;
+  sizeCombo->setRange(minSize,maxSize);
   hbox->addWidget(sizeCombo);
   hbox->addWidget(new QLabel("x"));
   hbox->addWidget(new QLabel("1"));
-
+  sizeCombo->setValue(size);
+  QObject::connect(sizeCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
   hbox->addStretch(2);
   widget = new VecWidget(size);
-  QObject::connect(sizeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(currentIndexChanged(int)));
   layout->addWidget(widget);
-  sizeCombo->setCurrentIndex(0);
-
   setLayout(layout);
 }
 
-void VecSizeVarWidget::currentIndexChanged(int i) {
-  int size = i+minSize;
+void VecSizeVarWidget::currentIndexChanged(int size) {
   widget->resize(size);
   emit sizeChanged(size);
 }
@@ -421,6 +418,7 @@ bool VecSizeVarWidget::validate(const string &str) const {
 }
 
 MatColsVarWidget::MatColsVarWidget(int rows, int cols, int minCols_, int maxCols_) : minCols(minCols_), maxCols(maxCols_) {
+
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   QWidget *box = new QWidget;
@@ -430,22 +428,18 @@ MatColsVarWidget::MatColsVarWidget(int rows, int cols, int minCols_, int maxCols
   layout->addWidget(box);
   hbox->addWidget(new QLabel(QString::number(rows)));
   hbox->addWidget(new QLabel("x"));
-  colsCombo = new QComboBox;
-  for(int j=minCols; j<=maxCols; j++)
-    colsCombo->addItem(QString::number(j));
-
+  colsCombo = new QSpinBox;
+  colsCombo->setRange(minCols,maxCols);
+  colsCombo->setValue(cols);
+  QObject::connect(colsCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
   hbox->addWidget(colsCombo);
   hbox->addStretch(2);
   widget = new MatWidget(rows,cols);
-  QObject::connect(colsCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(currentIndexChanged(int)));
   layout->addWidget(widget);
-  colsCombo->setCurrentIndex(0);
-
   setLayout(layout);
 }
 
-void MatColsVarWidget::currentIndexChanged(int i) {
-  int cols = i+minCols;
+void MatColsVarWidget::currentIndexChanged(int cols) {
   widget->resize(widget->rows(),cols);
   emit sizeChanged(cols);
 }

@@ -24,6 +24,7 @@
 #include "utils.h"
 #include <QCheckBox>
 #include <QComboBox>
+#include <QSpinBox>
 #include <QPlainTextEdit>
 #include <QLineEdit>
 #include <QSyntaxHighlighter>
@@ -178,17 +179,17 @@ class VecSizeVarWidget : public BasicVecWidget {
 
   private:
     VecWidget *widget;
-    QComboBox* sizeCombo;
+    QSpinBox* sizeCombo;
     int minSize, maxSize;
   public:
     VecSizeVarWidget(int size, int minSize, int maxSize);
     std::vector<std::string> getVec() const {return widget->getVec();}
     void setVec(const std::vector<std::string> &x) {
-      sizeCombo->setCurrentIndex(sizeCombo->findText(QString::number(x.size())));
+      sizeCombo->setValue(x.size());
       widget->setVec(x);
     }
     void resize(int size) {widget->resize(size);}
-    int size() const {return sizeCombo->currentText().toInt();}
+    int size() const {return sizeCombo->value();}
     std::string getValue() const {return toStr(getVec());}
     void setValue(const std::string &str) {setVec(strToVec(str));}
     void setReadOnly(bool flag) {widget->setReadOnly(flag);}
@@ -209,18 +210,18 @@ class MatColsVarWidget : public BasicMatWidget {
 
   private:
     MatWidget *widget;
-    QComboBox* colsCombo;
+    QSpinBox* colsCombo;
     int minCols, maxCols;
   public:
     MatColsVarWidget(int rows, int cols, int minCols, int maxCols);
     std::vector<std::vector<std::string> > getMat() const {return widget->getMat();}
     void setMat(const std::vector<std::vector<std::string> > &A) {
-      colsCombo->setCurrentIndex(colsCombo->findText(QString::number(A[0].size())));
+      colsCombo->setValue(A[0].size());
       widget->setMat(A);
     }
     void resize(int rows, int cols) {widget->resize(rows,cols);}
     int rows() const {return widget->rows();}
-    int cols() const {return colsCombo->currentText().toInt();}
+    int cols() const {return colsCombo->value();}
     std::string getValue() const {return toStr(getMat());}
     void setValue(const std::string &str) {setMat(strToMat(str));}
     void setReadOnly(bool flag) {widget->setReadOnly(flag);}

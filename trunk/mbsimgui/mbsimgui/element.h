@@ -22,7 +22,7 @@
 
 #include "treeitemdata.h"
 #include "extended_properties.h"
-#include "property_widget.h"
+#include "element_property_dialog.h"
 
 class Element;
 class Frame;

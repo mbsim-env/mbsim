@@ -21,7 +21,7 @@
 #define _INTEGRATOR__H_
 
 #include "extended_properties.h"
-#include "property_widget.h"
+#include "integrator_property_dialog.h"
 
 class TiXmlElement;
 class TiXmlNode;

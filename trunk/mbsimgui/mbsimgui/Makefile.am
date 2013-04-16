@@ -50,7 +50,10 @@ mbsimgui_SOURCES = element.cc \
 		   ombv_widgets.cc \
 		   extended_widgets.cc \
 		   integrator_widgets.cc \
-		   property_widget.cc\
+		   property_dialog.cc \
+		   element_property_dialog.cc \
+		   integrator_property_dialog.cc \
+		   parameter_property_dialog.cc \
 		   dialogs.cc  \
 		   utils.cc \
 		   mainwindow.cc \
@@ -67,7 +70,10 @@ QT_BUILT_SOURCES = basic_widgets.moc.cc \
 		   kinetics_widgets.moc.cc \
 		   ombv_widgets.moc.cc \
 		   extended_widgets.moc.cc \
-		   property_widget.moc.cc  \
+		   property_dialog.moc.cc  \
+		   element_property_dialog.moc.cc \
+		   integrator_property_dialog.moc.cc \
+		   parameter_property_dialog.moc.cc \
 		   dialogs.moc.cc  \
 		   integrator.moc.cc \
 		   delegate.moc.cc \
