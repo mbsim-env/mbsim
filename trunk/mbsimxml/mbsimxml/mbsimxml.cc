@@ -65,7 +65,7 @@ bool newer(const string &filenamea, const string &filenameb) {
 // return filename without path but with extension (OS-independent)
 string basename(const string &filename) {
   bfs::path p(filename.c_str());
-  return (--p.end())->generic_string();
+  return p.filename().generic_string();
 }
 
 // create filename if it does not exist or touch it if if exists (OS-independent)
