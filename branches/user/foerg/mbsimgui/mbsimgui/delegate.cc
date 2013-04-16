@@ -81,6 +81,7 @@ void ParameterDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
   ParameterPropertyDialog *dialog = static_cast<ParameterPropertyDialog*>(editor);
   dialog->fromWidget(static_cast<Parameter*>(static_cast<const ParameterListModel*>(model)->getItem(index)->getItemData()));
   static_cast<ParameterListModel*>(model)->updateView(index);
+  mw->updateOctaveParameters();
   mw->mbsimxml(1);
 }
 

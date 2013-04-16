@@ -617,8 +617,6 @@ void MainWindow::loadMBS(const QString &file) {
     model->removeRow(index.row(), index.parent());
     Solver *sys = Solver::readXMLFile(file.toStdString());
     model->createGroupItem(sys);
-    //QTreeWidgetItem* parentItem = elementList->invisibleRootItem();
-    //sys->updateWidget();
     //((Integrator*)integratorList->topLevelItem(0))->setSolver(sys);
     actionSaveMBS->setDisabled(false);
   }
@@ -637,14 +635,12 @@ void MainWindow::loadMBS() {
 void MainWindow::saveMBSAs() {
   ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = model->index(0,0);
-//  if(index.isValid()) {
-    QString file=QFileDialog::getSaveFileName(0, "XML model files", QString("./")+QString::fromStdString(model->getItem(index)->getItemData()->getName())+".mbsim.xml", "XML files (*.mbsim.xml)");
-    if(file!="") {
-      fileMBS->setText(file.right(10)==".mbsim.xml"?file:file+".mbsim.xml");
-      actionSaveMBS->setDisabled(false);
-      saveMBS();
-    }
-//  }
+  QString file=QFileDialog::getSaveFileName(0, "XML model files", QString("./")+QString::fromStdString(model->getItem(index)->getItemData()->getName())+".mbsim.xml", "XML files (*.mbsim.xml)");
+  if(file!="") {
+    fileMBS->setText(file.right(10)==".mbsim.xml"?file:file+".mbsim.xml");
+    actionSaveMBS->setDisabled(false);
+    saveMBS();
+  }
 }
 
 void MainWindow::saveMBS() {
@@ -656,40 +652,8 @@ void MainWindow::saveMBS() {
   solver->writeXMLFile(file.toStdString());
 }
 
-//void MainWindow::newIntegrator(const QString &str) {
-//  bool ok;
-//  integratorList->clear();
-//  QString text;
-//  if(str=="") {
-//    QStringList strList;
-//    strList << "DOPRI5Integrator" << "LSODEIntegrator";
-//    text = QInputDialog::getItem(0, tr("New integrator"), tr("Integrators:"),strList, 0, false, &ok);
-//  } else {
-//    text = str;
-//    ok = true;
-//  }
-//  QTreeWidgetItem* parentItem = integratorList->invisibleRootItem();
-//  if (ok && !text.isEmpty()) {
-//    Integrator *integrator = 0;
-//    if(text == "DOPRI5Integrator") {
-//      integrator = new DOPRI5Integrator("DOPRI5",parentItem);
-//    }
-//    else if(text == "LSODEIntegrator") {
-//      integrator = new LSODEIntegrator("LSODE",parentItem);
-//    }
-//    parentItem->addChild(integrator);
-//  }
-//}
-
 void MainWindow::newDOPRI5Integrator() {
   actionSaveIntegrator->setDisabled(true);
-//  integratorList->clear();
-//  QTreeWidgetItem* parentItem = integratorList->invisibleRootItem();
-//  delete integrator;
-//  integrator = new DOPRI5Integrator;
-//  cout << integrator << endl;
-  //integrator->setSolver(((Solver*)elementList->topLevelItem(0)));
-  //parentItem->addChild(integrator);
   integratorList->newDOPRI5Integrator();
   fileIntegrator->setText("");
 }
@@ -758,7 +722,6 @@ void MainWindow::saveIntegratorAs() {
 
 void MainWindow::saveIntegrator() {
   QString file = fileIntegrator->text();
-  //((Integrator*)integratorList->topLevelItem(0))->writeXMLFile(file);
   integratorList->getIntegrator()->writeXMLFile(file.toStdString());
 }
 
@@ -772,6 +735,7 @@ void MainWindow::addScalarParameter() {
   //tabBar->setCurrentIndex(2);
   ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
   model->addScalarParameter();
+  updateOctaveParameters();
 }
 
 void MainWindow::newParameter() {
@@ -825,14 +789,14 @@ void MainWindow::loadParameter() {
 }
 
 void MainWindow::saveParameterAs() {
-//  if(parameterList->topLevelItemCount()) {
-//    QString file=QFileDialog::getSaveFileName(0, "MBSim parameter files", QString("./")+((Solver*)elementList->topLevelItem(0))->getName()+".mbsimparam.xml", "XML files (*.mbsimparam.xml)");
-//    if(file!="") {
-//      fileParameter->setText(file.right(15)==".mbsimparam.xml"?file:file+".mbsimparam.xml");
-//      actionSaveParameter->setDisabled(false);
-//      saveParameter();
-//    }
-//  }
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+  QModelIndex index = model->index(0,0);
+  QString file=QFileDialog::getSaveFileName(0, "MBSim parameter files", QString("./")+QString::fromStdString(model->getItem(index)->getItemData()->getName())+".mbsimparam.xml", "XML files (*.mbsimparam.xml)");
+  if(file!="") {
+    fileParameter->setText(file.right(15)==".mbsimparam.xml"?file:file+".mbsimparam.xml");
+    actionSaveParameter->setDisabled(false);
+    saveParameter();
+  }
 }
 
 void MainWindow::saveParameter(QString fileName) {
