@@ -44,49 +44,57 @@ MainWindow *mw;
 
 class IntegratorView : public QLineEdit {
   public:
-    IntegratorView() : integrator(0) {}
+    IntegratorView() : i(0) {
+      integrator.push_back(new DOPRI5Integrator);
+      integrator.push_back(new RADAU5Integrator);
+      integrator.push_back(new LSODEIntegrator);
+      integrator.push_back(new LSODARIntegrator);
+      integrator.push_back(new TimeSteppingIntegrator);
+      integrator.push_back(new EulerExplicitIntegrator);
+      integrator.push_back(new RKSuiteIntegrator);
+      type.push_back("DOPRI5");
+      type.push_back("RADAU5");
+      type.push_back("LSODE");
+      type.push_back("LSODAR");
+      type.push_back("Time stepping");
+      type.push_back("Euler explicit");
+      type.push_back("RKSuite");
+    }
     ~IntegratorView() {
-      delete integrator;
+      for(int i=0; i<integrator.size(); i++)
+        delete integrator[i];
     }
-    void newDOPRI5Integrator() {
-      delete integrator;
-      integrator = new DOPRI5Integrator;
-      setText("DOPRI5");
+    void setIntegrator(int i_) {
+      i = i_;
+      updateText();
     }
-    void newRADAU5Integrator() {
-      delete integrator;
-      integrator = new RADAU5Integrator;
-      setText("RADAU5");
+    Integrator* getIntegrator() {return integrator[i];}
+    void setIntegrator(Integrator *integrator_) {
+      if(dynamic_cast<DOPRI5Integrator*>(integrator_))
+        i=0;
+      else if(dynamic_cast<RADAU5Integrator*>(integrator_))
+        i=1;
+      else if(dynamic_cast<LSODEIntegrator*>(integrator_))
+        i=2;
+      else if(dynamic_cast<LSODARIntegrator*>(integrator_))
+        i=3;
+      else if(dynamic_cast<TimeSteppingIntegrator*>(integrator_))
+        i=4;
+      else if(dynamic_cast<EulerExplicitIntegrator*>(integrator_))
+        i=5;
+      else if(dynamic_cast<RKSuiteIntegrator*>(integrator_))
+        i=6;
+      delete integrator[i];
+      integrator[i] = integrator_;
+      updateText();
     }
-    void newLSODEIntegrator() {
-      delete integrator;
-      integrator = new LSODEIntegrator;
-      setText("LSODE");
+    void updateText() {
+      setText(type[i]);
     }
-    void newLSODARIntegrator() {
-      delete integrator;
-      integrator = new LSODARIntegrator;
-      setText("LSODAR");
-    }
-    void newTimeSteppingIntegrator() {
-      delete integrator;
-      integrator = new TimeSteppingIntegrator;
-      setText("Time stepping");
-    }
-    void newEulerExplicitIntegrator() {
-      delete integrator;
-      integrator = new EulerExplicitIntegrator;
-      setText("Euler explicit");
-    }
-    void newRKSuiteIntegrator() {
-      delete integrator;
-      integrator = new RKSuiteIntegrator;
-      setText("RKSuite");
-    }
-    Integrator* getIntegrator() {return integrator;}
-    void setIntegrator(Integrator *integrator_) {integrator = integrator_;}
   protected:
-    Integrator *integrator;
+    vector<Integrator*> integrator;
+    vector<QString> type;
+    int i;
 };
 
 bool IntegratorMouseEvent::eventFilter(QObject *obj, QEvent *event) {
@@ -240,35 +248,22 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   menuBar()->addMenu(MBSMenu);
 
   QMenu *integratorMenu=new QMenu("Integrator", menuBar());
-  QMenu *submenu = integratorMenu->addMenu("New");
+  integratorMenu->addAction("Select", this, SLOT(selectIntegrator()));
 
-  newDOPRI5IntegratorAction=new QAction(Utils::QIconCached("newobject.svg"),"DOPRI5 integrator", this);
-  connect(newDOPRI5IntegratorAction,SIGNAL(triggered()),this,SLOT(newDOPRI5Integrator()));
-  submenu->addAction(newDOPRI5IntegratorAction);
-  
-  newRADAU5IntegratorAction=new QAction(Utils::QIconCached("newobject.svg"),"RADAU5 integrator", this);
-  connect(newRADAU5IntegratorAction,SIGNAL(triggered()),this,SLOT(newRADAU5Integrator()));
-  submenu->addAction(newRADAU5IntegratorAction);
-
-  newLSODEIntegratorAction=new QAction(Utils::QIconCached("newobject.svg"),"LSODE integrator", this);
-  connect(newLSODEIntegratorAction,SIGNAL(triggered()),this,SLOT(newLSODEIntegrator()));
-  submenu->addAction(newLSODEIntegratorAction);
-
-  newLSODARIntegratorAction=new QAction(Utils::QIconCached("newobject.svg"),"LSODAR integrator", this);
-  connect(newLSODARIntegratorAction,SIGNAL(triggered()),this,SLOT(newLSODARIntegrator()));
-  submenu->addAction(newLSODARIntegratorAction);
-
-  newTimeSteppingIntegratorAction=new QAction(Utils::QIconCached("newobject.svg"),"Time stepping integrator", this);
-  connect(newTimeSteppingIntegratorAction,SIGNAL(triggered()),this,SLOT(newTimeSteppingIntegrator()));
-  submenu->addAction(newTimeSteppingIntegratorAction);
-
-  newEulerExplicitIntegratorAction=new QAction(Utils::QIconCached("newobject.svg"),"Euler explicit integrator", this);
-  connect(newEulerExplicitIntegratorAction,SIGNAL(triggered()),this,SLOT(newEulerExplicitIntegrator()));
-  submenu->addAction(newEulerExplicitIntegratorAction);
-
-  newRKSuiteIntegratorAction=new QAction(Utils::QIconCached("newobject.svg"),"RKSuite integrator", this);
-  connect(newRKSuiteIntegratorAction,SIGNAL(triggered()),this,SLOT(newRKSuiteIntegrator()));
-  submenu->addAction(newRKSuiteIntegratorAction);
+  selectDOPRI5IntegratorAction=new QAction(Utils::QIconCached("newobject.svg"),"DOPRI5", this);
+  connect(selectDOPRI5IntegratorAction,SIGNAL(triggered()),this,SLOT(selectDOPRI5Integrator()));
+  selectRADAU5IntegratorAction=new QAction(Utils::QIconCached("newobject.svg"),"RADAU5", this);
+  connect(selectRADAU5IntegratorAction,SIGNAL(triggered()),this,SLOT(selectRADAU5Integrator()));
+  selectLSODEIntegratorAction=new QAction(Utils::QIconCached("newobject.svg"),"LSODE", this);
+  connect(selectLSODEIntegratorAction,SIGNAL(triggered()),this,SLOT(selectLSODEIntegrator()));
+  selectLSODARIntegratorAction=new QAction(Utils::QIconCached("newobject.svg"),"LSODAR", this);
+  connect(selectLSODARIntegratorAction,SIGNAL(triggered()),this,SLOT(selectLSODARIntegrator()));
+  selectTimeSteppingIntegratorAction=new QAction(Utils::QIconCached("newobject.svg"),"Time stepping", this);
+  connect(selectTimeSteppingIntegratorAction,SIGNAL(triggered()),this,SLOT(selectTimeSteppingIntegrator()));
+  selectEulerExplicitIntegratorAction=new QAction(Utils::QIconCached("newobject.svg"),"Euler explicit", this);
+  connect(selectEulerExplicitIntegratorAction,SIGNAL(triggered()),this,SLOT(selectEulerExplicitIntegrator()));
+  selectRKSuiteIntegratorAction=new QAction(Utils::QIconCached("newobject.svg"),"RKSuite", this);
+  connect(selectRKSuiteIntegratorAction,SIGNAL(triggered()),this,SLOT(selectRKSuiteIntegrator()));
 
   integratorMenu->addAction("Load", this, SLOT(loadIntegrator()));
   integratorMenu->addAction("Save as", this, SLOT(saveIntegratorAs()));
@@ -276,12 +271,12 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   actionSaveIntegrator->setDisabled(true);
   menuBar()->addMenu(integratorMenu);
 
-  QMenu *parameterMenu=new QMenu("Parameter", menuBar());
-  parameterMenu->addAction("New", this, SLOT(newParameter()));
-  parameterMenu->addAction("Load", this, SLOT(loadParameter()));
-  parameterMenu->addAction("Save as", this, SLOT(saveParameterAs()));
-  actionSaveParameter = parameterMenu->addAction("Save", this, SLOT(saveParameter()));
-  actionSaveParameter->setDisabled(true);
+  QMenu *parameterMenu=new QMenu("Parameter list", menuBar());
+  parameterMenu->addAction("New", this, SLOT(newParameterList()));
+  parameterMenu->addAction("Load", this, SLOT(loadParameterList()));
+  parameterMenu->addAction("Save as", this, SLOT(saveParameterListAs()));
+  actionSaveParameterList = parameterMenu->addAction("Save", this, SLOT(saveParameter()));
+  actionSaveParameterList->setDisabled(true);
   parameterMenu->addAction(addParameterAction);
   menuBar()->addMenu(parameterMenu);
 
@@ -335,7 +330,7 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   box->setLayout(gl);
   gl->addWidget(elementList);
 
-  QDockWidget *dockWidget3 = new QDockWidget("Parameter");
+  QDockWidget *dockWidget3 = new QDockWidget("Parameter list");
   addDockWidget(Qt::LeftDockWidgetArea,dockWidget3);
   box = new QWidget;
   dockWidget3->setWidget(box);
@@ -348,19 +343,20 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   QDockWidget *dockWidget2 = new QDockWidget("Integrator");
   addDockWidget(Qt::BottomDockWidgetArea,dockWidget2);
   box = new QWidget;
+  box->setMaximumWidth(150);
   dockWidget2->setWidget(box);
   gl = new QVBoxLayout;
   box->setLayout(gl);
   fileIntegrator = new QLineEdit("");
   fileIntegrator->setReadOnly(true);
-  integratorList = new IntegratorView;
-  integratorList->installEventFilter(new IntegratorMouseEvent(integratorList));
+  integratorView = new IntegratorView;
+  integratorView->installEventFilter(new IntegratorMouseEvent(integratorView));
   QList<QAction*> actionList;
-  actionList << newDOPRI5IntegratorAction << newRADAU5IntegratorAction << newLSODEIntegratorAction << newLSODARIntegratorAction << newTimeSteppingIntegratorAction << newEulerExplicitIntegratorAction << newRKSuiteIntegratorAction;
-  integratorList->insertActions(0,actionList);
-  integratorList->setContextMenuPolicy(Qt::ActionsContextMenu);
-  integratorList->setReadOnly(true);
-  gl->addWidget(integratorList);
+  actionList << selectDOPRI5IntegratorAction << selectRADAU5IntegratorAction << selectLSODEIntegratorAction << selectLSODARIntegratorAction << selectTimeSteppingIntegratorAction << selectEulerExplicitIntegratorAction << selectRKSuiteIntegratorAction;
+  integratorView->insertActions(0,actionList);
+  integratorView->setContextMenuPolicy(Qt::ActionsContextMenu);
+  integratorView->setReadOnly(true);
+  gl->addWidget(integratorView);
  
   //tabifyDockWidget(dockWidget1,dockWidget2);
   //tabifyDockWidget(dockWidget2,dockWidget3);
@@ -386,7 +382,7 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
 
   setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
   
-  newDOPRI5Integrator();
+  selectDOPRI5Integrator();
   newMBS();
 }
 
@@ -449,10 +445,10 @@ void MainWindow::closeEvent(QCloseEvent *event) {
       saveIntegrator();
     else
       saveIntegratorAs();
-    if(actionSaveParameter->isEnabled())
-      saveParameter();
+    if(actionSaveParameterList->isEnabled())
+      saveParameterList();
     else
-      saveParameterAs();
+      saveParameterListAs();
     event->accept();
   } 
   else if (ret == QMessageBox::Discard) 
@@ -509,17 +505,17 @@ void MainWindow::elementListClicked() {
   }
 }
 
-void MainWindow::integratorListClicked() {
-  cout << "integratorListClicked" << endl;
+void MainWindow::integratorViewClicked() {
+  cout << "integratorViewClicked" << endl;
 //  if(QApplication::mouseButtons()==Qt::RightButton) {
-//    Integrator *integrator=(Integrator*)integratorList->currentItem();
+//    Integrator *integrator=(Integrator*)integratorView->currentItem();
 //    if(integrator) {
 //      QMenu* menu=integrator->getContextMenu();
 //      menu->exec(QCursor::pos());
 //    }
 //  } 
 //  else if(QApplication::mouseButtons()==Qt::LeftButton) {
-//    Integrator *integrator=(Integrator*)integratorList->currentItem();
+//    Integrator *integrator=(Integrator*)integratorView->currentItem();
 //    pagesWidget->insertWidget(0,integrator->getPropertyWidget());
 //    pagesWidget->setCurrentWidget(integrator->getPropertyWidget());
 //  }
@@ -544,7 +540,7 @@ void MainWindow::parameterListClicked() {
 //}
 
 void MainWindow::loadProj(const QString &file) {
-  loadParameter(file+"/MBS.mbsimparam.xml");
+  loadParameterList(file+"/MBS.mbsimparam.xml");
   loadIntegrator(file+"/MBS.mbsimint.xml");
   loadMBS(file+"/MBS.mbsim.xml");
   actionSaveProj->setDisabled(false);
@@ -568,7 +564,7 @@ void MainWindow::saveProjAs() {
       actionSaveIntegrator->setDisabled(false);
   //    saveIntegrator();
       fileParameter->setText(file+"/MBS.mbsimparam.xml");
-      actionSaveParameter->setDisabled(false);
+      actionSaveParameterList->setDisabled(false);
   //    saveParameter();
       actionSaveProj->setDisabled(false);
     }
@@ -578,7 +574,7 @@ void MainWindow::saveProjAs() {
 void MainWindow::saveProj() {
   saveMBS();
   saveIntegrator();
-  saveParameter();
+  saveParameterList();
 }
 
 void MainWindow::newMBS() {
@@ -591,7 +587,7 @@ void MainWindow::newMBS() {
   model->removeRow(index.row(), index.parent());
   model->addSolver();
 
-  //((Integrator*)integratorList->topLevelItem(0))->setSolver(0);
+  //((Integrator*)integratorView->topLevelItem(0))->setSolver(0);
 
   actionSaveMBS->setDisabled(true);
   fileMBS->setText("");
@@ -616,7 +612,7 @@ void MainWindow::loadMBS(const QString &file) {
     model->removeRow(index.row(), index.parent());
     Solver *sys = Solver::readXMLFile(file.toStdString());
     model->createGroupItem(sys);
-    //((Integrator*)integratorList->topLevelItem(0))->setSolver(sys);
+    //((Integrator*)integratorView->topLevelItem(0))->setSolver(sys);
     actionSaveMBS->setDisabled(false);
   }
 
@@ -651,45 +647,57 @@ void MainWindow::saveMBS() {
   solver->writeXMLFile(file.toStdString());
 }
 
-void MainWindow::newDOPRI5Integrator() {
+void MainWindow::selectIntegrator() {
+  QMenu menu("Context Menu");
+  menu.addAction(selectDOPRI5IntegratorAction);
+  menu.addAction(selectRADAU5IntegratorAction);
+  menu.addAction(selectLSODEIntegratorAction);
+  menu.addAction(selectLSODARIntegratorAction);
+  menu.addAction(selectTimeSteppingIntegratorAction);
+  menu.addAction(selectEulerExplicitIntegratorAction);
+  menu.addAction(selectRKSuiteIntegratorAction);
+  menu.exec(QCursor::pos());
+}
+
+void MainWindow::selectDOPRI5Integrator() {
   actionSaveIntegrator->setDisabled(true);
-  integratorList->newDOPRI5Integrator();
+  integratorView->setIntegrator(0);
   fileIntegrator->setText("");
 }
 
-void MainWindow::newRADAU5Integrator() {
+void MainWindow::selectRADAU5Integrator() {
   actionSaveIntegrator->setDisabled(true);
-  integratorList->newRADAU5Integrator();
+  integratorView->setIntegrator(1);
   fileIntegrator->setText("");
 }
 
-void MainWindow::newLSODEIntegrator() {
+void MainWindow::selectLSODEIntegrator() {
   actionSaveIntegrator->setDisabled(true);
-  integratorList->newLSODEIntegrator();
+  integratorView->setIntegrator(2);
   fileIntegrator->setText("");
 }
 
-void MainWindow::newLSODARIntegrator() {
+void MainWindow::selectLSODARIntegrator() {
   actionSaveIntegrator->setDisabled(true);
-  integratorList->newLSODARIntegrator();
+  integratorView->setIntegrator(3);
   fileIntegrator->setText("");
 }
 
-void MainWindow::newTimeSteppingIntegrator() {
+void MainWindow::selectTimeSteppingIntegrator() {
   actionSaveIntegrator->setDisabled(true);
-  integratorList->newTimeSteppingIntegrator();
+  integratorView->setIntegrator(4);
   fileIntegrator->setText("");
 }
 
-void MainWindow::newEulerExplicitIntegrator() {
+void MainWindow::selectEulerExplicitIntegrator() {
   actionSaveIntegrator->setDisabled(true);
-  integratorList->newEulerExplicitIntegrator();
+  integratorView->setIntegrator(5);
   fileIntegrator->setText("");
 }
 
-void MainWindow::newRKSuiteIntegrator() {
+void MainWindow::selectRKSuiteIntegrator() {
   actionSaveIntegrator->setDisabled(true);
-  integratorList->newRKSuiteIntegrator();
+  integratorView->setIntegrator(6);
   fileIntegrator->setText("");
 }
 
@@ -697,7 +705,7 @@ void MainWindow::loadIntegrator(const QString &file) {
   fileIntegrator->setText(file);
   actionSaveIntegrator->setDisabled(true);
   if(file!="") {
-    integratorList->setIntegrator(Integrator::readXMLFile(file.toStdString()));
+    integratorView->setIntegrator(Integrator::readXMLFile(file.toStdString()));
     actionSaveIntegrator->setDisabled(false);
   }
 }
@@ -721,7 +729,7 @@ void MainWindow::saveIntegratorAs() {
 
 void MainWindow::saveIntegrator() {
   QString file = fileIntegrator->text();
-  integratorList->getIntegrator()->writeXMLFile(file.toStdString());
+  integratorView->getIntegrator()->writeXMLFile(file.toStdString());
 }
 
 void MainWindow::removeParameter() {
@@ -737,19 +745,19 @@ void MainWindow::addParameter() {
   updateOctaveParameters();
 }
 
-void MainWindow::newParameter() {
+void MainWindow::newParameterList() {
   ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
   QModelIndex index = model->index(0,0);
   model->removeRows(index.row(), model->rowCount(QModelIndex()), index.parent());
 }
 
-void MainWindow::loadParameter(const QString &file) {
+void MainWindow::loadParameterList(const QString &file) {
   //tabBar->setCurrentIndex(2);
   ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
   QModelIndex index = model->index(0,0);
   model->removeRows(index.row(), model->rowCount(QModelIndex()), index.parent());
   fileParameter->setText(file);
-  actionSaveParameter->setDisabled(true);
+  actionSaveParameterList->setDisabled(true);
   if(file!="") {
     ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
     QModelIndex index = model->index(0,0);
@@ -774,7 +782,7 @@ void MainWindow::loadParameter(const QString &file) {
       E=E->NextSiblingElement();
     }
     updateOctaveParameters();
-    actionSaveParameter->setDisabled(false);
+    actionSaveParameterList->setDisabled(false);
   }
 
 #ifdef INLINE_OPENMBV
@@ -782,25 +790,25 @@ void MainWindow::loadParameter(const QString &file) {
 #endif
 }
 
-void MainWindow::loadParameter() {
+void MainWindow::loadParameterList() {
   QString file=QFileDialog::getOpenFileName(0, "MBSim parameter files", ".", "XML files (*.mbsimparam.xml)");
   if(file!="") {
-    loadParameter(file);
+    loadParameterList(file);
   }
 }
 
-void MainWindow::saveParameterAs() {
+void MainWindow::saveParameterListAs() {
   ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = model->index(0,0);
   QString file=QFileDialog::getSaveFileName(0, "MBSim parameter files", QString("./")+QString::fromStdString(model->getItem(index)->getItemData()->getName())+".mbsimparam.xml", "XML files (*.mbsimparam.xml)");
   if(file!="") {
     fileParameter->setText(file.right(15)==".mbsimparam.xml"?file:file+".mbsimparam.xml");
-    actionSaveParameter->setDisabled(false);
-    saveParameter();
+    actionSaveParameterList->setDisabled(false);
+    saveParameterList();
   }
 }
 
-void MainWindow::saveParameter(QString fileName) {
+void MainWindow::saveParameterList(QString fileName) {
   ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
   QModelIndex index = model->index(0,0);
 
@@ -837,8 +845,8 @@ void MainWindow::mbsimxml(int task) {
   absolutePath = true;
   QModelIndex index = elementList->model()->index(0,0);
   Solver *slv=dynamic_cast<Solver*>(static_cast<ElementTreeModel*>(elementList->model())->getItem(index)->getItemData());
-  //Integrator *integ=(Integrator*)integratorList->topLevelItem(0);
-  Integrator *integ=integratorList->getIntegrator();
+  //Integrator *integ=(Integrator*)integratorView->topLevelItem(0);
+  Integrator *integ=integratorView->getIntegrator();
   if(!slv || !integ)
     return;
 
@@ -850,7 +858,7 @@ void MainWindow::mbsimxml(int task) {
   slv->setName(saveName);
 
   QString mbsParamFile=uniqueTempDir+"/in"+sTask+".mbsimparam.xml";
-  saveParameter(mbsParamFile);
+  saveParameterList(mbsParamFile);
 
   QString intFile=uniqueTempDir+"/in"+sTask+".mbsimint.xml";
   integ->writeXMLFile(intFile.toStdString());

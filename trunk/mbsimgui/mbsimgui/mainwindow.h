@@ -68,7 +68,7 @@ class MainWindow : public QMainWindow {
 
   private:
     QTreeView *elementList, *parameterList;
-    IntegratorView *integratorList;
+    IntegratorView *integratorView;
     QStackedWidget *pagesWidget;
     QTabBar *tabBar;
     QLineEdit *fileMBS, *fileIntegrator, *fileParameter;
@@ -76,14 +76,14 @@ class MainWindow : public QMainWindow {
     void loadProj(const QString &file);
     void loadMBS(const QString &file);
     void loadIntegrator(const QString &file);
-    void loadParameter(const QString &file);
+    void loadParameterList(const QString &file);
     OpenMBVGUI::MainWindow *inlineOpenMBVMW;
     void initInlineOpenMBV();
     QString uniqueTempDir, absoluteMBSFilePath;
-    QAction *actionSaveProj, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameter;
+    QAction *actionSaveProj, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameterList;
     QAction *addFrameAction, *addContourAction, *addGroupAction, *addObjectAction, *addLinkAction, *addObserverAction, *addPointAction, *addLineAction, *addPlaneAction, *addSphereAction, *addRigidBodyAction, *addGearConstraintAction, *addKinematicConstraintAction, *addJointConstraintAction, *addKineticExcitationAction, *addSpringDamperAction, *addJointAction, *addContactAction, *addAbsoluteKinematicsObserverAction, *removeElementAction;
     QAction *addParameterAction, *removeParameterAction;
-    QAction *newDOPRI5IntegratorAction, *newRADAU5IntegratorAction, *newLSODEIntegratorAction, *newLSODARIntegratorAction, *newTimeSteppingIntegratorAction, *newEulerExplicitIntegratorAction, *newRKSuiteIntegratorAction;
+    QAction *selectDOPRI5IntegratorAction, *selectRADAU5IntegratorAction, *selectLSODEIntegratorAction, *selectLSODARIntegratorAction, *selectTimeSteppingIntegratorAction, *selectEulerExplicitIntegratorAction, *selectRKSuiteIntegratorAction;
 
   public:
     MainWindow();
@@ -93,7 +93,7 @@ class MainWindow : public QMainWindow {
   public slots:
     void elementListClicked();
     void parameterListClicked();
-    void integratorListClicked();
+    void integratorViewClicked();
     void loadProj();
     void saveProjAs();
     void saveProj();
@@ -101,20 +101,21 @@ class MainWindow : public QMainWindow {
     void loadMBS();
     void saveMBSAs();
     void saveMBS();
-    void newDOPRI5Integrator();
-    void newRADAU5Integrator();
-    void newLSODEIntegrator();
-    void newLSODARIntegrator();
-    void newTimeSteppingIntegrator();
-    void newEulerExplicitIntegrator();
-    void newRKSuiteIntegrator();
+    void selectIntegrator();
+    void selectDOPRI5Integrator();
+    void selectRADAU5Integrator();
+    void selectLSODEIntegrator();
+    void selectLSODARIntegrator();
+    void selectTimeSteppingIntegrator();
+    void selectEulerExplicitIntegrator();
+    void selectRKSuiteIntegrator();
     void loadIntegrator();
     void saveIntegratorAs();
     void saveIntegrator();
-    void newParameter();
-    void loadParameter();
-    void saveParameterAs();
-    void saveParameter(QString filename="");
+    void newParameterList();
+    void loadParameterList();
+    void saveParameterListAs();
+    void saveParameterList(QString filename="");
     void removeParameter();
     void addParameter();
     void simulate();
