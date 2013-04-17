@@ -388,13 +388,8 @@ void ParameterListModel::removeParameter(const QModelIndex &index) {
   removeRow(index.row(), index.parent());
 }
 
-void ParameterListModel::addScalarParameter(const QModelIndex &parent) {
-  ScalarParameter *parameter = new ScalarParameter("a"+toStr(IDcounter));
-  createParameterItem(parameter,parent);
-}
-
-void ParameterListModel::addVectorParameter(const QModelIndex &parent) {
-  VectorParameter *parameter = new VectorParameter("a"+toStr(IDcounter));
+void ParameterListModel::addParameter(const QModelIndex &parent) {
+  Parameter *parameter = new Parameter("a"+toStr(IDcounter));
   createParameterItem(parameter,parent);
 }
 

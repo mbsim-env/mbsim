@@ -31,48 +31,20 @@ ParameterPropertyDialog::ParameterPropertyDialog(QWidget *parent, Qt::WindowFlag
   name = new TextWidget;
   ExtWidget *name_=new ExtWidget("Name",name);
   addToTab("General",name_);
+  vector<PhysicalStringWidget*> input;
+  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),QStringList(),0));
+  //input.push_back(new PhysicalStringWidget(new VecSizeVarWidget(3,1,1000),QStringList(),0));
+  input.push_back(new PhysicalStringWidget(new MatRowsColsVarWidget(3,3,1,1000,1,1000),QStringList(),0));
+  value = new ExtWidget("Value",new ExtPhysicalVarWidget(input,1));
+  addToTab("General", value);
 }
 
 void ParameterPropertyDialog::toWidget(Parameter *parameter) {
-  name->setName(QString::fromStdString(parameter->getName()));
+ name->setName(QString::fromStdString(parameter->getName()));
+ parameter->value.toWidget(value);
 }
 
 void ParameterPropertyDialog::fromWidget(Parameter *parameter) {
   parameter->setName(name->getName().toStdString());
-}
-
-ScalarParameterPropertyDialog::ScalarParameterPropertyDialog(QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parent,f) {
-
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1"),QStringList(),0));
-  value = new ExtWidget("Value",new ExtPhysicalVarWidget(input));
-  addToTab("General", value);
-}
-
-void ScalarParameterPropertyDialog::toWidget(Parameter *parameter) {
-  ParameterPropertyDialog::toWidget(parameter);
-  static_cast<ScalarParameter*>(parameter)->value.toWidget(value);
-}
-
-void ScalarParameterPropertyDialog::fromWidget(Parameter *parameter) {
-  ParameterPropertyDialog::fromWidget(parameter);
-  static_cast<ScalarParameter*>(parameter)->value.fromWidget(value);
-}
-
-VectorParameterPropertyDialog::VectorParameterPropertyDialog(QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parent,f) {
-
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new VecSizeVarWidget(3,1,1000),QStringList(),0));
-  value = new ExtWidget("Value",new ExtPhysicalVarWidget(input));
-  addToTab("General", value);
-}
-
-void VectorParameterPropertyDialog::toWidget(Parameter *parameter) {
-  ParameterPropertyDialog::toWidget(parameter);
-  static_cast<VectorParameter*>(parameter)->value.toWidget(value);
-}
-
-void VectorParameterPropertyDialog::fromWidget(Parameter *parameter) {
-  ParameterPropertyDialog::fromWidget(parameter);
-  static_cast<VectorParameter*>(parameter)->value.fromWidget(value);
+  parameter->value.fromWidget(value);
 }

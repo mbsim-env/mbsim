@@ -455,6 +455,53 @@ bool MatColsVarWidget::validate(const string &str) const {
   return true;
 }
 
+MatRowsColsVarWidget::MatRowsColsVarWidget(int rows, int cols, int minRows_, int maxRows_, int minCols_, int maxCols_) : minRows(minRows_), maxRows(maxRows_), minCols(minCols_), maxCols(maxCols_) {
+
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  QWidget *box = new QWidget;
+  QHBoxLayout *hbox = new QHBoxLayout;
+  box->setLayout(hbox);
+  hbox->setMargin(0);
+  layout->addWidget(box);
+  rowsCombo = new QSpinBox;
+  rowsCombo->setRange(minRows,maxRows);
+  rowsCombo->setValue(rows);
+  colsCombo = new QSpinBox;
+  colsCombo->setRange(minCols,maxCols);
+  colsCombo->setValue(cols);
+  QObject::connect(rowsCombo, SIGNAL(valueChanged(int)), this, SLOT(currentRowIndexChanged(int)));
+  QObject::connect(colsCombo, SIGNAL(valueChanged(int)), this, SLOT(currentColIndexChanged(int)));
+  hbox->addWidget(rowsCombo);
+  hbox->addWidget(new QLabel("x"));
+  hbox->addWidget(colsCombo);
+  hbox->addStretch(2);
+  widget = new MatWidget(rows,cols);
+  layout->addWidget(widget);
+  setLayout(layout);
+}
+
+void MatRowsColsVarWidget::currentRowIndexChanged(int rows) {
+  widget->resize(rows,widget->cols());
+  emit rowSizeChanged(rows);
+}
+
+void MatRowsColsVarWidget::currentColIndexChanged(int cols) {
+  widget->resize(widget->rows(),cols);
+  emit colSizeChanged(cols);
+}
+
+bool MatRowsColsVarWidget::validate(const string &str) const {
+  vector<vector<string> > A = strToMat(str);
+  if(A.size()<minRows || A.size()>maxRows)
+    return false;
+  if(A[0].size()<minCols || A[0].size()>maxCols)
+    return false;
+  if(A[0][0]=="")
+    return false;
+  return true;
+}
+
 CardanWidget::CardanWidget(bool transpose_) : transpose(transpose_) {
 
   QGridLayout *layout = new QGridLayout;

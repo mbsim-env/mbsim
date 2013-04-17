@@ -82,7 +82,7 @@ class MainWindow : public QMainWindow {
     QString uniqueTempDir, absoluteMBSFilePath;
     QAction *actionSaveProj, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameter;
     QAction *addFrameAction, *addContourAction, *addGroupAction, *addObjectAction, *addLinkAction, *addObserverAction, *addPointAction, *addLineAction, *addPlaneAction, *addSphereAction, *addRigidBodyAction, *addGearConstraintAction, *addKinematicConstraintAction, *addJointConstraintAction, *addKineticExcitationAction, *addSpringDamperAction, *addJointAction, *addContactAction, *addAbsoluteKinematicsObserverAction, *removeElementAction;
-    QAction *addScalarParameterAction, *addVectorParameterAction, *removeParameterAction;
+    QAction *addParameterAction, *removeParameterAction;
     QAction *newDOPRI5IntegratorAction, *newRADAU5IntegratorAction, *newLSODEIntegratorAction, *newLSODARIntegratorAction, *newTimeSteppingIntegratorAction, *newEulerExplicitIntegratorAction, *newRKSuiteIntegratorAction;
 
   public:
@@ -116,8 +116,7 @@ class MainWindow : public QMainWindow {
     void saveParameterAs();
     void saveParameter(QString filename="");
     void removeParameter();
-    void addScalarParameter();
-    void addVectorParameter();
+    void addParameter();
     void simulate();
     void openmbv();
     void h5plotserie();

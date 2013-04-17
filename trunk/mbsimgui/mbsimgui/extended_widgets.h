@@ -34,7 +34,7 @@ class ExtPhysicalVarWidget : public Widget {
   Q_OBJECT
 
   public:
-    ExtPhysicalVarWidget(std::vector<PhysicalStringWidget*> inputWidget);
+    ExtPhysicalVarWidget(std::vector<PhysicalStringWidget*> inputWidget, int evalIndex=0);
     ~ExtPhysicalVarWidget();
 
     PhysicalStringWidget* getPhysicalStringWidget(int i) {return inputWidget[i];}

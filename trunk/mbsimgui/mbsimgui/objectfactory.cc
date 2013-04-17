@@ -191,9 +191,11 @@ Parameter* ObjectFactory::createParameter(TiXmlElement *element) {
 Parameter* MBSimObjectFactory::createParameter(TiXmlElement *element) {
   if(element==0) return 0;
   if(element->ValueStr()==PARAMNS"scalarParameter")
-    return new ScalarParameter(element->Attribute("name"));
-  if(element->ValueStr()==PARAMNS"vectorParameter")
-    return new VectorParameter(element->Attribute("name"));
+    return new Parameter(element->Attribute("name"));
+  else if(element->ValueStr()==PARAMNS"vectorParameter")
+    return new Parameter(element->Attribute("name"));
+  else if(element->ValueStr()==PARAMNS"matrixParameter")
+    return new Parameter(element->Attribute("name"));
   return 0;
 }
 

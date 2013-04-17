@@ -26,7 +26,7 @@
 
 using namespace std;
 
-ExtPhysicalVarWidget::ExtPhysicalVarWidget(std::vector<PhysicalStringWidget*> inputWidget_) : inputWidget(inputWidget_), evalInput(0) {
+ExtPhysicalVarWidget::ExtPhysicalVarWidget(std::vector<PhysicalStringWidget*> inputWidget_, int evalIndex) : inputWidget(inputWidget_), evalInput(0) {
   QHBoxLayout *layout = new QHBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -35,7 +35,7 @@ ExtPhysicalVarWidget::ExtPhysicalVarWidget(std::vector<PhysicalStringWidget*> in
 
   QPushButton *evalButton = new QPushButton("Eval");
   connect(evalButton,SIGNAL(clicked(bool)),this,SLOT(openEvalDialog()));
-  evalDialog = new EvalDialog(((StringWidget*)inputWidget[0])->cloneStringWidget());
+  evalDialog = new EvalDialog(((StringWidget*)inputWidget[evalIndex])->cloneStringWidget());
   //connect(evalDialog,SIGNAL(clicked(bool)),this,SLOT(updateInput()));
 
   inputCombo = new QComboBox;

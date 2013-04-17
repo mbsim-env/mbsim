@@ -233,7 +233,40 @@ class MatColsVarWidget : public BasicMatWidget {
     void currentIndexChanged(int);
   signals:
     void sizeChanged(int);
+};
 
+class MatRowsColsVarWidget : public BasicMatWidget {
+
+  Q_OBJECT
+
+  private:
+    MatWidget *widget;
+    QSpinBox *rowsCombo, *colsCombo;
+    int minRows, maxRows, minCols, maxCols;
+  public:
+    MatRowsColsVarWidget(int rows, int cols, int minRows, int maxRows, int minCols, int maxCols);
+    std::vector<std::vector<std::string> > getMat() const {return widget->getMat();}
+    void setMat(const std::vector<std::vector<std::string> > &A) {
+      rowsCombo->setValue(A.size());
+      colsCombo->setValue(A[0].size());
+      widget->setMat(A);
+    }
+    void resize(int rows, int cols) {widget->resize(rows,cols);}
+    int rows() const {return rowsCombo->value();}
+    int cols() const {return colsCombo->value();}
+    std::string getValue() const {return toStr(getMat());}
+    void setValue(const std::string &str) {setMat(strToMat(str));}
+    void setReadOnly(bool flag) {widget->setReadOnly(flag);}
+    virtual StringWidget* cloneStringWidget() {return new MatWidget(rows(),cols());}
+    virtual std::string getType() const {return "Matrix";}
+    bool validate(const std::string &str) const;
+
+  public slots:
+    void currentRowIndexChanged(int);
+    void currentColIndexChanged(int);
+  signals:
+    void rowSizeChanged(int);
+    void colSizeChanged(int);
 };
 
 class CardanWidget : public StringWidget {

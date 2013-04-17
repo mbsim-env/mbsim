@@ -216,11 +216,8 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   removeElementAction->setText(QApplication::translate("MainWindow", "Remove", 0, QApplication::UnicodeUTF8));
   removeElementAction->setShortcut(QApplication::translate("MainWindow", "Ctrl+R, R", 0, QApplication::UnicodeUTF8));
 
-  addScalarParameterAction=new QAction("Add scalar", this);
-  connect(addScalarParameterAction,SIGNAL(triggered()),this,SLOT(addScalarParameter()));
-  removeParameterAction = new QAction(this);
-  addVectorParameterAction=new QAction("Add vector", this);
-  connect(addVectorParameterAction,SIGNAL(triggered()),this,SLOT(addVectorParameter()));
+  addParameterAction=new QAction("Add parameter", this);
+  connect(addParameterAction,SIGNAL(triggered()),this,SLOT(addParameter()));
   removeParameterAction = new QAction(this);
   connect(removeParameterAction, SIGNAL(triggered()), this, SLOT(removeParameter()));
   removeParameterAction->setText(QApplication::translate("MainWindow", "Remove", 0, QApplication::UnicodeUTF8));
@@ -285,9 +282,7 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   parameterMenu->addAction("Save as", this, SLOT(saveParameterAs()));
   actionSaveParameter = parameterMenu->addAction("Save", this, SLOT(saveParameter()));
   actionSaveParameter->setDisabled(true);
-  submenu = parameterMenu->addMenu("Add parameter");
-  submenu->addAction(addScalarParameterAction);
-  submenu->addAction(addVectorParameterAction);
+  parameterMenu->addAction(addParameterAction);
   menuBar()->addMenu(parameterMenu);
 
   menuBar()->addSeparator();
@@ -324,8 +319,7 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   parameterList->setColumnWidth(0,75);
   parameterList->setColumnWidth(1,125);
 
-  parameterList->insertAction(0,addScalarParameterAction);
-  parameterList->insertAction(0,addVectorParameterAction);
+  parameterList->insertAction(0,addParameterAction);
   parameterList->setContextMenuPolicy(Qt::ActionsContextMenu);
 
   connect(elementList,SIGNAL(pressed(QModelIndex)), this, SLOT(elementListClicked()));
@@ -736,16 +730,10 @@ void MainWindow::removeParameter() {
   model->removeParameter(index);
 }
 
-void MainWindow::addScalarParameter() {
+void MainWindow::addParameter() {
   //tabBar->setCurrentIndex(2);
   ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
-  model->addScalarParameter();
-  updateOctaveParameters();
-}
-
-void MainWindow::addVectorParameter() {
-  ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
-  model->addVectorParameter();
+  model->addParameter();
   updateOctaveParameters();
 }
 

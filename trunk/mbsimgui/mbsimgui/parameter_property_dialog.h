@@ -34,25 +34,6 @@ class ParameterPropertyDialog : public PropertyDialog {
     virtual void fromWidget(Parameter *parameter);
   protected:
     TextWidget *name;
-};
-
-class ScalarParameterPropertyDialog : public ParameterPropertyDialog {
-
-  public:
-    ScalarParameterPropertyDialog(QWidget * parent = 0, Qt::WindowFlags f = 0);
-    void toWidget(Parameter *parameter);
-    void fromWidget(Parameter *parameter);
-  protected:
-    ExtWidget *value;
-};
-
-class VectorParameterPropertyDialog : public ParameterPropertyDialog {
-
-  public:
-    VectorParameterPropertyDialog(QWidget * parent = 0, Qt::WindowFlags f = 0);
-    void toWidget(Parameter *parameter);
-    void fromWidget(Parameter *parameter);
-  protected:
     ExtWidget *value;
 };
 
