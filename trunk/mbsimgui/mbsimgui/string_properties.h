@@ -50,17 +50,18 @@ class StringProperty : public Property {
 //    std::string value;
 //};
 //
-//class OctaveExpressionProperty : public StringProperty {
-//  public:
-//    OctaveExpressionProperty() {}
-//    std::string getValue() const { return value; }
-//    void setValue(const std::string &str) { value = str; }
-//    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-//    TiXmlElement* writeXMLFile(TiXmlNode *element);
-//
-//  private:
-//    std::string value;
-//};
+
+class OctaveExpressionProperty : public StringProperty {
+  public:
+    OctaveExpressionProperty() {}
+    std::string getValue() const { return value; }
+    void setValue(const std::string &str) { value = str; }
+    TiXmlElement* initializeUsingXML(TiXmlElement *element);
+    TiXmlElement* writeXMLFile(TiXmlNode *element);
+
+  private:
+    std::string value;
+};
 
 class ScalarProperty : public StringProperty {
   protected:

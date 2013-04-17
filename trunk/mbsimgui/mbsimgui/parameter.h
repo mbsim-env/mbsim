@@ -55,6 +55,7 @@ class ScalarParameter : public Parameter {
     virtual std::string getType() const { return "scalarParameter"; }
     std::string getValue() const;
     virtual void initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     ParameterPropertyDialog* createPropertyDialog() {return new ScalarParameterPropertyDialog;}
   protected:
     ExtProperty value;
@@ -67,6 +68,7 @@ class VectorParameter : public Parameter {
     virtual std::string getType() const { return "vectorParameter"; }
     std::string getValue() const;
     virtual void initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     ParameterPropertyDialog* createPropertyDialog() {return new VectorParameterPropertyDialog;}
   protected:
     ExtProperty value;

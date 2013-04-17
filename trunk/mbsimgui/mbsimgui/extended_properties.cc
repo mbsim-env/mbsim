@@ -31,7 +31,7 @@
 using namespace std;
 
 ExtPhysicalVarProperty::ExtPhysicalVarProperty(std::vector<PhysicalStringProperty*> inputProperty_) : inputProperty(inputProperty_), currentInput(0) {
-  inputProperty.push_back(new PhysicalStringProperty(new ScalarProperty(""), inputProperty[0]->getUnit(), inputProperty[0]->getXmlName()));
+  inputProperty.push_back(new PhysicalStringProperty(new OctaveExpressionProperty, inputProperty[0]->getUnit(), inputProperty[0]->getXmlName()));
 }
 
 TiXmlElement* ExtPhysicalVarProperty::initializeUsingXML(TiXmlElement *element) {

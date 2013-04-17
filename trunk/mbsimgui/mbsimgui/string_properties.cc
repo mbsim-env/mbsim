@@ -42,25 +42,28 @@ void StringProperty::toWidget(QWidget *widget) {
   static_cast<StringWidget*>(widget)->setValue(getValue());
 }
 
-//TiXmlElement* OctaveExpressionProperty::initializeUsingXML(TiXmlElement *element) {
-//  TiXmlText* text = dynamic_cast<TiXmlText*>(element->FirstChild());
-//  if(!text)
-//    return 0;
-//  setValue(text->Value());
-//  return element;
-//}
-//
-//TiXmlElement* OctaveExpressionProperty::writeXMLFile(TiXmlNode *parent) {
-//  TiXmlText *text = new TiXmlText(getValue());
-//  parent->LinkEndChild(text);
-//  return 0;
-//}
+TiXmlElement* OctaveExpressionProperty::initializeUsingXML(TiXmlElement *element) {
+  TiXmlText* text = dynamic_cast<TiXmlText*>(element->FirstChild());
+  if(!text)
+    return 0;
+  setValue(text->Value());
+  return element;
+}
+
+TiXmlElement* OctaveExpressionProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlText *text = new TiXmlText(getValue());
+  parent->LinkEndChild(text);
+  return 0;
+}
 
 TiXmlElement* ScalarProperty::initializeUsingXML(TiXmlElement *element) {
   TiXmlText* text = dynamic_cast<TiXmlText*>(element->FirstChild());
   if(!text)
     return 0;
-  setValue(text->Value());
+  string str = text->Value();
+  if(str.find("\n")!=string::npos)
+    return 0;
+  setValue(str);
   return element;
 }
 
@@ -232,11 +235,16 @@ TiXmlElement* PhysicalStringProperty::initializeUsingXML(TiXmlElement *parent) {
 }
 
 TiXmlElement* PhysicalStringProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele = new TiXmlElement(xmlName);
+  TiXmlElement *ele;
+  if(xmlName!="") {
+    ele = new TiXmlElement(xmlName);
+    parent->LinkEndChild(ele);
+  } 
+  else
+    ele = (TiXmlElement*)parent;
   if(unit!="")
     ele->SetAttribute("unit", getUnit());
   value->writeXMLFile(ele);
-  parent->LinkEndChild(ele);
   return 0;
 }
 

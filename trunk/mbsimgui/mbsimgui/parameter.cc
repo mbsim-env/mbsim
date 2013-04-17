@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "parameter.h"
+#include "basic_properties.h"
 #include "objectfactory.h"
 
 using namespace std;
@@ -35,8 +36,6 @@ void Parameter::initializeUsingXML(TiXmlElement *element) {
 TiXmlElement* Parameter::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0=new TiXmlElement(PARAMNS+getType());
   ele0->SetAttribute("name", getName());
-  TiXmlText* text= new TiXmlText(getValue());
-  ele0->LinkEndChild(text);
   parent->LinkEndChild(ele0);
   return ele0;
 }
@@ -81,6 +80,13 @@ void ScalarParameter::initializeUsingXML(TiXmlElement *element) {
   val->initializeUsingXML(element);
 }
 
+TiXmlElement* ScalarParameter::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = Parameter::writeXMLFile(parent);
+  ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
+  val->writeXMLFile(ele0);
+  return ele0;
+}
+
 VectorParameter::VectorParameter(const string &str) : Parameter(str) {
 
   vector<PhysicalStringProperty*> input;
@@ -97,3 +103,9 @@ void VectorParameter::initializeUsingXML(TiXmlElement *element) {
   val->initializeUsingXML(element);
 }
 
+TiXmlElement* VectorParameter::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = Parameter::writeXMLFile(parent);
+  ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
+  val->writeXMLFile(ele0);
+  return ele0;
+}
