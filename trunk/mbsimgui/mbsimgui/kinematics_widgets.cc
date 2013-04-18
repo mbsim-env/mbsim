@@ -62,6 +62,13 @@ TranslationChoiceWidget::TranslationChoiceWidget(const string &xmlName_) : trans
   setLayout(layout);
 
   comboBox = new QComboBox;
+  comboBox->addItem(tr("Translation in x direction"));
+  comboBox->addItem(tr("Translation in y direction"));
+  comboBox->addItem(tr("Translation in z direction"));
+  comboBox->addItem(tr("Translation in x- and y- direction"));
+  comboBox->addItem(tr("Translation in x- and z- direction"));
+  comboBox->addItem(tr("Translation in y- and z- direction"));
+  comboBox->addItem(tr("Translation in x-, y- and z- direction"));
   comboBox->addItem(tr("Linear translation"));
   comboBox->addItem(tr("Time dependent translation"));
   layout->addWidget(comboBox);
@@ -73,11 +80,26 @@ void TranslationChoiceWidget::defineTranslation(int index) {
   layout->removeWidget(translation);
   delete translation;
   if(index==0)
-    translation = new LinearTranslationWidget;  
+    translation = new TranslationInXDirectionWidget;  
   else if(index==1)
+    translation = new TranslationInYDirectionWidget;  
+  else if(index==2)
+    translation = new TranslationInZDirectionWidget;  
+  else if(index==3)
+    translation = new TranslationInXYDirectionWidget;  
+  else if(index==4)
+    translation = new TranslationInXZDirectionWidget;  
+  else if(index==5)
+    translation = new TranslationInYZDirectionWidget;  
+  else if(index==6)
+    translation = new TranslationInXYZDirectionWidget;  
+  else if(index==7) {
+    translation = new LinearTranslationWidget;  
+    connect(translation, SIGNAL(translationChanged()), this, SIGNAL(translationChanged()));
+  }
+  else if(index==8)
     translation = new TimeDependentTranslationWidget;  
   layout->addWidget(translation);
-  connect(translation, SIGNAL(translationChanged()), this, SIGNAL(translationChanged()));
   emit translationChanged();
 }
 

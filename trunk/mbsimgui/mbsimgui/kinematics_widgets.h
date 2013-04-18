@@ -35,6 +35,55 @@ class TranslationWidget : public Widget {
    protected:
 };
 
+class TranslationInXDirectionWidget : public TranslationWidget {
+
+  public:
+    TranslationInXDirectionWidget() {}
+    virtual int getSize() const {return 1;}
+};
+
+class TranslationInYDirectionWidget : public TranslationWidget {
+
+  public:
+    TranslationInYDirectionWidget() {}
+    virtual int getSize() const {return 1;}
+};
+
+class TranslationInZDirectionWidget : public TranslationWidget {
+
+  public:
+    TranslationInZDirectionWidget() {}
+    virtual int getSize() const {return 1;}
+};
+
+class TranslationInXYDirectionWidget : public TranslationWidget {
+
+  public:
+    TranslationInXYDirectionWidget() {}
+    virtual int getSize() const {return 2;}
+};
+
+class TranslationInXZDirectionWidget : public TranslationWidget {
+
+  public:
+    TranslationInXZDirectionWidget() {}
+    virtual int getSize() const {return 2;}
+};
+
+class TranslationInYZDirectionWidget : public TranslationWidget {
+
+  public:
+    TranslationInYZDirectionWidget() {}
+    virtual int getSize() const {return 2;}
+};
+
+class TranslationInXYZDirectionWidget : public TranslationWidget {
+
+  public:
+    TranslationInXYZDirectionWidget() {}
+    virtual int getSize() const {return 3;}
+};
+
 class LinearTranslationWidget : public TranslationWidget {
   Q_OBJECT
 
@@ -59,7 +108,6 @@ class TimeDependentTranslationWidget : public TranslationWidget {
   protected:
     ExtWidget *function;
 };
-
 
 class TranslationChoiceWidget : public Widget {
   Q_OBJECT

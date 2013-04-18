@@ -44,10 +44,10 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   input.push_back(new PhysicalStringProperty(new MatProperty(getEye<string>(3,3,"0.01","0")),"kg*m^2",MBSIMNS"inertiaTensor"));
   inertia.setProperty(new ExtPhysicalVarProperty(input));
 
-  translation.setProperty(new TranslationChoiceProperty(new LinearTranslationProperty,""));
+  translation.setProperty(new TranslationChoiceProperty(0,""));
   translation.setXMLName(MBSIMNS"translation");
 
-  rotation.setProperty(new RotationChoiceProperty(new RotationAboutZAxisProperty,""));
+  rotation.setProperty(new RotationChoiceProperty(2,""));
   rotation.setXMLName(MBSIMNS"rotation");
 
   ombvEditor.setProperty(new OMBVBodySelectionProperty(this));

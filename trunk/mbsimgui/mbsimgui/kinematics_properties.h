@@ -34,6 +34,83 @@ class TranslationProperty : public Property {
     virtual int getSize() const = 0;
 };
 
+class TranslationInXDirectionProperty : public TranslationProperty {
+
+  public:
+    TranslationInXDirectionProperty() {}
+    int getSize() const {return 1;}
+    TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
+    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void fromWidget(QWidget *widget) {}
+    void toWidget(QWidget *widget) {}
+};
+
+class TranslationInYDirectionProperty : public TranslationProperty {
+
+  public:
+    TranslationInYDirectionProperty() {}
+    int getSize() const {return 1;}
+    TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
+    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void fromWidget(QWidget *widget) {}
+    void toWidget(QWidget *widget) {}
+};
+
+class TranslationInZDirectionProperty : public TranslationProperty {
+
+  public:
+    TranslationInZDirectionProperty() {}
+    int getSize() const {return 1;}
+    TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
+    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void fromWidget(QWidget *widget) {}
+    void toWidget(QWidget *widget) {}
+};
+
+class TranslationInXYDirectionProperty : public TranslationProperty {
+
+  public:
+    TranslationInXYDirectionProperty() {}
+    int getSize() const {return 2;}
+    TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
+    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void fromWidget(QWidget *widget) {}
+    void toWidget(QWidget *widget) {}
+};
+
+class TranslationInXZDirectionProperty : public TranslationProperty {
+
+  public:
+    TranslationInXZDirectionProperty() {}
+    int getSize() const {return 2;}
+    TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
+    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void fromWidget(QWidget *widget) {}
+    void toWidget(QWidget *widget) {}
+};
+
+class TranslationInYZDirectionProperty : public TranslationProperty {
+
+  public:
+    TranslationInYZDirectionProperty() {}
+    int getSize() const {return 2;}
+    TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
+    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void fromWidget(QWidget *widget) {}
+    void toWidget(QWidget *widget) {}
+};
+
+class TranslationInXYZDirectionProperty : public TranslationProperty {
+
+  public:
+    TranslationInXYZDirectionProperty() {}
+    int getSize() const {return 3;}
+    TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
+    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void fromWidget(QWidget *widget) {}
+    void toWidget(QWidget *widget) {}
+};
+
 class LinearTranslationProperty : public TranslationProperty {
 
   public:
@@ -65,7 +142,7 @@ class TimeDependentTranslationProperty : public TranslationProperty {
 class TranslationChoiceProperty : public Property {
 
   public:
-    TranslationChoiceProperty(TranslationProperty* translation_, const std::string &xmlName_): translation(translation_), xmlName(xmlName_), index(0) {}
+    TranslationChoiceProperty(int index, const std::string &xmlName_): translation(0), xmlName(xmlName_) {defineTranslation(index);}
 
     int getSize() const { return translation->getSize(); }
 
@@ -159,7 +236,7 @@ class CardanAnglesProperty : public RotationProperty {
 class RotationChoiceProperty : public Property {
 
   public:
-    RotationChoiceProperty(RotationProperty* rotation_, const std::string &xmlName_): rotation(rotation_), xmlName(xmlName_), index(0) {}
+    RotationChoiceProperty(int index, const std::string &xmlName_): rotation(0), xmlName(xmlName_) {defineRotation(index);}
 
     int getSize() const { return rotation->getSize(); }
 
