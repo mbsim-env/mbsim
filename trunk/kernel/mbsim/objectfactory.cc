@@ -302,6 +302,20 @@ namespace MBSim {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"LinearTranslation")
       return new LinearTranslation;
+    if(element->ValueStr()==MBSIMNS"TranslationInXDirection")
+      return new TranslationInXDirection;
+    if(element->ValueStr()==MBSIMNS"TranslationInYDirection")
+      return new TranslationInYDirection;
+    if(element->ValueStr()==MBSIMNS"TranslationInZDirection")
+      return new TranslationInZDirection;
+    if(element->ValueStr()==MBSIMNS"TranslationInXYDirection")
+      return new TranslationInXYDirection;
+    if(element->ValueStr()==MBSIMNS"TranslationInXZDirection")
+      return new TranslationInXZDirection;
+    if(element->ValueStr()==MBSIMNS"TranslationInYZDirection")
+      return new TranslationInYZDirection;
+    if(element->ValueStr()==MBSIMNS"TranslationInXYZDirection")
+      return new TranslationInXYZDirection;
     if(element->ValueStr()==MBSIMNS"TimeDependentTranslation")
       return new TimeDependentTranslation;
     return 0;
@@ -323,8 +337,12 @@ namespace MBSim {
       return new CardanAngles;
     if(element->ValueStr()==MBSIMNS"RotationAboutAxesXY")
       return new RotationAboutAxesXY;
+    if(element->ValueStr()==MBSIMNS"RotationAboutAxesXZ")
+      return new RotationAboutAxesXZ;
     if(element->ValueStr()==MBSIMNS"RotationAboutAxesYZ")
       return new RotationAboutAxesYZ;
+    if(element->ValueStr()==MBSIMNS"RotationAboutAxesXYZ")
+      return new RotationAboutAxesXYZ;
     if(element->ValueStr()==MBSIMNS"EulerAngles")
       return new EulerAngles;
     if(element->ValueStr()==MBSIMNS"TimeDependentCardanAngles")

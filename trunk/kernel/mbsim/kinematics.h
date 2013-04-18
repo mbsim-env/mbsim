@@ -61,13 +61,136 @@ namespace MBSim {
       /***************************************************/
   };
 
+  class RotationIndependentTranslation : public Translation {
+    public:
+    /**
+       * \brief constructor
+       */
+      RotationIndependentTranslation() {}
+
+      virtual int getqSize() const { throw; return 0; }
+      virtual int getqTSize() const = 0;
+      virtual int getuTSize() const = 0;
+
+    protected:
+      /**
+       * \brief position vector
+       */
+      fmatvec::Vec3 r;
+  };
+
+  class TranslationInXDirection : public RotationIndependentTranslation {
+    public:
+      /**
+       * \brief constructor
+       */
+      TranslationInXDirection() {} 
+
+      /* INTERFACE OF TRANSLATION */
+      virtual int getqTSize() const {return 1;}
+      virtual int getuTSize() const {return 1;}
+      virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) {r(0) = q(0); return r;}
+      virtual void initializeUsingXML(TiXmlElement *element) {}
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+  };
+
+  class TranslationInYDirection : public RotationIndependentTranslation {
+    public:
+      /**
+       * \brief constructor
+       */
+      TranslationInYDirection() {} 
+
+      /* INTERFACE OF TRANSLATION */
+      virtual int getqTSize() const {return 1;}
+      virtual int getuTSize() const {return 1;}
+      virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) {r(1) = q(0); return r;}
+      virtual void initializeUsingXML(TiXmlElement *element) {}
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+  };
+
+  class TranslationInZDirection : public RotationIndependentTranslation {
+    public:
+      /**
+       * \brief constructor
+       */
+      TranslationInZDirection() {} 
+
+      /* INTERFACE OF TRANSLATION */
+      virtual int getqTSize() const {return 1;}
+      virtual int getuTSize() const {return 1;}
+      virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) {r(2) = q(0); return r;}
+      virtual void initializeUsingXML(TiXmlElement *element) {}
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+  };
+
+  class TranslationInXYDirection : public RotationIndependentTranslation {
+    public:
+      /**
+       * \brief constructor
+       */
+      TranslationInXYDirection() {} 
+
+      /* INTERFACE OF TRANSLATION */
+      virtual int getqTSize() const {return 2;}
+      virtual int getuTSize() const {return 2;}
+      virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) {r(0) = q(0); r(1) = q(1); return r;}
+      virtual void initializeUsingXML(TiXmlElement *element) {}
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+  };
+
+  class TranslationInXZDirection : public RotationIndependentTranslation {
+    public:
+      /**
+       * \brief constructor
+       */
+      TranslationInXZDirection() {} 
+
+      /* INTERFACE OF TRANSLATION */
+      virtual int getqTSize() const {return 2;}
+      virtual int getuTSize() const {return 2;}
+      virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) {r(0) = q(0); r(2) = q(1); return r;}
+      virtual void initializeUsingXML(TiXmlElement *element) {}
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+  };
+
+  class TranslationInYZDirection : public RotationIndependentTranslation {
+    public:
+      /**
+       * \brief constructor
+       */
+      TranslationInYZDirection() {} 
+
+      /* INTERFACE OF TRANSLATION */
+      virtual int getqTSize() const {return 2;}
+      virtual int getuTSize() const {return 2;}
+      virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) {r(1) = q(0); r(2) = q(1); return r;}
+      virtual void initializeUsingXML(TiXmlElement *element) {}
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+  };
+
+  class TranslationInXYZDirection : public RotationIndependentTranslation {
+    public:
+      /**
+       * \brief constructor
+       */
+      TranslationInXYZDirection() {} 
+
+      /* INTERFACE OF TRANSLATION */
+      virtual int getqTSize() const {return 3;}
+      virtual int getuTSize() const {return 3;}
+      virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) {r(0) = q(0); r(1) = q(1); r(2) = q(2); return r;}
+      virtual void initializeUsingXML(TiXmlElement *element) {}
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+  };
+
   /**
    * \brief class to describe translations along a line
    * \author Martin Foerg
    * \date 2009-04-08 some comments (Thorsten Schindler)
    * \date 2010-05-23 update according to change in Translation (Martin Foerg)
    */
-  class LinearTranslation : public Translation {
+  class LinearTranslation : public RotationIndependentTranslation {
     public:
       /**
        * \brief constructor
@@ -81,7 +204,8 @@ namespace MBSim {
       LinearTranslation(const fmatvec::Mat3xV &PJT_) { PJT = PJT_; }
 
       /* INTERFACE OF TRANSLATION */
-      virtual int getqSize() const { throw; return 0; }
+      virtual int getqTSize() const {return PJT.cols();}
+      virtual int getuTSize() const {return PJT.cols();}
       virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return PJT*q(0,PJT.cols()-1); }
       virtual void initializeUsingXML(TiXmlElement *element);
       virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
@@ -104,19 +228,19 @@ namespace MBSim {
       fmatvec::Mat3xV PJT;
   };
 
-  class TimeDependentLinearTranslation: public Translation {
+  class TimeDependentLinearTranslation: public RotationIndependentTranslation {
     public:
       /**
        * \brief constructor
        */
-      TimeDependentLinearTranslation() : Translation(), pos(NULL) {}
+      TimeDependentLinearTranslation() : pos(NULL) {}
 
       /**
        * \brief constructor
        * \param independent generalized position function
        * \param independent direction matrix of translation
        */
-      TimeDependentLinearTranslation(Function1<fmatvec::VecV, double> *pos_, const fmatvec::Mat3xV &PJT_) : Translation(), PJT(PJT_), pos(pos_) {}
+      TimeDependentLinearTranslation(Function1<fmatvec::VecV, double> *pos_, const fmatvec::Mat3xV &PJT_) : PJT(PJT_), pos(pos_) {}
 
       /**
        * \brief destructor
@@ -124,7 +248,8 @@ namespace MBSim {
       virtual ~TimeDependentLinearTranslation() { delete pos; pos = 0; }
 
       /* INTERFACE OF ROTATION */
-      virtual int getqSize() const { return 0; }
+      virtual int getqTSize() const {return 0;}
+      virtual int getuTSize() const {return 0;}
       virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return PJT*(*pos)(t); }
       //virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
@@ -154,7 +279,7 @@ namespace MBSim {
    * \date 2009-12-21 some adaptations (Thorsten Schindler)
    * \date 2010-05-23 update according to change in Translation (Martin Foerg)
    */
-  class TimeDependentTranslation : public Translation {
+  class TimeDependentTranslation : public RotationIndependentTranslation {
     public:
       /**
        * \brief constructor
@@ -173,7 +298,8 @@ namespace MBSim {
       virtual ~TimeDependentTranslation() { delete pos; pos = 0; }
 
       /* INTERFACE OF TRANSLATION */
-      virtual int getqSize() const { return 0; }
+      virtual int getqTSize() const {return 0;}
+      virtual int getuTSize() const {return 0;}
       virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return (*pos)(t); }
       virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
@@ -311,14 +437,12 @@ namespace MBSim {
       /***************************************************/
   };
 
-  class RotationAboutOneAxis: public Rotation {
+  class TranslationIndependentRotation: public Rotation {
     public:
-    /**
-       * \brief constructor
-       */
-      RotationAboutOneAxis() {}
 
       virtual int getqSize() const { throw; return 0; }
+      virtual int getqRSize() const = 0;
+      virtual int getuRSize() const = 0;
 
     protected:
       /**
@@ -331,7 +455,7 @@ namespace MBSim {
    * \brief class to describe rotation about y-axis
    * \author Martin Foerg
    */
-  class RotationAboutXAxis: public RotationAboutOneAxis {
+  class RotationAboutXAxis: public TranslationIndependentRotation {
     public:
       /**
        * \brief constructor
@@ -339,6 +463,8 @@ namespace MBSim {
       RotationAboutXAxis();
 
       /* INTERFACE OF ROTATION */
+      virtual int getqRSize() const {return 1;}
+      virtual int getuRSize() const {return 1;}
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {}
       virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
@@ -348,7 +474,7 @@ namespace MBSim {
    * \brief class to describe rotation about y-axis
    * \author Martin Foerg
    */
-  class RotationAboutYAxis: public RotationAboutOneAxis {
+  class RotationAboutYAxis: public TranslationIndependentRotation {
     public:
       /**
        * \brief constructor
@@ -356,6 +482,8 @@ namespace MBSim {
       RotationAboutYAxis();
 
       /* INTERFACE OF ROTATION */
+      virtual int getqRSize() const {return 1;}
+      virtual int getuRSize() const {return 1;}
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {}
       virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
@@ -366,7 +494,7 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2010-05-23 update according to change in Rotation (Martin Foerg)
    */
-  class RotationAboutZAxis: public RotationAboutOneAxis {
+  class RotationAboutZAxis: public TranslationIndependentRotation {
     public:
       /**
        * \brief constructor
@@ -374,6 +502,8 @@ namespace MBSim {
       RotationAboutZAxis();
 
       /* INTERFACE OF ROTATION */
+      virtual int getqRSize() const {return 1;}
+      virtual int getuRSize() const {return 1;}
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {}
       virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
@@ -385,20 +515,22 @@ namespace MBSim {
    * \date 2009-04-08 some comments (Thorsten Schindler)
    * \date 2010-05-23 update according to change in Rotation (Martin Foerg)
    */
-  class RotationAboutFixedAxis: public RotationAboutOneAxis {
+  class RotationAboutFixedAxis: public TranslationIndependentRotation {
     public:
       /**
        * \brief constructor
        */
-      RotationAboutFixedAxis() : RotationAboutOneAxis() {}
+      RotationAboutFixedAxis() {}
 
       /**
        * \brief constructor
        * \param axis of rotation
        */
-      RotationAboutFixedAxis(const fmatvec::Vec3 &a_) : RotationAboutOneAxis() { a = a_; }
+      RotationAboutFixedAxis(const fmatvec::Vec3 &a_) { a = a_; }
 
       /* INTERFACE OF ROTATION */
+      virtual int getqRSize() const {return 1;}
+      virtual int getuRSize() const {return 1;}
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element);
       virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
@@ -423,19 +555,19 @@ namespace MBSim {
    * \date 2009-12-22 should be a rotation because otherwise it has some dof (Thorsten Schindler)
    * \date 2010-05-23 update according to change in Rotation (Martin Foerg)
    */
-  class TimeDependentRotationAboutFixedAxis: public Rotation {
+  class TimeDependentRotationAboutFixedAxis: public TranslationIndependentRotation {
     public:
       /**
        * \brief constructor
        */
-      TimeDependentRotationAboutFixedAxis() : Rotation(), rot(new RotationAboutFixedAxis()), angle(NULL) {}
+      TimeDependentRotationAboutFixedAxis() : rot(new RotationAboutFixedAxis()), angle(NULL) {}
 
       /**
        * \brief constructor
        * \param independent rotation angle function
        * \param axis of rotation
        */
-      TimeDependentRotationAboutFixedAxis(Function1<double, double> *angle_, const fmatvec::Vec3 &a_) : Rotation(), rot(new RotationAboutFixedAxis(a_)), angle(angle_) {}
+      TimeDependentRotationAboutFixedAxis(Function1<double, double> *angle_, const fmatvec::Vec3 &a_) : rot(new RotationAboutFixedAxis(a_)), angle(angle_) {}
 
       /**
        * \brief destructor
@@ -443,7 +575,8 @@ namespace MBSim {
       virtual ~TimeDependentRotationAboutFixedAxis() { delete rot; rot = 0; delete angle; angle = 0; }
 
       /* INTERFACE OF ROTATION */
-      virtual int getqSize() const { return 0; }
+      virtual int getqRSize() const { return 0; }
+      virtual int getuRSize() const {return 0;}
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
@@ -467,37 +600,41 @@ namespace MBSim {
       Function1<double, double> *angle;
   };
 
-  class RotationAboutTwoAxes: public Rotation {
-    public:
-    /**
-       * \brief constructor
-       */
-      RotationAboutTwoAxes() {}
-
-      virtual int getqSize() const { throw; return 0; }
-
-    protected:
-      /**
-       * \brief transformation matrix
-       */
-      fmatvec::SqrMat3 APK;
-  };
-
   /**
    * \brief class to describe rotation about axes x and y with basic rotations interpretated in the current coordinate system
    * \author Martin Foerg
    * \date 2009-12-21 some localisations (Thorsten Schindler)
    * \date 2010-05-23 update according to change in Rotation (Martin Foerg)
    */
-  class RotationAboutAxesXY: public RotationAboutTwoAxes {
+  class RotationAboutAxesXY: public TranslationIndependentRotation {
     public:
       /**
        * \brief constructor
        */
-      RotationAboutAxesXY() : RotationAboutTwoAxes() {}
+      RotationAboutAxesXY() {}
 
       /* INTERFACE OF ROTATION */
-      virtual int getqSize() const { return 2; }
+      virtual int getqRSize() const { return 2; }
+      virtual int getuRSize() const { return 2; }
+      virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
+      virtual void initializeUsingXML(TiXmlElement *element) {};
+      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+      /***************************************************/
+  };
+  /**
+   * \brief class to describe rotation about axes x and z with basic rotations interpretated in the current coordinate system
+   * \author Martin Foerg
+   */
+  class RotationAboutAxesXZ: public TranslationIndependentRotation {
+    public:
+      /**
+       * \brief constructor
+       */
+      RotationAboutAxesXZ() {}
+
+      /* INTERFACE OF ROTATION */
+      virtual int getqRSize() const { return 2; }
+      virtual int getuRSize() const { return 2; }
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {};
       virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
@@ -510,35 +647,20 @@ namespace MBSim {
    * \date 2009-12-21 some localisations (Thorsten Schindler)
    * \date 2010-05-23 update according to change in Rotation (Martin Foerg)
    */
-  class RotationAboutAxesYZ: public RotationAboutTwoAxes {
+  class RotationAboutAxesYZ: public TranslationIndependentRotation {
     public:
       /**
        * \brief constructor
        */
-      RotationAboutAxesYZ() : RotationAboutTwoAxes() {}
+      RotationAboutAxesYZ() {}
 
       /* INTERFACE OF ROTATION */
-      virtual int getqSize() const { return 2; }
+      virtual int getqRSize() const { return 2; }
+      virtual int getuRSize() const { return 2; }
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {};
       virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
       /***************************************************/
-  };
-
- class RotationAboutThreeAxes: public Rotation {
-    public:
-    /**
-       * \brief constructor
-       */
-      RotationAboutThreeAxes() {}
-
-      virtual int getqSize() const { throw; return 0; }
-
-    protected:
-      /**
-       * \brief transformation matrix
-       */
-      fmatvec::SqrMat3 APK;
   };
 
   /**
@@ -547,15 +669,16 @@ namespace MBSim {
    * \date 2009-04-08 some comments (Thorsten Schindler)
    * \date 2010-05-23 update according to change in Rotation (Martin Foerg)
    */
-  class CardanAngles: public RotationAboutThreeAxes {
+  class CardanAngles: public TranslationIndependentRotation {
     public:
       /**
        * \brief constructor
        */
-      CardanAngles() : RotationAboutThreeAxes() {}
+      CardanAngles() {}
 
       /* INTERFACE OF ROTATION */
-      virtual int getqSize() const { return 3; }
+      virtual int getqRSize() const { return 3; }
+      virtual int getuRSize() const { return 3; }
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {};
       virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
@@ -567,15 +690,16 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2010-10-20 first commit (Martin Foerg)
    */
-  class EulerAngles: public RotationAboutThreeAxes {
+  class EulerAngles: public TranslationIndependentRotation {
     public:
       /**
        * \brief constructor
        */
-      EulerAngles() : RotationAboutThreeAxes() {}
+      EulerAngles() {}
 
       /* INTERFACE OF ROTATION */
-      virtual int getqSize() const { return 3; }
+      virtual int getqRSize() const { return 3; }
+      virtual int getuRSize() const { return 3; }
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {};
       virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
@@ -588,15 +712,16 @@ namespace MBSim {
    * \date 2009-04-08 some comments (Thorsten Schindler)
    * \date 2010-05-23 update according to change in Rotation (Martin Foerg)
    */
-  class RotationAboutAxesXYZ: public RotationAboutThreeAxes {
+  class RotationAboutAxesXYZ: public TranslationIndependentRotation {
     public:
       /**
        * \brief constructor
        */
-      RotationAboutAxesXYZ() : RotationAboutThreeAxes() {}
+      RotationAboutAxesXYZ() {}
 
       /* INTERFACE OF ROTATION */
-      virtual int getqSize() const { return 3; }
+      virtual int getqRSize() const { return 3; }
+      virtual int getuRSize() const { return 3; }
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {};
       virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
@@ -610,18 +735,18 @@ namespace MBSim {
    * \date 2009-12-22 should be a rotation because otherwise it has some dof (Thorsten Schindler)
    * \date 2010-05-23 update according to change in Rotation (Martin Foerg)
    */
-  class TimeDependentCardanAngles: public RotationAboutThreeAxes {
+  class TimeDependentCardanAngles: public TranslationIndependentRotation {
     public:
       /**
        * \brief constructor
        */
-      TimeDependentCardanAngles() : RotationAboutThreeAxes(), rot(new CardanAngles()), angle(NULL) {}
+      TimeDependentCardanAngles() : rot(new CardanAngles()), angle(NULL) {}
 
       /**
        * \brief constructor
        * \param independent rotation angle function
        */
-      TimeDependentCardanAngles(Function1<fmatvec::Vec3, double> *angle_) : RotationAboutThreeAxes(), rot(new CardanAngles()), angle(angle_) {}
+      TimeDependentCardanAngles(Function1<fmatvec::Vec3, double> *angle_) : rot(new CardanAngles()), angle(angle_) {}
 
       /**
        * \brief destructor
@@ -629,7 +754,8 @@ namespace MBSim {
       virtual ~TimeDependentCardanAngles() { delete rot; rot = 0; delete angle; angle = 0; }
 
       /* INTERFACE OF ROTATION */
-      virtual int getqSize() const { return 0; }
+      virtual int getqRSize() const { return 0; }
+      virtual int getuRSize() const { return 0; }
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
@@ -835,6 +961,35 @@ namespace MBSim {
        * \param size of generalized velocity vector
        */
       JRotationAboutAxesXY(int uSize_) : uSize(uSize_), J(uSize) {}
+
+      /* INTERFACE OF JACOBIAN */
+      int getuSize() const { return uSize; }
+      virtual fmatvec::Mat3xV operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
+      /***************************************************/
+
+    private:
+      /**
+       * \brief size of positions and velocities
+       */
+      int uSize;
+
+      /**
+       * \brief linear relation between differentiated positions and velocities
+       */
+      fmatvec::Mat3xV J;
+  };
+
+  /**
+   * \brief Jacobian for rotation about axes x and z
+   * \author Martin Foerg
+   */
+  class JRotationAboutAxesXZ : public Jacobian {
+    public:
+      /**
+       * \brief constructor
+       * \param size of generalized velocity vector
+       */
+      JRotationAboutAxesXZ(int uSize_) : uSize(uSize_), J(uSize) {}
 
       /* INTERFACE OF JACOBIAN */
       int getuSize() const { return uSize; }
@@ -1076,6 +1231,32 @@ namespace MBSim {
   };
 
   /**
+   * \brief derivative of Jacobian for rotation about axes x and z
+   * \author Martin Foerg
+   */
+  class JdRotationAboutAxesXZ : public Function3<fmatvec::Mat3xV,fmatvec::Vec,fmatvec::Vec,double> {
+    public:
+      /**
+       * \brief constructor
+       * \param size of generalized velocity vector
+       */
+      JdRotationAboutAxesXZ(int uSize_) : uSize(uSize_), Jd(uSize) {}
+
+      virtual fmatvec::Mat3xV operator()(const fmatvec::Vec &qd, const fmatvec::Vec& q, const double& t, const void*);
+
+    private:
+      /**
+       * \brief size of positions and velocities
+       */
+      int uSize;
+
+      /**
+       * \brief linear relation between differentiated positions and velocities
+       */
+      fmatvec::Mat3xV Jd;
+  };
+
+  /**
    * \brief derivative of Jacobian for rotation about axes y and z
    * \author Martin Foerg
    */
@@ -1126,222 +1307,6 @@ namespace MBSim {
        */
       fmatvec::Mat3xV Jd;
   };
-
-////   class Kinematics {
-////     public:
-////
-////       Kinematics();
-////
-////       int getqSize() const {return qSize;}
-////       int getuSize(int j=0) const {return uSize[j];}
-////
-////       //void update(const fmatvec::Vec& uRel, const fmatvec::Vec& qRel, double t);
-////       //void updateqdRel(const fmatvec::Vec& uRel) { qdRel = T*uRel; }
-////       void updateT(const fmatvec::Vec& qRel, double t) { if(fT) T = (*fT)(qRel,t); }
-////       void updatePrPK(const fmatvec::Vec& qRel, double t) { if(fPrPK) PrPK = (*fPrPK)(qRel,t); }
-////       void updateAPK(const fmatvec::Vec& qRel, double t) { if(fAPK) APK = (*fAPK)(qRel,t); }
-////       void updatePJT(const fmatvec::Vec& qRel, double t) { if(fPJT) PJT[0] = (*fPJT)(qRel,t); }
-////       void updatePJR(const fmatvec::Vec& qRel, double t) { if(fPJR) PJR[0] = (*fPJR)(qRel,t); }
-////       void updatePdJT(const fmatvec::Vec& qdRel, const fmatvec::Vec& qRel, double t) { if(fPdJT) PdJT = (*fPdJT)(qdRel,qRel,t); }
-////       void updatePdJR(const fmatvec::Vec& qdRel, const fmatvec::Vec& qRel, double t) { if(fPdJR) PdJR = (*fPdJR)(qdRel,qRel,t); }
-////       void updatePjT(double t) { if(fPjT) PjT = (*fPjT)(t); }
-////       void updatePjR(double t) { if(fPjR) PjR = (*fPjR)(t); }
-////       void updatePdjT(double t) { if(fPdjT) PdjT = (*fPdjT)(t); }
-////       void updatePdjR(double t) { if(fPdjR) PdjR = (*fPdjR)(t); }
-////       virtual void calcqSize();
-////       virtual void calcuSize(int j=0);
-////       virtual void init(InitStage stage);
-////
-////     public:
-////       int qSize, uSize[2];
-////
-////       fmatvec::Mat PJT[2], PJR[2], PdJT, PdJR;
-////
-////       fmatvec::Vec PjT, PjR, PdjT, PdjR;
-////       fmatvec::SqrMat APK;
-////       fmatvec::Vec PrPK;
-////       fmatvec::Mat T;
-////       //fmatvec::Vec qdRel;
-////
-////       Jacobian *fT;
-////
-////       Translation *fPrPK;
-////
-////       Rotation *fAPK;
-////
-////       Jacobian *fPJT;
-////       Jacobian *fPJR;
-////
-////       Function3<fmatvec::Mat, fmatvec::Vec, fmatvec::Vec, double> *fPdJT;
-////       Function3<fmatvec::Mat, fmatvec::Vec, fmatvec::Vec, double> *fPdJR;
-////
-////       Function1<fmatvec::Vec,double> *fPjT;
-////       Function1<fmatvec::Vec,double> *fPjR;
-////
-////       Function1<fmatvec::Vec,double> *fPdjT;
-////       Function1<fmatvec::Vec,double> *fPdjR;
-////
-////       void setTranslation(Translation* fPrPK_) { fPrPK = fPrPK_; }
-////       void setRotation(Rotation* fAPK_)        { fAPK  = fAPK_;  }
-////       Translation* getTranslation()            { return fPrPK;   }
-////       Rotation*    getRotation()               { return fAPK;    }
-////       void setJacobianOfTranslation(Jacobian* fPJT_) { fPJT = fPJT_; }
-////       void setJacobianOfRotation(Jacobian* fPJR_)    { fPJR = fPJR_; }
-////       void setDerivativeOfJacobianOfTranslation(Function3<fmatvec::Mat, fmatvec::Vec, fmatvec::Vec, double>* fPdJT_) { fPdJT = fPdJT_;}
-////       void setDerivativeOfJacobianOfRotation(Function3<fmatvec::Mat, fmatvec::Vec, fmatvec::Vec, double>* fPdJR_) { fPdJR = fPdJR_;}
-////       void setGuidingVelocityOfTranslation(Function1<fmatvec::Vec,double>* fPjT_) { fPjT = fPjT_;}
-////       void setGuidingVelocityOfRotation(Function1<fmatvec::Vec,double>* fPjR_) { fPjR = fPjR_;}
-////       void setDerivativeOfGuidingVelocityOfTranslation(Function1<fmatvec::Vec,double>* fPdjT_) { fPdjT = fPdjT_;}
-////       void setDerivativeOfGuidingVelocityOfRotation(Function1<fmatvec::Vec,double>* fPdjR_) { fPdjR = fPdjR_;}
-////       fmatvec::Mat& getT() {return T;}
-////       fmatvec::Mat& getPJT(int i=0) {return PJT[i];}
-////       fmatvec::Mat& getPJR(int i=0) {return PJR[i];}
-////       fmatvec::Mat& getPdJT() {return PdJT;}
-////       fmatvec::Mat& getPdJR() {return PdJR;}
-////       fmatvec::Vec& getPjT() {return PjT;}
-////       fmatvec::Vec& getPjR() {return PjR;}
-////       fmatvec::Vec& getPdjT() {return PdjT;}
-////       fmatvec::Vec& getPdjR() {return PdjR;}
-////       fmatvec::Vec& getPrPK() {return PrPK;}
-////       fmatvec::SqrMat& getAPK() {return APK;}
-////
-////
-////   };
-////
-//// //  class KinematicsTranslation {
-//// //    public:
-//// //      KinematicsTranslation();
-//// //      virtual ~KinematicsTranslation() {}
-//// //      //void setTranslation(Translation* fPrPK_) { fPrPK = fPrPK_; }
-//// //      //Translation* getTranslation()            { return fPrPK;   }
-//// //      //void setJacobianOfTranslation(Jacobian* fPJT_) { fPJT = fPJT_; }
-//// //      //void setDerivativeOfJacobianOfTranslation(Function3<fmatvec::Mat, fmatvec::Vec, fmatvec::Vec, double>* fPdJT_) { fPdJT = fPdJT_;}
-//// //      //void setGuidingVelocityOfTranslation(Function1<fmatvec::Vec,double>* fPjT_) { fPjT = fPjT_;}
-//// //      //void setDerivativeOfGuidingVelocityOfTranslation(Function1<fmatvec::Vec,double>* fPdjT_) { fPdjT = fPdjT_;}
-//// //      virtual void update(const fmatvec::Vec& qdRel, const fmatvec::Vec& qRel, double t);
-//// //      fmatvec::Mat& getTranslation() { return PrPK; }
-//// //      fmatvec::Mat& getJacobianOfTranslation() { return PJT; }
-//// //      fmatvec::Mat& getDerivativeOfJacobianOfTranslation() { return PdJT; }
-//// //      fmatvec::Vec& getGuidingVelocityOfTranslation() { return PjT;}
-//// //      fmatvec::Vec& getDerivativeOfGuidingVelocityOfTranslation() { return PdjT;}
-//// //      const fmatvec::Mat& getTranslation() const { return PrPK; }
-//// //      const fmatvec::Mat& getJacobianOfTranslation() const { return PJT; }
-//// //      const fmatvec::Mat& getDerivativeOfJacobianOfTranslation() const { return PdJT; }
-//// //      const fmatvec::Vec& getGuidingVelocityOfTranslation() const { return PjT;}
-//// //      const fmatvec::Vec& getDerivativeOfGuidingVelocityOfTranslation() const { return PdjT;}
-//// //    protected:
-//// //      virtual fmatvec::Vec fPrPK(const fmatvec::Vec &q, const double &t, const void * =NULL) = 0;
-//// //      virtual fmatvec::Mat fPJT(const fmatvec::Vec &q, const double &t, const void * =NULL) = 0;
-//// //      virtual fmatvec::Mat fPdJT(const fmatvec::Vec &qd, const fmatvec::Vec &q, const double &t, const void * =NULL) = 0;
-//// //      virtual fmatvec::Vec fPjT(const double &t, const void * =NULL) = 0;
-//// //      virtual fmatvec::Vec fPdjT(const double &t, const void * =NULL) = 0;
-//// //      //Translation *fPrPK;
-//// //      //Jacobian *fPJT;
-//// //      //Function3<fmatvec::Mat, fmatvec::Vec, fmatvec::Vec, double> *fPdJT;
-//// //      //Function1<fmatvec::Vec,double> *fPjT;
-//// //      //Function1<fmatvec::Vec,double> *fPdjT;
-//// //      fmatvec::Mat PJT, PdJT;
-//// //      fmatvec::Vec PrPK, PjT, PdjT;
-//// //
-//// //  };
-//// //
-//// //  class KinematicsRotation {
-//// //    public:
-//// //      KinematicsRotation();
-//// //      virtual ~KinematicsRotation() {}
-//// //      virtual void update(const fmatvec::Vec& qdRel, const fmatvec::Vec& qRel, double t);
-//// //      fmatvec::Mat& getRotation() { return APK; }
-//// //      fmatvec::Mat& getJacobianOfRotation() { return PJR; }
-//// //      fmatvec::Mat& getDerivativeOfJacobianOfRotation() { return PdJR; }
-//// //      fmatvec::Vec& getGuidingVelocityOfRotation() { return PjR;}
-//// //      fmatvec::Vec& getDerivativeOfGuidingVelocityOfRotation() { return PdjR;}
-//// //      const fmatvec::Mat& getRotation() const { return APK; }
-//// //      const fmatvec::Mat& getJacobianOfRotation() const { return PJR; }
-//// //      const fmatvec::Mat& getDerivativeOfJacobianOfRotation() const { return PdJR; }
-//// //      const fmatvec::Vec& getGuidingVelocityOfRotation() const { return PjR;}
-//// //      const fmatvec::Vec& getDerivativeOfGuidingVelocityOfRotation() const { return PdjR;}
-//// //    protected:
-//// //      virtual fmatvec::SqrMat fAPK(const fmatvec::Vec &q, const double &t, const void * =NULL) = 0;
-//// //      virtual fmatvec::Mat fPJR(const fmatvec::Vec &q, const double &t, const void * =NULL) = 0;
-//// //      virtual fmatvec::Mat fPdJR(const fmatvec::Vec &qd, const fmatvec::Vec &q, const double &t, const void * =NULL) = 0;
-//// //      virtual fmatvec::Vec fPjR(const double &t, const void * =NULL) = 0;
-//// //      virtual fmatvec::Vec fPdjR(const double &t, const void * =NULL) = 0;
-//// //      fmatvec::Mat PJR, PdJR;
-//// //      fmatvec::SqrMat APK;
-//// //      fmatvec::Vec PjR, PdjR;
-//// //
-//// //  };
-//// //
-//// //  class Kinematics {
-//// //    public:
-//// //
-//// //      int getqSize() const {return qSize;}
-//// //      int getuSize() const {return uSize;}
-//// //
-//// //      virtual void update(const fmatvec::Vec& uRel, const fmatvec::Vec& qRel, double t);
-//// //
-//// //    protected:
-//// //      int qSize, uSize;
-//// //
-//// //      Jacobian *fT;
-//// //      KinematicsTranslation *translation;
-//// //      KinematicsRotation *rotation;
-//// //      fmatvec::Mat T;
-//// //  };
-//// //
-//// //  class KinematicsLinearTranslation : public KinematicsTranslation {
-//// //    public:
-//// //      KinematicsLinearTranslation(const fmatvec::Mat &PJT_) : KinematicsTranslation() { PJT = PJT_; }
-//// //
-//// //      /* INTERFACE OF TRANSLATION */
-//// //      //virtual fmatvec::Vec operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return PJT*q(0,PJT.cols()-1); }
-//// //      //virtual void initializeUsingXML(TiXmlElement *element);
-//// //      /***************************************************/
-//// //
-//// //      /* GETTER / SETTER */
-//// //      const fmatvec::Mat& getTranslationVectors() const { return PJT; }
-//// //
-//// //      /**
-//// //       * Set the posible translations vectors. Each column of the matrix
-//// //       * is a posible translation vector.
-//// //       */
-//// //      void setTranslationVectors(const fmatvec::Mat &PJT_) { PJT = PJT_; }
-//// //      /***************************************************/
-//// //
-//// //    protected:
-//// //      virtual fmatvec::Vec fPrPK(const fmatvec::Vec &q, const double &t, const void * =NULL) { return PJT*q(0,PJT.cols()-1); }
-//// //      virtual fmatvec::Mat fPJT(const fmatvec::Vec &q, const double &t, const void * =NULL) { return fmatvec::Mat(3,q.size()); }
-//// //      virtual fmatvec::Mat fPdJT(const fmatvec::Vec &u, const fmatvec::Vec &q, const double &t, const void * =NULL) { return fmatvec::Mat(3,q.size()); }
-//// //      virtual fmatvec::Vec fPjT(const double &t, const void * =NULL) { return fmatvec::Vec(3); }
-//// //      virtual fmatvec::Vec fPdjT(const double &t, const void * =NULL) { return fmatvec::Vec(3); }
-//// //    private:
-//// //      /**
-//// //       * independent direction matrix of translation
-//// //       */
-//// //      fmatvec::Mat PJT;
-//// //  };
-//// //
-//// //  class KinematicsRotationAboutFixedAxis : public KinematicsRotation {
-//// //    public:
-//// //      KinematicsRotationAboutFixedAxis(const fmatvec::Vec &a_) : KinematicsRotation() { a = a_; }
-//// //
-//// //      const fmatvec::Vec& getAxisOfRotation() const { return a; }
-//// //      void setAxisOfRotation(const fmatvec::Vec& a_) { a = a_; }
-//// //    protected:
-//// //      virtual fmatvec::SqrMat fAPK(const fmatvec::Vec &q, const double &t, const void * =NULL);
-//// //      virtual fmatvec::Mat fPJR(const fmatvec::Vec &q, const double &t, const void * =NULL) { return fmatvec::Mat(3,q.size()); }
-//// //
-//// //      virtual fmatvec::Mat fPdJR(const fmatvec::Vec &u, const fmatvec::Vec &q, const double &t, const void * =NULL) { return fmatvec::Mat(3,q.size()); }
-//// //
-//// //      virtual fmatvec::Vec fPjR(const double &t, const void * =NULL) { return fmatvec::Vec(3); }
-//// //      virtual fmatvec::Vec fPdjR(const double &t, const void * =NULL) { return fmatvec::Vec(3); }
-//// //      fmatvec::Mat PJR, PdJR;
-//// //      fmatvec::SqrMat APK;
-//// //      fmatvec::Vec PjR, PdjR;
-//// //
-//// //    private:
-//// //      fmatvec::Vec a;
-//// //  };
 
 }
 
