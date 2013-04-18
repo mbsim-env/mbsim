@@ -34,11 +34,9 @@ if test $debug = "yes" ; then
   FFLAGS="$FFLAGS -g3"
 else
   CFLAGS="$CFLAGS -g -O3"
-  CXXFLAGS="$CXXFLAGS -g -O3"
+  CXXFLAGS="$CXXFLAGS -g -O3 -DNDEBUG"
   FCFLAGS="$FCFLAGS -g -O2"
   FFLAGS="$FFLAGS -g -O2"
-  AC_DEFINE([FMATVEC_NO_BOUNDS_CHECK],[],[Do not check bounds in fmatvec operations])
-  AC_DEFINE([FMATVEC_NO_SIZE_CHECK],[],[Do not check size in fmatvec operations])
 fi
 
 dnl check for optional module nurbs
