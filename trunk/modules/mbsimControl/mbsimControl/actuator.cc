@@ -17,6 +17,7 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
+#include <config.h>
 #include "mbsimControl/actuator.h"
 #include "mbsimControl/signal_.h"
 #include "mbsimControl/objectfactory.h"

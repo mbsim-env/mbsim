@@ -17,6 +17,7 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
+#include <config.h>
 #include "mbsimHydraulics/obsolet_hint.h"
 #include <string>
 #include <iostream>

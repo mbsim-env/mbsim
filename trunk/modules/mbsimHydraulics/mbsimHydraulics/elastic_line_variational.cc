@@ -17,6 +17,7 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
+#include <config.h>
 #include "mbsimHydraulics/elastic_line_variational.h"
 #include "mbsimHydraulics/objectfactory.h"
 #include "environment.h"

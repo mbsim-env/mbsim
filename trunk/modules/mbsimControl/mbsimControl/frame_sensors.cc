@@ -17,6 +17,7 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
+#include <config.h>
 #include "mbsimControl/frame_sensors.h"
 #include "mbsimControl/objectfactory.h"
 

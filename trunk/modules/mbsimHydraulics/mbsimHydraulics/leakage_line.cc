@@ -17,6 +17,7 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
+#include <config.h>
 #include "mbsimHydraulics/leakage_line.h"
 #include "mbsimHydraulics/environment.h"
 #include "mbsimHydraulics/pressure_loss.h"

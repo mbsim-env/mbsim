@@ -17,7 +17,7 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
-#include "config.h"
+#include <config.h>
 #include "mbsimHydraulics/objectfactory.h"
 #include "mbsimHydraulics/rigid_line.h"
 #include "mbsimHydraulics/pressure_loss.h"

@@ -21,6 +21,7 @@
  *
  */ 
 
+#include <config.h>
 #include "mbsimControl/massless_spring_damper.h"
 #include "mbsimControl/objectfactory.h"
 #include "mbsimControl/signal_.h"

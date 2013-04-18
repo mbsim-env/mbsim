@@ -17,6 +17,7 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
+#include <config.h>
 #include "mbsimControl/signal_.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/dynamic_system.h"

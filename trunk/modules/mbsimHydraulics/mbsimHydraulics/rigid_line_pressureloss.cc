@@ -17,6 +17,7 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
+#include <config.h>
 #include "mbsimHydraulics/rigid_line_pressureloss.h"
 #include "mbsimHydraulics/hline.h"
 #include "mbsimHydraulics/rigid_line.h"

@@ -21,6 +21,7 @@
  *
  */ 
 
+#include <config.h>
 #include "mbsimControl/linear_transfer_system.h"
 #include "mbsimControl/objectfactory.h"
 #include "mbsimControl/signal_.h"

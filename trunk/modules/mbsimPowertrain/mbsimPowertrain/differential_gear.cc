@@ -1,3 +1,4 @@
+#include <config.h>
 #include "differential_gear.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/constraint.h"
