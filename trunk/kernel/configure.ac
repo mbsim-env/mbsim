@@ -5,6 +5,12 @@ AC_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([mbsim/element.h])
 LT_INIT([win32-dll])
+
+: ${CFLAGS=""}
+: ${CXXFLAGS=""}
+: ${FCFLAGS=""}
+: ${FFLAGS=""}
+
 AC_PROG_CXX
 AC_PROG_FC
 AC_PROG_F77
@@ -18,6 +24,24 @@ requires="fmatvec hdf5serie"
 PKG_CHECK_MODULES(DEPS, fmatvec >= 1.0.1 hdf5serie mbxmlutilstinyxml)
 
 AC_SUBST([requires])
+
+dnl Enable debugging 
+AC_ARG_ENABLE([debug],[  --enable-debug  Enable debuggig],[debug="yes"],[debug="no"])
+
+if test $debug = "yes" ; then
+  CFLAGS="$CFLAGS -g3"
+  CXXFLAGS="$CXXFLAGS -g3"
+  FCFLAGS="$FCFLAGS -g3"
+  FFLAGS="$FFLAGS -g3"
+else
+  CFLAGS="$CFLAGS -g -O3"
+  CXXFLAGS="$CXXFLAGS -g -O3"
+  FCFLAGS="$FCFLAGS -g -O2"
+  FFLAGS="$FFLAGS -g -O2"
+  AC_DEFINE([FMATVEC_NO_BOUNDS_CHECK],[],[Do not check bounds in fmatvec operations])
+  AC_DEFINE([FMATVEC_NO_SIZE_CHECK],[],[Do not check size in fmatvec operations])
+fi
+
 
 dnl Check for casadi 
 AC_ARG_WITH(casadi_inc_prefix,
@@ -110,6 +134,7 @@ CPPFLAGS_OLD=$CPPFLAGS
 CPPFLAGS="$CPPFLAGS -Wno-strict-overflow"
 AC_COMPILE_IFELSE([int main() {}], [AC_MSG_RESULT([yes])], [AC_MSG_RESULT([no]); CPPFLAGS=$CPPFLAGS_OLD])
 
+
 dnl Check for MinGW
 AC_CANONICAL_HOST
 if test "_$host_os" = "_mingw32" ; then
@@ -141,12 +166,11 @@ Configuration for $PACKAGE $VERSION :
 
  Source code location ....: $srcdir
  Host System Type ........: $host
- Preprocessor ............: $CC $CPPFLAGS
- C Compiler ..............: $CC $CFLAGS $LIBFLAC_CFLAGS
+ Preprocessor ............: $CXX $CPPFLAGS
  C++ Compiler ............: $CXX $CXXFLAGS
  Fortran 77 Compiler .....: $F77 $FFLAGS
  Fortran 90 Compiler .....: $FC $FCFLAGS
- Linker ..................: $CC $LDFLAGS $LIBS $LIBFLAC_LIBS
+ Linker ..................: $CXX $LDFLAGS $LIBS 
  Install path ............: $prefix
 
  Now type 'make' to build $PACKAGE $VERSION,
