@@ -261,8 +261,32 @@ TiXmlElement* RotationAboutAxesXYProperty::writeXMLFile(TiXmlNode *parent) {
   return ele2;
 }
 
+TiXmlElement* RotationAboutAxesXZProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"RotationAboutAxesXZ" );
+  parent->LinkEndChild(ele2);
+  return ele2;
+}
+
+TiXmlElement* RotationAboutAxesYZProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"RotationAboutAxesYZ" );
+  parent->LinkEndChild(ele2);
+  return ele2;
+}
+
+TiXmlElement* RotationAboutAxesXYZProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"RotationAboutAxesXYZ" );
+  parent->LinkEndChild(ele2);
+  return ele2;
+}
+
 TiXmlElement* CardanAnglesProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"CardanAngles" );
+  parent->LinkEndChild(ele2);
+  return ele2;
+}
+
+TiXmlElement* EulerAnglesProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"EulerAngles" );
   parent->LinkEndChild(ele2);
   return ele2;
 }
@@ -280,10 +304,18 @@ TiXmlElement* RotationChoiceProperty::initializeUsingXML(TiXmlElement *element) 
         index = 2;
       else if(ee->ValueStr() == MBSIMNS"RotationAboutFixedAxis")
         index = 3;
-      else if(ee->ValueStr() == MBSIMNS"CardanAngles")
-        index = 4;
       else if(ee->ValueStr() == MBSIMNS"RotationAboutAxesXY")
+        index = 4;
+      else if(ee->ValueStr() == MBSIMNS"RotationAboutAxesXZ")
         index = 5;
+      else if(ee->ValueStr() == MBSIMNS"RotationAboutAxesYZ")
+        index = 6;
+      else if(ee->ValueStr() == MBSIMNS"CardanAngles")
+        index = 7;
+      else if(ee->ValueStr() == MBSIMNS"EulerAngles")
+        index = 8;
+      else if(ee->ValueStr() == MBSIMNS"RotationAboutAxesXYZ")
+        index = 9;
       defineRotation(index);
       rotation->initializeUsingXML(ee);
       return e;
@@ -316,9 +348,17 @@ void RotationChoiceProperty::defineRotation(int index_) {
   else if(index==3)
     rotation = new RotationAboutFixedAxisProperty;  
   else if(index==4)
-    rotation = new CardanAnglesProperty;  
-  else if(index==5)
     rotation = new RotationAboutAxesXYProperty;  
+  else if(index==5)
+    rotation = new RotationAboutAxesXZProperty;  
+  else if(index==6)
+    rotation = new RotationAboutAxesYZProperty;  
+  else if(index==7)
+    rotation = new CardanAnglesProperty;  
+  else if(index==8)
+    rotation = new EulerAnglesProperty;  
+  else if(index==9)
+    rotation = new RotationAboutAxesXYZProperty;  
 }
 
 void RotationChoiceProperty::fromWidget(QWidget *widget) {

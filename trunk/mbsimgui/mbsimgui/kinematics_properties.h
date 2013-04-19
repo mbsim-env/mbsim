@@ -222,11 +222,55 @@ class RotationAboutAxesXYProperty : public RotationProperty {
     void toWidget(QWidget *widget) {}
 };
 
+class RotationAboutAxesXZProperty : public RotationProperty {
+
+  public:
+    RotationAboutAxesXZProperty() {}
+    int getSize() const {return 2;}
+    TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
+    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void fromWidget(QWidget *widget) {}
+    void toWidget(QWidget *widget) {}
+};
+
+class RotationAboutAxesYZProperty : public RotationProperty {
+
+  public:
+    RotationAboutAxesYZProperty() {}
+    int getSize() const {return 2;}
+    TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
+    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void fromWidget(QWidget *widget) {}
+    void toWidget(QWidget *widget) {}
+};
+
+class RotationAboutAxesXYZProperty : public RotationProperty {
+
+  public:
+    RotationAboutAxesXYZProperty() {}
+    int getSize() const {return 3;}
+    TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
+    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void fromWidget(QWidget *widget) {}
+    void toWidget(QWidget *widget) {}
+};
+
 class CardanAnglesProperty : public RotationProperty {
 
   public:
     CardanAnglesProperty() {}
-    int getSize() const {return 2;}
+    int getSize() const {return 3;}
+    TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
+    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void fromWidget(QWidget *widget) {}
+    void toWidget(QWidget *widget) {}
+};
+
+class EulerAnglesProperty : public RotationProperty {
+
+  public:
+    EulerAnglesProperty() {}
+    int getSize() const {return 3;}
     TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
     TiXmlElement* writeXMLFile(TiXmlNode *element);
     void fromWidget(QWidget *widget) {}

@@ -124,8 +124,12 @@ RotationChoiceWidget::RotationChoiceWidget(const string &xmlName_) : rotation(0)
   comboBox->addItem(tr("Rotation about y-axis"));
   comboBox->addItem(tr("Rotation about z-axis"));
   comboBox->addItem(tr("Rotation about fixed axis"));
-  comboBox->addItem(tr("Cardan angles"));
   comboBox->addItem(tr("Rotation about x- and y-axis"));
+  comboBox->addItem(tr("Rotation about x- and z-axis"));
+  comboBox->addItem(tr("Rotation about y- and z-axis"));
+  comboBox->addItem(tr("Cardan angles"));
+  comboBox->addItem(tr("Euler angles"));
+  comboBox->addItem(tr("Rotation about x-, y- and z-axis"));
   layout->addWidget(comboBox);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineRotation(int)));
   defineRotation(0);
@@ -143,9 +147,17 @@ void RotationChoiceWidget::defineRotation(int index) {
   else if(index==3)
     rotation = new RotationAboutFixedAxisWidget;  
   else if(index==4)
-    rotation = new CardanAnglesWidget;  
-  else if(index==5)
     rotation = new RotationAboutAxesXYWidget;  
+  else if(index==5)
+    rotation = new RotationAboutAxesXZWidget;  
+  else if(index==6)
+    rotation = new RotationAboutAxesYZWidget;  
+  else if(index==7)
+    rotation = new CardanAnglesWidget;  
+  else if(index==8)
+    rotation = new EulerAnglesWidget;  
+  else if(index==9)
+    rotation = new RotationAboutAxesXYZWidget;  
   layout->addWidget(rotation);
   emit rotationChanged();
 }

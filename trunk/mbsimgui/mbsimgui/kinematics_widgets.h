@@ -177,10 +177,38 @@ class RotationAboutAxesXYWidget : public RotationWidget {
     virtual int getSize() const {return 2;}
 };
 
+class RotationAboutAxesXZWidget : public RotationWidget {
+
+  public:
+    RotationAboutAxesXZWidget() {}
+    virtual int getSize() const {return 2;}
+};
+
+class RotationAboutAxesYZWidget : public RotationWidget {
+
+  public:
+    RotationAboutAxesYZWidget() {}
+    virtual int getSize() const {return 2;}
+};
+
+class RotationAboutAxesXYZWidget : public RotationWidget {
+
+  public:
+    RotationAboutAxesXYZWidget() {}
+    virtual int getSize() const {return 3;}
+};
+
 class CardanAnglesWidget : public RotationWidget {
 
   public:
     CardanAnglesWidget() {}
+    virtual int getSize() const {return 3;}
+};
+
+class EulerAnglesWidget : public RotationWidget {
+
+  public:
+    EulerAnglesWidget() {}
     virtual int getSize() const {return 3;}
 };
 

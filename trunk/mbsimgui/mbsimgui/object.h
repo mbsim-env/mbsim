@@ -23,9 +23,6 @@
 #include "element.h"
 #include "extended_properties.h"
 
-class QAction;
-class VecWidget;
-
 class Object : public Element {
   friend class ObjectPropertyDialog;
   public:
@@ -38,7 +35,6 @@ class Object : public Element {
     virtual Element* getByPathSearch(std::string path);
     ElementPropertyDialog* createPropertyDialog() {return new ObjectPropertyDialog(this);}
   protected:
-    QAction *actionSaveAs;
     ExtProperty q0, u0;
 
 };
