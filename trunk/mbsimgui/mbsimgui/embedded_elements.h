@@ -28,6 +28,7 @@ class EmbeddedObject : public Object {
   public:
     EmbeddedObject(const std::string &str, Element *parent);
     ~EmbeddedObject();
+    std::string getType() const { return "EmbeddedObject"; }
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     EmbeddedObjectPropertyDialog* createPropertyDialog() {return new EmbeddedObjectPropertyDialog(this);}

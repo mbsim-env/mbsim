@@ -181,8 +181,12 @@ void RigidBodyOfReferenceProperty::toWidget(QWidget *widget) {
   static_cast<RigidBodyOfReferenceWidget*>(widget)->updateWidget();
 }
 
-string FileProperty::getFilePath() const {
+string FileProperty::getAbsoluteFilePath() const {
   return absolutePath?absoluteFilePath:mbsDir.relativeFilePath(QString::fromStdString(absoluteFilePath)).toStdString();
+}
+
+void FileProperty::setAbsoluteFilePath(const string &str) {
+  absoluteFilePath=mbsDir.absoluteFilePath(QString::fromStdString(str)).toStdString();
 }
 
 TiXmlElement* FileProperty::initializeUsingXML(TiXmlElement *element) {
@@ -193,7 +197,7 @@ TiXmlElement* FileProperty::initializeUsingXML(TiXmlElement *element) {
       string file = text->Value();
       fileName = file;
       file = file.substr(1,file.length()-2);
-      absoluteFilePath=mbsDir.absoluteFilePath(QString::fromStdString(file)).toStdString();
+      setAbsoluteFilePath(file);
       return e;
     }
   }
@@ -202,7 +206,7 @@ TiXmlElement* FileProperty::initializeUsingXML(TiXmlElement *element) {
 
 TiXmlElement* FileProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = new TiXmlElement(xmlName);
-  string filePath = string("\"")+getFilePath()+"\"";
+  string filePath = string("\"")+getAbsoluteFilePath()+"\"";
   TiXmlText *text = new TiXmlText(filePath);
   ele0->LinkEndChild(text);
   parent->LinkEndChild(ele0);

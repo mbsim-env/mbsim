@@ -31,11 +31,14 @@ EmbeddedObject::~EmbeddedObject() {
 }
 
 void EmbeddedObject::initializeUsingXML(TiXmlElement *element) {
+  string file = element->Attribute("href");
+  static_cast<FileProperty*>(href.getProperty())->setFileName(file);
+  static_cast<FileProperty*>(href.getProperty())->setAbsoluteFilePath(file);
 }
 
 TiXmlElement* EmbeddedObject::writeXMLFile(TiXmlNode *parent) {    
   TiXmlElement *ele0=new TiXmlElement(PVNS+string("embed"));
-  ele0->SetAttribute("href", static_cast<FileProperty*>(href.getProperty())->getFilePath());
+  ele0->SetAttribute("href", static_cast<FileProperty*>(href.getProperty())->getAbsoluteFilePath());
   if(count != "")
     ele0->SetAttribute("count", count);
   if(counterName != "")
