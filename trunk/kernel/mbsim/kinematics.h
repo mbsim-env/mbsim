@@ -549,6 +549,41 @@ namespace MBSim {
   };
 
   /**
+   * \brief class to describe state dependent rotation about fixed axis
+   */
+  class StateDependentRotationAboutFixedAxis: public Rotation {
+    public:
+
+      /**
+       * \brief constructor
+       */
+      StateDependentRotationAboutFixedAxis(int qSize_, Function1<double, fmatvec::Vec> *angle_, const fmatvec::Vec3 &a_) : qSize(qSize_), rot(new RotationAboutFixedAxis(a_)), angle(angle_) {}
+
+      /**
+       * \brief destructor
+       */
+      virtual ~StateDependentRotationAboutFixedAxis() { delete rot; rot = 0; delete angle; angle = 0; }
+
+      /* INTERFACE OF ROTATION */
+      virtual int getqSize() const {return qSize;}
+      virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) {return (*rot)(fmatvec::Vec(1,fmatvec::INIT,(*angle)(q)),t);} 
+      virtual void initializeUsingXML(TiXmlElement *element) {}
+      /***************************************************/
+
+      /* GETTER / SETTER */
+      Function1<double, fmatvec::Vec>* getRotationalFunction() { return angle; }
+      void setRotationalFunction(Function1<double, fmatvec::Vec> *angle_) { angle = angle_; }
+      const fmatvec::Vec3& getAxisOfRotation() const { return rot->getAxisOfRotation(); }
+      void setAxisOfRotation(const fmatvec::Vec3& a_) { rot->setAxisOfRotation(a_); }
+      /***************************************************/
+
+    private:
+      int qSize;
+      RotationAboutFixedAxis *rot;
+      Function1<double, fmatvec::Vec> *angle;
+  };
+
+  /**
    * \brief class to describe time dependent rotation about fixed axis
    * \author Thorsten Schindler
    * \date 2009-12-21 initial commit (Thorsten Schindler)
@@ -577,7 +612,7 @@ namespace MBSim {
       /* INTERFACE OF ROTATION */
       virtual int getqRSize() const { return 0; }
       virtual int getuRSize() const {return 0;}
-      virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
+      virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) {return (*rot)(fmatvec::Vec(1,fmatvec::INIT,(*angle)(t)),t);}
       virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
 

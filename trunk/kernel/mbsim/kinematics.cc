@@ -202,11 +202,6 @@ namespace MBSim {
     return ele0;
   }
 
-  SqrMat3 TimeDependentRotationAboutFixedAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
-    Vec phi(1,INIT,(*angle)(t));
-    return (*rot)(phi,t);
-  }
-
   void TimeDependentRotationAboutFixedAxis::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"axisOfRotation");

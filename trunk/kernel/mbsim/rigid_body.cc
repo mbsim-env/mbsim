@@ -248,25 +248,62 @@ namespace MBSim {
         SymbolicFunction1<VecV,double> *pos = dynamic_cast<SymbolicFunction1<VecV,double>*>(static_cast<TimeDependentLinearTranslation*>(fPrPK)->getTranslationalFunction());
         if(pos) {
           Mat3xV PJT = static_cast<TimeDependentLinearTranslation*>(fPrPK)->getTranslationVectors();
-          CasADi::SXMatrix der1(PJT.rows(),PJT.cols());
+          CasADi::SXMatrix r(PJT.rows(),1);
           for(int i=0; i<PJT.rows(); i++)
             for(int j=0; j<PJT.cols(); j++)
-              der1.elem(i,j) = PJT.e(i,j)*pos->getSXFunction().outputExpr(0).elem(0,0);
-          CasADi::SXFunction foo(pos->getSXFunction().inputExpr(),der1);
+              r.elem(i,0) += PJT.e(i,j)*pos->getSXFunction().outputExpr(0).elem(j,0);
+          CasADi::SXFunction foo(pos->getSXFunction().inputExpr(),r);
           foo.init();
           if(fPjT==0) fPjT = new SymbolicFunction1<Vec3,double>(foo.jacobian());
           if(fPdjT==0) fPdjT = new SymbolicFunction1<Vec3,double>(static_cast<SymbolicFunction1<Vec3,double>*>(fPjT)->getSXFunction().jacobian());
         }
       }
 
-      if(dynamic_cast<TimeDependentRotationAboutFixedAxis*>(fAPK)) {
+      if(dynamic_cast<StateDependentRotationAboutFixedAxis*>(fAPK)) {
+        SymbolicFunction1<double,Vec> *angle = dynamic_cast<SymbolicFunction1<double,Vec>*>(static_cast<StateDependentRotationAboutFixedAxis*>(fAPK)->getRotationalFunction());
+        int nq = fAPK->getqSize();
+        if(angle) {
+          if(fPJR==0) {
+            Vec3 axis = static_cast<StateDependentRotationAboutFixedAxis*>(fAPK)->getAxisOfRotation();
+            CasADi::SXMatrix phi(axis.size(),nq);
+            for(int i=0; i<axis.size(); i++)
+              phi.elem(i,0) = axis.e(i)*angle->getSXFunction().outputExpr(0).elem(0,0);
+            CasADi::SXFunction foo(angle->getSXFunction().inputExpr(),phi);
+            foo.init();
+            CasADi::SXFunction jac(angle->getSXFunction().inputExpr(),foo.jac());
+            fPJR = new StateDependentJacobian(nq,new SymbolicFunction1<Mat3xV,Vec>(jac));
+          }
+          if(fPdJR==0) {
+            SymbolicFunction1<Mat3xV,Vec> *jac = static_cast<SymbolicFunction1<Mat3xV,Vec>*>(static_cast<StateDependentJacobian*>(fPJR)->getJacobianFunction());
+            vector<CasADi::SX> sqd(nq);
+            for(int i=0; i<nq; i++) {
+              stringstream stream;
+              stream << "qd" << i;
+              sqd[i] = CasADi::SX(stream.str());
+            }
+            vector<CasADi::SX> st(1);
+            st[0] = CasADi::SX("t");
+            vector<CasADi::SXMatrix> input2(3);
+            input2[0] = sqd;
+            input2[1] = angle->getSXFunction().inputExpr(0);
+            input2[2] = st;
+            CasADi::SXMatrix Jd(3,nq);
+            for(int j=0; j<nq; j++) {
+              Jd(CasADi::Slice(0,3),CasADi::Slice(j,j+1)) = jac->getSXFunction().jac(0)(CasADi::Slice(j,nq*3,nq),CasADi::Slice(0,nq)).mul(sqd);
+            }
+            CasADi::SXFunction derJac(input2,Jd);
+            fPdJR = new SymbolicFunction3<Mat3xV,Vec,Vec,double>(derJac);
+          }
+        }
+      }
+      else if(dynamic_cast<TimeDependentRotationAboutFixedAxis*>(fAPK)) {
         SymbolicFunction1<double,double> *angle = dynamic_cast<SymbolicFunction1<double,double>*>(static_cast<TimeDependentRotationAboutFixedAxis*>(fAPK)->getRotationalFunction());
         if(angle) {
           Vec3 axis = static_cast<TimeDependentRotationAboutFixedAxis*>(fAPK)->getAxisOfRotation();
-          CasADi::SXMatrix der1(axis.size(),1);
+          CasADi::SXMatrix phi(axis.size(),1);
           for(int i=0; i<axis.size(); i++)
-            der1.elem(i,0) = axis.e(i)*angle->getSXFunction().outputExpr(0).elem(0,0);
-          CasADi::SXFunction foo(angle->getSXFunction().inputExpr(),der1);
+            phi.elem(i,0) = axis.e(i)*angle->getSXFunction().outputExpr(0).elem(0,0);
+          CasADi::SXFunction foo(angle->getSXFunction().inputExpr(),phi);
           foo.init();
           if(fPjR==0) fPjR = new SymbolicFunction1<Vec3,double>(foo.jacobian());
           if(fPdjR==0) fPdjR = new SymbolicFunction1<Vec3,double>(static_cast<SymbolicFunction1<Vec3,double>*>(fPjR)->getSXFunction().jacobian());
