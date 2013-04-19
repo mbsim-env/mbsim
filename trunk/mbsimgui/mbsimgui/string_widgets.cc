@@ -588,7 +588,7 @@ void VecFromFileWidget::selectFile() {
 }
 
 string VecFromFileWidget::getValue() const {
-  return evalOctaveExpression(string("load('") + fileName->text().toStdString() + "')");
+  return evalOctaveExpression(string("ret=load('") + fileName->text().toStdString() + "')");
 }
 
 MatFromFileWidget::MatFromFileWidget() {
@@ -614,5 +614,5 @@ void MatFromFileWidget::selectFile() {
 }
 
 string MatFromFileWidget::getValue() const {
-  return evalOctaveExpression(string("load('") + fileName->text().toStdString() + "')");
+  return evalOctaveExpression(string("ret=load('") + fileName->text().toStdString() + "')");
 }

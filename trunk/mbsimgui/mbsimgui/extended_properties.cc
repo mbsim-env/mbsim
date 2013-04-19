@@ -95,7 +95,12 @@ void PropertyChoiceProperty::fromWidget(QWidget *widget) {
 }
 
 void PropertyChoiceProperty::toWidget(QWidget *widget) {
-  static_cast<WidgetChoiceWidget*>(widget)->changeCurrent(index);
+  static_cast<WidgetChoiceWidget*>(widget)->choice->blockSignals(true);
+  static_cast<WidgetChoiceWidget*>(widget)->choice->setCurrentIndex(index);
+  static_cast<WidgetChoiceWidget*>(widget)->choice->blockSignals(false);
+  static_cast<WidgetChoiceWidget*>(widget)->stackedWidget->blockSignals(true);
+  static_cast<WidgetChoiceWidget*>(widget)->stackedWidget->setCurrentIndex(index);
+  static_cast<WidgetChoiceWidget*>(widget)->stackedWidget->blockSignals(false);
   property[index]->toWidget(static_cast<WidgetChoiceWidget*>(widget)->stackedWidget->currentWidget());
 }
 
@@ -155,8 +160,9 @@ void PropertyContainer::initialize() {
 }
 
 TiXmlElement* PropertyContainer::initializeUsingXML(TiXmlElement *element) {
+  bool flag = false;
   for(unsigned int i=0; i<property.size(); i++)
-    if(property[i]->initializeUsingXML(element))
+    if(!property[i]->initializeUsingXML(element))
       return 0;
   return element;
 }

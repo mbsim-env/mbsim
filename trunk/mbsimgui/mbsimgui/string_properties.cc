@@ -259,7 +259,7 @@ void PhysicalStringProperty::toWidget(QWidget *widget) {
 }
 
 string VecFromFileProperty::getValue() const {
-  return evalOctaveExpression(string("load('") + fileName.toStdString() + "')");
+  return evalOctaveExpression(string("ret=load('") + fileName.toStdString() + "')");
 }
 
 TiXmlElement* VecFromFileProperty::initializeUsingXML(TiXmlElement *element) {
@@ -267,7 +267,7 @@ TiXmlElement* VecFromFileProperty::initializeUsingXML(TiXmlElement *element) {
   if(!text)
     return 0;
   string str = text->Value();
-  if(str.substr(0,4)!="load")
+  if(str.substr(0,8)!="ret=load")
     return 0;
   int pos1 = str.find_first_of('\''); 
   int pos2 = str.find_last_of('\''); 
@@ -278,7 +278,7 @@ TiXmlElement* VecFromFileProperty::initializeUsingXML(TiXmlElement *element) {
 }
 
 TiXmlElement* VecFromFileProperty::writeXMLFile(TiXmlNode *parent) {
-  QString filePath = QString("load('")+(absolutePath?absoluteFilePath:mbsDir.relativeFilePath(absoluteFilePath))+"')";
+  QString filePath = QString("ret=load('")+(absolutePath?absoluteFilePath:mbsDir.relativeFilePath(absoluteFilePath))+"')";
  //string exp = string("load('") + fileName.toStdString() + "')"; 
   TiXmlText *text = new TiXmlText(filePath.toStdString());
   parent->LinkEndChild(text);
@@ -296,7 +296,7 @@ void VecFromFileProperty::toWidget(QWidget *widget) {
 }
 
 string MatFromFileProperty::getValue() const {
-  return evalOctaveExpression(string("load('") + fileName.toStdString() + "')");
+  return evalOctaveExpression(string("ret=load('") + fileName.toStdString() + "')");
 }
 
 TiXmlElement* MatFromFileProperty::initializeUsingXML(TiXmlElement *element) {
@@ -304,7 +304,7 @@ TiXmlElement* MatFromFileProperty::initializeUsingXML(TiXmlElement *element) {
   if(!text)
     return 0;
   string str = text->Value();
-  if(str.substr(0,4)!="load")
+  if(str.substr(0,8)!="ret=load")
     return 0;
   int pos1 = str.find_first_of('\''); 
   int pos2 = str.find_last_of('\''); 
@@ -314,7 +314,7 @@ TiXmlElement* MatFromFileProperty::initializeUsingXML(TiXmlElement *element) {
 }
 
 TiXmlElement* MatFromFileProperty::writeXMLFile(TiXmlNode *parent) {
-  QString filePath = QString("load('")+(absolutePath?absoluteFilePath:mbsDir.relativeFilePath(absoluteFilePath))+"')";
+  QString filePath = QString("ret=load('")+(absolutePath?absoluteFilePath:mbsDir.relativeFilePath(absoluteFilePath))+"')";
  //string exp = string("load('") + fileName->text().toStdString() + "')"; 
   TiXmlText *text = new TiXmlText(filePath.toStdString());
   parent->LinkEndChild(text);

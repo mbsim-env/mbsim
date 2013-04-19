@@ -167,8 +167,7 @@ TabularFunction1Property::TabularFunction1Property() {
 
   vector<PhysicalStringProperty*> input;
   input.push_back(new PhysicalStringProperty(new VecFromFileProperty,"",MBSIMNS"x"));
-  ExtProperty *prop = new ExtProperty(new ExtPhysicalVarProperty(input));
-  propertyContainer->addProperty(prop);
+  propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
   input.clear();
   input.push_back(new PhysicalStringProperty(new MatFromFileProperty,"",MBSIMNS"y"));
