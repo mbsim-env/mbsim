@@ -26,7 +26,6 @@
 #include "basic_properties.h"
 #include "kinematics_properties.h"
 #include "ombv_properties.h"
-#include <QMenu>
 
 using namespace std;
 

@@ -37,6 +37,7 @@ class Constraint;
 class GearConstraint;
 class KinematicConstraint;
 class JointConstraint;
+class EmbeddedObject;
 class Link;
 class KineticExcitation;
 class SpringDamper;
@@ -103,7 +104,6 @@ class SpherePropertyDialog : public ContourPropertyDialog {
   protected:
     ExtWidget *radius, *visu;
 };
-
 
 class GroupPropertyDialog : public ElementPropertyDialog {
 
@@ -211,6 +211,16 @@ class JointConstraintPropertyDialog : public ConstraintPropertyDialog {
     ExtWidget *force, *moment, *connections, *independentBody, *dependentBodiesFirstSide, *dependentBodiesSecondSide;
 };
 
+class EmbeddedObjectPropertyDialog : public ObjectPropertyDialog {
+
+  public:
+    EmbeddedObjectPropertyDialog(EmbeddedObject *object, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+    ExtWidget *href;
+    TextWidget *count, *counterName;
+};
 
 class LinkPropertyDialog : public ElementPropertyDialog {
 

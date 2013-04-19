@@ -39,7 +39,7 @@ class TextWidget;
 class Element : public TreeItemData {
   protected:
     static int IDcounter;
-    std::string ns, ID;
+    std::string ID;
     std::string name;
     Element *parent;
   public:

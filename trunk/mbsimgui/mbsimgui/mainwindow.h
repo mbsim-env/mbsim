@@ -81,7 +81,7 @@ class MainWindow : public QMainWindow {
     void initInlineOpenMBV();
     QString uniqueTempDir, absoluteMBSFilePath;
     QAction *actionSaveProj, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameterList;
-    QAction *addFrameAction, *addContourAction, *addGroupAction, *addObjectAction, *addLinkAction, *addObserverAction, *addPointAction, *addLineAction, *addPlaneAction, *addSphereAction, *addRigidBodyAction, *addGearConstraintAction, *addKinematicConstraintAction, *addJointConstraintAction, *addKineticExcitationAction, *addSpringDamperAction, *addJointAction, *addContactAction, *addAbsoluteKinematicsObserverAction, *removeElementAction;
+    QAction *addFrameAction, *addContourAction, *addGroupAction, *addObjectAction, *addLinkAction, *addObserverAction, *addPointAction, *addLineAction, *addPlaneAction, *addSphereAction, *addRigidBodyAction, *addGearConstraintAction, *addKinematicConstraintAction, *addJointConstraintAction, *addEmbeddedObjectAction, *addKineticExcitationAction, *addSpringDamperAction, *addJointAction, *addContactAction, *addAbsoluteKinematicsObserverAction, *removeElementAction;
     QAction *addParameterAction, *removeParameterAction;
     QAction *selectDOPRI5IntegratorAction, *selectRADAU5IntegratorAction, *selectLSODEIntegratorAction, *selectLSODARIntegratorAction, *selectTimeSteppingIntegratorAction, *selectEulerExplicitIntegratorAction, *selectRKSuiteIntegratorAction;
 
@@ -139,6 +139,7 @@ class MainWindow : public QMainWindow {
     void addGearConstraint();
     void addKinematicConstraint();
     void addJointConstraint();
+    void addEmbeddedObject();
     void addSpringDamper();
     void addKineticExcitation();
     void addJoint();

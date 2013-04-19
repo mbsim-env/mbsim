@@ -174,11 +174,11 @@ class TextWidget : public Widget {
   public:
     TextWidget(bool readOnly=false);
 
-    QString getName() const {return ename->text();}
-    void setName(const QString &name) {ename->setText(name);}
+    QString getText() const {return text->text();}
+    void setText(const QString &name) {text->setText(name);}
 
   protected:
-    QLineEdit *ename;
+    QLineEdit *text;
 };
 
 class ConnectFramesWidget : public Widget {

@@ -242,9 +242,9 @@ TextWidget::TextWidget(bool readOnly) {
   layout->setMargin(0);
   setLayout(layout);
 
-  ename = new QLineEdit;
-  ename->setReadOnly(readOnly);
-  layout->addWidget(ename);
+  text = new QLineEdit;
+  text->setReadOnly(readOnly);
+  layout->addWidget(text);
 }
 
 ConnectFramesWidget::ConnectFramesWidget(int n, Element *element_) : element(element_) {

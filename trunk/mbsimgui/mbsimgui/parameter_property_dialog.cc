@@ -40,11 +40,11 @@ ParameterPropertyDialog::ParameterPropertyDialog(QWidget *parent, Qt::WindowFlag
 }
 
 void ParameterPropertyDialog::toWidget(Parameter *parameter) {
- name->setName(QString::fromStdString(parameter->getName()));
+ name->setText(QString::fromStdString(parameter->getName()));
  parameter->value.toWidget(value);
 }
 
 void ParameterPropertyDialog::fromWidget(Parameter *parameter) {
-  parameter->setName(name->getName().toStdString());
+  parameter->setName(name->getText().toStdString());
   parameter->value.fromWidget(value);
 }

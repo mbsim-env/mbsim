@@ -18,28 +18,28 @@
    */
 
 #include <config.h>
-#include "link.h"
+#include "embedded_elements.h"
+#include "basic_properties.h"
 
 using namespace std;
 
-Link::Link(const string &str, Element *parent) : Element(str, parent) {
+EmbeddedObject::EmbeddedObject(const string &str, Element *parent) : Object(str,parent) {
+  href.setProperty(new FileProperty(""));
 }
 
-Link::~Link() {
+EmbeddedObject::~EmbeddedObject() {
 }
 
-Element * Link::getByPathSearch(string path) {
-  if (path.substr(0, 3)=="../") // relative path
-    return getParent()->getByPathSearch(path.substr(3));
-  else // absolut path
-    if(getParent())
-      return getParent()->getByPathSearch(path);
-    else
-      return getByPathSearch(path.substr(1));
+void EmbeddedObject::initializeUsingXML(TiXmlElement *element) {
 }
 
-//void Link::initializeUsingXML(TiXmlElement *element) {
-//}
-
-//TiXmlElement* Link::writeXMLFile(TiXmlNode *parent) {    
-//}
+TiXmlElement* EmbeddedObject::writeXMLFile(TiXmlNode *parent) {    
+  TiXmlElement *ele0=new TiXmlElement(PVNS+string("embed"));
+  ele0->SetAttribute("href", static_cast<FileProperty*>(href.getProperty())->getFilePath());
+  if(count != "")
+    ele0->SetAttribute("count", count);
+  if(counterName != "")
+  ele0->SetAttribute("counterName", counterName);
+  parent->LinkEndChild(ele0);
+  return ele0;
+}

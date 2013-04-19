@@ -19,7 +19,6 @@
 
 #include <config.h>
 #include "object.h"
-#include <QtGui/QMenu>
 
 using namespace std;
 

@@ -25,6 +25,7 @@
 #include "solver.h"
 #include "rigidbody.h"
 #include "constraint.h"
+#include "embedded_elements.h"
 #include "kinetic_excitation.h"
 #include "spring_damper.h"
 #include "joint.h"
@@ -199,6 +200,12 @@ void ElementTreeModel::addRigidBody(const QModelIndex &parent) {
   RigidBody *rigidbody = new RigidBody("RigidBody"+toStr(IDcounter),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addObject(rigidbody);
   createObjectItem(rigidbody,parent.child(3,0));
+}
+
+void ElementTreeModel::addEmbeddedObject(const QModelIndex &parent) {
+  EmbeddedObject *object = new EmbeddedObject("EmbeddedObject"+toStr(IDcounter),static_cast<Element*>(getItem(parent)->getItemData()));
+  static_cast<Element*>(getItem(parent)->getItemData())->addObject(object);
+  createObjectItem(object,parent.child(3,0));
 }
 
 void ElementTreeModel::addKinematicConstraint(const QModelIndex &parent) {

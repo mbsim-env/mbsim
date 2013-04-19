@@ -134,6 +134,7 @@ class FileProperty : public Property {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
+    std::string getFilePath() const;
 
   protected:
     std::string fileName;

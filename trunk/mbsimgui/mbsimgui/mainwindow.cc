@@ -204,6 +204,8 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   connect(addGearConstraintAction,SIGNAL(triggered()),this,SLOT(addGearConstraint()));
   addJointConstraintAction=new QAction("Add joint constraint", this);
   connect(addJointConstraintAction,SIGNAL(triggered()),this,SLOT(addJointConstraint()));
+  addEmbeddedObjectAction=new QAction("Add embedded object", this);
+  connect(addEmbeddedObjectAction,SIGNAL(triggered()),this,SLOT(addEmbeddedObject()));
   addLinkAction=new QAction("Add link", this);
   connect(addLinkAction,SIGNAL(triggered()),this,SLOT(addLink()));
   addKineticExcitationAction=new QAction("Add kinetic excitation", this);
@@ -275,7 +277,7 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   parameterMenu->addAction("New", this, SLOT(newParameterList()));
   parameterMenu->addAction("Load", this, SLOT(loadParameterList()));
   parameterMenu->addAction("Save as", this, SLOT(saveParameterListAs()));
-  actionSaveParameterList = parameterMenu->addAction("Save", this, SLOT(saveParameter()));
+  actionSaveParameterList = parameterMenu->addAction("Save", this, SLOT(saveParameterList()));
   actionSaveParameterList->setDisabled(true);
   parameterMenu->addAction(addParameterAction);
   menuBar()->addMenu(parameterMenu);
@@ -1058,6 +1060,7 @@ void MainWindow::addObject() {
   menu.addAction(addGearConstraintAction);
   menu.addAction(addKinematicConstraintAction);
   menu.addAction(addJointConstraintAction);
+  menu.addAction(addEmbeddedObjectAction);
   menu.exec(QCursor::pos());
 }
 
@@ -1128,6 +1131,18 @@ void MainWindow::addJointConstraint() {
   //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
 }
 
+void MainWindow::addEmbeddedObject() {
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  model->addEmbeddedObject(index);
+#ifdef INLINE_OPENMBV
+  mbsimxml(1);
+#endif
+  QModelIndex containerIndex = model->index(3, 0, index);
+  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
+  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+}
 
 void MainWindow::addFrame() {
   ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());

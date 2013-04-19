@@ -21,7 +21,6 @@
 #include "observer.h"
 #include "basic_properties.h"
 #include "ombv_properties.h"
-#include <QtGui/QMenu>
 
 using namespace std;
 

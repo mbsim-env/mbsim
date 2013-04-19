@@ -32,6 +32,7 @@
 #include "contour.h"
 #include "rigidbody.h"
 #include "constraint.h"
+#include "embedded_elements.h"
 #include "kinetic_excitation.h"
 #include "spring_damper.h"
 #include "joint.h"
@@ -51,11 +52,11 @@ ElementPropertyDialog::ElementPropertyDialog(QWidget *parent, Qt::WindowFlags f)
 }
 
 void ElementPropertyDialog::toWidget(Element *element) {
-  name->setName(QString::fromStdString(element->getName()));
+  name->setText(QString::fromStdString(element->getName()));
 }
 
 void ElementPropertyDialog::fromWidget(Element *element) {
-  element->setName(name->getName().toStdString());
+  element->setName(name->getText().toStdString());
 }
 
 FramePropertyDialog::FramePropertyDialog(Frame *frame, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(parent,f) {
@@ -499,6 +500,27 @@ void JointConstraintPropertyDialog::fromWidget(Element *element) {
   static_cast<JointConstraint*>(element)->connections.fromWidget(connections);
   static_cast<JointConstraint*>(element)->force.fromWidget(force);
   static_cast<JointConstraint*>(element)->moment.fromWidget(moment);
+}
+
+EmbeddedObjectPropertyDialog::EmbeddedObjectPropertyDialog(EmbeddedObject *object, QWidget *parent, Qt::WindowFlags f) : ObjectPropertyDialog(object,parent,f) {
+  href = new ExtWidget("xml file name",new FileWidget("XML model files", "xml files (*.xml)"));
+  addToTab("General",href);
+  count = new TextWidget;
+  ExtWidget *count_=new ExtWidget("Count",count);
+  addToTab("General",count_);
+  counterName = new TextWidget;
+  ExtWidget *counterName_=new ExtWidget("CounterName",counterName);
+  addToTab("General",counterName_);
+}
+
+void EmbeddedObjectPropertyDialog::toWidget(Element *element) {
+  ObjectPropertyDialog::toWidget(element);
+  static_cast<EmbeddedObject*>(element)->href.toWidget(href);
+}
+
+void EmbeddedObjectPropertyDialog::fromWidget(Element *element) {
+  ObjectPropertyDialog::fromWidget(element);
+  static_cast<EmbeddedObject*>(element)->href.fromWidget(href);
 }
 
 LinkPropertyDialog::LinkPropertyDialog(Link *link, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(parent,f) {

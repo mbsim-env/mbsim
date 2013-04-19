@@ -35,7 +35,7 @@ using namespace std;
 
 int Element::IDcounter=0;
 
-Element::Element(const string &name_, Element *parent_) : name(name_), parent(parent_), ns(MBSIMNS) {
+Element::Element(const string &name_, Element *parent_) : name(name_), parent(parent_) {
   stringstream sstr;
   sstr<<IDcounter++;
   ID=sstr.str();
@@ -66,7 +66,7 @@ void Element::initializeUsingXML(TiXmlElement *element) {
 }
 
 TiXmlElement* Element::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0=new TiXmlElement(ns+getType());
+  TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
   //name->writeXMLFile(ele0);
   ele0->SetAttribute("name", getName());
 //  for(unsigned int i=0; i<plotFeature.size(); i++)
