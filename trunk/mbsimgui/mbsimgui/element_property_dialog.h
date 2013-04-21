@@ -218,8 +218,7 @@ class EmbeddedObjectPropertyDialog : public ObjectPropertyDialog {
     void toWidget(Element *element);
     void fromWidget(Element *element);
   protected:
-    ExtWidget *href;
-    TextWidget *count, *counterName;
+    ExtWidget *href, *count, *counterName, *parameterList;
 };
 
 class LinkPropertyDialog : public ElementPropertyDialog {

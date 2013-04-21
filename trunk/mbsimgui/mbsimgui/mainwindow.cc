@@ -225,6 +225,8 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   connect(removeElementAction, SIGNAL(triggered()), this, SLOT(removeElement()));
   removeElementAction->setText(QApplication::translate("MainWindow", "Remove", 0, QApplication::UnicodeUTF8));
   removeElementAction->setShortcut(QApplication::translate("MainWindow", "Ctrl+R, R", 0, QApplication::UnicodeUTF8));
+  saveElementAsAction=new QAction("Save as", this);
+  connect(saveElementAsAction,SIGNAL(triggered()),this,SLOT(saveElementAs()));
 
   addParameterAction=new QAction("Add parameter", this);
   connect(addParameterAction,SIGNAL(triggered()),this,SLOT(addParameter()));
@@ -497,10 +499,11 @@ void MainWindow::elementListClicked() {
         menu.addAction(addFrameAction);
         menu.addAction(addContourAction);
       }
-      menu.addSeparator();
       if(model->getItem(index)->isRemovable()) {
-        //menu.insertAction(propertiesAction);
+        menu.addSeparator();
         menu.addAction(removeElementAction);
+        menu.addSeparator();
+        menu.addAction(saveElementAsAction);
       }
       menu.exec(QCursor::pos());
     } 
@@ -1272,4 +1275,12 @@ void MainWindow::addAbsoluteKinematicsObserver() {
   QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
   //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+}
+
+void MainWindow::saveElementAs() {
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  QString file=QFileDialog::getSaveFileName(0, "XML model files", QString("./")+QString::fromStdString(model->getItem(index)->getItemData()->getName())+".xml", "XML files (*.xml)");
+  if(file!="")
+    static_cast<Element*>(model->getItem(index)->getItemData())->writeXMLFile(file.toStdString());
 }

@@ -167,14 +167,19 @@ class FileWidget : public Widget {
   protected slots:
     void selectFile();
 
+  signals:
+    void fileChanged(const QString &str);
 };
 
 class TextWidget : public Widget {
+  Q_OBJECT
 
   public:
     TextWidget(bool readOnly=false);
 
     QString getText() const {return text->text();}
+
+  public slots:
     void setText(const QString &name) {text->setText(name);}
 
   protected:

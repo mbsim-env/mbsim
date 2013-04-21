@@ -33,8 +33,7 @@ class EmbeddedObject : public Object {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     EmbeddedObjectPropertyDialog* createPropertyDialog() {return new EmbeddedObjectPropertyDialog(this);}
   protected:
-    ExtProperty href;
-    std::string count, counterName;
+    ExtProperty href, count, counterName, parameterList;
 };
 
 #endif

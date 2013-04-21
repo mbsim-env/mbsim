@@ -145,6 +145,22 @@ class FileProperty : public Property {
     std::string absoluteFilePath;
 };
 
+class TextProperty : public Property {
+
+  public:
+    TextProperty(const std::string &text_, const std::string &xmlName_) : text(text_), xmlName(xmlName_) {}
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+    std::string getText() const {return text;}
+    void setText(const std::string &text_) {text = text_;}
+
+  protected:
+    std::string text;
+    std::string xmlName;
+};
+
 class DependenciesProperty : public Property {
 
   public:

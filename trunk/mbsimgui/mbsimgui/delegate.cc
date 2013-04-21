@@ -52,6 +52,8 @@ void ElementDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionVi
 
 QWidget *ElementDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const {
   const ElementTreeModel *model = static_cast<const ElementTreeModel*>(index.model());
+  if(!dynamic_cast<Element*>(model->getItem(index)->getItemData()))
+    return 0;
   ElementPropertyDialog *editor = static_cast<Element*>(model->getItem(index)->getItemData())->createPropertyDialog();
   editor->setModal(true);
   connect(editor,SIGNAL(apply(QWidget*)),this,SIGNAL(commitData(QWidget*)));

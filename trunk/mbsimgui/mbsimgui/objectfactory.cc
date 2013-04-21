@@ -118,7 +118,7 @@ Object* MBSimObjectFactory::createObject(TiXmlElement *element, Element *parent)
   else if(element->ValueStr()==MBSIMNS"JointConstraint")
     return new JointConstraint(element->Attribute("name"),parent);
   else if(element->ValueStr()==PVNS"embed")
-    return new EmbeddedObject(element->Attribute("href"),parent);
+    return new EmbeddedObject( string("\"")+element->Attribute("href")+string("\""),parent);
   return 0;
 }
 

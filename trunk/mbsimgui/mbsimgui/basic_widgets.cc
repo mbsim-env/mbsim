@@ -226,6 +226,7 @@ FileWidget::FileWidget(const QString &description_, const QString &extensions_) 
   QPushButton *button = new QPushButton("Browse");
   layout->addWidget(button);
   connect(button,SIGNAL(clicked(bool)),this,SLOT(selectFile()));
+  connect(fileName,SIGNAL(textChanged(const QString&)),this,SIGNAL(fileChanged(const QString&)));
 }
 
 void FileWidget::selectFile() {

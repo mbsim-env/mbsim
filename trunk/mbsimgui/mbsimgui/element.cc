@@ -54,7 +54,7 @@ void Element::writeXMLFile(const string &name) {
   doc.LinkEndChild( decl );
   writeXMLFile(&doc);
   unIncorporateNamespace(doc.FirstChildElement(), Utils::getMBSimNamespacePrefixMapping());  
-  doc.SaveFile((name+".xml"));
+  doc.SaveFile((name.length()>4 && name.substr(name.length()-4,4)==".xml")?name:name+".xml");
 }
 
 void Element::initialize() {
@@ -149,62 +149,3 @@ string Element::getXMLPath(Element *ref, bool rel) {
     return str;
   }
 }
-
-//Element* Element::getChild(TreeItem* container, const string &name, bool check) {
-//  int i;
-//  for(i=0; i<container->childCount(); i++) {
-//    if(((Element*)container->child(i))->getName() == name)
-//      return (Element*)container->child(i);
-//  }
-//  if(check) {
-//    if(!(i<container->childCount()))
-//      throw MBSimError("The object \""+((Element*)container->child(i))->getName()+"\" comprises no frame \""+name+"\"!");
-//    assert(i<container->childCount());
-//  }
-//  return NULL;
-//}
-
-//Element* Container::getChild(int i) {
-//  return (Element*)child(i);
-//}
-
-//Element* Container::getChild(const string &name, bool check) {
-//  int i;
-//  for(i=0; i<childCount(); i++) {
-//    if(getChild(i)->getName() == name)
-//      return (Element*)child(i);
-//  }
-//  if(check) {
-//    if(!(i<childCount()))
-//      throw MBSimError("The object \""+getChild(i)->getName()+"\" comprises no element \""+name+"\"!");
-//    assert(i<childCount());
-//  }
-//  return NULL;
-//}
-
-
-//Frame* Element::getFrame(int i) {
-//  return (Frame*)frames->child(i); 
-//}
-//
-//Contour* Element::getContour(int i) {
-//  return (Contour*)contours->child(i); 
-//}
-//
-//Object* Element::getObject(int i) {
-//  return (Object*)objects->child(i); 
-//}
-//
-//Link* Element::getLink(int i) {
-//  return (Link*)links->child(i); 
-//}
-//
-//Observer* Element::getObserver(int i) {
-//  return (Observer*)observers->child(i); 
-//}
-//
-//Group* Element::getGroup(int i) {
-//  return (Group*)groups->child(i); 
-//}
-
-

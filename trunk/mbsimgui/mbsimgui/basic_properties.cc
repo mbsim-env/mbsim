@@ -220,8 +220,39 @@ void FileProperty::fromWidget(QWidget *widget) {
 }
 
 void FileProperty::toWidget(QWidget *widget) {
+  static_cast<FileWidget*>(widget)->blockSignals(true);
   static_cast<FileWidget*>(widget)->setFileName(QString::fromStdString(fileName));
+  static_cast<FileWidget*>(widget)->blockSignals(false);
   static_cast<FileWidget*>(widget)->setAbsoluteFilePath(QString::fromStdString(absoluteFilePath));
+}
+
+TiXmlElement* TextProperty::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e=element->FirstChildElement(xmlName);
+  if(e) {
+    TiXmlText *text_ = dynamic_cast<TiXmlText*>(e->FirstChild());
+    if(text_) {
+      text = text_->Value();
+      return e;
+    }
+  }
+  return 0;
+}
+
+TiXmlElement* TextProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = new TiXmlElement(xmlName);
+  TiXmlText *text_ = new TiXmlText(text);
+  ele0->LinkEndChild(text_);
+  parent->LinkEndChild(ele0);
+
+  return 0;
+}
+
+void TextProperty::fromWidget(QWidget *widget) {
+  text = static_cast<TextWidget*>(widget)->getText().toStdString();
+}
+
+void TextProperty::toWidget(QWidget *widget) {
+  static_cast<TextWidget*>(widget)->setText(QString::fromStdString(text));
 }
 
 void DependenciesProperty::initialize() {
