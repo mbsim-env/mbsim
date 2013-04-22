@@ -21,8 +21,10 @@
 #define _ELEMENT__H_
 
 #include "treeitemdata.h"
+#include "basic_properties.h"
 #include "extended_properties.h"
 #include "element_property_dialog.h"
+#include "element_context_menu.h"
 
 class Element;
 class Frame;
@@ -37,10 +39,11 @@ class TiXmlNode;
 class TextWidget;
 
 class Element : public TreeItemData {
+  friend class ElementPropertyDialog;
   protected:
     static int IDcounter;
     std::string ID;
-    std::string name;
+    ExtProperty name;
     Element *parent;
   public:
     Element(const std::string &name, Element *parent);
@@ -52,8 +55,8 @@ class Element : public TreeItemData {
     virtual void writeXMLFile(const std::string &name);
     virtual void writeXMLFile() { writeXMLFile(getName()); }
     virtual void initialize();
-    const std::string& getName() const {return name;}
-    void setName(const std::string &str) {name = str;}
+    const std::string& getName() const {return static_cast<const TextProperty*>(name.getProperty())->getText();}
+    void setName(const std::string &str) {static_cast<TextProperty*>(name.getProperty())->setText(str);}
     virtual std::string getType() const { return "Element"; }
     std::string getValue() const { return getType(); }
     //std::string newName(const std::string &type);
@@ -89,6 +92,7 @@ class Element : public TreeItemData {
     virtual Element* getParent() {return parent;}
     virtual void setParent(Element* parent_) {parent = parent_;}
     virtual ElementPropertyDialog* createPropertyDialog() {return new ElementPropertyDialog;}
+    virtual ElementContextMenu* createContextMenu() {return new ElementContextMenu;}
     Element* getRoot() {return parent?parent->getRoot():this;}
 };
 

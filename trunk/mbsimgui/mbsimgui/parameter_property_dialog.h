@@ -33,8 +33,7 @@ class ParameterPropertyDialog : public PropertyDialog {
     virtual void toWidget(Parameter *parameter);
     virtual void fromWidget(Parameter *parameter);
   protected:
-    TextWidget *name;
-    ExtWidget *value;
+    ExtWidget *name, *value;
 };
 
 #endif

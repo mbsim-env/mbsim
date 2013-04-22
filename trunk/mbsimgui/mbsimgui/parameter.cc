@@ -24,7 +24,9 @@
 
 using namespace std;
 
-Parameter::Parameter(const string &name_) : name(name_) {
+Parameter::Parameter(const string &name_) {
+  name.setProperty(new TextProperty(name_,""));
+
   vector<PhysicalStringProperty*> input;
   input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"",""));
   //input.push_back(new PhysicalStringProperty(new VecProperty(3),"",""));

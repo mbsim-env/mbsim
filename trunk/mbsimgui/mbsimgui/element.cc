@@ -35,7 +35,8 @@ using namespace std;
 
 int Element::IDcounter=0;
 
-Element::Element(const string &name_, Element *parent_) : name(name_), parent(parent_) {
+Element::Element(const string &name_, Element *parent_) : parent(parent_) {
+  name.setProperty(new TextProperty(name_,""));
   stringstream sstr;
   sstr<<IDcounter++;
   ID=sstr.str();

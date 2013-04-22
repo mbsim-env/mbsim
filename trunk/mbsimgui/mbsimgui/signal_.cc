@@ -28,20 +28,19 @@
 
 using namespace std;
 
-Signal::Signal(const QString &str, QTreeWidgetItem *parentItem, int ind) : Link(str, parentItem, ind) {
-  ns = MBSIMCONTROLNS;
+Signal::Signal(const string &str, Element *parent) : Link(str, parent) {
 }
 
 Signal::~Signal() {
 }
 
-Sensor::Sensor(const QString &str, QTreeWidgetItem *parentItem, int ind) : Signal(str, parentItem, ind) {
+Sensor::Sensor(const string &str, Element *parent) : Signal(str, parent) {
 }
 
 Sensor::~Sensor() {
 }
 
-AbsolutCoordinateSensor::AbsolutCoordinateSensor(const QString &str, QTreeWidgetItem *parentItem, int ind) : Sensor(str, parentItem, ind) {
+AbsolutCoordinateSensor::AbsolutCoordinateSensor(const string &str, Element *parent) : Sensor(str, parent) {
   frame.setProperty(new FrameOfReferenceProperty(0,this,MBSIMCONTROLNS"frame"));
   direction.setProperty(new GeneralizedForceDirectionProperty(MBSIMCONTROLNS"direction"));
 }
@@ -49,26 +48,6 @@ AbsolutCoordinateSensor::AbsolutCoordinateSensor(const QString &str, QTreeWidget
 void AbsolutCoordinateSensor::initialize() {
   Sensor::initialize();
   frame.initialize();
-}
-
-void AbsolutCoordinateSensor::initializeDialog() {
-  Sensor::initializeDialog();
-
-  frameWidget = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(this,0));
-  dialog->addToTab("General", frameWidget);
-  directionWidget = new ExtWidget("Direction",new GeneralizedForceDirectionWidget);
-  dialog->addToTab("General", directionWidget);
-}
-void AbsolutCoordinateSensor::toWidget() {
-  Sensor::toWidget();
-  frame.toWidget(frameWidget);
-  direction.toWidget(directionWidget);
-}
-
-void AbsolutCoordinateSensor::fromWidget() {
-  Sensor::fromWidget();
-  frame.fromWidget(frameWidget);
-  direction.fromWidget(directionWidget);
 }
 
 void AbsolutCoordinateSensor::initializeUsingXML(TiXmlElement *element) {
@@ -84,6 +63,5 @@ TiXmlElement* AbsolutCoordinateSensor::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
-AbsolutePositionSensor::AbsolutePositionSensor(const QString &str, QTreeWidgetItem *parentItem, int ind) : AbsolutCoordinateSensor(str, parentItem, ind) {
-  setText(1,getType());
+AbsolutePositionSensor::AbsolutePositionSensor(const string &str, Element *parent) : AbsolutCoordinateSensor(str, parent) {
 }

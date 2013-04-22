@@ -46,22 +46,23 @@ using namespace std;
 
 ElementPropertyDialog::ElementPropertyDialog(QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f) {
   addTab("General");
-  name = new TextWidget;
-  ExtWidget *name_=new ExtWidget("Name",name);
-  addToTab("General",name_);
+  name = new ExtWidget("Name",new TextWidget);
+  name->setToolTip("Set the name of the element");
+  addToTab("General", name);
 }
 
 void ElementPropertyDialog::toWidget(Element *element) {
-  name->setText(QString::fromStdString(element->getName()));
+  element->name.toWidget(name);
 }
 
 void ElementPropertyDialog::fromWidget(Element *element) {
-  element->setName(name->getText().toStdString());
+  element->name.fromWidget(name);
 }
 
 FramePropertyDialog::FramePropertyDialog(Frame *frame, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(parent,f) {
   addTab("Visualisation");
   visu = new ExtWidget("OpenMBV frame",new OMBVFrameWidget("NOTSET"),true,true);
+  visu->setToolTip("Set the visualisation parameters for the frame");
   addToTab("Visualisation", visu);
 }
 
@@ -147,8 +148,8 @@ void SpherePropertyDialog::fromWidget(Element *element) {
   static_cast<Sphere*>(element)->visu.fromWidget(visu);
 }
 
-GroupPropertyDialog::GroupPropertyDialog(Group *group, QWidget *parent, Qt::WindowFlags f, bool disabled) : ElementPropertyDialog(parent,f), position(0), orientation(0), frameOfReference(0) {
-  if(!disabled) {
+GroupPropertyDialog::GroupPropertyDialog(Group *group, QWidget *parent, Qt::WindowFlags f, bool kinematics) : ElementPropertyDialog(parent,f), position(0), orientation(0), frameOfReference(0) {
+  if(kinematics) {
     addTab("Kinematics");
 
     vector<PhysicalStringWidget*> input;
@@ -184,7 +185,7 @@ void GroupPropertyDialog::fromWidget(Element *element) {
   }
 }
 
-SolverPropertyDialog::SolverPropertyDialog(Solver *solver, QWidget *parent, Qt::WindowFlags f) : GroupPropertyDialog(solver,parent,f,true) {
+SolverPropertyDialog::SolverPropertyDialog(Solver *solver, QWidget *parent, Qt::WindowFlags f) : GroupPropertyDialog(solver,parent,f,false) {
   addTab("Environment");
   addTab("Solver parameters");
   addTab("Extra");
@@ -315,6 +316,7 @@ void RigidBodyPropertyDialog::toWidget(Element *element) {
   BodyPropertyDialog::toWidget(element);
   static_cast<RigidBody*>(element)->K.toWidget(K);
   static_cast<RigidBody*>(element)->mass.toWidget(mass);
+  static_cast<RigidBody*>(element)->inertia.toWidget(inertia);
   static_cast<RigidBody*>(element)->translation.toWidget(translation);
   static_cast<RigidBody*>(element)->rotation.toWidget(rotation);
   static_cast<RigidBody*>(element)->ombvEditor.toWidget(ombvEditor);
@@ -328,6 +330,7 @@ void RigidBodyPropertyDialog::fromWidget(Element *element) {
   BodyPropertyDialog::fromWidget(element);
   static_cast<RigidBody*>(element)->K.fromWidget(K);
   static_cast<RigidBody*>(element)->mass.fromWidget(mass);
+  static_cast<RigidBody*>(element)->inertia.fromWidget(inertia);
   static_cast<RigidBody*>(element)->translation.fromWidget(translation);
   static_cast<RigidBody*>(element)->rotation.fromWidget(rotation);
   static_cast<RigidBody*>(element)->ombvEditor.fromWidget(ombvEditor);
@@ -504,7 +507,7 @@ void JointConstraintPropertyDialog::fromWidget(Element *element) {
 
 EmbeddedObjectPropertyDialog::EmbeddedObjectPropertyDialog(EmbeddedObject *object, QWidget *parent, Qt::WindowFlags f) : ObjectPropertyDialog(object,parent,f) {
   href = new ExtWidget("XML object file",new FileWidget("XML model files", "xml files (*.xml)"));
-  connect(static_cast<FileWidget*>(href->getWidget()),SIGNAL(fileChanged(const QString&)),name,SLOT(setText(const QString&)));
+  connect(static_cast<FileWidget*>(href->getWidget()),SIGNAL(fileChanged(const QString&)),static_cast<TextWidget*>(name->getWidget()),SLOT(setText(const QString&)));
   addToTab("General",href);
   count = new ExtWidget("Count", new TextWidget, true);
   addToTab("General",count);

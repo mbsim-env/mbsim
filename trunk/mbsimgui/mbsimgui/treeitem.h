@@ -35,7 +35,6 @@ class BasicItemData : public TreeItemData {
     std::string getValue() const {return value;}
     void setName(const std::string &name_) {name = name_;}
     void setValue(const std::string &value_) {value = value_;}
-    bool isRemovable() {return false;}
 };
 
 class TreeItem {
@@ -66,7 +65,6 @@ class TreeItem {
     void (TreeItem::*setData_[2])(const QVariant &value);
     QVariant getData(int column) const {return (this->*getData_[column])();}
     void setData(int column, const QVariant &value) {(this->*setData_[column])(value);}
-    bool isRemovable() {return itemData->isRemovable();}
 
   protected:
     QList<TreeItem*> childItems;

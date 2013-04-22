@@ -35,11 +35,13 @@ OMBVFrameWidget::OMBVFrameWidget(const string &name) : OMBVObjectWidget(name) {
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new ScalarWidget("1"), lengthUnits(), 4));
   size = new ExtWidget("Size",new ExtPhysicalVarWidget(input));
+  size->setToolTip("Set the size of the frame");
   layout->addWidget(size);
 
   input.clear();
   input.push_back(new PhysicalStringWidget(new ScalarWidget("1"), noUnitUnits(), 1));
   offset = new ExtWidget("Offset",new ExtPhysicalVarWidget(input));
+  offset->setToolTip("Set the offset of the frame");
   layout->addWidget(offset);
 }
 

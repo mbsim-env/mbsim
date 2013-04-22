@@ -153,7 +153,7 @@ class TextProperty : public Property {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    std::string getText() const {return text;}
+    const std::string& getText() const {return text;}
     void setText(const std::string &text_) {text = text_;}
 
   protected:

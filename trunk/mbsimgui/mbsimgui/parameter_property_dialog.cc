@@ -28,9 +28,8 @@ using namespace std;
 
 ParameterPropertyDialog::ParameterPropertyDialog(QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f) {
   addTab("General");
-  name = new TextWidget;
-  ExtWidget *name_=new ExtWidget("Name",name);
-  addToTab("General",name_);
+  name=new ExtWidget("Name",new TextWidget);
+  addToTab("General",name);
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),QStringList(),0));
   //input.push_back(new PhysicalStringWidget(new VecSizeVarWidget(3,1,1000),QStringList(),0));
@@ -40,11 +39,11 @@ ParameterPropertyDialog::ParameterPropertyDialog(QWidget *parent, Qt::WindowFlag
 }
 
 void ParameterPropertyDialog::toWidget(Parameter *parameter) {
- name->setText(QString::fromStdString(parameter->getName()));
+ parameter->name.toWidget(name);
  parameter->value.toWidget(value);
 }
 
 void ParameterPropertyDialog::fromWidget(Parameter *parameter) {
-  parameter->setName(name->getText().toStdString());
+  parameter->name.fromWidget(name);
   parameter->value.fromWidget(value);
 }

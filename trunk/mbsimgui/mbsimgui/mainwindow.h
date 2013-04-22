@@ -22,7 +22,6 @@
 
 #include <QMainWindow>
 #include <QTabWidget>
-#include <QModelIndex>
 #include <mbxmlutilstinyxml/tinyxml.h>
 
 class QTreeWidget;
@@ -35,7 +34,6 @@ class QTextBrowser;
 class QProcess;
 class QUrl;
 class Process;
-class QModelIndex;
 class Integrator;
 class IntegratorView;
 class IntegratorPropertyDialog;
@@ -48,20 +46,6 @@ namespace MBXMLUtils {
   class OctaveEvaluator;
 }
 
-class IntegratorMouseEvent : public QObject {
-  Q_OBJECT
-  public:
-    IntegratorMouseEvent(IntegratorView* view_) : view(view_) {}
-  protected:
-    IntegratorView *view;
-    IntegratorPropertyDialog *dialog;
-    bool eventFilter(QObject *obj, QEvent *event);
-  protected slots:
-    void commitDataAndClose();
-    void commitData();
-    void rejectDataAndClose();
-};
-
 class MainWindow : public QMainWindow {
 
   Q_OBJECT
@@ -69,8 +53,6 @@ class MainWindow : public QMainWindow {
   private:
     QTreeView *elementList, *parameterList;
     IntegratorView *integratorView;
-    QStackedWidget *pagesWidget;
-    QTabBar *tabBar;
     QLineEdit *fileMBS, *fileIntegrator, *fileParameter;
     Process *mbsim;
     void loadProj(const QString &file);
@@ -81,9 +63,6 @@ class MainWindow : public QMainWindow {
     void initInlineOpenMBV();
     QString uniqueTempDir, absoluteMBSFilePath;
     QAction *actionSaveProj, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameterList;
-    QAction *addFrameAction, *addContourAction, *addGroupAction, *addObjectAction, *addLinkAction, *addObserverAction, *addPointAction, *addLineAction, *addPlaneAction, *addSphereAction, *addRigidBodyAction, *addGearConstraintAction, *addKinematicConstraintAction, *addJointConstraintAction, *addEmbeddedObjectAction, *addKineticExcitationAction, *addSpringDamperAction, *addJointAction, *addContactAction, *addAbsoluteKinematicsObserverAction, *removeElementAction, *saveElementAsAction;
-    QAction *addParameterAction, *removeParameterAction;
-    QAction *selectDOPRI5IntegratorAction, *selectRADAU5IntegratorAction, *selectLSODEIntegratorAction, *selectLSODARIntegratorAction, *selectTimeSteppingIntegratorAction, *selectEulerExplicitIntegratorAction, *selectRKSuiteIntegratorAction;
 
   public:
     MainWindow();
@@ -93,11 +72,10 @@ class MainWindow : public QMainWindow {
   public slots:
     void elementListClicked();
     void parameterListClicked();
-    void integratorViewClicked();
     void loadProj();
     void saveProjAs();
     void saveProj();
-    void newMBS();
+    void newMBS(bool ask=true);
     void loadMBS();
     void saveMBSAs();
     void saveMBS();
@@ -126,11 +104,7 @@ class MainWindow : public QMainWindow {
     void updateOctaveParameters();
     void removeElement();
     void addFrame();
-    void addContour();
     void addGroup();
-    void addObject();
-    void addLink();
-    void addObserver();
     void addPoint();
     void addLine();
     void addPlane();

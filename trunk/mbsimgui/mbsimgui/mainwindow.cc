@@ -22,18 +22,17 @@
 #include "solver.h"
 #include "integrator.h"
 #include "objectfactory.h"
-#include <QtGui>
-#include "frame.h"
-#include "rigidbody.h"
 #include "parameter.h"
 #include "octaveutils.h"
-#include <mbxmlutils/utils.h>
-#include <openmbv/mainwindow.h>
-#include <mbxmlutilstinyxml/getinstallpath.h>
 #include "widget.h"
 #include "treemodel.h"
 #include "delegate.h"
 #include "treeitem.h"
+#include "integrator_view.h"
+#include <mbxmlutils/utils.h>
+#include <mbxmlutilstinyxml/getinstallpath.h>
+#include <openmbv/mainwindow.h>
+#include <QtGui>
 
 using namespace std;
 
@@ -41,88 +40,6 @@ bool absolutePath = false;
 QDir mbsDir;
 
 MainWindow *mw;
-
-class IntegratorView : public QLineEdit {
-  public:
-    IntegratorView() : i(0) {
-      integrator.push_back(new DOPRI5Integrator);
-      integrator.push_back(new RADAU5Integrator);
-      integrator.push_back(new LSODEIntegrator);
-      integrator.push_back(new LSODARIntegrator);
-      integrator.push_back(new TimeSteppingIntegrator);
-      integrator.push_back(new EulerExplicitIntegrator);
-      integrator.push_back(new RKSuiteIntegrator);
-      type.push_back("DOPRI5");
-      type.push_back("RADAU5");
-      type.push_back("LSODE");
-      type.push_back("LSODAR");
-      type.push_back("Time stepping");
-      type.push_back("Euler explicit");
-      type.push_back("RKSuite");
-    }
-    ~IntegratorView() {
-      for(int i=0; i<integrator.size(); i++)
-        delete integrator[i];
-    }
-    void setIntegrator(int i_) {
-      i = i_;
-      updateText();
-    }
-    Integrator* getIntegrator() {return integrator[i];}
-    void setIntegrator(Integrator *integrator_) {
-      if(dynamic_cast<DOPRI5Integrator*>(integrator_))
-        i=0;
-      else if(dynamic_cast<RADAU5Integrator*>(integrator_))
-        i=1;
-      else if(dynamic_cast<LSODEIntegrator*>(integrator_))
-        i=2;
-      else if(dynamic_cast<LSODARIntegrator*>(integrator_))
-        i=3;
-      else if(dynamic_cast<TimeSteppingIntegrator*>(integrator_))
-        i=4;
-      else if(dynamic_cast<EulerExplicitIntegrator*>(integrator_))
-        i=5;
-      else if(dynamic_cast<RKSuiteIntegrator*>(integrator_))
-        i=6;
-      delete integrator[i];
-      integrator[i] = integrator_;
-      updateText();
-    }
-    void updateText() {
-      setText(type[i]);
-    }
-  protected:
-    vector<Integrator*> integrator;
-    vector<QString> type;
-    int i;
-};
-
-bool IntegratorMouseEvent::eventFilter(QObject *obj, QEvent *event) {
-  if (event->type() == QEvent::MouseButtonDblClick) {
-    dialog = view->getIntegrator()->createPropertyDialog();
-    dialog->toWidget(view->getIntegrator());
-    connect(dialog,SIGNAL(ok(QWidget*)),this,SLOT(commitDataAndClose()));
-    connect(dialog,SIGNAL(apply(QWidget*)),this,SLOT(commitData()));
-    connect(dialog,SIGNAL(cancel(QWidget*)),this,SLOT(rejectDataAndClose()));
-    dialog->exec();
-    delete dialog;
-    return true;
-  } else
-    return QObject::eventFilter(obj, event);
-}
-
-void IntegratorMouseEvent::commitData() {
-  dialog->fromWidget(view->getIntegrator());
-}
-
-void IntegratorMouseEvent::commitDataAndClose() {
-  dialog->fromWidget(view->getIntegrator());
-  dialog->accept();
-}
-
-void IntegratorMouseEvent::rejectDataAndClose() {
-  dialog->reject();
-}
 
 bool removeDir(const QString &dirName) {
   bool result = true;
@@ -180,61 +97,6 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   action->setStatusTip(tr("Exit the application"));
   menuBar()->addMenu(GUIMenu);
 
-  addFrameAction=new QAction("Add frame", this);
-  connect(addFrameAction,SIGNAL(triggered()),this,SLOT(addFrame()));
-  addContourAction=new QAction("Add contour", this);
-  connect(addContourAction,SIGNAL(triggered()),this,SLOT(addContour()));
-  addPointAction=new QAction("Add point", this);
-  connect(addPointAction,SIGNAL(triggered()),this,SLOT(addPoint()));
-  addLineAction=new QAction("Add line", this);
-  connect(addLineAction,SIGNAL(triggered()),this,SLOT(addLine()));
-  addPlaneAction=new QAction("Add plane", this);
-  connect(addPlaneAction,SIGNAL(triggered()),this,SLOT(addPlane()));
-  addSphereAction=new QAction("Add sphere", this);
-  connect(addSphereAction,SIGNAL(triggered()),this,SLOT(addSphere()));
-  addGroupAction=new QAction("Add group", this);
-  connect(addGroupAction,SIGNAL(triggered()),this,SLOT(addGroup()));
-  addObjectAction=new QAction("Add object", this);
-  connect(addObjectAction,SIGNAL(triggered()),this,SLOT(addObject()));
-  addRigidBodyAction=new QAction("Add rigid body", this);
-  connect(addRigidBodyAction,SIGNAL(triggered()),this,SLOT(addRigidBody()));
-  addKinematicConstraintAction=new QAction("Add kinematic constraint", this);
-  connect(addKinematicConstraintAction,SIGNAL(triggered()),this,SLOT(addKinematicConstraint()));
-  addGearConstraintAction=new QAction("Add gear constraint", this);
-  connect(addGearConstraintAction,SIGNAL(triggered()),this,SLOT(addGearConstraint()));
-  addJointConstraintAction=new QAction("Add joint constraint", this);
-  connect(addJointConstraintAction,SIGNAL(triggered()),this,SLOT(addJointConstraint()));
-  addEmbeddedObjectAction=new QAction("Add embedded object", this);
-  connect(addEmbeddedObjectAction,SIGNAL(triggered()),this,SLOT(addEmbeddedObject()));
-  addLinkAction=new QAction("Add link", this);
-  connect(addLinkAction,SIGNAL(triggered()),this,SLOT(addLink()));
-  addKineticExcitationAction=new QAction("Add kinetic excitation", this);
-  connect(addKineticExcitationAction,SIGNAL(triggered()),this,SLOT(addKineticExcitation()));
-  addSpringDamperAction=new QAction("Add spring damper", this);
-  connect(addSpringDamperAction,SIGNAL(triggered()),this,SLOT(addSpringDamper()));
-  addJointAction=new QAction("Add joint", this);
-  connect(addJointAction,SIGNAL(triggered()),this,SLOT(addJoint()));
-  addContactAction=new QAction("Add contact", this);
-  connect(addContactAction,SIGNAL(triggered()),this,SLOT(addContact()));
-  addObserverAction=new QAction("Add observer", this);
-  connect(addObserverAction,SIGNAL(triggered()),this,SLOT(addObserver()));
-  addAbsoluteKinematicsObserverAction=new QAction("Add absolute kinematics observer", this);
-  connect(addAbsoluteKinematicsObserverAction,SIGNAL(triggered()),this,SLOT(addAbsoluteKinematicsObserver()));
-  removeElementAction = new QAction(this);
-  removeElementAction->setObjectName(QString::fromUtf8("removeElementAction"));
-  connect(removeElementAction, SIGNAL(triggered()), this, SLOT(removeElement()));
-  removeElementAction->setText(QApplication::translate("MainWindow", "Remove", 0, QApplication::UnicodeUTF8));
-  removeElementAction->setShortcut(QApplication::translate("MainWindow", "Ctrl+R, R", 0, QApplication::UnicodeUTF8));
-  saveElementAsAction=new QAction("Save as", this);
-  connect(saveElementAsAction,SIGNAL(triggered()),this,SLOT(saveElementAs()));
-
-  addParameterAction=new QAction("Add parameter", this);
-  connect(addParameterAction,SIGNAL(triggered()),this,SLOT(addParameter()));
-  removeParameterAction = new QAction(this);
-  connect(removeParameterAction, SIGNAL(triggered()), this, SLOT(removeParameter()));
-  removeParameterAction->setText(QApplication::translate("MainWindow", "Remove", 0, QApplication::UnicodeUTF8));
-  removeParameterAction->setShortcut(QApplication::translate("MainWindow", "Ctrl+R, R", 0, QApplication::UnicodeUTF8));
-
   QMenu *ProjMenu=new QMenu("Project", menuBar());
   ProjMenu->addAction("New", this, SLOT(saveProjAs()));
   ProjMenu->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_DirOpenIcon)),"Load", this, SLOT(loadProj()));
@@ -254,21 +116,6 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   QMenu *integratorMenu=new QMenu("Integrator", menuBar());
   integratorMenu->addAction("Select", this, SLOT(selectIntegrator()));
 
-  selectDOPRI5IntegratorAction=new QAction(Utils::QIconCached("newobject.svg"),"DOPRI5", this);
-  connect(selectDOPRI5IntegratorAction,SIGNAL(triggered()),this,SLOT(selectDOPRI5Integrator()));
-  selectRADAU5IntegratorAction=new QAction(Utils::QIconCached("newobject.svg"),"RADAU5", this);
-  connect(selectRADAU5IntegratorAction,SIGNAL(triggered()),this,SLOT(selectRADAU5Integrator()));
-  selectLSODEIntegratorAction=new QAction(Utils::QIconCached("newobject.svg"),"LSODE", this);
-  connect(selectLSODEIntegratorAction,SIGNAL(triggered()),this,SLOT(selectLSODEIntegrator()));
-  selectLSODARIntegratorAction=new QAction(Utils::QIconCached("newobject.svg"),"LSODAR", this);
-  connect(selectLSODARIntegratorAction,SIGNAL(triggered()),this,SLOT(selectLSODARIntegrator()));
-  selectTimeSteppingIntegratorAction=new QAction(Utils::QIconCached("newobject.svg"),"Time stepping", this);
-  connect(selectTimeSteppingIntegratorAction,SIGNAL(triggered()),this,SLOT(selectTimeSteppingIntegrator()));
-  selectEulerExplicitIntegratorAction=new QAction(Utils::QIconCached("newobject.svg"),"Euler explicit", this);
-  connect(selectEulerExplicitIntegratorAction,SIGNAL(triggered()),this,SLOT(selectEulerExplicitIntegrator()));
-  selectRKSuiteIntegratorAction=new QAction(Utils::QIconCached("newobject.svg"),"RKSuite", this);
-  connect(selectRKSuiteIntegratorAction,SIGNAL(triggered()),this,SLOT(selectRKSuiteIntegrator()));
-
   integratorMenu->addAction("Load", this, SLOT(loadIntegrator()));
   integratorMenu->addAction("Save as", this, SLOT(saveIntegratorAs()));
   actionSaveIntegrator = integratorMenu->addAction("Save", this, SLOT(saveIntegrator()));
@@ -281,7 +128,6 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   parameterMenu->addAction("Save as", this, SLOT(saveParameterListAs()));
   actionSaveParameterList = parameterMenu->addAction("Save", this, SLOT(saveParameterList()));
   actionSaveParameterList->setDisabled(true);
-  parameterMenu->addAction(addParameterAction);
   menuBar()->addMenu(parameterMenu);
 
   menuBar()->addSeparator();
@@ -318,7 +164,9 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   parameterList->setColumnWidth(0,75);
   parameterList->setColumnWidth(1,125);
 
-  parameterList->insertAction(0,addParameterAction);
+  action = new QAction("Add parameter", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addParameter()));
+  parameterList->insertAction(0,action);
   parameterList->setContextMenuPolicy(Qt::ActionsContextMenu);
 
   connect(elementList,SIGNAL(pressed(QModelIndex)), this, SLOT(elementListClicked()));
@@ -354,12 +202,6 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   fileIntegrator = new QLineEdit("");
   fileIntegrator->setReadOnly(true);
   integratorView = new IntegratorView;
-  integratorView->installEventFilter(new IntegratorMouseEvent(integratorView));
-  QList<QAction*> actionList;
-  actionList << selectDOPRI5IntegratorAction << selectRADAU5IntegratorAction << selectLSODEIntegratorAction << selectLSODARIntegratorAction << selectTimeSteppingIntegratorAction << selectEulerExplicitIntegratorAction << selectRKSuiteIntegratorAction;
-  integratorView->insertActions(0,actionList);
-  integratorView->setContextMenuPolicy(Qt::ActionsContextMenu);
-  integratorView->setReadOnly(true);
   gl->addWidget(integratorView);
  
   //tabifyDockWidget(dockWidget1,dockWidget2);
@@ -371,7 +213,6 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   setCentralWidget(centralWidget);
   QHBoxLayout *mainlayout = new QHBoxLayout;
   centralWidget->setLayout(mainlayout);
-  pagesWidget = new QStackedWidget;
 #ifdef INLINE_OPENMBV
   mainlayout->addWidget(inlineOpenMBVMW);
 #endif
@@ -387,7 +228,7 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
   
   selectDOPRI5Integrator();
-  newMBS();
+  newMBS(false);
 }
 
 void MainWindow::openPropertyDialog() {
@@ -483,66 +324,26 @@ void MainWindow::elementListClicked() {
   selectionChanged();
   if(QApplication::mouseButtons()==Qt::RightButton) {
     QModelIndex index = elementList->selectionModel()->currentIndex();
-    if(index.column()==0) {
-      ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-      QMenu menu("Context Menu");
-      if(dynamic_cast<Group*>(model->getItem(index)->getItemData())) {
-        menu.addSeparator();
-        menu.addAction(addFrameAction);
-        menu.addAction(addContourAction);
-        menu.addAction(addGroupAction);
-        menu.addAction(addObjectAction);
-        menu.addAction(addLinkAction);
-        menu.addAction(addObserverAction);
-      }
-      else if(dynamic_cast<Body*>(model->getItem(index)->getItemData())) {
-        menu.addAction(addFrameAction);
-        menu.addAction(addContourAction);
-      }
-      if(model->getItem(index)->isRemovable()) {
-        menu.addSeparator();
-        menu.addAction(removeElementAction);
-        menu.addSeparator();
-        menu.addAction(saveElementAsAction);
-      }
-      menu.exec(QCursor::pos());
+    Element *element = dynamic_cast<Element*>(static_cast<ElementTreeModel*>(elementList->model())->getItem(index)->getItemData());
+    if(element && index.column()==0) {
+      QMenu *menu = element->createContextMenu();
+      menu->exec(QCursor::pos());
+      delete menu;
     } 
   }
-}
-
-void MainWindow::integratorViewClicked() {
-  cout << "integratorViewClicked" << endl;
-//  if(QApplication::mouseButtons()==Qt::RightButton) {
-//    Integrator *integrator=(Integrator*)integratorView->currentItem();
-//    if(integrator) {
-//      QMenu* menu=integrator->getContextMenu();
-//      menu->exec(QCursor::pos());
-//    }
-//  } 
-//  else if(QApplication::mouseButtons()==Qt::LeftButton) {
-//    Integrator *integrator=(Integrator*)integratorView->currentItem();
-//    pagesWidget->insertWidget(0,integrator->getPropertyWidget());
-//    pagesWidget->setCurrentWidget(integrator->getPropertyWidget());
-//  }
 }
 
 void MainWindow::parameterListClicked() {
   if(QApplication::mouseButtons()==Qt::RightButton) {
     QModelIndex index = parameterList->selectionModel()->currentIndex();
     if(index.column()==0) {
-      ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
-      QMenu menu("Context Menu");
-      menu.addAction(removeParameterAction);
-      menu.exec(QCursor::pos());
+      Parameter *parameter = static_cast<Parameter*>(static_cast<ParameterListModel*>(parameterList->model())->getItem(index)->getItemData());
+      QMenu *menu = parameter->createContextMenu();
+      menu->exec(QCursor::pos());
+      delete menu;
     } 
   }
 }
-
-//void MainWindow::parameterListClicked(const QPoint &pos) {
-//  QMenu menu(this);
-//  menu.addMenu(newParameterMenu);
-//  menu.exec(QCursor::pos());
-//}
 
 void MainWindow::loadProj(const QString &file) {
   loadParameterList(file+"/MBS.mbsimparam.xml");
@@ -582,25 +383,30 @@ void MainWindow::saveProj() {
   saveParameterList();
 }
 
-void MainWindow::newMBS() {
+void MainWindow::newMBS(bool ask) {
   //tabBar->setCurrentIndex(0);
-  mbsDir = QDir::current();
-  actionOpenMBV->setDisabled(true);
-  actionH5plotserie->setDisabled(true);
-  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-  QModelIndex index = model->index(0,0);
-  model->removeRow(index.row(), index.parent());
-  model->addSolver();
+  int ret = QMessageBox::Ok;
+  if(ask) 
+    ret = QMessageBox::warning(this, "New MBS", "Current MBS will be deleted", QMessageBox::Ok | QMessageBox::Cancel);
+  if(ret == QMessageBox::Ok) {
+    mbsDir = QDir::current();
+    actionOpenMBV->setDisabled(true);
+    actionH5plotserie->setDisabled(true);
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    QModelIndex index = model->index(0,0);
+    model->removeRow(index.row(), index.parent());
+    model->addSolver();
 
-  //((Integrator*)integratorView->topLevelItem(0))->setSolver(0);
+    //((Integrator*)integratorView->topLevelItem(0))->setSolver(0);
 
-  actionSaveMBS->setDisabled(true);
-  fileMBS->setText("");
-  absoluteMBSFilePath="";
+    actionSaveMBS->setDisabled(true);
+    fileMBS->setText("");
+    absoluteMBSFilePath="";
 
 #ifdef INLINE_OPENMBV
-  mbsimxml(1);
+    mbsimxml(1);
 #endif
+  }
 }
 
 void MainWindow::loadMBS(const QString &file) {
@@ -653,15 +459,9 @@ void MainWindow::saveMBS() {
 }
 
 void MainWindow::selectIntegrator() {
-  QMenu menu("Context Menu");
-  menu.addAction(selectDOPRI5IntegratorAction);
-  menu.addAction(selectRADAU5IntegratorAction);
-  menu.addAction(selectLSODEIntegratorAction);
-  menu.addAction(selectLSODARIntegratorAction);
-  menu.addAction(selectTimeSteppingIntegratorAction);
-  menu.addAction(selectEulerExplicitIntegratorAction);
-  menu.addAction(selectRKSuiteIntegratorAction);
-  menu.exec(QCursor::pos());
+  QMenu *menu = integratorView->createContextMenu();
+  menu->exec(QCursor::pos());
+  delete menu;
 }
 
 void MainWindow::selectDOPRI5Integrator() {
@@ -753,7 +553,14 @@ void MainWindow::addParameter() {
 void MainWindow::newParameterList() {
   ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
   QModelIndex index = model->index(0,0);
-  model->removeRows(index.row(), model->rowCount(QModelIndex()), index.parent());
+  if(index.isValid()) {
+    int ret = QMessageBox::warning(this, "New parameter list", "Current parameters will be deleted", QMessageBox::Ok | QMessageBox::Cancel);
+    if(ret == QMessageBox::Ok) {
+      ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
+      QModelIndex index = model->index(0,0);
+      model->removeRows(index.row(), model->rowCount(QModelIndex()), index.parent());
+    }
+  }
 }
 
 void MainWindow::loadParameterList(const QString &file) {
@@ -1046,40 +853,6 @@ void MainWindow::addGroup() {
   QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
   //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
-}
-
-void MainWindow::addContour() {
-  QMenu menu("Context Menu");
-  menu.addAction(addPointAction);
-  menu.addAction(addLineAction);
-  menu.addAction(addPlaneAction);
-  menu.addAction(addSphereAction);
-  menu.exec(QCursor::pos());
-}
-
-void MainWindow::addObject() {
-  QMenu menu("Context Menu");
-  menu.addAction(addRigidBodyAction);
-  menu.addAction(addGearConstraintAction);
-  menu.addAction(addKinematicConstraintAction);
-  menu.addAction(addJointConstraintAction);
-  menu.addAction(addEmbeddedObjectAction);
-  menu.exec(QCursor::pos());
-}
-
-void MainWindow::addLink() {
-  QMenu menu("Context Menu");
-  menu.addAction(addKineticExcitationAction);
-  menu.addAction(addSpringDamperAction);
-  menu.addAction(addJointAction);
-  menu.addAction(addContactAction);
-  menu.exec(QCursor::pos());
-}
-
-void MainWindow::addObserver() {
-  QMenu menu("Context Menu");
-  menu.addAction(addAbsoluteKinematicsObserverAction);
-  menu.exec(QCursor::pos());
 }
 
 void MainWindow::addRigidBody() {

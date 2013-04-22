@@ -1,6 +1,6 @@
 /*
     MBSimGUI - A fronted for MBSim.
-    Copyright (C) 2013 Martin Förg
+    Copyright (C) 2012 Martin Förg
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,18 +17,15 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _TREEITEMDATA__H_
-#define _TREEITEMDATA__H_
+#include <config.h>
+#include "parameter_context_menu.h"
+#include "mainwindow.h"
 
-#include <string>
+extern MainWindow *mw;
 
-class TreeItemData {
-  public:
-    virtual ~TreeItemData() {}
-    virtual const std::string& getName() const = 0;
-    virtual std::string getValue() const = 0;
-    virtual void setName(const std::string &data) = 0;
-    virtual void setValue(const std::string &data) {}
-};
+ParameterContextMenu::ParameterContextMenu(QWidget *parent) : QMenu(parent) {
+  QAction *action=new QAction("Remove", this);
+  connect(action,SIGNAL(triggered()),mw,SLOT(removeParameter()));
+  addAction(action);
+}
 
-#endif

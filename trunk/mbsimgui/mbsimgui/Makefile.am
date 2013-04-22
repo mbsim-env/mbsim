@@ -26,6 +26,7 @@ mbsimgui_SOURCES = element.cc \
 		   spring_damper.cc \
 		   joint.cc \
 		   contact.cc \
+		   signal_.cc \
 		   observer.cc \
 		   embedded_elements.cc \
 		   integrator.cc \
@@ -55,6 +56,9 @@ mbsimgui_SOURCES = element.cc \
 		   element_property_dialog.cc \
 		   integrator_property_dialog.cc \
 		   parameter_property_dialog.cc \
+		   element_context_menu.cc \
+		   parameter_context_menu.cc \
+		   integrator_view.cc \
 		   dialogs.cc  \
 		   utils.cc \
 		   mainwindow.cc \
@@ -75,6 +79,8 @@ QT_BUILT_SOURCES = basic_widgets.moc.cc \
 		   element_property_dialog.moc.cc \
 		   integrator_property_dialog.moc.cc \
 		   parameter_property_dialog.moc.cc \
+		   element_context_menu.moc.cc \
+		   integrator_view.moc.cc \
 		   dialogs.moc.cc  \
 		   integrator.moc.cc \
 		   delegate.moc.cc \

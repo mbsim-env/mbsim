@@ -21,8 +21,10 @@
 #define _PARAMETER__H_
 
 #include "treeitemdata.h"
+#include "basic_properties.h"
 #include "extended_properties.h"
 #include "parameter_property_dialog.h"
+#include "parameter_context_menu.h"
 
 class PropertyWidget;
 class PropertyDialog;
@@ -33,8 +35,6 @@ class TextWidget;
 
 class Parameter : public TreeItemData {
   friend class ParameterPropertyDialog;
-  protected:
-    std::string name;
   public:
     Parameter(const std::string &name);
     virtual ~Parameter();
@@ -45,11 +45,12 @@ class Parameter : public TreeItemData {
     virtual void writeXMLFile(const std::string &name);
     virtual void writeXMLFile() { writeXMLFile(getType()); }
     virtual std::string getType() const { return "matrixParameter"; }
-    const std::string& getName() const {return name;}
-    void setName(const std::string &str) {name = str;}
+    const std::string& getName() const {return static_cast<const TextProperty*>(name.getProperty())->getText();}
+    void setName(const std::string &str) {static_cast<TextProperty*>(name.getProperty())->setText(str);}
     virtual ParameterPropertyDialog* createPropertyDialog() {return new ParameterPropertyDialog;}
+    virtual ParameterContextMenu* createContextMenu() {return new ParameterContextMenu;}
   protected:
-    ExtProperty value;
+    ExtProperty name, value;
 };
 
 #endif

@@ -56,7 +56,7 @@ class ElementPropertyDialog : public PropertyDialog {
     virtual void toWidget(Element *element);
     virtual void fromWidget(Element *element);
   protected:
-    TextWidget *name;
+    ExtWidget *name;
 };
 
 class FramePropertyDialog : public ElementPropertyDialog {
@@ -108,7 +108,7 @@ class SpherePropertyDialog : public ContourPropertyDialog {
 class GroupPropertyDialog : public ElementPropertyDialog {
 
   public:
-    GroupPropertyDialog(Group *group, QWidget * parent = 0, Qt::WindowFlags f = 0, bool disabled=false);
+    GroupPropertyDialog(Group *group, QWidget * parent = 0, Qt::WindowFlags f = 0, bool kinematics=true);
     void toWidget(Element *element);
     void fromWidget(Element *element);
   protected:
