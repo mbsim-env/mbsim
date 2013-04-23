@@ -51,7 +51,7 @@ class ExtWidget;
 class ElementPropertyDialog : public PropertyDialog {
 
   public:
-    ElementPropertyDialog(QWidget * parent = 0, Qt::WindowFlags f = 0);
+    ElementPropertyDialog(QWidget * parent = 0, Qt::WindowFlags f = 0, bool embedding=true);
     virtual void toWidget(Element *element);
     virtual void fromWidget(Element *element);
   protected:
@@ -61,7 +61,7 @@ class ElementPropertyDialog : public PropertyDialog {
 class FramePropertyDialog : public ElementPropertyDialog {
 
   public:
-    FramePropertyDialog(Frame *frame, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    FramePropertyDialog(Frame *frame, QWidget * parent = 0, Qt::WindowFlags f = 0, bool embedding=false);
     void toWidget(Element *element);
     void fromWidget(Element *element);
   protected:

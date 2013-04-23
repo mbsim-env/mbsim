@@ -42,6 +42,7 @@ class ObjectFactoryBase {
     typedef std::pair<double, P_NSPRE> P_PRINSPRE;
   public:
     typedef std::multimap<double, P_NSPRE> MM_PRINSPRE;
+    virtual Frame* createFrame(TiXmlElement *element, Element *parent) { return NULL; }
     virtual Contour* createContour(TiXmlElement *element, Element *parent) { return NULL; }
     virtual Group* createGroup(TiXmlElement *element, Element *parent) { return NULL; }
     virtual Object* createObject(TiXmlElement *element, Element *parent) { return NULL; }
@@ -84,6 +85,7 @@ class ObjectFactory : public ObjectFactoryBase {
     void registerObjectFactory(ObjectFactoryBase *fac) { factories.insert(fac); }
     void unregisterObjectFactory(ObjectFactory *fac) { factories.erase(fac); }
 
+    Frame* createFrame(TiXmlElement *element, Element *parent);
     Contour* createContour(TiXmlElement *element, Element *parent);
     Group* createGroup(TiXmlElement *element, Element *parent);
     Object* createObject(TiXmlElement *element, Element *parent);
@@ -120,6 +122,7 @@ class MBSimObjectFactory : protected ObjectFactoryBase  {
     // objects from MBSimObjectFactory
     static void initialize();
   protected:
+    Frame* createFrame(TiXmlElement *element, Element *parent);
     Contour* createContour(TiXmlElement *element, Element *parent);
     Group* createGroup(TiXmlElement *element, Element *parent);
     Object* createObject(TiXmlElement *element, Element *parent);

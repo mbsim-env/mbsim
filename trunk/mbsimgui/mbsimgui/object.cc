@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "object.h"
+#include "objectfactory.h"
 
 using namespace std;
 
@@ -34,6 +35,20 @@ Object::Object(const string &str, Element *parent) : Element(str,parent), q0(0,f
 }
 
 Object::~Object() {
+}
+
+Object* Object::readXMLFile(const string &filename, Element *parent) {
+  TiXmlDocument doc;
+  bool ret=doc.LoadFile(filename);
+  assert(ret==true);
+  TiXml_PostLoadFile(&doc);
+  TiXmlElement *e=doc.FirstChildElement();
+  map<string,string> dummy;
+  incorporateNamespace(doc.FirstChildElement(), dummy);
+  Object *object=ObjectFactory::getInstance()->createObject(e,parent);
+  if(object)
+    object->initializeUsingXML(e);
+  return object;
 }
 
 void Object::initializeUsingXML(TiXmlElement *element) {

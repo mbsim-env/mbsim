@@ -111,7 +111,7 @@ Solver* Solver::readXMLFile(const string &filename) {
   map<string,string> dummy;
   incorporateNamespace(doc.FirstChildElement(), dummy);
   Solver *solver=dynamic_cast<Solver*>(ObjectFactory::getInstance()->createGroup(e,0));
-  solver->initializeUsingXML(doc.FirstChildElement());
+  solver->initializeUsingXML(e);
   solver->initialize();
   return solver;
 }

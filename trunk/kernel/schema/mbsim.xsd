@@ -2108,6 +2108,7 @@
             </xs:element>
           </xs:choice>
         </xs:sequence> 
+       <xs:attribute ref="xml:base"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType> 
@@ -2165,18 +2166,19 @@
     <xs:complexContent>
       <xs:extension base="ElementType">
         <xs:sequence>
-      <xs:element name="frameOfReference" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-            Koordinatensystem, in dem die Positionierung des KOS angegeben wird.<br/>
-            Standardmässig "I"-System der Gruppe bzw. "C"-System des RigidBody.
-          </xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-          <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
-        </xs:complexType>
-      </xs:element>
+          <xs:element name="frameOfReference" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Koordinatensystem, in dem die Positionierung des KOS angegeben wird.<br/>
+                Standardmässig "I"-System der Gruppe bzw. "C"-System des RigidBody.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
         </xs:sequence>
+       <xs:attribute ref="xml:base"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -4052,9 +4054,11 @@
   </xs:element>
   <xs:complexType name="ObserverType">
     <xs:complexContent>
-      <xs:extension base="ElementType"/>
+      <xs:extension base="ElementType">
+        <xs:attribute ref="xml:base"/>
+      </xs:extension>
     </xs:complexContent>
-  </xs:complexType> 
+  </xs:complexType>
 
   <xs:element name="AbsoluteKinematicsObserver" substitutionGroup="Observer" type="AbsoluteKinematicsObserverType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">

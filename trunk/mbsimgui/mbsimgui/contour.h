@@ -27,6 +27,7 @@ class Contour : public Element {
   public:
     Contour(const std::string &str, Element *parent);
     ~Contour();
+    static Contour* readXMLFile(const std::string &filename, Element *parent);
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual Element *getByPathSearch(std::string path);

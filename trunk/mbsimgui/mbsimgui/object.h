@@ -30,6 +30,7 @@ class Object : public Element {
     ~Object();
     virtual int getqSize() {return 0;}
     virtual int getuSize() {return 0;}
+    static Object* readXMLFile(const std::string &filename, Element *parent);
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual Element* getByPathSearch(std::string path);

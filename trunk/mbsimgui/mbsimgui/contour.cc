@@ -21,6 +21,7 @@
 #include "contour.h"
 #include "basic_properties.h"
 #include "ombv_properties.h"
+#include "objectfactory.h"
 
 using namespace std;
 
@@ -38,6 +39,20 @@ void Contour::initialize() {
 
 void Contour::setSavedFrameOfReference(const string &str) {
   ((ParentFrameOfReferenceProperty*)(refFrame.getProperty()))->setSavedFrameOfReference(str);
+}
+
+Contour* Contour::readXMLFile(const string &filename, Element *parent) {
+  TiXmlDocument doc;
+  bool ret=doc.LoadFile(filename);
+  assert(ret==true);
+  TiXml_PostLoadFile(&doc);
+  TiXmlElement *e=doc.FirstChildElement();
+  map<string,string> dummy;
+  incorporateNamespace(doc.FirstChildElement(), dummy);
+  Contour *contour=ObjectFactory::getInstance()->createContour(e,parent);
+  if(contour)
+    contour->initializeUsingXML(e);
+  return contour;
 }
 
 void Contour::initializeUsingXML(TiXmlElement *element) {

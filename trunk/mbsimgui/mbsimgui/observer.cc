@@ -21,6 +21,7 @@
 #include "observer.h"
 #include "basic_properties.h"
 #include "ombv_properties.h"
+#include "objectfactory.h"
 
 using namespace std;
 
@@ -28,6 +29,20 @@ Observer::Observer(const string &str, Element *parent) : Element(str, parent) {
 }
 
 Observer::~Observer() {
+}
+
+Observer* Observer::readXMLFile(const string &filename, Element *parent) {
+  TiXmlDocument doc;
+  bool ret=doc.LoadFile(filename);
+  assert(ret==true);
+  TiXml_PostLoadFile(&doc);
+  TiXmlElement *e=doc.FirstChildElement();
+  map<string,string> dummy;
+  incorporateNamespace(doc.FirstChildElement(), dummy);
+  Observer *observer=ObjectFactory::getInstance()->createObserver(e,parent);
+  if(observer)
+    observer->initializeUsingXML(e);
+  return observer;
 }
 
 Element * Observer::getByPathSearch(string path) {

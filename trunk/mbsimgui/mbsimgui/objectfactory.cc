@@ -65,6 +65,19 @@ void MBSimObjectFactory::initialize() {
   }
 }
 
+Frame* ObjectFactory::createFrame(TiXmlElement *element, Element *parent) {
+  if(element==NULL) return NULL;
+  for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
+    return (*i)->createFrame(element,parent);
+  return 0;
+}
+Frame* MBSimObjectFactory::createFrame(TiXmlElement *element, Element *parent) {
+  if(element==0) return 0;
+  if(element->ValueStr()==MBSIMNS"FixedRelativeFrame")
+    return new FixedRelativeFrame(element->Attribute("name"),parent);
+  return 0;
+}
+
 Contour* ObjectFactory::createContour(TiXmlElement *element, Element *parent) {
   if(element==NULL) return NULL;
   for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)

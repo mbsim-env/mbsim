@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "link.h"
+#include "objectfactory.h"
 
 using namespace std;
 
@@ -26,6 +27,20 @@ Link::Link(const string &str, Element *parent) : Element(str, parent) {
 }
 
 Link::~Link() {
+}
+
+Link* Link::readXMLFile(const string &filename, Element *parent) {
+  TiXmlDocument doc;
+  bool ret=doc.LoadFile(filename);
+  assert(ret==true);
+  TiXml_PostLoadFile(&doc);
+  TiXmlElement *e=doc.FirstChildElement();
+  map<string,string> dummy;
+  incorporateNamespace(doc.FirstChildElement(), dummy);
+  Link *link=ObjectFactory::getInstance()->createLink(e,parent);
+  if(link)
+    link->initializeUsingXML(e);
+  return link;
 }
 
 Element * Link::getByPathSearch(string path) {

@@ -43,39 +43,45 @@
 
 using namespace std;
 
-ElementPropertyDialog::ElementPropertyDialog(QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f) {
+ElementPropertyDialog::ElementPropertyDialog(QWidget *parent, Qt::WindowFlags f, bool embedding) : PropertyDialog(parent,f), href(0), count(0), counterName(0), parameterList(0) {
   addTab("General");
-  addTab("Embedding");
   name = new ExtWidget("Name",new TextWidget);
   name->setToolTip("Set the name of the element");
   addToTab("General", name);
-  href = new ExtWidget("Embed", new FileWidget("XML model files", "xml files (*.xml)"), true);
-  addToTab("Embedding", href);
-  count = new ExtWidget("Count", new TextWidget, true);
-  addToTab("Embedding",count);
-  counterName = new ExtWidget("Counter name", new TextWidget, true);
-  addToTab("Embedding",counterName);
-  parameterList = new ExtWidget("XML parameter file", new FileWidget("XML model files", "xml files (*.mbsimparam.xml)"), true);
-  addToTab("Embedding",parameterList);
+  if(embedding) {
+    addTab("Embedding");
+    href = new ExtWidget("Embed", new FileWidget("XML model files", "xml files (*.xml)"), true);
+    addToTab("Embedding", href);
+    count = new ExtWidget("Count", new TextWidget, true);
+    addToTab("Embedding",count);
+    counterName = new ExtWidget("Counter name", new TextWidget, true);
+    addToTab("Embedding",counterName);
+    parameterList = new ExtWidget("Parameter file", new FileWidget("XML parameter files", "xml files (*.mbsimparam.xml)"), true);
+    addToTab("Embedding",parameterList);
+  }
 }
 
 void ElementPropertyDialog::toWidget(Element *element) {
   element->name.toWidget(name);
-  element->href.toWidget(href);
-  element->count.toWidget(count);
-  element->counterName.toWidget(counterName);
-  element->parameterList.toWidget(parameterList);
+  if(href) {
+    element->href.toWidget(href);
+    element->count.toWidget(count);
+    element->counterName.toWidget(counterName);
+    element->parameterList.toWidget(parameterList);
+  }
 }
 
 void ElementPropertyDialog::fromWidget(Element *element) {
   element->name.fromWidget(name);
-  element->href.fromWidget(href);
-  element->count.fromWidget(count);
-  element->counterName.fromWidget(counterName);
-  element->parameterList.fromWidget(parameterList);
+  if(href) {
+    element->href.fromWidget(href);
+    element->count.fromWidget(count);
+    element->counterName.fromWidget(counterName);
+    element->parameterList.fromWidget(parameterList);
+  }
 }
 
-FramePropertyDialog::FramePropertyDialog(Frame *frame, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(parent,f) {
+FramePropertyDialog::FramePropertyDialog(Frame *frame, QWidget *parent, Qt::WindowFlags f, bool embedding) : ElementPropertyDialog(parent,f,embedding) {
   addTab("Visualisation",1);
   visu = new ExtWidget("OpenMBV frame",new OMBVFrameWidget("NOTSET"),true,true);
   visu->setToolTip("Set the visualisation parameters for the frame");
@@ -92,7 +98,7 @@ void FramePropertyDialog::fromWidget(Element *element) {
   static_cast<Frame*>(element)->visu.fromWidget(visu);
 }
 
-FixedRelativeFramePropertyDialog::FixedRelativeFramePropertyDialog(FixedRelativeFrame *frame, QWidget *parent, Qt::WindowFlags f) : FramePropertyDialog(frame,parent,f) {
+FixedRelativeFramePropertyDialog::FixedRelativeFramePropertyDialog(FixedRelativeFrame *frame, QWidget *parent, Qt::WindowFlags f) : FramePropertyDialog(frame,parent,f,true) {
   addTab("Kinematics",1);
 
   vector<PhysicalStringWidget*> input;
@@ -164,7 +170,7 @@ void SpherePropertyDialog::fromWidget(Element *element) {
   static_cast<Sphere*>(element)->visu.fromWidget(visu);
 }
 
-GroupPropertyDialog::GroupPropertyDialog(Group *group, QWidget *parent, Qt::WindowFlags f, bool kinematics) : ElementPropertyDialog(parent,f), position(0), orientation(0), frameOfReference(0) {
+GroupPropertyDialog::GroupPropertyDialog(Group *group, QWidget *parent, Qt::WindowFlags f, bool kinematics) : ElementPropertyDialog(parent,f,kinematics), position(0), orientation(0), frameOfReference(0) {
   if(kinematics) {
     addTab("Kinematics",1);
 

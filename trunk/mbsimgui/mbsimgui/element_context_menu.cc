@@ -87,9 +87,6 @@ void GroupContextMenu::addObject() {
   action = new QAction("Add joint constraint", this);
   connect(action,SIGNAL(triggered()),mw,SLOT(addJointConstraint()));
   menu.addAction(action);
-  action = new QAction("Add embedded object", this);
-  connect(action,SIGNAL(triggered()),mw,SLOT(addEmbeddedObject()));
-  menu.addAction(action);
   menu.exec(QCursor::pos());
 }
 

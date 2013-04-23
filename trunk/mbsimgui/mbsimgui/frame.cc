@@ -20,7 +20,7 @@
 #include <config.h>
 #include "frame.h"
 #include "ombv_properties.h"
-#include <QMenu>
+#include "objectfactory.h"
 
 using namespace std;
 
@@ -40,6 +40,20 @@ Frame::Frame(const string &str, Element *parent, bool grey) : Element(str,parent
 
 Frame::~Frame() {
   //cout << "destroy frame" << endl;
+}
+
+Frame* Frame::readXMLFile(const string &filename, Element *parent) {
+  TiXmlDocument doc;
+  bool ret=doc.LoadFile(filename);
+  assert(ret==true);
+  TiXml_PostLoadFile(&doc);
+  TiXmlElement *e=doc.FirstChildElement();
+  map<string,string> dummy;
+  incorporateNamespace(doc.FirstChildElement(), dummy);
+  Frame *frame=ObjectFactory::getInstance()->createFrame(e,parent);
+  if(frame)
+    frame->initializeUsingXML(e);
+  return frame;
 }
 
 void Frame::initializeUsingXML(TiXmlElement *element) {

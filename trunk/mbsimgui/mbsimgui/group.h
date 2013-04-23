@@ -50,6 +50,7 @@ class Group : public Element {
     int getqSize();
     int getuSize();
     int getxSize();
+    static Group* readXMLFile(const std::string &filename, Element *parent);
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual Element *getByPathSearch(std::string path);

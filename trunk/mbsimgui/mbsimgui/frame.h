@@ -31,6 +31,7 @@ class Frame : public Element {
     Frame(const std::string &str, Element *parent, bool grey=true);
     ~Frame();
     std::string getType() const { return "Frame"; }
+    static Frame* readXMLFile(const std::string &filename, Element *parent);    
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     virtual void initializeUsingXML2(TiXmlElement *element);

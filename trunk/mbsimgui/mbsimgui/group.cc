@@ -217,6 +217,20 @@ void Group::removeElement(Element* element) {
   }
 }
 
+Group* Group::readXMLFile(const string &filename, Element *parent) {
+  TiXmlDocument doc;
+  bool ret=doc.LoadFile(filename);
+  assert(ret==true);
+  TiXml_PostLoadFile(&doc);
+  TiXmlElement *e=doc.FirstChildElement();
+  map<string,string> dummy;
+  incorporateNamespace(doc.FirstChildElement(), dummy);
+  Group *group=ObjectFactory::getInstance()->createGroup(e,parent);
+  if(group)
+    group->initializeUsingXML(e);
+  return group;
+}
+
 void Group::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e;
   Element::initializeUsingXML(element);
@@ -248,10 +262,19 @@ void Group::initializeUsingXML(TiXmlElement *element) {
     f->initializeUsingXML2(E);
     E=E->NextSiblingElement();
   }
-  while(E && E->ValueStr()==MBSIMNS"FixedRelativeFrame") {
-    FixedRelativeFrame *f=new FixedRelativeFrame(E->Attribute("name"),this);
-    addFrame(f);
-    f->initializeUsingXML(E);
+  while(E) {
+    if(E->ValueStr()==PVNS"embed") {
+      Frame *f=Frame::readXMLFile(E->Attribute("href"),this);
+      if(f) {
+        addFrame(f);
+        f->initializeUsingXMLEmbed(E);
+      }
+    }
+    else {
+      FixedRelativeFrame *f=new FixedRelativeFrame(E->Attribute("name"),this);
+      addFrame(f);
+      f->initializeUsingXML(E);
+    }
     E=E->NextSiblingElement();
   }
 
@@ -275,10 +298,19 @@ void Group::initializeUsingXML(TiXmlElement *element) {
     E=E->NextSiblingElement();
   }
   while(E) {
-    c=ObjectFactory::getInstance()->createContour(E,this);
-    if(c) {
-      addContour(c);
-      c->initializeUsingXML(E);
+    if(E->ValueStr()==PVNS"embed") {
+      c=Contour::readXMLFile(E->Attribute("href"),this);
+      if(c) {
+        addContour(c);
+        c->initializeUsingXMLEmbed(E);
+      }
+    }
+    else {
+      c=ObjectFactory::getInstance()->createContour(E,this);
+      if(c) {
+        addContour(c);
+        c->initializeUsingXML(E);
+      }
     }
     E=E->NextSiblingElement();
   }
@@ -287,10 +319,19 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   E=element->FirstChildElement(MBSIMNS"groups")->FirstChildElement();
   Group *g;
   while(E) {
-    g=ObjectFactory::getInstance()->createGroup(E,this);
-    if(g) {
-      addGroup(g);
-      g->initializeUsingXML(E);
+    if(E->ValueStr()==PVNS"embed") {
+      g=Group::readXMLFile(E->Attribute("href"),this);
+      if(g) {
+        addGroup(g);
+        g->initializeUsingXMLEmbed(E);
+      }
+    }
+    else {
+      g=ObjectFactory::getInstance()->createGroup(E,this);
+      if(g) {
+        addGroup(g);
+        g->initializeUsingXML(E);
+      }
     }
     E=E->NextSiblingElement();
   }
@@ -300,17 +341,9 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   Object *o;
   while(E) {
     if(E->ValueStr()==PVNS"embed") {
-      TiXmlDocument doc;
-      bool ret=doc.LoadFile(E->Attribute("href"));
-      assert(ret==true);
-      TiXml_PostLoadFile(&doc);
-      TiXmlElement *e=doc.FirstChildElement();
-      map<string,string> dummy;
-      incorporateNamespace(doc.FirstChildElement(), dummy);
-      o=ObjectFactory::getInstance()->createObject(e,this);
+      o=Object::readXMLFile(E->Attribute("href"),this);
       if(o) {
         addObject(o);
-        o->initializeUsingXML(e);
         o->initializeUsingXMLEmbed(E);
       }
     }
@@ -340,10 +373,19 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   E=element->FirstChildElement(MBSIMNS"links")->FirstChildElement();
   Link *l;
   while(E) {
-    l=ObjectFactory::getInstance()->createLink(E,this);
-    if(l) {
-      addLink(l);
-      l->initializeUsingXML(E);
+    if(E->ValueStr()==PVNS"embed") {
+      l=Link::readXMLFile(E->Attribute("href"),this);
+      if(l) {
+        addLink(l);
+        l->initializeUsingXMLEmbed(E);
+      }
+    }
+    else {
+      l=ObjectFactory::getInstance()->createLink(E,this);
+      if(l) {
+        addLink(l);
+        l->initializeUsingXML(E);
+      }
     }
     E=E->NextSiblingElement();
   }
@@ -353,10 +395,19 @@ void Group::initializeUsingXML(TiXmlElement *element) {
     E=element->FirstChildElement(MBSIMNS"observers")->FirstChildElement();
     Observer *obsrv;
     while(E) {
-      obsrv=ObjectFactory::getInstance()->createObserver(E,this);
-      if(obsrv) {
-        addObserver(obsrv);
-        obsrv->initializeUsingXML(E);
+      if(E->ValueStr()==PVNS"embed") {
+        obsrv=Observer::readXMLFile(E->Attribute("href"),this);
+        if(obsrv) {
+          addObserver(obsrv);
+          obsrv->initializeUsingXMLEmbed(E);
+        }
+      }
+      else {
+        obsrv=ObjectFactory::getInstance()->createObserver(E,this);
+        if(obsrv) {
+          addObserver(obsrv);
+          obsrv->initializeUsingXML(E);
+        }
       }
       E=E->NextSiblingElement();
     }
@@ -382,17 +433,26 @@ TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
 
   ele1 = new TiXmlElement( MBSIMNS"frames" );
   for(int i=1; i<frame.size(); i++)
-    frame[i]->writeXMLFile(ele1);
+    if(frame[i]->embed())
+      frame[i]->writeXMLFileEmbed(ele1);
+    else
+      frame[i]->writeXMLFile(ele1);
   ele0->LinkEndChild( ele1 );
 
   ele1 = new TiXmlElement( MBSIMNS"contours" );
   for(int i=0; i<contour.size(); i++)
-    contour[i]->writeXMLFile(ele1);
+    if(contour[i]->embed())
+      contour[i]->writeXMLFileEmbed(ele1);
+    else
+      contour[i]->writeXMLFile(ele1);
   ele0->LinkEndChild( ele1 );
 
   ele1 = new TiXmlElement( MBSIMNS"groups" );
   for(int i=0; i<group.size(); i++)
-    group[i]->writeXMLFile(ele1);
+    if(group[i]->embed())
+      group[i]->writeXMLFileEmbed(ele1);
+    else
+      group[i]->writeXMLFile(ele1);
   ele0->LinkEndChild( ele1 );
 
   ele1 = new TiXmlElement( MBSIMNS"objects" );
@@ -408,12 +468,18 @@ TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
 
   ele1 = new TiXmlElement( MBSIMNS"links" );
   for(int i=0; i<link.size(); i++)
-    link[i]->writeXMLFile(ele1);
+    if(link[i]->embed())
+      link[i]->writeXMLFileEmbed(ele1);
+    else
+      link[i]->writeXMLFile(ele1);
   ele0->LinkEndChild( ele1 );
 
   ele1 = new TiXmlElement( MBSIMNS"observers" );
   for(int i=0; i<observer.size(); i++)
-    observer[i]->writeXMLFile(ele1);
+    if(observer[i]->embed())
+      observer[i]->writeXMLFileEmbed(ele1);
+    else
+      observer[i]->writeXMLFile(ele1);
   ele0->LinkEndChild( ele1 );
 
   Frame *I = getFrame(0);
