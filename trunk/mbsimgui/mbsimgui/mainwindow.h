@@ -113,7 +113,6 @@ class MainWindow : public QMainWindow {
     void addGearConstraint();
     void addKinematicConstraint();
     void addJointConstraint();
-    void addEmbeddedObject();
     void addSpringDamper();
     void addKineticExcitation();
     void addJoint();

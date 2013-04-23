@@ -23,9 +23,13 @@
 #include <QMenu>
 
 class ElementContextMenu : public QMenu {
+  Q_OBJECT
 
   public:
     ElementContextMenu(QWidget * parent = 0, bool removable=true);
+
+  protected slots:
+    void addContour();
 };
 
 class GroupContextMenu : public ElementContextMenu {
@@ -33,8 +37,8 @@ class GroupContextMenu : public ElementContextMenu {
 
   public:
     GroupContextMenu(QWidget * parent = 0, bool removable=true);
+
   protected slots:
-    void addContour();
     void addObject();
     void addLink();
     void addObserver();
@@ -57,5 +61,18 @@ class FixedRelativeFrameContextMenu : public FrameContextMenu {
   public:
     FixedRelativeFrameContextMenu(QWidget * parent = 0) : FrameContextMenu(parent,true) {}
 };
+
+class ObjectContextMenu : public ElementContextMenu {
+
+  public:
+    ObjectContextMenu(QWidget * parent = 0);
+};
+
+class BodyContextMenu : public ObjectContextMenu {
+
+  public:
+    BodyContextMenu(QWidget * parent = 0);
+};
+
 
 #endif

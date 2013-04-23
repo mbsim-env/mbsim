@@ -32,7 +32,6 @@
 #include "contour.h"
 #include "rigidbody.h"
 #include "constraint.h"
-#include "embedded_elements.h"
 #include "kinetic_excitation.h"
 #include "spring_damper.h"
 #include "joint.h"
@@ -46,21 +45,38 @@ using namespace std;
 
 ElementPropertyDialog::ElementPropertyDialog(QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f) {
   addTab("General");
+  addTab("Embedding");
   name = new ExtWidget("Name",new TextWidget);
   name->setToolTip("Set the name of the element");
   addToTab("General", name);
+  href = new ExtWidget("Embed", new FileWidget("XML model files", "xml files (*.xml)"), true);
+  addToTab("Embedding", href);
+  count = new ExtWidget("Count", new TextWidget, true);
+  addToTab("Embedding",count);
+  counterName = new ExtWidget("Counter name", new TextWidget, true);
+  addToTab("Embedding",counterName);
+  parameterList = new ExtWidget("XML parameter file", new FileWidget("XML model files", "xml files (*.mbsimparam.xml)"), true);
+  addToTab("Embedding",parameterList);
 }
 
 void ElementPropertyDialog::toWidget(Element *element) {
   element->name.toWidget(name);
+  element->href.toWidget(href);
+  element->count.toWidget(count);
+  element->counterName.toWidget(counterName);
+  element->parameterList.toWidget(parameterList);
 }
 
 void ElementPropertyDialog::fromWidget(Element *element) {
   element->name.fromWidget(name);
+  element->href.fromWidget(href);
+  element->count.fromWidget(count);
+  element->counterName.fromWidget(counterName);
+  element->parameterList.fromWidget(parameterList);
 }
 
 FramePropertyDialog::FramePropertyDialog(Frame *frame, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(parent,f) {
-  addTab("Visualisation");
+  addTab("Visualisation",1);
   visu = new ExtWidget("OpenMBV frame",new OMBVFrameWidget("NOTSET"),true,true);
   visu->setToolTip("Set the visualisation parameters for the frame");
   addToTab("Visualisation", visu);
@@ -108,7 +124,7 @@ void FixedRelativeFramePropertyDialog::fromWidget(Element *element) {
 }
 
 PlanePropertyDialog::PlanePropertyDialog(Plane *plane, QWidget *parent, Qt::WindowFlags f) : ContourPropertyDialog(plane,parent,f) {
-  addTab("Visualisation");
+  addTab("Visualisation",1);
  
   visu = new ExtWidget("OpenMBV Plane",new OMBVPlaneWidget,true);
   addToTab("Visualisation", visu);
@@ -125,7 +141,7 @@ void PlanePropertyDialog::fromWidget(Element *element) {
 }
 
 SpherePropertyDialog::SpherePropertyDialog(Sphere *sphere, QWidget *parent, Qt::WindowFlags f) : ContourPropertyDialog(sphere,parent,f) {
-  addTab("Visualisation");
+  addTab("Visualisation",1);
  
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new ScalarWidget("1"), lengthUnits(), 4));
@@ -150,7 +166,7 @@ void SpherePropertyDialog::fromWidget(Element *element) {
 
 GroupPropertyDialog::GroupPropertyDialog(Group *group, QWidget *parent, Qt::WindowFlags f, bool kinematics) : ElementPropertyDialog(parent,f), position(0), orientation(0), frameOfReference(0) {
   if(kinematics) {
-    addTab("Kinematics");
+    addTab("Kinematics",1);
 
     vector<PhysicalStringWidget*> input;
     input.push_back(new PhysicalStringWidget(new VecWidget(3),lengthUnits(),4));
@@ -186,9 +202,9 @@ void GroupPropertyDialog::fromWidget(Element *element) {
 }
 
 SolverPropertyDialog::SolverPropertyDialog(Solver *solver, QWidget *parent, Qt::WindowFlags f) : GroupPropertyDialog(solver,parent,f,false) {
-  addTab("Environment");
-  addTab("Solver parameters");
-  addTab("Extra");
+  addTab("Environment",1);
+  addTab("Solver parameters",2);
+  addTab("Extra",3);
 
   vector<PhysicalStringWidget*> input;
   input.push_back(new PhysicalStringWidget(new VecWidget(vector<string>(3)),accelerationUnits(),0));
@@ -219,7 +235,7 @@ void SolverPropertyDialog::fromWidget(Element *element) {
 }
 
 ObjectPropertyDialog::ObjectPropertyDialog(Object *object, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(parent,f) {
-  addTab("Initial conditions");
+  addTab("Initial conditions",1);
   vector<PhysicalStringWidget*> input;
   q0_ = new VecWidget(0);
   input.push_back(new PhysicalStringWidget(q0_,QStringList(),1));
@@ -250,7 +266,7 @@ void ObjectPropertyDialog::fromWidget(Element *element) {
 }
 
 BodyPropertyDialog::BodyPropertyDialog(Body *body, QWidget *parent, Qt::WindowFlags f) : ObjectPropertyDialog(body,parent,f) {
-  addTab("Kinematics");
+  addTab("Kinematics",2);
   R = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(body,0),true);
   addToTab("Kinematics",R);
 }
@@ -266,8 +282,8 @@ void BodyPropertyDialog::fromWidget(Element *element) {
 }
 
 RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *parent, Qt::WindowFlags f) : BodyPropertyDialog(body_,parent,f), body(body_) {
-  addTab("Visualisation");
-  addTab("Extra");
+  addTab("Visualisation",3);
+  addTab("Extra",4);
 
   K = new ExtWidget("Frame for kinematics",new LocalFrameOfReferenceWidget(body,0),true);
   addToTab("Kinematics",K);
@@ -505,34 +521,6 @@ void JointConstraintPropertyDialog::fromWidget(Element *element) {
   static_cast<JointConstraint*>(element)->moment.fromWidget(moment);
 }
 
-EmbeddedObjectPropertyDialog::EmbeddedObjectPropertyDialog(EmbeddedObject *object, QWidget *parent, Qt::WindowFlags f) : ObjectPropertyDialog(object,parent,f) {
-  href = new ExtWidget("XML object file",new FileWidget("XML model files", "xml files (*.xml)"));
-  connect(static_cast<FileWidget*>(href->getWidget()),SIGNAL(fileChanged(const QString&)),static_cast<TextWidget*>(name->getWidget()),SLOT(setText(const QString&)));
-  addToTab("General",href);
-  count = new ExtWidget("Count", new TextWidget, true);
-  addToTab("General",count);
-  counterName = new ExtWidget("Counter name", new TextWidget, true);
-  addToTab("General",counterName);
-  parameterList = new ExtWidget("XML parameter file", new FileWidget("XML model files", "xml files (*.mbsimparam.xml)"), true);
-  addToTab("General",parameterList);
-}
-
-void EmbeddedObjectPropertyDialog::toWidget(Element *element) {
-  ObjectPropertyDialog::toWidget(element);
-  static_cast<EmbeddedObject*>(element)->href.toWidget(href);
-  static_cast<EmbeddedObject*>(element)->count.toWidget(count);
-  static_cast<EmbeddedObject*>(element)->counterName.toWidget(counterName);
-  static_cast<EmbeddedObject*>(element)->parameterList.toWidget(parameterList);
-}
-
-void EmbeddedObjectPropertyDialog::fromWidget(Element *element) {
-  ObjectPropertyDialog::fromWidget(element);
-  static_cast<EmbeddedObject*>(element)->href.fromWidget(href);
-  static_cast<EmbeddedObject*>(element)->count.fromWidget(count);
-  static_cast<EmbeddedObject*>(element)->counterName.fromWidget(counterName);
-  static_cast<EmbeddedObject*>(element)->parameterList.fromWidget(parameterList);
-}
-
 LinkPropertyDialog::LinkPropertyDialog(Link *link, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(parent,f) {
 }
 
@@ -546,8 +534,8 @@ void LinkPropertyDialog::fromWidget(Element *element) {
 
 KineticExcitationPropertyDialog::KineticExcitationPropertyDialog(KineticExcitation *kineticExcitation, QWidget *parent, Qt::WindowFlags wf) : LinkPropertyDialog(kineticExcitation,parent,wf) {
 
-  addTab("Kinetics");
-  addTab("Visualisation");
+  addTab("Kinetics",1);
+  addTab("Visualisation",2);
 
   forceArrow = new ExtWidget("OpenMBV force arrow",new OMBVArrowWidget("NOTSET"),true);
   addToTab("Visualisation",forceArrow);
@@ -600,8 +588,8 @@ void KineticExcitationPropertyDialog::fromWidget(Element *element) {
 }
 
 SpringDamperPropertyDialog::SpringDamperPropertyDialog(SpringDamper *springDamper, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(springDamper,parent,f) {
-  addTab("Kinetics");
-  addTab("Visualisation");
+  addTab("Kinetics",1);
+  addTab("Visualisation",2);
 
   connections = new ExtWidget("Connections",new ConnectFramesWidget(2,springDamper));
   addToTab("Kinetics", connections);
@@ -633,8 +621,8 @@ void SpringDamperPropertyDialog::fromWidget(Element *element) {
 }
 
 JointPropertyDialog::JointPropertyDialog(Joint *joint, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(joint,parent,f) {
-  addTab("Kinetics");
-  addTab("Visualisation");
+  addTab("Kinetics",1);
+  addTab("Visualisation",2);
 
   forceArrow = new ExtWidget("OpenMBV force arrow",new OMBVArrowWidget("NOTSET"),true);
   addToTab("Visualisation",forceArrow);
@@ -672,8 +660,8 @@ void JointPropertyDialog::fromWidget(Element *element) {
 
 ContactPropertyDialog::ContactPropertyDialog(Contact *contact, QWidget *parent, Qt::WindowFlags f) : LinkPropertyDialog(contact,parent,f) {
 
-  addTab("Kinetics");
-  addTab("Visualisation");
+  addTab("Kinetics",1);
+  addTab("Visualisation",2);
 
   connections = new ExtWidget("Connections",new ConnectContoursWidget(2,contact));
   addToTab("Kinetics", connections);
@@ -728,7 +716,7 @@ void ContactPropertyDialog::fromWidget(Element *element) {
 
 AbsoluteKinematicsObserverPropertyDialog::AbsoluteKinematicsObserverPropertyDialog(AbsoluteKinematicsObserver *observer, QWidget *parent, Qt::WindowFlags f) : ObserverPropertyDialog(observer,parent,f) {
 
-  addTab("Visualisation");
+  addTab("Visualisation",1);
 
   frame = new ExtWidget("Frame",new FrameOfReferenceWidget(observer,0));
   addToTab("General", frame);

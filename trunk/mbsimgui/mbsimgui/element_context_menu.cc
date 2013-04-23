@@ -34,6 +34,23 @@ ElementContextMenu::ElementContextMenu(QWidget *parent, bool removable) : QMenu(
   }
 }
 
+void ElementContextMenu::addContour() {
+  QMenu menu("Context Menu");
+  QAction *action = new QAction("Add point", this);
+  connect(action,SIGNAL(triggered()),mw,SLOT(addPoint()));
+  menu.addAction(action);
+  action = new QAction("Add line", this);
+  connect(action,SIGNAL(triggered()),mw,SLOT(addLine()));
+  menu.addAction(action);
+  action = new QAction("Add plane", this);
+  connect(action,SIGNAL(triggered()),mw,SLOT(addPlane()));
+  menu.addAction(action);
+  action = new QAction("Add sphere", this);
+  connect(action,SIGNAL(triggered()),mw,SLOT(addSphere()));
+  menu.addAction(action);
+  menu.exec(QCursor::pos());
+}
+
 GroupContextMenu::GroupContextMenu(QWidget *parent, bool removable) : ElementContextMenu(parent,removable) {
   QAction *action;
   action = new QAction("Add frame", this);
@@ -56,22 +73,6 @@ GroupContextMenu::GroupContextMenu(QWidget *parent, bool removable) : ElementCon
   addAction(action);
 } 
 
-void GroupContextMenu::addContour() {
-  QMenu menu("Context Menu");
-  QAction *action = new QAction("Add point", this);
-  connect(action,SIGNAL(triggered()),mw,SLOT(addPoint()));
-  menu.addAction(action);
-  action = new QAction("Add line", this);
-  connect(action,SIGNAL(triggered()),mw,SLOT(addLine()));
-  menu.addAction(action);
-  action = new QAction("Add plane", this);
-  connect(action,SIGNAL(triggered()),mw,SLOT(addPlane()));
-  menu.addAction(action);
-  action = new QAction("Add sphere", this);
-  connect(action,SIGNAL(triggered()),mw,SLOT(addSphere()));
-  menu.addAction(action);
-  menu.exec(QCursor::pos());
-}
 void GroupContextMenu::addObject() {
   QMenu menu("Context Menu");
   QAction *action = new QAction("Add rigid body", this);
@@ -115,3 +116,16 @@ void GroupContextMenu::addObserver() {
   menu.addAction(action);
   menu.exec(QCursor::pos());
 }
+
+ObjectContextMenu::ObjectContextMenu(QWidget *parent) : ElementContextMenu(parent,true) {
+} 
+
+BodyContextMenu::BodyContextMenu(QWidget *parent) : ObjectContextMenu(parent) {
+  QAction *action;
+  action = new QAction("Add frame", this);
+  connect(action,SIGNAL(triggered()),mw,SLOT(addFrame()));
+  addAction(action);
+  action = new QAction("Add contour", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addContour()));
+  addAction(action);
+} 

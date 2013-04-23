@@ -28,7 +28,6 @@ mbsimgui_SOURCES = element.cc \
 		   contact.cc \
 		   signal_.cc \
 		   observer.cc \
-		   embedded_elements.cc \
 		   integrator.cc \
 		   parameter.cc \
 		   octaveutils.cc \

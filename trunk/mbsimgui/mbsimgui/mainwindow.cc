@@ -276,9 +276,8 @@ void MainWindow::changeWorkingDir() {
 
 void MainWindow::closeEvent(QCloseEvent *event) {
   //if(actionSaveMBS->isEnabled() || actionSaveMBS->isEnabled() || actionSaveParameter->isEnabled()) {
-  QMessageBox::StandardButton ret;
-  ret = QMessageBox::warning(this, tr("Application"),
-      tr("A document may has been modified.\n"
+  QMessageBox::StandardButton ret = QMessageBox::warning(this, tr("Application"),
+      tr("MBS, parameter list or integrator may have been modified.\n"
         "Do you want to save your changes?"),
       QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
   if (ret == QMessageBox::Save) {
@@ -385,7 +384,7 @@ void MainWindow::saveProj() {
 
 void MainWindow::newMBS(bool ask) {
   //tabBar->setCurrentIndex(0);
-  int ret = QMessageBox::Ok;
+  QMessageBox::StandardButton ret = QMessageBox::Ok;
   if(ask) 
     ret = QMessageBox::warning(this, "New MBS", "Current MBS will be deleted", QMessageBox::Ok | QMessageBox::Cancel);
   if(ret == QMessageBox::Ok) {
@@ -554,7 +553,7 @@ void MainWindow::newParameterList() {
   ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
   QModelIndex index = model->index(0,0);
   if(index.isValid()) {
-    int ret = QMessageBox::warning(this, "New parameter list", "Current parameters will be deleted", QMessageBox::Ok | QMessageBox::Cancel);
+    QMessageBox::StandardButton ret = QMessageBox::warning(this, "New parameter list", "Current parameters will be deleted", QMessageBox::Ok | QMessageBox::Cancel);
     if(ret == QMessageBox::Ok) {
       ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
       QModelIndex index = model->index(0,0);
@@ -898,19 +897,6 @@ void MainWindow::addJointConstraint() {
   ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
   model->addJointConstraint(index);
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
-  QModelIndex containerIndex = model->index(3, 0, index);
-  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
-  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
-}
-
-void MainWindow::addEmbeddedObject() {
-  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-  QModelIndex index = elementList->selectionModel()->currentIndex();
-  model->addEmbeddedObject(index);
 #ifdef INLINE_OPENMBV
   mbsimxml(1);
 #endif

@@ -41,10 +41,10 @@ class TextWidget;
 class Element : public TreeItemData {
   friend class ElementPropertyDialog;
   protected:
+    Element *parent;
     static int IDcounter;
     std::string ID;
-    ExtProperty name;
-    Element *parent;
+    ExtProperty name, href, count, counterName, parameterList;
   public:
     Element(const std::string &name, Element *parent);
     virtual ~Element();
@@ -52,6 +52,8 @@ class Element : public TreeItemData {
     std::string getXMLPath(Element *ref=0, bool rel=false);
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual void initializeUsingXMLEmbed(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFileEmbed(TiXmlNode *element);
     virtual void writeXMLFile(const std::string &name);
     virtual void writeXMLFile() { writeXMLFile(getName()); }
     virtual void initialize();
@@ -94,6 +96,7 @@ class Element : public TreeItemData {
     virtual ElementPropertyDialog* createPropertyDialog() {return new ElementPropertyDialog;}
     virtual ElementContextMenu* createContextMenu() {return new ElementContextMenu;}
     Element* getRoot() {return parent?parent->getRoot():this;}
+    bool embed() const {return href.isActive();}
 };
 
 template<class T>

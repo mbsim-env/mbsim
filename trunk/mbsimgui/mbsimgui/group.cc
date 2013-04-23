@@ -299,10 +299,27 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   E=element->FirstChildElement(MBSIMNS"objects")->FirstChildElement();
   Object *o;
   while(E) {
-    o=ObjectFactory::getInstance()->createObject(E,this);
-    if(o) {
-      addObject(o);
-      o->initializeUsingXML(E);
+    if(E->ValueStr()==PVNS"embed") {
+      TiXmlDocument doc;
+      bool ret=doc.LoadFile(E->Attribute("href"));
+      assert(ret==true);
+      TiXml_PostLoadFile(&doc);
+      TiXmlElement *e=doc.FirstChildElement();
+      map<string,string> dummy;
+      incorporateNamespace(doc.FirstChildElement(), dummy);
+      o=ObjectFactory::getInstance()->createObject(e,this);
+      if(o) {
+        addObject(o);
+        o->initializeUsingXML(e);
+        o->initializeUsingXMLEmbed(E);
+      }
+    }
+    else {
+      o=ObjectFactory::getInstance()->createObject(E,this);
+      if(o) {
+        addObject(o);
+        o->initializeUsingXML(E);
+      }
     }
     E=E->NextSiblingElement();
   }
@@ -380,7 +397,10 @@ TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
 
   ele1 = new TiXmlElement( MBSIMNS"objects" );
   for(int i=0; i<object.size(); i++)
-    object[i]->writeXMLFile(ele1);
+    if(object[i]->embed())
+      object[i]->writeXMLFileEmbed(ele1);
+    else
+      object[i]->writeXMLFile(ele1);
   ele0->LinkEndChild( ele1 );
 
   ele1 = new TiXmlElement( MBSIMNS"extraDynamics" );

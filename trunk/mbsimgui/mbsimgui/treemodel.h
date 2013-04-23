@@ -78,7 +78,6 @@ class ElementTreeModel : public TreeModel {
     void addGearConstraint(const QModelIndex &parent = QModelIndex());
     void addKinematicConstraint(const QModelIndex &parent = QModelIndex());
     void addJointConstraint(const QModelIndex &parent = QModelIndex());
-    void addEmbeddedObject(const QModelIndex &parent = QModelIndex());
     void addKineticExcitation(const QModelIndex &parent = QModelIndex());
     void addSpringDamper(const QModelIndex &parent = QModelIndex());
     void addJoint(const QModelIndex &parent = QModelIndex());

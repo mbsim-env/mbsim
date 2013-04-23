@@ -37,7 +37,6 @@ class Constraint;
 class GearConstraint;
 class KinematicConstraint;
 class JointConstraint;
-class EmbeddedObject;
 class Link;
 class KineticExcitation;
 class SpringDamper;
@@ -56,7 +55,7 @@ class ElementPropertyDialog : public PropertyDialog {
     virtual void toWidget(Element *element);
     virtual void fromWidget(Element *element);
   protected:
-    ExtWidget *name;
+    ExtWidget *name, *href, *count, *counterName, *parameterList;
 };
 
 class FramePropertyDialog : public ElementPropertyDialog {
@@ -209,16 +208,6 @@ class JointConstraintPropertyDialog : public ConstraintPropertyDialog {
     void resizeGeneralizedPosition();
   protected:
     ExtWidget *force, *moment, *connections, *independentBody, *dependentBodiesFirstSide, *dependentBodiesSecondSide;
-};
-
-class EmbeddedObjectPropertyDialog : public ObjectPropertyDialog {
-
-  public:
-    EmbeddedObjectPropertyDialog(EmbeddedObject *object, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    void toWidget(Element *element);
-    void fromWidget(Element *element);
-  protected:
-    ExtWidget *href, *count, *counterName, *parameterList;
 };
 
 class LinkPropertyDialog : public ElementPropertyDialog {

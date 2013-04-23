@@ -48,6 +48,7 @@ class Body : public Object {
     TiXmlElement* writeXMLFile(TiXmlNode *element);
 
     ElementPropertyDialog* createPropertyDialog() {return new BodyPropertyDialog(this);}
+    ElementContextMenu* createContextMenu() {return new BodyContextMenu;}
   protected:
     std::vector<Frame*> frame;
     std::vector<Contour*> contour;

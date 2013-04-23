@@ -35,8 +35,14 @@ using namespace std;
 
 int Element::IDcounter=0;
 
-Element::Element(const string &name_, Element *parent_) : parent(parent_) {
+Element::Element(const string &name_, Element *parent_) : parent(parent_), href(0,false), count(0,false), counterName(0,false), parameterList(0,false) {
   name.setProperty(new TextProperty(name_,""));
+  href.setProperty(new FileProperty(""));
+  static_cast<FileProperty*>(href.getProperty())->setFileName(name_+".xml");
+  static_cast<FileProperty*>(href.getProperty())->setAbsoluteFilePath(name_+".xml");
+  count.setProperty(new TextProperty("1",""));
+  counterName.setProperty(new TextProperty("n",""));
+  parameterList.setProperty(new FileProperty(""));
   stringstream sstr;
   sstr<<IDcounter++;
   ID=sstr.str();
@@ -72,6 +78,46 @@ TiXmlElement* Element::writeXMLFile(TiXmlNode *parent) {
   ele0->SetAttribute("name", getName());
 //  for(unsigned int i=0; i<plotFeature.size(); i++)
 //    plotFeature[i]->writeXMLFile(ele0);
+  parent->LinkEndChild(ele0);
+  return ele0;
+}
+
+void Element::initializeUsingXMLEmbed(TiXmlElement *element) {
+  href.setActive(true);
+  string file = element->Attribute("href");
+  static_cast<FileProperty*>(href.getProperty())->setFileName(file);
+  static_cast<FileProperty*>(href.getProperty())->setAbsoluteFilePath(file);
+  if(element->Attribute("count")) {
+    count.setActive(true);
+    static_cast<TextProperty*>(count.getProperty())->setText(element->Attribute("count"));
+  }
+  if(element->Attribute("counterName")) {
+    counterName.setActive(true);
+    static_cast<TextProperty*>(counterName.getProperty())->setText(element->Attribute("counterName"));
+  }
+  TiXmlElement *ele = element->FirstChildElement(PVNS+string("localParameter"));
+  if(ele) {
+    parameterList.setActive(true);
+    string file = ele->Attribute("href");
+    static_cast<FileProperty*>(parameterList.getProperty())->setFileName(file);
+    static_cast<FileProperty*>(parameterList.getProperty())->setAbsoluteFilePath(file);
+  }
+}
+
+TiXmlElement* Element::writeXMLFileEmbed(TiXmlNode *parent) {
+  writeXMLFile(static_cast<FileProperty*>(href.getProperty())->getAbsoluteFilePath());
+  TiXmlElement *ele0=new TiXmlElement(PVNS+string("embed"));
+  ele0->SetAttribute("href", static_cast<FileProperty*>(href.getProperty())->getAbsoluteFilePath());
+  if(count.isActive())
+    ele0->SetAttribute("count", static_cast<TextProperty*>(count.getProperty())->getText());
+  //if(static_cast<TextProperty*>(counterName.getProperty())->getText() != "")
+  if(counterName.isActive())
+    ele0->SetAttribute("counterName", static_cast<TextProperty*>(counterName.getProperty())->getText());
+  if(parameterList.isActive()) {
+    TiXmlElement *ele1=new TiXmlElement(PVNS+string("localParameter"));
+    ele1->SetAttribute("href", static_cast<FileProperty*>(parameterList.getProperty())->getAbsoluteFilePath());
+    ele0->LinkEndChild(ele1);
+  }
   parent->LinkEndChild(ele0);
   return ele0;
 }
