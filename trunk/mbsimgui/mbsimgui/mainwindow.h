@@ -62,7 +62,7 @@ class MainWindow : public QMainWindow {
     OpenMBVGUI::MainWindow *inlineOpenMBVMW;
     void initInlineOpenMBV();
     QString uniqueTempDir, absoluteMBSFilePath;
-    QAction *actionSaveProj, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameterList;
+    QAction *actionSaveProj, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameterList, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs;
 
   public:
     MainWindow();
@@ -93,7 +93,13 @@ class MainWindow : public QMainWindow {
     void newParameterList();
     void loadParameterList();
     void saveParameterListAs();
-    void saveParameterList(QString filename="");
+    void saveParameterList(const QString &filename="");
+    void saveDataAs();
+    void saveMBSimH5DataAs();
+    void saveMBSimH5Data(const QString &file);
+    void saveOpenMBVDataAs();
+    void saveOpenMBVXMLData(const QString &file);
+    void saveOpenMBVH5Data(const QString &file);
     void removeParameter();
     void addParameter();
     void simulate();

@@ -105,30 +105,39 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   actionSaveProj->setDisabled(true);
   menuBar()->addMenu(ProjMenu);
 
-  QMenu *MBSMenu=new QMenu("MBS", menuBar());
-  MBSMenu->addAction("New", this, SLOT(newMBS()));
-  MBSMenu->addAction("Load", this, SLOT(loadMBS()));
-  MBSMenu->addAction("Save as", this, SLOT(saveMBSAs()));
-  actionSaveMBS = MBSMenu->addAction("Save", this, SLOT(saveMBS()));
+  QMenu *menu=new QMenu("MBS", menuBar());
+  menu->addAction("New", this, SLOT(newMBS()));
+  menu->addAction("Load", this, SLOT(loadMBS()));
+  menu->addAction("Save as", this, SLOT(saveMBSAs()));
+  actionSaveMBS = menu->addAction("Save", this, SLOT(saveMBS()));
   actionSaveMBS->setDisabled(true);
-  menuBar()->addMenu(MBSMenu);
+  menuBar()->addMenu(menu);
 
-  QMenu *integratorMenu=new QMenu("Integrator", menuBar());
-  integratorMenu->addAction("Select", this, SLOT(selectIntegrator()));
+  menu=new QMenu("Integrator", menuBar());
+  menu->addAction("Select", this, SLOT(selectIntegrator()));
 
-  integratorMenu->addAction("Load", this, SLOT(loadIntegrator()));
-  integratorMenu->addAction("Save as", this, SLOT(saveIntegratorAs()));
-  actionSaveIntegrator = integratorMenu->addAction("Save", this, SLOT(saveIntegrator()));
+  menu->addAction("Load", this, SLOT(loadIntegrator()));
+  menu->addAction("Save as", this, SLOT(saveIntegratorAs()));
+  actionSaveIntegrator = menu->addAction("Save", this, SLOT(saveIntegrator()));
   actionSaveIntegrator->setDisabled(true);
-  menuBar()->addMenu(integratorMenu);
+  menuBar()->addMenu(menu);
 
-  QMenu *parameterMenu=new QMenu("Parameter list", menuBar());
-  parameterMenu->addAction("New", this, SLOT(newParameterList()));
-  parameterMenu->addAction("Load", this, SLOT(loadParameterList()));
-  parameterMenu->addAction("Save as", this, SLOT(saveParameterListAs()));
-  actionSaveParameterList = parameterMenu->addAction("Save", this, SLOT(saveParameterList()));
+  menu=new QMenu("Parameter list", menuBar());
+  menu->addAction("New", this, SLOT(newParameterList()));
+  menu->addAction("Load", this, SLOT(loadParameterList()));
+  menu->addAction("Save as", this, SLOT(saveParameterListAs()));
+  actionSaveParameterList = menu->addAction("Save", this, SLOT(saveParameterList()));
   actionSaveParameterList->setDisabled(true);
-  menuBar()->addMenu(parameterMenu);
+  menuBar()->addMenu(menu);
+
+  menu=new QMenu("Export", menuBar());
+  actionSaveDataAs = menu->addAction("Export data", this, SLOT(saveDataAs()));
+  actionSaveMBSimH5DataAs = menu->addAction("Export MBSim data file", this, SLOT(saveMBSimH5DataAs()));
+  actionSaveOpenMBVDataAs = menu->addAction("Export OpenMBV data", this, SLOT(saveOpenMBVDataAs()));
+  actionSaveDataAs->setDisabled(true);
+  actionSaveMBSimH5DataAs->setDisabled(true);
+  actionSaveOpenMBVDataAs->setDisabled(true);
+  menuBar()->addMenu(menu);
 
   menuBar()->addSeparator();
   QMenu *helpMenu=new QMenu("Help", menuBar());
@@ -280,7 +289,7 @@ void MainWindow::closeEvent(QCloseEvent *event) {
       tr("MBS, parameter list or integrator may have been modified.\n"
         "Do you want to save your changes?"),
       QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-  if (ret == QMessageBox::Save) {
+  if(ret == QMessageBox::Save) {
     if(actionSaveMBS->isEnabled())
       saveMBS();
     else
@@ -295,7 +304,7 @@ void MainWindow::closeEvent(QCloseEvent *event) {
       saveParameterListAs();
     event->accept();
   } 
-  else if (ret == QMessageBox::Discard) 
+  else if(ret == QMessageBox::Discard) 
     event->accept();
   else if(ret == QMessageBox::Cancel) 
     event->ignore();
@@ -391,6 +400,9 @@ void MainWindow::newMBS(bool ask) {
     mbsDir = QDir::current();
     actionOpenMBV->setDisabled(true);
     actionH5plotserie->setDisabled(true);
+    actionSaveDataAs->setDisabled(true);
+    actionSaveMBSimH5DataAs->setDisabled(true);
+    actionSaveOpenMBVDataAs->setDisabled(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = model->index(0,0);
     model->removeRow(index.row(), index.parent());
@@ -416,6 +428,9 @@ void MainWindow::loadMBS(const QString &file) {
   actionOpenMBV->setDisabled(true);
   actionH5plotserie->setDisabled(true);
   actionSaveMBS->setDisabled(true);
+  actionSaveDataAs->setDisabled(true);
+  actionSaveMBSimH5DataAs->setDisabled(true);
+  actionSaveOpenMBVDataAs->setDisabled(true);
   if(file!="") {
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = model->index(0,0);
@@ -619,7 +634,7 @@ void MainWindow::saveParameterListAs() {
   }
 }
 
-void MainWindow::saveParameterList(QString fileName) {
+void MainWindow::saveParameterList(const QString &fileName) {
   ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
   QModelIndex index = model->index(0,0);
 
@@ -650,6 +665,62 @@ void MainWindow::updateOctaveParameters() {
   catch(string e) {
     cout << "An exception occurred in updateOctaveParameters: " << e << endl;
   }
+}
+
+void MainWindow::saveDataAs() {
+  QString dir = QFileDialog::getExistingDirectory (0, "Export simulation data", ".");
+  if(dir != "") {
+    QDir directory(dir);
+    QMessageBox::StandardButton ret = QMessageBox::Ok;
+    if(directory.count()>2)
+      ret = QMessageBox::warning(this, tr("Application"), tr("Directory not empty. Overwrite existing files?"), QMessageBox::Ok | QMessageBox::Cancel);
+    if(ret == QMessageBox::Ok) {
+      saveMBSimH5Data(dir+"/MBS.mbsim.h5");
+      saveOpenMBVXMLData(dir+"/MBS.ombv.xml");
+      saveOpenMBVH5Data(dir+"/MBS.ombv.h5");
+    }
+  }
+}
+
+void MainWindow::saveMBSimH5DataAs() {
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+  QModelIndex index = model->index(0,0);
+  QString file=QFileDialog::getSaveFileName(0, "Export MBSim H5 file", QString("./")+QString::fromStdString(model->getItem(index)->getItemData()->getName())+".mbsim.h5", "H5 files (*.mbsim.h5)");
+  if(file!="") {
+    saveMBSimH5Data(file);
+  }
+}
+
+void MainWindow::saveMBSimH5Data(const QString &file) {
+  if(QFile::exists(file))
+    QFile::remove(file);
+  QFile::copy(uniqueTempDir+"/out0.mbsim.h5",file);
+}
+
+void MainWindow::saveOpenMBVDataAs() {
+  QString dir = QFileDialog::getExistingDirectory (0, "Export OpenMBV data", ".");
+  if(dir != "") {
+    QDir directory(dir);
+    QMessageBox::StandardButton ret = QMessageBox::Ok;
+    if(directory.count()>2)
+      ret = QMessageBox::warning(this, tr("Application"), tr("Directory not empty. Overwrite existing files?"), QMessageBox::Ok | QMessageBox::Cancel);
+    if(ret == QMessageBox::Ok) {
+      saveOpenMBVXMLData(dir+"/MBS.ombv.xml");
+      saveOpenMBVH5Data(dir+"/MBS.ombv.h5");
+    }
+  }
+}
+
+void MainWindow::saveOpenMBVXMLData(const QString &file) {
+  if(QFile::exists(file))
+    QFile::remove(file);
+  QFile::copy(uniqueTempDir+"/out0.ombv.xml",file);
+}
+
+void MainWindow::saveOpenMBVH5Data(const QString &file) {
+  if(QFile::exists(file))
+    QFile::remove(file);
+  QFile::copy(uniqueTempDir+"/out0.ombv.h5",file);
 }
 
 void MainWindow::mbsimxml(int task) {
@@ -690,6 +761,9 @@ void MainWindow::simulate() {
   mbsimxml(0);
   actionOpenMBV->setDisabled(false);
   actionH5plotserie->setDisabled(false);
+  actionSaveDataAs->setDisabled(false);
+  actionSaveMBSimH5DataAs->setDisabled(false);
+  actionSaveOpenMBVDataAs->setDisabled(false);
 }
 
 void MainWindow::openmbv() {
