@@ -98,7 +98,9 @@ class ParameterListModel : public TreeModel {
     ParameterListModel(QObject *parent = 0);
 
     void removeParameter(const QModelIndex &parent = QModelIndex());
-    void addParameter(const QModelIndex &parent = QModelIndex());
+    void addScalarParameter(const QModelIndex &parent = QModelIndex());
+    void addVectorParameter(const QModelIndex &parent = QModelIndex());
+    void addMatrixParameter(const QModelIndex &parent = QModelIndex());
     void createParameterItem(Parameter *parameter, const QModelIndex &parent = QModelIndex());
 };
 

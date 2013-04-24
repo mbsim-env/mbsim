@@ -101,7 +101,9 @@ class MainWindow : public QMainWindow {
     void saveOpenMBVXMLData(const QString &file);
     void saveOpenMBVH5Data(const QString &file);
     void removeParameter();
-    void addParameter();
+    void addScalarParameter();
+    void addVectorParameter();
+    void addMatrixParameter();
     void simulate();
     void openmbv();
     void h5plotserie();
@@ -130,6 +132,7 @@ class MainWindow : public QMainWindow {
     void changeWorkingDir();
     void selectionChanged();
     void openPropertyDialog();
+    void simulationFinished(int exitCode);
   protected:
     void closeEvent ( QCloseEvent * event );
 };

@@ -26,31 +26,17 @@ using namespace std;
 
 Parameter::Parameter(const string &name_) {
   name.setProperty(new TextProperty(name_,""));
-
-  vector<PhysicalStringProperty*> input;
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"",""));
-  //input.push_back(new PhysicalStringProperty(new VecProperty(3),"",""));
-  input.push_back(new PhysicalStringProperty(new MatProperty(3,3),"",""));
-  value.setProperty(new ExtPhysicalVarProperty(input));
 }
 
 Parameter::~Parameter() {
 }
 
-string Parameter::getValue() const { 
-  return static_cast<const ExtPhysicalVarProperty*>(value.getProperty())->getValue();
-}
-
 void Parameter::initializeUsingXML(TiXmlElement *element) {
-  ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
-  val->initializeUsingXML(element);
 }
 
 TiXmlElement* Parameter::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0=new TiXmlElement(PARAMNS+getType());
   ele0->SetAttribute("name", getName());
-  ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
-  val->writeXMLFile(ele0);
   parent->LinkEndChild(ele0);
   return ele0;
 }
@@ -78,3 +64,82 @@ void Parameter::writeXMLFile(const string &name) {
   unIncorporateNamespace(doc.FirstChildElement(), Utils::getMBSimNamespacePrefixMapping());  
   doc.SaveFile((name.length()>15 && name.substr(name.length()-15,15)==".mbsimparam.xml")?name:name+".mbsimparam.xml");
 }
+
+ScalarParameter::ScalarParameter(const string &name) : Parameter(name) {
+
+  vector<PhysicalStringProperty*> input;
+  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"",""));
+  value.setProperty(new ExtPhysicalVarProperty(input));
+}
+
+ScalarParameter::~ScalarParameter() {
+}
+
+void ScalarParameter::initializeUsingXML(TiXmlElement *element) {
+  ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
+  val->initializeUsingXML(element);
+}
+
+TiXmlElement* ScalarParameter::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = Parameter::writeXMLFile(parent);
+  ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
+  val->writeXMLFile(ele0);
+  return ele0;
+}
+
+string ScalarParameter::getValue() const { 
+  return static_cast<const ExtPhysicalVarProperty*>(value.getProperty())->getValue();
+}
+
+VectorParameter::VectorParameter(const string &name) : Parameter(name) {
+
+  vector<PhysicalStringProperty*> input;
+  input.push_back(new PhysicalStringProperty(new VecProperty(3),"",""));
+  value.setProperty(new ExtPhysicalVarProperty(input));
+}
+
+VectorParameter::~VectorParameter() {
+}
+
+void VectorParameter::initializeUsingXML(TiXmlElement *element) {
+  ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
+  val->initializeUsingXML(element);
+}
+
+TiXmlElement* VectorParameter::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = Parameter::writeXMLFile(parent);
+  ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
+  val->writeXMLFile(ele0);
+  return ele0;
+}
+
+string VectorParameter::getValue() const { 
+  return static_cast<const ExtPhysicalVarProperty*>(value.getProperty())->getValue();
+}
+
+MatrixParameter::MatrixParameter(const string &name) : Parameter(name) {
+
+  vector<PhysicalStringProperty*> input;
+  input.push_back(new PhysicalStringProperty(new MatProperty(3,3),"",""));
+  value.setProperty(new ExtPhysicalVarProperty(input));
+}
+
+MatrixParameter::~MatrixParameter() {
+}
+
+void MatrixParameter::initializeUsingXML(TiXmlElement *element) {
+  ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
+  val->initializeUsingXML(element);
+}
+
+TiXmlElement* MatrixParameter::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = Parameter::writeXMLFile(parent);
+  ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
+  val->writeXMLFile(ele0);
+  return ele0;
+}
+
+string MatrixParameter::getValue() const { 
+  return static_cast<const ExtPhysicalVarProperty*>(value.getProperty())->getValue();
+}
+

@@ -38,19 +38,61 @@ class Parameter : public TreeItemData {
   public:
     Parameter(const std::string &name);
     virtual ~Parameter();
-    std::string getValue() const;
+    virtual std::string getValue() const = 0;
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     static Parameter* readXMLFile(const std::string &filename);
     virtual void writeXMLFile(const std::string &name);
     virtual void writeXMLFile() { writeXMLFile(getType()); }
-    virtual std::string getType() const { return "matrixParameter"; }
+    virtual std::string getType() const { return "Parameter"; }
     const std::string& getName() const {return static_cast<const TextProperty*>(name.getProperty())->getText();}
     void setName(const std::string &str) {static_cast<TextProperty*>(name.getProperty())->setText(str);}
     virtual ParameterPropertyDialog* createPropertyDialog() {return new ParameterPropertyDialog;}
     virtual ParameterContextMenu* createContextMenu() {return new ParameterContextMenu;}
   protected:
-    ExtProperty name, value;
+    ExtProperty name;
+};
+
+class ScalarParameter : public Parameter {
+  friend class ScalarParameterPropertyDialog;
+  public:
+    ScalarParameter(const std::string &name);
+    virtual ~ScalarParameter();
+    std::string getValue() const;
+    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual std::string getType() const { return "scalarParameter"; }
+    virtual ParameterPropertyDialog* createPropertyDialog() {return new ScalarParameterPropertyDialog;}
+  protected:
+    ExtProperty value;
+};
+
+class VectorParameter : public Parameter {
+  friend class VectorParameterPropertyDialog;
+  public:
+    VectorParameter(const std::string &name);
+    virtual ~VectorParameter();
+    std::string getValue() const;
+    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual std::string getType() const { return "vectorParameter"; }
+    virtual ParameterPropertyDialog* createPropertyDialog() {return new VectorParameterPropertyDialog;}
+  protected:
+    ExtProperty value;
+};
+
+class MatrixParameter : public Parameter {
+  friend class MatrixParameterPropertyDialog;
+  public:
+    MatrixParameter(const std::string &name);
+    virtual ~MatrixParameter();
+    std::string getValue() const;
+    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual std::string getType() const { return "matrixParameter"; }
+    virtual ParameterPropertyDialog* createPropertyDialog() {return new MatrixParameterPropertyDialog;}
+  protected:
+    ExtProperty value;
 };
 
 #endif

@@ -86,8 +86,6 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   MBSimObjectFactory::initialize();
   octEval=new MBXMLUtils::OctaveEvaluator;
 
-  statusBar()->showMessage(tr("Ready"));
-
   QMenu *GUIMenu=new QMenu("GUI", menuBar());
   QAction *action = GUIMenu->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_DirHomeIcon)),"Workdir", this, SLOT(changeWorkingDir()));
   action->setStatusTip(tr("Change working directory"));
@@ -131,7 +129,7 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   menuBar()->addMenu(menu);
 
   menu=new QMenu("Export", menuBar());
-  actionSaveDataAs = menu->addAction("Export data", this, SLOT(saveDataAs()));
+  actionSaveDataAs = menu->addAction("Export all data", this, SLOT(saveDataAs()));
   actionSaveMBSimH5DataAs = menu->addAction("Export MBSim data file", this, SLOT(saveMBSimH5DataAs()));
   actionSaveOpenMBVDataAs = menu->addAction("Export OpenMBV data", this, SLOT(saveOpenMBVDataAs()));
   actionSaveDataAs->setDisabled(true);
@@ -147,6 +145,7 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
 
   QToolBar *toolBar = addToolBar("Tasks");
   actionSimulate = toolBar->addAction(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/simulate.svg"),"Simulate");
+  //actionSimulate->setStatusTip(tr("Simulate the multibody system"));
   actionSimulate->setStatusTip(tr("Simulate the multibody system"));
   connect(actionSimulate,SIGNAL(triggered()),this,SLOT(simulate()));
   toolBar->addAction(actionSimulate);
@@ -173,8 +172,14 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   parameterList->setColumnWidth(0,75);
   parameterList->setColumnWidth(1,125);
 
-  action = new QAction("Add parameter", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(addParameter()));
+  action = new QAction("Add scalar parameter", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addScalarParameter()));
+  parameterList->insertAction(0,action);
+  action = new QAction("Add vector parameter", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addVectorParameter()));
+  parameterList->insertAction(0,action);
+  action = new QAction("Add matrix parameter", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addMatrixParameter()));
   parameterList->insertAction(0,action);
   parameterList->setContextMenuPolicy(Qt::ActionsContextMenu);
 
@@ -202,9 +207,8 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   gl->addWidget(parameterList);
 
   QDockWidget *dockWidget2 = new QDockWidget("Integrator");
-  addDockWidget(Qt::BottomDockWidgetArea,dockWidget2);
+  addDockWidget(Qt::LeftDockWidgetArea,dockWidget2);
   box = new QWidget;
-  box->setMaximumWidth(150);
   dockWidget2->setWidget(box);
   gl = new QVBoxLayout;
   box->setLayout(gl);
@@ -233,11 +237,18 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   env.insert("MBXMLUTILS_XMLOUTPUT", "1");
   mbsim->getProcess()->setProcessEnvironment(env);
   mbsimDW->setWidget(mbsim); 
+  connect(mbsim->getProcess(),SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(simulationFinished(int)));
 
   setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
   
   selectDOPRI5Integrator();
   newMBS(false);
+}
+
+void MainWindow::simulationFinished(int exitCode) {
+  actionSimulate->setDisabled(false);
+  statusBar()->showMessage(tr("Ready"));
+  mbsim->setCurrentIndex(exitCode);
 }
 
 void MainWindow::openPropertyDialog() {
@@ -557,10 +568,22 @@ void MainWindow::removeParameter() {
   model->removeParameter(index);
 }
 
-void MainWindow::addParameter() {
+void MainWindow::addScalarParameter() {
   //tabBar->setCurrentIndex(2);
   ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
-  model->addParameter();
+  model->addScalarParameter();
+  updateOctaveParameters();
+}
+
+void MainWindow::addVectorParameter() {
+  ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
+  model->addVectorParameter();
+  updateOctaveParameters();
+}
+
+void MainWindow::addMatrixParameter() {
+  ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
+  model->addMatrixParameter();
   updateOctaveParameters();
 }
 
@@ -764,6 +787,8 @@ void MainWindow::simulate() {
   actionSaveDataAs->setDisabled(false);
   actionSaveMBSimH5DataAs->setDisabled(false);
   actionSaveOpenMBVDataAs->setDisabled(false);
+  actionSimulate->setDisabled(true);
+  statusBar()->showMessage(tr("Simulating"));
 }
 
 void MainWindow::openmbv() {
