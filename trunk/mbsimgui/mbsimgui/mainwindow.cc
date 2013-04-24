@@ -1135,6 +1135,19 @@ void MainWindow::addAbsoluteKinematicsObserver() {
   //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
 }
 
+void MainWindow::addAbsolutePositionSensor() {
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  model->addAbsolutePositionSensor(index);
+#ifdef INLINE_OPENMBV
+  mbsimxml(1);
+#endif
+  QModelIndex containerIndex = model->index(5, 0, index);
+  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
+  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+}
+
 void MainWindow::saveElementAs() {
   ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();

@@ -126,6 +126,7 @@ class MainWindow : public QMainWindow {
     void addJoint();
     void addContact();
     void addAbsoluteKinematicsObserver();
+    void addAbsolutePositionSensor();
     void saveElementAs();
   protected slots:
     void selectElement(std::string);

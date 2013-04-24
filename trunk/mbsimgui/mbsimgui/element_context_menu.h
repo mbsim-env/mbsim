@@ -44,6 +44,40 @@ class GroupContextMenu : public ElementContextMenu {
     void addObserver();
 };
 
+class ContourContextContextMenu : public QMenu {
+
+  public:
+    ContourContextContextMenu(QWidget * parent = 0);
+};
+
+class ObjectContextContextMenu : public QMenu {
+
+  public:
+    ObjectContextContextMenu(QWidget * parent = 0);
+};
+
+class LinkContextContextMenu : public QMenu {
+  Q_OBJECT
+
+  public:
+    LinkContextContextMenu(QWidget * parent = 0);
+
+  protected slots:
+    void addSensor();
+};
+
+class ObserverContextContextMenu : public QMenu {
+
+  public:
+    ObserverContextContextMenu(QWidget * parent = 0);
+};
+
+class SensorContextContextMenu : public QMenu {
+
+  public:
+    SensorContextContextMenu(QWidget * parent = 0);
+};
+
 class SolverContextMenu : public GroupContextMenu {
 
   public:

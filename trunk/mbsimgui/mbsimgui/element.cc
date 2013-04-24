@@ -73,7 +73,7 @@ void Element::initializeUsingXML(TiXmlElement *element) {
 }
 
 TiXmlElement* Element::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
+  TiXmlElement *ele0=new TiXmlElement(getNameSpace()+getType());
   //name->writeXMLFile(ele0);
   ele0->SetAttribute("name", getName());
 //  for(unsigned int i=0; i<plotFeature.size(); i++)

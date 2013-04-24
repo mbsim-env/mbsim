@@ -40,28 +40,28 @@ Sensor::Sensor(const string &str, Element *parent) : Signal(str, parent) {
 Sensor::~Sensor() {
 }
 
-AbsolutCoordinateSensor::AbsolutCoordinateSensor(const string &str, Element *parent) : Sensor(str, parent) {
+AbsoluteCoordinateSensor::AbsoluteCoordinateSensor(const string &str, Element *parent) : Sensor(str, parent) {
   frame.setProperty(new FrameOfReferenceProperty(0,this,MBSIMCONTROLNS"frame"));
   direction.setProperty(new GeneralizedForceDirectionProperty(MBSIMCONTROLNS"direction"));
 }
 
-void AbsolutCoordinateSensor::initialize() {
+void AbsoluteCoordinateSensor::initialize() {
   Sensor::initialize();
   frame.initialize();
 }
 
-void AbsolutCoordinateSensor::initializeUsingXML(TiXmlElement *element) {
+void AbsoluteCoordinateSensor::initializeUsingXML(TiXmlElement *element) {
   Sensor::initializeUsingXML(element);
   frame.initializeUsingXML(element);
   direction.initializeUsingXML(element);
 }
 
-TiXmlElement* AbsolutCoordinateSensor::writeXMLFile(TiXmlNode *parent) {
+TiXmlElement* AbsoluteCoordinateSensor::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Sensor::writeXMLFile(parent);
   frame.writeXMLFile(ele0);
   direction.writeXMLFile(ele0);
   return ele0;
 }
 
-AbsolutePositionSensor::AbsolutePositionSensor(const string &str, Element *parent) : AbsolutCoordinateSensor(str, parent) {
+AbsolutePositionSensor::AbsolutePositionSensor(const string &str, Element *parent) : AbsoluteCoordinateSensor(str, parent) {
 }

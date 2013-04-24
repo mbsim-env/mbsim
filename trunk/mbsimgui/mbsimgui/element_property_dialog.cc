@@ -39,6 +39,7 @@
 #include "observer.h"
 #include "parameter.h"
 #include "integrator.h"
+#include "signal_.h"
 #include <QPushButton>
 
 using namespace std;
@@ -762,3 +763,32 @@ void AbsoluteKinematicsObserverPropertyDialog::fromWidget(Element *element) {
   static_cast<AbsoluteKinematicsObserver*>(element)->acceleration.fromWidget(acceleration);
   static_cast<AbsoluteKinematicsObserver*>(element)->angularAcceleration.fromWidget(angularAcceleration);
 }
+
+SignalPropertyDialog::SignalPropertyDialog(Signal *signal, QWidget * parent, Qt::WindowFlags f) : LinkPropertyDialog(signal,parent,f) {
+}
+
+SensorPropertyDialog::SensorPropertyDialog(Sensor *sensor, QWidget * parent, Qt::WindowFlags f) : SignalPropertyDialog(sensor,parent,f) {
+}
+
+AbsoluteCoordinateSensorPropertyDialog::AbsoluteCoordinateSensorPropertyDialog(AbsoluteCoordinateSensor *sensor, QWidget * parent, Qt::WindowFlags f) : SensorPropertyDialog(sensor,parent,f) {
+  frame = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(sensor,0));
+  addToTab("General", frame);
+  direction = new ExtWidget("Direction",new GeneralizedForceDirectionWidget);
+  addToTab("General", direction);
+}
+
+void AbsoluteCoordinateSensorPropertyDialog::toWidget(Element *element) {
+  SensorPropertyDialog::toWidget(element);
+  static_cast<AbsoluteCoordinateSensor*>(element)->frame.toWidget(frame);
+  static_cast<AbsoluteCoordinateSensor*>(element)->direction.toWidget(direction);
+}
+
+void AbsoluteCoordinateSensorPropertyDialog::fromWidget(Element *element) {
+  SensorPropertyDialog::fromWidget(element);
+  static_cast<AbsoluteCoordinateSensor*>(element)->frame.fromWidget(frame);
+  static_cast<AbsoluteCoordinateSensor*>(element)->direction.fromWidget(direction);
+}
+
+AbsolutePositionSensorPropertyDialog::AbsolutePositionSensorPropertyDialog(AbsolutePositionSensor *sensor, QWidget * parent, Qt::WindowFlags f) : AbsoluteCoordinateSensorPropertyDialog(sensor,parent,f) {
+}
+

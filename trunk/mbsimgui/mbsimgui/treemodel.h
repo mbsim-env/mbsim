@@ -83,6 +83,7 @@ class ElementTreeModel : public TreeModel {
     void addJoint(const QModelIndex &parent = QModelIndex());
     void addContact(const QModelIndex &parent = QModelIndex());
     void addAbsoluteKinematicsObserver(const QModelIndex &parent = QModelIndex());
+    void addAbsolutePositionSensor(const QModelIndex &parent = QModelIndex());
     void createFrameItem(Frame *frame, const QModelIndex &parent = QModelIndex());
     void createContourItem(Contour *contour, const QModelIndex &parent = QModelIndex());
     void createGroupItem(Group *group, const QModelIndex &parent = QModelIndex());

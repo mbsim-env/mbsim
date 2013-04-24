@@ -26,6 +26,7 @@
 class Signal : public Link {
   public:
     Signal(const std::string &str, Element *parent);
+    virtual std::string getNameSpace() const { return MBSIMCONTROLNS; }
     ~Signal(); 
 };
 
@@ -35,10 +36,11 @@ class Sensor : public Signal {
     ~Sensor(); 
 };
 
-class AbsolutCoordinateSensor : public Sensor {
+class AbsoluteCoordinateSensor : public Sensor {
+  friend class AbsoluteCoordinateSensorPropertyDialog;
   public:
-    AbsolutCoordinateSensor(const std::string &str, Element *parent);
-    virtual std::string getType() const { return "AbsolutCoordinateSensor"; }
+    AbsoluteCoordinateSensor(const std::string &str, Element *parent);
+    virtual std::string getType() const { return "AbsoluteCoordinateSensor"; }
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void initialize();
@@ -46,10 +48,11 @@ class AbsolutCoordinateSensor : public Sensor {
     ExtProperty frame, direction;
 };
 
-class AbsolutePositionSensor : public AbsolutCoordinateSensor {
+class AbsolutePositionSensor : public AbsoluteCoordinateSensor {
   public:
     AbsolutePositionSensor(const std::string &str, Element *parent);
     virtual std::string getType() const { return "AbsolutePositionSensor"; }
+    ElementPropertyDialog* createPropertyDialog() {return new AbsolutePositionSensorPropertyDialog(this);}
 };
 
 

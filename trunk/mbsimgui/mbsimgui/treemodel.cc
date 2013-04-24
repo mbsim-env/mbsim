@@ -31,6 +31,7 @@
 #include "contact.h"
 #include "observer.h"
 #include "parameter.h"
+#include "signal_.h"
 #include <iostream>
 
 using namespace std;
@@ -247,6 +248,12 @@ void ElementTreeModel::addAbsoluteKinematicsObserver(const QModelIndex &parent) 
   AbsoluteKinematicsObserver *observer = new AbsoluteKinematicsObserver("AbsoluteKinematicsObserver"+toStr(IDcounter),static_cast<Element*>(getItem(parent)->getItemData()));
   static_cast<Element*>(getItem(parent)->getItemData())->addObserver(observer);
   createObserverItem(observer,parent.child(5,0));
+}
+
+void ElementTreeModel::addAbsolutePositionSensor(const QModelIndex &parent) {
+  AbsolutePositionSensor *observer = new AbsolutePositionSensor("AbsolutePositionSensor"+toStr(IDcounter),static_cast<Element*>(getItem(parent)->getItemData()));
+  static_cast<Element*>(getItem(parent)->getItemData())->addLink(observer);
+  createLinkItem(observer,parent.child(4,0));
 }
 
 void ElementTreeModel::removeElement(const QModelIndex &index) {

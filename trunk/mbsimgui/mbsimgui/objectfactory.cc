@@ -148,8 +148,8 @@ Link* MBSimObjectFactory::createLink(TiXmlElement *element, Element *parent) {
     return new Joint(element->Attribute("name"),parent);
   if(element->ValueStr()==MBSIMNS"Contact")
     return new Contact(element->Attribute("name"),parent);
-  //if(element->ValueStr()==MBSIMCONTROLNS"AbsolutePositionSensor")
-  //  return new AbsolutePositionSensor(element->Attribute("name"),parent);
+  if(element->ValueStr()==MBSIMCONTROLNS"AbsolutePositionSensor")
+    return new AbsolutePositionSensor(element->Attribute("name"),parent);
   //if(element->ValueStr()==MBSIMNS"ExternGeneralizedIO")
   //  return new ExternGeneralizedIO(element->Attribute("name"));
   return 0;

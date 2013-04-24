@@ -60,6 +60,7 @@ class Element : public TreeItemData {
     const std::string& getName() const {return static_cast<const TextProperty*>(name.getProperty())->getText();}
     void setName(const std::string &str) {static_cast<TextProperty*>(name.getProperty())->setText(str);}
     virtual std::string getType() const { return "Element"; }
+    virtual std::string getNameSpace() const { return MBSIMNS; }
     std::string getValue() const { return getType(); }
     //std::string newName(const std::string &type);
     virtual std::string getFileExtension() const { return ".xml"; }

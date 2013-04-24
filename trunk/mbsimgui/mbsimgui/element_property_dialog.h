@@ -44,6 +44,10 @@ class Joint;
 class Contact;
 class Observer;
 class AbsoluteKinematicsObserver;
+class Signal;
+class Sensor;
+class AbsoluteCoordinateSensor;
+class AbsolutePositionSensor;
 class TextWidget;
 class VecWidget;
 class ExtWidget;
@@ -273,6 +277,34 @@ class AbsoluteKinematicsObserverPropertyDialog : public ObserverPropertyDialog {
     void fromWidget(Element *element);
   protected:
     ExtWidget *frame, *position, *velocity, *angularVelocity, *acceleration, *angularAcceleration;
+};
+
+class SignalPropertyDialog: public LinkPropertyDialog {
+
+  public:
+    SignalPropertyDialog(Signal *signal, QWidget * parent = 0, Qt::WindowFlags f = 0); 
+};
+
+class SensorPropertyDialog : public SignalPropertyDialog {
+
+  public:
+    SensorPropertyDialog(Sensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0); 
+};
+
+class AbsoluteCoordinateSensorPropertyDialog : public SensorPropertyDialog {
+
+  public:
+    AbsoluteCoordinateSensorPropertyDialog(AbsoluteCoordinateSensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+    ExtWidget *frame, *direction;
+};
+
+class AbsolutePositionSensorPropertyDialog : public AbsoluteCoordinateSensorPropertyDialog {
+
+  public:
+    AbsolutePositionSensorPropertyDialog(AbsolutePositionSensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
 };
 
 #endif
