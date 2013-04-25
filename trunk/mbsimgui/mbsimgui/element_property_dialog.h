@@ -61,7 +61,7 @@ class ElementPropertyDialog : public PropertyDialog {
     Element* getElement() {return element;}
   protected:
     Element *element;
-    ExtWidget *name, *href, *count, *counterName, *parameterList;
+    ExtWidget *name, *embed;
 };
 
 class FramePropertyDialog : public ElementPropertyDialog {

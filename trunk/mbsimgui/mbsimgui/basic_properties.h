@@ -275,5 +275,24 @@ class GearDependenciesProperty : public Property {
     void updateGeneralizedCoordinatesOfBodies();
 };
 
+class EmbedProperty : public Property {
+
+  public:
+    EmbedProperty(Element *element);
+    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
+    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+    std::string getFile() const {return static_cast<const FileProperty*>(href.getProperty())->getAbsoluteFilePath();}
+    bool hasCounter() const {return counterName.isActive();}
+    std::string getCounterName() const {return static_cast<const TextProperty*>(counterName.getProperty())->getText();}
+    bool hasParameterFile() const {return (parameterList.isActive() && static_cast<const FileProperty*>(parameterList.getProperty())->getAbsoluteFilePath()!="");}
+    std::string getParameterFile() const {return static_cast<const FileProperty*>(parameterList.getProperty())->getAbsoluteFilePath();}
+
+  protected:
+    ExtProperty href, count, counterName, parameterList;
+
+};
+
 #endif
 

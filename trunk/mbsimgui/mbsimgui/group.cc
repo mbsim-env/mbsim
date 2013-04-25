@@ -433,7 +433,7 @@ TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
 
   ele1 = new TiXmlElement( MBSIMNS"frames" );
   for(int i=1; i<frame.size(); i++)
-    if(frame[i]->embed())
+    if(frame[i]->isEmbedded())
       frame[i]->writeXMLFileEmbed(ele1);
     else
       frame[i]->writeXMLFile(ele1);
@@ -441,7 +441,7 @@ TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
 
   ele1 = new TiXmlElement( MBSIMNS"contours" );
   for(int i=0; i<contour.size(); i++)
-    if(contour[i]->embed())
+    if(contour[i]->isEmbedded())
       contour[i]->writeXMLFileEmbed(ele1);
     else
       contour[i]->writeXMLFile(ele1);
@@ -449,7 +449,7 @@ TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
 
   ele1 = new TiXmlElement( MBSIMNS"groups" );
   for(int i=0; i<group.size(); i++)
-    if(group[i]->embed())
+    if(group[i]->isEmbedded())
       group[i]->writeXMLFileEmbed(ele1);
     else
       group[i]->writeXMLFile(ele1);
@@ -457,7 +457,7 @@ TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
 
   ele1 = new TiXmlElement( MBSIMNS"objects" );
   for(int i=0; i<object.size(); i++)
-    if(object[i]->embed())
+    if(object[i]->isEmbedded())
       object[i]->writeXMLFileEmbed(ele1);
     else
       object[i]->writeXMLFile(ele1);
@@ -468,7 +468,7 @@ TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
 
   ele1 = new TiXmlElement( MBSIMNS"links" );
   for(int i=0; i<link.size(); i++)
-    if(link[i]->embed())
+    if(link[i]->isEmbedded())
       link[i]->writeXMLFileEmbed(ele1);
     else
       link[i]->writeXMLFile(ele1);
@@ -476,7 +476,7 @@ TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
 
   ele1 = new TiXmlElement( MBSIMNS"observers" );
   for(int i=0; i<observer.size(); i++)
-    if(observer[i]->embed())
+    if(observer[i]->isEmbedded())
       observer[i]->writeXMLFileEmbed(ele1);
     else
       observer[i]->writeXMLFile(ele1);

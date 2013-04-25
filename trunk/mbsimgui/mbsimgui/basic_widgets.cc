@@ -215,7 +215,7 @@ void RigidBodyOfReferenceWidget::setBody(RigidBody* body_) {
   emit bodyChanged();
 }
 
-FileWidget::FileWidget(const QString &description_, const QString &extensions_) : description(description_), extensions(extensions_) {
+FileWidget::FileWidget(const QString &description_, const QString &extensions_, int mode_) : description(description_), extensions(extensions_), mode(mode_) {
   QHBoxLayout *layout = new QHBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -230,7 +230,11 @@ FileWidget::FileWidget(const QString &description_, const QString &extensions_) 
 }
 
 void FileWidget::selectFile() {
-  QString file = QFileDialog::getOpenFileName(0, description, absoluteFilePath, extensions);
+  QString file;
+  if(mode==0) 
+    file = QFileDialog::getOpenFileName(0, description, absoluteFilePath, extensions);
+  else
+    file = QFileDialog::getSaveFileName(0, description, absoluteFilePath, extensions);
   if(file!="") {
     absoluteFilePath = file;
     fileName->setText(QString("\"")+mbsDir.relativeFilePath(absoluteFilePath)+"\"");
@@ -556,3 +560,16 @@ void GearDependenciesWidget::removeDependency() {
   updateList();
 }
 
+EmbedWidget::EmbedWidget() {
+  QVBoxLayout *layout = new QVBoxLayout;
+  setLayout(layout);
+  layout->setMargin(0);
+  href = new ExtWidget("File", new FileWidget("XML model files", "xml files (*.xml)", 1));
+  layout->addWidget(href);
+  count = new ExtWidget("Count", new TextWidget, true);
+  layout->addWidget(count);
+  counterName = new ExtWidget("Counter name", new TextWidget, true);
+  layout->addWidget(counterName);
+  parameterList = new ExtWidget("Parameter file", new FileWidget("XML parameter files", "xml files (*.mbsimparam.xml)"), true);
+  layout->addWidget(parameterList);
+}

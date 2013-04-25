@@ -154,7 +154,7 @@ class FileWidget : public Widget {
   Q_OBJECT
 
   public:
-    FileWidget(const QString &description, const QString &extensions);
+    FileWidget(const QString &description, const QString &extensions, int mode=0);
     QString getFileName() const {return fileName->text();}
     void setFileName(const QString &str) {fileName->setText(str);}
     QString getAbsoluteFilePath() const {return absoluteFilePath;}
@@ -163,6 +163,7 @@ class FileWidget : public Widget {
   protected:
     QLineEdit *fileName;
     QString absoluteFilePath, description, extensions;
+    bool mode;
 
   protected slots:
     void selectFile();
@@ -322,6 +323,18 @@ class GearDependenciesWidget : public Widget {
 
   signals:
     void bodyChanged();
+};
+
+class EmbedWidget : public Widget {
+
+  friend class EmbedProperty;
+
+  public:
+    EmbedWidget();
+
+  protected:
+    ExtWidget *href, *count, *counterName, *parameterList;
+
 };
 
 #endif

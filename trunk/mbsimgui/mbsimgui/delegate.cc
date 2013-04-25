@@ -43,7 +43,7 @@ extern MainWindow *mw;
 
 void ElementDelegate::commitDataAndcloseEditor(QWidget *editor) {
   Element *element = static_cast<ElementPropertyDialog*>(editor)->getElement();
-  if(element->embed())
+  if(element->isEmbedded())
     mw->updateOctaveParameters(ParameterList());
   commitData(editor);
   closeEditor(editor);
@@ -52,7 +52,7 @@ void ElementDelegate::commitDataAndcloseEditor(QWidget *editor) {
 void ElementDelegate::applyData(QWidget *editor) {
   commitData(editor);
   Element *element = static_cast<ElementPropertyDialog*>(editor)->getElement();
-  if(element->embed())
+  if(element->isEmbedded())
     mw->updateOctaveParameters(element->getParameterList());
 }
 
@@ -66,7 +66,7 @@ QWidget *ElementDelegate::createEditor(QWidget *parent, const QStyleOptionViewIt
     return 0;
   Element *element = static_cast<Element*>(model->getItem(index)->getItemData());
   ElementPropertyDialog *editor = element->createPropertyDialog();
-  if(element->embed())
+  if(element->isEmbedded())
     mw->updateOctaveParameters(element->getParameterList());
   editor->setModal(true);
   connect(editor,SIGNAL(apply(QWidget*)),this,SLOT(applyData(QWidget*)));

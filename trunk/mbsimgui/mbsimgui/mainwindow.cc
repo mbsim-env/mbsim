@@ -172,6 +172,8 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   parameterList->setColumnWidth(0,75);
   parameterList->setColumnWidth(1,125);
 
+  integratorView = new IntegratorView;
+
   action = new QAction("Add scalar parameter", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addScalarParameter()));
   parameterList->insertAction(0,action);
@@ -186,36 +188,23 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   connect(elementList,SIGNAL(pressed(QModelIndex)), this, SLOT(elementListClicked()));
   connect(parameterList,SIGNAL(pressed(QModelIndex)), this, SLOT(parameterListClicked()));
 
-  QDockWidget *dockWidget1 = new QDockWidget("MBS");
+  QDockWidget *dockWidget1 = new QDockWidget("Multibody system");
   addDockWidget(Qt::LeftDockWidgetArea,dockWidget1);
-  QWidget *box = new QWidget;
-  dockWidget1->setWidget(box);
   fileMBS = new QLineEdit("");
   fileMBS->setReadOnly(true);
-  QVBoxLayout *gl = new QVBoxLayout;
-  box->setLayout(gl);
-  gl->addWidget(elementList);
+  dockWidget1->setWidget(elementList);
 
   QDockWidget *dockWidget3 = new QDockWidget("Parameter list");
   addDockWidget(Qt::LeftDockWidgetArea,dockWidget3);
-  box = new QWidget;
-  dockWidget3->setWidget(box);
-  gl = new QVBoxLayout;
-  box->setLayout(gl);
   fileParameter = new QLineEdit("");
   fileParameter->setReadOnly(true);
-  gl->addWidget(parameterList);
+  dockWidget3->setWidget(parameterList);
 
   QDockWidget *dockWidget2 = new QDockWidget("Integrator");
   addDockWidget(Qt::LeftDockWidgetArea,dockWidget2);
-  box = new QWidget;
-  dockWidget2->setWidget(box);
-  gl = new QVBoxLayout;
-  box->setLayout(gl);
   fileIntegrator = new QLineEdit("");
   fileIntegrator->setReadOnly(true);
-  integratorView = new IntegratorView;
-  gl->addWidget(integratorView);
+  dockWidget2->setWidget(integratorView);
  
   //tabifyDockWidget(dockWidget1,dockWidget2);
   //tabifyDockWidget(dockWidget2,dockWidget3);

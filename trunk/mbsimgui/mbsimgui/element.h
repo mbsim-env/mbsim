@@ -45,7 +45,7 @@ class Element : public TreeItemData {
     Element *parent;
     static int IDcounter;
     std::string ID;
-    ExtProperty name, href, count, counterName, parameterList;
+    ExtProperty name, embed;
   public:
     Element(const std::string &name, Element *parent);
     virtual ~Element();
@@ -98,7 +98,7 @@ class Element : public TreeItemData {
     virtual ElementPropertyDialog* createPropertyDialog() {return new ElementPropertyDialog(this);}
     virtual ElementContextMenu* createContextMenu() {return new ElementContextMenu;}
     Element* getRoot() {return parent?parent->getRoot():this;}
-    bool embed() const {return href.isActive();}
+    bool isEmbedded() const {return embed.isActive();}
     ParameterList getParameterList(bool addCounter=true) const;
 };
 

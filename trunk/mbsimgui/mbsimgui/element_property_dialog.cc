@@ -44,43 +44,28 @@
 
 using namespace std;
 
-ElementPropertyDialog::ElementPropertyDialog(Element *element_, QWidget *parent, Qt::WindowFlags f, bool embedding) : PropertyDialog(parent,f), element(element_), href(0), count(0), counterName(0), parameterList(0) {
+ElementPropertyDialog::ElementPropertyDialog(Element *element_, QWidget *parent, Qt::WindowFlags f, bool embedding) : PropertyDialog(parent,f), element(element_), embed(0) {
   addTab("General");
   name = new ExtWidget("Name",new TextWidget);
   name->setToolTip("Set the name of the element");
   addToTab("General", name);
   if(embedding) {
     addTab("Embedding");
-    href = new ExtWidget("Embed", new FileWidget("XML model files", "xml files (*.xml)"), true);
-    addToTab("Embedding", href);
-    count = new ExtWidget("Count", new TextWidget, true);
-    addToTab("Embedding",count);
-    counterName = new ExtWidget("Counter name", new TextWidget, true);
-    addToTab("Embedding",counterName);
-    parameterList = new ExtWidget("Parameter file", new FileWidget("XML parameter files", "xml files (*.mbsimparam.xml)"), true);
-    //connect(static_cast<FileWidget*>(parameterList->getWidget()),SIGNAL(fileChanged(const QString&)),this,SLOT());
-    addToTab("Embedding",parameterList);
+    embed = new ExtWidget("Embed", new EmbedWidget, true);
+    addToTab("Embedding",embed);
   }
 }
 
 void ElementPropertyDialog::toWidget(Element *element) {
   element->name.toWidget(name);
-  if(href) {
-    element->href.toWidget(href);
-    element->count.toWidget(count);
-    element->counterName.toWidget(counterName);
-    element->parameterList.toWidget(parameterList);
-  }
+  if(embed)
+    element->embed.toWidget(embed);
 }
 
 void ElementPropertyDialog::fromWidget(Element *element) {
   element->name.fromWidget(name);
-  if(href) {
-    element->href.fromWidget(href);
-    element->count.fromWidget(count);
-    element->counterName.fromWidget(counterName);
-    element->parameterList.fromWidget(parameterList);
-  }
+  if(embed)
+    element->embed.fromWidget(embed);
 }
 
 FramePropertyDialog::FramePropertyDialog(Frame *frame, QWidget *parent, Qt::WindowFlags f, bool embedding) : ElementPropertyDialog(frame,parent,f,embedding) {

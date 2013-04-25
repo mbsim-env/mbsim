@@ -613,3 +613,63 @@ void GearDependenciesProperty::toWidget(QWidget *widget) {
   static_cast<GearDependenciesWidget*>(widget)->updateWidget();
 }
 
+EmbedProperty::EmbedProperty(Element *element) : count(0,false), counterName(0,false), parameterList(0,false) {
+  href.setProperty(new FileProperty(""));
+  static_cast<FileProperty*>(href.getProperty())->setFileName(element->getName()+".xml");
+  static_cast<FileProperty*>(href.getProperty())->setAbsoluteFilePath(element->getName()+".xml");
+  count.setProperty(new TextProperty("1",""));
+  counterName.setProperty(new TextProperty("n",""));
+  parameterList.setProperty(new FileProperty(""));
+}
+
+TiXmlElement* EmbedProperty::initializeUsingXML(TiXmlElement *parent) {
+  string file = parent->Attribute("href");
+  static_cast<FileProperty*>(href.getProperty())->setFileName(file);
+  static_cast<FileProperty*>(href.getProperty())->setAbsoluteFilePath(file);
+  if(parent->Attribute("count")) {
+    count.setActive(true);
+    static_cast<TextProperty*>(count.getProperty())->setText(parent->Attribute("count"));
+  }
+  if(parent->Attribute("counterName")) {
+    counterName.setActive(true);
+    static_cast<TextProperty*>(counterName.getProperty())->setText(parent->Attribute("counterName"));
+  }
+  TiXmlElement *ele = parent->FirstChildElement(PVNS+string("localParameter"));
+  if(ele) {
+    parameterList.setActive(true);
+    string file = ele->Attribute("href");
+    static_cast<FileProperty*>(parameterList.getProperty())->setFileName(file);
+    static_cast<FileProperty*>(parameterList.getProperty())->setAbsoluteFilePath(file);
+  }
+}
+
+TiXmlElement* EmbedProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0=new TiXmlElement(PVNS+string("embed"));
+  ele0->SetAttribute("href", static_cast<FileProperty*>(href.getProperty())->getAbsoluteFilePath());
+  if(count.isActive())
+    ele0->SetAttribute("count", static_cast<TextProperty*>(count.getProperty())->getText());
+  if(counterName.isActive())
+    ele0->SetAttribute("counterName", static_cast<TextProperty*>(counterName.getProperty())->getText());
+  if(parameterList.isActive()) {
+    TiXmlElement *ele1=new TiXmlElement(PVNS+string("localParameter"));
+    ele1->SetAttribute("href", static_cast<FileProperty*>(parameterList.getProperty())->getAbsoluteFilePath());
+    ele0->LinkEndChild(ele1);
+  }
+  parent->LinkEndChild(ele0);
+  return ele0;
+}
+
+void EmbedProperty::fromWidget(QWidget *widget) {
+  href.fromWidget(static_cast<EmbedWidget*>(widget)->href);
+  count.fromWidget(static_cast<EmbedWidget*>(widget)->count);
+  counterName.fromWidget(static_cast<EmbedWidget*>(widget)->counterName);
+  parameterList.fromWidget(static_cast<EmbedWidget*>(widget)->parameterList);
+}
+
+void EmbedProperty::toWidget(QWidget *widget) {
+  href.toWidget(static_cast<EmbedWidget*>(widget)->href);
+  count.toWidget(static_cast<EmbedWidget*>(widget)->count);
+  counterName.toWidget(static_cast<EmbedWidget*>(widget)->counterName);
+  parameterList.toWidget(static_cast<EmbedWidget*>(widget)->parameterList);
+}
+
