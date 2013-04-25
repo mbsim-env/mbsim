@@ -326,7 +326,7 @@ namespace MBSim {
 //      exit(EXIT_FAILURE);
 //    }
 //  }
-
+#ifdef HAVE_OPENMBVCPPINTERFACE
   void PolynomialFrustum::createInventorFile() {
 
     //TODO: Use IndexedTriangleSet instead of IndexedFaceSet (should be faster)
@@ -464,6 +464,7 @@ namespace MBSim {
     f = f - rhs;
     return f;
   }
+#endif
 
 //TODO: Do we need these functions?
 //  Polyfun_in_cppc::Polyfun_in_cppc(const Vec & para_, const Vec2 & P_){

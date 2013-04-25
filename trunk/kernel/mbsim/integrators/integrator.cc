@@ -62,6 +62,7 @@ namespace MBSim {
     TiXmlDocument doc;
     bool ret=doc.LoadFile(filename);
     assert(ret==true);
+    (void) ret;
     TiXml_PostLoadFile(&doc);
     TiXmlElement *e=doc.FirstChildElement();
     TiXml_setLineNrFromProcessingInstruction(e);
