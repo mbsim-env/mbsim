@@ -41,30 +41,6 @@ TiXmlElement* Parameter::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
-Parameter* Parameter::readXMLFile(const string &filename) {
-  MBSimObjectFactory::initialize();
-  TiXmlDocument doc;
-  bool ret=doc.LoadFile(filename);
-  assert(ret==true);
-  TiXml_PostLoadFile(&doc);
-  TiXmlElement *e=doc.FirstChildElement();
-  TiXml_setLineNrFromProcessingInstruction(e);
-  map<string,string> dummy;
-  incorporateNamespace(e, dummy);
-  Parameter *parameter=ObjectFactory::getInstance()->createParameter(e);
-  parameter->initializeUsingXML(doc.FirstChildElement());
-  return parameter;
-}
-
-void Parameter::writeXMLFile(const string &name) {
-  TiXmlDocument doc;
-  TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
-  doc.LinkEndChild( decl );
-  writeXMLFile(&doc);
-  unIncorporateNamespace(doc.FirstChildElement(), Utils::getMBSimNamespacePrefixMapping());  
-  doc.SaveFile((name.length()>15 && name.substr(name.length()-15,15)==".mbsimparam.xml")?name:name+".mbsimparam.xml");
-}
-
 ScalarParameter::ScalarParameter(const string &name) : Parameter(name) {
 
   vector<PhysicalStringProperty*> input;
@@ -143,3 +119,29 @@ string MatrixParameter::getValue() const {
   return static_cast<const ExtPhysicalVarProperty*>(value.getProperty())->getValue();
 }
 
+void ParameterList::addParameterList(const ParameterList &list) {
+  for(int i=0; i<list.getSize(); i++)
+    addParameter(list.getParameterName(i),list.getParameterValue(i));
+}
+
+void ParameterList::readXMLFile(const string &filename) {
+  MBSimObjectFactory::initialize();
+  TiXmlDocument doc;
+  bool ret=doc.LoadFile(filename);
+  assert(ret==true);
+  TiXml_PostLoadFile(&doc);
+  TiXml_PostLoadFile(&doc);
+  TiXmlElement *e=doc.FirstChildElement();
+  TiXml_setLineNrFromProcessingInstruction(e);
+  map<string,string> dummy;
+  incorporateNamespace(doc.FirstChildElement(), dummy);
+  TiXmlElement *E=e->FirstChildElement();
+  vector<QString> refFrame;
+  while(E) {
+    Parameter *parameter=ObjectFactory::getInstance()->createParameter(E);
+    parameter->initializeUsingXML(E);
+    addParameter(parameter->getName(),parameter->getValue());
+    delete parameter;
+    E=E->NextSiblingElement();
+  }
+}

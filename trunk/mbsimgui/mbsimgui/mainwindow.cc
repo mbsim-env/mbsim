@@ -566,6 +566,7 @@ void MainWindow::removeParameter() {
   ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
   QModelIndex index = parameterList->selectionModel()->currentIndex();
   model->removeParameter(index);
+  updateOctaveParameters();
 }
 
 void MainWindow::addScalarParameter() {
@@ -596,6 +597,7 @@ void MainWindow::newParameterList() {
       ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
       QModelIndex index = model->index(0,0);
       model->removeRows(index.row(), model->rowCount(QModelIndex()), index.parent());
+      updateOctaveParameters();
     }
   }
 }
@@ -627,7 +629,6 @@ void MainWindow::loadParameterList(const QString &file) {
       Parameter *parameter=ObjectFactory::getInstance()->createParameter(E);
       parameter->initializeUsingXML(E);
       model->createParameterItem(parameter);
-      //connect(parameter,SIGNAL(parameterChanged(const QString&)),this,SLOT(updateOctaveParameters()));
       E=E->NextSiblingElement();
     }
     updateOctaveParameters();
@@ -673,7 +674,7 @@ void MainWindow::saveParameterList(const QString &fileName) {
   doc.SaveFile(fileName.isEmpty()?file.toAscii().data():fileName.toStdString());
 }
 
-void MainWindow::updateOctaveParameters() {
+void MainWindow::updateOctaveParameters(const ParameterList &paramList) {
   vector<MBXMLUtils::OctaveEvaluator::Param> param;
   ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
   QModelIndex index = model->index(0,0);
@@ -681,6 +682,8 @@ void MainWindow::updateOctaveParameters() {
     Parameter *p=static_cast<Parameter*>(model->getItem(index.sibling(i,0))->getItemData());
     param.push_back(MBXMLUtils::OctaveEvaluator::Param(p->getName(), toStr(p->getValue()), 0));
   }
+  for(int i=0; i<paramList.getSize(); i++)
+    param.push_back(MBXMLUtils::OctaveEvaluator::Param(paramList.getParameterName(i), paramList.getParameterValue(i), 0));
   try {
     octEval->saveAndClearCurrentParam();
     octEval->fillParam(param, false);

@@ -41,9 +41,6 @@ class Parameter : public TreeItemData {
     virtual std::string getValue() const = 0;
     virtual void initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    static Parameter* readXMLFile(const std::string &filename);
-    virtual void writeXMLFile(const std::string &name);
-    virtual void writeXMLFile() { writeXMLFile(getType()); }
     virtual std::string getType() const { return "Parameter"; }
     const std::string& getName() const {return static_cast<const TextProperty*>(name.getProperty())->getText();}
     void setName(const std::string &str) {static_cast<TextProperty*>(name.getProperty())->setText(str);}
@@ -93,6 +90,21 @@ class MatrixParameter : public Parameter {
     virtual ParameterPropertyDialog* createPropertyDialog() {return new MatrixParameterPropertyDialog;}
   protected:
     ExtProperty value;
+};
+
+class ParameterList {
+  public:
+    void readXMLFile(const std::string &filename);
+    //virtual void writeXMLFile(const std::string &name);
+    int getSize() const {return name.size();}
+    void addParameter(const std::string &name_, const std::string &value_) {name.push_back(name_); value.push_back(value_);}
+    void addParameterList(const ParameterList &list); 
+    const std::string& getParameterName(int i) const {return name[i];}
+    const std::string& getParameterValue(int i) const {return value[i];}
+    //void printList() const;
+    //void clear() {name.clear(); value.clear();}
+      private:
+    std::vector<std::string> name, value;
 };
 
 #endif

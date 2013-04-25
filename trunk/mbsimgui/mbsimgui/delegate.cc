@@ -42,8 +42,18 @@ extern MainWindow *mw;
 //}
 
 void ElementDelegate::commitDataAndcloseEditor(QWidget *editor) {
-  emit commitData(editor);
-  emit closeEditor(editor);
+  Element *element = static_cast<ElementPropertyDialog*>(editor)->getElement();
+  if(element->embed())
+    mw->updateOctaveParameters(ParameterList());
+  commitData(editor);
+  closeEditor(editor);
+}
+
+void ElementDelegate::applyData(QWidget *editor) {
+  commitData(editor);
+  Element *element = static_cast<ElementPropertyDialog*>(editor)->getElement();
+  if(element->embed())
+    mw->updateOctaveParameters(element->getParameterList());
 }
 
 void ElementDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const {
@@ -54,9 +64,12 @@ QWidget *ElementDelegate::createEditor(QWidget *parent, const QStyleOptionViewIt
   const ElementTreeModel *model = static_cast<const ElementTreeModel*>(index.model());
   if(!dynamic_cast<Element*>(model->getItem(index)->getItemData()))
     return 0;
-  ElementPropertyDialog *editor = static_cast<Element*>(model->getItem(index)->getItemData())->createPropertyDialog();
+  Element *element = static_cast<Element*>(model->getItem(index)->getItemData());
+  ElementPropertyDialog *editor = element->createPropertyDialog();
+  if(element->embed())
+    mw->updateOctaveParameters(element->getParameterList());
   editor->setModal(true);
-  connect(editor,SIGNAL(apply(QWidget*)),this,SIGNAL(commitData(QWidget*)));
+  connect(editor,SIGNAL(apply(QWidget*)),this,SLOT(applyData(QWidget*)));
   connect(editor,SIGNAL(cancel(QWidget*)),this,SIGNAL(closeEditor(QWidget*)));
   connect(editor,SIGNAL(ok(QWidget*)),this,SLOT(commitDataAndcloseEditor(QWidget*)));
   return editor;
@@ -71,7 +84,6 @@ void ElementDelegate::setEditorData(QWidget *editor, const QModelIndex &index) c
 void ElementDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
   ElementPropertyDialog *dialog = static_cast<ElementPropertyDialog*>(editor);
   dialog->fromWidget(static_cast<Element*>(static_cast<const ElementTreeModel*>(model)->getItem(index)->getItemData()));
-  static_cast<ElementTreeModel*>(model)->updateView(index);
   mw->mbsimxml(1);
 }
 
@@ -99,7 +111,7 @@ void ParameterDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
 void ParameterDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
   ParameterPropertyDialog *dialog = static_cast<ParameterPropertyDialog*>(editor);
   dialog->fromWidget(static_cast<Parameter*>(static_cast<const ParameterListModel*>(model)->getItem(index)->getItemData()));
-  static_cast<ParameterListModel*>(model)->updateView(index);
+  //static_cast<ParameterListModel*>(model)->updateView(index);
   mw->updateOctaveParameters();
   mw->mbsimxml(1);
 }

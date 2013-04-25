@@ -39,6 +39,7 @@ class ElementDelegate : public QItemDelegate {
 
   protected slots:
     void commitDataAndcloseEditor(QWidget *editor);
+    void applyData(QWidget *editor);
 };
 
 class ParameterDelegate : public QItemDelegate {

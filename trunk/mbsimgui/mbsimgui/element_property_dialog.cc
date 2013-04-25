@@ -44,7 +44,7 @@
 
 using namespace std;
 
-ElementPropertyDialog::ElementPropertyDialog(QWidget *parent, Qt::WindowFlags f, bool embedding) : PropertyDialog(parent,f), href(0), count(0), counterName(0), parameterList(0) {
+ElementPropertyDialog::ElementPropertyDialog(Element *element_, QWidget *parent, Qt::WindowFlags f, bool embedding) : PropertyDialog(parent,f), element(element_), href(0), count(0), counterName(0), parameterList(0) {
   addTab("General");
   name = new ExtWidget("Name",new TextWidget);
   name->setToolTip("Set the name of the element");
@@ -58,6 +58,7 @@ ElementPropertyDialog::ElementPropertyDialog(QWidget *parent, Qt::WindowFlags f,
     counterName = new ExtWidget("Counter name", new TextWidget, true);
     addToTab("Embedding",counterName);
     parameterList = new ExtWidget("Parameter file", new FileWidget("XML parameter files", "xml files (*.mbsimparam.xml)"), true);
+    //connect(static_cast<FileWidget*>(parameterList->getWidget()),SIGNAL(fileChanged(const QString&)),this,SLOT());
     addToTab("Embedding",parameterList);
   }
 }
@@ -82,7 +83,7 @@ void ElementPropertyDialog::fromWidget(Element *element) {
   }
 }
 
-FramePropertyDialog::FramePropertyDialog(Frame *frame, QWidget *parent, Qt::WindowFlags f, bool embedding) : ElementPropertyDialog(parent,f,embedding) {
+FramePropertyDialog::FramePropertyDialog(Frame *frame, QWidget *parent, Qt::WindowFlags f, bool embedding) : ElementPropertyDialog(frame,parent,f,embedding) {
   addTab("Visualisation",1);
   visu = new ExtWidget("OpenMBV frame",new OMBVFrameWidget("NOTSET"),true,true);
   visu->setToolTip("Set the visualisation parameters for the frame");
@@ -130,6 +131,9 @@ void FixedRelativeFramePropertyDialog::fromWidget(Element *element) {
   static_cast<FixedRelativeFrame*>(element)->refFrame.fromWidget(refFrame);
 }
 
+ContourPropertyDialog::ContourPropertyDialog(Contour *contour, QWidget * parent, Qt::WindowFlags f) : ElementPropertyDialog(contour,parent,f) {
+}
+
 PlanePropertyDialog::PlanePropertyDialog(Plane *plane, QWidget *parent, Qt::WindowFlags f) : ContourPropertyDialog(plane,parent,f) {
   addTab("Visualisation",1);
  
@@ -171,7 +175,7 @@ void SpherePropertyDialog::fromWidget(Element *element) {
   static_cast<Sphere*>(element)->visu.fromWidget(visu);
 }
 
-GroupPropertyDialog::GroupPropertyDialog(Group *group, QWidget *parent, Qt::WindowFlags f, bool kinematics) : ElementPropertyDialog(parent,f,kinematics), position(0), orientation(0), frameOfReference(0) {
+GroupPropertyDialog::GroupPropertyDialog(Group *group, QWidget *parent, Qt::WindowFlags f, bool kinematics) : ElementPropertyDialog(group,parent,f,kinematics), position(0), orientation(0), frameOfReference(0) {
   if(kinematics) {
     addTab("Kinematics",1);
 
@@ -241,7 +245,7 @@ void SolverPropertyDialog::fromWidget(Element *element) {
   static_cast<Solver*>(element)->inverseKinetics.fromWidget(inverseKinetics);
 }
 
-ObjectPropertyDialog::ObjectPropertyDialog(Object *object, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(parent,f) {
+ObjectPropertyDialog::ObjectPropertyDialog(Object *object, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(object,parent,f) {
   addTab("Initial conditions",1);
   vector<PhysicalStringWidget*> input;
   q0_ = new VecWidget(0);
@@ -528,7 +532,7 @@ void JointConstraintPropertyDialog::fromWidget(Element *element) {
   static_cast<JointConstraint*>(element)->moment.fromWidget(moment);
 }
 
-LinkPropertyDialog::LinkPropertyDialog(Link *link, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(parent,f) {
+LinkPropertyDialog::LinkPropertyDialog(Link *link, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(link,parent,f) {
 }
 
 void LinkPropertyDialog::toWidget(Element *element) {
@@ -719,6 +723,9 @@ void ContactPropertyDialog::fromWidget(Element *element) {
   static_cast<Contact*>(element)->enableOpenMBVContactPoints.fromWidget(enableOpenMBVContactPoints);
   static_cast<Contact*>(element)->normalForceArrow.fromWidget(normalForceArrow);
   static_cast<Contact*>(element)->frictionArrow.fromWidget(frictionArrow);
+}
+
+ObserverPropertyDialog::ObserverPropertyDialog(Observer *observer, QWidget * parent, Qt::WindowFlags f) : ElementPropertyDialog(observer,parent,f) {
 }
 
 AbsoluteKinematicsObserverPropertyDialog::AbsoluteKinematicsObserverPropertyDialog(AbsoluteKinematicsObserver *observer, QWidget *parent, Qt::WindowFlags f) : ObserverPropertyDialog(observer,parent,f) {

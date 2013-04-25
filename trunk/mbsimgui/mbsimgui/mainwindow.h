@@ -20,6 +20,7 @@
 #ifndef __MAINWINDOW_H_
 #define __MAINWINDOW_H_
 
+#include "parameter.h"
 #include <QMainWindow>
 #include <QTabWidget>
 #include <mbxmlutilstinyxml/tinyxml.h>
@@ -109,7 +110,7 @@ class MainWindow : public QMainWindow {
     void h5plotserie();
     void help();
     void about();
-    void updateOctaveParameters();
+    void updateOctaveParameters(const ParameterList &list=ParameterList());
     void removeElement();
     void addFrame();
     void addGroup();

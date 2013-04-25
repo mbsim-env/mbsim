@@ -196,3 +196,15 @@ string Element::getXMLPath(Element *ref, bool rel) {
     return str;
   }
 }
+
+ParameterList Element::getParameterList(bool addCounter) const {
+  ParameterList list;
+  if(embed()) {
+    list.readXMLFile(static_cast<const FileProperty*>(parameterList.getProperty())->getAbsoluteFilePath());
+  }
+  if(parent)
+    list.addParameterList(parent->getParameterList(false));
+  if(addCounter && counterName.isActive())
+    list.addParameter(static_cast<const TextProperty*>(counterName.getProperty())->getText(),"1"); 
+  return list;
+}

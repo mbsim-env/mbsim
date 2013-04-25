@@ -25,6 +25,7 @@
 #include "extended_properties.h"
 #include "element_property_dialog.h"
 #include "element_context_menu.h"
+#include "parameter.h"
 
 class Element;
 class Frame;
@@ -94,10 +95,11 @@ class Element : public TreeItemData {
     const std::string& getID() const { return ID; }
     virtual Element* getParent() {return parent;}
     virtual void setParent(Element* parent_) {parent = parent_;}
-    virtual ElementPropertyDialog* createPropertyDialog() {return new ElementPropertyDialog;}
+    virtual ElementPropertyDialog* createPropertyDialog() {return new ElementPropertyDialog(this);}
     virtual ElementContextMenu* createContextMenu() {return new ElementContextMenu;}
     Element* getRoot() {return parent?parent->getRoot():this;}
     bool embed() const {return href.isActive();}
+    ParameterList getParameterList(bool addCounter=true) const;
 };
 
 template<class T>

@@ -55,10 +55,12 @@ class ExtWidget;
 class ElementPropertyDialog : public PropertyDialog {
 
   public:
-    ElementPropertyDialog(QWidget * parent = 0, Qt::WindowFlags f = 0, bool embedding=true);
+    ElementPropertyDialog(Element *element, QWidget * parent = 0, Qt::WindowFlags f = 0, bool embedding=true);
     virtual void toWidget(Element *element);
     virtual void fromWidget(Element *element);
+    Element* getElement() {return element;}
   protected:
+    Element *element;
     ExtWidget *name, *href, *count, *counterName, *parameterList;
 };
 
@@ -85,7 +87,7 @@ class FixedRelativeFramePropertyDialog : public FramePropertyDialog {
 class ContourPropertyDialog : public ElementPropertyDialog {
 
   public:
-    ContourPropertyDialog(Contour *contour, QWidget * parent = 0, Qt::WindowFlags f = 0) : ElementPropertyDialog(parent,f) {}
+    ContourPropertyDialog(Contour *contour, QWidget * parent = 0, Qt::WindowFlags f = 0); 
 };
 
 class PlanePropertyDialog : public ContourPropertyDialog {
@@ -266,7 +268,7 @@ class ContactPropertyDialog : public LinkPropertyDialog {
 class ObserverPropertyDialog : public ElementPropertyDialog {
 
   public:
-    ObserverPropertyDialog(Observer *observer, QWidget * parent = 0, Qt::WindowFlags f = 0) : ElementPropertyDialog(parent,f) {}
+    ObserverPropertyDialog(Observer *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
 };
 
 class AbsoluteKinematicsObserverPropertyDialog : public ObserverPropertyDialog {
