@@ -469,7 +469,9 @@ void MainWindow::saveMBS() {
   Solver *solver = static_cast<Solver*>(model->getItem(index)->getItemData());
   QString file = fileMBS->text();
   mbsDir = QFileInfo(file).absolutePath();
+  solver->setDir("");
   solver->writeXMLFile(file.toStdString());
+  solver->setDir(".");
 }
 
 void MainWindow::selectIntegrator() {

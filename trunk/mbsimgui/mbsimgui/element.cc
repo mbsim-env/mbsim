@@ -39,9 +39,7 @@ string Element::dir=".";
 Element::Element(const string &name_, Element *parent_) : parent(parent_), embed(0,false) {
   name.setProperty(new TextProperty(name_,""));
   embed.setProperty(new EmbedProperty(this));
-  stringstream sstr;
-  sstr<<IDcounter++;
-  ID=sstr.str();
+  ID=toStr(IDcounter++);
 }
 
 Element::~Element() {

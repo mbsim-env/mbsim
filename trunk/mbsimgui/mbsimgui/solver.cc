@@ -123,5 +123,6 @@ void Solver::writeXMLFile(const string &name) {
   writeXMLFile(&doc);
   unIncorporateNamespace(doc.FirstChildElement(), Utils::getMBSimNamespacePrefixMapping());  
   string file = dir+"/"+name;
+  cout << file << endl;
   doc.SaveFile((file.length()>10 && file.substr(file.length()-10,10)==".mbsim.xml")?file:file+".mbsim.xml");
 }

@@ -315,11 +315,8 @@ ConnectFramesProperty::ConnectFramesProperty(int n, Element *element_) : element
 
   for(int i=0; i<n; i++) {
     string xmlName = MBSIMNS"ref";
-    if(n>1) {
-      stringstream stream;
-      stream << i+1;
-      xmlName += stream.str();
-    }
+    if(n>1)
+      xmlName += toStr(i+1);
     frame.push_back(new FrameOfReferenceProperty(0,element,xmlName));
   }
 }
@@ -334,11 +331,8 @@ TiXmlElement* ConnectFramesProperty::initializeUsingXML(TiXmlElement *element) {
   if(e) {
     for(unsigned int i=0; i<frame.size(); i++) {
       string xmlName = "ref";
-      if(frame.size()>1) {
-        stringstream stream;
-        stream << i+1;
-        xmlName += stream.str();
-      }
+      if(frame.size()>1)
+        xmlName += toStr(int(i+1));
       if(!e->Attribute(xmlName))
         return 0;
       frame[i]->setSavedFrameOfReference(e->Attribute(xmlName.c_str()));
@@ -351,11 +345,8 @@ TiXmlElement* ConnectFramesProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele = new TiXmlElement(MBSIMNS"connect");
   for(unsigned int i=0; i<frame.size(); i++) {
     string xmlName = "ref";
-    if(frame.size()>1) {
-      stringstream stream;
-      stream << i+1;
-      xmlName += stream.str();
-    }
+    if(frame.size()>1)
+      xmlName += toStr(int(i+1));
     if(frame[i]->getFrame())
       ele->SetAttribute(xmlName, frame[i]->getFrame()->getXMLPath(element,true)); 
   }
@@ -378,11 +369,8 @@ ConnectContoursProperty::ConnectContoursProperty(int n, Element *element_) : ele
 
   for(int i=0; i<n; i++) {
     string xmlName = MBSIMNS"ref";
-    if(n>1) {
-      stringstream stream;
-      stream << i+1;
-      xmlName += stream.str();
-    }
+    if(n>1)
+      xmlName += toStr(i+1);
     contour.push_back(new ContourOfReferenceProperty(0,element,xmlName));
   }
 }
@@ -397,11 +385,8 @@ TiXmlElement* ConnectContoursProperty::initializeUsingXML(TiXmlElement *element)
   if(e) {
     for(unsigned int i=0; i<contour.size(); i++) {
       string xmlName = "ref";
-      if(contour.size()>1) {
-        stringstream stream;
-        stream << i+1;
-        xmlName += stream.str();
-      }
+      if(contour.size()>1)
+        xmlName += toStr(int(i+1));
       if(!e->Attribute(xmlName))
         return 0;
       contour[i]->setSavedContourOfReference(e->Attribute(xmlName.c_str()));
@@ -414,11 +399,8 @@ TiXmlElement* ConnectContoursProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele = new TiXmlElement(MBSIMNS"connect");
   for(unsigned int i=0; i<contour.size(); i++) {
     string xmlName = "ref";
-    if(contour.size()>1) {
-      stringstream stream;
-      stream << i+1;
-      xmlName += stream.str();
-    }
+    if(contour.size()>1)
+      xmlName += toStr(int(i+1));
     if(contour[i]->getContour())
       ele->SetAttribute(xmlName, contour[i]->getContour()->getXMLPath(element,true)); 
   }

@@ -82,6 +82,7 @@ void ElementDelegate::setEditorData(QWidget *editor, const QModelIndex &index) c
 }
 
 void ElementDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
+  cout << "setModelData" << endl;
   ElementPropertyDialog *dialog = static_cast<ElementPropertyDialog*>(editor);
   dialog->fromWidget(static_cast<Element*>(static_cast<const ElementTreeModel*>(model)->getItem(index)->getItemData()));
   mw->updateElementView(index);

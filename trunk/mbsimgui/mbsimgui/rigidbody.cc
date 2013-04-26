@@ -115,9 +115,7 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
       addContour(c);
       c->initializeUsingXML(ec);
     }
-    stringstream stream;
-    stream << "ContourFrame" << contour.size();
-    FixedRelativeFrame *f=new FixedRelativeFrame(stream.str(),this);
+    FixedRelativeFrame *f=new FixedRelativeFrame("ContourFrame"+toStr(int(contour.size())),this);
     addFrame(f);
     f->initializeUsingXML2(e);
     c->setSavedFrameOfReference(string("../Frame[")+f->getName()+"]");
