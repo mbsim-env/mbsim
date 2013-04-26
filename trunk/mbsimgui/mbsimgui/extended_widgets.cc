@@ -19,23 +19,23 @@
 
 #include <config.h>
 #include "extended_widgets.h"
-#include "string_widgets.h"
+#include "variable_widgets.h"
 #include "dialogs.h"
 #include "octaveutils.h"
 #include <QtGui>
 
 using namespace std;
 
-ExtPhysicalVarWidget::ExtPhysicalVarWidget(std::vector<PhysicalStringWidget*> inputWidget_, int evalIndex) : inputWidget(inputWidget_), evalInput(0) {
+ExtPhysicalVarWidget::ExtPhysicalVarWidget(std::vector<PhysicalVariableWidget*> inputWidget_, int evalIndex) : inputWidget(inputWidget_), evalInput(0) {
   QHBoxLayout *layout = new QHBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
-  inputWidget.push_back(new PhysicalStringWidget(new OctaveExpressionWidget, inputWidget[0]->getUnitList(), inputWidget[0]->getDefaultUnit()));
+  inputWidget.push_back(new PhysicalVariableWidget(new OctaveExpressionWidget, inputWidget[0]->getUnitList(), inputWidget[0]->getDefaultUnit()));
 
   QPushButton *evalButton = new QPushButton("Eval");
   connect(evalButton,SIGNAL(clicked(bool)),this,SLOT(openEvalDialog()));
-  evalDialog = new EvalDialog(((StringWidget*)inputWidget[evalIndex])->cloneStringWidget());
+  evalDialog = new EvalDialog(((VariableWidget*)inputWidget[evalIndex])->cloneVariableWidget());
   //connect(evalDialog,SIGNAL(clicked(bool)),this,SLOT(updateInput()));
 
   inputCombo = new QComboBox;

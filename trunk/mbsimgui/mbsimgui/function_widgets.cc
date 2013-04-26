@@ -21,7 +21,7 @@
 #include "function_widgets.h"
 #include "utils.h"
 #include "octaveutils.h"
-#include "string_widgets.h"
+#include "variable_widgets.h"
 #include "extended_widgets.h"
 #include <QtGui>
 
@@ -36,15 +36,15 @@ ConstantFunction1Widget::ConstantFunction1Widget(const QString &ext, int n) : Fu
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new VecWidget(n,true),QStringList(),0));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new VecWidget(n,true),QStringList(),0));
   c = new ExtWidget("Value",new ExtPhysicalVarWidget(input));
   layout->addWidget(c);
 }
 
 void ConstantFunction1Widget::resize(int m, int n) {
-  if(((VecWidget*)static_cast<ExtPhysicalVarWidget*>(c->getWidget())->getPhysicalStringWidget(0)->getWidget())->size() != m)
-    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(c->getWidget())->getPhysicalStringWidget(0)->getWidget())->resize(m);
+  if(((VecWidget*)static_cast<ExtPhysicalVarWidget*>(c->getWidget())->getPhysicalVariableWidget(0)->getWidget())->size() != m)
+    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(c->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize(m);
 }
 
 QuadraticFunction1Widget::QuadraticFunction1Widget(int n) {
@@ -52,27 +52,27 @@ QuadraticFunction1Widget::QuadraticFunction1Widget(int n) {
   layout->setMargin(0);
   setLayout(layout);
 
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new VecWidget(n,true),QStringList(),0));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new VecWidget(n,true),QStringList(),0));
   a0 = new ExtWidget("a0",new ExtPhysicalVarWidget(input));
   layout->addWidget(a0);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new VecWidget(n,true),QStringList(),0));
+  input.push_back(new PhysicalVariableWidget(new VecWidget(n,true),QStringList(),0));
   a1 = new ExtWidget("a1",new ExtPhysicalVarWidget(input));
   layout->addWidget(a1);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new VecWidget(n,true),QStringList(),0));
+  input.push_back(new PhysicalVariableWidget(new VecWidget(n,true),QStringList(),0));
   a2 = new ExtWidget("a2",new ExtPhysicalVarWidget(input));
   layout->addWidget(a2);
 }
 
 void QuadraticFunction1Widget::resize(int m, int n) {
-  if(((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a0->getWidget())->getPhysicalStringWidget(0)->getWidget())->size() != m) {
-    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a0->getWidget())->getPhysicalStringWidget(0)->getWidget())->resize(m);
-    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a1->getWidget())->getPhysicalStringWidget(0)->getWidget())->resize(m);
-    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a2->getWidget())->getPhysicalStringWidget(0)->getWidget())->resize(m);
+  if(((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a0->getWidget())->getPhysicalVariableWidget(0)->getWidget())->size() != m) {
+    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a0->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize(m);
+    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a1->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize(m);
+    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a2->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize(m);
   }
 }
 
@@ -81,33 +81,33 @@ SinusFunction1Widget::SinusFunction1Widget(int n) {
   layout->setMargin(0);
   setLayout(layout);
 
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new VecWidget(n,true),QStringList(),0));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new VecWidget(n,true),QStringList(),0));
   a = new ExtWidget("Amplitude",new ExtPhysicalVarWidget(input));
   layout->addWidget(a);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new VecWidget(n,true),QStringList(),0));
+  input.push_back(new PhysicalVariableWidget(new VecWidget(n,true),QStringList(),0));
   f = new ExtWidget("Frequency",new ExtPhysicalVarWidget(input));
   layout->addWidget(f);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new VecWidget(n,true),QStringList(),0));
+  input.push_back(new PhysicalVariableWidget(new VecWidget(n,true),QStringList(),0));
   p = new ExtWidget("Phase",new ExtPhysicalVarWidget(input));
   layout->addWidget(p);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new VecWidget(n,true),QStringList(),0));
+  input.push_back(new PhysicalVariableWidget(new VecWidget(n,true),QStringList(),0));
   o = new ExtWidget("Offset",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(o);
 }
 
 void SinusFunction1Widget::resize(int m, int n) {
-  if(((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a->getWidget())->getPhysicalStringWidget(0)->getWidget())->size() != m) {
-    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a->getWidget())->getPhysicalStringWidget(0)->getWidget())->resize(m);
-    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(f->getWidget())->getPhysicalStringWidget(0)->getWidget())->resize(m);
-    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(p->getWidget())->getPhysicalStringWidget(0)->getWidget())->resize(m);
-    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(o->getWidget())->getPhysicalStringWidget(0)->getWidget())->resize(m);
+  if(((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a->getWidget())->getPhysicalVariableWidget(0)->getWidget())->size() != m) {
+    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize(m);
+    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(f->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize(m);
+    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(p->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize(m);
+    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(o->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize(m);
   }
 }
 
@@ -121,18 +121,18 @@ TabularFunction1Widget::TabularFunction1Widget(int n) {
   name.push_back("x and y");
   name.push_back("xy");
   WidgetContainer *widgetContainer = new WidgetContainer;
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new VecFromFileWidget,QStringList(),0));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new VecFromFileWidget,QStringList(),0));
   widgetContainer->addWidget(new ExtWidget("x",new ExtPhysicalVarWidget(input)));
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new MatFromFileWidget,QStringList(),0));
+  input.push_back(new PhysicalVariableWidget(new MatFromFileWidget,QStringList(),0));
   widgetContainer->addWidget(new ExtWidget("y",new ExtPhysicalVarWidget(input)));
 
   choiceWidget.push_back(widgetContainer);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new MatFromFileWidget,QStringList(),0));
+  input.push_back(new PhysicalVariableWidget(new MatFromFileWidget,QStringList(),0));
   choiceWidget.push_back(new ExtWidget("xy",new ExtPhysicalVarWidget(input)));
 
   choice = new WidgetChoiceWidget(name,choiceWidget);
@@ -206,18 +206,18 @@ LinearSpringDamperForceWidget::LinearSpringDamperForceWidget() {
   layout->setMargin(0);
   setLayout(layout);
 
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),stiffnessUnits(),1));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),stiffnessUnits(),1));
   c = new ExtWidget("Stiffness coefficient",new ExtPhysicalVarWidget(input));
   layout->addWidget(c);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),dampingUnits(),0));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),dampingUnits(),0));
   d = new ExtWidget("Damping coefficient",new ExtPhysicalVarWidget(input));
   layout->addWidget(d);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),lengthUnits(),4));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),lengthUnits(),4));
   l0 = new ExtWidget("Unloaded length",new ExtPhysicalVarWidget(input));
   layout->addWidget(l0);
 }
@@ -227,13 +227,13 @@ LinearRegularizedBilateralConstraintWidget::LinearRegularizedBilateralConstraint
   layout->setMargin(0);
   setLayout(layout);
 
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),stiffnessUnits(),1));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),stiffnessUnits(),1));
   c = new ExtWidget("Stiffness coefficient",new ExtPhysicalVarWidget(input));
   layout->addWidget(c);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),dampingUnits(),0));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),dampingUnits(),0));
   d = new ExtWidget("Damping coefficient",new ExtPhysicalVarWidget(input));
   layout->addWidget(d);
 }
@@ -243,13 +243,13 @@ LinearRegularizedUnilateralConstraintWidget::LinearRegularizedUnilateralConstrai
   layout->setMargin(0);
   setLayout(layout);
 
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),stiffnessUnits(),1));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),stiffnessUnits(),1));
   c = new ExtWidget("Stiffness coefficient",new ExtPhysicalVarWidget(input));
   layout->addWidget(c);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),dampingUnits(),0));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),dampingUnits(),0));
   d = new ExtWidget("Damping coefficient",new ExtPhysicalVarWidget(input));
   layout->addWidget(d);
 }
@@ -259,13 +259,13 @@ LinearRegularizedCoulombFrictionWidget::LinearRegularizedCoulombFrictionWidget()
   layout->setMargin(0);
   setLayout(layout);
 
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0.01"),velocityUnits(),0));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.01"),velocityUnits(),0));
   gd = new ExtWidget("Marginal velocity",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(gd);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
   mu = new ExtWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
   layout->addWidget(mu);
 }
@@ -277,8 +277,8 @@ Function1ChoiceWidget::Function1ChoiceWidget(bool withFactor, int n_) : function
   setLayout(layout);
 
   if(withFactor) {
-    vector<PhysicalStringWidget*> input;
-    input.push_back(new PhysicalStringWidget(new ScalarWidget("1"),noUnitUnits(),1));
+    vector<PhysicalVariableWidget*> input;
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),noUnitUnits(),1));
     factor = new ExtWidget("Factor",new ExtPhysicalVarWidget(input));
     layout->addWidget(factor);
   }

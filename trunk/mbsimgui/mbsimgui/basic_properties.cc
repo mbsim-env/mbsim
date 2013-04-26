@@ -23,7 +23,7 @@
 #include "contour.h"
 #include "rigidbody.h"
 #include "basic_widgets.h"
-#include "string_widgets.h"
+#include "variable_widgets.h"
 #include "kinematics_widgets.h"
 #include "extended_widgets.h"
 #include <QDir>
@@ -436,28 +436,28 @@ void ConnectContoursProperty::toWidget(QWidget *widget) {
 
 SolverTolerancesProperty::SolverTolerancesProperty() : g(0,false), gd(0,false), gdd(0,false), la(0,false), La(0,false) {
 
-  vector<PhysicalStringProperty*> input;
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("1e-15"), "-", MBSIMNS"projection"));
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-15"), "-", MBSIMNS"projection"));
   projection.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("1e-8"), "-", MBSIMNS"g"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-8"), "-", MBSIMNS"g"));
   g.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("1e-10"), "-", MBSIMNS"gd"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-10"), "-", MBSIMNS"gd"));
   gd.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("1e-12"), "-", MBSIMNS"gdd"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-12"), "-", MBSIMNS"gdd"));
   gdd.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("1e-12"), "-", MBSIMNS"la"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-12"), "-", MBSIMNS"la"));
   la.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("1e-10"), "-", MBSIMNS"La"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-10"), "-", MBSIMNS"La"));
   La.setProperty(new ExtPhysicalVarProperty(input));
 }
 
@@ -530,8 +530,8 @@ void SolverParametersProperty::toWidget(QWidget *widget) {
 }
 
 GearDependencyProperty::GearDependencyProperty(Element* element_) : element(element_), refBody(0,element) {
-  vector<PhysicalStringProperty*> input;
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("1"), "", MBSIMNS"transmissionRatio"));
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"), "", MBSIMNS"transmissionRatio"));
   ratio.setProperty(new ExtPhysicalVarProperty(input));
 } 
 

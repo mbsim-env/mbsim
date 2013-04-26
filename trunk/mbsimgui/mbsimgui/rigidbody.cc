@@ -35,12 +35,12 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
 
   K.setProperty(new LocalFrameOfReferenceProperty(getFrame(0),this,MBSIMNS"frameForKinematics"));
 
-  vector<PhysicalStringProperty*> input;
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("1"),"kg",MBSIMNS"mass"));
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"),"kg",MBSIMNS"mass"));
   mass.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new MatProperty(getEye<string>(3,3,"0.01","0")),"kg*m^2",MBSIMNS"inertiaTensor"));
+  input.push_back(new PhysicalVariableProperty(new MatProperty(getEye<string>(3,3,"0.01","0")),"kg*m^2",MBSIMNS"inertiaTensor"));
   inertia.setProperty(new ExtPhysicalVarProperty(input));
 
   translation.setProperty(new TranslationChoiceProperty(0,""));
@@ -64,7 +64,7 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   ((OMBVArrowProperty*)jointMomentArrow.getProperty())->setID(getID());
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"",MBSIMNS"isFrameOfBodyForRotation"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"isFrameOfBodyForRotation"));
   isFrameOfBodyForRotation.setProperty(new ExtPhysicalVarProperty(input)); 
 }
 

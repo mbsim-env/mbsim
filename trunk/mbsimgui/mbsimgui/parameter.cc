@@ -43,8 +43,8 @@ TiXmlElement* Parameter::writeXMLFile(TiXmlNode *parent) {
 
 ScalarParameter::ScalarParameter(const string &name) : Parameter(name) {
 
-  vector<PhysicalStringProperty*> input;
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"",""));
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"",""));
   value.setProperty(new ExtPhysicalVarProperty(input));
 }
 
@@ -69,8 +69,8 @@ string ScalarParameter::getValue() const {
 
 VectorParameter::VectorParameter(const string &name) : Parameter(name) {
 
-  vector<PhysicalStringProperty*> input;
-  input.push_back(new PhysicalStringProperty(new VecProperty(3),"",""));
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new VecProperty(3),"",""));
   value.setProperty(new ExtPhysicalVarProperty(input));
 }
 
@@ -95,8 +95,8 @@ string VectorParameter::getValue() const {
 
 MatrixParameter::MatrixParameter(const string &name) : Parameter(name) {
 
-  vector<PhysicalStringProperty*> input;
-  input.push_back(new PhysicalStringProperty(new MatProperty(3,3),"",""));
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new MatProperty(3,3),"",""));
   value.setProperty(new ExtPhysicalVarProperty(input));
 }
 

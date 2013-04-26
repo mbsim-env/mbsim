@@ -36,7 +36,7 @@ mbsimgui_SOURCES = element.cc \
 		   treemodel.cc \
 		   delegate.cc \
 		   basic_properties.cc \
-		   string_properties.cc \
+		   variable_properties.cc \
 		   kinematics_properties.cc \
 		   kinetics_properties.cc \
 		   function_properties.cc \
@@ -44,7 +44,7 @@ mbsimgui_SOURCES = element.cc \
 		   extended_properties.cc \
 		   integrator_properties.cc \
 		   basic_widgets.cc \
-		   string_widgets.cc \
+		   variable_widgets.cc \
 		   function_widgets.cc \
 		   kinematics_widgets.cc \
 		   kinetics_widgets.cc \
@@ -68,7 +68,7 @@ nodist_mbsimgui_SOURCES=$(QT_BUILT_SOURCES)
 
 # C++ source file to build automatically (e.g. abc.moc.cc by abc.h)
 QT_BUILT_SOURCES = basic_widgets.moc.cc \
-		   string_widgets.moc.cc \
+		   variable_widgets.moc.cc \
 		   function_widgets.moc.cc \
 		   kinematics_widgets.moc.cc \
 		   kinetics_widgets.moc.cc \

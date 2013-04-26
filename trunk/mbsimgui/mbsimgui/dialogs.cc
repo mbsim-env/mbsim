@@ -28,7 +28,7 @@
 #include <QTreeWidget>
 #include <QScrollArea>
 
-EvalDialog::EvalDialog(StringWidget *var_) : var(var_) {
+EvalDialog::EvalDialog(VariableWidget *var_) : var(var_) {
   QScrollArea *tab = new QScrollArea;
   tab->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
   tab->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);

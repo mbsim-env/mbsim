@@ -18,10 +18,10 @@
 */
 
 #include <config.h>
-#include "string_properties.h"
+#include "variable_properties.h"
 #include "frame.h"
 #include "basic_widgets.h"
-#include "string_widgets.h"
+#include "variable_widgets.h"
 #include "kinematics_widgets.h"
 #include "extended_widgets.h"
 #include "octaveutils.h"
@@ -34,12 +34,12 @@ using namespace std;
 extern QDir mbsDir;
 extern bool absolutePath;
 
-void StringProperty::fromWidget(QWidget *widget) {
-  setValue(static_cast<StringWidget*>(widget)->getValue());
+void VariableProperty::fromWidget(QWidget *widget) {
+  setValue(static_cast<VariableWidget*>(widget)->getValue());
 }
 
-void StringProperty::toWidget(QWidget *widget) {
-  static_cast<StringWidget*>(widget)->setValue(getValue());
+void VariableProperty::toWidget(QWidget *widget) {
+  static_cast<VariableWidget*>(widget)->setValue(getValue());
 }
 
 TiXmlElement* OctaveExpressionProperty::initializeUsingXML(TiXmlElement *element) {
@@ -222,7 +222,7 @@ void MatProperty::toWidget(QWidget *widget) {
 //  static_cast<BasicMatWidget*>(widget)->setMat(getMat());
 //}
 
-TiXmlElement* PhysicalStringProperty::initializeUsingXML(TiXmlElement *parent) {
+TiXmlElement* PhysicalVariableProperty::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *e = (xmlName=="")?parent:parent->FirstChildElement(xmlName);
   if(e) {
     if(value->initializeUsingXML(e)) {
@@ -234,7 +234,7 @@ TiXmlElement* PhysicalStringProperty::initializeUsingXML(TiXmlElement *parent) {
   return 0;
 }
 
-TiXmlElement* PhysicalStringProperty::writeXMLFile(TiXmlNode *parent) {
+TiXmlElement* PhysicalVariableProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele;
   if(xmlName!="") {
     ele = new TiXmlElement(xmlName);
@@ -248,14 +248,14 @@ TiXmlElement* PhysicalStringProperty::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-void PhysicalStringProperty::fromWidget(QWidget *widget) {
-  getProperty()->fromWidget(static_cast<PhysicalStringWidget*>(widget)->getWidget());
-  setUnit(static_cast<PhysicalStringWidget*>(widget)->getUnit());
+void PhysicalVariableProperty::fromWidget(QWidget *widget) {
+  getProperty()->fromWidget(static_cast<PhysicalVariableWidget*>(widget)->getWidget());
+  setUnit(static_cast<PhysicalVariableWidget*>(widget)->getUnit());
 }
 
-void PhysicalStringProperty::toWidget(QWidget *widget) {
-  getProperty()->toWidget(static_cast<PhysicalStringWidget*>(widget)->getWidget());
-  static_cast<PhysicalStringWidget*>(widget)->setUnit(getUnit());
+void PhysicalVariableProperty::toWidget(QWidget *widget) {
+  getProperty()->toWidget(static_cast<PhysicalVariableWidget*>(widget)->getWidget());
+  static_cast<PhysicalVariableWidget*>(widget)->setUnit(getUnit());
 }
 
 string VecFromFileProperty::getValue() const {

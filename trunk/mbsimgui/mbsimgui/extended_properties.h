@@ -20,16 +20,16 @@
 #ifndef _EXTENDED_PROPERTIES_H_
 #define _EXTENDED_PROPERTIES_H_
 
-#include "string_properties.h"
+#include "variable_properties.h"
 
 class ExtPhysicalVarProperty : public Property {
 
   public:
-    ExtPhysicalVarProperty(std::vector<PhysicalStringProperty*> inputProperty);
+    ExtPhysicalVarProperty(std::vector<PhysicalVariableProperty*> inputProperty);
     ~ExtPhysicalVarProperty();
-    PhysicalStringProperty* getPhysicalStringProperty(int i) {return inputProperty[i];}
-    PhysicalStringProperty* getCurrentPhysicalStringProperty() {return inputProperty[currentInput];}
-    const PhysicalStringProperty* getCurrentPhysicalStringProperty() const {return inputProperty[currentInput];}
+    PhysicalVariableProperty* getPhysicalVariableProperty(int i) {return inputProperty[i];}
+    PhysicalVariableProperty* getCurrentPhysicalVariableProperty() {return inputProperty[currentInput];}
+    const PhysicalVariableProperty* getCurrentPhysicalVariableProperty() const {return inputProperty[currentInput];}
     int getNumberOfInputs() const {return inputProperty.size();}
     std::string getValue() const {return inputProperty[currentInput]->getValue();}
     void setValue(const std::string &str) {inputProperty[currentInput]->setValue(str);}
@@ -39,7 +39,7 @@ class ExtPhysicalVarProperty : public Property {
     void toWidget(QWidget *widget);
 
   protected:
-    std::vector<PhysicalStringProperty*> inputProperty;
+    std::vector<PhysicalVariableProperty*> inputProperty;
     int currentInput;
 };
 

@@ -20,7 +20,7 @@
 #include <config.h>
 #include "parameter_property_dialog.h"
 #include "basic_widgets.h"
-#include "string_widgets.h"
+#include "variable_widgets.h"
 #include "extended_widgets.h"
 #include "parameter.h"
 
@@ -41,8 +41,8 @@ void ParameterPropertyDialog::fromWidget(Parameter *parameter) {
 }
 
 ScalarParameterPropertyDialog::ScalarParameterPropertyDialog(QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parent,f) {
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),QStringList(),0));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
   value = new ExtWidget("Value",new ExtPhysicalVarWidget(input));
   addToTab("General", value);
 }
@@ -58,8 +58,8 @@ void ScalarParameterPropertyDialog::fromWidget(Parameter *parameter) {
 }
 
 VectorParameterPropertyDialog::VectorParameterPropertyDialog(QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parent,f) {
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new VecSizeVarWidget(3,1,1000),QStringList(),0));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new VecSizeVarWidget(3,1,1000),QStringList(),0));
   value = new ExtWidget("Value",new ExtPhysicalVarWidget(input));
   addToTab("General", value);
 }
@@ -75,8 +75,8 @@ void VectorParameterPropertyDialog::fromWidget(Parameter *parameter) {
 }
 
 MatrixParameterPropertyDialog::MatrixParameterPropertyDialog(QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parent,f) {
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new MatRowsColsVarWidget(3,3,1,1000,1,1000),QStringList(),0));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new MatRowsColsVarWidget(3,3,1,1000,1,1000),QStringList(),0));
   value = new ExtWidget("Value",new ExtPhysicalVarWidget(input));
   addToTab("General", value);
 }

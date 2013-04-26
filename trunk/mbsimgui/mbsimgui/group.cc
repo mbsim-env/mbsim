@@ -47,12 +47,12 @@ Group::Group(const string &str, Element *parent) : Element(str,parent), position
   addFrame(I);
 
   if(parent) {
-    vector<PhysicalStringProperty*> input;
-    input.push_back(new PhysicalStringProperty(new VecProperty(3),"m",MBSIMNS"position"));
+    vector<PhysicalVariableProperty*> input;
+    input.push_back(new PhysicalVariableProperty(new VecProperty(3),"m",MBSIMNS"position"));
     position.setProperty(new ExtPhysicalVarProperty(input));
 
     input.clear();
-    input.push_back(new PhysicalStringProperty(new MatProperty(getEye<string>(3,3,"1","0")),"-",MBSIMNS"orientation"));
+    input.push_back(new PhysicalVariableProperty(new MatProperty(getEye<string>(3,3,"1","0")),"-",MBSIMNS"orientation"));
     orientation.setProperty(new ExtPhysicalVarProperty(input));
 
     frameOfReference.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0),this,MBSIMNS"frameOfReference"));

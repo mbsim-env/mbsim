@@ -33,20 +33,20 @@ extern MainWindow *mw;
 
 Integrator::Integrator() : initialState(0,false) {
 
-  vector<PhysicalStringProperty*> input;
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"s",MBSIMINTNS"startTime"));
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"startTime"));
   startTime.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("1"),"s",MBSIMINTNS"endTime"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"),"s",MBSIMINTNS"endTime"));
   endTime.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("1e-2"),"s",MBSIMINTNS"plotStepSize"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-2"),"s",MBSIMINTNS"plotStepSize"));
   plotStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new VecProperty(0), "", MBSIMINTNS"initialState"));
+  input.push_back(new PhysicalVariableProperty(new VecProperty(0), "", MBSIMINTNS"initialState"));
   initialState.setProperty(new ExtPhysicalVarProperty(input));
 }
 
@@ -98,37 +98,37 @@ void Integrator::writeXMLFile(const string &name) {
 }
 
 DOPRI5Integrator::DOPRI5Integrator() : maxSteps(0,false) {
-  vector<PhysicalStringProperty*> input;
+  vector<PhysicalVariableProperty*> input;
   vector<Property*> property;
   vector<string> name;
   name.push_back("Scalar");
   name.push_back("Vector");
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("1e-6"),"",MBSIMINTNS"absoluteToleranceScalar"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-6"),"",MBSIMINTNS"absoluteToleranceScalar"));
   property.push_back(new ExtPhysicalVarProperty(input));
   input.clear();
-  input.push_back(new PhysicalStringProperty(new VecProperty(0),"",MBSIMINTNS"absoluteTolerance"));
+  input.push_back(new PhysicalVariableProperty(new VecProperty(0),"",MBSIMINTNS"absoluteTolerance"));
   property.push_back(new ExtPhysicalVarProperty(input));
   absTol.setProperty(new PropertyChoiceProperty(property)); 
 
   input.clear();
   property.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("1e-6"),"-",MBSIMINTNS"relativeToleranceScalar"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-6"),"-",MBSIMINTNS"relativeToleranceScalar"));
   property.push_back(new ExtPhysicalVarProperty(input));
   input.clear();
-  input.push_back(new PhysicalStringProperty(new VecProperty(0),"",MBSIMINTNS"relativeTolerance"));
+  input.push_back(new PhysicalVariableProperty(new VecProperty(0),"",MBSIMINTNS"relativeTolerance"));
   property.push_back(new ExtPhysicalVarProperty(input));
   relTol.setProperty(new PropertyChoiceProperty(property)); 
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"s",MBSIMINTNS"initialStepSize"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"initialStepSize"));
   initialStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"s",MBSIMINTNS"maximalStepSize"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"maximalStepSize"));
   maximalStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"",MBSIMINTNS"maximalNumberOfSteps"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMINTNS"maximalNumberOfSteps"));
   maxSteps.setProperty(new ExtPhysicalVarProperty(input)); 
 }
 
@@ -152,37 +152,37 @@ TiXmlElement* DOPRI5Integrator::writeXMLFile(TiXmlNode *parent) {
 }
 
 RADAU5Integrator::RADAU5Integrator() {
-  vector<PhysicalStringProperty*> input;
+  vector<PhysicalVariableProperty*> input;
   vector<Property*> property;
   vector<string> name;
   name.push_back("Scalar");
   name.push_back("Vector");
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("1e-6"),"",MBSIMINTNS"absoluteToleranceScalar"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-6"),"",MBSIMINTNS"absoluteToleranceScalar"));
   property.push_back(new ExtPhysicalVarProperty(input));
   input.clear();
-  input.push_back(new PhysicalStringProperty(new VecProperty(0),"",MBSIMINTNS"absoluteTolerance"));
+  input.push_back(new PhysicalVariableProperty(new VecProperty(0),"",MBSIMINTNS"absoluteTolerance"));
   property.push_back(new ExtPhysicalVarProperty(input));
   absTol.setProperty(new PropertyChoiceProperty(property)); 
 
   input.clear();
   property.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("1e-6"),"-",MBSIMINTNS"relativeToleranceScalar"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-6"),"-",MBSIMINTNS"relativeToleranceScalar"));
   property.push_back(new ExtPhysicalVarProperty(input));
   input.clear();
-  input.push_back(new PhysicalStringProperty(new VecProperty(0),"",MBSIMINTNS"relativeTolerance"));
+  input.push_back(new PhysicalVariableProperty(new VecProperty(0),"",MBSIMINTNS"relativeTolerance"));
   property.push_back(new ExtPhysicalVarProperty(input));
   relTol.setProperty(new PropertyChoiceProperty(property)); 
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"s",MBSIMINTNS"initialStepSize"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"initialStepSize"));
   initialStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"s",MBSIMINTNS"maximalStepSize"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"maximalStepSize"));
   maximalStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"",MBSIMINTNS"maximalNumberOfSteps"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMINTNS"maximalNumberOfSteps"));
   maxSteps.setProperty(new ExtPhysicalVarProperty(input)); 
 }
 
@@ -206,40 +206,40 @@ TiXmlElement* RADAU5Integrator::writeXMLFile(TiXmlNode *parent) {
 }
 
 LSODEIntegrator::LSODEIntegrator() : stiff(0,false) {
-  vector<PhysicalStringProperty*> input;
+  vector<PhysicalVariableProperty*> input;
   vector<Property*> property;
   vector<string> name;
   name.push_back("Scalar");
   name.push_back("Vector");
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("1e-6"),"",MBSIMINTNS"absoluteToleranceScalar"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-6"),"",MBSIMINTNS"absoluteToleranceScalar"));
   property.push_back(new ExtPhysicalVarProperty(input));
   input.clear();
-  input.push_back(new PhysicalStringProperty(new VecProperty(0),"",MBSIMINTNS"absoluteTolerance"));
+  input.push_back(new PhysicalVariableProperty(new VecProperty(0),"",MBSIMINTNS"absoluteTolerance"));
   property.push_back(new ExtPhysicalVarProperty(input));
   absTol.setProperty(new PropertyChoiceProperty(property)); 
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("1e-6"),"-",MBSIMINTNS"relativeToleranceScalar"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-6"),"-",MBSIMINTNS"relativeToleranceScalar"));
   relTol.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"s",MBSIMINTNS"initialStepSize"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"initialStepSize"));
   initialStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"s",MBSIMINTNS"maximalStepSize"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"maximalStepSize"));
   maximalStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"s",MBSIMINTNS"minimalStepSize"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"minimalStepSize"));
   minimalStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"",MBSIMINTNS"numberOfMaximalSteps"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMINTNS"numberOfMaximalSteps"));
   maxSteps.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"",MBSIMINTNS"stiffModus"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMINTNS"stiffModus"));
   stiff.setProperty(new ExtPhysicalVarProperty(input)); 
 }
 
@@ -267,36 +267,36 @@ TiXmlElement* LSODEIntegrator::writeXMLFile(TiXmlNode *parent) {
 }
 
 LSODARIntegrator::LSODARIntegrator() {
-  vector<PhysicalStringProperty*> input;
+  vector<PhysicalVariableProperty*> input;
   vector<Property*> property;
   vector<string> name;
   name.push_back("Scalar");
   name.push_back("Vector");
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("1e-6"),"",MBSIMINTNS"absoluteToleranceScalar"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-6"),"",MBSIMINTNS"absoluteToleranceScalar"));
   property.push_back(new ExtPhysicalVarProperty(input));
   input.clear();
-  input.push_back(new PhysicalStringProperty(new VecProperty(0),"",MBSIMINTNS"absoluteTolerance"));
+  input.push_back(new PhysicalVariableProperty(new VecProperty(0),"",MBSIMINTNS"absoluteTolerance"));
   property.push_back(new ExtPhysicalVarProperty(input));
   absTol.setProperty(new PropertyChoiceProperty(property)); 
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("1e-6"),"-",MBSIMINTNS"relativeToleranceScalar"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-6"),"-",MBSIMINTNS"relativeToleranceScalar"));
   relTol.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"s",MBSIMINTNS"initialStepSize"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"initialStepSize"));
   initialStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"s",MBSIMINTNS"maximalStepSize"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"maximalStepSize"));
   maximalStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"s",MBSIMINTNS"minimalStepSize"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"minimalStepSize"));
   minimalStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"",MBSIMINTNS"plotOnRoot"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMINTNS"plotOnRoot"));
   plotOnRoot.setProperty(new ExtPhysicalVarProperty(input)); 
 }
 
@@ -323,8 +323,8 @@ TiXmlElement* LSODARIntegrator::writeXMLFile(TiXmlNode *parent) {
 
 TimeSteppingIntegrator::TimeSteppingIntegrator() {
 
-  vector<PhysicalStringProperty*> input;
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("1e-3"),"s",MBSIMINTNS"stepSize"));
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-3"),"s",MBSIMINTNS"stepSize"));
   stepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 }
 
@@ -340,8 +340,8 @@ TiXmlElement* TimeSteppingIntegrator::writeXMLFile(TiXmlNode *parent) {
 }
 
 EulerExplicitIntegrator::EulerExplicitIntegrator() {
-  vector<PhysicalStringProperty*> input;
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("1e-3"),"s",MBSIMINTNS"stepSize"));
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-3"),"s",MBSIMINTNS"stepSize"));
   stepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 }
 
@@ -360,16 +360,16 @@ RKSuiteIntegrator::RKSuiteIntegrator() : initialStepSize(0,false) {
 
   type.setProperty(new RKSuiteTypeProperty);
 
-  vector<PhysicalStringProperty*> input;
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("1e-6"),"-",MBSIMINTNS"relativeToleranceScalar"));
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-6"),"-",MBSIMINTNS"relativeToleranceScalar"));
   relTol.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("1e-6"),"-",MBSIMINTNS"thresholdScalar"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-6"),"-",MBSIMINTNS"thresholdScalar"));
   threshold.setProperty(new ExtPhysicalVarProperty(input)); 
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"s",MBSIMINTNS"initialStepSize"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"initialStepSize"));
   initialStepSize.setProperty(new ExtPhysicalVarProperty(input)); 
 }
 

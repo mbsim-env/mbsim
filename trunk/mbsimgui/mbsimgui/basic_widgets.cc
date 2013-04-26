@@ -400,33 +400,33 @@ SolverTolerancesWidget::SolverTolerancesWidget() {
   setLayout(layout);
   layout->setMargin(0);
 
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-15"), noUnitUnits(), 1));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-15"), noUnitUnits(), 1));
   projection = new ExtWidget("Projection",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(projection);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-8"), noUnitUnits(), 1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-8"), noUnitUnits(), 1));
   g = new ExtWidget("g",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(g);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-10"), noUnitUnits(), 1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-10"), noUnitUnits(), 1));
   gd = new ExtWidget("gd",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(gd);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-12"), noUnitUnits(), 1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-12"), noUnitUnits(), 1));
   gdd = new ExtWidget("gdd",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(gdd);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-12"), noUnitUnits(), 1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-12"), noUnitUnits(), 1));
   la = new ExtWidget("la",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(la);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-10"), noUnitUnits(), 1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-10"), noUnitUnits(), 1));
   La = new ExtWidget("La",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(La);
 }
@@ -457,8 +457,8 @@ GearDependencyWidget::GearDependencyWidget(Element *element) {
   refBody = new RigidBodyOfReferenceWidget(element,0);
   layout->addWidget(refBody);
 
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1"), QStringList(), 1));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), QStringList(), 1));
   ratio = new ExtWidget("Transmission ratio",new ExtPhysicalVarWidget(input));
   layout->addWidget(ratio);
 }

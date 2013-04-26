@@ -50,18 +50,18 @@ Environment *Environment::instance=NULL;
 
 Solver::Solver(const string &str, Element *parent) : Group(str,parent), solverParameters(0,false), inverseKinetics(0,false) {
 
-  vector<PhysicalStringProperty*> input;
+  vector<PhysicalVariableProperty*> input;
   vector<string> g(3);
   g[0] = "0";
   g[1] = "-9.81";
   g[2] = "0";
-  input.push_back(new PhysicalStringProperty(new VecProperty(g),"m/s^2",MBSIMNS"accelerationOfGravity"));
+  input.push_back(new PhysicalVariableProperty(new VecProperty(g),"m/s^2",MBSIMNS"accelerationOfGravity"));
   environment.setProperty(new ExtPhysicalVarProperty(input));
 
   solverParameters.setProperty(new SolverParametersProperty); 
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("1"),"",MBSIMNS"inverseKinetics"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"),"",MBSIMNS"inverseKinetics"));
   inverseKinetics.setProperty(new ExtPhysicalVarProperty(input));
 }
 

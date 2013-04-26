@@ -18,7 +18,7 @@
 */
 
 #include <config.h>
-#include "string_properties.h"
+#include "variable_properties.h"
 #include "function_properties.h"
 #include "function_widgets.h"
 #include "extended_widgets.h"
@@ -44,8 +44,8 @@ void DifferentiableFunction1Property::setDerivative(Function1Property *diff,size
 }
 
 ConstantFunction1Property::ConstantFunction1Property(const QString &ext) : Function1Property(ext) {
-  vector<PhysicalStringProperty*> input;
-  input.push_back(new PhysicalStringProperty(new VecProperty(1),"",MBSIMNS"value"));
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new VecProperty(1),"",MBSIMNS"value"));
   c.setProperty(new ExtPhysicalVarProperty(input));
 }
 
@@ -70,16 +70,16 @@ void ConstantFunction1Property::toWidget(QWidget *widget) {
 
 QuadraticFunction1Property::QuadraticFunction1Property() {
 
-  vector<PhysicalStringProperty*> input;
-  input.push_back(new PhysicalStringProperty(new VecProperty(1),"",MBSIMNS"a0"));
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new VecProperty(1),"",MBSIMNS"a0"));
   a0.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new VecProperty(1),"",MBSIMNS"a1"));
+  input.push_back(new PhysicalVariableProperty(new VecProperty(1),"",MBSIMNS"a1"));
   a1.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new VecProperty(1),"",MBSIMNS"a2"));
+  input.push_back(new PhysicalVariableProperty(new VecProperty(1),"",MBSIMNS"a2"));
   a2.setProperty(new ExtPhysicalVarProperty(input));
 }
 
@@ -112,20 +112,20 @@ void QuadraticFunction1Property::toWidget(QWidget *widget) {
 
 SinusFunction1Property::SinusFunction1Property() {
 
-  vector<PhysicalStringProperty*> input;
-  input.push_back(new PhysicalStringProperty(new VecProperty(1),"",MBSIMNS"amplitude"));
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new VecProperty(1),"",MBSIMNS"amplitude"));
   a.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new VecProperty(1),"",MBSIMNS"frequency"));
+  input.push_back(new PhysicalVariableProperty(new VecProperty(1),"",MBSIMNS"frequency"));
   f.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new VecProperty(1),"",MBSIMNS"phase"));
+  input.push_back(new PhysicalVariableProperty(new VecProperty(1),"",MBSIMNS"phase"));
   p.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new VecProperty(1),"",MBSIMNS"offset"));
+  input.push_back(new PhysicalVariableProperty(new VecProperty(1),"",MBSIMNS"offset"));
   o.setProperty(new ExtPhysicalVarProperty(input));
 }
 
@@ -165,18 +165,18 @@ TabularFunction1Property::TabularFunction1Property() {
   PropertyContainer *propertyContainer = new PropertyContainer;
   vector<Property*> choiceProperty;
 
-  vector<PhysicalStringProperty*> input;
-  input.push_back(new PhysicalStringProperty(new VecFromFileProperty,"",MBSIMNS"x"));
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new VecFromFileProperty,"",MBSIMNS"x"));
   propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new MatFromFileProperty,"",MBSIMNS"y"));
+  input.push_back(new PhysicalVariableProperty(new MatFromFileProperty,"",MBSIMNS"y"));
   propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
   choiceProperty.push_back(propertyContainer);
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new MatFromFileProperty,"",MBSIMNS"xy"));
+  input.push_back(new PhysicalVariableProperty(new MatFromFileProperty,"",MBSIMNS"xy"));
   choiceProperty.push_back(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
   choice = new PropertyChoiceProperty(choiceProperty);
@@ -239,16 +239,16 @@ void SummationFunction1Property::toWidget(QWidget *widget) {
 
 LinearSpringDamperForceProperty::LinearSpringDamperForceProperty() {
 
-  vector<PhysicalStringProperty*> input;
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"N/m",MBSIMNS"stiffnessCoefficient"));
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"N/m",MBSIMNS"stiffnessCoefficient"));
   c.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"N*s/m",MBSIMNS"dampingCoefficient"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"N*s/m",MBSIMNS"dampingCoefficient"));
   d.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"m",MBSIMNS"unloadedLength"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"m",MBSIMNS"unloadedLength"));
   l0.setProperty(new ExtPhysicalVarProperty(input));
 }
 
@@ -281,12 +281,12 @@ void LinearSpringDamperForceProperty::toWidget(QWidget *widget) {
 
 LinearRegularizedBilateralConstraintProperty::LinearRegularizedBilateralConstraintProperty() {
 
-  vector<PhysicalStringProperty*> input;
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"N/m",MBSIMNS"stiffnessCoefficient"));
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"N/m",MBSIMNS"stiffnessCoefficient"));
   c.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"N*s/m",MBSIMNS"dampingCoefficient"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"N*s/m",MBSIMNS"dampingCoefficient"));
   d.setProperty(new ExtPhysicalVarProperty(input));
 }
 
@@ -315,12 +315,12 @@ void LinearRegularizedBilateralConstraintProperty::toWidget(QWidget *widget) {
 
 LinearRegularizedUnilateralConstraintProperty::LinearRegularizedUnilateralConstraintProperty() {
 
-  vector<PhysicalStringProperty*> input;
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"N/m",MBSIMNS"stiffnessCoefficient"));
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"N/m",MBSIMNS"stiffnessCoefficient"));
   c.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"N*s/m",MBSIMNS"dampingCoefficient"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"N*s/m",MBSIMNS"dampingCoefficient"));
   d.setProperty(new ExtPhysicalVarProperty(input));
 }
 
@@ -349,12 +349,12 @@ void LinearRegularizedUnilateralConstraintProperty::toWidget(QWidget *widget) {
 
 LinearRegularizedCoulombFrictionProperty::LinearRegularizedCoulombFrictionProperty() : gd(0,false) {
 
-  vector<PhysicalStringProperty*> input;
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0.01"),"m/s",MBSIMNS"marginalVelocity"));
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0.01"),"m/s",MBSIMNS"marginalVelocity"));
   gd.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0"),"-",MBSIMNS"frictionCoefficient"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMNS"frictionCoefficient"));
   mu.setProperty(new ExtPhysicalVarProperty(input));
 }
 
@@ -384,8 +384,8 @@ void LinearRegularizedCoulombFrictionProperty::toWidget(QWidget *widget) {
 Function1ChoiceProperty::Function1ChoiceProperty(const string &xmlName_, bool withFactor) : function(0), factor(0), index(0), xmlName(xmlName_) {
 
   if(withFactor) {
-    vector<PhysicalStringProperty*> input;
-    input.push_back(new PhysicalStringProperty(new ScalarProperty("1"),"-",MBSIMNS"factor"));
+    vector<PhysicalVariableProperty*> input;
+    input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMNS"factor"));
     factor.setProperty(new ExtPhysicalVarProperty(input));
   }
   defineForceLaw(0);

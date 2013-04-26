@@ -23,7 +23,7 @@
 #include <QDialog>
 #include <QPushButton>
 #include <QTreeWidgetItem>
-#include "string_widgets.h"
+#include "variable_widgets.h"
 
 class Element;
 class RigidBody;
@@ -41,12 +41,12 @@ class ElementItem : public QTreeWidgetItem {
 class EvalDialog : public QDialog {
 //  Q_OBJECT
   public:
-    EvalDialog(StringWidget *var);
+    EvalDialog(VariableWidget *var);
     void setValue(const std::string &str) {var->setValue(str);}
     std::string getValue() const {return var->getValue();}
     //void setButtonDisabled(bool flag) {button->setDisabled(flag);}
   protected:
-    StringWidget *var;
+    VariableWidget *var;
 //    QPushButton *button;
 //  signals:
 //    void clicked(bool);

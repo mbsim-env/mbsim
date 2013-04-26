@@ -28,7 +28,7 @@
 class TiXmlElement;
 class TiXmlNode;
 
-class StringProperty : public Property {
+class VariableProperty : public Property {
 
   public:
     virtual std::string getValue() const = 0;
@@ -37,7 +37,7 @@ class StringProperty : public Property {
     void toWidget(QWidget *widget);
 };
 
-//class TextProperty : public StringProperty {
+//class TextProperty : public VariableProperty {
 //
 //  public:
 //    ChoiceProperty(const std::string &value_) : value(value_) {}
@@ -51,7 +51,7 @@ class StringProperty : public Property {
 //};
 //
 
-class OctaveExpressionProperty : public StringProperty {
+class OctaveExpressionProperty : public VariableProperty {
   public:
     OctaveExpressionProperty() {}
     std::string getValue() const { return value; }
@@ -63,7 +63,7 @@ class OctaveExpressionProperty : public StringProperty {
     std::string value;
 };
 
-class ScalarProperty : public StringProperty {
+class ScalarProperty : public VariableProperty {
   protected:
     std::string scalar;
   public:
@@ -74,7 +74,7 @@ class ScalarProperty : public StringProperty {
     TiXmlElement* writeXMLFile(TiXmlNode *element);
 };
 
-class VecProperty : public StringProperty {
+class VecProperty : public VariableProperty {
   private:
     std::vector<std::string> value;
   public:
@@ -92,7 +92,7 @@ class VecProperty : public StringProperty {
     void toWidget(QWidget *widget);
 };
 
-class MatProperty : public StringProperty {
+class MatProperty : public VariableProperty {
 
   private:
     std::vector<std::vector<std::string> > value;
@@ -111,7 +111,7 @@ class MatProperty : public StringProperty {
     void toWidget(QWidget *widget);
 };
 
-//class SymMatProperty : public StringProperty {
+//class SymMatProperty : public VariableProperty {
 //
 //  private:
 //    std::vector<std::vector<std::string> > value;
@@ -130,18 +130,18 @@ class MatProperty : public StringProperty {
 //    void toWidget(QWidget *widget);
 //};
 
-class PhysicalStringProperty : public Property {
+class PhysicalVariableProperty : public Property {
   protected:
-    StringProperty* value;
+    VariableProperty* value;
     std::string unit, xmlName;
   public:
-    PhysicalStringProperty(StringProperty *value_=0, const std::string &unit_="", const std::string &xmlName_="") : value(value_), unit(unit_), xmlName(xmlName_) {}
-    ~PhysicalStringProperty() {delete value;}
+    PhysicalVariableProperty(VariableProperty *value_=0, const std::string &unit_="", const std::string &xmlName_="") : value(value_), unit(unit_), xmlName(xmlName_) {}
+    ~PhysicalVariableProperty() {delete value;}
     std::string getValue() const {return value->getValue();}
     void setValue(const std::string &str) {value->setValue(str);}
     std::string getUnit() const {return unit;}
     void setUnit(const std::string &unit_) {unit = unit_;}
-    virtual StringProperty* getProperty() {return value;}
+    virtual VariableProperty* getProperty() {return value;}
     const std::string& getXmlName() const {return xmlName;}
     void setXmlName(const std::string &name) {xmlName = name;}
     TiXmlElement* initializeUsingXML(TiXmlElement *element);
@@ -150,7 +150,7 @@ class PhysicalStringProperty : public Property {
     void toWidget(QWidget *widget);
 };
 
-class VecFromFileProperty : public StringProperty {
+class VecFromFileProperty : public VariableProperty {
 
   public:
     VecFromFileProperty(const QString &fileName_="", const QString &absoluteFilePath_="") : fileName(fileName_), absoluteFilePath(absoluteFilePath_) {}
@@ -165,7 +165,7 @@ class VecFromFileProperty : public StringProperty {
     QString fileName, absoluteFilePath;
 };
 
-class MatFromFileProperty : public StringProperty {
+class MatFromFileProperty : public VariableProperty {
 
   public:
     MatFromFileProperty(const QString &fileName_="", const QString &absoluteFilePath_="") : fileName(fileName_), absoluteFilePath(absoluteFilePath_) {}

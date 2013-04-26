@@ -20,11 +20,11 @@
 #include <config.h>
 #include "kinematics_properties.h"
 #include "frame.h"
-#include "string_properties.h"
+#include "variable_properties.h"
 #include "function_properties.h"
 #include "extended_properties.h"
 #include "basic_widgets.h"
-#include "string_widgets.h"
+#include "variable_widgets.h"
 #include "kinematics_widgets.h"
 #include "extended_widgets.h"
 #include "octaveutils.h"
@@ -76,13 +76,13 @@ TiXmlElement* TranslationInXYZDirectionProperty::writeXMLFile(TiXmlNode *parent)
 }
 
 LinearTranslationProperty::LinearTranslationProperty() {
-  vector<PhysicalStringProperty*> input;
-  input.push_back(new PhysicalStringProperty(new MatProperty(3,1),"-",MBSIMNS"translationVectors"));
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMNS"translationVectors"));
   mat.setProperty(new ExtPhysicalVarProperty(input));
 }
 
 int LinearTranslationProperty::getSize() const {
-  string str = evalOctaveExpression(static_cast<const ExtPhysicalVarProperty*>(mat.getProperty())->getCurrentPhysicalStringProperty()->getValue());
+  string str = evalOctaveExpression(static_cast<const ExtPhysicalVarProperty*>(mat.getProperty())->getCurrentPhysicalVariableProperty()->getValue());
   vector<vector<string> > A = strToMat(str);
   return A.size()?A[0].size():0;
 }
@@ -231,8 +231,8 @@ TiXmlElement* RotationAboutZAxisProperty::writeXMLFile(TiXmlNode *parent) {
 }
 
 RotationAboutFixedAxisProperty::RotationAboutFixedAxisProperty() {
-  vector<PhysicalStringProperty*> input;
-  input.push_back(new PhysicalStringProperty(new VecProperty(3),"-",MBSIMNS"axisOfRotation"));
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new VecProperty(3),"-",MBSIMNS"axisOfRotation"));
   vec.setProperty(new ExtPhysicalVarProperty(input));  
 }
 

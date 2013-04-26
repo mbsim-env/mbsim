@@ -18,7 +18,7 @@
 */
 
 #include <config.h>
-#include "string_widgets.h"
+#include "variable_widgets.h"
 #include "octaveutils.h"
 #include <vector>
 #include <QtGui>
@@ -553,7 +553,7 @@ void CardanWidget::setReadOnly(bool flag) {
   }
 }
 
-PhysicalStringWidget::PhysicalStringWidget(StringWidget *widget_, const QStringList &units_, int defaultUnit_) : widget(widget_), units(units_), defaultUnit(defaultUnit_) {
+PhysicalVariableWidget::PhysicalVariableWidget(VariableWidget *widget_, const QStringList &units_, int defaultUnit_) : widget(widget_), units(units_), defaultUnit(defaultUnit_) {
   QHBoxLayout *layout = new QHBoxLayout;
   setLayout(layout);
   layout->setMargin(0);

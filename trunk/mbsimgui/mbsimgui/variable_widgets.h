@@ -39,37 +39,37 @@ class OctaveHighlighter : public QSyntaxHighlighter {
     std::vector<std::pair<QRegExp, QTextCharFormat> > rule;
 };
 
-class StringWidget : public Widget {
+class VariableWidget : public Widget {
 
   public:
     virtual void setReadOnly(bool flag) {}
     virtual std::string getValue() const = 0;
     virtual void setValue(const std::string &str) = 0;
-    virtual StringWidget* cloneStringWidget() {return 0;}
+    virtual VariableWidget* cloneVariableWidget() {return 0;}
     virtual std::string getType() const = 0;
     virtual bool validate(const std::string &str) const {return true;}
 };
 
-class BoolWidget : public StringWidget {
+class BoolWidget : public VariableWidget {
 
   public:
     BoolWidget(const std::string &b="0");
     std::string getValue() const {return value->checkState()==Qt::Checked?"1":"0";}
     void setValue(const std::string &str) {value->setCheckState((str=="0"||str=="false")?Qt::Unchecked:Qt::Checked);}
-    virtual StringWidget* cloneStringWidget() {return new BoolWidget;}
+    virtual VariableWidget* cloneVariableWidget() {return new BoolWidget;}
     virtual std::string getType() const {return "Boolean";}
 
   protected:
     QCheckBox *value;
 };
 
-class ChoiceWidget : public StringWidget {
+class ChoiceWidget : public VariableWidget {
 
   public:
     ChoiceWidget(const std::vector<std::string> &list, int num);
     std::string getValue() const {return value->currentText().toStdString();}
     void setValue(const std::string &str) {value->setCurrentIndex(value->findText(str.c_str()));}
-    virtual StringWidget* cloneStringWidget() {ChoiceWidget *widget=new ChoiceWidget(list,value->currentIndex());widget->setDisabled(true);return widget;}
+    virtual VariableWidget* cloneVariableWidget() {ChoiceWidget *widget=new ChoiceWidget(list,value->currentIndex());widget->setDisabled(true);return widget;}
     virtual std::string getType() const {return "Choice";}
     void setDisabled(bool flag) {value->setDisabled(flag);}
     bool validate(const std::string &str) const {return value->findText(str.c_str())>=0;}
@@ -79,7 +79,7 @@ class ChoiceWidget : public StringWidget {
     std::vector<std::string> list;
 };
 
-class OctaveExpressionWidget : public StringWidget {
+class OctaveExpressionWidget : public VariableWidget {
   public:
     OctaveExpressionWidget();
     std::string getValue() const { return value->toPlainText().toStdString(); }
@@ -90,7 +90,7 @@ class OctaveExpressionWidget : public StringWidget {
     QPlainTextEdit *value;
 };
 
-class ScalarWidget : public StringWidget {
+class ScalarWidget : public VariableWidget {
   private:
     QLineEdit* box;
   public:
@@ -98,11 +98,11 @@ class ScalarWidget : public StringWidget {
     void setReadOnly(bool flag) {box->setReadOnly(flag);}
     std::string getValue() const {return box->text().toStdString();}
     void setValue(const std::string &str) {box->setText(str.c_str());}
-    virtual StringWidget* cloneStringWidget() {return new ScalarWidget;}
+    virtual VariableWidget* cloneVariableWidget() {return new ScalarWidget;}
     virtual std::string getType() const {return "Scalar";}
 };
 
-class BasicVecWidget : public StringWidget {
+class BasicVecWidget : public VariableWidget {
   public:
     virtual std::vector<std::string> getVec() const = 0;
     virtual void setVec(const std::vector<std::string> &x) = 0;
@@ -122,12 +122,12 @@ class VecWidget : public BasicVecWidget {
     std::string getValue() const {return toStr(getVec());}
     void setValue(const std::string &str) {setVec(strToVec(str));}
     int size() const {return box.size();}
-    virtual StringWidget* cloneStringWidget() {return new VecWidget(size());}
+    virtual VariableWidget* cloneVariableWidget() {return new VecWidget(size());}
     virtual std::string getType() const {return "Vector";}
     bool validate(const std::string &str) const;
 };
 
-class BasicMatWidget : public StringWidget {
+class BasicMatWidget : public VariableWidget {
   public:
     virtual std::vector<std::vector<std::string> > getMat() const = 0;
     virtual void setMat(const std::vector<std::vector<std::string> > &A) = 0;
@@ -148,7 +148,7 @@ class MatWidget : public BasicMatWidget {
     void setValue(const std::string &str) {setMat(strToMat(str));}
     int rows() const {return box.size();}
     int cols() const {return box[0].size();}
-    virtual StringWidget* cloneStringWidget() {return new MatWidget(rows(),cols());}
+    virtual VariableWidget* cloneVariableWidget() {return new MatWidget(rows(),cols());}
     virtual std::string getType() const {return "Matrix";}
     bool validate(const std::string &str) const;
 };
@@ -166,7 +166,7 @@ class SymMatWidget : public BasicMatWidget {
     void setReadOnly(bool flag);
     std::string getValue() const {return toStr(getMat());}
     void setValue(const std::string &str) {setMat(strToMat(str));}
-    virtual StringWidget* cloneStringWidget() {return new SymMatWidget(rows());}
+    virtual VariableWidget* cloneVariableWidget() {return new SymMatWidget(rows());}
     int rows() const {return box.size();}
     int cols() const {return box[0].size();}
     virtual std::string getType() const {return "Matrix";}
@@ -193,7 +193,7 @@ class VecSizeVarWidget : public BasicVecWidget {
     std::string getValue() const {return toStr(getVec());}
     void setValue(const std::string &str) {setVec(strToVec(str));}
     void setReadOnly(bool flag) {widget->setReadOnly(flag);}
-    virtual StringWidget* cloneStringWidget() {return new VecWidget(size());}
+    virtual VariableWidget* cloneVariableWidget() {return new VecWidget(size());}
     virtual std::string getType() const {return "Vector";}
     bool validate(const std::string &str) const;
 
@@ -225,7 +225,7 @@ class MatColsVarWidget : public BasicMatWidget {
     std::string getValue() const {return toStr(getMat());}
     void setValue(const std::string &str) {setMat(strToMat(str));}
     void setReadOnly(bool flag) {widget->setReadOnly(flag);}
-    virtual StringWidget* cloneStringWidget() {return new MatWidget(rows(),cols());}
+    virtual VariableWidget* cloneVariableWidget() {return new MatWidget(rows(),cols());}
     virtual std::string getType() const {return "Matrix";}
     bool validate(const std::string &str) const;
 
@@ -257,7 +257,7 @@ class MatRowsColsVarWidget : public BasicMatWidget {
     std::string getValue() const {return toStr(getMat());}
     void setValue(const std::string &str) {setMat(strToMat(str));}
     void setReadOnly(bool flag) {widget->setReadOnly(flag);}
-    virtual StringWidget* cloneStringWidget() {return new MatWidget(rows(),cols());}
+    virtual VariableWidget* cloneVariableWidget() {return new MatWidget(rows(),cols());}
     virtual std::string getType() const {return "Matrix";}
     bool validate(const std::string &str) const;
 
@@ -269,7 +269,7 @@ class MatRowsColsVarWidget : public BasicMatWidget {
     void colSizeChanged(int);
 };
 
-class CardanWidget : public StringWidget {
+class CardanWidget : public VariableWidget {
 
   private:
     std::vector<QLineEdit*> box;
@@ -282,26 +282,26 @@ class CardanWidget : public StringWidget {
     void setReadOnly(bool flag);
     std::string getValue() const {return toStr(getCardan());}
     void setValue(const std::string &str) {setCardan(strToVec(str));}
-    virtual StringWidget* cloneStringWidget() {return new CardanWidget;}
+    virtual VariableWidget* cloneVariableWidget() {return new CardanWidget;}
     virtual std::string getType() const {return "Cardan";}
 };
 
-class PhysicalStringWidget : public StringWidget {
+class PhysicalVariableWidget : public VariableWidget {
 
   Q_OBJECT
 
   private:
-    StringWidget *widget;
+    VariableWidget *widget;
     QComboBox* unit;
     QStringList units;
     int defaultUnit;
   public:
-    PhysicalStringWidget(StringWidget *widget, const QStringList &units, int defaultUnit);
+    PhysicalVariableWidget(VariableWidget *widget, const QStringList &units, int defaultUnit);
     std::string getValue() const {return widget->getValue();}
     void setValue(const std::string &str) {widget->setValue(str);}
     void setReadOnly(bool flag) {widget->setReadOnly(flag);}
-    virtual StringWidget* cloneStringWidget() {return widget->cloneStringWidget();}
-    virtual StringWidget* getWidget() {return widget;}
+    virtual VariableWidget* cloneVariableWidget() {return widget->cloneVariableWidget();}
+    virtual VariableWidget* getWidget() {return widget;}
     const QStringList& getUnitList() const {return units;}
     int getDefaultUnit() const {return defaultUnit;}
     virtual std::string getType() const {return widget->getType();}
@@ -310,7 +310,7 @@ class PhysicalStringWidget : public StringWidget {
     void setUnit(const std::string &unit_) {unit->setCurrentIndex(unit->findText(unit_.c_str()));}
 };
 
-class VecFromFileWidget : public StringWidget {
+class VecFromFileWidget : public VariableWidget {
   Q_OBJECT
 
   friend class VecFromFileProperty;
@@ -320,7 +320,7 @@ class VecFromFileWidget : public StringWidget {
     std::string getValue() const;
     void setValue(const std::string &str) {}
     virtual std::string getType() const {return "File";}
-    virtual StringWidget* cloneStringWidget() {return new VecWidget(0);}
+    virtual VariableWidget* cloneVariableWidget() {return new VecWidget(0);}
 
   protected:
     QLineEdit *fileName;
@@ -331,7 +331,7 @@ class VecFromFileWidget : public StringWidget {
 
 };
 
-class MatFromFileWidget : public StringWidget {
+class MatFromFileWidget : public VariableWidget {
   Q_OBJECT
 
   friend class MatFromFileProperty;
@@ -341,7 +341,7 @@ class MatFromFileWidget : public StringWidget {
     std::string getValue() const; 
     void setValue(const std::string &str) {}
     virtual std::string getType() const {return "File";}
-    virtual StringWidget* cloneStringWidget() {return new MatWidget(0,0);}
+    virtual VariableWidget* cloneVariableWidget() {return new MatWidget(0,0);}
 
   protected:
     QLineEdit *fileName;

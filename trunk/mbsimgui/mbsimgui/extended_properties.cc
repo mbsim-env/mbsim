@@ -21,7 +21,7 @@
 #include "extended_properties.h"
 #include "frame.h"
 #include "basic_widgets.h"
-#include "string_widgets.h"
+#include "variable_widgets.h"
 #include "kinematics_widgets.h"
 #include "extended_widgets.h"
 #include <QStackedWidget>
@@ -30,8 +30,8 @@
 
 using namespace std;
 
-ExtPhysicalVarProperty::ExtPhysicalVarProperty(std::vector<PhysicalStringProperty*> inputProperty_) : inputProperty(inputProperty_), currentInput(0) {
-  inputProperty.push_back(new PhysicalStringProperty(new OctaveExpressionProperty, inputProperty[0]->getUnit(), inputProperty[0]->getXmlName()));
+ExtPhysicalVarProperty::ExtPhysicalVarProperty(std::vector<PhysicalVariableProperty*> inputProperty_) : inputProperty(inputProperty_), currentInput(0) {
+  inputProperty.push_back(new PhysicalVariableProperty(new OctaveExpressionProperty, inputProperty[0]->getUnit(), inputProperty[0]->getXmlName()));
 }
 
 TiXmlElement* ExtPhysicalVarProperty::initializeUsingXML(TiXmlElement *element) {
@@ -45,7 +45,7 @@ TiXmlElement* ExtPhysicalVarProperty::initializeUsingXML(TiXmlElement *element) 
 }
 
 ExtPhysicalVarProperty::~ExtPhysicalVarProperty() {
-  for(vector<PhysicalStringProperty*>::iterator i = inputProperty.begin(); i != inputProperty.end(); ++i)
+  for(vector<PhysicalVariableProperty*>::iterator i = inputProperty.begin(); i != inputProperty.end(); ++i)
     delete *i;
 }
 
@@ -57,13 +57,13 @@ TiXmlElement* ExtPhysicalVarProperty::writeXMLFile(TiXmlNode *parent) {
 void ExtPhysicalVarProperty::fromWidget(QWidget *widget) {
   currentInput = static_cast<ExtPhysicalVarWidget*>(widget)->getCurrentInput();
   for(int i=0; i< inputProperty.size(); i++)
-    inputProperty[i]->fromWidget(static_cast<ExtPhysicalVarWidget*>(widget)->getPhysicalStringWidget(i));
+    inputProperty[i]->fromWidget(static_cast<ExtPhysicalVarWidget*>(widget)->getPhysicalVariableWidget(i));
 }
 
 void ExtPhysicalVarProperty::toWidget(QWidget *widget) {
   static_cast<ExtPhysicalVarWidget*>(widget)->setCurrentInput(currentInput);
   for(int i=0; i< inputProperty.size(); i++)
-    inputProperty[i]->toWidget(static_cast<ExtPhysicalVarWidget*>(widget)->getPhysicalStringWidget(i));
+    inputProperty[i]->toWidget(static_cast<ExtPhysicalVarWidget*>(widget)->getPhysicalVariableWidget(i));
 }
 
 PropertyChoiceProperty::~PropertyChoiceProperty() {

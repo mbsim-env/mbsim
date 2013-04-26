@@ -20,7 +20,7 @@
 #include <config.h>
 #include "element_property_dialog.h"
 #include "basic_widgets.h"
-#include "string_widgets.h"
+#include "variable_widgets.h"
 #include "kinematics_widgets.h"
 #include "kinetics_widgets.h"
 #include "function_widgets.h"
@@ -88,13 +88,13 @@ void FramePropertyDialog::fromWidget(Element *element) {
 FixedRelativeFramePropertyDialog::FixedRelativeFramePropertyDialog(FixedRelativeFrame *frame, QWidget *parent, Qt::WindowFlags f) : FramePropertyDialog(frame,parent,f,true) {
   addTab("Kinematics",1);
 
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new VecWidget(3), lengthUnits(), 4));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new VecWidget(3), lengthUnits(), 4));
   position = new ExtWidget("Relative position", new ExtPhysicalVarWidget(input),true);
   addToTab("Kinematics", position);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new MatWidget(getEye<string>(3,3,"1","0")),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new MatWidget(getEye<string>(3,3,"1","0")),noUnitUnits(),1));
   orientation = new ExtWidget("Relative orientation",new ExtPhysicalVarWidget(input),true);
   addToTab("Kinematics", orientation);
 
@@ -139,8 +139,8 @@ void PlanePropertyDialog::fromWidget(Element *element) {
 SpherePropertyDialog::SpherePropertyDialog(Sphere *sphere, QWidget *parent, Qt::WindowFlags f) : ContourPropertyDialog(sphere,parent,f) {
   addTab("Visualisation",1);
  
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1"), lengthUnits(), 4));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 4));
   radius = new ExtWidget("Radius",new ExtPhysicalVarWidget(input));
   addToTab("General", radius);
 
@@ -164,13 +164,13 @@ GroupPropertyDialog::GroupPropertyDialog(Group *group, QWidget *parent, Qt::Wind
   if(kinematics) {
     addTab("Kinematics",1);
 
-    vector<PhysicalStringWidget*> input;
-    input.push_back(new PhysicalStringWidget(new VecWidget(3),lengthUnits(),4));
+    vector<PhysicalVariableWidget*> input;
+    input.push_back(new PhysicalVariableWidget(new VecWidget(3),lengthUnits(),4));
     position = new ExtWidget("Position",new ExtPhysicalVarWidget(input),true); 
     addToTab("Kinematics", position);
 
     input.clear();
-    input.push_back(new PhysicalStringWidget(new MatWidget(getEye<string>(3,3,"1","0")),noUnitUnits(),1));
+    input.push_back(new PhysicalVariableWidget(new MatWidget(getEye<string>(3,3,"1","0")),noUnitUnits(),1));
     orientation = new ExtWidget("Orientation",new ExtPhysicalVarWidget(input),true); 
     addToTab("Kinematics", orientation);
 
@@ -202,8 +202,8 @@ SolverPropertyDialog::SolverPropertyDialog(Solver *solver, QWidget *parent, Qt::
   addTab("Solver parameters",2);
   addTab("Extra",3);
 
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new VecWidget(vector<string>(3)),accelerationUnits(),0));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new VecWidget(vector<string>(3)),accelerationUnits(),0));
   environment = new ExtWidget("Acceleration of gravity",new ExtPhysicalVarWidget(input));
   addToTab("Environment", environment);
 
@@ -211,7 +211,7 @@ SolverPropertyDialog::SolverPropertyDialog(Solver *solver, QWidget *parent, Qt::
   addToTab("Solver parameters",solverParameters);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new BoolWidget("1"),QStringList(),1));
+  input.push_back(new PhysicalVariableWidget(new BoolWidget("1"),QStringList(),1));
   inverseKinetics = new ExtWidget("Inverse kinetics",new ExtPhysicalVarWidget(input),true); 
   addToTab("Extra", inverseKinetics);
 }
@@ -232,16 +232,16 @@ void SolverPropertyDialog::fromWidget(Element *element) {
 
 ObjectPropertyDialog::ObjectPropertyDialog(Object *object, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(object,parent,f) {
   addTab("Initial conditions",1);
-  vector<PhysicalStringWidget*> input;
+  vector<PhysicalVariableWidget*> input;
   q0_ = new VecWidget(0);
-  input.push_back(new PhysicalStringWidget(q0_,QStringList(),1));
+  input.push_back(new PhysicalVariableWidget(q0_,QStringList(),1));
   ExtPhysicalVarWidget *var = new ExtPhysicalVarWidget(input);  
   q0 = new ExtWidget("Initial generalized position",var,true);
   addToTab("Initial conditions", q0);
 
   input.clear();
   u0_ = new VecWidget(0);
-  input.push_back(new PhysicalStringWidget(u0_,QStringList(),1));
+  input.push_back(new PhysicalVariableWidget(u0_,QStringList(),1));
   var = new ExtPhysicalVarWidget(input);  
   u0 = new ExtWidget("Initial generalized velocity",var,true);
   addToTab("Initial conditions", u0);
@@ -284,13 +284,13 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   K = new ExtWidget("Frame for kinematics",new LocalFrameOfReferenceWidget(body,0),true);
   addToTab("Kinematics",K);
 
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1"),massUnits(),2));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),massUnits(),2));
   mass = new ExtWidget("Mass",new ExtPhysicalVarWidget(input));
   addToTab("General", mass);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new SymMatWidget(getEye<string>(3,3,"0.01","0")),inertiaUnits(),2));
+  input.push_back(new PhysicalVariableWidget(new SymMatWidget(getEye<string>(3,3,"0.01","0")),inertiaUnits(),2));
   inertia = new ExtWidget("Inertia tensor",new ExtPhysicalVarWidget(input));
   addToTab("General", inertia);
 
@@ -319,7 +319,7 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   addToTab("Visualisation",jointMomentArrow);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new BoolWidget("0"),QStringList(),1));
+  input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
   isFrameOfBodyForRotation = new ExtWidget("Use body frame for rotation",new ExtPhysicalVarWidget(input),true); 
   addToTab("Extra", isFrameOfBodyForRotation);
 }
@@ -674,8 +674,8 @@ ContactPropertyDialog::ContactPropertyDialog(Contact *contact, QWidget *parent, 
   frictionImpactLaw = new ExtWidget("Friction impact law",new FrictionImpactLawChoiceWidget,true);
   addToTab("Kinetics", frictionImpactLaw);
 
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0.1"),lengthUnits(),4));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.1"),lengthUnits(),4));
   enableOpenMBVContactPoints = new ExtWidget("OpenMBV contact points",new ExtPhysicalVarWidget(input),true); 
   addToTab("Visualisation",enableOpenMBVContactPoints);
 

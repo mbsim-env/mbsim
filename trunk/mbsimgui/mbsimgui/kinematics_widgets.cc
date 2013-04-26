@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "kinematics_widgets.h"
-#include "string_widgets.h"
+#include "variable_widgets.h"
 #include "function_widgets.h"
 #include "extended_widgets.h"
 #include "octaveutils.h"
@@ -28,9 +28,9 @@
 using namespace std;
 
 LinearTranslationWidget::LinearTranslationWidget() {
-  vector<PhysicalStringWidget*> input;
+  vector<PhysicalVariableWidget*> input;
   MatColsVarWidget* m = new MatColsVarWidget(3,1,1,3);
-  input.push_back(new PhysicalStringWidget(m,noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(m,noUnitUnits(),1));
   ExtPhysicalVarWidget *mat_ = new ExtPhysicalVarWidget(input);
   mat = new ExtWidget("Translation vectors",mat_);
   QVBoxLayout *layout = new QVBoxLayout;
@@ -42,7 +42,7 @@ LinearTranslationWidget::LinearTranslationWidget() {
 }
 
 int LinearTranslationWidget::getSize() const {
-  string str = evalOctaveExpression(static_cast<ExtPhysicalVarWidget*>(mat->getWidget())->getCurrentPhysicalStringWidget()->getValue());
+  string str = evalOctaveExpression(static_cast<ExtPhysicalVarWidget*>(mat->getWidget())->getCurrentPhysicalVariableWidget()->getValue());
   vector<vector<string> > A = strToMat(str);
   return A.size()?A[0].size():0;
 }
@@ -104,8 +104,8 @@ void TranslationChoiceWidget::defineTranslation(int index) {
 }
 
 RotationAboutFixedAxisWidget::RotationAboutFixedAxisWidget() {
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new VecWidget(3),noUnitUnits(),1));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new VecWidget(3),noUnitUnits(),1));
   ExtPhysicalVarWidget *vec_ = new ExtPhysicalVarWidget(input);
   vec = new ExtWidget("Translation vectors",vec_);
   QVBoxLayout *layout = new QVBoxLayout;

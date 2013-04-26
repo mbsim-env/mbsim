@@ -20,7 +20,7 @@
 #include <config.h>
 #include "integrator_property_dialog.h"
 #include "integrator.h"
-#include "string_widgets.h"
+#include "variable_widgets.h"
 #include "extended_widgets.h"
 #include "integrator_widgets.h"
 
@@ -30,24 +30,24 @@ IntegratorPropertyDialog::IntegratorPropertyDialog(QWidget *parent, Qt::WindowFl
   addTab("General");
   addTab("Initial conditions");
 
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),timeUnits(),2));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),timeUnits(),2));
   startTime= new ExtWidget("Start time",new ExtPhysicalVarWidget(input)); 
   addToTab("General", startTime);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1"),timeUnits(),2));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),timeUnits(),2));
   endTime= new ExtWidget("End time",new ExtPhysicalVarWidget(input)); 
   addToTab("General", endTime);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-2"),timeUnits(),2));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-2"),timeUnits(),2));
   plotStepSize= new ExtWidget("Plot step size",new ExtPhysicalVarWidget(input)); 
   addToTab("General", plotStepSize);
 
   input.clear();
   z0 = new VecWidget(0);
-  input.push_back(new PhysicalStringWidget(z0, QStringList(), 0));
+  input.push_back(new PhysicalVariableWidget(z0, QStringList(), 0));
   initialState= new ExtWidget("Initial state",new ExtPhysicalVarWidget(input),true);
   addToTab("Initial conditions", initialState);
 }
@@ -70,43 +70,43 @@ DOPRI5IntegratorPropertyDialog::DOPRI5IntegratorPropertyDialog(QWidget *parent, 
   addTab("Tolerances");
   addTab("Step size");
 
-  vector<PhysicalStringWidget*> input;
+  vector<PhysicalVariableWidget*> input;
   vector<QWidget*> widget;
   vector<string> name;
   name.push_back("Scalar");
   name.push_back("Vector");
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-6"),QStringList(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-6"),QStringList(),1));
   widget.push_back(new ExtPhysicalVarWidget(input));
   input.clear();
   aTol = new VecWidget(0);
-  input.push_back(new PhysicalStringWidget(aTol,QStringList(),1));
+  input.push_back(new PhysicalVariableWidget(aTol,QStringList(),1));
   widget.push_back(new ExtPhysicalVarWidget(input));
   absTol = new ExtWidget("Absolute tolerance",new WidgetChoiceWidget(name,widget)); 
   addToTab("Tolerances", absTol);
 
   input.clear();
   widget.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-6"),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-6"),noUnitUnits(),1));
   widget.push_back(new ExtPhysicalVarWidget(input));
   input.clear();
   rTol = new VecWidget(0);
-  input.push_back(new PhysicalStringWidget(rTol,noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(rTol,noUnitUnits(),1));
   widget.push_back(new ExtPhysicalVarWidget(input));
   relTol = new ExtWidget("Relative tolerance",new WidgetChoiceWidget(name,widget)); 
   addToTab("Tolerances", relTol);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),timeUnits(),2));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),timeUnits(),2));
   initialStepSize = new ExtWidget("Initial step size",new ExtPhysicalVarWidget(input)); 
   addToTab("Step size", initialStepSize);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),timeUnits(),2));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),timeUnits(),2));
   maximalStepSize = new ExtWidget("Maximal step size",new ExtPhysicalVarWidget(input)); 
   addToTab("Step size", maximalStepSize);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),QStringList(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),1));
   maxSteps = new ExtWidget("Number of maximal steps",new ExtPhysicalVarWidget(input),true); 
   addToTab("Step size", maxSteps);
 }
@@ -133,43 +133,43 @@ RADAU5IntegratorPropertyDialog::RADAU5IntegratorPropertyDialog(QWidget *parent, 
   addTab("Tolerances");
   addTab("Step size");
 
-  vector<PhysicalStringWidget*> input;
+  vector<PhysicalVariableWidget*> input;
   vector<QWidget*> widget;
   vector<string> name;
   name.push_back("Scalar");
   name.push_back("Vector");
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-6"),QStringList(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-6"),QStringList(),1));
   widget.push_back(new ExtPhysicalVarWidget(input));
   input.clear();
   aTol = new VecWidget(0);
-  input.push_back(new PhysicalStringWidget(aTol,QStringList(),1));
+  input.push_back(new PhysicalVariableWidget(aTol,QStringList(),1));
   widget.push_back(new ExtPhysicalVarWidget(input));
   absTol = new ExtWidget("Absolute tolerance",new WidgetChoiceWidget(name,widget)); 
   addToTab("Tolerances", absTol);
 
   input.clear();
   widget.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-6"),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-6"),noUnitUnits(),1));
   widget.push_back(new ExtPhysicalVarWidget(input));
   input.clear();
   rTol = new VecWidget(0);
-  input.push_back(new PhysicalStringWidget(rTol,noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(rTol,noUnitUnits(),1));
   widget.push_back(new ExtPhysicalVarWidget(input));
   relTol = new ExtWidget("Relative tolerance",new WidgetChoiceWidget(name,widget)); 
   addToTab("Tolerances", relTol);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),timeUnits(),2));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),timeUnits(),2));
   initialStepSize = new ExtWidget("Initial step size",new ExtPhysicalVarWidget(input)); 
   addToTab("Step size", initialStepSize);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),timeUnits(),2));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),timeUnits(),2));
   maximalStepSize = new ExtWidget("Maximal step size",new ExtPhysicalVarWidget(input)); 
   addToTab("Step size", maximalStepSize);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),QStringList(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),1));
   maxSteps = new ExtWidget("Number of maximal steps",new ExtPhysicalVarWidget(input),true); 
   addToTab("Step size", maxSteps);
 }
@@ -197,47 +197,47 @@ LSODEIntegratorPropertyDialog::LSODEIntegratorPropertyDialog(QWidget *parent, Qt
   addTab("Step size");
   addTab("Extra");
 
-  vector<PhysicalStringWidget*> input;
+  vector<PhysicalVariableWidget*> input;
   vector<QWidget*> widget;
   vector<string> name;
   name.push_back("Scalar");
   name.push_back("Vector");
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-6"),QStringList(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-6"),QStringList(),1));
   widget.push_back(new ExtPhysicalVarWidget(input));
   input.clear();
   aTol = new VecWidget(0);
-  input.push_back(new PhysicalStringWidget(aTol,QStringList(),1));
+  input.push_back(new PhysicalVariableWidget(aTol,QStringList(),1));
   widget.push_back(new ExtPhysicalVarWidget(input));
   absTol = new ExtWidget("Absolute tolerance",new WidgetChoiceWidget(name,widget)); 
   addToTab("Tolerances", absTol);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-6"),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-6"),noUnitUnits(),1));
   relTol = new ExtWidget("Relative tolerance",new ExtPhysicalVarWidget(input)); 
   addToTab("Tolerances", relTol);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),timeUnits(),2));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),timeUnits(),2));
   initialStepSize = new ExtWidget("Initial step size",new ExtPhysicalVarWidget(input)); 
   addToTab("Step size", initialStepSize);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),timeUnits(),2));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),timeUnits(),2));
   maximalStepSize = new ExtWidget("Maximal step size",new ExtPhysicalVarWidget(input)); 
   addToTab("Step size", maximalStepSize);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),timeUnits(),2));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),timeUnits(),2));
   minimalStepSize = new ExtWidget("Minimal step size",new ExtPhysicalVarWidget(input)); 
   addToTab("Step size", minimalStepSize);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),QStringList(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),1));
   maxSteps = new ExtWidget("Number of maximal steps",new ExtPhysicalVarWidget(input)); 
   addToTab("Step size", maxSteps);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new BoolWidget("0"),QStringList(),1));
+  input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
   stiff = new ExtWidget("Stiff modus",new ExtPhysicalVarWidget(input),true); 
   addToTab("Extra", stiff);
 }
@@ -267,37 +267,37 @@ LSODARIntegratorPropertyDialog::LSODARIntegratorPropertyDialog(QWidget *parent, 
   addTab("Step size");
   addTab("Extra");
 
-  vector<PhysicalStringWidget*> input;
+  vector<PhysicalVariableWidget*> input;
   vector<QWidget*> widget;
   vector<string> name;
   name.push_back("Scalar");
   name.push_back("Vector");
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-6"),QStringList(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-6"),QStringList(),1));
   widget.push_back(new ExtPhysicalVarWidget(input));
   input.clear();
   aTol = new VecWidget(0);
-  input.push_back(new PhysicalStringWidget(aTol,QStringList(),1));
+  input.push_back(new PhysicalVariableWidget(aTol,QStringList(),1));
   widget.push_back(new ExtPhysicalVarWidget(input));
   absTol = new ExtWidget("Absolute tolerance",new WidgetChoiceWidget(name,widget)); 
   addToTab("Tolerances", absTol);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-6"),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-6"),noUnitUnits(),1));
   relTol = new ExtWidget("Relative tolerance",new ExtPhysicalVarWidget(input)); 
   addToTab("Tolerances", relTol);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),timeUnits(),2));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),timeUnits(),2));
   initialStepSize = new ExtWidget("Initial step size",new ExtPhysicalVarWidget(input)); 
   addToTab("Step size", initialStepSize);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),timeUnits(),2));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),timeUnits(),2));
   maximalStepSize = new ExtWidget("Maximal step size",new ExtPhysicalVarWidget(input)); 
   addToTab("Step size", maximalStepSize);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new BoolWidget("0"),QStringList(),1));
+  input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
   plotOnRoot = new ExtWidget("Plot at root",new ExtPhysicalVarWidget(input)); 
   addToTab("Extra", plotOnRoot);
 }
@@ -323,8 +323,8 @@ void LSODARIntegratorPropertyDialog::fromWidget(Integrator *integrator) {
 TimeSteppingIntegratorPropertyDialog::TimeSteppingIntegratorPropertyDialog(QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(parent,f) {
   addTab("Step size");
 
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-3"),timeUnits(),2));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-3"),timeUnits(),2));
   stepSize = new ExtWidget("Time step size",new ExtPhysicalVarWidget(input)); 
   addToTab("Step size", stepSize);
 }
@@ -342,8 +342,8 @@ void TimeSteppingIntegratorPropertyDialog::fromWidget(Integrator *integrator) {
 EulerExplicitIntegratorPropertyDialog::EulerExplicitIntegratorPropertyDialog(QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(parent,f) {
   addTab("Step size");
 
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-3"),timeUnits(),2));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-3"),timeUnits(),2));
   stepSize = new ExtWidget("Time step size",new ExtPhysicalVarWidget(input)); 
   addToTab("Step size", stepSize);
 }
@@ -365,18 +365,18 @@ RKSuiteIntegratorPropertyDialog::RKSuiteIntegratorPropertyDialog(QWidget *parent
   type = new ExtWidget("Type",new RKSuiteTypeWidget);
   addToTab("General", type);
 
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-6"),noUnitUnits(),1));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-6"),noUnitUnits(),1));
   relTol = new ExtWidget("Relative tolerance",new ExtPhysicalVarWidget(input)); 
   addToTab("Tolerances", relTol);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("1e-6"),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-6"),noUnitUnits(),1));
   threshold = new ExtWidget("Threshold",new ExtPhysicalVarWidget(input)); 
   addToTab("Tolerances", threshold);
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),timeUnits(),2));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),timeUnits(),2));
   initialStepSize = new ExtWidget("Initial step size",new ExtPhysicalVarWidget(input),true); 
   addToTab("Step size", initialStepSize);
 }
