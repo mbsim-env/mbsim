@@ -28,8 +28,6 @@
 #include <mbxmlutilstinyxml/tinyxml.h>
 #include <mbxmlutilstinyxml/tinynamespace.h>
 
-using namespace std;
-
 class QTreeWidgetItem;
 
 /** Utilitiy class */

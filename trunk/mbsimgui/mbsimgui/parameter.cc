@@ -31,6 +31,8 @@ Parameter::Parameter(const string &name_) {
 Parameter::~Parameter() {
 }
 
+  //return static_cast<const ExtPhysicalVarProperty*>(value.getProperty())->getValue();
+
 void Parameter::initializeUsingXML(TiXmlElement *element) {
 }
 
@@ -46,6 +48,7 @@ ScalarParameter::ScalarParameter(const string &name) : Parameter(name) {
   vector<PhysicalVariableProperty*> input;
   input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"",""));
   value.setProperty(new ExtPhysicalVarProperty(input));
+  setValue(static_cast<const ExtPhysicalVarProperty*>(value.getProperty())->getValue());
 }
 
 ScalarParameter::~ScalarParameter() {
@@ -54,6 +57,7 @@ ScalarParameter::~ScalarParameter() {
 void ScalarParameter::initializeUsingXML(TiXmlElement *element) {
   ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
   val->initializeUsingXML(element);
+  setValue(val->getValue());
 }
 
 TiXmlElement* ScalarParameter::writeXMLFile(TiXmlNode *parent) {
@@ -63,15 +67,12 @@ TiXmlElement* ScalarParameter::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
-string ScalarParameter::getValue() const { 
-  return static_cast<const ExtPhysicalVarProperty*>(value.getProperty())->getValue();
-}
-
 VectorParameter::VectorParameter(const string &name) : Parameter(name) {
 
   vector<PhysicalVariableProperty*> input;
   input.push_back(new PhysicalVariableProperty(new VecProperty(3),"",""));
   value.setProperty(new ExtPhysicalVarProperty(input));
+  setValue(static_cast<const ExtPhysicalVarProperty*>(value.getProperty())->getValue());
 }
 
 VectorParameter::~VectorParameter() {
@@ -80,6 +81,7 @@ VectorParameter::~VectorParameter() {
 void VectorParameter::initializeUsingXML(TiXmlElement *element) {
   ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
   val->initializeUsingXML(element);
+  setValue(val->getValue());
 }
 
 TiXmlElement* VectorParameter::writeXMLFile(TiXmlNode *parent) {
@@ -89,15 +91,12 @@ TiXmlElement* VectorParameter::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
-string VectorParameter::getValue() const { 
-  return static_cast<const ExtPhysicalVarProperty*>(value.getProperty())->getValue();
-}
-
 MatrixParameter::MatrixParameter(const string &name) : Parameter(name) {
 
   vector<PhysicalVariableProperty*> input;
   input.push_back(new PhysicalVariableProperty(new MatProperty(3,3),"",""));
   value.setProperty(new ExtPhysicalVarProperty(input));
+  setValue(static_cast<const ExtPhysicalVarProperty*>(value.getProperty())->getValue());
 }
 
 MatrixParameter::~MatrixParameter() {
@@ -106,6 +105,7 @@ MatrixParameter::~MatrixParameter() {
 void MatrixParameter::initializeUsingXML(TiXmlElement *element) {
   ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
   val->initializeUsingXML(element);
+  setValue(val->getValue());
 }
 
 TiXmlElement* MatrixParameter::writeXMLFile(TiXmlNode *parent) {
@@ -113,10 +113,6 @@ TiXmlElement* MatrixParameter::writeXMLFile(TiXmlNode *parent) {
   ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
   val->writeXMLFile(ele0);
   return ele0;
-}
-
-string MatrixParameter::getValue() const { 
-  return static_cast<const ExtPhysicalVarProperty*>(value.getProperty())->getValue();
 }
 
 void ParameterList::addParameterList(const ParameterList &list) {
