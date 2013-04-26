@@ -83,26 +83,22 @@ OMBVArrowWidget::OMBVArrowWidget(const string &name, bool fromPoint) : OMBVDynam
   headLength = new ExtWidget("Head length",new ExtPhysicalVarWidget(input));
   layout->addWidget(headLength);
 
-  input.clear();
   vector<string> list;
-  list.push_back(string("\"")+"line"+"\"");
-  list.push_back(string("\"")+"fromHead"+"\"");
-  list.push_back(string("\"")+"toHead"+"\"");
-  list.push_back(string("\"")+"bothHeads"+"\"");
-  list.push_back(string("\"")+"formDoubleHead"+"\"");
-  list.push_back(string("\"")+"toDoubleHead"+"\"");
-  list.push_back(string("\"")+"bothDoubleHeads"+"\"");
-  input.push_back(new PhysicalVariableWidget(new ChoiceWidget(list,2), QStringList(), 0));
-  type = new ExtWidget("Type",new ExtPhysicalVarWidget(input));
+  list.push_back("line");
+  list.push_back("fromHead");
+  list.push_back("toHead");
+  list.push_back("bothHeads");
+  list.push_back("formDoubleHead");
+  list.push_back("toDoubleHead");
+  list.push_back("bothDoubleHeads");
+  type = new ExtWidget("Type",new TextChoiceWidget(list,2));
   layout->addWidget(type);
 
-  input.clear();
   list.clear();
-  list.push_back(string("\"")+"toPoint"+"\"");
-  list.push_back(string("\"")+"fromPoint"+"\"");
-  list.push_back(string("\"")+"midPoint"+"\"");
-  input.push_back(new PhysicalVariableWidget(new ChoiceWidget(list,fromPoint?1:0), QStringList(), 0));
-  referencePoint = new ExtWidget("Reference point",new ExtPhysicalVarWidget(input),true);
+  list.push_back("toPoint");
+  list.push_back("fromPoint");
+  list.push_back("midPoint");
+  referencePoint = new ExtWidget("Reference point",new TextChoiceWidget(list,fromPoint?1:0),true);
   if(fromPoint)
     referencePoint->setChecked(true);
   layout->addWidget(referencePoint);
@@ -118,16 +114,14 @@ OMBVCoilSpringWidget::OMBVCoilSpringWidget(const string &name) : OMBVObjectWidge
   layout->setMargin(0);
   setLayout(layout);
 
-  vector<PhysicalVariableWidget*> input;
   vector<string> list;
-  list.push_back(string("\"")+"tube"+"\"");
-  list.push_back(string("\"")+"scaledTube"+"\"");
-  list.push_back(string("\"")+"polyline"+"\"");
-  input.push_back(new PhysicalVariableWidget(new ChoiceWidget(list,0), QStringList(), 0));
-  type = new ExtWidget("Type",new ExtPhysicalVarWidget(input));
+  list.push_back("tube");
+  list.push_back("scaledTube");
+  list.push_back("polyline");
+  type = new ExtWidget("Type",new TextChoiceWidget(list,0));
   layout->addWidget(type);
 
-  input.clear();
+  vector<PhysicalVariableWidget*> input;
   input.push_back(new PhysicalVariableWidget(new ScalarWidget("3"), noUnitUnits(), 1));
   numberOfCoils= new ExtWidget("Number of coils",new ExtPhysicalVarWidget(input));
   layout->addWidget(numberOfCoils);

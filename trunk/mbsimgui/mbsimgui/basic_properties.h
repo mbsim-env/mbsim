@@ -135,7 +135,7 @@ class FileProperty : public Property {
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
     const std::string& getFileName() const {return fileName;}
-    void setFileName(const std::string &str) {fileName="\""+str+"\"";}
+    void setFileName(const std::string &str) {fileName=str;}
     std::string getAbsoluteFilePath() const;
     void setAbsoluteFilePath(const std::string &str);
 
@@ -148,7 +148,7 @@ class FileProperty : public Property {
 class TextProperty : public Property {
 
   public:
-    TextProperty(const std::string &text_, const std::string &xmlName_) : text(text_), xmlName(xmlName_) {}
+    TextProperty(const std::string &text_, const std::string &xmlName_, int quote_=0) : text(text_), xmlName(xmlName_), quote(quote_) {}
     virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void fromWidget(QWidget *widget);
@@ -159,6 +159,7 @@ class TextProperty : public Property {
   protected:
     std::string text;
     std::string xmlName;
+    int quote;
 };
 
 class DependenciesProperty : public Property {
@@ -283,11 +284,11 @@ class EmbedProperty : public Property {
     virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    std::string getFile() const {return static_cast<const FileProperty*>(href.getProperty())->getAbsoluteFilePath();}
+    std::string getFile() const {return static_cast<const FileProperty*>(href.getProperty())->getFileName();}
     bool hasCounter() const {return counterName.isActive();}
     std::string getCounterName() const {return static_cast<const TextProperty*>(counterName.getProperty())->getText();}
-    bool hasParameterFile() const {return (parameterList.isActive() && static_cast<const FileProperty*>(parameterList.getProperty())->getAbsoluteFilePath()!="");}
-    std::string getParameterFile() const {return static_cast<const FileProperty*>(parameterList.getProperty())->getAbsoluteFilePath();}
+    bool hasParameterFile() const {return (parameterList.isActive() && static_cast<const FileProperty*>(parameterList.getProperty())->getFileName()!="");}
+    std::string getParameterFile() const {return static_cast<const FileProperty*>(parameterList.getProperty())->getFileName();}
 
   protected:
     ExtProperty href, count, counterName, parameterList;

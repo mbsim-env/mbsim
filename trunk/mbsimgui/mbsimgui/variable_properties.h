@@ -37,20 +37,6 @@ class VariableProperty : public Property {
     void toWidget(QWidget *widget);
 };
 
-//class TextProperty : public VariableProperty {
-//
-//  public:
-//    ChoiceProperty(const std::string &value_) : value(value_) {}
-//    std::string getValue() const {return value;}
-//    void setValue(const std::string &str) {value=str;}
-//    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-//    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-//
-//  protected:
-//    std::string value;
-//};
-//
-
 class OctaveExpressionProperty : public VariableProperty {
   public:
     OctaveExpressionProperty() {}

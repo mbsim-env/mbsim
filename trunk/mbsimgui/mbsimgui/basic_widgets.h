@@ -172,19 +172,40 @@ class FileWidget : public Widget {
     void fileChanged(const QString &str);
 };
 
-class TextWidget : public Widget {
-  Q_OBJECT
+class BasicTextWidget : public Widget {
+
+  public:
+    virtual QString getText() const = 0;
+    virtual void setText(const QString &text) = 0;
+};
+
+class TextWidget : public BasicTextWidget {
+  //Q_OBJECT
 
   public:
     TextWidget(bool readOnly=false);
 
     QString getText() const {return text->text();}
+    void setText(const QString &text_) {text->setText(text_);}
 
-  public slots:
-    void setText(const QString &name) {text->setText(name);}
+  //public slots:
 
   protected:
     QLineEdit *text;
+};
+
+class TextChoiceWidget : public BasicTextWidget {
+
+  public:
+    TextChoiceWidget(const std::vector<std::string> &list, int num);
+    QString getText() const {return text->currentText();}
+    void setText(const QString &str) {text->setCurrentIndex(text->findText(str));}
+//    virtual std::string getType() const {return "Choice";}
+//    void setDisabled(bool flag) {text->setDisabled(flag);}
+
+  protected:
+    QComboBox *text;
+    std::vector<std::string> list;
 };
 
 class ConnectFramesWidget : public Widget {

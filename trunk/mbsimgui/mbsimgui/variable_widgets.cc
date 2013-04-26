@@ -132,17 +132,6 @@ BoolWidget::BoolWidget(const std::string &b) {
   layout->addWidget(value);
 }
 
-ChoiceWidget::ChoiceWidget(const vector<string> &list_, int num) : list(list_) { 
-  value = new QComboBox;
-  for(unsigned int i=0; i<list.size(); i++)
-    value->addItem(list[i].c_str());
-  value->setCurrentIndex(num);
-  QHBoxLayout* layout = new QHBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
-  layout->addWidget(value);
-}
-
 OctaveExpressionWidget::OctaveExpressionWidget() {
   QVBoxLayout *layout=new QVBoxLayout;
   layout->setMargin(0);

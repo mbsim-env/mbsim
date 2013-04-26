@@ -46,6 +46,7 @@ class Element : public TreeItemData {
     static int IDcounter;
     std::string ID;
     ExtProperty name, embed;
+    static std::string dir;
   public:
     Element(const std::string &name, Element *parent);
     virtual ~Element();
@@ -100,6 +101,7 @@ class Element : public TreeItemData {
     Element* getRoot() {return parent?parent->getRoot():this;}
     bool isEmbedded() const {return embed.isActive();}
     ParameterList getParameterList(bool addCounter=true) const;
+    static void setDir(const std::string &dir_) {dir = dir_;}
 };
 
 template<class T>

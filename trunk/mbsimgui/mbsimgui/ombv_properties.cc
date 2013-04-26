@@ -144,13 +144,9 @@ OMBVArrowProperty::OMBVArrowProperty(const string &name, bool fromPoint) : OMBVD
   input.push_back(new PhysicalVariableProperty(new ScalarProperty("0.2"), "m", OPENMBVNS"headLength"));
   headLength.setProperty(new ExtPhysicalVarProperty(input));
 
-  input.clear();
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty(string("\"")+"toHead"+"\""), "", OPENMBVNS"type"));
-  type.setProperty(new ExtPhysicalVarProperty(input));
+  type.setProperty(new TextProperty("toHead", OPENMBVNS"type", true));
 
-  input.clear();
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty(string("\"")+(fromPoint?"fromPoint":"toPoint")+"\""), "", OPENMBVNS"referencePoint"));
-  referencePoint.setProperty(new ExtPhysicalVarProperty(input));
+  referencePoint.setProperty(new TextProperty(fromPoint?"fromPoint":"toPoint", OPENMBVNS"referencePoint", true));
   if(fromPoint)
     referencePoint.setActive(true);
 
@@ -203,11 +199,9 @@ void OMBVArrowProperty::toWidget(QWidget *widget) {
 
 OMBVCoilSpringProperty::OMBVCoilSpringProperty(const string &name) : OMBVObjectProperty(name), crossSectionRadius(0,false), nominalLength(0,false) {
 
-  vector<PhysicalVariableProperty*> input;
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty(string("\"")+"tube"+"\""), "", OPENMBVNS"type"));
-  type.setProperty(new ExtPhysicalVarProperty(input));
+  type.setProperty(new TextProperty("tube", OPENMBVNS"type", true));
 
-  input.clear();
+  vector<PhysicalVariableProperty*> input;
   input.push_back(new PhysicalVariableProperty(new ScalarProperty("3"), "-", OPENMBVNS"numberOfCoils"));
   numberOfCoils.setProperty(new ExtPhysicalVarProperty(input));
 

@@ -748,11 +748,13 @@ void MainWindow::mbsimxml(int task) {
     return;
 
   QString sTask = QString::number(task); 
-  QString mbsFile=uniqueTempDir+"/in"+sTask+".mbsim.xml";
+  QString mbsFile="in"+sTask+".mbsim.xml";
+  slv->setDir(uniqueTempDir.toStdString());
   string saveName=slv->getName();
   slv->setName("out"+sTask.toStdString());
   slv->writeXMLFile(mbsFile.toStdString());
   slv->setName(saveName);
+  slv->setDir(".");
 
   QString mbsParamFile=uniqueTempDir+"/in"+sTask+".mbsimparam.xml";
   saveParameterList(mbsParamFile);

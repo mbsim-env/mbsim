@@ -34,6 +34,7 @@
 using namespace std;
 
 int Element::IDcounter=0;
+string Element::dir=".";
 
 Element::Element(const string &name_, Element *parent_) : parent(parent_), embed(0,false) {
   name.setProperty(new TextProperty(name_,""));
@@ -56,7 +57,8 @@ void Element::writeXMLFile(const string &name) {
   doc.LinkEndChild( decl );
   writeXMLFile(&doc);
   unIncorporateNamespace(doc.FirstChildElement(), Utils::getMBSimNamespacePrefixMapping());  
-  doc.SaveFile((name.length()>4 && name.substr(name.length()-4,4)==".xml")?name:name+".xml");
+  string file = dir+"/"+name;
+  doc.SaveFile((file.length()>4 && file.substr(file.length()-4,4)==".xml")?file:file+".xml");
 }
 
 void Element::initialize() {
@@ -84,6 +86,7 @@ void Element::initializeUsingXMLEmbed(TiXmlElement *element) {
 
 TiXmlElement* Element::writeXMLFileEmbed(TiXmlNode *parent) {
   writeXMLFile(static_cast<const EmbedProperty*>(embed.getProperty())->getFile());
+  QFile::copy(QString::fromStdString(static_cast<const EmbedProperty*>(embed.getProperty())->getParameterFile()),QString::fromStdString(dir+"/"+static_cast<const EmbedProperty*>(embed.getProperty())->getParameterFile()));
   return embed.writeXMLFile(parent);
 }
 

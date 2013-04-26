@@ -237,7 +237,7 @@ void FileWidget::selectFile() {
     file = QFileDialog::getSaveFileName(0, description, absoluteFilePath, extensions);
   if(file!="") {
     absoluteFilePath = file;
-    fileName->setText(QString("\"")+mbsDir.relativeFilePath(absoluteFilePath)+"\"");
+    fileName->setText(mbsDir.relativeFilePath(absoluteFilePath));
   }
     //fileName->setText(QFileInfo(absoluteFilePath).fileName());
 }
@@ -249,6 +249,17 @@ TextWidget::TextWidget(bool readOnly) {
 
   text = new QLineEdit;
   text->setReadOnly(readOnly);
+  layout->addWidget(text);
+}
+
+TextChoiceWidget::TextChoiceWidget(const vector<string> &list_, int num) : list(list_) { 
+  text = new QComboBox;
+  for(unsigned int i=0; i<list.size(); i++)
+    text->addItem(list[i].c_str());
+  text->setCurrentIndex(num);
+  QHBoxLayout* layout = new QHBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
   layout->addWidget(text);
 }
 

@@ -195,8 +195,8 @@ TiXmlElement* FileProperty::initializeUsingXML(TiXmlElement *element) {
     TiXmlText *text = dynamic_cast<TiXmlText*>(e->FirstChild());
     if(text) {
       string file = text->Value();
-      fileName = file;
       file = file.substr(1,file.length()-2);
+      fileName = file;
       setAbsoluteFilePath(file);
       return e;
     }
@@ -232,7 +232,9 @@ TiXmlElement* TextProperty::initializeUsingXML(TiXmlElement *element) {
     TiXmlText *text_ = dynamic_cast<TiXmlText*>(e->FirstChild());
     if(text_) {
       text = text_->Value();
-      return e;
+      if(quote)
+        text = text.substr(1,text.length()-2);
+     return e;
     }
   }
   return 0;
@@ -240,7 +242,8 @@ TiXmlElement* TextProperty::initializeUsingXML(TiXmlElement *element) {
 
 TiXmlElement* TextProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = new TiXmlElement(xmlName);
-  TiXmlText *text_ = new TiXmlText(text);
+  TiXmlText *text_ = new TiXmlText(quote?("\""+text+"\""):text);
+
   ele0->LinkEndChild(text_);
   parent->LinkEndChild(ele0);
 
@@ -248,11 +251,11 @@ TiXmlElement* TextProperty::writeXMLFile(TiXmlNode *parent) {
 }
 
 void TextProperty::fromWidget(QWidget *widget) {
-  text = static_cast<TextWidget*>(widget)->getText().toStdString();
+  text = static_cast<BasicTextWidget*>(widget)->getText().toStdString();
 }
 
 void TextProperty::toWidget(QWidget *widget) {
-  static_cast<TextWidget*>(widget)->setText(QString::fromStdString(text));
+  static_cast<BasicTextWidget*>(widget)->setText(QString::fromStdString(text));
 }
 
 void DependenciesProperty::initialize() {
@@ -645,14 +648,14 @@ TiXmlElement* EmbedProperty::initializeUsingXML(TiXmlElement *parent) {
 
 TiXmlElement* EmbedProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0=new TiXmlElement(PVNS+string("embed"));
-  ele0->SetAttribute("href", static_cast<FileProperty*>(href.getProperty())->getAbsoluteFilePath());
+  ele0->SetAttribute("href", static_cast<FileProperty*>(href.getProperty())->getFileName());
   if(count.isActive())
     ele0->SetAttribute("count", static_cast<TextProperty*>(count.getProperty())->getText());
   if(counterName.isActive())
     ele0->SetAttribute("counterName", static_cast<TextProperty*>(counterName.getProperty())->getText());
   if(parameterList.isActive()) {
     TiXmlElement *ele1=new TiXmlElement(PVNS+string("localParameter"));
-    ele1->SetAttribute("href", static_cast<FileProperty*>(parameterList.getProperty())->getAbsoluteFilePath());
+    ele1->SetAttribute("href", static_cast<FileProperty*>(parameterList.getProperty())->getFileName());
     ele0->LinkEndChild(ele1);
   }
   parent->LinkEndChild(ele0);

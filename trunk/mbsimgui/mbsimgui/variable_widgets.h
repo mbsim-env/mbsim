@@ -63,22 +63,6 @@ class BoolWidget : public VariableWidget {
     QCheckBox *value;
 };
 
-class ChoiceWidget : public VariableWidget {
-
-  public:
-    ChoiceWidget(const std::vector<std::string> &list, int num);
-    std::string getValue() const {return value->currentText().toStdString();}
-    void setValue(const std::string &str) {value->setCurrentIndex(value->findText(str.c_str()));}
-    virtual VariableWidget* cloneVariableWidget() {ChoiceWidget *widget=new ChoiceWidget(list,value->currentIndex());widget->setDisabled(true);return widget;}
-    virtual std::string getType() const {return "Choice";}
-    void setDisabled(bool flag) {value->setDisabled(flag);}
-    bool validate(const std::string &str) const {return value->findText(str.c_str())>=0;}
-
-  protected:
-    QComboBox *value;
-    std::vector<std::string> list;
-};
-
 class OctaveExpressionWidget : public VariableWidget {
   public:
     OctaveExpressionWidget();
