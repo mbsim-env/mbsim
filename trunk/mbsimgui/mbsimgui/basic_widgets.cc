@@ -24,7 +24,6 @@
 #include "contour.h"
 #include "group.h"
 #include "dialogs.h"
-#include <string>
 #include <QtGui>
 
 using namespace std;
@@ -252,10 +251,10 @@ TextWidget::TextWidget(bool readOnly) {
   layout->addWidget(text);
 }
 
-TextChoiceWidget::TextChoiceWidget(const vector<string> &list_, int num) : list(list_) { 
+TextChoiceWidget::TextChoiceWidget(const vector<QString> &list_, int num) : list(list_) { 
   text = new QComboBox;
   for(unsigned int i=0; i<list.size(); i++)
-    text->addItem(list[i].c_str());
+    text->addItem(list[i]);
   text->setCurrentIndex(num);
   QHBoxLayout* layout = new QHBoxLayout;
   layout->setMargin(0);
@@ -450,7 +449,7 @@ SolverParametersWidget::SolverParametersWidget() {
   layout->addWidget(tolerances);
 }
 
-PlotFeature::PlotFeature(const string &name_) : name(name_) {
+PlotFeature::PlotFeature(const QString &name_) : name(name_) {
   QHBoxLayout *layout = new QHBoxLayout;
   layout->setMargin(0);
   setLayout(layout);

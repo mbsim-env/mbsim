@@ -98,7 +98,7 @@ OMBVDynamicColoredObjectProperty::OMBVDynamicColoredObjectProperty(const string 
 }
 
 TiXmlElement* OMBVDynamicColoredObjectProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=element->FirstChildElement(OPENMBVNS+getType().toStdString());
+  TiXmlElement *e=element->FirstChildElement(OPENMBVNS+getType());
   if(e) {
     minimalColorValue.initializeUsingXML(e);
     maximalColorValue.initializeUsingXML(e);
@@ -108,7 +108,7 @@ TiXmlElement* OMBVDynamicColoredObjectProperty::initializeUsingXML(TiXmlElement 
 }
 
 TiXmlElement* OMBVDynamicColoredObjectProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *e=new TiXmlElement(OPENMBVNS+getType().toStdString());
+  TiXmlElement *e=new TiXmlElement(OPENMBVNS+getType());
   parent->LinkEndChild(e);
   e->SetAttribute("name", "dummy");
   writeXMLFileID(e);
@@ -223,7 +223,7 @@ OMBVCoilSpringProperty::OMBVCoilSpringProperty(const string &name) : OMBVObjectP
 }
 
 TiXmlElement* OMBVCoilSpringProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=element->FirstChildElement(OPENMBVNS+getType().toStdString());
+  TiXmlElement *e=element->FirstChildElement(OPENMBVNS+getType());
   if(e) {
     type.initializeUsingXML(e);
     numberOfCoils.initializeUsingXML(e);
@@ -236,7 +236,7 @@ TiXmlElement* OMBVCoilSpringProperty::initializeUsingXML(TiXmlElement *element) 
 }
 
 TiXmlElement* OMBVCoilSpringProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *e=new TiXmlElement(OPENMBVNS+getType().toStdString());
+  TiXmlElement *e=new TiXmlElement(OPENMBVNS+getType());
   parent->LinkEndChild(e);
   e->SetAttribute("name", "dummy");
   writeXMLFileID(e);
@@ -295,7 +295,7 @@ TiXmlElement* OMBVBodyProperty::initializeUsingXML(TiXmlElement *element) {
 }
 
 TiXmlElement* OMBVBodyProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *e=new TiXmlElement(OPENMBVNS+getType().toStdString());
+  TiXmlElement *e=new TiXmlElement(OPENMBVNS+getType());
   parent->LinkEndChild(e);
   e->SetAttribute("name", name==""?"NOTSET":name);
   writeXMLFileID(e);
@@ -517,7 +517,7 @@ TiXmlElement* CompoundRigidBodyProperty::initializeUsingXML(TiXmlElement *elemen
   TiXmlElement *e=element->FirstChildElement(OPENMBVNS"scaleFactor");
   e=e->NextSiblingElement();
   while(e) {
-    body.push_back(new OMBVBodyChoiceProperty((QString("Body")+QString::number(body.size()+1)).toStdString(),false));
+    body.push_back(new OMBVBodyChoiceProperty("Body"+toStr(int(body.size()+1)),false));
     body[body.size()-1]->initializeUsingXML(e);
     e=e->NextSiblingElement();
   }
@@ -534,7 +534,7 @@ TiXmlElement* CompoundRigidBodyProperty::writeXMLFile(TiXmlNode *parent) {
 void CompoundRigidBodyProperty::fromWidget(QWidget *widget) {
   OMBVBodyProperty::fromWidget(widget);
   for(unsigned int i=0; i<static_cast<CompoundRigidBodyWidget*>(widget)->body.size(); i++) {
-    body.push_back(new OMBVBodyChoiceProperty((QString("Body")+QString::number(body.size()+1)).toStdString(),false));
+    body.push_back(new OMBVBodyChoiceProperty("Body"+toStr(int(body.size()+1)),false));
     body[i]->fromWidget(static_cast<CompoundRigidBodyWidget*>(widget)->body[i]);
   }
 }

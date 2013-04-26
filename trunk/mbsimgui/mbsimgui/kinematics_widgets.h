@@ -115,7 +115,7 @@ class TranslationChoiceWidget : public Widget {
   friend class TranslationChoiceProperty;
 
   public:
-    TranslationChoiceWidget(const std::string &xmlName);
+    TranslationChoiceWidget();
 
     int getSize() const { return translation->getSize(); }
 
@@ -126,7 +126,6 @@ class TranslationChoiceWidget : public Widget {
     QComboBox *comboBox;
     QVBoxLayout *layout;
     TranslationWidget *translation;
-    std::string xmlName;
   signals:
     void translationChanged();
 };
@@ -218,7 +217,7 @@ class RotationChoiceWidget : public Widget {
   friend class RotationChoiceProperty;
 
   public:
-    RotationChoiceWidget(const std::string &xmlName);
+    RotationChoiceWidget();
 
     int getSize() const { return rotation->getSize(); }
 
@@ -229,7 +228,6 @@ class RotationChoiceWidget : public Widget {
     QComboBox *comboBox;
     QVBoxLayout *layout;
     RotationWidget *rotation;
-    std::string xmlName;
   signals:
     void rotationChanged();
 };

@@ -27,13 +27,13 @@
 using namespace std;
 
 TiXmlElement* Function1Property::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType().toStdString());
+  TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
   parent->LinkEndChild(ele0);
   return ele0;
 }
 
 TiXmlElement* Function2Property::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType().toStdString());
+  TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
   parent->LinkEndChild(ele0);
   return ele0;
 }
@@ -43,7 +43,7 @@ void DifferentiableFunction1Property::setDerivative(Function1Property *diff,size
   derivatives[degree]=diff; 
 }
 
-ConstantFunction1Property::ConstantFunction1Property(const QString &ext) : Function1Property(ext) {
+ConstantFunction1Property::ConstantFunction1Property(const string &ext) : Function1Property(ext) {
   vector<PhysicalVariableProperty*> input;
   input.push_back(new PhysicalVariableProperty(new VecProperty(1),"",MBSIMNS"value"));
   c.setProperty(new ExtPhysicalVarProperty(input));

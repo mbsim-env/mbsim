@@ -287,7 +287,7 @@ GeneralizedForceChoiceWidget::GeneralizedForceChoiceWidget() {
 }
 
 int GeneralizedForceChoiceWidget::getSize() const {
-  string str = evalOctaveExpression(static_cast<ExtPhysicalVarWidget*>(mat->getWidget())->getCurrentPhysicalVariableWidget()->getValue());
+  string str = evalOctaveExpression(static_cast<ExtPhysicalVarWidget*>(mat->getWidget())->getCurrentPhysicalVariableWidget()->getValue().toStdString());
   vector<vector<string> > A = strToMat(str);
   return A.size()?A[0].size():0;
 }
@@ -319,7 +319,7 @@ void ForceChoiceWidget::resizeVariables() {
 }
 
 int ForceChoiceWidget::getSize() const {
-  string str = evalOctaveExpression(static_cast<ExtPhysicalVarWidget*>(mat->getWidget())->getCurrentPhysicalVariableWidget()->getValue());
+  string str = evalOctaveExpression(static_cast<ExtPhysicalVarWidget*>(mat->getWidget())->getCurrentPhysicalVariableWidget()->getValue().toStdString());
   vector<vector<string> > A = strToMat(str);
   return A.size()?A[0].size():0;
 }
@@ -360,7 +360,7 @@ GeneralizedForceDirectionWidget::GeneralizedForceDirectionWidget() {
 }
 
 int GeneralizedForceDirectionWidget::getSize() const {
-  string str = evalOctaveExpression(static_cast<ExtPhysicalVarWidget*>(mat->getWidget())->getCurrentPhysicalVariableWidget()->getValue());
+  string str = evalOctaveExpression(static_cast<ExtPhysicalVarWidget*>(mat->getWidget())->getCurrentPhysicalVariableWidget()->getValue().toStdString());
   vector<vector<string> > A = strToMat(str);
   return A.size()?A[0].size():0;
 }

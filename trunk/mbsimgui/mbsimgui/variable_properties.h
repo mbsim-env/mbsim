@@ -139,7 +139,7 @@ class PhysicalVariableProperty : public Property {
 class VecFromFileProperty : public VariableProperty {
 
   public:
-    VecFromFileProperty(const QString &fileName_="", const QString &absoluteFilePath_="") : fileName(fileName_), absoluteFilePath(absoluteFilePath_) {}
+    VecFromFileProperty(const std::string &fileName_="", const std::string &absoluteFilePath_="") : fileName(fileName_), absoluteFilePath(absoluteFilePath_) {}
     std::string getValue() const;
     void setValue(const std::string &str) {}
     virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
@@ -148,13 +148,13 @@ class VecFromFileProperty : public VariableProperty {
     void toWidget(QWidget *widget);
 
   protected:
-    QString fileName, absoluteFilePath;
+    std::string fileName, absoluteFilePath;
 };
 
 class MatFromFileProperty : public VariableProperty {
 
   public:
-    MatFromFileProperty(const QString &fileName_="", const QString &absoluteFilePath_="") : fileName(fileName_), absoluteFilePath(absoluteFilePath_) {}
+    MatFromFileProperty(const std::string &fileName_="", const std::string &absoluteFilePath_="") : fileName(fileName_), absoluteFilePath(absoluteFilePath_) {}
     std::string getValue() const; 
     void setValue(const std::string &str) {}
     virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
@@ -163,7 +163,7 @@ class MatFromFileProperty : public VariableProperty {
     void toWidget(QWidget *widget);
 
   protected:
-    QString fileName, absoluteFilePath;
+    std::string fileName, absoluteFilePath;
 };
 
 #endif

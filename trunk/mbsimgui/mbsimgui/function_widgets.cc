@@ -117,7 +117,7 @@ TabularFunction1Widget::TabularFunction1Widget(int n) {
   setLayout(layout);
 
   vector<QWidget*> choiceWidget;
-  vector<string> name;
+  vector<QString> name;
   name.push_back("x and y");
   name.push_back("xy");
   WidgetContainer *widgetContainer = new WidgetContainer;

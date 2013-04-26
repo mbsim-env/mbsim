@@ -104,14 +104,12 @@ QWidget *ParameterDelegate::createEditor(QWidget *parent, const QStyleOptionView
 }
 
 void ParameterDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const {
-  cout << "setEditorData" << endl;
   const ParameterListModel *model = static_cast<const ParameterListModel*>(index.model());
   ParameterPropertyDialog *dialog = static_cast<ParameterPropertyDialog*>(editor);
   dialog->toWidget(static_cast<Parameter*>(model->getItem(index)->getItemData()));
 }
 
 void ParameterDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
-  cout << "setModelData" << endl;
   ParameterPropertyDialog *dialog = static_cast<ParameterPropertyDialog*>(editor);
   dialog->fromWidget(static_cast<Parameter*>(static_cast<const ParameterListModel*>(model)->getItem(index)->getItemData()));
   //static_cast<ParameterListModel*>(model)->updateView(index);

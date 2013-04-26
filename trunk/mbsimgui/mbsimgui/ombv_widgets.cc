@@ -27,7 +27,7 @@
 
 using namespace std;
 
-OMBVFrameWidget::OMBVFrameWidget(const string &name) : OMBVObjectWidget(name) {
+OMBVFrameWidget::OMBVFrameWidget(const QString &name) : OMBVObjectWidget(name) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -45,7 +45,7 @@ OMBVFrameWidget::OMBVFrameWidget(const string &name) : OMBVObjectWidget(name) {
   layout->addWidget(offset);
 }
 
-OMBVDynamicColoredObjectWidget::OMBVDynamicColoredObjectWidget(const string &name) : OMBVObjectWidget(name) {
+OMBVDynamicColoredObjectWidget::OMBVDynamicColoredObjectWidget(const QString &name) : OMBVObjectWidget(name) {
   layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -66,7 +66,7 @@ OMBVDynamicColoredObjectWidget::OMBVDynamicColoredObjectWidget(const string &nam
   layout->addWidget(staticColor);
 }
 
-OMBVArrowWidget::OMBVArrowWidget(const string &name, bool fromPoint) : OMBVDynamicColoredObjectWidget(name) {
+OMBVArrowWidget::OMBVArrowWidget(const QString &name, bool fromPoint) : OMBVDynamicColoredObjectWidget(name) {
 
   vector<PhysicalVariableWidget*> input;
   input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.1"), lengthUnits(), 4));
@@ -83,7 +83,7 @@ OMBVArrowWidget::OMBVArrowWidget(const string &name, bool fromPoint) : OMBVDynam
   headLength = new ExtWidget("Head length",new ExtPhysicalVarWidget(input));
   layout->addWidget(headLength);
 
-  vector<string> list;
+  vector<QString> list;
   list.push_back("line");
   list.push_back("fromHead");
   list.push_back("toHead");
@@ -109,12 +109,12 @@ OMBVArrowWidget::OMBVArrowWidget(const string &name, bool fromPoint) : OMBVDynam
   layout->addWidget(scaleLength);
 }
 
-OMBVCoilSpringWidget::OMBVCoilSpringWidget(const string &name) : OMBVObjectWidget(name) {
+OMBVCoilSpringWidget::OMBVCoilSpringWidget(const QString &name) : OMBVObjectWidget(name) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
-  vector<string> list;
+  vector<QString> list;
   list.push_back("tube");
   list.push_back("scaledTube");
   list.push_back("polyline");
@@ -147,7 +147,7 @@ OMBVCoilSpringWidget::OMBVCoilSpringWidget(const string &name) : OMBVObjectWidge
   layout->addWidget(scaleFactor);
 }
 
-OMBVBodyWidget::OMBVBodyWidget(const string &name) : OMBVObjectWidget(name) {
+OMBVBodyWidget::OMBVBodyWidget(const QString &name) : OMBVObjectWidget(name) {
   layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -173,7 +173,7 @@ OMBVBodyWidget::OMBVBodyWidget(const string &name) : OMBVObjectWidget(name) {
   layout->addWidget(scale);
 }
 
-CubeWidget::CubeWidget(const string &name) : OMBVBodyWidget(name) {
+CubeWidget::CubeWidget(const QString &name) : OMBVBodyWidget(name) {
 
   vector<PhysicalVariableWidget*> input;
   input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 4));
@@ -181,15 +181,15 @@ CubeWidget::CubeWidget(const string &name) : OMBVBodyWidget(name) {
   layout->addWidget(length);
 }
 
-CuboidWidget::CuboidWidget(const string &name) : OMBVBodyWidget(name) {
+CuboidWidget::CuboidWidget(const QString &name) : OMBVBodyWidget(name) {
 
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new VecWidget(getScalars<string>(3,"1"),true), lengthUnits(), 4));
+  input.push_back(new PhysicalVariableWidget(new VecWidget(getScalars<QString>(3,"1"),true), lengthUnits(), 4));
   length = new ExtWidget("Length",new ExtPhysicalVarWidget(input));
   layout->addWidget(length);
 }
 
-SphereWidget::SphereWidget(const string &name) : OMBVBodyWidget(name) {
+SphereWidget::SphereWidget(const QString &name) : OMBVBodyWidget(name) {
 
   vector<PhysicalVariableWidget*> input;
   input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 4));
@@ -197,7 +197,7 @@ SphereWidget::SphereWidget(const string &name) : OMBVBodyWidget(name) {
   layout->addWidget(radius);
 }
 
-FrustumWidget::FrustumWidget(const string &name) : OMBVBodyWidget(name) {
+FrustumWidget::FrustumWidget(const QString &name) : OMBVBodyWidget(name) {
 
   vector<PhysicalVariableWidget*> input;
   input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 4));
@@ -225,7 +225,7 @@ FrustumWidget::FrustumWidget(const string &name) : OMBVBodyWidget(name) {
   layout->addWidget(innerBase);
 }
 
-IvBodyWidget::IvBodyWidget(const string &name) : OMBVBodyWidget(name) {
+IvBodyWidget::IvBodyWidget(const QString &name) : OMBVBodyWidget(name) {
 
   ivFileName = new ExtWidget("Iv file name",new FileWidget("XML model files", "iv files (*.iv *.wrl)"));
   layout->addWidget(ivFileName);
@@ -241,7 +241,7 @@ IvBodyWidget::IvBodyWidget(const string &name) : OMBVBodyWidget(name) {
   layout->addWidget(boundaryEdges);
 }
 
-CompoundRigidBodyWidget::CompoundRigidBodyWidget(const string &name) : OMBVBodyWidget(name) {
+CompoundRigidBodyWidget::CompoundRigidBodyWidget(const QString &name) : OMBVBodyWidget(name) {
   QGroupBox *box = new QGroupBox("Bodies");
   QHBoxLayout *sublayout = new QHBoxLayout;
   box->setLayout(sublayout);
@@ -285,7 +285,7 @@ void CompoundRigidBodyWidget::openContextMenu(const QPoint &pos) {
 
 void CompoundRigidBodyWidget::addBody() {
   int i = body.size();
-  body.push_back(new OMBVBodyChoiceWidget((QString("Body")+QString::number(i+1)).toStdString(),false));
+  body.push_back(new OMBVBodyChoiceWidget((QString("Body")+QString::number(i+1)),false));
   bodyList->addItem((QString("Body")+QString::number(i+1)));
   stackedWidget->addWidget(body[i]);
   //stackedWidget->widget(i)->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Ignored);
@@ -300,11 +300,11 @@ void CompoundRigidBodyWidget::removeBody() {
   delete bodyList->takeItem(i);
   for(int i=0; i<bodyList->count(); i++) {
     bodyList->item(i)->setText((QString("Body")+QString::number(i+1)));
-    body[i]->setName(bodyList->item(i)->text().toStdString());
+    body[i]->setName(bodyList->item(i)->text());
   }
 }
 
-OMBVBodyChoiceWidget::OMBVBodyChoiceWidget(const string &name_, bool flag) : ombv(0), name(name_) {
+OMBVBodyChoiceWidget::OMBVBodyChoiceWidget(const QString &name_, bool flag) : ombv(0), name(name_) {
 
   layout = new QVBoxLayout;
   layout->setMargin(0);

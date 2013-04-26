@@ -42,8 +42,8 @@ class ExtPhysicalVarWidget : public Widget {
     int getNumberOfInputs() const {return inputWidget.size();}
     int getCurrentInput() const {return inputCombo->currentIndex();}
     void setCurrentInput(int i) {inputCombo->setCurrentIndex(i);}
-    virtual std::string getValue() const;
-    void setValue(const std::string &str);
+    virtual QString getValue() const;
+    void setValue(const QString &str);
 
   protected:
     std::vector<PhysicalVariableWidget*> inputWidget;
@@ -65,7 +65,7 @@ class WidgetChoiceWidget : public Widget {
   friend class PropertyChoiceProperty;
 
   public:
-    WidgetChoiceWidget(const std::vector<std::string> &name, const std::vector<QWidget*> &widget);
+    WidgetChoiceWidget(const std::vector<QString> &name, const std::vector<QWidget*> &widget);
     virtual void updateWidget();
   protected slots:
     void changeCurrent(int idx);

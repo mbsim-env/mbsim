@@ -42,7 +42,7 @@ LinearTranslationWidget::LinearTranslationWidget() {
 }
 
 int LinearTranslationWidget::getSize() const {
-  string str = evalOctaveExpression(static_cast<ExtPhysicalVarWidget*>(mat->getWidget())->getCurrentPhysicalVariableWidget()->getValue());
+  string str = evalOctaveExpression(static_cast<ExtPhysicalVarWidget*>(mat->getWidget())->getCurrentPhysicalVariableWidget()->getValue().toStdString());
   vector<vector<string> > A = strToMat(str);
   return A.size()?A[0].size():0;
 }
@@ -56,7 +56,7 @@ TimeDependentTranslationWidget::TimeDependentTranslationWidget() {
   layout->addWidget(function);
 }
 
-TranslationChoiceWidget::TranslationChoiceWidget(const string &xmlName_) : translation(0), xmlName(xmlName_) {
+TranslationChoiceWidget::TranslationChoiceWidget() : translation(0) {
   layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -114,7 +114,7 @@ RotationAboutFixedAxisWidget::RotationAboutFixedAxisWidget() {
   layout->addWidget(vec);
 }
 
-RotationChoiceWidget::RotationChoiceWidget(const string &xmlName_) : rotation(0), xmlName(xmlName_) {
+RotationChoiceWidget::RotationChoiceWidget() : rotation(0) {
   layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);

@@ -46,14 +46,14 @@ ExtPhysicalVarWidget::ExtPhysicalVarWidget(std::vector<PhysicalVariableWidget*> 
   for(unsigned int i=0; i<inputWidget.size()-1; i++) {
     stackedWidget->addWidget(inputWidget[i]);
     //inputCombo->addItem(QString("Schema ")+QString::number(i+1));
-    inputCombo->addItem(inputWidget[i]->getType().c_str());
+    inputCombo->addItem(inputWidget[i]->getType());
     inputWidget[i+1]->hide();
   }
   inputWidget[inputWidget.size()-1]->setSizePolicy(QSizePolicy::Ignored,
       QSizePolicy::Ignored);
   stackedWidget->addWidget(inputWidget[inputWidget.size()-1]);
   //inputCombo->addItem("Editor");
-  inputCombo->addItem(inputWidget[inputWidget.size()-1]->getType().c_str());
+  inputCombo->addItem(inputWidget[inputWidget.size()-1]->getType());
 
 
   layout->addWidget(stackedWidget);
@@ -81,11 +81,11 @@ void ExtPhysicalVarWidget::changeCurrent(int idx) {
   adjustSize();
 }
 
-string ExtPhysicalVarWidget::getValue() const { 
+QString ExtPhysicalVarWidget::getValue() const { 
   return inputWidget[inputCombo->currentIndex()]->getValue();
 }
 
-void ExtPhysicalVarWidget::setValue(const string &str) { 
+void ExtPhysicalVarWidget::setValue(const QString &str) { 
   inputWidget[inputCombo->currentIndex()]->setValue(str);
 }
 
@@ -106,7 +106,7 @@ void ExtPhysicalVarWidget::updateInput() {
 
 void ExtPhysicalVarWidget::openEvalDialog() {
   evalInput = inputCombo->currentIndex();
-  string str = evalOctaveExpression(getValue());
+  QString str = QString::fromStdString(evalOctaveExpression(getValue().toStdString()));
   str = removeWhiteSpace(str);
   if(str=="" || (evalInput == inputCombo->count()-1 && !inputWidget[0]->validate(str))) {
     QMessageBox::warning( this, "Validation", "Value not valid"); 
@@ -117,13 +117,13 @@ void ExtPhysicalVarWidget::openEvalDialog() {
   //evalDialog->setButtonDisabled(evalInput != (inputCombo->count()-1));
 }
 
-WidgetChoiceWidget::WidgetChoiceWidget(const vector<string> &name, const vector<QWidget*> &widget) { 
+WidgetChoiceWidget::WidgetChoiceWidget(const vector<QString> &name, const vector<QWidget*> &widget) { 
   QHBoxLayout* layout = new QHBoxLayout;
   layout->setMargin(0);
   choice = new QComboBox;
   stackedWidget = new QStackedWidget;
   for(unsigned int i=0; i<name.size(); i++) {
-    choice->addItem(name[i].c_str());
+    choice->addItem(name[i]);
     stackedWidget->addWidget(widget[i]);
   }
   setLayout(layout);

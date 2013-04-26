@@ -42,8 +42,8 @@ class EvalDialog : public QDialog {
 //  Q_OBJECT
   public:
     EvalDialog(VariableWidget *var);
-    void setValue(const std::string &str) {var->setValue(str);}
-    std::string getValue() const {return var->getValue();}
+    void setValue(const QString &str) {var->setValue(str);}
+    QString getValue() const {return var->getValue();}
     //void setButtonDisabled(bool flag) {button->setDisabled(flag);}
   protected:
     VariableWidget *var;

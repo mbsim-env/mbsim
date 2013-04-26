@@ -72,7 +72,7 @@ DOPRI5IntegratorPropertyDialog::DOPRI5IntegratorPropertyDialog(QWidget *parent, 
 
   vector<PhysicalVariableWidget*> input;
   vector<QWidget*> widget;
-  vector<string> name;
+  vector<QString> name;
   name.push_back("Scalar");
   name.push_back("Vector");
   input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-6"),QStringList(),1));
@@ -135,7 +135,7 @@ RADAU5IntegratorPropertyDialog::RADAU5IntegratorPropertyDialog(QWidget *parent, 
 
   vector<PhysicalVariableWidget*> input;
   vector<QWidget*> widget;
-  vector<string> name;
+  vector<QString> name;
   name.push_back("Scalar");
   name.push_back("Vector");
   input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-6"),QStringList(),1));
@@ -199,7 +199,7 @@ LSODEIntegratorPropertyDialog::LSODEIntegratorPropertyDialog(QWidget *parent, Qt
 
   vector<PhysicalVariableWidget*> input;
   vector<QWidget*> widget;
-  vector<string> name;
+  vector<QString> name;
   name.push_back("Scalar");
   name.push_back("Vector");
   input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-6"),QStringList(),1));
@@ -269,7 +269,7 @@ LSODARIntegratorPropertyDialog::LSODARIntegratorPropertyDialog(QWidget *parent, 
 
   vector<PhysicalVariableWidget*> input;
   vector<QWidget*> widget;
-  vector<string> name;
+  vector<QString> name;
   name.push_back("Scalar");
   name.push_back("Vector");
   input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-6"),QStringList(),1));

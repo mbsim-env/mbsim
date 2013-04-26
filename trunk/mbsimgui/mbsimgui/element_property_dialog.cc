@@ -94,7 +94,7 @@ FixedRelativeFramePropertyDialog::FixedRelativeFramePropertyDialog(FixedRelative
   addToTab("Kinematics", position);
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new MatWidget(getEye<string>(3,3,"1","0")),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new MatWidget(getEye<QString>(3,3,"1","0")),noUnitUnits(),1));
   orientation = new ExtWidget("Relative orientation",new ExtPhysicalVarWidget(input),true);
   addToTab("Kinematics", orientation);
 
@@ -170,7 +170,7 @@ GroupPropertyDialog::GroupPropertyDialog(Group *group, QWidget *parent, Qt::Wind
     addToTab("Kinematics", position);
 
     input.clear();
-    input.push_back(new PhysicalVariableWidget(new MatWidget(getEye<string>(3,3,"1","0")),noUnitUnits(),1));
+    input.push_back(new PhysicalVariableWidget(new MatWidget(getEye<QString>(3,3,"1","0")),noUnitUnits(),1));
     orientation = new ExtWidget("Orientation",new ExtPhysicalVarWidget(input),true); 
     addToTab("Kinematics", orientation);
 
@@ -203,7 +203,7 @@ SolverPropertyDialog::SolverPropertyDialog(Solver *solver, QWidget *parent, Qt::
   addTab("Extra",3);
 
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new VecWidget(vector<string>(3)),accelerationUnits(),0));
+  input.push_back(new PhysicalVariableWidget(new VecWidget(vector<QString>(3)),accelerationUnits(),0));
   environment = new ExtWidget("Acceleration of gravity",new ExtPhysicalVarWidget(input));
   addToTab("Environment", environment);
 
@@ -290,17 +290,17 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   addToTab("General", mass);
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new SymMatWidget(getEye<string>(3,3,"0.01","0")),inertiaUnits(),2));
+  input.push_back(new PhysicalVariableWidget(new SymMatWidget(getEye<QString>(3,3,"0.01","0")),inertiaUnits(),2));
   inertia = new ExtWidget("Inertia tensor",new ExtPhysicalVarWidget(input));
   addToTab("General", inertia);
 
-  TranslationChoiceWidget *translation_ = new TranslationChoiceWidget("");
+  TranslationChoiceWidget *translation_ = new TranslationChoiceWidget;
   translation = new ExtWidget("Translation",translation_,true);
   addToTab("Kinematics", translation);
   connect(translation_,SIGNAL(translationChanged()),this,SLOT(resizeVariables()));
   connect(translation,SIGNAL(resize()),this,SLOT(resizeVariables()));
 
-  RotationChoiceWidget *rotation_ = new RotationChoiceWidget("");
+  RotationChoiceWidget *rotation_ = new RotationChoiceWidget;
   rotation = new ExtWidget("Rotation",rotation_,true);
   addToTab("Kinematics", rotation);
   connect(rotation_,SIGNAL(rotationChanged()),this,SLOT(resizeVariables()));
@@ -540,7 +540,7 @@ KineticExcitationPropertyDialog::KineticExcitationPropertyDialog(KineticExcitati
   addToTab("Visualisation",momentArrow);
 
   vector<QWidget*> widget;
-  vector<string> name;
+  vector<QString> name;
   name.push_back("1 frame");
   name.push_back("2 frames");
   widget.push_back(new ConnectFramesWidget(1,kineticExcitation));

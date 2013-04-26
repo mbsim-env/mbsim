@@ -27,7 +27,7 @@
 using namespace std;
 
 TiXmlElement* GeneralizedForceLawProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType().toStdString());
+  TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
   if(forceFunc) {
     TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"forceFunction" );
     forceFunc->writeXMLFile(ele1);
@@ -102,7 +102,7 @@ void RegularizedUnilateralConstraintProperty::toWidget(QWidget *widget) {
 }
 
 TiXmlElement* GeneralizedImpactLawProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType().toStdString());
+  TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
   parent->LinkEndChild(ele0);
   return ele0;
 }
@@ -133,7 +133,7 @@ void UnilateralNewtonImpactProperty::toWidget(QWidget *widget) {
 }
 
 TiXmlElement* FrictionForceLawProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType().toStdString());
+  TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
   if(frictionForceFunc) {
     TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"frictionForceFunction" );
     frictionForceFunc->writeXMLFile(ele1);
@@ -256,7 +256,7 @@ void RegularizedSpatialFrictionProperty::toWidget(QWidget *widget) {
 }
 
 TiXmlElement* FrictionImpactLawProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType().toStdString());
+  TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
   parent->LinkEndChild(ele0);
   return ele0;
 }

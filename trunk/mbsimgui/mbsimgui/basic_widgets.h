@@ -197,15 +197,13 @@ class TextWidget : public BasicTextWidget {
 class TextChoiceWidget : public BasicTextWidget {
 
   public:
-    TextChoiceWidget(const std::vector<std::string> &list, int num);
+    TextChoiceWidget(const std::vector<QString> &list, int num);
     QString getText() const {return text->currentText();}
     void setText(const QString &str) {text->setCurrentIndex(text->findText(str));}
-//    virtual std::string getType() const {return "Choice";}
-//    void setDisabled(bool flag) {text->setDisabled(flag);}
 
   protected:
     QComboBox *text;
-    std::vector<std::string> list;
+    std::vector<QString> list;
 };
 
 class ConnectFramesWidget : public Widget {
@@ -292,10 +290,10 @@ class SolverParametersWidget : public Widget {
 
 class PlotFeature : public Widget {
   public:
-    PlotFeature(const std::string &name);
+    PlotFeature(const QString &name);
 
   protected:
-    std::string name;
+    QString name;
     QComboBox *status;
 };
 

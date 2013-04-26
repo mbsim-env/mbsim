@@ -191,4 +191,16 @@ string removeWhiteSpace(const string &str) {
   return ret;
 }
 
+QString removeWhiteSpace(const QString &str) {
+  QString ret = str;
+  size_t found;
+  found=ret.indexOf(" ");
+  while (found!=string::npos) {
+    ret.remove(found,1);
+    found=ret.indexOf(" ",found);
+  }
+  return ret;
+}
+
+
 
