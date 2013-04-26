@@ -186,6 +186,9 @@ cp -uL $PREFIX/bin/_OpenMBV.pyd $DISTDIR/bin
 cp -uL $PREFIX/bin/casadi.m $DISTDIR/bin
 cp -uL $PREFIX/bin/casadi_helpers.m $DISTDIR/bin
 cp -ruL $PREFIX/bin/@swig_ref $DISTDIR/bin
+# copy casadi SWIG files for java
+cp -uL $PREFIX/bin/openmbv.jar $DISTDIR/bin
+cp -uL $PREFIX/bin/libopenmbvjava.jni $DISTDIR/bin
 
 # create mbsim-config.bat
 cat << EOF > $DISTDIR/bin/mbsim-config.bat

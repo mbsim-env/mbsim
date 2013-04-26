@@ -203,6 +203,9 @@ cp -uL $PREFIX/bin/_OpenMBV.so $DISTDIR/bin
 cp -uL $PREFIX/bin/casadi.m $DISTDIR/bin
 cp -uL $PREFIX/bin/casadi_helpers.m $DISTDIR/bin
 cp -ruL $PREFIX/bin/@swig_ref $DISTDIR/bin
+# copy casadi SWIG files for java
+cp -uL $PREFIX/bin/openmbv.jar $DISTDIR/bin
+cp -uL $PREFIX/bin/libopenmbvjava.jni $DISTDIR/bin
 # modifie all ELF rpath in lib/*.so*
 for F in $DISTDIR/lib/*.so $DISTDIR/lib/*.so.*; do
   chrpath -r '$ORIGIN/../lib' $F &> /dev/null || chrpath -d $F &> /dev/null || DUMMYVAR=0
