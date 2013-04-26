@@ -1147,3 +1147,13 @@ void MainWindow::saveElementAs() {
   if(file!="")
     static_cast<Element*>(model->getItem(index)->getItemData())->writeXMLFile(file.toStdString());
 }
+
+void MainWindow::updateElementView(const QModelIndex &index) {
+  elementList->update(index);
+}
+
+void MainWindow::updateParameterView(const QModelIndex &index) {
+  parameterList->update(index);
+  parameterList->update(index.sibling(index.row(),1));
+}
+

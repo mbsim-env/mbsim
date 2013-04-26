@@ -84,12 +84,13 @@ void ElementDelegate::setEditorData(QWidget *editor, const QModelIndex &index) c
 void ElementDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
   ElementPropertyDialog *dialog = static_cast<ElementPropertyDialog*>(editor);
   dialog->fromWidget(static_cast<Element*>(static_cast<const ElementTreeModel*>(model)->getItem(index)->getItemData()));
+  mw->updateElementView(index);
   mw->mbsimxml(1);
 }
 
 void ParameterDelegate::commitDataAndcloseEditor(QWidget *editor) {
-  emit commitData(editor);
-  emit closeEditor(editor);
+  commitData(editor);
+  closeEditor(editor);
 }
 
 QWidget *ParameterDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const {
@@ -103,15 +104,18 @@ QWidget *ParameterDelegate::createEditor(QWidget *parent, const QStyleOptionView
 }
 
 void ParameterDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const {
+  cout << "setEditorData" << endl;
   const ParameterListModel *model = static_cast<const ParameterListModel*>(index.model());
   ParameterPropertyDialog *dialog = static_cast<ParameterPropertyDialog*>(editor);
   dialog->toWidget(static_cast<Parameter*>(model->getItem(index)->getItemData()));
 }
 
 void ParameterDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
+  cout << "setModelData" << endl;
   ParameterPropertyDialog *dialog = static_cast<ParameterPropertyDialog*>(editor);
   dialog->fromWidget(static_cast<Parameter*>(static_cast<const ParameterListModel*>(model)->getItem(index)->getItemData()));
   //static_cast<ParameterListModel*>(model)->updateView(index);
+  mw->updateParameterView(index);
   mw->updateOctaveParameters();
   mw->mbsimxml(1);
 }

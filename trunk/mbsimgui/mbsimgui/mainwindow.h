@@ -38,6 +38,7 @@ class Process;
 class Integrator;
 class IntegratorView;
 class IntegratorPropertyDialog;
+class QModelIndex;
 
 namespace OpenMBVGUI {
   class MainWindow;
@@ -129,6 +130,8 @@ class MainWindow : public QMainWindow {
     void addAbsoluteKinematicsObserver();
     void addAbsolutePositionSensor();
     void saveElementAs();
+    void updateElementView(const QModelIndex &index);
+    void updateParameterView(const QModelIndex &index);
   protected slots:
     void selectElement(std::string);
     void changeWorkingDir();

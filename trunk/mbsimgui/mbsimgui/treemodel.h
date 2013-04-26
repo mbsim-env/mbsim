@@ -55,8 +55,6 @@ class TreeModel : public QAbstractItemModel {
 
     TreeItem *getItem(const QModelIndex &index) const;
 
-    void updateView(const QModelIndex &index) {emit dataChanged(index,index);}
-
  protected:
     TreeItem *rootItem;
     int IDcounter;
