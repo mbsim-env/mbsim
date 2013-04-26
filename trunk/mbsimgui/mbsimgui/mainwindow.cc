@@ -469,9 +469,7 @@ void MainWindow::saveMBS() {
   Solver *solver = static_cast<Solver*>(model->getItem(index)->getItemData());
   QString file = fileMBS->text();
   mbsDir = QFileInfo(file).absolutePath();
-  solver->setDir("");
   solver->writeXMLFile(file.toStdString());
-  solver->setDir(".");
 }
 
 void MainWindow::selectIntegrator() {
@@ -750,13 +748,11 @@ void MainWindow::mbsimxml(int task) {
     return;
 
   QString sTask = QString::number(task); 
-  QString mbsFile="in"+sTask+".mbsim.xml";
-  slv->setDir(uniqueTempDir.toStdString());
+  QString mbsFile=uniqueTempDir+"/in"+sTask+".mbsim.xml";
   string saveName=slv->getName();
   slv->setName("out"+sTask.toStdString());
   slv->writeXMLFile(mbsFile.toStdString());
   slv->setName(saveName);
-  slv->setDir(".");
 
   QString mbsParamFile=uniqueTempDir+"/in"+sTask+".mbsimparam.xml";
   saveParameterList(mbsParamFile);

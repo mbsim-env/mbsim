@@ -71,6 +71,7 @@ class MainWindow : public QMainWindow {
     ~MainWindow();
     static MBXMLUtils::OctaveEvaluator *octEval;
     void mbsimxml(int task);
+    const QString& getUniqueTempDir() const {return uniqueTempDir;}
   public slots:
     void elementListClicked();
     void parameterListClicked();
