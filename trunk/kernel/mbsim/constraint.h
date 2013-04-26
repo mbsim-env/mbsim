@@ -68,7 +68,7 @@ namespace MBSim {
       void updateJacobians(double t, int j=0);
       void setUpInverseKinetics();
 
-      void initializeUsingXML(TiXmlElement * element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
 
       virtual std::string getType() const { return "GearConstraint"; }
     
@@ -104,7 +104,7 @@ namespace MBSim {
       void updateStateDependentVariables(double t);
       void updateJacobians(double t, int j=0);
 
-      void initializeUsingXML(TiXmlElement * element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
 
       virtual std::string getType() const { return "KinematicConstraint"; }
 
@@ -141,8 +141,8 @@ namespace MBSim {
       fmatvec::Vec res(const fmatvec::Vec& q, const double& t);
       void updateStateDependentVariables(double t); 
       void updateJacobians(double t, int j=0); 
-      virtual void initializeUsingXML(TiXmlElement *element);
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
 
       virtual std::string getType() const { return "JointConstraint"; }
 

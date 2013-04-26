@@ -29,9 +29,11 @@
 class PropertyWidget;
 class PropertyDialog;
 class ExtWidget;
-class TiXmlElement;
-class TiXmlNode;
 class TextWidget;
+namespace MBXMLUtils {
+  class TiXmlElement;
+  class TiXmlNode;
+}
 
 class Parameter : public TreeItemData {
   friend class ParameterPropertyDialog;
@@ -40,8 +42,8 @@ class Parameter : public TreeItemData {
     virtual ~Parameter();
     virtual std::string getValue() const {return valuestr;}
     void setValue(const std::string &value) {valuestr = value;}
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "Parameter"; }
     const std::string& getName() const {return static_cast<const TextProperty*>(name.getProperty())->getText();}
     void setName(const std::string &str) {static_cast<TextProperty*>(name.getProperty())->setText(str);}
@@ -57,8 +59,8 @@ class ScalarParameter : public Parameter {
   public:
     ScalarParameter(const std::string &name);
     virtual ~ScalarParameter();
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "scalarParameter"; }
     virtual ParameterPropertyDialog* createPropertyDialog() {return new ScalarParameterPropertyDialog;}
 };
@@ -68,8 +70,8 @@ class VectorParameter : public Parameter {
   public:
     VectorParameter(const std::string &name);
     virtual ~VectorParameter();
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "vectorParameter"; }
     virtual ParameterPropertyDialog* createPropertyDialog() {return new VectorParameterPropertyDialog;}
 };
@@ -79,8 +81,8 @@ class MatrixParameter : public Parameter {
   public:
     MatrixParameter(const std::string &name);
     virtual ~MatrixParameter();
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "matrixParameter"; }
     virtual ParameterPropertyDialog* createPropertyDialog() {return new MatrixParameterPropertyDialog;}
 };

@@ -49,8 +49,8 @@ namespace MBSimHydraulics {
 
     public:
       static HydraulicEnvironment * getInstance() {return instance?instance:(instance=new HydraulicEnvironment); }
-      virtual void initializeUsingXML(TiXmlElement *e);
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent) { return 0;}
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *e);
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0;}
       virtual void initializeFluidData();
 
       /*! set the basic (air-free) bulk modulus*/

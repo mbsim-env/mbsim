@@ -22,6 +22,7 @@
 #include "objectfactory.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 
 Object::Object(const string &str, Element *parent) : Element(str,parent), q0(0,false), u0(0,false) {
 

@@ -74,8 +74,8 @@ namespace MBSim {
        * \brief initialize the force law using XML
        * \param XML element
        */
-      virtual void initializeUsingXML(TiXmlElement *element) {}
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
 
       /**
        * \return std::string representation
@@ -187,8 +187,8 @@ namespace MBSim {
       virtual fmatvec::Vec diff(double la, double gdn, double gda, double r, double laMin=0) = 0;
       virtual double solve(double G, double gdn, double gda) = 0;
       virtual bool isFulfilled(double la,  double gdn, double gda, double tolla, double tolgd, double laMin=0) = 0;
-      virtual void initializeUsingXML(TiXmlElement *element) {}
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
 
       /**
        * \return std::string representation
@@ -230,7 +230,7 @@ namespace MBSim {
       virtual fmatvec::Vec diff(double la, double gdn, double gda, double r, double laMin=0);
       virtual double solve(double G, double gdn, double gda);
       virtual bool isFulfilled(double la,  double gdn, double gda, double tolla, double tolgd, double laMin=0);
-      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       /***************************************************/
 
     protected:
@@ -292,7 +292,7 @@ namespace MBSim {
       virtual bool isSticking(const fmatvec::Vec& s, double sTol) = 0;
       virtual double getFrictionCoefficient(double gd) { return 0; }
       virtual bool isSetValued() const = 0;
-      virtual void initializeUsingXML(TiXmlElement *element) {}
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
       /***************************************************/
       
       fmatvec::Vec operator()(const fmatvec::Vec &gd, double laN) { assert(frictionForceFunc); return (*frictionForceFunc)(gd,laN); }
@@ -340,7 +340,7 @@ namespace MBSim {
       virtual bool isSticking(const fmatvec::Vec& s, double sTol) { return fabs(s(0)) <= sTol; }
       virtual double getFrictionCoefficient(double gd) { return mu; }
       virtual bool isSetValued() const { return true; }
-      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       /***************************************************/
 
       void setFrictionCoefficient(double mu_) { mu = mu_; }
@@ -381,7 +381,7 @@ namespace MBSim {
       virtual bool isSticking(const fmatvec::Vec& s, double sTol) { return nrm2(s(0,1)) <= sTol; }
       virtual double getFrictionCoefficient(double gd) { return mu; }
       virtual bool isSetValued() const { return true; }
-      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       /***************************************************/
 
       void setFrictionCoefficient(double mu_) { mu = mu_; }
@@ -498,7 +498,7 @@ namespace MBSim {
       virtual bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double tolla, double tolgd) = 0;
       virtual int isSticking(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double laTol, double gdTol) = 0;
       virtual int getFrictionDirections() = 0;
-      virtual void initializeUsingXML(TiXmlElement *element) {}
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
       /***************************************************/
   };
 
@@ -531,7 +531,7 @@ namespace MBSim {
       virtual bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double tolla, double tolgd);
       virtual int isSticking(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double laTol, double gdTol);
       virtual int getFrictionDirections() { return 1; }
-      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       /***************************************************/
 
       void setFrictionCoefficient(double mu_) { mu = mu_; }
@@ -570,7 +570,7 @@ namespace MBSim {
       virtual bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double tolla, double tolgd);
       virtual int isSticking(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double laTol, double gdTol);
       virtual int getFrictionDirections() { return 2; }
-      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       /***************************************************/
 
       void setFrictionCoefficient(double mu_) { mu = mu_; }
@@ -687,7 +687,7 @@ namespace MBSim {
       virtual bool isSetValued() const { return false; }
       /***************************************************/
 
-      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
   };
 
   /**
@@ -715,7 +715,7 @@ namespace MBSim {
       virtual bool isSetValued() const { return false; }
       /***************************************************/
 
-      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
 
       virtual std::string getType() const { return "RegularizedBilateralConstraint"; }
   };
@@ -728,7 +728,7 @@ namespace MBSim {
       int getFrictionDirections() { return 1; }
       bool isSticking(const fmatvec::Vec& s, double sTol) { return fabs(s(0)) <= sTol; }
       bool isSetValued() const { return false; }
-      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
   };
 
   class RegularizedSpatialFriction : public FrictionForceLaw {
@@ -739,7 +739,7 @@ namespace MBSim {
       int getFrictionDirections() { return 2; }
       bool isSticking(const fmatvec::Vec& s, double sTol) { return nrm2(s(0,1)) <= sTol; }
       bool isSetValued() const { return false; }
-      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
   };
 
 }

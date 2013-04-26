@@ -26,6 +26,7 @@
 #include "function_properties.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 
 Constraint::Constraint(const string &str, Element *parent) : Object(str, parent) {
 }

@@ -28,6 +28,7 @@
 #include "mainwindow.h"
 #include <mbxmlutils/utils.h>
 using namespace std;
+using namespace MBXMLUtils;
 
 void initializeOctave() {
   MBXMLUtils::OctaveEvaluator::initialize();

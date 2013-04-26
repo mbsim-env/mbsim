@@ -25,6 +25,7 @@
 #include "utils.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 
 TiXmlElement* Function1Property::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());

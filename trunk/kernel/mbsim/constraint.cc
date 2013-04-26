@@ -31,6 +31,7 @@
 #include "mbsim/objectfactory.h"
 
 using namespace MBSim;
+using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace std;
 

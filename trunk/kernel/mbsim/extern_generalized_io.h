@@ -60,7 +60,7 @@ namespace MBSim {
       double getGeneralizedVelocity() { return gd(0); }
 
       void plot(double t, double dt=1);
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       Type getType() { return type; }
 
       virtual void updateWRef(const fmatvec::Mat&, int) {}

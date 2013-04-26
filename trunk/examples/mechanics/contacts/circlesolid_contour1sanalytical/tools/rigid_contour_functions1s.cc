@@ -26,6 +26,7 @@
 #include "rigid_contour_functions1s.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
 

@@ -23,6 +23,7 @@
 #include "objectfactory.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 
 Parameter::Parameter(const string &name_) {
   name.setProperty(new TextProperty(name_,""));

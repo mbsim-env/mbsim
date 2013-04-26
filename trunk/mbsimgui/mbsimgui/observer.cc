@@ -24,6 +24,7 @@
 #include "objectfactory.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 
 Observer::Observer(const string &str, Element *parent) : Element(str, parent) {
 }

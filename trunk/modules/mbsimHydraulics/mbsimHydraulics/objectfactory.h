@@ -45,11 +45,11 @@ namespace MBSimHydraulics {
       // objects from MBSimObjectFactory
       static void initialize();
     protected:
-      MBSim::Group* createGroup(TiXmlElement *element);
-      MBSim::Object* createObject(TiXmlElement *element);
-      MBSim::Link* createLink(TiXmlElement *element);
-      MBSim::Environment *getEnvironment(TiXmlElement *element);
-      MBSim::Function1<double, double> * createFunction1_SS(TiXmlElement *element);
+      MBSim::Group* createGroup(MBXMLUtils::TiXmlElement *element);
+      MBSim::Object* createObject(MBXMLUtils::TiXmlElement *element);
+      MBSim::Link* createLink(MBXMLUtils::TiXmlElement *element);
+      MBSim::Environment *getEnvironment(MBXMLUtils::TiXmlElement *element);
+      MBSim::Function1<double, double> * createFunction1_SS(MBXMLUtils::TiXmlElement *element);
       MBSim::ObjectFactoryBase::MM_PRINSPRE& getPriorityNamespacePrefix();
   };
 

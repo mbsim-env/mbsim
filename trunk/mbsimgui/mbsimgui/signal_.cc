@@ -27,6 +27,7 @@
 #include "property.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 
 Signal::Signal(const string &str, Element *parent) : Link(str, parent) {
 }

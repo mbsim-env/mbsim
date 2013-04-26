@@ -25,8 +25,10 @@
 #include "utils.h"
 #include "property.h"
 
-class TiXmlElement;
-class TiXmlNode;
+namespace MBXMLUtils {
+  class TiXmlElement;
+  class TiXmlNode;
+}
 
 class VariableProperty : public Property {
 
@@ -42,8 +44,8 @@ class OctaveExpressionProperty : public VariableProperty {
     OctaveExpressionProperty() {}
     std::string getValue() const { return value; }
     void setValue(const std::string &str) { value = str; }
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
 
   private:
     std::string value;
@@ -56,8 +58,8 @@ class ScalarProperty : public VariableProperty {
     ScalarProperty(const std::string &scalar_="1") : scalar(scalar_) {}
     std::string getValue() const {return scalar;}
     void setValue(const std::string &scalar_) {scalar = scalar_;}
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
 };
 
 class VecProperty : public VariableProperty {
@@ -72,8 +74,8 @@ class VecProperty : public VariableProperty {
     std::string getValue() const {return toStr(getVec());}
     void setValue(const std::string &str) {setVec(strToVec(str));}
     int size() const {return value.size();}
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 };
@@ -89,8 +91,8 @@ class MatProperty : public VariableProperty {
     void setMat(const std::vector<std::vector<std::string> > &A) {value = A;}
     std::string getValue() const {return toStr(getMat());}
     void setValue(const std::string &str) {setMat(strToMat(str));}
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     int rows() const {return value.size();}
     int cols() const {return value[0].size();}
     void fromWidget(QWidget *widget);
@@ -108,8 +110,8 @@ class MatProperty : public VariableProperty {
 //    void setMat(const std::vector<std::vector<std::string> > &A) {value = A;}
 //    std::string getValue() const {return toStr(getMat());}
 //    void setValue(const std::string &str) {setMat(strToMat(str));}
-//    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-//    TiXmlElement* writeXMLFile(TiXmlNode *element);
+//    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+//    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
 //    int rows() const {return value.size();}
 //    int cols() const {return value[0].size();}
 //    void fromWidget(QWidget *widget);
@@ -130,8 +132,8 @@ class PhysicalVariableProperty : public Property {
     virtual VariableProperty* getProperty() {return value;}
     const std::string& getXmlName() const {return xmlName;}
     void setXmlName(const std::string &name) {xmlName = name;}
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 };
@@ -142,8 +144,8 @@ class VecFromFileProperty : public VariableProperty {
     VecFromFileProperty(const std::string &fileName_="", const std::string &absoluteFilePath_="") : fileName(fileName_), absoluteFilePath(absoluteFilePath_) {}
     std::string getValue() const;
     void setValue(const std::string &str) {}
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -157,8 +159,8 @@ class MatFromFileProperty : public VariableProperty {
     MatFromFileProperty(const std::string &fileName_="", const std::string &absoluteFilePath_="") : fileName(fileName_), absoluteFilePath(absoluteFilePath_) {}
     std::string getValue() const; 
     void setValue(const std::string &str) {}
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 

@@ -23,6 +23,7 @@
 #include "ombv_properties.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 
 Joint::Joint(const string &str, Element *parent) : Link(str, parent), forceArrow(0,false), momentArrow(0,false), force(0,false), moment(0,false) {
 

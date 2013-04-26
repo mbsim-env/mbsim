@@ -26,6 +26,7 @@
 #include "frame.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 
 void OMBVObjectProperty::writeXMLFileID(TiXmlNode *parent) {
   if(!ID.empty()) {

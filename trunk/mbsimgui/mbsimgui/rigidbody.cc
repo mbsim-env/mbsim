@@ -28,6 +28,7 @@
 #include "ombv_properties.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 
 RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), constrained(false), K(0,false), translation(0,false), rotation(0,false), ombvEditor(0,true), weightArrow(0,false), jointForceArrow(0,false), jointMomentArrow(0,false), isFrameOfBodyForRotation(0,false) {
   Frame *C = new Frame("C",this);

@@ -33,6 +33,7 @@
 using namespace std;
 using namespace fmatvec;
 using namespace MBSim;
+using namespace MBXMLUtils;
 
 namespace MBSimHydraulics {
 

@@ -50,7 +50,7 @@ namespace MBSimFlexibleBody {
        * \param XML object
        * \return analogous MBSim::Object
        */
-      MBSim::Object* createObject(TiXmlElement *element);
+      MBSim::Object* createObject(MBXMLUtils::TiXmlElement *element);
       MBSim::ObjectFactoryBase::MM_PRINSPRE& getPriorityNamespacePrefix();
     
     private:

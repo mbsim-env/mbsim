@@ -32,6 +32,7 @@
 #include <mbxmlutilstinyxml/tinynamespace.h>
 
 using namespace std;
+using namespace MBXMLUtils;
 
 TiXmlElement* TranslationInXDirectionProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"TranslationInXDirection" );

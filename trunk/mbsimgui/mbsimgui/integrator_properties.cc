@@ -21,6 +21,8 @@
 #include "integrator_properties.h"
 #include "integrator_widgets.h"
 
+using namespace MBXMLUtils;
+
 RKSuiteTypeProperty::RKSuiteTypeProperty() : index(0) {
   method.push_back(MBSIMINTNS"method23");
   method.push_back(MBSIMINTNS"method45");

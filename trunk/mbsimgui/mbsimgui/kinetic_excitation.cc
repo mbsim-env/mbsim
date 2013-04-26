@@ -23,6 +23,7 @@
 #include "kinetics_properties.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 
 KineticExcitation::KineticExcitation(const string &str, Element *parent) : Link(str, parent), forceArrow(0,true), momentArrow(0,true), force(0,false), moment(0,false), frameOfReference(0,false) {
 

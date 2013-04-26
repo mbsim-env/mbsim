@@ -82,7 +82,7 @@ namespace MBSim {
       void enableOpenMBV(bool enable=true);
 #endif
 
-    virtual void initializeUsingXML(TiXmlElement *element);
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
 
     protected:
       /** 

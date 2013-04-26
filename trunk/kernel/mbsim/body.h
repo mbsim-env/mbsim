@@ -131,8 +131,8 @@ namespace MBSim {
        */
       int contourIndex(const Contour *contour_) const;
 
-      virtual void initializeUsingXML(TiXmlElement *element);
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
 
       virtual Element * getByPathSearch(std::string path);
 

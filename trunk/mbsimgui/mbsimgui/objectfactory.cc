@@ -37,6 +37,7 @@
 #include <string>
 
 using namespace std;
+using namespace MBXMLUtils;
 
 ObjectFactory* ObjectFactory::instance=NULL;
 

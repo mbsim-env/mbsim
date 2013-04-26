@@ -28,6 +28,7 @@ using namespace std;
 #endif
 
 using namespace fmatvec;
+using namespace MBXMLUtils;
 
 namespace MBSim {
 

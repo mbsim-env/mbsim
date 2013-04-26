@@ -41,8 +41,8 @@ class AbsoluteCoordinateSensor : public Sensor {
   public:
     AbsoluteCoordinateSensor(const std::string &str, Element *parent);
     virtual std::string getType() const { return "AbsoluteCoordinateSensor"; }
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void initialize();
   protected:
     ExtProperty frame, direction;

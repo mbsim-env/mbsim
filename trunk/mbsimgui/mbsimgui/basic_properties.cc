@@ -31,6 +31,7 @@
 #include <mbxmlutilstinyxml/tinynamespace.h>
 
 using namespace std;
+using namespace MBXMLUtils;
 
 extern bool absolutePath;
 extern QDir mbsDir;

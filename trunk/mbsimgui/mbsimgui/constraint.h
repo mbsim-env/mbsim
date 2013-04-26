@@ -37,8 +37,8 @@ class GearConstraint : public Constraint {
     GearConstraint(const std::string &str, Element *parent);
     ~GearConstraint();
     std::string getType() const { return "GearConstraint"; }
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new GearConstraintPropertyDialog(this);}
   protected:
@@ -51,8 +51,8 @@ class KinematicConstraint : public Constraint {
     KinematicConstraint(const std::string &str, Element *parent);
     ~KinematicConstraint();
     std::string getType() const { return "KinematicConstraint"; }
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new KinematicConstraintPropertyDialog(this);}
   protected:
@@ -66,8 +66,8 @@ class JointConstraint : public Constraint {
     JointConstraint(const std::string &str, Element *parent);
     ~JointConstraint();
     std::string getType() const { return "JointConstraint"; }
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new JointConstraintPropertyDialog(this);}
   protected:

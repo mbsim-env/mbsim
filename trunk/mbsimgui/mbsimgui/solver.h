@@ -26,8 +26,8 @@
 
 class Environment : public QObject {
   public:
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
     static Environment *getInstance() { return instance?instance:(instance=new Environment); }
 
   protected:
@@ -43,8 +43,8 @@ class Solver : public Group {
   public:
     Solver(const std::string &str, Element *parent);
     std::string getType() const { return "DynamicSystemSolver"; }
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     std::string getFileExtension() const { return ".mbsim.xml"; }
 
     static Solver* readXMLFile(const std::string &filename);

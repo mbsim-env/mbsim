@@ -113,8 +113,8 @@ namespace MBSim {
       void setAcceleration(const fmatvec::Vec3 &a) { WaP = a; } 
       void setAngularAcceleration(const fmatvec::Vec3 &psi) { WpsiP = psi; }
 
-      virtual void initializeUsingXML(TiXmlElement *element);
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
       /***************************************************/
 
       virtual Element * getByPathSearch(std::string path);
@@ -209,8 +209,8 @@ namespace MBSim {
         setAngularAcceleration(getJacobianOfRotation()*ud + getGyroscopicAccelerationOfRotation());
       }
 
-      virtual void initializeUsingXML(TiXmlElement *element);
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
 
     protected:
       const Frame *R;

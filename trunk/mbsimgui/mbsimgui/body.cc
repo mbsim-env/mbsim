@@ -24,6 +24,7 @@
 #include "basic_properties.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 
 Body::Body(const string &str, Element *parent) : Object(str,parent), R(0,false) {
   R.setProperty(new FrameOfReferenceProperty(getParent()->getFrame(0),this,MBSIMNS"frameOfReference"));

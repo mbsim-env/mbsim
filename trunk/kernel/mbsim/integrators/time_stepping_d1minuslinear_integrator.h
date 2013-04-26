@@ -52,7 +52,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF INTEGRATOR */
       virtual void integrate(DynamicSystemSolver& system);
-      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       /***************************************************/
 
       /* GETTER / SETTER */

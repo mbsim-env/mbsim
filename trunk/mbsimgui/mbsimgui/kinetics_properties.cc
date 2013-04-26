@@ -25,6 +25,7 @@
 #include "function_widgets.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 
 TiXmlElement* GeneralizedForceLawProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());

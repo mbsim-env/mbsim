@@ -35,9 +35,11 @@ class Object;
 class Link;
 class ExtraDynamic;
 class Observer;
-class TiXmlElement;
-class TiXmlNode;
 class TextWidget;
+namespace MBXMLUtils {
+  class TiXmlElement;
+  class TiXmlNode;
+}
 
 class Element : public TreeItemData {
   friend class ElementPropertyDialog;
@@ -51,10 +53,10 @@ class Element : public TreeItemData {
     virtual ~Element();
     virtual std::string getPath();
     std::string getXMLPath(Element *ref=0, bool rel=false);
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual void initializeUsingXMLEmbed(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFileEmbed(TiXmlNode *element);
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXMLEmbed(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFileEmbed(MBXMLUtils::TiXmlNode *element);
     virtual void writeXMLFile(const std::string &name);
     virtual void writeXMLFile() { writeXMLFile(getName()); }
     virtual void initialize();

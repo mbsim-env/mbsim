@@ -22,6 +22,7 @@
 #include "mbsimHydraulics/objectfactory.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 
 namespace MBSimHydraulics {
 

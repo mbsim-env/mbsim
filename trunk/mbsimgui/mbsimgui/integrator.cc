@@ -28,6 +28,7 @@
 #include <QtGui/QHBoxLayout>
 
 using namespace std;
+using namespace MBXMLUtils;
 
 extern MainWindow *mw;
 

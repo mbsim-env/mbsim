@@ -31,8 +31,8 @@ class RigidBody : public Body {
     std::string getType() const { return "RigidBody"; }
     int getqSize() const {return constrained?0:getqRelSize();}
     int getqRelSize() const;
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     bool isConstrained() const {return constrained;} 
     void setConstrained(bool b) {constrained = b;}
     void initialize();

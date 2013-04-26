@@ -58,7 +58,7 @@ namespace MBSim {
   // NOTE!!! When adding a new PlotFeature here, the default setting for this feature must
   // be specified in dynamic_system_solver.cc:DynamicSystemSolver::constructor() and the
   // new feature must also be added in
-  // element.cc:Element::initializeUsingXML(TiXmlElement *element)
+  // element.cc:Element::initializeUsingXML(MBXMLUtils::TiXmlElement *element)
   // and in
   // mbsimxml/schema/mbsim.xsd.in
   /** \brief Plot Features */
@@ -233,8 +233,8 @@ namespace MBSim {
        */
       PlotFeatureStatus getPlotFeatureForChildren(PlotFeature pf) { return plotFeatureForChildren[pf]; }
 
-      virtual void initializeUsingXML(TiXmlElement *element);
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
 
       /**
        * \brief a general element access
@@ -254,17 +254,17 @@ namespace MBSim {
       virtual Element* getByPathSearch(std::string path) {return 0; }
 
       // some convenience function for XML
-      static double getDouble(TiXmlElement *e);
-      static int getInt(TiXmlElement *e);
-      static bool getBool(TiXmlElement *e);
-      static fmatvec::Vec3 getVec3(TiXmlElement *e);
-      static fmatvec::Vec getVec(TiXmlElement *e, int rows=0);
-      static fmatvec::Mat3xV getMat3xV(TiXmlElement *e, int cols=0);
-      static fmatvec::Mat getMat(TiXmlElement *e, int rows=0, int cols=0);
-      static fmatvec::SqrMat3 getSqrMat3(TiXmlElement *e);
-      static fmatvec::SqrMat getSqrMat(TiXmlElement *e, int size=0);
-      static fmatvec::SymMat3 getSymMat3(TiXmlElement *e);
-      static fmatvec::SymMat getSymMat(TiXmlElement *e, int size=0);
+      static double getDouble(MBXMLUtils::TiXmlElement *e);
+      static int getInt(MBXMLUtils::TiXmlElement *e);
+      static bool getBool(MBXMLUtils::TiXmlElement *e);
+      static fmatvec::Vec3 getVec3(MBXMLUtils::TiXmlElement *e);
+      static fmatvec::Vec getVec(MBXMLUtils::TiXmlElement *e, int rows=0);
+      static fmatvec::Mat3xV getMat3xV(MBXMLUtils::TiXmlElement *e, int cols=0);
+      static fmatvec::Mat getMat(MBXMLUtils::TiXmlElement *e, int rows=0, int cols=0);
+      static fmatvec::SqrMat3 getSqrMat3(MBXMLUtils::TiXmlElement *e);
+      static fmatvec::SqrMat getSqrMat(MBXMLUtils::TiXmlElement *e, int size=0);
+      static fmatvec::SymMat3 getSymMat3(MBXMLUtils::TiXmlElement *e);
+      static fmatvec::SymMat getSymMat(MBXMLUtils::TiXmlElement *e, int size=0);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       virtual OpenMBV::Group* getOpenMBVGrp() {return 0;}

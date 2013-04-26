@@ -24,6 +24,7 @@
 #include "objectfactory.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 
 Contour::Contour(const string &str, Element *parent) : Element(str,parent), refFrame(0,false) {
   refFrame.setProperty(new ParentFrameOfReferenceProperty(0,this,MBSIMNS"frameOfReference"));

@@ -27,6 +27,7 @@
 #include "mbsim/dynamic_system_solver.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
 

@@ -36,6 +36,7 @@ extern MainWindow *mw;
 extern bool absolutePath;
 
 using namespace std;
+using namespace MBXMLUtils;
 
 int Element::IDcounter=0;
 

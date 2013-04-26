@@ -30,7 +30,7 @@ class Function1Property : public Property {
     virtual ~Function1Property() {}
     virtual std::string getType() const { return "Function1_"+ext; }
     virtual std::string getExt() const { return ext; }
-    TiXmlElement* writeXMLFile(TiXmlNode *parent);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   protected:
     std::string ext;
 };
@@ -42,7 +42,7 @@ class Function2Property : public Property {
     virtual std::string getType() const { return "Function2_"+ext; }
     virtual std::string getExt() const { return ext; }
     virtual void resize(int m, int n) {}
-    TiXmlElement* writeXMLFile(TiXmlNode *parent);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   protected:
     std::string ext;
 };
@@ -70,8 +70,8 @@ class ConstantFunction1Property : public Function1Property {
     ConstantFunction1Property(const std::string &ext);
     inline std::string getType() const { return "ConstantFunction1_"+ext; }
     void resize(int m, int n);
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
   protected:
@@ -82,8 +82,8 @@ class QuadraticFunction1Property : public DifferentiableFunction1Property {
   public:
     QuadraticFunction1Property();
     inline std::string getType() const { return "QuadraticFunction1_VS"; }
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -95,8 +95,8 @@ class SinusFunction1Property : public DifferentiableFunction1Property {
   public:
     SinusFunction1Property();
     inline std::string getType() const { return "SinusFunction1_VS"; }
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -131,8 +131,8 @@ class TabularFunction1Property : public Function1Property {
   public:
     TabularFunction1Property();
     inline std::string getType() const { return "TabularFunction1_VS"; }
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -145,8 +145,8 @@ class SummationFunction1Property : public Function1Property {
   public:
     SummationFunction1Property() {}
     inline std::string getType() const { return "SummationFunction1_VS"; }
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -159,8 +159,8 @@ class LinearSpringDamperForceProperty : public Function2Property {
   public:
     LinearSpringDamperForceProperty();
     inline std::string getType() const { return "LinearSpringDamperForce"+ext; }
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -172,8 +172,8 @@ class LinearRegularizedBilateralConstraintProperty: public Function2Property {
   public:
     LinearRegularizedBilateralConstraintProperty();
     std::string getType() const { return "LinearRegularizedBilateralConstraint"; }
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -187,8 +187,8 @@ class LinearRegularizedUnilateralConstraintProperty: public Function2Property {
 
     virtual std::string getType() const { return "LinearRegularizedUnilateralConstraint"; }
 
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -202,8 +202,8 @@ class LinearRegularizedCoulombFrictionProperty: public Function2Property {
 
     virtual std::string getType() const { return "LinearRegularizedCoulombFriction"; }
 
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -218,8 +218,8 @@ class Function1ChoiceProperty : public Property {
 
     void defineForceLaw(int);
 
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -237,8 +237,8 @@ class Function2ChoiceProperty : public Property {
 
     void defineForceLaw(int);
 
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 

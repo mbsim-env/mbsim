@@ -28,8 +28,8 @@ class Contour : public Element {
     Contour(const std::string &str, Element *parent);
     ~Contour();
     static Contour* readXMLFile(const std::string &filename, Element *parent);
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual Element *getByPathSearch(std::string path);
     void setSavedFrameOfReference(const std::string &str);
     virtual void initialize();
@@ -57,8 +57,8 @@ class Plane : public Contour {
     Plane(const std::string &str, Element *parent);
     ~Plane();
     std::string getType() const { return "Plane"; }
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     ElementPropertyDialog* createPropertyDialog() {return new PlanePropertyDialog(this);}
   protected:
     ExtProperty visu;
@@ -69,8 +69,8 @@ class Sphere : public Contour {
   public:
     Sphere(const std::string &str, Element *parent);
     ~Sphere();
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     std::string getType() const { return "Sphere"; }
     ElementPropertyDialog* createPropertyDialog() {return new SpherePropertyDialog(this);}
   protected:

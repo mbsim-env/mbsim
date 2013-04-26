@@ -56,8 +56,8 @@ namespace MBSim {
        */
       virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) = 0;
 
-      virtual void initializeUsingXML(TiXmlElement *element) {}
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent) { return 0; }
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; }
       /***************************************************/
   };
 
@@ -90,8 +90,8 @@ namespace MBSim {
       virtual int getqTSize() const {return 1;}
       virtual int getuTSize() const {return 1;}
       virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) {r(0) = q(0); return r;}
-      virtual void initializeUsingXML(TiXmlElement *element) {}
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
   class TranslationInYDirection : public RotationIndependentTranslation {
@@ -105,8 +105,8 @@ namespace MBSim {
       virtual int getqTSize() const {return 1;}
       virtual int getuTSize() const {return 1;}
       virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) {r(1) = q(0); return r;}
-      virtual void initializeUsingXML(TiXmlElement *element) {}
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
   class TranslationInZDirection : public RotationIndependentTranslation {
@@ -120,8 +120,8 @@ namespace MBSim {
       virtual int getqTSize() const {return 1;}
       virtual int getuTSize() const {return 1;}
       virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) {r(2) = q(0); return r;}
-      virtual void initializeUsingXML(TiXmlElement *element) {}
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
   class TranslationInXYDirection : public RotationIndependentTranslation {
@@ -135,8 +135,8 @@ namespace MBSim {
       virtual int getqTSize() const {return 2;}
       virtual int getuTSize() const {return 2;}
       virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) {r(0) = q(0); r(1) = q(1); return r;}
-      virtual void initializeUsingXML(TiXmlElement *element) {}
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
   class TranslationInXZDirection : public RotationIndependentTranslation {
@@ -150,8 +150,8 @@ namespace MBSim {
       virtual int getqTSize() const {return 2;}
       virtual int getuTSize() const {return 2;}
       virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) {r(0) = q(0); r(2) = q(1); return r;}
-      virtual void initializeUsingXML(TiXmlElement *element) {}
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
   class TranslationInYZDirection : public RotationIndependentTranslation {
@@ -165,8 +165,8 @@ namespace MBSim {
       virtual int getqTSize() const {return 2;}
       virtual int getuTSize() const {return 2;}
       virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) {r(1) = q(0); r(2) = q(1); return r;}
-      virtual void initializeUsingXML(TiXmlElement *element) {}
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
   class TranslationInXYZDirection : public RotationIndependentTranslation {
@@ -180,8 +180,8 @@ namespace MBSim {
       virtual int getqTSize() const {return 3;}
       virtual int getuTSize() const {return 3;}
       virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) {r(0) = q(0); r(1) = q(1); r(2) = q(2); return r;}
-      virtual void initializeUsingXML(TiXmlElement *element) {}
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
   /**
@@ -207,8 +207,8 @@ namespace MBSim {
       virtual int getqTSize() const {return PJT.cols();}
       virtual int getuTSize() const {return PJT.cols();}
       virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return PJT*q(0,PJT.cols()-1); }
-      virtual void initializeUsingXML(TiXmlElement *element);
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -251,7 +251,7 @@ namespace MBSim {
       virtual int getqTSize() const {return 0;}
       virtual int getuTSize() const {return 0;}
       virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return PJT*(*pos)(t); }
-      //virtual void initializeUsingXML(TiXmlElement *element);
+      //virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -301,7 +301,7 @@ namespace MBSim {
       virtual int getqTSize() const {return 0;}
       virtual int getuTSize() const {return 0;}
       virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return (*pos)(t); }
-      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -344,8 +344,8 @@ namespace MBSim {
        */
       virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return (*pos)(q); }
 
-      virtual void initializeUsingXML(TiXmlElement *element) {}
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent) { return 0; }
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; }
 
       /* GETTER / SETTER */
       /**
@@ -385,8 +385,8 @@ namespace MBSim {
        */
       virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return (*pos)(q,t); }
 
-      virtual void initializeUsingXML(TiXmlElement *element) {}
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent) { return 0; }
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; }
 
       /* GETTER / SETTER */
       /**
@@ -432,8 +432,8 @@ namespace MBSim {
        */
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) = 0;
 
-     virtual void initializeUsingXML(TiXmlElement *element) {}
-     virtual TiXmlElement* writeXMLFile(TiXmlNode *parent) { return 0;}
+     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0;}
       /***************************************************/
   };
 
@@ -466,8 +466,8 @@ namespace MBSim {
       virtual int getqRSize() const {return 1;}
       virtual int getuRSize() const {return 1;}
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
-      virtual void initializeUsingXML(TiXmlElement *element) {}
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
   /**
@@ -485,8 +485,8 @@ namespace MBSim {
       virtual int getqRSize() const {return 1;}
       virtual int getuRSize() const {return 1;}
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
-      virtual void initializeUsingXML(TiXmlElement *element) {}
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
   /**
@@ -505,8 +505,8 @@ namespace MBSim {
       virtual int getqRSize() const {return 1;}
       virtual int getuRSize() const {return 1;}
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
-      virtual void initializeUsingXML(TiXmlElement *element) {}
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
   /**
@@ -532,8 +532,8 @@ namespace MBSim {
       virtual int getqRSize() const {return 1;}
       virtual int getuRSize() const {return 1;}
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
-      virtual void initializeUsingXML(TiXmlElement *element);
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -567,7 +567,7 @@ namespace MBSim {
       /* INTERFACE OF ROTATION */
       virtual int getqSize() const {return qSize;}
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) {return (*rot)(fmatvec::Vec(1,fmatvec::INIT,(*angle)(q)),t);} 
-      virtual void initializeUsingXML(TiXmlElement *element) {}
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -613,7 +613,7 @@ namespace MBSim {
       virtual int getqRSize() const { return 0; }
       virtual int getuRSize() const {return 0;}
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) {return (*rot)(fmatvec::Vec(1,fmatvec::INIT,(*angle)(t)),t);}
-      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -652,8 +652,8 @@ namespace MBSim {
       virtual int getqRSize() const { return 2; }
       virtual int getuRSize() const { return 2; }
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
-      virtual void initializeUsingXML(TiXmlElement *element) {};
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
       /***************************************************/
   };
   /**
@@ -671,8 +671,8 @@ namespace MBSim {
       virtual int getqRSize() const { return 2; }
       virtual int getuRSize() const { return 2; }
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
-      virtual void initializeUsingXML(TiXmlElement *element) {};
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
       /***************************************************/
   };
 
@@ -693,8 +693,8 @@ namespace MBSim {
       virtual int getqRSize() const { return 2; }
       virtual int getuRSize() const { return 2; }
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
-      virtual void initializeUsingXML(TiXmlElement *element) {};
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
       /***************************************************/
   };
 
@@ -715,8 +715,8 @@ namespace MBSim {
       virtual int getqRSize() const { return 3; }
       virtual int getuRSize() const { return 3; }
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
-      virtual void initializeUsingXML(TiXmlElement *element) {};
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
       /***************************************************/
   };
 
@@ -736,8 +736,8 @@ namespace MBSim {
       virtual int getqRSize() const { return 3; }
       virtual int getuRSize() const { return 3; }
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
-      virtual void initializeUsingXML(TiXmlElement *element) {};
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
       /***************************************************/
   };
 
@@ -758,8 +758,8 @@ namespace MBSim {
       virtual int getqRSize() const { return 3; }
       virtual int getuRSize() const { return 3; }
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
-      virtual void initializeUsingXML(TiXmlElement *element) {};
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
       /***************************************************/
   };
 
@@ -792,7 +792,7 @@ namespace MBSim {
       virtual int getqRSize() const { return 0; }
       virtual int getuRSize() const { return 0; }
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
-      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       /***************************************************/
 
     private:
@@ -828,7 +828,7 @@ namespace MBSim {
 
       virtual fmatvec::MatV operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) = 0;
 
-      virtual void initializeUsingXML(TiXmlElement *element) {};
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
       /***************************************************/
   };
 
@@ -865,7 +865,7 @@ namespace MBSim {
        */
       virtual fmatvec::Mat3xV operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) = 0;
 
-      virtual void initializeUsingXML(TiXmlElement *element) {};
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
       /***************************************************/
   };
 
@@ -892,7 +892,7 @@ namespace MBSim {
       /* INTERFACE OF JACOBIAN */
       virtual int getuSize() const { return J.cols(); }
       virtual fmatvec::Mat3xV operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return J; }
-      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       /***************************************************/
 
     private:
@@ -928,7 +928,7 @@ namespace MBSim {
        */
       virtual fmatvec::Mat3xV operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return (*J)(q); }
 
-      virtual void initializeUsingXML(TiXmlElement *element) {};
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
 
       /* GETTER / SETTER */
       /**
@@ -969,7 +969,7 @@ namespace MBSim {
        */
       virtual fmatvec::Mat3xV operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return (*J)(q,t); }
 
-      virtual void initializeUsingXML(TiXmlElement *element) {};
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
 
       /* GETTER / SETTER */
       /**

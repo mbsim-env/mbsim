@@ -24,6 +24,7 @@
 #include "mbsim/dynamic_system.h"
 
 using namespace fmatvec;
+using namespace MBXMLUtils;
 using namespace MBSim;
 
 namespace MBSimControl {

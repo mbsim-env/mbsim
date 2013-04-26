@@ -4,6 +4,7 @@
 #include <casadi/symbolic/sx/sx_tools.hpp>
 
 using namespace std;
+using namespace MBXMLUtils;
 using namespace CasADi;
 
 int main() {

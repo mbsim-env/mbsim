@@ -35,6 +35,7 @@
 #include <QtGui>
 
 using namespace std;
+using namespace MBXMLUtils;
 
 bool absolutePath = false;
 QDir mbsDir;

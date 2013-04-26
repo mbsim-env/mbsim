@@ -28,8 +28,8 @@ class RKSuiteTypeProperty : public Property {
     RKSuiteTypeProperty();
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element); 
+    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
   protected:
     int index;
     std::vector<std::string> method;

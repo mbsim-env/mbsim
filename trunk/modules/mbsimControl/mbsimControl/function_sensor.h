@@ -37,7 +37,7 @@ namespace MBSimControl {
       void setFunction(MBSim::Function1<fmatvec::Vec, double>* function_);
       fmatvec::Vec getSignal() {return y.copy(); }
       void updateg(double t);
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     private:
       MBSim::Function1<fmatvec::Vec, double> * function;
       fmatvec::Vec y;
@@ -50,7 +50,7 @@ namespace MBSimControl {
   class Function1_SSEvaluation : public Signal {
     public:
       Function1_SSEvaluation(const std::string &name) : Signal(name), signal(NULL), fun(NULL), signalString("") {}
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       void init(MBSim::InitStage stage);
       void setSignal(Signal * s) {signal=s; }
       void setFunction(MBSim::Function1<double, double>* fun_) {fun=fun_; }
@@ -68,7 +68,7 @@ namespace MBSimControl {
   class Function2_SSSEvaluation : public Signal {
     public:
       Function2_SSSEvaluation(const std::string &name) : Signal(name), signal1(NULL), signal2(NULL), fun(NULL), signal1String(""), signal2String("") {}
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       void init(MBSim::InitStage stage);
       void setSignals(Signal * s1, Signal * s2) {signal1=s1; signal2=s2; }
       void setFunction(MBSim::Function2<double, double, double>* fun_) {fun=fun_; }

@@ -24,6 +24,7 @@
 #include "mbsimControl/obsolet_hint.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
 

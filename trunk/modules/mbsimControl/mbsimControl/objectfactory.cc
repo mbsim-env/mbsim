@@ -14,6 +14,7 @@
 #include "mbsimControl/actuator.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 
 namespace MBSimControl {
 

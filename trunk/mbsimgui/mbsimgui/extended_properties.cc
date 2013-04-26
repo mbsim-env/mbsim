@@ -29,6 +29,7 @@
 #include <mbxmlutilstinyxml/tinynamespace.h>
 
 using namespace std;
+using namespace MBXMLUtils;
 
 ExtPhysicalVarProperty::ExtPhysicalVarProperty(std::vector<PhysicalVariableProperty*> inputProperty_) : inputProperty(inputProperty_), currentInput(0) {
   inputProperty.push_back(new PhysicalVariableProperty(new OctaveExpressionProperty, inputProperty[0]->getUnit(), inputProperty[0]->getXmlName()));

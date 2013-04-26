@@ -32,10 +32,10 @@ class Frame : public Element {
     ~Frame();
     std::string getType() const { return "Frame"; }
     static Frame* readXMLFile(const std::string &filename, Element *parent);    
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual void initializeUsingXML2(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile2(TiXmlNode *element);
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML2(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile2(MBXMLUtils::TiXmlNode *element);
     bool openMBVFrame() const {return visu.isActive();}
     void setOpenMBVFrame(bool flag) {visu.setActive(flag);}
     virtual Element * getByPathSearch(std::string path);
@@ -51,9 +51,9 @@ class FixedRelativeFrame : public Frame {
     FixedRelativeFrame(const std::string &str, Element *parent);
     ~FixedRelativeFrame();
     std::string getType() const { return "FixedRelativeFrame"; }
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual void initializeUsingXML2(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual void initializeUsingXML2(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new FixedRelativeFramePropertyDialog(this);}
     ElementContextMenu* createContextMenu() {return new FixedRelativeFrameContextMenu;}

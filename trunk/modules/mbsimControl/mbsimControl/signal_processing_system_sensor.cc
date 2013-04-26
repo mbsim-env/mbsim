@@ -23,6 +23,7 @@
 #include "mbsimControl/objectfactory.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
 

@@ -23,6 +23,7 @@
 #include "objectfactory.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 
 Frame::Frame(const string &str, Element *parent, bool grey) : Element(str,parent), visu(0,true) {
 

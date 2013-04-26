@@ -32,6 +32,7 @@
 #include "mbsimHydraulics/elastic_line_variational.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 using namespace MBSim;
 
 namespace MBSimHydraulics {

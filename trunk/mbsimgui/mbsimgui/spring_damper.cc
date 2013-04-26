@@ -25,6 +25,7 @@
 #include "ombv_properties.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 
 SpringDamper::SpringDamper(const string &str, Element *parent) : Link(str, parent), forceDirection(0,false), coilSpring(0,true) {
 

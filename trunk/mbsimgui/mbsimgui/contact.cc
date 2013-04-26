@@ -25,6 +25,7 @@
 #include "ombv_properties.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 
 Contact::Contact(const string &str, Element *parent) : Link(str, parent), contactImpactLaw(0,false), frictionForceLaw(0,false), frictionImpactLaw(0,false), enableOpenMBVContactPoints(0,false), normalForceArrow(0,false), frictionArrow(0,false) {
 

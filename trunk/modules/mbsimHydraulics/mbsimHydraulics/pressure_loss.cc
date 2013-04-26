@@ -29,6 +29,7 @@
 #include "mbsim/utils/eps.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
 

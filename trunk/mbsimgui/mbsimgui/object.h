@@ -31,8 +31,8 @@ class Object : public Element {
     virtual int getqSize() {return 0;}
     virtual int getuSize() {return 0;}
     static Object* readXMLFile(const std::string &filename, Element *parent);
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual Element* getByPathSearch(std::string path);
     ElementPropertyDialog* createPropertyDialog() {return new ObjectPropertyDialog(this);}
   protected:

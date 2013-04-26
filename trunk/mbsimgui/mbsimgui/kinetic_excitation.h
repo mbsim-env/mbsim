@@ -29,8 +29,8 @@ class KineticExcitation : public Link {
     KineticExcitation(const std::string &str, Element *parent);
     ~KineticExcitation();
     std::string getType() const { return "KineticExcitation"; }
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new KineticExcitationPropertyDialog(this);}
   protected:

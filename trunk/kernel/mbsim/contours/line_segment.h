@@ -52,7 +52,7 @@ namespace MBSim {
       void enableOpenMBV(bool enable=true, double size=1., int number=10);
 #endif
 
-      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
 
       /* GETTER / SETTER */
       void setBounds(const fmatvec::Vec &bound_);

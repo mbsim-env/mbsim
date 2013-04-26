@@ -106,7 +106,7 @@ namespace MBSim {
       return FromCasadi<Ret>::cast(f.output());
     }
 
-    void initializeUsingXML(TiXmlElement *element) {
+    void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
       f=CasADi::createCasADiSXFunctionFromXML(element->FirstChildElement());
       f.init();
     }

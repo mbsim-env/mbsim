@@ -38,8 +38,8 @@ class AbsoluteKinematicsObserver : public Observer {
     AbsoluteKinematicsObserver(const std::string &str, Element *parent);
     ~AbsoluteKinematicsObserver();
     std::string getType() const { return "AbsoluteKinematicsObserver"; }
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new AbsoluteKinematicsObserverPropertyDialog(this);}
   protected:

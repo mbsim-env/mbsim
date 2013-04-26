@@ -51,8 +51,8 @@ class Group : public Element {
     int getuSize();
     int getxSize();
     static Group* readXMLFile(const std::string &filename, Element *parent);
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual Element *getByPathSearch(std::string path);
     void setActionPasteDisabled(bool flag);
     void initialize();

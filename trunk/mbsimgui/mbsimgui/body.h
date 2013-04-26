@@ -44,8 +44,8 @@ class Body : public Object {
 
     void initialize();
 
-    void initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
 
     ElementPropertyDialog* createPropertyDialog() {return new BodyPropertyDialog(this);}
     ElementContextMenu* createContextMenu() {return new BodyContextMenu;}
