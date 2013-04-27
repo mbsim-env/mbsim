@@ -396,6 +396,8 @@ def update(nr, tool, buildTools):
       ret=1
     if re.search("\nUpdated to revision [0-9]+.\n$", output.decode("utf-8"))!=None:
       buildTools.add(tool)
+    if re.search("\nSummary of conflicts:\n$", output.decode("utf-8"))!=None:
+      ret=1
   else:
     output=b"Update disabled"
     
