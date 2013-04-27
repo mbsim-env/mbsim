@@ -36,12 +36,7 @@ intSchema  =None
 directories=list() # a list of all examples sorted in descending order (filled recursively (using the filter) by by --directories)
 # the following examples will fail: do not report them in the RSS feed as errors
 willFail=set([
-  pj('mechanics', 'basics', 'time_dependent_kinematics'),
-  pj('mechanics', 'basics', 'general_kinematics_symbolic'),
-  pj('xmlflat', 'time_dependent_kinematics'),
-  pj('mechanics', 'contacts', 'area_polynomialfrustum'),
-  pj('mechanics', 'flexible_body', 'perlchain_cosserat'),
-  pj('xml', 'time_dependent_kinematics')
+#  pj('xml', 'time_dependent_kinematics')
 ])
 
 # command line option definition
