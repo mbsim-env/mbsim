@@ -182,13 +182,15 @@ cp -uL /usr/i686-w64-mingw32/sys-root/mingw/bin/iconv.dll $DISTDIR/bin
 cp -uL $PREFIX/bin/OpenMBV.oct $DISTDIR/bin
 cp -uL $PREFIX/bin/OpenMBV.py $DISTDIR/bin
 cp -uL $PREFIX/bin/_OpenMBV.pyd $DISTDIR/bin
+cp -uL $PREFIX/bin/openmbv.jar $DISTDIR/bin
+cp -uL $PREFIX/bin/libopenmbvjava.jni $DISTDIR/bin
+# copy openmbvcppinterface SWIG example files
+mkdir -p $DISTDIR/examples/openmbvcppinterface_swig
+cp -uL $PREFIX/share/openmbvcppinterface/examples/swig/* $DISTDIR/examples/openmbvcppinterface_swig
 # copy casadi SWIG files for octave
 cp -uL $PREFIX/bin/casadi.m $DISTDIR/bin
 cp -uL $PREFIX/bin/casadi_helpers.m $DISTDIR/bin
 cp -ruL $PREFIX/bin/@swig_ref $DISTDIR/bin
-# copy casadi SWIG files for java
-cp -uL $PREFIX/bin/openmbv.jar $DISTDIR/bin
-cp -uL $PREFIX/bin/libopenmbvjava.jni $DISTDIR/bin
 
 # create mbsim-config.bat
 cat << EOF > $DISTDIR/bin/mbsim-config.bat
