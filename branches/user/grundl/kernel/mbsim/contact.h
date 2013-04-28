@@ -129,6 +129,14 @@ namespace MBSim {
       virtual void checkActive(int j);
       virtual void LinearImpactEstimation(fmatvec::Vec &gInActive_, fmatvec::Vec &gdInActive_, int *IndInActive_, fmatvec::Vec &gAct_, int *IndActive_);
       virtual void SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_);
+
+      //Getter Setter
+      virtual void setlaTol(double tol);
+      virtual void setLaTol(double tol);
+      virtual void setgTol(double tol);
+      virtual void setgdTol(double tol);
+      virtual void setgddTol(double tol);
+      virtual void setrMax(double rMax_);
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */

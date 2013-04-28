@@ -84,7 +84,7 @@ namespace MBSimHydraulics {
       virtual void updategd(double t);
       virtual bool isActive() const {return false; }
       virtual bool gActiveChanged() {return false; }
-      virtual bool isSingleValued() const { return true; }
+
 
       void plot(double t, double dt);
 
@@ -116,6 +116,7 @@ namespace MBSimHydraulics {
       void updateg(double t);
       void init(MBSim::InitStage stage);
       void initializeUsingXML(TiXmlElement *element);
+      virtual bool isSingleValued() const {return true;}
 
     private:
       MBSim::Function1<double,double> * pFun;
@@ -129,6 +130,8 @@ namespace MBSimHydraulics {
       virtual std::string getType() const { return "EnvironmentNode"; }
 
       void init(MBSim::InitStage stage);
+
+      virtual bool isSingleValued() const {return true;}
   };
 
 
@@ -154,6 +157,8 @@ namespace MBSimHydraulics {
       void updatedx(double t, double dt);
 
       void plot(double t, double dt);
+
+      virtual bool isSingleValued() const {return true;}
 
     private:
       double V, E;

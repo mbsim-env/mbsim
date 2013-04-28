@@ -163,6 +163,7 @@ namespace MBSimElectronics {
       void setSetValued(bool flag) {sv = flag;}
       void updateh(double t, int j=0);
       bool isSetValued() const {return sv;}
+      virtual bool isSingleValued() const {return not sv;}
       void checkImpactsForTermination(double dt);
       void solveImpactsGaussSeidel(double dt);
   };
@@ -177,6 +178,7 @@ namespace MBSimElectronics {
       Switch(const std::string &name);
       void setSetValued(bool flag) {sv = flag;}
       bool isSetValued() const {return sv;}
+      virtual bool isSingleValued() const {return not sv;}
       void updateh(double t, int j=0);
       void updateW(double t, int j=0);
       void checkImpactsForTermination(double dt);
