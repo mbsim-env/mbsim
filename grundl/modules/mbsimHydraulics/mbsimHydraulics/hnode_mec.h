@@ -137,6 +137,8 @@ namespace MBSimHydraulics {
       virtual std::string getType() const { return "EnvironmentNodeMec"; }
 
       void init(MBSim::InitStage stage);
+
+      virtual bool isSingleValued() const {return true;}
   };
 
 

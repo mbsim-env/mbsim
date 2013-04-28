@@ -683,6 +683,60 @@ namespace MBSim {
     }
   }
 
+  void Contact::setlaTol(double tol) {
+    LinkMechanics::setlaTol(tol);
+    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
+        jter->setlaTol(tol);
+      }
+    }
+  }
+
+  void Contact::setLaTol(double tol) {
+    LinkMechanics::setLaTol(tol);
+    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
+        jter->setLaTol(tol);
+      }
+    }
+  }
+
+  void Contact::setgTol(double tol) {
+    LinkMechanics::setgTol(tol);
+    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
+        jter->setgTol(tol);
+      }
+    }
+  }
+
+  void Contact::setgdTol(double tol) {
+    LinkMechanics::setgdTol(tol);
+    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
+        jter->setgdTol(tol);
+      }
+    }
+  }
+
+  void Contact::setgddTol(double tol) {
+    LinkMechanics::setgddTol(tol);
+    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
+        jter->setgddTol(tol);
+      }
+    }
+  }
+
+  void Contact::setrMax(double rMax_) {
+    LinkMechanics::setrMax(rMax_);
+    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
+        jter->setrMax(rMax_);
+      }
+    }
+  }
+
   void Contact::initializeUsingXML(TiXmlElement *element) {
     LinkMechanics::initializeUsingXML(element);
     TiXmlElement *e;
