@@ -169,10 +169,10 @@ string Element::getXMLPath(Element *ref, bool rel) {
 ParameterList Element::getParameterList(bool addCounter) const {
   ParameterList list;
   const EmbedProperty *e = static_cast<const EmbedProperty*>(embed.getProperty());
-  if(isEmbedded() && e->hasParameterFile())
-    list.readXMLFile(e->getParameterFile());
   if(parent)
     list.addParameterList(parent->getParameterList(false));
+  if(isEmbedded() && e->hasParameterFile())
+    list.readXMLFile(e->getParameterFile());
   if(addCounter && e->hasCounter())
     list.addParameter(e->getCounterName(),"1"); 
   return list;
