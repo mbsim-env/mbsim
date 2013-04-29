@@ -26,8 +26,9 @@
 #include "octaveutils.h"
 #include "widget.h"
 #include "treemodel.h"
-#include "delegate.h"
 #include "treeitem.h"
+#include "element_view.h"
+#include "parameter_view.h"
 #include "integrator_view.h"
 #include <mbxmlutils/utils.h>
 #include <mbxmlutilstinyxml/getinstallpath.h>
@@ -161,15 +162,15 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
 
   setWindowTitle("MBSim GUI");
 
-  elementList = new QTreeView;
+  elementList = new ElementView;
   elementList->setModel(new ElementTreeModel);
-  elementList->setItemDelegate(new ElementDelegate);
+  //elementList->setItemDelegate(new ElementDelegate);
   elementList->setColumnWidth(0,250);
   elementList->setColumnWidth(1,200);
 
-  parameterList = new QTreeView;
+  parameterList = new ParameterView;
   parameterList->setModel(new ParameterListModel);
-  parameterList->setItemDelegate(new ParameterDelegate);
+  //parameterList->setItemDelegate(new ParameterDelegate);
   parameterList->setColumnWidth(0,75);
   parameterList->setColumnWidth(1,125);
 
@@ -243,7 +244,7 @@ void MainWindow::simulationFinished(int exitCode) {
 
 void MainWindow::openPropertyDialog() {
   QModelIndex index = elementList->selectionModel()->currentIndex();
-  elementList->edit(index);
+  elementList->openEditor();
 }
 
 void MainWindow::initInlineOpenMBV() {
@@ -1148,13 +1149,3 @@ void MainWindow::saveElementAs() {
   if(file!="")
     static_cast<Element*>(model->getItem(index)->getItemData())->writeXMLFile(file.toStdString());
 }
-
-void MainWindow::updateElementView(const QModelIndex &index) {
-  elementList->update(index);
-}
-
-void MainWindow::updateParameterView(const QModelIndex &index) {
-  parameterList->update(index);
-  parameterList->update(index.sibling(index.row(),1));
-}
-

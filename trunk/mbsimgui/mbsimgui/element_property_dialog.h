@@ -58,6 +58,8 @@ class ElementPropertyDialog : public PropertyDialog {
     ElementPropertyDialog(Element *element, QWidget * parent = 0, Qt::WindowFlags f = 0, bool embedding=true);
     virtual void toWidget(Element *element);
     virtual void fromWidget(Element *element);
+    void toWidget() {toWidget(element);}
+    void fromWidget() {fromWidget(element);}
     Element* getElement() {return element;}
   protected:
     Element *element;

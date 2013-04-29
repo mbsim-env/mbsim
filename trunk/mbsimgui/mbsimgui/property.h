@@ -32,8 +32,6 @@
 #define MBSIMINTNS "{"MBSIMINTNS_"}"
 #define MBSIMCONTROLNS_ "http://mbsim.berlios.de/MBSimControl"
 #define MBSIMCONTROLNS "{"MBSIMCONTROLNS_"}"
-#define XINS_ "http://www.w3.org/2001/XInclude"
-#define XINS "{"XINS_"}"
 
 class PropertyInterface {
   public:

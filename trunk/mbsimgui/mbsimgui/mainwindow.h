@@ -25,19 +25,16 @@
 #include <QTabWidget>
 #include <mbxmlutilstinyxml/tinyxml.h>
 
-class QTreeWidget;
 class QTreeView;
-class QListView;
-class QStackedWidget;
 class QAction;
 class QLineEdit;
 class QTextBrowser;
 class QProcess;
 class QUrl;
 class Process;
-class Integrator;
+class ElementView;
+class ParameterView;
 class IntegratorView;
-class IntegratorPropertyDialog;
 class QModelIndex;
 
 namespace OpenMBVGUI {
@@ -53,7 +50,8 @@ class MainWindow : public QMainWindow {
   Q_OBJECT
 
   private:
-    QTreeView *elementList, *parameterList;
+    ElementView *elementList;
+    ParameterView *parameterList;
     IntegratorView *integratorView;
     QLineEdit *fileMBS, *fileIntegrator, *fileParameter;
     Process *mbsim;
@@ -131,8 +129,6 @@ class MainWindow : public QMainWindow {
     void addAbsoluteKinematicsObserver();
     void addAbsolutePositionSensor();
     void saveElementAs();
-    void updateElementView(const QModelIndex &index);
-    void updateParameterView(const QModelIndex &index);
   protected slots:
     void selectElement(std::string);
     void changeWorkingDir();

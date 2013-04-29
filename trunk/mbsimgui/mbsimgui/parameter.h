@@ -47,7 +47,7 @@ class Parameter : public TreeItemData {
     virtual std::string getType() const { return "Parameter"; }
     const std::string& getName() const {return static_cast<const TextProperty*>(name.getProperty())->getText();}
     void setName(const std::string &str) {static_cast<TextProperty*>(name.getProperty())->setText(str);}
-    virtual ParameterPropertyDialog* createPropertyDialog() {return new ParameterPropertyDialog;}
+    virtual ParameterPropertyDialog* createPropertyDialog() {return new ParameterPropertyDialog(this);}
     virtual ParameterContextMenu* createContextMenu() {return new ParameterContextMenu;}
   protected:
     ExtProperty name, value;
@@ -62,7 +62,7 @@ class ScalarParameter : public Parameter {
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "scalarParameter"; }
-    virtual ParameterPropertyDialog* createPropertyDialog() {return new ScalarParameterPropertyDialog;}
+    virtual ParameterPropertyDialog* createPropertyDialog() {return new ScalarParameterPropertyDialog(this);}
 };
 
 class VectorParameter : public Parameter {
@@ -73,7 +73,7 @@ class VectorParameter : public Parameter {
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "vectorParameter"; }
-    virtual ParameterPropertyDialog* createPropertyDialog() {return new VectorParameterPropertyDialog;}
+    virtual ParameterPropertyDialog* createPropertyDialog() {return new VectorParameterPropertyDialog(this);}
 };
 
 class MatrixParameter : public Parameter {
@@ -84,7 +84,7 @@ class MatrixParameter : public Parameter {
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "matrixParameter"; }
-    virtual ParameterPropertyDialog* createPropertyDialog() {return new MatrixParameterPropertyDialog;}
+    virtual ParameterPropertyDialog* createPropertyDialog() {return new MatrixParameterPropertyDialog(this);}
 };
 
 class ParameterList {

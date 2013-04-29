@@ -25,8 +25,6 @@
 #include <QPushButton>
 #include <QStyle>
 
-using namespace std;
-
 PropertyDialog::PropertyDialog(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,f) {
 
   QGridLayout *layout = new QGridLayout;
@@ -46,12 +44,17 @@ PropertyDialog::~PropertyDialog() {
 }
 
 void PropertyDialog::clicked(QAbstractButton *button) {
-  if(button == buttonBox->button(QDialogButtonBox::Ok))
-    emit ok(this);
-  else if(button == buttonBox->button(QDialogButtonBox::Apply))
-    emit apply(this);
+  if(button == buttonBox->button(QDialogButtonBox::Ok)) {
+    fromWidget();
+    emit apply();
+    accept();
+  }
+  else if(button == buttonBox->button(QDialogButtonBox::Apply)) {
+    fromWidget();
+    emit apply();
+  }
   else if(button == buttonBox->button(QDialogButtonBox::Cancel))
-    emit cancel(this);
+    reject();
 }
 
 void PropertyDialog::addToTab(const QString &name, QWidget* widget_) {

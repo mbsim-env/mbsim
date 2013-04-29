@@ -23,23 +23,29 @@
 #include "property_dialog.h"
 
 class Parameter;
+class ScalarParameter;
+class VectorParameter;
+class MatrixParameter;
 class TextWidget;
 class ExtWidget;
 
 class ParameterPropertyDialog : public PropertyDialog {
 
   public:
-    ParameterPropertyDialog(QWidget * parent = 0, Qt::WindowFlags f = 0);
+    ParameterPropertyDialog(Parameter *parameter, QWidget * parent = 0, Qt::WindowFlags f = 0);
     virtual void toWidget(Parameter *parameter);
     virtual void fromWidget(Parameter *parameter);
+    void toWidget() {toWidget(parameter);}
+    void fromWidget() {fromWidget(parameter);}
   protected:
+    Parameter *parameter;
     ExtWidget *name;
 };
 
 class ScalarParameterPropertyDialog : public ParameterPropertyDialog {
 
   public:
-    ScalarParameterPropertyDialog(QWidget * parent = 0, Qt::WindowFlags f = 0);
+    ScalarParameterPropertyDialog(ScalarParameter *parameter, QWidget * parent = 0, Qt::WindowFlags f = 0);
     virtual void toWidget(Parameter *parameter);
     virtual void fromWidget(Parameter *parameter);
   protected:
@@ -49,7 +55,7 @@ class ScalarParameterPropertyDialog : public ParameterPropertyDialog {
 class VectorParameterPropertyDialog : public ParameterPropertyDialog {
 
   public:
-    VectorParameterPropertyDialog(QWidget * parent = 0, Qt::WindowFlags f = 0);
+    VectorParameterPropertyDialog(VectorParameter *parameter, QWidget * parent = 0, Qt::WindowFlags f = 0);
     virtual void toWidget(Parameter *parameter);
     virtual void fromWidget(Parameter *parameter);
   protected:
@@ -59,7 +65,7 @@ class VectorParameterPropertyDialog : public ParameterPropertyDialog {
 class MatrixParameterPropertyDialog : public ParameterPropertyDialog {
 
   public:
-    MatrixParameterPropertyDialog(QWidget * parent = 0, Qt::WindowFlags f = 0);
+    MatrixParameterPropertyDialog(MatrixParameter *parameter, QWidget * parent = 0, Qt::WindowFlags f = 0);
     virtual void toWidget(Parameter *parameter);
     virtual void fromWidget(Parameter *parameter);
   protected:
