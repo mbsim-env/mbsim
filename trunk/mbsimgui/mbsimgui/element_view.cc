@@ -31,7 +31,9 @@ extern MainWindow *mw;
 void ElementView::openEditor () {
   if(!editor) {
   index = selectionModel()->currentIndex();
-  Element *element = static_cast<Element*>(static_cast<ElementTreeModel*>(model())->getItem(index)->getItemData());
+  element = static_cast<Element*>(static_cast<ElementTreeModel*>(model())->getItem(index)->getItemData());
+  if(element->isEmbedded())
+    mw->updateOctaveParameters(element->getParameterList());
   editor = element->createPropertyDialog();
   editor->setAttribute(Qt::WA_DeleteOnClose);
   editor->toWidget();
@@ -51,11 +53,18 @@ void ElementView::mousePressEvent ( QMouseEvent * event ) {
 }
 
 void ElementView::dialogFinished(int result) {
+  if(result != 0) {
+    if(element->isEmbedded())
+      mw->updateOctaveParameters(ParameterList());
+    mw->mbsimxml(1);
+  }
   editor = 0;
+  element = 0;
 }
 
 void ElementView::apply() {
   update(index);
+  if(element->isEmbedded())
+    mw->updateOctaveParameters(element->getParameterList());
   mw->mbsimxml(1);
 }
-

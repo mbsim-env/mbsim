@@ -23,15 +23,17 @@
 #include <QTreeView>
 #include <QModelIndex>
 
+class Element;
 class ElementPropertyDialog;
 
 class ElementView : public QTreeView {
   Q_OBJECT
   private:
     QModelIndex index;
+    Element *element;
     ElementPropertyDialog *editor;
   public:
-    ElementView ( QWidget * parent = 0 ) : QTreeView(parent), editor(0) {
+    ElementView ( QWidget * parent = 0 ) : QTreeView(parent), element(0), editor(0) {
     }
     void openEditor ();
   protected:

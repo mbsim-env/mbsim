@@ -46,7 +46,6 @@ PropertyDialog::~PropertyDialog() {
 void PropertyDialog::clicked(QAbstractButton *button) {
   if(button == buttonBox->button(QDialogButtonBox::Ok)) {
     fromWidget();
-    emit apply();
     accept();
   }
   else if(button == buttonBox->button(QDialogButtonBox::Apply)) {
