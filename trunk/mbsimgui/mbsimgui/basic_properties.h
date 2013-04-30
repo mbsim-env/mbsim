@@ -50,23 +50,18 @@ class LocalFrameOfReferenceProperty : public Property {
 
 class ParentFrameOfReferenceProperty : public Property {
   protected:
-    Frame *frame;
+    std::string frame;
     Element* element;
     std::string xmlName;
-    std::string saved_frameOfReference;
 
   public:
-    ParentFrameOfReferenceProperty(Frame* frame_=0, Element* element_=0, const std::string &xmlName_="") : frame(frame_), element(element_), xmlName(xmlName_) {}
-
-    void initialize();
-    Frame* getFrame() {return frame;}
-    void setFrame(Frame *frame_) {frame = frame_;}
+    ParentFrameOfReferenceProperty(const std::string &frame_="", Element* element_=0, const std::string &xmlName_="") : frame(frame_), element(element_), xmlName(xmlName_) {}
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    void setSavedFrameOfReference(const std::string &str) {saved_frameOfReference = str;}
-    const std::string& getSavedFrameOfReference() const {return saved_frameOfReference;}
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
+    void setFrame(const std::string &str) {frame = str;}
+    const std::string& getFrame() const {return frame;}
 };
 
 class FrameOfReferenceProperty : public Property {

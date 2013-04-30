@@ -98,7 +98,7 @@ FixedRelativeFrame::FixedRelativeFrame(const string &str, Element *parent) : Fra
   input.push_back(new PhysicalVariableProperty(new MatProperty(getEye<string>(3,3,"1","0")),"-",MBSIMNS"relativeOrientation"));
   orientation.setProperty(new ExtPhysicalVarProperty(input));
 
-  refFrame.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0),this,MBSIMNS"frameOfReference"));
+  refFrame.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIMNS"frameOfReference"));
 }
 
 FixedRelativeFrame::~FixedRelativeFrame() {
@@ -127,9 +127,9 @@ TiXmlElement* FixedRelativeFrame::writeXMLFile(TiXmlNode *parent) {
 
 void FixedRelativeFrame::initializeUsingXML2(TiXmlElement *element) {
   refFrame.initializeUsingXML(element);
-  string ref = ((ParentFrameOfReferenceProperty*)refFrame.getProperty())->getSavedFrameOfReference();
+  string ref = ((ParentFrameOfReferenceProperty*)refFrame.getProperty())->getFrame();
   if(ref[0]=='F')
-    ((ParentFrameOfReferenceProperty*)refFrame.getProperty())->setSavedFrameOfReference(string("../")+ref);
+    ((ParentFrameOfReferenceProperty*)refFrame.getProperty())->setFrame(string("../")+ref);
   ((PhysicalVariableProperty*)((ExtPhysicalVarProperty*)position.getProperty())->getPhysicalVariableProperty(0))->setXmlName(MBSIMNS"position");
   ((PhysicalVariableProperty*)((ExtPhysicalVarProperty*)position.getProperty())->getPhysicalVariableProperty(1))->setXmlName(MBSIMNS"position");
   ((PhysicalVariableProperty*)((ExtPhysicalVarProperty*)orientation.getProperty())->getPhysicalVariableProperty(0))->setXmlName(MBSIMNS"orientation");

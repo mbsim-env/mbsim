@@ -78,6 +78,7 @@ ParentFrameOfReferenceWidget::ParentFrameOfReferenceWidget(Element *element_, Fr
   setLayout(layout);
 
   frame = new QComboBox;
+  frame->setEditable(true);
   layout->addWidget(frame);
   selectedFrame = element->getParent()->getFrame(0);
   connect(frame,SIGNAL(currentIndexChanged(const QString&)),this,SLOT(setFrame(const QString&)));
@@ -86,25 +87,30 @@ ParentFrameOfReferenceWidget::ParentFrameOfReferenceWidget(Element *element_, Fr
 void ParentFrameOfReferenceWidget::updateWidget() {
   frame->blockSignals(true);
   frame->clear();
-  int oldindex = 0;
+  int oldIndex = 0;
+  QString oldText = frame->currentText();
   for(int i=0, k=0; i<element->getParent()->getNumberOfFrames(); i++) {
     if(omitFrame!=element->getParent()->getFrame(i)) {
       frame->addItem("../Frame["+QString::fromStdString(element->getParent()->getFrame(i)->getName())+"]");
       if(element->getParent()->getFrame(i) == selectedFrame)
-        oldindex = k;
+        oldIndex = k;
       k++;
     }
   }
-  frame->setCurrentIndex(oldindex);
+  if(selectedFrame)
+    frame->setCurrentIndex(oldIndex);
+  else
+    frame->setEditText(oldText);
   frame->blockSignals(false);
-}
-
-void ParentFrameOfReferenceWidget::setFrame(Frame* frame_) {
-  selectedFrame = frame_; 
 }
 
 void ParentFrameOfReferenceWidget::setFrame(const QString &str) {
   selectedFrame = element->getParent()->getFrame(str.mid(9, str.length()-10).toStdString());
+  frame->setEditText(str);
+}
+
+QString ParentFrameOfReferenceWidget::getFrame() const {
+  return frame->currentText();
 }
 
 FrameOfReferenceWidget::FrameOfReferenceWidget(Element *element_, Frame* selectedFrame_) : element(element_), selectedFrame(selectedFrame_) {

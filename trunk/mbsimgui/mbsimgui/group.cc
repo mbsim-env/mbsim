@@ -56,7 +56,7 @@ Group::Group(const string &str, Element *parent) : Element(str,parent), position
     input.push_back(new PhysicalVariableProperty(new MatProperty(getEye<string>(3,3,"1","0")),"-",MBSIMNS"orientation"));
     orientation.setProperty(new ExtPhysicalVarProperty(input));
 
-    frameOfReference.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0),this,MBSIMNS"frameOfReference"));
+    frameOfReference.setProperty(new ParentFrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIMNS"frameOfReference"));
   }
 }
 

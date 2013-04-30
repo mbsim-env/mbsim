@@ -63,15 +63,14 @@ class ParentFrameOfReferenceWidget : public Widget {
     ParentFrameOfReferenceWidget(Element* element, Frame* omitFrame=0);
 
     void updateWidget();
-    Frame* getFrame() {return selectedFrame;}
-    void setFrame(Frame* frame_);
+    QString getFrame() const; 
 
   protected:
     QComboBox *frame;
     Element* element;
     Frame *selectedFrame, *omitFrame;
 
-  protected slots:
+  public slots:
     void setFrame(const QString &str);
 };
 

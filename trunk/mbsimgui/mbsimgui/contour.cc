@@ -27,7 +27,7 @@ using namespace std;
 using namespace MBXMLUtils;
 
 Contour::Contour(const string &str, Element *parent) : Element(str,parent), refFrame(0,false) {
-  refFrame.setProperty(new ParentFrameOfReferenceProperty(0,this,MBSIMNS"frameOfReference"));
+  refFrame.setProperty(new ParentFrameOfReferenceProperty("",this,MBSIMNS"frameOfReference"));
 }
 
 Contour::~Contour() {
@@ -39,7 +39,7 @@ void Contour::initialize() {
 }
 
 void Contour::setSavedFrameOfReference(const string &str) {
-  ((ParentFrameOfReferenceProperty*)(refFrame.getProperty()))->setSavedFrameOfReference(str);
+  ((ParentFrameOfReferenceProperty*)(refFrame.getProperty()))->setFrame(str);
 }
 
 Contour* Contour::readXMLFile(const string &filename, Element *parent) {

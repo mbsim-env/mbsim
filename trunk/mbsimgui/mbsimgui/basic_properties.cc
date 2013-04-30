@@ -39,63 +39,44 @@ extern QDir mbsDir;
 TiXmlElement* LocalFrameOfReferenceProperty::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *e = parent->FirstChildElement(xmlName);
   if(e) frame=e->Attribute("ref");
-//  if(e) {
-//    string refF="";
-//    frame=e->Attribute("ref");
-//    refF=refF.substr(6, refF.length()-7);
-//    setFrame(refF==""?element->getFrame(0):element->getFrame(refF));
-//  }
   return e;
 }
 
 TiXmlElement* LocalFrameOfReferenceProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele = new TiXmlElement(xmlName);
-  //string str = string("Frame[") + getFrame()->getName() + "]";
-  //ele->SetAttribute("ref", str);
   ele->SetAttribute("ref", frame);
   parent->LinkEndChild(ele);
   return 0;
 }
 
 void LocalFrameOfReferenceProperty::fromWidget(QWidget *widget) {
-  //setFrame(static_cast<LocalFrameOfReferenceWidget*>(widget)->getFrame());
   frame=static_cast<LocalFrameOfReferenceWidget*>(widget)->getFrame().toStdString();
 }
 
 void LocalFrameOfReferenceProperty::toWidget(QWidget *widget) {
-  //static_cast<LocalFrameOfReferenceWidget*>(widget)->setFrame(getFrame());
   static_cast<LocalFrameOfReferenceWidget*>(widget)->setFrame(QString::fromStdString(frame));
   static_cast<LocalFrameOfReferenceWidget*>(widget)->updateWidget();
 }
 
-void ParentFrameOfReferenceProperty::initialize() {
-  if(saved_frameOfReference!="") {
-    string refF = saved_frameOfReference;
-    refF=refF.substr(9, refF.length()-10);
-    setFrame(element->getParent()->getFrame(refF));
-  }
-}
-
 TiXmlElement* ParentFrameOfReferenceProperty::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *e = parent->FirstChildElement(xmlName);
-  if(e) saved_frameOfReference = e->Attribute("ref");
+  if(e) frame = e->Attribute("ref");
   return e;
 }
 
 TiXmlElement* ParentFrameOfReferenceProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele = new TiXmlElement(xmlName);
-  string str = string("../Frame[") + getFrame()->getName() + "]";
-  ele->SetAttribute("ref", str);
+  ele->SetAttribute("ref", frame);
   parent->LinkEndChild(ele);
   return 0;
 }
 
 void ParentFrameOfReferenceProperty::fromWidget(QWidget *widget) {
-  setFrame(static_cast<ParentFrameOfReferenceWidget*>(widget)->getFrame());
+  frame=static_cast<ParentFrameOfReferenceWidget*>(widget)->getFrame().toStdString();
 }
 
 void ParentFrameOfReferenceProperty::toWidget(QWidget *widget) {
-  static_cast<ParentFrameOfReferenceWidget*>(widget)->setFrame(getFrame());
+  static_cast<ParentFrameOfReferenceWidget*>(widget)->setFrame(QString::fromStdString(frame));
   static_cast<ParentFrameOfReferenceWidget*>(widget)->updateWidget();
 }
 
