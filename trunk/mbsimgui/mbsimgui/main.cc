@@ -39,10 +39,10 @@ int main(int argc, char *argv[]) {
   QLocale::setDefault(QLocale::C);
   setlocale(LC_ALL, "C");
   MainWindow *mainwindow = new MainWindow;
-  mainwindow->show();
-  //mainwindow->showMaximized();
+  //mainwindow->show();
+  mainwindow->showMaximized();
   //mainwindow->resize(1400, 900);
-  mainwindow->resize(1100, 700);
+  //mainwindow->resize(1100, 700);
   int ret=app.exec();
   MBXMLUtils::OctaveEvaluator::terminate();
   delete mainwindow;

@@ -73,7 +73,6 @@ Element * Object::getByPathSearch(string path) {
       return getByPathSearch(path.substr(1));
   else if (path.substr(0, 3)=="../") // relative path
     return getParent()->getByPathSearch(path.substr(3));
-  else  // local path
-    throw MBSimError("Unknown identifier of container");
+  return NULL;
 }
 

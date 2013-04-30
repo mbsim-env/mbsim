@@ -75,9 +75,7 @@ Element *Contour::getByPathSearch(string path) {
       return getByPathSearch(path.substr(1));
   else if (path.substr(0, 3)=="../") // relative path
     return getParent()->getByPathSearch(path.substr(3));
-  else { // local path
-    throw;
-  }
+  return NULL;
 }
 
 Point::Point(const string &str, Element *parent) : Contour(str,parent) {

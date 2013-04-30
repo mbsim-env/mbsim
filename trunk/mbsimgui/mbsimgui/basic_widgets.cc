@@ -107,7 +107,7 @@ FrameOfReferenceWidget::FrameOfReferenceWidget(Element *element_, Frame* selecte
   setLayout(layout);
 
   frame = new QLineEdit;
-  frame->setReadOnly(true);
+  //frame->setReadOnly(true);
   if(selectedFrame)
     frame->setText(QString::fromStdString(selectedFrame->getXMLPath()));
   frameBrowser = new FrameBrowser(element->getRoot(),selectedFrame,this);
@@ -136,6 +136,17 @@ void FrameOfReferenceWidget::setFrame() {
 void FrameOfReferenceWidget::setFrame(Frame* frame_) {
   selectedFrame = frame_; 
   frame->setText(selectedFrame?QString::fromStdString(selectedFrame->getXMLPath()):"");
+}
+
+void FrameOfReferenceWidget::setFrame(const QString &str) {
+  frame->setText(str);
+  Frame *frame = element->getByPath<Frame>(str.toStdString());
+  if(frame)
+    setFrame(frame);
+}
+
+QString FrameOfReferenceWidget::getFrame() const {
+  return frame->text();
 }
 
 ContourOfReferenceWidget::ContourOfReferenceWidget(Element *element_, Contour* selectedContour_) : element(element_), selectedContour(selectedContour_) {

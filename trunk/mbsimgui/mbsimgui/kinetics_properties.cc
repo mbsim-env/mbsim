@@ -622,7 +622,7 @@ ForceDirectionProperty::ForceDirectionProperty(Element *element_, const string &
   vector<PhysicalVariableProperty*> input;
   input.push_back(new PhysicalVariableProperty(new VecProperty(3),"-",MBSIMNS"direction"));
   mat.setProperty(new ExtPhysicalVarProperty(input));
-  refFrame.setProperty(new FrameOfReferenceProperty(0,element,MBSIMNS"frameOfReference"));
+  refFrame.setProperty(new FrameOfReferenceProperty("",element,MBSIMNS"frameOfReference"));
 }
 TiXmlElement* ForceDirectionProperty::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=element->FirstChildElement(xmlName);

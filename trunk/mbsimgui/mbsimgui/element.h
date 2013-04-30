@@ -81,12 +81,12 @@ class Element : public TreeItemData {
     virtual Object* getObject(int i) {return 0;}
     virtual Link* getLink(int i) {return 0;}
     virtual Observer* getObserver(int i) {return 0;}
-    virtual Frame* getFrame(const std::string &name, bool check=true) {return 0;}
-    //Contour* getContour(const std::string &name, bool check=true);
-    //Object* getObject(const std::string &name, bool check=true);
-    //Group* getGroup(const std::string &name, bool check=true);
-    //Link* getLink(const std::string &name, bool check=true);
-    //Observer* getObserver(const std::string &name, bool check=true);
+    virtual Frame* getFrame(const std::string &name) {return 0;}
+    //Contour* getContour(const std::string &name);
+    //Object* getObject(const std::string &name);
+    //Group* getGroup(const std::string &name);
+    //Link* getLink(const std::string &name);
+    //Observer* getObserver(const std::string &name);
     virtual void addFrame(Frame *frame) {}
     virtual void addContour(Contour *contour) {}
     virtual void addGroup(Group *group) {}
@@ -107,10 +107,7 @@ class Element : public TreeItemData {
 template<class T>
 T* Element::getByPath(std::string path) {
   Element * e = getByPathSearch(path);
-  if (dynamic_cast<T*>(e))
-    return (T*)(e);
-  else
-    throw MBSimError("ERROR in "+getName()+" (Element::getByPath): Element \""+path+"\" not found or not of wanted type!");
+  return dynamic_cast<T*>(e);
 }
 
 #endif

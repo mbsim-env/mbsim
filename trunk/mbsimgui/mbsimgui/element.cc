@@ -131,7 +131,7 @@ string Element::getXMLPath(Element *ref, bool rel) {
       else if(dynamic_cast<Contour*>(*i1))
         str = string("Contour[") + (*i1)->getName() + "]/" + str;
       else
-        throw;
+        str = "";
     }
     for(int i=0; i<int(e0.size())-imatch; i++)
       str = "../" + str;
@@ -158,7 +158,7 @@ string Element::getXMLPath(Element *ref, bool rel) {
       else if(dynamic_cast<Contour*>(element))
         str = string("Contour[") + element->getName() + "]/" + str;
       else
-        throw;
+        str = "";
       element = element->getParent();
     }
     str = "/" + str;

@@ -54,11 +54,12 @@ Element * Observer::getByPathSearch(string path) {
       return getParent()->getByPathSearch(path);
     else
       return getByPathSearch(path.substr(1));
+  return NULL;
 }
 
 AbsoluteKinematicsObserver::AbsoluteKinematicsObserver(const string &str, Element *parent) : Observer(str, parent), position(0,false), velocity(0,false), angularVelocity(0,false), acceleration(0,false), angularAcceleration(0,false) {
 
-  frame.setProperty(new FrameOfReferenceProperty(0,this,MBSIMNS"frame"));
+  frame.setProperty(new FrameOfReferenceProperty("",this,MBSIMNS"frame"));
 
   position.setProperty(new OMBVArrowProperty("NOTSET",true));
   ((OMBVArrowProperty*)position.getProperty())->setID(getID());

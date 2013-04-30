@@ -162,16 +162,6 @@ vector<vector<double> > AIK2Cardan(const vector<vector<double> > &AIK) {
   return AlphaBetaGamma;
 }
 
-MBSimError::MBSimError(const std::string &mbsim_error_message_) : MBSimException(), mbsim_error_message(mbsim_error_message_) {}
-
-  void MBSimError::printExceptionMessage() {
-    cout << endl;
-    cout << endl;
-    cout << "A MBSimError was detected: " << mbsim_error_message << endl;
-    cout << endl;
-    cout << endl;
-  }
-
 QTreeWidgetItem* getChild(QTreeWidgetItem *parentItem, const QString &str) {
   for(int i=0; i<parentItem->childCount(); i++) {
     if(parentItem->child(i)->text(0) == str)

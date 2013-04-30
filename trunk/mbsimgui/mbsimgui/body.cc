@@ -27,7 +27,7 @@ using namespace std;
 using namespace MBXMLUtils;
 
 Body::Body(const string &str, Element *parent) : Object(str,parent), R(0,false) {
-  R.setProperty(new FrameOfReferenceProperty(getParent()->getFrame(0),this,MBSIMNS"frameOfReference"));
+  R.setProperty(new FrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(),this,MBSIMNS"frameOfReference"));
 }
 
 Body::~Body() {
@@ -70,30 +70,20 @@ void Body::removeElement(Element* element) {
   }
 }
 
-Frame* Body::getFrame(const string &name, bool check) {
+Frame* Body::getFrame(const string &name) {
   int i;
   for(i=0; i<frame.size(); i++) {
     if(frame[i]->getName() == name)
       return frame[i];
   }
-  if(check) {
-    if(!(i<frame.size()))
-      throw MBSimError("The frames \""+frame[i]->getName()+"\" comprises no frame \""+name+"\"!");
-    assert(i<getContainerFrame()->childCount());
-  }
   return NULL;
 }
 
-Contour* Body::getContour(const string &name, bool check) {
+Contour* Body::getContour(const string &name) {
   int i;
   for(i=0; i<contour.size(); i++) {
     if(contour[i]->getName() == name)
       return contour[i];
-  }
-  if(check) {
-    if(!(i<contour.size()))
-      throw MBSimError("The contours \""+contour[i]->getName()+"\" comprises no contour \""+name+"\"!");
-    assert(i<getContainerContour()->childCount());
   }
   return NULL;
 }
@@ -126,11 +116,8 @@ Element * Body::getByPathSearch(string path) {
       return getFrame(searched_name);
     else if (container=="Contour")
       return getContour(searched_name);
-    else {
-      cout << "ERROR in "+getName()+" (Body::getByPathSearch): Unknown name of container!" << endl;
-      throw;
-    }
   }
+  return NULL;
 }
 
 

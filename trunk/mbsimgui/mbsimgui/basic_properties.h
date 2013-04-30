@@ -71,23 +71,19 @@ class ParentFrameOfReferenceProperty : public Property {
 
 class FrameOfReferenceProperty : public Property {
   protected:
-    Frame *frame;
+    std::string frame;
     Element* element;
     std::string xmlName;
-    std::string saved_frameOfReference;
   public:
-    FrameOfReferenceProperty(Frame* frame_=0, Element* element_=0, const std::string &xmlName_="") : frame(frame_), element(element_), xmlName(xmlName_) {}
-    Frame* getFrame() const {return frame;}
-    void setFrame(Frame *frame_) {frame = frame_;}
-    void initialize();
+    FrameOfReferenceProperty(const std::string &frame_="", Element* element_=0, const std::string &xmlName_="") : frame(frame_), element(element_), xmlName(xmlName_) {}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    void setSavedFrameOfReference(const std::string &str) {saved_frameOfReference = str;}
-    const std::string& getSavedFrameOfReference() const {return saved_frameOfReference;}
-
+    void setFrame(const std::string &str) {frame = str;}
+    const std::string& getFrame() const {return frame;}
 };
+
 class ContourOfReferenceProperty : public Property {
   protected:
     Contour *contour;

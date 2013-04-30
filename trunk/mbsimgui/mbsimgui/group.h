@@ -68,12 +68,12 @@ class Group : public Element {
     Group* getGroup(int i) {return group[i];}
     Link* getLink(int i) {return link[i];}
     Observer* getObserver(int i) {return observer[i];}
-    Frame* getFrame(const std::string &name, bool check=true);
-    Contour* getContour(const std::string &name, bool check=true);
-    Object* getObject(const std::string &name, bool check=true);
-    Group* getGroup(const std::string &name, bool check=true);
-    Link* getLink(const std::string &name, bool check=true);
-    Observer* getObserver(const std::string &name, bool check=true);
+    Frame* getFrame(const std::string &name);
+    Contour* getContour(const std::string &name);
+    Object* getObject(const std::string &name);
+    Group* getGroup(const std::string &name);
+    Link* getLink(const std::string &name);
+    Observer* getObserver(const std::string &name);
 
     void addFrame(Frame *frame);
     void addContour(Contour *contour);

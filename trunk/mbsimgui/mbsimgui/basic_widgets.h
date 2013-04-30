@@ -29,6 +29,7 @@ class Frame;
 class Contour;
 class Parameter;
 class QComboBox;
+class QCheckBox;
 class QStackedWidget;
 class QListWidget;
 class FrameBrowser;
@@ -65,14 +66,11 @@ class ParentFrameOfReferenceWidget : public Widget {
     void updateWidget();
     Frame* getFrame() {return selectedFrame;}
     void setFrame(Frame* frame_);
-    void setSavedFrameOfReference(const QString &str) {saved_frameOfReference = str;}
-    const QString& getSavedFrameOfReference() const {return saved_frameOfReference;}
 
   protected:
     QComboBox *frame;
     Element* element;
     Frame *selectedFrame, *omitFrame;
-    QString saved_frameOfReference;
 
   protected slots:
     void setFrame(const QString &str);
@@ -85,20 +83,18 @@ class FrameOfReferenceWidget : public Widget {
     FrameOfReferenceWidget(Element* element, Frame* selectedFrame);
 
     void updateWidget();
-    Frame* getFrame() {return selectedFrame;}
     void setFrame(Frame* frame_);
-    void setSavedFrameOfReference(const QString &str) {saved_frameOfReference = str;}
-    const QString& getSavedFrameOfReference() const {return saved_frameOfReference;}
+    void setFrame(const QString &str);
+    QString getFrame() const;
 
   protected:
     QLineEdit *frame;
     Element* element;
     FrameBrowser *frameBrowser;
     Frame *selectedFrame;
-    QString saved_frameOfReference;
 
   public slots:
-    void setFrame();
+    void setFrame(); 
 };
 
 class ContourOfReferenceWidget : public Widget {
@@ -110,15 +106,12 @@ class ContourOfReferenceWidget : public Widget {
     void updateWidget();
     Contour* getContour() {return selectedContour;}
     void setContour(Contour* contour_);
-    void setSavedContourOfReference(const QString &str) {saved_contourOfReference = str;}
-    const QString& getSavedContourOfReference() const {return saved_contourOfReference;}
 
   protected:
     QLineEdit *contour;
     Element* element;
     ContourBrowser *contourBrowser;
     Contour *selectedContour;
-    QString saved_contourOfReference;
 
   public slots:
     void setContour();
@@ -133,15 +126,12 @@ class RigidBodyOfReferenceWidget : public Widget {
     void updateWidget();
     RigidBody* getBody() {return selectedBody;}
     void setBody(RigidBody* body_);
-    void setSavedBodyOfReference(const QString &str) {saved_bodyOfReference = str;}
-    const QString& getSavedBodyOfReference() const {return saved_bodyOfReference;}
 
   protected:
     QLineEdit* body;
     Element* element;
     RigidBodyBrowser* bodyBrowser;
     RigidBody* selectedBody;
-    QString saved_bodyOfReference;
 
   public slots:
     void setBody();

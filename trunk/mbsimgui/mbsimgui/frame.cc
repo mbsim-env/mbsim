@@ -85,9 +85,7 @@ Element *Frame::getByPathSearch(string path) {
       return getByPathSearch(path.substr(1));
   else if (path.substr(0, 3)=="../") // relative path
     return getParent()->getByPathSearch(path.substr(3));
-  else { // local path
-    throw;
-  }
+  return NULL;
 }
 
 FixedRelativeFrame::FixedRelativeFrame(const string &str, Element *parent) : Frame(str,parent,false), refFrame(0,false), position(0,false), orientation(0,false) {

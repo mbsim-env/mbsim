@@ -35,8 +35,8 @@ class Body : public Object {
     Frame* getFrame(int i) {return frame[i];}
     Contour* getContour(int i) {return contour[i];}
 
-    Frame* getFrame(const std::string &name, bool check=true);
-    Contour* getContour(const std::string &name, bool check=true);
+    Frame* getFrame(const std::string &name);
+    Contour* getContour(const std::string &name);
 
     void addFrame(Frame *frame);
     void addContour(Contour *contour);

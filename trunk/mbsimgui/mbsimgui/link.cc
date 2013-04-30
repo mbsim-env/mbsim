@@ -52,6 +52,7 @@ Element * Link::getByPathSearch(string path) {
       return getParent()->getByPathSearch(path);
     else
       return getByPathSearch(path.substr(1));
+  return NULL;
 }
 
 //void Link::initializeUsingXML(TiXmlElement *element) {

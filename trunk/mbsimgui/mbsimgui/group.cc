@@ -507,17 +507,19 @@ Element* Group::getByPathSearch(string path) {
     string searched_name=path.substr(pos0+1, pos1-pos0-1);
     if(path.length()>pos1+1) { // weiter absteigen
       string rest=path.substr(pos1+2);
-      if (container=="Object")
-        return getObject(searched_name)->getByPathSearch(rest);
-      else if (container=="Link")
-        return getLink(searched_name)->getByPathSearch(rest);
+      if (container=="Object") {
+        Object *object = getObject(searched_name);
+        return object?object->getByPathSearch(rest):NULL;
+      }
+      else if (container=="Link") {
+        Link *link = getLink(searched_name);
+        return link?link->getByPathSearch(rest):NULL;
+      }
       //else if (container=="ExtraDynamic")
       //return getExtraDynamic(searched_name)->getByPathSearch(rest);
-      else if (container=="Group")
-        return getGroup(searched_name)->getByPathSearch(rest);
-      else {
-        cout << "Unknown name of container" << endl;
-        throw;
+      else if (container=="Group") {
+        Group *group = getGroup(searched_name);
+        return group?group->getByPathSearch(rest):NULL;
       }
     }
     else {
@@ -533,94 +535,61 @@ Element* Group::getByPathSearch(string path) {
         return getFrame(searched_name);
       else if (container=="Contour")
         return getContour(searched_name);
-      else {
-        cout << "Unknown name of container" << endl;
-        throw;
-      }
     }
   }
+  return NULL;
 }
 
-Link* Group::getLink(const string &name, bool check) {
+Link* Group::getLink(const string &name) {
   int i;
   for(i=0; i<link.size(); i++) {
     if(link[i]->getName() == name)
       return link[i];
   }
-  if(check) {
-    if(!(i<link.size()))
-      throw MBSimError("The link \""+link[i]->getName()+"\" comprises no frame \""+name+"\"!");
-    assert(i<getContainerLink()->childCount());
-  }
   return NULL;
 }
 
-Observer* Group::getObserver(const string &name, bool check) {
+Observer* Group::getObserver(const string &name) {
   int i;
   for(i=0; i<observer.size(); i++) {
     if(observer[i]->getName() == name)
       return observer[i];
   }
-  if(check) {
-    if(!(i<observer.size()))
-      throw MBSimError("The observer \""+observer[i]->getName()+"\" comprises no frame \""+name+"\"!");
-    assert(i<getContainerObserver()->childCount());
-  }
   return NULL;
 }
 
-Group* Group::getGroup(const string &name, bool check) {
+Group* Group::getGroup(const string &name) {
   int i;
   for(i=0; i<group.size(); i++) {
     if(group[i]->getName() == name)
       return group[i];
   }
-  if(check) {
-    if(!(i<group.size()))
-      throw MBSimError("The group \""+group[i]->getName()+"\" comprises no frame \""+name+"\"!");
-    assert(i<getContainerGroup()->childCount());
-  }
   return NULL;
 }
 
-Object* Group::getObject(const string &name, bool check) {
+Object* Group::getObject(const string &name) {
   int i;
   for(i=0; i<object.size(); i++) {
     if(object[i]->getName() == name)
       return object[i];
   }
-  if(check) {
-    if(!(i<object.size()))
-      throw MBSimError("The object \""+object[i]->getName()+"\" comprises no frame \""+name+"\"!");
-    assert(i<getContainerObject()->childCount());
-  }
   return NULL;
 }
 
-Frame* Group::getFrame(const string &name, bool check) {
+Frame* Group::getFrame(const string &name) {
   int i;
   for(i=0; i<frame.size(); i++) {
     if(frame[i]->getName() == name)
       return frame[i];
   }
-  if(check) {
-    if(!(i<frame.size()))
-      throw MBSimError("The frames \""+frame[i]->getName()+"\" comprises no frame \""+name+"\"!");
-    assert(i<getContainerFrame()->childCount());
-  }
   return NULL;
 }
 
-Contour* Group::getContour(const string &name, bool check) {
+Contour* Group::getContour(const string &name) {
   int i;
   for(i=0; i<contour.size(); i++) {
     if(contour[i]->getName() == name)
       return contour[i];
-  }
-  if(check) {
-    if(!(i<contour.size()))
-      throw MBSimError("The contours \""+contour[i]->getName()+"\" comprises no contour \""+name+"\"!");
-    assert(i<getContainerContour()->childCount());
   }
   return NULL;
 }

@@ -42,7 +42,7 @@ Sensor::~Sensor() {
 }
 
 AbsoluteCoordinateSensor::AbsoluteCoordinateSensor(const string &str, Element *parent) : Sensor(str, parent) {
-  frame.setProperty(new FrameOfReferenceProperty(0,this,MBSIMCONTROLNS"frame"));
+  frame.setProperty(new FrameOfReferenceProperty("",this,MBSIMCONTROLNS"frame"));
   direction.setProperty(new GeneralizedForceDirectionProperty(MBSIMCONTROLNS"direction"));
 }
 

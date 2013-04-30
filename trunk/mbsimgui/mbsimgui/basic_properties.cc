@@ -95,32 +95,25 @@ void ParentFrameOfReferenceProperty::toWidget(QWidget *widget) {
   static_cast<ParentFrameOfReferenceWidget*>(widget)->updateWidget();
 }
 
-void FrameOfReferenceProperty::initialize() {
-  if(saved_frameOfReference!="")
-    setFrame(element->getByPath<Frame>(saved_frameOfReference));
-}
-
 TiXmlElement* FrameOfReferenceProperty::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *e = parent->FirstChildElement(xmlName);
-  if(e) saved_frameOfReference=e->Attribute("ref");
+  if(e) frame=e->Attribute("ref");
   return e;
 }
 
 TiXmlElement* FrameOfReferenceProperty::writeXMLFile(TiXmlNode *parent) {
-  if(getFrame()) {
-    TiXmlElement *ele = new TiXmlElement(xmlName);
-    ele->SetAttribute("ref", getFrame()->getXMLPath(element,true));
-    parent->LinkEndChild(ele);
-  }
+  TiXmlElement *ele = new TiXmlElement(xmlName);
+  ele->SetAttribute("ref", frame);
+  parent->LinkEndChild(ele);
   return 0;
 }
 
 void FrameOfReferenceProperty::fromWidget(QWidget *widget) {
-  setFrame(static_cast<FrameOfReferenceWidget*>(widget)->getFrame());
+  frame=static_cast<FrameOfReferenceWidget*>(widget)->getFrame().toStdString();
 }
 
 void FrameOfReferenceProperty::toWidget(QWidget *widget) {
-  static_cast<FrameOfReferenceWidget*>(widget)->setFrame(getFrame());
+  static_cast<FrameOfReferenceWidget*>(widget)->setFrame(QString::fromStdString(frame));
   static_cast<FrameOfReferenceWidget*>(widget)->updateWidget();
 }
 
@@ -318,7 +311,7 @@ ConnectFramesProperty::ConnectFramesProperty(int n, Element *element_) : element
     string xmlName = MBSIMNS"ref";
     if(n>1)
       xmlName += toStr(i+1);
-    frame.push_back(new FrameOfReferenceProperty(0,element,xmlName));
+    frame.push_back(new FrameOfReferenceProperty("",element,xmlName));
   }
 }
 
@@ -336,7 +329,7 @@ TiXmlElement* ConnectFramesProperty::initializeUsingXML(TiXmlElement *element) {
         xmlName += toStr(int(i+1));
       if(!e->Attribute(xmlName))
         return 0;
-      frame[i]->setSavedFrameOfReference(e->Attribute(xmlName.c_str()));
+      frame[i]->setFrame(e->Attribute(xmlName.c_str()));
     }
   }
   return e;
@@ -348,8 +341,7 @@ TiXmlElement* ConnectFramesProperty::writeXMLFile(TiXmlNode *parent) {
     string xmlName = "ref";
     if(frame.size()>1)
       xmlName += toStr(int(i+1));
-    if(frame[i]->getFrame())
-      ele->SetAttribute(xmlName, frame[i]->getFrame()->getXMLPath(element,true)); 
+    ele->SetAttribute(xmlName, frame[i]->getFrame()); 
   }
   parent->LinkEndChild(ele);
   return ele;

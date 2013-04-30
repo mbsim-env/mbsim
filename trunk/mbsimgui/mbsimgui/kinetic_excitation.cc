@@ -42,7 +42,7 @@ KineticExcitation::KineticExcitation(const string &str, Element *parent) : Link(
   force.setProperty(new ForceChoiceProperty(forceArrow,MBSIMNS"force"));
   moment.setProperty(new ForceChoiceProperty(momentArrow,MBSIMNS"moment"));
 
-  frameOfReference.setProperty(new FrameOfReferenceProperty(0,this,MBSIMNS"frameOfReference"));
+  frameOfReference.setProperty(new FrameOfReferenceProperty("",this,MBSIMNS"frameOfReference"));
 
 }
 
