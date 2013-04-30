@@ -41,7 +41,7 @@ class Integrator {
     virtual void writeXMLFile(const std::string &name);
     virtual void writeXMLFile() { writeXMLFile(getType()); }
     virtual std::string getType() const { return "Integrator"; }
-    virtual IntegratorPropertyDialog* createPropertyDialog() {return new IntegratorPropertyDialog;}
+    virtual IntegratorPropertyDialog* createPropertyDialog() {return new IntegratorPropertyDialog(this);}
 };
 
 class DOPRI5Integrator : public Integrator {
@@ -51,7 +51,7 @@ class DOPRI5Integrator : public Integrator {
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "DOPRI5Integrator"; }
-    IntegratorPropertyDialog* createPropertyDialog() {return new DOPRI5IntegratorPropertyDialog;}
+    IntegratorPropertyDialog* createPropertyDialog() {return new DOPRI5IntegratorPropertyDialog(this);}
   protected:
     ExtProperty absTol, relTol, initialStepSize, maximalStepSize, maxSteps;
 };
@@ -63,7 +63,7 @@ class RADAU5Integrator : public Integrator {
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "RADAU5Integrator"; }
-    IntegratorPropertyDialog* createPropertyDialog() {return new RADAU5IntegratorPropertyDialog;}
+    IntegratorPropertyDialog* createPropertyDialog() {return new RADAU5IntegratorPropertyDialog(this);}
   protected:
     ExtProperty absTol, relTol, initialStepSize, maximalStepSize, maxSteps;
 };
@@ -75,7 +75,7 @@ class LSODEIntegrator : public Integrator {
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "LSODEIntegrator"; }
-    IntegratorPropertyDialog* createPropertyDialog() {return new LSODEIntegratorPropertyDialog;}
+    IntegratorPropertyDialog* createPropertyDialog() {return new LSODEIntegratorPropertyDialog(this);}
   protected:
     ExtProperty absTol, relTol, initialStepSize, maximalStepSize, minimalStepSize, maxSteps, stiff;
 };
@@ -87,7 +87,7 @@ class LSODARIntegrator : public Integrator {
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "LSODARIntegrator"; }
-    IntegratorPropertyDialog* createPropertyDialog() {return new LSODARIntegratorPropertyDialog;}
+    IntegratorPropertyDialog* createPropertyDialog() {return new LSODARIntegratorPropertyDialog(this);}
   protected:
     ExtProperty absTol, relTol, initialStepSize, maximalStepSize, minimalStepSize, plotOnRoot;
 };
@@ -99,7 +99,7 @@ class TimeSteppingIntegrator : public Integrator {
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "TimeSteppingIntegrator"; }
-    IntegratorPropertyDialog* createPropertyDialog() {return new TimeSteppingIntegratorPropertyDialog;}
+    IntegratorPropertyDialog* createPropertyDialog() {return new TimeSteppingIntegratorPropertyDialog(this);}
   protected:
     ExtProperty stepSize;
 };
@@ -111,7 +111,7 @@ class EulerExplicitIntegrator : public Integrator {
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "EulerExplicitIntegrator"; }
-    IntegratorPropertyDialog* createPropertyDialog() {return new EulerExplicitIntegratorPropertyDialog;}
+    IntegratorPropertyDialog* createPropertyDialog() {return new EulerExplicitIntegratorPropertyDialog(this);}
   protected:
     ExtProperty stepSize;
 };
@@ -123,7 +123,7 @@ class RKSuiteIntegrator : public Integrator {
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "RKSuiteIntegrator"; }
-    IntegratorPropertyDialog* createPropertyDialog() {return new RKSuiteIntegratorPropertyDialog;}
+    IntegratorPropertyDialog* createPropertyDialog() {return new RKSuiteIntegratorPropertyDialog(this);}
   protected:
     ExtProperty type, relTol, threshold, initialStepSize;
 };

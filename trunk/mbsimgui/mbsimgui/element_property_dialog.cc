@@ -387,7 +387,7 @@ GearConstraintPropertyDialog::GearConstraintPropertyDialog(GearConstraint *const
 void GearConstraintPropertyDialog::updateReferenceBody() {
   if(refBody)
     refBody->setConstrained(false);
-  refBody = ((RigidBodyOfReferenceWidget*)dependentBody->getWidget())->getBody();
+  refBody = ((RigidBodyOfReferenceWidget*)dependentBody->getWidget())->getSelectedBody();
   if(refBody)
     refBody->setConstrained(true);
 }
@@ -435,7 +435,7 @@ void KinematicConstraintPropertyDialog::resizeVariables() {
 void KinematicConstraintPropertyDialog::updateReferenceBody() {
   if(refBody)
     refBody->setConstrained(false);
-  refBody = ((RigidBodyOfReferenceWidget*)dependentBody->getWidget())->getBody();
+  refBody = ((RigidBodyOfReferenceWidget*)dependentBody->getWidget())->getSelectedBody();
   if(refBody) {
     refBody->setConstrained(true);
     resizeVariables();
@@ -488,11 +488,11 @@ JointConstraintPropertyDialog::JointConstraintPropertyDialog(JointConstraint *co
 void JointConstraintPropertyDialog::resizeGeneralizedPosition() {
   int size = 0;
   for(int i=0; i<((DependenciesWidget*)dependentBodiesFirstSide->getWidget())->getSize(); i++)
-    if(((DependenciesWidget*)dependentBodiesFirstSide->getWidget())->getBody(i))
-    size += ((DependenciesWidget*)dependentBodiesFirstSide->getWidget())->getBody(i)->getqRelSize();
+    if(((DependenciesWidget*)dependentBodiesFirstSide->getWidget())->getSelectedBody(i))
+    size += ((DependenciesWidget*)dependentBodiesFirstSide->getWidget())->getSelectedBody(i)->getqRelSize();
   for(int i=0; i<((DependenciesWidget*)dependentBodiesSecondSide->getWidget())->getSize(); i++)
-    if(((DependenciesWidget*)dependentBodiesSecondSide->getWidget())->getBody(i))
-      size += ((DependenciesWidget*)dependentBodiesSecondSide->getWidget())->getBody(i)->getqRelSize();
+    if(((DependenciesWidget*)dependentBodiesSecondSide->getWidget())->getSelectedBody(i))
+      size += ((DependenciesWidget*)dependentBodiesSecondSide->getWidget())->getSelectedBody(i)->getqRelSize();
   if(q0_->size() != size)
     q0_->resize(size);
 }

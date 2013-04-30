@@ -26,7 +26,7 @@
 
 using namespace std;
 
-IntegratorPropertyDialog::IntegratorPropertyDialog(QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f) {
+IntegratorPropertyDialog::IntegratorPropertyDialog(Integrator *integrator_, QWidget *parent, Qt::WindowFlags f) : PropertyDialog(parent,f), integrator(integrator_) {
   addTab("General");
   addTab("Initial conditions");
 
@@ -66,7 +66,7 @@ void IntegratorPropertyDialog::fromWidget(Integrator *integrator) {
   static_cast<Integrator*>(integrator)->initialState.fromWidget(initialState);
 }
 
-DOPRI5IntegratorPropertyDialog::DOPRI5IntegratorPropertyDialog(QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(parent,f) {
+DOPRI5IntegratorPropertyDialog::DOPRI5IntegratorPropertyDialog(DOPRI5Integrator *integrator, QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(integrator,parent,f) {
   addTab("Tolerances");
   addTab("Step size");
 
@@ -129,7 +129,7 @@ void DOPRI5IntegratorPropertyDialog::fromWidget(Integrator *integrator) {
   static_cast<DOPRI5Integrator*>(integrator)->maxSteps.fromWidget(maxSteps);
 }
 
-RADAU5IntegratorPropertyDialog::RADAU5IntegratorPropertyDialog(QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(parent,f) {
+RADAU5IntegratorPropertyDialog::RADAU5IntegratorPropertyDialog(RADAU5Integrator *integrator, QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(integrator,parent,f) {
   addTab("Tolerances");
   addTab("Step size");
 
@@ -192,7 +192,7 @@ void RADAU5IntegratorPropertyDialog::fromWidget(Integrator *integrator) {
   static_cast<RADAU5Integrator*>(integrator)->maxSteps.fromWidget(maxSteps);
 }
 
-LSODEIntegratorPropertyDialog::LSODEIntegratorPropertyDialog(QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(parent,f) {
+LSODEIntegratorPropertyDialog::LSODEIntegratorPropertyDialog(LSODEIntegrator *integrator, QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(integrator,parent,f) {
   addTab("Tolerances");
   addTab("Step size");
   addTab("Extra");
@@ -262,7 +262,7 @@ void LSODEIntegratorPropertyDialog::fromWidget(Integrator *integrator) {
   static_cast<LSODEIntegrator*>(integrator)->stiff.fromWidget(stiff);
 }
 
-LSODARIntegratorPropertyDialog::LSODARIntegratorPropertyDialog(QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(parent,f) {
+LSODARIntegratorPropertyDialog::LSODARIntegratorPropertyDialog(LSODARIntegrator *integrator, QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(integrator,parent,f) {
   addTab("Tolerances");
   addTab("Step size");
   addTab("Extra");
@@ -320,7 +320,7 @@ void LSODARIntegratorPropertyDialog::fromWidget(Integrator *integrator) {
   static_cast<LSODARIntegrator*>(integrator)->plotOnRoot.fromWidget(plotOnRoot);
 }
 
-TimeSteppingIntegratorPropertyDialog::TimeSteppingIntegratorPropertyDialog(QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(parent,f) {
+TimeSteppingIntegratorPropertyDialog::TimeSteppingIntegratorPropertyDialog(TimeSteppingIntegrator *integrator, QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(integrator,parent,f) {
   addTab("Step size");
 
   vector<PhysicalVariableWidget*> input;
@@ -339,7 +339,7 @@ void TimeSteppingIntegratorPropertyDialog::fromWidget(Integrator *integrator) {
   static_cast<TimeSteppingIntegrator*>(integrator)->stepSize.fromWidget(stepSize);
 }
 
-EulerExplicitIntegratorPropertyDialog::EulerExplicitIntegratorPropertyDialog(QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(parent,f) {
+EulerExplicitIntegratorPropertyDialog::EulerExplicitIntegratorPropertyDialog(EulerExplicitIntegrator *integrator, QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(integrator,parent,f) {
   addTab("Step size");
 
   vector<PhysicalVariableWidget*> input;
@@ -358,7 +358,7 @@ void EulerExplicitIntegratorPropertyDialog::fromWidget(Integrator *integrator) {
   static_cast<EulerExplicitIntegrator*>(integrator)->stepSize.fromWidget(stepSize);
 }
 
-RKSuiteIntegratorPropertyDialog::RKSuiteIntegratorPropertyDialog(QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(parent,f) {
+RKSuiteIntegratorPropertyDialog::RKSuiteIntegratorPropertyDialog(RKSuiteIntegrator *integrator, QWidget *parent, Qt::WindowFlags f) : IntegratorPropertyDialog(integrator,parent,f) {
   addTab("Tolerances");
   addTab("Step size");
 

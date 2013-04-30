@@ -199,7 +199,6 @@ RigidBodyOfReferenceWidget::RigidBodyOfReferenceWidget(Element *element_, RigidB
   setLayout(layout);
 
   body = new QLineEdit;
-  body->setReadOnly(true);
   if(selectedBody)
     body->setText(QString::fromStdString(selectedBody->getXMLPath()));
   bodyBrowser = new RigidBodyBrowser(element->getRoot(),0,this);
@@ -226,10 +225,14 @@ void RigidBodyOfReferenceWidget::setBody() {
   emit bodyChanged();
 }
 
-void RigidBodyOfReferenceWidget::setBody(RigidBody* body_) {
-  selectedBody = body_;
-  body->setText(selectedBody?QString::fromStdString(selectedBody->getXMLPath()):"");
+void RigidBodyOfReferenceWidget::setBody(const QString &str) {
+  selectedBody = element->getByPath<RigidBody>(str.toStdString()); 
+  body->setText(str);
   emit bodyChanged();
+}
+
+QString RigidBodyOfReferenceWidget::getBody() const {
+  return body->text();
 }
 
 FileWidget::FileWidget(const QString &description_, const QString &extensions_, int mode_) : description(description_), extensions(extensions_), mode(mode_) {
@@ -386,7 +389,7 @@ void DependenciesWidget::updateGeneralizedCoordinatesOfBodies() {
   for(unsigned int i=0; i<refBody.size(); i++) {
     if(selectedBody[i])
       selectedBody[i]->setConstrained(false);
-    selectedBody[i] = refBody[i]->getBody();
+    selectedBody[i] = refBody[i]->getSelectedBody();
     if(selectedBody[i])
       selectedBody[i]->setConstrained(true);
   }
@@ -395,8 +398,8 @@ void DependenciesWidget::updateGeneralizedCoordinatesOfBodies() {
 void DependenciesWidget::updateList() {
   emit bodyChanged();
   for(int i=0; i<bodyList->count(); i++)
-    if(refBody[i]->getBody())
-      bodyList->item(i)->setText(QString::fromStdString(refBody[i]->getBody()->getName()));
+    if(refBody[i]->getSelectedBody())
+      bodyList->item(i)->setText(QString::fromStdString(refBody[i]->getSelectedBody()->getName()));
 }
 
 void DependenciesWidget::addDependency() {
@@ -551,7 +554,7 @@ void GearDependenciesWidget::updateGeneralizedCoordinatesOfBodies() {
   for(unsigned int i=0; i<refBody.size(); i++) {
     if(selectedBody[i])
       selectedBody[i]->setConstrained(false);
-    selectedBody[i] = refBody[i]->getBody();
+    selectedBody[i] = refBody[i]->getSelectedBody();
     if(selectedBody[i])
       selectedBody[i]->setConstrained(true);
   }
@@ -560,8 +563,8 @@ void GearDependenciesWidget::updateGeneralizedCoordinatesOfBodies() {
 void GearDependenciesWidget::updateList() {
   emit bodyChanged();
   for(int i=0; i<bodyList->count(); i++)
-    if(refBody[i]->getBody())
-      bodyList->item(i)->setText(QString::fromStdString(refBody[i]->getBody()->getName()));
+    if(refBody[i]->getSelectedBody())
+      bodyList->item(i)->setText(QString::fromStdString(refBody[i]->getSelectedBody()->getName()));
 }
 
 void GearDependenciesWidget::addDependency() {

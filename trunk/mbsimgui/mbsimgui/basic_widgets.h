@@ -121,8 +121,9 @@ class RigidBodyOfReferenceWidget : public Widget {
     RigidBodyOfReferenceWidget(Element* element, RigidBody* selectedBody);
 
     void updateWidget();
-    RigidBody* getBody() {return selectedBody;}
-    void setBody(RigidBody* body_);
+    void setBody(const QString &str);
+    QString getBody() const;
+    RigidBody* getSelectedBody() {return selectedBody;}
 
   protected:
     QLineEdit* body;
@@ -231,7 +232,7 @@ class DependenciesWidget : public Widget {
 
     void updateWidget(); 
 
-    RigidBody* getBody(int i) {return refBody[i]->getBody();}
+    RigidBody* getSelectedBody(int i) {return refBody[i]->getSelectedBody();}
     void addBody(int i, RigidBody* body_);
     int getSize() const {return refBody.size();}
     void setNumberOfBodies(int n);
@@ -290,7 +291,7 @@ class GearDependencyWidget : public Widget {
 
   public:
     GearDependencyWidget(Element* element);
-    RigidBody* getBody() {return refBody->getBody();}
+    RigidBody* getSelectedBody() {return refBody->getSelectedBody();}
     RigidBodyOfReferenceWidget* getRigidBodyOfReferenceWidget() {return refBody;}
     void updateWidget() {refBody->updateWidget();}
   protected:
@@ -308,7 +309,7 @@ class GearDependenciesWidget : public Widget {
 
     void updateWidget(); 
 
-    RigidBody* getBody(int i) {return refBody[i]->getBody();}
+    RigidBody* getSelectedBody(int i) {return refBody[i]->getSelectedBody();}
     void addBody(int i, RigidBody* body_);
     int getSize() const {return refBody.size();}
     void setNumberOfBodies(int n);

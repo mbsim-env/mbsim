@@ -53,7 +53,6 @@ class ParentFrameOfReferenceProperty : public Property {
     std::string frame;
     Element* element;
     std::string xmlName;
-
   public:
     ParentFrameOfReferenceProperty(const std::string &frame_="", Element* element_=0, const std::string &xmlName_="") : frame(frame_), element(element_), xmlName(xmlName_) {}
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
@@ -95,24 +94,18 @@ class ContourOfReferenceProperty : public Property {
 };
 
 class RigidBodyOfReferenceProperty : public Property {
-
+  protected:
+    std::string body;
+    Element* element;
+    std::string xmlName;
   public:
-    RigidBodyOfReferenceProperty(RigidBody *body_=0, Element *element_=0, const std::string &xmlName_="") : body(body_), element(element_), xmlName(xmlName_) {}
-    RigidBody* getBody() const {return body;}
-    void setBody(RigidBody* body_) {body = body_;}
-    void initialize();
+    RigidBodyOfReferenceProperty(const std::string &body_="", Element *element_=0, const std::string &xmlName_="") : body(body_), element(element_), xmlName(xmlName_) {}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    void setSavedBodyOfReference(const std::string &str) {saved_bodyOfReference = str;}
-    const std::string& getSavedBodyOfReference() const {return saved_bodyOfReference;}
-
-  protected:
-    RigidBody* body;
-    Element* element;
-    std::string xmlName;
-    std::string saved_bodyOfReference;
+    void setBody(const std::string &str) {body = str;}
+    const std::string& getBody() const {return body;}
 };
 
 class FileProperty : public Property {

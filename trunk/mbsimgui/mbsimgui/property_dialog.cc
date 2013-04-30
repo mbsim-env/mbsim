@@ -25,6 +25,9 @@
 #include <QPushButton>
 #include <QStyle>
 
+#include <iostream>
+using namespace std;
+
 PropertyDialog::PropertyDialog(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,f) {
 
   QGridLayout *layout = new QGridLayout;
@@ -41,6 +44,7 @@ PropertyDialog::PropertyDialog(QWidget *parent, Qt::WindowFlags f) : QDialog(par
 }
 
 PropertyDialog::~PropertyDialog() {
+  cout << "delete" << endl;
 }
 
 void PropertyDialog::clicked(QAbstractButton *button) {

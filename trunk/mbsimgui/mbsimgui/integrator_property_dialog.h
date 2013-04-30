@@ -23,16 +23,27 @@
 #include "property_dialog.h"
 
 class Integrator;
+class DOPRI5Integrator;
+class RADAU5Integrator;
+class LSODEIntegrator;
+class LSODARIntegrator;
+class TimeSteppingIntegrator;
+class EulerExplicitIntegrator;
+class RKSuiteIntegrator;
 class VecWidget;
 class ExtWidget;
 
 class IntegratorPropertyDialog : public PropertyDialog {
 
   public:
-    IntegratorPropertyDialog(QWidget * parent = 0, Qt::WindowFlags f = 0);
+    IntegratorPropertyDialog(Integrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
     virtual void toWidget(Integrator *integrator);
     virtual void fromWidget(Integrator *integrator);
+    void toWidget() {toWidget(integrator);}
+    void fromWidget() {fromWidget(integrator);}
+    Integrator* getIntegrator() {return integrator;}
   protected:
+    Integrator *integrator;
     VecWidget *z0;
     ExtWidget *startTime, *endTime, *plotStepSize, *initialState;
 };
@@ -40,7 +51,7 @@ class IntegratorPropertyDialog : public PropertyDialog {
 class DOPRI5IntegratorPropertyDialog : public IntegratorPropertyDialog {
 
   public:
-    DOPRI5IntegratorPropertyDialog(QWidget * parent = 0, Qt::WindowFlags f = 0);
+    DOPRI5IntegratorPropertyDialog(DOPRI5Integrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
     virtual void toWidget(Integrator *integrator);
     virtual void fromWidget(Integrator *integrator);
   protected:
@@ -51,7 +62,7 @@ class DOPRI5IntegratorPropertyDialog : public IntegratorPropertyDialog {
 class RADAU5IntegratorPropertyDialog : public IntegratorPropertyDialog {
 
   public:
-    RADAU5IntegratorPropertyDialog(QWidget * parent = 0, Qt::WindowFlags f = 0);
+    RADAU5IntegratorPropertyDialog(RADAU5Integrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
     virtual void toWidget(Integrator *integrator);
     virtual void fromWidget(Integrator *integrator);
   protected:
@@ -62,7 +73,7 @@ class RADAU5IntegratorPropertyDialog : public IntegratorPropertyDialog {
 class LSODEIntegratorPropertyDialog : public IntegratorPropertyDialog {
 
   public:
-    LSODEIntegratorPropertyDialog(QWidget * parent = 0, Qt::WindowFlags f = 0);
+    LSODEIntegratorPropertyDialog(LSODEIntegrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
     virtual void toWidget(Integrator *integrator);
     virtual void fromWidget(Integrator *integrator);
   protected:
@@ -73,7 +84,7 @@ class LSODEIntegratorPropertyDialog : public IntegratorPropertyDialog {
 class LSODARIntegratorPropertyDialog : public IntegratorPropertyDialog {
 
   public:
-    LSODARIntegratorPropertyDialog(QWidget * parent = 0, Qt::WindowFlags f = 0);
+    LSODARIntegratorPropertyDialog(LSODARIntegrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
     virtual void toWidget(Integrator *integrator);
     virtual void fromWidget(Integrator *integrator);
   protected:
@@ -84,7 +95,7 @@ class LSODARIntegratorPropertyDialog : public IntegratorPropertyDialog {
 class TimeSteppingIntegratorPropertyDialog : public IntegratorPropertyDialog {
 
   public:
-    TimeSteppingIntegratorPropertyDialog(QWidget * parent = 0, Qt::WindowFlags f = 0);
+    TimeSteppingIntegratorPropertyDialog(TimeSteppingIntegrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
     virtual void toWidget(Integrator *integrator);
     virtual void fromWidget(Integrator *integrator);
   protected:
@@ -94,7 +105,7 @@ class TimeSteppingIntegratorPropertyDialog : public IntegratorPropertyDialog {
 class EulerExplicitIntegratorPropertyDialog : public IntegratorPropertyDialog {
 
   public:
-    EulerExplicitIntegratorPropertyDialog(QWidget * parent = 0, Qt::WindowFlags f = 0);
+    EulerExplicitIntegratorPropertyDialog(EulerExplicitIntegrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
     virtual void toWidget(Integrator *integrator);
     virtual void fromWidget(Integrator *integrator);
   protected:
@@ -104,7 +115,7 @@ class EulerExplicitIntegratorPropertyDialog : public IntegratorPropertyDialog {
 class RKSuiteIntegratorPropertyDialog : public IntegratorPropertyDialog {
 
   public:
-    RKSuiteIntegratorPropertyDialog(QWidget * parent = 0, Qt::WindowFlags f = 0);
+    RKSuiteIntegratorPropertyDialog(RKSuiteIntegrator *integrator, QWidget * parent = 0, Qt::WindowFlags f = 0);
     virtual void toWidget(Integrator *integrator);
     virtual void fromWidget(Integrator *integrator);
   protected:

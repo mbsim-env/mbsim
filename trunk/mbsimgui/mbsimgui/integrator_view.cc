@@ -106,28 +106,20 @@ void IntegratorView::setIntegrator(Integrator *integrator_) {
 
 bool IntegratorMouseEvent::eventFilter(QObject *obj, QEvent *event) {
   if (event->type() == QEvent::MouseButtonDblClick) {
-    dialog = view->getIntegrator()->createPropertyDialog();
-    dialog->toWidget(view->getIntegrator());
-    connect(dialog,SIGNAL(ok(QWidget*)),this,SLOT(commitDataAndClose()));
-    connect(dialog,SIGNAL(apply(QWidget*)),this,SLOT(commitData()));
-    connect(dialog,SIGNAL(cancel(QWidget*)),this,SLOT(rejectDataAndClose()));
-    dialog->exec();
-    delete dialog;
+    editor = view->getIntegrator()->createPropertyDialog();
+    editor->setAttribute(Qt::WA_DeleteOnClose);
+    editor->toWidget();
+    editor->show();
+    connect(editor,SIGNAL(apply()),this,SLOT(apply()));
+    connect(editor,SIGNAL(finished(int)),this,SLOT(dialogFinished(int)));
     return true;
   } else
     return QObject::eventFilter(obj, event);
 }
 
-void IntegratorMouseEvent::commitData() {
-  dialog->fromWidget(view->getIntegrator());
+void IntegratorMouseEvent::dialogFinished(int result) {
+  editor = 0;
 }
 
-void IntegratorMouseEvent::commitDataAndClose() {
-  dialog->fromWidget(view->getIntegrator());
-  dialog->accept();
+void IntegratorMouseEvent::apply() {
 }
-
-void IntegratorMouseEvent::rejectDataAndClose() {
-  dialog->reject();
-}
-

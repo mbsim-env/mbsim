@@ -57,12 +57,11 @@ class IntegratorMouseEvent : public QObject {
     IntegratorMouseEvent(IntegratorView* view_) : view(view_) {}
   protected:
     IntegratorView *view;
-    IntegratorPropertyDialog *dialog;
+    IntegratorPropertyDialog *editor;
     bool eventFilter(QObject *obj, QEvent *event);
   protected slots:
-    void commitDataAndClose();
-    void commitData();
-    void rejectDataAndClose();
+    void dialogFinished(int result);
+    void apply();
 };
 
 #endif

@@ -36,7 +36,7 @@ Constraint::~Constraint() {
 
 GearConstraint::GearConstraint(const string &str, Element *parent) : Constraint(str, parent) {
 
-  dependentBody.setProperty(new RigidBodyOfReferenceProperty(0,this,MBSIMNS"dependentRigidBody"));
+  dependentBody.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIMNS"dependentRigidBody"));
 
   independentBodies.setProperty(new GearDependenciesProperty(this,MBSIMNS"independentRigidBodies"));
 
@@ -68,7 +68,7 @@ TiXmlElement* GearConstraint::writeXMLFile(TiXmlNode *parent) {
 
 KinematicConstraint::KinematicConstraint(const string &str, Element *parent) : Constraint(str, parent), kinematicFunction(0,false), firstDerivativeOfKinematicFunction(0,false), secondDerivativeOfKinematicFunction(0,false) {
 
-  dependentBody.setProperty(new RigidBodyOfReferenceProperty(0,this,MBSIMNS"dependentRigidBody"));
+  dependentBody.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIMNS"dependentRigidBody"));
 
   kinematicFunction.setProperty(new Function1ChoiceProperty(MBSIMNS"kinematicFunction"));
 
@@ -108,7 +108,7 @@ TiXmlElement* KinematicConstraint::writeXMLFile(TiXmlNode *parent) {
 
 JointConstraint::JointConstraint(const string &str, Element *parent) : Constraint(str, parent), force(0,false), moment(0,false) {
 
-  independentBody.setProperty(new RigidBodyOfReferenceProperty(0,this,MBSIMNS"independentRigidBody"));
+  independentBody.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIMNS"independentRigidBody"));
 
   DependenciesProperty *dependentBodiesFirstSide_ = new DependenciesProperty(this, MBSIMNS"dependentRigidBodiesFirstSide");
   dependentBodiesFirstSide.setProperty(dependentBodiesFirstSide_);
