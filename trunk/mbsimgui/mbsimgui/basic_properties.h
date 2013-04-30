@@ -35,17 +35,17 @@ namespace MBXMLUtils {
 
 class LocalFrameOfReferenceProperty : public Property {
   protected:
-    Frame *frame;
+    std::string frame;
     Element* element;
     std::string xmlName;
   public:
-    LocalFrameOfReferenceProperty(Frame* frame_=0, Element* element_=0, const std::string &xmlName_="") : frame(frame_), element(element_), xmlName(xmlName_) {}
-    Frame* getFrame() const {return frame;}
-    void setFrame(Frame *frame_) {frame = frame_;}
+    LocalFrameOfReferenceProperty(const std::string &frame_="", Element* element_=0, const std::string &xmlName_="") : frame(frame_), element(element_), xmlName(xmlName_) {}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
+    void setFrame(const std::string &str) {frame = str;}
+    const std::string& getFrame() const {return frame;}
 };
 
 class ParentFrameOfReferenceProperty : public Property {

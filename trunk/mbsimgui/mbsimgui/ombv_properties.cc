@@ -611,7 +611,7 @@ void OMBVBodyChoiceProperty::toWidget(QWidget *widget) {
   ombv->toWidget(static_cast<OMBVBodyChoiceWidget*>(widget)->ombv);
 }
 
-OMBVBodySelectionProperty::OMBVBodySelectionProperty(RigidBody *body) : ombv("NOTSET", true, body->getID()), ref(body->getFrame(0),body,MBSIMNS"frameOfReference") {
+OMBVBodySelectionProperty::OMBVBodySelectionProperty(RigidBody *body) : ombv("NOTSET", true, body->getID()), ref("Frame[C]",body,MBSIMNS"frameOfReference") {
 
 }
 
@@ -627,7 +627,7 @@ TiXmlElement* OMBVBodySelectionProperty::initializeUsingXML(TiXmlElement *elemen
 TiXmlElement* OMBVBodySelectionProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"openMBVRigidBody" );
   ombv.writeXMLFile(ele0);
-  if(ref.getFrame()->getName()!="C")
+  if(ref.getFrame()!="Frame[C]")
     ref.writeXMLFile(ele0);
   parent->LinkEndChild(ele0);
   return 0;

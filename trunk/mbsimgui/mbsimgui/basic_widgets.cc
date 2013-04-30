@@ -37,6 +37,7 @@ LocalFrameOfReferenceWidget::LocalFrameOfReferenceWidget(Element *element_, Fram
   setLayout(layout);
 
   frame = new QComboBox;
+  frame->setEditable(true);
   layout->addWidget(frame);
   selectedFrame = element->getFrame(0);
   connect(frame,SIGNAL(currentIndexChanged(const QString&)),this,SLOT(setFrame(const QString&)));
@@ -45,25 +46,30 @@ LocalFrameOfReferenceWidget::LocalFrameOfReferenceWidget(Element *element_, Fram
 void LocalFrameOfReferenceWidget::updateWidget() {
   frame->blockSignals(true);
   frame->clear();
-  int oldindex = 0;
+  int oldIndex = 0;
+  QString oldText = frame->currentText();
   for(int i=0, k=0; i<element->getNumberOfFrames(); i++) {
     if(omitFrame!=element->getFrame(i)) {
       frame->addItem("Frame["+QString::fromStdString(element->getFrame(i)->getName())+"]");
       if(element->getFrame(i) == selectedFrame)
-        oldindex = k;
+        oldIndex = k;
       k++;
     }
   }
-  frame->setCurrentIndex(oldindex);
+  if(selectedFrame)
+    frame->setCurrentIndex(oldIndex);
+  else
+    frame->setEditText(oldText);
   frame->blockSignals(false);
-}
-
-void LocalFrameOfReferenceWidget::setFrame(Frame* frame_) {
-  selectedFrame = frame_; 
 }
 
 void LocalFrameOfReferenceWidget::setFrame(const QString &str) {
   selectedFrame = element->getFrame(str.mid(6, str.length()-7).toStdString());
+  frame->setEditText(str);
+}
+
+QString LocalFrameOfReferenceWidget::getFrame() const {
+  return frame->currentText();
 }
 
 ParentFrameOfReferenceWidget::ParentFrameOfReferenceWidget(Element *element_, Frame* omitFrame_) : element(element_), selectedFrame(0), omitFrame(omitFrame_) {
@@ -107,7 +113,6 @@ FrameOfReferenceWidget::FrameOfReferenceWidget(Element *element_, Frame* selecte
   setLayout(layout);
 
   frame = new QLineEdit;
-  //frame->setReadOnly(true);
   if(selectedFrame)
     frame->setText(QString::fromStdString(selectedFrame->getXMLPath()));
   frameBrowser = new FrameBrowser(element->getRoot(),selectedFrame,this);
@@ -133,16 +138,9 @@ void FrameOfReferenceWidget::setFrame() {
   frame->setText(QString::fromStdString(selectedFrame->getXMLPath()));
 }
 
-void FrameOfReferenceWidget::setFrame(Frame* frame_) {
-  selectedFrame = frame_; 
-  frame->setText(selectedFrame?QString::fromStdString(selectedFrame->getXMLPath()):"");
-}
-
 void FrameOfReferenceWidget::setFrame(const QString &str) {
+  selectedFrame = element->getByPath<Frame>(str.toStdString()); 
   frame->setText(str);
-  Frame *frame = element->getByPath<Frame>(str.toStdString());
-  if(frame)
-    setFrame(frame);
 }
 
 QString FrameOfReferenceWidget::getFrame() const {

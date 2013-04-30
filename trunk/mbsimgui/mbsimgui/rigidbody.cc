@@ -34,7 +34,7 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   Frame *C = new Frame("C",this);
   addFrame(C);
 
-  K.setProperty(new LocalFrameOfReferenceProperty(getFrame(0),this,MBSIMNS"frameForKinematics"));
+  K.setProperty(new LocalFrameOfReferenceProperty("Frame[C]",this,MBSIMNS"frameForKinematics"));
 
   vector<PhysicalVariableProperty*> input;
   input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"),"kg",MBSIMNS"mass"));

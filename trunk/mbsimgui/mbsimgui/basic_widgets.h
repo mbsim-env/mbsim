@@ -45,15 +45,14 @@ class LocalFrameOfReferenceWidget : public Widget {
     LocalFrameOfReferenceWidget(Element* element, Frame* omitFrame=0);
 
     void updateWidget();
-    Frame* getFrame() {return selectedFrame;}
-    void setFrame(Frame* frame_);
+    QString getFrame() const;
 
   protected:
     QComboBox *frame;
     Element* element;
     Frame *selectedFrame, *omitFrame;
 
-  protected slots:
+  public slots:
     void setFrame(const QString &str);
 };
 
@@ -83,7 +82,6 @@ class FrameOfReferenceWidget : public Widget {
     FrameOfReferenceWidget(Element* element, Frame* selectedFrame);
 
     void updateWidget();
-    void setFrame(Frame* frame_);
     void setFrame(const QString &str);
     QString getFrame() const;
 
