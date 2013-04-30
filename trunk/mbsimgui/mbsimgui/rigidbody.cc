@@ -99,10 +99,19 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
     f->initializeUsingXML2(e);
     e=e->NextSiblingElement();
   }
-  while(e && e->ValueStr()==MBSIMNS"FixedRelativeFrame") {
-    FixedRelativeFrame *f=new FixedRelativeFrame(e->Attribute("name"),this);
-    addFrame(f);
-    f->initializeUsingXML(e);
+  while(e) {
+    if(e->ValueStr()==PVNS"embed") {
+      Frame *f=Frame::readXMLFile(e->Attribute("href"),this);
+      if(f) {
+        addFrame(f);
+        f->initializeUsingXMLEmbed(e);
+      }
+    }
+    else {
+      FixedRelativeFrame *f=new FixedRelativeFrame(e->Attribute("name"),this);
+      addFrame(f);
+      f->initializeUsingXML(e);
+    }
     e=e->NextSiblingElement();
   }
 
@@ -123,10 +132,19 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
     e=e->NextSiblingElement();
   }
   while(e) {
-    c=ObjectFactory::getInstance()->createContour(e,this);
-    if(c) {
-      addContour(c);
-      c->initializeUsingXML(e);
+    if(e->ValueStr()==PVNS"embed") {
+      c=Contour::readXMLFile(e->Attribute("href"),this);
+      if(c) {
+        addContour(c);
+        c->initializeUsingXMLEmbed(e);
+      }
+    }
+    else {
+      c=ObjectFactory::getInstance()->createContour(e,this);
+      if(c) {
+        addContour(c);
+        c->initializeUsingXML(e);
+      }
     }
     e=e->NextSiblingElement();
   }
@@ -172,12 +190,18 @@ TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
 
   ele1 = new TiXmlElement( MBSIMNS"frames" );
   for(int i=1; i<frame.size(); i++)
-    frame[i]->writeXMLFile(ele1);
+    if(frame[i]->isEmbedded())
+      frame[i]->writeXMLFileEmbed(ele1);
+    else
+      frame[i]->writeXMLFile(ele1);
   ele0->LinkEndChild( ele1 );
 
   ele1 = new TiXmlElement( MBSIMNS"contours" );
   for(int i=0; i<contour.size(); i++)
-    contour[i]->writeXMLFile(ele1);
+    if(contour[i]->isEmbedded())
+      contour[i]->writeXMLFileEmbed(ele1);
+    else
+      contour[i]->writeXMLFile(ele1);
   ele0->LinkEndChild( ele1 );
 
   isFrameOfBodyForRotation.writeXMLFile(ele0);
