@@ -81,21 +81,17 @@ class FrameOfReferenceProperty : public Property {
 
 class ContourOfReferenceProperty : public Property {
   protected:
-    Contour *contour;
+    std::string contour;
     Element* element;
     std::string xmlName;
-    std::string saved_contourOfReference;
   public:
-    ContourOfReferenceProperty(Contour* contour_=0, Element* element_=0, const std::string &xmlName_="") : contour(contour_), element(element_), xmlName(xmlName_) {}
-    Contour* getContour() const {return contour;}
-    void setContour(Contour *contour_) {contour = contour_;}
-    void initialize();
+    ContourOfReferenceProperty(const std::string &contour_="", Element* element_=0, const std::string &xmlName_="") : contour(contour_), element(element_), xmlName(xmlName_) {}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    void setSavedContourOfReference(const std::string &str) {saved_contourOfReference = str;}
-    const std::string& getSavedContourOfReference() const {return saved_contourOfReference;}
+    void setContour(const std::string &str) {contour = str;}
+    const std::string& getContour() const {return contour;}
 };
 
 class RigidBodyOfReferenceProperty : public Property {

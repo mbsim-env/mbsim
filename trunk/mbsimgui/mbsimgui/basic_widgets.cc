@@ -159,7 +159,6 @@ ContourOfReferenceWidget::ContourOfReferenceWidget(Element *element_, Contour* s
   setLayout(layout);
 
   contour = new QLineEdit;
-  contour->setReadOnly(true);
   if(selectedContour)
     contour->setText(QString::fromStdString(selectedContour->getXMLPath()));
   contourBrowser = new ContourBrowser(element->getRoot(),selectedContour,this);
@@ -185,9 +184,13 @@ void ContourOfReferenceWidget::setContour() {
   contour->setText(QString::fromStdString(selectedContour->getXMLPath()));
 }
 
-void ContourOfReferenceWidget::setContour(Contour* contour_) {
-  selectedContour = contour_; 
-  contour->setText(selectedContour?QString::fromStdString(selectedContour->getXMLPath()):"");
+void ContourOfReferenceWidget::setContour(const QString &str) {
+  selectedContour = element->getByPath<Contour>(str.toStdString()); 
+  contour->setText(str);
+}
+
+QString ContourOfReferenceWidget::getContour() const {
+  return contour->text();
 }
 
 RigidBodyOfReferenceWidget::RigidBodyOfReferenceWidget(Element *element_, RigidBody* selectedBody_) : element(element_), selectedBody(selectedBody_) {

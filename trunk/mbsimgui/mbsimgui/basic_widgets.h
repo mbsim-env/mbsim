@@ -101,8 +101,8 @@ class ContourOfReferenceWidget : public Widget {
     ContourOfReferenceWidget(Element* element, Contour* selectedContour);
 
     void updateWidget();
-    Contour* getContour() {return selectedContour;}
-    void setContour(Contour* contour_);
+    void setContour(const QString &str);
+    QString getContour() const;
 
   protected:
     QLineEdit *contour;

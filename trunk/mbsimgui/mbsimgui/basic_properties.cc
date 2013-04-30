@@ -102,32 +102,25 @@ void FrameOfReferenceProperty::toWidget(QWidget *widget) {
   static_cast<FrameOfReferenceWidget*>(widget)->updateWidget();
 }
 
-void ContourOfReferenceProperty::initialize() {
-  if(saved_contourOfReference!="")
-    setContour(element->getByPath<Contour>(saved_contourOfReference));
-}
-
 TiXmlElement* ContourOfReferenceProperty::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *e = parent->FirstChildElement(xmlName);
-  if(e) saved_contourOfReference=e->Attribute("ref");
+  if(e) contour=e->Attribute("ref");
   return e;
 }
 
 TiXmlElement* ContourOfReferenceProperty::writeXMLFile(TiXmlNode *parent) {
-  if(getContour()) {
-    TiXmlElement *ele = new TiXmlElement(xmlName);
-    ele->SetAttribute("ref", getContour()->getXMLPath(element,true));
-    parent->LinkEndChild(ele);
-  }
+  TiXmlElement *ele = new TiXmlElement(xmlName);
+  ele->SetAttribute("ref", contour);
+  parent->LinkEndChild(ele);
   return 0;
 }
 
 void ContourOfReferenceProperty::fromWidget(QWidget *widget) {
-  setContour(static_cast<ContourOfReferenceWidget*>(widget)->getContour());
+  contour=static_cast<ContourOfReferenceWidget*>(widget)->getContour().toStdString();
 }
 
 void ContourOfReferenceProperty::toWidget(QWidget *widget) {
-  static_cast<ContourOfReferenceWidget*>(widget)->setContour(getContour());
+  static_cast<ContourOfReferenceWidget*>(widget)->setContour(QString::fromStdString(contour));
   static_cast<ContourOfReferenceWidget*>(widget)->updateWidget();
 }
 
@@ -349,7 +342,7 @@ ConnectContoursProperty::ConnectContoursProperty(int n, Element *element_) : ele
     string xmlName = MBSIMNS"ref";
     if(n>1)
       xmlName += toStr(i+1);
-    contour.push_back(new ContourOfReferenceProperty(0,element,xmlName));
+    contour.push_back(new ContourOfReferenceProperty("",element,xmlName));
   }
 }
 
@@ -367,7 +360,7 @@ TiXmlElement* ConnectContoursProperty::initializeUsingXML(TiXmlElement *element)
         xmlName += toStr(int(i+1));
       if(!e->Attribute(xmlName))
         return 0;
-      contour[i]->setSavedContourOfReference(e->Attribute(xmlName.c_str()));
+      contour[i]->setContour(e->Attribute(xmlName.c_str()));
     }
   }
   return e;
@@ -379,8 +372,7 @@ TiXmlElement* ConnectContoursProperty::writeXMLFile(TiXmlNode *parent) {
     string xmlName = "ref";
     if(contour.size()>1)
       xmlName += toStr(int(i+1));
-    if(contour[i]->getContour())
-      ele->SetAttribute(xmlName, contour[i]->getContour()->getXMLPath(element,true)); 
+    ele->SetAttribute(xmlName, contour[i]->getContour()); 
   }
   parent->LinkEndChild(ele);
   return ele;
