@@ -55,10 +55,11 @@ AC_CHECK_HEADERS([casadi/symbolic/sx/sx.hpp], [casadi="yes"],
   [AC_MSG_RESULT([Can not find casadi c++ header casadi/symbolic/sx/sx.hpp])])
 AC_MSG_CHECKING([for casadi c++ library])
 if test $casadi = "yes" ; then
-LDFLAGS="$LDFLAGS $CASADILDFLAGS"
-LIBS="$LIBS -lcasadi"
-AC_TRY_LINK([#include <casadi/symbolic/sx/sx.hpp>],[CasADi::SX x],[AC_MSG_RESULT([yes])],
-  [casadi="no"; AC_MSG_RESULT([no]); AC_MSG_ERROR([Can not link with casadi c++ library])])
+  LDFLAGS="$LDFLAGS $CASADILDFLAGS"
+  LIBS="$LIBS -lcasadi"
+  test "_$host_os" != "_mingw32" && LIBS="$LIBS -ldl"
+  AC_TRY_LINK([#include <casadi/symbolic/sx/sx.hpp>],[CasADi::SX x],[AC_MSG_RESULT([yes])],
+    [casadi="no"; AC_MSG_RESULT([no]); AC_MSG_ERROR([Can not link with casadi c++ library])])
 fi
 
 dnl check for numerics library
@@ -119,6 +120,7 @@ AC_SUBST([LIBMBSIM_VERSION_INFO])
 AM_CONDITIONAL([COND_CASADI], [test _$casadi = _yes])
 if test $casadi = "yes" ; then
   CASADILIB="-lcasadi"
+  test "_$host_os" != "_mingw32" && CASADILIB="$CASADILIB -ldl"
   AC_SUBST([CASADILIB])
   AC_SUBST([CASADICPPFLAGS])
   AC_SUBST([CASADILDFLAGS])
