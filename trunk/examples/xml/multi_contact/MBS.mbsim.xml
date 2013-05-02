@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DynamicSystemSolver name="TS" 
+  xmlns="http://mbsim.berlios.de/MBSim"
+  xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
+  xmlns:ombv="http://openmbv.berlios.de/OpenMBV"
+  xmlns:h="http://mbsim.berlios.de/MBSimHydraulics"
+  xmlns:c="http://mbsim.berlios.de/MBSimControl">
+  <frames/>
+  <contours>
+    <contour>
+      <Plane name="Ground">
+          <enableOpenMBV>
+           <size>1</size>   
+		   <numberOfLines>2</numberOfLines>      
+          </enableOpenMBV>
+      </Plane>
+      <position>[0;0;0]</position>
+      <orientation>eye(3)</orientation> 
+    </contour> 
+  </contours>
+  <groups/>
+  <objects>
+    <RigidBody name="Ball1">
+      <initialGeneralizedPosition>[0.01;0.1;0]</initialGeneralizedPosition>
+      <frameOfReference ref="../Frame[I]"/>
+      <frameForKinematics ref="Frame[C]"/>
+      <mass>1.</mass>
+      <inertiaTensor>eye(3)</inertiaTensor>
+      <translation>
+        <LinearTranslation xmlns="http://mbsim.berlios.de/MBSim">
+          <translationVectors>[1 0 0; 0 1 0; 0 0 1]'</translationVectors>
+        </LinearTranslation>
+      </translation>
+      <rotation/>
+      <frames/>
+      <contours>
+        <contour>
+          <Sphere name="Sphere"> 
+              <radius>0.006</radius>
+              <enableOpenMBV></enableOpenMBV>
+          </Sphere>
+          <position>[0;0;0]</position>
+          <orientation>eye(3)</orientation>
+        </contour>
+      </contours>
+      <enableOpenMBVFrameC>
+        <size>.001</size>
+        <offset>1.</offset>
+      </enableOpenMBVFrameC>      
+    </RigidBody>
+    
+    <RigidBody name="Ball2">
+      <initialGeneralizedPosition>[0.01;0;0]</initialGeneralizedPosition>
+      <frameOfReference ref="../Frame[I]"/>
+      <frameForKinematics ref="Frame[C]"/>
+      <mass>1.</mass>
+      <inertiaTensor>eye(3)</inertiaTensor>
+      <translation>
+        <LinearTranslation xmlns="http://mbsim.berlios.de/MBSim">
+          <translationVectors>[1 0 0; 0 1 0; 0 0 1]'</translationVectors>
+        </LinearTranslation>
+      </translation>
+      <rotation/>
+      <frames/>
+      <contours>
+        <contour>
+          <Sphere name="Sphere"> 
+              <radius>0.006</radius>
+              <enableOpenMBV></enableOpenMBV>
+          </Sphere>
+          <position>[0;0;0]</position>
+          <orientation>eye(3)</orientation>
+        </contour>
+      </contours>
+      <enableOpenMBVFrameC>
+        <size>.001</size>
+        <offset>1.</offset>
+      </enableOpenMBVFrameC>
+    </RigidBody>
+  </objects>
+  
+  <links>
+   <Contact name="Contact" xmlns="http://mbsim.berlios.de/MBSim">
+      <!--
+     <contactForceLaw>
+      <UnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim"/>
+     </contactForceLaw>
+     <contactImpactLaw>
+      <UnilateralNewtonImpact>
+       <restitutionCoefficient>0.9</restitutionCoefficient>       
+      </UnilateralNewtonImpact>      
+     </contactImpactLaw>
+      -->
+     <contactForceLaw>
+      <MaxwellUnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim">
+        <InfluenceFunction>
+          <FlexibilityInfluenceFunction contourName1="../Contour[Ground]" contourName2="../Contour[Ground]">
+            <Flexibility>1e-5</Flexibility>          
+          </FlexibilityInfluenceFunction>               
+        </InfluenceFunction>                             
+      </MaxwellUnilateralConstraint>      
+     </contactForceLaw>
+     <contactImpactLaw/>
+     <frictionForceLaw/>
+     <frictionImpactLaw/>
+     <connect ref1="../Contour[Ground]" ref2="../Object[Ball1]/Contour[Sphere]" name="Contact_Uno"/>
+     <connect ref1="../Contour[Ground]" ref2="../Object[Ball2]/Contour[Sphere]" name="Contact_Due"/>
+     <enableOpenMBVContactPoints>0.1</enableOpenMBVContactPoints>
+     <openMBVNormalForceArrow>
+        <Arrow name="XXX" xmlns="http://openmbv.berlios.de/OpenMBV">
+          <minimalColorValue>0</minimalColorValue> <!-- optional -->
+          <maximalColorValue>100</maximalColorValue> <!-- optional -->
+          <diameter>0.1</diameter>
+          <headDiameter>2*0.1</headDiameter>
+          <headLength>2*0.1</headLength>
+          <type>"toHead"</type>
+          <scaleLength>.01</scaleLength>
+        </Arrow>   
+     </openMBVNormalForceArrow>
+     <openMBVFrictionArrow>
+        <Arrow name="XXX" xmlns="http://openmbv.berlios.de/OpenMBV">
+          <minimalColorValue>0</minimalColorValue> <!-- optional -->
+          <maximalColorValue>100</maximalColorValue> <!-- optional -->
+          <diameter>0.1</diameter>
+          <headDiameter>2*0.1</headDiameter>
+          <headLength>2*0.1</headLength>
+          <type>"toHead"</type>
+          <scaleLength>.01</scaleLength>
+        </Arrow>       
+     </openMBVFrictionArrow> 
+   </Contact>   
+  </links>
+  
+  <environments>
+    <MBSimEnvironment>
+      <accelerationOfGravity>[-9.81;0;0]</accelerationOfGravity>
+    </MBSimEnvironment>
+  </environments>
+</DynamicSystemSolver>

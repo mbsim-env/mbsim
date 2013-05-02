@@ -1,0 +1,51 @@
+<Group name="controller" xmlns="http://mbsim.berlios.de/MBSim">
+  <frames>
+  </frames>
+  <contours>
+  </contours>
+  <groups>
+  </groups>
+  <objects>
+  </objects>
+  <extraDynamics> <!-- optional -->
+    <LinearTransferSystem name="pidController" xmlns="http://mbsim.berlios.de/MBSimControl">
+      <inputSignal ref="../Link[speedDeviation]"/>
+      <pidType>
+        <P>controllerKP</P>
+        <I>controllerKI</I>
+        <D>0</D>
+      </pidType>
+      <showABCD/> <!-- optional -->
+    </LinearTransferSystem>
+  </extraDynamics>
+  <links>
+    <GeneralizedVelocitySensor name="crankMeasuredSpeed" xmlns="http://mbsim.berlios.de/MBSimControl">
+      <object ref="../../Object[Crank]"/>
+      <index>0</index>
+    </GeneralizedVelocitySensor>
+    <FunctionSensor name="crankReferenceSpeed" xmlns="http://mbsim.berlios.de/MBSimControl">
+      <function>
+        <ConstantFunction1_VS xmlns="http://mbsim.berlios.de/MBSim">
+          <value>ReferenceSpeed</value>
+        </ConstantFunction1_VS>
+      </function>
+    </FunctionSensor>
+    <SignalAddition name="speedDeviation" xmlns="http://mbsim.berlios.de/MBSimControl">
+      <inputSignal ref="../Link[crankReferenceSpeed]">
+        <factor>1</factor>
+      </inputSignal>
+      <inputSignal ref="../Link[crankMeasuredSpeed]">
+        <factor>-1</factor>
+      </inputSignal>
+    </SignalAddition>
+    <SignalProcessingSystemSensor name="controllerOutput" xmlns="http://mbsim.berlios.de/MBSimControl">
+      <signalProcessingSystem ref="../ExtraDynamic[pidController]"/>
+    </SignalProcessingSystemSensor>
+    <Actuator name="motor" xmlns="http://mbsim.berlios.de/MBSimControl">
+      <momentDirection>[0 0 1]'</momentDirection> <!-- optional -->
+      <inputSignal ref="../Link[controllerOutput]"/>
+      <connect ref1="../../Object[Crank]/Frame[B2]" ref2="../Frame[I]"/>
+    </Actuator>
+  </links>
+</Group>
+

@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+bindir=${exec_prefix}/bin
+
+Name: nurbs++
+Description: nurbs++ is a library for non uniform rational b-splines.
+Version: @VERSION@
+Libs: -L${libdir} -lnurbsd -lnurbsf -lmatrixN -lmatrixI -lmatrix 
+Cflags: -I${includedir}
+

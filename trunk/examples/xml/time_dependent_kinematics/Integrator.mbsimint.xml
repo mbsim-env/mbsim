@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LSODEIntegrator xmlns="http://mbsim.berlios.de/MBSimIntegrator">
+  <startTime>0</startTime>
+  <endTime>10</endTime>
+  <plotStepSize>1e-2</plotStepSize>
+  <absoluteTolerance>1e-6</absoluteTolerance>
+  <relativeToleranceScalar>1e-6</relativeToleranceScalar>
+  <initialStepSize>1e-13</initialStepSize>
+  <maximalStepSize>0</maximalStepSize>
+  <minimalStepSize>0</minimalStepSize>
+  <numberOfMaximalSteps>0</numberOfMaximalSteps>
+</LSODEIntegrator>
