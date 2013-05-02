@@ -24,8 +24,8 @@ class MyPos : public Translation {
 class JacobianT : public Jacobian {
   public:
     int getuSize() const {return 1;} 
-    Mat3V operator()(const Vec& q, const double &t, const void * =NULL) {
-      Mat3V J(1);
+    Mat3xV operator()(const Vec& q, const double &t, const void * =NULL) {
+      Mat3xV J(1);
       J(0,0) = -sin(q(0));
       J(1,0) =  cos(q(0));
       return J;
@@ -33,26 +33,26 @@ class JacobianT : public Jacobian {
 };
 class JacobianR : public Jacobian {
   public:
-    Mat3V operator()(const Vec& q, double t) {
-      Mat3V J(1);
+    Mat3xV operator()(const Vec& q, double t) {
+      Mat3xV J(1);
       return J;
     }
 };
 
-class MyDerT : public Function3<Mat3V,Vec,Vec,double> {
+class MyDerT : public Function3<Mat3xV,Vec,Vec,double> {
   public:
-    Mat3V operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
-      Mat3V J(1);
+    Mat3xV operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
+      Mat3xV J(1);
       J(0,0) = -cos(q(0))*qd(0);
       J(1,0) = -sin(q(0))*qd(0);
       return J;
     }
 };
 
-class MyDerR : public Function3<Mat3V,Vec,Vec,double> {
+class MyDerR : public Function3<Mat3xV,Vec,Vec,double> {
   public:
-    Mat3V operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
-      Mat3V J(1);
+    Mat3xV operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
+      Mat3xV J(1);
       return J;
     }
 };

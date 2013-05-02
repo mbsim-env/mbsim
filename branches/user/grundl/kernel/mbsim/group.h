@@ -62,8 +62,8 @@ namespace MBSim {
       virtual std::string getType() const { return "Group"; }
       /***************************************************/
 
-      virtual void initializeUsingXML(TiXmlElement *element);
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
 
       fmatvec::Vec RrRD;
       fmatvec::SqrMat ARD;

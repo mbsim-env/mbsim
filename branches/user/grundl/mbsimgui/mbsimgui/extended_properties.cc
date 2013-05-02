@@ -21,7 +21,7 @@
 #include "extended_properties.h"
 #include "frame.h"
 #include "basic_widgets.h"
-#include "string_widgets.h"
+#include "variable_widgets.h"
 #include "kinematics_widgets.h"
 #include "extended_widgets.h"
 #include <QStackedWidget>
@@ -29,9 +29,10 @@
 #include <mbxmlutilstinyxml/tinynamespace.h>
 
 using namespace std;
+using namespace MBXMLUtils;
 
-ExtPhysicalVarProperty::ExtPhysicalVarProperty(std::vector<PhysicalStringProperty*> inputProperty_) : inputProperty(inputProperty_), currentInput(0) {
-  inputProperty.push_back(new PhysicalStringProperty(new ScalarProperty(""), inputProperty[0]->getUnit(), inputProperty[0]->getXmlName()));
+ExtPhysicalVarProperty::ExtPhysicalVarProperty(std::vector<PhysicalVariableProperty*> inputProperty_) : inputProperty(inputProperty_), currentInput(0) {
+  inputProperty.push_back(new PhysicalVariableProperty(new OctaveExpressionProperty, inputProperty[0]->getUnit(), inputProperty[0]->getXmlName()));
 }
 
 TiXmlElement* ExtPhysicalVarProperty::initializeUsingXML(TiXmlElement *element) {
@@ -44,6 +45,11 @@ TiXmlElement* ExtPhysicalVarProperty::initializeUsingXML(TiXmlElement *element) 
   return 0;
 }
 
+ExtPhysicalVarProperty::~ExtPhysicalVarProperty() {
+  for(vector<PhysicalVariableProperty*>::iterator i = inputProperty.begin(); i != inputProperty.end(); ++i)
+    delete *i;
+}
+
 TiXmlElement* ExtPhysicalVarProperty::writeXMLFile(TiXmlNode *parent) {
   inputProperty[currentInput]->writeXMLFile(parent);
   return 0;
@@ -52,13 +58,18 @@ TiXmlElement* ExtPhysicalVarProperty::writeXMLFile(TiXmlNode *parent) {
 void ExtPhysicalVarProperty::fromWidget(QWidget *widget) {
   currentInput = static_cast<ExtPhysicalVarWidget*>(widget)->getCurrentInput();
   for(int i=0; i< inputProperty.size(); i++)
-    inputProperty[i]->fromWidget(static_cast<ExtPhysicalVarWidget*>(widget)->getPhysicalStringWidget(i));
+    inputProperty[i]->fromWidget(static_cast<ExtPhysicalVarWidget*>(widget)->getPhysicalVariableWidget(i));
 }
 
 void ExtPhysicalVarProperty::toWidget(QWidget *widget) {
   static_cast<ExtPhysicalVarWidget*>(widget)->setCurrentInput(currentInput);
   for(int i=0; i< inputProperty.size(); i++)
-    inputProperty[i]->toWidget(static_cast<ExtPhysicalVarWidget*>(widget)->getPhysicalStringWidget(i));
+    inputProperty[i]->toWidget(static_cast<ExtPhysicalVarWidget*>(widget)->getPhysicalVariableWidget(i));
+}
+
+PropertyChoiceProperty::~PropertyChoiceProperty() {
+  for(vector<Property*>::iterator i = property.begin(); i != property.end(); ++i)
+    delete *i;
 }
 
 void PropertyChoiceProperty::initialize() {
@@ -85,7 +96,12 @@ void PropertyChoiceProperty::fromWidget(QWidget *widget) {
 }
 
 void PropertyChoiceProperty::toWidget(QWidget *widget) {
-  static_cast<WidgetChoiceWidget*>(widget)->changeCurrent(index);
+  static_cast<WidgetChoiceWidget*>(widget)->choice->blockSignals(true);
+  static_cast<WidgetChoiceWidget*>(widget)->choice->setCurrentIndex(index);
+  static_cast<WidgetChoiceWidget*>(widget)->choice->blockSignals(false);
+  static_cast<WidgetChoiceWidget*>(widget)->stackedWidget->blockSignals(true);
+  static_cast<WidgetChoiceWidget*>(widget)->stackedWidget->setCurrentIndex(index);
+  static_cast<WidgetChoiceWidget*>(widget)->stackedWidget->blockSignals(false);
   property[index]->toWidget(static_cast<WidgetChoiceWidget*>(widget)->stackedWidget->currentWidget());
 }
 
@@ -134,14 +150,20 @@ void ExtProperty::toWidget(QWidget *widget) {
   property->toWidget(static_cast<ExtWidget*>(widget)->widget);
 }
 
+PropertyContainer::~PropertyContainer() {
+  for(vector<Property*>::iterator i = property.begin(); i != property.end(); ++i)
+    delete *i;
+}
+
 void PropertyContainer::initialize() {
   for(unsigned int i=0; i<property.size(); i++)
     property[i]->initialize();
 }
 
 TiXmlElement* PropertyContainer::initializeUsingXML(TiXmlElement *element) {
+  bool flag = false;
   for(unsigned int i=0; i<property.size(); i++)
-    if(property[i]->initializeUsingXML(element))
+    if(!property[i]->initializeUsingXML(element))
       return 0;
   return element;
 }

@@ -20,157 +20,111 @@
 #ifndef _INTEGRATOR__H_
 #define _INTEGRATOR__H_
 
-#include <QtGui/QTreeWidgetItem>
-
 #include "extended_properties.h"
+#include "integrator_property_dialog.h"
 
-class Solver;
-class PropertyWidget;
-class PropertyDialog;
-class ExtWidget;
-class VecWidget;
-class TiXmlElement;
-class TiXmlNode;
+namespace MBXMLUtils {
+  class TiXmlElement;
+  class TiXmlNode;
+}
 
-class Integrator : public QObject, public QTreeWidgetItem {
-  Q_OBJECT
+class Integrator {
+  friend class IntegratorPropertyDialog;
   protected:
-    QString newName(const QString &type);
-    bool drawThisPath;
-    std::string iconFile;
-    bool searchMatched;
-    QMenu *contextMenu;
-    VecWidget *z0;
-    ExtWidget *startTimeWidget, *endTimeWidget, *plotStepSizeWidget, *initialStateWidget;
     ExtProperty startTime, endTime, plotStepSize, initialState;
-    Solver *solver;
-    PropertyDialog *dialog;
   public:
-    Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    Integrator();
     virtual ~Integrator();
-    std::string &getIconFile() { return iconFile; }
-    void setSolver(Solver *solver_) {solver = solver_;}
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    static Integrator* readXMLFile(const QString &filename, QTreeWidgetItem *parent);
-    virtual void writeXMLFile(const QString &name);
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    static Integrator* readXMLFile(const std::string &filename);
+    virtual void writeXMLFile(const std::string &name);
     virtual void writeXMLFile() { writeXMLFile(getType()); }
-    virtual QString getType() const { return "Integrator"; }
-    QMenu* getContextMenu() { return contextMenu; }
-    void setEndTime(double t);
-    virtual void initializeDialog();
-    virtual void fromWidget();
-    virtual void toWidget();
-    virtual void resizeVariables(); 
-  public slots:
-    void saveAs();
-    void openPropertyDialog();
-    void updateElement();
+    virtual std::string getType() const { return "Integrator"; }
+    virtual IntegratorPropertyDialog* createPropertyDialog() {return new IntegratorPropertyDialog(this);}
 };
 
 class DOPRI5Integrator : public Integrator {
+  friend class DOPRI5IntegratorPropertyDialog;
   public:
-    DOPRI5Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind);
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual QString getType() const { return "DOPRI5Integrator"; }
-    virtual void initializeDialog();
-    virtual void fromWidget();
-    virtual void toWidget();
-    virtual void resizeVariables();
+    DOPRI5Integrator();
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual std::string getType() const { return "DOPRI5Integrator"; }
+    IntegratorPropertyDialog* createPropertyDialog() {return new DOPRI5IntegratorPropertyDialog(this);}
   protected:
-    VecWidget *aTol, *rTol;
-    ExtWidget *absTolWidget, *relTolWidget, *initialStepSizeWidget, *maximalStepSizeWidget, *maxStepsWidget;
     ExtProperty absTol, relTol, initialStepSize, maximalStepSize, maxSteps;
 };
 
 class RADAU5Integrator : public Integrator {
+  friend class RADAU5IntegratorPropertyDialog;
   public:
-    RADAU5Integrator(const QString &str, QTreeWidgetItem *parentItem, int ind);
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual QString getType() const { return "RADAU5Integrator"; }
-    virtual void initializeDialog();
-    virtual void fromWidget();
-    virtual void toWidget();
-    virtual void resizeVariables();
+    RADAU5Integrator();
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual std::string getType() const { return "RADAU5Integrator"; }
+    IntegratorPropertyDialog* createPropertyDialog() {return new RADAU5IntegratorPropertyDialog(this);}
   protected:
-    VecWidget *aTol, *rTol;
-    ExtWidget *absTolWidget, *relTolWidget, *initialStepSizeWidget, *maximalStepSizeWidget, *maxStepsWidget;
     ExtProperty absTol, relTol, initialStepSize, maximalStepSize, maxSteps;
 };
 
 class LSODEIntegrator : public Integrator {
+  friend class LSODEIntegratorPropertyDialog;
   public:
-    LSODEIntegrator(const QString &str, QTreeWidgetItem *parentItem, int ind);
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual QString getType() const { return "LSODEIntegrator"; }
-    virtual void initializeDialog();
-    virtual void fromWidget();
-    virtual void toWidget();
-    virtual void resizeVariables();
+    LSODEIntegrator();
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual std::string getType() const { return "LSODEIntegrator"; }
+    IntegratorPropertyDialog* createPropertyDialog() {return new LSODEIntegratorPropertyDialog(this);}
   protected:
-    VecWidget *aTol;
-    ExtWidget *absTolWidget, *relTolWidget, *initialStepSizeWidget, *maximalStepSizeWidget, *minimalStepSizeWidget, *maxStepsWidget, *stiffWidget;
     ExtProperty absTol, relTol, initialStepSize, maximalStepSize, minimalStepSize, maxSteps, stiff;
 };
 
 class LSODARIntegrator : public Integrator {
+  friend class LSODARIntegratorPropertyDialog;
   public:
-    LSODARIntegrator(const QString &str, QTreeWidgetItem *parentItem, int ind);
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual QString getType() const { return "LSODARIntegrator"; }
-    virtual void initializeDialog();
-    virtual void fromWidget();
-    virtual void toWidget();
-    virtual void resizeVariables();
+    LSODARIntegrator();
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual std::string getType() const { return "LSODARIntegrator"; }
+    IntegratorPropertyDialog* createPropertyDialog() {return new LSODARIntegratorPropertyDialog(this);}
   protected:
-    VecWidget *aTol;
-    ExtWidget *absTolWidget, *relTolWidget, *initialStepSizeWidget, *maximalStepSizeWidget, *minimalStepSizeWidget, *plotOnRootWidget;
     ExtProperty absTol, relTol, initialStepSize, maximalStepSize, minimalStepSize, plotOnRoot;
 };
 
 class TimeSteppingIntegrator : public Integrator {
+  friend class TimeSteppingIntegratorPropertyDialog;
   public:
-    TimeSteppingIntegrator(const QString &str, QTreeWidgetItem *parentItem, int ind);
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual QString getType() const { return "TimeSteppingIntegrator"; }
-    virtual void fromWidget();
-    virtual void toWidget();
-    virtual void initializeDialog();
+    TimeSteppingIntegrator();
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual std::string getType() const { return "TimeSteppingIntegrator"; }
+    IntegratorPropertyDialog* createPropertyDialog() {return new TimeSteppingIntegratorPropertyDialog(this);}
   protected:
-    ExtWidget *stepSizeWidget;
     ExtProperty stepSize;
 };
 
 class EulerExplicitIntegrator : public Integrator {
+  friend class EulerExplicitIntegratorPropertyDialog;
   public:
-    EulerExplicitIntegrator(const QString &str, QTreeWidgetItem *parentItem, int ind);
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual QString getType() const { return "EulerExplicitIntegrator"; }
-    virtual void fromWidget();
-    virtual void toWidget();
-    virtual void initializeDialog();
+    EulerExplicitIntegrator();
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual std::string getType() const { return "EulerExplicitIntegrator"; }
+    IntegratorPropertyDialog* createPropertyDialog() {return new EulerExplicitIntegratorPropertyDialog(this);}
   protected:
-    ExtWidget *stepSizeWidget;
     ExtProperty stepSize;
 };
 
 class RKSuiteIntegrator : public Integrator {
+  friend class RKSuiteIntegratorPropertyDialog;
   public:
-    RKSuiteIntegrator(const QString &str, QTreeWidgetItem *parentItem, int ind);
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual QString getType() const { return "RKSuiteIntegrator"; }
-    virtual void fromWidget();
-    virtual void toWidget();
-    virtual void initializeDialog();
+    RKSuiteIntegrator();
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual std::string getType() const { return "RKSuiteIntegrator"; }
+    IntegratorPropertyDialog* createPropertyDialog() {return new RKSuiteIntegratorPropertyDialog(this);}
   protected:
-    ExtWidget *typeWidget, *relTolWidget, *thresholdWidget, *initialStepSizeWidget;
     ExtProperty type, relTol, threshold, initialStepSize;
 };
 

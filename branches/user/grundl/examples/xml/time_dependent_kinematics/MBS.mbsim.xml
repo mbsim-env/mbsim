@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<DynamicSystemSolver name="TS" xmlns="http://mbsim.berlios.de/MBSim" xmlns:mbsimint="http://mbsim.berlios.de/MBSimIntegrator" xmlns:param="http://openmbv.berlios.de/MBXMLUtils/parameter" xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable" xmlns:ombv="http://openmbv.berlios.de/OpenMBV" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <position>[0;0;0]</position>
+    <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
+    <frames />
+    <contours />
+    <groups />
+    <objects>
+        <RigidBody name="Box1">
+            <frameOfReference ref="../Frame[I]" />
+            <frameForKinematics ref="Frame[C]" />
+            <mass>3</mass>
+            <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
+            <translation>
+                <TimeDependentTranslation>
+                    <position>
+                        <!--<SymbolicFunction1_VS arg1name="t">
+                            The below line is the code we want to write here for returning a 3x1 matrix.
+                            But this code generates a lot of octave/casadi valgrind errors and
+                            or even crashes. However the below code works fine, without any valgrind
+                            error.
+
+                            [sin(freq1*t + pi/2); v0y*t; 0]
+                        </SymbolicFunction1_VS>-->
+                        <SymbolicFunction1_VS arg1name="t">
+                            ret=casadi.ssym('ret', 3, 1);
+                            ret(1)=sin(freq1*t + pi/2);
+                            ret(2)=v0y*t;
+                            ret(3)=0;
+                        </SymbolicFunction1_VS>
+                    </position>
+                </TimeDependentTranslation>
+            </translation>
+            <rotation>
+                <TimeDependentRotationAboutFixedAxis>
+                    <axisOfRotation>[0;0;1]</axisOfRotation>
+                    <position>
+                        <SymbolicFunction1_SS arg1name="t">
+                            5*sin(freq2*t)
+                        </SymbolicFunction1_SS>
+                    </position>
+                </TimeDependentRotationAboutFixedAxis>
+            </rotation>
+            <frames />
+            <contours />
+            <openMBVRigidBody>
+                <ombv:Cube name="Box1">
+                    <ombv:staticColor>0</ombv:staticColor>
+                    <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
+                    <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
+                    <ombv:scaleFactor>1</ombv:scaleFactor>
+                    <ombv:length>2</ombv:length>
+                </ombv:Cube>
+                <frameOfReference ref="Frame[C]" />
+            </openMBVRigidBody>
+        </RigidBody>
+        <RigidBody name="Rod2">
+            <frameOfReference ref="../Frame[I]" />
+            <frameForKinematics ref="Frame[C]" />
+            <mass>1</mass>
+            <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
+            <translation>
+                <LinearTranslation>
+                    <translationVectors>[0;1;0]</translationVectors>
+                </LinearTranslation>
+            </translation>
+            <rotation />
+            <frames />
+            <contours />
+        </RigidBody>
+    </objects>
+    <extraDynamics />
+    <links />
+    <environments>
+        <MBSimEnvironment>
+            <accelerationOfGravity>[0;-9.81;0]</accelerationOfGravity>
+        </MBSimEnvironment>
+    </environments>
+</DynamicSystemSolver>

@@ -5,6 +5,12 @@ AC_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([mbsimHydraulics/Makefile.am])
 LT_INIT([win32-dll])
+
+: ${CFLAGS=""}
+: ${CXXFLAGS=""}
+: ${FCFLAGS=""}
+: ${FFLAGS=""}
+
 AC_PROG_CXX
 AC_PROG_F77
 AC_PROG_CXXCPP
@@ -17,6 +23,20 @@ AC_CHECK_FUNCS([sqrt])
 AC_HEADER_STDBOOL
 
 PKG_CHECK_MODULES(DEPS, mbsim >= 3.0.0 mbsimControl)
+
+dnl Enable debugging 
+AC_ARG_ENABLE([debug],[  --enable-debug  Enable debuggig],[debug="yes"],[debug="no"])
+if test $debug = "yes" ; then
+  CFLAGS="$CFLAGS -g3"
+  CXXFLAGS="$CXXFLAGS -g3"
+  FCFLAGS="$FCFLAGS -g3"
+  FFLAGS="$FFLAGS -g3"
+else
+  CFLAGS="$CFLAGS -g -O3"
+  CXXFLAGS="$CXXFLAGS -g -O3 -DNDEBUG"
+  FCFLAGS="$FCFLAGS -g -O2"
+  FFLAGS="$FFLAGS -g -O2"
+fi
 
 dnl versioning (see http://www.gnu.org/software/libtool/manual.html)
 dnl current: 	The most recent interface number that this library implements. 
@@ -63,9 +83,9 @@ Configuration for $PACKAGE $VERSION :
 
  Source code location ....: $srcdir
  Host System Type ........: $host
- Preprocessor ............: $CC $CPPFLAGS
- Compiler ................: $CC $CFLAGS $LIBFLAC_CFLAGS
- Linker ..................: $CC $LDFLAGS $LIBS $LIBFLAC_LIBS
+ Preprocessor ............: $CXX $CPPFLAGS
+ Compiler ................: $CXX $CXXFLAGS
+ Linker ..................: $CXX $LDFLAGS $LIBS 
  Install path ............: $prefix
 
  Now type 'make' to build $PACKAGE $VERSION,

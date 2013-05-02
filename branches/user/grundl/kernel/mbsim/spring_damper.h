@@ -78,7 +78,7 @@ namespace MBSim {
       void setProjectionDirection(Frame *refFrame_, fmatvec::Vec dir) { refFrame=refFrame_; forceDir=dir; }
 
       void plot(double t, double dt=1);
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /** \brief Visualise the SpringDamper using a OpenMBV::CoilSpring */

@@ -23,8 +23,8 @@ namespace MBSimControl {
       // objects from MBSimObjectFactory
       static void initialize();
     protected:
-      MBSim::ExtraDynamic * createExtraDynamic(TiXmlElement *element);
-      MBSim::Link* createLink(TiXmlElement *element);
+      MBSim::ExtraDynamic * createExtraDynamic(MBXMLUtils::TiXmlElement *element);
+      MBSim::Link* createLink(MBXMLUtils::TiXmlElement *element);
       MBSim::ObjectFactoryBase::MM_PRINSPRE& getPriorityNamespacePrefix();
   };
 

@@ -79,7 +79,7 @@ namespace MBSimHydraulics {
       void plot(double t, double dt);
       void plotParameters();
 
-      void initializeUsingXML(TiXmlElement * element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
     
     private:
       int mdim, plotdim;

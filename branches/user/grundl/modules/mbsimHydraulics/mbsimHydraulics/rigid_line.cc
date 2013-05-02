@@ -17,6 +17,7 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
+#include <config.h>
 #include "mbsimHydraulics/rigid_line.h"
 #include "mbsimHydraulics/hnode.h"
 #include "mbsimHydraulics/environment.h"
@@ -32,6 +33,7 @@
 using namespace std;
 using namespace fmatvec;
 using namespace MBSim;
+using namespace MBXMLUtils;
 
 namespace MBSimHydraulics {
 

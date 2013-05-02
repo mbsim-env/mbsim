@@ -23,6 +23,7 @@
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_rcm.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 using namespace MBSim;
 
 namespace MBSimFlexibleBody {

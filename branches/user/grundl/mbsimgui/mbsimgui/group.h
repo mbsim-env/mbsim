@@ -22,56 +22,68 @@
 
 #include "element.h"
 #include "extended_properties.h"
+class Frame;
+class Contour;
+class Object;
+class Link;
+class Observer;
 
 class Group : public Element {
-  Q_OBJECT
+  friend class GroupPropertyDialog;
   protected:
-    QString getType() const { return "Group"; }
-    QAction *actionPaste;
-    QMenu *contourContextMenu, *objectContextMenu, *linkContextMenu, *sensorContextMenu, *observerContextMenu;
-    ExtWidget *positionWidget, *orientationWidget, *frameOfReferenceWidget; 
+    //QAction *actionPaste;
+    //QMenu *contourContextMenu, *objectContextMenu, *linkContextMenu, *sensorContextMenu, *observerContextMenu;
+    //ExtWidget *positionWidget, *orientationWidget, *frameOfReferenceWidget; 
     ExtProperty position, orientation, frameOfReference; 
+    std::vector<Frame*> frame;
+    std::vector<Contour*> contour;
+    std::vector<Group*> group;
+    std::vector<Object*> object;
+    std::vector<Link*> link;
+    //std::vector<ExtraDynamic*> extraDynamic;
+    std::vector<Observer*> observer;
 
   public:
-    Group(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    Group(const std::string &str, Element *parent);
+    ~Group();
+    std::string getType() const { return "Group"; }
     int getqSize();
     int getuSize();
     int getxSize();
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual Element *getByPathSearch(QString path);
+    static Group* readXMLFile(const std::string &filename, Element *parent);
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual Element *getByPathSearch(std::string path);
     void setActionPasteDisabled(bool flag);
-    void initializeDialog();
-    virtual void fromWidget();
-    virtual void toWidget();
     void initialize();
+    int getNumberOfFrames() {return frame.size();}
+    int getNumberOfContours() {return contour.size();}
+    int getNumberOfGroups() {return group.size();}
+    int getNumberOfObjects() {return object.size();}
+    int getNumberOfLinks() {return link.size();}
+    int getNumberOfObservers() {return observer.size();}
+    Frame* getFrame(int i) {return frame[i];}
+    Contour* getContour(int i) {return contour[i];}
+    Object* getObject(int i) {return object[i];}
+    Group* getGroup(int i) {return group[i];}
+    Link* getLink(int i) {return link[i];}
+    Observer* getObserver(int i) {return observer[i];}
+    Frame* getFrame(const std::string &name);
+    Contour* getContour(const std::string &name);
+    Object* getObject(const std::string &name);
+    Group* getGroup(const std::string &name);
+    Link* getLink(const std::string &name);
+    Observer* getObserver(const std::string &name);
 
-  protected slots:
-    void addGroup();
-    void addFrame();
-    void addContour();
-    void addPoint();
-    void addLine();
-    void addPlane();
-    void addSphere();
-    void addObject();
-    void addRigidBody();
-    void addJointConstraint();
-    void addKinematicConstraint();
-    void addLink();
-    void addJoint();
-    void addKineticExcitation();
-    void addSpringDamper();
-    void addContact();
-    void addSensor();
-    void addAbsolutePositionSensor();
-    void addObserver();
-    void addAbsoluteKinematicsObserver();
-    //void remove();
-
-  public slots:
-    void addFromFile();
-    void paste();
+    void addFrame(Frame *frame);
+    void addContour(Contour *contour);
+    void addGroup(Group *group);
+    void addObject(Object *object);
+    void addLink(Link *link);
+    void addObserver(Observer *observer);
+    void removeElement(Element *element);
+    ElementPropertyDialog* createPropertyDialog() {return new GroupPropertyDialog(this);}
+    ElementContextMenu* createContextMenu() {return new GroupContextMenu;}
 };
 
 #endif

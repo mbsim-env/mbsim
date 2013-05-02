@@ -20,7 +20,7 @@
 #include <config.h>
 #include "kinetics_widgets.h"
 #include "function_widgets.h"
-#include "string_widgets.h"
+#include "variable_widgets.h"
 #include "extended_widgets.h"
 #include "octaveutils.h"
 #include <QtGui>
@@ -74,8 +74,8 @@ void RegularizedUnilateralConstraintWidget::defineFunction(int index) {
 UnilateralNewtonImpactWidget::UnilateralNewtonImpactWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   setLayout(layout);
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
   restitutionCoefficient = new ExtWidget("Restitution coefficient",new ExtPhysicalVarWidget(input));
   layout->addWidget(restitutionCoefficient);
 }
@@ -83,8 +83,8 @@ UnilateralNewtonImpactWidget::UnilateralNewtonImpactWidget() {
 PlanarCoulombFrictionWidget::PlanarCoulombFrictionWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   setLayout(layout);
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
   frictionCoefficient = new ExtWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
   layout->addWidget(frictionCoefficient);
 }
@@ -92,8 +92,8 @@ PlanarCoulombFrictionWidget::PlanarCoulombFrictionWidget() {
 SpatialCoulombFrictionWidget::SpatialCoulombFrictionWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   setLayout(layout);
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
   frictionCoefficient = new ExtWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
   layout->addWidget(frictionCoefficient);
 }
@@ -145,8 +145,8 @@ void RegularizedSpatialFrictionWidget::defineFunction(int index) {
 PlanarCoulombImpactWidget::PlanarCoulombImpactWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   setLayout(layout);
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
   frictionCoefficient = new ExtWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
   layout->addWidget(frictionCoefficient);
 }
@@ -154,8 +154,8 @@ PlanarCoulombImpactWidget::PlanarCoulombImpactWidget() {
 SpatialCoulombImpactWidget::SpatialCoulombImpactWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   setLayout(layout);
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
   frictionCoefficient = new ExtWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
   layout->addWidget(frictionCoefficient);
 }
@@ -274,8 +274,8 @@ GeneralizedForceChoiceWidget::GeneralizedForceChoiceWidget() {
   layout->setMargin(0);
   setLayout(layout);
 
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new MatColsVarWidget(3,1,1,3),noUnitUnits(),1));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new MatColsVarWidget(3,1,1,3),noUnitUnits(),1));
   mat = new ExtWidget("Direction vectors",new ExtPhysicalVarWidget(input));
   layout->addWidget(mat);
 
@@ -287,7 +287,7 @@ GeneralizedForceChoiceWidget::GeneralizedForceChoiceWidget() {
 }
 
 int GeneralizedForceChoiceWidget::getSize() const {
-  string str = evalOctaveExpression(static_cast<ExtPhysicalVarWidget*>(mat->getWidget())->getCurrentPhysicalStringWidget()->getValue());
+  string str = evalOctaveExpression(static_cast<ExtPhysicalVarWidget*>(mat->getWidget())->getCurrentPhysicalVariableWidget()->getValue().toStdString());
   vector<vector<string> > A = strToMat(str);
   return A.size()?A[0].size():0;
 }
@@ -297,9 +297,9 @@ ForceChoiceWidget::ForceChoiceWidget() {
   layout->setMargin(0);
   setLayout(layout);
 
-  vector<PhysicalStringWidget*> input;
+  vector<PhysicalVariableWidget*> input;
   MatColsVarWidget *mat_ = new MatColsVarWidget(3,1,1,3);
-  input.push_back(new PhysicalStringWidget(mat_,noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(mat_,noUnitUnits(),1));
   mat = new ExtWidget("Direction vectors",new ExtPhysicalVarWidget(input));
   layout->addWidget(mat);
 
@@ -319,7 +319,7 @@ void ForceChoiceWidget::resizeVariables() {
 }
 
 int ForceChoiceWidget::getSize() const {
-  string str = evalOctaveExpression(static_cast<ExtPhysicalVarWidget*>(mat->getWidget())->getCurrentPhysicalStringWidget()->getValue());
+  string str = evalOctaveExpression(static_cast<ExtPhysicalVarWidget*>(mat->getWidget())->getCurrentPhysicalVariableWidget()->getValue().toStdString());
   vector<vector<string> > A = strToMat(str);
   return A.size()?A[0].size():0;
 }
@@ -335,8 +335,8 @@ ForceDirectionWidget::ForceDirectionWidget(Element *element_) : element(element_
   hlayout->setMargin(0);
   forceDirWidget->setLayout(hlayout);
 
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new VecWidget(3),noUnitUnits(),1));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new VecWidget(3),noUnitUnits(),1));
   mat = new ExtWidget("Direction vector",new ExtPhysicalVarWidget(input));
   hlayout->addWidget(mat);
   refFrame = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(element,0));
@@ -353,14 +353,14 @@ GeneralizedForceDirectionWidget::GeneralizedForceDirectionWidget() {
   layout->setMargin(0);
   setLayout(layout);
 
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new MatColsVarWidget(3,1,1,3),noUnitUnits(),1));
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new MatColsVarWidget(3,1,1,3),noUnitUnits(),1));
   mat = new ExtWidget("Direction vectors",new ExtPhysicalVarWidget(input));
   layout->addWidget(mat);
 }
 
 int GeneralizedForceDirectionWidget::getSize() const {
-  string str = evalOctaveExpression(static_cast<ExtPhysicalVarWidget*>(mat->getWidget())->getCurrentPhysicalStringWidget()->getValue());
+  string str = evalOctaveExpression(static_cast<ExtPhysicalVarWidget*>(mat->getWidget())->getCurrentPhysicalVariableWidget()->getValue().toStdString());
   vector<vector<string> > A = strToMat(str);
   return A.size()?A[0].size():0;
 }

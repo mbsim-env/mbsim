@@ -37,8 +37,8 @@ namespace MBSim {
        * \brief initializes environment variables by XML element
        * \param XML element
        */
-      virtual void initializeUsingXML(TiXmlElement *element)=0;
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent)=0;
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element)=0;
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent)=0;
       /***************************************************/
     
     protected:
@@ -61,8 +61,8 @@ namespace MBSim {
   class MBSimEnvironment : public Environment {
     public:
       /* INHERITED INTERFACE */
-      virtual void initializeUsingXML(TiXmlElement *element);
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
       /***************************************************/
 
       /* GETTER / SETTER */

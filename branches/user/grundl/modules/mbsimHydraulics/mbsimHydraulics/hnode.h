@@ -88,7 +88,7 @@ namespace MBSimHydraulics {
 
       void plot(double t, double dt);
 
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
 
     protected:
       std::vector<connectedLinesStruct> connectedLines;
@@ -115,7 +115,7 @@ namespace MBSimHydraulics {
 
       void updateg(double t);
       void init(MBSim::InitStage stage);
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       virtual bool isSingleValued() const {return true;}
 
     private:
@@ -149,7 +149,7 @@ namespace MBSimHydraulics {
       void calcxSize() {xSize=1; }
 
       void init(MBSim::InitStage stage);
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
 
       void updatexRef(const fmatvec::Vec &xParent);
 
@@ -225,7 +225,7 @@ namespace MBSimHydraulics {
       void calcsvSize() {svSize=1; }
 
       void init(MBSim::InitStage stage);
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       void plot(double t, double dt);
 
       void checkActive(int j);
@@ -271,7 +271,7 @@ namespace MBSimHydraulics {
 
       void updateg(double t);
       void init(MBSim::InitStage stage);
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
 
     private:
       MBSimControl::Signal * pSignal;

@@ -65,7 +65,7 @@ namespace MBSimFlexibleBody {
       /* INHERITED INTERFACE OF ELEMENT */
       virtual void plot(double t, double dt=1);
       virtual std::string getType() const { return "FlexibleBody1s23BTA"; }
-      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       /***************************************************/
 
       /* GETTER / SETTER */

@@ -17,12 +17,14 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
+#include <config.h>
 #include "mbsimControl/object_sensors.h"
 #include "mbsimControl/objectfactory.h"
 #include "mbsim/object.h"
 #include "mbsim/dynamic_system.h"
 
 using namespace fmatvec;
+using namespace MBXMLUtils;
 using namespace MBSim;
 
 namespace MBSimControl {

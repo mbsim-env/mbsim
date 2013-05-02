@@ -17,6 +17,7 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
+#include <config.h>
 #include "mbsimHydraulics/pressure_loss.h"
 #include "mbsimHydraulics/rigid_line.h"
 #include "mbsimHydraulics/leakage_line.h"
@@ -28,6 +29,7 @@
 #include "mbsim/utils/eps.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
 

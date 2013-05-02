@@ -21,6 +21,7 @@
  *
  */ 
 
+#include <config.h>
 #include "mbsimControl/linear_transfer_system.h"
 #include "mbsimControl/objectfactory.h"
 #include "mbsimControl/signal_.h"
@@ -28,6 +29,7 @@
 #include "mbsim/utils/eps.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
 

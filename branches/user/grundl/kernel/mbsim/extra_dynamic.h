@@ -79,7 +79,7 @@ namespace MBSim {
       virtual Element *getByPathSearch(std::string path);
       /***************************************************/
       
-      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
 
     protected:
       /**

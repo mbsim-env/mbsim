@@ -17,12 +17,14 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
+#include <config.h>
 #include "mbsimControl/signal_processing_system.h"
 #include "mbsimControl/signal_.h"
 #include "mbsimControl/objectfactory.h"
 #include "mbsimControl/obsolet_hint.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
 

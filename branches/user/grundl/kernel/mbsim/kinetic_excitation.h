@@ -104,8 +104,8 @@ namespace MBSim {
       }
 #endif
 
-      void initializeUsingXML(TiXmlElement *element);
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
 
       virtual std::string getType() const { return "KineticExcitation"; }
 
@@ -118,7 +118,7 @@ namespace MBSim {
       /**
        * \brief directions of force and moment in frame of reference
        */
-      fmatvec::Mat3V forceDir, momentDir;
+      fmatvec::Mat3xV forceDir, momentDir;
 
       /**
        * \brief portions of the force / moment in the specific directions

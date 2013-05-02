@@ -54,9 +54,9 @@ namespace MBSim {
          * \brief initialize function with XML code
          * \param XML element
          */
-        virtual void initializeUsingXML(TiXmlElement *element) {}
-        virtual TiXmlElement* writeXMLFile(TiXmlNode *parent) { 
-          TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
+        virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+        virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { 
+          MBXMLUtils::TiXmlElement *ele0=new MBXMLUtils::TiXmlElement(MBSIMNS+getType());
           parent->LinkEndChild(ele0);
           return ele0;
         }
@@ -93,9 +93,9 @@ namespace MBSim {
          * \brief initialize function with XML code
          * \param XML element
          */
-        virtual void initializeUsingXML(TiXmlElement *element) {}
-        virtual TiXmlElement* writeXMLFile(TiXmlNode *parent) { 
-          TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
+        virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+        virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { 
+          MBXMLUtils::TiXmlElement *ele0=new MBXMLUtils::TiXmlElement(MBSIMNS+getType());
           parent->LinkEndChild(ele0);
           return ele0;
         }
@@ -132,7 +132,7 @@ namespace MBSim {
          * \brief initialize function with XML code
          * \param XML element
          */
-        virtual void initializeUsingXML(TiXmlElement *element) {}
+        virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
         /***************************************************/
     };
 
@@ -192,15 +192,15 @@ namespace MBSim {
          * \brief initialize function with XML code
          * \param XML element
          */
-        virtual void initializeUsingXML(TiXmlElement *element) {
+        virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
           Function1<Ret,double>::initializeUsingXML(element);
-          TiXmlElement * e;
+          MBXMLUtils::TiXmlElement * e;
           e=element->FirstChildElement(MBSIMNS"orderOfDerivative");
           if (e)
             setOrderOfDerivative(atoi(e->GetText()));
         }
-        TiXmlElement* writeXMLFile(TiXmlNode *parent) {
-          TiXmlElement *ele0 = Function1<Ret,double>::writeXMLFile(parent);
+        MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) {
+          MBXMLUtils::TiXmlElement *ele0 = Function1<Ret,double>::writeXMLFile(parent);
           addElementText(ele0,MBSIMNS"orderOfDerivative",order);
           return ele0;
         }
@@ -236,15 +236,15 @@ namespace MBSim {
 
         /* INHERITED INTERFACE OF FUNCTION1 */
         virtual Ret operator()(const Arg& p, const void * =NULL) { return c; }
-        void initializeUsingXML(TiXmlElement *element) {
+        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
           Function1<Ret,Arg>::initializeUsingXML(element);
-          TiXmlElement *e;
+          MBXMLUtils::TiXmlElement *e;
           e=element->FirstChildElement(MBSIMNS"value");
           // TODO: use c=fromMatStr<Ret>(e->GetText()) and remove ConstantFunction1<double, Arg>
           c=Ret(e->GetText());
         }
-        virtual TiXmlElement* writeXMLFile(TiXmlNode *parent) {
-          TiXmlElement *ele0 = Function1<Ret,Arg>::writeXMLFile(parent);
+        virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) {
+          MBXMLUtils::TiXmlElement *ele0 = Function1<Ret,Arg>::writeXMLFile(parent);
           addElementText(ele0,MBSIMNS"value",c);
           return ele0;
         } 
@@ -284,14 +284,14 @@ namespace MBSim {
 
         /* INHERITED INTERFACE OF FUNCTION1 */
         virtual double operator()(const Arg& p, const void * =NULL) { return c; }
-        void initializeUsingXML(TiXmlElement *element) {
+        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
           Function1<double,Arg>::initializeUsingXML(element);
-          TiXmlElement *e;
+          MBXMLUtils::TiXmlElement *e;
           e=element->FirstChildElement(MBSIMNS"value");
           c=Element::getDouble(e);
         }
-        virtual TiXmlElement* writeXMLFile(TiXmlNode *parent) {
-          TiXmlElement *ele0 = Function1<double,Arg>::writeXMLFile(parent);
+        virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) {
+          MBXMLUtils::TiXmlElement *ele0 = Function1<double,Arg>::writeXMLFile(parent);
           addElementText(ele0,MBSIMNS"value",c);
           return ele0;
         } 
@@ -330,9 +330,9 @@ namespace MBSim {
 
         /* INHERITED INTERFACE OF FUNCTION2 */
         virtual Ret operator()(const Arg1& p1, const Arg2& p2, const void * =NULL) { return c; }
-        void initializeUsingXML(TiXmlElement *element) {
+        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
           Function2<Ret,Arg1,Arg2>::initializeUsingXML(element);
-          TiXmlElement *e;
+          MBXMLUtils::TiXmlElement *e;
           e=element->FirstChildElement(MBSIMNS"value");
           c=Ret(e->GetText());
         }
@@ -372,7 +372,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF FUNCTION2 */
       virtual double operator()(const double& g, const double& gd, const void * =NULL) { return c*(g-l0) + d*gd; }
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -408,7 +408,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF FUNCTION2 */
       virtual double operator()(const double& g, const double& gd, const void * =NULL) { return (*gForceFun)(g)(0) + (*gdForceFun)(gd)(0); }
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -447,9 +447,9 @@ namespace MBSim {
 
         /* INHERITED INTERFACE OF FUNCTION2 */
         virtual double operator()(const Arg1& p1, const Arg2& p2, const void * =NULL) { return c; }
-        void initializeUsingXML(TiXmlElement *element) {
+        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
           Function2<double,Arg1,Arg2>::initializeUsingXML(element);
-          TiXmlElement *e;
+          MBXMLUtils::TiXmlElement *e;
           e=element->FirstChildElement(MBSIMNS"value");
           c=Element::getDouble(e);
         }
@@ -492,7 +492,7 @@ namespace MBSim {
         else
           return -c*g;
       }
-      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -530,8 +530,8 @@ namespace MBSim {
       virtual double operator()(const double& g, const double& gd, const void * =NULL) { 
         return -c*g - d*gd;
       }
-      virtual void initializeUsingXML(TiXmlElement *element);
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
 
       virtual std::string getType() const { return "LinearRegularizedBilateralConstraint"; }
       /***************************************************/
@@ -570,7 +570,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF FUNCTION2 */
       virtual fmatvec::Vec operator()(const fmatvec::Vec &gd, const double& laN, const void * =NULL);
-      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -608,7 +608,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF FUNCTION2 */
       virtual fmatvec::Vec operator()(const fmatvec::Vec &gd, const double& laN, const void * =NULL);
-      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -636,7 +636,7 @@ namespace MBSim {
       InfluenceFunction(){}
       /* INHERITED INTERFACE OF FUNCTION2 */
       virtual double operator()(const fmatvec::Vec2& firstContourLagrangeParameter, const fmatvec::Vec2& secondContourLagrangeParameter, const void * = NULL)=0;
-      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       /***************************************************/
   };
 
@@ -658,7 +658,7 @@ namespace MBSim {
         else
           return 0;
       }
-      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       /***************************************************/
 
     protected:
@@ -680,7 +680,7 @@ namespace MBSim {
       virtual double operator()(const fmatvec::Vec2& firstContourLagrangeParameter, const fmatvec::Vec2& secondContourLagrangeParameter, const void * = NULL) {
         return couplingValue;
       }
-      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       /***************************************************/
 
     protected:

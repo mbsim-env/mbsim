@@ -17,18 +17,15 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _PROPERTY_WIDGET_H_
-#define _PROPERTY_WIDGET_H_
+#ifndef _PROPERTY_DIALOG_H_
+#define _PROPERTY_DIALOG_H_
 
 #include <QScrollArea>
 #include <QTabWidget>
 #include <QDialog>
 #include <map>
 
-class ExtWidget;
 class QVBoxLayout;
-class TiXmlElement;
-class TiXmlNode;
 class QDialogButtonBox;
 class QAbstractButton;
 
@@ -41,18 +38,18 @@ class PropertyDialog : public QDialog {
     void setParentObject(QObject *obj);
     void addToTab(const QString &name, QWidget* widget_);
     void addTab(const QString &name, int i=-1);
-    QObject* getParentObject() { return parentObject; }
     void addStretch();
     void updateWidget();
-    void resizeVariables();
   protected:
-    QObject* parentObject;
     std::map<QString,QVBoxLayout*> layout;
     std::vector<QWidget*> widget;
     QTabWidget *tabWidget;
     QDialogButtonBox *buttonBox;
+    QPushButton *buttonResize;
   public slots:
     void clicked(QAbstractButton *button);
+    virtual void toWidget() {}
+    virtual void fromWidget() {}
   signals:
     void apply();
 };

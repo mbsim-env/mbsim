@@ -23,13 +23,9 @@
 #include "objectfactory.h"
 #include <string>
 #include "basic_properties.h"
-#include "basic_widgets.h"
-#include "string_widgets.h"
-#include "extended_widgets.h"
 
 using namespace std;
-
-TiXmlElement* Element::copiedElement;
+using namespace MBXMLUtils;
 
 void Environment::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e;
@@ -53,64 +49,21 @@ Environment::~Environment() {}
 
 Environment *Environment::instance=NULL;
 
-Solver::Solver(const QString &str, QTreeWidgetItem *parentItem, int ind) : Group(str, parentItem, ind), solverParametersProperty(0,false), inverseKineticsProperty(0,false) {
+Solver::Solver(const string &str, Element *parent) : Group(str,parent), solverParameters(0,false), inverseKinetics(0,false) {
 
-  setText(1,getType());
-
-  Element::copiedElement = 0;
-
-  vector<PhysicalStringProperty*> input;
+  vector<PhysicalVariableProperty*> input;
   vector<string> g(3);
   g[0] = "0";
   g[1] = "-9.81";
   g[2] = "0";
-  input.push_back(new PhysicalStringProperty(new VecProperty(g),"m/s^2",MBSIMNS"accelerationOfGravity"));
-  environmentProperty.setProperty(new ExtPhysicalVarProperty(input));
+  input.push_back(new PhysicalVariableProperty(new VecProperty(g),"m/s^2",MBSIMNS"accelerationOfGravity"));
+  environment.setProperty(new ExtPhysicalVarProperty(input));
 
-  solverParametersProperty.setProperty(new SolverParametersProperty); 
-
-  input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("1"),"",MBSIMNS"inverseKinetics"));
-  inverseKineticsProperty.setProperty(new ExtPhysicalVarProperty(input));
-}
-
-void Solver::initializeDialog() {
-  Group::initializeDialog();
-
-  dialog->addTab("Environment");
-  dialog->addTab("Solver parameters");
-  dialog->addTab("Extra");
-
-  vector<PhysicalStringWidget*> input;
-  vector<string> g(3);
-  g[0] = "0";
-  g[1] = "-9.81";
-  g[2] = "0";
-  input.push_back(new PhysicalStringWidget(new VecWidget(g),accelerationUnits(),0));
-  environmentWidget = new ExtWidget("Acceleration of gravity",new ExtPhysicalVarWidget(input));
-  dialog->addToTab("Environment", environmentWidget);
-
-  solverParametersWidget = new ExtWidget("Solver parameters",new SolverParametersWidget,true); 
-  dialog->addToTab("Solver parameters",solverParametersWidget);
+  solverParameters.setProperty(new SolverParametersProperty); 
 
   input.clear();
-  input.push_back(new PhysicalStringWidget(new BoolWidget("1"),QStringList(),1));
-  inverseKineticsWidget = new ExtWidget("Inverse kinetics",new ExtPhysicalVarWidget(input),true); 
-  dialog->addToTab("Extra", inverseKineticsWidget);
-}
-
-void Solver::toWidget() {
-  Group::toWidget();
-  environmentProperty.toWidget(environmentWidget);
-  solverParametersProperty.toWidget(solverParametersWidget);
-  inverseKineticsProperty.toWidget(inverseKineticsWidget);
-}
-
-void Solver::fromWidget() {
-  Group::fromWidget();
-  environmentProperty.fromWidget(environmentWidget);
-  solverParametersProperty.fromWidget(solverParametersWidget);
-  inverseKineticsProperty.fromWidget(inverseKineticsWidget);
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"),"",MBSIMNS"inverseKinetics"));
+  inverseKinetics.setProperty(new ExtPhysicalVarProperty(input));
 }
 
 void Solver::initializeUsingXML(TiXmlElement *element) {
@@ -122,13 +75,13 @@ void Solver::initializeUsingXML(TiXmlElement *element) {
   Environment *env;
   while((env=ObjectFactory::getInstance()->getEnvironment(e))) {
     env->initializeUsingXML(e);
-    environmentProperty.initializeUsingXML(e);
+    environment.initializeUsingXML(e);
     e=e->NextSiblingElement();
   }
 
-  solverParametersProperty.initializeUsingXML(element);
+  solverParameters.initializeUsingXML(element);
 
-  inverseKineticsProperty.initializeUsingXML(element);
+  inverseKinetics.initializeUsingXML(element);
 }
 
 TiXmlElement* Solver::writeXMLFile(TiXmlNode *parent) {
@@ -138,37 +91,37 @@ TiXmlElement* Solver::writeXMLFile(TiXmlNode *parent) {
 
   TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"environments" );
   TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"MBSimEnvironment" );
-  environmentProperty.writeXMLFile(ele2);
+  environment.writeXMLFile(ele2);
   ele1->LinkEndChild( ele2 );
   ele0->LinkEndChild( ele1 );
 
-  solverParametersProperty.writeXMLFile(ele0);
+  solverParameters.writeXMLFile(ele0);
 
-  inverseKineticsProperty.writeXMLFile(ele0);
+  inverseKinetics.writeXMLFile(ele0);
 
   return ele0;
 }
 
-Solver* Solver::readXMLFile(const QString &filename, QTreeWidgetItem* parent) {
+Solver* Solver::readXMLFile(const string &filename) {
   MBSimObjectFactory::initialize();
   TiXmlDocument doc;
-  bool ret=doc.LoadFile(filename.toAscii().data());
+  bool ret=doc.LoadFile(filename);
   assert(ret==true);
   TiXml_PostLoadFile(&doc);
   TiXmlElement *e=doc.FirstChildElement();
   map<string,string> dummy;
   incorporateNamespace(doc.FirstChildElement(), dummy);
-  Solver *solver=dynamic_cast<Solver*>(ObjectFactory::getInstance()->createGroup(e, parent, 1));
-  solver->initializeUsingXML(doc.FirstChildElement());
+  Solver *solver=dynamic_cast<Solver*>(ObjectFactory::getInstance()->createGroup(e,0));
+  solver->initializeUsingXML(e);
   solver->initialize();
   return solver;
 }
 
-void Solver::writeXMLFile(const QString &name) {
+void Solver::writeXMLFile(const string &name) {
   TiXmlDocument doc;
   TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
   doc.LinkEndChild( decl );
   writeXMLFile(&doc);
   unIncorporateNamespace(doc.FirstChildElement(), Utils::getMBSimNamespacePrefixMapping());  
-  doc.SaveFile((name.right(10)==".mbsim.xml"?name:name+".mbsim.xml").toAscii().data());
+  doc.SaveFile((name.length()>10 && name.substr(name.length()-10,10)==".mbsim.xml")?name:name+".mbsim.xml");
 }

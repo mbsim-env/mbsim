@@ -24,19 +24,16 @@
 #include "extended_properties.h"
 
 class Joint : public Link {
+  friend class JointPropertyDialog;
   public:
-    Joint(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    Joint(const std::string &str, Element *parent);
     ~Joint();
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    QString getType() const { return "Joint"; }
-    void initializeDialog();
-    virtual void fromWidget();
-    virtual void toWidget();
+    std::string getType() const { return "Joint"; }
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void initialize();
-
+    ElementPropertyDialog* createPropertyDialog() {return new JointPropertyDialog(this);}
   protected:
-    ExtWidget *forceWidget, *momentWidget, *connectionsWidget, *forceArrowWidget, *momentArrowWidget;
     ExtProperty force, moment, connections, forceArrow, momentArrow;
 };
 

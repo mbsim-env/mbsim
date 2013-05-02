@@ -22,6 +22,7 @@
 #include "mbsim/object.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 using namespace fmatvec;
 
 namespace MBSim {

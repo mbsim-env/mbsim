@@ -22,8 +22,10 @@
 
 #include <QWidget>
 
-class TiXmlElement;
-class TiXmlNode;
+namespace MBXMLUtils {
+  class TiXmlElement;
+  class TiXmlNode;
+}
 
 class WidgetInterface {
 

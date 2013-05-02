@@ -17,6 +17,7 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
+#include <config.h>
 #include "mbsimHydraulics/elastic_line_galerkin.h"
 #include "mbsimHydraulics/objectfactory.h"
 #include "environment.h"
@@ -26,6 +27,7 @@
 #include "mbsim/dynamic_system_solver.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
 

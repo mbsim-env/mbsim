@@ -38,7 +38,7 @@ namespace MBSimControl {
       std::string getType() const { return "GeneralizedCoordinateSensor"; }
       void setObject(MBSim::Object * object_) {object=object_; }
       void setIndex(int index_) {index=index_; }
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       void init(MBSim::InitStage stage);
     protected:
       MBSim::Object * object;

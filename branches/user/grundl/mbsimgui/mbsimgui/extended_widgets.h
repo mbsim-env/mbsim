@@ -25,8 +25,8 @@
 #include <QGroupBox>
 
 class QStackedWidget;
-class StringWidget;
-class PhysicalStringWidget;
+class VariableWidget;
+class PhysicalVariableWidget;
 class EvalDialog;
 class QVBoxLayout;
 
@@ -34,18 +34,19 @@ class ExtPhysicalVarWidget : public Widget {
   Q_OBJECT
 
   public:
-    ExtPhysicalVarWidget(std::vector<PhysicalStringWidget*> inputWidget);
+    ExtPhysicalVarWidget(std::vector<PhysicalVariableWidget*> inputWidget, int evalIndex=0);
+    ~ExtPhysicalVarWidget();
 
-    PhysicalStringWidget* getPhysicalStringWidget(int i) {return inputWidget[i];}
-    PhysicalStringWidget* getCurrentPhysicalStringWidget() {return inputWidget[inputCombo->currentIndex()];}
+    PhysicalVariableWidget* getPhysicalVariableWidget(int i) {return inputWidget[i];}
+    PhysicalVariableWidget* getCurrentPhysicalVariableWidget() {return inputWidget[inputCombo->currentIndex()];}
     int getNumberOfInputs() const {return inputWidget.size();}
     int getCurrentInput() const {return inputCombo->currentIndex();}
     void setCurrentInput(int i) {inputCombo->setCurrentIndex(i);}
-    virtual std::string getValue() const;
-    void setValue(const std::string &str);
+    virtual QString getValue() const;
+    void setValue(const QString &str);
 
   protected:
-    std::vector<PhysicalStringWidget*> inputWidget;
+    std::vector<PhysicalVariableWidget*> inputWidget;
     QComboBox *inputCombo;
     EvalDialog *evalDialog;
     QStackedWidget *stackedWidget;
@@ -64,7 +65,7 @@ class WidgetChoiceWidget : public Widget {
   friend class PropertyChoiceProperty;
 
   public:
-    WidgetChoiceWidget(const std::vector<std::string> &name, const std::vector<QWidget*> &widget);
+    WidgetChoiceWidget(const std::vector<QString> &name, const std::vector<QWidget*> &widget);
     virtual void updateWidget();
   protected slots:
     void changeCurrent(int idx);

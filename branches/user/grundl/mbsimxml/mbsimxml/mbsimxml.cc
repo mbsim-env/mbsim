@@ -44,8 +44,7 @@ int runProgram(const vector<string> &arg) {
     throw runtime_error("Spawn process terminated abnormally.");
 #else
   int ret;
-  extern char **_environ;
-  ret=_spawnve(_P_WAIT, argv[0], argv, _environ);
+  ret=_spawnv(_P_WAIT, argv[0], argv);
   delete[]argv;
   if(ret==-1)
     throw runtime_error("Unable to spawn process.");
@@ -66,7 +65,7 @@ bool newer(const string &filenamea, const string &filenameb) {
 // return filename without path but with extension (OS-independent)
 string basename(const string &filename) {
   bfs::path p(filename.c_str());
-  return (--p.end())->generic_string();
+  return p.filename().generic_string();
 }
 
 // create filename if it does not exist or touch it if if exists (OS-independent)
@@ -220,7 +219,7 @@ int main(int argc, char *argv[]) {
 
     // run preprocessor
     vector<string> command;
-    command.push_back(MBXMLUTILSBIN+"/mbxmlutilspp");
+    command.push_back(MBXMLUTILSBIN+"/mbxmlutilspp"+EXEEXT);
     command.insert(command.end(), AUTORELOAD.begin(), AUTORELOAD.end());
     command.insert(command.end(), MPATH.begin(), MPATH.end());
     command.push_back(PARAM);
@@ -233,7 +232,7 @@ int main(int argc, char *argv[]) {
 
     if(!ONLYPP && ret==0) {
       vector<string> command;
-      command.push_back(MBSIMXMLBIN+"/mbsimflatxml");
+      command.push_back(MBSIMXMLBIN+"/mbsimflatxml"+EXEEXT);
       if(NOINT!="") command.push_back(NOINT);
       if(ONLY1OUT!="") command.push_back(ONLY1OUT);
       command.push_back(PPMBSIM);

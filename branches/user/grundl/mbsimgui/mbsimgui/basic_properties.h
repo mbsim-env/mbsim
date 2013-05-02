@@ -28,117 +28,120 @@ class Element;
 class Frame;
 class Contour;
 class RigidBody;
-class TiXmlElement;
-class TiXmlNode;
+namespace MBXMLUtils {
+  class TiXmlElement;
+  class TiXmlNode;
+}
 
 class LocalFrameOfReferenceProperty : public Property {
   protected:
-    Frame *frame;
+    std::string frame;
     Element* element;
     std::string xmlName;
   public:
-    LocalFrameOfReferenceProperty(Frame* frame_=0, Element* element_=0, const std::string &xmlName_="") : frame(frame_), element(element_), xmlName(xmlName_) {}
-    Frame* getFrame() const {return frame;}
-    void setFrame(Frame *frame_) {frame = frame_;}
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element); 
+    LocalFrameOfReferenceProperty(const std::string &frame_="", Element* element_=0, const std::string &xmlName_="") : frame(frame_), element(element_), xmlName(xmlName_) {}
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
+    void setFrame(const std::string &str) {frame = str;}
+    const std::string& getFrame() const {return frame;}
 };
 
 class ParentFrameOfReferenceProperty : public Property {
   protected:
-    Frame *frame;
+    std::string frame;
     Element* element;
     std::string xmlName;
-    QString saved_frameOfReference;
-
   public:
-    ParentFrameOfReferenceProperty(Frame* frame_=0, Element* element_=0, const std::string &xmlName_="") : frame(frame_), element(element_), xmlName(xmlName_) {}
-
-    void initialize();
-    Frame* getFrame() {return frame;}
-    void setFrame(Frame *frame_) {frame = frame_;}
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    void setSavedFrameOfReference(const QString &str) {saved_frameOfReference = str;}
-    const QString& getSavedFrameOfReference() const {return saved_frameOfReference;}
+    ParentFrameOfReferenceProperty(const std::string &frame_="", Element* element_=0, const std::string &xmlName_="") : frame(frame_), element(element_), xmlName(xmlName_) {}
+    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
+    void setFrame(const std::string &str) {frame = str;}
+    const std::string& getFrame() const {return frame;}
 };
 
 class FrameOfReferenceProperty : public Property {
   protected:
-    Frame *frame;
+    std::string frame;
     Element* element;
     std::string xmlName;
-    QString saved_frameOfReference;
   public:
-    FrameOfReferenceProperty(Frame* frame_=0, Element* element_=0, const std::string &xmlName_="") : frame(frame_), element(element_), xmlName(xmlName_) {}
-    Frame* getFrame() const {return frame;}
-    void setFrame(Frame *frame_) {frame = frame_;}
-    void initialize();
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element); 
+    FrameOfReferenceProperty(const std::string &frame_="", Element* element_=0, const std::string &xmlName_="") : frame(frame_), element(element_), xmlName(xmlName_) {}
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    void setSavedFrameOfReference(const QString &str) {saved_frameOfReference = str;}
-    const QString& getSavedFrameOfReference() const {return saved_frameOfReference;}
-
+    void setFrame(const std::string &str) {frame = str;}
+    const std::string& getFrame() const {return frame;}
 };
+
 class ContourOfReferenceProperty : public Property {
   protected:
-    Contour *contour;
+    std::string contour;
     Element* element;
     std::string xmlName;
-    QString saved_contourOfReference;
   public:
-    ContourOfReferenceProperty(Contour* contour_=0, Element* element_=0, const std::string &xmlName_="") : contour(contour_), element(element_), xmlName(xmlName_) {}
-    Contour* getContour() const {return contour;}
-    void setContour(Contour *contour_) {contour = contour_;}
-    void initialize();
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element); 
+    ContourOfReferenceProperty(const std::string &contour_="", Element* element_=0, const std::string &xmlName_="") : contour(contour_), element(element_), xmlName(xmlName_) {}
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    void setSavedContourOfReference(const QString &str) {saved_contourOfReference = str;}
-    const QString& getSavedContourOfReference() const {return saved_contourOfReference;}
+    void setContour(const std::string &str) {contour = str;}
+    const std::string& getContour() const {return contour;}
 };
 
 class RigidBodyOfReferenceProperty : public Property {
-
-  public:
-    RigidBodyOfReferenceProperty(RigidBody *body_=0, Element *element_=0, const std::string &xmlName_="") : body(body_), element(element_), xmlName(xmlName_) {}
-    RigidBody* getBody() const {return body;}
-    void setBody(RigidBody* body_) {body = body_;}
-    void initialize();
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element); 
-    void fromWidget(QWidget *widget);
-    void toWidget(QWidget *widget);
-    void setSavedBodyOfReference(const QString &str) {saved_bodyOfReference = str;}
-    const QString& getSavedBodyOfReference() const {return saved_bodyOfReference;}
-
   protected:
-    RigidBody* body;
+    std::string body;
     Element* element;
     std::string xmlName;
-    QString saved_bodyOfReference;
+  public:
+    RigidBodyOfReferenceProperty(const std::string &body_="", Element *element_=0, const std::string &xmlName_="") : body(body_), element(element_), xmlName(xmlName_) {}
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+    void setBody(const std::string &str) {body = str;}
+    const std::string& getBody() const {return body;}
 };
 
 class FileProperty : public Property {
 
   public:
     FileProperty(const std::string &xmlName_) : xmlName(xmlName_) {}
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
+    const std::string& getFileName() const {return fileName;}
+    void setFileName(const std::string &str) {fileName=str;}
+    std::string getAbsoluteFilePath() const;
+    void setAbsoluteFilePath(const std::string &str);
 
   protected:
-    QString fileName;
+    std::string fileName;
     std::string xmlName;
-    QString absoluteFilePath;
+    std::string absoluteFilePath;
+};
+
+class TextProperty : public Property {
+
+  public:
+    TextProperty(const std::string &text_, const std::string &xmlName_, int quote_=0) : text(text_), xmlName(xmlName_), quote(quote_) {}
+    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+    const std::string& getText() const {return text;}
+    void setText(const std::string &text_) {text = text_;}
+
+  protected:
+    std::string text;
+    std::string xmlName;
+    int quote;
 };
 
 class DependenciesProperty : public Property {
@@ -147,8 +150,8 @@ class DependenciesProperty : public Property {
     DependenciesProperty(Element* element_, const std::string &xmlName_) : element(element_), xmlName(xmlName_) {}
 
     void initialize();
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -167,8 +170,8 @@ class ConnectFramesProperty : public Property {
     ConnectFramesProperty(int n, Element* element);
 
     void initialize();
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -183,8 +186,8 @@ class ConnectContoursProperty : public Property {
     ConnectContoursProperty(int n, Element* element);
 
     void initialize();
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -198,8 +201,8 @@ class SolverTolerancesProperty : public Property {
   public:
     SolverTolerancesProperty();
 
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -212,13 +215,66 @@ class SolverParametersProperty : public Property {
   public:
     SolverParametersProperty();
 
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
   protected:
     ExtProperty tolerances;
+};
+
+class GearDependencyProperty : public Property {
+  public:
+    GearDependencyProperty(Element* element);
+    void initialize() {refBody.initialize();}
+    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+  protected:
+    Element* element;
+    RigidBodyOfReferenceProperty refBody;
+    ExtProperty ratio;
+};
+
+class GearDependenciesProperty : public Property {
+
+  public:
+    GearDependenciesProperty(Element* element_, const std::string &xmlName_) : element(element_), xmlName(xmlName_) {}
+
+    void initialize();
+    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+
+  protected:
+    Element* element;
+    std::string xmlName;
+    std::vector<GearDependencyProperty*> refBody;
+
+    void addDependency();
+    void updateGeneralizedCoordinatesOfBodies();
+};
+
+class EmbedProperty : public Property {
+
+  public:
+    EmbedProperty(Element *element);
+    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+    std::string getFile() const {return static_cast<const FileProperty*>(href.getProperty())->getFileName();}
+    bool hasCounter() const {return counterName.isActive();}
+    std::string getCounterName() const {return static_cast<const TextProperty*>(counterName.getProperty())->getText();}
+    bool hasParameterFile() const {return (parameterList.isActive() && static_cast<const FileProperty*>(parameterList.getProperty())->getFileName()!="");}
+    std::string getParameterFile() const {return static_cast<const FileProperty*>(parameterList.getProperty())->getFileName();}
+
+  protected:
+    ExtProperty href, count, counterName, parameterList;
+
 };
 
 #endif

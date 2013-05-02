@@ -36,7 +36,7 @@ namespace MBSimControl {
     public:
       LinkSensor(const std::string &name) : Sensor(name), link(NULL), linkString("") {}
       std::string getType() const { return "LinkSensor"; }
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       void init(MBSim::InitStage stage);
       void setLink(MBSim::Link * link_) {link=link_; }
     protected:

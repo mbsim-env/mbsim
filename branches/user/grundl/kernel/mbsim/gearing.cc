@@ -125,7 +125,7 @@ namespace MBSim {
 
     Vec3 WvZ0Z1 = Z1.getVelocity()-Z0.getVelocity();
     RigidBody* bodyP0 = dynamic_cast<RigidBody*>(P0->getParent());
-    Mat3V a = bodyP0->getFrameOfReference()->getOrientation()*bodyP0->getPJR();
+    Mat3xV a = bodyP0->getFrameOfReference()->getOrientation()*bodyP0->getPJR();
     Wt = crossProduct(WrP0Z,a.col(0));
     Wt /= -nrm2(Wt);
     gd(0)=Wt.T()*WvZ0Z1;

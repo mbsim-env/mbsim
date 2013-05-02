@@ -26,8 +26,8 @@
 
 class Environment : public QObject {
   public:
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *parent);
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
     static Environment *getInstance() { return instance?instance:(instance=new Environment); }
 
   protected:
@@ -37,22 +37,22 @@ class Environment : public QObject {
 };
 
 class Solver : public Group {
+  friend class SolverPropertyDialog;
   protected:
-    ExtWidget *environmentWidget, *solverParametersWidget, *inverseKineticsWidget;
-    ExtProperty environmentProperty, solverParametersProperty, inverseKineticsProperty;
+    ExtProperty environment, solverParameters, inverseKinetics;
   public:
-    Solver(const QString &str, QTreeWidgetItem *parentItem, int ind);
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    QString getType() const { return "DynamicSystemSolver"; }
-    QString getFileExtension() const { return ".mbsim.xml"; }
+    Solver(const std::string &str, Element *parent);
+    std::string getType() const { return "DynamicSystemSolver"; }
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    std::string getFileExtension() const { return ".mbsim.xml"; }
 
-    static Solver* readXMLFile(const QString &filename, QTreeWidgetItem *parent);
-    void writeXMLFile(const QString &name);
+    static Solver* readXMLFile(const std::string &filename);
+    void writeXMLFile(const std::string &name);
     void writeXMLFile() { writeXMLFile(getName()); }
-    virtual void initializeDialog();
-    virtual void fromWidget();
-    virtual void toWidget();
+
+    ElementPropertyDialog* createPropertyDialog() {return new SolverPropertyDialog(this);}
+    ElementContextMenu* createContextMenu() {return new SolverContextMenu;}
 };
 
 #endif

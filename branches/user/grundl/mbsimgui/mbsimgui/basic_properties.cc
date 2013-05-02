@@ -23,7 +23,7 @@
 #include "contour.h"
 #include "rigidbody.h"
 #include "basic_widgets.h"
-#include "string_widgets.h"
+#include "variable_widgets.h"
 #include "kinematics_widgets.h"
 #include "extended_widgets.h"
 #include <QDir>
@@ -31,154 +31,127 @@
 #include <mbxmlutilstinyxml/tinynamespace.h>
 
 using namespace std;
+using namespace MBXMLUtils;
 
 extern bool absolutePath;
 extern QDir mbsDir;
 
 TiXmlElement* LocalFrameOfReferenceProperty::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *e = parent->FirstChildElement(xmlName);
-  if(e) {
-    QString refF="";
-    refF=e->Attribute("ref");
-    refF=refF.mid(6, refF.length()-7);
-    setFrame(refF==""?element->getFrame(0):element->getFrame(refF));
-  }
+  if(e) frame=e->Attribute("ref");
   return e;
 }
 
 TiXmlElement* LocalFrameOfReferenceProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele = new TiXmlElement(xmlName);
-  QString str = QString("Frame[") + getFrame()->getName() + "]";
-  ele->SetAttribute("ref", str.toStdString());
+  ele->SetAttribute("ref", frame);
   parent->LinkEndChild(ele);
   return 0;
 }
 
 void LocalFrameOfReferenceProperty::fromWidget(QWidget *widget) {
-  setFrame(static_cast<LocalFrameOfReferenceWidget*>(widget)->getFrame());
+  frame=static_cast<LocalFrameOfReferenceWidget*>(widget)->getFrame().toStdString();
 }
 
 void LocalFrameOfReferenceProperty::toWidget(QWidget *widget) {
-  static_cast<LocalFrameOfReferenceWidget*>(widget)->setFrame(getFrame());
+  static_cast<LocalFrameOfReferenceWidget*>(widget)->setFrame(QString::fromStdString(frame));
   static_cast<LocalFrameOfReferenceWidget*>(widget)->updateWidget();
-}
-
-void ParentFrameOfReferenceProperty::initialize() {
-  if(saved_frameOfReference!="") {
-    QString refF = saved_frameOfReference;
-    refF=refF.mid(9, refF.length()-10);
-    setFrame(element->getParentElement()->getFrame(refF));
-  }
 }
 
 TiXmlElement* ParentFrameOfReferenceProperty::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *e = parent->FirstChildElement(xmlName);
-  if(e) saved_frameOfReference = e->Attribute("ref");
+  if(e) frame = e->Attribute("ref");
   return e;
 }
 
 TiXmlElement* ParentFrameOfReferenceProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele = new TiXmlElement(xmlName);
-  QString str = QString("../Frame[") + getFrame()->getName() + "]";
-  ele->SetAttribute("ref", str.toStdString());
+  ele->SetAttribute("ref", frame);
   parent->LinkEndChild(ele);
   return 0;
 }
 
 void ParentFrameOfReferenceProperty::fromWidget(QWidget *widget) {
-  setFrame(static_cast<ParentFrameOfReferenceWidget*>(widget)->getFrame());
+  frame=static_cast<ParentFrameOfReferenceWidget*>(widget)->getFrame().toStdString();
 }
 
 void ParentFrameOfReferenceProperty::toWidget(QWidget *widget) {
-  static_cast<ParentFrameOfReferenceWidget*>(widget)->setFrame(getFrame());
+  static_cast<ParentFrameOfReferenceWidget*>(widget)->setFrame(QString::fromStdString(frame));
   static_cast<ParentFrameOfReferenceWidget*>(widget)->updateWidget();
-}
-
-void FrameOfReferenceProperty::initialize() {
-  if(saved_frameOfReference!="")
-    setFrame(element->getByPath<Frame>(saved_frameOfReference));
 }
 
 TiXmlElement* FrameOfReferenceProperty::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *e = parent->FirstChildElement(xmlName);
-  if(e) saved_frameOfReference=e->Attribute("ref");
+  if(e) frame=e->Attribute("ref");
   return e;
 }
 
 TiXmlElement* FrameOfReferenceProperty::writeXMLFile(TiXmlNode *parent) {
-  if(getFrame()) {
-    TiXmlElement *ele = new TiXmlElement(xmlName);
-    ele->SetAttribute("ref", getFrame()->getXMLPath(element,true).toStdString());
-    parent->LinkEndChild(ele);
-  }
+  TiXmlElement *ele = new TiXmlElement(xmlName);
+  ele->SetAttribute("ref", frame);
+  parent->LinkEndChild(ele);
   return 0;
 }
 
 void FrameOfReferenceProperty::fromWidget(QWidget *widget) {
-  setFrame(static_cast<FrameOfReferenceWidget*>(widget)->getFrame());
+  frame=static_cast<FrameOfReferenceWidget*>(widget)->getFrame().toStdString();
 }
 
 void FrameOfReferenceProperty::toWidget(QWidget *widget) {
-  static_cast<FrameOfReferenceWidget*>(widget)->setFrame(getFrame());
+  static_cast<FrameOfReferenceWidget*>(widget)->setFrame(QString::fromStdString(frame));
   static_cast<FrameOfReferenceWidget*>(widget)->updateWidget();
-}
-
-void ContourOfReferenceProperty::initialize() {
-  if(saved_contourOfReference!="")
-    setContour(element->getByPath<Contour>(saved_contourOfReference));
 }
 
 TiXmlElement* ContourOfReferenceProperty::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *e = parent->FirstChildElement(xmlName);
-  if(e) saved_contourOfReference=e->Attribute("ref");
+  if(e) contour=e->Attribute("ref");
   return e;
 }
 
 TiXmlElement* ContourOfReferenceProperty::writeXMLFile(TiXmlNode *parent) {
-  if(getContour()) {
-    TiXmlElement *ele = new TiXmlElement(xmlName);
-    ele->SetAttribute("ref", getContour()->getXMLPath(element,true).toStdString());
-    parent->LinkEndChild(ele);
-  }
+  TiXmlElement *ele = new TiXmlElement(xmlName);
+  ele->SetAttribute("ref", contour);
+  parent->LinkEndChild(ele);
   return 0;
 }
 
 void ContourOfReferenceProperty::fromWidget(QWidget *widget) {
-  setContour(static_cast<ContourOfReferenceWidget*>(widget)->getContour());
+  contour=static_cast<ContourOfReferenceWidget*>(widget)->getContour().toStdString();
 }
 
 void ContourOfReferenceProperty::toWidget(QWidget *widget) {
-  static_cast<ContourOfReferenceWidget*>(widget)->setContour(getContour());
+  static_cast<ContourOfReferenceWidget*>(widget)->setContour(QString::fromStdString(contour));
   static_cast<ContourOfReferenceWidget*>(widget)->updateWidget();
-}
-
-void RigidBodyOfReferenceProperty::initialize() {
-  if(saved_bodyOfReference!="")
-    setBody(element->getByPath<RigidBody>(saved_bodyOfReference));
 }
 
 TiXmlElement* RigidBodyOfReferenceProperty::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *e = parent->FirstChildElement(xmlName);
-  if(e) saved_bodyOfReference=e->Attribute("ref");
+  if(e) body=e->Attribute("ref");
   return e;
 }
 
 TiXmlElement* RigidBodyOfReferenceProperty::writeXMLFile(TiXmlNode *parent) {
-  if(getBody()) {
-    TiXmlElement *ele = new TiXmlElement(xmlName);
-    ele->SetAttribute("ref", getBody()->getXMLPath(element,true).toStdString());
-    parent->LinkEndChild(ele);
-  }
+  TiXmlElement *ele = new TiXmlElement(xmlName);
+  ele->SetAttribute("ref", body);
+  parent->LinkEndChild(ele);
   return 0;
 }
 
 void RigidBodyOfReferenceProperty::fromWidget(QWidget *widget) {
-  setBody(static_cast<RigidBodyOfReferenceWidget*>(widget)->getBody());
+  body=static_cast<RigidBodyOfReferenceWidget*>(widget)->getBody().toStdString();
 }
 
 void RigidBodyOfReferenceProperty::toWidget(QWidget *widget) {
-  static_cast<RigidBodyOfReferenceWidget*>(widget)->setBody(getBody());
+  static_cast<RigidBodyOfReferenceWidget*>(widget)->setBody(QString::fromStdString(body));
   static_cast<RigidBodyOfReferenceWidget*>(widget)->updateWidget();
+}
+
+string FileProperty::getAbsoluteFilePath() const {
+  return absolutePath?absoluteFilePath:mbsDir.relativeFilePath(QString::fromStdString(absoluteFilePath)).toStdString();
+}
+
+void FileProperty::setAbsoluteFilePath(const string &str) {
+  absoluteFilePath=mbsDir.absoluteFilePath(QString::fromStdString(str)).toStdString();
 }
 
 TiXmlElement* FileProperty::initializeUsingXML(TiXmlElement *element) {
@@ -186,10 +159,10 @@ TiXmlElement* FileProperty::initializeUsingXML(TiXmlElement *element) {
   if(e) {
     TiXmlText *text = dynamic_cast<TiXmlText*>(e->FirstChild());
     if(text) {
-      QString file = text->Value();
+      string file = text->Value();
+      file = file.substr(1,file.length()-2);
       fileName = file;
-      file = file.mid(1,file.length()-2);
-      absoluteFilePath=mbsDir.absoluteFilePath(file);
+      setAbsoluteFilePath(file);
       return e;
     }
   }
@@ -198,8 +171,8 @@ TiXmlElement* FileProperty::initializeUsingXML(TiXmlElement *element) {
 
 TiXmlElement* FileProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = new TiXmlElement(xmlName);
-  QString filePath = QString("\"")+(absolutePath?absoluteFilePath:mbsDir.relativeFilePath(absoluteFilePath))+"\"";
-  TiXmlText *text = new TiXmlText(filePath.toStdString());
+  string filePath = string("\"")+getAbsoluteFilePath()+"\"";
+  TiXmlText *text = new TiXmlText(filePath);
   ele0->LinkEndChild(text);
   parent->LinkEndChild(ele0);
 
@@ -207,13 +180,47 @@ TiXmlElement* FileProperty::writeXMLFile(TiXmlNode *parent) {
 }
 
 void FileProperty::fromWidget(QWidget *widget) {
-  fileName = static_cast<FileWidget*>(widget)->getFileName();
-  absoluteFilePath = static_cast<FileWidget*>(widget)->getAbsoluteFilePath();
+  fileName = static_cast<FileWidget*>(widget)->getFileName().toStdString();
+  absoluteFilePath = static_cast<FileWidget*>(widget)->getAbsoluteFilePath().toStdString();
 }
 
 void FileProperty::toWidget(QWidget *widget) {
-  static_cast<FileWidget*>(widget)->setFileName(fileName);
-  static_cast<FileWidget*>(widget)->setAbsoluteFilePath(absoluteFilePath);
+  static_cast<FileWidget*>(widget)->blockSignals(true);
+  static_cast<FileWidget*>(widget)->setFileName(QString::fromStdString(fileName));
+  static_cast<FileWidget*>(widget)->blockSignals(false);
+  static_cast<FileWidget*>(widget)->setAbsoluteFilePath(QString::fromStdString(absoluteFilePath));
+}
+
+TiXmlElement* TextProperty::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e=element->FirstChildElement(xmlName);
+  if(e) {
+    TiXmlText *text_ = dynamic_cast<TiXmlText*>(e->FirstChild());
+    if(text_) {
+      text = text_->Value();
+      if(quote)
+        text = text.substr(1,text.length()-2);
+     return e;
+    }
+  }
+  return 0;
+}
+
+TiXmlElement* TextProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = new TiXmlElement(xmlName);
+  TiXmlText *text_ = new TiXmlText(quote?("\""+text+"\""):text);
+
+  ele0->LinkEndChild(text_);
+  parent->LinkEndChild(ele0);
+
+  return 0;
+}
+
+void TextProperty::fromWidget(QWidget *widget) {
+  text = static_cast<BasicTextWidget*>(widget)->getText().toStdString();
+}
+
+void TextProperty::toWidget(QWidget *widget) {
+  static_cast<BasicTextWidget*>(widget)->setText(QString::fromStdString(text));
 }
 
 void DependenciesProperty::initialize() {
@@ -229,8 +236,8 @@ TiXmlElement* DependenciesProperty::initializeUsingXML(TiXmlElement *ele) {
   if(e) {
     TiXmlElement *ee=e->FirstChildElement();
     while(ee) {
-      refBody.push_back(new RigidBodyOfReferenceProperty(0,element,MBSIMNS"dependentRigidBody"));
-      refBody[refBody.size()-1]->setSavedBodyOfReference(ee->Attribute("ref"));
+      refBody.push_back(new RigidBodyOfReferenceProperty("",element,MBSIMNS"dependentRigidBody"));
+      refBody[refBody.size()-1]->setBody(ee->Attribute("ref"));
       ee=ee->NextSiblingElement();
     }
   }
@@ -251,7 +258,7 @@ void DependenciesProperty::fromWidget(QWidget *widget) {
   if(refBody.size()!=static_cast<DependenciesWidget*>(widget)->refBody.size()) {
     refBody.clear();
     for(int i=0; i<static_cast<DependenciesWidget*>(widget)->refBody.size(); i++)
-      refBody.push_back(new RigidBodyOfReferenceProperty(0,element,MBSIMNS"dependentRigidBody"));
+      refBody.push_back(new RigidBodyOfReferenceProperty("",element,MBSIMNS"dependentRigidBody"));
   }
   for(int i=0; i<static_cast<DependenciesWidget*>(widget)->refBody.size(); i++) {
     if(static_cast<DependenciesWidget*>(widget)->refBody[i])
@@ -272,10 +279,10 @@ void DependenciesProperty::toWidget(QWidget *widget) {
 ConnectFramesProperty::ConnectFramesProperty(int n, Element *element_) : element(element_) {
 
   for(int i=0; i<n; i++) {
-    QString xmlName = MBSIMNS"ref";
+    string xmlName = MBSIMNS"ref";
     if(n>1)
-      xmlName += QString::number(i+1);
-    frame.push_back(new FrameOfReferenceProperty(0,element,xmlName.toStdString()));
+      xmlName += toStr(i+1);
+    frame.push_back(new FrameOfReferenceProperty("",element,xmlName));
   }
 }
 
@@ -288,12 +295,12 @@ TiXmlElement* ConnectFramesProperty::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e = element->FirstChildElement(MBSIMNS"connect");
   if(e) {
     for(unsigned int i=0; i<frame.size(); i++) {
-      QString xmlName = "ref";
+      string xmlName = "ref";
       if(frame.size()>1)
-        xmlName += QString::number(i+1);
-      if(!e->Attribute(xmlName.toStdString()))
+        xmlName += toStr(int(i+1));
+      if(!e->Attribute(xmlName))
         return 0;
-      frame[i]->setSavedFrameOfReference(e->Attribute(xmlName.toAscii().data()));
+      frame[i]->setFrame(e->Attribute(xmlName.c_str()));
     }
   }
   return e;
@@ -302,11 +309,10 @@ TiXmlElement* ConnectFramesProperty::initializeUsingXML(TiXmlElement *element) {
 TiXmlElement* ConnectFramesProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele = new TiXmlElement(MBSIMNS"connect");
   for(unsigned int i=0; i<frame.size(); i++) {
-    QString xmlName = "ref";
+    string xmlName = "ref";
     if(frame.size()>1)
-      xmlName += QString::number(i+1);
-    if(frame[i]->getFrame())
-      ele->SetAttribute(xmlName.toAscii().data(), frame[i]->getFrame()->getXMLPath(element,true).toStdString()); 
+      xmlName += toStr(int(i+1));
+    ele->SetAttribute(xmlName, frame[i]->getFrame()); 
   }
   parent->LinkEndChild(ele);
   return ele;
@@ -326,10 +332,10 @@ void ConnectFramesProperty::toWidget(QWidget *widget) {
 ConnectContoursProperty::ConnectContoursProperty(int n, Element *element_) : element(element_) {
 
   for(int i=0; i<n; i++) {
-    QString xmlName = MBSIMNS"ref";
+    string xmlName = MBSIMNS"ref";
     if(n>1)
-      xmlName += QString::number(i+1);
-    contour.push_back(new ContourOfReferenceProperty(0,element,xmlName.toStdString()));
+      xmlName += toStr(i+1);
+    contour.push_back(new ContourOfReferenceProperty("",element,xmlName));
   }
 }
 
@@ -342,12 +348,12 @@ TiXmlElement* ConnectContoursProperty::initializeUsingXML(TiXmlElement *element)
   TiXmlElement *e = element->FirstChildElement(MBSIMNS"connect");
   if(e) {
     for(unsigned int i=0; i<contour.size(); i++) {
-      QString xmlName = "ref";
+      string xmlName = "ref";
       if(contour.size()>1)
-        xmlName += QString::number(i+1);
-      if(!e->Attribute(xmlName.toStdString()))
+        xmlName += toStr(int(i+1));
+      if(!e->Attribute(xmlName))
         return 0;
-      contour[i]->setSavedContourOfReference(e->Attribute(xmlName.toAscii().data()));
+      contour[i]->setContour(e->Attribute(xmlName.c_str()));
     }
   }
   return e;
@@ -356,11 +362,10 @@ TiXmlElement* ConnectContoursProperty::initializeUsingXML(TiXmlElement *element)
 TiXmlElement* ConnectContoursProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele = new TiXmlElement(MBSIMNS"connect");
   for(unsigned int i=0; i<contour.size(); i++) {
-    QString xmlName = "ref";
+    string xmlName = "ref";
     if(contour.size()>1)
-      xmlName += QString::number(i+1);
-    if(contour[i]->getContour())
-      ele->SetAttribute(xmlName.toAscii().data(), contour[i]->getContour()->getXMLPath(element,true).toStdString()); 
+      xmlName += toStr(int(i+1));
+    ele->SetAttribute(xmlName, contour[i]->getContour()); 
   }
   parent->LinkEndChild(ele);
   return ele;
@@ -379,28 +384,28 @@ void ConnectContoursProperty::toWidget(QWidget *widget) {
 
 SolverTolerancesProperty::SolverTolerancesProperty() : g(0,false), gd(0,false), gdd(0,false), la(0,false), La(0,false) {
 
-  vector<PhysicalStringProperty*> input;
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("1e-15"), "-", MBSIMNS"projection"));
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-15"), "-", MBSIMNS"projection"));
   projection.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("1e-8"), "-", MBSIMNS"g"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-8"), "-", MBSIMNS"g"));
   g.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("1e-10"), "-", MBSIMNS"gd"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-10"), "-", MBSIMNS"gd"));
   gd.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("1e-12"), "-", MBSIMNS"gdd"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-12"), "-", MBSIMNS"gdd"));
   gdd.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("1e-12"), "-", MBSIMNS"la"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-12"), "-", MBSIMNS"la"));
   la.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("1e-10"), "-", MBSIMNS"La"));
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-10"), "-", MBSIMNS"La"));
   La.setProperty(new ExtPhysicalVarProperty(input));
 }
 
@@ -470,5 +475,148 @@ void SolverParametersProperty::fromWidget(QWidget *widget) {
 
 void SolverParametersProperty::toWidget(QWidget *widget) {
   tolerances.toWidget(static_cast<SolverParametersWidget*>(widget)->tolerances);
+}
+
+GearDependencyProperty::GearDependencyProperty(Element* element_) : element(element_), refBody(0,element) {
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"), "", MBSIMNS"transmissionRatio"));
+  ratio.setProperty(new ExtPhysicalVarProperty(input));
+} 
+
+TiXmlElement* GearDependencyProperty::initializeUsingXML(TiXmlElement *ele) {
+  ratio.initializeUsingXML(ele);
+  refBody.setBody(ele->Attribute("ref"));
+  return ele;
+}
+
+TiXmlElement* GearDependencyProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele = new TiXmlElement(MBSIMNS"independentRigidBody");
+  ratio.writeXMLFile(ele);
+  ele->SetAttribute("ref", refBody.getBody());
+  parent->LinkEndChild(ele);
+  return ele;
+}
+
+void GearDependencyProperty::fromWidget(QWidget *widget) {
+  ratio.fromWidget(static_cast<GearDependencyWidget*>(widget)->ratio);
+  refBody.fromWidget(static_cast<GearDependencyWidget*>(widget)->refBody);
+}
+
+void GearDependencyProperty::toWidget(QWidget *widget) {
+  ratio.toWidget(static_cast<GearDependencyWidget*>(widget)->ratio);
+  refBody.toWidget(static_cast<GearDependencyWidget*>(widget)->refBody);
+}
+
+void GearDependenciesProperty::initialize() {
+  for(unsigned int i=0; i<refBody.size(); i++)
+    refBody[i]->initialize();
+}
+
+void GearDependenciesProperty::addDependency() {
+}
+
+TiXmlElement* GearDependenciesProperty::initializeUsingXML(TiXmlElement *ele) {
+  TiXmlElement *e = ele->FirstChildElement(xmlName);
+  if(e) {
+    TiXmlElement *ee=e->FirstChildElement();
+    while(ee) {
+      refBody.push_back(new GearDependencyProperty(element));
+      refBody[refBody.size()-1]->initializeUsingXML(ee);
+      ee=ee->NextSiblingElement();
+    }
+  }
+  return e;
+}
+
+TiXmlElement* GearDependenciesProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele = new TiXmlElement(xmlName);
+  for(int i=0; i<refBody.size(); i++) {
+    if(refBody[i])
+      refBody[i]->writeXMLFile(ele);
+  }
+  parent->LinkEndChild(ele);
+  return ele;
+}
+
+void GearDependenciesProperty::fromWidget(QWidget *widget) {
+  if(refBody.size()!=static_cast<GearDependenciesWidget*>(widget)->refBody.size()) {
+    refBody.clear();
+    for(int i=0; i<static_cast<GearDependenciesWidget*>(widget)->refBody.size(); i++)
+      refBody.push_back(new GearDependencyProperty(element));
+  }
+  for(int i=0; i<static_cast<GearDependenciesWidget*>(widget)->refBody.size(); i++) {
+    if(static_cast<GearDependenciesWidget*>(widget)->refBody[i])
+      refBody[i]->fromWidget(static_cast<GearDependenciesWidget*>(widget)->refBody[i]);
+  }
+}
+
+void GearDependenciesProperty::toWidget(QWidget *widget) {
+  static_cast<GearDependenciesWidget*>(widget)->setNumberOfBodies(refBody.size());
+  for(int i=0; i<refBody.size(); i++) {
+    if(refBody[i]) {
+      refBody[i]->toWidget(static_cast<GearDependenciesWidget*>(widget)->refBody[i]);
+    }
+  }
+  static_cast<GearDependenciesWidget*>(widget)->updateWidget();
+}
+
+EmbedProperty::EmbedProperty(Element *element) : count(0,false), counterName(0,false), parameterList(0,false) {
+  href.setProperty(new FileProperty(""));
+  static_cast<FileProperty*>(href.getProperty())->setFileName(element->getName()+".xml");
+  static_cast<FileProperty*>(href.getProperty())->setAbsoluteFilePath(element->getName()+".xml");
+  count.setProperty(new TextProperty("1",""));
+  counterName.setProperty(new TextProperty("n",""));
+  parameterList.setProperty(new FileProperty(""));
+}
+
+TiXmlElement* EmbedProperty::initializeUsingXML(TiXmlElement *parent) {
+  string file = parent->Attribute("href");
+  static_cast<FileProperty*>(href.getProperty())->setFileName(file);
+  static_cast<FileProperty*>(href.getProperty())->setAbsoluteFilePath(file);
+  if(parent->Attribute("count")) {
+    count.setActive(true);
+    static_cast<TextProperty*>(count.getProperty())->setText(parent->Attribute("count"));
+  }
+  if(parent->Attribute("counterName")) {
+    counterName.setActive(true);
+    static_cast<TextProperty*>(counterName.getProperty())->setText(parent->Attribute("counterName"));
+  }
+  TiXmlElement *ele = parent->FirstChildElement(PVNS+string("localParameter"));
+  if(ele) {
+    parameterList.setActive(true);
+    string file = ele->Attribute("href");
+    static_cast<FileProperty*>(parameterList.getProperty())->setFileName(file);
+    static_cast<FileProperty*>(parameterList.getProperty())->setAbsoluteFilePath(file);
+  }
+}
+
+TiXmlElement* EmbedProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0=new TiXmlElement(PVNS+string("embed"));
+  ele0->SetAttribute("href", static_cast<FileProperty*>(href.getProperty())->getFileName());
+  if(count.isActive())
+    ele0->SetAttribute("count", static_cast<TextProperty*>(count.getProperty())->getText());
+  if(counterName.isActive())
+    ele0->SetAttribute("counterName", static_cast<TextProperty*>(counterName.getProperty())->getText());
+  if(parameterList.isActive()) {
+    TiXmlElement *ele1=new TiXmlElement(PVNS+string("localParameter"));
+    ele1->SetAttribute("href", static_cast<FileProperty*>(parameterList.getProperty())->getFileName());
+    ele0->LinkEndChild(ele1);
+  }
+  parent->LinkEndChild(ele0);
+  return ele0;
+}
+
+void EmbedProperty::fromWidget(QWidget *widget) {
+  href.fromWidget(static_cast<EmbedWidget*>(widget)->href);
+  count.fromWidget(static_cast<EmbedWidget*>(widget)->count);
+  counterName.fromWidget(static_cast<EmbedWidget*>(widget)->counterName);
+  parameterList.fromWidget(static_cast<EmbedWidget*>(widget)->parameterList);
+}
+
+void EmbedProperty::toWidget(QWidget *widget) {
+  href.toWidget(static_cast<EmbedWidget*>(widget)->href);
+  count.toWidget(static_cast<EmbedWidget*>(widget)->count);
+  counterName.toWidget(static_cast<EmbedWidget*>(widget)->counterName);
+  parameterList.toWidget(static_cast<EmbedWidget*>(widget)->parameterList);
 }
 

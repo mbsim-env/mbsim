@@ -30,8 +30,8 @@ class GeneralizedForceLawProperty : public Property {
 
   public:
     GeneralizedForceLawProperty() : forceFunc(0) {}
-    virtual QString getType() const { return "GeneralizedForceLaw"; }
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual std::string getType() const { return "GeneralizedForceLaw"; }
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
    protected:
     Function2Property *forceFunc;
 };
@@ -40,8 +40,8 @@ class BilateralConstraintProperty : public GeneralizedForceLawProperty {
 
   public:
     BilateralConstraintProperty() {}
-    QString getType() const { return "BilateralConstraint"; }
-    TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
+    std::string getType() const { return "BilateralConstraint"; }
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
     void fromWidget(QWidget *widget) {}
     void toWidget(QWidget *widget) {}
 };
@@ -50,8 +50,8 @@ class RegularizedBilateralConstraintProperty : public GeneralizedForceLawPropert
 
   public:
     RegularizedBilateralConstraintProperty() : index(0) {}
-    QString getType() const { return "RegularizedBilateralConstraint"; }
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
+    std::string getType() const { return "RegularizedBilateralConstraint"; }
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
   protected:
@@ -63,8 +63,8 @@ class UnilateralConstraintProperty : public GeneralizedForceLawProperty {
 
   public:
     UnilateralConstraintProperty() {}
-    QString getType() const { return "UnilateralConstraint"; }
-    TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
+    std::string getType() const { return "UnilateralConstraint"; }
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
     void fromWidget(QWidget *widget) {}
     void toWidget(QWidget *widget) {}
 };
@@ -73,8 +73,8 @@ class RegularizedUnilateralConstraintProperty : public GeneralizedForceLawProper
 
   public:
     RegularizedUnilateralConstraintProperty() : index(0) {} 
-    QString getType() const { return "RegularizedUnilateralConstraint"; }
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
+    std::string getType() const { return "RegularizedUnilateralConstraint"; }
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
   protected:
@@ -86,16 +86,16 @@ class GeneralizedImpactLawProperty : public Property {
 
   public:
     GeneralizedImpactLawProperty() {}
-    virtual QString getType() const { return "GeneralizedImpactLaw"; }
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual std::string getType() const { return "GeneralizedImpactLaw"; }
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
 };
 
 class BilateralImpactProperty : public GeneralizedImpactLawProperty {
 
   public:
     BilateralImpactProperty() {}
-    QString getType() const { return "BilateralImpact"; }
-    TiXmlElement* initializeUsingXML(TiXmlElement *element) {}
+    std::string getType() const { return "BilateralImpact"; }
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
     void fromWidget(QWidget *widget) {}
     void toWidget(QWidget *widget) {}
 };
@@ -104,9 +104,9 @@ class UnilateralNewtonImpactProperty : public GeneralizedImpactLawProperty {
 
   public:
     UnilateralNewtonImpactProperty();
-    QString getType() const { return "UnilateralNewtonImpact"; }
-    TiXmlElement* initializeUsingXML(TiXmlElement *element); 
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    std::string getType() const { return "UnilateralNewtonImpact"; }
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element); 
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
   protected:
@@ -117,8 +117,8 @@ class FrictionForceLawProperty : public Property {
 
   public:
     FrictionForceLawProperty() : frictionForceFunc(0) {}
-    virtual QString getType() const { return "FrictionForceLaw"; }
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual std::string getType() const { return "FrictionForceLaw"; }
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
    protected:
     Function2Property *frictionForceFunc;
 };
@@ -127,9 +127,9 @@ class PlanarCoulombFrictionProperty : public FrictionForceLawProperty {
 
   public:
     PlanarCoulombFrictionProperty();
-    QString getType() const { return "PlanarCoulombFriction"; }
-    TiXmlElement* initializeUsingXML(TiXmlElement *element); 
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    std::string getType() const { return "PlanarCoulombFriction"; }
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element); 
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -141,9 +141,9 @@ class SpatialCoulombFrictionProperty : public FrictionForceLawProperty {
 
   public:
     SpatialCoulombFrictionProperty();
-    QString getType() const { return "SpatialCoulombFriction"; }
-    TiXmlElement* initializeUsingXML(TiXmlElement *element); 
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    std::string getType() const { return "SpatialCoulombFriction"; }
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element); 
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -155,8 +155,8 @@ class RegularizedPlanarFrictionProperty : public FrictionForceLawProperty {
 
   public:
     RegularizedPlanarFrictionProperty() : index(0) {defineFunction(0);}
-    QString getType() const { return "RegularizedPlanarFriction"; }
-    TiXmlElement* initializeUsingXML(TiXmlElement *element); 
+    std::string getType() const { return "RegularizedPlanarFriction"; }
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element); 
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -169,8 +169,8 @@ class RegularizedSpatialFrictionProperty : public FrictionForceLawProperty {
 
   public:
     RegularizedSpatialFrictionProperty() : index(0) {defineFunction(0);}
-    QString getType() const { return "RegularizedSpatialFriction"; }
-    TiXmlElement* initializeUsingXML(TiXmlElement *element); 
+    std::string getType() const { return "RegularizedSpatialFriction"; }
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element); 
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -183,17 +183,17 @@ class FrictionImpactLawProperty : public Property {
 
   public:
     FrictionImpactLawProperty() {}
-    virtual QString getType() const { return "FrictionImpactLaw"; }
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    virtual std::string getType() const { return "FrictionImpactLaw"; }
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
 };
 
 class PlanarCoulombImpactProperty : public FrictionImpactLawProperty {
 
   public:
     PlanarCoulombImpactProperty();
-    QString getType() const { return "PlanarCoulombImpact"; }
-    TiXmlElement* initializeUsingXML(TiXmlElement *element); 
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    std::string getType() const { return "PlanarCoulombImpact"; }
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element); 
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -205,9 +205,9 @@ class SpatialCoulombImpactProperty : public FrictionImpactLawProperty {
 
   public:
     SpatialCoulombImpactProperty();
-    QString getType() const { return "SpatialCoulombImpact"; }
-    TiXmlElement* initializeUsingXML(TiXmlElement *element); 
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    std::string getType() const { return "SpatialCoulombImpact"; }
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element); 
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -221,8 +221,8 @@ class GeneralizedForceLawChoiceProperty : public Property {
     GeneralizedForceLawChoiceProperty(const std::string &xmlName_) : generalizedForceLaw(0), index(0), xmlName(xmlName_) {defineForceLaw(0);}
 
     void defineForceLaw(int);
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -238,8 +238,8 @@ class GeneralizedImpactLawChoiceProperty : public Property {
     GeneralizedImpactLawChoiceProperty(const std::string &xmlName_) : generalizedImpactLaw(0), index(0), xmlName(xmlName_) {defineImpactLaw(0);}
 
     void defineImpactLaw(int);
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -253,8 +253,8 @@ class FrictionForceLawChoiceProperty : public Property {
 
   public:
     FrictionForceLawChoiceProperty(const std::string &xmlName_) : frictionForceLaw(0), index(0), xmlName(xmlName_) {defineFrictionLaw(0);}
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -272,8 +272,8 @@ class FrictionImpactLawChoiceProperty : public Property {
     FrictionImpactLawChoiceProperty(const std::string &xmlName_) : frictionImpactLaw(0), index(0), xmlName(xmlName_) {defineFrictionImpactLaw(0);}
 
     void defineFrictionImpactLaw(int);
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -288,8 +288,8 @@ class GeneralizedForceChoiceProperty : public Property {
   public:
     GeneralizedForceChoiceProperty(ExtProperty& arrow, const std::string &xmlName);
 
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -303,8 +303,8 @@ class ForceChoiceProperty : public Property {
   public:
     ForceChoiceProperty(ExtProperty &arrow, const std::string &xmlName);
 
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -317,8 +317,8 @@ class ForceDirectionProperty : public Property {
 
   public:
     ForceDirectionProperty(Element *element, const std::string &xmlName);
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -333,8 +333,8 @@ class GeneralizedForceDirectionProperty : public Property {
   public:
     GeneralizedForceDirectionProperty(const std::string &xmlName);
 
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 

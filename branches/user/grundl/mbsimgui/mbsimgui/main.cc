@@ -21,6 +21,7 @@
 #include <QApplication>
 #include "mainwindow.h"
 #include "octaveutils.h"
+#include <mbxmlutils/utils.h>
 #include <H5Cpp.h>
 #include <QLocale>
 
@@ -38,13 +39,12 @@ int main(int argc, char *argv[]) {
   QLocale::setDefault(QLocale::C);
   setlocale(LC_ALL, "C");
   MainWindow *mainwindow = new MainWindow;
-  mainwindow->show();
-  //mainwindow->showMaximized();
+  //mainwindow->show();
+  mainwindow->showMaximized();
   //mainwindow->resize(1400, 900);
-  mainwindow->resize(1100, 700);
+  //mainwindow->resize(1100, 700);
   int ret=app.exec();
-  do_octave_atexit(); // do_octave_atexit must be called before leaving (to prevent crashed in atexit())
-  std::cout << "deleting" << std::endl;
+  MBXMLUtils::OctaveEvaluator::terminate();
   delete mainwindow;
   return ret;
 }

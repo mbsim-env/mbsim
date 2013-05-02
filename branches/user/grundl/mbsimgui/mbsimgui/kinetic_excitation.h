@@ -24,18 +24,16 @@
 #include "extended_properties.h"
 
 class KineticExcitation : public Link {
+  friend class KineticExcitationPropertyDialog;
   public:
-    KineticExcitation(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    KineticExcitation(const std::string &str, Element *parent);
     ~KineticExcitation();
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    QString getType() const { return "KineticExcitation"; }
-    void initializeDialog(); virtual void fromWidget();
-    virtual void toWidget();
+    std::string getType() const { return "KineticExcitation"; }
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void initialize();
-
+    ElementPropertyDialog* createPropertyDialog() {return new KineticExcitationPropertyDialog(this);}
   protected:
-    ExtWidget *forceWidget, *momentWidget, *connectionsWidget, *frameOfReferenceWidget, *forceArrowWidget, *momentArrowWidget;
     ExtProperty force, moment, connections, frameOfReference, forceArrow, momentArrow;
 };
 

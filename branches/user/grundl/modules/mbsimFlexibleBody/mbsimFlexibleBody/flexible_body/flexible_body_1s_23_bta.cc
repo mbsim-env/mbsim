@@ -30,6 +30,7 @@
 
 
 using namespace fmatvec;
+using namespace MBXMLUtils;
 using namespace std;
 using namespace MBSim;
 

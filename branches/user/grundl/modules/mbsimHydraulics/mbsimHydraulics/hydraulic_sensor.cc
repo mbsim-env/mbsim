@@ -17,6 +17,7 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
+#include <config.h>
 #include "mbsimHydraulics/hydraulic_sensor.h"
 #include "mbsimHydraulics/objectfactory.h"
 #include "mbsimHydraulics/hnode.h"
@@ -25,6 +26,7 @@
 #include "mbsimHydraulics/obsolet_hint.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 using namespace fmatvec;
 
 namespace MBSimHydraulics {

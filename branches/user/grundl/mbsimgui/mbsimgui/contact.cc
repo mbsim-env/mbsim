@@ -23,16 +23,11 @@
 #include "function_properties.h"
 #include "kinetics_properties.h"
 #include "ombv_properties.h"
-#include "kinetics_widgets.h"
-#include "string_widgets.h"
-#include "extended_widgets.h"
-#include "ombv_widgets.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 
-Contact::Contact(const QString &str, QTreeWidgetItem *parentItem, int ind) : Link(str, parentItem, ind), contactImpactLaw(0,false), frictionForceLaw(0,false), frictionImpactLaw(0,false), enableOpenMBVContactPoints(0,false), normalForceArrow(0,false), frictionArrow(0,false) {
-
-  setText(1,getType());
+Contact::Contact(const string &str, Element *parent) : Link(str, parent), contactImpactLaw(0,false), frictionForceLaw(0,false), frictionImpactLaw(0,false), enableOpenMBVContactPoints(0,false), normalForceArrow(0,false), frictionArrow(0,false) {
 
   connections.setProperty(new ConnectContoursProperty(2,this));
 
@@ -47,8 +42,8 @@ Contact::Contact(const QString &str, QTreeWidgetItem *parentItem, int ind) : Lin
   frictionImpactLaw.setProperty(new FrictionImpactLawChoiceProperty(""));
   frictionImpactLaw.setXMLName(MBSIMNS"frictionImpactLaw");
 
-  vector<PhysicalStringProperty*> input;
-  input.push_back(new PhysicalStringProperty(new ScalarProperty("0.1"),"m",MBSIMNS"enableOpenMBVContactPoints"));
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0.1"),"m",MBSIMNS"enableOpenMBVContactPoints"));
   enableOpenMBVContactPoints.setProperty(new ExtPhysicalVarProperty(input)); 
 
   normalForceArrow.setProperty(new OMBVArrowProperty("NOTSET"));
@@ -64,63 +59,6 @@ Contact::~Contact() {
 void Contact::initialize() {
   Link::initialize();
   connections.initialize();
-}
-
-void Contact::initializeDialog() {
-  Link::initializeDialog();
-
-  dialog->addTab("Kinetics");
-  dialog->addTab("Visualisation");
-
-  connectionsWidget = new ExtWidget("Connections",new ConnectContoursWidget(2,this));
-  dialog->addToTab("Kinetics", connectionsWidget);
-
-  contactForceLawWidget = new ExtWidget("Contact force law",new GeneralizedForceLawChoiceWidget);
-  dialog->addToTab("Kinetics", contactForceLawWidget);
-
-  contactImpactLawWidget = new ExtWidget("Contact impact law",new GeneralizedImpactLawChoiceWidget,true);
-  dialog->addToTab("Kinetics", contactImpactLawWidget);
-
-  frictionForceLawWidget = new ExtWidget("Friction force law",new FrictionForceLawChoiceWidget,true);
-  dialog->addToTab("Kinetics", frictionForceLawWidget);
-
-  frictionImpactLawWidget = new ExtWidget("Friction impact law",new FrictionImpactLawChoiceWidget,true);
-  dialog->addToTab("Kinetics", frictionImpactLawWidget);
-
-  vector<PhysicalStringWidget*> input;
-  input.push_back(new PhysicalStringWidget(new ScalarWidget("0.1"),lengthUnits(),4));
-  enableOpenMBVContactPointsWidget = new ExtWidget("OpenMBV contact points",new ExtPhysicalVarWidget(input),true); 
-  dialog->addToTab("Visualisation",enableOpenMBVContactPointsWidget);
-
-  normalForceArrowWidget = new ExtWidget("OpenMBV normal force arrow",new OMBVArrowWidget("NOTSET"),true);
-  dialog->addToTab("Visualisation",normalForceArrowWidget);
-
-  frictionArrowWidget = new ExtWidget("OpenMBV friction arrow",new OMBVArrowWidget("NOTSET"),true);
-  dialog->addToTab("Visualisation",frictionArrowWidget);
-}
-
-void Contact::toWidget() {
-  Link::toWidget();
-  contactForceLaw.toWidget(contactForceLawWidget);
-  contactImpactLaw.toWidget(contactImpactLawWidget);
-  frictionForceLaw.toWidget(frictionForceLawWidget);
-  frictionImpactLaw.toWidget(frictionImpactLawWidget);
-  connections.toWidget(connectionsWidget);
-  enableOpenMBVContactPoints.toWidget(enableOpenMBVContactPointsWidget);
-  normalForceArrow.toWidget(normalForceArrowWidget);
-  frictionArrow.toWidget(frictionArrowWidget);
-}
-
-void Contact::fromWidget() {
-  Link::fromWidget();
-  contactForceLaw.fromWidget(contactForceLawWidget);
-  contactImpactLaw.fromWidget(contactImpactLawWidget);
-  frictionForceLaw.fromWidget(frictionForceLawWidget);
-  frictionImpactLaw.fromWidget(frictionImpactLawWidget);
-  connections.fromWidget(connectionsWidget);
-  enableOpenMBVContactPoints.fromWidget(enableOpenMBVContactPointsWidget);
-  normalForceArrow.fromWidget(normalForceArrowWidget);
-  frictionArrow.fromWidget(frictionArrowWidget);
 }
 
 void Contact::initializeUsingXML(TiXmlElement *element) {

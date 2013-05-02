@@ -53,6 +53,7 @@
 //#endif
 
 using namespace std;
+using namespace MBXMLUtils;
 using namespace fmatvec;
 
 namespace MBSim {
@@ -557,7 +558,7 @@ namespace MBSim {
       double nrmf = 1;
       for (int k=0; k<maxDampingSteps; k++) {
         la = La_old - alpha*dx;
-        solveConstraintsRootFinding();
+        Group::solveConstraintsRootFinding();
         nrmf = nrm2(res);
         if(nrmf < nrmf0) break;
 
@@ -625,7 +626,7 @@ namespace MBSim {
       double nrmf = 1;
       for (int k=0; k<maxDampingSteps; k++) {
         la = La_old - alpha*dx;
-        solveImpactsRootFinding(dt);
+        Group::solveImpactsRootFinding(dt);
         nrmf = nrm2(res);
         if(nrmf < nrmf0) break;
         alpha *= .5;  
@@ -1254,7 +1255,7 @@ namespace MBSim {
     else {
       ofstream file(fileName.c_str());
       file.setf(ios::scientific);
-      file.precision(15);
+      file.precision(numeric_limits<double>::digits10+1);
       for (int i=0; i<q.size(); i++)
         file << q(i) << endl;
       for (int i=0; i<u.size(); i++)
@@ -1427,6 +1428,7 @@ namespace MBSim {
     TiXmlDocument doc;
     bool ret=doc.LoadFile(filename);
     assert(ret==true);
+    (void)ret;
     TiXml_PostLoadFile(&doc);
     TiXmlElement *e=doc.FirstChildElement();
     TiXml_setLineNrFromProcessingInstruction(e);

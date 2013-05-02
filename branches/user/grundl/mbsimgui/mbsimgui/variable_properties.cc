@@ -18,10 +18,10 @@
 */
 
 #include <config.h>
-#include "string_properties.h"
+#include "variable_properties.h"
 #include "frame.h"
 #include "basic_widgets.h"
-#include "string_widgets.h"
+#include "variable_widgets.h"
 #include "kinematics_widgets.h"
 #include "extended_widgets.h"
 #include "octaveutils.h"
@@ -30,37 +30,75 @@
 #include <mbxmlutilstinyxml/tinynamespace.h>
 
 using namespace std;
+using namespace MBXMLUtils;
 
 extern QDir mbsDir;
 extern bool absolutePath;
 
-void StringProperty::fromWidget(QWidget *widget) {
-  setValue(static_cast<StringWidget*>(widget)->getValue());
+vector<string> toStdVec(const vector<QString> &x) {
+  vector<string> y(x.size());
+  for(unsigned int i=0; i<x.size(); i++)
+    y[i] = x[i].toStdString();
+  return y;
 }
 
-void StringProperty::toWidget(QWidget *widget) {
-  static_cast<StringWidget*>(widget)->setValue(getValue());
+vector<QString> fromStdVec(const vector<string> &x) {
+  vector<QString> y(x.size());
+  for(unsigned int i=0; i<x.size(); i++)
+    y[i] = QString::fromStdString(x[i]);
+  return y;
 }
 
-//TiXmlElement* OctaveExpressionProperty::initializeUsingXML(TiXmlElement *element) {
-//  TiXmlText* text = dynamic_cast<TiXmlText*>(element->FirstChild());
-//  if(!text)
-//    return 0;
-//  setValue(text->Value());
-//  return element;
-//}
-//
-//TiXmlElement* OctaveExpressionProperty::writeXMLFile(TiXmlNode *parent) {
-//  TiXmlText *text = new TiXmlText(getValue());
-//  parent->LinkEndChild(text);
-//  return 0;
-//}
+vector<vector<string> > toStdMat(const vector<vector<QString> > &A) {
+  vector<vector<string> > B(A.size());
+  for(unsigned int i=0; i<A.size(); i++) {
+    B[i].resize(A[i].size());
+    for(unsigned int j=0; j<A[i].size(); j++)
+      B[i][j] = A[i][j].toStdString();
+  }
+  return B;
+}
+
+vector<vector<QString> > fromStdMat(const vector<vector<string> > &A) {
+  vector<vector<QString> > B(A.size());
+  for(unsigned int i=0; i<A.size(); i++) {
+    B[i].resize(A[i].size());
+    for(unsigned int j=0; j<A[i].size(); j++)
+      B[i][j] = QString::fromStdString(A[i][j]);
+  }
+  return B;
+}
+
+void VariableProperty::fromWidget(QWidget *widget) {
+  setValue(static_cast<VariableWidget*>(widget)->getValue().toStdString());
+}
+
+void VariableProperty::toWidget(QWidget *widget) {
+  static_cast<VariableWidget*>(widget)->setValue(QString::fromStdString(getValue()));
+}
+
+TiXmlElement* OctaveExpressionProperty::initializeUsingXML(TiXmlElement *element) {
+  TiXmlText* text = dynamic_cast<TiXmlText*>(element->FirstChild());
+  if(!text)
+    return 0;
+  setValue(text->Value());
+  return element;
+}
+
+TiXmlElement* OctaveExpressionProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlText *text = new TiXmlText(getValue());
+  parent->LinkEndChild(text);
+  return 0;
+}
 
 TiXmlElement* ScalarProperty::initializeUsingXML(TiXmlElement *element) {
   TiXmlText* text = dynamic_cast<TiXmlText*>(element->FirstChild());
   if(!text)
     return 0;
-  setValue(text->Value());
+  string str = text->Value();
+  if(str.find("\n")!=string::npos)
+    return 0;
+  setValue(str);
   return element;
 }
 
@@ -70,10 +108,12 @@ TiXmlElement* ScalarProperty::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-VecProperty::VecProperty(int size) {
-  value.resize(size);
+VecProperty::VecProperty(int size) : value(size) {
   for(int i=0; i<size; i++)
     value[i] = "0";
+}
+
+VecProperty::~VecProperty() {
 }
 
 TiXmlElement* VecProperty::initializeUsingXML(TiXmlElement *parent) {
@@ -104,11 +144,11 @@ TiXmlElement* VecProperty::writeXMLFile(TiXmlNode *parent) {
 }
 
 void VecProperty::fromWidget(QWidget *widget) {
-  setVec(static_cast<BasicVecWidget*>(widget)->getVec());
+  setVec(toStdVec(static_cast<BasicVecWidget*>(widget)->getVec()));
 }
 
 void VecProperty::toWidget(QWidget *widget) {
-  static_cast<BasicVecWidget*>(widget)->setVec(getVec());
+  static_cast<BasicVecWidget*>(widget)->setVec(fromStdVec(getVec()));
 }
 
 MatProperty::MatProperty(int rows, int cols) {
@@ -159,11 +199,11 @@ TiXmlElement* MatProperty::writeXMLFile(TiXmlNode *parent) {
 }
 
 void MatProperty::fromWidget(QWidget *widget) {
-  setMat(static_cast<BasicMatWidget*>(widget)->getMat());
+  setMat(toStdMat(static_cast<BasicMatWidget*>(widget)->getMat()));
 }
 
 void MatProperty::toWidget(QWidget *widget) {
-  static_cast<BasicMatWidget*>(widget)->setMat(getMat());
+  static_cast<BasicMatWidget*>(widget)->setMat(fromStdMat(getMat()));
 }
 
 //SymMatProperty::SymMatProperty(int rows) {
@@ -217,8 +257,8 @@ void MatProperty::toWidget(QWidget *widget) {
 //  static_cast<BasicMatWidget*>(widget)->setMat(getMat());
 //}
 
-TiXmlElement* PhysicalStringProperty::initializeUsingXML(TiXmlElement *parent) {
-  TiXmlElement *e = parent->FirstChildElement(xmlName);
+TiXmlElement* PhysicalVariableProperty::initializeUsingXML(TiXmlElement *parent) {
+  TiXmlElement *e = (xmlName=="")?parent:parent->FirstChildElement(xmlName);
   if(e) {
     if(value->initializeUsingXML(e)) {
       if(e->Attribute("unit"))
@@ -229,27 +269,32 @@ TiXmlElement* PhysicalStringProperty::initializeUsingXML(TiXmlElement *parent) {
   return 0;
 }
 
-TiXmlElement* PhysicalStringProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele = new TiXmlElement(xmlName);
+TiXmlElement* PhysicalVariableProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele;
+  if(xmlName!="") {
+    ele = new TiXmlElement(xmlName);
+    parent->LinkEndChild(ele);
+  } 
+  else
+    ele = (TiXmlElement*)parent;
   if(unit!="")
     ele->SetAttribute("unit", getUnit());
   value->writeXMLFile(ele);
-  parent->LinkEndChild(ele);
   return 0;
 }
 
-void PhysicalStringProperty::fromWidget(QWidget *widget) {
-  getProperty()->fromWidget(static_cast<PhysicalStringWidget*>(widget)->getWidget());
-  setUnit(static_cast<PhysicalStringWidget*>(widget)->getUnit());
+void PhysicalVariableProperty::fromWidget(QWidget *widget) {
+  getProperty()->fromWidget(static_cast<PhysicalVariableWidget*>(widget)->getWidget());
+  setUnit(static_cast<PhysicalVariableWidget*>(widget)->getUnit().toStdString());
 }
 
-void PhysicalStringProperty::toWidget(QWidget *widget) {
-  getProperty()->toWidget(static_cast<PhysicalStringWidget*>(widget)->getWidget());
-  static_cast<PhysicalStringWidget*>(widget)->setUnit(getUnit());
+void PhysicalVariableProperty::toWidget(QWidget *widget) {
+  getProperty()->toWidget(static_cast<PhysicalVariableWidget*>(widget)->getWidget());
+  static_cast<PhysicalVariableWidget*>(widget)->setUnit(QString::fromStdString(getUnit()));
 }
 
 string VecFromFileProperty::getValue() const {
-  return evalOctaveExpression(string("load('") + fileName.toStdString() + "')");
+  return evalOctaveExpression(string("ret=load('") + fileName + "')");
 }
 
 TiXmlElement* VecFromFileProperty::initializeUsingXML(TiXmlElement *element) {
@@ -257,36 +302,36 @@ TiXmlElement* VecFromFileProperty::initializeUsingXML(TiXmlElement *element) {
   if(!text)
     return 0;
   string str = text->Value();
-  if(str.substr(0,4)!="load")
+  if(str.substr(0,8)!="ret=load")
     return 0;
   int pos1 = str.find_first_of('\''); 
   int pos2 = str.find_last_of('\''); 
   fileName = str.substr(pos1+1,pos2-pos1-1).c_str();
-  absoluteFilePath=mbsDir.absoluteFilePath(str.substr(pos1+1,pos2-pos1-1).c_str());
+  absoluteFilePath=mbsDir.absoluteFilePath(QString::fromStdString(str.substr(pos1+1,pos2-pos1-1))).toStdString();
 
   return element;
 }
 
 TiXmlElement* VecFromFileProperty::writeXMLFile(TiXmlNode *parent) {
-  QString filePath = QString("load('")+(absolutePath?absoluteFilePath:mbsDir.relativeFilePath(absoluteFilePath))+"')";
+  string filePath = "ret=load('"+(absolutePath?absoluteFilePath:mbsDir.relativeFilePath(QString::fromStdString(absoluteFilePath)).toStdString())+"')";
  //string exp = string("load('") + fileName.toStdString() + "')"; 
-  TiXmlText *text = new TiXmlText(filePath.toStdString());
+  TiXmlText *text = new TiXmlText(filePath);
   parent->LinkEndChild(text);
   return 0;
 }
 
 void VecFromFileProperty::fromWidget(QWidget *widget) {
-  fileName = static_cast<VecFromFileWidget*>(widget)->fileName->text();
-  absoluteFilePath = static_cast<VecFromFileWidget*>(widget)->absoluteFilePath;
+  fileName = static_cast<VecFromFileWidget*>(widget)->fileName->text().toStdString();
+  absoluteFilePath = static_cast<VecFromFileWidget*>(widget)->absoluteFilePath.toStdString();
 }
 
 void VecFromFileProperty::toWidget(QWidget *widget) {
-  static_cast<VecFromFileWidget*>(widget)->fileName->setText(fileName);
-  static_cast<VecFromFileWidget*>(widget)->absoluteFilePath = absoluteFilePath;
+  static_cast<VecFromFileWidget*>(widget)->fileName->setText(QString::fromStdString(fileName));
+  static_cast<VecFromFileWidget*>(widget)->absoluteFilePath = QString::fromStdString(absoluteFilePath);
 }
 
 string MatFromFileProperty::getValue() const {
-  return evalOctaveExpression(string("load('") + fileName.toStdString() + "')");
+  return evalOctaveExpression("ret=load('" + fileName + "')");
 }
 
 TiXmlElement* MatFromFileProperty::initializeUsingXML(TiXmlElement *element) {
@@ -294,29 +339,29 @@ TiXmlElement* MatFromFileProperty::initializeUsingXML(TiXmlElement *element) {
   if(!text)
     return 0;
   string str = text->Value();
-  if(str.substr(0,4)!="load")
+  if(str.substr(0,8)!="ret=load")
     return 0;
   int pos1 = str.find_first_of('\''); 
   int pos2 = str.find_last_of('\''); 
   fileName = str.substr(pos1+1,pos2-pos1-1).c_str();
-  absoluteFilePath=mbsDir.absoluteFilePath(str.substr(pos1+1,pos2-pos1-1).c_str());
+  absoluteFilePath=mbsDir.absoluteFilePath(QString::fromStdString(str.substr(pos1+1,pos2-pos1-1))).toStdString();
   return element;
 }
 
 TiXmlElement* MatFromFileProperty::writeXMLFile(TiXmlNode *parent) {
-  QString filePath = QString("load('")+(absolutePath?absoluteFilePath:mbsDir.relativeFilePath(absoluteFilePath))+"')";
+  string filePath = "ret=load('"+(absolutePath?absoluteFilePath:mbsDir.relativeFilePath(QString::fromStdString(absoluteFilePath)).toStdString())+"')";
  //string exp = string("load('") + fileName->text().toStdString() + "')"; 
-  TiXmlText *text = new TiXmlText(filePath.toStdString());
+  TiXmlText *text = new TiXmlText(filePath);
   parent->LinkEndChild(text);
   return 0;
 }
 
 void MatFromFileProperty::fromWidget(QWidget *widget) {
-  fileName = static_cast<MatFromFileWidget*>(widget)->fileName->text();
-  absoluteFilePath = static_cast<MatFromFileWidget*>(widget)->absoluteFilePath;
+  fileName = static_cast<MatFromFileWidget*>(widget)->fileName->text().toStdString();
+  absoluteFilePath = static_cast<MatFromFileWidget*>(widget)->absoluteFilePath.toStdString();
 }
 
 void MatFromFileProperty::toWidget(QWidget *widget) {
-  static_cast<MatFromFileWidget*>(widget)->fileName->setText(fileName);
-  static_cast<MatFromFileWidget*>(widget)->absoluteFilePath = absoluteFilePath;
+  static_cast<MatFromFileWidget*>(widget)->fileName->setText(QString::fromStdString(fileName));
+  static_cast<MatFromFileWidget*>(widget)->absoluteFilePath = QString::fromStdString(absoluteFilePath);
 }

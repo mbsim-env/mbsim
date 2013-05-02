@@ -80,34 +80,80 @@ template <class AT>
 inline std::string toStr(const std::vector<AT> &x) {
   if(x.size()==0)
     return "";
-  std::stringstream s;
-  s << "[";
+  std::string s;
+  s += "[";
   for(int i=0; i<x.size(); i++) {
-    s << x[i];
+    s += x[i];
     if(i<x.size()-1)
-      s << ";";
+      s += ";";
   }
-  s << "]";
-  return s.str();
+  s += "]";
+  return s;
 }
 
 template <class AT>
 inline std::string toStr(const std::vector<std::vector<AT> > &A) {
   if(A.size()==0 || A[0].size()==0)
     return "";
-  std::stringstream s;
-  s << "[";
+  std::string s;
+  s += "[";
   for(int i=0; i<A.size(); i++) {
     for(int j=0; j<A[i].size(); j++) {
-      s << A[i][j];
+      s += A[i][j];
       if(j<A[i].size()-1)
-        s << ",";
+        s += ",";
     }
     if(i<A.size()-1)
-      s << ";";
+      s += ";";
   }
-  s << "]";
-  return s.str();
+  s += "]";
+  return s;
+}
+
+inline QString toQStr(const QString &str) {
+  return str;
+}
+
+inline QString toQStr(int i) {
+  return QString::number(i);
+}
+
+inline QString toQStr(double d) {
+  return QString::number(d);
+}
+
+template <class AT>
+inline QString toQStr(const std::vector<AT> &x) {
+  if(x.size()==0)
+    return "";
+  QString s;
+  s += "[";
+  for(int i=0; i<x.size(); i++) {
+    s += x[i];
+    if(i<x.size()-1)
+      s += ";";
+  }
+  s += "]";
+  return s;
+}
+
+template <class AT>
+inline QString toQStr(const std::vector<std::vector<AT> > &A) {
+  if(A.size()==0 || A[0].size()==0)
+    return "";
+  QString s;
+  s += "[";
+  for(int i=0; i<A.size(); i++) {
+    for(int j=0; j<A[i].size(); j++) {
+      s += A[i][j];
+      if(j<A[i].size()-1)
+        s += ",";
+    }
+    if(i<A.size()-1)
+      s += ";";
+  }
+  s += "]";
+  return s;
 }
 
 inline std::vector<std::string> extract(const std::string &str, char c) {
@@ -165,98 +211,81 @@ inline std::vector<std::vector<std::string> > strToMat(const std::string &str) {
   return A;
 }
 
-template <class T>
-void addElementText(TiXmlElement *parent, std::string name, T value) {
-  std::ostringstream oss;
-  oss << std::setprecision(std::numeric_limits<double>::digits10) << toStr(value);
-  parent->LinkEndChild(new TiXmlElement(name))->LinkEndChild(new TiXmlText(oss.str()));
+inline std::vector<QString> extract(const QString &str, char c) {
+  std::vector<int> vi;
+  vi.push_back(-1);
+  int i=0;
+  while(true) {
+    i = str.indexOf(c,i); 
+    if(i!=-1)
+      vi.push_back(i);
+    else
+      break;
+    i+=1;
+  } 
+  vi.push_back(str.size());
+  std::vector<QString> ret(vi.size()-1);
+  for(unsigned int i=0; i<vi.size()-1; i++) {
+    ret[i] = str.mid(vi[i]+1,vi[i+1]-vi[i]-1);
+  }
+  return ret;
+}
+
+
+inline std::vector<QString> strToVec(const QString &str) {
+  if(str=="") {
+    std::vector<QString> x;
+    return x;
+  }
+  int pos1 = str.indexOf("["); 
+  int pos2 = str.indexOf("]"); 
+  QString str0 = str.mid(pos1+1,pos2-1);
+  std::vector<QString> str1 = extract(str0,';');
+  std::vector<QString> x(str1.size());
+  for(unsigned int i=0; i<str1.size(); i++) {
+    x[i] = str1[i];
+  }
+  return x;
+}
+
+inline std::vector<std::vector<QString> > strToMat(const QString &str) {
+  if(str=="") {
+    std::vector<std::vector<QString> > A;
+    return A;
+  }
+  int pos1 = str.indexOf("["); 
+  int pos2 = str.indexOf("]"); 
+  QString str0 = str.mid(pos1+1,pos2-1);
+  std::vector<QString> str1 = extract(str0,';');
+  std::vector<std::vector<QString> > A(str1.size());
+  for(unsigned int i=0; i<str1.size(); i++) {
+    std::vector<QString> str2 = extract(str1[i],',');
+    A[i].resize(str2.size());
+    for(unsigned int j=0; j<str2.size(); j++)
+      A[i][j] = str2[j];
+  }
+  return A;
 }
 
 template <class T>
-void addElementAttributeAndText(TiXmlElement *parent, std::string name, std::string attribute, std::string attributeName, T value) {
+void addElementText(MBXMLUtils::TiXmlElement *parent, std::string name, T value) {
   std::ostringstream oss;
-  oss << std::setprecision(std::numeric_limits<double>::digits10) << toStr(value);
-  TiXmlElement* ele = new TiXmlElement(name);
+  oss << std::setprecision(std::numeric_limits<double>::digits10+1) << toStr(value);
+  parent->LinkEndChild(new MBXMLUtils::TiXmlElement(name))->LinkEndChild(new MBXMLUtils::TiXmlText(oss.str()));
+}
+
+template <class T>
+void addElementAttributeAndText(MBXMLUtils::TiXmlElement *parent, std::string name, std::string attribute, std::string attributeName, T value) {
+  std::ostringstream oss;
+  oss << std::setprecision(std::numeric_limits<double>::digits10+1) << toStr(value);
+  MBXMLUtils::TiXmlElement* ele = new MBXMLUtils::TiXmlElement(name);
   ele->SetAttribute(attribute,attributeName);
-  ele->LinkEndChild(new TiXmlText(oss.str()));
+  ele->LinkEndChild(new MBXMLUtils::TiXmlText(oss.str()));
   parent->LinkEndChild(ele);
 }
 
 std::vector<std::vector<double> > Cardan2AIK(const std::vector<std::vector<double> > &x);
 std::vector<std::vector<double> > AIK2Cardan(const std::vector<std::vector<double> > &x);
-
- /**
-   * \brief basic event class for MBSim
-   * \author Thorsten Schindler
-   * \date 2009-03-20 inital commit (Thorsten Schindler)
-   */
-  class MBSimEvent {
-    public:
-      /**
-       * \brief constructor
-       */
-      MBSimEvent() {}
-      
-      /**
-       * \brief destructor
-       */
-      virtual ~MBSimEvent() {}
-  };
-
-  /**
-   * \brief basic exception interface for mbsim
-   * \author Thorsten Schindler
-   * \date 2009-03-20 inital commit (Thorsten Schindler)
-   */
-  class MBSimException : public MBSimEvent{
-    public:
-      /**
-       * \brief constructor
-       */
-      MBSimException() : MBSimEvent() {}
-      
-      /**
-       * \brief destructor
-       */
-      virtual ~MBSimException() {}
-
-      /* INTERFACE */
-      /**
-       * \brief prints exception message on stdout
-       */
-      virtual void printExceptionMessage() = 0; 
-  };
-
-  /**
-   * \brief basic error class for mbsim
-   * \author Thorsten Schindler
-   * \date 2009-03-20 inital commit (Thorsten Schindler)
-   */
-  class MBSimError : public MBSimException {
-    public:
-      /**
-       * \brief constructor
-       * \param message to be written
-       */
-      MBSimError(const std::string &mbsim_error_message_); 
-      
-      /**
-       * \brief destructor
-       */
-      virtual ~MBSimError() {}
-
-      /* INHERITED INTERFACE */
-      virtual void printExceptionMessage();
-
-    private:
-      /**
-       * \brief error message
-       */
-      std::string mbsim_error_message;
-
-  };
-
-std::string evaluateOctave(const std::string &program);
 
 template<class T>
 inline std::string funcExt() {
@@ -406,6 +435,8 @@ inline QStringList forceUnits() {
 }
 
 std::string removeWhiteSpace(const std::string &str);
+
+QString removeWhiteSpace(const QString &str);
 
 //template<class T> 
 //T max(T x1, T x2) {

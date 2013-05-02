@@ -26,64 +26,53 @@
 class RigidBody;
 
 class Constraint : public Object {
-  private:
   public:
-    Constraint(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    Constraint(const std::string &str, Element *parent);
     ~Constraint();
+};
+
+class GearConstraint : public Constraint {
+  friend class GearConstraintPropertyDialog;
+  public:
+    GearConstraint(const std::string &str, Element *parent);
+    ~GearConstraint();
+    std::string getType() const { return "GearConstraint"; }
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    void initialize();
+    ElementPropertyDialog* createPropertyDialog() {return new GearConstraintPropertyDialog(this);}
   protected:
-    friend class MainWindow;
+    ExtProperty dependentBody, independentBodies;
 };
 
 class KinematicConstraint : public Constraint {
-  Q_OBJECT
-
+  friend class KinematicConstraintPropertyDialog;
   public:
-    KinematicConstraint(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    KinematicConstraint(const std::string &str, Element *parent);
     ~KinematicConstraint();
-
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-
-    virtual QString getType() const { return "KinematicConstraint"; }
-    //virtual void resizeVariables() {Element::resizeVariables();}
-
-    virtual void initializeDialog();
-    virtual void fromWidget();
-    virtual void toWidget();
+    std::string getType() const { return "KinematicConstraint"; }
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void initialize();
-
+    ElementPropertyDialog* createPropertyDialog() {return new KinematicConstraintPropertyDialog(this);}
   protected:
-    RigidBody *refBody;
-    ExtWidget *dependentBodyWidget, *kinematicFunctionWidget, *firstDerivativeOfKinematicFunctionWidget, *secondDerivativeOfKinematicFunctionWidget;
     ExtProperty dependentBody, kinematicFunction, firstDerivativeOfKinematicFunction, secondDerivativeOfKinematicFunction;
 
-  protected slots:
-    void resizeVariables();
-    void updateReferenceBody();
 };
 
 class JointConstraint : public Constraint {
-  Q_OBJECT
-
+  friend class JointConstraintPropertyDialog;
   public:
-    JointConstraint(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    JointConstraint(const std::string &str, Element *parent);
     ~JointConstraint();
-
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-
-    virtual QString getType() const { return "JointConstraint"; }
-
-    virtual void initializeDialog();
-    virtual void fromWidget();
-    virtual void toWidget();
+    std::string getType() const { return "JointConstraint"; }
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void initialize();
-
+    ElementPropertyDialog* createPropertyDialog() {return new JointConstraintPropertyDialog(this);}
   protected:
-    ExtWidget *forceWidget, *momentWidget, *connectionsWidget, *independentBodyWidget, *dependentBodiesFirstSideWidget, *dependentBodiesSecondSideWidget;
     ExtProperty force, moment, connections, independentBody, dependentBodiesFirstSide, dependentBodiesSecondSide;
 
-    void resizeGeneralizedPosition();
 };
 
 #endif

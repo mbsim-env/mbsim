@@ -24,36 +24,22 @@
 #include "extended_properties.h"
 
 class RigidBody : public Body {
-  Q_OBJECT
+  friend class RigidBodyPropertyDialog;
   public:
-    RigidBody(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    RigidBody(const std::string &str, Element *parent);
     ~RigidBody();
-    virtual int getqSize() {return getSize();}
-    virtual int getuSize() {return getSize();}
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    QString getType() const { return "RigidBody"; }
+    std::string getType() const { return "RigidBody"; }
+    int getqSize() const {return constrained?0:getqRelSize();}
+    int getqRelSize() const;
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    bool isConstrained() const {return constrained;} 
     void setConstrained(bool b) {constrained = b;}
-    int getSize() const {return constrained ? 0 : getUnconstrainedSize();}
-    int getUnconstrainedSize() const; 
-    void resizeGeneralizedPosition();
-    void resizeGeneralizedVelocity();
-    virtual void initializeDialog();
-    virtual void fromWidget();
-    virtual void toWidget();
     void initialize();
-  public slots:
-    void addFrame();
-    void addContour();
-    void addPoint();
-    void addLine();
-    void addPlane();
-    void addSphere();
+    ElementPropertyDialog* createPropertyDialog() {return new RigidBodyPropertyDialog(this);}
   protected:
-    QMenu *contourContextMenu;
     bool constrained;
-    ExtWidget *RWidget, *KWidget, *massWidget, *inertiaWidget, *translationWidget, *rotationWidget, *ombvEditorWidget, *weightArrowWidget, *jointForceArrowWidget, *jointMomentArrowWidget, *isFrameOfBodyForRotationWidget;
-    ExtProperty R, K, mass, inertia, translation, rotation, ombvEditor, weightArrow, jointForceArrow, jointMomentArrow, isFrameOfBodyForRotation;
+    ExtProperty K, mass, inertia, translation, rotation, ombvEditor, weightArrow, jointForceArrow, jointMomentArrow, isFrameOfBodyForRotation;
 };
 
 #endif

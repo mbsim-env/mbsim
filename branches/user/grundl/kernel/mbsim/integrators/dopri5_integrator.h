@@ -77,8 +77,8 @@ namespace MBSim {
 
       void integrate(DynamicSystemSolver& system);
 
-      virtual void initializeUsingXML(TiXmlElement *element);
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
 
       using Integrator::writeXMLFile;
 
