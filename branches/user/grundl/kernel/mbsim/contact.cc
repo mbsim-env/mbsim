@@ -293,7 +293,6 @@ namespace MBSim {
     LinkMechanics::calcLinkStatusSize();
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->setLinkStatusInd(LinkStatusInd + LinkStatusSize);
         jter->calcLinkStatusSize();
         LinkStatusSize += jter->getLinkStatusSize();
       }
@@ -305,7 +304,6 @@ namespace MBSim {
     LinkMechanics::calcLinkStatusRegSize();
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        jter->setLinkStatusRegInd(LinkStatusRegInd + LinkStatusRegSize);
         jter->calcLinkStatusRegSize();
         LinkStatusRegSize += jter->getLinkStatusRegSize();
       }
@@ -543,6 +541,30 @@ namespace MBSim {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
         jter->setcorrInd(nextcorrInd);
         nextcorrInd += jter->getcorrSize();
+      }
+    }
+  }
+
+  void Contact::setLinkStatusInd(int LinkStatusInd_) {
+    LinkMechanics::setLinkStatusInd(LinkStatusInd_);
+    int nextLinkStatusInd = LinkStatusInd_;
+    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
+        cout << nextLinkStatusInd << endl;
+        jter->setLinkStatusInd(nextLinkStatusInd);
+        nextLinkStatusInd += jter->getLinkStatusSize();
+      }
+    }
+  }
+
+  void Contact::setLinkStatusRegInd(int LinkStatusRegInd_) {
+    LinkMechanics::setLinkStatusRegInd(LinkStatusRegInd_);
+    int nextLinkStatusRegInd = LinkStatusRegInd_;
+    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
+        cout << nextLinkStatusRegInd << endl;
+        jter->setLinkStatusRegInd(nextLinkStatusRegInd);
+        nextLinkStatusRegInd += jter->getLinkStatusRegSize();
       }
     }
   }

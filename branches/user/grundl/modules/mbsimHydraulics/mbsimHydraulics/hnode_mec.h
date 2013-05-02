@@ -125,6 +125,8 @@ namespace MBSimHydraulics {
 
       void updateg(double t);
 
+      virtual bool isSingleValued() const {return true;}
+
     private:
       MBSim::Function1<double,double> * pFun;
   };
@@ -163,6 +165,8 @@ namespace MBSimHydraulics {
       void updatedx(double t, double dt);
 
       void plot(double t, double dt);
+
+      virtual bool isSingleValued() const {return true;}
 
 
     private:
