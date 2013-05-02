@@ -154,8 +154,8 @@ namespace MBSim {
       Rotation*    getRotation()               { return fAPK;    }
       void setJacobianOfTranslation(Jacobian* fPJT_) { fPJT = fPJT_; }
       void setJacobianOfRotation(Jacobian* fPJR_)    { fPJR = fPJR_; }
-      void setDerivativeOfJacobianOfTranslation(Function3<fmatvec::Mat3V, fmatvec::Vec, fmatvec::Vec, double>* fPdJT_) { fPdJT = fPdJT_;}
-      void setDerivativeOfJacobianOfRotation(Function3<fmatvec::Mat3V, fmatvec::Vec, fmatvec::Vec, double>* fPdJR_) { fPdJR = fPdJR_;}
+      void setDerivativeOfJacobianOfTranslation(Function3<fmatvec::Mat3xV, fmatvec::Vec, fmatvec::Vec, double>* fPdJT_) { fPdJT = fPdJT_;}
+      void setDerivativeOfJacobianOfRotation(Function3<fmatvec::Mat3xV, fmatvec::Vec, fmatvec::Vec, double>* fPdJR_) { fPdJR = fPdJR_;}
 
       /** \brief Sets the time dependent function for the guiding velocity of translation */
       void setGuidingVelocityOfTranslation(Function1<fmatvec::Vec3,double>* fPjT_) { fPjT = fPjT_;}
@@ -250,25 +250,25 @@ namespace MBSim {
       void setOpenMBVJointMomentArrow(OpenMBV::Arrow *arrow) { MArrow = arrow; }
 #endif
 
-      virtual void initializeUsingXML(TiXmlElement *element);
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
 
       virtual void updatePositionAndOrientationOfFrame(double t, Frame *P);
       virtual void updateAccelerations(double t, Frame *P);
       virtual void updateRelativeJacobians(double t, Frame *P);
-      virtual void updateRelativeJacobians(double t, Frame *P, fmatvec::Mat3V &WJTrel, fmatvec::Mat3V &WJRrel);
-      const fmatvec::Mat3V& getWJTrel() const {return WJTrel;}
-      const fmatvec::Mat3V& getWJRrel() const {return WJRrel;}
-      fmatvec::Mat3V& getWJTrel() {return WJTrel;}
-      fmatvec::Mat3V& getWJRrel() {return WJRrel;}
+      virtual void updateRelativeJacobians(double t, Frame *P, fmatvec::Mat3xV &WJTrel, fmatvec::Mat3xV &WJRrel);
+      const fmatvec::Mat3xV& getWJTrel() const {return WJTrel;}
+      const fmatvec::Mat3xV& getWJRrel() const {return WJRrel;}
+      fmatvec::Mat3xV& getWJTrel() {return WJTrel;}
+      fmatvec::Mat3xV& getWJRrel() {return WJRrel;}
       fmatvec::Mat& getJRel(int i=0) {return JRel[i];}
       fmatvec::Vec& getjRel() {return jRel;}
       fmatvec::Vec& getqRel() {return qRel;}
       fmatvec::Vec& getuRel() {return uRel;}
       // void setqRel(const fmatvec::Vec &q) {qRel0 = q;}
       // void setuRel(const fmatvec::Vec &u) {uRel0 = u;}
-      fmatvec::Mat3V& getPJT(int i=0) {return PJT[i];}
-      fmatvec::Mat3V& getPJR(int i=0) {return PJR[i];}
+      fmatvec::Mat3xV& getPJT(int i=0) {return PJT[i];}
+      fmatvec::Mat3xV& getPJR(int i=0) {return PJR[i];}
 
     protected:
       /**
@@ -296,7 +296,7 @@ namespace MBSim {
       /**
        * JACOBIAN of translation, rotation and their derivatives in parent system
        */
-      fmatvec::Mat3V PJT[2], PJR[2], PdJT, PdJR;
+      fmatvec::Mat3xV PJT[2], PJR[2], PdJT, PdJR;
 
       /**
        * guiding velocities of translation, rotation and their derivatives in parent system
@@ -346,12 +346,12 @@ namespace MBSim {
       /**
        * \brief differentiated JACOBIAN of translation in parent system
        */
-      Function3<fmatvec::Mat3V, fmatvec::Vec, fmatvec::Vec, double> *fPdJT;
+      Function3<fmatvec::Mat3xV, fmatvec::Vec, fmatvec::Vec, double> *fPdJT;
 
       /**
        * \brief differentiated JACOBIAN of rotation in parent system
        */
-      Function3<fmatvec::Mat3V, fmatvec::Vec, fmatvec::Vec, double> *fPdJR;
+      Function3<fmatvec::Mat3xV, fmatvec::Vec, fmatvec::Vec, double> *fPdJR;
 
       /**
        * \brief guiding velocity of translation in parent system
@@ -414,7 +414,7 @@ namespace MBSim {
       fmatvec::Mat JRel[2];
       fmatvec::Vec jRel;
 
-      fmatvec::Mat3V WJTrel,WJRrel;
+      fmatvec::Mat3xV WJTrel,WJRrel;
       fmatvec::Vec3 WjTrel,WjRrel;
 
       fmatvec::Mat TRel;

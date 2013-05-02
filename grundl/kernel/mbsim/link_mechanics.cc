@@ -173,8 +173,8 @@ namespace MBSim {
         r[1].push_back(Vec(frame[i]->getJacobianOfTranslation(1).cols()));
         WF.push_back(Vec3());
         WM.push_back(Vec3());
-        fF.push_back(Mat3V(laSize));
-        fM.push_back(Mat3V(laSize));
+        fF.push_back(Mat3xV(laSize));
+        fM.push_back(Mat3xV(laSize));
       }
 #ifdef HAVE_OPENMBVCPPINTERFACE
       assert(openMBVArrowF.size()==0 || openMBVArrowF.size()==frame.size());
@@ -192,8 +192,8 @@ namespace MBSim {
         r[1].push_back(Vec(contour[i]->getReferenceJacobianOfTranslation(1).cols()));
         WF.push_back(Vec3());
         WM.push_back(Vec3());
-        fF.push_back(Mat3V(laSize));
-        fM.push_back(Mat3V(laSize));
+        fF.push_back(Mat3xV(laSize));
+        fM.push_back(Mat3xV(laSize));
       }
     }
     else if(stage==MBSim::plot) {

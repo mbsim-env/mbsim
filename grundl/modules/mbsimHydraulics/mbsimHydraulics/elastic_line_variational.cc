@@ -17,6 +17,7 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
+#include <config.h>
 #include "mbsimHydraulics/elastic_line_variational.h"
 #include "mbsimHydraulics/objectfactory.h"
 #include "environment.h"
@@ -28,6 +29,7 @@
 #include "mbsim/dynamic_system_solver.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
 
@@ -281,7 +283,7 @@ namespace MBSimHydraulics {
       lname.replace(lname.find_first_of("/"), 1, "_");
     ofstream s(("stateSpace_" + lname + ".out").c_str()); 
 
-    s.precision(18);
+    s.precision(numeric_limits<double>::digits10+1);
     s.setf(ios::scientific); 
 
     s << "Window=" << window_function_type << endl;

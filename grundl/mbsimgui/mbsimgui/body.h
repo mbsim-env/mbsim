@@ -23,15 +23,36 @@
 #include "object.h"
 
 class Body : public Object {
-  Q_OBJECT
-  private:
+  friend class BodyPropertyDialog;
   public:
-    Body(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    Body(const std::string &str, Element *parent);
     ~Body();
-    virtual Element* getByPathSearch(QString path);
+    virtual Element* getByPathSearch(std::string path);
 
-  public slots:
+    int getNumberOfFrames() {return frame.size();}
+    int getNumberOfContours() {return contour.size();}
+
+    Frame* getFrame(int i) {return frame[i];}
+    Contour* getContour(int i) {return contour[i];}
+
+    Frame* getFrame(const std::string &name);
+    Contour* getContour(const std::string &name);
+
+    void addFrame(Frame *frame);
+    void addContour(Contour *contour);
+    void removeElement(Element* element);
+
+    void initialize();
+
+    void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+
+    ElementPropertyDialog* createPropertyDialog() {return new BodyPropertyDialog(this);}
+    ElementContextMenu* createContextMenu() {return new BodyContextMenu;}
   protected:
+    std::vector<Frame*> frame;
+    std::vector<Contour*> contour;
+    ExtProperty R;
 };
 
 #endif

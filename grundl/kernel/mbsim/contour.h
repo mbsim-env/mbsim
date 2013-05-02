@@ -143,7 +143,7 @@ namespace MBSim {
       /**
        * \param JACOBIAN of translation of contour in inertial frame
        */
-      virtual void setReferenceJacobianOfTranslation(const fmatvec::Mat3V &WJP, int j=0) { R->setJacobianOfTranslation(WJP,j); }
+      virtual void setReferenceJacobianOfTranslation(const fmatvec::Mat3xV &WJP, int j=0) { R->setJacobianOfTranslation(WJP,j); }
 
       /**
        * \param gyroscopic acceleration of translation of contour in inertial frame
@@ -153,7 +153,7 @@ namespace MBSim {
       /**
        * \param JACOBIAN of rotation of contour in inertial frame
        */
-      virtual void setReferenceJacobianOfRotation(const fmatvec::Mat3V &WJR, int j=0) { R->setJacobianOfRotation(WJR,j); }
+      virtual void setReferenceJacobianOfRotation(const fmatvec::Mat3xV &WJR, int j=0) { R->setJacobianOfRotation(WJR,j); }
 
       /**
        * \param gyroscopic acceleration of rotation of contour in inertial frame
@@ -190,10 +190,10 @@ namespace MBSim {
       const fmatvec::SqrMat3& getReferenceOrientation() const { return R->getOrientation(); }
       const fmatvec::Vec3& getReferenceVelocity() const { return R->getVelocity(); }
       const fmatvec::Vec3& getReferenceAngularVelocity() const { return R->getAngularVelocity(); }
-      const fmatvec::Mat3V& getReferenceJacobianOfTranslation(int j=0) const { return R->getJacobianOfTranslation(j); }
-      const fmatvec::Mat3V& getReferenceJacobianOfRotation(int j=0) const { return R->getJacobianOfRotation(j); }
-      fmatvec::Mat3V& getReferenceJacobianOfTranslation(int j=0) { return R->getJacobianOfTranslation(j); }
-      fmatvec::Mat3V& getReferenceJacobianOfRotation(int j=0) { return R->getJacobianOfRotation(j); }
+      const fmatvec::Mat3xV& getReferenceJacobianOfTranslation(int j=0) const { return R->getJacobianOfTranslation(j); }
+      const fmatvec::Mat3xV& getReferenceJacobianOfRotation(int j=0) const { return R->getJacobianOfRotation(j); }
+      fmatvec::Mat3xV& getReferenceJacobianOfTranslation(int j=0) { return R->getJacobianOfTranslation(j); }
+      fmatvec::Mat3xV& getReferenceJacobianOfRotation(int j=0) { return R->getJacobianOfRotation(j); }
       const fmatvec::Vec3& getReferenceGyroscopicAccelerationOfTranslation() const { return R->getGyroscopicAccelerationOfTranslation(); }
       const fmatvec::Vec3& getReferenceGyroscopicAccelerationOfRotation() const { return R->getGyroscopicAccelerationOfRotation(); }
       fmatvec::Vec3& getReferenceGyroscopicAccelerationOfTranslation() { return R->getGyroscopicAccelerationOfTranslation(); }
@@ -218,7 +218,7 @@ namespace MBSim {
       virtual void updateJacobians(double t, int j=0) {}
       virtual void updateStateDerivativeDependentVariables(const fmatvec::Vec &ud, double t) {}
 
-      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
 
     protected:
 //      /**

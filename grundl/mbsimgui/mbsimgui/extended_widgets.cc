@@ -19,23 +19,23 @@
 
 #include <config.h>
 #include "extended_widgets.h"
-#include "string_widgets.h"
+#include "variable_widgets.h"
 #include "dialogs.h"
 #include "octaveutils.h"
 #include <QtGui>
 
 using namespace std;
 
-ExtPhysicalVarWidget::ExtPhysicalVarWidget(std::vector<PhysicalStringWidget*> inputWidget_) : inputWidget(inputWidget_), evalInput(0) {
+ExtPhysicalVarWidget::ExtPhysicalVarWidget(std::vector<PhysicalVariableWidget*> inputWidget_, int evalIndex) : inputWidget(inputWidget_), evalInput(0) {
   QHBoxLayout *layout = new QHBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
-  inputWidget.push_back(new PhysicalStringWidget(new OctaveExpressionWidget, inputWidget[0]->getUnitList(), inputWidget[0]->getDefaultUnit()));
+  inputWidget.push_back(new PhysicalVariableWidget(new OctaveExpressionWidget, inputWidget[0]->getUnitList(), inputWidget[0]->getDefaultUnit()));
 
   QPushButton *evalButton = new QPushButton("Eval");
   connect(evalButton,SIGNAL(clicked(bool)),this,SLOT(openEvalDialog()));
-  evalDialog = new EvalDialog(((StringWidget*)inputWidget[0])->cloneStringWidget());
+  evalDialog = new EvalDialog(((VariableWidget*)inputWidget[evalIndex])->cloneVariableWidget());
   //connect(evalDialog,SIGNAL(clicked(bool)),this,SLOT(updateInput()));
 
   inputCombo = new QComboBox;
@@ -46,14 +46,14 @@ ExtPhysicalVarWidget::ExtPhysicalVarWidget(std::vector<PhysicalStringWidget*> in
   for(unsigned int i=0; i<inputWidget.size()-1; i++) {
     stackedWidget->addWidget(inputWidget[i]);
     //inputCombo->addItem(QString("Schema ")+QString::number(i+1));
-    inputCombo->addItem(inputWidget[i]->getType().c_str());
+    inputCombo->addItem(inputWidget[i]->getType());
     inputWidget[i+1]->hide();
   }
   inputWidget[inputWidget.size()-1]->setSizePolicy(QSizePolicy::Ignored,
       QSizePolicy::Ignored);
   stackedWidget->addWidget(inputWidget[inputWidget.size()-1]);
   //inputCombo->addItem("Editor");
-  inputCombo->addItem(inputWidget[inputWidget.size()-1]->getType().c_str());
+  inputCombo->addItem(inputWidget[inputWidget.size()-1]->getType());
 
 
   layout->addWidget(stackedWidget);
@@ -69,6 +69,10 @@ ExtPhysicalVarWidget::ExtPhysicalVarWidget(std::vector<PhysicalStringWidget*> in
  // layout->addWidget(inputCombo,2,1);
 }
 
+ExtPhysicalVarWidget::~ExtPhysicalVarWidget() {
+  delete evalDialog;
+}
+
 void ExtPhysicalVarWidget::changeCurrent(int idx) {
   if (stackedWidget->currentWidget() !=0)
     stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
@@ -77,11 +81,11 @@ void ExtPhysicalVarWidget::changeCurrent(int idx) {
   adjustSize();
 }
 
-string ExtPhysicalVarWidget::getValue() const { 
+QString ExtPhysicalVarWidget::getValue() const { 
   return inputWidget[inputCombo->currentIndex()]->getValue();
 }
 
-void ExtPhysicalVarWidget::setValue(const string &str) { 
+void ExtPhysicalVarWidget::setValue(const QString &str) { 
   inputWidget[inputCombo->currentIndex()]->setValue(str);
 }
 
@@ -102,7 +106,7 @@ void ExtPhysicalVarWidget::updateInput() {
 
 void ExtPhysicalVarWidget::openEvalDialog() {
   evalInput = inputCombo->currentIndex();
-  string str = evalOctaveExpression(getValue());
+  QString str = QString::fromStdString(evalOctaveExpression(getValue().toStdString()));
   str = removeWhiteSpace(str);
   if(str=="" || (evalInput == inputCombo->count()-1 && !inputWidget[0]->validate(str))) {
     QMessageBox::warning( this, "Validation", "Value not valid"); 
@@ -113,13 +117,13 @@ void ExtPhysicalVarWidget::openEvalDialog() {
   //evalDialog->setButtonDisabled(evalInput != (inputCombo->count()-1));
 }
 
-WidgetChoiceWidget::WidgetChoiceWidget(const vector<string> &name, const vector<QWidget*> &widget) { 
+WidgetChoiceWidget::WidgetChoiceWidget(const vector<QString> &name, const vector<QWidget*> &widget) { 
   QHBoxLayout* layout = new QHBoxLayout;
   layout->setMargin(0);
   choice = new QComboBox;
   stackedWidget = new QStackedWidget;
   for(unsigned int i=0; i<name.size(); i++) {
-    choice->addItem(name[i].c_str());
+    choice->addItem(name[i]);
     stackedWidget->addWidget(widget[i]);
   }
   setLayout(layout);

@@ -208,25 +208,28 @@ namespace MBSim {
 
   Vec3 PolynomialFrustum::computeNormal(const double & x, const double & phi) {
     Vec3 normal(NONINIT);
-    normal(0) = getValue(x) * getValueD1(x);
-    normal(1) = - getValue(x) * cos(phi);
-    normal(2) = - getValue(x) * sin(phi);
+    const double f = getValue(x);
+    normal(0) =  f * getValueD1(x);
+    normal(1) = - f * cos(phi);
+    normal(2) = - f * sin(phi);
     return -normal/nrm2(normal);
   }
 
   Vec3 PolynomialFrustum::computeTangentRadial(const double & x, const double & phi) {
     Vec3 tangent(NONINIT);
+    const double fd = getValueD1(x);
     tangent(0) = 1;
-    tangent(1) = getValueD1(x) * cos(phi);
-    tangent(2) = getValueD1(x) * sin(phi);
+    tangent(1) = fd * cos(phi);
+    tangent(2) = fd * sin(phi);
     return tangent/nrm2(tangent);
   }
 
   Vec3 PolynomialFrustum::computeTangentAzimuthal(const double & x, const double & phi) {
     Vec3 tangent(NONINIT);
+    const double f = getValue(x);
     tangent(0) = 0;
-    tangent(1) = - getValue(x) * sin(phi);
-    tangent(2) = getValue(x) * cos(phi);
+    tangent(1) = - f * sin(phi);
+    tangent(2) = f * cos(phi);
     return tangent/nrm2(tangent);
   }
 
@@ -323,7 +326,7 @@ namespace MBSim {
 //      exit(EXIT_FAILURE);
 //    }
 //  }
-
+#ifdef HAVE_OPENMBVCPPINTERFACE
   void PolynomialFrustum::createInventorFile() {
 
     //TODO: Use IndexedTriangleSet instead of IndexedFaceSet (should be faster)
@@ -461,6 +464,7 @@ namespace MBSim {
     f = f - rhs;
     return f;
   }
+#endif
 
 //TODO: Do we need these functions?
 //  Polyfun_in_cppc::Polyfun_in_cppc(const Vec & para_, const Vec2 & P_){

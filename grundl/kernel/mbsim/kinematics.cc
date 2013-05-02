@@ -22,14 +22,57 @@
 #include "mbsim/objectfactory.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 using namespace fmatvec;
 
 namespace MBSim {
 
+  TiXmlElement* TranslationInXDirection::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"TranslationInXDirection" );
+    parent->LinkEndChild(ele0);
+    return ele0;
+  }
+
+  TiXmlElement* TranslationInYDirection::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"TranslationInYDirection" );
+    parent->LinkEndChild(ele0);
+    return ele0;
+  }
+
+  TiXmlElement* TranslationInZDirection::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"TranslationInZDirection" );
+    parent->LinkEndChild(ele0);
+    return ele0;
+  }
+
+  TiXmlElement* TranslationInXYDirection::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"TranslationInXYDirection" );
+    parent->LinkEndChild(ele0);
+    return ele0;
+  }
+
+  TiXmlElement* TranslationInXZDirection::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"TranslationInXZDirection" );
+    parent->LinkEndChild(ele0);
+    return ele0;
+  }
+
+  TiXmlElement* TranslationInYZDirection::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"TranslationInYZDirection" );
+    parent->LinkEndChild(ele0);
+    return ele0;
+  }
+
+  TiXmlElement* TranslationInXYZDirection::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"TranslationInXYZDirection" );
+    parent->LinkEndChild(ele0);
+    return ele0;
+  }
+
   void LinearTranslation::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"translationVectors");
-    setTranslationVectors(Element::getMat3V(e,0));
+    setTranslationVectors(Element::getMat3xV(e,0));
   }
 
   TiXmlElement* LinearTranslation::writeXMLFile(TiXmlNode *parent) {
@@ -49,7 +92,7 @@ namespace MBSim {
     pos->initializeUsingXML(e->FirstChildElement());
   }
 
-  RotationAboutXAxis::RotationAboutXAxis() : RotationAboutOneAxis() {
+  RotationAboutXAxis::RotationAboutXAxis() {
     APK(0,0) = 1;
   }
 
@@ -73,7 +116,7 @@ namespace MBSim {
     return ele0;
   }
 
-  RotationAboutYAxis::RotationAboutYAxis() : RotationAboutOneAxis() {
+  RotationAboutYAxis::RotationAboutYAxis() {
     APK(1,1) = 1;
   }
 
@@ -97,7 +140,7 @@ namespace MBSim {
     return ele0;
   }
 
-  RotationAboutZAxis::RotationAboutZAxis() : RotationAboutOneAxis() {
+  RotationAboutZAxis::RotationAboutZAxis() {
     APK(2,2) = 1;
   }
 
@@ -160,11 +203,6 @@ namespace MBSim {
     return ele0;
   }
 
-  SqrMat3 TimeDependentRotationAboutFixedAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
-    Vec phi(1,INIT,(*angle)(t));
-    return (*rot)(phi,t);
-  }
-
   void TimeDependentRotationAboutFixedAxis::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"axisOfRotation");
@@ -180,16 +218,20 @@ namespace MBSim {
     int i = q.size()-1;
     double a=q(i-1);
     double b=q(i);
+    double cosa = cos(a);
+    double sina = sin(a);
+    double cosb = cos(b);
+    double sinb = sin(b);
 
-    APK(0,0) = cos(b);
-    APK(1,0) = sin(a)*sin(b);
-    APK(2,0) = -cos(a)*sin(b);
+    APK(0,0) = cosb;
+    APK(1,0) = sina*sinb;
+    APK(2,0) = -cosa*sinb;
     APK(0,1) = 0;
-    APK(1,1) = cos(a);
-    APK(2,1) = sin(a);
-    APK(0,2) = sin(b);
-    APK(1,2) = -sin(a)*cos(b);
-    APK(2,2) = cos(a)*cos(b);
+    APK(1,1) = cosa;
+    APK(2,1) = sina;
+    APK(0,2) = sinb;
+    APK(1,2) = -sina*cosb;
+    APK(2,2) = cosa*cosb;
 
     return APK;
   }
@@ -200,22 +242,56 @@ namespace MBSim {
     return ele0;
   }
 
+  SqrMat3 RotationAboutAxesXZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+    SqrMat3 APK(NONINIT);
+
+    int i = q.size()-1;
+    double a=q(i-1);
+    double b=q(i);
+    double cosa = cos(a);
+    double sina = sin(a);
+    double cosb = cos(b);
+    double sinb = sin(b);
+
+    APK(0,0) = cosb;
+    APK(1,0) = cosa*sinb;
+    APK(2,0) = sina*sinb;
+    APK(0,1) = -sinb;
+    APK(1,1) = cosa*cosb;
+    APK(2,1) = sina*cosb;
+    APK(0,2) = 0;
+    APK(1,2) = -sina;
+    APK(2,2) = cosa;
+
+    return APK;
+  }
+
+  TiXmlElement* RotationAboutAxesXZ::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"RotationAboutAxesXZ" );
+    parent->LinkEndChild(ele0);
+    return ele0;
+  }
+
   SqrMat3 RotationAboutAxesYZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     SqrMat3 APK(NONINIT);
 
     int i = q.size()-1;
     double b=q(i-1);
     double g=q(i);
+    double cosb = cos(b);
+    double sinb = sin(b);
+    double cosg = cos(g);
+    double sing = sin(g);
 
-    APK(0,0) = cos(b)*cos(g);
-    APK(1,0) = sin(g);
-    APK(2,0) = -sin(b)*cos(g);
-    APK(0,1) = -cos(b)*sin(g);
-    APK(1,1) = cos(g);
-    APK(2,1) = sin(b)*sin(g);
-    APK(0,2) = sin(b);
+    APK(0,0) = cosb*cosg;
+    APK(1,0) = sing;
+    APK(2,0) = -sinb*cosg;
+    APK(0,1) = -cosb*sing;
+    APK(1,1) = cosg;
+    APK(2,1) = sinb*sing;
+    APK(0,2) = sinb;
     APK(1,2) = 0;
-    APK(2,2) = cos(b);
+    APK(2,2) = cosb;
 
     return APK;
   }
@@ -234,16 +310,22 @@ namespace MBSim {
     double a=q(i-2);
     double b=q(i-1);
     double g=q(i);
+    double cosa = cos(a);
+    double sina = sin(a);
+    double cosb = cos(b);
+    double sinb = sin(b);
+    double cosg = cos(g);
+    double sing = sin(g);
 
-    APK(0,0) = cos(b)*cos(g);
-    APK(1,0) = sin(a)*sin(b)*cos(g)+cos(a)*sin(g);
-    APK(2,0) = -cos(a)*sin(b)*cos(g)+sin(a)*sin(g);
-    APK(0,1) = -cos(b)*sin(g);
-    APK(1,1) = -sin(g)*sin(b)*sin(a)+cos(a)*cos(g);
-    APK(2,1) = cos(a)*sin(b)*sin(g)+sin(a)*cos(g);
-    APK(0,2) = sin(b);
-    APK(1,2) = -sin(a)*cos(b);
-    APK(2,2) = cos(a)*cos(b);
+    APK(0,0) = cosb*cosg;
+    APK(1,0) = sina*sinb*cosg+cosa*sing;
+    APK(2,0) = -cosa*sinb*cosg+sina*sing;
+    APK(0,1) = -cosb*sing;
+    APK(1,1) = -sing*sinb*sina+cosa*cosg;
+    APK(2,1) = cosa*sinb*sing+sina*cosg;
+    APK(0,2) = sinb;
+    APK(1,2) = -sina*cosb;
+    APK(2,2) = cosa*cosb;
 
     return APK;
   }
@@ -294,16 +376,22 @@ namespace MBSim {
     double a=q(i-2);
     double b=q(i-1);
     double g=q(i);
+    double cosa = cos(a);
+    double sina = sin(a);
+    double cosb = cos(b);
+    double sinb = sin(b);
+    double cosg = cos(g);
+    double sing = sin(g);
 
-    APK(0,0) = cos(b)*cos(g);
-    APK(1,0) = sin(a)*sin(b)*cos(g)+cos(a)*sin(g);
-    APK(2,0) = -cos(a)*sin(b)*cos(g)+sin(a)*sin(g);
-    APK(0,1) = -cos(b)*sin(g);
-    APK(1,1) = -sin(g)*sin(b)*sin(a)+cos(a)*cos(g);
-    APK(2,1) = cos(a)*sin(b)*sin(g)+sin(a)*cos(g);
-    APK(0,2) = sin(b);
-    APK(1,2) = -sin(a)*cos(b);
-    APK(2,2) = cos(a)*cos(b);
+    APK(0,0) = cosb*cosg;
+    APK(1,0) = sina*sinb*cosg+cosa*sing;
+    APK(2,0) = -cosa*sinb*cosg+sina*sing;
+    APK(0,1) = -cosb*sing;
+    APK(1,1) = -sing*sinb*sina+cosa*cosg;
+    APK(2,1) = cosa*sinb*sing+sina*cosg;
+    APK(0,2) = sinb;
+    APK(1,2) = -sina*cosb;
+    APK(2,2) = cosa*cosb;
 
     return APK;
   }
@@ -325,7 +413,7 @@ namespace MBSim {
     angle->initializeUsingXML(e->FirstChildElement());
   }
 
-  Mat3V JRotationAboutAxesXY::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  Mat3xV JRotationAboutAxesXY::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     int iq = q.size()-1;
     int iu = uSize-1;
     double a = q(iq-1);
@@ -338,7 +426,20 @@ namespace MBSim {
     return J;
   }
 
-  Mat3V JRotationAboutAxesYZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  Mat3xV JRotationAboutAxesXZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+    int iq = q.size()-1;
+    int iu = uSize-1;
+    double a = q(iq-1);
+    J(0,iu-1) = 1;
+    J(0,iu) = 0;
+    J(1,iu-1) = 0;
+    J(1,iu) = -sin(a);
+    J(2,iu-1) = 0;
+    J(2,iu) = cos(a);
+    return J;
+  }
+
+  Mat3xV JRotationAboutAxesYZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     int iq = q.size()-1;
     int iu = uSize-1;
     double beta = q(iq-1);
@@ -351,20 +452,24 @@ namespace MBSim {
     return J;
   }
 
-  Mat3V JRotationAboutAxesXYZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+  Mat3xV JRotationAboutAxesXYZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     int iq = q.size()-1;
     int iu = uSize-1;
     double a = q(iq-2);
     double b = q(iq-1);
+    double cosa = cos(a);
+    double sina = sin(a);
+    double cosb = cos(b);
+
     J(0,iu-2) = 1;
     J(0,iu-1) = 0;
     J(0,iu) = sin(b);
     J(1,iu-2) = 0;
-    J(1,iu-1) = cos(a);
-    J(1,iu) = -sin(a)*cos(b);
+    J(1,iu-1) = cosa;
+    J(1,iu) = -sina*cosb;
     J(2,iu-2) = 0;
-    J(2,iu-1) = sin(a);
-    J(2,iu) = cos(a)*cos(b);
+    J(2,iu-1) = sina;
+    J(2,iu) = cosa*cosb;
     return J;
   }
 
@@ -463,7 +568,7 @@ namespace MBSim {
     J=Element::getMat(e);
   }
 
-  Mat3V JdRotationAboutAxesXY::operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
+  Mat3xV JdRotationAboutAxesXY::operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
     int iq = q.size()-1;
     int iu = uSize-1;
     double a = q(iq-1);
@@ -474,11 +579,24 @@ namespace MBSim {
     Jd(1,iu) = -sin(a)*ad;
     Jd(2,iu-1) = 0;
     Jd(2,iu) = cos(a)*ad;
-
     return Jd;
   }
 
-  Mat3V JdRotationAboutAxesYZ::operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
+  Mat3xV JdRotationAboutAxesXZ::operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
+    int iq = q.size()-1;
+    int iu = uSize-1;
+    double a = q(iq-1);
+    double ad = qd(iq-1);
+    Jd(0,iu-1) = 0;
+    Jd(0,iu) = 0;
+    Jd(1,iu-1) = 0;
+    Jd(1,iu) = -cos(a)*ad;
+    Jd(2,iu-1) = 0;
+    Jd(2,iu) = -sin(a)*ad;
+    return Jd;
+  }
+
+  Mat3xV JdRotationAboutAxesYZ::operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
     int iq = q.size()-1;
     int iu = uSize-1;
     double beta = q(iq-1);
@@ -492,220 +610,28 @@ namespace MBSim {
     return Jd;
   }
 
-  Mat3V JdRotationAboutAxesXYZ::operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
+  Mat3xV JdRotationAboutAxesXYZ::operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
     int iq = q.size()-1;
     int iu = uSize-1;
     double a = q(iq-2);
     double b = q(iq-1);
     double ad = qd(iq-2);
     double bd = qd(iq-1);
+    double cosa = cos(a);
+    double sina = sin(a);
+    double cosb = cos(b);
+    double sinb = sin(b);
     Jd(0,iu-2) = 0;
     Jd(0,iu-1) = 0;
-    Jd(0,iu) = cos(b)*bd;
+    Jd(0,iu) = cosb*bd;
     Jd(1,iu-2) = 0;
-    Jd(1,iu-1) = -sin(a)*ad;
-    Jd(1,iu) = -cos(a)*cos(b)*ad + sin(a)*sin(b)*bd;
+    Jd(1,iu-1) = -sina*ad;
+    Jd(1,iu) = -cosa*cosb*ad + sina*sinb*bd;
     Jd(2,iu-2) = 0;
-    Jd(2,iu-1) = cos(a)*ad;
-    Jd(2,iu) = -sin(a)*cos(b)*ad - cos(a)*sin(b)*bd;
+    Jd(2,iu-1) = cosa*ad;
+    Jd(2,iu) = -sina*cosb*ad - cosa*sinb*bd;
     return Jd;
   }
-
-
-////   Kinematics::Kinematics() : PjT(3,INIT,0.), PjR(3,INIT,0.), PdjT(3,INIT,0.), PdjR(3,INIT,0.), APK(3,EYE), PrPK(3,INIT,0.),  fT(0), fPrPK(0), fAPK(0), fPJT(0), fPJR(0), fPdJT(0), fPdJR(0), fPjT(0), fPjR(0), fPdjT(0), fPdjR(0) {
-////   }
-////
-//// //  void Kinematics::update(const Vec& uRel, const Vec& qRel, double t) {
-//// //    updateT(qRel,t);
-//// //    updateqdRel(uRel);
-//// //    updatePJT(qRel,t);
-//// //    updatePJR(qRel,t);
-//// //    updatePjT(t);
-//// //    updatePjR(t);
-//// //    updateAPK(qRel,t);
-//// //    updatePrPK(qRel,t);
-//// //    updatePdJT(qdRel,qRel,t);
-//// //    updatePdJR(qdRel,qRel,t);
-//// //    updatePdjT(t);
-//// //    updatePdjR(t);
-//// //  }
-////
-////   void Kinematics::calcqSize() {
-////     int nqT=0, nqR=0;
-////     if(dynamic_cast<LinearTranslation*>(fPrPK)) {
-////       nqT += dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors().cols();
-////       nqR = nqT;
-////     }
-////     else if(fPrPK)
-////       nqT = fPrPK->getqSize();
-////     if(dynamic_cast<RotationAboutOneAxis*>(fAPK)) {
-////       nqR += 1;
-////       nqT = nqR;
-////     }
-////     else if(fAPK)
-////       nqR = fAPK->getqSize();
-////     // TODO: besseres Konzept überlegen
-////     assert(nqT == nqR);
-////     qSize = nqT;
-////   }
-////
-////   void Kinematics::calcuSize(int j) {
-////     int nuT=0, nuR=0;
-////     if(j==0) {
-////       if(fPJT==0) {
-//// 	if(dynamic_cast<LinearTranslation*>(fPrPK)) {
-//// 	  nuT += dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors().cols();
-//// 	  nuR = nuT;
-//// 	} else
-//// 	  nuT = 0;
-////       }
-////
-////       if(fPJR==0) {
-//// 	if(dynamic_cast<RotationAboutOneAxis*>(fAPK)) {
-//// 	  nuR += 1;
-//// 	  nuT = nuR;
-//// 	}
-////       } else
-////         nuR = fPJR->getuSize();
-////       assert(nuT == nuR);
-////       uSize[j] = nuT;
-////     } else {
-////       uSize[j] = 6;
-////     }
-////   }
-////
-////   void Kinematics::init(InitStage stage) {
-////     if(stage==resize) {
-////
-////       PJT[0].resize(3,uSize[0]);
-////       PJR[0].resize(3,uSize[0]);
-////
-////       PdJT.resize(3,uSize[0]);
-////       PdJR.resize(3,uSize[0]);
-////
-////       PJT[1].resize(3,uSize[1]);
-////       PJR[1].resize(3,uSize[1]);
-////       for(int i=0; i<3; i++)
-//// 	PJT[1](i,i) = 1;
-////       for(int i=3; i<6; i++)
-//// 	PJR[1](i-3,i) = 1;
-////     }
-////     else if(stage==MBSim::unknownStage) {
-////
-////       if(fPJT==0) {
-////         Mat JT(3,0);
-////         if(dynamic_cast<LinearTranslation*>(fPrPK)) {
-////           JT.resize() = dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors();
-////         }
-////         PJT[0](Index(0,2), Index(0,JT.cols()-1)) = JT;
-////       }
-////       if(fPJR==0) {
-////         Mat JR(3,0);
-////
-////         if(dynamic_cast<RotationAboutXAxis*>(fAPK))
-////           JR.resize() = Vec("[1;0;0]");
-//// 	else if(dynamic_cast<RotationAboutYAxis*>(fAPK))
-////           JR.resize() = Vec("[0;1;0]");
-//// 	else if(dynamic_cast<RotationAboutZAxis*>(fAPK))
-////           JR.resize() = Vec("[0;0;1]");
-////         else if(dynamic_cast<RotationAboutFixedAxis*>(fAPK))
-////           JR.resize() = dynamic_cast<RotationAboutFixedAxis*>(fAPK)->getAxisOfRotation();
-////         else if(dynamic_cast<RotationAboutAxesYZ*>(fAPK)) {
-////           fPJR = new JRotationAboutAxesYZ(uSize[0]);
-////           fPdJR = new JdRotationAboutAxesYZ(uSize[0]);
-////         }
-////         else if(dynamic_cast<RotationAboutAxesXY*>(fAPK)) {
-////           fPJR = new JRotationAboutAxesXY(uSize[0]);
-////           fPdJR = new JdRotationAboutAxesXY(uSize[0]);
-////         }
-////         else if(dynamic_cast<CardanAngles*>(fAPK)) {
-////           JR.resize() = DiagMat(3,INIT,1);
-//// 	  fT = new TCardanAngles(qSize,uSize[0]);
-////         }
-//// 	else if(dynamic_cast<EulerAngles*>(fAPK)) {
-////           JR.resize() = DiagMat(3,INIT,1);
-//// 	  fT = new TEulerAngles(qSize,uSize[0]);
-////         }
-////
-////         PJR[0](Index(0,2), Index(uSize[0]-JR.cols(),uSize[0]-1)) = JR;
-////       }
-////
-////       T.resize(qSize,uSize[0]); // TODO: nach resize
-////
-////       for(int i=0; i<uSize[0]; i++)
-////         T(i,i) = 1;
-////     }
-////     //else
-////     //  Body::init(stage);
-////   }
-////  // KinematicsTranslation::KinematicsTranslation() {
-////  // }
-////
-////  // void KinematicsTranslation::update(const Vec& qdRel, const Vec& qRel, double t) {
-////  //   //if(fPJT)
-////  //     PJT = fPJT(qRel,t);
-////
-////  //   //if(fPjT)
-////  //     PjT = fPjT(t);
-////
-////  //   //if(fPrPK)
-////  //     PrPK = fPrPK(qRel,t);
-////
-////  //   //if(fPdJT)
-////  //     PdJT = fPdJT(qdRel,qRel,t);
-////
-////  //   //if(fPdjT)
-////  //     PdjT = fPdjT(t);
-////
-////  // }
-////
-////  // void KinematicsRotation::update(const Vec& qdRel, const Vec& qRel, double t) {
-////  //   //if(fPJR)
-////  //     PJR = fPJR(qRel,t);
-////
-////  //   //if(fPjR)
-////  //     PjR = fPjR(t);
-////
-////  //   //if(fAPK)
-////  //     APK = fAPK(qRel,t);
-////
-////  //   //if(fPdJR)
-////  //     PdJR = fPdJR(qdRel,qRel,t);
-////
-////  //   //if(fPdjR)
-////  //     PdjR = fPdjR(t);
-////  // }
-////
-////  // void Kinematics::update(const Vec& uRel, const Vec& qRel, double t) {
-////  //   if(fT)
-////  //     T = (*fT)(qRel,t);
-////  //   Vec qdRel = T*uRel;
-////  //   translation->update(qdRel,qRel,t);
-////  //   rotation->update(qdRel,qRel,t);
-////  // }
-////
-////  // SqrMat KinematicsRotationAboutFixedAxis::fAPK(const fmatvec::Vec &q, const double &t, const void *) {
-////
-////  //   int i = q.size()-1;
-////  //   const double cosq=cos(q(i));
-////  //   const double sinq=sin(q(i));
-////  //   const double onemcosq=1-cosq;
-////  //   const double a0a1=a(0)*a(1);
-////  //   const double a0a2=a(0)*a(2);
-////  //   const double a1a2=a(1)*a(2);
-////
-////  //   APK(0,0) = cosq+onemcosq*a(0)*a(0);
-////  //   APK(1,0) = onemcosq*a0a1+a(2)*sinq;
-////  //   APK(2,0) = onemcosq*a0a2-a(1)*sinq;
-////  //   APK(0,1) = onemcosq*a0a1-a(2)*sinq;
-////  //   APK(1,1) = cosq+onemcosq*a(1)*a(1);
-////  //   APK(2,1) = onemcosq*a1a2+a(0)*sinq;
-////  //   APK(0,2) = onemcosq*a0a2+a(1)*sinq;
-////  //   APK(1,2) = onemcosq*a1a2-a(0)*sinq;
-////  //   APK(2,2) = cosq+onemcosq*a(2)*a(2);
-////
-////  //   return APK;
-////  // }
 
 }
 

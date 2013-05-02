@@ -37,6 +37,9 @@
 #include "mbsim/integrators/euler_explicit_integrator.h"
 #include "mbsim/integrators/rksuite_integrator.h"
 #include "mbsim/utils/contour_functions.h"
+#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
+#  include "mbsim/utils/symbolic_function.h"
+#endif
 #include "mbsim/constraint.h"
 #include "mbsim/observers/kinematics_observer.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -44,6 +47,7 @@
 #endif
 
 using namespace std;
+using namespace MBXMLUtils;
 using namespace fmatvec;
 
 namespace MBSim {
@@ -216,9 +220,9 @@ namespace MBSim {
     throw MBSimError(string("No Function2_VVS of type ")+element->ValueStr()+" exists.");
   }
 
-  Function3<Mat3V,Vec,Vec,double> *ObjectFactory::createFunction3_MVVS(TiXmlElement *element) {
+  Function3<Mat3xV,Vec,Vec,double> *ObjectFactory::createFunction3_MVVS(TiXmlElement *element) {
     if(element==NULL) return NULL;
-    Function3<Mat3V,Vec,Vec,double> *obj;
+    Function3<Mat3xV,Vec,Vec,double> *obj;
     for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->createFunction3_MVVS(element))) return obj;
     throw MBSimError(string("No Function2_MVVS of type ")+element->ValueStr()+" exists.");
@@ -307,6 +311,20 @@ namespace MBSim {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"LinearTranslation")
       return new LinearTranslation;
+    if(element->ValueStr()==MBSIMNS"TranslationInXDirection")
+      return new TranslationInXDirection;
+    if(element->ValueStr()==MBSIMNS"TranslationInYDirection")
+      return new TranslationInYDirection;
+    if(element->ValueStr()==MBSIMNS"TranslationInZDirection")
+      return new TranslationInZDirection;
+    if(element->ValueStr()==MBSIMNS"TranslationInXYDirection")
+      return new TranslationInXYDirection;
+    if(element->ValueStr()==MBSIMNS"TranslationInXZDirection")
+      return new TranslationInXZDirection;
+    if(element->ValueStr()==MBSIMNS"TranslationInYZDirection")
+      return new TranslationInYZDirection;
+    if(element->ValueStr()==MBSIMNS"TranslationInXYZDirection")
+      return new TranslationInXYZDirection;
     if(element->ValueStr()==MBSIMNS"TimeDependentTranslation")
       return new TimeDependentTranslation;
     return 0;
@@ -328,8 +346,12 @@ namespace MBSim {
       return new CardanAngles;
     if(element->ValueStr()==MBSIMNS"RotationAboutAxesXY")
       return new RotationAboutAxesXY;
+    if(element->ValueStr()==MBSIMNS"RotationAboutAxesXZ")
+      return new RotationAboutAxesXZ;
     if(element->ValueStr()==MBSIMNS"RotationAboutAxesYZ")
       return new RotationAboutAxesYZ;
+    if(element->ValueStr()==MBSIMNS"RotationAboutAxesXYZ")
+      return new RotationAboutAxesXYZ;
     if(element->ValueStr()==MBSIMNS"EulerAngles")
       return new EulerAngles;
     if(element->ValueStr()==MBSIMNS"TimeDependentCardanAngles")
@@ -476,6 +498,10 @@ namespace MBSim {
       return new Function1_SS_from_VS();
     if(element->ValueStr()==MBSIMNS"Polynom1_SS")
       return new Polynom1_SS();
+#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
+    if(element->ValueStr()==MBSIMNS"SymbolicFunction1_SS")
+      return new SymbolicFunction1<double, double>;
+#endif
     return 0;
   }
 
@@ -532,6 +558,10 @@ namespace MBSim {
       return new PPolynom<Var,Fixed<3> >;
     if(element->ValueStr()==MBSIMNS"Function1_VS_from_SS")
       return new Function1_VS_from_SS<Fixed<3> >;
+#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
+    if(element->ValueStr()==MBSIMNS"SymbolicFunction1_VS")
+      return new SymbolicFunction1<Vec3, double>;
+#endif
     return 0;
   }
 
@@ -561,7 +591,7 @@ namespace MBSim {
     return 0;
   }
 
-  Function3<Mat3V,Vec,Vec,double> *MBSimObjectFactory::createFunction3_MVVS(TiXmlElement *element) {
+  Function3<Mat3xV,Vec,Vec,double> *MBSimObjectFactory::createFunction3_MVVS(TiXmlElement *element) {
     return 0;
   }
 

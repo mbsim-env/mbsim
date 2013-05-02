@@ -25,27 +25,24 @@
 
 class Observer : public Element {
   public:
-    Observer(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    Observer(const std::string &str, Element *parent);
     ~Observer();
+    static Observer* readXMLFile(const std::string &filename, Element *parent);
     virtual int getxSize() {return 0;}
-    virtual Element* getByPathSearch(QString path);
+    virtual Element* getByPathSearch(std::string path);
 };
 
 class AbsoluteKinematicsObserver : public Observer {
+  friend class AbsoluteKinematicsObserverPropertyDialog;
   public:
-    AbsoluteKinematicsObserver(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    AbsoluteKinematicsObserver(const std::string &str, Element *parent);
     ~AbsoluteKinematicsObserver();
-
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    void initializeDialog();
-    virtual void fromWidget();
-    virtual void toWidget();
+    std::string getType() const { return "AbsoluteKinematicsObserver"; }
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void initialize();
-
-    virtual QString getType() const { return "AbsoluteKinematicsObserver"; }
+    ElementPropertyDialog* createPropertyDialog() {return new AbsoluteKinematicsObserverPropertyDialog(this);}
   protected:
-    ExtWidget *frameWidget, *positionWidget, *velocityWidget, *angularVelocityWidget, *accelerationWidget, *angularAccelerationWidget;
     ExtProperty frame, position, velocity, angularVelocity, acceleration, angularAcceleration;
 };
 

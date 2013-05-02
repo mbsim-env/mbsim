@@ -80,7 +80,7 @@ inline std::string toStr(const fmatvec::Matrix<Type,Row,Col,AT> &A) {
   s << "[";
   for(int i=0; i<A.rows(); i++) {
     for(int j=0; j<A.cols(); j++) {
-      s << std::setprecision(std::numeric_limits<double>::digits10) << A(i,j);
+      s << std::setprecision(std::numeric_limits<double>::digits10+1) << A(i,j);
       if(j<A.cols()-1)
         s << ",";
     }
@@ -113,10 +113,10 @@ inline double fromMatStr(const std::string &str) {
 }
 
 template <class T>
-void addElementText(TiXmlElement *parent, std::string name, T value) {
+void addElementText(MBXMLUtils::TiXmlElement *parent, std::string name, T value) {
   std::ostringstream oss;
-  oss << std::setprecision(std::numeric_limits<double>::digits10) << toStr(value);
-  parent->LinkEndChild(new TiXmlElement(name))->LinkEndChild(new TiXmlText(oss.str()));
+  oss << std::setprecision(std::numeric_limits<double>::digits10+1) << toStr(value);
+  parent->LinkEndChild(new MBXMLUtils::TiXmlElement(name))->LinkEndChild(new MBXMLUtils::TiXmlText(oss.str()));
 }
 
 
@@ -124,8 +124,8 @@ void addElementText(TiXmlElement *parent, std::string name, T value) {
 class Deprecated {
   public:
     /*! register a deprecated feature with name message.
-     * If e is NULL a stack trace is printed if available if e it not NULL TiXml_location is printed. */
-    static void registerMessage(const std::string &message, TiXmlElement *e=NULL);
+     * If e is NULL a stack trace is printed if available if e it not NULL MBXMLUtils::TiXml_location is printed. */
+    static void registerMessage(const std::string &message, MBXMLUtils::TiXmlElement *e=NULL);
   private:
     static void printAllMessages();
     static std::set<std::vector<std::string> > allMessages;

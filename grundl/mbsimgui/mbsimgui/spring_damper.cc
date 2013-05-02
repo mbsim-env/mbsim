@@ -23,16 +23,11 @@
 #include "function_properties.h"
 #include "kinetics_properties.h"
 #include "ombv_properties.h"
-#include "kinetics_widgets.h"
-#include "function_widgets.h"
-#include "extended_widgets.h"
-#include "ombv_widgets.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 
-SpringDamper::SpringDamper(const QString &str, QTreeWidgetItem *parentItem, int ind) : Link(str, parentItem, ind), forceDirection(0,false), coilSpring(0,true) {
-
-  setText(1,getType());
+SpringDamper::SpringDamper(const string &str, Element *parent) : Link(str, parent), forceDirection(0,false), coilSpring(0,true) {
 
   connections.setProperty(new ConnectFramesProperty(2,this));
 
@@ -50,41 +45,6 @@ SpringDamper::~SpringDamper() {
 void SpringDamper::initialize() {
   Link::initialize();
   connections.initialize();
-}
-
-void SpringDamper::initializeDialog() {
-  Link::initializeDialog();
-
-  dialog->addTab("Kinetics");
-  dialog->addTab("Visualisation");
-
-  connectionsWidget = new ExtWidget("Connections",new ConnectFramesWidget(2,this));
-  dialog->addToTab("Kinetics", connectionsWidget);
-
-  forceFunctionWidget = new ExtWidget("Force function",new Function2ChoiceWidget);
-  dialog->addToTab("Kinetics", forceFunctionWidget);
-
-  forceDirectionWidget = new ExtWidget("Force direction",new ForceDirectionWidget(this),true);
-  dialog->addToTab("Kinetics", forceDirectionWidget);
-
-  coilSpringWidget = new ExtWidget("Coil spring",new OMBVCoilSpringWidget("NOTSET"),true);
-  dialog->addToTab("Visualisation", coilSpringWidget);
-}
-
-void SpringDamper::toWidget() {
-  Link::toWidget();
-  connections.toWidget(connectionsWidget);
-  forceFunction.toWidget(forceFunctionWidget);
-  forceDirection.toWidget(forceDirectionWidget);
-  coilSpring.toWidget(coilSpringWidget);
-}
-
-void SpringDamper::fromWidget() {
-  Link::fromWidget();
-  connections.fromWidget(connectionsWidget);
-  forceFunction.fromWidget(forceFunctionWidget);
-  forceDirection.fromWidget(forceDirectionWidget);
-  coilSpring.fromWidget(coilSpringWidget);
 }
 
 void SpringDamper::initializeUsingXML(TiXmlElement *element) {

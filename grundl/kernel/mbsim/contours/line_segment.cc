@@ -25,6 +25,7 @@
 #endif
 
 using namespace std;
+using namespace MBXMLUtils;
 
 namespace MBSim {
   LineSegment::LineSegment(const std::string& name) : RigidContour(name), bound(2), length(0) {

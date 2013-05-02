@@ -17,11 +17,13 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
+#include <config.h>
 #include "mbsimControl/signal_processing_system_sensor.h"
 #include "mbsimControl/signal_processing_system.h"
 #include "mbsimControl/objectfactory.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
 

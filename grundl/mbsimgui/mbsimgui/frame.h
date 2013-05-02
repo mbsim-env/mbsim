@@ -26,40 +26,39 @@
 class ExtWidget;
 
 class Frame : public Element {
+  friend class FramePropertyDialog;
   public:
-    Frame(const QString &str, QTreeWidgetItem *parentItem, int ind, bool grey=false);
+    Frame(const std::string &str, Element *parent, bool grey=true);
     ~Frame();
-    QString getType() const { return "Frame"; }
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual void initializeUsingXML2(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile2(TiXmlNode *element);
-    bool openMBVFrame() const {return visuProperty.isActive();}
-    void setOpenMBVFrame(bool flag) {visuProperty.setActive(flag);}
-    virtual Element * getByPathSearch(QString path);
-    virtual void initializeDialog();
-    virtual void fromWidget();
-    virtual void toWidget();
+    std::string getType() const { return "Frame"; }
+    static Frame* readXMLFile(const std::string &filename, Element *parent);    
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual void initializeUsingXML2(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile2(MBXMLUtils::TiXmlNode *element);
+    bool openMBVFrame() const {return visu.isActive();}
+    void setOpenMBVFrame(bool flag) {visu.setActive(flag);}
+    virtual Element * getByPathSearch(std::string path);
+    ElementPropertyDialog* createPropertyDialog() {return new FramePropertyDialog(this);}
+    ElementContextMenu* createContextMenu() {return new FrameContextMenu;}
   protected:
-    ExtWidget *visuWidget;
-    ExtProperty visuProperty;
+    ExtProperty visu;
 };
 
 class FixedRelativeFrame : public Frame {
+  friend class FixedRelativeFramePropertyDialog;
   public:
-    FixedRelativeFrame(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    FixedRelativeFrame(const std::string &str, Element *parent);
     ~FixedRelativeFrame();
-    QString getType() const { return "FixedRelativeFrame"; }
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual void initializeUsingXML2(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+    std::string getType() const { return "FixedRelativeFrame"; }
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual void initializeUsingXML2(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual void initialize();
-    virtual void initializeDialog();
-    virtual void fromWidget();
-    virtual void toWidget();
+    ElementPropertyDialog* createPropertyDialog() {return new FixedRelativeFramePropertyDialog(this);}
+    ElementContextMenu* createContextMenu() {return new FixedRelativeFrameContextMenu;}
   protected:
-    ExtWidget *refFrameWidget, *positionWidget, *orientationWidget;
-    ExtProperty refFrameProperty, positionProperty, orientationProperty;
+    ExtProperty refFrame, position, orientation;
 };
 
 #endif

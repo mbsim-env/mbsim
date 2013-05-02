@@ -25,6 +25,7 @@
 
 #ifndef NO_ISO_14882
 using namespace std;
+using namespace MBXMLUtils;
 #endif
 
 using namespace fmatvec;

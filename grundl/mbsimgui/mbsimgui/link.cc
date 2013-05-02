@@ -19,30 +19,40 @@
 
 #include <config.h>
 #include "link.h"
-#include <QtGui/QMenu>
-#include "mainwindow.h"
+#include "objectfactory.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 
-
-Link::Link(const QString &str, QTreeWidgetItem *parentItem, int ind) : Element(str, parentItem, ind) {
-
-  QAction *action=new QAction(Utils::QIconCached("newobject.svg"),"Remove", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(remove()));
-  contextMenu->addAction(action);
+Link::Link(const string &str, Element *parent) : Element(str, parent) {
 }
 
 Link::~Link() {
 }
 
-Element * Link::getByPathSearch(QString path) {
-  if (path.mid(0, 3)=="../") // relative path
-    return getParentElement()->getByPathSearch(path.mid(3));
+Link* Link::readXMLFile(const string &filename, Element *parent) {
+  TiXmlDocument doc;
+  bool ret=doc.LoadFile(filename);
+  assert(ret==true);
+  TiXml_PostLoadFile(&doc);
+  TiXmlElement *e=doc.FirstChildElement();
+  map<string,string> dummy;
+  incorporateNamespace(doc.FirstChildElement(), dummy);
+  Link *link=ObjectFactory::getInstance()->createLink(e,parent);
+  if(link)
+    link->initializeUsingXML(e);
+  return link;
+}
+
+Element * Link::getByPathSearch(string path) {
+  if (path.substr(0, 3)=="../") // relative path
+    return getParent()->getByPathSearch(path.substr(3));
   else // absolut path
-    if(getParentElement())
-      return getParentElement()->getByPathSearch(path);
+    if(getParent())
+      return getParent()->getByPathSearch(path);
     else
-      return getByPathSearch(path.mid(1));
+      return getByPathSearch(path.substr(1));
+  return NULL;
 }
 
 //void Link::initializeUsingXML(TiXmlElement *element) {

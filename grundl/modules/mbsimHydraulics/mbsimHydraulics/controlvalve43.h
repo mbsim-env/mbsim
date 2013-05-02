@@ -39,7 +39,7 @@ namespace MBSimHydraulics {
       Controlvalve43(const std::string& name);
       
       void init(MBSim::InitStage stage);
-      void initializeUsingXML(TiXmlElement * element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
 
       void setLength(double l_);
       void setDiameter(double d_);

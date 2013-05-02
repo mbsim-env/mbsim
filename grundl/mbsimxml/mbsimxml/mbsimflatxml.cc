@@ -10,6 +10,7 @@
 #include "mbsimxml/mbsimflatxml.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 
 namespace MBSim {
 

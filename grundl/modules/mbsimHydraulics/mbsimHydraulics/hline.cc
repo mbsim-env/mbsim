@@ -17,6 +17,7 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
+#include <config.h>
 #include "mbsimHydraulics/hline.h"
 #include "mbsimHydraulics/pressure_loss.h"
 #include "mbsimHydraulics/rigid_line_pressureloss.h"
@@ -27,6 +28,7 @@
 #include "mbsimHydraulics/obsolet_hint.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
 using namespace MBSimControl;

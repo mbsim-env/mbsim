@@ -111,7 +111,7 @@ namespace MBSim {
       /**
        * \brief cartesian force and moment direction matrix for nonsmooth right hand side
        */
-      std::vector<fmatvec::Mat3V> fF, fM;
+      std::vector<fmatvec::Mat3xV> fF, fM;
 
       /**
        * \brief array in which all frames are listed, connecting bodies via a link

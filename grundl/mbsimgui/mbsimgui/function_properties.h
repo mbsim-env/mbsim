@@ -26,30 +26,30 @@ class Function1ChoiceProperty;
 
 class Function1Property : public Property {
   public:
-    Function1Property(const QString& ext_="") : ext(ext_) {}
+    Function1Property(const std::string &ext_="") : ext(ext_) {}
     virtual ~Function1Property() {}
-    virtual QString getType() const { return "Function1_"+ext; }
-    virtual QString getExt() const { return ext; }
-    TiXmlElement* writeXMLFile(TiXmlNode *parent);
+    virtual std::string getType() const { return "Function1_"+ext; }
+    virtual std::string getExt() const { return ext; }
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   protected:
-    QString ext;
+    std::string ext;
 };
 
 class Function2Property : public Property {
   public:
-    Function2Property(const QString& ext_="") : ext(ext_) {}
+    Function2Property(const std::string &ext_="") : ext(ext_) {}
     virtual ~Function2Property() {}
-    virtual QString getType() const { return "Function2_"+ext; }
-    virtual QString getExt() const { return ext; }
+    virtual std::string getType() const { return "Function2_"+ext; }
+    virtual std::string getExt() const { return ext; }
     virtual void resize(int m, int n) {}
-    TiXmlElement* writeXMLFile(TiXmlNode *parent);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   protected:
-    QString ext;
+    std::string ext;
 };
 
 class DifferentiableFunction1Property : public Function1Property {
   public:
-    DifferentiableFunction1Property(const QString &ext="") : Function1Property(ext), order(0) {}
+    DifferentiableFunction1Property(const std::string &ext="") : Function1Property(ext), order(0) {}
     //virtual ~DifferentiableFunction1() { delete derivatives[0]; derivatives.erase(derivatives.begin()); }
     const Function1Property& getDerivative(int degree) const { return *(derivatives[degree]); }
     Function1Property& getDerivative(int degree) { return *(derivatives[degree]); }
@@ -58,7 +58,7 @@ class DifferentiableFunction1Property : public Function1Property {
 
     void setOrderOfDerivative(int i) { order=i; }
 
-    QString getType() const { return "DifferentiableFunction1"; }
+    std::string getType() const { return "DifferentiableFunction1"; }
 
   protected:
     std::vector<Function1Property*> derivatives;
@@ -67,11 +67,11 @@ class DifferentiableFunction1Property : public Function1Property {
 
 class ConstantFunction1Property : public Function1Property {
   public:
-    ConstantFunction1Property(const QString &ext);
-    inline QString getType() const { return QString("ConstantFunction1_")+ext; }
+    ConstantFunction1Property(const std::string &ext);
+    inline std::string getType() const { return "ConstantFunction1_"+ext; }
     void resize(int m, int n);
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
   protected:
@@ -81,9 +81,9 @@ class ConstantFunction1Property : public Function1Property {
 class QuadraticFunction1Property : public DifferentiableFunction1Property {
   public:
     QuadraticFunction1Property();
-    inline QString getType() const { return QString("QuadraticFunction1_VS"); }
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    inline std::string getType() const { return "QuadraticFunction1_VS"; }
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -94,9 +94,9 @@ class QuadraticFunction1Property : public DifferentiableFunction1Property {
 class SinusFunction1Property : public DifferentiableFunction1Property {
   public:
     SinusFunction1Property();
-    inline QString getType() const { return QString("SinusFunction1_VS"); }
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    inline std::string getType() const { return "SinusFunction1_VS"; }
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -130,9 +130,9 @@ class SinusFunction1Property : public DifferentiableFunction1Property {
 class TabularFunction1Property : public Function1Property {
   public:
     TabularFunction1Property();
-    inline QString getType() const { return QString("TabularFunction1_VS"); }
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    inline std::string getType() const { return "TabularFunction1_VS"; }
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -144,9 +144,9 @@ class SummationFunction1Property : public Function1Property {
 
   public:
     SummationFunction1Property() {}
-    inline QString getType() const { return QString("SummationFunction1_VS"); }
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    inline std::string getType() const { return "SummationFunction1_VS"; }
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -158,9 +158,9 @@ class SummationFunction1Property : public Function1Property {
 class LinearSpringDamperForceProperty : public Function2Property {
   public:
     LinearSpringDamperForceProperty();
-    inline QString getType() const { return QString("LinearSpringDamperForce")+ext; }
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    inline std::string getType() const { return "LinearSpringDamperForce"+ext; }
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -171,9 +171,9 @@ class LinearSpringDamperForceProperty : public Function2Property {
 class LinearRegularizedBilateralConstraintProperty: public Function2Property {
   public:
     LinearRegularizedBilateralConstraintProperty();
-    QString getType() const { return "LinearRegularizedBilateralConstraint"; }
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    std::string getType() const { return "LinearRegularizedBilateralConstraint"; }
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -185,10 +185,10 @@ class LinearRegularizedUnilateralConstraintProperty: public Function2Property {
   public:
     LinearRegularizedUnilateralConstraintProperty(); 
 
-    virtual QString getType() const { return "LinearRegularizedUnilateralConstraint"; }
+    virtual std::string getType() const { return "LinearRegularizedUnilateralConstraint"; }
 
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -200,10 +200,10 @@ class LinearRegularizedCoulombFrictionProperty: public Function2Property {
   public:
     LinearRegularizedCoulombFrictionProperty(); 
 
-    virtual QString getType() const { return "LinearRegularizedCoulombFriction"; }
+    virtual std::string getType() const { return "LinearRegularizedCoulombFriction"; }
 
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -218,8 +218,8 @@ class Function1ChoiceProperty : public Property {
 
     void defineForceLaw(int);
 
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
@@ -237,8 +237,8 @@ class Function2ChoiceProperty : public Property {
 
     void defineForceLaw(int);
 
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 

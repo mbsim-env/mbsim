@@ -44,7 +44,7 @@ namespace MBSimHydraulics {
 
       void plot(double t, double dt);
 
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     private:
       double diameter;
       LinePressureLoss * pL;
@@ -72,7 +72,7 @@ namespace MBSimHydraulics {
 
       void init(MBSim::InitStage stage);
 
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     private:
       ClosablePressureLoss * cpL;
       MBSimControl::Signal * cpLSignal;
@@ -97,7 +97,7 @@ namespace MBSimHydraulics {
 
       void init(MBSim::InitStage stage);
 
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     private:
       UnidirectionalPressureLoss * upL;
       double dpMin;

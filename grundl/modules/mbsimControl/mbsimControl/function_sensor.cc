@@ -17,11 +17,13 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
+#include <config.h>
 #include "mbsimControl/function_sensor.h"
 #include "mbsimControl/objectfactory.h"
 #include "mbsimControl/obsolet_hint.h"
 
 using namespace MBSim;
+using namespace MBXMLUtils;
 using namespace fmatvec;
 
 namespace MBSimControl {

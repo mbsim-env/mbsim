@@ -70,7 +70,7 @@
 //  
 //        void integrate(DynamicSystemSolver& system);
 //        
-//        virtual void initializeUsingXML(TiXmlElement *element);
+//        virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
 //    };
 //  
 //  }

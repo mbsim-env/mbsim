@@ -30,10 +30,19 @@ namespace MBSim {
 
   class edgePolyFrustum : public Function1<fmatvec::Vec, fmatvec::Vec> {
     public:
+      /*!
+       * \brief constructor
+       */
       edgePolyFrustum(const PolynomialFrustum * frustum);
 
+      /*!
+       * \brief standard destructor
+       */
       virtual ~edgePolyFrustum();
 
+      /*!
+       * \brief set the one corner point A and the direction of the edge with (A + dir) is the other corner point
+       */
       void setAdir(const fmatvec::Vec3 & A, const fmatvec::Vec3 & dir);
 
       fmatvec::Vec operator()(const fmatvec::Vec &x, const void* = NULL);
@@ -129,6 +138,65 @@ namespace MBSim {
       double dx;
   };
 
+  /*!
+   * \brief function that is zero for a height-coordinate of the polynomial frustum on which the normal on that point points towards the given outer point
+   */
+  class projectAlongNormal : public Function1<fmatvec::Vec, fmatvec::Vec> {
+    public:
+      projectAlongNormal(PolynomialFrustum * frustum);
+
+      virtual ~projectAlongNormal();
+
+      void setUpSystemParamters(const fmatvec::Vec3 & referencePoint, const double & phi);
+
+      fmatvec::Vec operator()(const fmatvec::Vec &x, const void* = NULL);
+
+    protected:
+      /*!
+       * \brief constant pointer to the frustum
+       */
+      PolynomialFrustum * frustum;
+
+      /*!
+       * \brief point that should be projected
+       */
+      fmatvec::Vec3 referencePoint;
+
+      /*!
+       * \brief azimuathal position where it all happens
+       */
+      double phi;
+  };
+
+  /*!
+   * \brief the Jacobian function for the projectAlongNormal Function
+   */
+  class projectAlongNormalJacobian : public NewtonJacobianFunction {
+    public:
+      projectAlongNormalJacobian(PolynomialFrustum * frustum);
+
+      virtual ~projectAlongNormalJacobian();
+
+      void setUpSystemParamters(const fmatvec::Vec3 & referencePoint, const double & phi);
+
+      fmatvec::SqrMat operator()(const fmatvec::Vec &x, const void* = NULL);
+
+    protected:
+      /*!
+       * \brief constant pointer to the frustum
+       */
+      PolynomialFrustum * frustum;
+
+      /*!
+       * \brief point that should be projected
+       */
+      fmatvec::Vec3 referencePoint;
+
+      /*!
+       * \brief azimuathal position where it all happens
+       */
+      double phi;
+  };
 
 
   /*!
@@ -153,7 +221,7 @@ namespace MBSim {
       /*!
        * \brief set the values for the contact kinematics for the frustum due to the given x and phi
        */
-      void setFrustumOrienationKinematics(const double & x, const double & phi, fmatvec::Vec & g, ContourPointData * cpData);
+      void setFrustumOrienationKinematics(const double & x, const double & phi, ContourPointData * cpData);
 
       /***************************************************/
       /*!
@@ -177,30 +245,6 @@ namespace MBSim {
        * \todo: unefficient and only finding (one) intersection point --> There should always be two intersection points and then using the middle or something
        */
       bool edgeContact(fmatvec::Vec & g, ContourPointData * cpData);
-
-      /*!
-       * \brief given two vectors x and v, this function is used to generate the rotation matrix which rotating the current reference frame to a new one
-       *        the new frame keeps x as an axis and uses the cross product of x and v as new z axis
-       * \return orientation matrix A so that for a point P, P_newframe=A*(P_currentframe-vec(from orgin of current to new frame))
-       *
-       * \todo: activate function to use in case that the contact point is on the edge
-       */
-//      fmatvec::SqrMat3 RotatM_2vec(fmatvec::Vec3 X, fmatvec::Vec3 V);
-      /*!
-       * \brief this function is used to find the smallest distance between a point and the surface of a frustum
-       *        To solve this, we transform the 3D problem to a 2D problem on a section which includes two lines:
-       *        one goes through the origin of the frustum (center point of bottom or top circle) and the given point;
-       *        the other is the x-axis
-       * the coordinates used here is under      which??  frame
-       *
-       * * \todo: activate function to use in case that the contact point is on the edge
-       */
-      //     CP_item_frustum CP_toP_onfrustum3D(fmatvec::Vec3 P);
-      /*!
-       * \brief this function is used to search the smallest distance between the surface of a frustum and a linesegment with end points P1,P2
-       *        We will use numerical scheme, first select several points on the line segment and calculate the distances, then around the point with the
-       *        smallest distance, discretize the neighboring part with much denser points and then calculate the distance again.
-       */
 
       /*!
        * \brief computes the point on the contour of the frustum due to the height-coordinate x and the normal in world coordinates
@@ -261,27 +305,52 @@ namespace MBSim {
       /*!
        * \brief function for intersection point
        */
-      edgePolyFrustum * funcAB;
+      projectAlongNormal * funcProjectAlongNormal;
 
       /*!
        * \brief newton method for solving the edge contact
        */
-      MultiDimensionalNewtonMethod newtonedge;
+      MultiDimensionalNewtonMethod newtonProjectAlongNormal;
 
       /*!
        * \brief Jacobian for newton method
        */
-      NumericalNewtonJacobianFunction jacobian;
+      projectAlongNormalJacobian * jacobianProjectAlongNormal;
 
       /*!
        * \brief criteria for newton method
        */
-      edgePolyFrustumCriteria criteria;
+      GlobalResidualCriteriaFunction criteriaProjectAlongNormal;
 
       /*!
        * \brief damping function for newton method
        */
-      StandardDampingFunction damping;
+      StandardDampingFunction dampingProjectAlongNormal;
+
+      /*!
+       * \brief function for intersection point
+       */
+      edgePolyFrustum * funcEdge;
+
+      /*!
+       * \brief newton method for solving the edge contact
+       */
+      MultiDimensionalNewtonMethod newtonEdge;
+
+      /*!
+       * \brief Jacobian for newton method
+       */
+      NumericalNewtonJacobianFunction jacobianEdge;
+
+      /*!
+       * \brief criteria for newton method
+       */
+      edgePolyFrustumCriteria criteriaEdge;
+
+      /*!
+       * \brief damping function for newton method
+       */
+      StandardDampingFunction dampingEdge;
 
       /*!
        * \brief index of last edge contact
@@ -294,22 +363,6 @@ namespace MBSim {
       fmatvec::Vec xi;
 
   };
-/*!
- * \brief this class stores information about contact points both on the surface of frustum and the other item as well as the smallest distance
- */
-//  class CP_item_frustum {
-//    private:
-//      fmatvec::Vec3 P_fru;
-//      fmatvec::Vec3 P_other;
-//      double dis;
-//    public:
-//      CP_item_frustum(const fmatvec::Vec3 _P_fru, const fmatvec::Vec3 _P_other, double _dis) {
-//        P_fru = _P_fru;
-//        P_other = _P_other;
-//        dis = _dis;
-//      }
-//      ;
-//      ~CP_item_frustum();
-//  };
+
 } /* namespace MBSim */
 #endif /* AREA_POLYNOMIALFRUSTUM_H_ */

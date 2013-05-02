@@ -28,6 +28,9 @@
 #include "mbsim/environment.h"
 #include "mbsim/constraint.h"
 #include "mbsim/utils/utils.h"
+#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
+#include "mbsim/utils/symbolic_function.h"
+#endif
 #include "mbsim/contours/compound_contour.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/rigidbody.h>
@@ -38,6 +41,7 @@
 #endif
 
 using namespace std;
+using namespace MBXMLUtils;
 using namespace fmatvec;
 
 namespace MBSim {
@@ -113,20 +117,12 @@ namespace MBSim {
     Body::calcqSize();
     int nqT=0, nqR=0;
     nq = 0;
-    if(dynamic_cast<LinearTranslation*>(fPrPK))
-      nqT = dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors().cols();
+    if(dynamic_cast<RotationIndependentTranslation*>(fPrPK))
+      nqT = static_cast<RotationIndependentTranslation*>(fPrPK)->getqTSize();
     else if(fPrPK)
       nq = fPrPK->getqSize();
-    if(dynamic_cast<RotationAboutOneAxis*>(fAPK)) {
-      nqR = 1;
-    }
-    else if(dynamic_cast<RotationAboutTwoAxes*>(fAPK)) {
-      nqR = 2;
-    }
-    else if(dynamic_cast<RotationAboutThreeAxes*>(fAPK)) {
-      if (not (dynamic_cast<TimeDependentCardanAngles*>(fAPK)))
-        nqR = 3;
-    }
+    if(dynamic_cast<TranslationIndependentRotation*>(fAPK))
+      nqR = static_cast<TranslationIndependentRotation*>(fAPK)->getqRSize();
     else if(fAPK) {
       int nqtmp = fAPK->getqSize();
       if(nq) assert(nq==nqtmp);
@@ -142,22 +138,14 @@ namespace MBSim {
     if(j==0) {
       nu[0] = 0;
       if(fPJT==0) {
-        if(dynamic_cast<LinearTranslation*>(fPrPK))
-          nuT = dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors().cols();
+        if(dynamic_cast<RotationIndependentTranslation*>(fPrPK))
+          nuT = static_cast<RotationIndependentTranslation*>(fPrPK)->getuTSize();
       } else
         nu[0] = fPJT->getuSize();
 
       if(fPJR==0) {
-	if(dynamic_cast<RotationAboutOneAxis*>(fAPK)) {
-	  nuR = 1;
-	}
-	else if(dynamic_cast<RotationAboutTwoAxes*>(fAPK)) {
-	  nuR = 2;
-	}
-	else if(dynamic_cast<RotationAboutThreeAxes*>(fAPK)) {
-	  if (not (dynamic_cast<TimeDependentCardanAngles*>(fAPK)))
-	    nuR = 3;
-	}
+	if(dynamic_cast<TranslationIndependentRotation*>(fAPK))
+	  nuR = static_cast<TranslationIndependentRotation*>(fAPK)->getuRSize();
       } else {
         int nutmp = fPJR->getuSize();
         if(nu[0]) assert(nu[0]==nutmp);
@@ -174,6 +162,155 @@ namespace MBSim {
   void RigidBody::init(InitStage stage) {
     if(stage==preInit) {
       Body::init(stage);
+
+#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
+      if(dynamic_cast<TimeDependentTranslation*>(fPrPK)) {
+        SymbolicFunction1<Vec3,double> *pos = dynamic_cast<SymbolicFunction1<Vec3,double>*>(static_cast<TimeDependentTranslation*>(fPrPK)->getTranslationFunction());
+        if(pos) {
+          if(fPjT==0) fPjT = new SymbolicFunction1<Vec3,double>(pos->getSXFunction().jacobian());
+          if(fPdjT==0) fPdjT = new SymbolicFunction1<Vec3,double>(static_cast<SymbolicFunction1<Vec3,double>*>(fPjT)->getSXFunction().jacobian());
+        }
+        //Casadi2DiffFunction<Vec3> *pos = dynamic_cast<Casadi2DiffFunction<Vec3>*>(static_cast<TimeDependentTranslation*>(fPrPK)->getTranslationFunction());
+        //if(pos) {
+        //  if(fPjT==0) fPjT = new SymbolicFXFunction<Vec3>(pos->getFXFunction(),1);
+        //  if(fPdjT==0) fPdjT = new SymbolicFXFunction<Vec3>(pos->getFXFunction(),2);
+        //}
+      }
+      else if(dynamic_cast<StateDependentTranslation*>(fPrPK)) {
+        SymbolicFunction1<Vec3,Vec> *pos = dynamic_cast<SymbolicFunction1<Vec3,Vec>*>(static_cast<StateDependentTranslation*>(fPrPK)->getTranslationFunction());
+        int nq = fPrPK->getqSize();
+        if(pos) {
+          if(fPJT==0) {
+            CasADi::SXFunction jac(pos->getSXFunction().inputExpr(),pos->getSXFunction().jac());
+            fPJT = new StateDependentJacobian(nq,new SymbolicFunction1<Mat3xV,Vec>(jac));
+          }
+          if(fPdJT==0) {
+            SymbolicFunction1<Mat3xV,Vec> *jac = static_cast<SymbolicFunction1<Mat3xV,Vec>*>(static_cast<StateDependentJacobian*>(fPJT)->getJacobianFunction());
+            vector<CasADi::SX> sqd(nq);
+            for(int i=0; i<nq; i++) {
+              stringstream stream;
+              stream << "qd" << i;
+              sqd[i] = CasADi::SX(stream.str());
+            }
+            vector<CasADi::SX> st(1);
+            st[0] = CasADi::SX("t");
+            vector<CasADi::SXMatrix> input2(3);
+            input2[0] = sqd;
+            input2[1] = pos->getSXFunction().inputExpr(0);
+            input2[2] = st;
+            CasADi::SXMatrix Jd(3,nq);
+            for(int j=0; j<nq; j++) {
+              Jd(CasADi::Slice(0,3),CasADi::Slice(j,j+1)) = jac->getSXFunction().jac(0)(CasADi::Slice(j,nq*3,nq),CasADi::Slice(0,nq)).mul(sqd);
+            }
+            CasADi::SXFunction derJac(input2,Jd);
+            fPdJT = new SymbolicFunction3<Mat3xV,Vec,Vec,double>(derJac);
+          }
+        }
+      }
+      else if(dynamic_cast<GeneralTranslation*>(fPrPK)) {
+        SymbolicFunction2<Vec3,Vec,double> *pos = dynamic_cast<SymbolicFunction2<Vec3,Vec,double>*>(static_cast<GeneralTranslation*>(fPrPK)->getTranslationFunction());
+        int nq = fPrPK->getqSize();
+        if(pos) {
+          if(fPJT==0) {
+            CasADi::SXFunction jac(pos->getSXFunction().inputExpr(),pos->getSXFunction().jac(0));
+            fPJT = new GeneralJacobian(nq,new SymbolicFunction2<Mat3xV,Vec,double>(jac));
+          }
+          if(fPdJT==0) {
+            SymbolicFunction2<Mat3xV,Vec,double> *jac = static_cast<SymbolicFunction2<Mat3xV,Vec,double>*>(static_cast<GeneralJacobian*>(fPJT)->getJacobianFunction());
+            vector<CasADi::SX> sqd(nq);
+            for(int i=0; i<nq; i++) {
+              stringstream stream;
+              stream << "qd" << i;
+              sqd[i] = CasADi::SX(stream.str());
+            }
+            vector<CasADi::SXMatrix> input2(3);
+            input2[0] = sqd;
+            input2[1] = pos->getSXFunction().inputExpr(0);
+            input2[2] = pos->getSXFunction().inputExpr(1);
+            CasADi::SXMatrix Jd(3,nq);
+            for(int j=0; j<nq; j++) {
+              Jd(CasADi::Slice(0,3),CasADi::Slice(j,j+1)) = jac->getSXFunction().jac(0)(CasADi::Slice(j,nq*3,nq),CasADi::Slice(0,nq)).mul(sqd);
+              Jd(CasADi::Slice(0,3),CasADi::Slice(j,j+1)) += jac->getSXFunction().jac(1)(CasADi::Slice(j,nq*3,nq),CasADi::Slice(0,1));
+            }
+            CasADi::SXFunction derJac(input2,Jd);
+            fPdJT = new SymbolicFunction3<Mat3xV,Vec,Vec,double>(derJac);
+          }
+          if(fPjT==0) {
+            CasADi::SXFunction j(pos->getSXFunction().inputExpr(1),pos->getSXFunction().jac(1));
+            fPjT = new SymbolicFunction1<fmatvec::Vec3,double>(j);
+          }
+          if(fPdjT==0) {
+            CasADi::SXFunction jd(static_cast<SymbolicFunction1<Vec3,double>*>(fPjT)->getSXFunction().jacobian());
+            fPdjT = new SymbolicFunction1<fmatvec::Vec3,double>(jd);
+          }
+        }
+      }
+      else if(dynamic_cast<TimeDependentLinearTranslation*>(fPrPK)) {
+        SymbolicFunction1<VecV,double> *pos = dynamic_cast<SymbolicFunction1<VecV,double>*>(static_cast<TimeDependentLinearTranslation*>(fPrPK)->getTranslationalFunction());
+        if(pos) {
+          Mat3xV PJT = static_cast<TimeDependentLinearTranslation*>(fPrPK)->getTranslationVectors();
+          CasADi::SXMatrix r(PJT.rows(),1);
+          for(int i=0; i<PJT.rows(); i++)
+            for(int j=0; j<PJT.cols(); j++)
+              r.elem(i,0) += PJT.e(i,j)*pos->getSXFunction().outputExpr(0).elem(j,0);
+          CasADi::SXFunction foo(pos->getSXFunction().inputExpr(),r);
+          foo.init();
+          if(fPjT==0) fPjT = new SymbolicFunction1<Vec3,double>(foo.jacobian());
+          if(fPdjT==0) fPdjT = new SymbolicFunction1<Vec3,double>(static_cast<SymbolicFunction1<Vec3,double>*>(fPjT)->getSXFunction().jacobian());
+        }
+      }
+
+      if(dynamic_cast<StateDependentRotationAboutFixedAxis*>(fAPK)) {
+        SymbolicFunction1<double,Vec> *angle = dynamic_cast<SymbolicFunction1<double,Vec>*>(static_cast<StateDependentRotationAboutFixedAxis*>(fAPK)->getRotationalFunction());
+        int nq = fAPK->getqSize();
+        if(angle) {
+          if(fPJR==0) {
+            Vec3 axis = static_cast<StateDependentRotationAboutFixedAxis*>(fAPK)->getAxisOfRotation();
+            CasADi::SXMatrix phi(axis.size(),nq);
+            for(int i=0; i<axis.size(); i++)
+              phi.elem(i,0) = axis.e(i)*angle->getSXFunction().outputExpr(0).elem(0,0);
+            CasADi::SXFunction foo(angle->getSXFunction().inputExpr(),phi);
+            foo.init();
+            CasADi::SXFunction jac(angle->getSXFunction().inputExpr(),foo.jac());
+            fPJR = new StateDependentJacobian(nq,new SymbolicFunction1<Mat3xV,Vec>(jac));
+          }
+          if(fPdJR==0) {
+            SymbolicFunction1<Mat3xV,Vec> *jac = static_cast<SymbolicFunction1<Mat3xV,Vec>*>(static_cast<StateDependentJacobian*>(fPJR)->getJacobianFunction());
+            vector<CasADi::SX> sqd(nq);
+            for(int i=0; i<nq; i++) {
+              stringstream stream;
+              stream << "qd" << i;
+              sqd[i] = CasADi::SX(stream.str());
+            }
+            vector<CasADi::SX> st(1);
+            st[0] = CasADi::SX("t");
+            vector<CasADi::SXMatrix> input2(3);
+            input2[0] = sqd;
+            input2[1] = angle->getSXFunction().inputExpr(0);
+            input2[2] = st;
+            CasADi::SXMatrix Jd(3,nq);
+            for(int j=0; j<nq; j++) {
+              Jd(CasADi::Slice(0,3),CasADi::Slice(j,j+1)) = jac->getSXFunction().jac(0)(CasADi::Slice(j,nq*3,nq),CasADi::Slice(0,nq)).mul(sqd);
+            }
+            CasADi::SXFunction derJac(input2,Jd);
+            fPdJR = new SymbolicFunction3<Mat3xV,Vec,Vec,double>(derJac);
+          }
+        }
+      }
+      else if(dynamic_cast<TimeDependentRotationAboutFixedAxis*>(fAPK)) {
+        SymbolicFunction1<double,double> *angle = dynamic_cast<SymbolicFunction1<double,double>*>(static_cast<TimeDependentRotationAboutFixedAxis*>(fAPK)->getRotationalFunction());
+        if(angle) {
+          Vec3 axis = static_cast<TimeDependentRotationAboutFixedAxis*>(fAPK)->getAxisOfRotation();
+          CasADi::SXMatrix phi(axis.size(),1);
+          for(int i=0; i<axis.size(); i++)
+            phi.elem(i,0) = axis.e(i)*angle->getSXFunction().outputExpr(0).elem(0,0);
+          CasADi::SXFunction foo(angle->getSXFunction().inputExpr(),phi);
+          foo.init();
+          if(fPjR==0) fPjR = new SymbolicFunction1<Vec3,double>(foo.jacobian());
+          if(fPdjR==0) fPdjR = new SymbolicFunction1<Vec3,double>(static_cast<SymbolicFunction1<Vec3,double>*>(fPjR)->getSXFunction().jacobian());
+        }
+      }
+#endif
 
       if(constraint)
         dependency.push_back(constraint);
@@ -249,21 +386,29 @@ namespace MBSim {
       C->getJacobianOfRotation(1) = PJR[1];
 
       if(fPJT==0) {
-        Mat3V JT;
-        if(dynamic_cast<LinearTranslation*>(fPrPK)) {
-          JT = dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors();
-        }
-        else if(dynamic_cast<TimeDependentTranslation*>(fPrPK)) {
-          DifferentiableFunction1<fmatvec::Vec3> *pos = dynamic_cast<DifferentiableFunction1<fmatvec::Vec3> *>(dynamic_cast<TimeDependentTranslation*>(fPrPK)->getTranslationFunction());
-          if(pos) {
-            if(fPjT==0) fPjT = &pos->getDerivative(1);
-            if(fPdjT==0) fPdjT = &pos->getDerivative(2);
-          }
-        }
+        Mat3xV JT;
+
+        if(dynamic_cast<LinearTranslation*>(fPrPK))
+          JT = static_cast<LinearTranslation*>(fPrPK)->getTranslationVectors();
+        else if(dynamic_cast<TranslationInXDirection*>(fPrPK))
+          JT = Vec3("[1;0;0]");
+        else if(dynamic_cast<TranslationInYDirection*>(fPrPK))
+          JT = Vec3("[0;1;0]");
+        else if(dynamic_cast<TranslationInZDirection*>(fPrPK))
+          JT = Vec3("[0;0;1]");
+        else if(dynamic_cast<TranslationInXYDirection*>(fPrPK))
+          JT = Mat3x2("[1,0;0,1;0,0]");
+        else if(dynamic_cast<TranslationInXZDirection*>(fPrPK))
+          JT = Mat3x2("[1,0;0,0;0,1]");
+        else if(dynamic_cast<TranslationInYZDirection*>(fPrPK))
+          JT = Mat3x2("[0,0;1,0;0,1]");
+        else if(dynamic_cast<TranslationInXYZDirection*>(fPrPK))
+          JT = Mat3x3(EYE);
+        
         PJT[0].set(Index(0,2), Index(0,JT.cols()-1),JT);
       }
       if(fPJR==0) {
-        Mat3V JR;
+        Mat3xV JR;
 
         if(dynamic_cast<RotationAboutXAxis*>(fAPK))
           JR = Vec3("[1;0;0]");
@@ -273,13 +418,17 @@ namespace MBSim {
           JR = Vec3("[0;0;1]");
         else if(dynamic_cast<RotationAboutFixedAxis*>(fAPK))
           JR = dynamic_cast<RotationAboutFixedAxis*>(fAPK)->getAxisOfRotation();
-        else if(dynamic_cast<RotationAboutAxesYZ*>(fAPK)) {
-          fPJR = new JRotationAboutAxesYZ(nu[0]);
-          fPdJR = new JdRotationAboutAxesYZ(nu[0]);
-        }
         else if(dynamic_cast<RotationAboutAxesXY*>(fAPK)) {
           fPJR = new JRotationAboutAxesXY(nu[0]);
           fPdJR = new JdRotationAboutAxesXY(nu[0]);
+        }
+        else if(dynamic_cast<RotationAboutAxesXZ*>(fAPK)) {
+          fPJR = new JRotationAboutAxesXZ(nu[0]);
+          fPdJR = new JdRotationAboutAxesXZ(nu[0]);
+        }
+        else if(dynamic_cast<RotationAboutAxesYZ*>(fAPK)) {
+          fPJR = new JRotationAboutAxesYZ(nu[0]);
+          fPdJR = new JdRotationAboutAxesYZ(nu[0]);
         }
         else if(dynamic_cast<CardanAngles*>(fAPK)) {
           JR = Mat3x3(EYE);
@@ -357,8 +506,8 @@ namespace MBSim {
   void RigidBody::setUpInverseKinetics() {
     InverseKineticsJoint *joint = new InverseKineticsJoint(string("Joint_")+R->getParent()->getName()+"_"+name);
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(joint);
-    joint->setForceDirection(Mat3V(3,EYE));
-    joint->setMomentDirection(Mat3V(3,EYE));
+    joint->setForceDirection(Mat3xV(3,EYE));
+    joint->setMomentDirection(Mat3xV(3,EYE));
     joint->connect(R,K);
     joint->setBody(this);
     if(FArrow)
@@ -413,6 +562,11 @@ namespace MBSim {
   }
 
   void RigidBody::updateKinematicsForSelectedFrame(double t) {
+    if(fAPK)
+      APK = (*fAPK)(qRel,t);
+    if(fPrPK)
+      PrPK = (*fPrPK)(qRel,t);
+
     if(fPJT)
       PJT[0] = (*fPJT)(qRel,t);
     if(fPJR)
@@ -422,11 +576,6 @@ namespace MBSim {
       PjT = (*fPjT)(t);
     if(fPjR)
       PjR = (*fPjR)(t);
-
-    if(fAPK)
-      APK = (*fAPK)(qRel,t);
-    if(fPrPK)
-      PrPK = (*fPrPK)(qRel,t);
 
     K->setOrientation(R->getOrientation()*APK);
 
@@ -647,7 +796,7 @@ namespace MBSim {
      ((FixedRelativeFrame*)P)->updateJacobians();
   }
 
-  void RigidBody::updateRelativeJacobians(double t, Frame *P, Mat3V &WJTrel0, Mat3V &WJRrel0) {
+  void RigidBody::updateRelativeJacobians(double t, Frame *P, Mat3xV &WJTrel0, Mat3xV &WJRrel0) {
 
     if(K != C) {
       WJTrel0 += tilde(K->getWrRP())*WJRrel0;
@@ -763,13 +912,13 @@ namespace MBSim {
     }
     e=element->FirstChildElement(MBSIMNS"derivativeOfJacobianOfTranslation");
     if(e) {
-      Function3<Mat3V,Vec,Vec,double> *f=ObjectFactory::getInstance()->createFunction3_MVVS(e->FirstChildElement());
+      Function3<Mat3xV,Vec,Vec,double> *f=ObjectFactory::getInstance()->createFunction3_MVVS(e->FirstChildElement());
       setDerivativeOfJacobianOfTranslation(f);
       f->initializeUsingXML(e->FirstChildElement());
     }
     e=element->FirstChildElement(MBSIMNS"derivativeOfJacobianOfRotation");
     if(e) {
-      Function3<Mat3V,Vec,Vec,double> *f=ObjectFactory::getInstance()->createFunction3_MVVS(e->FirstChildElement());
+      Function3<Mat3xV,Vec,Vec,double> *f=ObjectFactory::getInstance()->createFunction3_MVVS(e->FirstChildElement());
       setDerivativeOfJacobianOfRotation(f);
       f->initializeUsingXML(e->FirstChildElement());
     }

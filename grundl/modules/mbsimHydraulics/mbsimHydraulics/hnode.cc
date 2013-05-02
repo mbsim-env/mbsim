@@ -17,6 +17,7 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
+#include <config.h>
 #include "mbsimHydraulics/hnode.h"
 #include "mbsimHydraulics/hline.h"
 #include "mbsimHydraulics/environment.h"
@@ -34,6 +35,7 @@
 #endif
 
 using namespace std;
+using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
 

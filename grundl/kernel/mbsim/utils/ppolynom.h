@@ -109,7 +109,7 @@ namespace MBSim {
        * \brief initialize function with XML code
        * \param XML element
        */
-      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
 
     protected:
       /** 
@@ -482,9 +482,9 @@ namespace MBSim {
   }
 
   template<class Row, class Col>
-  void PPolynom<Row,Col>::initializeUsingXML(TiXmlElement * element) {
+  void PPolynom<Row,Col>::initializeUsingXML(MBXMLUtils::TiXmlElement * element) {
     DifferentiableFunction1<fmatvec::Vector<Col,double> >::initializeUsingXML(element);
-    TiXmlElement * e;
+    MBXMLUtils::TiXmlElement * e;
     fmatvec::Vector<Row,double> x;
     fmatvec::Matrix<fmatvec::General,Row,Col,double> y;
     e=element->FirstChildElement(MBSIMNS"x");

@@ -35,6 +35,55 @@ class TranslationWidget : public Widget {
    protected:
 };
 
+class TranslationInXDirectionWidget : public TranslationWidget {
+
+  public:
+    TranslationInXDirectionWidget() {}
+    virtual int getSize() const {return 1;}
+};
+
+class TranslationInYDirectionWidget : public TranslationWidget {
+
+  public:
+    TranslationInYDirectionWidget() {}
+    virtual int getSize() const {return 1;}
+};
+
+class TranslationInZDirectionWidget : public TranslationWidget {
+
+  public:
+    TranslationInZDirectionWidget() {}
+    virtual int getSize() const {return 1;}
+};
+
+class TranslationInXYDirectionWidget : public TranslationWidget {
+
+  public:
+    TranslationInXYDirectionWidget() {}
+    virtual int getSize() const {return 2;}
+};
+
+class TranslationInXZDirectionWidget : public TranslationWidget {
+
+  public:
+    TranslationInXZDirectionWidget() {}
+    virtual int getSize() const {return 2;}
+};
+
+class TranslationInYZDirectionWidget : public TranslationWidget {
+
+  public:
+    TranslationInYZDirectionWidget() {}
+    virtual int getSize() const {return 2;}
+};
+
+class TranslationInXYZDirectionWidget : public TranslationWidget {
+
+  public:
+    TranslationInXYZDirectionWidget() {}
+    virtual int getSize() const {return 3;}
+};
+
 class LinearTranslationWidget : public TranslationWidget {
   Q_OBJECT
 
@@ -60,14 +109,13 @@ class TimeDependentTranslationWidget : public TranslationWidget {
     ExtWidget *function;
 };
 
-
 class TranslationChoiceWidget : public Widget {
   Q_OBJECT
 
   friend class TranslationChoiceProperty;
 
   public:
-    TranslationChoiceWidget(const std::string &xmlName);
+    TranslationChoiceWidget();
 
     int getSize() const { return translation->getSize(); }
 
@@ -78,7 +126,6 @@ class TranslationChoiceWidget : public Widget {
     QComboBox *comboBox;
     QVBoxLayout *layout;
     TranslationWidget *translation;
-    std::string xmlName;
   signals:
     void translationChanged();
 };
@@ -129,10 +176,38 @@ class RotationAboutAxesXYWidget : public RotationWidget {
     virtual int getSize() const {return 2;}
 };
 
+class RotationAboutAxesXZWidget : public RotationWidget {
+
+  public:
+    RotationAboutAxesXZWidget() {}
+    virtual int getSize() const {return 2;}
+};
+
+class RotationAboutAxesYZWidget : public RotationWidget {
+
+  public:
+    RotationAboutAxesYZWidget() {}
+    virtual int getSize() const {return 2;}
+};
+
+class RotationAboutAxesXYZWidget : public RotationWidget {
+
+  public:
+    RotationAboutAxesXYZWidget() {}
+    virtual int getSize() const {return 3;}
+};
+
 class CardanAnglesWidget : public RotationWidget {
 
   public:
     CardanAnglesWidget() {}
+    virtual int getSize() const {return 3;}
+};
+
+class EulerAnglesWidget : public RotationWidget {
+
+  public:
+    EulerAnglesWidget() {}
     virtual int getSize() const {return 3;}
 };
 
@@ -142,7 +217,7 @@ class RotationChoiceWidget : public Widget {
   friend class RotationChoiceProperty;
 
   public:
-    RotationChoiceWidget(const std::string &xmlName);
+    RotationChoiceWidget();
 
     int getSize() const { return rotation->getSize(); }
 
@@ -153,7 +228,6 @@ class RotationChoiceWidget : public Widget {
     QComboBox *comboBox;
     QVBoxLayout *layout;
     RotationWidget *rotation;
-    std::string xmlName;
   signals:
     void rotationChanged();
 };

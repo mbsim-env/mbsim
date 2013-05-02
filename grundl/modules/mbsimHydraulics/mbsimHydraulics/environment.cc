@@ -17,11 +17,12 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
-#include "config.h"
+#include <config.h>
 #include "mbsimHydraulics/environment.h"
 #include "mbsimHydraulics/objectfactory.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 
 namespace MBSimHydraulics {
 

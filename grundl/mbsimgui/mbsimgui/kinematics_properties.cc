@@ -20,11 +20,11 @@
 #include <config.h>
 #include "kinematics_properties.h"
 #include "frame.h"
-#include "string_properties.h"
+#include "variable_properties.h"
 #include "function_properties.h"
 #include "extended_properties.h"
 #include "basic_widgets.h"
-#include "string_widgets.h"
+#include "variable_widgets.h"
 #include "kinematics_widgets.h"
 #include "extended_widgets.h"
 #include "octaveutils.h"
@@ -32,15 +32,58 @@
 #include <mbxmlutilstinyxml/tinynamespace.h>
 
 using namespace std;
+using namespace MBXMLUtils;
+
+TiXmlElement* TranslationInXDirectionProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"TranslationInXDirection" );
+  parent->LinkEndChild(ele2);
+  return ele2;
+}
+
+TiXmlElement* TranslationInYDirectionProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"TranslationInYDirection" );
+  parent->LinkEndChild(ele2);
+  return ele2;
+}
+
+TiXmlElement* TranslationInZDirectionProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"TranslationInZDirection" );
+  parent->LinkEndChild(ele2);
+  return ele2;
+}
+
+TiXmlElement* TranslationInXYDirectionProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"TranslationInXYDirection" );
+  parent->LinkEndChild(ele2);
+  return ele2;
+}
+
+TiXmlElement* TranslationInXZDirectionProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"TranslationInXZDirection" );
+  parent->LinkEndChild(ele2);
+  return ele2;
+}
+
+TiXmlElement* TranslationInYZDirectionProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"TranslationInYZDirection" );
+  parent->LinkEndChild(ele2);
+  return ele2;
+}
+
+TiXmlElement* TranslationInXYZDirectionProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"TranslationInXYZDirection" );
+  parent->LinkEndChild(ele2);
+  return ele2;
+}
 
 LinearTranslationProperty::LinearTranslationProperty() {
-  vector<PhysicalStringProperty*> input;
-  input.push_back(new PhysicalStringProperty(new MatProperty(3,1),"-",MBSIMNS"translationVectors"));
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMNS"translationVectors"));
   mat.setProperty(new ExtPhysicalVarProperty(input));
 }
 
 int LinearTranslationProperty::getSize() const {
-  string str = evalOctaveExpression(static_cast<const ExtPhysicalVarProperty*>(mat.getProperty())->getCurrentPhysicalStringProperty()->getValue());
+  string str = evalOctaveExpression(static_cast<const ExtPhysicalVarProperty*>(mat.getProperty())->getCurrentPhysicalVariableProperty()->getValue());
   vector<vector<string> > A = strToMat(str);
   return A.size()?A[0].size():0;
 }
@@ -91,8 +134,22 @@ void TranslationChoiceProperty::defineTranslation(int index_) {
   index = index_;
   delete translation;
   if(index==0)
-    translation = new LinearTranslationProperty;  
+    translation = new TranslationInXDirectionProperty;  
   else if(index==1)
+    translation = new TranslationInYDirectionProperty;  
+  else if(index==2)
+    translation = new TranslationInZDirectionProperty;  
+  else if(index==3)
+    translation = new TranslationInXYDirectionProperty;  
+  else if(index==4)
+    translation = new TranslationInXZDirectionProperty;  
+  else if(index==5)
+    translation = new TranslationInYZDirectionProperty;  
+  else if(index==6)
+    translation = new TranslationInXYZDirectionProperty;  
+  else if(index==7)
+    translation = new LinearTranslationProperty;  
+  else if(index==8)
     translation = new TimeDependentTranslationProperty;  
 }
 
@@ -101,10 +158,24 @@ TiXmlElement* TranslationChoiceProperty::initializeUsingXML(TiXmlElement *elemen
   if(e) {
     TiXmlElement *ee = e->FirstChildElement();
     if(ee) {
-      if(ee->ValueStr() == MBSIMNS"LinearTranslation")
+      if(ee->ValueStr() == MBSIMNS"TranslationInXDirection")
         index = 0;
-      else if(ee->ValueStr() == MBSIMNS"TimeDependentTranslation")
+      else if(ee->ValueStr() == MBSIMNS"TranslationInYDirection")
         index = 1;
+      else if(ee->ValueStr() == MBSIMNS"TranslationInZDirection")
+        index = 2;
+      else if(ee->ValueStr() == MBSIMNS"TranslationInXYDirection")
+        index = 3;
+      else if(ee->ValueStr() == MBSIMNS"TranslationInXZDirection")
+        index = 4;
+      else if(ee->ValueStr() == MBSIMNS"TranslationInYZDirection")
+        index = 5;
+      else if(ee->ValueStr() == MBSIMNS"TranslationInXYZDirection")
+        index = 6;
+      else if(ee->ValueStr() == MBSIMNS"LinearTranslation")
+        index = 7;
+      else if(ee->ValueStr() == MBSIMNS"TimeDependentTranslation")
+        index = 8;
       defineTranslation(index);
       translation->initializeUsingXML(ee);
       return e;
@@ -161,8 +232,8 @@ TiXmlElement* RotationAboutZAxisProperty::writeXMLFile(TiXmlNode *parent) {
 }
 
 RotationAboutFixedAxisProperty::RotationAboutFixedAxisProperty() {
-  vector<PhysicalStringProperty*> input;
-  input.push_back(new PhysicalStringProperty(new VecProperty(3),"-",MBSIMNS"axisOfRotation"));
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new VecProperty(3),"-",MBSIMNS"axisOfRotation"));
   vec.setProperty(new ExtPhysicalVarProperty(input));  
 }
 
@@ -191,8 +262,32 @@ TiXmlElement* RotationAboutAxesXYProperty::writeXMLFile(TiXmlNode *parent) {
   return ele2;
 }
 
+TiXmlElement* RotationAboutAxesXZProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"RotationAboutAxesXZ" );
+  parent->LinkEndChild(ele2);
+  return ele2;
+}
+
+TiXmlElement* RotationAboutAxesYZProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"RotationAboutAxesYZ" );
+  parent->LinkEndChild(ele2);
+  return ele2;
+}
+
+TiXmlElement* RotationAboutAxesXYZProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"RotationAboutAxesXYZ" );
+  parent->LinkEndChild(ele2);
+  return ele2;
+}
+
 TiXmlElement* CardanAnglesProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"CardanAngles" );
+  parent->LinkEndChild(ele2);
+  return ele2;
+}
+
+TiXmlElement* EulerAnglesProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"EulerAngles" );
   parent->LinkEndChild(ele2);
   return ele2;
 }
@@ -210,10 +305,18 @@ TiXmlElement* RotationChoiceProperty::initializeUsingXML(TiXmlElement *element) 
         index = 2;
       else if(ee->ValueStr() == MBSIMNS"RotationAboutFixedAxis")
         index = 3;
-      else if(ee->ValueStr() == MBSIMNS"CardanAngles")
-        index = 4;
       else if(ee->ValueStr() == MBSIMNS"RotationAboutAxesXY")
+        index = 4;
+      else if(ee->ValueStr() == MBSIMNS"RotationAboutAxesXZ")
         index = 5;
+      else if(ee->ValueStr() == MBSIMNS"RotationAboutAxesYZ")
+        index = 6;
+      else if(ee->ValueStr() == MBSIMNS"CardanAngles")
+        index = 7;
+      else if(ee->ValueStr() == MBSIMNS"EulerAngles")
+        index = 8;
+      else if(ee->ValueStr() == MBSIMNS"RotationAboutAxesXYZ")
+        index = 9;
       defineRotation(index);
       rotation->initializeUsingXML(ee);
       return e;
@@ -246,9 +349,17 @@ void RotationChoiceProperty::defineRotation(int index_) {
   else if(index==3)
     rotation = new RotationAboutFixedAxisProperty;  
   else if(index==4)
-    rotation = new CardanAnglesProperty;  
-  else if(index==5)
     rotation = new RotationAboutAxesXYProperty;  
+  else if(index==5)
+    rotation = new RotationAboutAxesXZProperty;  
+  else if(index==6)
+    rotation = new RotationAboutAxesYZProperty;  
+  else if(index==7)
+    rotation = new CardanAnglesProperty;  
+  else if(index==8)
+    rotation = new EulerAnglesProperty;  
+  else if(index==9)
+    rotation = new RotationAboutAxesXYZProperty;  
 }
 
 void RotationChoiceProperty::fromWidget(QWidget *widget) {

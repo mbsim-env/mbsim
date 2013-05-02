@@ -29,6 +29,7 @@ class Frame;
 class Contour;
 class Parameter;
 class QComboBox;
+class QCheckBox;
 class QStackedWidget;
 class QListWidget;
 class FrameBrowser;
@@ -44,15 +45,14 @@ class LocalFrameOfReferenceWidget : public Widget {
     LocalFrameOfReferenceWidget(Element* element, Frame* omitFrame=0);
 
     void updateWidget();
-    Frame* getFrame() {return selectedFrame;}
-    void setFrame(Frame* frame_);
+    QString getFrame() const;
 
   protected:
     QComboBox *frame;
     Element* element;
     Frame *selectedFrame, *omitFrame;
 
-  protected slots:
+  public slots:
     void setFrame(const QString &str);
 };
 
@@ -63,18 +63,14 @@ class ParentFrameOfReferenceWidget : public Widget {
     ParentFrameOfReferenceWidget(Element* element, Frame* omitFrame=0);
 
     void updateWidget();
-    Frame* getFrame() {return selectedFrame;}
-    void setFrame(Frame* frame_);
-    void setSavedFrameOfReference(const QString &str) {saved_frameOfReference = str;}
-    const QString& getSavedFrameOfReference() const {return saved_frameOfReference;}
+    QString getFrame() const; 
 
   protected:
     QComboBox *frame;
     Element* element;
     Frame *selectedFrame, *omitFrame;
-    QString saved_frameOfReference;
 
-  protected slots:
+  public slots:
     void setFrame(const QString &str);
 };
 
@@ -85,20 +81,17 @@ class FrameOfReferenceWidget : public Widget {
     FrameOfReferenceWidget(Element* element, Frame* selectedFrame);
 
     void updateWidget();
-    Frame* getFrame() {return selectedFrame;}
-    void setFrame(Frame* frame_);
-    void setSavedFrameOfReference(const QString &str) {saved_frameOfReference = str;}
-    const QString& getSavedFrameOfReference() const {return saved_frameOfReference;}
+    void setFrame(const QString &str);
+    QString getFrame() const;
 
   protected:
     QLineEdit *frame;
     Element* element;
     FrameBrowser *frameBrowser;
     Frame *selectedFrame;
-    QString saved_frameOfReference;
 
   public slots:
-    void setFrame();
+    void setFrame(); 
 };
 
 class ContourOfReferenceWidget : public Widget {
@@ -108,17 +101,14 @@ class ContourOfReferenceWidget : public Widget {
     ContourOfReferenceWidget(Element* element, Contour* selectedContour);
 
     void updateWidget();
-    Contour* getContour() {return selectedContour;}
-    void setContour(Contour* contour_);
-    void setSavedContourOfReference(const QString &str) {saved_contourOfReference = str;}
-    const QString& getSavedContourOfReference() const {return saved_contourOfReference;}
+    void setContour(const QString &str);
+    QString getContour() const;
 
   protected:
     QLineEdit *contour;
     Element* element;
     ContourBrowser *contourBrowser;
     Contour *selectedContour;
-    QString saved_contourOfReference;
 
   public slots:
     void setContour();
@@ -131,17 +121,15 @@ class RigidBodyOfReferenceWidget : public Widget {
     RigidBodyOfReferenceWidget(Element* element, RigidBody* selectedBody);
 
     void updateWidget();
-    RigidBody* getBody() {return selectedBody;}
-    void setBody(RigidBody* body_);
-    void setSavedBodyOfReference(const QString &str) {saved_bodyOfReference = str;}
-    const QString& getSavedBodyOfReference() const {return saved_bodyOfReference;}
+    void setBody(const QString &str);
+    QString getBody() const;
+    RigidBody* getSelectedBody() {return selectedBody;}
 
   protected:
     QLineEdit* body;
     Element* element;
     RigidBodyBrowser* bodyBrowser;
     RigidBody* selectedBody;
-    QString saved_bodyOfReference;
 
   public slots:
     void setBody();
@@ -154,7 +142,7 @@ class FileWidget : public Widget {
   Q_OBJECT
 
   public:
-    FileWidget(const QString &description, const QString &extensions);
+    FileWidget(const QString &description, const QString &extensions, int mode=0);
     QString getFileName() const {return fileName->text();}
     void setFileName(const QString &str) {fileName->setText(str);}
     QString getAbsoluteFilePath() const {return absoluteFilePath;}
@@ -163,22 +151,47 @@ class FileWidget : public Widget {
   protected:
     QLineEdit *fileName;
     QString absoluteFilePath, description, extensions;
+    bool mode;
 
   protected slots:
     void selectFile();
 
+  signals:
+    void fileChanged(const QString &str);
 };
 
-class TextWidget : public Widget {
+class BasicTextWidget : public Widget {
+
+  public:
+    virtual QString getText() const = 0;
+    virtual void setText(const QString &text) = 0;
+};
+
+class TextWidget : public BasicTextWidget {
+  //Q_OBJECT
 
   public:
     TextWidget(bool readOnly=false);
 
-    QString getName() const {return ename->text();}
-    void setName(const QString &name) {ename->setText(name);}
+    QString getText() const {return text->text();}
+    void setText(const QString &text_) {text->setText(text_);}
+
+  //public slots:
 
   protected:
-    QLineEdit *ename;
+    QLineEdit *text;
+};
+
+class TextChoiceWidget : public BasicTextWidget {
+
+  public:
+    TextChoiceWidget(const std::vector<QString> &list, int num);
+    QString getText() const {return text->currentText();}
+    void setText(const QString &str) {text->setCurrentIndex(text->findText(str));}
+
+  protected:
+    QComboBox *text;
+    std::vector<QString> list;
 };
 
 class ConnectFramesWidget : public Widget {
@@ -219,7 +232,7 @@ class DependenciesWidget : public Widget {
 
     void updateWidget(); 
 
-    RigidBody* getBody(int i) {return refBody[i]->getBody();}
+    RigidBody* getSelectedBody(int i) {return refBody[i]->getSelectedBody();}
     void addBody(int i, RigidBody* body_);
     int getSize() const {return refBody.size();}
     void setNumberOfBodies(int n);
@@ -265,11 +278,70 @@ class SolverParametersWidget : public Widget {
 
 class PlotFeature : public Widget {
   public:
-    PlotFeature(const std::string &name);
+    PlotFeature(const QString &name);
 
   protected:
-    std::string name;
+    QString name;
     QComboBox *status;
+};
+
+class GearDependencyWidget : public Widget {
+
+  friend class GearDependencyProperty;
+
+  public:
+    GearDependencyWidget(Element* element);
+    RigidBody* getSelectedBody() {return refBody->getSelectedBody();}
+    RigidBodyOfReferenceWidget* getRigidBodyOfReferenceWidget() {return refBody;}
+    void updateWidget() {refBody->updateWidget();}
+  protected:
+   RigidBodyOfReferenceWidget* refBody;
+   ExtWidget *ratio;
+};
+
+class GearDependenciesWidget : public Widget {
+  Q_OBJECT
+
+  friend class GearDependenciesProperty;
+
+  public:
+    GearDependenciesWidget(Element* element);
+
+    void updateWidget(); 
+
+    RigidBody* getSelectedBody(int i) {return refBody[i]->getSelectedBody();}
+    void addBody(int i, RigidBody* body_);
+    int getSize() const {return refBody.size();}
+    void setNumberOfBodies(int n);
+
+  protected:
+    Element* element;
+    std::vector<RigidBody*> selectedBody;
+    std::vector<GearDependencyWidget*> refBody;
+    QStackedWidget *stackedWidget; 
+    QListWidget *bodyList; 
+
+  protected slots:
+    void updateList();
+    void addDependency();
+    void removeDependency();
+    void updateGeneralizedCoordinatesOfBodies();
+    void openContextMenu(const QPoint &pos);
+
+  signals:
+    void bodyChanged();
+};
+
+class EmbedWidget : public Widget {
+
+  friend class EmbedProperty;
+
+  public:
+    EmbedWidget();
+
+  protected:
+    ExtWidget *href, *count, *counterName, *parameterList;
+
 };
 
 #endif

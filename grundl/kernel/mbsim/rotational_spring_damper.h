@@ -76,7 +76,7 @@ namespace MBSim {
       void setRelativeBody(RigidBody* body_);
 
       void plot(double t, double dt=1);
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /** \brief Visualise the RelativeRotationalSpringDamper using a OpenMBV::CoilSpring */

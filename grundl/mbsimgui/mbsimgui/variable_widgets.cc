@@ -18,7 +18,7 @@
 */
 
 #include <config.h>
-#include "string_widgets.h"
+#include "variable_widgets.h"
 #include "octaveutils.h"
 #include <vector>
 #include <QtGui>
@@ -123,20 +123,9 @@ void OctaveHighlighter::highlightBlock(const QString &text) {
   }
 }
 
-BoolWidget::BoolWidget(const std::string &b) { 
+BoolWidget::BoolWidget(const QString &b) { 
   value = new QCheckBox;
   setValue(b);
-  QHBoxLayout* layout = new QHBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
-  layout->addWidget(value);
-}
-
-ChoiceWidget::ChoiceWidget(const vector<string> &list_, int num) : list(list_) { 
-  value = new QComboBox;
-  for(unsigned int i=0; i<list.size(); i++)
-    value->addItem(list[i].c_str());
-  value->setCurrentIndex(num);
   QHBoxLayout* layout = new QHBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -159,7 +148,7 @@ OctaveExpressionWidget::OctaveExpressionWidget() {
   layout->addWidget(value);
 }
 
-ScalarWidget::ScalarWidget(const std::string &d) {
+ScalarWidget::ScalarWidget(const QString &d) {
 
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -178,7 +167,7 @@ VecWidget::VecWidget(int size, bool transpose_) : transpose(transpose_) {
   resize(size);
 }
 
-VecWidget::VecWidget(const vector<string> &x, bool transpose_) : transpose(transpose_) {
+VecWidget::VecWidget(const vector<QString> &x, bool transpose_) : transpose(transpose_) {
 
   QGridLayout *layout = new QGridLayout;
   layout->setMargin(0);
@@ -202,19 +191,19 @@ void VecWidget::resize(int size) {
   }
 }
 
-vector<string> VecWidget::getVec() const {
-  vector<string> x(box.size());
+vector<QString> VecWidget::getVec() const {
+  vector<QString> x(box.size());
   for(unsigned int i=0; i<box.size(); i++) {
-    x[i] = box[i]->text().toStdString();
+    x[i] = box[i]->text();
   }
   return x;
 }
 
-void VecWidget::setVec(const vector<string> &x) {
+void VecWidget::setVec(const vector<QString> &x) {
   if(x.size() != box.size())
     resize(x.size());
   for(unsigned int i=0; i<box.size(); i++)
-    box[i]->setText(x[i].c_str());
+    box[i]->setText(x[i]);
 }
 
 void VecWidget::setReadOnly(bool flag) {
@@ -223,11 +212,11 @@ void VecWidget::setReadOnly(bool flag) {
   }
 }
 
-bool VecWidget::validate(const string &str) const {
-  vector<string> x = strToVec(str);
+bool VecWidget::validate(const QString &str) const {
+  vector<QString> x = strToVec(str);
   if(size()!=x.size())
     return false;
-  if(x[0]=="" || x[0].find(",")!=string::npos)
+  if(x[0]=="" || x[0].indexOf(",")!=-1)
     return false;
   return true;
 }
@@ -240,7 +229,7 @@ MatWidget::MatWidget(int rows, int cols) {
   resize(rows,cols);
 }
 
-MatWidget::MatWidget(const vector<vector<string> > &A) {
+MatWidget::MatWidget(const vector<vector<QString> > &A) {
 
   QGridLayout *layout = new QGridLayout;
   layout->setMargin(0);
@@ -266,24 +255,24 @@ void MatWidget::resize(int rows, int cols) {
   }
 }
 
-vector<vector<string> > MatWidget::getMat() const {
-  vector<vector<string> > A(box.size());
+vector<vector<QString> > MatWidget::getMat() const {
+  vector<vector<QString> > A(box.size());
   for(unsigned int i=0; i<box.size(); i++) {
     A[i].resize(box[i].size());
     for(unsigned int j=0; j<box[i].size(); j++) 
-      A[i][j] = box[i][j]->text().toStdString();
+      A[i][j] = box[i][j]->text();
   }
   return A;
 }
 
-void MatWidget::setMat(const vector<vector<string> > &A) {
+void MatWidget::setMat(const vector<vector<QString> > &A) {
   if(A.size()==0)
     return resize(0,0);
   if(A.size() != box.size() || A[0].size()!=box[0].size())
     resize(A.size(),A[0].size());
   for(unsigned int i=0; i<box.size(); i++) 
     for(unsigned int j=0; j<box[i].size(); j++)
-      box[i][j]->setText(A[i][j].c_str());
+      box[i][j]->setText(A[i][j]);
 }
 
 void MatWidget::setReadOnly(bool flag) {
@@ -294,8 +283,8 @@ void MatWidget::setReadOnly(bool flag) {
   }
 }
 
-bool MatWidget::validate(const string &str) const {
-  vector<vector<string> > A = strToMat(str);
+bool MatWidget::validate(const QString &str) const {
+  vector<vector<QString> > A = strToMat(str);
   if(rows()!=A.size() || cols()!=A[0].size())
     return false;
   return true;
@@ -313,7 +302,7 @@ SymMatWidget::SymMatWidget(int rows) {
         connect(box[i][j],SIGNAL(textChanged(const QString&)),box[j][i],SLOT(setText(const QString&)));
 }
 
-SymMatWidget::SymMatWidget(const vector<vector<string> > &A) {
+SymMatWidget::SymMatWidget(const vector<vector<QString> > &A) {
 
   QGridLayout *layout = new QGridLayout;
   layout->setMargin(0);
@@ -338,24 +327,24 @@ void SymMatWidget::resize(int rows) {
   }
 }
 
-vector<vector<string> > SymMatWidget::getMat() const {
-  vector<vector<string> > A(box.size());
+vector<vector<QString> > SymMatWidget::getMat() const {
+  vector<vector<QString> > A(box.size());
   for(unsigned int i=0; i<box.size(); i++) {
     A[i].resize(box.size());
     for(unsigned int j=0; j<box[i].size(); j++) 
-      A[i][j] = box[i][j]->text().toStdString();
+      A[i][j] = box[i][j]->text();
   }
   return A;
 }
 
-void SymMatWidget::setMat(const vector<vector<string> > &A) {
+void SymMatWidget::setMat(const vector<vector<QString> > &A) {
   if(A.size() == 0 || A.size() != A[0].size())
     return resize(0);
   if(A.size() != box.size())
     resize(A.size());
   for(unsigned int i=0; i<box.size(); i++) 
     for(unsigned int j=0; j<box.size(); j++) 
-      box[i][j]->setText(A[i][j].c_str());
+      box[i][j]->setText(A[i][j]);
 }
 
 void SymMatWidget::setReadOnly(bool flag) {
@@ -366,15 +355,15 @@ void SymMatWidget::setReadOnly(bool flag) {
   }
 }
 
-bool SymMatWidget::validate(const string &str) const {
-  vector<vector<string> > A = strToMat(str);
+bool SymMatWidget::validate(const QString &str) const {
+  vector<vector<QString> > A = strToMat(str);
   if(rows()!=A.size() || cols()!=A[0].size())
     return false;
   for(unsigned int i=0; i<rows(); i++) {
     //if(cols()!=A[i].size())
       //return false;
     for(unsigned int j=0; j<i; j++) {
-      if(fabs(atof(A[i][j].c_str()) - atof(A[j][i].c_str()))>1e-8)
+      if(fabs(A[i][j].toDouble() - A[j][i].toDouble())>1e-8)
         return false;
     }
   }
@@ -382,6 +371,7 @@ bool SymMatWidget::validate(const string &str) const {
 }
 
 VecSizeVarWidget::VecSizeVarWidget(int size, int minSize_, int maxSize_) : minSize(minSize_), maxSize(maxSize_) {
+
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   QWidget *box = new QWidget;
@@ -389,30 +379,26 @@ VecSizeVarWidget::VecSizeVarWidget(int size, int minSize_, int maxSize_) : minSi
   box->setLayout(hbox);
   hbox->setMargin(0);
   layout->addWidget(box);
-  sizeCombo = new QComboBox;
-  for(int j=minSize; j<=maxSize; j++)
-    sizeCombo->addItem(QString::number(j));
+  sizeCombo = new QSpinBox;
+  sizeCombo->setRange(minSize,maxSize);
   hbox->addWidget(sizeCombo);
   hbox->addWidget(new QLabel("x"));
   hbox->addWidget(new QLabel("1"));
-
+  sizeCombo->setValue(size);
+  QObject::connect(sizeCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
   hbox->addStretch(2);
   widget = new VecWidget(size);
-  QObject::connect(sizeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(currentIndexChanged(int)));
   layout->addWidget(widget);
-  sizeCombo->setCurrentIndex(0);
-
   setLayout(layout);
 }
 
-void VecSizeVarWidget::currentIndexChanged(int i) {
-  int size = i+minSize;
+void VecSizeVarWidget::currentIndexChanged(int size) {
   widget->resize(size);
   emit sizeChanged(size);
 }
 
-bool VecSizeVarWidget::validate(const string &str) const {
-  vector<string> x = strToVec(str);
+bool VecSizeVarWidget::validate(const QString &str) const {
+  vector<QString> x = strToVec(str);
   if(x.size()<minSize || x.size()>maxSize)
     return false;
   if(x[0]=="")
@@ -421,6 +407,7 @@ bool VecSizeVarWidget::validate(const string &str) const {
 }
 
 MatColsVarWidget::MatColsVarWidget(int rows, int cols, int minCols_, int maxCols_) : minCols(minCols_), maxCols(maxCols_) {
+
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   QWidget *box = new QWidget;
@@ -430,29 +417,72 @@ MatColsVarWidget::MatColsVarWidget(int rows, int cols, int minCols_, int maxCols
   layout->addWidget(box);
   hbox->addWidget(new QLabel(QString::number(rows)));
   hbox->addWidget(new QLabel("x"));
-  colsCombo = new QComboBox;
-  for(int j=minCols; j<=maxCols; j++)
-    colsCombo->addItem(QString::number(j));
-
+  colsCombo = new QSpinBox;
+  colsCombo->setRange(minCols,maxCols);
+  colsCombo->setValue(cols);
+  QObject::connect(colsCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
   hbox->addWidget(colsCombo);
   hbox->addStretch(2);
   widget = new MatWidget(rows,cols);
-  QObject::connect(colsCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(currentIndexChanged(int)));
   layout->addWidget(widget);
-  colsCombo->setCurrentIndex(0);
-
   setLayout(layout);
 }
 
-void MatColsVarWidget::currentIndexChanged(int i) {
-  int cols = i+minCols;
+void MatColsVarWidget::currentIndexChanged(int cols) {
   widget->resize(widget->rows(),cols);
   emit sizeChanged(cols);
 }
 
-bool MatColsVarWidget::validate(const string &str) const {
-  vector<vector<string> > A = strToMat(str);
+bool MatColsVarWidget::validate(const QString &str) const {
+  vector<vector<QString> > A = strToMat(str);
   if(rows()!=A.size())
+    return false;
+  if(A[0].size()<minCols || A[0].size()>maxCols)
+    return false;
+  if(A[0][0]=="")
+    return false;
+  return true;
+}
+
+MatRowsColsVarWidget::MatRowsColsVarWidget(int rows, int cols, int minRows_, int maxRows_, int minCols_, int maxCols_) : minRows(minRows_), maxRows(maxRows_), minCols(minCols_), maxCols(maxCols_) {
+
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  QWidget *box = new QWidget;
+  QHBoxLayout *hbox = new QHBoxLayout;
+  box->setLayout(hbox);
+  hbox->setMargin(0);
+  layout->addWidget(box);
+  rowsCombo = new QSpinBox;
+  rowsCombo->setRange(minRows,maxRows);
+  rowsCombo->setValue(rows);
+  colsCombo = new QSpinBox;
+  colsCombo->setRange(minCols,maxCols);
+  colsCombo->setValue(cols);
+  QObject::connect(rowsCombo, SIGNAL(valueChanged(int)), this, SLOT(currentRowIndexChanged(int)));
+  QObject::connect(colsCombo, SIGNAL(valueChanged(int)), this, SLOT(currentColIndexChanged(int)));
+  hbox->addWidget(rowsCombo);
+  hbox->addWidget(new QLabel("x"));
+  hbox->addWidget(colsCombo);
+  hbox->addStretch(2);
+  widget = new MatWidget(rows,cols);
+  layout->addWidget(widget);
+  setLayout(layout);
+}
+
+void MatRowsColsVarWidget::currentRowIndexChanged(int rows) {
+  widget->resize(rows,widget->cols());
+  emit rowSizeChanged(rows);
+}
+
+void MatRowsColsVarWidget::currentColIndexChanged(int cols) {
+  widget->resize(widget->rows(),cols);
+  emit colSizeChanged(cols);
+}
+
+bool MatRowsColsVarWidget::validate(const QString &str) const {
+  vector<vector<QString> > A = strToMat(str);
+  if(A.size()<minRows || A.size()>maxRows)
     return false;
   if(A[0].size()<minCols || A[0].size()>maxCols)
     return false;
@@ -477,7 +507,7 @@ CardanWidget::CardanWidget(bool transpose_) : transpose(transpose_) {
   }
 }
 
-CardanWidget::CardanWidget(const vector<string> &x, bool transpose_) : transpose(transpose_) {
+CardanWidget::CardanWidget(const vector<QString> &x, bool transpose_) : transpose(transpose_) {
 
   QGridLayout *layout = new QGridLayout;
   layout->setMargin(0);
@@ -485,7 +515,7 @@ CardanWidget::CardanWidget(const vector<string> &x, bool transpose_) : transpose
   box.resize(3);
   for(int i=0; i<3; i++) {
     box[i] = new QLineEdit(this);
-    box[i]->setText(x[i].c_str());
+    box[i]->setText(x[i]);
     if(transpose) 
       layout->addWidget(box[i], 0, i);
     else
@@ -493,17 +523,17 @@ CardanWidget::CardanWidget(const vector<string> &x, bool transpose_) : transpose
   }
 }
 
-vector<string> CardanWidget::getCardan() const {
-  vector<string> x(box.size());
+vector<QString> CardanWidget::getCardan() const {
+  vector<QString> x(box.size());
   for(unsigned int i=0; i<box.size(); i++) {
-    x[i] = box[i]->text().toStdString();
+    x[i] = box[i]->text();
   }
   return x;
 }
 
-void CardanWidget::setCardan(const vector<string> &x) {
+void CardanWidget::setCardan(const vector<QString> &x) {
   for(unsigned int i=0; i<box.size(); i++) 
-    box[i]->setText(x[i].c_str());
+    box[i]->setText(x[i]);
 }
 
 void CardanWidget::setReadOnly(bool flag) {
@@ -512,7 +542,7 @@ void CardanWidget::setReadOnly(bool flag) {
   }
 }
 
-PhysicalStringWidget::PhysicalStringWidget(StringWidget *widget_, const QStringList &units_, int defaultUnit_) : widget(widget_), units(units_), defaultUnit(defaultUnit_) {
+PhysicalVariableWidget::PhysicalVariableWidget(VariableWidget *widget_, const QStringList &units_, int defaultUnit_) : widget(widget_), units(units_), defaultUnit(defaultUnit_) {
   QHBoxLayout *layout = new QHBoxLayout;
   setLayout(layout);
   layout->setMargin(0);
@@ -546,8 +576,8 @@ void VecFromFileWidget::selectFile() {
   }
 }
 
-string VecFromFileWidget::getValue() const {
-  return evalOctaveExpression(string("load('") + fileName->text().toStdString() + "')");
+QString VecFromFileWidget::getValue() const {
+  return QString::fromStdString(evalOctaveExpression("ret=load('" + fileName->text().toStdString() + "')"));
 }
 
 MatFromFileWidget::MatFromFileWidget() {
@@ -572,6 +602,6 @@ void MatFromFileWidget::selectFile() {
   }
 }
 
-string MatFromFileWidget::getValue() const {
-  return evalOctaveExpression(string("load('") + fileName->text().toStdString() + "')");
+QString MatFromFileWidget::getValue() const {
+  return QString::fromStdString(evalOctaveExpression("ret=load('" + fileName->text().toStdString() + "')"));
 }

@@ -24,19 +24,16 @@
 #include "extended_properties.h"
 
 class Contact : public Link {
+  friend class ContactPropertyDialog;
   public:
-    Contact(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    Contact(const std::string &str, Element *parent);
     ~Contact();
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    QString getType() const { return "Contact"; }
-   void initializeDialog();
-    virtual void fromWidget();
-    virtual void toWidget();
+    std::string getType() const { return "Contact"; }
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void initialize();
-
+    ElementPropertyDialog* createPropertyDialog() {return new ContactPropertyDialog(this);}
   protected:
-    ExtWidget *contactForceLawWidget, *contactImpactLawWidget, *frictionForceLawWidget, *frictionImpactLawWidget, *connectionsWidget, *enableOpenMBVContactPointsWidget, *normalForceArrowWidget, *frictionArrowWidget;
     ExtProperty contactForceLaw, contactImpactLaw, frictionForceLaw, frictionImpactLaw, connections, enableOpenMBVContactPoints, normalForceArrow, frictionArrow;
 };
 

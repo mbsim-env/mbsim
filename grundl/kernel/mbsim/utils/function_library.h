@@ -31,7 +31,7 @@ namespace MBSim {
       Function1_SS_from_VS(Function1<fmatvec::Vec, double> * fun_) : fun(fun_) {assert((*fun)(0).size()==1); }
       void setFunction(Function1<fmatvec::Vec, double> * fun_) {fun=fun_; assert((*fun)(0).size()==1); }
       double operator()(const double& x, const void * =NULL) {return (*fun)(x)(0); }
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     private:
       Function1<fmatvec::Vec, double> * fun;
   };
@@ -44,7 +44,7 @@ namespace MBSim {
       void setFunction(Function1<double, double> * fun_) {fun=fun_; }
       void setVector(fmatvec::Vector<Col,double> v) {vec=v; vec/=nrm2(v); }
       fmatvec::Vector<Col,double> operator()(const double& x, const void * =NULL) {return (*fun)(x)*vec; }
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     private:
       Function1<double, double> * fun;
       fmatvec::Vector<Col,double> vec;
@@ -62,7 +62,7 @@ namespace MBSim {
     public:
       QuadraticFunction1_VS();
       QuadraticFunction1_VS(fmatvec::Vector<Col,double> a0_, fmatvec::Vector<Col,double> a1_, fmatvec::Vector<Col,double> a2_);
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
 
       class ZerothDerivative : public Function1<fmatvec::Vector<Col,double>,double> {
          public:
@@ -105,8 +105,8 @@ namespace MBSim {
     public:
       SinusFunction1_VS();
       SinusFunction1_VS(fmatvec::Vector<Col,double>, fmatvec::Vector<Col,double> frequency_, fmatvec::Vector<Col,double> phase_, fmatvec::Vector<Col,double> offset_);
-      void initializeUsingXML(TiXmlElement *element);
-      TiXmlElement* writeXMLFile(TiXmlNode *parent);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
       std::string getType() const { return "SinusFunction1_VS"; }
 
       class ZerothDerivative : public Function1<fmatvec::Vector<Col,double>,double> {
@@ -145,7 +145,7 @@ namespace MBSim {
       PositiveSinusFunction1_VS() {}
       PositiveSinusFunction1_VS(fmatvec::Vec amplitude, fmatvec::Vec frequency, fmatvec::Vec phase, fmatvec::Vec offset) : SinusFunction1_VS<fmatvec::Ref>(amplitude, frequency, phase, offset) {}
       fmatvec::Vec operator()(const double& tVal, const void * =NULL);
-      void initializeUsingXML(TiXmlElement *element) {
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
         SinusFunction1_VS<fmatvec::Ref>::initializeUsingXML(element);
       }
   };
@@ -158,7 +158,7 @@ namespace MBSim {
         check();
       }
       fmatvec::Vec operator()(const double& tVal, const void * =NULL);
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     private:
       fmatvec::Vec stepTime, stepSize;
       int ySize;
@@ -174,7 +174,7 @@ namespace MBSim {
         check();
       }
       fmatvec::Vector<Col,double> operator()(const double& xVal, const void * =NULL);
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     protected:
       fmatvec::Vector<Row,double> x;
       fmatvec::Matrix<fmatvec::General,Row,Col,double> y;
@@ -191,7 +191,7 @@ namespace MBSim {
         check();
       }
       fmatvec::Vec operator()(const double& xVal, const void * =NULL);
-      void initializeUsingXML(TiXmlElement *element) {
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
         TabularFunction1_VS<fmatvec::Ref,fmatvec::Ref>::initializeUsingXML(element);
         check();
       }
@@ -222,7 +222,7 @@ namespace MBSim {
           y+=factors[i]*(*(functions[i]))(tVal);
         return y;
       }
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     private:
       std::vector<Function1<fmatvec::Vec, double> *> functions;
       std::vector<double> factors;
@@ -234,7 +234,7 @@ namespace MBSim {
     public:
       TabularFunction2_SSS();
       /* INHERITED INTERFACE OF FUNCTION2 */
-      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       virtual double operator()(const double& x, const double& y, const void * = NULL);
       /***************************************************/
       /* GETTER / SETTER */
@@ -265,7 +265,7 @@ namespace MBSim {
   class Polynom1_SS : public MBSim::DifferentiableFunction1<double> {
     public:
       Polynom1_SS() {}
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
 
       class Polynom1_SSEvaluation : public MBSim::Function1<double,double> {
         public:
@@ -321,9 +321,9 @@ namespace MBSim {
   }
 
   template<class Col>
-  void QuadraticFunction1_VS<Col>::initializeUsingXML(TiXmlElement *element) {
+  void QuadraticFunction1_VS<Col>::initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
     DifferentiableFunction1<fmatvec::Vector<Col,double> >::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"a0");
+    MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"a0");
     a0=Element::getVec(e);
     ySize=a0.size();
     e=element->FirstChildElement(MBSIMNS"a1");
@@ -334,8 +334,8 @@ namespace MBSim {
   }
 
   template<class Col>
-  void Function1_VS_from_SS<Col>::initializeUsingXML(TiXmlElement * element) {
-    TiXmlElement * e;
+  void Function1_VS_from_SS<Col>::initializeUsingXML(MBXMLUtils::TiXmlElement * element) {
+    MBXMLUtils::TiXmlElement * e;
     e=element->FirstChildElement(MBSIMNS"function");
     Function1<double, double> * f=ObjectFactory::getInstance()->getInstance()->createFunction1_SS(e->FirstChildElement());
     f->initializeUsingXML(e->FirstChildElement());
@@ -384,9 +384,9 @@ namespace MBSim {
     }
 
   template<class Col>
-    void SinusFunction1_VS<Col>::initializeUsingXML(TiXmlElement *element) {
+    void SinusFunction1_VS<Col>::initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
       DifferentiableFunction1<fmatvec::Vector<Col,double> >::initializeUsingXML(element);
-      TiXmlElement *e=element->FirstChildElement(MBSIMNS"amplitude");
+      MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"amplitude");
       fmatvec::Vector<Col,double> amplitude_=Element::getVec(e);
       amplitude=amplitude_;
       e=element->FirstChildElement(MBSIMNS"frequency");
@@ -406,8 +406,8 @@ namespace MBSim {
     }
 
   template<class Col>
-  TiXmlElement* SinusFunction1_VS<Col>::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = DifferentiableFunction1<fmatvec::Vector<Col,double> >::writeXMLFile(parent);
+  MBXMLUtils::TiXmlElement* SinusFunction1_VS<Col>::writeXMLFile(MBXMLUtils::TiXmlNode *parent) {
+    MBXMLUtils::TiXmlElement *ele0 = DifferentiableFunction1<fmatvec::Vector<Col,double> >::writeXMLFile(parent);
     addElementText(ele0,MBSIMNS"amplitude",amplitude);
     addElementText(ele0,MBSIMNS"frequency",frequency);
     addElementText(ele0,MBSIMNS"phase",phase);
@@ -424,8 +424,8 @@ namespace MBSim {
     }
 
   template<class Row, class Col>
-    void TabularFunction1_VS<Row,Col>::initializeUsingXML(TiXmlElement * element) {
-      TiXmlElement *e=element->FirstChildElement(MBSIMNS"x");
+    void TabularFunction1_VS<Row,Col>::initializeUsingXML(MBXMLUtils::TiXmlElement * element) {
+      MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"x");
       if (e) {
         fmatvec::Vector<Row,double> x_=Element::getVec(e);
         x=x_;

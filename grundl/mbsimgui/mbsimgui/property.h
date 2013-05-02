@@ -35,8 +35,8 @@
 
 class PropertyInterface {
   public:
-    virtual TiXmlElement* initializeUsingXML(TiXmlElement *element) = 0;
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element) = 0;
+    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element) = 0;
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element) = 0;
     virtual void fromWidget(QWidget *widget) = 0;
     virtual void toWidget(QWidget *widget) = 0;
     virtual void initialize() {}
@@ -45,6 +45,7 @@ class PropertyInterface {
 class Property : public PropertyInterface {
   public:
     Property() {}
+    virtual ~Property() {}
 };
 
 #endif

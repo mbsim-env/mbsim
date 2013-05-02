@@ -25,37 +25,34 @@
 
 class Signal : public Link {
   public:
-    Signal(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    Signal(const std::string &str, Element *parent);
+    virtual std::string getNameSpace() const { return MBSIMCONTROLNS; }
     ~Signal(); 
-    virtual QString getType() const { return "Signal"; }
 };
 
 class Sensor : public Signal {
   public:
-    Sensor(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    Sensor(const std::string &str, Element *parent);
     ~Sensor(); 
-    virtual QString getType() const { return "Sensor"; }
 };
 
-class AbsolutCoordinateSensor : public Sensor {
+class AbsoluteCoordinateSensor : public Sensor {
+  friend class AbsoluteCoordinateSensorPropertyDialog;
   public:
-    AbsolutCoordinateSensor(const QString &str, QTreeWidgetItem *parentItem, int ind); 
-    virtual QString getType() const { return "AbsolutCoordinateSensor"; }
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    void initializeDialog();
-    virtual void fromWidget();
-    virtual void toWidget();
+    AbsoluteCoordinateSensor(const std::string &str, Element *parent);
+    virtual std::string getType() const { return "AbsoluteCoordinateSensor"; }
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void initialize();
   protected:
-    ExtWidget *frameWidget, *directionWidget;
     ExtProperty frame, direction;
 };
 
-class AbsolutePositionSensor : public AbsolutCoordinateSensor {
+class AbsolutePositionSensor : public AbsoluteCoordinateSensor {
   public:
-    AbsolutePositionSensor(const QString &str, QTreeWidgetItem *parentItem, int ind); 
-    virtual QString getType() const { return "AbsolutePositionSensor"; }
+    AbsolutePositionSensor(const std::string &str, Element *parent);
+    virtual std::string getType() const { return "AbsolutePositionSensor"; }
+    ElementPropertyDialog* createPropertyDialog() {return new AbsolutePositionSensorPropertyDialog(this);}
 };
 
 

@@ -23,6 +23,7 @@ utilsinclude_HEADERS = colors.h\
                        nonlinear_algebra.h\
                        nonsmooth_algebra.h\
                        function.h\
+                       symbolic_function.h\
                        function_library.h\
                        ppolynom.h\
                        contact_utils.h\
@@ -31,3 +32,9 @@ utilsinclude_HEADERS = colors.h\
                        stopwatch.h\
                        ansatz_functions.h\
                        contour_functions.h
+
+if COND_CASADI
+  MAYBE_CPPCASADITOXML = cppCasADiToXML
+endif
+noinst_PROGRAMS = $(MAYBE_CPPCASADITOXML)
+cppCasADiToXML_SOURCES = cppCasADiToXML.cc

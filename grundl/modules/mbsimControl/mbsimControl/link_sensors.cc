@@ -17,12 +17,14 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
+#include <config.h>
 #include "mbsimControl/link_sensors.h"
 #include "mbsimControl/objectfactory.h"
 
 #include "mbsim/link.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
 

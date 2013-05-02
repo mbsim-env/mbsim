@@ -40,7 +40,7 @@ namespace MBSimHydraulics {
       void calcqSize() {qSize=0; }
       void calcuSize(int j) {uSize[j]=0; }
       
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       void init(MBSim::InitStage stage);
       void plot(double t, double dt);
     protected:
@@ -68,7 +68,7 @@ namespace MBSimHydraulics {
 
       void updateStateDependentVariables(double t);
 
-      void initializeUsingXML(TiXmlElement * element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
     protected:
       LeakagePressureLoss * lpl;
     private:
@@ -87,7 +87,7 @@ namespace MBSimHydraulics {
       double getGapHeight() const {return hGap; }
       void setPlaneLeakagePressureLoss(PlaneLeakagePressureLoss * plpl);
 
-      void initializeUsingXML(TiXmlElement * element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
     private:
       double hGap, wGap;
   };
@@ -106,7 +106,7 @@ namespace MBSimHydraulics {
 
       void init(MBSim::InitStage stage);
 
-      void initializeUsingXML(TiXmlElement * element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
     private:
       double rI, rO, hGap;
   };

@@ -32,7 +32,7 @@ namespace MBSimHydraulics {
       FlowSensor(const std::string &name) : MBSimControl::Sensor(name), line(NULL), lineString("") {}
       std::string getType() const { return "FlowSensor"; }
       fmatvec::Vec getSignal();
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       void init(MBSim::InitStage stage);
       void setHLine(HLine * line_) {line=line_; }
     protected:
@@ -45,7 +45,7 @@ namespace MBSimHydraulics {
       PressureSensor(const std::string &name) : MBSimControl::Sensor(name), node(NULL), nodeString("") {}
       std::string getType() const { return "PressureSensor"; }
       fmatvec::Vec getSignal();
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       void init(MBSim::InitStage stage);
       void setHNode(HNode * node_) {node=node_; }
     protected:

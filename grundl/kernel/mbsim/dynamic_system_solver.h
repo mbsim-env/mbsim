@@ -447,8 +447,8 @@ namespace MBSim {
        */
       void readz0(std::string fileName);
 
-      virtual void initializeUsingXML(TiXmlElement *element);
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
 
       static DynamicSystemSolver* readXMLFile(const std::string &filename);
       void writeXMLFile(const std::string &name);

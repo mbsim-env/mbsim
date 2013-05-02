@@ -36,11 +36,7 @@ intSchema  =None
 directories=list() # a list of all examples sorted in descending order (filled recursively (using the filter) by by --directories)
 # the following examples will fail: do not report them in the RSS feed as errors
 willFail=set([
-  pj('mechanics', 'flexible_body', 'spatial_beam_cosserat'),
-  pj('mechanics', 'flexible_body', 'mfr_mindlin'),
-  pj('mechanics', 'contacts', 'point_nurbsdisk'),
-  pj('mechanics', 'contacts', 'circle_nurbsdisk2s'),
-  pj('mechanics', 'flexible_body', 'perlchain_cosserat')
+#  pj('xml', 'time_dependent_kinematics')
 ])
 
 # command line option definition
@@ -97,6 +93,7 @@ cfgOpts.add_argument("--disableValidate", action="store_true", help="disable val
 cfgOpts.add_argument("--buildType", default="", type=str, help="Description of the build type (e.g: 'Daily Build: ')")
 cfgOpts.add_argument("--prefixSimulation", default=None, type=str,
   help="prefix the simulation command (./main, mbsimflatxml, mbsimxml) with this string: e.g. 'valgrind --tool=callgrind'")
+cfgOpts.add_argument("--exeExt", default="", type=str, help="File extension of cross compiled executables")
 
 outOpts=argparser.add_argument_group('Output Options')
 outOpts.add_argument("--reportOutDir", default="runexamples_report", type=str, help="the output directory of the report")
@@ -528,7 +525,7 @@ def executeSrcExample(executeFD):
     mainEnv[NAME]=libDir
   # run main
   t0=datetime.datetime.now()
-  if subprocess.call(args.prefixSimulation+[pj(os.curdir, "main")], stderr=subprocess.STDOUT, stdout=executeFD, env=mainEnv)!=0: return 1, 0
+  if subprocess.call(args.prefixSimulation+[pj(os.curdir, "main"+args.exeExt)], stderr=subprocess.STDOUT, stdout=executeFD, env=mainEnv)!=0: return 1, 0
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
   return 0, dt
@@ -548,7 +545,7 @@ def executeXMLExample(executeFD):
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  if subprocess.call(args.prefixSimulation+[pj(mbsimBinDir, "mbsimxml")]+parMBSimOption+parIntOption+mpathOption+
+  if subprocess.call(args.prefixSimulation+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+parMBSimOption+parIntOption+mpathOption+
                      ["MBS.mbsim.xml", "Integrator.mbsimint.xml"], stderr=subprocess.STDOUT, stdout=executeFD)!=0: return 1, 0
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
@@ -563,7 +560,7 @@ def executeFlatXMLExample(executeFD):
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  if subprocess.call(args.prefixSimulation+[pj(mbsimBinDir, "mbsimflatxml"), "MBS.mbsim.flat.xml", "Integrator.mbsimint.xml"],
+  if subprocess.call(args.prefixSimulation+[pj(mbsimBinDir, "mbsimflatxml"+args.exeExt), "MBS.mbsim.flat.xml", "Integrator.mbsimint.xml"],
                      stderr=subprocess.STDOUT, stdout=executeFD)!=0: return 1, 0
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
@@ -878,10 +875,11 @@ def downloadReferenceTarBz2():
 def validateXML(example, consoleOutput, htmlOutputFD):
   nrFailed=0
   nrTotal=0
-  types=[["*.ombv.xml",     ombvSchema],
-         ["*.ombv.env.xml", ombvSchema],
-         ["*.mbsim.xml",    mbsimSchema],
-         ["*.mbsimint.xml", intSchema]]
+  types=[["*.ombv.xml",       ombvSchema],
+         ["*.ombv.env.xml",   ombvSchema],
+         ["*.mbsim.xml",      mbsimSchema],
+         ["*.mbsim.flat.xml", mbsimSchema],
+         ["*.mbsimint.xml",   intSchema]]
   for root, _, filenames in os.walk(os.curdir):
     for curType in types:
       for filename in fnmatch.filter(filenames, curType[0]):

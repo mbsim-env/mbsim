@@ -20,25 +20,26 @@
 #ifndef _EXTENDED_PROPERTIES_H_
 #define _EXTENDED_PROPERTIES_H_
 
-#include "string_properties.h"
+#include "variable_properties.h"
 
 class ExtPhysicalVarProperty : public Property {
 
   public:
-    ExtPhysicalVarProperty(std::vector<PhysicalStringProperty*> inputProperty);
-    PhysicalStringProperty* getPhysicalStringProperty(int i) {return inputProperty[i];}
-    PhysicalStringProperty* getCurrentPhysicalStringProperty() {return inputProperty[currentInput];}
-    const PhysicalStringProperty* getCurrentPhysicalStringProperty() const {return inputProperty[currentInput];}
+    ExtPhysicalVarProperty(std::vector<PhysicalVariableProperty*> inputProperty);
+    ~ExtPhysicalVarProperty();
+    PhysicalVariableProperty* getPhysicalVariableProperty(int i) {return inputProperty[i];}
+    PhysicalVariableProperty* getCurrentPhysicalVariableProperty() {return inputProperty[currentInput];}
+    const PhysicalVariableProperty* getCurrentPhysicalVariableProperty() const {return inputProperty[currentInput];}
     int getNumberOfInputs() const {return inputProperty.size();}
     std::string getValue() const {return inputProperty[currentInput]->getValue();}
     void setValue(const std::string &str) {inputProperty[currentInput]->setValue(str);}
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
   protected:
-    std::vector<PhysicalStringProperty*> inputProperty;
+    std::vector<PhysicalVariableProperty*> inputProperty;
     int currentInput;
 };
 
@@ -46,9 +47,10 @@ class PropertyChoiceProperty : public Property {
 
   public:
     PropertyChoiceProperty(const std::vector<Property*> &property_) : property(property_), index(0) {}
+    ~PropertyChoiceProperty();
     void initialize();
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
   protected:
@@ -59,13 +61,14 @@ class PropertyChoiceProperty : public Property {
 class ExtProperty : public Property {
   public:
     ExtProperty(Property *property_=0, bool active_=true, const std::string &name="", bool flag=true) : property(property_), active(active_), xmlName(name), alwaysWriteXMLName(flag) {}
+    ~ExtProperty() {delete property;}
     Property* getProperty() {return property;}
     const Property* getProperty() const {return property;}
     void setProperty(Property *property_) {property = property_;}
     void setXMLName(const std::string &name, bool flag=true) {xmlName = name; alwaysWriteXMLName=flag;}
 
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
     void initialize() {property->initialize();}
@@ -82,11 +85,12 @@ class PropertyContainer : public Property {
   public:
     PropertyContainer() {}
     PropertyContainer(const std::vector<Property*> &property_) : property(property_) {}
+    ~PropertyContainer();
 
     void initialize();
     void addProperty(Property *property_) {property.push_back(property_);}
-    TiXmlElement* initializeUsingXML(TiXmlElement *element);
-    TiXmlElement* writeXMLFile(TiXmlNode *element);
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 

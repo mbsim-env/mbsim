@@ -23,33 +23,20 @@
 #include "element.h"
 #include "extended_properties.h"
 
-class QAction;
-class VecWidget;
-
 class Object : public Element {
-  Q_OBJECT
+  friend class ObjectPropertyDialog;
   public:
-    Object(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    Object(const std::string &str, Element *parent);
     ~Object();
     virtual int getqSize() {return 0;}
     virtual int getuSize() {return 0;}
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    virtual Element* getByPathSearch(QString path);
-    virtual void resizeGeneralizedPosition() {}
-    virtual void resizeGeneralizedVelocity() {}
-    virtual void initializeDialog();
-    virtual void fromWidget();
-    virtual void toWidget();
-  public slots:
-    virtual void resizeVariables() {resizeGeneralizedPosition();resizeGeneralizedVelocity();emit sizeChanged();}
+    static Object* readXMLFile(const std::string &filename, Element *parent);
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual Element* getByPathSearch(std::string path);
+    ElementPropertyDialog* createPropertyDialog() {return new ObjectPropertyDialog(this);}
   protected:
-    QAction *actionSaveAs;
-    ExtWidget *q0Widget, *u0Widget;
-    ExtProperty q0Property, u0Property;
-    VecWidget *q0, *u0;
-  signals:
-    void sizeChanged();
+    ExtProperty q0, u0;
 
 };
 

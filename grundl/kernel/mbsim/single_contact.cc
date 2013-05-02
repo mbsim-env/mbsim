@@ -39,6 +39,7 @@
 
 using namespace std;
 using namespace fmatvec;
+using namespace MBXMLUtils;
 
 namespace MBSim {
   extern double tP;
@@ -143,7 +144,7 @@ namespace MBSim {
       gdN(0) = Wn.T() * WvD;
 
       if (gdT.size()) {
-        Mat3V Wt(gdT.size());
+        Mat3xV Wt(gdT.size());
         Wt.set(0, cpData[0].getFrameOfReference().getOrientation().col(1));
         if (gdT.size() > 1)
           Wt.set(1, cpData[0].getFrameOfReference().getOrientation().col(2));

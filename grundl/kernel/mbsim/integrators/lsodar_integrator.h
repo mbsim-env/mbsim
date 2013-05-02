@@ -73,7 +73,7 @@ namespace MBSim {
       void subIntegrate(DynamicSystemSolver& system, double tStop);
       void postIntegrate(DynamicSystemSolver& system);
 
-      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
   };
 
 }

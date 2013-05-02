@@ -79,8 +79,8 @@ namespace MBSim {
        * \brief initialize integrator
        * \param XML description
        */
-      virtual void initializeUsingXML(TiXmlElement *element);
-      virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
 
       static Integrator* readXMLFile(const std::string &filename);
       void writeXMLFile(const std::string &name);

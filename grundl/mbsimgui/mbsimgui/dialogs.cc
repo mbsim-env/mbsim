@@ -26,8 +26,9 @@
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
 #include <QTreeWidget>
+#include <QScrollArea>
 
-EvalDialog::EvalDialog(StringWidget *var_) : var(var_) {
+EvalDialog::EvalDialog(VariableWidget *var_) : var(var_) {
   QScrollArea *tab = new QScrollArea;
   tab->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
   tab->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -65,7 +66,7 @@ EvalDialog::EvalDialog(StringWidget *var_) : var(var_) {
   setWindowTitle("Octave expression evaluation");
 }
 
-RigidBodyBrowser::RigidBodyBrowser(QTreeWidget* tree_, RigidBody* rigidBody, QWidget *parentObject_) : QDialog(parentObject_), selection(rigidBody), savedItem(0), tree(tree_) {
+RigidBodyBrowser::RigidBodyBrowser(Element* element_, RigidBody* rigidBody, QWidget *parentObject_) : QDialog(parentObject_), selection(rigidBody), savedItem(0), element(element_) {
   QGridLayout* mainLayout=new QGridLayout;
   setLayout(mainLayout);
   rigidBodyList = new QTreeWidget;
@@ -90,7 +91,7 @@ void RigidBodyBrowser::updateWidget(RigidBody *sel) {
   selection = sel;
   rigidBodyList->clear();
   savedItem = 0;
-  mbs2RigidBodyTree((Element*)tree->topLevelItem(0),rigidBodyList->invisibleRootItem());
+  mbs2RigidBodyTree(element,rigidBodyList->invisibleRootItem());
   rigidBodyList->setCurrentItem(savedItem);
 }
 
@@ -98,25 +99,17 @@ void RigidBodyBrowser::mbs2RigidBodyTree(Element* ele, QTreeWidgetItem* parentIt
   if(dynamic_cast<Group*>(ele) || dynamic_cast<RigidBody*>(ele) || dynamic_cast<RigidBody*>(ele)) {
 
     ElementItem *item = new ElementItem(ele);
-    item->setText(0,ele->getName());
+    item->setText(0,QString::fromStdString(ele->getName()));
 
     if(ele == selection)
       savedItem = item;
 
     parentItem->addChild(item);
 
-    if(ele->getContainerFrame())
-      for(int i=0; i<ele->getContainerFrame()->childCount(); i++) {
-        mbs2RigidBodyTree((Element*)ele->getContainerFrame()->child(i),item);
-      }
-    if(ele->getContainerGroup())
-      for(int i=0; i<ele->getContainerGroup()->childCount(); i++) {
-        mbs2RigidBodyTree((Element*)ele->getContainerGroup()->child(i),item);
-      }
-    if(ele->getContainerObject())
-      for(int i=0; i<ele->getContainerObject()->childCount(); i++) {
-        mbs2RigidBodyTree((Element*)ele->getContainerObject()->child(i),item);
-      }
+    for(int i=0; i<ele->getNumberOfGroups(); i++)
+      mbs2RigidBodyTree(ele->getGroup(i),item);
+    for(int i=0; i<ele->getNumberOfObjects(); i++)
+      mbs2RigidBodyTree(ele->getObject(i),item);
   }
 }
 
@@ -128,7 +121,7 @@ void RigidBodyBrowser::checkForRigidBody(QTreeWidgetItem* item_,int) {
     okButton->setDisabled(true);
 }
 
-FrameBrowser::FrameBrowser(QTreeWidget* tree_, Frame* frame, QWidget *parentObject_) : QDialog(parentObject_), selection(frame), savedItem(0), tree(tree_) {
+FrameBrowser::FrameBrowser(Element* element_, Frame* frame, QWidget *parentObject_) : QDialog(parentObject_), selection(frame), savedItem(0), element(element_) {
   QGridLayout* mainLayout=new QGridLayout;
   setLayout(mainLayout);
   frameList = new QTreeWidget;
@@ -153,7 +146,7 @@ void FrameBrowser::updateWidget(Frame *sel) {
   selection = sel;
   frameList->clear();
   savedItem = 0;
-  mbs2FrameTree((Element*)tree->topLevelItem(0),frameList->invisibleRootItem());
+  mbs2FrameTree(element,frameList->invisibleRootItem());
   frameList->setCurrentItem(savedItem);
 }
 
@@ -161,25 +154,19 @@ void FrameBrowser::mbs2FrameTree(Element* ele, QTreeWidgetItem* parentItem) {
   if(dynamic_cast<Group*>(ele) || dynamic_cast<RigidBody*>(ele) || dynamic_cast<Frame*>(ele)) {
 
     ElementItem *item = new ElementItem(ele);
-    item->setText(0,ele->getName());
+    item->setText(0,QString::fromStdString(ele->getName()));
 
     if(ele == selection)
       savedItem = item;
 
     parentItem->addChild(item);
 
-    if(ele->getContainerFrame())
-      for(int i=0; i<ele->getContainerFrame()->childCount(); i++) {
-        mbs2FrameTree((Element*)ele->getContainerFrame()->child(i),item);
-      }
-    if(ele->getContainerGroup())
-      for(int i=0; i<ele->getContainerGroup()->childCount(); i++) {
-        mbs2FrameTree((Element*)ele->getContainerGroup()->child(i),item);
-      }
-    if(ele->getContainerObject())
-      for(int i=0; i<ele->getContainerObject()->childCount(); i++) {
-        mbs2FrameTree((Element*)ele->getContainerObject()->child(i),item);
-      }
+    for(int i=0; i<ele->getNumberOfFrames(); i++)
+      mbs2FrameTree(ele->getFrame(i),item);
+    for(int i=0; i<ele->getNumberOfGroups(); i++)
+      mbs2FrameTree(ele->getGroup(i),item);
+    for(int i=0; i<ele->getNumberOfObjects(); i++)
+      mbs2FrameTree(ele->getObject(i),item);
   }
 }
 
@@ -191,7 +178,7 @@ void FrameBrowser::checkForFrame(QTreeWidgetItem* item_,int) {
     okButton->setDisabled(true);
 }
 
-ContourBrowser::ContourBrowser(QTreeWidget* tree_, Contour* contour, QWidget *parentObject_) : QDialog(parentObject_), selection(contour), savedItem(0), tree(tree_) {
+ContourBrowser::ContourBrowser(Element* element_, Contour* contour, QWidget *parentObject_) : QDialog(parentObject_), selection(contour), savedItem(0), element(element_) {
   QGridLayout* mainLayout=new QGridLayout;
   setLayout(mainLayout);
   contourList = new QTreeWidget;
@@ -216,7 +203,7 @@ void ContourBrowser::updateWidget(Contour *sel) {
   selection = sel;
   contourList->clear();
   savedItem = 0;
-  mbs2ContourTree((Element*)tree->topLevelItem(0),contourList->invisibleRootItem());
+  mbs2ContourTree(element,contourList->invisibleRootItem());
   contourList->setCurrentItem(savedItem);
 }
 
@@ -224,25 +211,19 @@ void ContourBrowser::mbs2ContourTree(Element* ele, QTreeWidgetItem* parentItem) 
   if(dynamic_cast<Group*>(ele) || dynamic_cast<RigidBody*>(ele) || dynamic_cast<Contour*>(ele)) {
 
     ElementItem *item = new ElementItem(ele);
-    item->setText(0,ele->getName());
+    item->setText(0,QString::fromStdString(ele->getName()));
 
     if(ele == selection)
       savedItem = item;
 
     parentItem->addChild(item);
 
-    if(ele->getContainerContour())
-      for(int i=0; i<ele->getContainerContour()->childCount(); i++) {
-        mbs2ContourTree((Element*)ele->getContainerContour()->child(i),item);
-      }
-    if(ele->getContainerGroup())
-      for(int i=0; i<ele->getContainerGroup()->childCount(); i++) {
-        mbs2ContourTree((Element*)ele->getContainerGroup()->child(i),item);
-      }
-    if(ele->getContainerObject())
-      for(int i=0; i<ele->getContainerObject()->childCount(); i++) {
-        mbs2ContourTree((Element*)ele->getContainerObject()->child(i),item);
-      }
+    for(int i=0; i<ele->getNumberOfContours(); i++)
+      mbs2ContourTree(ele->getContour(i),item);
+    for(int i=0; i<ele->getNumberOfGroups(); i++)
+      mbs2ContourTree(ele->getGroup(i),item);
+    for(int i=0; i<ele->getNumberOfObjects(); i++)
+      mbs2ContourTree(ele->getObject(i),item);
   }
 }
 

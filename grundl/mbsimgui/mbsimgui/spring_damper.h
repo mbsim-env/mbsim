@@ -24,19 +24,16 @@
 #include "extended_properties.h"
 
 class SpringDamper : public Link {
+  friend class SpringDamperPropertyDialog;
   public:
-    SpringDamper(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    SpringDamper(const std::string &str, Element *element);
     ~SpringDamper();
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    QString getType() const { return "SpringDamper"; }
-    void initializeDialog();
-    virtual void fromWidget();
-    virtual void toWidget();
+    std::string getType() const { return "SpringDamper"; }
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void initialize();
-
+    ElementPropertyDialog* createPropertyDialog() {return new SpringDamperPropertyDialog(this);}
   protected:
-    ExtWidget *forceFunctionWidget, *connectionsWidget, *forceDirectionWidget, *coilSpringWidget;
     ExtProperty forceFunction, connections, forceDirection, coilSpring;
 };
 

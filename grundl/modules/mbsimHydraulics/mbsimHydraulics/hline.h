@@ -70,7 +70,7 @@ namespace MBSimHydraulics {
       void updateM(double t, int j=0) {M[j]=Mlocal; }
 
       void init(MBSim::InitStage stage);
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       
     protected:
       HNode * nFrom;
@@ -107,7 +107,7 @@ namespace MBSimHydraulics {
       void updateh(double t, int j=0);
       void updateM(double t, int j=0);
       
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       void init(MBSim::InitStage stage);
       void plot(double t, double dt);
       
@@ -137,7 +137,7 @@ namespace MBSimHydraulics {
       virtual void updateStateDependentVariables(double t);
       void updateh(double t, int j=0) {};
       
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       void init(MBSim::InitStage stage);
       
     private:
@@ -162,7 +162,7 @@ namespace MBSimHydraulics {
       
       void updateh(double t, int j=0) {};
       
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       void init(MBSim::InitStage stage);
       
     private:
@@ -193,7 +193,7 @@ namespace MBSimHydraulics {
       
       void updateh(double t, int j=0) {};
       
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       void init(MBSim::InitStage stage);
       void plot(double t, double dt);
       

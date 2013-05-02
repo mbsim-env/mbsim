@@ -17,6 +17,7 @@
  * Contact: markus.ms.schneider@gmail.com
  */
 
+#include <config.h>
 #include "checkvalve.h"
 #include "mbsim/frame.h"
 #include "mbsim/rigid_body.h"
@@ -39,6 +40,7 @@
 #endif
 
 using namespace std;
+using namespace MBXMLUtils;
 using namespace fmatvec;
 using namespace MBSim;
 using namespace MBSimControl;

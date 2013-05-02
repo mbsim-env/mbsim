@@ -20,71 +20,86 @@
 #ifndef _PARAMETER__H_
 #define _PARAMETER__H_
 
-#include <QtGui/QTreeWidgetItem>
+#include "treeitemdata.h"
+#include "basic_properties.h"
 #include "extended_properties.h"
+#include "parameter_property_dialog.h"
+#include "parameter_context_menu.h"
 
 class PropertyWidget;
 class PropertyDialog;
 class ExtWidget;
-class TiXmlElement;
-class TiXmlNode;
 class TextWidget;
+namespace MBXMLUtils {
+  class TiXmlElement;
+  class TiXmlNode;
+}
 
-class Parameter : public QObject, public QTreeWidgetItem {
-  Q_OBJECT
-  friend class Editor;
-  friend class MainWindow;
-  protected:
-    QString newName(const QString &type);
-    bool drawThisPath;
-    QString iconFile;
-    bool searchMatched;
-    PropertyDialog *dialog;
-    QMenu *contextMenu;
-    QString name;
-    TextWidget *textWidget;
+class Parameter : public TreeItemData {
+  friend class ParameterPropertyDialog;
   public:
-    Parameter(const QString &str, QTreeWidgetItem *parentItem, int ind);
+    Parameter(const std::string &name);
     virtual ~Parameter();
-    QString &getIconFile() { return iconFile; }
-    virtual QString getInfo();
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual TiXmlElement* writeXMLFile(TiXmlNode *element);
-    static Parameter* readXMLFile(const QString &filename, QTreeWidgetItem *parent);
-    virtual void writeXMLFile(const QString &name);
-    virtual void writeXMLFile() { writeXMLFile(getType()); }
-    virtual QString getType() const { return "Parameter"; }
-    QMenu* getContextMenu() { return contextMenu; }
-    QString getName() const {return name;}
-    void setName(const QString &str);
-    virtual std::string getValue() const = 0;
-    virtual void fromWidget();
-    virtual void toWidget();
-    virtual void initializeDialog();
-  public slots:
-    void saveAs();
-    void openPropertyDialog();
-    void updateElement();
-  protected slots:
-    void updateTreeWidgetItem(const QString &str);
-    void remove();
-  signals:
-    void parameterChanged(const QString &str);
-
+    virtual std::string getValue() const {return valuestr;}
+    void setValue(const std::string &value) {valuestr = value;}
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual std::string getType() const { return "Parameter"; }
+    const std::string& getName() const {return static_cast<const TextProperty*>(name.getProperty())->getText();}
+    void setName(const std::string &str) {static_cast<TextProperty*>(name.getProperty())->setText(str);}
+    virtual ParameterPropertyDialog* createPropertyDialog() {return new ParameterPropertyDialog(this);}
+    virtual ParameterContextMenu* createContextMenu() {return new ParameterContextMenu;}
+  protected:
+    ExtProperty name, value;
+    std::string valuestr;
 };
 
-class DoubleParameter : public Parameter {
+class ScalarParameter : public Parameter {
+  friend class ScalarParameterPropertyDialog;
   public:
-    DoubleParameter(const QString &str, QTreeWidgetItem *parentItem, int ind);
-    virtual QString getType() const { return "scalarParameter"; }
-    virtual std::string getValue() const;
-    virtual void initializeUsingXML(TiXmlElement *element);
-    virtual void fromWidget();
-    virtual void toWidget();
-    virtual void initializeDialog();
-  protected:
-    ExtWidget *valueWidget;
-    ExtProperty value;
+    ScalarParameter(const std::string &name);
+    virtual ~ScalarParameter();
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual std::string getType() const { return "scalarParameter"; }
+    virtual ParameterPropertyDialog* createPropertyDialog() {return new ScalarParameterPropertyDialog(this);}
+};
+
+class VectorParameter : public Parameter {
+  friend class VectorParameterPropertyDialog;
+  public:
+    VectorParameter(const std::string &name);
+    virtual ~VectorParameter();
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual std::string getType() const { return "vectorParameter"; }
+    virtual ParameterPropertyDialog* createPropertyDialog() {return new VectorParameterPropertyDialog(this);}
+};
+
+class MatrixParameter : public Parameter {
+  friend class MatrixParameterPropertyDialog;
+  public:
+    MatrixParameter(const std::string &name);
+    virtual ~MatrixParameter();
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    virtual std::string getType() const { return "matrixParameter"; }
+    virtual ParameterPropertyDialog* createPropertyDialog() {return new MatrixParameterPropertyDialog(this);}
+};
+
+class ParameterList {
+  public:
+    void readXMLFile(const std::string &filename);
+    //virtual void writeXMLFile(const std::string &name);
+    int getSize() const {return name.size();}
+    void addParameter(const std::string &name_, const std::string &value_) {name.push_back(name_); value.push_back(value_);}
+    void addParameterList(const ParameterList &list); 
+    const std::string& getParameterName(int i) const {return name[i];}
+    const std::string& getParameterValue(int i) const {return value[i];}
+    //void printList() const;
+    //void clear() {name.clear(); value.clear();}
+      private:
+    std::vector<std::string> name, value;
 };
 
 #endif

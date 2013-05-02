@@ -54,7 +54,7 @@ namespace MBSimHydraulics {
       SerialResistanceLinePressureLoss() : LinePressureLoss() {}
       void addLinePressureLoss(LinePressureLoss * l) {slp.push_back(l); }
       double operator()(const double& Q, const void * line);
-      void initializeUsingXML(TiXmlElement * element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
     private:
       std::vector<LinePressureLoss*> slp;
   };
@@ -66,7 +66,7 @@ namespace MBSimHydraulics {
       ParallelResistanceLinePressureLoss() : LinePressureLoss(), pl(NULL), number(0) {}
       void setLinePressureLoss(LinePressureLoss * pl_, int number_) {pl=pl_; number=double(number_); }
       double operator()(const double& Q, const void * line);
-      void initializeUsingXML(TiXmlElement * element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
     private:
       LinePressureLoss* pl;
       double number;
@@ -79,7 +79,7 @@ namespace MBSimHydraulics {
       ZetaLinePressureLoss() : LinePressureLoss(), c(0) {};
       void setZeta(double zeta_) {c=zeta_; }
       double operator()(const double& Q, const void * line);
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     private:
       double c;
   };
@@ -92,7 +92,7 @@ namespace MBSimHydraulics {
       void setZetaPos(double zeta_) {cPos=zeta_; }
       void setZetaNeg(double zeta_) {cNeg=zeta_; }
       double operator()(const double& Q, const void * line);
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     private:
       double cPos, cNeg;
   };
@@ -116,7 +116,7 @@ namespace MBSimHydraulics {
       void setHydraulicDiameter(double dHyd_, double dHydNeg_=0);
       void setSurfaceRoughness(double k_) {k=k_; }
       double operator()(const double& Q, const void * line);
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     private:
       double c, dRef, dHyd, dHydNeg, k, ReynoldsFactor, ReynoldsFactorNeg;
       MBSim::TabularFunction1_VS<fmatvec::Ref,fmatvec::Ref> * lambdaTabular;
@@ -129,7 +129,7 @@ namespace MBSimHydraulics {
       CurveFittedLinePressureLoss() : LinePressureLoss(), dRef(0), dHyd(0), aPos(0), bPos(0), aNeg(0), bNeg(0), ReynoldsFactor(0) {}
       void setFactors(double aPos_, double bPos_, double aNeg_, double bNeg_, double dRef_, double dHyd_) { aPos=aPos_; bPos=bPos_; aNeg=aNeg_; bNeg=bNeg_; dRef=dRef_; dHyd=dHyd_; }
       double operator()(const double& Q, const void * line);
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     private:
       double dRef, dHyd;
       double aPos, bPos, aNeg, bNeg;
@@ -143,7 +143,7 @@ namespace MBSimHydraulics {
       TabularLinePressureLoss() : LinePressureLoss(), zetaTabular(NULL) {};
       void setZetaTabular(MBSim::Function1<double, double> * zetaTabular_) {zetaTabular=zetaTabular_; }
       double operator()(const double& Q, const void * line);
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     private:
       MBSim::Function1<double, double> * zetaTabular;
   };
@@ -163,7 +163,7 @@ namespace MBSimHydraulics {
       void setZeta(double zeta_) {c=zeta_; }
       void setZetaNegative(double zeta_) {cNeg=zeta_; }
       virtual double operator()(const double& Q, const void * line);
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     private:
       double c, cNeg;
   };
@@ -176,7 +176,7 @@ namespace MBSimHydraulics {
       void setLength(double l_) {l=l_; }
       void setWidth(double b_) {b=b_; }
       virtual double operator()(const double& Q, const void * line);
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     private:
       double c, l, b;
   };
@@ -198,7 +198,7 @@ namespace MBSimHydraulics {
       RelativeAlphaClosablePressureLoss() : ClosablePressureLoss(), alpha(0), alpha2(0), c(0) {}
       void setAlpha(double alpha_) {alpha=alpha_; assert(alpha>.01); assert(alpha<=1.); }
       virtual double operator()(const double& Q, const void * line);
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     private:
       double alpha, alpha2, c;
   };
@@ -211,7 +211,7 @@ namespace MBSimHydraulics {
       void setBallRadius(double rBall_) {rBall=rBall_; }
       double getBallRadius() const {return rBall; }
       virtual double calcBallForceArea() {return -1.; }
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     protected:
       double rBall;
   };
@@ -225,7 +225,7 @@ namespace MBSimHydraulics {
       void setGamma(double gamma_) {gamma=gamma_; }
       virtual double calcBallForceArea() {return M_PI*rBall*rBall*sin(gamma)*sin(gamma); }
       double operator()(const double& Q, const void * =NULL);
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     private:
       double alpha, gamma, c, siga, coga;
   };
@@ -247,7 +247,7 @@ namespace MBSimHydraulics {
       ConeCheckvalveClosablePressureLoss() : CheckvalveClosablePressureLoss(), alpha(0), c(0) {}
       void setAlpha(double alpha_) {alpha=alpha_; }
       double operator()(const double& Q, const void * line);
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     private:
       double alpha;
       double numer[2], denom[2], c;
@@ -286,7 +286,7 @@ namespace MBSimHydraulics {
       EccentricCircularLeakagePressureLoss() : CircularLeakagePressureLoss (), ecc(0), pVfac(0), xdfac(0) {}
       void setEccentricity(double ecc_) {ecc=ecc_; }
       double operator()(const double& pVorQ, const void * line);
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     private:
       double ecc, pVfac, xdfac;
   };
@@ -315,7 +315,7 @@ namespace MBSimHydraulics {
       UnidirectionalZetaPressureLoss() : UnidirectionalPressureLoss(), c(0) {}
       void setZeta(double zeta_) {c=zeta_; }
       virtual double operator()(const double& Q, const void * line);
-      void initializeUsingXML(TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     private:
       double c;
   };

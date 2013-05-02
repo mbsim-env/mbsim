@@ -43,6 +43,6 @@ contourinclude_HEADERS = face.h\
 			 planewithfrustum.h\
 			 point.h\
 			 polynomial_frustum.h\
-			 room.h
+			 room.h\
 			 sphere.h\
 			 line_segment.h

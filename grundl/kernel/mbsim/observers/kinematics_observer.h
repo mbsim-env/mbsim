@@ -61,7 +61,7 @@ namespace MBSim {
       void setFrame(Frame *frame_) { frame = frame_; } 
       void init(InitStage stage);
       virtual void plot(double t, double dt);
-      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVPositionArrow(OpenMBV::Arrow *arrow) { openMBVPositionArrow = arrow; }

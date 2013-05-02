@@ -179,7 +179,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       fmatvec::VecV operator()(const fmatvec::VecV &alpha, const void * =NULL) {
-        fmatvec::Mat3V Wt = contour->computeWt(alpha);
+        fmatvec::Mat3xV Wt = contour->computeWt(alpha);
         fmatvec::Vec3 WrOC[2];
         WrOC[0] = point->getFrame()->getPosition();
         WrOC[1] = contour->computeWrOC(alpha);
