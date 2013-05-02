@@ -87,9 +87,9 @@ mainOpts.add_argument("--filter", default="all",
            "src"], help="Filter the specified directories")
 
 cfgOpts=argparser.add_argument_group('Configuration Options')
-cfgOpts.add_argument("--atol", default=1e-5, type=float,
+cfgOpts.add_argument("--atol", default=2e-5, type=float,
   help="Absolute tolerance. Channel comparing failed if for at least ONE datapoint the abs. AND rel. toleranz is violated")
-cfgOpts.add_argument("--rtol", default=1e-5, type=float,
+cfgOpts.add_argument("--rtol", default=2e-5, type=float,
   help="Relative tolerance. Channel comparing failed if for at least ONE datapoint the abs. AND rel. toleranz is violated")
 cfgOpts.add_argument("--disableRun", action="store_true", help="disable running the example on action 'report'")
 cfgOpts.add_argument("--disableCompare", action="store_true", help="disable comparing the results on action 'report'")
@@ -375,7 +375,7 @@ def runExample(resultQueue, example):
     runExampleRet=0 # run ok
     # execute the example[0]
     if not os.path.isdir(pj(args.reportOutDir, example[0])): os.makedirs(pj(args.reportOutDir, example[0]))
-    executeFN=pj(example[0], "execute.out")
+    executeFN=pj(example[0], "execute.txt")
     executeRet=0
     if not args.disableRun:
       executeFD=open(pj(args.reportOutDir, executeFN), "w")
@@ -408,7 +408,12 @@ def runExample(resultQueue, example):
     if args.disableRun:
       resultStr+='<td><span style="color:orange">not run</span></td>'
     else:
-      resultStr+='<td>%.3f</td>'%dt
+      # if not reference time or time is nearly equal refTime => display time in black color
+      if math.isinf(refTime) or abs(dt-refTime)<0.1*refTime:
+        resultStr+='<td>%.3f</td>'%dt
+      # dt differs more then 10% from refTime => display in yellow color
+      else:
+        resultStr+='<td><span style="color:orange">%.3f</span></td>'%dt
     if not math.isinf(refTime):
       resultStr+='<td>%.3f</td>'%refTime
     else:
@@ -487,7 +492,7 @@ def runExample(resultQueue, example):
     resultStr+='</tr>'
 
   except:
-    fatalScriptErrorFN=pj(example[0], "fatalScriptError.out")
+    fatalScriptErrorFN=pj(example[0], "fatalScriptError.txt")
     fatalScriptErrorFD=open(pj(args.reportOutDir, fatalScriptErrorFN), "w")
     print(traceback.format_exc(), file=fatalScriptErrorFD)
     fatalScriptErrorFD.close()
@@ -588,21 +593,11 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, label, data
   print('<b>Dataset:</b> '+datasetName+'<br/>', file=diffHTMLPlotFD)
   print('<b>Label:</b> '+label.decode("utf-8")+'<br/>', file=diffHTMLPlotFD)
   print('</p>', file=diffHTMLPlotFD)
-  print('<p><embed src="plot.svg" height="95%" type="image/svg+xml"/></p>', file=diffHTMLPlotFD)
+  print('<p>A result differs if <b>at least at one time point</b> the absolute tolerance <b>and</b> the relative tolerance is larger then the requested.</p>', file=diffHTMLPlotFD)
+  print('<p><object data="plot.svg" height="300%" width="100%" type="image/svg+xml"/></p>', file=diffHTMLPlotFD)
   print('</body>', file=diffHTMLPlotFD)
   print('</html>', file=diffHTMLPlotFD)
   diffHTMLPlotFD.close()
-
-  # create gnuplot file
-  diffGPFileName=pj(diffDir, "diffplot.gnuplot")
-  SVGFileName=pj(diffDir, "plot.svg")
-  dataFileName=pj(diffDir, "data.dat")
-  diffGPFD=open(diffGPFileName, "w")
-  print("set terminal svg dynamic", file=diffGPFD)
-  print("set output '"+SVGFileName+"'", file=diffGPFD)
-  print("set xlabel 'Time'", file=diffGPFD)
-  print("set ylabel 'Value'", file=diffGPFD)
-  print("plot \\", file=diffGPFD)
 
   # check for one horizontal line => gnuplot warning: empty y range and remove this warning by adding a dummy value
   singleYValue=dataArrayRef[0,1]
@@ -614,14 +609,49 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, label, data
       [dataArrayCur[0,0], singleYValue+1]
     ])
     dataArrayCur=numpy.concatenate((dataArrayCur, add), axis=0)
+    dataArrayRef=numpy.concatenate((dataArrayRef, add), axis=0)
 
-  print("  '"+dataFileName+".ref' u ($1):($2) binary format='%double%double' title 'reference' w l lw 2, \\", file=diffGPFD)
-  print("  '"+dataFileName+".cur' u ($1):($2) binary format='%double%double' title 'current'   w l", file=diffGPFD)
+  # create gnuplot file
+  diffGPFileName=pj(diffDir, "diffplot.gnuplot")
+  SVGFileName=pj(diffDir, "plot.svg")
+  dataFileName=pj(diffDir, "data.dat")
+  diffGPFD=open(diffGPFileName, "w")
+  print("set terminal svg size 900, 1400", file=diffGPFD)
+  print("set output '"+SVGFileName+"'", file=diffGPFD)
+  print("set multiplot layout 3, 1", file=diffGPFD)
+  print("set title 'Compare'", file=diffGPFD)
+  print("set xlabel 'Time'", file=diffGPFD)
+  print("set ylabel 'Value'", file=diffGPFD)
+  print("plot \\", file=diffGPFD)
+  print("  '"+dataFileName+"' u ($1):($2) binary format='%double%double%double%double' title 'ref' w l lw 2, \\", file=diffGPFD)
+  print("  '"+dataFileName+"' u ($3):($4) binary format='%double%double%double%double' title 'cur' w l", file=diffGPFD)
+  if dataArrayRef.shape==dataArrayCur.shape:
+    print("set title 'Absolute Tolerance'", file=diffGPFD)
+    print("set xlabel 'Time'", file=diffGPFD)
+    print("set ylabel 'cur-ref'", file=diffGPFD)
+    print("plot [:] [%g:%g] \\"%(-3*args.atol, 3*args.atol), file=diffGPFD)
+    print("  '"+dataFileName+"' u ($1):($4-$2) binary format='%double%double%double%double' title 'cur-ref' w l, \\", file=diffGPFD)
+    print("  %g title 'atol' lt 2 lw 1, \\"%(args.atol), file=diffGPFD)
+    print("  %g notitle lt 2 lw 1"%(-args.atol), file=diffGPFD)
+    print("set title 'Relative Tolerance'", file=diffGPFD)
+    print("set xlabel 'Time'", file=diffGPFD)
+    print("set ylabel '(cur-ref)/ref'", file=diffGPFD)
+    print("plot [:] [%g:%g] \\"%(-3*args.rtol, 3*args.rtol), file=diffGPFD)
+    print("  '"+dataFileName+"' u ($1):(($4-$2)/$2) binary format='%double%double%double%double' title '(cur-ref)/ref' w l, \\", file=diffGPFD)
+    print("  %g title 'rtol' lt 2 lw 1, \\"%(args.rtol), file=diffGPFD)
+    print("  %g notitle lt 2 lw 1"%(-args.rtol), file=diffGPFD)
   diffGPFD.close()
 
   # create datafile
-  dataArrayRef.tofile(dataFileName+".ref")
-  dataArrayCur.tofile(dataFileName+".cur")
+  nradd=dataArrayRef.shape[0]-dataArrayCur.shape[0]
+  add=numpy.empty([abs(nradd), 2])
+  add[:]=float("NaN");
+  if nradd<0:
+    dataArrayRef=numpy.concatenate((dataArrayRef, add), axis=0)
+  if nradd>0:
+    dataArrayCur=numpy.concatenate((dataArrayCur, add), axis=0)
+  dataArrayRefCur=numpy.concatenate((dataArrayRef, dataArrayCur), axis=1)
+  dataArrayRefCur.tofile(dataFileName)
 
   # run gnuplot
   try:
@@ -631,8 +661,7 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, label, data
 
   # cleanup
   os.remove(diffGPFileName)
-  os.remove(dataFileName+".ref")
-  os.remove(dataFileName+".cur")
+  os.remove(dataFileName)
 
 def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMemberNames, datasetName, refObj):
   import numpy
@@ -856,7 +885,7 @@ def validateXML(example, consoleOutput, htmlOutputFD):
   for root, _, filenames in os.walk(os.curdir):
     for curType in types:
       for filename in fnmatch.filter(filenames, curType[0]):
-        outputFN=pj(example[0], filename+".out")
+        outputFN=pj(example[0], filename+".txt")
         outputFD=open(pj(args.reportOutDir, outputFN), "w")
         print('<tr>', file=htmlOutputFD)
         print('<td>'+filename+'</td>', file=htmlOutputFD)
@@ -867,9 +896,9 @@ def validateXML(example, consoleOutput, htmlOutputFD):
         if subprocess.call([xmllint, "--xinclude", "--noout", "--schema", curType[1], pj(root, filename)],
                            stderr=subprocess.STDOUT, stdout=outputFD)!=0:
           nrFailed+=1
-          print('<td><a href="'+myurllib.pathname2url(filename+".out")+'"><span style="color:red">failed</span></a></td>', file=htmlOutputFD)
+          print('<td><a href="'+myurllib.pathname2url(filename+".txt")+'"><span style="color:red">failed</span></a></td>', file=htmlOutputFD)
         else:
-          print('<td><a href="'+myurllib.pathname2url(filename+".out")+'"><span style="color:green">passed</span></a></td>', file=htmlOutputFD)
+          print('<td><a href="'+myurllib.pathname2url(filename+".txt")+'"><span style="color:green">passed</span></a></td>', file=htmlOutputFD)
         print('</tr>', file=htmlOutputFD)
         nrTotal+=1
         outputFD.close()

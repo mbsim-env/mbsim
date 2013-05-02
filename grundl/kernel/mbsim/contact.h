@@ -181,11 +181,14 @@ namespace MBSim {
 #endif
 
       /* GETTER / SETTER */
-      void setgInd(int gInd_);
-      void setgdInd(int gdInd_);
-      void setlaInd(int laInd_);
-      void setrFactorInd(int rFactorInd_);
-      void setcorrInd(int corrInd_);
+      virtual void setgInd(int gInd_);
+      virtual void setgdInd(int gdInd_);
+      virtual void setlaInd(int laInd_);
+      virtual void setrFactorInd(int rFactorInd_);
+      virtual void setcorrInd(int corrInd_);
+      virtual void setLinkStatusInd(int LinkStatusInd_);
+      virtual void setLinkStatusRegInd(int LinkStatusRegInd_);
+
       void setContactForceLaw(GeneralizedForceLaw *fcl_) {
         fcl = fcl_;
       }

@@ -339,10 +339,10 @@ namespace MBSim {
       void setsvInd(int svInd_) { svInd = svInd_; };
       int getsvSize() const { return svSize; }
 
-      void setLinkStatusInd(int LinkStatusInd_) { LinkStatusInd = LinkStatusInd_; };
+      virtual void setLinkStatusInd(int LinkStatusInd_) { LinkStatusInd = LinkStatusInd_; };
       int getLinkStatusSize() const { return LinkStatusSize; }
 
-      void setLinkStatusRegInd(int LinkStatusRegInd_) { LinkStatusRegInd = LinkStatusRegInd_; };
+      virtual void setLinkStatusRegInd(int LinkStatusRegInd_) { LinkStatusRegInd = LinkStatusRegInd_; };
       int getLinkStatusRegSize() const { return LinkStatusRegSize; }
 
       const fmatvec::Vec& getla() const { return la; }
