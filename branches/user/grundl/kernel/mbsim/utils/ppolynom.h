@@ -314,8 +314,8 @@ namespace MBSim {
   template<class Row, class Col>
   void PPolynom<Row,Col>::calculateSplineNatural(const fmatvec::Vector<Row,double> &x, const fmatvec::Matrix<fmatvec::General,Row,Col,double> &f) {
     // first row
-    int i=0;
-    int N = x.size();
+    unsigned int i=0;
+    unsigned int N = x.size();
     fmatvec::SqrMat C(N-2,fmatvec::INIT,0.0);
     fmatvec::Mat rs(N-2,f.cols(),fmatvec::INIT,0.0);
     double hi = x(i+1)-x(i);
@@ -352,7 +352,7 @@ namespace MBSim {
     for(i=N-3;i>=0 ;i--) { // backward substitution
       fmatvec::RowVector<Col,double> sum_ciCi(f.cols(),fmatvec::NONINIT); 
       sum_ciCi.init(0.);
-      for(int ii=i+1; ii<=N-3; ii++) sum_ciCi = sum_ciCi + C1(i,ii)*c.row(ii);
+      for(unsigned int ii=i+1; ii<=N-3; ii++) sum_ciCi = sum_ciCi + C1(i,ii)*c.row(ii);
       c.row(i)= (rs1.row(i) - sum_ciCi)/C1(i,i);
     }
     fmatvec::Mat ctmp(N,f.cols(),fmatvec::INIT,0.0);
