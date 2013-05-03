@@ -1436,7 +1436,7 @@ namespace MBSim {
     if (e) {
       OpenMBV::Arrow *arrow = dynamic_cast<OpenMBV::Arrow*>(OpenMBV::ObjectFactory::createObject(e->FirstChildElement()));
       arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-      setopenMBVFrictionArrow(arrow);
+      setOpenMBVFrictionArrow(arrow);
       e = e->NextSiblingElement();
     }
 #endif
