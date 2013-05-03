@@ -175,7 +175,7 @@ namespace MBSim {
        * If using a set-valued friction law, then the arrow is drawn in green if the contact
        * is in slip and in red, if the contact is in stick.
        */
-      void setopenMBVFrictionArrow(OpenMBV::Arrow *arrow) {
+      void setOpenMBVFrictionArrow(OpenMBV::Arrow *arrow) {
         frictionArrow = arrow;
       }
 #endif

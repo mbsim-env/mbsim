@@ -374,10 +374,12 @@ namespace MBSim {
           jter->setFrictionImpactLaw(ftil);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
+          //Set OpenMBV-Properties to single contacts
           for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
             for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
+              jter->enableOpenMBVContactPoints(openMBVContactFrameSize, openMBVContactFrameEnabled);
               jter->setOpenMBVNormalForceArrow(contactArrow);
-              jter->setopenMBVFrictionArrow(frictionArrow);
+              jter->setOpenMBVFrictionArrow(frictionArrow);
             }
           }
 #endif
@@ -551,7 +553,6 @@ namespace MBSim {
     int nextLinkStatusInd = LinkStatusInd_;
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        cout << nextLinkStatusInd << endl;
         jter->setLinkStatusInd(nextLinkStatusInd);
         nextLinkStatusInd += jter->getLinkStatusSize();
       }
@@ -563,7 +564,6 @@ namespace MBSim {
     int nextLinkStatusRegInd = LinkStatusRegInd_;
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
-        cout << nextLinkStatusRegInd << endl;
         jter->setLinkStatusRegInd(nextLinkStatusRegInd);
         nextLinkStatusRegInd += jter->getLinkStatusRegSize();
       }
@@ -833,7 +833,7 @@ namespace MBSim {
     if (e) {
       OpenMBV::Arrow *arrow = dynamic_cast<OpenMBV::Arrow*>(OpenMBV::ObjectFactory::createObject(e->FirstChildElement()));
       arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-      setopenMBVFrictionArrow(arrow);
+      setOpenMBVFrictionArrow(arrow);
       e = e->NextSiblingElement();
     }
 #endif
