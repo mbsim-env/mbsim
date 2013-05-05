@@ -522,8 +522,8 @@ def make(tool, mainFD):
       # make
       print("\n\nRUNNING make clean\n", file=makeFD); makeFD.flush()
       if subprocess.call(["make", "clean"], stderr=subprocess.STDOUT, stdout=makeFD)!=0: raise RuntimeError("make clean failed")
-      print("\n\nRUNNING make\n", file=makeFD); makeFD.flush()
-      if subprocess.call(["make", "-j", str(args.j)], stderr=subprocess.STDOUT, stdout=makeFD)!=0: raise RuntimeError("make failed")
+      print("\n\nRUNNING make -k\n", file=makeFD); makeFD.flush()
+      if subprocess.call(["make", "-k", "-j", str(args.j)], stderr=subprocess.STDOUT, stdout=makeFD)!=0: raise RuntimeError("make failed")
       print("\n\nRUNNING make install\n", file=makeFD); makeFD.flush()
       if subprocess.call(["make", "install"], stderr=subprocess.STDOUT, stdout=makeFD)!=0: raise RuntimeError("make install failed")
     else:
