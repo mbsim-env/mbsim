@@ -595,7 +595,7 @@ EmbedWidget::EmbedWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   setLayout(layout);
   layout->setMargin(0);
-  href = new ExtWidget("File", new FileWidget("XML model files", "xml files (*.xml)", 1));
+  href = new ExtWidget("File", new FileWidget("XML model files", "xml files (*.xml)", 1), true);
   layout->addWidget(href);
   count = new ExtWidget("Count", new TextWidget, true);
   layout->addWidget(count);

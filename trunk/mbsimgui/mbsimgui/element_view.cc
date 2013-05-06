@@ -30,16 +30,18 @@ extern MainWindow *mw;
 
 void ElementView::openEditor () {
   if(!editor) {
-  index = selectionModel()->currentIndex();
-  element = static_cast<Element*>(static_cast<ElementTreeModel*>(model())->getItem(index)->getItemData());
-  if(element->isEmbedded())
-    mw->updateOctaveParameters(element->getParameterList());
-  editor = element->createPropertyDialog();
-  editor->setAttribute(Qt::WA_DeleteOnClose);
-  editor->toWidget();
-  editor->show();
-  connect(editor,SIGNAL(apply()),this,SLOT(apply()));
-  connect(editor,SIGNAL(finished(int)),this,SLOT(dialogFinished(int)));
+    index = selectionModel()->currentIndex();
+    element = dynamic_cast<Element*>(static_cast<ElementTreeModel*>(model())->getItem(index)->getItemData());
+    if(element) {
+      if(element->isEmbedded())
+        mw->updateOctaveParameters(element->getParameterList());
+      editor = element->createPropertyDialog();
+      editor->setAttribute(Qt::WA_DeleteOnClose);
+      editor->toWidget();
+      editor->show();
+      connect(editor,SIGNAL(apply()),this,SLOT(apply()));
+      connect(editor,SIGNAL(finished(int)),this,SLOT(dialogFinished(int)));
+    }
   }
 }
 

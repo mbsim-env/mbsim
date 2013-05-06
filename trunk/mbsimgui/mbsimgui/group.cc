@@ -263,16 +263,27 @@ void Group::initializeUsingXML(TiXmlElement *element) {
     f->initializeUsingXML2(E);
     E=E->NextSiblingElement();
   }
+  Frame *f;
   while(E) {
     if(E->ValueStr()==PVNS"embed") {
-      Frame *f=Frame::readXMLFile(E->Attribute("href"),this);
+      TiXmlElement *EE = 0;
+      if(E->Attribute("href"))
+        f=Frame::readXMLFile(E->Attribute("href"),this);
+      else {
+        EE = E->FirstChildElement();
+        if(EE->ValueStr() == PVNS"localParameter")
+          EE = EE->NextSiblingElement();
+        f=ObjectFactory::getInstance()->createFrame(EE,this);
+      }
       if(f) {
         addFrame(f);
         f->initializeUsingXMLEmbed(E);
+        if(EE)
+          f->initializeUsingXML(EE);
       }
     }
     else {
-      FixedRelativeFrame *f=new FixedRelativeFrame(E->Attribute("name"),this);
+      f=ObjectFactory::getInstance()->createFrame(E,this);
       addFrame(f);
       f->initializeUsingXML(E);
     }
@@ -298,10 +309,20 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   }
   while(E) {
     if(E->ValueStr()==PVNS"embed") {
-      c=Contour::readXMLFile(E->Attribute("href"),this);
+      TiXmlElement *EE = 0;
+      if(E->Attribute("href"))
+        c=Contour::readXMLFile(E->Attribute("href"),this);
+      else {
+        EE = E->FirstChildElement();
+        if(EE->ValueStr() == PVNS"localParameter")
+          EE = EE->NextSiblingElement();
+        c=ObjectFactory::getInstance()->createContour(EE,this);
+      }
       if(c) {
         addContour(c);
         c->initializeUsingXMLEmbed(E);
+        if(EE)
+          c->initializeUsingXML(EE);
       }
     }
     else {
@@ -319,10 +340,20 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   Group *g;
   while(E) {
     if(E->ValueStr()==PVNS"embed") {
-      g=Group::readXMLFile(E->Attribute("href"),this);
+      TiXmlElement *EE = 0;
+      if(E->Attribute("href"))
+        g=Group::readXMLFile(E->Attribute("href"),this);
+      else {
+        EE = E->FirstChildElement();
+        if(EE->ValueStr() == PVNS"localParameter")
+          EE = EE->NextSiblingElement();
+        g=ObjectFactory::getInstance()->createGroup(EE,this);
+      }
       if(g) {
         addGroup(g);
         g->initializeUsingXMLEmbed(E);
+        if(EE)
+          g->initializeUsingXML(EE);
       }
     }
     else {
@@ -340,10 +371,20 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   Object *o;
   while(E) {
     if(E->ValueStr()==PVNS"embed") {
-      o=Object::readXMLFile(E->Attribute("href"),this);
+      TiXmlElement *EE = 0;
+      if(E->Attribute("href"))
+        o=Object::readXMLFile(E->Attribute("href"),this);
+      else {
+        EE = E->FirstChildElement();
+        if(EE->ValueStr() == PVNS"localParameter")
+          EE = EE->NextSiblingElement();
+        o=ObjectFactory::getInstance()->createObject(EE,this);
+      }
       if(o) {
         addObject(o);
         o->initializeUsingXMLEmbed(E);
+        if(EE)
+          o->initializeUsingXML(EE);
       }
     }
     else {
@@ -373,10 +414,20 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   Link *l;
   while(E) {
     if(E->ValueStr()==PVNS"embed") {
-      l=Link::readXMLFile(E->Attribute("href"),this);
+      TiXmlElement *EE = 0;
+      if(E->Attribute("href"))
+        l=Link::readXMLFile(E->Attribute("href"),this);
+      else {
+        EE = E->FirstChildElement();
+        if(EE->ValueStr() == PVNS"localParameter")
+          EE = EE->NextSiblingElement();
+        l=ObjectFactory::getInstance()->createLink(EE,this);
+      }
       if(l) {
         addLink(l);
         l->initializeUsingXMLEmbed(E);
+        if(EE)
+          l->initializeUsingXML(EE);
       }
     }
     else {
@@ -395,10 +446,20 @@ void Group::initializeUsingXML(TiXmlElement *element) {
     Observer *obsrv;
     while(E) {
       if(E->ValueStr()==PVNS"embed") {
-        obsrv=Observer::readXMLFile(E->Attribute("href"),this);
+        TiXmlElement *EE = 0;
+        if(E->Attribute("href"))
+          obsrv=Observer::readXMLFile(E->Attribute("href"),this);
+        else {
+          EE = E->FirstChildElement();
+          if(EE->ValueStr() == PVNS"localParameter")
+            EE = EE->NextSiblingElement();
+          obsrv=ObjectFactory::getInstance()->createObserver(EE,this);
+        }
         if(obsrv) {
           addObserver(obsrv);
           obsrv->initializeUsingXMLEmbed(E);
+          if(EE)
+            obsrv->initializeUsingXML(EE);
         }
       }
       else {

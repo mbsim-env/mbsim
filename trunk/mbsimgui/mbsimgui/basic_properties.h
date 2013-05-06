@@ -266,6 +266,7 @@ class EmbedProperty : public Property {
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
+    bool hasFile() const {return (href.isActive() && static_cast<const FileProperty*>(href.getProperty())->getFileName()!="");}
     std::string getFile() const {return static_cast<const FileProperty*>(href.getProperty())->getFileName();}
     bool hasCounter() const {return counterName.isActive();}
     std::string getCounterName() const {return static_cast<const TextProperty*>(counterName.getProperty())->getText();}
