@@ -146,23 +146,13 @@ void RigidBodyOfReferenceProperty::toWidget(QWidget *widget) {
   static_cast<RigidBodyOfReferenceWidget*>(widget)->updateWidget();
 }
 
-string FileProperty::getAbsoluteFilePath() const {
-  return absolutePath?absoluteFilePath:mbsDir.relativeFilePath(QString::fromStdString(absoluteFilePath)).toStdString();
-}
-
-void FileProperty::setAbsoluteFilePath(const string &str) {
-  absoluteFilePath=mbsDir.absoluteFilePath(QString::fromStdString(str)).toStdString();
-}
-
 TiXmlElement* FileProperty::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=element->FirstChildElement(xmlName);
   if(e) {
     TiXmlText *text = dynamic_cast<TiXmlText*>(e->FirstChild());
     if(text) {
-      string file = text->Value();
+      file = text->Value();
       file = file.substr(1,file.length()-2);
-      fileName = file;
-      setAbsoluteFilePath(file);
       return e;
     }
   }
@@ -171,7 +161,7 @@ TiXmlElement* FileProperty::initializeUsingXML(TiXmlElement *element) {
 
 TiXmlElement* FileProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = new TiXmlElement(xmlName);
-  string filePath = string("\"")+getAbsoluteFilePath()+"\"";
+  string filePath = string("\"")+(absolutePath?mbsDir.absoluteFilePath(QString::fromStdString(file)).toStdString():mbsDir.relativeFilePath(QString::fromStdString(file)).toStdString())+"\"";
   TiXmlText *text = new TiXmlText(filePath);
   ele0->LinkEndChild(text);
   parent->LinkEndChild(ele0);
@@ -180,15 +170,13 @@ TiXmlElement* FileProperty::writeXMLFile(TiXmlNode *parent) {
 }
 
 void FileProperty::fromWidget(QWidget *widget) {
-  fileName = static_cast<FileWidget*>(widget)->getFileName().toStdString();
-  absoluteFilePath = static_cast<FileWidget*>(widget)->getAbsoluteFilePath().toStdString();
+  file = static_cast<FileWidget*>(widget)->getFile().toStdString();
 }
 
 void FileProperty::toWidget(QWidget *widget) {
   static_cast<FileWidget*>(widget)->blockSignals(true);
-  static_cast<FileWidget*>(widget)->setFileName(QString::fromStdString(fileName));
+  static_cast<FileWidget*>(widget)->setFile(QString::fromStdString(file));
   static_cast<FileWidget*>(widget)->blockSignals(false);
-  static_cast<FileWidget*>(widget)->setAbsoluteFilePath(QString::fromStdString(absoluteFilePath));
 }
 
 TiXmlElement* TextProperty::initializeUsingXML(TiXmlElement *element) {
@@ -562,8 +550,7 @@ void GearDependenciesProperty::toWidget(QWidget *widget) {
 
 EmbedProperty::EmbedProperty(Element *element) : href(0,false), count(0,false), counterName(0,false), parameterList(0,false) {
   href.setProperty(new FileProperty(""));
-  static_cast<FileProperty*>(href.getProperty())->setFileName(element->getName()+".xml");
-  static_cast<FileProperty*>(href.getProperty())->setAbsoluteFilePath(element->getName()+".xml");
+  static_cast<FileProperty*>(href.getProperty())->setFile(element->getName()+".xml");
   count.setProperty(new TextProperty("1",""));
   counterName.setProperty(new TextProperty("n",""));
   parameterList.setProperty(new FileProperty(""));
@@ -573,8 +560,7 @@ TiXmlElement* EmbedProperty::initializeUsingXML(TiXmlElement *parent) {
   if(parent->Attribute("href")) {
     href.setActive(true);
     string file = parent->Attribute("href");
-    static_cast<FileProperty*>(href.getProperty())->setFileName(file);
-    static_cast<FileProperty*>(href.getProperty())->setAbsoluteFilePath(file);
+    static_cast<FileProperty*>(href.getProperty())->setFile(file);
   }
   if(parent->Attribute("count")) {
     count.setActive(true);
@@ -588,22 +574,21 @@ TiXmlElement* EmbedProperty::initializeUsingXML(TiXmlElement *parent) {
   if(ele) {
     parameterList.setActive(true);
     string file = ele->Attribute("href");
-    static_cast<FileProperty*>(parameterList.getProperty())->setFileName(file);
-    static_cast<FileProperty*>(parameterList.getProperty())->setAbsoluteFilePath(file);
+    static_cast<FileProperty*>(parameterList.getProperty())->setFile(file);
   }
 }
 
 TiXmlElement* EmbedProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0=new TiXmlElement(PVNS+string("embed"));
   if(href.isActive())
-    ele0->SetAttribute("href", static_cast<FileProperty*>(href.getProperty())->getFileName());
+    ele0->SetAttribute("href", static_cast<FileProperty*>(href.getProperty())->getFile());
   if(count.isActive())
     ele0->SetAttribute("count", static_cast<TextProperty*>(count.getProperty())->getText());
   if(counterName.isActive())
     ele0->SetAttribute("counterName", static_cast<TextProperty*>(counterName.getProperty())->getText());
   if(parameterList.isActive()) {
     TiXmlElement *ele1=new TiXmlElement(PVNS+string("localParameter"));
-    string filePath = absolutePath?mbsDir.absoluteFilePath(QString::fromStdString(static_cast<FileProperty*>(parameterList.getProperty())->getFileName())).toStdString():mbsDir.relativeFilePath(QString::fromStdString(static_cast<FileProperty*>(parameterList.getProperty())->getFileName())).toStdString();
+    string filePath = absolutePath?mbsDir.absoluteFilePath(QString::fromStdString(static_cast<FileProperty*>(parameterList.getProperty())->getFile())).toStdString():mbsDir.relativeFilePath(QString::fromStdString(static_cast<FileProperty*>(parameterList.getProperty())->getFile())).toStdString();
     ele1->SetAttribute("href", filePath);
     ele0->LinkEndChild(ele1);
   }

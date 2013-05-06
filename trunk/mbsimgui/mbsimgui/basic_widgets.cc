@@ -240,26 +240,23 @@ FileWidget::FileWidget(const QString &description_, const QString &extensions_, 
   layout->setMargin(0);
   setLayout(layout);
 
-  fileName = new QLineEdit;
-  fileName->setReadOnly(true);
-  layout->addWidget(fileName);
+  file = new QLineEdit;
+  file->setReadOnly(true);
+  layout->addWidget(file);
   QPushButton *button = new QPushButton("Browse");
   layout->addWidget(button);
   connect(button,SIGNAL(clicked(bool)),this,SLOT(selectFile()));
-  connect(fileName,SIGNAL(textChanged(const QString&)),this,SIGNAL(fileChanged(const QString&)));
+  connect(file,SIGNAL(textChanged(const QString&)),this,SIGNAL(fileChanged(const QString&)));
 }
 
 void FileWidget::selectFile() {
-  QString file;
+  QString fileName;
   if(mode==0) 
-    file = QFileDialog::getOpenFileName(0, description, absoluteFilePath, extensions);
+    fileName = QFileDialog::getOpenFileName(0, description, getFile(), extensions);
   else
-    file = QFileDialog::getSaveFileName(0, description, absoluteFilePath, extensions);
-  if(file!="") {
-    absoluteFilePath = file;
-    fileName->setText(mbsDir.relativeFilePath(absoluteFilePath));
-  }
-    //fileName->setText(QFileInfo(absoluteFilePath).fileName());
+    fileName = QFileDialog::getSaveFileName(0, description, getFile(), extensions);
+  if(fileName!="")
+    file->setText(mbsDir.relativeFilePath(fileName));
 }
 
 TextWidget::TextWidget(bool readOnly) {

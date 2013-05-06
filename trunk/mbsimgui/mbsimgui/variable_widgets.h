@@ -307,8 +307,7 @@ class VecFromFileWidget : public VariableWidget {
     virtual VariableWidget* cloneVariableWidget() {return new VecWidget(0);}
 
   protected:
-    QLineEdit *fileName;
-    QString absoluteFilePath;
+    QLineEdit *file;
 
   protected slots:
     void selectFile();
@@ -328,8 +327,7 @@ class MatFromFileWidget : public VariableWidget {
     virtual VariableWidget* cloneVariableWidget() {return new MatWidget(0,0);}
 
   protected:
-    QLineEdit *fileName;
-    QString absoluteFilePath; 
+    QLineEdit *file;
 
   protected slots:
     void selectFile();

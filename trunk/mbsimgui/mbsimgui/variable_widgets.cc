@@ -559,25 +559,22 @@ VecFromFileWidget::VecFromFileWidget() {
   layout->setMargin(0);
   setLayout(layout);
 
-  fileName = new QLineEdit;
-  fileName->setReadOnly(true);
-  layout->addWidget(fileName);
+  file = new QLineEdit;
+  file->setReadOnly(true);
+  layout->addWidget(file);
   QPushButton *button = new QPushButton("Browse");
   layout->addWidget(button);
   connect(button,SIGNAL(clicked(bool)),this,SLOT(selectFile()));
 }
 
 void VecFromFileWidget::selectFile() {
-  QString file=QFileDialog::getOpenFileName(0, "ASCII files", QString("./"), "all files (*.*)");
-  if(file!="") {
-    absoluteFilePath = file;
-    fileName->setText(mbsDir.relativeFilePath(absoluteFilePath));
-    //fileName->setText(file);
-  }
+  QString fileName=QFileDialog::getOpenFileName(0, "ASCII files", file->text(), "all files (*.*)");
+  if(fileName!="")
+    file->setText(mbsDir.relativeFilePath(fileName));
 }
 
 QString VecFromFileWidget::getValue() const {
-  return QString::fromStdString(evalOctaveExpression("ret=load('" + fileName->text().toStdString() + "')"));
+  return QString::fromStdString(evalOctaveExpression("ret=load('" + file->text().toStdString() + "')"));
 }
 
 MatFromFileWidget::MatFromFileWidget() {
@@ -585,23 +582,20 @@ MatFromFileWidget::MatFromFileWidget() {
   layout->setMargin(0);
   setLayout(layout);
 
-  fileName = new QLineEdit;
-  fileName->setReadOnly(true);
-  layout->addWidget(fileName);
+  file = new QLineEdit;
+  file->setReadOnly(true);
+  layout->addWidget(file);
   QPushButton *button = new QPushButton("Browse");
   layout->addWidget(button);
   connect(button,SIGNAL(clicked(bool)),this,SLOT(selectFile()));
 }
 
 void MatFromFileWidget::selectFile() {
-  QString file=QFileDialog::getOpenFileName(0, "ASCII files", QString("./"), "all files (*.*)");
-  if(file!="") {
-    absoluteFilePath = file;
-    fileName->setText(mbsDir.relativeFilePath(absoluteFilePath));
-    //fileName->setText(file);
-  }
+  QString fileName=QFileDialog::getOpenFileName(0, "ASCII files", file->text(), "all files (*.*)");
+  if(fileName!="")
+    file->setText(mbsDir.relativeFilePath(fileName));
 }
 
 QString MatFromFileWidget::getValue() const {
-  return QString::fromStdString(evalOctaveExpression("ret=load('" + fileName->text().toStdString() + "')"));
+  return QString::fromStdString(evalOctaveExpression("ret=load('" + file->text().toStdString() + "')"));
 }

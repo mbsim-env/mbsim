@@ -294,7 +294,7 @@ void PhysicalVariableProperty::toWidget(QWidget *widget) {
 }
 
 string VecFromFileProperty::getValue() const {
-  return evalOctaveExpression(string("ret=load('") + fileName + "')");
+  return evalOctaveExpression(string("ret=load('") + file + "')");
 }
 
 TiXmlElement* VecFromFileProperty::initializeUsingXML(TiXmlElement *element) {
@@ -306,32 +306,29 @@ TiXmlElement* VecFromFileProperty::initializeUsingXML(TiXmlElement *element) {
     return 0;
   int pos1 = str.find_first_of('\''); 
   int pos2 = str.find_last_of('\''); 
-  fileName = str.substr(pos1+1,pos2-pos1-1).c_str();
-  absoluteFilePath=mbsDir.absoluteFilePath(QString::fromStdString(str.substr(pos1+1,pos2-pos1-1))).toStdString();
+  file = str.substr(pos1+1,pos2-pos1-1).c_str();
 
   return element;
 }
 
 TiXmlElement* VecFromFileProperty::writeXMLFile(TiXmlNode *parent) {
-  string filePath = "ret=load('"+(absolutePath?absoluteFilePath:mbsDir.relativeFilePath(QString::fromStdString(absoluteFilePath)).toStdString())+"')";
- //string exp = string("load('") + fileName.toStdString() + "')"; 
+  string filePath = "ret=load('"+(absolutePath?mbsDir.absoluteFilePath(QString::fromStdString(file)).toStdString():mbsDir.relativeFilePath(QString::fromStdString(file)).toStdString())+"')";
+ //string exp = string("load('") + file.toStdString() + "')"; 
   TiXmlText *text = new TiXmlText(filePath);
   parent->LinkEndChild(text);
   return 0;
 }
 
 void VecFromFileProperty::fromWidget(QWidget *widget) {
-  fileName = static_cast<VecFromFileWidget*>(widget)->fileName->text().toStdString();
-  absoluteFilePath = static_cast<VecFromFileWidget*>(widget)->absoluteFilePath.toStdString();
+  file = static_cast<VecFromFileWidget*>(widget)->file->text().toStdString();
 }
 
 void VecFromFileProperty::toWidget(QWidget *widget) {
-  static_cast<VecFromFileWidget*>(widget)->fileName->setText(QString::fromStdString(fileName));
-  static_cast<VecFromFileWidget*>(widget)->absoluteFilePath = QString::fromStdString(absoluteFilePath);
+  static_cast<VecFromFileWidget*>(widget)->file->setText(QString::fromStdString(file));
 }
 
 string MatFromFileProperty::getValue() const {
-  return evalOctaveExpression("ret=load('" + fileName + "')");
+  return evalOctaveExpression("ret=load('" + file + "')");
 }
 
 TiXmlElement* MatFromFileProperty::initializeUsingXML(TiXmlElement *element) {
@@ -343,25 +340,22 @@ TiXmlElement* MatFromFileProperty::initializeUsingXML(TiXmlElement *element) {
     return 0;
   int pos1 = str.find_first_of('\''); 
   int pos2 = str.find_last_of('\''); 
-  fileName = str.substr(pos1+1,pos2-pos1-1).c_str();
-  absoluteFilePath=mbsDir.absoluteFilePath(QString::fromStdString(str.substr(pos1+1,pos2-pos1-1))).toStdString();
+  file = str.substr(pos1+1,pos2-pos1-1).c_str();
   return element;
 }
 
 TiXmlElement* MatFromFileProperty::writeXMLFile(TiXmlNode *parent) {
-  string filePath = "ret=load('"+(absolutePath?absoluteFilePath:mbsDir.relativeFilePath(QString::fromStdString(absoluteFilePath)).toStdString())+"')";
- //string exp = string("load('") + fileName->text().toStdString() + "')"; 
+  string filePath = "ret=load('"+(absolutePath?mbsDir.absoluteFilePath(QString::fromStdString(file)).toStdString():mbsDir.relativeFilePath(QString::fromStdString(file)).toStdString())+"')";
+ //string exp = string("load('") + file->text().toStdString() + "')"; 
   TiXmlText *text = new TiXmlText(filePath);
   parent->LinkEndChild(text);
   return 0;
 }
 
 void MatFromFileProperty::fromWidget(QWidget *widget) {
-  fileName = static_cast<MatFromFileWidget*>(widget)->fileName->text().toStdString();
-  absoluteFilePath = static_cast<MatFromFileWidget*>(widget)->absoluteFilePath.toStdString();
+  file = static_cast<MatFromFileWidget*>(widget)->file->text().toStdString();
 }
 
 void MatFromFileProperty::toWidget(QWidget *widget) {
-  static_cast<MatFromFileWidget*>(widget)->fileName->setText(QString::fromStdString(fileName));
-  static_cast<MatFromFileWidget*>(widget)->absoluteFilePath = QString::fromStdString(absoluteFilePath);
+  static_cast<MatFromFileWidget*>(widget)->file->setText(QString::fromStdString(file));
 }
