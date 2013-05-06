@@ -116,15 +116,12 @@ class FileProperty : public Property {
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    const std::string& getFileName() const {return fileName;}
-    void setFileName(const std::string &str) {fileName=str;}
-    std::string getAbsoluteFilePath() const;
-    void setAbsoluteFilePath(const std::string &str);
+    const std::string& getFile() const {return file;}
+    void setFile(const std::string &str) {file=str;}
 
   protected:
-    std::string fileName;
+    std::string file;
     std::string xmlName;
-    std::string absoluteFilePath;
 };
 
 class TextProperty : public Property {
@@ -266,12 +263,12 @@ class EmbedProperty : public Property {
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    bool hasFile() const {return (href.isActive() && static_cast<const FileProperty*>(href.getProperty())->getFileName()!="");}
-    std::string getFile() const {return static_cast<const FileProperty*>(href.getProperty())->getFileName();}
+    bool hasFile() const {return (href.isActive() && static_cast<const FileProperty*>(href.getProperty())->getFile()!="");}
+    std::string getFile() const {return static_cast<const FileProperty*>(href.getProperty())->getFile();}
     bool hasCounter() const {return counterName.isActive();}
     std::string getCounterName() const {return static_cast<const TextProperty*>(counterName.getProperty())->getText();}
-    bool hasParameterFile() const {return (parameterList.isActive() && static_cast<const FileProperty*>(parameterList.getProperty())->getFileName()!="");}
-    std::string getParameterFile() const {return static_cast<const FileProperty*>(parameterList.getProperty())->getFileName();}
+    bool hasParameterFile() const {return (parameterList.isActive() && static_cast<const FileProperty*>(parameterList.getProperty())->getFile()!="");}
+    std::string getParameterFile() const {return static_cast<const FileProperty*>(parameterList.getProperty())->getFile();}
 
   protected:
     ExtProperty href, count, counterName, parameterList;
