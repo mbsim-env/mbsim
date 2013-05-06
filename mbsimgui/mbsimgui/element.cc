@@ -81,14 +81,17 @@ TiXmlElement* Element::writeXMLFile(TiXmlNode *parent) {
 }
 
 void Element::initializeUsingXMLEmbed(TiXmlElement *element) {
-  embed.setActive(true);
   embed.initializeUsingXML(element);
+  embed.setActive(true);
 }
 
 TiXmlElement* Element::writeXMLFileEmbed(TiXmlNode *parent) {
-  writeXMLFile(absolutePath?(mw->getUniqueTempDir().toStdString()+"/"+static_cast<const EmbedProperty*>(embed.getProperty())->getFile()):(static_cast<const EmbedProperty*>(embed.getProperty())->getFile()));
-  QFile::copy(QString::fromStdString(static_cast<const EmbedProperty*>(embed.getProperty())->getParameterFile()),mw->getUniqueTempDir()+"/"+QString::fromStdString(static_cast<const EmbedProperty*>(embed.getProperty())->getParameterFile()));
-  return embed.writeXMLFile(parent);
+  TiXmlElement *ele = embed.writeXMLFile(parent);
+  if(!static_cast<const EmbedProperty*>(embed.getProperty())->hasFile())
+    writeXMLFile(ele);
+  else 
+    writeXMLFile(absolutePath?(mw->getUniqueTempDir().toStdString()+"/"+static_cast<const EmbedProperty*>(embed.getProperty())->getFile()):(static_cast<const EmbedProperty*>(embed.getProperty())->getFile()));
+  return ele;
 }
 
 string Element::getXMLPath(Element *ref, bool rel) {

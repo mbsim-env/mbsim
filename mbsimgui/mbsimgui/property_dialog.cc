@@ -44,7 +44,6 @@ PropertyDialog::PropertyDialog(QWidget *parent, Qt::WindowFlags f) : QDialog(par
 }
 
 PropertyDialog::~PropertyDialog() {
-  cout << "delete" << endl;
 }
 
 void PropertyDialog::clicked(QAbstractButton *button) {
