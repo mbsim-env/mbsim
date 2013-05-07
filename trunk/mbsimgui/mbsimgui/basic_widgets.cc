@@ -140,12 +140,12 @@ void FrameOfReferenceWidget::setFrame() {
   if(frameBrowser->getFrameList()->currentItem())
     selectedFrame = (Frame*)static_cast<ElementItem*>(frameBrowser->getFrameList()->currentItem())->getElement();
   else
-    selectedFrame = ((Group*)element->getParent())->getFrame(0);
-  frame->setText(QString::fromStdString(selectedFrame->getXMLPath()));
+    selectedFrame = element->getParent()->getFrame(0);
+  frame->setText(QString::fromStdString(selectedFrame->getXMLPath(element,true)));
 }
 
-void FrameOfReferenceWidget::setFrame(const QString &str) {
-  selectedFrame = element->getByPath<Frame>(str.toStdString()); 
+void FrameOfReferenceWidget::setFrame(const QString &str, Frame *framePtr) {
+  selectedFrame = framePtr; 
   frame->setText(str);
 }
 
@@ -251,9 +251,7 @@ FileWidget::FileWidget(const QString &description_, const QString &extensions_, 
 
 void FileWidget::setFile(const QString &str) {
   file = str;
-  cout << file.toStdString() << endl;
   relativeFilePath->setText(mbsDir.relativeFilePath(file));
-  cout << mbsDir.relativeFilePath(file).toStdString() << endl;
 }
 
 void FileWidget::selectFile() {
