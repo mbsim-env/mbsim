@@ -66,12 +66,14 @@ class ParentFrameOfReferenceProperty : public Property {
 class FrameOfReferenceProperty : public Property {
   protected:
     std::string frame;
+    Frame *framePtr;
     Element* element;
     std::string xmlName;
   public:
-    FrameOfReferenceProperty(const std::string &frame_="", Element* element_=0, const std::string &xmlName_="") : frame(frame_), element(element_), xmlName(xmlName_) {}
+    FrameOfReferenceProperty(const std::string &frame="", Element* element=0, const std::string &xmlName=""); 
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
+    void initialize();
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
     void setFrame(const std::string &str) {frame = str;}

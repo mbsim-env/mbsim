@@ -81,7 +81,7 @@ class FrameOfReferenceWidget : public Widget {
     FrameOfReferenceWidget(Element* element, Frame* selectedFrame);
 
     void updateWidget();
-    void setFrame(const QString &str);
+    void setFrame(const QString &str, Frame *framePtr);
     QString getFrame() const;
 
   protected:
