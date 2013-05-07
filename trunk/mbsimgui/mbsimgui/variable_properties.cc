@@ -307,24 +307,27 @@ TiXmlElement* VecFromFileProperty::initializeUsingXML(TiXmlElement *element) {
   int pos1 = str.find_first_of('\''); 
   int pos2 = str.find_last_of('\''); 
   file = str.substr(pos1+1,pos2-pos1-1).c_str();
+  QFileInfo fileInfo(QString::fromStdString(file));
+  file = fileInfo.canonicalFilePath().toStdString();
 
   return element;
 }
 
 TiXmlElement* VecFromFileProperty::writeXMLFile(TiXmlNode *parent) {
   string filePath = "ret=load('"+(absolutePath?mbsDir.absoluteFilePath(QString::fromStdString(file)).toStdString():mbsDir.relativeFilePath(QString::fromStdString(file)).toStdString())+"')";
- //string exp = string("load('") + file.toStdString() + "')"; 
   TiXmlText *text = new TiXmlText(filePath);
   parent->LinkEndChild(text);
   return 0;
 }
 
 void VecFromFileProperty::fromWidget(QWidget *widget) {
-  file = static_cast<VecFromFileWidget*>(widget)->file->text().toStdString();
+  file = static_cast<VecFromFileWidget*>(widget)->getFile().toStdString();
 }
 
 void VecFromFileProperty::toWidget(QWidget *widget) {
-  static_cast<VecFromFileWidget*>(widget)->file->setText(QString::fromStdString(file));
+  static_cast<VecFromFileWidget*>(widget)->blockSignals(true);
+  static_cast<VecFromFileWidget*>(widget)->setFile(QString::fromStdString(file));
+  static_cast<VecFromFileWidget*>(widget)->blockSignals(false);
 }
 
 string MatFromFileProperty::getValue() const {
@@ -341,21 +344,24 @@ TiXmlElement* MatFromFileProperty::initializeUsingXML(TiXmlElement *element) {
   int pos1 = str.find_first_of('\''); 
   int pos2 = str.find_last_of('\''); 
   file = str.substr(pos1+1,pos2-pos1-1).c_str();
+  QFileInfo fileInfo(QString::fromStdString(file));
+  file = fileInfo.canonicalFilePath().toStdString();
   return element;
 }
 
 TiXmlElement* MatFromFileProperty::writeXMLFile(TiXmlNode *parent) {
   string filePath = "ret=load('"+(absolutePath?mbsDir.absoluteFilePath(QString::fromStdString(file)).toStdString():mbsDir.relativeFilePath(QString::fromStdString(file)).toStdString())+"')";
- //string exp = string("load('") + file->text().toStdString() + "')"; 
   TiXmlText *text = new TiXmlText(filePath);
   parent->LinkEndChild(text);
   return 0;
 }
 
 void MatFromFileProperty::fromWidget(QWidget *widget) {
-  file = static_cast<MatFromFileWidget*>(widget)->file->text().toStdString();
+  file = static_cast<MatFromFileWidget*>(widget)->getFile().toStdString();
 }
 
 void MatFromFileProperty::toWidget(QWidget *widget) {
-  static_cast<MatFromFileWidget*>(widget)->file->setText(QString::fromStdString(file));
+  static_cast<MatFromFileWidget*>(widget)->blockSignals(true);
+  static_cast<MatFromFileWidget*>(widget)->setFile(QString::fromStdString(file));
+  static_cast<MatFromFileWidget*>(widget)->blockSignals(false);
 }

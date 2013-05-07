@@ -153,6 +153,8 @@ TiXmlElement* FileProperty::initializeUsingXML(TiXmlElement *element) {
     if(text) {
       file = text->Value();
       file = file.substr(1,file.length()-2);
+      QFileInfo fileInfo(QString::fromStdString(file));
+      file = fileInfo.canonicalFilePath().toStdString();
       return e;
     }
   }

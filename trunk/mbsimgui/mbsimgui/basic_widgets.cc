@@ -240,23 +240,30 @@ FileWidget::FileWidget(const QString &description_, const QString &extensions_, 
   layout->setMargin(0);
   setLayout(layout);
 
-  file = new QLineEdit;
-  file->setReadOnly(true);
-  layout->addWidget(file);
+  relativeFilePath = new QLineEdit;
+  relativeFilePath->setReadOnly(true);
+  layout->addWidget(relativeFilePath);
   QPushButton *button = new QPushButton("Browse");
   layout->addWidget(button);
   connect(button,SIGNAL(clicked(bool)),this,SLOT(selectFile()));
-  connect(file,SIGNAL(textChanged(const QString&)),this,SIGNAL(fileChanged(const QString&)));
+  connect(relativeFilePath,SIGNAL(textChanged(const QString&)),this,SIGNAL(fileChanged(const QString&)));
+}
+
+void FileWidget::setFile(const QString &str) {
+  file = str;
+  cout << file.toStdString() << endl;
+  relativeFilePath->setText(mbsDir.relativeFilePath(file));
+  cout << mbsDir.relativeFilePath(file).toStdString() << endl;
 }
 
 void FileWidget::selectFile() {
-  QString fileName;
+  QString file;
   if(mode==0) 
-    fileName = QFileDialog::getOpenFileName(0, description, getFile(), extensions);
+    file = QFileDialog::getOpenFileName(0, description, getFile(), extensions);
   else
-    fileName = QFileDialog::getSaveFileName(0, description, getFile(), extensions);
-  if(fileName!="")
-    file->setText(mbsDir.relativeFilePath(fileName));
+    file = QFileDialog::getSaveFileName(0, description, getFile(), extensions);
+  if(file!="")
+    setFile(file);
 }
 
 TextWidget::TextWidget(bool readOnly) {

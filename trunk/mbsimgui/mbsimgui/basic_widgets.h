@@ -143,12 +143,12 @@ class FileWidget : public Widget {
 
   public:
     FileWidget(const QString &description, const QString &extensions, int mode=0);
-    QString getFile() const {return file->text();}
-    void setFile(const QString &str) {file->setText(str);}
+    QString getFile() const {return file;}
+    void setFile(const QString &str);
 
   protected:
-    QLineEdit *file;
-    QString description, extensions;
+    QLineEdit *relativeFilePath;
+    QString file, description, extensions;
     bool mode;
 
   protected slots:
