@@ -303,11 +303,14 @@ class VecFromFileWidget : public VariableWidget {
     VecFromFileWidget();
     QString getValue() const;
     void setValue(const QString &str) {}
+    QString getFile() const {return file;}
+    void setFile(const QString &str);
     virtual QString getType() const {return "File";}
     virtual VariableWidget* cloneVariableWidget() {return new VecWidget(0);}
 
   protected:
-    QLineEdit *file;
+    QLineEdit *relativeFilePath;
+    QString file; 
 
   protected slots:
     void selectFile();
@@ -323,11 +326,14 @@ class MatFromFileWidget : public VariableWidget {
     MatFromFileWidget();
     QString getValue() const; 
     void setValue(const QString &str) {}
+    QString getFile() const {return file;}
+    void setFile(const QString &str);
     virtual QString getType() const {return "File";}
     virtual VariableWidget* cloneVariableWidget() {return new MatWidget(0,0);}
 
   protected:
-    QLineEdit *file;
+    QLineEdit *relativeFilePath;
+    QString file; 
 
   protected slots:
     void selectFile();
