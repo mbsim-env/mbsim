@@ -23,7 +23,7 @@
       <inertiaTensor>eye(3)</inertiaTensor>
       <translation>
         <TimeDependentTranslation>
-          <position>
+          <translationFunction>
             <Function1_VS_from_SS>
               <function>
                 <Function1_SS_from_VS>
@@ -36,7 +36,7 @@
               </function>
               <direction>[0;1;0]</direction>
             </Function1_VS_from_SS>
-          </position>
+          </translationFunction>
         </TimeDependentTranslation>
       </translation>
       <rotation/>

@@ -486,7 +486,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   actuator = new Actuator("EMotor");
   addLink(actuator);
   actuator->setSignal(sensor);
-  actuator->setMomentDirection("[1;0;0]");
+  actuator->setMomentDirection("[-1;0;0]");
   actuator->connect(karosserie->getFrame("C"),shaft1->getFrame("C"));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

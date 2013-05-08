@@ -39,10 +39,10 @@ namespace MBSimControl {
       Wf = frame[KOSYID-1]->getOrientation()*forceDir;
       Wm = frame[KOSYID-1]->getOrientation()*momentDir;
     }
-    WF[0] = Wf*la(IT);
-    WF[1] = -WF[0];
-    WM[0] = Wm*la(IR);
-    WM[1] = -WM[0];
+    WF[1] = Wf*la(IT);
+    WF[0] = -WF[1];
+    WM[1] = Wm*la(IR);
+    WM[0] = -WM[1];
 
     h[j][0] += frame[0]->getJacobianOfTranslation(j).T()*WF[0] + frame[0]->getJacobianOfRotation(j).T()*WM[0];
     h[j][1] += frame[1]->getJacobianOfTranslation(j).T()*WF[1] + frame[1]->getJacobianOfRotation(j).T()*WM[1];

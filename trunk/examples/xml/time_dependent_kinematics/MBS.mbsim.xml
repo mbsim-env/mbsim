@@ -13,7 +13,7 @@
             <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
             <translation>
                 <TimeDependentTranslation>
-                    <position>
+                    <translationFunction>
                         <!--<SymbolicFunction1_VS arg1name="t">
                             The below line is the code we want to write here for returning a 3x1 matrix.
                             But this code generates a lot of octave/casadi valgrind errors and
@@ -28,17 +28,17 @@
                             ret(2)=v0y*t;
                             ret(3)=0;
                         </SymbolicFunction1_VS>
-                    </position>
+                    </translationFunction>
                 </TimeDependentTranslation>
             </translation>
             <rotation>
                 <TimeDependentRotationAboutFixedAxis>
                     <axisOfRotation>[0;0;1]</axisOfRotation>
-                    <position>
+                    <rotationalFunction>
                         <SymbolicFunction1_SS arg1name="t">
                             5*sin(freq2*t)
                         </SymbolicFunction1_SS>
-                    </position>
+                    </rotationalFunction>
                 </TimeDependentRotationAboutFixedAxis>
             </rotation>
             <frames />

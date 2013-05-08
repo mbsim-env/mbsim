@@ -382,7 +382,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Actuator *Antrieb = new Actuator("Antrieb");
   addLink(Antrieb);
   Antrieb->setSignal(Reglerausgang);
-  Antrieb->setMomentDirection("[0;0;-1]");
+  Antrieb->setMomentDirection("[0;0;1]");
   Antrieb->connect(this->getFrame("I"),Crank->getFrameForKinematics());
 
   //---------------------------------------------------------------------------

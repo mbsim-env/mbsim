@@ -262,7 +262,7 @@
       </inputSignal>
     </SignalMultiplication>
     <Actuator name="Actuator" xmlns="http://mbsim.berlios.de/MBSimControl">
-      <momentDirection>[0 0 1]'</momentDirection>
+      <momentDirection>[0 0 -1]'</momentDirection>
       <inputSignal ref="../Link[Excitation]"/>
       <connect ref1="../Object[Pendulum]/Frame[fBottom]" ref2="../Object[Base]/Frame[fTop]"/>
     </Actuator>

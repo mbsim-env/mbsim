@@ -115,8 +115,8 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
 
   SignalAddition * basePositionDiff = new SignalAddition("BasePositionDiff");
   addLink(basePositionDiff);
-  basePositionDiff->addSignal(basePosition, 1);
-  basePositionDiff->addSignal(basePositionSoll, -1);
+  basePositionDiff->addSignal(basePositionSoll, 1);
+  basePositionDiff->addSignal(basePosition, -1);
 
   LinearTransferSystem * basisControl = new LinearTransferSystem("ReglerBasis");
   addExtraDynamic(basisControl);
@@ -156,8 +156,8 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
 
   SignalAddition * armPositionDiff = new SignalAddition("ArmPositionDiff");
   addLink(armPositionDiff);
-  armPositionDiff->addSignal(armPosition, 1);
-  armPositionDiff->addSignal(armPositionSoll, -1);
+  armPositionDiff->addSignal(armPositionSoll, 1);
+  armPositionDiff->addSignal(armPosition, -1);
 
   LinearTransferSystem * armControl = new LinearTransferSystem("ReglerArm");
   addExtraDynamic(armControl);
@@ -197,8 +197,8 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
 
   SignalAddition * spitzePositionDiff = new SignalAddition("SpitzePositionDiff");
   addLink(spitzePositionDiff);
-  spitzePositionDiff->addSignal(spitzePosition, 1);
-  spitzePositionDiff->addSignal(spitzePositionSoll, -1);
+  spitzePositionDiff->addSignal(spitzePositionSoll, 1);
+  spitzePositionDiff->addSignal(spitzePosition, -1);
 
   LinearTransferSystem * spitzeControl = new LinearTransferSystem("ReglerSpitze");
   addExtraDynamic(spitzeControl);

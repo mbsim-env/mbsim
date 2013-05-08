@@ -1652,95 +1652,6 @@
     </xs:complexContent>
   </xs:complexType>   
 
-
-  <xs:element name="Actuator" substitutionGroup="LinkMechanics" type="ActuatorType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Definiert eine externe, kinetische Anregung auf einen Körper.
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="ActuatorType">
-    <xs:complexContent>
-      <xs:extension base="LinkMechanicsType">
-        <xs:sequence>
-          <xs:element name="force" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert eine Kraftanregung.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element name="directionVectors" type="pv:nounitMatrix">
-                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Definiert die Wirkrichtung der Kraftanregung(en).
-                      Die Spalte i dieser Matrix definiert den Wirkrichtungsvektor des i-ten Eintrags der Kraftfunktion angegeben
-                      im KOS <tt>frameOfReference</tt>. Um eine Skalierung der skalaren Kraft (i-ter Eintrag der Kraftfunktion)
-                      zu umgehen, sollte jede Spalte dieser Matrix normiert sein.
-                  </xs:documentation></xs:annotation>
-                </xs:element>
-                <xs:element name="function">
-                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Definiert die Kraftfunktion in Abhängigkeit der Zeit.
-                  </xs:documentation></xs:annotation>
-                  <xs:complexType>
-                    <xs:sequence>
-                      <xs:element ref="Function1_VS"/>
-                    </xs:sequence>
-                  </xs:complexType>
-                </xs:element>
-                <xs:element ref="ombv:Arrow" minOccurs="0">
-                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Wenn angegeben, wird die Kraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
-                  </xs:documentation></xs:annotation>
-                </xs:element>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="moment" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert eine Momentenanregung.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element name="directionVectors" type="pv:nounitMatrix">
-                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Definiert die Wirkrichtung der Momentenanregung(en).
-                      Die Spalte i dieser Matrix definiert den Wirkrichtungsvektor des i-ten Eintrags der Momentfunktion angegeben
-                      im KOS <tt>frameOfReference</tt>. Um eine Skalierung des skalaren Moments (i-ter Eintrag der Momentfunktion)
-                      zu umgehen, sollte jede Spalte dieser Matrix normiert sein.
-                  </xs:documentation></xs:annotation>
-                </xs:element>
-                <xs:element name="function">
-                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Definiert die Momentfunktion in Abhängigkeit der Zeit.
-                  </xs:documentation></xs:annotation>
-                  <xs:complexType>
-                    <xs:sequence>
-                      <xs:element ref="Function1_VS"/>
-                    </xs:sequence>
-                  </xs:complexType>
-                </xs:element>
-                <xs:element ref="ombv:Arrow" minOccurs="0">
-                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Wenn angegeben, wird das Moment durch einen OpenMBV Pfeil in OpenMBV visualisiert.
-                  </xs:documentation></xs:annotation>
-                </xs:element>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="connect">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert den Angriffspunkt dieser kinetischen Anregung auf einen Körper. Als Angriffspunkt
-                muss dabei ein KOS des entsprechenden Körpers angegeben werden.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref1" type="FrameReferenceType" use="required"/>
-              <xs:attribute name="ref2" type="FrameReferenceType" use="required"/>
-            </xs:complexType> 
-          </xs:element>
-        </xs:sequence> 
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>   
-
   <xs:element name="SpringDamper" substitutionGroup="LinkMechanics" type="SpringDamperType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Definiert ein Feder-Dämpfer Element als Verbindung zwischen zwei Körpern. Es wird zwischen einer gerichteten Verbindung und einer Punkt-zu-Punkt-Verbindung unterschieden.
@@ -2825,7 +2736,7 @@
     <xs:complexContent>
       <xs:extension base="TranslationType">
         <xs:sequence>
-          <xs:element name="position">
+          <xs:element name="translationFunction">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Definiert den zeitabhängen vektoriellen Ort <object class="inlineeqn">\mathbf{p}</object>.
             </xs:documentation></xs:annotation>
@@ -2916,7 +2827,7 @@
                 Definiert die normierte konstante Drehachse.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="position">
+          <xs:element name="rotationalFunction">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Definiert den zeitabhängen Winkel um die Drehachse.
             </xs:documentation></xs:annotation>
@@ -2996,7 +2907,7 @@
     <xs:complexContent>
       <xs:extension base="RotationType">
         <xs:sequence>
-          <xs:element name="position">
+          <xs:element name="rotationalFunction">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Definiert die zeitabhängen Kardan-Winkel.
             </xs:documentation></xs:annotation>
