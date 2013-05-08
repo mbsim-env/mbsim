@@ -99,16 +99,27 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
     f->initializeUsingXML2(e);
     e=e->NextSiblingElement();
   }
+  Frame *f;
   while(e) {
     if(e->ValueStr()==PVNS"embed") {
-      Frame *f=Frame::readXMLFile(e->Attribute("href"),this);
+      TiXmlElement *ee = 0;
+      if(e->Attribute("href"))
+        f=Frame::readXMLFile(e->Attribute("href"),this);
+      else {
+        ee = e->FirstChildElement();
+        if(ee->ValueStr() == PVNS"localParameter")
+          ee = ee->NextSiblingElement();
+        f=ObjectFactory::getInstance()->createFrame(ee,this);
+      }
       if(f) {
         addFrame(f);
         f->initializeUsingXMLEmbed(e);
+        if(ee)
+          f->initializeUsingXML(ee);
       }
     }
     else {
-      FixedRelativeFrame *f=new FixedRelativeFrame(e->Attribute("name"),this);
+      f=ObjectFactory::getInstance()->createFrame(e,this);
       addFrame(f);
       f->initializeUsingXML(e);
     }
@@ -133,10 +144,20 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
   }
   while(e) {
     if(e->ValueStr()==PVNS"embed") {
-      c=Contour::readXMLFile(e->Attribute("href"),this);
+      TiXmlElement *ee = 0;
+      if(e->Attribute("href"))
+        c=Contour::readXMLFile(e->Attribute("href"),this);
+      else {
+        ee = e->FirstChildElement();
+        if(ee->ValueStr() == PVNS"localParameter")
+          ee = ee->NextSiblingElement();
+        c=ObjectFactory::getInstance()->createContour(ee,this);
+      }
       if(c) {
         addContour(c);
         c->initializeUsingXMLEmbed(e);
+        if(ee)
+          c->initializeUsingXML(ee);
       }
     }
     else {
