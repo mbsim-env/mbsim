@@ -46,13 +46,14 @@ class LocalFrameOfReferenceWidget : public Widget {
 
     void updateWidget();
     QString getFrame() const;
+    void setFrame(const QString &str, Frame *framePtr);
 
   protected:
     QComboBox *frame;
     Element* element;
     Frame *selectedFrame, *omitFrame;
 
-  public slots:
+  protected slots:
     void setFrame(const QString &str);
 };
 
@@ -64,13 +65,14 @@ class ParentFrameOfReferenceWidget : public Widget {
 
     void updateWidget();
     QString getFrame() const; 
+    void setFrame(const QString &str, Frame *framePtr);
 
   protected:
     QComboBox *frame;
     Element* element;
     Frame *selectedFrame, *omitFrame;
 
-  public slots:
+  protected slots:
     void setFrame(const QString &str);
 };
 
