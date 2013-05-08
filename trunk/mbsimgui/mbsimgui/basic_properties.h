@@ -36,31 +36,34 @@ namespace MBXMLUtils {
 class LocalFrameOfReferenceProperty : public Property {
   protected:
     std::string frame;
+    Frame *framePtr;
     Element* element;
     std::string xmlName;
   public:
-    LocalFrameOfReferenceProperty(const std::string &frame_="", Element* element_=0, const std::string &xmlName_="") : frame(frame_), element(element_), xmlName(xmlName_) {}
+    LocalFrameOfReferenceProperty(const std::string &frame_="", Element* element_=0, const std::string &xmlName_="");
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    void setFrame(const std::string &str) {frame = str;}
-    const std::string& getFrame() const {return frame;}
+    void setFrame(const std::string &str);
+    std::string getFrame() const;
 };
 
 class ParentFrameOfReferenceProperty : public Property {
   protected:
     std::string frame;
+    Frame *framePtr;
     Element* element;
     std::string xmlName;
   public:
-    ParentFrameOfReferenceProperty(const std::string &frame_="", Element* element_=0, const std::string &xmlName_="") : frame(frame_), element(element_), xmlName(xmlName_) {}
+    ParentFrameOfReferenceProperty(const std::string &frame_="", Element* element_=0, const std::string &xmlName_="");
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    void initialize();
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    void setFrame(const std::string &str) {frame = str;}
-    const std::string& getFrame() const {return frame;}
+    void setFrame(const std::string &str);
+    std::string getFrame() const;
 };
 
 class FrameOfReferenceProperty : public Property {

@@ -63,6 +63,11 @@ void LocalFrameOfReferenceWidget::updateWidget() {
   frame->blockSignals(false);
 }
 
+void LocalFrameOfReferenceWidget::setFrame(const QString &str, Frame *framePtr) {
+  selectedFrame = framePtr;
+  frame->setEditText(str);
+}
+
 void LocalFrameOfReferenceWidget::setFrame(const QString &str) {
   selectedFrame = element->getFrame(str.mid(6, str.length()-7).toStdString());
   frame->setEditText(str);
@@ -102,6 +107,11 @@ void ParentFrameOfReferenceWidget::updateWidget() {
   else
     frame->setEditText(oldText);
   frame->blockSignals(false);
+}
+
+void ParentFrameOfReferenceWidget::setFrame(const QString &str, Frame *framePtr) {
+  selectedFrame = framePtr;
+  frame->setEditText(str);
 }
 
 void ParentFrameOfReferenceWidget::setFrame(const QString &str) {
