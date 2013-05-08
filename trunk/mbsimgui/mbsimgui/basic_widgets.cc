@@ -120,7 +120,7 @@ FrameOfReferenceWidget::FrameOfReferenceWidget(Element *element_, Frame* selecte
 
   frame = new QLineEdit;
   if(selectedFrame)
-    frame->setText(QString::fromStdString(selectedFrame->getXMLPath()));
+    frame->setText(QString::fromStdString(selectedFrame->getXMLPath(element,true)));
   frameBrowser = new FrameBrowser(element->getRoot(),selectedFrame,this);
   connect(frameBrowser,SIGNAL(accepted()),this,SLOT(setFrame()));
   layout->addWidget(frame);
@@ -160,7 +160,7 @@ ContourOfReferenceWidget::ContourOfReferenceWidget(Element *element_, Contour* s
 
   contour = new QLineEdit;
   if(selectedContour)
-    contour->setText(QString::fromStdString(selectedContour->getXMLPath()));
+    contour->setText(QString::fromStdString(selectedContour->getXMLPath(element,true)));
   contourBrowser = new ContourBrowser(element->getRoot(),selectedContour,this);
   connect(contourBrowser,SIGNAL(accepted()),this,SLOT(setContour()));
   layout->addWidget(contour);
@@ -181,11 +181,11 @@ void ContourOfReferenceWidget::setContour() {
     selectedContour = (Contour*)static_cast<ElementItem*>(contourBrowser->getContourList()->currentItem())->getElement();
   else
     selectedContour = ((Group*)element->getParent())->getContour(0);
-  contour->setText(QString::fromStdString(selectedContour->getXMLPath()));
+  contour->setText(QString::fromStdString(selectedContour->getXMLPath(element,true)));
 }
 
-void ContourOfReferenceWidget::setContour(const QString &str) {
-  selectedContour = element->getByPath<Contour>(str.toStdString()); 
+void ContourOfReferenceWidget::setContour(const QString &str, Contour *contourPtr) {
+  selectedContour = contourPtr;
   contour->setText(str);
 }
 
@@ -200,7 +200,7 @@ RigidBodyOfReferenceWidget::RigidBodyOfReferenceWidget(Element *element_, RigidB
 
   body = new QLineEdit;
   if(selectedBody)
-    body->setText(QString::fromStdString(selectedBody->getXMLPath()));
+    body->setText(QString::fromStdString(selectedBody->getXMLPath(element,true)));
   bodyBrowser = new RigidBodyBrowser(element->getRoot(),0,this);
   connect(bodyBrowser,SIGNAL(accepted()),this,SLOT(setBody()));
   layout->addWidget(body);
@@ -221,12 +221,12 @@ void RigidBodyOfReferenceWidget::setBody() {
     selectedBody = static_cast<RigidBody*>(static_cast<ElementItem*>(bodyBrowser->getRigidBodyList()->currentItem())->getElement());
   else
     selectedBody = 0;
-  body->setText(selectedBody?QString::fromStdString(selectedBody->getXMLPath()):"");
+  body->setText(selectedBody?QString::fromStdString(selectedBody->getXMLPath(element,true)):"");
   emit bodyChanged();
 }
 
-void RigidBodyOfReferenceWidget::setBody(const QString &str) {
-  selectedBody = element->getByPath<RigidBody>(str.toStdString()); 
+void RigidBodyOfReferenceWidget::setBody(const QString &str, RigidBody *bodyPtr) {
+  selectedBody = bodyPtr;
   body->setText(str);
   emit bodyChanged();
 }

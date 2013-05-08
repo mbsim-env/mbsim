@@ -87,28 +87,51 @@ void FrameOfReferenceProperty::initialize() {
   framePtr=element->getByPath<Frame>(frame);
 }
 
+void FrameOfReferenceProperty::setFrame(const std::string &str) {
+  frame = str;
+  framePtr=element->getByPath<Frame>(frame);
+}
+
+std::string FrameOfReferenceProperty::getFrame() const {
+  return framePtr?framePtr->getXMLPath(element,true):frame;
+}
+
 TiXmlElement* FrameOfReferenceProperty::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *e = parent->FirstChildElement(xmlName);
-  if(e)
-    frame=e->Attribute("ref");
+  if(e) frame=e->Attribute("ref");
   return e;
 }
 
 TiXmlElement* FrameOfReferenceProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele = new TiXmlElement(xmlName);
-  ele->SetAttribute("ref", framePtr?framePtr->getXMLPath(element,true):frame);
+  ele->SetAttribute("ref", getFrame());
   parent->LinkEndChild(ele);
   return 0;
 }
 
 void FrameOfReferenceProperty::fromWidget(QWidget *widget) {
-  frame=static_cast<FrameOfReferenceWidget*>(widget)->getFrame().toStdString();
-  framePtr=element->getByPath<Frame>(frame);
+  setFrame(static_cast<FrameOfReferenceWidget*>(widget)->getFrame().toStdString());
 }
 
 void FrameOfReferenceProperty::toWidget(QWidget *widget) {
   static_cast<FrameOfReferenceWidget*>(widget)->setFrame(QString::fromStdString(frame),framePtr);
   static_cast<FrameOfReferenceWidget*>(widget)->updateWidget();
+}
+
+ContourOfReferenceProperty::ContourOfReferenceProperty(const std::string &contour_, Element* element_, const std::string &xmlName_) : contour(contour_), contourPtr(element_->getByPath<Contour>(contour)), element(element_), xmlName(xmlName_) {
+}
+
+void ContourOfReferenceProperty::initialize() {
+  contourPtr=element->getByPath<Contour>(contour);
+}
+
+void ContourOfReferenceProperty::setContour(const std::string &str) {
+  contour = str;
+  contourPtr=element->getByPath<Contour>(contour);
+}
+
+std::string ContourOfReferenceProperty::getContour() const {
+  return contourPtr?contourPtr->getXMLPath(element,true):contour;
 }
 
 TiXmlElement* ContourOfReferenceProperty::initializeUsingXML(TiXmlElement *parent) {
@@ -119,18 +142,34 @@ TiXmlElement* ContourOfReferenceProperty::initializeUsingXML(TiXmlElement *paren
 
 TiXmlElement* ContourOfReferenceProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele = new TiXmlElement(xmlName);
-  ele->SetAttribute("ref", contour);
+  ele->SetAttribute("ref", getContour());
   parent->LinkEndChild(ele);
   return 0;
 }
 
 void ContourOfReferenceProperty::fromWidget(QWidget *widget) {
-  contour=static_cast<ContourOfReferenceWidget*>(widget)->getContour().toStdString();
+  setContour(static_cast<ContourOfReferenceWidget*>(widget)->getContour().toStdString());
 }
 
 void ContourOfReferenceProperty::toWidget(QWidget *widget) {
-  static_cast<ContourOfReferenceWidget*>(widget)->setContour(QString::fromStdString(contour));
+  static_cast<ContourOfReferenceWidget*>(widget)->setContour(QString::fromStdString(contour),contourPtr);
   static_cast<ContourOfReferenceWidget*>(widget)->updateWidget();
+}
+
+RigidBodyOfReferenceProperty::RigidBodyOfReferenceProperty(const std::string &body_, Element *element_, const std::string &xmlName_) : body(body_), bodyPtr(element_->getByPath<RigidBody>(body)), element(element_), xmlName(xmlName_) {
+}
+
+void RigidBodyOfReferenceProperty::initialize() {
+  bodyPtr=element->getByPath<RigidBody>(body);
+}
+
+void RigidBodyOfReferenceProperty::setBody(const std::string &str) {
+  body = str;
+  bodyPtr=element->getByPath<RigidBody>(body);
+}
+
+std::string RigidBodyOfReferenceProperty::getBody() const {
+  return bodyPtr?bodyPtr->getXMLPath(element,true):body;
 }
 
 TiXmlElement* RigidBodyOfReferenceProperty::initializeUsingXML(TiXmlElement *parent) {
@@ -141,17 +180,17 @@ TiXmlElement* RigidBodyOfReferenceProperty::initializeUsingXML(TiXmlElement *par
 
 TiXmlElement* RigidBodyOfReferenceProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele = new TiXmlElement(xmlName);
-  ele->SetAttribute("ref", body);
+  ele->SetAttribute("ref", getBody());
   parent->LinkEndChild(ele);
   return 0;
 }
 
 void RigidBodyOfReferenceProperty::fromWidget(QWidget *widget) {
-  body=static_cast<RigidBodyOfReferenceWidget*>(widget)->getBody().toStdString();
+  setBody(static_cast<RigidBodyOfReferenceWidget*>(widget)->getBody().toStdString());
 }
 
 void RigidBodyOfReferenceProperty::toWidget(QWidget *widget) {
-  static_cast<RigidBodyOfReferenceWidget*>(widget)->setBody(QString::fromStdString(body));
+  static_cast<RigidBodyOfReferenceWidget*>(widget)->setBody(QString::fromStdString(body),bodyPtr);
   static_cast<RigidBodyOfReferenceWidget*>(widget)->updateWidget();
 }
 
