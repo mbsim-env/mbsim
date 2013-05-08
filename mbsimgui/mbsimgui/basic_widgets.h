@@ -101,7 +101,7 @@ class ContourOfReferenceWidget : public Widget {
     ContourOfReferenceWidget(Element* element, Contour* selectedContour);
 
     void updateWidget();
-    void setContour(const QString &str);
+    void setContour(const QString &str, Contour *contourPtr);
     QString getContour() const;
 
   protected:
@@ -121,7 +121,7 @@ class RigidBodyOfReferenceWidget : public Widget {
     RigidBodyOfReferenceWidget(Element* element, RigidBody* selectedBody);
 
     void updateWidget();
-    void setBody(const QString &str);
+    void setBody(const QString &str, RigidBody *bodyPtr);
     QString getBody() const;
     RigidBody* getSelectedBody() {return selectedBody;}
 

@@ -76,38 +76,42 @@ class FrameOfReferenceProperty : public Property {
     void initialize();
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    void setFrame(const std::string &str) {frame = str;}
-    const std::string& getFrame() const {return frame;}
+    void setFrame(const std::string &str);
+    std::string getFrame() const;
 };
 
 class ContourOfReferenceProperty : public Property {
   protected:
     std::string contour;
+    Contour *contourPtr;
     Element* element;
     std::string xmlName;
   public:
-    ContourOfReferenceProperty(const std::string &contour_="", Element* element_=0, const std::string &xmlName_="") : contour(contour_), element(element_), xmlName(xmlName_) {}
+    ContourOfReferenceProperty(const std::string &contour_="", Element* element_=0, const std::string &xmlName_=""); 
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
+    void initialize();
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    void setContour(const std::string &str) {contour = str;}
-    const std::string& getContour() const {return contour;}
+    void setContour(const std::string &str);
+    std::string getContour() const; 
 };
 
 class RigidBodyOfReferenceProperty : public Property {
   protected:
     std::string body;
+    RigidBody *bodyPtr;
     Element* element;
     std::string xmlName;
   public:
-    RigidBodyOfReferenceProperty(const std::string &body_="", Element *element_=0, const std::string &xmlName_="") : body(body_), element(element_), xmlName(xmlName_) {}
+    RigidBodyOfReferenceProperty(const std::string &body_="", Element *element_=0, const std::string &xmlName_="");
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
+    void initialize();
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    void setBody(const std::string &str) {body = str;}
-    const std::string& getBody() const {return body;}
+    void setBody(const std::string &str);
+    std::string getBody() const;
 };
 
 class FileProperty : public Property {
