@@ -42,7 +42,7 @@
       <signalProcessingSystem ref="../ExtraDynamic[pidController]"/>
     </SignalProcessingSystemSensor>
     <Actuator name="motor" xmlns="http://mbsim.berlios.de/MBSimControl">
-      <momentDirection>[0 0 1]'</momentDirection> <!-- optional -->
+      <momentDirection>[0 0 -1]'</momentDirection> <!-- optional -->
       <inputSignal ref="../Link[controllerOutput]"/>
       <connect ref1="../../Object[Crank]/Frame[B2]" ref2="../Frame[I]"/>
     </Actuator>

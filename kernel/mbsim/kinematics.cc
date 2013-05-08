@@ -87,7 +87,7 @@ namespace MBSim {
 
   void TimeDependentTranslation::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"position");
+    e=element->FirstChildElement(MBSIMNS"translationFunction");
     pos=ObjectFactory::getInstance()->createFunction1_V3S(e->FirstChildElement());
     pos->initializeUsingXML(e->FirstChildElement());
   }
@@ -207,7 +207,7 @@ namespace MBSim {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"axisOfRotation");
     setAxisOfRotation(Element::getVec3(e));
-    e=element->FirstChildElement(MBSIMNS"position");
+    e=element->FirstChildElement(MBSIMNS"rotationalFunction");
     angle=ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement());
     angle->initializeUsingXML(e->FirstChildElement());
   }
@@ -408,7 +408,7 @@ namespace MBSim {
 
   void TimeDependentCardanAngles::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"position");
+    e=element->FirstChildElement(MBSIMNS"rotationalFunction");
     angle=ObjectFactory::getInstance()->createFunction1_V3S(e->FirstChildElement());
     angle->initializeUsingXML(e->FirstChildElement());
   }

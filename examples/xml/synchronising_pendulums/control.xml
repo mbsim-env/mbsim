@@ -38,14 +38,14 @@
         <inertiaTensor>eye(3)</inertiaTensor>
         <translation>
           <TimeDependentTranslation xmlns="http://mbsim.berlios.de/MBSim">
-            <position>
+            <translationFunction>
               <PiecewisePolynom1_VS xmlns="http://mbsim.berlios.de/MBSim">
                 <orderOfDerivative>0</orderOfDerivative>
                 <x>xValue(:,1)</x>
                 <y>xValue(:,2:4)</y>
                 <cSplineNatural/>
               </PiecewisePolynom1_VS>
-            </position>
+            </translationFunction>
           </TimeDependentTranslation>
         </translation>
         <rotation>

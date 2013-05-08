@@ -795,6 +795,9 @@ namespace MBSim {
       virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       /***************************************************/
 
+      /* GETTER / SETTER */
+      Function1<fmatvec::Vec3, double>* getRotationalFunction() { return angle; }
+      void setRotationalFunction(Function1<fmatvec::Vec3, double> *angle_) { angle = angle_; }
     private:
       /**
        * \brief rotational parametrisation
