@@ -202,6 +202,7 @@ cp -uL $PREFIX/bin/OpenMBV.py $DISTDIR/bin
 cp -uL $PREFIX/bin/_OpenMBV.so $DISTDIR/bin
 cp -uL $PREFIX/bin/openmbv.jar $DISTDIR/bin
 cp -uL $PREFIX/bin/libopenmbvjava.jni $DISTDIR/bin
+cp -uL $PREFIX/bin/libopenmbvjavaloadJNI.jni $DISTDIR/bin
 # copy openmbvcppinterface SWIG example files
 mkdir -p $DISTDIR/examples/openmbvcppinterface_swig
 cp -uL $PREFIX/share/openmbvcppinterface/examples/swig/* $DISTDIR/examples/openmbvcppinterface_swig
