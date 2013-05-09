@@ -46,6 +46,8 @@ EOF
 
 rss 0
 
+rm -rf $SRCDIR/local/share/mbxmlutils
+
 $SRCDIR/build-scripts/daily-build/build.py --forceBuild "$@" --sourceDir $SRCDIR --prefix $SRCDIR/local --reportOutDir $OUTDIR/report --url $URL/report --buildType "Windows Release Build: " --passToConfigure --enable-shared --disable-static --build=i686-pc-linux-gnu --host=i686-w64-mingw32 --with-blas-lib-prefix=$SRCDIR/local/lib --with-qwt-inc-prefix=/usr/i686-w64-mingw32/sys-root/mingw/include/qwt --with-qwt-lib-name=qwt5 --with-mkoctfile=$SRCDIR/local/bin/mkoctfile.exe --with-boost-filesystem-lib=boost_filesystem-gcc47-1_48 --with-boost-system-lib=boost_system-gcc47-1_48 --with-windres=i686-w64-mingw32-windres --with-javajnicflags=-I/home/user/MBSimWindows/jni_include CPPFLAGS=-DSOQT_DLL PKG_CONFIG_PATH=/usr/i686-w64-mingw32/sys-root/mingw/lib/pkgconfig:$SRCDIR/local/lib/pkgconfig PYTHON_CFLAGS=-I/home/user/MBSimWindows/3rdparty/python/include PYTHON_LIBS="-L/home/user/MBSimWindows/3rdparty/python/libs -lpython27" PYTHON_BIN=/home/user/MBSimWindows/3rdparty/python/python.exe --passToRunexamples --exeExt .exe xmlflat/hierachical_modelling xml/hierachical_modelling xml/time_dependent_kinematics
 
 RET=0
