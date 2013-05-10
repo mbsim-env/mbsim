@@ -36,6 +36,7 @@ class Link;
 class ExtraDynamic;
 class Observer;
 class TextWidget;
+
 namespace MBXMLUtils {
   class TiXmlElement;
   class TiXmlNode;

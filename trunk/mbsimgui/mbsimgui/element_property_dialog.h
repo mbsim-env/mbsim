@@ -46,8 +46,11 @@ class Observer;
 class AbsoluteKinematicsObserver;
 class Signal;
 class Sensor;
+class GeneralizedCoordinateSensor;
+class GeneralizedPositionSensor;
 class AbsoluteCoordinateSensor;
 class AbsolutePositionSensor;
+class FunctionSensor;
 class TextWidget;
 class VecWidget;
 class ExtWidget;
@@ -299,6 +302,22 @@ class SensorPropertyDialog : public SignalPropertyDialog {
     SensorPropertyDialog(Sensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0); 
 };
 
+class GeneralizedCoordinateSensorPropertyDialog : public SensorPropertyDialog {
+
+  public:
+    GeneralizedCoordinateSensorPropertyDialog(GeneralizedCoordinateSensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+    ExtWidget *object, *index;
+};
+
+class GeneralizedPositionSensorPropertyDialog : public GeneralizedCoordinateSensorPropertyDialog {
+
+  public:
+    GeneralizedPositionSensorPropertyDialog(GeneralizedPositionSensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
+};
+
 class AbsoluteCoordinateSensorPropertyDialog : public SensorPropertyDialog {
 
   public:
@@ -314,5 +333,16 @@ class AbsolutePositionSensorPropertyDialog : public AbsoluteCoordinateSensorProp
   public:
     AbsolutePositionSensorPropertyDialog(AbsolutePositionSensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
 };
+
+class FunctionSensorPropertyDialog : public SensorPropertyDialog {
+
+  public:
+    FunctionSensorPropertyDialog(FunctionSensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+    ExtWidget *function;
+};
+
 
 #endif

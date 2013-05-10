@@ -245,6 +245,48 @@ QString RigidBodyOfReferenceWidget::getBody() const {
   return body->text();
 }
 
+ObjectOfReferenceWidget::ObjectOfReferenceWidget(Element *element_, Object* selectedObject_) : element(element_), selectedObject(selectedObject_) {
+  QHBoxLayout *layout = new QHBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
+  object = new QLineEdit;
+  if(selectedObject)
+    object->setText(QString::fromStdString(selectedObject->getXMLPath(element,true)));
+  objectBrowser = new ObjectBrowser(element->getRoot(),0,this);
+  connect(objectBrowser,SIGNAL(accepted()),this,SLOT(setObject()));
+  layout->addWidget(object);
+  QPushButton *button = new QPushButton(tr("Browse"));
+  connect(button,SIGNAL(clicked(bool)),objectBrowser,SLOT(show()));
+  layout->addWidget(button);
+}
+
+void ObjectOfReferenceWidget::updateWidget() {
+  objectBrowser->updateWidget(selectedObject); 
+  if(selectedObject) {
+    setObject();
+  }
+}
+
+void ObjectOfReferenceWidget::setObject() {
+  if(objectBrowser->getObjectList()->currentItem())
+    selectedObject = static_cast<Object*>(static_cast<ElementItem*>(objectBrowser->getObjectList()->currentItem())->getElement());
+  else
+    selectedObject = 0;
+  object->setText(selectedObject?QString::fromStdString(selectedObject->getXMLPath(element,true)):"");
+  emit objectChanged();
+}
+
+void ObjectOfReferenceWidget::setObject(const QString &str, Object *objectPtr) {
+  selectedObject = objectPtr;
+  object->setText(str);
+  emit objectChanged();
+}
+
+QString ObjectOfReferenceWidget::getObject() const {
+  return object->text();
+}
+
 FileWidget::FileWidget(const QString &description_, const QString &extensions_, int mode_) : description(description_), extensions(extensions_), mode(mode_) {
   QHBoxLayout *layout = new QHBoxLayout;
   layout->setMargin(0);

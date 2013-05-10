@@ -36,10 +36,29 @@ class Sensor : public Signal {
     ~Sensor(); 
 };
 
+class GeneralizedCoordinateSensor : public Sensor {
+  friend class GeneralizedCoordinateSensorPropertyDialog;
+  public:
+    GeneralizedCoordinateSensor(const std::string &str, Element *parent);
+    virtual std::string getType() const { return "GeneralizedCoordinateSensor"; }
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    void initialize();
+  protected:
+    ExtProperty object, index;
+};
+
+class GeneralizedPositionSensor : public GeneralizedCoordinateSensor {
+  public:
+    GeneralizedPositionSensor(const std::string &str, Element *parent) : GeneralizedCoordinateSensor(str, parent) {}
+    virtual std::string getType() const { return "GeneralizedPositionSensor"; }
+    ElementPropertyDialog* createPropertyDialog() {return new GeneralizedPositionSensorPropertyDialog(this);}
+};
+
 class AbsoluteCoordinateSensor : public Sensor {
   friend class AbsoluteCoordinateSensorPropertyDialog;
   public:
-    AbsoluteCoordinateSensor(const std::string &str, Element *parent);
+    AbsoluteCoordinateSensor(const std::string &str, Element *parent); 
     virtual std::string getType() const { return "AbsoluteCoordinateSensor"; }
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -50,10 +69,21 @@ class AbsoluteCoordinateSensor : public Sensor {
 
 class AbsolutePositionSensor : public AbsoluteCoordinateSensor {
   public:
-    AbsolutePositionSensor(const std::string &str, Element *parent);
+    AbsolutePositionSensor(const std::string &str, Element *parent) : AbsoluteCoordinateSensor(str, parent) {}
     virtual std::string getType() const { return "AbsolutePositionSensor"; }
     ElementPropertyDialog* createPropertyDialog() {return new AbsolutePositionSensorPropertyDialog(this);}
 };
 
+class FunctionSensor : public Sensor {
+  friend class FunctionSensorPropertyDialog;
+  public:
+    FunctionSensor(const std::string &str, Element *parent); 
+    virtual std::string getType() const { return "FunctionSensor"; }
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    ElementPropertyDialog* createPropertyDialog() {return new FunctionSensorPropertyDialog(this);}
+  protected:
+    ExtProperty function;
+};
 
 #endif

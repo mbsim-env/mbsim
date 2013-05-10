@@ -27,7 +27,9 @@
 class Element;
 class Frame;
 class Contour;
+class Object;
 class RigidBody;
+
 namespace MBXMLUtils {
   class TiXmlElement;
   class TiXmlNode;
@@ -115,6 +117,23 @@ class RigidBodyOfReferenceProperty : public Property {
     void toWidget(QWidget *widget);
     void setBody(const std::string &str);
     std::string getBody() const;
+};
+
+class ObjectOfReferenceProperty : public Property {
+  protected:
+    std::string object;
+    Object *objectPtr;
+    Element* element;
+    std::string xmlName;
+  public:
+    ObjectOfReferenceProperty(const std::string &object_="", Element *element_=0, const std::string &xmlName_=""); 
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
+    void initialize();
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+    void setObject(const std::string &str);
+    std::string getObject() const;
 };
 
 class FileProperty : public Property {

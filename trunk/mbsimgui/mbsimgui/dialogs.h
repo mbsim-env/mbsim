@@ -26,6 +26,7 @@
 #include "variable_widgets.h"
 
 class Element;
+class Object;
 class RigidBody;
 class Frame;
 class Contour;
@@ -50,6 +51,25 @@ class EvalDialog : public QDialog {
 //    QPushButton *button;
 //  signals:
 //    void clicked(bool);
+};
+
+class ObjectBrowser : public QDialog {
+  Q_OBJECT
+
+  public:
+    ObjectBrowser(Element* element, Object* selection, QWidget *obj);
+    ~ObjectBrowser() {}
+    QTreeWidget* getObjectList() const {return objectList;}
+    void updateWidget(Object *object);
+  protected:
+    QPushButton *okButton;
+    QTreeWidget *objectList;
+    Object *selection;
+    ElementItem *savedItem;
+    Element* element;
+    void mbs2ObjectTree(Element* item, QTreeWidgetItem* parentItem);
+  protected slots:
+    void checkForObject(QTreeWidgetItem* item_,int);
 };
 
 class RigidBodyBrowser : public QDialog {

@@ -24,6 +24,7 @@
 #include <QLineEdit>
 
 class Element;
+class Object;
 class RigidBody;
 class Frame;
 class Contour;
@@ -35,6 +36,7 @@ class QListWidget;
 class FrameBrowser;
 class ContourBrowser;
 class RigidBodyBrowser;
+class ObjectBrowser;
 class ExtWidget;
 class QLabel;
 
@@ -138,6 +140,30 @@ class RigidBodyOfReferenceWidget : public Widget {
 
   signals:
     void bodyChanged();
+};
+
+class ObjectOfReferenceWidget : public Widget {
+  Q_OBJECT
+
+  public:
+    ObjectOfReferenceWidget(Element* element, Object* selectedObject);
+
+    void updateWidget();
+    void setObject(const QString &str, Object *objectPtr);
+    QString getObject() const;
+    Object* getSelectedObject() {return selectedObject;}
+
+  protected:
+    QLineEdit* object;
+    Element* element;
+    ObjectBrowser* objectBrowser;
+    Object* selectedObject;
+
+  public slots:
+    void setObject();
+
+  signals:
+    void objectChanged();
 };
 
 class FileWidget : public Widget {
