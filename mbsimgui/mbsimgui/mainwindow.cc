@@ -1150,8 +1150,16 @@ void MainWindow::addAbsoluteKinematicsObserver() {
   addObserver_<AbsoluteKinematicsObserver>("AbsoluteKinematicsObserver",elementList);
 }
 
+void MainWindow::addGeneralizedPositionSensor() {
+  addLink_<GeneralizedPositionSensor>("GeneralizedPositionSensor",elementList);
+}
+
 void MainWindow::addAbsolutePositionSensor() {
   addLink_<AbsolutePositionSensor>("AbsolutePositionSensor",elementList);
+}
+
+void MainWindow::addFunctionSensor() {
+  addLink_<FunctionSensor>("FunctionSensor",elementList);
 }
 
 void MainWindow::saveElementAs() {

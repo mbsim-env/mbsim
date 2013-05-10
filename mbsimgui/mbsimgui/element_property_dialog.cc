@@ -775,6 +775,31 @@ SignalPropertyDialog::SignalPropertyDialog(Signal *signal, QWidget * parent, Qt:
 SensorPropertyDialog::SensorPropertyDialog(Sensor *sensor, QWidget * parent, Qt::WindowFlags f) : SignalPropertyDialog(sensor,parent,f) {
 }
 
+GeneralizedCoordinateSensorPropertyDialog::GeneralizedCoordinateSensorPropertyDialog(GeneralizedCoordinateSensor *sensor, QWidget * parent, Qt::WindowFlags f) : SensorPropertyDialog(sensor,parent,f) {
+  object = new ExtWidget("Object of reference",new ObjectOfReferenceWidget(sensor,0));
+  addToTab("General", object);
+
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"), QStringList(), 0));
+  index = new ExtWidget("Index",new ExtPhysicalVarWidget(input));
+  addToTab("General", index);
+}
+
+void GeneralizedCoordinateSensorPropertyDialog::toWidget(Element *element) {
+  SensorPropertyDialog::toWidget(element);
+  static_cast<GeneralizedCoordinateSensor*>(element)->object.toWidget(object);
+  static_cast<GeneralizedCoordinateSensor*>(element)->index.toWidget(index);
+}
+
+void GeneralizedCoordinateSensorPropertyDialog::fromWidget(Element *element) {
+  SensorPropertyDialog::fromWidget(element);
+  static_cast<GeneralizedCoordinateSensor*>(element)->object.fromWidget(object);
+  static_cast<GeneralizedCoordinateSensor*>(element)->index.fromWidget(index);
+}
+
+GeneralizedPositionSensorPropertyDialog::GeneralizedPositionSensorPropertyDialog(GeneralizedPositionSensor *sensor, QWidget * parent, Qt::WindowFlags f) : GeneralizedCoordinateSensorPropertyDialog(sensor,parent,f) {
+}
+
 AbsoluteCoordinateSensorPropertyDialog::AbsoluteCoordinateSensorPropertyDialog(AbsoluteCoordinateSensor *sensor, QWidget * parent, Qt::WindowFlags f) : SensorPropertyDialog(sensor,parent,f) {
   frame = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(sensor,0));
   addToTab("General", frame);
@@ -795,5 +820,20 @@ void AbsoluteCoordinateSensorPropertyDialog::fromWidget(Element *element) {
 }
 
 AbsolutePositionSensorPropertyDialog::AbsolutePositionSensorPropertyDialog(AbsolutePositionSensor *sensor, QWidget * parent, Qt::WindowFlags f) : AbsoluteCoordinateSensorPropertyDialog(sensor,parent,f) {
+}
+
+FunctionSensorPropertyDialog::FunctionSensorPropertyDialog(FunctionSensor *sensor, QWidget * parent, Qt::WindowFlags f) : SensorPropertyDialog(sensor,parent,f) {
+  function = new ExtWidget("Function",new Function1ChoiceWidget);
+  addToTab("General", function);
+}
+
+void FunctionSensorPropertyDialog::toWidget(Element *element) {
+  SensorPropertyDialog::toWidget(element);
+  static_cast<FunctionSensor*>(element)->function.toWidget(function);
+}
+
+void FunctionSensorPropertyDialog::fromWidget(Element *element) {
+  SensorPropertyDialog::fromWidget(element);
+  static_cast<FunctionSensor*>(element)->function.fromWidget(function);
 }
 

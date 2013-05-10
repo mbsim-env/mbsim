@@ -222,6 +222,44 @@ void RigidBodyOfReferenceProperty::toWidget(QWidget *widget) {
   static_cast<RigidBodyOfReferenceWidget*>(widget)->updateWidget();
 }
 
+ObjectOfReferenceProperty::ObjectOfReferenceProperty(const std::string &object_, Element *element_, const std::string &xmlName_) : object(object_), objectPtr(element_->getByPath<Object>(object)), element(element_), xmlName(xmlName_) {
+}
+
+void ObjectOfReferenceProperty::initialize() {
+  objectPtr=element->getByPath<Object>(object);
+}
+
+void ObjectOfReferenceProperty::setObject(const std::string &str) {
+  object = str;
+  objectPtr=element->getByPath<Object>(object);
+}
+
+std::string ObjectOfReferenceProperty::getObject() const {
+  return objectPtr?objectPtr->getXMLPath(element,true):object;
+}
+
+TiXmlElement* ObjectOfReferenceProperty::initializeUsingXML(TiXmlElement *parent) {
+  TiXmlElement *e = parent->FirstChildElement(xmlName);
+  if(e) object=e->Attribute("ref");
+  return e;
+}
+
+TiXmlElement* ObjectOfReferenceProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele = new TiXmlElement(xmlName);
+  ele->SetAttribute("ref", getObject());
+  parent->LinkEndChild(ele);
+  return 0;
+}
+
+void ObjectOfReferenceProperty::fromWidget(QWidget *widget) {
+  setObject(static_cast<ObjectOfReferenceWidget*>(widget)->getObject().toStdString());
+}
+
+void ObjectOfReferenceProperty::toWidget(QWidget *widget) {
+  static_cast<ObjectOfReferenceWidget*>(widget)->setObject(QString::fromStdString(object),objectPtr);
+  static_cast<ObjectOfReferenceWidget*>(widget)->updateWidget();
+}
+
 TiXmlElement* FileProperty::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=element->FirstChildElement(xmlName);
   if(e) {

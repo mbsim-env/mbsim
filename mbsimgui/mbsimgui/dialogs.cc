@@ -121,6 +121,61 @@ void RigidBodyBrowser::checkForRigidBody(QTreeWidgetItem* item_,int) {
     okButton->setDisabled(true);
 }
 
+ObjectBrowser::ObjectBrowser(Element* element_, Object* object, QWidget *parentObject_) : QDialog(parentObject_), selection(object), savedItem(0), element(element_) {
+  QGridLayout* mainLayout=new QGridLayout;
+  setLayout(mainLayout);
+  objectList = new QTreeWidget;
+  objectList->setColumnCount(1);
+  mainLayout->addWidget(objectList,0,0);
+  QObject::connect(objectList, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(checkForObject(QTreeWidgetItem*,int)));
+
+  okButton = new QPushButton("Ok");
+  if(!selection)
+    okButton->setDisabled(true);
+  mainLayout->addWidget(okButton,1,0);
+  connect(okButton, SIGNAL(clicked(bool)), this, SLOT(accept()));
+
+  QPushButton *button = new QPushButton("Cancel");
+  mainLayout->addWidget(button,1,1);
+  connect(button, SIGNAL(clicked(bool)), this, SLOT(reject()));
+
+  setWindowTitle("Object browser");
+}
+
+void ObjectBrowser::updateWidget(Object *sel) {
+  selection = sel;
+  objectList->clear();
+  savedItem = 0;
+  mbs2ObjectTree(element,objectList->invisibleRootItem());
+  objectList->setCurrentItem(savedItem);
+}
+
+void ObjectBrowser::mbs2ObjectTree(Element* ele, QTreeWidgetItem* parentItem) {
+  if(dynamic_cast<Group*>(ele) || dynamic_cast<RigidBody*>(ele) || dynamic_cast<RigidBody*>(ele)) {
+
+    ElementItem *item = new ElementItem(ele);
+    item->setText(0,QString::fromStdString(ele->getName()));
+
+    if(ele == selection)
+      savedItem = item;
+
+    parentItem->addChild(item);
+
+    for(int i=0; i<ele->getNumberOfGroups(); i++)
+      mbs2ObjectTree(ele->getGroup(i),item);
+    for(int i=0; i<ele->getNumberOfObjects(); i++)
+      mbs2ObjectTree(ele->getObject(i),item);
+  }
+}
+
+void ObjectBrowser::checkForObject(QTreeWidgetItem* item_,int) {
+  ElementItem* item = static_cast<ElementItem*>(item_);
+  if(dynamic_cast<Object*>(item->getElement()))
+    okButton->setDisabled(false);
+  else
+    okButton->setDisabled(true);
+}
+
 FrameBrowser::FrameBrowser(Element* element_, Frame* frame, QWidget *parentObject_) : QDialog(parentObject_), selection(frame), savedItem(0), element(element_) {
   QGridLayout* mainLayout=new QGridLayout;
   setLayout(mainLayout);

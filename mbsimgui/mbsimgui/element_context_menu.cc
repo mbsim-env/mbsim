@@ -153,8 +153,14 @@ ObserverContextContextMenu::ObserverContextContextMenu(QWidget *parent) : QMenu(
 }
   
 SensorContextContextMenu::SensorContextContextMenu(QWidget *parent) : QMenu(parent) {
-  QAction *action = new QAction("Add absolute position sensor", this);
+  QAction *action = new QAction("Add generalized position sensor", this);
+  connect(action,SIGNAL(triggered()),mw,SLOT(addGeneralizedPositionSensor()));
+  addAction(action);
+  action = new QAction("Add absolute position sensor", this);
   connect(action,SIGNAL(triggered()),mw,SLOT(addAbsolutePositionSensor()));
+  addAction(action);
+  action = new QAction("Add function sensor", this);
+  connect(action,SIGNAL(triggered()),mw,SLOT(addFunctionSensor()));
   addAction(action);
 }
 

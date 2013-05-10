@@ -127,7 +127,9 @@ class MainWindow : public QMainWindow {
     void addJoint();
     void addContact();
     void addAbsoluteKinematicsObserver();
+    void addGeneralizedPositionSensor();
     void addAbsolutePositionSensor();
+    void addFunctionSensor();
     void saveElementAs();
     void addElementFromFile();
   protected slots:

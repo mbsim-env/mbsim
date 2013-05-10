@@ -21,6 +21,7 @@
 #include "signal_.h"
 #include "basic_properties.h"
 #include "kinetics_properties.h"
+#include "function_properties.h"
 #include "basic_widgets.h"
 #include "kinetics_widgets.h"
 #include "extended_widgets.h"
@@ -39,6 +40,31 @@ Sensor::Sensor(const string &str, Element *parent) : Signal(str, parent) {
 }
 
 Sensor::~Sensor() {
+}
+
+GeneralizedCoordinateSensor::GeneralizedCoordinateSensor(const string &str, Element *parent) : Sensor(str, parent) {
+  object.setProperty(new ObjectOfReferenceProperty("",this,MBSIMCONTROLNS"object"));
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"), "", MBSIMCONTROLNS"index"));
+  index.setProperty(new ExtPhysicalVarProperty(input));
+}
+
+void GeneralizedCoordinateSensor::initialize() {
+  Sensor::initialize();
+  object.initialize();
+}
+
+void GeneralizedCoordinateSensor::initializeUsingXML(TiXmlElement *element) {
+  Sensor::initializeUsingXML(element);
+  object.initializeUsingXML(element);
+  index.initializeUsingXML(element);
+}
+
+TiXmlElement* GeneralizedCoordinateSensor::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = Sensor::writeXMLFile(parent);
+  object.writeXMLFile(ele0);
+  index.writeXMLFile(ele0);
+  return ele0;
 }
 
 AbsoluteCoordinateSensor::AbsoluteCoordinateSensor(const string &str, Element *parent) : Sensor(str, parent) {
@@ -64,5 +90,17 @@ TiXmlElement* AbsoluteCoordinateSensor::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
-AbsolutePositionSensor::AbsolutePositionSensor(const string &str, Element *parent) : AbsoluteCoordinateSensor(str, parent) {
+FunctionSensor::FunctionSensor(const string &str, Element *parent) : Sensor(str, parent) {
+  function.setProperty(new Function1ChoiceProperty(MBSIMCONTROLNS"function"));
+}
+
+void FunctionSensor::initializeUsingXML(TiXmlElement *element) {
+  Sensor::initializeUsingXML(element);
+  function.initializeUsingXML(element);
+}
+
+TiXmlElement* FunctionSensor::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = Sensor::writeXMLFile(parent);
+  function.writeXMLFile(ele0);
+  return ele0;
 }
