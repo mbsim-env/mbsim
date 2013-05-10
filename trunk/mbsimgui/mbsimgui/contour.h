@@ -24,6 +24,7 @@
 #include "extended_properties.h"
 
 class Contour : public Element {
+  friend class ContourPropertyDialog;
   public:
     Contour(const std::string &str, Element *parent);
     ~Contour();

@@ -20,6 +20,16 @@
 #include <config.h>
 #include "mainwindow.h"
 #include "solver.h"
+#include "frame.h"
+#include "contour.h"
+#include "rigidbody.h"
+#include "constraint.h"
+#include "kinetic_excitation.h"
+#include "spring_damper.h"
+#include "joint.h"
+#include "contact.h"
+#include "signal_.h"
+#include "observer.h"
 #include "integrator.h"
 #include "objectfactory.h"
 #include "parameter.h"
@@ -408,7 +418,8 @@ void MainWindow::newMBS(bool ask) {
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = model->index(0,0);
     model->removeRow(index.row(), index.parent());
-    model->addSolver();
+    Solver *solver = new Solver("MBS",0);
+    model->createGroupItem(solver,QModelIndex());
 
     //((Integrator*)integratorView->topLevelItem(0))->setSolver(0);
 
@@ -928,218 +939,173 @@ void Process::errLinkClicked(const QUrl &link) {
 void MainWindow::removeElement() {
   ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
-  model->removeElement(index);
+  Element *element = static_cast<Element*>(model->getItem(index)->getItemData());
+  element->getParent()->removeElement(element);
+  model->removeRow(index.row(), index.parent());
 #ifdef INLINE_OPENMBV
   mbsimxml(1);
 #endif
+}
+
+template <class T>
+void addFrame_(const string &name, ElementView *elementList) {
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  Element *parentElement = static_cast<Element*>(model->getItem(index)->getItemData());
+  Frame *frame = new T(name+toStr(parentElement->getFrameID()),parentElement);
+  parentElement->addFrame(frame);
+  QModelIndex containerIndex = index.child(0,0);
+  model->createFrameItem(frame,containerIndex);
+#ifdef INLINE_OPENMBV
+  mw->mbsimxml(1);
+#endif
+  QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
+  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+}
+
+template <class T>
+void addContour_(const string &name, ElementView *elementList) {
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  Element *parentElement = static_cast<Element*>(model->getItem(index)->getItemData());
+  Contour *contour = new T(name+toStr(parentElement->getContourID()),parentElement);
+  parentElement->addContour(contour);
+  QModelIndex containerIndex = index.child(1,0);
+  model->createContourItem(contour,containerIndex);
+#ifdef INLINE_OPENMBV
+  mw->mbsimxml(1);
+#endif
+  QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
+  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+}
+
+
+template <class T>
+void addGroup_(const string &name, ElementView *elementList) {
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  Element *parentElement = static_cast<Element*>(model->getItem(index)->getItemData());
+  Group *group = new T(name+toStr(parentElement->getGroupID()),parentElement);
+  parentElement->addGroup(group);
+  QModelIndex containerIndex = index.child(2,0);
+  model->createGroupItem(group,containerIndex);
+#ifdef INLINE_OPENMBV
+  mw->mbsimxml(1);
+#endif
+  QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
+  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+}
+
+template <class T>
+void addObject_(const string &name, ElementView *elementList) {
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  Element *parentElement = static_cast<Element*>(model->getItem(index)->getItemData());
+  Object *object = new T(name+toStr(parentElement->getObjectID()),parentElement);
+  parentElement->addObject(object);
+  QModelIndex containerIndex = index.child(3,0);
+  model->createObjectItem(object,containerIndex);
+#ifdef INLINE_OPENMBV
+  mw->mbsimxml(1);
+#endif
+  QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
+  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+}
+
+template <class T>
+void addLink_(const string &name, ElementView *elementList) {
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  Element *parentElement = static_cast<Element*>(model->getItem(index)->getItemData());
+  Link *link = new T(name+toStr(parentElement->getLinkID()),parentElement);
+  parentElement->addLink(link);
+  QModelIndex containerIndex = index.child(4,0);
+  model->createLinkItem(link,containerIndex);
+#ifdef INLINE_OPENMBV
+  mw->mbsimxml(1);
+#endif
+  QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
+  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+}
+
+template <class T>
+void addObserver_(const string &name, ElementView *elementList) {
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  Element *parentElement = static_cast<Element*>(model->getItem(index)->getItemData());
+  Observer *observer = new T(name+toStr(parentElement->getObserverID()),parentElement);
+  parentElement->addObserver(observer);
+  QModelIndex containerIndex = index.child(5,0);
+  model->createObserverItem(observer,containerIndex);
+#ifdef INLINE_OPENMBV
+  mw->mbsimxml(1);
+#endif
+  QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
+  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
 }
 
 void MainWindow::addGroup() {
-  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-  QModelIndex index = elementList->selectionModel()->currentIndex();
-  model->addGroup(index);
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
-  QModelIndex containerIndex = model->index(2, 0, index);
-  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
-  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+  addGroup_<Group>("Group",elementList);
 }
 
 void MainWindow::addRigidBody() {
-  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-  QModelIndex index = elementList->selectionModel()->currentIndex();
-  model->addRigidBody(index);
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
-  QModelIndex containerIndex = model->index(3, 0, index);
-  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
-  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+  addObject_<RigidBody>("RigidBody",elementList);
 }
 
 void MainWindow::addGearConstraint() {
-  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-  QModelIndex index = elementList->selectionModel()->currentIndex();
-  model->addGearConstraint(index);
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
-  QModelIndex containerIndex = model->index(3, 0, index);
-  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
-  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+  addObject_<GearConstraint>("GearConstraint",elementList);
 }
 
 void MainWindow::addKinematicConstraint() {
-  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-  QModelIndex index = elementList->selectionModel()->currentIndex();
-  model->addKinematicConstraint(index);
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
-  QModelIndex containerIndex = model->index(3, 0, index);
-  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
-  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+  addObject_<KinematicConstraint>("KinematicConstraint",elementList);
 }
 
 void MainWindow::addJointConstraint() {
-  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-  QModelIndex index = elementList->selectionModel()->currentIndex();
-  model->addJointConstraint(index);
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
-  QModelIndex containerIndex = model->index(3, 0, index);
-  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
-  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+  addObject_<JointConstraint>("JointConstraint",elementList);
 }
 
-void MainWindow::addFrame() {
-  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-  QModelIndex index = elementList->selectionModel()->currentIndex();
-  model->addFrame(index);
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
-  QModelIndex containerIndex = model->index(0, 0, index);
-  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
-  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+void MainWindow::addFixedRelativeFrame() {
+  addFrame_<FixedRelativeFrame>("P",elementList);
 }
 
 void MainWindow::addPoint() {
-  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-  QModelIndex index = elementList->selectionModel()->currentIndex();
-  model->addPoint(index);
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
-  QModelIndex containerIndex = model->index(1, 0, index);
-  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
-  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+  addContour_<Point>("Point",elementList);
 }
 
 void MainWindow::addLine() {
-  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-  QModelIndex index = elementList->selectionModel()->currentIndex();
-  model->addLine(index);
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
-  QModelIndex containerIndex = model->index(1, 0, index);
-  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
-  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+  addContour_<Line>("Line",elementList);
 }
 
 void MainWindow::addPlane() {
-  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-  QModelIndex index = elementList->selectionModel()->currentIndex();
-  model->addPlane(index);
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
-  QModelIndex containerIndex = model->index(1, 0, index);
-  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
-  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+  addContour_<Plane>("Plane",elementList);
 }
 
 void MainWindow::addSphere() {
-  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-  QModelIndex index = elementList->selectionModel()->currentIndex();
-  model->addSphere(index);
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
-  QModelIndex containerIndex = model->index(1, 0, index);
-  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
-  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+  addContour_<Sphere>("Sphere",elementList);
 }
 
 void MainWindow::addKineticExcitation() {
-  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-  QModelIndex index = elementList->selectionModel()->currentIndex();
-  model->addKineticExcitation(index);
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
-  QModelIndex containerIndex = model->index(4, 0, index);
-  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
-  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+  addLink_<KineticExcitation>("KineticExcitation",elementList);
 }
 
 void MainWindow::addSpringDamper() {
-  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-  QModelIndex index = elementList->selectionModel()->currentIndex();
-  model->addSpringDamper(index);
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
-  QModelIndex containerIndex = model->index(4, 0, index);
-  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
-  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+  addLink_<SpringDamper>("SpringDamper",elementList);
 }
 
 void MainWindow::addJoint() {
-  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-  QModelIndex index = elementList->selectionModel()->currentIndex();
-  model->addJoint(index);
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
-  QModelIndex containerIndex = model->index(4, 0, index);
-  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
-  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+  addLink_<Joint>("Joint",elementList);
 }
 
 void MainWindow::addContact() {
-  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-  QModelIndex index = elementList->selectionModel()->currentIndex();
-  model->addContact(index);
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
-  QModelIndex containerIndex = model->index(4, 0, index);
-  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
-  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+  addLink_<Contact>("Contact",elementList);
 }
 
 void MainWindow::addAbsoluteKinematicsObserver() {
-  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-  QModelIndex index = elementList->selectionModel()->currentIndex();
-  model->addAbsoluteKinematicsObserver(index);
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
-  QModelIndex containerIndex = model->index(5, 0, index);
-  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
-  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+  addObserver_<AbsoluteKinematicsObserver>("AbsoluteKinematicsObserver",elementList);
 }
 
 void MainWindow::addAbsolutePositionSensor() {
-  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-  QModelIndex index = elementList->selectionModel()->currentIndex();
-  model->addAbsolutePositionSensor(index);
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
-  QModelIndex containerIndex = model->index(5, 0, index);
-  QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
-  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  //elementList->selectionModel()->setCurrentIndex(currentIndex.sibling(currentIndex.row(),1),QItemSelectionModel::Select);
+  addLink_<AbsolutePositionSensor>("AbsolutePositionSensor",elementList);
 }
 
 void MainWindow::saveElementAs() {
@@ -1149,3 +1115,38 @@ void MainWindow::saveElementAs() {
   if(file!="")
     static_cast<Element*>(model->getItem(index)->getItemData())->writeXMLFile(file.toStdString());
 }
+
+void MainWindow::addElementFromFile() {
+  QString file=QFileDialog::getOpenFileName(0, "XML model files", ".", "XML files (*.xml)");
+  if(file!="") {
+    ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+    QModelIndex index = elementList->selectionModel()->currentIndex();
+    Element *element;
+    Element *parent = static_cast<Element*>(model->getItem(index)->getItemData());
+    element = Group::readXMLFile(file.toStdString(),parent);
+    if(element) {
+      parent->addGroup(static_cast<Group*>(element));
+      model->createGroupItem(static_cast<Group*>(element),index.child(2,0));
+#ifdef INLINE_OPENMBV
+      mbsimxml(1);
+#endif
+      QModelIndex containerIndex = model->index(2, 0, index);
+      QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
+      elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+      return;
+    }
+    element = Object::readXMLFile(file.toStdString(),parent);
+    if(element) {
+      parent->addObject(static_cast<Object*>(element));
+      model->createObjectItem(static_cast<Object*>(element),index.child(3,0));
+#ifdef INLINE_OPENMBV
+      mbsimxml(1);
+#endif
+      QModelIndex containerIndex = model->index(3, 0, index);
+      QModelIndex currentIndex = model->index(model->rowCount(containerIndex)-1,0,containerIndex);
+      elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+      return;
+    }
+  }
+}
+

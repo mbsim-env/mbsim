@@ -90,6 +90,10 @@ class ContourPropertyDialog : public ElementPropertyDialog {
 
   public:
     ContourPropertyDialog(Contour *contour, QWidget * parent = 0, Qt::WindowFlags f = 0); 
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+   ExtWidget *refFrame;
 };
 
 class PlanePropertyDialog : public ContourPropertyDialog {

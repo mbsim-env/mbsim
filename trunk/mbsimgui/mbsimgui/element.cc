@@ -40,7 +40,7 @@ using namespace MBXMLUtils;
 
 int Element::IDcounter=0;
 
-Element::Element(const string &name_, Element *parent_) : parent(parent_), embed(0,false) {
+Element::Element(const string &name_, Element *parent_) : parent(parent_), embed(0,false), frameID(0), contourID(1), groupID(1), objectID(1), linkID(1), observerID(1) {
   name.setProperty(new TextProperty(name_,""));
   embed.setProperty(new EmbedProperty(this));
   ID=toStr(IDcounter++);

@@ -44,7 +44,7 @@ void ElementContextMenu::addContour() {
 GroupContextMenu::GroupContextMenu(QWidget *parent, bool removable) : ElementContextMenu(parent,removable) {
   QAction *action;
   action = new QAction("Add frame", this);
-  connect(action,SIGNAL(triggered()),mw,SLOT(addFrame()));
+  connect(action,SIGNAL(triggered()),mw,SLOT(addFixedRelativeFrame()));
   addAction(action);
   action = new QAction("Add contour", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addContour()));
@@ -60,6 +60,9 @@ GroupContextMenu::GroupContextMenu(QWidget *parent, bool removable) : ElementCon
   addAction(action);
   action = new QAction("Add observer", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addObserver()));
+  addAction(action);
+  action = new QAction("Add element from File", this);
+  connect(action,SIGNAL(triggered()),mw,SLOT(addElementFromFile()));
   addAction(action);
 } 
 
@@ -84,7 +87,7 @@ ObjectContextMenu::ObjectContextMenu(QWidget *parent) : ElementContextMenu(paren
 BodyContextMenu::BodyContextMenu(QWidget *parent) : ObjectContextMenu(parent) {
   QAction *action;
   action = new QAction("Add frame", this);
-  connect(action,SIGNAL(triggered()),mw,SLOT(addFrame()));
+  connect(action,SIGNAL(triggered()),mw,SLOT(addFixedRelativeFrame()));
   addAction(action);
   action = new QAction("Add contour", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addContour()));

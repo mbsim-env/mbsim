@@ -40,7 +40,6 @@ Frame::Frame(const string &str, Element *parent, bool grey) : Element(str,parent
 }
 
 Frame::~Frame() {
-  //cout << "destroy frame" << endl;
 }
 
 Frame* Frame::readXMLFile(const string &filename, Element *parent) {
