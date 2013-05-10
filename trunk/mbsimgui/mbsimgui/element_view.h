@@ -33,12 +33,11 @@ class ElementView : public QTreeView {
     Element *element;
     ElementPropertyDialog *editor;
   public:
-    ElementView ( QWidget * parent = 0 ) : QTreeView(parent), element(0), editor(0) {
-    }
-    void openEditor ();
+    ElementView(QWidget *parent=0) : QTreeView(parent), element(0), editor(0) {}
+    void openEditor();
   protected:
-    void mouseDoubleClickEvent ( QMouseEvent * event );
-    void mousePressEvent ( QMouseEvent * event );
+    void mouseDoubleClickEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
   protected slots:
     void dialogFinished(int result);
     void apply();

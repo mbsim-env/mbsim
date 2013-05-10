@@ -24,6 +24,15 @@
 #include <QMainWindow>
 #include <QTabWidget>
 #include <mbxmlutilstinyxml/tinyxml.h>
+#include "treemodel.h"
+#include "treeitem.h"
+#include "element_view.h"
+#include "object.h"
+#include "link.h"
+#include "group.h"
+#include "frame.h"
+#include "contour.h"
+#include "observer.h"
 
 class QTreeView;
 class QAction;
@@ -70,6 +79,12 @@ class MainWindow : public QMainWindow {
     static MBXMLUtils::OctaveEvaluator *octEval;
     void mbsimxml(int task);
     const QString& getUniqueTempDir() const {return uniqueTempDir;}
+    template <class T> bool addFrame(const std::string &name, bool file=false);
+    template <class T> bool addContour(const std::string &name, bool file=false);
+    template <class T> bool addGroup(const std::string &name, bool file=false);
+    template <class T> bool addObject(const std::string &name, bool file=false);
+    template <class T> bool addLink(const std::string &name, bool file=false);
+    template <class T> bool addObserver(const std::string &name, bool file=false);
   public slots:
     void elementListClicked();
     void parameterListClicked();
@@ -112,26 +127,7 @@ class MainWindow : public QMainWindow {
     void about();
     void updateOctaveParameters(const ParameterList &list=ParameterList());
     void removeElement();
-    void addFixedRelativeFrame();
-    void addGroup();
-    void addPoint();
-    void addLine();
-    void addPlane();
-    void addSphere();
-    void addRigidBody();
-    void addGearConstraint();
-    void addKinematicConstraint();
-    void addJointConstraint();
-    void addSpringDamper();
-    void addKineticExcitation();
-    void addJoint();
-    void addContact();
-    void addAbsoluteKinematicsObserver();
-    void addGeneralizedPositionSensor();
-    void addAbsolutePositionSensor();
-    void addFunctionSensor();
     void saveElementAs();
-    void addElementFromFile();
   protected slots:
     void selectElement(std::string);
     void changeWorkingDir();
@@ -162,5 +158,143 @@ class Process : public QTabWidget {
     void outLinkClicked(const QUrl &link);
     void errLinkClicked(const QUrl &link);
 };
+
+template <class T>
+bool MainWindow::addFrame(const std::string &name, bool file) {
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  QModelIndex containerIndex = index.child(0,0);
+  Element *parentElement = static_cast<Element*>(model->getItem(index)->getItemData());
+  Frame *frame;
+  if(file)
+    frame = Frame::readXMLFile(name,parentElement);
+  else
+    frame = new T(name+toStr(model->getItem(containerIndex)->getID()-1),parentElement);
+  if(!frame)
+    return false;
+  parentElement->addFrame(frame);
+  model->createFrameItem(frame,containerIndex);
+#ifdef INLINE_OPENMBV
+  mbsimxml(1);
+#endif
+  QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
+  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+  return true;
+}
+
+template <class T>
+bool MainWindow::addContour(const std::string &name, bool file) {
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  QModelIndex containerIndex = index.child(1,0);
+  Element *parentElement = static_cast<Element*>(model->getItem(index)->getItemData());
+  Contour *contour;
+  if(file)
+    contour = Contour::readXMLFile(name,parentElement);
+  else
+    contour = new T(name+toStr(model->getItem(containerIndex)->getID()),parentElement);
+  if(!contour)
+    return false;
+  parentElement->addContour(contour);
+  model->createContourItem(contour,containerIndex);
+#ifdef INLINE_OPENMBV
+  mbsimxml(1);
+#endif
+  QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
+  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+  return true;
+}
+
+template <class T>
+bool MainWindow::addGroup(const std::string &name, bool file) {
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  QModelIndex containerIndex = index.child(2,0);
+  Element *parentElement = static_cast<Element*>(model->getItem(index)->getItemData());
+  Group *group;
+  if(file) 
+    group = Group::readXMLFile(name,parentElement);
+  else
+    group = new T(name+toStr(model->getItem(containerIndex)->getID()),parentElement);
+  if(!group)
+    return false;
+  parentElement->addGroup(group);
+  model->createGroupItem(group,containerIndex);
+#ifdef INLINE_OPENMBV
+  mbsimxml(1);
+#endif
+  QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
+  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+  return true;
+}
+
+template <class T>
+bool MainWindow::addObject(const std::string &name, bool file) {
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  QModelIndex containerIndex = index.child(3,0);
+  Element *parentElement = static_cast<Element*>(model->getItem(index)->getItemData());
+  Object *object;
+  if(file) 
+    object = Object::readXMLFile(name,parentElement);
+  else
+    object = new T(name+toStr(model->getItem(containerIndex)->getID()),parentElement);
+  if(!object)
+    return false;
+  parentElement->addObject(object);
+  model->createObjectItem(object,containerIndex);
+#ifdef INLINE_OPENMBV
+  mbsimxml(1);
+#endif
+  QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
+  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+  return true;
+}
+
+template <class T>
+bool MainWindow::addLink(const std::string &name, bool file) {
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  QModelIndex containerIndex = index.child(4,0);
+  Element *parentElement = static_cast<Element*>(model->getItem(index)->getItemData());
+  Link *link;
+  if(file)
+    link = Link::readXMLFile(name,parentElement);
+  else
+    link = new T(name+toStr(model->getItem(containerIndex)->getID()),parentElement);
+  if(!link)
+    return false;
+  parentElement->addLink(link);
+  model->createLinkItem(link,containerIndex);
+#ifdef INLINE_OPENMBV
+  mbsimxml(1);
+#endif
+  QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
+  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+  return true;
+}
+
+template <class T>
+bool MainWindow::addObserver(const std::string &name, bool file) {
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  QModelIndex containerIndex = index.child(5,0);
+  Element *parentElement = static_cast<Element*>(model->getItem(index)->getItemData());
+  Observer *observer;
+  if(file)
+    observer = Observer::readXMLFile(name,parentElement);
+  else
+    observer = new T(name+toStr(model->getItem(containerIndex)->getID()),parentElement);
+  if(!observer)
+    return false;
+  parentElement->addObserver(observer);
+  model->createObserverItem(observer,containerIndex);
+#ifdef INLINE_OPENMBV
+  mbsimxml(1);
+#endif
+  QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
+  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+  return true;
+}
 
 #endif

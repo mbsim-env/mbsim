@@ -31,11 +31,10 @@ class ParameterView : public QTreeView {
     QModelIndex index;
     ParameterPropertyDialog *editor;
   public:
-    ParameterView ( QWidget * parent = 0 ) : QTreeView(parent), editor(0) {
-    }
+    ParameterView(QWidget *parent=0) : QTreeView(parent), editor(0) {}
   protected:
-    void mouseDoubleClickEvent ( QMouseEvent * event );
-    void mousePressEvent ( QMouseEvent * event );
+    void mouseDoubleClickEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
   protected slots:
     void dialogFinished(int result);
     void apply();
