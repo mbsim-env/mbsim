@@ -607,23 +607,23 @@ void MainWindow::loadParameterList(const QString &file) {
 
     MBSimObjectFactory::initialize();
     TiXmlDocument doc;
-    bool ret=doc.LoadFile(file.toAscii().data());
-    assert(ret==true);
-    TiXml_PostLoadFile(&doc);
-    TiXmlElement *e=doc.FirstChildElement();
-    TiXml_setLineNrFromProcessingInstruction(e);
-    map<string,string> dummy;
-    incorporateNamespace(doc.FirstChildElement(), dummy);
-    TiXmlElement *E=e->FirstChildElement();
-    vector<QString> refFrame;
-    while(E) {
-      Parameter *parameter=ObjectFactory::getInstance()->createParameter(E);
-      parameter->initializeUsingXML(E);
-      model->createParameterItem(parameter);
-      E=E->NextSiblingElement();
+    if(doc.LoadFile(file.toAscii().data())) {
+      TiXml_PostLoadFile(&doc);
+      TiXmlElement *e=doc.FirstChildElement();
+      TiXml_setLineNrFromProcessingInstruction(e);
+      map<string,string> dummy;
+      incorporateNamespace(doc.FirstChildElement(), dummy);
+      TiXmlElement *E=e->FirstChildElement();
+      vector<QString> refFrame;
+      while(E) {
+        Parameter *parameter=ObjectFactory::getInstance()->createParameter(E);
+        parameter->initializeUsingXML(E);
+        model->createParameterItem(parameter);
+        E=E->NextSiblingElement();
+      }
+      updateOctaveParameters();
+      actionSaveParameterList->setDisabled(false);
     }
-    updateOctaveParameters();
-    actionSaveParameterList->setDisabled(false);
   }
 
 #ifdef INLINE_OPENMBV

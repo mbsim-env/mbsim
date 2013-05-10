@@ -77,16 +77,18 @@ TiXmlElement* Integrator::writeXMLFile(TiXmlNode *parent) {
 Integrator* Integrator::readXMLFile(const string &filename) {
   MBSimObjectFactory::initialize();
   TiXmlDocument doc;
-  bool ret=doc.LoadFile(filename);
-  assert(ret==true);
-  TiXml_PostLoadFile(&doc);
-  TiXmlElement *e=doc.FirstChildElement();
-  TiXml_setLineNrFromProcessingInstruction(e);
-  map<string,string> dummy;
-  incorporateNamespace(e, dummy);
-  Integrator *integrator=ObjectFactory::getInstance()->createIntegrator(e);
-  integrator->initializeUsingXML(doc.FirstChildElement());
-  return integrator;
+  if(doc.LoadFile(filename)) {
+    TiXml_PostLoadFile(&doc);
+    TiXmlElement *e=doc.FirstChildElement();
+    TiXml_setLineNrFromProcessingInstruction(e);
+    map<string,string> dummy;
+    incorporateNamespace(e, dummy);
+    Integrator *integrator=ObjectFactory::getInstance()->createIntegrator(e);
+    if(integrator)
+      integrator->initializeUsingXML(doc.FirstChildElement());
+    return integrator;
+  }
+  return 0;
 }
 
 void Integrator::writeXMLFile(const string &name) {

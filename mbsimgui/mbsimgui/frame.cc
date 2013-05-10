@@ -45,16 +45,17 @@ Frame::~Frame() {
 
 Frame* Frame::readXMLFile(const string &filename, Element *parent) {
   TiXmlDocument doc;
-  bool ret=doc.LoadFile(filename);
-  assert(ret==true);
-  TiXml_PostLoadFile(&doc);
-  TiXmlElement *e=doc.FirstChildElement();
-  map<string,string> dummy;
-  incorporateNamespace(doc.FirstChildElement(), dummy);
-  Frame *frame=ObjectFactory::getInstance()->createFrame(e,parent);
-  if(frame)
-    frame->initializeUsingXML(e);
-  return frame;
+  if(doc.LoadFile(filename)) {
+    TiXml_PostLoadFile(&doc);
+    TiXmlElement *e=doc.FirstChildElement();
+    map<string,string> dummy;
+    incorporateNamespace(doc.FirstChildElement(), dummy);
+    Frame *frame=ObjectFactory::getInstance()->createFrame(e,parent);
+    if(frame)
+      frame->initializeUsingXML(e);
+    return frame;
+  }
+  return 0;
 }
 
 void Frame::initializeUsingXML(TiXmlElement *element) {

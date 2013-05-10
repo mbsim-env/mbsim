@@ -34,16 +34,17 @@ Observer::~Observer() {
 
 Observer* Observer::readXMLFile(const string &filename, Element *parent) {
   TiXmlDocument doc;
-  bool ret=doc.LoadFile(filename);
-  assert(ret==true);
-  TiXml_PostLoadFile(&doc);
-  TiXmlElement *e=doc.FirstChildElement();
-  map<string,string> dummy;
-  incorporateNamespace(doc.FirstChildElement(), dummy);
-  Observer *observer=ObjectFactory::getInstance()->createObserver(e,parent);
-  if(observer)
-    observer->initializeUsingXML(e);
-  return observer;
+  if(doc.LoadFile(filename)) {
+    TiXml_PostLoadFile(&doc);
+    TiXmlElement *e=doc.FirstChildElement();
+    map<string,string> dummy;
+    incorporateNamespace(doc.FirstChildElement(), dummy);
+    Observer *observer=ObjectFactory::getInstance()->createObserver(e,parent);
+    if(observer)
+      observer->initializeUsingXML(e);
+    return observer;
+  }
+  return 0;
 }
 
 Element * Observer::getByPathSearch(string path) {

@@ -105,16 +105,17 @@ TiXmlElement* Solver::writeXMLFile(TiXmlNode *parent) {
 Solver* Solver::readXMLFile(const string &filename) {
   MBSimObjectFactory::initialize();
   TiXmlDocument doc;
-  bool ret=doc.LoadFile(filename);
-  assert(ret==true);
-  TiXml_PostLoadFile(&doc);
-  TiXmlElement *e=doc.FirstChildElement();
-  map<string,string> dummy;
-  incorporateNamespace(doc.FirstChildElement(), dummy);
-  Solver *solver=dynamic_cast<Solver*>(ObjectFactory::getInstance()->createGroup(e,0));
-  solver->initializeUsingXML(e);
-  solver->initialize();
-  return solver;
+  if(doc.LoadFile(filename)) {
+    TiXml_PostLoadFile(&doc);
+    TiXmlElement *e=doc.FirstChildElement();
+    map<string,string> dummy;
+    incorporateNamespace(doc.FirstChildElement(), dummy);
+    Solver *solver=dynamic_cast<Solver*>(ObjectFactory::getInstance()->createGroup(e,0));
+    solver->initializeUsingXML(e);
+    solver->initialize();
+    return solver;
+  }
+  return 0;
 }
 
 void Solver::writeXMLFile(const string &name) {

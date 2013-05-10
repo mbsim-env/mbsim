@@ -89,7 +89,7 @@ class MatrixParameter : public Parameter {
 
 class ParameterList {
   public:
-    void readXMLFile(const std::string &filename);
+    bool readXMLFile(const std::string &filename);
     //virtual void writeXMLFile(const std::string &name);
     int getSize() const {return name.size();}
     void addParameter(const std::string &name_, const std::string &value_) {name.push_back(name_); value.push_back(value_);}
