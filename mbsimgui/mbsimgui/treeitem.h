@@ -40,7 +40,7 @@ class BasicItemData : public TreeItemData {
 class TreeItem {
   public:
 
-    TreeItem(TreeItemData *itemData = 0, TreeItem *parent = 0) : itemData(itemData), parentItem(parent) {
+    TreeItem(TreeItemData *itemData = 0, TreeItem *parent = 0) : itemData(itemData), parentItem(parent), ID(1) {
       getData_[0] = &TreeItem::getData0;
       getData_[1] = &TreeItem::getData1;
       setData_[0] = &TreeItem::setData0;
@@ -65,11 +65,13 @@ class TreeItem {
     void (TreeItem::*setData_[2])(const QVariant &value);
     QVariant getData(int column) const {return (this->*getData_[column])();}
     void setData(int column, const QVariant &value) {(this->*setData_[column])(value);}
+    int getID() const {return ID;}
 
   protected:
     QList<TreeItem*> childItems;
     TreeItemData *itemData;
     TreeItem *parentItem;
+    int ID;
 };
 
 #endif

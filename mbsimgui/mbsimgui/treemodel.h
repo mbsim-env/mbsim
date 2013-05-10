@@ -57,7 +57,6 @@ class TreeModel : public QAbstractItemModel {
 
  protected:
     TreeItem *rootItem;
-    int IDcounter;
 };
 
 class ElementTreeModel : public TreeModel {
@@ -78,10 +77,6 @@ class ParameterListModel : public TreeModel {
   public:
     ParameterListModel(QObject *parent = 0);
 
-    void removeParameter(const QModelIndex &parent = QModelIndex());
-    void addScalarParameter(const QModelIndex &parent = QModelIndex());
-    void addVectorParameter(const QModelIndex &parent = QModelIndex());
-    void addMatrixParameter(const QModelIndex &parent = QModelIndex());
     void createParameterItem(Parameter *parameter, const QModelIndex &parent = QModelIndex());
 };
 

@@ -138,32 +138,26 @@ int Group::getxSize() {
 }
 
 void Group::addFrame(Frame* frame_) {
-  frameID++;
   frame.push_back(frame_);
 }
 
 void Group::addContour(Contour* contour_) {
-  contourID++;
   contour.push_back(contour_);
 }
 
 void Group::addGroup(Group* group_) {
-  groupID++;
   group.push_back(group_);
 }
 
 void Group::addObject(Object* object_) {
-  objectID++;
   object.push_back(object_);
 }
 
 void Group::addLink(Link* link_) {
-  linkID++;
   link.push_back(link_);
 }
 
 void Group::addObserver(Observer* observer_) {
-  observerID++;
   observer.push_back(observer_);
 }
 

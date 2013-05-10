@@ -37,6 +37,8 @@ int TreeItem::childNumber() const {
 
 bool TreeItem::insertChildren(TreeItem *item, int count) {
 
+  ID++;
+
   for (int row = 0; row < count; ++row)
     childItems.insert(childItems.count(), item);
 
