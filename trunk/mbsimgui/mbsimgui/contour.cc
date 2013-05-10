@@ -44,16 +44,17 @@ void Contour::setSavedFrameOfReference(const string &str) {
 
 Contour* Contour::readXMLFile(const string &filename, Element *parent) {
   TiXmlDocument doc;
-  bool ret=doc.LoadFile(filename);
-  assert(ret==true);
-  TiXml_PostLoadFile(&doc);
-  TiXmlElement *e=doc.FirstChildElement();
-  map<string,string> dummy;
-  incorporateNamespace(doc.FirstChildElement(), dummy);
-  Contour *contour=ObjectFactory::getInstance()->createContour(e,parent);
-  if(contour)
-    contour->initializeUsingXML(e);
-  return contour;
+  if(doc.LoadFile(filename)) {
+    TiXml_PostLoadFile(&doc);
+    TiXmlElement *e=doc.FirstChildElement();
+    map<string,string> dummy;
+    incorporateNamespace(doc.FirstChildElement(), dummy);
+    Contour *contour=ObjectFactory::getInstance()->createContour(e,parent);
+    if(contour)
+      contour->initializeUsingXML(e);
+    return contour;
+  }
+  return 0;
 }
 
 void Contour::initializeUsingXML(TiXmlElement *element) {

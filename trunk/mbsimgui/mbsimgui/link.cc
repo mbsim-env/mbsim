@@ -32,16 +32,17 @@ Link::~Link() {
 
 Link* Link::readXMLFile(const string &filename, Element *parent) {
   TiXmlDocument doc;
-  bool ret=doc.LoadFile(filename);
-  assert(ret==true);
-  TiXml_PostLoadFile(&doc);
-  TiXmlElement *e=doc.FirstChildElement();
-  map<string,string> dummy;
-  incorporateNamespace(doc.FirstChildElement(), dummy);
-  Link *link=ObjectFactory::getInstance()->createLink(e,parent);
-  if(link)
-    link->initializeUsingXML(e);
-  return link;
+  if(doc.LoadFile(filename)) {
+    TiXml_PostLoadFile(&doc);
+    TiXmlElement *e=doc.FirstChildElement();
+    map<string,string> dummy;
+    incorporateNamespace(doc.FirstChildElement(), dummy);
+    Link *link=ObjectFactory::getInstance()->createLink(e,parent);
+    if(link)
+      link->initializeUsingXML(e);
+    return link;
+  }
+  return 0;
 }
 
 Element * Link::getByPathSearch(string path) {

@@ -220,16 +220,17 @@ void Group::removeElement(Element* element) {
 
 Group* Group::readXMLFile(const string &filename, Element *parent) {
   TiXmlDocument doc;
-  bool ret=doc.LoadFile(filename);
-  assert(ret==true);
-  TiXml_PostLoadFile(&doc);
-  TiXmlElement *e=doc.FirstChildElement();
-  map<string,string> dummy;
-  incorporateNamespace(doc.FirstChildElement(), dummy);
-  Group *group=ObjectFactory::getInstance()->createGroup(e,parent);
-  if(group)
-    group->initializeUsingXML(e);
-  return group;
+  if(doc.LoadFile(filename)) {
+    TiXml_PostLoadFile(&doc);
+    TiXmlElement *e=doc.FirstChildElement();
+    map<string,string> dummy;
+    incorporateNamespace(doc.FirstChildElement(), dummy);
+    Group *group=ObjectFactory::getInstance()->createGroup(e,parent);
+    if(group)
+      group->initializeUsingXML(e);
+    return group;
+  }
+  return 0;
 }
 
 void Group::initializeUsingXML(TiXmlElement *element) {

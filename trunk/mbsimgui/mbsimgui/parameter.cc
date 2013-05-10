@@ -121,24 +121,26 @@ void ParameterList::addParameterList(const ParameterList &list) {
     addParameter(list.getParameterName(i),list.getParameterValue(i));
 }
 
-void ParameterList::readXMLFile(const string &filename) {
+bool ParameterList::readXMLFile(const string &filename) {
   MBSimObjectFactory::initialize();
   TiXmlDocument doc;
-  bool ret=doc.LoadFile(filename);
-  assert(ret==true);
-  TiXml_PostLoadFile(&doc);
-  TiXml_PostLoadFile(&doc);
-  TiXmlElement *e=doc.FirstChildElement();
-  TiXml_setLineNrFromProcessingInstruction(e);
-  map<string,string> dummy;
-  incorporateNamespace(doc.FirstChildElement(), dummy);
-  TiXmlElement *E=e->FirstChildElement();
-  vector<QString> refFrame;
-  while(E) {
-    Parameter *parameter=ObjectFactory::getInstance()->createParameter(E);
-    parameter->initializeUsingXML(E);
-    addParameter(parameter->getName(),parameter->getValue());
-    delete parameter;
-    E=E->NextSiblingElement();
+  if(doc.LoadFile(filename)) {
+    TiXml_PostLoadFile(&doc);
+    TiXml_PostLoadFile(&doc);
+    TiXmlElement *e=doc.FirstChildElement();
+    TiXml_setLineNrFromProcessingInstruction(e);
+    map<string,string> dummy;
+    incorporateNamespace(doc.FirstChildElement(), dummy);
+    TiXmlElement *E=e->FirstChildElement();
+    vector<QString> refFrame;
+    while(E) {
+      Parameter *parameter=ObjectFactory::getInstance()->createParameter(E);
+      parameter->initializeUsingXML(E);
+      addParameter(parameter->getName(),parameter->getValue());
+      delete parameter;
+      E=E->NextSiblingElement();
+    }
+    return true;
   }
+  return false;
 }
