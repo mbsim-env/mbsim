@@ -519,7 +519,6 @@ GearDependenciesWidget::GearDependenciesWidget(Element *element_) : element(elem
   //connect(bodyList,SIGNAL(currentRowChanged(int)),this,SLOT(changeCurrent(int)));
   connect(bodyList,SIGNAL(currentRowChanged(int)),stackedWidget,SLOT(setCurrentIndex(int)));
   connect(bodyList,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(openContextMenu(const QPoint &)));
-  connect(this,SIGNAL(bodyChanged()),this,SLOT(updateGeneralizedCoordinatesOfBodies()));
   layout->addWidget(stackedWidget,0,Qt::AlignTop);
 }
 
@@ -560,16 +559,6 @@ void GearDependenciesWidget::setNumberOfBodies(int n) {
 void GearDependenciesWidget::updateWidget() {
   for(unsigned int i=0; i<refBody.size(); i++)
     refBody[i]->updateWidget();
-}
-
-void GearDependenciesWidget::updateGeneralizedCoordinatesOfBodies() {
-  for(unsigned int i=0; i<refBody.size(); i++) {
-    if(selectedBody[i])
-      selectedBody[i]->setConstrained(false);
-    selectedBody[i] = refBody[i]->getSelectedBody();
-    if(selectedBody[i])
-      selectedBody[i]->setConstrained(true);
-  }
 }
 
 void GearDependenciesWidget::updateList() {

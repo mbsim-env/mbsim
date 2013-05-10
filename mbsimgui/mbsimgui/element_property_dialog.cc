@@ -117,6 +117,18 @@ void FixedRelativeFramePropertyDialog::fromWidget(Element *element) {
 }
 
 ContourPropertyDialog::ContourPropertyDialog(Contour *contour, QWidget * parent, Qt::WindowFlags f) : ElementPropertyDialog(contour,parent,f) {
+  refFrame = new ExtWidget("Frame of reference",new ParentFrameOfReferenceWidget(contour,0),true);
+  addToTab("General", refFrame);
+}
+
+void ContourPropertyDialog::toWidget(Element *element) {
+  ElementPropertyDialog::toWidget(element);
+  static_cast<Contour*>(element)->refFrame.toWidget(refFrame);
+}
+
+void ContourPropertyDialog::fromWidget(Element *element) {
+  ElementPropertyDialog::fromWidget(element);
+  static_cast<Contour*>(element)->refFrame.fromWidget(refFrame);
 }
 
 PlanePropertyDialog::PlanePropertyDialog(Plane *plane, QWidget *parent, Qt::WindowFlags f) : ContourPropertyDialog(plane,parent,f) {
@@ -336,6 +348,7 @@ void RigidBodyPropertyDialog::toWidget(Element *element) {
   static_cast<RigidBody*>(element)->jointForceArrow.toWidget(jointForceArrow);
   static_cast<RigidBody*>(element)->jointMomentArrow.toWidget(jointMomentArrow);
   static_cast<RigidBody*>(element)->isFrameOfBodyForRotation.toWidget(isFrameOfBodyForRotation);
+  resizeVariables();
 }
 
 void RigidBodyPropertyDialog::fromWidget(Element *element) {

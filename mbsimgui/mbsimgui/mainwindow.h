@@ -112,7 +112,7 @@ class MainWindow : public QMainWindow {
     void about();
     void updateOctaveParameters(const ParameterList &list=ParameterList());
     void removeElement();
-    void addFrame();
+    void addFixedRelativeFrame();
     void addGroup();
     void addPoint();
     void addLine();
@@ -129,6 +129,7 @@ class MainWindow : public QMainWindow {
     void addAbsoluteKinematicsObserver();
     void addAbsolutePositionSensor();
     void saveElementAs();
+    void addElementFromFile();
   protected slots:
     void selectElement(std::string);
     void changeWorkingDir();

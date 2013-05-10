@@ -48,6 +48,7 @@ class Element : public TreeItemData {
     static int IDcounter;
     std::string ID;
     ExtProperty name, embed;
+    int frameID, contourID, groupID, objectID, linkID, observerID;
   public:
     Element(const std::string &name, Element *parent);
     virtual ~Element();
@@ -102,6 +103,12 @@ class Element : public TreeItemData {
     Element* getRoot() {return parent?parent->getRoot():this;}
     bool isEmbedded() const {return embed.isActive();}
     ParameterList getParameterList(bool addCounter=true) const;
+    int getFrameID() const {return frameID;}
+    int getContourID() const {return contourID;}
+    int getGroupID() const {return groupID;}
+    int getObjectID() const {return objectID;}
+    int getLinkID() const {return linkID;}
+    int getObserverID() const {return observerID;}
 };
 
 template<class T>

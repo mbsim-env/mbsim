@@ -42,10 +42,12 @@ void Body::initialize() {
 }
 
 void Body::addFrame(Frame* frame_) {
+  frameID++;
   frame.push_back(frame_);
 }
 
 void Body::addContour(Contour* contour_) {
+  contourID++;
   contour.push_back(contour_);
 }
 

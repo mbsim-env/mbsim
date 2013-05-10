@@ -74,7 +74,7 @@ ParentFrameOfReferenceProperty::ParentFrameOfReferenceProperty(const std::string
 }
 
 void ParentFrameOfReferenceProperty::initialize() {
-  framePtr=element->getParent()->getFrame(frame.substr(9, frame.length()-10));
+  framePtr=element->getParent()->getFrame((frame.substr(0,2)=="..")?frame.substr(9, frame.length()-10):frame.substr(6, frame.length()-7));
 }
 
 void ParentFrameOfReferenceProperty::setFrame(const std::string &str) {
@@ -543,7 +543,7 @@ void SolverParametersProperty::toWidget(QWidget *widget) {
   tolerances.toWidget(static_cast<SolverParametersWidget*>(widget)->tolerances);
 }
 
-GearDependencyProperty::GearDependencyProperty(Element* element_) : element(element_), refBody(0,element) {
+GearDependencyProperty::GearDependencyProperty(Element* element_) : element(element_), refBody("",element) {
   vector<PhysicalVariableProperty*> input;
   input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"), "", MBSIMNS"transmissionRatio"));
   ratio.setProperty(new ExtPhysicalVarProperty(input));
