@@ -31,7 +31,7 @@
 
 using namespace std;
 
-TreeModel::TreeModel(QObject *parent) : QAbstractItemModel(parent), rootItem(0), IDcounter(0) {
+TreeModel::TreeModel(QObject *parent) : QAbstractItemModel(parent), rootItem(0) {
 }
 
 TreeModel::~TreeModel() {
@@ -151,7 +151,6 @@ ElementTreeModel::ElementTreeModel(QObject *parent) : TreeModel(parent) {
 }
 
 void ElementTreeModel::createFrameItem(Frame *frame, const QModelIndex &parent) {
-  IDcounter++;
 
   TreeItem *parentItem = getItem(parent);
 
@@ -165,7 +164,6 @@ void ElementTreeModel::createFrameItem(Frame *frame, const QModelIndex &parent) 
 }
 
 void ElementTreeModel::createContourItem(Contour *contour, const QModelIndex &parent) {
-  IDcounter++;
 
   TreeItem *parentItem = getItem(parent);
 
@@ -179,7 +177,6 @@ void ElementTreeModel::createContourItem(Contour *contour, const QModelIndex &pa
 }
 
 void ElementTreeModel::createGroupItem(Group *group, const QModelIndex &parent) {
-  IDcounter++;
 
   TreeItem *parentItem = getItem(parent);
 
@@ -220,7 +217,6 @@ void ElementTreeModel::createGroupItem(Group *group, const QModelIndex &parent) 
 }
 
 void ElementTreeModel::createObjectItem(Object *object, const QModelIndex &parent) {
-  IDcounter++;
 
   TreeItem *parentItem = getItem(parent);
 
@@ -247,7 +243,6 @@ void ElementTreeModel::createObjectItem(Object *object, const QModelIndex &paren
 }
 
 void ElementTreeModel::createLinkItem(Link *link, const QModelIndex &parent) {
-  IDcounter++;
 
   TreeItem *parentItem = getItem(parent);
 
@@ -261,7 +256,6 @@ void ElementTreeModel::createLinkItem(Link *link, const QModelIndex &parent) {
 }
 
 void ElementTreeModel::createObserverItem(Observer *link, const QModelIndex &parent) {
-  IDcounter++;
 
   TreeItem *parentItem = getItem(parent);
 
@@ -279,27 +273,7 @@ ParameterListModel::ParameterListModel(QObject *parent) : TreeModel(parent) {
   rootItem = new TreeItem(new BasicItemData("Name","Value"));
 }
 
-void ParameterListModel::removeParameter(const QModelIndex &index) {
-  removeRow(index.row(), index.parent());
-}
-
-void ParameterListModel::addScalarParameter(const QModelIndex &parent) {
-  ScalarParameter *parameter = new ScalarParameter("a"+toStr(IDcounter));
-  createParameterItem(parameter,parent);
-}
-
-void ParameterListModel::addVectorParameter(const QModelIndex &parent) {
-  VectorParameter *parameter = new VectorParameter("a"+toStr(IDcounter));
-  createParameterItem(parameter,parent);
-}
-
-void ParameterListModel::addMatrixParameter(const QModelIndex &parent) {
-  MatrixParameter *parameter = new MatrixParameter("a"+toStr(IDcounter));
-  createParameterItem(parameter,parent);
-}
-
 void ParameterListModel::createParameterItem(Parameter *parameter, const QModelIndex &parent) {
-  IDcounter++;
 
   TreeItem *parentItem = getItem(parent);
 
