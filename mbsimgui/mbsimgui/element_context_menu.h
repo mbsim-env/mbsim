@@ -22,21 +22,26 @@
 
 #include <QMenu>
 
+class Element;
+
 class ElementContextMenu : public QMenu {
   Q_OBJECT
 
   public:
-    ElementContextMenu(QWidget * parent = 0, bool removable=true);
+    ElementContextMenu(Element *element, QWidget * parent = 0, bool removable=true);
 
   protected slots:
     void addContour();
+
+  protected:
+    Element *element;
 };
 
 class GroupContextMenu : public ElementContextMenu {
   Q_OBJECT
 
   public:
-    GroupContextMenu(QWidget * parent = 0, bool removable=true);
+    GroupContextMenu(Element *group, QWidget * parent = 0, bool removable=true);
 
   protected slots:
     void addFixedRelativeFrame();
@@ -51,33 +56,39 @@ class ContourContextContextMenu : public QMenu {
   Q_OBJECT
 
   public:
-    ContourContextContextMenu(QWidget * parent = 0);
+    ContourContextContextMenu(Element *contour, QWidget * parent = 0);
 
   protected slots:
     void addPoint();
     void addLine();
     void addPlane();
     void addSphere();
+
+  protected:
+    Element *element;
 };
 
 class ObjectContextContextMenu : public QMenu {
   Q_OBJECT
 
   public:
-    ObjectContextContextMenu(QWidget * parent = 0);
+    ObjectContextContextMenu(Element *object, QWidget * parent = 0);
 
   protected slots:
     void addRigidBody();
     void addGearConstraint();
     void addKinematicConstraint();
     void addJointConstraint();
+
+  protected:
+    Element *element;
 };
 
 class LinkContextContextMenu : public QMenu {
   Q_OBJECT
 
   public:
-    LinkContextContextMenu(QWidget * parent = 0);
+    LinkContextContextMenu(Element *link, QWidget * parent = 0);
 
   protected slots:
     void addSpringDamper();
@@ -85,59 +96,68 @@ class LinkContextContextMenu : public QMenu {
     void addJoint();
     void addContact();
     void addSensor();
+
+  protected:
+    Element *element;
 };
 
 class ObserverContextContextMenu : public QMenu {
   Q_OBJECT
 
   public:
-    ObserverContextContextMenu(QWidget * parent = 0);
+    ObserverContextContextMenu(Element *observer, QWidget * parent = 0);
 
   protected slots:
     void addAbsoluteKinematicsObserver();
+
+  protected:
+    Element *element;
 };
 
 class SensorContextContextMenu : public QMenu {
   Q_OBJECT
 
   public:
-    SensorContextContextMenu(QWidget * parent = 0);
+    SensorContextContextMenu(Element *sensor, QWidget * parent = 0);
 
   protected slots:
     void addGeneralizedPositionSensor();
     void addAbsolutePositionSensor();
     void addFunctionSensor();
+
+  protected:
+    Element *element;
 };
 
 class SolverContextMenu : public GroupContextMenu {
 
   public:
-    SolverContextMenu(QWidget * parent = 0) : GroupContextMenu(parent,false) {} 
+    SolverContextMenu(Element *solver, QWidget * parent = 0);
 };
 
 class FrameContextMenu : public ElementContextMenu {
 
   public:
-    FrameContextMenu(QWidget * parent = 0, bool removable=false) : ElementContextMenu(parent,removable) {}
+    FrameContextMenu(Element *frame, QWidget * parent = 0, bool removable=false);
 };
 
 class FixedRelativeFrameContextMenu : public FrameContextMenu {
 
   public:
-    FixedRelativeFrameContextMenu(QWidget * parent = 0) : FrameContextMenu(parent,true) {}
+    FixedRelativeFrameContextMenu(Element *frame, QWidget * parent = 0); 
 };
 
 class ObjectContextMenu : public ElementContextMenu {
 
   public:
-    ObjectContextMenu(QWidget * parent = 0);
+    ObjectContextMenu(Element *object, QWidget * parent = 0);
 };
 
 class BodyContextMenu : public ObjectContextMenu {
   Q_OBJECT
 
   public:
-    BodyContextMenu(QWidget * parent = 0);
+    BodyContextMenu(Element *body, QWidget * parent = 0);
 
   protected slots:
     void addFixedRelativeFrame();

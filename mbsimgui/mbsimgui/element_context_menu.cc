@@ -28,11 +28,14 @@
 #include "contact.h"
 #include "signal_.h"
 #include "observer.h"
+#include "frame.h"
+#include "contour.h"
+#include "group.h"
 #include <QFileDialog>
 
 extern MainWindow *mw;
 
-ElementContextMenu::ElementContextMenu(QWidget *parent, bool removable) : QMenu(parent) {
+ElementContextMenu::ElementContextMenu(Element *element_, QWidget *parent, bool removable) : QMenu(parent), element(element_) {
   if(removable) {
     QAction *action=new QAction("Save as", this);
     connect(action,SIGNAL(triggered()),mw,SLOT(saveElementAs()));
@@ -46,11 +49,17 @@ ElementContextMenu::ElementContextMenu(QWidget *parent, bool removable) : QMenu(
 }
 
 void ElementContextMenu::addContour() {
-  ContourContextContextMenu menu;
+  ContourContextContextMenu menu(element);
   menu.exec(QCursor::pos());
 }
 
-GroupContextMenu::GroupContextMenu(QWidget *parent, bool removable) : ElementContextMenu(parent,removable) {
+FrameContextMenu::FrameContextMenu(Element *frame, QWidget * parent, bool removable) : ElementContextMenu(frame,parent,removable) {
+}
+
+FixedRelativeFrameContextMenu::FixedRelativeFrameContextMenu(Element *frame, QWidget * parent) : FrameContextMenu(frame,parent,true) {
+}
+
+GroupContextMenu::GroupContextMenu(Element *element, QWidget *parent, bool removable) : ElementContextMenu(element,parent,removable) {
   QAction *action;
   action = new QAction("Add frame", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addFixedRelativeFrame()));
@@ -76,51 +85,53 @@ GroupContextMenu::GroupContextMenu(QWidget *parent, bool removable) : ElementCon
 } 
 
 void GroupContextMenu::addFixedRelativeFrame() {
-  mw->addFrame<FixedRelativeFrame>("P");
+  mw->addFrame(new FixedRelativeFrame("P",element));
 }
-
 
 void GroupContextMenu::addElementFromFile() {
   QString file=QFileDialog::getOpenFileName(0, "XML model files", ".", "XML files (*.xml)");
   if(file!="") {
-    if(mw->addFrame<Frame>(file.toStdString(),true))
-      return;
-    if(mw->addContour<Contour>(file.toStdString(),true))
-      return;
-    if(mw->addGroup<Group>(file.toStdString(),true))
-      return;
-    if(mw->addObject<Object>(file.toStdString(),true))
-      return;
-    if(mw->addLink<Link>(file.toStdString(),true))
-      return;
-    if(mw->addObserver<Observer>(file.toStdString(),true))
-      return;
+    Frame *frame = Frame::readXMLFile(file.toStdString(),element);
+    if(frame) return mw->addFrame(frame);
+    Contour *contour = Contour::readXMLFile(file.toStdString(),element);
+    if(contour) return mw->addContour(contour);
+    Group *group = Group::readXMLFile(file.toStdString(),element);
+    if(group) return mw->addGroup(group);
+    Object *object = Object::readXMLFile(file.toStdString(),element);
+    if(object) return mw->addObject(object);
+    Link *link = Link::readXMLFile(file.toStdString(),element);
+    if(link) return mw->addLink(link);
+    Observer *observer = Observer::readXMLFile(file.toStdString(),element);
+    if(observer) return mw->addObserver(observer);
   }
 }
 
 void GroupContextMenu::addGroup() {
-  mw->addGroup<Group>("Group");
+  mw->addGroup(new Group("Group",element));
 }
 
 void GroupContextMenu::addObject() {
-  ObjectContextContextMenu menu;
+  ObjectContextContextMenu menu(element);
   menu.exec(QCursor::pos());
 }
 
 void GroupContextMenu::addLink() {
-  LinkContextContextMenu menu;
+  LinkContextContextMenu menu(element);
   menu.exec(QCursor::pos());
 }
 
 void GroupContextMenu::addObserver() {
-  ObserverContextContextMenu menu;
+  ObserverContextContextMenu menu(element);
   menu.exec(QCursor::pos());
 }
 
-ObjectContextMenu::ObjectContextMenu(QWidget *parent) : ElementContextMenu(parent,true) {
+SolverContextMenu::SolverContextMenu(Element *solver, QWidget * parent) : GroupContextMenu(solver,parent,false) {
+}
+
+ObjectContextMenu::ObjectContextMenu(Element *element, QWidget *parent) : ElementContextMenu(element,parent,true) {
 } 
 
-BodyContextMenu::BodyContextMenu(QWidget *parent) : ObjectContextMenu(parent) {
+BodyContextMenu::BodyContextMenu(Element *element, QWidget *parent) : ObjectContextMenu(element,parent) {
   QAction *action;
   action = new QAction("Add frame", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addFixedRelativeFrame()));
@@ -131,10 +142,10 @@ BodyContextMenu::BodyContextMenu(QWidget *parent) : ObjectContextMenu(parent) {
 } 
 
 void BodyContextMenu::addFixedRelativeFrame() {
-  mw->addFrame<FixedRelativeFrame>("P");
+  mw->addFrame(new FixedRelativeFrame("P",element));
 }
 
-ContourContextContextMenu::ContourContextContextMenu(QWidget *parent) : QMenu(parent) {
+ContourContextContextMenu::ContourContextContextMenu(Element *element_, QWidget *parent) : QMenu(parent), element(element_) {
   QAction *action = new QAction("Add point", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addPoint()));
   addAction(action);
@@ -150,22 +161,22 @@ ContourContextContextMenu::ContourContextContextMenu(QWidget *parent) : QMenu(pa
 }
 
 void ContourContextContextMenu::addPoint() {
-  mw->addContour<Point>("Point");
+  mw->addContour(new Point("Point",element));
 }
 
 void ContourContextContextMenu::addLine() {
-  mw->addContour<Line>("Line");
+  mw->addContour(new Line("Line",element));
 }
 
 void ContourContextContextMenu::addPlane() {
-  mw->addContour<Plane>("Plane");
+  mw->addContour(new Plane("Plane",element));
 }
 
 void ContourContextContextMenu::addSphere() {
-  mw->addContour<Sphere>("Sphere");
+  mw->addContour(new Sphere("Sphere",element));
 }
 
-ObjectContextContextMenu::ObjectContextContextMenu(QWidget *parent) : QMenu(parent) {
+ObjectContextContextMenu::ObjectContextContextMenu(Element *element_, QWidget *parent) : QMenu(parent), element(element_) {
   QAction *action = new QAction("Add rigid body", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addRigidBody()));
   addAction(action);
@@ -181,22 +192,22 @@ ObjectContextContextMenu::ObjectContextContextMenu(QWidget *parent) : QMenu(pare
 }
 
 void ObjectContextContextMenu::addRigidBody() {
-  mw->addObject<RigidBody>("RigidBody");
+  mw->addObject(new RigidBody("RigidBody",element));
 }
 
 void ObjectContextContextMenu::addGearConstraint() {
-  mw->addObject<GearConstraint>("GearConstraint");
+  mw->addObject(new GearConstraint("GearConstraint",element));
 }
 
 void ObjectContextContextMenu::addKinematicConstraint() {
-  mw->addObject<KinematicConstraint>("KinematicConstraint");
+  mw->addObject(new KinematicConstraint("KinematicConstraint",element));
 }
 
 void ObjectContextContextMenu::addJointConstraint() {
-  mw->addObject<JointConstraint>("JointConstraint");
+  mw->addObject(new JointConstraint("JointConstraint",element));
 }
 
-LinkContextContextMenu::LinkContextContextMenu(QWidget *parent) : QMenu(parent) {
+LinkContextContextMenu::LinkContextContextMenu(Element *element_, QWidget *parent) : QMenu(parent) {
   QAction *action = new QAction("Add kinetic excitation", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addKineticExcitation()));
   action = new QAction("Add spring damper", this);
@@ -214,37 +225,37 @@ LinkContextContextMenu::LinkContextContextMenu(QWidget *parent) : QMenu(parent) 
 }
 
 void LinkContextContextMenu::addKineticExcitation() {
-  mw->addLink<KineticExcitation>("KineticExcitation");
+  mw->addLink(new KineticExcitation("KineticExcitation",element));
 }
 
 void LinkContextContextMenu::addSpringDamper() {
-  mw->addLink<SpringDamper>("SpringDamper");
+  mw->addLink(new SpringDamper("SpringDamper",element));
 }
 
 void LinkContextContextMenu::addJoint() {
-  mw->addLink<Joint>("Joint");
+  mw->addLink(new Joint("Joint",element));
 }
 
 void LinkContextContextMenu::addContact() {
-  mw->addLink<Contact>("Contact");
+  mw->addLink(new Contact("Contact",element));
 }
 
 void LinkContextContextMenu::addSensor() {
-  SensorContextContextMenu menu;
+  SensorContextContextMenu menu(element);
   menu.exec(QCursor::pos());
 }
 
-ObserverContextContextMenu::ObserverContextContextMenu(QWidget *parent) : QMenu(parent) {
+ObserverContextContextMenu::ObserverContextContextMenu(Element *element_, QWidget *parent) : QMenu(parent), element(element_) {
   QAction *action = new QAction("Add absolute kinematics observer", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addAbsoluteKinematicsObserver()));
   addAction(action);
 }
 
 void ObserverContextContextMenu::addAbsoluteKinematicsObserver() {
-  mw->addObserver<AbsoluteKinematicsObserver>("AbsoluteKinematicsObserver");
+  mw->addObserver(new AbsoluteKinematicsObserver("AbsoluteKinematicsObserver",element));
 }
 
-SensorContextContextMenu::SensorContextContextMenu(QWidget *parent) : QMenu(parent) {
+SensorContextContextMenu::SensorContextContextMenu(Element *element_, QWidget *parent) : QMenu(parent), element(element_) {
   QAction *action = new QAction("Add generalized position sensor", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedPositionSensor()));
   addAction(action);
@@ -257,15 +268,15 @@ SensorContextContextMenu::SensorContextContextMenu(QWidget *parent) : QMenu(pare
 }
 
 void SensorContextContextMenu::addGeneralizedPositionSensor() {
-  mw->addLink<GeneralizedPositionSensor>("GeneralizedPositionSensor");
+  mw->addLink(new GeneralizedPositionSensor("GeneralizedPositionSensor",element));
 }
 
 void SensorContextContextMenu::addAbsolutePositionSensor() {
-  mw->addLink<AbsolutePositionSensor>("AbsolutePositionSensor");
+  mw->addLink(new AbsolutePositionSensor("AbsolutePositionSensor",element));
 }
 
 void SensorContextContextMenu::addFunctionSensor() {
-  mw->addLink<FunctionSensor>("FunctionSensor");
+  mw->addLink(new FunctionSensor("FunctionSensor",element));
 }
 
 
