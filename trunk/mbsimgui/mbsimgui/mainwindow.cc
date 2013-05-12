@@ -233,7 +233,7 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   env.insert("MBXMLUTILS_XMLOUTPUT", "1");
   mbsim->getProcess()->setProcessEnvironment(env);
   mbsimDW->setWidget(mbsim); 
-  connect(mbsim->getProcess(),SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(simulationFinished(int)));
+  connect(mbsim->getProcess(),SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(simulationFinished(int,QProcess::ExitStatus)));
 
   setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
   
@@ -241,10 +241,9 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   newMBS(false);
 }
 
-void MainWindow::simulationFinished(int exitCode) {
+void MainWindow::simulationFinished(int exitCode, QProcess::ExitStatus exitStatus) {
   actionSimulate->setDisabled(false);
   statusBar()->showMessage(tr("Ready"));
-  mbsim->setCurrentIndex(exitCode);
 }
 
 void MainWindow::openPropertyDialog() {
@@ -866,13 +865,13 @@ Process::Process(QWidget *parent) : QTabWidget(parent) {
   err->setOpenLinks(false);
   connect(out, SIGNAL(anchorClicked(const QUrl &)), this, SLOT(outLinkClicked(const QUrl &)));
   connect(err, SIGNAL(anchorClicked(const QUrl &)), this, SLOT(errLinkClicked(const QUrl &)));
+  connect(process, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(processFinished(int,QProcess::ExitStatus)));
   addTab(out, "Out");
   addTab(err, "Err");
-  setCurrentIndex(1);
+  setCurrentIndex(0);
   setMinimumHeight(80);
   setTabPosition(QTabWidget::West);
-  connect(process, SIGNAL(readyReadStandardOutput()), this, SLOT(output()));
-  connect(process, SIGNAL(readyReadStandardError()), this, SLOT(error()));
+  connect(&timer, SIGNAL(timeout()), this, SLOT(updateOutputAndError()));
 }
 
 void Process::clearOutputAndStart(const QString &program, const QStringList &arguments) {
@@ -880,31 +879,51 @@ void Process::clearOutputAndStart(const QString &program, const QStringList &arg
   errText="";
   out->clear();
   err->clear();
+  setCurrentIndex(0);
   process->start(program, arguments);
+  timer.start(250);
 }
 
-void Process::output() {
-  QString newText=process->readAllStandardOutput().data();
-  convertToHtml(newText);
-  outText+=newText;
-  out->setHtml(outText);
-  out->moveCursor(QTextCursor::End);
+void Process::updateOutputAndError() {
+  QByteArray outArray=process->readAllStandardOutput();
+  if(outArray.size()!=0) {
+    outText+=outArray.data();
+    out->setHtml(convertToHtml(outText));
+    out->moveCursor(QTextCursor::End);
+  }
+
+  QByteArray errArray=process->readAllStandardError();
+  if(errArray.size()!=0) {
+    errText+=errArray.data();
+    err->setHtml(convertToHtml(errText));
+    err->moveCursor(QTextCursor::Start);
+  }
 }
 
-void Process::error() {
-  QString newText=process->readAllStandardError().data();
-  convertToHtml(newText);
-  errText+=newText;
-  err->setHtml(errText);
-  err->moveCursor(QTextCursor::Start);
-}
+QString Process::convertToHtml(QString &text) {
+  // the following operations modify the original text
 
-void Process::convertToHtml(QString &text) {
-  // newlines to html
-  text.replace("\n", "<br/>");
-  // replace <FILE ...>
+#ifdef WIN32
+  // convert windows line ending to linux line ending (they are later replaced to html line ending)
+  text.replace("\x0D\x0A", "\x0A");
+#endif
+  // from now on use linux line ending => do not use \n, \r in string literals but \x0A, \x0D
+
+  // remove all lines but the last ending with carriage return '\x0D'
+  static QRegExp carriageReturn("(^|\x0A)[^\x0A]*\x0D([^\x0A\x0D]*\x0D)");
+  text.replace(carriageReturn, "\\1\\2");
+
+  // replace <FILE ...> to html reference
   static QRegExp fileRE("<FILE path=\"(.+)\" line=\"([0-9]+)\">(.+)</FILE>");
   text.replace(fileRE, "<a href=\"\\1?line=\\2\">\\3</a>");
+
+  // the following operations modify only the QString return value
+  QString ret=text;
+
+  // newlines '\x0A' to html
+  ret.replace("\x0A", "<br/>");
+
+  return ret;
 }
 
 QSize Process::sizeHint() const {
@@ -934,6 +953,15 @@ void Process::outLinkClicked(const QUrl &link) {
 
 void Process::errLinkClicked(const QUrl &link) {
   linkClicked(link, err);
+}
+
+void Process::processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
+  timer.stop();
+  updateOutputAndError();
+  if(exitStatus==QProcess::NormalExit && exitCode==0)
+    setCurrentIndex(0);
+  else
+    setCurrentIndex(1);
 }
 
 void MainWindow::removeElement() {
