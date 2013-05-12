@@ -207,7 +207,7 @@ void ObjectContextContextMenu::addJointConstraint() {
   mw->addObject(new JointConstraint("JointConstraint",element));
 }
 
-LinkContextContextMenu::LinkContextContextMenu(Element *element_, QWidget *parent) : QMenu(parent) {
+LinkContextContextMenu::LinkContextContextMenu(Element *element_, QWidget *parent) : QMenu(parent), element(element_) {
   QAction *action = new QAction("Add kinetic excitation", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addKineticExcitation()));
   action = new QAction("Add spring damper", this);
