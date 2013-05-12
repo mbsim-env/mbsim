@@ -29,6 +29,7 @@ class Frame;
 class Contour;
 class Object;
 class RigidBody;
+class Signal;
 
 namespace MBXMLUtils {
   class TiXmlElement;
@@ -134,6 +135,23 @@ class ObjectOfReferenceProperty : public Property {
     void toWidget(QWidget *widget);
     void setObject(const std::string &str);
     std::string getObject() const;
+};
+
+class SignalOfReferenceProperty : public Property {
+  protected:
+    std::string signal;
+    Signal *signalPtr;
+    Element* element;
+    std::string xmlName;
+  public:
+    SignalOfReferenceProperty(const std::string &signal_="", Element *element_=0, const std::string &xmlName_=""); 
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
+    void initialize();
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+    void setSignal(const std::string &str);
+    std::string getSignal() const;
 };
 
 class FileProperty : public Property {
@@ -302,6 +320,40 @@ class EmbedProperty : public Property {
     ExtProperty href, count, counterName, parameterList;
 
 };
+
+class SignalReferenceProperty : public Property {
+  public:
+    SignalReferenceProperty(Element* element);
+    void initialize() {refSignal.initialize();}
+    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+  protected:
+    Element* element;
+    SignalOfReferenceProperty refSignal;
+    ExtProperty factor;
+};
+
+class SignalReferencesProperty : public Property {
+
+  public:
+    SignalReferencesProperty(Element* element_, const std::string &xmlName_) : element(element_), xmlName(xmlName_) {}
+
+    void initialize();
+    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+
+  protected:
+    Element* element;
+    std::string xmlName;
+    std::vector<SignalReferenceProperty*> refSignal;
+
+    void addReference();
+};
+
 
 #endif
 

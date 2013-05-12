@@ -219,8 +219,8 @@ LinkContextContextMenu::LinkContextContextMenu(Element *element_, QWidget *paren
   action = new QAction("Add contact", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addContact()));
   addAction(action);
-  action = new QAction("Add sensor", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(addSensor()));
+  action = new QAction("Add signal", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addSignal()));
   addAction(action);
 }
 
@@ -240,9 +240,13 @@ void LinkContextContextMenu::addContact() {
   mw->addLink(new Contact("Contact",element));
 }
 
-void LinkContextContextMenu::addSensor() {
-  SensorContextContextMenu menu(element);
+void LinkContextContextMenu::addSignal() {
+  SignalContextContextMenu menu(element);
   menu.exec(QCursor::pos());
+}
+
+void ObserverContextContextMenu::addAbsoluteKinematicsObserver() {
+  mw->addObserver(new AbsoluteKinematicsObserver("AbsoluteKinematicsObserver",element));
 }
 
 ObserverContextContextMenu::ObserverContextContextMenu(Element *element_, QWidget *parent) : QMenu(parent), element(element_) {
@@ -251,8 +255,22 @@ ObserverContextContextMenu::ObserverContextContextMenu(Element *element_, QWidge
   addAction(action);
 }
 
-void ObserverContextContextMenu::addAbsoluteKinematicsObserver() {
-  mw->addObserver(new AbsoluteKinematicsObserver("AbsoluteKinematicsObserver",element));
+SignalContextContextMenu::SignalContextContextMenu(Element *element_, QWidget *parent) : QMenu(parent), element(element_) {
+  QAction *action = new QAction("Add sensor", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addSensor()));
+  addAction(action);
+  action = new QAction("Add signal addition", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addSignalAddition()));
+  addAction(action);
+}
+
+void SignalContextContextMenu::addSensor() {
+  SensorContextContextMenu menu(element);
+  menu.exec(QCursor::pos());
+}
+
+void SignalContextContextMenu::addSignalAddition() {
+  mw->addLink(new SignalAddition("SignalAddition",element));
 }
 
 SensorContextContextMenu::SensorContextContextMenu(Element *element_, QWidget *parent) : QMenu(parent), element(element_) {
@@ -278,5 +296,3 @@ void SensorContextContextMenu::addAbsolutePositionSensor() {
 void SensorContextContextMenu::addFunctionSensor() {
   mw->addLink(new FunctionSensor("FunctionSensor",element));
 }
-
-

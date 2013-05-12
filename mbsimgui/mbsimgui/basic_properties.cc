@@ -22,6 +22,7 @@
 #include "frame.h"
 #include "contour.h"
 #include "rigidbody.h"
+#include "signal_.h"
 #include "basic_widgets.h"
 #include "variable_widgets.h"
 #include "kinematics_widgets.h"
@@ -258,6 +259,44 @@ void ObjectOfReferenceProperty::fromWidget(QWidget *widget) {
 void ObjectOfReferenceProperty::toWidget(QWidget *widget) {
   static_cast<ObjectOfReferenceWidget*>(widget)->setObject(QString::fromStdString(object),objectPtr);
   static_cast<ObjectOfReferenceWidget*>(widget)->updateWidget();
+}
+
+SignalOfReferenceProperty::SignalOfReferenceProperty(const std::string &signal_, Element *element_, const std::string &xmlName_) : signal(signal_), signalPtr(element_->getByPath<Signal>(signal)), element(element_), xmlName(xmlName_) {
+}
+
+void SignalOfReferenceProperty::initialize() {
+  signalPtr=element->getByPath<Signal>(signal);
+}
+
+void SignalOfReferenceProperty::setSignal(const std::string &str) {
+  signal = str;
+  signalPtr=element->getByPath<Signal>(signal);
+}
+
+std::string SignalOfReferenceProperty::getSignal() const {
+  return signalPtr?signalPtr->getXMLPath(element,true):signal;
+}
+
+TiXmlElement* SignalOfReferenceProperty::initializeUsingXML(TiXmlElement *parent) {
+  TiXmlElement *e = parent->FirstChildElement(xmlName);
+  if(e) signal=e->Attribute("ref");
+  return e;
+}
+
+TiXmlElement* SignalOfReferenceProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele = new TiXmlElement(xmlName);
+  ele->SetAttribute("ref", getSignal());
+  parent->LinkEndChild(ele);
+  return 0;
+}
+
+void SignalOfReferenceProperty::fromWidget(QWidget *widget) {
+  setSignal(static_cast<SignalOfReferenceWidget*>(widget)->getSignal().toStdString());
+}
+
+void SignalOfReferenceProperty::toWidget(QWidget *widget) {
+  static_cast<SignalOfReferenceWidget*>(widget)->setSignal(QString::fromStdString(signal),signalPtr);
+  static_cast<SignalOfReferenceWidget*>(widget)->updateWidget();
 }
 
 TiXmlElement* FileProperty::initializeUsingXML(TiXmlElement *element) {
@@ -724,5 +763,83 @@ void EmbedProperty::toWidget(QWidget *widget) {
   count.toWidget(static_cast<EmbedWidget*>(widget)->count);
   counterName.toWidget(static_cast<EmbedWidget*>(widget)->counterName);
   parameterList.toWidget(static_cast<EmbedWidget*>(widget)->parameterList);
+}
+
+SignalReferenceProperty::SignalReferenceProperty(Element* element_) : element(element_), refSignal("",element) {
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"), "", MBSIMCONTROLNS"factor"));
+  factor.setProperty(new ExtPhysicalVarProperty(input));
+} 
+
+TiXmlElement* SignalReferenceProperty::initializeUsingXML(TiXmlElement *ele) {
+  factor.initializeUsingXML(ele);
+  refSignal.setSignal(ele->Attribute("ref"));
+  return ele;
+}
+
+TiXmlElement* SignalReferenceProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele = new TiXmlElement(MBSIMCONTROLNS"inputSignal");
+  factor.writeXMLFile(ele);
+  ele->SetAttribute("ref", refSignal.getSignal());
+  parent->LinkEndChild(ele);
+  return ele;
+}
+
+void SignalReferenceProperty::fromWidget(QWidget *widget) {
+  factor.fromWidget(static_cast<SignalReferenceWidget*>(widget)->factor);
+  refSignal.fromWidget(static_cast<SignalReferenceWidget*>(widget)->refSignal);
+}
+
+void SignalReferenceProperty::toWidget(QWidget *widget) {
+  factor.toWidget(static_cast<SignalReferenceWidget*>(widget)->factor);
+  refSignal.toWidget(static_cast<SignalReferenceWidget*>(widget)->refSignal);
+}
+
+void SignalReferencesProperty::initialize() {
+  for(unsigned int i=0; i<refSignal.size(); i++)
+    refSignal[i]->initialize();
+}
+
+void SignalReferencesProperty::addReference() {
+}
+
+TiXmlElement* SignalReferencesProperty::initializeUsingXML(TiXmlElement *ele) {
+  TiXmlElement *ee=ele->FirstChildElement();
+  while(ee) {
+    refSignal.push_back(new SignalReferenceProperty(element));
+    refSignal[refSignal.size()-1]->initializeUsingXML(ee);
+    ee=ee->NextSiblingElement();
+  }
+  return ele;
+}
+
+TiXmlElement* SignalReferencesProperty::writeXMLFile(TiXmlNode *parent) {
+  for(int i=0; i<refSignal.size(); i++) {
+    if(refSignal[i])
+      refSignal[i]->writeXMLFile(parent);
+  }
+  return 0;
+}
+
+void SignalReferencesProperty::fromWidget(QWidget *widget) {
+  if(refSignal.size()!=static_cast<SignalReferencesWidget*>(widget)->refSignal.size()) {
+    refSignal.clear();
+    for(int i=0; i<static_cast<SignalReferencesWidget*>(widget)->refSignal.size(); i++)
+      refSignal.push_back(new SignalReferenceProperty(element));
+  }
+  for(int i=0; i<static_cast<SignalReferencesWidget*>(widget)->refSignal.size(); i++) {
+    if(static_cast<SignalReferencesWidget*>(widget)->refSignal[i])
+      refSignal[i]->fromWidget(static_cast<SignalReferencesWidget*>(widget)->refSignal[i]);
+  }
+}
+
+void SignalReferencesProperty::toWidget(QWidget *widget) {
+  static_cast<SignalReferencesWidget*>(widget)->setNumberOfSignals(refSignal.size());
+  for(int i=0; i<refSignal.size(); i++) {
+    if(refSignal[i]) {
+      refSignal[i]->toWidget(static_cast<SignalReferencesWidget*>(widget)->refSignal[i]);
+    }
+  }
+  static_cast<SignalReferencesWidget*>(widget)->updateWidget();
 }
 

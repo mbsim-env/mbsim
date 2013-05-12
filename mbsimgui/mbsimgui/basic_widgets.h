@@ -29,6 +29,7 @@ class RigidBody;
 class Frame;
 class Contour;
 class Parameter;
+class Signal;
 class QComboBox;
 class QCheckBox;
 class QStackedWidget;
@@ -37,6 +38,7 @@ class FrameBrowser;
 class ContourBrowser;
 class RigidBodyBrowser;
 class ObjectBrowser;
+class SignalBrowser;
 class ExtWidget;
 class QLabel;
 
@@ -164,6 +166,30 @@ class ObjectOfReferenceWidget : public Widget {
 
   signals:
     void objectChanged();
+};
+
+class SignalOfReferenceWidget : public Widget {
+  Q_OBJECT
+
+  public:
+    SignalOfReferenceWidget(Element* element, Signal* selectedSignal);
+
+    void updateWidget();
+    void setSignal(const QString &str, Signal *signalPtr);
+    QString getSignal() const;
+    Signal* getSelectedSignal() {return selectedSignal;}
+
+  protected:
+    QLineEdit* signal;
+    Element* element;
+    SignalBrowser* signalBrowser;
+    Signal* selectedSignal;
+
+  public slots:
+    void setSignal();
+
+  signals:
+    void signalChanged();
 };
 
 class FileWidget : public Widget {
@@ -368,5 +394,49 @@ class EmbedWidget : public Widget {
     ExtWidget *href, *count, *counterName, *parameterList;
 
 };
+
+class SignalReferenceWidget : public Widget {
+
+  friend class SignalReferenceProperty;
+
+  public:
+    SignalReferenceWidget(Element* element);
+    Signal* getSelectedSignal() {return refSignal->getSelectedSignal();}
+    SignalOfReferenceWidget* getSignalOfReferenceWidget() {return refSignal;}
+    void updateWidget() {refSignal->updateWidget();}
+  protected:
+   SignalOfReferenceWidget* refSignal;
+   ExtWidget *factor;
+};
+
+class SignalReferencesWidget : public Widget {
+  Q_OBJECT
+
+  friend class SignalReferencesProperty;
+
+  public:
+    SignalReferencesWidget(Element* element);
+
+    void updateWidget(); 
+
+    Signal* getSelectedSignal(int i) {return refSignal[i]->getSelectedSignal();}
+    void addSignal(int i, Signal* signal_);
+    int getSize() const {return refSignal.size();}
+    void setNumberOfSignals(int n);
+
+  protected:
+    Element* element;
+    std::vector<Signal*> selectedSignal;
+    std::vector<SignalReferenceWidget*> refSignal;
+    QStackedWidget *stackedWidget; 
+    QListWidget *signalList; 
+
+  protected slots:
+    void updateList();
+    void addReference();
+    void removeReference();
+    void openContextMenu(const QPoint &pos);
+};
+
 
 #endif

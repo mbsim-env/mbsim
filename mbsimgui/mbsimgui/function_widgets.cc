@@ -290,11 +290,11 @@ Function1ChoiceWidget::Function1ChoiceWidget(bool withFactor, int n_) : function
   comboBox->addItem(tr("Tabular function"));
   comboBox->addItem(tr("Summation function"));
   layout->addWidget(comboBox);
-  connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineForceLaw(int)));
-  defineForceLaw(0);
+  connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFunction(int)));
+  defineFunction(0);
 }
 
-void Function1ChoiceWidget::defineForceLaw(int index) {
+void Function1ChoiceWidget::defineFunction(int index) {
   layout->removeWidget(function);
   delete function;
   if(index==0)
@@ -323,11 +323,11 @@ Function2ChoiceWidget::Function2ChoiceWidget() : function(0) {
   //comboBox->addItem(tr("None"));
   comboBox->addItem(tr("Linear spring damper force"));
   layout->addWidget(comboBox);
-  connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineForceLaw(int)));
-  defineForceLaw(0);
+  connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFunction(int)));
+  defineFunction(0);
 }
 
-void Function2ChoiceWidget::defineForceLaw(int index) {
+void Function2ChoiceWidget::defineFunction(int index) {
   int cols = 0;
   layout->removeWidget(function);
   delete function;

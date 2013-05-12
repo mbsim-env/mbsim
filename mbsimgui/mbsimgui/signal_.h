@@ -86,4 +86,18 @@ class FunctionSensor : public Sensor {
     ExtProperty function;
 };
 
+class SignalAddition : public Signal {
+  friend class SignalAdditionPropertyDialog;
+  public:
+    SignalAddition(const std::string &str, Element *parent);
+    virtual std::string getType() const { return "SignalAddition"; }
+    void initialize();
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    ElementPropertyDialog* createPropertyDialog() {return new SignalAdditionPropertyDialog(this);}
+  protected:
+    ExtProperty signalReferences;
+};
+
+
 #endif

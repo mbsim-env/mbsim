@@ -51,6 +51,7 @@ class GeneralizedPositionSensor;
 class AbsoluteCoordinateSensor;
 class AbsolutePositionSensor;
 class FunctionSensor;
+class SignalAddition;
 class TextWidget;
 class VecWidget;
 class ExtWidget;
@@ -344,5 +345,14 @@ class FunctionSensorPropertyDialog : public SensorPropertyDialog {
     ExtWidget *function;
 };
 
+class SignalAdditionPropertyDialog : public SignalPropertyDialog {
+
+  public:
+    SignalAdditionPropertyDialog(SignalAddition *signal, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+    ExtWidget *signalReferences;
+};
 
 #endif
