@@ -23,6 +23,8 @@
 #include "parameter.h"
 #include <QMainWindow>
 #include <QTabWidget>
+#include <QProcess>
+#include <QTimer>
 #include <mbxmlutilstinyxml/tinyxml.h>
 
 class QAction;
@@ -129,7 +131,7 @@ class MainWindow : public QMainWindow {
     void changeWorkingDir();
     void selectionChanged();
     void openPropertyDialog();
-    void simulationFinished(int exitCode);
+    void simulationFinished(int exitCode, QProcess::ExitStatus exitStatus);
   protected:
     void closeEvent ( QCloseEvent * event );
 };
@@ -146,13 +148,14 @@ class Process : public QTabWidget {
     QProcess *process;
     QTextBrowser *out, *err;
     QString outText, errText;
-    void convertToHtml(QString &text);
+    static QString convertToHtml(QString &text);
     void linkClicked(const QUrl &link, QTextBrowser *std);
+    QTimer timer;
   private slots:
-    void output();
-    void error();
+    void updateOutputAndError();
     void outLinkClicked(const QUrl &link);
     void errLinkClicked(const QUrl &link);
+    void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
 };
 
 #endif
