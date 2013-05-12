@@ -23,6 +23,7 @@
 #include "rigidbody.h"
 #include "frame.h"
 #include "contour.h"
+#include "signal_.h"
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
 #include <QTreeWidget>
@@ -96,7 +97,7 @@ void RigidBodyBrowser::updateWidget(RigidBody *sel) {
 }
 
 void RigidBodyBrowser::mbs2RigidBodyTree(Element* ele, QTreeWidgetItem* parentItem) {
-  if(dynamic_cast<Group*>(ele) || dynamic_cast<RigidBody*>(ele) || dynamic_cast<RigidBody*>(ele)) {
+  if(dynamic_cast<Group*>(ele) || dynamic_cast<RigidBody*>(ele)) {
 
     ElementItem *item = new ElementItem(ele);
     item->setText(0,QString::fromStdString(ele->getName()));
@@ -151,7 +152,7 @@ void ObjectBrowser::updateWidget(Object *sel) {
 }
 
 void ObjectBrowser::mbs2ObjectTree(Element* ele, QTreeWidgetItem* parentItem) {
-  if(dynamic_cast<Group*>(ele) || dynamic_cast<RigidBody*>(ele) || dynamic_cast<RigidBody*>(ele)) {
+  if(dynamic_cast<Group*>(ele) || dynamic_cast<Object*>(ele)) {
 
     ElementItem *item = new ElementItem(ele);
     item->setText(0,QString::fromStdString(ele->getName()));
@@ -206,7 +207,7 @@ void FrameBrowser::updateWidget(Frame *sel) {
 }
 
 void FrameBrowser::mbs2FrameTree(Element* ele, QTreeWidgetItem* parentItem) {
-  if(dynamic_cast<Group*>(ele) || dynamic_cast<RigidBody*>(ele) || dynamic_cast<Frame*>(ele)) {
+  if(dynamic_cast<Group*>(ele) || dynamic_cast<Frame*>(ele)) {
 
     ElementItem *item = new ElementItem(ele);
     item->setText(0,QString::fromStdString(ele->getName()));
@@ -263,7 +264,7 @@ void ContourBrowser::updateWidget(Contour *sel) {
 }
 
 void ContourBrowser::mbs2ContourTree(Element* ele, QTreeWidgetItem* parentItem) {
-  if(dynamic_cast<Group*>(ele) || dynamic_cast<RigidBody*>(ele) || dynamic_cast<Contour*>(ele)) {
+  if(dynamic_cast<Group*>(ele) || dynamic_cast<Contour*>(ele)) {
 
     ElementItem *item = new ElementItem(ele);
     item->setText(0,QString::fromStdString(ele->getName()));
@@ -285,6 +286,61 @@ void ContourBrowser::mbs2ContourTree(Element* ele, QTreeWidgetItem* parentItem) 
 void ContourBrowser::checkForContour(QTreeWidgetItem* item_,int) {
   ElementItem* item = static_cast<ElementItem*>(item_);
   if(dynamic_cast<Contour*>(item->getElement()))
+    okButton->setDisabled(false);
+  else
+    okButton->setDisabled(true);
+}
+
+SignalBrowser::SignalBrowser(Element* element_, Signal* signal, QWidget *parentSignal_) : QDialog(parentSignal_), selection(signal), savedItem(0), element(element_) {
+  QGridLayout* mainLayout=new QGridLayout;
+  setLayout(mainLayout);
+  signalList = new QTreeWidget;
+  signalList->setColumnCount(1);
+  mainLayout->addWidget(signalList,0,0);
+  QObject::connect(signalList, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(checkForSignal(QTreeWidgetItem*,int)));
+
+  okButton = new QPushButton("Ok");
+  if(!selection)
+    okButton->setDisabled(true);
+  mainLayout->addWidget(okButton,1,0);
+  connect(okButton, SIGNAL(clicked(bool)), this, SLOT(accept()));
+
+  QPushButton *button = new QPushButton("Cancel");
+  mainLayout->addWidget(button,1,1);
+  connect(button, SIGNAL(clicked(bool)), this, SLOT(reject()));
+
+  setWindowTitle("Signal browser");
+}
+
+void SignalBrowser::updateWidget(Signal *sel) {
+  selection = sel;
+  signalList->clear();
+  savedItem = 0;
+  mbs2SignalTree(element,signalList->invisibleRootItem());
+  signalList->setCurrentItem(savedItem);
+}
+
+void SignalBrowser::mbs2SignalTree(Element* ele, QTreeWidgetItem* parentItem) {
+  if(dynamic_cast<Group*>(ele) || dynamic_cast<Signal*>(ele)) {
+
+    ElementItem *item = new ElementItem(ele);
+    item->setText(0,QString::fromStdString(ele->getName()));
+
+    if(ele == selection)
+      savedItem = item;
+
+    parentItem->addChild(item);
+
+    for(int i=0; i<ele->getNumberOfGroups(); i++)
+      mbs2SignalTree(ele->getGroup(i),item);
+    for(int i=0; i<ele->getNumberOfLinks(); i++)
+      mbs2SignalTree(ele->getLink(i),item);
+  }
+}
+
+void SignalBrowser::checkForSignal(QTreeWidgetItem* item_,int) {
+  ElementItem* item = static_cast<ElementItem*>(item_);
+  if(dynamic_cast<Signal*>(item->getElement()))
     okButton->setDisabled(false);
   else
     okButton->setDisabled(true);

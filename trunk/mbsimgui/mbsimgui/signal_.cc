@@ -104,3 +104,24 @@ TiXmlElement* FunctionSensor::writeXMLFile(TiXmlNode *parent) {
   function.writeXMLFile(ele0);
   return ele0;
 }
+
+SignalAddition::SignalAddition(const string &str, Element *parent) : Signal(str, parent) {
+  signalReferences.setProperty(new SignalReferencesProperty(this,""));
+}
+
+void SignalAddition::initialize() {
+  Signal::initialize();
+
+  signalReferences.initialize();
+}
+
+void SignalAddition::initializeUsingXML(TiXmlElement *element) {
+  Signal::initializeUsingXML(element);
+  signalReferences.initializeUsingXML(element);
+}
+
+TiXmlElement* SignalAddition::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = Signal::writeXMLFile(parent);
+  signalReferences.writeXMLFile(ele0);
+  return ele0;
+}

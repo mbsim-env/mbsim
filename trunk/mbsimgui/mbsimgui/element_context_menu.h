@@ -95,7 +95,7 @@ class LinkContextContextMenu : public QMenu {
     void addKineticExcitation();
     void addJoint();
     void addContact();
-    void addSensor();
+    void addSignal();
 
   protected:
     Element *element;
@@ -109,6 +109,20 @@ class ObserverContextContextMenu : public QMenu {
 
   protected slots:
     void addAbsoluteKinematicsObserver();
+
+  protected:
+    Element *element;
+};
+
+class SignalContextContextMenu : public QMenu {
+  Q_OBJECT
+
+  public:
+    SignalContextContextMenu(Element *signal, QWidget * parent = 0);
+
+  protected slots:
+    void addSensor();
+    void addSignalAddition();
 
   protected:
     Element *element;

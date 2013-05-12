@@ -216,7 +216,7 @@ class Function1ChoiceProperty : public Property {
   public:
     Function1ChoiceProperty(const std::string &xmlName, bool withFactor=false);
 
-    void defineForceLaw(int);
+    void defineFunction(int);
 
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -235,7 +235,7 @@ class Function2ChoiceProperty : public Property {
   public:
     Function2ChoiceProperty(const std::string &xmlName);
 
-    void defineForceLaw(int);
+    void defineFunction(int);
 
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);

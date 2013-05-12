@@ -389,10 +389,10 @@ Function1ChoiceProperty::Function1ChoiceProperty(const string &xmlName_, bool wi
     input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMNS"factor"));
     factor.setProperty(new ExtPhysicalVarProperty(input));
   }
-  defineForceLaw(0);
+  defineFunction(0);
 }
 
-void Function1ChoiceProperty::defineForceLaw(int index_) {
+void Function1ChoiceProperty::defineFunction(int index_) {
   index = index_;
   delete function;
   if(index==0)
@@ -423,7 +423,7 @@ TiXmlElement* Function1ChoiceProperty::initializeUsingXML(TiXmlElement *element)
         index = 3;
       else if(ee->ValueStr() == MBSIMNS"SummationFunction1_VS")
         index = 4;
-      defineForceLaw(index);
+      defineFunction(index);
       function->initializeUsingXML(ee);
     }
     if(factor.getProperty())
@@ -449,7 +449,7 @@ TiXmlElement* Function1ChoiceProperty::writeXMLFile(TiXmlNode *parent) {
 }
 
 void Function1ChoiceProperty::fromWidget(QWidget *widget) {
-  defineForceLaw(static_cast<Function1ChoiceWidget*>(widget)->comboBox->currentIndex());
+  defineFunction(static_cast<Function1ChoiceWidget*>(widget)->comboBox->currentIndex());
   function->fromWidget(static_cast<Function1ChoiceWidget*>(widget)->function);
   if(factor.getProperty())
     factor.fromWidget(static_cast<Function1ChoiceWidget*>(widget)->factor);
@@ -460,7 +460,7 @@ void Function1ChoiceProperty::toWidget(QWidget *widget) {
   static_cast<Function1ChoiceWidget*>(widget)->comboBox->setCurrentIndex(index);
   static_cast<Function1ChoiceWidget*>(widget)->comboBox->blockSignals(false);
   static_cast<Function1ChoiceWidget*>(widget)->blockSignals(true);
-  static_cast<Function1ChoiceWidget*>(widget)->defineForceLaw(index);
+  static_cast<Function1ChoiceWidget*>(widget)->defineFunction(index);
   static_cast<Function1ChoiceWidget*>(widget)->blockSignals(false);
   function->toWidget(static_cast<Function1ChoiceWidget*>(widget)->function);
   if(factor.getProperty())
@@ -468,10 +468,10 @@ void Function1ChoiceProperty::toWidget(QWidget *widget) {
 }
 
 Function2ChoiceProperty::Function2ChoiceProperty(const string &xmlName_) : function(0), index(0), xmlName(xmlName_) {
-  defineForceLaw(0);
+  defineFunction(0);
 }
 
-void Function2ChoiceProperty::defineForceLaw(int index_) {
+void Function2ChoiceProperty::defineFunction(int index_) {
   index = index_;
   delete function;
   if(index==0)
@@ -484,7 +484,7 @@ TiXmlElement* Function2ChoiceProperty::initializeUsingXML(TiXmlElement *element)
     TiXmlElement* ee=e->FirstChildElement();
     if(ee) {
       if(ee->ValueStr() == MBSIMNS"LinearSpringDamperForce") {
-        defineForceLaw(0);
+        defineFunction(0);
         function->initializeUsingXML(ee);
       }
     }
@@ -502,7 +502,7 @@ TiXmlElement* Function2ChoiceProperty::writeXMLFile(TiXmlNode *parent) {
 }
 
 void Function2ChoiceProperty::fromWidget(QWidget *widget) {
-  defineForceLaw(static_cast<Function2ChoiceWidget*>(widget)->comboBox->currentIndex());
+  defineFunction(static_cast<Function2ChoiceWidget*>(widget)->comboBox->currentIndex());
   function->fromWidget(static_cast<Function2ChoiceWidget*>(widget)->function);
 }
 
@@ -511,7 +511,7 @@ void Function2ChoiceProperty::toWidget(QWidget *widget) {
   static_cast<Function2ChoiceWidget*>(widget)->comboBox->setCurrentIndex(index);
   static_cast<Function2ChoiceWidget*>(widget)->comboBox->blockSignals(false);
   static_cast<Function2ChoiceWidget*>(widget)->blockSignals(true);
-  static_cast<Function2ChoiceWidget*>(widget)->defineForceLaw(index);
+  static_cast<Function2ChoiceWidget*>(widget)->defineFunction(index);
   static_cast<Function2ChoiceWidget*>(widget)->blockSignals(false);
   function->toWidget(static_cast<Function2ChoiceWidget*>(widget)->function);
 }

@@ -30,6 +30,7 @@ class Object;
 class RigidBody;
 class Frame;
 class Contour;
+class Signal;
 
 class ElementItem : public QTreeWidgetItem {
   private:
@@ -127,6 +128,25 @@ class ContourBrowser : public QDialog {
     void mbs2ContourTree(Element* item, QTreeWidgetItem* parentItem);
   protected slots:
     void checkForContour(QTreeWidgetItem* item_,int);
+};
+
+class SignalBrowser : public QDialog {
+  Q_OBJECT
+
+  public:
+    SignalBrowser(Element* element, Signal* selection, QWidget *obj);
+    ~SignalBrowser() {}
+    QTreeWidget* getSignalList() const {return signalList;}
+    void updateWidget(Signal *signal);
+  protected:
+    QPushButton *okButton;
+    QTreeWidget *signalList;
+    Signal *selection;
+    ElementItem *savedItem;
+    Element* element;
+    void mbs2SignalTree(Element* item, QTreeWidgetItem* parentItem);
+  protected slots:
+    void checkForSignal(QTreeWidgetItem* item_,int);
 };
 
 #endif

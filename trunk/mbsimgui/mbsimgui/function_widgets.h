@@ -236,7 +236,7 @@ class Function1ChoiceWidget : public Widget {
     Function1Widget* getFunction() {return function;}
 
   protected slots:
-    void defineForceLaw(int);
+    void defineFunction(int);
 
   protected:
     QComboBox *comboBox;
@@ -260,7 +260,7 @@ class Function2ChoiceWidget : public Widget {
     void resize(int m, int n) {if(function) function->resize(m,n);}
 
   protected slots:
-      void defineForceLaw(int);
+      void defineFunction(int);
 
   protected:
     QComboBox *comboBox;

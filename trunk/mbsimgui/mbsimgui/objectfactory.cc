@@ -155,6 +155,8 @@ Link* MBSimObjectFactory::createLink(TiXmlElement *element, Element *parent) {
     return new AbsolutePositionSensor(element->Attribute("name"),parent);
   if(element->ValueStr()==MBSIMCONTROLNS"FunctionSensor")
     return new FunctionSensor(element->Attribute("name"),parent);
+  if(element->ValueStr()==MBSIMCONTROLNS"SignalAddition")
+    return new SignalAddition(element->Attribute("name"),parent);
   //if(element->ValueStr()==MBSIMNS"ExternGeneralizedIO")
   //  return new ExternGeneralizedIO(element->Attribute("name"));
   return 0;

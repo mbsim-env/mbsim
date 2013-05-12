@@ -837,3 +837,18 @@ void FunctionSensorPropertyDialog::fromWidget(Element *element) {
   static_cast<FunctionSensor*>(element)->function.fromWidget(function);
 }
 
+SignalAdditionPropertyDialog::SignalAdditionPropertyDialog(SignalAddition *signal, QWidget * parent, Qt::WindowFlags f) : SignalPropertyDialog(signal,parent,f) {
+  signalReferences = new ExtWidget("Signal references",new SignalReferencesWidget(signal));
+  addToTab("General", signalReferences);
+}
+
+void SignalAdditionPropertyDialog::toWidget(Element *element) {
+  SignalPropertyDialog::toWidget(element);
+  static_cast<SignalAddition*>(element)->signalReferences.toWidget(signalReferences);
+}
+
+void SignalAdditionPropertyDialog::fromWidget(Element *element) {
+  SignalPropertyDialog::fromWidget(element);
+  static_cast<SignalAddition*>(element)->signalReferences.fromWidget(signalReferences);
+}
+

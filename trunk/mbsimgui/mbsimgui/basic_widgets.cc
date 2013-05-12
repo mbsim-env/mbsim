@@ -23,6 +23,7 @@
 #include "frame.h"
 #include "contour.h"
 #include "group.h"
+#include "signal_.h"
 #include "dialogs.h"
 #include <QtGui>
 
@@ -285,6 +286,48 @@ void ObjectOfReferenceWidget::setObject(const QString &str, Object *objectPtr) {
 
 QString ObjectOfReferenceWidget::getObject() const {
   return object->text();
+}
+
+SignalOfReferenceWidget::SignalOfReferenceWidget(Element *element_, Signal* selectedSignal_) : element(element_), selectedSignal(selectedSignal_) {
+  QHBoxLayout *layout = new QHBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
+  signal = new QLineEdit;
+  if(selectedSignal)
+    signal->setText(QString::fromStdString(selectedSignal->getXMLPath(element,true)));
+  signalBrowser = new SignalBrowser(element->getRoot(),0,this);
+  connect(signalBrowser,SIGNAL(accepted()),this,SLOT(setSignal()));
+  layout->addWidget(signal);
+  QPushButton *button = new QPushButton(tr("Browse"));
+  connect(button,SIGNAL(clicked(bool)),signalBrowser,SLOT(show()));
+  layout->addWidget(button);
+}
+
+void SignalOfReferenceWidget::updateWidget() {
+  signalBrowser->updateWidget(selectedSignal); 
+  if(selectedSignal) {
+    setSignal();
+  }
+}
+
+void SignalOfReferenceWidget::setSignal() {
+  if(signalBrowser->getSignalList()->currentItem())
+    selectedSignal = static_cast<Signal*>(static_cast<ElementItem*>(signalBrowser->getSignalList()->currentItem())->getElement());
+  else
+    selectedSignal = 0;
+  signal->setText(selectedSignal?QString::fromStdString(selectedSignal->getXMLPath(element,true)):"");
+  emit signalChanged();
+}
+
+void SignalOfReferenceWidget::setSignal(const QString &str, Signal *signalPtr) {
+  selectedSignal = signalPtr;
+  signal->setText(str);
+  emit signalChanged();
+}
+
+QString SignalOfReferenceWidget::getSignal() const {
+  return signal->text();
 }
 
 FileWidget::FileWidget(const QString &description_, const QString &extensions_, int mode_) : description(description_), extensions(extensions_), mode(mode_) {
@@ -647,3 +690,102 @@ EmbedWidget::EmbedWidget() {
   parameterList = new ExtWidget("Parameter file", new FileWidget("XML parameter files", "xml files (*.mbsimparam.xml)"), true);
   layout->addWidget(parameterList);
 }
+
+SignalReferenceWidget::SignalReferenceWidget(Element *element) {
+  QVBoxLayout *layout = new QVBoxLayout;
+  setLayout(layout);
+  layout->setMargin(0);
+
+  refSignal = new SignalOfReferenceWidget(element,0);
+  layout->addWidget(refSignal);
+
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), QStringList(), 1));
+  factor = new ExtWidget("Factor",new ExtPhysicalVarWidget(input));
+  layout->addWidget(factor);
+}
+
+SignalReferencesWidget::SignalReferencesWidget(Element *element_) : element(element_) {
+  QHBoxLayout *layout = new QHBoxLayout;
+  setLayout(layout);
+  layout->setMargin(0);
+  signalList = new QListWidget;
+  signalList->setContextMenuPolicy (Qt::CustomContextMenu);
+  signalList->setMinimumWidth(signalList->sizeHint().width()/3);
+  signalList->setMaximumWidth(signalList->sizeHint().width()/3);
+  layout->addWidget(signalList);
+  stackedWidget = new QStackedWidget;
+  //connect(signalList,SIGNAL(currentRowChanged(int)),this,SLOT(changeCurrent(int)));
+  connect(signalList,SIGNAL(currentRowChanged(int)),stackedWidget,SLOT(setCurrentIndex(int)));
+  connect(signalList,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(openContextMenu(const QPoint &)));
+  layout->addWidget(stackedWidget,0,Qt::AlignTop);
+}
+
+void SignalReferencesWidget::openContextMenu(const QPoint &pos) {
+ if(signalList->itemAt(pos)) {
+   QMenu menu(this);
+   QAction *add = new QAction(tr("Remove"), this);
+   connect(add, SIGNAL(triggered()), this, SLOT(removeReference()));
+   menu.addAction(add);
+   menu.exec(QCursor::pos());
+ }
+ else {
+   QMenu menu(this);
+   QAction *add = new QAction(tr("Add"), this);
+   connect(add, SIGNAL(triggered()), this, SLOT(addReference()));
+   menu.addAction(add);
+   menu.exec(QCursor::pos());
+ }
+}
+
+void SignalReferencesWidget::setNumberOfSignals(int n) {
+  if(refSignal.size() != n) {
+    for(unsigned int i=0; i<refSignal.size(); i++)
+      stackedWidget->removeWidget(refSignal[i]);
+    selectedSignal.clear();
+    refSignal.clear();
+    signalList->clear();
+    for(unsigned int i=0; i<n; i++) {
+      selectedSignal.push_back(0);
+      refSignal.push_back(new SignalReferenceWidget(element));
+      connect(refSignal[i]->getSignalOfReferenceWidget(),SIGNAL(signalChanged()),this,SLOT(updateList()));
+      signalList->addItem("Undefined");
+      stackedWidget->addWidget(refSignal[i]);
+    }
+  }
+}
+
+void SignalReferencesWidget::updateWidget() {
+  for(unsigned int i=0; i<refSignal.size(); i++)
+    refSignal[i]->updateWidget();
+}
+
+void SignalReferencesWidget::updateList() {
+  for(int i=0; i<signalList->count(); i++)
+    if(refSignal[i]->getSelectedSignal())
+      signalList->item(i)->setText(QString::fromStdString(refSignal[i]->getSelectedSignal()->getName()));
+}
+
+void SignalReferencesWidget::addReference() {
+  int i = refSignal.size();
+  selectedSignal.push_back(0);
+  refSignal.push_back(new SignalReferenceWidget(element));
+  connect(refSignal[i]->getSignalOfReferenceWidget(),SIGNAL(signalChanged()),this,SLOT(updateList()));
+  signalList->addItem("Undefined");
+  stackedWidget->addWidget(refSignal[i]);
+  updateWidget();
+}
+
+void SignalReferencesWidget::removeReference() {
+  int i = signalList->currentRow();
+  selectedSignal.pop_back();
+
+  stackedWidget->removeWidget(refSignal[i]);
+  delete refSignal[i];
+  refSignal.erase(refSignal.begin()+i);
+  delete signalList->takeItem(i);
+
+  updateList();
+}
+
+
