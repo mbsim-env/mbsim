@@ -46,7 +46,7 @@ class ExtPhysicalVarProperty : public Property {
 class PropertyChoiceProperty : public Property {
 
   public:
-    PropertyChoiceProperty(const std::vector<Property*> &property_) : property(property_), index(0) {}
+    PropertyChoiceProperty(const std::vector<Property*> &property_, const std::string &xmlName_="") : property(property_), index(0), xmlName(xmlName_) {}
     ~PropertyChoiceProperty();
     void initialize();
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
@@ -56,16 +56,17 @@ class PropertyChoiceProperty : public Property {
   protected:
     std::vector<Property*> property;
     int index;
+    std::string xmlName;
 };
 
 class ExtProperty : public Property {
   public:
-    ExtProperty(Property *property_=0, bool active_=true, const std::string &name="", bool flag=true) : property(property_), active(active_), xmlName(name), alwaysWriteXMLName(flag) {}
+    ExtProperty(Property *property_=0, bool active_=true, const std::string &xmlName_="", bool flag=true) : property(property_), active(active_), xmlName(xmlName_), alwaysWriteXMLName(flag) {}
     ~ExtProperty() {delete property;}
     Property* getProperty() {return property;}
     const Property* getProperty() const {return property;}
     void setProperty(Property *property_) {property = property_;}
-    void setXMLName(const std::string &name, bool flag=true) {xmlName = name; alwaysWriteXMLName=flag;}
+    void setXMLName(const std::string &xmlName_, bool flag=true) {xmlName = xmlName_; alwaysWriteXMLName=flag;}
 
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -83,8 +84,8 @@ class ExtProperty : public Property {
 
 class PropertyContainer : public Property {
   public:
-    PropertyContainer() {}
-    PropertyContainer(const std::vector<Property*> &property_) : property(property_) {}
+    PropertyContainer(const std::string &xmlName_="") : xmlName(xmlName_) {}
+    PropertyContainer(const std::vector<Property*> &property_, const std::string &xmlName_="") : property(property_), xmlName(xmlName_) {}
     ~PropertyContainer();
 
     void initialize();
@@ -96,6 +97,7 @@ class PropertyContainer : public Property {
 
   protected:
     std::vector<Property*> property;
+    std::string xmlName;
 };
 
 #endif

@@ -78,16 +78,34 @@ void PropertyChoiceProperty::initialize() {
 }
 
 TiXmlElement* PropertyChoiceProperty::initializeUsingXML(TiXmlElement *element) {
-  for(int i=0; i<property.size(); i++)
-    if(property[i]->initializeUsingXML(element)) {
-      index = i;
-      return element;
-    }
+  if(xmlName!="") {
+    TiXmlElement *e=element->FirstChildElement(xmlName);
+    if(e)
+      for(int i=0; i<property.size(); i++)
+        if(property[i]->initializeUsingXML(e)) {
+          index = i;
+          return e;
+        }
+  }
+  else {
+    for(int i=0; i<property.size(); i++)
+      if(property[i]->initializeUsingXML(element)) {
+        index = i;
+        return element;
+      }
+  }
   return 0;
 }
 
 TiXmlElement* PropertyChoiceProperty::writeXMLFile(TiXmlNode *parent) {
-  return property[index]->writeXMLFile(parent);
+  if(xmlName!="") {
+    TiXmlElement *ele0 = new TiXmlElement(xmlName);
+    property[index]->writeXMLFile(ele0);
+    parent->LinkEndChild(ele0);
+    return ele0;
+  }
+  else
+    return property[index]->writeXMLFile(parent);
 }
 
 void PropertyChoiceProperty::fromWidget(QWidget *widget) {
@@ -112,9 +130,8 @@ TiXmlElement* ExtProperty::initializeUsingXML(TiXmlElement *element) {
     if(e)
       active = property->initializeUsingXML(e);
   }
-  else {
+  else
     active = property->initializeUsingXML(element);
-  }
   return active?element:0;
 }
 
@@ -161,16 +178,32 @@ void PropertyContainer::initialize() {
 }
 
 TiXmlElement* PropertyContainer::initializeUsingXML(TiXmlElement *element) {
-  bool flag = false;
-  for(unsigned int i=0; i<property.size(); i++)
-    if(!property[i]->initializeUsingXML(element))
-      return 0;
-  return element;
+  if(xmlName!="") {
+    TiXmlElement *e=element->FirstChildElement(xmlName);
+    if(e)
+      for(unsigned int i=0; i<property.size(); i++)
+        if(!property[i]->initializeUsingXML(e))
+          return 0;
+    return e;
+  }
+  else {
+    for(unsigned int i=0; i<property.size(); i++)
+      if(!property[i]->initializeUsingXML(element))
+        return 0;
+    return element;
+  }
 }
 
 TiXmlElement* PropertyContainer::writeXMLFile(TiXmlNode *parent) {
-  for(unsigned int i=0; i<property.size(); i++)
-    property[i]->writeXMLFile(parent);
+  if(xmlName!="") {
+    TiXmlElement *ele0 = new TiXmlElement(xmlName);
+    for(unsigned int i=0; i<property.size(); i++)
+      property[i]->writeXMLFile(ele0);
+    parent->LinkEndChild(ele0);
+  }
+  else
+    for(unsigned int i=0; i<property.size(); i++)
+      property[i]->writeXMLFile(parent);
   return 0;
 }
 

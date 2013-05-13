@@ -579,7 +579,7 @@ LinearTransferSystemPropertyDialog::LinearTransferSystemPropertyDialog(LinearTra
   input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
   propertyContainer->addWidget(new ExtWidget("D",new ExtPhysicalVarWidget(input)));
 
-  choiceWidget.push_back(new ExtWidget("PID",propertyContainer));
+  choiceWidget.push_back(propertyContainer);
 
   propertyContainer = new WidgetContainer;
 
@@ -599,7 +599,7 @@ LinearTransferSystemPropertyDialog::LinearTransferSystemPropertyDialog(LinearTra
   input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
   propertyContainer->addWidget(new ExtWidget("D",new ExtPhysicalVarWidget(input)));
 
-  choiceWidget.push_back(new ExtWidget("ABCD",propertyContainer));
+  choiceWidget.push_back(propertyContainer);
 
   propertyContainer = new WidgetContainer;
 
@@ -607,7 +607,7 @@ LinearTransferSystemPropertyDialog::LinearTransferSystemPropertyDialog(LinearTra
   input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),noUnitUnits(),1));
   propertyContainer->addWidget(new ExtWidget("gain",new ExtPhysicalVarWidget(input)));
 
-  choiceWidget.push_back(new ExtWidget("Integrator",propertyContainer));
+  choiceWidget.push_back(propertyContainer);
 
   propertyContainer = new WidgetContainer;
 
@@ -619,7 +619,7 @@ LinearTransferSystemPropertyDialog::LinearTransferSystemPropertyDialog(LinearTra
   input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.1"),noUnitUnits(),1));
   propertyContainer->addWidget(new ExtWidget("T",new ExtPhysicalVarWidget(input)));
 
-  choiceWidget.push_back(new ExtWidget("PT1",propertyContainer));
+  choiceWidget.push_back(propertyContainer);
 
   choice = new ExtWidget("Type",new WidgetChoiceWidget(name,choiceWidget));
   addToTab("General", choice);
