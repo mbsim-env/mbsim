@@ -25,19 +25,14 @@
 #include <QtGui/QMessageBox>
 #include <QVBoxLayout>
 #include "objectfactory.h"
-#include "rigidbody.h"
-#include "constraint.h"
-#include "spring_damper.h"
-#include "joint.h"
-#include "kinetic_excitation.h"
-#include "contact.h"
-#include "signal_.h"
 #include "frame.h"
 #include "contour.h"
-#include "basic_properties.h"
-#include <string>
-#include "utils.h"
+#include "object.h"
+#include "link.h"
+#include "extra_dynamic.h"
 #include "observer.h"
+#include "basic_properties.h"
+#include "utils.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -61,16 +56,6 @@ Group::Group(const string &str, Element *parent) : Element(str,parent), position
 }
 
 Group::~Group() {
-//  for(vector<Group*>::iterator i = group.begin(); i != group.end(); ++i) 
-//    delete *i;
-//  for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
-//    delete *i;
-//  for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
-//    delete *i;
-//  // for(vector<ExtraDynamic*>::iterator i = extraDynamic.begin(); i != extraDynamic.end(); ++i)
-//  //   delete *i;
-//  for(vector<Frame*>::iterator i = frame.begin(); i != frame.end(); ++i)
-//    delete *i;
 }
 
 void Group::initialize() {
@@ -90,6 +75,9 @@ void Group::initialize() {
 
   for(int i=0; i<link.size(); i++)
     link[i]->initialize();
+
+  for(int i=0; i<extraDynamic.size(); i++)
+    extraDynamic[i]->initialize();
 
   for(int i=0; i<observer.size(); i++)
     observer[i]->initialize();
@@ -153,6 +141,10 @@ void Group::addObject(Object* object_) {
   object.push_back(object_);
 }
 
+void Group::addExtraDynamic(ExtraDynamic* extraDynamic_) {
+  extraDynamic.push_back(extraDynamic_);
+}
+
 void Group::addLink(Link* link_) {
   link.push_back(link_);
 }
@@ -194,6 +186,15 @@ void Group::removeElement(Element* element) {
       if(*it==element) {
         //cout << "erase " << (*it)->getName() << endl;
         object.erase(it);
+        //delete (*it);
+        break;
+      }
+  }
+  else if(dynamic_cast<ExtraDynamic*>(element)) {
+    for (vector<ExtraDynamic*>::iterator it = extraDynamic.begin() ; it != extraDynamic.end(); ++it)
+      if(*it==element) {
+        //cout << "erase " << (*it)->getName() << endl;
+        extraDynamic.erase(it);
         //delete (*it);
         break;
       }
@@ -398,14 +399,35 @@ void Group::initializeUsingXML(TiXmlElement *element) {
     E=E->NextSiblingElement();
   }
 
-  // extraDynamics
+  // extra dynamics
   if(element->FirstChildElement(MBSIMNS"extraDynamics")) {
     E=element->FirstChildElement(MBSIMNS"extraDynamics")->FirstChildElement();
-    //ExtraDynamic *ed;
+    ExtraDynamic *ed;
     while(E) {
-      //        ed=ObjectFactory::getInstance()->createExtraDynamic(E);
-      //        addExtraDynamic(ed);
-      //        ed->initializeUsingXML(E);
+      if(E->ValueStr()==PVNS"embed") {
+        TiXmlElement *EE = 0;
+        if(E->Attribute("href"))
+          ed=ExtraDynamic::readXMLFile(E->Attribute("href"),this);
+        else {
+          EE = E->FirstChildElement();
+          if(EE->ValueStr() == PVNS"localParameter")
+            EE = EE->NextSiblingElement();
+          ed=ObjectFactory::getInstance()->createExtraDynamic(EE,this);
+        }
+        if(ed) {
+          addExtraDynamic(ed);
+          ed->initializeUsingXMLEmbed(E);
+          if(EE)
+            ed->initializeUsingXML(EE);
+        }
+      }
+      else {
+        ed=ObjectFactory::getInstance()->createExtraDynamic(E,this);
+        if(ed) {
+          addExtraDynamic(ed);
+          ed->initializeUsingXML(E);
+        }
+      }
       E=E->NextSiblingElement();
     }
   }
@@ -523,9 +545,16 @@ TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
     else
       object[i]->writeXMLFile(ele1);
   ele0->LinkEndChild( ele1 );
-
-  ele1 = new TiXmlElement( MBSIMNS"extraDynamics" );
-  ele0->LinkEndChild( ele1 );
+  
+  if(extraDynamic.size()) { 
+    ele1 = new TiXmlElement( MBSIMNS"extraDynamics" );
+    for(int i=0; i<extraDynamic.size(); i++)
+      if(extraDynamic[i]->isEmbedded())
+        extraDynamic[i]->writeXMLFileEmbed(ele1);
+      else
+        extraDynamic[i]->writeXMLFile(ele1);
+    ele0->LinkEndChild( ele1 );
+  }
 
   ele1 = new TiXmlElement( MBSIMNS"links" );
   for(int i=0; i<link.size(); i++)
@@ -535,13 +564,15 @@ TiXmlElement* Group::writeXMLFile(TiXmlNode *parent) {
       link[i]->writeXMLFile(ele1);
   ele0->LinkEndChild( ele1 );
 
-  ele1 = new TiXmlElement( MBSIMNS"observers" );
-  for(int i=0; i<observer.size(); i++)
-    if(observer[i]->isEmbedded())
-      observer[i]->writeXMLFileEmbed(ele1);
-    else
-      observer[i]->writeXMLFile(ele1);
-  ele0->LinkEndChild( ele1 );
+  if(observer.size()) { 
+    ele1 = new TiXmlElement( MBSIMNS"observers" );
+    for(int i=0; i<observer.size(); i++)
+      if(observer[i]->isEmbedded())
+        observer[i]->writeXMLFileEmbed(ele1);
+      else
+        observer[i]->writeXMLFile(ele1);
+    ele0->LinkEndChild( ele1 );
+  }
 
   Frame *I = getFrame(0);
   if(I->openMBVFrame()) {
@@ -569,53 +600,61 @@ Element* Group::getByPathSearch(string path) {
     string searched_name=path.substr(pos0+1, pos1-pos0-1);
     if(path.length()>pos1+1) { // weiter absteigen
       string rest=path.substr(pos1+2);
-      if (container=="Object") {
+      if (container=="Group") {
+        Group *group = getGroup(searched_name);
+        return group?group->getByPathSearch(rest):NULL;
+      }
+      else if (container=="Object") {
         Object *object = getObject(searched_name);
         return object?object->getByPathSearch(rest):NULL;
+      }
+      else if (container=="ExtraDynamic") {
+        ExtraDynamic *ed = getExtraDynamic(searched_name);
+        return ed?ed->getByPathSearch(rest):NULL;
       }
       else if (container=="Link") {
         Link *link = getLink(searched_name);
         return link?link->getByPathSearch(rest):NULL;
       }
-      //else if (container=="ExtraDynamic")
-      //return getExtraDynamic(searched_name)->getByPathSearch(rest);
-      else if (container=="Group") {
-        Group *group = getGroup(searched_name);
-        return group?group->getByPathSearch(rest):NULL;
+      else if (container=="Observer") {
+        Observer *observer = getObserver(searched_name);
+        return observer?observer->getByPathSearch(rest):NULL;
       }
     }
     else {
-      if (container=="Object")
-        return getObject(searched_name);
-      else if (container=="Link")
-        return getLink(searched_name);
-      //else if (container=="ExtraDynamic")
-      //return getExtraDynamic(searched_name);
-      else if (container=="Group")
-        return getGroup(searched_name);
-      else if (container=="Frame")
+      if (container=="Frame")
         return getFrame(searched_name);
       else if (container=="Contour")
         return getContour(searched_name);
+      else if (container=="Group")
+        return getGroup(searched_name);
+      else if (container=="Object")
+        return getObject(searched_name);
+      else if (container=="ExtraDynamic")
+        return getExtraDynamic(searched_name);
+      else if (container=="Link")
+        return getLink(searched_name);
+      else if (container=="Observer")
+        return getObserver(searched_name);
     }
   }
   return NULL;
 }
 
-Link* Group::getLink(const string &name) {
+Frame* Group::getFrame(const string &name) {
   int i;
-  for(i=0; i<link.size(); i++) {
-    if(link[i]->getName() == name)
-      return link[i];
+  for(i=0; i<frame.size(); i++) {
+    if(frame[i]->getName() == name)
+      return frame[i];
   }
   return NULL;
 }
 
-Observer* Group::getObserver(const string &name) {
+Contour* Group::getContour(const string &name) {
   int i;
-  for(i=0; i<observer.size(); i++) {
-    if(observer[i]->getName() == name)
-      return observer[i];
+  for(i=0; i<contour.size(); i++) {
+    if(contour[i]->getName() == name)
+      return contour[i];
   }
   return NULL;
 }
@@ -638,21 +677,33 @@ Object* Group::getObject(const string &name) {
   return NULL;
 }
 
-Frame* Group::getFrame(const string &name) {
+ExtraDynamic* Group::getExtraDynamic(const string &name) {
   int i;
-  for(i=0; i<frame.size(); i++) {
-    if(frame[i]->getName() == name)
-      return frame[i];
+  for(i=0; i<extraDynamic.size(); i++) {
+    if(extraDynamic[i]->getName() == name)
+      return extraDynamic[i];
   }
   return NULL;
 }
 
-Contour* Group::getContour(const string &name) {
+Link* Group::getLink(const string &name) {
   int i;
-  for(i=0; i<contour.size(); i++) {
-    if(contour[i]->getName() == name)
-      return contour[i];
+  for(i=0; i<link.size(); i++) {
+    if(link[i]->getName() == name)
+      return link[i];
   }
   return NULL;
 }
+
+Observer* Group::getObserver(const string &name) {
+  int i;
+  for(i=0; i<observer.size(); i++) {
+    if(observer[i]->getName() == name)
+      return observer[i];
+  }
+  return NULL;
+}
+
+
+
 

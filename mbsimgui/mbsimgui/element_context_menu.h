@@ -47,6 +47,7 @@ class GroupContextMenu : public ElementContextMenu {
     void addFixedRelativeFrame();
     void addGroup();
     void addObject();
+    void addExtraDynamic();
     void addLink();
     void addObserver();
     void addElementFromFile();
@@ -83,6 +84,20 @@ class ObjectContextContextMenu : public QMenu {
   protected:
     Element *element;
 };
+
+class ExtraDynamicContextContextMenu : public QMenu {
+  Q_OBJECT
+
+  public:
+    ExtraDynamicContextContextMenu(Element *ed, QWidget * parent = 0);
+
+  protected slots:
+    void addLinearTransferSystem();
+
+  protected:
+    Element *element;
+};
+
 
 class LinkContextContextMenu : public QMenu {
   Q_OBJECT

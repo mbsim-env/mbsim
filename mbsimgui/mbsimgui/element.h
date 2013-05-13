@@ -32,8 +32,8 @@ class Frame;
 class Contour;
 class Group;
 class Object;
-class Link;
 class ExtraDynamic;
+class Link;
 class Observer;
 class TextWidget;
 
@@ -74,24 +74,22 @@ class Element : public TreeItemData {
     virtual int getNumberOfContours() {return 0;}
     virtual int getNumberOfGroups() {return 0;}
     virtual int getNumberOfObjects() {return 0;}
+    virtual int getNumberOfExtraDynamics() {return 0;}
     virtual int getNumberOfLinks() {return 0;}
     virtual int getNumberOfObservers() {return 0;}
     virtual Frame* getFrame(int i) {return 0;}
     virtual Contour* getContour(int i) {return 0;}
     virtual Group* getGroup(int i) {return 0;}
     virtual Object* getObject(int i) {return 0;}
+    virtual ExtraDynamic* getExtraDynamic(int i) {return 0;}
     virtual Link* getLink(int i) {return 0;}
     virtual Observer* getObserver(int i) {return 0;}
     virtual Frame* getFrame(const std::string &name) {return 0;}
-    //Contour* getContour(const std::string &name);
-    //Object* getObject(const std::string &name);
-    //Group* getGroup(const std::string &name);
-    //Link* getLink(const std::string &name);
-    //Observer* getObserver(const std::string &name);
     virtual void addFrame(Frame *frame) {}
     virtual void addContour(Contour *contour) {}
     virtual void addGroup(Group *group) {}
     virtual void addObject(Object *object) {}
+    virtual void addExtraDynamic(ExtraDynamic *extraDynamic) {}
     virtual void addLink(Link *link) {}
     virtual void addObserver(Observer *observer) {}
     virtual void removeElement(Element *element) {}

@@ -37,6 +37,9 @@ class Constraint;
 class GearConstraint;
 class KinematicConstraint;
 class JointConstraint;
+class ExtraDynamic;
+class SignalProcessingSystem;
+class LinearTransferSystem;
 class Link;
 class KineticExcitation;
 class SpringDamper;
@@ -224,6 +227,35 @@ class JointConstraintPropertyDialog : public ConstraintPropertyDialog {
     void resizeGeneralizedPosition();
   protected:
     ExtWidget *force, *moment, *connections, *independentBody, *dependentBodiesFirstSide, *dependentBodiesSecondSide;
+};
+
+class ExtraDynamicPropertyDialog : public ElementPropertyDialog {
+
+  public:
+    ExtraDynamicPropertyDialog(ExtraDynamic *ed, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+};
+
+class SignalProcessingSystemPropertyDialog : public ExtraDynamicPropertyDialog {
+
+  public:
+    SignalProcessingSystemPropertyDialog(SignalProcessingSystem *sps, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+    ExtWidget *signalRef;
+};
+
+class LinearTransferSystemPropertyDialog : public SignalProcessingSystemPropertyDialog {
+
+  public:
+    LinearTransferSystemPropertyDialog(LinearTransferSystem *lts, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+    ExtWidget *choice;
 };
 
 class LinkPropertyDialog : public ElementPropertyDialog {
