@@ -17,31 +17,25 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _SIGNAL__H_
-#define _SIGNAL__H_
+#ifndef _ACTUATOR__H_
+#define _ACTUATOR__H_
 
 #include "link.h"
 #include "extended_properties.h"
 
-class Signal : public Link {
+class Actuator : public Link {
+  friend class ActuatorPropertyDialog;
   public:
-    Signal(const std::string &str, Element *parent);
+    Actuator(const std::string &str, Element *parent);
+    ~Actuator();
+    std::string getType() const { return "Actuator"; }
     virtual std::string getNameSpace() const { return MBSIMCONTROLNS; }
-    ~Signal(); 
-};
-
-class SignalAddition : public Signal {
-  friend class SignalAdditionPropertyDialog;
-  public:
-    SignalAddition(const std::string &str, Element *parent);
-    virtual std::string getType() const { return "SignalAddition"; }
-    void initialize();
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    ElementPropertyDialog* createPropertyDialog() {return new SignalAdditionPropertyDialog(this);}
+    void initialize();
+    ElementPropertyDialog* createPropertyDialog() {return new ActuatorPropertyDialog(this);}
   protected:
-    ExtProperty signalReferences;
+    ExtProperty forceDir, momentDir, frameOfReference, inputSignal, connections;
 };
-
 
 #endif

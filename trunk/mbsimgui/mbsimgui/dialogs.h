@@ -31,6 +31,7 @@ class RigidBody;
 class Frame;
 class Contour;
 class Signal;
+class ExtraDynamic;
 
 class ElementItem : public QTreeWidgetItem {
   private:
@@ -148,5 +149,25 @@ class SignalBrowser : public QDialog {
   protected slots:
     void checkForSignal(QTreeWidgetItem* item_,int);
 };
+
+class ExtraDynamicBrowser : public QDialog {
+  Q_OBJECT
+
+  public:
+    ExtraDynamicBrowser(Element* element, ExtraDynamic* selection, QWidget *obj);
+    ~ExtraDynamicBrowser() {}
+    QTreeWidget* getExtraDynamicList() const {return edList;}
+    void updateWidget(ExtraDynamic *ed);
+  protected:
+    QPushButton *okButton;
+    QTreeWidget *edList;
+    ExtraDynamic *selection;
+    ElementItem *savedItem;
+    Element* element;
+    void mbs2ExtraDynamicTree(Element* item, QTreeWidgetItem* parentItem);
+  protected slots:
+    void checkForExtraDynamic(QTreeWidgetItem* item_,int);
+};
+
 
 #endif

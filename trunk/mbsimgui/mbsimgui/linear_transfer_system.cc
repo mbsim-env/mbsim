@@ -91,7 +91,6 @@ void LinearTransferSystem::initializeUsingXML(TiXmlElement *element) {
 
 TiXmlElement* LinearTransferSystem::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = SignalProcessingSystem::writeXMLFile(parent);
-  cout << choice.isActive() << endl;
   choice.writeXMLFile(ele0);
   return ele0;
 }

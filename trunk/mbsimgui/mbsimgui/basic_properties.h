@@ -30,6 +30,7 @@ class Contour;
 class Object;
 class RigidBody;
 class Signal;
+class ExtraDynamic;
 
 namespace MBXMLUtils {
   class TiXmlElement;
@@ -154,6 +155,23 @@ class SignalOfReferenceProperty : public Property {
     std::string getSignal() const;
 };
 
+class ExtraDynamicOfReferenceProperty : public Property {
+  protected:
+    std::string ed;
+    ExtraDynamic *edPtr;
+    Element* element;
+    std::string xmlName;
+  public:
+    ExtraDynamicOfReferenceProperty(const std::string &ed_="", Element *element_=0, const std::string &xmlName_=""); 
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
+    void initialize();
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+    void setExtraDynamic(const std::string &str);
+    std::string getExtraDynamic() const;
+};
+
 class FileProperty : public Property {
 
   public:
@@ -210,7 +228,7 @@ class DependenciesProperty : public Property {
 class ConnectFramesProperty : public Property {
 
   public:
-    ConnectFramesProperty(int n, Element* element);
+    ConnectFramesProperty(int n, Element* element, const std::string &xmlName_=MBSIMNS"connect");
 
     void initialize();
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
@@ -221,12 +239,13 @@ class ConnectFramesProperty : public Property {
   protected:
     std::vector<FrameOfReferenceProperty*> frame;
     Element* element;
+    std::string xmlName;
 };
 
 class ConnectContoursProperty : public Property {
 
   public:
-    ConnectContoursProperty(int n, Element* element);
+    ConnectContoursProperty(int n, Element* element, const std::string &xmlName_=MBSIMNS"connect");
 
     void initialize();
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
@@ -237,6 +256,7 @@ class ConnectContoursProperty : public Property {
   protected:
     std::vector<ContourOfReferenceProperty*> contour;
     Element* element;
+    std::string xmlName;
 };
 
 class SolverTolerancesProperty : public Property {

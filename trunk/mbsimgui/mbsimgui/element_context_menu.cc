@@ -27,7 +27,8 @@
 #include "spring_damper.h"
 #include "joint.h"
 #include "contact.h"
-#include "signal_.h"
+#include "actuator.h"
+#include "sensor.h"
 #include "observer.h"
 #include "frame.h"
 #include "contour.h"
@@ -239,6 +240,9 @@ LinkContextContextMenu::LinkContextContextMenu(Element *element_, QWidget *paren
   action = new QAction("Add contact", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addContact()));
   addAction(action);
+  action = new QAction("Add actuator", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addActuator()));
+  addAction(action);
   action = new QAction("Add signal", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addSignal()));
   addAction(action);
@@ -258,6 +262,10 @@ void LinkContextContextMenu::addJoint() {
 
 void LinkContextContextMenu::addContact() {
   mw->addLink(new Contact("Contact",element));
+}
+
+void LinkContextContextMenu::addActuator() {
+  mw->addLink(new Actuator("Actuator",element));
 }
 
 void LinkContextContextMenu::addSignal() {
@@ -303,6 +311,9 @@ SensorContextContextMenu::SensorContextContextMenu(Element *element_, QWidget *p
   action = new QAction("Add function sensor", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addFunctionSensor()));
   addAction(action);
+  action = new QAction("Add signal processing system sensor", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addSignalProcessingSystemSensor()));
+  addAction(action);
 }
 
 void SensorContextContextMenu::addGeneralizedPositionSensor() {
@@ -315,4 +326,8 @@ void SensorContextContextMenu::addAbsolutePositionSensor() {
 
 void SensorContextContextMenu::addFunctionSensor() {
   mw->addLink(new FunctionSensor("FunctionSensor",element));
+}
+
+void SensorContextContextMenu::addSignalProcessingSystemSensor() {
+  mw->addLink(new SignalProcessingSystemSensor("SPS",element));
 }

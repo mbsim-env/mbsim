@@ -19,10 +19,11 @@
 
 #include <config.h>
 #include "basic_widgets.h"
-#include "rigidbody.h"
 #include "frame.h"
 #include "contour.h"
 #include "group.h"
+#include "rigidbody.h"
+#include "extra_dynamic.h"
 #include "signal_.h"
 #include "dialogs.h"
 #include <QtGui>
@@ -328,6 +329,48 @@ void SignalOfReferenceWidget::setSignal(const QString &str, Signal *signalPtr) {
 
 QString SignalOfReferenceWidget::getSignal() const {
   return signal->text();
+}
+
+ExtraDynamicOfReferenceWidget::ExtraDynamicOfReferenceWidget(Element *element_, ExtraDynamic* selectedExtraDynamic_) : element(element_), selectedExtraDynamic(selectedExtraDynamic_) {
+  QHBoxLayout *layout = new QHBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
+  ed = new QLineEdit;
+  if(selectedExtraDynamic)
+    ed->setText(QString::fromStdString(selectedExtraDynamic->getXMLPath(element,true)));
+  edBrowser = new ExtraDynamicBrowser(element->getRoot(),0,this);
+  connect(edBrowser,SIGNAL(accepted()),this,SLOT(setExtraDynamic()));
+  layout->addWidget(ed);
+  QPushButton *button = new QPushButton(tr("Browse"));
+  connect(button,SIGNAL(clicked(bool)),edBrowser,SLOT(show()));
+  layout->addWidget(button);
+}
+
+void ExtraDynamicOfReferenceWidget::updateWidget() {
+  edBrowser->updateWidget(selectedExtraDynamic); 
+  if(selectedExtraDynamic) {
+    setExtraDynamic();
+  }
+}
+
+void ExtraDynamicOfReferenceWidget::setExtraDynamic() {
+  if(edBrowser->getExtraDynamicList()->currentItem())
+    selectedExtraDynamic = static_cast<ExtraDynamic*>(static_cast<ElementItem*>(edBrowser->getExtraDynamicList()->currentItem())->getElement());
+  else
+    selectedExtraDynamic = 0;
+  ed->setText(selectedExtraDynamic?QString::fromStdString(selectedExtraDynamic->getXMLPath(element,true)):"");
+  emit edChanged();
+}
+
+void ExtraDynamicOfReferenceWidget::setExtraDynamic(const QString &str, ExtraDynamic *edPtr) {
+  selectedExtraDynamic = edPtr;
+  ed->setText(str);
+  emit edChanged();
+}
+
+QString ExtraDynamicOfReferenceWidget::getExtraDynamic() const {
+  return ed->text();
 }
 
 FileWidget::FileWidget(const QString &description_, const QString &extensions_, int mode_) : description(description_), extensions(extensions_), mode(mode_) {
