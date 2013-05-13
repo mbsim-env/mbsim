@@ -27,6 +27,9 @@ mbsimgui_SOURCES = element.cc \
 		   joint.cc \
 		   contact.cc \
 		   signal_.cc \
+		   extra_dynamic.cc \
+		   signal_processing_system.cc \
+		   linear_transfer_system.cc \
 		   observer.cc \
 		   integrator.cc \
 		   parameter.cc \

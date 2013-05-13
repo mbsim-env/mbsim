@@ -23,6 +23,7 @@
 #include "frame.h"
 #include "contour.h"
 #include "object.h"
+#include "extra_dynamic.h"
 #include "link.h"
 #include "observer.h"
 #include "integrator.h"
@@ -1043,10 +1044,26 @@ void MainWindow::addObject(Object *object) {
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
 }
 
-void MainWindow::addLink(Link *link) {
+void MainWindow::addExtraDynamic(ExtraDynamic *ed) {
   ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
   QModelIndex containerIndex = index.child(4,0);
+  Element *parentElement = static_cast<Element*>(model->getItem(index)->getItemData());
+  ed->setName(ed->getName()+toStr(model->getItem(containerIndex)->getID()));
+  parentElement->addExtraDynamic(ed);
+  model->createExtraDynamicItem(ed,containerIndex);
+#ifdef INLINE_OPENMBV
+  mbsimxml(1);
+#endif
+  QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
+  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+}
+
+
+void MainWindow::addLink(Link *link) {
+  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
+  QModelIndex index = elementList->selectionModel()->currentIndex();
+  QModelIndex containerIndex = index.child(5,0);
   Element *parentElement = static_cast<Element*>(model->getItem(index)->getItemData());
   link->setName(link->getName()+toStr(model->getItem(containerIndex)->getID()));
   parentElement->addLink(link);
@@ -1061,7 +1078,7 @@ void MainWindow::addLink(Link *link) {
 void MainWindow::addObserver(Observer *observer) {
   ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
-  QModelIndex containerIndex = index.child(5,0);
+  QModelIndex containerIndex = index.child(6,0);
   Element *parentElement = static_cast<Element*>(model->getItem(index)->getItemData());
   observer->setName(observer->getName()+toStr(model->getItem(containerIndex)->getID()));
   parentElement->addObserver(observer);

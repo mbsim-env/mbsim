@@ -25,6 +25,7 @@
 #include "group.h"
 #include "rigidbody.h"
 #include "constraint.h"
+#include "linear_transfer_system.h"
 #include "kinetic_excitation.h"
 #include "joint.h"
 #include "spring_damper.h"
@@ -132,6 +133,19 @@ Object* MBSimObjectFactory::createObject(TiXmlElement *element, Element *parent)
     return new JointConstraint(element->Attribute("name"),parent);
   return 0;
 }
+
+ExtraDynamic* ObjectFactory::createExtraDynamic(TiXmlElement *element, Element *parent) {
+  if(element==NULL) return NULL;
+  for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
+    return (*i)->createExtraDynamic(element,parent);
+  return 0;
+}
+ExtraDynamic* MBSimObjectFactory::createExtraDynamic(TiXmlElement *element, Element *parent) {
+  if(element==0) return 0;
+  if(element->ValueStr()==MBSIMCONTROLNS"LinearTransferSystem")
+    return new LinearTransferSystem(element->Attribute("name"),parent);
+  return 0;
+}  
 
 Link* ObjectFactory::createLink(TiXmlElement *element, Element *parent) {
   if(element==NULL) return NULL;

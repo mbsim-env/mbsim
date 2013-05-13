@@ -24,10 +24,11 @@
 #include <QtGui/QInputDialog>
 #include <QtGui/QMessageBox>
 #include <cmath>
-#include "solver.h"
-#include "object.h"
 #include "frame.h"
 #include "contour.h"
+#include "solver.h"
+#include "object.h"
+#include "extra_dynamic.h"
 #include "link.h"
 #include "observer.h"
 #include "mainwindow.h"
@@ -113,16 +114,20 @@ string Element::getXMLPath(Element *ref, bool rel) {
     for(vector<Element*>::iterator i0 = e0.end()-1, i1 = e1.end()-1 ; (i0 != e0.begin()-1) && (i1 != e1.begin()-1) ; i0--, i1--) 
       if(*i0 == *i1) imatch++;
     string type;
-    if(dynamic_cast<Group*>(this))
+    if(dynamic_cast<Frame*>(this))
+      type = "Frame";
+    else if(dynamic_cast<Contour*>(this))
+      type = "Contour";
+    else if(dynamic_cast<Group*>(this))
       type = "Group";
     else if(dynamic_cast<Object*>(this))
       type = "Object";
+    else if(dynamic_cast<ExtraDynamic*>(this))
+      type = "ExtraDynamic";
     else if(dynamic_cast<Link*>(this))
       type = "Link";
-    else if(dynamic_cast<Contour*>(this))
-      type = "Contour";
-    else if(dynamic_cast<Frame*>(this))
-      type = "Frame";
+    else if(dynamic_cast<Observer*>(this))
+      type = "Observer";
     else 
       type = getType();
     string str = type + "[" + getName() + "]";
@@ -131,12 +136,12 @@ string Element::getXMLPath(Element *ref, bool rel) {
         str = string("Group[") + (*i1)->getName() + "]/" + str;
       else if(dynamic_cast<Object*>(*i1))
         str = string("Object[") + (*i1)->getName() + "]/" + str;
+      else if(dynamic_cast<ExtraDynamic*>(*i1))
+        str = string("ExtraDynamic[") + (*i1)->getName() + "]/" + str;
       else if(dynamic_cast<Link*>(*i1))
         str = string("Link[") + (*i1)->getName() + "]/" + str;
-      else if(dynamic_cast<Frame*>(*i1))
-        str = string("Frame[") + (*i1)->getName() + "]/" + str;
-      else if(dynamic_cast<Contour*>(*i1))
-        str = string("Contour[") + (*i1)->getName() + "]/" + str;
+      else if(dynamic_cast<Observer*>(*i1))
+        str = string("Observer[") + (*i1)->getName() + "]/" + str;
       else
         str = "";
     }
@@ -145,16 +150,20 @@ string Element::getXMLPath(Element *ref, bool rel) {
     return str;
   } else {
     string type;
-    if(dynamic_cast<Group*>(this))
-      type = "Group";
-    else if(dynamic_cast<Object*>(this))
-      type = "Object";
-    else if(dynamic_cast<Link*>(this))
-      type = "Link";
-    else if(dynamic_cast<Frame*>(this))
+    if(dynamic_cast<Frame*>(this))
       type = "Frame";
     else if(dynamic_cast<Contour*>(this))
       type = "Contour";
+    else if(dynamic_cast<Group*>(this))
+      type = "Group";
+    else if(dynamic_cast<Object*>(this))
+      type = "Object";
+    else if(dynamic_cast<ExtraDynamic*>(this))
+      type = "ExtraDynamic";
+    else if(dynamic_cast<Link*>(this))
+      type = "Link";
+    else if(dynamic_cast<Observer*>(this))
+      type = "Observer";
     else 
       type = getType();
     string str = type + "[" + getName() + "]";
@@ -164,10 +173,12 @@ string Element::getXMLPath(Element *ref, bool rel) {
         str = string("Group[") + element->getName() + "]/" + str;
       else if(dynamic_cast<Object*>(element))
         str = string("Object[") + element->getName() + "]/" + str;
+      else if(dynamic_cast<ExtraDynamic*>(element))
+        str = string("ExtraDynamic[") + element->getName() + "]/" + str;
       else if(dynamic_cast<Link*>(element))
         str = string("Link[") + element->getName() + "]/" + str;
-      else if(dynamic_cast<Contour*>(element))
-        str = string("Contour[") + element->getName() + "]/" + str;
+      else if(dynamic_cast<Observer*>(element))
+        str = string("Observer[") + element->getName() + "]/" + str;
       else
         str = "";
       element = element->getParent();

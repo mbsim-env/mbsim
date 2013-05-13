@@ -22,6 +22,7 @@
 #include "mainwindow.h"
 #include "rigidbody.h"
 #include "constraint.h"
+#include "linear_transfer_system.h"
 #include "kinetic_excitation.h"
 #include "spring_damper.h"
 #include "joint.h"
@@ -73,6 +74,9 @@ GroupContextMenu::GroupContextMenu(Element *element, QWidget *parent, bool remov
   action = new QAction("Add object", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addObject()));
   addAction(action);
+  action = new QAction("Add extra dynamic", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addExtraDynamic()));
+  addAction(action);
   action = new QAction("Add link", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addLink()));
   addAction(action);
@@ -112,6 +116,11 @@ void GroupContextMenu::addGroup() {
 
 void GroupContextMenu::addObject() {
   ObjectContextContextMenu menu(element);
+  menu.exec(QCursor::pos());
+}
+
+void GroupContextMenu::addExtraDynamic() {
+  ExtraDynamicContextContextMenu menu(element);
   menu.exec(QCursor::pos());
 }
 
@@ -207,9 +216,20 @@ void ObjectContextContextMenu::addJointConstraint() {
   mw->addObject(new JointConstraint("JointConstraint",element));
 }
 
+ExtraDynamicContextContextMenu::ExtraDynamicContextContextMenu(Element *element_, QWidget *parent) : QMenu(parent), element(element_) {
+  QAction *action = new QAction("Add linear transfer system", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addLinearTransferSystem()));
+  addAction(action);
+}
+
+void ExtraDynamicContextContextMenu::addLinearTransferSystem() {
+  mw->addExtraDynamic(new LinearTransferSystem("LinearTransferSystem",element));
+}
+
 LinkContextContextMenu::LinkContextContextMenu(Element *element_, QWidget *parent) : QMenu(parent), element(element_) {
   QAction *action = new QAction("Add kinetic excitation", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addKineticExcitation()));
+  addAction(action);
   action = new QAction("Add spring damper", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addSpringDamper()));
   addAction(action);

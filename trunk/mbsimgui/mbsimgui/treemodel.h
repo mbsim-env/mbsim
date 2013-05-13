@@ -28,6 +28,7 @@ class Frame;
 class Contour;
 class Group;
 class Object;
+class ExtraDynamic;
 class Link;
 class Observer;
 class Parameter;
@@ -67,6 +68,7 @@ class ElementTreeModel : public TreeModel {
     void createContourItem(Contour *contour, const QModelIndex &parent = QModelIndex());
     void createGroupItem(Group *group, const QModelIndex &parent = QModelIndex());
     void createObjectItem(Object *object, const QModelIndex &parent = QModelIndex());
+    void createExtraDynamicItem(ExtraDynamic *ed, const QModelIndex &parent = QModelIndex());
     void createLinkItem(Link *link, const QModelIndex &parent = QModelIndex());
     void createObserverItem(Observer *observer, const QModelIndex &parent = QModelIndex());
 

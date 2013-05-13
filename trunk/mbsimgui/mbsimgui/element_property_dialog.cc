@@ -32,6 +32,8 @@
 #include "contour.h"
 #include "rigidbody.h"
 #include "constraint.h"
+#include "signal_processing_system.h"
+#include "linear_transfer_system.h"
 #include "kinetic_excitation.h"
 #include "spring_damper.h"
 #include "joint.h"
@@ -528,6 +530,109 @@ void JointConstraintPropertyDialog::fromWidget(Element *element) {
   static_cast<JointConstraint*>(element)->connections.fromWidget(connections);
   static_cast<JointConstraint*>(element)->force.fromWidget(force);
   static_cast<JointConstraint*>(element)->moment.fromWidget(moment);
+}
+
+ExtraDynamicPropertyDialog::ExtraDynamicPropertyDialog(ExtraDynamic *ed, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(ed,parent,f) {
+}
+
+void ExtraDynamicPropertyDialog::toWidget(Element *element) {
+  ElementPropertyDialog::toWidget(element);
+}
+
+void ExtraDynamicPropertyDialog::fromWidget(Element *element) {
+  ElementPropertyDialog::fromWidget(element);
+}
+
+SignalProcessingSystemPropertyDialog::SignalProcessingSystemPropertyDialog(SignalProcessingSystem *sps, QWidget * parent, Qt::WindowFlags f) : ExtraDynamicPropertyDialog(sps,parent,f) {
+  signalRef = new ExtWidget("Input signal",new SignalOfReferenceWidget(sps,0));
+  addToTab("General", signalRef);
+}
+
+void SignalProcessingSystemPropertyDialog::toWidget(Element *element) {
+  ExtraDynamicPropertyDialog::toWidget(element);
+  static_cast<SignalProcessingSystem*>(element)->signalRef.toWidget(signalRef);
+}
+
+void SignalProcessingSystemPropertyDialog::fromWidget(Element *element) {
+  ExtraDynamicPropertyDialog::fromWidget(element);
+  static_cast<SignalProcessingSystem*>(element)->signalRef.fromWidget(signalRef);
+}
+
+LinearTransferSystemPropertyDialog::LinearTransferSystemPropertyDialog(LinearTransferSystem *lts, QWidget * parent, Qt::WindowFlags f) : SignalProcessingSystemPropertyDialog(lts,parent,f) {
+  WidgetContainer *propertyContainer = new WidgetContainer;
+  vector<QWidget*> choiceWidget;
+  vector<QString> name;
+  name.push_back("PID");
+  name.push_back("ABCD");
+  name.push_back("Integrator");
+  name.push_back("PT1");
+
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),noUnitUnits(),1));
+  propertyContainer->addWidget(new ExtWidget("P",new ExtPhysicalVarWidget(input)));
+
+  input.clear();
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  propertyContainer->addWidget(new ExtWidget("I",new ExtPhysicalVarWidget(input)));
+
+  input.clear();
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  propertyContainer->addWidget(new ExtWidget("D",new ExtPhysicalVarWidget(input)));
+
+  choiceWidget.push_back(new ExtWidget("PID",propertyContainer));
+
+  propertyContainer = new WidgetContainer;
+
+  input.clear();
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  propertyContainer->addWidget(new ExtWidget("A",new ExtPhysicalVarWidget(input)));
+
+  input.clear();
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  propertyContainer->addWidget(new ExtWidget("B",new ExtPhysicalVarWidget(input)));
+
+  input.clear();
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  propertyContainer->addWidget(new ExtWidget("C",new ExtPhysicalVarWidget(input)));
+
+  input.clear();
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  propertyContainer->addWidget(new ExtWidget("D",new ExtPhysicalVarWidget(input)));
+
+  choiceWidget.push_back(new ExtWidget("ABCD",propertyContainer));
+
+  propertyContainer = new WidgetContainer;
+
+  input.clear();
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),noUnitUnits(),1));
+  propertyContainer->addWidget(new ExtWidget("gain",new ExtPhysicalVarWidget(input)));
+
+  choiceWidget.push_back(new ExtWidget("Integrator",propertyContainer));
+
+  propertyContainer = new WidgetContainer;
+
+  input.clear();
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),noUnitUnits(),1));
+  propertyContainer->addWidget(new ExtWidget("P",new ExtPhysicalVarWidget(input)));
+
+  input.clear();
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.1"),noUnitUnits(),1));
+  propertyContainer->addWidget(new ExtWidget("T",new ExtPhysicalVarWidget(input)));
+
+  choiceWidget.push_back(new ExtWidget("PT1",propertyContainer));
+
+  choice = new ExtWidget("Type",new WidgetChoiceWidget(name,choiceWidget));
+  addToTab("General", choice);
+}
+
+void LinearTransferSystemPropertyDialog::toWidget(Element *element) {
+  SignalProcessingSystemPropertyDialog::toWidget(element);
+  static_cast<LinearTransferSystem*>(element)->choice.toWidget(choice);
+}
+
+void LinearTransferSystemPropertyDialog::fromWidget(Element *element) {
+  SignalProcessingSystemPropertyDialog::fromWidget(element);
+  static_cast<LinearTransferSystem*>(element)->choice.fromWidget(choice);
 }
 
 LinkPropertyDialog::LinkPropertyDialog(Link *link, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(link,parent,f) {
