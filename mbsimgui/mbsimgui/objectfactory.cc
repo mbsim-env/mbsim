@@ -30,7 +30,8 @@
 #include "joint.h"
 #include "spring_damper.h"
 #include "contact.h"
-#include "signal_.h"
+#include "actuator.h"
+#include "sensor.h"
 #include "widget.h"
 #include "parameter.h"
 #include "observer.h"
@@ -163,6 +164,8 @@ Link* MBSimObjectFactory::createLink(TiXmlElement *element, Element *parent) {
     return new Joint(element->Attribute("name"),parent);
   if(element->ValueStr()==MBSIMNS"Contact")
     return new Contact(element->Attribute("name"),parent);
+  if(element->ValueStr()==MBSIMCONTROLNS"Actuator")
+    return new Actuator(element->Attribute("name"),parent);
   if(element->ValueStr()==MBSIMCONTROLNS"GeneralizedPositionSensor")
     return new GeneralizedPositionSensor(element->Attribute("name"),parent);
   if(element->ValueStr()==MBSIMCONTROLNS"AbsolutePositionSensor")

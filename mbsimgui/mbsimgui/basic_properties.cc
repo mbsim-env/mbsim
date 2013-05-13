@@ -22,6 +22,7 @@
 #include "frame.h"
 #include "contour.h"
 #include "rigidbody.h"
+#include "extra_dynamic.h"
 #include "signal_.h"
 #include "basic_widgets.h"
 #include "variable_widgets.h"
@@ -299,6 +300,44 @@ void SignalOfReferenceProperty::toWidget(QWidget *widget) {
   static_cast<SignalOfReferenceWidget*>(widget)->updateWidget();
 }
 
+ExtraDynamicOfReferenceProperty::ExtraDynamicOfReferenceProperty(const std::string &ed_, Element *element_, const std::string &xmlName_) : ed(ed_), edPtr(element_->getByPath<ExtraDynamic>(ed)), element(element_), xmlName(xmlName_) {
+}
+
+void ExtraDynamicOfReferenceProperty::initialize() {
+  edPtr=element->getByPath<ExtraDynamic>(ed);
+}
+
+void ExtraDynamicOfReferenceProperty::setExtraDynamic(const std::string &str) {
+  ed = str;
+  edPtr=element->getByPath<ExtraDynamic>(ed);
+}
+
+std::string ExtraDynamicOfReferenceProperty::getExtraDynamic() const {
+  return edPtr?edPtr->getXMLPath(element,true):ed;
+}
+
+TiXmlElement* ExtraDynamicOfReferenceProperty::initializeUsingXML(TiXmlElement *parent) {
+  TiXmlElement *e = parent->FirstChildElement(xmlName);
+  if(e) ed=e->Attribute("ref");
+  return e;
+}
+
+TiXmlElement* ExtraDynamicOfReferenceProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele = new TiXmlElement(xmlName);
+  ele->SetAttribute("ref", getExtraDynamic());
+  parent->LinkEndChild(ele);
+  return 0;
+}
+
+void ExtraDynamicOfReferenceProperty::fromWidget(QWidget *widget) {
+  setExtraDynamic(static_cast<ExtraDynamicOfReferenceWidget*>(widget)->getExtraDynamic().toStdString());
+}
+
+void ExtraDynamicOfReferenceProperty::toWidget(QWidget *widget) {
+  static_cast<ExtraDynamicOfReferenceWidget*>(widget)->setExtraDynamic(QString::fromStdString(ed),edPtr);
+  static_cast<ExtraDynamicOfReferenceWidget*>(widget)->updateWidget();
+}
+
 TiXmlElement* FileProperty::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=element->FirstChildElement(xmlName);
   if(e) {
@@ -419,7 +458,7 @@ void DependenciesProperty::toWidget(QWidget *widget) {
   static_cast<DependenciesWidget*>(widget)->updateWidget();
 }
 
-ConnectFramesProperty::ConnectFramesProperty(int n, Element *element_) : element(element_) {
+ConnectFramesProperty::ConnectFramesProperty(int n, Element *element_, const std::string &xmlName_) : element(element_), xmlName(xmlName_)  {
 
   for(int i=0; i<n; i++) {
     string xmlName = MBSIMNS"ref";
@@ -435,7 +474,7 @@ void ConnectFramesProperty::initialize() {
 }
 
 TiXmlElement* ConnectFramesProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e = element->FirstChildElement(MBSIMNS"connect");
+  TiXmlElement *e = element->FirstChildElement(xmlName);
   if(e) {
     for(unsigned int i=0; i<frame.size(); i++) {
       string xmlName = "ref";
@@ -450,7 +489,7 @@ TiXmlElement* ConnectFramesProperty::initializeUsingXML(TiXmlElement *element) {
 }
 
 TiXmlElement* ConnectFramesProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele = new TiXmlElement(MBSIMNS"connect");
+  TiXmlElement *ele = new TiXmlElement(xmlName);
   for(unsigned int i=0; i<frame.size(); i++) {
     string xmlName = "ref";
     if(frame.size()>1)
@@ -472,7 +511,7 @@ void ConnectFramesProperty::toWidget(QWidget *widget) {
   static_cast<ConnectFramesWidget*>(widget)->update();
 }
 
-ConnectContoursProperty::ConnectContoursProperty(int n, Element *element_) : element(element_) {
+ConnectContoursProperty::ConnectContoursProperty(int n, Element *element_, const std::string &xmlName_) : element(element_), xmlName(xmlName_) {
 
   for(int i=0; i<n; i++) {
     string xmlName = MBSIMNS"ref";
@@ -488,7 +527,7 @@ void ConnectContoursProperty::initialize() {
 }
 
 TiXmlElement* ConnectContoursProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e = element->FirstChildElement(MBSIMNS"connect");
+  TiXmlElement *e = element->FirstChildElement(xmlName);
   if(e) {
     for(unsigned int i=0; i<contour.size(); i++) {
       string xmlName = "ref";
@@ -503,7 +542,7 @@ TiXmlElement* ConnectContoursProperty::initializeUsingXML(TiXmlElement *element)
 }
 
 TiXmlElement* ConnectContoursProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele = new TiXmlElement(MBSIMNS"connect");
+  TiXmlElement *ele = new TiXmlElement(xmlName);
   for(unsigned int i=0; i<contour.size(); i++) {
     string xmlName = "ref";
     if(contour.size()>1)

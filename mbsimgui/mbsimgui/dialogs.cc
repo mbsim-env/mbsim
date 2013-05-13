@@ -19,10 +19,11 @@
 
 #include <config.h>
 #include "dialogs.h"
-#include "group.h"
-#include "rigidbody.h"
 #include "frame.h"
 #include "contour.h"
+#include "group.h"
+#include "rigidbody.h"
+#include "extra_dynamic.h"
 #include "signal_.h"
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
@@ -341,6 +342,61 @@ void SignalBrowser::mbs2SignalTree(Element* ele, QTreeWidgetItem* parentItem) {
 void SignalBrowser::checkForSignal(QTreeWidgetItem* item_,int) {
   ElementItem* item = static_cast<ElementItem*>(item_);
   if(dynamic_cast<Signal*>(item->getElement()))
+    okButton->setDisabled(false);
+  else
+    okButton->setDisabled(true);
+}
+
+ExtraDynamicBrowser::ExtraDynamicBrowser(Element* element_, ExtraDynamic* ed, QWidget *parentExtraDynamic_) : QDialog(parentExtraDynamic_), selection(ed), savedItem(0), element(element_) {
+  QGridLayout* mainLayout=new QGridLayout;
+  setLayout(mainLayout);
+  edList = new QTreeWidget;
+  edList->setColumnCount(1);
+  mainLayout->addWidget(edList,0,0);
+  QObject::connect(edList, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(checkForExtraDynamic(QTreeWidgetItem*,int)));
+
+  okButton = new QPushButton("Ok");
+  if(!selection)
+    okButton->setDisabled(true);
+  mainLayout->addWidget(okButton,1,0);
+  connect(okButton, SIGNAL(clicked(bool)), this, SLOT(accept()));
+
+  QPushButton *button = new QPushButton("Cancel");
+  mainLayout->addWidget(button,1,1);
+  connect(button, SIGNAL(clicked(bool)), this, SLOT(reject()));
+
+  setWindowTitle("ExtraDynamic browser");
+}
+
+void ExtraDynamicBrowser::updateWidget(ExtraDynamic *sel) {
+  selection = sel;
+  edList->clear();
+  savedItem = 0;
+  mbs2ExtraDynamicTree(element,edList->invisibleRootItem());
+  edList->setCurrentItem(savedItem);
+}
+
+void ExtraDynamicBrowser::mbs2ExtraDynamicTree(Element* ele, QTreeWidgetItem* parentItem) {
+  if(dynamic_cast<Group*>(ele) || dynamic_cast<ExtraDynamic*>(ele)) {
+
+    ElementItem *item = new ElementItem(ele);
+    item->setText(0,QString::fromStdString(ele->getName()));
+
+    if(ele == selection)
+      savedItem = item;
+
+    parentItem->addChild(item);
+
+    for(int i=0; i<ele->getNumberOfGroups(); i++)
+      mbs2ExtraDynamicTree(ele->getGroup(i),item);
+    for(int i=0; i<ele->getNumberOfExtraDynamics(); i++)
+      mbs2ExtraDynamicTree(ele->getExtraDynamic(i),item);
+  }
+}
+
+void ExtraDynamicBrowser::checkForExtraDynamic(QTreeWidgetItem* item_,int) {
+  ElementItem* item = static_cast<ElementItem*>(item_);
+  if(dynamic_cast<ExtraDynamic*>(item->getElement()))
     okButton->setDisabled(false);
   else
     okButton->setDisabled(true);

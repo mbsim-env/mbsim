@@ -38,10 +38,11 @@
 #include "spring_damper.h"
 #include "joint.h"
 #include "contact.h"
+#include "actuator.h"
 #include "observer.h"
 #include "parameter.h"
 #include "integrator.h"
-#include "signal_.h"
+#include "sensor.h"
 #include <QPushButton>
 
 using namespace std;
@@ -828,6 +829,45 @@ void ContactPropertyDialog::fromWidget(Element *element) {
   static_cast<Contact*>(element)->frictionArrow.fromWidget(frictionArrow);
 }
 
+ActuatorPropertyDialog::ActuatorPropertyDialog(Actuator *actuator, QWidget *parent, Qt::WindowFlags wf) : LinkPropertyDialog(actuator,parent,wf) {
+
+  addTab("Kinetics",1);
+  addTab("Visualisation",2);
+
+  forceDir = new ExtWidget("Force",new GeneralizedForceDirectionWidget,true);
+  addToTab("Kinetics", forceDir);
+
+  momentDir = new ExtWidget("Moment",new GeneralizedForceDirectionWidget,true);
+  addToTab("Kinetics", momentDir);
+
+  connections = new ExtWidget("Connections",new ConnectFramesWidget(2,actuator));
+  addToTab("Kinetics",connections);
+
+  frameOfReference = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(actuator,0),true);
+  addToTab("Kinetics",frameOfReference);
+
+  inputSignal = new ExtWidget("Input signal",new SignalOfReferenceWidget(actuator,0));
+  addToTab("Kinetics",inputSignal);
+}
+
+void ActuatorPropertyDialog::toWidget(Element *element) {
+  LinkPropertyDialog::toWidget(element);
+  static_cast<Actuator*>(element)->forceDir.toWidget(forceDir);
+  static_cast<Actuator*>(element)->momentDir.toWidget(momentDir);
+  static_cast<Actuator*>(element)->frameOfReference.toWidget(frameOfReference);
+  static_cast<Actuator*>(element)->connections.toWidget(connections);
+  static_cast<Actuator*>(element)->inputSignal.toWidget(inputSignal);
+}
+
+void ActuatorPropertyDialog::fromWidget(Element *element) {
+  LinkPropertyDialog::fromWidget(element);
+  static_cast<Actuator*>(element)->forceDir.fromWidget(forceDir);
+  static_cast<Actuator*>(element)->momentDir.fromWidget(momentDir);
+  static_cast<Actuator*>(element)->frameOfReference.fromWidget(frameOfReference);
+  static_cast<Actuator*>(element)->connections.fromWidget(connections);
+  static_cast<Actuator*>(element)->inputSignal.fromWidget(inputSignal);
+}
+
 ObserverPropertyDialog::ObserverPropertyDialog(Observer *observer, QWidget * parent, Qt::WindowFlags f) : ElementPropertyDialog(observer,parent,f) {
 }
 
@@ -940,6 +980,21 @@ void FunctionSensorPropertyDialog::toWidget(Element *element) {
 void FunctionSensorPropertyDialog::fromWidget(Element *element) {
   SensorPropertyDialog::fromWidget(element);
   static_cast<FunctionSensor*>(element)->function.fromWidget(function);
+}
+
+SignalProcessingSystemSensorPropertyDialog::SignalProcessingSystemSensorPropertyDialog(SignalProcessingSystemSensor *sensor, QWidget * parent, Qt::WindowFlags f) : SensorPropertyDialog(sensor,parent,f) {
+  spsRef = new ExtWidget("Signal processing system",new ExtraDynamicOfReferenceWidget(sensor,0));
+  addToTab("General", spsRef);
+}
+
+void SignalProcessingSystemSensorPropertyDialog::toWidget(Element *element) {
+  SensorPropertyDialog::toWidget(element);
+  static_cast<SignalProcessingSystemSensor*>(element)->spsRef.toWidget(spsRef);
+}
+
+void SignalProcessingSystemSensorPropertyDialog::fromWidget(Element *element) {
+  SensorPropertyDialog::fromWidget(element);
+  static_cast<SignalProcessingSystemSensor*>(element)->spsRef.fromWidget(spsRef);
 }
 
 SignalAdditionPropertyDialog::SignalAdditionPropertyDialog(SignalAddition *signal, QWidget * parent, Qt::WindowFlags f) : SignalPropertyDialog(signal,parent,f) {

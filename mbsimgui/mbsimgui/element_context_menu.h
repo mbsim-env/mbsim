@@ -110,6 +110,7 @@ class LinkContextContextMenu : public QMenu {
     void addKineticExcitation();
     void addJoint();
     void addContact();
+    void addActuator();
     void addSignal();
 
   protected:
@@ -153,6 +154,7 @@ class SensorContextContextMenu : public QMenu {
     void addGeneralizedPositionSensor();
     void addAbsolutePositionSensor();
     void addFunctionSensor();
+    void addSignalProcessingSystemSensor();
 
   protected:
     Element *element;

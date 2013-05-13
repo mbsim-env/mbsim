@@ -26,7 +26,9 @@ mbsimgui_SOURCES = element.cc \
 		   spring_damper.cc \
 		   joint.cc \
 		   contact.cc \
+		   actuator.cc \
 		   signal_.cc \
+		   sensor.cc \
 		   extra_dynamic.cc \
 		   signal_processing_system.cc \
 		   linear_transfer_system.cc \

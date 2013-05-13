@@ -45,6 +45,7 @@ class KineticExcitation;
 class SpringDamper;
 class Joint;
 class Contact;
+class Actuator;
 class Observer;
 class AbsoluteKinematicsObserver;
 class Signal;
@@ -54,6 +55,7 @@ class GeneralizedPositionSensor;
 class AbsoluteCoordinateSensor;
 class AbsolutePositionSensor;
 class FunctionSensor;
+class SignalProcessingSystemSensor;
 class SignalAddition;
 class TextWidget;
 class VecWidget;
@@ -307,6 +309,16 @@ class ContactPropertyDialog : public LinkPropertyDialog {
     ExtWidget *contactForceLaw, *contactImpactLaw, *frictionForceLaw, *frictionImpactLaw, *connections, *enableOpenMBVContactPoints, *normalForceArrow, *frictionArrow;
 };
 
+class ActuatorPropertyDialog : public LinkPropertyDialog {
+
+  public:
+    ActuatorPropertyDialog(Actuator *kineticExcitation, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+    ExtWidget *forceDir, *momentDir, *frameOfReference, *inputSignal, *connections;
+};
+
 class ObserverPropertyDialog : public ElementPropertyDialog {
 
   public:
@@ -375,6 +387,16 @@ class FunctionSensorPropertyDialog : public SensorPropertyDialog {
     void fromWidget(Element *element);
   protected:
     ExtWidget *function;
+};
+
+class SignalProcessingSystemSensorPropertyDialog : public SensorPropertyDialog {
+
+  public:
+    SignalProcessingSystemSensorPropertyDialog(SignalProcessingSystemSensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+    ExtWidget *spsRef;
 };
 
 class SignalAdditionPropertyDialog : public SignalPropertyDialog {
