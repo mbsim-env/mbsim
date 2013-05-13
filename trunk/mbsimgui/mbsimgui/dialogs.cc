@@ -207,7 +207,7 @@ void FrameBrowser::updateWidget(Frame *sel) {
 }
 
 void FrameBrowser::mbs2FrameTree(Element* ele, QTreeWidgetItem* parentItem) {
-  if(dynamic_cast<Group*>(ele) || dynamic_cast<Frame*>(ele)) {
+  if(dynamic_cast<Group*>(ele) || dynamic_cast<Object*>(ele) || dynamic_cast<Frame*>(ele)) {
 
     ElementItem *item = new ElementItem(ele);
     item->setText(0,QString::fromStdString(ele->getName()));
@@ -264,7 +264,7 @@ void ContourBrowser::updateWidget(Contour *sel) {
 }
 
 void ContourBrowser::mbs2ContourTree(Element* ele, QTreeWidgetItem* parentItem) {
-  if(dynamic_cast<Group*>(ele) || dynamic_cast<Contour*>(ele)) {
+  if(dynamic_cast<Group*>(ele) || dynamic_cast<Object*>(ele)  || dynamic_cast<Contour*>(ele)) {
 
     ElementItem *item = new ElementItem(ele);
     item->setText(0,QString::fromStdString(ele->getName()));
