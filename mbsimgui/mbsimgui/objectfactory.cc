@@ -168,6 +168,8 @@ Link* MBSimObjectFactory::createLink(TiXmlElement *element, Element *parent) {
     return new Actuator(element->Attribute("name"),parent);
   if(element->ValueStr()==MBSIMCONTROLNS"GeneralizedPositionSensor")
     return new GeneralizedPositionSensor(element->Attribute("name"),parent);
+  if(element->ValueStr()==MBSIMCONTROLNS"GeneralizedVelocitySensor")
+    return new GeneralizedVelocitySensor(element->Attribute("name"),parent);
   if(element->ValueStr()==MBSIMCONTROLNS"AbsolutePositionSensor")
     return new AbsolutePositionSensor(element->Attribute("name"),parent);
   if(element->ValueStr()==MBSIMCONTROLNS"FunctionSensor")

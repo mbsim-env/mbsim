@@ -29,7 +29,6 @@ SignalProcessingSystem::SignalProcessingSystem(const string &str, Element *paren
 
 void SignalProcessingSystem::initialize() {
   ExtraDynamic::initialize();
-
   signalRef.initialize();
 }
 

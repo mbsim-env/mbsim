@@ -305,6 +305,9 @@ SensorContextContextMenu::SensorContextContextMenu(Element *element_, QWidget *p
   QAction *action = new QAction("Add generalized position sensor", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedPositionSensor()));
   addAction(action);
+  action = new QAction("Add generalized velocity sensor", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedVelocitySensor()));
+  addAction(action);
   action = new QAction("Add absolute position sensor", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addAbsolutePositionSensor()));
   addAction(action);
@@ -318,6 +321,10 @@ SensorContextContextMenu::SensorContextContextMenu(Element *element_, QWidget *p
 
 void SensorContextContextMenu::addGeneralizedPositionSensor() {
   mw->addLink(new GeneralizedPositionSensor("GeneralizedPositionSensor",element));
+}
+
+void SensorContextContextMenu::addGeneralizedVelocitySensor() {
+  mw->addLink(new GeneralizedVelocitySensor("GeneralizedVelocitySensor",element));
 }
 
 void SensorContextContextMenu::addAbsolutePositionSensor() {
