@@ -45,6 +45,14 @@ class GeneralizedPositionSensor : public GeneralizedCoordinateSensor {
     GeneralizedPositionSensor(const std::string &str, Element *parent) : GeneralizedCoordinateSensor(str, parent) {}
     virtual std::string getType() const { return "GeneralizedPositionSensor"; }
     ElementPropertyDialog* createPropertyDialog() {return new GeneralizedPositionSensorPropertyDialog(this);}
+
+};
+
+class GeneralizedVelocitySensor : public GeneralizedCoordinateSensor {
+  public:
+    GeneralizedVelocitySensor(const std::string &str, Element *parent) : GeneralizedCoordinateSensor(str, parent) {}
+    virtual std::string getType() const { return "GeneralizedVelocitySensor"; }
+    ElementPropertyDialog* createPropertyDialog() {return new GeneralizedVelocitySensorPropertyDialog(this);}
 };
 
 class AbsoluteCoordinateSensor : public Sensor {
@@ -82,6 +90,7 @@ class SignalProcessingSystemSensor : public Sensor {
   friend class SignalProcessingSystemSensorPropertyDialog;
   public:
     SignalProcessingSystemSensor(const std::string &str, Element *parent); 
+    void initialize();
     virtual std::string getType() const { return "SignalProcessingSystemSensor"; }
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);

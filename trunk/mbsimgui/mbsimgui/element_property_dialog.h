@@ -52,6 +52,7 @@ class Signal;
 class Sensor;
 class GeneralizedCoordinateSensor;
 class GeneralizedPositionSensor;
+class GeneralizedVelocitySensor;
 class AbsoluteCoordinateSensor;
 class AbsolutePositionSensor;
 class FunctionSensor;
@@ -361,6 +362,12 @@ class GeneralizedPositionSensorPropertyDialog : public GeneralizedCoordinateSens
 
   public:
     GeneralizedPositionSensorPropertyDialog(GeneralizedPositionSensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
+};
+
+class GeneralizedVelocitySensorPropertyDialog : public GeneralizedCoordinateSensorPropertyDialog {
+
+  public:
+    GeneralizedVelocitySensorPropertyDialog(GeneralizedVelocitySensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
 };
 
 class AbsoluteCoordinateSensorPropertyDialog : public SensorPropertyDialog {

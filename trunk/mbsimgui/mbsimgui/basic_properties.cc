@@ -305,6 +305,7 @@ ExtraDynamicOfReferenceProperty::ExtraDynamicOfReferenceProperty(const std::stri
 
 void ExtraDynamicOfReferenceProperty::initialize() {
   edPtr=element->getByPath<ExtraDynamic>(ed);
+  cout << edPtr << endl;
 }
 
 void ExtraDynamicOfReferenceProperty::setExtraDynamic(const std::string &str) {

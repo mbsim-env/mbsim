@@ -152,6 +152,7 @@ class SensorContextContextMenu : public QMenu {
 
   protected slots:
     void addGeneralizedPositionSensor();
+    void addGeneralizedVelocitySensor();
     void addAbsolutePositionSensor();
     void addFunctionSensor();
     void addSignalProcessingSystemSensor();
