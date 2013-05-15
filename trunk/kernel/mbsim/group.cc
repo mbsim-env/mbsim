@@ -56,32 +56,22 @@ namespace MBSim {
   }
 
   void Group::updateStateDependentVariables(double t) {
-    for(int i=0; i<(int)dynamicsystem.size(); i++) {
-      try { dynamicsystem[i]->updateStateDependentVariables(t); }
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
+    for(int i=0; i<(int)dynamicsystem.size(); i++)
+      dynamicsystem[i]->updateStateDependentVariables(t);
 
-    for(int i=0; i<(int)object.size(); i++) {
-      try { object[i]->updateStateDependentVariables(t); }
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
+    for(int i=0; i<(int)object.size(); i++)
+      object[i]->updateStateDependentVariables(t);
   }
 
   void Group::updateJacobians(double t, int j) {
-    for(int i=0; i<(int)dynamicsystem.size(); i++) {
-      try { dynamicsystem[i]->updateJacobians(t,j); }
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
+    for(int i=0; i<(int)dynamicsystem.size(); i++)
+      dynamicsystem[i]->updateJacobians(t,j);
 
-    for(int i=0; i<(int)object.size(); i++) {
-      try { object[i]->updateJacobians(t,j); }
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
+    for(int i=0; i<(int)object.size(); i++)
+      object[i]->updateJacobians(t,j);
 
-    for(int i=0; i<(int)link.size(); i++) {
-      try { link[i]->updateJacobians(t,j); }
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
+    for(int i=0; i<(int)link.size(); i++)
+      link[i]->updateJacobians(t,j);
   }
 
   void Group::updatedu(double t, double dt) {

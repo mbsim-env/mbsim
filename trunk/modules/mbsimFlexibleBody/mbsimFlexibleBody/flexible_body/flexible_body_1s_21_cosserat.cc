@@ -425,10 +425,8 @@ namespace MBSimFlexibleBody {
     FlexibleBodyContinuum<double>::updateh(t);
 
     /* rotational elements */
-    for(int i=0;i<(int)rotationDiscretization.size();i++) {
-      try { rotationDiscretization[i]->computeh(qRotationElement[i],uRotationElement[i]); } // compute attributes of finite element
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
+    for(int i=0;i<(int)rotationDiscretization.size();i++)
+      rotationDiscretization[i]->computeh(qRotationElement[i],uRotationElement[i]); // compute attributes of finite element
     for(int i=0;i<(int)rotationDiscretization.size();i++) GlobalVectorContributionRotation(i,rotationDiscretization[i]->geth(),h[0]); // assemble
   }
 
@@ -593,10 +591,8 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21Cosserat::initM() {
-    for(int i=0;i<(int)discretization.size();i++) {
-      try { static_cast<FiniteElement1s21CosseratTranslation*>(discretization[i])->initM(); } // compute attributes of finite element
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
+    for(int i=0;i<(int)discretization.size();i++)
+      static_cast<FiniteElement1s21CosseratTranslation*>(discretization[i])->initM(); // compute attributes of finite element
     for(int i=0;i<(int)discretization.size();i++) GlobalMatrixContribution(i,discretization[i]->getM(),M[0]); // assemble
     for(int i=0;i<(int)discretization.size();i++) {
       int j = 3*i;
