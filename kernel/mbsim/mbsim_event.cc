@@ -29,11 +29,11 @@ namespace MBSim {
   MBSimError::MBSimError(const std::string &mbsim_error_message_) : MBSimException(), mbsim_error_message(mbsim_error_message_) {}
 
   void MBSimError::printExceptionMessage() {
-    cout << endl;
-    cout << endl;
-    cout << "A MBSimError was detected: " << mbsim_error_message << endl;
-    cout << endl;
-    cout << endl;
+    cerr << endl;
+    cerr << endl;
+    cerr << "A MBSimError was detected: " << mbsim_error_message << endl;
+    cerr << endl;
+    cerr << endl;
   }
 
 }
