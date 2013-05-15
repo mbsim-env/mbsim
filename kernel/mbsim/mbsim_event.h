@@ -21,71 +21,27 @@
 #define _MBSIM_EVENT_H_
 
 #include<string>
+#include<exception>
 
 namespace MBSim {
-
-  /**
-   * \brief basic event class for MBSim
-   * \author Thorsten Schindler
-   * \date 2009-03-20 inital commit (Thorsten Schindler)
-   */
-  class MBSimEvent {
-    public:
-      /**
-       * \brief constructor
-       */
-      MBSimEvent() {}
-      
-      /**
-       * \brief destructor
-       */
-      virtual ~MBSimEvent() {}
-  };
-
-  /**
-   * \brief basic exception interface for mbsim
-   * \author Thorsten Schindler
-   * \date 2009-03-20 inital commit (Thorsten Schindler)
-   */
-  class MBSimException : public MBSimEvent{
-    public:
-      /**
-       * \brief constructor
-       */
-      MBSimException() : MBSimEvent() {}
-      
-      /**
-       * \brief destructor
-       */
-      virtual ~MBSimException() {}
-
-      /* INTERFACE */
-      /**
-       * \brief prints exception message on stdout
-       */
-      virtual void printExceptionMessage() = 0; 
-  };
 
   /**
    * \brief basic error class for mbsim
    * \author Thorsten Schindler
    * \date 2009-03-20 inital commit (Thorsten Schindler)
+   * \date 2013-05-15 changed base class to std::exception (Martin Foerg)
    */
-  class MBSimError : public MBSimException {
+  class MBSimError : public std::exception {
     public:
       /**
        * \brief constructor
        * \param message to be written
        */
-      MBSimError(const std::string &mbsim_error_message_); 
+      MBSimError(const std::string &mbsim_error_message_) throw(); 
       
-      /**
-       * \brief destructor
-       */
-      virtual ~MBSimError() {}
+      virtual ~MBSimError() throw() {}
 
-      /* INHERITED INTERFACE */
-      virtual void printExceptionMessage();
+      virtual const char* what() const throw();
 
     private:
       /**

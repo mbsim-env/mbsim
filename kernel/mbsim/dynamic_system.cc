@@ -86,25 +86,17 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateh(double t, int j) {
-    for(int i=0; i<(int)dynamicsystem.size(); i++) {
-      try { dynamicsystem[i]->updateh(t,j); }
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
+    for(int i=0; i<(int)dynamicsystem.size(); i++)
+      dynamicsystem[i]->updateh(t,j);
 
-    for(int i=0; i<(int)object.size(); i++) {
-      try { object[i]->updateh(t,j); }
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
+    for(int i=0; i<(int)object.size(); i++)
+      object[i]->updateh(t,j);
 
-    for(int i=0; i<(int)linkSingleValued.size(); i++) {
-      try { linkSingleValued[i]->updateh(t,j); }
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
+    for(int i=0; i<(int)linkSingleValued.size(); i++)
+      linkSingleValued[i]->updateh(t,j);
 
-    for(int i=0; i<(int)linkSetValuedNotActiveWithSmoothPart.size(); i++) {
-      try { linkSetValuedNotActiveWithSmoothPart[i]->updateh(t,j); }
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
+    for(int i=0; i<(int)linkSetValuedNotActiveWithSmoothPart.size(); i++)
+      linkSetValuedNotActiveWithSmoothPart[i]->updateh(t,j);
   }
 
   void DynamicSystem::updateh0Fromh1(double t) {
@@ -148,15 +140,11 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateM(double t, int j) {
-    for(int i=0; i<(int)dynamicsystem.size(); i++) {
-      try { dynamicsystem[i]->updateM(t,j); }
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
+    for(int i=0; i<(int)dynamicsystem.size(); i++)
+      dynamicsystem[i]->updateM(t,j);
 
-    for(int i=0; i<(int)object.size(); i++) {
-      try { object[i]->updateM(t,j); }
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
+    for(int i=0; i<(int)object.size(); i++)
+      object[i]->updateM(t,j);
   }
 
   void DynamicSystem::updatedq(double t, double dt) {
@@ -305,44 +293,32 @@ namespace MBSim {
 
   void DynamicSystem::updateg(double t) {
 
-    for(int i=0; i<(int)link.size(); i++) {
-      try { link[i]->updateg(t); }
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
+    for(int i=0; i<(int)link.size(); i++)
+      link[i]->updateg(t);
   }
 
   void DynamicSystem::updategInverseKinetics(double t) {
 
-    for(int i=0; i<(int)inverseKineticsLink.size(); i++) {
-      try { inverseKineticsLink[i]->updateg(t); }
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
+    for(int i=0; i<(int)inverseKineticsLink.size(); i++)
+      inverseKineticsLink[i]->updateg(t);
   }
 
   void DynamicSystem::updategd(double t) {
 
-    for(int i=0; i<(int)linkSingleValued.size(); i++) {
-      try { linkSingleValued[i]->updategd(t); }
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
+    for(int i=0; i<(int)linkSingleValued.size(); i++)
+      linkSingleValued[i]->updategd(t);
 
-    for(int i=0; i<(int)linkSetValuedNotActiveWithSmoothPart.size(); i++) { 
-      try { linkSetValuedNotActiveWithSmoothPart[i]->updategd(t); }
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
+    for(int i=0; i<(int)linkSetValuedNotActiveWithSmoothPart.size(); i++)
+      linkSetValuedNotActiveWithSmoothPart[i]->updategd(t);
 
-    for(int i=0; i<(int)linkSetValued.size(); i++) { 
-      try { linkSetValued[i]->updategd(t); }
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
+    for(int i=0; i<(int)linkSetValued.size(); i++)
+      linkSetValued[i]->updategd(t);
   }
 
   void DynamicSystem::updategdInverseKinetics(double t) {
 
-    for(int i=0; i<(int)inverseKineticsLink.size(); i++) { 
-      try { inverseKineticsLink[i]->updategd(t); }
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
+    for(int i=0; i<(int)inverseKineticsLink.size(); i++)
+      inverseKineticsLink[i]->updategd(t);
   }
 
   void DynamicSystem::updatedx(double t, double dt) {
@@ -579,10 +555,8 @@ namespace MBSim {
 
   int DynamicSystem::solveImpactsFixpointSingle(double dt) {
 
-    for(int i=0; i<(int)linkSetValuedActive.size(); i++) {
-      try { linkSetValuedActive[i]->solveImpactsFixpointSingle(dt); }
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
+    for(int i=0; i<(int)linkSetValuedActive.size(); i++)
+      linkSetValuedActive[i]->solveImpactsFixpointSingle(dt);
 
     return 0;
   }
@@ -1577,10 +1551,8 @@ namespace MBSim {
 
   void DynamicSystem::updatecorr(int j) {
 
-    for(int i=0; i<(int)linkSetValued.size(); i++) {
-      try { linkSetValued[i]->updatecorr(j); }
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
+    for(int i=0; i<(int)linkSetValued.size(); i++)
+      linkSetValued[i]->updatecorr(j);
   }
   
   void DynamicSystem::updatecorrRef(const fmatvec::Vec &ref) {

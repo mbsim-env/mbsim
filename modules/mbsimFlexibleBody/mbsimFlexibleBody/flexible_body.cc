@@ -48,10 +48,8 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody::updateh(double t, int k) {
-    for(int i=0;i<(int)discretization.size();i++) {
-      try { discretization[i]->computeh(qElement[i],uElement[i]); } // compute attributes of finite element
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
+    for(int i=0;i<(int)discretization.size();i++)
+      discretization[i]->computeh(qElement[i],uElement[i]); // compute attributes of finite element
     for(int i=0;i<(int)discretization.size();i++) GlobalVectorContribution(i,discretization[i]->geth(),h[k]); // assemble
 
     if(d_massproportional>0) { // mass proportional damping
@@ -60,19 +58,15 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody::updateM(double t, int k) {
-    for(int i=0;i<(int)discretization.size();i++) {
-      try { discretization[i]->computeM(qElement[i]); } // compute attributes of finite element
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
+    for(int i=0;i<(int)discretization.size();i++)
+      discretization[i]->computeM(qElement[i]); // compute attributes of finite element
     for(int i=0;i<(int)discretization.size();i++) GlobalMatrixContribution(i,discretization[i]->getM(),M[k]); // assemble
   }
 
   void FlexibleBody::updatedhdz(double t) {
     updateh(t);
-    for(int i=0;i<(int)discretization.size();i++) {
-      try {discretization[i]->computedhdz(qElement[i],uElement[i]); } // compute attributes of finite element
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
+    for(int i=0;i<(int)discretization.size();i++)
+      discretization[i]->computedhdz(qElement[i],uElement[i]); // compute attributes of finite element
    for(int i=0;i<(int)discretization.size();i++) GlobalMatrixContribution(i,discretization[i]->getdhdq(),dhdq); // assemble
    for(int i=0;i<(int)discretization.size();i++) GlobalMatrixContribution(i,discretization[i]->getdhdu(),dhdu); // assemble
   }

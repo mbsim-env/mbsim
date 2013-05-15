@@ -56,10 +56,8 @@ namespace MBSimFlexibleBody {
     FlexibleBodyContinuum<double>::updateh(t);
 
     /* rotational elements */
-    for(int i=0;i<(int)rotationDiscretization.size();i++) {
-      try { rotationDiscretization[i]->computeh(qRotationElement[i],uRotationElement[i]); } // compute attributes of finite element
-      catch(MBSimError error) { error.printExceptionMessage(); throw; }
-    }
+    for(int i=0;i<(int)rotationDiscretization.size();i++)
+      rotationDiscretization[i]->computeh(qRotationElement[i],uRotationElement[i]); // compute attributes of finite element
     for(int i=0;i<(int)rotationDiscretization.size();i++) GlobalVectorContributionRotation(i,rotationDiscretization[i]->geth(),h[0]); // assemble
   }
 
