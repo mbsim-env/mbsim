@@ -231,7 +231,15 @@ namespace MBSim {
 
   TiXmlElement* FixedRelativeFrame::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0 = Frame::writeXMLFile(parent);
-    return ele0;
+     if(getFrameOfReference()) {
+        TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"frameOfReference" );
+        string str = string("../Frame[") + getFrameOfReference()->getName() + "]";
+        ele1->SetAttribute("ref", str);
+        ele0->LinkEndChild(ele1);
+      }
+     addElementText(ele0,MBSIMNS"relativePosition",getRelativePosition());
+     addElementText(ele0,MBSIMNS"relativeOrientation",getRelativeOrientation());
+   return ele0;
   }
 
 }

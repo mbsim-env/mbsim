@@ -174,6 +174,8 @@ namespace MBSim {
     public:
       FixedRelativeFrame(const std::string &name = "dummy", const fmatvec::Vec3 &r=fmatvec::Vec3(), const fmatvec::SqrMat3 &A=fmatvec::SqrMat3(fmatvec::EYE), const Frame *refFrame=0) : Frame(name), R(refFrame), RrRP(r), ARP(A) {}
 
+      std::string getType() const { return "FixedRelativeFrame"; }
+
       virtual void init(InitStage stage);
 
       void setRelativePosition(const fmatvec::Vec3 &r) { RrRP = r; }

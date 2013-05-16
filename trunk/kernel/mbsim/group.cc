@@ -294,20 +294,8 @@ namespace MBSim {
     addElementText(ele0,MBSIMNS"orientation", getOrientation());
 
     ele1 = new TiXmlElement( MBSIMNS"frames" );
-    for(unsigned int i=1; i<frame.size(); i++) {
-      TiXmlElement* ele2 = new TiXmlElement( MBSIMNS"frame" );
-      ele1->LinkEndChild( ele2 );
-      frame[i]->writeXMLFile(ele2);
-      if(static_cast<FixedRelativeFrame*>(frame[i])->getFrameOfReference() != I) {
-        TiXmlElement *ele3 = new TiXmlElement( MBSIMNS"frameOfReference" );
-        string str = string("Frame[") + static_cast<FixedRelativeFrame*>(frame[i])->getName() + "]";
-        ele3->SetAttribute("ref", str);
-        ele2->LinkEndChild(ele3);
-      }
-
-      addElementText(ele2,MBSIMNS"position", static_cast<FixedRelativeFrame*>(frame[i])->getRelativePosition());
-      addElementText(ele2,MBSIMNS"orientation", static_cast<FixedRelativeFrame*>(frame[i])->getRelativeOrientation());
-    }
+    for(vector<Frame*>::iterator i = frame.begin()+1; i != frame.end(); ++i) 
+      (*i)->writeXMLFile(ele1);
     ele0->LinkEndChild( ele1 );
 
     ele1 = new TiXmlElement( MBSIMNS"contours" );
