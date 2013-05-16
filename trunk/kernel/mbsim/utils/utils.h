@@ -20,6 +20,9 @@
 #ifndef UTILS_H_
 #define UTILS_H_
 
+#define PVNS_ "http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
+#define PVNS "{"PVNS_"}"
+
 #include <string>
 #include "fmatvec.h"
 #include "mbxmlutilstinyxml/tinyxml.h"
@@ -58,37 +61,51 @@ int min(int i, int j);
  */
 double ArcTan(double x,double y);
 
-inline std::string toStr(const std::string &str) {
-  return str;
-}
-
-inline std::string toStr(int i) {
+template <class T>
+inline std::string toStr(const T &val) {
   std::stringstream s;
-  s << i;
+  s << std::setprecision(std::numeric_limits<double>::digits10+1) << val;
   return s.str();
 }
 
-inline std::string toStr(double d) {
-  std::stringstream s;
-  s << d;
-  return s.str();
+inline MBXMLUtils::TiXmlNode* toXML(const std::string &str) {
+  return new MBXMLUtils::TiXmlText(str);
 }
 
-template <class Type, class Row, class Col, class AT>
-inline std::string toStr(const fmatvec::Matrix<Type,Row,Col,AT> &A) {
-  std::stringstream s;
-  s << "[";
-  for(int i=0; i<A.rows(); i++) {
-    for(int j=0; j<A.cols(); j++) {
-      s << std::setprecision(std::numeric_limits<double>::digits10+1) << A(i,j);
-      if(j<A.cols()-1)
-        s << ",";
-    }
-    if(i<A.rows()-1)
-      s << ";";
+inline MBXMLUtils::TiXmlNode* toXML(int i) {
+  return new MBXMLUtils::TiXmlText(toStr(i));
+}
+
+inline MBXMLUtils::TiXmlNode* toXML(double d) {
+  return new MBXMLUtils::TiXmlText(toStr(d));
+}
+
+template <class Row>
+inline MBXMLUtils::TiXmlNode* toXML(const fmatvec::Vector<Row,double> &x) {
+  MBXMLUtils::TiXmlElement *ele = new MBXMLUtils::TiXmlElement(PVNS"xmlVector");
+  for(int i=0; i<x.size(); i++) {
+    MBXMLUtils::TiXmlElement *elei = new MBXMLUtils::TiXmlElement(PVNS"ele");
+    MBXMLUtils::TiXmlText *text = new MBXMLUtils::TiXmlText(toStr(x.e(i)));
+    elei->LinkEndChild(text);
+    ele->LinkEndChild(elei);
   }
-  s << "]";
-  return s.str();
+  return ele;
+}
+
+template <class Type, class Row, class Col>
+inline MBXMLUtils::TiXmlNode* toXML(const fmatvec::Matrix<Type,Row,Col,double> &A) {
+  MBXMLUtils::TiXmlElement *ele = new MBXMLUtils::TiXmlElement(PVNS"xmlMatrix");
+  for(int i=0; i<A.rows(); i++) {
+    MBXMLUtils::TiXmlElement *elei = new MBXMLUtils::TiXmlElement(PVNS"row");
+    for(int j=0; j<A.cols(); j++) {
+      MBXMLUtils::TiXmlElement *elej = new MBXMLUtils::TiXmlElement(PVNS"ele");
+      MBXMLUtils::TiXmlText *text = new MBXMLUtils::TiXmlText(toStr(A.e(i,j)));
+      elej->LinkEndChild(text);
+      elei->LinkEndChild(elej);
+    }
+    ele->LinkEndChild(elei);
+  }
+  return ele;
 }
 
 template<class T>
@@ -113,13 +130,9 @@ inline double fromMatStr(const std::string &str) {
 }
 
 template <class T>
-void addElementText(MBXMLUtils::TiXmlElement *parent, std::string name, T value) {
-  std::ostringstream oss;
-  oss << std::setprecision(std::numeric_limits<double>::digits10+1) << toStr(value);
-  parent->LinkEndChild(new MBXMLUtils::TiXmlElement(name))->LinkEndChild(new MBXMLUtils::TiXmlText(oss.str()));
+void addElementText(MBXMLUtils::TiXmlElement *parent, std::string name, const T &value) {
+  parent->LinkEndChild(new MBXMLUtils::TiXmlElement(name))->LinkEndChild(toXML(value));
 }
-
-
 
 class Deprecated {
   public:

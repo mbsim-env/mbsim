@@ -77,10 +77,7 @@ namespace MBSim {
 
   TiXmlElement* LinearTranslation::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"LinearTranslation" );
-    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"translationVectors" );
-    TiXmlText *text = new TiXmlText(toStr(getTranslationVectors()));
-    ele1->LinkEndChild(text);
-    ele0->LinkEndChild(ele1);
+    addElementText(ele0,MBSIMNS"translationVectors",getTranslationVectors());
     parent->LinkEndChild(ele0);
     return ele0;
   }
@@ -195,10 +192,7 @@ namespace MBSim {
 
   TiXmlElement* RotationAboutFixedAxis::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"RotationAboutFixedAxis" );
-    TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"axisOfRotation" );
-    TiXmlText *text = new TiXmlText(toStr(getAxisOfRotation()));
-    ele1->LinkEndChild(text);
-    ele0->LinkEndChild(ele1);
+    addElementText(ele0,MBSIMNS"axisOfRotation",getAxisOfRotation());
     parent->LinkEndChild(ele0);
     return ele0;
   }
