@@ -20,8 +20,13 @@
 
 #include <config.h>
 #include <mbsim/element.h>
+#include <mbsim/frame.h>
+#include <mbsim/contour.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/object.h>
+#include <mbsim/extra_dynamic.h>
+#include <mbsim/link.h>
+#include <mbsim/observer.h>
 #include <mbsim/mbsim_event.h>
 #include <mbsim/utils/eps.h>
 #include "mbxmlutilstinyxml/tinynamespace.h"
@@ -129,28 +134,74 @@ namespace MBSim {
       int imatch=0;
       for(vector<Element*>::iterator i0 = e0.end()-1, i1 = e1.end()-1 ; (i0 != e0.begin()-1) && (i1 != e1.begin()-1) ; i0--, i1--) 
         if(*i0 == *i1) imatch++;
-      string str = getType()+ "[" + getName() + "]";
+      string type;
+      if(dynamic_cast<Frame*>(this))
+        type = "Frame";
+      else if(dynamic_cast<Contour*>(this))
+        type = "Contour";
+      else if(dynamic_cast<Group*>(this))
+        type = "Group";
+      else if(dynamic_cast<Object*>(this))
+        type = "Object";
+      else if(dynamic_cast<ExtraDynamic*>(this))
+        type = "ExtraDynamic";
+      else if(dynamic_cast<Link*>(this))
+        type = "Link";
+      else if(dynamic_cast<Observer*>(this))
+        type = "Observer";
+      else 
+        type = getType();
+      string str = type + "[" + getName() + "]";
       for(vector<Element*>::iterator i1 = e1.begin() ; i1 != e1.end()-imatch ; i1++) {
         if(dynamic_cast<Group*>(*i1))
           str = string("Group[") + (*i1)->getName() + "]/" + str;
         else if(dynamic_cast<Object*>(*i1))
           str = string("Object[") + (*i1)->getName() + "]/" + str;
+        else if(dynamic_cast<ExtraDynamic*>(*i1))
+          str = string("ExtraDynamic[") + (*i1)->getName() + "]/" + str;
+        else if(dynamic_cast<Link*>(*i1))
+          str = string("Link[") + (*i1)->getName() + "]/" + str;
+        else if(dynamic_cast<Observer*>(*i1))
+          str = string("Observer[") + (*i1)->getName() + "]/" + str;
         else
-          throw;
+          str = "";
       }
       for(int i=0; i<int(e0.size())-imatch; i++)
         str = "../" + str;
       return str;
     } else {
-      string str = getType()+ "[" + getName() + "]";
-      Element* element = getParent();
+      string type;
+      if(dynamic_cast<Frame*>(this))
+        type = "Frame";
+      else if(dynamic_cast<Contour*>(this))
+        type = "Contour";
+      else if(dynamic_cast<Group*>(this))
+        type = "Group";
+      else if(dynamic_cast<Object*>(this))
+        type = "Object";
+      else if(dynamic_cast<ExtraDynamic*>(this))
+        type = "ExtraDynamic";
+      else if(dynamic_cast<Link*>(this))
+        type = "Link";
+      else if(dynamic_cast<Observer*>(this))
+        type = "Observer";
+      else 
+        type = getType();
+      string str = type + "[" + getName() + "]";
+      Element* element = parent;
       while(!dynamic_cast<DynamicSystemSolver*>(element)) {
         if(dynamic_cast<Group*>(element))
           str = string("Group[") + element->getName() + "]/" + str;
         else if(dynamic_cast<Object*>(element))
           str = string("Object[") + element->getName() + "]/" + str;
+        else if(dynamic_cast<ExtraDynamic*>(element))
+          str = string("ExtraDynamic[") + element->getName() + "]/" + str;
+        else if(dynamic_cast<Link*>(element))
+          str = string("Link[") + element->getName() + "]/" + str;
+        else if(dynamic_cast<Observer*>(element))
+          str = string("Observer[") + element->getName() + "]/" + str;
         else
-          throw;
+          str = "";
         element = element->getParent();
       }
       str = "/" + str;

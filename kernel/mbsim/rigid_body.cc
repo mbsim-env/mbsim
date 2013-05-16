@@ -1017,6 +1017,8 @@ namespace MBSim {
     ele0->LinkEndChild(ele1);
 
     addElementText(ele0,MBSIMNS"mass",getMass());
+    if(frameForInertiaTensor)
+      throw MBSimError("Inertia tensor with respect to frame " + frameForInertiaTensor->getName() + " not supported in XML. Provide inertia tensor with respect to frame C.");
     addElementText(ele0,MBSIMNS"inertiaTensor",getInertiaTensor());
 
     ele1 = new TiXmlElement( MBSIMNS"translation" );
@@ -1030,20 +1032,8 @@ namespace MBSim {
     ele0->LinkEndChild(ele1);
 
     ele1 = new TiXmlElement( MBSIMNS"frames" );
-    for(unsigned int i=1; i<frame.size(); i++) {
-      TiXmlElement* ele2 = new TiXmlElement( MBSIMNS"frame" );
-      ele1->LinkEndChild( ele2 );
-      frame[i]->writeXMLFile(ele2);
-      if(static_cast<FixedRelativeFrame*>(frame[i])->getFrameOfReference() && static_cast<FixedRelativeFrame*>(frame[i])->getFrameOfReference() != C) {
-        TiXmlElement *ele3 = new TiXmlElement( MBSIMNS"frameOfReference" );
-        string str = string("Frame[") + static_cast<FixedRelativeFrame*>(frame[i])->getFrameOfReference()->getName() + "]";
-        ele3->SetAttribute("ref", str);
-        ele2->LinkEndChild(ele3);
-      }
-
-      addElementText(ele2,MBSIMNS"position",static_cast<FixedRelativeFrame*>(frame[i])->getRelativePosition());
-      addElementText(ele2,MBSIMNS"orientation",static_cast<FixedRelativeFrame*>(frame[i])->getRelativeOrientation());
-    }
+    for(vector<Frame*>::iterator i = frame.begin()+1; i != frame.end(); ++i) 
+      (*i)->writeXMLFile(ele1);
     ele0->LinkEndChild( ele1 );
 
     ele1 = new TiXmlElement( MBSIMNS"contours" );
