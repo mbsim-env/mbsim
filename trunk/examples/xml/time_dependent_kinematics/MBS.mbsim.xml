@@ -14,19 +14,8 @@
             <translation>
                 <TimeDependentTranslation>
                     <translationFunction>
-                        <!--<SymbolicFunction1_VS arg1name="t">
-                            The below line is the code we want to write here for returning a 3x1 matrix.
-                            But this code generates a lot of octave/casadi valgrind errors and
-                            or even crashes. However the below code works fine, without any valgrind
-                            error.
-
-                            [sin(freq1*t + pi/2); v0y*t; 0]
-                        </SymbolicFunction1_VS>-->
                         <SymbolicFunction1_VS arg1name="t">
-                            ret=casadi.ssym('ret', 3, 1);
-                            ret(1)=sin(freq1*t + pi/2);
-                            ret(2)=v0y*t;
-                            ret(3)=0;
+                            [sin(freq1*t + pi/2); v0y*t; 0]
                         </SymbolicFunction1_VS>
                     </translationFunction>
                 </TimeDependentTranslation>
