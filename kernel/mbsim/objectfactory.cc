@@ -220,12 +220,28 @@ namespace MBSim {
     throw MBSimError(string("No Function2_VVS of type ")+element->ValueStr()+" exists.");
   }
 
+  Function2<Vec3,Vec,double> *ObjectFactory::createFunction2_V3VS(TiXmlElement *element) {
+    if(element==NULL) return NULL;
+    Function2<Vec3,Vec,double> *obj;
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
+      if((obj=(*i)->createFunction2_V3VS(element))) return obj;
+    throw MBSimError(string("No Function2_V3VS of type ")+element->ValueStr()+" exists.");
+  }
+
   Function3<Mat3xV,Vec,Vec,double> *ObjectFactory::createFunction3_MVVS(TiXmlElement *element) {
     if(element==NULL) return NULL;
     Function3<Mat3xV,Vec,Vec,double> *obj;
     for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->createFunction3_MVVS(element))) return obj;
     throw MBSimError(string("No Function2_MVVS of type ")+element->ValueStr()+" exists.");
+  }
+
+  Function1<fmatvec::Vec3,fmatvec::Vec> *ObjectFactory::createFunction1_V3V(TiXmlElement *element) {
+    if(element==NULL) return NULL;
+    Function1<Vec3,Vec> *obj;
+    for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
+      if((obj=(*i)->createFunction1_V3V(element))) return obj;
+    throw MBSimError(string("No Function1_V3V of type ")+element->ValueStr()+" exists.");
   }
 
   InfluenceFunction* ObjectFactory::createInfluenceFunction(TiXmlElement *element) {
@@ -327,6 +343,10 @@ namespace MBSim {
       return new TranslationInXYZDirection;
     if(element->ValueStr()==MBSIMNS"TimeDependentTranslation")
       return new TimeDependentTranslation;
+    if(element->ValueStr()==MBSIMNS"GeneralTranslation")
+      return new GeneralTranslation;
+    if(element->ValueStr()==MBSIMNS"StateDependentTranslation")
+      return new StateDependentTranslation;
     return 0;
   }
 
@@ -492,6 +512,7 @@ namespace MBSim {
   }
 
   Function1<double,double> *MBSimObjectFactory::createFunction1_SS(TiXmlElement *element) {
+    if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"ConstantFunction1_SS")
       return new ConstantFunction1<double,double>;
     if(element->ValueStr()==MBSIMNS"Function1_SS_from_VS")
@@ -506,6 +527,7 @@ namespace MBSim {
   }
 
   Function1<Vec,double> *MBSimObjectFactory::createFunction1_VS(TiXmlElement *element) {
+    if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"ConstantFunction1_VS")
       return new ConstantFunction1<Vec,double>;
     if(element->ValueStr()==MBSIMNS"PiecewisePolynom1_VS")
@@ -530,6 +552,7 @@ namespace MBSim {
   }
 
   Function1<VecV,double> *MBSimObjectFactory::createFunction1_VVS(TiXmlElement *element) {
+    if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"ConstantFunction1_VS")
       return new ConstantFunction1<VecV,double>;
     if(element->ValueStr()==MBSIMNS"QuadraticFunction1_VS")
@@ -546,6 +569,7 @@ namespace MBSim {
   }
 
   Function1<Vec3,double> *MBSimObjectFactory::createFunction1_V3S(TiXmlElement *element) {
+    if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"ConstantFunction1_VS")
       return new ConstantFunction1<Vec3,double>;
     if(element->ValueStr()==MBSIMNS"QuadraticFunction1_VS")
@@ -591,7 +615,25 @@ namespace MBSim {
     return 0;
   }
 
+  Function2<Vec3,Vec,double> *MBSimObjectFactory::createFunction2_V3VS(TiXmlElement *element) {
+    if(element==0) return 0;
+#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
+    if(element->ValueStr()==MBSIMNS"SymbolicFunction2_V3VS")
+      return new SymbolicFunction2<Vec3, Vec, double>;
+#endif
+    return 0;
+  }
+
   Function3<Mat3xV,Vec,Vec,double> *MBSimObjectFactory::createFunction3_MVVS(TiXmlElement *element) {
+    return 0;
+  }
+
+  Function1<fmatvec::Vec3,fmatvec::Vec> *MBSimObjectFactory::createFunction1_V3V(TiXmlElement *element) {
+    if(element==0) return 0;
+#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
+    if(element->ValueStr()==MBSIMNS"SymbolicFunction1_V3V")
+      return new SymbolicFunction1<Vec3, Vec>;
+#endif
     return 0;
   }
 

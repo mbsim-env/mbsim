@@ -109,6 +109,8 @@ namespace MBSim {
     void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
       f=CasADi::createCasADiSXFunctionFromXML(element->FirstChildElement());
       f.init();
+      assert(f.getNumInputs()==1);
+      assert(f.getNumOutputs()==1);
     }
   };
 
@@ -116,6 +118,7 @@ namespace MBSim {
   class SymbolicFunction2 : public Function2<Ret,Arg1,Arg2> {
     CasADi::SXFunction f;
     public:
+    SymbolicFunction2() {}
     SymbolicFunction2(const CasADi::SXFunction &f_) : f(f_) {
       f.init();
     }
@@ -131,6 +134,13 @@ namespace MBSim {
       f.setInput(ToCasadi<Arg2>::cast(x2),1);
       f.evaluate();
       return FromCasadi<Ret>::cast(f.output());
+    }
+
+    void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
+      f=CasADi::createCasADiSXFunctionFromXML(element->FirstChildElement());
+      f.init();
+      assert(f.getNumInputs()==2);
+      assert(f.getNumOutputs()==1);
     }
   };
 
