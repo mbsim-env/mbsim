@@ -45,8 +45,21 @@ int main(int argc, char *argv[]) {
 
     MBSimXML::postMain(argc, argv, integrator, dss);
   }
-  catch (MBSimError error) {
-    cerr << error.what() << endl;
+  catch(const MBSimError &e) {
+    cerr<<"MBSimError: "<<e.what()<<endl;
+    return 1;
+  }
+  catch(const H5::Exception &e) {
+    cerr<<"HDF5 exception: "<<e.getCDetailMsg()<<endl<<
+          "function: "<<e.getCFuncName()<<endl;
+    return 1;
+  }
+  catch(const exception &e) {
+    cerr<<"Exception: "<<e.what()<<endl;
+    return 1;
+  }
+  catch(...) {
+    cerr<<"Unknown exception"<<endl;
     return 1;
   }
 

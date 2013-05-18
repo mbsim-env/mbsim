@@ -43,19 +43,62 @@
                 <frameOfReference ref="Frame[C]" />
             </openMBVRigidBody>
         </RigidBody>
-        <RigidBody name="Rod2">
+        <RigidBody name="Box2">
             <frameOfReference ref="../Frame[I]" />
             <frameForKinematics ref="Frame[C]" />
-            <mass>1</mass>
+            <mass>3</mass>
             <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
             <translation>
-                <LinearTranslation>
-                    <translationVectors>[0;1;0]</translationVectors>
-                </LinearTranslation>
+                <StateDependentTranslation>
+                    <translationFunction>
+                        <SymbolicFunction1_V3V arg1name="q" arg1dim="1">
+                            [5+cos(freq1*q); sin(freq1*q(1)); 0]
+                        </SymbolicFunction1_V3V>
+                    </translationFunction>
+                </StateDependentTranslation>
             </translation>
-            <rotation />
+            <rotation/>
             <frames />
             <contours />
+            <openMBVRigidBody>
+                <ombv:Cube name="Box2">
+                    <ombv:staticColor>0</ombv:staticColor>
+                    <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
+                    <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
+                    <ombv:scaleFactor>1</ombv:scaleFactor>
+                    <ombv:length>1</ombv:length>
+                </ombv:Cube>
+                <frameOfReference ref="Frame[C]" />
+            </openMBVRigidBody>
+        </RigidBody>
+        <RigidBody name="Box3">
+            <initialGeneralizedVelocity>[0;1]</initialGeneralizedVelocity>
+            <frameOfReference ref="../Frame[I]" />
+            <frameForKinematics ref="Frame[C]" />
+            <mass>3</mass>
+            <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
+            <translation>
+                <GeneralTranslation>
+                    <translationFunction>
+                        <SymbolicFunction2_V3VS arg1name="q" arg1dim="2" arg2name="t">
+                            [10+t+cos(freq1*q(1)); sin(freq1*q(1)); q(2)]
+                        </SymbolicFunction2_V3VS>
+                    </translationFunction>
+                </GeneralTranslation>
+            </translation>
+            <rotation/>
+            <frames />
+            <contours />
+            <openMBVRigidBody>
+                <ombv:Cube name="Box3">
+                    <ombv:staticColor>0</ombv:staticColor>
+                    <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
+                    <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
+                    <ombv:scaleFactor>1</ombv:scaleFactor>
+                    <ombv:length>1</ombv:length>
+                </ombv:Cube>
+                <frameOfReference ref="Frame[C]" />
+            </openMBVRigidBody>
         </RigidBody>
     </objects>
     <extraDynamics />

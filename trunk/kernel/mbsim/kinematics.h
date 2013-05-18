@@ -321,6 +321,8 @@ namespace MBSim {
 
   class StateDependentTranslation : public Translation {
     public:
+      StateDependentTranslation() : qSize(0), pos(NULL) {}
+
       /**
        * \brief constructor
        */
@@ -344,7 +346,7 @@ namespace MBSim {
        */
       virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return (*pos)(q); }
 
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; }
 
       /* GETTER / SETTER */
@@ -362,6 +364,7 @@ namespace MBSim {
 
   class GeneralTranslation : public Translation {
     public:
+      GeneralTranslation() : qSize(0), pos(NULL) {}
       /**
        * \brief constructor
        */
@@ -385,7 +388,7 @@ namespace MBSim {
        */
       virtual fmatvec::Vec3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return (*pos)(q,t); }
 
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; }
 
       /* GETTER / SETTER */

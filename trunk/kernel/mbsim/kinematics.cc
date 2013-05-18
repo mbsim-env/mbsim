@@ -20,6 +20,10 @@
 #include <config.h>
 #include "mbsim/kinematics.h"
 #include "mbsim/objectfactory.h"
+#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
+#  include "mbsim/utils/symbolic_function.h"
+#  include <casadi/symbolic/fx/sx_function.hpp>
+#endif
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -87,6 +91,19 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"translationFunction");
     pos=ObjectFactory::getInstance()->createFunction1_V3S(e->FirstChildElement());
     pos->initializeUsingXML(e->FirstChildElement());
+  }
+
+  void StateDependentTranslation::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMNS"translationFunction");
+    pos=ObjectFactory::getInstance()->createFunction1_V3V(e->FirstChildElement());
+    pos->initializeUsingXML(e->FirstChildElement());
+#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
+    // set qSize for symbolic function (qSize if given by user)
+    SymbolicFunction1<Vec3,Vec> *symPos=dynamic_cast<SymbolicFunction1<Vec3,Vec>*>(pos);
+    if(symPos)
+      qSize=symPos->getSXFunction().inputExpr(0).size1();
+#endif
   }
 
   RotationAboutXAxis::RotationAboutXAxis() {
@@ -627,5 +644,17 @@ namespace MBSim {
     return Jd;
   }
 
-}
+  void GeneralTranslation::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMNS"translationFunction");
+    pos=ObjectFactory::getInstance()->createFunction2_V3VS(e->FirstChildElement());
+    pos->initializeUsingXML(e->FirstChildElement());
+#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
+    // set qSize for symbolic function (qSize if given by user)
+    SymbolicFunction2<Vec3,Vec,double> *symPos=dynamic_cast<SymbolicFunction2<Vec3,Vec,double>*>(pos);
+    if(symPos)
+      qSize=symPos->getSXFunction().inputExpr(0).size1();
+#endif
+  }
 
+}

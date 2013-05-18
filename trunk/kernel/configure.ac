@@ -124,7 +124,7 @@ if test $casadi = "yes" ; then
   AC_SUBST([CASADILIB])
   AC_SUBST([CASADICPPFLAGS])
   AC_SUBST([CASADILDFLAGS])
-  CPPFLAGS="$CPPFLAGS -Wall -Wno-unknown-pragmas -Wno-long-long"
+  CPPFLAGS="$CPPFLAGS -Wall -Wno-unknown-pragmas -Wno-long-long -Wno-sign-compare"
 else
   CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long -Wfloat-equal"
 fi
