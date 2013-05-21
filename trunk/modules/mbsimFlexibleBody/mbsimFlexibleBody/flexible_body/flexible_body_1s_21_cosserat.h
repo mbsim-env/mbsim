@@ -20,6 +20,7 @@
 #ifndef _FLEXIBLE_BODY_1S_21_COSSERAT_H_
 #define _FLEXIBLE_BODY_1S_21_COSSERAT_H_
 
+#include <fmatvec.h>
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_cosserat.h"
 #include "mbsimFlexibleBody/flexible_body.h"
 #include "mbsimFlexibleBody/pointer.h"
@@ -31,6 +32,8 @@
 #include <openmbvcppinterface/spineextrusion.h>
 #endif
 
+using namespace fmatvec;
+
 namespace MBSimFlexibleBody {
 
   class NurbsCurve1s;
@@ -41,9 +44,10 @@ namespace MBSimFlexibleBody {
    * \author Thorsten Schindler
    * \author Robert von Zitzewitz
    * \date 2012-12-14 initial commit (Thomas Cebulla)
-   * \date 2013-02-04 completed 2D Cosserat beam (Robert von Zitzewitz)
+   * \date 2013-02-04 completed 2D Cosserat beam for closed structure (Robert von Zitzewitz)
+   * \date 2013-02-04 completed POD model reduction for TIMESTEPPING integrator (Robert von Zitzewitz)
    * \todo compute boundary conditions TODO
-   * \todo check open structure in contact kinematics TODO
+   * \todo open structure TODO
    *
    * Cosserat model based on
    * H. Lang, J. Linn, M. Arnold: Multi-body dynamics simulation of geometrically exact Cosserat rods
@@ -56,6 +60,27 @@ namespace MBSimFlexibleBody {
    */
   class FlexibleBody1s21Cosserat : public FlexibleBody1sCosserat {
     public:
+
+
+      /**
+       * \brief bool true: execute POD, false: without POD
+       */
+      bool SVD;
+
+      /**
+       * \brief POM projection matrix
+       */
+      fmatvec::Mat U;
+
+      /**
+       * \brief LU decomposition of reduced mass matrix
+       */
+      fmatvec::SymMat LLUMUT[2];
+
+      /**
+       * \brief reduced differentiated velocity
+       */
+      fmatvec::Vec udSVD[2];
 
       /**
        * \brief constructor
@@ -70,6 +95,7 @@ namespace MBSimFlexibleBody {
       virtual ~FlexibleBody1s21Cosserat();
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
+      virtual void updateM(double t, int k=0){};
       virtual void BuildElements();
       virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
       virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
@@ -84,6 +110,7 @@ namespace MBSimFlexibleBody {
       virtual void init(MBSim::InitStage stage);
       virtual double computePotentialEnergy();
       virtual void facLLM(int i=0);
+      virtual void updatedu(double t, double dt);
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
@@ -110,6 +137,26 @@ namespace MBSimFlexibleBody {
       int getNumberDOFs() const { return qSize; }
       double getLength() const { return L; }
       bool isOpenStructure() const { return openStructure; }
+
+      /**
+       * \brief initialize POM projection matrix
+       * \param  POM matrix
+       */
+      void setU(Mat U_){U << U_;}
+
+      /**
+       * \brief initialize LU decomposed constant reduced mass  matrix
+       * \param  reduced mass matrix
+       */
+      void setLLUMUT(SymMat LLUMUT_){
+        LLUMUT[0].resize(LLUMUT_.size(),INIT,0.);
+        LLUMUT[0] << LLUMUT_;
+      }
+
+      /* \brief Set SVD=true for POD model reduction
+       * \param  reduced mass matrix
+       */
+      void setSVD(){SVD=true;}
       /***************************************************/
 
       /**

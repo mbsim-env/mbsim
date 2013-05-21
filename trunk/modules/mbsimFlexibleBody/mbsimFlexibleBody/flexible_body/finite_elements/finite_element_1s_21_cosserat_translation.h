@@ -57,10 +57,7 @@ namespace MBSimFlexibleBody {
        * \param Young's modulus
        * \param shear modulus
        * \param first area moment of inertia
-       * \param second area moment of inertia
-       * \param torsional moment of inertia
        * \param acceleration of gravity
-       * \param cardan object
        */
       FiniteElement1s21CosseratTranslation(double l0_,double rho_,double A_,double E_,double G_,double I1_,const fmatvec::Vec& g_);
 
@@ -92,7 +89,7 @@ namespace MBSimFlexibleBody {
 
       /* GETTER / SETTER */
       void setMaterialDamping(double cEps0D_,double cEps1D_);
-      void setShearCorrectionFactors(double sigma1_, double sigma2_);
+      void setShearCorrectionFactors(double sigma1_);
       double getl0() const;
 
       /**
@@ -144,7 +141,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief geometrical moment of inertia 
        */
-      double I1, I2, I0;
+      double I1;
 
       /**
        * \brief gravitation
@@ -154,12 +151,12 @@ namespace MBSimFlexibleBody {
       /**
        * \brief strain damping
        */
-      double cEps0D, cEps1D, cEps2D;
+      double cEps0D, cEps1D;
 
       /**
        * \brief shear correction factors
        */
-      double sigma1, sigma2;
+      double sigma1;
 
       /**
        * \brief global system description 
@@ -199,7 +196,7 @@ namespace MBSimFlexibleBody {
   inline fmatvec::Vec FiniteElement1s21CosseratTranslation::computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s21CosseratTranslation::computeVelocity): Not implemented!"); }
   inline fmatvec::Vec FiniteElement1s21CosseratTranslation::computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s21CosseratTranslation::computeAngularVelocity): Not implemented!"); }
   inline fmatvec::Mat FiniteElement1s21CosseratTranslation::computeJacobianOfMotion(const fmatvec::Vec& qG,const MBSim::ContourPointData& data) { return computeJXqG(qG,data.getLagrangeParameterPosition()(0)); }
-  inline void FiniteElement1s21CosseratTranslation::setShearCorrectionFactors(double sigma1_, double sigma2_) { sigma1 = sigma1_; sigma2 = sigma2_; }
+  inline void FiniteElement1s21CosseratTranslation::setShearCorrectionFactors(double sigma1_) { sigma1 = sigma1_; }
   inline double FiniteElement1s21CosseratTranslation::getl0() const { return l0; }
   inline fmatvec::Mat FiniteElement1s21CosseratTranslation::computeJXqG(const fmatvec::Vec& qG,double x) { throw MBSim::MBSimError("ERROR (FiniteElement1s21CosseratTranslation::computeJXqG): Not implemented!"); }
 

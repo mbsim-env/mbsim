@@ -64,14 +64,14 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FlexibleBody1s21Cosserat::FlexibleBody1s21Cosserat(const string &name, bool openStructure_) : FlexibleBody1sCosserat(name, openStructure) {
-    Body::addContour(cylinder);
-    Body::addContour(top);
-    Body::addContour(bottom);
-    Body::addContour(left);
-    Body::addContour(right);
-    Body::addContour(neutralFibre);
-    Body::addContour(curve);
+  FlexibleBody1s21Cosserat::FlexibleBody1s21Cosserat(const string &name, bool openStructure_) : FlexibleBody1sCosserat(name, openStructure),SVD(false) {
+    addContour(cylinder);
+    addContour(top);
+    addContour(bottom);
+    addContour(left);
+    addContour(right);
+    addContour(neutralFibre);
+    addContour(curve);
   }
 
   FlexibleBody1s21Cosserat::~FlexibleBody1s21Cosserat() {
@@ -80,12 +80,23 @@ namespace MBSimFlexibleBody {
     }
   }
 
+  void FlexibleBody1s21Cosserat::updatedu(double t, double dt) {
+    /* POD model reduction if SVD==true */
+    if(SVD==true){
+      udSVD[0] = slvLLFac(LLUMUT[0], U.T()*h[0]*dt + U.T()*r[0]);
+      ud[0] = U * udSVD[0];
+    }
+    else{
+      ud[0] = slvLLFac(LLM[0], h[0]*dt+r[0]);
+    }
+  }
+
   void FlexibleBody1s21Cosserat::BuildElements() {
     /* translational elements */
     for(int i=0;i<Elements;i++) {
       int j = 3*i; // start index in entire beam coordinates
 
-      if(i<Elements-1 || openStructure) {
+      if(i<Elements-1) {
         qElement[i] = q(j,j+4);
         uElement[i] = u(j,j+4);
       }
@@ -98,9 +109,6 @@ namespace MBSimFlexibleBody {
     }
 
     /* rotational elements */
-    if(openStructure)
-      computeBoundaryCondition();
-
     for(int i=0;i<rotationalElements;i++) {
       int j = 3*i; // start index in entire beam coordinates
 
@@ -109,32 +117,16 @@ namespace MBSimFlexibleBody {
         uRotationElement[i] = u(j-1,j+2);
       }
       else if(i==0) { // first element
-        if(openStructure) { // open structure
-          qRotationElement[i](0,2) = bound_ang_start;
-          uRotationElement[i](0,2) = bound_ang_vel_start;
-          qRotationElement[i](3,8) = q(j,j+5);
-          uRotationElement[i](3,8) = u(j,j+5);
-        }
-        else { // closed structure concerning gamma
-          qRotationElement[i](0) = q(q.size()-1);
-          uRotationElement[i](0) = u(u.size()-1);
-          qRotationElement[i](1,3) = q(j,j+2);
-          uRotationElement[i](1,3) = u(j,j+2);
-          if(q(j+2)<q(q.size()-1)) qRotationElement[i](0) -= 2.*M_PI;
-          else qRotationElement[i](0) += 2.*M_PI;
-        }
+        qRotationElement[i](0) = q(q.size()-1);
+        uRotationElement[i](0) = u(u.size()-1);
+        qRotationElement[i](1,3) = q(j,j+2);
+        uRotationElement[i](1,3) = u(j,j+2);
+        if(q(j+2)<q(q.size()-1)) qRotationElement[i](0) -= 2.*M_PI;
+        else qRotationElement[i](0) += 2.*M_PI;
       }
       else if(i==rotationalElements-1) { // last element
-        if(openStructure) { // open structure
-          qRotationElement[i](0,5) = q(j-3,j+2);
-          uRotationElement[i](0,5) = u(j-3,j+2);
-          qRotationElement[i](6,8) = bound_ang_end;
-          uRotationElement[i](6,8) = bound_ang_vel_end;
-        }
-        else { // closed structure concerning gamma
-          qRotationElement[i] = q(j-1,j+2);
-          uRotationElement[i] = u(j-1,j+2);
-        }
+        qRotationElement[i] = q(j-1,j+2);
+        uRotationElement[i] = u(j-1,j+2);
       }
     }
   }
@@ -142,7 +134,7 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s21Cosserat::GlobalVectorContribution(int n, const Vec& locVec,Vec& gloVec) {
     int j = 3*n; // start index in entire beam coordinates
 
-    if(n<Elements-1 || openStructure) {
+    if(n<Elements-1) {
       gloVec(j,j+4) += locVec;
     }
     else { // last FE for closed structure
@@ -152,39 +144,24 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21Cosserat::GlobalVectorContributionRotation(int n, const Vec& locVec,Vec& gloVec) {
-    int j = 3*n; // start index in entire beam coordinates
-    if(n>0 && n<rotationalElements-1) { // no problem case
-      gloVec(j-1,j+2) += locVec; // staggered grid -> rotation offset
+    int j=3*n;
+    if(n==0){
+      gloVec(0,2) += locVec(1,3);
+      gloVec(q.size()-1) += locVec(0);
     }
-    else if(n==0) { // first element
-      if(openStructure) { // open structure
-        gloVec(j,j+5) += locVec(3,8);
-        gloVec(j+3,j+5) += locVec(0,2); // TODO depends on computeBoundaryConditions()
-      }
-      else { // closed structure
-        gloVec(j,j+2) += locVec(1,3);
-        gloVec(q.size()-1) += locVec(0);
-      }
-    }
-    else if(n==rotationalElements-1) { // last element
-      if(openStructure) { // open structure
-        gloVec(j-3,j+2) += locVec(0,5);
-        gloVec(j-3,j-1) += locVec(6,8); // TODO depends on computeBoundaryConditions()
-      }
-      else { // closed structure
-        gloVec(j-1,j+2) += locVec;
-      }
+    else if(n>>0 && n < rotationalElements){
+      gloVec(j-1,j+2) += locVec;
     }
   }
 
   void FlexibleBody1s21Cosserat::GlobalMatrixContribution(int n, const Mat& locMat, Mat& gloMat) {
     int j = 3*n; // start index in entire beam coordinates
 
-    if(n<Elements-1 || openStructure) {
+    if(n<Elements-1) {
       gloMat(Index(j,j+4),Index(j,j+4)) += locMat;
     }
-    else { // last FE for closed structure
-      gloMat(Index(j,j+2),Index(j,j+2)) += locMat(Index(0,2),Index(0,2));	// normaler Anteil mit überschneidung vorheriges Element
+    else { // last FE
+      gloMat(Index(j,j+2),Index(j,j+2)) += locMat(Index(0,2),Index(0,2));
       gloMat(Index(0,1),Index(0,1)) += locMat(Index(3,4),Index(3,4));
     }
   }
@@ -192,12 +169,12 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s21Cosserat::GlobalMatrixContribution(int n, const SymMat& locMat, SymMat& gloMat) {
     int j = 3*n; // start index in entire beam coordinates
 
-    if(n<Elements-1 || openStructure) {
+    if(n<Elements-1) {
       gloMat(Index(j,j+4)) += locMat;
     }
-    else { // last FE for closed structure
-      gloMat(Index(j,j+2)) += locMat(Index(0,2));		// normaler Anteil mit überschneidung vorheriges Element
-      gloMat(Index(0,1)) += locMat(Index(3,4));			// überschneidung letztes und erstes element
+    else { // last FE
+      gloMat(Index(j,j+2)) += locMat(Index(0,2));
+      gloMat(Index(0,1)) += locMat(Index(3,4));
     }
   }
 
@@ -209,6 +186,7 @@ namespace MBSimFlexibleBody {
 
       BuildElementTranslation(cp.getLagrangeParameterPosition()(0),sLocalTranslation,currentElementTranslation); // Lagrange parameter and number of translational element
 
+      /* 2D -> 3D mapping */
       Vec qTmpCONT(3,INIT,0.);
       qTmpCONT(2) = q(3*currentElementTranslation+2);
 
@@ -227,7 +205,8 @@ namespace MBSimFlexibleBody {
         cp.getFrameOfReference().getOrientation().set(2, crossProduct(cp.getFrameOfReference().getOrientation().col(0),cp.getFrameOfReference().getOrientation().col(1))); // binormal (cartesian system)
     }
     else if(cp.getContourParameterType() == NODE) { // frame on node
-      int node = cp.getNodeNumber(); // TODO open structure different?
+      int node = cp.getNodeNumber();
+      /* 2D -> 3D mapping */
       Vec qTmpNODE(3,INIT,0.);
       qTmpNODE(0,1) = q(3*node+0,3*node+1);
       Vec qTmpANGLE(3,INIT,0.);
@@ -236,7 +215,6 @@ namespace MBSimFlexibleBody {
       uTmp(0,1) = u(3*node+0,3*node+1);
       Vec uTmpANGLE(3,INIT,0.);
       uTmpANGLE(2) = u(3*node+2);
-
 
       if(ff==position || ff==position_cosy || ff==all)
         cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation()*qTmpNODE);
@@ -274,23 +252,19 @@ namespace MBSimFlexibleBody {
     }
     else if(cp.getContourParameterType() == NODE) { // force on node
       int node = cp.getNodeNumber();
-      int qSizeTmp;
-      qSizeTmp = qSize*2;
-      Mat Jacobian_trans(qSizeTmp,3,INIT,0.);
-
-      Jacobian_trans(Index(6*node,6*node+2),Index(0,2)) << SqrMat(3,EYE); // translation
+      /* Jacobian of translation element matrix [1,0,0;0,1,0], static */
+      Mat Jacobian_trans(qSize,3,INIT,0.);
+      Jacobian_trans(3*node,0) = 1;
+      Jacobian_trans(3*node+1,1) = 1;
 
       cp.getFrameOfReference().setJacobianOfTranslation(R->getOrientation()*Jacobian_trans.T());
     }
     else if(cp.getContourParameterType() == STAGGEREDNODE) { // force on staggered node
       int node = cp.getNodeNumber();
-      int qSizeTmpRot;
-      qSizeTmpRot = qSize*2;
-      Vec pTmp(3,INIT,0.);
+      /* Jacobian of rotation element matrix [1,0,0;0,1,0], static */
+      Mat Jacobian_rot(qSize,3,INIT,0.);
+      Jacobian_rot(3*node+2,2)=1;
 
-      Mat Jacobian_rot(qSizeTmpRot,3,INIT,0.); // TODO open structure
-      pTmp(2) = q(3*node+2);
-      Jacobian_rot(Index(6*node+3,6*node+5),Index(0,2)) = angle->computeT(pTmp);
       cp.getFrameOfReference().setJacobianOfRotation(R->getOrientation()*Jacobian_rot.T());
     }
     else throw MBSimError("ERROR(FlexibleBody1s21Cosserat::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'STAGGEREDNODE' or 'CONTINUUM'");
@@ -467,11 +441,7 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s21Cosserat::setNumberElements(int n) {
     Elements = n;
     rotationalElements = n;
-    if(openStructure) {
-      qSize = 6*n+3;
-      rotationalElements += 1;
-    }
-    else qSize = 3*n;
+    qSize = 3*n;
 
     Vec q0Tmp;
     if(q0.size())
@@ -516,7 +486,7 @@ namespace MBSimFlexibleBody {
   Vec3 FlexibleBody1s21Cosserat::computeAngles(double sGlobal) {
     Vec3 phiTmp, phi_L, phi_R;
     double sLocalRotation;
-    int currentElementRotation; // TODO openstructure
+    int currentElementRotation;
 
     if(sGlobal < l0/2.) { // first rotation element (last half)
       sLocalRotation = sGlobal + l0/2.;
