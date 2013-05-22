@@ -75,6 +75,10 @@ namespace MBSim {
       delete *i;
     for(vector<Frame*>::iterator i = frame.begin(); i != frame.end(); ++i)
       delete *i;
+    for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i)
+      delete *i;
+    for(vector<Observer*>::iterator i = observer.begin(); i != observer.end(); ++i)
+      delete *i;
   }
 
   void DynamicSystem::updateT(double t) {
