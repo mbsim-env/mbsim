@@ -52,6 +52,7 @@ class Body : public Object {
   protected:
     std::vector<Frame*> frame;
     std::vector<Contour*> contour;
+    std::vector<Element*> removedElement;
     ExtProperty R;
 };
 

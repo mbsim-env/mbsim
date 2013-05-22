@@ -39,6 +39,7 @@ class Group : public Element {
     std::vector<ExtraDynamic*> extraDynamic;
     std::vector<Link*> link;
     std::vector<Observer*> observer;
+    std::vector<Element*> removedElement;
 
   public:
     Group(const std::string &str, Element *parent);

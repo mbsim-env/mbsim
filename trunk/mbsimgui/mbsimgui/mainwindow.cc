@@ -566,6 +566,7 @@ void MainWindow::saveIntegrator() {
 void MainWindow::removeParameter() {
   ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
   QModelIndex index = parameterList->selectionModel()->currentIndex();
+  delete model->getItem(index)->getItemData();
   model->removeRow(index.row(), index.parent());
   updateOctaveParameters();
 }
