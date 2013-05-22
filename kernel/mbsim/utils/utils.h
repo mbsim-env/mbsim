@@ -76,8 +76,24 @@ inline MBXMLUtils::TiXmlNode* toXML(int i) {
   return new MBXMLUtils::TiXmlText(toStr(i));
 }
 
+inline MBXMLUtils::TiXmlNode* toXML(unsigned int i) {
+  return new MBXMLUtils::TiXmlText(toStr(i));
+}
+
 inline MBXMLUtils::TiXmlNode* toXML(double d) {
   return new MBXMLUtils::TiXmlText(toStr(d));
+}
+
+template <class T>
+inline MBXMLUtils::TiXmlNode* toXML(const std::vector<T> &x) {
+  MBXMLUtils::TiXmlElement *ele = new MBXMLUtils::TiXmlElement(PVNS"xmlVector");
+  for(int i=0; i<x.size(); i++) {
+    MBXMLUtils::TiXmlElement *elei = new MBXMLUtils::TiXmlElement(PVNS"ele");
+    MBXMLUtils::TiXmlText *text = new MBXMLUtils::TiXmlText(toStr(x[i]));
+    elei->LinkEndChild(text);
+    ele->LinkEndChild(elei);
+  }
+  return ele;
 }
 
 template <class Row>

@@ -19,6 +19,7 @@
 
 #include<config.h>
 #include "mbsim/contours/plane.h"
+#include "mbsim/utils/utils.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/grid.h>
@@ -67,6 +68,19 @@ namespace MBSim {
       }
     }
 #endif
+  }
+
+  TiXmlElement* Plane::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = Contour::writeXMLFile(parent);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    if(openMBVRigidBody) {
+      TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"enableOpenMBV");
+      addElementText(ele1,MBSIMNS"size",static_cast<OpenMBV::Grid*>(openMBVRigidBody)->getXSize());
+      addElementText(ele1,MBSIMNS"numberOfLines",static_cast<OpenMBV::Grid*>(openMBVRigidBody)->getXNumber());
+      ele0->LinkEndChild(ele1);
+    }
+#endif
+    return ele0;
   }
 
 }

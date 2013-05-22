@@ -102,4 +102,16 @@ namespace MBSim {
       enableOpenMBV();
 #endif
   }
+
+  TiXmlElement* Frustum::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = Contour::writeXMLFile(parent);
+    addElementText(ele0,MBSIMNS"baseRadius",r(0));
+    addElementText(ele0,MBSIMNS"topRadius",r(1));
+    addElementText(ele0,MBSIMNS"height",h);
+    addElementText(ele0,MBSIMNS"solid",outCont);
+    if(openMBVRigidBody)
+      ele0->LinkEndChild(new TiXmlElement(MBSIMNS"enableOpenMBV"));
+    return ele0;
+  }
+
 }

@@ -95,5 +95,15 @@ namespace MBSim {
 #endif
   }
 
+  TiXmlElement* Circle::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = Contour::writeXMLFile(parent);
+    addElementText(ele0,MBSIMNS"radius",r);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    if(openMBVRigidBody)
+      ele0->LinkEndChild(new TiXmlElement(MBSIMNS"enableOpenMBV"));
+#endif
+    return ele0;
+  }
+
 }
 

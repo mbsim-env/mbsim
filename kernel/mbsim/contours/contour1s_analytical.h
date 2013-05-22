@@ -80,6 +80,7 @@ namespace MBSim {
 #endif
       
       virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
 
       /**
        * \brief contact search for RigidContours

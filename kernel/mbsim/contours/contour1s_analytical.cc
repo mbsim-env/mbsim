@@ -213,10 +213,26 @@ namespace MBSim {
     funcCrPC=ObjectFactory::getInstance()->createContourFunction1s(e->FirstChildElement());
     funcCrPC->initializeUsingXML(e->FirstChildElement());
 #ifdef HAVE_OPENMBVCPPINTERFACE
-		e=element->FirstChildElement(MBSIMNS"enableOpenMBV");
+    e=element->FirstChildElement(MBSIMNS"enableOpenMBV");
     if (e)
       enableOpenMBV(true);
 #endif
+  }
+
+  TiXmlElement* Contour1sAnalytical::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = Contour::writeXMLFile(parent);
+    addElementText(ele0,MBSIMNS"alphaStart",as);
+    addElementText(ele0,MBSIMNS"alphaEnd",ae);
+    addElementText(ele0,MBSIMNS"nodes",nodes);
+    addElementText(ele0,MBSIMNS"diameter",diameter);
+    TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"contourFunction");
+    funcCrPC->writeXMLFile(ele1);
+    ele0->LinkEndChild(ele1);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    if(openMBVRigidBody)
+      ele0->LinkEndChild(new TiXmlElement(MBSIMNS"enableOpenMBV"));
+#endif
+    return ele0;
   }
 
   ContactKinematics * Contour1sAnalytical::findContactPairingWith(std::string type0, std::string type1) {

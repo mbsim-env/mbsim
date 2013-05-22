@@ -139,6 +139,17 @@ namespace MBSim {
     if(ec) setFrameOfReference(ec->Attribute("ref"));
   }
 
+  TiXmlElement* Contour::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = Element::writeXMLFile(parent);
+     if(getFrameOfReference()) {
+        TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"frameOfReference" );
+        string str = string("../Frame[") + getFrameOfReference()->getName() + "]";
+        ele1->SetAttribute("ref", str);
+        ele0->LinkEndChild(ele1);
+      }
+   return ele0;
+  }
+
   /* Rigid Contour */
   RigidContour::~RigidContour() {
   }

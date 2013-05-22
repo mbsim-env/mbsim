@@ -19,6 +19,7 @@
 
 #include<config.h>
 #include "mbsim/contours/sphere.h"
+#include "mbsim/utils/utils.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/sphere.h>
@@ -55,8 +56,17 @@ namespace MBSim {
           openMBVRigidBody->setID(unknown->ValueStr().substr(length, unknown->ValueStr().length()-length-1));
       }
     }
-
 #endif
+  }
+
+  TiXmlElement* Sphere::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = Contour::writeXMLFile(parent);
+    addElementText(ele0,MBSIMNS"radius",r);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    if(openMBVRigidBody)
+      ele0->LinkEndChild(new TiXmlElement(MBSIMNS"enableOpenMBV"));
+#endif
+    return ele0;
   }
 
 }
