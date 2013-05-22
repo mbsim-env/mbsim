@@ -412,6 +412,8 @@ void MainWindow::newMBS(bool ask) {
     actionSaveOpenMBVDataAs->setDisabled(true);
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = model->index(0,0);
+    if(model->rowCount(index))
+      delete model->getItem(index)->getItemData();
     model->removeRow(index.row(), index.parent());
     Solver *solver = new Solver("MBS",0);
     model->createGroupItem(solver,QModelIndex());
@@ -442,6 +444,8 @@ void MainWindow::loadMBS(const QString &file) {
   if(file!="") {
     ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
     QModelIndex index = model->index(0,0);
+    if(model->rowCount(index))
+      delete model->getItem(index)->getItemData();
     model->removeRow(index.row(), index.parent());
     Solver *sys = Solver::readXMLFile(file.toStdString());
     model->createGroupItem(sys);
@@ -598,6 +602,8 @@ void MainWindow::newParameterList() {
     if(ret == QMessageBox::Ok) {
       ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
       QModelIndex index = model->index(0,0);
+      for(int i=0; i<model->rowCount(QModelIndex()); i++)
+        delete model->getItem(index.sibling(i,0))->getItemData();
       model->removeRows(index.row(), model->rowCount(QModelIndex()), index.parent());
       updateOctaveParameters();
     }
@@ -608,14 +614,12 @@ void MainWindow::loadParameterList(const QString &file) {
   //tabBar->setCurrentIndex(2);
   ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
   QModelIndex index = model->index(0,0);
+  for(int i=0; i<model->rowCount(QModelIndex()); i++)
+    delete model->getItem(index.sibling(i,0))->getItemData();
   model->removeRows(index.row(), model->rowCount(QModelIndex()), index.parent());
   fileParameter->setText(file);
   actionSaveParameterList->setDisabled(true);
   if(file!="") {
-    ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
-    QModelIndex index = model->index(0,0);
-    model->removeRow(index.row(), index.parent());
-
     MBSimObjectFactory::initialize();
     TiXmlDocument doc;
     if(doc.LoadFile(file.toAscii().data())) {

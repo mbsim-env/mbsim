@@ -58,6 +58,7 @@ class AbsolutePositionSensor;
 class FunctionSensor;
 class SignalProcessingSystemSensor;
 class SignalAddition;
+class PIDController;
 class TextWidget;
 class VecWidget;
 class ExtWidget;
@@ -414,6 +415,16 @@ class SignalAdditionPropertyDialog : public SignalPropertyDialog {
     void fromWidget(Element *element);
   protected:
     ExtWidget *signalReferences;
+};
+
+class PIDControllerPropertyDialog : public SignalPropertyDialog {
+
+  public:
+    PIDControllerPropertyDialog(PIDController *signal, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+    ExtWidget *sRef, *sdRef, *P, *I, *D;
 };
 
 #endif

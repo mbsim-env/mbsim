@@ -24,7 +24,6 @@
 using namespace std;
 
 TreeItem::~TreeItem() {
-  delete itemData;
   qDeleteAll(childItems);
 }
 

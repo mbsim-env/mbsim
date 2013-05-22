@@ -43,5 +43,17 @@ class SignalAddition : public Signal {
     ExtProperty signalReferences;
 };
 
+class PIDController : public Signal {
+  friend class PIDControllerPropertyDialog;
+  public:
+    PIDController(const std::string &str, Element *parent);
+    std::string getType() const { return "PIDController"; }
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    void initialize();
+    ElementPropertyDialog* createPropertyDialog() {return new PIDControllerPropertyDialog(this);}
+  protected:
+    ExtProperty sRef, sdRef, P, I, D;
+};
 
 #endif

@@ -567,6 +567,8 @@ void OMBVBodyChoiceProperty::ombvSelection(int index_) {
     ombv = new IvBodyProperty(name);  
   else if(index==5)
     ombv = new CompoundRigidBodyProperty(name);  
+  else if(index==6)
+    ombv = new InvisibleBodyProperty(name);  
   ombv->setID(ID);
 }
 
@@ -587,6 +589,8 @@ TiXmlElement* OMBVBodyChoiceProperty::initializeUsingXML(TiXmlElement *element) 
       index = 4;
     else if(e1->ValueStr() == OPENMBVNS"CompoundRigidBody")
       index = 5;
+    else if(e1->ValueStr() == OPENMBVNS"InvisibleBody")
+      index = 6;
     ombvSelection(index);
     ombv->initializeUsingXML(e1);
   }

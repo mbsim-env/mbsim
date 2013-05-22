@@ -56,3 +56,46 @@ TiXmlElement* SignalAddition::writeXMLFile(TiXmlNode *parent) {
   signalReferences.writeXMLFile(ele0);
   return ele0;
 }
+
+PIDController::PIDController(const string &str, Element *parent) : Signal(str, parent) {
+  sRef.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROLNS"inputSignal"));
+  sdRef.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROLNS"derivativeOfInputSignal"));
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMCONTROLNS"P"));
+  P.setProperty(new ExtPhysicalVarProperty(input));
+
+  input.clear();
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROLNS"I"));
+  I.setProperty(new ExtPhysicalVarProperty(input));
+
+  input.clear();
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROLNS"D"));
+  D.setProperty(new ExtPhysicalVarProperty(input));
+
+}
+
+void PIDController::initialize() {
+  Signal::initialize();
+  sRef.initialize();
+  sdRef.initialize();
+}
+
+void PIDController::initializeUsingXML(TiXmlElement *element) {
+  Signal::initializeUsingXML(element);
+  sRef.initializeUsingXML(element);
+  sdRef.initializeUsingXML(element);
+  P.initializeUsingXML(element);
+  I.initializeUsingXML(element);
+  D.initializeUsingXML(element);
+}
+
+TiXmlElement* PIDController::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = Signal::writeXMLFile(parent);
+  sRef.writeXMLFile(ele0);
+  sdRef.writeXMLFile(ele0);
+  P.writeXMLFile(ele0);
+  I.writeXMLFile(ele0);
+  D.writeXMLFile(ele0);
+  return ele0;
+}
+

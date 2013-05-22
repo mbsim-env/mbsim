@@ -97,6 +97,13 @@ class OMBVBodyWidget : public OMBVObjectWidget {
     ExtWidget *trans, *rot, *color, *scale;
 };
 
+class InvisibleBodyWidget : public OMBVBodyWidget {
+
+  public:
+    InvisibleBodyWidget(const QString &name) : OMBVBodyWidget(name) {}
+    virtual QString getType() const { return "InvisibleBody"; }
+};
+
 class CubeWidget : public OMBVBodyWidget {
 
   friend class CubeProperty;

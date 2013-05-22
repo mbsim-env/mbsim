@@ -34,6 +34,7 @@ class Contour : public Element {
     virtual Element *getByPathSearch(std::string path);
     void setSavedFrameOfReference(const std::string &str);
     virtual void initialize();
+    ElementPropertyDialog* createPropertyDialog() {return new ContourPropertyDialog(this);}
   protected:
     ExtProperty refFrame;
 };

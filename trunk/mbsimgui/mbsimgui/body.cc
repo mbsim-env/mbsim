@@ -31,10 +31,10 @@ Body::Body(const string &str, Element *parent) : Object(str,parent), R(0,false) 
 }
 
 Body::~Body() {
-//  for(vector<Frame*>::iterator i = frame.begin(); i != frame.end(); ++i) 
-//    delete *i;
-//  for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i) 
-//    delete *i;
+  for(vector<Frame*>::iterator i = frame.begin(); i != frame.end(); ++i) 
+    delete *i;
+  for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i) 
+    delete *i;
 }
 
 void Body::initialize() {

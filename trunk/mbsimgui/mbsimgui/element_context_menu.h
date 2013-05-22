@@ -139,6 +139,7 @@ class SignalContextContextMenu : public QMenu {
   protected slots:
     void addSensor();
     void addSignalAddition();
+    void addPIDController();
 
   protected:
     Element *element;

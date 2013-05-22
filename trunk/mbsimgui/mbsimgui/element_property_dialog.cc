@@ -1015,3 +1015,43 @@ void SignalAdditionPropertyDialog::fromWidget(Element *element) {
   static_cast<SignalAddition*>(element)->signalReferences.fromWidget(signalReferences);
 }
 
+PIDControllerPropertyDialog::PIDControllerPropertyDialog(PIDController *signal, QWidget * parent, Qt::WindowFlags f) : SignalPropertyDialog(signal,parent,f) {
+  sRef = new ExtWidget("Input signal",new SignalOfReferenceWidget(signal,0));
+  addToTab("General", sRef);
+  sdRef = new ExtWidget("Derivative of input signal",new SignalOfReferenceWidget(signal,0));
+  addToTab("General", sdRef);
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),noUnitUnits(),1));
+  P = new ExtWidget("P",new ExtPhysicalVarWidget(input));
+  addToTab("General", P);
+
+  input.clear();
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  I = new ExtWidget("I",new ExtPhysicalVarWidget(input));
+  addToTab("General", I);
+
+  input.clear();
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  D = new ExtWidget("D",new ExtPhysicalVarWidget(input));
+  addToTab("General", D);
+
+}
+
+void PIDControllerPropertyDialog::toWidget(Element *element) {
+  SignalPropertyDialog::toWidget(element);
+  static_cast<PIDController*>(element)->sRef.toWidget(sRef);
+  static_cast<PIDController*>(element)->sdRef.toWidget(sdRef);
+  static_cast<PIDController*>(element)->P.toWidget(P);
+  static_cast<PIDController*>(element)->I.toWidget(I);
+  static_cast<PIDController*>(element)->D.toWidget(D);
+}
+
+void PIDControllerPropertyDialog::fromWidget(Element *element) {
+  SignalPropertyDialog::fromWidget(element);
+  static_cast<PIDController*>(element)->sRef.fromWidget(sRef);
+  static_cast<PIDController*>(element)->sdRef.fromWidget(sdRef);
+  static_cast<PIDController*>(element)->P.fromWidget(P);
+  static_cast<PIDController*>(element)->I.fromWidget(I);
+  static_cast<PIDController*>(element)->D.fromWidget(D);
+}
+

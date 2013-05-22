@@ -105,6 +105,13 @@ class OMBVBodyProperty : public OMBVObjectProperty {
     ExtProperty trans, rot, color, scale;
 };
 
+class InvisibleBodyProperty : public OMBVBodyProperty {
+
+  public:
+    InvisibleBodyProperty(const std::string &name) : OMBVBodyProperty(name) {}
+    virtual std::string getType() const { return "InvisibleBody"; }
+};
+
 class CubeProperty : public OMBVBodyProperty {
 
   public:
