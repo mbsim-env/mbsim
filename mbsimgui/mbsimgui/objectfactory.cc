@@ -178,6 +178,8 @@ Link* MBSimObjectFactory::createLink(TiXmlElement *element, Element *parent) {
     return new SignalProcessingSystemSensor(element->Attribute("name"),parent);
   if(element->ValueStr()==MBSIMCONTROLNS"SignalAddition")
     return new SignalAddition(element->Attribute("name"),parent);
+  if(element->ValueStr()==MBSIMCONTROLNS"PIDController")
+    return new PIDController(element->Attribute("name"),parent);
   //if(element->ValueStr()==MBSIMNS"ExternGeneralizedIO")
   //  return new ExternGeneralizedIO(element->Attribute("name"));
   return 0;

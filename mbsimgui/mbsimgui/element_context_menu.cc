@@ -290,6 +290,9 @@ SignalContextContextMenu::SignalContextContextMenu(Element *element_, QWidget *p
   action = new QAction("Add signal addition", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addSignalAddition()));
   addAction(action);
+  action = new QAction("Add PID controller", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addPIDController()));
+  addAction(action);
 }
 
 void SignalContextContextMenu::addSensor() {
@@ -299,6 +302,10 @@ void SignalContextContextMenu::addSensor() {
 
 void SignalContextContextMenu::addSignalAddition() {
   mw->addLink(new SignalAddition("SignalAddition",element));
+}
+
+void SignalContextContextMenu::addPIDController() {
+  mw->addLink(new PIDController("PIDController",element));
 }
 
 SensorContextContextMenu::SensorContextContextMenu(Element *element_, QWidget *parent) : QMenu(parent), element(element_) {

@@ -56,6 +56,20 @@ Group::Group(const string &str, Element *parent) : Element(str,parent), position
 }
 
 Group::~Group() {
+  for(vector<Group*>::iterator i = group.begin(); i != group.end(); ++i) 
+    delete *i;
+  for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
+    delete *i;
+  for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
+    delete *i;
+  for(vector<ExtraDynamic*>::iterator i = extraDynamic.begin(); i != extraDynamic.end(); ++i)
+    delete *i;
+  for(vector<Frame*>::iterator i = frame.begin(); i != frame.end(); ++i)
+    delete *i;
+  for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i)
+    delete *i;
+  for(vector<Observer*>::iterator i = observer.begin(); i != observer.end(); ++i)
+    delete *i;
 }
 
 void Group::initialize() {

@@ -318,6 +318,7 @@ OMBVBodyChoiceWidget::OMBVBodyChoiceWidget(const QString &name_, bool flag) : om
   comboBox->addItem(tr("IvBody"));
   if(flag)
     comboBox->addItem(tr("CompoundRigidBody"));
+  comboBox->addItem(tr("InvisibleBody"));
   layout->addWidget(comboBox);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ombvSelection(int)));
   ombvSelection(0);
@@ -339,6 +340,8 @@ void OMBVBodyChoiceWidget::ombvSelection(int index) {
     ombv = new IvBodyWidget(name);  
   else if(index==5)
     ombv = new CompoundRigidBodyWidget(name);  
+  else if(index==6)
+    ombv = new InvisibleBodyWidget(name);  
   layout->addWidget(ombv);
   ombv->updateWidget();
 }
