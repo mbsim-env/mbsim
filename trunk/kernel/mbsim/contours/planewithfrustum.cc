@@ -19,6 +19,7 @@
 
 #include<config.h>
 #include "mbsim/contours/planewithfrustum.h"
+#include "mbsim/utils/utils.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frustum.h>
@@ -69,6 +70,19 @@ namespace MBSim {
       enableOpenMBV();
 #endif
     checkInput();
+  }
+
+  TiXmlElement* PlaneWithFrustum::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = Contour::writeXMLFile(parent);
+    addElementText(ele0,MBSIMNS"baseRadius",rFrustumOnPlane);
+    addElementText(ele0,MBSIMNS"topRadius",rFrustumOnTop);
+    addElementText(ele0,MBSIMNS"height",hFrustum);
+    addElementText(ele0,MBSIMNS"roundingRadius",rho);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    if(openMBVRigidBody)
+      ele0->LinkEndChild(new TiXmlElement(MBSIMNS"enableOpenMBV"));
+#endif
+    return ele0;
   }
 
 }

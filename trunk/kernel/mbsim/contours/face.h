@@ -44,6 +44,7 @@ namespace MBSim {
 #endif
 
       virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
 
       void setBounds(const fmatvec::Mat &bound_) {bound = bound_;}
       const fmatvec::Mat& getBounds() const { return bound; }

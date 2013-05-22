@@ -219,6 +219,7 @@ namespace MBSim {
       virtual void updateStateDerivativeDependentVariables(const fmatvec::Vec &ud, double t) {}
 
       virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
 
     protected:
 //      /**
