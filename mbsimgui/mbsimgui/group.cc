@@ -70,6 +70,8 @@ Group::~Group() {
     delete *i;
   for(vector<Observer*>::iterator i = observer.begin(); i != observer.end(); ++i)
     delete *i;
+  for(vector<Element*>::iterator i = removedElement.begin(); i != removedElement.end(); ++i) 
+    delete *i;
 }
 
 void Group::initialize() {
@@ -231,6 +233,7 @@ void Group::removeElement(Element* element) {
         break;
       }
   }
+  removedElement.push_back(element);
 }
 
 Group* Group::readXMLFile(const string &filename, Element *parent) {

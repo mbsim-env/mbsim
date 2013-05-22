@@ -35,6 +35,8 @@ Body::~Body() {
     delete *i;
   for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i) 
     delete *i;
+  for(vector<Element*>::iterator i = removedElement.begin(); i != removedElement.end(); ++i) 
+    delete *i;
 }
 
 void Body::initialize() {
@@ -68,6 +70,7 @@ void Body::removeElement(Element* element) {
         break;
       }
   }
+  removedElement.push_back(element);
 }
 
 Frame* Body::getFrame(const string &name) {
