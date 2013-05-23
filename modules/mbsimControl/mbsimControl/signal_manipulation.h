@@ -203,6 +203,40 @@ namespace MBSimControl {
       fmatvec::Vec s2values;
   };
 
+  /*!
+   * \brief PID controller
+   * \author Martin Foerg
+   */
+  class PIDController : public Signal {
+
+    public:   
+      PIDController(const std::string& name) : Signal(name), s(NULL), sd(NULL) {}
+      void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
+      
+      void calcxSize() {xSize=getSignalMethod==&PIDController::getSignalPD?0:1;}
+      
+      void init(MBSim::InitStage stage);
+
+      void updatedx(double t, double dt);
+      void updatexd(double t);
+      
+      void plot(double t,double dt);
+     
+      void setPID(double P_, double I_, double D_);
+      void setInputSignal(Signal *inputSignal_) {s=inputSignal_; }
+      void setDerivativeOfInputSignal(Signal *inputSignal_) {sd=inputSignal_; }
+
+      fmatvec::Vec getSignal();
+
+    protected:
+      double P,I,D;
+      Signal *s, *sd;
+      std::string sString, sdString;
+      fmatvec::Vec (PIDController::*getSignalMethod)();
+      fmatvec::Vec getSignalPD();
+      fmatvec::Vec getSignalPID();
+  };
+
 }
 
 #endif /* _SIGNAL_MANIPULATION_H_ */
