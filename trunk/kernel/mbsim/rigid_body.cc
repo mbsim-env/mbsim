@@ -1061,6 +1061,24 @@ namespace MBSim {
       addElementText(ele1,MBSIMNS"offset",C->getOpenMBVFrame()->getOffset());
       ele0->LinkEndChild(ele1);
     }
+
+    if(FWeight) {
+      ele1 = new TiXmlElement( MBSIMNS"openMBVWeightArrow" );
+      FWeight->writeXMLFile(ele1);
+      ele0->LinkEndChild(ele1);
+    }
+
+    if(FArrow) {
+      ele1 = new TiXmlElement( MBSIMNS"openMBVJointForceArrow" );
+      FArrow->writeXMLFile(ele1);
+      ele0->LinkEndChild(ele1);
+    }
+
+    if(MArrow) {
+      ele1 = new TiXmlElement( MBSIMNS"openMBVJointMomentArrow" );
+      MArrow->writeXMLFile(ele1);
+      ele0->LinkEndChild(ele1);
+    }
 #endif
 
     return ele0;
