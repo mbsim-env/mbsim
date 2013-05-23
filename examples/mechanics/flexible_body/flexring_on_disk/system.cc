@@ -180,7 +180,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     aC_T->setDiameter (0.5);
     aC_T->setScaleLength(0.01);
     contact->setOpenMBVNormalForceArrow(aC_N);
-    contact->setopenMBVFrictionArrow(aC_T);
+    contact->setOpenMBVFrictionArrow(aC_T);
     contact->enableOpenMBVContactPoints(0.02,true);
 #endif
     this->addLink(contact);
