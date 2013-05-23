@@ -59,7 +59,6 @@ namespace MBSim {
   }
 
   Integrator* Integrator::readXMLFile(const string &filename) {
-    MBSimObjectFactory::initialize();
     TiXmlDocument doc;
     bool ret=doc.LoadFile(filename);
     assert(ret==true);
@@ -69,18 +68,17 @@ namespace MBSim {
     TiXml_setLineNrFromProcessingInstruction(e);
     map<string,string> dummy;
     incorporateNamespace(e, dummy);
-    Integrator *integrator=ObjectFactory::getInstance()->createIntegrator(e);
+    Integrator *integrator=ObjectFactory<Integrator>::create(e);
     integrator->initializeUsingXML(doc.FirstChildElement());
     return integrator;
   }
 
   void Integrator::writeXMLFile(const string &name) {
-    MBSimObjectFactory::initialize();
     TiXmlDocument doc;
     TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
     doc.LinkEndChild( decl );
     writeXMLFile(&doc);
-    map<string, string> nsprefix=ObjectFactory::getInstance()->getNamespacePrefixMapping();
+    map<string, string> nsprefix;//MISSING READD =ObjectFactory::getInstance()->getNamespacePrefixMapping();
     unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
     doc.SaveFile(name.substr(name.length()-13,13)==".mbsimint.xml"?name:name+".mbsimint.xml");
   }

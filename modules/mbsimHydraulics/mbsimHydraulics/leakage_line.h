@@ -58,7 +58,7 @@ namespace MBSimHydraulics {
   /*! PlaneLeakageLine */
   class PlaneLeakageLine : public LeakageLine {
     public:
-      PlaneLeakageLine(const std::string &name) : LeakageLine(name), hGap(0), wGap(0) {};
+      PlaneLeakageLine(const std::string &name="") : LeakageLine(name), hGap(0), wGap(0) {};
       virtual std::string getType() const { return "PlaneLeakageLine"; }
 
       void setGapWidth(double wGap_) {wGap=wGap_; }
@@ -77,7 +77,7 @@ namespace MBSimHydraulics {
   /*! CircularLeakageLine */
   class CircularLeakageLine : public LeakageLine {
     public:
-      CircularLeakageLine(const std::string &name) : LeakageLine(name), rI(0), rO(0), hGap(0) {}
+      CircularLeakageLine(const std::string &name="") : LeakageLine(name), rI(0), rO(0), hGap(0) {}
       virtual std::string getType() const { return "CircularLeakageLine"; }
 
       void setInnerRadius(double rI_) {rI=rI_; }

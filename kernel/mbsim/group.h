@@ -38,7 +38,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of group
        */
-      Group(const std::string &name);
+      Group(const std::string &name="");
 
       /**
        * \brief destructor

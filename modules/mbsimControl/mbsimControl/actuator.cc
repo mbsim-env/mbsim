@@ -20,8 +20,9 @@
 #include <config.h>
 #include "mbsimControl/actuator.h"
 #include "mbsimControl/signal_.h"
-#include "mbsimControl/objectfactory.h"
 #include "mbsimControl/obsolet_hint.h"
+#include "mbsim/frame.h"
+#include "mbsimControl/defines.h"
 
 using namespace std;
 using namespace MBXMLUtils;

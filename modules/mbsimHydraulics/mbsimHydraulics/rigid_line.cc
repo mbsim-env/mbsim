@@ -23,12 +23,13 @@
 #include "mbsimHydraulics/environment.h"
 #include "mbsimHydraulics/pressure_loss.h"
 #include "mbsimHydraulics/rigid_line_pressureloss.h"
-#include "mbsimHydraulics/objectfactory.h"
 #include "mbsimHydraulics/obsolet_hint.h"
 #include "mbsim/object.h"
 #include "mbsim/frame.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsimControl/signal_.h"
+#include "mbsimHydraulics/defines.h"
+#include "mbsim/objectfactory.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -73,7 +74,7 @@ namespace MBSimHydraulics {
     TiXmlElement * e=element->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
     setDiameter(getDouble(e));
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"linePressureLoss");
-    LinePressureLoss *p=(LinePressureLoss*)(MBSim::ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()));
+    LinePressureLoss *p=MBSim::ObjectFactory<Function1<double, double> >::create<LinePressureLoss>(e->FirstChildElement());
     setLinePressureLoss(p);
     p->initializeUsingXML(e->FirstChildElement());
   }
@@ -109,7 +110,7 @@ namespace MBSimHydraulics {
     RigidLine::initializeUsingXML(element);
     TiXmlElement * e=element->FirstChildElement(MBSIMHYDRAULICSNS"closablePressureLoss");
     TiXmlElement * ee=e->FirstChildElement();
-    ClosablePressureLoss *p=(ClosablePressureLoss*)(MBSim::ObjectFactory::getInstance()->createFunction1_SS(ee));
+    ClosablePressureLoss *p=MBSim::ObjectFactory<Function1<double,double> >::create<ClosablePressureLoss>(ee);
     setClosablePressureLoss(p);
     p->initializeUsingXML(ee);
     ee=e->FirstChildElement(MBSIMHYDRAULICSNS"checksizeSignal");
@@ -138,7 +139,7 @@ namespace MBSimHydraulics {
     RigidLine::initializeUsingXML(element);
     TiXmlElement * e=element->FirstChildElement(MBSIMHYDRAULICSNS"unidirectionalPressureLoss");
     TiXmlElement * ee=e->FirstChildElement();
-    UnidirectionalPressureLoss *p=(UnidirectionalPressureLoss*)(MBSim::ObjectFactory::getInstance()->createFunction1_SS(ee));
+    UnidirectionalPressureLoss *p=MBSim::ObjectFactory<Function1<double,double> >::create<UnidirectionalPressureLoss>(ee);
     if (p) {
       setUnidirectionalPressureLoss(p);
       p->initializeUsingXML(ee);

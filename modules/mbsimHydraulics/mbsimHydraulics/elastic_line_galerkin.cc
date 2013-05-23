@@ -19,10 +19,11 @@
 
 #include <config.h>
 #include "mbsimHydraulics/elastic_line_galerkin.h"
-#include "mbsimHydraulics/objectfactory.h"
 #include "environment.h"
 #include "mbsim/utils/ansatz_functions.h"
 #include "mbsim/utils/utils.h"
+#include "mbsim/frame.h"
+#include "mbsimHydraulics/defines.h"
 
 #include "mbsim/dynamic_system_solver.h"
 

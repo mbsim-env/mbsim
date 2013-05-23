@@ -38,7 +38,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of circle
        */
-      CircleHollow(const std::string& name) : Circle(name) {}
+      CircleHollow(const std::string& name="") : Circle(name) {}
 
       /**
        * \brief constructor

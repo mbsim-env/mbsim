@@ -91,6 +91,9 @@ AC_CHECK_HEADERS([libunwind.h])
 AC_CHECK_LIB(unwind-x86_64, main)
 AC_CHECK_HEADERS([cxxabi.h])
 
+dnl Check for optional boost type_trains and static_assert
+AC_CHECK_HEADERS([boost/type_traits.hpp])
+
 dnl Check for ANSI C Signal Handling
 AC_SUBST([DEFINES])
 AC_MSG_CHECKING([for ANSI c signal SIGINT]); AC_COMPILE_IFELSE([

@@ -210,6 +210,7 @@ namespace MBSim {
   }
 
   void Element::initializeUsingXML(TiXmlElement *element) {
+    setName(element->Attribute("name"));
     TiXmlElement *e;
     e=element->FirstChildElement();
     while(e && (e->ValueStr()==MBSIMNS"plotFeature" ||

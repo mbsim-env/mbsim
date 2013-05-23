@@ -32,7 +32,7 @@ namespace MBSimControl {
    */
   class SignalProcessingSystemSensor : public Sensor {
     public:
-      SignalProcessingSystemSensor(const std::string &name) : Sensor(name), sps(NULL), spsString("") {}
+      SignalProcessingSystemSensor(const std::string &name="") : Sensor(name), sps(NULL), spsString("") {}
       virtual std::string getType() const {return "SignalProcessingSystemSensor"; }
       void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
       void init(MBSim::InitStage stage);

@@ -40,10 +40,10 @@ namespace MBSim {
     Function2<double, double, double>::initializeUsingXML(element);
     TiXmlElement *e;
     e = element->FirstChildElement(MBSIMNS"distanceForce");
-    gForceFun = ObjectFactory::getInstance()->getInstance()->createFunction1_VS(e->FirstChildElement());
+    gForceFun = ObjectFactory<Function1<Vec,double> >::create(e->FirstChildElement());
     gForceFun->initializeUsingXML(e->FirstChildElement());
     e = element->FirstChildElement(MBSIMNS"velocityForce");
-    gdForceFun = ObjectFactory::getInstance()->getInstance()->createFunction1_VS(e->FirstChildElement());
+    gdForceFun = ObjectFactory<Function1<Vec,double> >::create(e->FirstChildElement());
     gdForceFun->initializeUsingXML(e->FirstChildElement());
   }
 
@@ -115,7 +115,7 @@ namespace MBSim {
     if (e)
       gdLim = Element::getDouble(e);
     e = element->FirstChildElement(MBSIMNS"frictionFunction");
-    Function1<double, double> *f = ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement());
+    Function1<double, double> *f = ObjectFactory<Function1<double,double> >::create(e->FirstChildElement());
     setFrictionFunction(f);
     f->initializeUsingXML(e->FirstChildElement());
   }

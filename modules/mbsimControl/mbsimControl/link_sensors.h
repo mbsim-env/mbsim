@@ -50,7 +50,7 @@ namespace MBSimControl {
    */
   class LinkDistanceSensor : public LinkSensor {
     public:
-      LinkDistanceSensor(const std::string &name) : LinkSensor(name) {}
+      LinkDistanceSensor(const std::string &name="") : LinkSensor(name) {}
       std::string getType() const { return "LinkDistanceSensor"; }
       fmatvec::Vec getSignal();
   };
@@ -61,7 +61,7 @@ namespace MBSimControl {
    */
   class LinkVelocitySensor : public LinkSensor {
     public:
-      LinkVelocitySensor(const std::string &name) : LinkSensor(name) {}
+      LinkVelocitySensor(const std::string &name="") : LinkSensor(name) {}
       std::string getType() const { return "LinkVelocitySensor"; }
       fmatvec::Vec getSignal();
   };

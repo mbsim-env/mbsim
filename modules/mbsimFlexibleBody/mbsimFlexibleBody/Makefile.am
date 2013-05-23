@@ -2,8 +2,7 @@ SUBDIRS = flexible_body contours contact_kinematics utils .
   
 lib_LTLIBRARIES = libmbsimFlexibleBody.la
 libmbsimFlexibleBody_la_LDFLAGS = -version-info @LIBMBSIMFLEXIBLEBODY_VERSION_INFO@
-libmbsimFlexibleBody_la_SOURCES = flexible_body.cc\
-																	objectfactory.cc
+libmbsimFlexibleBody_la_SOURCES = flexible_body.cc dummyof.cc
 
 libmbsimFlexibleBody_la_LIBADD = flexible_body/libflexiblebody.la contours/libcontour.la contact_kinematics/libcontactkinematics.la utils/libutils.la
 
@@ -14,7 +13,5 @@ LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) $(NURBS_LIBS)
 
 mbsimFlexibleBodyincludedir = $(includedir)/mbsimFlexibleBody
 mbsimFlexibleBodyinclude_HEADERS = flexible_body.h\
-																	 functions_contact.h \
-																	 objectfactory.h\
-																	 pointer.h
-
+  functions_contact.h \
+  pointer.h

@@ -60,7 +60,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of contact
        */
-      Contact(const std::string &name);
+      Contact(const std::string &name="");
 
       /**
        * \brief destructor

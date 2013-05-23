@@ -56,6 +56,7 @@ ScalarParameter::~ScalarParameter() {
 }
 
 void ScalarParameter::initializeUsingXML(TiXmlElement *element) {
+  Parameter::initializeUsingXML(element);
   ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
   val->initializeUsingXML(element);
   setValue(val->getValue());
@@ -80,6 +81,7 @@ VectorParameter::~VectorParameter() {
 }
 
 void VectorParameter::initializeUsingXML(TiXmlElement *element) {
+  Parameter::initializeUsingXML(element);
   ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
   val->initializeUsingXML(element);
   setValue(val->getValue());
@@ -104,6 +106,7 @@ MatrixParameter::~MatrixParameter() {
 }
 
 void MatrixParameter::initializeUsingXML(TiXmlElement *element) {
+  Parameter::initializeUsingXML(element);
   ExtPhysicalVarProperty *val = static_cast<ExtPhysicalVarProperty*>(value.getProperty());
   val->initializeUsingXML(element);
   setValue(val->getValue());

@@ -32,6 +32,8 @@ using namespace std;
 using namespace MBXMLUtils;
 using namespace fmatvec;
 
+namespace MBSim {
+
 std::string numtostr(int i){
   std::ostringstream oss;
   oss << i;
@@ -57,10 +59,6 @@ double sign(double x) {
   else 
     return 0;
 }
-
-int min(int i, int j) {
-  return i<j?i:j;
-}  
 
 Vec tildetovec(const SqrMat &A) {
   Vec x(3,NONINIT);
@@ -104,22 +102,13 @@ void Deprecated::registerMessage(const std::string &message, TiXmlElement *e) {
     unw_step(&cp);
     unw_word_t offp;
     char name[102400];
-    char *demangledName=NULL;
-    int status=1;
     int nr=0;
     do {
       unw_get_proc_name(&cp, name, 102400, &offp);
-#if defined HAVE_CXXABI_H
-      demangledName=abi::__cxa_demangle(name, NULL, NULL, &status);
-#endif
-      if(status==0)
-        stack.push_back((nr==0?"at ":"by ")+string(demangledName));
-      else
-        stack.push_back((nr==0?"at ":"by ")+string(name));
+      stack.push_back((nr==0?"at ":"by ")+demangleSymbolName(name));
       nr++;
     }
     while(unw_step(&cp)>0 && string(name)!="main");
-    free(demangledName);
 #else
     stack.push_back("(no stack trace available)");
 #endif
@@ -140,4 +129,21 @@ void Deprecated::printAllMessages() {
     for(; it2!=it->end(); it2++)
       cerr<<"  "<<*it2<<endl;
   }
+}
+
+std::string demangleSymbolName(std::string name) {
+#if defined HAVE_CXXABI_H
+  std::string ret=name;
+  int status=1;
+  char *demangledName=NULL;
+  demangledName=abi::__cxa_demangle(name.c_str(), NULL, NULL, &status);
+  if(status==0)
+    ret=demangledName;
+  free(demangledName);
+  return ret;
+#else
+  return name;
+#endif
+}
+
 }

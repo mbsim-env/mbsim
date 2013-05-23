@@ -280,6 +280,7 @@ double FuncCrPC::computeCurvatureTabular(const double& alpha) {
   }
 
 void FuncCrPC::initializeUsingXML(TiXmlElement * element) {
+  ContourFunction1s::initializeUsingXML(element);
 /* TiXmlElement * e;
   e=element->FirstChildElement(MBSIMVALVETRAINNS"YZ");
   Mat YZ=Element::getMat(e);
@@ -393,6 +394,7 @@ void FuncCrPC_PlanePolar::updateData(const double& alpha) {
 }
 
 void FuncCrPC_PlanePolar::initializeUsingXML(TiXmlElement * element) {
+  ContourFunction1s::initializeUsingXML(element);
 }
 
 

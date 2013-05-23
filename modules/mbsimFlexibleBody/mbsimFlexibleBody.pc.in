@@ -5,8 +5,6 @@ includedir=@includedir@
 
 SCHEMA=../http___mbsim_berlios_de_MBSimFlexibleBody/mbsimflexiblebody.xsd
 NAMESPACE=http://mbsim.berlios.de/MBSimFlexibleBody
-INITIALIZEFUNC=MBSimFlexibleBody::ObjectFactory::initialize()
-INITIALIZEHEADER=mbsimFlexibleBody/objectfactory.h
 
 Name: mbsimFlexibleBody
 Description: mbsimFlexibleBody is an add-on for flexible bodies to the mbsim-kernel

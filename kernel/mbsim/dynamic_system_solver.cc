@@ -26,6 +26,7 @@
 #include "mbsim/contour.h"
 #include "mbsim/link.h"
 #include "mbsim/graph.h"
+#include "mbsim/object.h"
 #include "mbsim/extra_dynamic.h"
 #include "mbsim/observer.h"
 #include "mbsim/integrators/integrator.h"
@@ -39,6 +40,7 @@
 #include <hdf5serie/simpleattribute.h>
 #include <hdf5serie/simpledataset.h>
 #include <unistd.h>
+#include <limits>
 
 #ifdef HAVE_ANSICSIGNAL
 #  include <signal.h>
@@ -1349,7 +1351,7 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"environments")->FirstChildElement();
 
     Environment *env;
-    while((env=ObjectFactory::getInstance()->getEnvironment(e))) {
+    while((env=ObjectFactory<Environment>::create(e))) {
       env->initializeUsingXML(e);
       e=e->NextSiblingElement();
     }
@@ -1424,7 +1426,6 @@ namespace MBSim {
   }
 
   DynamicSystemSolver* DynamicSystemSolver::readXMLFile(const string &filename) {
-    MBSimObjectFactory::initialize();
     TiXmlDocument doc;
     bool ret=doc.LoadFile(filename);
     assert(ret==true);
@@ -1434,18 +1435,17 @@ namespace MBSim {
     TiXml_setLineNrFromProcessingInstruction(e);
     map<string,string> dummy;
     incorporateNamespace(doc.FirstChildElement(), dummy);
-    DynamicSystemSolver *dss=dynamic_cast<DynamicSystemSolver*>(ObjectFactory::getInstance()->createGroup(e));
+    DynamicSystemSolver *dss=dynamic_cast<DynamicSystemSolver*>(ObjectFactory<Element>::create<Group>(e));
     dss->initializeUsingXML(doc.FirstChildElement());
     return dss;
  }
 
   void DynamicSystemSolver::writeXMLFile(const string &name) {
-    MBSimObjectFactory::initialize();
     TiXmlDocument doc;
     TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
     doc.LinkEndChild( decl );
     writeXMLFile(&doc);
-    map<string, string> nsprefix=ObjectFactory::getInstance()->getNamespacePrefixMapping();
+    map<string, string> nsprefix;//MISSING READD =ObjectFactory::getInstance()->getNamespacePrefixMapping();
     unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
     doc.SaveFile((name.length()>10 && name.substr(name.length()-10,10)==".mbsim.xml")?name:name+".mbsim.xml");
   }

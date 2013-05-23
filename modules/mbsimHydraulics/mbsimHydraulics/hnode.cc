@@ -21,13 +21,14 @@
 #include "mbsimHydraulics/hnode.h"
 #include "mbsimHydraulics/hline.h"
 #include "mbsimHydraulics/environment.h"
-#include "mbsimHydraulics/objectfactory.h"
 #include "mbsimHydraulics/obsolet_hint.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsimControl/signal_.h"
 #include "mbsimHydraulics/obsolet_hint.h"
+#include "mbsimHydraulics/defines.h"
+#include "mbsim/objectfactory.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/group.h"
@@ -301,7 +302,7 @@ namespace MBSimHydraulics {
   void ConstrainedNode::initializeUsingXML(TiXmlElement *element) {
     HNode::initializeUsingXML(element);
     TiXmlElement *e=element->FirstChildElement(MBSIMHYDRAULICSNS"function");
-    pFun=MBSim::ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()); 
+    pFun=MBSim::ObjectFactory<Function1<double,double> >::create(e->FirstChildElement()); 
     pFun->initializeUsingXML(e->FirstChildElement());
   }
 

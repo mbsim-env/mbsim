@@ -84,27 +84,21 @@ AC_SUBST([native_MBXMLUTILSSCHEMA])
 
 dnl Get all mbsim*.pc files in $prefix/lib/pkgconfig and $PKG_CONFIG_PATH directory
 OLDPWD=$(pwd)
-cd $prefix/lib/pkgconfig; ALLMBSIMMODULES=$(ls -1 mbsim*.pc | sed -rne "/^mbsim.pc$/n;s/.pc$//p")
-ALLMBSIMMODULES="$ALLMBSIMMODULES $(for i in $(echo $PKG_CONFIG_PATH | tr ':' ' '); do cd $i; ls -1 mbsim*.pc | sed -rne "/^mbsim.pc$/n;s/.pc$//p"; done)"
+cd $prefix/lib/pkgconfig; ALLMBSIMMODULES=$(ls -1 mbsim*.pc | grep -v mbsimxml.pc | sed -rne "/^mbsim.pc$/n;s/.pc$//p")
+ALLMBSIMMODULES="$ALLMBSIMMODULES $(for i in $(echo $PKG_CONFIG_PATH | tr ':' ' '); do cd $i; ls -1 mbsim*.pc | grep -v mbsimxml.pc | sed -rne "/^mbsim.pc$/n;s/.pc$//p"; done)"
 ALLMBSIMMODULES=$(echo $ALLMBSIMMODULES | tr ' ' '\n' | sort | uniq)
 cd $OLDPWD
 dnl Check for all found mbsim*.pc modules
-rm -f mbsimxml/headermodules.h; touch mbsimxml/headermodules.h
-rm -f mbsimxml/initmodules.def; touch mbsimxml/initmodules.def
 for MBSIMMODULE in $ALLMBSIMMODULES; do
   SCHEMA=$(pkg-config $MBSIMMODULE --variable SCHEMA)
   NAMESPACE=$(pkg-config $MBSIMMODULE --variable NAMESPACE)
-  INITIALIZEHEADER=$(pkg-config $MBSIMMODULE --variable INITIALIZEHEADER)
-  INITIALIZEFUNC=$(pkg-config $MBSIMMODULE --variable INITIALIZEFUNC)
-  if test -z "$SCHEMA" -o -z "$NAMESPACE" -o -z "$INITIALIZEHEADER" -o -z "$INITIALIZEFUNC"; then
+  if test -z "$SCHEMA" -o -z "$NAMESPACE"; then
     AC_MSG_WARN([MBSim module $MBSIMMODULE is not able to work with XML!])
     continue
   fi
   AC_MSG_NOTICE([MBSim module $MBSIMMODULE added])
   MBSIMMODULES_IMPORT="$MBSIMMODULES_IMPORT <xs:import namespace=\"$NAMESPACE\" schemaLocation=\"$SCHEMA\"/>"
   MBSIMMODULES_NAME="$MBSIMMODULES_NAME $MBSIMMODULE"
-  echo "#include <$INITIALIZEHEADER>" >> mbsimxml/headermodules.h
-  echo "$INITIALIZEFUNC;" >> mbsimxml/initmodules.def
   AC_SUBST([MBSIMMODULES_IMPORT])
 done
 if test ! -z "$MBSIMMODULES_NAME"; then

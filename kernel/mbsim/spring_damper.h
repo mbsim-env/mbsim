@@ -45,7 +45,7 @@ namespace MBSim {
       OpenMBV::CoilSpring *coilspringOpenMBV;
 #endif
     public:
-      SpringDamper(const std::string &name);
+      SpringDamper(const std::string &name="");
       void updateh(double, int i=0);
       void updateg(double);
       void updategd(double);

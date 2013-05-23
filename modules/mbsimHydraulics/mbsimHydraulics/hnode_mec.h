@@ -114,7 +114,7 @@ namespace MBSimHydraulics {
   /*! ConstrainedNodeMec */
   class ConstrainedNodeMec : public HNodeMec {
     public:
-      ConstrainedNodeMec(const std::string &name) : HNodeMec(name), pFun(NULL) {}
+      ConstrainedNodeMec(const std::string &name="") : HNodeMec(name), pFun(NULL) {}
       ~ConstrainedNodeMec() {};
       virtual std::string getType() const { return "ConstrainedNodeMec"; }
 
@@ -135,7 +135,7 @@ namespace MBSimHydraulics {
   /*! EnvironmentNodeMec */
   class EnvironmentNodeMec : public HNodeMec {
     public:
-      EnvironmentNodeMec(const std::string &name) : HNodeMec(name) {}
+      EnvironmentNodeMec(const std::string &name="") : HNodeMec(name) {}
       virtual std::string getType() const { return "EnvironmentNodeMec"; }
 
       void init(MBSim::InitStage stage);
@@ -147,7 +147,7 @@ namespace MBSimHydraulics {
   /*! ElasticNodeMec */
   class ElasticNodeMec : public HNodeMec {
     public:
-      ElasticNodeMec(const std::string &name) : HNodeMec(name), E(0), fracAir(0), p0(0), bulkModulus(NULL) {}
+      ElasticNodeMec(const std::string &name="") : HNodeMec(name), E(0), fracAir(0), p0(0), bulkModulus(NULL) {}
       ~ElasticNodeMec();
       virtual std::string getType() const { return "ElasticNode"; }
 
@@ -181,7 +181,7 @@ namespace MBSimHydraulics {
   /*! RigidNodeMec */
   class RigidNodeMec : public HNodeMec {
     public:
-      RigidNodeMec(const std::string &name);
+      RigidNodeMec(const std::string &name="");
       ~RigidNodeMec();
       virtual std::string getType() const { return "RigidNodeMec"; }
 

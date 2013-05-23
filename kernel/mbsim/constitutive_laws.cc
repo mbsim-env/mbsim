@@ -694,9 +694,10 @@ namespace MBSim {
   }
 
   void RegularizedUnilateralConstraint::initializeUsingXML(TiXmlElement *element) {
+    GeneralizedForceLaw::initializeUsingXML(element);
     TiXmlElement *e;
     e = element->FirstChildElement(MBSIMNS"forceFunction");
-    Function2<double, double, double> *f = ObjectFactory::getInstance()->createFunction2_SSS(e->FirstChildElement());
+    Function2<double, double, double> *f = ObjectFactory<Function2<double,double,double> >::create(e->FirstChildElement());
     setForceFunction(f);
     f->initializeUsingXML(e->FirstChildElement());
   }
@@ -784,7 +785,7 @@ namespace MBSim {
     e = element->FirstChildElement(MBSIMNS"InfluenceFunction");
     while(e) {
       xmlInfo info;
-      info.function = ObjectFactory::getInstance()->createInfluenceFunction(e->FirstChildElement());
+      info.function = ObjectFactory<Function2<double,Vec2,Vec2> >::create<InfluenceFunction>(e->FirstChildElement());
       info.name1 = e->FirstChildElement()->Attribute("contourName1");
       info.name2 = e->FirstChildElement()->Attribute("contourName2");
 
@@ -921,9 +922,10 @@ void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<
   }
 
   void RegularizedBilateralConstraint::initializeUsingXML(TiXmlElement *element) {
+    GeneralizedForceLaw::initializeUsingXML(element);
     TiXmlElement *e;
     e = element->FirstChildElement(MBSIMNS"forceFunction");
-    Function2<double, double, double> *f = ObjectFactory::getInstance()->createFunction2_SSS(e->FirstChildElement());
+    Function2<double, double, double> *f = ObjectFactory<Function2<double,double,double> >::create(e->FirstChildElement());
     setForceFunction(f);
     f->initializeUsingXML(e->FirstChildElement());
   }
@@ -937,17 +939,19 @@ void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<
   }
 
   void RegularizedPlanarFriction::initializeUsingXML(TiXmlElement *element) {
+    FrictionForceLaw::initializeUsingXML(element);
     TiXmlElement *e;
     e = element->FirstChildElement(MBSIMNS"frictionForceFunction");
-    Function2<Vec, Vec, double> *f = ObjectFactory::getInstance()->createFunction2_VVS(e->FirstChildElement());
+    Function2<Vec, Vec, double> *f = ObjectFactory<Function2<Vec,Vec,double> >::create(e->FirstChildElement());
     setFrictionForceFunction(f);
     f->initializeUsingXML(e->FirstChildElement());
   }
 
   void RegularizedSpatialFriction::initializeUsingXML(TiXmlElement *element) {
+    FrictionForceLaw::initializeUsingXML(element);
     TiXmlElement *e;
     e = element->FirstChildElement(MBSIMNS"frictionForceFunction");
-    Function2<Vec, Vec, double> *f = ObjectFactory::getInstance()->createFunction2_VVS(e->FirstChildElement());
+    Function2<Vec, Vec, double> *f = ObjectFactory<Function2<Vec,Vec,double> >::create(e->FirstChildElement());
     setFrictionForceFunction(f);
     f->initializeUsingXML(e->FirstChildElement());
   }

@@ -44,7 +44,7 @@ namespace MBSimHydraulics {
   /*! Checkvalve */
   class Checkvalve : public MBSim::Group {
     public:
-      Checkvalve(const std::string &name);
+      Checkvalve(const std::string &name="");
       
       void setFrameOfReference(MBSim::Frame * ref);
       void setLineLength(double lLine);

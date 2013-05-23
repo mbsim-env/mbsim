@@ -46,7 +46,7 @@ namespace MBSim {
        * \brief constructor
        * \param name
        */
-      Joint(const std::string &name);
+      Joint(const std::string &name="");
 
       /**
        * \brief destructor

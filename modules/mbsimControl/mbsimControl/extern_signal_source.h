@@ -21,7 +21,6 @@
 #define _EXTERNSIGNALSOURCE_H_
 
 #include "mbsimControl/signal_.h"
-#include "mbsimControl/objectfactory.h"
 
 namespace MBSimControl {
 
@@ -31,7 +30,7 @@ namespace MBSimControl {
       fmatvec::Vec source;
       int sourceSize;
     public:
-      ExternSignalSource(const std::string &name) : Signal(name), sourceSize(0) {}
+      ExternSignalSource(const std::string &name="") : Signal(name), sourceSize(0) {}
       void setSourceSize(int size) { sourceSize=size; source.resize(sourceSize); }
       std::string getType() const { return "ExternSignalSource"; }
       fmatvec::Vec getSignal() { return source; }

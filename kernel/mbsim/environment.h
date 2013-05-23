@@ -37,7 +37,7 @@ namespace MBSim {
        * \brief initializes environment variables by XML element
        * \param XML element
        */
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element)=0;
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
       virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent)=0;
       /***************************************************/
     

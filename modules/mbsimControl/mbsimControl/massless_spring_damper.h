@@ -35,7 +35,7 @@ namespace MBSimControl {
   class MasslessSpringDamper : public SignalProcessingSystem {
 
     public:   
-      MasslessSpringDamper(const std::string& name);
+      MasslessSpringDamper(const std::string& name="");
       virtual std::string getType() const {return "MasslessSpringDamper"; }
       void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
       

@@ -4,7 +4,7 @@ libmbsimflatxml_la_CPPFLAGS = $(DEPS_CFLAGS) $(MBSIMMODULES_CFLAGS)
 libmbsimflatxml_la_LDFLAGS = 
 libmbsimflatxml_la_LIBADD = $(DEPS_LIBS) $(MBSIMMODULES_LIBS)
 mbsimxmlincludedir = $(includedir)/mbsimxml
-mbsimxmlinclude_HEADERS = mbsimflatxml.h headermodules.h
+mbsimxmlinclude_HEADERS = mbsimflatxml.h
 
 
 bin_PROGRAMS = mbsimflatxml mbsimxml

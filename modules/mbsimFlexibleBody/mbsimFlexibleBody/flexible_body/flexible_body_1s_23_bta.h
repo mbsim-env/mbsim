@@ -42,7 +42,7 @@ namespace MBSimFlexibleBody {
        * \brief constructor
        * \param name of body
        */
-      FlexibleBody1s23BTA(const std::string &name);
+      FlexibleBody1s23BTA(const std::string &name="");
 
       /**
        * \brief destructor

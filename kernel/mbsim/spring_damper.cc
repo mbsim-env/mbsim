@@ -20,6 +20,7 @@
 #include "mbsim/spring_damper.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/objectfactory.h"
+#include "mbsim/frame.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/coilspring.h>
 #include <openmbvcppinterface/arrow.h>
@@ -145,7 +146,7 @@ namespace MBSim {
     TiXmlElement *e;
     LinkMechanics::initializeUsingXML(element);
     e=element->FirstChildElement(MBSIMNS"forceFunction");
-    Function2<double,double,double> *f=ObjectFactory::getInstance()->createFunction2_SSS(e->FirstChildElement());
+    Function2<double,double,double> *f=ObjectFactory<Function2<double,double,double> >::create(e->FirstChildElement());
     setForceFunction(f);
     f->initializeUsingXML(e->FirstChildElement());
     e=element->FirstChildElement(MBSIMNS"projectionDirection");

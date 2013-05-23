@@ -114,17 +114,17 @@ namespace MBSim {
     cout.setf(ios::scientific, ios::floatfield);
     while(t<tEnd) {
       DLSODE (fzdot, &zSize, z(), &t, &tPlot, &iTol, &rTol, aTol(), 
-	  &one, &istate, &one, rWork(), &lrWork, iWork(), 
-	  &liWork, 0, &MF);
+        &one, &istate, &one, rWork(), &lrWork, iWork(), 
+        &liWork, 0, &MF);
       if(istate==2 || fabs(t-tPlot)<epsroot()) {
-	system->plot(z, t);
-	if(output)
-	  cout << "   t = " <<  t << ",\tdt = "<< rWork(10) << "\r"<<flush;
-	double s1 = clock();
-	time += (s1-s0)/CLOCKS_PER_SEC;
-	s0 = s1; 
-	integPlot<< t << " " << rWork(10) << " " << time << endl;
-	tPlot = min(tEnd,tPlot + dtPlot);
+        system->plot(z, t);
+        if(output)
+          cout << "   t = " <<  t << ",\tdt = "<< rWork(10) << "\r"<<flush;
+        double s1 = clock();
+        time += (s1-s0)/CLOCKS_PER_SEC;
+        s0 = s1; 
+        integPlot<< t << " " << rWork(10) << " " << time << endl;
+        tPlot = min(tEnd,tPlot + dtPlot);
       }
       if(istate<0) exit(istate);
     }
