@@ -44,7 +44,7 @@ namespace MBSimControl {
        * \brief constructor
        * \param name
        */
-      Actuator(const std::string &name);
+      Actuator(const std::string &name="");
 
       /**
        * \brief destructor

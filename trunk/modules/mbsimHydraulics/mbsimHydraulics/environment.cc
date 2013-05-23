@@ -19,7 +19,8 @@
 
 #include <config.h>
 #include "mbsimHydraulics/environment.h"
-#include "mbsimHydraulics/objectfactory.h"
+#include "mbsimHydraulics/defines.h"
+#include "mbsim/element.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -29,6 +30,7 @@ namespace MBSimHydraulics {
   HydraulicEnvironment *HydraulicEnvironment::instance=NULL;
       
   void HydraulicEnvironment::initializeUsingXML(TiXmlElement *element) {
+    Environment::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"environmentPressure");
     setEnvironmentPressure(MBSim::Element::getDouble(e));

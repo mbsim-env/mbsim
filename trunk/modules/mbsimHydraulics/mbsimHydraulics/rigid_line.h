@@ -33,7 +33,7 @@ namespace MBSimHydraulics {
   /*! RigidLine */
   class RigidLine : public RigidHLine {
     public:
-      RigidLine(const std::string &name) : RigidHLine(name), diameter(0), pL(NULL), ReynoldsFactor(0) {}
+      RigidLine(const std::string &name="") : RigidHLine(name), diameter(0), pL(NULL), ReynoldsFactor(0) {}
       virtual std::string getType() const { return "RigidLine"; }
 
       void setDiameter(double diameter_) {diameter=diameter_; }
@@ -57,7 +57,7 @@ namespace MBSimHydraulics {
   /*! ClosableRigidLine */
   class ClosableRigidLine : public RigidLine {
     public:
-      ClosableRigidLine(const std::string &name) : RigidLine(name), cpL(NULL), cpLSignal(NULL), cpLMinValue(0), cpLBilateral(false), refSignalString("") {}
+      ClosableRigidLine(const std::string &name="") : RigidLine(name), cpL(NULL), cpLSignal(NULL), cpLMinValue(0), cpLBilateral(false), refSignalString("") {}
       virtual std::string getType() const { return "ClosableRigidLine"; }
 
       void setClosablePressureLoss(ClosablePressureLoss * cpL_) {cpL=cpL_; }
@@ -87,7 +87,7 @@ namespace MBSimHydraulics {
   /*! UnidirectionalRigidLine */
   class UnidirectionalRigidLine : public RigidLine {
     public:
-      UnidirectionalRigidLine(const std::string &name) : RigidLine(name), upL(NULL), dpMin(0) {}
+      UnidirectionalRigidLine(const std::string &name="") : RigidLine(name), upL(NULL), dpMin(0) {}
       virtual std::string getType() const { return "UnidirectionalRigidLine"; }
 
       void setUnidirectionalPressureLoss(UnidirectionalPressureLoss * upL_) {upL=upL_; }

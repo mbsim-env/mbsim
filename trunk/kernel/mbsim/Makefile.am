@@ -28,11 +28,11 @@ kinetic_excitation.cc\
 kinematic_excitation.cc\
 mbsim_event.cc\
 object.cc\
-objectfactory.cc\
 extra_dynamic.cc\
 rigid_body.cc\
 graph.cc\
 constraint.cc \
+dummyof.cc \
 observer.cc
 
 libmbsim_la_LIBADD = integrators/libintegrators.la utils/libutils.la contact_kinematics/libcontactkinematics.la contours/libcontour.la numerics/libnumerics.la observers/libobserver.la -lgfortran

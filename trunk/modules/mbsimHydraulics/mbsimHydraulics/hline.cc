@@ -22,10 +22,11 @@
 #include "mbsimHydraulics/pressure_loss.h"
 #include "mbsimHydraulics/rigid_line_pressureloss.h"
 #include "mbsimHydraulics/environment.h"
-#include "mbsimHydraulics/objectfactory.h"
 #include "mbsimControl/signal_.h"
 #include "mbsim/frame.h"
 #include "mbsimHydraulics/obsolet_hint.h"
+#include "mbsimHydraulics/defines.h"
+#include "mbsim/objectfactory.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -209,7 +210,7 @@ namespace MBSimHydraulics {
   void ConstrainedLine::initializeUsingXML(TiXmlElement * element) {
     HLine::initializeUsingXML(element);
     TiXmlElement *e=element->FirstChildElement(MBSIMHYDRAULICSNS"function");
-    Function1<double, double> * qf=MBSim::ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()); 
+    Function1<double, double> * qf=MBSim::ObjectFactory<Function1<double,double> >::create(e->FirstChildElement()); 
     setQFunction(qf);
     qf->initializeUsingXML(e->FirstChildElement());
   }

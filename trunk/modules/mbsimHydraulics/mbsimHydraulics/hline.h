@@ -122,7 +122,7 @@ namespace MBSimHydraulics {
   /*! ConstrainedLine */
   class ConstrainedLine : public HLine {
     public:
-      ConstrainedLine(const std::string &name) : HLine(name), QFun(NULL), Q(1) {}
+      ConstrainedLine(const std::string &name="") : HLine(name), QFun(NULL), Q(1) {}
       virtual std::string getType() const { return "ConstrainedLine"; }
       
       void setQFunction(MBSim::Function1<double,double> * QFun_) {QFun=QFun_; }
@@ -148,7 +148,7 @@ namespace MBSimHydraulics {
   /*! FluidPump */
   class FluidPump : public HLine {
     public:
-      FluidPump(const std::string &name) : HLine(name), QSignal(NULL), QSignalString(""), Q(1) {}
+      FluidPump(const std::string &name="") : HLine(name), QSignal(NULL), QSignalString(""), Q(1) {}
       virtual std::string getType() const { return "FluidPump"; }
       
       void setQSignal(MBSimControl::Signal * QSignal_) {QSignal=QSignal_; }
@@ -174,7 +174,7 @@ namespace MBSimHydraulics {
   /*! StatelessOrifice */
   class StatelessOrifice : public HLine {
     public:
-      StatelessOrifice(const std::string &name) : HLine(name), inflowSignal(NULL), outflowSignal(NULL), openingSignal(NULL), inflowSignalString(""), outflowSignalString(""), openingSignalString(""), diameter(0), alpha(0.), calcAreaModus(0) {}
+      StatelessOrifice(const std::string &name="") : HLine(name), inflowSignal(NULL), outflowSignal(NULL), openingSignal(NULL), inflowSignalString(""), outflowSignalString(""), openingSignalString(""), diameter(0), alpha(0.), calcAreaModus(0) {}
       virtual std::string getType() const { return "StatelessOrifice"; }
       
       void setInflowSignal(MBSimControl::Signal * inflowSignal_) {inflowSignal=inflowSignal_; }

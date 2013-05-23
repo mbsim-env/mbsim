@@ -35,7 +35,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of point
        */
-      Point(const std::string& name) : RigidContour(name) {}
+      Point(const std::string& name="") : RigidContour(name) {}
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "Point"; }

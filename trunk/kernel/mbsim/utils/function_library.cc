@@ -27,9 +27,10 @@ using namespace fmatvec;
 namespace MBSim {
 
   void Function1_SS_from_VS::initializeUsingXML(TiXmlElement * element) {
+    Function1<double,double>::initializeUsingXML(element);
     TiXmlElement * e;
     e=element;
-    Function1<fmatvec::Vec, double> * f=ObjectFactory::getInstance()->getInstance()->createFunction1_VS(e->FirstChildElement());
+    Function1<fmatvec::Vec, double> * f=ObjectFactory<Function1<Vec,double> >::create(e->FirstChildElement());
     f->initializeUsingXML(e->FirstChildElement());
     setFunction(f);
   }
@@ -54,6 +55,7 @@ namespace MBSim {
 
 
   void StepFunction1_VS::initializeUsingXML(TiXmlElement * element) {
+    Function1<Vec,double>::initializeUsingXML(element);
     TiXmlElement *e=element->FirstChildElement(MBSIMNS"time");
     Vec stepTime_=Element::getVec(e);
     stepTime=stepTime_;
@@ -81,11 +83,12 @@ namespace MBSim {
 
 
   void SummationFunction1_VS::initializeUsingXML(TiXmlElement * element) {
+    Function1<Vec,double>::initializeUsingXML(element);
     TiXmlElement * e;
     e=element->FirstChildElement(MBSIMNS"function");
     while (e && e->ValueStr()==MBSIMNS"function") {
       TiXmlElement * ee = e->FirstChildElement();
-      Function1<Vec,double> *f=ObjectFactory::getInstance()->createFunction1_VS(ee);
+      Function1<Vec,double> *f=ObjectFactory<Function1<Vec,double> >::create(ee);
       f->initializeUsingXML(ee);
       ee=e->FirstChildElement(MBSIMNS"factor");
       double factor=Element::getDouble(ee);
@@ -191,6 +194,7 @@ namespace MBSim {
   }
 
   void TabularFunction2_SSS::initializeUsingXML(TiXmlElement * element) {
+    Function2<double,double,double>::initializeUsingXML(element);
     TiXmlElement * e;
     e = element->FirstChildElement(MBSIMNS"xValues");
     Vec x_=Element::getVec(e);
@@ -217,6 +221,7 @@ namespace MBSim {
   }
 
   void Polynom1_SS::initializeUsingXML(TiXmlElement * element) {
+    Function1<double,double>::initializeUsingXML(element);
     MBSim::DifferentiableFunction1<double>::initializeUsingXML(element);
     TiXmlElement * e=element->FirstChildElement(MBSIMNS"coefficients");
     setCoefficients(MBSim::Element::getVec(e));

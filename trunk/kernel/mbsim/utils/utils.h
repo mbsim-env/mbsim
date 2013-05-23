@@ -30,6 +30,8 @@
 #include <vector>
 #include <set>
 
+namespace MBSim {
+
 std::string numtostr(int i);   
 std::string numtostr(double d);   
 template<class Type, class Row, class Col>
@@ -51,7 +53,6 @@ fmatvec::Vec radtodeg(fmatvec::Vec phi);
 fmatvec::Vec tildetovec(const fmatvec::SqrMat &A);
 
 double sign(double x);
-int min(int i, int j);
 
 /*!
  * \brief calculates planar angle in [0,2\pi] with respect to Cartesian coordinates of: Arc Tangent (y/x)
@@ -135,17 +136,6 @@ inline std::string funcExt<double>() {
 }
 
 template <class T>
-inline T fromMatStr(const std::string &str) {
-  return T(str.c_str());
-}
-
-template < >
-inline double fromMatStr(const std::string &str) {
-  fmatvec::Mat A(str.c_str());
-  return A(0,0);
-}
-
-template <class T>
 void addElementText(MBXMLUtils::TiXmlElement *parent, std::string name, const T &value) {
   parent->LinkEndChild(new MBXMLUtils::TiXmlElement(name))->LinkEndChild(toXML(value));
 }
@@ -160,5 +150,9 @@ class Deprecated {
     static std::set<std::vector<std::string> > allMessages;
     static bool atExitRegistred;
 };
+
+std::string demangleSymbolName(std::string name);
+
+}
 
 #endif

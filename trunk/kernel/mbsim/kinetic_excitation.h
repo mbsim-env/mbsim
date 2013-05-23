@@ -38,7 +38,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of link machanics
        */
-      KineticExcitation(const std::string &name);
+      KineticExcitation(const std::string &name="");
 
       /**
        * \brief destructor

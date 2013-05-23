@@ -51,7 +51,7 @@ namespace MBSimFlexibleBody {
        * \param name of body
        * \param bool to specify open (cantilever) or closed (ring) structure
        */
-      FlexibleBody1s33RCM(const std::string &name,bool openStructure);
+      FlexibleBody1s33RCM(const std::string &name="",bool openStructure=false);
 
       /**
        * \brief destructor

@@ -23,10 +23,11 @@
 #include "mbsimHydraulics/pressure_loss.h"
 #include "mbsimHydraulics/hnode.h"
 #include "mbsimControl/signal_.h"
-#include "mbsimHydraulics/objectfactory.h"
 #include "mbsim/utils/eps.h"
 #include <fstream>
 #include "mbsimHydraulics/obsolet_hint.h"
+#include "mbsimHydraulics/defines.h"
+#include "mbsim/objectfactory.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -192,6 +193,9 @@ namespace MBSimHydraulics {
   }
 
   void Controlvalve43::initializeUsingXML(TiXmlElement * element) {
+    // Controlvalve43 is a pseudo group not not call Group::initializeUsingXML but Element::initializeUsingXML
+    Element::initializeUsingXML(element);
+
     TiXmlElement * e;
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"length");
     setLength(getDouble(e));
@@ -205,7 +209,7 @@ namespace MBSimHydraulics {
       aT=getDouble(e);
     setAlpha(a, aT);
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"relativeAlphaPA");
-    Function1<double, double> * relAlphaPA_=MBSim::ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()); 
+    Function1<double, double> * relAlphaPA_=MBSim::ObjectFactory<Function1<double,double> >::create(e->FirstChildElement()); 
     relAlphaPA_->initializeUsingXML(e->FirstChildElement());
     setPARelativeAlphaFunction(relAlphaPA_);
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"minimalRelativeAlpha");

@@ -57,7 +57,7 @@ namespace MBSim {
 #endif
 
     public:
-      AbsoluteKinematicsObserver(const std::string &name);
+      AbsoluteKinematicsObserver(const std::string &name="");
       void setFrame(Frame *frame_) { frame = frame_; } 
       void init(InitStage stage);
       virtual void plot(double t, double dt);

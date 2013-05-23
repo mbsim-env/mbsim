@@ -108,7 +108,7 @@ namespace MBSimHydraulics {
   /*! ConstrainedNode */
   class ConstrainedNode : public HNode {
     public:
-      ConstrainedNode(const std::string &name) : HNode(name), pFun(NULL) {}
+      ConstrainedNode(const std::string &name="") : HNode(name), pFun(NULL) {}
       virtual std::string getType() const { return "ConstrainedNode"; }
 
       void setpFunction(MBSim::Function1<double,double> * pFun_) {pFun=pFun_; }
@@ -126,7 +126,7 @@ namespace MBSimHydraulics {
   /*! EnvironmentNode */
   class EnvironmentNode : public HNode {
     public:
-      EnvironmentNode(const std::string &name) : HNode(name) {}
+      EnvironmentNode(const std::string &name="") : HNode(name) {}
       virtual std::string getType() const { return "EnvironmentNode"; }
 
       void init(MBSim::InitStage stage);
@@ -138,7 +138,7 @@ namespace MBSimHydraulics {
   /*! ElasticNode */
   class ElasticNode : public HNode {
     public:
-      ElasticNode(const std::string &name) : HNode(name), V(0), E(0), fracAir(0), p0(0), bulkModulus(NULL) {}
+      ElasticNode(const std::string &name="") : HNode(name), V(0), E(0), fracAir(0), p0(0), bulkModulus(NULL) {}
       ~ElasticNode();
       virtual std::string getType() const { return "ElasticNode"; }
 
@@ -171,7 +171,7 @@ namespace MBSimHydraulics {
   /*! RigidNode */
   class RigidNode : public HNode {
     public:
-      RigidNode(const std::string &name);
+      RigidNode(const std::string &name="");
       ~RigidNode();
       virtual std::string getType() const { return "RigidNode"; }
 
@@ -206,7 +206,7 @@ namespace MBSimHydraulics {
   /*! RigidCavitationNode */
   class RigidCavitationNode : public HNode {
     public:
-      RigidCavitationNode(const std::string &name);
+      RigidCavitationNode(const std::string &name="");
       ~RigidCavitationNode();
       virtual std::string getType() const { return "RigidCavitationNode"; }
 
@@ -264,7 +264,7 @@ namespace MBSimHydraulics {
   /*! PressurePump */
   class PressurePump : public HNode {
     public:
-      PressurePump(const std::string &name) : HNode(name), pSignal(NULL), pSignalString("") {}
+      PressurePump(const std::string &name="") : HNode(name), pSignal(NULL), pSignalString("") {}
       virtual std::string getType() const { return "PressurePump"; }
 
       void setpSignal(MBSimControl::Signal * pSignal_) {pSignal=pSignal_; }

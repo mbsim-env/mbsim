@@ -38,7 +38,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of contour
        */
-      Plane(const std::string &name) :
+      Plane(const std::string &name="") :
           RigidContour(name) {
       }
       

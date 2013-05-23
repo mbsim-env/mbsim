@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "mbsimControl/link_sensors.h"
-#include "mbsimControl/objectfactory.h"
+#include "mbsimControl/defines.h"
 
 #include "mbsim/link.h"
 

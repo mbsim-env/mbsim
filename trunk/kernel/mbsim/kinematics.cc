@@ -74,6 +74,7 @@ namespace MBSim {
   }
 
   void LinearTranslation::initializeUsingXML(TiXmlElement *element) {
+    RotationIndependentTranslation::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"translationVectors");
     setTranslationVectors(Element::getMat3xV(e,0));
@@ -87,16 +88,18 @@ namespace MBSim {
   }
 
   void TimeDependentTranslation::initializeUsingXML(TiXmlElement *element) {
+    RotationIndependentTranslation::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"translationFunction");
-    pos=ObjectFactory::getInstance()->createFunction1_V3S(e->FirstChildElement());
+    pos=ObjectFactory<Function1<Vec3,double> >::create(e->FirstChildElement());
     pos->initializeUsingXML(e->FirstChildElement());
   }
 
   void StateDependentTranslation::initializeUsingXML(TiXmlElement *element) {
+    Translation::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"translationFunction");
-    pos=ObjectFactory::getInstance()->createFunction1_V3V(e->FirstChildElement());
+    pos=ObjectFactory<Function1<Vec3,Vec> >::create(e->FirstChildElement());
     pos->initializeUsingXML(e->FirstChildElement());
 #ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
     // set qSize for symbolic function (qSize if given by user)
@@ -202,6 +205,7 @@ namespace MBSim {
   }
 
   void RotationAboutFixedAxis::initializeUsingXML(TiXmlElement *element) {
+    TranslationIndependentRotation::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"axisOfRotation");
     setAxisOfRotation(Element::getVec3(e));
@@ -215,11 +219,12 @@ namespace MBSim {
   }
 
   void TimeDependentRotationAboutFixedAxis::initializeUsingXML(TiXmlElement *element) {
+    TranslationIndependentRotation::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"axisOfRotation");
     setAxisOfRotation(Element::getVec3(e));
     e=element->FirstChildElement(MBSIMNS"rotationalFunction");
-    angle=ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement());
+    angle=ObjectFactory<Function1<double,double> >::create(e->FirstChildElement());
     angle->initializeUsingXML(e->FirstChildElement());
   }
 
@@ -418,9 +423,10 @@ namespace MBSim {
   }
 
   void TimeDependentCardanAngles::initializeUsingXML(TiXmlElement *element) {
+    TranslationIndependentRotation::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"rotationalFunction");
-    angle=ObjectFactory::getInstance()->createFunction1_V3S(e->FirstChildElement());
+    angle=ObjectFactory<Function1<Vec3,double> >::create(e->FirstChildElement());
     angle->initializeUsingXML(e->FirstChildElement());
   }
 
@@ -574,6 +580,7 @@ namespace MBSim {
   }
 
   void ConstantJacobian::initializeUsingXML(TiXmlElement *element) {
+    Jacobian::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"constant");
     J=Element::getMat(e);
@@ -645,9 +652,10 @@ namespace MBSim {
   }
 
   void GeneralTranslation::initializeUsingXML(TiXmlElement *element) {
+    Translation::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"translationFunction");
-    pos=ObjectFactory::getInstance()->createFunction2_V3VS(e->FirstChildElement());
+    pos=ObjectFactory<Function2<Vec3,Vec,double> >::create(e->FirstChildElement());
     pos->initializeUsingXML(e->FirstChildElement());
 #ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
     // set qSize for symbolic function (qSize if given by user)

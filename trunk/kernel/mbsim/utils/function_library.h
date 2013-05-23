@@ -337,7 +337,7 @@ namespace MBSim {
   void Function1_VS_from_SS<Col>::initializeUsingXML(MBXMLUtils::TiXmlElement * element) {
     MBXMLUtils::TiXmlElement * e;
     e=element->FirstChildElement(MBSIMNS"function");
-    Function1<double, double> * f=ObjectFactory::getInstance()->getInstance()->createFunction1_SS(e->FirstChildElement());
+    Function1<double, double> * f=ObjectFactory<Function1<double,double> >::create(e->FirstChildElement());
     f->initializeUsingXML(e->FirstChildElement());
     setFunction(f);
     e=element->FirstChildElement(MBSIMNS"direction");

@@ -23,10 +23,10 @@
 
 #include <config.h>
 #include "mbsimControl/massless_spring_damper.h"
-#include "mbsimControl/objectfactory.h"
 #include "mbsimControl/signal_.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
+#include "mbsimControl/defines.h"
 
 using namespace std;
 using namespace MBXMLUtils;

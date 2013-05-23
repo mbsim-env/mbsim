@@ -857,7 +857,9 @@ namespace MBSim {
 
     if (!FlagSSC) dt=dtMin;
 
+#ifdef _OPENMP
     omp_set_nested(1);
+#endif
 
     qUncertaintyByExtrapolation=0;
 

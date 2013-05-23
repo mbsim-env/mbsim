@@ -37,7 +37,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of contour
        */
-      Sphere(const std::string &name) : RigidContour(name), r(0.) {}
+      Sphere(const std::string &name="") : RigidContour(name), r(0.) {}
 
       /**
        * \brief constructor

@@ -19,8 +19,8 @@
 
 #include <config.h>
 #include "mbsimControl/signal_manipulation.h"
-#include "mbsimControl/objectfactory.h"
 #include "mbsimControl/obsolet_hint.h"
+#include "mbsimControl/defines.h"
 #include "mbsim/utils/eps.h"
 
 using namespace std;

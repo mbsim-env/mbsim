@@ -28,6 +28,7 @@
 #include "hdf5serie/simpleattribute.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/observer.h"
+#include "mbsim/utils/utils.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frame.h>
@@ -163,7 +164,7 @@ namespace MBSim {
     while(E && E->ValueStr()==MBSIMNS"contour") {
       Deprecated::registerMessage("Using the <mbsim:contour> element is deprecated, use the <mbsim:Contour> element instead.", E);
       TiXmlElement *ec=E->FirstChildElement();
-      Contour *c=ObjectFactory::getInstance()->createContour(ec);
+      Contour *c=ObjectFactory<Element>::create<Contour>(ec);
       c->initializeUsingXML(ec);
       ec=ec->NextSiblingElement();
       string refF;
@@ -195,7 +196,7 @@ namespace MBSim {
       addContour(c);
     }
     while(E) {
-      Contour *c=ObjectFactory::getInstance()->createContour(E);
+      Contour *c=ObjectFactory<Element>::create<Contour>(E);
       addContour(c);
       c->initializeUsingXML(E);
       E=E->NextSiblingElement();
@@ -206,7 +207,7 @@ namespace MBSim {
     E=e->FirstChildElement();
     Group *g;
     while(E) {
-      g=ObjectFactory::getInstance()->createGroup(E);
+      g=ObjectFactory<Element>::create<Group>(E);
       addGroup(g);
       g->initializeUsingXML(E);
       E=E->NextSiblingElement();
@@ -217,7 +218,7 @@ namespace MBSim {
     E=e->FirstChildElement();
     Object *o;
     while(E) {
-      o=ObjectFactory::getInstance()->createObject(E);
+      o=ObjectFactory<Element>::create<Object>(E);
       addObject(o);
       o->initializeUsingXML(E);
       E=E->NextSiblingElement();
@@ -229,7 +230,7 @@ namespace MBSim {
       E=e->FirstChildElement();
       ExtraDynamic *ed;
       while(E) {
-        ed=ObjectFactory::getInstance()->createExtraDynamic(E);
+        ed=ObjectFactory<Element>::create<ExtraDynamic>(E);
         addExtraDynamic(ed);
         ed->initializeUsingXML(E);
         E=E->NextSiblingElement();
@@ -241,7 +242,7 @@ namespace MBSim {
     E=e->FirstChildElement();
     Link *l;
     while(E) {
-      l=ObjectFactory::getInstance()->createLink(E);
+      l=ObjectFactory<Element>::create<Link>(E);
       addLink(l);
       l->initializeUsingXML(E);
       E=E->NextSiblingElement();
@@ -253,7 +254,7 @@ namespace MBSim {
       E=e->FirstChildElement();
       Observer *obsrv;
       while(E) {
-        obsrv=ObjectFactory::getInstance()->createObserver(E);
+        obsrv=ObjectFactory<Element>::create<Observer>(E);
         addObserver(obsrv);
         obsrv->initializeUsingXML(E);
         E=E->NextSiblingElement();

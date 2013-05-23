@@ -19,8 +19,9 @@
 
 #include <config.h>
 #include "mbsimControl/function_sensor.h"
-#include "mbsimControl/objectfactory.h"
 #include "mbsimControl/obsolet_hint.h"
+#include "mbsimControl/defines.h"
+#include "mbsim/objectfactory.h"
 
 using namespace MBSim;
 using namespace MBXMLUtils;
@@ -44,7 +45,7 @@ namespace MBSimControl {
   void FunctionSensor::initializeUsingXML(TiXmlElement *element) {
     Sensor::initializeUsingXML(element);
     TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"function");
-    function=MBSim::ObjectFactory::getInstance()->getInstance()->createFunction1_VS(e->FirstChildElement()); 
+    function=MBSim::ObjectFactory<Function1<Vec,double> >::create(e->FirstChildElement()); 
     function->initializeUsingXML(e->FirstChildElement());
     y=(*function)(0);
   }
@@ -55,7 +56,7 @@ namespace MBSimControl {
     TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
     signalString = e->Attribute("ref");
     e=element->FirstChildElement(MBSIMCONTROLNS"function");
-    fun=MBSim::ObjectFactory::getInstance()->getInstance()->createFunction1_SS(e->FirstChildElement()); 
+    fun=MBSim::ObjectFactory<Function1<double,double> >::create(e->FirstChildElement()); 
     fun->initializeUsingXML(e->FirstChildElement());
   }
 
@@ -85,7 +86,7 @@ namespace MBSimControl {
     e=element->FirstChildElement(MBSIMCONTROLNS"secondInputSignal");
     signal2String = e->Attribute("ref");
     e=element->FirstChildElement(MBSIMCONTROLNS"function");
-    fun=MBSim::ObjectFactory::getInstance()->getInstance()->createFunction2_SSS(e->FirstChildElement()); 
+    fun=MBSim::ObjectFactory<Function2<double,double,double> >::create(e->FirstChildElement()); 
     fun->initializeUsingXML(e->FirstChildElement());
   }
 

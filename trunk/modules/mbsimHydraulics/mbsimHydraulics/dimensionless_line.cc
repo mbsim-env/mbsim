@@ -23,10 +23,11 @@
 #include "mbsimHydraulics/hnode.h"
 #include "mbsimHydraulics/hnode_mec.h"
 #include "mbsimHydraulics/environment.h"
-#include "mbsimHydraulics/objectfactory.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsimControl/signal_.h"
 #include "mbsimHydraulics/obsolet_hint.h"
+#include "mbsimHydraulics/defines.h"
+#include "mbsim/objectfactory.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -128,7 +129,7 @@ namespace MBSimHydraulics {
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"height");
     setGapHeight(getDouble(e));
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"planeLeakagePressureLoss");
-    PlaneLeakagePressureLoss *p=(PlaneLeakagePressureLoss*)(MBSim::ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()));
+    PlaneLeakagePressureLoss *p=MBSim::ObjectFactory<Function1<double,double> >::create<PlaneLeakagePressureLoss>(e->FirstChildElement());
     setPlaneLeakagePressureLoss(p);
     p->initializeUsingXML(e->FirstChildElement());
   }
@@ -154,7 +155,7 @@ namespace MBSimHydraulics {
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"height");
     setGapHeight(getDouble(e));
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"circularLeakagePressureLoss");
-    CircularLeakagePressureLoss *p=(CircularLeakagePressureLoss*)(MBSim::ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()));
+    CircularLeakagePressureLoss *p=MBSim::ObjectFactory<Function1<double,double> >::create<CircularLeakagePressureLoss>(e->FirstChildElement());
     setCircularLeakagePressureLoss(p);
     p->initializeUsingXML(e->FirstChildElement());
   }

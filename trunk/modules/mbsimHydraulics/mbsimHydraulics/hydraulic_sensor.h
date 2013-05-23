@@ -29,7 +29,7 @@ namespace MBSimHydraulics {
 
   class FlowSensor : public MBSimControl::Sensor {
     public:
-      FlowSensor(const std::string &name) : MBSimControl::Sensor(name), line(NULL), lineString("") {}
+      FlowSensor(const std::string &name="") : MBSimControl::Sensor(name), line(NULL), lineString("") {}
       std::string getType() const { return "FlowSensor"; }
       fmatvec::Vec getSignal();
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
@@ -42,7 +42,7 @@ namespace MBSimHydraulics {
 
   class PressureSensor : public MBSimControl::Sensor {
     public:
-      PressureSensor(const std::string &name) : MBSimControl::Sensor(name), node(NULL), nodeString("") {}
+      PressureSensor(const std::string &name="") : MBSimControl::Sensor(name), node(NULL), nodeString("") {}
       std::string getType() const { return "PressureSensor"; }
       fmatvec::Vec getSignal();
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
@@ -55,7 +55,7 @@ namespace MBSimHydraulics {
 
   class TemperatureSensor : public MBSimControl::Sensor {
     public:
-      TemperatureSensor(const std::string &name) : MBSimControl::Sensor(name), T(1) {}
+      TemperatureSensor(const std::string &name="") : MBSimControl::Sensor(name), T(1) {}
       std::string getType() const { return "TemperatureSensor"; }
       fmatvec::Vec getSignal() {return T; }
       void init(MBSim::InitStage stage);
@@ -65,7 +65,7 @@ namespace MBSimHydraulics {
 
   class KinematicViscositySensor : public MBSimControl::Sensor {
     public:
-      KinematicViscositySensor(const std::string &name) : MBSimControl::Sensor(name), nu(1) {}
+      KinematicViscositySensor(const std::string &name="") : MBSimControl::Sensor(name), nu(1) {}
       std::string getType() const { return "KinematicViscositySensor"; }
       fmatvec::Vec getSignal() {return nu; }
       void init(MBSim::InitStage stage);

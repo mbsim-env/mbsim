@@ -42,7 +42,7 @@ namespace MBSim {
        * \param height of frustum (positive in "free" space, negative in "solid" space)
        * \param radius of the (small) rouding 
        */
-      PlaneWithFrustum(const std::string &name) : RigidContour(name), rFrustumOnPlane(0), rFrustumOnTop(0), hFrustum(0), rho(0) {
+      PlaneWithFrustum(const std::string &name="") : RigidContour(name), rFrustumOnPlane(0), rFrustumOnTop(0), hFrustum(0), rho(0) {
       }
       
       PlaneWithFrustum(const std::string &name, double rFrustumOnPlane_, double rFrustumOnTop_, double hFrustum_, double rho_) : RigidContour(name), rFrustumOnPlane(rFrustumOnPlane_), rFrustumOnTop(rFrustumOnTop_), hFrustum(hFrustum_), rho(rho_) {

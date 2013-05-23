@@ -37,7 +37,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of line
        */
-      Line(const std::string& name) : RigidContour(name) {}
+      Line(const std::string& name="") : RigidContour(name) {}
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "Line"; }

@@ -56,7 +56,7 @@ namespace MBSim {
 
     public:
       GearConstraint(const std::string &name, RigidBody* body);
-      GearConstraint(const std::string &name);
+      GearConstraint(const std::string &name="");
 
       void addDependency(RigidBody* body_, double ratio);
 
@@ -91,7 +91,7 @@ namespace MBSim {
 
     public:
       KinematicConstraint(const std::string &name, RigidBody* body);
-      KinematicConstraint(const std::string &name);
+      KinematicConstraint(const std::string &name="");
 
       void setKinematicFunction(Function1<fmatvec::VecV,double>* f_) { f = f_;}
       void setFirstDerivativeOfKinematicFunction(Function1<fmatvec::VecV,double>* fd_) { fd = fd_;}
@@ -123,7 +123,7 @@ namespace MBSim {
    */
   class JointConstraint : public Constraint {
     public:
-      JointConstraint(const std::string &name);
+      JointConstraint(const std::string &name="");
 
       void init(InitStage stage);
       void initz();

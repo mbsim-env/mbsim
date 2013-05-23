@@ -39,7 +39,7 @@ namespace MBSimHydraulics {
       };
 
       /*! Constructor */
-      ElasticLineGalerkin(const std::string &name);
+      ElasticLineGalerkin(const std::string &name="");
       virtual std::string getType() const { return "ElasticLineGalerkin"; }
 
       /*! set initial pressure of the pipe fluid*/

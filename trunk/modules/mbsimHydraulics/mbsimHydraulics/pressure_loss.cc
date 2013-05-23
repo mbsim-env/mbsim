@@ -23,10 +23,11 @@
 #include "mbsimHydraulics/leakage_line.h"
 #include "mbsimHydraulics/dimensionless_line.h"
 #include "mbsimHydraulics/environment.h"
-#include "mbsimHydraulics/objectfactory.h"
 #include "mbsim/utils/function_library.h"
 #include "mbsim/utils/nonlinear_algebra.h"
 #include "mbsim/utils/eps.h"
+#include "mbsimHydraulics/defines.h"
+#include "mbsim/objectfactory.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -43,10 +44,11 @@ namespace MBSimHydraulics {
   }
 
   void SerialResistanceLinePressureLoss::initializeUsingXML(TiXmlElement * element) {
+    LinePressureLoss::initializeUsingXML(element);
     TiXmlElement * e;
     e=element->FirstChildElement();
     while (e) {
-      LinePressureLoss *p=(LinePressureLoss*)(MBSim::ObjectFactory::getInstance()->createFunction1_SS(e));
+      LinePressureLoss *p=MBSim::ObjectFactory<Function1<double,double> >::create<LinePressureLoss>(e);
       addLinePressureLoss(p);
       p->initializeUsingXML(e);
       e=e->NextSiblingElement();
@@ -59,11 +61,12 @@ namespace MBSimHydraulics {
   }
 
   void ParallelResistanceLinePressureLoss::initializeUsingXML(TiXmlElement * element) {
+    LinePressureLoss::initializeUsingXML(element);
     TiXmlElement * e;
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"number");
     int n=Element::getInt(e);
     e=e->NextSiblingElement();
-    LinePressureLoss *p=(LinePressureLoss*)(MBSim::ObjectFactory::getInstance()->createFunction1_SS(e));
+    LinePressureLoss *p=MBSim::ObjectFactory<Function1<double,double> >::create<LinePressureLoss>(e);
     p->initializeUsingXML(e);
     setLinePressureLoss(p, n);
   }
@@ -81,6 +84,7 @@ namespace MBSimHydraulics {
   }
 
   void ZetaLinePressureLoss::initializeUsingXML(TiXmlElement * element) {
+    LinePressureLoss::initializeUsingXML(element);
     TiXmlElement * e;
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"zeta");
     setZeta(Element::getDouble(e));
@@ -100,6 +104,7 @@ namespace MBSimHydraulics {
   }
 
   void ZetaPosNegLinePressureLoss::initializeUsingXML(TiXmlElement * element) {
+    LinePressureLoss::initializeUsingXML(element);
     TiXmlElement * e;
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"zetaPos");
     setZetaPos(Element::getDouble(e));
@@ -228,9 +233,10 @@ namespace MBSimHydraulics {
   }
 
   void TabularLinePressureLoss::initializeUsingXML(TiXmlElement * element) {
+    LinePressureLoss::initializeUsingXML(element);
     TiXmlElement * e;
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"function");
-    zetaTabular=MBSim::ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement());
+    zetaTabular=MBSim::ObjectFactory<Function1<double,double> >::create(e->FirstChildElement());
     zetaTabular->initializeUsingXML(e->FirstChildElement());
   }
 
@@ -548,6 +554,7 @@ namespace MBSimHydraulics {
   }
 
   void UnidirectionalZetaPressureLoss::initializeUsingXML(TiXmlElement * element) {
+    PressureLoss::initializeUsingXML(element);
     TiXmlElement * e;
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"zeta");
     setZeta(Element::getDouble(e));

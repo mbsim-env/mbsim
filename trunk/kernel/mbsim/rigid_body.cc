@@ -842,7 +842,7 @@ namespace MBSim {
       Deprecated::registerMessage("Using the <mbsim:contour> element is deprecated, use the <mbsim:Contour> element instead.", e);
       TiXmlElement *ec=e->FirstChildElement();
 
-      Contour *c=ObjectFactory::getInstance()->createContour(ec);
+      Contour *c=ObjectFactory<Element>::create<Contour>(ec);
       c->initializeUsingXML(ec);
       ec=ec->NextSiblingElement();
       string refF;
@@ -873,7 +873,7 @@ namespace MBSim {
       addContour(c);
     }
     while(e) {
-      Contour *c=ObjectFactory::getInstance()->createContour(e);
+      Contour *c=ObjectFactory<Element>::create<Contour>(e);
       addContour(c);
       c->initializeUsingXML(e);
       e=e->NextSiblingElement();
@@ -886,13 +886,13 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"inertiaTensor");
     setInertiaTensor(getSymMat3(e));
     e=element->FirstChildElement(MBSIMNS"translation");
-    Translation *trans=ObjectFactory::getInstance()->createTranslation(e->FirstChildElement());
+    Translation *trans=ObjectFactory<Function2<Vec3,Vec,double> >::create<Translation>(e->FirstChildElement());
     if(trans) {
       setTranslation(trans);
       trans->initializeUsingXML(e->FirstChildElement());
     }
     e=element->FirstChildElement(MBSIMNS"rotation");
-    Rotation *rot=ObjectFactory::getInstance()->createRotation(e->FirstChildElement());
+    Rotation *rot=ObjectFactory<Function2<SqrMat3,Vec,double> >::create<Rotation>(e->FirstChildElement());
     if(rot) {
       setRotation(rot);
       rot->initializeUsingXML(e->FirstChildElement());
@@ -900,49 +900,49 @@ namespace MBSim {
     // BEGIN The following elements are rarly used. That is why they are optional
     e=element->FirstChildElement(MBSIMNS"jacobianOfTranslation");
     if(e) {
-      Jacobian *jac=ObjectFactory::getInstance()->createJacobian(e->FirstChildElement());
+      Jacobian *jac=ObjectFactory<Function2<Mat3xV,Vec,double> >::create<Jacobian>(e->FirstChildElement());
       setJacobianOfTranslation(jac);
       jac->initializeUsingXML(e->FirstChildElement());
     }
     e=element->FirstChildElement(MBSIMNS"jacobianOfRotation");
     if(e) {
-      Jacobian *jac=ObjectFactory::getInstance()->createJacobian(e->FirstChildElement());
+      Jacobian *jac=ObjectFactory<Function2<Mat3xV,Vec,double> >::create<Jacobian>(e->FirstChildElement());
       setJacobianOfRotation(jac);
       jac->initializeUsingXML(e->FirstChildElement());
     }
     e=element->FirstChildElement(MBSIMNS"derivativeOfJacobianOfTranslation");
     if(e) {
-      Function3<Mat3xV,Vec,Vec,double> *f=ObjectFactory::getInstance()->createFunction3_MVVS(e->FirstChildElement());
+      Function3<Mat3xV,Vec,Vec,double> *f=ObjectFactory<Function3<Mat3xV,Vec,Vec,double> >::create(e->FirstChildElement());
       setDerivativeOfJacobianOfTranslation(f);
       f->initializeUsingXML(e->FirstChildElement());
     }
     e=element->FirstChildElement(MBSIMNS"derivativeOfJacobianOfRotation");
     if(e) {
-      Function3<Mat3xV,Vec,Vec,double> *f=ObjectFactory::getInstance()->createFunction3_MVVS(e->FirstChildElement());
+      Function3<Mat3xV,Vec,Vec,double> *f=ObjectFactory<Function3<Mat3xV,Vec,Vec,double> >::create(e->FirstChildElement());
       setDerivativeOfJacobianOfRotation(f);
       f->initializeUsingXML(e->FirstChildElement());
     }
     e=element->FirstChildElement(MBSIMNS"guidingVelocityOfTranslation");
     if(e) {
-      Function1<Vec3,double> *f=ObjectFactory::getInstance()->createFunction1_V3S(e->FirstChildElement());
+      Function1<Vec3,double> *f=ObjectFactory<Function1<Vec3,double> >::create(e->FirstChildElement());
       setGuidingVelocityOfTranslation(f);
       f->initializeUsingXML(e->FirstChildElement());
     }
     e=element->FirstChildElement(MBSIMNS"guidingVelocityOfRotation");
     if(e) {
-      Function1<Vec3,double> *f=ObjectFactory::getInstance()->createFunction1_V3S(e->FirstChildElement());
+      Function1<Vec3,double> *f=ObjectFactory<Function1<Vec3,double> >::create(e->FirstChildElement());
       setGuidingVelocityOfRotation(f);
       f->initializeUsingXML(e->FirstChildElement());
     }
     e=element->FirstChildElement(MBSIMNS"derivativeOfGuidingVelocityOfTranslation");
     if(e) {
-      Function1<Vec3,double> *f=ObjectFactory::getInstance()->createFunction1_V3S(e->FirstChildElement());
+      Function1<Vec3,double> *f=ObjectFactory<Function1<Vec3,double> >::create(e->FirstChildElement());
       setDerivativeOfGuidingVelocityOfTranslation(f);
       f->initializeUsingXML(e->FirstChildElement());
     }
     e=element->FirstChildElement(MBSIMNS"derivativeOfGuidingVelocityOfRotation");
     if(e) {
-      Function1<Vec3,double> *f=ObjectFactory::getInstance()->createFunction1_V3S(e->FirstChildElement());
+      Function1<Vec3,double> *f=ObjectFactory<Function1<Vec3,double> >::create(e->FirstChildElement());
       setDerivativeOfGuidingVelocityOfRotation(f);
       f->initializeUsingXML(e->FirstChildElement());
     }

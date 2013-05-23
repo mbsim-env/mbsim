@@ -19,11 +19,11 @@
 
 #include <config.h>
 #include "mbsimHydraulics/hydraulic_sensor.h"
-#include "mbsimHydraulics/objectfactory.h"
 #include "mbsimHydraulics/hnode.h"
 #include "mbsimHydraulics/hline.h"
 #include "mbsimHydraulics/environment.h"
 #include "mbsimHydraulics/obsolet_hint.h"
+#include "mbsimHydraulics/defines.h"
 
 using namespace std;
 using namespace MBXMLUtils;
