@@ -92,6 +92,8 @@ namespace MBSimControl {
       return new SpecialSignalOperation(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"Actuator")
       return new Actuator(element->Attribute("name"));
+    if (element->ValueStr()==MBSIMCONTROLNS"PIDController")
+      return new PIDController(element->Attribute("name"));
     return 0;
   }
 

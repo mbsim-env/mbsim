@@ -495,5 +495,76 @@ namespace MBSimControl {
     return y; 
   }
 
+  void PIDController::initializeUsingXML(TiXmlElement * element) {
+    Signal::initializeUsingXML(element);
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
+    sString=e->Attribute("ref");
+    e=element->FirstChildElement(MBSIMCONTROLNS"derivativeOfInputSignal");
+    sdString=e->Attribute("ref");
+    e=element->FirstChildElement(MBSIMCONTROLNS"P");
+    double p=Element::getDouble(e);
+    e=element->FirstChildElement(MBSIMCONTROLNS"I");
+    double i=Element::getDouble(e);
+    e=element->FirstChildElement(MBSIMCONTROLNS"D");
+    double d=Element::getDouble(e);
+    setPID(p, i, d);
+  }
+
+  void PIDController::updatedx(double t, double dt) {
+    xd=s->getSignal()*dt;
+  }
+
+  void PIDController::updatexd(double t) {
+    xd=s->getSignal();
+  }
+
+  void PIDController::init(MBSim::InitStage stage) {
+    if (stage==resolveXMLPath) {
+      if (sString!="")
+        setInputSignal(getByPath<Signal>(process_signal_string(sString)));
+      if (sdString!="")
+        setDerivativeOfInputSignal(getByPath<Signal>(process_signal_string(sdString)));
+      Signal::init(stage);
+    }
+    else if (stage==MBSim::resize) {
+      Signal::init(stage);
+      x.resize(xSize, INIT, 0);
+    }
+    else if (stage==MBSim::plot) {
+      updatePlotFeatures();
+      if(getPlotFeature(plotRecursive)==enabled) {
+        Signal::init(stage);
+      }
+    }
+    else
+      Signal::init(stage);
+  }
+
+  Vec PIDController::getSignal() {
+    return (this->*getSignalMethod)();
+  }
+
+  Vec PIDController::getSignalPID() {
+    return P*s->getSignal() + D*sd->getSignal() + I*x;
+  }
+
+  Vec PIDController::getSignalPD() {
+    return P*s->getSignal() + D*sd->getSignal();
+  }
+
+  void PIDController::setPID(double PP, double II, double DD) {
+    if ((fabs(II)<epsroot()))
+      getSignalMethod=&PIDController::getSignalPD;
+    else
+      getSignalMethod=&PIDController::getSignalPID;
+    P = PP; I = II; D = DD;
+  }
+
+  void PIDController::plot(double t, double dt) {
+    Signal::plot(t,dt);
+  }
+
+
 }
 
