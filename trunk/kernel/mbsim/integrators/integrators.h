@@ -30,6 +30,7 @@
 #include "radau5_integrator.h"
 #include "time_stepping_integrator.h"
 #include "time_stepping_ssc_integrator.h"
+#include "auto_time_stepping_ssc_integrator.h"
 #include "time_stepping_d1minuslinear_integrator.h"
 #include "theta_time_stepping_integrator.h"
 #include "euler_explicit_integrator.h"
