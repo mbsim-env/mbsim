@@ -85,7 +85,7 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
   //fancy stuff
   contact->enableOpenMBVContactPoints(0.01);
   contact->setOpenMBVNormalForceArrow(normalArrow);
-  contact->setopenMBVFrictionArrow(frArrow);
+  contact->setOpenMBVFrictionArrow(frArrow);
 #endif
 
   double stiffness = 1e5;

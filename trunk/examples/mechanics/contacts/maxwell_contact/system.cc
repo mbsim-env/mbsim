@@ -203,7 +203,7 @@ System::System(const string &projectName, int contactType, int firstBall, int la
   //fancy stuff
   contact->enableOpenMBVContactPoints(1.,false);
   contact->setOpenMBVNormalForceArrow(normalArrow);
-  contact->setopenMBVFrictionArrow(frArrow);
+  contact->setOpenMBVFrictionArrow(frArrow);
 
 
   for (size_t contactIter = 0; contactIter < balls.size(); contactIter++) {
