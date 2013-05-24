@@ -564,7 +564,47 @@ void ConnectContoursProperty::toWidget(QWidget *widget) {
   static_cast<ConnectContoursWidget*>(widget)->update();
 }
 
-SolverTolerancesProperty::SolverTolerancesProperty() : g(0,false), gd(0,false), gdd(0,false), la(0,false), La(0,false) {
+TiXmlElement* SolverChoiceProperty::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e=element->FirstChildElement(xmlName);
+  if (e) {
+    if (e->FirstChildElement(MBSIMNS"FixedPointSingle"))
+      choice = "FixedPointSingle";
+    else if (e->FirstChildElement(MBSIMNS"GaussSeidel"))
+      choice = "GaussSeidel";
+    else if (e->FirstChildElement(MBSIMNS"LinearEquations"))
+      choice = "LinearEquations";
+    else if (e->FirstChildElement(MBSIMNS"RootFinding"))
+      choice = "RootFinding";
+    return e;
+  }
+  return 0;
+}
+
+TiXmlElement* SolverChoiceProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *e=new TiXmlElement(xmlName);
+  parent->LinkEndChild(e);
+  if(choice=="FixedPointTotal")
+    e->LinkEndChild(new TiXmlElement( MBSIMNS"FixedPointTotal" ));
+  else if(choice=="FixedPointSingle")
+    e->LinkEndChild(new TiXmlElement( MBSIMNS"FixedPointSingle" ));
+  else if(choice=="GaussSeidel")
+    e->LinkEndChild(new TiXmlElement( MBSIMNS"GaussSeidel" ));
+  else if(choice=="LinearEquations")
+    e->LinkEndChild(new TiXmlElement( MBSIMNS"LinearEquations" ));
+  else if(choice=="RootFinding")
+    e->LinkEndChild(new TiXmlElement( MBSIMNS"RootFinding" ));
+  return e;
+}
+
+void SolverChoiceProperty::fromWidget(QWidget *widget) {
+  choice = static_cast<SolverChoiceWidget*>(widget)->getSolver().toStdString();
+}
+
+void SolverChoiceProperty::toWidget(QWidget *widget) {
+  static_cast<SolverChoiceWidget*>(widget)->setSolver(QString::fromStdString(choice));
+}
+
+SolverTolerancesProperty::SolverTolerancesProperty() : projection(0,false), g(0,false), gd(0,false), gdd(0,false), la(0,false), La(0,false) {
 
   vector<PhysicalVariableProperty*> input;
   input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-15"), "-", MBSIMNS"projection"));
@@ -634,28 +674,49 @@ void SolverTolerancesProperty::toWidget(QWidget *widget) {
   La.toWidget(static_cast<SolverTolerancesWidget*>(widget)->La);
 }
 
-SolverParametersProperty::SolverParametersProperty() : tolerances(0,false) {
+SolverParametersProperty::SolverParametersProperty() : constraintSolver(0,false), impactSolver(0,false), numberOfMaximalIterations(0,false), tolerances(0,false) {
+  constraintSolver.setProperty(new SolverChoiceProperty(MBSIMNS"constraintSolver"));
+  impactSolver.setProperty(new SolverChoiceProperty(MBSIMNS"impactSolver"));
+
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("10000"), "", MBSIMNS"numberOfMaximalIterations"));
+  numberOfMaximalIterations.setProperty(new ExtPhysicalVarProperty(input));
+
   tolerances.setProperty(new SolverTolerancesProperty);
 }
 
 TiXmlElement* SolverParametersProperty::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=element->FirstChildElement(MBSIMNS"solverParameters");
-  if(e) tolerances.initializeUsingXML(e);
+  if(e) {
+    constraintSolver.initializeUsingXML(e);
+    impactSolver.initializeUsingXML(e);
+    numberOfMaximalIterations.initializeUsingXML(e);
+    tolerances.initializeUsingXML(e);
+  }
   return e;
 }
 
 TiXmlElement* SolverParametersProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *e=new TiXmlElement(MBSIMNS"solverParameters");
   parent->LinkEndChild(e);
+  constraintSolver.writeXMLFile(e);
+  impactSolver.writeXMLFile(e);
+  numberOfMaximalIterations.writeXMLFile(e);
   tolerances.writeXMLFile(e);
   return e;
 }
 
 void SolverParametersProperty::fromWidget(QWidget *widget) {
+  constraintSolver.fromWidget(static_cast<SolverParametersWidget*>(widget)->constraintSolver);
+  impactSolver.fromWidget(static_cast<SolverParametersWidget*>(widget)->impactSolver);
+  numberOfMaximalIterations.fromWidget(static_cast<SolverParametersWidget*>(widget)->numberOfMaximalIterations);
   tolerances.fromWidget(static_cast<SolverParametersWidget*>(widget)->tolerances);
 }
 
 void SolverParametersProperty::toWidget(QWidget *widget) {
+  constraintSolver.toWidget(static_cast<SolverParametersWidget*>(widget)->constraintSolver);
+  impactSolver.toWidget(static_cast<SolverParametersWidget*>(widget)->impactSolver);
+  numberOfMaximalIterations.toWidget(static_cast<SolverParametersWidget*>(widget)->numberOfMaximalIterations);
   tolerances.toWidget(static_cast<SolverParametersWidget*>(widget)->tolerances);
 }
 

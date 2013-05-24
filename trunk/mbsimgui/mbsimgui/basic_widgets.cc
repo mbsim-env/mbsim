@@ -412,7 +412,7 @@ TextWidget::TextWidget(bool readOnly) {
   layout->addWidget(text);
 }
 
-TextChoiceWidget::TextChoiceWidget(const vector<QString> &list_, int num) : list(list_) { 
+TextChoiceWidget::TextChoiceWidget(const vector<QString> &list, int num) { 
   text = new QComboBox;
   for(unsigned int i=0; i<list.size(); i++)
     text->addItem(list[i]);
@@ -566,6 +566,19 @@ void DependenciesWidget::removeDependency() {
   updateList();
 }
 
+SolverChoiceWidget::SolverChoiceWidget() {
+  choice = new QComboBox;
+  choice->addItem("FixedPointSingle");
+  choice->addItem("GaussSeidel");
+  choice->addItem("LinearEquations");
+  choice->addItem("RootFinding");
+  choice->setCurrentIndex(0);
+  QHBoxLayout* layout = new QHBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+  layout->addWidget(choice);
+}
+
 SolverTolerancesWidget::SolverTolerancesWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   setLayout(layout);
@@ -606,6 +619,18 @@ SolverParametersWidget::SolverParametersWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
+
+  constraintSolver = new ExtWidget("Constraint solver",new SolverChoiceWidget,true);
+  layout->addWidget(constraintSolver);
+
+  impactSolver = new ExtWidget("Impact solver",new SolverChoiceWidget,true);
+  layout->addWidget(impactSolver);
+
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("10000"), QStringList(), 0));
+  numberOfMaximalIterations = new ExtWidget("Number of maximal iterations",new ExtPhysicalVarWidget(input),true);
+  layout->addWidget(numberOfMaximalIterations);
+
   tolerances = new ExtWidget("Tolerances",new SolverTolerancesWidget,true);
   layout->addWidget(tolerances);
 }
