@@ -191,7 +191,7 @@ class FileProperty : public Property {
 class TextProperty : public Property {
 
   public:
-    TextProperty(const std::string &text_, const std::string &xmlName_, int quote_=0) : text(text_), xmlName(xmlName_), quote(quote_) {}
+    TextProperty(const std::string &text_, const std::string &xmlName_, bool quote_=0) : text(text_), xmlName(xmlName_), quote(quote_) {}
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
@@ -202,7 +202,7 @@ class TextProperty : public Property {
   protected:
     std::string text;
     std::string xmlName;
-    int quote;
+    bool quote;
 };
 
 class DependenciesProperty : public Property {
@@ -259,6 +259,21 @@ class ConnectContoursProperty : public Property {
     std::string xmlName;
 };
 
+class SolverChoiceProperty : public Property {
+
+  public:
+    SolverChoiceProperty(const std::string &xmlName_) : choice("FixedPointSingle"), xmlName(xmlName_) {}
+
+    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+
+  protected:
+    std::string choice;
+    std::string xmlName;
+};
+
 class SolverTolerancesProperty : public Property {
 
   public:
@@ -284,7 +299,7 @@ class SolverParametersProperty : public Property {
     void toWidget(QWidget *widget);
 
   protected:
-    ExtProperty tolerances;
+    ExtProperty constraintSolver, impactSolver, numberOfMaximalIterations, tolerances;
 };
 
 class GearDependencyProperty : public Property {

@@ -269,7 +269,6 @@ class TextChoiceWidget : public BasicTextWidget {
 
   protected:
     QComboBox *text;
-    std::vector<QString> list;
 };
 
 class ConnectFramesWidget : public Widget {
@@ -333,6 +332,18 @@ class DependenciesWidget : public Widget {
     void bodyChanged();
 };
 
+class SolverChoiceWidget : public Widget {
+  friend class SolverChoiceProperty;
+
+  public:
+    SolverChoiceWidget();
+    QString getSolver() const {return choice->currentText();}
+    void setSolver(const QString &str) {choice->setCurrentIndex(choice->findText(str));}
+
+  protected:
+    QComboBox *choice;
+};
+
 class SolverTolerancesWidget : public Widget {
   friend class SolverTolerancesProperty;
 
@@ -351,7 +362,7 @@ class SolverParametersWidget : public Widget {
     SolverParametersWidget();
 
   protected:
-    ExtWidget *tolerances;
+    ExtWidget *constraintSolver, *impactSolver, *numberOfMaximalIterations, *tolerances;
 };
 
 class PlotFeature : public Widget {
