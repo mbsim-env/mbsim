@@ -548,6 +548,29 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="PIDController" substitutionGroup="Signal" type="PIDControllerType"/>
+  <xs:complexType name="PIDControllerType">
+    <xs:complexContent>
+      <xs:extension base="SignalType">
+        <xs:sequence>
+          <xs:element name="inputSignal">
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="derivativeOfInputSignal">
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="P" type="pv:nounitScalar"/>
+          <xs:element name="I" type="pv:nounitScalar"/>
+          <xs:element name="D" type="pv:nounitScalar"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="SignalOffset" substitutionGroup="Signal" type="SignalOffsetType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
