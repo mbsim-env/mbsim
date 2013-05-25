@@ -210,7 +210,7 @@ namespace MBSimHydraulics {
   void ConstrainedLine::initializeUsingXML(TiXmlElement * element) {
     HLine::initializeUsingXML(element);
     TiXmlElement *e=element->FirstChildElement(MBSIMHYDRAULICSNS"function");
-    Function1<double, double> * qf=MBSim::ObjectFactory<Function1<double,double> >::create(e->FirstChildElement()); 
+    Function1<double, double> * qf=MBSim::ObjectFactory<Function>::create<Function1<double,double> >(e->FirstChildElement()); 
     setQFunction(qf);
     qf->initializeUsingXML(e->FirstChildElement());
   }

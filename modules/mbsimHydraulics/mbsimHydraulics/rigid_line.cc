@@ -74,7 +74,7 @@ namespace MBSimHydraulics {
     TiXmlElement * e=element->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
     setDiameter(getDouble(e));
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"linePressureLoss");
-    LinePressureLoss *p=MBSim::ObjectFactory<Function1<double, double> >::create<LinePressureLoss>(e->FirstChildElement());
+    LinePressureLoss *p=MBSim::ObjectFactory<Function>::create<LinePressureLoss>(e->FirstChildElement());
     setLinePressureLoss(p);
     p->initializeUsingXML(e->FirstChildElement());
   }
@@ -110,7 +110,7 @@ namespace MBSimHydraulics {
     RigidLine::initializeUsingXML(element);
     TiXmlElement * e=element->FirstChildElement(MBSIMHYDRAULICSNS"closablePressureLoss");
     TiXmlElement * ee=e->FirstChildElement();
-    ClosablePressureLoss *p=MBSim::ObjectFactory<Function1<double,double> >::create<ClosablePressureLoss>(ee);
+    ClosablePressureLoss *p=MBSim::ObjectFactory<Function>::create<ClosablePressureLoss>(ee);
     setClosablePressureLoss(p);
     p->initializeUsingXML(ee);
     ee=e->FirstChildElement(MBSIMHYDRAULICSNS"checksizeSignal");
@@ -139,7 +139,7 @@ namespace MBSimHydraulics {
     RigidLine::initializeUsingXML(element);
     TiXmlElement * e=element->FirstChildElement(MBSIMHYDRAULICSNS"unidirectionalPressureLoss");
     TiXmlElement * ee=e->FirstChildElement();
-    UnidirectionalPressureLoss *p=MBSim::ObjectFactory<Function1<double,double> >::create<UnidirectionalPressureLoss>(ee);
+    UnidirectionalPressureLoss *p=MBSim::ObjectFactory<Function>::create<UnidirectionalPressureLoss>(ee);
     if (p) {
       setUnidirectionalPressureLoss(p);
       p->initializeUsingXML(ee);

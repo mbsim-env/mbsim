@@ -28,6 +28,7 @@ kinetic_excitation.cc\
 kinematic_excitation.cc\
 mbsim_event.cc\
 object.cc\
+objectfactory.cc\
 extra_dynamic.cc\
 rigid_body.cc\
 graph.cc\
@@ -73,6 +74,7 @@ mbsim_event.h\
 modelling_interface.h\
 object.h\
 objectfactory.h\
+objectfactory_instance.h\
 extra_dynamic.h\
 rigid_body.h\
 graph.h\

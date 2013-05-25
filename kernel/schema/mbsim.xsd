@@ -2772,7 +2772,7 @@
           <xs:element name="translationFunction">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function2_V3VS">
+                <xs:element ref="Function2_VVS">
                 </xs:element>
               </xs:sequence>
             </xs:complexType>
@@ -2790,7 +2790,7 @@
           <xs:element name="translationFunction">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function1_V3V"/>
+                <xs:element ref="Function1_VV"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -3386,10 +3386,10 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="SymbolicFunction2_V3VS" substitutionGroup="Function2_V3VS" type="SymbolicFunction2_V3VSType"/>
-  <xs:complexType name="SymbolicFunction2_V3VSType" mixed="true">
+  <xs:element name="SymbolicFunction2_VVS" substitutionGroup="Function2_VVS" type="SymbolicFunction2_VVSType"/>
+  <xs:complexType name="SymbolicFunction2_VVSType" mixed="true">
     <xs:complexContent>
-      <xs:extension base="Function2_V3VSType">
+      <xs:extension base="Function2_VVSType">
         <xs:group ref="pv:symbolicFunctionXMLElement"/>
         <xs:attribute name="arg1name" use="required" type="pv:symbolicFunctionArgNameType"/>
         <xs:attribute name="arg1dim" use="required" type="pv:symbolicFunctionArgDimType"/>
@@ -3398,10 +3398,10 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="SymbolicFunction1_V3V" substitutionGroup="Function1_V3V" type="SymbolicFunction1_V3VType"/>
-  <xs:complexType name="SymbolicFunction1_V3VType" mixed="true">
+  <xs:element name="SymbolicFunction1_VV" substitutionGroup="Function1_VV" type="SymbolicFunction1_VVType"/>
+  <xs:complexType name="SymbolicFunction1_VVType" mixed="true">
     <xs:complexContent>
-      <xs:extension base="Function1_V3VType">
+      <xs:extension base="Function1_VVType">
         <xs:group ref="pv:symbolicFunctionXMLElement"/>
         <xs:attribute name="arg1name" use="required" type="pv:symbolicFunctionArgNameType"/>
         <xs:attribute name="arg1dim" use="required" type="pv:symbolicFunctionArgDimType"/>
@@ -3441,8 +3441,8 @@
   </xs:element>
   <xs:complexType name="Function1_VSType"/>
 
-  <xs:element name="Function1_V3V" abstract="true" type="Function1_V3VType"/>
-  <xs:complexType name="Function1_V3VType"/>
+  <xs:element name="Function1_VV" abstract="true" type="Function1_VVType"/>
+  <xs:complexType name="Function1_VVType"/>
 
   <xs:element name="ConstantFunction1_VS" substitutionGroup="Function1_VS" type="ConstantFunction1_VSType">
     <xs:annotation>
@@ -4058,9 +4058,6 @@
     </xs:annotation>
   </xs:element>
   <xs:complexType name="Function2_VVSType"/>
-
-  <xs:element name="Function2_V3VS" abstract="true" type="Function2_V3VSType"/>
-  <xs:complexType name="Function2_V3VSType"/>
 
   <xs:element name="LinearRegularizedCoulombFriction" substitutionGroup="Function2_VVS" type="LinearRegularizedCoulombFrictionType">
     <xs:annotation>

@@ -29,13 +29,20 @@
 
 namespace MBSim {
 
+  // abstract base class for all Functions
+  // (required to be able to case Function of different type dynamically (in ObjectFactory))
+  class Function {
+    public:
+      virtual ~Function() {}
+  };
+
   /*! 
    * \brief template class for functions with one parameter
    * \author Markus Friedrich
    * \date 2009-08-31 some comments (Thorsten Schindler)
    */
   template<class Ret, class Arg>
-    class Function1 {
+    class Function1 : public Function {
       public:
         /**
          * \brief destructor
@@ -74,7 +81,7 @@ namespace MBSim {
    * \date 2009-08-31 some comments (Thorsten Schindler)
    */
   template<class Ret, class Arg1, class Arg2>
-    class Function2 {
+    class Function2 : public Function {
       public:
         /**
          * \brief destructor
@@ -113,7 +120,7 @@ namespace MBSim {
    * \date 2009-08-31 some comments (Thorsten Schindler)
    */
   template<class Ret, class Arg1, class Arg2, class Arg3>
-    class Function3 {
+    class Function3 : public Function {
       public:
         /**
          * \brief destructor

@@ -45,7 +45,7 @@ namespace MBSimControl {
   void FunctionSensor::initializeUsingXML(TiXmlElement *element) {
     Sensor::initializeUsingXML(element);
     TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"function");
-    function=MBSim::ObjectFactory<Function1<Vec,double> >::create(e->FirstChildElement()); 
+    function=MBSim::ObjectFactory<Function>::create<Function1<Vec,double> >(e->FirstChildElement()); 
     function->initializeUsingXML(e->FirstChildElement());
     y=(*function)(0);
   }
@@ -56,7 +56,7 @@ namespace MBSimControl {
     TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
     signalString = e->Attribute("ref");
     e=element->FirstChildElement(MBSIMCONTROLNS"function");
-    fun=MBSim::ObjectFactory<Function1<double,double> >::create(e->FirstChildElement()); 
+    fun=MBSim::ObjectFactory<Function>::create<Function1<double,double> >(e->FirstChildElement()); 
     fun->initializeUsingXML(e->FirstChildElement());
   }
 
@@ -86,7 +86,7 @@ namespace MBSimControl {
     e=element->FirstChildElement(MBSIMCONTROLNS"secondInputSignal");
     signal2String = e->Attribute("ref");
     e=element->FirstChildElement(MBSIMCONTROLNS"function");
-    fun=MBSim::ObjectFactory<Function2<double,double,double> >::create(e->FirstChildElement()); 
+    fun=MBSim::ObjectFactory<Function>::create<Function2<double,double,double> >(e->FirstChildElement()); 
     fun->initializeUsingXML(e->FirstChildElement());
   }
 

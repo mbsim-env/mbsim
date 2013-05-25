@@ -91,7 +91,7 @@ namespace MBSim {
     RotationIndependentTranslation::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"translationFunction");
-    pos=ObjectFactory<Function1<Vec3,double> >::create(e->FirstChildElement());
+    pos=ObjectFactory<Function>::create<Function1<Vec3,double> >(e->FirstChildElement());
     pos->initializeUsingXML(e->FirstChildElement());
   }
 
@@ -99,7 +99,7 @@ namespace MBSim {
     Translation::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"translationFunction");
-    pos=ObjectFactory<Function1<Vec3,Vec> >::create(e->FirstChildElement());
+    pos=ObjectFactory<Function>::create<Function1<Vec3,Vec> >(e->FirstChildElement());
     pos->initializeUsingXML(e->FirstChildElement());
 #ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
     // set qSize for symbolic function (qSize if given by user)
@@ -224,7 +224,7 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"axisOfRotation");
     setAxisOfRotation(Element::getVec3(e));
     e=element->FirstChildElement(MBSIMNS"rotationalFunction");
-    angle=ObjectFactory<Function1<double,double> >::create(e->FirstChildElement());
+    angle=ObjectFactory<Function>::create<Function1<double,double> >(e->FirstChildElement());
     angle->initializeUsingXML(e->FirstChildElement());
   }
 
@@ -426,7 +426,7 @@ namespace MBSim {
     TranslationIndependentRotation::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"rotationalFunction");
-    angle=ObjectFactory<Function1<Vec3,double> >::create(e->FirstChildElement());
+    angle=ObjectFactory<Function>::create<Function1<Vec3,double> >(e->FirstChildElement());
     angle->initializeUsingXML(e->FirstChildElement());
   }
 
@@ -655,7 +655,7 @@ namespace MBSim {
     Translation::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"translationFunction");
-    pos=ObjectFactory<Function2<Vec3,Vec,double> >::create(e->FirstChildElement());
+    pos=ObjectFactory<Function>::create<Function2<Vec3,Vec,double> >(e->FirstChildElement());
     pos->initializeUsingXML(e->FirstChildElement());
 #ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
     // set qSize for symbolic function (qSize if given by user)
