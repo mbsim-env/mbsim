@@ -48,7 +48,7 @@ rss 0
 
 rm -rf $SRCDIR/local/share/mbxmlutils
 
-$SRCDIR/build-scripts/daily-build/build.py --forceBuild "$@" --sourceDir $SRCDIR --prefix $SRCDIR/local --reportOutDir $OUTDIR/report --url $URL/report --buildType "Linux Release Build: " --passToConfigure --enable-shared --disable-static --with-qwt-inc-prefix=/usr/include/qwt --passToRunexamples xmlflat/hierachical_modelling xml/hierachical_modelling xml/time_dependent_kinematics
+$SRCDIR/build-scripts/daily-build/build.py --forceBuild "$@" -j 2 --sourceDir $SRCDIR --prefix $SRCDIR/local --reportOutDir $OUTDIR/report --url $URL/report --buildType "Linux Release Build: " --passToConfigure --enable-shared --disable-static --with-qwt-inc-prefix=/usr/include/qwt --passToRunexamples xmlflat/hierachical_modelling xml/hierachical_modelling xml/time_dependent_kinematics
 
 RET=0
 
