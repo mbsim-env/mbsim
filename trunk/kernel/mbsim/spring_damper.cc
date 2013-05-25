@@ -146,7 +146,7 @@ namespace MBSim {
     TiXmlElement *e;
     LinkMechanics::initializeUsingXML(element);
     e=element->FirstChildElement(MBSIMNS"forceFunction");
-    Function2<double,double,double> *f=ObjectFactory<Function2<double,double,double> >::create(e->FirstChildElement());
+    Function2<double,double,double> *f=ObjectFactory<Function>::create<Function2<double,double,double> >(e->FirstChildElement());
     setForceFunction(f);
     f->initializeUsingXML(e->FirstChildElement());
     e=element->FirstChildElement(MBSIMNS"projectionDirection");

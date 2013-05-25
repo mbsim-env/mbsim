@@ -30,7 +30,7 @@ namespace MBSim {
     Function1<double,double>::initializeUsingXML(element);
     TiXmlElement * e;
     e=element;
-    Function1<fmatvec::Vec, double> * f=ObjectFactory<Function1<Vec,double> >::create(e->FirstChildElement());
+    Function1<fmatvec::Vec, double> * f=ObjectFactory<Function>::create<Function1<Vec,double> >(e->FirstChildElement());
     f->initializeUsingXML(e->FirstChildElement());
     setFunction(f);
   }
@@ -88,7 +88,7 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"function");
     while (e && e->ValueStr()==MBSIMNS"function") {
       TiXmlElement * ee = e->FirstChildElement();
-      Function1<Vec,double> *f=ObjectFactory<Function1<Vec,double> >::create(ee);
+      Function1<Vec,double> *f=ObjectFactory<Function>::create<Function1<Vec,double> >(ee);
       f->initializeUsingXML(ee);
       ee=e->FirstChildElement(MBSIMNS"factor");
       double factor=Element::getDouble(ee);

@@ -48,7 +48,7 @@ namespace MBSimHydraulics {
     TiXmlElement * e;
     e=element->FirstChildElement();
     while (e) {
-      LinePressureLoss *p=MBSim::ObjectFactory<Function1<double,double> >::create<LinePressureLoss>(e);
+      LinePressureLoss *p=MBSim::ObjectFactory<Function>::create<LinePressureLoss>(e);
       addLinePressureLoss(p);
       p->initializeUsingXML(e);
       e=e->NextSiblingElement();
@@ -66,7 +66,7 @@ namespace MBSimHydraulics {
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"number");
     int n=Element::getInt(e);
     e=e->NextSiblingElement();
-    LinePressureLoss *p=MBSim::ObjectFactory<Function1<double,double> >::create<LinePressureLoss>(e);
+    LinePressureLoss *p=MBSim::ObjectFactory<Function>::create<LinePressureLoss>(e);
     p->initializeUsingXML(e);
     setLinePressureLoss(p, n);
   }
@@ -236,7 +236,7 @@ namespace MBSimHydraulics {
     LinePressureLoss::initializeUsingXML(element);
     TiXmlElement * e;
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"function");
-    zetaTabular=MBSim::ObjectFactory<Function1<double,double> >::create(e->FirstChildElement());
+    zetaTabular=MBSim::ObjectFactory<Function>::create<Function1<double,double> >(e->FirstChildElement());
     zetaTabular->initializeUsingXML(e->FirstChildElement());
   }
 

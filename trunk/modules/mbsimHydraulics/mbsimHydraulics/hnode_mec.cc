@@ -477,7 +477,7 @@ namespace MBSimHydraulics {
   void ConstrainedNodeMec::initializeUsingXML(TiXmlElement *element) {
     HNodeMec::initializeUsingXML(element);
     TiXmlElement *e=element->FirstChildElement(MBSIMHYDRAULICSNS"function");
-    pFun=MBSim::ObjectFactory<Function1<double,double> >::create(e->FirstChildElement()); 
+    pFun=MBSim::ObjectFactory<Function>::create<Function1<double,double> >(e->FirstChildElement()); 
     pFun->initializeUsingXML(e->FirstChildElement());
   }
 

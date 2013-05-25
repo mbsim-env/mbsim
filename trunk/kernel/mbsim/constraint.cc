@@ -188,20 +188,20 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"kinematicFunction");
     cout << "in initializeUsingXML " << e << endl;
     if(e) {
-      Function1<VecV,double> *f=ObjectFactory<Function1<VecV,double> >::create(e->FirstChildElement());
+      Function1<VecV,double> *f=ObjectFactory<Function>::create<Function1<VecV,double> >(e->FirstChildElement());
       cout << "kinematicFunction = " << f << endl;
       setKinematicFunction(f);
       f->initializeUsingXML(e->FirstChildElement());
     }
     e=element->FirstChildElement(MBSIMNS"firstDerivativeOfKinematicFunction");
     if(e) {
-      Function1<VecV,double> *f=ObjectFactory<Function1<VecV,double> >::create(e->FirstChildElement());
+      Function1<VecV,double> *f=ObjectFactory<Function>::create<Function1<VecV,double> >(e->FirstChildElement());
       setFirstDerivativeOfKinematicFunction(f);
       f->initializeUsingXML(e->FirstChildElement());
     }
     e=element->FirstChildElement(MBSIMNS"secondDerivativeOfKinematicFunction");
     if(e) {
-      Function1<VecV,double> *f=ObjectFactory<Function1<VecV,double> >::create(e->FirstChildElement());
+      Function1<VecV,double> *f=ObjectFactory<Function>::create<Function1<VecV,double> >(e->FirstChildElement());
       setSecondDerivativeOfKinematicFunction(f);
       f->initializeUsingXML(e->FirstChildElement());
     }

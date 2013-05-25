@@ -51,9 +51,9 @@
             <translation>
                 <StateDependentTranslation>
                     <translationFunction>
-                        <SymbolicFunction1_V3V arg1name="q" arg1dim="1">
+                        <SymbolicFunction1_VV arg1name="q" arg1dim="1">
                             [5+cos(freq1*q); sin(freq1*q(1)); 0]
-                        </SymbolicFunction1_V3V>
+                        </SymbolicFunction1_VV>
                     </translationFunction>
                 </StateDependentTranslation>
             </translation>
@@ -80,9 +80,9 @@
             <translation>
                 <GeneralTranslation>
                     <translationFunction>
-                        <SymbolicFunction2_V3VS arg1name="q" arg1dim="2" arg2name="t">
+                        <SymbolicFunction2_VVS arg1name="q" arg1dim="2" arg2name="t">
                             [10+t+cos(freq1*q(1)); sin(freq1*q(1)); q(2)]
-                        </SymbolicFunction2_V3VS>
+                        </SymbolicFunction2_VVS>
                     </translationFunction>
                 </GeneralTranslation>
             </translation>
