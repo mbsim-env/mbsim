@@ -57,6 +57,18 @@ class Function2Widget : public Widget {
     QString ext;
 };
 
+class SymbolicFunction1Widget : public Function1Widget {
+
+  friend class SymbolicFunction1Property;
+
+  public:
+    SymbolicFunction1Widget(const QString &ext);
+    inline QString getType() const { return QString("SymbolicFunction1_")+ext; }
+  protected:
+    ExtWidget *f;
+    std::vector<ExtWidget*> argname, argdim;
+};
+
 class DifferentiableFunction1Widget : public Function1Widget {
   public:
     DifferentiableFunction1Widget(const QString &ext="") : Function1Widget(ext), order(0) {}

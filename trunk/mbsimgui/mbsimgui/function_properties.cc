@@ -18,6 +18,7 @@
 */
 
 #include <config.h>
+#include "basic_properties.h"
 #include "variable_properties.h"
 #include "function_properties.h"
 #include "function_widgets.h"
@@ -37,6 +38,54 @@ TiXmlElement* Function2Property::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
   parent->LinkEndChild(ele0);
   return ele0;
+}
+
+SymbolicFunction1Property::SymbolicFunction1Property(const string &ext) : Function1Property(ext), argname(ext.size()-1), argdim(ext.size()-1) {
+  for(int i=1; i<ext.size(); i++) {
+     argname[i-1].setProperty(new TextProperty("t",""));
+     argdim[i-1].setProperty(new TextProperty("1",""));
+  }
+  f.setProperty(new OctaveExpressionProperty);
+}
+
+TiXmlElement* SymbolicFunction1Property::initializeUsingXML(TiXmlElement *element) {
+  f.initializeUsingXML(element);
+  for(int i=1; i<ext.size(); i++) {
+    string str = "arg"+toStr(i)+"name";
+    if(element->Attribute(str))
+      static_cast<TextProperty*>(argname[i-1].getProperty())->setText(element->Attribute(str.c_str()));
+    str = "arg"+toStr(i)+"dim";
+    if(element->Attribute(str))
+      static_cast<TextProperty*>(argdim[i-1].getProperty())->setText(element->Attribute(str.c_str()));
+  }
+  return element;
+}
+
+TiXmlElement* SymbolicFunction1Property::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = Function1Property::writeXMLFile(parent);
+  for(int i=1; i<ext.size(); i++) {
+    ele0->SetAttribute("arg"+toStr(i)+"name", static_cast<TextProperty*>(argname[i-1].getProperty())->getText());
+    if(ext[i]=='V')
+      ele0->SetAttribute("arg"+toStr(i+1)+"dim",static_cast<TextProperty*>(argdim[i-1].getProperty())->getText());
+  }
+  f.writeXMLFile(ele0);
+  return ele0;
+} 
+
+void SymbolicFunction1Property::fromWidget(QWidget *widget) {
+  for(int i=0; i<argname.size(); i++) {
+    argname[i].fromWidget(static_cast<SymbolicFunction1Widget*>(widget)->argname[i]);
+    argdim[i].fromWidget(static_cast<SymbolicFunction1Widget*>(widget)->argdim[i]);
+  }
+  f.fromWidget(static_cast<SymbolicFunction1Widget*>(widget)->f);
+}
+
+void SymbolicFunction1Property::toWidget(QWidget *widget) {
+  for(int i=0; i<argname.size(); i++) {
+    argname[i].toWidget(static_cast<SymbolicFunction1Widget*>(widget)->argname[i]);
+    argdim[i].toWidget(static_cast<SymbolicFunction1Widget*>(widget)->argdim[i]);
+  }
+  f.toWidget(static_cast<SymbolicFunction1Widget*>(widget)->f);
 }
 
 void DifferentiableFunction1Property::setDerivative(Function1Property *diff,size_t degree) { 
@@ -396,14 +445,16 @@ void Function1ChoiceProperty::defineFunction(int index_) {
   index = index_;
   delete function;
   if(index==0)
-    function = new ConstantFunction1Property("VS");  
+    function = new SymbolicFunction1Property("VS");  
   else if(index==1)
-    function = new QuadraticFunction1Property;
+    function = new ConstantFunction1Property("VS");  
   else if(index==2)
-    function = new SinusFunction1Property;
+    function = new QuadraticFunction1Property;
   else if(index==3)
+    function = new SinusFunction1Property;
+  else if(index==4)
     function = new TabularFunction1Property;
-  else if(index==4) {
+  else if(index==5) {
     function = new SummationFunction1Property;
   }
 }
@@ -413,16 +464,18 @@ TiXmlElement* Function1ChoiceProperty::initializeUsingXML(TiXmlElement *element)
   if(e) {
     TiXmlElement* ee=e->FirstChildElement();
     if(ee) {
-      if(ee->ValueStr() == MBSIMNS"ConstantFunction1_VS")
+      if(ee->ValueStr() == MBSIMNS"SymbolicFunction1_VS")
         index = 0;
-      else if(ee->ValueStr() == MBSIMNS"QuadraticFunction1_VS")
+      else if(ee->ValueStr() == MBSIMNS"ConstantFunction1_VS")
         index = 1;
-      else if(ee->ValueStr() == MBSIMNS"SinusFunction1_VS")
+      else if(ee->ValueStr() == MBSIMNS"QuadraticFunction1_VS")
         index = 2;
-      else if(ee->ValueStr() == MBSIMNS"TabularFunction1_VS")
+      else if(ee->ValueStr() == MBSIMNS"SinusFunction1_VS")
         index = 3;
-      else if(ee->ValueStr() == MBSIMNS"SummationFunction1_VS")
+      else if(ee->ValueStr() == MBSIMNS"TabularFunction1_VS")
         index = 4;
+      else if(ee->ValueStr() == MBSIMNS"SummationFunction1_VS")
+        index = 5;
       defineFunction(index);
       function->initializeUsingXML(ee);
     }
