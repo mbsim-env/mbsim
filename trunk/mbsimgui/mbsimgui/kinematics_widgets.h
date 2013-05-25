@@ -120,6 +120,17 @@ class StateDependentTranslationWidget : public TranslationWidget {
     ExtWidget *function;
 };
 
+class GeneralTranslationWidget : public TranslationWidget {
+
+  friend class GeneralTranslationProperty;
+
+  public:
+    GeneralTranslationWidget();
+    int getSize() const {return 0;}
+  protected:
+    ExtWidget *function;
+};
+
 class TranslationChoiceWidget : public Widget {
   Q_OBJECT
 

@@ -218,6 +218,22 @@ void SummationFunction1Widget::removeFunction() {
   delete functionList->takeItem(i);
 }
 
+SymbolicFunction2Widget::SymbolicFunction2Widget(const QString &ext) : Function2Widget(ext) {
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+  for(int i=1; i<ext.size(); i++) {
+    argname.push_back(new ExtWidget("Name of argument "+QString::number(i),new TextWidget(QString("x")+QString::number(i))));
+    layout->addWidget(argname[i-1]);
+
+    argdim.push_back(new ExtWidget("Dimension of argument "+QString::number(i),new TextWidget("1")));
+    if(ext[i]=='V')
+      layout->addWidget(argdim[i-1]);
+  }
+  f = new ExtWidget("Function",new OctaveExpressionWidget);
+  layout->addWidget(f);
+}
+
 LinearSpringDamperForceWidget::LinearSpringDamperForceWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -334,13 +350,14 @@ void Function1ChoiceWidget::defineFunction(int index) {
   emit resize();
 }
 
-Function2ChoiceWidget::Function2ChoiceWidget() : function(0) {
+Function2ChoiceWidget::Function2ChoiceWidget(const QString& ext_) : function(0), ext(ext_) {
   layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
   comboBox = new QComboBox;
   //comboBox->addItem(tr("None"));
+  comboBox->addItem(tr("Symbolic function"));
   comboBox->addItem(tr("Linear spring damper force"));
   layout->addWidget(comboBox);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFunction(int)));
@@ -353,12 +370,13 @@ void Function2ChoiceWidget::defineFunction(int index) {
   delete function;
 //  if(index==0)
 //    function = 0;
-  if(index==0) {
+  if(index==0)
+    function = new SymbolicFunction2Widget(ext);  
+  else if(index==1)
     function = new LinearSpringDamperForceWidget;  
-    layout->addWidget(function);
-  } 
-  if(function) {
+  layout->addWidget(function);
+  //if(function) {
     //emit resize();
     //connect(function,SIGNAL(resize()),this,SIGNAL(resize()));
-  }
+  //}
 }

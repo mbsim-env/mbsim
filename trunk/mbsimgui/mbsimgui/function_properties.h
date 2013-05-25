@@ -166,6 +166,19 @@ class SummationFunction1Property : public Function1Property {
     std::vector<ExtProperty> factor;
 };
 
+class SymbolicFunction2Property : public Function2Property {
+  public:
+    SymbolicFunction2Property(const std::string &ext);
+    inline std::string getType() const { return "SymbolicFunction2_"+ext; }
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+  protected:
+    ExtProperty f;
+    std::vector<ExtProperty> argname, argdim;
+};
+
 class LinearSpringDamperForceProperty : public Function2Property {
   public:
     LinearSpringDamperForceProperty();
@@ -245,7 +258,7 @@ class Function1ChoiceProperty : public Property {
 class Function2ChoiceProperty : public Property {
 
   public:
-    Function2ChoiceProperty(const std::string &xmlName);
+    Function2ChoiceProperty(const std::string &xmlName, const std::string &ext_="VVS");
 
     void defineFunction(int);
 
@@ -258,6 +271,7 @@ class Function2ChoiceProperty : public Property {
     Function2Property *function;
     int index;
     std::string xmlName;
+    std::string ext;
 };
 
 

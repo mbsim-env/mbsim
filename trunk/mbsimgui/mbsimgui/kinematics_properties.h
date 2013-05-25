@@ -155,6 +155,20 @@ class StateDependentTranslationProperty : public TranslationProperty {
     ExtProperty function;
 };
 
+class GeneralTranslationProperty : public TranslationProperty {
+
+  public:
+    GeneralTranslationProperty();
+    int getSize() const {return 0;}
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+
+  protected:
+    ExtProperty function;
+};
+
 class TranslationChoiceProperty : public Property {
 
   public:

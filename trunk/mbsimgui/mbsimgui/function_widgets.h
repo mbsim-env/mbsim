@@ -186,6 +186,18 @@ class SummationFunction1Widget : public Function1Widget {
     void resize();
 };
 
+class SymbolicFunction2Widget : public Function2Widget {
+
+  friend class SymbolicFunction2Property;
+
+  public:
+    SymbolicFunction2Widget(const QString &ext);
+    inline QString getType() const { return QString("SymbolicFunction2_")+ext; }
+  protected:
+    ExtWidget *f;
+    std::vector<ExtWidget*> argname, argdim;
+};
+
 class LinearSpringDamperForceWidget : public Function2Widget {
 
   friend class LinearSpringDamperForceProperty;
@@ -268,7 +280,7 @@ class Function2ChoiceWidget : public Widget {
   friend class Function2ChoiceProperty;
 
   public:
-    Function2ChoiceWidget();
+    Function2ChoiceWidget(const QString& ext="VVS");
 
     void resize(int m, int n) {if(function) function->resize(m,n);}
 
@@ -279,6 +291,7 @@ class Function2ChoiceWidget : public Widget {
     QComboBox *comboBox;
     QVBoxLayout *layout;
     Function2Widget *function;
+    QString ext;
   signals:
     void resize();
 };

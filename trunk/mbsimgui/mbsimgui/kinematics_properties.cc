@@ -153,6 +153,28 @@ void StateDependentTranslationProperty::toWidget(QWidget *widget) {
   function.toWidget(static_cast<StateDependentTranslationWidget*>(widget)->function);
 }
 
+GeneralTranslationProperty::GeneralTranslationProperty() {
+  function.setProperty(new Function2ChoiceProperty(MBSIMNS"translationFunction","VVS"));
+}
+
+TiXmlElement* GeneralTranslationProperty::initializeUsingXML(TiXmlElement *element) {
+  return function.initializeUsingXML(element);
+}
+
+TiXmlElement* GeneralTranslationProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"GeneralTranslation" );
+  function.writeXMLFile(ele2);
+  parent->LinkEndChild(ele2);
+  return ele2;
+}
+
+void GeneralTranslationProperty::fromWidget(QWidget *widget) {
+  function.fromWidget(static_cast<GeneralTranslationWidget*>(widget)->function);
+}
+
+void GeneralTranslationProperty::toWidget(QWidget *widget) {
+  function.toWidget(static_cast<GeneralTranslationWidget*>(widget)->function);
+}
 
 void TranslationChoiceProperty::defineTranslation(int index_) {
   index = index_;
@@ -177,6 +199,8 @@ void TranslationChoiceProperty::defineTranslation(int index_) {
     translation = new TimeDependentTranslationProperty;  
   else if(index==9)
     translation = new StateDependentTranslationProperty;  
+  else if(index==10)
+    translation = new GeneralTranslationProperty;  
 }
 
 TiXmlElement* TranslationChoiceProperty::initializeUsingXML(TiXmlElement *element) {
@@ -204,6 +228,8 @@ TiXmlElement* TranslationChoiceProperty::initializeUsingXML(TiXmlElement *elemen
         index = 8;
       else if(ee->ValueStr() == MBSIMNS"StateDependentTranslation")
         index = 9;
+      else if(ee->ValueStr() == MBSIMNS"GeneralTranslation")
+        index = 10;
       defineTranslation(index);
       translation->initializeUsingXML(ee);
       return e;
