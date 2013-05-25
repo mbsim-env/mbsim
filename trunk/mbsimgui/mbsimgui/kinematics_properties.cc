@@ -108,7 +108,7 @@ void LinearTranslationProperty::toWidget(QWidget *widget) {
 }
 
 TimeDependentTranslationProperty::TimeDependentTranslationProperty() {
-  function.setProperty(new Function1ChoiceProperty(MBSIMNS"position"));
+  function.setProperty(new Function1ChoiceProperty(MBSIMNS"translationFunction"));
 }
 
 TiXmlElement* TimeDependentTranslationProperty::initializeUsingXML(TiXmlElement *element) {
@@ -129,6 +129,30 @@ void TimeDependentTranslationProperty::fromWidget(QWidget *widget) {
 void TimeDependentTranslationProperty::toWidget(QWidget *widget) {
   function.toWidget(static_cast<TimeDependentTranslationWidget*>(widget)->function);
 }
+
+StateDependentTranslationProperty::StateDependentTranslationProperty() {
+  function.setProperty(new Function1ChoiceProperty(MBSIMNS"translationFunction",false,"VV"));
+}
+
+TiXmlElement* StateDependentTranslationProperty::initializeUsingXML(TiXmlElement *element) {
+  return function.initializeUsingXML(element);
+}
+
+TiXmlElement* StateDependentTranslationProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"StateDependentTranslation" );
+  function.writeXMLFile(ele2);
+  parent->LinkEndChild(ele2);
+  return ele2;
+}
+
+void StateDependentTranslationProperty::fromWidget(QWidget *widget) {
+  function.fromWidget(static_cast<StateDependentTranslationWidget*>(widget)->function);
+}
+
+void StateDependentTranslationProperty::toWidget(QWidget *widget) {
+  function.toWidget(static_cast<StateDependentTranslationWidget*>(widget)->function);
+}
+
 
 void TranslationChoiceProperty::defineTranslation(int index_) {
   index = index_;
@@ -151,6 +175,8 @@ void TranslationChoiceProperty::defineTranslation(int index_) {
     translation = new LinearTranslationProperty;  
   else if(index==8)
     translation = new TimeDependentTranslationProperty;  
+  else if(index==9)
+    translation = new StateDependentTranslationProperty;  
 }
 
 TiXmlElement* TranslationChoiceProperty::initializeUsingXML(TiXmlElement *element) {
@@ -176,6 +202,8 @@ TiXmlElement* TranslationChoiceProperty::initializeUsingXML(TiXmlElement *elemen
         index = 7;
       else if(ee->ValueStr() == MBSIMNS"TimeDependentTranslation")
         index = 8;
+      else if(ee->ValueStr() == MBSIMNS"StateDependentTranslation")
+        index = 9;
       defineTranslation(index);
       translation->initializeUsingXML(ee);
       return e;

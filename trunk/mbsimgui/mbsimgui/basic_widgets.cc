@@ -402,12 +402,13 @@ void FileWidget::selectFile() {
     setFile(file);
 }
 
-TextWidget::TextWidget(bool readOnly) {
+TextWidget::TextWidget(const QString &text_, bool readOnly) {
   QHBoxLayout *layout = new QHBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
   text = new QLineEdit;
+  text->setText(text_);
   text->setReadOnly(readOnly);
   layout->addWidget(text);
 }
