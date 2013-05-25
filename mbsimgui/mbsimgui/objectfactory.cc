@@ -49,7 +49,7 @@ Environment *ObjectFactory::getEnvironment(TiXmlElement *element) {
   for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
     if((obj=(*i)->getEnvironment(element))) return obj;
   cout << string("No Environment of type ")+element->ValueStr()+" exists.";
-  throw;
+  return 0;
 }
 
 Environment *MBSimObjectFactory::getEnvironment(TiXmlElement *element) {

@@ -65,6 +65,15 @@ StateDependentTranslationWidget::StateDependentTranslationWidget() {
   layout->addWidget(function);
 }
 
+GeneralTranslationWidget::GeneralTranslationWidget() {
+  function = new ExtWidget("Kinematic function",new Function2ChoiceWidget("VVS"));
+
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+  layout->addWidget(function);
+}
+
 TranslationChoiceWidget::TranslationChoiceWidget() : translation(0) {
   layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -81,6 +90,7 @@ TranslationChoiceWidget::TranslationChoiceWidget() : translation(0) {
   comboBox->addItem(tr("Linear translation"));
   comboBox->addItem(tr("Time dependent translation"));
   comboBox->addItem(tr("State dependent translation"));
+  comboBox->addItem(tr("General translation"));
   layout->addWidget(comboBox);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineTranslation(int)));
   defineTranslation(0);
@@ -111,6 +121,8 @@ void TranslationChoiceWidget::defineTranslation(int index) {
     translation = new TimeDependentTranslationWidget;  
   else if(index==9)
     translation = new StateDependentTranslationWidget;  
+  else if(index==10)
+    translation = new GeneralTranslationWidget;  
   layout->addWidget(translation);
   emit translationChanged();
 }
