@@ -41,10 +41,22 @@ class Function2Property : public Property {
     virtual ~Function2Property() {}
     virtual std::string getType() const { return "Function2_"+ext; }
     virtual std::string getExt() const { return ext; }
-    virtual void resize(int m, int n) {}
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   protected:
     std::string ext;
+};
+
+class SymbolicFunction1Property : public Function1Property {
+  public:
+    SymbolicFunction1Property(const std::string &ext);
+    inline std::string getType() const { return "SymbolicFunction1_"+ext; }
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+  protected:
+    ExtProperty f;
+    std::vector<ExtProperty> argname, argdim;
 };
 
 class DifferentiableFunction1Property : public Function1Property {
@@ -69,7 +81,6 @@ class ConstantFunction1Property : public Function1Property {
   public:
     ConstantFunction1Property(const std::string &ext);
     inline std::string getType() const { return "ConstantFunction1_"+ext; }
-    void resize(int m, int n);
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);

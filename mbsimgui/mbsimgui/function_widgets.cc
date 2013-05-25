@@ -18,11 +18,12 @@
 */
 
 #include <config.h>
+#include "basic_widgets.h"
 #include "function_widgets.h"
-#include "utils.h"
-#include "octaveutils.h"
 #include "variable_widgets.h"
 #include "extended_widgets.h"
+#include "utils.h"
+#include "octaveutils.h"
 #include <QtGui>
 
 using namespace std;
@@ -30,6 +31,27 @@ using namespace std;
 void DifferentiableFunction1Widget::setDerivative(Function1Widget *diff,size_t degree) { 
   derivatives.resize(max(derivatives.size(),degree+1)); 
   derivatives[degree]=diff; 
+}
+
+SymbolicFunction1Widget::SymbolicFunction1Widget(const QString &ext) : Function1Widget(ext) {
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+  for(int i=1; i<ext.size(); i++) {
+    //TextWidget *text = new TextWidget;
+    //layout->addWidget(new ExtWidget("Name of argument "+QString::number(i),text));
+    //if(ext[i]=='S')
+      //text->setText("t");
+     argname.push_back(new ExtWidget("Name of argument "+QString::number(i),new TextWidget));
+     layout->addWidget(argname[i-1]);
+
+     argdim.push_back(new ExtWidget("Dimension of argument "+QString::number(i),new TextWidget));
+    if(ext[i]=='V')
+     layout->addWidget(argdim[i-1]);
+      //layout->addWidget(new ExtWidget("Size of argument "+QString::number(i),new TextWidget));
+  }
+  f = new ExtWidget("Function",new OctaveExpressionWidget);
+  layout->addWidget(f);
 }
 
 ConstantFunction1Widget::ConstantFunction1Widget(const QString &ext, int n) : Function1Widget(ext) {
@@ -284,6 +306,7 @@ Function1ChoiceWidget::Function1ChoiceWidget(bool withFactor, int n_) : function
   }
 
   comboBox = new QComboBox;
+  comboBox->addItem(tr("Symbolic function"));
   comboBox->addItem(tr("Constant function"));
   comboBox->addItem(tr("Quadratic function"));
   comboBox->addItem(tr("Sinus function"));
@@ -298,14 +321,16 @@ void Function1ChoiceWidget::defineFunction(int index) {
   layout->removeWidget(function);
   delete function;
   if(index==0)
+    function = new SymbolicFunction1Widget("VS");  
+  if(index==1)
     function = new ConstantFunction1Widget("VS",n);  
-  else if(index==1)
-    function = new QuadraticFunction1Widget(n);
   else if(index==2)
-    function = new SinusFunction1Widget(n);
+    function = new QuadraticFunction1Widget(n);
   else if(index==3)
+    function = new SinusFunction1Widget(n);
+  else if(index==4)
     function = new TabularFunction1Widget(n);
-  else if(index==4) {
+  else if(index==5) {
     function = new SummationFunction1Widget(n);
     connect(function,SIGNAL(resize()),this,SIGNAL(resize()));
   }
