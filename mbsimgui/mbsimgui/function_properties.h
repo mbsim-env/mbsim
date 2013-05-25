@@ -225,7 +225,7 @@ class LinearRegularizedCoulombFrictionProperty: public Function2Property {
 class Function1ChoiceProperty : public Property {
 
   public:
-    Function1ChoiceProperty(const std::string &xmlName, bool withFactor=false);
+    Function1ChoiceProperty(const std::string &xmlName, bool withFactor=false, const std::string &ext_="VS");
 
     void defineFunction(int);
 
@@ -239,6 +239,7 @@ class Function1ChoiceProperty : public Property {
     ExtProperty factor;
     int index;
     std::string xmlName;
+    std::string ext;
 };
 
 class Function2ChoiceProperty : public Property {

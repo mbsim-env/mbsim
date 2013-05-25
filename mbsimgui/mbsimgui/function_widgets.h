@@ -242,7 +242,7 @@ class Function1ChoiceWidget : public Widget {
   friend class Function1ChoiceProperty;
 
   public:
-    Function1ChoiceWidget(bool withFactor=false, int n=0);
+    Function1ChoiceWidget(bool withFactor=false, int n=0, const QString& ext="VS");
 
     void resize(int m, int n) {if(function) function->resize(m,n);}
     Function1Widget* getFunction() {return function;}
@@ -256,6 +256,7 @@ class Function1ChoiceWidget : public Widget {
     Function1Widget *function;
     ExtWidget *factor;
     int n;
+    QString ext;
   signals:
     void resize();
     void functionChanged();

@@ -249,7 +249,7 @@ class TextWidget : public BasicTextWidget {
   //Q_OBJECT
 
   public:
-    TextWidget(bool readOnly=false);
+    TextWidget(const QString &text="", bool readOnly=false);
 
     QString getText() const {return text->text();}
     void setText(const QString &text_) {text->setText(text_);}

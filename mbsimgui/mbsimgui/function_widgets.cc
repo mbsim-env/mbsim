@@ -38,17 +38,12 @@ SymbolicFunction1Widget::SymbolicFunction1Widget(const QString &ext) : Function1
   layout->setMargin(0);
   setLayout(layout);
   for(int i=1; i<ext.size(); i++) {
-    //TextWidget *text = new TextWidget;
-    //layout->addWidget(new ExtWidget("Name of argument "+QString::number(i),text));
-    //if(ext[i]=='S')
-      //text->setText("t");
-     argname.push_back(new ExtWidget("Name of argument "+QString::number(i),new TextWidget));
-     layout->addWidget(argname[i-1]);
+    argname.push_back(new ExtWidget("Name of argument "+QString::number(i),new TextWidget(QString("x")+QString::number(i))));
+    layout->addWidget(argname[i-1]);
 
-     argdim.push_back(new ExtWidget("Dimension of argument "+QString::number(i),new TextWidget));
+    argdim.push_back(new ExtWidget("Dimension of argument "+QString::number(i),new TextWidget("1")));
     if(ext[i]=='V')
-     layout->addWidget(argdim[i-1]);
-      //layout->addWidget(new ExtWidget("Size of argument "+QString::number(i),new TextWidget));
+      layout->addWidget(argdim[i-1]);
   }
   f = new ExtWidget("Function",new OctaveExpressionWidget);
   layout->addWidget(f);
@@ -292,7 +287,7 @@ LinearRegularizedCoulombFrictionWidget::LinearRegularizedCoulombFrictionWidget()
   layout->addWidget(mu);
 }
 
-Function1ChoiceWidget::Function1ChoiceWidget(bool withFactor, int n_) : function(0), factor(0), n(n_) {
+Function1ChoiceWidget::Function1ChoiceWidget(bool withFactor, int n_, const QString& ext_) : function(0), factor(0), n(n_), ext(ext_) {
 
   layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -321,9 +316,9 @@ void Function1ChoiceWidget::defineFunction(int index) {
   layout->removeWidget(function);
   delete function;
   if(index==0)
-    function = new SymbolicFunction1Widget("VS");  
+    function = new SymbolicFunction1Widget(ext);  
   if(index==1)
-    function = new ConstantFunction1Widget("VS",n);  
+    function = new ConstantFunction1Widget(ext,n);  
   else if(index==2)
     function = new QuadraticFunction1Widget(n);
   else if(index==3)
