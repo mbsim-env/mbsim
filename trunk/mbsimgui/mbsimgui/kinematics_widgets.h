@@ -233,6 +233,17 @@ class EulerAnglesWidget : public RotationWidget {
     virtual int getSize() const {return 3;}
 };
 
+class TimeDependentRotationAboutFixedAxisWidget : public RotationWidget {
+
+  friend class TimeDependentRotationAboutFixedAxisProperty;
+
+  public:
+    TimeDependentRotationAboutFixedAxisWidget();
+    int getSize() const {return 0;}
+  protected:
+    ExtWidget *vec, *function;
+};
+
 class RotationChoiceWidget : public Widget {
   Q_OBJECT
 

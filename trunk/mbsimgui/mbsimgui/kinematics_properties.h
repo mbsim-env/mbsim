@@ -307,6 +307,20 @@ class EulerAnglesProperty : public RotationProperty {
     void toWidget(QWidget *widget) {}
 };
 
+class TimeDependentRotationAboutFixedAxisProperty : public RotationProperty {
+
+  public:
+    TimeDependentRotationAboutFixedAxisProperty();
+    int getSize() const {return 0;}
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+
+  protected:
+    ExtProperty vec, function;
+};
+
 class RotationChoiceProperty : public Property {
 
   public:
