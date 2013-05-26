@@ -6,6 +6,7 @@
 
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/objectfactory.h"
+#include "mbsim/xmlnamespacemapping.h"
 #include "mbsim/integrators/integrator.h"
 #include "mbsimxml/mbsimflatxml.h"
 
@@ -18,7 +19,7 @@ int MBSimXML::preInitDynamicSystemSolver(int argc, char *argv[], DynamicSystemSo
 
   // print namespace-prefix mapping
   if(argc==2 && strcmp(argv[1], "--printNamespacePrefixMapping")==0) {
-    map<string, string> nsprefix;//MISSING READD =ObjectFactory::getInstance()->getNamespacePrefixMapping();
+    map<string, string> nsprefix=XMLNamespaceMapping::getNamespacePrefixMapping();
     for(map<string, string>::iterator it=nsprefix.begin(); it!=nsprefix.end(); it++)
       cout<<it->first<<" "<<it->second<<endl;
     return 1;
