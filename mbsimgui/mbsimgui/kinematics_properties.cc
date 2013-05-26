@@ -291,6 +291,10 @@ RotationAboutFixedAxisProperty::RotationAboutFixedAxisProperty() {
   vec.setProperty(new ExtPhysicalVarProperty(input));  
 }
 
+TiXmlElement* RotationAboutFixedAxisProperty::initializeUsingXML(TiXmlElement *element) {
+  return vec.initializeUsingXML(element);
+}
+
 TiXmlElement* RotationAboutFixedAxisProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"RotationAboutFixedAxis" );
   vec.writeXMLFile(ele2);
@@ -304,10 +308,6 @@ void RotationAboutFixedAxisProperty::fromWidget(QWidget *widget) {
 
 void RotationAboutFixedAxisProperty::toWidget(QWidget *widget) {
   vec.toWidget(static_cast<RotationAboutFixedAxisWidget*>(widget)->vec);
-}
-
-TiXmlElement* RotationAboutFixedAxisProperty::initializeUsingXML(TiXmlElement *element) {
-  return vec.initializeUsingXML(element);
 }
 
 TiXmlElement* RotationAboutAxesXYProperty::writeXMLFile(TiXmlNode *parent) {
@@ -346,6 +346,37 @@ TiXmlElement* EulerAnglesProperty::writeXMLFile(TiXmlNode *parent) {
   return ele2;
 }
 
+TimeDependentRotationAboutFixedAxisProperty::TimeDependentRotationAboutFixedAxisProperty() {
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new VecProperty(3),"-",MBSIMNS"axisOfRotation"));
+  vec.setProperty(new ExtPhysicalVarProperty(input));  
+
+  function.setProperty(new Function1ChoiceProperty(MBSIMNS"rotationalFunction",false,"SS"));
+}
+
+TiXmlElement* TimeDependentRotationAboutFixedAxisProperty::initializeUsingXML(TiXmlElement *element) {
+  vec.initializeUsingXML(element);
+  return function.initializeUsingXML(element);
+}
+
+TiXmlElement* TimeDependentRotationAboutFixedAxisProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"TimeDependentRotationAboutFixedAxis" );
+  vec.writeXMLFile(ele2);
+  function.writeXMLFile(ele2);
+  parent->LinkEndChild(ele2);
+  return ele2;
+}
+
+void TimeDependentRotationAboutFixedAxisProperty::fromWidget(QWidget *widget) {
+  vec.fromWidget(static_cast<TimeDependentRotationAboutFixedAxisWidget*>(widget)->vec);
+  function.fromWidget(static_cast<TimeDependentRotationAboutFixedAxisWidget*>(widget)->function);
+}
+
+void TimeDependentRotationAboutFixedAxisProperty::toWidget(QWidget *widget) {
+  vec.toWidget(static_cast<TimeDependentRotationAboutFixedAxisWidget*>(widget)->vec);
+  function.toWidget(static_cast<TimeDependentRotationAboutFixedAxisWidget*>(widget)->function);
+}
+
 TiXmlElement* RotationChoiceProperty::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=(xmlName=="")?element:element->FirstChildElement(xmlName);
   if(e) {
@@ -371,6 +402,8 @@ TiXmlElement* RotationChoiceProperty::initializeUsingXML(TiXmlElement *element) 
         index = 8;
       else if(ee->ValueStr() == MBSIMNS"RotationAboutAxesXYZ")
         index = 9;
+      else if(ee->ValueStr() == MBSIMNS"TimeDependentRotationAboutFixedAxis")
+        index = 10;
       defineRotation(index);
       rotation->initializeUsingXML(ee);
       return e;
@@ -414,6 +447,8 @@ void RotationChoiceProperty::defineRotation(int index_) {
     rotation = new EulerAnglesProperty;  
   else if(index==9)
     rotation = new RotationAboutAxesXYZProperty;  
+  else if(index==10)
+    rotation = new TimeDependentRotationAboutFixedAxisProperty;  
 }
 
 void RotationChoiceProperty::fromWidget(QWidget *widget) {
