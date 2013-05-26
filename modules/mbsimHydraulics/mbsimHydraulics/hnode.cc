@@ -29,6 +29,8 @@
 #include "mbsimHydraulics/obsolet_hint.h"
 #include "mbsimHydraulics/defines.h"
 #include "mbsim/objectfactory.h"
+#include "mbsimHydraulics/defines.h"
+#include "mbsim/xmlnamespacemapping.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/group.h"
@@ -878,3 +880,9 @@ namespace MBSimHydraulics {
   }
 
 }
+
+// register namspace mapping (must just be done in any *.cc file)
+MBSIM_REGISTER_XMLNAMESPACEMAPPING(50, MBSIMHYDRAULICSNS_, "")
+MBSIM_REGISTER_XMLNAMESPACEMAPPING(40, MBSIMHYDRAULICSNS_, "hyd")
+MBSIM_REGISTER_XMLNAMESPACEMAPPING(30, MBSIMHYDRAULICSNS_, "hydraulic")
+MBSIM_REGISTER_XMLNAMESPACEMAPPING(20, MBSIMHYDRAULICSNS_, "mbsimhydraulic")

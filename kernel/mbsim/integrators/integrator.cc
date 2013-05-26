@@ -22,6 +22,7 @@
 #include "mbsim/element.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/objectfactory.h"
+#include <mbsim/xmlnamespacemapping.h>
 #include "mbxmlutilstinyxml/tinynamespace.h"
 
 using namespace std;
@@ -78,7 +79,7 @@ namespace MBSim {
     TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
     doc.LinkEndChild( decl );
     writeXMLFile(&doc);
-    map<string, string> nsprefix;//MISSING READD =ObjectFactory::getInstance()->getNamespacePrefixMapping();
+    map<string, string> nsprefix=XMLNamespaceMapping::getNamespacePrefixMapping();
     unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
     doc.SaveFile(name.substr(name.length()-13,13)==".mbsimint.xml"?name:name+".mbsimint.xml");
   }

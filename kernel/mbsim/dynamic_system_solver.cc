@@ -34,6 +34,7 @@
 #include "dirent.h"
 #include <mbsim/environment.h>
 #include <mbsim/objectfactory.h>
+#include <mbsim/xmlnamespacemapping.h>
 
 #include <H5Cpp.h>
 #include <hdf5serie/fileserie.h>
@@ -1445,7 +1446,7 @@ namespace MBSim {
     TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
     doc.LinkEndChild( decl );
     writeXMLFile(&doc);
-    map<string, string> nsprefix;//MISSING READD =ObjectFactory::getInstance()->getNamespacePrefixMapping();
+    map<string, string> nsprefix=XMLNamespaceMapping::getNamespacePrefixMapping();
     unIncorporateNamespace(doc.FirstChildElement(), nsprefix);  
     doc.SaveFile((name.length()>10 && name.substr(name.length()-10,10)==".mbsim.xml")?name:name+".mbsim.xml");
   }

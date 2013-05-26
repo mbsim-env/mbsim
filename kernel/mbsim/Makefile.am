@@ -29,6 +29,7 @@ kinematic_excitation.cc\
 mbsim_event.cc\
 object.cc\
 objectfactory.cc\
+xmlnamespacemapping.cc\
 extra_dynamic.cc\
 rigid_body.cc\
 graph.cc\
@@ -75,6 +76,7 @@ modelling_interface.h\
 object.h\
 objectfactory.h\
 objectfactory_instance.h\
+xmlnamespacemapping.h\
 extra_dynamic.h\
 rigid_body.h\
 graph.h\

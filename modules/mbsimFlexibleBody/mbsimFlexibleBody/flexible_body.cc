@@ -27,6 +27,8 @@
 #include <mbsim/mbsim_event.h>
 #include <mbsim/contour_pdata.h>
 #include <mbsim/discretization_interface.h>
+#include "mbsimFlexibleBody/defines.h"
+#include "mbsim/xmlnamespacemapping.h"
 
 //#ifdef _OPENMP
 //#include <omp.h>
@@ -174,3 +176,8 @@ namespace MBSimFlexibleBody {
 
 }
 
+// register namspace mapping (must just be done in any *.cc file)
+MBSIM_REGISTER_XMLNAMESPACEMAPPING(50, MBSIMFLEXIBLEBODYNS_, "")
+MBSIM_REGISTER_XMLNAMESPACEMAPPING(40, MBSIMFLEXIBLEBODYNS_, "flex")
+MBSIM_REGISTER_XMLNAMESPACEMAPPING(30, MBSIMFLEXIBLEBODYNS_, "flexbody")
+MBSIM_REGISTER_XMLNAMESPACEMAPPING(20, MBSIMFLEXIBLEBODYNS_, "mbsimflexbody")
