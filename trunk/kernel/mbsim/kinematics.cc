@@ -218,6 +218,22 @@ namespace MBSim {
     return ele0;
   }
 
+  void StateDependentRotationAboutFixedAxis::initializeUsingXML(TiXmlElement *element) {
+    Rotation::initializeUsingXML(element);
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMNS"axisOfRotation");
+    setAxisOfRotation(Element::getVec3(e));
+    e=element->FirstChildElement(MBSIMNS"rotationalFunction");
+    angle=ObjectFactory<Function>::create<Function1<double,Vec> >(e->FirstChildElement());
+    angle->initializeUsingXML(e->FirstChildElement());
+#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
+    // set qSize for symbolic function (qSize if given by user)
+    SymbolicFunction1<double,Vec> *symAngle=dynamic_cast<SymbolicFunction1<double,Vec>*>(angle);
+    if(symAngle)
+      qSize=symAngle->getSXFunction().inputExpr(0).size1();
+#endif
+  }
+
   void TimeDependentRotationAboutFixedAxis::initializeUsingXML(TiXmlElement *element) {
     TranslationIndependentRotation::initializeUsingXML(element);
     TiXmlElement *e;

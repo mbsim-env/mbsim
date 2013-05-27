@@ -556,6 +556,10 @@ namespace MBSim {
    */
   class StateDependentRotationAboutFixedAxis: public Rotation {
     public:
+      /**
+       * \brief constructor
+       */
+      StateDependentRotationAboutFixedAxis() : qSize(0), rot(new RotationAboutFixedAxis()), angle(NULL) {}
 
       /**
        * \brief constructor
@@ -570,7 +574,7 @@ namespace MBSim {
       /* INTERFACE OF ROTATION */
       virtual int getqSize() const {return qSize;}
       virtual fmatvec::SqrMat3 operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) {return (*rot)(fmatvec::Vec(1,fmatvec::INIT,(*angle)(q)),t);} 
-      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       /***************************************************/
 
       /* GETTER / SETTER */
