@@ -321,6 +321,20 @@ class TimeDependentRotationAboutFixedAxisProperty : public RotationProperty {
     ExtProperty vec, function;
 };
 
+class StateDependentRotationAboutFixedAxisProperty : public RotationProperty {
+
+  public:
+    StateDependentRotationAboutFixedAxisProperty();
+    int getSize() const {return 0;}
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+
+  protected:
+    ExtProperty vec, function;
+};
+
 class RotationChoiceProperty : public Property {
 
   public:

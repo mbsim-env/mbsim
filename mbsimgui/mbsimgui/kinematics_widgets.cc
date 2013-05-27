@@ -48,7 +48,7 @@ int LinearTranslationWidget::getSize() const {
 }
 
 TimeDependentTranslationWidget::TimeDependentTranslationWidget() {
-  function = new ExtWidget("Kinematic function",new Function1ChoiceWidget(false,3));
+  function = new ExtWidget("Translation function",new Function1ChoiceWidget(false,3));
 
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -57,7 +57,7 @@ TimeDependentTranslationWidget::TimeDependentTranslationWidget() {
 }
 
 StateDependentTranslationWidget::StateDependentTranslationWidget() {
-  function = new ExtWidget("Kinematic function",new Function1ChoiceWidget(false,3,"VV"));
+  function = new ExtWidget("Translation function",new Function1ChoiceWidget(false,3,"VV"));
 
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -66,7 +66,7 @@ StateDependentTranslationWidget::StateDependentTranslationWidget() {
 }
 
 GeneralTranslationWidget::GeneralTranslationWidget() {
-  function = new ExtWidget("Kinematic function",new Function2ChoiceWidget("VVS"));
+  function = new ExtWidget("Translation function",new Function2ChoiceWidget("VVS"));
 
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -135,7 +135,7 @@ RotationAboutFixedAxisWidget::RotationAboutFixedAxisWidget() {
   vector<PhysicalVariableWidget*> input;
   input.push_back(new PhysicalVariableWidget(new VecWidget(3),noUnitUnits(),1));
   ExtPhysicalVarWidget *vec_ = new ExtPhysicalVarWidget(input);
-  vec = new ExtWidget("Translation vectors",vec_);
+  vec = new ExtWidget("Axis of rotation",vec_);
   layout->addWidget(vec);
 }
 
@@ -147,10 +147,25 @@ TimeDependentRotationAboutFixedAxisWidget::TimeDependentRotationAboutFixedAxisWi
   vector<PhysicalVariableWidget*> input;
   input.push_back(new PhysicalVariableWidget(new VecWidget(3),noUnitUnits(),1));
   ExtPhysicalVarWidget *vec_ = new ExtPhysicalVarWidget(input);
-  vec = new ExtWidget("Translation vectors",vec_);
+  vec = new ExtWidget("Axis of rotation",vec_);
   layout->addWidget(vec);
 
-  function = new ExtWidget("Kinematic function",new Function1ChoiceWidget(false,3,"SS"));
+  function = new ExtWidget("Rotational function",new Function1ChoiceWidget(false,3,"SS"));
+  layout->addWidget(function);
+}
+
+StateDependentRotationAboutFixedAxisWidget::StateDependentRotationAboutFixedAxisWidget() {
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new VecWidget(3),noUnitUnits(),1));
+  ExtPhysicalVarWidget *vec_ = new ExtPhysicalVarWidget(input);
+  vec = new ExtWidget("Axis of rotation",vec_);
+  layout->addWidget(vec);
+
+  function = new ExtWidget("Rotational function",new Function1ChoiceWidget(false,3,"SV"));
   layout->addWidget(function);
 }
 
@@ -171,6 +186,7 @@ RotationChoiceWidget::RotationChoiceWidget() : rotation(0) {
   comboBox->addItem(tr("Euler angles"));
   comboBox->addItem(tr("Rotation about x-, y- and z-axis"));
   comboBox->addItem(tr("Time dependent rotation about fixed axis"));
+  comboBox->addItem(tr("State dependent rotation about fixed axis"));
   layout->addWidget(comboBox);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineRotation(int)));
   defineRotation(0);
@@ -201,6 +217,8 @@ void RotationChoiceWidget::defineRotation(int index) {
     rotation = new RotationAboutAxesXYZWidget;  
   else if(index==10)
     rotation = new TimeDependentRotationAboutFixedAxisWidget;  
+  else if(index==11)
+    rotation = new StateDependentRotationAboutFixedAxisWidget;  
   layout->addWidget(rotation);
   emit rotationChanged();
 }

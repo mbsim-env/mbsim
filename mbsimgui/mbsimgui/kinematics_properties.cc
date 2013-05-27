@@ -377,6 +377,37 @@ void TimeDependentRotationAboutFixedAxisProperty::toWidget(QWidget *widget) {
   function.toWidget(static_cast<TimeDependentRotationAboutFixedAxisWidget*>(widget)->function);
 }
 
+StateDependentRotationAboutFixedAxisProperty::StateDependentRotationAboutFixedAxisProperty() {
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new VecProperty(3),"-",MBSIMNS"axisOfRotation"));
+  vec.setProperty(new ExtPhysicalVarProperty(input));  
+
+  function.setProperty(new Function1ChoiceProperty(MBSIMNS"rotationalFunction",false,"SV"));
+}
+
+TiXmlElement* StateDependentRotationAboutFixedAxisProperty::initializeUsingXML(TiXmlElement *element) {
+  vec.initializeUsingXML(element);
+  return function.initializeUsingXML(element);
+}
+
+TiXmlElement* StateDependentRotationAboutFixedAxisProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"StateDependentRotationAboutFixedAxis" );
+  vec.writeXMLFile(ele2);
+  function.writeXMLFile(ele2);
+  parent->LinkEndChild(ele2);
+  return ele2;
+}
+
+void StateDependentRotationAboutFixedAxisProperty::fromWidget(QWidget *widget) {
+  vec.fromWidget(static_cast<StateDependentRotationAboutFixedAxisWidget*>(widget)->vec);
+  function.fromWidget(static_cast<StateDependentRotationAboutFixedAxisWidget*>(widget)->function);
+}
+
+void StateDependentRotationAboutFixedAxisProperty::toWidget(QWidget *widget) {
+  vec.toWidget(static_cast<StateDependentRotationAboutFixedAxisWidget*>(widget)->vec);
+  function.toWidget(static_cast<StateDependentRotationAboutFixedAxisWidget*>(widget)->function);
+}
+
 TiXmlElement* RotationChoiceProperty::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=(xmlName=="")?element:element->FirstChildElement(xmlName);
   if(e) {
@@ -404,6 +435,8 @@ TiXmlElement* RotationChoiceProperty::initializeUsingXML(TiXmlElement *element) 
         index = 9;
       else if(ee->ValueStr() == MBSIMNS"TimeDependentRotationAboutFixedAxis")
         index = 10;
+      else if(ee->ValueStr() == MBSIMNS"StateDependentRotationAboutFixedAxis")
+        index = 11;
       defineRotation(index);
       rotation->initializeUsingXML(ee);
       return e;
@@ -449,6 +482,8 @@ void RotationChoiceProperty::defineRotation(int index_) {
     rotation = new RotationAboutAxesXYZProperty;  
   else if(index==10)
     rotation = new TimeDependentRotationAboutFixedAxisProperty;  
+  else if(index==11)
+    rotation = new StateDependentRotationAboutFixedAxisProperty;  
 }
 
 void RotationChoiceProperty::fromWidget(QWidget *widget) {
