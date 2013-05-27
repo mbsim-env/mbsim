@@ -181,7 +181,8 @@ class RigidBodyPropertyDialog : public BodyPropertyDialog {
     void fromWidget(Element *element);
     void resizeGeneralizedPosition();
     void resizeGeneralizedVelocity();
-    int getSize() const; 
+    int getqRelSize() const; 
+    int getuRelSize() const; 
   protected:
     ExtWidget *K, *mass, *inertia, *translation, *rotation, *ombvEditor, *weightArrow, *jointForceArrow, *jointMomentArrow, *isFrameOfBodyForRotation;
     RigidBody *body;

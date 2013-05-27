@@ -368,18 +368,62 @@ void RigidBodyPropertyDialog::fromWidget(Element *element) {
   static_cast<RigidBody*>(element)->isFrameOfBodyForRotation.fromWidget(isFrameOfBodyForRotation);
 }
 
-int RigidBodyPropertyDialog::getSize() const {
-  return (translation->isActive()?((TranslationChoiceWidget*)translation->getWidget())->getSize():0) + (rotation->isActive()?((RotationChoiceWidget*)rotation->getWidget())->getSize():0);
+int RigidBodyPropertyDialog::getqRelSize() const {
+  int nq=0, nqT=0, nqR=0;
+  if(translation->isActive()) {
+    TranslationChoiceWidget *trans = static_cast<TranslationChoiceWidget*>(translation->getWidget());
+    if(trans->isIndependent())
+      nqT = trans->getqTSize();
+    else
+      nq = trans->getqSize();
+  }
+  if(rotation->isActive()) {
+    RotationChoiceWidget *rot = static_cast<RotationChoiceWidget*>(rotation->getWidget());
+    if(rot->isIndependent())
+      nqR = rot->getqRSize();
+    else {
+      int nqtmp = rot->getqSize();
+      if(nq) assert(nq==nqtmp);
+      nq = nqtmp;
+    }
+  }
+  if(nq == 0)
+    nq = nqT + nqR;
+  return nq;
+}
+
+int RigidBodyPropertyDialog::getuRelSize() const {
+  int nu=0, nuT=0, nuR=0;
+  if(translation->isActive()) {
+    TranslationChoiceWidget *trans = static_cast<TranslationChoiceWidget*>(translation->getWidget());
+    if(trans->isIndependent())
+      nuT = trans->getuTSize();
+    else
+      nu = trans->getuSize();
+  }
+  if(rotation->isActive()) {
+    RotationChoiceWidget *rot = static_cast<RotationChoiceWidget*>(rotation->getWidget());
+    if(rot->isIndependent())
+      nuR = rot->getuRSize();
+    else {
+      int nutmp = rot->getuSize();
+      if(nu) assert(nu==nutmp);
+      nu = nutmp;
+    }
+  }
+  if(nu == 0)
+    nu = nuT + nuR;
+  return nu;
 }
 
 void RigidBodyPropertyDialog::resizeGeneralizedPosition() {
-  int size =  body->isConstrained() ? 0 : getSize();
+  int size =  body->isConstrained() ? 0 : getqRelSize();
   if(q0_ && q0_->size() != size)
     q0_->resize(size);
 }
 
 void RigidBodyPropertyDialog::resizeGeneralizedVelocity() {
-  int size = getSize();
+  int size =  body->isConstrained() ? 0 : getuRelSize();
   if(u0_ && u0_->size() != size)
     u0_->resize(size);
 }

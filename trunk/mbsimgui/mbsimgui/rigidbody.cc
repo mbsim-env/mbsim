@@ -73,7 +73,51 @@ RigidBody::~RigidBody() {
 }
 
 int RigidBody::getqRelSize() const {
-  return (translation.isActive()?((TranslationChoiceProperty*)translation.getProperty())->getSize():0) + (rotation.isActive()?((RotationChoiceProperty*)rotation.getProperty())->getSize():0);
+  int nq=0, nqT=0, nqR=0;
+  if(translation.isActive()) {
+    const TranslationChoiceProperty *trans = static_cast<const TranslationChoiceProperty*>(translation.getProperty());
+    if(trans->isIndependent())
+      nqT = trans->getqTSize();
+    else
+      nq = trans->getqSize();
+  }
+  if(rotation.isActive()) {
+    const RotationChoiceProperty *rot = static_cast<const RotationChoiceProperty*>(rotation.getProperty());
+    if(rot->isIndependent())
+      nqR = rot->getqRSize();
+    else {
+      int nqtmp = rot->getqSize();
+      if(nq) assert(nq==nqtmp);
+      nq = nqtmp;
+    }
+  }
+  if(nq == 0)
+    nq = nqT + nqR;
+  return nq;
+}
+
+int RigidBody::getuRelSize() const {
+  int nu=0, nuT=0, nuR=0;
+  if(translation.isActive()) {
+    const TranslationChoiceProperty *trans = static_cast<const TranslationChoiceProperty*>(translation.getProperty());
+    if(trans->isIndependent())
+      nuT = trans->getuTSize();
+    else
+      nu = trans->getuSize();
+  }
+  if(rotation.isActive()) {
+    const RotationChoiceProperty *rot = static_cast<const RotationChoiceProperty*>(rotation.getProperty());
+    if(rot->isIndependent())
+      nuR = rot->getuRSize();
+    else {
+      int nutmp = rot->getuSize();
+      if(nu) assert(nu==nutmp);
+      nu = nutmp;
+    }
+  }
+  if(nu == 0)
+    nu = nuT + nuR;
+  return nu;
 }
 
 void RigidBody::initialize() {
