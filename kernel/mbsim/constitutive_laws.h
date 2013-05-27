@@ -149,6 +149,8 @@ namespace MBSim {
       /***************************************************/
 
       bool remainsClosed(double s, double sTol) { return s<=sTol; }  // s = gd/gdd
+
+      virtual std::string getType() const { return "UnilateralConstraint"; }
   };
 
   /**
@@ -249,6 +251,8 @@ namespace MBSim {
       virtual double solve(double G, double gdn, double gda);
       virtual bool isFulfilled(double la,  double gdn, double gda, double tolla, double tolgd, double laMin=0);
       virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+      virtual std::string getType() const { return "UnilateralNewtonImpact"; }
       /***************************************************/
 
     protected:
@@ -311,6 +315,12 @@ namespace MBSim {
       virtual double getFrictionCoefficient(double gd) { return 0; }
       virtual bool isSetValued() const = 0;
       virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+
+      /**
+       * \return std::string representation
+       */
+      virtual std::string getType() const { return "FrictionForceLaw"; }
       /***************************************************/
       
       fmatvec::Vec operator()(const fmatvec::Vec &gd, double laN) { assert(frictionForceFunc); return (*frictionForceFunc)(gd,laN); }
@@ -359,6 +369,8 @@ namespace MBSim {
       virtual double getFrictionCoefficient(double gd) { return mu; }
       virtual bool isSetValued() const { return true; }
       virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+      virtual std::string getType() const { return "PlanarCoulombFriction"; }
       /***************************************************/
 
       void setFrictionCoefficient(double mu_) { mu = mu_; }
@@ -400,6 +412,8 @@ namespace MBSim {
       virtual double getFrictionCoefficient(double gd) { return mu; }
       virtual bool isSetValued() const { return true; }
       virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+      virtual std::string getType() const { return "SpatialCoulombFriction"; }
       /***************************************************/
 
       void setFrictionCoefficient(double mu_) { mu = mu_; }
@@ -517,6 +531,12 @@ namespace MBSim {
       virtual int isSticking(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double laTol, double gdTol) = 0;
       virtual int getFrictionDirections() = 0;
       virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+
+      /**
+       * \return std::string representation
+       */
+      virtual std::string getType() const { return "FrictionImpactLaw"; }
       /***************************************************/
   };
 
@@ -550,6 +570,8 @@ namespace MBSim {
       virtual int isSticking(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double laTol, double gdTol);
       virtual int getFrictionDirections() { return 1; }
       virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+      virtual std::string getType() const { return "PlanarCoulombImpact"; }
       /***************************************************/
 
       void setFrictionCoefficient(double mu_) { mu = mu_; }
@@ -589,6 +611,8 @@ namespace MBSim {
       virtual int isSticking(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double laTol, double gdTol);
       virtual int getFrictionDirections() { return 2; }
       virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+      virtual std::string getType() const { return "SpatialCoulombImpact"; }
       /***************************************************/
 
       void setFrictionCoefficient(double mu_) { mu = mu_; }

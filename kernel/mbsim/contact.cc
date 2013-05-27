@@ -839,6 +839,51 @@ namespace MBSim {
 #endif
   }
 
+  TiXmlElement* Contact::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = LinkMechanics::writeXMLFile(parent);
+    TiXmlElement *ele1;
+    ele1 = new TiXmlElement( MBSIMNS"contactForceLaw" );
+    if(fcl) 
+      fcl->writeXMLFile(ele1);
+    ele0->LinkEndChild(ele1);
+    if(fnil) {
+      ele1 = new TiXmlElement( MBSIMNS"contactImpactLaw" );
+      fnil->writeXMLFile(ele1);
+      ele0->LinkEndChild(ele1);
+    }
+    if(fdf) {
+      ele1 = new TiXmlElement( MBSIMNS"frictionForceLaw" );
+      fdf->writeXMLFile(ele1);
+      ele0->LinkEndChild(ele1);
+    }
+    if(ftil) {
+      ele1 = new TiXmlElement( MBSIMNS"frictionImpactLaw" );
+      ftil->writeXMLFile(ele1);
+      ele0->LinkEndChild(ele1);
+    }
+    ele1 = new TiXmlElement(MBSIMNS"connect");
+    //for(unsigned int i=0; i<saved_ref.size(); i++) {
+      ele1->SetAttribute("ref1", contour[0]->getXMLPath(this,true)); // relative path
+      ele1->SetAttribute("ref2", contour[1]->getXMLPath(this,true)); // relative path
+    //}
+    ele0->LinkEndChild(ele1);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    if(openMBVContactFrameEnabled==true)
+      addElementText(ele0,MBSIMNS"enableOpenMBVContactPoints",openMBVContactFrameSize);
+    if(contactArrow) {
+      ele1 = new TiXmlElement( MBSIMNS"openMBVNormalForceArrow" );
+      contactArrow->writeXMLFile(ele1);
+      ele0->LinkEndChild(ele1);
+    }
+    if(frictionArrow) {
+      ele1 = new TiXmlElement( MBSIMNS"openMBVFrictionArrow" );
+      frictionArrow->writeXMLFile(ele1);
+      ele0->LinkEndChild(ele1);
+    }
+#endif
+    return ele0;
+  }
+
   void Contact::updatecorrRef(const Vec& corrParent) {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)

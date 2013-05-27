@@ -63,7 +63,7 @@ namespace MBSim {
 
   class RotationIndependentTranslation : public Translation {
     public:
-    /**
+      /**
        * \brief constructor
        */
       RotationIndependentTranslation() {}
@@ -442,6 +442,10 @@ namespace MBSim {
 
   class TranslationIndependentRotation: public Rotation {
     public:
+      /**
+       * \brief constructor
+       */
+      TranslationIndependentRotation() {}
 
       virtual int getqSize() const { throw; return 0; }
       virtual int getqRSize() const = 0;

@@ -467,6 +467,32 @@ namespace MBSim {
        */
       void setProjectionTolerance(double tol) { tolProj = tol; }
 
+     /**
+       * \param tolerance for relative velocity
+       */
+      void setgTol(double tol) {gTol = tol; Group::setgTol(tol);}
+
+      /**
+       * \param tolerance for relative velocity
+       */
+      void setgdTol(double tol) {gdTol = tol; Group::setgdTol(tol);}
+
+      /**
+       * \param tolerance for relative acceleration
+       */
+      void setgddTol(double tol) {gddTol = tol; Group::setgddTol(tol);}
+
+      /**
+       * \param tolerance for contact force
+       */
+      void setlaTol(double tol) {laTol = tol; Group::setlaTol(tol);}
+
+      /**
+       * \param tolerance for impact
+       */
+      void setLaTol(double tol) {LaTol = tol; Group::setLaTol(tol);}
+
+
       /**
        * \param decide, whether information should be printed on standard output.
        */
@@ -762,6 +788,8 @@ namespace MBSim {
       fmatvec::Vec corrParent;
 
       int rootID;
+
+      double gTol, gdTol, gddTol, laTol, LaTol;
 
     private:
       /**

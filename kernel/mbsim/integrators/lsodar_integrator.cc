@@ -21,6 +21,7 @@
 #include <fmatvec.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/utils/eps.h>
+#include <mbsim/utils/utils.h>
 #include "fortran_wrapper.h"
 #include "lsodar_integrator.h"
 #include <fstream>
@@ -67,6 +68,22 @@ namespace MBSim {
     setMaximalStepSize(Element::getDouble(e));
     e=element->FirstChildElement(MBSIMINTNS"plotOnRoot");
     setPlotOnRoot(Element::getBool(e));
+  }
+
+  TiXmlElement* LSODARIntegrator::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = Integrator::writeXMLFile(parent);
+    if(aTol.size()==0)
+      addElementText(ele0,MBSIMINTNS"absoluteToleranceScalar",1e-6);
+    else if(aTol.size()==1)
+      addElementText(ele0,MBSIMINTNS"absoluteToleranceScalar",aTol(0));
+    else
+      addElementText(ele0,MBSIMINTNS"absoluteTolerance",aTol);
+    addElementText(ele0,MBSIMINTNS"relativeToleranceScalar",rTol);
+    addElementText(ele0,MBSIMINTNS"initialStepSize",dt0);
+    addElementText(ele0,MBSIMINTNS"minimalStepSize",dtMin);
+    addElementText(ele0,MBSIMINTNS"maximalStepSize",dtMax);
+    addElementText(ele0,MBSIMINTNS"plotOnRoot",plotOnRoot);
+    return ele0;
   }
 
   void LSODARIntegrator::integrate(DynamicSystemSolver& system) {
