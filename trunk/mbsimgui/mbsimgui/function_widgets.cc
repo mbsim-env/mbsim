@@ -34,19 +34,19 @@ void DifferentiableFunction1Widget::setDerivative(Function1Widget *diff,size_t d
 }
 
 SymbolicFunction1Widget::SymbolicFunction1Widget(const QString &ext) : Function1Widget(ext) {
-  QVBoxLayout *layout = new QVBoxLayout;
+  QGridLayout *layout = new QGridLayout;
   layout->setMargin(0);
   setLayout(layout);
   for(int i=1; i<ext.size(); i++) {
     argname.push_back(new ExtWidget("Name of argument "+QString::number(i),new TextWidget(QString("x")+QString::number(i))));
-    layout->addWidget(argname[i-1]);
+    layout->addWidget(argname[i-1],i-1,0);
 
     argdim.push_back(new ExtWidget("Dimension of argument "+QString::number(i),new TextWidget("1")));
     if(ext[i]=='V')
-      layout->addWidget(argdim[i-1]);
+      layout->addWidget(argdim[i-1],i-1,1);
   }
   f = new ExtWidget("Function",new OctaveExpressionWidget);
-  layout->addWidget(f);
+  layout->addWidget(f,ext.size()-1,0,1,2);
 }
 
 ConstantFunction1Widget::ConstantFunction1Widget(const QString &ext, int n) : Function1Widget(ext) {

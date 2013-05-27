@@ -244,6 +244,17 @@ class TimeDependentRotationAboutFixedAxisWidget : public RotationWidget {
     ExtWidget *vec, *function;
 };
 
+class StateDependentRotationAboutFixedAxisWidget : public RotationWidget {
+
+  friend class StateDependentRotationAboutFixedAxisProperty;
+
+  public:
+    StateDependentRotationAboutFixedAxisWidget();
+    int getSize() const {return 0;}
+  protected:
+    ExtWidget *vec, *function;
+};
+
 class RotationChoiceWidget : public Widget {
   Q_OBJECT
 
