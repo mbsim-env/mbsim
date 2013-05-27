@@ -95,6 +95,7 @@ MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(Function, RotationAboutFixedAxis, MBSIMN
 MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(Function, RotationAboutXAxis, MBSIMNS"RotationAboutXAxis")
 MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(Function, RotationAboutYAxis, MBSIMNS"RotationAboutYAxis")
 MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(Function, RotationAboutZAxis, MBSIMNS"RotationAboutZAxis")
+MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(Function, StateDependentRotationAboutFixedAxis, MBSIMNS"StateDependentRotationAboutFixedAxis")
 MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(Function, TimeDependentRotationAboutFixedAxis, MBSIMNS"TimeDependentRotationAboutFixedAxis")
 MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(Function, CardanAngles, MBSIMNS"CardanAngles")
 MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(Function, RotationAboutAxesXY, MBSIMNS"RotationAboutAxesXY")
@@ -209,6 +210,12 @@ MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(Function, SymbolicFunction1<VecV COMMA V
 MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(Function, SymbolicFunction1<Vec3 COMMA Vec >, MBSIMNS"SymbolicFunction1_VV")
 MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(Function, SymbolicFunction1<Vec3 COMMA VecV>, MBSIMNS"SymbolicFunction1_VV")
 MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(Function, SymbolicFunction1<Vec3 COMMA Vec3>, MBSIMNS"SymbolicFunction1_VV")
+#endif
+#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
+// create some common Vec combination for SymbolicFunction1_SV
+MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(Function, SymbolicFunction1<double COMMA Vec >, MBSIMNS"SymbolicFunction1_SV")
+MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(Function, SymbolicFunction1<double COMMA VecV>, MBSIMNS"SymbolicFunction1_SV")
+MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(Function, SymbolicFunction1<double COMMA Vec3>, MBSIMNS"SymbolicFunction1_SV")
 #endif
 MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(Function, FlexibilityInfluenceFunction, MBSIMNS"FlexibilityInfluenceFunction")
 MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(Function, ConstantInfluenceFunction, MBSIMNS"ConstantInfluenceFunction")

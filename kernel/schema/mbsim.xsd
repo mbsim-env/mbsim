@@ -2890,6 +2890,36 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="StateDependentRotationAboutFixedAxis" substitutionGroup="Rotation" type="StateDependentRotationAboutFixedAxisType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Parametrisiert eine zustandsabhängige Rotation um eine feste Achse für Starrkörper (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="StateDependentRotationAboutFixedAxisType">
+    <xs:complexContent>
+      <xs:extension base="RotationType">
+        <xs:sequence>
+          <xs:element name="axisOfRotation" type="pv:nounitVector">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert die normierte konstante Drehachse.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="rotationalFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert den zeitabhängen Winkel um die Drehachse.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function1_SV">
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="RotationAboutAxesXY" substitutionGroup="TranslationIndependentRotation" type="RotationAboutAxesXYType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Definiert eine Rotation um die x- und y-Achse für Starrkörper ausschließlich abhängig von generalisierten Kardan Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
@@ -3409,6 +3439,17 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="SymbolicFunction1_SV" substitutionGroup="Function1_SV" type="SymbolicFunction1_SVType"/>
+  <xs:complexType name="SymbolicFunction1_SVType" mixed="true">
+    <xs:complexContent>
+      <xs:extension base="Function1_SVType">
+        <xs:group ref="pv:symbolicFunctionXMLElement"/>
+        <xs:attribute name="arg1name" use="required" type="pv:symbolicFunctionArgNameType"/>
+        <xs:attribute name="arg1dim" use="required" type="pv:symbolicFunctionArgDimType"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="Polynom1_SS" substitutionGroup="DifferentiableFunction1_SS" type="Polynom1_SSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -3844,6 +3885,15 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
+
+  <xs:element name="Function1_SV" abstract="true" type="Function1_SVType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrakte Klasse von vektorwertigen Funktionen mit einem Parameter <object class="inlineeqn">\boldsymbol{y}=\boldsymbol{f}(x)</object>.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="Function1_SVType"/>
 
   <xs:element name="Function2_SSS" abstract="true" type="Function2_SSSType">
     <xs:annotation>
