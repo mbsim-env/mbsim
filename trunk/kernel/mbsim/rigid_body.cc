@@ -266,7 +266,7 @@ namespace MBSim {
         if(angle) {
           if(fPJR==0) {
             Vec3 axis = static_cast<StateDependentRotationAboutFixedAxis*>(fAPK)->getAxisOfRotation();
-            CasADi::SXMatrix phi(axis.size(),nq);
+            CasADi::SXMatrix phi(axis.size(),1);
             for(int i=0; i<axis.size(); i++)
               phi.elem(i,0) = axis.e(i)*angle->getSXFunction().outputExpr(0).elem(0,0);
             CasADi::SXFunction foo(angle->getSXFunction().inputExpr(),phi);
