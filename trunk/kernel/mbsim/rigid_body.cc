@@ -128,7 +128,8 @@ namespace MBSim {
       if(nq) assert(nq==nqtmp);
       nq = nqtmp;
     }
-    nq += nqT + nqR;
+    if(nq == 0)
+      nq = nqT + nqR;
     qSize = constraint ? 0 : nq;
   }
 
@@ -151,7 +152,8 @@ namespace MBSim {
         if(nu[0]) assert(nu[0]==nutmp);
         nu[0] = nutmp;
       }
-      nu[0] += nuT + nuR;
+      if(nu[0] == 0)
+        nu[0] = nuT + nuR;
       uSize[j] = constraint ? 0 : nu[j];
     } else {
       nu[j] = 6;
