@@ -41,7 +41,7 @@ LinearTranslationWidget::LinearTranslationWidget() {
   QObject::connect(mat_, SIGNAL(inputDialogChanged(int)), this, SIGNAL(translationChanged()));
 }
 
-int LinearTranslationWidget::getSize() const {
+int LinearTranslationWidget::getqTSize() const {
   string str = evalOctaveExpression(static_cast<ExtPhysicalVarWidget*>(mat->getWidget())->getCurrentPhysicalVariableWidget()->getValue().toStdString());
   vector<vector<string> > A = strToMat(str);
   return A.size()?A[0].size():0;
@@ -63,6 +63,13 @@ StateDependentTranslationWidget::StateDependentTranslationWidget() {
   layout->setMargin(0);
   setLayout(layout);
   layout->addWidget(function);
+}
+
+int StateDependentTranslationWidget::getqSize() const {
+  SymbolicFunction1Widget *func = dynamic_cast<SymbolicFunction1Widget*>(static_cast<Function1ChoiceWidget*>(function->getWidget())->getFunction());
+  if(func)
+    return func->getArgDim();
+  return 0;
 }
 
 GeneralTranslationWidget::GeneralTranslationWidget() {
@@ -167,6 +174,13 @@ StateDependentRotationAboutFixedAxisWidget::StateDependentRotationAboutFixedAxis
 
   function = new ExtWidget("Rotational function",new Function1ChoiceWidget(false,3,"SV"));
   layout->addWidget(function);
+}
+
+int StateDependentRotationAboutFixedAxisWidget::getqSize() const {
+  SymbolicFunction1Widget *func = dynamic_cast<SymbolicFunction1Widget*>(static_cast<Function1ChoiceWidget*>(function->getWidget())->getFunction());
+  if(func)
+    return func->getArgDim();
+  return 0;
 }
 
 RotationChoiceWidget::RotationChoiceWidget() : rotation(0) {

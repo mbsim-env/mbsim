@@ -32,92 +32,72 @@ namespace MBXMLUtils {
 class TranslationProperty : public Property {
 
   public:
-    TranslationProperty() {}
-    virtual int getSize() const = 0;
-};
-
-class TranslationInXDirectionProperty : public TranslationProperty {
-
-  public:
-    TranslationInXDirectionProperty() {}
-    int getSize() const {return 1;}
+    virtual int getqSize() const {return 0;}
+    virtual int getuSize() const {return getqSize();}
+    virtual int getqTSize() const {return 0;}
+    virtual int getuTSize() const {return getqTSize();}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget) {}
     void toWidget(QWidget *widget) {}
 };
 
-class TranslationInYDirectionProperty : public TranslationProperty {
-
-  public:
-    TranslationInYDirectionProperty() {}
-    int getSize() const {return 1;}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    void fromWidget(QWidget *widget) {}
-    void toWidget(QWidget *widget) {}
+class RotationIndependentTranslationProperty : public TranslationProperty {
 };
 
-class TranslationInZDirectionProperty : public TranslationProperty {
+class TranslationInXDirectionProperty : public RotationIndependentTranslationProperty {
 
   public:
-    TranslationInZDirectionProperty() {}
-    int getSize() const {return 1;}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+    int getqTSize() const {return 1;}
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    void fromWidget(QWidget *widget) {}
-    void toWidget(QWidget *widget) {}
 };
 
-class TranslationInXYDirectionProperty : public TranslationProperty {
+class TranslationInYDirectionProperty : public RotationIndependentTranslationProperty {
 
   public:
-    TranslationInXYDirectionProperty() {}
-    int getSize() const {return 2;}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+    int getqTSize() const {return 1;}
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    void fromWidget(QWidget *widget) {}
-    void toWidget(QWidget *widget) {}
 };
 
-class TranslationInXZDirectionProperty : public TranslationProperty {
+class TranslationInZDirectionProperty : public RotationIndependentTranslationProperty {
 
   public:
-    TranslationInXZDirectionProperty() {}
-    int getSize() const {return 2;}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+    int getqTSize() const {return 1;}
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    void fromWidget(QWidget *widget) {}
-    void toWidget(QWidget *widget) {}
 };
 
-class TranslationInYZDirectionProperty : public TranslationProperty {
+class TranslationInXYDirectionProperty : public RotationIndependentTranslationProperty {
 
   public:
-    TranslationInYZDirectionProperty() {}
-    int getSize() const {return 2;}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+    int getqTSize() const {return 2;}
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    void fromWidget(QWidget *widget) {}
-    void toWidget(QWidget *widget) {}
 };
 
-class TranslationInXYZDirectionProperty : public TranslationProperty {
+class TranslationInXZDirectionProperty : public RotationIndependentTranslationProperty {
 
   public:
-    TranslationInXYZDirectionProperty() {}
-    int getSize() const {return 3;}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+    int getqTSize() const {return 2;}
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    void fromWidget(QWidget *widget) {}
-    void toWidget(QWidget *widget) {}
 };
 
-class LinearTranslationProperty : public TranslationProperty {
+class TranslationInYZDirectionProperty : public RotationIndependentTranslationProperty {
+
+  public:
+    int getqTSize() const {return 2;}
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+};
+
+class TranslationInXYZDirectionProperty : public RotationIndependentTranslationProperty {
+
+  public:
+    int getqTSize() const {return 3;}
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+};
+
+class LinearTranslationProperty : public RotationIndependentTranslationProperty {
 
   public:
     LinearTranslationProperty();
-    int getSize() const;
+    int getqTSize() const;
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
@@ -127,11 +107,11 @@ class LinearTranslationProperty : public TranslationProperty {
     ExtProperty mat;
 };
 
-class TimeDependentTranslationProperty : public TranslationProperty {
+class TimeDependentTranslationProperty : public RotationIndependentTranslationProperty {
 
   public:
     TimeDependentTranslationProperty();
-    int getSize() const {return 0;}
+    int getqTSize() const {return 0;}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
@@ -145,7 +125,7 @@ class StateDependentTranslationProperty : public TranslationProperty {
 
   public:
     StateDependentTranslationProperty();
-    int getSize() const {return 0;}
+    int getqSize() const {return 0;}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
@@ -159,7 +139,7 @@ class GeneralTranslationProperty : public TranslationProperty {
 
   public:
     GeneralTranslationProperty();
-    int getSize() const {return 0;}
+    int getqSize() const {return 0;}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
@@ -174,7 +154,12 @@ class TranslationChoiceProperty : public Property {
   public:
     TranslationChoiceProperty(int index, const std::string &xmlName_): translation(0), xmlName(xmlName_) {defineTranslation(index);}
 
-    int getSize() const { return translation->getSize(); }
+    int getqSize() const { return translation->getqSize(); }
+    int getuSize() const { return translation->getuSize(); }
+    int getqTSize() const { return translation->getqTSize(); }
+    int getuTSize() const { return translation->getuTSize(); }
+
+    bool isIndependent() const {return dynamic_cast<RotationIndependentTranslationProperty*>(translation)!=NULL;}
 
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -191,48 +176,44 @@ class TranslationChoiceProperty : public Property {
 class RotationProperty : public Property {
 
   public:
-    RotationProperty() {}
-    virtual int getSize() const = 0;
-};
-
-class RotationAboutXAxisProperty : public RotationProperty {
-
-  public:
-    RotationAboutXAxisProperty() {}
-    int getSize() const {return 1;}
+    virtual int getqSize() const {return 0;}
+    virtual int getuSize() const {return getqSize();}
+    virtual int getqRSize() const {return 0;}
+    virtual int getuRSize() const {return getqRSize();}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget) {}
     void toWidget(QWidget *widget) {}
 };
 
-class RotationAboutYAxisProperty : public RotationProperty {
-
-  public:
-    RotationAboutYAxisProperty() {}
-    int getSize() const {return 1;}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    void fromWidget(QWidget *widget) {}
-    void toWidget(QWidget *widget) {}
+class TranslationIndependentRotationProperty: public RotationProperty {
 };
 
-class RotationAboutZAxisProperty : public RotationProperty {
+class RotationAboutXAxisProperty : public TranslationIndependentRotationProperty {
 
   public:
-    RotationAboutZAxisProperty() {}
-    int getSize() const {return 1;}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+    int getqRSize() const {return 1;}
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    void fromWidget(QWidget *widget) {}
-    void toWidget(QWidget *widget) {}
 };
 
-class RotationAboutFixedAxisProperty : public RotationProperty {
+class RotationAboutYAxisProperty : public TranslationIndependentRotationProperty {
+
+  public:
+    int getqRSize() const {return 1;}
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+};
+
+class RotationAboutZAxisProperty : public TranslationIndependentRotationProperty {
+
+  public:
+    int getqRSize() const {return 1;}
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+};
+
+class RotationAboutFixedAxisProperty : public TranslationIndependentRotationProperty {
 
   public:
     RotationAboutFixedAxisProperty();
-    int getSize() const {return 1;}
+    int getqRSize() const {return 1;}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget); 
@@ -241,77 +222,53 @@ class RotationAboutFixedAxisProperty : public RotationProperty {
     ExtProperty vec;
 };
 
-class RotationAboutAxesXYProperty : public RotationProperty {
+class RotationAboutAxesXYProperty : public TranslationIndependentRotationProperty {
 
   public:
-    RotationAboutAxesXYProperty() {}
-    int getSize() const {return 2;}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+    int getqRSize() const {return 2;}
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    void fromWidget(QWidget *widget) {}
-    void toWidget(QWidget *widget) {}
 };
 
-class RotationAboutAxesXZProperty : public RotationProperty {
+class RotationAboutAxesXZProperty : public TranslationIndependentRotationProperty {
 
   public:
-    RotationAboutAxesXZProperty() {}
-    int getSize() const {return 2;}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+    int getqRSize() const {return 2;}
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    void fromWidget(QWidget *widget) {}
-    void toWidget(QWidget *widget) {}
 };
 
-class RotationAboutAxesYZProperty : public RotationProperty {
+class RotationAboutAxesYZProperty : public TranslationIndependentRotationProperty {
 
   public:
-    RotationAboutAxesYZProperty() {}
-    int getSize() const {return 2;}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+    int getqRSize() const {return 2;}
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    void fromWidget(QWidget *widget) {}
-    void toWidget(QWidget *widget) {}
 };
 
-class RotationAboutAxesXYZProperty : public RotationProperty {
+class RotationAboutAxesXYZProperty : public TranslationIndependentRotationProperty {
 
   public:
-    RotationAboutAxesXYZProperty() {}
-    int getSize() const {return 3;}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+    int getqRSize() const {return 3;}
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    void fromWidget(QWidget *widget) {}
-    void toWidget(QWidget *widget) {}
 };
 
-class CardanAnglesProperty : public RotationProperty {
+class CardanAnglesProperty : public TranslationIndependentRotationProperty {
 
   public:
-    CardanAnglesProperty() {}
-    int getSize() const {return 3;}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+    int getqRSize() const {return 3;}
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    void fromWidget(QWidget *widget) {}
-    void toWidget(QWidget *widget) {}
 };
 
-class EulerAnglesProperty : public RotationProperty {
+class EulerAnglesProperty : public TranslationIndependentRotationProperty {
 
   public:
-    EulerAnglesProperty() {}
-    int getSize() const {return 3;}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+    int getqRSize() const {return 3;}
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    void fromWidget(QWidget *widget) {}
-    void toWidget(QWidget *widget) {}
 };
 
-class TimeDependentRotationAboutFixedAxisProperty : public RotationProperty {
+class TimeDependentRotationAboutFixedAxisProperty : public TranslationIndependentRotationProperty {
 
   public:
     TimeDependentRotationAboutFixedAxisProperty();
-    int getSize() const {return 0;}
+    int getqRSize() const {return 0;}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
@@ -325,7 +282,7 @@ class StateDependentRotationAboutFixedAxisProperty : public RotationProperty {
 
   public:
     StateDependentRotationAboutFixedAxisProperty();
-    int getSize() const {return 0;}
+    int getqSize() const {return 0;}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
@@ -340,7 +297,12 @@ class RotationChoiceProperty : public Property {
   public:
     RotationChoiceProperty(int index, const std::string &xmlName_): rotation(0), xmlName(xmlName_) {defineRotation(index);}
 
-    int getSize() const { return rotation->getSize(); }
+    int getqSize() const { return rotation->getqSize(); }
+    int getuSize() const { return rotation->getuSize(); }
+    int getqRSize() const { return rotation->getqRSize(); }
+    int getuRSize() const { return rotation->getuRSize(); }
+
+    bool isIndependent() const {return dynamic_cast<TranslationIndependentRotationProperty*>(rotation)!=NULL;}
 
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);

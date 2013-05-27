@@ -82,7 +82,7 @@ LinearTranslationProperty::LinearTranslationProperty() {
   mat.setProperty(new ExtPhysicalVarProperty(input));
 }
 
-int LinearTranslationProperty::getSize() const {
+int LinearTranslationProperty::getqTSize() const {
   string str = evalOctaveExpression(static_cast<const ExtPhysicalVarProperty*>(mat.getProperty())->getCurrentPhysicalVariableProperty()->getValue());
   vector<vector<string> > A = strToMat(str);
   return A.size()?A[0].size():0;

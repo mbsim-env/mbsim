@@ -49,6 +49,10 @@ SymbolicFunction1Widget::SymbolicFunction1Widget(const QString &ext) : Function1
   layout->addWidget(f,ext.size()-1,0,1,2);
 }
 
+int SymbolicFunction1Widget::getArgDim() const {
+  return static_cast<TextWidget*>(argdim[0]->getWidget())->getText().toInt();
+}
+
 ConstantFunction1Widget::ConstantFunction1Widget(const QString &ext, int n) : Function1Widget(ext) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);

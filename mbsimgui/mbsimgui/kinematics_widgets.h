@@ -30,81 +30,78 @@ class QVBoxLayout;
 class TranslationWidget : public Widget {
 
   public:
-    TranslationWidget() {}
-    virtual int getSize() const = 0;
-   protected:
+    virtual int getqSize() const {return 0;}
+    virtual int getuSize() const {return getqSize();}
+    virtual int getqTSize() const {return 0;}
+    virtual int getuTSize() const {return getqTSize();}
 };
 
-class TranslationInXDirectionWidget : public TranslationWidget {
+class RotationIndependentTranslationWidget : public TranslationWidget {
+};
+
+class TranslationInXDirectionWidget : public RotationIndependentTranslationWidget {
 
   public:
-    TranslationInXDirectionWidget() {}
-    virtual int getSize() const {return 1;}
+    virtual int getqTSize() const {return 1;}
 };
 
-class TranslationInYDirectionWidget : public TranslationWidget {
+class TranslationInYDirectionWidget : public RotationIndependentTranslationWidget {
 
   public:
-    TranslationInYDirectionWidget() {}
-    virtual int getSize() const {return 1;}
+    virtual int getqTSize() const {return 1;}
 };
 
-class TranslationInZDirectionWidget : public TranslationWidget {
+class TranslationInZDirectionWidget : public RotationIndependentTranslationWidget {
 
   public:
-    TranslationInZDirectionWidget() {}
-    virtual int getSize() const {return 1;}
+    virtual int getqTSize() const {return 1;}
 };
 
-class TranslationInXYDirectionWidget : public TranslationWidget {
+class TranslationInXYDirectionWidget : public RotationIndependentTranslationWidget {
 
   public:
-    TranslationInXYDirectionWidget() {}
-    virtual int getSize() const {return 2;}
+    virtual int getqTSize() const {return 2;}
 };
 
-class TranslationInXZDirectionWidget : public TranslationWidget {
+class TranslationInXZDirectionWidget : public RotationIndependentTranslationWidget {
 
   public:
-    TranslationInXZDirectionWidget() {}
-    virtual int getSize() const {return 2;}
+    virtual int getqTSize() const {return 2;}
 };
 
-class TranslationInYZDirectionWidget : public TranslationWidget {
+class TranslationInYZDirectionWidget : public RotationIndependentTranslationWidget {
 
   public:
-    TranslationInYZDirectionWidget() {}
-    virtual int getSize() const {return 2;}
+    virtual int getqTSize() const {return 2;}
 };
 
-class TranslationInXYZDirectionWidget : public TranslationWidget {
+class TranslationInXYZDirectionWidget : public RotationIndependentTranslationWidget {
 
   public:
-    TranslationInXYZDirectionWidget() {}
-    virtual int getSize() const {return 3;}
+    virtual int getqTSize() const {return 3;}
 };
 
-class LinearTranslationWidget : public TranslationWidget {
+class LinearTranslationWidget : public RotationIndependentTranslationWidget {
   Q_OBJECT
 
   friend class LinearTranslationProperty;
 
   public:
     LinearTranslationWidget();
-    int getSize() const;
+    int getqTSize() const;
   protected:
     ExtWidget *mat;
   signals:
     void translationChanged();
 };
 
-class TimeDependentTranslationWidget : public TranslationWidget {
+class TimeDependentTranslationWidget : public RotationIndependentTranslationWidget {
 
   friend class TimeDependentTranslationProperty;
 
   public:
     TimeDependentTranslationWidget();
-    int getSize() const {return 0;}
+    int getqTSize() const {return 0;}
   protected:
     ExtWidget *function;
 };
@@ -115,7 +112,7 @@ class StateDependentTranslationWidget : public TranslationWidget {
 
   public:
     StateDependentTranslationWidget();
-    int getSize() const {return 0;}
+    int getqSize() const;
   protected:
     ExtWidget *function;
 };
@@ -126,7 +123,7 @@ class GeneralTranslationWidget : public TranslationWidget {
 
   public:
     GeneralTranslationWidget();
-    int getSize() const {return 0;}
+    int getqSize() const {return 0;}
   protected:
     ExtWidget *function;
 };
@@ -139,7 +136,12 @@ class TranslationChoiceWidget : public Widget {
   public:
     TranslationChoiceWidget();
 
-    int getSize() const { return translation->getSize(); }
+    int getqSize() const { return translation->getqSize(); }
+    int getuSize() const { return translation->getuSize(); }
+    int getqTSize() const { return translation->getqTSize(); }
+    int getuTSize() const { return translation->getuTSize(); }
+
+    bool isIndependent() const {return dynamic_cast<RotationIndependentTranslationWidget*>(translation)!=NULL;}
 
   protected slots:
     void defineTranslation(int);
@@ -155,91 +157,87 @@ class TranslationChoiceWidget : public Widget {
 class RotationWidget : public Widget {
 
   public:
-    RotationWidget() {}
-    virtual int getSize() const = 0;
+    virtual int getqSize() const {return 0;}
+    virtual int getuSize() const {return getqSize();}
+    virtual int getqRSize() const {return 0;}
+    virtual int getuRSize() const {return getqRSize();}
 };
 
-class RotationAboutXAxisWidget : public RotationWidget {
+class TranslationIndependentRotationWidget : public RotationWidget  {
+};
+
+class RotationAboutXAxisWidget : public TranslationIndependentRotationWidget {
 
   public:
-    RotationAboutXAxisWidget() {}
-    virtual int getSize() const {return 1;}
+    virtual int getqRSize() const {return 1;}
 };
 
-class RotationAboutYAxisWidget : public RotationWidget {
+class RotationAboutYAxisWidget : public TranslationIndependentRotationWidget {
 
   public:
-    RotationAboutYAxisWidget() {}
-    virtual int getSize() const {return 1;}
+    virtual int getqRSize() const {return 1;}
 };
 
-class RotationAboutZAxisWidget : public RotationWidget {
+class RotationAboutZAxisWidget : public TranslationIndependentRotationWidget {
 
   public:
-    RotationAboutZAxisWidget() {}
-    virtual int getSize() const {return 1;}
+    virtual int getqRSize() const {return 1;}
 };
 
-class RotationAboutFixedAxisWidget : public RotationWidget {
+class RotationAboutFixedAxisWidget : public TranslationIndependentRotationWidget {
 
   friend class RotationAboutFixedAxisProperty;
 
   public:
     RotationAboutFixedAxisWidget();
-    virtual int getSize() const {return 1;}
+    virtual int getqRSize() const {return 1;}
   protected:
     ExtWidget *vec;
 };
 
-class RotationAboutAxesXYWidget : public RotationWidget {
+class RotationAboutAxesXYWidget : public TranslationIndependentRotationWidget {
 
   public:
-    RotationAboutAxesXYWidget() {}
-    virtual int getSize() const {return 2;}
+    virtual int getqRSize() const {return 2;}
 };
 
-class RotationAboutAxesXZWidget : public RotationWidget {
+class RotationAboutAxesXZWidget : public TranslationIndependentRotationWidget {
 
   public:
-    RotationAboutAxesXZWidget() {}
-    virtual int getSize() const {return 2;}
+    virtual int getqRSize() const {return 2;}
 };
 
-class RotationAboutAxesYZWidget : public RotationWidget {
+class RotationAboutAxesYZWidget : public TranslationIndependentRotationWidget {
 
   public:
-    RotationAboutAxesYZWidget() {}
-    virtual int getSize() const {return 2;}
+    virtual int getqRSize() const {return 2;}
 };
 
-class RotationAboutAxesXYZWidget : public RotationWidget {
+class RotationAboutAxesXYZWidget : public TranslationIndependentRotationWidget {
 
   public:
-    RotationAboutAxesXYZWidget() {}
-    virtual int getSize() const {return 3;}
+    virtual int getqRSize() const {return 3;}
 };
 
-class CardanAnglesWidget : public RotationWidget {
+class CardanAnglesWidget : public TranslationIndependentRotationWidget {
 
   public:
-    CardanAnglesWidget() {}
-    virtual int getSize() const {return 3;}
+    virtual int getqRSize() const {return 3;}
 };
 
-class EulerAnglesWidget : public RotationWidget {
+class EulerAnglesWidget : public TranslationIndependentRotationWidget {
 
   public:
-    EulerAnglesWidget() {}
-    virtual int getSize() const {return 3;}
+    virtual int getqRSize() const {return 3;}
 };
 
-class TimeDependentRotationAboutFixedAxisWidget : public RotationWidget {
+class TimeDependentRotationAboutFixedAxisWidget : public TranslationIndependentRotationWidget {
 
   friend class TimeDependentRotationAboutFixedAxisProperty;
 
   public:
     TimeDependentRotationAboutFixedAxisWidget();
-    int getSize() const {return 0;}
+    int getqRSize() const {return 0;}
   protected:
     ExtWidget *vec, *function;
 };
@@ -250,7 +248,7 @@ class StateDependentRotationAboutFixedAxisWidget : public RotationWidget {
 
   public:
     StateDependentRotationAboutFixedAxisWidget();
-    int getSize() const {return 0;}
+    int getqSize() const;
   protected:
     ExtWidget *vec, *function;
 };
@@ -263,7 +261,12 @@ class RotationChoiceWidget : public Widget {
   public:
     RotationChoiceWidget();
 
-    int getSize() const { return rotation->getSize(); }
+    int getqSize() const { return rotation->getqSize(); }
+    int getuSize() const { return rotation->getuSize(); }
+    int getqRSize() const { return rotation->getqRSize(); }
+    int getuRSize() const { return rotation->getuRSize(); }
+
+    bool isIndependent() const {return dynamic_cast<TranslationIndependentRotationWidget*>(rotation)!=NULL;}
 
   public slots:
     void defineRotation(int);

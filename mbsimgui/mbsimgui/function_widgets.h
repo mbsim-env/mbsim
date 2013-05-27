@@ -64,6 +64,7 @@ class SymbolicFunction1Widget : public Function1Widget {
   public:
     SymbolicFunction1Widget(const QString &ext);
     inline QString getType() const { return QString("SymbolicFunction1_")+ext; }
+    int getArgDim() const;
   protected:
     ExtWidget *f;
     std::vector<ExtWidget*> argname, argdim;
