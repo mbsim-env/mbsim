@@ -223,6 +223,12 @@ namespace MBSim {
     epsilon = Element::getDouble(e);
   }
 
+  TiXmlElement* UnilateralNewtonImpact::writeXMLFile(TiXmlNode *parent) { 
+    TiXmlElement *ele0 = GeneralizedImpactLaw::writeXMLFile(parent);
+    addElementText(ele0,MBSIMNS"restitutionCoefficient",epsilon);
+    return ele0;
+  }
+
   double BilateralImpact::project(double la, double gdn, double gda, double r, double laMin) {
     return la - r * gdn;
   }
@@ -240,6 +246,17 @@ namespace MBSim {
 
   bool BilateralImpact::isFulfilled(double la, double gdn, double gda, double laTol, double gdTol, double laMin) {
     return fabs(gdn) <= gdTol;
+  }
+
+  TiXmlElement* FrictionForceLaw::writeXMLFile(TiXmlNode *parent) { 
+    TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
+    if(frictionForceFunc) {
+      TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"frictionForceFunction" );
+      frictionForceFunc->writeXMLFile(ele1);
+      ele0->LinkEndChild(ele1);
+    }
+    parent->LinkEndChild(ele0);
+    return ele0;
   }
 
   Vec PlanarCoulombFriction::project(const Vec& la, const Vec& gdn, double laN, double r) {
@@ -290,6 +307,12 @@ namespace MBSim {
     TiXmlElement *e;
     e = element->FirstChildElement(MBSIMNS"frictionCoefficient");
     setFrictionCoefficient(Element::getDouble(e));
+  }
+
+  TiXmlElement* PlanarCoulombFriction::writeXMLFile(TiXmlNode *parent) { 
+    TiXmlElement *ele0 = FrictionForceLaw::writeXMLFile(parent);
+    addElementText(ele0,MBSIMNS"frictionCoefficient",mu);
+    return ele0;
   }
   
   //Vec CoulombFriction::project(const Vec& la, const Vec& gdn, const Vec& r) {
@@ -422,6 +445,12 @@ namespace MBSim {
     setFrictionCoefficient(Element::getDouble(e));
   }
 
+  TiXmlElement* SpatialCoulombFriction::writeXMLFile(TiXmlNode *parent) { 
+    TiXmlElement *ele0 = FrictionForceLaw::writeXMLFile(parent);
+    addElementText(ele0,MBSIMNS"frictionCoefficient",mu);
+    return ele0;
+  }
+
   Vec PlanarStribeckFriction::project(const Vec& la, const Vec& gdn, double laN, double r) {
     return Vec(1, INIT, proxCT2D(la(0) - r * gdn(0), (*fmu)(0) * fabs(laN)));
   }
@@ -503,6 +532,12 @@ namespace MBSim {
     return -(*fmu)(nrm2(gd)) * gd / nrm2(gd);
   }
 
+  TiXmlElement* FrictionImpactLaw::writeXMLFile(TiXmlNode *parent) { 
+    TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
+    parent->LinkEndChild(ele0);
+    return ele0;
+  }
+
   Vec PlanarCoulombImpact::project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
     return Vec(1, INIT, proxCT2D(la(0) - r * gdn(0), mu * fabs(laN)));
   }
@@ -556,6 +591,12 @@ namespace MBSim {
     setFrictionCoefficient(Element::getDouble(e));
   }
 
+  TiXmlElement* PlanarCoulombImpact::writeXMLFile(TiXmlNode *parent) { 
+    TiXmlElement *ele0 = FrictionImpactLaw::writeXMLFile(parent);
+    addElementText(ele0,MBSIMNS"frictionCoefficient",mu);
+    return ele0;
+  }
+
   Vec SpatialCoulombImpact::project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
     return proxCT3D(la - r * gdn, mu * fabs(laN));
   }
@@ -604,6 +645,12 @@ namespace MBSim {
     TiXmlElement *e;
     e = element->FirstChildElement(MBSIMNS"frictionCoefficient");
     setFrictionCoefficient(Element::getDouble(e));
+  }
+
+  TiXmlElement* SpatialCoulombImpact::writeXMLFile(TiXmlNode *parent) { 
+    TiXmlElement *ele0 = FrictionImpactLaw::writeXMLFile(parent);
+    addElementText(ele0,MBSIMNS"frictionCoefficient",mu);
+    return ele0;
   }
 
   Vec PlanarStribeckImpact::project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {

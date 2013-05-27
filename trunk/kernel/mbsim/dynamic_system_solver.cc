@@ -65,11 +65,11 @@ namespace MBSim {
 
   bool DynamicSystemSolver::exitRequest=false;
 
-  DynamicSystemSolver::DynamicSystemSolver() : Group("Default"), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), reorganizeHierarchy(true), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), rootID(0), INFO(true), READZ0(false), truncateSimulationFiles(true) { 
+  DynamicSystemSolver::DynamicSystemSolver() : Group("Default"), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), reorganizeHierarchy(true), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), rootID(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), INFO(true), READZ0(false), truncateSimulationFiles(true) { 
     constructor();
   } 
 
-  DynamicSystemSolver::DynamicSystemSolver(const string &projectName) : Group(projectName), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), reorganizeHierarchy(true), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), rootID(0), INFO(true), READZ0(false), truncateSimulationFiles(true) { 
+  DynamicSystemSolver::DynamicSystemSolver(const string &projectName) : Group(projectName), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), reorganizeHierarchy(true), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), rootID(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), INFO(true), READZ0(false), truncateSimulationFiles(true) { 
     constructor();
   }
 
@@ -1423,6 +1423,56 @@ namespace MBSim {
     TiXmlElement *ele1 = new TiXmlElement( MBSIMNS"environments" );
     MBSimEnvironment::getInstance()->writeXMLFile(ele1);
     ele0->LinkEndChild( ele1 );
+
+    ele1 = new TiXmlElement( MBSIMNS"solverParameters" );
+    if(contactSolver!=FixedPointSingle) {
+      TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"constraintSolver" );
+      if(contactSolver==FixedPointTotal)
+        ele2->LinkEndChild(new TiXmlElement( MBSIMNS"FixedPointTotal" ));
+      else if(contactSolver==FixedPointSingle)
+        ele2->LinkEndChild(new TiXmlElement( MBSIMNS"FixedPointSingle" ));
+      else if(contactSolver==GaussSeidel)
+        ele2->LinkEndChild(new TiXmlElement( MBSIMNS"GaussSeidel" ));
+      else if(contactSolver==LinearEquations)
+        ele2->LinkEndChild(new TiXmlElement( MBSIMNS"LinearEquations" ));
+      else if(contactSolver==RootFinding)
+        ele2->LinkEndChild(new TiXmlElement( MBSIMNS"RootFinding" ));
+      ele1->LinkEndChild(ele2);
+    }
+    if(impactSolver!=FixedPointSingle) {
+      TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"impactSolver" );
+      if(impactSolver==FixedPointTotal)
+        ele2->LinkEndChild(new TiXmlElement( MBSIMNS"FixedPointTotal" ));
+      else if(impactSolver==FixedPointSingle)
+        ele2->LinkEndChild(new TiXmlElement( MBSIMNS"FixedPointSingle" ));
+      else if(impactSolver==GaussSeidel)
+        ele2->LinkEndChild(new TiXmlElement( MBSIMNS"GaussSeidel" ));
+      else if(impactSolver==LinearEquations)
+        ele2->LinkEndChild(new TiXmlElement( MBSIMNS"LinearEquations" ));
+      else if(impactSolver==RootFinding)
+        ele2->LinkEndChild(new TiXmlElement( MBSIMNS"RootFinding" ));
+      ele1->LinkEndChild(ele2);
+    }
+    if(maxIter!=10000)
+      addElementText(ele1,MBSIMNS"numberOfMaximalIterations",maxIter);
+    TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"tolerances" );
+    if(tolProj!=1e-15)
+      addElementText(ele2,MBSIMNS"projection",tolProj);
+    if(gTol!=1e-8)
+      addElementText(ele2,MBSIMNS"g",gTol);
+    if(gdTol!=1e-10)
+      addElementText(ele2,MBSIMNS"gd",gdTol);
+    if(gddTol!=1e-12)
+      addElementText(ele2,MBSIMNS"gdd",gddTol);
+    if(laTol!=1e-12)
+      addElementText(ele2,MBSIMNS"la",laTol);
+    if(LaTol!=1e-10)
+      addElementText(ele2,MBSIMNS"La",LaTol);
+    ele1->LinkEndChild( ele2 );
+    ele0->LinkEndChild( ele1 );
+    if(inverseKinetics)
+      addElementText(ele0,MBSIMNS"inverseKinetics",inverseKinetics);
+
     return ele0;
   }
 

@@ -231,6 +231,7 @@ namespace MBSim {
       void computeCurvatures(fmatvec::Vec & r, int contactKinematicsIndex) const;
 
       virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
 
       void calccorrSize(int j);
       void updatecorr(int j);
