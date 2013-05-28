@@ -183,6 +183,7 @@ class SummationFunction1Widget : public Function1Widget {
     void addFunction();
     void removeFunction();
     void openContextMenu(const QPoint &pos);
+    void changeCurrent(int idx);
   signals:
     void resize();
 };

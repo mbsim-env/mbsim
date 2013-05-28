@@ -193,7 +193,7 @@ class OMBVBodyChoiceProperty : public Property {
 
   public:
 
-    OMBVBodyChoiceProperty(const std::string &name, bool flag=true, const std::string &ID="");
+    OMBVBodyChoiceProperty(const std::string &name, const std::string &ID="");
 
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);

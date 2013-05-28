@@ -253,7 +253,6 @@ CompoundRigidBodyWidget::CompoundRigidBodyWidget(const QString &name) : OMBVBody
   sublayout->addWidget(bodyList);
   stackedWidget = new QStackedWidget;
   connect(bodyList,SIGNAL(currentRowChanged(int)),this,SLOT(changeCurrent(int)));
-  //  connect(bodyList,SIGNAL(currentRowChanged(int)),stackedWidget,SLOT(setCurrentIndex(int)));
   connect(bodyList,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(openContextMenu(const QPoint &)));
   sublayout->addWidget(stackedWidget);
 }
@@ -285,10 +284,11 @@ void CompoundRigidBodyWidget::openContextMenu(const QPoint &pos) {
 
 void CompoundRigidBodyWidget::addBody() {
   int i = body.size();
-  body.push_back(new OMBVBodyChoiceWidget((QString("Body")+QString::number(i+1)),false));
+  body.push_back(new OMBVBodyChoiceWidget((QString("Body")+QString::number(i+1))));
+  if(i>0)
+    body[i]->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
   bodyList->addItem((QString("Body")+QString::number(i+1)));
   stackedWidget->addWidget(body[i]);
-  //stackedWidget->widget(i)->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Ignored);
 }
 
 void CompoundRigidBodyWidget::removeBody() {
@@ -304,7 +304,7 @@ void CompoundRigidBodyWidget::removeBody() {
   }
 }
 
-OMBVBodyChoiceWidget::OMBVBodyChoiceWidget(const QString &name_, bool flag) : ombv(0), name(name_) {
+OMBVBodyChoiceWidget::OMBVBodyChoiceWidget(const QString &name_) : ombv(0), name(name_) {
 
   layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -316,8 +316,7 @@ OMBVBodyChoiceWidget::OMBVBodyChoiceWidget(const QString &name_, bool flag) : om
   comboBox->addItem(tr("Frustum"));
   comboBox->addItem(tr("Sphere"));
   comboBox->addItem(tr("IvBody"));
-  if(flag)
-    comboBox->addItem(tr("CompoundRigidBody"));
+  comboBox->addItem(tr("CompoundRigidBody"));
   comboBox->addItem(tr("InvisibleBody"));
   layout->addWidget(comboBox);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ombvSelection(int)));
@@ -352,7 +351,7 @@ OMBVBodySelectionWidget::OMBVBodySelectionWidget(RigidBody *body) : ombv(0), ref
   layout->setMargin(0);
   setLayout(layout);
 
-  ombv = new OMBVBodyChoiceWidget("NOTSET", true);
+  ombv = new OMBVBodyChoiceWidget("NOTSET");
   ref=new LocalFrameOfReferenceWidget(body);
   ExtWidget *widget = new ExtWidget("Frame of reference",ref);
   layout->addWidget(ombv);

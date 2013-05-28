@@ -518,7 +518,7 @@ TiXmlElement* CompoundRigidBodyProperty::initializeUsingXML(TiXmlElement *elemen
   TiXmlElement *e=element->FirstChildElement(OPENMBVNS"scaleFactor");
   e=e->NextSiblingElement();
   while(e) {
-    body.push_back(new OMBVBodyChoiceProperty("Body"+toStr(int(body.size()+1)),false));
+    body.push_back(new OMBVBodyChoiceProperty("Body"+toStr(int(body.size()+1))));
     body[body.size()-1]->initializeUsingXML(e);
     e=e->NextSiblingElement();
   }
@@ -535,7 +535,7 @@ TiXmlElement* CompoundRigidBodyProperty::writeXMLFile(TiXmlNode *parent) {
 void CompoundRigidBodyProperty::fromWidget(QWidget *widget) {
   OMBVBodyProperty::fromWidget(widget);
   for(unsigned int i=0; i<static_cast<CompoundRigidBodyWidget*>(widget)->body.size(); i++) {
-    body.push_back(new OMBVBodyChoiceProperty("Body"+toStr(int(body.size()+1)),false));
+    body.push_back(new OMBVBodyChoiceProperty("Body"+toStr(int(body.size()+1))));
     body[i]->fromWidget(static_cast<CompoundRigidBodyWidget*>(widget)->body[i]);
   }
 }
@@ -548,7 +548,7 @@ void CompoundRigidBodyProperty::toWidget(QWidget *widget) {
   }
 }
 
-OMBVBodyChoiceProperty::OMBVBodyChoiceProperty(const string &name_, bool flag, const string &ID_) : ombv(0), index(0), name(name_), ID(ID_) {
+OMBVBodyChoiceProperty::OMBVBodyChoiceProperty(const string &name_, const string &ID_) : ombv(0), index(0), name(name_), ID(ID_) {
   ombvSelection(0);
 }
 
@@ -569,7 +569,8 @@ void OMBVBodyChoiceProperty::ombvSelection(int index_) {
     ombv = new CompoundRigidBodyProperty(name);  
   else if(index==6)
     ombv = new InvisibleBodyProperty(name);  
-  ombv->setID(ID);
+  if(index!=5)
+    ombv->setID(ID);
 }
 
 TiXmlElement* OMBVBodyChoiceProperty::initializeUsingXML(TiXmlElement *element) {
@@ -615,7 +616,7 @@ void OMBVBodyChoiceProperty::toWidget(QWidget *widget) {
   ombv->toWidget(static_cast<OMBVBodyChoiceWidget*>(widget)->ombv);
 }
 
-OMBVBodySelectionProperty::OMBVBodySelectionProperty(RigidBody *body) : ombv("NOTSET", true, body->getID()), ref("Frame[C]",body,MBSIMNS"frameOfReference") {
+OMBVBodySelectionProperty::OMBVBodySelectionProperty(RigidBody *body) : ombv("NOTSET", body->getID()), ref("Frame[C]",body,MBSIMNS"frameOfReference") {
 
 }
 

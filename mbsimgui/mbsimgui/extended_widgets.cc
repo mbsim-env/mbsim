@@ -39,32 +39,21 @@ ExtPhysicalVarWidget::ExtPhysicalVarWidget(std::vector<PhysicalVariableWidget*> 
 
   inputCombo = new QComboBox;
   stackedWidget = new QStackedWidget;
-  //connect(inputCombo,SIGNAL(currentIndexChanged(int)),stackedWidget,SLOT(setCurrentIndex(int)));
   connect(inputCombo,SIGNAL(currentIndexChanged(int)),this,SLOT(changeCurrent(int)));
   connect(inputCombo,SIGNAL(currentIndexChanged(int)),this,SIGNAL(inputDialogChanged(int)));
   for(unsigned int i=0; i<inputWidget.size()-1; i++) {
     stackedWidget->addWidget(inputWidget[i]);
-    //inputCombo->addItem(QString("Schema ")+QString::number(i+1));
     inputCombo->addItem(inputWidget[i]->getType());
-    inputWidget[i+1]->hide();
+    if(i>0)
+      inputWidget[i]->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
   }
-  inputWidget[inputWidget.size()-1]->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
   stackedWidget->addWidget(inputWidget[inputWidget.size()-1]);
-  //inputCombo->addItem("Editor");
   inputCombo->addItem(inputWidget[inputWidget.size()-1]->getType());
-
+  inputWidget[inputWidget.size()-1]->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
   layout->addWidget(stackedWidget);
   layout->addWidget(evalButton);
   layout->addWidget(inputCombo);
-
-
-  //adjustSize();
- // layout->addWidget(stackedWidget,0,0,3,1);
- // if(units.size())
- //   layout->addWidget(unit,0,1);
- // layout->addWidget(evalButton,1,1);
- // layout->addWidget(inputCombo,2,1);
 }
 
 ExtPhysicalVarWidget::~ExtPhysicalVarWidget() {
@@ -117,12 +106,13 @@ WidgetChoiceWidget::WidgetChoiceWidget(const vector<QString> &name, const vector
   for(unsigned int i=0; i<name.size(); i++) {
     choice->addItem(name[i]);
     stackedWidget->addWidget(widget[i]);
+    if(i>0)
+      widget[i]->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
   }
   setLayout(layout);
   layout->addWidget(choice);
 
-  connect(choice,SIGNAL(currentIndexChanged(int)),stackedWidget,SLOT(setCurrentIndex(int)));
-  //connect(choice,SIGNAL(currentIndexChanged(int)),this,SLOT(changeCurrent(int)));
+  connect(choice,SIGNAL(currentIndexChanged(int)),this,SLOT(changeCurrent(int)));
   layout->addWidget(stackedWidget);
 }
 

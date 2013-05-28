@@ -171,9 +171,17 @@ SummationFunction1Widget::SummationFunction1Widget(int n_) : n(n_) {
   functionList->setMaximumWidth(functionList->sizeHint().width()/3);
   layout->addWidget(functionList);
   stackedWidget = new QStackedWidget;
-  connect(functionList,SIGNAL(currentRowChanged(int)),stackedWidget,SLOT(setCurrentIndex(int)));
+  connect(functionList,SIGNAL(currentRowChanged(int)),this,SLOT(changeCurrent(int)));
   connect(functionList,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(openContextMenu(const QPoint &)));
   layout->addWidget(stackedWidget,0,Qt::AlignTop);
+}
+
+void SummationFunction1Widget::changeCurrent(int idx) {
+  if (stackedWidget->currentWidget() !=0)
+    stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->setCurrentIndex(idx);
+  stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  adjustSize();
 }
 
 void SummationFunction1Widget::openContextMenu(const QPoint &pos) {
@@ -206,6 +214,8 @@ void SummationFunction1Widget::updateList() {
 void SummationFunction1Widget::addFunction() {
   int i = functionChoice.size();
   functionChoice.push_back(new Function1ChoiceWidget(true,n));
+  if(i>0)
+    functionChoice[i]->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
   functionList->addItem("Undefined");
   connect(functionChoice[i],SIGNAL(functionChanged()),this,SLOT(updateList()));
   connect(functionChoice[i],SIGNAL(resize()),this,SIGNAL(resize()));
