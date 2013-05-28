@@ -258,19 +258,20 @@ class Function1ChoiceWidget : public Widget {
   public:
     Function1ChoiceWidget(bool withFactor=false, int n=0, const QString& ext="VS");
 
-    void resize(int m, int n) {if(function) function->resize(m,n);}
-    Function1Widget* getFunction() {return function;}
+    void resize(int m, int n);
+    Function1Widget* getFunction(int i);
+    Function1Widget* getFunction();
 
   protected slots:
     void defineFunction(int);
 
   protected:
     QComboBox *comboBox;
-    QVBoxLayout *layout;
-    Function1Widget *function;
-    ExtWidget *factor;
+    QStackedWidget *stackedWidget;
+    ExtWidget* factor;
     int n;
     QString ext;
+
   signals:
     void resize();
     void functionChanged();
@@ -284,18 +285,21 @@ class Function2ChoiceWidget : public Widget {
   public:
     Function2ChoiceWidget(const QString& ext="VVS");
 
-    void resize(int m, int n) {if(function) function->resize(m,n);}
+    void resize(int m, int n);
+    Function2Widget* getFunction(int i);
+    Function2Widget* getFunction();
 
   protected slots:
       void defineFunction(int);
 
   protected:
     QComboBox *comboBox;
-    QVBoxLayout *layout;
-    Function2Widget *function;
+    QStackedWidget *stackedWidget;
     QString ext;
+
   signals:
     void resize();
+    void functionChanged();
 };
 
 

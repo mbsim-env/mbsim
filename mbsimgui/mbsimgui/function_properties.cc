@@ -479,33 +479,26 @@ void LinearRegularizedCoulombFrictionProperty::toWidget(QWidget *widget) {
   mu.toWidget(static_cast<LinearRegularizedCoulombFrictionWidget*>(widget)->mu);
 }
 
-Function1ChoiceProperty::Function1ChoiceProperty(const string &xmlName_, bool withFactor, const string &ext_) : function(0), factor(0), index(0), xmlName(xmlName_), ext(ext_) {
+Function1ChoiceProperty::Function1ChoiceProperty(const string &xmlName_, bool withFactor, const string &ext_) : factor(0), index(0), xmlName(xmlName_), ext(ext_) {
 
   if(withFactor) {
     vector<PhysicalVariableProperty*> input;
     input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMNS"factor"));
     factor.setProperty(new ExtPhysicalVarProperty(input));
   }
-  defineFunction(0);
+  function.push_back(new ConstantFunction1Property(ext));
+  function.push_back(new QuadraticFunction1Property);
+  function.push_back(new SinusFunction1Property);
+  function.push_back(new TabularFunction1Property);
+  function.push_back(new SummationFunction1Property);
+  function.push_back(new SymbolicFunction1Property(ext));  
 }
 
-void Function1ChoiceProperty::defineFunction(int index_) {
-  index = index_;
-  delete function;
-  if(index==0)
-    function = new ConstantFunction1Property(ext);  
-  else if(index==1)
-    function = new QuadraticFunction1Property;
-  else if(index==2)
-    function = new SinusFunction1Property;
-  else if(index==3)
-    function = new TabularFunction1Property;
-  else if(index==4)
-    function = new SummationFunction1Property;
-  else if(index==5)
-    function = new SymbolicFunction1Property(ext);  
+Function1ChoiceProperty::~Function1ChoiceProperty() {
+  for(unsigned int i=0; i<function.size(); i++)
+    delete function[i];
 }
-
+  
 TiXmlElement* Function1ChoiceProperty::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=xmlName!=""?element->FirstChildElement(xmlName):element;
   if(e) {
@@ -523,8 +516,7 @@ TiXmlElement* Function1ChoiceProperty::initializeUsingXML(TiXmlElement *element)
         index = 4;
       else if(ee->ValueStr() == MBSIMNS"SymbolicFunction1_"+ext)
         index = 5;
-      defineFunction(index);
-      function->initializeUsingXML(ee);
+      function[index]->initializeUsingXML(ee);
     }
     if(factor.getProperty())
       factor.initializeUsingXML(e);
@@ -540,8 +532,7 @@ TiXmlElement* Function1ChoiceProperty::writeXMLFile(TiXmlNode *parent) {
   }
   else
     ele0 = parent;
-  if(function)
-    function->writeXMLFile(ele0);
+  function[index]->writeXMLFile(ele0);
   if(factor.getProperty())
     factor.writeXMLFile(ele0);
 
@@ -549,8 +540,10 @@ TiXmlElement* Function1ChoiceProperty::writeXMLFile(TiXmlNode *parent) {
 }
 
 void Function1ChoiceProperty::fromWidget(QWidget *widget) {
-  defineFunction(static_cast<Function1ChoiceWidget*>(widget)->comboBox->currentIndex());
-  function->fromWidget(static_cast<Function1ChoiceWidget*>(widget)->function);
+  index = static_cast<Function1ChoiceWidget*>(widget)->comboBox->currentIndex();
+  function[index]->fromWidget(static_cast<Function1ChoiceWidget*>(widget)->getFunction());
+  //for(unsigned int i=0; i<function.size(); i++)
+  //  function[i]->fromWidget(static_cast<Function1ChoiceWidget*>(widget)->getFunction(i));
   if(factor.getProperty())
     factor.fromWidget(static_cast<Function1ChoiceWidget*>(widget)->factor);
 }
@@ -562,22 +555,21 @@ void Function1ChoiceProperty::toWidget(QWidget *widget) {
   static_cast<Function1ChoiceWidget*>(widget)->blockSignals(true);
   static_cast<Function1ChoiceWidget*>(widget)->defineFunction(index);
   static_cast<Function1ChoiceWidget*>(widget)->blockSignals(false);
-  function->toWidget(static_cast<Function1ChoiceWidget*>(widget)->function);
+  function[index]->toWidget(static_cast<Function1ChoiceWidget*>(widget)->getFunction());
+  //for(unsigned int i=0; i<function.size(); i++)
+  //  function[i]->toWidget(static_cast<Function1ChoiceWidget*>(widget)->getFunction(i));
   if(factor.getProperty())
     factor.toWidget(static_cast<Function1ChoiceWidget*>(widget)->factor);
 }
 
-Function2ChoiceProperty::Function2ChoiceProperty(const string &xmlName_, const string &ext_) : function(0), index(0), xmlName(xmlName_), ext(ext_) {
-  defineFunction(0);
+Function2ChoiceProperty::Function2ChoiceProperty(const string &xmlName_, const string &ext_) : index(0), xmlName(xmlName_), ext(ext_) {
+  function.push_back(new LinearSpringDamperForceProperty);
+  function.push_back(new SymbolicFunction2Property(ext));  
 }
 
-void Function2ChoiceProperty::defineFunction(int index_) {
-  index = index_;
-  delete function;
-  if(index==0)
-    function = new LinearSpringDamperForceProperty;  
-  else if(index==1)
-    function = new SymbolicFunction2Property(ext);  
+Function2ChoiceProperty::~Function2ChoiceProperty() {
+  for(unsigned int i=0; i<function.size(); i++)
+    delete function[i];
 }
 
 TiXmlElement* Function2ChoiceProperty::initializeUsingXML(TiXmlElement *element) {
@@ -589,25 +581,28 @@ TiXmlElement* Function2ChoiceProperty::initializeUsingXML(TiXmlElement *element)
         index = 0;
       else if(ee->ValueStr() == MBSIMNS"SymbolicFunction2_"+ext)
         index = 1;
-      defineFunction(index);
-      function->initializeUsingXML(ee);
+      function[index]->initializeUsingXML(ee);
     }
   }
   return e;
 }
 
 TiXmlElement* Function2ChoiceProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = new TiXmlElement(xmlName);
-  if(function)
-    function->writeXMLFile(ele0);
-  parent->LinkEndChild(ele0);
+  TiXmlNode *ele0;
+  if(xmlName!="") {
+    ele0 = new TiXmlElement(xmlName);
+    parent->LinkEndChild(ele0);
+  }
+  else
+    ele0 = parent;
+  function[index]->writeXMLFile(ele0);
 
   return 0;
 }
 
 void Function2ChoiceProperty::fromWidget(QWidget *widget) {
-  defineFunction(static_cast<Function2ChoiceWidget*>(widget)->comboBox->currentIndex());
-  function->fromWidget(static_cast<Function2ChoiceWidget*>(widget)->function);
+  index = static_cast<Function2ChoiceWidget*>(widget)->comboBox->currentIndex();
+  function[index]->fromWidget(static_cast<Function2ChoiceWidget*>(widget)->getFunction());
 }
 
 void Function2ChoiceProperty::toWidget(QWidget *widget) {
@@ -617,5 +612,5 @@ void Function2ChoiceProperty::toWidget(QWidget *widget) {
   static_cast<Function2ChoiceWidget*>(widget)->blockSignals(true);
   static_cast<Function2ChoiceWidget*>(widget)->defineFunction(index);
   static_cast<Function2ChoiceWidget*>(widget)->blockSignals(false);
-  function->toWidget(static_cast<Function2ChoiceWidget*>(widget)->function);
+  function[index]->toWidget(static_cast<Function2ChoiceWidget*>(widget)->getFunction());
 }

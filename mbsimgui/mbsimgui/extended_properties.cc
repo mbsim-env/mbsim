@@ -57,14 +57,16 @@ TiXmlElement* ExtPhysicalVarProperty::writeXMLFile(TiXmlNode *parent) {
 
 void ExtPhysicalVarProperty::fromWidget(QWidget *widget) {
   currentInput = static_cast<ExtPhysicalVarWidget*>(widget)->getCurrentInput();
-  for(int i=0; i< inputProperty.size(); i++)
-    inputProperty[i]->fromWidget(static_cast<ExtPhysicalVarWidget*>(widget)->getPhysicalVariableWidget(i));
+  inputProperty[currentInput]->fromWidget(static_cast<ExtPhysicalVarWidget*>(widget)->getCurrentPhysicalVariableWidget());
+//  for(int i=0; i< inputProperty.size(); i++)
+//    inputProperty[i]->fromWidget(static_cast<ExtPhysicalVarWidget*>(widget)->getPhysicalVariableWidget(i));
 }
 
 void ExtPhysicalVarProperty::toWidget(QWidget *widget) {
   static_cast<ExtPhysicalVarWidget*>(widget)->setCurrentInput(currentInput);
-  for(int i=0; i< inputProperty.size(); i++)
-    inputProperty[i]->toWidget(static_cast<ExtPhysicalVarWidget*>(widget)->getPhysicalVariableWidget(i));
+  inputProperty[currentInput]->toWidget(static_cast<ExtPhysicalVarWidget*>(widget)->getCurrentPhysicalVariableWidget());
+  //for(int i=0; i< inputProperty.size(); i++)
+  //  inputProperty[i]->toWidget(static_cast<ExtPhysicalVarWidget*>(widget)->getPhysicalVariableWidget(i));
 }
 
 PropertyChoiceProperty::~PropertyChoiceProperty() {

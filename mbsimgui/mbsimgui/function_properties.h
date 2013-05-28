@@ -239,8 +239,7 @@ class Function1ChoiceProperty : public Property {
 
   public:
     Function1ChoiceProperty(const std::string &xmlName, bool withFactor=false, const std::string &ext_="VS");
-
-    void defineFunction(int);
+    ~Function1ChoiceProperty();
 
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -248,7 +247,7 @@ class Function1ChoiceProperty : public Property {
     void toWidget(QWidget *widget);
 
   protected:
-    Function1Property *function;
+    std::vector<Function1Property*> function;
     ExtProperty factor;
     int index;
     std::string xmlName;
@@ -259,8 +258,7 @@ class Function2ChoiceProperty : public Property {
 
   public:
     Function2ChoiceProperty(const std::string &xmlName, const std::string &ext_="VVS");
-
-    void defineFunction(int);
+    ~Function2ChoiceProperty();
 
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -268,7 +266,7 @@ class Function2ChoiceProperty : public Property {
     void toWidget(QWidget *widget);
 
   protected:
-    Function2Property *function;
+    std::vector<Function2Property*> function;
     int index;
     std::string xmlName;
     std::string ext;
