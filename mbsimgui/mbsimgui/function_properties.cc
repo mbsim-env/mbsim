@@ -95,7 +95,10 @@ void DifferentiableFunction1Property::setDerivative(Function1Property *diff,size
 
 ConstantFunction1Property::ConstantFunction1Property(const string &ext) : Function1Property(ext) {
   vector<PhysicalVariableProperty*> input;
-  input.push_back(new PhysicalVariableProperty(new VecProperty(1),"",MBSIMNS"value"));
+  if(ext[0]=='V')
+    input.push_back(new PhysicalVariableProperty(new VecProperty(1),"",MBSIMNS"value"));
+  else
+    input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"value"));
   c.setProperty(new ExtPhysicalVarProperty(input));
 }
 

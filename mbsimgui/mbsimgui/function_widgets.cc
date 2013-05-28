@@ -58,7 +58,10 @@ ConstantFunction1Widget::ConstantFunction1Widget(const QString &ext, int n) : Fu
   layout->setMargin(0);
   setLayout(layout);
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new VecWidget(n,true),QStringList(),0));
+  if(ext[0]=='V')
+    input.push_back(new PhysicalVariableWidget(new VecWidget(n,true),QStringList(),0));
+  else
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
   c = new ExtWidget("Value",new ExtPhysicalVarWidget(input));
   layout->addWidget(c);
 }
@@ -339,7 +342,8 @@ Function1ChoiceWidget::Function1ChoiceWidget(bool withFactor, int n_, const QStr
   comboBox->addItem(tr("Symbolic function"));
   layout->addWidget(comboBox);
   stackedWidget = new QStackedWidget;
-  Function1Widget *function = new ConstantFunction1Widget(ext,n);
+  Function1Widget *function;
+  function = new ConstantFunction1Widget(ext,n);
   stackedWidget->addWidget(function);
   function = new QuadraticFunction1Widget(n);
   function->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
@@ -351,6 +355,7 @@ Function1ChoiceWidget::Function1ChoiceWidget(bool withFactor, int n_, const QStr
   function->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
   stackedWidget->addWidget(function);
   function = new SummationFunction1Widget(n);
+  connect(function,SIGNAL(resize()),this,SIGNAL(resize())); 
   function->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
   stackedWidget->addWidget(function);
   function = new SymbolicFunction1Widget(ext);
@@ -363,9 +368,11 @@ Function1ChoiceWidget::Function1ChoiceWidget(bool withFactor, int n_, const QStr
 void Function1ChoiceWidget::resize(int m, int n) {
   getFunction()->resize(m,n);
 }
+
 Function1Widget* Function1ChoiceWidget::getFunction() {
   return static_cast<Function1Widget*>(stackedWidget->currentWidget());
 }
+
 Function1Widget* Function1ChoiceWidget::getFunction(int i) {
   return static_cast<Function1Widget*>(stackedWidget->widget(i));
 }
@@ -390,7 +397,8 @@ Function2ChoiceWidget::Function2ChoiceWidget(const QString& ext_) : ext(ext_) {
   comboBox->addItem(tr("Symbolic function"));
   layout->addWidget(comboBox);
   stackedWidget = new QStackedWidget;
-  Function2Widget *function = new LinearSpringDamperForceWidget;
+  Function2Widget *function;
+  function = new LinearSpringDamperForceWidget;
   stackedWidget->addWidget(function);
   function = new SymbolicFunction2Widget(ext);
   function->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
@@ -402,9 +410,11 @@ Function2ChoiceWidget::Function2ChoiceWidget(const QString& ext_) : ext(ext_) {
 void Function2ChoiceWidget::resize(int m, int n) {
   getFunction()->resize(m,n);
 }
+
 Function2Widget* Function2ChoiceWidget::getFunction() {
   return static_cast<Function2Widget*>(stackedWidget->currentWidget());
 }
+
 Function2Widget* Function2ChoiceWidget::getFunction(int i) {
   return static_cast<Function2Widget*>(stackedWidget->widget(i));
 }

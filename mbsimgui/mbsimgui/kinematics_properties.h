@@ -152,23 +152,23 @@ class GeneralTranslationProperty : public TranslationProperty {
 class TranslationChoiceProperty : public Property {
 
   public:
-    TranslationChoiceProperty(int index, const std::string &xmlName_): translation(0), xmlName(xmlName_) {defineTranslation(index);}
+    TranslationChoiceProperty(int index, const std::string &xmlName_);
+    ~TranslationChoiceProperty();
 
-    int getqSize() const { return translation->getqSize(); }
-    int getuSize() const { return translation->getuSize(); }
-    int getqTSize() const { return translation->getqTSize(); }
-    int getuTSize() const { return translation->getuTSize(); }
+    int getqSize() const { return translation[index]->getqSize(); }
+    int getuSize() const { return translation[index]->getuSize(); }
+    int getqTSize() const { return translation[index]->getqTSize(); }
+    int getuTSize() const { return translation[index]->getuTSize(); }
 
-    bool isIndependent() const {return dynamic_cast<RotationIndependentTranslationProperty*>(translation)!=NULL;}
+    bool isIndependent() const {return dynamic_cast<RotationIndependentTranslationProperty*>(translation[index])!=NULL;}
 
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    void defineTranslation(int);
 
   protected:
-    TranslationProperty *translation;
+    std::vector<TranslationProperty*> translation;
     std::string xmlName;
     int index;
 };
@@ -295,23 +295,23 @@ class StateDependentRotationAboutFixedAxisProperty : public RotationProperty {
 class RotationChoiceProperty : public Property {
 
   public:
-    RotationChoiceProperty(int index, const std::string &xmlName_): rotation(0), xmlName(xmlName_) {defineRotation(index);}
+    RotationChoiceProperty(int index, const std::string &xmlName_);
+    ~RotationChoiceProperty();
 
-    int getqSize() const { return rotation->getqSize(); }
-    int getuSize() const { return rotation->getuSize(); }
-    int getqRSize() const { return rotation->getqRSize(); }
-    int getuRSize() const { return rotation->getuRSize(); }
+    int getqSize() const { return rotation[index]->getqSize(); }
+    int getuSize() const { return rotation[index]->getuSize(); }
+    int getqRSize() const { return rotation[index]->getqRSize(); }
+    int getuRSize() const { return rotation[index]->getuRSize(); }
 
-    bool isIndependent() const {return dynamic_cast<TranslationIndependentRotationProperty*>(rotation)!=NULL;}
+    bool isIndependent() const {return dynamic_cast<TranslationIndependentRotationProperty*>(rotation[index])!=NULL;}
 
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
-    void defineRotation(int);
 
   protected:
-    RotationProperty *rotation;
+    std::vector<RotationProperty*> rotation;
     std::string xmlName;
     int index;
 };

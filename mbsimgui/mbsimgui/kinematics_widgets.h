@@ -26,6 +26,7 @@
 class ExtPhysicalVarWidget;
 class ExtWidget;
 class QVBoxLayout;
+class QStackedWidget;
 
 class TranslationWidget : public Widget {
 
@@ -136,20 +137,22 @@ class TranslationChoiceWidget : public Widget {
   public:
     TranslationChoiceWidget();
 
-    int getqSize() const { return translation->getqSize(); }
-    int getuSize() const { return translation->getuSize(); }
-    int getqTSize() const { return translation->getqTSize(); }
-    int getuTSize() const { return translation->getuTSize(); }
+    int getqSize() const { return getTranslation()->getqSize(); }
+    int getuSize() const { return getTranslation()->getuSize(); }
+    int getqTSize() const { return getTranslation()->getqTSize(); }
+    int getuTSize() const { return getTranslation()->getuTSize(); }
 
-    bool isIndependent() const {return dynamic_cast<RotationIndependentTranslationWidget*>(translation)!=NULL;}
+    bool isIndependent() const {return dynamic_cast<RotationIndependentTranslationWidget*>(getTranslation())!=NULL;}
+
+    TranslationWidget* getTranslation(int i);
+    TranslationWidget* getTranslation() const;
 
   protected slots:
     void defineTranslation(int);
 
   protected:
     QComboBox *comboBox;
-    QVBoxLayout *layout;
-    TranslationWidget *translation;
+    QStackedWidget *stackedWidget;
   signals:
     void translationChanged();
 };
@@ -261,20 +264,22 @@ class RotationChoiceWidget : public Widget {
   public:
     RotationChoiceWidget();
 
-    int getqSize() const { return rotation->getqSize(); }
-    int getuSize() const { return rotation->getuSize(); }
-    int getqRSize() const { return rotation->getqRSize(); }
-    int getuRSize() const { return rotation->getuRSize(); }
+    int getqSize() const { return getRotation()->getqSize(); }
+    int getuSize() const { return getRotation()->getuSize(); }
+    int getqRSize() const { return getRotation()->getqRSize(); }
+    int getuRSize() const { return getRotation()->getuRSize(); }
 
-    bool isIndependent() const {return dynamic_cast<TranslationIndependentRotationWidget*>(rotation)!=NULL;}
+    bool isIndependent() const {return dynamic_cast<TranslationIndependentRotationWidget*>(getRotation())!=NULL;}
+
+    RotationWidget* getRotation(int i);
+    RotationWidget* getRotation() const;
 
   public slots:
     void defineRotation(int);
 
   protected:
     QComboBox *comboBox;
-    QVBoxLayout *layout;
-    RotationWidget *rotation;
+    QStackedWidget *stackedWidget;
   signals:
     void rotationChanged();
 };
