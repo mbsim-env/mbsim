@@ -97,7 +97,7 @@ FixedRelativeFramePropertyDialog::FixedRelativeFramePropertyDialog(FixedRelative
   addToTab("Kinematics", position);
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new MatWidget(getEye<QString>(3,3,"1","0")),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new MatWidget(3,3),noUnitUnits(),1));
   orientation = new ExtWidget("Relative orientation",new ExtPhysicalVarWidget(input),true);
   addToTab("Kinematics", orientation);
 
@@ -155,7 +155,7 @@ SpherePropertyDialog::SpherePropertyDialog(Sphere *sphere, QWidget *parent, Qt::
   addTab("Visualisation",1);
  
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 4));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget, lengthUnits(), 4));
   radius = new ExtWidget("Radius",new ExtPhysicalVarWidget(input));
   addToTab("General", radius);
 
@@ -185,7 +185,7 @@ GroupPropertyDialog::GroupPropertyDialog(Group *group, QWidget *parent, Qt::Wind
     addToTab("Kinematics", position);
 
     input.clear();
-    input.push_back(new PhysicalVariableWidget(new MatWidget(getEye<QString>(3,3,"1","0")),noUnitUnits(),1));
+    input.push_back(new PhysicalVariableWidget(new MatWidget(3,3),noUnitUnits(),1));
     orientation = new ExtWidget("Orientation",new ExtPhysicalVarWidget(input),true); 
     addToTab("Kinematics", orientation);
 
@@ -218,7 +218,7 @@ SolverPropertyDialog::SolverPropertyDialog(Solver *solver, QWidget *parent, Qt::
   addTab("Extra",3);
 
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new VecWidget(vector<QString>(3)),accelerationUnits(),0));
+  input.push_back(new PhysicalVariableWidget(new VecWidget(3),accelerationUnits(),0));
   environment = new ExtWidget("Acceleration of gravity",new ExtPhysicalVarWidget(input));
   addToTab("Environment", environment);
 
@@ -226,7 +226,7 @@ SolverPropertyDialog::SolverPropertyDialog(Solver *solver, QWidget *parent, Qt::
   addToTab("Solver parameters",solverParameters);
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new BoolWidget("1"),QStringList(),1));
+  input.push_back(new PhysicalVariableWidget(new BoolWidget,QStringList(),1));
   inverseKinetics = new ExtWidget("Inverse kinetics",new ExtPhysicalVarWidget(input),true); 
   addToTab("Extra", inverseKinetics);
 }
@@ -300,12 +300,12 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   addToTab("Kinematics",K);
 
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),massUnits(),2));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget,massUnits(),2));
   mass = new ExtWidget("Mass",new ExtPhysicalVarWidget(input));
   addToTab("General", mass);
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new SymMatWidget(getEye<QString>(3,3,"0.01","0")),inertiaUnits(),2));
+  input.push_back(new PhysicalVariableWidget(new SymMatWidget(3),inertiaUnits(),2));
   inertia = new ExtWidget("Inertia tensor",new ExtPhysicalVarWidget(input));
   addToTab("General", inertia);
 
@@ -334,7 +334,7 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   addToTab("Visualisation",jointMomentArrow);
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
+  input.push_back(new PhysicalVariableWidget(new BoolWidget,QStringList(),1));
   isFrameOfBodyForRotation = new ExtWidget("Use body frame for rotation",new ExtPhysicalVarWidget(input),true); 
   addToTab("Extra", isFrameOfBodyForRotation);
 }
@@ -613,15 +613,15 @@ LinearTransferSystemPropertyDialog::LinearTransferSystemPropertyDialog(LinearTra
   name.push_back("PT1");
 
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget,noUnitUnits(),1));
   propertyContainer->addWidget(new ExtWidget("P",new ExtPhysicalVarWidget(input)));
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget,noUnitUnits(),1));
   propertyContainer->addWidget(new ExtWidget("I",new ExtPhysicalVarWidget(input)));
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget,noUnitUnits(),1));
   propertyContainer->addWidget(new ExtWidget("D",new ExtPhysicalVarWidget(input)));
 
   choiceWidget.push_back(propertyContainer);
@@ -629,19 +629,19 @@ LinearTransferSystemPropertyDialog::LinearTransferSystemPropertyDialog(LinearTra
   propertyContainer = new WidgetContainer;
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget,noUnitUnits(),1));
   propertyContainer->addWidget(new ExtWidget("A",new ExtPhysicalVarWidget(input)));
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget,noUnitUnits(),1));
   propertyContainer->addWidget(new ExtWidget("B",new ExtPhysicalVarWidget(input)));
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget,noUnitUnits(),1));
   propertyContainer->addWidget(new ExtWidget("C",new ExtPhysicalVarWidget(input)));
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget,noUnitUnits(),1));
   propertyContainer->addWidget(new ExtWidget("D",new ExtPhysicalVarWidget(input)));
 
   choiceWidget.push_back(propertyContainer);
@@ -649,7 +649,7 @@ LinearTransferSystemPropertyDialog::LinearTransferSystemPropertyDialog(LinearTra
   propertyContainer = new WidgetContainer;
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget,noUnitUnits(),1));
   propertyContainer->addWidget(new ExtWidget("gain",new ExtPhysicalVarWidget(input)));
 
   choiceWidget.push_back(propertyContainer);
@@ -657,11 +657,11 @@ LinearTransferSystemPropertyDialog::LinearTransferSystemPropertyDialog(LinearTra
   propertyContainer = new WidgetContainer;
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget,noUnitUnits(),1));
   propertyContainer->addWidget(new ExtWidget("P",new ExtPhysicalVarWidget(input)));
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.1"),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget,noUnitUnits(),1));
   propertyContainer->addWidget(new ExtWidget("T",new ExtPhysicalVarWidget(input)));
 
   choiceWidget.push_back(propertyContainer);
@@ -838,7 +838,7 @@ ContactPropertyDialog::ContactPropertyDialog(Contact *contact, QWidget *parent, 
   addToTab("Kinetics", frictionImpactLaw);
 
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.1"),lengthUnits(),4));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget,lengthUnits(),4));
   enableOpenMBVContactPoints = new ExtWidget("OpenMBV contact points",new ExtPhysicalVarWidget(input),true); 
   addToTab("Visualisation",enableOpenMBVContactPoints);
 
@@ -969,7 +969,7 @@ GeneralizedCoordinateSensorPropertyDialog::GeneralizedCoordinateSensorPropertyDi
   addToTab("General", object);
 
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"), QStringList(), 0));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget, QStringList(), 0));
   index = new ExtWidget("Index",new ExtPhysicalVarWidget(input));
   addToTab("General", index);
 }
@@ -1065,17 +1065,17 @@ PIDControllerPropertyDialog::PIDControllerPropertyDialog(PIDController *signal, 
   sdRef = new ExtWidget("Derivative of input signal",new SignalOfReferenceWidget(signal,0));
   addToTab("General", sdRef);
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget,noUnitUnits(),1));
   P = new ExtWidget("P",new ExtPhysicalVarWidget(input));
   addToTab("General", P);
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget,noUnitUnits(),1));
   I = new ExtWidget("I",new ExtPhysicalVarWidget(input));
   addToTab("General", I);
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget,noUnitUnits(),1));
   D = new ExtWidget("D",new ExtPhysicalVarWidget(input));
   addToTab("General", D);
 

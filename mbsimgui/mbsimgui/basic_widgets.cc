@@ -586,32 +586,32 @@ SolverTolerancesWidget::SolverTolerancesWidget() {
   layout->setMargin(0);
 
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-15"), noUnitUnits(), 1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget, noUnitUnits(), 1));
   projection = new ExtWidget("Projection",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(projection);
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-8"), noUnitUnits(), 1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget, noUnitUnits(), 1));
   g = new ExtWidget("g",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(g);
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-10"), noUnitUnits(), 1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget, noUnitUnits(), 1));
   gd = new ExtWidget("gd",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(gd);
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-12"), noUnitUnits(), 1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget, noUnitUnits(), 1));
   gdd = new ExtWidget("gdd",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(gdd);
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-12"), noUnitUnits(), 1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget, noUnitUnits(), 1));
   la = new ExtWidget("la",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(la);
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1e-10"), noUnitUnits(), 1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget, noUnitUnits(), 1));
   La = new ExtWidget("La",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(La);
 }
@@ -628,7 +628,7 @@ SolverParametersWidget::SolverParametersWidget() {
   layout->addWidget(impactSolver);
 
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("10000"), QStringList(), 0));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget, QStringList(), 0));
   numberOfMaximalIterations = new ExtWidget("Number of maximal iterations",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(numberOfMaximalIterations);
 
@@ -655,7 +655,7 @@ GearDependencyWidget::GearDependencyWidget(Element *element) {
   layout->addWidget(refBody);
 
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), QStringList(), 1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget, QStringList(), 1));
   ratio = new ExtWidget("Transmission ratio",new ExtPhysicalVarWidget(input));
   layout->addWidget(ratio);
 }
@@ -769,7 +769,7 @@ SignalReferenceWidget::SignalReferenceWidget(Element *element) {
   layout->addWidget(refSignal);
 
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), QStringList(), 1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget, QStringList(), 1));
   factor = new ExtWidget("Factor",new ExtPhysicalVarWidget(input));
   layout->addWidget(factor);
 }

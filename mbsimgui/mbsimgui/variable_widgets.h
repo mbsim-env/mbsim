@@ -45,19 +45,18 @@ class VariableWidget : public Widget {
     virtual void setReadOnly(bool flag) {}
     virtual QString getValue() const = 0;
     virtual void setValue(const QString &str) = 0;
-    virtual VariableWidget* cloneVariableWidget() {return 0;}
     virtual QString getType() const = 0;
-    virtual bool validate(const QString &str) const {return true;}
+    virtual bool validate(const std::vector<std::vector<QString> > &A) const {return true;}
 };
 
 class BoolWidget : public VariableWidget {
 
   public:
-    BoolWidget(const QString &b="0");
+    BoolWidget();
     QString getValue() const {return value->checkState()==Qt::Checked?"1":"0";}
     void setValue(const QString &str) {value->setCheckState((str=="0"||str=="false")?Qt::Unchecked:Qt::Checked);}
-    virtual VariableWidget* cloneVariableWidget() {return new BoolWidget;}
     virtual QString getType() const {return "Boolean";}
+    bool validate(const std::vector<std::vector<QString> > &A) const;
 
   protected:
     QCheckBox *value;
@@ -78,12 +77,12 @@ class ScalarWidget : public VariableWidget {
   private:
     QLineEdit* box;
   public:
-    ScalarWidget(const QString &d="1");
+    ScalarWidget();
     void setReadOnly(bool flag) {box->setReadOnly(flag);}
     QString getValue() const {return box->text();}
     void setValue(const QString &str) {box->setText(str);}
-    virtual VariableWidget* cloneVariableWidget() {return new ScalarWidget;}
     virtual QString getType() const {return "Scalar";}
+    bool validate(const std::vector<std::vector<QString> > &A) const;
 };
 
 class BasicVecWidget : public VariableWidget {
@@ -98,7 +97,6 @@ class VecWidget : public BasicVecWidget {
     bool transpose;
   public:
     VecWidget(int size, bool transpose=false);
-    VecWidget(const std::vector<QString> &x, bool transpose=false);
     void resize(int size);
     std::vector<QString> getVec() const;
     void setVec(const std::vector<QString> &x);
@@ -106,9 +104,8 @@ class VecWidget : public BasicVecWidget {
     QString getValue() const {return toQStr(getVec());}
     void setValue(const QString &str) {setVec(strToVec(str));}
     int size() const {return box.size();}
-    virtual VariableWidget* cloneVariableWidget() {return new VecWidget(size());}
     virtual QString getType() const {return "Vector";}
-    bool validate(const QString &str) const;
+    bool validate(const std::vector<std::vector<QString> > &A) const;
 };
 
 class BasicMatWidget : public VariableWidget {
@@ -123,7 +120,6 @@ class MatWidget : public BasicMatWidget {
     std::vector<std::vector<QLineEdit*> > box;
   public:
     MatWidget(int rows, int cols);
-    MatWidget(const std::vector<std::vector<QString> > &A);
     void resize(int rows, int cols);
     std::vector<std::vector<QString> > getMat() const;
     void setMat(const std::vector<std::vector<QString> > &A);
@@ -132,9 +128,8 @@ class MatWidget : public BasicMatWidget {
     void setValue(const QString &str) {setMat(strToMat(str));}
     int rows() const {return box.size();}
     int cols() const {return box[0].size();}
-    virtual VariableWidget* cloneVariableWidget() {return new MatWidget(rows(),cols());}
     virtual QString getType() const {return "Matrix";}
-    bool validate(const QString &str) const;
+    bool validate(const std::vector<std::vector<QString> > &A) const;
 };
 
 class SymMatWidget : public BasicMatWidget {
@@ -143,18 +138,16 @@ class SymMatWidget : public BasicMatWidget {
     std::vector<std::vector<QLineEdit*> > box;
   public:
     SymMatWidget(int rows);
-    SymMatWidget(const std::vector<std::vector<QString> > &A);
     void resize(int rows);
     std::vector<std::vector<QString> > getMat() const;
     void setMat(const std::vector<std::vector<QString> > &A);
     void setReadOnly(bool flag);
     QString getValue() const {return toQStr(getMat());}
     void setValue(const QString &str) {setMat(strToMat(str));}
-    virtual VariableWidget* cloneVariableWidget() {return new SymMatWidget(rows());}
     int rows() const {return box.size();}
     int cols() const {return box[0].size();}
     virtual QString getType() const {return "Matrix";}
-    bool validate(const QString &str) const;
+    bool validate(const std::vector<std::vector<QString> > &A) const;
 };
 
 class VecSizeVarWidget : public BasicVecWidget {
@@ -177,9 +170,8 @@ class VecSizeVarWidget : public BasicVecWidget {
     QString getValue() const {return toQStr(getVec());}
     void setValue(const QString &str) {setVec(strToVec(str));}
     void setReadOnly(bool flag) {widget->setReadOnly(flag);}
-    virtual VariableWidget* cloneVariableWidget() {return new VecWidget(size());}
     virtual QString getType() const {return "Vector";}
-    bool validate(const QString &str) const;
+    bool validate(const std::vector<std::vector<QString> > &A) const;
 
   public slots:
     void currentIndexChanged(int);
@@ -209,9 +201,8 @@ class MatColsVarWidget : public BasicMatWidget {
     QString getValue() const {return toQStr(getMat());}
     void setValue(const QString &str) {setMat(strToMat(str));}
     void setReadOnly(bool flag) {widget->setReadOnly(flag);}
-    virtual VariableWidget* cloneVariableWidget() {return new MatWidget(rows(),cols());}
     virtual QString getType() const {return "Matrix";}
-    bool validate(const QString &str) const;
+    bool validate(const std::vector<std::vector<QString> > &A) const;
 
   public slots:
     void currentIndexChanged(int);
@@ -241,9 +232,8 @@ class MatRowsColsVarWidget : public BasicMatWidget {
     QString getValue() const {return toQStr(getMat());}
     void setValue(const QString &str) {setMat(strToMat(str));}
     void setReadOnly(bool flag) {widget->setReadOnly(flag);}
-    virtual VariableWidget* cloneVariableWidget() {return new MatWidget(rows(),cols());}
     virtual QString getType() const {return "Matrix";}
-    bool validate(const QString &str) const;
+    bool validate(const std::vector<std::vector<QString> > &A) const;
 
   public slots:
     void currentRowIndexChanged(int);
@@ -260,13 +250,11 @@ class CardanWidget : public VariableWidget {
     bool transpose;
   public:
     CardanWidget(bool transpose=false);
-    CardanWidget(const std::vector<QString> &x, bool transpose=false);
     std::vector<QString> getCardan() const;
     void setCardan(const std::vector<QString> &x);
     void setReadOnly(bool flag);
     QString getValue() const {return toQStr(getCardan());}
     void setValue(const QString &str) {setCardan(strToVec(str));}
-    virtual VariableWidget* cloneVariableWidget() {return new CardanWidget;}
     virtual QString getType() const {return "Cardan";}
 };
 
@@ -284,12 +272,11 @@ class PhysicalVariableWidget : public VariableWidget {
     QString getValue() const {return widget->getValue();}
     void setValue(const QString &str) {widget->setValue(str);}
     void setReadOnly(bool flag) {widget->setReadOnly(flag);}
-    virtual VariableWidget* cloneVariableWidget() {return widget->cloneVariableWidget();}
     virtual VariableWidget* getWidget() {return widget;}
     const QStringList& getUnitList() const {return units;}
     int getDefaultUnit() const {return defaultUnit;}
     virtual QString getType() const {return widget->getType();}
-    bool validate(const QString &str) const {return widget->validate(str);}
+    bool validate(const std::vector<std::vector<QString> > &A) const {return widget->validate(A);}
     QString getUnit() const {return unit->currentText();}
     void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
 };
@@ -306,7 +293,6 @@ class VecFromFileWidget : public VariableWidget {
     QString getFile() const {return file;}
     void setFile(const QString &str);
     virtual QString getType() const {return "File";}
-    virtual VariableWidget* cloneVariableWidget() {return new VecWidget(0);}
 
   protected:
     QLineEdit *relativeFilePath;
@@ -329,7 +315,6 @@ class MatFromFileWidget : public VariableWidget {
     QString getFile() const {return file;}
     void setFile(const QString &str);
     virtual QString getType() const {return "File";}
-    virtual VariableWidget* cloneVariableWidget() {return new MatWidget(0,0);}
 
   protected:
     QLineEdit *relativeFilePath;

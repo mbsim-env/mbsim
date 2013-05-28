@@ -42,7 +42,7 @@ void ParameterPropertyDialog::fromWidget(Parameter *parameter) {
 
 ScalarParameterPropertyDialog::ScalarParameterPropertyDialog(ScalarParameter *parameter, QWidget *parent, Qt::WindowFlags f) : ParameterPropertyDialog(parameter,parent,f) {
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget,QStringList(),0));
   value = new ExtWidget("Value",new ExtPhysicalVarWidget(input));
   addToTab("General", value);
 }

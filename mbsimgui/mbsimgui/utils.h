@@ -79,7 +79,7 @@ inline std::string toStr(double d) {
 template <class AT>
 inline std::string toStr(const std::vector<AT> &x) {
   if(x.size()==0)
-    return "";
+    return "[]";
   std::string s;
   s += "[";
   for(int i=0; i<x.size(); i++) {
@@ -94,7 +94,7 @@ inline std::string toStr(const std::vector<AT> &x) {
 template <class AT>
 inline std::string toStr(const std::vector<std::vector<AT> > &A) {
   if(A.size()==0 || A[0].size()==0)
-    return "";
+    return "[]";
   std::string s;
   s += "[";
   for(int i=0; i<A.size(); i++) {
@@ -125,7 +125,7 @@ inline QString toQStr(double d) {
 template <class AT>
 inline QString toQStr(const std::vector<AT> &x) {
   if(x.size()==0)
-    return "";
+    return "[]";
   QString s;
   s += "[";
   for(int i=0; i<x.size(); i++) {
@@ -140,7 +140,7 @@ inline QString toQStr(const std::vector<AT> &x) {
 template <class AT>
 inline QString toQStr(const std::vector<std::vector<AT> > &A) {
   if(A.size()==0 || A[0].size()==0)
-    return "";
+    return "[]";
   QString s;
   s += "[";
   for(int i=0; i<A.size(); i++) {
@@ -177,10 +177,8 @@ inline std::vector<std::string> extract(const std::string &str, char c) {
 }
 
 inline std::vector<std::string> strToVec(const std::string &str) {
-  if(str=="") {
-    std::vector<std::string> x;
-    return x;
-  }
+  if(str=="" || str=="[]" || str.substr(0,2) == "[;")
+    return std::vector<std::string>();
   int pos1 = str.find("["); 
   int pos2 = str.find("]"); 
   std::string str0 = str.substr(pos1+1,pos2-1);
@@ -193,10 +191,8 @@ inline std::vector<std::string> strToVec(const std::string &str) {
 }
 
 inline std::vector<std::vector<std::string> > strToMat(const std::string &str) {
-  if(str=="") {
-    std::vector<std::vector<std::string> > A;
-    return A;
-  }
+  if(str=="" || str=="[]" || str.substr(0,2) == "[;")
+    return std::vector<std::vector<std::string> >();
   int pos1 = str.find("["); 
   int pos2 = str.find("]"); 
   std::string str0 = str.substr(pos1+1,pos2-1);
@@ -233,10 +229,8 @@ inline std::vector<QString> extract(const QString &str, char c) {
 
 
 inline std::vector<QString> strToVec(const QString &str) {
-  if(str=="") {
-    std::vector<QString> x;
-    return x;
-  }
+  if(str=="" || str=="[]" || str.mid(0,2) == "[;")
+    return std::vector<QString>();
   int pos1 = str.indexOf("["); 
   int pos2 = str.indexOf("]"); 
   QString str0 = str.mid(pos1+1,pos2-1);
@@ -249,10 +243,8 @@ inline std::vector<QString> strToVec(const QString &str) {
 }
 
 inline std::vector<std::vector<QString> > strToMat(const QString &str) {
-  if(str=="") {
-    std::vector<std::vector<QString> > A;
-    return A;
-  }
+  if(str=="" || str=="[]" || str.mid(0,2) == "[;")
+    return std::vector<std::vector<QString> >();
   int pos1 = str.indexOf("["); 
   int pos2 = str.indexOf("]"); 
   QString str0 = str.mid(pos1+1,pos2-1);

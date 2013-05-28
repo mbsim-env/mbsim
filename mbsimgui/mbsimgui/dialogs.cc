@@ -30,7 +30,8 @@
 #include <QTreeWidget>
 #include <QScrollArea>
 
-EvalDialog::EvalDialog(VariableWidget *var_) : var(var_) {
+EvalDialog::EvalDialog() {
+  var = new MatWidget(0,0);
   QScrollArea *tab = new QScrollArea;
   tab->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
   tab->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -42,29 +43,11 @@ EvalDialog::EvalDialog(VariableWidget *var_) : var(var_) {
   QVBoxLayout *layout = new QVBoxLayout;
   setLayout(layout);
   layout->addWidget(tab);
-//  QWidget *extension = new QWidget;
-//  button = new QPushButton(tr("Assign to Schema 1"));
-//  button = new QPushButton(QString("Assign to ") + var->getType().c_str());
-//  connect(button,SIGNAL(clicked(bool)),this,SIGNAL(clicked(bool)));
-//  QVBoxLayout *extensionLayout = new QVBoxLayout;
-//  extensionLayout->setMargin(0);
-//  extensionLayout->addWidget(button);
-//  extension->setLayout(extensionLayout);
-
-//  QPushButton *buttonBox = new QPushButton("Ok");
-//  okButton->setDefault(true);
   QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
   buttonBox->addButton(QDialogButtonBox::Close);
-//  QPushButton *moreButton = new QPushButton(tr("&More"));
-//  moreButton->setCheckable(true);
-//  moreButton->setAutoDefault(false);
-//  //buttonBox->addButton(moreButton, QDialogButtonBox::ActionRole);
-//  connect(moreButton, SIGNAL(toggled(bool)), extension, SLOT(setVisible(bool)));
   connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
   layout->addWidget(buttonBox);
- // layout->addWidget(extension);
- // extension->hide();
   setWindowTitle("Octave expression evaluation");
 }
 

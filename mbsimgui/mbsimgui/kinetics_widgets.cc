@@ -75,7 +75,7 @@ UnilateralNewtonImpactWidget::UnilateralNewtonImpactWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   setLayout(layout);
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget,noUnitUnits(),1));
   restitutionCoefficient = new ExtWidget("Restitution coefficient",new ExtPhysicalVarWidget(input));
   layout->addWidget(restitutionCoefficient);
 }
@@ -84,7 +84,7 @@ PlanarCoulombFrictionWidget::PlanarCoulombFrictionWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   setLayout(layout);
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget,noUnitUnits(),1));
   frictionCoefficient = new ExtWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
   layout->addWidget(frictionCoefficient);
 }
@@ -93,7 +93,7 @@ SpatialCoulombFrictionWidget::SpatialCoulombFrictionWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   setLayout(layout);
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget,noUnitUnits(),1));
   frictionCoefficient = new ExtWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
   layout->addWidget(frictionCoefficient);
 }
@@ -146,7 +146,7 @@ PlanarCoulombImpactWidget::PlanarCoulombImpactWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   setLayout(layout);
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget,noUnitUnits(),1));
   frictionCoefficient = new ExtWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
   layout->addWidget(frictionCoefficient);
 }
@@ -155,7 +155,7 @@ SpatialCoulombImpactWidget::SpatialCoulombImpactWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   setLayout(layout);
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget,noUnitUnits(),1));
   frictionCoefficient = new ExtWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
   layout->addWidget(frictionCoefficient);
 }

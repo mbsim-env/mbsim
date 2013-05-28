@@ -35,8 +35,7 @@ ExtPhysicalVarWidget::ExtPhysicalVarWidget(std::vector<PhysicalVariableWidget*> 
 
   QPushButton *evalButton = new QPushButton("Eval");
   connect(evalButton,SIGNAL(clicked(bool)),this,SLOT(openEvalDialog()));
-  evalDialog = new EvalDialog(((VariableWidget*)inputWidget[evalIndex])->cloneVariableWidget());
-  //connect(evalDialog,SIGNAL(clicked(bool)),this,SLOT(updateInput()));
+  evalDialog = new EvalDialog;
 
   inputCombo = new QComboBox;
   stackedWidget = new QStackedWidget;
@@ -89,13 +88,6 @@ void ExtPhysicalVarWidget::setValue(const QString &str) {
   inputWidget[inputCombo->currentIndex()]->setValue(str);
 }
 
-void ExtPhysicalVarWidget::updateInput() {
-  //for(int i=0; i<inputWidget.size(); i++)
-  //  if(i!=evalInput)
-  //    inputWidget[i]->setValue(evalDialog->getValue());
-  inputWidget[0]->setValue(evalDialog->getValue());
-}
-
 //void ExtPhysicalVarWidget::changeInput(int j) {
 //  for(int i=0; i<inputWidget.size(); i++)
 //    if(i==j)
@@ -108,11 +100,12 @@ void ExtPhysicalVarWidget::openEvalDialog() {
   evalInput = inputCombo->currentIndex();
   QString str = QString::fromStdString(evalOctaveExpression(getValue().toStdString()));
   str = removeWhiteSpace(str);
-  if(str=="" || (evalInput == inputCombo->count()-1 && !inputWidget[0]->validate(str))) {
+  vector<vector<QString> > A = strToMat(str);
+  if(str=="" || (evalInput == inputCombo->count()-1 && !inputWidget[0]->validate(A))) {
     QMessageBox::warning( this, "Validation", "Value not valid"); 
     return;
   }
-  evalDialog->setValue(str);
+  evalDialog->setValue(A);
   evalDialog->exec();
   //evalDialog->setButtonDisabled(evalInput != (inputCombo->count()-1));
 }

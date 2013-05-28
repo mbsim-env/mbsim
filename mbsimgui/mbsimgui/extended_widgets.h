@@ -53,7 +53,6 @@ class ExtPhysicalVarWidget : public Widget {
     int evalInput;
   protected slots:
     void openEvalDialog();
-    void updateInput();
     void changeCurrent(int idx);
   signals:
     void inputDialogChanged(int);
