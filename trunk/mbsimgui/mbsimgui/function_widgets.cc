@@ -321,12 +321,12 @@ Function1ChoiceWidget::Function1ChoiceWidget(bool withFactor, int n_, const QStr
   }
 
   comboBox = new QComboBox;
-  comboBox->addItem(tr("Symbolic function"));
   comboBox->addItem(tr("Constant function"));
   comboBox->addItem(tr("Quadratic function"));
   comboBox->addItem(tr("Sinus function"));
   comboBox->addItem(tr("Tabular function"));
   comboBox->addItem(tr("Summation function"));
+  comboBox->addItem(tr("Symbolic function"));
   layout->addWidget(comboBox);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFunction(int)));
   defineFunction(0);
@@ -336,19 +336,19 @@ void Function1ChoiceWidget::defineFunction(int index) {
   layout->removeWidget(function);
   delete function;
   if(index==0)
-    function = new SymbolicFunction1Widget(ext);  
-  if(index==1)
     function = new ConstantFunction1Widget(ext,n);  
-  else if(index==2)
+  else if(index==1)
     function = new QuadraticFunction1Widget(n);
-  else if(index==3)
+  else if(index==2)
     function = new SinusFunction1Widget(n);
-  else if(index==4)
+  else if(index==3)
     function = new TabularFunction1Widget(n);
-  else if(index==5) {
+  else if(index==4) {
     function = new SummationFunction1Widget(n);
     connect(function,SIGNAL(resize()),this,SIGNAL(resize()));
   }
+  else if(index==5)
+    function = new SymbolicFunction1Widget(ext);  
   layout->addWidget(function);
   emit functionChanged();
   emit resize();
@@ -361,8 +361,8 @@ Function2ChoiceWidget::Function2ChoiceWidget(const QString& ext_) : function(0),
 
   comboBox = new QComboBox;
   //comboBox->addItem(tr("None"));
-  comboBox->addItem(tr("Symbolic function"));
   comboBox->addItem(tr("Linear spring damper force"));
+  comboBox->addItem(tr("Symbolic function"));
   layout->addWidget(comboBox);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineFunction(int)));
   defineFunction(0);
@@ -375,9 +375,9 @@ void Function2ChoiceWidget::defineFunction(int index) {
 //  if(index==0)
 //    function = 0;
   if(index==0)
-    function = new SymbolicFunction2Widget(ext);  
-  else if(index==1)
     function = new LinearSpringDamperForceWidget;  
+  else if(index==1)
+    function = new SymbolicFunction2Widget(ext);  
   layout->addWidget(function);
   //if(function) {
     //emit resize();
