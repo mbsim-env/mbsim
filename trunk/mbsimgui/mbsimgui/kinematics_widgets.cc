@@ -81,8 +81,8 @@ GeneralTranslationWidget::GeneralTranslationWidget() {
   layout->addWidget(function);
 }
 
-TranslationChoiceWidget::TranslationChoiceWidget() : translation(0) {
-  layout = new QVBoxLayout;
+TranslationChoiceWidget::TranslationChoiceWidget() {
+  QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
@@ -100,37 +100,59 @@ TranslationChoiceWidget::TranslationChoiceWidget() : translation(0) {
   comboBox->addItem(tr("General translation"));
   layout->addWidget(comboBox);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineTranslation(int)));
-  defineTranslation(0);
+  stackedWidget = new QStackedWidget;
+  TranslationWidget *translation;
+  translation = new TranslationInXDirectionWidget;  
+  stackedWidget->addWidget(translation);
+  translation = new TranslationInYDirectionWidget;  
+  translation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->addWidget(translation);
+  translation = new TranslationInZDirectionWidget;  
+  translation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->addWidget(translation);
+  translation = new TranslationInXYDirectionWidget;  
+  translation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->addWidget(translation);
+  translation = new TranslationInXZDirectionWidget;  
+  translation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->addWidget(translation);
+  translation = new TranslationInYZDirectionWidget;  
+  translation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->addWidget(translation);
+  translation = new TranslationInXYZDirectionWidget;  
+  translation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->addWidget(translation);
+  translation = new LinearTranslationWidget;  
+  connect(translation, SIGNAL(translationChanged()), this, SIGNAL(translationChanged()));
+  translation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->addWidget(translation);
+  translation = new TimeDependentTranslationWidget;  
+  translation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->addWidget(translation);
+  translation = new StateDependentTranslationWidget;  
+  translation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->addWidget(translation);
+  translation = new GeneralTranslationWidget;  
+  translation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->addWidget(translation);
+  layout->addWidget(stackedWidget);
+  connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(defineTranslation(int)));
+}
+
+TranslationWidget* TranslationChoiceWidget::getTranslation() const {
+  return static_cast<TranslationWidget*>(stackedWidget->currentWidget());
+}
+
+TranslationWidget* TranslationChoiceWidget::getTranslation(int i) {
+  return static_cast<TranslationWidget*>(stackedWidget->widget(i));
 }
 
 void TranslationChoiceWidget::defineTranslation(int index) {
-  layout->removeWidget(translation);
-  delete translation;
-  if(index==0)
-    translation = new TranslationInXDirectionWidget;  
-  else if(index==1)
-    translation = new TranslationInYDirectionWidget;  
-  else if(index==2)
-    translation = new TranslationInZDirectionWidget;  
-  else if(index==3)
-    translation = new TranslationInXYDirectionWidget;  
-  else if(index==4)
-    translation = new TranslationInXZDirectionWidget;  
-  else if(index==5)
-    translation = new TranslationInYZDirectionWidget;  
-  else if(index==6)
-    translation = new TranslationInXYZDirectionWidget;  
-  else if(index==7) {
-    translation = new LinearTranslationWidget;  
-    connect(translation, SIGNAL(translationChanged()), this, SIGNAL(translationChanged()));
-  }
-  else if(index==8)
-    translation = new TimeDependentTranslationWidget;  
-  else if(index==9)
-    translation = new StateDependentTranslationWidget;  
-  else if(index==10)
-    translation = new GeneralTranslationWidget;  
-  layout->addWidget(translation);
+  if (stackedWidget->currentWidget() !=0)
+    stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->setCurrentIndex(index);
+  stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  adjustSize();
   emit translationChanged();
 }
 
@@ -157,7 +179,7 @@ TimeDependentRotationAboutFixedAxisWidget::TimeDependentRotationAboutFixedAxisWi
   vec = new ExtWidget("Axis of rotation",vec_);
   layout->addWidget(vec);
 
-  function = new ExtWidget("Rotational function",new Function1ChoiceWidget(false,3,"SS"));
+  function = new ExtWidget("Rotational function",new Function1ChoiceWidget(false,1,"SS"));
   layout->addWidget(function);
 }
 
@@ -172,7 +194,7 @@ StateDependentRotationAboutFixedAxisWidget::StateDependentRotationAboutFixedAxis
   vec = new ExtWidget("Axis of rotation",vec_);
   layout->addWidget(vec);
 
-  function = new ExtWidget("Rotational function",new Function1ChoiceWidget(false,3,"SV"));
+  function = new ExtWidget("Rotational function",new Function1ChoiceWidget(false,1,"SV"));
   layout->addWidget(function);
 }
 
@@ -183,8 +205,8 @@ int StateDependentRotationAboutFixedAxisWidget::getqSize() const {
   return 0;
 }
 
-RotationChoiceWidget::RotationChoiceWidget() : rotation(0) {
-  layout = new QVBoxLayout;
+RotationChoiceWidget::RotationChoiceWidget() {
+  QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
@@ -202,38 +224,61 @@ RotationChoiceWidget::RotationChoiceWidget() : rotation(0) {
   comboBox->addItem(tr("Time dependent rotation about fixed axis"));
   comboBox->addItem(tr("State dependent rotation about fixed axis"));
   layout->addWidget(comboBox);
-  connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(defineRotation(int)));
-  defineRotation(0);
+  stackedWidget = new QStackedWidget;
+  RotationWidget *rotation;
+  rotation = new RotationAboutXAxisWidget;  
+  stackedWidget->addWidget(rotation);
+  rotation = new RotationAboutYAxisWidget;  
+  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->addWidget(rotation);
+  rotation = new RotationAboutZAxisWidget;  
+  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->addWidget(rotation);
+  rotation = new RotationAboutFixedAxisWidget;  
+  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->addWidget(rotation);
+  rotation = new RotationAboutAxesXYWidget;  
+  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->addWidget(rotation);
+  rotation = new RotationAboutAxesXZWidget;  
+  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->addWidget(rotation);
+  rotation = new RotationAboutAxesYZWidget;  
+  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->addWidget(rotation);
+  rotation = new CardanAnglesWidget;  
+  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->addWidget(rotation);
+  rotation = new EulerAnglesWidget;  
+  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->addWidget(rotation);
+  rotation = new RotationAboutAxesXYZWidget;  
+  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->addWidget(rotation);
+  rotation = new TimeDependentRotationAboutFixedAxisWidget;  
+  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->addWidget(rotation);
+  rotation = new StateDependentRotationAboutFixedAxisWidget;  
+  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->addWidget(rotation);
+  layout->addWidget(stackedWidget);
+  connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(defineRotation(int)));
+}
+
+RotationWidget* RotationChoiceWidget::getRotation() const {
+  return static_cast<RotationWidget*>(stackedWidget->currentWidget());
+}
+
+RotationWidget* RotationChoiceWidget::getRotation(int i) {
+  return static_cast<RotationWidget*>(stackedWidget->widget(i));
 }
 
 void RotationChoiceWidget::defineRotation(int index) {
-  layout->removeWidget(rotation);
-  delete rotation;
-  if(index==0)
-    rotation = new RotationAboutXAxisWidget;  
-  else if(index==1)
-    rotation = new RotationAboutYAxisWidget;  
-  else if(index==2)
-    rotation = new RotationAboutZAxisWidget;  
-  else if(index==3)
-    rotation = new RotationAboutFixedAxisWidget;  
-  else if(index==4)
-    rotation = new RotationAboutAxesXYWidget;  
-  else if(index==5)
-    rotation = new RotationAboutAxesXZWidget;  
-  else if(index==6)
-    rotation = new RotationAboutAxesYZWidget;  
-  else if(index==7)
-    rotation = new CardanAnglesWidget;  
-  else if(index==8)
-    rotation = new EulerAnglesWidget;  
-  else if(index==9)
-    rotation = new RotationAboutAxesXYZWidget;  
-  else if(index==10)
-    rotation = new TimeDependentRotationAboutFixedAxisWidget;  
-  else if(index==11)
-    rotation = new StateDependentRotationAboutFixedAxisWidget;  
-  layout->addWidget(rotation);
+  if (stackedWidget->currentWidget() !=0)
+    stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->setCurrentIndex(index);
+  stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  adjustSize();
   emit rotationChanged();
 }
 

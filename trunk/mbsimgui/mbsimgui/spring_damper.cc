@@ -31,7 +31,7 @@ SpringDamper::SpringDamper(const string &str, Element *parent) : Link(str, paren
 
   connections.setProperty(new ConnectFramesProperty(2,this));
 
-  forceFunction.setProperty(new Function2ChoiceProperty(MBSIMNS"forceFunction"));
+  forceFunction.setProperty(new Function2ChoiceProperty(MBSIMNS"forceFunction","SSS"));
 
   forceDirection.setProperty(new ForceDirectionProperty(this,MBSIMNS"projectionDirection"));
 

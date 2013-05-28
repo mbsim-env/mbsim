@@ -176,33 +176,25 @@ void GeneralTranslationProperty::toWidget(QWidget *widget) {
   function.toWidget(static_cast<GeneralTranslationWidget*>(widget)->function);
 }
 
-void TranslationChoiceProperty::defineTranslation(int index_) {
-  index = index_;
-  delete translation;
-  if(index==0)
-    translation = new TranslationInXDirectionProperty;  
-  else if(index==1)
-    translation = new TranslationInYDirectionProperty;  
-  else if(index==2)
-    translation = new TranslationInZDirectionProperty;  
-  else if(index==3)
-    translation = new TranslationInXYDirectionProperty;  
-  else if(index==4)
-    translation = new TranslationInXZDirectionProperty;  
-  else if(index==5)
-    translation = new TranslationInYZDirectionProperty;  
-  else if(index==6)
-    translation = new TranslationInXYZDirectionProperty;  
-  else if(index==7)
-    translation = new LinearTranslationProperty;  
-  else if(index==8)
-    translation = new TimeDependentTranslationProperty;  
-  else if(index==9)
-    translation = new StateDependentTranslationProperty;  
-  else if(index==10)
-    translation = new GeneralTranslationProperty;  
+TranslationChoiceProperty::TranslationChoiceProperty(int index, const std::string &xmlName_) : xmlName(xmlName_), index(0) {
+  translation.push_back(new TranslationInXDirectionProperty);
+  translation.push_back(new TranslationInYDirectionProperty);  
+  translation.push_back(new TranslationInZDirectionProperty);  
+  translation.push_back(new TranslationInXYDirectionProperty);  
+  translation.push_back(new TranslationInXZDirectionProperty);  
+  translation.push_back(new TranslationInYZDirectionProperty);  
+  translation.push_back(new TranslationInXYZDirectionProperty);  
+  translation.push_back(new LinearTranslationProperty);  
+  translation.push_back(new TimeDependentTranslationProperty);  
+  translation.push_back(new StateDependentTranslationProperty);  
+  translation.push_back(new GeneralTranslationProperty);  
 }
 
+TranslationChoiceProperty::~TranslationChoiceProperty() {
+  for(unsigned int i=0; i<translation.size(); i++)
+    delete translation[i];
+}
+  
 TiXmlElement* TranslationChoiceProperty::initializeUsingXML(TiXmlElement *element) {
    TiXmlElement *e=(xmlName=="")?element:element->FirstChildElement(xmlName);
   if(e) {
@@ -230,8 +222,7 @@ TiXmlElement* TranslationChoiceProperty::initializeUsingXML(TiXmlElement *elemen
         index = 9;
       else if(ee->ValueStr() == MBSIMNS"GeneralTranslation")
         index = 10;
-      defineTranslation(index);
-      translation->initializeUsingXML(ee);
+      translation[index]->initializeUsingXML(ee);
       return e;
     }
   }
@@ -241,20 +232,18 @@ TiXmlElement* TranslationChoiceProperty::initializeUsingXML(TiXmlElement *elemen
 TiXmlElement* TranslationChoiceProperty::writeXMLFile(TiXmlNode *parent) {
   if(xmlName!="") {
     TiXmlElement *ele0 = new TiXmlElement(xmlName);
-    //if(getTranslation()==1) {
-    translation->writeXMLFile(ele0);
-    //}
+    translation[index]->writeXMLFile(ele0);
     parent->LinkEndChild(ele0);
   }
   else
-    translation->writeXMLFile(parent);
+    translation[index]->writeXMLFile(parent);
 
  return 0;
 }
 
 void TranslationChoiceProperty::fromWidget(QWidget *widget) {
-  defineTranslation(static_cast<TranslationChoiceWidget*>(widget)->comboBox->currentIndex());
-  translation->fromWidget(static_cast<TranslationChoiceWidget*>(widget)->translation);
+  index = static_cast<TranslationChoiceWidget*>(widget)->comboBox->currentIndex();
+  translation[index]->fromWidget(static_cast<TranslationChoiceWidget*>(widget)->getTranslation());
 }
 
 void TranslationChoiceProperty::toWidget(QWidget *widget) {
@@ -264,7 +253,7 @@ void TranslationChoiceProperty::toWidget(QWidget *widget) {
   static_cast<TranslationChoiceWidget*>(widget)->blockSignals(true);
   static_cast<TranslationChoiceWidget*>(widget)->defineTranslation(index);
   static_cast<TranslationChoiceWidget*>(widget)->blockSignals(false);
-  translation->toWidget(static_cast<TranslationChoiceWidget*>(widget)->translation);
+  translation[index]->toWidget(static_cast<TranslationChoiceWidget*>(widget)->getTranslation());
 }
 
 TiXmlElement* RotationAboutXAxisProperty::writeXMLFile(TiXmlNode *parent) {
@@ -408,6 +397,26 @@ void StateDependentRotationAboutFixedAxisProperty::toWidget(QWidget *widget) {
   function.toWidget(static_cast<StateDependentRotationAboutFixedAxisWidget*>(widget)->function);
 }
 
+RotationChoiceProperty::RotationChoiceProperty(int index, const std::string &xmlName_): xmlName(xmlName_), index(0) {
+  rotation.push_back(new RotationAboutXAxisProperty);
+  rotation.push_back(new RotationAboutYAxisProperty);  
+  rotation.push_back(new RotationAboutZAxisProperty);  
+  rotation.push_back(new RotationAboutFixedAxisProperty);  
+  rotation.push_back(new RotationAboutAxesXYProperty);
+  rotation.push_back(new RotationAboutAxesXZProperty);  
+  rotation.push_back(new RotationAboutAxesYZProperty);  
+  rotation.push_back(new CardanAnglesProperty);
+  rotation.push_back(new EulerAnglesProperty);
+  rotation.push_back(new RotationAboutAxesXYZProperty);  
+  rotation.push_back(new TimeDependentRotationAboutFixedAxisProperty);  
+  rotation.push_back(new StateDependentRotationAboutFixedAxisProperty);  
+}
+
+RotationChoiceProperty::~RotationChoiceProperty() {
+  for(unsigned int i=0; i<rotation.size(); i++)
+    delete rotation[i];
+}
+
 TiXmlElement* RotationChoiceProperty::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=(xmlName=="")?element:element->FirstChildElement(xmlName);
   if(e) {
@@ -437,8 +446,7 @@ TiXmlElement* RotationChoiceProperty::initializeUsingXML(TiXmlElement *element) 
         index = 10;
       else if(ee->ValueStr() == MBSIMNS"StateDependentRotationAboutFixedAxis")
         index = 11;
-      defineRotation(index);
-      rotation->initializeUsingXML(ee);
+      rotation[index]->initializeUsingXML(ee);
       return e;
     }
   }
@@ -448,47 +456,18 @@ TiXmlElement* RotationChoiceProperty::initializeUsingXML(TiXmlElement *element) 
 TiXmlElement* RotationChoiceProperty::writeXMLFile(TiXmlNode *parent) {
   if(xmlName!="") {
     TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"rotation" );
-    rotation->writeXMLFile(ele0);
+    rotation[index]->writeXMLFile(ele0);
     parent->LinkEndChild(ele0);
   }
   else
-    rotation->writeXMLFile(parent);
+    rotation[index]->writeXMLFile(parent);
 
  return 0;
 }
 
-void RotationChoiceProperty::defineRotation(int index_) {
-  index = index_;
-  delete rotation;
-  if(index==0)
-    rotation = new RotationAboutXAxisProperty;  
-  else if(index==1)
-    rotation = new RotationAboutYAxisProperty;  
-  else if(index==2)
-    rotation = new RotationAboutZAxisProperty;  
-  else if(index==3)
-    rotation = new RotationAboutFixedAxisProperty;  
-  else if(index==4)
-    rotation = new RotationAboutAxesXYProperty;  
-  else if(index==5)
-    rotation = new RotationAboutAxesXZProperty;  
-  else if(index==6)
-    rotation = new RotationAboutAxesYZProperty;  
-  else if(index==7)
-    rotation = new CardanAnglesProperty;  
-  else if(index==8)
-    rotation = new EulerAnglesProperty;  
-  else if(index==9)
-    rotation = new RotationAboutAxesXYZProperty;  
-  else if(index==10)
-    rotation = new TimeDependentRotationAboutFixedAxisProperty;  
-  else if(index==11)
-    rotation = new StateDependentRotationAboutFixedAxisProperty;  
-}
-
 void RotationChoiceProperty::fromWidget(QWidget *widget) {
-  defineRotation(static_cast<RotationChoiceWidget*>(widget)->comboBox->currentIndex());
-  rotation->fromWidget(static_cast<RotationChoiceWidget*>(widget)->rotation);
+  index = static_cast<RotationChoiceWidget*>(widget)->comboBox->currentIndex();
+  rotation[index]->fromWidget(static_cast<RotationChoiceWidget*>(widget)->getRotation());
 }
 
 void RotationChoiceProperty::toWidget(QWidget *widget) {
@@ -498,5 +477,5 @@ void RotationChoiceProperty::toWidget(QWidget *widget) {
   static_cast<RotationChoiceWidget*>(widget)->blockSignals(true);
   static_cast<RotationChoiceWidget*>(widget)->defineRotation(index);
   static_cast<RotationChoiceWidget*>(widget)->blockSignals(false);
-  rotation->toWidget(static_cast<RotationChoiceWidget*>(widget)->rotation);
+  rotation[index]->toWidget(static_cast<RotationChoiceWidget*>(widget)->getRotation());
 }

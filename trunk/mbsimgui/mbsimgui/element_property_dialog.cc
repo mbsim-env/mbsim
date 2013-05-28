@@ -753,7 +753,7 @@ SpringDamperPropertyDialog::SpringDamperPropertyDialog(SpringDamper *springDampe
   connections = new ExtWidget("Connections",new ConnectFramesWidget(2,springDamper));
   addToTab("Kinetics", connections);
 
-  forceFunction = new ExtWidget("Force function",new Function2ChoiceWidget);
+  forceFunction = new ExtWidget("Force function",new Function2ChoiceWidget("SSS"));
   addToTab("Kinetics", forceFunction);
 
   forceDirection = new ExtWidget("Force direction",new ForceDirectionWidget(springDamper),true);
