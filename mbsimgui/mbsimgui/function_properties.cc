@@ -493,18 +493,17 @@ void Function1ChoiceProperty::defineFunction(int index_) {
   index = index_;
   delete function;
   if(index==0)
-    function = new SymbolicFunction1Property(ext);  
-  else if(index==1)
     function = new ConstantFunction1Property(ext);  
-  else if(index==2)
+  else if(index==1)
     function = new QuadraticFunction1Property;
-  else if(index==3)
+  else if(index==2)
     function = new SinusFunction1Property;
-  else if(index==4)
+  else if(index==3)
     function = new TabularFunction1Property;
-  else if(index==5) {
+  else if(index==4)
     function = new SummationFunction1Property;
-  }
+  else if(index==5)
+    function = new SymbolicFunction1Property(ext);  
 }
 
 TiXmlElement* Function1ChoiceProperty::initializeUsingXML(TiXmlElement *element) {
@@ -512,17 +511,17 @@ TiXmlElement* Function1ChoiceProperty::initializeUsingXML(TiXmlElement *element)
   if(e) {
     TiXmlElement* ee=e->FirstChildElement();
     if(ee) {
-      if(ee->ValueStr() == MBSIMNS"SymbolicFunction1_"+ext)
+      if(ee->ValueStr() == MBSIMNS"ConstantFunction1_"+ext)
         index = 0;
-      else if(ee->ValueStr() == MBSIMNS"ConstantFunction1_"+ext)
-        index = 1;
       else if(ee->ValueStr() == MBSIMNS"QuadraticFunction1_"+ext)
-        index = 2;
+        index = 1;
       else if(ee->ValueStr() == MBSIMNS"SinusFunction1_"+ext)
-        index = 3;
+        index = 2;
       else if(ee->ValueStr() == MBSIMNS"TabularFunction1_"+ext)
-        index = 4;
+        index = 3;
       else if(ee->ValueStr() == MBSIMNS"SummationFunction1_"+ext)
+        index = 4;
+      else if(ee->ValueStr() == MBSIMNS"SymbolicFunction1_"+ext)
         index = 5;
       defineFunction(index);
       function->initializeUsingXML(ee);
@@ -576,9 +575,9 @@ void Function2ChoiceProperty::defineFunction(int index_) {
   index = index_;
   delete function;
   if(index==0)
-    function = new SymbolicFunction2Property(ext);  
-  else if(index==1)
     function = new LinearSpringDamperForceProperty;  
+  else if(index==1)
+    function = new SymbolicFunction2Property(ext);  
 }
 
 TiXmlElement* Function2ChoiceProperty::initializeUsingXML(TiXmlElement *element) {
@@ -586,9 +585,9 @@ TiXmlElement* Function2ChoiceProperty::initializeUsingXML(TiXmlElement *element)
   if(e) {
     TiXmlElement* ee=e->FirstChildElement();
     if(ee) {
-      if(ee->ValueStr() == MBSIMNS"SymbolicFunction2_"+ext)
+      if(ee->ValueStr() == MBSIMNS"LinearSpringDamperForce")
         index = 0;
-      else if(ee->ValueStr() == MBSIMNS"LinearSpringDamperForce")
+      else if(ee->ValueStr() == MBSIMNS"SymbolicFunction2_"+ext)
         index = 1;
       defineFunction(index);
       function->initializeUsingXML(ee);

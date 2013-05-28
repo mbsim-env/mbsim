@@ -52,7 +52,7 @@ class VariableWidget : public Widget {
 class BoolWidget : public VariableWidget {
 
   public:
-    BoolWidget();
+    BoolWidget(const QString &b="0");
     QString getValue() const {return value->checkState()==Qt::Checked?"1":"0";}
     void setValue(const QString &str) {value->setCheckState((str=="0"||str=="false")?Qt::Unchecked:Qt::Checked);}
     virtual QString getType() const {return "Boolean";}
@@ -77,7 +77,7 @@ class ScalarWidget : public VariableWidget {
   private:
     QLineEdit* box;
   public:
-    ScalarWidget();
+    ScalarWidget(const QString &d="1");
     void setReadOnly(bool flag) {box->setReadOnly(flag);}
     QString getValue() const {return box->text();}
     void setValue(const QString &str) {box->setText(str);}
@@ -97,6 +97,7 @@ class VecWidget : public BasicVecWidget {
     bool transpose;
   public:
     VecWidget(int size, bool transpose=false);
+    VecWidget(const std::vector<QString> &x, bool transpose=false);
     void resize(int size);
     std::vector<QString> getVec() const;
     void setVec(const std::vector<QString> &x);
@@ -120,6 +121,7 @@ class MatWidget : public BasicMatWidget {
     std::vector<std::vector<QLineEdit*> > box;
   public:
     MatWidget(int rows, int cols);
+    MatWidget(const std::vector<std::vector<QString> > &A);
     void resize(int rows, int cols);
     std::vector<std::vector<QString> > getMat() const;
     void setMat(const std::vector<std::vector<QString> > &A);
@@ -138,6 +140,7 @@ class SymMatWidget : public BasicMatWidget {
     std::vector<std::vector<QLineEdit*> > box;
   public:
     SymMatWidget(int rows);
+    SymMatWidget(const std::vector<std::vector<QString> > &A);
     void resize(int rows);
     std::vector<std::vector<QString> > getMat() const;
     void setMat(const std::vector<std::vector<QString> > &A);
@@ -250,6 +253,7 @@ class CardanWidget : public VariableWidget {
     bool transpose;
   public:
     CardanWidget(bool transpose=false);
+    CardanWidget(const std::vector<QString> &x, bool transpose=false);
     std::vector<QString> getCardan() const;
     void setCardan(const std::vector<QString> &x);
     void setReadOnly(bool flag);

@@ -48,8 +48,7 @@ ExtPhysicalVarWidget::ExtPhysicalVarWidget(std::vector<PhysicalVariableWidget*> 
     inputCombo->addItem(inputWidget[i]->getType());
     inputWidget[i+1]->hide();
   }
-  inputWidget[inputWidget.size()-1]->setSizePolicy(QSizePolicy::Ignored,
-      QSizePolicy::Ignored);
+  inputWidget[inputWidget.size()-1]->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
   stackedWidget->addWidget(inputWidget[inputWidget.size()-1]);
   //inputCombo->addItem("Editor");
   inputCombo->addItem(inputWidget[inputWidget.size()-1]->getType());
@@ -122,8 +121,8 @@ WidgetChoiceWidget::WidgetChoiceWidget(const vector<QString> &name, const vector
   setLayout(layout);
   layout->addWidget(choice);
 
-//  connect(choice,SIGNAL(currentIndexChanged(int)),stackedWidget,SLOT(setCurrentIndex(int)));
-  connect(choice,SIGNAL(currentIndexChanged(int)),this,SLOT(changeCurrent(int)));
+  connect(choice,SIGNAL(currentIndexChanged(int)),stackedWidget,SLOT(setCurrentIndex(int)));
+  //connect(choice,SIGNAL(currentIndexChanged(int)),this,SLOT(changeCurrent(int)));
   layout->addWidget(stackedWidget);
 }
 
