@@ -244,17 +244,17 @@ LinearSpringDamperForceWidget::LinearSpringDamperForceWidget() {
   setLayout(layout);
 
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),stiffnessUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget,stiffnessUnits(),1));
   c = new ExtWidget("Stiffness coefficient",new ExtPhysicalVarWidget(input));
   layout->addWidget(c);
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),dampingUnits(),0));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget,dampingUnits(),0));
   d = new ExtWidget("Damping coefficient",new ExtPhysicalVarWidget(input));
   layout->addWidget(d);
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),lengthUnits(),4));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget,lengthUnits(),4));
   l0 = new ExtWidget("Unloaded length",new ExtPhysicalVarWidget(input));
   layout->addWidget(l0);
 }
@@ -265,12 +265,12 @@ LinearRegularizedBilateralConstraintWidget::LinearRegularizedBilateralConstraint
   setLayout(layout);
 
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),stiffnessUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget,stiffnessUnits(),1));
   c = new ExtWidget("Stiffness coefficient",new ExtPhysicalVarWidget(input));
   layout->addWidget(c);
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),dampingUnits(),0));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget,dampingUnits(),0));
   d = new ExtWidget("Damping coefficient",new ExtPhysicalVarWidget(input));
   layout->addWidget(d);
 }
@@ -281,12 +281,12 @@ LinearRegularizedUnilateralConstraintWidget::LinearRegularizedUnilateralConstrai
   setLayout(layout);
 
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),stiffnessUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget,stiffnessUnits(),1));
   c = new ExtWidget("Stiffness coefficient",new ExtPhysicalVarWidget(input));
   layout->addWidget(c);
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),dampingUnits(),0));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget,dampingUnits(),0));
   d = new ExtWidget("Damping coefficient",new ExtPhysicalVarWidget(input));
   layout->addWidget(d);
 }
@@ -297,12 +297,12 @@ LinearRegularizedCoulombFrictionWidget::LinearRegularizedCoulombFrictionWidget()
   setLayout(layout);
 
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.01"),velocityUnits(),0));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget,velocityUnits(),0));
   gd = new ExtWidget("Marginal velocity",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(gd);
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget,noUnitUnits(),1));
   mu = new ExtWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
   layout->addWidget(mu);
 }
@@ -315,7 +315,7 @@ Function1ChoiceWidget::Function1ChoiceWidget(bool withFactor, int n_, const QStr
 
   if(withFactor) {
     vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),noUnitUnits(),1));
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget,noUnitUnits(),1));
     factor = new ExtWidget("Factor",new ExtPhysicalVarWidget(input));
     layout->addWidget(factor);
   }

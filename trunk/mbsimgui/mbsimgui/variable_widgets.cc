@@ -123,13 +123,20 @@ void OctaveHighlighter::highlightBlock(const QString &text) {
   }
 }
 
-BoolWidget::BoolWidget(const QString &b) { 
+BoolWidget::BoolWidget() { 
   value = new QCheckBox;
-  setValue(b);
   QHBoxLayout* layout = new QHBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
   layout->addWidget(value);
+}
+
+bool BoolWidget::validate(const vector<vector<QString> > &A) const {
+  if(A.size()!=1)
+    return false;
+  if(A[0].size()!=1)
+    return false;
+  return true;
 }
 
 OctaveExpressionWidget::OctaveExpressionWidget() {
@@ -148,15 +155,21 @@ OctaveExpressionWidget::OctaveExpressionWidget() {
   layout->addWidget(value);
 }
 
-ScalarWidget::ScalarWidget(const QString &d) {
+ScalarWidget::ScalarWidget() {
 
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
   box = new QLineEdit(this);
-  setValue(d);
   layout->addWidget(box);
-  //connect(box,SIGNAL(textEdited(const QString&)),this,SIGNAL(valueChanged(const QString&)));
+}
+
+bool ScalarWidget::validate(const vector<vector<QString> > &A) const {
+  if(A.size()!=1)
+    return false;
+  if(A[0].size()!=1)
+    return false;
+  return true;
 }
 
 VecWidget::VecWidget(int size, bool transpose_) : transpose(transpose_) {
@@ -165,14 +178,6 @@ VecWidget::VecWidget(int size, bool transpose_) : transpose(transpose_) {
   layout->setMargin(0);
   setLayout(layout);
   resize(size);
-}
-
-VecWidget::VecWidget(const vector<QString> &x, bool transpose_) : transpose(transpose_) {
-
-  QGridLayout *layout = new QGridLayout;
-  layout->setMargin(0);
-  setLayout(layout);
-  setVec(x);
 }
 
 void VecWidget::resize(int size) {
@@ -212,11 +217,10 @@ void VecWidget::setReadOnly(bool flag) {
   }
 }
 
-bool VecWidget::validate(const QString &str) const {
-  vector<QString> x = strToVec(str);
-  if(size()!=x.size())
+bool VecWidget::validate(const vector<vector<QString> > &A) const {
+  if(size()!=A.size())
     return false;
-  if(x[0]=="" || x[0].indexOf(",")!=-1)
+  if(A.size() && A[0].size()!=1)
     return false;
   return true;
 }
@@ -227,14 +231,6 @@ MatWidget::MatWidget(int rows, int cols) {
   layout->setMargin(0);
   setLayout(layout);
   resize(rows,cols);
-}
-
-MatWidget::MatWidget(const vector<vector<QString> > &A) {
-
-  QGridLayout *layout = new QGridLayout;
-  layout->setMargin(0);
-  setLayout(layout);
-  setMat(A);
 }
 
 void MatWidget::resize(int rows, int cols) {
@@ -283,8 +279,7 @@ void MatWidget::setReadOnly(bool flag) {
   }
 }
 
-bool MatWidget::validate(const QString &str) const {
-  vector<vector<QString> > A = strToMat(str);
+bool MatWidget::validate(const vector<vector<QString> > &A) const {
   if(rows()!=A.size() || cols()!=A[0].size())
     return false;
   return true;
@@ -296,18 +291,6 @@ SymMatWidget::SymMatWidget(int rows) {
   layout->setMargin(0);
   setLayout(layout);
   resize(rows);
-  for(unsigned int i=0; i<box.size(); i++)
-    for(unsigned int j=0; j<box.size(); j++)
-      if(i!=j) 
-        connect(box[i][j],SIGNAL(textChanged(const QString&)),box[j][i],SLOT(setText(const QString&)));
-}
-
-SymMatWidget::SymMatWidget(const vector<vector<QString> > &A) {
-
-  QGridLayout *layout = new QGridLayout;
-  layout->setMargin(0);
-  setLayout(layout);
-  setMat(A);
 }
 
 void SymMatWidget::resize(int rows) {
@@ -325,6 +308,10 @@ void SymMatWidget::resize(int rows) {
       static_cast<QGridLayout*>(layout())->addWidget(box[i][j], i, j);
     }
   }
+  for(unsigned int i=0; i<box.size(); i++)
+    for(unsigned int j=0; j<box.size(); j++)
+      if(i!=j) 
+        connect(box[i][j],SIGNAL(textChanged(const QString&)),box[j][i],SLOT(setText(const QString&)));
 }
 
 vector<vector<QString> > SymMatWidget::getMat() const {
@@ -355,13 +342,10 @@ void SymMatWidget::setReadOnly(bool flag) {
   }
 }
 
-bool SymMatWidget::validate(const QString &str) const {
-  vector<vector<QString> > A = strToMat(str);
+bool SymMatWidget::validate(const vector<vector<QString> > &A) const {
   if(rows()!=A.size() || cols()!=A[0].size())
     return false;
   for(unsigned int i=0; i<rows(); i++) {
-    //if(cols()!=A[i].size())
-      //return false;
     for(unsigned int j=0; j<i; j++) {
       if(fabs(A[i][j].toDouble() - A[j][i].toDouble())>1e-8)
         return false;
@@ -397,11 +381,10 @@ void VecSizeVarWidget::currentIndexChanged(int size) {
   emit sizeChanged(size);
 }
 
-bool VecSizeVarWidget::validate(const QString &str) const {
-  vector<QString> x = strToVec(str);
-  if(x.size()<minSize || x.size()>maxSize)
+bool VecSizeVarWidget::validate(const vector<vector<QString> > &A) const {
+  if(A.size()<minSize || A.size()>maxSize)
     return false;
-  if(x[0]=="")
+  if(A.size() && A[0].size()!=1)
     return false;
   return true;
 }
@@ -433,13 +416,10 @@ void MatColsVarWidget::currentIndexChanged(int cols) {
   emit sizeChanged(cols);
 }
 
-bool MatColsVarWidget::validate(const QString &str) const {
-  vector<vector<QString> > A = strToMat(str);
+bool MatColsVarWidget::validate(const vector<vector<QString> > &A) const {
   if(rows()!=A.size())
     return false;
   if(A[0].size()<minCols || A[0].size()>maxCols)
-    return false;
-  if(A[0][0]=="")
     return false;
   return true;
 }
@@ -480,13 +460,10 @@ void MatRowsColsVarWidget::currentColIndexChanged(int cols) {
   emit colSizeChanged(cols);
 }
 
-bool MatRowsColsVarWidget::validate(const QString &str) const {
-  vector<vector<QString> > A = strToMat(str);
+bool MatRowsColsVarWidget::validate(const vector<vector<QString> > &A) const {
   if(A.size()<minRows || A.size()>maxRows)
     return false;
   if(A[0].size()<minCols || A[0].size()>maxCols)
-    return false;
-  if(A[0][0]=="")
     return false;
   return true;
 }
@@ -500,22 +477,6 @@ CardanWidget::CardanWidget(bool transpose_) : transpose(transpose_) {
   for(int i=0; i<3; i++) {
     box[i] = new QLineEdit(this);
     box[i]->setText("0");
-    if(transpose) 
-      layout->addWidget(box[i], 0, i);
-    else
-      layout->addWidget(box[i], i, 0);
-  }
-}
-
-CardanWidget::CardanWidget(const vector<QString> &x, bool transpose_) : transpose(transpose_) {
-
-  QGridLayout *layout = new QGridLayout;
-  layout->setMargin(0);
-  setLayout(layout);
-  box.resize(3);
-  for(int i=0; i<3; i++) {
-    box[i] = new QLineEdit(this);
-    box[i]->setText(x[i]);
     if(transpose) 
       layout->addWidget(box[i], 0, i);
     else
