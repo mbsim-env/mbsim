@@ -123,8 +123,9 @@ void OctaveHighlighter::highlightBlock(const QString &text) {
   }
 }
 
-BoolWidget::BoolWidget() { 
+BoolWidget::BoolWidget(const QString &b) { 
   value = new QCheckBox;
+  setValue(b);
   QHBoxLayout* layout = new QHBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -150,17 +151,17 @@ OctaveExpressionWidget::OctaveExpressionWidget() {
   QFont font;
   font.setFamily("Monospace");
   value->setFont(font);
-  //value->setPlainText(toPlainText());
   value->setLineWrapMode(QPlainTextEdit::NoWrap);
   layout->addWidget(value);
 }
 
-ScalarWidget::ScalarWidget() {
+ScalarWidget::ScalarWidget(const QString &d) {
 
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
   box = new QLineEdit(this);
+  setValue(d);
   layout->addWidget(box);
 }
 
@@ -178,6 +179,14 @@ VecWidget::VecWidget(int size, bool transpose_) : transpose(transpose_) {
   layout->setMargin(0);
   setLayout(layout);
   resize(size);
+}
+
+VecWidget::VecWidget(const vector<QString> &x, bool transpose_) : transpose(transpose_) {
+
+  QGridLayout *layout = new QGridLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+  setVec(x);
 }
 
 void VecWidget::resize(int size) {
@@ -231,6 +240,14 @@ MatWidget::MatWidget(int rows, int cols) {
   layout->setMargin(0);
   setLayout(layout);
   resize(rows,cols);
+}
+
+MatWidget::MatWidget(const vector<vector<QString> > &A) {
+
+  QGridLayout *layout = new QGridLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+  setMat(A);
 }
 
 void MatWidget::resize(int rows, int cols) {
@@ -291,6 +308,14 @@ SymMatWidget::SymMatWidget(int rows) {
   layout->setMargin(0);
   setLayout(layout);
   resize(rows);
+}
+
+SymMatWidget::SymMatWidget(const vector<vector<QString> > &A) {
+
+  QGridLayout *layout = new QGridLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+  setMat(A);
 }
 
 void SymMatWidget::resize(int rows) {
@@ -477,6 +502,22 @@ CardanWidget::CardanWidget(bool transpose_) : transpose(transpose_) {
   for(int i=0; i<3; i++) {
     box[i] = new QLineEdit(this);
     box[i]->setText("0");
+    if(transpose) 
+      layout->addWidget(box[i], 0, i);
+    else
+      layout->addWidget(box[i], i, 0);
+  }
+}
+
+CardanWidget::CardanWidget(const vector<QString> &x, bool transpose_) : transpose(transpose_) {
+
+  QGridLayout *layout = new QGridLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+  box.resize(3);
+  for(int i=0; i<3; i++) {
+    box[i] = new QLineEdit(this);
+    box[i]->setText(x[i]);
     if(transpose) 
       layout->addWidget(box[i], 0, i);
     else
