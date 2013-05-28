@@ -480,7 +480,6 @@ DependenciesWidget::DependenciesWidget(Element *element_) : element(element_) {
   bodyList->setMaximumWidth(bodyList->sizeHint().width()/3);
   layout->addWidget(bodyList);
   stackedWidget = new QStackedWidget;
-  //connect(bodyList,SIGNAL(currentRowChanged(int)),this,SLOT(changeCurrent(int)));
   connect(bodyList,SIGNAL(currentRowChanged(int)),stackedWidget,SLOT(setCurrentIndex(int)));
   connect(bodyList,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(openContextMenu(const QPoint &)));
   connect(this,SIGNAL(bodyChanged()),this,SLOT(updateGeneralizedCoordinatesOfBodies()));
@@ -670,7 +669,6 @@ GearDependenciesWidget::GearDependenciesWidget(Element *element_) : element(elem
   bodyList->setMaximumWidth(bodyList->sizeHint().width()/3);
   layout->addWidget(bodyList);
   stackedWidget = new QStackedWidget;
-  //connect(bodyList,SIGNAL(currentRowChanged(int)),this,SLOT(changeCurrent(int)));
   connect(bodyList,SIGNAL(currentRowChanged(int)),stackedWidget,SLOT(setCurrentIndex(int)));
   connect(bodyList,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(openContextMenu(const QPoint &)));
   layout->addWidget(stackedWidget,0,Qt::AlignTop);
@@ -784,7 +782,6 @@ SignalReferencesWidget::SignalReferencesWidget(Element *element_) : element(elem
   signalList->setMaximumWidth(signalList->sizeHint().width()/3);
   layout->addWidget(signalList);
   stackedWidget = new QStackedWidget;
-  //connect(signalList,SIGNAL(currentRowChanged(int)),this,SLOT(changeCurrent(int)));
   connect(signalList,SIGNAL(currentRowChanged(int)),stackedWidget,SLOT(setCurrentIndex(int)));
   connect(signalList,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(openContextMenu(const QPoint &)));
   layout->addWidget(stackedWidget,0,Qt::AlignTop);

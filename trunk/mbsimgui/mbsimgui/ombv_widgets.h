@@ -187,7 +187,7 @@ class OMBVBodyChoiceWidget : public Widget {
 
   public:
 
-    OMBVBodyChoiceWidget(const QString &name, bool flag=true);
+    OMBVBodyChoiceWidget(const QString &name);
 
     void setName(const QString &name) {ombv->setName(name);}
 
