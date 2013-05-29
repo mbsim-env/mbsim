@@ -33,32 +33,35 @@ void DifferentiableFunction1Widget::setDerivative(Function1Widget *diff,size_t d
   derivatives[degree]=diff; 
 }
 
-SymbolicFunction1Widget::SymbolicFunction1Widget(const QString &ext) : Function1Widget(ext) {
+SymbolicFunction1Widget::SymbolicFunction1Widget(const QStringList &var) : Function1Widget() {
   QGridLayout *layout = new QGridLayout;
   layout->setMargin(0);
   setLayout(layout);
-  for(int i=1; i<ext.size(); i++) {
-    argname.push_back(new ExtWidget("Name of argument "+QString::number(i),new TextWidget(QString("x")+QString::number(i))));
-    layout->addWidget(argname[i-1],i-1,0);
+  for(int i=0; i<var.size(); i++) {
+    argname.push_back(new ExtWidget("Name of argument "+QString::number(i+1),new TextWidget(var[i])));
+    layout->addWidget(argname[i],i,0);
 
-    argdim.push_back(new ExtWidget("Dimension of argument "+QString::number(i),new TextWidget("1")));
-    if(ext[i]=='V')
-      layout->addWidget(argdim[i-1],i-1,1);
+    //argdim.push_back(new ExtWidget("Dimension of argument "+QString::number(i+1),new TextWidget("1")));
+    argdim.push_back(new QSpinBox);
+    argdim[i]->setMinimum(1);
+    if(var[i]!="t")
+      layout->addWidget(argdim[i],i,1);
   }
   f = new ExtWidget("Function",new OctaveExpressionWidget);
-  layout->addWidget(f,ext.size()-1,0,1,2);
+  layout->addWidget(f,var.size(),0,1,2);
 }
 
 int SymbolicFunction1Widget::getArgDim() const {
-  return static_cast<TextWidget*>(argdim[0]->getWidget())->getText().toInt();
+  //return static_cast<TextWidget*>(argdim[0]->getWidget())->getText().toInt();
+  return argdim[0]->value();
 }
 
-ConstantFunction1Widget::ConstantFunction1Widget(const QString &ext, int n) : Function1Widget(ext) {
+ConstantFunction1Widget::ConstantFunction1Widget(bool vec, int n) : Function1Widget() {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
   vector<PhysicalVariableWidget*> input;
-  if(ext[0]=='V')
+  if(vec)
     input.push_back(new PhysicalVariableWidget(new VecWidget(n,true),QStringList(),0));
   else
     input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
@@ -235,24 +238,27 @@ void SummationFunction1Widget::removeFunction() {
   delete functionList->takeItem(i);
 }
 
-SymbolicFunction2Widget::SymbolicFunction2Widget(const QString &ext) : Function2Widget(ext) {
+SymbolicFunction2Widget::SymbolicFunction2Widget(const QStringList &var) : Function2Widget() {
   QGridLayout *layout = new QGridLayout;
   layout->setMargin(0);
   setLayout(layout);
-  for(int i=1; i<ext.size(); i++) {
-    argname.push_back(new ExtWidget("Name of argument "+QString::number(i),new TextWidget(QString("x")+QString::number(i))));
-    layout->addWidget(argname[i-1],i-1,0);
+  for(int i=0; i<var.size(); i++) {
+    argname.push_back(new ExtWidget("Name of argument "+QString::number(i+1),new TextWidget(var[i])));
+    layout->addWidget(argname[i],i,0);
 
-    argdim.push_back(new ExtWidget("Dimension of argument "+QString::number(i),new TextWidget("1")));
-    if(ext[i]=='V')
-      layout->addWidget(argdim[i-1],i-1,1);
+    //argdim.push_back(new ExtWidget("Dimension of argument "+QString::number(i+1),new TextWidget("1")));
+    argdim.push_back(new QSpinBox);
+    argdim[i]->setMinimum(1);
+    if(var[i]!="t")
+      layout->addWidget(argdim[i],i,1);
   }
   f = new ExtWidget("Function",new OctaveExpressionWidget);
-  layout->addWidget(f,ext.size()-1,0,1,2);
+  layout->addWidget(f,var.size(),0,1,2);
 }
 
 int SymbolicFunction2Widget::getArgDim(int i) const {
-  return static_cast<TextWidget*>(argdim[i]->getWidget())->getText().toInt();
+  //return static_cast<TextWidget*>(argdim[i]->getWidget())->getText().toInt();
+  return argdim[i]->value();
 }
 
 LinearSpringDamperForceWidget::LinearSpringDamperForceWidget() {
@@ -324,7 +330,7 @@ LinearRegularizedCoulombFrictionWidget::LinearRegularizedCoulombFrictionWidget()
   layout->addWidget(mu);
 }
 
-Function1ChoiceWidget::Function1ChoiceWidget(bool withFactor, int n_, const QString& ext_) : factor(0), n(n_), ext(ext_) {
+Function1ChoiceWidget::Function1ChoiceWidget(bool withFactor, int n_) : factor(0), n(n_) {
 
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -347,7 +353,7 @@ Function1ChoiceWidget::Function1ChoiceWidget(bool withFactor, int n_, const QStr
   layout->addWidget(comboBox);
   stackedWidget = new QStackedWidget;
   Function1Widget *function;
-  function = new ConstantFunction1Widget(ext,n);
+  function = new ConstantFunction1Widget(true,n);
   stackedWidget->addWidget(function);
   function = new QuadraticFunction1Widget(n);
   function->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
@@ -362,7 +368,7 @@ Function1ChoiceWidget::Function1ChoiceWidget(bool withFactor, int n_, const QStr
   connect(function,SIGNAL(resize_()),this,SIGNAL(resize_())); 
   function->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
   stackedWidget->addWidget(function);
-  function = new SymbolicFunction1Widget(ext);
+  function = new SymbolicFunction1Widget(QStringList());
   function->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
   stackedWidget->addWidget(function);
   layout->addWidget(stackedWidget);
@@ -391,7 +397,7 @@ void Function1ChoiceWidget::defineFunction(int index) {
   emit resize_();
 }
 
-Function2ChoiceWidget::Function2ChoiceWidget(const QString& ext_) : ext(ext_) {
+Function2ChoiceWidget::Function2ChoiceWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -404,7 +410,7 @@ Function2ChoiceWidget::Function2ChoiceWidget(const QString& ext_) : ext(ext_) {
   Function2Widget *function;
   function = new LinearSpringDamperForceWidget;
   stackedWidget->addWidget(function);
-  function = new SymbolicFunction2Widget(ext);
+  function = new SymbolicFunction2Widget(QStringList());
   function->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
   stackedWidget->addWidget(function);
   layout->addWidget(stackedWidget);

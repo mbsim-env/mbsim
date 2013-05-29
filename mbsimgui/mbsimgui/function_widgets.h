@@ -30,31 +30,26 @@ class Function1ChoiceWidget;
 class WidgetChoiceWidget;
 class QStackedWidget;
 class QListWidget;
+class QSpinBox;
 
 class Function1Widget : public Widget {
   Q_OBJECT
   public:
-    Function1Widget(const QString& ext_="") : ext(ext_) {}
+    Function1Widget() {}
     virtual ~Function1Widget() {}
-    virtual QString getType() const { return "Function1_"+ext; }
-    virtual QString getExt() const { return ext; }
+    virtual QString getType() const { return "Function"; }
   public slots:
     virtual void resize_(int m, int n) {}
-  protected:
-    QString ext;
 };
 
 class Function2Widget : public Widget {
   Q_OBJECT
   public:
-    Function2Widget(const QString& ext_="") : ext(ext_) {}
+    Function2Widget() {}
     virtual ~Function2Widget() {}
-    virtual QString getType() const { return "Function2_"+ext; }
-    virtual QString getExt() const { return ext; }
+    virtual QString getType() const { return "Function"; }
   public slots:
     virtual void resize_(int m, int n) {}
-  protected:
-    QString ext;
 };
 
 class SymbolicFunction1Widget : public Function1Widget {
@@ -62,17 +57,18 @@ class SymbolicFunction1Widget : public Function1Widget {
   friend class SymbolicFunction1Property;
 
   public:
-    SymbolicFunction1Widget(const QString &ext);
-    inline QString getType() const { return QString("SymbolicFunction1_")+ext; }
+    SymbolicFunction1Widget(const QStringList &var);
+    inline QString getType() const { return "SymbolicFunction"; }
     int getArgDim() const;
   protected:
     ExtWidget *f;
-    std::vector<ExtWidget*> argname, argdim;
+    std::vector<ExtWidget*> argname;
+    std::vector<QSpinBox*> argdim;
 };
 
 class DifferentiableFunction1Widget : public Function1Widget {
   public:
-    DifferentiableFunction1Widget(const QString &ext="") : Function1Widget(ext), order(0) {}
+    DifferentiableFunction1Widget() : Function1Widget(), order(0) {}
     //virtual ~DifferentiableFunction1() { delete derivatives[0]; derivatives.erase(derivatives.begin()); }
     const Function1Widget& getDerivative(int degree) const { return *(derivatives[degree]); }
     Function1Widget& getDerivative(int degree) { return *(derivatives[degree]); }
@@ -93,8 +89,8 @@ class ConstantFunction1Widget : public Function1Widget {
   friend class ConstantFunction1Property;
 
   public:
-    ConstantFunction1Widget(const QString &ext, int n);
-    inline QString getType() const { return QString("ConstantFunction1_")+ext; }
+    ConstantFunction1Widget(bool vec, int n);
+    inline QString getType() const { return "ConstantFunction"; }
     void resize_(int m, int n);
   protected:
     ExtWidget *c;
@@ -193,12 +189,14 @@ class SymbolicFunction2Widget : public Function2Widget {
   friend class SymbolicFunction2Property;
 
   public:
-    SymbolicFunction2Widget(const QString &ext);
-    inline QString getType() const { return QString("SymbolicFunction2_")+ext; }
+    SymbolicFunction2Widget(const QStringList &var);
+    inline QString getType() const { return "SymbolicFunction"; }
     int getArgDim(int i) const;
   protected:
     ExtWidget *f;
-    std::vector<ExtWidget*> argname, argdim;
+    //std::vector<ExtWidget*> argname, argdim;
+    std::vector<ExtWidget*> argname;
+    std::vector<QSpinBox*> argdim;
 };
 
 class LinearSpringDamperForceWidget : public Function2Widget {
@@ -207,7 +205,7 @@ class LinearSpringDamperForceWidget : public Function2Widget {
 
   public:
     LinearSpringDamperForceWidget();
-    inline QString getType() const { return QString("LinearSpringDamperForce")+ext; }
+    inline QString getType() const { return "LinearSpringDamperForce"; }
   protected:
     ExtWidget *c, *d, *l0;
 };
@@ -257,7 +255,7 @@ class Function1ChoiceWidget : public Widget {
   friend class Function1ChoiceProperty;
 
   public:
-    Function1ChoiceWidget(bool withFactor=false, int n=0, const QString& ext="VS");
+    Function1ChoiceWidget(bool withFactor=false, int n=0);
 
     void resize_(int m, int n);
     Function1Widget* getFunction(int i);
@@ -271,7 +269,6 @@ class Function1ChoiceWidget : public Widget {
     QStackedWidget *stackedWidget;
     ExtWidget* factor;
     int n;
-    QString ext;
 
   signals:
     void resize_();
@@ -284,7 +281,7 @@ class Function2ChoiceWidget : public Widget {
   friend class Function2ChoiceProperty;
 
   public:
-    Function2ChoiceWidget(const QString& ext="VVS");
+    Function2ChoiceWidget();
 
     void resize_(int m, int n);
     Function2Widget* getFunction(int i);
@@ -296,7 +293,6 @@ class Function2ChoiceWidget : public Widget {
   protected:
     QComboBox *comboBox;
     QStackedWidget *stackedWidget;
-    QString ext;
 
   signals:
     void resize_();

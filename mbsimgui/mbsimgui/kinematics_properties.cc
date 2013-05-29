@@ -108,7 +108,9 @@ void LinearTranslationProperty::toWidget(QWidget *widget) {
 }
 
 TimeDependentTranslationProperty::TimeDependentTranslationProperty() {
-  function.setProperty(new Function1ChoiceProperty(MBSIMNS"translationFunction"));
+  vector<Property*> property;
+  property.push_back(new SymbolicFunction1Property("VS"));
+  function.setProperty(new GeneralChoiceProperty(MBSIMNS"translationFunction",property));
 }
 
 TiXmlElement* TimeDependentTranslationProperty::initializeUsingXML(TiXmlElement *element) {
@@ -346,7 +348,9 @@ TimeDependentRotationAboutFixedAxisProperty::TimeDependentRotationAboutFixedAxis
   input.push_back(new PhysicalVariableProperty(new VecProperty(3),"-",MBSIMNS"axisOfRotation"));
   vec.setProperty(new ExtPhysicalVarProperty(input));  
 
-  function.setProperty(new Function1ChoiceProperty(MBSIMNS"rotationalFunction",false,"SS"));
+  vector<Property*> property;
+  property.push_back(new SymbolicFunction1Property("SS"));
+  function.setProperty(new GeneralChoiceProperty(MBSIMNS"rotationalFunction",property));
 }
 
 TiXmlElement* TimeDependentRotationAboutFixedAxisProperty::initializeUsingXML(TiXmlElement *element) {

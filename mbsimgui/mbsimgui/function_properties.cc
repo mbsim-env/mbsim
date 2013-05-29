@@ -24,6 +24,7 @@
 #include "function_widgets.h"
 #include "extended_widgets.h"
 #include "utils.h"
+#include <QSpinBox>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -43,7 +44,7 @@ TiXmlElement* Function2Property::writeXMLFile(TiXmlNode *parent) {
 SymbolicFunction1Property::SymbolicFunction1Property(const string &ext) : Function1Property(ext), argname(ext.size()-1), argdim(ext.size()-1) {
   for(int i=1; i<ext.size(); i++) {
      argname[i-1].setProperty(new TextProperty("x"+toStr(i),""));
-     argdim[i-1].setProperty(new TextProperty("1",""));
+     argdim[i-1] = 1;
   }
   f.setProperty(new OctaveExpressionProperty);
 }
@@ -56,7 +57,8 @@ TiXmlElement* SymbolicFunction1Property::initializeUsingXML(TiXmlElement *elemen
       static_cast<TextProperty*>(argname[i-1].getProperty())->setText(element->Attribute(str.c_str()));
     str = "arg"+toStr(i)+"dim";
     if(element->Attribute(str))
-      static_cast<TextProperty*>(argdim[i-1].getProperty())->setText(element->Attribute(str.c_str()));
+      //static_cast<TextProperty*>(argdim[i-1].getProperty())->setText(element->Attribute(str.c_str()));
+      argdim[i-1] = atoi(element->Attribute(str.c_str()));
   }
   return element;
 }
@@ -66,7 +68,8 @@ TiXmlElement* SymbolicFunction1Property::writeXMLFile(TiXmlNode *parent) {
   for(int i=1; i<ext.size(); i++) {
     ele0->SetAttribute("arg"+toStr(i)+"name", static_cast<TextProperty*>(argname[i-1].getProperty())->getText());
     if(ext[i]=='V')
-      ele0->SetAttribute("arg"+toStr(i)+"dim",static_cast<TextProperty*>(argdim[i-1].getProperty())->getText());
+      //ele0->SetAttribute("arg"+toStr(i)+"dim",static_cast<TextProperty*>(argdim[i-1].getProperty())->getText());
+      ele0->SetAttribute("arg"+toStr(i)+"dim",argdim[i-1]);
   }
   f.writeXMLFile(ele0);
   return ele0;
@@ -75,7 +78,8 @@ TiXmlElement* SymbolicFunction1Property::writeXMLFile(TiXmlNode *parent) {
 void SymbolicFunction1Property::fromWidget(QWidget *widget) {
   for(int i=0; i<argname.size(); i++) {
     argname[i].fromWidget(static_cast<SymbolicFunction1Widget*>(widget)->argname[i]);
-    argdim[i].fromWidget(static_cast<SymbolicFunction1Widget*>(widget)->argdim[i]);
+    //argdim[i].fromWidget(static_cast<SymbolicFunction1Widget*>(widget)->argdim[i]);
+    argdim[i] = static_cast<SymbolicFunction1Widget*>(widget)->argdim[i]->value();
   }
   f.fromWidget(static_cast<SymbolicFunction1Widget*>(widget)->f);
 }
@@ -83,7 +87,8 @@ void SymbolicFunction1Property::fromWidget(QWidget *widget) {
 void SymbolicFunction1Property::toWidget(QWidget *widget) {
   for(int i=0; i<argname.size(); i++) {
     argname[i].toWidget(static_cast<SymbolicFunction1Widget*>(widget)->argname[i]);
-    argdim[i].toWidget(static_cast<SymbolicFunction1Widget*>(widget)->argdim[i]);
+    //argdim[i].toWidget(static_cast<SymbolicFunction1Widget*>(widget)->argdim[i]);
+    static_cast<SymbolicFunction1Widget*>(widget)->argdim[i]->setValue(argdim[i]);
   }
   f.toWidget(static_cast<SymbolicFunction1Widget*>(widget)->f);
 }
@@ -293,7 +298,8 @@ void SummationFunction1Property::toWidget(QWidget *widget) {
 SymbolicFunction2Property::SymbolicFunction2Property(const string &ext) : Function2Property(ext), argname(ext.size()-1), argdim(ext.size()-1) {
   for(int i=1; i<ext.size(); i++) {
      argname[i-1].setProperty(new TextProperty("x"+toStr(i),""));
-     argdim[i-1].setProperty(new TextProperty("1",""));
+     //argdim[i-1].setProperty(new TextProperty("1",""));
+     argdim[i-1] = 1;
   }
   f.setProperty(new OctaveExpressionProperty);
 }
@@ -306,7 +312,8 @@ TiXmlElement* SymbolicFunction2Property::initializeUsingXML(TiXmlElement *elemen
       static_cast<TextProperty*>(argname[i-1].getProperty())->setText(element->Attribute(str.c_str()));
     str = "arg"+toStr(i)+"dim";
     if(element->Attribute(str))
-      static_cast<TextProperty*>(argdim[i-1].getProperty())->setText(element->Attribute(str.c_str()));
+      //static_cast<TextProperty*>(argdim[i-1].getProperty())->setText(element->Attribute(str.c_str()));
+      argdim[i-1] = atoi(element->Attribute(str.c_str()));
   }
   return element;
 }
@@ -316,7 +323,8 @@ TiXmlElement* SymbolicFunction2Property::writeXMLFile(TiXmlNode *parent) {
   for(int i=1; i<ext.size(); i++) {
     ele0->SetAttribute("arg"+toStr(i)+"name", static_cast<TextProperty*>(argname[i-1].getProperty())->getText());
     if(ext[i]=='V')
-      ele0->SetAttribute("arg"+toStr(i)+"dim",static_cast<TextProperty*>(argdim[i-1].getProperty())->getText());
+      //ele0->SetAttribute("arg"+toStr(i)+"dim",static_cast<TextProperty*>(argdim[i-1].getProperty())->getText());
+      ele0->SetAttribute("arg"+toStr(i)+"dim",argdim[i-1]);
   }
   f.writeXMLFile(ele0);
   return ele0;
@@ -325,7 +333,8 @@ TiXmlElement* SymbolicFunction2Property::writeXMLFile(TiXmlNode *parent) {
 void SymbolicFunction2Property::fromWidget(QWidget *widget) {
   for(int i=0; i<argname.size(); i++) {
     argname[i].fromWidget(static_cast<SymbolicFunction2Widget*>(widget)->argname[i]);
-    argdim[i].fromWidget(static_cast<SymbolicFunction2Widget*>(widget)->argdim[i]);
+    //argdim[i].fromWidget(static_cast<SymbolicFunction2Widget*>(widget)->argdim[i]);
+    argdim[i] = static_cast<SymbolicFunction2Widget*>(widget)->argdim[i]->value();
   }
   f.fromWidget(static_cast<SymbolicFunction2Widget*>(widget)->f);
 }
@@ -333,7 +342,8 @@ void SymbolicFunction2Property::fromWidget(QWidget *widget) {
 void SymbolicFunction2Property::toWidget(QWidget *widget) {
   for(int i=0; i<argname.size(); i++) {
     argname[i].toWidget(static_cast<SymbolicFunction2Widget*>(widget)->argname[i]);
-    argdim[i].toWidget(static_cast<SymbolicFunction2Widget*>(widget)->argdim[i]);
+    //argdim[i].toWidget(static_cast<SymbolicFunction2Widget*>(widget)->argdim[i]);
+    static_cast<SymbolicFunction2Widget*>(widget)->argdim[i]->setValue(argdim[i]);
   }
   f.toWidget(static_cast<SymbolicFunction2Widget*>(widget)->f);
 }
