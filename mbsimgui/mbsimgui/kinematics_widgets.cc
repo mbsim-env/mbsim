@@ -209,14 +209,19 @@ StateDependentRotationAboutFixedAxisWidget::StateDependentRotationAboutFixedAxis
   vec = new ExtWidget("Axis of rotation",vec_);
   layout->addWidget(vec);
 
-  function = new ExtWidget("Rotational function",new Function1ChoiceWidget(false,1,"SV"));
+  vector<Widget*> widget;
+  vector<QString> name;
+  widget.push_back(new SymbolicFunction1Widget("SV"));
+  name.push_back("Symbolic function");
+  function = new ExtWidget("Translation function",new GeneralChoiceWidget(widget,name));
+
+  //function = new ExtWidget("Rotational function",new Function1ChoiceWidget(false,1,"SV"));
   layout->addWidget(function);
 }
 
 int StateDependentRotationAboutFixedAxisWidget::getqSize() const {
-  SymbolicFunction1Widget *func = dynamic_cast<SymbolicFunction1Widget*>(static_cast<Function1ChoiceWidget*>(function->getWidget())->getFunction());
-  if(func)
-    return func->getArgDim();
+  SymbolicFunction1Widget *func = static_cast<SymbolicFunction1Widget*>(static_cast<GeneralChoiceWidget*>(function->getWidget())->getWidget());
+  return func->getArgDim();
   return 0;
 }
 
