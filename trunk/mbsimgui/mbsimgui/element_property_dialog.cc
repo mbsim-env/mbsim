@@ -470,17 +470,22 @@ KinematicConstraintPropertyDialog::KinematicConstraintPropertyDialog(KinematicCo
   connect((RigidBodyOfReferenceWidget*)dependentBody->getWidget(),SIGNAL(bodyChanged()),this,SLOT(updateReferenceBody()));
   addToTab("General", dependentBody);
 
-  kinematicFunction = new ExtWidget("Kinematic function",new Function1ChoiceWidget,true);
+  vector<Widget*> widget;
+  vector<QString> name;
+  widget.push_back(new SymbolicFunction1Widget("VS"));
+  name.push_back("Symbolic function");
+  kinematicFunction = new ExtWidget("Kineematic function",new GeneralChoiceWidget(widget,name));
+//  kinematicFunction = new ExtWidget("Kinematic function",new Function1ChoiceWidget,true);
   addToTab("General", kinematicFunction);
-  connect((Function1ChoiceWidget*)kinematicFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+  connect((GeneralChoiceWidget*)kinematicFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
-  firstDerivativeOfKinematicFunction = new ExtWidget("First derivative of kinematic function",new Function1ChoiceWidget,true);
-  addToTab("General", firstDerivativeOfKinematicFunction);
-  connect((Function1ChoiceWidget*)firstDerivativeOfKinematicFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
-
-  secondDerivativeOfKinematicFunction = new ExtWidget("Second derivative of kinematic function",new Function1ChoiceWidget,true);
-  addToTab("General", secondDerivativeOfKinematicFunction);
-  connect((Function1ChoiceWidget*)secondDerivativeOfKinematicFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+//  firstDerivativeOfKinematicFunction = new ExtWidget("First derivative of kinematic function",new Function1ChoiceWidget,true);
+//  addToTab("General", firstDerivativeOfKinematicFunction);
+//  connect((Function1ChoiceWidget*)firstDerivativeOfKinematicFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+//
+//  secondDerivativeOfKinematicFunction = new ExtWidget("Second derivative of kinematic function",new Function1ChoiceWidget,true);
+//  addToTab("General", secondDerivativeOfKinematicFunction);
+//  connect((Function1ChoiceWidget*)secondDerivativeOfKinematicFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
   connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
 }
@@ -488,8 +493,8 @@ KinematicConstraintPropertyDialog::KinematicConstraintPropertyDialog(KinematicCo
 void KinematicConstraintPropertyDialog::resizeVariables() {
   int size = refBody?refBody->getqRelSize():0;
   ((Function1ChoiceWidget*)kinematicFunction->getWidget())->resize_(size,1);
-  ((Function1ChoiceWidget*)firstDerivativeOfKinematicFunction->getWidget())->resize_(size,1);
-  ((Function1ChoiceWidget*)secondDerivativeOfKinematicFunction->getWidget())->resize_(size,1);
+//  ((Function1ChoiceWidget*)firstDerivativeOfKinematicFunction->getWidget())->resize_(size,1);
+//  ((Function1ChoiceWidget*)secondDerivativeOfKinematicFunction->getWidget())->resize_(size,1);
 }
 
 void KinematicConstraintPropertyDialog::updateReferenceBody() {
@@ -506,16 +511,16 @@ void KinematicConstraintPropertyDialog::toWidget(Element *element) {
   ConstraintPropertyDialog::toWidget(element);
   static_cast<KinematicConstraint*>(element)->dependentBody.toWidget(dependentBody);
   static_cast<KinematicConstraint*>(element)->kinematicFunction.toWidget(kinematicFunction);
-  static_cast<KinematicConstraint*>(element)->firstDerivativeOfKinematicFunction.toWidget(firstDerivativeOfKinematicFunction);
-  static_cast<KinematicConstraint*>(element)->secondDerivativeOfKinematicFunction.toWidget(secondDerivativeOfKinematicFunction);
+//  static_cast<KinematicConstraint*>(element)->firstDerivativeOfKinematicFunction.toWidget(firstDerivativeOfKinematicFunction);
+//  static_cast<KinematicConstraint*>(element)->secondDerivativeOfKinematicFunction.toWidget(secondDerivativeOfKinematicFunction);
 }
 
 void KinematicConstraintPropertyDialog::fromWidget(Element *element) {
   ConstraintPropertyDialog::fromWidget(element);
   static_cast<KinematicConstraint*>(element)->dependentBody.fromWidget(dependentBody);
   static_cast<KinematicConstraint*>(element)->kinematicFunction.fromWidget(kinematicFunction);
-  static_cast<KinematicConstraint*>(element)->firstDerivativeOfKinematicFunction.fromWidget(firstDerivativeOfKinematicFunction);
-  static_cast<KinematicConstraint*>(element)->secondDerivativeOfKinematicFunction.fromWidget(secondDerivativeOfKinematicFunction);
+//  static_cast<KinematicConstraint*>(element)->firstDerivativeOfKinematicFunction.fromWidget(firstDerivativeOfKinematicFunction);
+//  static_cast<KinematicConstraint*>(element)->secondDerivativeOfKinematicFunction.fromWidget(secondDerivativeOfKinematicFunction);
 }
 
 JointConstraintPropertyDialog::JointConstraintPropertyDialog(JointConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : ConstraintPropertyDialog(constraint,parent,f) {

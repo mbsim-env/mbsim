@@ -377,7 +377,10 @@ StateDependentRotationAboutFixedAxisProperty::StateDependentRotationAboutFixedAx
   input.push_back(new PhysicalVariableProperty(new VecProperty(3),"-",MBSIMNS"axisOfRotation"));
   vec.setProperty(new ExtPhysicalVarProperty(input));  
 
-  function.setProperty(new Function1ChoiceProperty(MBSIMNS"rotationalFunction",false,"SV"));
+  vector<Property*> property;
+  property.push_back(new SymbolicFunction1Property("SV"));
+  function.setProperty(new GeneralChoiceProperty(MBSIMNS"rotationalFunction",property));
+  //function.setProperty(new Function1ChoiceProperty(MBSIMNS"rotationalFunction",false,"SV"));
 }
 
 TiXmlElement* StateDependentRotationAboutFixedAxisProperty::initializeUsingXML(TiXmlElement *element) {

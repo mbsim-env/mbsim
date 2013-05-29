@@ -70,11 +70,15 @@ KinematicConstraint::KinematicConstraint(const string &str, Element *parent) : C
 
   dependentBody.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIMNS"dependentRigidBody"));
 
-  kinematicFunction.setProperty(new Function1ChoiceProperty(MBSIMNS"kinematicFunction"));
+  vector<Property*> property;
+  property.push_back(new SymbolicFunction1Property("VS"));
+  kinematicFunction.setProperty(new GeneralChoiceProperty(MBSIMNS"kinematicFunction",property));
 
-  firstDerivativeOfKinematicFunction.setProperty(new Function1ChoiceProperty(MBSIMNS"firstDerivativeOfKinematicFunction"));
+  //kinematicFunction.setProperty(new Function1ChoiceProperty(MBSIMNS"kinematicFunction"));
 
-  secondDerivativeOfKinematicFunction.setProperty(new Function1ChoiceProperty(MBSIMNS"secondDerivativeOfKinematicFunction"));
+  //firstDerivativeOfKinematicFunction.setProperty(new Function1ChoiceProperty(MBSIMNS"firstDerivativeOfKinematicFunction"));
+
+  //secondDerivativeOfKinematicFunction.setProperty(new Function1ChoiceProperty(MBSIMNS"secondDerivativeOfKinematicFunction"));
 
 }
 
@@ -91,8 +95,8 @@ void KinematicConstraint::initializeUsingXML(TiXmlElement *element) {
   Constraint::initializeUsingXML(element);
   dependentBody.initializeUsingXML(element);
   kinematicFunction.initializeUsingXML(element);
-  firstDerivativeOfKinematicFunction.initializeUsingXML(element);
-  secondDerivativeOfKinematicFunction.initializeUsingXML(element);
+  //firstDerivativeOfKinematicFunction.initializeUsingXML(element);
+  //secondDerivativeOfKinematicFunction.initializeUsingXML(element);
 }
 
 TiXmlElement* KinematicConstraint::writeXMLFile(TiXmlNode *parent) {
@@ -100,8 +104,8 @@ TiXmlElement* KinematicConstraint::writeXMLFile(TiXmlNode *parent) {
 
   dependentBody.writeXMLFile(ele0);
   kinematicFunction.writeXMLFile(ele0);
-  firstDerivativeOfKinematicFunction.writeXMLFile(ele0);
-  secondDerivativeOfKinematicFunction.writeXMLFile(ele0);
+  //firstDerivativeOfKinematicFunction.writeXMLFile(ele0);
+  //secondDerivativeOfKinematicFunction.writeXMLFile(ele0);
 
   return ele0;
 }
