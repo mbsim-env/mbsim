@@ -217,6 +217,10 @@ MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(Function, SymbolicFunction1<double COMMA
 MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(Function, SymbolicFunction1<double COMMA VecV>, MBSIMNS"SymbolicFunction1_SV")
 MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(Function, SymbolicFunction1<double COMMA Vec3>, MBSIMNS"SymbolicFunction1_SV")
 #endif
+#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
+// create some common Vec combination for SymbolicFunction2_SSS
+MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(Function, SymbolicFunction2<double  COMMA double  COMMA double>, MBSIMNS"SymbolicFunction2_SSS")
+#endif
 MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(Function, FlexibilityInfluenceFunction, MBSIMNS"FlexibilityInfluenceFunction")
 MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(Function, ConstantInfluenceFunction, MBSIMNS"ConstantInfluenceFunction")
 /*

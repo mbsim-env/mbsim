@@ -29,6 +29,9 @@
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/objectfactory.h"
+#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
+#include "mbsim/utils/symbolic_function.h"
+#endif
 
 using namespace MBSim;
 using namespace MBXMLUtils;
@@ -162,10 +165,10 @@ namespace MBSim {
     }
     else if(stage==MBSim::unknownStage) {
       Constraint::init(stage);
-      DifferentiableFunction1<fmatvec::VecV> *pos = dynamic_cast<DifferentiableFunction1<fmatvec::VecV> *>(f);
-      if(pos) {
-        if(fd==0) fd = &pos->getDerivative(1);
-        if(fdd==0) fdd = &pos->getDerivative(2);
+      SymbolicFunction1<VecV,double> *function = dynamic_cast<SymbolicFunction1<VecV,double>*>(f);
+      if(function) {
+        if(fd==0) fd = new SymbolicFunction1<VecV,double>(function->getSXFunction().jacobian());
+        if(fdd==0) fdd = new SymbolicFunction1<VecV,double>(static_cast<SymbolicFunction1<VecV,double>*>(fd)->getSXFunction().jacobian());
       }
     }
     else
