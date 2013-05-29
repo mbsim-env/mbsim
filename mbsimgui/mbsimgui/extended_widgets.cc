@@ -135,7 +135,7 @@ ExtWidget::ExtWidget(const QString &name, Widget *widget_, bool deactivatable, b
 
   if(deactivatable) {
     setCheckable(true);
-    connect(this,SIGNAL(toggled(bool)),this,SIGNAL(resize()));
+    connect(this,SIGNAL(toggled(bool)),this,SIGNAL(resize_()));
     connect(this,SIGNAL(toggled(bool)),widget,SLOT(setVisible(bool)));
     setChecked(active);
   }

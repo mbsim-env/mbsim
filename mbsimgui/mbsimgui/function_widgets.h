@@ -39,7 +39,7 @@ class Function1Widget : public Widget {
     virtual QString getType() const { return "Function1_"+ext; }
     virtual QString getExt() const { return ext; }
   public slots:
-    virtual void resize(int m, int n) {}
+    virtual void resize_(int m, int n) {}
   protected:
     QString ext;
 };
@@ -52,7 +52,7 @@ class Function2Widget : public Widget {
     virtual QString getType() const { return "Function2_"+ext; }
     virtual QString getExt() const { return ext; }
   public slots:
-    virtual void resize(int m, int n) {}
+    virtual void resize_(int m, int n) {}
   protected:
     QString ext;
 };
@@ -95,7 +95,7 @@ class ConstantFunction1Widget : public Function1Widget {
   public:
     ConstantFunction1Widget(const QString &ext, int n);
     inline QString getType() const { return QString("ConstantFunction1_")+ext; }
-    void resize(int m, int n);
+    void resize_(int m, int n);
   protected:
     ExtWidget *c;
 };
@@ -107,7 +107,7 @@ class QuadraticFunction1Widget : public DifferentiableFunction1Widget {
   public:
     QuadraticFunction1Widget(int n);
     inline QString getType() const { return QString("QuadraticFunction1_VS"); }
-    void resize(int m, int n);
+    void resize_(int m, int n);
 
   protected:
     ExtWidget *a0, *a1, *a2;
@@ -120,7 +120,7 @@ class SinusFunction1Widget : public DifferentiableFunction1Widget {
   public:
     SinusFunction1Widget(int n);
     inline QString getType() const { return QString("SinusFunction1_VS"); }
-    void resize(int m, int n);
+    void resize_(int m, int n);
 
  //   class ZerothDerivative : public Function1 {
  //      public:
@@ -169,7 +169,7 @@ class SummationFunction1Widget : public Function1Widget {
   public:
     SummationFunction1Widget(int n);
     inline QString getType() const { return QString("SummationFunction1_VS"); }
-    void resize(int m, int n);
+    void resize_(int m, int n);
 
   protected:
     std::vector<Function1ChoiceWidget*> functionChoice;
@@ -185,7 +185,7 @@ class SummationFunction1Widget : public Function1Widget {
     void openContextMenu(const QPoint &pos);
     void changeCurrent(int idx);
   signals:
-    void resize();
+    void resize_();
 };
 
 class SymbolicFunction2Widget : public Function2Widget {
@@ -195,6 +195,7 @@ class SymbolicFunction2Widget : public Function2Widget {
   public:
     SymbolicFunction2Widget(const QString &ext);
     inline QString getType() const { return QString("SymbolicFunction2_")+ext; }
+    int getArgDim(int i) const;
   protected:
     ExtWidget *f;
     std::vector<ExtWidget*> argname, argdim;
@@ -258,7 +259,7 @@ class Function1ChoiceWidget : public Widget {
   public:
     Function1ChoiceWidget(bool withFactor=false, int n=0, const QString& ext="VS");
 
-    void resize(int m, int n);
+    void resize_(int m, int n);
     Function1Widget* getFunction(int i);
     Function1Widget* getFunction();
 
@@ -273,7 +274,7 @@ class Function1ChoiceWidget : public Widget {
     QString ext;
 
   signals:
-    void resize();
+    void resize_();
     void functionChanged();
 };
 
@@ -285,7 +286,7 @@ class Function2ChoiceWidget : public Widget {
   public:
     Function2ChoiceWidget(const QString& ext="VVS");
 
-    void resize(int m, int n);
+    void resize_(int m, int n);
     Function2Widget* getFunction(int i);
     Function2Widget* getFunction();
 
@@ -298,10 +299,8 @@ class Function2ChoiceWidget : public Widget {
     QString ext;
 
   signals:
-    void resize();
+    void resize_();
     void functionChanged();
 };
 
-
 #endif
-

@@ -131,7 +131,10 @@ void TimeDependentTranslationProperty::toWidget(QWidget *widget) {
 }
 
 StateDependentTranslationProperty::StateDependentTranslationProperty() {
-  function.setProperty(new Function1ChoiceProperty(MBSIMNS"translationFunction",false,"VV"));
+  //function.setProperty(new Function1ChoiceProperty(MBSIMNS"translationFunction",false,"VV"));
+  vector<Property*> property;
+  property.push_back(new SymbolicFunction1Property("VV"));
+  function.setProperty(new GeneralChoiceProperty(MBSIMNS"translationFunction",property));
 }
 
 TiXmlElement* StateDependentTranslationProperty::initializeUsingXML(TiXmlElement *element) {
@@ -154,7 +157,10 @@ void StateDependentTranslationProperty::toWidget(QWidget *widget) {
 }
 
 GeneralTranslationProperty::GeneralTranslationProperty() {
-  function.setProperty(new Function2ChoiceProperty(MBSIMNS"translationFunction","VVS"));
+  //function.setProperty(new Function2ChoiceProperty(MBSIMNS"translationFunction","VVS"));
+  vector<Property*> property;
+  property.push_back(new SymbolicFunction2Property("VVS"));
+  function.setProperty(new GeneralChoiceProperty(MBSIMNS"translationFunction",property));
 }
 
 TiXmlElement* GeneralTranslationProperty::initializeUsingXML(TiXmlElement *element) {

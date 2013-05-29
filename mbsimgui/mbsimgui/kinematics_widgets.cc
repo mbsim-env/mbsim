@@ -20,6 +20,7 @@
 #include <config.h>
 #include "kinematics_widgets.h"
 #include "variable_widgets.h"
+#include "basic_widgets.h"
 #include "function_widgets.h"
 #include "extended_widgets.h"
 #include "octaveutils.h"
@@ -57,7 +58,11 @@ TimeDependentTranslationWidget::TimeDependentTranslationWidget() {
 }
 
 StateDependentTranslationWidget::StateDependentTranslationWidget() {
-  function = new ExtWidget("Translation function",new Function1ChoiceWidget(false,3,"VV"));
+  vector<Widget*> widget;
+  vector<QString> name;
+  widget.push_back(new SymbolicFunction1Widget("VV"));
+  name.push_back("Symbolic function");
+  function = new ExtWidget("Translation function",new GeneralChoiceWidget(widget,name));
 
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -66,20 +71,30 @@ StateDependentTranslationWidget::StateDependentTranslationWidget() {
 }
 
 int StateDependentTranslationWidget::getqSize() const {
-  SymbolicFunction1Widget *func = dynamic_cast<SymbolicFunction1Widget*>(static_cast<Function1ChoiceWidget*>(function->getWidget())->getFunction());
-  if(func)
-    return func->getArgDim();
+  SymbolicFunction1Widget *func = static_cast<SymbolicFunction1Widget*>(static_cast<GeneralChoiceWidget*>(function->getWidget())->getWidget());
+  return func->getArgDim();
   return 0;
 }
 
 GeneralTranslationWidget::GeneralTranslationWidget() {
-  function = new ExtWidget("Translation function",new Function2ChoiceWidget("VVS"));
+  vector<Widget*> widget;
+  vector<QString> name;
+  widget.push_back(new SymbolicFunction2Widget("VVS"));
+  name.push_back("Symbolic function");
+  function = new ExtWidget("Translation function",new GeneralChoiceWidget(widget,name));
 
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
   layout->addWidget(function);
 }
+
+int GeneralTranslationWidget::getqSize() const {
+  SymbolicFunction2Widget *func = static_cast<SymbolicFunction2Widget*>(static_cast<GeneralChoiceWidget*>(function->getWidget())->getWidget());
+  return func->getArgDim(0);
+  return 0;
+}
+
 
 TranslationChoiceWidget::TranslationChoiceWidget() {
   QVBoxLayout *layout = new QVBoxLayout;

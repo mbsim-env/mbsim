@@ -98,7 +98,7 @@ class VecWidget : public BasicVecWidget {
   public:
     VecWidget(int size, bool transpose=false);
     VecWidget(const std::vector<QString> &x, bool transpose=false);
-    void resize(int size);
+    void resize_(int size);
     std::vector<QString> getVec() const;
     void setVec(const std::vector<QString> &x);
     void setReadOnly(bool flag);
@@ -122,7 +122,7 @@ class MatWidget : public BasicMatWidget {
   public:
     MatWidget(int rows, int cols);
     MatWidget(const std::vector<std::vector<QString> > &A);
-    void resize(int rows, int cols);
+    void resize_(int rows, int cols);
     std::vector<std::vector<QString> > getMat() const;
     void setMat(const std::vector<std::vector<QString> > &A);
     void setReadOnly(bool flag);
@@ -141,7 +141,7 @@ class SymMatWidget : public BasicMatWidget {
   public:
     SymMatWidget(int rows);
     SymMatWidget(const std::vector<std::vector<QString> > &A);
-    void resize(int rows);
+    void resize_(int rows);
     std::vector<std::vector<QString> > getMat() const;
     void setMat(const std::vector<std::vector<QString> > &A);
     void setReadOnly(bool flag);
@@ -168,7 +168,7 @@ class VecSizeVarWidget : public BasicVecWidget {
       sizeCombo->setValue(x.size());
       widget->setVec(x);
     }
-    void resize(int size) {widget->resize(size);}
+    void resize_(int size) {widget->resize_(size);}
     int size() const {return sizeCombo->value();}
     QString getValue() const {return toQStr(getVec());}
     void setValue(const QString &str) {setVec(strToVec(str));}
@@ -198,7 +198,7 @@ class MatColsVarWidget : public BasicMatWidget {
       colsCombo->setValue(A[0].size());
       widget->setMat(A);
     }
-    void resize(int rows, int cols) {widget->resize(rows,cols);}
+    void resize_(int rows, int cols) {widget->resize_(rows,cols);}
     int rows() const {return widget->rows();}
     int cols() const {return colsCombo->value();}
     QString getValue() const {return toQStr(getMat());}
@@ -229,7 +229,7 @@ class MatRowsColsVarWidget : public BasicMatWidget {
       colsCombo->setValue(A[0].size());
       widget->setMat(A);
     }
-    void resize(int rows, int cols) {widget->resize(rows,cols);}
+    void resize_(int rows, int cols) {widget->resize_(rows,cols);}
     int rows() const {return rowsCombo->value();}
     int cols() const {return colsCombo->value();}
     QString getValue() const {return toQStr(getMat());}

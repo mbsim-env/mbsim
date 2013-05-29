@@ -124,7 +124,7 @@ class GeneralTranslationWidget : public TranslationWidget {
 
   public:
     GeneralTranslationWidget();
-    int getqSize() const {return 0;}
+    int getqSize() const;
   protected:
     ExtWidget *function;
 };

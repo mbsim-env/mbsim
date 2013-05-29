@@ -178,7 +178,7 @@ VecWidget::VecWidget(int size, bool transpose_) : transpose(transpose_) {
   QGridLayout *layout = new QGridLayout;
   layout->setMargin(0);
   setLayout(layout);
-  resize(size);
+  resize_(size);
 }
 
 VecWidget::VecWidget(const vector<QString> &x, bool transpose_) : transpose(transpose_) {
@@ -189,7 +189,7 @@ VecWidget::VecWidget(const vector<QString> &x, bool transpose_) : transpose(tran
   setVec(x);
 }
 
-void VecWidget::resize(int size) {
+void VecWidget::resize_(int size) {
   for(unsigned int i=0; i<box.size(); i++) {
     layout()->removeWidget(box[i]);
     delete box[i];
@@ -215,7 +215,7 @@ vector<QString> VecWidget::getVec() const {
 
 void VecWidget::setVec(const vector<QString> &x) {
   if(x.size() != box.size())
-    resize(x.size());
+    resize_(x.size());
   for(unsigned int i=0; i<box.size(); i++)
     box[i]->setText(x[i]);
 }
@@ -239,7 +239,7 @@ MatWidget::MatWidget(int rows, int cols) {
   QGridLayout *layout = new QGridLayout;
   layout->setMargin(0);
   setLayout(layout);
-  resize(rows,cols);
+  resize_(rows,cols);
 }
 
 MatWidget::MatWidget(const vector<vector<QString> > &A) {
@@ -250,7 +250,7 @@ MatWidget::MatWidget(const vector<vector<QString> > &A) {
   setMat(A);
 }
 
-void MatWidget::resize(int rows, int cols) {
+void MatWidget::resize_(int rows, int cols) {
   for(unsigned int i=0; i<box.size(); i++) {
     for(unsigned int j=0; j<box[i].size(); j++) {
       layout()->removeWidget(box[i][j]);
@@ -280,9 +280,9 @@ vector<vector<QString> > MatWidget::getMat() const {
 
 void MatWidget::setMat(const vector<vector<QString> > &A) {
   if(A.size()==0)
-    return resize(0,0);
+    return resize_(0,0);
   if(A.size() != box.size() || A[0].size()!=box[0].size())
-    resize(A.size(),A[0].size());
+    resize_(A.size(),A[0].size());
   for(unsigned int i=0; i<box.size(); i++) 
     for(unsigned int j=0; j<box[i].size(); j++)
       box[i][j]->setText(A[i][j]);
@@ -307,7 +307,7 @@ SymMatWidget::SymMatWidget(int rows) {
   QGridLayout *layout = new QGridLayout;
   layout->setMargin(0);
   setLayout(layout);
-  resize(rows);
+  resize_(rows);
 }
 
 SymMatWidget::SymMatWidget(const vector<vector<QString> > &A) {
@@ -318,7 +318,7 @@ SymMatWidget::SymMatWidget(const vector<vector<QString> > &A) {
   setMat(A);
 }
 
-void SymMatWidget::resize(int rows) {
+void SymMatWidget::resize_(int rows) {
   for(unsigned int i=0; i<box.size(); i++) {
     for(unsigned int j=0; j<box[i].size(); j++) {
       layout()->removeWidget(box[i][j]);
@@ -351,9 +351,9 @@ vector<vector<QString> > SymMatWidget::getMat() const {
 
 void SymMatWidget::setMat(const vector<vector<QString> > &A) {
   if(A.size() == 0 || A.size() != A[0].size())
-    return resize(0);
+    return resize_(0);
   if(A.size() != box.size())
-    resize(A.size());
+    resize_(A.size());
   for(unsigned int i=0; i<box.size(); i++) 
     for(unsigned int j=0; j<box.size(); j++) 
       box[i][j]->setText(A[i][j]);
@@ -402,7 +402,7 @@ VecSizeVarWidget::VecSizeVarWidget(int size, int minSize_, int maxSize_) : minSi
 }
 
 void VecSizeVarWidget::currentIndexChanged(int size) {
-  widget->resize(size);
+  widget->resize_(size);
   emit sizeChanged(size);
 }
 
@@ -437,7 +437,7 @@ MatColsVarWidget::MatColsVarWidget(int rows, int cols, int minCols_, int maxCols
 }
 
 void MatColsVarWidget::currentIndexChanged(int cols) {
-  widget->resize(widget->rows(),cols);
+  widget->resize_(widget->rows(),cols);
   emit sizeChanged(cols);
 }
 
@@ -476,12 +476,12 @@ MatRowsColsVarWidget::MatRowsColsVarWidget(int rows, int cols, int minRows_, int
 }
 
 void MatRowsColsVarWidget::currentRowIndexChanged(int rows) {
-  widget->resize(rows,widget->cols());
+  widget->resize_(rows,widget->cols());
   emit rowSizeChanged(rows);
 }
 
 void MatRowsColsVarWidget::currentColIndexChanged(int cols) {
-  widget->resize(widget->rows(),cols);
+  widget->resize_(widget->rows(),cols);
   emit colSizeChanged(cols);
 }
 
