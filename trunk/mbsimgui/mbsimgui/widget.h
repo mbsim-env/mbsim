@@ -32,6 +32,7 @@ class WidgetInterface {
   public:
     virtual void updateWidget() {}
     virtual void resizeVariables() {}
+    virtual void resize_(int m, int n) {}
 };
 
 class Widget : public QWidget, public WidgetInterface {

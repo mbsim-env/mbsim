@@ -40,6 +40,7 @@ class PropertyInterface {
     virtual void fromWidget(QWidget *widget) = 0;
     virtual void toWidget(QWidget *widget) = 0;
     virtual void initialize() {}
+    virtual std::string getType() const {return "";}
 };
 
 class Property : public PropertyInterface {

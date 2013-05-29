@@ -313,13 +313,13 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   translation = new ExtWidget("Translation",translation_,true);
   addToTab("Kinematics", translation);
   connect(translation_,SIGNAL(translationChanged()),this,SLOT(resizeVariables()));
-  connect(translation,SIGNAL(resize()),this,SLOT(resizeVariables()));
+  connect(translation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
   RotationChoiceWidget *rotation_ = new RotationChoiceWidget;
   rotation = new ExtWidget("Rotation",rotation_,true);
   addToTab("Kinematics", rotation);
   connect(rotation_,SIGNAL(rotationChanged()),this,SLOT(resizeVariables()));
-  connect(rotation,SIGNAL(resize()),this,SLOT(resizeVariables()));
+  connect(rotation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
   ombvEditor = new ExtWidget("OpenMBV body",new OMBVBodySelectionWidget(body),true);
   addToTab("Visualisation", ombvEditor);
@@ -419,13 +419,13 @@ int RigidBodyPropertyDialog::getuRelSize() const {
 void RigidBodyPropertyDialog::resizeGeneralizedPosition() {
   int size =  body->isConstrained() ? 0 : getqRelSize();
   if(q0_ && q0_->size() != size)
-    q0_->resize(size);
+    q0_->resize_(size);
 }
 
 void RigidBodyPropertyDialog::resizeGeneralizedVelocity() {
   int size =  body->isConstrained() ? 0 : getuRelSize();
   if(u0_ && u0_->size() != size)
-    u0_->resize(size);
+    u0_->resize_(size);
 }
 
 ConstraintPropertyDialog::ConstraintPropertyDialog(Constraint *constraint, QWidget *parent, Qt::WindowFlags f) : ObjectPropertyDialog(constraint,parent,f) {
@@ -472,24 +472,24 @@ KinematicConstraintPropertyDialog::KinematicConstraintPropertyDialog(KinematicCo
 
   kinematicFunction = new ExtWidget("Kinematic function",new Function1ChoiceWidget,true);
   addToTab("General", kinematicFunction);
-  connect((Function1ChoiceWidget*)kinematicFunction->getWidget(),SIGNAL(resize()),this,SLOT(resizeVariables()));
+  connect((Function1ChoiceWidget*)kinematicFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
   firstDerivativeOfKinematicFunction = new ExtWidget("First derivative of kinematic function",new Function1ChoiceWidget,true);
   addToTab("General", firstDerivativeOfKinematicFunction);
-  connect((Function1ChoiceWidget*)firstDerivativeOfKinematicFunction->getWidget(),SIGNAL(resize()),this,SLOT(resizeVariables()));
+  connect((Function1ChoiceWidget*)firstDerivativeOfKinematicFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
   secondDerivativeOfKinematicFunction = new ExtWidget("Second derivative of kinematic function",new Function1ChoiceWidget,true);
   addToTab("General", secondDerivativeOfKinematicFunction);
-  connect((Function1ChoiceWidget*)secondDerivativeOfKinematicFunction->getWidget(),SIGNAL(resize()),this,SLOT(resizeVariables()));
+  connect((Function1ChoiceWidget*)secondDerivativeOfKinematicFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
   connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
 }
 
 void KinematicConstraintPropertyDialog::resizeVariables() {
   int size = refBody?refBody->getqRelSize():0;
-  ((Function1ChoiceWidget*)kinematicFunction->getWidget())->resize(size,1);
-  ((Function1ChoiceWidget*)firstDerivativeOfKinematicFunction->getWidget())->resize(size,1);
-  ((Function1ChoiceWidget*)secondDerivativeOfKinematicFunction->getWidget())->resize(size,1);
+  ((Function1ChoiceWidget*)kinematicFunction->getWidget())->resize_(size,1);
+  ((Function1ChoiceWidget*)firstDerivativeOfKinematicFunction->getWidget())->resize_(size,1);
+  ((Function1ChoiceWidget*)secondDerivativeOfKinematicFunction->getWidget())->resize_(size,1);
 }
 
 void KinematicConstraintPropertyDialog::updateReferenceBody() {
@@ -554,7 +554,7 @@ void JointConstraintPropertyDialog::resizeGeneralizedPosition() {
     if(((DependenciesWidget*)dependentBodiesSecondSide->getWidget())->getSelectedBody(i))
       size += ((DependenciesWidget*)dependentBodiesSecondSide->getWidget())->getSelectedBody(i)->getqRelSize();
   if(q0_->size() != size)
-    q0_->resize(size);
+    q0_->resize_(size);
 }
 
 void JointConstraintPropertyDialog::toWidget(Element *element) {

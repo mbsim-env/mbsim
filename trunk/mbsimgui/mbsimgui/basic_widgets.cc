@@ -854,4 +854,43 @@ void SignalReferencesWidget::removeReference() {
   updateList();
 }
 
+GeneralChoiceWidget::GeneralChoiceWidget(const std::vector<Widget*> &widget, const std::vector<QString> &name) {
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
 
+  comboBox = new QComboBox;
+  for(int i=0; i<name.size(); i++)
+    comboBox->addItem(name[i]);
+  layout->addWidget(comboBox);
+  stackedWidget = new QStackedWidget;
+  stackedWidget->addWidget(widget[0]);
+  for(int i=1; i<widget.size(); i++) {
+    widget[i]->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    stackedWidget->addWidget(widget[i]);
+  }
+  layout->addWidget(stackedWidget);
+  connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(defineWidget(int)));
+}
+
+void GeneralChoiceWidget::resize_(int m, int n) {
+  getWidget()->resize_(m,n);
+}
+
+Widget* GeneralChoiceWidget::getWidget() const {
+  return static_cast<Widget*>(stackedWidget->currentWidget());
+}
+
+Widget* GeneralChoiceWidget::getWidget(int i) const {
+  return static_cast<Widget*>(stackedWidget->widget(i));
+}
+
+void GeneralChoiceWidget::defineWidget(int index) {
+  if (stackedWidget->currentWidget() !=0)
+    stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->setCurrentIndex(index);
+  stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  adjustSize();
+  emit widgetChanged();
+  emit resizeVariables();
+}

@@ -307,15 +307,15 @@ ForceChoiceWidget::ForceChoiceWidget() {
   connect(mat_, SIGNAL(sizeChanged(int)), this, SLOT(resizeVariables()));
 
   Function1ChoiceWidget *forceLaw_ = new Function1ChoiceWidget;
-  forceLaw_->resize(1,1);
+  forceLaw_->resize_(1,1);
   forceLaw = new ExtWidget("Function",forceLaw_);
   layout->addWidget(forceLaw);
 
-  connect(forceLaw_,SIGNAL(resize()),this,SLOT(resizeVariables()));
+  connect(forceLaw_,SIGNAL(resize_()),this,SLOT(resizeVariables()));
 }
 
 void ForceChoiceWidget::resizeVariables() {
-  static_cast<Function1ChoiceWidget*>(forceLaw->getWidget())->resize(getSize(),1);
+  static_cast<Function1ChoiceWidget*>(forceLaw->getWidget())->resize_(getSize(),1);
 }
 
 int ForceChoiceWidget::getSize() const {

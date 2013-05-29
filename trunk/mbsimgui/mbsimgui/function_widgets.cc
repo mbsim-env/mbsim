@@ -66,9 +66,9 @@ ConstantFunction1Widget::ConstantFunction1Widget(const QString &ext, int n) : Fu
   layout->addWidget(c);
 }
 
-void ConstantFunction1Widget::resize(int m, int n) {
+void ConstantFunction1Widget::resize_(int m, int n) {
   if(((VecWidget*)static_cast<ExtPhysicalVarWidget*>(c->getWidget())->getPhysicalVariableWidget(0)->getWidget())->size() != m)
-    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(c->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize(m);
+    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(c->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
 }
 
 QuadraticFunction1Widget::QuadraticFunction1Widget(int n) {
@@ -92,11 +92,11 @@ QuadraticFunction1Widget::QuadraticFunction1Widget(int n) {
   layout->addWidget(a2);
 }
 
-void QuadraticFunction1Widget::resize(int m, int n) {
+void QuadraticFunction1Widget::resize_(int m, int n) {
   if(((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a0->getWidget())->getPhysicalVariableWidget(0)->getWidget())->size() != m) {
-    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a0->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize(m);
-    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a1->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize(m);
-    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a2->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize(m);
+    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a0->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
+    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a1->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
+    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a2->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
   }
 }
 
@@ -126,12 +126,12 @@ SinusFunction1Widget::SinusFunction1Widget(int n) {
   layout->addWidget(o);
 }
 
-void SinusFunction1Widget::resize(int m, int n) {
+void SinusFunction1Widget::resize_(int m, int n) {
   if(((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a->getWidget())->getPhysicalVariableWidget(0)->getWidget())->size() != m) {
-    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize(m);
-    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(f->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize(m);
-    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(p->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize(m);
-    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(o->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize(m);
+    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
+    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(f->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
+    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(p->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
+    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(o->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
   }
 }
 
@@ -204,9 +204,9 @@ void SummationFunction1Widget::openContextMenu(const QPoint &pos) {
   }
 }
 
-void SummationFunction1Widget::resize(int m, int n) {
+void SummationFunction1Widget::resize_(int m, int n) {
   for(int i=0; i<functionChoice.size(); i++)
-   functionChoice[i]->resize(m,n);
+   functionChoice[i]->resize_(m,n);
 }
 
 void SummationFunction1Widget::updateList() {
@@ -221,9 +221,9 @@ void SummationFunction1Widget::addFunction() {
     functionChoice[i]->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
   functionList->addItem("Undefined");
   connect(functionChoice[i],SIGNAL(functionChanged()),this,SLOT(updateList()));
-  connect(functionChoice[i],SIGNAL(resize()),this,SIGNAL(resize()));
+  connect(functionChoice[i],SIGNAL(resize_()),this,SIGNAL(resize_()));
   stackedWidget->addWidget(functionChoice[i]);
-  emit resize();
+  emit resize_();
   emit updateList();
 }
 
@@ -249,6 +249,10 @@ SymbolicFunction2Widget::SymbolicFunction2Widget(const QString &ext) : Function2
   }
   f = new ExtWidget("Function",new OctaveExpressionWidget);
   layout->addWidget(f,ext.size()-1,0,1,2);
+}
+
+int SymbolicFunction2Widget::getArgDim(int i) const {
+  return static_cast<TextWidget*>(argdim[i]->getWidget())->getText().toInt();
 }
 
 LinearSpringDamperForceWidget::LinearSpringDamperForceWidget() {
@@ -355,7 +359,7 @@ Function1ChoiceWidget::Function1ChoiceWidget(bool withFactor, int n_, const QStr
   function->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
   stackedWidget->addWidget(function);
   function = new SummationFunction1Widget(n);
-  connect(function,SIGNAL(resize()),this,SIGNAL(resize())); 
+  connect(function,SIGNAL(resize_()),this,SIGNAL(resize_())); 
   function->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
   stackedWidget->addWidget(function);
   function = new SymbolicFunction1Widget(ext);
@@ -365,8 +369,8 @@ Function1ChoiceWidget::Function1ChoiceWidget(bool withFactor, int n_, const QStr
   connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(defineFunction(int)));
 }
 
-void Function1ChoiceWidget::resize(int m, int n) {
-  getFunction()->resize(m,n);
+void Function1ChoiceWidget::resize_(int m, int n) {
+  getFunction()->resize_(m,n);
 }
 
 Function1Widget* Function1ChoiceWidget::getFunction() {
@@ -384,7 +388,7 @@ void Function1ChoiceWidget::defineFunction(int index) {
   stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   adjustSize();
   emit functionChanged();
-  emit resize();
+  emit resize_();
 }
 
 Function2ChoiceWidget::Function2ChoiceWidget(const QString& ext_) : ext(ext_) {
@@ -407,8 +411,8 @@ Function2ChoiceWidget::Function2ChoiceWidget(const QString& ext_) : ext(ext_) {
   connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(defineFunction(int)));
 }
 
-void Function2ChoiceWidget::resize(int m, int n) {
-  getFunction()->resize(m,n);
+void Function2ChoiceWidget::resize_(int m, int n) {
+  getFunction()->resize_(m,n);
 }
 
 Function2Widget* Function2ChoiceWidget::getFunction() {
@@ -426,5 +430,6 @@ void Function2ChoiceWidget::defineFunction(int index) {
   stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   adjustSize();
   emit functionChanged();
-  emit resize();
+  emit resize_();
 }
+

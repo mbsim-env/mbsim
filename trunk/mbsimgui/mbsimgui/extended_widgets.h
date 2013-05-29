@@ -90,7 +90,7 @@ class ExtWidget : public QGroupBox, public WidgetInterface {
   protected:
     Widget *widget;
   signals:
-    void resize();
+    void resize_();
 };
 
 class WidgetContainer : public Widget {

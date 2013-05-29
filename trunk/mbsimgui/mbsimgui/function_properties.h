@@ -272,6 +272,5 @@ class Function2ChoiceProperty : public Property {
     std::string ext;
 };
 
-
 #endif
 

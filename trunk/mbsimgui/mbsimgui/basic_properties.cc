@@ -943,3 +943,49 @@ void SignalReferencesProperty::toWidget(QWidget *widget) {
   static_cast<SignalReferencesWidget*>(widget)->updateWidget();
 }
 
+GeneralChoiceProperty::~GeneralChoiceProperty() {
+  for(unsigned int i=0; i<property.size(); i++)
+    delete property[i];
+}
+
+TiXmlElement* GeneralChoiceProperty::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e=element->FirstChildElement(xmlName);
+  if(e) {
+    TiXmlElement* ee=e->FirstChildElement();
+    if(ee) {
+      for(int i=0; i<property.size(); i++)
+        if(ee->ValueStr() == MBSIMNS+property[i]->getType())
+          index = i;
+      property[index]->initializeUsingXML(ee);
+    }
+  }
+  return e;
+}
+
+TiXmlElement* GeneralChoiceProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlNode *ele0;
+  if(xmlName!="") {
+    ele0 = new TiXmlElement(xmlName);
+    parent->LinkEndChild(ele0);
+  }
+  else
+    ele0 = parent;
+  property[index]->writeXMLFile(ele0);
+
+  return 0;
+}
+
+void GeneralChoiceProperty::fromWidget(QWidget *widget) {
+  index = static_cast<GeneralChoiceWidget*>(widget)->comboBox->currentIndex();
+  property[index]->fromWidget(static_cast<GeneralChoiceWidget*>(widget)->getWidget());
+}
+
+void GeneralChoiceProperty::toWidget(QWidget *widget) {
+  static_cast<GeneralChoiceWidget*>(widget)->comboBox->blockSignals(true);
+  static_cast<GeneralChoiceWidget*>(widget)->comboBox->setCurrentIndex(index);
+  static_cast<GeneralChoiceWidget*>(widget)->comboBox->blockSignals(false);
+  static_cast<GeneralChoiceWidget*>(widget)->blockSignals(true);
+  static_cast<GeneralChoiceWidget*>(widget)->defineWidget(index);
+  static_cast<GeneralChoiceWidget*>(widget)->blockSignals(false);
+  property[index]->toWidget(static_cast<GeneralChoiceWidget*>(widget)->getWidget());
+}
