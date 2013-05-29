@@ -472,7 +472,9 @@ KinematicConstraintPropertyDialog::KinematicConstraintPropertyDialog(KinematicCo
 
   vector<Widget*> widget;
   vector<QString> name;
-  widget.push_back(new SymbolicFunction1Widget("VS"));
+  QStringList var;
+  var << "t";
+  widget.push_back(new SymbolicFunction1Widget(var));
   name.push_back("Symbolic function");
   kinematicFunction = new ExtWidget("Kineematic function",new GeneralChoiceWidget(widget,name));
 //  kinematicFunction = new ExtWidget("Kinematic function",new Function1ChoiceWidget,true);
@@ -758,7 +760,7 @@ SpringDamperPropertyDialog::SpringDamperPropertyDialog(SpringDamper *springDampe
   connections = new ExtWidget("Connections",new ConnectFramesWidget(2,springDamper));
   addToTab("Kinetics", connections);
 
-  forceFunction = new ExtWidget("Force function",new Function2ChoiceWidget("SSS"));
+  forceFunction = new ExtWidget("Force function",new Function2ChoiceWidget);
   addToTab("Kinetics", forceFunction);
 
   forceDirection = new ExtWidget("Force direction",new ForceDirectionWidget(springDamper),true);
