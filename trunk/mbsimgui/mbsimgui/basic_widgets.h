@@ -22,6 +22,7 @@
 
 #include "extended_widgets.h"
 #include <QLineEdit>
+#include <QSpinBox>
 
 class Element;
 class Object;
@@ -236,6 +237,24 @@ class FileWidget : public Widget {
 
   signals:
     void fileChanged(const QString &str);
+};
+
+class IntegerWidget : public Widget {
+
+  public:
+    virtual int getValue() = 0;
+    virtual void setValue(int val) = 0;
+};
+
+class SpinBoxWidget : public IntegerWidget {
+
+  public:
+    SpinBoxWidget(int val=0, int min=0);
+    int getValue() {return value->value();}
+    void setValue(int val) {value->setValue(val);}
+
+  protected:
+    QSpinBox *value;
 };
 
 class BasicTextWidget : public Widget {

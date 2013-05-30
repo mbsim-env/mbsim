@@ -56,8 +56,7 @@ class SymbolicFunction1Property : public Function1Property {
     void toWidget(QWidget *widget);
   protected:
     ExtProperty f;
-    std::vector<ExtProperty> argname;
-    std::vector<int> argdim;
+    std::vector<ExtProperty> argname, argdim;
 };
 
 class DifferentiableFunction1Property : public Function1Property {
@@ -177,9 +176,7 @@ class SymbolicFunction2Property : public Function2Property {
     void toWidget(QWidget *widget);
   protected:
     ExtProperty f;
-    //std::vector<ExtProperty> argname, argdim;
-    std::vector<ExtProperty> argname;
-    std::vector<int> argdim;
+    std::vector<ExtProperty> argname, argdim;
 };
 
 class LinearSpringDamperForceProperty : public Function2Property {

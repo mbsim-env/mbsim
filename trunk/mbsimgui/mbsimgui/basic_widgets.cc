@@ -402,6 +402,17 @@ void FileWidget::selectFile() {
     setFile(file);
 }
 
+SpinBoxWidget::SpinBoxWidget(int val, int min) {
+  QHBoxLayout *layout = new QHBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
+  value = new QSpinBox;
+  value->setValue(val);
+  value->setMinimum(min);
+  layout->addWidget(value);
+}
+
 TextWidget::TextWidget(const QString &text_, bool readOnly) {
   QHBoxLayout *layout = new QHBoxLayout;
   layout->setMargin(0);
@@ -750,7 +761,7 @@ EmbedWidget::EmbedWidget() {
   layout->setMargin(0);
   href = new ExtWidget("File", new FileWidget("XML model files", "xml files (*.xml)", 1), true);
   layout->addWidget(href);
-  count = new ExtWidget("Count", new TextWidget, true);
+  count = new ExtWidget("Count", new SpinBoxWidget(1,1), true);
   layout->addWidget(count);
   counterName = new ExtWidget("Counter name", new TextWidget, true);
   layout->addWidget(counterName);
