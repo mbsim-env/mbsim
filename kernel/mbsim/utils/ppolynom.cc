@@ -28,6 +28,10 @@ using namespace fmatvec;
 using namespace std;
 
 namespace MBSim {
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, PPolynom<Ref COMMA Ref>, MBSIMNS"PiecewisePolynom1_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, PPolynom<Var COMMA Var>, MBSIMNS"PiecewisePolynom1_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, PPolynom<Var COMMA Fixed<3> >, MBSIMNS"PiecewisePolynom1_VS")
       
 }
 

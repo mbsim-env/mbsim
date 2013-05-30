@@ -29,6 +29,9 @@ using namespace std;
 using namespace MBXMLUtils;
 
 namespace MBSim {
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, LineSegment, MBSIMNS"LineSegment")
+
   LineSegment::LineSegment(const std::string& name) : RigidContour(name), bound(2), length(0) {
     bound(0) = 0;
     bound(1) = 1;

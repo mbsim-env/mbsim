@@ -8,6 +8,7 @@ libutils_la_SOURCES = colors.cc\
                       rotarymatrices.cc\
                       utils.cc\
                       function.cc\
+                      symbolic_function.cc\
                       function_library.cc\
                       stopwatch.cc\
                       ansatz_functions.cc

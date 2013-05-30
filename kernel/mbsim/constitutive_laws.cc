@@ -85,6 +85,8 @@ namespace MBSim {
     return ele0;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedForceLaw, UnilateralConstraint, MBSIMNS"UnilateralConstraint")
+
   double UnilateralConstraint::project(double la, double gdn, double r, double laMin) {
     return proxCN(la - r * gdn, laMin);
   }
@@ -132,6 +134,8 @@ namespace MBSim {
   //  return (fabs(gdn(0)) <= gdTol);
   //}
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedForceLaw, BilateralConstraint, MBSIMNS"BilateralConstraint")
+
   double BilateralConstraint::project(double la, double gdn, double r, double laMin) {
     return la - r * gdn;
   }
@@ -156,6 +160,8 @@ namespace MBSim {
     parent->LinkEndChild(ele0);
     return ele0;
   }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedImpactLaw, UnilateralNewtonImpact, MBSIMNS"UnilateralNewtonImpact")
 
   double UnilateralNewtonImpact::project(double la, double gdn, double gda, double r, double laMin) {
     if (gda <= -gd_limit) {       // 2 Aenderungen :
@@ -229,6 +235,8 @@ namespace MBSim {
     return ele0;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedImpactLaw, BilateralImpact, MBSIMNS"BilateralImpact")
+
   double BilateralImpact::project(double la, double gdn, double gda, double r, double laMin) {
     return la - r * gdn;
   }
@@ -258,6 +266,8 @@ namespace MBSim {
     parent->LinkEndChild(ele0);
     return ele0;
   }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FrictionForceLaw, PlanarCoulombFriction, MBSIMNS"PlanarCoulombFriction")
 
   Vec PlanarCoulombFriction::project(const Vec& la, const Vec& gdn, double laN, double r) {
     return Vec(1, INIT, proxCT2D(la(0) - r * gdn(0), mu * fabs(laN)));
@@ -397,6 +407,8 @@ namespace MBSim {
   //    }
   //    return false;
   //  }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FrictionForceLaw, SpatialCoulombFriction, MBSIMNS"SpatialCoulombFriction")
 
   Vec SpatialCoulombFriction::project(const Vec& la, const Vec& gdn, double laN, double r) {
     return proxCT3D(la - r * gdn, mu * fabs(laN));
@@ -538,6 +550,8 @@ namespace MBSim {
     return ele0;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FrictionImpactLaw, PlanarCoulombImpact, MBSIMNS"PlanarCoulombImpact")
+
   Vec PlanarCoulombImpact::project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
     return Vec(1, INIT, proxCT2D(la(0) - r * gdn(0), mu * fabs(laN)));
   }
@@ -596,6 +610,8 @@ namespace MBSim {
     addElementText(ele0,MBSIMNS"frictionCoefficient",mu);
     return ele0;
   }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FrictionImpactLaw, SpatialCoulombImpact, MBSIMNS"SpatialCoulombImpact")
 
   Vec SpatialCoulombImpact::project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
     return proxCT3D(la - r * gdn, mu * fabs(laN));
@@ -740,6 +756,8 @@ namespace MBSim {
       return 0;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedForceLaw, RegularizedUnilateralConstraint, MBSIMNS"RegularizedUnilateralConstraint")
+
   void RegularizedUnilateralConstraint::initializeUsingXML(TiXmlElement *element) {
     GeneralizedForceLaw::initializeUsingXML(element);
     TiXmlElement *e;
@@ -756,6 +774,8 @@ namespace MBSim {
       }
     }
   }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedForceLaw, MaxwellUnilateralConstraint, MBSIMNS"MaxwellUnilateralConstraint")
 
   MaxwellUnilateralConstraint::MaxwellUnilateralConstraint(const double & damping, const double & gapLimit) :
       lcpSolvingStrategy(Standard), dampingCoefficient(damping), gLim(gapLimit), matConst(0), matConstSetted(false), DEBUGLEVEL(0) {
@@ -968,6 +988,8 @@ void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<
     }
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedForceLaw, RegularizedBilateralConstraint, MBSIMNS"RegularizedBilateralConstraint")
+
   void RegularizedBilateralConstraint::initializeUsingXML(TiXmlElement *element) {
     GeneralizedForceLaw::initializeUsingXML(element);
     TiXmlElement *e;
@@ -985,6 +1007,8 @@ void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<
     }
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FrictionForceLaw, RegularizedPlanarFriction, MBSIMNS"RegularizedPlanarFriction")
+
   void RegularizedPlanarFriction::initializeUsingXML(TiXmlElement *element) {
     FrictionForceLaw::initializeUsingXML(element);
     TiXmlElement *e;
@@ -993,6 +1017,8 @@ void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<
     setFrictionForceFunction(f);
     f->initializeUsingXML(e->FirstChildElement());
   }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FrictionForceLaw, RegularizedSpatialFriction, MBSIMNS"RegularizedSpatialFriction")
 
   void RegularizedSpatialFriction::initializeUsingXML(TiXmlElement *element) {
     FrictionForceLaw::initializeUsingXML(element);

@@ -31,6 +31,8 @@ using namespace fmatvec;
 
 namespace MBSim {
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, PlaneWithFrustum, MBSIMNS"PlaneWithFrustum")
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
   void PlaneWithFrustum::enableOpenMBV(bool enable) {
     if(enable) {
