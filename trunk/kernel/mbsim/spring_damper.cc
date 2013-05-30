@@ -45,7 +45,7 @@ namespace MBSim {
   void SpringDamper::updateh(double t, int j) {
     la(0)=(*func)(g(0),gd(0));
     if(refFrame==0 && dist<=epsroot() && abs(la(0))>epsroot())
-      cout<<"Warning! The SpringDamper force is not 0 and the force direction can not calculated!\nUsing force=0 at t="<<t<<endl;
+      cerr<<"Warning! The SpringDamper force is not 0 and the force direction can not calculated!\nUsing force=0 at t="<<t<<endl;
     if(refFrame==0) // Point to Point
       WF[0]=n*la;
     else // Directed

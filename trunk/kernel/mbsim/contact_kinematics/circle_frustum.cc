@@ -125,7 +125,7 @@ namespace MBSim {
           if(g(0) < eps) {
             if(outCont_F && !outCont_C) { // inner circle, outer frustum
               if(fabs(c_CF_nrm2)<epsroot()) {
-                cout << "ERROR (ContactKinematicsCircleFrustum:updateg): Infinite number of possible contact points in Circle-Frustum-Contact!" << endl;
+                cerr << "ERROR (ContactKinematicsCircleFrustum:updateg): Infinite number of possible contact points in Circle-Frustum-Contact!" << endl;
                 throw(1);
               }
               else {
@@ -138,7 +138,7 @@ namespace MBSim {
             else if(!outCont_F && outCont_C) { // outer circle, inner frustum
               if(g(0) < eps) {
                 if(fabs(c_CF_nrm2)<epsroot()) {
-                  cout << "ERROR (ContactKinematicsCircleFrustum:updateg): Infinite number of possible contact points in Circle-Frustum-Contact!" << endl;
+                  cerr << "ERROR (ContactKinematicsCircleFrustum:updateg): Infinite number of possible contact points in Circle-Frustum-Contact!" << endl;
                   throw(1);
                 }
                 else {
@@ -171,7 +171,7 @@ namespace MBSim {
 
         else if (fabs(phi_F) < epsroot()) { // special case: frustum=cylinder (circle-ellipse)
           if(fabs(al_CF-M_PI/2.)<epsroot()) {
-            cout << "ERROR (ContactKinematicsCircleFrustum:updateg): Circle axis-Cylinder axis angle equals 90° -> indefinite contact configuration!" << endl;
+            cerr << "ERROR (ContactKinematicsCircleFrustum:updateg): Circle axis-Cylinder axis angle equals 90° -> indefinite contact configuration!" << endl;
             throw(1);
           }
           double cE1_star_nrm2 = r_F(0)/t_CF;
@@ -219,7 +219,7 @@ namespace MBSim {
 
             if(s_PF < 0. || s_PF > h_F) {
               if(warnLevel!=0) {
-                cout << "WARNING (ContactKinematicsCircleFrustum:updateg): Possible intersection with the bottom or top of the Cylinder not represented at the moment!" << endl;
+                cerr << "WARNING (ContactKinematicsCircleFrustum:updateg): Possible intersection with the bottom or top of the Cylinder not represented at the moment!" << endl;
               }
               g(0) = 1.;
             }
@@ -350,7 +350,7 @@ namespace MBSim {
 
             if(s_PF < 0. || s_PF > h_F) {
               if(warnLevel!=0) {
-                cout << "WARNING (ContactKinematicsCircleFrustum:updateg): Possible intersection with the bottom or top of the Frustum not represented at the moment!" << endl;
+                cerr << "WARNING (ContactKinematicsCircleFrustum:updateg): Possible intersection with the bottom or top of the Frustum not represented at the moment!" << endl;
               }
               g(0) = 1.;
             }

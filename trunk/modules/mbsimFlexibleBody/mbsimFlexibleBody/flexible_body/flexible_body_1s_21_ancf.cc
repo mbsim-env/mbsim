@@ -255,7 +255,7 @@ namespace MBSim {
       uElement(NodeDOFs,ElementalDOFs-1) << u(0,  NodeDOFs-1);
     } else {
       qElement.init(0.0);uElement.init(0.0);
-      cout << "\nKein Element " <<ENumber<< " vorhanden. Nur 0, 1 ...  " <<Elements-1<< " Elemente definiert!\n";
+      cerr << "\nKein Element " <<ENumber<< " vorhanden. Nur 0, 1 ...  " <<Elements-1<< " Elemente definiert!\n";
       throw(1);
     }
   }

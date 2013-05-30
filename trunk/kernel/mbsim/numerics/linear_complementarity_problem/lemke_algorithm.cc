@@ -129,7 +129,7 @@ namespace MBSim {
       if(!validBasis(basis)) {
         info = -1;
         if(DEBUGLEVEL >= 1)
-          cout << "Lemke-Algorithm ended with Ray-Termination (no valid solution)." << endl;
+          cerr << "Lemke-Algorithm ended with Ray-Termination (no valid solution)." << endl;
 
         return solutionVector;
       }

@@ -71,9 +71,9 @@ namespace MBSim {
        */
       virtual void integrate(DynamicSystemSolver& system) = 0;
 
-      virtual void preIntegrate(DynamicSystemSolver& system) { std::cout<<"preIntegrate is not defined\n"<<std::endl; }
-      virtual void subIntegrate(DynamicSystemSolver& system, double tStop) { std::cout<<"subIntegrate is not defined\n"<<std::endl; }
-      virtual void postIntegrate(DynamicSystemSolver& system) { std::cout<<"postIntegrate is not defined\n"<<std::endl; }
+      virtual void preIntegrate(DynamicSystemSolver& system) { std::cerr<<"preIntegrate is not defined\n"<<std::endl; }
+      virtual void subIntegrate(DynamicSystemSolver& system, double tStop) { std::cerr<<"subIntegrate is not defined\n"<<std::endl; }
+      virtual void postIntegrate(DynamicSystemSolver& system) { std::cerr<<"postIntegrate is not defined\n"<<std::endl; }
 
       /*! 
        * \brief initialize integrator

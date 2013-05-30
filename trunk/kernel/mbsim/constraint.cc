@@ -93,7 +93,7 @@ namespace MBSim {
       bd->addDependency(this);
       if (saved_DependencyBodies.size()>0) {
         for (unsigned int i=0; i<saved_DependencyBodies.size(); i++) {
-          cerr << saved_DependencyBodies[i] << endl;
+          cout << saved_DependencyBodies[i] << endl;
           addDependency(getByPath<RigidBody>(saved_DependencyBodies[i]), saved_ratio[i]);
         }
       }

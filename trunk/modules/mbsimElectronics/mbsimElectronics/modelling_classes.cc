@@ -38,7 +38,7 @@ namespace MBSimElectronics {
           currentBranch->setEndTerminal(connectedTerminal[i]);
         }
         else {
-          cout << "Fehler wegen flag = "<< (connectedTerminal[i]->getFlag()) << endl;
+          cerr << "Fehler wegen flag = "<< (connectedTerminal[i]->getFlag()) << endl;
           throw 5;
         }
 
@@ -83,7 +83,7 @@ namespace MBSimElectronics {
 
   void ElectronicComponent::addTerminal(Terminal *terminal_) {
     if(getTerminal(terminal_->getName(),false)) {
-      cout << "Error: The Component " << getName() << " can only comprise one Object by the name " <<  terminal_->getName() << "!" << endl;
+      cerr << "Error: The Component " << getName() << " can only comprise one Object by the name " <<  terminal_->getName() << "!" << endl;
       assert(getTerminal(terminal_->getName(),false) == NULL); 
     }
     terminal.push_back(terminal_);
@@ -102,7 +102,7 @@ namespace MBSimElectronics {
         return terminal[i];
     }
     if(check){
-      if(!(i<terminal.size())) cout << "Error: The Component " << this->getName() <<" comprises no terminal " << name << "!" << endl; 
+      if(!(i<terminal.size())) cerr << "Error: The Component " << this->getName() <<" comprises no terminal " << name << "!" << endl; 
       assert(i<terminal.size());
     }
     return NULL;
@@ -222,7 +222,7 @@ namespace MBSimElectronics {
 	linkList.push_back(linkcomp);
       }
       else {
-	cout << "Fehler" << endl;
+	cerr << "Fehler" << endl;
 	throw 5;
       }
     }
