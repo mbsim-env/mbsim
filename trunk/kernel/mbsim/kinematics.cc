@@ -640,6 +640,8 @@ namespace MBSim {
     return T;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, ConstantJacobian, MBSIMNS"ConstantJacobian")
+
   void ConstantJacobian::initializeUsingXML(TiXmlElement *element) {
     Jacobian::initializeUsingXML(element);
     TiXmlElement *e;

@@ -26,6 +26,24 @@ using namespace fmatvec;
 
 namespace MBSim {
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, Function1_SS_from_VS, MBSIMNS"Function1_SS_from_VS")
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, QuadraticFunction1_VS<Ref>, MBSIMNS"QuadraticFunction1_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, QuadraticFunction1_VS<Var>, MBSIMNS"QuadraticFunction1_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, QuadraticFunction1_VS<Fixed<3> >, MBSIMNS"QuadraticFunction1_VS")
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SinusFunction1_VS<Ref>, MBSIMNS"SinusFunction1_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SinusFunction1_VS<Var>, MBSIMNS"SinusFunction1_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SinusFunction1_VS<Fixed<3> >, MBSIMNS"SinusFunction1_VS")
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, TabularFunction1_VS<Ref COMMA Ref>, MBSIMNS"TabularFunction1_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, TabularFunction1_VS<Var COMMA Var>, MBSIMNS"TabularFunction1_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, TabularFunction1_VS<Var COMMA Fixed<3> >, MBSIMNS"TabularFunction1_VS")
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, Function1_VS_from_SS<Ref>, MBSIMNS"Function1_VS_from_SS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, Function1_VS_from_SS<Var>, MBSIMNS"Function1_VS_from_SS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, Function1_VS_from_SS<Fixed<3> >, MBSIMNS"Function1_VS_from_SS")
+
   void Function1_SS_from_VS::initializeUsingXML(TiXmlElement * element) {
     Function1<double,double>::initializeUsingXML(element);
     TiXmlElement * e;
@@ -35,6 +53,7 @@ namespace MBSim {
     setFunction(f);
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, PositiveSinusFunction1_VS, MBSIMNS"PositiveSinusFunction1_VS")
 
   Vec PositiveSinusFunction1_VS::operator()(const double& tVal, const void *) {
     Vec y=SinusFunction1_VS<fmatvec::Ref>::operator()(tVal);
@@ -44,6 +63,7 @@ namespace MBSim {
     return y;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, StepFunction1_VS, MBSIMNS"StepFunction1_VS")
 
   Vec StepFunction1_VS::operator()(const double& tVal, const void *) {
     Vec y(ySize, INIT, 0);
@@ -71,6 +91,7 @@ namespace MBSim {
   }
 
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, PeriodicTabularFunction1_VS, MBSIMNS"PeriodicTabularFunction1_VS")
 
   Vec PeriodicTabularFunction1_VS::operator()(const double& xVal, const void *) {
     double xValTmp=xVal;
@@ -81,6 +102,7 @@ namespace MBSim {
     return TabularFunction1_VS<fmatvec::Ref,fmatvec::Ref>::operator()(xValTmp);
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SummationFunction1_VS, MBSIMNS"SummationFunction1_VS")
 
   void SummationFunction1_VS::initializeUsingXML(TiXmlElement * element) {
     Function1<Vec,double>::initializeUsingXML(element);
@@ -97,6 +119,7 @@ namespace MBSim {
     }
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, TabularFunction2_SSS, MBSIMNS"TabularFunction2_SSS")
 
   TabularFunction2_SSS::TabularFunction2_SSS() : xVec(Vec(0)), yVec(Vec(0)), XY(Mat(0,0)), xSize(0), ySize(0), x0Index(0), x1Index(0), y0Index(0), y1Index(0), func_value(Vec(1,INIT,0)), xy(Vec(4,INIT,1)), XYval(Vec(4,INIT,0)), XYfac(Mat(4,4,INIT,0)) {
   }
@@ -207,6 +230,7 @@ namespace MBSim {
     setXYMat(xy_);
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, Polynom1_SS, MBSIMNS"Polynom1_SS")
 
   void Polynom1_SS::setCoefficients(Vec a) {
     for (int i=0; i<a.size(); i++) {

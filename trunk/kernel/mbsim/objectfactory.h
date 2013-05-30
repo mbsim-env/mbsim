@@ -30,6 +30,8 @@
 #endif
 #include "mbsim/utils/utils.h"
 
+#define COMMA ,
+
 namespace MBSim {
 
 /** A object factory.

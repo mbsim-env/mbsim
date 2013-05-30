@@ -30,7 +30,9 @@ using namespace MBXMLUtils;
 
 namespace MBSim {
 
-  #ifdef HAVE_OPENMBVCPPINTERFACE
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Sphere, MBSIMNS"Sphere")
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
   void Sphere::enableOpenMBV(bool enable) {
     if(enable) {
       openMBVRigidBody=new OpenMBV::Sphere;

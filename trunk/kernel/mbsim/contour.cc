@@ -20,6 +20,8 @@
 
 #include <config.h>
 #include "mbsim/contour.h"
+#include "mbsim/contours/line.h"
+#include "mbsim/contours/point.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/object.h"
 #include "mbsim/mbsim_event.h"
@@ -39,6 +41,9 @@ using namespace MBXMLUtils;
 using namespace std;
 
 namespace MBSim {
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Line, MBSIMNS"Line")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Point, MBSIMNS"Point")
 
   /* Contour */
   Contour::Contour(const string &name) : Element(name), R(0) {

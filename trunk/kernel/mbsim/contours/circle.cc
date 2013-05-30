@@ -19,6 +19,8 @@
 
 #include<config.h>
 #include "mbsim/contours/circle.h"
+#include "mbsim/contours/circle_hollow.h"
+#include "mbsim/contours/circle_solid.h"
 
 #include <mbsim/utils/contact_utils.h>
 #include <mbsim/utils/utils.h>
@@ -34,6 +36,10 @@ using namespace MBXMLUtils;
 using namespace fmatvec;
 
 namespace MBSim {
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, CircleHollow, MBSIMNS"CircleHollow")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, CircleSolid, MBSIMNS"CircleSolid")
+
   Circle::Circle(const string& name) : RigidContour(name),r(0.),curvature(0),outCont(false) {}
  
   Circle::Circle(const string& name, bool outCont_) : RigidContour(name),r(0.),curvature(0),outCont(outCont_) {}

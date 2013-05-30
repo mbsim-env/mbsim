@@ -40,6 +40,8 @@ using namespace std;
 
 namespace MBSim {
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Contour1sAnalytical, MBSIMNS"Contour1sAnalytical")
+
   Contour1sAnalytical::~Contour1sAnalytical() {
      if (funcCrPC) 
        delete funcCrPC;

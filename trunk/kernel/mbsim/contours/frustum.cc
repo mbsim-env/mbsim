@@ -35,6 +35,8 @@ using namespace fmatvec;
 
 namespace MBSim {
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Frustum, MBSIMNS"Frustum")
+
   void Frustum::init(InitStage stage) {
     if(stage==MBSim::plot) {
       updatePlotFeatures();
