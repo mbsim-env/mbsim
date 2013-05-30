@@ -169,9 +169,9 @@ namespace MBSim {
     XY << XY_;
 
     if(xSize==0)
-      cout << "It is strongly recommended to set x file first! Continuing anyway." << endl;
+      cerr << "It is strongly recommended to set x file first! Continuing anyway." << endl;
     else if(ySize==0)
-      cout << "It is strongly recommended to set y file first! Continuing anyway." << endl;
+      cerr << "It is strongly recommended to set y file first! Continuing anyway." << endl;
     else {
       if(XY.cols()!=xSize)
         throw MBSimError("Dimension missmatch in xSize");

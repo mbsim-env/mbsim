@@ -509,7 +509,7 @@ namespace MBSimHydraulics {
       HNodeMec::init(stage);
       double pinf=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
       if (fabs(p0)<epsroot()) {
-        cout << "WARNING ElasticNodeMec \"" << name << "\" has no initial pressure. Using EnvironmentPressure instead." << endl;
+        cerr << "WARNING ElasticNodeMec \"" << name << "\" has no initial pressure. Using EnvironmentPressure instead." << endl;
         p0=pinf;
       }
       la(0)=p0;
@@ -587,7 +587,7 @@ namespace MBSimHydraulics {
 //          if (fabs(u0(j))>epsroot())
 //            zero=false;
 //        if (!zero)
-//          cout << "WARNING in RigidNodeMec \"" << getName() << "\": HydraulicLine \"" << connectedLines[i].line->getName() << "\" has an initialGeneralizedVelocity not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
+//          cerr << "WARNING in RigidNodeMec \"" << getName() << "\": HydraulicLine \"" << connectedLines[i].line->getName() << "\" has an initialGeneralizedVelocity not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
       }
       for (unsigned int i=0; i<nTrans; i++) { // TODO Baumstruktur
         if(dynamic_cast<Object*>(connectedTransFrames[i].frame->getParent())) {
@@ -597,7 +597,7 @@ namespace MBSimHydraulics {
 //            if (fabs(u0(j))>epsroot())
 //              zero=false;
 //          if (!zero)
-//            cout << "WARNING in RigidNodeMec \"" << getName() << "\": Object \"" << ((Object*)connectedTransFrames[i].frame->getParent())->getName() << "\" of connected Frame \"" <<  connectedTransFrames[i].frame->getName() << "\" has an initialGeneralizedVelocity not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
+//            cerr << "WARNING in RigidNodeMec \"" << getName() << "\": Object \"" << ((Object*)connectedTransFrames[i].frame->getParent())->getName() << "\" of connected Frame \"" <<  connectedTransFrames[i].frame->getName() << "\" has an initialGeneralizedVelocity not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
         }
       }
       for (unsigned int i=0; i<nRot; i++) { // TODO Baumstruktur
@@ -608,7 +608,7 @@ namespace MBSimHydraulics {
 //            if (fabs(u0(j))>epsroot())
 //              zero=false;
 //          if (!zero)
-//            cout << "WARNING in RigidNodeMec \"" << getName() << "\": Object \"" << ((Object*)connectedRotFrames[i].frame->getParent())->getName() << "\" of connected Frame \"" <<  connectedRotFrames[i].frame->getName() << "\" has an initialGeneralizedVelocity not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
+//            cerr << "WARNING in RigidNodeMec \"" << getName() << "\": Object \"" << ((Object*)connectedRotFrames[i].frame->getParent())->getName() << "\" of connected Frame \"" <<  connectedRotFrames[i].frame->getName() << "\" has an initialGeneralizedVelocity not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
         }
       }
     }

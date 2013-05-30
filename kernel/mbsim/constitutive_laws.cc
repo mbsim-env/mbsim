@@ -798,8 +798,8 @@ namespace MBSim {
       influenceFunctions[Pair] = fct;
     }
     else {
-      cout << "WARNING: Function existed for contour-pair: \"" << contour1->getName() << "\" + \"" << contour2->getName() << "\"." << endl;
-      cout << "         No Function has been added." << endl;
+      cerr << "WARNING: Function existed for contour-pair: \"" << contour1->getName() << "\" + \"" << contour2->getName() << "\"." << endl;
+      cerr << "         No Function has been added." << endl;
     }
 
   }

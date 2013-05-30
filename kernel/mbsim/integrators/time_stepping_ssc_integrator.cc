@@ -1096,7 +1096,7 @@ namespace MBSim {
                     dte= dt/2.0;
                   }
                 }  
-                if (testOK) cout<<"Hohe Ordnung abgeleht aber dafuer Order 1 akzeptiert!!!"<<endl; 
+                if (testOK) cerr<<"Hohe Ordnung abgeleht aber dafuer Order 1 akzeptiert!!!"<<endl; 
           }
 
         } //endif !ConstraintsChanged
@@ -1127,7 +1127,7 @@ namespace MBSim {
           //cout<<"step size halved because of failed convergence"<<endl;
         }
         else {
-          cout<<"Error: no convergence despite minimum stepsize("<<maxIter<<" iterations) Anyway, continuing integration..."<<endl;
+          cerr<<"Error: no convergence despite minimum stepsize("<<maxIter<<" iterations) Anyway, continuing integration..."<<endl;
         }
       }
       else {

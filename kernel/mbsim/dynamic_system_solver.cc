@@ -370,10 +370,10 @@ namespace MBSim {
       if(contactSolver == GaussSeidel) solveConstraints_ = &DynamicSystemSolver::solveConstraintsGaussSeidel; 
       else if(contactSolver == LinearEquations) {
         solveConstraints_ = &DynamicSystemSolver::solveConstraintsLinearEquations;
-        cout << "WARNING: solveLL is only valid for bilateral constrained systems!" << endl;
+        cerr << "WARNING: solveLL is only valid for bilateral constrained systems!" << endl;
       }
       else if(contactSolver == FixedPointSingle) solveConstraints_ = &DynamicSystemSolver::solveConstraintsFixpointSingle;
-      else if(contactSolver == RootFinding) { cout << "WARNING: RootFinding solver is BUGGY at least if there is friction!" << endl; solveConstraints_ = &DynamicSystemSolver::solveConstraintsRootFinding; }
+      else if(contactSolver == RootFinding) { cerr << "WARNING: RootFinding solver is BUGGY at least if there is friction!" << endl; solveConstraints_ = &DynamicSystemSolver::solveConstraintsRootFinding; }
       else throw MBSimError("ERROR (DynamicSystemSolver::init()): Unknown contact solver");
 
       // impact solver specific settings
@@ -381,10 +381,10 @@ namespace MBSim {
       if(impactSolver == GaussSeidel) solveImpacts_ = &DynamicSystemSolver::solveImpactsGaussSeidel; 
       else if(impactSolver == LinearEquations) {
         solveImpacts_ = &DynamicSystemSolver::solveImpactsLinearEquations;
-        cout << "WARNING: solveLL is only valid for bilateral constrained systems!" << endl;
+        cerr << "WARNING: solveLL is only valid for bilateral constrained systems!" << endl;
       }
       else if(impactSolver == FixedPointSingle) solveImpacts_ = &DynamicSystemSolver::solveImpactsFixpointSingle;
-      else if(impactSolver == RootFinding) { cout << "WARNING: RootFinding solver is BUGGY at least if there is friction!" << endl; solveImpacts_ = &DynamicSystemSolver::solveImpactsRootFinding; }
+      else if(impactSolver == RootFinding) { cerr << "WARNING: RootFinding solver is BUGGY at least if there is friction!" << endl; solveImpacts_ = &DynamicSystemSolver::solveImpactsRootFinding; }
       else throw MBSimError("ERROR (DynamicSystemSolver::init()): Unknown impact solver");
     }
     else if(stage==MBSim::modelBuildup) {
@@ -431,8 +431,8 @@ namespace MBSim {
       if(level < decreaseLevels.size() && iter > decreaseLevels(level)) {
         level++;
         decreaserFactors();
-        cout << endl << "WARNING: decreasing r-factors at iter = " << iter << endl;
-        if(warnLevel>=2) cout <<endl<< "WARNING: decreasing r-factors at iter = " << iter << endl;
+        cerr << endl << "WARNING: decreasing r-factors at iter = " << iter << endl;
+        if(warnLevel>=2) cerr <<endl<< "WARNING: decreasing r-factors at iter = " << iter << endl;
       }
 
       Group::solveConstraintsFixpointSingle();
@@ -460,8 +460,8 @@ namespace MBSim {
       if(level < decreaseLevels.size() && iter > decreaseLevels(level)) {
         level++;
         decreaserFactors();
-        cout << endl << "WARNING: decreasing r-factors at iter = " << iter << endl;
-        if(warnLevel>=2) cout << endl << "WARNING: decreasing r-factors at iter = " << iter << endl;
+        cerr << endl << "WARNING: decreasing r-factors at iter = " << iter << endl;
+        if(warnLevel>=2) cerr << endl << "WARNING: decreasing r-factors at iter = " << iter << endl;
       }
 
       Group::solveImpactsFixpointSingle(dt);
@@ -833,15 +833,15 @@ namespace MBSim {
     iter = (this->*solveConstraints_)(); // solver election
     if(iter >= maxIter) {
       if(INFO)  { 
-        cout << endl;
-        cout << "Iterations: " << iter << endl;
-        cout << "\nError: no convergence."<< endl;
+        cerr << endl;
+        cerr << "Iterations: " << iter << endl;
+        cerr << "\nError: no convergence."<< endl;
       }
       if(stopIfNoConvergence) {
         if(dropContactInfo) dropContactMatrices();
         assert(iter < maxIter);
       }
-      if(INFO) cout << "Anyway, continuing integration..."<< endl;
+      if(INFO) cerr << "Anyway, continuing integration..."<< endl;
     }
 
     if(warnLevel>=1 && iter>highIter)
@@ -866,15 +866,15 @@ namespace MBSim {
     iter = (this->*solveImpacts_)(dt); // solver election
     if(iter >= maxIter) {
       if (INFO) {
-        cout << endl;
-        cout << "Iterations: " << iter << endl;
-        cout << "\nError: no convergence."<< endl;
+        cerr << endl;
+        cerr << "Iterations: " << iter << endl;
+        cerr << "\nError: no convergence."<< endl;
       }
       if(stopIfNoConvergence) {
         if(dropContactInfo) dropContactMatrices();
         assert(iter < maxIter);
       }
-      if (INFO) cout << "Anyway, continuing integration..."<< endl;
+      if (INFO) cerr << "Anyway, continuing integration..."<< endl;
     }
 
     if(warnLevel>=1 && iter>highIter)

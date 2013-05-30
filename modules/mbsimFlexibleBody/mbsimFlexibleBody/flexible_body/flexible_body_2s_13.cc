@@ -121,7 +121,7 @@ namespace MBSimFlexibleBody {
     addContour(contour);
 #else
     contour=0;
-    cout << "WARNING (FlexibleBody2s13::FlexibleBody2s13): No NURBS library installed!" << endl;
+    cerr << "WARNING (FlexibleBody2s13::FlexibleBody2s13): No NURBS library installed!" << endl;
 #endif
 
     // frame in axis
