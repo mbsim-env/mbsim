@@ -3450,6 +3450,17 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="SymbolicFunction2_SSS" substitutionGroup="Function2_SSS" type="SymbolicFunction2_SSSType"/>
+  <xs:complexType name="SymbolicFunction2_SSSType" mixed="true">
+    <xs:complexContent>
+      <xs:extension base="Function2_SSSType">
+        <xs:group ref="pv:symbolicFunctionXMLElement"/>
+        <xs:attribute name="arg1name" use="required" type="pv:symbolicFunctionArgNameType"/>
+        <xs:attribute name="arg2name" use="required" type="pv:symbolicFunctionArgNameType"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="Polynom1_SS" substitutionGroup="DifferentiableFunction1_SS" type="Polynom1_SSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
