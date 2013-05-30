@@ -42,7 +42,7 @@ class ObjectFactory {
 
     /** Register the class CreateType which the XML element name name by the object factory.
      * You should not use this function directly but
-     * see also the macro MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY.  */
+     * see also the macro MBSIM_OBJECTFACTORY_REGISTERXMLNAME.  */
     template<class CreateType>
     static void registerXMLName(const std::string &name) {
       registerXMLName(name, &allocate<CreateType>, &deallocate);
@@ -50,7 +50,7 @@ class ObjectFactory {
 
     /** Register the class CreateType which the XML element name name by the object factory.
      * You should not use this function directly but
-     * see also the macro MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORYASSINGLETON. */
+     * see also the macro MBSIM_OBJECTFACTORY_REGISTERXMLNAMEASSINGLETON. */
     template<class CreateType>
     static void registerXMLNameAsSingleton(const std::string &name) {
       registerXMLName(name, &singleton<CreateType>, NULL);
@@ -150,12 +150,12 @@ class ObjectFactory {
  * You should not use this class directly but
  * use the macro MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY. */
 template<class BaseType, class CreateType>
-class RegisterXMLNameAtObjectFactory {
+class ObjectFactoryRegisterXMLNameHelper {
 
   public:
 
     /** ctor registring the new type */
-    RegisterXMLNameAtObjectFactory(const std::string &name) {
+    ObjectFactoryRegisterXMLNameHelper(const std::string &name) {
       ObjectFactory<BaseType>::template registerXMLName<CreateType>(name);
     };
 
@@ -165,12 +165,12 @@ class RegisterXMLNameAtObjectFactory {
  * You should not use this class directly but
  * use the macro MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORYASSINGLETON. */
 template<class BaseType, class CreateType>
-class RegisterXMLNameAtObjectFactoryAsSingleton {
+class ObjectFactoryRegisterXMLNameHelperAsSingleton {
 
   public:
 
     /** ctor registring the new type */
-    RegisterXMLNameAtObjectFactoryAsSingleton(const std::string &name) {
+    ObjectFactoryRegisterXMLNameHelperAsSingleton(const std::string &name) {
       ObjectFactory<BaseType>::template registerXMLNameAsSingleton<CreateType>(name);
     };
 
@@ -185,15 +185,15 @@ class RegisterXMLNameAtObjectFactoryAsSingleton {
 /** Use this macro somewhere at the class definition of ThisType to register it by the ObjectFactory.
  * BaseType is the base of ThisType and also the template parameter of ObjectFactory.
  * ThisType must have a public default ctor and a public dtor. */
-#define MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORY(BaseType, ThisType, name) \
-  static MBSim::RegisterXMLNameAtObjectFactory<BaseType,ThisType> \
-    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistreationDummyVariable)(name);
+#define MBSIM_OBJECTFACTORY_REGISTERXMLNAME(BaseType, ThisType, name) \
+  static MBSim::ObjectFactoryRegisterXMLNameHelper<BaseType,ThisType> \
+    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariable)(name);
 
 /** Use this macro somewhere at the class definition of ThisType to register it by the ObjectFactory (as a singleton).
  * BaseType is the base of ThisType and also the template parameter of ObjectFactory.
  * ThisType must have a public ThisType* getInstance() function and should not have a public dtor. */
-#define MBSIM_REGISTER_XMLNAME_AT_OBJECTFACTORYASSINGLETON(BaseType, ThisType, name) \
-  static MBSim::RegisterXMLNameAtObjectFactoryAsSingleton<BaseType,ThisType> \
-    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistreationDummyVariableAsSingleTon)(name);
+#define MBSIM_OBJECTFACTORY_REGISTERXMLNAMEASSINGLETON(BaseType, ThisType, name) \
+  static MBSim::ObjectFactoryRegisterXMLNameHelperAsSingleton<BaseType,ThisType> \
+    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariableAsSingleTon)(name);
 
 #endif

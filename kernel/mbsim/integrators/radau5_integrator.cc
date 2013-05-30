@@ -36,6 +36,8 @@ using namespace MBXMLUtils;
 
 namespace MBSim {
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Integrator, RADAU5Integrator, MBSIMINTNS"RADAU5Integrator")
+
   RADAU5Integrator::RADAU5Integrator() : dt0(0), maxSteps(0), dtMax(0) {
   }
 

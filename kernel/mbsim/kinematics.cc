@@ -31,11 +31,15 @@ using namespace fmatvec;
 
 namespace MBSim {
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, TranslationInXDirection, MBSIMNS"TranslationInXDirection")
+
   TiXmlElement* TranslationInXDirection::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"TranslationInXDirection" );
     parent->LinkEndChild(ele0);
     return ele0;
   }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, TranslationInYDirection, MBSIMNS"TranslationInYDirection")
 
   TiXmlElement* TranslationInYDirection::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"TranslationInYDirection" );
@@ -43,11 +47,15 @@ namespace MBSim {
     return ele0;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, TranslationInZDirection, MBSIMNS"TranslationInZDirection")
+
   TiXmlElement* TranslationInZDirection::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"TranslationInZDirection" );
     parent->LinkEndChild(ele0);
     return ele0;
   }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, TranslationInXYDirection, MBSIMNS"TranslationInXYDirection")
 
   TiXmlElement* TranslationInXYDirection::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"TranslationInXYDirection" );
@@ -55,11 +63,15 @@ namespace MBSim {
     return ele0;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, TranslationInXZDirection, MBSIMNS"TranslationInXZDirection")
+
   TiXmlElement* TranslationInXZDirection::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"TranslationInXZDirection" );
     parent->LinkEndChild(ele0);
     return ele0;
   }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, TranslationInYZDirection, MBSIMNS"TranslationInYZDirection")
 
   TiXmlElement* TranslationInYZDirection::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"TranslationInYZDirection" );
@@ -67,11 +79,15 @@ namespace MBSim {
     return ele0;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, TranslationInXYZDirection, MBSIMNS"TranslationInXYZDirection")
+
   TiXmlElement* TranslationInXYZDirection::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"TranslationInXYZDirection" );
     parent->LinkEndChild(ele0);
     return ele0;
   }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, LinearTranslation, MBSIMNS"LinearTranslation")
 
   void LinearTranslation::initializeUsingXML(TiXmlElement *element) {
     RotationIndependentTranslation::initializeUsingXML(element);
@@ -87,6 +103,8 @@ namespace MBSim {
     return ele0;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, TimeDependentTranslation, MBSIMNS"TimeDependentTranslation")
+
   void TimeDependentTranslation::initializeUsingXML(TiXmlElement *element) {
     RotationIndependentTranslation::initializeUsingXML(element);
     TiXmlElement *e;
@@ -94,6 +112,8 @@ namespace MBSim {
     pos=ObjectFactory<Function>::create<Function1<Vec3,double> >(e->FirstChildElement());
     pos->initializeUsingXML(e->FirstChildElement());
   }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, StateDependentTranslation, MBSIMNS"StateDependentTranslation")
 
   void StateDependentTranslation::initializeUsingXML(TiXmlElement *element) {
     Translation::initializeUsingXML(element);
@@ -108,6 +128,8 @@ namespace MBSim {
       qSize=symPos->getSXFunction().inputExpr(0).size1();
 #endif
   }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, RotationAboutXAxis, MBSIMNS"RotationAboutXAxis")
 
   RotationAboutXAxis::RotationAboutXAxis() {
     APK(0,0) = 1;
@@ -133,6 +155,8 @@ namespace MBSim {
     return ele0;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, RotationAboutYAxis, MBSIMNS"RotationAboutYAxis")
+
   RotationAboutYAxis::RotationAboutYAxis() {
     APK(1,1) = 1;
   }
@@ -157,6 +181,8 @@ namespace MBSim {
     return ele0;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, RotationAboutZAxis, MBSIMNS"RotationAboutZAxis")
+
   RotationAboutZAxis::RotationAboutZAxis() {
     APK(2,2) = 1;
   }
@@ -180,6 +206,8 @@ namespace MBSim {
     parent->LinkEndChild(ele0);
     return ele0;
   }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, RotationAboutFixedAxis, MBSIMNS"RotationAboutFixedAxis")
 
   SqrMat3 RotationAboutFixedAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
 
@@ -218,6 +246,8 @@ namespace MBSim {
     return ele0;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, StateDependentRotationAboutFixedAxis, MBSIMNS"StateDependentRotationAboutFixedAxis")
+
   void StateDependentRotationAboutFixedAxis::initializeUsingXML(TiXmlElement *element) {
     Rotation::initializeUsingXML(element);
     TiXmlElement *e;
@@ -234,6 +264,8 @@ namespace MBSim {
 #endif
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, TimeDependentRotationAboutFixedAxis, MBSIMNS"TimeDependentRotationAboutFixedAxis")
+
   void TimeDependentRotationAboutFixedAxis::initializeUsingXML(TiXmlElement *element) {
     TranslationIndependentRotation::initializeUsingXML(element);
     TiXmlElement *e;
@@ -243,6 +275,8 @@ namespace MBSim {
     angle=ObjectFactory<Function>::create<Function1<double,double> >(e->FirstChildElement());
     angle->initializeUsingXML(e->FirstChildElement());
   }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, RotationAboutAxesXY, MBSIMNS"RotationAboutAxesXY")
 
   SqrMat3 RotationAboutAxesXY::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     SqrMat3 APK(NONINIT);
@@ -274,6 +308,8 @@ namespace MBSim {
     return ele0;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, RotationAboutAxesXZ, MBSIMNS"RotationAboutAxesXZ")
+
   SqrMat3 RotationAboutAxesXZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     SqrMat3 APK(NONINIT);
 
@@ -303,6 +339,8 @@ namespace MBSim {
     parent->LinkEndChild(ele0);
     return ele0;
   }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, RotationAboutAxesYZ, MBSIMNS"RotationAboutAxesYZ")
 
   SqrMat3 RotationAboutAxesYZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     SqrMat3 APK(NONINIT);
@@ -334,6 +372,7 @@ namespace MBSim {
     return ele0;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, CardanAngles, MBSIMNS"CardanAngles")
 
   SqrMat3 CardanAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     SqrMat3 APK(NONINIT);
@@ -368,6 +407,8 @@ namespace MBSim {
     return ele0;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, EulerAngles, MBSIMNS"EulerAngles")
+
   SqrMat3 EulerAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     SqrMat3 APK(NONINIT);
 
@@ -401,6 +442,8 @@ namespace MBSim {
     return ele0;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, RotationAboutAxesXYZ, MBSIMNS"RotationAboutAxesXYZ")
+
   SqrMat3 RotationAboutAxesXYZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     SqrMat3 APK(NONINIT);
 
@@ -433,6 +476,8 @@ namespace MBSim {
     parent->LinkEndChild(ele0);
     return ele0;
   }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, TimeDependentCardanAngles, MBSIMNS"TimeDependentCardanAngles")
 
   SqrMat3 TimeDependentCardanAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     return (*rot)((*angle)(t),t);
@@ -666,6 +711,8 @@ namespace MBSim {
     Jd(2,iu) = -sina*cosb*ad - cosa*sinb*bd;
     return Jd;
   }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, GeneralTranslation, MBSIMNS"GeneralTranslation")
 
   void GeneralTranslation::initializeUsingXML(TiXmlElement *element) {
     Translation::initializeUsingXML(element);

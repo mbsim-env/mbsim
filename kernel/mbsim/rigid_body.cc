@@ -46,6 +46,8 @@ using namespace fmatvec;
 
 namespace MBSim {
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, RigidBody, MBSIMNS"RigidBody")
+
   RigidBody::RigidBody(const string &name) : Body(name), m(0), cb(false), APK(EYE), fT(0), fPrPK(0), fAPK(0), fPJT(0), fPJR(0), fPdJT(0), fPdJR(0), fPjT(0), fPjR(0), fPdjT(0), fPdjR(0), constraint(0), frameForJacobianOfRotation(0), frameForInertiaTensor(0) {
 
     C=new FixedRelativeFrame("C");
@@ -1085,6 +1087,5 @@ namespace MBSim {
 
     return ele0;
   }
-
 
 }

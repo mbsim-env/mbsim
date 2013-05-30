@@ -33,6 +33,8 @@ using namespace fmatvec;
 
 namespace MBSim {
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, KineticExcitation, MBSIMNS"KineticExcitation")
+
   KineticExcitation::KineticExcitation(const string &name) : LinkMechanics(name), refFrame(NULL), F(NULL), M(NULL) {}
 
   KineticExcitation::~KineticExcitation() {}

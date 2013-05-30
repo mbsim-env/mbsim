@@ -44,6 +44,8 @@ using namespace fmatvec;
 
 namespace MBSim {
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Group, MBSIMNS"Group")
+
   Group::Group(const string &name) : DynamicSystem(name) {}
 
   Group::~Group() {}

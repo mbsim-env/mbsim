@@ -30,6 +30,8 @@ namespace MBSim {
 
   MBSimEnvironment *MBSimEnvironment::instance=NULL;
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAMEASSINGLETON(Environment, MBSimEnvironment, MBSIMNS"MBSimEnvironment")
+
   void MBSimEnvironment::initializeUsingXML(TiXmlElement *element) {
     Environment::initializeUsingXML(element);
     TiXmlElement *e;
