@@ -373,6 +373,35 @@ void FileProperty::toWidget(QWidget *widget) {
   static_cast<FileWidget*>(widget)->blockSignals(false);
 }
 
+TiXmlElement* IntegerProperty::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e=element->FirstChildElement(xmlName);
+  if(e) {
+    TiXmlText *text = dynamic_cast<TiXmlText*>(e->FirstChild());
+    if(text) {
+      value = atoi(text->Value());
+      return e;
+    }
+  }
+  return 0;
+}
+
+TiXmlElement* IntegerProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = new TiXmlElement(xmlName);
+  TiXmlText *text= new TiXmlText(toStr(value));
+  ele0->LinkEndChild(text);
+  parent->LinkEndChild(ele0);
+
+  return 0;
+}
+
+void IntegerProperty::fromWidget(QWidget *widget) {
+  value = static_cast<IntegerWidget*>(widget)->getValue();
+}
+
+void IntegerProperty::toWidget(QWidget *widget) {
+  static_cast<IntegerWidget*>(widget)->setValue(value);
+}
+
 TiXmlElement* TextProperty::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e=element->FirstChildElement(xmlName);
   if(e) {
@@ -381,7 +410,7 @@ TiXmlElement* TextProperty::initializeUsingXML(TiXmlElement *element) {
       text = text_->Value();
       if(quote)
         text = text.substr(1,text.length()-2);
-     return e;
+      return e;
     }
   }
   return 0;
@@ -390,7 +419,6 @@ TiXmlElement* TextProperty::initializeUsingXML(TiXmlElement *element) {
 TiXmlElement* TextProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = new TiXmlElement(xmlName);
   TiXmlText *text_ = new TiXmlText(quote?("\""+text+"\""):text);
-
   ele0->LinkEndChild(text_);
   parent->LinkEndChild(ele0);
 
@@ -806,7 +834,7 @@ void GearDependenciesProperty::toWidget(QWidget *widget) {
 EmbedProperty::EmbedProperty(Element *element) : href(0,false), count(0,false), counterName(0,false), parameterList(0,false) {
   href.setProperty(new FileProperty(""));
   static_cast<FileProperty*>(href.getProperty())->setFile(element->getName()+".xml");
-  count.setProperty(new TextProperty("1",""));
+  count.setProperty(new IntegerProperty(1,""));
   counterName.setProperty(new TextProperty("n",""));
   parameterList.setProperty(new FileProperty(""));
 }
@@ -819,7 +847,7 @@ TiXmlElement* EmbedProperty::initializeUsingXML(TiXmlElement *parent) {
   }
   if(parent->Attribute("count")) {
     count.setActive(true);
-    static_cast<TextProperty*>(count.getProperty())->setText(parent->Attribute("count"));
+    static_cast<IntegerProperty*>(count.getProperty())->setValue(atoi(parent->Attribute("count")));
   }
   if(parent->Attribute("counterName")) {
     counterName.setActive(true);
@@ -838,7 +866,7 @@ TiXmlElement* EmbedProperty::writeXMLFile(TiXmlNode *parent) {
   if(href.isActive())
     ele0->SetAttribute("href", static_cast<FileProperty*>(href.getProperty())->getFile());
   if(count.isActive())
-    ele0->SetAttribute("count", static_cast<TextProperty*>(count.getProperty())->getText());
+    ele0->SetAttribute("count", static_cast<IntegerProperty*>(count.getProperty())->getValue());
   if(counterName.isActive())
     ele0->SetAttribute("counterName", static_cast<TextProperty*>(counterName.getProperty())->getText());
   if(parameterList.isActive()) {

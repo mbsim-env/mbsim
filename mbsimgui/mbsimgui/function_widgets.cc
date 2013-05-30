@@ -41,9 +41,7 @@ SymbolicFunction1Widget::SymbolicFunction1Widget(const QStringList &var) : Funct
     argname.push_back(new ExtWidget("Name of argument "+QString::number(i+1),new TextWidget(var[i])));
     layout->addWidget(argname[i],i,0);
 
-    //argdim.push_back(new ExtWidget("Dimension of argument "+QString::number(i+1),new TextWidget("1")));
-    argdim.push_back(new QSpinBox);
-    argdim[i]->setMinimum(1);
+    argdim.push_back(new ExtWidget("Dimension of argument "+QString::number(i+1),new SpinBoxWidget(1,1)));
     if(var[i]!="t")
       layout->addWidget(argdim[i],i,1);
   }
@@ -52,8 +50,7 @@ SymbolicFunction1Widget::SymbolicFunction1Widget(const QStringList &var) : Funct
 }
 
 int SymbolicFunction1Widget::getArgDim() const {
-  //return static_cast<TextWidget*>(argdim[0]->getWidget())->getText().toInt();
-  return argdim[0]->value();
+  return static_cast<SpinBoxWidget*>(argdim[0]->getWidget())->getValue();
 }
 
 ConstantFunction1Widget::ConstantFunction1Widget(bool vec, int n) : Function1Widget() {
@@ -246,9 +243,7 @@ SymbolicFunction2Widget::SymbolicFunction2Widget(const QStringList &var) : Funct
     argname.push_back(new ExtWidget("Name of argument "+QString::number(i+1),new TextWidget(var[i])));
     layout->addWidget(argname[i],i,0);
 
-    //argdim.push_back(new ExtWidget("Dimension of argument "+QString::number(i+1),new TextWidget("1")));
-    argdim.push_back(new QSpinBox);
-    argdim[i]->setMinimum(1);
+    argdim.push_back(new ExtWidget("Dimension of argument "+QString::number(i+1),new SpinBoxWidget(1,1)));
     if(var[i]!="t")
       layout->addWidget(argdim[i],i,1);
   }
@@ -257,8 +252,7 @@ SymbolicFunction2Widget::SymbolicFunction2Widget(const QStringList &var) : Funct
 }
 
 int SymbolicFunction2Widget::getArgDim(int i) const {
-  //return static_cast<TextWidget*>(argdim[i]->getWidget())->getText().toInt();
-  return argdim[i]->value();
+  return static_cast<SpinBoxWidget*>(argdim[i]->getWidget())->getValue();
 }
 
 LinearSpringDamperForceWidget::LinearSpringDamperForceWidget() {

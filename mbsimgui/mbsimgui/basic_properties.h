@@ -188,6 +188,22 @@ class FileProperty : public Property {
     std::string xmlName;
 };
 
+class IntegerProperty : public Property {
+
+  public:
+    IntegerProperty(int value_, const std::string &xmlName_) : value(value_), xmlName(xmlName_) {}
+    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+    int getValue() const {return value;}
+    void setValue(int value_) {value = value_;}
+
+  protected:
+    int value;
+    std::string xmlName;
+};
+
 class TextProperty : public Property {
 
   public:

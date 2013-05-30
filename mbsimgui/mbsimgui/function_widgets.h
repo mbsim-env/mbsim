@@ -62,8 +62,7 @@ class SymbolicFunction1Widget : public Function1Widget {
     int getArgDim() const;
   protected:
     ExtWidget *f;
-    std::vector<ExtWidget*> argname;
-    std::vector<QSpinBox*> argdim;
+    std::vector<ExtWidget*> argname, argdim;
 };
 
 class DifferentiableFunction1Widget : public Function1Widget {
@@ -194,9 +193,7 @@ class SymbolicFunction2Widget : public Function2Widget {
     int getArgDim(int i) const;
   protected:
     ExtWidget *f;
-    //std::vector<ExtWidget*> argname, argdim;
-    std::vector<ExtWidget*> argname;
-    std::vector<QSpinBox*> argdim;
+    std::vector<ExtWidget*> argname, argdim;
 };
 
 class LinearSpringDamperForceWidget : public Function2Widget {
