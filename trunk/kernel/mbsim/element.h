@@ -22,6 +22,7 @@
 #define _ELEMENT_H_
 
 #include "fmatvec.h"
+#include "mbsim/objectfactory.h"
 #include <string>
 #include <hdf5serie/vectorserie.h>
 #include "mbxmlutilstinyxml/tinyxml.h"

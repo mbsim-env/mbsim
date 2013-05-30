@@ -32,6 +32,8 @@ using namespace MBXMLUtils;
 
 namespace MBSim {
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Integrator, TimeSteppingIntegrator, MBSIMINTNS"TimeSteppingIntegrator")
+
   TimeSteppingIntegrator::TimeSteppingIntegrator() : dt(1e-3), t(0.), tPlot(0.), iter(0), step(0), integrationSteps(0), maxIter(0), sumIter(0), s0(0.), time(0.), stepPlot(0), driftCompensation(false) {}
 
   void TimeSteppingIntegrator::preIntegrate(DynamicSystemSolver& system) {

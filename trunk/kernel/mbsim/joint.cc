@@ -36,6 +36,8 @@ using namespace fmatvec;
 
 namespace MBSim {
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Joint, MBSIMNS"Joint")
+
   Joint::Joint(const string &name) : LinkMechanics(name), ffl(0), fml(0), fifl(0), fiml(0), C("C") {
   }
 

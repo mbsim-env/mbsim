@@ -32,6 +32,8 @@ using namespace fmatvec;
 
 namespace MBSim {
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Integrator, EulerExplicitIntegrator, MBSIMINTNS"EulerExplicitIntegrator")
+
   EulerExplicitIntegrator::EulerExplicitIntegrator() : dt(1e-3) {
   }
 

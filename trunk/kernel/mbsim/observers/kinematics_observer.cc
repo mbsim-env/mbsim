@@ -88,6 +88,8 @@ namespace MBSim {
     }
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, AbsoluteKinematicsObserver, MBSIMNS"AbsoluteKinematicsObserver")
+
   AbsoluteKinematicsObserver::AbsoluteKinematicsObserver(const std::string &name) : Observer(name), frame(0) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     openMBVPositionArrow=0;

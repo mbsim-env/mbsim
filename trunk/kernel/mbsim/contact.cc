@@ -46,6 +46,8 @@ namespace MBSim {
   extern double tP;
   extern bool gflag;
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Contact, MBSIMNS"Contact")
+
   Contact::Contact(const string &name) :
       LinkMechanics(name), fcl(0), fdf(0), fnil(0), ftil(0)
 #ifdef HAVE_OPENMBVCPPINTERFACE

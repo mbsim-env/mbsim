@@ -77,6 +77,8 @@ namespace MBSim {
   Constraint::Constraint(const std::string &name) : Object(name) {
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, GearConstraint, MBSIMNS"GearConstraint")
+
   GearConstraint::GearConstraint(const std::string &name, RigidBody* body) : Constraint(name), bd(body), saved_DependentBody("") {
     //bd->addDependency(this);
   }
@@ -150,6 +152,8 @@ namespace MBSim {
     }
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, KinematicConstraint, MBSIMNS"KinematicConstraint")
+
   KinematicConstraint::KinematicConstraint(const std::string &name) : Constraint(name), bd(0), f(0), fd(0), fdd(0), saved_DependentBody("") {
   }
 
@@ -218,6 +222,8 @@ namespace MBSim {
     ke->setFirstDerivativeOfKinematicFunction(fd);
     ke->setSecondDerivativeOfKinematicFunction(fdd);
   }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, JointConstraint, MBSIMNS"JointConstraint")
 
   JointConstraint::JointConstraint(const string &name) : Constraint(name), bi(NULL), frame1(0), frame2(0), nq(0), nu(0), nh(0), saved_ref1(""), saved_ref2("") {
 #ifdef HAVE_OPENMBVCPPINTERFACE

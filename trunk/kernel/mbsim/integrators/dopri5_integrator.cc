@@ -37,6 +37,8 @@ using namespace MBXMLUtils;
 
 namespace MBSim {
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Integrator, DOPRI5Integrator, MBSIMINTNS"DOPRI5Integrator")
+
   DOPRI5Integrator::DOPRI5Integrator() : dt0(0), maxSteps(2000000000), dtMax(0) {
   }
 

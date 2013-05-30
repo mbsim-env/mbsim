@@ -34,6 +34,8 @@ using namespace fmatvec;
 
 namespace MBSim {
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SpringDamper, MBSIMNS"SpringDamper")
+
   SpringDamper::SpringDamper(const string &name) : LinkMechanics(name), func(NULL), refFrame(NULL) 
 #ifdef HAVE_OPENMBVCPPINTERFACE
     , coilspringOpenMBV(NULL)
