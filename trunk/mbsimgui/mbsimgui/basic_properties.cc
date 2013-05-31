@@ -977,7 +977,7 @@ GeneralChoiceProperty::~GeneralChoiceProperty() {
 }
 
 TiXmlElement* GeneralChoiceProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=element->FirstChildElement(xmlName);
+  TiXmlElement *e=(xmlName!="")?element->FirstChildElement(xmlName):element;
   if(e) {
     TiXmlElement* ee=e->FirstChildElement();
     if(ee) {
