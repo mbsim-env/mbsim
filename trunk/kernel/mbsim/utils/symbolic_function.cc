@@ -17,7 +17,10 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
+#include <config.h>
 #include <mbsim/utils/symbolic_function.h>
+
+using namespace fmatvec;
 
 namespace MBSim {
 
