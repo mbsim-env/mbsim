@@ -20,6 +20,7 @@
 #include <config.h>
 #include "integrator_property_dialog.h"
 #include "integrator.h"
+#include "basic_widgets.h"
 #include "variable_widgets.h"
 #include "extended_widgets.h"
 #include "integrator_widgets.h"
@@ -81,7 +82,7 @@ DOPRI5IntegratorPropertyDialog::DOPRI5IntegratorPropertyDialog(DOPRI5Integrator 
   aTol = new VecWidget(0);
   input.push_back(new PhysicalVariableWidget(aTol,QStringList(),1));
   widget.push_back(new ExtPhysicalVarWidget(input));
-  absTol = new ExtWidget("Absolute tolerance",new WidgetChoiceWidget(name,widget)); 
+  absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(widget,name,QBoxLayout::LeftToRight)); 
   addToTab("Tolerances", absTol);
 
   input.clear();
@@ -92,7 +93,7 @@ DOPRI5IntegratorPropertyDialog::DOPRI5IntegratorPropertyDialog(DOPRI5Integrator 
   rTol = new VecWidget(0);
   input.push_back(new PhysicalVariableWidget(rTol,noUnitUnits(),1));
   widget.push_back(new ExtPhysicalVarWidget(input));
-  relTol = new ExtWidget("Relative tolerance",new WidgetChoiceWidget(name,widget)); 
+  relTol = new ExtWidget("Relative tolerance",new ChoiceWidget(widget,name,QBoxLayout::LeftToRight)); 
   addToTab("Tolerances", relTol);
 
   input.clear();
@@ -144,7 +145,7 @@ RADAU5IntegratorPropertyDialog::RADAU5IntegratorPropertyDialog(RADAU5Integrator 
   aTol = new VecWidget(0);
   input.push_back(new PhysicalVariableWidget(aTol,QStringList(),1));
   widget.push_back(new ExtPhysicalVarWidget(input));
-  absTol = new ExtWidget("Absolute tolerance",new WidgetChoiceWidget(name,widget)); 
+  absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(widget,name,QBoxLayout::LeftToRight)); 
   addToTab("Tolerances", absTol);
 
   input.clear();
@@ -155,7 +156,7 @@ RADAU5IntegratorPropertyDialog::RADAU5IntegratorPropertyDialog(RADAU5Integrator 
   rTol = new VecWidget(0);
   input.push_back(new PhysicalVariableWidget(rTol,noUnitUnits(),1));
   widget.push_back(new ExtPhysicalVarWidget(input));
-  relTol = new ExtWidget("Relative tolerance",new WidgetChoiceWidget(name,widget)); 
+  relTol = new ExtWidget("Relative tolerance",new ChoiceWidget(widget,name,QBoxLayout::LeftToRight)); 
   addToTab("Tolerances", relTol);
 
   input.clear();
@@ -208,7 +209,7 @@ LSODEIntegratorPropertyDialog::LSODEIntegratorPropertyDialog(LSODEIntegrator *in
   aTol = new VecWidget(0);
   input.push_back(new PhysicalVariableWidget(aTol,QStringList(),1));
   widget.push_back(new ExtPhysicalVarWidget(input));
-  absTol = new ExtWidget("Absolute tolerance",new WidgetChoiceWidget(name,widget)); 
+  absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(widget,name,QBoxLayout::LeftToRight)); 
   addToTab("Tolerances", absTol);
 
   input.clear();
@@ -278,7 +279,7 @@ LSODARIntegratorPropertyDialog::LSODARIntegratorPropertyDialog(LSODARIntegrator 
   aTol = new VecWidget(0);
   input.push_back(new PhysicalVariableWidget(aTol,QStringList(),1));
   widget.push_back(new ExtPhysicalVarWidget(input));
-  absTol = new ExtWidget("Absolute tolerance",new WidgetChoiceWidget(name,widget)); 
+  absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(widget,name,QBoxLayout::LeftToRight)); 
   addToTab("Tolerances", absTol);
 
   input.clear();

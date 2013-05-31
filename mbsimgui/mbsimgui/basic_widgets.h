@@ -494,28 +494,4 @@ class SignalReferencesWidget : public Widget {
     void openContextMenu(const QPoint &pos);
 };
 
-class GeneralChoiceWidget : public Widget {
-  Q_OBJECT
-
-  friend class GeneralChoiceProperty;
-
-  public:
-    GeneralChoiceWidget(const std::vector<Widget*> &widget, const std::vector<QString> &name);
-
-    void resize_(int m, int n);
-    Widget* getWidget(int i) const;
-    Widget* getWidget() const;
-
-  protected slots:
-    void defineWidget(int);
-
-  protected:
-    QComboBox *comboBox;
-    QStackedWidget *stackedWidget;
-
-  signals:
-    void resize_();
-    void widgetChanged();
-};
-
 #endif

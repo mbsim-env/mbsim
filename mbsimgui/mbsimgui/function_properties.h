@@ -22,7 +22,7 @@
 
 #include "extended_properties.h"
 
-class GeneralChoiceProperty;
+class ChoiceProperty;
 
 class Function1Property : public Property {
   public:
@@ -141,6 +141,7 @@ class SinusFunction1Property : public DifferentiableFunction1Property {
 class TabularFunction1Property : public Function1Property {
   public:
     TabularFunction1Property();
+    ~TabularFunction1Property() {delete choice;}
     inline std::string getType() const { return "TabularFunction1_VS"; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -148,7 +149,7 @@ class TabularFunction1Property : public Function1Property {
     void toWidget(QWidget *widget);
 
   protected:
-    PropertyChoiceProperty *choice;
+    ChoiceProperty *choice;
 };
 
 class SummationFunction1Property : public Function1Property {
@@ -162,7 +163,7 @@ class SummationFunction1Property : public Function1Property {
     void toWidget(QWidget *widget);
 
   protected:
-    std::vector<PropertyContainer*> function;
+    std::vector<ContainerProperty*> function;
 };
 
 class SymbolicFunction2Property : public Function2Property {

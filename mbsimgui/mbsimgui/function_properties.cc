@@ -218,7 +218,7 @@ void SinusFunction1Property::toWidget(QWidget *widget) {
 
 TabularFunction1Property::TabularFunction1Property() {
 
-  PropertyContainer *propertyContainer = new PropertyContainer;
+  ContainerProperty *propertyContainer = new ContainerProperty;
   vector<Property*> choiceProperty;
 
   vector<PhysicalVariableProperty*> input;
@@ -235,7 +235,7 @@ TabularFunction1Property::TabularFunction1Property() {
   input.push_back(new PhysicalVariableProperty(new MatFromFileProperty,"",MBSIMNS"xy"));
   choiceProperty.push_back(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
-  choice = new PropertyChoiceProperty(choiceProperty);
+  choice = new ChoiceProperty("",choiceProperty,1);
 }
 
 TiXmlElement* TabularFunction1Property::initializeUsingXML(TiXmlElement *element) {
@@ -264,7 +264,7 @@ TiXmlElement* SummationFunction1Property::initializeUsingXML(TiXmlElement *eleme
   function.clear();
   TiXmlElement *e = element->FirstChildElement(MBSIMNS"function");
   while(e) {
-    PropertyContainer *propertyContainer = new PropertyContainer;
+    ContainerProperty *propertyContainer = new ContainerProperty;
     vector<Property*> property;
     property.push_back(new ConstantFunction1Property("VS"));
     property.push_back(new QuadraticFunction1Property);
@@ -272,7 +272,7 @@ TiXmlElement* SummationFunction1Property::initializeUsingXML(TiXmlElement *eleme
     property.push_back(new TabularFunction1Property);
     property.push_back(new SummationFunction1Property);
     property.push_back(new SymbolicFunction1Property("VS"));
-    propertyContainer->addProperty(new GeneralChoiceProperty("",property));
+    propertyContainer->addProperty(new ChoiceProperty("",property));
 
     vector<PhysicalVariableProperty*> input;
     input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMNS"factor"));
@@ -303,7 +303,7 @@ void SummationFunction1Property::fromWidget(QWidget *widget) {
     delete function[i];
   function.clear();
   for(unsigned int i=0; i<static_cast<SummationFunction1Widget*>(widget)->stackedWidget->count(); i++) {
-    PropertyContainer *propertyContainer = new PropertyContainer;
+    ContainerProperty *propertyContainer = new ContainerProperty;
 
     vector<Property*> property;
     property.push_back(new ConstantFunction1Property("VS"));
@@ -312,7 +312,7 @@ void SummationFunction1Property::fromWidget(QWidget *widget) {
     property.push_back(new TabularFunction1Property);
     property.push_back(new SummationFunction1Property);
     property.push_back(new SymbolicFunction1Property("VS"));
-    propertyContainer->addProperty(new GeneralChoiceProperty("",property));
+    propertyContainer->addProperty(new ChoiceProperty("",property));
 
     vector<PhysicalVariableProperty*> input;
     input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMNS"factor"));

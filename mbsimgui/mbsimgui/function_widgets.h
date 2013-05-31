@@ -26,8 +26,7 @@ class ExtPhysicalVarWidget;
 class ExtWidget;
 class QVBoxLayout;
 class QComboBox;
-class GeneralChoiceWidget;
-class WidgetChoiceWidget;
+class ChoiceWidget;
 class QStackedWidget;
 class QListWidget;
 class QSpinBox;
@@ -130,7 +129,7 @@ class TabularFunction1Widget : public Function1Widget {
     inline QString getType() const { return QString("TabularFunction1_VS"); }
 
   protected:
-    WidgetChoiceWidget* choice;
+    ChoiceWidget* choice;
 };
 
 class SummationFunction1Widget : public Function1Widget {

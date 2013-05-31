@@ -470,15 +470,15 @@ KinematicConstraintPropertyDialog::KinematicConstraintPropertyDialog(KinematicCo
   connect((RigidBodyOfReferenceWidget*)dependentBody->getWidget(),SIGNAL(bodyChanged()),this,SLOT(updateReferenceBody()));
   addToTab("General", dependentBody);
 
-  vector<Widget*> widget;
+  vector<QWidget*> widget;
   vector<QString> name;
   QStringList var;
   var << "t";
   widget.push_back(new SymbolicFunction1Widget(var));
   name.push_back("Symbolic function");
-  kinematicFunction = new ExtWidget("Kinematic function",new GeneralChoiceWidget(widget,name));
+  kinematicFunction = new ExtWidget("Kinematic function",new ChoiceWidget(widget,name));
   addToTab("General", kinematicFunction);
-  connect((GeneralChoiceWidget*)kinematicFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+  connect((ChoiceWidget*)kinematicFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
 //  firstDerivativeOfKinematicFunction = new ExtWidget("First derivative of kinematic function",new Function1ChoiceWidget,true);
 //  addToTab("General", firstDerivativeOfKinematicFunction);
@@ -493,7 +493,7 @@ KinematicConstraintPropertyDialog::KinematicConstraintPropertyDialog(KinematicCo
 
 void KinematicConstraintPropertyDialog::resizeVariables() {
   int size = refBody?refBody->getqRelSize():0;
-  ((GeneralChoiceWidget*)kinematicFunction->getWidget())->resize_(size,1);
+  ((ChoiceWidget*)kinematicFunction->getWidget())->resize_(size,1);
 //  ((Function1ChoiceWidget*)firstDerivativeOfKinematicFunction->getWidget())->resize_(size,1);
 //  ((Function1ChoiceWidget*)secondDerivativeOfKinematicFunction->getWidget())->resize_(size,1);
 }
@@ -610,7 +610,7 @@ void SignalProcessingSystemPropertyDialog::fromWidget(Element *element) {
 }
 
 LinearTransferSystemPropertyDialog::LinearTransferSystemPropertyDialog(LinearTransferSystem *lts, QWidget * parent, Qt::WindowFlags f) : SignalProcessingSystemPropertyDialog(lts,parent,f) {
-  WidgetContainer *propertyContainer = new WidgetContainer;
+  ContainerWidget *propertyContainer = new ContainerWidget;
   vector<QWidget*> choiceWidget;
   vector<QString> name;
   name.push_back("PID");
@@ -632,7 +632,7 @@ LinearTransferSystemPropertyDialog::LinearTransferSystemPropertyDialog(LinearTra
 
   choiceWidget.push_back(propertyContainer);
 
-  propertyContainer = new WidgetContainer;
+  propertyContainer = new ContainerWidget;
 
   input.clear();
   input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
@@ -652,7 +652,7 @@ LinearTransferSystemPropertyDialog::LinearTransferSystemPropertyDialog(LinearTra
 
   choiceWidget.push_back(propertyContainer);
 
-  propertyContainer = new WidgetContainer;
+  propertyContainer = new ContainerWidget;
 
   input.clear();
   input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),noUnitUnits(),1));
@@ -660,7 +660,7 @@ LinearTransferSystemPropertyDialog::LinearTransferSystemPropertyDialog(LinearTra
 
   choiceWidget.push_back(propertyContainer);
 
-  propertyContainer = new WidgetContainer;
+  propertyContainer = new ContainerWidget;
 
   input.clear();
   input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),noUnitUnits(),1));
@@ -672,7 +672,7 @@ LinearTransferSystemPropertyDialog::LinearTransferSystemPropertyDialog(LinearTra
 
   choiceWidget.push_back(propertyContainer);
 
-  choice = new ExtWidget("Type",new WidgetChoiceWidget(name,choiceWidget));
+  choice = new ExtWidget("Type",new ChoiceWidget(choiceWidget,name,QBoxLayout::LeftToRight));
   addToTab("General", choice);
 }
 
@@ -715,7 +715,7 @@ KineticExcitationPropertyDialog::KineticExcitationPropertyDialog(KineticExcitati
   widget.push_back(new ConnectFramesWidget(1,kineticExcitation));
   widget.push_back(new ConnectFramesWidget(2,kineticExcitation));
 
-  connections = new ExtWidget("Connections",new WidgetChoiceWidget(name,widget)); 
+  connections = new ExtWidget("Connections",new ChoiceWidget(widget,name,QBoxLayout::LeftToRight));
   addToTab("Kinetics",connections);
 
   ForceChoiceWidget *f = new ForceChoiceWidget;
@@ -759,7 +759,7 @@ SpringDamperPropertyDialog::SpringDamperPropertyDialog(SpringDamper *springDampe
   connections = new ExtWidget("Connections",new ConnectFramesWidget(2,springDamper));
   addToTab("Kinetics", connections);
 
-  vector<Widget*> widget;
+  vector<QWidget*> widget;
   vector<QString> name;
   widget.push_back(new LinearSpringDamperForceWidget);
   name.push_back("Linear spring damper force");
@@ -767,7 +767,7 @@ SpringDamperPropertyDialog::SpringDamperPropertyDialog(SpringDamper *springDampe
   var << "g" << "gd";
   widget.push_back(new SymbolicFunction2Widget(var,1));
   name.push_back("Symbolic function");
-  forceFunction = new ExtWidget("Force function",new GeneralChoiceWidget(widget,name));
+  forceFunction = new ExtWidget("Force function",new ChoiceWidget(widget,name));
   addToTab("Kinetics", forceFunction);
 
   forceDirection = new ExtWidget("Force direction",new ForceDirectionWidget(springDamper),true);
@@ -1029,7 +1029,7 @@ AbsolutePositionSensorPropertyDialog::AbsolutePositionSensorPropertyDialog(Absol
 }
 
 FunctionSensorPropertyDialog::FunctionSensorPropertyDialog(FunctionSensor *sensor, QWidget * parent, Qt::WindowFlags f) : SensorPropertyDialog(sensor,parent,f) {
-  vector<Widget*> widget;
+  vector<QWidget*> widget;
   vector<QString> name;
   widget.push_back(new ConstantFunction1Widget(true,1));
   name.push_back("Constant function");
@@ -1045,7 +1045,7 @@ FunctionSensorPropertyDialog::FunctionSensorPropertyDialog(FunctionSensor *senso
   var << "t";
   widget.push_back(new SymbolicFunction1Widget(var));
   name.push_back("Symbolic function");
-  function = new ExtWidget("Function",new GeneralChoiceWidget(widget,name));
+  function = new ExtWidget("Function",new ChoiceWidget(widget,name));
   addToTab("General", function);
 }
 

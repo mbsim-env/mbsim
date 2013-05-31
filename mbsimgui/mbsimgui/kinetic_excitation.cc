@@ -37,7 +37,7 @@ KineticExcitation::KineticExcitation(const string &str, Element *parent) : Link(
   widget.push_back(new ConnectFramesProperty(1,this));
   widget.push_back(new ConnectFramesProperty(2,this));
 
-  connections.setProperty(new PropertyChoiceProperty(widget)); 
+  connections.setProperty(new ChoiceProperty("",widget,1)); 
 
   force.setProperty(new ForceChoiceProperty(forceArrow,MBSIMNS"force"));
   moment.setProperty(new ForceChoiceProperty(momentArrow,MBSIMNS"moment"));

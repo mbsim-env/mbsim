@@ -72,7 +72,7 @@ KinematicConstraint::KinematicConstraint(const string &str, Element *parent) : C
 
   vector<Property*> property;
   property.push_back(new SymbolicFunction1Property("VS"));
-  kinematicFunction.setProperty(new GeneralChoiceProperty(MBSIMNS"kinematicFunction",property));
+  kinematicFunction.setProperty(new ChoiceProperty(MBSIMNS"kinematicFunction",property));
 
   //kinematicFunction.setProperty(new Function1ChoiceProperty(MBSIMNS"kinematicFunction"));
 

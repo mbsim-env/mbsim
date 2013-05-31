@@ -111,7 +111,7 @@ DOPRI5Integrator::DOPRI5Integrator() : maxSteps(0,false) {
   input.clear();
   input.push_back(new PhysicalVariableProperty(new VecProperty(0),"",MBSIMINTNS"absoluteTolerance"));
   property.push_back(new ExtPhysicalVarProperty(input));
-  absTol.setProperty(new PropertyChoiceProperty(property)); 
+  absTol.setProperty(new ChoiceProperty("",property)); 
 
   input.clear();
   property.clear();
@@ -120,7 +120,7 @@ DOPRI5Integrator::DOPRI5Integrator() : maxSteps(0,false) {
   input.clear();
   input.push_back(new PhysicalVariableProperty(new VecProperty(0),"",MBSIMINTNS"relativeTolerance"));
   property.push_back(new ExtPhysicalVarProperty(input));
-  relTol.setProperty(new PropertyChoiceProperty(property)); 
+  relTol.setProperty(new ChoiceProperty("",property)); 
 
   input.clear();
   input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"initialStepSize"));
@@ -165,7 +165,7 @@ RADAU5Integrator::RADAU5Integrator() {
   input.clear();
   input.push_back(new PhysicalVariableProperty(new VecProperty(0),"",MBSIMINTNS"absoluteTolerance"));
   property.push_back(new ExtPhysicalVarProperty(input));
-  absTol.setProperty(new PropertyChoiceProperty(property)); 
+  absTol.setProperty(new ChoiceProperty("",property)); 
 
   input.clear();
   property.clear();
@@ -174,7 +174,7 @@ RADAU5Integrator::RADAU5Integrator() {
   input.clear();
   input.push_back(new PhysicalVariableProperty(new VecProperty(0),"",MBSIMINTNS"relativeTolerance"));
   property.push_back(new ExtPhysicalVarProperty(input));
-  relTol.setProperty(new PropertyChoiceProperty(property)); 
+  relTol.setProperty(new ChoiceProperty("",property)); 
 
   input.clear();
   input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"s",MBSIMINTNS"initialStepSize"));
@@ -219,7 +219,7 @@ LSODEIntegrator::LSODEIntegrator() : stiff(0,false) {
   input.clear();
   input.push_back(new PhysicalVariableProperty(new VecProperty(0),"",MBSIMINTNS"absoluteTolerance"));
   property.push_back(new ExtPhysicalVarProperty(input));
-  absTol.setProperty(new PropertyChoiceProperty(property)); 
+  absTol.setProperty(new ChoiceProperty("",property)); 
 
   input.clear();
   input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-6"),"-",MBSIMINTNS"relativeToleranceScalar"));
@@ -280,7 +280,7 @@ LSODARIntegrator::LSODARIntegrator() {
   input.clear();
   input.push_back(new PhysicalVariableProperty(new VecProperty(0),"",MBSIMINTNS"absoluteTolerance"));
   property.push_back(new ExtPhysicalVarProperty(input));
-  absTol.setProperty(new PropertyChoiceProperty(property)); 
+  absTol.setProperty(new ChoiceProperty("",property)); 
 
   input.clear();
   input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-6"),"-",MBSIMINTNS"relativeToleranceScalar"));

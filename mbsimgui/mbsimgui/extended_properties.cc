@@ -69,60 +69,79 @@ void ExtPhysicalVarProperty::toWidget(QWidget *widget) {
   //  inputProperty[i]->toWidget(static_cast<ExtPhysicalVarWidget*>(widget)->getPhysicalVariableWidget(i));
 }
 
-PropertyChoiceProperty::~PropertyChoiceProperty() {
-  for(vector<Property*>::iterator i = property.begin(); i != property.end(); ++i)
-    delete *i;
+ChoiceProperty::~ChoiceProperty() {
+  for(unsigned int i=0; i<property.size(); i++)
+    delete property[i];
 }
 
-void PropertyChoiceProperty::initialize() {
+void ChoiceProperty::initialize() {
   for(unsigned int i=0; i<property.size(); i++)
     property[i]->initialize();
 }
 
-TiXmlElement* PropertyChoiceProperty::initializeUsingXML(TiXmlElement *element) {
-  if(xmlName!="") {
-    TiXmlElement *e=element->FirstChildElement(xmlName);
-    if(e)
-      for(int i=0; i<property.size(); i++)
-        if(property[i]->initializeUsingXML(e)) {
-          index = i;
-          return e;
-        }
+TiXmlElement* ChoiceProperty::initializeUsingXML(TiXmlElement *element) {
+  if(mode==0) {
+    TiXmlElement *e=(xmlName!="")?element->FirstChildElement(xmlName):element;
+    if(e) {
+      TiXmlElement* ee=e->FirstChildElement();
+      if(ee) {
+        for(int i=0; i<property.size(); i++)
+          if(ee->ValueStr() == MBSIMNS+property[i]->getType()) {
+            index = i;
+            break;
+          }
+        property[index]->initializeUsingXML(ee);
+      }
+    }
+    return e;
   }
   else {
-    for(int i=0; i<property.size(); i++)
-      if(property[i]->initializeUsingXML(element)) {
-        index = i;
-        return element;
-      }
+    if(xmlName!="") {
+      TiXmlElement *e=element->FirstChildElement(xmlName);
+      if(e)
+        for(int i=0; i<property.size(); i++)
+          if(property[i]->initializeUsingXML(e)) {
+            index = i;
+            return e;
+          }
+    }
+    else {
+      for(int i=0; i<property.size(); i++)
+        if(property[i]->initializeUsingXML(element)) {
+          index = i;
+          return element;
+        }
+    }
+    return 0;
   }
+}
+
+TiXmlElement* ChoiceProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlNode *ele0;
+  if(xmlName!="") {
+    ele0 = new TiXmlElement(xmlName);
+    parent->LinkEndChild(ele0);
+  }
+  else
+    ele0 = parent;
+  property[index]->writeXMLFile(ele0);
+
   return 0;
 }
 
-TiXmlElement* PropertyChoiceProperty::writeXMLFile(TiXmlNode *parent) {
-  if(xmlName!="") {
-    TiXmlElement *ele0 = new TiXmlElement(xmlName);
-    property[index]->writeXMLFile(ele0);
-    parent->LinkEndChild(ele0);
-    return ele0;
-  }
-  else
-    return property[index]->writeXMLFile(parent);
+void ChoiceProperty::fromWidget(QWidget *widget) {
+  index = static_cast<ChoiceWidget*>(widget)->comboBox->currentIndex();
+  property[index]->fromWidget(static_cast<ChoiceWidget*>(widget)->getWidget());
 }
 
-void PropertyChoiceProperty::fromWidget(QWidget *widget) {
-  index = static_cast<WidgetChoiceWidget*>(widget)->stackedWidget->currentIndex();
-  property[index]->fromWidget(static_cast<WidgetChoiceWidget*>(widget)->stackedWidget->currentWidget());
-}
-
-void PropertyChoiceProperty::toWidget(QWidget *widget) {
-  static_cast<WidgetChoiceWidget*>(widget)->choice->blockSignals(true);
-  static_cast<WidgetChoiceWidget*>(widget)->choice->setCurrentIndex(index);
-  static_cast<WidgetChoiceWidget*>(widget)->choice->blockSignals(false);
-  static_cast<WidgetChoiceWidget*>(widget)->stackedWidget->blockSignals(true);
-  static_cast<WidgetChoiceWidget*>(widget)->stackedWidget->setCurrentIndex(index);
-  static_cast<WidgetChoiceWidget*>(widget)->stackedWidget->blockSignals(false);
-  property[index]->toWidget(static_cast<WidgetChoiceWidget*>(widget)->stackedWidget->currentWidget());
+void ChoiceProperty::toWidget(QWidget *widget) {
+  static_cast<ChoiceWidget*>(widget)->comboBox->blockSignals(true);
+  static_cast<ChoiceWidget*>(widget)->comboBox->setCurrentIndex(index);
+  static_cast<ChoiceWidget*>(widget)->comboBox->blockSignals(false);
+  static_cast<ChoiceWidget*>(widget)->blockSignals(true);
+  static_cast<ChoiceWidget*>(widget)->defineWidget(index);
+  static_cast<ChoiceWidget*>(widget)->blockSignals(false);
+  property[index]->toWidget(static_cast<ChoiceWidget*>(widget)->getWidget());
 }
 
 TiXmlElement* ExtProperty::initializeUsingXML(TiXmlElement *element) {
@@ -169,17 +188,17 @@ void ExtProperty::toWidget(QWidget *widget) {
   property->toWidget(static_cast<ExtWidget*>(widget)->widget);
 }
 
-PropertyContainer::~PropertyContainer() {
+ContainerProperty::~ContainerProperty() {
   for(vector<Property*>::iterator i = property.begin(); i != property.end(); ++i)
     delete *i;
 }
 
-void PropertyContainer::initialize() {
+void ContainerProperty::initialize() {
   for(unsigned int i=0; i<property.size(); i++)
     property[i]->initialize();
 }
 
-TiXmlElement* PropertyContainer::initializeUsingXML(TiXmlElement *element) {
+TiXmlElement* ContainerProperty::initializeUsingXML(TiXmlElement *element) {
   if(xmlName!="") {
     TiXmlElement *e=element->FirstChildElement(xmlName);
     if(e)
@@ -196,7 +215,7 @@ TiXmlElement* PropertyContainer::initializeUsingXML(TiXmlElement *element) {
   }
 }
 
-TiXmlElement* PropertyContainer::writeXMLFile(TiXmlNode *parent) {
+TiXmlElement* ContainerProperty::writeXMLFile(TiXmlNode *parent) {
   if(xmlName!="") {
     TiXmlElement *ele0 = new TiXmlElement(xmlName);
     for(unsigned int i=0; i<property.size(); i++)
@@ -209,14 +228,14 @@ TiXmlElement* PropertyContainer::writeXMLFile(TiXmlNode *parent) {
   return 0;
 }
 
-void PropertyContainer::fromWidget(QWidget *widget) {
+void ContainerProperty::fromWidget(QWidget *widget) {
   for(unsigned int i=0; i<property.size(); i++)
-    property[i]->fromWidget(static_cast<WidgetContainer*>(widget)->widget[i]);
+    property[i]->fromWidget(static_cast<ContainerWidget*>(widget)->widget[i]);
 }
 
-void PropertyContainer::toWidget(QWidget *widget) {
+void ContainerProperty::toWidget(QWidget *widget) {
   for(unsigned int i=0; i<property.size(); i++)
-    property[i]->toWidget(static_cast<WidgetContainer*>(widget)->widget[i]);
+    property[i]->toWidget(static_cast<ContainerWidget*>(widget)->widget[i]);
 }
 
 

@@ -306,7 +306,7 @@ ForceChoiceWidget::ForceChoiceWidget() {
   connect(mat->getWidget(),SIGNAL(inputDialogChanged(int)),this,SLOT(resizeVariables()));
   connect(mat_, SIGNAL(sizeChanged(int)), this, SLOT(resizeVariables()));
 
-  vector<Widget*> widget;
+  vector<QWidget*> widget;
   vector<QString> name;
   widget.push_back(new ConstantFunction1Widget(true,1));
   name.push_back("Constant function");
@@ -322,14 +322,14 @@ ForceChoiceWidget::ForceChoiceWidget() {
   var << "t";
   widget.push_back(new SymbolicFunction1Widget(var));
   name.push_back("Symbolic function");
-  forceLaw = new ExtWidget("Function",new GeneralChoiceWidget(widget,name));
+  forceLaw = new ExtWidget("Function",new ChoiceWidget(widget,name));
   layout->addWidget(forceLaw);
 
-  connect((GeneralChoiceWidget*)forceLaw->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+  connect((ChoiceWidget*)forceLaw->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 }
 
 void ForceChoiceWidget::resizeVariables() {
-  static_cast<GeneralChoiceWidget*>(forceLaw->getWidget())->resize_(getSize(),1);
+  static_cast<ChoiceWidget*>(forceLaw->getWidget())->resize_(getSize(),1);
 }
 
 int ForceChoiceWidget::getSize() const {
