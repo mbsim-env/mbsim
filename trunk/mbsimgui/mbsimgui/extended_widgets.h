@@ -23,6 +23,7 @@
 #include "widget.h"
 #include <QComboBox>
 #include <QGroupBox>
+#include <QBoxLayout>
 
 class QStackedWidget;
 class VariableWidget;
@@ -58,21 +59,6 @@ class ExtPhysicalVarWidget : public Widget {
     void inputDialogChanged(int);
 };
 
-class WidgetChoiceWidget : public Widget {
-  Q_OBJECT
-
-  friend class PropertyChoiceProperty;
-
-  public:
-    WidgetChoiceWidget(const std::vector<QString> &name, const std::vector<QWidget*> &widget);
-    virtual void updateWidget();
-  protected slots:
-    void changeCurrent(int idx);
-  protected:
-    QComboBox *choice;
-    QStackedWidget *stackedWidget;
-};
-
 class ExtWidget : public QGroupBox, public WidgetInterface {
   Q_OBJECT
 
@@ -93,12 +79,39 @@ class ExtWidget : public QGroupBox, public WidgetInterface {
     void resize_();
 };
 
-class WidgetContainer : public Widget {
+class ChoiceWidget : public Widget {
+  Q_OBJECT
 
-  friend class PropertyContainer;
+  friend class ChoiceProperty;
 
   public:
-    WidgetContainer();
+    ChoiceWidget(const std::vector<QWidget*> &widget, const std::vector<QString> &name, QBoxLayout::Direction dir=QBoxLayout::TopToBottom);
+
+    void resize_(int m, int n);
+    QWidget* getWidget(int i) const;
+    QWidget* getWidget() const;
+    QString getName(int i) const;
+    QString getName() const;
+    void updateWidget();
+
+  protected slots:
+    void defineWidget(int);
+
+  protected:
+    QComboBox *comboBox;
+    QStackedWidget *stackedWidget;
+
+  signals:
+    void resize_();
+    void widgetChanged();
+};
+
+class ContainerWidget : public Widget {
+
+  friend class ContainerProperty;
+
+  public:
+    ContainerWidget();
 
     void addWidget(QWidget *widget_);
     QWidget* getWidget(int i) const {return widget[i];}

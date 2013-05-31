@@ -91,7 +91,7 @@ FunctionSensor::FunctionSensor(const string &str, Element *parent) : Sensor(str,
   property.push_back(new TabularFunction1Property);
   property.push_back(new SummationFunction1Property);
   property.push_back(new SymbolicFunction1Property("VS"));
-  function.setProperty(new GeneralChoiceProperty(MBSIMCONTROLNS"function",property));
+  function.setProperty(new ChoiceProperty(MBSIMCONTROLNS"function",property));
 }
 
 void FunctionSensor::initializeUsingXML(TiXmlElement *element) {

@@ -144,7 +144,7 @@ TabularFunction1Widget::TabularFunction1Widget(int n) {
   vector<QString> name;
   name.push_back("x and y");
   name.push_back("xy");
-  WidgetContainer *widgetContainer = new WidgetContainer;
+  ContainerWidget *widgetContainer = new ContainerWidget;
   vector<PhysicalVariableWidget*> input;
   input.push_back(new PhysicalVariableWidget(new VecFromFileWidget,QStringList(),0));
   widgetContainer->addWidget(new ExtWidget("x",new ExtPhysicalVarWidget(input)));
@@ -159,7 +159,7 @@ TabularFunction1Widget::TabularFunction1Widget(int n) {
   input.push_back(new PhysicalVariableWidget(new MatFromFileWidget,QStringList(),0));
   choiceWidget.push_back(new ExtWidget("xy",new ExtPhysicalVarWidget(input)));
 
-  choice = new WidgetChoiceWidget(name,choiceWidget);
+  choice = new ChoiceWidget(choiceWidget,name,QBoxLayout::LeftToRight);
   layout->addWidget(choice);
 }
 
@@ -206,19 +206,19 @@ void SummationFunction1Widget::openContextMenu(const QPoint &pos) {
 
 void SummationFunction1Widget::resize_(int m, int n) {
   for(int i=0; i<stackedWidget->count(); i++)
-   static_cast<Widget*>(static_cast<WidgetContainer*>(stackedWidget->widget(i))->getWidget(0))->resize_(m,n);
+   static_cast<Widget*>(static_cast<ContainerWidget*>(stackedWidget->widget(i))->getWidget(0))->resize_(m,n);
 }
 
 void SummationFunction1Widget::updateList() {
   for(int i=0; i<functionList->count(); i++)
-    functionList->item(i)->setText(static_cast<GeneralChoiceWidget*>(static_cast<WidgetContainer*>(stackedWidget->widget(i))->getWidget(0))->getWidget()->getType());
+    functionList->item(i)->setText(static_cast<ChoiceWidget*>(static_cast<ContainerWidget*>(stackedWidget->widget(i))->getWidget(0))->getName());
 }
 
 void SummationFunction1Widget::addFunction() {
   int i = stackedWidget->count();
 
-  WidgetContainer *widgetContainer = new WidgetContainer;
-  vector<Widget*> widget;
+  ContainerWidget *widgetContainer = new ContainerWidget;
+  vector<QWidget*> widget;
   vector<QString> name;
   widget.push_back(new ConstantFunction1Widget(true,n));
   name.push_back("Constant function");
@@ -234,7 +234,7 @@ void SummationFunction1Widget::addFunction() {
   var << "t";
   widget.push_back(new SymbolicFunction1Widget(var));
   name.push_back("Symbolic function");
-  widgetContainer->addWidget(new GeneralChoiceWidget(widget,name));
+  widgetContainer->addWidget(new ChoiceWidget(widget,name));
 
   vector<PhysicalVariableWidget*> input;
   input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),noUnitUnits(),1));
@@ -246,8 +246,8 @@ void SummationFunction1Widget::addFunction() {
   if(i>0)
     widgetContainer->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
-  connect(static_cast<GeneralChoiceWidget*>(static_cast<WidgetContainer*>(stackedWidget->widget(i))->getWidget(0)),SIGNAL(widgetChanged()),this,SLOT(updateList()));
-  connect(static_cast<GeneralChoiceWidget*>(static_cast<WidgetContainer*>(stackedWidget->widget(i))->getWidget(0)),SIGNAL(resize_()),this,SIGNAL(resize_()));
+  connect(static_cast<ChoiceWidget*>(static_cast<ContainerWidget*>(stackedWidget->widget(i))->getWidget(0)),SIGNAL(widgetChanged()),this,SLOT(updateList()));
+  connect(static_cast<ChoiceWidget*>(static_cast<ContainerWidget*>(stackedWidget->widget(i))->getWidget(0)),SIGNAL(resize_()),this,SIGNAL(resize_()));
 
   emit resize_();
   emit updateList();

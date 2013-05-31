@@ -43,22 +43,6 @@ class ExtPhysicalVarProperty : public Property {
     int currentInput;
 };
 
-class PropertyChoiceProperty : public Property {
-
-  public:
-    PropertyChoiceProperty(const std::vector<Property*> &property_, const std::string &xmlName_="") : property(property_), index(0), xmlName(xmlName_) {}
-    ~PropertyChoiceProperty();
-    void initialize();
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    void fromWidget(QWidget *widget);
-    void toWidget(QWidget *widget);
-  protected:
-    std::vector<Property*> property;
-    int index;
-    std::string xmlName;
-};
-
 class ExtProperty : public Property {
   public:
     ExtProperty(Property *property_=0, bool active_=true, const std::string &xmlName_="", bool flag=true) : property(property_), active(active_), xmlName(xmlName_), alwaysWriteXMLName(flag) {}
@@ -82,11 +66,29 @@ class ExtProperty : public Property {
     bool active, alwaysWriteXMLName;
 };
 
-class PropertyContainer : public Property {
+class ChoiceProperty : public Property {
+
   public:
-    PropertyContainer(const std::string &xmlName_="") : xmlName(xmlName_) {}
-    PropertyContainer(const std::vector<Property*> &property_, const std::string &xmlName_="") : property(property_), xmlName(xmlName_) {}
-    ~PropertyContainer();
+    ChoiceProperty(const std::string &xmlName_, const std::vector<Property*> &property_, int mode_=0) : property(property_), index(0), mode(mode_), xmlName(xmlName_) {}
+    ~ChoiceProperty();
+
+    void initialize();
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+
+  protected:
+    std::vector<Property*> property;
+    int index, mode;
+    std::string xmlName;
+};
+
+class ContainerProperty : public Property {
+  public:
+    ContainerProperty(const std::string &xmlName_="") : xmlName(xmlName_) {}
+    ContainerProperty(const std::vector<Property*> &property_, const std::string &xmlName_="") : property(property_), xmlName(xmlName_) {}
+    ~ContainerProperty();
 
     void initialize();
     void addProperty(Property *property_) {property.push_back(property_);}

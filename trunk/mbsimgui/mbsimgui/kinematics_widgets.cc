@@ -49,13 +49,13 @@ int LinearTranslationWidget::getqTSize() const {
 }
 
 TimeDependentTranslationWidget::TimeDependentTranslationWidget() {
-  vector<Widget*> widget;
+  vector<QWidget*> widget;
   vector<QString> name;
   QStringList var;
   var << "t";
   widget.push_back(new SymbolicFunction1Widget(var));
   name.push_back("Symbolic function");
-  function = new ExtWidget("Translation function",new GeneralChoiceWidget(widget,name));
+  function = new ExtWidget("Translation function",new ChoiceWidget(widget,name));
 
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -64,13 +64,13 @@ TimeDependentTranslationWidget::TimeDependentTranslationWidget() {
 }
 
 StateDependentTranslationWidget::StateDependentTranslationWidget() {
-  vector<Widget*> widget;
+  vector<QWidget*> widget;
   vector<QString> name;
   QStringList var;
   var << "q";
   widget.push_back(new SymbolicFunction1Widget(var));
   name.push_back("Symbolic function");
-  function = new ExtWidget("Translation function",new GeneralChoiceWidget(widget,name));
+  function = new ExtWidget("Translation function",new ChoiceWidget(widget,name));
 
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -79,19 +79,19 @@ StateDependentTranslationWidget::StateDependentTranslationWidget() {
 }
 
 int StateDependentTranslationWidget::getqSize() const {
-  SymbolicFunction1Widget *func = static_cast<SymbolicFunction1Widget*>(static_cast<GeneralChoiceWidget*>(function->getWidget())->getWidget());
+  SymbolicFunction1Widget *func = static_cast<SymbolicFunction1Widget*>(static_cast<ChoiceWidget*>(function->getWidget())->getWidget());
   return func->getArgDim();
   return 0;
 }
 
 GeneralTranslationWidget::GeneralTranslationWidget() {
-  vector<Widget*> widget;
+  vector<QWidget*> widget;
   vector<QString> name;
   QStringList var;
   var << "q" << "t";
   widget.push_back(new SymbolicFunction2Widget(var));
   name.push_back("Symbolic function");
-  function = new ExtWidget("Translation function",new GeneralChoiceWidget(widget,name));
+  function = new ExtWidget("Translation function",new ChoiceWidget(widget,name));
 
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
@@ -100,7 +100,7 @@ GeneralTranslationWidget::GeneralTranslationWidget() {
 }
 
 int GeneralTranslationWidget::getqSize() const {
-  SymbolicFunction2Widget *func = static_cast<SymbolicFunction2Widget*>(static_cast<GeneralChoiceWidget*>(function->getWidget())->getWidget());
+  SymbolicFunction2Widget *func = static_cast<SymbolicFunction2Widget*>(static_cast<ChoiceWidget*>(function->getWidget())->getWidget());
   return func->getArgDim(0);
   return 0;
 }
@@ -204,13 +204,13 @@ TimeDependentRotationAboutFixedAxisWidget::TimeDependentRotationAboutFixedAxisWi
   vec = new ExtWidget("Axis of rotation",vec_);
   layout->addWidget(vec);
 
-  vector<Widget*> widget;
+  vector<QWidget*> widget;
   vector<QString> name;
   QStringList var;
   var << "t";
   widget.push_back(new SymbolicFunction1Widget(var));
   name.push_back("Symbolic function");
-  function = new ExtWidget("Rotational function",new GeneralChoiceWidget(widget,name));
+  function = new ExtWidget("Rotational function",new ChoiceWidget(widget,name));
   layout->addWidget(function);
 }
 
@@ -225,20 +225,20 @@ StateDependentRotationAboutFixedAxisWidget::StateDependentRotationAboutFixedAxis
   vec = new ExtWidget("Axis of rotation",vec_);
   layout->addWidget(vec);
 
-  vector<Widget*> widget;
+  vector<QWidget*> widget;
   vector<QString> name;
   QStringList var;
   var << "q";
   widget.push_back(new SymbolicFunction1Widget(var));
   name.push_back("Symbolic function");
-  function = new ExtWidget("Translation function",new GeneralChoiceWidget(widget,name));
+  function = new ExtWidget("Translation function",new ChoiceWidget(widget,name));
 
   //function = new ExtWidget("Rotational function",new Function1ChoiceWidget(false,1,"SV"));
   layout->addWidget(function);
 }
 
 int StateDependentRotationAboutFixedAxisWidget::getqSize() const {
-  SymbolicFunction1Widget *func = static_cast<SymbolicFunction1Widget*>(static_cast<GeneralChoiceWidget*>(function->getWidget())->getWidget());
+  SymbolicFunction1Widget *func = static_cast<SymbolicFunction1Widget*>(static_cast<ChoiceWidget*>(function->getWidget())->getWidget());
   return func->getArgDim();
   return 0;
 }

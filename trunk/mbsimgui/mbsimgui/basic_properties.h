@@ -405,22 +405,5 @@ class SignalReferencesProperty : public Property {
     void addReference();
 };
 
-class GeneralChoiceProperty : public Property {
-
-  public:
-    GeneralChoiceProperty(const std::string &xmlName_, const std::vector<Property*> &property_) : property(property_), index(0), xmlName(xmlName_) {}
-    ~GeneralChoiceProperty();
-
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    void fromWidget(QWidget *widget);
-    void toWidget(QWidget *widget);
-
-  protected:
-    std::vector<Property*> property;
-    int index;
-    std::string xmlName;
-};
-
 #endif
 

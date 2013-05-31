@@ -110,7 +110,7 @@ void LinearTranslationProperty::toWidget(QWidget *widget) {
 TimeDependentTranslationProperty::TimeDependentTranslationProperty() {
   vector<Property*> property;
   property.push_back(new SymbolicFunction1Property("VS"));
-  function.setProperty(new GeneralChoiceProperty(MBSIMNS"translationFunction",property));
+  function.setProperty(new ChoiceProperty(MBSIMNS"translationFunction",property));
 }
 
 TiXmlElement* TimeDependentTranslationProperty::initializeUsingXML(TiXmlElement *element) {
@@ -136,7 +136,7 @@ StateDependentTranslationProperty::StateDependentTranslationProperty() {
   //function.setProperty(new Function1ChoiceProperty(MBSIMNS"translationFunction",false,"VV"));
   vector<Property*> property;
   property.push_back(new SymbolicFunction1Property("VV"));
-  function.setProperty(new GeneralChoiceProperty(MBSIMNS"translationFunction",property));
+  function.setProperty(new ChoiceProperty(MBSIMNS"translationFunction",property));
 }
 
 TiXmlElement* StateDependentTranslationProperty::initializeUsingXML(TiXmlElement *element) {
@@ -162,7 +162,7 @@ GeneralTranslationProperty::GeneralTranslationProperty() {
   //function.setProperty(new Function2ChoiceProperty(MBSIMNS"translationFunction","VVS"));
   vector<Property*> property;
   property.push_back(new SymbolicFunction2Property("VVS"));
-  function.setProperty(new GeneralChoiceProperty(MBSIMNS"translationFunction",property));
+  function.setProperty(new ChoiceProperty(MBSIMNS"translationFunction",property));
 }
 
 TiXmlElement* GeneralTranslationProperty::initializeUsingXML(TiXmlElement *element) {
@@ -350,7 +350,7 @@ TimeDependentRotationAboutFixedAxisProperty::TimeDependentRotationAboutFixedAxis
 
   vector<Property*> property;
   property.push_back(new SymbolicFunction1Property("SS"));
-  function.setProperty(new GeneralChoiceProperty(MBSIMNS"rotationalFunction",property));
+  function.setProperty(new ChoiceProperty(MBSIMNS"rotationalFunction",property));
 }
 
 TiXmlElement* TimeDependentRotationAboutFixedAxisProperty::initializeUsingXML(TiXmlElement *element) {
@@ -383,8 +383,7 @@ StateDependentRotationAboutFixedAxisProperty::StateDependentRotationAboutFixedAx
 
   vector<Property*> property;
   property.push_back(new SymbolicFunction1Property("SV"));
-  function.setProperty(new GeneralChoiceProperty(MBSIMNS"rotationalFunction",property));
-  //function.setProperty(new Function1ChoiceProperty(MBSIMNS"rotationalFunction",false,"SV"));
+  function.setProperty(new ChoiceProperty(MBSIMNS"rotationalFunction",property));
 }
 
 TiXmlElement* StateDependentRotationAboutFixedAxisProperty::initializeUsingXML(TiXmlElement *element) {

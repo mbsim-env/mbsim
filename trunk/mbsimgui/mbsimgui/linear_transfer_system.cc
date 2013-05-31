@@ -24,7 +24,7 @@ using namespace std;
 using namespace MBXMLUtils;
 
 LinearTransferSystem::LinearTransferSystem(const string &str, Element *parent) : SignalProcessingSystem(str, parent) {
-  PropertyContainer *propertyContainer = new PropertyContainer(MBSIMCONTROLNS"pidType");
+  ContainerProperty *propertyContainer = new ContainerProperty(MBSIMCONTROLNS"pidType");
   vector<Property*> choiceProperty;
 
   vector<PhysicalVariableProperty*> input;
@@ -41,7 +41,7 @@ LinearTransferSystem::LinearTransferSystem(const string &str, Element *parent) :
 
   choiceProperty.push_back(propertyContainer);
 
-  propertyContainer = new PropertyContainer(MBSIMCONTROLNS"abcdType");
+  propertyContainer = new ContainerProperty(MBSIMCONTROLNS"abcdType");
 
   input.clear();
   input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROLNS"A"));
@@ -61,7 +61,7 @@ LinearTransferSystem::LinearTransferSystem(const string &str, Element *parent) :
 
   choiceProperty.push_back(propertyContainer);
 
-  propertyContainer = new PropertyContainer(MBSIMCONTROLNS"integratorType");
+  propertyContainer = new ContainerProperty(MBSIMCONTROLNS"integratorType");
 
   input.clear();
   input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMCONTROLNS"gain"));
@@ -69,7 +69,7 @@ LinearTransferSystem::LinearTransferSystem(const string &str, Element *parent) :
 
   choiceProperty.push_back(propertyContainer);
 
-  propertyContainer = new PropertyContainer(MBSIMCONTROLNS"pt1Type");
+  propertyContainer = new ContainerProperty(MBSIMCONTROLNS"pt1Type");
 
   input.clear();
   input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMCONTROLNS"P"));
@@ -81,7 +81,7 @@ LinearTransferSystem::LinearTransferSystem(const string &str, Element *parent) :
 
   choiceProperty.push_back(propertyContainer);
 
-  choice.setProperty(new PropertyChoiceProperty(choiceProperty));
+  choice.setProperty(new ChoiceProperty("",choiceProperty,1));
 }
 
 void LinearTransferSystem::initializeUsingXML(TiXmlElement *element) {
