@@ -80,13 +80,13 @@ void ChoiceProperty::initialize() {
 }
 
 TiXmlElement* ChoiceProperty::initializeUsingXML(TiXmlElement *element) {
-  if(mode==0) {
+  if(mode<=1) {
     TiXmlElement *e=(xmlName!="")?element->FirstChildElement(xmlName):element;
     if(e) {
-      TiXmlElement* ee=e->FirstChildElement();
+      TiXmlElement* ee=(mode==0)?e->FirstChildElement():e;
       if(ee) {
         for(int i=0; i<property.size(); i++)
-          if(ee->ValueStr() == MBSIMNS+property[i]->getType()) {
+          if(ee->ValueStr() == xmlBase+property[i]->getType()) {
             index = i;
             break;
           }

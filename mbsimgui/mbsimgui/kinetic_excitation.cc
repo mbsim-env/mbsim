@@ -27,17 +27,15 @@ using namespace MBXMLUtils;
 
 KineticExcitation::KineticExcitation(const string &str, Element *parent) : Link(str, parent), forceArrow(0,true), momentArrow(0,true), force(0,false), moment(0,false), frameOfReference(0,false) {
 
-  forceArrow.setProperty(new OMBVArrowProperty("NOTSET"));
-  ((OMBVArrowProperty*)forceArrow.getProperty())->setID(getID());
+  forceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
 
-  momentArrow.setProperty(new OMBVArrowProperty("NOTSET"));
-  ((OMBVArrowProperty*)momentArrow.getProperty())->setID(getID());
+  momentArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
 
   vector<Property*> widget;
   widget.push_back(new ConnectFramesProperty(1,this));
   widget.push_back(new ConnectFramesProperty(2,this));
 
-  connections.setProperty(new ChoiceProperty("",widget,1)); 
+  connections.setProperty(new ChoiceProperty("",widget,2)); 
 
   force.setProperty(new ForceChoiceProperty(forceArrow,MBSIMNS"force"));
   moment.setProperty(new ForceChoiceProperty(momentArrow,MBSIMNS"moment"));

@@ -27,11 +27,9 @@ using namespace MBXMLUtils;
 
 Joint::Joint(const string &str, Element *parent) : Link(str, parent), forceArrow(0,false), momentArrow(0,false), force(0,false), moment(0,false) {
 
-  forceArrow.setProperty(new OMBVArrowProperty("NOTSET"));
-  ((OMBVArrowProperty*)forceArrow.getProperty())->setID(getID());
+  forceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
 
-  momentArrow.setProperty(new OMBVArrowProperty("NOTSET"));
-  ((OMBVArrowProperty*)momentArrow.getProperty())->setID(getID());
+  momentArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
 
   connections.setProperty(new ConnectFramesProperty(2,this));
 

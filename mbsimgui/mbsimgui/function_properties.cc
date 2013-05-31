@@ -235,7 +235,7 @@ TabularFunction1Property::TabularFunction1Property() {
   input.push_back(new PhysicalVariableProperty(new MatFromFileProperty,"",MBSIMNS"xy"));
   choiceProperty.push_back(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
-  choice = new ChoiceProperty("",choiceProperty,1);
+  choice = new ChoiceProperty("",choiceProperty,2);
 }
 
 TiXmlElement* TabularFunction1Property::initializeUsingXML(TiXmlElement *element) {

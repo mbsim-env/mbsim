@@ -38,8 +38,7 @@ SpringDamper::SpringDamper(const string &str, Element *parent) : Link(str, paren
 
   forceDirection.setProperty(new ForceDirectionProperty(this,MBSIMNS"projectionDirection"));
 
-  coilSpring.setProperty(new OMBVCoilSpringProperty("NOTSET"));
-  ((OMBVCoilSpringProperty*)coilSpring.getProperty())->setID(getID());
+  coilSpring.setProperty(new OMBVCoilSpringProperty("NOTSET",getID()));
 }
 
 SpringDamper::~SpringDamper() {

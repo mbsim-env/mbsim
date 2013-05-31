@@ -283,88 +283,72 @@ void CompoundRigidBodyWidget::openContextMenu(const QPoint &pos) {
 }
 
 void CompoundRigidBodyWidget::addBody() {
-  int i = body.size();
-  body.push_back(new OMBVBodyChoiceWidget((QString("Body")+QString::number(i+1))));
-  if(i>0)
-    body[i]->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  int i = stackedWidget->count();
+  vector<QWidget*> widget;
+  vector<QString> name;
+  widget.push_back(new CubeWidget);
+  name.push_back("Cube");
+  widget.push_back(new CuboidWidget);
+  name.push_back("Cuboid");
+  widget.push_back(new FrustumWidget);
+  name.push_back("Frustum");
+  widget.push_back(new SphereWidget);
+  name.push_back("Sphere");
+  widget.push_back(new IvBodyWidget);
+  name.push_back("IvBody");
+  widget.push_back(new InvisibleBodyWidget);
+  name.push_back("InvisibleBody");
   bodyList->addItem((QString("Body")+QString::number(i+1)));
-  stackedWidget->addWidget(body[i]);
+  stackedWidget->addWidget(new ChoiceWidget(widget,name));
+  if(i>0)
+    stackedWidget->widget(i)->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 }
 
 void CompoundRigidBodyWidget::removeBody() {
   int i = bodyList->currentRow();
 
-  stackedWidget->removeWidget(body[i]);
-  delete body[i];
-  body.erase(body.begin()+i);
+  delete stackedWidget->widget(i);
+  stackedWidget->removeWidget(stackedWidget->widget(i));
   delete bodyList->takeItem(i);
-  for(int i=0; i<bodyList->count(); i++) {
-    bodyList->item(i)->setText((QString("Body")+QString::number(i+1)));
-    body[i]->setName(bodyList->item(i)->text());
-  }
 }
 
-OMBVBodyChoiceWidget::OMBVBodyChoiceWidget(const QString &name_) : ombv(0), name(name_) {
-
-  layout = new QVBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
-
-  comboBox = new QComboBox;
-  comboBox->addItem(tr("Cube"));
-  comboBox->addItem(tr("Cuboid"));
-  comboBox->addItem(tr("Frustum"));
-  comboBox->addItem(tr("Sphere"));
-  comboBox->addItem(tr("IvBody"));
-  comboBox->addItem(tr("CompoundRigidBody"));
-  comboBox->addItem(tr("InvisibleBody"));
-  layout->addWidget(comboBox);
-  connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ombvSelection(int)));
-  ombvSelection(0);
-}
-
-void OMBVBodyChoiceWidget::ombvSelection(int index) {
-  layout->removeWidget(ombv);
-  delete ombv;
-  //ombv->deleteLater();
-  if(index==0)
-    ombv = new CubeWidget(name);  
-  if(index==1)
-    ombv = new CuboidWidget(name);  
-  else if(index==2)
-    ombv = new FrustumWidget(name);  
-  else if(index==3)
-    ombv = new SphereWidget(name);  
-  else if(index==4)
-    ombv = new IvBodyWidget(name);  
-  else if(index==5)
-    ombv = new CompoundRigidBodyWidget(name);  
-  else if(index==6)
-    ombv = new InvisibleBodyWidget(name);  
-  layout->addWidget(ombv);
-  ombv->updateWidget();
-}
-
-OMBVBodySelectionWidget::OMBVBodySelectionWidget(RigidBody *body) : ombv(0), ref(0) {
+OMBVBodySelectionWidget::OMBVBodySelectionWidget(RigidBody *body) {
 
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
-  ombv = new OMBVBodyChoiceWidget("NOTSET");
-  ref=new LocalFrameOfReferenceWidget(body);
-  ExtWidget *widget = new ExtWidget("Frame of reference",ref);
+  vector<QWidget*> widget;
+  vector<QString> name;
+  widget.push_back(new CubeWidget);
+  name.push_back("Cube");
+  widget.push_back(new CuboidWidget);
+  name.push_back("Cuboid");
+  widget.push_back(new FrustumWidget);
+  name.push_back("Frustum");
+  widget.push_back(new SphereWidget);
+  name.push_back("Sphere");
+  widget.push_back(new IvBodyWidget);
+  name.push_back("IvBody");
+  widget.push_back(new CompoundRigidBodyWidget);
+  name.push_back("CompoundRigidBody");
+  widget.push_back(new InvisibleBodyWidget);
+  name.push_back("InvisibleBody");
+  ombv = new ExtWidget("Body",new ChoiceWidget(widget,name));
+//  ombv = new OMBVBodyChoiceWidget("NOTSET");
+
+  ref=new ExtWidget("Frame of reference", new LocalFrameOfReferenceWidget(body));
   layout->addWidget(ombv);
-  layout->addWidget(widget);
+  layout->addWidget(ref);
 }
 
-OMBVEmptyWidget::OMBVEmptyWidget() : OMBVObjectWidget("Empty") {
+OMBVEmptyWidget::OMBVEmptyWidget(const QString &name) : OMBVObjectWidget(name) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 }
 
-OMBVPlaneWidget::OMBVPlaneWidget() : OMBVObjectWidget("Plane") {
+OMBVPlaneWidget::OMBVPlaneWidget(const QString &name) : OMBVObjectWidget(name) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
