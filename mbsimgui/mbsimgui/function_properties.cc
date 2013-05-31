@@ -22,9 +22,11 @@
 #include "variable_properties.h"
 #include "function_properties.h"
 #include "function_widgets.h"
+#include "basic_widgets.h"
 #include "extended_widgets.h"
 #include "utils.h"
 #include <QSpinBox>
+#include <QStackedWidget>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -256,38 +258,78 @@ void TabularFunction1Property::toWidget(QWidget *widget) {
 }
 
 TiXmlElement* SummationFunction1Property::initializeUsingXML(TiXmlElement *element) {
+  for(unsigned int i=0; i<function.size(); i++)
+    delete function[i];
+  
+  function.clear();
   TiXmlElement *e = element->FirstChildElement(MBSIMNS"function");
   while(e) {
-    functionChoice.push_back(new Function1ChoiceProperty("",true));
-    functionChoice[functionChoice.size()-1]->initializeUsingXML(e);
+    PropertyContainer *propertyContainer = new PropertyContainer;
+    vector<Property*> property;
+    property.push_back(new ConstantFunction1Property("VS"));
+    property.push_back(new QuadraticFunction1Property);
+    property.push_back(new SinusFunction1Property);
+    property.push_back(new TabularFunction1Property);
+    property.push_back(new SummationFunction1Property);
+    property.push_back(new SymbolicFunction1Property("VS"));
+    propertyContainer->addProperty(new GeneralChoiceProperty("",property));
+
+    vector<PhysicalVariableProperty*> input;
+    input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMNS"factor"));
+    propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
+
+    function.push_back(propertyContainer);
+
+    function[function.size()-1]->initializeUsingXML(e);
+
     e=e->NextSiblingElement();
   }
+
   return e;
 }
 
 TiXmlElement* SummationFunction1Property::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Function1Property::writeXMLFile(parent);
-  for(int i=0; i<functionChoice.size(); i++) {
+  for(int i=0; i<function.size(); i++) {
     TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"function");
+    function[i]->writeXMLFile(ele1);
     ele0->LinkEndChild(ele1);
-    functionChoice[i]->writeXMLFile(ele1);
   }
   return ele0;
 }
 
 void SummationFunction1Property::fromWidget(QWidget *widget) {
-  for(unsigned int i=0; i<static_cast<SummationFunction1Widget*>(widget)->functionChoice.size(); i++) {
-    functionChoice.push_back(new Function1ChoiceProperty("",true));
-    functionChoice[i]->fromWidget(static_cast<SummationFunction1Widget*>(widget)->functionChoice[i]);
+  for(unsigned int i=0; i<function.size(); i++)
+    delete function[i];
+  function.clear();
+  for(unsigned int i=0; i<static_cast<SummationFunction1Widget*>(widget)->stackedWidget->count(); i++) {
+    PropertyContainer *propertyContainer = new PropertyContainer;
+
+    vector<Property*> property;
+    property.push_back(new ConstantFunction1Property("VS"));
+    property.push_back(new QuadraticFunction1Property);
+    property.push_back(new SinusFunction1Property);
+    property.push_back(new TabularFunction1Property);
+    property.push_back(new SummationFunction1Property);
+    property.push_back(new SymbolicFunction1Property("VS"));
+    propertyContainer->addProperty(new GeneralChoiceProperty("",property));
+
+    vector<PhysicalVariableProperty*> input;
+    input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMNS"factor"));
+    propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
+
+    function.push_back(propertyContainer);
+
+    function[i]->fromWidget(static_cast<SummationFunction1Widget*>(widget)->stackedWidget->widget(i));
   }
 }
 
 void SummationFunction1Property::toWidget(QWidget *widget) {
-  for(unsigned int i=0; i<functionChoice.size(); i++) {
+  for(unsigned int i=0; i<function.size(); i++) {
     static_cast<SummationFunction1Widget*>(widget)->blockSignals(true);
     static_cast<SummationFunction1Widget*>(widget)->addFunction();
     static_cast<SummationFunction1Widget*>(widget)->blockSignals(false);
-    functionChoice[i]->toWidget(static_cast<SummationFunction1Widget*>(widget)->functionChoice[i]);
+    function[i]->toWidget(static_cast<SummationFunction1Widget*>(widget)->stackedWidget->widget(i));
   }
 }
 
@@ -481,140 +523,4 @@ void LinearRegularizedCoulombFrictionProperty::fromWidget(QWidget *widget) {
 void LinearRegularizedCoulombFrictionProperty::toWidget(QWidget *widget) {
   gd.toWidget(static_cast<LinearRegularizedCoulombFrictionWidget*>(widget)->gd);
   mu.toWidget(static_cast<LinearRegularizedCoulombFrictionWidget*>(widget)->mu);
-}
-
-Function1ChoiceProperty::Function1ChoiceProperty(const string &xmlName_, bool withFactor, const string &ext_) : factor(0), index(0), xmlName(xmlName_), ext(ext_) {
-
-  if(withFactor) {
-    vector<PhysicalVariableProperty*> input;
-    input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMNS"factor"));
-    factor.setProperty(new ExtPhysicalVarProperty(input));
-  }
-  function.push_back(new ConstantFunction1Property(ext));
-  function.push_back(new QuadraticFunction1Property);
-  function.push_back(new SinusFunction1Property);
-  function.push_back(new TabularFunction1Property);
-  function.push_back(new SummationFunction1Property);
-  function.push_back(new SymbolicFunction1Property(ext));  
-}
-
-Function1ChoiceProperty::~Function1ChoiceProperty() {
-  for(unsigned int i=0; i<function.size(); i++)
-    delete function[i];
-}
-  
-TiXmlElement* Function1ChoiceProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=xmlName!=""?element->FirstChildElement(xmlName):element;
-  if(e) {
-    TiXmlElement* ee=e->FirstChildElement();
-    if(ee) {
-      if(ee->ValueStr() == MBSIMNS"ConstantFunction1_"+ext)
-        index = 0;
-      else if(ee->ValueStr() == MBSIMNS"QuadraticFunction1_"+ext)
-        index = 1;
-      else if(ee->ValueStr() == MBSIMNS"SinusFunction1_"+ext)
-        index = 2;
-      else if(ee->ValueStr() == MBSIMNS"TabularFunction1_"+ext)
-        index = 3;
-      else if(ee->ValueStr() == MBSIMNS"SummationFunction1_"+ext)
-        index = 4;
-      else if(ee->ValueStr() == MBSIMNS"SymbolicFunction1_"+ext)
-        index = 5;
-      function[index]->initializeUsingXML(ee);
-    }
-    if(factor.getProperty())
-      factor.initializeUsingXML(e);
-  }
-  return e;
-}
-
-TiXmlElement* Function1ChoiceProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlNode *ele0;
-  if(xmlName!="") {
-    ele0 = new TiXmlElement(xmlName);
-    parent->LinkEndChild(ele0);
-  }
-  else
-    ele0 = parent;
-  function[index]->writeXMLFile(ele0);
-  if(factor.getProperty())
-    factor.writeXMLFile(ele0);
-
-  return 0;
-}
-
-void Function1ChoiceProperty::fromWidget(QWidget *widget) {
-  index = static_cast<Function1ChoiceWidget*>(widget)->comboBox->currentIndex();
-  function[index]->fromWidget(static_cast<Function1ChoiceWidget*>(widget)->getFunction());
-  //for(unsigned int i=0; i<function.size(); i++)
-  //  function[i]->fromWidget(static_cast<Function1ChoiceWidget*>(widget)->getFunction(i));
-  if(factor.getProperty())
-    factor.fromWidget(static_cast<Function1ChoiceWidget*>(widget)->factor);
-}
-
-void Function1ChoiceProperty::toWidget(QWidget *widget) {
-  static_cast<Function1ChoiceWidget*>(widget)->comboBox->blockSignals(true);
-  static_cast<Function1ChoiceWidget*>(widget)->comboBox->setCurrentIndex(index);
-  static_cast<Function1ChoiceWidget*>(widget)->comboBox->blockSignals(false);
-  static_cast<Function1ChoiceWidget*>(widget)->blockSignals(true);
-  static_cast<Function1ChoiceWidget*>(widget)->defineFunction(index);
-  static_cast<Function1ChoiceWidget*>(widget)->blockSignals(false);
-  function[index]->toWidget(static_cast<Function1ChoiceWidget*>(widget)->getFunction());
-  //for(unsigned int i=0; i<function.size(); i++)
-  //  function[i]->toWidget(static_cast<Function1ChoiceWidget*>(widget)->getFunction(i));
-  if(factor.getProperty())
-    factor.toWidget(static_cast<Function1ChoiceWidget*>(widget)->factor);
-}
-
-Function2ChoiceProperty::Function2ChoiceProperty(const string &xmlName_, const string &ext_) : index(0), xmlName(xmlName_), ext(ext_) {
-  function.push_back(new LinearSpringDamperForceProperty);
-  function.push_back(new SymbolicFunction2Property(ext));  
-}
-
-Function2ChoiceProperty::~Function2ChoiceProperty() {
-  for(unsigned int i=0; i<function.size(); i++)
-    delete function[i];
-}
-
-TiXmlElement* Function2ChoiceProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=element->FirstChildElement(xmlName);
-  if(e) {
-    TiXmlElement* ee=e->FirstChildElement();
-    if(ee) {
-      if(ee->ValueStr() == MBSIMNS"LinearSpringDamperForce")
-        index = 0;
-      else if(ee->ValueStr() == MBSIMNS"SymbolicFunction2_"+ext)
-        index = 1;
-      function[index]->initializeUsingXML(ee);
-    }
-  }
-  return e;
-}
-
-TiXmlElement* Function2ChoiceProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlNode *ele0;
-  if(xmlName!="") {
-    ele0 = new TiXmlElement(xmlName);
-    parent->LinkEndChild(ele0);
-  }
-  else
-    ele0 = parent;
-  function[index]->writeXMLFile(ele0);
-
-  return 0;
-}
-
-void Function2ChoiceProperty::fromWidget(QWidget *widget) {
-  index = static_cast<Function2ChoiceWidget*>(widget)->comboBox->currentIndex();
-  function[index]->fromWidget(static_cast<Function2ChoiceWidget*>(widget)->getFunction());
-}
-
-void Function2ChoiceProperty::toWidget(QWidget *widget) {
-  static_cast<Function2ChoiceWidget*>(widget)->comboBox->blockSignals(true);
-  static_cast<Function2ChoiceWidget*>(widget)->comboBox->setCurrentIndex(index);
-  static_cast<Function2ChoiceWidget*>(widget)->comboBox->blockSignals(false);
-  static_cast<Function2ChoiceWidget*>(widget)->blockSignals(true);
-  static_cast<Function2ChoiceWidget*>(widget)->defineFunction(index);
-  static_cast<Function2ChoiceWidget*>(widget)->blockSignals(false);
-  function[index]->toWidget(static_cast<Function2ChoiceWidget*>(widget)->getFunction());
 }

@@ -249,7 +249,7 @@ class IntegerWidget : public Widget {
 class SpinBoxWidget : public IntegerWidget {
 
   public:
-    SpinBoxWidget(int val=0, int min=0);
+    SpinBoxWidget(int val=0, int min=0, int max=99);
     int getValue() {return value->value();}
     void setValue(int val) {value->setValue(val);}
 
@@ -507,7 +507,7 @@ class GeneralChoiceWidget : public Widget {
     Widget* getWidget() const;
 
   protected slots:
-      void defineWidget(int);
+    void defineWidget(int);
 
   protected:
     QComboBox *comboBox;

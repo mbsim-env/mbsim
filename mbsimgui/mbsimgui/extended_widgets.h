@@ -101,6 +101,7 @@ class WidgetContainer : public Widget {
     WidgetContainer();
 
     void addWidget(QWidget *widget_);
+    QWidget* getWidget(int i) const {return widget[i];}
 
   protected:
     QVBoxLayout *layout;

@@ -402,7 +402,7 @@ void FileWidget::selectFile() {
     setFile(file);
 }
 
-SpinBoxWidget::SpinBoxWidget(int val, int min) {
+SpinBoxWidget::SpinBoxWidget(int val, int min, int max) {
   QHBoxLayout *layout = new QHBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -410,6 +410,7 @@ SpinBoxWidget::SpinBoxWidget(int val, int min) {
   value = new QSpinBox;
   value->setValue(val);
   value->setMinimum(min);
+  value->setMaximum(max);
   layout->addWidget(value);
 }
 
@@ -903,5 +904,5 @@ void GeneralChoiceWidget::defineWidget(int index) {
   stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   adjustSize();
   emit widgetChanged();
-  emit resizeVariables();
+  emit resize_();
 }

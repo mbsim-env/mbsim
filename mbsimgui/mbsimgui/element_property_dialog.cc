@@ -476,8 +476,7 @@ KinematicConstraintPropertyDialog::KinematicConstraintPropertyDialog(KinematicCo
   var << "t";
   widget.push_back(new SymbolicFunction1Widget(var));
   name.push_back("Symbolic function");
-  kinematicFunction = new ExtWidget("Kineematic function",new GeneralChoiceWidget(widget,name));
-//  kinematicFunction = new ExtWidget("Kinematic function",new Function1ChoiceWidget,true);
+  kinematicFunction = new ExtWidget("Kinematic function",new GeneralChoiceWidget(widget,name));
   addToTab("General", kinematicFunction);
   connect((GeneralChoiceWidget*)kinematicFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
@@ -494,7 +493,7 @@ KinematicConstraintPropertyDialog::KinematicConstraintPropertyDialog(KinematicCo
 
 void KinematicConstraintPropertyDialog::resizeVariables() {
   int size = refBody?refBody->getqRelSize():0;
-  ((Function1ChoiceWidget*)kinematicFunction->getWidget())->resize_(size,1);
+  ((GeneralChoiceWidget*)kinematicFunction->getWidget())->resize_(size,1);
 //  ((Function1ChoiceWidget*)firstDerivativeOfKinematicFunction->getWidget())->resize_(size,1);
 //  ((Function1ChoiceWidget*)secondDerivativeOfKinematicFunction->getWidget())->resize_(size,1);
 }
@@ -760,7 +759,15 @@ SpringDamperPropertyDialog::SpringDamperPropertyDialog(SpringDamper *springDampe
   connections = new ExtWidget("Connections",new ConnectFramesWidget(2,springDamper));
   addToTab("Kinetics", connections);
 
-  forceFunction = new ExtWidget("Force function",new Function2ChoiceWidget);
+  vector<Widget*> widget;
+  vector<QString> name;
+  widget.push_back(new LinearSpringDamperForceWidget);
+  name.push_back("Linear spring damper force");
+  QStringList var;
+  var << "g" << "gd";
+  widget.push_back(new SymbolicFunction2Widget(var,1));
+  name.push_back("Symbolic function");
+  forceFunction = new ExtWidget("Force function",new GeneralChoiceWidget(widget,name));
   addToTab("Kinetics", forceFunction);
 
   forceDirection = new ExtWidget("Force direction",new ForceDirectionWidget(springDamper),true);
@@ -1022,7 +1029,23 @@ AbsolutePositionSensorPropertyDialog::AbsolutePositionSensorPropertyDialog(Absol
 }
 
 FunctionSensorPropertyDialog::FunctionSensorPropertyDialog(FunctionSensor *sensor, QWidget * parent, Qt::WindowFlags f) : SensorPropertyDialog(sensor,parent,f) {
-  function = new ExtWidget("Function",new Function1ChoiceWidget);
+  vector<Widget*> widget;
+  vector<QString> name;
+  widget.push_back(new ConstantFunction1Widget(true,1));
+  name.push_back("Constant function");
+  widget.push_back(new QuadraticFunction1Widget(1));
+  name.push_back("Quadratic function");
+  widget.push_back(new SinusFunction1Widget(1));
+  name.push_back("Sinus function");
+  widget.push_back(new TabularFunction1Widget(1));
+  name.push_back("Tabular function");
+  widget.push_back(new SummationFunction1Widget(1));
+  name.push_back("Summation function");
+  QStringList var;
+  var << "t";
+  widget.push_back(new SymbolicFunction1Widget(var));
+  name.push_back("Symbolic function");
+  function = new ExtWidget("Function",new GeneralChoiceWidget(widget,name));
   addToTab("General", function);
 }
 

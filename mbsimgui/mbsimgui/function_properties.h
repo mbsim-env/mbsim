@@ -22,7 +22,7 @@
 
 #include "extended_properties.h"
 
-class Function1ChoiceProperty;
+class GeneralChoiceProperty;
 
 class Function1Property : public Property {
   public:
@@ -162,8 +162,7 @@ class SummationFunction1Property : public Function1Property {
     void toWidget(QWidget *widget);
 
   protected:
-    std::vector<Function1ChoiceProperty*> functionChoice;
-    std::vector<ExtProperty> factor;
+    std::vector<PropertyContainer*> function;
 };
 
 class SymbolicFunction2Property : public Function2Property {
@@ -233,43 +232,6 @@ class LinearRegularizedCoulombFrictionProperty: public Function2Property {
 
   private:
     ExtProperty gd, mu;
-};
-
-class Function1ChoiceProperty : public Property {
-
-  public:
-    Function1ChoiceProperty(const std::string &xmlName, bool withFactor=false, const std::string &ext_="VS");
-    ~Function1ChoiceProperty();
-
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    void fromWidget(QWidget *widget);
-    void toWidget(QWidget *widget);
-
-  protected:
-    std::vector<Function1Property*> function;
-    ExtProperty factor;
-    int index;
-    std::string xmlName;
-    std::string ext;
-};
-
-class Function2ChoiceProperty : public Property {
-
-  public:
-    Function2ChoiceProperty(const std::string &xmlName, const std::string &ext_="VVS");
-    ~Function2ChoiceProperty();
-
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    void fromWidget(QWidget *widget);
-    void toWidget(QWidget *widget);
-
-  protected:
-    std::vector<Function2Property*> function;
-    int index;
-    std::string xmlName;
-    std::string ext;
 };
 
 #endif

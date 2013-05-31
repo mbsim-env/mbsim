@@ -26,7 +26,7 @@ class ExtPhysicalVarWidget;
 class ExtWidget;
 class QVBoxLayout;
 class QComboBox;
-class Function1ChoiceWidget;
+class GeneralChoiceWidget;
 class WidgetChoiceWidget;
 class QStackedWidget;
 class QListWidget;
@@ -57,7 +57,7 @@ class SymbolicFunction1Widget : public Function1Widget {
   friend class SymbolicFunction1Property;
 
   public:
-    SymbolicFunction1Widget(const QStringList &var);
+    SymbolicFunction1Widget(const QStringList &var, int max=99);
     inline QString getType() const { return "SymbolicFunction"; }
     int getArgDim() const;
   protected:
@@ -117,29 +117,6 @@ class SinusFunction1Widget : public DifferentiableFunction1Widget {
     inline QString getType() const { return QString("SinusFunction1_VS"); }
     void resize_(int m, int n);
 
- //   class ZerothDerivative : public Function1 {
- //      public:
- //       ZerothDerivative(SinusFunction1 *sin) : Function1(), parent(sin) {}
- //       Vector<Col,double> operator()(const double& x, const void * =NULL);
- //     private:
- //       SinusFunction1 *parent;
- //   };
-
- //   class FirstDerivative : public Function1 {
- //      public:
- //       FirstDerivative(SinusFunction1 *sin) : Function1(), parent(sin) {}
- //       Vector<Col,double> operator()(const double& x, const void * =NULL);
- //     private:
- //       SinusFunction1 *parent;
- //   };
- //   
- //   class SecondDerivative : public Function1 {
- //      public:
- //       SecondDerivative(SinusFunction1 *sin) : Function1(), parent(sin) {}
- //       Vector<Col,double> operator()(const double& x, const void * =NULL);
- //     private:
- //       SinusFunction1 *parent;
- //   };
   protected:
     ExtWidget *a, *f, *p, *o;
 };
@@ -167,8 +144,6 @@ class SummationFunction1Widget : public Function1Widget {
     void resize_(int m, int n);
 
   protected:
-    std::vector<Function1ChoiceWidget*> functionChoice;
-    std::vector<ExtWidget*> factor;
     QStackedWidget *stackedWidget; 
     QListWidget *functionList; 
     int n;
@@ -188,7 +163,7 @@ class SymbolicFunction2Widget : public Function2Widget {
   friend class SymbolicFunction2Property;
 
   public:
-    SymbolicFunction2Widget(const QStringList &var);
+    SymbolicFunction2Widget(const QStringList &var, int max=99);
     inline QString getType() const { return "SymbolicFunction"; }
     int getArgDim(int i) const;
   protected:
@@ -244,56 +219,6 @@ class LinearRegularizedCoulombFrictionWidget: public Function2Widget {
 
   private:
     ExtWidget *gd, *mu;
-};
-
-class Function1ChoiceWidget : public Widget {
-  Q_OBJECT
-
-  friend class Function1ChoiceProperty;
-
-  public:
-    Function1ChoiceWidget(bool withFactor=false, int n=0);
-
-    void resize_(int m, int n);
-    Function1Widget* getFunction(int i);
-    Function1Widget* getFunction();
-
-  protected slots:
-    void defineFunction(int);
-
-  protected:
-    QComboBox *comboBox;
-    QStackedWidget *stackedWidget;
-    ExtWidget* factor;
-    int n;
-
-  signals:
-    void resize_();
-    void functionChanged();
-};
-
-class Function2ChoiceWidget : public Widget {
-  Q_OBJECT
-
-  friend class Function2ChoiceProperty;
-
-  public:
-    Function2ChoiceWidget();
-
-    void resize_(int m, int n);
-    Function2Widget* getFunction(int i);
-    Function2Widget* getFunction();
-
-  protected slots:
-      void defineFunction(int);
-
-  protected:
-    QComboBox *comboBox;
-    QStackedWidget *stackedWidget;
-
-  signals:
-    void resize_();
-    void functionChanged();
 };
 
 #endif

@@ -33,6 +33,7 @@ class WidgetInterface {
     virtual void updateWidget() {}
     virtual void resizeVariables() {}
     virtual void resize_(int m, int n) {}
+    virtual QString getType() const {return "";}
 };
 
 class Widget : public QWidget, public WidgetInterface {

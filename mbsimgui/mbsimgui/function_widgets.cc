@@ -33,7 +33,7 @@ void DifferentiableFunction1Widget::setDerivative(Function1Widget *diff,size_t d
   derivatives[degree]=diff; 
 }
 
-SymbolicFunction1Widget::SymbolicFunction1Widget(const QStringList &var) : Function1Widget() {
+SymbolicFunction1Widget::SymbolicFunction1Widget(const QStringList &var, int max) : Function1Widget() {
   QGridLayout *layout = new QGridLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -41,7 +41,7 @@ SymbolicFunction1Widget::SymbolicFunction1Widget(const QStringList &var) : Funct
     argname.push_back(new ExtWidget("Name of argument "+QString::number(i+1),new TextWidget(var[i])));
     layout->addWidget(argname[i],i,0);
 
-    argdim.push_back(new ExtWidget("Dimension of argument "+QString::number(i+1),new SpinBoxWidget(1,1)));
+    argdim.push_back(new ExtWidget("Dimension of argument "+QString::number(i+1),new SpinBoxWidget(1,1,max)));
     if(var[i]!="t")
       layout->addWidget(argdim[i],i,1);
   }
@@ -205,37 +205,65 @@ void SummationFunction1Widget::openContextMenu(const QPoint &pos) {
 }
 
 void SummationFunction1Widget::resize_(int m, int n) {
-  for(int i=0; i<functionChoice.size(); i++)
-   functionChoice[i]->resize_(m,n);
+  for(int i=0; i<stackedWidget->count(); i++)
+   static_cast<Widget*>(static_cast<WidgetContainer*>(stackedWidget->widget(i))->getWidget(0))->resize_(m,n);
 }
 
 void SummationFunction1Widget::updateList() {
   for(int i=0; i<functionList->count(); i++)
-    functionList->item(i)->setText(functionChoice[i]->getFunction()->getType());
+    functionList->item(i)->setText(static_cast<GeneralChoiceWidget*>(static_cast<WidgetContainer*>(stackedWidget->widget(i))->getWidget(0))->getWidget()->getType());
 }
 
 void SummationFunction1Widget::addFunction() {
-  int i = functionChoice.size();
-  functionChoice.push_back(new Function1ChoiceWidget(true,n));
-  if(i>0)
-    functionChoice[i]->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  int i = stackedWidget->count();
+
+  WidgetContainer *widgetContainer = new WidgetContainer;
+  vector<Widget*> widget;
+  vector<QString> name;
+  widget.push_back(new ConstantFunction1Widget(true,n));
+  name.push_back("Constant function");
+  widget.push_back(new QuadraticFunction1Widget(n));
+  name.push_back("Quadratic function");
+  widget.push_back(new SinusFunction1Widget(n));
+  name.push_back("Sinus function");
+  widget.push_back(new TabularFunction1Widget(n));
+  name.push_back("Tabular function");
+  widget.push_back(new SummationFunction1Widget(n));
+  name.push_back("Summation function");
+  QStringList var;
+  var << "t";
+  widget.push_back(new SymbolicFunction1Widget(var));
+  name.push_back("Symbolic function");
+  widgetContainer->addWidget(new GeneralChoiceWidget(widget,name));
+
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),noUnitUnits(),1));
+  widgetContainer->addWidget(new ExtWidget("Factor",new ExtPhysicalVarWidget(input)));
+
   functionList->addItem("Undefined");
-  connect(functionChoice[i],SIGNAL(functionChanged()),this,SLOT(updateList()));
-  connect(functionChoice[i],SIGNAL(resize_()),this,SIGNAL(resize_()));
-  stackedWidget->addWidget(functionChoice[i]);
+
+  stackedWidget->addWidget(widgetContainer);
+  if(i>0)
+    widgetContainer->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+
+  connect(static_cast<GeneralChoiceWidget*>(static_cast<WidgetContainer*>(stackedWidget->widget(i))->getWidget(0)),SIGNAL(widgetChanged()),this,SLOT(updateList()));
+  connect(static_cast<GeneralChoiceWidget*>(static_cast<WidgetContainer*>(stackedWidget->widget(i))->getWidget(0)),SIGNAL(resize_()),this,SIGNAL(resize_()));
+
   emit resize_();
   emit updateList();
 }
 
 void SummationFunction1Widget::removeFunction() {
   int i = functionList->currentRow();
-  stackedWidget->removeWidget(functionChoice[i]);
-  delete functionChoice[i];
-  functionChoice.erase(functionChoice.begin()+i);
+  delete stackedWidget->widget(i);
+  stackedWidget->removeWidget(stackedWidget->widget(i));
+  //functionChoice.erase(functionChoice.begin()+i);
+  //delete factor[i];
+  //factor.erase(factor.begin()+i);
   delete functionList->takeItem(i);
 }
 
-SymbolicFunction2Widget::SymbolicFunction2Widget(const QStringList &var) : Function2Widget() {
+SymbolicFunction2Widget::SymbolicFunction2Widget(const QStringList &var, int max) : Function2Widget() {
   QGridLayout *layout = new QGridLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -243,7 +271,7 @@ SymbolicFunction2Widget::SymbolicFunction2Widget(const QStringList &var) : Funct
     argname.push_back(new ExtWidget("Name of argument "+QString::number(i+1),new TextWidget(var[i])));
     layout->addWidget(argname[i],i,0);
 
-    argdim.push_back(new ExtWidget("Dimension of argument "+QString::number(i+1),new SpinBoxWidget(1,1)));
+    argdim.push_back(new ExtWidget("Dimension of argument "+QString::number(i+1),new SpinBoxWidget(1,1,max)));
     if(var[i]!="t")
       layout->addWidget(argdim[i],i,1);
   }
@@ -323,113 +351,3 @@ LinearRegularizedCoulombFrictionWidget::LinearRegularizedCoulombFrictionWidget()
   mu = new ExtWidget("Friction coefficient",new ExtPhysicalVarWidget(input));
   layout->addWidget(mu);
 }
-
-Function1ChoiceWidget::Function1ChoiceWidget(bool withFactor, int n_) : factor(0), n(n_) {
-
-  QVBoxLayout *layout = new QVBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
-
-  if(withFactor) {
-    vector<PhysicalVariableWidget*> input;
-    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),noUnitUnits(),1));
-    factor = new ExtWidget("Factor",new ExtPhysicalVarWidget(input));
-    layout->addWidget(factor);
-  }
-
-  comboBox = new QComboBox;
-  comboBox->addItem(tr("Constant function"));
-  comboBox->addItem(tr("Quadratic function"));
-  comboBox->addItem(tr("Sinus function"));
-  comboBox->addItem(tr("Tabular function"));
-  comboBox->addItem(tr("Summation function"));
-  comboBox->addItem(tr("Symbolic function"));
-  layout->addWidget(comboBox);
-  stackedWidget = new QStackedWidget;
-  Function1Widget *function;
-  function = new ConstantFunction1Widget(true,n);
-  stackedWidget->addWidget(function);
-  function = new QuadraticFunction1Widget(n);
-  function->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-  stackedWidget->addWidget(function);
-  function = new SinusFunction1Widget(n);     
-  function->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-  stackedWidget->addWidget(function);
-  function = new TabularFunction1Widget(n);   
-  function->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-  stackedWidget->addWidget(function);
-  function = new SummationFunction1Widget(n);
-  connect(function,SIGNAL(resize_()),this,SIGNAL(resize_())); 
-  function->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-  stackedWidget->addWidget(function);
-  function = new SymbolicFunction1Widget(QStringList());
-  function->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-  stackedWidget->addWidget(function);
-  layout->addWidget(stackedWidget);
-  connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(defineFunction(int)));
-}
-
-void Function1ChoiceWidget::resize_(int m, int n) {
-  getFunction()->resize_(m,n);
-}
-
-Function1Widget* Function1ChoiceWidget::getFunction() {
-  return static_cast<Function1Widget*>(stackedWidget->currentWidget());
-}
-
-Function1Widget* Function1ChoiceWidget::getFunction(int i) {
-  return static_cast<Function1Widget*>(stackedWidget->widget(i));
-}
-
-void Function1ChoiceWidget::defineFunction(int index) {
-  if (stackedWidget->currentWidget() !=0)
-    stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-  stackedWidget->setCurrentIndex(index);
-  stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  adjustSize();
-  emit functionChanged();
-  emit resize_();
-}
-
-Function2ChoiceWidget::Function2ChoiceWidget() {
-  QVBoxLayout *layout = new QVBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
-
-  comboBox = new QComboBox;
-  comboBox->addItem(tr("Linear spring damper force"));
-  comboBox->addItem(tr("Symbolic function"));
-  layout->addWidget(comboBox);
-  stackedWidget = new QStackedWidget;
-  Function2Widget *function;
-  function = new LinearSpringDamperForceWidget;
-  stackedWidget->addWidget(function);
-  function = new SymbolicFunction2Widget(QStringList());
-  function->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-  stackedWidget->addWidget(function);
-  layout->addWidget(stackedWidget);
-  connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(defineFunction(int)));
-}
-
-void Function2ChoiceWidget::resize_(int m, int n) {
-  getFunction()->resize_(m,n);
-}
-
-Function2Widget* Function2ChoiceWidget::getFunction() {
-  return static_cast<Function2Widget*>(stackedWidget->currentWidget());
-}
-
-Function2Widget* Function2ChoiceWidget::getFunction(int i) {
-  return static_cast<Function2Widget*>(stackedWidget->widget(i));
-}
-
-void Function2ChoiceWidget::defineFunction(int index) {
-  if (stackedWidget->currentWidget() !=0)
-    stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-  stackedWidget->setCurrentIndex(index);
-  stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  adjustSize();
-  emit functionChanged();
-  emit resize_();
-}
-

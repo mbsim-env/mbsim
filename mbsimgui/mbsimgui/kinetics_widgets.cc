@@ -306,16 +306,30 @@ ForceChoiceWidget::ForceChoiceWidget() {
   connect(mat->getWidget(),SIGNAL(inputDialogChanged(int)),this,SLOT(resizeVariables()));
   connect(mat_, SIGNAL(sizeChanged(int)), this, SLOT(resizeVariables()));
 
-  Function1ChoiceWidget *forceLaw_ = new Function1ChoiceWidget;
-  forceLaw_->resize_(1,1);
-  forceLaw = new ExtWidget("Function",forceLaw_);
+  vector<Widget*> widget;
+  vector<QString> name;
+  widget.push_back(new ConstantFunction1Widget(true,1));
+  name.push_back("Constant function");
+  widget.push_back(new QuadraticFunction1Widget(1));
+  name.push_back("Quadratic function");
+  widget.push_back(new SinusFunction1Widget(1));
+  name.push_back("Sinus function");
+  widget.push_back(new TabularFunction1Widget(1));
+  name.push_back("Tabular function");
+  widget.push_back(new SummationFunction1Widget(1));
+  name.push_back("Summation function");
+  QStringList var;
+  var << "t";
+  widget.push_back(new SymbolicFunction1Widget(var));
+  name.push_back("Symbolic function");
+  forceLaw = new ExtWidget("Function",new GeneralChoiceWidget(widget,name));
   layout->addWidget(forceLaw);
 
-  connect(forceLaw_,SIGNAL(resize_()),this,SLOT(resizeVariables()));
+  connect((GeneralChoiceWidget*)forceLaw->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 }
 
 void ForceChoiceWidget::resizeVariables() {
-  static_cast<Function1ChoiceWidget*>(forceLaw->getWidget())->resize_(getSize(),1);
+  static_cast<GeneralChoiceWidget*>(forceLaw->getWidget())->resize_(getSize(),1);
 }
 
 int ForceChoiceWidget::getSize() const {
