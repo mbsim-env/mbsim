@@ -36,7 +36,6 @@ class Function1Widget : public Widget {
   public:
     Function1Widget() {}
     virtual ~Function1Widget() {}
-    virtual QString getType() const { return "Function"; }
   public slots:
     virtual void resize_(int m, int n) {}
 };
@@ -46,7 +45,6 @@ class Function2Widget : public Widget {
   public:
     Function2Widget() {}
     virtual ~Function2Widget() {}
-    virtual QString getType() const { return "Function"; }
   public slots:
     virtual void resize_(int m, int n) {}
 };
@@ -57,7 +55,6 @@ class SymbolicFunction1Widget : public Function1Widget {
 
   public:
     SymbolicFunction1Widget(const QStringList &var, int max=99);
-    inline QString getType() const { return "SymbolicFunction"; }
     int getArgDim() const;
   protected:
     ExtWidget *f;
@@ -75,7 +72,6 @@ class DifferentiableFunction1Widget : public Function1Widget {
 
     void setOrderOfDerivative(int i) { order=i; }
 
-    QString getType() const { return "DifferentiableFunction1"; }
 
   protected:
     std::vector<Function1Widget*> derivatives;
@@ -88,7 +84,6 @@ class ConstantFunction1Widget : public Function1Widget {
 
   public:
     ConstantFunction1Widget(bool vec, int n);
-    inline QString getType() const { return "ConstantFunction"; }
     void resize_(int m, int n);
   protected:
     ExtWidget *c;
@@ -100,7 +95,6 @@ class QuadraticFunction1Widget : public DifferentiableFunction1Widget {
 
   public:
     QuadraticFunction1Widget(int n);
-    inline QString getType() const { return QString("QuadraticFunction1_VS"); }
     void resize_(int m, int n);
 
   protected:
@@ -113,7 +107,6 @@ class SinusFunction1Widget : public DifferentiableFunction1Widget {
 
   public:
     SinusFunction1Widget(int n);
-    inline QString getType() const { return QString("SinusFunction1_VS"); }
     void resize_(int m, int n);
 
   protected:
@@ -126,7 +119,6 @@ class TabularFunction1Widget : public Function1Widget {
 
   public:
     TabularFunction1Widget(int n);
-    inline QString getType() const { return QString("TabularFunction1_VS"); }
 
   protected:
     ChoiceWidget* choice;
@@ -139,7 +131,6 @@ class SummationFunction1Widget : public Function1Widget {
 
   public:
     SummationFunction1Widget(int n);
-    inline QString getType() const { return QString("SummationFunction1_VS"); }
     void resize_(int m, int n);
 
   protected:
@@ -163,7 +154,6 @@ class SymbolicFunction2Widget : public Function2Widget {
 
   public:
     SymbolicFunction2Widget(const QStringList &var, int max=99);
-    inline QString getType() const { return "SymbolicFunction"; }
     int getArgDim(int i) const;
   protected:
     ExtWidget *f;
@@ -176,7 +166,6 @@ class LinearSpringDamperForceWidget : public Function2Widget {
 
   public:
     LinearSpringDamperForceWidget();
-    inline QString getType() const { return "LinearSpringDamperForce"; }
   protected:
     ExtWidget *c, *d, *l0;
 };
@@ -188,7 +177,6 @@ class LinearRegularizedBilateralConstraintWidget: public Function2Widget {
   public:
     LinearRegularizedBilateralConstraintWidget(); 
 
-    virtual QString getType() const { return "LinearRegularizedBilateralConstraint"; }
 
   private:
     ExtWidget *c, *d;
@@ -201,7 +189,6 @@ class LinearRegularizedUnilateralConstraintWidget: public Function2Widget {
   public:
     LinearRegularizedUnilateralConstraintWidget(); 
 
-    virtual QString getType() const { return "LinearRegularizedUnilateralConstraint"; }
 
   private:
     ExtWidget *c, *d;
@@ -214,7 +201,6 @@ class LinearRegularizedCoulombFrictionWidget: public Function2Widget {
   public:
     LinearRegularizedCoulombFrictionWidget(); 
 
-    virtual QString getType() const { return "LinearRegularizedCoulombFriction"; }
 
   private:
     ExtWidget *gd, *mu;

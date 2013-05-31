@@ -33,8 +33,7 @@ class RigidBody;
 class OMBVObjectWidget : public Widget {
 
   public:
-    OMBVObjectWidget(const QString &name_) : name(name_) {}
-    virtual QString getType() const = 0;
+    OMBVObjectWidget(const QString &name_="NOTSET") : name(name_) {}
     void setName(const QString &name_) {name = name_;}
   protected:
     QString name;
@@ -45,8 +44,7 @@ class OMBVFrameWidget : public OMBVObjectWidget {
   friend class OMBVFrameProperty;
 
   public:
-    OMBVFrameWidget(const QString &name);
-    virtual QString getType() const { return "Frame"; }
+    OMBVFrameWidget(const QString &name="NOTSET");
   protected:
     ExtWidget *size, *offset;
 };
@@ -56,7 +54,7 @@ class OMBVDynamicColoredObjectWidget : public OMBVObjectWidget {
   friend class OMBVDynamicColoredObjectProperty;
 
   public:
-    OMBVDynamicColoredObjectWidget(const QString &name);
+    OMBVDynamicColoredObjectWidget(const QString &name="NOTSET");
   protected:
     QVBoxLayout *layout;
     ExtWidget *minimalColorValue, *maximalColorValue, *staticColor;
@@ -68,8 +66,7 @@ class OMBVArrowWidget : public OMBVDynamicColoredObjectWidget {
   friend class OMBVArrowProperty;
 
   public:
-    OMBVArrowWidget(const QString &name, bool fromPoint=false);
-    virtual QString getType() const { return "Arrow"; }
+    OMBVArrowWidget(const QString &name="NOTSET", bool fromPoint=false);
   protected:
     ExtWidget *diameter, *headDiameter, *headLength, *type, *referencePoint, *scaleLength;
 };
@@ -79,8 +76,7 @@ class OMBVCoilSpringWidget : public OMBVObjectWidget {
   friend class OMBVCoilSpringProperty;
 
   public:
-    OMBVCoilSpringWidget(const QString &name);
-    virtual QString getType() const { return "CoilSpring"; }
+    OMBVCoilSpringWidget(const QString &name="NOTSET");
   protected:
     ExtWidget *type, *numberOfCoils, *springRadius, *crossSectionRadius, *nominalLength, *scaleFactor;
 };
@@ -90,8 +86,7 @@ class OMBVBodyWidget : public OMBVObjectWidget {
   friend class OMBVBodyProperty;
 
   public:
-    OMBVBodyWidget(const QString &name);
-    virtual QString getType() const = 0;
+    OMBVBodyWidget(const QString &name="NOTSET");
   protected:
     QVBoxLayout *layout;
     ExtWidget *trans, *rot, *color, *scale;
@@ -100,8 +95,7 @@ class OMBVBodyWidget : public OMBVObjectWidget {
 class InvisibleBodyWidget : public OMBVBodyWidget {
 
   public:
-    InvisibleBodyWidget(const QString &name) : OMBVBodyWidget(name) {}
-    virtual QString getType() const { return "InvisibleBody"; }
+    InvisibleBodyWidget(const QString &name="NOTSET") : OMBVBodyWidget(name) {}
 };
 
 class CubeWidget : public OMBVBodyWidget {
@@ -109,8 +103,7 @@ class CubeWidget : public OMBVBodyWidget {
   friend class CubeProperty;
 
   public:
-    CubeWidget(const QString &name);
-    virtual QString getType() const { return "Cube"; }
+    CubeWidget(const QString &name="NOTSET");
   protected:
     ExtWidget *length;
 };
@@ -120,8 +113,7 @@ class CuboidWidget : public OMBVBodyWidget {
   friend class CuboidProperty;
 
   public:
-    CuboidWidget(const QString &name);
-    virtual QString getType() const { return "Cuboid"; }
+    CuboidWidget(const QString &name="NOTSET");
   protected:
     ExtWidget *length;
 };
@@ -131,8 +123,7 @@ class SphereWidget : public OMBVBodyWidget {
   friend class SphereProperty;
 
   public:
-    SphereWidget(const QString &name);
-    virtual QString getType() const { return "Sphere"; }
+    SphereWidget(const QString &name="NOTSET");
   protected:
     ExtWidget *radius;
 };
@@ -142,8 +133,7 @@ class FrustumWidget : public OMBVBodyWidget {
   friend class FrustumProperty;
 
   public:
-    FrustumWidget(const QString &name);
-    virtual QString getType() const { return "Frustum"; }
+    FrustumWidget(const QString &name="NOTSET");
   protected:
     ExtWidget *top, *base, *height, *innerBase, *innerTop;
 };
@@ -153,8 +143,7 @@ class IvBodyWidget : public OMBVBodyWidget {
   friend class IvBodyProperty;
 
   public:
-    IvBodyWidget(const QString &name);
-    virtual QString getType() const { return "IvBody"; }
+    IvBodyWidget(const QString &name="NOTSET");
   protected:
     ExtWidget *ivFileName, *creaseEdges, *boundaryEdges;
 };
@@ -166,11 +155,8 @@ class CompoundRigidBodyWidget : public OMBVBodyWidget {
   friend class CompoundRigidBodyProperty;
 
   public:
-    CompoundRigidBodyWidget(const QString &name);
-    virtual QString getType() const { return "CompoundRigidBody"; }
+    CompoundRigidBodyWidget(const QString &name="NOTSET");
   protected:
-    std::vector<OMBVBodyChoiceWidget*> body;
-    //std::vector<OMBVBodyWidget*> body;
     QStackedWidget *stackedWidget; 
     QListWidget *bodyList; 
   protected slots:
@@ -178,27 +164,6 @@ class CompoundRigidBodyWidget : public OMBVBodyWidget {
     void openContextMenu(const QPoint &pos);
     void addBody();
     void removeBody();
-};
-
-class OMBVBodyChoiceWidget : public Widget {
-  Q_OBJECT
-
-  friend class OMBVBodyChoiceProperty;
-
-  public:
-
-    OMBVBodyChoiceWidget(const QString &name);
-
-    void setName(const QString &name) {ombv->setName(name);}
-
-  protected slots:
-    void ombvSelection(int index);
-
-  protected:
-    QComboBox *comboBox;
-    QVBoxLayout *layout;
-    OMBVBodyWidget *ombv;
-    QString name;
 };
 
 class OMBVBodySelectionWidget : public Widget {
@@ -212,16 +177,14 @@ class OMBVBodySelectionWidget : public Widget {
     virtual void updateWidget() {ref->updateWidget();}
 
   protected:
-    OMBVBodyChoiceWidget *ombv;
-    LocalFrameOfReferenceWidget *ref;
+    ExtWidget *ombv, *ref;
 };
 
 class OMBVEmptyWidget : public OMBVObjectWidget {
 
   public:
-    OMBVEmptyWidget();
+    OMBVEmptyWidget(const QString &name="Empty");
 
-    virtual QString getType() const { return "Empty"; }
 };
 
 class OMBVPlaneWidget : public OMBVObjectWidget {
@@ -229,8 +192,7 @@ class OMBVPlaneWidget : public OMBVObjectWidget {
   friend class OMBVPlaneProperty;
 
   public:
-    OMBVPlaneWidget();
-    virtual QString getType() const { return "Plane"; }
+    OMBVPlaneWidget(const QString &name="Plane");
 
   protected:
     ExtWidget *size, *numberOfLines;

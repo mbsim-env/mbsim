@@ -62,24 +62,19 @@ AbsoluteKinematicsObserver::AbsoluteKinematicsObserver(const string &str, Elemen
 
   frame.setProperty(new FrameOfReferenceProperty("",this,MBSIMNS"frame"));
 
-  position.setProperty(new OMBVArrowProperty("NOTSET",true));
-  ((OMBVArrowProperty*)position.getProperty())->setID(getID());
+  position.setProperty(new OMBVArrowProperty("NOTSET",getID(),true));
   position.setXMLName(MBSIMNS"openMBVPositionArrow",false);
 
-  velocity.setProperty(new OMBVArrowProperty("NOTSET",true));
-  ((OMBVArrowProperty*)velocity.getProperty())->setID(getID());
+  velocity.setProperty(new OMBVArrowProperty("NOTSET",getID(),true));
   velocity.setXMLName(MBSIMNS"openMBVVelocityArrow",false);
 
-  angularVelocity.setProperty(new OMBVArrowProperty("NOTSET",true));
-  ((OMBVArrowProperty*)angularVelocity.getProperty())->setID(getID());
+  angularVelocity.setProperty(new OMBVArrowProperty("NOTSET",getID(),true));
   angularVelocity.setXMLName(MBSIMNS"openMBVAngularVelocityArrow",false);
 
-  acceleration.setProperty(new OMBVArrowProperty("NOTSET",true));
-  ((OMBVArrowProperty*)acceleration.getProperty())->setID(getID());
+  acceleration.setProperty(new OMBVArrowProperty("NOTSET",getID(),true));
   acceleration.setXMLName(MBSIMNS"openMBVAccelerationArrow",false);
 
-  angularAcceleration.setProperty(new OMBVArrowProperty("NOTSET",true));
-  ((OMBVArrowProperty*)angularAcceleration.getProperty())->setID(getID());
+  angularAcceleration.setProperty(new OMBVArrowProperty("NOTSET",getID(),true));
   angularAcceleration.setXMLName(MBSIMNS"openMBVAngularAccelerationArrow",false);
 }
 

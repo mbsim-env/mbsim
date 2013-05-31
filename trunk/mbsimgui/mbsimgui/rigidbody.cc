@@ -52,17 +52,14 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
 
   ombvEditor.setProperty(new OMBVBodySelectionProperty(this));
 
-  weightArrow.setProperty(new OMBVArrowProperty("NOTSET"));
+  weightArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
   weightArrow.setXMLName(MBSIMNS"openMBVWeightArrow",false);
-  ((OMBVArrowProperty*)weightArrow.getProperty())->setID(getID());
 
-  jointForceArrow.setProperty(new OMBVArrowProperty("NOTSET"));
+  jointForceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
   jointForceArrow.setXMLName(MBSIMNS"openMBVJointForceArrow",false);
-  ((OMBVArrowProperty*)jointForceArrow.getProperty())->setID(getID());
 
-  jointMomentArrow.setProperty(new OMBVArrowProperty("NOTSET"));
+  jointMomentArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
   jointMomentArrow.setXMLName(MBSIMNS"openMBVJointMomentArrow",false);
-  ((OMBVArrowProperty*)jointMomentArrow.getProperty())->setID(getID());
 
   input.clear();
   input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"isFrameOfBodyForRotation"));

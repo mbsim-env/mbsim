@@ -81,7 +81,7 @@ LinearTransferSystem::LinearTransferSystem(const string &str, Element *parent) :
 
   choiceProperty.push_back(propertyContainer);
 
-  choice.setProperty(new ChoiceProperty("",choiceProperty,1));
+  choice.setProperty(new ChoiceProperty("",choiceProperty,2));
 }
 
 void LinearTransferSystem::initializeUsingXML(TiXmlElement *element) {

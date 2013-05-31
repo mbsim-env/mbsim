@@ -69,7 +69,7 @@ class ExtProperty : public Property {
 class ChoiceProperty : public Property {
 
   public:
-    ChoiceProperty(const std::string &xmlName_, const std::vector<Property*> &property_, int mode_=0) : property(property_), index(0), mode(mode_), xmlName(xmlName_) {}
+    ChoiceProperty(const std::string &xmlName_, const std::vector<Property*> &property_, int mode_=0, const std::string &xmlBase_=MBSIMNS) : property(property_), index(0), mode(mode_), xmlName(xmlName_), xmlBase(xmlBase_) {}
     ~ChoiceProperty();
 
     void initialize();
@@ -81,7 +81,7 @@ class ChoiceProperty : public Property {
   protected:
     std::vector<Property*> property;
     int index, mode;
-    std::string xmlName;
+    std::string xmlName, xmlBase;
 };
 
 class ContainerProperty : public Property {

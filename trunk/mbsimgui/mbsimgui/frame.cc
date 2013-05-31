@@ -35,8 +35,7 @@ Frame::Frame(const string &str, Element *parent, bool grey) : Element(str,parent
  // plotFeature.push_back(new ExtWidget("Plot global acceleration", new PlotFeature("globalAcceleration"),true));
  // properties->addToTab("Plotting",plotFeature[plotFeature.size()-1]);
 
-  visu.setProperty(new OMBVFrameProperty("NOTSET",grey?"":MBSIMNS"enableOpenMBV"));
-  ((OMBVFrameProperty*)visu.getProperty())->setID(getID());
+  visu.setProperty(new OMBVFrameProperty("NOTSET",grey?"":MBSIMNS"enableOpenMBV",getID()));
 }
 
 Frame::~Frame() {

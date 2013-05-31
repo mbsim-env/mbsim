@@ -94,8 +94,7 @@ Line::~Line() {
 
 Plane::Plane(const string &str, Element *parent) : Contour(str,parent) {
 
-  visu.setProperty(new OMBVPlaneProperty(MBSIMNS"enableOpenMBV"));
-  ((OMBVPlaneProperty*)visu.getProperty())->setID(getID());
+  visu.setProperty(new OMBVPlaneProperty(MBSIMNS"enableOpenMBV",getID()));
 }
 
 Plane::~Plane() {
@@ -118,8 +117,7 @@ Sphere::Sphere(const string &str, Element *parent) : Contour(str,parent) {
   input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIMNS"radius"));
   radius.setProperty(new ExtPhysicalVarProperty(input));
 
-  visu.setProperty(new OMBVEmptyProperty(MBSIMNS"enableOpenMBV"));
-  ((OMBVEmptyProperty*)visu.getProperty())->setID(getID());
+  visu.setProperty(new OMBVEmptyProperty(MBSIMNS"enableOpenMBV",getID()));
 
 }
 

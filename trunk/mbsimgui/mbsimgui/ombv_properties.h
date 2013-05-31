@@ -29,10 +29,9 @@ class RigidBody;
 class OMBVObjectProperty : public Property {
 
   public:
-    OMBVObjectProperty(const std::string &name_) : name(name_) {}
+    OMBVObjectProperty(const std::string &name_="NOTSET", const std::string &ID_=0) : name(name_), ID(ID_) {}
     virtual std::string getType() const = 0;
     void setName(const std::string &name_) {name = name_;}
-    void setID(const std::string &ID_) { ID = ID_; }
   protected:
     std::string name;
     std::string ID;
@@ -42,7 +41,7 @@ class OMBVObjectProperty : public Property {
 class OMBVFrameProperty : public OMBVObjectProperty {
 
   public:
-    OMBVFrameProperty(const std::string &name, const std::string &xmlName);
+    OMBVFrameProperty(const std::string &name="NOTSET", const std::string &xmlName="", const std::string &ID_=0);
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
     virtual std::string getType() const { return "Frame"; }
@@ -56,7 +55,7 @@ class OMBVFrameProperty : public OMBVObjectProperty {
 class OMBVDynamicColoredObjectProperty : public OMBVObjectProperty {
 
   public:
-    OMBVDynamicColoredObjectProperty(const std::string &name);
+    OMBVDynamicColoredObjectProperty(const std::string &name="NOTSET", const std::string &ID_=0);
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
     void fromWidget(QWidget *widget);
@@ -69,7 +68,7 @@ class OMBVDynamicColoredObjectProperty : public OMBVObjectProperty {
 class OMBVArrowProperty : public OMBVDynamicColoredObjectProperty {
 
   public:
-    OMBVArrowProperty(const std::string &name, bool fromPoint=false);
+    OMBVArrowProperty(const std::string &name="NOTSET", const std::string &ID_=0, bool fromPoint=false);
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
     virtual std::string getType() const { return "Arrow"; }
@@ -82,7 +81,7 @@ class OMBVArrowProperty : public OMBVDynamicColoredObjectProperty {
 class OMBVCoilSpringProperty : public OMBVObjectProperty {
 
   public:
-    OMBVCoilSpringProperty(const std::string &name);
+    OMBVCoilSpringProperty(const std::string &name="NOTSET", const std::string &ID_=0);
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
     void fromWidget(QWidget *widget);
@@ -95,7 +94,7 @@ class OMBVCoilSpringProperty : public OMBVObjectProperty {
 class OMBVBodyProperty : public OMBVObjectProperty {
 
   public:
-    OMBVBodyProperty(const std::string &name);
+    OMBVBodyProperty(const std::string &name="NOTSET", const std::string &ID_=0);
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
     virtual std::string getType() const = 0;
@@ -108,14 +107,14 @@ class OMBVBodyProperty : public OMBVObjectProperty {
 class InvisibleBodyProperty : public OMBVBodyProperty {
 
   public:
-    InvisibleBodyProperty(const std::string &name) : OMBVBodyProperty(name) {}
+    InvisibleBodyProperty(const std::string &name="NOTSET", const std::string &ID=0) : OMBVBodyProperty(name,ID) {}
     virtual std::string getType() const { return "InvisibleBody"; }
 };
 
 class CubeProperty : public OMBVBodyProperty {
 
   public:
-    CubeProperty(const std::string &name);
+    CubeProperty(const std::string &name="NOTSET", const std::string &ID_=0);
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "Cube"; }
@@ -128,7 +127,7 @@ class CubeProperty : public OMBVBodyProperty {
 class CuboidProperty : public OMBVBodyProperty {
 
   public:
-    CuboidProperty(const std::string &name);
+    CuboidProperty(const std::string &name="NOTSET", const std::string &ID_=0);
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "Cuboid"; }
@@ -141,7 +140,7 @@ class CuboidProperty : public OMBVBodyProperty {
 class SphereProperty : public OMBVBodyProperty {
 
   public:
-    SphereProperty(const std::string &name);
+    SphereProperty(const std::string &name="NOTSET", const std::string &ID_=0);
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "Sphere"; }
@@ -153,7 +152,7 @@ class SphereProperty : public OMBVBodyProperty {
 
 class FrustumProperty : public OMBVBodyProperty {
   public:
-    FrustumProperty(const std::string &name);
+    FrustumProperty(const std::string &name="NOTSET", const std::string &ID_=0);
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "Frustum"; }
@@ -165,7 +164,7 @@ class FrustumProperty : public OMBVBodyProperty {
 
 class IvBodyProperty : public OMBVBodyProperty {
   public:
-    IvBodyProperty(const std::string &name);
+    IvBodyProperty(const std::string &name="NOTSET", const std::string &ID_=0);
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "IvBody"; }
@@ -174,40 +173,18 @@ class IvBodyProperty : public OMBVBodyProperty {
   protected:
     ExtProperty ivFileName, creaseEdges, boundaryEdges;
 };
-class OMBVBodyChoiceProperty;
 
 class CompoundRigidBodyProperty : public OMBVBodyProperty {
 
   public:
-    CompoundRigidBodyProperty(const std::string &name) : OMBVBodyProperty(name) {}
+    CompoundRigidBodyProperty(const std::string &name="NOTSET", const std::string &ID_=0);
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "CompoundRigidBody"; }
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
   protected:
-    std::vector<OMBVBodyChoiceProperty*> body;
-};
-
-class OMBVBodyChoiceProperty : public Property {
-
-  public:
-
-    OMBVBodyChoiceProperty(const std::string &name, const std::string &ID="");
-
-    virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    void setName(const std::string &name) {ombv->setName(name);}
-    void fromWidget(QWidget *widget);
-    void toWidget(QWidget *widget);
-
-  protected:
-    void ombvSelection(int index);
-
-    OMBVBodyProperty *ombv;
-    int index;
-    std::string name;
-    std::string ID;
+    std::vector<ChoiceProperty*> body;
 };
 
 class OMBVBodySelectionProperty : public Property {
@@ -221,14 +198,13 @@ class OMBVBodySelectionProperty : public Property {
     void toWidget(QWidget *widget);
 
   protected:
-    OMBVBodyChoiceProperty ombv;
-    LocalFrameOfReferenceProperty ref;
+    ExtProperty ombv, ref;
 };
 
 class OMBVEmptyProperty : public OMBVObjectProperty {
 
   public:
-    OMBVEmptyProperty(const std::string &xmlName_) : OMBVObjectProperty("Empty"), xmlName(xmlName_) {}
+    OMBVEmptyProperty(const std::string &xmlName_, const std::string &ID=0) : OMBVObjectProperty("Empty",ID), xmlName(xmlName_) {}
 
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -243,7 +219,7 @@ class OMBVEmptyProperty : public OMBVObjectProperty {
 class OMBVPlaneProperty : public OMBVObjectProperty {
 
   public:
-    OMBVPlaneProperty(const std::string &xmlName);
+    OMBVPlaneProperty(const std::string &xmlName, const std::string &ID_=0);
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
     virtual std::string getType() const { return "Plane"; }
