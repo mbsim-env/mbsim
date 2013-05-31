@@ -20,6 +20,7 @@
 #include<config.h>
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_rcm.h"
 #include "mbsimFlexibleBody/utils/revcardan.h"
+#include "mbsimFlexibleBody/defines.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
@@ -64,6 +65,9 @@ using namespace fmatvec;
 using namespace MBSim;
 
 namespace MBSimFlexibleBody {
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibleBody, FlexibleBody1s33RCM, MBSIMFLEXIBLEBODYNS"FlexibleBody1s33RCMCantilever")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FlexibleBody, FlexibleBody1s33RCM, MBSIMFLEXIBLEBODYNS"FlexibleBody1s33RCMRing")
 
   FlexibleBody1s33RCM::FlexibleBody1s33RCM(const string &name,bool openStructure_) : FlexibleBodyContinuum<double>(name),cylinder(new CylinderFlexible("Cylinder")),top(new FlexibleBand("Top")),bottom(new FlexibleBand("Bottom")),left(new FlexibleBand("Left")),right(new FlexibleBand("Right")),neutralFibre(new Contour1sFlexible("NeutralFibre")),angle(new RevCardan()),Elements(0),L(0.),l0(0.),E(0.),G(0.),A(0.),I1(0.),I2(0.),I0(0.),rho(0.),R1(0.),R2(0.),epstD(0.),k0D(0.),epstL(0.),k0L(0.),openStructure(openStructure_),initialised(false),nGauss(3),cylinderRadius(0.),cuboidBreadth(0.),cuboidHeight(0.) {
     addContour(cylinder);
