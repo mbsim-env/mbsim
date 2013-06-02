@@ -35,6 +35,8 @@ using namespace MBSim;
 
 namespace MBSimControl {
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, MasslessSpringDamper, MBSIMCONTROLNS"MasslessSpringDamper")
+
   MasslessSpringDamper::MasslessSpringDamper(const string& name) : SignalProcessingSystem(name), c(0), F0(0), dPos(0), dNeg(0), FFricPos(0), FFricNeg(1./epsroot()), xMin(-1./epsroot()), xMax(1./epsroot()) {
   }
 

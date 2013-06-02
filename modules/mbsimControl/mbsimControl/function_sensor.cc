@@ -28,6 +28,8 @@ using namespace MBXMLUtils;
 using namespace fmatvec;
 
 namespace MBSimControl {
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, FunctionSensor, MBSIMCONTROLNS"FunctionSensor")
       
   FunctionSensor::FunctionSensor(const std::string &name, Function1<fmatvec::Vec, double>* function_) : Sensor(name), function(function_) {
     y=(*function)(0);
@@ -50,6 +52,7 @@ namespace MBSimControl {
     y=(*function)(0);
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Function1_SSEvaluation, MBSIMCONTROLNS"Function1_SSEvaluation")
 
   void Function1_SSEvaluation::initializeUsingXML(TiXmlElement *element) {
     Signal::initializeUsingXML(element);
@@ -77,6 +80,7 @@ namespace MBSimControl {
     return y;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Function2_SSSEvaluation, MBSIMCONTROLNS"Function2_SSSEvaluation")
 
   void Function2_SSSEvaluation::initializeUsingXML(TiXmlElement *element) {
     Signal::initializeUsingXML(element);

@@ -24,8 +24,11 @@
 
 using namespace std;
 using namespace MBXMLUtils;
+using namespace MBSim;
 
 namespace MBSimHydraulics {
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAMEASSINGLETON(Environment, HydraulicEnvironment, MBSIMHYDRAULICSNS"HydraulicEnvironment")
 
   HydraulicEnvironment *HydraulicEnvironment::instance=NULL;
       

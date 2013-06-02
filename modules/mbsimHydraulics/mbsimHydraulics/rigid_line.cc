@@ -38,6 +38,8 @@ using namespace MBXMLUtils;
 
 namespace MBSimHydraulics {
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, RigidLine,  MBSIMHYDRAULICSNS"RigidLine")
+
   void RigidLine::init(InitStage stage) {
     if (stage==MBSim::modelBuildup) {
       if (pL)
@@ -79,6 +81,7 @@ namespace MBSimHydraulics {
     p->initializeUsingXML(e->FirstChildElement());
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, ClosableRigidLine,  MBSIMHYDRAULICSNS"ClosableRigidLine")
 
   bool ClosableRigidLine::isClosed() const {
    return (cpLSignal->getSignal()(0)<cpLMinValue);
@@ -122,6 +125,7 @@ namespace MBSimHydraulics {
       setBilateral(true);
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, UnidirectionalRigidLine,  MBSIMHYDRAULICSNS"UnidirectionalRigidLine")
 
   void UnidirectionalRigidLine::init(InitStage stage) {
     if (stage==MBSim::modelBuildup) {

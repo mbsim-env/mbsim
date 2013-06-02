@@ -29,6 +29,8 @@ using namespace MBSim;
 
 namespace MBSimControl {
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalProcessingSystemSensor, MBSIMCONTROLNS"SignalProcessingSystemSensor")
+
   void SignalProcessingSystemSensor::initializeUsingXML(TiXmlElement * element) {
     Sensor::initializeUsingXML(element);
     TiXmlElement * e;

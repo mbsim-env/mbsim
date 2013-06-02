@@ -73,6 +73,8 @@ namespace MBSimHydraulics {
   };
 #endif
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Checkvalve, MBSIMHYDRAULICSNS"Checkvalve")
+
   Checkvalve::Checkvalve(const string &name) : Group(name), line(new ClosableRigidLine("Line")), ballSeat(new RigidBody("BallSeat")), ball(new RigidBody("Ball")), seatContact(new Contact("SeatContact")), maxContact(new Contact("MaximalContact")), spring(new SpringDamper("Spring")), xOpen(new GeneralizedPositionSensor("xOpen")), fromNodeAreaIndex(0), toNodeAreaIndex(0), hMax(0), mBall(0), refFrameString("")
 #ifdef HAVE_OPENMBVCPPINTERFACE
                                                , openMBVBodies(false), openMBVArrows(false), openMBVFrames(false)

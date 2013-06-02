@@ -35,6 +35,8 @@ using namespace MBSim;
 
 namespace MBSimControl {
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, LinearTransferSystem, MBSIMCONTROLNS"LinearTransferSystem")
+
   LinearTransferSystem::LinearTransferSystem(const string& name) : SignalProcessingSystem(name), R1(.002), R2(1.), c(1.) {
   }
 

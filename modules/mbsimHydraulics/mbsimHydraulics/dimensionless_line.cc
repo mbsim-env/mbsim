@@ -117,6 +117,7 @@ namespace MBSimHydraulics {
       glPath=e->Attribute("ref");
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, PlaneLeakage0DOF,  MBSIMHYDRAULICSNS"PlaneLeakage0DOF")
 
   void PlaneLeakage0DOF::setPlaneLeakagePressureLoss(PlaneLeakagePressureLoss * plpl) {
     lpl=plpl;
@@ -134,6 +135,7 @@ namespace MBSimHydraulics {
     p->initializeUsingXML(e->FirstChildElement());
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, CircularLeakage0DOF,  MBSIMHYDRAULICSNS"CircularLeakage0DOF")
 
   void CircularLeakage0DOF::setCircularLeakagePressureLoss(CircularLeakagePressureLoss * clpl) {
     lpl=clpl;
