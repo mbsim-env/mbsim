@@ -163,17 +163,21 @@ namespace MBSim {
     saved_ref2=e->Attribute("ref2");
     e=e->NextSiblingElement();
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    OpenMBV::CoilSpring *coilSpring=dynamic_cast<OpenMBV::CoilSpring*>(OpenMBV::ObjectFactory::createObject(e));
-    if(coilSpring) {
-      setOpenMBVSpring(coilSpring);
-      coilSpring->initializeUsingXML(e);
-      e=e->NextSiblingElement();
+    try { // e is of a type derived from CoilSpring or Arrow: if CoilSpring then ...
+      OpenMBV::CoilSpring *coilSpring=OpenMBV::ObjectFactory::create<OpenMBV::CoilSpring>(e);
+      if(coilSpring) {
+        setOpenMBVSpring(coilSpring);
+        coilSpring->initializeUsingXML(e);
+        e=e->NextSiblingElement();
+      }
     }
-    OpenMBV::Arrow *arrow=dynamic_cast<OpenMBV::Arrow*>(OpenMBV::ObjectFactory::createObject(e));
-    if(arrow) {
-      arrow->initializeUsingXML(e); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-      setOpenMBVForceArrow(arrow);
-      e=e->NextSiblingElement();
+    catch(const runtime_error&) { // if not CoilSpring then check for Arrow ... (if not a error is thrown)
+      OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e);
+      if(arrow) {
+        arrow->initializeUsingXML(e); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
+        setOpenMBVForceArrow(arrow);
+        e=e->NextSiblingElement();
+      }
     }
 #endif
   }

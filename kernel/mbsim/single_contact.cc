@@ -1427,7 +1427,7 @@ namespace MBSim {
     //Normal force
     e = element->FirstChildElement(MBSIMNS"openMBVNormalForceArrow");
     if (e) {
-      OpenMBV::Arrow *arrow = dynamic_cast<OpenMBV::Arrow*>(OpenMBV::ObjectFactory::createObject(e->FirstChildElement()));
+      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
       arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
       setOpenMBVNormalForceArrow(arrow);
       e = e->NextSiblingElement();
@@ -1436,7 +1436,7 @@ namespace MBSim {
     //Friction force
     e = element->FirstChildElement(MBSIMNS"openMBVFrictionArrow");
     if (e) {
-      OpenMBV::Arrow *arrow = dynamic_cast<OpenMBV::Arrow*>(OpenMBV::ObjectFactory::createObject(e->FirstChildElement()));
+      OpenMBV::Arrow *arrow = OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
       arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
       setOpenMBVFrictionArrow(arrow);
       e = e->NextSiblingElement();

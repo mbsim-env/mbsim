@@ -959,7 +959,7 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=element->FirstChildElement(MBSIMNS"openMBVRigidBody");
     if(e) {
-      OpenMBV::RigidBody *rb=dynamic_cast<OpenMBV::RigidBody*>(OpenMBV::ObjectFactory::createObject(e->FirstChildElement()));
+      OpenMBV::RigidBody *rb=OpenMBV::ObjectFactory::create<OpenMBV::RigidBody>(e->FirstChildElement());
       setOpenMBVRigidBody(rb);
       rb->initializeUsingXML(e->FirstChildElement());
 
@@ -985,7 +985,7 @@ namespace MBSim {
 
     e=element->FirstChildElement(MBSIMNS"openMBVWeightArrow");
     if(e) {
-      OpenMBV::Arrow *arrow=dynamic_cast<OpenMBV::Arrow*>(OpenMBV::ObjectFactory::createObject(e->FirstChildElement()));
+      OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
       if(!openMBVBody)
         setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
       arrow->initializeUsingXML(e->FirstChildElement());
@@ -994,7 +994,7 @@ namespace MBSim {
 
     e=element->FirstChildElement(MBSIMNS"openMBVJointForceArrow");
     if(e) {
-      OpenMBV::Arrow *arrow=dynamic_cast<OpenMBV::Arrow*>(OpenMBV::ObjectFactory::createObject(e->FirstChildElement()));
+      OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
       if(!openMBVBody)
         setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
       arrow->initializeUsingXML(e->FirstChildElement());
@@ -1003,7 +1003,7 @@ namespace MBSim {
 
     e=element->FirstChildElement(MBSIMNS"openMBVJointMomentArrow");
     if(e) {
-      OpenMBV::Arrow *arrow=dynamic_cast<OpenMBV::Arrow*>(OpenMBV::ObjectFactory::createObject(e->FirstChildElement()));
+      OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
       if(!openMBVBody)
         setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
       arrow->initializeUsingXML(e->FirstChildElement());
