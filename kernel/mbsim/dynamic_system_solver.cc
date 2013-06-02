@@ -1352,7 +1352,7 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"environments")->FirstChildElement();
 
     Environment *env;
-    while((env=ObjectFactory<Environment>::create(e))) {
+    while((env=ObjectFactory<Environment>::create<Environment>(e))) {
       env->initializeUsingXML(e);
       e=e->NextSiblingElement();
     }

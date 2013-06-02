@@ -58,13 +58,6 @@ class ObjectFactory {
       registerXMLName(name, &singleton<CreateType>, NULL);
     }
 
-    /** Create an object corresponding to the XML element element and return a pointer of type BaseType.
-     * This function returns a new object or a singleton object dependent on the registration of the created object. */
-    static BaseType* create(const MBXMLUtils::TiXmlElement *element) {
-      // just call the create<TYPE> function with TYPE = BaseType
-      return create<BaseType>(element);
-    }
-
     /** Create an object corresponding to the XML element element and return a pointer of type ContainerType.
      * Throws if the created object is not of type ContainerType.
      * This function returns a new object or a singleton object dependent on the registration of the created object. */
