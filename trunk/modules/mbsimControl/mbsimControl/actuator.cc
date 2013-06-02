@@ -31,6 +31,8 @@ using namespace MBSim;
 
 namespace MBSimControl {
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Actuator, MBSIMCONTROLNS"Actuator")
+
   Actuator::Actuator(const string &name) : LinkMechanics(name), signal(0), KOSYID(1) {
   }
 

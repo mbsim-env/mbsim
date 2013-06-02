@@ -286,6 +286,7 @@ namespace MBSimHydraulics {
     }
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, ConstrainedNode, MBSIMHYDRAULICSNS"ConstrainedNode")
 
   void ConstrainedNode::init(InitStage stage) {
     if (stage==MBSim::unknownStage) {
@@ -308,7 +309,7 @@ namespace MBSimHydraulics {
     pFun->initializeUsingXML(e->FirstChildElement());
   }
 
-
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, EnvironmentNode, MBSIMHYDRAULICSNS"EnvironmentNode")
 
   void EnvironmentNode::init(InitStage stage) {
     if (stage==MBSim::unknownStage) {
@@ -319,6 +320,7 @@ namespace MBSimHydraulics {
       HNode::init(stage);
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, ElasticNode, MBSIMHYDRAULICSNS"ElasticNode")
 
   ElasticNode::~ElasticNode() {
     delete bulkModulus;
@@ -385,6 +387,7 @@ namespace MBSimHydraulics {
     }
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, RigidNode, MBSIMHYDRAULICSNS"RigidNode")
 
   RigidNode::RigidNode(const string &name) : HNode(name), gdn(0), gdd(0), gfl(new BilateralConstraint), gil(new BilateralImpact) {
   }
@@ -576,6 +579,7 @@ namespace MBSimHydraulics {
       ds->setTermination(false);
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, RigidCavitationNode, MBSIMHYDRAULICSNS"RigidCavitationNode")
 
   RigidCavitationNode::RigidCavitationNode(const string &name) : HNode(name), pCav(0), active(false), active0(false), gdn(0), gdd(0), gfl(new UnilateralConstraint), gil(new UnilateralNewtonImpact) {
   }
@@ -857,6 +861,7 @@ namespace MBSimHydraulics {
       ds->setTermination(false);
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, PressurePump, MBSIMHYDRAULICSNS"PressurePump")
 
   void PressurePump::initializeUsingXML(TiXmlElement * element) {
     HNode::initializeUsingXML(element);

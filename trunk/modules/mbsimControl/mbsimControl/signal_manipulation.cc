@@ -30,6 +30,8 @@ using namespace MBSim;
 
 namespace MBSimControl {
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalAddition, MBSIMCONTROLNS"SignalAddition")
+
   void SignalAddition::initializeUsingXML(TiXmlElement *element) {
     Signal::initializeUsingXML(element);
     TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
@@ -66,6 +68,7 @@ namespace MBSimControl {
     return y;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalOffset, MBSIMCONTROLNS"SignalOffset")
   
   void SignalOffset::initializeUsingXML(TiXmlElement *element) {
     Signal::initializeUsingXML(element);
@@ -87,6 +90,7 @@ namespace MBSimControl {
     return signal->getSignal()+offset;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalMultiplication, MBSIMCONTROLNS"SignalMultiplication")
   
   void SignalMultiplication::initializeUsingXML(TiXmlElement *element) {
     Signal::initializeUsingXML(element);
@@ -127,6 +131,7 @@ namespace MBSimControl {
     return y;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalMux, MBSIMCONTROLNS"SignalMux")
 
   void SignalMux::initializeUsingXML(TiXmlElement *element) {
     Signal::initializeUsingXML(element);
@@ -161,6 +166,7 @@ namespace MBSimControl {
     return y;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalDemux, MBSIMCONTROLNS"SignalDemux")
 
   void SignalDemux::initializeUsingXML(TiXmlElement *element) {
     Signal::initializeUsingXML(element);
@@ -207,6 +213,7 @@ namespace MBSimControl {
     return y;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalLimitation, MBSIMCONTROLNS"SignalLimitation")
 
   void SignalLimitation::initializeUsingXML(TiXmlElement *element) {
     Signal::initializeUsingXML(element);
@@ -241,6 +248,7 @@ namespace MBSimControl {
     return y; 
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalTimeDiscretization, MBSIMCONTROLNS"SignalTimeDiscretization")
 
   void SignalTimeDiscretization::initializeUsingXML(TiXmlElement *element) {
     Signal::initializeUsingXML(element);
@@ -272,6 +280,7 @@ namespace MBSimControl {
     return y; 
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SignalOperation, MBSIMCONTROLNS"SignalOperation")
 
   void SignalOperation::initializeUsingXML(TiXmlElement *element) {
     Signal::initializeUsingXML(element);
@@ -452,6 +461,8 @@ namespace MBSimControl {
         y(i)=tanh(y(i));
     return y; 
   }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, SpecialSignalOperation, MBSIMCONTROLNS"SpecialSignalOperation")
   
   void SpecialSignalOperation::initializeUsingXML(TiXmlElement *element) {
     Signal::initializeUsingXML(element);
@@ -494,6 +505,8 @@ namespace MBSimControl {
         y(i)=y2(i)>0?y(i):0;
     return y; 
   }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, PIDController, MBSIMCONTROLNS"PIDController")
 
   void PIDController::initializeUsingXML(TiXmlElement * element) {
     Signal::initializeUsingXML(element);

@@ -28,8 +28,11 @@
 using namespace std;
 using namespace MBXMLUtils;
 using namespace fmatvec;
+using namespace MBSim;
 
 namespace MBSimHydraulics {
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, FlowSensor, MBSIMHYDRAULICSNS"FlowSensor")
 
   Vec FlowSensor::getSignal() {
     return line->getQIn(); 
@@ -52,6 +55,8 @@ namespace MBSimHydraulics {
       Sensor::init(stage);
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, PressureSensor, MBSIMHYDRAULICSNS"PressureSensor")
+
   Vec PressureSensor::getSignal() {
     return node->getla(); 
   }
@@ -73,6 +78,7 @@ namespace MBSimHydraulics {
       Sensor::init(stage);
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, TemperatureSensor, MBSIMHYDRAULICSNS"TemperatureSensor")
   
   void TemperatureSensor::init(MBSim::InitStage stage) {
     if (stage==MBSim::preInit) {
@@ -83,6 +89,7 @@ namespace MBSimHydraulics {
       Sensor::init(stage);
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, KinematicViscositySensor, MBSIMHYDRAULICSNS"KinematicViscositySensor")
   
   void KinematicViscositySensor::init(MBSim::InitStage stage) {
     if (stage==MBSim::preInit) {

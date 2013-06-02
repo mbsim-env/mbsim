@@ -51,15 +51,19 @@ namespace MBSimControl {
       Sensor::init(stage);
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, AbsolutePositionSensor, MBSIMCONTROLNS"AbsolutePositionSensor")
+
   Vec AbsolutePositionSensor::getSignal() {
     return direction.T()*frame->getPosition();
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, AbsoluteVelocitySensor, MBSIMCONTROLNS"AbsoluteVelocitySensor")
 
   Vec AbsoluteVelocitySensor::getSignal() {
     return direction.T()*frame->getVelocity();
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, AbsoluteAngularPositionSensor, MBSIMCONTROLNS"AbsoluteAngularPositionSensor")
 
   void AbsoluteAngularPositionSensor::updategd(double t) {
     gd=direction.T()*frame->getAngularVelocity();
@@ -69,6 +73,7 @@ namespace MBSimControl {
     return g;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, AbsoluteAngularVelocitySensor, MBSIMCONTROLNS"AbsoluteAngularVelocitySensor")
 
   Vec AbsoluteAngularVelocitySensor::getSignal() {
     return direction.T()*frame->getAngularVelocity();
@@ -99,18 +104,21 @@ namespace MBSimControl {
       Sensor::init(stage);
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, RelativePositionSensor, MBSIMCONTROLNS"RelativePositionSensor")
 
   Vec RelativePositionSensor::getSignal() {
     Vec WrRefRel=relFrame->getPosition()-refFrame->getPosition();
     return (refFrame->getOrientation()*direction).T()*WrRefRel;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, RelativeVelocitySensor, MBSIMCONTROLNS"RelativeVelocitySensor")
 
   Vec RelativeVelocitySensor::getSignal() {
     Vec WvRefRel=relFrame->getVelocity()-refFrame->getVelocity();
     return (refFrame->getOrientation()*direction).T()*WvRefRel;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, RelativeAngularPositionSensor, MBSIMCONTROLNS"RelativeAngularPositionSensor")
 
   void RelativeAngularPositionSensor::updategd(double t) {
     Vec WomegaRefRel=relFrame->getAngularVelocity()-refFrame->getAngularVelocity();
@@ -121,6 +129,7 @@ namespace MBSimControl {
     return g;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, RelativeAngularVelocitySensor, MBSIMCONTROLNS"RelativeAngularVelocitySensor")
 
   Vec RelativeAngularVelocitySensor::getSignal() {
     Vec WomegaRefRel=relFrame->getAngularVelocity()-refFrame->getAngularVelocity();

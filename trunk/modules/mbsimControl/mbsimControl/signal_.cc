@@ -18,7 +18,9 @@
  */
 
 #include <config.h>
+#include "mbsimControl/defines.h"
 #include "mbsimControl/signal_.h"
+#include "mbsimControl/extern_signal_source.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsimControl/defines.h"
@@ -31,6 +33,8 @@ using namespace fmatvec;
 using namespace MBSim;
 
 namespace MBSimControl {
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, ExternSignalSource, MBSIMCONTROLNS"ExternSignalSource")
 
   void Signal::init(InitStage stage) {
     if (stage==MBSim::plot) {

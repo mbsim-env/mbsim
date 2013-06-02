@@ -47,6 +47,8 @@ namespace MBSimControl {
       Sensor::init(stage);
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, GeneralizedPositionSensor, MBSIMCONTROLNS"GeneralizedPositionSensor")
+
   Vec GeneralizedPositionSensor::getSignal() {
     if (object->getq().size()==0)
       //return object->getq0()(fmatvec::Index(index, index));
@@ -55,6 +57,7 @@ namespace MBSimControl {
       return ((object->getq()).copy())(fmatvec::Index(index, index));
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, GeneralizedVelocitySensor, MBSIMCONTROLNS"GeneralizedVelocitySensor")
 
   Vec GeneralizedVelocitySensor::getSignal() {
     if (object->getu().size()==0)

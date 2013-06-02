@@ -14,7 +14,6 @@ libmbsimControl_la_SOURCES = \
   linear_transfer_system.cc\
   massless_spring_damper.cc\
   actuator.cc\
-  dummyof.cc\
   obsolet_hint.cc
 
 

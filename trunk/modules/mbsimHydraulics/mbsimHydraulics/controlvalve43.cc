@@ -55,6 +55,8 @@ namespace MBSimHydraulics {
       Vec signal;
   };
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Controlvalve43, MBSIMHYDRAULICSNS"Controlvalve43")
+
   Controlvalve43::Controlvalve43(const string &name) : Group(name), lPA(new ClosableRigidLine("LinePA")), lPB(new ClosableRigidLine("LinePB")), lAT(new ClosableRigidLine("LineAT")), lBT(new ClosableRigidLine("LineBT")), nP(new RigidNode("nP")), nA(new RigidNode("nA")), nB(new RigidNode("nB")), nT(new RigidNode("nT")), offset(0), relAlphaPA(NULL), position(NULL), checkSizeSignalPA(NULL), checkSizeSignalPB(NULL), checkSizeSignalAT(NULL), checkSizeSignalBT(NULL), positionString(""), nPInflowString(""), nAOutflowString(""), nBOutflowString(""), nTOutflowString(""), pRACC(false) {
     addObject(lPA);
     lPA->setDirection(Vec(3, INIT, 0));
