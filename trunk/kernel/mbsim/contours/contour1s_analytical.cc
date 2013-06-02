@@ -212,7 +212,7 @@ namespace MBSim {
     diameter=atof(e->GetText());
     //Contour1sAnalytical
     e=element->FirstChildElement(MBSIMNS"contourFunction");
-    funcCrPC=ObjectFactory<ContourFunction1s>::create(e->FirstChildElement());
+    funcCrPC=ObjectFactory<ContourFunction1s>::create<ContourFunction1s>(e->FirstChildElement());
     funcCrPC->initializeUsingXML(e->FirstChildElement());
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=element->FirstChildElement(MBSIMNS"enableOpenMBV");

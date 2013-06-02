@@ -119,7 +119,7 @@ void MBSimXML::initIntegrator(int argc, char *argv[], Integrator *&integrator) {
   incorporateNamespace(e, dummy);
 
   // create integrator
-  integrator=ObjectFactory<Integrator>::create(e);
+  integrator=ObjectFactory<Integrator>::create<Integrator>(e);
   if(integrator==0)
     throw MBSimError("ERROR! Cannot create the integrator object!");
   integrator->initializeUsingXML(e);
