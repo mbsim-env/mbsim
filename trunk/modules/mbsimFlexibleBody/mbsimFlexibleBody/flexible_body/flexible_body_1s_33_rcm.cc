@@ -441,7 +441,7 @@ namespace MBSimFlexibleBody {
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=element->FirstChildElement(MBSIMFLEXNS"openMBVBody");
     if(e) {
-      OpenMBV::SpineExtrusion *rb=dynamic_cast<OpenMBV::SpineExtrusion*>(OpenMBV::ObjectFactory::createObject(e->FirstChildElement()));
+      OpenMBV::SpineExtrusion *rb=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>(e->FirstChildElement());
       setOpenMBVSpineExtrusion(rb);
       rb->initializeUsingXML(e->FirstChildElement());
       rb->setNumberOfSpinePoints(4*Elements+1);
