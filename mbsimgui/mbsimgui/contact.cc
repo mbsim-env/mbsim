@@ -46,10 +46,10 @@ Contact::Contact(const string &str, Element *parent) : Link(str, parent), contac
   input.push_back(new PhysicalVariableProperty(new ScalarProperty("0.1"),"m",MBSIMNS"enableOpenMBVContactPoints"));
   enableOpenMBVContactPoints.setProperty(new ExtPhysicalVarProperty(input)); 
 
-  normalForceArrow.setProperty(new OMBVArrowProperty("NOTSET"));
+  normalForceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
   normalForceArrow.setXMLName(MBSIMNS"openMBVNormalForceArrow",false);
 
-  frictionArrow.setProperty(new OMBVArrowProperty("NOTSET"));
+  frictionArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
   frictionArrow.setXMLName(MBSIMNS"openMBVFrictionArrow",false);
 }
 
