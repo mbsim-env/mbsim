@@ -136,3 +136,29 @@ TiXmlElement* Sphere::writeXMLFile(TiXmlNode *parent) {
   visu.writeXMLFile(e);
   return e;
 }
+
+CircleSolid::CircleSolid(const string &str, Element *parent) : Contour(str,parent) {
+ 
+  vector<PhysicalVariableProperty*> input;
+  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIMNS"radius"));
+  radius.setProperty(new ExtPhysicalVarProperty(input));
+
+  visu.setProperty(new OMBVEmptyProperty(MBSIMNS"enableOpenMBV",getID()));
+
+}
+
+CircleSolid::~CircleSolid() {
+}
+
+void CircleSolid::initializeUsingXML(TiXmlElement *element) {
+  Contour::initializeUsingXML(element);
+  radius.initializeUsingXML(element);
+  visu.initializeUsingXML(element);
+}
+
+TiXmlElement* CircleSolid::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *e = Contour::writeXMLFile(parent);
+  radius.writeXMLFile(e);
+  visu.writeXMLFile(e);
+  return e;
+}

@@ -79,5 +79,17 @@ class Sphere : public Contour {
     ExtProperty radius, visu;
 };
 
+class CircleSolid : public Contour {
+  friend class CircleSolidPropertyDialog;
+  public:
+    CircleSolid(const std::string &str, Element *parent);
+    ~CircleSolid();
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    std::string getType() const { return "CircleSolid"; }
+    ElementPropertyDialog* createPropertyDialog() {return new CircleSolidPropertyDialog(this);}
+  protected:
+    ExtProperty radius, visu;
+};
 
 #endif

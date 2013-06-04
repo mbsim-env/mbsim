@@ -64,6 +64,7 @@ class ContourContextContextMenu : public QMenu {
     void addLine();
     void addPlane();
     void addSphere();
+    void addCircleSolid();
 
   protected:
     Element *element;

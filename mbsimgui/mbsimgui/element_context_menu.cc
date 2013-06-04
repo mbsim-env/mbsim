@@ -168,6 +168,9 @@ ContourContextContextMenu::ContourContextContextMenu(Element *element_, QWidget 
   action = new QAction("Add sphere", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addSphere()));
   addAction(action);
+  action = new QAction("Add solid circle", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addCircleSolid()));
+  addAction(action);
 }
 
 void ContourContextContextMenu::addPoint() {
@@ -184,6 +187,10 @@ void ContourContextContextMenu::addPlane() {
 
 void ContourContextContextMenu::addSphere() {
   mw->addContour(new Sphere("Sphere",element));
+}
+
+void ContourContextContextMenu::addCircleSolid() {
+  mw->addContour(new CircleSolid("CircleSolid",element));
 }
 
 ObjectContextContextMenu::ObjectContextContextMenu(Element *element_, QWidget *parent) : QMenu(parent), element(element_) {

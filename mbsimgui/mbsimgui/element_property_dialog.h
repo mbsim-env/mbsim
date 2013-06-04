@@ -28,6 +28,7 @@ class FixedRelativeFrame;
 class Contour;
 class Plane;
 class Sphere;
+class CircleSolid;
 class Solver;
 class Group;
 class Object;
@@ -121,6 +122,16 @@ class SpherePropertyDialog : public ContourPropertyDialog {
 
   public:
     SpherePropertyDialog(Sphere *sphere, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+    ExtWidget *radius, *visu;
+};
+
+class CircleSolidPropertyDialog : public ContourPropertyDialog {
+
+  public:
+    CircleSolidPropertyDialog(CircleSolid *circle, QWidget * parent = 0, Qt::WindowFlags f = 0);
     void toWidget(Element *element);
     void fromWidget(Element *element);
   protected:
