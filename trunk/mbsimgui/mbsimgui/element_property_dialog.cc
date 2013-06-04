@@ -175,6 +175,30 @@ void SpherePropertyDialog::fromWidget(Element *element) {
   static_cast<Sphere*>(element)->visu.fromWidget(visu);
 }
 
+CircleSolidPropertyDialog::CircleSolidPropertyDialog(CircleSolid *circle, QWidget *parent, Qt::WindowFlags f) : ContourPropertyDialog(circle,parent,f) {
+  addTab("Visualisation",1);
+ 
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"), lengthUnits(), 4));
+  radius = new ExtWidget("Radius",new ExtPhysicalVarWidget(input));
+  addToTab("General", radius);
+
+  visu = new ExtWidget("OpenMBV CircleSolid",new OMBVEmptyWidget,true);
+  addToTab("Visualisation", visu);
+}
+
+void CircleSolidPropertyDialog::toWidget(Element *element) {
+  ContourPropertyDialog::toWidget(element);
+  static_cast<CircleSolid*>(element)->radius.toWidget(radius);
+  static_cast<CircleSolid*>(element)->visu.toWidget(visu);
+}
+
+void CircleSolidPropertyDialog::fromWidget(Element *element) {
+  ContourPropertyDialog::fromWidget(element);
+  static_cast<CircleSolid*>(element)->radius.fromWidget(radius);
+  static_cast<CircleSolid*>(element)->visu.fromWidget(visu);
+}
+
 GroupPropertyDialog::GroupPropertyDialog(Group *group, QWidget *parent, Qt::WindowFlags f, bool kinematics) : ElementPropertyDialog(group,parent,f,kinematics), position(0), orientation(0), frameOfReference(0) {
   if(kinematics) {
     addTab("Kinematics",1);

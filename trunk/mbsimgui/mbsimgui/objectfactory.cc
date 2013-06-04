@@ -97,6 +97,8 @@ Contour* MBSimObjectFactory::createContour(TiXmlElement *element, Element *paren
     return new Plane(element->Attribute("name"),parent);
   else if(element->ValueStr()==MBSIMNS"Sphere")
     return new Sphere(element->Attribute("name"),parent);
+  else if(element->ValueStr()==MBSIMNS"CircleSolid")
+    return new CircleSolid(element->Attribute("name"),parent);
   return 0;
 }
 

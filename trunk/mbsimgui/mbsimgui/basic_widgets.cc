@@ -152,8 +152,8 @@ void FrameOfReferenceWidget::setFrame() {
   if(frameBrowser->getFrameList()->currentItem())
     selectedFrame = (Frame*)static_cast<ElementItem*>(frameBrowser->getFrameList()->currentItem())->getElement();
   else
-    selectedFrame = element->getParent()->getFrame(0);
-  frame->setText(QString::fromStdString(selectedFrame->getXMLPath(element,true)));
+    selectedFrame = 0;
+  frame->setText(selectedFrame?QString::fromStdString(selectedFrame->getXMLPath(element,true)):"");
 }
 
 void FrameOfReferenceWidget::setFrame(const QString &str, Frame *framePtr) {
@@ -192,8 +192,8 @@ void ContourOfReferenceWidget::setContour() {
   if(contourBrowser->getContourList()->currentItem())
     selectedContour = (Contour*)static_cast<ElementItem*>(contourBrowser->getContourList()->currentItem())->getElement();
   else
-    selectedContour = ((Group*)element->getParent())->getContour(0);
-  contour->setText(QString::fromStdString(selectedContour->getXMLPath(element,true)));
+    selectedContour = 0;
+  contour->setText(selectedContour?QString::fromStdString(selectedContour->getXMLPath(element,true)):"");
 }
 
 void ContourOfReferenceWidget::setContour(const QString &str, Contour *contourPtr) {
