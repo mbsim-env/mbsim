@@ -212,6 +212,8 @@ namespace MBSim {
         assert(index < contactKinematics.size());
         return contactKinematics[index];
       }
+
+      virtual void setPlotFeatureContactKinematics(std::string cKName, PlotFeature pf, PlotFeatureStatus value);
       /***************************************************/
 
       /**
@@ -256,6 +258,13 @@ namespace MBSim {
        * \todo: what really is annoying is the fact, that due to the concept of the compound contour the sub contacts can not be build when the contours are connected. Thus it is not possible before the contact kinematics are assigned (what happens in the preInit-stage) that plot featers (and everything else, like names for the plot and so on) can not be set before. Thus this properties have to be saved in a special list in the multiple contact or the things are set later on...
        */
       std::vector<std::string> ckNames;
+
+      /*!
+       * \brief plotFeatures of sub-contacts
+       *
+       * \todo: see remark of ckNames
+       */
+      std::map<std::pair<std::string, MBSim::PlotFeature>, MBSim::PlotFeatureStatus> plotFeatureMap;
 
       /**
        * \brief force laws in normal and tangential direction on acceleration and velocity level

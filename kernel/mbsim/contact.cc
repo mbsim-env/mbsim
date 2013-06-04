@@ -38,6 +38,8 @@
 #include <mbsim/utils/rotarymatrices.h>
 #endif
 
+#include <algorithm>
+
 using namespace std;
 using namespace fmatvec;
 using namespace MBXMLUtils;
@@ -49,7 +51,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Contact, MBSIMNS"Contact")
 
   Contact::Contact(const string &name) :
-      LinkMechanics(name), fcl(0), fdf(0), fnil(0), ftil(0)
+      LinkMechanics(name), contacts(0), contactKinematics(0), ckNames(0), plotFeatureMap(), fcl(0), fdf(0), fnil(0), ftil(0)
 #ifdef HAVE_OPENMBVCPPINTERFACE
           , openMBVGrp(0), openMBVContactFrameSize(0), openMBVContactFrameEnabled(false), contactArrow(NULL), frictionArrow(NULL)
 #endif
@@ -62,6 +64,13 @@ namespace MBSim {
 
   void Contact::setDynamicSystemSolver(DynamicSystemSolver * sys) {
     ds = sys;
+  }
+
+  void Contact::setPlotFeatureContactKinematics(std::string cKName, MBSim::PlotFeature pf, MBSim::PlotFeatureStatus value) {
+    if(ckNames.end() != find(ckNames.begin(), ckNames.end(), cKName)) {
+      pair<string, MBSim::PlotFeature> Pair(cKName, pf);
+      plotFeatureMap.insert(pair<pair<string, MBSim::PlotFeature>, MBSim::PlotFeatureStatus >(Pair, value));
+    }
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -348,8 +357,17 @@ namespace MBSim {
           contacts[cK][k].connect(contour0);
           contacts[cK][k].connect(contour1);
           //Applies the plot feature to all children (make it possible to set only some children...)
-          for (int i = MBSim::plotRecursive; i != MBSim::LASTPLOTFEATURE; i++)
-            contacts[cK][k].setPlotFeature(static_cast<MBSim::PlotFeature>(i), getPlotFeature(static_cast<MBSim::PlotFeature>(i)));
+          for (int i = MBSim::plotRecursive; i != MBSim::LASTPLOTFEATURE; i++) {
+            MBSim::PlotFeature pf = static_cast<MBSim::PlotFeature>(i);
+            MBSim::PlotFeatureStatus pfS = getPlotFeature(pf);
+
+            pair<string, MBSim::PlotFeature> Pair(ckNames[cK], pf);
+            if(plotFeatureMap.find(Pair) != plotFeatureMap.end()) {
+              pfS = plotFeatureMap.find(Pair)->second;
+            }
+
+            contacts[cK][k].setPlotFeature(pf, pfS);
+          }
 
           //set the tolerances for the single contacts
           contacts[cK][k].setgTol(gTol);

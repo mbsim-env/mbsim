@@ -28,6 +28,9 @@
 
 namespace MBSim {
 
+  /*!
+   * \brief Function describing the scalar product between normal of frustum point and difference between frustum point and point on line defined by one parameter t
+   */
   class edgePolyFrustum : public Function1<fmatvec::Vec, fmatvec::Vec> {
     public:
       /*!
@@ -212,7 +215,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
       void assignContours(const std::vector<Contour*> &contour);
-      virtual void updateg(fmatvec::Vec& g, ContourPointData *cpData, int index);
+      virtual void updateg(fmatvec::Vec& g, ContourPointData *cpData, int index = 0);
       virtual void updatewb(fmatvec::Vec& wb, const fmatvec::Vec &g, ContourPointData *cpData) {
         throw MBSimError("ERROR (ContactKinematicsAreaPolynomialFrustum::updatewb): not implemented!");
       }
