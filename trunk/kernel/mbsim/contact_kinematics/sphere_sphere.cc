@@ -58,7 +58,7 @@ namespace MBSim {
     cpData[isphere0].getFrameOfReference().getOrientation().set(2, crossProduct(Wd,t));
     cpData[isphere1].getFrameOfReference().getOrientation().set(2, cpData[isphere0].getFrameOfReference().getOrientation().col(2));
     cpData[isphere0].getFrameOfReference().getPosition() = sphere0->getFrame()->getPosition() + sphere0->getRadius() * Wd;
-    cpData[isphere1].getFrameOfReference().getPosition() = sphere1->getFrame()->getPosition() - sphere0->getRadius() * Wd;
+    cpData[isphere1].getFrameOfReference().getPosition() = sphere1->getFrame()->getPosition() - sphere1->getRadius() * Wd;
   }
 
 }
