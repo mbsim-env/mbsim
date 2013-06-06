@@ -1456,17 +1456,17 @@ namespace MBSim {
     if(maxIter!=10000)
       addElementText(ele1,MBSIMNS"numberOfMaximalIterations",maxIter);
     TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"tolerances" );
-    if(tolProj!=1e-15)
+    if(tolProj>1e-15)
       addElementText(ele2,MBSIMNS"projection",tolProj);
-    if(gTol!=1e-8)
+    if(gTol>1e-8)
       addElementText(ele2,MBSIMNS"g",gTol);
-    if(gdTol!=1e-10)
+    if(gdTol>1e-10)
       addElementText(ele2,MBSIMNS"gd",gdTol);
-    if(gddTol!=1e-12)
+    if(gddTol>1e-12)
       addElementText(ele2,MBSIMNS"gdd",gddTol);
-    if(laTol!=1e-12)
+    if(laTol>1e-12)
       addElementText(ele2,MBSIMNS"la",laTol);
-    if(LaTol!=1e-10)
+    if(LaTol>1e-10)
       addElementText(ele2,MBSIMNS"La",LaTol);
     ele1->LinkEndChild( ele2 );
     ele0->LinkEndChild( ele1 );

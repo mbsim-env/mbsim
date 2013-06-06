@@ -169,11 +169,13 @@ namespace MBSim {
     }
     else if(stage==MBSim::unknownStage) {
       Constraint::init(stage);
+#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
       SymbolicFunction1<VecV,double> *function = dynamic_cast<SymbolicFunction1<VecV,double>*>(f);
       if(function) {
         if(fd==0) fd = new SymbolicFunction1<VecV,double>(function->getSXFunction().jacobian());
         if(fdd==0) fdd = new SymbolicFunction1<VecV,double>(static_cast<SymbolicFunction1<VecV,double>*>(fd)->getSXFunction().jacobian());
       }
+#endif
     }
     else
       Constraint::init(stage);
