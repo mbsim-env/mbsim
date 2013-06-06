@@ -21,6 +21,7 @@ import math
 import traceback
 import tarfile
 import re
+import hashlib
 if sys.version_info[0]==2: # to unify python 2 and python 3
   import urllib as myurllib
 else:
@@ -69,11 +70,9 @@ mainOpts.add_argument("directories", nargs="*", default=os.curdir, help="A direc
 mainOpts.add_argument("--action", default="report",
   choices=["report",
            "copyToReference",
-           "createReferenceTarBz2",
-           "applyReferenceTarBz2",
-           "uploadReferenceTarBz2",
-           "downloadReferenceTarBz2"],
-  help="The action of this script")
+           "pushReference",
+           "updateReference"],
+  help="The action of this script (pushReference is a internal action)")
 mainOpts.add_argument("-j", default=1, type=int, help="Number of jobs to run in parallel (applies only to the action 'report')")
 mainOpts.add_argument("--filter", default="all",
   choices=["all",
@@ -161,24 +160,14 @@ def main():
     copyToReference()
     return 0
 
-  # craete tar archive of the referernce
-  if args.action=="createReferenceTarBz2":
-    createReferenceTarBz2()
+  # apply (unpack) a reference archive
+  if args.action=="pushReference":
+    pushReference()
     return 0
 
   # apply (unpack) a reference archive
-  if args.action=="applyReferenceTarBz2":
-    applyReferenceTarBz2()
-    return 0
-
-  # apply (unpack) a reference archive
-  if args.action=="uploadReferenceTarBz2":
-    uploadReferenceTarBz2()
-    return 0
-
-  # apply (unpack) a reference archive
-  if args.action=="downloadReferenceTarBz2":
-    downloadReferenceTarBz2()
+  if args.action=="updateReference":
+    updateReference()
     return 0
 
   if os.path.isdir(args.reportOutDir): shutil.rmtree(args.reportOutDir)
@@ -359,6 +348,8 @@ def addExamplesByFilter(baseDir, directoriesSet):
   else: # remove dir
     baseDir=baseDir[1:] # remove the leading "^"
     addOrDiscard=directoriesSet.discard
+  # make baseDir a relative path
+  baseDir=os.path.relpath(baseDir)
   for root, _, _ in os.walk(baseDir):
     foundXML=os.path.isfile(pj(root, "MBS.mbsim.xml"))
     foundFLATXML=os.path.isfile(pj(root, "MBS.mbsim.flat.xml"))
@@ -850,58 +841,48 @@ def compareExample(example, compareFN):
 
 
 
+def loopOverReferenceFiles(msg, srcPrefix, srcPostfix, dstPrefix, dstPostfix, action):
+  curNumber=0
+  lenDirs=len(directories)
+  for example in directories:
+    curNumber+=1
+    print("%s: Example %03d/%03d; %5.1f%%; %s"%(msg, curNumber, lenDirs, curNumber/lenDirs*100, example[0]))
+    if not os.path.isdir(pj(dstPrefix, example[0], dstPostfix)): os.makedirs(pj(dstPrefix, example[0], dstPostfix))
+    for h5File in glob.glob(pj(srcPrefix, example[0], srcPostfix, "*.h5")):
+      action(h5File, pj(dstPrefix, example[0], dstPostfix, os.path.basename(h5File)))
+    action(pj(srcPrefix, example[0], srcPostfix, "time.dat"), pj(dstPrefix, example[0], dstPostfix, "time.dat"))
+
 def copyToReference():
-  curNumber=0
-  lenDirs=len(directories)
-  for example in directories:
-    curNumber+=1
-    print("Copying example %03d/%03d; %5.1f%%; %s"%(curNumber, lenDirs, curNumber/lenDirs*100, example[0]))
-    savedDir=os.getcwd()
-    os.chdir(example[0])
+  loopOverReferenceFiles("Copy to reference", ".", ".", ".", "reference", shutil.copyfile)
 
-    if not os.path.isdir("reference"): os.makedirs("reference")
-    for h5File in glob.glob("*.h5"):
-      shutil.copyfile(h5File, pj("reference", h5File))
-    shutil.copyfile("time.dat", pj("reference", "time.dat"))
+def copyAndSHA1(src, dst):
+  # copy src to dst
+  shutil.copyfile(src, dst)
+  # create sha1 hash of dst (save to <dst>.sha1)
+  open(dst+".sha1", "w").write(hashlib.sha1(open(dst, "rb").read()).hexdigest())
+def pushReference():
+  #MFMF uploadDir="/media/mbsim-env/MBSimDailyBuild/references"
+  uploadDir="/dev/shm/abc"
+  print("WARNING! pushReference is a internal action!")
+  print("This action should only be used on the official MBSim build system!")
+  print("It will fail on all other hosts!")
+  loopOverReferenceFiles("Pushing reference to download dir", ".", "reference", uploadDir, "reference", copyAndSHA1)
 
-    os.chdir(savedDir)
-
-
-
-def createReferenceTarBz2():
-  tfFD=tarfile.open("reference.tar.bz2", "w:bz2")
-  curNumber=0
-  lenDirs=len(directories)
-  for example in directories:
-    curNumber+=1
-    print("Archive example %03d/%03d; %5.1f%%; %s"%(curNumber, lenDirs, curNumber/lenDirs*100, example[0]))
-    tfFD.add(pj(example[0], "reference"))
-  tfFD.close()
-
-
-
-def applyReferenceTarBz2():
-  print("Appling the following files form the archive:")
-  tfFD=tarfile.open("reference.tar.bz2", "r:bz2")
-  toExtract=[]
-  for tarMember in tfFD.getmembers():
-    if tarMember.isfile():
-      for d in directories:
-        if os.path.dirname(os.path.dirname(os.path.normpath(tarMember.name)))==os.path.normpath(d[0]):
-          print(tarMember.name)
-          toExtract.append(tarMember)
-  tfFD.extractall(os.curdir, toExtract)
-  tfFD.close()
-
-
-
-def uploadReferenceTarBz2():
-  print("Not implemented yet!")
-
-
-
-def downloadReferenceTarBz2():
-  print("Not implemented yet!")
+def downloadFileIfDifferent(src, dst):
+  #MFMF downloadURL="http://www4.amm.mw.tu-muenchen.de/mbsim-env/MBSimDailyBuild/references/"
+  downloadURL="file:///dev/shm/abc/"
+  remoteSHA1Url=downloadURL+myurllib.pathname2url(src+".sha1")
+  remoteSHA1=myurllib.urlopen(remoteSHA1Url).read().decode('utf-8')
+  localSHA1=hashlib.sha1(open(src, "rb").read()).hexdigest()
+  if remoteSHA1!=localSHA1:
+    remoteUrl=downloadURL+myurllib.pathname2url(src)
+    print("  Download "+remoteUrl)
+    open(src, "wb").write(myurllib.urlopen(remoteUrl).read())
+def updateReference():
+  print("NOTE: Only files already existing in the corresponding reference directory are updated!")
+  print("Hence you have to run the script with '--action report' and afterwards with '--action copyToReference'")
+  print("to get an up to date reference before updating.")
+  loopOverReferenceFiles("Update reference", ".", "reference", ".", "reference", downloadFileIfDifferent)
 
 
 
