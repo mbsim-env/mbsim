@@ -871,8 +871,11 @@ def pushReference():
 def downloadFileIfDifferent(src, dst):
   downloadURL="http://www4.amm.mw.tu-muenchen.de/mbsim-env/MBSimDailyBuild/references/"
   remoteSHA1Url=downloadURL+myurllib.pathname2url(src+".sha1")
-  remoteSHA1=myurllib.urlopen(remoteSHA1Url).read().decode('utf-8')
-  localSHA1=hashlib.sha1(open(src, "rb").read()).hexdigest()
+  try:
+    remoteSHA1=myurllib.urlopen(remoteSHA1Url).read().decode('utf-8')
+    localSHA1=hashlib.sha1(open(src, "rb").read()).hexdigest()
+  except IOError: 
+    return
   if remoteSHA1!=localSHA1:
     remoteUrl=downloadURL+myurllib.pathname2url(src)
     print("  Download "+remoteUrl)
