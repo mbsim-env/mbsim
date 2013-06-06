@@ -21,6 +21,7 @@
 
 #include "fmatvec.h"
 #include "area_polynomialfrustum.h"
+
 #include "mbsim/contours/polynomial_frustum.h"
 #include "mbsim/utils/nonlinear_algebra.h"
 #include "fmatvec/linear_algebra_double.h"
@@ -97,67 +98,6 @@ namespace MBSim {
     return true;
   }
 
-  projectAlongNormal::projectAlongNormal(PolynomialFrustum * frustum) :
-      frustum(frustum), referencePoint(), phi(0.) {
-  }
-
-  projectAlongNormal::~projectAlongNormal() {
-
-  }
-
-  void projectAlongNormal::setUpSystemParamters(const Vec3 & referencePoint_, const double & phi_) {
-    referencePoint = referencePoint_;
-    phi = phi_;
-  }
-
-  Vec projectAlongNormal::operator ()(const Vec & xin, const void *) {
-    Vec result(1, NONINIT);
-
-    const double & x = xin(0);
-
-    const double fd = frustum->getValueD1(x);
-
-    //to avoid numerical instabilities chose one of the two options
-    double tmp = referencePoint(1) /  cos(phi);
-    if(fabs(cos(phi)) < 1e-2)
-      tmp = referencePoint(2) / sin(phi);
-
-    result(0) = referencePoint(0) - (frustum->getValue(x) * fd - fd * tmp + x);
-
-    return result;
-  }
-
-  projectAlongNormalJacobian::projectAlongNormalJacobian(PolynomialFrustum * frustum) :
-      frustum(frustum), referencePoint(), phi(0.) {
-  }
-
-  projectAlongNormalJacobian::~projectAlongNormalJacobian() {
-  }
-
-  void projectAlongNormalJacobian::setUpSystemParamters(const Vec3 & referencePoint_, const double & phi_) {
-    referencePoint = referencePoint_;
-    phi = phi_;
-  }
-
-  SqrMat projectAlongNormalJacobian::operator ()(const Vec & xin, const void *) {
-    SqrMat Jac(1, NONINIT);
-
-    const double & x = xin(0);
-
-    const double fd = frustum->getValueD1(x);
-    const double fdd = frustum->getValueD2(x);
-
-    //to avoid numerical instabilities chose one of the two options
-    double tmp = referencePoint(1) /  cos(phi);
-    if(fabs(cos(phi)) < 1e-2)
-      tmp = referencePoint(2) / sin(phi);
-
-    Jac(0,0) =  - fd*fd - frustum->getValue(x) * fdd + fdd * tmp - 1;
-
-    return Jac;
-  }
-
-
   ContactKinematicsAreaPolynomialFrustum::ContactKinematicsAreaPolynomialFrustum() :
       ContactKinematics(), iarea(-1), ifrustum(-1), area(0), frustum(0), x1(-1), x2(-1), funcProjectAlongNormal(0), newtonProjectAlongNormal(), jacobianProjectAlongNormal(0), criteriaProjectAlongNormal(), dampingProjectAlongNormal(),  funcEdge(0), newtonEdge(), jacobianEdge(), criteriaEdge(), dampingEdge(), ilast(-1), xi(1, INIT, 0.5) {
   }
@@ -187,9 +127,9 @@ namespace MBSim {
     x2 = frustum->getHeight() / 2;
 
     /*Set Up system for projection of contact point onto frustum surface*/
-    funcProjectAlongNormal = new projectAlongNormal(frustum);
+    funcProjectAlongNormal = new projectPointAlongNormal(frustum);
     newtonProjectAlongNormal.setFunction(funcProjectAlongNormal);
-    jacobianProjectAlongNormal = new projectAlongNormalJacobian(frustum);
+    jacobianProjectAlongNormal = new projectPointAlongNormalJacobian(frustum);
     newtonProjectAlongNormal.setJacobianFunction(jacobianProjectAlongNormal);
     newtonProjectAlongNormal.setCriteriaFunction(&criteriaProjectAlongNormal);
     newtonProjectAlongNormal.setDampingFunction(&dampingProjectAlongNormal);

@@ -25,6 +25,7 @@
 #include <mbsim/contours/polynomial_frustum.h>
 #include <mbsim/contours/area.h>
 #include <mbsim/numerics/nonlinear_algebra/multi_dimensional_newton_method.h>
+#include <mbsim/contact_kinematics/point_polynomialfrustum.h>
 
 namespace MBSim {
 
@@ -142,67 +143,6 @@ namespace MBSim {
   };
 
   /*!
-   * \brief function that is zero for a height-coordinate of the polynomial frustum on which the normal on that point points towards the given outer point
-   */
-  class projectAlongNormal : public Function1<fmatvec::Vec, fmatvec::Vec> {
-    public:
-      projectAlongNormal(PolynomialFrustum * frustum);
-
-      virtual ~projectAlongNormal();
-
-      void setUpSystemParamters(const fmatvec::Vec3 & referencePoint, const double & phi);
-
-      fmatvec::Vec operator()(const fmatvec::Vec &x, const void* = NULL);
-
-    protected:
-      /*!
-       * \brief constant pointer to the frustum
-       */
-      PolynomialFrustum * frustum;
-
-      /*!
-       * \brief point that should be projected
-       */
-      fmatvec::Vec3 referencePoint;
-
-      /*!
-       * \brief azimuathal position where it all happens
-       */
-      double phi;
-  };
-
-  /*!
-   * \brief the Jacobian function for the projectAlongNormal Function
-   */
-  class projectAlongNormalJacobian : public NewtonJacobianFunction {
-    public:
-      projectAlongNormalJacobian(PolynomialFrustum * frustum);
-
-      virtual ~projectAlongNormalJacobian();
-
-      void setUpSystemParamters(const fmatvec::Vec3 & referencePoint, const double & phi);
-
-      fmatvec::SqrMat operator()(const fmatvec::Vec &x, const void* = NULL);
-
-    protected:
-      /*!
-       * \brief constant pointer to the frustum
-       */
-      PolynomialFrustum * frustum;
-
-      /*!
-       * \brief point that should be projected
-       */
-      fmatvec::Vec3 referencePoint;
-
-      /*!
-       * \brief azimuathal position where it all happens
-       */
-      double phi;
-  };
-
-
-  /*!
    * \brief class for contact kinematics between convex frustum and an area
    * \author Kilian Grundl, Tingting Sun
    * \date  09.10.2012
@@ -308,7 +248,7 @@ namespace MBSim {
       /*!
        * \brief function for intersection point
        */
-      projectAlongNormal * funcProjectAlongNormal;
+      projectPointAlongNormal * funcProjectAlongNormal;
 
       /*!
        * \brief newton method for solving the edge contact
@@ -318,7 +258,7 @@ namespace MBSim {
       /*!
        * \brief Jacobian for newton method
        */
-      projectAlongNormalJacobian * jacobianProjectAlongNormal;
+      projectPointAlongNormalJacobian * jacobianProjectAlongNormal;
 
       /*!
        * \brief criteria for newton method
