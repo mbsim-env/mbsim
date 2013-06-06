@@ -30,7 +30,7 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
   //contact
   double mu = 0.8;
 
-  Vec WrOK(3);
+  Vec3 WrOK;
   Vec KrKS(3);
   Vec KrKP(3);
   SymMat Theta(3);
@@ -49,8 +49,10 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
   ground->setOutCont(false);
 
 
-  this->addFrame("K",WrOK,SqrMat(3,EYE),this->getFrame("I"));
-  groundBase->setFrameOfReference(this->getFrame("K"));
+  FixedRelativeFrame* frameK = new FixedRelativeFrame("K", WrOK, SqrMat3(EYE), getFrameI());
+  addFrame(frameK);
+
+  groundBase->setFrameOfReference(frameK);
   groundBase->setFrameForKinematics(groundBase->getFrame("C"));
   groundBase->setMass(1.);
   groundBase->setInertiaTensor(SymMat(3,EYE));
@@ -62,6 +64,7 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
   radii(1) = rO;
   ground->setRadii(radii);
   ground->setHeight(h);
+  ground->setFrameOfReference(groundBase->getFrameC());
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   ground->enableOpenMBV();
@@ -69,7 +72,7 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
 #endif
 
 
-  groundBase->addContour(ground,Vec(3,INIT,0.),SqrMat(3,EYE));
+  groundBase->addContour(ground);
 
   /* contact */
   Contact *contact = new Contact("Contact");
@@ -139,9 +142,10 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
     WrOS0B(0) = (rI+rO)*0.75*cos(k*2.*M_PI/nB);
     WrOS0B(1) = h;
     WrOS0B(2) = (rI+rO)*0.85*sin(k*2.*M_PI/nB);
-    this->addFrame(frame.str(),WrOS0B,SqrMat(3,EYE),this->getFrame("I"));
+    FixedRelativeFrame * refFrame = new FixedRelativeFrame(frame.str(),WrOS0B,SqrMat3(EYE),getFrameI());
+    this->addFrame(refFrame);
 
-    balls[k]->setFrameOfReference(this->getFrame(frame.str()));
+    balls[k]->setFrameOfReference(refFrame);
     balls[k]->setFrameForKinematics(balls[k]->getFrame("C"));
     balls[k]->setMass(mass);
     balls[k]->setInertiaTensor(Theta);
@@ -156,8 +160,9 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
     spheres.push_back(new Sphere(spherename.str()));
     spheres[k]->setRadius(0.01);
     spheres[k]->enableOpenMBV();
+    spheres[k]->setFrameOfReference(balls[k]->getFrameC());
 
-    balls[k]->addContour(spheres[k],Vec(3,INIT,0.), SqrMat(3,EYE));
+    balls[k]->addContour(spheres[k]);
 
     contact->connect(groundBase->getContour("Ground"),spheres[k]);
   }

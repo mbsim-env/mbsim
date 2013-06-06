@@ -22,10 +22,12 @@ libcontactkinematics_la_SOURCES = area_polynomialfrustum.cc\
 				  point_plane.cc\
 				  point_sphere.cc\
 				  point_planewithfrustum.cc\
+				  point_polynomialfrustum.cc\
 				  point_line_segment.cc\
 				  sphere_frustum.cc\
 				  sphere_plane.cc\
-				  sphere_sphere.cc
+				  sphere_sphere.cc\
+				  sphere_polynomialfrustum.cc			  
 
 contactkinematicsincludedir = $(includedir)/mbsim/contact_kinematics
 
@@ -55,7 +57,9 @@ contactkinematicsinclude_HEADERS = area_polynomialfrustum.h\
 				   point_plane.h \
 				   point_sphere.h \
 				   point_planewithfrustum.h \
-				   point_line_segment.h \
-				   sphere_frustum.h \
-				   sphere_plane.h \
-				   sphere_sphere.h
+				   point_polynomialfrustum.h\
+				   point_line_segment.h\
+				   sphere_frustum.h\
+				   sphere_plane.h\
+				   sphere_sphere.h\
+				   sphere_polynomialfrustum.h	

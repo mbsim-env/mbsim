@@ -213,6 +213,10 @@ namespace MBSim {
         return contactKinematics[index];
       }
 
+      const std::vector<std::vector<SingleContact> > & getSubcontacts() const {
+        return contacts;
+      }
+
       virtual void setPlotFeatureContactKinematics(std::string cKName, PlotFeature pf, PlotFeatureStatus value);
       /***************************************************/
 
