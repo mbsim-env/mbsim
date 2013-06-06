@@ -861,16 +861,14 @@ def copyAndSHA1(src, dst):
   # create sha1 hash of dst (save to <dst>.sha1)
   open(dst+".sha1", "w").write(hashlib.sha1(open(dst, "rb").read()).hexdigest())
 def pushReference():
-  #MFMF uploadDir="/media/mbsim-env/MBSimDailyBuild/references"
-  uploadDir="/dev/shm/abc"
+  uploadDir="/media/mbsim-env/MBSimDailyBuild/references"
   print("WARNING! pushReference is a internal action!")
   print("This action should only be used on the official MBSim build system!")
   print("It will fail on all other hosts!")
   loopOverReferenceFiles("Pushing reference to download dir", ".", "reference", uploadDir, "reference", copyAndSHA1)
 
 def downloadFileIfDifferent(src, dst):
-  #MFMF downloadURL="http://www4.amm.mw.tu-muenchen.de/mbsim-env/MBSimDailyBuild/references/"
-  downloadURL="file:///dev/shm/abc/"
+  downloadURL="http://www4.amm.mw.tu-muenchen.de/mbsim-env/MBSimDailyBuild/references/"
   remoteSHA1Url=downloadURL+myurllib.pathname2url(src+".sha1")
   remoteSHA1=myurllib.urlopen(remoteSHA1Url).read().decode('utf-8')
   localSHA1=hashlib.sha1(open(src, "rb").read()).hexdigest()
