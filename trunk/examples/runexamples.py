@@ -850,7 +850,8 @@ def loopOverReferenceFiles(msg, srcPrefix, srcPostfix, dstPrefix, dstPostfix, ac
     if not os.path.isdir(pj(dstPrefix, example[0], dstPostfix)): os.makedirs(pj(dstPrefix, example[0], dstPostfix))
     for h5File in glob.glob(pj(srcPrefix, example[0], srcPostfix, "*.h5")):
       action(h5File, pj(dstPrefix, example[0], dstPostfix, os.path.basename(h5File)))
-    action(pj(srcPrefix, example[0], srcPostfix, "time.dat"), pj(dstPrefix, example[0], dstPostfix, "time.dat"))
+    if os.path.isfile(pj(srcPrefix, example[0], srcPostfix, "time.dat")):
+      action(pj(srcPrefix, example[0], srcPostfix, "time.dat"), pj(dstPrefix, example[0], dstPostfix, "time.dat"))
 
 def copyToReference():
   loopOverReferenceFiles("Copy to reference", ".", ".", ".", "reference", shutil.copyfile)
