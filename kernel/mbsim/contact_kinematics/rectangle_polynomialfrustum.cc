@@ -20,7 +20,7 @@
 #include <config.h>
 
 #include "fmatvec.h"
-#include "area_polynomialfrustum.h"
+#include "rectangle_polynomialfrustum.h"
 
 #include "mbsim/contours/polynomial_frustum.h"
 #include "mbsim/utils/nonlinear_algebra.h"

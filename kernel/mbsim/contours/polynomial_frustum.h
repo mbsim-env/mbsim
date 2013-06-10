@@ -23,7 +23,7 @@
 
 #include <mbsim/contour.h>
 
-#include <mbsim/contours/area.h>
+#include <mbsim/contours/rectangle.h>
 
 #include <mbsim/utils/colors.h>
 

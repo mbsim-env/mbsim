@@ -19,8 +19,8 @@
  */
 
 #include <config.h> 
-#include "mbsim/contact_kinematics/point_area.h"
-#include "mbsim/contours/area.h"
+#include "mbsim/contact_kinematics/point_rectangle.h"
+#include "mbsim/contours/rectangle.h"
 #include "mbsim/contours/point.h"
 
 using namespace fmatvec;
