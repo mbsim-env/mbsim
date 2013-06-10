@@ -1,7 +1,7 @@
 #include "system.h"
 #include <mbsim/utils/rotarymatrices.h>
 #include "mbsim/rigid_body.h"
-#include "mbsim/contours/area.h"
+#include "mbsim/contours/rectangle.h"
 #include "mbsim/contours/polynomial_frustum.h"
 #include "mbsim/contact.h"
 #include "mbsim/constitutive_laws.h"
@@ -64,33 +64,33 @@ System::System(const string &projectName) :
 
   //CONTOUR
   { // Rectangle1
-    Rectangle* area = new Rectangle("AREA1");
-    area->setYLength(1);
-    area->setZLength(1);
-    area->enableOpenMBV();
+    Rectangle* rectangle = new Rectangle("AREA1");
+    rectangle->setYLength(1);
+    rectangle->setZLength(1);
+    rectangle->enableOpenMBV();
 
     //BODY
-    RigidBody* areaBody = new RigidBody("RectangleBody1");
-    areaBody->setMass(1);
-    areaBody->setFrameOfReference(this->getFrameI());
-    areaBody->setInertiaTensor(SymMat3(EYE));
+    RigidBody* rectangleBody = new RigidBody("RectangleBody1");
+    rectangleBody->setMass(1);
+    rectangleBody->setFrameOfReference(this->getFrameI());
+    rectangleBody->setInertiaTensor(SymMat3(EYE));
 
-    areaBody->setTranslation(new LinearTranslation(Mat3x3(EYE)));
-    areaBody->setRotation(new CardanAngles);
+    rectangleBody->setTranslation(new LinearTranslation(Mat3x3(EYE)));
+    rectangleBody->setRotation(new CardanAngles);
     //give degrees of freedom
-    areaBody->setInitialGeneralizedPosition(Vec("[-1.5;0.5;0;0;0;0]"));
-    areaBody->setInitialGeneralizedVelocity(Vec("[0;0;0;0;0;0]"));
+    rectangleBody->setInitialGeneralizedPosition(Vec("[-1.5;0.5;0;0;0;0]"));
+    rectangleBody->setInitialGeneralizedVelocity(Vec("[0;0;0;0;0;0]"));
 
-    this->addObject(areaBody);
+    this->addObject(rectangleBody);
 
-    FixedRelativeFrame * areaFrame = new FixedRelativeFrame("RectangleFrame", Vec3(), BasicRotAKIx(M_2_PI));
-    areaBody->addFrame(areaFrame);
-    area->setFrameOfReference(areaFrame);
-    areaBody->addContour(area);
+    FixedRelativeFrame * rectangleFrame = new FixedRelativeFrame("RectangleFrame", Vec3(), BasicRotAKIx(M_2_PI));
+    rectangleBody->addFrame(rectangleFrame);
+    rectangle->setFrameOfReference(rectangleFrame);
+    rectangleBody->addContour(rectangle);
 
-    //Add contact between frustum and area
+    //Add contact between frustum and rectangle
     Contact* contact = new Contact("FrustumRectangle1");
-    contact->connect(area, polyfrustumcontour);
+    contact->connect(rectangle, polyfrustumcontour);
 
     contact->setPlotFeature(openMBV, enabled);
     contact->enableOpenMBVContactPoints();
@@ -105,33 +105,33 @@ System::System(const string &projectName) :
   }
 
   { // Rectangle2
-    Rectangle* area = new Rectangle("AREA2");
-    area->setYLength(2);
-    area->setZLength(2);
-    area->enableOpenMBV();
+    Rectangle* rectangle = new Rectangle("AREA2");
+    rectangle->setYLength(2);
+    rectangle->setZLength(2);
+    rectangle->enableOpenMBV();
 
     //BODY
-    RigidBody* areaBody = new RigidBody("RectangleBody2");
-    areaBody->setMass(1);
-    areaBody->setFrameOfReference(this->getFrameI());
-    areaBody->setInertiaTensor(SymMat3(EYE));
+    RigidBody* rectangleBody = new RigidBody("RectangleBody2");
+    rectangleBody->setMass(1);
+    rectangleBody->setFrameOfReference(this->getFrameI());
+    rectangleBody->setInertiaTensor(SymMat3(EYE));
 
-    areaBody->setTranslation(new LinearTranslation(Mat3x3(EYE)));
-    areaBody->setRotation(new CardanAngles);
+    rectangleBody->setTranslation(new LinearTranslation(Mat3x3(EYE)));
+    rectangleBody->setRotation(new CardanAngles);
     //give degrees of freedom
-    areaBody->setInitialGeneralizedPosition(Vec("[1.5;0.8;0;0;0;0]"));
-    areaBody->setInitialGeneralizedVelocity(Vec("[0;0;0;0;0;0]"));
+    rectangleBody->setInitialGeneralizedPosition(Vec("[1.5;0.8;0;0;0;0]"));
+    rectangleBody->setInitialGeneralizedVelocity(Vec("[0;0;0;0;0;0]"));
 
-    this->addObject(areaBody);
+    this->addObject(rectangleBody);
 
-    FixedRelativeFrame * areaFrame = new FixedRelativeFrame("RectangleFrame", Vec3(), BasicRotAKIz(M_PI));
-    areaBody->addFrame(areaFrame);
-    area->setFrameOfReference(areaFrame);
-    areaBody->addContour(area);
+    FixedRelativeFrame * rectangleFrame = new FixedRelativeFrame("RectangleFrame", Vec3(), BasicRotAKIz(M_PI));
+    rectangleBody->addFrame(rectangleFrame);
+    rectangle->setFrameOfReference(rectangleFrame);
+    rectangleBody->addContour(rectangle);
 
-    //Add contact between frustum and area
+    //Add contact between frustum and rectangle
     Contact* contact = new Contact("FrustumRectangle2");
-    contact->connect(area, polyfrustumcontour);
+    contact->connect(rectangle, polyfrustumcontour);
 
     contact->setPlotFeature(openMBV, enabled);
     contact->enableOpenMBVContactPoints();
@@ -147,33 +147,33 @@ System::System(const string &projectName) :
   }
 
   { // Rectangle3
-    Rectangle* area = new Rectangle("AREA3");
-    area->setYLength(0.5);
-    area->setZLength(1);
-    area->enableOpenMBV();
+    Rectangle* rectangle = new Rectangle("AREA3");
+    rectangle->setYLength(0.5);
+    rectangle->setZLength(1);
+    rectangle->enableOpenMBV();
 
     //BODY
-    RigidBody* areaBody = new RigidBody("RectangleBody3");
-    areaBody->setMass(1);
-    areaBody->setFrameOfReference(this->getFrameI());
-    areaBody->setInertiaTensor(SymMat3(EYE));
+    RigidBody* rectangleBody = new RigidBody("RectangleBody3");
+    rectangleBody->setMass(1);
+    rectangleBody->setFrameOfReference(this->getFrameI());
+    rectangleBody->setInertiaTensor(SymMat3(EYE));
 
-    areaBody->setTranslation(new LinearTranslation(Mat3x3(EYE)));
-    areaBody->setRotation(new CardanAngles);
+    rectangleBody->setTranslation(new LinearTranslation(Mat3x3(EYE)));
+    rectangleBody->setRotation(new CardanAngles);
     //give degrees of freedom
-    areaBody->setInitialGeneralizedPosition(Vec("[0.;-0.3;1.5;0;0;0]"));
-    areaBody->setInitialGeneralizedVelocity(Vec("[0;0;0;0;0;0]"));
+    rectangleBody->setInitialGeneralizedPosition(Vec("[0.;-0.3;1.5;0;0;0]"));
+    rectangleBody->setInitialGeneralizedVelocity(Vec("[0;0;0;0;0;0]"));
 
-    this->addObject(areaBody);
+    this->addObject(rectangleBody);
 
-    FixedRelativeFrame * areaFrame = new FixedRelativeFrame("RectangleFrame", Vec3(), BasicRotAKIz(M_PI) * BasicRotAIKy(M_PI_2));
-    areaBody->addFrame(areaFrame);
-    area->setFrameOfReference(areaFrame);
-    areaBody->addContour(area);
+    FixedRelativeFrame * rectangleFrame = new FixedRelativeFrame("RectangleFrame", Vec3(), BasicRotAKIz(M_PI) * BasicRotAIKy(M_PI_2));
+    rectangleBody->addFrame(rectangleFrame);
+    rectangle->setFrameOfReference(rectangleFrame);
+    rectangleBody->addContour(rectangle);
 
-    //Add contact between frustum and area
+    //Add contact between frustum and rectangle
     Contact* contact = new Contact("FrustumRectangle3");
-    contact->connect(area, polyfrustumcontour);
+    contact->connect(rectangle, polyfrustumcontour);
 
     contact->setPlotFeature(openMBV, enabled);
     contact->enableOpenMBVContactPoints();

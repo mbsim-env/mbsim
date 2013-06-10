@@ -4,7 +4,7 @@
 #include "mbsim/joint.h"
 #include "mbsim/contact.h"
 #include "mbsim/contours/point.h"
-#include "mbsim/contours/area.h"
+#include "mbsim/contours/rectangle.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"
 
@@ -24,11 +24,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
   /* disk */
-  Rectangle* area = new Rectangle("Rectangle");
-  addContour(area, Vec3(), SqrMat3(EYE));
-  area->setYLength(3);
-  area->setZLength(2);
-  area->enableOpenMBV();
+  Rectangle* rectangle = new Rectangle("Rectangle");
+  addContour(rectangle, Vec3(), SqrMat3(EYE));
+  rectangle->setYLength(3);
+  rectangle->setZLength(2);
+  rectangle->enableOpenMBV();
 
 
   /* ball */ 
@@ -101,7 +101,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     contact[k]->setContactImpactLaw(new UnilateralNewtonImpact(.5));
 //    contact[k]->setFrictionForceLaw(new SpatialCoulombFriction(0.4));
 //    contact[k]->setFrictionImpactLaw(new SpatialCoulombImpact(0.4));
-    contact[k]->connect(points[k], area);
+    contact[k]->connect(points[k], rectangle);
     contact[k]->enableOpenMBVContactPoints();
     this->addLink(contact[k]);
   }

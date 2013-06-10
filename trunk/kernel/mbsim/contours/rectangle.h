@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _AREA_H_
-#define _AREA_H_
+#ifndef _RECTANGLE_H_
+#define _RECTANGLE_H_
 
 #include "mbsim/contours/plane.h"
 #include "fmatvec.h"

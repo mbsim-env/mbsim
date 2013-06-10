@@ -34,7 +34,7 @@
 #include <mbsim/contact_kinematics/compoundcontour_contour.h>
 #include <mbsim/contact_kinematics/edge_edge.h>
 #include <mbsim/contact_kinematics/line_contour1s.h>
-#include <mbsim/contact_kinematics/point_area.h>
+#include <mbsim/contact_kinematics/point_rectangle.h>
 #include <mbsim/contact_kinematics/point_contour1s.h>
 #include <mbsim/contact_kinematics/point_contourinterpolation.h>
 #include <mbsim/contact_kinematics/point_frustum.h>
@@ -48,7 +48,7 @@
 #include <mbsim/contact_kinematics/sphere_plane.h>
 #include <mbsim/contact_kinematics/sphere_polynomialfrustum.h>
 #include <mbsim/contact_kinematics/sphere_sphere.h>
-#include <mbsim/contact_kinematics/area_polynomialfrustum.h>
+#include <mbsim/contact_kinematics/rectangle_polynomialfrustum.h>
 #include <mbsim/contact_kinematics/point_polynomialfrustum.h>
 // --- List of contact kinematic implementations - END ---
 

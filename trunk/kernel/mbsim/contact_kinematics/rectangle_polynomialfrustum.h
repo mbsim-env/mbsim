@@ -23,7 +23,7 @@
 #include "contact_kinematics.h"
 
 #include <mbsim/contours/polynomial_frustum.h>
-#include <mbsim/contours/area.h>
+#include <mbsim/contours/rectangle.h>
 #include <mbsim/numerics/nonlinear_algebra/multi_dimensional_newton_method.h>
 #include <mbsim/contact_kinematics/point_polynomialfrustum.h>
 

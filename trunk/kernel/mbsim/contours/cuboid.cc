@@ -19,7 +19,7 @@
 
 #include<config.h>
 #include "mbsim/contours/cuboid.h"
-#include "mbsim/contours/area.h"
+#include "mbsim/contours/rectangle.h"
 #include "mbsim/contours/edge.h"
 #include "mbsim/utils/rotarymatrices.h"
 
