@@ -41,16 +41,22 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setLength(double l_) { l = l_; }
-      void setHeight(double h_) { h = h_; }
-      void setDepth(double d_) { d = d_; }
+      void setXLength(double lx_) { lx = lx_; }
+      void setYLength(double ly_) { ly = ly_; }
+      void setZLength(double lz_) { lz = lz_; }
       /***************************************************/
+
+      virtual void plot(double t, double dt = 1);
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      void enableOpenMBV(bool enable=true);
+#endif
 
     private:
       /**
-       * \brief length, height and depth of cuboid
+       * \brief x-, y- and z-length of cuboid
        */
-      double l,h,d;
+      double lx,ly,lz;
 
       void init(InitStage stage);
   };

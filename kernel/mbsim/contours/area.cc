@@ -29,51 +29,51 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  Area::Area(const string &name) :
-      Plane(name), limy(1), limz(1), RrA(0), RrB(0), RrC(0), RrD(0) {
+  Rectangle::Rectangle(const string &name) :
+      Plane(name), yLength(1), zLength(1), thickness(0.01), RrA(0), RrB(0), RrC(0), RrD(0) {
   }
 
-  void Area::init(InitStage stage) {
+  void Rectangle::init(InitStage stage) {
     if (stage == calculateLocalInitialValues)
       setVertices();
 
     Plane::init(stage);
   }
 
-  void Area::setVertices() {
+  void Rectangle::setVertices() {
     {
-      //coordinates of the vertices under reference frame of the area
+      //coordinates of the vertices under reference frame of the rectangle
       RrA(0) = 0.;
-      RrA(1) = limy / 2;
-      RrA(2) = limz / 2;
+      RrA(1) = yLength / 2;
+      RrA(2) = zLength / 2;
 
       RrB(0) = 0.;
-      RrB(1) = -limy / 2;
-      RrB(2) = limz / 2;
+      RrB(1) = -yLength / 2;
+      RrB(2) = zLength / 2;
 
       RrC(0) = 0.;
-      RrC(1) = -limy / 2;
-      RrC(2) = -limz / 2;
+      RrC(1) = -yLength / 2;
+      RrC(2) = -zLength / 2;
 
       RrD(0) = 0.;
-      RrD(1) = limy / 2;
-      RrD(2) = -limz / 2;
+      RrD(1) = yLength / 2;
+      RrD(2) = -zLength / 2;
     }
 
   }
 
-  bool Area::PointInArea(const fmatvec::Vec3& Point) {
-    //point vector in coordinates of reference frame of the area
+  bool Rectangle::PointInRectangle(const fmatvec::Vec3& Point) {
+    //point vector in coordinates of reference frame of the rectangle
     Vec3 P_inA = this->getFrame()->getOrientation().T() * (Point - this->getFrame()->getPosition());
 
-    // Here we suppose that the area in our codes has axis x parallel to its normal
-    if ((P_inA(1) <= limy / 2) && (P_inA(1) >= (-limy / 2)) && (P_inA(2) <= limz / 2) && (P_inA(2) >= (-limz / 2))) {
+    // Here we suppose that the rectangle in our codes has axis x parallel to its normal
+    if ((P_inA(1) <= yLength / 2) && (P_inA(1) >= (-yLength / 2)) && (P_inA(2) <= zLength / 2) && (P_inA(2) >= (-zLength / 2))) {
       return true;
     }
     return false;
   }
 
-  bool Area::PointInCircle(const fmatvec::Vec3& Point, const fmatvec::Vec3& CenCir, const double & radius) {
+  bool Rectangle::PointInCircle(const fmatvec::Vec3& Point, const fmatvec::Vec3& CenCir, const double & radius) {
     double dis = nrm2(Point - CenCir);
     if (dis > radius) {
       return false;
@@ -82,7 +82,7 @@ namespace MBSim {
   }
 
   // this algorithm comes from http://doswa.com/2009/07/13/circle-segment-intersectioncollision.html
-  Vec3 Area::Point_closest_toCircle_onLineseg(const Vec3 & EndP1, const Vec3 & EndP2, const Vec3& CenCir) {
+  Vec3 Rectangle::Point_closest_toCircle_onLineseg(const Vec3 & EndP1, const Vec3 & EndP2, const Vec3& CenCir) {
     //vector of the line segment
     Vec3 SegV = EndP2 - EndP1;
     //vector from end point 1 to center of the circle
@@ -100,13 +100,13 @@ namespace MBSim {
     return EndP1 + proj * SegV_unit;
   }
 
-  bool Area::Intersect_Circle(const double & radi, const Vec3& CenCir) {
+  bool Rectangle::Intersect_Circle(const double & radi, const Vec3& CenCir) {
     //if CenCir lies in the square, intersect
-    if (PointInArea(CenCir)) {
+    if (PointInRectangle(CenCir)) {
       return true;
     }
 
-    //center of area
+    //center of rectangle
     Vec3 C_A = this->getFrame()->getPosition();
     //orientation matrix
     SqrMat3 OriMat = this->getFrame()->getOrientation();
@@ -134,7 +134,7 @@ namespace MBSim {
 //      return true;
 //    }
 
-//check if any of the 4 edges of the area(AB,BC,CD,DA) intersect with the square
+//check if any of the 4 edges of the rectangle(AB,BC,CD,DA) intersect with the square
 //firstly select the nearest point to the circle on the line segment
     Closest = Point_closest_toCircle_onLineseg(IrA, IrB, CenCir);
     if (PointInCircle(Closest, CenCir, radi)) {
@@ -157,10 +157,10 @@ namespace MBSim {
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  void Area::enableOpenMBV(bool enable, int number) {
-    Plane::enableOpenMBV(enable, limy, number);
+  void Rectangle::enableOpenMBV(bool enable, int number) {
+    Plane::enableOpenMBV(enable, yLength, number);
     if (enable) {
-      ((OpenMBV::Grid*) openMBVRigidBody)->setXSize(limz);
+      ((OpenMBV::Grid*) openMBVRigidBody)->setXSize(zLength);
     }
     else
       openMBVRigidBody = 0;

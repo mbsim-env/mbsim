@@ -223,7 +223,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   C(0,0) = -1; C(1,1) = 1; C(2,2) = -1;
   Vec RrRC_line1(3,INIT,0.);
   RrRC_line1(0) = -(0.5*Laenge_Block+0.5*Laenge_Piston); //damit Kontakt an beiden Konturen auftritt
-  line1->setBounds(Vec("[-1.; 1.]"));
+  line1->setLength(2);
   Block->addContour(line1,RrRC_line1,C);
 
 

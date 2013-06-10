@@ -49,8 +49,6 @@ namespace MBSim {
       ContactKinematics *tmp = findContactPairingRigidRigid(c[0]->getType().c_str(), c[1]->getType().c_str());
       if (tmp == 0)
         tmp = findContactPairingRigidRigid(c[1]->getType().c_str(), c[0]->getType().c_str());
-      if (tmp == 0)
-        throw;
       if (tmp) {
         contactKinematics.push_back(tmp);
         tmp->assignContours(c[0], c[1]);

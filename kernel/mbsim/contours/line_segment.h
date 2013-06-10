@@ -56,21 +56,22 @@ namespace MBSim {
       virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
 
       /* GETTER / SETTER */
-      void setBounds(const fmatvec::Vec &bound_);
-      const fmatvec::Vec& getBounds() const { return bound; }
-      const double& getSegmentLength() const {return length; }
+      void setLength(double length_) {length = length_; }
+      double getLength() const {return length; }
+      void setThickness(double thickness_) {thickness = thickness_;}
+      double getThickness() const {return thickness;}
       /***************************************************/
 
     private:
       /**
-       * \brief bounds of line segment
-       */
-      fmatvec::Vec bound;
-
-      /**
        * \brief length of line segment
        */
       double length;
+
+      /**
+       * \brief thickness of line segment
+       */
+      double thickness;
   };      
 }
 

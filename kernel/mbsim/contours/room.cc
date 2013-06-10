@@ -100,17 +100,17 @@ namespace MBSim {
         frame->setFrameOfReference(R);
         addFrame(frame);
 
-        Area * area = new Area(s.str());
-        area->setLimitY(limit[i](0));
-        area->setLimitZ(limit[i](1));
-        area->setFrameOfReference(frame);
-        addContour(area);
+        Rectangle * rectangle = new Rectangle(s.str());
+        rectangle->setYLength(limit[i](0));
+        rectangle->setZLength(limit[i](1));
+        rectangle->setFrameOfReference(frame);
+        addContour(rectangle);
       }
     }
     else if (stage == MBSim::plot) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       for (int i = 0; i < 6; i++) {
-        static_cast<Area*>(element[i])->enableOpenMBV(enable, gridSize);
+        static_cast<Rectangle*>(element[i])->enableOpenMBV(enable, gridSize);
       }
 #endif
     }

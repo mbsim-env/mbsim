@@ -143,21 +143,21 @@ namespace MBSim {
   };
 
   /*!
-   * \brief class for contact kinematics between convex frustum and an area
+   * \brief class for contact kinematics between convex frustum and an rectangle
    * \author Kilian Grundl, Tingting Sun
    * \date  09.10.2012
    */
 
-  class ContactKinematicsAreaPolynomialFrustum : public MBSim::ContactKinematics {
+  class ContactKinematicsRectanglePolynomialFrustum : public MBSim::ContactKinematics {
     public:
-      ContactKinematicsAreaPolynomialFrustum();
-      virtual ~ContactKinematicsAreaPolynomialFrustum();
+      ContactKinematicsRectanglePolynomialFrustum();
+      virtual ~ContactKinematicsRectanglePolynomialFrustum();
 
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
       void assignContours(const std::vector<Contour*> &contour);
       virtual void updateg(fmatvec::Vec& g, ContourPointData *cpData, int index = 0);
       virtual void updatewb(fmatvec::Vec& wb, const fmatvec::Vec &g, ContourPointData *cpData) {
-        throw MBSimError("ERROR (ContactKinematicsAreaPolynomialFrustum::updatewb): not implemented!");
+        throw MBSimError("ERROR (ContactKinematicsRectanglePolynomialFrustum::updatewb): not implemented!");
       }
 
     protected:
@@ -168,12 +168,12 @@ namespace MBSim {
 
       /***************************************************/
       /*!
-       * \brief check if there is a contact point within the area between the frustum and the area
-       * \return true (if) or false (if there is no contact within the area)
+       * \brief check if there is a contact point within the rectangle between the frustum and the rectangle
+       * \return true (if) or false (if there is no contact within the rectangle)
        *
        * If there is contact the position and the cpData information is setted right away
        */
-      bool cpLocationInArea(fmatvec::Vec & g, ContourPointData * cpData);
+      bool cpLocationInRectangle(fmatvec::Vec & g, ContourPointData * cpData);
 
       /*!
        * \brief checks if there is a contact point at one of the corner points
@@ -182,7 +182,7 @@ namespace MBSim {
       bool cornerContact(fmatvec::Vec & g, ContourPointData * cpData);
 
       /*!
-       * \brief checks if there is a contact on one edge of the area
+       * \brief checks if there is a contact on one edge of the rectangle
        * \return true (if) or false (if there is no contact at one of the corner points)
        *
        * \todo: unefficient and only finding (one) intersection point --> There should always be two intersection points and then using the middle or something
@@ -200,20 +200,20 @@ namespace MBSim {
       /*!
        * \brief check if frustum point identified by coordinate x is possible contact point
        * \param x height-coordinate of possible contact point
-       * \param n normal vector of the area
+       * \param n normal vector of the rectangle
        */
       int checkPossibleContactPoint(const double & x, const fmatvec::Vec3 & n);
 
       /*!
-       * \brief compute distance between given point and area
+       * \brief compute distance between given point and rectangle
        * \param point Given point in world coordinates
        */
-      double distance2Area(const fmatvec::Vec3 & point);
+      double distance2Rectangle(const fmatvec::Vec3 & point);
 
       /**
-       * \brief contour index of area (in cpData)
+       * \brief contour index of rectangle (in cpData)
        */
-      int iarea;
+      int irectangle;
 
       /**
        * \brief contour index of frustum (in cpData)
@@ -221,9 +221,9 @@ namespace MBSim {
       int ifrustum;
 
       /**
-       * \brief pointer to the contour class for the area
+       * \brief pointer to the contour class for the rectangle
        */
-      Area *area;
+      Rectangle *rectangle;
 
       /*!
        * \brief pointer to the contour class for the polynomial frustum
@@ -241,7 +241,7 @@ namespace MBSim {
       double x2;
 
       /*!
-       * \brief array of the four corner points of the area in the frame of the frustum
+       * \brief array of the four corner points of the rectangle in the frame of the frustum
        */
       fmatvec::Vec3 cornerPoints[4];
 

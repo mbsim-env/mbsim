@@ -100,16 +100,16 @@ namespace MBSim {
   }
 
   void ContactKinematicsPointPolynomialFrustum::assignContours(const vector<Contour*> &contour) {
-    if (dynamic_cast<Area*>(contour[0])) {
+    if (dynamic_cast<Rectangle*>(contour[0])) {
       ipoint = 0;
       ifrustum = 1;
-      point = static_cast<Area*>(contour[0]);
+      point = static_cast<Rectangle*>(contour[0]);
       frustum = static_cast<PolynomialFrustum*>(contour[1]);
     }
     else {
       ipoint = 1;
       ifrustum = 0;
-      point = static_cast<Area*>(contour[1]);
+      point = static_cast<Rectangle*>(contour[1]);
       frustum = static_cast<PolynomialFrustum*>(contour[0]);
     }
 
@@ -157,7 +157,7 @@ namespace MBSim {
         cpData[ifrustum].getFrameOfReference().getPosition() = rF + AWF * contactPointFrustum;
         setFrustumOrienationKinematics(x(0), phi, cpData);
 
-        //Area
+        //Rectangle
         cpData[ipoint].getFrameOfReference().getPosition() = rF + AWF  * rPoint;
         cpData[ipoint].getFrameOfReference().getOrientation().set(0, -cpData[ifrustum].getFrameOfReference().getOrientation().col(0));
         cpData[ipoint].getFrameOfReference().getOrientation().set(1, -cpData[ifrustum].getFrameOfReference().getOrientation().col(1));

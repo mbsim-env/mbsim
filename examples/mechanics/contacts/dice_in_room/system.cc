@@ -68,9 +68,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 //#endif
 
   Cuboid *cuboid = new Cuboid("Wuerfel");
-  cuboid->setLength(l);
-  cuboid->setHeight(h);
-  cuboid->setDepth(b);
+  cuboid->setXLength(l);
+  cuboid->setYLength(h);
+  cuboid->setZLength(b);
   cuboid->setFrameOfReference(body->getFrameC());
   body->addContour(cuboid);
 

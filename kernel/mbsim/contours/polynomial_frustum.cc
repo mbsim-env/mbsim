@@ -252,9 +252,9 @@ namespace MBSim {
 
   //TODO: Do we need these functions?
   //The position of the given point has 3 situations:
-  //1st: above the curve and in the "middle" area. In this situation, the tangent through the closest point on the curve is perpendicular to the line pass through the itself and the given point;
-  //2nd: left area. The given point is either on the left side of the domain or on the left side of a line which passes through the left end point of the curve and perpendicular to the tangent on that end point. In this situation, the closest point on the curve is its left end point.
-  //3rd: right area. Similar to left area. In this situation, the closest point is the right end point of the curve.
+  //1st: above the curve and in the "middle" rectangle. In this situation, the tangent through the closest point on the curve is perpendicular to the line pass through the itself and the given point;
+  //2nd: left rectangle. The given point is either on the left side of the domain or on the left side of a line which passes through the left end point of the curve and perpendicular to the tangent on that end point. In this situation, the closest point on the curve is its left end point.
+  //3rd: right rectangle. Similar to left rectangle. In this situation, the closest point is the right end point of the curve.
 //  fmatvec::Vec3 PolynomialFrustum::CP_toP_onPolycurve2D(double x_0, double x_end, fmatvec::Vec2 P){
 //
 //    Vec3 closeP;//the first element stores the smallest distance, the second and third ones for the position of corresponding point on the frustum surface
@@ -272,9 +272,9 @@ namespace MBSim {
 //    Vec2 temp;
 //
 //    double midP = (x_0+x_end)/2;
-//    //if the given point lies in the left area, the closest point is the left end point on the curve
+//    //if the given point lies in the left rectangle, the closest point is the left end point on the curve
 //    if(P(0) <= midP){
-//      //check if P lies in the left area
+//      //check if P lies in the left rectangle
 //      double temp1 = getValue(x_0)-(P(0)-x_0)/getValueD1(x_0);
 //      if(P(1) < temp1){//2nd situation
 //        closeP(1) = x_0;

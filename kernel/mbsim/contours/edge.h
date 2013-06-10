@@ -36,21 +36,18 @@ namespace MBSim {
        * \brief constructor
        * \param name of contour
        */
-      Edge(const std::string &name) : RigidContour(name) {};
+      Edge(const std::string &name) : RigidContour(name), length(1), thickness(0.01) {};
+
+      std::string getType() const {return "Edge";}
 
       /* GETTER / SETTER */
-      void setLimit(double l) {lim = l;}
-      void setCd(const fmatvec::Vec3& Cd);
-      void setCe(const fmatvec::Vec3& Ce);
-      double getLimit() const { return lim; }
+      void setLength(double length_) {length = length_;}
+      double getLength() const { return length; }
+      double getThickness() const {return thickness;}
       /***************************************************/
 
-      fmatvec::Vec3 computeWe() { return R->getOrientation()*Ce; }
-      fmatvec::Vec3 computeWd() { return R->getOrientation()*Cd; }
-
     private:
-      double lim;
-      fmatvec::Vec3 Cn, Cd, Ce;
+      double length, thickness;
   };
 }
 
