@@ -1274,15 +1274,15 @@ namespace MBSim {
 
     H5::SimpleDataSet<vector<double> > qToRead;
     qToRead.open(file,"q0");
-    q0 = qToRead.read();
+    q0.resize() = qToRead.read();
 
     H5::SimpleDataSet<vector<double> > uToRead;
     uToRead.open(file,"u0");
-    u0 = uToRead.read();
+    u0.resize() = uToRead.read();
 
     H5::SimpleDataSet<vector<double> > xToRead;
     xToRead.open(file,"x0");
-    x0 = xToRead.read();
+    x0.resize() = xToRead.read();
 
     file.close();
 
