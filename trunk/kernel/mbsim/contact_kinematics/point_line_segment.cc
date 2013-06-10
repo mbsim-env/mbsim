@@ -52,17 +52,17 @@ namespace MBSim {
     Vec3 Wd =  point->getFrame()->getPosition() - line->getFrame()->getPosition();
 
     double s = Wt.T()*Wd; 
-    if(s > line->getBounds()(1) || s < line->getBounds()(0))
-      g(0) = 1;
-    else 
-    {
+    if(fabs(s) <= line->getLength()/2) {
       g(0) = Wn.T()*Wd;
-      if(g(0) < -0.01)
+      if(g(0) < -line->getThickness())
         g(0) = 1;
+      else {
+        cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition());
+        cpData[iline].getFrameOfReference().setPosition(cpData[ipoint].getFrameOfReference().getPosition() - Wn*g(0));
+      }
     }
-
-    cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition());
-    cpData[iline].getFrameOfReference().setPosition(cpData[ipoint].getFrameOfReference().getPosition() - Wn*g(0));
+    else 
+      g(0) = 1;
   }
 
   void ContactKinematicsPointLineSegment::updatewb(Vec &wb, const Vec &g, ContourPointData *cpData) {

@@ -101,7 +101,8 @@ namespace MBSim {
         ( strcmp(contour0, "Room")==0 && strcmp(contour1, "Point")==0 ))
         return new ContactKinematicsCompoundContourContour;  
 
-    else if ( strcmp(contour0, "Cuboid")==0 && strcmp(contour1, "Room")==0 )
+    else if (( strcmp(contour0, "Cuboid")==0 && strcmp(contour1, "Room")==0 ) or
+        ( strcmp(contour0, "Cuboid")==0 && strcmp(contour1, "Cuboid")==0 ))
         return new ContactKinematicsCompoundContourCompoundContour;
 
     /*
@@ -115,8 +116,8 @@ namespace MBSim {
     else if ( strcmp(contour0, "Edge")==0 && strcmp(contour1, "Edge")==0 )
       return new ContactKinematicsEdgeEdge;
 
-    else if ( strcmp(contour0, "Point")==0 && strcmp(contour1, "Area")==0 )
-      return new ContactKinematicsPointArea;
+    else if ( strcmp(contour0, "Point")==0 && strcmp(contour1, "Rectangle")==0 )
+      return new ContactKinematicsPointRectangle;
 
     else if ( strcmp(contour0, "Point")==0 && strcmp(contour1, "Contour1s")==0 )
       return new ContactKinematicsPointContour1s;
@@ -160,8 +161,8 @@ namespace MBSim {
     else if ( strcmp(contour0, "Sphere")==0 && strcmp(contour1, "Sphere")==0 )
       return new ContactKinematicsSphereSphere;
 
-    else if ( strcmp(contour0, "Area")==0 && strcmp(contour1, "PolynomialFrustum")==0 )
-      return new ContactKinematicsAreaPolynomialFrustum;
+    else if ( strcmp(contour0, "Rectangle")==0 && strcmp(contour1, "PolynomialFrustum")==0 )
+      return new ContactKinematicsRectanglePolynomialFrustum;
 
     else
       return 0;

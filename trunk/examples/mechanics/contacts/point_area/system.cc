@@ -24,10 +24,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
   /* disk */
-  Area* area = new Area("Area");
+  Rectangle* area = new Rectangle("Rectangle");
   addContour(area, Vec3(), SqrMat3(EYE));
-  area->setLimitY(3);
-  area->setLimitZ(2);
+  area->setYLength(3);
+  area->setZLength(2);
   area->enableOpenMBV();
 
 

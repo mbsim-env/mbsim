@@ -43,8 +43,6 @@ namespace MBSim {
         ContactKinematics *tmp = findContactPairingRigidRigid(contour0->getContourElement(i)->getType().c_str(), contour1->getContourElement(j)->getType().c_str());
         if (tmp == 0)
           tmp = findContactPairingRigidRigid(contour1->getContourElement(j)->getType().c_str(), contour0->getContourElement(i)->getType().c_str());
-        if (tmp == 0)
-          throw MBSimError("ERROR: No Contact Kinematics found for pairing between" + contour1->getContourElement(j)->getType() + " and " + contour0->getContourElement(i)->getType());
         if(tmp) {
           contactKinematics.push_back(tmp); 
           tmp->assignContours(contour0->getContourElement(i),contour1->getContourElement(j));

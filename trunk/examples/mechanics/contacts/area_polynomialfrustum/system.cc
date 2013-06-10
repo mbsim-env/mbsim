@@ -60,17 +60,17 @@ System::System(const string &projectName) :
   polyfrustumcontour->setFrameOfReference(polyFrustumFrame);
   polyfrustum->addContour(polyfrustumcontour);
 
-  /*Area initialisation*/
+  /*Rectangle initialisation*/
 
   //CONTOUR
-  { // Area1
-    Area* area = new Area("AREA1");
-    area->setLimitY(1);
-    area->setLimitZ(1);
+  { // Rectangle1
+    Rectangle* area = new Rectangle("AREA1");
+    area->setYLength(1);
+    area->setZLength(1);
     area->enableOpenMBV();
 
     //BODY
-    RigidBody* areaBody = new RigidBody("AreaBody1");
+    RigidBody* areaBody = new RigidBody("RectangleBody1");
     areaBody->setMass(1);
     areaBody->setFrameOfReference(this->getFrameI());
     areaBody->setInertiaTensor(SymMat3(EYE));
@@ -83,13 +83,13 @@ System::System(const string &projectName) :
 
     this->addObject(areaBody);
 
-    FixedRelativeFrame * areaFrame = new FixedRelativeFrame("AreaFrame", Vec3(), BasicRotAKIx(M_2_PI));
+    FixedRelativeFrame * areaFrame = new FixedRelativeFrame("RectangleFrame", Vec3(), BasicRotAKIx(M_2_PI));
     areaBody->addFrame(areaFrame);
     area->setFrameOfReference(areaFrame);
     areaBody->addContour(area);
 
     //Add contact between frustum and area
-    Contact* contact = new Contact("FrustumArea1");
+    Contact* contact = new Contact("FrustumRectangle1");
     contact->connect(area, polyfrustumcontour);
 
     contact->setPlotFeature(openMBV, enabled);
@@ -104,14 +104,14 @@ System::System(const string &projectName) :
     this->addLink(contact);
   }
 
-  { // Area2
-    Area* area = new Area("AREA2");
-    area->setLimitY(2);
-    area->setLimitZ(2);
+  { // Rectangle2
+    Rectangle* area = new Rectangle("AREA2");
+    area->setYLength(2);
+    area->setZLength(2);
     area->enableOpenMBV();
 
     //BODY
-    RigidBody* areaBody = new RigidBody("AreaBody2");
+    RigidBody* areaBody = new RigidBody("RectangleBody2");
     areaBody->setMass(1);
     areaBody->setFrameOfReference(this->getFrameI());
     areaBody->setInertiaTensor(SymMat3(EYE));
@@ -124,13 +124,13 @@ System::System(const string &projectName) :
 
     this->addObject(areaBody);
 
-    FixedRelativeFrame * areaFrame = new FixedRelativeFrame("AreaFrame", Vec3(), BasicRotAKIz(M_PI));
+    FixedRelativeFrame * areaFrame = new FixedRelativeFrame("RectangleFrame", Vec3(), BasicRotAKIz(M_PI));
     areaBody->addFrame(areaFrame);
     area->setFrameOfReference(areaFrame);
     areaBody->addContour(area);
 
     //Add contact between frustum and area
-    Contact* contact = new Contact("FrustumArea2");
+    Contact* contact = new Contact("FrustumRectangle2");
     contact->connect(area, polyfrustumcontour);
 
     contact->setPlotFeature(openMBV, enabled);
@@ -146,14 +146,14 @@ System::System(const string &projectName) :
     this->addLink(contact);
   }
 
-  { // Area3
-    Area* area = new Area("AREA3");
-    area->setLimitY(0.5);
-    area->setLimitZ(1);
+  { // Rectangle3
+    Rectangle* area = new Rectangle("AREA3");
+    area->setYLength(0.5);
+    area->setZLength(1);
     area->enableOpenMBV();
 
     //BODY
-    RigidBody* areaBody = new RigidBody("AreaBody3");
+    RigidBody* areaBody = new RigidBody("RectangleBody3");
     areaBody->setMass(1);
     areaBody->setFrameOfReference(this->getFrameI());
     areaBody->setInertiaTensor(SymMat3(EYE));
@@ -166,13 +166,13 @@ System::System(const string &projectName) :
 
     this->addObject(areaBody);
 
-    FixedRelativeFrame * areaFrame = new FixedRelativeFrame("AreaFrame", Vec3(), BasicRotAKIz(M_PI) * BasicRotAIKy(M_PI_2));
+    FixedRelativeFrame * areaFrame = new FixedRelativeFrame("RectangleFrame", Vec3(), BasicRotAKIz(M_PI) * BasicRotAIKy(M_PI_2));
     areaBody->addFrame(areaFrame);
     area->setFrameOfReference(areaFrame);
     areaBody->addContour(area);
 
     //Add contact between frustum and area
-    Contact* contact = new Contact("FrustumArea3");
+    Contact* contact = new Contact("FrustumRectangle3");
     contact->connect(area, polyfrustumcontour);
 
     contact->setPlotFeature(openMBV, enabled);

@@ -32,28 +32,14 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, LineSegment, MBSIMNS"LineSegment")
 
-  LineSegment::LineSegment(const std::string& name) : RigidContour(name), bound(2), length(0) {
-    bound(0) = 0;
-    bound(1) = 1;
-  }
-
-  void LineSegment::setBounds(const fmatvec::Vec &b) {
-    assert(b.size()==2);
-    assert(fabs(b(0)-b(1))>1e-6);
-    bound=b;
-    if (b(1)<b(0)) {
-      const double tmp=bound(0);
-      bound(0)=bound(1);
-      bound(1)=tmp;
-    }
-    length=bound(1)-bound(0);
+  LineSegment::LineSegment(const std::string& name) : RigidContour(name), length(1), thickness(0.01) {
   }
 
   void LineSegment::initializeUsingXML(TiXmlElement *element) {
     RigidContour::initializeUsingXML(element);
     TiXmlElement* e;
-    e=element->FirstChildElement(MBSIMNS"bounds");
-    setBounds(getVec(e, 2));
+    e=element->FirstChildElement(MBSIMNS"length");
+    setLength(getDouble(e));
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=element->FirstChildElement(MBSIMNS"enableOpenMBV");
     if(e) {
@@ -66,7 +52,7 @@ namespace MBSim {
 
   TiXmlElement* LineSegment::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0 = Contour::writeXMLFile(parent);
-    addElementText(ele0,MBSIMNS"bounds",bound);
+    addElementText(ele0,MBSIMNS"length",length);
 #ifdef HAVE_OPENMBVCPPINTERFACE
     if(openMBVRigidBody) {
       TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"enableOpenMBV");

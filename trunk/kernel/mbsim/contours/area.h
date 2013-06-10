@@ -28,40 +28,41 @@
 namespace MBSim {
 
   /**
-   *  \brief RigidContour Area
+   *  \brief RigidContour Rectangle
    *  \date 2009-07-14 some comments (Bastian Esefeld)
    *  \date 2009-07-16 new file (Bastian Esefeld)
    */
-  class Area : public Plane {
+  class Rectangle : public Plane {
     public:
       /**
        * \brief constructor
        * \param name of contour
        */
-      Area(const std::string &name);
+      Rectangle(const std::string &name);
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const {
-        return "Area";
+        return "Rectangle";
       }
       virtual void init(InitStage stage);
       /**********************************/
 
       /* GETTER / SETTER */
-      void setLimitY(double l) {
-        limy = l;
+      void setYLength(double l) {
+        yLength = l;
       }
-      void setLimitZ(double l) {
-        limz = l;
+      void setZLength(double l) {
+        zLength = l;
       }
+      void setThickness(double thickness_) {thickness = thickness_;}
 
-      double getLimitY() const {
-        return limy;
+      double getYLength() const {
+        return yLength;
       }
-      double getLimitZ() const {
-        return limz;
+      double getZLength() const {
+        return zLength;
       }
-      //get vertex of the area, under reference frame of the area
+      //get vertex of the rectangle, under reference frame of the rectangle
       const fmatvec::Vec3 & getA() const {
         return RrA;
       }
@@ -74,15 +75,16 @@ namespace MBSim {
       const fmatvec::Vec3 & getD() const {
         return RrD;
       }
+      double getThickness() const {return thickness;}
 
       /***************************************************//*new added part by ting 05.10.2012*/
       /*!
-       * \brief if the point and area are on the same plane by default, this function checks if a point lies in the area;
-       *        else this function checks if the projection of the point lies in the area;
+       * \brief if the point and rectangle are on the same plane by default, this function checks if a point lies in the rectangle;
+       *        else this function checks if the projection of the point lies in the rectangle;
        * \param Point: position of the point
-       * \return true: point in the area
+       * \return true: point in the rectangle
        */
-      bool PointInArea(const fmatvec::Vec3& Point); //need to be check again.......................................................
+      bool PointInRectangle(const fmatvec::Vec3& Point); //need to be check again.......................................................
 
       /*!
        * \brief check if a point lies in the circle (point and circle are on the same plane)
@@ -100,10 +102,10 @@ namespace MBSim {
       fmatvec::Vec3 Point_closest_toCircle_onLineseg(const fmatvec::Vec3& EndP1, const fmatvec::Vec3& EndP2, const fmatvec::Vec3& CenCir);
 
       /*!
-       * \brief check if this area(rectangle) intersect with a circle,
+       * \brief check if this rectangle intersect with a circle,
        * \param radius radius of the circle
        * \param CenCir center of the circle in world coordinates
-       * \return true: this area intersects the circle
+       * \return true: this rectangle intersects the circle
        * \attention: the circle is the intersection circle between the sphere and the plane, thus the center of the
        * circle is different from the center of the sphere.
        */
@@ -115,7 +117,7 @@ namespace MBSim {
 #endif
 
     protected:
-      double limy, limz;
+      double yLength, zLength, thickness;
       //vertices under reference frame
       /*!
        * \brief vertex for y = limy/2, z = limz/2

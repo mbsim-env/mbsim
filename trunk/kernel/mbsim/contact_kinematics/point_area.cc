@@ -28,31 +28,35 @@ using namespace std;
 
 namespace MBSim {
 
-  void ContactKinematicsPointArea::assignContours(const vector<Contour*> &contour) {
+  void ContactKinematicsPointRectangle::assignContours(const vector<Contour*> &contour) {
     if (dynamic_cast<Point*>(contour[0])) {
       ipoint = 0;
-      iarea = 1;
+      irectangle = 1;
       point = static_cast<Point*>(contour[0]);
-      area = static_cast<Area*>(contour[1]);
+      rectangle = static_cast<Rectangle*>(contour[1]);
     }
     else {
       ipoint = 1;
-      iarea = 0;
+      irectangle = 0;
       point = static_cast<Point*>(contour[1]);
-      area = static_cast<Area*>(contour[0]);
+      rectangle = static_cast<Rectangle*>(contour[0]);
     }
   }
 
-  void ContactKinematicsPointArea::updateg(fmatvec::Vec &g, ContourPointData *cpData, int index) {
-    Vec3 Ar = area->getFrame()->getOrientation().T() * (point->getFrame()->getPosition() - area->getFrame()->getPosition());
-    if(fabs(Ar(1)) <= area->getLimitY() / 2 and fabs(Ar(2)) <= area->getLimitZ()  / 2){
+  void ContactKinematicsPointRectangle::updateg(fmatvec::Vec &g, ContourPointData *cpData, int index) {
+    Vec3 Ar = rectangle->getFrame()->getOrientation().T() * (point->getFrame()->getPosition() - rectangle->getFrame()->getPosition());
+    if(fabs(Ar(1)) <= rectangle->getYLength()/2 and fabs(Ar(2)) <= rectangle->getZLength()/2){
       g(0) = Ar(0);
-      cpData[ipoint].getFrameOfReference().getPosition() = point->getFrame()->getPosition();
-      cpData[iarea].getFrameOfReference().getPosition() = point->getFrame()->getPosition() - g(0) * area->getFrame()->getOrientation().col(0);
-      cpData[iarea].getFrameOfReference().getOrientation() = area->getFrame()->getOrientation();
-      cpData[ipoint].getFrameOfReference().getOrientation().set(0,-area->getFrame()->getOrientation().col(0));
-      cpData[ipoint].getFrameOfReference().getOrientation().set(1,-area->getFrame()->getOrientation().col(1));
-      cpData[ipoint].getFrameOfReference().getOrientation().set(2,area->getFrame()->getOrientation().col(2));
+      if(g(0) < -rectangle->getThickness())
+        g(0) = 1;
+      else {
+        cpData[ipoint].getFrameOfReference().getPosition() = point->getFrame()->getPosition();
+        cpData[irectangle].getFrameOfReference().getPosition() = point->getFrame()->getPosition() - g(0) * rectangle->getFrame()->getOrientation().col(0);
+        cpData[irectangle].getFrameOfReference().getOrientation() = rectangle->getFrame()->getOrientation();
+        cpData[ipoint].getFrameOfReference().getOrientation().set(0,-rectangle->getFrame()->getOrientation().col(0));
+        cpData[ipoint].getFrameOfReference().getOrientation().set(1,-rectangle->getFrame()->getOrientation().col(1));
+        cpData[ipoint].getFrameOfReference().getOrientation().set(2,rectangle->getFrame()->getOrientation().col(2));
+      }
     }
     else
       g(0) = 1.;

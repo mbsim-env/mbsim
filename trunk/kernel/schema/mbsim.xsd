@@ -2359,7 +2359,7 @@
     <xs:complexContent>
       <xs:extension base="RigidContourType">
         <xs:sequence>
-          <xs:element name="bounds" type="pv:lengthVector">
+          <xs:element name="length" type="pv:lengthScalar">
           </xs:element>
           <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:complexType>

@@ -33,65 +33,46 @@ namespace MBSim {
     edge1 = static_cast<Edge*>(contour[1]);
   }
 
-  void ContactKinematicsEdgeEdge::updateg(fmatvec::Vec &g, ContourPointData *cpData, int index) {}
+  void ContactKinematicsEdgeEdge::updateg(fmatvec::Vec &g, ContourPointData *cpData, int index) {
+    Vec Wd = edge1->getFrame()->getPosition() - edge0->getFrame()->getPosition();
+    Vec Wd0 = edge0->getFrame()->getOrientation().col(1);
+    Vec Wd1 = edge1->getFrame()->getOrientation().col(1);
+    Vec Wn = crossProduct(Wd0,Wd1);
+    Wn = Wn/nrm2(Wn);
+    double d = Wn.T()*Wd;
+    if(d<0) {
+      Wn *= -1.;
+      d *= -1.;
+    }
+    Vec We0 = -edge0->getFrame()->getOrientation().col(0);
+    Vec We1 = -edge1->getFrame()->getOrientation().col(0);
+    if(Wn.T()*We0 >= 0 && Wn.T()*We1 <= 0) {
+      if(d > max(edge0->getThickness(),edge1->getThickness())) {
+        g(0) = 1;
+      } else {
+        double t0 = trans(Wd0)*(Wd - Wd1*trans(Wd1)*Wd)/(1.0-trans(Wd0)*Wd1*trans(Wd1)*Wd0);
+        double t1 = t0*trans(Wd1)*Wd0 - trans(Wd1)*Wd;
 
-//  void ContactKinematicsEdgeEdge::stage1(Vec &g, vector<ContourPointData> &cpData) {
-//
-//    Vec Wd = edge1->getWrOP() - edge0->getWrOP();
-//    Vec Wd0 = edge0->computeWd();
-//    Vec Wd1 = edge1->computeWd();
-//    cpData[iedge0].Wn = crossProduct(Wd0,Wd1);
-//    cpData[iedge0].Wn = cpData[iedge0].Wn/nrm2(cpData[iedge0].Wn);
-//    double d = trans(cpData[iedge0].Wn)*Wd;
-//    if(d<0) {
-//      cpData[iedge0].Wn *= -1;
-//      d *= -1;
-//    }
-//    Vec We0 = edge0->computeWe();
-//    Vec We1 = edge1->computeWe();
-//    if(trans(cpData[iedge0].Wn)*We0 >= 0 && trans(cpData[iedge0].Wn)*We1 <= 0) {
-//      if(-d < -0.01) {
-//        g(0) = 1;
-//      } else {
-//        double t0 = trans(Wd0)*(Wd - Wd1*trans(Wd1)*Wd)/(1.0-trans(Wd0)*Wd1*trans(Wd1)*Wd0);
-//        double t1 = t0*trans(Wd1)*Wd0 - trans(Wd1)*Wd;
-//
-//        if(t1 > edge1->getLimit() || t0 > edge0->getLimit() || t1 < 0 || t0 < 0)
-//          g(0) = 1;
-//        else {
-//          WrPC[iedge1] = t1*Wd1;
-//          WrPC[iedge0] = t0*Wd0;
-//          g(0) = -d;
-//        }
-//      }
-//    } else if(trans(cpData[iedge0].Wn)*We0 < 0 && trans(cpData[iedge0].Wn)*We1 > 0)
-//      g(0) = d;
-//    else
-//      g(0) = 1;
-//
-//    cpData[iedge1].Wn = -cpData[iedge0].Wn;
-//  }
+        if(fabs(t1) <= edge1->getLength()/2 and fabs(t0) <= edge0->getLength()/2) {
+          cpData[iedge0].getFrameOfReference().setPosition(edge0->getFrame()->getPosition() + t0*Wd0);
+          cpData[iedge1].getFrameOfReference().setPosition(edge1->getFrame()->getPosition() + t1*Wd1);
+          cpData[iedge0].getFrameOfReference().getOrientation().set(0, -Wn);
+          cpData[iedge1].getFrameOfReference().getOrientation().set(0, -cpData[iedge0].getFrameOfReference().getOrientation().col(0));
+          cpData[iedge0].getFrameOfReference().getOrientation().set(1, Wd0);
+          cpData[iedge1].getFrameOfReference().getOrientation().set(1, -cpData[iedge0].getFrameOfReference().getOrientation().col(1));
+          cpData[iedge0].getFrameOfReference().getOrientation().set(2, crossProduct(Wn,Wd0));
+          cpData[iedge1].getFrameOfReference().getOrientation().set(2, cpData[iedge0].getFrameOfReference().getOrientation().col(2));
 
-//  void ContactKinematicsEdgeEdge::stage2(const Vec &g, Vec &gd, vector<ContourPointData> &cpData) {
-//    if(g(0)>0.0) return;
-//    cpData[iedge1].WrOC = edge1->getWrOP()+WrPC[iedge1];
-//    cpData[iedge0].WrOC = edge0->getWrOP()+WrPC[iedge0];
-//
-//    Vec WvC[2];
-//    WvC[iedge0] = edge0->getWvP()+crossProduct(edge0->getWomegaC(),WrPC[iedge0]);
-//    WvC[iedge1] = edge1->getWvP()+crossProduct(edge1->getWomegaC(),WrPC[iedge1]);
-//    Vec WvD = WvC[iedge0] - WvC[iedge1];
-//    gd(0) = trans(cpData[iedge0].Wn)*WvD;
-//
-//    if(cpData[iedge0].Wt.cols()) {
-//      cpData[iedge0].Wt.col(0) = computeTangential(cpData[iedge0].Wn);
-//      cpData[iedge0].Wt.col(1) = crossProduct(cpData[iedge0].Wn,cpData[iedge0].Wt.col(0));
-//      cpData[iedge1].Wt = -cpData[iedge0].Wt;
-//      static Index iT(1,cpData[iedge0].Wt.cols());
-//      gd(iT) = trans(cpData[iedge0].Wt)*WvD;
-//    }
-//
-//  }
+          g(0) = -d;
+        }
+        else
+          g(0) = 1;
+      }
+    } else if(Wn.T()*We0 < 0 && Wn.T()*We1 > 0)
+      g(0) = d;
+    else
+      g(0) = 1;
+  }
 
 }
 
