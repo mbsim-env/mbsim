@@ -7,8 +7,10 @@ using namespace MBSim;
 
 int main (int argc, char* argv[]) {
 
+  double dt = 1e-4;
+
   System sys("MBS");
-  sys.setlaTol(1e-1);
+  sys.setLaTol(1e-1*dt);
   sys.setgdTol(1e-4);
   sys.setMaxIter(100000);
   sys.setrMax(1.0);
@@ -16,7 +18,7 @@ int main (int argc, char* argv[]) {
 
 
   TimeSteppingIntegrator integrator;
-  integrator.setStepSize(1e-4);
+  integrator.setStepSize(dt);
 
   integrator.setEndTime(0.30);
   integrator.setPlotStepSize(1e-3);
