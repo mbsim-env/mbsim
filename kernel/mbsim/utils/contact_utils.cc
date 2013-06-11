@@ -98,7 +98,8 @@ namespace MBSim {
       return new ContactKinematicsCircleSolidPlane;
     
     else if (( strcmp(contour0, "Cuboid")==0 && strcmp(contour1, "Plane")==0 ) or
-        ( strcmp(contour0, "Room")==0 && strcmp(contour1, "Point")==0 ))
+        ( strcmp(contour0, "Room")==0 && strcmp(contour1, "Point")==0 ) or
+        ( strcmp(contour0, "Cuboid")==0 && strcmp(contour1, "Frustum")==0 ))
         return new ContactKinematicsCompoundContourContour;  
 
     else if (( strcmp(contour0, "Cuboid")==0 && strcmp(contour1, "Room")==0 ) or
