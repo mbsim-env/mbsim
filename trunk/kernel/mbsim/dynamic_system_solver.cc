@@ -289,9 +289,6 @@ namespace MBSim {
     else if(stage==unknownStage) {
       setDynamicSystemSolver(this);
 
-      // TODO memory problem with many contacts
-      if(laSize>8000)
-        laSize=8000;
       MParent[0].resize(getuSize(0));
       MParent[1].resize(getuSize(1));
       TParent.resize(getqSize(),getuSize());
