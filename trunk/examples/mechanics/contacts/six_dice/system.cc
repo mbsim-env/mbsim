@@ -78,10 +78,10 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   cup->setFrameOfReference(getFrame("Is"));
   addObject(cup);
   OpenMBV::IvBody *obj=new OpenMBV::IvBody;
-  obj->setIvFileName("objects/cup.iv");
+  obj->setIvFileName("iv/cup.iv");
   obj->setScaleFactor(0.1);
-  obj->setInitialRotation(M_PI,0,0);
-  obj->setInitialTranslation(0,0,-0.2);
+  obj->setInitialRotation(0,0,0);
+  obj->setInitialTranslation(0,0,0);
   cup->setOpenMBVRigidBody(obj);
 
   Frustum *frustum = new Frustum("CupFrustum");
@@ -96,8 +96,8 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   wall->setFrameOfReference(cup->getFrame("Q"));
   cup->addContour(wall);
 
-  frustum->enableOpenMBV();
-  ground->enableOpenMBV(0.05);
+  //frustum->enableOpenMBV();
+  //ground->enableOpenMBV(0.05);
 
   const int nWuerfel = 6;
   RigidBody* body[nWuerfel];
@@ -165,7 +165,16 @@ System::System(const string &name) : DynamicSystemSolver(name) {
     cuboid->setXLength(l);
     cuboid->setYLength(b);
     cuboid->setZLength(h);
-    cuboid->enableOpenMBV();
+    //cuboid->enableOpenMBV();
+
+    obj=new OpenMBV::IvBody;
+    stringstream ivname;
+    ivname << "iv/cube" << ceil((i+1)/2.) << ".iv";
+    obj->setIvFileName(ivname.str());
+    obj->setScaleFactor(0.1);
+    obj->setInitialRotation(0,0,0);
+    obj->setInitialTranslation(0,0,0);
+    body[i]->setOpenMBVRigidBody(obj);
 
     stringstream nameContact;
     nameContact <<"ContactCuboidCupFrustum" << i;
