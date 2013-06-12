@@ -32,9 +32,9 @@ class MyPos : public Translation {
     }; 
 };
 
-class jT : public Function1<Vec3,double> {
+class jT : public GuidingVelocity {
   public:
-    Vec3 operator()(const double& t, const void*) {
+    Vec3 operator()(const Vec &q, const double& t, const void*) {
       Vec3 j;
       double om = 1;
       j(0) = -sin(om*t)*om;
@@ -43,9 +43,9 @@ class jT : public Function1<Vec3,double> {
     }
 };
 
-class djT : public Function1<Vec3,double> {
+class djT : public DerivativeOfGuidingVelocity {
   public:
-    Vec3 operator()(const double& t, const void*) {
+    Vec3 operator()(const Vec &qd, const Vec &q, const double& t, const void*) {
       Vec3 dj;
       double om = 1;
       dj(0) = -cos(om*t)*om*om;

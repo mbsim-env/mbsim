@@ -154,20 +154,21 @@ namespace MBSim {
       Rotation*    getRotation()               { return fAPK;    }
       void setJacobianOfTranslation(Jacobian* fPJT_) { fPJT = fPJT_; }
       void setJacobianOfRotation(Jacobian* fPJR_)    { fPJR = fPJR_; }
-      void setDerivativeOfJacobianOfTranslation(Function3<fmatvec::Mat3xV, fmatvec::Vec, fmatvec::Vec, double>* fPdJT_) { fPdJT = fPdJT_;}
-      void setDerivativeOfJacobianOfRotation(Function3<fmatvec::Mat3xV, fmatvec::Vec, fmatvec::Vec, double>* fPdJR_) { fPdJR = fPdJR_;}
+      void setDerivativeOfJacobianOfTranslation(DerivativeOfJacobian* fPdJT_) { fPdJT = fPdJT_;}
+      void setDerivativeOfJacobianOfRotation(DerivativeOfJacobian* fPdJR_) { fPdJR = fPdJR_;}
 
       /** \brief Sets the time dependent function for the guiding velocity of translation */
-      void setGuidingVelocityOfTranslation(Function1<fmatvec::Vec3,double>* fPjT_) { fPjT = fPjT_;}
+      void setGuidingVelocityOfTranslation(GuidingVelocity* fPjT_) { fPjT = fPjT_;}
 
       /** \brief Sets the time dependent function for the guiding velocity of rotation */
-      void setGuidingVelocityOfRotation(Function1<fmatvec::Vec3,double>* fPjR_) { fPjR = fPjR_;}
+      void setGuidingVelocityOfRotation(GuidingVelocity* fPjR_) { fPjR = fPjR_;}
 
       /** \brief Sets the time dependent function for the derivative of the guilding velocity of translation */
-      void setDerivativeOfGuidingVelocityOfTranslation(Function1<fmatvec::Vec3,double>* fPdjT_) { fPdjT = fPdjT_;}
+      void setDerivativeOfGuidingVelocityOfTranslation(DerivativeOfGuidingVelocity* fPdjT_) { fPdjT = fPdjT_;}
 
       /** \brief Sets the time dependent function for the derivative of the guilding velocity of rotation */
-      void setDerivativeOfGuidingVelocityOfRotation(Function1<fmatvec::Vec3,double>* fPdjR_) { fPdjR = fPdjR_;}
+      void setDerivativeOfGuidingVelocityOfRotation(DerivativeOfGuidingVelocity* fPdjR_) { fPdjR = fPdjR_;}
+
       void setMass(double m_) { m = m_; }
       double getMass() const { return m; }
       FixedRelativeFrame* getFrameForKinematics() { return K; };
@@ -346,32 +347,32 @@ namespace MBSim {
       /**
        * \brief differentiated JACOBIAN of translation in parent system
        */
-      Function3<fmatvec::Mat3xV, fmatvec::Vec, fmatvec::Vec, double> *fPdJT;
+      DerivativeOfJacobian *fPdJT;
 
       /**
        * \brief differentiated JACOBIAN of rotation in parent system
        */
-      Function3<fmatvec::Mat3xV, fmatvec::Vec, fmatvec::Vec, double> *fPdJR;
+      DerivativeOfJacobian *fPdJR;
 
       /**
        * \brief guiding velocity of translation in parent system
        */
-      Function1<fmatvec::Vec3,double> *fPjT;
+      GuidingVelocity *fPjT;
 
       /**
        * \brief guiding velocity of rotation in parent system
        */
-      Function1<fmatvec::Vec3,double> *fPjR;
+      GuidingVelocity *fPjR;
 
       /**
        * \brief differentiated guiding veclocity of translation in parent system
        */
-      Function1<fmatvec::Vec3,double> *fPdjT;
+      DerivativeOfGuidingVelocity *fPdjT;
 
       /**
        * \brief differentiated guiding veclocity of rotation in parent system
        */
-      Function1<fmatvec::Vec3,double> *fPdjR;
+      DerivativeOfGuidingVelocity *fPdjR;
 
       /**
        * \brief function pointer to update mass matrix

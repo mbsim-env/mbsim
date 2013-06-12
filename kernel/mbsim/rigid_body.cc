@@ -171,8 +171,8 @@ namespace MBSim {
       if(dynamic_cast<TimeDependentTranslation*>(fPrPK)) {
         SymbolicFunction1<Vec3,double> *pos = dynamic_cast<SymbolicFunction1<Vec3,double>*>(static_cast<TimeDependentTranslation*>(fPrPK)->getTranslationFunction());
         if(pos) {
-          if(fPjT==0) fPjT = new SymbolicFunction1<Vec3,double>(pos->getSXFunction().jacobian());
-          if(fPdjT==0) fPdjT = new SymbolicFunction1<Vec3,double>(static_cast<SymbolicFunction1<Vec3,double>*>(fPjT)->getSXFunction().jacobian());
+          if(fPjT==0) fPjT = new TimeDependentGuidingVelocity(new SymbolicFunction1<Vec3,double>(pos->getSXFunction().jacobian()));
+          if(fPdjT==0) fPdjT = new TimeDependentDerivativeOfGuidingVelocity(new SymbolicFunction1<Vec3,double>(static_cast<SymbolicFunction1<Vec3,double>*>(static_cast<TimeDependentGuidingVelocity*>(fPjT)->getGuidingVelocityFunction())->getSXFunction().jacobian()));
         }
         //Casadi2DiffFunction<Vec3> *pos = dynamic_cast<Casadi2DiffFunction<Vec3>*>(static_cast<TimeDependentTranslation*>(fPrPK)->getTranslationFunction());
         //if(pos) {
@@ -207,7 +207,7 @@ namespace MBSim {
               Jd(CasADi::Slice(0,3),CasADi::Slice(j,j+1)) = jac->getSXFunction().jac(0)(CasADi::Slice(j,nq*3,nq),CasADi::Slice(0,nq)).mul(sqd);
             }
             CasADi::SXFunction derJac(input2,Jd);
-            fPdJT = new SymbolicFunction3<Mat3xV,Vec,Vec,double>(derJac);
+            fPdJT = new StateDependentDerivativeOfJacobian(new SymbolicFunction2<Mat3xV,Vec,Vec>(derJac));
           }
         }
       }
@@ -237,15 +237,26 @@ namespace MBSim {
               Jd(CasADi::Slice(0,3),CasADi::Slice(j,j+1)) += jac->getSXFunction().jac(1)(CasADi::Slice(j,nq*3,nq),CasADi::Slice(0,1));
             }
             CasADi::SXFunction derJac(input2,Jd);
-            fPdJT = new SymbolicFunction3<Mat3xV,Vec,Vec,double>(derJac);
+            fPdJT = new GeneralDerivativeOfJacobian(new SymbolicFunction3<Mat3xV,Vec,Vec,double>(derJac));
           }
           if(fPjT==0) {
-            CasADi::SXFunction j(pos->getSXFunction().inputExpr(1),pos->getSXFunction().jac(1));
-            fPjT = new SymbolicFunction1<fmatvec::Vec3,double>(j);
+            fPjT = new GeneralGuidingVelocity(new SymbolicFunction2<Vec3,Vec,double>(pos->getSXFunction().jacobian(1)));
           }
           if(fPdjT==0) {
-            CasADi::SXFunction jd(static_cast<SymbolicFunction1<Vec3,double>*>(fPjT)->getSXFunction().jacobian());
-            fPdjT = new SymbolicFunction1<fmatvec::Vec3,double>(jd);
+           SymbolicFunction2<Vec3,Vec,double> *jac = static_cast<SymbolicFunction2<Vec3,Vec,double>*>(static_cast<GeneralGuidingVelocity*>(fPjT)->getGuidingVelocityFunction());
+           vector<CasADi::SX> sqd(nq);
+            for(int i=0; i<nq; i++) {
+              stringstream stream;
+              stream << "qd" << i;
+              sqd[i] = CasADi::SX(stream.str());
+            }
+            vector<CasADi::SXMatrix> input2(3);
+            input2[0] = sqd;
+            input2[1] = pos->getSXFunction().inputExpr(0);
+            input2[2] = pos->getSXFunction().inputExpr(1);
+            CasADi::SXMatrix djT = jac->getSXFunction().jac(0).mul(sqd) + jac->getSXFunction().jac(1);
+            CasADi::SXFunction derJac(input2,djT);
+            fPdjT = new GeneralDerivativeOfGuidingVelocity(new SymbolicFunction3<Vec3,Vec,Vec,double>(derJac));
           }
         }
       }
@@ -259,8 +270,8 @@ namespace MBSim {
               r.elem(i,0) += PJT.e(i,j)*pos->getSXFunction().outputExpr(0).elem(j,0);
           CasADi::SXFunction foo(pos->getSXFunction().inputExpr(),r);
           foo.init();
-          if(fPjT==0) fPjT = new SymbolicFunction1<Vec3,double>(foo.jacobian());
-          if(fPdjT==0) fPdjT = new SymbolicFunction1<Vec3,double>(static_cast<SymbolicFunction1<Vec3,double>*>(fPjT)->getSXFunction().jacobian());
+          if(fPjT==0) fPjT = new TimeDependentGuidingVelocity(new SymbolicFunction1<Vec3,double>(foo.jacobian()));
+          if(fPdjT==0) fPdjT = new TimeDependentDerivativeOfGuidingVelocity(new SymbolicFunction1<Vec3,double>(static_cast<SymbolicFunction1<Vec3,double>*>(static_cast<TimeDependentGuidingVelocity*>(fPjT)->getGuidingVelocityFunction())->getSXFunction().jacobian()));
         }
       }
 
@@ -297,7 +308,7 @@ namespace MBSim {
               Jd(CasADi::Slice(0,3),CasADi::Slice(j,j+1)) = jac->getSXFunction().jac(0)(CasADi::Slice(j,nq*3,nq),CasADi::Slice(0,nq)).mul(sqd);
             }
             CasADi::SXFunction derJac(input2,Jd);
-            fPdJR = new SymbolicFunction3<Mat3xV,Vec,Vec,double>(derJac);
+            fPdJR = new StateDependentDerivativeOfJacobian(new SymbolicFunction2<Mat3xV,Vec,Vec>(derJac));
           }
         }
       }
@@ -310,8 +321,8 @@ namespace MBSim {
             phi.elem(i,0) = axis.e(i)*angle->getSXFunction().outputExpr(0).elem(0,0);
           CasADi::SXFunction foo(angle->getSXFunction().inputExpr(),phi);
           foo.init();
-          if(fPjR==0) fPjR = new SymbolicFunction1<Vec3,double>(foo.jacobian());
-          if(fPdjR==0) fPdjR = new SymbolicFunction1<Vec3,double>(static_cast<SymbolicFunction1<Vec3,double>*>(fPjR)->getSXFunction().jacobian());
+          if(fPjR==0) fPjR = new TimeDependentGuidingVelocity(new SymbolicFunction1<Vec3,double>(foo.jacobian()));
+          if(fPdjR==0) fPdjR = new TimeDependentDerivativeOfGuidingVelocity(new SymbolicFunction1<Vec3,double>(static_cast<SymbolicFunction1<Vec3,double>*>(static_cast<TimeDependentGuidingVelocity*>(fPjR)->getGuidingVelocityFunction())->getSXFunction().jacobian()));
         }
       }
 #endif
@@ -577,9 +588,9 @@ namespace MBSim {
       PJR[0] = (*fPJR)(qRel,t);
 
     if(fPjT)
-      PjT = (*fPjT)(t);
+      PjT = (*fPjT)(qRel,t);
     if(fPjR)
-      PjR = (*fPjR)(t);
+      PjR = (*fPjR)(qRel,t);
 
     K->setOrientation(R->getOrientation()*APK);
 
@@ -596,15 +607,16 @@ namespace MBSim {
     K->getJacobianOfTranslation().init(0);
     K->getJacobianOfRotation().init(0);
 
+    Vec qdRel = TRel*uRel;
     if(fPdJT)
-      PdJT = (*fPdJT)(TRel*uRel,qRel,t);
+      PdJT = (*fPdJT)(qdRel,qRel,t);
     if(fPdJR)
-      PdJR = (*fPdJR)(TRel*uRel,qRel,t);
+      PdJR = (*fPdJR)(qdRel,qRel,t);
 
     if(fPdjT)
-      PdjT = (*fPdjT)(t);
+      PdjT = (*fPdjT)(qdRel,qRel,t);
     if(fPdjR)
-      PdjR = (*fPdjR)(t);
+      PdjR = (*fPdjR)(qdRel,qRel,t);
 
     SqrMat3 tWrPK = tilde(WrPK);
     K->setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation() - tWrPK*R->getGyroscopicAccelerationOfRotation() + R->getOrientation()*(PdJT*uRel + PdjT + PJT[0]*jRel) + crossProduct(R->getAngularVelocity(), 2.*WvPKrel+crossProduct(R->getAngularVelocity(),WrPK)));
@@ -681,7 +693,7 @@ namespace MBSim {
     addFrame(rigidBodyFrame);
   }
 
-  void RigidBody::addContour(Contour* contour_, const fmatvec::Vec3 &RrRC, const fmatvec::SqrMat3 &ARC, const Frame* refFrame) {
+  void RigidBody::addContour(Contour* contour_, const Vec3 &RrRC, const SqrMat3 &ARC, const Frame* refFrame) {
     Deprecated::registerMessage("Using RigidBody::addCongour(Contour*, const Vec3&, const SqrMat3&, const Frame*) is deprecated, create a Contour instead and add is using addContour(Contour*).");
     stringstream frameName;
     frameName << "ContourFrame" << contour.size();
@@ -744,9 +756,9 @@ namespace MBSim {
       PJR[0] = (*fPJR)(qRel,t);
 
     if(fPjT)
-      PjT = (*fPjT)(t);
+      PjT = (*fPjT)(qRel,t);
     if(fPjR)
-      PjR = (*fPjR)(t);
+      PjR = (*fPjR)(qRel,t);
 
     WJRrel = frameForJacobianOfRotation->getOrientation()*PJR[0];
     WJTrel = R->getOrientation()*PJT[0];
@@ -770,15 +782,16 @@ namespace MBSim {
   void RigidBody::updateAccelerations(double t, Frame *P) {
     K->getJacobianOfTranslation().init(0);
     K->getJacobianOfRotation().init(0);
+    Vec qdRel = TRel*uRel;
     if(fPdJT)
-      PdJT = (*fPdJT)(TRel*uRel,qRel,t);
+      PdJT = (*fPdJT)(qdRel,qRel,t);
     if(fPdJR)
-      PdJR = (*fPdJR)(TRel*uRel,qRel,t);
+      PdJR = (*fPdJR)(qdRel,qRel,t);
 
     if(fPdjT)
-      PdjT = (*fPdjT)(t);
+      PdjT = (*fPdjT)(qdRel,qRel,t);
     if(fPdjR)
-      PdjR = (*fPdjR)(t);
+      PdjR = (*fPdjR)(qdRel,qRel,t);
 
     WomPK = frameForJacobianOfRotation->getOrientation()*(PJR[0]*uRel + PjR);
     WvPKrel = R->getOrientation()*(PJT[0]*uRel + PjT);
@@ -916,39 +929,39 @@ namespace MBSim {
     }
     e=element->FirstChildElement(MBSIMNS"derivativeOfJacobianOfTranslation");
     if(e) {
-      Function3<Mat3xV,Vec,Vec,double> *f=ObjectFactory<Function>::create<Function3<Mat3xV,Vec,Vec,double> >(e->FirstChildElement());
-      setDerivativeOfJacobianOfTranslation(f);
-      f->initializeUsingXML(e->FirstChildElement());
+      DerivativeOfJacobian *derJac=ObjectFactory<Function>::create<DerivativeOfJacobian>(e->FirstChildElement());
+      setDerivativeOfJacobianOfTranslation(derJac);
+      derJac->initializeUsingXML(e->FirstChildElement());
     }
     e=element->FirstChildElement(MBSIMNS"derivativeOfJacobianOfRotation");
     if(e) {
-      Function3<Mat3xV,Vec,Vec,double> *f=ObjectFactory<Function>::create<Function3<Mat3xV,Vec,Vec,double> >(e->FirstChildElement());
-      setDerivativeOfJacobianOfRotation(f);
-      f->initializeUsingXML(e->FirstChildElement());
+      DerivativeOfJacobian *derJac=ObjectFactory<Function>::create<DerivativeOfJacobian>(e->FirstChildElement());
+      setDerivativeOfJacobianOfRotation(derJac);
+      derJac->initializeUsingXML(e->FirstChildElement());
     }
     e=element->FirstChildElement(MBSIMNS"guidingVelocityOfTranslation");
     if(e) {
-      Function1<Vec3,double> *f=ObjectFactory<Function>::create<Function1<Vec3,double> >(e->FirstChildElement());
-      setGuidingVelocityOfTranslation(f);
-      f->initializeUsingXML(e->FirstChildElement());
+      GuidingVelocity *j=ObjectFactory<Function>::create<GuidingVelocity>(e->FirstChildElement());
+      setGuidingVelocityOfTranslation(j);
+      j->initializeUsingXML(e->FirstChildElement());
     }
     e=element->FirstChildElement(MBSIMNS"guidingVelocityOfRotation");
     if(e) {
-      Function1<Vec3,double> *f=ObjectFactory<Function>::create<Function1<Vec3,double> >(e->FirstChildElement());
-      setGuidingVelocityOfRotation(f);
-      f->initializeUsingXML(e->FirstChildElement());
+      GuidingVelocity *j=ObjectFactory<Function>::create<GuidingVelocity>(e->FirstChildElement());
+      setGuidingVelocityOfRotation(j);
+      j->initializeUsingXML(e->FirstChildElement());
     }
     e=element->FirstChildElement(MBSIMNS"derivativeOfGuidingVelocityOfTranslation");
     if(e) {
-      Function1<Vec3,double> *f=ObjectFactory<Function>::create<Function1<Vec3,double> >(e->FirstChildElement());
-      setDerivativeOfGuidingVelocityOfTranslation(f);
-      f->initializeUsingXML(e->FirstChildElement());
+      DerivativeOfGuidingVelocity *jd=ObjectFactory<Function>::create<DerivativeOfGuidingVelocity>(e->FirstChildElement());
+      setDerivativeOfGuidingVelocityOfTranslation(jd);
+      jd->initializeUsingXML(e->FirstChildElement());
     }
     e=element->FirstChildElement(MBSIMNS"derivativeOfGuidingVelocityOfRotation");
     if(e) {
-      Function1<Vec3,double> *f=ObjectFactory<Function>::create<Function1<Vec3,double> >(e->FirstChildElement());
-      setDerivativeOfGuidingVelocityOfRotation(f);
-      f->initializeUsingXML(e->FirstChildElement());
+      DerivativeOfGuidingVelocity *jd=ObjectFactory<Function>::create<DerivativeOfGuidingVelocity>(e->FirstChildElement());
+      setDerivativeOfGuidingVelocityOfRotation(jd);
+      jd->initializeUsingXML(e->FirstChildElement());
     }
 
     e=element->FirstChildElement(MBSIMNS"isFrameOfBodyForRotation");

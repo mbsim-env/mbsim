@@ -51,20 +51,28 @@
         <rotation>
         </rotation>
         <guidingVelocityOfTranslation>
-          <PiecewisePolynom1_VS xmlns="http://mbsim.berlios.de/MBSim">
-            <orderOfDerivative>1</orderOfDerivative>
-            <x>xValue(:,1)</x>
-            <y>xValue(:,2:4)</y>
-            <cSplineNatural/>
-          </PiecewisePolynom1_VS>
+          <TimeDependentGuidingVelocity xmlns="http://mbsim.berlios.de/MBSim">
+            <guidingVelocityFunction>
+              <PiecewisePolynom1_VS xmlns="http://mbsim.berlios.de/MBSim">
+                <orderOfDerivative>1</orderOfDerivative>
+                <x>xValue(:,1)</x>
+                <y>xValue(:,2:4)</y>
+                <cSplineNatural/>
+              </PiecewisePolynom1_VS>
+            </guidingVelocityFunction>
+          </TimeDependentGuidingVelocity>
         </guidingVelocityOfTranslation>
         <derivativeOfGuidingVelocityOfTranslation>
-          <PiecewisePolynom1_VS xmlns="http://mbsim.berlios.de/MBSim">
-            <orderOfDerivative>2</orderOfDerivative>
-            <x>xValue(:,1)</x>
-            <y>xValue(:,2:4)</y>
-            <cSplineNatural/>
-          </PiecewisePolynom1_VS>
+          <TimeDependentDerivativeOfGuidingVelocity>
+            <derivativeOfGuidingVelocityFunction>
+              <PiecewisePolynom1_VS xmlns="http://mbsim.berlios.de/MBSim">
+                <orderOfDerivative>2</orderOfDerivative>
+                <x>xValue(:,1)</x>
+                <y>xValue(:,2:4)</y>
+                <cSplineNatural/>
+              </PiecewisePolynom1_VS>
+            </derivativeOfGuidingVelocityFunction>
+          </TimeDependentDerivativeOfGuidingVelocity>
         </derivativeOfGuidingVelocityOfTranslation>
         <frames>
         </frames>

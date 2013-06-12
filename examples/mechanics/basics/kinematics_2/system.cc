@@ -39,7 +39,7 @@ class JacobianR : public Jacobian {
     }
 };
 
-class MyDerT : public Function3<Mat3xV,Vec,Vec,double> {
+class MyDerT : public DerivativeOfJacobian {
   public:
     Mat3xV operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
       Mat3xV J(1);
@@ -49,7 +49,7 @@ class MyDerT : public Function3<Mat3xV,Vec,Vec,double> {
     }
 };
 
-class MyDerR : public Function3<Mat3xV,Vec,Vec,double> {
+class MyDerR : public DerivativeOfJacobian {
   public:
     Mat3xV operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
       Mat3xV J(1);

@@ -71,7 +71,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
 
   RigidBody* cup = new RigidBody("Cup");
   cup->setRotation(new TimeDependentRotationAboutFixedAxis(new Angle,"[0;1;0]"));
-  cup->setGuidingVelocityOfRotation(new Omega);
+  cup->setGuidingVelocityOfRotation(new TimeDependentGuidingVelocity(new Omega));
   SymMat Theta(3);
   Theta(1,1) = 0.5*0.1*0.2*0.2;
   addFrame(new FixedRelativeFrame("Is",rB,SqrMat(3,EYE)));

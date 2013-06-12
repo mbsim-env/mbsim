@@ -41,18 +41,26 @@
       </translation>
       <rotation/>
       <guidingVelocityOfTranslation>
-        <SinusFunction1_VS>
-          <amplitude>2*pi*f * A *  [0;1;0]</amplitude>
-          <frequency>f*ones(3,1)</frequency>
-          <phase>pi*ones(3,1)</phase>
-        </SinusFunction1_VS>
+        <TimeDependentGuidingVelocity>
+          <guidingVelocityFunction>
+            <SinusFunction1_VS>
+                <amplitude>2*pi*f * A *  [0;1;0]</amplitude>
+                <frequency>f*ones(3,1)</frequency>
+                <phase>pi*ones(3,1)</phase>
+              </SinusFunction1_VS>
+            </guidingVelocityFunction>
+            </TimeDependentGuidingVelocity>
       </guidingVelocityOfTranslation>
       <derivativeOfGuidingVelocityOfTranslation>
-        <SinusFunction1_VS>
-          <amplitude>(2*pi*f)^2 * A * [0;1;0]</amplitude>
-          <frequency>f*ones(3,1)</frequency>
-          <phase>1.5*pi*ones(3,1)</phase>
-        </SinusFunction1_VS>
+        <TimeDependentDerivativeOfGuidingVelocity>
+          <derivativeOfGuidingVelocityFunction>
+            <SinusFunction1_VS>
+              <amplitude>(2*pi*f)^2 * A * [0;1;0]</amplitude>
+              <frequency>f*ones(3,1)</frequency>
+              <phase>1.5*pi*ones(3,1)</phase>
+            </SinusFunction1_VS>
+          </derivativeOfGuidingVelocityFunction>
+        </TimeDependentDerivativeOfGuidingVelocity>
       </derivativeOfGuidingVelocityOfTranslation>
       <frames>
         <frame>
