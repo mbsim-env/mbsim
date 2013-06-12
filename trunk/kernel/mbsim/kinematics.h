@@ -1254,10 +1254,109 @@ namespace MBSim {
   };
 
   /**
+   * \brief base class to describe derivatives of Jacobians
+   * \author Martin Foerg
+   */
+  class DerivativeOfJacobian : public Function3<fmatvec::Mat3xV,fmatvec::Vec,fmatvec::Vec,double> {
+    public:
+      /**
+       * \brief constructor
+       */
+      DerivativeOfJacobian() {}
+
+      /**
+       * \brief destructor
+       */
+      virtual ~DerivativeOfJacobian() {}
+
+      /**
+       * \param derivative of generalized position
+       * \param generalized position
+       * \param time
+       * \return derivative of Jacobian matrix as a function of derivative of generalized position, generalized position and time,
+       * Jd=Jd(qd,q,t)
+       */
+      virtual fmatvec::Mat3xV operator()(const fmatvec::Vec &qd, const fmatvec::Vec& q, const double& t, const void* =NULL) = 0;
+
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
+      /***************************************************/
+  };
+
+  class StateDependentDerivativeOfJacobian : public DerivativeOfJacobian {
+    public:
+      /**
+       * \brief constructor
+       */
+      StateDependentDerivativeOfJacobian(Function2<fmatvec::Mat3xV,fmatvec::Vec,fmatvec::Vec> *Jd_) : Jd(Jd_) {}
+
+      /**
+       * \brief destructor
+       */
+      virtual ~StateDependentDerivativeOfJacobian() { delete Jd; Jd = 0; }
+
+      /**
+       * \param derivative of generalized position
+       * \param generalized position
+       * \param time
+       * \return derivative of Jacobian matrix as a function of derivative of generalized position, generalized position and time,
+       * Jd=Jd(qd,q,t)
+       */
+      virtual fmatvec::Mat3xV operator()(const fmatvec::Vec &qd, const fmatvec::Vec& q, const double& t, const void* =NULL) { return (*Jd)(qd,q); }
+
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
+
+      /* GETTER / SETTER */
+      /**
+       * \brief set the derivative of Jacobian function
+       */
+      Function2<fmatvec::Mat3xV,fmatvec::Vec,fmatvec::Vec>* getDerivativeOfJacobianFunction() { return Jd; }
+      void setDerivativeOfJacobianFunction(Function2<fmatvec::Mat3xV,fmatvec::Vec,fmatvec::Vec> *Jd_) { Jd = Jd_; }
+      /***************************************************/
+
+    private:
+      Function2<fmatvec::Mat3xV,fmatvec::Vec,fmatvec::Vec> *Jd;
+  };
+
+  class GeneralDerivativeOfJacobian : public DerivativeOfJacobian {
+    public:
+      /**
+       * \brief constructor
+       */
+      GeneralDerivativeOfJacobian(Function3<fmatvec::Mat3xV,fmatvec::Vec,fmatvec::Vec,double> *Jd_) : Jd(Jd_) {}
+
+      /**
+       * \brief destructor
+       */
+      virtual ~GeneralDerivativeOfJacobian() { delete Jd; Jd = 0; }
+
+      /**
+       * \param derivative of generalized position
+       * \param generalized position
+       * \param time
+       * \return derivative of Jacobian matrix as a function of derivative of generalized position, generalized position and time,
+       * Jd=Jd(qd,q,t)
+       */
+      virtual fmatvec::Mat3xV operator()(const fmatvec::Vec &qd, const fmatvec::Vec& q, const double& t, const void* =NULL) { return (*Jd)(qd,q,t); }
+
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
+
+      /* GETTER / SETTER */
+      /**
+       * \brief set the Jacobian function
+       */
+      Function3<fmatvec::Mat3xV,fmatvec::Vec,fmatvec::Vec,double>* getDerivativeOfJacobianFunction() { return Jd; }
+      void setDerivativeOfJacobianFunction(Function3<fmatvec::Mat3xV,fmatvec::Vec,fmatvec::Vec,double> *Jd_) { Jd = Jd_; }
+      /***************************************************/
+
+    private:
+      Function3<fmatvec::Mat3xV,fmatvec::Vec,fmatvec::Vec,double> *Jd;
+  };
+
+  /**
    * \brief derivative of Jacobian for rotation about axes x and y
    * \author Martin Foerg
    */
-  class JdRotationAboutAxesXY : public Function3<fmatvec::Mat3xV,fmatvec::Vec,fmatvec::Vec,double> {
+  class JdRotationAboutAxesXY : public DerivativeOfJacobian {
     public:
       /**
        * \brief constructor
@@ -1265,7 +1364,7 @@ namespace MBSim {
        */
       JdRotationAboutAxesXY(int uSize_) : uSize(uSize_), Jd(uSize) {}
 
-      virtual fmatvec::Mat3xV operator()(const fmatvec::Vec &qd, const fmatvec::Vec& q, const double& t, const void*);
+      virtual fmatvec::Mat3xV operator()(const fmatvec::Vec &qd, const fmatvec::Vec& q, const double& t, const void* =NULL);
 
     private:
       /**
@@ -1283,7 +1382,7 @@ namespace MBSim {
    * \brief derivative of Jacobian for rotation about axes x and z
    * \author Martin Foerg
    */
-  class JdRotationAboutAxesXZ : public Function3<fmatvec::Mat3xV,fmatvec::Vec,fmatvec::Vec,double> {
+  class JdRotationAboutAxesXZ : public DerivativeOfJacobian {
     public:
       /**
        * \brief constructor
@@ -1291,7 +1390,7 @@ namespace MBSim {
        */
       JdRotationAboutAxesXZ(int uSize_) : uSize(uSize_), Jd(uSize) {}
 
-      virtual fmatvec::Mat3xV operator()(const fmatvec::Vec &qd, const fmatvec::Vec& q, const double& t, const void*);
+      virtual fmatvec::Mat3xV operator()(const fmatvec::Vec &qd, const fmatvec::Vec& q, const double& t, const void* =NULL);
 
     private:
       /**
@@ -1309,7 +1408,7 @@ namespace MBSim {
    * \brief derivative of Jacobian for rotation about axes y and z
    * \author Martin Foerg
    */
-  class JdRotationAboutAxesYZ : public Function3<fmatvec::Mat3xV,fmatvec::Vec,fmatvec::Vec,double> {
+  class JdRotationAboutAxesYZ : public DerivativeOfJacobian {
     public:
       /**
        * \brief constructor
@@ -1317,7 +1416,7 @@ namespace MBSim {
        */
       JdRotationAboutAxesYZ(int uSize_) : uSize(uSize_), Jd(uSize) {}
 
-      virtual fmatvec::Mat3xV operator()(const fmatvec::Vec &qd, const fmatvec::Vec& q, const double& t, const void*);
+      virtual fmatvec::Mat3xV operator()(const fmatvec::Vec &qd, const fmatvec::Vec& q, const double& t, const void* =NULL);
 
     private:
       /**
@@ -1335,7 +1434,7 @@ namespace MBSim {
    * \brief derivative of Jacobian for rotation about axes x and y
    * \author Martin Foerg
    */
-  class JdRotationAboutAxesXYZ : public Function3<fmatvec::Mat3xV,fmatvec::Vec,fmatvec::Vec,double> {
+  class JdRotationAboutAxesXYZ : public DerivativeOfJacobian {
     public:
       /**
        * \brief constructor
@@ -1343,7 +1442,7 @@ namespace MBSim {
        */
       JdRotationAboutAxesXYZ(int uSize_) : uSize(uSize_), Jd(uSize) {}
 
-      virtual fmatvec::Mat3xV operator()(const fmatvec::Vec &qd, const fmatvec::Vec& q, const double& t, const void*);
+      virtual fmatvec::Mat3xV operator()(const fmatvec::Vec &qd, const fmatvec::Vec& q, const double& t, const void* =NULL);
 
     private:
       /**
@@ -1355,6 +1454,212 @@ namespace MBSim {
        * \brief linear relation between differentiated positions and velocities
        */
       fmatvec::Mat3xV Jd;
+  };
+
+  /**
+   * \brief base class to describe guiding velocities
+   * \author Martin Foerg
+   */
+  class GuidingVelocity : public Function2<fmatvec::Vec3,fmatvec::Vec,double> {
+    public:
+      /**
+       * \brief constructor
+       */
+      GuidingVelocity() {}
+
+      /**
+       * \brief destructor
+       */
+      virtual ~GuidingVelocity() {}
+
+      /**
+       * \param derivative of generalized position
+       * \param generalized position
+       * \param time
+       * \return guiding velocity as a function of generalized position and time,
+       * Jd=Jd(qd,q,t)
+       */
+      virtual fmatvec::Vec3 operator()(const fmatvec::Vec& q, const double& t, const void* =NULL) = 0;
+
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
+      /***************************************************/
+  };
+
+  class TimeDependentGuidingVelocity : public GuidingVelocity {
+    public:
+      /**
+       * \brief constructor
+       */
+      TimeDependentGuidingVelocity() : j(NULL) {}
+
+      /**
+       * \brief constructor
+       */
+      TimeDependentGuidingVelocity(Function1<fmatvec::Vec3,double> *j_) : j(j_) {}
+
+      /**
+       * \brief destructor
+       */
+      virtual ~TimeDependentGuidingVelocity() { delete j; j = 0; }
+
+      /**
+       * \param generalized position
+       * \param time
+       * \return guiding velocity as a function of time,
+       * j=j(t)
+       */
+      virtual fmatvec::Vec3 operator()(const fmatvec::Vec& q, const double& t, const void* =NULL) { return (*j)(t); }
+
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+
+      /* GETTER / SETTER */
+      /**
+       * \brief set the guiding velocity function
+       */
+      Function1<fmatvec::Vec3,double>* getGuidingVelocityFunction() { return j; }
+      void setGuidingVelocityFunction(Function1<fmatvec::Vec3,double> *j_) { j = j_; }
+      /***************************************************/
+
+    private:
+      Function1<fmatvec::Vec3,double> *j;
+  };
+
+  class GeneralGuidingVelocity : public GuidingVelocity {
+    public:
+      /**
+       * \brief constructor
+       */
+      GeneralGuidingVelocity(Function2<fmatvec::Vec3,fmatvec::Vec,double> *j_) : j(j_) {}
+
+      /**
+       * \brief destructor
+       */
+      virtual ~GeneralGuidingVelocity() { delete j; j = 0; }
+
+      /**
+       * \param derivative of generalized position
+       * \param generalized position
+       * \param time
+       * \return guiding velocity as a function of generalized position and time,
+       * j=j(qd,q,t)
+       */
+      virtual fmatvec::Vec3 operator()(const fmatvec::Vec& q, const double& t, const void* =NULL) { return (*j)(q,t); }
+
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
+
+      /* GETTER / SETTER */
+      /**
+       * \brief set the guiding velocity function
+       */
+      Function2<fmatvec::Vec3,fmatvec::Vec,double>* getGuidingVelocityFunction() { return j; }
+      void setGuidingVelocityFunction(Function2<fmatvec::Vec3,fmatvec::Vec,double> *j_) { j = j_; }
+      /***************************************************/
+
+    private:
+      Function2<fmatvec::Vec3,fmatvec::Vec,double> *j;
+  };
+
+  /**
+   * \brief base class to describe derivatives of guiding velocities
+   * \author Martin Foerg
+   */
+  class DerivativeOfGuidingVelocity : public Function3<fmatvec::Vec3,fmatvec::Vec,fmatvec::Vec,double> {
+    public:
+      /**
+       * \brief constructor
+       */
+      DerivativeOfGuidingVelocity() {}
+
+      /**
+       * \brief destructor
+       */
+      virtual ~DerivativeOfGuidingVelocity() {}
+
+      /**
+       * \param derivative of generalized position
+       * \param generalized position
+       * \param time
+       * \return derivative of guiding velocity as a function of derivative of generalized position, generalized position and time,
+       * Jd=Jd(qd,q,t)
+       */
+      virtual fmatvec::Vec3 operator()(const fmatvec::Vec& qd, const fmatvec::Vec& q, const double& t, const void* =NULL) = 0;
+
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
+      /***************************************************/
+  };
+
+  class TimeDependentDerivativeOfGuidingVelocity : public DerivativeOfGuidingVelocity {
+    public:
+      /**
+       * \brief constructor
+       */
+      TimeDependentDerivativeOfGuidingVelocity() : jd(NULL) {}
+
+      /**
+       * \brief constructor
+       */
+      TimeDependentDerivativeOfGuidingVelocity(Function1<fmatvec::Vec3,double> *jd_) : jd(jd_) {}
+
+      /**
+       * \brief destructor
+       */
+      virtual ~TimeDependentDerivativeOfGuidingVelocity() { delete jd; jd = 0; }
+
+      /**
+       * \param generalized position
+       * \param time
+       * \return derivative of guiding velocity as a function of time,
+       * jd=jd(t)
+       */
+      virtual fmatvec::Vec3 operator()(const fmatvec::Vec& qd, const fmatvec::Vec& q, const double& t, const void* =NULL) { return (*jd)(t); }
+
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+
+      /* GETTER / SETTER */
+      /**
+       * \brief set the derivative of derivative of guiding velocity function
+       */
+      Function1<fmatvec::Vec3,double>* getDerivativeOfGuidingVelocityFunction() { return jd; }
+      void setDerivativeOfGuidingVelocityFunction(Function1<fmatvec::Vec3,double> *jd_) { jd = jd_; }
+      /***************************************************/
+
+    private:
+      Function1<fmatvec::Vec3,double> *jd;
+  };
+
+  class GeneralDerivativeOfGuidingVelocity : public DerivativeOfGuidingVelocity {
+    public:
+      /**
+       * \brief constructor
+       */
+      GeneralDerivativeOfGuidingVelocity(Function3<fmatvec::Vec3,fmatvec::Vec,fmatvec::Vec,double> *jd_) : jd(jd_) {}
+
+      /**
+       * \brief destructor
+       */
+      virtual ~GeneralDerivativeOfGuidingVelocity() { delete jd; jd = 0; }
+
+      /**
+       * \param derivative of generalized position
+       * \param generalized position
+       * \param time
+       * \return derivative of guiding velocity as a function of derivative of generalized position, generalized position and time,
+       * jd=jd(qd,q,t)
+       */
+      virtual fmatvec::Vec3 operator()(const fmatvec::Vec& qd, const fmatvec::Vec& q, const double& t, const void* =NULL) { return (*jd)(qd,q,t); }
+
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
+
+      /* GETTER / SETTER */
+      /**
+       * \brief set the derivative of guiding velocity function
+       */
+      Function3<fmatvec::Vec3,fmatvec::Vec,fmatvec::Vec,double>* getDerivativeOfGuidingVelocityFunction() { return jd; }
+      void setDerivativeOfGuidingVelocityFunction(Function3<fmatvec::Vec3,fmatvec::Vec,fmatvec::Vec,double> *jd_) { jd = jd_; }
+      /***************************************************/
+
+    private:
+      Function3<fmatvec::Vec3,fmatvec::Vec,fmatvec::Vec,double> *jd;
   };
 
 }

@@ -730,4 +730,23 @@ namespace MBSim {
 #endif
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, TimeDependentGuidingVelocity, MBSIMNS"TimeDependentGuidingVelocity")
+
+  void TimeDependentGuidingVelocity::initializeUsingXML(TiXmlElement *element) {
+    GuidingVelocity::initializeUsingXML(element);
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMNS"guidingVelocityFunction");
+    j=ObjectFactory<Function>::create<Function1<Vec3,double> >(e->FirstChildElement());
+    j->initializeUsingXML(e->FirstChildElement());
+  }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, TimeDependentDerivativeOfGuidingVelocity, MBSIMNS"TimeDependentDerivativeOfGuidingVelocity")
+
+  void TimeDependentDerivativeOfGuidingVelocity::initializeUsingXML(TiXmlElement *element) {
+    DerivativeOfGuidingVelocity::initializeUsingXML(element);
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMNS"derivativeOfGuidingVelocityFunction");
+    jd=ObjectFactory<Function>::create<Function1<Vec3,double> >(e->FirstChildElement());
+    jd->initializeUsingXML(e->FirstChildElement());
+  }
 }

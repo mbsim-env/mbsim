@@ -1078,7 +1078,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function3_MVVS"/>
+                <xs:element ref="DerivativeOfJacobian"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -1091,7 +1091,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function3_MVVS"/>
+                <xs:element ref="DerivativeOfJacobian"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -1106,7 +1106,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function1_VS"/>
+                <xs:element ref="GuidingVelocity"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -1121,7 +1121,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function1_VS"/>
+                <xs:element ref="GuidingVelocity"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -1136,7 +1136,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function1_VS"/>
+                <xs:element ref="DerivativeOfGuidingVelocity"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -1151,7 +1151,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function1_VS"/>
+                <xs:element ref="DerivativeOfGuidingVelocity"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -3018,6 +3018,56 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="TimeDependentGuidingVelocity" substitutionGroup="GuidingVelocity" type="TimeDependentGuidingVelocityType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Parametrisiert eine zeitabhängige Translation <object class="inlineeqn">\mathbf{p}</object> für Starrkörper (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="TimeDependentGuidingVelocityType">
+    <xs:complexContent>
+      <xs:extension base="GuidingVelocityType">
+        <xs:sequence>
+          <xs:element name="guidingVelocityFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert den zeitabhängen vektoriellen Ort <object class="inlineeqn">\mathbf{p}</object>.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function1_VS">
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="TimeDependentDerivativeOfGuidingVelocity" substitutionGroup="DerivativeOfGuidingVelocity" type="TimeDependentDerivativeOfGuidingVelocityType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Parametrisiert eine zeitabhängige Translation <object class="inlineeqn">\mathbf{p}</object> für Starrkörper (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="TimeDependentDerivativeOfGuidingVelocityType">
+    <xs:complexContent>
+      <xs:extension base="DerivativeOfGuidingVelocityType">
+        <xs:sequence>
+          <xs:element name="derivativeOfGuidingVelocityFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert den zeitabhängen vektoriellen Ort <object class="inlineeqn">\mathbf{p}</object>.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function1_VS">
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="GeneralizedForceLaw" abstract="true" type="GeneralizedForceLawType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -3324,6 +3374,33 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
+  
+  <xs:element name="DerivativeOfJacobian" abstract="true" type="DerivativeOfJacobianType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrakte Oberklasse zur Beschreibung der Ableitung der Jacobi-Matrizen bei der kinematischen Parametrisierung eines Starrkörpers (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>).
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="DerivativeOfJacobianType"/>
+
+  <xs:element name="GuidingVelocity" abstract="true" type="GuidingVelocityType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrakte Oberklasse zur Beschreibung der Führungsgeschwindigkeiten bei der kinematischen Parametrisierung eines Starrkörpers (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>).
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="GuidingVelocityType"/>
+
+  <xs:element name="DerivativeOfGuidingVelocity" abstract="true" type="DerivativeOfGuidingVelocityType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrakte Oberklasse zur Beschreibung der Ableitung der Führungsgeschwindigkeiten bei der kinematischen Parametrisierung eines Starrkörpers (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>).
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="DerivativeOfGuidingVelocityType"/>
 
   <xs:element name="Function1_SS" abstract="true" type="Function1_SSType">
     <xs:annotation>
