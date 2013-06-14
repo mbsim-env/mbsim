@@ -193,6 +193,14 @@ namespace MBSim {
        * \brief computes the point on the contour of the frustum due to the height-coordinate x and the normal in world coordinates
        * \param x height coordinate
        * \param n normal of the frustum
+       * \return contour point in frustum coordinates of the contour point on the frustum
+       */
+      fmatvec::Vec3 computeContourPointFrustum(const double & x, const fmatvec::Vec3 & n);
+
+      /*!
+       * \brief computes the point on the contour of the frustum due to the height-coordinate x and the normal in world coordinates
+       * \param x height coordinate
+       * \param n normal of the frustum
        * \return contour point in world coordinates of the contour point on the frustum
        */
       fmatvec::Vec3 computeContourPoint(const double & x, const fmatvec::Vec3 & n);
@@ -229,6 +237,11 @@ namespace MBSim {
        * \brief pointer to the contour class for the polynomial frustum
        */
       PolynomialFrustum *frustum;
+
+      /*!
+       * \brief sign of height-direction
+       */
+      double signh;
 
       /*!
        * \brief save last value to use it again as starting value for equation 1
