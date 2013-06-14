@@ -118,7 +118,7 @@ namespace MBSimFlexibleBody {
        * \brief compute angles at Lagrangian coordinate in local FE coordinates
        * \param Lagrangian coordinate
        */
-      virtual fmatvec::Vec3 computeAngles(double s)=0;
+      virtual fmatvec::Vec3 computeAngles(double sGlobal, const fmatvec::Vec & vec)=0;
 
       /**
        * \brief initialise beam only for giving information with respect to state, number elements, length, (not for simulation)

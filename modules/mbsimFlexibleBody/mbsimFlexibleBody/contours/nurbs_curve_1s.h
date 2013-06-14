@@ -141,8 +141,10 @@ namespace MBSimFlexibleBody {
 #ifdef HAVE_NURBS
       /*!
        * \brief interpolates the Jacobians of translation with the node-data from the body
+       * \param interpolate translational jacobian
+       * \param interpolate rotational jacobian
        */
-      void computeCurveJacobians();
+      void computeCurveJacobians(bool trans = true, bool rot = true);
 #endif
 
     protected:
