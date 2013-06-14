@@ -238,35 +238,16 @@ namespace MBSim {
       ContactPolyfun(double, const fmatvec::Vec &);
       virtual ~ContactPolyfun() {
       }
-      ;
+
       virtual double operator()(const double & x, const void * = NULL);
       void initializeUsingXML() {
       }
-      ;
 
     protected:
       double rhs;
       fmatvec::Vec para;
 
   };
-
-//TODO: Do we need this class anymore?
-/*!
- * \brief this class denotes left hand side of the equation to be solved when find closest point on a polynomial curve  to a given point, as interpreted in function CP_toP_onPolycurve
- *        The equation has the form: (f(x)-y_P)*f'(x)+x-x_p=0
- */
-//  class Polyfun_in_cppc: public MBSim::Function1<double, double>{
-//      public:
-//           Polyfun_in_cppc(double ,const fmatvec::Vec  &);
-//           virtual ~Polyfun_in_cppc(){};
-//           virtual double operator()(const double & x, const void * = NULL);
-//           void initializeUsingXML() {};
-//
-//      protected:
-//           fmatvec::Vec para;
-//           fmatvec::Vec2 P;
-//
-//  };
 
 }
 
