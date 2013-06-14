@@ -250,82 +250,6 @@ namespace MBSim {
     sphereRadius = (temp1 > temp) ? temp1 : temp;
   }
 
-  //TODO: Do we need these functions?
-  //The position of the given point has 3 situations:
-  //1st: above the curve and in the "middle" rectangle. In this situation, the tangent through the closest point on the curve is perpendicular to the line pass through the itself and the given point;
-  //2nd: left rectangle. The given point is either on the left side of the domain or on the left side of a line which passes through the left end point of the curve and perpendicular to the tangent on that end point. In this situation, the closest point on the curve is its left end point.
-  //3rd: right rectangle. Similar to left rectangle. In this situation, the closest point is the right end point of the curve.
-//  fmatvec::Vec3 PolynomialFrustum::CP_toP_onPolycurve2D(double x_0, double x_end, fmatvec::Vec2 P){
-//
-//    Vec3 closeP;//the first element stores the smallest distance, the second and third ones for the position of corresponding point on the frustum surface
-//    int succeed=0;//1 for succeed; 0 for not
-//
-//    Polyfun_in_cppc *Funleft = new Polyfun_in_cppc(parameters,P);
-//    NewtonMethod *solver3= new NewtonMethod(Funleft);
-//    int itmax=200, kmax=200;//maximum iteration, maximum damping steps, information of success
-//    double tol=1e-10;
-//    solver3->setMaximumNumberOfIterations(itmax);
-//    solver3->setMaximumDampingSteps(kmax);
-//    solver3->setTolerance(tol);
-//    int status;
-//    double root;
-//    Vec2 temp;
-//
-//    double midP = (x_0+x_end)/2;
-//    //if the given point lies in the left rectangle, the closest point is the left end point on the curve
-//    if(P(0) <= midP){
-//      //check if P lies in the left rectangle
-//      double temp1 = getValue(x_0)-(P(0)-x_0)/getValueD1(x_0);
-//      if(P(1) < temp1){//2nd situation
-//        closeP(1) = x_0;
-//        closeP(2) = getValue(x_0);
-//        temp(0) = P(0)-closeP(1);
-//        temp(1) = P(1)-closeP(2);
-//        closeP(0) = nrm2(temp);
-//        succeed=1;
-//      }else{//1st situation
-//        root = solver3->solve(midP);//initial guess x=(x_0+x_end)/2
-//        status = solver3->getInfo();
-//        if(status == 0 && ((root-x_0)*(root-x_end)<=0)){
-//          closeP(1) = root;
-//          closeP(2) = getValue(root);
-//          temp(0) = P(0)-closeP(1);
-//          temp(1) = P(1)-closeP(2);
-//          closeP(0) = nrm2(temp);
-//          succeed=1;
-//        }
-//      }
-//    }else{
-//      double temp2 = getValue(x_end)-(P(0)-x_end)/getValueD1(x_end);
-//      if(P(1) < temp2){//3rd situation
-//              closeP(1) = x_end;
-//              closeP(2) = getValue(x_end);
-//              temp(0) = P(0)-closeP(1);
-//              temp(1) = P(1)-closeP(2);
-//              closeP(0) = nrm2(temp);
-//              succeed=1;
-//      }else{//1st situation
-//        root = solver3->solve(midP);
-//        status = solver3->getInfo();
-//        if(status == 0 && ((root-x_0)*(root-x_end)<=0)){
-//          closeP(1) = root;
-//          closeP(2) = getValue(root);
-//          temp(0) = P(0)-closeP(1);
-//          temp(1) = P(1)-closeP(2);
-//          closeP(0) = nrm2(temp);
-//          succeed=1;
-//        }
-//      }
-//
-//    }
-//
-//    if(succeed == 1){
-//      return closeP;
-//    }else{
-//      cout<<"CP_toP_onPolycurve failed";
-//      exit(EXIT_FAILURE);
-//    }
-//  }
 #ifdef HAVE_OPENMBVCPPINTERFACE
   void PolynomialFrustum::createInventorFile() {
 
@@ -465,25 +389,5 @@ namespace MBSim {
     return f;
   }
 #endif
-
-//TODO: Do we need these functions?
-//  Polyfun_in_cppc::Polyfun_in_cppc(const Vec & para_, const Vec2 & P_){
-//    para = para_;
-//    P = P_;
-//  }
-//  double Polyfun_in_cppc::operator ()(const double &x, const void *){
-//    int n = para.size();
-//    double f = 0;
-//    double fprime = 0;
-//    double result = 0;
-//    for (int i = 0; i < n; i++) {
-//      f = f + para(i) * pow(x, i);
-//    }
-//    for (int j = 1; j < para.size(); j++) {
-//      fprime += j * para(j) * pow(x, (j - 1));
-//    }
-//    result = (f-P(1))*fprime+x-P(0);
-//    return result;
-//  }
 
 }

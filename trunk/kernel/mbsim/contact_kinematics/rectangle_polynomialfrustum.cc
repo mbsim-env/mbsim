@@ -92,7 +92,8 @@ namespace MBSim {
 
   bool edgePolyFrustumCriteria::inBounds(const double & t) {
     double x = ax + t * dx;
-    if (t < 0 or t > 1 or x < 0 or x > frustumHeight)
+    double signh = sign(frustumHeight);
+    if (t < 0 or t > 1 or signh*x < 0 or signh*x > signh*frustumHeight)
       return false;
 
     return true;
@@ -162,8 +163,9 @@ namespace MBSim {
     //normal of the rectangle under the frustum reference frame
     Vec3 v = frustum->getReferenceOrientation().T() * rectangle->getReferenceOrientation().col(0);
 
+    double signh = sign(frustum->getHeight());
     //right sides of the two equations
-    rhs = sqrt(v(0) * v(0) / (v(1) * v(1) + v(2) * v(2)));
+    rhs = signh * sqrt(v(0) * v(0) / (v(1) * v(1) + v(2) * v(2)));
     //rhs2 = -rhs;
 
     const Vec & para = frustum->getPolynomialParameters(); //para = (a0,a1 ... an)
@@ -202,7 +204,7 @@ namespace MBSim {
     //2.Check if the corresponding point is within the rectangle
     //3.Find the corresponding point on the plane, check if it is in the
     //rectangle
-    if ((solver1->getInfo() == 0) && x1 >= 0 && x1 <= frustum->getHeight())
+    if ((solver1->getInfo() == 0) && signh*x1 >= 0 && signh*x1 <= signh*frustum->getHeight())
       status = checkPossibleContactPoint(x1, v);
 
     //same thing with the other solution x2
@@ -241,13 +243,16 @@ namespace MBSim {
     double weights[4];
     double weightsum = 0;
 
+    double h = frustum->getHeight();
+    int signh = sign(h);
+
     for (int i = 0; i < 4; i++) {
       cornerPoints[i] = frustum->getFrame()->getOrientation().T() * (rectangle->getFrame()->getPosition() + rectangle->getFrame()->getOrientation() * cornerPoints[i] - frustum->getFrame()->getPosition());
       const double & x = cornerPoints[i](0);
       //radial position of point
       const double r = sqrt(pow(cornerPoints[i](1), 2) + pow(cornerPoints[i](2), 2));
       const double R = frustum->getValue(x);
-      if (x >= 0 and x <= frustum->getHeight() and r <= R) {
+      if (signh*x >= 0 and signh*x <= signh*h and r <= R) {
         //Possible contact point found --> assumed to be at x-position of corner point
         weights[i] = R - r;
         weightsum += weights[i];
