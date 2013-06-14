@@ -41,30 +41,32 @@ namespace MBSim {
   ThetaTimeSteppingIntegrator::ThetaTimeSteppingIntegrator() : dt(1e-3), theta(0.5), t(0.), tPlot(0.), iter(0), step(0), integrationSteps(0), maxIter(0), sumIter(0), s0(0.), time(0.), stepPlot(0), driftCompensation(false) {}
 
   void ThetaTimeSteppingIntegrator::update(DynamicSystemSolver& system, const Vec& z, double t) {
-    if(system.getq()()!=z()) system.updatezRef(z);
+    if (system.getq()() != z())
+      system.updatezRef(z);
 
     system.updateStateDependentVariables(t);
     system.updateg(t);
     system.checkActive(1);
     system.setUpActiveLinks();
-    if(system.gActiveChanged()) {
+    if (system.gActiveChanged()) {
       // system.checkAllgd(); // TODO necessary?
       system.calcgdSize(3); // IH
       system.calclaSize(3); // IH
       system.calcrFactorSize(3); // IH
 
-      system.updateWRef(system.getWParent()(Index(0,system.getuSize()-1),Index(0,system.getlaSize()-1)));
-      system.updateVRef(system.getVParent()(Index(0,system.getuSize()-1),Index(0,system.getlaSize()-1)));
-      system.updatelaRef(system.getlaParent()(0,system.getlaSize()-1));
-      system.updategdRef(system.getgdParent()(0,system.getgdSize()-1));
-      if(system.getImpactSolver() == RootFinding) system.updateresRef(system.getresParent()(0,system.getlaSize()-1));
-      system.updaterFactorRef(system.getrFactorParent()(0,system.getrFactorSize()-1));
+      system.updateWRef(system.getWParent()(Index(0, system.getuSize() - 1), Index(0, system.getlaSize() - 1)));
+      system.updateVRef(system.getVParent()(Index(0, system.getuSize() - 1), Index(0, system.getlaSize() - 1)));
+      system.updatelaRef(system.getlaParent()(0, system.getlaSize() - 1));
+      system.updategdRef(system.getgdParent()(0, system.getgdSize() - 1));
+      if (system.getImpactSolver() == RootFinding)
+        system.updateresRef(system.getresParent()(0, system.getlaSize() - 1));
+      system.updaterFactorRef(system.getrFactorParent()(0, system.getrFactorSize() - 1));
     }
     system.updategd(t);
-    system.updateT(t); 
+    system.updateT(t);
     system.updateJacobians(t);
     system.updateM(t);
-    system.updateW(t); 
+    system.updateW(t);
     system.updateV(t);
     system.updateh(t);
   }
@@ -80,44 +82,48 @@ namespace MBSim {
     int nx = system.getxSize();
     int n = nq + nu + nx;
 
-    Index Iq(0,nq-1);
-    Index Iu(nq,nq+nu-1);
-    Index Ix(nq+nu,n-1);
+    Index Iq(0, nq - 1);
+    Index Iu(nq, nq + nu - 1);
+    Index Ix(nq + nu, n - 1);
     z.resize(n);
-    q>>z(Iq);
-    u>>z(Iu);
-    x>>z(Ix);
+    q >> z(Iq);
+    u >> z(Iu);
+    x >> z(Ix);
 
-    if(z0.size()) z = z0;
-    else system.initz(z);
+    if (z0.size())
+      z = z0;
+    else
+      system.initz(z);
 
     integPlot.open((name + ".plt").c_str());
     cout.setf(ios::scientific, ios::floatfield);
     
-    stepPlot = (int)(dtPlot/dt + 0.5);
-    assert(fabs(stepPlot*dt - dtPlot) < dt*dt);
+    stepPlot = (int) (dtPlot / dt + 0.5);
+    assert(fabs(stepPlot * dt - dtPlot) < dt * dt);
 
     s0 = clock();
   }
 
   void ThetaTimeSteppingIntegrator::subIntegrate(DynamicSystemSolver& system, double tStop) {
-    while(t<=tStop) { // time loop
+    while (t <= tStop) { // time loop
       integrationSteps++;
-      if((step*stepPlot - integrationSteps) < 0) {
+      if ((step * stepPlot - integrationSteps) < 0) {
         step++;
-        if(driftCompensation) system.projectGeneralizedPositions(t,0);
-        system.plot2(z,t,dt);
+        if (driftCompensation)
+          system.projectGeneralizedPositions(t, 0);
+        system.plot2(z, t, dt);
         double s1 = clock();
-        time += (s1-s0)/CLOCKS_PER_SEC;
-        s0 = s1; 
-        integPlot << t << " " << dt << " " <<  iter << " " << time << " "<<system.getlaSize() << endl;
-        if(output) cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = "<< setw(5) << setiosflags(ios::left) << iter << "\r" << flush;
+        time += (s1 - s0) / CLOCKS_PER_SEC;
+        s0 = s1;
+        integPlot << t << " " << dt << " " << iter << " " << time << " " << system.getlaSize() << endl;
+        if (output)
+          cout << "   t = " << t << ",\tdt = " << dt << ",\titer = " << setw(5) << setiosflags(ios::left) << iter << "\r" << flush;
         tPlot += dtPlot;
       }
 
       double te = t + dt;
-      t += theta*dt;
-      update(system,z,t);
+      t += theta * dt;
+      update(system, z, t);
 
       Mat T = system.getT().copy();
       SymMat M = system.getM().copy();
@@ -128,21 +134,22 @@ namespace MBSim {
       Mat dhdu = system.dhdu(t);
 
       VecInt ipiv(M.size());
-      SqrMat luMeff = SqrMat(facLU(M - theta*dt*dhdu - theta*theta*dt*dt*dhdq*T,ipiv));
-      Vec heff = h+theta*dhdq*T*u*dt;
-      system.getG() << SqrMat(W.T()*slvLUFac(luMeff,V,ipiv));
+      SqrMat luMeff = SqrMat(facLU(M - theta * dt * dhdu - theta * theta * dt * dt * dhdq * T, ipiv));
+      Vec heff = h + theta * dhdq * T * u * dt;
+      system.getG() << SqrMat(W.T() * slvLUFac(luMeff, V, ipiv));
       system.getGs() << system.getG();
-      system.getb() << system.getgd() + W.T()*slvLUFac(luMeff,heff,ipiv)*dt; // TODO system.getgd() necessary?
+      system.getb() << system.getgd() + W.T() * slvLUFac(luMeff, heff, ipiv) * dt; // TODO system.getgd() necessary?
 
       iter = system.solveImpacts(dt);
-      if(iter>maxIter) maxIter = iter;
+      if (iter > maxIter)
+        maxIter = iter;
       sumIter += iter;
-
-      Vec du = slvLUFac(luMeff,heff*dt + V*system.getla(),ipiv);
       
-      q += T*(u+theta*du)*dt;
+      Vec du = slvLUFac(luMeff, heff * dt + V * system.getla(), ipiv);
+
+      q += T * (u + theta * du) * dt;
       u += du;
-      x += system.deltax(z,t,dt);
+      x += system.deltax(z, t, dt);
       t = te;
     }
   }
@@ -154,10 +161,10 @@ namespace MBSim {
     integSum << "Integration time: " << time << endl;
     integSum << "Integration steps: " << integrationSteps << endl;
     integSum << "Maximum number of iterations: " << maxIter << endl;
-    integSum << "Average number of iterations: " << double(sumIter)/integrationSteps << endl;
+    integSum << "Average number of iterations: " << double(sumIter) / integrationSteps << endl;
     integSum.close();
 
-    cout.unsetf (ios::scientific);
+    cout.unsetf(ios::scientific);
     cout << endl;
   }
 
@@ -170,14 +177,14 @@ namespace MBSim {
   void ThetaTimeSteppingIntegrator::initializeUsingXML(TiXmlElement *element) {
     Integrator::initializeUsingXML(element);
     TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMINTNS"stepSize");
+    e = element->FirstChildElement(MBSIMINTNS"stepSize");
     setStepSize(Element::getDouble(e));
-    e=element->FirstChildElement(MBSIMINTNS"theta");
-    const double theta=Element::getDouble(e);
-    assert(theta>=0);
-    assert(theta<=1);
+    e = element->FirstChildElement(MBSIMINTNS"theta");
+    const double theta = Element::getDouble(e);
+    assert(theta >= 0);
+    assert(theta <= 1);
     setTheta(theta);
-    e=element->FirstChildElement(MBSIMINTNS"driftCompensation");
+    e = element->FirstChildElement(MBSIMINTNS"driftCompensation");
     setDriftCompensation(Element::getBool(e));
   }
 

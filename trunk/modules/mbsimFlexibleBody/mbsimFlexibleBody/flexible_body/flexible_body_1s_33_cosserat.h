@@ -127,15 +127,21 @@ namespace MBSimFlexibleBody {
       /**
        * \brief compute angles at Lagrangian coordinate in local FE coordinates
        * \param Lagrangian coordinate
+       * \param vector to be interpolated
        */
-      fmatvec::Vec3 computeAngles(double s);
+      fmatvec::Vec3 computeAngles(double sGlobal, const fmatvec::Vec & vec);
 
       /**
        * \brief initialise beam only for giving information with respect to state, number elements, length, (not for simulation)
        */
       void initInfo();
 
-    private:
+    protected:
+
+      /*!
+       * \brief marker if Jacobians already interpolated
+       */
+      bool JTransInterp;
 
       /**
        * \brief area moments of inertia
