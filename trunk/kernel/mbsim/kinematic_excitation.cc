@@ -132,11 +132,11 @@ namespace MBSim {
         LinkMechanics::init(stage);
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
-          if(getPlotFeature(openMBV)==enabled && FArrow) {
+          if(FArrow) {
             FArrow->setName("Force");
             openMBVForceGrp->addObject(FArrow);
           }
-          if(getPlotFeature(openMBV)==enabled && MArrow) {
+          if(MArrow) {
             MArrow->setName("Moment");
             openMBVForceGrp->addObject(MArrow);
           }

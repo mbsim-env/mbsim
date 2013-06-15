@@ -67,6 +67,14 @@ namespace MBSim {
 
       virtual std::string getType() const { return "GearConstraint"; }
     
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      /** \brief Visualize the constraint force */
+      void setOpenMBVGearForceArrow(OpenMBV::Arrow *arrow) { FArrow = arrow; }
+
+      /** \brief Visualize the constraint moment */
+      void setOpenMBVGearMomentArrow(OpenMBV::Arrow *arrow) { MArrow = arrow; }
+#endif
+
     private:
       std::vector<RigidBody*> bi;
       RigidBody *bd;
@@ -75,6 +83,10 @@ namespace MBSim {
       std::string saved_DependentBody;
       std::vector<std::string> saved_DependencyBodies;
       std::vector<double> saved_ratio;
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::Arrow *FArrow, *MArrow;
+#endif
   };
 
   class KinematicConstraint : public Constraint {
@@ -195,12 +207,12 @@ namespace MBSim {
       virtual std::string getType() const { return "JointConstraint"; }
 
       /** \brief Visualize a force arrow acting on frame2 */
-      void setOpenMBVForceArrow(OpenMBV::Arrow *arrow) {
+      void setOpenMBVJointForceArrow(OpenMBV::Arrow *arrow) {
         FArrow = arrow;
       }
 
       /** \brief Visualize a moment arrow acting on frame2 */
-      void setOpenMBVMomentArrow(OpenMBV::Arrow *arrow) {
+      void setOpenMBVJointMomentArrow(OpenMBV::Arrow *arrow) {
         MArrow = arrow;
       }
 

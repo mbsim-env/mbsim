@@ -57,6 +57,19 @@ namespace MBSim {
 
       void plot(double t, double dt=1);
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      /** \brief Visualize a force arrow */
+      void setOpenMBVForceArrow(OpenMBV::Arrow *arrow) { FArrow[0] = arrow; }
+
+      /** \brief Visualize a moment arrow */
+      void setOpenMBVMomentArrow(OpenMBV::Arrow *arrow) { MArrow[0] = arrow; }
+#endif
+
+    protected:
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      std::vector<OpenMBV::Arrow*> FArrow, MArrow;
+#endif
+
   };
 
 }

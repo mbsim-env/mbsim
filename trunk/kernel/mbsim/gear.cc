@@ -21,16 +21,23 @@
 #include "mbsim/gear.h"
 #include "mbsim/frame.h"
 #include "mbsim/dynamic_system_solver.h"
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include "openmbvcppinterface/arrow.h"
+#endif
 
 using namespace std;
 using namespace fmatvec;
 
 namespace MBSim {
 
-  Gear::Gear(const string &name) : LinkMechanics(name)
-  {
+  Gear::Gear(const string &name) : LinkMechanics(name) {
     body.push_back(0); 
     ratio.push_back(-1);
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    FArrow.push_back(0);
+    MArrow.push_back(0);
+#endif
   }
 
   void Gear::calclaSize(int j) {
@@ -169,6 +176,32 @@ namespace MBSim {
       }
       if(getPlotFeature(plotRecursive)==enabled) {
         LinkMechanics::init(stage);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+        if(getPlotFeature(openMBV)==enabled) {
+          if(FArrow[0]) {
+            FArrow[0]->setName("Force0");
+            openMBVForceGrp->addObject(FArrow[0]);
+            for(int i=1; i<body.size(); i++) {
+              stringstream s;
+              s << i;
+              FArrow.push_back(new OpenMBV::Arrow(*FArrow[0]));
+              FArrow[i]->setName("Force"+s.str());
+              openMBVForceGrp->addObject(FArrow[i]);
+            }
+          }
+          if(MArrow[0]) {
+            MArrow[0]->setName("Moment0");
+            openMBVForceGrp->addObject(MArrow[0]);
+            for(int i=1; i<body.size(); i++) {
+              stringstream s;
+              s << i;
+              MArrow.push_back(new OpenMBV::Arrow(*MArrow[0]));
+              MArrow[i]->setName("Moment"+s.str());
+              openMBVForceGrp->addObject(MArrow[i]);
+            }
+          }
+        }
+#endif
       }
     }
     else {
@@ -182,6 +215,42 @@ namespace MBSim {
       plotVector.push_back(ratio[i]*la(0));
     }
     if(getPlotFeature(plotRecursive)==enabled) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      if(getPlotFeature(openMBV)==enabled) {
+        if(FArrow[0]) {
+          for(unsigned i=0; i<body.size(); i++) {
+            vector<double> data;
+            data.push_back(t);
+            Vec3 WF = -body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJT()*ratio[i]*la;
+            Vec3 WrOS=body[i]->getFrameC()->getPosition();
+            data.push_back(WrOS(0));
+            data.push_back(WrOS(1));
+            data.push_back(WrOS(2));
+            data.push_back(WF(0));
+            data.push_back(WF(1));
+            data.push_back(WF(2));
+            data.push_back(1.0);
+            FArrow[i]->append(data);
+          }
+        }
+        if(MArrow[0]) {
+          for(unsigned i=0; i<body.size(); i++) {
+            vector<double> data;
+            data.push_back(t);
+            Vec3 WM = -body[i]->getFrameOfReference()->getOrientation()*body[i]->getPJR()*ratio[i]*la;
+            Vec3 WrOS=body[i]->getFrameC()->getPosition();
+            data.push_back(WrOS(0));
+            data.push_back(WrOS(1));
+            data.push_back(WrOS(2));
+            data.push_back(WM(0));
+            data.push_back(WM(1));
+            data.push_back(WM(2));
+            data.push_back(1.0);
+            MArrow[i]->append(data);
+          }
+        }
+      }
+#endif
       LinkMechanics::plot(t,dt);
     }
   }
