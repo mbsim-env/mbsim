@@ -32,6 +32,10 @@
 #ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
 #include "mbsim/utils/symbolic_function.h"
 #endif
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/arrow.h>
+#include <openmbvcppinterface/frame.h>
+#endif
 
 using namespace MBSim;
 using namespace MBXMLUtils;
@@ -93,7 +97,6 @@ namespace MBSim {
       bd->addDependency(this);
       if (saved_DependencyBodies.size()>0) {
         for (unsigned int i=0; i<saved_DependencyBodies.size(); i++) {
-          cout << saved_DependencyBodies[i] << endl;
           addDependency(getByPath<RigidBody>(saved_DependencyBodies[i]), saved_ratio[i]);
         }
       }
@@ -152,12 +155,18 @@ namespace MBSim {
     }
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, KinematicConstraint, MBSIMNS"KinematicConstraint")
-
-  KinematicConstraint::KinematicConstraint(const std::string &name) : Constraint(name), bd(0), f(0), fd(0), fdd(0), saved_DependentBody("") {
+  KinematicConstraint::KinematicConstraint(const std::string &name) : Constraint(name), bd(0), saved_DependentBody("") {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    FArrow = 0;
+    MArrow = 0;
+#endif
   }
 
-  KinematicConstraint::KinematicConstraint(const std::string &name, RigidBody* body) : Constraint(name), bd(body), f(0), fd(0), fdd(0), saved_DependentBody("") {
+  KinematicConstraint::KinematicConstraint(const std::string &name, RigidBody* body) : Constraint(name), bd(body), saved_DependentBody("") {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    FArrow = 0;
+    MArrow = 0;
+#endif
   }
 
   void KinematicConstraint::init(InitStage stage) {
@@ -167,8 +176,37 @@ namespace MBSim {
       bd->addDependency(this);
       Constraint::init(stage);
     }
-    else if(stage==MBSim::unknownStage) {
+    else
       Constraint::init(stage);
+  }
+
+  void KinematicConstraint::initializeUsingXML(TiXmlElement* element) {
+    Constraint::initializeUsingXML(element);
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"dependentRigidBody");
+    saved_DependentBody=e->Attribute("ref");
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    e=element->FirstChildElement(MBSIMNS"openMBVConstraintForceArrow");
+    if(e) {
+      OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
+      arrow->initializeUsingXML(e->FirstChildElement());
+      setOpenMBVConstraintForceArrow(arrow);
+    }
+
+    e=element->FirstChildElement(MBSIMNS"openMBVConstraintMomentArrow");
+    if(e) {
+      OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
+      arrow->initializeUsingXML(e->FirstChildElement());
+      setOpenMBVConstraintMomentArrow(arrow);
+    }
+#endif
+  }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, TimeDependentKinematicConstraint, MBSIMNS"TimeDependentKinematicConstraint")
+
+  void TimeDependentKinematicConstraint::init(InitStage stage) {
+    if(stage==MBSim::unknownStage) {
+      KinematicConstraint::init(stage);
 #ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
       SymbolicFunction1<VecV,double> *function = dynamic_cast<SymbolicFunction1<VecV,double>*>(f);
       if(function) {
@@ -178,51 +216,138 @@ namespace MBSim {
 #endif
     }
     else
-      Constraint::init(stage);
+      KinematicConstraint::init(stage);
   }
 
-  void KinematicConstraint::updateStateDependentVariables(double t) {
+  void TimeDependentKinematicConstraint::calcqSize() {
+    if(!f) qSize = bd->getqRelSize();
+  }
+
+  void TimeDependentKinematicConstraint::updateqd(double t) {
+    if(!f && fd) qd = (*fd)(t);
+  }
+
+  void TimeDependentKinematicConstraint::updateStateDependentVariables(double t) {
     if(f) bd->getqRel() = (*f)(t);
+    else bd->getqRel() = q;
     if(fd) bd->getuRel() = (*fd)(t);
   }
 
-  void KinematicConstraint::updateJacobians(double t, int jj) {
+  void TimeDependentKinematicConstraint::updateJacobians(double t, int jj) {
     if(fdd) bd->getjRel() = (*fdd)(t);
   }
 
-  void KinematicConstraint::initializeUsingXML(TiXmlElement* element) {
-    Constraint::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"dependentRigidBody");
-    saved_DependentBody=e->Attribute("ref");
-    e=element->FirstChildElement(MBSIMNS"kinematicFunction");
-    cout << "in initializeUsingXML " << e << endl;
+  void TimeDependentKinematicConstraint::initializeUsingXML(TiXmlElement* element) {
+    KinematicConstraint::initializeUsingXML(element);
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"generalizedPositionFunction");
     if(e) {
       Function1<VecV,double> *f=ObjectFactory<Function>::create<Function1<VecV,double> >(e->FirstChildElement());
-      cout << "kinematicFunction = " << f << endl;
-      setKinematicFunction(f);
+      setGeneralizedPositionFunction(f);
       f->initializeUsingXML(e->FirstChildElement());
     }
-    e=element->FirstChildElement(MBSIMNS"firstDerivativeOfKinematicFunction");
+    e=element->FirstChildElement(MBSIMNS"firstDerivativeOfGeneralizedPositionFunction");
     if(e) {
       Function1<VecV,double> *f=ObjectFactory<Function>::create<Function1<VecV,double> >(e->FirstChildElement());
-      setFirstDerivativeOfKinematicFunction(f);
+      setFirstDerivativeOfGeneralizedPositionFunction(f);
       f->initializeUsingXML(e->FirstChildElement());
     }
-    e=element->FirstChildElement(MBSIMNS"secondDerivativeOfKinematicFunction");
+    e=element->FirstChildElement(MBSIMNS"secondDerivativeOfGeneralizedPositionFunction");
     if(e) {
       Function1<VecV,double> *f=ObjectFactory<Function>::create<Function1<VecV,double> >(e->FirstChildElement());
-      setSecondDerivativeOfKinematicFunction(f);
+      setSecondDerivativeOfGeneralizedPositionFunction(f);
       f->initializeUsingXML(e->FirstChildElement());
     }
   }
 
-  void KinematicConstraint::setUpInverseKinetics() {
-    KinematicExcitation *ke = new KinematicExcitation(string("KinematicExcitation")+name);
+  void TimeDependentKinematicConstraint::setUpInverseKinetics() {
+    TimeDependentKinematicExcitation *ke = new TimeDependentKinematicExcitation(string("KinematicExcitation")+name);
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(ke);
     ke->setDependentBody(bd);
-    ke->setKinematicFunction(f);
-    ke->setFirstDerivativeOfKinematicFunction(fd);
-    ke->setSecondDerivativeOfKinematicFunction(fdd);
+    ke->setGeneralizedPositionFunction(f);
+    ke->setFirstDerivativeOfGeneralizedPositionFunction(fd);
+    ke->setSecondDerivativeOfGeneralizedPositionFunction(fdd);
+    if(FArrow)
+      ke->setOpenMBVForceArrow(FArrow);
+    if(MArrow)
+      ke->setOpenMBVMomentArrow(MArrow);
+  }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, StateDependentKinematicConstraint, MBSIMNS"StateDependentKinematicConstraint")
+
+  void StateDependentKinematicConstraint::init(InitStage stage) {
+    if(stage==MBSim::unknownStage) {
+      KinematicConstraint::init(stage);
+#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
+      SymbolicFunction1<VecV,Vec> *function = dynamic_cast<SymbolicFunction1<VecV,Vec>*>(f);
+      if(function)
+        if(fd==0) {
+          int nq = bd->getqRelSize();
+          vector<CasADi::SX> sqd(nq);
+          for(int i=0; i<nq; i++) {
+            stringstream stream;
+            stream << "qd" << i;
+            sqd[i] = CasADi::SX(stream.str());
+          }
+          vector<CasADi::SXMatrix> input2(2);
+          input2[0] = sqd;
+          input2[1] = function->getSXFunction().inputExpr(0);
+          CasADi::SXMatrix Jd = function->getSXFunction().jac(0).mul(sqd);
+          CasADi::SXFunction derJac(input2,Jd);
+          derJac.init();
+
+          fd = new SymbolicFunction2<VecV,Vec,Vec>(derJac);
+        }
+#endif
+    }
+    else
+      KinematicConstraint::init(stage);
+  }
+
+  void StateDependentKinematicConstraint::calcqSize() {
+    qSize = bd->getqRelSize();
+  }
+
+  void StateDependentKinematicConstraint::updateqd(double t) {
+    if(f) qd = (*f)(q);
+  }
+
+  void StateDependentKinematicConstraint::updateStateDependentVariables(double t) {
+    bd->getqRel() = q;
+    if(f) bd->getuRel() = (*f)(q);
+  }
+
+  void StateDependentKinematicConstraint::updateJacobians(double t, int jj) {
+    if(fd) bd->getjRel() = (*fd)(qd,q);
+  }
+
+  void StateDependentKinematicConstraint::initializeUsingXML(TiXmlElement* element) {
+    KinematicConstraint::initializeUsingXML(element);
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"dependentRigidBody");
+    saved_DependentBody=e->Attribute("ref");
+    e=element->FirstChildElement(MBSIMNS"generalizedVelocityFunction");
+    if(e) {
+      Function1<VecV,Vec> *f=ObjectFactory<Function>::create<Function1<VecV,Vec> >(e->FirstChildElement());
+      setGeneralizedVelocityFunction(f);
+      f->initializeUsingXML(e->FirstChildElement());
+    }
+    e=element->FirstChildElement(MBSIMNS"firstDerivativeOfGeneralizedVelocityFunction");
+    if(e) {
+      Function2<VecV,Vec,Vec> *f=ObjectFactory<Function>::create<Function2<VecV,Vec,Vec> >(e->FirstChildElement());
+      setFirstDerivativeOfGeneralizedVelocityFunction(f);
+      f->initializeUsingXML(e->FirstChildElement());
+    }
+  }
+
+  void StateDependentKinematicConstraint::setUpInverseKinetics() {
+    StateDependentKinematicExcitation *ke = new StateDependentKinematicExcitation(string("StateDependentKinematicExcitation")+name);
+    static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(ke);
+    ke->setDependentBody(bd);
+    ke->setGeneralizedVelocityFunction(f);
+    ke->setFirstDerivativeOfGeneralizedVelocityFunction(fd);
+    if(FArrow)
+      ke->setOpenMBVForceArrow(FArrow);
+    if(MArrow)
+      ke->setOpenMBVMomentArrow(MArrow);
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, JointConstraint, MBSIMNS"JointConstraint")
@@ -441,14 +566,12 @@ namespace MBSim {
     ee=e->FirstChildElement();
     while(ee) {
       saved_RigidBodyFirstSide.push_back(ee->Attribute("ref"));
-      cout << saved_RigidBodyFirstSide.size() << " " << saved_RigidBodyFirstSide.back() << endl;
       ee=ee->NextSiblingElement();
     }
     e=element->FirstChildElement(MBSIMNS"dependentRigidBodiesSecondSide");
     ee=e->FirstChildElement();
     while(ee) {
       saved_RigidBodySecondSide.push_back(ee->Attribute("ref"));
-      cout << saved_RigidBodySecondSide.size() << " " << saved_RigidBodySecondSide.back() << endl;
       ee=ee->NextSiblingElement();
     }
     e=element->FirstChildElement(MBSIMNS"independentRigidBody");
@@ -499,4 +622,5 @@ namespace MBSim {
 
     return ele0;
   }
+
 }

@@ -117,50 +117,15 @@ namespace MBSim {
 
   void RigidBody::calcqSize() {
     Body::calcqSize();
-    int nqT=0, nqR=0;
-    nq = 0;
-    if(dynamic_cast<RotationIndependentTranslation*>(fPrPK))
-      nqT = static_cast<RotationIndependentTranslation*>(fPrPK)->getqTSize();
-    else if(fPrPK)
-      nq = fPrPK->getqSize();
-    if(dynamic_cast<TranslationIndependentRotation*>(fAPK))
-      nqR = static_cast<TranslationIndependentRotation*>(fAPK)->getqRSize();
-    else if(fAPK) {
-      int nqtmp = fAPK->getqSize();
-      if(nq) assert(nq==nqtmp);
-      nq = nqtmp;
-    }
-    if(nq == 0)
-      nq = nqT + nqR;
     qSize = constraint ? 0 : nq;
   }
 
   void RigidBody::calcuSize(int j) {
     Body::calcuSize(j);
-    int nuT=0, nuR=0;
-    if(j==0) {
-      nu[0] = 0;
-      if(fPJT==0) {
-        if(dynamic_cast<RotationIndependentTranslation*>(fPrPK))
-          nuT = static_cast<RotationIndependentTranslation*>(fPrPK)->getuTSize();
-      } else
-        nu[0] = fPJT->getuSize();
-
-      if(fPJR==0) {
-	if(dynamic_cast<TranslationIndependentRotation*>(fAPK))
-	  nuR = static_cast<TranslationIndependentRotation*>(fAPK)->getuRSize();
-      } else {
-        int nutmp = fPJR->getuSize();
-        if(nu[0]) assert(nu[0]==nutmp);
-        nu[0] = nutmp;
-      }
-      if(nu[0] == 0)
-        nu[0] = nuT + nuR;
+    if(j==0)
       uSize[j] = constraint ? 0 : nu[j];
-    } else {
-      nu[j] = 6;
+    else
       uSize[j] = 6;
-    }
   }
 
   void RigidBody::init(InitStage stage) {
@@ -196,12 +161,9 @@ namespace MBSim {
               stream << "qd" << i;
               sqd[i] = CasADi::SX(stream.str());
             }
-            vector<CasADi::SX> st(1);
-            st[0] = CasADi::SX("t");
-            vector<CasADi::SXMatrix> input2(3);
+            vector<CasADi::SXMatrix> input2(2);
             input2[0] = sqd;
             input2[1] = pos->getSXFunction().inputExpr(0);
-            input2[2] = st;
             CasADi::SXMatrix Jd(3,nq);
             for(int j=0; j<nq; j++) {
               Jd(CasADi::Slice(0,3),CasADi::Slice(j,j+1)) = jac->getSXFunction().jac(0)(CasADi::Slice(j,nq*3,nq),CasADi::Slice(0,nq)).mul(sqd);
@@ -297,12 +259,9 @@ namespace MBSim {
               stream << "qd" << i;
               sqd[i] = CasADi::SX(stream.str());
             }
-            vector<CasADi::SX> st(1);
-            st[0] = CasADi::SX("t");
-            vector<CasADi::SXMatrix> input2(3);
+            vector<CasADi::SXMatrix> input2(2);
             input2[0] = sqd;
             input2[1] = angle->getSXFunction().inputExpr(0);
-            input2[2] = st;
             CasADi::SXMatrix Jd(3,nq);
             for(int j=0; j<nq; j++) {
               Jd(CasADi::Slice(0,3),CasADi::Slice(j,j+1)) = jac->getSXFunction().jac(0)(CasADi::Slice(j,nq*3,nq),CasADi::Slice(0,nq)).mul(sqd);
@@ -326,6 +285,42 @@ namespace MBSim {
         }
       }
 #endif
+
+      int nqT=0, nqR=0;
+      nq = 0;
+      if(dynamic_cast<RotationIndependentTranslation*>(fPrPK))
+        nqT = static_cast<RotationIndependentTranslation*>(fPrPK)->getqTSize();
+      else if(fPrPK)
+        nq = fPrPK->getqSize();
+      if(dynamic_cast<TranslationIndependentRotation*>(fAPK))
+        nqR = static_cast<TranslationIndependentRotation*>(fAPK)->getqRSize();
+      else if(fAPK) {
+        int nqtmp = fAPK->getqSize();
+        if(nq) assert(nq==nqtmp);
+        nq = nqtmp;
+      }
+      if(nq == 0)
+        nq = nqT + nqR;
+
+      int nuT=0, nuR=0;
+      nu[0] = 0;
+      if(fPJT==0) {
+        if(dynamic_cast<RotationIndependentTranslation*>(fPrPK))
+          nuT = static_cast<RotationIndependentTranslation*>(fPrPK)->getuTSize();
+      } else
+        nu[0] = fPJT->getuSize();
+
+      if(fPJR==0) {
+        if(dynamic_cast<TranslationIndependentRotation*>(fAPK))
+          nuR = static_cast<TranslationIndependentRotation*>(fAPK)->getuRSize();
+      } else {
+        int nutmp = fPJR->getuSize();
+        if(nu[0]) assert(nu[0]==nutmp);
+        nu[0] = nutmp;
+      }
+      if(nu[0] == 0)
+        nu[0] = nuT + nuR;
+      nu[1] = 6;
 
       if(constraint)
         dependency.push_back(constraint);

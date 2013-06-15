@@ -34,7 +34,7 @@ namespace MBSim {
   class Frame;
 
   /** 
-   * \brief class for constraints between generalized coordinates of objects
+   * \brief Class for constraints between generalized coordinates of objects
    * \author Martin Foerg
    */
   class Constraint : public Object {
@@ -47,11 +47,6 @@ namespace MBSim {
 #endif
   };
 
-   /** 
-   * \brief example 2 for contraint 
-   * \todo generalization of this class
-   * \author Martin Foerg
-   */
   class GearConstraint : public Constraint {
 
     public:
@@ -82,42 +77,95 @@ namespace MBSim {
       std::vector<double> saved_ratio;
   };
 
-  /** 
-   * \brief example 4 for contraint 
-   * \todo generalization of this class
-   * \author Martin Foerg
-   */
   class KinematicConstraint : public Constraint {
 
     public:
       KinematicConstraint(const std::string &name, RigidBody* body);
       KinematicConstraint(const std::string &name="");
 
-      void setKinematicFunction(Function1<fmatvec::VecV,double>* f_) { f = f_;}
-      void setFirstDerivativeOfKinematicFunction(Function1<fmatvec::VecV,double>* fd_) { fd = fd_;}
-      void setSecondDerivativeOfKinematicFunction(Function1<fmatvec::VecV,double>* fdd_) { fdd = fdd_;}
       void setDependentBody(RigidBody* body) {bd=body; }
-      virtual void setUpInverseKinetics();
+      virtual void setUpInverseKinetics() = 0;
 
       void init(InitStage stage);
 
+      void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      /** \brief Visualize the constraint force */
+      void setOpenMBVConstraintForceArrow(OpenMBV::Arrow *arrow) { FArrow = arrow; }
+
+      /** \brief Visualize the constraint moment */
+      void setOpenMBVConstraintMomentArrow(OpenMBV::Arrow *arrow) { MArrow = arrow; }
+#endif
+
+    protected:
+      RigidBody *bd;
+
+      std::string saved_DependentBody;
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::Arrow *FArrow, *MArrow;
+#endif
+  };
+
+  class TimeDependentKinematicConstraint : public KinematicConstraint {
+
+    public:
+      TimeDependentKinematicConstraint(const std::string &name, RigidBody* body) : KinematicConstraint(name,body) {}
+      TimeDependentKinematicConstraint(const std::string &name="") : KinematicConstraint(name) {}
+
+      void init(InitStage stage);
+
+      void calcqSize();
+
+      void setGeneralizedPositionFunction(Function1<fmatvec::VecV,double>* f_) { f = f_;}
+      void setFirstDerivativeOfGeneralizedPositionFunction(Function1<fmatvec::VecV,double>* fd_) { fd = fd_;}
+      void setSecondDerivativeOfGeneralizedPositionFunction(Function1<fmatvec::VecV,double>* fdd_) { fdd = fdd_;}
+
+      void setUpInverseKinetics();
+
+      void updateqd(double t);
       void updateStateDependentVariables(double t);
       void updateJacobians(double t, int j=0);
 
       void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
 
-      virtual std::string getType() const { return "KinematicConstraint"; }
+      virtual std::string getType() const { return "TimeDependentKinematicConstraint"; }
 
     private:
-      RigidBody *bd;
       Function1<fmatvec::VecV,double> *f, *fd, *fdd;
+  };
 
-      std::string saved_DependentBody;
+  class StateDependentKinematicConstraint : public KinematicConstraint {
+
+    public:
+      StateDependentKinematicConstraint(const std::string &name, RigidBody* body) : KinematicConstraint(name,body) {}
+      StateDependentKinematicConstraint(const std::string &name="") : KinematicConstraint(name) {}
+
+      void init(InitStage stage);
+
+      void calcqSize();
+
+      void setGeneralizedVelocityFunction(Function1<fmatvec::VecV,fmatvec::Vec>* f_) { f = f_;}
+      void setFirstDerivativeOfGeneralizedVelocityFunction(Function2<fmatvec::VecV,fmatvec::Vec,fmatvec::Vec>* fd_) { fd = fd_;}
+
+      virtual void setUpInverseKinetics();
+
+      void updateqd(double t);
+      void updateStateDependentVariables(double t);
+      void updateJacobians(double t, int j=0);
+
+      void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
+
+      virtual std::string getType() const { return "StateDependetKinematicConstraint"; }
+
+    private:
+      Function1<fmatvec::VecV,fmatvec::Vec> *f; 
+      Function2<fmatvec::VecV,fmatvec::Vec,fmatvec::Vec> *fd; 
   };
 
   /** 
-   * \brief example 5 for contraint 
-   * \todo generalization of this class
+   * \brief Joint contraint 
    * \author Martin Foerg
    * 2011-08-04 XML Interface added (Markus Schneider)
    */

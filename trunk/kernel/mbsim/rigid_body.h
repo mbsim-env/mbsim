@@ -271,6 +271,9 @@ namespace MBSim {
       fmatvec::Mat3xV& getPJT(int i=0) {return PJT[i];}
       fmatvec::Mat3xV& getPJR(int i=0) {return PJR[i];}
 
+      int getqRelSize() const {return nq;}
+      int getuRelSize(int i=0) const {return nu[i];}
+
     protected:
       /**
        * \brief mass

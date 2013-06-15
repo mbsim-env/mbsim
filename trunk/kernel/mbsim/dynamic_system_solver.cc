@@ -241,7 +241,7 @@ namespace MBSim {
       for(unsigned int i=0; i< dynamicsystem.size(); i++)
         if(dynamic_cast<Graph*>(dynamicsystem[i]))
           dynamic_cast<Graph*>(dynamicsystem[i])->co();
-   }
+    }
     else if(stage==resize) {
       calcqSize();
       calcuSize(0);
