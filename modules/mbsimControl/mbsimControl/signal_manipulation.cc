@@ -22,6 +22,7 @@
 #include "mbsimControl/obsolet_hint.h"
 #include "mbsimControl/defines.h"
 #include "mbsim/utils/eps.h"
+#include "mbsim/utils/symbolic_function.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -578,6 +579,34 @@ namespace MBSimControl {
     Signal::plot(t,dt);
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, UnarySignalOperation, MBSIMCONTROLNS"UnarySignalOperation")
+
+  void UnarySignalOperation::initializeUsingXML(TiXmlElement *element) {
+    Signal::initializeUsingXML(element);
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
+    signalString=e->Attribute("ref");
+    e=element->FirstChildElement(MBSIMCONTROLNS"function");
+    if(e) {
+      Function1<Vec,Vec> *f=ObjectFactory<Function>::create<Function1<Vec,Vec> >(e->FirstChildElement());
+      setFunction(f);
+      f->initializeUsingXML(e->FirstChildElement());
+    }
+  }
+
+  void UnarySignalOperation::init(InitStage stage) {
+    if (stage==resolveXMLPath) {
+      if (signalString!="")
+        setSignal(getByPath<Signal>(process_signal_string(signalString)));
+      Signal::init(stage);
+    }
+    else
+      Signal::init(stage);
+  }
+
+  Vec UnarySignalOperation::getSignal() { 
+    return (*f)(s->getSignal()); 
+  }
 
 }
 

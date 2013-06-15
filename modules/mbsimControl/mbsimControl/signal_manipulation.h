@@ -22,6 +22,11 @@
 
 #include "mbsimControl/signal_.h"
 
+namespace MBSim {
+  template <class Ret, class Arg> class Function1;
+  template <class Ret, class Arg1, class Arg2> class Function2;
+}
+
 namespace MBSimControl {
 
   /*!
@@ -236,6 +241,25 @@ namespace MBSimControl {
       fmatvec::Vec getSignalPD();
       fmatvec::Vec getSignalPID();
   };
+
+  /*!
+   * \brief UnarySignalOperation
+   * \author Martin Foerg
+   */
+  class UnarySignalOperation : public Signal {  
+    public:
+      UnarySignalOperation(const std::string &name="") : Signal(name), s(NULL), signalString(""), f(0) {}
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void init(MBSim::InitStage stage);
+      void setSignal(Signal * signal_) {s=signal_; }
+      void setFunction(MBSim::Function1<fmatvec::Vec,fmatvec::Vec> *f_) {f=f_; };
+      fmatvec::Vec getSignal();
+    private:
+      Signal * s;
+      std::string signalString;
+      MBSim::Function1<fmatvec::Vec,fmatvec::Vec> *f;
+  };
+
 
 }
 
