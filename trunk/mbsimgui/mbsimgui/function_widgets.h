@@ -54,7 +54,7 @@ class SymbolicFunction1Widget : public Function1Widget {
   friend class SymbolicFunction1Property;
 
   public:
-    SymbolicFunction1Widget(const QStringList &var, int max=99);
+    SymbolicFunction1Widget(const QString &var, int max=99);
     int getArgDim() const;
   protected:
     ExtWidget *f;

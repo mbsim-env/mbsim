@@ -318,9 +318,7 @@ ForceChoiceWidget::ForceChoiceWidget() {
   name.push_back("Tabular function");
   widget.push_back(new SummationFunction1Widget(1));
   name.push_back("Summation function");
-  QStringList var;
-  var << "t";
-  widget.push_back(new SymbolicFunction1Widget(var));
+  widget.push_back(new SymbolicFunction1Widget("t"));
   name.push_back("Symbolic function");
   forceLaw = new ExtWidget("Function",new ChoiceWidget(widget,name));
   layout->addWidget(forceLaw);

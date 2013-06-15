@@ -24,6 +24,7 @@
 #include "basic_properties.h"
 #include "kinetics_properties.h"
 #include "function_properties.h"
+#include "ombv_properties.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -66,20 +67,15 @@ TiXmlElement* GearConstraint::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
-KinematicConstraint::KinematicConstraint(const string &str, Element *parent) : Constraint(str, parent), kinematicFunction(0,false), firstDerivativeOfKinematicFunction(0,false), secondDerivativeOfKinematicFunction(0,false) {
+KinematicConstraint::KinematicConstraint(const string &str, Element *parent) : Constraint(str, parent), constraintForceArrow(0,false), constraintMomentArrow(0,false) {
 
   dependentBody.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIMNS"dependentRigidBody"));
 
-  vector<Property*> property;
-  property.push_back(new SymbolicFunction1Property("VS"));
-  kinematicFunction.setProperty(new ChoiceProperty(MBSIMNS"kinematicFunction",property));
+  constraintForceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
+  constraintForceArrow.setXMLName(MBSIMNS"openMBVConstraintForceArrow",false);
 
-  //kinematicFunction.setProperty(new Function1ChoiceProperty(MBSIMNS"kinematicFunction"));
-
-  //firstDerivativeOfKinematicFunction.setProperty(new Function1ChoiceProperty(MBSIMNS"firstDerivativeOfKinematicFunction"));
-
-  //secondDerivativeOfKinematicFunction.setProperty(new Function1ChoiceProperty(MBSIMNS"secondDerivativeOfKinematicFunction"));
-
+  constraintMomentArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
+  constraintMomentArrow.setXMLName(MBSIMNS"openMBVConstraintMomentArrow",false);
 }
 
 KinematicConstraint::~KinematicConstraint() {
@@ -94,18 +90,64 @@ void KinematicConstraint::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e, *ee;
   Constraint::initializeUsingXML(element);
   dependentBody.initializeUsingXML(element);
-  kinematicFunction.initializeUsingXML(element);
-  //firstDerivativeOfKinematicFunction.initializeUsingXML(element);
-  //secondDerivativeOfKinematicFunction.initializeUsingXML(element);
+  constraintForceArrow.initializeUsingXML(element);
+  constraintMomentArrow.initializeUsingXML(element);
 }
 
 TiXmlElement* KinematicConstraint::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Constraint::writeXMLFile(parent);
 
   dependentBody.writeXMLFile(ele0);
-  kinematicFunction.writeXMLFile(ele0);
-  //firstDerivativeOfKinematicFunction.writeXMLFile(ele0);
-  //secondDerivativeOfKinematicFunction.writeXMLFile(ele0);
+  constraintForceArrow.writeXMLFile(ele0);
+  constraintMomentArrow.writeXMLFile(ele0);
+
+  return ele0;
+}
+
+TimeDependentKinematicConstraint::TimeDependentKinematicConstraint(const string &str, Element *parent) : KinematicConstraint(str, parent), generalizedPositionFunction(0,false) {
+
+  vector<Property*> property;
+  property.push_back(new SymbolicFunction1Property("VS","t"));
+  generalizedPositionFunction.setProperty(new ChoiceProperty(MBSIMNS"generalizedPositionFunction",property));
+}
+
+TimeDependentKinematicConstraint::~TimeDependentKinematicConstraint() {
+}
+
+void TimeDependentKinematicConstraint::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e, *ee;
+  KinematicConstraint::initializeUsingXML(element);
+  generalizedPositionFunction.initializeUsingXML(element);
+}
+
+TiXmlElement* TimeDependentKinematicConstraint::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = KinematicConstraint::writeXMLFile(parent);
+
+  generalizedPositionFunction.writeXMLFile(ele0);
+
+  return ele0;
+}
+
+StateDependentKinematicConstraint::StateDependentKinematicConstraint(const string &str, Element *parent) : KinematicConstraint(str, parent), generalizedVelocityFunction(0,false) {
+
+  vector<Property*> property;
+  property.push_back(new SymbolicFunction1Property("VV","q"));
+  generalizedVelocityFunction.setProperty(new ChoiceProperty(MBSIMNS"generalizedVelocityFunction",property));
+}
+
+StateDependentKinematicConstraint::~StateDependentKinematicConstraint() {
+}
+
+void StateDependentKinematicConstraint::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e, *ee;
+  KinematicConstraint::initializeUsingXML(element);
+  generalizedVelocityFunction.initializeUsingXML(element);
+}
+
+TiXmlElement* StateDependentKinematicConstraint::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = KinematicConstraint::writeXMLFile(parent);
+
+  generalizedVelocityFunction.writeXMLFile(ele0);
 
   return ele0;
 }

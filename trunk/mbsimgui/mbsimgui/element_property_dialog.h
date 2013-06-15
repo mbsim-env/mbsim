@@ -37,6 +37,8 @@ class RigidBody;
 class Constraint;
 class GearConstraint;
 class KinematicConstraint;
+class TimeDependentKinematicConstraint;
+class StateDependentKinematicConstraint;
 class JointConstraint;
 class ExtraDynamic;
 class SignalProcessingSystem;
@@ -56,10 +58,12 @@ class GeneralizedPositionSensor;
 class GeneralizedVelocitySensor;
 class AbsoluteCoordinateSensor;
 class AbsolutePositionSensor;
+class AbsoluteVelocitySensor;
 class FunctionSensor;
 class SignalProcessingSystemSensor;
 class SignalAddition;
 class PIDController;
+class UnarySignalOperation;
 class TextWidget;
 class VecWidget;
 class ExtWidget;
@@ -227,11 +231,37 @@ class KinematicConstraintPropertyDialog : public ConstraintPropertyDialog {
     void toWidget(Element *element);
     void fromWidget(Element *element);
   protected:
-    ExtWidget *dependentBody, *kinematicFunction, *firstDerivativeOfKinematicFunction, *secondDerivativeOfKinematicFunction;
+    ExtWidget *dependentBody, *constraintForceArrow, *constraintMomentArrow;
     RigidBody *refBody;
   protected slots:
-    void resizeVariables();
     void updateReferenceBody();
+};
+
+class TimeDependentKinematicConstraintPropertyDialog : public KinematicConstraintPropertyDialog {
+  Q_OBJECT
+
+  public:
+    TimeDependentKinematicConstraintPropertyDialog(TimeDependentKinematicConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+    ExtWidget *generalizedPositionFunction;
+  protected slots:
+    void resizeVariables();
+};
+
+class StateDependentKinematicConstraintPropertyDialog : public KinematicConstraintPropertyDialog {
+  Q_OBJECT
+
+  public:
+    StateDependentKinematicConstraintPropertyDialog(StateDependentKinematicConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+    void resizeGeneralizedPosition();
+  protected:
+    ExtWidget *generalizedVelocityFunction;
+  protected slots:
+    void resizeVariables();
 };
 
 class JointConstraintPropertyDialog : public ConstraintPropertyDialog {
@@ -399,6 +429,12 @@ class AbsolutePositionSensorPropertyDialog : public AbsoluteCoordinateSensorProp
     AbsolutePositionSensorPropertyDialog(AbsolutePositionSensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
 };
 
+class AbsoluteVelocitySensorPropertyDialog : public AbsoluteCoordinateSensorPropertyDialog {
+
+  public:
+    AbsoluteVelocitySensorPropertyDialog(AbsoluteVelocitySensor *sensor, QWidget * parent = 0, Qt::WindowFlags f = 0);
+};
+
 class FunctionSensorPropertyDialog : public SensorPropertyDialog {
 
   public:
@@ -437,6 +473,16 @@ class PIDControllerPropertyDialog : public SignalPropertyDialog {
     void fromWidget(Element *element);
   protected:
     ExtWidget *sRef, *sdRef, *P, *I, *D;
+};
+
+class UnarySignalOperationPropertyDialog : public SignalPropertyDialog {
+
+  public:
+    UnarySignalOperationPropertyDialog(UnarySignalOperation *signal, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+    ExtWidget *sRef, *f;
 };
 
 #endif

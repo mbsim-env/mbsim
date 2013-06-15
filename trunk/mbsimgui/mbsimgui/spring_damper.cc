@@ -33,7 +33,10 @@ SpringDamper::SpringDamper(const string &str, Element *parent) : Link(str, paren
 
   vector<Property*> property;
   property.push_back(new LinearSpringDamperForceProperty);
-  property.push_back(new SymbolicFunction2Property("SSS"));
+  vector<string> var;
+  var.push_back("gd");
+  var.push_back("g");
+  property.push_back(new SymbolicFunction2Property("SSS",var));
   forceFunction.setProperty(new ChoiceProperty(MBSIMNS"forceFunction",property));
 
   forceDirection.setProperty(new ForceDirectionProperty(this,MBSIMNS"projectionDirection"));

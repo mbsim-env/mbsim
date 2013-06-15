@@ -79,7 +79,8 @@ class ObjectContextContextMenu : public QMenu {
   protected slots:
     void addRigidBody();
     void addGearConstraint();
-    void addKinematicConstraint();
+    void addTimeDependentKinematicConstraint();
+    void addStateDependentKinematicConstraint();
     void addJointConstraint();
 
   protected:
@@ -141,6 +142,7 @@ class SignalContextContextMenu : public QMenu {
     void addSensor();
     void addSignalAddition();
     void addPIDController();
+    void addUnarySignalOperation();
 
   protected:
     Element *element;
@@ -156,6 +158,7 @@ class SensorContextContextMenu : public QMenu {
     void addGeneralizedPositionSensor();
     void addGeneralizedVelocitySensor();
     void addAbsolutePositionSensor();
+    void addAbsoluteVelocitySensor();
     void addFunctionSensor();
     void addSignalProcessingSystemSensor();
 

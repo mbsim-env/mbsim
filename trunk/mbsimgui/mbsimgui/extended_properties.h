@@ -77,6 +77,8 @@ class ChoiceProperty : public Property {
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
+    Property* getProperty(int i) const {return property[i];}
+    Property* getProperty() const {return property[index];}
 
   protected:
     std::vector<Property*> property;

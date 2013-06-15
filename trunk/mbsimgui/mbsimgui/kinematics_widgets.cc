@@ -51,9 +51,7 @@ int LinearTranslationWidget::getqTSize() const {
 TimeDependentTranslationWidget::TimeDependentTranslationWidget() {
   vector<QWidget*> widget;
   vector<QString> name;
-  QStringList var;
-  var << "t";
-  widget.push_back(new SymbolicFunction1Widget(var));
+  widget.push_back(new SymbolicFunction1Widget("t"));
   name.push_back("Symbolic function");
   function = new ExtWidget("Translation function",new ChoiceWidget(widget,name));
 
@@ -66,9 +64,7 @@ TimeDependentTranslationWidget::TimeDependentTranslationWidget() {
 StateDependentTranslationWidget::StateDependentTranslationWidget() {
   vector<QWidget*> widget;
   vector<QString> name;
-  QStringList var;
-  var << "q";
-  widget.push_back(new SymbolicFunction1Widget(var));
+  widget.push_back(new SymbolicFunction1Widget("q"));
   name.push_back("Symbolic function");
   function = new ExtWidget("Translation function",new ChoiceWidget(widget,name));
 
@@ -206,9 +202,7 @@ TimeDependentRotationAboutFixedAxisWidget::TimeDependentRotationAboutFixedAxisWi
 
   vector<QWidget*> widget;
   vector<QString> name;
-  QStringList var;
-  var << "t";
-  widget.push_back(new SymbolicFunction1Widget(var));
+  widget.push_back(new SymbolicFunction1Widget("t"));
   name.push_back("Symbolic function");
   function = new ExtWidget("Rotational function",new ChoiceWidget(widget,name));
   layout->addWidget(function);
@@ -227,9 +221,7 @@ StateDependentRotationAboutFixedAxisWidget::StateDependentRotationAboutFixedAxis
 
   vector<QWidget*> widget;
   vector<QString> name;
-  QStringList var;
-  var << "q";
-  widget.push_back(new SymbolicFunction1Widget(var));
+  widget.push_back(new SymbolicFunction1Widget("q"));
   name.push_back("Symbolic function");
   function = new ExtWidget("Translation function",new ChoiceWidget(widget,name));
 

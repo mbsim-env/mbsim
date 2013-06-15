@@ -56,8 +56,33 @@ class KinematicConstraint : public Constraint {
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new KinematicConstraintPropertyDialog(this);}
   protected:
-    ExtProperty dependentBody, kinematicFunction, firstDerivativeOfKinematicFunction, secondDerivativeOfKinematicFunction;
+    ExtProperty dependentBody, constraintForceArrow, constraintMomentArrow;
+};
 
+class TimeDependentKinematicConstraint : public KinematicConstraint {
+  friend class TimeDependentKinematicConstraintPropertyDialog;
+  public:
+    TimeDependentKinematicConstraint(const std::string &str, Element *parent);
+    ~TimeDependentKinematicConstraint();
+    std::string getType() const { return "TimeDependentKinematicConstraint"; }
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    ElementPropertyDialog* createPropertyDialog() {return new TimeDependentKinematicConstraintPropertyDialog(this);}
+  protected:
+    ExtProperty generalizedPositionFunction;
+};
+
+class StateDependentKinematicConstraint : public KinematicConstraint {
+  friend class StateDependentKinematicConstraintPropertyDialog;
+  public:
+    StateDependentKinematicConstraint(const std::string &str, Element *parent);
+    ~StateDependentKinematicConstraint();
+    std::string getType() const { return "StateDependentKinematicConstraint"; }
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    ElementPropertyDialog* createPropertyDialog() {return new StateDependentKinematicConstraintPropertyDialog(this);}
+  protected:
+    ExtProperty generalizedVelocityFunction;
 };
 
 class JointConstraint : public Constraint {

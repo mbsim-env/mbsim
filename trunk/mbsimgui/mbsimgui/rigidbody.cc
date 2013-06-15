@@ -82,11 +82,8 @@ int RigidBody::getqRelSize() const {
     const RotationChoiceProperty *rot = static_cast<const RotationChoiceProperty*>(rotation.getProperty());
     if(rot->isIndependent())
       nqR = rot->getqRSize();
-    else {
-      int nqtmp = rot->getqSize();
-      if(nq) assert(nq==nqtmp);
-      nq = nqtmp;
-    }
+    else
+      nq = rot->getqSize();
   }
   if(nq == 0)
     nq = nqT + nqR;
@@ -106,11 +103,8 @@ int RigidBody::getuRelSize() const {
     const RotationChoiceProperty *rot = static_cast<const RotationChoiceProperty*>(rotation.getProperty());
     if(rot->isIndependent())
       nuR = rot->getuRSize();
-    else {
-      int nutmp = rot->getuSize();
-      if(nu) assert(nu==nutmp);
-      nu = nutmp;
-    }
+    else
+      nu = rot->getuSize();
   }
   if(nu == 0)
     nu = nuT + nuR;
