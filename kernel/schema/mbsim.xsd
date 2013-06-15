@@ -1321,7 +1321,43 @@
               <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="kinematicFunction" minOccurs="0">
+          <xs:element name="openMBVConstraintForceArrow" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Wenn angegeben, wird die Zwangskraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="ombv:Arrow"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="openMBVConstraintMomentArrow" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Wenn angegeben, wird das Zwangsmoment durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="ombv:Arrow"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="TimeDependentKinematicConstraint" substitutionGroup="KinematicConstraint" type="TimeDependentKinematicConstraintType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        TODO <br/>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="TimeDependentKinematicConstraintType">
+    <xs:complexContent>
+      <xs:extension base="KinematicConstraintType">
+        <xs:sequence>
+          <xs:element name="generalizedPositionFunction" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
               TODO
             </xs:documentation></xs:annotation>
@@ -1331,7 +1367,7 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="firstDerivativeOfKinematicFunction" minOccurs="0">
+          <xs:element name="firstDerivativeOfGeneralizedPositionFunction" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
               TODO
             </xs:documentation></xs:annotation>
@@ -1341,13 +1377,49 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="secondDerivativeOfKinematicFunction" minOccurs="0">
+          <xs:element name="secondDerivativeOfGeneralizedPositionFunction" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
               TODO
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="Function1_VS"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="StateDependentKinematicConstraint" substitutionGroup="KinematicConstraint" type="StateDependentKinematicConstraintType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        TODO <br/>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="StateDependentKinematicConstraintType">
+    <xs:complexContent>
+      <xs:extension base="KinematicConstraintType">
+        <xs:sequence>
+          <xs:element name="generalizedVelocityFunction" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              TODO
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function1_VV"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="firstDerivativeOfGeneralizedVelocityFunction" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              TODO
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function2_VVV"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -3505,6 +3577,19 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="SymbolicFunction2_VVV" substitutionGroup="Function2_VVV" type="SymbolicFunction2_VVVType"/>
+  <xs:complexType name="SymbolicFunction2_VVVType" mixed="true">
+    <xs:complexContent>
+      <xs:extension base="Function2_VVVType">
+        <xs:group ref="pv:symbolicFunctionXMLElement"/>
+        <xs:attribute name="arg1name" use="required" type="pv:symbolicFunctionArgNameType"/>
+        <xs:attribute name="arg1dim" use="required" type="pv:symbolicFunctionArgDimType"/>
+        <xs:attribute name="arg2name" use="required" type="pv:symbolicFunctionArgNameType"/>
+        <xs:attribute name="arg2dim" use="required" type="pv:symbolicFunctionArgDimType"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="SymbolicFunction1_VV" substitutionGroup="Function1_VV" type="SymbolicFunction1_VVType"/>
   <xs:complexType name="SymbolicFunction1_VVType" mixed="true">
     <xs:complexContent>
@@ -4261,6 +4346,15 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
+
+  <xs:element name="Function2_VVV" abstract="true" type="Function2_VVVType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrakte Oberklasse für vektorwertige Funktionen mit einem skalaren und vektorwertigen Parameter.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="Function2_VVVType"/>
 
   <xs:element name="FunctionContour" abstract="true" type="FunctionContourType"/>
   <xs:complexType name="FunctionContourType"/>

@@ -28,7 +28,6 @@ namespace MBSim {
 
   class KinematicExcitation : public LinkMechanics {
     protected:
-      Function1<fmatvec::VecV,double> *f, *fd, *fdd;
       Function2<fmatvec::VecV,fmatvec::VecV,fmatvec::VecV> *func;
       RigidBody* body;
       Frame C;
@@ -36,31 +35,79 @@ namespace MBSim {
       KinematicExcitation(const std::string &name);
       void updateh(double, int i=0);
       void updateW(double, int i=0);
-      void updateg(double);
-      void updategd(double);
       void updateJacobians(double t, int j=0);
-      void updatewb(double t, int i=0);
       void updatehRef(const fmatvec::Vec &hParent, int j=0);
       void updateWRef(const fmatvec::Mat &WParent, int j=0);
       void setDependentBody(RigidBody* body_) {body = body_;}
 
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
-      std::string getType() const { return "KinematicExcitation"; }
       void init(InitStage stage);
       bool isSetValued() const;
-      virtual void calclaSize(int j);
-      virtual void calcgSize(int j);
-      virtual void calcgdSize(int j);
+      void calclaSize(int j);
+      void calcgSize(int j);
+      void calcgdSize(int j);
 
-      void setKinematicFunction(Function1<fmatvec::VecV,double>* f_) { f = f_;}
-      void setFirstDerivativeOfKinematicFunction(Function1<fmatvec::VecV,double>* fd_) { fd = fd_;}
-      void setSecondDerivativeOfKinematicFunction(Function1<fmatvec::VecV,double>* fdd_) { fdd = fdd_;}
       void setForceFunction(Function2<fmatvec::VecV,fmatvec::VecV,fmatvec::VecV> *func_) { func=func_; }
 
       void plot(double t, double dt=1);
 
-    private:
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      /** \brief Visualize a force arrow */
+      void setOpenMBVForceArrow(OpenMBV::Arrow *arrow) { FArrow = arrow; }
+
+      /** \brief Visualize a moment arrow */
+      void setOpenMBVMomentArrow(OpenMBV::Arrow *arrow) { MArrow = arrow; }
+#endif
+
+    protected:
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::Arrow *FArrow, *MArrow;
+#endif
+
+  };
+
+  class TimeDependentKinematicExcitation : public KinematicExcitation {
+    protected:
+      Function1<fmatvec::VecV,double> *f, *fd, *fdd;
+      Function2<fmatvec::VecV,fmatvec::VecV,fmatvec::VecV> *func;
+      RigidBody* body;
+      Frame C;
+    public:
+      TimeDependentKinematicExcitation(const std::string &name) : KinematicExcitation(name) {}
+
+      void calcxSize();
+
+      void updatexd(double t);
+      void updateg(double t);
+      void updategd(double t);
+      void updatewb(double t, int i=0);
+
+      std::string getType() const { return "TimeDependentKinematicExcitation"; }
+
+      void setGeneralizedPositionFunction(Function1<fmatvec::VecV,double>* f_) { f = f_;}
+      void setFirstDerivativeOfGeneralizedPositionFunction(Function1<fmatvec::VecV,double>* fd_) { fd = fd_;}
+      void setSecondDerivativeOfGeneralizedPositionFunction(Function1<fmatvec::VecV,double>* fdd_) { fdd = fdd_;}
+  };
+
+  class StateDependentKinematicExcitation : public KinematicExcitation {
+    protected:
+      Function1<fmatvec::VecV,fmatvec::Vec> *f;
+      Function2<fmatvec::VecV,fmatvec::Vec,fmatvec::Vec> *fd; 
+    public:
+      StateDependentKinematicExcitation(const std::string &name) : KinematicExcitation(name) {}
+
+      void calcxSize();
+
+      void updatexd(double t);
+      void updateg(double t);
+      void updategd(double t);
+      void updatewb(double t, int i=0);
+
+      std::string getType() const { return "StateDependentKinematicExcitation"; }
+
+      void setGeneralizedVelocityFunction(Function1<fmatvec::VecV,fmatvec::Vec>* f_) { f = f_;}
+      void setFirstDerivativeOfGeneralizedVelocityFunction(Function2<fmatvec::VecV,fmatvec::Vec,fmatvec::Vec>* fd_) { fd = fd_;}
   };
 
 }

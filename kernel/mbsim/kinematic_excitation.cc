@@ -21,24 +21,32 @@
 #include "mbsim/kinematic_excitation.h"
 #include "mbsim/frame.h"
 #include "mbsim/dynamic_system_solver.h"
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include "openmbvcppinterface/objectfactory.h"
+#include "openmbvcppinterface/arrow.h"
+#endif
 
 using namespace std;
 using namespace fmatvec;
 
 namespace MBSim {
 
-  KinematicExcitation::KinematicExcitation(const string &name) : LinkMechanics(name), body(0)
-  {
+  KinematicExcitation::KinematicExcitation(const string &name) : LinkMechanics(name), body(0) {
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    FArrow = 0;
+    MArrow = 0;
+#endif
   }
 
   void KinematicExcitation::calclaSize(int j) {
-    laSize = (*f)(0).size();
+    laSize = body->getuRelSize();
   }
   void KinematicExcitation::calcgSize(int j) {
-    gSize = (*f)(0).size();
+    gSize = body->getuRelSize();
   }
   void KinematicExcitation::calcgdSize(int j) {
-    gdSize = (*f)(0).size();
+    gdSize = body->getuRelSize();
   }
 
   void KinematicExcitation::updateW(double t, int j) {
@@ -90,22 +98,8 @@ namespace MBSim {
     C.setGyroscopicAccelerationOfRotation(body->getFrameOfReference()->getGyroscopicAccelerationOfRotation(j),j);
   }
 
-  void KinematicExcitation::updateg(double t) {
-    if(g.size())
-    g=body->getqRel()-(*f)(t);
-  } 
-
-  void KinematicExcitation::updategd(double t) {
-    if(gd.size())
-    gd=body->getuRel()-(*fd)(t);
-  }
-
   bool KinematicExcitation::isSetValued() const {
     return func?false:true;
-  }
-
-  void KinematicExcitation::updatewb(double t, int j) {
-    wb += body->getjRel()-(*fdd)(t);
   }
 
  void KinematicExcitation::init(InitStage stage) {
@@ -136,6 +130,18 @@ namespace MBSim {
       //plotColumns.push_back("la(0)");
       if(getPlotFeature(plotRecursive)==enabled) {
         LinkMechanics::init(stage);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+        if(getPlotFeature(openMBV)==enabled) {
+          if(getPlotFeature(openMBV)==enabled && FArrow) {
+            FArrow->setName("Force");
+            openMBVForceGrp->addObject(FArrow);
+          }
+          if(getPlotFeature(openMBV)==enabled && MArrow) {
+            MArrow->setName("Moment");
+            openMBVForceGrp->addObject(MArrow);
+          }
+        }
+#endif
       }
     }
     else {
@@ -146,8 +152,80 @@ namespace MBSim {
   void KinematicExcitation::plot(double t,double dt) {
     //plotVector.push_back(la(0));
     if(getPlotFeature(plotRecursive)==enabled) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      if(getPlotFeature(openMBV)==enabled) {
+        if(FArrow) {
+          vector<double> data;
+          data.push_back(t);
+          Vec3 WF = -body->getFrameOfReference()->getOrientation()*body->getPJT()*la;
+          Vec3 WrOS=body->getFrameC()->getPosition();
+          data.push_back(WrOS(0));
+          data.push_back(WrOS(1));
+          data.push_back(WrOS(2));
+          data.push_back(WF(0));
+          data.push_back(WF(1));
+          data.push_back(WF(2));
+          data.push_back(1.0);
+          FArrow->append(data);
+        }
+        if(MArrow) {
+          vector<double> data;
+          data.push_back(t);
+          Vec3 WM = -body->getFrameOfReference()->getOrientation()*body->getPJR()*la;
+          Vec3 WrOS=body->getFrameC()->getPosition();
+          data.push_back(WrOS(0));
+          data.push_back(WrOS(1));
+          data.push_back(WrOS(2));
+          data.push_back(WM(0));
+          data.push_back(WM(1));
+          data.push_back(WM(2));
+          data.push_back(1.0);
+          MArrow->append(data);
+        }
+      }
+#endif
       LinkMechanics::plot(t,dt);
     }
+  }
+
+  void TimeDependentKinematicExcitation::calcxSize() {
+    if(!f) xSize = body->getqRelSize();
+  }
+
+  void TimeDependentKinematicExcitation::updatexd(double t) {
+    if(!f && fd) xd = (*fd)(t);
+  }
+
+  void TimeDependentKinematicExcitation::updateg(double t) {
+    if(g.size() && f) g=body->getqRel()-(*f)(t);
+  } 
+
+  void TimeDependentKinematicExcitation::updategd(double t) {
+    if(gd.size() && fd) gd=body->getuRel()-(*fd)(t);
+  }
+
+  void TimeDependentKinematicExcitation::updatewb(double t, int j) {
+    if(fdd) wb += body->getjRel()-(*fdd)(t);
+  }
+
+  void StateDependentKinematicExcitation::calcxSize() {
+    xSize = body->getqRelSize();
+  }
+
+  void StateDependentKinematicExcitation::updatexd(double t) {
+    if(f) xd = (*f)(x);
+  }
+
+  void StateDependentKinematicExcitation::updateg(double t) {
+    if(g.size()) g=body->getqRel()-x;
+  } 
+
+  void StateDependentKinematicExcitation::updategd(double t) {
+    if(gd.size() && f) gd=body->getuRel()-(*f)(x);
+  }
+
+  void StateDependentKinematicExcitation::updatewb(double t, int j) {
+    if (fd) wb += body->getjRel()-(*fd)(xd,x);
   }
 
 }
