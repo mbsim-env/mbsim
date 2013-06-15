@@ -35,12 +35,17 @@ Constraint::Constraint(const string &str, Element *parent) : Object(str, parent)
 Constraint::~Constraint() {
 }
 
-GearConstraint::GearConstraint(const string &str, Element *parent) : Constraint(str, parent) {
+GearConstraint::GearConstraint(const string &str, Element *parent) : Constraint(str, parent), gearForceArrow(0,false), gearMomentArrow(0,false) {
 
   dependentBody.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIMNS"dependentRigidBody"));
 
   independentBodies.setProperty(new GearDependenciesProperty(this,MBSIMNS"independentRigidBodies"));
 
+  gearForceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
+  gearForceArrow.setXMLName(MBSIMNS"openMBVGearForceArrow",false);
+
+  gearMomentArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
+  gearMomentArrow.setXMLName(MBSIMNS"openMBVGearMomentArrow",false);
 }
 
 GearConstraint::~GearConstraint() {
@@ -58,12 +63,16 @@ void GearConstraint::initializeUsingXML(TiXmlElement *element) {
   Constraint::initializeUsingXML(element);
   dependentBody.initializeUsingXML(element);
   independentBodies.initializeUsingXML(element);
+  gearForceArrow.initializeUsingXML(element);
+  gearMomentArrow.initializeUsingXML(element);
 }
 
 TiXmlElement* GearConstraint::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Constraint::writeXMLFile(parent);
   dependentBody.writeXMLFile(ele0);
   independentBodies.writeXMLFile(ele0);
+  gearForceArrow.writeXMLFile(ele0);
+  gearMomentArrow.writeXMLFile(ele0);
   return ele0;
 }
 
@@ -152,7 +161,7 @@ TiXmlElement* StateDependentKinematicConstraint::writeXMLFile(TiXmlNode *parent)
   return ele0;
 }
 
-JointConstraint::JointConstraint(const string &str, Element *parent) : Constraint(str, parent), force(0,false), moment(0,false) {
+JointConstraint::JointConstraint(const string &str, Element *parent) : Constraint(str, parent), force(0,false), moment(0,false), jointForceArrow(0,false), jointMomentArrow(0,false) {
 
   independentBody.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIMNS"independentRigidBody"));
 
@@ -167,6 +176,12 @@ JointConstraint::JointConstraint(const string &str, Element *parent) : Constrain
   force.setProperty(new GeneralizedForceDirectionProperty(MBSIMNS"forceDirection"));
 
   moment.setProperty(new GeneralizedForceDirectionProperty(MBSIMNS"momentDirection"));
+
+  jointForceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
+  jointForceArrow.setXMLName(MBSIMNS"openMBVJointForceArrow",false);
+
+  jointMomentArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
+  jointMomentArrow.setXMLName(MBSIMNS"openMBVJointMomentArrow",false);
 }
 
 JointConstraint::~JointConstraint() {
@@ -182,13 +197,19 @@ void JointConstraint::initialize() {
 
 void JointConstraint::initializeUsingXML(TiXmlElement *element) {
   Constraint::initializeUsingXML(element);
+
   dependentBodiesFirstSide.initializeUsingXML(element);
   dependentBodiesSecondSide.initializeUsingXML(element);
+
   independentBody.initializeUsingXML(element);
 
   force.initializeUsingXML(element);
   moment.initializeUsingXML(element);
+
   connections.initializeUsingXML(element);
+
+  jointForceArrow.initializeUsingXML(element);
+  jointMomentArrow.initializeUsingXML(element);
 }
 
 TiXmlElement* JointConstraint::writeXMLFile(TiXmlNode *parent) {
@@ -203,6 +224,9 @@ TiXmlElement* JointConstraint::writeXMLFile(TiXmlNode *parent) {
   moment.writeXMLFile(ele0);
 
   connections.writeXMLFile(ele0);
+
+  jointForceArrow.writeXMLFile(ele0);
+  jointMomentArrow.writeXMLFile(ele0);
 
   return ele0;
 }
