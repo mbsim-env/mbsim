@@ -182,6 +182,7 @@ TiXmlElement* OMBVArrowProperty::writeXMLFile(TiXmlNode *parent) {
 }
 
 void OMBVArrowProperty::fromWidget(QWidget *widget) {
+  OMBVDynamicColoredObjectProperty::fromWidget(widget);
   diameter.fromWidget(static_cast<OMBVArrowWidget*>(widget)->diameter);
   headDiameter.fromWidget(static_cast<OMBVArrowWidget*>(widget)->headDiameter);
   headLength.fromWidget(static_cast<OMBVArrowWidget*>(widget)->headLength);
@@ -191,6 +192,7 @@ void OMBVArrowProperty::fromWidget(QWidget *widget) {
 }
 
 void OMBVArrowProperty::toWidget(QWidget *widget) {
+  OMBVDynamicColoredObjectProperty::toWidget(widget);
   diameter.toWidget(static_cast<OMBVArrowWidget*>(widget)->diameter);
   headDiameter.toWidget(static_cast<OMBVArrowWidget*>(widget)->headDiameter);
   headLength.toWidget(static_cast<OMBVArrowWidget*>(widget)->headLength);

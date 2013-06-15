@@ -74,6 +74,13 @@ class AbsolutePositionSensor : public AbsoluteCoordinateSensor {
     ElementPropertyDialog* createPropertyDialog() {return new AbsolutePositionSensorPropertyDialog(this);}
 };
 
+class AbsoluteVelocitySensor : public AbsoluteCoordinateSensor {
+  public:
+    AbsoluteVelocitySensor(const std::string &str, Element *parent) : AbsoluteCoordinateSensor(str, parent) {}
+    virtual std::string getType() const { return "AbsoluteVelocitySensor"; }
+    ElementPropertyDialog* createPropertyDialog() {return new AbsoluteVelocitySensorPropertyDialog(this);}
+};
+
 class FunctionSensor : public Sensor {
   friend class FunctionSensorPropertyDialog;
   public:

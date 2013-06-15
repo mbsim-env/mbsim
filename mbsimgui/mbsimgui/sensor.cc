@@ -90,7 +90,7 @@ FunctionSensor::FunctionSensor(const string &str, Element *parent) : Sensor(str,
   property.push_back(new SinusFunction1Property);
   property.push_back(new TabularFunction1Property);
   property.push_back(new SummationFunction1Property);
-  property.push_back(new SymbolicFunction1Property("VS"));
+  property.push_back(new SymbolicFunction1Property("VS","t"));
   function.setProperty(new ChoiceProperty(MBSIMCONTROLNS"function",property));
 }
 

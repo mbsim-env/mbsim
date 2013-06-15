@@ -489,37 +489,17 @@ void GearConstraintPropertyDialog::fromWidget(Element *element) {
 }
 
 KinematicConstraintPropertyDialog::KinematicConstraintPropertyDialog(KinematicConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : ConstraintPropertyDialog(constraint,parent,f), refBody(0) {
+  addTab("Visualisation");
 
   dependentBody = new ExtWidget("Dependent body",new RigidBodyOfReferenceWidget(constraint,0));
   connect((RigidBodyOfReferenceWidget*)dependentBody->getWidget(),SIGNAL(bodyChanged()),this,SLOT(updateReferenceBody()));
   addToTab("General", dependentBody);
 
-  vector<QWidget*> widget;
-  vector<QString> name;
-  QStringList var;
-  var << "t";
-  widget.push_back(new SymbolicFunction1Widget(var));
-  name.push_back("Symbolic function");
-  kinematicFunction = new ExtWidget("Kinematic function",new ChoiceWidget(widget,name));
-  addToTab("General", kinematicFunction);
-  connect((ChoiceWidget*)kinematicFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+  constraintForceArrow = new ExtWidget("OpenMBV constraint force arrow",new OMBVArrowWidget("NOTSET"),true);
+  addToTab("Visualisation",constraintForceArrow);
 
-//  firstDerivativeOfKinematicFunction = new ExtWidget("First derivative of kinematic function",new Function1ChoiceWidget,true);
-//  addToTab("General", firstDerivativeOfKinematicFunction);
-//  connect((Function1ChoiceWidget*)firstDerivativeOfKinematicFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
-//
-//  secondDerivativeOfKinematicFunction = new ExtWidget("Second derivative of kinematic function",new Function1ChoiceWidget,true);
-//  addToTab("General", secondDerivativeOfKinematicFunction);
-//  connect((Function1ChoiceWidget*)secondDerivativeOfKinematicFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
-
-  connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
-}
-
-void KinematicConstraintPropertyDialog::resizeVariables() {
-  int size = refBody?refBody->getqRelSize():0;
-  ((ChoiceWidget*)kinematicFunction->getWidget())->resize_(size,1);
-//  ((Function1ChoiceWidget*)firstDerivativeOfKinematicFunction->getWidget())->resize_(size,1);
-//  ((Function1ChoiceWidget*)secondDerivativeOfKinematicFunction->getWidget())->resize_(size,1);
+  constraintMomentArrow = new ExtWidget("OpenMBV constraint moment arrow",new OMBVArrowWidget("NOTSET"),true);
+  addToTab("Visualisation",constraintMomentArrow);
 }
 
 void KinematicConstraintPropertyDialog::updateReferenceBody() {
@@ -535,17 +515,78 @@ void KinematicConstraintPropertyDialog::updateReferenceBody() {
 void KinematicConstraintPropertyDialog::toWidget(Element *element) {
   ConstraintPropertyDialog::toWidget(element);
   static_cast<KinematicConstraint*>(element)->dependentBody.toWidget(dependentBody);
-  static_cast<KinematicConstraint*>(element)->kinematicFunction.toWidget(kinematicFunction);
-//  static_cast<KinematicConstraint*>(element)->firstDerivativeOfKinematicFunction.toWidget(firstDerivativeOfKinematicFunction);
-//  static_cast<KinematicConstraint*>(element)->secondDerivativeOfKinematicFunction.toWidget(secondDerivativeOfKinematicFunction);
+  static_cast<KinematicConstraint*>(element)->constraintForceArrow.toWidget(constraintForceArrow);
+  static_cast<KinematicConstraint*>(element)->constraintMomentArrow.toWidget(constraintMomentArrow);
 }
 
 void KinematicConstraintPropertyDialog::fromWidget(Element *element) {
   ConstraintPropertyDialog::fromWidget(element);
   static_cast<KinematicConstraint*>(element)->dependentBody.fromWidget(dependentBody);
-  static_cast<KinematicConstraint*>(element)->kinematicFunction.fromWidget(kinematicFunction);
-//  static_cast<KinematicConstraint*>(element)->firstDerivativeOfKinematicFunction.fromWidget(firstDerivativeOfKinematicFunction);
-//  static_cast<KinematicConstraint*>(element)->secondDerivativeOfKinematicFunction.fromWidget(secondDerivativeOfKinematicFunction);
+  static_cast<KinematicConstraint*>(element)->constraintForceArrow.fromWidget(constraintForceArrow);
+  static_cast<KinematicConstraint*>(element)->constraintMomentArrow.fromWidget(constraintMomentArrow);
+}
+
+TimeDependentKinematicConstraintPropertyDialog::TimeDependentKinematicConstraintPropertyDialog(TimeDependentKinematicConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : KinematicConstraintPropertyDialog(constraint,parent,f) {
+
+  vector<QWidget*> widget;
+  vector<QString> name;
+  widget.push_back(new SymbolicFunction1Widget("t"));
+  name.push_back("Symbolic function");
+  generalizedPositionFunction = new ExtWidget("Generalized position function",new ChoiceWidget(widget,name));
+  addToTab("General", generalizedPositionFunction);
+  connect((ChoiceWidget*)generalizedPositionFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+
+  connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
+}
+
+void TimeDependentKinematicConstraintPropertyDialog::resizeVariables() {
+  int size = refBody?refBody->getqRelSize():0;
+  ((ChoiceWidget*)generalizedPositionFunction->getWidget())->resize_(size,1);
+}
+
+void TimeDependentKinematicConstraintPropertyDialog::toWidget(Element *element) {
+  KinematicConstraintPropertyDialog::toWidget(element);
+  static_cast<TimeDependentKinematicConstraint*>(element)->generalizedPositionFunction.toWidget(generalizedPositionFunction);
+}
+
+void TimeDependentKinematicConstraintPropertyDialog::fromWidget(Element *element) {
+  KinematicConstraintPropertyDialog::fromWidget(element);
+  static_cast<TimeDependentKinematicConstraint*>(element)->generalizedPositionFunction.fromWidget(generalizedPositionFunction);
+}
+
+StateDependentKinematicConstraintPropertyDialog::StateDependentKinematicConstraintPropertyDialog(StateDependentKinematicConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : KinematicConstraintPropertyDialog(constraint,parent,f) {
+
+  vector<QWidget*> widget;
+  vector<QString> name;
+  widget.push_back(new SymbolicFunction1Widget("q"));
+  name.push_back("Symbolic function");
+  generalizedVelocityFunction = new ExtWidget("Generalized velocity function",new ChoiceWidget(widget,name));
+  addToTab("General", generalizedVelocityFunction);
+  connect((ChoiceWidget*)generalizedVelocityFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+
+  connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
+}
+
+void StateDependentKinematicConstraintPropertyDialog::resizeGeneralizedPosition() {
+  int size = refBody->getqRelSize();
+  cout << size << endl;
+  if(q0_ && q0_->size() != size)
+    q0_->resize_(size);
+}
+
+void StateDependentKinematicConstraintPropertyDialog::resizeVariables() {
+  int size = refBody?refBody->getqRelSize():0;
+  ((ChoiceWidget*)generalizedVelocityFunction->getWidget())->resize_(size,1);
+}
+
+void StateDependentKinematicConstraintPropertyDialog::toWidget(Element *element) {
+  KinematicConstraintPropertyDialog::toWidget(element);
+  static_cast<StateDependentKinematicConstraint*>(element)->generalizedVelocityFunction.toWidget(generalizedVelocityFunction);
+}
+
+void StateDependentKinematicConstraintPropertyDialog::fromWidget(Element *element) {
+  KinematicConstraintPropertyDialog::fromWidget(element);
+  static_cast<StateDependentKinematicConstraint*>(element)->generalizedVelocityFunction.fromWidget(generalizedVelocityFunction);
 }
 
 JointConstraintPropertyDialog::JointConstraintPropertyDialog(JointConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : ConstraintPropertyDialog(constraint,parent,f) {
@@ -925,8 +966,10 @@ ActuatorPropertyDialog::ActuatorPropertyDialog(Actuator *actuator, QWidget *pare
   connections = new ExtWidget("Connections",new ConnectFramesWidget(2,actuator));
   addToTab("Kinetics",connections);
 
-  frameOfReference = new ExtWidget("Frame of reference",new FrameOfReferenceWidget(actuator,0),true);
-  addToTab("Kinetics",frameOfReference);
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
+  frameOfReference = new ExtWidget("Frame of reference",new ExtPhysicalVarWidget(input),true); 
+  addToTab("Kinetics", frameOfReference);
 
   inputSignal = new ExtWidget("Input signal",new SignalOfReferenceWidget(actuator,0));
   addToTab("Kinetics",inputSignal);
@@ -1052,6 +1095,9 @@ void AbsoluteCoordinateSensorPropertyDialog::fromWidget(Element *element) {
 AbsolutePositionSensorPropertyDialog::AbsolutePositionSensorPropertyDialog(AbsolutePositionSensor *sensor, QWidget * parent, Qt::WindowFlags f) : AbsoluteCoordinateSensorPropertyDialog(sensor,parent,f) {
 }
 
+AbsoluteVelocitySensorPropertyDialog::AbsoluteVelocitySensorPropertyDialog(AbsoluteVelocitySensor *sensor, QWidget * parent, Qt::WindowFlags f) : AbsoluteCoordinateSensorPropertyDialog(sensor,parent,f) {
+}
+
 FunctionSensorPropertyDialog::FunctionSensorPropertyDialog(FunctionSensor *sensor, QWidget * parent, Qt::WindowFlags f) : SensorPropertyDialog(sensor,parent,f) {
   vector<QWidget*> widget;
   vector<QString> name;
@@ -1065,9 +1111,7 @@ FunctionSensorPropertyDialog::FunctionSensorPropertyDialog(FunctionSensor *senso
   name.push_back("Tabular function");
   widget.push_back(new SummationFunction1Widget(1));
   name.push_back("Summation function");
-  QStringList var;
-  var << "t";
-  widget.push_back(new SymbolicFunction1Widget(var));
+  widget.push_back(new SymbolicFunction1Widget("t"));
   name.push_back("Symbolic function");
   function = new ExtWidget("Function",new ChoiceWidget(widget,name));
   addToTab("General", function);
@@ -1151,5 +1195,30 @@ void PIDControllerPropertyDialog::fromWidget(Element *element) {
   static_cast<PIDController*>(element)->P.fromWidget(P);
   static_cast<PIDController*>(element)->I.fromWidget(I);
   static_cast<PIDController*>(element)->D.fromWidget(D);
+}
+
+UnarySignalOperationPropertyDialog::UnarySignalOperationPropertyDialog(UnarySignalOperation *signal, QWidget * parent, Qt::WindowFlags f_) : SignalPropertyDialog(signal,parent,f_) {
+  sRef = new ExtWidget("Input signal",new SignalOfReferenceWidget(signal,0));
+  addToTab("General", sRef);
+
+  vector<QWidget*> widget;
+  vector<QString> name;
+  widget.push_back(new SymbolicFunction1Widget("x"));
+  name.push_back("Symbolic function");
+  f = new ExtWidget("Function",new ChoiceWidget(widget,name));
+  addToTab("General", f);
+  //connect((ChoiceWidget*)kinematicFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+}
+
+void UnarySignalOperationPropertyDialog::toWidget(Element *element) {
+  SignalPropertyDialog::toWidget(element);
+  static_cast<UnarySignalOperation*>(element)->sRef.toWidget(sRef);
+  static_cast<UnarySignalOperation*>(element)->f.toWidget(f);
+}
+
+void UnarySignalOperationPropertyDialog::fromWidget(Element *element) {
+  SignalPropertyDialog::fromWidget(element);
+  static_cast<UnarySignalOperation*>(element)->sRef.fromWidget(sRef);
+  static_cast<UnarySignalOperation*>(element)->f.fromWidget(f);
 }
 

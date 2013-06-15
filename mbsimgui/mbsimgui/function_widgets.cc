@@ -33,18 +33,16 @@ void DifferentiableFunction1Widget::setDerivative(Function1Widget *diff,size_t d
   derivatives[degree]=diff; 
 }
 
-SymbolicFunction1Widget::SymbolicFunction1Widget(const QStringList &var, int max) : Function1Widget() {
+SymbolicFunction1Widget::SymbolicFunction1Widget(const QString &var, int max) : Function1Widget() {
   QGridLayout *layout = new QGridLayout;
   layout->setMargin(0);
   setLayout(layout);
-  for(int i=0; i<var.size(); i++) {
-    argname.push_back(new ExtWidget("Name of argument "+QString::number(i+1),new TextWidget(var[i])));
-    layout->addWidget(argname[i],i,0);
+  argname.push_back(new ExtWidget("Name of argument",new TextWidget(var)));
+  layout->addWidget(argname[0],0,0);
 
-    argdim.push_back(new ExtWidget("Dimension of argument "+QString::number(i+1),new SpinBoxWidget(1,1,max)));
-    if(var[i]!="t")
-      layout->addWidget(argdim[i],i,1);
-  }
+  argdim.push_back(new ExtWidget("Dimension of argument",new SpinBoxWidget(1,1,max)));
+  if(var!="t")
+    layout->addWidget(argdim[0],0,1);
   f = new ExtWidget("Function",new OctaveExpressionWidget);
   layout->addWidget(f,var.size(),0,1,2);
 }
@@ -230,9 +228,7 @@ void SummationFunction1Widget::addFunction() {
   name.push_back("Tabular function");
   widget.push_back(new SummationFunction1Widget(n));
   name.push_back("Summation function");
-  QStringList var;
-  var << "t";
-  widget.push_back(new SymbolicFunction1Widget(var));
+  widget.push_back(new SymbolicFunction1Widget("t"));
   name.push_back("Symbolic function");
   widgetContainer->addWidget(new ChoiceWidget(widget,name));
 

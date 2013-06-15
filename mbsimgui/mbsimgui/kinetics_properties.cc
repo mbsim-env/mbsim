@@ -590,7 +590,7 @@ ForceChoiceProperty::ForceChoiceProperty(ExtProperty &arrow_, const std::string 
   property.push_back(new SinusFunction1Property);
   property.push_back(new TabularFunction1Property);
   property.push_back(new SummationFunction1Property);
-  property.push_back(new SymbolicFunction1Property("VS"));
+  property.push_back(new SymbolicFunction1Property("VS","t"));
   forceLaw.setProperty(new ChoiceProperty(MBSIMNS"function",property));
 }
 

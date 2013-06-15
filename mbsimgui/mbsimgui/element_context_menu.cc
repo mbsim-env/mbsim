@@ -197,8 +197,11 @@ ObjectContextContextMenu::ObjectContextContextMenu(Element *element_, QWidget *p
   QAction *action = new QAction("Add rigid body", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addRigidBody()));
   addAction(action);
-  action = new QAction("Add kinematic constraint", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(addKinematicConstraint()));
+  action = new QAction("Add time dependent kinematic constraint", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addTimeDependentKinematicConstraint()));
+  addAction(action);
+  action = new QAction("Add state dependent kinematic constraint", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addStateDependentKinematicConstraint()));
   addAction(action);
   action = new QAction("Add gear constraint", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addGearConstraint()));
@@ -216,8 +219,12 @@ void ObjectContextContextMenu::addGearConstraint() {
   mw->addObject(new GearConstraint("GearConstraint",element));
 }
 
-void ObjectContextContextMenu::addKinematicConstraint() {
-  mw->addObject(new KinematicConstraint("KinematicConstraint",element));
+void ObjectContextContextMenu::addTimeDependentKinematicConstraint() {
+  mw->addObject(new TimeDependentKinematicConstraint("KinematicConstraint",element));
+}
+
+void ObjectContextContextMenu::addStateDependentKinematicConstraint() {
+  mw->addObject(new StateDependentKinematicConstraint("KinematicConstraint",element));
 }
 
 void ObjectContextContextMenu::addJointConstraint() {
@@ -300,6 +307,9 @@ SignalContextContextMenu::SignalContextContextMenu(Element *element_, QWidget *p
   action = new QAction("Add PID controller", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addPIDController()));
   addAction(action);
+  action = new QAction("Add unary signal operation", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addUnarySignalOperation()));
+  addAction(action);
 }
 
 void SignalContextContextMenu::addSensor() {
@@ -315,6 +325,10 @@ void SignalContextContextMenu::addPIDController() {
   mw->addLink(new PIDController("PIDController",element));
 }
 
+void SignalContextContextMenu::addUnarySignalOperation() {
+  mw->addLink(new UnarySignalOperation("UnarySignalOperation",element));
+}
+
 SensorContextContextMenu::SensorContextContextMenu(Element *element_, QWidget *parent) : QMenu(parent), element(element_) {
   QAction *action = new QAction("Add generalized position sensor", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedPositionSensor()));
@@ -324,6 +338,9 @@ SensorContextContextMenu::SensorContextContextMenu(Element *element_, QWidget *p
   addAction(action);
   action = new QAction("Add absolute position sensor", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addAbsolutePositionSensor()));
+  addAction(action);
+  action = new QAction("Add absolute velocity sensor", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addAbsoluteVelocitySensor()));
   addAction(action);
   action = new QAction("Add function sensor", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addFunctionSensor()));
@@ -343,6 +360,10 @@ void SensorContextContextMenu::addGeneralizedVelocitySensor() {
 
 void SensorContextContextMenu::addAbsolutePositionSensor() {
   mw->addLink(new AbsolutePositionSensor("AbsolutePositionSensor",element));
+}
+
+void SensorContextContextMenu::addAbsoluteVelocitySensor() {
+  mw->addLink(new AbsoluteVelocitySensor("AbsoluteVelocitySensor",element));
 }
 
 void SensorContextContextMenu::addFunctionSensor() {

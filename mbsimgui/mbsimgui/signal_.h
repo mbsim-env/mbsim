@@ -56,4 +56,17 @@ class PIDController : public Signal {
     ExtProperty sRef, sdRef, P, I, D;
 };
 
+class UnarySignalOperation : public Signal {
+  friend class UnarySignalOperationPropertyDialog;
+  public:
+    UnarySignalOperation(const std::string &str, Element *parent);
+    std::string getType() const { return "UnarySignalOperation"; }
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    void initialize();
+    ElementPropertyDialog* createPropertyDialog() {return new UnarySignalOperationPropertyDialog(this);}
+  protected:
+    ExtProperty sRef, f;
+};
+
 #endif

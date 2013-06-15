@@ -48,12 +48,13 @@ class Function2Property : public Property {
 
 class SymbolicFunction1Property : public Function1Property {
   public:
-    SymbolicFunction1Property(const std::string &ext);
+    SymbolicFunction1Property(const std::string &ext, const std::string &var);
     inline std::string getType() const { return "SymbolicFunction1_"+ext; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
+    int getArgDim() const;
   protected:
     ExtProperty f;
     std::vector<ExtProperty> argname, argdim;
@@ -168,12 +169,13 @@ class SummationFunction1Property : public Function1Property {
 
 class SymbolicFunction2Property : public Function2Property {
   public:
-    SymbolicFunction2Property(const std::string &ext);
+    SymbolicFunction2Property(const std::string &ext, const std::vector<std::string> &var);
     inline std::string getType() const { return "SymbolicFunction2_"+ext; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
+    int getArgDim(int i) const;
   protected:
     ExtProperty f;
     std::vector<ExtProperty> argname, argdim;

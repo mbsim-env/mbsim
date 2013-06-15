@@ -99,3 +99,30 @@ TiXmlElement* PIDController::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
+UnarySignalOperation::UnarySignalOperation(const string &str, Element *parent) : Signal(str, parent) {
+  sRef.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROLNS"inputSignal"));
+
+  vector<Property*> property;
+  property.push_back(new SymbolicFunction1Property("VV","x"));
+  f.setProperty(new ChoiceProperty(MBSIMCONTROLNS"function",property));
+
+}
+
+void UnarySignalOperation::initialize() {
+  Signal::initialize();
+  sRef.initialize();
+}
+
+void UnarySignalOperation::initializeUsingXML(TiXmlElement *element) {
+  Signal::initializeUsingXML(element);
+  sRef.initializeUsingXML(element);
+  f.initializeUsingXML(element);
+}
+
+TiXmlElement* UnarySignalOperation::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = Signal::writeXMLFile(parent);
+  sRef.writeXMLFile(ele0);
+  f.writeXMLFile(ele0);
+  return ele0;
+}
+

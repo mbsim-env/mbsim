@@ -130,8 +130,10 @@ Object* MBSimObjectFactory::createObject(TiXmlElement *element, Element *parent)
     return new RigidBody(element->Attribute("name"),parent);
   else if(element->ValueStr()==MBSIMNS"GearConstraint")
     return new GearConstraint(element->Attribute("name"),parent);
-  else if(element->ValueStr()==MBSIMNS"KinematicConstraint")
-    return new KinematicConstraint(element->Attribute("name"),parent);
+  else if(element->ValueStr()==MBSIMNS"TimeDependentKinematicConstraint")
+    return new TimeDependentKinematicConstraint(element->Attribute("name"),parent);
+  else if(element->ValueStr()==MBSIMNS"StateDependentKinematicConstraint")
+    return new StateDependentKinematicConstraint(element->Attribute("name"),parent);
   else if(element->ValueStr()==MBSIMNS"JointConstraint")
     return new JointConstraint(element->Attribute("name"),parent);
   return 0;
@@ -174,6 +176,8 @@ Link* MBSimObjectFactory::createLink(TiXmlElement *element, Element *parent) {
     return new GeneralizedVelocitySensor(element->Attribute("name"),parent);
   if(element->ValueStr()==MBSIMCONTROLNS"AbsolutePositionSensor")
     return new AbsolutePositionSensor(element->Attribute("name"),parent);
+  if(element->ValueStr()==MBSIMCONTROLNS"AbsoluteVelocitySensor")
+    return new AbsoluteVelocitySensor(element->Attribute("name"),parent);
   if(element->ValueStr()==MBSIMCONTROLNS"FunctionSensor")
     return new FunctionSensor(element->Attribute("name"),parent);
   if(element->ValueStr()==MBSIMCONTROLNS"SignalProcessingSystemSensor")
@@ -182,6 +186,8 @@ Link* MBSimObjectFactory::createLink(TiXmlElement *element, Element *parent) {
     return new SignalAddition(element->Attribute("name"),parent);
   if(element->ValueStr()==MBSIMCONTROLNS"PIDController")
     return new PIDController(element->Attribute("name"),parent);
+  if(element->ValueStr()==MBSIMCONTROLNS"UnarySignalOperation")
+    return new UnarySignalOperation(element->Attribute("name"),parent);
   //if(element->ValueStr()==MBSIMNS"ExternGeneralizedIO")
   //  return new ExternGeneralizedIO(element->Attribute("name"));
   return 0;
