@@ -84,10 +84,17 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, GearConstraint, MBSIMNS"GearConstraint")
 
   GearConstraint::GearConstraint(const std::string &name, RigidBody* body) : Constraint(name), bd(body), saved_DependentBody("") {
-    //bd->addDependency(this);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    FArrow = 0;
+    MArrow = 0;
+#endif
   }
 
   GearConstraint::GearConstraint(const std::string &name) : Constraint(name), bd(NULL), saved_DependentBody("") {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    FArrow = 0;
+    MArrow = 0;
+#endif
   }
 
   void GearConstraint::init(InitStage stage) {
@@ -144,6 +151,22 @@ namespace MBSim {
       saved_ratio.push_back(getDouble(ee->FirstChildElement()));
       ee=ee->NextSiblingElement();
     }
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    e=element->FirstChildElement(MBSIMNS"openMBVGearForceArrow");
+    if(e) {
+      OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
+      arrow->initializeUsingXML(e->FirstChildElement());
+      setOpenMBVGearForceArrow(arrow);
+    }
+
+    e=element->FirstChildElement(MBSIMNS"openMBVGearMomentArrow");
+    if(e) {
+      OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
+      arrow->initializeUsingXML(e->FirstChildElement());
+      setOpenMBVGearMomentArrow(arrow);
+    }
+#endif
   }
 
   void GearConstraint::setUpInverseKinetics() {
@@ -153,6 +176,10 @@ namespace MBSim {
     for(unsigned int i=0; i<bi.size(); i++) {
       gear->addDependency(bi[i],ratio[i]);
     }
+    if(FArrow)
+      gear->setOpenMBVForceArrow(FArrow);
+    if(MArrow)
+      gear->setOpenMBVMomentArrow(MArrow);
   }
 
   KinematicConstraint::KinematicConstraint(const std::string &name) : Constraint(name), bd(0), saved_DependentBody("") {
@@ -585,6 +612,22 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"connect");
     saved_ref1=e->Attribute("ref1");
     saved_ref2=e->Attribute("ref2");
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    e=element->FirstChildElement(MBSIMNS"openMBVJointForceArrow");
+    if(e) {
+      OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
+      arrow->initializeUsingXML(e->FirstChildElement());
+      setOpenMBVJointForceArrow(arrow);
+    }
+
+    e=element->FirstChildElement(MBSIMNS"openMBVJointMomentArrow");
+    if(e) {
+      OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
+      arrow->initializeUsingXML(e->FirstChildElement());
+      setOpenMBVJointMomentArrow(arrow);
+    }
+#endif
   }
 
   TiXmlElement* JointConstraint::writeXMLFile(TiXmlNode *parent) {
@@ -619,6 +662,18 @@ namespace MBSim {
     ele1->SetAttribute("ref1", frame1->getXMLPath(this,true)); // relative path
     ele1->SetAttribute("ref2", frame2->getXMLPath(this,true)); // relative path
     ele0->LinkEndChild(ele1);
+
+    if(FArrow) {
+      ele1 = new TiXmlElement( MBSIMNS"openMBVJointForceArrow" );
+      FArrow->writeXMLFile(ele1);
+      ele0->LinkEndChild(ele1);
+    }
+
+    if(MArrow) {
+      ele1 = new TiXmlElement( MBSIMNS"openMBVJointMomentArrow" );
+      MArrow->writeXMLFile(ele1);
+      ele0->LinkEndChild(ele1);
+    }
 
     return ele0;
   }
