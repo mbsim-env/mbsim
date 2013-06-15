@@ -456,6 +456,7 @@ ConstraintPropertyDialog::ConstraintPropertyDialog(Constraint *constraint, QWidg
 }
 
 GearConstraintPropertyDialog::GearConstraintPropertyDialog(GearConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : ConstraintPropertyDialog(constraint,parent,f), refBody(0) {
+  addTab("Visualisation");
 
   dependentBody = new ExtWidget("Dependent body",new RigidBodyOfReferenceWidget(constraint,0));
   connect((RigidBodyOfReferenceWidget*)dependentBody->getWidget(),SIGNAL(bodyChanged()),this,SLOT(updateReferenceBody()));
@@ -464,6 +465,12 @@ GearConstraintPropertyDialog::GearConstraintPropertyDialog(GearConstraint *const
   independentBodies = new ExtWidget("Independent bodies",new GearDependenciesWidget(constraint));
   //connect(dependentBodiesFirstSide_,SIGNAL(bodyChanged()),this,SLOT(resizeVariables()));
   addToTab("General", independentBodies);
+
+  gearForceArrow = new ExtWidget("OpenMBV gear force arrow",new OMBVArrowWidget("NOTSET"),true);
+  addToTab("Visualisation",gearForceArrow);
+
+  gearMomentArrow = new ExtWidget("OpenMBV gear moment arrow",new OMBVArrowWidget("NOTSET"),true);
+  addToTab("Visualisation",gearMomentArrow);
 
   connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
 }
@@ -480,12 +487,16 @@ void GearConstraintPropertyDialog::toWidget(Element *element) {
   ConstraintPropertyDialog::toWidget(element);
   static_cast<GearConstraint*>(element)->dependentBody.toWidget(dependentBody);
   static_cast<GearConstraint*>(element)->independentBodies.toWidget(independentBodies);
+  static_cast<GearConstraint*>(element)->gearForceArrow.toWidget(gearForceArrow);
+  static_cast<GearConstraint*>(element)->gearMomentArrow.toWidget(gearMomentArrow);
 }
 
 void GearConstraintPropertyDialog::fromWidget(Element *element) {
   ConstraintPropertyDialog::fromWidget(element);
   static_cast<GearConstraint*>(element)->dependentBody.fromWidget(dependentBody);
   static_cast<GearConstraint*>(element)->independentBodies.fromWidget(independentBodies);
+  static_cast<GearConstraint*>(element)->gearForceArrow.fromWidget(gearForceArrow);
+  static_cast<GearConstraint*>(element)->gearMomentArrow.fromWidget(gearMomentArrow);
 }
 
 KinematicConstraintPropertyDialog::KinematicConstraintPropertyDialog(KinematicConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : ConstraintPropertyDialog(constraint,parent,f), refBody(0) {
@@ -569,7 +580,6 @@ StateDependentKinematicConstraintPropertyDialog::StateDependentKinematicConstrai
 
 void StateDependentKinematicConstraintPropertyDialog::resizeGeneralizedPosition() {
   int size = refBody->getqRelSize();
-  cout << size << endl;
   if(q0_ && q0_->size() != size)
     q0_->resize_(size);
 }
@@ -592,6 +602,7 @@ void StateDependentKinematicConstraintPropertyDialog::fromWidget(Element *elemen
 JointConstraintPropertyDialog::JointConstraintPropertyDialog(JointConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : ConstraintPropertyDialog(constraint,parent,f) {
 
   addTab("Kinetics",1);
+  addTab("Visualisation");
 
   independentBody = new ExtWidget("Independent body",new RigidBodyOfReferenceWidget(constraint,0));
   addToTab("General", independentBody);
@@ -614,7 +625,13 @@ JointConstraintPropertyDialog::JointConstraintPropertyDialog(JointConstraint *co
 
   moment = new ExtWidget("Moment",new GeneralizedForceDirectionWidget,true);
   addToTab("Kinetics", moment);
- }
+
+  jointForceArrow = new ExtWidget("OpenMBV joint force arrow",new OMBVArrowWidget("NOTSET"),true);
+  addToTab("Visualisation",jointForceArrow);
+
+  jointMomentArrow = new ExtWidget("OpenMBV joint moment arrow",new OMBVArrowWidget("NOTSET"),true);
+  addToTab("Visualisation",jointMomentArrow);
+}
 
 void JointConstraintPropertyDialog::resizeGeneralizedPosition() {
   int size = 0;
@@ -636,6 +653,8 @@ void JointConstraintPropertyDialog::toWidget(Element *element) {
   static_cast<JointConstraint*>(element)->connections.toWidget(connections);
   static_cast<JointConstraint*>(element)->force.toWidget(force);
   static_cast<JointConstraint*>(element)->moment.toWidget(moment);
+  static_cast<JointConstraint*>(element)->jointForceArrow.toWidget(jointForceArrow);
+  static_cast<JointConstraint*>(element)->jointMomentArrow.toWidget(jointMomentArrow);
 }
 
 void JointConstraintPropertyDialog::fromWidget(Element *element) {
@@ -646,6 +665,8 @@ void JointConstraintPropertyDialog::fromWidget(Element *element) {
   static_cast<JointConstraint*>(element)->connections.fromWidget(connections);
   static_cast<JointConstraint*>(element)->force.fromWidget(force);
   static_cast<JointConstraint*>(element)->moment.fromWidget(moment);
+  static_cast<JointConstraint*>(element)->jointForceArrow.fromWidget(jointForceArrow);
+  static_cast<JointConstraint*>(element)->jointMomentArrow.fromWidget(jointMomentArrow);
 }
 
 ExtraDynamicPropertyDialog::ExtraDynamicPropertyDialog(ExtraDynamic *ed, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(ed,parent,f) {

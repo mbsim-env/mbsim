@@ -42,7 +42,7 @@ class GearConstraint : public Constraint {
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new GearConstraintPropertyDialog(this);}
   protected:
-    ExtProperty dependentBody, independentBodies;
+    ExtProperty dependentBody, independentBodies, gearForceArrow, gearMomentArrow;
 };
 
 class KinematicConstraint : public Constraint {
@@ -96,7 +96,7 @@ class JointConstraint : public Constraint {
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new JointConstraintPropertyDialog(this);}
   protected:
-    ExtProperty force, moment, connections, independentBody, dependentBodiesFirstSide, dependentBodiesSecondSide;
+    ExtProperty force, moment, connections, independentBody, dependentBodiesFirstSide, dependentBodiesSecondSide, jointForceArrow, jointMomentArrow;
 
 };
 

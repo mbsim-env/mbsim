@@ -217,7 +217,7 @@ class GearConstraintPropertyDialog : public ConstraintPropertyDialog {
     void toWidget(Element *element);
     void fromWidget(Element *element);
   protected:
-    ExtWidget *dependentBody, *independentBodies;
+    ExtWidget *dependentBody, *independentBodies, *gearForceArrow, *gearMomentArrow;
     RigidBody *refBody;
   protected slots:
     void updateReferenceBody();
@@ -272,7 +272,7 @@ class JointConstraintPropertyDialog : public ConstraintPropertyDialog {
     void fromWidget(Element *element);
     void resizeGeneralizedPosition();
   protected:
-    ExtWidget *force, *moment, *connections, *independentBody, *dependentBodiesFirstSide, *dependentBodiesSecondSide;
+    ExtWidget *force, *moment, *connections, *independentBody, *dependentBodiesFirstSide, *dependentBodiesSecondSide, *jointForceArrow, *jointMomentArrow;
 };
 
 class ExtraDynamicPropertyDialog : public ElementPropertyDialog {
