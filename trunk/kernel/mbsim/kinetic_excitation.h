@@ -21,10 +21,11 @@
 #define _KINETICEXCITATION_H_
 
 #include <mbsim/link_mechanics.h>
-#include <mbsim/utils/function.h>
-#include "mbsim/frame.h"
+#include <mbsim/frame.h>
 
 namespace MBSim {
+
+  template <class Ret, class Arg> class Function1;
 
   /**
    * \brief kinetic excitations given by time dependent functions
