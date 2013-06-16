@@ -55,6 +55,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction2<Vec3 COMMA Vec  COMMA double>, MBSIMNS"SymbolicFunction2_VVS")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction2<Vec3 COMMA VecV COMMA double>, MBSIMNS"SymbolicFunction2_VVS")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction2<Vec3 COMMA Vec3 COMMA double>, MBSIMNS"SymbolicFunction2_VVS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction2<Vec COMMA Vec COMMA Vec>, MBSIMNS"SymbolicFunction2_VVV")
 
 #endif
 
