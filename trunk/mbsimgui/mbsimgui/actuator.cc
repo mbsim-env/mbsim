@@ -25,7 +25,7 @@
 using namespace std;
 using namespace MBXMLUtils;
 
-Actuator::Actuator(const string &str, Element *parent) : Link(str, parent), forceDir(0,false), momentDir(0,false), frameOfReference(0,false) {
+Actuator::Actuator(const string &str, Element *parent) : Link(str, parent), forceDir(0,false), momentDir(0,false), frameOfReference(0,false), actuatorForceArrow(0,false), actuatorMomentArrow(0,false) {
 
   forceDir.setProperty(new GeneralizedForceDirectionProperty(MBSIMCONTROLNS"forceDirection"));
 
@@ -39,7 +39,13 @@ Actuator::Actuator(const string &str, Element *parent) : Link(str, parent), forc
   
   connections.setProperty(new ConnectFramesProperty(2,this,MBSIMCONTROLNS"connect"));
 
+  actuatorForceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
+  actuatorForceArrow.setXMLName(MBSIMCONTROLNS"openMBVActuatorForceArrow",false);
+
+  actuatorMomentArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
+  actuatorMomentArrow.setXMLName(MBSIMCONTROLNS"openMBVActuatorMomentArrow",false);
 }
+
 
 Actuator::~Actuator() {
 }
@@ -57,6 +63,8 @@ void Actuator::initializeUsingXML(TiXmlElement *element) {
   frameOfReference.initializeUsingXML(element);
   inputSignal.initializeUsingXML(element);
   connections.initializeUsingXML(element);
+  actuatorForceArrow.initializeUsingXML(element);
+  actuatorMomentArrow.initializeUsingXML(element);
 }
 
 TiXmlElement* Actuator::writeXMLFile(TiXmlNode *parent) {
@@ -66,6 +74,8 @@ TiXmlElement* Actuator::writeXMLFile(TiXmlNode *parent) {
   frameOfReference.writeXMLFile(ele0);
   inputSignal.writeXMLFile(ele0);
   connections.writeXMLFile(ele0);
+  actuatorForceArrow.writeXMLFile(ele0);
+  actuatorMomentArrow.writeXMLFile(ele0);
   return ele0;
 }
 

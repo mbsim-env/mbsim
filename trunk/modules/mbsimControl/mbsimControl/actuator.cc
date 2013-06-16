@@ -23,6 +23,10 @@
 #include "mbsimControl/obsolet_hint.h"
 #include "mbsim/frame.h"
 #include "mbsimControl/defines.h"
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include "openmbvcppinterface/objectfactory.h"
+#include "openmbvcppinterface/arrow.h"
+#endif
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -33,21 +37,29 @@ namespace MBSimControl {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Actuator, MBSIMCONTROLNS"Actuator")
 
-  Actuator::Actuator(const string &name) : LinkMechanics(name), signal(0), KOSYID(1) {
+  Actuator::Actuator(const string &name) : LinkMechanics(name), signal(0), KOSYID(1), refFrame(0) {
   }
 
   void Actuator::updateh(double t, int j) {
+    Vec3 WrP0P1 = frame[1]->getPosition()-frame[0]->getPosition();
+    Mat3x3 tWrP0P1 = tilde(WrP0P1);
+
+    C.setOrientation(frame[0]->getOrientation());
+    C.setPosition(frame[0]->getPosition() + WrP0P1);
+    C.setAngularVelocity(frame[0]->getAngularVelocity());
+    C.setVelocity(frame[0]->getVelocity() + crossProduct(frame[0]->getAngularVelocity(),WrP0P1));
+    C.setJacobianOfTranslation(frame[0]->getJacobianOfTranslation(j) - tWrP0P1*frame[0]->getJacobianOfRotation(j),j);
+    C.setJacobianOfRotation(frame[0]->getJacobianOfRotation(j),j);
+    C.setGyroscopicAccelerationOfTranslation(frame[0]->getGyroscopicAccelerationOfTranslation(j) - tWrP0P1*frame[0]->getGyroscopicAccelerationOfRotation(j) + crossProduct(frame[0]->getAngularVelocity(),crossProduct(frame[0]->getAngularVelocity(),WrP0P1)),j);
+    C.setGyroscopicAccelerationOfRotation(frame[0]->getGyroscopicAccelerationOfRotation(j),j);
+
     la = signal->getSignal();
-    if(KOSYID) { // calculation of force / moment direction
-      Wf = frame[KOSYID-1]->getOrientation()*forceDir;
-      Wm = frame[KOSYID-1]->getOrientation()*momentDir;
-    }
-    WF[1] = Wf*la(IT);
+    WF[1] = refFrame->getOrientation()*forceDir*la(IT);
     WF[0] = -WF[1];
-    WM[1] = Wm*la(IR);
+    WM[1] = refFrame->getOrientation()*momentDir*la(IR);
     WM[0] = -WM[1];
 
-    h[j][0] += frame[0]->getJacobianOfTranslation(j).T()*WF[0] + frame[0]->getJacobianOfRotation(j).T()*WM[0];
+    h[j][0] += C.getJacobianOfTranslation(j).T()*WF[0] + C.getJacobianOfRotation(j).T()*WM[0];
     h[j][1] += frame[1]->getJacobianOfTranslation(j).T()*WF[1] + frame[1]->getJacobianOfRotation(j).T()*WM[1];
   }
 
@@ -63,18 +75,14 @@ namespace MBSimControl {
       LinkMechanics::init(stage);
       IT = Index(0,forceDir.cols()-1);
       IR = Index(forceDir.cols(),forceDir.cols()+momentDir.cols()-1);
-      if(forceDir.cols()) 
-        Wf = forceDir;
-      else {
-        forceDir.resize(3,0);
-        Wf.resize(3,0);
-      }
-      if(momentDir.cols())
-        Wm = momentDir;
-      else {
-        momentDir.resize(3,0);
-        Wm.resize(3,0);
-      }
+    }
+    else if(stage==unknownStage) {
+      LinkMechanics::init(stage);
+      refFrame = KOSYID==1?frame[0]:frame[1];
+      C.getJacobianOfTranslation(0).resize(frame[0]->getJacobianOfTranslation(0).cols());
+      C.getJacobianOfRotation(0).resize(frame[0]->getJacobianOfRotation(0).cols());
+      C.getJacobianOfTranslation(1).resize(frame[0]->getJacobianOfTranslation(1).cols());
+      C.getJacobianOfRotation(1).resize(frame[0]->getJacobianOfRotation(1).cols());
     }
     else
       LinkMechanics::init(stage);
@@ -96,7 +104,7 @@ namespace MBSimControl {
     forceDir = fd;
 
     for(int i=0; i<fd.cols(); i++)
-      forceDir.col(i) = forceDir.col(i)/nrm2(fd.col(i));
+      forceDir.set(i, forceDir.col(i)/nrm2(fd.col(i)));
   }
 
   void Actuator::setMomentDirection(const Mat &md) {
@@ -105,7 +113,7 @@ namespace MBSimControl {
     momentDir = md;
 
     for(int i=0; i<md.cols(); i++)
-      momentDir.col(i) = momentDir.col(i)/nrm2(md.col(i));
+      momentDir.set(i, momentDir.col(i)/nrm2(md.col(i)));
   }
   
   void Actuator::initializeUsingXML(TiXmlElement *element) {
@@ -122,6 +130,22 @@ namespace MBSimControl {
     e=element->FirstChildElement(MBSIMCONTROLNS"connect");
     saved_ref1=e->Attribute("ref1");
     saved_ref2=e->Attribute("ref2");
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    e=element->FirstChildElement(MBSIMCONTROLNS"openMBVActuatorForceArrow");
+    if(e) {
+      OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
+      arrow->initializeUsingXML(e->FirstChildElement());
+      setOpenMBVActuatorForceArrow(arrow);
+    }
+
+    e=element->FirstChildElement(MBSIMCONTROLNS"openMBVActuatorMomentArrow");
+    if(e) {
+      OpenMBV::Arrow *arrow=OpenMBV::ObjectFactory::create<OpenMBV::Arrow>(e->FirstChildElement());
+      arrow->initializeUsingXML(e->FirstChildElement());
+      setOpenMBVActuatorMomentArrow(arrow);
+    }
+#endif
   }
 
 }

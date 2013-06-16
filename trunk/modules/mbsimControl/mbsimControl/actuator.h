@@ -21,10 +21,7 @@
 #define _ACTUATOR_H_
 
 #include "mbsim/link_mechanics.h"
-
-namespace MBSim {
-  class Frame;
-}
+#include "mbsim/frame.h"
 
 namespace MBSimControl {
   
@@ -79,6 +76,22 @@ namespace MBSimControl {
        */
       void connect(MBSim::Frame *frame1, MBSim::Frame *frame2);
       
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      /** \brief Visualize a force arrow acting on the frame */
+      void setOpenMBVActuatorForceArrow(OpenMBV::Arrow *arrow) {
+        std::vector<bool> which; which.resize(2, false);
+        which[1]=true;
+        LinkMechanics::setOpenMBVForceArrow(arrow, which);
+      }
+
+      /** \brief Visualize a moment arrow acting on the frame */
+      void setOpenMBVActuatorMomentArrow(OpenMBV::Arrow *arrow) {
+        std::vector<bool> which; which.resize(2, false);
+        which[1]=true;
+        LinkMechanics::setOpenMBVMomentArrow(arrow, which);
+      }
+#endif
+
       /**
        * \param local force direction
        */
@@ -100,17 +113,7 @@ namespace MBSimControl {
       /**
        * \brief local force and moment direction
        */
-      fmatvec::Mat forceDir, momentDir; 
-
-      /**
-       * \brief global force and moment direction
-       */
-      fmatvec::Mat Wf, Wm; 
-
-      /**
-       * \brief global force and moment direction for each body
-       */
-      fmatvec::Mat WF[2], WM[2]; 
+      fmatvec::Mat3xV forceDir, momentDir; 
 
       /**
        * \brief force / moment norm function
@@ -121,6 +124,16 @@ namespace MBSimControl {
        * \brief frame index for rotating forces
        */
       int KOSYID;
+
+      /**
+       * \brief frame of reference the force is defined in
+       */
+      MBSim::Frame *refFrame;
+
+      /**
+       * \brief own frame located in second partner with same orientation as first partner 
+       */
+      MBSim::Frame C;
 
     private:
       std::string saved_inputSignal, saved_ref1, saved_ref2;

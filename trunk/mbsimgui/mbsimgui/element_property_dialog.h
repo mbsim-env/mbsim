@@ -360,7 +360,7 @@ class ActuatorPropertyDialog : public LinkPropertyDialog {
     void toWidget(Element *element);
     void fromWidget(Element *element);
   protected:
-    ExtWidget *forceDir, *momentDir, *frameOfReference, *inputSignal, *connections;
+    ExtWidget *forceDir, *momentDir, *frameOfReference, *inputSignal, *connections, *actuatorForceArrow, *actuatorMomentArrow;
 };
 
 class ObserverPropertyDialog : public ElementPropertyDialog {
