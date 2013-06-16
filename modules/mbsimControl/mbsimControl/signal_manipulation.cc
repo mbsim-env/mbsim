@@ -22,7 +22,7 @@
 #include "mbsimControl/obsolet_hint.h"
 #include "mbsimControl/defines.h"
 #include "mbsim/utils/eps.h"
-#include "mbsim/utils/symbolic_function.h"
+#include "mbsim/utils/function.h"
 
 using namespace std;
 using namespace MBXMLUtils;
