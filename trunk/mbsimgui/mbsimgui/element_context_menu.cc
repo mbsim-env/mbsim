@@ -310,6 +310,9 @@ SignalContextContextMenu::SignalContextContextMenu(Element *element_, QWidget *p
   action = new QAction("Add unary signal operation", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addUnarySignalOperation()));
   addAction(action);
+  action = new QAction("Add binary signal operation", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addBinarySignalOperation()));
+  addAction(action);
 }
 
 void SignalContextContextMenu::addSensor() {
@@ -327,6 +330,10 @@ void SignalContextContextMenu::addPIDController() {
 
 void SignalContextContextMenu::addUnarySignalOperation() {
   mw->addLink(new UnarySignalOperation("UnarySignalOperation",element));
+}
+
+void SignalContextContextMenu::addBinarySignalOperation() {
+  mw->addLink(new BinarySignalOperation("BinarySignalOperation",element));
 }
 
 SensorContextContextMenu::SensorContextContextMenu(Element *element_, QWidget *parent) : QMenu(parent), element(element_) {

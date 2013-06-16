@@ -608,5 +608,38 @@ namespace MBSimControl {
     return (*f)(s->getSignal()); 
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, BinarySignalOperation, MBSIMCONTROLNS"BinarySignalOperation")
+
+  void BinarySignalOperation::initializeUsingXML(TiXmlElement *element) {
+    Signal::initializeUsingXML(element);
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMCONTROLNS"input1Signal");
+    signal1String=e->Attribute("ref");
+    e=element->FirstChildElement(MBSIMCONTROLNS"input2Signal");
+    signal2String=e->Attribute("ref");
+    e=element->FirstChildElement(MBSIMCONTROLNS"function");
+    if(e) {
+      Function2<Vec,Vec,Vec> *f=ObjectFactory<Function>::create<Function2<Vec,Vec,Vec> >(e->FirstChildElement());
+      setFunction(f);
+      f->initializeUsingXML(e->FirstChildElement());
+    }
+  }
+
+  void BinarySignalOperation::init(InitStage stage) {
+    if (stage==resolveXMLPath) {
+      if (signal1String!="")
+        setSignal1(getByPath<Signal>(process_signal_string(signal1String)));
+      if (signal2String!="")
+        setSignal2(getByPath<Signal>(process_signal_string(signal2String)));
+      Signal::init(stage);
+    }
+    else
+      Signal::init(stage);
+  }
+
+  Vec BinarySignalOperation::getSignal() { 
+    return (*f)(s1->getSignal(),s2->getSignal()); 
+  }
+
 }
 
