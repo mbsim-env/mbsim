@@ -251,15 +251,33 @@ namespace MBSimControl {
       UnarySignalOperation(const std::string &name="") : Signal(name), s(NULL), signalString(""), f(0) {}
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       void init(MBSim::InitStage stage);
-      void setSignal(Signal * signal_) {s=signal_; }
+      void setSignal(Signal *signal_) {s=signal_; }
       void setFunction(MBSim::Function1<fmatvec::Vec,fmatvec::Vec> *f_) {f=f_; };
       fmatvec::Vec getSignal();
     private:
-      Signal * s;
+      Signal *s;
       std::string signalString;
       MBSim::Function1<fmatvec::Vec,fmatvec::Vec> *f;
   };
 
+  /*!
+   * \brief BinarySignalOperation
+   * \author Martin Foerg
+   */
+  class BinarySignalOperation : public Signal {  
+    public:
+      BinarySignalOperation(const std::string &name="") : Signal(name), s1(NULL), s2(NULL), signal1String(""), signal2String(""), f(0) {}
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void init(MBSim::InitStage stage);
+      void setSignal1(Signal *signal_) {s1=signal_; }
+      void setSignal2(Signal *signal_) {s2=signal_; }
+      void setFunction(MBSim::Function2<fmatvec::Vec,fmatvec::Vec,fmatvec::Vec> *f_) {f=f_; };
+      fmatvec::Vec getSignal();
+    private:
+      Signal *s1, *s2;
+      std::string signal1String, signal2String;
+      MBSim::Function2<fmatvec::Vec,fmatvec::Vec,fmatvec::Vec> *f;
+  };
 
 }
 

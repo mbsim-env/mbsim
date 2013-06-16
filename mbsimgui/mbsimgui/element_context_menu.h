@@ -143,6 +143,7 @@ class SignalContextContextMenu : public QMenu {
     void addSignalAddition();
     void addPIDController();
     void addUnarySignalOperation();
+    void addBinarySignalOperation();
 
   protected:
     Element *element;

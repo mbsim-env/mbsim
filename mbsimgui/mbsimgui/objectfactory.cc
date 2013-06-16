@@ -188,6 +188,8 @@ Link* MBSimObjectFactory::createLink(TiXmlElement *element, Element *parent) {
     return new PIDController(element->Attribute("name"),parent);
   if(element->ValueStr()==MBSIMCONTROLNS"UnarySignalOperation")
     return new UnarySignalOperation(element->Attribute("name"),parent);
+  if(element->ValueStr()==MBSIMCONTROLNS"BinarySignalOperation")
+    return new BinarySignalOperation(element->Attribute("name"),parent);
   //if(element->ValueStr()==MBSIMNS"ExternGeneralizedIO")
   //  return new ExternGeneralizedIO(element->Attribute("name"));
   return 0;

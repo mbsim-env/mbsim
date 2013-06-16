@@ -987,9 +987,7 @@ ActuatorPropertyDialog::ActuatorPropertyDialog(Actuator *actuator, QWidget *pare
   connections = new ExtWidget("Connections",new ConnectFramesWidget(2,actuator));
   addToTab("Kinetics",connections);
 
-  vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
-  frameOfReference = new ExtWidget("Frame of reference",new ExtPhysicalVarWidget(input),true); 
+  frameOfReference = new ExtWidget("Frame of reference",new SpinBoxWidget(1,1,2),true); 
   addToTab("Kinetics", frameOfReference);
 
   inputSignal = new ExtWidget("Input signal",new SignalOfReferenceWidget(actuator,0));
@@ -1253,3 +1251,34 @@ void UnarySignalOperationPropertyDialog::fromWidget(Element *element) {
   static_cast<UnarySignalOperation*>(element)->f.fromWidget(f);
 }
 
+BinarySignalOperationPropertyDialog::BinarySignalOperationPropertyDialog(BinarySignalOperation *signal, QWidget * parent, Qt::WindowFlags f_) : SignalPropertyDialog(signal,parent,f_) {
+  s1Ref = new ExtWidget("Input 1 signal",new SignalOfReferenceWidget(signal,0));
+  addToTab("General", s1Ref);
+
+  s2Ref = new ExtWidget("Input 2 signal",new SignalOfReferenceWidget(signal,0));
+  addToTab("General", s2Ref);
+
+  vector<QWidget*> widget;
+  vector<QString> name;
+  QStringList var;
+  var << "x1" << "x2";
+  widget.push_back(new SymbolicFunction2Widget(var));
+  name.push_back("Symbolic function");
+  f = new ExtWidget("Function",new ChoiceWidget(widget,name));
+  addToTab("General", f);
+  //connect((ChoiceWidget*)kinematicFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
+}
+
+void BinarySignalOperationPropertyDialog::toWidget(Element *element) {
+  SignalPropertyDialog::toWidget(element);
+  static_cast<BinarySignalOperation*>(element)->s1Ref.toWidget(s1Ref);
+  static_cast<BinarySignalOperation*>(element)->s2Ref.toWidget(s2Ref);
+  static_cast<BinarySignalOperation*>(element)->f.toWidget(f);
+}
+
+void BinarySignalOperationPropertyDialog::fromWidget(Element *element) {
+  SignalPropertyDialog::fromWidget(element);
+  static_cast<BinarySignalOperation*>(element)->s1Ref.fromWidget(s1Ref);
+  static_cast<BinarySignalOperation*>(element)->s2Ref.fromWidget(s2Ref);
+  static_cast<BinarySignalOperation*>(element)->f.fromWidget(f);
+}

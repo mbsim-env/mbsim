@@ -69,4 +69,17 @@ class UnarySignalOperation : public Signal {
     ExtProperty sRef, f;
 };
 
+class BinarySignalOperation : public Signal {
+  friend class BinarySignalOperationPropertyDialog;
+  public:
+    BinarySignalOperation(const std::string &str, Element *parent);
+    std::string getType() const { return "BinarySignalOperation"; }
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    void initialize();
+    ElementPropertyDialog* createPropertyDialog() {return new BinarySignalOperationPropertyDialog(this);}
+  protected:
+    ExtProperty s1Ref, s2Ref, f;
+};
+
 #endif

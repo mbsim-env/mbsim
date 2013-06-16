@@ -105,7 +105,6 @@ UnarySignalOperation::UnarySignalOperation(const string &str, Element *parent) :
   vector<Property*> property;
   property.push_back(new SymbolicFunction1Property("VV","x"));
   f.setProperty(new ChoiceProperty(MBSIMCONTROLNS"function",property));
-
 }
 
 void UnarySignalOperation::initialize() {
@@ -126,3 +125,35 @@ TiXmlElement* UnarySignalOperation::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
+BinarySignalOperation::BinarySignalOperation(const string &str, Element *parent) : Signal(str, parent) {
+  s1Ref.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROLNS"input1Signal"));
+  s2Ref.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROLNS"input2Signal"));
+
+  vector<Property*> property;
+  vector<string> var;
+  var.push_back("x1");
+  var.push_back("x2");
+  property.push_back(new SymbolicFunction2Property("VVV",var));
+  f.setProperty(new ChoiceProperty(MBSIMCONTROLNS"function",property));
+}
+
+void BinarySignalOperation::initialize() {
+  Signal::initialize();
+  s1Ref.initialize();
+  s2Ref.initialize();
+}
+
+void BinarySignalOperation::initializeUsingXML(TiXmlElement *element) {
+  Signal::initializeUsingXML(element);
+  s1Ref.initializeUsingXML(element);
+  s2Ref.initializeUsingXML(element);
+  f.initializeUsingXML(element);
+}
+
+TiXmlElement* BinarySignalOperation::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = Signal::writeXMLFile(parent);
+  s1Ref.writeXMLFile(ele0);
+  s2Ref.writeXMLFile(ele0);
+  f.writeXMLFile(ele0);
+  return ele0;
+}

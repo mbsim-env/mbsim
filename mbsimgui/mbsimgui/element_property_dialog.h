@@ -64,6 +64,7 @@ class SignalProcessingSystemSensor;
 class SignalAddition;
 class PIDController;
 class UnarySignalOperation;
+class BinarySignalOperation;
 class TextWidget;
 class VecWidget;
 class ExtWidget;
@@ -483,6 +484,16 @@ class UnarySignalOperationPropertyDialog : public SignalPropertyDialog {
     void fromWidget(Element *element);
   protected:
     ExtWidget *sRef, *f;
+};
+
+class BinarySignalOperationPropertyDialog : public SignalPropertyDialog {
+
+  public:
+    BinarySignalOperationPropertyDialog(BinarySignalOperation *signal, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+    ExtWidget *s1Ref, *s2Ref, *f;
 };
 
 #endif

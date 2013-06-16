@@ -329,7 +329,7 @@ void SummationFunction1Property::toWidget(QWidget *widget) {
 
 SymbolicFunction2Property::SymbolicFunction2Property(const string &ext, const vector<string> &var) : Function2Property(ext), argname(ext.size()-1), argdim(ext.size()-1) {
   for(int i=1; i<ext.size(); i++) {
-     argname[i-1].setProperty(new TextProperty(var[i-1]+toStr(i),""));
+     argname[i-1].setProperty(new TextProperty(var[i-1],""));
      argdim[i-1].setProperty(new IntegerProperty(1,""));
   }
   f.setProperty(new OctaveExpressionProperty);
