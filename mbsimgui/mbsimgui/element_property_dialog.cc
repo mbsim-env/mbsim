@@ -994,6 +994,12 @@ ActuatorPropertyDialog::ActuatorPropertyDialog(Actuator *actuator, QWidget *pare
 
   inputSignal = new ExtWidget("Input signal",new SignalOfReferenceWidget(actuator,0));
   addToTab("Kinetics",inputSignal);
+
+  actuatorForceArrow = new ExtWidget("OpenMBV actuator force arrow",new OMBVArrowWidget("NOTSET"),true);
+  addToTab("Visualisation",actuatorForceArrow);
+
+  actuatorMomentArrow = new ExtWidget("OpenMBV actuator moment arrow",new OMBVArrowWidget("NOTSET"),true);
+  addToTab("Visualisation",actuatorMomentArrow);
 }
 
 void ActuatorPropertyDialog::toWidget(Element *element) {
@@ -1003,6 +1009,8 @@ void ActuatorPropertyDialog::toWidget(Element *element) {
   static_cast<Actuator*>(element)->frameOfReference.toWidget(frameOfReference);
   static_cast<Actuator*>(element)->connections.toWidget(connections);
   static_cast<Actuator*>(element)->inputSignal.toWidget(inputSignal);
+  static_cast<Actuator*>(element)->actuatorForceArrow.toWidget(actuatorForceArrow);
+  static_cast<Actuator*>(element)->actuatorMomentArrow.toWidget(actuatorMomentArrow);
 }
 
 void ActuatorPropertyDialog::fromWidget(Element *element) {
@@ -1012,6 +1020,8 @@ void ActuatorPropertyDialog::fromWidget(Element *element) {
   static_cast<Actuator*>(element)->frameOfReference.fromWidget(frameOfReference);
   static_cast<Actuator*>(element)->connections.fromWidget(connections);
   static_cast<Actuator*>(element)->inputSignal.fromWidget(inputSignal);
+  static_cast<Actuator*>(element)->actuatorForceArrow.fromWidget(actuatorForceArrow);
+  static_cast<Actuator*>(element)->actuatorMomentArrow.fromWidget(actuatorMomentArrow);
 }
 
 ObserverPropertyDialog::ObserverPropertyDialog(Observer *observer, QWidget * parent, Qt::WindowFlags f) : ElementPropertyDialog(observer,parent,f) {

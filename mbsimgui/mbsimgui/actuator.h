@@ -35,7 +35,7 @@ class Actuator : public Link {
     void initialize();
     ElementPropertyDialog* createPropertyDialog() {return new ActuatorPropertyDialog(this);}
   protected:
-    ExtProperty forceDir, momentDir, frameOfReference, inputSignal, connections;
+    ExtProperty forceDir, momentDir, frameOfReference, inputSignal, connections, actuatorForceArrow, actuatorMomentArrow;
 };
 
 #endif
