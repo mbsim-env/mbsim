@@ -68,7 +68,7 @@ using namespace H5;
 namespace MBSimFlexibleBody {
 
   FlexibleBody1s21Cosserat::FlexibleBody1s21Cosserat(const string &name, bool openStructure_) :
-                      FlexibleBody1sCosserat(name, openStructure), JInterp(false), PODreduced(false) {
+                      FlexibleBody1sCosserat(name, openStructure_), JInterp(false), PODreduced(false) {
     addContour(cylinder);
     addContour(top);
     addContour(bottom);
