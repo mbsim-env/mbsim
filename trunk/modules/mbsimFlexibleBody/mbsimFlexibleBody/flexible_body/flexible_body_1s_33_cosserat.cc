@@ -65,7 +65,7 @@ using namespace MBSim;
 namespace MBSimFlexibleBody {
 
   FlexibleBody1s33Cosserat::FlexibleBody1s33Cosserat(const string &name, bool openStructure_) :
-      FlexibleBody1sCosserat(name, openStructure), JTransInterp(false), I2(0.), I0(0.), R2(0.), cEps2D(0.) {
+      FlexibleBody1sCosserat(name, openStructure_), JTransInterp(false), I2(0.), I0(0.), R2(0.), cEps2D(0.) {
     addContour(cylinder);
     addContour(top);
     addContour(bottom);
