@@ -102,7 +102,10 @@ class FrameBrowser : public QDialog {
     Frame *selection;
     ElementItem *savedItem;
     Element* element;
+    std::string oldID;
     void mbs2FrameTree(Element* item, QTreeWidgetItem* parentItem);
+    void showEvent(QShowEvent *event);
+    void hideEvent(QHideEvent *event);
   protected slots:
     void checkForFrame(QTreeWidgetItem* item_,int);
 };

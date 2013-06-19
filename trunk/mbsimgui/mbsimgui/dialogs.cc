@@ -25,10 +25,13 @@
 #include "rigidbody.h"
 #include "extra_dynamic.h"
 #include "signal_.h"
+#include "mainwindow.h"
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
 #include <QTreeWidget>
 #include <QScrollArea>
+
+extern MainWindow *mw;
 
 EvalDialog::EvalDialog() {
   var = new MatWidget(0,0);
@@ -182,6 +185,18 @@ FrameBrowser::FrameBrowser(Element* element_, Frame* frame, QWidget *parentObjec
   setWindowTitle("Frame browser");
 }
 
+void FrameBrowser::showEvent(QShowEvent *event) {
+  QDialog::showEvent(event);
+  oldID = mw->getHighlightedObject();
+  if(frameList->currentItem())
+    checkForFrame(frameList->currentItem(),0);
+}
+
+void FrameBrowser::hideEvent(QHideEvent *event) {
+  QDialog::hideEvent(event);
+  mw->highlightObject(oldID);
+}
+
 void FrameBrowser::updateWidget(Frame *sel) {
   selection = sel;
   frameList->clear();
@@ -212,9 +227,10 @@ void FrameBrowser::mbs2FrameTree(Element* ele, QTreeWidgetItem* parentItem) {
 
 void FrameBrowser::checkForFrame(QTreeWidgetItem* item_,int) {
   ElementItem* item = static_cast<ElementItem*>(item_);
-  if(dynamic_cast<Frame*>(item->getElement()))
+  if(dynamic_cast<Frame*>(item->getElement())) {
+    mw->highlightObject(static_cast<Frame*>(item->getElement())->getID());
     okButton->setDisabled(false);
-  else
+  } else
     okButton->setDisabled(true);
 }
 
