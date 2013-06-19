@@ -323,15 +323,20 @@ void MainWindow::closeEvent(QCloseEvent *event) {
   //  }
 }
 
+void MainWindow::highlightObject(const string &ID) {
+  currentID = ID;
+  inlineOpenMBVMW->highlightObject(ID);
+}
+
 void MainWindow::selectionChanged() {
   QModelIndex index = elementList->selectionModel()->currentIndex();
   ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   Element *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
 #ifdef INLINE_OPENMBV
   if(element)
-    inlineOpenMBVMW->highlightObject(element->getID());
+    highlightObject(element->getID());
   else
-    inlineOpenMBVMW->highlightObject("");
+    highlightObject("");
 #endif
 }
 
@@ -830,7 +835,7 @@ void MainWindow::selectElement(string ID) {
    //elementList->selectionModel()->setCurrentIndex(it->second.sibling(it->second.row(),1),QItemSelectionModel::Select);
   }
 #ifdef INLINE_OPENMBV
-  inlineOpenMBVMW->highlightObject(ID);
+  highlightObject(ID);
 #endif
 }
 

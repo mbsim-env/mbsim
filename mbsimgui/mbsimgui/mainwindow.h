@@ -71,6 +71,7 @@ class MainWindow : public QMainWindow {
     void initInlineOpenMBV();
     QString uniqueTempDir, absoluteMBSFilePath;
     QAction *actionSaveProj, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameterList, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs;
+    std::string currentID;
 
   public:
     MainWindow();
@@ -85,6 +86,8 @@ class MainWindow : public QMainWindow {
     void addExtraDynamic(ExtraDynamic *ed);
     void addLink(Link *link);
     void addObserver(Observer *observer);
+    void highlightObject(const std::string &ID);
+    const std::string& getHighlightedObject() const {return currentID;}
   public slots:
     void elementListClicked();
     void parameterListClicked();
