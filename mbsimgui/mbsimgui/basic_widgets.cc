@@ -26,19 +26,46 @@
 #include "extra_dynamic.h"
 #include "signal_.h"
 #include "dialogs.h"
+#include "mainwindow.h"
 #include <QtGui>
 
 using namespace std;
 
 extern bool absolutePath;
 extern QDir mbsDir;
+extern MainWindow *mw;
+
+FrameComboBox::FrameComboBox(Element *element_, QWidget *parent) : QComboBox(parent), element(element_) {
+  connect(this,SIGNAL(highlighted(const QString&)),this,SLOT(highlightObject(const QString&)));
+}
+
+void FrameComboBox::showPopup() {
+  QComboBox::showPopup();
+  highlightObject(currentText());
+}
+
+void FrameComboBox::hidePopup() {
+  QComboBox::hidePopup();
+  if(oldID!="") {
+    mw->highlightObject(oldID);
+    oldID="";
+  }
+}
+
+void FrameComboBox::highlightObject(const QString &frame) {
+  if(oldID=="") 
+    oldID = mw->getHighlightedObject();
+  Frame *selection = element->getFrame(frame.toStdString().substr(6, frame.length()-7));
+  if(selection)
+    mw->highlightObject(selection->getID());
+}
 
 LocalFrameOfReferenceWidget::LocalFrameOfReferenceWidget(Element *element_, Frame* omitFrame_) : element(element_), selectedFrame(0), omitFrame(omitFrame_) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
-  frame = new QComboBox;
+  frame = new FrameComboBox(element);
   frame->setEditable(true);
   layout->addWidget(frame);
   selectedFrame = element->getFrame(0);
