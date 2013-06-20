@@ -45,10 +45,23 @@ class ExtraDynamicBrowser;
 class ExtWidget;
 class QLabel;
 
-class FrameComboBox : public QComboBox {
+class LocalFrameComboBox : public QComboBox {
   Q_OBJECT
   public:
-    FrameComboBox(Element *element, QWidget *parent = 0);
+    LocalFrameComboBox(Element *element, QWidget *parent = 0);
+  protected:
+    Element *element;
+    std::string oldID;
+    virtual void showPopup();
+    virtual void hidePopup();
+  protected slots:
+    void highlightObject(const QString &str);
+};
+
+class ParentFrameComboBox : public QComboBox {
+  Q_OBJECT
+  public:
+    ParentFrameComboBox(Element *element, QWidget *parent = 0);
   protected:
     Element *element;
     std::string oldID;
