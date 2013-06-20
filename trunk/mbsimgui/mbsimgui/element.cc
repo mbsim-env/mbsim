@@ -60,6 +60,10 @@ void Element::writeXMLFile(const string &name) {
   doc.LinkEndChild( decl );
   writeXMLFile(&doc);
   unIncorporateNamespace(doc.FirstChildElement(), Utils::getMBSimNamespacePrefixMapping());  
+  QFileInfo info(QString::fromStdString(name));
+  QDir dir;
+  if(!dir.exists(info.absolutePath()))
+    dir.mkpath(info.absolutePath());
   doc.SaveFile((name.length()>4 && name.substr(name.length()-4,4)==".xml")?name:name+".xml");
 }
 

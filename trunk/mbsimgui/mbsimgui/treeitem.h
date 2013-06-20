@@ -40,7 +40,7 @@ class BasicItemData : public TreeItemData {
 class TreeItem {
   public:
 
-    TreeItem(TreeItemData *itemData = 0, TreeItem *parent = 0) : itemData(itemData), parentItem(parent), ID(1) {
+    TreeItem(TreeItemData *itemData = 0, TreeItem *parent = 0, int ID_ = 1) : itemData(itemData), parentItem(parent), ID(ID_) {
       getData_[0] = &TreeItem::getData0;
       getData_[1] = &TreeItem::getData1;
       setData_[0] = &TreeItem::setData0;
