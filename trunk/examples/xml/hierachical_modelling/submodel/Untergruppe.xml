@@ -38,16 +38,14 @@
       </translation>
       <rotation/>
       <frames>
-        <frame>
-          <Frame name="P1">
+          <FixedRelativeFrame name="P1">
             <enableOpenMBV>
               <size>h1</size>
               <offset>1</offset>
             </enableOpenMBV>
-          </Frame>
-          <position>[0;-h1/2;0]</position>
-          <orientation>rotateAboutX(0)</orientation>
-        </frame>
+            <relativePosition>[0;-h1/2;0]</relativePosition>
+            <relativeOrientation>rotateAboutX(0)</relativeOrientation>
+          </FixedRelativeFrame>
         <pv:embed>
           <include href="../frame.xml" xmlns="http://www.w3.org/2001/XInclude"/>
         </pv:embed>
@@ -77,16 +75,14 @@
       </translation>
       <rotation/>
       <frames>
-        <frame>
-          <Frame name="P1">
-            <enableOpenMBV>
-              <size>h2</size>
-              <offset>1</offset>
-            </enableOpenMBV>
-          </Frame>
-          <position>[0;-h2/2;0]</position>
-          <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
-        </frame>
+        <FixedRelativeFrame name="P1">
+          <enableOpenMBV>
+            <size>h2</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+          <relativePosition>[0;-h2/2;0]</relativePosition>
+          <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+        </FixedRelativeFrame>
       </frames>
       <contours/>
       <openMBVRigidBody>
