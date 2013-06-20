@@ -64,7 +64,10 @@ class ObjectBrowser : public QDialog {
     Object *selection;
     ElementItem *savedItem;
     Element* element;
+    std::string oldID;
     void mbs2ObjectTree(Element* item, QTreeWidgetItem* parentItem);
+    void showEvent(QShowEvent *event);
+    void hideEvent(QHideEvent *event);
   protected slots:
     void checkForObject(QTreeWidgetItem* item_,int);
 };
@@ -83,7 +86,10 @@ class RigidBodyBrowser : public QDialog {
     RigidBody *selection;
     ElementItem *savedItem;
     Element* element;
+    std::string oldID;
     void mbs2RigidBodyTree(Element* item, QTreeWidgetItem* parentItem);
+    void showEvent(QShowEvent *event);
+    void hideEvent(QHideEvent *event);
   protected slots:
     void checkForRigidBody(QTreeWidgetItem* item_,int);
 };
@@ -124,7 +130,10 @@ class ContourBrowser : public QDialog {
     Contour *selection;
     ElementItem *savedItem;
     Element* element;
+    std::string oldID;
     void mbs2ContourTree(Element* item, QTreeWidgetItem* parentItem);
+    void showEvent(QShowEvent *event);
+    void hideEvent(QHideEvent *event);
   protected slots:
     void checkForContour(QTreeWidgetItem* item_,int);
 };

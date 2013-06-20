@@ -75,6 +75,18 @@ RigidBodyBrowser::RigidBodyBrowser(Element* element_, RigidBody* rigidBody, QWid
   setWindowTitle("RigidBody browser");
 }
 
+void RigidBodyBrowser::showEvent(QShowEvent *event) {
+  QDialog::showEvent(event);
+  oldID = mw->getHighlightedObject();
+  if(rigidBodyList->currentItem())
+    checkForRigidBody(rigidBodyList->currentItem(),0);
+}
+
+void RigidBodyBrowser::hideEvent(QHideEvent *event) {
+  QDialog::hideEvent(event);
+  mw->highlightObject(oldID);
+}
+
 void RigidBodyBrowser::updateWidget(RigidBody *sel) {
   selection = sel;
   rigidBodyList->clear();
@@ -103,8 +115,10 @@ void RigidBodyBrowser::mbs2RigidBodyTree(Element* ele, QTreeWidgetItem* parentIt
 
 void RigidBodyBrowser::checkForRigidBody(QTreeWidgetItem* item_,int) {
   ElementItem* item = static_cast<ElementItem*>(item_);
-  if(dynamic_cast<RigidBody*>(item->getElement()))
+  if(dynamic_cast<RigidBody*>(item->getElement())) {
+    mw->highlightObject(static_cast<RigidBody*>(item->getElement())->getID());
     okButton->setDisabled(false);
+  }
   else
     okButton->setDisabled(true);
 }
@@ -128,6 +142,18 @@ ObjectBrowser::ObjectBrowser(Element* element_, Object* object, QWidget *parentO
   connect(button, SIGNAL(clicked(bool)), this, SLOT(reject()));
 
   setWindowTitle("Object browser");
+}
+
+void ObjectBrowser::showEvent(QShowEvent *event) {
+  QDialog::showEvent(event);
+  oldID = mw->getHighlightedObject();
+  if(objectList->currentItem())
+    checkForObject(objectList->currentItem(),0);
+}
+
+void ObjectBrowser::hideEvent(QHideEvent *event) {
+  QDialog::hideEvent(event);
+  mw->highlightObject(oldID);
 }
 
 void ObjectBrowser::updateWidget(Object *sel) {
@@ -158,8 +184,10 @@ void ObjectBrowser::mbs2ObjectTree(Element* ele, QTreeWidgetItem* parentItem) {
 
 void ObjectBrowser::checkForObject(QTreeWidgetItem* item_,int) {
   ElementItem* item = static_cast<ElementItem*>(item_);
-  if(dynamic_cast<Object*>(item->getElement()))
+  if(dynamic_cast<Object*>(item->getElement())) {
+    mw->highlightObject(static_cast<Object*>(item->getElement())->getID());
     okButton->setDisabled(false);
+  }
   else
     okButton->setDisabled(true);
 }
@@ -255,6 +283,18 @@ ContourBrowser::ContourBrowser(Element* element_, Contour* contour, QWidget *par
   setWindowTitle("Contour browser");
 }
 
+void ContourBrowser::showEvent(QShowEvent *event) {
+  QDialog::showEvent(event);
+  oldID = mw->getHighlightedObject();
+  if(contourList->currentItem())
+    checkForContour(contourList->currentItem(),0);
+}
+
+void ContourBrowser::hideEvent(QHideEvent *event) {
+  QDialog::hideEvent(event);
+  mw->highlightObject(oldID);
+}
+
 void ContourBrowser::updateWidget(Contour *sel) {
   selection = sel;
   contourList->clear();
@@ -285,8 +325,10 @@ void ContourBrowser::mbs2ContourTree(Element* ele, QTreeWidgetItem* parentItem) 
 
 void ContourBrowser::checkForContour(QTreeWidgetItem* item_,int) {
   ElementItem* item = static_cast<ElementItem*>(item_);
-  if(dynamic_cast<Contour*>(item->getElement()))
+  if(dynamic_cast<Contour*>(item->getElement())) {
+    mw->highlightObject(static_cast<Contour*>(item->getElement())->getID());
     okButton->setDisabled(false);
+  }
   else
     okButton->setDisabled(true);
 }

@@ -35,16 +35,16 @@ extern bool absolutePath;
 extern QDir mbsDir;
 extern MainWindow *mw;
 
-FrameComboBox::FrameComboBox(Element *element_, QWidget *parent) : QComboBox(parent), element(element_) {
+LocalFrameComboBox::LocalFrameComboBox(Element *element_, QWidget *parent) : QComboBox(parent), element(element_) {
   connect(this,SIGNAL(highlighted(const QString&)),this,SLOT(highlightObject(const QString&)));
 }
 
-void FrameComboBox::showPopup() {
+void LocalFrameComboBox::showPopup() {
   QComboBox::showPopup();
   highlightObject(currentText());
 }
 
-void FrameComboBox::hidePopup() {
+void LocalFrameComboBox::hidePopup() {
   QComboBox::hidePopup();
   if(oldID!="") {
     mw->highlightObject(oldID);
@@ -52,10 +52,35 @@ void FrameComboBox::hidePopup() {
   }
 }
 
-void FrameComboBox::highlightObject(const QString &frame) {
+void LocalFrameComboBox::highlightObject(const QString &frame) {
   if(oldID=="") 
     oldID = mw->getHighlightedObject();
   Frame *selection = element->getFrame(frame.toStdString().substr(6, frame.length()-7));
+  if(selection)
+    mw->highlightObject(selection->getID());
+}
+
+ParentFrameComboBox::ParentFrameComboBox(Element *element_, QWidget *parent) : QComboBox(parent), element(element_) {
+  connect(this,SIGNAL(highlighted(const QString&)),this,SLOT(highlightObject(const QString&)));
+}
+
+void ParentFrameComboBox::showPopup() {
+  QComboBox::showPopup();
+  highlightObject(currentText());
+}
+
+void ParentFrameComboBox::hidePopup() {
+  QComboBox::hidePopup();
+  if(oldID!="") {
+    mw->highlightObject(oldID);
+    oldID="";
+  }
+}
+
+void ParentFrameComboBox::highlightObject(const QString &frame) {
+  if(oldID=="") 
+    oldID = mw->getHighlightedObject();
+  Frame *selection = element->getParent()->getFrame(frame.toStdString().substr(9, frame.length()-10));
   if(selection)
     mw->highlightObject(selection->getID());
 }
@@ -65,7 +90,7 @@ LocalFrameOfReferenceWidget::LocalFrameOfReferenceWidget(Element *element_, Fram
   layout->setMargin(0);
   setLayout(layout);
 
-  frame = new FrameComboBox(element);
+  frame = new LocalFrameComboBox(element);
   frame->setEditable(true);
   layout->addWidget(frame);
   selectedFrame = element->getFrame(0);
@@ -111,7 +136,7 @@ ParentFrameOfReferenceWidget::ParentFrameOfReferenceWidget(Element *element_, Fr
   layout->setMargin(0);
   setLayout(layout);
 
-  frame = new QComboBox;
+  frame = new ParentFrameComboBox(element);
   frame->setEditable(true);
   layout->addWidget(frame);
   selectedFrame = element->getParent()->getFrame(0);
