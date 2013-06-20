@@ -95,13 +95,19 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
   octEval=new MBXMLUtils::OctaveEvaluator;
 
   QMenu *GUIMenu=new QMenu("GUI", menuBar());
+  menuBar()->addMenu(GUIMenu);
+
   QAction *action = GUIMenu->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_DirHomeIcon)),"Workdir", this, SLOT(changeWorkingDir()));
   action->setStatusTip(tr("Change working directory"));
+
+  action = GUIMenu->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_DirHomeIcon)),"Octave m-files path", this, SLOT(changeOctavePath()));
+  action->setStatusTip(tr("Change path to the octave m-files directory"));
+
   GUIMenu->addSeparator();
+
   action = GUIMenu->addAction(Utils::QIconCached(QString::fromStdString(MBXMLUtils::getInstallPath())+"/share/mbsimgui/icons/exit.svg"), "E&xit", this, SLOT(close()));
   action->setShortcuts(QKeySequence::Quit);
   action->setStatusTip(tr("Exit the application"));
-  menuBar()->addMenu(GUIMenu);
 
   QMenu *ProjMenu=new QMenu("Project", menuBar());
   ProjMenu->addAction("New", this, SLOT(saveProjAs()));
@@ -288,6 +294,10 @@ void MainWindow::changeWorkingDir() {
     QDir::setCurrent(dir);
     fileMBS->setText(QDir::current().relativeFilePath(absoluteMBSFilePath));
   }
+}
+
+void MainWindow::changeOctavePath() {
+  mPath = QFileDialog::getExistingDirectory (0, "Path to octave m-files path", ".");
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
@@ -777,8 +787,8 @@ void MainWindow::mbsimxml(int task) {
   slv->writeXMLFile(mbsFile.toStdString());
   slv->setName(saveName);
 
-  QString mbsParamFile=uniqueTempDir+"/in"+sTask+".mbsimparam.xml";
-  saveParameterList(mbsParamFile);
+  QString paramFile=uniqueTempDir+"/in"+sTask+".mbsimparam.xml";
+  saveParameterList(paramFile);
 
   QString intFile=uniqueTempDir+"/in"+sTask+".mbsimint.xml";
   integ->writeXMLFile(intFile.toStdString());
@@ -786,8 +796,12 @@ void MainWindow::mbsimxml(int task) {
   QStringList arg;
   if(task==1)
     arg.append("--stopafterfirststep");
+  if(mPath!="") {
+    arg.append("--mpath");
+    arg.append(mPath);
+  }
   arg.append("--mbsimparam");
-  arg.append(mbsParamFile);
+  arg.append(paramFile);
   arg.append(mbsFile);
   arg.append(intFile);
   mbsim->getProcess()->setWorkingDirectory(uniqueTempDir);

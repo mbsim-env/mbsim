@@ -72,6 +72,7 @@ class MainWindow : public QMainWindow {
     QString uniqueTempDir, absoluteMBSFilePath;
     QAction *actionSaveProj, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameterList, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs;
     std::string currentID;
+    QString mPath;
 
   public:
     MainWindow();
@@ -134,6 +135,7 @@ class MainWindow : public QMainWindow {
   protected slots:
     void selectElement(std::string);
     void changeWorkingDir();
+    void changeOctavePath();
     void selectionChanged();
     void openPropertyDialog();
     void simulationFinished(int exitCode, QProcess::ExitStatus exitStatus);
