@@ -122,6 +122,6 @@ System::System(const string &projectName) :
 
 void System::reduce(const string & h5file) {
 
-  rod->enablePOD(h5file, true, 1, 5);
+  rod->enablePOD(h5file, 1, 5);
 
 }

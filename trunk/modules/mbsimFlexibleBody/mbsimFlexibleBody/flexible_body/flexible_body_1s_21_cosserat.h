@@ -87,7 +87,7 @@ namespace MBSimFlexibleBody {
       virtual void init(MBSim::InitStage stage);
       virtual double computePotentialEnergy();
       virtual void facLLM(int i = 0);
-      virtual void updatedu(double t, double dt);
+//      virtual void updatedu(double t, double dt);
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
@@ -117,9 +117,6 @@ namespace MBSimFlexibleBody {
       int getNumberElements() const {
         return Elements;
       }
-      int getNumberDOFs() const {
-        return qSize;
-      }
       double getLength() const {
         return L;
       }
@@ -130,7 +127,7 @@ namespace MBSimFlexibleBody {
       /* \brief Set SVD=true for POD model reduction
        * \param  reduced mass matrix
        */
-      void enablePOD(const std::string & h5Path, bool reduceEnergy = true, int reduceMode = 0, int POMSize = 0);
+      void enablePOD(const std::string & h5Path, int reduceMode = 0, int POMSize = 0);
       /***************************************************/
 
       /**
@@ -178,6 +175,21 @@ namespace MBSimFlexibleBody {
        * \brief POM projection matrix
        */
       fmatvec::Mat U;
+
+      /*!
+       * \brief vector of position-DOFs of full system
+       */
+      fmatvec::Vec qFull;
+
+      /*!
+       * \brief vector of velocity-DOFs of full system
+       */
+      fmatvec::Vec uFull;
+
+      /*!
+       * \brief vector of smooth right-hand side of full system
+       */
+      fmatvec::Vec hFull;
 
       FlexibleBody1s21Cosserat(); // standard constructor
       FlexibleBody1s21Cosserat(const FlexibleBody1s21Cosserat&); // copy constructor
