@@ -123,7 +123,7 @@ namespace MBSimFlexibleBody {
     if (stage == resize) {
       degU = 3;
       Elements = (static_cast<FlexibleBody1sCosserat*>(parent))->getNumberElements();
-      qSize = (static_cast<FlexibleBody1sCosserat*>(parent))->getNumberDOFs();
+      qSize = (static_cast<FlexibleBody1sCosserat*>(parent))->getqSize();
       openStructure = (static_cast<FlexibleBody1sCosserat*>(parent))->isOpenStructure();
       L = (static_cast<FlexibleBody1sCosserat*>(parent))->getLength();
 

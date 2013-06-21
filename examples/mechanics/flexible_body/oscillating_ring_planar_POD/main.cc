@@ -17,12 +17,12 @@ int main (int argc, char* argv[]) {
   string nameFullSystem = "MBS_Full";
   string nameReducedSystem = "MBS_reduced";
   System *sys;
-  TimeSteppingIntegrator *integrator;
+  ThetaTimeSteppingIntegrator *integrator;
 
-  double tEnd = 1e-1;
+  double tEnd = 3e-2;
   double dtFull = 1e-4;
   double dtRed = 1.e0*dtFull;
-  double dtPlot = 1e-3;
+  double dtPlot = dtRed;
 
   {
     //Run Full Simulation
@@ -30,7 +30,7 @@ int main (int argc, char* argv[]) {
     sys->setStopIfNoConvergence(true,true);
     sys->initialize();
 
-    integrator = new TimeSteppingIntegrator;
+    integrator = new ThetaTimeSteppingIntegrator;
     integrator->setEndTime(tEnd);
     integrator->setStepSize(dtFull);
     integrator->setPlotStepSize(dtPlot);
@@ -41,6 +41,8 @@ int main (int argc, char* argv[]) {
     double calctime = timer.elapsed();
     sys->closePlot();
 
+    sys->writez("z0.h5");
+
     cout << "Finished full Simulation after calculation time [s] : " << calctime << endl;
 
     delete sys;
@@ -50,11 +52,12 @@ int main (int argc, char* argv[]) {
   {
     //Run Reduced Simulation
     sys = new System(nameReducedSystem);
+//    sys->readz0("z0.h5");
     sys->reduce(nameFullSystem + ".mbsim.h5");
     sys->setStopIfNoConvergence(true,true);
     sys->initialize();
 
-    integrator = new TimeSteppingIntegrator;
+    integrator = new ThetaTimeSteppingIntegrator;
     integrator->setEndTime(tEnd);
     integrator->setStepSize(dtRed);
     integrator->setPlotStepSize(dtPlot);

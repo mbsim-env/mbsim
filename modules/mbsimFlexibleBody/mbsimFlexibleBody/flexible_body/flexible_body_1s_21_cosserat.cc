@@ -68,7 +68,7 @@ using namespace H5;
 namespace MBSimFlexibleBody {
 
   FlexibleBody1s21Cosserat::FlexibleBody1s21Cosserat(const string &name, bool openStructure_) :
-                      FlexibleBody1sCosserat(name, openStructure_), JInterp(false), PODreduced(false) {
+      FlexibleBody1sCosserat(name, openStructure_), JInterp(false), PODreduced(false), U(), qFull(), uFull(), hFull() {
     addContour(cylinder);
     addContour(top);
     addContour(bottom);
@@ -87,30 +87,20 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleBody1s21Cosserat::updatedu(double t, double dt) {
-    /* POD model reduction */
-    if (PODreduced == true) {
-      ud[0] = U * slvLLFac(LLMConst, U.T() * h[0] * dt + U.T() * r[0]);
-    }
-    else {
-      FlexibleBodyContinuum<double>::updatedu(t, dt);
-    }
-  }
-
   void FlexibleBody1s21Cosserat::BuildElements() {
     /* translational elements */
     for (int i = 0; i < Elements; i++) {
       int j = 3 * i; // start index in entire beam coordinates
 
       if (i < Elements - 1) {
-        qElement[i] = q(j, j + 4);
-        uElement[i] = u(j, j + 4);
+        qElement[i] = qFull(j, j + 4);
+        uElement[i] = uFull(j, j + 4);
       }
       else { // last FE-Beam for closed structure	
-        qElement[i](0, 2) = q(j, j + 2);
-        uElement[i](0, 2) = u(j, j + 2);
-        qElement[i](3, 4) = q(0, 1);
-        uElement[i](3, 4) = u(0, 1);
+        qElement[i](0, 2) = qFull(j, j + 2);
+        uElement[i](0, 2) = uFull(j, j + 2);
+        qElement[i](3, 4) = qFull(0, 1);
+        uElement[i](3, 4) = uFull(0, 1);
       }
     }
 
@@ -119,22 +109,22 @@ namespace MBSimFlexibleBody {
       int j = 3 * i; // start index in entire beam coordinates
 
       if (i > 0 && i < rotationalElements - 1) { // no problem case
-        qRotationElement[i] = q(j - 1, j + 2); // staggered grid -> rotation offset
-        uRotationElement[i] = u(j - 1, j + 2);
+        qRotationElement[i] = qFull(j - 1, j + 2); // staggered grid -> rotation offset
+        uRotationElement[i] = uFull(j - 1, j + 2);
       }
       else if (i == 0) { // first element
-        qRotationElement[i](0) = q(q.size() - 1);
-        uRotationElement[i](0) = u(u.size() - 1);
-        qRotationElement[i](1, 3) = q(j, j + 2);
-        uRotationElement[i](1, 3) = u(j, j + 2);
-        if (q(j + 2) < q(q.size() - 1))
+        qRotationElement[i](0) = qFull(qFull.size() - 1);
+        uRotationElement[i](0) = uFull(uFull.size() - 1);
+        qRotationElement[i](1, 3) = qFull(j, j + 2);
+        uRotationElement[i](1, 3) = uFull(j, j + 2);
+        if (qFull(j + 2) < qFull(qFull.size() - 1))
           qRotationElement[i](0) -= 2. * M_PI;
         else
           qRotationElement[i](0) += 2. * M_PI;
       }
       else if (i == rotationalElements - 1) { // last element
-        qRotationElement[i] = q(j - 1, j + 2);
-        uRotationElement[i] = u(j - 1, j + 2);
+        qRotationElement[i] = qFull(j - 1, j + 2);
+        uRotationElement[i] = uFull(j - 1, j + 2);
       }
     }
   }
@@ -155,7 +145,7 @@ namespace MBSimFlexibleBody {
     int j = 3 * n;
     if (n == 0) {
       gloVec(0, 2) += locVec(1, 3);
-      gloVec(q.size() - 1) += locVec(0);
+      gloVec(qFull.size() - 1) += locVec(0);
     }
     else if (n >> 0 && n < rotationalElements) {
       gloVec(j - 1, j + 2) += locVec;
@@ -189,21 +179,21 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s21Cosserat::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
     if (cp.getContourParameterType() == CONTINUUM) { // frame on continuum
 #ifdef HAVE_NURBS
-      double sLocalTranslation;
-      int currentElementTranslation;
+        double sLocalTranslation;
+        int currentElementTranslation;
 
-      BuildElementTranslation(cp.getLagrangeParameterPosition()(0), sLocalTranslation, currentElementTranslation); // Lagrange parameter and number of translational element
+        BuildElementTranslation(cp.getLagrangeParameterPosition()(0), sLocalTranslation, currentElementTranslation); // Lagrange parameter and number of translational element
 
-      /* 2D -> 3D mapping */
-      Vec qTmpCONT(3, INIT, 0.);
-      qTmpCONT(2) = q(3 * currentElementTranslation + 2);
+        /* 2D -> 3D mapping */
+        Vec qTmpCONT(3, INIT, 0.);
+        qTmpCONT(2) = qFull(3 * currentElementTranslation + 2);
 
-      curve->setNormalRotationGrid(R->getOrientation() * angle->computen(qTmpCONT));  // normal
-      curve->updateKinematicsForFrame(cp, ff);
+        curve->setNormalRotationGrid(R->getOrientation() * angle->computen(qTmpCONT));  // normal
+        curve->updateKinematicsForFrame(cp, ff);
 #endif
       Vec3 phiTmp;
       if (ff == firstTangent || ff == normal || ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
-        phiTmp = computeAngles(cp.getLagrangeParameterPosition()(0), q); // interpolate angles linearly
+        phiTmp = computeAngles(cp.getLagrangeParameterPosition()(0), qFull); // interpolate angles linearly
 
       if (ff == firstTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
         cp.getFrameOfReference().getOrientation().set(1, R->getOrientation() * angle->computet(phiTmp)); // tangent
@@ -216,13 +206,13 @@ namespace MBSimFlexibleBody {
       int node = cp.getNodeNumber();
       /* 2D -> 3D mapping */
       Vec qTmpNODE(3, INIT, 0.);
-      qTmpNODE(0, 1) = q(3 * node + 0, 3 * node + 1);
+      qTmpNODE(0, 1) = qFull(3 * node + 0, 3 * node + 1);
       Vec3 qTmpANGLE;
-      qTmpANGLE = computeAngles(node*L/Elements, q);
+      qTmpANGLE = computeAngles(node * L / Elements, qFull);
       Vec uTmp(3, INIT, 0.);
-      uTmp(0, 1) = u(3 * node + 0, 3 * node + 1);
+      uTmp(0, 1) = uFull(3 * node + 0, 3 * node + 1);
       Vec3 uTmpANGLE;
-      uTmpANGLE = computeAngles(node*L/Elements, u);
+      uTmpANGLE = computeAngles(node * L / Elements, uFull);
 
       if (ff == position || ff == position_cosy || ff == all)
         cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * qTmpNODE);
@@ -260,13 +250,13 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s21Cosserat::updateJacobiansForFrame(ContourPointData &cp, Frame *frame) {
     if (cp.getContourParameterType() == CONTINUUM) { // force on continuum
 #ifdef HAVE_NURBS
-      curve->updateJacobiansForFrame(cp);
+        curve->updateJacobiansForFrame(cp);
 #endif
     }
     else if (cp.getContourParameterType() == NODE) { // force on node
       int node = cp.getNodeNumber();
       /* Jacobian of translation element matrix [1,0,0;0,1,0], static */
-      Mat Jacobian_trans(qSize, 3, INIT, 0.);
+      Mat Jacobian_trans(qFull.size(), 3, INIT, 0.);
       Jacobian_trans(3 * node, 0) = 1;
       Jacobian_trans(3 * node + 1, 1) = 1;
 
@@ -275,7 +265,7 @@ namespace MBSimFlexibleBody {
     else if (cp.getContourParameterType() == STAGGEREDNODE) { // force on staggered node
       int node = cp.getNodeNumber();
       /* Jacobian of rotation element matrix [1,0,0;0,1,0], static */
-      Mat Jacobian_rot(qSize, 3, INIT, 0.);
+      Mat Jacobian_rot(qFull.size(), 3, INIT, 0.);
       Jacobian_rot(3 * node + 2, 2) = 1;
 
       cp.getFrameOfReference().setJacobianOfRotation(R->getOrientation() * Jacobian_rot.T());
@@ -298,12 +288,35 @@ namespace MBSimFlexibleBody {
     if (stage == preInit) {
       FlexibleBodyContinuum<double>::init(stage);
       l0 = L / Elements;
+
+      if (PODreduced)
+        qSize = U.cols();
+      else
+        qSize = 3 * Elements;
+
+      uSize[0] = qSize;
+      uSize[1] = qSize; // TODO
+
+      if (PODreduced) {
+        //TODO: move into readz0
+        q0.resize() = U.T() * q0;
+        u0.resize() = U.T() * u0;
+        q << q0;
+        u << u0;
+      }
     }
     else if (stage == resize) {
       FlexibleBodyContinuum<double>::init(stage);
-      if(not PODreduced) {
-        MConst.resize(Elements*3);
-        LLMConst.resize(Elements*3);
+
+      hFull.resize(3 * Elements);
+
+      if (PODreduced) {
+        qFull << U * q;
+        uFull << U * u;
+      }
+      else {
+        qFull >> q;
+        uFull >> u;
       }
     }
 
@@ -422,20 +435,45 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s21Cosserat::updateh(double t, int k) {
     /* translational elements */
-    FlexibleBodyContinuum<double>::updateh(t);
+    hFull.init(0); //TODO: avoid this as values are overwritten in GlobalVectorContribution anyway?!
+    for (int i = 0; i < (int) discretization.size(); i++)
+      discretization[i]->computeh(qElement[i], uElement[i]); // compute attributes of finite element
+    for (int i = 0; i < (int) discretization.size(); i++) {
+      GlobalVectorContribution(i, discretization[i]->geth(), hFull); // assemble
+    }
 
     /* rotational elements */
     for (int i = 0; i < (int) rotationDiscretization.size(); i++)
       rotationDiscretization[i]->computeh(qRotationElement[i], uRotationElement[i]); // compute attributes of finite element
     for (int i = 0; i < (int) rotationDiscretization.size(); i++)
-      GlobalVectorContributionRotation(i, rotationDiscretization[i]->geth(), h[0]); // assemble
+      GlobalVectorContributionRotation(i, rotationDiscretization[i]->geth(), hFull); // assemble
+
+    //reduce
+    if (PODreduced) {
+      h[k] << U.T() * hFull;
+    }
+    else
+      h[k] << hFull;
+
+    // mass proportional damping
+    if (d_massproportional > 0) {
+      h[k] -= d_massproportional * (M[k] * u);
+    }
   }
 
   void FlexibleBody1s21Cosserat::updateStateDependentVariables(double t) {
+    if (PODreduced) {
+      qFull << U * q;
+      uFull << U * u;
+    }
+    else {
+      qFull >> q;
+      uFull >> u;
+    }
 #ifdef HAVE_NURBS
     curve->computeCurveTranslations();
     curve->computeCurveVelocities();
-    if(not JInterp) {
+    if (not JInterp) {
       curve->computeCurveJacobians();
       JInterp = true;
     }
@@ -471,40 +509,15 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s21Cosserat::setNumberElements(int n) {
     Elements = n;
     rotationalElements = n;
-    qSize = 3 * n;
-
-    Vec q0Tmp;
-    if (q0.size())
-      q0Tmp = q0.copy();
-    q0.resize(qSize, INIT, 0.);
-    if (q0Tmp.size()) {
-      if (q0Tmp.size() == q0.size())
-        q0 = q0Tmp.copy();
-      else
-        throw MBSimError("Error in dimension of q0 of FlexibleBody1s21Cosserat \"" + name + "\"!");
-    }
-
-    uSize[0] = qSize;
-    uSize[1] = qSize; // TODO
-    Vec u0Tmp;
-    if (u0.size())
-      u0Tmp = u0.copy();
-    u0.resize(uSize[0], INIT, 0.);
-    if (u0Tmp.size()) {
-      if (u0Tmp.size() == u0.size())
-        u0 = u0Tmp.copy();
-      else
-        throw MBSimError("Error in dimension of u0 of FlexibleBody1s21Cosserat \"" + name + "\"!");
-    }
   }
 
-  void FlexibleBody1s21Cosserat::enablePOD(const string & h5Path, bool reduceEnergy, int reduceMode, int POMSize) {
+  void FlexibleBody1s21Cosserat::enablePOD(const string & h5Path, int reduceMode, int POMSize) {
     // Set POD-Reduction true
 
     Mat Snapshots;
     Snapshots.resize() << readPositionMatrix(h5Path, "q"); //TODO: which kind of "Job"...
 
-    int fullDOFs = 3*Elements;
+    int fullDOFs = 3 * Elements;
     int nSnapshots = Snapshots.cols();
 
     Mat SVD(fullDOFs, nSnapshots, NONINIT);
@@ -517,46 +530,16 @@ namespace MBSimFlexibleBody {
       throw MBSimError("FlexibleBody1s21Cosserat::enablePOD(const string & h5Path, bool reduceEnergy): Single-Value-Decomposition was not succesfull");
     }
 
-    if (reduceEnergy) {
-      if (reduceMode == 1) {
-        if(POMSize <= 0)
-          throw MBSimError("FlexibleBody1s21Cosserat::enablePOD(): No valid POMSize chosen -> Has to be positive!");
-      }
-      else {
-        // k: Reduce Total Energy
-        POMSize = findPOMSize(POM, SVD);
-      }
-
-      U.resize() << POM(Index(0, fullDOFs - 1), Index(0, POMSize - 1));
+    if (reduceMode == 1) {
+      if (POMSize <= 0)
+        throw MBSimError("FlexibleBody1s21Cosserat::enablePOD(): No valid POMSize chosen -> Has to be positive!");
+    }
+    else {
+      // k: Reduce Total Energy
+      POMSize = findPOMSize(POM, SVD);
     }
 
-    SymMat M_Element(5, INIT, 0.);
-    M_Element(0, 0) = 0.5 * rho * A * L / Elements;
-    M_Element(1, 1) = 0.5 * rho * A * L / Elements;
-    M_Element(2, 2) = rho * L / Elements * I1;
-    M_Element(3, 3) = 0.5 * rho * A * L / Elements;
-    M_Element(4, 4) = 0.5 * rho * A * L / Elements;
-
-    Mat M(fullDOFs, fullDOFs, INIT, 0.);
-
-    int i = 0;
-
-    for (i = 0; i < Elements; i++) {
-      int j = 3 * i; // start index in entire beam coordinates
-
-      if (i < Elements - 1) {
-        M(Index(j, j + 4)) += M_Element;
-      }
-      else { // last FE for closed structure
-        M(Index(j, j + 2)) += M_Element(Index(0, 2));   // normaler Anteil mit überschneidung vorheriges Element
-        M(Index(0, 1)) += M_Element(Index(3, 4));     // überschneidung letztes und erstes element
-      }
-    }
-
-    //Mass matrix is reduced
-    MConst.resize() << U.T() * M * U;
-
-    LLMConst.resize() << facLL(MConst);
+    U.resize() << POM(Index(0, fullDOFs - 1), Index(0, POMSize - 1));
 
     PODreduced = true;
 
@@ -568,7 +551,7 @@ namespace MBSimFlexibleBody {
 
     updateKinematicsForFrame(cp, position);
     temp(0, 2) = cp.getFrameOfReference().getPosition();
-    temp(3, 5) = computeAngles(sGlobal, q);
+    temp(3, 5) = computeAngles(sGlobal, qFull);
 
     updateKinematicsForFrame(cp, velocities);
     temp(6, 8) = cp.getFrameOfReference().getVelocity();
@@ -656,19 +639,26 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21Cosserat::initM() {
-    if(not PODreduced) {
-      for (int i = 0; i < (int) discretization.size(); i++)
-        static_cast<FiniteElement1s21CosseratTranslation*>(discretization[i])->initM(); // compute attributes of finite element
-      for (int i = 0; i < (int) discretization.size(); i++)
-        GlobalMatrixContribution(i, discretization[i]->getM(), MConst); // assemble
-      for (int i = 0; i < (int) discretization.size(); i++) {
-        int j = 3 * i;
-        LLMConst(Index(j, j + 2)) = facLL(MConst(Index(j, j + 2)));
-        if (openStructure && i == (int) discretization.size() - 1)
-          LLMConst(Index(j + 3, j + 4)) = facLL(MConst(Index(j + 3, j + 4)));
-      }
+    MConst.resize(3 * Elements);
+    LLMConst.resize(3 * Elements);
+    for (int i = 0; i < (int) discretization.size(); i++)
+      static_cast<FiniteElement1s21CosseratTranslation*>(discretization[i])->initM(); // compute attributes of finite element
+    for (int i = 0; i < (int) discretization.size(); i++)
+      GlobalMatrixContribution(i, discretization[i]->getM(), MConst); // assemble
+    for (int i = 0; i < (int) discretization.size(); i++) {
+      int j = 3 * i;
+      LLMConst(Index(j, j + 2)) = facLL(MConst(Index(j, j + 2)));
+      if (openStructure && i == (int) discretization.size() - 1)
+        LLMConst(Index(j + 3, j + 4)) = facLL(MConst(Index(j + 3, j + 4)));
     }
-    updateM(0,0);
+
+    if (PODreduced) {
+      //Mass matrix is reduced
+      MConst.resize() << U.T() * MConst * U;
+      LLMConst.resize() << facLL(MConst);
+    }
+
+    updateM(0, 0);
     facLLM(0);
   }
 
@@ -689,7 +679,7 @@ namespace MBSimFlexibleBody {
       for (int i = 0; i < Elements + deg; i++) {  // +deg-Elements are needed, as the curve is closed
         ContourPointData cp(i);
         if (i >= Elements)
-          cp.getNodeNumber() = i - Elements;
+        cp.getNodeNumber() = i - Elements;
 
         updateKinematicsForFrame(cp, position);
         NodelistPos[i] = HPoint3Dd(cp.getFrameOfReference().getPosition()(0), cp.getFrameOfReference().getPosition()(1), cp.getFrameOfReference().getPosition()(2), 1);
@@ -753,7 +743,7 @@ namespace MBSimFlexibleBody {
     PlNurbsCurved curveVel;
     curvePos.read(filenamePos.c_str());
     if (not filenameVel.empty())
-      curveVel.read(filenameVel.c_str());
+    curveVel.read(filenameVel.c_str());
 
     l0 = L / Elements;
     Vec q0Dummy(q0.size(), INIT, 0.);
@@ -771,7 +761,7 @@ namespace MBSimFlexibleBody {
         norHalf /= norm(norHalf);
         binHalf = crossProduct(norHalf, tangHalf);
         norHalf = crossProduct(binHalf, tangHalf);
-        refBinHalf = binHalf; // set only in first element
+        refBinHalf = binHalf;// set only in first element
       }
       else {
         binHalf = refBinHalf;
@@ -780,8 +770,8 @@ namespace MBSimFlexibleBody {
       }
 
       q0Dummy(i * 6) = posStart.x(); // x
-      q0Dummy(i * 6 + 1) = posStart.y(); // y
-      q0Dummy(i * 6 + 2) = posStart.z(); // z
+      q0Dummy(i * 6 + 1) = posStart.y();// y
+      q0Dummy(i * 6 + 2) = posStart.z();// z
 
       SqrMat AIK(3, INIT, 0.);
       AIK(0, 0) = tangHalf.x();
@@ -826,7 +816,7 @@ namespace MBSimFlexibleBody {
     }
     setq0(q0Dummy);
     if (not filenameVel.empty())
-      setu0(u0Dummy);
+    setu0(u0Dummy);
 
 #else
     throw MBSimError("No Nurbs-Library installed ...");

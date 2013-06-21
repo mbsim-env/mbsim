@@ -103,7 +103,6 @@ namespace MBSimFlexibleBody {
 #endif
 
       int getNumberElements() const { return Elements; }
-      int getNumberDOFs() const { return qSize; }
       double getLength() const { return L; }
       bool isOpenStructure() const { return openStructure; }
       /***************************************************/
