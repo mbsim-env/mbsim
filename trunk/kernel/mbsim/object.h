@@ -197,6 +197,16 @@ namespace MBSim {
        */
       virtual void initz();
 
+      /*!
+       * \brief writes its z-Vector to a subgroup of the given group
+       */
+      virtual void writez(const H5::Group & group);
+
+      /*!
+       * \brief reads the z-Vector of a subgroup of the given group
+       */
+      virtual void readz0(const H5::Group & group);
+
       /**
        * \brief perform Cholesky decomposition of mass martix
        */

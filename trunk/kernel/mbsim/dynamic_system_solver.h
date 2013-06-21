@@ -269,7 +269,7 @@ namespace MBSim {
       /**
        * \brief initialises state variables
        */
-      void initz(fmatvec::Vec& z0);
+      virtual void initz(fmatvec::Vec& z0);
 
       /**
        * \return successful flag for function pointer for election of prox-solver on acceleration level
