@@ -91,6 +91,8 @@ namespace MBSim {
       virtual void updatebRef(const fmatvec::Mat &hRef);
       virtual void init(InitStage stage);
       virtual void initz();
+      virtual void writez(const H5::Group & group);
+      virtual void readz0(const H5::Group & group);
       /***************************************************/
 
       virtual void setbInd(int bInd_) { bInd = bInd_; };

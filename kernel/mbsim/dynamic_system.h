@@ -147,6 +147,8 @@ namespace MBSim {
       void updatexdRef(const fmatvec::Vec &ref);
       virtual void init(InitStage stage);
       virtual void initz();
+      virtual void writez(const H5::CommonFG & group);
+      virtual void readz0(const H5::CommonFG & parent);
       /*****************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */

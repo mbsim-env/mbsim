@@ -23,13 +23,16 @@
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
 
+#include <hdf5serie/simpledataset.h>
+
 using namespace std;
 using namespace MBXMLUtils;
 using namespace fmatvec;
 
 namespace MBSim {
 
-  Object::Object(const string &name) : Element(name), qSize(0), qInd(0) {
+  Object::Object(const string &name) :
+      Element(name), qSize(0), qInd(0) {
     uSize[0] = 0;
     uSize[1] = 0;
     hSize[0] = 0;
@@ -40,9 +43,10 @@ namespace MBSim {
     hInd[1] = 0;
 
     setPlotFeature(state, enabled);
-  } 
+  }
 
-  Object::~Object() {}
+  Object::~Object() {
+  }
 
   void Object::updatedhdz(double t) {
     Vec h0 = h[0].copy();
@@ -51,13 +55,13 @@ namespace MBSim {
     Vec hEnd = h[0].copy();
 
     /**************** velocity dependent calculations ********************/
-    for(int i=0;i<uSize[0];i++) {  
+    for (int i = 0; i < uSize[0]; i++) {
       h[0] = h0;
 
       double ui = u(i); // save correct position
 
       u(i) += epsroot(); // update with disturbed positions assuming same active links
-      updateStateDependentVariables(t); 
+      updateStateDependentVariables(t);
       updateh(t);
 
       //dhdu.col(i) = (hObject-hObjectEnd)/epsroot();
@@ -65,14 +69,14 @@ namespace MBSim {
     }
 
     /***************** position dependent calculations ********************/
-    for(int i=0;i<qSize;i++) { 
+    for (int i = 0; i < qSize; i++) {
       h[0] = h0;
 
       double qi = q(i); // save correct position
 
       q(i) += epsroot(); // update with disturbed positions assuming same active links
-      updateStateDependentVariables(t); 
-      updateT(t); 
+      updateStateDependentVariables(t);
+      updateT(t);
       updateJacobians(t);
       updateh(t);
 
@@ -83,39 +87,35 @@ namespace MBSim {
     /******************* time dependent calculations **********************/
     // hObject = hObject0; // set to old values
     // h = h0;
-
     // double t0 = t; // save correct position
-
     // t += epsroot(); // update with disturbed positions assuming same active links
     // updateStateDependentVariables(t); 
     // updateT(t); 
     // updateJacobians(t);
     // updateh(t);
-
     // dhdt = (hObject-hObjectEnd)/epsroot();
     // t = t0;
-
     /******************* back to initial state **********************/
-    updateStateDependentVariables(t); 
-    updateT(t); 
+    updateStateDependentVariables(t);
+    updateT(t);
     updateJacobians(t);
     h[0] = hEnd;
   }
 
   void Object::updatedq(double t, double dt) {
-    qd = T*u*dt;
+    qd = T * u * dt;
   }
 
   void Object::updatedu(double t, double dt) {
-    ud[0] = slvLLFac(LLM[0], h[0]*dt+r[0]);
+    ud[0] = slvLLFac(LLM[0], h[0] * dt + r[0]);
   }
 
   void Object::updateud(double t, int i) {
-    ud[i] =  slvLLFac(LLM[i], h[i]+r[i]);
+    ud[i] = slvLLFac(LLM[i], h[i] + r[i]);
   }
 
   void Object::updateqd(double t) {
-    qd = T*u;
+    qd = T * u;
   }
 
   void Object::updatezd(double t) {
@@ -140,26 +140,26 @@ namespace MBSim {
   //}
 
   void Object::plot(double t, double dt) {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      if(getPlotFeature(state)==enabled) {
-        for(int i=0; i<qSize; ++i)
+    if (getPlotFeature(plotRecursive) == enabled) {
+      if (getPlotFeature(state) == enabled) {
+        for (int i = 0; i < qSize; ++i)
           plotVector.push_back(q(i));
-        for(int i=0; i<uSize[0]; ++i)
+        for (int i = 0; i < uSize[0]; ++i)
           plotVector.push_back(u(i));
       }
-      if(getPlotFeature(stateDerivative)==enabled) {
-        for(int i=0; i<qSize; ++i)
-          plotVector.push_back(qd(i)/dt);
-        for(int i=0; i<uSize[0]; ++i)
-          plotVector.push_back(ud[0](i)/dt);
+      if (getPlotFeature(stateDerivative) == enabled) {
+        for (int i = 0; i < qSize; ++i)
+          plotVector.push_back(qd(i) / dt);
+        for (int i = 0; i < uSize[0]; ++i)
+          plotVector.push_back(ud[0](i) / dt);
       }
-      if(getPlotFeature(rightHandSide)==enabled) {
-        for(int i=0; i<uSize[0]; ++i)
+      if (getPlotFeature(rightHandSide) == enabled) {
+        for (int i = 0; i < uSize[0]; ++i)
           plotVector.push_back(h[0](i));
-        for(int i=0; i<uSize[0]; ++i)
-          plotVector.push_back(r[0](i)/dt);
+        for (int i = 0; i < uSize[0]; ++i)
+          plotVector.push_back(r[0](i) / dt);
       }
-      if(getPlotFeature(energy)==enabled) {
+      if (getPlotFeature(energy) == enabled) {
         double Ttemp = computeKineticEnergy();
         double Vtemp = computePotentialEnergy();
         plotVector.push_back(Ttemp);
@@ -167,12 +167,12 @@ namespace MBSim {
         plotVector.push_back(Ttemp + Vtemp);
       }
 
-      Element::plot(t,dt);
+      Element::plot(t, dt);
     }
   }
 
   void Object::closePlot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
+    if (getPlotFeature(plotRecursive) == enabled) {
       Element::closePlot();
     }
   }
@@ -182,95 +182,95 @@ namespace MBSim {
   //}
 
   void Object::updateqRef(const Vec &qParent) {
-    q>>qParent(qInd,qInd+qSize-1);
+    q >> qParent(qInd, qInd + qSize - 1);
   }
 
   void Object::updateqdRef(const Vec &qdParent) {
-    qd>>qdParent(qInd,qInd+qSize-1);
+    qd >> qdParent(qInd, qInd + qSize - 1);
   }
 
   void Object::updateuRef(const Vec &uParent) {
-    u>>uParent(uInd[0],uInd[0]+uSize[0]-1);
+    u >> uParent(uInd[0], uInd[0] + uSize[0] - 1);
   }
 
   void Object::updateuallRef(const Vec &uParent) {
-    uall>>uParent(hInd[0],hInd[0]+hSize[0]-1);
+    uall >> uParent(hInd[0], hInd[0] + hSize[0] - 1);
   }
 
   void Object::updateudRef(const Vec &udParent, int i) {
-    ud[i]>>udParent(uInd[i],uInd[i]+uSize[i]-1);
+    ud[i] >> udParent(uInd[i], uInd[i] + uSize[i] - 1);
   }
 
   void Object::updateudallRef(const Vec &udParent, int i) {
-    udall[i]>>udParent(hInd[i],hInd[i]+hSize[i]-1);
+    udall[i] >> udParent(hInd[i], hInd[i] + hSize[i] - 1);
   }
 
   void Object::updatehRef(const Vec& hParent, int i) {
-    h[i]>>hParent(hInd[i],hInd[i]+hSize[i]-1);
+    h[i] >> hParent(hInd[i], hInd[i] + hSize[i] - 1);
   }
 
   void Object::updateWRef(const Mat& WParent, int i) {
-    W[i]>>WParent(Index(hInd[i],hInd[i]+hSize[i]-1),Index(0,WParent.cols()-1));
+    W[i] >> WParent(Index(hInd[i], hInd[i] + hSize[i] - 1), Index(0, WParent.cols() - 1));
   }
 
   void Object::updateVRef(const Mat& VParent, int i) {
-    V[i]>>VParent(Index(hInd[i],hInd[i]+hSize[i]-1),Index(0,VParent.cols()-1));
+    V[i] >> VParent(Index(hInd[i], hInd[i] + hSize[i] - 1), Index(0, VParent.cols() - 1));
   }
 
   void Object::updatedhdqRef(const Mat& dhdqParent, int i) {
-    dhdq>>dhdqParent(Index(hInd[i],hInd[i]+hSize[i]-1),Index(qInd,qInd+qSize-1));
+    dhdq >> dhdqParent(Index(hInd[i], hInd[i] + hSize[i] - 1), Index(qInd, qInd + qSize - 1));
   }
 
   void Object::updatedhduRef(const SqrMat& dhduParent, int i) {
-    dhdu>>dhduParent(Index(hInd[i],hInd[i]+hSize[i]-1),Index(uInd[0],uInd[0]+uSize[0]-1));
+    dhdu >> dhduParent(Index(hInd[i], hInd[i] + hSize[i] - 1), Index(uInd[0], uInd[0] + uSize[0] - 1));
   }
 
   void Object::updatedhdtRef(const Vec& dhdtParent, int i) {
-    dhdt>>dhdtParent(hInd[i],hInd[i]+hSize[i]-1);
+    dhdt >> dhdtParent(hInd[i], hInd[i] + hSize[i] - 1);
   }
 
   void Object::updaterRef(const Vec& rParent, int i) {
-    r[i]>>rParent(uInd[i],uInd[i]+uSize[i]-1);
+    r[i] >> rParent(uInd[i], uInd[i] + uSize[i] - 1);
   }
 
   void Object::updateTRef(const Mat &TParent) {
-    T>>TParent(Index(qInd,qInd+qSize-1),Index(uInd[0],uInd[0]+uSize[0]-1));
+    T >> TParent(Index(qInd, qInd + qSize - 1), Index(uInd[0], uInd[0] + uSize[0] - 1));
   }
 
   void Object::updateMRef(const SymMat &MParent, int i) {
-    M[i]>>MParent(Index(hInd[i],hInd[i]+hSize[i]-1));
+    M[i] >> MParent(Index(hInd[i], hInd[i] + hSize[i] - 1));
   }
 
   void Object::updateLLMRef(const SymMat &LLMParent, int i) {
-    LLM[i]>>LLMParent(Index(hInd[i],hInd[i]+hSize[i]-1));
+    LLM[i] >> LLMParent(Index(hInd[i], hInd[i] + hSize[i] - 1));
   }
 
-  void Object::init(InitStage stage) {  
-    if(stage==unknownStage) {
+  void Object::init(InitStage stage) {
+    if (stage == unknownStage) {
     }
-    else if(stage==MBSim::plot) {
+    else if (stage == MBSim::plot) {
       updatePlotFeatures();
 
-      if(getPlotFeature(plotRecursive)==enabled) {
-        if(getPlotFeature(state)==enabled) {
-          for(int i=0; i<qSize; ++i)
-            plotColumns.push_back("q("+numtostr(i)+")");
-          for(int i=0; i<uSize[0]; ++i)
-            plotColumns.push_back("u("+numtostr(i)+")");
+      if (getPlotFeature(plotRecursive) == enabled) {
+        if (getPlotFeature(state) == enabled) {
+          for (int i = 0; i < qSize; ++i)
+            plotColumns.push_back("q(" + numtostr(i) + ")");
+          for (int i = 0; i < uSize[0]; ++i)
+            plotColumns.push_back("u(" + numtostr(i) + ")");
         }
-        if(getPlotFeature(stateDerivative)==enabled) {
-          for(int i=0; i<qSize; ++i)
-            plotColumns.push_back("qd("+numtostr(i)+")");
-          for(int i=0; i<uSize[0]; ++i)
-            plotColumns.push_back("ud("+numtostr(i)+")");
+        if (getPlotFeature(stateDerivative) == enabled) {
+          for (int i = 0; i < qSize; ++i)
+            plotColumns.push_back("qd(" + numtostr(i) + ")");
+          for (int i = 0; i < uSize[0]; ++i)
+            plotColumns.push_back("ud(" + numtostr(i) + ")");
         }
-        if(getPlotFeature(rightHandSide)==enabled) {
-          for(int i=0; i<uSize[0]; ++i)
-            plotColumns.push_back("h("+numtostr(i)+")");
-          for(int i=0; i<getuSize(); ++i)
-            plotColumns.push_back("r("+numtostr(i)+")");
+        if (getPlotFeature(rightHandSide) == enabled) {
+          for (int i = 0; i < uSize[0]; ++i)
+            plotColumns.push_back("h(" + numtostr(i) + ")");
+          for (int i = 0; i < getuSize(); ++i)
+            plotColumns.push_back("r(" + numtostr(i) + ")");
         }
-        if(getPlotFeature(energy)==enabled) {
+        if (getPlotFeature(energy) == enabled) {
           plotColumns.push_back("T");
           plotColumns.push_back("V");
           plotColumns.push_back("E");
@@ -284,17 +284,37 @@ namespace MBSim {
   }
 
   void Object::initz() {
-    q = (q0.size()==0)? Vec(qSize, INIT, 0) : q0;
-    u = (u0.size()==0)? Vec(uSize[0], INIT, 0) : u0;
+    q = (q0.size() == 0) ? Vec(qSize, INIT, 0) : q0;
+    u = (u0.size() == 0) ? Vec(uSize[0], INIT, 0) : u0;
+  }
+
+  void Object::writez(const H5::Group & group) {
+    H5::SimpleDataSet<vector<double> > qWrite;
+    qWrite.create(group, "q0");
+    qWrite.write(q);
+
+    H5::SimpleDataSet<vector<double> > uWrite;
+    uWrite.create(group, "u0");
+    uWrite.write(u);
+  }
+
+  void Object::readz0(const H5::Group & group) {
+    H5::SimpleDataSet<vector<double> > qWrite;
+    qWrite.open(group, "q0");
+    q0.resize() = qWrite.read();
+
+    H5::SimpleDataSet<vector<double> > uWrite;
+    uWrite.open(group, "u0");
+    u0.resize() = uWrite.read();
   }
 
   void Object::facLLM(int i) {
-    LLM[i] = facLL(M[i]); 
+    LLM[i] = facLL(M[i]);
   }
 
   void Object::sethInd(int hInd_, int j) {
     hInd[j] = hInd_;
-  }  
+  }
 
   void Object::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
@@ -309,20 +329,20 @@ namespace MBSim {
 
   TiXmlElement* Object::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0 = Element::writeXMLFile(parent);
-    if(q0.size()) 
-      addElementText(ele0,MBSIMNS"initialGeneralizedPosition",q0);
-    if(u0.size()) 
-      addElementText(ele0,MBSIMNS"initialGeneralizedVelocity",u0);
+    if(q0.size())
+    addElementText(ele0,MBSIMNS"initialGeneralizedPosition",q0);
+    if(u0.size())
+    addElementText(ele0,MBSIMNS"initialGeneralizedVelocity",u0);
     return ele0;
   }
 
   Element * Object::getByPathSearch(string path) {
-    if (path.substr(0, 1)=="/") // absolut path
-      if(parent)
+    if (path.substr(0, 1) == "/") // absolut path
+      if (parent)
         return parent->getByPathSearch(path);
       else
         return getByPathSearch(path.substr(1));
-    else if (path.substr(0, 3)=="../") // relative path
+    else if (path.substr(0, 3) == "../") // relative path
       return parent->getByPathSearch(path.substr(3));
     else { // local path
       throw MBSimError("Unknown identifier of container");
@@ -330,10 +350,10 @@ namespace MBSim {
   }
 
   int Object::computeLevel() {
-    int lOld=0;
-    for(unsigned int i=0; i<dependency.size(); i++) { 
-      int lNew = dependency[i]->computeLevel()+1;
-      if(lNew > lOld) {
+    int lOld = 0;
+    for (unsigned int i = 0; i < dependency.size(); i++) {
+      int lNew = dependency[i]->computeLevel() + 1;
+      if (lNew > lOld) {
         lOld = lNew;
       }
     }
@@ -341,16 +361,16 @@ namespace MBSim {
   }
   
   int Object::cutDependencies() {
-    int lOld=0;
-    Object* buf=0;
-    for(unsigned int i=0; i<dependency.size(); i++) { 
-      int lNew = dependency[i]->cutDependencies()+1;
-      if(lNew > lOld) {
+    int lOld = 0;
+    Object* buf = 0;
+    for (unsigned int i = 0; i < dependency.size(); i++) {
+      int lNew = dependency[i]->cutDependencies() + 1;
+      if (lNew > lOld) {
         lOld = lNew;
         buf = dependency[i];
       }
     }
-    if(dependency.size()) {
+    if (dependency.size()) {
       dependency.clear();
       dependency.push_back(buf);
     }

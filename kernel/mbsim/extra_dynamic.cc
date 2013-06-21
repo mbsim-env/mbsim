@@ -24,6 +24,8 @@
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/utils/utils.h"
 
+#include <hdf5serie/simpledataset.h>
+
 using namespace std;
 using namespace MBXMLUtils;
 using namespace fmatvec;
@@ -45,6 +47,18 @@ namespace MBSim {
 
   void ExtraDynamic::initz() {
     x = (x0.size()==0)? Vec(xSize, INIT, 0) : x0;
+  }
+
+  void ExtraDynamic::writez(const H5::Group & group) {
+    H5::SimpleDataSet<vector<double> > xWrite;
+    xWrite.create(group, "x0");
+    xWrite.write(x);
+  }
+
+  void ExtraDynamic::readz0(const H5::Group & group) {
+    H5::SimpleDataSet<vector<double> > ds;
+    ds.open(group, "x0");
+    x0.resize() = ds.read();
   }
 
   void ExtraDynamic::closePlot() {
