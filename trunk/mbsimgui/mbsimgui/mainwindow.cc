@@ -250,6 +250,8 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
 
 void MainWindow::simulationFinished(int exitCode, QProcess::ExitStatus exitStatus) {
   actionSimulate->setDisabled(false);
+  actionOpenMBV->setDisabled(false);
+  actionH5plotserie->setDisabled(false);
   statusBar()->showMessage(tr("Ready"));
 }
 
@@ -811,12 +813,12 @@ void MainWindow::mbsimxml(int task) {
 
 void MainWindow::simulate() {
   mbsimxml(0);
-  actionOpenMBV->setDisabled(false);
-  actionH5plotserie->setDisabled(false);
   actionSaveDataAs->setDisabled(false);
   actionSaveMBSimH5DataAs->setDisabled(false);
   actionSaveOpenMBVDataAs->setDisabled(false);
   actionSimulate->setDisabled(true);
+  actionOpenMBV->setDisabled(true);
+  actionH5plotserie->setDisabled(true);
   statusBar()->showMessage(tr("Simulating"));
 }
 
