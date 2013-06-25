@@ -203,8 +203,16 @@ Observer* ObjectFactory::createObserver(TiXmlElement *element, Element *parent) 
 }
 Observer* MBSimObjectFactory::createObserver(TiXmlElement *element, Element *parent) {
   if(element==0) return 0;
+  if(element->ValueStr()==MBSIMNS"CartesianCoordinatesObserver")
+    return new CartesianCoordinatesObserver(element->Attribute("name"),parent);
+  if(element->ValueStr()==MBSIMNS"CylinderCoordinatesObserver")
+    return new CylinderCoordinatesObserver(element->Attribute("name"),parent);
+  if(element->ValueStr()==MBSIMNS"NaturalCoordinatesObserver")
+    return new NaturalCoordinatesObserver(element->Attribute("name"),parent);
   if(element->ValueStr()==MBSIMNS"AbsoluteKinematicsObserver")
     return new AbsoluteKinematicsObserver(element->Attribute("name"),parent);
+  if(element->ValueStr()==MBSIMNS"RelativeKinematicsObserver")
+    return new RelativeKinematicsObserver(element->Attribute("name"),parent);
   return 0;
 }  
 

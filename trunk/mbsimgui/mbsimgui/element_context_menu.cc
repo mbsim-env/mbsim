@@ -287,14 +287,64 @@ void LinkContextContextMenu::addSignal() {
   menu.exec(QCursor::pos());
 }
 
-void ObserverContextContextMenu::addAbsoluteKinematicsObserver() {
-  mw->addObserver(new AbsoluteKinematicsObserver("AbsoluteKinematicsObserver",element));
+ObserverContextContextMenu::ObserverContextContextMenu(Element *element_, QWidget *parent) : QMenu(parent), element(element_) {
+  QAction *action = new QAction("Add coordinates observer", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addCoordinatesObserver()));
+  addAction(action);
+  action = new QAction("Add kinematics observer", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addKinematicsObserver()));
+  addAction(action);
 }
 
-ObserverContextContextMenu::ObserverContextContextMenu(Element *element_, QWidget *parent) : QMenu(parent), element(element_) {
+void ObserverContextContextMenu::addCoordinatesObserver() {
+  CoordinatesObserverContextContextMenu menu(element);
+  menu.exec(QCursor::pos());
+}
+
+void ObserverContextContextMenu::addKinematicsObserver() {
+  KinematicsObserverContextContextMenu menu(element);
+  menu.exec(QCursor::pos());
+}
+
+CoordinatesObserverContextContextMenu::CoordinatesObserverContextContextMenu(Element *element_, QWidget *parent) : QMenu(parent), element(element_) {
+  QAction *action = new QAction("Add cartesian coordinates observer", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addCartesianCoordinatesObserver()));
+  addAction(action);
+  action = new QAction("Add cylinder coordinates observer", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addCylinderCoordinatesObserver()));
+  addAction(action);
+  action = new QAction("Add natural coordinates observer", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addNaturalCoordinatesObserver()));
+  addAction(action);
+}
+
+void CoordinatesObserverContextContextMenu::addCartesianCoordinatesObserver() {
+  mw->addObserver(new CartesianCoordinatesObserver("CartesianCoordinatesObserver",element));
+}
+
+void CoordinatesObserverContextContextMenu::addCylinderCoordinatesObserver() {
+  mw->addObserver(new CylinderCoordinatesObserver("CylinderCoordinatesObserver",element));
+}
+
+void CoordinatesObserverContextContextMenu::addNaturalCoordinatesObserver() {
+  mw->addObserver(new NaturalCoordinatesObserver("NaturalCoordinatesObserver",element));
+}
+
+KinematicsObserverContextContextMenu::KinematicsObserverContextContextMenu(Element *element_, QWidget *parent) : QMenu(parent), element(element_) {
   QAction *action = new QAction("Add absolute kinematics observer", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addAbsoluteKinematicsObserver()));
   addAction(action);
+  action = new QAction("Add relative kinematics observer", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addRelativeKinematicsObserver()));
+  addAction(action);
+}
+
+void KinematicsObserverContextContextMenu::addAbsoluteKinematicsObserver() {
+  mw->addObserver(new AbsoluteKinematicsObserver("AbsoluteKinematicsObserver",element));
+}
+
+void KinematicsObserverContextContextMenu::addRelativeKinematicsObserver() {
+  mw->addObserver(new RelativeKinematicsObserver("RelativeKinematicsObserver",element));
 }
 
 SignalContextContextMenu::SignalContextContextMenu(Element *element_, QWidget *parent) : QMenu(parent), element(element_) {
