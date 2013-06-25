@@ -29,9 +29,6 @@ using namespace MBXMLUtils;
 Observer::Observer(const string &str, Element *parent) : Element(str, parent) {
 }
 
-Observer::~Observer() {
-}
-
 Observer* Observer::readXMLFile(const string &filename, Element *parent) {
   TiXmlDocument doc;
   if(doc.LoadFile(filename)) {
@@ -58,7 +55,44 @@ Element * Observer::getByPathSearch(string path) {
   return NULL;
 }
 
-AbsoluteKinematicsObserver::AbsoluteKinematicsObserver(const string &str, Element *parent) : Observer(str, parent), position(0,false), velocity(0,false), angularVelocity(0,false), acceleration(0,false), angularAcceleration(0,false) {
+CoordinatesObserver::CoordinatesObserver(const string &str, Element *parent) : Observer(str, parent), position(0,false), velocity(0,false), acceleration(0,false) {
+
+  frame.setProperty(new FrameOfReferenceProperty("",this,MBSIMNS"frame"));
+
+  position.setProperty(new OMBVArrowProperty("NOTSET",getID(),true));
+  position.setXMLName(MBSIMNS"openMBVPositionArrow",false);
+
+  velocity.setProperty(new OMBVArrowProperty("NOTSET",getID(),true));
+  velocity.setXMLName(MBSIMNS"openMBVVelocityArrow",false);
+
+  acceleration.setProperty(new OMBVArrowProperty("NOTSET",getID(),true));
+  acceleration.setXMLName(MBSIMNS"openMBVAccelerationArrow",false);
+}
+
+void CoordinatesObserver::initialize() {
+  Observer::initialize();
+  frame.initialize();
+}
+
+void CoordinatesObserver::initializeUsingXML(TiXmlElement *element) {
+  Observer::initializeUsingXML(element);
+  frame.initializeUsingXML(element);
+  position.initializeUsingXML(element);
+  velocity.initializeUsingXML(element);
+  acceleration.initializeUsingXML(element);
+}
+
+TiXmlElement* CoordinatesObserver::writeXMLFile(TiXmlNode *parent) {
+
+  TiXmlElement *ele0 = Observer::writeXMLFile(parent);
+  frame.writeXMLFile(ele0);
+  position.writeXMLFile(ele0);
+  velocity.writeXMLFile(ele0);
+  acceleration.writeXMLFile(ele0);
+  return ele0;
+}
+
+KinematicsObserver::KinematicsObserver(const string &str, Element *parent) : Observer(str, parent), position(0,false), velocity(0,false), angularVelocity(0,false), acceleration(0,false), angularAcceleration(0,false) {
 
   frame.setProperty(new FrameOfReferenceProperty("",this,MBSIMNS"frame"));
 
@@ -78,24 +112,14 @@ AbsoluteKinematicsObserver::AbsoluteKinematicsObserver(const string &str, Elemen
   angularAcceleration.setXMLName(MBSIMNS"openMBVAngularAccelerationArrow",false);
 }
 
-AbsoluteKinematicsObserver::~AbsoluteKinematicsObserver() {
-}
-
-void AbsoluteKinematicsObserver::initialize() {
+void KinematicsObserver::initialize() {
   Observer::initialize();
   frame.initialize();
 }
 
-void AbsoluteKinematicsObserver::initializeUsingXML(TiXmlElement *element) {
+void KinematicsObserver::initializeUsingXML(TiXmlElement *element) {
   Observer::initializeUsingXML(element);
   frame.initializeUsingXML(element);
-  //  TiXmlElement *e=element->FirstChildElement(MBSIMNS"enableOpenMBVPosition");
-  //  if(e) {
-  //    diameter->initializeUsingXML(element);
-  //    headDiameter->initializeUsingXML(element);
-  //    headLength->initializeUsingXML(element);
-  //    color->initializeUsingXML(element);
-  //  }
   position.initializeUsingXML(element);
   velocity.initializeUsingXML(element);
   angularVelocity.initializeUsingXML(element);
@@ -103,7 +127,7 @@ void AbsoluteKinematicsObserver::initializeUsingXML(TiXmlElement *element) {
   angularAcceleration.initializeUsingXML(element);
 }
 
-TiXmlElement* AbsoluteKinematicsObserver::writeXMLFile(TiXmlNode *parent) {
+TiXmlElement* KinematicsObserver::writeXMLFile(TiXmlNode *parent) {
 
   TiXmlElement *ele0 = Observer::writeXMLFile(parent);
   frame.writeXMLFile(ele0);
@@ -112,11 +136,29 @@ TiXmlElement* AbsoluteKinematicsObserver::writeXMLFile(TiXmlNode *parent) {
   angularVelocity.writeXMLFile(ele0);
   acceleration.writeXMLFile(ele0);
   angularAcceleration.writeXMLFile(ele0);
-  //  TiXmlElement *ele1=new TiXmlElement(MBSIMNS"enableOpenMBVPosition");
-  //  diameter->writeXMLFile(ele1);
-  //  headDiameter->writeXMLFile(ele1);
-  //  headLength->writeXMLFile(ele1);
-  //  color->writeXMLFile(ele1);
-  //  ele0->LinkEndChild(ele1);
   return ele0;
 }
+
+RelativeKinematicsObserver::RelativeKinematicsObserver(const string &str, Element *parent) : KinematicsObserver(str, parent) {
+
+  refFrame.setProperty(new FrameOfReferenceProperty("",this,MBSIMNS"frameOfReference"));
+}
+
+void RelativeKinematicsObserver::initialize() {
+  KinematicsObserver::initialize();
+  refFrame.initialize();
+}
+
+void RelativeKinematicsObserver::initializeUsingXML(TiXmlElement *element) {
+  KinematicsObserver::initializeUsingXML(element);
+  refFrame.initializeUsingXML(element);
+}
+
+TiXmlElement* RelativeKinematicsObserver::writeXMLFile(TiXmlNode *parent) {
+
+  TiXmlElement *ele0 = KinematicsObserver::writeXMLFile(parent);
+  refFrame.writeXMLFile(ele0);
+  return ele0;
+}
+
+

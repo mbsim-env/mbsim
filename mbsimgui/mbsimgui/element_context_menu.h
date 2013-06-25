@@ -126,7 +126,37 @@ class ObserverContextContextMenu : public QMenu {
     ObserverContextContextMenu(Element *observer, QWidget * parent = 0);
 
   protected slots:
+    void addCoordinatesObserver();
+    void addKinematicsObserver();
+
+  protected:
+    Element *element;
+};
+
+class CoordinatesObserverContextContextMenu : public QMenu {
+  Q_OBJECT
+
+  public:
+    CoordinatesObserverContextContextMenu(Element *observer, QWidget * parent = 0);
+
+  protected slots:
+    void addCartesianCoordinatesObserver();
+    void addCylinderCoordinatesObserver();
+    void addNaturalCoordinatesObserver();
+
+  protected:
+    Element *element;
+};
+
+class KinematicsObserverContextContextMenu : public QMenu {
+  Q_OBJECT
+
+  public:
+    KinematicsObserverContextContextMenu(Element *observer, QWidget * parent = 0);
+
+  protected slots:
     void addAbsoluteKinematicsObserver();
+    void addRelativeKinematicsObserver();
 
   protected:
     Element *element;

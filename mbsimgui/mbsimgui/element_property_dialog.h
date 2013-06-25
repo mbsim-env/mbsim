@@ -50,7 +50,14 @@ class Joint;
 class Contact;
 class Actuator;
 class Observer;
+class CoordinatesObserver;
+class CartesianCoordinatesObserver;
+class CylinderCoordinatesObserver;
+class NaturalCoordinatesObserver;
+class KinematicsObserver;
 class AbsoluteKinematicsObserver;
+class RelativeKinematicsObserver;
+class NaturalCoordinatesObserver;
 class Signal;
 class Sensor;
 class GeneralizedCoordinateSensor;
@@ -370,14 +377,58 @@ class ObserverPropertyDialog : public ElementPropertyDialog {
     ObserverPropertyDialog(Observer *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
 };
 
-class AbsoluteKinematicsObserverPropertyDialog : public ObserverPropertyDialog {
+class CoordinatesObserverPropertyDialog : public ObserverPropertyDialog {
 
   public:
-    AbsoluteKinematicsObserverPropertyDialog(AbsoluteKinematicsObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    CoordinatesObserverPropertyDialog(CoordinatesObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+    ExtWidget *frame, *position, *velocity, *acceleration;
+};
+
+class CartesianCoordinatesObserverPropertyDialog : public CoordinatesObserverPropertyDialog {
+
+  public:
+    CartesianCoordinatesObserverPropertyDialog(CartesianCoordinatesObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
+};
+
+class CylinderCoordinatesObserverPropertyDialog : public CoordinatesObserverPropertyDialog {
+
+  public:
+    CylinderCoordinatesObserverPropertyDialog(CylinderCoordinatesObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
+};
+
+class NaturalCoordinatesObserverPropertyDialog : public CoordinatesObserverPropertyDialog {
+
+  public:
+    NaturalCoordinatesObserverPropertyDialog(NaturalCoordinatesObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
+};
+
+class KinematicsObserverPropertyDialog : public ObserverPropertyDialog {
+
+  public:
+    KinematicsObserverPropertyDialog(KinematicsObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
     void toWidget(Element *element);
     void fromWidget(Element *element);
   protected:
     ExtWidget *frame, *position, *velocity, *angularVelocity, *acceleration, *angularAcceleration;
+};
+
+class AbsoluteKinematicsObserverPropertyDialog : public KinematicsObserverPropertyDialog {
+
+  public:
+    AbsoluteKinematicsObserverPropertyDialog(AbsoluteKinematicsObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
+};
+
+class RelativeKinematicsObserverPropertyDialog : public KinematicsObserverPropertyDialog {
+
+  public:
+    RelativeKinematicsObserverPropertyDialog(RelativeKinematicsObserver *observer, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+  protected:
+    ExtWidget *refFrame;
 };
 
 class SignalPropertyDialog: public LinkPropertyDialog {
