@@ -28,36 +28,17 @@
 namespace MBSim {
   class Frame;
 
-  class AbsoluteVelocityObserver : public Observer {
-    private:
+  class KinematicsObserver : public Observer {
+    protected:
       Frame* frame;
+      std::string saved_frame;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Arrow *openMBVArrow;
-#endif
-
-    public:
-      AbsoluteVelocityObserver(const std::string &name);
-      void setFrame(Frame *frame_) { frame = frame_; } 
-      void init(InitStage stage);
-      virtual void plot(double t, double dt);
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      //void setOpenMBVArrow(OpenMBV::Arrow *arrow) { openMBVArrow = arrow; }
-
-      virtual void enableOpenMBV(double scale=1, OpenMBV::Arrow::ReferencePoint refPoint=OpenMBV::Arrow::toPoint, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
-#endif
-
-  };
-
-  class AbsoluteKinematicsObserver : public Observer {
-    private:
-      Frame* frame;
-#ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::Group *openMBVPosGrp, *openMBVVelGrp, *openMBVAngVelGrp, *openMBVAccGrp, *openMBVAngAccGrp;
       OpenMBV::Arrow *openMBVPositionArrow, *openMBVVelocityArrow, *openMBVAngularVelocityArrow, *openMBVAccelerationArrow, *openMBVAngularAccelerationArrow;
 #endif
 
     public:
-      AbsoluteKinematicsObserver(const std::string &name="");
+      KinematicsObserver(const std::string &name="");
       void setFrame(Frame *frame_) { frame = frame_; } 
       void init(InitStage stage);
       virtual void plot(double t, double dt);
@@ -76,37 +57,33 @@ namespace MBSim {
       virtual void enableOpenMBVAcceleration(double scale=1, OpenMBV::Arrow::ReferencePoint refPoint=OpenMBV::Arrow::fromPoint, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
       virtual void enableOpenMBVAngularAcceleration(double scale=1, OpenMBV::Arrow::ReferencePoint refPoint=OpenMBV::Arrow::fromPoint, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
 #endif
-
-    private:
-      std::string saved_frame;
   };
 
-  class RelativeKinematicsObserver : public Observer {
+  class AbsoluteKinematicsObserver : public KinematicsObserver {
+    public:
+      AbsoluteKinematicsObserver(const std::string &name="") : KinematicsObserver(name) {}
+  };
+
+  class RelativeKinematicsObserver : public KinematicsObserver {
     private:
-      Frame* frame[2];
+      Frame* refFrame;
+      std::string saved_frameOfReference;
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Arrow *openMBVr, *openMBVrTrans, *openMBVrRel;
-      OpenMBV::Arrow *openMBVv, *openMBVvTrans, *openMBVvRot, *openMBVvRel, *openMBVvF;
-      OpenMBV::Arrow *openMBVa, *openMBVaTrans, *openMBVaRot, *openMBVaZp, *openMBVaCor, *openMBVaRel, *openMBVaF;
-      OpenMBV::Arrow *openMBVom, *openMBVomTrans, *openMBVomRel;
-      OpenMBV::Arrow *openMBVpsi, *openMBVpsiTrans, *openMBVpsiRot, *openMBVpsiRel;
+      OpenMBV::Arrow *openMBVrTrans, *openMBVrRel;
+      OpenMBV::Arrow *openMBVvTrans, *openMBVvRot, *openMBVvRel, *openMBVvF;
+      OpenMBV::Arrow *openMBVaTrans, *openMBVaRot, *openMBVaZp, *openMBVaCor, *openMBVaRel, *openMBVaF;
+      OpenMBV::Arrow *openMBVomTrans, *openMBVomRel;
+      OpenMBV::Arrow *openMBVpsiTrans, *openMBVpsiRot, *openMBVpsiRel;
 #endif
 
     public:
-      RelativeKinematicsObserver(const std::string &name);
-      void setFrames(Frame *frame0, Frame *frame1) { frame[0] = frame0; frame[1] = frame1; } 
+      RelativeKinematicsObserver(const std::string &name="");
+      void setFrames(Frame *frame0, Frame *frame1) { frame = frame0; refFrame = frame1; } 
+      void setFrameOfReference(Frame *frame_) { refFrame = frame_; }
 
       void init(InitStage stage);
       virtual void plot(double t, double dt);
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      virtual void enableOpenMBVPosition(double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
-      virtual void enableOpenMBVVelocity(double scale=1, OpenMBV::Arrow::ReferencePoint refPoint=OpenMBV::Arrow::fromPoint, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
-      virtual void enableOpenMBVAngularVelocity(double scale=1, OpenMBV::Arrow::ReferencePoint refPoint=OpenMBV::Arrow::fromPoint, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
-      virtual void enableOpenMBVAcceleration(double scale=1, OpenMBV::Arrow::ReferencePoint refPoint=OpenMBV::Arrow::fromPoint, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
-      virtual void enableOpenMBVAngularAcceleration(double scale=1, OpenMBV::Arrow::ReferencePoint refPoint=OpenMBV::Arrow::fromPoint, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
-#endif
-
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
   };
 
 }  
