@@ -38,8 +38,10 @@ ExtraDynamic* ExtraDynamic::readXMLFile(const string &filename, Element *parent)
     map<string,string> dummy;
     incorporateNamespace(doc.FirstChildElement(), dummy);
     ExtraDynamic *ed=ObjectFactory::getInstance()->createExtraDynamic(e,parent);
-    if(ed)
+    if(ed) {
       ed->initializeUsingXML(e);
+      ed->initialize();
+    }
     return ed;
   }
   return 0;

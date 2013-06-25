@@ -49,8 +49,10 @@ Frame* Frame::readXMLFile(const string &filename, Element *parent) {
     map<string,string> dummy;
     incorporateNamespace(doc.FirstChildElement(), dummy);
     Frame *frame=ObjectFactory::getInstance()->createFrame(e,parent);
-    if(frame)
+    if(frame) {
       frame->initializeUsingXML(e);
+      frame->initialize();
+    }
     return frame;
   }
   return 0;

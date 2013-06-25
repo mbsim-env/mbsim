@@ -46,8 +46,10 @@ Object* Object::readXMLFile(const string &filename, Element *parent) {
     map<string,string> dummy;
     incorporateNamespace(doc.FirstChildElement(), dummy);
     Object *object=ObjectFactory::getInstance()->createObject(e,parent);
-    if(object)
+    if(object) {
       object->initializeUsingXML(e);
+      object->initialize();
+    }
     return object;
   }
   return 0;

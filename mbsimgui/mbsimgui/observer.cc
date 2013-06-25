@@ -37,8 +37,10 @@ Observer* Observer::readXMLFile(const string &filename, Element *parent) {
     map<string,string> dummy;
     incorporateNamespace(doc.FirstChildElement(), dummy);
     Observer *observer=ObjectFactory::getInstance()->createObserver(e,parent);
-    if(observer)
+    if(observer) {
       observer->initializeUsingXML(e);
+      observer->initialize();
+    }
     return observer;
   }
   return 0;
