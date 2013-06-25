@@ -45,6 +45,7 @@ class LocalFrameOfReferenceProperty : public Property {
     std::string xmlName;
   public:
     LocalFrameOfReferenceProperty(const std::string &frame_="", Element* element_=0, const std::string &xmlName_="");
+    virtual Property* clone() const {return new LocalFrameOfReferenceProperty(*this);}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
     void fromWidget(QWidget *widget);
@@ -61,6 +62,7 @@ class ParentFrameOfReferenceProperty : public Property {
     std::string xmlName;
   public:
     ParentFrameOfReferenceProperty(const std::string &frame_="", Element* element_=0, const std::string &xmlName_="");
+    virtual Property* clone() const {return new ParentFrameOfReferenceProperty(*this);}
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void initialize();
@@ -78,6 +80,7 @@ class FrameOfReferenceProperty : public Property {
     std::string xmlName;
   public:
     FrameOfReferenceProperty(const std::string &frame="", Element* element=0, const std::string &xmlName=""); 
+    virtual Property* clone() const {return new FrameOfReferenceProperty(*this);}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
     void initialize();
@@ -95,6 +98,7 @@ class ContourOfReferenceProperty : public Property {
     std::string xmlName;
   public:
     ContourOfReferenceProperty(const std::string &contour_="", Element* element_=0, const std::string &xmlName_=""); 
+    virtual Property* clone() const {return new ContourOfReferenceProperty(*this);}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
     void initialize();
@@ -112,6 +116,7 @@ class RigidBodyOfReferenceProperty : public Property {
     std::string xmlName;
   public:
     RigidBodyOfReferenceProperty(const std::string &body_="", Element *element_=0, const std::string &xmlName_="");
+    virtual Property* clone() const {return new RigidBodyOfReferenceProperty(*this);}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
     void initialize();
@@ -129,6 +134,7 @@ class ObjectOfReferenceProperty : public Property {
     std::string xmlName;
   public:
     ObjectOfReferenceProperty(const std::string &object_="", Element *element_=0, const std::string &xmlName_=""); 
+    virtual Property* clone() const {return new ObjectOfReferenceProperty(*this);}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
     void initialize();
@@ -146,6 +152,7 @@ class SignalOfReferenceProperty : public Property {
     std::string xmlName;
   public:
     SignalOfReferenceProperty(const std::string &signal_="", Element *element_=0, const std::string &xmlName_=""); 
+    virtual Property* clone() const {return new SignalOfReferenceProperty(*this);}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
     void initialize();
@@ -163,6 +170,7 @@ class ExtraDynamicOfReferenceProperty : public Property {
     std::string xmlName;
   public:
     ExtraDynamicOfReferenceProperty(const std::string &ed_="", Element *element_=0, const std::string &xmlName_=""); 
+    virtual Property* clone() const {return new ExtraDynamicOfReferenceProperty(*this);}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
     void initialize();
@@ -176,6 +184,7 @@ class FileProperty : public Property {
 
   public:
     FileProperty(const std::string &xmlName_) : xmlName(xmlName_) {}
+    virtual Property* clone() const {return new FileProperty(*this);}
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
@@ -192,6 +201,7 @@ class IntegerProperty : public Property {
 
   public:
     IntegerProperty(int value_, const std::string &xmlName_) : value(value_), xmlName(xmlName_) {}
+    virtual Property* clone() const {return new IntegerProperty(*this);}
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
@@ -208,6 +218,7 @@ class TextProperty : public Property {
 
   public:
     TextProperty(const std::string &text_, const std::string &xmlName_, bool quote_=0) : text(text_), xmlName(xmlName_), quote(quote_) {}
+    virtual Property* clone() const {return new TextProperty(*this);}
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
@@ -225,6 +236,7 @@ class DependenciesProperty : public Property {
 
   public:
     DependenciesProperty(Element* element_, const std::string &xmlName_) : element(element_), xmlName(xmlName_) {}
+    virtual Property* clone() const {return new DependenciesProperty(*this);}
 
     void initialize();
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
@@ -235,7 +247,7 @@ class DependenciesProperty : public Property {
   protected:
     Element* element;
     std::string xmlName;
-    std::vector<RigidBodyOfReferenceProperty*> refBody;
+    std::vector<RigidBodyOfReferenceProperty> refBody;
 
     void addDependency();
     void updateGeneralizedCoordinatesOfBodies();
@@ -245,6 +257,7 @@ class ConnectFramesProperty : public Property {
 
   public:
     ConnectFramesProperty(int n, Element* element, const std::string &xmlName_=MBSIMNS"connect");
+    virtual Property* clone() const {return new ConnectFramesProperty(*this);}
 
     void initialize();
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
@@ -253,8 +266,7 @@ class ConnectFramesProperty : public Property {
     void toWidget(QWidget *widget);
 
   protected:
-    std::vector<FrameOfReferenceProperty*> frame;
-    Element* element;
+    std::vector<FrameOfReferenceProperty> frame;
     std::string xmlName;
 };
 
@@ -262,6 +274,7 @@ class ConnectContoursProperty : public Property {
 
   public:
     ConnectContoursProperty(int n, Element* element, const std::string &xmlName_=MBSIMNS"connect");
+    virtual Property* clone() const {return new ConnectContoursProperty(*this);}
 
     void initialize();
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
@@ -270,8 +283,7 @@ class ConnectContoursProperty : public Property {
     void toWidget(QWidget *widget);
 
   protected:
-    std::vector<ContourOfReferenceProperty*> contour;
-    Element* element;
+    std::vector<ContourOfReferenceProperty> contour;
     std::string xmlName;
 };
 
@@ -279,6 +291,7 @@ class SolverChoiceProperty : public Property {
 
   public:
     SolverChoiceProperty(const std::string &xmlName_) : choice("FixedPointSingle"), xmlName(xmlName_) {}
+    virtual Property* clone() const {return new SolverChoiceProperty(*this);}
 
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -294,6 +307,7 @@ class SolverTolerancesProperty : public Property {
 
   public:
     SolverTolerancesProperty();
+    virtual Property* clone() const {return new SolverTolerancesProperty(*this);}
 
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -308,6 +322,7 @@ class SolverParametersProperty : public Property {
 
   public:
     SolverParametersProperty();
+    virtual Property* clone() const {return new SolverParametersProperty(*this);}
 
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -321,13 +336,13 @@ class SolverParametersProperty : public Property {
 class GearDependencyProperty : public Property {
   public:
     GearDependencyProperty(Element* element);
+    virtual Property* clone() const {return new GearDependencyProperty(*this);}
     void initialize() {refBody.initialize();}
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
   protected:
-    Element* element;
     RigidBodyOfReferenceProperty refBody;
     ExtProperty ratio;
 };
@@ -336,6 +351,7 @@ class GearDependenciesProperty : public Property {
 
   public:
     GearDependenciesProperty(Element* element_, const std::string &xmlName_) : element(element_), xmlName(xmlName_) {}
+    virtual Property* clone() const {return new GearDependenciesProperty(*this);}
 
     void initialize();
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
@@ -346,7 +362,7 @@ class GearDependenciesProperty : public Property {
   protected:
     Element* element;
     std::string xmlName;
-    std::vector<GearDependencyProperty*> refBody;
+    std::vector<GearDependencyProperty> refBody;
 
     void addDependency();
     void updateGeneralizedCoordinatesOfBodies();
@@ -356,6 +372,7 @@ class EmbedProperty : public Property {
 
   public:
     EmbedProperty(Element *element);
+    virtual Property* clone() const {return new EmbedProperty(*this);}
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
@@ -375,13 +392,13 @@ class EmbedProperty : public Property {
 class SignalReferenceProperty : public Property {
   public:
     SignalReferenceProperty(Element* element);
+    virtual Property* clone() const {return new SignalReferenceProperty(*this);}
     void initialize() {refSignal.initialize();}
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
   protected:
-    Element* element;
     SignalOfReferenceProperty refSignal;
     ExtProperty factor;
 };
@@ -390,6 +407,7 @@ class SignalReferencesProperty : public Property {
 
   public:
     SignalReferencesProperty(Element* element_, const std::string &xmlName_) : element(element_), xmlName(xmlName_) {}
+    virtual Property* clone() const {return new SignalReferencesProperty(*this);}
 
     void initialize();
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
@@ -400,7 +418,7 @@ class SignalReferencesProperty : public Property {
   protected:
     Element* element;
     std::string xmlName;
-    std::vector<SignalReferenceProperty*> refSignal;
+    std::vector<SignalReferenceProperty> refSignal;
 
     void addReference();
 };

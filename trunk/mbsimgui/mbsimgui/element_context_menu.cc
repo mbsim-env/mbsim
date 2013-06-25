@@ -104,6 +104,8 @@ void GroupContextMenu::addElementFromFile() {
     if(group) return mw->addGroup(group);
     Object *object = Object::readXMLFile(file.toStdString(),element);
     if(object) return mw->addObject(object);
+    ExtraDynamic *extraDynamic = ExtraDynamic::readXMLFile(file.toStdString(),element);
+    if(extraDynamic) return mw->addExtraDynamic(extraDynamic);
     Link *link = Link::readXMLFile(file.toStdString(),element);
     if(link) return mw->addLink(link);
     Observer *observer = Observer::readXMLFile(file.toStdString(),element);

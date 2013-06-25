@@ -47,9 +47,6 @@ Element::Element(const string &name_, Element *parent_) : parent(parent_), embed
   ID=toStr(IDcounter++);
 }
 
-Element::~Element() {
-}
-
 string Element::getPath() {
  return parent?(parent->getPath()+"."+getName()):getName();
 }

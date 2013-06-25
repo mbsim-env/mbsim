@@ -206,57 +206,6 @@ void MatProperty::toWidget(QWidget *widget) {
   static_cast<BasicMatWidget*>(widget)->setMat(fromStdMat(getMat()));
 }
 
-//SymMatProperty::SymMatProperty(int rows) {
-// value.resize(rows);
-//  for(int i=0; i<rows; i++)
-//    value[i].resize(rows);
-//}
-//
-//TiXmlElement* SymMatProperty::initializeUsingXML(TiXmlElement *parent) {
-//  TiXmlElement *element=parent->FirstChildElement();
-//  if(!element || element->ValueStr() != (PVNS"xmlMatrix"))
-//    return 0;
-//  TiXmlElement *ei=element->FirstChildElement();
-//  int i=0;
-//  while(ei && ei->ValueStr()==PVNS"row") {
-//    TiXmlElement *ej=ei->FirstChildElement();
-//    int j=0;
-//    value.push_back(vector<string>());
-//    while(ej && ej->ValueStr()==PVNS"ele") {
-//      value[i].push_back(ej->GetText());
-//      ej=ej->NextSiblingElement();
-//      j++;
-//    }
-//    i++;
-//    ei=ei->NextSiblingElement();
-//  }
-//  return element;
-//}
-//
-//TiXmlElement* SymMatProperty::writeXMLFile(TiXmlNode *parent) {
-//  TiXmlElement *ele = new TiXmlElement(PVNS"xmlMatrix");
-//  for(unsigned int i=0; i<rows(); i++) {
-//    TiXmlElement *elei = new TiXmlElement(PVNS"row");
-//    for(unsigned int j=0; j<cols(); j++) {
-//      TiXmlElement *elej = new TiXmlElement(PVNS"ele");
-//      TiXmlText *text = new TiXmlText(value[i][j]);
-//      elej->LinkEndChild(text);
-//      elei->LinkEndChild(elej);
-//    }
-//    ele->LinkEndChild(elei);
-//  }
-//  parent->LinkEndChild(ele);
-//  return 0;
-//}
-//
-//void SymMatProperty::fromWidget(QWidget *widget) {
-//  setMat(static_cast<BasicMatWidget*>(widget)->getMat());
-//}
-//
-//void SymMatProperty::toWidget(QWidget *widget) {
-//  static_cast<BasicMatWidget*>(widget)->setMat(getMat());
-//}
-
 TiXmlElement* PhysicalVariableProperty::initializeUsingXML(TiXmlElement *parent) {
   TiXmlElement *e = (xmlName=="")?parent:parent->FirstChildElement(xmlName);
   if(e) {

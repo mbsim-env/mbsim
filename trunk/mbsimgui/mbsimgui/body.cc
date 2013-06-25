@@ -30,6 +30,13 @@ Body::Body(const string &str, Element *parent) : Object(str,parent), R(0,false) 
   R.setProperty(new FrameOfReferenceProperty(getParent()->getFrame(0)->getXMLPath(this,true),this,MBSIMNS"frameOfReference"));
 }
 
+Body::Body(const Body &b) : Object(b), R(b.R) {
+  for(unsigned int i=0; i<b.frame.size(); i++)
+    frame.push_back(static_cast<Frame*>(b.frame[i]->clone()));;
+  for(unsigned int i=0; i<b.contour.size(); i++)
+    contour.push_back(static_cast<Contour*>(b.contour[i]->clone()));;
+}
+
 Body::~Body() {
   for(vector<Frame*>::iterator i = frame.begin(); i != frame.end(); ++i) 
     delete *i;
@@ -37,6 +44,24 @@ Body::~Body() {
     delete *i;
   for(vector<Element*>::iterator i = removedElement.begin(); i != removedElement.end(); ++i) 
     delete *i;
+}
+
+Body& Body::operator=(const Body &b) {
+  Object::operator=(b);
+  for(vector<Frame*>::iterator i = frame.begin(); i != frame.end(); ++i)
+    delete *i;
+  for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i)
+    delete *i;
+  for(vector<Element*>::iterator i = removedElement.begin(); i != removedElement.end(); ++i) 
+    delete *i;
+  frame.clear();
+  contour.clear();
+  removedElement.clear();
+  R=b.R;
+  for(unsigned int i=0; i<b.frame.size(); i++)
+    frame.push_back(static_cast<Frame*>(b.frame[i]->clone()));;
+  for(unsigned int i=0; i<b.contour.size(); i++)
+    contour.push_back(static_cast<Contour*>(b.contour[i]->clone()));;
 }
 
 void Body::initialize() {

@@ -35,9 +35,6 @@ Object::Object(const string &str, Element *parent) : Element(str,parent), q0(0,f
   u0.setProperty(new ExtPhysicalVarProperty(input));
 }
 
-Object::~Object() {
-}
-
 Object* Object::readXMLFile(const string &filename, Element *parent) {
   TiXmlDocument doc;
   if(doc.LoadFile(filename)) {

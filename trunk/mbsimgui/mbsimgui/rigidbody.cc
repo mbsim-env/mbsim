@@ -66,9 +66,6 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   isFrameOfBodyForRotation.setProperty(new ExtPhysicalVarProperty(input)); 
 }
 
-RigidBody::~RigidBody() {
-}
-
 int RigidBody::getqRelSize() const {
   int nq=0, nqT=0, nqR=0;
   if(translation.isActive()) {

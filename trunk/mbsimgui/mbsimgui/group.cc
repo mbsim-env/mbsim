@@ -55,6 +55,23 @@ Group::Group(const string &str, Element *parent) : Element(str,parent), position
   }
 }
 
+Group::Group(const Group &g) : Element(g), position(g.position), orientation(g.orientation), frameOfReference(g.frameOfReference) {
+  for(unsigned int i=0; i<g.group.size(); i++)
+    group.push_back(static_cast<Group*>(g.group[i]->clone()));;
+  for(unsigned int i=0; i<g.object.size(); i++)
+    object.push_back(static_cast<Object*>(g.object[i]->clone()));;
+  for(unsigned int i=0; i<g.link.size(); i++)
+    link.push_back(static_cast<Link*>(g.link[i]->clone()));;
+  for(unsigned int i=0; i<g.extraDynamic.size(); i++)
+    extraDynamic.push_back(static_cast<ExtraDynamic*>(g.extraDynamic[i]->clone()));;
+  for(unsigned int i=0; i<g.frame.size(); i++)
+    frame.push_back(static_cast<Frame*>(g.frame[i]->clone()));;
+  for(unsigned int i=0; i<g.contour.size(); i++)
+    contour.push_back(static_cast<Contour*>(g.contour[i]->clone()));;
+  for(unsigned int i=0; i<g.observer.size(); i++)
+    observer.push_back(static_cast<Observer*>(g.observer[i]->clone()));;
+}
+
 Group::~Group() {
   for(vector<Group*>::iterator i = group.begin(); i != group.end(); ++i) 
     delete *i;
@@ -72,6 +89,51 @@ Group::~Group() {
     delete *i;
   for(vector<Element*>::iterator i = removedElement.begin(); i != removedElement.end(); ++i) 
     delete *i;
+}
+
+Group& Group::operator=(const Group &g) {
+  Element::operator=(g);
+  for(vector<Group*>::iterator i = group.begin(); i != group.end(); ++i) 
+    delete *i;
+  for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
+    delete *i;
+  for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
+    delete *i;
+  for(vector<ExtraDynamic*>::iterator i = extraDynamic.begin(); i != extraDynamic.end(); ++i)
+    delete *i;
+  for(vector<Frame*>::iterator i = frame.begin(); i != frame.end(); ++i)
+    delete *i;
+  for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i)
+    delete *i;
+  for(vector<Observer*>::iterator i = observer.begin(); i != observer.end(); ++i)
+    delete *i;
+  for(vector<Element*>::iterator i = removedElement.begin(); i != removedElement.end(); ++i) 
+    delete *i;
+  group.clear();
+  object.clear();
+  link.clear();
+  extraDynamic.clear();
+  frame.clear();
+  contour.clear();
+  observer.clear();
+  removedElement.clear();
+  position=g.position; 
+  orientation=g.orientation; 
+  frameOfReference=g.frameOfReference;
+   for(unsigned int i=0; i<g.group.size(); i++)
+    group.push_back(static_cast<Group*>(g.group[i]->clone()));;
+  for(unsigned int i=0; i<g.object.size(); i++)
+    object.push_back(static_cast<Object*>(g.object[i]->clone()));;
+  for(unsigned int i=0; i<g.link.size(); i++)
+    link.push_back(static_cast<Link*>(g.link[i]->clone()));;
+  for(unsigned int i=0; i<g.extraDynamic.size(); i++)
+    extraDynamic.push_back(static_cast<ExtraDynamic*>(g.extraDynamic[i]->clone()));;
+  for(unsigned int i=0; i<g.frame.size(); i++)
+    frame.push_back(static_cast<Frame*>(g.frame[i]->clone()));;
+  for(unsigned int i=0; i<g.contour.size(); i++)
+    contour.push_back(static_cast<Contour*>(g.contour[i]->clone()));;
+  for(unsigned int i=0; i<g.observer.size(); i++)
+    observer.push_back(static_cast<Observer*>(g.observer[i]->clone()));;
 }
 
 void Group::initialize() {

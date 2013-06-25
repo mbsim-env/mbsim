@@ -26,7 +26,10 @@ class Body : public Object {
   friend class BodyPropertyDialog;
   public:
     Body(const std::string &str, Element *parent);
+    Body(const Body &b);
     ~Body();
+    Body& operator=(const Body &b);
+
     virtual Element* getByPathSearch(std::string path);
 
     int getNumberOfFrames() {return frame.size();}

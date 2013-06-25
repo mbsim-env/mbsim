@@ -520,8 +520,6 @@ CompoundRigidBodyProperty::CompoundRigidBodyProperty(const std::string &name, co
 }
 
 TiXmlElement* CompoundRigidBodyProperty::initializeUsingXML(TiXmlElement *element) {
-  for(unsigned int i=0; i<body.size(); i++)
-    delete body[i];
   body.clear();
   
   OMBVBodyProperty::initializeUsingXML(element);
@@ -536,8 +534,8 @@ TiXmlElement* CompoundRigidBodyProperty::initializeUsingXML(TiXmlElement *elemen
     property.push_back(new SphereProperty("Body"+toStr(i),ID));
     property.push_back(new IvBodyProperty("Body"+toStr(i),ID));
     property.push_back(new InvisibleBodyProperty("Body"+toStr(i),ID));
-    body.push_back(new ChoiceProperty("",property,1,OPENMBVNS));
-    body[body.size()-1]->initializeUsingXML(e);
+    body.push_back(ChoiceProperty("",property,1,OPENMBVNS));
+    body[body.size()-1].initializeUsingXML(e);
     e=e->NextSiblingElement();
     i++;
   }
@@ -547,13 +545,11 @@ TiXmlElement* CompoundRigidBodyProperty::initializeUsingXML(TiXmlElement *elemen
 TiXmlElement* CompoundRigidBodyProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *e=OMBVBodyProperty::writeXMLFile(parent);
   for(unsigned int i=0; i<body.size(); i++)
-    body[i]->writeXMLFile(e);
+    body[i].writeXMLFile(e);
   return e;
 }
 
 void CompoundRigidBodyProperty::fromWidget(QWidget *widget) {
-  for(unsigned int i=0; i<body.size(); i++)
-    delete body[i];
   body.clear();
   OMBVBodyProperty::fromWidget(widget);
   for(unsigned int i=0; i<static_cast<CompoundRigidBodyWidget*>(widget)->stackedWidget->count(); i++) {
@@ -564,8 +560,8 @@ void CompoundRigidBodyProperty::fromWidget(QWidget *widget) {
     property.push_back(new SphereProperty("Body"+toStr((int)i),ID));
     property.push_back(new IvBodyProperty("Body"+toStr((int)i),ID));
     property.push_back(new InvisibleBodyProperty("Body"+toStr((int)i),ID));
-    body.push_back(new ChoiceProperty("",property,1,OPENMBVNS));
-    body[i]->fromWidget(static_cast<CompoundRigidBodyWidget*>(widget)->stackedWidget->widget(i));
+    body.push_back(ChoiceProperty("",property,1,OPENMBVNS));
+    body[i].fromWidget(static_cast<CompoundRigidBodyWidget*>(widget)->stackedWidget->widget(i));
   }
 }
 
@@ -573,7 +569,7 @@ void CompoundRigidBodyProperty::toWidget(QWidget *widget) {
   OMBVBodyProperty::toWidget(widget);
   for(unsigned int i=0; i<body.size(); i++) {
     static_cast<CompoundRigidBodyWidget*>(widget)->addBody();
-    body[i]->toWidget(static_cast<CompoundRigidBodyWidget*>(widget)->stackedWidget->widget(i));
+    body[i].toWidget(static_cast<CompoundRigidBodyWidget*>(widget)->stackedWidget->widget(i));
   }
 }
 

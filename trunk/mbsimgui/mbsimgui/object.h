@@ -27,7 +27,6 @@ class Object : public Element {
   friend class ObjectPropertyDialog;
   public:
     Object(const std::string &str, Element *parent);
-    ~Object();
     virtual int getqSize() {return 0;}
     virtual int getuSize() {return 0;}
     static Object* readXMLFile(const std::string &filename, Element *parent);

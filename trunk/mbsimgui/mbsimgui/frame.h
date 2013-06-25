@@ -30,6 +30,7 @@ class Frame : public Element {
   public:
     Frame(const std::string &str, Element *parent, bool grey=true);
     ~Frame();
+    virtual Element* clone() const {return new Frame(*this);}
     std::string getType() const { return "Frame"; }
     static Frame* readXMLFile(const std::string &filename, Element *parent);    
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
@@ -50,6 +51,7 @@ class FixedRelativeFrame : public Frame {
   public:
     FixedRelativeFrame(const std::string &str, Element *parent);
     ~FixedRelativeFrame();
+    virtual Element* clone() const {return new FixedRelativeFrame(*this);}
     std::string getType() const { return "FixedRelativeFrame"; }
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual void initializeUsingXML2(MBXMLUtils::TiXmlElement *element);

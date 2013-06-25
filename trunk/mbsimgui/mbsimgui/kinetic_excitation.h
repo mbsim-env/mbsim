@@ -27,7 +27,7 @@ class KineticExcitation : public Link {
   friend class KineticExcitationPropertyDialog;
   public:
     KineticExcitation(const std::string &str, Element *parent);
-    ~KineticExcitation();
+    virtual Element* clone() const {return new KineticExcitation(*this);}
     std::string getType() const { return "KineticExcitation"; }
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
