@@ -51,8 +51,10 @@ Contour* Contour::readXMLFile(const string &filename, Element *parent) {
     map<string,string> dummy;
     incorporateNamespace(doc.FirstChildElement(), dummy);
     Contour *contour=ObjectFactory::getInstance()->createContour(e,parent);
-    if(contour)
+    if(contour) {
       contour->initializeUsingXML(e);
+      contour->initialize();
+    }
     return contour;
   }
   return 0;

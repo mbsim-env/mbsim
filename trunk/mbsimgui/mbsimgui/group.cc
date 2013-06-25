@@ -244,8 +244,10 @@ Group* Group::readXMLFile(const string &filename, Element *parent) {
     map<string,string> dummy;
     incorporateNamespace(doc.FirstChildElement(), dummy);
     Group *group=ObjectFactory::getInstance()->createGroup(e,parent);
-    if(group)
+    if(group) {
       group->initializeUsingXML(e);
+      group->initialize();
+    }
     return group;
   }
   return 0;

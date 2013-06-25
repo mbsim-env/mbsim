@@ -38,8 +38,10 @@ Link* Link::readXMLFile(const string &filename, Element *parent) {
     map<string,string> dummy;
     incorporateNamespace(doc.FirstChildElement(), dummy);
     Link *link=ObjectFactory::getInstance()->createLink(e,parent);
-    if(link)
+    if(link) {
       link->initializeUsingXML(e);
+      link->initialize();
+    }
     return link;
   }
   return 0;
