@@ -42,6 +42,7 @@ class Solver : public Group {
     ExtProperty environment, solverParameters, inverseKinetics;
   public:
     Solver(const std::string &str, Element *parent);
+    virtual Element* clone() const {return new Solver(*this);}
     std::string getType() const { return "DynamicSystemSolver"; }
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);

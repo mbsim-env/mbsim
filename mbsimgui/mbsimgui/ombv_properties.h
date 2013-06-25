@@ -42,6 +42,7 @@ class OMBVFrameProperty : public OMBVObjectProperty {
 
   public:
     OMBVFrameProperty(const std::string &name="NOTSET", const std::string &xmlName="", const std::string &ID_=0);
+    virtual Property* clone() const {return new OMBVFrameProperty(*this);}
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
     virtual std::string getType() const { return "Frame"; }
@@ -69,6 +70,7 @@ class OMBVArrowProperty : public OMBVDynamicColoredObjectProperty {
 
   public:
     OMBVArrowProperty(const std::string &name="NOTSET", const std::string &ID_=0, bool fromPoint=false);
+    virtual Property* clone() const {return new OMBVArrowProperty(*this);}
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
     virtual std::string getType() const { return "Arrow"; }
@@ -82,6 +84,7 @@ class OMBVCoilSpringProperty : public OMBVObjectProperty {
 
   public:
     OMBVCoilSpringProperty(const std::string &name="NOTSET", const std::string &ID_=0);
+    virtual Property* clone() const {return new OMBVCoilSpringProperty(*this);}
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
     void fromWidget(QWidget *widget);
@@ -108,6 +111,7 @@ class InvisibleBodyProperty : public OMBVBodyProperty {
 
   public:
     InvisibleBodyProperty(const std::string &name="NOTSET", const std::string &ID=0) : OMBVBodyProperty(name,ID) {}
+    virtual Property* clone() const {return new InvisibleBodyProperty(*this);}
     virtual std::string getType() const { return "InvisibleBody"; }
 };
 
@@ -115,6 +119,7 @@ class CubeProperty : public OMBVBodyProperty {
 
   public:
     CubeProperty(const std::string &name="NOTSET", const std::string &ID_=0);
+    virtual Property* clone() const {return new CubeProperty(*this);}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "Cube"; }
@@ -128,6 +133,7 @@ class CuboidProperty : public OMBVBodyProperty {
 
   public:
     CuboidProperty(const std::string &name="NOTSET", const std::string &ID_=0);
+    virtual Property* clone() const {return new CuboidProperty(*this);}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "Cuboid"; }
@@ -141,6 +147,7 @@ class SphereProperty : public OMBVBodyProperty {
 
   public:
     SphereProperty(const std::string &name="NOTSET", const std::string &ID_=0);
+    virtual Property* clone() const {return new SphereProperty(*this);}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "Sphere"; }
@@ -153,6 +160,7 @@ class SphereProperty : public OMBVBodyProperty {
 class FrustumProperty : public OMBVBodyProperty {
   public:
     FrustumProperty(const std::string &name="NOTSET", const std::string &ID_=0);
+    virtual Property* clone() const {return new FrustumProperty(*this);}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "Frustum"; }
@@ -165,6 +173,7 @@ class FrustumProperty : public OMBVBodyProperty {
 class IvBodyProperty : public OMBVBodyProperty {
   public:
     IvBodyProperty(const std::string &name="NOTSET", const std::string &ID_=0);
+    virtual Property* clone() const {return new IvBodyProperty(*this);}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "IvBody"; }
@@ -178,19 +187,21 @@ class CompoundRigidBodyProperty : public OMBVBodyProperty {
 
   public:
     CompoundRigidBodyProperty(const std::string &name="NOTSET", const std::string &ID_=0);
+    virtual Property* clone() const {return new CompoundRigidBodyProperty(*this);}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     virtual std::string getType() const { return "CompoundRigidBody"; }
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
   protected:
-    std::vector<ChoiceProperty*> body;
+    std::vector<ChoiceProperty> body;
 };
 
 class OMBVBodySelectionProperty : public Property {
   public:
 
     OMBVBodySelectionProperty(RigidBody* body);
+    virtual Property* clone() const {return new OMBVBodySelectionProperty(*this);}
 
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -205,6 +216,7 @@ class OMBVEmptyProperty : public OMBVObjectProperty {
 
   public:
     OMBVEmptyProperty(const std::string &xmlName_, const std::string &ID=0) : OMBVObjectProperty("Empty",ID), xmlName(xmlName_) {}
+    virtual Property* clone() const {return new OMBVEmptyProperty(*this);}
 
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -220,6 +232,7 @@ class OMBVPlaneProperty : public OMBVObjectProperty {
 
   public:
     OMBVPlaneProperty(const std::string &xmlName, const std::string &ID_=0);
+    virtual Property* clone() const {return new OMBVPlaneProperty(*this);}
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
     virtual std::string getType() const { return "Plane"; }

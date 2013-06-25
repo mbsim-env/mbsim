@@ -27,7 +27,7 @@ class RigidBody : public Body {
   friend class RigidBodyPropertyDialog;
   public:
     RigidBody(const std::string &str, Element *parent);
-    ~RigidBody();
+    virtual Element* clone() const {return new RigidBody(*this);}
     std::string getType() const { return "RigidBody"; }
     int getqSize() const {return constrained?0:getqRelSize();}
     int getquize() const {return constrained?0:getuRelSize();}

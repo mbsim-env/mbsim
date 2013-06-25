@@ -45,9 +45,23 @@ TiXmlElement* ExtPhysicalVarProperty::initializeUsingXML(TiXmlElement *element) 
   return 0;
 }
 
+ExtPhysicalVarProperty::ExtPhysicalVarProperty(const ExtPhysicalVarProperty &p) : currentInput(p.currentInput) {
+  for(unsigned int i=0; i<p.inputProperty.size(); i++)
+    inputProperty.push_back(new PhysicalVariableProperty(*p.inputProperty[i]));
+}
+
 ExtPhysicalVarProperty::~ExtPhysicalVarProperty() {
   for(vector<PhysicalVariableProperty*>::iterator i = inputProperty.begin(); i != inputProperty.end(); ++i)
     delete *i;
+}
+
+ExtPhysicalVarProperty& ExtPhysicalVarProperty::operator=(const ExtPhysicalVarProperty &p) {
+  for(vector<PhysicalVariableProperty*>::iterator i = inputProperty.begin(); i != inputProperty.end(); ++i)
+    delete *i;
+  inputProperty.clear();
+  currentInput = p.currentInput;
+  for(unsigned int i=0; i<p.inputProperty.size(); i++)
+    inputProperty.push_back(new PhysicalVariableProperty(*p.inputProperty[i]));
 }
 
 TiXmlElement* ExtPhysicalVarProperty::writeXMLFile(TiXmlNode *parent) {
@@ -69,9 +83,26 @@ void ExtPhysicalVarProperty::toWidget(QWidget *widget) {
   //  inputProperty[i]->toWidget(static_cast<ExtPhysicalVarWidget*>(widget)->getPhysicalVariableWidget(i));
 }
 
+ChoiceProperty::ChoiceProperty(const ChoiceProperty &p) : index(p.index), mode(p.mode), xmlName(p.xmlName), xmlBase(p.xmlBase) {
+  for(unsigned int i=0; i<p.property.size(); i++)
+    property.push_back(p.property[i]->clone());
+}
+
 ChoiceProperty::~ChoiceProperty() {
   for(unsigned int i=0; i<property.size(); i++)
     delete property[i];
+}
+
+ChoiceProperty& ChoiceProperty::operator=(const ChoiceProperty &p) {
+  for(unsigned int i=0; i<property.size(); i++)
+    delete property[i];
+  property.clear();
+  index=p.index; 
+  mode=p.mode; 
+  xmlName=p.xmlName; 
+  xmlBase=p.xmlBase;
+  for(unsigned int i=0; i<p.property.size(); i++)
+    property.push_back(p.property[i]->clone());
 }
 
 void ChoiceProperty::initialize() {
@@ -188,9 +219,23 @@ void ExtProperty::toWidget(QWidget *widget) {
   property->toWidget(static_cast<ExtWidget*>(widget)->widget);
 }
 
+ContainerProperty::ContainerProperty(const ContainerProperty &p) : xmlName(p.xmlName) {
+  for(unsigned int i=0; i<p.property.size(); i++)
+    property.push_back(p.property[i]->clone());
+}
+
 ContainerProperty::~ContainerProperty() {
   for(vector<Property*>::iterator i = property.begin(); i != property.end(); ++i)
     delete *i;
+}
+
+ContainerProperty& ContainerProperty::operator=(const ContainerProperty &p) {
+  for(vector<Property*>::iterator i = property.begin(); i != property.end(); ++i)
+    delete *i;
+  property.clear();
+  xmlName=p.xmlName; 
+  for(unsigned int i=0; i<p.property.size(); i++)
+    property.push_back(p.property[i]->clone());
 }
 
 void ContainerProperty::initialize() {

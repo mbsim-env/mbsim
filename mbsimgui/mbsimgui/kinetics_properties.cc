@@ -27,6 +27,18 @@
 using namespace std;
 using namespace MBXMLUtils;
 
+GeneralizedForceLawProperty::GeneralizedForceLawProperty(const GeneralizedForceLawProperty &p) : forceFunc(static_cast<Function2Property*>(p.forceFunc->clone())) {
+}
+    
+GeneralizedForceLawProperty::~GeneralizedForceLawProperty() {
+  delete forceFunc;
+}
+
+GeneralizedForceLawProperty& GeneralizedForceLawProperty::operator=(const GeneralizedForceLawProperty &p) {
+  delete forceFunc;
+  forceFunc=static_cast<Function2Property*>(p.forceFunc->clone());
+}
+
 TiXmlElement* GeneralizedForceLawProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
   if(forceFunc) {
@@ -131,6 +143,18 @@ void UnilateralNewtonImpactProperty::fromWidget(QWidget *widget) {
 
 void UnilateralNewtonImpactProperty::toWidget(QWidget *widget) {
   restitutionCoefficient.toWidget(static_cast<UnilateralNewtonImpactWidget*>(widget)->restitutionCoefficient);
+}
+
+FrictionForceLawProperty::FrictionForceLawProperty(const FrictionForceLawProperty &p) : frictionForceFunc(static_cast<Function2Property*>(p.frictionForceFunc->clone())) {
+}
+
+FrictionForceLawProperty::~FrictionForceLawProperty() {
+  delete frictionForceFunc;
+}
+
+FrictionForceLawProperty& FrictionForceLawProperty::operator=(const FrictionForceLawProperty &p) {
+  delete frictionForceFunc; 
+  frictionForceFunc=static_cast<Function2Property*>(p.frictionForceFunc->clone());
 }
 
 TiXmlElement* FrictionForceLawProperty::writeXMLFile(TiXmlNode *parent) {
@@ -624,7 +648,7 @@ void ForceChoiceProperty::toWidget(QWidget *widget) {
   forceLaw.toWidget(static_cast<ForceChoiceWidget*>(widget)->forceLaw);
 }
 
-ForceDirectionProperty::ForceDirectionProperty(Element *element_, const string &xmlName_) : element(element_), xmlName(xmlName_) {
+ForceDirectionProperty::ForceDirectionProperty(Element *element, const string &xmlName_) : xmlName(xmlName_) {
 
   vector<PhysicalVariableProperty*> input;
   input.push_back(new PhysicalVariableProperty(new VecProperty(3),"-",MBSIMNS"direction"));

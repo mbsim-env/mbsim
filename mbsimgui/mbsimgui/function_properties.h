@@ -49,6 +49,7 @@ class Function2Property : public Property {
 class SymbolicFunction1Property : public Function1Property {
   public:
     SymbolicFunction1Property(const std::string &ext, const std::string &var);
+    virtual Property* clone() const {return new SymbolicFunction1Property(*this);}
     inline std::string getType() const { return "SymbolicFunction1_"+ext; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -63,7 +64,9 @@ class SymbolicFunction1Property : public Function1Property {
 class DifferentiableFunction1Property : public Function1Property {
   public:
     DifferentiableFunction1Property(const std::string &ext="") : Function1Property(ext), order(0) {}
-    //virtual ~DifferentiableFunction1() { delete derivatives[0]; derivatives.erase(derivatives.begin()); }
+    DifferentiableFunction1Property(const DifferentiableFunction1Property &p);
+    ~DifferentiableFunction1Property();
+    DifferentiableFunction1Property& operator=(const DifferentiableFunction1Property &p);
     const Function1Property& getDerivative(int degree) const { return *(derivatives[degree]); }
     Function1Property& getDerivative(int degree) { return *(derivatives[degree]); }
     void addDerivative(Function1Property *diff) { derivatives.push_back(diff); }
@@ -81,6 +84,7 @@ class DifferentiableFunction1Property : public Function1Property {
 class ConstantFunction1Property : public Function1Property {
   public:
     ConstantFunction1Property(const std::string &ext);
+    virtual Property* clone() const {return new ConstantFunction1Property(*this);}
     inline std::string getType() const { return "ConstantFunction1_"+ext; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -93,6 +97,7 @@ class ConstantFunction1Property : public Function1Property {
 class QuadraticFunction1Property : public DifferentiableFunction1Property {
   public:
     QuadraticFunction1Property();
+    virtual Property* clone() const {return new QuadraticFunction1Property(*this);}
     inline std::string getType() const { return "QuadraticFunction1_VS"; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -106,35 +111,13 @@ class QuadraticFunction1Property : public DifferentiableFunction1Property {
 class SinusFunction1Property : public DifferentiableFunction1Property {
   public:
     SinusFunction1Property();
+    virtual Property* clone() const {return new SinusFunction1Property(*this);}
     inline std::string getType() const { return "SinusFunction1_VS"; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
- //   class ZerothDerivative : public Function1 {
- //      public:
- //       ZerothDerivative(SinusFunction1 *sin) : Function1(), parent(sin) {}
- //       Vector<Col,double> operator()(const double& x, const void * =NULL);
- //     private:
- //       SinusFunction1 *parent;
- //   };
-
- //   class FirstDerivative : public Function1 {
- //      public:
- //       FirstDerivative(SinusFunction1 *sin) : Function1(), parent(sin) {}
- //       Vector<Col,double> operator()(const double& x, const void * =NULL);
- //     private:
- //       SinusFunction1 *parent;
- //   };
- //   
- //   class SecondDerivative : public Function1 {
- //      public:
- //       SecondDerivative(SinusFunction1 *sin) : Function1(), parent(sin) {}
- //       Vector<Col,double> operator()(const double& x, const void * =NULL);
- //     private:
- //       SinusFunction1 *parent;
- //   };
   protected:
     ExtProperty a, f, p, o;
 };
@@ -142,7 +125,7 @@ class SinusFunction1Property : public DifferentiableFunction1Property {
 class TabularFunction1Property : public Function1Property {
   public:
     TabularFunction1Property();
-    ~TabularFunction1Property() {delete choice;}
+    virtual Property* clone() const {return new TabularFunction1Property(*this);}
     inline std::string getType() const { return "TabularFunction1_VS"; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -150,13 +133,14 @@ class TabularFunction1Property : public Function1Property {
     void toWidget(QWidget *widget);
 
   protected:
-    ChoiceProperty *choice;
+    ChoiceProperty choice;
 };
 
 class SummationFunction1Property : public Function1Property {
 
   public:
     SummationFunction1Property() {}
+    virtual Property* clone() const {return new SummationFunction1Property(*this);}
     inline std::string getType() const { return "SummationFunction1_VS"; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -164,12 +148,13 @@ class SummationFunction1Property : public Function1Property {
     void toWidget(QWidget *widget);
 
   protected:
-    std::vector<ContainerProperty*> function;
+    std::vector<ContainerProperty> function;
 };
 
 class SymbolicFunction2Property : public Function2Property {
   public:
     SymbolicFunction2Property(const std::string &ext, const std::vector<std::string> &var);
+    virtual Property* clone() const {return new SymbolicFunction2Property(*this);}
     inline std::string getType() const { return "SymbolicFunction2_"+ext; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -184,6 +169,7 @@ class SymbolicFunction2Property : public Function2Property {
 class LinearSpringDamperForceProperty : public Function2Property {
   public:
     LinearSpringDamperForceProperty();
+    virtual Property* clone() const {return new LinearSpringDamperForceProperty(*this);}
     inline std::string getType() const { return "LinearSpringDamperForce"+ext; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -197,6 +183,7 @@ class LinearSpringDamperForceProperty : public Function2Property {
 class LinearRegularizedBilateralConstraintProperty: public Function2Property {
   public:
     LinearRegularizedBilateralConstraintProperty();
+    virtual Property* clone() const {return new LinearRegularizedBilateralConstraintProperty(*this);}
     std::string getType() const { return "LinearRegularizedBilateralConstraint"; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -211,6 +198,7 @@ class LinearRegularizedUnilateralConstraintProperty: public Function2Property {
   public:
     LinearRegularizedUnilateralConstraintProperty(); 
 
+    virtual Property* clone() const {return new LinearRegularizedUnilateralConstraintProperty(*this);}
     virtual std::string getType() const { return "LinearRegularizedUnilateralConstraint"; }
 
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
@@ -226,6 +214,7 @@ class LinearRegularizedCoulombFrictionProperty: public Function2Property {
   public:
     LinearRegularizedCoulombFrictionProperty(); 
 
+    virtual Property* clone() const {return new LinearRegularizedCoulombFrictionProperty(*this);}
     virtual std::string getType() const { return "LinearRegularizedCoulombFriction"; }
 
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);

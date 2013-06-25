@@ -213,10 +213,26 @@ TranslationChoiceProperty::TranslationChoiceProperty(int index, const std::strin
   translation.push_back(new GeneralTranslationProperty);  
 }
 
+TranslationChoiceProperty::TranslationChoiceProperty(const TranslationChoiceProperty &p) : xmlName(p.xmlName), index(p.index) {
+  for(unsigned int i=0; i<p.translation.size(); i++)
+    translation.push_back(static_cast<TranslationProperty*>(p.translation[i]->clone()));
+}
+
 TranslationChoiceProperty::~TranslationChoiceProperty() {
   for(unsigned int i=0; i<translation.size(); i++)
     delete translation[i];
 }
+
+TranslationChoiceProperty& TranslationChoiceProperty::operator=(const TranslationChoiceProperty &p) {
+  for(unsigned int i=0; i<translation.size(); i++)
+    delete translation[i];
+  translation.clear();
+  xmlName=p.xmlName; 
+  index=p.index;
+  for(unsigned int i=0; i<p.translation.size(); i++)
+    translation.push_back(static_cast<TranslationProperty*>(p.translation[i]->clone()));
+}
+
   
 TiXmlElement* TranslationChoiceProperty::initializeUsingXML(TiXmlElement *element) {
    TiXmlElement *e=(xmlName=="")?element:element->FirstChildElement(xmlName);
@@ -445,9 +461,24 @@ RotationChoiceProperty::RotationChoiceProperty(int index, const std::string &xml
   rotation.push_back(new StateDependentRotationAboutFixedAxisProperty);  
 }
 
+RotationChoiceProperty::RotationChoiceProperty(const RotationChoiceProperty &p) : xmlName(p.xmlName), index(p.index) {
+  for(unsigned int i=0; i<p.rotation.size(); i++)
+    rotation.push_back(static_cast<RotationProperty*>(p.rotation[i]->clone()));
+}
+
 RotationChoiceProperty::~RotationChoiceProperty() {
   for(unsigned int i=0; i<rotation.size(); i++)
     delete rotation[i];
+}
+
+RotationChoiceProperty& RotationChoiceProperty::operator=(const RotationChoiceProperty &p) {
+  for(unsigned int i=0; i<rotation.size(); i++)
+    delete rotation[i];
+  rotation.clear();
+  xmlName=p.xmlName; 
+  index=p.index;
+  for(unsigned int i=0; i<p.rotation.size(); i++)
+    rotation.push_back(static_cast<RotationProperty*>(p.rotation[i]->clone()));
 }
 
 TiXmlElement* RotationChoiceProperty::initializeUsingXML(TiXmlElement *element) {

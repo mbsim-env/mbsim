@@ -47,6 +47,7 @@ class Property : public PropertyInterface {
   public:
     Property() {}
     virtual ~Property() {}
+    virtual Property* clone() const {return 0;}
 };
 
 #endif

@@ -85,6 +85,24 @@ int SymbolicFunction1Property::getArgDim() const {
   return static_cast<const IntegerProperty*>(argdim[0].getProperty())->getValue();
 }
 
+DifferentiableFunction1Property::DifferentiableFunction1Property(const DifferentiableFunction1Property &p) : order(p.order) {
+  for(unsigned int i=0; i<p.derivatives.size(); i++)
+    derivatives.push_back(static_cast<Function1Property*>(p.derivatives[i]->clone()));
+}
+
+DifferentiableFunction1Property::~DifferentiableFunction1Property() {
+  for(unsigned int i=0; i<derivatives.size(); i++)
+    delete derivatives[i];
+}
+
+DifferentiableFunction1Property& DifferentiableFunction1Property::operator=(const DifferentiableFunction1Property &p) {
+  for(unsigned int i=0; i<derivatives.size(); i++)
+    delete derivatives[i];
+  order=p.order;
+  for(unsigned int i=0; i<p.derivatives.size(); i++)
+    derivatives.push_back(static_cast<Function1Property*>(p.derivatives[i]->clone()));
+}
+
 void DifferentiableFunction1Property::setDerivative(Function1Property *diff,size_t degree) { 
   derivatives.resize(max(derivatives.size(),degree+1)); 
   derivatives[degree]=diff; 
@@ -210,7 +228,7 @@ void SinusFunction1Property::toWidget(QWidget *widget) {
   o.toWidget(static_cast<SinusFunction1Widget*>(widget)->o);
 }
 
-TabularFunction1Property::TabularFunction1Property() {
+TabularFunction1Property::TabularFunction1Property() : choice("",vector<Property*>(),2) {
 
   ContainerProperty *propertyContainer = new ContainerProperty;
   vector<Property*> choiceProperty;
@@ -229,36 +247,34 @@ TabularFunction1Property::TabularFunction1Property() {
   input.push_back(new PhysicalVariableProperty(new MatFromFileProperty,"",MBSIMNS"xy"));
   choiceProperty.push_back(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
-  choice = new ChoiceProperty("",choiceProperty,2);
+  choice.setProperty(choiceProperty);
 }
 
 TiXmlElement* TabularFunction1Property::initializeUsingXML(TiXmlElement *element) {
-  choice->initializeUsingXML(element);
+  choice.initializeUsingXML(element);
   return element;
 }
 
 TiXmlElement* TabularFunction1Property::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Function1Property::writeXMLFile(parent);
-  choice->writeXMLFile(ele0);
+  choice.writeXMLFile(ele0);
   return ele0;
 } 
 
 void TabularFunction1Property::fromWidget(QWidget *widget) {
-  choice->fromWidget(static_cast<TabularFunction1Widget*>(widget)->choice);
+  choice.fromWidget(static_cast<TabularFunction1Widget*>(widget)->choice);
 }
 
 void TabularFunction1Property::toWidget(QWidget *widget) {
-  choice->toWidget(static_cast<TabularFunction1Widget*>(widget)->choice);
+  choice.toWidget(static_cast<TabularFunction1Widget*>(widget)->choice);
 }
 
 TiXmlElement* SummationFunction1Property::initializeUsingXML(TiXmlElement *element) {
-  for(unsigned int i=0; i<function.size(); i++)
-    delete function[i];
   
   function.clear();
   TiXmlElement *e = element->FirstChildElement(MBSIMNS"function");
   while(e) {
-    ContainerProperty *propertyContainer = new ContainerProperty;
+    function.push_back(ContainerProperty());
     vector<Property*> property;
     property.push_back(new ConstantFunction1Property("VS"));
     property.push_back(new QuadraticFunction1Property);
@@ -266,15 +282,13 @@ TiXmlElement* SummationFunction1Property::initializeUsingXML(TiXmlElement *eleme
     property.push_back(new TabularFunction1Property);
     property.push_back(new SummationFunction1Property);
     property.push_back(new SymbolicFunction1Property("VS","t"));
-    propertyContainer->addProperty(new ChoiceProperty("",property));
+    function[function.size()-1].addProperty(new ChoiceProperty("",property));
 
     vector<PhysicalVariableProperty*> input;
     input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMNS"factor"));
-    propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
+    function[function.size()-1].addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
-    function.push_back(propertyContainer);
-
-    function[function.size()-1]->initializeUsingXML(e);
+    function[function.size()-1].initializeUsingXML(e);
 
     e=e->NextSiblingElement();
   }
@@ -286,18 +300,16 @@ TiXmlElement* SummationFunction1Property::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = Function1Property::writeXMLFile(parent);
   for(int i=0; i<function.size(); i++) {
     TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"function");
-    function[i]->writeXMLFile(ele1);
+    function[i].writeXMLFile(ele1);
     ele0->LinkEndChild(ele1);
   }
   return ele0;
 }
 
 void SummationFunction1Property::fromWidget(QWidget *widget) {
-  for(unsigned int i=0; i<function.size(); i++)
-    delete function[i];
   function.clear();
   for(unsigned int i=0; i<static_cast<SummationFunction1Widget*>(widget)->stackedWidget->count(); i++) {
-    ContainerProperty *propertyContainer = new ContainerProperty;
+    function.push_back(ContainerProperty());
 
     vector<Property*> property;
     property.push_back(new ConstantFunction1Property("VS"));
@@ -306,15 +318,13 @@ void SummationFunction1Property::fromWidget(QWidget *widget) {
     property.push_back(new TabularFunction1Property);
     property.push_back(new SummationFunction1Property);
     property.push_back(new SymbolicFunction1Property("VS","t"));
-    propertyContainer->addProperty(new ChoiceProperty("",property));
+    function[function.size()-1].addProperty(new ChoiceProperty("",property));
 
     vector<PhysicalVariableProperty*> input;
     input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMNS"factor"));
-    propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
+    function[function.size()-1].addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
-    function.push_back(propertyContainer);
-
-    function[i]->fromWidget(static_cast<SummationFunction1Widget*>(widget)->stackedWidget->widget(i));
+    function[i].fromWidget(static_cast<SummationFunction1Widget*>(widget)->stackedWidget->widget(i));
   }
 }
 
@@ -323,7 +333,7 @@ void SummationFunction1Property::toWidget(QWidget *widget) {
     static_cast<SummationFunction1Widget*>(widget)->blockSignals(true);
     static_cast<SummationFunction1Widget*>(widget)->addFunction();
     static_cast<SummationFunction1Widget*>(widget)->blockSignals(false);
-    function[i]->toWidget(static_cast<SummationFunction1Widget*>(widget)->stackedWidget->widget(i));
+    function[i].toWidget(static_cast<SummationFunction1Widget*>(widget)->stackedWidget->widget(i));
   }
 }
 

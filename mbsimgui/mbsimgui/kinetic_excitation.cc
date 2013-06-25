@@ -44,9 +44,6 @@ KineticExcitation::KineticExcitation(const string &str, Element *parent) : Link(
 
 }
 
-KineticExcitation::~KineticExcitation() {
-}
-
 void KineticExcitation::initialize() {
   Link::initialize();
   connections.initialize();

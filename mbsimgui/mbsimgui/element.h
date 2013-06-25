@@ -51,7 +51,7 @@ class Element : public TreeItemData {
     ExtProperty name, embed;
   public:
     Element(const std::string &name, Element *parent);
-    virtual ~Element();
+    virtual Element* clone() const {return 0;}
     virtual std::string getPath();
     std::string getXMLPath(Element *ref=0, bool rel=false);
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);

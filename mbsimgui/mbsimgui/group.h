@@ -43,7 +43,10 @@ class Group : public Element {
 
   public:
     Group(const std::string &str, Element *parent);
+    Group(const Group &g);
     ~Group();
+    Group& operator=(const Group &g);
+    virtual Element* clone() const {return new Group(*this);}
     std::string getType() const { return "Group"; }
     int getqSize();
     int getuSize();

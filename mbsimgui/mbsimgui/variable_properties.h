@@ -42,6 +42,7 @@ class VariableProperty : public Property {
 class OctaveExpressionProperty : public VariableProperty {
   public:
     OctaveExpressionProperty() {}
+    virtual Property* clone() const {return new OctaveExpressionProperty(*this);}
     std::string getValue() const { return value; }
     void setValue(const std::string &str) { value = str; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
@@ -56,6 +57,7 @@ class ScalarProperty : public VariableProperty {
     std::string scalar;
   public:
     ScalarProperty(const std::string &scalar_="1") : scalar(scalar_) {}
+    virtual Property* clone() const {return new ScalarProperty(*this);}
     std::string getValue() const {return scalar;}
     void setValue(const std::string &scalar_) {scalar = scalar_;}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
@@ -69,6 +71,7 @@ class VecProperty : public VariableProperty {
     VecProperty(int size);
     VecProperty(const std::vector<std::string> &x) : value(x) {}
     ~VecProperty();
+    virtual Property* clone() const {return new VecProperty(*this);}
     std::vector<std::string> getVec() const {return value;}
     void setVec(const std::vector<std::string> &x) {value = x;}
     std::string getValue() const {return toStr(getVec());}
@@ -87,6 +90,7 @@ class MatProperty : public VariableProperty {
   public:
     MatProperty(int rows, int cols);
     MatProperty(const std::vector<std::vector<std::string> > &A) : value(A) {}
+    virtual Property* clone() const {return new MatProperty(*this);}
     std::vector<std::vector<std::string> > getMat() const {return value;}
     void setMat(const std::vector<std::vector<std::string> > &A) {value = A;}
     std::string getValue() const {return toStr(getMat());}
@@ -99,32 +103,16 @@ class MatProperty : public VariableProperty {
     void toWidget(QWidget *widget);
 };
 
-//class SymMatProperty : public VariableProperty {
-//
-//  private:
-//    std::vector<std::vector<std::string> > value;
-//  public:
-//    SymMatProperty(int rows);
-//    SymMatProperty(const std::vector<std::vector<std::string> > &A) : value(A) {}
-//    std::vector<std::vector<std::string> > getMat() const {return value;}
-//    void setMat(const std::vector<std::vector<std::string> > &A) {value = A;}
-//    std::string getValue() const {return toStr(getMat());}
-//    void setValue(const std::string &str) {setMat(strToMat(str));}
-//    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-//    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-//    int rows() const {return value.size();}
-//    int cols() const {return value[0].size();}
-//    void fromWidget(QWidget *widget);
-//    void toWidget(QWidget *widget);
-//};
-
 class PhysicalVariableProperty : public Property {
   protected:
     VariableProperty* value;
     std::string unit, xmlName;
   public:
     PhysicalVariableProperty(VariableProperty *value_=0, const std::string &unit_="", const std::string &xmlName_="") : value(value_), unit(unit_), xmlName(xmlName_) {}
+    PhysicalVariableProperty(const PhysicalVariableProperty &p) : value(static_cast<VariableProperty*>(p.value->clone())), unit(p.unit), xmlName(p.xmlName) {}
     ~PhysicalVariableProperty() {delete value;}
+    PhysicalVariableProperty& operator=(const PhysicalVariableProperty &p) {delete value; value=static_cast<VariableProperty*>(p.value->clone()); unit=p.unit; xmlName=p.xmlName;}
+    virtual Property* clone() const {return new PhysicalVariableProperty(*this);}
     std::string getValue() const {return value->getValue();}
     void setValue(const std::string &str) {value->setValue(str);}
     std::string getUnit() const {return unit;}
@@ -142,6 +130,7 @@ class VecFromFileProperty : public VariableProperty {
 
   public:
     VecFromFileProperty(const std::string &file_="") : file(file_) {}
+    virtual Property* clone() const {return new VecFromFileProperty(*this);}
     std::string getValue() const;
     void setValue(const std::string &str) {}
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
@@ -157,6 +146,7 @@ class MatFromFileProperty : public VariableProperty {
 
   public:
     MatFromFileProperty(const std::string &file_="") : file(file_) {}
+    virtual Property* clone() const {return new MatFromFileProperty(*this);}
     std::string getValue() const; 
     void setValue(const std::string &str) {}
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
