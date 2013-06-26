@@ -22,19 +22,72 @@
 
 #include "treeitemdata.h"
 #include <QList>
+#include <QMenu>
 #include <QVariant>
 #include <QVector>
+#include "element_context_menu.h"
+
+class Element;
 
 class BasicItemData : public TreeItemData {
-  private:
+  protected:
     std::string name, value;
   public:
     BasicItemData(const std::string &name_, const std::string &value_) : name(name_), value(value_) {}
-    ~BasicItemData() {}
     const std::string& getName() const {return name;}
     std::string getValue() const {return value;}
     void setName(const std::string &name_) {name = name_;}
     void setValue(const std::string &value_) {value = value_;}
+    virtual QMenu* createContextMenu() {return new QMenu;}
+};
+
+class FrameItemData : public BasicItemData {
+  private:
+    Element *element;
+  public:
+    FrameItemData(Element *element_) : BasicItemData("frames",""), element(element_) {}
+    virtual QMenu* createContextMenu() {return new FrameContextContextMenu(element);}
+};
+
+class ContourItemData : public BasicItemData {
+  private:
+    Element *element;
+  public:
+    ContourItemData(Element *element_) : BasicItemData("contours",""), element(element_) {}
+    virtual QMenu* createContextMenu() {return new ContourContextContextMenu(element);}
+};
+
+class GroupItemData : public BasicItemData {
+  private:
+    Element *element;
+  public:
+    GroupItemData(Element *element_) : BasicItemData("groups",""), element(element_) {}
+    virtual QMenu* createContextMenu() {return new GroupContextContextMenu(element);}
+};
+
+
+class ObjectItemData : public BasicItemData {
+  private:
+    Element *element;
+  public:
+    ObjectItemData(Element *element_) : BasicItemData("objects",""), element(element_) {}
+    virtual QMenu* createContextMenu() {return new ObjectContextContextMenu(element);}
+};
+
+class LinkItemData : public BasicItemData {
+  private:
+    Element *element;
+  public:
+    LinkItemData(Element *element_) : BasicItemData("links",""), element(element_) {}
+    virtual QMenu* createContextMenu() {return new LinkContextContextMenu(element);}
+};
+
+class ObserverItemData : public BasicItemData {
+  private:
+    Element *element;
+  public:
+    ObserverItemData(Element *element_) : BasicItemData("observers",""), element(element_) {}
+    virtual QMenu* createContextMenu() {return new ObserverContextContextMenu(element);}
 };
 
 class TreeItem {

@@ -53,11 +53,24 @@ class GroupContextMenu : public ElementContextMenu {
     void addElementFromFile();
 };
 
+class FrameContextContextMenu : public QMenu {
+  Q_OBJECT
+
+  public:
+    FrameContextContextMenu(Element *contour, const QString &title="", QWidget * parent = 0);
+
+  protected slots:
+    void addFixedRelativeFrame();
+
+  protected:
+    Element *element;
+};
+
 class ContourContextContextMenu : public QMenu {
   Q_OBJECT
 
   public:
-    ContourContextContextMenu(Element *contour, QWidget * parent = 0);
+    ContourContextContextMenu(Element *contour, const QString &title="", QWidget * parent = 0);
 
   protected slots:
     void addPoint();
@@ -70,14 +83,48 @@ class ContourContextContextMenu : public QMenu {
     Element *element;
 };
 
-class ObjectContextContextMenu : public QMenu {
+class GroupContextContextMenu : public QMenu {
   Q_OBJECT
 
   public:
-    ObjectContextContextMenu(Element *object, QWidget * parent = 0);
+    GroupContextContextMenu(Element *contour, const QString &title="", QWidget * parent = 0);
+
+  protected slots:
+    void addGroup();
+
+  protected:
+    Element *element;
+};
+
+class ObjectContextContextMenu : public QMenu {
+
+  public:
+    ObjectContextContextMenu(Element *object, const QString &title="", QWidget * parent = 0);
+
+  protected:
+    Element *element;
+};
+
+class BodyContextContextMenu : public QMenu {
+  Q_OBJECT
+
+  public:
+    BodyContextContextMenu(Element *object, const QString &title="", QWidget * parent = 0);
 
   protected slots:
     void addRigidBody();
+
+  protected:
+    Element *element;
+};
+
+class ConstraintContextContextMenu : public QMenu {
+  Q_OBJECT
+
+  public:
+    ConstraintContextContextMenu(Element *object, const QString &title="", QWidget * parent = 0);
+
+  protected slots:
     void addGearConstraint();
     void addTimeDependentKinematicConstraint();
     void addStateDependentKinematicConstraint();
@@ -105,7 +152,7 @@ class LinkContextContextMenu : public QMenu {
   Q_OBJECT
 
   public:
-    LinkContextContextMenu(Element *link, QWidget * parent = 0);
+    LinkContextContextMenu(Element *link, const QString &title="", QWidget * parent = 0);
 
   protected slots:
     void addSpringDamper();
@@ -123,7 +170,7 @@ class ObserverContextContextMenu : public QMenu {
   Q_OBJECT
 
   public:
-    ObserverContextContextMenu(Element *observer, QWidget * parent = 0);
+    ObserverContextContextMenu(Element *observer, const QString &title="", QWidget * parent = 0);
 
   protected slots:
     void addCoordinatesObserver();
@@ -137,7 +184,7 @@ class CoordinatesObserverContextContextMenu : public QMenu {
   Q_OBJECT
 
   public:
-    CoordinatesObserverContextContextMenu(Element *observer, QWidget * parent = 0);
+    CoordinatesObserverContextContextMenu(Element *observer, const QString &title="", QWidget * parent = 0);
 
   protected slots:
     void addCartesianCoordinatesObserver();
@@ -152,7 +199,7 @@ class KinematicsObserverContextContextMenu : public QMenu {
   Q_OBJECT
 
   public:
-    KinematicsObserverContextContextMenu(Element *observer, QWidget * parent = 0);
+    KinematicsObserverContextContextMenu(Element *observer, const QString &title="", QWidget * parent = 0);
 
   protected slots:
     void addAbsoluteKinematicsObserver();
@@ -166,7 +213,7 @@ class SignalContextContextMenu : public QMenu {
   Q_OBJECT
 
   public:
-    SignalContextContextMenu(Element *signal, QWidget * parent = 0);
+    SignalContextContextMenu(Element *signal, const QString &title="", QWidget * parent = 0);
 
   protected slots:
     void addSensor();
@@ -183,7 +230,7 @@ class SensorContextContextMenu : public QMenu {
   Q_OBJECT
 
   public:
-    SensorContextContextMenu(Element *sensor, QWidget * parent = 0);
+    SensorContextContextMenu(Element *sensor, const QString &title="", QWidget * parent = 0);
 
   protected slots:
     void addGeneralizedPositionSensor();

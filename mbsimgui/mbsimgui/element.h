@@ -97,7 +97,7 @@ class Element : public TreeItemData {
     virtual Element* getParent() {return parent;}
     virtual void setParent(Element* parent_) {parent = parent_;}
     virtual ElementPropertyDialog* createPropertyDialog() {return new ElementPropertyDialog(this);}
-    virtual ElementContextMenu* createContextMenu() {return new ElementContextMenu(this);}
+    virtual QMenu* createContextMenu() {return new ElementContextMenu(this);}
     Element* getRoot() {return parent?parent->getRoot():this;}
     bool isEmbedded() const {return embed.isActive();}
     ParameterList getParameterList(bool addCounter=true) const;
