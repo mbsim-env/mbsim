@@ -4508,12 +4508,143 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="AbsoluteKinematicsObserver" substitutionGroup="Observer" type="AbsoluteKinematicsObserverType">
+  <xs:element name="CoordinatesObserver" substitutionGroup="Observer" type="CoordinatesObserverType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
     tbd.
     </xs:documentation></xs:annotation>
   </xs:element>
-  <xs:complexType name="AbsoluteKinematicsObserverType">
+  <xs:complexType name="CoordinatesObserverType">
+    <xs:complexContent>
+      <xs:extension base="ObserverType">
+        <xs:sequence>
+          <xs:element name="frame">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              tbd.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:sequence>
+            <xs:choice>
+              <xs:element name="enableOpenMBVPosition" minOccurs="0">  
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="diameter" type="pv:lengthScalar">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                        tbd.
+                        </xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element name="headDiameter" type="pv:lengthScalar">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                        tbd.
+                        </xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element name="headLength" type="pv:lengthScalar">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                        tbd.
+                        </xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element name="staticColor" type="pv:nounitScalar">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                        tbd.
+                        </xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType> 
+              </xs:element>
+              <xs:element name="openMBVPositionArrow" minOccurs="0">  
+                 <xs:annotation>
+                   <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                   tbd
+                   </xs:documentation>
+                 </xs:annotation>
+                 <xs:complexType>
+                   <xs:sequence>
+                     <xs:element ref="ombv:Arrow"/>
+                   </xs:sequence>
+                 </xs:complexType>
+              </xs:element>
+            </xs:choice>
+          </xs:sequence>
+          <xs:element name="openMBVVelocityArrow" minOccurs="0">  
+             <xs:annotation>
+               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+               tbd
+               </xs:documentation>
+             </xs:annotation>
+             <xs:complexType>
+               <xs:sequence>
+                 <xs:element ref="ombv:Arrow"/>
+               </xs:sequence>
+             </xs:complexType>
+          </xs:element>
+          <xs:element name="openMBVAccelerationArrow" minOccurs="0">  
+             <xs:annotation>
+               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+               tbd
+               </xs:documentation>
+             </xs:annotation>
+             <xs:complexType>
+               <xs:sequence>
+                 <xs:element ref="ombv:Arrow"/>
+               </xs:sequence>
+             </xs:complexType>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType> 
+
+  <xs:element name="CartesianCoordinatesObserver" substitutionGroup="CoordinatesObserver" type="CartesianCoordinatesObserverType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+    tbd.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="CartesianCoordinatesObserverType">
+    <xs:complexContent>
+      <xs:extension base="CoordinatesObserverType"/>
+    </xs:complexContent>
+  </xs:complexType> 
+
+  <xs:element name="CylinderCoordinatesObserver" substitutionGroup="CoordinatesObserver" type="CylinderCoordinatesObserverType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+    tbd.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="CylinderCoordinatesObserverType">
+    <xs:complexContent>
+      <xs:extension base="CoordinatesObserverType"/>
+    </xs:complexContent>
+  </xs:complexType> 
+
+  <xs:element name="NaturalCoordinatesObserver" substitutionGroup="CoordinatesObserver" type="NaturalCoordinatesObserverType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+    tbd.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="NaturalCoordinatesObserverType">
+    <xs:complexContent>
+      <xs:extension base="CoordinatesObserverType"/>
+    </xs:complexContent>
+  </xs:complexType> 
+
+  <xs:element name="KinematicsObserver" substitutionGroup="Observer" type="KinematicsObserverType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+    tbd.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="KinematicsObserverType">
     <xs:complexContent>
       <xs:extension base="ObserverType">
         <xs:sequence>
@@ -4624,6 +4755,41 @@
                  <xs:element ref="ombv:Arrow"/>
                </xs:sequence>
              </xs:complexType>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType> 
+
+  <xs:element name="AbsoluteKinematicsObserver" substitutionGroup="KinematicsObserver" type="AbsoluteKinematicsObserverType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+    tbd.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="AbsoluteKinematicsObserverType">
+    <xs:complexContent>
+      <xs:extension base="KinematicsObserverType"/>
+    </xs:complexContent>
+  </xs:complexType> 
+
+  <xs:element name="RelativeKinematicsObserver" substitutionGroup="KinematicsObserver" type="RelativeKinematicsObserverType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+    tbd.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="RelativeKinematicsObserverType">
+    <xs:complexContent>
+      <xs:extension base="KinematicsObserverType">
+        <xs:sequence>
+          <xs:element name="frameOfReference">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              tbd.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+            </xs:complexType>
           </xs:element>
         </xs:sequence> 
       </xs:extension>
