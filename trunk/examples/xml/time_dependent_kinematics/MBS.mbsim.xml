@@ -101,7 +101,6 @@
             </openMBVRigidBody>
         </RigidBody>
     </objects>
-    <extraDynamics />
     <links />
     <environments>
         <MBSimEnvironment>

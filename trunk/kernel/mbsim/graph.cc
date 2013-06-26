@@ -20,7 +20,6 @@
 #include "mbsim/graph.h"
 #include "mbsim/object.h"
 #include "mbsim/frame.h"
-#include "mbsim/extra_dynamic.h"
 
 using namespace fmatvec; 
 using namespace std;
@@ -68,9 +67,6 @@ namespace MBSim {
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->updatexd(t);
-
-    for(vector<ExtraDynamic*>::iterator i = extraDynamic.begin(); i!= extraDynamic.end(); ++i) 
-      (**i).updatexd(t);
   }
 
   void Graph::sethSize0(int hSize_) {

@@ -19,7 +19,6 @@
 #include <config.h>
 #include "mbsim/dynamic_system.h"
 #include "mbsim/modelling_interface.h"
-#include "mbsim/extra_dynamic.h"
 #include "mbsim/link.h"
 #include "mbsim/contour.h"
 #include "mbsim/object.h"
@@ -72,8 +71,6 @@ namespace MBSim {
     for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
       delete *i;
     for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
-      delete *i;
-    for (vector<ExtraDynamic*>::iterator i = extraDynamic.begin(); i != extraDynamic.end(); ++i)
       delete *i;
     for (vector<Frame*>::iterator i = frame.begin(); i != frame.end(); ++i)
       delete *i;
@@ -335,10 +332,6 @@ namespace MBSim {
 
     for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
       (**i).updatedx(t, dt);
-
-    for (vector<ExtraDynamic*>::iterator i = extraDynamic.begin(); i != extraDynamic.end(); ++i)
-      (**i).updatedx(t, dt);
-
   }
 
   void DynamicSystem::updateqd(double t) {
@@ -354,9 +347,6 @@ namespace MBSim {
       (**i).updatexd(t);
 
     for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
-      (**i).updatexd(t);
-
-    for (vector<ExtraDynamic*>::iterator i = extraDynamic.begin(); i != extraDynamic.end(); ++i)
       (**i).updatexd(t);
   }
 
@@ -391,9 +381,6 @@ namespace MBSim {
 
     for (unsigned i = 0; i < link.size(); i++)
       link[i]->setDynamicSystemSolver(sys);
-
-    for (unsigned i = 0; i < extraDynamic.size(); i++)
-      extraDynamic[i]->setDynamicSystemSolver(sys);
   }
 
   void DynamicSystem::plot(double t, double dt) {
@@ -404,8 +391,6 @@ namespace MBSim {
         object[i]->plot(t, dt);
       for (unsigned i = 0; i < link.size(); i++)
         link[i]->plot(t, dt);
-      for (unsigned i = 0; i < extraDynamic.size(); i++)
-        extraDynamic[i]->plot(t, dt);
       for (unsigned i = 0; i < frame.size(); i++)
         frame[i]->plot(t, dt);
       for (unsigned i = 0; i < contour.size(); i++)
@@ -425,8 +410,6 @@ namespace MBSim {
         object[i]->plotAtSpecialEvent(t, dt);
       for (unsigned i = 0; i < link.size(); i++)
         link[i]->plotAtSpecialEvent(t, dt);
-      for (unsigned i = 0; i < extraDynamic.size(); i++)
-        extraDynamic[i]->plotAtSpecialEvent(t, dt);
       for (unsigned i = 0; i < frame.size(); i++)
         frame[i]->plotAtSpecialEvent(t, dt);
       for (unsigned i = 0; i < inverseKineticsLink.size(); i++)
@@ -442,8 +425,6 @@ namespace MBSim {
         object[i]->closePlot();
       for (unsigned i = 0; i < link.size(); i++)
         link[i]->closePlot();
-      for (unsigned i = 0; i < extraDynamic.size(); i++)
-        extraDynamic[i]->closePlot();
       for (unsigned i = 0; i < frame.size(); i++)
         frame[i]->closePlot();
 
@@ -543,8 +524,6 @@ namespace MBSim {
       object[i]->init(stage);
     for (unsigned i = 0; i < link.size(); i++)
       link[i]->init(stage);
-    for (unsigned i = 0; i < extraDynamic.size(); i++)
-      extraDynamic[i]->init(stage);
     for (unsigned i = 0; i < model.size(); i++)
       model[i]->init(stage);
     for (unsigned i = 0; i < inverseKineticsLink.size(); i++)
@@ -727,9 +706,6 @@ namespace MBSim {
 
     for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
       (**i).updatexRef(xParent);
-
-    for (vector<ExtraDynamic*>::iterator i = extraDynamic.begin(); i != extraDynamic.end(); ++i)
-      (**i).updatexRef(xParent);
   }
 
   void DynamicSystem::updatexdRef(const Vec &xdParent) {
@@ -739,9 +715,6 @@ namespace MBSim {
       (**i).updatexdRef(xdParent);
 
     for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
-      (**i).updatexdRef(xdParent);
-
-    for (vector<ExtraDynamic*>::iterator i = extraDynamic.begin(); i != extraDynamic.end(); ++i)
       (**i).updatexdRef(xdParent);
   }
 
@@ -959,8 +932,6 @@ namespace MBSim {
       object[i]->initz();
     for (unsigned i = 0; i < link.size(); i++)
       link[i]->initz();
-    for (unsigned i = 0; i < extraDynamic.size(); i++)
-      extraDynamic[i]->initz();
   }
 
   void DynamicSystem::writez(const H5::CommonFG & parent) {
@@ -976,10 +947,6 @@ namespace MBSim {
       H5::Group group = parent.createGroup("Link_" + numtostr((int)i));
       link[i]->writez(group);
     }
-    for (unsigned i = 0; i < extraDynamic.size(); i++) {
-      H5::Group group = parent.createGroup("ExtraDynamic_" + numtostr((int)i));
-      extraDynamic[i]->writez(group);
-    }
   }
 
   void DynamicSystem::readz0(const H5::CommonFG & parent) {
@@ -994,10 +961,6 @@ namespace MBSim {
     for (unsigned i = 0; i < link.size(); i++) {
       H5::Group group = parent.openGroup("Link_" + numtostr((int)i));
       link[i]->readz0(group);
-    }
-    for (unsigned i = 0; i < extraDynamic.size(); i++) {
-      H5::Group group = parent.openGroup("ExtraDynamic_" + numtostr((int)i));
-      extraDynamic[i]->readz0(group);
     }
   }
 
@@ -1040,14 +1003,6 @@ namespace MBSim {
     if (recursive)
       for (unsigned int i = 0; i < dynamicsystem.size(); i++)
         dynamicsystem[i]->buildListOfContours(cnt, recursive);
-  }
-
-  void DynamicSystem::buildListOfExtraDynamic(vector<ExtraDynamic*> &ed, bool recursive) {
-    for (unsigned int i = 0; i < extraDynamic.size(); i++)
-      ed.push_back(extraDynamic[i]);
-    if (recursive)
-      for (unsigned int i = 0; i < dynamicsystem.size(); i++)
-        dynamicsystem[i]->buildListOfExtraDynamic(ed, recursive);
   }
 
   void DynamicSystem::buildListOfModels(std::vector<ModellingInterface*> &modelList, bool recursive) {
@@ -1148,11 +1103,6 @@ namespace MBSim {
       (*i)->calcxSize();
       xSize += (*i)->getxSize();
     }
-
-    for (vector<ExtraDynamic*>::iterator i = extraDynamic.begin(); i != extraDynamic.end(); ++i) {
-      (*i)->calcxSize();
-      xSize += (*i)->getxSize();
-    }
   }
 
   void DynamicSystem::setxInd(int xInd_) {
@@ -1163,10 +1113,6 @@ namespace MBSim {
       xInd_ += (*i)->getxSize();
     }
     for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) {
-      (*i)->setxInd(xInd_);
-      xInd_ += (*i)->getxSize();
-    }
-    for (vector<ExtraDynamic*>::iterator i = extraDynamic.begin(); i != extraDynamic.end(); ++i) {
       (*i)->setxInd(xInd_);
       xInd_ += (*i)->getxSize();
     }
@@ -1462,29 +1408,6 @@ namespace MBSim {
     return NULL;
   }
 
-  void DynamicSystem::addExtraDynamic(ExtraDynamic *ed_) {
-    if (getExtraDynamic(ed_->getName(), false)) {
-      throw MBSimError("The DynamicSystem \"" + name + "\" can only comprise one ExtraDynamic by the name \"" + ed_->getName() + "\"!");
-      assert(getExtraDynamic(ed_->getName(),false) == NULL);
-    }
-    extraDynamic.push_back(ed_);
-    ed_->setParent(this);
-  }
-
-  ExtraDynamic* DynamicSystem::getExtraDynamic(const string &name, bool check) {
-    unsigned int i;
-    for (i = 0; i < extraDynamic.size(); i++) {
-      if (extraDynamic[i]->getName() == name)
-        return extraDynamic[i];
-    }
-    if (check) {
-      if (!(i < extraDynamic.size()))
-        throw MBSimError("The DynamicSystem \"" + this->name + "\" comprises no ExtraDynamic \"" + name + "\"!");
-      assert(i < extraDynamic.size());
-    }
-    return NULL;
-  }
-
   void DynamicSystem::addModel(ModellingInterface *model_) {
     if (getModel(model_->getName(), false)) {
       throw MBSimError("The DynamicSystem \"" + name + "\" can only comprise one model by the name \"" + model_->getName() + "\"!");
@@ -1546,8 +1469,6 @@ namespace MBSim {
           return getObject(searched_name)->getByPathSearch(rest);
         else if (container == "Link")
           return getLink(searched_name)->getByPathSearch(rest);
-        else if (container == "ExtraDynamic")
-          return getExtraDynamic(searched_name)->getByPathSearch(rest);
         else if (container == "Group")
           return getGroup(searched_name)->getByPathSearch(rest);
         else
@@ -1558,8 +1479,6 @@ namespace MBSim {
           return getObject(searched_name);
         else if (container == "Link")
           return getLink(searched_name);
-        else if (container == "ExtraDynamic")
-          return getExtraDynamic(searched_name);
         else if (container == "Group")
           return getGroup(searched_name);
         else if (container == "Frame")

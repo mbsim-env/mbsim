@@ -457,7 +457,7 @@
         <xs:sequence>
           <xs:element name="signalProcessingSystem">
             <xs:complexType>
-              <xs:attribute name="ref" type="mbsim:ExtraDynamicReferenceType" use="required"/>
+              <xs:attribute name="ref" type="mbsim:LinkReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -1104,10 +1104,10 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="SignalProcessingSystem" substitutionGroup="mbsim:ExtraDynamicSystem" type="SignalProcessingSystemType"/>
+  <xs:element name="SignalProcessingSystem" substitutionGroup="mbsim:Link" type="SignalProcessingSystemType"/>
   <xs:complexType name="SignalProcessingSystemType">
     <xs:complexContent>
-      <xs:extension base="mbsim:ExtraDynamicSystemType">
+      <xs:extension base="mbsim:LinkType">
         <xs:sequence>
           <xs:element name="inputSignal">
             <xs:complexType>

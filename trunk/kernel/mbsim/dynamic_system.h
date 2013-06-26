@@ -20,9 +20,6 @@
 #define _DYNAMIC_SYSTEM_H_
 
 #include "mbsim/element.h"
-//#include "mbsim/link_interface.h"
-//#include "mbsim/object_interface.h"
-//#include "mbsim/extradynamic_interface.h"
 #include "mbsim/mbsim_event.h"
 
 namespace H5 {
@@ -33,7 +30,6 @@ namespace MBSim {
   class Frame;
   class FixedRelativeFrame;
   class Contour;
-  class ExtraDynamic;
   class Object;
   class Link;
   class ModellingInterface;
@@ -55,9 +51,9 @@ namespace MBSim {
    * \date 2010-07-06 modifications for timestepper ssc, e.g LinkStatus and buildListOfSetValuedLinks (Robert Huber)
    * \date 2012-05-08 OpenMP completely removed; will be inserted again soon (Jan Clauberg)
    * \date 2012-05-08 modifications for AutoTimeSteppingSSCIntegrator (Jan Clauberg)
+   * \date 2013-06-23 removed extra dynamics (Martin Foerg)
    *
    */
-  //class DynamicSystem : public Element, public ObjectInterface, public LinkInterface, public ExtraDynamicInterface {
   class DynamicSystem : public Element {
     public:
       /** 
@@ -517,13 +513,6 @@ namespace MBSim {
       virtual void buildListOfContours(std::vector<Contour*> &cnt, bool recursive);
 
       /**
-       * \brief build flat list of extra dynamic
-       * \param list of extra dynamic
-       * \param flag for recursive
-       */
-      virtual void buildListOfExtraDynamic(std::vector<ExtraDynamic*> &ed, bool recursive=false);
-
-      /**
        * \brief build flat list of models
        * \param list of models
        * \param flag for recursive
@@ -738,18 +727,6 @@ namespace MBSim {
       Link* getLink(const std::string &name,bool check=true);
 
       /**
-       * \param extra dynamic to add
-       */
-      void addExtraDynamic(ExtraDynamic *ed_);
-
-      /**
-       * \param name of the extra dynamic
-       * \param check for existence of extra dynamic
-       * \return extra dynamic
-       */
-      ExtraDynamic* getExtraDynamic(const std::string &name,bool check=true);
-
-      /**
        * \param modell to add
        */
       void addModel(ModellingInterface *modell);
@@ -797,7 +774,6 @@ namespace MBSim {
       std::vector<Link*> linkSetValued;
       std::vector<Link*> linkSetValuedActive;
       std::vector<Link*> linkSetValuedNotActiveWithSmoothPart;
-      std::vector<ExtraDynamic*> extraDynamic;
       std::vector<ModellingInterface*> model;
       std::vector<DynamicSystem*> dynamicsystem;
       std::vector<Link*> inverseKineticsLink;

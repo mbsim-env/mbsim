@@ -141,7 +141,7 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <!-- A reference from a Link|Object|ExtraDynamicSystem to a Frame somewhere in the hierarchy -->
+  <!-- A reference from a Link|Object to a Frame somewhere in the hierarchy -->
   <xs:simpleType name="FrameReferenceType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Definiert eine Pfadangabe zu einem <a class="link" href="mbsim:Frame"><tt>&lt;Frame&gt;</tt></a> an beliebiger
@@ -165,7 +165,7 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <!-- A reference form a Link|Object|ExtraDynamicSystem to a Contour somewhere in the hierarchy -->
+  <!-- A reference form a Link|Object to a Contour somewhere in the hierarchy -->
   <xs:simpleType name="ContourReferenceType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Definiert eine Pfadangabe zu einer <a class="link" href="mbsim:Contour"><tt>&lt;Contour&gt;</tt></a> an beliebiger
@@ -230,28 +230,6 @@
       X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
       from physicalvariable.xsd name attribute -->
       <xs:pattern value="(/|(\.\./)+)(Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]/)*Link\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
-    </xs:restriction>
-  </xs:simpleType>
-
-  <!-- A reference form a Link to a ExtraDynamic somewhere in the hierarchy -->
-  <xs:simpleType name="ExtraDynamicReferenceType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Definiert eine Pfadangabe zu einem <a class="link" href="mbsim:ExtraDynamic"><tt>&lt;ExtraDynamic&gt;</tt></a> an beliebiger
-        Position im Modell. Gültige Werte sind z.B. <tt>../../Group[X]/Group[X]/ExtraDynamic[Y]</tt>, wobei <tt>X</tt> und
-        <tt>Y</tt> geweils einen <a class="link" href="pv:name">Element-Namen</a> darstellt. Der Pfadteil <tt>..</tt>
-        kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil <tt>Group</tt>
-        kann beliebig oft oder nicht auftreten und wechselt eine Hierarchieebene tiefer in die <tt>Group</tt> mit dem
-        Element-Namen <tt>X</tt>. Als letzter Pfadteil wird das <tt>Object Y</tt> ausgewählt. Alternativ kann die
-        Pfadangabe anstatt mit <tt>..</tt> mit <tt>/</tt> beginnen, in diesem Fall beginnt die Referenzierung beim
-        obersten Element (<a class="link" href="mbsim:DynamicSystemSolver"><tt>DynamicSystemSolver</tt></a>) des Modells.
-        <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
-          Elemente die mit einem Großbuchstaben beginnen.</p>
-    </xs:documentation></xs:annotation>
-    <xs:restriction base="pv:partialOctaveString">
-      <!-- pattern value="(/|(\.\./)+)(Group\[X\]/)*ExtraDynamic\[X\]" with
-      X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
-      from physicalvariable.xsd name attribute -->
-      <xs:pattern value="(/|(\.\./)+)(Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]/)*ExtraDynamic\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -557,31 +535,6 @@
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
-              </xs:choice>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="extraDynamics" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Kontainer für zusätzliche dynamische Systeme, welche als gewöhnliches Differentialgleichungssystem 1. Ordnung <object class="inlineeqn">x'=f\left(x\right)</object> abgebildet werden können.
-              </xs:documentation>
-            </xs:annotation>
-            <xs:complexType>
-              <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="ExtraDynamicSystem">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Lokale Definition.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>  
-                <xs:element ref="pv:embed">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Definition in externer Datei.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>  
               </xs:choice>
             </xs:complexType>
           </xs:element>
@@ -1615,29 +1568,6 @@
             </xs:complexType>
           </xs:element>
         </xs:sequence> 
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="ExtraDynamicSystem" abstract="true" substitutionGroup="Element" type="ExtraDynamicSystemType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Abstrakte Oberklasse für Dynamische Systeme der Form <object class="inlineeqn">x'=f\left(x\right)</object>.
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="ExtraDynamicSystemType">
-    <xs:complexContent>
-      <xs:extension base="ElementType">
-        <xs:sequence>
-          <xs:element name="initialState" type="pv:nounitVector" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Anfangszustand der Uebertragungsfunktion
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-        </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   

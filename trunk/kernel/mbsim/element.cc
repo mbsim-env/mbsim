@@ -24,7 +24,6 @@
 #include <mbsim/contour.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/object.h>
-#include <mbsim/extra_dynamic.h>
 #include <mbsim/link.h>
 #include <mbsim/observer.h>
 #include <mbsim/mbsim_event.h>
@@ -143,8 +142,6 @@ namespace MBSim {
         type = "Group";
       else if(dynamic_cast<Object*>(this))
         type = "Object";
-      else if(dynamic_cast<ExtraDynamic*>(this))
-        type = "ExtraDynamic";
       else if(dynamic_cast<Link*>(this))
         type = "Link";
       else if(dynamic_cast<Observer*>(this))
@@ -157,8 +154,6 @@ namespace MBSim {
           str = string("Group[") + (*i1)->getName() + "]/" + str;
         else if(dynamic_cast<Object*>(*i1))
           str = string("Object[") + (*i1)->getName() + "]/" + str;
-        else if(dynamic_cast<ExtraDynamic*>(*i1))
-          str = string("ExtraDynamic[") + (*i1)->getName() + "]/" + str;
         else if(dynamic_cast<Link*>(*i1))
           str = string("Link[") + (*i1)->getName() + "]/" + str;
         else if(dynamic_cast<Observer*>(*i1))
@@ -179,8 +174,6 @@ namespace MBSim {
         type = "Group";
       else if(dynamic_cast<Object*>(this))
         type = "Object";
-      else if(dynamic_cast<ExtraDynamic*>(this))
-        type = "ExtraDynamic";
       else if(dynamic_cast<Link*>(this))
         type = "Link";
       else if(dynamic_cast<Observer*>(this))
@@ -194,8 +187,6 @@ namespace MBSim {
           str = string("Group[") + element->getName() + "]/" + str;
         else if(dynamic_cast<Object*>(element))
           str = string("Object[") + element->getName() + "]/" + str;
-        else if(dynamic_cast<ExtraDynamic*>(element))
-          str = string("ExtraDynamic[") + element->getName() + "]/" + str;
         else if(dynamic_cast<Link*>(element))
           str = string("Link[") + element->getName() + "]/" + str;
         else if(dynamic_cast<Observer*>(element))

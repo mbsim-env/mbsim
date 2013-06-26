@@ -30,11 +30,11 @@ using namespace MBSim;
 
 namespace MBSimControl {
 
-  SignalProcessingSystem::SignalProcessingSystem(const string &name) : ExtraDynamic(name), inputSignal(NULL), inputSignalString("") {
+  SignalProcessingSystem::SignalProcessingSystem(const string &name) : Link(name), inputSignal(NULL), inputSignalString("") {
   }
 
   void SignalProcessingSystem::initializeUsingXML(TiXmlElement * element) {
-    ExtraDynamic::initializeUsingXML(element);
+    Link::initializeUsingXML(element);
     TiXmlElement * e;
     e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
     inputSignalString=e->Attribute("ref");
@@ -44,10 +44,10 @@ namespace MBSimControl {
     if (stage==resolveXMLPath) {
       if (inputSignalString!="")
         setInputSignal(getByPath<Signal>(process_signal_string(inputSignalString)));
-      ExtraDynamic::init(stage);
+      Link::init(stage);
     }
     else
-      ExtraDynamic::init(stage);
+      Link::init(stage);
   }
 
 

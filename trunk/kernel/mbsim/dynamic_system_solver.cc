@@ -27,7 +27,6 @@
 #include "mbsim/link.h"
 #include "mbsim/graph.h"
 #include "mbsim/object.h"
-#include "mbsim/extra_dynamic.h"
 #include "mbsim/observer.h"
 #include "mbsim/integrators/integrator.h"
 #include "mbsim/utils/eps.h"
@@ -111,9 +110,6 @@ namespace MBSim {
       vector<Link*> lnkList;
       buildListOfLinks(lnkList, true);
 
-      vector<ExtraDynamic*> edList;
-      buildListOfExtraDynamic(edList, true);
-
       vector<ModellingInterface*> modellList;
       buildListOfModels(modellList, true);
 
@@ -133,7 +129,6 @@ namespace MBSim {
       frame.clear(); // delete old frame list
       contour.clear(); // delete old contour list
       link.clear(); // delete old link list
-      extraDynamic.clear(); // delete old ed list
       inverseKineticsLink.clear(); // delete old link list
       observer.clear(); // delete old link list
 
@@ -176,16 +171,6 @@ namespace MBSim {
           cout << str.str() << endl;
         lnkList[i]->setName(str.str());
         addLink(lnkList[i]);
-      }
-      if (INFO)
-        cout << "ed List:" << endl;
-      for (unsigned int i = 0; i < edList.size(); i++) {
-        stringstream str;
-        str << edList[i]->getParent()->getPath('/') << "/" << edList[i]->getName();
-        if (INFO)
-          cout << str.str() << endl;
-        edList[i]->setName(str.str());
-        addExtraDynamic(edList[i]);
       }
       if (INFO)
         cout << "inverse kinetics link List:" << endl;
@@ -1245,13 +1230,10 @@ namespace MBSim {
   void DynamicSystemSolver::addElement(Element *element_) {
     Object* object_ = dynamic_cast<Object*>(element_);
     Link* link_ = dynamic_cast<Link*>(element_);
-    ExtraDynamic* ed_ = dynamic_cast<ExtraDynamic*>(element_);
     if (object_)
       addObject(object_);
     else if (link_)
       addLink(link_);
-    else if (ed_)
-      addExtraDynamic(ed_);
     else {
       throw MBSimError("ERROR (DynamicSystemSolver: addElement()): No such type of Element to add!");
     }

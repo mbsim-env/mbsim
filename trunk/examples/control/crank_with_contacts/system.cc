@@ -369,7 +369,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // Regler
   LinearTransferSystem *Regler = new LinearTransferSystem("Regler");
-  addExtraDynamic(Regler);
+  addLink(Regler);
   Regler->setInputSignal(Regelfehler);
   Regler->setPID(10000.,1000.,0.);
 

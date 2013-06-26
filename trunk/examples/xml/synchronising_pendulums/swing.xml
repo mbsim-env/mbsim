@@ -234,8 +234,6 @@
          -->
     </RigidBody>
   </objects>
-  <extraDynamics>
-  </extraDynamics>
   <links>
     <Joint name="JointMountLeft" xmlns="http://mbsim.berlios.de/MBSim">
       <force>
