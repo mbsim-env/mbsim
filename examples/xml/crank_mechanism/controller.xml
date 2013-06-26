@@ -7,7 +7,7 @@
   </groups>
   <objects>
   </objects>
-  <extraDynamics> <!-- optional -->
+  <links>
     <LinearTransferSystem name="pidController" xmlns="http://mbsim.berlios.de/MBSimControl">
       <inputSignal ref="../Link[speedDeviation]"/>
       <pidType>
@@ -17,8 +17,6 @@
       </pidType>
       <showABCD/> <!-- optional -->
     </LinearTransferSystem>
-  </extraDynamics>
-  <links>
     <GeneralizedVelocitySensor name="crankMeasuredSpeed" xmlns="http://mbsim.berlios.de/MBSimControl">
       <object ref="../../Object[Crank]"/>
       <index>0</index>
@@ -39,7 +37,7 @@
       </inputSignal>
     </SignalAddition>
     <SignalProcessingSystemSensor name="controllerOutput" xmlns="http://mbsim.berlios.de/MBSimControl">
-      <signalProcessingSystem ref="../ExtraDynamic[pidController]"/>
+      <signalProcessingSystem ref="../Link[pidController]"/>
     </SignalProcessingSystemSensor>
     <Actuator name="motor" xmlns="http://mbsim.berlios.de/MBSimControl">
       <momentDirection>[0 0 -1]'</momentDirection> <!-- optional -->

@@ -29,7 +29,6 @@ namespace MBSim {
   class Frame;
   class Node;
   class Graph;
-  class ExtraDynamicInterface;
   class Integrator;
 
   /**

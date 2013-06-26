@@ -5,7 +5,7 @@
   <contours/>
   <groups/>
   <objects/>
-  <extraDynamics>
+  <links>
     <LinearTransferSystem name="LTI" xmlns="http://mbsim.berlios.de/MBSimControl">
       <inputSignal ref="../Signal[DifferencePosition]"/>
       <pidType>
@@ -21,8 +21,6 @@
         <T>1/25</T>
       </pt1Type>
     </LinearTransferSystem>
-  </extraDynamics>
-  <links>
     <RelativePositionSensor name="MassPosition" xmlns="http://mbsim.berlios.de/MBSimControl">
       <frame ref="../../Frame[FMass]" rel="../../Group[Rocker]/Object[Mass]/Frame[C]"/>
       <direction>[0;1;0]</direction>
@@ -55,7 +53,7 @@
       </inputSignal>
     </SignalAddition>
     <SignalProcessingSystemSensor name="ControlOutput" xmlns="http://mbsim.berlios.de/MBSimControl">
-      <signalProcessingSystem ref="../ExtraDynamic[LTI]"/>
+      <signalProcessingSystem ref="../Link[LTI]"/>
     </SignalProcessingSystemSensor>
     <SignalLimitation name="ControlOutputLimitted" xmlns="http://mbsim.berlios.de/MBSimControl">
       <inputSignal ref="../Signal[ControlOutput]"/>
@@ -63,7 +61,7 @@
       <maximalValue>1+5</maximalValue>
     </SignalLimitation>
     <SignalProcessingSystemSensor name="PT1ControlvalveOutput" xmlns="http://mbsim.berlios.de/MBSimControl">
-      <signalProcessingSystem ref="../ExtraDynamic[PT1Controlvalve]"/>
+      <signalProcessingSystem ref="../Link[PT1Controlvalve]"/>
     </SignalProcessingSystemSensor>
     <SignalLimitation name="PT1ControlvalveOutputLimitted" xmlns="http://mbsim.berlios.de/MBSimControl">
       <inputSignal ref="../Signal[PT1ControlvalveOutput]"/>

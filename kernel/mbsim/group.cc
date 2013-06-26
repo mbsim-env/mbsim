@@ -21,7 +21,6 @@
 #include "mbsim/group.h"
 #include "mbsim/object.h"
 #include "mbsim/link.h"
-#include "mbsim/extra_dynamic.h"
 #include "mbsim/frame.h"
 #include "mbsim/contour.h"
 #include "mbsim/dynamic_system_solver.h"
@@ -101,9 +100,6 @@ namespace MBSim {
       (*i)->updatezd(t);
 
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
-      (*i)->updatexd(t);
-
-    for(vector<ExtraDynamic*>::iterator i = extraDynamic.begin(); i!= extraDynamic.end(); ++i) 
       (*i)->updatexd(t);
   }
 
@@ -227,19 +223,6 @@ namespace MBSim {
     }
     e=e->NextSiblingElement();
 
-    // extraDynamics
-    if (e->ValueStr()==MBSIMNS"extraDynamics") {
-      E=e->FirstChildElement();
-      ExtraDynamic *ed;
-      while(E) {
-        ed=ObjectFactory<Element>::create<ExtraDynamic>(E);
-        addExtraDynamic(ed);
-        ed->initializeUsingXML(E);
-        E=E->NextSiblingElement();
-      }
-      e=e->NextSiblingElement();
-    }
-
     // links
     E=e->FirstChildElement();
     Link *l;
@@ -313,11 +296,6 @@ namespace MBSim {
 
     ele1 = new TiXmlElement( MBSIMNS"objects" );
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (*i)->writeXMLFile(ele1);
-    ele0->LinkEndChild( ele1 );
-
-    ele1 = new TiXmlElement( MBSIMNS"extraDynamics" );
-    for(vector<ExtraDynamic*>::iterator i = extraDynamic.begin(); i != extraDynamic.end(); ++i) 
       (*i)->writeXMLFile(ele1);
     ele0->LinkEndChild( ele1 );
 

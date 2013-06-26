@@ -33,7 +33,6 @@ namespace MBSim {
 
   class Frame;
   class Object;
-  class ExtraDynamic;
   class Contour;
   class DynamicSystem;
 
