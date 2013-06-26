@@ -20,9 +20,9 @@
 #ifndef _SIGNAL_PROCESSING_SYSTEM__H_
 #define _SIGNAL_PROCESSING_SYSTEM__H_
 
-#include "extra_dynamic.h"
+#include "link.h"
 
-class SignalProcessingSystem : public ExtraDynamic {
+class SignalProcessingSystem : public Link {
   friend class SignalProcessingSystemPropertyDialog;
   public:
     SignalProcessingSystem(const std::string &str, Element *parent);

@@ -29,7 +29,6 @@ mbsimgui_SOURCES = element.cc \
 		   actuator.cc \
 		   signal_.cc \
 		   sensor.cc \
-		   extra_dynamic.cc \
 		   signal_processing_system.cc \
 		   linear_transfer_system.cc \
 		   observer.cc \

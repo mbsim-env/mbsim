@@ -22,7 +22,6 @@
 #include "frame.h"
 #include "contour.h"
 #include "rigidbody.h"
-#include "extra_dynamic.h"
 #include "signal_.h"
 #include "basic_widgets.h"
 #include "variable_widgets.h"
@@ -298,44 +297,6 @@ void SignalOfReferenceProperty::fromWidget(QWidget *widget) {
 void SignalOfReferenceProperty::toWidget(QWidget *widget) {
   static_cast<SignalOfReferenceWidget*>(widget)->setSignal(QString::fromStdString(signal),signalPtr);
   static_cast<SignalOfReferenceWidget*>(widget)->updateWidget();
-}
-
-ExtraDynamicOfReferenceProperty::ExtraDynamicOfReferenceProperty(const std::string &ed_, Element *element_, const std::string &xmlName_) : ed(ed_), edPtr(element_->getByPath<ExtraDynamic>(ed)), element(element_), xmlName(xmlName_) {
-}
-
-void ExtraDynamicOfReferenceProperty::initialize() {
-  edPtr=element->getByPath<ExtraDynamic>(ed);
-}
-
-void ExtraDynamicOfReferenceProperty::setExtraDynamic(const std::string &str) {
-  ed = str;
-  edPtr=element->getByPath<ExtraDynamic>(ed);
-}
-
-std::string ExtraDynamicOfReferenceProperty::getExtraDynamic() const {
-  return edPtr?edPtr->getXMLPath(element,true):ed;
-}
-
-TiXmlElement* ExtraDynamicOfReferenceProperty::initializeUsingXML(TiXmlElement *parent) {
-  TiXmlElement *e = parent->FirstChildElement(xmlName);
-  if(e) ed=e->Attribute("ref");
-  return e;
-}
-
-TiXmlElement* ExtraDynamicOfReferenceProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele = new TiXmlElement(xmlName);
-  ele->SetAttribute("ref", getExtraDynamic());
-  parent->LinkEndChild(ele);
-  return 0;
-}
-
-void ExtraDynamicOfReferenceProperty::fromWidget(QWidget *widget) {
-  setExtraDynamic(static_cast<ExtraDynamicOfReferenceWidget*>(widget)->getExtraDynamic().toStdString());
-}
-
-void ExtraDynamicOfReferenceProperty::toWidget(QWidget *widget) {
-  static_cast<ExtraDynamicOfReferenceWidget*>(widget)->setExtraDynamic(QString::fromStdString(ed),edPtr);
-  static_cast<ExtraDynamicOfReferenceWidget*>(widget)->updateWidget();
 }
 
 TiXmlElement* FileProperty::initializeUsingXML(TiXmlElement *element) {

@@ -30,7 +30,6 @@ class Contour;
 class Object;
 class RigidBody;
 class Signal;
-class ExtraDynamic;
 
 namespace MBXMLUtils {
   class TiXmlElement;
@@ -161,24 +160,6 @@ class SignalOfReferenceProperty : public Property {
     void toWidget(QWidget *widget);
     void setSignal(const std::string &str);
     std::string getSignal() const;
-};
-
-class ExtraDynamicOfReferenceProperty : public Property {
-  protected:
-    std::string ed;
-    ExtraDynamic *edPtr;
-    Element* element;
-    std::string xmlName;
-  public:
-    ExtraDynamicOfReferenceProperty(const std::string &ed_="", Element *element_=0, const std::string &xmlName_=""); 
-    virtual Property* clone() const {return new ExtraDynamicOfReferenceProperty(*this);}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
-    void initialize();
-    void fromWidget(QWidget *widget);
-    void toWidget(QWidget *widget);
-    void setExtraDynamic(const std::string &str);
-    std::string getExtraDynamic() const;
 };
 
 class FileProperty : public Property {

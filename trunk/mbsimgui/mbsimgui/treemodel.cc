@@ -24,7 +24,6 @@
 #include "contour.h"
 #include "group.h"
 #include "object.h"
-#include "extra_dynamic.h"
 #include "link.h"
 #include "observer.h"
 #include "parameter.h"
@@ -212,8 +211,6 @@ void ElementTreeModel::createGroupItem(Group *group, const QModelIndex &parent) 
     createGroupItem(group->getGroup(i),index.child(2,0));
   for(int i=0; i<group->getNumberOfObjects(); i++)
     createObjectItem(group->getObject(i),index.child(3,0));
-  for(int i=0; i<group->getNumberOfExtraDynamics(); i++)
-    createExtraDynamicItem(group->getExtraDynamic(i),index.child(4,0));
   for(int i=0; i<group->getNumberOfLinks(); i++)
     createLinkItem(group->getLink(i),index.child(5,0));
   for(int i=0; i<group->getNumberOfObservers(); i++)
@@ -244,19 +241,6 @@ void ElementTreeModel::createObjectItem(Object *object, const QModelIndex &paren
     createFrameItem(object->getFrame(i),index.child(0,0));
   for(int i=0; i<object->getNumberOfContours(); i++)
     createContourItem(object->getContour(i),index.child(1,0));
-}
-
-void ElementTreeModel::createExtraDynamicItem(ExtraDynamic *ed, const QModelIndex &parent) {
-
-  TreeItem *parentItem = getItem(parent);
-
-  int i = rowCount(parent);
-  beginInsertRows(parent, i, i);
-  TreeItem *item = new TreeItem(ed,parentItem);
-  parentItem->insertChildren(item,1);
-  endInsertRows();
-
-  idEleMap.insert(make_pair(ed->getID(), parent.child(i,0)));
 }
 
 void ElementTreeModel::createLinkItem(Link *link, const QModelIndex &parent) {
