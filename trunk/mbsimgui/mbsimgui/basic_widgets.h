@@ -370,7 +370,6 @@ class DependenciesWidget : public Widget {
     void updateList();
     void addDependency();
     void removeDependency();
-    void updateGeneralizedCoordinatesOfBodies();
     void openContextMenu(const QPoint &pos);
 
   signals:

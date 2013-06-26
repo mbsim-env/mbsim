@@ -38,6 +38,7 @@ class GearConstraint : public Constraint {
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void initialize();
+    void deinitialize();
     ElementPropertyDialog* createPropertyDialog() {return new GearConstraintPropertyDialog(this);}
   protected:
     ExtProperty dependentBody, independentBodies, gearForceArrow, gearMomentArrow;
@@ -89,6 +90,7 @@ class JointConstraint : public Constraint {
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void initialize();
+    void deinitialize();
     ElementPropertyDialog* createPropertyDialog() {return new JointConstraintPropertyDialog(this);}
   protected:
     ExtProperty force, moment, connections, independentBody, dependentBodiesFirstSide, dependentBodiesSecondSide, jointForceArrow, jointMomentArrow;

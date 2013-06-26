@@ -244,6 +244,7 @@ class DependenciesProperty : public Property {
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
+    const std::vector<RigidBodyOfReferenceProperty>& getBodies() const {return refBody;}
 
   protected:
     Element* element;
