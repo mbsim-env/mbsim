@@ -28,14 +28,12 @@ class RigidBody;
 class Constraint : public Object {
   public:
     Constraint(const std::string &str, Element *parent);
-    ~Constraint();
 };
 
 class GearConstraint : public Constraint {
   friend class GearConstraintPropertyDialog;
   public:
     GearConstraint(const std::string &str, Element *parent);
-    ~GearConstraint();
     std::string getType() const { return "GearConstraint"; }
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -49,11 +47,11 @@ class KinematicConstraint : public Constraint {
   friend class KinematicConstraintPropertyDialog;
   public:
     KinematicConstraint(const std::string &str, Element *parent);
-    ~KinematicConstraint();
     std::string getType() const { return "KinematicConstraint"; }
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void initialize();
+    void deinitialize();
     ElementPropertyDialog* createPropertyDialog() {return new KinematicConstraintPropertyDialog(this);}
   protected:
     ExtProperty dependentBody, constraintForceArrow, constraintMomentArrow;
@@ -63,7 +61,6 @@ class TimeDependentKinematicConstraint : public KinematicConstraint {
   friend class TimeDependentKinematicConstraintPropertyDialog;
   public:
     TimeDependentKinematicConstraint(const std::string &str, Element *parent);
-    ~TimeDependentKinematicConstraint();
     std::string getType() const { return "TimeDependentKinematicConstraint"; }
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -76,7 +73,6 @@ class StateDependentKinematicConstraint : public KinematicConstraint {
   friend class StateDependentKinematicConstraintPropertyDialog;
   public:
     StateDependentKinematicConstraint(const std::string &str, Element *parent);
-    ~StateDependentKinematicConstraint();
     std::string getType() const { return "StateDependentKinematicConstraint"; }
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -89,7 +85,6 @@ class JointConstraint : public Constraint {
   friend class JointConstraintPropertyDialog;
   public:
     JointConstraint(const std::string &str, Element *parent);
-    ~JointConstraint();
     std::string getType() const { return "JointConstraint"; }
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);

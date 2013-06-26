@@ -60,7 +60,8 @@ class Element : public TreeItemData {
     virtual MBXMLUtils::TiXmlElement* writeXMLFileEmbed(MBXMLUtils::TiXmlNode *element);
     virtual void writeXMLFile(const std::string &name);
     virtual void writeXMLFile() { writeXMLFile(getName()); }
-    virtual void initialize();
+    virtual void initialize() {}
+    virtual void deinitialize() {}
     const std::string& getName() const {return static_cast<const TextProperty*>(name.getProperty())->getText();}
     void setName(const std::string &str) {static_cast<TextProperty*>(name.getProperty())->setText(str);}
     virtual std::string getType() const { return "Element"; }

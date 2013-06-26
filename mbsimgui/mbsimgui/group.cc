@@ -296,6 +296,7 @@ void Group::removeElement(Element* element) {
       }
   }
   removedElement.push_back(element);
+  element->deinitialize();
 }
 
 Group* Group::readXMLFile(const string &filename, Element *parent) {

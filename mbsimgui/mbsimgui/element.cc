@@ -64,9 +64,6 @@ void Element::writeXMLFile(const string &name) {
   doc.SaveFile((name.length()>4 && name.substr(name.length()-4,4)==".xml")?name:name+".xml");
 }
 
-void Element::initialize() {
-}
-
 void Element::initializeUsingXML(TiXmlElement *element) {
 //  for(unsigned int i=0; i<plotFeature.size(); i++)
 //    plotFeature[i]->initializeUsingXML(element);

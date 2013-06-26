@@ -124,6 +124,7 @@ class RigidBodyOfReferenceProperty : public Property {
     void toWidget(QWidget *widget);
     void setBody(const std::string &str);
     std::string getBody() const;
+    RigidBody* getBodyPtr() const {return bodyPtr;}
 };
 
 class ObjectOfReferenceProperty : public Property {
