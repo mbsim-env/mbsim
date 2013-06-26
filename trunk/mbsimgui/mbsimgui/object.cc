@@ -26,12 +26,12 @@ using namespace MBXMLUtils;
 
 Object::Object(const string &str, Element *parent) : Element(str,parent), q0(0,false), u0(0,false) {
 
-  vector<PhysicalVariableProperty*> input;
-  input.push_back(new PhysicalVariableProperty(new VecProperty(0),"",MBSIMNS"initialGeneralizedPosition"));
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIMNS"initialGeneralizedPosition"));
   q0.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(new PhysicalVariableProperty(new VecProperty(0),"",MBSIMNS"initialGeneralizedVelocity"));
+  input.push_back(PhysicalVariableProperty(new VecProperty(0),"",MBSIMNS"initialGeneralizedVelocity"));
   u0.setProperty(new ExtPhysicalVarProperty(input));
 }
 

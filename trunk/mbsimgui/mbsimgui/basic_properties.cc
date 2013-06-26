@@ -631,28 +631,28 @@ void SolverChoiceProperty::toWidget(QWidget *widget) {
 
 SolverTolerancesProperty::SolverTolerancesProperty() : projection(0,false), g(0,false), gd(0,false), gdd(0,false), la(0,false), La(0,false) {
 
-  vector<PhysicalVariableProperty*> input;
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-15"), "-", MBSIMNS"projection"));
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-15"), "-", MBSIMNS"projection"));
   projection.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-8"), "-", MBSIMNS"g"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-8"), "-", MBSIMNS"g"));
   g.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-10"), "-", MBSIMNS"gd"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-10"), "-", MBSIMNS"gd"));
   gd.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-12"), "-", MBSIMNS"gdd"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-12"), "-", MBSIMNS"gdd"));
   gdd.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-12"), "-", MBSIMNS"la"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-12"), "-", MBSIMNS"la"));
   la.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1e-10"), "-", MBSIMNS"La"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1e-10"), "-", MBSIMNS"La"));
   La.setProperty(new ExtPhysicalVarProperty(input));
 }
 
@@ -703,8 +703,8 @@ SolverParametersProperty::SolverParametersProperty() : constraintSolver(0,false)
   constraintSolver.setProperty(new SolverChoiceProperty(MBSIMNS"constraintSolver"));
   impactSolver.setProperty(new SolverChoiceProperty(MBSIMNS"impactSolver"));
 
-  vector<PhysicalVariableProperty*> input;
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("10000"), "", MBSIMNS"numberOfMaximalIterations"));
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("10000"), "", MBSIMNS"numberOfMaximalIterations"));
   numberOfMaximalIterations.setProperty(new ExtPhysicalVarProperty(input));
 
   tolerances.setProperty(new SolverTolerancesProperty);
@@ -746,8 +746,8 @@ void SolverParametersProperty::toWidget(QWidget *widget) {
 }
 
 GearDependencyProperty::GearDependencyProperty(Element* element) : refBody("",element) {
-  vector<PhysicalVariableProperty*> input;
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"), "", MBSIMNS"transmissionRatio"));
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "", MBSIMNS"transmissionRatio"));
   ratio.setProperty(new ExtPhysicalVarProperty(input));
 } 
 
@@ -888,8 +888,8 @@ void EmbedProperty::toWidget(QWidget *widget) {
 }
 
 SignalReferenceProperty::SignalReferenceProperty(Element* element) : refSignal("",element) {
-  vector<PhysicalVariableProperty*> input;
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"), "", MBSIMCONTROLNS"factor"));
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "", MBSIMCONTROLNS"factor"));
   factor.setProperty(new ExtPhysicalVarProperty(input));
 } 
 

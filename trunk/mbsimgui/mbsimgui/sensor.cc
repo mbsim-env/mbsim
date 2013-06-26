@@ -37,8 +37,8 @@ Sensor::~Sensor() {
 
 GeneralizedCoordinateSensor::GeneralizedCoordinateSensor(const string &str, Element *parent) : Sensor(str, parent) {
   object.setProperty(new ObjectOfReferenceProperty("",this,MBSIMCONTROLNS"object"));
-  vector<PhysicalVariableProperty*> input;
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"), "", MBSIMCONTROLNS"index"));
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"), "", MBSIMCONTROLNS"index"));
   index.setProperty(new ExtPhysicalVarProperty(input));
 }
 

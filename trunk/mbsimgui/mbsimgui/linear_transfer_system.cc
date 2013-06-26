@@ -27,16 +27,16 @@ LinearTransferSystem::LinearTransferSystem(const string &str, Element *parent) :
   ContainerProperty *propertyContainer = new ContainerProperty(MBSIMCONTROLNS"pidType");
   vector<Property*> choiceProperty;
 
-  vector<PhysicalVariableProperty*> input;
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMCONTROLNS"P"));
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMCONTROLNS"P"));
   propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
   input.clear();
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROLNS"I"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROLNS"I"));
   propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
   input.clear();
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROLNS"D"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROLNS"D"));
   propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
   choiceProperty.push_back(propertyContainer);
@@ -44,19 +44,19 @@ LinearTransferSystem::LinearTransferSystem(const string &str, Element *parent) :
   propertyContainer = new ContainerProperty(MBSIMCONTROLNS"abcdType");
 
   input.clear();
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROLNS"A"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROLNS"A"));
   propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
   input.clear();
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROLNS"B"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROLNS"B"));
   propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
   input.clear();
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROLNS"C"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROLNS"C"));
   propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
   input.clear();
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROLNS"D"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROLNS"D"));
   propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
   choiceProperty.push_back(propertyContainer);
@@ -64,7 +64,7 @@ LinearTransferSystem::LinearTransferSystem(const string &str, Element *parent) :
   propertyContainer = new ContainerProperty(MBSIMCONTROLNS"integratorType");
 
   input.clear();
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMCONTROLNS"gain"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMCONTROLNS"gain"));
   propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
   choiceProperty.push_back(propertyContainer);
@@ -72,11 +72,11 @@ LinearTransferSystem::LinearTransferSystem(const string &str, Element *parent) :
   propertyContainer = new ContainerProperty(MBSIMCONTROLNS"pt1Type");
 
   input.clear();
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMCONTROLNS"P"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMCONTROLNS"P"));
   propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
   input.clear();
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0.1"),"-",MBSIMCONTROLNS"T"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0.1"),"-",MBSIMCONTROLNS"T"));
   propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
   choiceProperty.push_back(propertyContainer);

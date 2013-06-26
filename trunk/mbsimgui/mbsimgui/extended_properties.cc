@@ -31,13 +31,13 @@
 using namespace std;
 using namespace MBXMLUtils;
 
-ExtPhysicalVarProperty::ExtPhysicalVarProperty(std::vector<PhysicalVariableProperty*> inputProperty_) : inputProperty(inputProperty_), currentInput(0) {
-  inputProperty.push_back(new PhysicalVariableProperty(new OctaveExpressionProperty, inputProperty[0]->getUnit(), inputProperty[0]->getXmlName()));
+ExtPhysicalVarProperty::ExtPhysicalVarProperty(const std::vector<PhysicalVariableProperty> &inputProperty_) : inputProperty(inputProperty_), currentInput(0) {
+  inputProperty.push_back(PhysicalVariableProperty(new OctaveExpressionProperty, inputProperty[0].getUnit(), inputProperty[0].getXmlName()));
 }
 
 TiXmlElement* ExtPhysicalVarProperty::initializeUsingXML(TiXmlElement *element) {
   for(int i=0; i< inputProperty.size(); i++) {
-    if(inputProperty[i]->initializeUsingXML(element)) { 
+    if(inputProperty[i].initializeUsingXML(element)) { 
       currentInput = i;
       return element;
     }
@@ -45,40 +45,21 @@ TiXmlElement* ExtPhysicalVarProperty::initializeUsingXML(TiXmlElement *element) 
   return 0;
 }
 
-ExtPhysicalVarProperty::ExtPhysicalVarProperty(const ExtPhysicalVarProperty &p) : currentInput(p.currentInput) {
-  for(unsigned int i=0; i<p.inputProperty.size(); i++)
-    inputProperty.push_back(new PhysicalVariableProperty(*p.inputProperty[i]));
-}
-
-ExtPhysicalVarProperty::~ExtPhysicalVarProperty() {
-  for(vector<PhysicalVariableProperty*>::iterator i = inputProperty.begin(); i != inputProperty.end(); ++i)
-    delete *i;
-}
-
-ExtPhysicalVarProperty& ExtPhysicalVarProperty::operator=(const ExtPhysicalVarProperty &p) {
-  for(vector<PhysicalVariableProperty*>::iterator i = inputProperty.begin(); i != inputProperty.end(); ++i)
-    delete *i;
-  inputProperty.clear();
-  currentInput = p.currentInput;
-  for(unsigned int i=0; i<p.inputProperty.size(); i++)
-    inputProperty.push_back(new PhysicalVariableProperty(*p.inputProperty[i]));
-}
-
 TiXmlElement* ExtPhysicalVarProperty::writeXMLFile(TiXmlNode *parent) {
-  inputProperty[currentInput]->writeXMLFile(parent);
+  inputProperty[currentInput].writeXMLFile(parent);
   return 0;
 }
 
 void ExtPhysicalVarProperty::fromWidget(QWidget *widget) {
   currentInput = static_cast<ExtPhysicalVarWidget*>(widget)->getCurrentInput();
-  inputProperty[currentInput]->fromWidget(static_cast<ExtPhysicalVarWidget*>(widget)->getCurrentPhysicalVariableWidget());
+  inputProperty[currentInput].fromWidget(static_cast<ExtPhysicalVarWidget*>(widget)->getCurrentPhysicalVariableWidget());
 //  for(int i=0; i< inputProperty.size(); i++)
 //    inputProperty[i]->fromWidget(static_cast<ExtPhysicalVarWidget*>(widget)->getPhysicalVariableWidget(i));
 }
 
 void ExtPhysicalVarProperty::toWidget(QWidget *widget) {
   static_cast<ExtPhysicalVarWidget*>(widget)->setCurrentInput(currentInput);
-  inputProperty[currentInput]->toWidget(static_cast<ExtPhysicalVarWidget*>(widget)->getCurrentPhysicalVariableWidget());
+  inputProperty[currentInput].toWidget(static_cast<ExtPhysicalVarWidget*>(widget)->getCurrentPhysicalVariableWidget());
   //for(int i=0; i< inputProperty.size(); i++)
   //  inputProperty[i]->toWidget(static_cast<ExtPhysicalVarWidget*>(widget)->getPhysicalVariableWidget(i));
 }

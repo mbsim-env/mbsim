@@ -77,13 +77,13 @@ TiXmlElement* TranslationInXYZDirectionProperty::writeXMLFile(TiXmlNode *parent)
 }
 
 LinearTranslationProperty::LinearTranslationProperty() {
-  vector<PhysicalVariableProperty*> input;
-  input.push_back(new PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMNS"translationVectors"));
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMNS"translationVectors"));
   mat.setProperty(new ExtPhysicalVarProperty(input));
 }
 
 int LinearTranslationProperty::getqTSize() const {
-  string str = evalOctaveExpression(static_cast<const ExtPhysicalVarProperty*>(mat.getProperty())->getCurrentPhysicalVariableProperty()->getValue());
+  string str = evalOctaveExpression(static_cast<const ExtPhysicalVarProperty*>(mat.getProperty())->getCurrentPhysicalVariableProperty().getValue());
   vector<vector<string> > A = strToMat(str);
   return A.size()?A[0].size():0;
 }
@@ -314,8 +314,8 @@ TiXmlElement* RotationAboutZAxisProperty::writeXMLFile(TiXmlNode *parent) {
 }
 
 RotationAboutFixedAxisProperty::RotationAboutFixedAxisProperty() {
-  vector<PhysicalVariableProperty*> input;
-  input.push_back(new PhysicalVariableProperty(new VecProperty(3),"-",MBSIMNS"axisOfRotation"));
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new VecProperty(3),"-",MBSIMNS"axisOfRotation"));
   vec.setProperty(new ExtPhysicalVarProperty(input));  
 }
 
@@ -375,8 +375,8 @@ TiXmlElement* EulerAnglesProperty::writeXMLFile(TiXmlNode *parent) {
 }
 
 TimeDependentRotationAboutFixedAxisProperty::TimeDependentRotationAboutFixedAxisProperty() {
-  vector<PhysicalVariableProperty*> input;
-  input.push_back(new PhysicalVariableProperty(new VecProperty(3),"-",MBSIMNS"axisOfRotation"));
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new VecProperty(3),"-",MBSIMNS"axisOfRotation"));
   vec.setProperty(new ExtPhysicalVarProperty(input));  
 
   vector<Property*> property;
@@ -408,8 +408,8 @@ void TimeDependentRotationAboutFixedAxisProperty::toWidget(QWidget *widget) {
 }
 
 StateDependentRotationAboutFixedAxisProperty::StateDependentRotationAboutFixedAxisProperty() {
-  vector<PhysicalVariableProperty*> input;
-  input.push_back(new PhysicalVariableProperty(new VecProperty(3),"-",MBSIMNS"axisOfRotation"));
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new VecProperty(3),"-",MBSIMNS"axisOfRotation"));
   vec.setProperty(new ExtPhysicalVarProperty(input));  
 
   vector<Property*> property;
