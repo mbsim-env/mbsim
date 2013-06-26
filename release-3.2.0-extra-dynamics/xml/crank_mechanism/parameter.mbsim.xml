@@ -1,0 +1,40 @@
+<parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/parameter">
+  <scalarParameter name="fSize">.01</scalarParameter>
+
+  <scalarParameter name="g">-9.81</scalarParameter>
+  
+  <scalarParameter name="l1">.3</scalarParameter>
+  <scalarParameter name="l2">.02</scalarParameter>
+  <scalarParameter name="l3">.283</scalarParameter>
+  <scalarParameter name="l4">.0775</scalarParameter>
+
+  <scalarParameter name="m2">1.789</scalarParameter>
+  <scalarParameter name="m3">.504</scalarParameter>
+  <scalarParameter name="m4">1.517</scalarParameter>
+  
+  <scalarParameter name="r2">-0.00269</scalarParameter>
+  <scalarParameter name="r3">.155</scalarParameter>
+  <scalarParameter name="r4">.0937</scalarParameter>
+  
+  <scalarParameter name="J2">.00145</scalarParameter>
+  <scalarParameter name="J3">.00421</scalarParameter>
+  <scalarParameter name="J4">.00304</scalarParameter>
+  
+  <scalarParameter name="rBushing">.01215</scalarParameter>
+  <scalarParameter name="rBolt">.012</scalarParameter>
+  
+  <scalarParameter name="epsilon">.7</scalarParameter>
+  <scalarParameter name="mu">.07</scalarParameter>
+  
+  <scalarParameter name="ReferenceSpeed">17</scalarParameter>
+  <scalarParameter name="phi2InitPos">pi/4</scalarParameter>
+  <scalarParameter name="phi2InitVel">18.113/18.326*ReferenceSpeed</scalarParameter>
+  <scalarParameter name="phi4InitPos">1.6989</scalarParameter>
+  <scalarParameter name="phi4InitVel">2.514/18.326*ReferenceSpeed</scalarParameter>
+  <scalarParameter name="phi43InitPos">1.6662</scalarParameter>
+  <scalarParameter name="phi43InitVel">-3.526/18.326*ReferenceSpeed</scalarParameter>
+  
+  <scalarParameter name="b">.01</scalarParameter>
+  <scalarParameter name="arrowDiameter">.003</scalarParameter>
+
+</parameter>
