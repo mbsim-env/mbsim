@@ -115,8 +115,8 @@ TiXmlElement* Plane::writeXMLFile(TiXmlNode *parent) {
 
 Sphere::Sphere(const string &str, Element *parent) : Contour(str,parent) {
  
-  vector<PhysicalVariableProperty*> input;
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIMNS"radius"));
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIMNS"radius"));
   radius.setProperty(new ExtPhysicalVarProperty(input));
 
   visu.setProperty(new OMBVEmptyProperty(MBSIMNS"enableOpenMBV",getID()));
@@ -141,8 +141,8 @@ TiXmlElement* Sphere::writeXMLFile(TiXmlNode *parent) {
 
 CircleSolid::CircleSolid(const string &str, Element *parent) : Contour(str,parent) {
  
-  vector<PhysicalVariableProperty*> input;
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIMNS"radius"));
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "m", MBSIMNS"radius"));
   radius.setProperty(new ExtPhysicalVarProperty(input));
 
   visu.setProperty(new OMBVEmptyProperty(MBSIMNS"enableOpenMBV",getID()));

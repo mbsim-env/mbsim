@@ -25,24 +25,21 @@
 class ExtPhysicalVarProperty : public Property {
 
   public:
-    ExtPhysicalVarProperty(std::vector<PhysicalVariableProperty*> inputProperty);
-    ExtPhysicalVarProperty(const ExtPhysicalVarProperty &p);
-    ~ExtPhysicalVarProperty();
-    ExtPhysicalVarProperty& operator=(const ExtPhysicalVarProperty &p);
+    ExtPhysicalVarProperty(const std::vector<PhysicalVariableProperty> &inputProperty);
     virtual Property* clone() const {return new ExtPhysicalVarProperty(*this);}
-    PhysicalVariableProperty* getPhysicalVariableProperty(int i) {return inputProperty[i];}
-    PhysicalVariableProperty* getCurrentPhysicalVariableProperty() {return inputProperty[currentInput];}
-    const PhysicalVariableProperty* getCurrentPhysicalVariableProperty() const {return inputProperty[currentInput];}
+    const PhysicalVariableProperty& getPhysicalVariableProperty(int i) {return inputProperty[i];}
+    const PhysicalVariableProperty& getCurrentPhysicalVariableProperty() {return inputProperty[currentInput];}
+    const PhysicalVariableProperty& getCurrentPhysicalVariableProperty() const {return inputProperty[currentInput];}
     int getNumberOfInputs() const {return inputProperty.size();}
-    std::string getValue() const {return inputProperty[currentInput]->getValue();}
-    void setValue(const std::string &str) {inputProperty[currentInput]->setValue(str);}
+    std::string getValue() const {return inputProperty[currentInput].getValue();}
+    void setValue(const std::string &str) {inputProperty[currentInput].setValue(str);}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
 
   protected:
-    std::vector<PhysicalVariableProperty*> inputProperty;
+    std::vector<PhysicalVariableProperty> inputProperty;
     int currentInput;
 };
 

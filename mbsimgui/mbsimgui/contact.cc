@@ -42,8 +42,8 @@ Contact::Contact(const string &str, Element *parent) : Link(str, parent), contac
   frictionImpactLaw.setProperty(new FrictionImpactLawChoiceProperty(""));
   frictionImpactLaw.setXMLName(MBSIMNS"frictionImpactLaw");
 
-  vector<PhysicalVariableProperty*> input;
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0.1"),"m",MBSIMNS"enableOpenMBVContactPoints"));
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0.1"),"m",MBSIMNS"enableOpenMBVContactPoints"));
   enableOpenMBVContactPoints.setProperty(new ExtPhysicalVarProperty(input)); 
 
   normalForceArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));

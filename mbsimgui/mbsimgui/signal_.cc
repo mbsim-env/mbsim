@@ -60,16 +60,16 @@ TiXmlElement* SignalAddition::writeXMLFile(TiXmlNode *parent) {
 PIDController::PIDController(const string &str, Element *parent) : Signal(str, parent) {
   sRef.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROLNS"inputSignal"));
   sdRef.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROLNS"derivativeOfInputSignal"));
-  vector<PhysicalVariableProperty*> input;
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMCONTROLNS"P"));
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("1"),"-",MBSIMCONTROLNS"P"));
   P.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROLNS"I"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROLNS"I"));
   I.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROLNS"D"));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMCONTROLNS"D"));
   D.setProperty(new ExtPhysicalVarProperty(input));
 
 }

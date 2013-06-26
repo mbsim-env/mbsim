@@ -121,8 +121,8 @@ TiXmlElement* GeneralizedImpactLawProperty::writeXMLFile(TiXmlNode *parent) {
 }
 
 UnilateralNewtonImpactProperty::UnilateralNewtonImpactProperty() {
-  vector<PhysicalVariableProperty*> input;
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMNS"restitutionCoefficient"));
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMNS"restitutionCoefficient"));
   restitutionCoefficient.setProperty(new ExtPhysicalVarProperty(input));
 }
 
@@ -169,8 +169,8 @@ TiXmlElement* FrictionForceLawProperty::writeXMLFile(TiXmlNode *parent) {
 }
 
 PlanarCoulombFrictionProperty::PlanarCoulombFrictionProperty() {
-  vector<PhysicalVariableProperty*> input;
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMNS"frictionCoefficient"));
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMNS"frictionCoefficient"));
   frictionCoefficient.setProperty(new ExtPhysicalVarProperty(input));
 }
 
@@ -194,8 +194,8 @@ void PlanarCoulombFrictionProperty::toWidget(QWidget *widget) {
 }
 
 SpatialCoulombFrictionProperty::SpatialCoulombFrictionProperty() {
-  vector<PhysicalVariableProperty*> input;
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMNS"frictionCoefficient"));
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMNS"frictionCoefficient"));
   frictionCoefficient.setProperty(new ExtPhysicalVarProperty(input));
 }
 
@@ -287,8 +287,8 @@ TiXmlElement* FrictionImpactLawProperty::writeXMLFile(TiXmlNode *parent) {
 }
 
 PlanarCoulombImpactProperty::PlanarCoulombImpactProperty() {
-  vector<PhysicalVariableProperty*> input;
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMNS"frictionCoefficient"));
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMNS"frictionCoefficient"));
   frictionCoefficient.setProperty(new ExtPhysicalVarProperty(input));
 }
 
@@ -312,8 +312,8 @@ void PlanarCoulombImpactProperty::toWidget(QWidget *widget) {
 }
 
 SpatialCoulombImpactProperty::SpatialCoulombImpactProperty() {
-  vector<PhysicalVariableProperty*> input;
-  input.push_back(new PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMNS"frictionCoefficient"));
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMNS"frictionCoefficient"));
   frictionCoefficient.setProperty(new ExtPhysicalVarProperty(input));
 }
 
@@ -558,8 +558,8 @@ void FrictionImpactLawChoiceProperty::toWidget(QWidget *widget) {
 
 GeneralizedForceChoiceProperty::GeneralizedForceChoiceProperty(ExtProperty &arrow_, const std::string &xmlName_) : arrow(arrow_), generalizedImpactLaw(0,false), xmlName(xmlName_) {
 
-  vector<PhysicalVariableProperty*> input;
-  input.push_back(new PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMNS"direction"));
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMNS"direction"));
   mat.setProperty(new ExtPhysicalVarProperty(input));
 
   generalizedForceLaw.setProperty(new GeneralizedForceLawChoiceProperty(MBSIMNS"generalizedForceLaw"));
@@ -604,8 +604,8 @@ void GeneralizedForceChoiceProperty::toWidget(QWidget *widget) {
 
 ForceChoiceProperty::ForceChoiceProperty(ExtProperty &arrow_, const std::string &xmlName_) : arrow(arrow_), xmlName(xmlName_) {
 
-  vector<PhysicalVariableProperty*> input;
-  input.push_back(new PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMNS"directionVectors"));
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",MBSIMNS"directionVectors"));
   mat.setProperty(new ExtPhysicalVarProperty(input));
 
   vector<Property*> property;
@@ -650,8 +650,8 @@ void ForceChoiceProperty::toWidget(QWidget *widget) {
 
 ForceDirectionProperty::ForceDirectionProperty(Element *element, const string &xmlName_) : xmlName(xmlName_) {
 
-  vector<PhysicalVariableProperty*> input;
-  input.push_back(new PhysicalVariableProperty(new VecProperty(3),"-",MBSIMNS"direction"));
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new VecProperty(3),"-",MBSIMNS"direction"));
   mat.setProperty(new ExtPhysicalVarProperty(input));
   refFrame.setProperty(new FrameOfReferenceProperty("",element,MBSIMNS"frameOfReference"));
 }
@@ -685,8 +685,8 @@ void ForceDirectionProperty::toWidget(QWidget *widget) {
 
 GeneralizedForceDirectionProperty::GeneralizedForceDirectionProperty(const string &xmlName) {
 
-  vector<PhysicalVariableProperty*> input;
-  input.push_back(new PhysicalVariableProperty(new MatProperty(3,1),"-",xmlName));
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new MatProperty(3,1),"-",xmlName));
   mat.setProperty(new ExtPhysicalVarProperty(input));
 }
 
