@@ -23,22 +23,22 @@
 using namespace std;
 using namespace MBXMLUtils;
 
-SignalProcessingSystem::SignalProcessingSystem(const string &str, Element *parent) : ExtraDynamic(str, parent) {
+SignalProcessingSystem::SignalProcessingSystem(const string &str, Element *parent) : Link(str, parent) {
   signalRef.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROLNS"inputSignal"));
 }
 
 void SignalProcessingSystem::initialize() {
-  ExtraDynamic::initialize();
+  Link::initialize();
   signalRef.initialize();
 }
 
 void SignalProcessingSystem::initializeUsingXML(TiXmlElement *element) {
-  ExtraDynamic::initializeUsingXML(element);
+  Link::initializeUsingXML(element);
   signalRef.initializeUsingXML(element);
 }
 
 TiXmlElement* SignalProcessingSystem::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = ExtraDynamic::writeXMLFile(parent);
+  TiXmlElement *ele0 = Link::writeXMLFile(parent);
   signalRef.writeXMLFile(ele0);
   return ele0;
 }

@@ -31,7 +31,6 @@ class Frame;
 class Contour;
 class Parameter;
 class Signal;
-class ExtraDynamic;
 class QComboBox;
 class QCheckBox;
 class QStackedWidget;
@@ -41,7 +40,6 @@ class ContourBrowser;
 class RigidBodyBrowser;
 class ObjectBrowser;
 class SignalBrowser;
-class ExtraDynamicBrowser;
 class ExtWidget;
 class QLabel;
 
@@ -219,30 +217,6 @@ class SignalOfReferenceWidget : public Widget {
 
   signals:
     void signalChanged();
-};
-
-class ExtraDynamicOfReferenceWidget : public Widget {
-  Q_OBJECT
-
-  public:
-    ExtraDynamicOfReferenceWidget(Element* element, ExtraDynamic* selectedExtraDynamic);
-
-    void updateWidget();
-    void setExtraDynamic(const QString &str, ExtraDynamic *edPtr);
-    QString getExtraDynamic() const;
-    ExtraDynamic* getSelectedExtraDynamic() {return selectedExtraDynamic;}
-
-  protected:
-    QLineEdit* ed;
-    Element* element;
-    ExtraDynamicBrowser* edBrowser;
-    ExtraDynamic* selectedExtraDynamic;
-
-  public slots:
-    void setExtraDynamic();
-
-  signals:
-    void edChanged();
 };
 
 class FileWidget : public Widget {

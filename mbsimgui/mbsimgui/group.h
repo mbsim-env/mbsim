@@ -36,7 +36,6 @@ class Group : public Element {
     std::vector<Contour*> contour;
     std::vector<Group*> group;
     std::vector<Object*> object;
-    std::vector<ExtraDynamic*> extraDynamic;
     std::vector<Link*> link;
     std::vector<Observer*> observer;
     std::vector<Element*> removedElement;
@@ -61,21 +60,18 @@ class Group : public Element {
     int getNumberOfContours() {return contour.size();}
     int getNumberOfGroups() {return group.size();}
     int getNumberOfObjects() {return object.size();}
-    int getNumberOfExtraDynamics() {return extraDynamic.size();}
     int getNumberOfLinks() {return link.size();}
     int getNumberOfObservers() {return observer.size();}
     Frame* getFrame(int i) {return frame[i];}
     Contour* getContour(int i) {return contour[i];}
     Object* getObject(int i) {return object[i];}
     Group* getGroup(int i) {return group[i];}
-    ExtraDynamic* getExtraDynamic(int i) {return extraDynamic[i];}
     Link* getLink(int i) {return link[i];}
     Observer* getObserver(int i) {return observer[i];}
     Frame* getFrame(const std::string &name);
     Contour* getContour(const std::string &name);
     Object* getObject(const std::string &name);
     Group* getGroup(const std::string &name);
-    ExtraDynamic* getExtraDynamic(const std::string &name);
     Link* getLink(const std::string &name);
     Observer* getObserver(const std::string &name);
 
@@ -83,7 +79,6 @@ class Group : public Element {
     void addContour(Contour *contour);
     void addGroup(Group *group);
     void addObject(Object *object);
-    void addExtraDynamic(ExtraDynamic *extraDynamic);
     void addLink(Link *link);
     void addObserver(Observer *observer);
     void removeElement(Element *element);

@@ -145,12 +145,6 @@ ExtraDynamic* ObjectFactory::createExtraDynamic(TiXmlElement *element, Element *
     return (*i)->createExtraDynamic(element,parent);
   return 0;
 }
-ExtraDynamic* MBSimObjectFactory::createExtraDynamic(TiXmlElement *element, Element *parent) {
-  if(element==0) return 0;
-  if(element->ValueStr()==MBSIMCONTROLNS"LinearTransferSystem")
-    return new LinearTransferSystem(element->Attribute("name"),parent);
-  return 0;
-}  
 
 Link* ObjectFactory::createLink(TiXmlElement *element, Element *parent) {
   if(element==NULL) return NULL;
