@@ -680,29 +680,18 @@ void JointConstraintPropertyDialog::fromWidget(Element *element) {
   }
 }
 
-ExtraDynamicPropertyDialog::ExtraDynamicPropertyDialog(ExtraDynamic *ed, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(ed,parent,f) {
-}
-
-void ExtraDynamicPropertyDialog::toWidget(Element *element) {
-  ElementPropertyDialog::toWidget(element);
-}
-
-void ExtraDynamicPropertyDialog::fromWidget(Element *element) {
-  ElementPropertyDialog::fromWidget(element);
-}
-
-SignalProcessingSystemPropertyDialog::SignalProcessingSystemPropertyDialog(SignalProcessingSystem *sps, QWidget * parent, Qt::WindowFlags f) : ExtraDynamicPropertyDialog(sps,parent,f) {
+SignalProcessingSystemPropertyDialog::SignalProcessingSystemPropertyDialog(SignalProcessingSystem *sps, QWidget * parent, Qt::WindowFlags f) : LinkPropertyDialog(sps,parent,f) {
   signalRef = new ExtWidget("Input signal",new SignalOfReferenceWidget(sps,0));
   addToTab("General", signalRef);
 }
 
 void SignalProcessingSystemPropertyDialog::toWidget(Element *element) {
-  ExtraDynamicPropertyDialog::toWidget(element);
+  LinkPropertyDialog::toWidget(element);
   static_cast<SignalProcessingSystem*>(element)->signalRef.toWidget(signalRef);
 }
 
 void SignalProcessingSystemPropertyDialog::fromWidget(Element *element) {
-  ExtraDynamicPropertyDialog::fromWidget(element);
+  LinkPropertyDialog::fromWidget(element);
   static_cast<SignalProcessingSystem*>(element)->signalRef.fromWidget(signalRef);
 }
 
@@ -1229,7 +1218,7 @@ void FunctionSensorPropertyDialog::fromWidget(Element *element) {
 }
 
 SignalProcessingSystemSensorPropertyDialog::SignalProcessingSystemSensorPropertyDialog(SignalProcessingSystemSensor *sensor, QWidget * parent, Qt::WindowFlags f) : SensorPropertyDialog(sensor,parent,f) {
-  spsRef = new ExtWidget("Signal processing system",new ExtraDynamicOfReferenceWidget(sensor,0));
+  //spsRef = new ExtWidget("Signal processing system",new LinkOfReferenceWidget(sensor,0));
   addToTab("General", spsRef);
 }
 

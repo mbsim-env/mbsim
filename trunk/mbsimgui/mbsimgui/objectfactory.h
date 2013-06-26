@@ -25,7 +25,6 @@ class Frame;
 class Contour;
 class Group;
 class Object;
-class ExtraDynamic;
 class Link;
 class Observer;
 class Integrator;
@@ -49,7 +48,6 @@ class ObjectFactoryBase {
     virtual Contour* createContour(MBXMLUtils::TiXmlElement *element, Element *parent) { return NULL; }
     virtual Group* createGroup(MBXMLUtils::TiXmlElement *element, Element *parent) { return NULL; }
     virtual Object* createObject(MBXMLUtils::TiXmlElement *element, Element *parent) { return NULL; }
-    virtual ExtraDynamic* createExtraDynamic(MBXMLUtils::TiXmlElement *element, Element *parent) { return NULL; }
     virtual Link* createLink(MBXMLUtils::TiXmlElement *element, Element *parent) { return NULL; }
     virtual Observer* createObserver(MBXMLUtils::TiXmlElement *element, Element *parent) { return NULL; }
     virtual Integrator* createIntegrator(MBXMLUtils::TiXmlElement *element) { return NULL; }
@@ -77,7 +75,6 @@ class ObjectFactory : public ObjectFactoryBase {
     Contour* createContour(MBXMLUtils::TiXmlElement *element, Element *parent);
     Group* createGroup(MBXMLUtils::TiXmlElement *element, Element *parent);
     Object* createObject(MBXMLUtils::TiXmlElement *element, Element *parent);
-    ExtraDynamic* createExtraDynamic(MBXMLUtils::TiXmlElement *element, Element *parent);
     Link* createLink(MBXMLUtils::TiXmlElement *element, Element *parent);
     Observer* createObserver(MBXMLUtils::TiXmlElement *element, Element *parent);
     Integrator* createIntegrator(MBXMLUtils::TiXmlElement *element);
@@ -100,7 +97,6 @@ class MBSimObjectFactory : protected ObjectFactoryBase  {
     Contour* createContour(MBXMLUtils::TiXmlElement *element, Element *parent);
     Group* createGroup(MBXMLUtils::TiXmlElement *element, Element *parent);
     Object* createObject(MBXMLUtils::TiXmlElement *element, Element *parent);
-    ExtraDynamic* createExtraDynamic(MBXMLUtils::TiXmlElement *element, Element *parent);
     Link* createLink(MBXMLUtils::TiXmlElement *element, Element *parent);
     Observer* createObserver(MBXMLUtils::TiXmlElement *element, Element *parent);
     Integrator* createIntegrator(MBXMLUtils::TiXmlElement *element);
