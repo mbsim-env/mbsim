@@ -88,7 +88,7 @@ class Group : public Element {
     void addObserver(Observer *observer);
     void removeElement(Element *element);
     ElementPropertyDialog* createPropertyDialog() {return new GroupPropertyDialog(this);}
-    ElementContextMenu* createContextMenu() {return new GroupContextMenu(this);}
+    QMenu* createContextMenu() {return new GroupContextMenu(this);}
 };
 
 #endif

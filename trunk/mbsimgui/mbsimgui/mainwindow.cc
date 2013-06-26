@@ -356,9 +356,9 @@ void MainWindow::elementListClicked() {
   selectionChanged();
   if(QApplication::mouseButtons()==Qt::RightButton) {
     QModelIndex index = elementList->selectionModel()->currentIndex();
-    Element *element = dynamic_cast<Element*>(static_cast<ElementTreeModel*>(elementList->model())->getItem(index)->getItemData());
-    if(element && index.column()==0) {
-      QMenu *menu = element->createContextMenu();
+    TreeItemData *itemData = static_cast<ElementTreeModel*>(elementList->model())->getItem(index)->getItemData();
+    if(itemData && index.column()==0) {
+      QMenu *menu = itemData->createContextMenu();
       menu->exec(QCursor::pos());
       delete menu;
     } 
@@ -1018,61 +1018,49 @@ void MainWindow::saveElementAs() {
 void MainWindow::addFrame(Frame *frame) {
   ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
-  QModelIndex containerIndex = index.child(0,0);
-  Element *parentElement = static_cast<Element*>(model->getItem(index)->getItemData());
+  QModelIndex containerIndex = index.data().toString()=="frames"?index:index.child(0,0); 
   frame->setName(frame->getName()+toStr(model->getItem(containerIndex)->getID()));
-  parentElement->addFrame(frame);
+  frame->getParent()->addFrame(frame);
   model->createFrameItem(frame,containerIndex);
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
   QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+  elementList->openEditor();
 }
 
 void MainWindow::addContour(Contour *contour) {
   ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
-  QModelIndex containerIndex = index.child(1,0);
-  Element *parentElement = static_cast<Element*>(model->getItem(index)->getItemData());
+  QModelIndex containerIndex = (index.row()==0)?index.child(1,0):index;
   contour->setName(contour->getName()+toStr(model->getItem(containerIndex)->getID()));
-  parentElement->addContour(contour);
+  contour->getParent()->addContour(contour);
   model->createContourItem(contour,containerIndex);
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
   QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+  elementList->openEditor();
 }
 
 void MainWindow::addGroup(Group *group) {
   ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
-  QModelIndex containerIndex = index.child(2,0);
-  Element *parentElement = static_cast<Element*>(model->getItem(index)->getItemData());
+  QModelIndex containerIndex = (index.row()==0)?index.child(2,0):index;
   group->setName(group->getName()+toStr(model->getItem(containerIndex)->getID()));
-  parentElement->addGroup(group);
+  group->getParent()->addGroup(group);
   model->createGroupItem(group,containerIndex);
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
   QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+  elementList->openEditor();
 }
 
 void MainWindow::addObject(Object *object) {
   ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
-  QModelIndex containerIndex = index.child(3,0);
-  Element *parentElement = static_cast<Element*>(model->getItem(index)->getItemData());
+  QModelIndex containerIndex = (index.row()==0)?index.child(3,0):index;
   object->setName(object->getName()+toStr(model->getItem(containerIndex)->getID()));
-  parentElement->addObject(object);
+  object->getParent()->addObject(object);
   model->createObjectItem(object,containerIndex);
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
   QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+  elementList->openEditor();
 }
 
 void MainWindow::addExtraDynamic(ExtraDynamic *ed) {
@@ -1083,42 +1071,34 @@ void MainWindow::addExtraDynamic(ExtraDynamic *ed) {
   ed->setName(ed->getName()+toStr(model->getItem(containerIndex)->getID()));
   parentElement->addExtraDynamic(ed);
   model->createExtraDynamicItem(ed,containerIndex);
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
   QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+  elementList->openEditor();
 }
 
 
 void MainWindow::addLink(Link *link) {
   ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
-  QModelIndex containerIndex = index.child(5,0);
-  Element *parentElement = static_cast<Element*>(model->getItem(index)->getItemData());
+  QModelIndex containerIndex = (index.row()==0)?index.child(5,0):index;
   link->setName(link->getName()+toStr(model->getItem(containerIndex)->getID()));
-  parentElement->addLink(link);
+  link->getParent()->addLink(link);
   model->createLinkItem(link,containerIndex);
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
   QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+  elementList->openEditor();
 }
 
 void MainWindow::addObserver(Observer *observer) {
   ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
-  QModelIndex containerIndex = index.child(6,0);
-  Element *parentElement = static_cast<Element*>(model->getItem(index)->getItemData());
+  QModelIndex containerIndex = (index.row()==0)?index.child(6,0):index;
   observer->setName(observer->getName()+toStr(model->getItem(containerIndex)->getID()));
-  parentElement->addObserver(observer);
+  observer->getParent()->addObserver(observer);
   model->createObserverItem(observer,containerIndex);
-#ifdef INLINE_OPENMBV
-  mbsimxml(1);
-#endif
   QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
   elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+  elementList->openEditor();
 }
 
 

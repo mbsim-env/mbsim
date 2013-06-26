@@ -53,7 +53,7 @@ class Solver : public Group {
     void writeXMLFile() { writeXMLFile(getName()); }
 
     ElementPropertyDialog* createPropertyDialog() {return new SolverPropertyDialog(this);}
-    ElementContextMenu* createContextMenu() {return new SolverContextMenu(this);}
+    QMenu* createContextMenu() {return new SolverContextMenu(this);}
 };
 
 #endif

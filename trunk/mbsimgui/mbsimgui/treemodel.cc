@@ -194,13 +194,13 @@ void ElementTreeModel::createGroupItem(Group *group, const QModelIndex &parent) 
     index = parent.child(i,0);
   i = rowCount(index);
   beginInsertRows(index, i, i+4);
-  item->insertChildren(new TreeItem(new BasicItemData("frames",""),item,0),1);
-  item->insertChildren(new TreeItem(new BasicItemData("contours",""),item),1);
-  item->insertChildren(new TreeItem(new BasicItemData("groups",""),item),1);
-  item->insertChildren(new TreeItem(new BasicItemData("objects",""),item),1);
+  item->insertChildren(new TreeItem(new FrameItemData(group),item,0),1);
+  item->insertChildren(new TreeItem(new ContourItemData(group),item),1);
+  item->insertChildren(new TreeItem(new GroupItemData(group),item),1);
+  item->insertChildren(new TreeItem(new ObjectItemData(group),item),1);
   item->insertChildren(new TreeItem(new BasicItemData("extra dynamics",""),item),1);
-  item->insertChildren(new TreeItem(new BasicItemData("links",""),item),1);
-  item->insertChildren(new TreeItem(new BasicItemData("observers",""),item),1);
+  item->insertChildren(new TreeItem(new LinkItemData(group),item),1);
+  item->insertChildren(new TreeItem(new ObserverItemData(group),item),1);
   endInsertRows();
   i = rowCount(index);
 
@@ -235,8 +235,8 @@ void ElementTreeModel::createObjectItem(Object *object, const QModelIndex &paren
   QModelIndex index = parent.child(i,0);
   i = rowCount(index);
   beginInsertRows(index, i, i+1);
-  item->insertChildren(new TreeItem(new BasicItemData("frames",""),item,0),1);
-  item->insertChildren(new TreeItem(new BasicItemData("contours",""),item),1);
+  item->insertChildren(new TreeItem(new FrameItemData(object),item,0),1);
+  item->insertChildren(new TreeItem(new ContourItemData(object),item),1);
   endInsertRows();
   i = rowCount(index);
 

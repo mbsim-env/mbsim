@@ -22,6 +22,8 @@
 
 #include <string>
 
+class QMenu;
+
 class TreeItemData {
   public:
     virtual ~TreeItemData() {}
@@ -29,6 +31,7 @@ class TreeItemData {
     virtual std::string getValue() const = 0;
     virtual void setName(const std::string &data) = 0;
     virtual void setValue(const std::string &data) {}
+    virtual QMenu* createContextMenu() = 0;
 };
 
 #endif
