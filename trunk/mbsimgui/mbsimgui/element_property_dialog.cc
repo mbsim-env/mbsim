@@ -503,7 +503,6 @@ KinematicConstraintPropertyDialog::KinematicConstraintPropertyDialog(KinematicCo
   addTab("Visualisation");
 
   dependentBody = new ExtWidget("Dependent body",new RigidBodyOfReferenceWidget(constraint,0));
-  connect((RigidBodyOfReferenceWidget*)dependentBody->getWidget(),SIGNAL(bodyChanged()),this,SLOT(updateReferenceBody()));
   addToTab("General", dependentBody);
 
   constraintForceArrow = new ExtWidget("OpenMBV constraint force arrow",new OMBVArrowWidget("NOTSET"),true);
@@ -511,16 +510,6 @@ KinematicConstraintPropertyDialog::KinematicConstraintPropertyDialog(KinematicCo
 
   constraintMomentArrow = new ExtWidget("OpenMBV constraint moment arrow",new OMBVArrowWidget("NOTSET"),true);
   addToTab("Visualisation",constraintMomentArrow);
-}
-
-void KinematicConstraintPropertyDialog::updateReferenceBody() {
-  if(refBody)
-    refBody->setConstrained(false);
-  refBody = ((RigidBodyOfReferenceWidget*)dependentBody->getWidget())->getSelectedBody();
-  if(refBody) {
-    refBody->setConstrained(true);
-    resizeVariables();
-  }
 }
 
 void KinematicConstraintPropertyDialog::toWidget(Element *element) {
@@ -532,9 +521,15 @@ void KinematicConstraintPropertyDialog::toWidget(Element *element) {
 
 void KinematicConstraintPropertyDialog::fromWidget(Element *element) {
   ConstraintPropertyDialog::fromWidget(element);
+  RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(static_cast<KinematicConstraint*>(element)->dependentBody.getProperty())->getBodyPtr();
+  if(body)
+    body->setConstrained(false);
   static_cast<KinematicConstraint*>(element)->dependentBody.fromWidget(dependentBody);
   static_cast<KinematicConstraint*>(element)->constraintForceArrow.fromWidget(constraintForceArrow);
   static_cast<KinematicConstraint*>(element)->constraintMomentArrow.fromWidget(constraintMomentArrow);
+  body = static_cast<RigidBodyOfReferenceProperty*>(static_cast<KinematicConstraint*>(element)->dependentBody.getProperty())->getBodyPtr();
+  if(body)
+    body->setConstrained(true);
 }
 
 TimeDependentKinematicConstraintPropertyDialog::TimeDependentKinematicConstraintPropertyDialog(TimeDependentKinematicConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : KinematicConstraintPropertyDialog(constraint,parent,f) {

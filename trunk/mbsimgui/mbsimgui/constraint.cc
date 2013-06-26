@@ -32,9 +32,6 @@ using namespace MBXMLUtils;
 Constraint::Constraint(const string &str, Element *parent) : Object(str, parent) {
 }
 
-Constraint::~Constraint() {
-}
-
 GearConstraint::GearConstraint(const string &str, Element *parent) : Constraint(str, parent), gearForceArrow(0,false), gearMomentArrow(0,false) {
 
   dependentBody.setProperty(new RigidBodyOfReferenceProperty("",this,MBSIMNS"dependentRigidBody"));
@@ -48,15 +45,11 @@ GearConstraint::GearConstraint(const string &str, Element *parent) : Constraint(
   gearMomentArrow.setXMLName(MBSIMNS"openMBVGearMomentArrow",false);
 }
 
-GearConstraint::~GearConstraint() {
-}
-
 void GearConstraint::initialize() {
   Constraint::initialize();
   dependentBody.initialize();
   independentBodies.initialize();
 }
-
 
 void GearConstraint::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e, *ee;
@@ -87,12 +80,19 @@ KinematicConstraint::KinematicConstraint(const string &str, Element *parent) : C
   constraintMomentArrow.setXMLName(MBSIMNS"openMBVConstraintMomentArrow",false);
 }
 
-KinematicConstraint::~KinematicConstraint() {
-}
-
 void KinematicConstraint::initialize() {
   Constraint::initialize();
   dependentBody.initialize();
+  RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(dependentBody.getProperty())->getBodyPtr();
+  if(body)
+    body->setConstrained(true);
+}
+
+void KinematicConstraint::deinitialize() {
+  Constraint::deinitialize();
+  RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(dependentBody.getProperty())->getBodyPtr();
+  if(body)
+    body->setConstrained(false);
 }
 
 void KinematicConstraint::initializeUsingXML(TiXmlElement *element) {
@@ -120,9 +120,6 @@ TimeDependentKinematicConstraint::TimeDependentKinematicConstraint(const string 
   generalizedPositionFunction.setProperty(new ChoiceProperty(MBSIMNS"generalizedPositionFunction",property));
 }
 
-TimeDependentKinematicConstraint::~TimeDependentKinematicConstraint() {
-}
-
 void TimeDependentKinematicConstraint::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e, *ee;
   KinematicConstraint::initializeUsingXML(element);
@@ -142,9 +139,6 @@ StateDependentKinematicConstraint::StateDependentKinematicConstraint(const strin
   vector<Property*> property;
   property.push_back(new SymbolicFunction1Property("VV","q"));
   generalizedVelocityFunction.setProperty(new ChoiceProperty(MBSIMNS"generalizedVelocityFunction",property));
-}
-
-StateDependentKinematicConstraint::~StateDependentKinematicConstraint() {
 }
 
 void StateDependentKinematicConstraint::initializeUsingXML(TiXmlElement *element) {
@@ -182,9 +176,6 @@ JointConstraint::JointConstraint(const string &str, Element *parent) : Constrain
 
   jointMomentArrow.setProperty(new OMBVArrowProperty("NOTSET",getID()));
   jointMomentArrow.setXMLName(MBSIMNS"openMBVJointMomentArrow",false);
-}
-
-JointConstraint::~JointConstraint() {
 }
 
 void JointConstraint::initialize() {
