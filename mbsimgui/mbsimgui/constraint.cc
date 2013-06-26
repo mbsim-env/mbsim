@@ -49,6 +49,16 @@ void GearConstraint::initialize() {
   Constraint::initialize();
   dependentBody.initialize();
   independentBodies.initialize();
+  RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(dependentBody.getProperty())->getBodyPtr();
+  if(body)
+    body->setConstrained(true);
+}
+
+void GearConstraint::deinitialize() {
+  Constraint::deinitialize();
+  RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(dependentBody.getProperty())->getBodyPtr();
+  if(body)
+    body->setConstrained(false);
 }
 
 void GearConstraint::initializeUsingXML(TiXmlElement *element) {
@@ -184,6 +194,30 @@ void JointConstraint::initialize() {
   dependentBodiesFirstSide.initialize();
   dependentBodiesSecondSide.initialize();
   connections.initialize();
+  for(int i=0; i<static_cast<DependenciesProperty*>(dependentBodiesFirstSide.getProperty())->getBodies().size(); i++) {
+    RigidBody *body = static_cast<DependenciesProperty*>(dependentBodiesFirstSide.getProperty())->getBodies()[i].getBodyPtr();
+    if(body)
+      body->setConstrained(true);
+  }
+  for(int i=0; i<static_cast<DependenciesProperty*>(dependentBodiesSecondSide.getProperty())->getBodies().size(); i++) {
+    RigidBody *body = static_cast<DependenciesProperty*>(dependentBodiesSecondSide.getProperty())->getBodies()[i].getBodyPtr();
+    if(body)
+      body->setConstrained(true);
+  }
+}
+
+void JointConstraint::deinitialize() {
+  Constraint::deinitialize();
+  for(int i=0; i<static_cast<DependenciesProperty*>(dependentBodiesFirstSide.getProperty())->getBodies().size(); i++) {
+    RigidBody *body = static_cast<DependenciesProperty*>(dependentBodiesFirstSide.getProperty())->getBodies()[i].getBodyPtr();
+    if(body)
+      body->setConstrained(false);
+  }
+  for(int i=0; i<static_cast<DependenciesProperty*>(dependentBodiesSecondSide.getProperty())->getBodies().size(); i++) {
+    RigidBody *body = static_cast<DependenciesProperty*>(dependentBodiesSecondSide.getProperty())->getBodies()[i].getBodyPtr();
+    if(body)
+      body->setConstrained(false);
+  }
 }
 
 void JointConstraint::initializeUsingXML(TiXmlElement *element) {

@@ -546,7 +546,6 @@ DependenciesWidget::DependenciesWidget(Element *element_) : element(element_) {
   stackedWidget = new QStackedWidget;
   connect(bodyList,SIGNAL(currentRowChanged(int)),stackedWidget,SLOT(setCurrentIndex(int)));
   connect(bodyList,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(openContextMenu(const QPoint &)));
-  connect(this,SIGNAL(bodyChanged()),this,SLOT(updateGeneralizedCoordinatesOfBodies()));
   layout->addWidget(stackedWidget,0,Qt::AlignTop);
 }
 
@@ -587,16 +586,6 @@ void DependenciesWidget::setNumberOfBodies(int n) {
 void DependenciesWidget::updateWidget() {
   for(unsigned int i=0; i<refBody.size(); i++)
     refBody[i]->updateWidget();
-}
-
-void DependenciesWidget::updateGeneralizedCoordinatesOfBodies() {
-  for(unsigned int i=0; i<refBody.size(); i++) {
-    if(selectedBody[i])
-      selectedBody[i]->setConstrained(false);
-    selectedBody[i] = refBody[i]->getSelectedBody();
-    if(selectedBody[i])
-      selectedBody[i]->setConstrained(true);
-  }
 }
 
 void DependenciesWidget::updateList() {

@@ -218,7 +218,6 @@ class ConstraintPropertyDialog : public ObjectPropertyDialog {
 };
 
 class GearConstraintPropertyDialog : public ConstraintPropertyDialog {
-  Q_OBJECT
 
   public:
     GearConstraintPropertyDialog(GearConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
@@ -227,8 +226,6 @@ class GearConstraintPropertyDialog : public ConstraintPropertyDialog {
   protected:
     ExtWidget *dependentBody, *independentBodies, *gearForceArrow, *gearMomentArrow;
     RigidBody *refBody;
-  protected slots:
-    void updateReferenceBody();
 };
 
 class KinematicConstraintPropertyDialog : public ConstraintPropertyDialog {

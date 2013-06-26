@@ -459,7 +459,6 @@ GearConstraintPropertyDialog::GearConstraintPropertyDialog(GearConstraint *const
   addTab("Visualisation");
 
   dependentBody = new ExtWidget("Dependent body",new RigidBodyOfReferenceWidget(constraint,0));
-  connect((RigidBodyOfReferenceWidget*)dependentBody->getWidget(),SIGNAL(bodyChanged()),this,SLOT(updateReferenceBody()));
   addToTab("General", dependentBody);
 
   independentBodies = new ExtWidget("Independent bodies",new GearDependenciesWidget(constraint));
@@ -475,14 +474,6 @@ GearConstraintPropertyDialog::GearConstraintPropertyDialog(GearConstraint *const
   connect(buttonResize, SIGNAL(clicked(bool)), this, SLOT(resizeVariables()));
 }
 
-void GearConstraintPropertyDialog::updateReferenceBody() {
-  if(refBody)
-    refBody->setConstrained(false);
-  refBody = ((RigidBodyOfReferenceWidget*)dependentBody->getWidget())->getSelectedBody();
-  if(refBody)
-    refBody->setConstrained(true);
-}
-
 void GearConstraintPropertyDialog::toWidget(Element *element) {
   ConstraintPropertyDialog::toWidget(element);
   static_cast<GearConstraint*>(element)->dependentBody.toWidget(dependentBody);
@@ -493,10 +484,16 @@ void GearConstraintPropertyDialog::toWidget(Element *element) {
 
 void GearConstraintPropertyDialog::fromWidget(Element *element) {
   ConstraintPropertyDialog::fromWidget(element);
+  RigidBody *body = static_cast<RigidBodyOfReferenceProperty*>(static_cast<GearConstraint*>(element)->dependentBody.getProperty())->getBodyPtr();
+  if(body)
+    body->setConstrained(false);
   static_cast<GearConstraint*>(element)->dependentBody.fromWidget(dependentBody);
   static_cast<GearConstraint*>(element)->independentBodies.fromWidget(independentBodies);
   static_cast<GearConstraint*>(element)->gearForceArrow.fromWidget(gearForceArrow);
   static_cast<GearConstraint*>(element)->gearMomentArrow.fromWidget(gearMomentArrow);
+  body = static_cast<RigidBodyOfReferenceProperty*>(static_cast<GearConstraint*>(element)->dependentBody.getProperty())->getBodyPtr();
+  if(body)
+    body->setConstrained(true);
 }
 
 KinematicConstraintPropertyDialog::KinematicConstraintPropertyDialog(KinematicConstraint *constraint, QWidget *parent, Qt::WindowFlags f) : ConstraintPropertyDialog(constraint,parent,f), refBody(0) {
@@ -653,7 +650,16 @@ void JointConstraintPropertyDialog::toWidget(Element *element) {
 }
 
 void JointConstraintPropertyDialog::fromWidget(Element *element) {
-  ConstraintPropertyDialog::fromWidget(element);
+  for(int i=0; i<static_cast<DependenciesProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesFirstSide.getProperty())->getBodies().size(); i++) {
+    RigidBody *body = static_cast<DependenciesProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesFirstSide.getProperty())->getBodies()[i].getBodyPtr();
+    if(body)
+      body->setConstrained(false);
+  }
+  for(int i=0; i<static_cast<DependenciesProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesSecondSide.getProperty())->getBodies().size(); i++) {
+    RigidBody *body = static_cast<DependenciesProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesSecondSide.getProperty())->getBodies()[i].getBodyPtr();
+    if(body)
+      body->setConstrained(false);
+  }
   static_cast<JointConstraint*>(element)->independentBody.fromWidget(independentBody);
   static_cast<JointConstraint*>(element)->dependentBodiesFirstSide.fromWidget(dependentBodiesFirstSide);
   static_cast<JointConstraint*>(element)->dependentBodiesSecondSide.fromWidget(dependentBodiesSecondSide);
@@ -662,6 +668,16 @@ void JointConstraintPropertyDialog::fromWidget(Element *element) {
   static_cast<JointConstraint*>(element)->moment.fromWidget(moment);
   static_cast<JointConstraint*>(element)->jointForceArrow.fromWidget(jointForceArrow);
   static_cast<JointConstraint*>(element)->jointMomentArrow.fromWidget(jointMomentArrow);
+  for(int i=0; i<static_cast<DependenciesProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesFirstSide.getProperty())->getBodies().size(); i++) {
+    RigidBody *body = static_cast<DependenciesProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesFirstSide.getProperty())->getBodies()[i].getBodyPtr();
+    if(body)
+      body->setConstrained(true);
+  }
+  for(int i=0; i<static_cast<DependenciesProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesSecondSide.getProperty())->getBodies().size(); i++) {
+    RigidBody *body = static_cast<DependenciesProperty*>(static_cast<JointConstraint*>(element)->dependentBodiesSecondSide.getProperty())->getBodies()[i].getBodyPtr();
+    if(body)
+      body->setConstrained(true);
+  }
 }
 
 ExtraDynamicPropertyDialog::ExtraDynamicPropertyDialog(ExtraDynamic *ed, QWidget *parent, Qt::WindowFlags f) : ElementPropertyDialog(ed,parent,f) {
