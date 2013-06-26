@@ -23,7 +23,6 @@
 #include "frame.h"
 #include "contour.h"
 #include "object.h"
-#include "extra_dynamic.h"
 #include "link.h"
 #include "observer.h"
 #include "integrator.h"
@@ -1063,24 +1062,10 @@ void MainWindow::addObject(Object *object) {
   elementList->openEditor();
 }
 
-void MainWindow::addExtraDynamic(ExtraDynamic *ed) {
-  ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
-  QModelIndex index = elementList->selectionModel()->currentIndex();
-  QModelIndex containerIndex = index.child(4,0);
-  Element *parentElement = static_cast<Element*>(model->getItem(index)->getItemData());
-  ed->setName(ed->getName()+toStr(model->getItem(containerIndex)->getID()));
-  parentElement->addExtraDynamic(ed);
-  model->createExtraDynamicItem(ed,containerIndex);
-  QModelIndex currentIndex = containerIndex.child(model->rowCount(containerIndex)-1,0);
-  elementList->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-  elementList->openEditor();
-}
-
-
 void MainWindow::addLink(Link *link) {
   ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
-  QModelIndex containerIndex = (index.row()==0)?index.child(5,0):index;
+  QModelIndex containerIndex = (index.row()==0)?index.child(4,0):index;
   link->setName(link->getName()+toStr(model->getItem(containerIndex)->getID()));
   link->getParent()->addLink(link);
   model->createLinkItem(link,containerIndex);
@@ -1092,7 +1077,7 @@ void MainWindow::addLink(Link *link) {
 void MainWindow::addObserver(Observer *observer) {
   ElementTreeModel *model = static_cast<ElementTreeModel*>(elementList->model());
   QModelIndex index = elementList->selectionModel()->currentIndex();
-  QModelIndex containerIndex = (index.row()==0)?index.child(6,0):index;
+  QModelIndex containerIndex = (index.row()==0)?index.child(5,0):index;
   observer->setName(observer->getName()+toStr(model->getItem(containerIndex)->getID()));
   observer->getParent()->addObserver(observer);
   model->createObserverItem(observer,containerIndex);

@@ -40,7 +40,6 @@ class KinematicConstraint;
 class TimeDependentKinematicConstraint;
 class StateDependentKinematicConstraint;
 class JointConstraint;
-class ExtraDynamic;
 class SignalProcessingSystem;
 class LinearTransferSystem;
 class Link;
@@ -277,16 +276,16 @@ class JointConstraintPropertyDialog : public ConstraintPropertyDialog {
     ExtWidget *force, *moment, *connections, *independentBody, *dependentBodiesFirstSide, *dependentBodiesSecondSide, *jointForceArrow, *jointMomentArrow;
 };
 
-class ExtraDynamicPropertyDialog : public ElementPropertyDialog {
+class LinkPropertyDialog : public ElementPropertyDialog {
 
   public:
-    ExtraDynamicPropertyDialog(ExtraDynamic *ed, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    LinkPropertyDialog(Link *link, QWidget * parent = 0, Qt::WindowFlags f = 0);
     void toWidget(Element *element);
     void fromWidget(Element *element);
   protected:
 };
 
-class SignalProcessingSystemPropertyDialog : public ExtraDynamicPropertyDialog {
+class SignalProcessingSystemPropertyDialog : public LinkPropertyDialog {
 
   public:
     SignalProcessingSystemPropertyDialog(SignalProcessingSystem *sps, QWidget * parent = 0, Qt::WindowFlags f = 0);
@@ -304,15 +303,6 @@ class LinearTransferSystemPropertyDialog : public SignalProcessingSystemProperty
     void fromWidget(Element *element);
   protected:
     ExtWidget *choice;
-};
-
-class LinkPropertyDialog : public ElementPropertyDialog {
-
-  public:
-    LinkPropertyDialog(Link *link, QWidget * parent = 0, Qt::WindowFlags f = 0);
-    void toWidget(Element *element);
-    void fromWidget(Element *element);
-  protected:
 };
 
 class KineticExcitationPropertyDialog : public LinkPropertyDialog {

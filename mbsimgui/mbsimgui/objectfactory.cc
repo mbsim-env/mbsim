@@ -139,13 +139,6 @@ Object* MBSimObjectFactory::createObject(TiXmlElement *element, Element *parent)
   return 0;
 }
 
-ExtraDynamic* ObjectFactory::createExtraDynamic(TiXmlElement *element, Element *parent) {
-  if(element==NULL) return NULL;
-  for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)
-    return (*i)->createExtraDynamic(element,parent);
-  return 0;
-}
-
 Link* ObjectFactory::createLink(TiXmlElement *element, Element *parent) {
   if(element==NULL) return NULL;
   for(set<ObjectFactoryBase*>::iterator i=factories.begin(); i!=factories.end(); i++)

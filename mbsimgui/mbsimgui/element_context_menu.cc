@@ -75,9 +75,6 @@ GroupContextMenu::GroupContextMenu(Element *element, QWidget *parent, bool remov
   addAction(action);
   menu = new ObjectContextContextMenu(element, "Add object");
   addMenu(menu);
-  action = new QAction("Add extra dynamic", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(addExtraDynamic()));
-  addAction(action);
   menu = new LinkContextContextMenu(element, "Add link");
   addMenu(menu);
   menu = new ObserverContextContextMenu(element, "Add observer");
@@ -102,8 +99,6 @@ void GroupContextMenu::addElementFromFile() {
     if(group) return mw->addGroup(group);
     Object *object = Object::readXMLFile(file.toStdString(),element);
     if(object) return mw->addObject(object);
-    ExtraDynamic *extraDynamic = ExtraDynamic::readXMLFile(file.toStdString(),element);
-    if(extraDynamic) return mw->addExtraDynamic(extraDynamic);
     Link *link = Link::readXMLFile(file.toStdString(),element);
     if(link) return mw->addLink(link);
     Observer *observer = Observer::readXMLFile(file.toStdString(),element);
@@ -117,11 +112,6 @@ void GroupContextMenu::addGroup() {
 
 void GroupContextMenu::addObject() {
   ObjectContextContextMenu menu(element);
-  menu.exec(QCursor::pos());
-}
-
-void GroupContextMenu::addExtraDynamic() {
-  ExtraDynamicContextContextMenu menu(element);
   menu.exec(QCursor::pos());
 }
 
@@ -258,16 +248,6 @@ void ConstraintContextContextMenu::addStateDependentKinematicConstraint() {
 
 void ConstraintContextContextMenu::addJointConstraint() {
   mw->addObject(new JointConstraint("JointConstraint",element));
-}
-
-ExtraDynamicContextContextMenu::ExtraDynamicContextContextMenu(Element *element_, QWidget *parent) : QMenu(parent), element(element_) {
-  QAction *action = new QAction("Add linear transfer system", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(addLinearTransferSystem()));
-  addAction(action);
-}
-
-void ExtraDynamicContextContextMenu::addLinearTransferSystem() {
-  mw->addExtraDynamic(new LinearTransferSystem("LinearTransferSystem",element));
 }
 
 LinkContextContextMenu::LinkContextContextMenu(Element *element_, const QString &title,  QWidget *parent) : QMenu(title,parent), element(element_) {

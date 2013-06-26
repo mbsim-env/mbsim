@@ -41,7 +41,6 @@ class Frame;
 class Contour;
 class Group;
 class Object;
-class ExtraDynamic;
 class Link;
 class Observer;
 
@@ -84,7 +83,6 @@ class MainWindow : public QMainWindow {
     void addContour(Contour *contour);
     void addGroup(Group *group);
     void addObject(Object *object);
-    void addExtraDynamic(ExtraDynamic *ed);
     void addLink(Link *link);
     void addObserver(Observer *observer);
     void highlightObject(const std::string &ID);

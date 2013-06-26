@@ -192,12 +192,11 @@ void ElementTreeModel::createGroupItem(Group *group, const QModelIndex &parent) 
   else
     index = parent.child(i,0);
   i = rowCount(index);
-  beginInsertRows(index, i, i+4);
+  beginInsertRows(index, i, i+5);
   item->insertChildren(new TreeItem(new FrameItemData(group),item,0),1);
   item->insertChildren(new TreeItem(new ContourItemData(group),item),1);
   item->insertChildren(new TreeItem(new GroupItemData(group),item),1);
   item->insertChildren(new TreeItem(new ObjectItemData(group),item),1);
-  item->insertChildren(new TreeItem(new BasicItemData("extra dynamics",""),item),1);
   item->insertChildren(new TreeItem(new LinkItemData(group),item),1);
   item->insertChildren(new TreeItem(new ObserverItemData(group),item),1);
   endInsertRows();
@@ -212,9 +211,9 @@ void ElementTreeModel::createGroupItem(Group *group, const QModelIndex &parent) 
   for(int i=0; i<group->getNumberOfObjects(); i++)
     createObjectItem(group->getObject(i),index.child(3,0));
   for(int i=0; i<group->getNumberOfLinks(); i++)
-    createLinkItem(group->getLink(i),index.child(5,0));
+    createLinkItem(group->getLink(i),index.child(4,0));
   for(int i=0; i<group->getNumberOfObservers(); i++)
-    createObserverItem(group->getObserver(i),index.child(6,0));
+    createObserverItem(group->getObserver(i),index.child(5,0));
 }
 
 void ElementTreeModel::createObjectItem(Object *object, const QModelIndex &parent) {
