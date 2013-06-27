@@ -642,7 +642,7 @@ namespace MBSim {
         if (openMBVContactFrameSize > epsroot()) {
           for (unsigned int i = 0; i < 2; i++) {
             vector<double> data;
-            data.push_back(i);
+            data.push_back(t);
             data.push_back(cpData[i].getFrameOfReference().getPosition()(0));
             data.push_back(cpData[i].getFrameOfReference().getPosition()(1));
             data.push_back(cpData[i].getFrameOfReference().getPosition()(2));
