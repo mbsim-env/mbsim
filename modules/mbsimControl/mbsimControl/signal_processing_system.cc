@@ -31,6 +31,8 @@ using namespace MBSim;
 namespace MBSimControl {
 
   SignalProcessingSystem::SignalProcessingSystem(const string &name) : Link(name), inputSignal(NULL), inputSignalString("") {
+    setPlotFeature(globalPosition, enabled);
+    setPlotFeature(state, enabled);
   }
 
   void SignalProcessingSystem::initializeUsingXML(TiXmlElement * element) {
