@@ -64,8 +64,8 @@ namespace MBSim {
   }
 
   MultiDimFixPointIteration::MultiDimFixPointIteration(Function1<Vec, Vec> *function_) :
-      function(function_), tol(1e-10), iter(0), itermax(30000), norms(0), info(1) {
-  }
+    function(function_), tol(1e-10), iter(0), itermax(30000), norms(0), info(1) {
+    }
 
   /*
    * \brief finds a fixpoint starting on the initialGuess values
@@ -90,12 +90,12 @@ namespace MBSim {
       if(fabs(norms[norms.size() - 2] - norms[norms.size() - 1])  < macheps()) {
         info = 1; //no more convergence possible --> stop
         return currentGuess;
-    }
+      }
 
-//      if(norms[norms.size() - 2] - norms[norms.size() - 1]  < 0) {
-//        info = -1; //divergence --> stop
-//        return lastGuess;
-//      }
+      //      if(norms[norms.size() - 2] - norms[norms.size() - 1]  < 0) {
+      //        info = -1; //divergence --> stop
+      //        return lastGuess;
+      //      }
 
     }
 

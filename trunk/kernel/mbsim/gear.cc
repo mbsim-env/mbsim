@@ -181,7 +181,7 @@ namespace MBSim {
           if(FArrow[0]) {
             FArrow[0]->setName("Force0");
             openMBVForceGrp->addObject(FArrow[0]);
-            for(int i=1; i<body.size(); i++) {
+            for(unsigned int i=1; i<body.size(); i++) {
               stringstream s;
               s << i;
               FArrow.push_back(new OpenMBV::Arrow(*FArrow[0]));
@@ -192,7 +192,7 @@ namespace MBSim {
           if(MArrow[0]) {
             MArrow[0]->setName("Moment0");
             openMBVForceGrp->addObject(MArrow[0]);
-            for(int i=1; i<body.size(); i++) {
+            for(unsigned int i=1; i<body.size(); i++) {
               stringstream s;
               s << i;
               MArrow.push_back(new OpenMBV::Arrow(*MArrow[0]));
