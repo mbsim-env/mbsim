@@ -10,47 +10,65 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
 
-class MyRot : public Rotation {
-  public:
-    virtual SqrMat3 operator()(const Vec &q, double t) {
-      SqrMat3 A;
-      for(int i=0; i<3; i++)
-        A(i,i) = 1;
-      return A;
-    }; 
-};
+// class MyPos : public fmatvec::Function<Vec3(VecV, double)> {
+//   public:
+//     int getArg1Size() {return 0;}
+//     Vec3 operator()(const VecV &q, const double &t) {
+//       Vec3 PrPK;
+//       double om = 1;
+//       PrPK(0) = cos(om*t);
+//       PrPK(1) = sin(om*t);
+//       return PrPK;
+//     }; 
+//     Mat3xV parDer1(const VecV &q, const double &t) {
+//       return Mat3xV();
+//     }
+//     Vec3 parDer2(const VecV &q, const double &t) {
+//       Vec3 j;
+//       double om = 1;
+//       j(0) = -sin(om*t)*om;
+//       j(1) =  cos(om*t)*om;
+//       return j;
+//     }
+//     Mat3xV parDer1ParDer2(const VecV &q, const double &t) {
+//       return Mat3xV();
+//     }
+//     Mat3xV parDer1DirDer1(const VecV &qd, const VecV &q, const double &t) {
+//       return Mat3xV();
+//     }
+//     Vec3 parDer2ParDer2(const VecV &q, const double &t) {
+//       Vec3 dj;
+//       double om = 1;
+//       dj(0) = -cos(om*t)*om*om;
+//       dj(1) =  -sin(om*t)*om*om;
+//       return dj;
+//     }
+//     Vec3 parDer2DirDer1(const VecV &qd, const VecV &q, const double &t) {
+//       return Vec3();
+//     }
+// };
 
-class MyPos : public Translation {
+class MyPos : public TranslationTeqI {
   public:
     int getqSize() const {return 0;}
-    virtual Vec3 operator()(const Vec &q, const double &t, const void * =NULL) {
-      Vec3 PrPK;
+    void updatePosition(const VecV &q, const double &t) {
       double om = 1;
-      PrPK(0) = cos(om*t);
-      PrPK(1) = sin(om*t);
-      return PrPK;
+      r(0) = cos(om*t);
+      r(1) = sin(om*t);
     }; 
-};
-
-class jT : public GuidingVelocity {
-  public:
-    Vec3 operator()(const Vec &q, const double& t, const void*) {
-      Vec3 j;
+    void updateJacobian(const VecV &q, const double &t) {
+    }
+    void updateGuidingVelocity(const VecV &q, const double &t) {
       double om = 1;
       j(0) = -sin(om*t)*om;
       j(1) =  cos(om*t)*om;
-      return j;
     }
-};
-
-class djT : public DerivativeOfGuidingVelocity {
-  public:
-    Vec3 operator()(const Vec &qd, const Vec &q, const double& t, const void*) {
-      Vec3 dj;
+    void updateDerivativeOfJacobian(const VecV &qd, const VecV &q, const double &t) {
+    }
+    void updateDerivativeOfGuidingVelocity(const VecV &qd, const VecV &q, const double &t) {
       double om = 1;
-      dj(0) = -cos(om*t)*om*om;
-      dj(1) =  -sin(om*t)*om*om;
-      return dj;
+      jd(0) = -cos(om*t)*om*om;
+      jd(1) =  -sin(om*t)*om*om;
     }
 };
 
@@ -77,9 +95,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setFrameForKinematics(body->getFrame("C"));
   body->setMass(m);
   body->setInertiaTensor(Theta);
+  //body->setTranslation(new TranslationTeqI(new MyPos));
   body->setTranslation(new MyPos);
-  body->setGuidingVelocityOfTranslation(new jT);
-  body->setDerivativeOfGuidingVelocityOfTranslation(new djT);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Cuboid *cuboid=new OpenMBV::Cuboid;

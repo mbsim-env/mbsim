@@ -10,50 +10,59 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
 
-class MyPos : public Translation {
-  public:
-    int getqSize() const {return 1;} 
-    Vec3 operator()(const Vec &q, const double &t, const void * =NULL) {
-      Vec3 PrPK;
-      PrPK(0) = cos(q(0));
-      PrPK(1) = sin(q(0));
-      return PrPK;
-    }; 
-};
+//class MyPos : public fmatvec::Function<Vec3(VecV, double)> {
+//  public:
+//    int getArg1Size() {return 1;} 
+//    Vec3 operator()(const VecV &q, const double &t) {
+//      Vec3 PrPK;
+//      PrPK(0) = cos(q(0));
+//      PrPK(1) = sin(q(0));
+//      return PrPK;
+//    }; 
+//    Mat3xV parDer1(const VecV &q, const double &t) {
+//      Mat3xV J(1);
+//      J(0,0) = -sin(q(0));
+//      J(1,0) =  cos(q(0));
+//      return J;
+//    }
+//    Vec3 parDer2(const VecV &q, const double &t) {
+//      return Vec3();
+//    }
+//    Mat3xV parDer1ParDer2(const VecV &q, const double &t) {
+//      return Mat3xV(getArg1Size());
+//    }
+//    Mat3xV parDer1DirDer1(const VecV &qd, const VecV &q, const double &t) {
+//      Mat3xV J(1);
+//      J(0,0) = -cos(q(0))*qd(0);
+//      J(1,0) = -sin(q(0))*qd(0);
+//      return J;
+//    }
+//    Vec3 parDer2ParDer2(const VecV &q, const double &t) {
+//      return Vec3();
+//    }
+//    Vec3 parDer2DirDer1(const VecV &qd, const VecV &q, const double &t) {
+//      return Vec3();
+//    }
+//};
 
-class JacobianT : public Jacobian {
+class MyPos : public TranslationTeqI {
   public:
-    int getuSize() const {return 1;} 
-    Mat3xV operator()(const Vec& q, const double &t, const void * =NULL) {
-      Mat3xV J(1);
+    int getqSize() const {return 1;}
+    void updatePosition(const VecV &q, const double &t) {
+      r(0) = cos(q(0));
+      r(1) = sin(q(0));
+    }; 
+    void updateJacobian(const VecV &q, const double &t) {
       J(0,0) = -sin(q(0));
       J(1,0) =  cos(q(0));
-      return J;
     }
-};
-class JacobianR : public Jacobian {
-  public:
-    Mat3xV operator()(const Vec& q, double t) {
-      Mat3xV J(1);
-      return J;
+    void updateGuidingVelocity(const VecV &q, const double &t) {
     }
-};
-
-class MyDerT : public DerivativeOfJacobian {
-  public:
-    Mat3xV operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
-      Mat3xV J(1);
-      J(0,0) = -cos(q(0))*qd(0);
-      J(1,0) = -sin(q(0))*qd(0);
-      return J;
+    void updateDerivativeOfJacobian(const VecV &qd, const VecV &q, const double &t) {
+      Jd(0,0) = -cos(q(0))*qd(0);
+      Jd(1,0) = -sin(q(0))*qd(0);
     }
-};
-
-class MyDerR : public DerivativeOfJacobian {
-  public:
-    Mat3xV operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
-      Mat3xV J(1);
-      return J;
+    void updateDerivativeOfGuidingVelocity(const VecV &qd, const VecV &q, const double &t) {
     }
 };
 
@@ -79,9 +88,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setFrameForKinematics(body->getFrame("C"));
   body->setMass(m);
   body->setInertiaTensor(Theta);
+  //body->setTranslation(new TranslationTeqI(new MyPos));
   body->setTranslation(new MyPos);
-  body->setJacobianOfTranslation(new JacobianT);
-  body->setDerivativeOfJacobianOfTranslation(new MyDerT);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Cuboid *cuboid=new OpenMBV::Cuboid;
