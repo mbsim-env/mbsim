@@ -419,9 +419,6 @@ namespace MBSim {
 
       if(constraint)
 	TRel.resize(nq,nu[0]);
-
-      for(int i=0; i<nu[0]; i++)
-        TRel(i,i) = 1;
     }
     else if(stage==MBSim::plot) {
       updatePlotFeatures();

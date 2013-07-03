@@ -462,6 +462,12 @@ namespace MBSim {
 
 //  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, CardanAngles, MBSIMNS"CardanAngles")
 
+  void CardanAngles::init() {
+    Rotation::init();
+    J.init(Eye());
+    T(0,0) = 1;
+  }
+
   void CardanAngles::updateOrientation(const fmatvec::VecV &q, const double &t) {
 
     double a=q(0);

@@ -57,8 +57,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   SXFunction spos(input1,pos);
   
-  SymbolicFunction2<Vec3,Vec,double> *position = new SymbolicFunction2<Vec3,Vec,double>(spos);
-  GeneralTranslation *trans = new GeneralTranslation(2,position);
+  SymbolicFunction<Vec3(VecV,double)> *position = new SymbolicFunction<Vec3(VecV,double)>(spos);
+  TranslationTeqI *trans = new TranslationTeqI(position);
   body1->setTranslation(trans);
   
   body1->setInitialGeneralizedVelocity("[0;1]");

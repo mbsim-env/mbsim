@@ -74,7 +74,7 @@ namespace MBSim {
 
       int getuSize() const { return getqSize(); }
 
-      void updateJ(const fmatvec::VecV &q, const double &t) { drdq = fr->parDer1(q,t); J = drdq; }
+      void updateJacobian(const fmatvec::VecV &q, const double &t) { drdq = fr->parDer1(q,t); J = drdq; }
       void updateT(const fmatvec::VecV &q, const double &t) { }
       void updateDerivativeOfT(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
       void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { dotdrdq = fr->parDer1DirDer1(qd,q,t)+fr->parDer1ParDer2(q,t); Jd = dotdrdq; }
@@ -495,7 +495,7 @@ namespace MBSim {
 
       int getuSize() const { return getqSize(); }
 
-      void updateJ(const fmatvec::VecV &q, const double &t) { dAdq = fA->parDer1(q,t); J = dAdq; }
+      void updateJacobian(const fmatvec::VecV &q, const double &t) { dAdq = fA->parDer1(q,t); J = dAdq; }
       void updateT(const fmatvec::VecV &q, const double &t) { }
       void updateDerivativeOfT(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
       void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { dotdAdq = fA->parDer1DirDer1(qd,q,t)+fA->parDer1ParDer2(q,t); Jd = dotdAdq; }
@@ -755,8 +755,6 @@ namespace MBSim {
       int getuSize() const {return 3;}
 
       void updateOrientation(const fmatvec::VecV &q, const double &t);
-      void updatePartialDerivativeOfOrientation(const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfPartialDerivativeOfOrientation(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
       void updateJacobian(const fmatvec::VecV &q, const double &t) { }
       void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { }
       void updateT(const fmatvec::VecV &q, const double &t);
@@ -764,7 +762,7 @@ namespace MBSim {
       void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
       void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
 
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) { }
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
