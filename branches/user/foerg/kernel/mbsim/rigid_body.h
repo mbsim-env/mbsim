@@ -72,7 +72,7 @@ namespace MBSim {
         constraint = constraint_;
       }
 
-      virtual void updateT(double t) { if(fT) TRel = (*fT)(qRel,t); }
+      virtual void updateT(double t);
       virtual void updateh(double t, int j=0);
       virtual void updateh0Fromh1(double t);
       virtual void updateW0FromW1(double t);
@@ -152,22 +152,6 @@ namespace MBSim {
        * \return rotational kinematic description
        */
       Rotation*    getRotation()               { return fAPK;    }
-      void setJacobianOfTranslation(Jacobian* fPJT_) { fPJT = fPJT_; }
-      void setJacobianOfRotation(Jacobian* fPJR_)    { fPJR = fPJR_; }
-      void setDerivativeOfJacobianOfTranslation(DerivativeOfJacobian* fPdJT_) { fPdJT = fPdJT_;}
-      void setDerivativeOfJacobianOfRotation(DerivativeOfJacobian* fPdJR_) { fPdJR = fPdJR_;}
-
-      /** \brief Sets the time dependent function for the guiding velocity of translation */
-      void setGuidingVelocityOfTranslation(GuidingVelocity* fPjT_) { fPjT = fPjT_;}
-
-      /** \brief Sets the time dependent function for the guiding velocity of rotation */
-      void setGuidingVelocityOfRotation(GuidingVelocity* fPjR_) { fPjR = fPjR_;}
-
-      /** \brief Sets the time dependent function for the derivative of the guilding velocity of translation */
-      void setDerivativeOfGuidingVelocityOfTranslation(DerivativeOfGuidingVelocity* fPdjT_) { fPdjT = fPdjT_;}
-
-      /** \brief Sets the time dependent function for the derivative of the guilding velocity of rotation */
-      void setDerivativeOfGuidingVelocityOfRotation(DerivativeOfGuidingVelocity* fPdjR_) { fPdjR = fPdjR_;}
 
       void setMass(double m_) { m = m_; }
       double getMass() const { return m; }
@@ -323,11 +307,6 @@ namespace MBSim {
       fmatvec::Vec3 WvPKrel, WomPK;
 
       /**
-       * \brief JACOBIAN for linear transformation between differentiated positions and velocities
-       */
-      TMatrix *fT;
-
-      /**
        * \brief translation from parent Frame to kinematic Frame in parent system
        */
       Translation *fPrPK;
@@ -336,46 +315,6 @@ namespace MBSim {
        * \brief rotation from kinematic Frame to parent Frame
        */
       Rotation *fAPK;
-
-      /**
-       * \brief JACOBIAN of translation in parent system
-       */
-      Jacobian *fPJT;
-
-      /**
-       * \brief JACOBIAN of rotation in parent system
-       */
-      Jacobian *fPJR;
-
-      /**
-       * \brief differentiated JACOBIAN of translation in parent system
-       */
-      DerivativeOfJacobian *fPdJT;
-
-      /**
-       * \brief differentiated JACOBIAN of rotation in parent system
-       */
-      DerivativeOfJacobian *fPdJR;
-
-      /**
-       * \brief guiding velocity of translation in parent system
-       */
-      GuidingVelocity *fPjT;
-
-      /**
-       * \brief guiding velocity of rotation in parent system
-       */
-      GuidingVelocity *fPjR;
-
-      /**
-       * \brief differentiated guiding veclocity of translation in parent system
-       */
-      DerivativeOfGuidingVelocity *fPdjT;
-
-      /**
-       * \brief differentiated guiding veclocity of rotation in parent system
-       */
-      DerivativeOfGuidingVelocity *fPdjR;
 
       /**
        * \brief function pointer to update mass matrix
@@ -418,6 +357,7 @@ namespace MBSim {
       fmatvec::Mat JRel[2];
       fmatvec::Vec jRel;
 
+      fmatvec::VecV qTRel, qRRel, qdTRel, qdRRel;
       fmatvec::Mat3xV WJTrel,WJRrel;
       fmatvec::Vec3 WjTrel,WjRrel;
 
@@ -433,6 +373,8 @@ namespace MBSim {
       std::vector<CompoundContour*> RBC;
 
       Frame *frameForInertiaTensor;
+
+      fmatvec::Range<fmatvec::Var,fmatvec::Var> iqT, iqR, iuT, iuR;
 
     private:
 #ifdef HAVE_OPENMBVCPPINTERFACE
