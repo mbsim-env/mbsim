@@ -234,13 +234,13 @@ namespace MBSim {
   void TimeDependentKinematicConstraint::init(InitStage stage) {
     if(stage==MBSim::unknownStage) {
       KinematicConstraint::init(stage);
-#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
-      SymbolicFunction1<VecV,double> *function = dynamic_cast<SymbolicFunction1<VecV,double>*>(f);
-      if(function) {
-        if(fd==0) fd = new SymbolicFunction1<VecV,double>(function->getSXFunction().jacobian());
-        if(fdd==0) fdd = new SymbolicFunction1<VecV,double>(static_cast<SymbolicFunction1<VecV,double>*>(fd)->getSXFunction().jacobian());
-      }
-#endif
+//#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
+//      SymbolicFunction1<VecV,double> *function = dynamic_cast<SymbolicFunction1<VecV,double>*>(f);
+//      if(function) {
+//        if(fd==0) fd = new SymbolicFunction1<VecV,double>(function->getSXFunction().jacobian());
+//        if(fdd==0) fdd = new SymbolicFunction1<VecV,double>(static_cast<SymbolicFunction1<VecV,double>*>(fd)->getSXFunction().jacobian());
+//      }
+//#endif
     }
     else
       KinematicConstraint::init(stage);
@@ -304,27 +304,27 @@ namespace MBSim {
   void StateDependentKinematicConstraint::init(InitStage stage) {
     if(stage==MBSim::unknownStage) {
       KinematicConstraint::init(stage);
-#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
-      SymbolicFunction1<VecV,Vec> *function = dynamic_cast<SymbolicFunction1<VecV,Vec>*>(f);
-      if(function)
-        if(fd==0) {
-          int nq = bd->getqRelSize();
-          vector<CasADi::SX> sqd(nq);
-          for(int i=0; i<nq; i++) {
-            stringstream stream;
-            stream << "qd" << i;
-            sqd[i] = CasADi::SX(stream.str());
-          }
-          vector<CasADi::SXMatrix> input2(2);
-          input2[0] = sqd;
-          input2[1] = function->getSXFunction().inputExpr(0);
-          CasADi::SXMatrix Jd = function->getSXFunction().jac(0).mul(sqd);
-          CasADi::SXFunction derJac(input2,Jd);
-          derJac.init();
-
-          fd = new SymbolicFunction2<VecV,Vec,Vec>(derJac);
-        }
-#endif
+//#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
+//      SymbolicFunction1<VecV,Vec> *function = dynamic_cast<SymbolicFunction1<VecV,Vec>*>(f);
+//      if(function)
+//        if(fd==0) {
+//          int nq = bd->getqRelSize();
+//          vector<CasADi::SX> sqd(nq);
+//          for(int i=0; i<nq; i++) {
+//            stringstream stream;
+//            stream << "qd" << i;
+//            sqd[i] = CasADi::SX(stream.str());
+//          }
+//          vector<CasADi::SXMatrix> input2(2);
+//          input2[0] = sqd;
+//          input2[1] = function->getSXFunction().inputExpr(0);
+//          CasADi::SXMatrix Jd = function->getSXFunction().jac(0).mul(sqd);
+//          CasADi::SXFunction derJac(input2,Jd);
+//          derJac.init();
+//
+//          fd = new SymbolicFunction2<VecV,Vec,Vec>(derJac);
+//        }
+//#endif
     }
     else
       KinematicConstraint::init(stage);
