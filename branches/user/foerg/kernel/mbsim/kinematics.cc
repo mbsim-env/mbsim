@@ -33,7 +33,7 @@ namespace MBSim {
 
   void Translation::init() {
     J.resize(getuSize());
-    T.resize(getqSize(),getuSize());
+    T.resize(getqSize(),getuSize(),Eye());
     Jd.resize(getuSize());
   }
 
@@ -45,20 +45,14 @@ namespace MBSim {
   }
 
   void Translation::updateStateDerivativeDependentVariables(const VecV &qd, const VecV &q, const double &t) {
-    updateDerivativeOfT(qd,q,t); 
     updateDerivativeOfJacobian(qd,q,t);
     updateDerivativeOfGuidingVelocity(qd,q,t);
-  }
-
-  void TranslationTeqI::init() {
-    Translation::init();
-    T.init(Eye());
   }
 
 //  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, TranslationInXDirection, MBSIMNS"TranslationInXDirection")
 
   void TranslationInXDirection::init() {
-    TranslationTeqI::init();
+    Translation::init();
     J(0,0) = 1;
   }
 
@@ -71,7 +65,7 @@ namespace MBSim {
 //  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, TranslationInYDirection, MBSIMNS"TranslationInYDirection")
 
   void TranslationInYDirection::init() {
-    TranslationTeqI::init();
+    Translation::init();
     J(1,0) = 1;
   }
 
@@ -84,7 +78,7 @@ namespace MBSim {
 //  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, TranslationInZDirection, MBSIMNS"TranslationInZDirection")
 
   void TranslationInZDirection::init() {
-    TranslationTeqI::init();
+    Translation::init();
     J(2,0) = 1;
   }
 
@@ -97,7 +91,7 @@ namespace MBSim {
 //  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, TranslationInXYDirection, MBSIMNS"TranslationInXYDirection")
 
   void TranslationInXYDirection::init() {
-    TranslationTeqI::init();
+    Translation::init();
     J(0,0) = 1;
     J(1,1) = 1;
   }
@@ -124,7 +118,7 @@ namespace MBSim {
 //  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, TranslationInYZDirection, MBSIMNS"TranslationInYZDirection")
 
   void TranslationInYZDirection::init() {
-    TranslationTeqI::init();
+    Translation::init();
     J(1,0) = 1;
     J(2,1) = 1;
   }
@@ -138,7 +132,7 @@ namespace MBSim {
 //  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, TranslationInXYZDirection, MBSIMNS"TranslationInXYZDirection")
 
   void TranslationInXYZDirection::init() {
-    TranslationTeqI::init();
+    Translation::init();
     J(0,0) = 1;
     J(1,1) = 1;
     J(2,2) = 1;
@@ -153,7 +147,7 @@ namespace MBSim {
 //  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, LinearTranslation, MBSIMNS"LinearTranslation")
 
   void LinearTranslation::init() {
-    TranslationTeqI::init();
+    Translation::init();
     J = D;
   }
 
@@ -199,7 +193,7 @@ namespace MBSim {
 
   void Rotation::init() {
     J.resize(getuSize());
-    T.resize(getqSize(),getuSize());
+    T.resize(getqSize(),getuSize(),Eye());
     Jd.resize(getuSize());
   }
 
@@ -211,20 +205,19 @@ namespace MBSim {
   }
 
   void Rotation::updateStateDerivativeDependentVariables(const VecV &qd, const VecV &q, const double &t) {
-    updateDerivativeOfT(qd,q,t); 
     updateDerivativeOfJacobian(qd,q,t);
     updateDerivativeOfGuidingVelocity(qd,q,t);
   }
 
-  void RotationTeqI::init() {
-    Rotation::init();
-    T.init(Eye());
-  }
+//  void RotationTeqI::init() {
+//    Rotation::init();
+//    T.init(Eye());
+//  }
 
 //  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, RotationAboutXAxis, MBSIMNS"RotationAboutXAxis")
 
   void RotationAboutXAxis::init() {
-    RotationTeqI::init();
+    Rotation::init();
     A(0,0) = 1;
     J(0,0) = 1;
   }
@@ -249,7 +242,7 @@ namespace MBSim {
 //  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, RotationAboutYAxis, MBSIMNS"RotationAboutYAxis")
 
   void RotationAboutYAxis::init() {
-    RotationTeqI::init();
+    Rotation::init();
     A(1,1) = 1;
     J(1,0) = 1;
   }
@@ -274,7 +267,7 @@ namespace MBSim {
 //  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, RotationAboutZAxis, MBSIMNS"RotationAboutZAxis")
 
   void RotationAboutZAxis::init() {
-    RotationTeqI::init();
+    Rotation::init();
     A(2,2) = 1;
     J(2,0) = 1;
   }
@@ -299,28 +292,31 @@ namespace MBSim {
 //  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, RotationAboutFixedAxis, MBSIMNS"RotationAboutFixedAxis")
 
   void RotationAboutFixedAxis::init() {
-    RotationTeqI::init();
+    Rotation::init();
     J = a;
   }
 
   void RotationAboutFixedAxis::updateOrientation(const fmatvec::VecV &q, const double &t) {
 
-    const double cosq=cos(q(0));
-    const double sinq=sin(q(0));
-    const double onemcosq=1-cosq;
-    const double a0a1=a(0)*a(1);
-    const double a0a2=a(0)*a(2);
-    const double a1a2=a(1)*a(2);
+    FRotationAboutFixedAxis<VecV> f(a);
+    A = f(q);
 
-    A(0,0) = cosq+onemcosq*a(0)*a(0);
-    A(1,0) = onemcosq*a0a1+a(2)*sinq;
-    A(2,0) = onemcosq*a0a2-a(1)*sinq;
-    A(0,1) = onemcosq*a0a1-a(2)*sinq;
-    A(1,1) = cosq+onemcosq*a(1)*a(1);
-    A(2,1) = onemcosq*a1a2+a(0)*sinq;
-    A(0,2) = onemcosq*a0a2+a(1)*sinq;
-    A(1,2) = onemcosq*a1a2-a(0)*sinq;
-    A(2,2) = cosq+onemcosq*a(2)*a(2);
+//    const double cosq=cos(q(0));
+//    const double sinq=sin(q(0));
+//    const double onemcosq=1-cosq;
+//    const double a0a1=a(0)*a(1);
+//    const double a0a2=a(0)*a(2);
+//    const double a1a2=a(1)*a(2);
+//
+//    A(0,0) = cosq+onemcosq*a(0)*a(0);
+//    A(1,0) = onemcosq*a0a1+a(2)*sinq;
+//    A(2,0) = onemcosq*a0a2-a(1)*sinq;
+//    A(0,1) = onemcosq*a0a1-a(2)*sinq;
+//    A(1,1) = cosq+onemcosq*a(1)*a(1);
+//    A(2,1) = onemcosq*a1a2+a(0)*sinq;
+//    A(0,2) = onemcosq*a0a2+a(1)*sinq;
+//    A(1,2) = onemcosq*a1a2-a(0)*sinq;
+//    A(2,2) = cosq+onemcosq*a(2)*a(2);
   }
 
   void RotationAboutFixedAxis::initializeUsingXML(TiXmlElement *element) {
@@ -338,6 +334,26 @@ namespace MBSim {
   }
 
 //  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, StateDependentRotationAboutFixedAxis, MBSIMNS"StateDependentRotationAboutFixedAxis")
+
+  void StateDependentRotationAboutFixedAxis::init() {
+    Rotation::init();
+    J = a;
+  }
+
+  void StateDependentRotationAboutFixedAxis::updateOrientation(const fmatvec::VecV &q, const double &t) {
+
+    FRotationAboutFixedAxis<double> f(a);
+    A = f((*falpha)(q));
+  }
+
+  void StateDependentRotationAboutFixedAxis::updateJacobian(const fmatvec::VecV &q, const double &t) {
+    J = a*falpha->parDer(q);
+  }
+
+  void StateDependentRotationAboutFixedAxis::updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) {
+    Jd = a*falpha->parDerDirDer(qd,q);
+  }
+
 //
 //  void StateDependentRotationAboutFixedAxis::initializeUsingXML(TiXmlElement *element) {
 //    Rotation::initializeUsingXML(element);

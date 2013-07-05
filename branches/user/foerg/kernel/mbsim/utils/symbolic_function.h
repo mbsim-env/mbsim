@@ -66,6 +66,17 @@ namespace MBSim {
       }
   };
 
+  template <class Col>
+  class FromCasadi<fmatvec::RowVector<Col,double> > {
+    public:
+      static fmatvec::RowVector<Col,double> cast(const CasADi::Matrix<double> &x) {
+        fmatvec::RowVector<Col,double> y(x.size2(),fmatvec::NONINIT);
+        for(int i=0; i<x.size2(); i++)
+          y.e(i) = x(0,i).toScalar();
+        return y;
+      }
+  };
+
   template <class Row>
   class FromCasadi<fmatvec::Matrix<fmatvec::General,Row,fmatvec::Var,double> > {
     public:
@@ -91,27 +102,57 @@ class SymbolicFunction;
 
 template<typename Ret, typename Arg>
   class SymbolicFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
-    CasADi::SXFunction f;
+    CasADi::SXFunction f, dfdx, ddfxdx;
     public:
     SymbolicFunction() {}
     SymbolicFunction(const CasADi::SXFunction &f_) : f(f_) {
       f.init();
+      dfdx = CasADi::SXFunction(f.inputExpr(),f.jac(0));
+      dfdx.init();
+      int nq = getArgSize();
+      std::vector<CasADi::SX> sqd(nq);
+      for(int i=0; i<nq; i++) {
+        std::stringstream stream;
+        stream << "qd" << i;
+        sqd[i] = CasADi::SX(stream.str());
+      }
+      std::vector<CasADi::SXMatrix> input2(3);
+      input2[0] = sqd;
+      input2[1] = f.inputExpr(0);
+      CasADi::SXMatrix Jd = dfdx.jac().mul(sqd);
+      ddfxdx = CasADi::SXFunction(input2,Jd);
+      ddfxdx.init();
     }
-    SymbolicFunction(const CasADi::FX &f_) : f(CasADi::SXFunction(f_)) {
-      f.init();
-    }
+//    SymbolicFunction(const CasADi::FX &f_) : f(CasADi::SXFunction(f_)) {
+//      f.init();
+//      dfdx = CasADi::SXFunction(f.inputExpr(),f.jac(0));
+//      dfdx.init();
+//    }
     CasADi::SXFunction& getSXFunction() {return f;} 
 
-    typename fmatvec::Size<Arg>::type getArg1Size() const {
+    typename fmatvec::Size<Arg>::type getArgSize() const {
       f.inputExpr(0).size();
     }
 
-    std::string getType() const { return "SymbolicFunction1"; }
+    std::string getType() const { return "SymbolicFunction2"; }
 
     Ret operator()(const Arg& x) {
-      f.setInput(ToCasadi<Arg>::cast(x));
+      f.setInput(ToCasadi<Arg>::cast(x),0);
       f.evaluate();
       return FromCasadi<Ret>::cast(f.output());
+    }
+
+    typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &x) {
+      dfdx.setInput(ToCasadi<Arg>::cast(x),0);
+      dfdx.evaluate();
+      return FromCasadi<typename fmatvec::Der<Ret, Arg>::type>::cast(dfdx.output());
+    }
+
+    typename fmatvec::Der<Ret, Arg>::type parDerDirDer(const Arg &xd, const Arg &x) {
+      ddfxdx.setInput(ToCasadi<Arg>::cast(xd),0);
+      ddfxdx.setInput(ToCasadi<Arg>::cast(x),1);
+      ddfxdx.evaluate();
+      return FromCasadi<typename fmatvec::Der<Ret, Arg>::type>::cast(ddfxdx.output());
     }
 
     void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
@@ -144,11 +185,12 @@ template<typename Ret, typename Arg1, typename Arg2>
       input2[0] = sqd;
       input2[1] = f.inputExpr(0);
       input2[2] = f.inputExpr(1);
-      CasADi::SXMatrix Jd1(3,nq);
-      CasADi::SXMatrix Jd2(3,nq);
+      int n = f.outputExpr(0).size1();
+      CasADi::SXMatrix Jd1(n,nq);
+      CasADi::SXMatrix Jd2(n,nq);
       for(int j=0; j<nq; j++) {
-        Jd1(CasADi::Slice(0,3),CasADi::Slice(j,j+1)) = dfdx1.jac(0)(CasADi::Slice(j,nq*3,nq),CasADi::Slice(0,nq)).mul(sqd);
-        Jd2(CasADi::Slice(0,3),CasADi::Slice(j,j+1)) = dfdx1.jac(1)(CasADi::Slice(j,nq*3,nq),CasADi::Slice(0,1));
+        Jd1(CasADi::Slice(0,n),CasADi::Slice(j,j+1)) = dfdx1.jac(0)(CasADi::Slice(j,nq*n,nq),CasADi::Slice(0,nq)).mul(sqd);
+        Jd2(CasADi::Slice(0,n),CasADi::Slice(j,j+1)) = dfdx1.jac(1)(CasADi::Slice(j,nq*n,nq),CasADi::Slice(0,1));
       }
       ddfx1dx1 = CasADi::SXFunction(input2,Jd1);
       ddfx1dx1.init();

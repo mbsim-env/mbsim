@@ -110,17 +110,17 @@ namespace MBSim {
     }
     else {
       //Rotation *rot = body->getRotation();
-//      if(dynamic_cast<RotationAboutFixedAxis*>(body->getRotation())) {
-//        RotationAboutFixedAxis *rot = dynamic_cast<RotationAboutFixedAxis*>(body->getRotation());
-//        assert( rot != NULL );
-//        torqueDir = rot->getAxisOfRotation();
-//      } else if(dynamic_cast<RotationAboutXAxis*>(body->getRotation())) {
-//        torqueDir = Vec("[1;0;0]");
-//      } else if(dynamic_cast<RotationAboutYAxis*>(body->getRotation())) {
-//        torqueDir = Vec("[0;1;0]");
-//      } else if(dynamic_cast<RotationAboutZAxis*>(body->getRotation())) {
-//        torqueDir = Vec("[0;0;1]");
-//      }
+      if(dynamic_cast<RotationAboutFixedAxis*>(body->getRotation())) {
+        RotationAboutFixedAxis *rot = dynamic_cast<RotationAboutFixedAxis*>(body->getRotation());
+        assert( rot != NULL );
+        torqueDir = rot->getAxisOfRotation();
+      } else if(dynamic_cast<RotationAboutXAxis*>(body->getRotation())) {
+        torqueDir = Vec("[1;0;0]");
+      } else if(dynamic_cast<RotationAboutYAxis*>(body->getRotation())) {
+        torqueDir = Vec("[0;1;0]");
+      } else if(dynamic_cast<RotationAboutZAxis*>(body->getRotation())) {
+        torqueDir = Vec("[0;0;1]");
+      }
       LinkMechanics::init(stage);
     }
   }

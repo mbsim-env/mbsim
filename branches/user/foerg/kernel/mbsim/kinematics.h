@@ -24,25 +24,85 @@
 #include "function.h"
 #include "mbsim/utils/function.h"
 
+namespace fmatvec {
+
+  template <class Arg>
+    class ToDouble {
+    };
+
+  template <>
+    class ToDouble<double> {
+      public:
+        static double cast(const double &x) {
+          return x;
+        }
+    };
+
+  template <class Col>
+    class ToDouble<Vector<Col,double> > {
+      public:
+        static double cast(const Vector<Col,double> &x) {
+          return x(0); 
+        }
+    };
+
+  template<class Arg> 
+    class FRotationAboutFixedAxis : public Function<RotMat3(Arg)> {
+      protected:
+        Vec3 a;
+      public:
+        FRotationAboutFixedAxis(const Vec3 &a_) : a(a_) { }
+
+        typename Size<Arg>::type getArg1Size() const {
+          return 1;
+        }
+        RotMat3 operator()(const Arg &arg) {
+          RotMat3 A;
+          double alpha = ToDouble<Arg>::cast(arg);
+
+          const double cosq=cos(alpha);
+          const double sinq=sin(alpha);
+          const double onemcosq=1-cosq;
+          const double a0a1=a(0)*a(1);
+          const double a0a2=a(0)*a(2);
+          const double a1a2=a(1)*a(2);
+
+          A(0,0) = cosq+onemcosq*a(0)*a(0);
+          A(1,0) = onemcosq*a0a1+a(2)*sinq;
+          A(2,0) = onemcosq*a0a2-a(1)*sinq;
+          A(0,1) = onemcosq*a0a1-a(2)*sinq;
+          A(1,1) = cosq+onemcosq*a(1)*a(1);
+          A(2,1) = onemcosq*a1a2+a(0)*sinq;
+          A(0,2) = onemcosq*a0a2+a(1)*sinq;
+          A(1,2) = onemcosq*a1a2-a(0)*sinq;
+          A(2,2) = cosq+onemcosq*a(2)*a(2);
+          return A;
+        }
+        typename Der<RotMat3, Arg>::type parDer(const Arg &arg1) {
+          return a;
+        }
+        typename Der<RotMat3, Arg>::type parDerDirDer(const Arg &argDir, const Arg &arg) {
+          return Vec3();
+        }
+    };
+}
+
 namespace MBSim {
+
 
   class Translation {
     protected:
-      fmatvec::Function<fmatvec::Vec3(fmatvec::VecV, double)> *fr;
-      fmatvec::Function<fmatvec::MatV(fmatvec::VecV, double)> *fT;
       fmatvec::Vec3 r, j, jd;
-      fmatvec::Mat3xV J, Jd, drdq, dotdrdq;
-      fmatvec::MatV T, dotT;
+      fmatvec::Mat3xV J, Jd;
+      fmatvec::MatV T;
 
     public:
-      Translation(fmatvec::Function<fmatvec::Vec3(fmatvec::VecV, double)> *fr_=0, fmatvec::Function<fmatvec::MatV(fmatvec::VecV, double)> *fT_=0) : fr(fr_), fT(fT_) { }
-
-      virtual ~Translation() {delete fr; delete fT;}
+      virtual ~Translation() { }
 
       virtual void init();
 
-      virtual int getqSize() const { return fr->getArg1Size(); }
-      virtual int getuSize() const { return (*fT)(fmatvec::Vec3(),0).cols(); }
+      virtual int getqSize() const = 0;
+      virtual int getuSize() const { return getqSize(); }
 
       virtual bool isIndependent() const { return false; }
 
@@ -56,31 +116,89 @@ namespace MBSim {
       void updateStateDependentVariables(const fmatvec::VecV &q, const double &t);
       void updateStateDerivativeDependentVariables(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t);
 
-      virtual void updatePosition(const fmatvec::VecV &q, const double &t) { r = (*fr)(q,t); }
-      virtual void updateJacobian(const fmatvec::VecV &q, const double &t) { drdq = fr->parDer1(q,t); J = drdq*T; }
-      virtual void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { j = fr->parDer2(q,t); }
-      virtual void updateT(const fmatvec::VecV &q, const double &t) { T = (*fT)(q,t); }
-      virtual void updateDerivativeOfT(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { dotT = fT->dirDer1(qd,q,t) + fT->parDer2(q,t); }
-      virtual void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { dotdrdq = fr->parDer1DirDer1(qd,q,t)+fr->parDer1ParDer2(q,t); Jd = dotdrdq*T + drdq*dotT; }
-      virtual void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { jd = fr->parDer2DirDer1(qd,q,t) + fr->parDer2ParDer2(q,t); }
+      virtual void updatePosition(const fmatvec::VecV &q, const double &t) { }
+      virtual void updateJacobian(const fmatvec::VecV &q, const double &t) { }
+      virtual void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { }
+      virtual void updateT(const fmatvec::VecV &q, const double &t) { }
+      virtual void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
+      virtual void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
   };
 
-  class TranslationTeqI : public Translation {
+//  class GeneralTranslation : public Translation {
+//    protected:
+//      fmatvec::Function<fmatvec::Vec3(fmatvec::VecV, double)> *fr;
+//      fmatvec::Function<fmatvec::MatV(fmatvec::VecV, double)> *fT;
+//      fmatvec::Mat3xV drdq, dotdrdq;
+//      fmatvec::MatV dotT;
+//
+//    public:
+//      GeneralTranslation(fmatvec::Function<fmatvec::Vec3(fmatvec::VecV, double)> *fr_=0, fmatvec::Function<fmatvec::MatV(fmatvec::VecV, double)> *fT_=0) : fr(fr_), fT(fT_) { }
+//
+//      virtual ~GeneralTranslation() { delete fr; delete fT; }
+//
+//      virtual void init();
+//
+//      virtual int getqSize() const { return fr->getArg1Size(); }
+//      virtual int getuSize() const { return (*fT)(fmatvec::Vec3(),0).cols(); }
+//
+//      virtual void updatePosition(const fmatvec::VecV &q, const double &t) { r = (*fr)(q,t); }
+//      virtual void updateJacobian(const fmatvec::VecV &q, const double &t) { drdq = fr->parDer1(q,t); J = drdq*T; }
+//      virtual void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { j = fr->parDer2(q,t); }
+//      virtual void updateT(const fmatvec::VecV &q, const double &t) { T = (*fT)(q,t); }
+//      virtual void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { dotdrdq = fr->parDer1DirDer1(qd,q,t)+fr->parDer1ParDer2(q,t); dotT = fT->dirDer1(qd,q,t) + fT->parDer2(q,t); Jd = dotdrdq*T + drdq*dotT; }
+//      virtual void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { jd = fr->parDer2DirDer1(qd,q,t) + fr->parDer2ParDer2(q,t); }
+//  };
+
+  class GeneralTranslation : public Translation {
+    protected:
+      fmatvec::Function<fmatvec::Vec3(fmatvec::VecV, double)> *fr;
+      fmatvec::Mat3xV drdq, dotdrdq;
 
     public:
-      TranslationTeqI(fmatvec::Function<fmatvec::Vec3(fmatvec::VecV, double)> *fr=0) : Translation(fr) { }
+      GeneralTranslation(fmatvec::Function<fmatvec::Vec3(fmatvec::VecV, double)> *fr_=0) : fr(fr_) { }
 
-      void init();
+      ~GeneralTranslation() { delete fr; }
 
-      int getuSize() const { return getqSize(); }
+      int getqSize() const { return fr->getArg1Size(); }
 
+      void updatePosition(const fmatvec::VecV &q, const double &t) { r = (*fr)(q,t); }
       void updateJacobian(const fmatvec::VecV &q, const double &t) { drdq = fr->parDer1(q,t); J = drdq; }
-      void updateT(const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfT(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
+      void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { j = fr->parDer2(q,t); }
       void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { dotdrdq = fr->parDer1DirDer1(qd,q,t)+fr->parDer1ParDer2(q,t); Jd = dotdrdq; }
+      void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { jd = fr->parDer2DirDer1(qd,q,t) + fr->parDer2ParDer2(q,t); }
   };
 
-  class TranslationInXDirection : public TranslationTeqI {
+  class StateDependentTranslation : public Translation {
+    protected:
+      fmatvec::Function<fmatvec::Vec3(fmatvec::VecV)> *fr;
+
+    public:
+      StateDependentTranslation(fmatvec::Function<fmatvec::Vec3(fmatvec::VecV)> *fr_=0) : fr(fr_) { }
+
+      ~StateDependentTranslation() { delete fr; }
+
+      int getqSize() const { return fr->getArgSize(); }
+
+      void updatePosition(const fmatvec::VecV &q, const double &t) { r = (*fr)(q); }
+      void updateJacobian(const fmatvec::VecV &q, const double &t) { J = fr->parDer(q); }
+      void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { Jd = fr->parDerDirDer(qd,q); }
+  };
+
+//  class TranslationTeqI : public Translation {
+//
+//    public:
+//      TranslationTeqI(fmatvec::Function<fmatvec::Vec3(fmatvec::VecV, double)> *fr=0) : Translation(fr) { }
+//
+//      void init();
+//
+//      int getuSize() const { return getqSize(); }
+//
+//      void updateJacobian(const fmatvec::VecV &q, const double &t) { drdq = fr->parDer1(q,t); J = drdq; }
+//      void updateT(const fmatvec::VecV &q, const double &t) { }
+//      void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { dotdrdq = fr->parDer1DirDer1(qd,q,t)+fr->parDer1ParDer2(q,t); Jd = dotdrdq; }
+//  };
+
+  class TranslationInXDirection : public Translation {
     public:
 
       void init();
@@ -90,16 +208,12 @@ namespace MBSim {
       int getqSize() const {return 1;}
 
       void updatePosition(const fmatvec::VecV &q, const double &t) { r(0) = q(0); }
-      void updateJacobian(const fmatvec::VecV &q, const double &t) { }
-      void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
 
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
-  class TranslationInYDirection : public TranslationTeqI {
+  class TranslationInYDirection : public Translation {
     public:
 
       void init();
@@ -109,20 +223,12 @@ namespace MBSim {
       int getqSize() const {return 1;}
 
       void updatePosition(const fmatvec::VecV &q, const double &t) { r(1) = q(0); }
-      void updatePartialDerivativeOfPosition(const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfPartialDerivativeOfPosition(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateJacobian(const fmatvec::VecV &q, const double &t) { }
-      void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { }
-      void updateT(const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfT(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
 
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
-  class TranslationInZDirection : public TranslationTeqI {
+  class TranslationInZDirection : public Translation {
     public:
 
       void init();
@@ -132,20 +238,12 @@ namespace MBSim {
       int getqSize() const {return 1;}
 
       void updatePosition(const fmatvec::VecV &q, const double &t) { r(2) = q(0); }
-      void updatePartialDerivativeOfPosition(const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfPartialDerivativeOfPosition(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateJacobian(const fmatvec::VecV &q, const double &t) { }
-      void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { }
-      void updateT(const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfT(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
 
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
-  class TranslationInXYDirection : public TranslationTeqI {
+  class TranslationInXYDirection : public Translation {
     public:
 
       void init();
@@ -155,20 +253,12 @@ namespace MBSim {
       int getqSize() const {return 2;}
 
       void updatePosition(const fmatvec::VecV &q, const double &t) { r(0) = q(0); r(1) = q(1); }
-      void updatePartialDerivativeOfPosition(const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfPartialDerivativeOfPosition(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateJacobian(const fmatvec::VecV &q, const double &t) { }
-      void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { }
-      void updateT(const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfT(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
 
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
-  class TranslationInXZDirection : public TranslationTeqI {
+  class TranslationInXZDirection : public Translation {
     public:
 
       void init();
@@ -178,20 +268,12 @@ namespace MBSim {
       int getqSize() const {return 2;}
 
       void updatePosition(const fmatvec::VecV &q, const double &t) { r(0) = q(0); r(2) = q(1); }
-      void updatePartialDerivativeOfPosition(const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfPartialDerivativeOfPosition(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateJacobian(const fmatvec::VecV &q, const double &t) { }
-      void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { }
-      void updateT(const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfT(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
 
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
-  class TranslationInYZDirection : public TranslationTeqI {
+  class TranslationInYZDirection : public Translation {
     public:
 
       void init();
@@ -201,20 +283,12 @@ namespace MBSim {
       int getqSize() const {return 2;}
 
       void updatePosition(const fmatvec::VecV &q, const double &t) { r(1) = q(0); r(2) = q(1); }
-      void updatePartialDerivativeOfPosition(const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfPartialDerivativeOfPosition(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateJacobian(const fmatvec::VecV &q, const double &t) { }
-      void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { }
-      void updateT(const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfT(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
 
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
-  class TranslationInXYZDirection : public TranslationTeqI {
+  class TranslationInXYZDirection : public Translation {
     public:
 
       void init();
@@ -224,20 +298,12 @@ namespace MBSim {
       int getqSize() const {return 3;}
 
       void updatePosition(const fmatvec::VecV &q, const double &t) { r(0) = q(0); r(1) = q(1); r(2) = q(2); }
-      void updatePartialDerivativeOfPosition(const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfPartialDerivativeOfPosition(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateJacobian(const fmatvec::VecV &q, const double &t) { }
-      void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { }
-      void updateT(const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfT(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
 
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
-  class LinearTranslation : public TranslationTeqI {
+  class LinearTranslation : public Translation {
     private:
       fmatvec::Mat3xV D;
 
@@ -253,14 +319,6 @@ namespace MBSim {
       int getqSize() const {return D.cols();}
 
       void updatePosition(const fmatvec::VecV &q, const double &t) { r = J*q; }
-      void updatePartialDerivativeOfPosition(const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfPartialDerivativeOfPosition(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateJacobian(const fmatvec::VecV &q, const double &t) { }
-      void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { }
-      void updateT(const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfT(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
 
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
@@ -448,22 +506,18 @@ namespace MBSim {
 
   class Rotation {
     protected:
-      fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fA;
-      fmatvec::Function<fmatvec::MatV(fmatvec::VecV, double)> *fT;
       fmatvec::RotMat3 A;
       fmatvec::Vec3 j, jd;
-      fmatvec::Mat3xV J, Jd, dAdq, dotdAdq;
-      fmatvec::MatV T, dotT;
+      fmatvec::Mat3xV J, Jd;
+      fmatvec::MatV T;
 
     public:
-      Rotation(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fA_=0, fmatvec::Function<fmatvec::MatV(fmatvec::VecV, double)> *fT_=0) : fA(fA_), fT(fT_) { }
-
-      virtual ~Rotation() {delete fA; delete fT;}
+      virtual ~Rotation() { }
 
       virtual void init();
 
-      virtual int getqSize() const { return fA->getArg1Size(); }
-      virtual int getuSize() const { return (*fT)(fmatvec::Vec3(),0).cols(); }
+      virtual int getqSize() const = 0;
+      virtual int getuSize() const { return getqSize(); }
 
       virtual bool isIndependent() const { return false; }
 
@@ -477,31 +531,89 @@ namespace MBSim {
       void updateStateDependentVariables(const fmatvec::VecV &q, const double &t);
       void updateStateDerivativeDependentVariables(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t);
 
-      virtual void updateOrientation(const fmatvec::VecV &q, const double &t) { A = (*fA)(q,t); }
-      virtual void updateJacobian(const fmatvec::VecV &q, const double &t) { dAdq = fA->parDer1(q,t); J = dAdq*T; }
-      virtual void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { j = fA->parDer2(q,t); }
-      virtual void updateT(const fmatvec::VecV &q, const double &t) { T = (*fT)(q,t); }
-      virtual void updateDerivativeOfT(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { dotT = fT->dirDer1(qd,q,t) + fT->parDer2(q,t); }
-      virtual void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { dotdAdq = fA->parDer1DirDer1(qd,q,t)+fA->parDer1ParDer2(q,t); Jd = dotdAdq*T + dAdq*dotT; }
-      virtual void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { jd = fA->parDer2DirDer1(qd,q,t) + fA->parDer2ParDer2(q,t); }
+      virtual void updateOrientation(const fmatvec::VecV &q, const double &t) { } 
+      virtual void updateJacobian(const fmatvec::VecV &q, const double &t) { }
+      virtual void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { }
+      virtual void updateT(const fmatvec::VecV &q, const double &t) { }
+      virtual void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
+      virtual void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
   };
 
-  class RotationTeqI : public Rotation {
+//  class Rotation {
+//    protected:
+//      fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fA;
+//      fmatvec::Function<fmatvec::MatV(fmatvec::VecV, double)> *fT;
+//      fmatvec::RotMat3 A;
+//      fmatvec::Vec3 j, jd;
+//      fmatvec::Mat3xV J, Jd, dAdq, dotdAdq;
+//      fmatvec::MatV T, dotT;
+//
+//    public:
+//      Rotation(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fA_=0, fmatvec::Function<fmatvec::MatV(fmatvec::VecV, double)> *fT_=0) : fA(fA_), fT(fT_) { }
+//
+//      virtual ~Rotation() {delete fA; delete fT;}
+//
+//      virtual void init();
+//
+//      virtual int getqSize() const { return fA->getArg1Size(); }
+//      virtual int getuSize() const { return (*fT)(fmatvec::Vec3(),0).cols(); }
+//
+//      virtual bool isIndependent() const { return false; }
+//
+//      const fmatvec::RotMat3 getOrientation() const {return A;}
+//      const fmatvec::Mat3xV getJacobian() const {return J;}
+//      const fmatvec::Vec3 getGuidingVelocity() const {return j;}
+//      const fmatvec::Mat3xV getDerivativeOfJacobian() const {return Jd;}
+//      const fmatvec::Vec3 getDerivativeOfGuidingVelocity() const {return jd;}
+//      const fmatvec::MatV getT() const {return T;}
+//
+//      void updateStateDependentVariables(const fmatvec::VecV &q, const double &t);
+//      void updateStateDerivativeDependentVariables(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t);
+//
+//      virtual void updateOrientation(const fmatvec::VecV &q, const double &t) { A = (*fA)(q,t); }
+//      virtual void updateJacobian(const fmatvec::VecV &q, const double &t) { dAdq = fA->parDer1(q,t); J = dAdq*T; }
+//      virtual void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { j = fA->parDer2(q,t); }
+//      virtual void updateT(const fmatvec::VecV &q, const double &t) { T = (*fT)(q,t); }
+//      virtual void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { dotdAdq = fA->parDer1DirDer1(qd,q,t)+fA->parDer1ParDer2(q,t); dotT = fT->dirDer1(qd,q,t) + fT->parDer2(q,t); Jd = dotdAdq*T + dAdq*dotT; }
+//      virtual void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { jd = fA->parDer2DirDer1(qd,q,t) + fA->parDer2ParDer2(q,t); }
+//  };
+
+  class GeneralRotation : public Rotation {
+    protected:
+      fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fA;
+      fmatvec::Mat3xV dAdq, dotdAdq;
 
     public:
-      RotationTeqI(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fA=0) : Rotation(fA) { }
+      GeneralRotation(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fA_=0) : fA(fA_) { }
 
-      void init();
+      ~GeneralRotation() { delete fA; }
 
-      int getuSize() const { return getqSize(); }
+      int getqSize() const { return fA->getArg1Size(); }
 
+      bool isIndependent() const { return false; }
+
+      void updateOrientation(const fmatvec::VecV &q, const double &t) { A = (*fA)(q,t); }
       void updateJacobian(const fmatvec::VecV &q, const double &t) { dAdq = fA->parDer1(q,t); J = dAdq; }
-      void updateT(const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfT(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
+      void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { j = fA->parDer2(q,t); }
       void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { dotdAdq = fA->parDer1DirDer1(qd,q,t)+fA->parDer1ParDer2(q,t); Jd = dotdAdq; }
+      void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { jd = fA->parDer2DirDer1(qd,q,t) + fA->parDer2ParDer2(q,t); }
   };
 
-  class RotationAboutXAxis : public RotationTeqI {
+//  class RotationTeqI : public Rotation {
+//
+//    public:
+//      RotationTeqI(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fA=0) : Rotation(fA) { }
+//
+//      void init();
+//
+//      int getuSize() const { return getqSize(); }
+//
+//      void updateJacobian(const fmatvec::VecV &q, const double &t) { dAdq = fA->parDer1(q,t); J = dAdq; }
+//      void updateT(const fmatvec::VecV &q, const double &t) { }
+//      void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { dotdAdq = fA->parDer1DirDer1(qd,q,t)+fA->parDer1ParDer2(q,t); Jd = dotdAdq; }
+//  };
+
+  class RotationAboutXAxis : public Rotation {
     public:
 
       bool isIndependent() const { return true; }
@@ -511,18 +623,12 @@ namespace MBSim {
       int getqSize() const {return 1;}
 
       void updateOrientation(const fmatvec::VecV &q, const double &t);
-      void updatePartialDerivativeOfOrientation(const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfPartialDerivativeOfOrientation(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateJacobian(const fmatvec::VecV &q, const double &t) { }
-      void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
 
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
-  class RotationAboutYAxis : public RotationTeqI {
+  class RotationAboutYAxis : public Rotation {
     public:
 
       bool isIndependent() const { return true; }
@@ -532,18 +638,12 @@ namespace MBSim {
       int getqSize() const {return 1;}
 
       void updateOrientation(const fmatvec::VecV &q, const double &t);
-      void updatePartialDerivativeOfOrientation(const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfPartialDerivativeOfOrientation(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateJacobian(const fmatvec::VecV &q, const double &t) { }
-      void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
 
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
-  class RotationAboutZAxis : public RotationTeqI {
+  class RotationAboutZAxis : public Rotation {
     public:
 
       bool isIndependent() const { return true; }
@@ -553,18 +653,12 @@ namespace MBSim {
       int getqSize() const {return 1;}
 
       void updateOrientation(const fmatvec::VecV &q, const double &t);
-      void updatePartialDerivativeOfOrientation(const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfPartialDerivativeOfOrientation(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateJacobian(const fmatvec::VecV &q, const double &t) { }
-      void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
 
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
-  class RotationAboutFixedAxis : public RotationTeqI {
+  class RotationAboutFixedAxis : public Rotation {
     private:
       fmatvec::Vec3 a;
 
@@ -579,15 +673,37 @@ namespace MBSim {
       int getqSize() const {return 1;}
 
       void updateOrientation(const fmatvec::VecV &q, const double &t);
-      void updatePartialDerivativeOfOrientation(const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfPartialDerivativeOfOrientation(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateJacobian(const fmatvec::VecV &q, const double &t) { }
-      void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
 
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+
+      const fmatvec::Vec3& getAxisOfRotation() const { return a; }
+      void setAxisOfRotation(const fmatvec::Vec3 &a_) { a = a_; }
+  };
+
+  class StateDependentRotationAboutFixedAxis : public Rotation {
+    protected:
+      fmatvec::Function<double(fmatvec::VecV)> *falpha;
+      fmatvec::Vec3 a;
+
+    public:
+      StateDependentRotationAboutFixedAxis() : falpha(0) { }
+      StateDependentRotationAboutFixedAxis(fmatvec::Function<double(fmatvec::VecV)> *falpha_, const fmatvec::Vec3 &a_) : falpha(falpha_), a(a_) { }
+
+      ~StateDependentRotationAboutFixedAxis() { delete falpha; }
+
+      void init();
+
+      int getqSize() const { return 1; }
+
+      bool isIndependent() const { return true; }
+
+      void updateOrientation(const fmatvec::VecV &q, const double &t);
+      void updateJacobian(const fmatvec::VecV &q, const double &t); 
+      void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t); 
+
+      const fmatvec::Vec3& getAxisOfRotation() const { return a; }
+      void setAxisOfRotation(const fmatvec::Vec3 &a_) { a = a_; }
   };
 
 //  /**
@@ -758,7 +874,6 @@ namespace MBSim {
       void updateJacobian(const fmatvec::VecV &q, const double &t) { }
       void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { }
       void updateT(const fmatvec::VecV &q, const double &t);
-      void updateDerivativeOfT(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
       void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
       void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
 
