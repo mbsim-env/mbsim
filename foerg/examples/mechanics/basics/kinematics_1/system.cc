@@ -48,7 +48,7 @@ using namespace std;
 //     }
 // };
 
-class MyPos : public TranslationTeqI {
+class MyPos : public Translation {
   public:
     int getqSize() const {return 0;}
     void updatePosition(const VecV &q, const double &t) {

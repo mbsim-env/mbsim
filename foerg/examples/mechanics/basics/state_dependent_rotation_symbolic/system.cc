@@ -51,16 +51,16 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   SXFunction spos(sq,pos);
   
-  SymbolicFunction1<Vec3,Vec> *position = new SymbolicFunction1<Vec3,Vec>(spos);
-  StateDependentTranslation *trans = new StateDependentTranslation(1,position);
+  SymbolicFunction<Vec3(VecV)> *position = new SymbolicFunction<Vec3(VecV)>(spos);
+  StateDependentTranslation *trans = new StateDependentTranslation(position);
   body->setTranslation(trans);
 
   vector<SX> al(1);
   al[0] = M_PI/2+sq[0]/R;
 
   SXFunction sangle(sq,al);
-  SymbolicFunction1<double,Vec> *angle = new SymbolicFunction1<double,Vec>(sangle);
-  StateDependentRotationAboutFixedAxis *rot = new StateDependentRotationAboutFixedAxis(1,angle,"[0;0;1]");
+  SymbolicFunction<double(VecV)> *angle = new SymbolicFunction<double(VecV)>(sangle);
+  StateDependentRotationAboutFixedAxis *rot = new StateDependentRotationAboutFixedAxis(angle,"[0;0;1]");
   body->setRotation(rot);
   
   body->getFrame("C")->setPlotFeature(globalPosition,enabled);
