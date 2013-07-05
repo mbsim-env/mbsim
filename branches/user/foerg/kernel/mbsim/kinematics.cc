@@ -354,6 +354,20 @@ namespace MBSim {
     Jd = a*falpha->parDerDirDer(qd,q);
   }
 
+  void TimeDependentRotationAboutFixedAxis::updateOrientation(const fmatvec::VecV &q, const double &t) {
+
+    FRotationAboutFixedAxis<double> f(a);
+    A = f((*falpha)(t));
+  }
+
+  void TimeDependentRotationAboutFixedAxis::updateGuidingVelocity(const fmatvec::VecV &q, const double &t) {
+    j = a*falpha->parDer(t);
+  }
+
+  void TimeDependentRotationAboutFixedAxis::updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) {
+    jd = a*falpha->parDerParDer(t);
+  }
+
 //
 //  void StateDependentRotationAboutFixedAxis::initializeUsingXML(TiXmlElement *element) {
 //    Rotation::initializeUsingXML(element);

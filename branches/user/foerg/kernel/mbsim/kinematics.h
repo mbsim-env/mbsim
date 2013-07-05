@@ -184,6 +184,22 @@ namespace MBSim {
       void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { Jd = fr->parDerDirDer(qd,q); }
   };
 
+  class TimeDependentTranslation : public Translation {
+    protected:
+      fmatvec::Function<fmatvec::Vec3(double)> *fr;
+
+    public:
+      TimeDependentTranslation(fmatvec::Function<fmatvec::Vec3(double)> *fr_=0) : fr(fr_) { }
+
+      ~TimeDependentTranslation() { delete fr; }
+
+      int getqSize() const { return 0; }
+
+      void updatePosition(const fmatvec::VecV &q, const double &t) { r = (*fr)(t); }
+      void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { j = fr->parDer(t); }
+      void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { jd = fr->parDerParDer(t); }
+  };
+
 //  class TranslationTeqI : public Translation {
 //
 //    public:
@@ -701,6 +717,29 @@ namespace MBSim {
       void updateOrientation(const fmatvec::VecV &q, const double &t);
       void updateJacobian(const fmatvec::VecV &q, const double &t); 
       void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t); 
+
+      const fmatvec::Vec3& getAxisOfRotation() const { return a; }
+      void setAxisOfRotation(const fmatvec::Vec3 &a_) { a = a_; }
+  };
+
+  class TimeDependentRotationAboutFixedAxis : public Rotation {
+    protected:
+      fmatvec::Function<double(double)> *falpha;
+      fmatvec::Vec3 a;
+
+    public:
+      TimeDependentRotationAboutFixedAxis() : falpha(0) { }
+      TimeDependentRotationAboutFixedAxis(fmatvec::Function<double(double)> *falpha_, const fmatvec::Vec3 &a_) : falpha(falpha_), a(a_) { }
+
+      ~TimeDependentRotationAboutFixedAxis() { delete falpha; }
+
+      int getqSize() const { return 0; }
+
+      bool isIndependent() const { return true; }
+
+      void updateOrientation(const fmatvec::VecV &q, const double &t);
+      void updateGuidingVelocity(const fmatvec::VecV &q, const double &t);
+      void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t);
 
       const fmatvec::Vec3& getAxisOfRotation() const { return a; }
       void setAxisOfRotation(const fmatvec::Vec3 &a_) { a = a_; }

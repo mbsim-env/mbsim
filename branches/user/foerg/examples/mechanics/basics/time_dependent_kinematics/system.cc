@@ -40,27 +40,22 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   body1->setFrameOfReference(getFrame("I"));
   body1->setFrameForKinematics(body1->getFrame("C"));
-  vector<SX> sq(0);
 
-  vector<SX> st(1);
-  st[0] = SX("t");
+  SX t("t");
   vector<SX> fexp(3);
-  fexp[0] = sin(freq1*st[0] + M_PI/2);
-  fexp[1] = v0y*st[0]; 
+  fexp[0] = sin(freq1*t + M_PI/2);
+  fexp[1] = v0y*t; 
   fexp[2] = 0; 
-  vector<vector<SX> > input1(2);
-  input1[0] = sq;
-  input1[1] = st;
-  SXFunction foo(input1,fexp);
+  SXFunction foo(t,fexp);
 
-  SymbolicFunction<Vec3(VecV,double)> *f = new SymbolicFunction<Vec3(VecV,double)>(foo);
-  body1->setTranslation(new TranslationTeqI(f));
+  SymbolicFunction<Vec3(double)> *f = new SymbolicFunction<Vec3(double)>(foo);
+  body1->setTranslation(new TimeDependentTranslation(f));
 
-  SX fexp2 = 5*sin(freq2*st[0]);
-  SXFunction foo2(st[0],fexp2);
+  SX fexp2 = 5*sin(freq2*t);
+  SXFunction foo2(t,fexp2);
 
-//  SymbolicFunction1<double,double> *f2 = new SymbolicFunction1<double,double>(foo2);
-//  body1->setRotation(new TimeDependentRotationAboutFixedAxis(f2,"[0;0;1]"));
+  SymbolicFunction<double(double)> *f2 = new SymbolicFunction<double(double)>(foo2);
+  body1->setRotation(new TimeDependentRotationAboutFixedAxis(f2,"[0;0;1]"));
 
   body1->getFrame("C")->setPlotFeature(globalPosition,enabled);
   body1->getFrame("C")->setPlotFeature(globalVelocity,enabled);
