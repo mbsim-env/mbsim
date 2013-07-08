@@ -42,47 +42,239 @@ namespace fmatvec {
     class ToDouble<Vector<Col,double> > {
       public:
         static double cast(const Vector<Col,double> &x) {
-          return x(0); 
+          return x.e(0); 
         }
     };
 
   template<class Arg> 
     class FRotationAboutFixedAxis : public Function<RotMat3(Arg)> {
-      protected:
+      private:
+        RotMat3 A;
         Vec3 a;
       public:
-        FRotationAboutFixedAxis(const Vec3 &a_) : a(a_) { }
-
-        typename Size<Arg>::type getArg1Size() const {
+        FRotationAboutFixedAxis(const Vec3 &a_=Vec3()) : a(a_) { }
+        typename Size<Arg>::type getArgSize() const {
           return 1;
         }
-        RotMat3 operator()(const Arg &arg) {
-          RotMat3 A;
-          double alpha = ToDouble<Arg>::cast(arg);
-
+        RotMat3 operator()(const Arg &q) {
+          double alpha = ToDouble<Arg>::cast(q);
           const double cosq=cos(alpha);
           const double sinq=sin(alpha);
           const double onemcosq=1-cosq;
           const double a0a1=a(0)*a(1);
           const double a0a2=a(0)*a(2);
           const double a1a2=a(1)*a(2);
-
-          A(0,0) = cosq+onemcosq*a(0)*a(0);
-          A(1,0) = onemcosq*a0a1+a(2)*sinq;
-          A(2,0) = onemcosq*a0a2-a(1)*sinq;
-          A(0,1) = onemcosq*a0a1-a(2)*sinq;
-          A(1,1) = cosq+onemcosq*a(1)*a(1);
-          A(2,1) = onemcosq*a1a2+a(0)*sinq;
-          A(0,2) = onemcosq*a0a2+a(1)*sinq;
-          A(1,2) = onemcosq*a1a2-a(0)*sinq;
-          A(2,2) = cosq+onemcosq*a(2)*a(2);
+          A.e(0,0) = cosq+onemcosq*a(0)*a(0);
+          A.e(1,0) = onemcosq*a0a1+a(2)*sinq;
+          A.e(2,0) = onemcosq*a0a2-a(1)*sinq;
+          A.e(0,1) = onemcosq*a0a1-a(2)*sinq;
+          A.e(1,1) = cosq+onemcosq*a(1)*a(1);
+          A.e(2,1) = onemcosq*a1a2+a(0)*sinq;
+          A.e(0,2) = onemcosq*a0a2+a(1)*sinq;
+          A.e(1,2) = onemcosq*a1a2-a(0)*sinq;
+          A.e(2,2) = cosq+onemcosq*a(2)*a(2);
           return A;
         }
-        typename Der<RotMat3, Arg>::type parDer(const Arg &arg1) {
+        typename Der<RotMat3, Arg>::type parDer(const Arg &q) {
           return a;
         }
-        typename Der<RotMat3, Arg>::type parDerDirDer(const Arg &argDir, const Arg &arg) {
+        typename Der<RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) {
           return Vec3();
+        }
+    };
+
+  template<class Arg> 
+    class FRotationAboutAxesXYZ : public Function<RotMat3(Arg)> {
+      private:
+        RotMat3 A;
+        Mat3xV J, Jd;
+      public:
+        FRotationAboutAxesXYZ() : J(3), Jd(3) { }
+        typename Size<Arg>::type getArgSize() const {
+          return 3;
+        }
+        RotMat3 operator()(const Arg &q) {
+          double a=q.e(0);
+          double b=q.e(1);
+          double g=q.e(2);
+          double cosa = cos(a);
+          double sina = sin(a);
+          double cosb = cos(b);
+          double sinb = sin(b);
+          double cosg = cos(g);
+          double sing = sin(g);
+          A.e(0,0) = cosb*cosg;
+          A.e(1,0) = sina*sinb*cosg+cosa*sing;
+          A.e(2,0) = -cosa*sinb*cosg+sina*sing;
+          A.e(0,1) = -cosb*sing;
+          A.e(1,1) = -sing*sinb*sina+cosa*cosg;
+          A.e(2,1) = cosa*sinb*sing+sina*cosg;
+          A.e(0,2) = sinb;
+          A.e(1,2) = -sina*cosb;
+          A.e(2,2) = cosa*cosb;
+          return A;
+        }
+        typename Der<RotMat3, Arg>::type parDer(const Arg &q) {
+          double a = q.e(0);
+          double b = q.e(1);
+          double cosa = cos(a);
+          double sina = sin(a);
+          double cosb = cos(b);
+          J.e(0,0) = 1;
+          //J.e(0,1) = 0;
+          J.e(0,2) = sin(b);
+          //J.e(1,0) = 0;
+          J.e(1,1) = cosa;
+          J.e(1,2) = -sina*cosb;
+          //J.e(2,0) = 0;
+          J.e(2,1) = sina;
+          J.e(2,2) = cosa*cosb;
+          return J;
+        }
+        typename Der<RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) {
+          double a = q.e(0);
+          double b = q.e(1);
+          double ad = qd.e(0);
+          double bd = qd.e(1);
+          double cosa = cos(a);
+          double sina = sin(a);
+          double cosb = cos(b);
+          double sinb = sin(b);
+          //Jd.e(0,0) = 0;
+          //Jd.e(0,1) = 0;
+          Jd.e(0,2) = cosb*bd;
+          //Jd.e(1,0) = 0;
+          Jd.e(1,1) = -sina*ad;
+          Jd.e(1,2) = -cosa*cosb*ad + sina*sinb*bd;
+          //Jd.e(2,0) = 0;
+          Jd.e(2,1) = cosa*ad;
+          Jd.e(2,2) = -sina*cosb*ad - cosa*sinb*bd;
+          return Jd;
+        }
+    };
+  
+  template<class Arg> 
+    class FRotationAboutAxesZXZ : public Function<RotMat3(Arg)> {
+      private:
+        RotMat3 A;
+        Mat3xV J, Jd;
+      public:
+        FRotationAboutAxesZXZ() : J(3), Jd(3) { }
+        typename Size<Arg>::type getArgSize() const {
+          return 3;
+        }
+        RotMat3 operator()(const Arg &q) {
+          double psi=q.e(0);
+          double theta=q.e(1);
+          double phi=q.e(2);
+          double spsi = sin(psi);
+          double stheta = sin(theta);
+          double sphi = sin(phi);
+          double cpsi = cos(psi);
+          double ctheta = cos(theta);
+          double cphi = cos(phi);
+          A.e(0,0) = cpsi*cphi-spsi*ctheta*sphi;
+          A.e(1,0) = spsi*cphi+cpsi*ctheta*sphi;
+          A.e(2,0) = stheta*sphi;
+          A.e(0,1) = -cpsi*sphi-spsi*ctheta*cphi;
+          A.e(1,1) = -spsi*sphi+cpsi*ctheta*cphi;
+          A.e(2,1) = stheta*cphi;
+          A.e(0,2) = spsi*stheta;
+          A.e(1,2) = -cpsi*stheta;
+          A.e(2,2) = ctheta;
+          return A;
+        }
+        typename Der<RotMat3, Arg>::type parDer(const Arg &q) {
+          throw std::runtime_error("FRotationAboutAxesZXZ::parDer() not yet implemented.");
+          return J;
+        }
+        typename Der<RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) {
+          throw std::runtime_error("FRotationAboutAxesZXZ::parDerDirDer() not yet implemented.");
+          return Jd;
+        }
+    };
+
+  template<class Arg> 
+    class TCardanAngles : public Function<MatV(Arg)> {
+      private:
+        MatV T;
+      public:
+        TCardanAngles() : T(3,3,Eye()) { }
+        typename Size<Arg>::type getArgSize() const {
+          return 3;
+        }
+        MatV operator()(const Arg &q) {
+          double alpha = q.e(0);
+          double beta = q.e(1);
+          double cos_beta = cos(beta);
+          double sin_beta = sin(beta);
+          double cos_alpha = cos(alpha);
+          double sin_alpha = sin(alpha);
+          double tan_beta = sin_beta/cos_beta;
+          T.e(0,1) = tan_beta*sin_alpha;
+          T.e(0,2) = -tan_beta*cos_alpha;
+          T.e(1,1) = cos_alpha;
+          T.e(1,2) = sin_alpha;
+          T.e(2,1) = -sin_alpha/cos_beta;
+          T.e(2,2) = cos_alpha/cos_beta;
+          return T;
+        }
+    };
+
+  template<class Arg> 
+    class TCardanAngles2 : public Function<MatV(Arg)> {
+      private:
+        MatV T;
+      public:
+        TCardanAngles2() : T(3,3,Eye()) { }
+        typename Size<Arg>::type getArgSize() const {
+          return 3;
+        }
+        MatV operator()(const Arg &q) {
+          double beta = q.e(0);
+          double gamma = q.e(1);
+          double cos_beta = cos(beta);
+          double sin_beta = sin(beta);
+          double cos_gamma = cos(gamma);
+          double sin_gamma = sin(gamma);
+          double tan_beta = sin_beta/cos_beta;
+          T.e(0,0) = cos_gamma/cos_beta;
+          T.e(0,1) = -sin_gamma/cos_beta;
+          T.e(1,0) = sin_gamma;
+          T.e(1,1) = cos_gamma;
+          T.e(2,0) = -cos_gamma*tan_beta;
+          T.e(2,1) = sin_gamma*tan_beta;
+          return T;
+        }
+    };
+
+  template<class Arg> 
+    class TEulerAngles : public Function<MatV(Arg)> {
+      private:
+        MatV T;
+      public:
+        TEulerAngles() : T(3,3) { T(0,2) = 1; }
+        typename Size<Arg>::type getArgSize() const {
+          return 3;
+        }
+        MatV operator()(const Arg &q) {
+          throw std::runtime_error("TEulerAngles::operator() not yet implemented.");
+          return T;
+        }
+    };
+
+  template<class Arg> 
+    class TEulerAngles2 : public Function<MatV(Arg)> {
+      private:
+        MatV T;
+      public:
+        TEulerAngles2() : T(Eye()) { }
+        typename Size<Arg>::type getArgSize() const {
+          return 3;
+        }
+        MatV operator()(const Arg &q) {
+          throw std::runtime_error("TEulerAngles2::operator() not yet implemented.");
+          return T;
         }
     };
 }
@@ -200,20 +392,6 @@ namespace MBSim {
       void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { jd = fr->parDerParDer(t); }
   };
 
-//  class TranslationTeqI : public Translation {
-//
-//    public:
-//      TranslationTeqI(fmatvec::Function<fmatvec::Vec3(fmatvec::VecV, double)> *fr=0) : Translation(fr) { }
-//
-//      void init();
-//
-//      int getuSize() const { return getqSize(); }
-//
-//      void updateJacobian(const fmatvec::VecV &q, const double &t) { drdq = fr->parDer1(q,t); J = drdq; }
-//      void updateT(const fmatvec::VecV &q, const double &t) { }
-//      void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { dotdrdq = fr->parDer1DirDer1(qd,q,t)+fr->parDer1ParDer2(q,t); Jd = dotdrdq; }
-//  };
-
   class TranslationInXDirection : public Translation {
     public:
 
@@ -326,7 +504,7 @@ namespace MBSim {
     public:
 
       LinearTranslation() { }
-      LinearTranslation(const fmatvec::Mat3xV &D_) { D = D_; }
+      LinearTranslation(const fmatvec::Mat3xV &D_) : D(D_) { }
 
       void init();
 
@@ -334,191 +512,49 @@ namespace MBSim {
 
       int getqSize() const {return D.cols();}
 
-      void updatePosition(const fmatvec::VecV &q, const double &t) { r = J*q; }
+      void updatePosition(const fmatvec::VecV &q, const double &t) { r = D*q; }
 
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
-//  class TimeDependentLinearTranslation: public Translation {
-//    public:
-//      /**
-//       * \brief constructor
-//       */
-//      TimeDependentLinearTranslation() : pos(NULL) {}
-//
-//      /**
-//       * \brief constructor
-//       * \param independent generalized position function
-//       * \param independent direction matrix of translation
-//       */
-//      TimeDependentLinearTranslation(Function1<fmatvec::VecV, double> *pos_, const fmatvec::Mat3xV &PJT_) : PJT(PJT_), pos(pos_) {}
-//
-//      /**
-//       * \brief destructor
-//       */
-//      virtual ~TimeDependentLinearTranslation() { delete pos; pos = 0; }
-//
-//      bool isIndependent() const { return true; }
-//
-//      /* INTERFACE OF ROTATION */
-//      virtual int getqTSize() const {return 0;}
-//      virtual int getuTSize() const {return 0;}
-//      virtual fmatvec::Vec3 operator()(const fmatvec::VecV &q, const double &t, const void * =NULL) { return PJT*(*pos)(t); }
-//      //virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-//      /***************************************************/
-//
-//      /* GETTER / SETTER */
-//      Function1<fmatvec::VecV, double>* getTranslationalFunction() { return pos; }
-//      void setTranslationalFunction(Function1<fmatvec::VecV, double> *pos_) { pos = pos_; }
-//      const fmatvec::Mat3xV& getTranslationVectors() const { return PJT; }
-//      void setTranslationVectors(const fmatvec::Mat3xV& PJT_) { PJT = PJT_; }
-//      /***************************************************/
-//
-//    private:
-//      /**
-//       * independent direction matrix of translation
-//       */
-//      fmatvec::Mat3xV PJT;
-//
-//      /**
-//       * \brief time dependent generalized position
-//       */
-//      Function1<fmatvec::VecV, double> *pos;
-//  };
-//
-//  /**
-//   * \brief class to describe time dependent translations
-//   * \author Markus Schneider
-//   * \date 2009-12-21 some adaptations (Thorsten Schindler)
-//   * \date 2010-05-23 update according to change in Translation (Martin Foerg)
-//   */
-//  class TimeDependentTranslation : public Translation {
-//    public:
-//      /**
-//       * \brief constructor
-//       */
-//      TimeDependentTranslation() : pos(NULL) {}
-//
-//      /**
-//       * \brief constructor
-//       * \param independent translation function
-//       */
-//      TimeDependentTranslation(Function1<fmatvec::Vec3, double> *pos_) : pos(pos_) {}
-//
-//      /**
-//       * \brief destructor
-//       */
-//      virtual ~TimeDependentTranslation() { delete pos; pos = 0; }
-//
-//      bool isIndependent() const { return true; }
-//
-//      /* INTERFACE OF TRANSLATION */
-//      virtual int getqTSize() const {return 0;}
-//      virtual int getuTSize() const {return 0;}
-//      virtual fmatvec::Vec3 operator()(const fmatvec::VecV &q, const double &t, const void * =NULL) { return (*pos)(t); }
-//      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-//      /***************************************************/
-//
-//      /* GETTER / SETTER */
-//      /**
-//       * \brief set the translation function
-//       */
-//      Function1<fmatvec::Vec3, double>* getTranslationFunction() { return pos; }
-//      void setTranslationFunction(Function1<fmatvec::Vec3, double> *pos_) { pos = pos_; }
-//      /***************************************************/
-//
-//    private:
-//      /**
-//       * time dependent translation function
-//       */
-//      Function1<fmatvec::Vec3, double> *pos;
-//  };
-//
-//  class StateDependentTranslation : public Translation {
-//    public:
-//      StateDependentTranslation() : qSize(0), pos(NULL) {}
-//
-//      /**
-//       * \brief constructor
-//       */
-//      StateDependentTranslation(int qSize_, Function1<fmatvec::Vec3,fmatvec::VecV> *pos_) : qSize(qSize_), pos(pos_) {}
-//
-//      /**
-//       * \brief destructor
-//       */
-//      virtual ~StateDependentTranslation() { delete pos; pos = 0; }
-//
-//      /* INTERFACE FOR DERIVED CLASSES */
-//      /**
-//       * \return degree of freedom of translation
-//       */
-//      virtual int getqSize() const {return qSize;}
-//
-//      /**
-//       * \param generalized position
-//       * \param time
-//       * \return translational vector as a function of generalized position and time, r=r(q,t)
-//       */
-//      virtual fmatvec::Vec3 operator()(const fmatvec::VecV &q, const double &t, const void * =NULL) { return (*pos)(q); }
-//
-//      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-//      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; }
-//
-//      /* GETTER / SETTER */
-//      /**
-//       * \brief set the translation function
-//       */
-//      Function1<fmatvec::Vec3,fmatvec::VecV>* getTranslationFunction() { return pos; }
-//      void setTranslationFunction(Function1<fmatvec::Vec3,fmatvec::VecV> *pos_) { pos = pos_; }
-//      /***************************************************/
-//
-//    private:
-//      int qSize;
-//      Function1<fmatvec::Vec3,fmatvec::VecV> *pos;
-//  };
-//
-//  class GeneralTranslation : public Translation {
-//    public:
-//      GeneralTranslation() : qSize(0), pos(NULL) {}
-//      /**
-//       * \brief constructor
-//       */
-//      GeneralTranslation(int qSize_, Function2<fmatvec::Vec3,fmatvec::VecV,double> *pos_) : qSize(qSize_), pos(pos_) {}
-//
-//      /**
-//       * \brief destructor
-//       */
-//      virtual ~GeneralTranslation() { delete pos; pos = 0; }
-//
-//      /* INTERFACE FOR DERIVED CLASSES */
-//      /**
-//       * \return degree of freedom of translation
-//       */
-//      virtual int getqSize() const {return qSize;}
-//
-//      /**
-//       * \param generalized position
-//       * \param time
-//       * \return translational vector as a function of generalized position and time, r=r(q,t)
-//       */
-//      virtual fmatvec::Vec3 operator()(const fmatvec::VecV &q, const double &t, const void * =NULL) { return (*pos)(q,t); }
-//
-//      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-//      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; }
-//
-//      /* GETTER / SETTER */
-//      /**
-//       * \brief set the translation function
-//       */
-//      Function2<fmatvec::Vec3,fmatvec::VecV,double>* getTranslationFunction() { return pos; }
-//      void setTranslationFunction(Function2<fmatvec::Vec3,fmatvec::VecV,double> *pos_) { pos = pos_; }
-//      /***************************************************/
-//
-//    private:
-//      int qSize;
-//      Function2<fmatvec::Vec3,fmatvec::VecV,double> *pos;
-//  };
+  class StateDependentLinearTranslation : public Translation {
+    protected:
+      fmatvec::Function<fmatvec::VecV(fmatvec::VecV)> *fq;
+      fmatvec::Mat3xV D;
+
+    public:
+      StateDependentLinearTranslation() : fq(0) { }
+      StateDependentLinearTranslation(fmatvec::Function<fmatvec::VecV(fmatvec::VecV)> *fq_, const fmatvec::Mat3xV &D_) : fq(fq_), D(D_) { }
+      ~StateDependentLinearTranslation() { delete fq; }
+
+      void init();
+
+      int getqSize() const { return D.cols(); }
+
+      void updatePosition(const fmatvec::VecV &q, const double &t) { r = D*(*fq)(q); }
+      void updateJacobian(const fmatvec::VecV &q, const double &t) { J = D*fq->parDer(q); }
+      void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { Jd = D*fq->parDerDirDer(qd,q); }
+  };
+
+  class TimeDependentLinearTranslation : public Translation {
+    protected:
+      fmatvec::Function<fmatvec::VecV(double)> *fq;
+      fmatvec::Mat3xV D;
+
+    public:
+      TimeDependentLinearTranslation() : fq(0) { }
+      TimeDependentLinearTranslation(fmatvec::Function<fmatvec::VecV(double)> *fq_, const fmatvec::Mat3xV &D_) : fq(fq_), D(D_) { }
+      ~TimeDependentLinearTranslation() { delete fq; }
+
+      void init();
+
+      int getqSize() const { return 0; }
+
+      void updatePosition(const fmatvec::VecV &q, const double &t) { r = D*(*fq)(t); }
+      void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { j = D*fq->parDer(t); }
+      void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { jd = D*fq->parDerParDer(t); }
+  };
 
   class Rotation {
     protected:
@@ -615,23 +651,8 @@ namespace MBSim {
       void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { jd = fA->parDer2DirDer1(qd,q,t) + fA->parDer2ParDer2(q,t); }
   };
 
-//  class RotationTeqI : public Rotation {
-//
-//    public:
-//      RotationTeqI(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fA=0) : Rotation(fA) { }
-//
-//      void init();
-//
-//      int getuSize() const { return getqSize(); }
-//
-//      void updateJacobian(const fmatvec::VecV &q, const double &t) { dAdq = fA->parDer1(q,t); J = dAdq; }
-//      void updateT(const fmatvec::VecV &q, const double &t) { }
-//      void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { dotdAdq = fA->parDer1DirDer1(qd,q,t)+fA->parDer1ParDer2(q,t); Jd = dotdAdq; }
-//  };
-
   class RotationAboutXAxis : public Rotation {
     public:
-
       bool isIndependent() const { return true; }
 
       void init();
@@ -646,7 +667,6 @@ namespace MBSim {
 
   class RotationAboutYAxis : public Rotation {
     public:
-
       bool isIndependent() const { return true; }
 
       void init();
@@ -661,7 +681,6 @@ namespace MBSim {
 
   class RotationAboutZAxis : public Rotation {
     public:
-
       bool isIndependent() const { return true; }
 
       void init();
@@ -674,13 +693,72 @@ namespace MBSim {
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
+  class RotationAboutAxesXY: public Rotation {
+    public:
+      bool isIndependent() const { return true; }
+
+      int getqSize() const {return 2;}
+
+      void updateOrientation(const fmatvec::VecV &q, const double &t);
+      void updateJacobian(const fmatvec::VecV &q, const double &t); 
+      void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t); 
+
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+      MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+  };
+
+  class RotationAboutAxesXZ: public Rotation {
+    public:
+      bool isIndependent() const { return true; }
+
+      int getqSize() const {return 2;}
+
+      void updateOrientation(const fmatvec::VecV &q, const double &t);
+      void updateJacobian(const fmatvec::VecV &q, const double &t); 
+      void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t); 
+
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+      MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+  };
+
+  class RotationAboutAxesYZ: public Rotation {
+    public:
+      bool isIndependent() const { return true; }
+
+      int getqSize() const {return 2;}
+
+      void updateOrientation(const fmatvec::VecV &q, const double &t);
+      void updateJacobian(const fmatvec::VecV &q, const double &t); 
+      void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t); 
+
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+      MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+  };
+
+  class RotationAboutAxesXYZ: public Rotation {
+    private:
+      fmatvec::FRotationAboutAxesXYZ<fmatvec::VecV> f;
+    public:
+      bool isIndependent() const { return true; }
+
+      int getqSize() const {return 3;}
+
+      void updateOrientation(const fmatvec::VecV &q, const double &t) { A = f(q); }
+      void updateJacobian(const fmatvec::VecV &q, const double &t) { J = f.parDer(q); }
+      void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { Jd = f.parDerDirDer(qd,q); }
+
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+      MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+  };
+
   class RotationAboutFixedAxis : public Rotation {
     private:
       fmatvec::Vec3 a;
+      fmatvec::FRotationAboutFixedAxis<fmatvec::VecV> f;
 
     public:
 
-      RotationAboutFixedAxis(const fmatvec::Vec3 &a_) : a(a_) { }
+      RotationAboutFixedAxis(const fmatvec::Vec3 &a_) : a(a_), f(a) { }
 
       void init();
 
@@ -688,7 +766,7 @@ namespace MBSim {
 
       int getqSize() const {return 1;}
 
-      void updateOrientation(const fmatvec::VecV &q, const double &t);
+      void updateOrientation(const fmatvec::VecV &q, const double &t) { A = f(q); }
 
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
@@ -698,13 +776,14 @@ namespace MBSim {
   };
 
   class StateDependentRotationAboutFixedAxis : public Rotation {
-    protected:
+    private:
       fmatvec::Function<double(fmatvec::VecV)> *falpha;
       fmatvec::Vec3 a;
+      fmatvec::FRotationAboutFixedAxis<double> f;
 
     public:
       StateDependentRotationAboutFixedAxis() : falpha(0) { }
-      StateDependentRotationAboutFixedAxis(fmatvec::Function<double(fmatvec::VecV)> *falpha_, const fmatvec::Vec3 &a_) : falpha(falpha_), a(a_) { }
+      StateDependentRotationAboutFixedAxis(fmatvec::Function<double(fmatvec::VecV)> *falpha_, const fmatvec::Vec3 &a_) : falpha(falpha_), a(a_), f(a) { }
 
       ~StateDependentRotationAboutFixedAxis() { delete falpha; }
 
@@ -714,9 +793,9 @@ namespace MBSim {
 
       bool isIndependent() const { return true; }
 
-      void updateOrientation(const fmatvec::VecV &q, const double &t);
-      void updateJacobian(const fmatvec::VecV &q, const double &t); 
-      void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t); 
+      void updateOrientation(const fmatvec::VecV &q, const double &t) { A = f((*falpha)(q)); }
+      void updateJacobian(const fmatvec::VecV &q, const double &t) { J = a*falpha->parDer(q); }
+      void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { Jd = a*falpha->parDerDirDer(qd,q); }
 
       const fmatvec::Vec3& getAxisOfRotation() const { return a; }
       void setAxisOfRotation(const fmatvec::Vec3 &a_) { a = a_; }
@@ -726,10 +805,11 @@ namespace MBSim {
     protected:
       fmatvec::Function<double(double)> *falpha;
       fmatvec::Vec3 a;
+      fmatvec::FRotationAboutFixedAxis<double> f;
 
     public:
       TimeDependentRotationAboutFixedAxis() : falpha(0) { }
-      TimeDependentRotationAboutFixedAxis(fmatvec::Function<double(double)> *falpha_, const fmatvec::Vec3 &a_) : falpha(falpha_), a(a_) { }
+      TimeDependentRotationAboutFixedAxis(fmatvec::Function<double(double)> *falpha_, const fmatvec::Vec3 &a_) : falpha(falpha_), a(a_), f(a) { }
 
       ~TimeDependentRotationAboutFixedAxis() { delete falpha; }
 
@@ -737,169 +817,57 @@ namespace MBSim {
 
       bool isIndependent() const { return true; }
 
-      void updateOrientation(const fmatvec::VecV &q, const double &t);
-      void updateGuidingVelocity(const fmatvec::VecV &q, const double &t);
-      void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t);
+      void updateOrientation(const fmatvec::VecV &q, const double &t) { A = f((*falpha)(t)); }
+      void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { j = a*falpha->parDer(t); }
+      void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) {jd = a*falpha->parDerParDer(t); }
 
       const fmatvec::Vec3& getAxisOfRotation() const { return a; }
       void setAxisOfRotation(const fmatvec::Vec3 &a_) { a = a_; }
   };
 
-//  /**
-//   * \brief class to describe state dependent rotation about fixed axis
-//   */
-//  class StateDependentRotationAboutFixedAxis: public Rotation {
-//    public:
-//      /**
-//       * \brief constructor
-//       */
-//      StateDependentRotationAboutFixedAxis() : qSize(0), rot(new RotationAboutFixedAxis()), angle(NULL) {}
-//
-//      /**
-//       * \brief constructor
-//       */
-//      StateDependentRotationAboutFixedAxis(int qSize_, Function1<double, fmatvec::VecV> *angle_, const fmatvec::Vec3 &a_) : qSize(qSize_), rot(new RotationAboutFixedAxis(a_)), angle(angle_) {}
-//
-//      /**
-//       * \brief destructor
-//       */
-//      virtual ~StateDependentRotationAboutFixedAxis() { delete rot; rot = 0; delete angle; angle = 0; }
-//
-//      /* INTERFACE OF ROTATION */
-//      virtual int getqSize() const {return qSize;}
-//      virtual fmatvec::SqrMat3 operator()(const fmatvec::VecV &q, const double &t, const void * =NULL) {return (*rot)(fmatvec::VecV(1,fmatvec::INIT,(*angle)(q)),t);} 
-//      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-//      /***************************************************/
-//
-//      /* GETTER / SETTER */
-//      Function1<double, fmatvec::VecV>* getRotationalFunction() { return angle; }
-//      void setRotationalFunction(Function1<double, fmatvec::VecV> *angle_) { angle = angle_; }
-//      const fmatvec::Vec3& getAxisOfRotation() const { return rot->getAxisOfRotation(); }
-//      void setAxisOfRotation(const fmatvec::Vec3& a_) { rot->setAxisOfRotation(a_); }
-//      /***************************************************/
-//
-//    private:
-//      int qSize;
-//      RotationAboutFixedAxis *rot;
-//      Function1<double, fmatvec::VecV> *angle;
-//  };
-//
-//  /**
-//   * \brief class to describe time dependent rotation about fixed axis
-//   * \author Thorsten Schindler
-//   * \date 2009-12-21 initial commit (Thorsten Schindler)
-//   * \date 2009-12-22 should be a rotation because otherwise it has some dof (Thorsten Schindler)
-//   * \date 2010-05-23 update according to change in Rotation (Martin Foerg)
-//   */
-//  class TimeDependentRotationAboutFixedAxis: public TranslationIndependentRotation {
-//    public:
-//      /**
-//       * \brief constructor
-//       */
-//      TimeDependentRotationAboutFixedAxis() : rot(new RotationAboutFixedAxis()), angle(NULL) {}
-//
-//      /**
-//       * \brief constructor
-//       * \param independent rotation angle function
-//       * \param axis of rotation
-//       */
-//      TimeDependentRotationAboutFixedAxis(Function1<double, double> *angle_, const fmatvec::Vec3 &a_) : rot(new RotationAboutFixedAxis(a_)), angle(angle_) {}
-//
-//      /**
-//       * \brief destructor
-//       */
-//      virtual ~TimeDependentRotationAboutFixedAxis() { delete rot; rot = 0; delete angle; angle = 0; }
-//
-//      /* INTERFACE OF ROTATION */
-//      virtual int getqRSize() const { return 0; }
-//      virtual int getuRSize() const {return 0;}
-//      virtual fmatvec::SqrMat3 operator()(const fmatvec::VecV &q, const double &t, const void * =NULL) {return (*rot)(fmatvec::VecV(1,fmatvec::INIT,(*angle)(t)),t);}
-//      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-//      /***************************************************/
-//
-//      /* GETTER / SETTER */
-//      Function1<double, double>* getRotationalFunction() { return angle; }
-//      void setRotationalFunction(Function1<double, double> *angle_) { angle = angle_; }
-//      const fmatvec::Vec3& getAxisOfRotation() const { return rot->getAxisOfRotation(); }
-//      void setAxisOfRotation(const fmatvec::Vec3& a_) { rot->setAxisOfRotation(a_); }
-//      /***************************************************/
-//
-//    private:
-//      /**
-//       * \brief rotational parametrisation
-//       */
-//      RotationAboutFixedAxis *rot;
-//
-//      /**
-//       * \brief time dependent rotation angle
-//       */
-//      Function1<double, double> *angle;
-//  };
-
-//  /**
-//   * \brief class to describe rotation about axes x and y with basic rotations interpretated in the current coordinate system
-//   * \author Martin Foerg
-//   * \date 2009-12-21 some localisations (Thorsten Schindler)
-//   * \date 2010-05-23 update according to change in Rotation (Martin Foerg)
-//   */
-//  class RotationAboutAxesXY: public TranslationIndependentRotation {
-//    public:
-//      /**
-//       * \brief constructor
-//       */
-//      RotationAboutAxesXY() {}
-//
-//      /* INTERFACE OF ROTATION */
-//      virtual int getqRSize() const { return 2; }
-//      virtual int getuRSize() const { return 2; }
-//      virtual fmatvec::SqrMat3 operator()(const fmatvec::VecV &q, const double &t, const void * =NULL);
-//      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
-//      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
-//      /***************************************************/
-//  };
-//  /**
-//   * \brief class to describe rotation about axes x and z with basic rotations interpretated in the current coordinate system
-//   * \author Martin Foerg
-//   */
-//  class RotationAboutAxesXZ: public TranslationIndependentRotation {
-//    public:
-//      /**
-//       * \brief constructor
-//       */
-//      RotationAboutAxesXZ() {}
-//
-//      /* INTERFACE OF ROTATION */
-//      virtual int getqRSize() const { return 2; }
-//      virtual int getuRSize() const { return 2; }
-//      virtual fmatvec::SqrMat3 operator()(const fmatvec::VecV &q, const double &t, const void * =NULL);
-//      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
-//      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
-//      /***************************************************/
-//  };
-//
-//  /**
-//   * \brief class to describe rotation about axes y and z with basic rotations interpretated in the current coordinate system
-//   * \author Martin Foerg
-//   * \date 2009-12-21 some localisations (Thorsten Schindler)
-//   * \date 2010-05-23 update according to change in Rotation (Martin Foerg)
-//   */
-//  class RotationAboutAxesYZ: public TranslationIndependentRotation {
-//    public:
-//      /**
-//       * \brief constructor
-//       */
-//      RotationAboutAxesYZ() {}
-//
-//      /* INTERFACE OF ROTATION */
-//      virtual int getqRSize() const { return 2; }
-//      virtual int getuRSize() const { return 2; }
-//      virtual fmatvec::SqrMat3 operator()(const fmatvec::VecV &q, const double &t, const void * =NULL);
-//      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
-//      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
-//      /***************************************************/
-//  };
-
   class CardanAngles : public Rotation {
+    private:
+      fmatvec::FRotationAboutAxesXYZ<fmatvec::VecV> fA;
+      fmatvec::TCardanAngles<fmatvec::VecV> fT;
+    public:
+      void init();
+
+      bool isIndependent() const { return true; }
+
+      int getqSize() const {return 3;}
+      int getuSize() const {return 3;}
+
+      void updateOrientation(const fmatvec::VecV &q, const double &t) { A = fA(q); }
+      void updateT(const fmatvec::VecV &q, const double &t) { T = fT(q); }
+
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) { }
+      MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+  };
+
+  class TimeDependentCardanAngles : public Rotation {
+    protected:
+      fmatvec::Function<fmatvec::VecV(double)> *fangles;
+      fmatvec::FRotationAboutAxesXYZ<fmatvec::VecV> fA;
+      fmatvec::TCardanAngles<fmatvec::VecV> fT;
+
+    public:
+      TimeDependentCardanAngles(fmatvec::Function<fmatvec::VecV(double)> *fangles_=0) : fangles(fangles_) { }
+
+      ~TimeDependentCardanAngles() { delete fangles; }
+
+      int getqSize() const { return 0; }
+
+      bool isIndependent() const { return true; }
+
+      void updateOrientation(const fmatvec::VecV &q, const double &t) { A = fA((*fangles)(t)); }
+      void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { j = fangles->parDer(t); }
+      void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) {jd = fangles->parDerParDer(t); }
+  };
+
+  class EulerAngles : public Rotation {
+    private:
+      fmatvec::FRotationAboutAxesZXZ<fmatvec::VecV> fA;
+      fmatvec::TEulerAngles<fmatvec::VecV> fT;
     public:
 
       void init();
@@ -909,947 +877,12 @@ namespace MBSim {
       int getqSize() const {return 3;}
       int getuSize() const {return 3;}
 
-      void updateOrientation(const fmatvec::VecV &q, const double &t);
-      void updateJacobian(const fmatvec::VecV &q, const double &t) { }
-      void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { }
-      void updateT(const fmatvec::VecV &q, const double &t);
-      void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
-      void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
+      void updateOrientation(const fmatvec::VecV &q, const double &t) { A = fA(q); }
+      void updateT(const fmatvec::VecV &q, const double &t) { T = fT(q); }
 
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element) { }
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
-
-//  /**
-//   * \brief class to describe rotation parametrised by Euler angles
-//   * \author Martin Foerg
-//   * \date 2010-10-20 first commit (Martin Foerg)
-//   */
-//  class EulerAngles: public TranslationIndependentRotation {
-//    public:
-//      /**
-//       * \brief constructor
-//       */
-//      EulerAngles() {}
-//
-//      /* INTERFACE OF ROTATION */
-//      virtual int getqRSize() const { return 3; }
-//      virtual int getuRSize() const { return 3; }
-//      virtual fmatvec::SqrMat3 operator()(const fmatvec::VecV &q, const double &t, const void * =NULL);
-//      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
-//      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
-//      /***************************************************/
-//  };
-//
-//  /**
-//   * \brief class to describe rotation parametrised by cardan angles
-//   * \author Martin Foerg
-//   * \date 2009-04-08 some comments (Thorsten Schindler)
-//   * \date 2010-05-23 update according to change in Rotation (Martin Foerg)
-//   */
-//  class RotationAboutAxesXYZ: public TranslationIndependentRotation {
-//    public:
-//      /**
-//       * \brief constructor
-//       */
-//      RotationAboutAxesXYZ() {}
-//
-//      /* INTERFACE OF ROTATION */
-//      virtual int getqRSize() const { return 3; }
-//      virtual int getuRSize() const { return 3; }
-//      virtual fmatvec::SqrMat3 operator()(const fmatvec::VecV &q, const double &t, const void * =NULL);
-//      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
-//      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
-//      /***************************************************/
-//  };
-//
-//  /**
-//   * \brief class to describe time dependent rotation parametrised by Cardan angles
-//   * \author Thorsten Schindler
-//   * \date 2009-12-21 initial commit (Thorsten Schindler)
-//   * \date 2009-12-22 should be a rotation because otherwise it has some dof (Thorsten Schindler)
-//   * \date 2010-05-23 update according to change in Rotation (Martin Foerg)
-//   */
-//  class TimeDependentCardanAngles: public TranslationIndependentRotation {
-//    public:
-//      /**
-//       * \brief constructor
-//       */
-//      TimeDependentCardanAngles() : rot(new CardanAngles()), angle(NULL) {}
-//
-//      /**
-//       * \brief constructor
-//       * \param independent rotation angle function
-//       */
-//      TimeDependentCardanAngles(Function1<fmatvec::Vec3, double> *angle_) : rot(new CardanAngles()), angle(angle_) {}
-//
-//      /**
-//       * \brief destructor
-//       */
-//      virtual ~TimeDependentCardanAngles() { delete rot; rot = 0; delete angle; angle = 0; }
-//
-//      /* INTERFACE OF ROTATION */
-//      virtual int getqRSize() const { return 0; }
-//      virtual int getuRSize() const { return 0; }
-//      virtual fmatvec::SqrMat3 operator()(const fmatvec::VecV &q, const double &t, const void * =NULL);
-//      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-//      /***************************************************/
-//
-//      /* GETTER / SETTER */
-//      Function1<fmatvec::Vec3, double>* getRotationalFunction() { return angle; }
-//      void setRotationalFunction(Function1<fmatvec::Vec3, double> *angle_) { angle = angle_; }
-//    private:
-//      /**
-//       * \brief rotational parametrisation
-//       */
-//      CardanAngles *rot;
-//
-//      /**
-//       * \brief time dependent rotation angle
-//       */
-//      Function1<fmatvec::Vec3, double> *angle;
-//  };
-
-//  class TMatrix : public Function2<fmatvec::MatV,fmatvec::VecV,double> {
-//    public:
-//      /**
-//       * \brief constructor
-//       */
-//      TMatrix() {}
-//
-//      /**
-//       * \brief destructor
-//       */
-//      virtual ~TMatrix() {}
-//
-//      /* INTERFACE FOR DERIVED CLASSES */
-//      /**
-//       * \return column size of TMatrix
-//       */
-//      virtual int getqSize() const = 0;
-//      virtual int getuSize() const = 0;
-//
-//      virtual fmatvec::MatV operator()(const fmatvec::VecV &q, const double &t, const void * =NULL) = 0;
-//
-//      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
-//      /***************************************************/
-//  };
-//
-//  /**
-//   * \brief base class to describe Jacobians along a path
-//   * \author Martin Foerg
-//   * \date 2009-04-08 some comments (Thorsten Schindler)
-//   * \date 2009-04-20 some comments (Thorsten Schindler)
-//   * \date 2010-05-23 Jacobian inherits Function2 (Martin Foerg)
-//   */
-//  class Jacobian : public Function2<fmatvec::Mat3xV,fmatvec::VecV,double> {
-//    public:
-//      /**
-//       * \brief constructor
-//       */
-//      Jacobian() {}
-//
-//      /**
-//       * \brief destructor
-//       */
-//      virtual ~Jacobian() {}
-//
-//      /* INTERFACE FOR DERIVED CLASSES */
-//      /**
-//       * \return column size of Jacobian
-//       */
-//      virtual int getuSize() const = 0;
-//
-//      /**
-//       * \param generalized position
-//       * \param time
-//       * \return Jacobian matrix as a function of generalized position and time,
-//       * J=J(q,t)
-//       */
-//      virtual fmatvec::Mat3xV operator()(const fmatvec::VecV &q, const double &t, const void * =NULL) = 0;
-//
-//      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
-//      /***************************************************/
-//  };
-//
-//  /**
-//   * \brief class to describe a constant Jacobians
-//   * \author Martin Foerg
-//   * \date 2009-04-08 some comments (Thorsten Schindler)
-//   * \date 2010-05-23 update according to change in Jacobian (Martin Foerg)
-//   */
-//  class ConstantJacobian : public Jacobian {
-//    public:
-//      /**
-//       * \brief constructor
-//       */
-//      ConstantJacobian(const fmatvec::Mat &J_) { J = J_; }
-//
-//      ConstantJacobian() {}
-//
-//      /**
-//       * \brief destructor
-//       */
-//      virtual ~ConstantJacobian() {}
-//
-//      /* INTERFACE OF JACOBIAN */
-//      virtual int getuSize() const { return J.cols(); }
-//      virtual fmatvec::Mat3xV operator()(const fmatvec::VecV &q, const double &t, const void * =NULL) { return J; }
-//      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-//      /***************************************************/
-//
-//    private:
-//      /**
-//       * \brief constant Jacobian
-//       */
-//      fmatvec::Mat3xV J;
-//  };
-//
-//  class StateDependentJacobian : public Jacobian {
-//    public:
-//      /**
-//       * \brief constructor
-//       */
-//      StateDependentJacobian(int uSize_, Function1<fmatvec::Mat3xV,fmatvec::VecV> *J_) : uSize(uSize_), J(J_) {}
-//
-//      /**
-//       * \brief destructor
-//       */
-//      virtual ~StateDependentJacobian() { delete J; J = 0; }
-//
-//      /* INTERFACE FOR DERIVED CLASSES */
-//      /**
-//       * \return column size of Jacobian
-//       */
-//      virtual int getuSize() const {return uSize;}
-//
-//      /**
-//       * \param generalized position
-//       * \param time
-//       * \return Jacobian matrix as a function of generalized position and time,
-//       * J=J(q,t)
-//       */
-//      virtual fmatvec::Mat3xV operator()(const fmatvec::VecV &q, const double &t, const void * =NULL) { return (*J)(q); }
-//
-//      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
-//
-//      /* GETTER / SETTER */
-//      /**
-//       * \brief set the Jacobian function
-//       */
-//      Function1<fmatvec::Mat3xV,fmatvec::VecV>* getJacobianFunction() { return J; }
-//      void setJacobianFunction(Function1<fmatvec::Mat3xV,fmatvec::VecV> *J_) { J = J_; }
-//      /***************************************************/
-//
-//    private:
-//      int uSize;
-//      Function1<fmatvec::Mat3xV,fmatvec::VecV> *J;
-//  };
-//
-//  class GeneralJacobian : public Jacobian {
-//    public:
-//      /**
-//       * \brief constructor
-//       */
-//      GeneralJacobian(int uSize_, Function2<fmatvec::Mat3xV,fmatvec::VecV,double> *J_) : uSize(uSize_), J(J_) {}
-//
-//      /**
-//       * \brief destructor
-//       */
-//      virtual ~GeneralJacobian() { delete J; J = 0; }
-//
-//      /* INTERFACE FOR DERIVED CLASSES */
-//      /**
-//       * \return column size of Jacobian
-//       */
-//      virtual int getuSize() const {return uSize;}
-//
-//      /**
-//       * \param generalized position
-//       * \param time
-//       * \return Jacobian matrix as a function of generalized position and time,
-//       * J=J(q,t)
-//       */
-//      virtual fmatvec::Mat3xV operator()(const fmatvec::VecV &q, const double &t, const void * =NULL) { return (*J)(q,t); }
-//
-//      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
-//
-//      /* GETTER / SETTER */
-//      /**
-//       * \brief set the Jacobian function
-//       */
-//      Function2<fmatvec::Mat3xV,fmatvec::VecV,double>* getJacobianFunction() { return J; }
-//      void setJacobianFunction(Function2<fmatvec::Mat3xV,fmatvec::VecV,double> *J_) { J = J_; }
-//      /***************************************************/
-//
-//    private:
-//      int uSize;
-//      Function2<fmatvec::Mat3xV,fmatvec::VecV,double> *J;
-//  };
-//
-//  /**
-//   * \brief Jacobian for rotation about axes x and y
-//   * \author Martin Foerg
-//   * \date 2010-05-23 update according to change in Jacobian (Martin Foerg)
-//   */
-//  class JRotationAboutAxesXY : public Jacobian {
-//    public:
-//      /**
-//       * \brief constructor
-//       * \param size of generalized velocity vector
-//       */
-//      JRotationAboutAxesXY(int uSize_) : uSize(uSize_), J(uSize) {}
-//
-//      /* INTERFACE OF JACOBIAN */
-//      int getuSize() const { return uSize; }
-//      virtual fmatvec::Mat3xV operator()(const fmatvec::VecV &q, const double &t, const void * =NULL);
-//      /***************************************************/
-//
-//    private:
-//      /**
-//       * \brief size of positions and velocities
-//       */
-//      int uSize;
-//
-//      /**
-//       * \brief linear relation between differentiated positions and velocities
-//       */
-//      fmatvec::Mat3xV J;
-//  };
-//
-//  /**
-//   * \brief Jacobian for rotation about axes x and z
-//   * \author Martin Foerg
-//   */
-//  class JRotationAboutAxesXZ : public Jacobian {
-//    public:
-//      /**
-//       * \brief constructor
-//       * \param size of generalized velocity vector
-//       */
-//      JRotationAboutAxesXZ(int uSize_) : uSize(uSize_), J(uSize) {}
-//
-//      /* INTERFACE OF JACOBIAN */
-//      int getuSize() const { return uSize; }
-//      virtual fmatvec::Mat3xV operator()(const fmatvec::VecV &q, const double &t, const void * =NULL);
-//      /***************************************************/
-//
-//    private:
-//      /**
-//       * \brief size of positions and velocities
-//       */
-//      int uSize;
-//
-//      /**
-//       * \brief linear relation between differentiated positions and velocities
-//       */
-//      fmatvec::Mat3xV J;
-//  };
-//
-//  /**
-//   * \brief Jacobian for rotation about axes y and z
-//   * \author Martin Foerg
-//   * \date 2010-05-23 update according to change in Jacobian (Martin Foerg)
-//   */
-//  class JRotationAboutAxesYZ : public Jacobian {
-//    public:
-//      /**
-//       * \brief constructor
-//       * \param size of generalized velocity vector
-//       */
-//      JRotationAboutAxesYZ(int uSize_) : uSize(uSize_), J(uSize) {}
-//
-//      /* INTERFACE OF JACOBIAN */
-//      int getuSize() const { return uSize; }
-//      virtual fmatvec::Mat3xV operator()(const fmatvec::VecV &q, const double &t, const void * =NULL);
-//      /***************************************************/
-//
-//    private:
-//      /**
-//       * \brief size of positions and velocities
-//       */
-//      int uSize;
-//
-//      /**
-//       * \brief linear relation between differentiated positions and velocities
-//       */
-//      fmatvec::Mat3xV J;
-//  };
-//
-//  /**
-//   * \brief Jacobian for rotation about axes x and y
-//   * \author Martin Foerg
-//   * \date 2010-05-23 update according to change in Jacobian (Martin Foerg)
-//   */
-//  class JRotationAboutAxesXYZ : public Jacobian {
-//    public:
-//      /**
-//       * \brief constructor
-//       * \param size of generalized velocity vector
-//       */
-//      JRotationAboutAxesXYZ(int uSize_) : uSize(uSize_), J(uSize) {}
-//
-//      /* INTERFACE OF JACOBIAN */
-//      int getuSize() const { return uSize; }
-//      virtual fmatvec::Mat3xV operator()(const fmatvec::VecV &q, const double &t, const void * =NULL);
-//      /***************************************************/
-//
-//    private:
-//      /**
-//       * \brief size of positions and velocities
-//       */
-//      int uSize;
-//
-//      /**
-//       * \brief linear relation between differentiated positions and velocities
-//       */
-//      fmatvec::Mat3xV J;
-//  };
-//
-//  /**
-//   * \brief standard parametrisation with angular velocity in reference system yields time-dependent mass matrix
-//   * \author Martin Foerg
-//   * \date 2009-04-08 some comments (Thorsten Schindler)
-//   * \date 2010-05-23 update according to change in Jacobian (Martin Foerg)
-//   */
-//  class TCardanAngles : public TMatrix {
-//    public:
-//      /**
-//       * \brief constructor
-//       * \param size of positions
-//       * \param size of velocities
-//       */
-//      TCardanAngles(int qSize_, int uSize_) : qSize(qSize_), uSize(uSize_), T(3,3,fmatvec::EYE) {}
-//
-//      /* INTERFACE OF JACOBIAN */
-//      int getqSize() const { return qSize; }
-//      int getuSize() const { return uSize; }
-//      virtual fmatvec::MatV operator()(const fmatvec::VecV &q, const double &t, const void * =NULL);
-//      /***************************************************/
-//
-//    private:
-//      /**
-//       * \brief size of positions and velocities
-//       */
-//      int qSize, uSize;
-//
-//      /**
-//       * \brief linear relation between differentiated positions and velocities
-//       */
-//      fmatvec::MatV T;
-//  };
-//
-//  /**
-//   * \brief standard parametrisation with angular velocity in reference system yields time-dependent mass matrix
-//   * \author Martin Foerg
-//   * \date 2010-10-20 first commit (Martin Foerg)
-//   */
-//  class TEulerAngles : public TMatrix {
-//    public:
-//      /**
-//       * \brief constructor
-//       * \param size of positions
-//       * \param size of velocities
-//       */
-//      TEulerAngles(int qSize_, int uSize_) : qSize(qSize_), uSize(uSize_), T(3,3,fmatvec::EYE) {
-//        int iq = qSize-1;
-//        int iu = uSize-1;
-//        T(iq-2,iu) = 1;
-//        T(iq,iu) = 0;
-//      }
-//
-//      /* INTERFACE OF JACOBIAN */
-//      int getqSize() const { return qSize; }
-//      int getuSize() const { return uSize; }
-//      virtual fmatvec::MatV operator()(const fmatvec::VecV &q, const double &t, const void * =NULL);
-//      /***************************************************/
-//
-//    private:
-//      /**
-//       * \brief size of positions and velocities
-//       */
-//      int qSize, uSize;
-//
-//      /**
-//       * \brief linear relation between differentiated positions and velocities
-//       */
-//      fmatvec::MatV T;
-//  };
-//
-//  /**
-//   * \brief alternative parametrisation with angular velocity in body frame yields constant mass matrix for absolute coordinates
-//   * \author Martin Foerg
-//   * \date 2009-04-08 some comments (Thorsten Schindler)
-//   * \date 2010-05-23 update according to change in Jacobian (Martin Foerg)
-//   */
-//  class TCardanAngles2 : public TMatrix {
-//    public:
-//      /**
-//       * \brief constructor
-//       * \param size of positions
-//       * \param size of velocities
-//       */
-//      TCardanAngles2(int qSize_, int uSize_) : qSize(qSize_), uSize(uSize_), T(3,3,fmatvec::EYE) {}
-//
-//      /* INTERFACE OF JACOBIAN */
-//      int getqSize() const { return qSize; }
-//      int getuSize() const { return uSize; }
-//      virtual fmatvec::MatV operator()(const fmatvec::VecV &q, const double &t, const void * =NULL);
-//      /***************************************************/
-//
-//    private:
-//      /**
-//       * \brief size of positions and velocities
-//       */
-//      int qSize, uSize;
-//
-//      /**
-//       * \brief linear relation between differentiated positions and velocities
-//       */
-//      fmatvec::MatV T;
-//  };
-//
-//  /**
-//   * \brief alternative parametrisation with angular velocity in body frame yields constant mass matrix for absolute coordinates
-//   * \author Martin Foerg
-//   * \date 2010-10-20 first commit (Martin Foerg)
-//   */
-//  class TEulerAngles2 : public TMatrix {
-//    public:
-//      /**
-//       * \brief constructor
-//       * \param size of positions
-//       * \param size of velocities
-//       */
-//      TEulerAngles2(int qSize_, int uSize_) : qSize(qSize_), uSize(uSize_), T(3,3,fmatvec::EYE) {
-//      }
-//
-//      /* INTERFACE OF JACOBIAN */
-//      int getqSize() const { return qSize; }
-//      int getuSize() const { return uSize; }
-//      virtual fmatvec::MatV operator()(const fmatvec::VecV &q, const double &t, const void * =NULL);
-//      /***************************************************/
-//
-//    private:
-//      /**
-//       * \brief size of positions and velocities
-//       */
-//      int qSize, uSize;
-//
-//      /**
-//       * \brief linear relation between differentiated positions and velocities
-//       */
-//      fmatvec::MatV T;
-//  };
-//
-//  /**
-//   * \brief base class to describe derivatives of Jacobians
-//   * \author Martin Foerg
-//   */
-//  class DerivativeOfJacobian : public Function3<fmatvec::Mat3xV,fmatvec::VecV,fmatvec::VecV,double> {
-//    public:
-//      /**
-//       * \brief constructor
-//       */
-//      DerivativeOfJacobian() {}
-//
-//      /**
-//       * \brief destructor
-//       */
-//      virtual ~DerivativeOfJacobian() {}
-//
-//      /**
-//       * \param derivative of generalized position
-//       * \param generalized position
-//       * \param time
-//       * \return derivative of Jacobian matrix as a function of derivative of generalized position, generalized position and time,
-//       * Jd=Jd(qd,q,t)
-//       */
-//      virtual fmatvec::Mat3xV operator()(const fmatvec::VecV &qd, const fmatvec::VecV& q, const double& t, const void* =NULL) = 0;
-//
-//      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
-//      /***************************************************/
-//  };
-//
-//  class StateDependentDerivativeOfJacobian : public DerivativeOfJacobian {
-//    public:
-//      /**
-//       * \brief constructor
-//       */
-//      StateDependentDerivativeOfJacobian(Function2<fmatvec::Mat3xV,fmatvec::VecV,fmatvec::VecV> *Jd_) : Jd(Jd_) {}
-//
-//      /**
-//       * \brief destructor
-//       */
-//      virtual ~StateDependentDerivativeOfJacobian() { delete Jd; Jd = 0; }
-//
-//      /**
-//       * \param derivative of generalized position
-//       * \param generalized position
-//       * \param time
-//       * \return derivative of Jacobian matrix as a function of derivative of generalized position, generalized position and time,
-//       * Jd=Jd(qd,q,t)
-//       */
-//      virtual fmatvec::Mat3xV operator()(const fmatvec::VecV &qd, const fmatvec::VecV& q, const double& t, const void* =NULL) { return (*Jd)(qd,q); }
-//
-//      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
-//
-//      /* GETTER / SETTER */
-//      /**
-//       * \brief set the derivative of Jacobian function
-//       */
-//      Function2<fmatvec::Mat3xV,fmatvec::VecV,fmatvec::VecV>* getDerivativeOfJacobianFunction() { return Jd; }
-//      void setDerivativeOfJacobianFunction(Function2<fmatvec::Mat3xV,fmatvec::VecV,fmatvec::VecV> *Jd_) { Jd = Jd_; }
-//      /***************************************************/
-//
-//    private:
-//      Function2<fmatvec::Mat3xV,fmatvec::VecV,fmatvec::VecV> *Jd;
-//  };
-//
-//  class GeneralDerivativeOfJacobian : public DerivativeOfJacobian {
-//    public:
-//      /**
-//       * \brief constructor
-//       */
-//      GeneralDerivativeOfJacobian(Function3<fmatvec::Mat3xV,fmatvec::VecV,fmatvec::VecV,double> *Jd_) : Jd(Jd_) {}
-//
-//      /**
-//       * \brief destructor
-//       */
-//      virtual ~GeneralDerivativeOfJacobian() { delete Jd; Jd = 0; }
-//
-//      /**
-//       * \param derivative of generalized position
-//       * \param generalized position
-//       * \param time
-//       * \return derivative of Jacobian matrix as a function of derivative of generalized position, generalized position and time,
-//       * Jd=Jd(qd,q,t)
-//       */
-//      virtual fmatvec::Mat3xV operator()(const fmatvec::VecV &qd, const fmatvec::VecV& q, const double& t, const void* =NULL) { return (*Jd)(qd,q,t); }
-//
-//      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
-//
-//      /* GETTER / SETTER */
-//      /**
-//       * \brief set the Jacobian function
-//       */
-//      Function3<fmatvec::Mat3xV,fmatvec::VecV,fmatvec::VecV,double>* getDerivativeOfJacobianFunction() { return Jd; }
-//      void setDerivativeOfJacobianFunction(Function3<fmatvec::Mat3xV,fmatvec::VecV,fmatvec::VecV,double> *Jd_) { Jd = Jd_; }
-//      /***************************************************/
-//
-//    private:
-//      Function3<fmatvec::Mat3xV,fmatvec::VecV,fmatvec::VecV,double> *Jd;
-//  };
-//
-//  /**
-//   * \brief derivative of Jacobian for rotation about axes x and y
-//   * \author Martin Foerg
-//   */
-//  class JdRotationAboutAxesXY : public DerivativeOfJacobian {
-//    public:
-//      /**
-//       * \brief constructor
-//       * \param size of generalized velocity vector
-//       */
-//      JdRotationAboutAxesXY(int uSize_) : uSize(uSize_), Jd(uSize) {}
-//
-//      virtual fmatvec::Mat3xV operator()(const fmatvec::VecV &qd, const fmatvec::VecV& q, const double& t, const void* =NULL);
-//
-//    private:
-//      /**
-//       * \brief size of positions and velocities
-//       */
-//      int uSize;
-//
-//      /**
-//       * \brief linear relation between differentiated positions and velocities
-//       */
-//      fmatvec::Mat3xV Jd;
-//  };
-//
-//  /**
-//   * \brief derivative of Jacobian for rotation about axes x and z
-//   * \author Martin Foerg
-//   */
-//  class JdRotationAboutAxesXZ : public DerivativeOfJacobian {
-//    public:
-//      /**
-//       * \brief constructor
-//       * \param size of generalized velocity vector
-//       */
-//      JdRotationAboutAxesXZ(int uSize_) : uSize(uSize_), Jd(uSize) {}
-//
-//      virtual fmatvec::Mat3xV operator()(const fmatvec::VecV &qd, const fmatvec::VecV& q, const double& t, const void* =NULL);
-//
-//    private:
-//      /**
-//       * \brief size of positions and velocities
-//       */
-//      int uSize;
-//
-//      /**
-//       * \brief linear relation between differentiated positions and velocities
-//       */
-//      fmatvec::Mat3xV Jd;
-//  };
-//
-//  /**
-//   * \brief derivative of Jacobian for rotation about axes y and z
-//   * \author Martin Foerg
-//   */
-//  class JdRotationAboutAxesYZ : public DerivativeOfJacobian {
-//    public:
-//      /**
-//       * \brief constructor
-//       * \param size of generalized velocity vector
-//       */
-//      JdRotationAboutAxesYZ(int uSize_) : uSize(uSize_), Jd(uSize) {}
-//
-//      virtual fmatvec::Mat3xV operator()(const fmatvec::VecV &qd, const fmatvec::VecV& q, const double& t, const void* =NULL);
-//
-//    private:
-//      /**
-//       * \brief size of positions and velocities
-//       */
-//      int uSize;
-//
-//      /**
-//       * \brief linear relation between differentiated positions and velocities
-//       */
-//      fmatvec::Mat3xV Jd;
-//  };
-//
-//  /**
-//   * \brief derivative of Jacobian for rotation about axes x and y
-//   * \author Martin Foerg
-//   */
-//  class JdRotationAboutAxesXYZ : public DerivativeOfJacobian {
-//    public:
-//      /**
-//       * \brief constructor
-//       * \param size of generalized velocity vector
-//       */
-//      JdRotationAboutAxesXYZ(int uSize_) : uSize(uSize_), Jd(uSize) {}
-//
-//      virtual fmatvec::Mat3xV operator()(const fmatvec::VecV &qd, const fmatvec::VecV& q, const double& t, const void* =NULL);
-//
-//    private:
-//      /**
-//       * \brief size of positions and velocities
-//       */
-//      int uSize;
-//
-//      /**
-//       * \brief linear relation between differentiated positions and velocities
-//       */
-//      fmatvec::Mat3xV Jd;
-//  };
-//
-//  /**
-//   * \brief base class to describe guiding velocities
-//   * \author Martin Foerg
-//   */
-//  class GuidingVelocity : public Function2<fmatvec::Vec3,fmatvec::VecV,double> {
-//    public:
-//      /**
-//       * \brief constructor
-//       */
-//      GuidingVelocity() {}
-//
-//      /**
-//       * \brief destructor
-//       */
-//      virtual ~GuidingVelocity() {}
-//
-//      /**
-//       * \param derivative of generalized position
-//       * \param generalized position
-//       * \param time
-//       * \return guiding velocity as a function of generalized position and time,
-//       * Jd=Jd(qd,q,t)
-//       */
-//      virtual fmatvec::Vec3 operator()(const fmatvec::VecV& q, const double& t, const void* =NULL) = 0;
-//
-//      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
-//      /***************************************************/
-//  };
-//
-//  class TimeDependentGuidingVelocity : public GuidingVelocity {
-//    public:
-//      /**
-//       * \brief constructor
-//       */
-//      TimeDependentGuidingVelocity() : j(NULL) {}
-//
-//      /**
-//       * \brief constructor
-//       */
-//      TimeDependentGuidingVelocity(Function1<fmatvec::Vec3,double> *j_) : j(j_) {}
-//
-//      /**
-//       * \brief destructor
-//       */
-//      virtual ~TimeDependentGuidingVelocity() { delete j; j = 0; }
-//
-//      /**
-//       * \param generalized position
-//       * \param time
-//       * \return guiding velocity as a function of time,
-//       * j=j(t)
-//       */
-//      virtual fmatvec::Vec3 operator()(const fmatvec::VecV& q, const double& t, const void* =NULL) { return (*j)(t); }
-//
-//      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-//
-//      /* GETTER / SETTER */
-//      /**
-//       * \brief set the guiding velocity function
-//       */
-//      Function1<fmatvec::Vec3,double>* getGuidingVelocityFunction() { return j; }
-//      void setGuidingVelocityFunction(Function1<fmatvec::Vec3,double> *j_) { j = j_; }
-//      /***************************************************/
-//
-//    private:
-//      Function1<fmatvec::Vec3,double> *j;
-//  };
-//
-//  class GeneralGuidingVelocity : public GuidingVelocity {
-//    public:
-//      /**
-//       * \brief constructor
-//       */
-//      GeneralGuidingVelocity(Function2<fmatvec::Vec3,fmatvec::VecV,double> *j_) : j(j_) {}
-//
-//      /**
-//       * \brief destructor
-//       */
-//      virtual ~GeneralGuidingVelocity() { delete j; j = 0; }
-//
-//      /**
-//       * \param derivative of generalized position
-//       * \param generalized position
-//       * \param time
-//       * \return guiding velocity as a function of generalized position and time,
-//       * j=j(qd,q,t)
-//       */
-//      virtual fmatvec::Vec3 operator()(const fmatvec::VecV& q, const double& t, const void* =NULL) { return (*j)(q,t); }
-//
-//      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
-//
-//      /* GETTER / SETTER */
-//      /**
-//       * \brief set the guiding velocity function
-//       */
-//      Function2<fmatvec::Vec3,fmatvec::VecV,double>* getGuidingVelocityFunction() { return j; }
-//      void setGuidingVelocityFunction(Function2<fmatvec::Vec3,fmatvec::VecV,double> *j_) { j = j_; }
-//      /***************************************************/
-//
-//    private:
-//      Function2<fmatvec::Vec3,fmatvec::VecV,double> *j;
-//  };
-//
-//  /**
-//   * \brief base class to describe derivatives of guiding velocities
-//   * \author Martin Foerg
-//   */
-//  class DerivativeOfGuidingVelocity : public Function3<fmatvec::Vec3,fmatvec::VecV,fmatvec::VecV,double> {
-//    public:
-//      /**
-//       * \brief constructor
-//       */
-//      DerivativeOfGuidingVelocity() {}
-//
-//      /**
-//       * \brief destructor
-//       */
-//      virtual ~DerivativeOfGuidingVelocity() {}
-//
-//      /**
-//       * \param derivative of generalized position
-//       * \param generalized position
-//       * \param time
-//       * \return derivative of guiding velocity as a function of derivative of generalized position, generalized position and time,
-//       * Jd=Jd(qd,q,t)
-//       */
-//      virtual fmatvec::Vec3 operator()(const fmatvec::VecV& qd, const fmatvec::VecV& q, const double& t, const void* =NULL) = 0;
-//
-//      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
-//      /***************************************************/
-//  };
-//
-//  class TimeDependentDerivativeOfGuidingVelocity : public DerivativeOfGuidingVelocity {
-//    public:
-//      /**
-//       * \brief constructor
-//       */
-//      TimeDependentDerivativeOfGuidingVelocity() : jd(NULL) {}
-//
-//      /**
-//       * \brief constructor
-//       */
-//      TimeDependentDerivativeOfGuidingVelocity(Function1<fmatvec::Vec3,double> *jd_) : jd(jd_) {}
-//
-//      /**
-//       * \brief destructor
-//       */
-//      virtual ~TimeDependentDerivativeOfGuidingVelocity() { delete jd; jd = 0; }
-//
-//      /**
-//       * \param generalized position
-//       * \param time
-//       * \return derivative of guiding velocity as a function of time,
-//       * jd=jd(t)
-//       */
-//      virtual fmatvec::Vec3 operator()(const fmatvec::VecV& qd, const fmatvec::VecV& q, const double& t, const void* =NULL) { return (*jd)(t); }
-//
-//      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-//
-//      /* GETTER / SETTER */
-//      /**
-//       * \brief set the derivative of derivative of guiding velocity function
-//       */
-//      Function1<fmatvec::Vec3,double>* getDerivativeOfGuidingVelocityFunction() { return jd; }
-//      void setDerivativeOfGuidingVelocityFunction(Function1<fmatvec::Vec3,double> *jd_) { jd = jd_; }
-//      /***************************************************/
-//
-//    private:
-//      Function1<fmatvec::Vec3,double> *jd;
-//  };
-//
-//  class GeneralDerivativeOfGuidingVelocity : public DerivativeOfGuidingVelocity {
-//    public:
-//      /**
-//       * \brief constructor
-//       */
-//      GeneralDerivativeOfGuidingVelocity(Function3<fmatvec::Vec3,fmatvec::VecV,fmatvec::VecV,double> *jd_) : jd(jd_) {}
-//
-//      /**
-//       * \brief destructor
-//       */
-//      virtual ~GeneralDerivativeOfGuidingVelocity() { delete jd; jd = 0; }
-//
-//      /**
-//       * \param derivative of generalized position
-//       * \param generalized position
-//       * \param time
-//       * \return derivative of guiding velocity as a function of derivative of generalized position, generalized position and time,
-//       * jd=jd(qd,q,t)
-//       */
-//      virtual fmatvec::Vec3 operator()(const fmatvec::VecV& qd, const fmatvec::VecV& q, const double& t, const void* =NULL) { return (*jd)(qd,q,t); }
-//
-//      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
-//
-//      /* GETTER / SETTER */
-//      /**
-//       * \brief set the derivative of guiding velocity function
-//       */
-//      Function3<fmatvec::Vec3,fmatvec::VecV,fmatvec::VecV,double>* getDerivativeOfGuidingVelocityFunction() { return jd; }
-//      void setDerivativeOfGuidingVelocityFunction(Function3<fmatvec::Vec3,fmatvec::VecV,fmatvec::VecV,double> *jd_) { jd = jd_; }
-//      /***************************************************/
-//
-//    private:
-//      Function3<fmatvec::Vec3,fmatvec::VecV,fmatvec::VecV,double> *jd;
-//  };
 
 }
 
