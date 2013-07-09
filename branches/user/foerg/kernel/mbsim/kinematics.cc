@@ -491,6 +491,10 @@ namespace MBSim {
   void CardanAngles::init() {
     Rotation::init();
     J.init(Eye());
+    if(KOSY)
+      fT = new TCardanAngles2<VecV>;
+    else
+      fT = new TCardanAngles<VecV>;
   }
 
   TiXmlElement* CardanAngles::writeXMLFile(TiXmlNode *parent) {
