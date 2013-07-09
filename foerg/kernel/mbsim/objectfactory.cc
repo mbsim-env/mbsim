@@ -44,6 +44,8 @@ class GeneralizedImpactLaw;
 class FrictionForceLaw;
 class FrictionImpactLaw;
 class ContourFunction1s;
+class Translation;
+class Rotation;
 
 // explicit instantiation for all BaseType's here
 template ObjectFactory<Function            >& ObjectFactory<Function            >::instance();
@@ -55,5 +57,7 @@ template ObjectFactory<GeneralizedImpactLaw>& ObjectFactory<GeneralizedImpactLaw
 template ObjectFactory<FrictionForceLaw    >& ObjectFactory<FrictionForceLaw    >::instance();
 template ObjectFactory<FrictionImpactLaw   >& ObjectFactory<FrictionImpactLaw   >::instance();
 template ObjectFactory<ContourFunction1s   >& ObjectFactory<ContourFunction1s   >::instance();
+template ObjectFactory<Translation         >& ObjectFactory<Translation         >::instance();
+template ObjectFactory<Rotation            >& ObjectFactory<Rotation            >::instance();
 
 }

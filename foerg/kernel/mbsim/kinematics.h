@@ -81,6 +81,8 @@ namespace MBSim {
         typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) {
           return fmatvec::Vec3();
         }
+        const fmatvec::Vec3& getAxisOfRotation() const { return a; }
+        void setAxisOfRotation(const fmatvec::Vec3 &a_) { a = a_; }
     };
 
   template<class Arg> 
@@ -278,8 +280,6 @@ namespace MBSim {
         }
     };
 
-
-
   class Translation {
     protected:
       fmatvec::Vec3 r, j, jd;
@@ -312,6 +312,9 @@ namespace MBSim {
       virtual void updateT(const fmatvec::VecV &q, const double &t) { }
       virtual void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
       virtual void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
+
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) { }
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; }
   };
 
 //  class GeneralTranslation : public Translation {
@@ -591,6 +594,9 @@ namespace MBSim {
       virtual void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { }
 
       void setKOSY(bool KOSY_) { KOSY = KOSY_; }
+
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) { }
+      virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; }
  };
 
 //  class Rotation {
@@ -755,12 +761,11 @@ namespace MBSim {
 
   class RotationAboutFixedAxis : public Rotation {
     private:
-      fmatvec::Vec3 a;
       FRotationAboutFixedAxis<fmatvec::VecV> f;
 
     public:
 
-      RotationAboutFixedAxis(const fmatvec::Vec3 &a_) : a(a_), f(a) { }
+      RotationAboutFixedAxis(const fmatvec::Vec3 &a=fmatvec::Vec3()) : f(a) { }
 
       void init();
 
@@ -773,19 +778,17 @@ namespace MBSim {
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
 
-      const fmatvec::Vec3& getAxisOfRotation() const { return a; }
-      void setAxisOfRotation(const fmatvec::Vec3 &a_) { a = a_; }
+      const fmatvec::Vec3& getAxisOfRotation() const { return f.getAxisOfRotation(); }
+      void setAxisOfRotation(const fmatvec::Vec3 &a) { f.setAxisOfRotation(a); }
   };
 
   class StateDependentRotationAboutFixedAxis : public Rotation {
     private:
       fmatvec::Function<double(fmatvec::VecV)> *falpha;
-      fmatvec::Vec3 a;
       FRotationAboutFixedAxis<double> f;
 
     public:
-      StateDependentRotationAboutFixedAxis() : falpha(0) { }
-      StateDependentRotationAboutFixedAxis(fmatvec::Function<double(fmatvec::VecV)> *falpha_, const fmatvec::Vec3 &a_) : falpha(falpha_), a(a_), f(a) { }
+      StateDependentRotationAboutFixedAxis(fmatvec::Function<double(fmatvec::VecV)> *falpha_=0, const fmatvec::Vec3 &a=fmatvec::Vec3()) : falpha(falpha_), f(a) { }
 
       ~StateDependentRotationAboutFixedAxis() { delete falpha; }
 
@@ -796,22 +799,20 @@ namespace MBSim {
       bool isIndependent() const { return true; }
 
       void updateOrientation(const fmatvec::VecV &q, const double &t) { A = f((*falpha)(q)); }
-      void updateJacobian(const fmatvec::VecV &q, const double &t) { J = a*falpha->parDer(q); }
-      void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { Jd = a*falpha->parDerDirDer(qd,q); }
+      void updateJacobian(const fmatvec::VecV &q, const double &t) { J = getAxisOfRotation()*falpha->parDer(q); }
+      void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { Jd = getAxisOfRotation()*falpha->parDerDirDer(qd,q); }
 
-      const fmatvec::Vec3& getAxisOfRotation() const { return a; }
-      void setAxisOfRotation(const fmatvec::Vec3 &a_) { a = a_; }
+      const fmatvec::Vec3& getAxisOfRotation() const { return f.getAxisOfRotation(); }
+      void setAxisOfRotation(const fmatvec::Vec3 &a) { f.setAxisOfRotation(a); }
   };
 
   class TimeDependentRotationAboutFixedAxis : public Rotation {
     protected:
       fmatvec::Function<double(double)> *falpha;
-      fmatvec::Vec3 a;
       FRotationAboutFixedAxis<double> f;
 
     public:
-      TimeDependentRotationAboutFixedAxis() : falpha(0) { }
-      TimeDependentRotationAboutFixedAxis(fmatvec::Function<double(double)> *falpha_, const fmatvec::Vec3 &a_) : falpha(falpha_), a(a_), f(a) { }
+      TimeDependentRotationAboutFixedAxis(fmatvec::Function<double(double)> *falpha_=0, const fmatvec::Vec3 &a=fmatvec::Vec3()) : falpha(falpha_), f(a) { }
 
       ~TimeDependentRotationAboutFixedAxis() { delete falpha; }
 
@@ -820,11 +821,11 @@ namespace MBSim {
       bool isIndependent() const { return true; }
 
       void updateOrientation(const fmatvec::VecV &q, const double &t) { A = f((*falpha)(t)); }
-      void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { j = a*falpha->parDer(t); }
-      void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) {jd = a*falpha->parDerParDer(t); }
+      void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { j = getAxisOfRotation()*falpha->parDer(t); }
+      void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) {jd = getAxisOfRotation()*falpha->parDerParDer(t); }
 
-      const fmatvec::Vec3& getAxisOfRotation() const { return a; }
-      void setAxisOfRotation(const fmatvec::Vec3 &a_) { a = a_; }
+      const fmatvec::Vec3& getAxisOfRotation() const { return f.getAxisOfRotation(); }
+      void setAxisOfRotation(const fmatvec::Vec3 &a) { f.setAxisOfRotation(a); }
   };
 
   class CardanAngles : public Rotation {

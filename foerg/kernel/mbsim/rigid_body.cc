@@ -46,6 +46,8 @@ using namespace fmatvec;
 
 namespace MBSim {
 
+  Range<Var,Var> i02(0,2);
+
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, RigidBody, MBSIMNS"RigidBody")
 
   RigidBody::RigidBody(const string &name) : Body(name), m(0), cb(false), APK(EYE), fPrPK(0), fAPK(0), constraint(0), frameForJacobianOfRotation(0), frameForInertiaTensor(0) {
@@ -87,11 +89,11 @@ namespace MBSim {
   }
 
   void RigidBody::updateW0FromW1(double t) {
-    W[0] += C->getJacobianOfTranslation(0).T()*W[1](Index(0,2),Index(0,W[1].cols()-1)) + C->getJacobianOfRotation(0).T()*W[1](Index(3,5),Index(0,W[1].cols()-1));
+    W[0] += C->getJacobianOfTranslation(0).T()*W[1](i02,Index(0,W[1].cols()-1)) + C->getJacobianOfRotation(0).T()*W[1](Index(3,5),Index(0,W[1].cols()-1));
   }
 
   void RigidBody::updateV0FromV1(double t) {
-    V[0] += C->getJacobianOfTranslation(0).T()*V[1](Index(0,2),Index(0,V[1].cols()-1)) + C->getJacobianOfRotation(0).T()*V[1](Index(3,5),Index(0,V[1].cols()-1));
+    V[0] += C->getJacobianOfTranslation(0).T()*V[1](i02,Index(0,V[1].cols()-1)) + C->getJacobianOfRotation(0).T()*V[1](Index(3,5),Index(0,V[1].cols()-1));
   }
 
   void RigidBody::updatehInverseKinetics(double t, int j) {
@@ -175,7 +177,7 @@ namespace MBSim {
 
       if(constraint)
         dependency.push_back(constraint);
-   }
+    }
     else if(stage==relativeFrameContourLocation) {
 
       //RBF.push_back(C);
@@ -262,12 +264,12 @@ namespace MBSim {
           if(fPrPK) {
             qTRel = qRel(iqT);
             fPrPK->updateStateDependentVariables(qTRel,0);
-            PJT[0].set(Index(0,2),iuT,fPrPK->getJacobian());
+            PJT[0].set(i02,iuT,fPrPK->getJacobian());
           }
           if(fAPK) {
             qRRel = qRel(iqR);
             fAPK->updateStateDependentVariables(qRRel,0);
-            PJR[0].set(Index(0,2),iuR,fAPK->getJacobian());
+            PJR[0].set(i02,iuR,fAPK->getJacobian());
           }
           updateM_ = &RigidBody::updateMConst;
           Mbuf = m*JTJ(PJT[0]) + JTMJ(SThetaS,PJR[0]);
@@ -382,7 +384,7 @@ namespace MBSim {
       qTRel = qRel(iqT);
       fPrPK->updateStateDependentVariables(qTRel,t);
       PrPK = fPrPK->getPosition();
-      PJT[0].set(Index(0,2),iuT,fPrPK->getJacobian());
+      PJT[0].set(i02,iuT,fPrPK->getJacobian());
       PjT = fPrPK->getGuidingVelocity();
     }
 
@@ -390,7 +392,7 @@ namespace MBSim {
       qRRel = qRel(iqR);
       fAPK->updateStateDependentVariables(qRRel,t);
       APK = fAPK->getOrientation();
-      PJR[0].set(Index(0,2),iuR,fAPK->getJacobian());
+      PJR[0].set(i02,iuR,fAPK->getJacobian());
       PjR = fAPK->getGuidingVelocity();
     }
 
@@ -414,22 +416,16 @@ namespace MBSim {
     if(fPrPK) {
       qdTRel = TRel(iqT,iuT)*uRel(iuT);
       fPrPK->updateStateDerivativeDependentVariables(qdTRel,qTRel,t);
-      //fPrPK->updateDerivativeOfPartialDerivativeOfPosition(qdTRel,qTRel,t);
-      //fPrPK->updateDerivativeOfJacobian(qdTRel,qTRel,t);
-      //fPrPK->updateDerivativeOfGuidingVelocity(qdTRel,qTRel,t);
 
-      PdJT.set(Index(0,2),iuT,fPrPK->getDerivativeOfJacobian());
+      PdJT.set(i02,iuT,fPrPK->getDerivativeOfJacobian());
       PdjT = fPrPK->getDerivativeOfGuidingVelocity();
     }
 
     if(fAPK) {
       qdRRel = TRel(iqR,iuR)*uRel(iuR);
       fAPK->updateStateDerivativeDependentVariables(qdRRel,qRRel,t);
-      //fAPK->updateDerivativeOfPartialDerivativeOfOrientation(qdRRel,qRRel,t);
-      //fAPK->updateDerivativeOfJacobian(qdRRel,qRRel,t);
-      //fAPK->updateDerivativeOfGuidingVelocity(qdRRel,qRRel,t);
 
-      PdJR.set(Index(0,2),iuR,fAPK->getDerivativeOfJacobian());
+      PdJR.set(i02,iuR,fAPK->getDerivativeOfJacobian());
       PdjR = fAPK->getDerivativeOfGuidingVelocity();
     }
 
@@ -437,11 +433,11 @@ namespace MBSim {
     K->setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation() - tWrPK*R->getGyroscopicAccelerationOfRotation() + R->getOrientation()*(PdJT*uRel + PdjT + PJT[0]*jRel) + crossProduct(R->getAngularVelocity(), 2.*WvPKrel+crossProduct(R->getAngularVelocity(),WrPK)));
     K->setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation() + frameForJacobianOfRotation->getOrientation()*(PdJR*uRel + PdjR + PJR[0]*jRel) + crossProduct(R->getAngularVelocity(), WomPK));
 
-    K->getJacobianOfTranslation().set(Index(0,2),Index(0,R->getJacobianOfTranslation().cols()-1), R->getJacobianOfTranslation() - tWrPK*R->getJacobianOfRotation());
-    K->getJacobianOfRotation().set(Index(0,2),Index(0,R->getJacobianOfRotation().cols()-1), R->getJacobianOfRotation());
+    K->getJacobianOfTranslation().set(i02,Index(0,R->getJacobianOfTranslation().cols()-1), R->getJacobianOfTranslation() - tWrPK*R->getJacobianOfRotation());
+    K->getJacobianOfRotation().set(i02,Index(0,R->getJacobianOfRotation().cols()-1), R->getJacobianOfRotation());
 
-    K->getJacobianOfTranslation().add(Index(0,2),Index(0,gethSize(0)-1), R->getOrientation()*PJT[0]*JRel[0]);
-    K->getJacobianOfRotation().add(Index(0,2),Index(0,gethSize(0)-1), frameForJacobianOfRotation->getOrientation()*PJR[0]*JRel[0]);
+    K->getJacobianOfTranslation().add(i02,Index(0,gethSize(0)-1), R->getOrientation()*PJT[0]*JRel[0]);
+    K->getJacobianOfRotation().add(i02,Index(0,gethSize(0)-1), frameForJacobianOfRotation->getOrientation()*PJR[0]*JRel[0]);
   }
 
   void RigidBody::updateKinematicsForRemainingFramesAndContours(double t) {
@@ -572,12 +568,12 @@ namespace MBSim {
   void RigidBody::updateRelativeJacobians(double t, Frame *P) {
 
     if(fPrPK) {
-      PJT[0].set(Index(0,2),iuT,fPrPK->getJacobian());
+      PJT[0].set(i02,iuT,fPrPK->getJacobian());
       PjT = fPrPK->getGuidingVelocity();
     }
 
     if(fAPK) {
-      PJR[0].set(Index(0,2),iuR,fAPK->getJacobian());
+      PJR[0].set(i02,iuR,fAPK->getJacobian());
       PjR = fAPK->getGuidingVelocity();
     }
 
@@ -608,13 +604,13 @@ namespace MBSim {
     if(fPrPK) {
       qdTRel = TRel(iqT,iuT)*uRel(iuT);
       fPrPK->updateStateDerivativeDependentVariables(qdTRel,qTRel,t);
-      PdJT.set(Index(0,2),iuT,fPrPK->getDerivativeOfJacobian());
+      PdJT.set(i02,iuT,fPrPK->getDerivativeOfJacobian());
       PdjT = fPrPK->getDerivativeOfGuidingVelocity();
     }
     if(fAPK) {
       qdRRel = TRel(iqR,iuR)*uRel(iuR);
       fAPK->updateStateDerivativeDependentVariables(qdRRel,qRRel,t);
-      PdJR.set(Index(0,2),iuR,fAPK->getDerivativeOfJacobian());
+      PdJR.set(i02,iuR,fAPK->getDerivativeOfJacobian());
       PdjR = fAPK->getDerivativeOfGuidingVelocity();
     }
 
@@ -630,8 +626,8 @@ namespace MBSim {
     K->setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation() - tWrPK*R->getGyroscopicAccelerationOfRotation() + R->getOrientation()*(PdJT*uRel + PdjT) + crossProduct(R->getAngularVelocity(), 2.*WvPKrel+crossProduct(R->getAngularVelocity(),WrPK)));
     K->setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation() + frameForJacobianOfRotation->getOrientation()*(PdJR*uRel + PdjR) + crossProduct(R->getAngularVelocity(), WomPK));
 
-    K->getJacobianOfTranslation().set(Index(0,2),Index(0,R->getJacobianOfTranslation().cols()-1), R->getJacobianOfTranslation() - tWrPK*R->getJacobianOfRotation());
-    K->getJacobianOfRotation().set(Index(0,2),Index(0,R->getJacobianOfRotation().cols()-1), R->getJacobianOfRotation());
+    K->getJacobianOfTranslation().set(i02,Index(0,R->getJacobianOfTranslation().cols()-1), R->getJacobianOfTranslation() - tWrPK*R->getJacobianOfRotation());
+    K->getJacobianOfRotation().set(i02,Index(0,R->getJacobianOfRotation().cols()-1), R->getJacobianOfRotation());
 
    if(K != C) C->updateJacobians();
    if(P!=C && P!=K)
@@ -728,66 +724,17 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"inertiaTensor");
     setInertiaTensor(getSymMat3(e));
     e=element->FirstChildElement(MBSIMNS"translation");
-//    Translation *trans=ObjectFactory<Function>::create<Translation>(e->FirstChildElement());
-//    if(trans) {
-//      setTranslation(trans);
-//      trans->initializeUsingXML(e->FirstChildElement());
-//    }
+    Translation *trans=ObjectFactory<Translation>::create<Translation>(e->FirstChildElement());
+    if(trans) {
+      setTranslation(trans);
+      trans->initializeUsingXML(e->FirstChildElement());
+    }
     e=element->FirstChildElement(MBSIMNS"rotation");
-//    Rotation *rot=ObjectFactory<Function>::create<Rotation>(e->FirstChildElement());
-//    if(rot) {
-//      setRotation(rot);
-//      rot->initializeUsingXML(e->FirstChildElement());
-//    }
-//    // BEGIN The following elements are rarly used. That is why they are optional
-//    e=element->FirstChildElement(MBSIMNS"jacobianOfTranslation");
-//    if(e) {
-//      Jacobian *jac=ObjectFactory<Function>::create<Jacobian>(e->FirstChildElement());
-//      setJacobianOfTranslation(jac);
-//      jac->initializeUsingXML(e->FirstChildElement());
-//    }
-//    e=element->FirstChildElement(MBSIMNS"jacobianOfRotation");
-//    if(e) {
-//      Jacobian *jac=ObjectFactory<Function>::create<Jacobian>(e->FirstChildElement());
-//      setJacobianOfRotation(jac);
-//      jac->initializeUsingXML(e->FirstChildElement());
-//    }
-//    e=element->FirstChildElement(MBSIMNS"derivativeOfJacobianOfTranslation");
-//    if(e) {
-//      DerivativeOfJacobian *derJac=ObjectFactory<Function>::create<DerivativeOfJacobian>(e->FirstChildElement());
-//      setDerivativeOfJacobianOfTranslation(derJac);
-//      derJac->initializeUsingXML(e->FirstChildElement());
-//    }
-//    e=element->FirstChildElement(MBSIMNS"derivativeOfJacobianOfRotation");
-//    if(e) {
-//      DerivativeOfJacobian *derJac=ObjectFactory<Function>::create<DerivativeOfJacobian>(e->FirstChildElement());
-//      setDerivativeOfJacobianOfRotation(derJac);
-//      derJac->initializeUsingXML(e->FirstChildElement());
-//    }
-//    e=element->FirstChildElement(MBSIMNS"guidingVelocityOfTranslation");
-//    if(e) {
-//      GuidingVelocity *j=ObjectFactory<Function>::create<GuidingVelocity>(e->FirstChildElement());
-//      setGuidingVelocityOfTranslation(j);
-//      j->initializeUsingXML(e->FirstChildElement());
-//    }
-//    e=element->FirstChildElement(MBSIMNS"guidingVelocityOfRotation");
-//    if(e) {
-//      GuidingVelocity *j=ObjectFactory<Function>::create<GuidingVelocity>(e->FirstChildElement());
-//      setGuidingVelocityOfRotation(j);
-//      j->initializeUsingXML(e->FirstChildElement());
-//    }
-//    e=element->FirstChildElement(MBSIMNS"derivativeOfGuidingVelocityOfTranslation");
-//    if(e) {
-//      DerivativeOfGuidingVelocity *jd=ObjectFactory<Function>::create<DerivativeOfGuidingVelocity>(e->FirstChildElement());
-//      setDerivativeOfGuidingVelocityOfTranslation(jd);
-//      jd->initializeUsingXML(e->FirstChildElement());
-//    }
-//    e=element->FirstChildElement(MBSIMNS"derivativeOfGuidingVelocityOfRotation");
-//    if(e) {
-//      DerivativeOfGuidingVelocity *jd=ObjectFactory<Function>::create<DerivativeOfGuidingVelocity>(e->FirstChildElement());
-//      setDerivativeOfGuidingVelocityOfRotation(jd);
-//      jd->initializeUsingXML(e->FirstChildElement());
-//    }
+    Rotation *rot=ObjectFactory<Rotation>::create<Rotation>(e->FirstChildElement());
+    if(rot) {
+      setRotation(rot);
+      rot->initializeUsingXML(e->FirstChildElement());
+    }
 
     e=element->FirstChildElement(MBSIMNS"isFrameOfBodyForRotation");
     if(e)
@@ -864,13 +811,13 @@ namespace MBSim {
     addElementText(ele0,MBSIMNS"inertiaTensor",getInertiaTensor());
 
     ele1 = new TiXmlElement( MBSIMNS"translation" );
-//    if(getTranslation()) 
-//      getTranslation()->writeXMLFile(ele1);
+    if(getTranslation()) 
+      getTranslation()->writeXMLFile(ele1);
     ele0->LinkEndChild(ele1);
 
     ele1 = new TiXmlElement( MBSIMNS"rotation" );
-//    if(getRotation()) 
-//      getRotation()->writeXMLFile(ele1);
+    if(getRotation()) 
+      getRotation()->writeXMLFile(ele1);
     ele0->LinkEndChild(ele1);
 
     ele1 = new TiXmlElement( MBSIMNS"frames" );
