@@ -1,4 +1,5 @@
 #include "system.h"
+#include "mbsim/frame.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/environment.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -30,7 +31,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addObject(stab1);
   KrKS(1) = a1;
 
-  stab1->addFrame("Ref",KrKS,SqrMat(3,EYE));
+  stab1->addFrame(new FixedRelativeFrame("Ref",KrKS,SqrMat(3,EYE)));
 
   stab1->setFrameOfReference(getFrame("I"));
   stab1->setFrameForKinematics(stab1->getFrame("Ref"));
@@ -57,9 +58,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   RigidBody* stab2 = new RigidBody("Stab2");
   addObject(stab2);
   KrKS(1) = -b1;
-  stab1->addFrame("P",KrKS,SqrMat(3,EYE));
+  stab1->addFrame(new FixedRelativeFrame("P",KrKS,SqrMat(3,EYE)));
   KrKS(1) = a2;
-  stab2->addFrame("R",KrKS,SqrMat(3,EYE));
+  stab2->addFrame(new FixedRelativeFrame("R",KrKS,SqrMat(3,EYE)));
   stab2->setFrameOfReference(stab1->getFrame("P"));
   stab2->setFrameForKinematics(stab2->getFrame("R"));
   stab2->setMass(mStab);

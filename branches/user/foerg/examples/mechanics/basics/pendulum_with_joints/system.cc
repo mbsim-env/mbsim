@@ -41,7 +41,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   E << DiagMat(3,INIT,1);
   Vec KrSP(3);
   KrSP(1) = a1;
-  box1->addFrame("PunktO",KrSP,E);
+  box1->addFrame(new FixedRelativeFrame("PunktO",KrSP,E));
 
   box1->setTranslation( new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
   box1->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
@@ -54,7 +54,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   box1->setInitialGeneralizedPosition(q0);
 
   KrSP(1) = -b1;
-  box1->addFrame("PunktU",KrSP,E);
+  box1->addFrame(new FixedRelativeFrame("PunktU",KrSP,E));
 
   RigidBody *box2 = new RigidBody("Stab2");
   addObject(box2);
@@ -63,7 +63,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   box2->setInertiaTensor(Theta);
 
   KrSP(1) = a2;
-  box2->addFrame("Punkt",KrSP,E);
+  box2->addFrame(new FixedRelativeFrame("Punkt",KrSP,E));
   box2->setTranslation( new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
   box2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
 
@@ -85,7 +85,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   q0(2) = -phi2;
   box2->setInitialGeneralizedPosition(q0);
 
-  addFrame("Os","[0;0;0.04]",E);
+  addFrame(new FixedRelativeFrame("Os","[0;0;0.04]",E));
   box2->setFrameOfReference(getFrame("Os"));
   box2->setFrameForKinematics(box2->getFrame("C"));
 

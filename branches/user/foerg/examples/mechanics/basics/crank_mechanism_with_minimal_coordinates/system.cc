@@ -15,13 +15,13 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
 
-class Moment : public Function1<fmatvec::Vec, double> {
+class Moment : public MBSim::Function<VecV(double)> {
   public:
-    fmatvec::Vec operator()(const double& t, const void * =NULL) { 
+    VecV operator()(const double& t) { 
       double t0 = 1;
       double t1 = 1.5;
       double M0 = 0*0.2;
-      Vec M(1);
+      VecV M(1);
       if(t<t0)
 	M(0) = t*M0/t0;
       else if(t<t1)
@@ -59,7 +59,7 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
 
   RigidBody* body1 = new RigidBody("body1");
   addObject(body1);
-  body1->addFrame("Q", Kr,SqrMat(3,EYE));
+  body1->addFrame(new FixedRelativeFrame("Q", Kr,SqrMat(3,EYE)));
 
   body1->setFrameOfReference(getFrame("I"));
   body1->setFrameForKinematics(body1->getFrame("C"));
@@ -71,14 +71,14 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
 
   Kr(0) = d;
   Kr(2) = 0.02;
-  addFrame("Q",Kr,SqrMat(3,EYE) );  
+  addFrame(new FixedRelativeFrame("Q",Kr,SqrMat(3,EYE)));  
 
   RigidBody* body2 = new RigidBody("body2");
   addObject(body2);
   Kr(0) = b/2;
   Kr(2) = 0;
-  body2->addFrame("P",-Kr,SqrMat(3,EYE));
-  body2->addFrame("Q", Kr,SqrMat(3,EYE));
+  body2->addFrame(new FixedRelativeFrame("P",-Kr,SqrMat(3,EYE)));
+  body2->addFrame(new FixedRelativeFrame("Q", Kr,SqrMat(3,EYE)));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   body2->getFrame("Q")->enableOpenMBV(0.3);
 #endif

@@ -47,7 +47,7 @@ System::System(const string &projectName)  : DynamicSystemSolver(projectName) {
   u0(0) = 5.0;
   u0(3) = 20.0;
   ball->setInitialGeneralizedVelocity(u0);
-  this->addFrame("R",Vec("[0;0.15;0]"),SqrMat(3,EYE));
+  this->addFrame(new FixedRelativeFrame("R",Vec("[0;0.15;0]"),SqrMat(3,EYE)));
   ball->setFrameOfReference(this->getFrame("R"));
 
   // contour
@@ -56,11 +56,13 @@ System::System(const string &projectName)  : DynamicSystemSolver(projectName) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
   sp->enableOpenMBV();
 #endif
-  ball->addContour(sp,Vec(3,INIT,0.),SqrMat(3,EYE));
+  ball->addContour(sp);
 
   // obstacles
   Plane* pl = new Plane("Table");
-  this->addContour(pl,Vec(3,INIT,0.),SqrMat("[0,-1,0;1,0,0;0,0,1]"));
+  addFrame(new FixedRelativeFrame("P",Vec(3,INIT,0.),SqrMat("[0,-1,0;1,0,0;0,0,1]")));
+  pl->setFrameOfReference(getFrame("P"));
+  this->addContour(pl);
 
   // contacts
   Contact *cr = new Contact("Contact");

@@ -1,5 +1,6 @@
 #include "system.h"
 #include "pendulum.h"
+#include "mbsim/frame.h"
 #include "mbsim/environment.h"
 
 using namespace MBSim;
@@ -16,7 +17,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Vec x(3,INIT,0.);
   x(0) = 0.15;
   SqrMat A(3,EYE);
-  pendel1->getRod2()->addFrame("P",x,A,pendel1->getRod2()->getFrame("R"));
+  pendel1->getRod2()->addFrame(new FixedRelativeFrame("P",x,A,pendel1->getRod2()->getFrame("R")));
 
   Pendulum *pendel2 = new Pendulum("Pendel2"); 
   addGroup(pendel2);

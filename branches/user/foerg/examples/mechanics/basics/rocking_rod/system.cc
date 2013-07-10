@@ -53,18 +53,24 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Line *line = new Line("Line");
   Vec KrSC(3);
   KrSC(0) = 0.5*h;
-  body->addContour(line,KrSC,SqrMat(3,EYE));
+  body->addFrame(new FixedRelativeFrame("P",KrSC,SqrMat(3,EYE)));
+  line->setFrameOfReference(body->getFrame("P"));
+  body->addContour(line);
 
   // Obstacles
   Vec delta1(3); 
   delta1(0) = -deltax/2.;
   Point* point1 = new Point("Point1");
-  addContour(point1,delta1,SqrMat(3,EYE));
+  addFrame(new FixedRelativeFrame("P1",delta1,SqrMat(3,EYE)));
+  point1->setFrameOfReference(getFrame("P1"));
+  addContour(point1);
 
   Vec delta2(3);
   delta2(0) = deltax/2.;
   Point* point2 = new Point("Point2");
-  addContour(point2,delta2,SqrMat(3,EYE));
+  addFrame(new FixedRelativeFrame("P2",delta2,SqrMat(3,EYE)));
+  point2->setFrameOfReference(getFrame("P2"));
+  addContour(point2);
 
   Contact *cr1S = new Contact("Contact1"); 
   cr1S->connect(point1,body->getContour("Line"));

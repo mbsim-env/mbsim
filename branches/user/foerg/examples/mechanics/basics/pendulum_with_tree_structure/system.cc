@@ -1,4 +1,5 @@
 #include "system.h"
+#include "mbsim/frame.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/environment.h"
 
@@ -29,7 +30,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   this->addObject(stab1);
   KrCR(0) = a1;
 
-  stab1->addFrame("R",KrCR,SqrMat(3,EYE));
+  stab1->addFrame(new FixedRelativeFrame("R",KrCR,SqrMat(3,EYE)));
 
   stab1->setFrameOfReference(getFrame("I"));
   stab1->setFrameForKinematics(stab1->getFrame("R"));
@@ -52,9 +53,9 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   this->addObject(stab2);
   KrRP(0) = lStab/2;
   KrRP(2) = 0.006;
-  stab1->addFrame("P",KrRP,SqrMat(3,EYE),stab1->getFrame("R"));
+  stab1->addFrame(new FixedRelativeFrame("P",KrRP,SqrMat(3,EYE),stab1->getFrame("R")));
   KrCR(0) = a2;
-  stab2->addFrame("R",-KrCR,SqrMat(3,EYE));
+  stab2->addFrame(new FixedRelativeFrame("R",-KrCR,SqrMat(3,EYE)));
   stab2->setFrameOfReference(stab1->getFrame("P"));
   stab2->setFrameForKinematics(stab2->getFrame("R"));
   stab2->setMass(mStab);
