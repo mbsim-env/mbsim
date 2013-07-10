@@ -25,7 +25,7 @@
 
 namespace MBSim {
 
-  template <class Ret, class Arg> class Function1;
+  template<typename Sig> class Function;
 
   /**
    * \brief kinetic excitations given by time dependent functions
@@ -71,10 +71,10 @@ namespace MBSim {
        * forceDir*func(t) is the applied force vector in space.
        * This force vector is given in the frame set by setFrameOfReference.
        */
-      void setForce(fmatvec::Mat dir, Function1<fmatvec::Vec,double> *func);
+      void setForce(fmatvec::Mat dir, Function<fmatvec::VecV(double)> *func);
 
       /** \brief see setForce */
-      void setMoment(fmatvec::Mat dir, Function1<fmatvec::Vec,double> *func);
+      void setMoment(fmatvec::Mat dir, Function<fmatvec::VecV(double)> *func);
 
       /** \brief The frame of reference for the force/moment direction vectors.
        * If not given, the frame the excitation is connected to is used.
@@ -124,7 +124,7 @@ namespace MBSim {
       /**
        * \brief portions of the force / moment in the specific directions
        */
-      Function1<fmatvec::Vec,double> *F, *M;
+      Function<fmatvec::VecV(double)> *F, *M;
 
       /**
        * \brief own frame located in second partner with same orientation as first partner 

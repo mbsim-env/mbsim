@@ -35,36 +35,36 @@ System::System(unsigned int type) : Group("System"+numtostr(int(type))) {
   cout << "mDisk = " << mDisk << endl;
 
   // single bodies and frames for connection
-  addFrame("fK1", 1.*h0Cylinder*Vec("[0;1;0]"), SqrMat(3,EYE));
-  addFrame("fK2", 2.*h0Cylinder*Vec("[0;1;0]"), SqrMat(3,EYE));
-  addFrame("fK3", 3.*h0Cylinder*Vec("[0;1;0]"), SqrMat(3,EYE));
+  addFrame(new FixedRelativeFrame("fK1", 1.*h0Cylinder*Vec("[0;1;0]"), SqrMat(3,EYE)));
+  addFrame(new FixedRelativeFrame("fK2", 2.*h0Cylinder*Vec("[0;1;0]"), SqrMat(3,EYE)));
+  addFrame(new FixedRelativeFrame("fK3", 3.*h0Cylinder*Vec("[0;1;0]"), SqrMat(3,EYE)));
 
   RigidBody *k1 = new RigidBody("K1");
   k1->setFrameForKinematics(k1->getFrame("C"));
   k1->setMass(3.*mDisk);
   k1->setInertiaTensor(0.001*SymMat(3,EYE));
   k1->setTranslation(new LinearTranslation(SqrMat(3,EYE)));
-  k1->addFrame("fK2", 1.*h0Cylinder*Vec("[0;1;0]"), SqrMat(3,EYE));
-  k1->addFrame("fK3", 2.*h0Cylinder*Vec("[0;1;0]"), SqrMat(3,EYE));
-  k1->addFrame("fTop", .5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE));
-  k1->addFrame("fBottom", -.5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE));
+  k1->addFrame(new FixedRelativeFrame("fK2", 1.*h0Cylinder*Vec("[0;1;0]"), SqrMat(3,EYE)));
+  k1->addFrame(new FixedRelativeFrame("fK3", 2.*h0Cylinder*Vec("[0;1;0]"), SqrMat(3,EYE)));
+  k1->addFrame(new FixedRelativeFrame("fTop", .5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE)));
+  k1->addFrame(new FixedRelativeFrame("fBottom", -.5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE)));
 
   RigidBody *k2 = new RigidBody("K2");
   k2->setFrameForKinematics(k2->getFrame("C"));
   k2->setMass(5.*mDisk);
   k2->setInertiaTensor(0.001*SymMat(3,EYE));
   k2->setTranslation(new LinearTranslation(SqrMat(3,EYE)));
-  k2->addFrame("fK3", 1.*h0Cylinder*Vec("[0;1;0]"), SqrMat(3,EYE));
-  k2->addFrame("fTop", .5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE));
-  k2->addFrame("fBottom", -.5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE));
+  k2->addFrame(new FixedRelativeFrame("fK3", 1.*h0Cylinder*Vec("[0;1;0]"), SqrMat(3,EYE)));
+  k2->addFrame(new FixedRelativeFrame("fTop", .5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE)));
+  k2->addFrame(new FixedRelativeFrame("fBottom", -.5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE)));
 
   RigidBody *k3 = new RigidBody("K3");
   k3->setFrameForKinematics(k3->getFrame("C"));
   k3->setMass(7.*mDisk);
   k3->setInertiaTensor(0.001*SymMat(3,EYE));
   k3->setTranslation(new LinearTranslation(SqrMat(3,EYE)));
-  k3->addFrame("fTop", .5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE));
-  k3->addFrame("fBottom", -.5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE));
+  k3->addFrame(new FixedRelativeFrame("fTop", .5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE)));
+  k3->addFrame(new FixedRelativeFrame("fBottom", -.5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE)));
 
   // parametrisation of relative kinematics
   if(type==1) { // K2 child of K1, K3 child of K2
@@ -120,7 +120,7 @@ System::System(unsigned int type) : Group("System"+numtostr(int(type))) {
   KineticExcitation *a = new KineticExcitation("Anregung");
   addLink(a);
   a->setFrameOfReference(k3->getFrame("fTop"));
-  a->setForce(Vec("[0;1;0]"), new ConstantFunction1<Vec, double>(Vec("[-10]")));
+  a->setForce(Vec("[0;1;0]"), new ConstantFunction<VecV(double)>(VecV("[-10]")));
   a->connect(k3->getFrame("fTop"));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

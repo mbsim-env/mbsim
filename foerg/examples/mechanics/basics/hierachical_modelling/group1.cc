@@ -66,12 +66,12 @@ Group1::Group1(const string &name) : Group(name) {
 
   // Federanschlusspunkte P1 und P2 auf Körper 1 definieren
   SrSP(1) = h1/2.;
-  box1->addFrame("P1",-SrSP,ASP); 
-  box1->addFrame("P2",SrSP,ASP);
+  box1->addFrame(new FixedRelativeFrame("P1",-SrSP,ASP));
+  box1->addFrame(new FixedRelativeFrame("P2",SrSP,ASP));
 
   // Federanschlusspunkt P1 auf Körper 2 definieren
   SrSP(1) = h2/2.;
-  box2->addFrame("P1",-SrSP,ASP);
+  box2->addFrame(new FixedRelativeFrame("P1",-SrSP,ASP));
 
   // ----------------------- Definition der 1. Feder --------------------  
   SpringDamper *spring1 = new SpringDamper("Feder1");

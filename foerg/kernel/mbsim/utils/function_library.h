@@ -477,6 +477,299 @@ namespace MBSim {
       xSize=x.size();
     }
 
+  template <class Arg>
+    class ToDouble {
+    };
+
+  template <>
+    class ToDouble<double> {
+      public:
+        static double cast(const double &x) {
+          return x;
+        }
+    };
+
+  template <class Col>
+    class ToDouble<fmatvec::Vector<Col,double> > {
+      public:
+        static double cast(const fmatvec::Vector<Col,double> &x) {
+          return x.e(0); 
+        }
+    };
+
+  template<typename Sig> class ConstantFunction;
+
+  template<typename Ret, typename Arg>
+    class ConstantFunction<Ret(Arg)> : public Function<Ret(Arg)> {
+      protected:
+        Ret a;
+      public:
+        ConstantFunction() {}
+        ConstantFunction(const Ret &a_) : a(a_) {}
+        Ret operator()(const Arg &arg) {
+          return a;
+        }
+    };
+
+  template<typename Sig> class LinearFunction;
+
+  template<typename Ret, typename Arg>
+    class LinearFunction<Ret(Arg)> : public Function<Ret(Arg)> {
+      protected:
+        typename fmatvec::Der<Ret, Arg>::type A;
+        Ret b;
+      public:
+        LinearFunction() {}
+        LinearFunction(const typename fmatvec::Der<Ret, Arg>::type &A_, const Ret &b_) : A(A_), b(b_) {}
+        typename fmatvec::Size<Arg>::type getArgSize() const {
+          return A.cols();
+        }
+        Ret operator()(const Arg &arg) {
+          return A*arg+b;
+        }
+        typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &arg) {
+          return A;
+        }
+        typename fmatvec::Der<Ret, Arg>::type parDerDirDer(const Arg &arg1Dir, const Arg &arg1) {
+          return typename fmatvec::Der<Ret, Arg>::type(A.rows(),A.cols());
+        }
+    };
+
+  template<class Arg> 
+    class FRotationAboutFixedAxis : public Function<fmatvec::RotMat3(Arg)> {
+      private:
+        fmatvec::RotMat3 A;
+        fmatvec::Vec3 a;
+      public:
+        FRotationAboutFixedAxis() { }
+        FRotationAboutFixedAxis(const fmatvec::Vec3 &a_) : a(a_) { }
+        typename fmatvec::Size<Arg>::type getArgSize() const {
+          return 1;
+        }
+        fmatvec::RotMat3 operator()(const Arg &q) {
+          double alpha = ToDouble<Arg>::cast(q);
+          const double cosq=cos(alpha);
+          const double sinq=sin(alpha);
+          const double onemcosq=1-cosq;
+          const double a0a1=a(0)*a(1);
+          const double a0a2=a(0)*a(2);
+          const double a1a2=a(1)*a(2);
+          A.e(0,0) = cosq+onemcosq*a(0)*a(0);
+          A.e(1,0) = onemcosq*a0a1+a(2)*sinq;
+          A.e(2,0) = onemcosq*a0a2-a(1)*sinq;
+          A.e(0,1) = onemcosq*a0a1-a(2)*sinq;
+          A.e(1,1) = cosq+onemcosq*a(1)*a(1);
+          A.e(2,1) = onemcosq*a1a2+a(0)*sinq;
+          A.e(0,2) = onemcosq*a0a2+a(1)*sinq;
+          A.e(1,2) = onemcosq*a1a2-a(0)*sinq;
+          A.e(2,2) = cosq+onemcosq*a(2)*a(2);
+          return A;
+        }
+        typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDer(const Arg &q) {
+          return a;
+        }
+        typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) {
+          return typename fmatvec::Der<fmatvec::RotMat3, Arg>::type();
+        }
+        const fmatvec::Vec3& getAxisOfRotation() const { return a; }
+        void setAxisOfRotation(const fmatvec::Vec3 &a_) { a = a_; }
+    };
+
+  template<class Arg> 
+    class FRotationAboutAxesXYZ : public Function<fmatvec::RotMat3(Arg)> {
+      private:
+        fmatvec::RotMat3 A;
+        fmatvec::Mat3xV J, Jd;
+      public:
+        FRotationAboutAxesXYZ() : J(3), Jd(3) { }
+        typename fmatvec::Size<Arg>::type getArgSize() const {
+          return 3;
+        }
+        fmatvec::RotMat3 operator()(const Arg &q) {
+          double a=q.e(0);
+          double b=q.e(1);
+          double g=q.e(2);
+          double cosa = cos(a);
+          double sina = sin(a);
+          double cosb = cos(b);
+          double sinb = sin(b);
+          double cosg = cos(g);
+          double sing = sin(g);
+          A.e(0,0) = cosb*cosg;
+          A.e(1,0) = sina*sinb*cosg+cosa*sing;
+          A.e(2,0) = -cosa*sinb*cosg+sina*sing;
+          A.e(0,1) = -cosb*sing;
+          A.e(1,1) = -sing*sinb*sina+cosa*cosg;
+          A.e(2,1) = cosa*sinb*sing+sina*cosg;
+          A.e(0,2) = sinb;
+          A.e(1,2) = -sina*cosb;
+          A.e(2,2) = cosa*cosb;
+          return A;
+        }
+        typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDer(const Arg &q) {
+          double a = q.e(0);
+          double b = q.e(1);
+          double cosa = cos(a);
+          double sina = sin(a);
+          double cosb = cos(b);
+          J.e(0,0) = 1;
+          //J.e(0,1) = 0;
+          J.e(0,2) = sin(b);
+          //J.e(1,0) = 0;
+          J.e(1,1) = cosa;
+          J.e(1,2) = -sina*cosb;
+          //J.e(2,0) = 0;
+          J.e(2,1) = sina;
+          J.e(2,2) = cosa*cosb;
+          return J;
+        }
+        typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) {
+          double a = q.e(0);
+          double b = q.e(1);
+          double ad = qd.e(0);
+          double bd = qd.e(1);
+          double cosa = cos(a);
+          double sina = sin(a);
+          double cosb = cos(b);
+          double sinb = sin(b);
+          //Jd.e(0,0) = 0;
+          //Jd.e(0,1) = 0;
+          Jd.e(0,2) = cosb*bd;
+          //Jd.e(1,0) = 0;
+          Jd.e(1,1) = -sina*ad;
+          Jd.e(1,2) = -cosa*cosb*ad + sina*sinb*bd;
+          //Jd.e(2,0) = 0;
+          Jd.e(2,1) = cosa*ad;
+          Jd.e(2,2) = -sina*cosb*ad - cosa*sinb*bd;
+          return Jd;
+        }
+    };
+  
+  template<class Arg> 
+    class FRotationAboutAxesZXZ : public Function<fmatvec::RotMat3(Arg)> {
+      private:
+        fmatvec::RotMat3 A;
+        fmatvec::Mat3xV J, Jd;
+      public:
+        FRotationAboutAxesZXZ() : J(3), Jd(3) { }
+        typename fmatvec::Size<Arg>::type getArgSize() const {
+          return 3;
+        }
+        fmatvec::RotMat3 operator()(const Arg &q) {
+          double psi=q.e(0);
+          double theta=q.e(1);
+          double phi=q.e(2);
+          double spsi = sin(psi);
+          double stheta = sin(theta);
+          double sphi = sin(phi);
+          double cpsi = cos(psi);
+          double ctheta = cos(theta);
+          double cphi = cos(phi);
+          A.e(0,0) = cpsi*cphi-spsi*ctheta*sphi;
+          A.e(1,0) = spsi*cphi+cpsi*ctheta*sphi;
+          A.e(2,0) = stheta*sphi;
+          A.e(0,1) = -cpsi*sphi-spsi*ctheta*cphi;
+          A.e(1,1) = -spsi*sphi+cpsi*ctheta*cphi;
+          A.e(2,1) = stheta*cphi;
+          A.e(0,2) = spsi*stheta;
+          A.e(1,2) = -cpsi*stheta;
+          A.e(2,2) = ctheta;
+          return A;
+        }
+        typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDer(const Arg &q) {
+          throw std::runtime_error("FRotationAboutAxesZXZ::parDer() not yet implemented.");
+          return J;
+        }
+        typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) {
+          throw std::runtime_error("FRotationAboutAxesZXZ::parDerDirDer() not yet implemented.");
+          return Jd;
+        }
+    };
+
+  template<class Arg> 
+    class TCardanAngles : public Function<fmatvec::MatV(Arg)> {
+      private:
+        fmatvec::MatV T;
+      public:
+        TCardanAngles() : T(3,3,fmatvec::Eye()) { }
+        typename fmatvec::Size<Arg>::type getArgSize() const {
+          return 3;
+        }
+        fmatvec::MatV operator()(const Arg &q) {
+          double alpha = q.e(0);
+          double beta = q.e(1);
+          double cos_beta = cos(beta);
+          double sin_beta = sin(beta);
+          double cos_alpha = cos(alpha);
+          double sin_alpha = sin(alpha);
+          double tan_beta = sin_beta/cos_beta;
+          T.e(0,1) = tan_beta*sin_alpha;
+          T.e(0,2) = -tan_beta*cos_alpha;
+          T.e(1,1) = cos_alpha;
+          T.e(1,2) = sin_alpha;
+          T.e(2,1) = -sin_alpha/cos_beta;
+          T.e(2,2) = cos_alpha/cos_beta;
+          return T;
+        }
+    };
+
+  template<class Arg> 
+    class TCardanAngles2 : public Function<fmatvec::MatV(Arg)> {
+      private:
+        fmatvec::MatV T;
+      public:
+        TCardanAngles2() : T(3,3,fmatvec::Eye()) { }
+        typename fmatvec::Size<Arg>::type getArgSize() const {
+          return 3;
+        }
+        fmatvec::MatV operator()(const Arg &q) {
+          double beta = q.e(1);
+          double gamma = q.e(2);
+          double cos_beta = cos(beta);
+          double sin_beta = sin(beta);
+          double cos_gamma = cos(gamma);
+          double sin_gamma = sin(gamma);
+          double tan_beta = sin_beta/cos_beta;
+          T.e(0,0) = cos_gamma/cos_beta;
+          T.e(0,1) = -sin_gamma/cos_beta;
+          T.e(1,0) = sin_gamma;
+          T.e(1,1) = cos_gamma;
+          T.e(2,0) = -cos_gamma*tan_beta;
+          T.e(2,1) = sin_gamma*tan_beta;
+          return T;
+        }
+    };
+
+  template<class Arg> 
+    class TEulerAngles : public Function<fmatvec::MatV(Arg)> {
+      private:
+        fmatvec::MatV T;
+      public:
+        TEulerAngles() : T(3,3) { T(0,2) = 1; }
+        typename fmatvec::Size<Arg>::type getArgSize() const {
+          return 3;
+        }
+        fmatvec::MatV operator()(const Arg &q) {
+          throw std::runtime_error("TEulerAngles::operator() not yet implemented.");
+          return T;
+        }
+    };
+
+  template<class Arg> 
+    class TEulerAngles2 : public Function<fmatvec::MatV(Arg)> {
+      private:
+        fmatvec::MatV T;
+      public:
+        TEulerAngles2() : T(fmatvec::Eye()) { }
+        typename fmatvec::Size<Arg>::type getArgSize() const {
+          return 3;
+        }
+        fmatvec::MatV operator()(const Arg &q) {
+          throw std::runtime_error("TEulerAngles2::operator() not yet implemented.");
+          return T;
+        }
+    };
+
 
 }
 

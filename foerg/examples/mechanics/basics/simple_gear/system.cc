@@ -15,17 +15,6 @@ using namespace std;
 using namespace fmatvec;
 using namespace MBSim;
 
-class Moment : public Function1<fmatvec::Vec, double> {
-  double M0;
-  public:
-    Moment(double M0_) : M0(M0_) {}
-    fmatvec::Vec operator()(const double& tVal, const void * =NULL) {
-      Vec M(1);
-      M(0) = M0;
-      return M;
-    };
-};
-
 Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   double r1 = 0.02;
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -62,7 +51,7 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   Vec r(3);
   r(1) = R1+R2a;
   r(2) = l;
-  addFrame("Q",r,SqrMat(3,EYE));
+  addFrame(new FixedRelativeFrame("Q",r,SqrMat(3,EYE)));
 
   RigidBody* shaft2 = new RigidBody("Shaft2");
   addObject(shaft2);
@@ -78,7 +67,7 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
 
   r(1) = R1+R2a-R2b-R3;
   r(2) = 2*l;
-  addFrame("P",r,SqrMat(3,EYE));
+  addFrame(new FixedRelativeFrame("P",r,SqrMat(3,EYE)));
   RigidBody* shaft3 = new RigidBody("Shaft3");
   addObject(shaft3);
   shaft3->setFrameOfReference(getFrame("P"));
@@ -103,12 +92,12 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   ke = new KineticExcitation("MAn");
   addLink(ke);
   ke->connect(shaft1->getFrame("C"));
-  ke->setMoment("[0;0;1]", new Moment(1.1/100.));
+  ke->setMoment("[0;0;1]", new ConstantFunction<VecV(double)>(VecV(1,INIT,1.1/100.)));
 
   ke = new KineticExcitation("MAbL");
   addLink(ke);
   ke->connect(shaft3->getFrame("C"));
-  ke->setMoment("[0;0;1]", new Moment(-4.0/100.));
+  ke->setMoment("[0;0;1]", new ConstantFunction<VecV(double)>(VecV(1,INIT,-4.0/100.)));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Frustum *c1=new OpenMBV::Frustum;

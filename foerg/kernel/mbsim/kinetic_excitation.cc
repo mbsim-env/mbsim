@@ -126,7 +126,7 @@ namespace MBSim {
     }
   }
 
-  void KineticExcitation::setForce(fmatvec::Mat dir, Function1<fmatvec::Vec,double> *func) {
+  void KineticExcitation::setForce(fmatvec::Mat dir, Function<VecV(double)> *func) {
     forceDir << dir;
 
     for(int i=0; i<dir.cols(); i++)
@@ -136,7 +136,7 @@ namespace MBSim {
     assert((*F)(0).size()==forceDir.cols());
   }
 
-  void KineticExcitation::setMoment(fmatvec::Mat dir, Function1<fmatvec::Vec,double> *func) {
+  void KineticExcitation::setMoment(fmatvec::Mat dir, Function<VecV(double)> *func) {
     momentDir << dir;
 
     for(int i=0; i<dir.cols(); i++)
@@ -157,7 +157,7 @@ namespace MBSim {
       TiXmlElement *ee=e->FirstChildElement();
       Mat dir=getMat(ee,3,0);
       ee=ee->NextSiblingElement();
-      Function1<Vec,double> *func=ObjectFactory<Function_>::create<Function1<Vec,double> >(ee->FirstChildElement());
+      Function<VecV(double)> *func=ObjectFactory<Function<VecV(double)> >::create<Function<VecV(double)> >(ee->FirstChildElement());
       func->initializeUsingXML(ee->FirstChildElement());
       setForce(dir, func);
       ee=ee->NextSiblingElement();
@@ -175,7 +175,7 @@ namespace MBSim {
       TiXmlElement *ee=e->FirstChildElement();
       Mat dir=getMat(ee,3,0);
       ee=ee->NextSiblingElement();
-      Function1<Vec,double> *func=ObjectFactory<Function_>::create<Function1<Vec,double> >(ee->FirstChildElement());
+      Function<VecV(double)> *func=ObjectFactory<Function<VecV(double)> >::create<Function<VecV(double)> >(ee->FirstChildElement());
       func->initializeUsingXML(ee->FirstChildElement());
       setMoment(dir, func);
       ee=ee->NextSiblingElement();

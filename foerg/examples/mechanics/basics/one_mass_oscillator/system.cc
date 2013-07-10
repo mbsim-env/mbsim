@@ -21,7 +21,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
   // frames on environment 
-  this->addFrame("L",Vec(3,INIT,1.),SqrMat(3,EYE));
+  this->addFrame(new FixedRelativeFrame("L",Vec(3,INIT,1.),SqrMat(3,EYE)));
 
   // bodies
   RigidBody *mass1 = new RigidBody("Mass1");
@@ -62,13 +62,13 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
   sphere1->enableOpenMBV();
 #endif
-  mass1->addContour(sphere1,Vec(3,INIT,0.),SqrMat(3,EYE));
+  mass1->addContour(sphere1);
   Sphere *sphere2 = new Sphere("Sphere2");
   sphere2->setRadius(0.2);
 #ifdef HAVE_OPENMBVCPPINTERFACE
   sphere2->enableOpenMBV();
 #endif
-  mass2->addContour(sphere2,Vec(3,INIT,0.),SqrMat(3,EYE));
+  mass2->addContour(sphere2);
   Contact *contact = new Contact("Contact");
   contact->connect(sphere1,sphere2);
   contact->setContactForceLaw(new UnilateralConstraint());
