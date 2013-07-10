@@ -247,41 +247,32 @@ namespace MBSim {
   }
 
   void TimeDependentKinematicConstraint::calcqSize() {
-    if(!f) qSize = bd->getqRelSize();
+    //if(!f) qSize = bd->getqRelSize();
   }
 
   void TimeDependentKinematicConstraint::updateqd(double t) {
-    if(!f && fd) qd = (*fd)(t);
+    //if(!f && fd) qd = (*fd)(t);
   }
 
   void TimeDependentKinematicConstraint::updateStateDependentVariables(double t) {
-    if(f) bd->getqRel() = (*f)(t);
-    else bd->getqRel() = q;
-    if(fd) bd->getuRel() = (*fd)(t);
+    bd->getqRel() = (*f)(t);
+    bd->getuRel() = f->parDer(t);
+    //if(f) bd->getqRel() = (*f)(t);
+    //else bd->getqRel() = q;
+    //if(fd) bd->getuRel() = (*fd)(t);
   }
 
   void TimeDependentKinematicConstraint::updateJacobians(double t, int jj) {
-    if(fdd) bd->getjRel() = (*fdd)(t);
+    bd->getjRel() = f->parDerParDer(t);
+    //if(fdd) bd->getjRel() = (*fdd)(t);
   }
 
   void TimeDependentKinematicConstraint::initializeUsingXML(TiXmlElement* element) {
     KinematicConstraint::initializeUsingXML(element);
     TiXmlElement *e=element->FirstChildElement(MBSIMNS"generalizedPositionFunction");
     if(e) {
-      Function1<VecV,double> *f=ObjectFactory<Function>::create<Function1<VecV,double> >(e->FirstChildElement());
+      Function<VecV(double)> *f=ObjectFactory<Function<VecV(double)> >::create<Function<VecV(double)> >(e->FirstChildElement());
       setGeneralizedPositionFunction(f);
-      f->initializeUsingXML(e->FirstChildElement());
-    }
-    e=element->FirstChildElement(MBSIMNS"firstDerivativeOfGeneralizedPositionFunction");
-    if(e) {
-      Function1<VecV,double> *f=ObjectFactory<Function>::create<Function1<VecV,double> >(e->FirstChildElement());
-      setFirstDerivativeOfGeneralizedPositionFunction(f);
-      f->initializeUsingXML(e->FirstChildElement());
-    }
-    e=element->FirstChildElement(MBSIMNS"secondDerivativeOfGeneralizedPositionFunction");
-    if(e) {
-      Function1<VecV,double> *f=ObjectFactory<Function>::create<Function1<VecV,double> >(e->FirstChildElement());
-      setSecondDerivativeOfGeneralizedPositionFunction(f);
       f->initializeUsingXML(e->FirstChildElement());
     }
   }
@@ -291,8 +282,6 @@ namespace MBSim {
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(ke);
     ke->setDependentBody(bd);
     ke->setGeneralizedPositionFunction(f);
-    ke->setFirstDerivativeOfGeneralizedPositionFunction(fd);
-    ke->setSecondDerivativeOfGeneralizedPositionFunction(fdd);
     if(FArrow)
       ke->setOpenMBVForceArrow(FArrow);
     if(MArrow)
@@ -335,16 +324,16 @@ namespace MBSim {
   }
 
   void StateDependentKinematicConstraint::updateqd(double t) {
-    if(f) qd = (*f)(q);
+    qd = (*f)(q);
   }
 
   void StateDependentKinematicConstraint::updateStateDependentVariables(double t) {
     bd->getqRel() = q;
-    if(f) bd->getuRel() = (*f)(q);
+    bd->getuRel() = (*f)(q);
   }
 
   void StateDependentKinematicConstraint::updateJacobians(double t, int jj) {
-    if(fd) bd->getjRel() = (*fd)(qd,q);
+    bd->getjRel() = f->dirDer(qd,q);
   }
 
   void StateDependentKinematicConstraint::initializeUsingXML(TiXmlElement* element) {
@@ -353,14 +342,8 @@ namespace MBSim {
     saved_DependentBody=e->Attribute("ref");
     e=element->FirstChildElement(MBSIMNS"generalizedVelocityFunction");
     if(e) {
-      Function1<VecV,Vec> *f=ObjectFactory<Function>::create<Function1<VecV,Vec> >(e->FirstChildElement());
+      Function<VecV(VecV)> *f=ObjectFactory<Function<VecV(VecV)> >::create<Function<VecV(VecV)> >(e->FirstChildElement());
       setGeneralizedVelocityFunction(f);
-      f->initializeUsingXML(e->FirstChildElement());
-    }
-    e=element->FirstChildElement(MBSIMNS"firstDerivativeOfGeneralizedVelocityFunction");
-    if(e) {
-      Function2<VecV,Vec,Vec> *f=ObjectFactory<Function>::create<Function2<VecV,Vec,Vec> >(e->FirstChildElement());
-      setFirstDerivativeOfGeneralizedVelocityFunction(f);
       f->initializeUsingXML(e->FirstChildElement());
     }
   }
@@ -370,7 +353,6 @@ namespace MBSim {
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(ke);
     ke->setDependentBody(bd);
     ke->setGeneralizedVelocityFunction(f);
-    ke->setFirstDerivativeOfGeneralizedVelocityFunction(fd);
     if(FArrow)
       ke->setOpenMBVForceArrow(FArrow);
     if(MArrow)

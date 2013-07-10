@@ -24,44 +24,13 @@
       <translation>
         <TimeDependentTranslation>
           <translationFunction>
-            <Function1_VS_from_SS>
-              <function>
-                <Function1_SS_from_VS>
-                  <SinusFunction1_VS>
-                    <amplitude>A</amplitude>
-                    <frequency>f</frequency>
-                    <phase>pi/2</phase>
-                  </SinusFunction1_VS>
-                </Function1_SS_from_VS>
-              </function>
-              <direction>[0;1;0]</direction>
-            </Function1_VS_from_SS>
+          <SymbolicFunction1_VS arg1name="t">
+            [0; A*sin(2*pi*f*t + pi/2); 0]
+          </SymbolicFunction1_VS>
           </translationFunction>
         </TimeDependentTranslation>
       </translation>
       <rotation/>
-      <guidingVelocityOfTranslation>
-        <TimeDependentGuidingVelocity>
-          <guidingVelocityFunction>
-            <SinusFunction1_VS>
-                <amplitude>2*pi*f * A *  [0;1;0]</amplitude>
-                <frequency>f*ones(3,1)</frequency>
-                <phase>pi*ones(3,1)</phase>
-              </SinusFunction1_VS>
-            </guidingVelocityFunction>
-            </TimeDependentGuidingVelocity>
-      </guidingVelocityOfTranslation>
-      <derivativeOfGuidingVelocityOfTranslation>
-        <TimeDependentDerivativeOfGuidingVelocity>
-          <derivativeOfGuidingVelocityFunction>
-            <SinusFunction1_VS>
-              <amplitude>(2*pi*f)^2 * A * [0;1;0]</amplitude>
-              <frequency>f*ones(3,1)</frequency>
-              <phase>1.5*pi*ones(3,1)</phase>
-            </SinusFunction1_VS>
-          </derivativeOfGuidingVelocityFunction>
-        </TimeDependentDerivativeOfGuidingVelocity>
-      </derivativeOfGuidingVelocityOfTranslation>
       <frames>
         <frame>
           <Frame name="LineF">

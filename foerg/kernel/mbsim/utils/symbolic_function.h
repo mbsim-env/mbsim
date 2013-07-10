@@ -21,7 +21,6 @@
 #define SYMBOLIC_FUNCTION_H_
 
 #include <mbsim/utils/function.h>
-#include <fmatvec/function.h>
 #include <casadi/symbolic/fx/sx_function.hpp>
 #include "casadi/symbolic/matrix/matrix_tools.hpp"
 #include "mbxmlutilstinyxml/casadiXML.h"
@@ -106,11 +105,20 @@ template<typename Sig>
 class SymbolicFunction;
 
 template<typename Ret, typename Arg>
-  class SymbolicFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
-    CasADi::SXFunction f, pd, pddd, pdpd;
+  class SymbolicFunction<Ret(Arg)> : public Function<Ret(Arg)> {
+    CasADi::SXFunction f, pd, dd, pddd, pdpd;
     public:
     SymbolicFunction() {}
     SymbolicFunction(const CasADi::SXFunction &f_) : f(f_) {
+      init();
+    }
+//    SymbolicFunction(const CasADi::FX &f_) : f(CasADi::SXFunction(f_)) {
+//      f.init();
+//      pd = CasADi::SXFunction(f.inputExpr(),f.jac(0));
+//      pd.init();
+//    }
+
+    void init() {
       f.init();
       pd = CasADi::SXFunction(f.inputExpr(),f.jac());
       pd.init();
@@ -124,21 +132,18 @@ template<typename Ret, typename Arg>
       std::vector<CasADi::SXMatrix> input2(3);
       input2[0] = sqd;
       input2[1] = f.inputExpr(0);
-      CasADi::SXMatrix Jd = pd.jac().mul(sqd);
-      pddd = CasADi::SXFunction(input2,Jd);
+      dd = CasADi::SXFunction(input2,f.jac().mul(sqd));
+      dd.init();
+      pddd = CasADi::SXFunction(input2,pd.jac().mul(sqd));
       pddd.init();
       pdpd = CasADi::SXFunction(f.inputExpr(),pd.jac());
       pdpd.init();
     }
-//    SymbolicFunction(const CasADi::FX &f_) : f(CasADi::SXFunction(f_)) {
-//      f.init();
-//      pd = CasADi::SXFunction(f.inputExpr(),f.jac(0));
-//      pd.init();
-//    }
+
     CasADi::SXFunction& getSXFunction() {return f;} 
 
     typename fmatvec::Size<Arg>::type getArgSize() const {
-      f.inputExpr(0).size();
+      return f.inputExpr(0).size();
     }
 
     std::string getType() const { return "SymbolicFunction2"; }
@@ -153,6 +158,13 @@ template<typename Ret, typename Arg>
       pd.setInput(ToCasadi<Arg>::cast(x),0);
       pd.evaluate();
       return FromCasadi<typename fmatvec::Der<Ret, Arg>::type>::cast(pd.output());
+    }
+
+    Ret dirDer(const Arg &xd, const Arg &x) {
+      dd.setInput(ToCasadi<Arg>::cast(xd),0);
+      dd.setInput(ToCasadi<Arg>::cast(x),1);
+      dd.evaluate();
+      return FromCasadi<Ret>::cast(dd.output());
     }
 
     typename fmatvec::Der<Ret, Arg>::type parDerDirDer(const Arg &xd, const Arg &x) {
@@ -170,18 +182,29 @@ template<typename Ret, typename Arg>
 
     void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
       f=CasADi::createCasADiSXFunctionFromXML(element->FirstChildElement());
-      f.init();
+      init();
       assert(f.getNumInputs()==1);
       assert(f.getNumOutputs()==1);
     }
   };
 
 template<typename Ret, typename Arg1, typename Arg2>
-  class SymbolicFunction<Ret(Arg1, Arg2)> : public fmatvec::Function<Ret(Arg1, Arg2)> {
+  class SymbolicFunction<Ret(Arg1, Arg2)> : public Function<Ret(Arg1, Arg2)> {
     CasADi::SXFunction f, pd1, pd2, pd1dd1, pd1pd2, pd2dd1, pd2pd2;
     public:
     SymbolicFunction() {}
     SymbolicFunction(const CasADi::SXFunction &f_) : f(f_) {
+      init();
+    }
+//    SymbolicFunction(const CasADi::FX &f_) : f(CasADi::SXFunction(f_)) {
+//      f.init();
+//      pd1 = CasADi::SXFunction(f.inputExpr(),f.jac(0));
+//      pd1.init();
+//      pd2 = CasADi::SXFunction(f.inputExpr(),f.jac(1));
+//      pd2.init();
+//    }
+
+    void init() {
       f.init();
       pd1 = CasADi::SXFunction(f.inputExpr(),f.jac(0));
       pd1.init();
@@ -217,21 +240,15 @@ template<typename Ret, typename Arg1, typename Arg2>
       pd2pd2 = CasADi::SXFunction(f.inputExpr(),djT2);
       pd2pd2.init();
     }
-//    SymbolicFunction(const CasADi::FX &f_) : f(CasADi::SXFunction(f_)) {
-//      f.init();
-//      pd1 = CasADi::SXFunction(f.inputExpr(),f.jac(0));
-//      pd1.init();
-//      pd2 = CasADi::SXFunction(f.inputExpr(),f.jac(1));
-//      pd2.init();
-//    }
+
     CasADi::SXFunction& getSXFunction() {return f;} 
 
     typename fmatvec::Size<Arg1>::type getArg1Size() const {
-      f.inputExpr(0).size();
+      return f.inputExpr(0).size();
     }
 
     typename fmatvec::Size<Arg2>::type getArg2Size() const {
-      f.inputExpr(1).size();
+      return f.inputExpr(1).size();
     }
 
     std::string getType() const { return "SymbolicFunction2"; }
@@ -289,7 +306,7 @@ template<typename Ret, typename Arg1, typename Arg2>
 
     void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
       f=CasADi::createCasADiSXFunctionFromXML(element->FirstChildElement());
-      f.init();
+      init();
       assert(f.getNumInputs()==2);
       assert(f.getNumOutputs()==1);
     }

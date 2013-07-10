@@ -193,19 +193,19 @@ namespace MBSim {
   }
 
   void TimeDependentKinematicExcitation::updatexd(double t) {
-    if(!f && fd) xd = (*fd)(t);
+    //if(!f && fd) xd = (*fd)(t);
   }
 
   void TimeDependentKinematicExcitation::updateg(double t) {
-    if(g.size() && f) g=body->getqRel()-(*f)(t);
+    if(g.size()) g=body->getqRel()-(*f)(t);
   } 
 
   void TimeDependentKinematicExcitation::updategd(double t) {
-    if(gd.size() && fd) gd=body->getuRel()-(*fd)(t);
+    if(gd.size()) gd=body->getuRel()-f->parDer(t);
   }
 
   void TimeDependentKinematicExcitation::updatewb(double t, int j) {
-    if(fdd) wb += body->getjRel()-(*fdd)(t);
+    wb += body->getjRel()-f->parDerParDer(t);
   }
 
   void StateDependentKinematicExcitation::calcxSize() {
@@ -221,11 +221,11 @@ namespace MBSim {
   } 
 
   void StateDependentKinematicExcitation::updategd(double t) {
-    if(gd.size() && f) gd=body->getuRel()-(*f)(x);
+    if(gd.size()) gd=body->getuRel()-(*f)(x);
   }
 
   void StateDependentKinematicExcitation::updatewb(double t, int j) {
-    if (fd) wb += body->getjRel()-(*fd)(xd,x);
+    wb += body->getjRel()-f->dirDer(xd,x);
   }
 
 }

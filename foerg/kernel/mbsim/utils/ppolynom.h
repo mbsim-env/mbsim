@@ -57,22 +57,11 @@ namespace MBSim {
    * (xi,fi) i=1..N is being interpolated by N-1 piecewise polynomials Si of degree 1 yielding a globally weak differentiable curve
    * in the context of this class the second derivative is defined to be zero everywhere (which is mathematically wrong)
    */
-  template<class Row, class Col>
-  class PPolynom : public DifferentiableFunction1<fmatvec::Vector<Col,double> > {
-    public:
-      /*! 
-       * \brief constructor
-       */
-      PPolynom() : DifferentiableFunction1<fmatvec::Vector<Col,double> >() {
-        this->addDerivative(new PPolynom<Row,Col>::ZerothDerivative(this));
-        this->addDerivative(new PPolynom<Row,Col>::FirstDerivative(this));
-        this->addDerivative(new PPolynom<Row,Col>::SecondDerivative(this));
-      }
+template<class Row, class Col>
+  class PPolynom : public Function<fmatvec::Vector<Col,double>(double)> {
 
-      /*! 
-       * \brief destructor
-       */
-      virtual ~PPolynom() {}
+    public:
+      PPolynom() : f(this), fd(this), fdd(this) { }
 
       /*! 
        * \brief set interpolation
@@ -160,16 +149,20 @@ namespace MBSim {
        */
       void calculatePLinear(const fmatvec::Vector<Row,double> &x, const fmatvec::Matrix<fmatvec::General,Row,Col,double> &f);
 
-      /**
+      fmatvec::Vector<Col,double> operator()(const double &x) { return f(x); }
+      typename fmatvec::Der<fmatvec::Vector<Col,double>, double>::type parDer(const double &x) { return fd(x); }
+      typename fmatvec::Der<typename fmatvec::Der<fmatvec::Vector<Col,double>, double>::type, double>::type parDerParDer(const double &x) { return fdd(x); }
+
+     /**
        * piecewise polynomial interpolation - zeroth derivative
        */
-      class ZerothDerivative : public Function1<fmatvec::Vector<Col,double>,double> {
+      class ZerothDerivative {
         public:
-          ZerothDerivative(PPolynom<Row,Col> *polynom) : Function1<fmatvec::Vector<Col,double>,double>(), parent(polynom), xSave(0), ySave(), firstCall(true) {}
+          ZerothDerivative(PPolynom<Row,Col> *polynom) : parent(polynom), xSave(0), ySave(), firstCall(true) {}
           virtual ~ZerothDerivative() {}
 
           /* INHERITED INTERFACE OF FUNCTION */
-          fmatvec::Vector<Col,double> operator()(const double& x, const void * =NULL);
+          fmatvec::Vector<Col,double> operator()(const double &x);
           /***************************************************/
 
         private:
@@ -182,13 +175,13 @@ namespace MBSim {
       /**
        * piecewise polynomial interpolation - first derivative
        */
-      class FirstDerivative : public Function1<fmatvec::Vector<Col,double>,double> {
+      class FirstDerivative {
         public:
-          FirstDerivative(PPolynom<Row,Col> *polynom) : Function1<fmatvec::Vector<Col,double>,double>(), parent(polynom), xSave(0), ySave(), firstCall(true) {}
+          FirstDerivative(PPolynom<Row,Col> *polynom) : parent(polynom), xSave(0), ySave(), firstCall(true) {}
           virtual ~FirstDerivative() {}
 
           /* INHERITED INTERFACE OF FUNCTION */
-          fmatvec::Vector<Col,double> operator()(const double& x, const void * =NULL);
+          fmatvec::Vector<Col,double> operator()(const double& x);
           /***************************************************/
 
         private:
@@ -201,13 +194,13 @@ namespace MBSim {
       /**
        * piecewise polynomial interpolation - second derivative
        */
-      class SecondDerivative : public Function1<fmatvec::Vector<Col,double>,double> {
+      class SecondDerivative {
         public:
-          SecondDerivative(PPolynom<Row,Col> *polynom) : Function1<fmatvec::Vector<Col,double>,double>(), parent(polynom), xSave(0), ySave(), firstCall(true) {}
+          SecondDerivative(PPolynom<Row,Col> *polynom) : parent(polynom), xSave(0), ySave(), firstCall(true) {}
           virtual ~SecondDerivative() {}
 
           /* INHERITED INTERFACE OF FUNCTION */
-          fmatvec::Vector<Col,double> operator()(const double& x, const void * =NULL);
+          fmatvec::Vector<Col,double> operator()(const double& x);
           /***************************************************/
 
         private:
@@ -216,6 +209,11 @@ namespace MBSim {
           fmatvec::Vector<Col,double> ySave;
           bool firstCall;
       };
+
+    private:
+      ZerothDerivative f;
+      FirstDerivative fd;
+      SecondDerivative fdd;
   };
 
   template<class Row, class Col>
@@ -396,7 +394,7 @@ namespace MBSim {
   }
           
   template<class Row, class Col>
-  fmatvec::Vector<Col,double> PPolynom<Row,Col>::ZerothDerivative::operator()(const double& x, const void *) {
+  fmatvec::Vector<Col,double> PPolynom<Row,Col>::ZerothDerivative::operator()(const double& x) {
     if(x>(parent->breaks)(parent->nPoly)) 
       throw MBSimError("ERROR (PPolynom::operator()): x out of range! x= "+numtostr(x)+", upper bound= "+numtostr((parent->breaks)(parent->nPoly)));
     if(x<(parent->breaks)(0)) 
@@ -426,7 +424,7 @@ namespace MBSim {
   }
 
   template<class Row, class Col>
-  fmatvec::Vector<Col,double> PPolynom<Row,Col>::FirstDerivative::operator()(const double& x, const void *) {
+  fmatvec::Vector<Col,double> PPolynom<Row,Col>::FirstDerivative::operator()(const double& x) {
     if(x>(parent->breaks)(parent->nPoly)) throw MBSimError("ERROR (PPolynom::diff1): x out of range! x= "+numtostr(x)+", upper bound= "+numtostr((parent->breaks)(parent->nPoly)));
     if(x<(parent->breaks)(0)) throw MBSimError("ERROR (PPolynom::diff1): x out of range!   x= "+numtostr(x)+" lower bound= "+numtostr((parent->breaks)(0)));
 
@@ -454,7 +452,7 @@ namespace MBSim {
   }
 
   template<class Row, class Col>
-  fmatvec::Vector<Col,double> PPolynom<Row,Col>::SecondDerivative::operator()(const double& x, const void *) {
+  fmatvec::Vector<Col,double> PPolynom<Row,Col>::SecondDerivative::operator()(const double& x) {
     if(x>(parent->breaks)(parent->nPoly)) throw MBSimError("ERROR (PPolynom::diff2): x out of range!   x= "+numtostr(x)+" upper bound= "+numtostr((parent->breaks)(parent->nPoly)));
     if(x<(parent->breaks)(0)) throw MBSimError("ERROR (PPolynom::diff2): x out of range!   x= "+numtostr(x)+" lower bound= "+numtostr((parent->breaks)(0)));
 
@@ -483,8 +481,7 @@ namespace MBSim {
 
   template<class Row, class Col>
   void PPolynom<Row,Col>::initializeUsingXML(MBXMLUtils::TiXmlElement * element) {
-    DifferentiableFunction1<fmatvec::Vector<Col,double> >::initializeUsingXML(element);
-    MBXMLUtils::TiXmlElement * e;
+    MBXMLUtils::TiXmlElement *e;
     fmatvec::Vector<Row,double> x;
     fmatvec::Matrix<fmatvec::General,Row,Col,double> y;
     e=element->FirstChildElement(MBSIMNS"x");
