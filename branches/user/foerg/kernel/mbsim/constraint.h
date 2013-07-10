@@ -130,9 +130,7 @@ namespace MBSim {
 
       void calcqSize();
 
-      void setGeneralizedPositionFunction(Function1<fmatvec::VecV,double>* f_) { f = f_;}
-      void setFirstDerivativeOfGeneralizedPositionFunction(Function1<fmatvec::VecV,double>* fd_) { fd = fd_;}
-      void setSecondDerivativeOfGeneralizedPositionFunction(Function1<fmatvec::VecV,double>* fdd_) { fdd = fdd_;}
+      void setGeneralizedPositionFunction(Function<fmatvec::VecV(double)>* f_) { f = f_;}
 
       void setUpInverseKinetics();
 
@@ -145,7 +143,7 @@ namespace MBSim {
       virtual std::string getType() const { return "TimeDependentKinematicConstraint"; }
 
     private:
-      Function1<fmatvec::VecV,double> *f, *fd, *fdd;
+      Function<fmatvec::VecV(double)> *f;
   };
 
   class StateDependentKinematicConstraint : public KinematicConstraint {
@@ -158,8 +156,7 @@ namespace MBSim {
 
       void calcqSize();
 
-      void setGeneralizedVelocityFunction(Function1<fmatvec::VecV,fmatvec::Vec>* f_) { f = f_;}
-      void setFirstDerivativeOfGeneralizedVelocityFunction(Function2<fmatvec::VecV,fmatvec::Vec,fmatvec::Vec>* fd_) { fd = fd_;}
+      void setGeneralizedVelocityFunction(Function<fmatvec::VecV(fmatvec::VecV)>* f_) { f = f_;}
 
       virtual void setUpInverseKinetics();
 
@@ -172,8 +169,7 @@ namespace MBSim {
       virtual std::string getType() const { return "StateDependetKinematicConstraint"; }
 
     private:
-      Function1<fmatvec::VecV,fmatvec::Vec> *f; 
-      Function2<fmatvec::VecV,fmatvec::Vec,fmatvec::Vec> *fd; 
+      Function<fmatvec::VecV(fmatvec::VecV)> *f; 
   };
 
   /** 

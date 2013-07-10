@@ -19,61 +19,13 @@
       <translation>
         <TimeDependentTranslation>
           <translationFunction>
-            <Function1_VS_from_SS>
-              <function>
-                <Function1_SS_from_VS>
-                  <SinusFunction1_VS>
-                    <orderOfDerivative>0</orderOfDerivative> <!-- optional -->
-                    <amplitude>2e-4</amplitude>
-                    <frequency>100</frequency>
-                    <phase>0</phase>
-                  </SinusFunction1_VS>
-                </Function1_SS_from_VS>
-              </function>
-              <direction>[0;1;0]</direction>
-            </Function1_VS_from_SS>
+            <SymbolicFunction1_VS arg1name="t">
+              [0; 2e-4*sin(2*pi*100*t); 0]
+            </SymbolicFunction1_VS>
           </translationFunction>
         </TimeDependentTranslation>
       </translation>
       <rotation/>
-      <guidingVelocityOfTranslation>
-        <TimeDependentGuidingVelocity>
-          <guidingVelocityFunction>
-            <Function1_VS_from_SS>
-              <function>
-                <Function1_SS_from_VS>
-                  <SinusFunction1_VS>
-                    <orderOfDerivative>1</orderOfDerivative> <!-- optional -->
-                    <amplitude>2e-4</amplitude>
-                    <frequency>100</frequency>
-                    <phase>0</phase>
-                  </SinusFunction1_VS>
-                </Function1_SS_from_VS>
-              </function>
-              <direction>[0;1;0]</direction>
-            </Function1_VS_from_SS>
-          </guidingVelocityFunction>
-        </TimeDependentGuidingVelocity>
-      </guidingVelocityOfTranslation>
-      <derivativeOfGuidingVelocityOfTranslation>
-        <TimeDependentDerivativeOfGuidingVelocity>
-          <derivativeOfGuidingVelocityFunction>
-            <Function1_VS_from_SS>
-              <function>
-                <Function1_SS_from_VS>
-                  <SinusFunction1_VS>
-                    <orderOfDerivative>2</orderOfDerivative> <!-- optional -->
-                    <amplitude>2e-4</amplitude>
-                    <frequency>100</frequency>
-                    <phase>0</phase>
-                  </SinusFunction1_VS>
-                </Function1_SS_from_VS>
-              </function>
-              <direction>[0;1;0]</direction>
-            </Function1_VS_from_SS>
-          </derivativeOfGuidingVelocityFunction>
-        </TimeDependentDerivativeOfGuidingVelocity>
-      </derivativeOfGuidingVelocityOfTranslation>
       <frames/>
       <contours/>
       <openMBVRigidBody>

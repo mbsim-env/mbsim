@@ -24,16 +24,43 @@
 #include <mbsim/element.h>
 #include <mbsim/utils/utils.h>
 #include <mbsim/utils/eps.h>
-
-#include <fmatvec.h>
+#include <fmatvec/fmatvec.h>
+#include <fmatvec/function.h>
 
 namespace MBSim {
 
+  template<typename Sig>
+    class Function;
+
+  template<typename Ret, typename Arg>
+    class Function<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
+      public:
+        virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+        virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { 
+          MBXMLUtils::TiXmlElement *ele0=new MBXMLUtils::TiXmlElement(MBSIMNS+getType());
+          parent->LinkEndChild(ele0);
+          return ele0;
+        }
+        virtual std::string getType() const { return "Function1"; }
+    };
+
+  template<typename Ret, typename Arg1, typename Arg2>
+    class Function<Ret(Arg1, Arg2)> : public fmatvec::Function<Ret(Arg1, Arg2)> {
+      public:
+        virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
+        virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { 
+          MBXMLUtils::TiXmlElement *ele0=new MBXMLUtils::TiXmlElement(MBSIMNS+getType());
+          parent->LinkEndChild(ele0);
+          return ele0;
+        }
+        virtual std::string getType() const { return "Function2"; }
+    };
+
   // abstract base class for all Functions
   // (required to be able to case Function of different type dynamically (in ObjectFactory))
-  class Function {
+  class Function_ {
     public:
-      virtual ~Function() {}
+      virtual ~Function_() {}
   };
 
   /*! 
@@ -42,7 +69,7 @@ namespace MBSim {
    * \date 2009-08-31 some comments (Thorsten Schindler)
    */
   template<class Ret, class Arg>
-    class Function1 : public Function {
+    class Function1 : public Function_ {
       public:
         /**
          * \brief destructor
@@ -81,7 +108,7 @@ namespace MBSim {
    * \date 2009-08-31 some comments (Thorsten Schindler)
    */
   template<class Ret, class Arg1, class Arg2>
-    class Function2 : public Function {
+    class Function2 : public Function_ {
       public:
         /**
          * \brief destructor
@@ -120,7 +147,7 @@ namespace MBSim {
    * \date 2009-08-31 some comments (Thorsten Schindler)
    */
   template<class Ret, class Arg1, class Arg2, class Arg3>
-    class Function3 : public Function {
+    class Function3 : public Function_ {
       public:
         /**
          * \brief destructor

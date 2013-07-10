@@ -20,7 +20,6 @@
 #include <config.h>
 #ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
 #include <mbsim/utils/symbolic_function.h>
-
 using namespace fmatvec;
 #endif
 
@@ -28,34 +27,35 @@ namespace MBSim {
 
 #ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
 
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction1<double COMMA double>, MBSIMNS"SymbolicFunction1_SS")
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction1<Vec  COMMA double>, MBSIMNS"SymbolicFunction1_VS")
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction1<VecV COMMA double>, MBSIMNS"SymbolicFunction1_VS")
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction1<Vec3 COMMA double>, MBSIMNS"SymbolicFunction1_VS")
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction1<Vec  COMMA Vec >, MBSIMNS"SymbolicFunction1_VV")
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction1<Vec  COMMA VecV>, MBSIMNS"SymbolicFunction1_VV")
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction1<Vec  COMMA Vec3>, MBSIMNS"SymbolicFunction1_VV")
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction1<VecV COMMA Vec >, MBSIMNS"SymbolicFunction1_VV")
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction1<VecV COMMA VecV>, MBSIMNS"SymbolicFunction1_VV")
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction1<VecV COMMA Vec3>, MBSIMNS"SymbolicFunction1_VV")
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction1<Vec3 COMMA Vec >, MBSIMNS"SymbolicFunction1_VV")
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction1<Vec3 COMMA VecV>, MBSIMNS"SymbolicFunction1_VV")
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction1<Vec3 COMMA Vec3>, MBSIMNS"SymbolicFunction1_VV")
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction1<double COMMA Vec >, MBSIMNS"SymbolicFunction1_SV")
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction1<double COMMA VecV>, MBSIMNS"SymbolicFunction1_SV")
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction1<double COMMA Vec3>, MBSIMNS"SymbolicFunction1_SV")
-//
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction2<double  COMMA double  COMMA double>, MBSIMNS"SymbolicFunction2_SSS")
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction2<Vec  COMMA Vec  COMMA double>, MBSIMNS"SymbolicFunction2_VVS")
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction2<Vec  COMMA VecV COMMA double>, MBSIMNS"SymbolicFunction2_VVS")
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction2<Vec  COMMA Vec3 COMMA double>, MBSIMNS"SymbolicFunction2_VVS")
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction2<VecV COMMA Vec  COMMA double>, MBSIMNS"SymbolicFunction2_VVS")
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction2<VecV COMMA VecV COMMA double>, MBSIMNS"SymbolicFunction2_VVS")
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction2<VecV COMMA Vec3 COMMA double>, MBSIMNS"SymbolicFunction2_VVS")
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction2<Vec3 COMMA Vec  COMMA double>, MBSIMNS"SymbolicFunction2_VVS")
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction2<Vec3 COMMA VecV COMMA double>, MBSIMNS"SymbolicFunction2_VVS")
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction2<Vec3 COMMA Vec3 COMMA double>, MBSIMNS"SymbolicFunction2_VVS")
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function, SymbolicFunction2<Vec COMMA Vec COMMA Vec>, MBSIMNS"SymbolicFunction2_VVV")
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double)>, SymbolicFunction<double(double)>, MBSIMNS"SymbolicFunction1_SS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec(double)>, SymbolicFunction<Vec(double)>, MBSIMNS"SymbolicFunction1_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<VecV(double)>, SymbolicFunction<VecV(double)>, MBSIMNS"SymbolicFunction1_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec3(double)>, SymbolicFunction<Vec3(double)>, MBSIMNS"SymbolicFunction1_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec(Vec)>, SymbolicFunction<Vec(Vec)>, MBSIMNS"SymbolicFunction1_VV")
+  //MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec(VecV)>, SymbolicFunction<Vec(VecV)>, MBSIMNS"SymbolicFunction1_VV")
+  //MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec(Vec3)>, SymbolicFunction<Vec(Vec3)>, MBSIMNS"SymbolicFunction1_VV")
+  //MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<VecV(Vec)>, SymbolicFunction<VecV(Vec)>, MBSIMNS"SymbolicFunction1_VV")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<VecV(VecV)>, SymbolicFunction<VecV(VecV)>, MBSIMNS"SymbolicFunction1_VV")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<VecV(Vec3)>, SymbolicFunction<VecV(Vec3)>, MBSIMNS"SymbolicFunction1_VV")
+  //MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec3(Vec)>, SymbolicFunction<Vec3(Vec)>, MBSIMNS"SymbolicFunction1_VV")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec3(VecV)>, SymbolicFunction<Vec3(VecV)>, MBSIMNS"SymbolicFunction1_VV")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec3(Vec3)>, SymbolicFunction<Vec3(Vec3)>, MBSIMNS"SymbolicFunction1_VV")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(Vec)>, SymbolicFunction<double(Vec)>, MBSIMNS"SymbolicFunction1_SV")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(VecV)>, SymbolicFunction<double(VecV)>, MBSIMNS"SymbolicFunction1_SV")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(Vec3)>, SymbolicFunction<double(Vec3)>, MBSIMNS"SymbolicFunction1_SV")
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double,double)>, SymbolicFunction<double(double,double)>, MBSIMNS"SymbolicFunction2_SSS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec(Vec,double)>, SymbolicFunction<Vec(Vec,double)>, MBSIMNS"SymbolicFunction2_VVS")
+  //MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec(VecV,double)>, SymbolicFunction<Vec(VecV,double)>, MBSIMNS"SymbolicFunction2_VVS")
+  //MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec(Vec3,double)>, SymbolicFunction<Vec(Vec3,double)>, MBSIMNS"SymbolicFunction2_VVS")
+  //MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<VecV(Vec,double)>, SymbolicFunction<VecV(Vec,double)>, MBSIMNS"SymbolicFunction2_VVS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<VecV(VecV,double)>, SymbolicFunction<VecV(VecV,double)>, MBSIMNS"SymbolicFunction2_VVS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<VecV(Vec3,double)>, SymbolicFunction<VecV(Vec3,double)>, MBSIMNS"SymbolicFunction2_VVS")
+  //MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec3(Vec,double)>, SymbolicFunction<Vec3(Vec,double)>, MBSIMNS"SymbolicFunction2_VVS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec3(VecV,double)>, SymbolicFunction<Vec3(VecV,double)>, MBSIMNS"SymbolicFunction2_VVS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec3(Vec3,double)>, SymbolicFunction<Vec3(Vec3,double)>, MBSIMNS"SymbolicFunction2_VVS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec(Vec,Vec)>, SymbolicFunction<Vec(Vec,Vec)>, MBSIMNS"SymbolicFunction2_VVV")
 
 #endif
 

@@ -31,6 +31,11 @@ using namespace fmatvec;
 
 namespace MBSim {
 
+  class TestFunction : public Function<Vec3(double)> {
+    public:
+      Vec3 operator()(const double &t) { return 0; }
+  };
+
   void Translation::init() {
     J.resize(getuSize());
     T.resize(getqSize(),getuSize(),Eye());
@@ -51,45 +56,40 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Translation, GeneralTranslation, MBSIMNS"GeneralTranslation")
 
-////  void GeneralTranslation::initializeUsingXML(TiXmlElement *element) {
-////    Translation::initializeUsingXML(element);
-////    TiXmlElement *e;
-////    e=element->FirstChildElement(MBSIMNS"translationFunction");
-////    pos=ObjectFactory<Function>::create<Function2<Vec3,VecV,double> >(e->FirstChildElement());
-////    pos->initializeUsingXML(e->FirstChildElement());
-////#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
-////    // set qSize for symbolic function (qSize if given by user)
-////    SymbolicFunction2<Vec3,VecV,double> *symPos=dynamic_cast<SymbolicFunction2<Vec3,VecV,double>*>(pos);
-////    if(symPos)
-////      qSize=symPos->getSXFunction().inputExpr(0).size1();
-////#endif
-////  }
+  void GeneralTranslation::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"translationFunction");
+    fr=ObjectFactory<Function<Vec3(VecV,double)> >::create<Function<Vec3(VecV,double)> >(e->FirstChildElement());
+    fr->initializeUsingXML(e->FirstChildElement());
+  }
+
+  TiXmlElement* GeneralTranslation::writeXMLFile(TiXmlNode *parent) {
+    return 0;
+  }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Translation, StateDependentTranslation, MBSIMNS"StateDependentTranslation")
 
-//  void StateDependentTranslation::initializeUsingXML(TiXmlElement *element) {
-//    Translation::initializeUsingXML(element);
-//    TiXmlElement *e;
-//    e=element->FirstChildElement(MBSIMNS"translationFunction");
-//    pos=ObjectFactory<Function>::create<Function1<Vec3,VecV> >(e->FirstChildElement());
-//    pos->initializeUsingXML(e->FirstChildElement());
-//#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
-//    // set qSize for symbolic function (qSize if given by user)
-//    SymbolicFunction1<Vec3,VecV> *symPos=dynamic_cast<SymbolicFunction1<Vec3,VecV>*>(pos);
-//    if(symPos)
-//      qSize=symPos->getSXFunction().inputExpr(0).size1();
-//#endif
-//  }
+  void StateDependentTranslation::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"translationFunction");
+    fr=ObjectFactory<Function<Vec3(VecV)> >::create<Function<Vec3(VecV)> >(e->FirstChildElement());
+    fr->initializeUsingXML(e->FirstChildElement());
+  }
+
+  TiXmlElement* StateDependentTranslation::writeXMLFile(TiXmlNode *parent) {
+    return 0;
+  }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Translation, TimeDependentTranslation, MBSIMNS"TimeDependentTranslation")
 
-//  void TimeDependentTranslation::initializeUsingXML(TiXmlElement *element) {
-//    RotationIndependentTranslation::initializeUsingXML(element);
-//    TiXmlElement *e;
-//    e=element->FirstChildElement(MBSIMNS"translationFunction");
-//    pos=ObjectFactory<Function>::create<Function1<Vec3,double> >(e->FirstChildElement());
-//    pos->initializeUsingXML(e->FirstChildElement());
-//  }
+  void TimeDependentTranslation::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"translationFunction");
+    fr=ObjectFactory<Function<Vec3(double)> >::create<Function<Vec3(double)> >(e->FirstChildElement());
+    fr->initializeUsingXML(e->FirstChildElement());
+  }
+
+  TiXmlElement* TimeDependentTranslation::writeXMLFile(TiXmlNode *parent) {
+    return 0;
+  }
+
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Translation, TranslationInXDirection, MBSIMNS"TranslationInXDirection")
 
@@ -205,14 +205,34 @@ namespace MBSim {
     return ele0;
   }
 
+  void StateDependentLinearTranslation::init() {
+    Translation::init();
+    J = D;
+  }
+
+  void StateDependentLinearTranslation::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"translationalFunction");
+    fq=ObjectFactory<Function<VecV(VecV)> >::create<Function<VecV(VecV)> >(e->FirstChildElement());
+    fq->initializeUsingXML(e->FirstChildElement());
+  }
+
+  TiXmlElement* StateDependentLinearTranslation::writeXMLFile(TiXmlNode *parent) {
+    return 0;
+  }
+
   void TimeDependentLinearTranslation::init() {
     Translation::init();
     J = D;
   }
 
-  void StateDependentLinearTranslation::init() {
-    Translation::init();
-    J = D;
+  void TimeDependentLinearTranslation::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"translationalFunction");
+    fq=ObjectFactory<Function<VecV(double)> >::create<Function<VecV(double)> >(e->FirstChildElement());
+    fq->initializeUsingXML(e->FirstChildElement());
+  }
+
+  TiXmlElement* TimeDependentLinearTranslation::writeXMLFile(TiXmlNode *parent) {
+    return 0;
   }
 
   void Rotation::init() {
@@ -489,7 +509,31 @@ namespace MBSim {
     J = getAxisOfRotation();
   }
 
+  void StateDependentRotationAboutFixedAxis::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"axisOfRotation");
+    setAxisOfRotation(Element::getVec3(e));
+    e=element->FirstChildElement(MBSIMNS"rotationalFunction");
+    falpha=ObjectFactory<Function<double(VecV)> >::create<Function<double(VecV)> >(e->FirstChildElement());
+    falpha->initializeUsingXML(e->FirstChildElement());
+  }
+
+  TiXmlElement* StateDependentRotationAboutFixedAxis::writeXMLFile(TiXmlNode *parent) {
+    return 0;
+  }
+
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Rotation, TimeDependentRotationAboutFixedAxis, MBSIMNS"TimeDependentRotationAboutFixedAxis")
+
+  void TimeDependentRotationAboutFixedAxis::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"axisOfRotation");
+    setAxisOfRotation(Element::getVec3(e));
+    e=element->FirstChildElement(MBSIMNS"rotationalFunction");
+    falpha=ObjectFactory<Function<double(double)> >::create<Function<double(double)> >(e->FirstChildElement());
+    falpha->initializeUsingXML(e->FirstChildElement());
+  }
+
+  TiXmlElement* TimeDependentRotationAboutFixedAxis::writeXMLFile(TiXmlNode *parent) {
+    return 0;
+  }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Rotation, CardanAngles, MBSIMNS"CardanAngles")
 
@@ -510,13 +554,15 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Rotation, TimeDependentCardanAngles, MBSIMNS"TimeDependentCardanAngles")
 
-//  void TimeDependentCardanAngles::initializeUsingXML(TiXmlElement *element) {
-//    TranslationIndependentRotation::initializeUsingXML(element);
-//    TiXmlElement *e;
-//    e=element->FirstChildElement(MBSIMNS"rotationalFunction");
-//    angle=ObjectFactory<Function>::create<Function1<Vec3,double> >(e->FirstChildElement());
-//    angle->initializeUsingXML(e->FirstChildElement());
-//  }
+  void TimeDependentCardanAngles::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"rotationalFunction");
+    fangles=ObjectFactory<Function<VecV(double)> >::create<Function<VecV(double)> >(e->FirstChildElement());
+    fangles->initializeUsingXML(e->FirstChildElement());
+  }
+
+  TiXmlElement* TimeDependentCardanAngles::writeXMLFile(TiXmlNode *parent) {
+    return 0;
+  }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Rotation, EulerAngles, MBSIMNS"EulerAngles")
 

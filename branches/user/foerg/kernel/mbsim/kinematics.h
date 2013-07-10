@@ -20,8 +20,6 @@
 #ifndef _KINEMATICS_H_
 #define _KINEMATICS_H_
 
-#include "fmatvec.h"
-#include "function.h"
 #include "mbsim/utils/function.h"
 
 namespace MBSim {
@@ -47,7 +45,7 @@ namespace MBSim {
     };
 
   template<class Arg> 
-    class FRotationAboutFixedAxis : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
+    class FRotationAboutFixedAxis : public Function<fmatvec::RotMat3(Arg)> {
       private:
         fmatvec::RotMat3 A;
         fmatvec::Vec3 a;
@@ -86,7 +84,7 @@ namespace MBSim {
     };
 
   template<class Arg> 
-    class FRotationAboutAxesXYZ : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
+    class FRotationAboutAxesXYZ : public Function<fmatvec::RotMat3(Arg)> {
       private:
         fmatvec::RotMat3 A;
         fmatvec::Mat3xV J, Jd;
@@ -156,7 +154,7 @@ namespace MBSim {
     };
   
   template<class Arg> 
-    class FRotationAboutAxesZXZ : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
+    class FRotationAboutAxesZXZ : public Function<fmatvec::RotMat3(Arg)> {
       private:
         fmatvec::RotMat3 A;
         fmatvec::Mat3xV J, Jd;
@@ -197,7 +195,7 @@ namespace MBSim {
     };
 
   template<class Arg> 
-    class TCardanAngles : public fmatvec::Function<fmatvec::MatV(Arg)> {
+    class TCardanAngles : public Function<fmatvec::MatV(Arg)> {
       private:
         fmatvec::MatV T;
       public:
@@ -224,7 +222,7 @@ namespace MBSim {
     };
 
   template<class Arg> 
-    class TCardanAngles2 : public fmatvec::Function<fmatvec::MatV(Arg)> {
+    class TCardanAngles2 : public Function<fmatvec::MatV(Arg)> {
       private:
         fmatvec::MatV T;
       public:
@@ -251,7 +249,7 @@ namespace MBSim {
     };
 
   template<class Arg> 
-    class TEulerAngles : public fmatvec::Function<fmatvec::MatV(Arg)> {
+    class TEulerAngles : public Function<fmatvec::MatV(Arg)> {
       private:
         fmatvec::MatV T;
       public:
@@ -266,7 +264,7 @@ namespace MBSim {
     };
 
   template<class Arg> 
-    class TEulerAngles2 : public fmatvec::Function<fmatvec::MatV(Arg)> {
+    class TEulerAngles2 : public Function<fmatvec::MatV(Arg)> {
       private:
         fmatvec::MatV T;
       public:
@@ -319,13 +317,13 @@ namespace MBSim {
 
 //  class GeneralTranslation : public Translation {
 //    protected:
-//      fmatvec::Function<fmatvec::Vec3(fmatvec::VecV, double)> *fr;
-//      fmatvec::Function<fmatvec::MatV(fmatvec::VecV, double)> *fT;
+//      Function<fmatvec::Vec3(fmatvec::VecV, double)> *fr;
+//      Function<fmatvec::MatV(fmatvec::VecV, double)> *fT;
 //      fmatvec::Mat3xV drdq, dotdrdq;
 //      fmatvec::MatV dotT;
 //
 //    public:
-//      GeneralTranslation(fmatvec::Function<fmatvec::Vec3(fmatvec::VecV, double)> *fr_=0, fmatvec::Function<fmatvec::MatV(fmatvec::VecV, double)> *fT_=0) : fr(fr_), fT(fT_) { }
+//      GeneralTranslation(Function<fmatvec::Vec3(fmatvec::VecV, double)> *fr_=0, Function<fmatvec::MatV(fmatvec::VecV, double)> *fT_=0) : fr(fr_), fT(fT_) { }
 //
 //      virtual ~GeneralTranslation() { delete fr; delete fT; }
 //
@@ -344,11 +342,11 @@ namespace MBSim {
 
   class GeneralTranslation : public Translation {
     protected:
-      fmatvec::Function<fmatvec::Vec3(fmatvec::VecV, double)> *fr;
+      Function<fmatvec::Vec3(fmatvec::VecV, double)> *fr;
       fmatvec::Mat3xV drdq, dotdrdq;
 
     public:
-      GeneralTranslation(fmatvec::Function<fmatvec::Vec3(fmatvec::VecV, double)> *fr_=0) : fr(fr_) { }
+      GeneralTranslation(Function<fmatvec::Vec3(fmatvec::VecV, double)> *fr_=0) : fr(fr_) { }
 
       ~GeneralTranslation() { delete fr; }
 
@@ -359,14 +357,17 @@ namespace MBSim {
       void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { j = fr->parDer2(q,t); }
       void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { dotdrdq = fr->parDer1DirDer1(qd,q,t)+fr->parDer1ParDer2(q,t); Jd = dotdrdq; }
       void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { jd = fr->parDer2DirDer1(qd,q,t) + fr->parDer2ParDer2(q,t); }
-  };
+
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+ };
 
   class StateDependentTranslation : public Translation {
     protected:
-      fmatvec::Function<fmatvec::Vec3(fmatvec::VecV)> *fr;
+      Function<fmatvec::Vec3(fmatvec::VecV)> *fr;
 
     public:
-      StateDependentTranslation(fmatvec::Function<fmatvec::Vec3(fmatvec::VecV)> *fr_=0) : fr(fr_) { }
+      StateDependentTranslation(Function<fmatvec::Vec3(fmatvec::VecV)> *fr_=0) : fr(fr_) { }
 
       ~StateDependentTranslation() { delete fr; }
 
@@ -375,22 +376,30 @@ namespace MBSim {
       void updatePosition(const fmatvec::VecV &q, const double &t) { r = (*fr)(q); }
       void updateJacobian(const fmatvec::VecV &q, const double &t) { J = fr->parDer(q); }
       void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { Jd = fr->parDerDirDer(qd,q); }
+
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
   class TimeDependentTranslation : public Translation {
     protected:
-      fmatvec::Function<fmatvec::Vec3(double)> *fr;
+      Function<fmatvec::Vec3(double)> *fr;
 
     public:
-      TimeDependentTranslation(fmatvec::Function<fmatvec::Vec3(double)> *fr_=0) : fr(fr_) { }
+      TimeDependentTranslation(Function<fmatvec::Vec3(double)> *fr_=0) : fr(fr_) { }
 
       ~TimeDependentTranslation() { delete fr; }
+
+      bool isIndependent() const { return true; }
 
       int getqSize() const { return 0; }
 
       void updatePosition(const fmatvec::VecV &q, const double &t) { r = (*fr)(t); }
       void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { j = fr->parDer(t); }
       void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { jd = fr->parDerParDer(t); }
+
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
   class TranslationInXDirection : public Translation {
@@ -404,7 +413,6 @@ namespace MBSim {
 
       void updatePosition(const fmatvec::VecV &q, const double &t) { r(0) = q(0); }
 
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
@@ -419,7 +427,6 @@ namespace MBSim {
 
       void updatePosition(const fmatvec::VecV &q, const double &t) { r(1) = q(0); }
 
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
@@ -434,7 +441,6 @@ namespace MBSim {
 
       void updatePosition(const fmatvec::VecV &q, const double &t) { r(2) = q(0); }
 
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
@@ -449,7 +455,6 @@ namespace MBSim {
 
       void updatePosition(const fmatvec::VecV &q, const double &t) { r(0) = q(0); r(1) = q(1); }
 
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
@@ -464,7 +469,6 @@ namespace MBSim {
 
       void updatePosition(const fmatvec::VecV &q, const double &t) { r(0) = q(0); r(2) = q(1); }
 
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
@@ -479,7 +483,6 @@ namespace MBSim {
 
       void updatePosition(const fmatvec::VecV &q, const double &t) { r(1) = q(0); r(2) = q(1); }
 
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
@@ -494,7 +497,6 @@ namespace MBSim {
 
       void updatePosition(const fmatvec::VecV &q, const double &t) { r(0) = q(0); r(1) = q(1); r(2) = q(2); }
 
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
@@ -521,12 +523,12 @@ namespace MBSim {
 
   class StateDependentLinearTranslation : public Translation {
     protected:
-      fmatvec::Function<fmatvec::VecV(fmatvec::VecV)> *fq;
+      Function<fmatvec::VecV(fmatvec::VecV)> *fq;
       fmatvec::Mat3xV D;
 
     public:
       StateDependentLinearTranslation() : fq(0) { }
-      StateDependentLinearTranslation(fmatvec::Function<fmatvec::VecV(fmatvec::VecV)> *fq_, const fmatvec::Mat3xV &D_) : fq(fq_), D(D_) { }
+      StateDependentLinearTranslation(Function<fmatvec::VecV(fmatvec::VecV)> *fq_, const fmatvec::Mat3xV &D_) : fq(fq_), D(D_) { }
       ~StateDependentLinearTranslation() { delete fq; }
 
       void init();
@@ -536,16 +538,19 @@ namespace MBSim {
       void updatePosition(const fmatvec::VecV &q, const double &t) { r = D*(*fq)(q); }
       void updateJacobian(const fmatvec::VecV &q, const double &t) { J = D*fq->parDer(q); }
       void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { Jd = D*fq->parDerDirDer(qd,q); }
+
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
   class TimeDependentLinearTranslation : public Translation {
     protected:
-      fmatvec::Function<fmatvec::VecV(double)> *fq;
+      Function<fmatvec::VecV(double)> *fq;
       fmatvec::Mat3xV D;
 
     public:
       TimeDependentLinearTranslation() : fq(0) { }
-      TimeDependentLinearTranslation(fmatvec::Function<fmatvec::VecV(double)> *fq_, const fmatvec::Mat3xV &D_) : fq(fq_), D(D_) { }
+      TimeDependentLinearTranslation(Function<fmatvec::VecV(double)> *fq_, const fmatvec::Mat3xV &D_) : fq(fq_), D(D_) { }
       ~TimeDependentLinearTranslation() { delete fq; }
 
       void init();
@@ -555,6 +560,9 @@ namespace MBSim {
       void updatePosition(const fmatvec::VecV &q, const double &t) { r = D*(*fq)(t); }
       void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { j = D*fq->parDer(t); }
       void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { jd = D*fq->parDerParDer(t); }
+
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
   class Rotation {
@@ -601,15 +609,15 @@ namespace MBSim {
 
 //  class Rotation {
 //    protected:
-//      fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fA;
-//      fmatvec::Function<fmatvec::MatV(fmatvec::VecV, double)> *fT;
+//      Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fA;
+//      Function<fmatvec::MatV(fmatvec::VecV, double)> *fT;
 //      fmatvec::RotMat3 A;
 //      fmatvec::Vec3 j, jd;
 //      fmatvec::Mat3xV J, Jd, dAdq, dotdAdq;
 //      fmatvec::MatV T, dotT;
 //
 //    public:
-//      Rotation(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fA_=0, fmatvec::Function<fmatvec::MatV(fmatvec::VecV, double)> *fT_=0) : fA(fA_), fT(fT_) { }
+//      Rotation(Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fA_=0, Function<fmatvec::MatV(fmatvec::VecV, double)> *fT_=0) : fA(fA_), fT(fT_) { }
 //
 //      virtual ~Rotation() {delete fA; delete fT;}
 //
@@ -640,11 +648,11 @@ namespace MBSim {
 
   class GeneralRotation : public Rotation {
     protected:
-      fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fA;
+      Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fA;
       fmatvec::Mat3xV dAdq, dotdAdq;
 
     public:
-      GeneralRotation(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fA_=0) : fA(fA_) { }
+      GeneralRotation(Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fA_=0) : fA(fA_) { }
 
       ~GeneralRotation() { delete fA; }
 
@@ -669,7 +677,6 @@ namespace MBSim {
 
       void updateOrientation(const fmatvec::VecV &q, const double &t);
 
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
@@ -683,7 +690,6 @@ namespace MBSim {
 
       void updateOrientation(const fmatvec::VecV &q, const double &t);
 
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
@@ -697,7 +703,6 @@ namespace MBSim {
 
       void updateOrientation(const fmatvec::VecV &q, const double &t);
 
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
@@ -711,7 +716,6 @@ namespace MBSim {
       void updateJacobian(const fmatvec::VecV &q, const double &t); 
       void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t); 
 
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
@@ -725,7 +729,6 @@ namespace MBSim {
       void updateJacobian(const fmatvec::VecV &q, const double &t); 
       void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t); 
 
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
@@ -739,7 +742,6 @@ namespace MBSim {
       void updateJacobian(const fmatvec::VecV &q, const double &t); 
       void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t); 
 
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
@@ -755,7 +757,6 @@ namespace MBSim {
       void updateJacobian(const fmatvec::VecV &q, const double &t) { J = f.parDer(q); }
       void updateDerivativeOfJacobian(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) { Jd = f.parDerDirDer(qd,q); }
 
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {}
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
@@ -784,11 +785,11 @@ namespace MBSim {
 
   class StateDependentRotationAboutFixedAxis : public Rotation {
     private:
-      fmatvec::Function<double(fmatvec::VecV)> *falpha;
+      Function<double(fmatvec::VecV)> *falpha;
       FRotationAboutFixedAxis<double> f;
 
     public:
-      StateDependentRotationAboutFixedAxis(fmatvec::Function<double(fmatvec::VecV)> *falpha_=0, const fmatvec::Vec3 &a=fmatvec::Vec3()) : falpha(falpha_), f(a) { }
+      StateDependentRotationAboutFixedAxis(Function<double(fmatvec::VecV)> *falpha_=0, const fmatvec::Vec3 &a=fmatvec::Vec3()) : falpha(falpha_), f(a) { }
 
       ~StateDependentRotationAboutFixedAxis() { delete falpha; }
 
@@ -804,15 +805,18 @@ namespace MBSim {
 
       const fmatvec::Vec3& getAxisOfRotation() const { return f.getAxisOfRotation(); }
       void setAxisOfRotation(const fmatvec::Vec3 &a) { f.setAxisOfRotation(a); }
+
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
   class TimeDependentRotationAboutFixedAxis : public Rotation {
     protected:
-      fmatvec::Function<double(double)> *falpha;
+      Function<double(double)> *falpha;
       FRotationAboutFixedAxis<double> f;
 
     public:
-      TimeDependentRotationAboutFixedAxis(fmatvec::Function<double(double)> *falpha_=0, const fmatvec::Vec3 &a=fmatvec::Vec3()) : falpha(falpha_), f(a) { }
+      TimeDependentRotationAboutFixedAxis(Function<double(double)> *falpha_=0, const fmatvec::Vec3 &a=fmatvec::Vec3()) : falpha(falpha_), f(a) { }
 
       ~TimeDependentRotationAboutFixedAxis() { delete falpha; }
 
@@ -826,12 +830,15 @@ namespace MBSim {
 
       const fmatvec::Vec3& getAxisOfRotation() const { return f.getAxisOfRotation(); }
       void setAxisOfRotation(const fmatvec::Vec3 &a) { f.setAxisOfRotation(a); }
+
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
   class CardanAngles : public Rotation {
     private:
       FRotationAboutAxesXYZ<fmatvec::VecV> fA;
-      fmatvec::Function<fmatvec::MatV(fmatvec::VecV)> *fT;
+      Function<fmatvec::MatV(fmatvec::VecV)> *fT;
     public:
       ~CardanAngles() { delete fT; }
 
@@ -853,12 +860,12 @@ namespace MBSim {
 
   class TimeDependentCardanAngles : public Rotation {
     protected:
-      fmatvec::Function<fmatvec::VecV(double)> *fangles;
+      Function<fmatvec::VecV(double)> *fangles;
       FRotationAboutAxesXYZ<fmatvec::VecV> fA;
       TCardanAngles<fmatvec::VecV> fT;
 
     public:
-      TimeDependentCardanAngles(fmatvec::Function<fmatvec::VecV(double)> *fangles_=0) : fangles(fangles_) { }
+      TimeDependentCardanAngles(Function<fmatvec::VecV(double)> *fangles_=0) : fangles(fangles_) { }
 
       ~TimeDependentCardanAngles() { delete fangles; }
 
@@ -869,6 +876,9 @@ namespace MBSim {
       void updateOrientation(const fmatvec::VecV &q, const double &t) { A = fA((*fangles)(t)); }
       void updateGuidingVelocity(const fmatvec::VecV &q, const double &t) { j = fangles->parDer(t); }
       void updateDerivativeOfGuidingVelocity(const fmatvec::VecV &qd, const fmatvec::VecV &q, const double &t) {jd = fangles->parDerParDer(t); }
+
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
   class EulerAngles : public Rotation {
