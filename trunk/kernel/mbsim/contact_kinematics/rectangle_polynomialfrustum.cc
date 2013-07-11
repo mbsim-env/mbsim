@@ -255,7 +255,6 @@ namespace MBSim {
     double weightsum = 0;
 
     double h = frustum->getHeight();
-    int signh = sign(h);
 
     for (int i = 0; i < 4; i++) {
       cornerPoints[i] = frustum->getFrame()->getOrientation().T() * (rectangle->getFrame()->getPosition() + rectangle->getFrame()->getOrientation() * cornerPoints[i] - frustum->getFrame()->getPosition());
