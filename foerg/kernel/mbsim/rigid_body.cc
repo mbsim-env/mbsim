@@ -128,52 +128,34 @@ namespace MBSim {
       int nqT=0, nqR=0, nuT=0, nuR=0;
       nq=0, nu[0]=0;
       if(fPrPK) {
-        if(fPrPK->isIndependent()) {
-          nqT = fPrPK->getqSize();
-          nuT = fPrPK->getuSize();
-        }
-        else {
-          nq = fPrPK->getqSize();
-          nu[0] = fPrPK->getuSize();
-        }
+        nqT = fPrPK->getqSize();
+        nuT = fPrPK->getuSize();
       }
       if(fAPK) {
-        if(fAPK->isIndependent()) {
-          nqR = fAPK->getqSize();
-          nuR = fAPK->getuSize();
-        }
-        else {
-          int nqtmp = fAPK->getqSize();
-          if(nq) assert(nq==nqtmp);
-          nq = nqtmp;
-          int nutmp = fAPK->getuSize();
-          if(nu[0]) assert(nu[0]==nutmp);
-          nu[0] = nutmp;
-        }
+        nqR = fAPK->getqSize();
+        nuR = fAPK->getuSize();
       }
 
-      if(nq == 0)
-        nq = nqT + nqR;
-      if(nqT)
-        iqT = Range<Var,Var>(0,nqT-1);
-      else
+      if(dep) {
+        assert(nqT = nqR);
+        assert(nuT = nuR);
+        nq = nqT;
+        nu[0] = nuT;
         iqT = Range<Var,Var>(0,nq-1);
-      if(nqR)
-        iqR = Range<Var,Var>(nq-nqR,nq-1);
-      else
         iqR = Range<Var,Var>(0,nq-1);
-
-      if(nu[0] == 0)
-        nu[0] = nuT + nuR;
-      nu[1] = 6;
-      if(nuT)
-        iuT = Range<Var,Var>(0,nuT-1);
-      else
         iuT = Range<Var,Var>(0,nu[0]-1);
-      if(nuR)
-        iuR = Range<Var,Var>(nu[0]-nuR,nu[0]-1);
-      else
         iuR = Range<Var,Var>(0,nu[0]-1);
+      }
+      else {
+        nq = nqT + nqR;
+        nu[0] = nuT + nuR;
+        iqT = Range<Var,Var>(0,nqT-1);
+        iqR = Range<Var,Var>(nq-nqR,nq-1);
+        iuT = Range<Var,Var>(0,nuT-1);
+        iuR = Range<Var,Var>(nu[0]-nuR,nu[0]-1);
+      }
+
+      nu[1] = 6;
 
       if(constraint)
         dependency.push_back(constraint);
@@ -221,9 +203,6 @@ namespace MBSim {
       PJT[0].resize(nu[0]);
       PJR[0].resize(nu[0]);
 
-      PdJT.resize(nu[0]);
-      PdJR.resize(nu[0]);
-
       PJT[1].resize(nu[1]);
       PJR[1].resize(nu[1]);
       for(int i=0; i<3; i++)
@@ -248,9 +227,6 @@ namespace MBSim {
 
       updateM_ = &RigidBody::updateMNotConst;
       facLLM_ = &RigidBody::facLLMNotConst;
-
-      if(constraint)
-	TRel.resize(nq,nu[0]);
     }
     else if(stage==MBSim::unknownStage) {
       Body::init(stage);
@@ -262,13 +238,11 @@ namespace MBSim {
         frameForJacobianOfRotation = K;
         if(K == C && dynamic_cast<DynamicSystem*>(R->getParent())) {
           if(fPrPK) {
-            qTRel = qRel(iqT);
-            fPrPK->updateStateDependentVariables(qTRel,0);
+            fPrPK->updateJacobian(qRel(iqT),0);
             PJT[0].set(i02,iuT,fPrPK->getJacobian());
           }
           if(fAPK) {
-            qRRel = qRel(iqR);
-            fAPK->updateStateDependentVariables(qRRel,0);
+            fAPK->updateJacobian(qRel(iqR),0);
             PJR[0].set(i02,iuR,fAPK->getJacobian());
           }
           updateM_ = &RigidBody::updateMConst;
@@ -373,34 +347,55 @@ namespace MBSim {
     }
   }
 
+  void RigidBody::updateqd(double t) {
+    if(!constraint) {
+      if(fPrPK) qd(iqT) = fPrPK->getqd();
+      if(fAPK) qd(iqR) = fAPK->getqd();
+    }
+  }
+
+  void RigidBody::updatedq(double t, double dt) {
+    if(!constraint) {
+      if(fPrPK) {
+        fPrPK->updateqd(uRel(iuT));
+        qd(iqT) = fPrPK->getqd()*dt;
+      }
+      if(fAPK) {
+        fAPK->updateqd(uRel(iuR));
+        qd(iqR) = fAPK->getqd()*dt;
+      }
+    }
+  }
+
   void RigidBody::updateT(double t) {
-    if(fPrPK) TRel(iqT,iuT) = fPrPK->getT();
-    if(fAPK) TRel(iqR,iuR) = fAPK->getT();
+    if(!constraint) {
+      if(fPrPK) T(iqT,iuT) = fPrPK->getT();
+      if(fAPK) T(iqR,iuR) = fAPK->getT();
+    }
   }
 
   void RigidBody::updateKinematicsForSelectedFrame(double t) {
 
     if(fPrPK) {
       qTRel = qRel(iqT);
-      fPrPK->updateStateDependentVariables(qTRel,t);
+      uTRel = uRel(iuT);
+      fPrPK->updateStateDependentVariables(uTRel,qTRel,t);
       PrPK = fPrPK->getPosition();
       PJT[0].set(i02,iuT,fPrPK->getJacobian());
-      PjT = fPrPK->getGuidingVelocity();
+      WvPKrel = R->getOrientation()*fPrPK->getVelocity();
     }
 
     if(fAPK) {
       qRRel = qRel(iqR);
-      fAPK->updateStateDependentVariables(qRRel,t);
+      uRRel = uRel(iuR);
+      fAPK->updateStateDependentVariables(uRRel,qRRel,t);
       APK = fAPK->getOrientation();
       PJR[0].set(i02,iuR,fAPK->getJacobian());
-      PjR = fAPK->getGuidingVelocity();
+      WomPK = frameForJacobianOfRotation->getOrientation()*fAPK->getAngularVelocity();
     }
 
     K->setOrientation(R->getOrientation()*APK);
-
     WrPK = R->getOrientation()*PrPK;
-    WomPK = frameForJacobianOfRotation->getOrientation()*(PJR[0]*uRel + PjR);
-    WvPKrel = R->getOrientation()*(PJT[0]*uRel + PjT);
 
     K->setAngularVelocity(R->getAngularVelocity() + WomPK);
     K->setPosition(WrPK + R->getPosition());
@@ -411,27 +406,12 @@ namespace MBSim {
     K->getJacobianOfTranslation().init(0);
     K->getJacobianOfRotation().init(0);
 
-//    Vec qdRel = TRel*uRel;
-
-    if(fPrPK) {
-      qdTRel = TRel(iqT,iuT)*uRel(iuT);
-      fPrPK->updateStateDerivativeDependentVariables(qdTRel,qTRel,t);
-
-      PdJT.set(i02,iuT,fPrPK->getDerivativeOfJacobian());
-      PdjT = fPrPK->getDerivativeOfGuidingVelocity();
-    }
-
-    if(fAPK) {
-      qdRRel = TRel(iqR,iuR)*uRel(iuR);
-      fAPK->updateStateDerivativeDependentVariables(qdRRel,qRRel,t);
-
-      PdJR.set(i02,iuR,fAPK->getDerivativeOfJacobian());
-      PdjR = fAPK->getDerivativeOfGuidingVelocity();
-    }
+    if(fPrPK) PjbT = fPrPK->getGyroscopicAcceleration();
+    if(fAPK) PjbR = fAPK->getGyroscopicAcceleration();
 
     SqrMat3 tWrPK = tilde(WrPK);
-    K->setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation() - tWrPK*R->getGyroscopicAccelerationOfRotation() + R->getOrientation()*(PdJT*uRel + PdjT + PJT[0]*jRel) + crossProduct(R->getAngularVelocity(), 2.*WvPKrel+crossProduct(R->getAngularVelocity(),WrPK)));
-    K->setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation() + frameForJacobianOfRotation->getOrientation()*(PdJR*uRel + PdjR + PJR[0]*jRel) + crossProduct(R->getAngularVelocity(), WomPK));
+    K->setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation() - tWrPK*R->getGyroscopicAccelerationOfRotation() + R->getOrientation()*(PjbT + PJT[0]*jRel) + crossProduct(R->getAngularVelocity(), 2.*WvPKrel+crossProduct(R->getAngularVelocity(),WrPK)));
+    K->setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation() + frameForJacobianOfRotation->getOrientation()*(PjbR + PJR[0]*jRel) + crossProduct(R->getAngularVelocity(), WomPK));
 
     K->getJacobianOfTranslation().set(i02,Index(0,R->getJacobianOfTranslation().cols()-1), R->getJacobianOfTranslation() - tWrPK*R->getJacobianOfRotation());
     K->getJacobianOfRotation().set(i02,Index(0,R->getJacobianOfRotation().cols()-1), R->getJacobianOfRotation());
@@ -479,11 +459,6 @@ namespace MBSim {
   void RigidBody::updateuRef(const Vec& ref) {
     Object::updateuRef(ref);
     if(!constraint) uRel>>u;
-  }
-
-  void RigidBody::updateTRef(const Mat& ref) {
-    Object::updateTRef(ref);
-    if(!constraint) TRel>>T;
   }
 
   void RigidBody::addFrame(FixedRelativeFrame *frame_) {
@@ -538,12 +513,14 @@ namespace MBSim {
 
     if(fPrPK) {
       qTRel = qRel(iqT);
-      fPrPK->updateStateDependentVariables(qTRel,t);
+      uTRel = uRel(iuT);
+      fPrPK->updateStateDependentVariables(uTRel,qTRel,t);
       PrPK = fPrPK->getPosition();
     }
     if(fAPK) {
       qRRel = qRel(iqR);
-      fAPK->updateStateDependentVariables(qRRel,t);
+      uRRel = uRel(iuR);
+      fAPK->updateStateDependentVariables(uRRel,qRRel,t);
       APK = fAPK->getOrientation();
     }
 
@@ -569,19 +546,19 @@ namespace MBSim {
 
     if(fPrPK) {
       PJT[0].set(i02,iuT,fPrPK->getJacobian());
-      PjT = fPrPK->getGuidingVelocity();
+      PjhT = fPrPK->getGuidingVelocity();
     }
 
     if(fAPK) {
       PJR[0].set(i02,iuR,fAPK->getJacobian());
-      PjR = fAPK->getGuidingVelocity();
+      PjhR = fAPK->getGuidingVelocity();
     }
 
     WJRrel = frameForJacobianOfRotation->getOrientation()*PJR[0];
     WJTrel = R->getOrientation()*PJT[0];
 
-    K->setVelocity(R->getOrientation()*PjT+R->getVelocity() + crossProduct(R->getAngularVelocity(),WrPK));
-    K->setAngularVelocity(frameForJacobianOfRotation->getOrientation()*PjR + R->getAngularVelocity());
+    K->setVelocity(R->getOrientation()*PjhT+R->getVelocity() + crossProduct(R->getAngularVelocity(),WrPK));
+    K->setAngularVelocity(frameForJacobianOfRotation->getOrientation()*PjhR + R->getAngularVelocity());
 
     if(K != C) {
       C->updateAngularVelocity();
@@ -599,32 +576,22 @@ namespace MBSim {
   void RigidBody::updateAccelerations(double t, Frame *P) {
     K->getJacobianOfTranslation().init(0);
     K->getJacobianOfRotation().init(0);
-    //Vec qdRel = TRel*uRel;
 
     if(fPrPK) {
-      qdTRel = TRel(iqT,iuT)*uRel(iuT);
-      fPrPK->updateStateDerivativeDependentVariables(qdTRel,qTRel,t);
-      PdJT.set(i02,iuT,fPrPK->getDerivativeOfJacobian());
-      PdjT = fPrPK->getDerivativeOfGuidingVelocity();
+      WvPKrel = R->getOrientation()*fPrPK->getVelocity();
+      PjbT = fPrPK->getGyroscopicAcceleration();
     }
     if(fAPK) {
-      qdRRel = TRel(iqR,iuR)*uRel(iuR);
-      fAPK->updateStateDerivativeDependentVariables(qdRRel,qRRel,t);
-      PdJR.set(i02,iuR,fAPK->getDerivativeOfJacobian());
-      PdjR = fAPK->getDerivativeOfGuidingVelocity();
+      WomPK = frameForJacobianOfRotation->getOrientation()*fAPK->getAngularVelocity();
+      PjbR = fAPK->getGyroscopicAcceleration();
     }
-
-    WomPK = frameForJacobianOfRotation->getOrientation()*(PJR[0]*uRel + PjR);
-    WvPKrel = R->getOrientation()*(PJT[0]*uRel + PjT);
-
-    //frame[i]->setAngularVelocity(R->getAngularVelocity() + WomPK);
 
     // TODO prüfen ob Optimierungspotential
 
     SqrMat3 tWrPK = tilde(WrPK);
 
-    K->setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation() - tWrPK*R->getGyroscopicAccelerationOfRotation() + R->getOrientation()*(PdJT*uRel + PdjT) + crossProduct(R->getAngularVelocity(), 2.*WvPKrel+crossProduct(R->getAngularVelocity(),WrPK)));
-    K->setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation() + frameForJacobianOfRotation->getOrientation()*(PdJR*uRel + PdjR) + crossProduct(R->getAngularVelocity(), WomPK));
+    K->setGyroscopicAccelerationOfTranslation(R->getGyroscopicAccelerationOfTranslation() - tWrPK*R->getGyroscopicAccelerationOfRotation() + R->getOrientation()*PjbT + crossProduct(R->getAngularVelocity(), 2.*WvPKrel+crossProduct(R->getAngularVelocity(),WrPK)));
+    K->setGyroscopicAccelerationOfRotation(R->getGyroscopicAccelerationOfRotation() + frameForJacobianOfRotation->getOrientation()*PjbR + crossProduct(R->getAngularVelocity(), WomPK));
 
     K->getJacobianOfTranslation().set(i02,Index(0,R->getJacobianOfTranslation().cols()-1), R->getJacobianOfTranslation() - tWrPK*R->getJacobianOfRotation());
     K->getJacobianOfRotation().set(i02,Index(0,R->getJacobianOfRotation().cols()-1), R->getJacobianOfRotation());
@@ -732,13 +699,15 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"rotation");
     Rotation *rot=ObjectFactory<Rotation>::create<Rotation>(e->FirstChildElement());
     if(rot) {
-      setRotation(rot);
       rot->initializeUsingXML(e->FirstChildElement());
+      TiXmlElement *ee=e->FirstChildElement(MBSIMNS"isDependent");
+      bool dep = false;
+      if(ee) dep = getBool(ee);
+      setRotation(rot,dep);
     }
 
     e=element->FirstChildElement(MBSIMNS"isFrameOfBodyForRotation");
-    if(e)
-      isFrameOfBodyForRotation(getBool(e));
+    if(e) isFrameOfBodyForRotation(getBool(e));
 
     // END
 #ifdef HAVE_OPENMBVCPPINTERFACE

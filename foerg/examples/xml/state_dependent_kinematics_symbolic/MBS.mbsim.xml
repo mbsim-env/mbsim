@@ -45,6 +45,7 @@
                         <SymbolicFunction1_SV arg1name="s" arg1dim="1">pi/2+s/R</SymbolicFunction1_SV>
                     </rotationalFunction>
                 </StateDependentRotationAboutFixedAxis>
+                <isDependent>true</isDependent>
             </rotation>
             <frames />
             <contours />

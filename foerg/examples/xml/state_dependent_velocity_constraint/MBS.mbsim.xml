@@ -45,6 +45,7 @@
                         <SymbolicFunction1_SV arg1name="x" arg1dim="1">atan(-c*2*x)</SymbolicFunction1_SV>
                     </rotationalFunction>
                 </StateDependentRotationAboutFixedAxis>
+                <isDependent>true</isDependent>
             </rotation>
             <frames />
             <contours />

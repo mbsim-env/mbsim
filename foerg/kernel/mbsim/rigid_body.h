@@ -72,6 +72,8 @@ namespace MBSim {
         constraint = constraint_;
       }
 
+      virtual void updatedq(double t, double dt);
+      virtual void updateqd(double t); 
       virtual void updateT(double t);
       virtual void updateh(double t, int j=0);
       virtual void updateh0Fromh1(double t);
@@ -98,7 +100,6 @@ namespace MBSim {
       /* INHERITED INTERFACE OF OBJECT */
       virtual void updateqRef(const fmatvec::Vec& ref);
       virtual void updateuRef(const fmatvec::Vec& ref);
-      virtual void updateTRef(const fmatvec::Mat &ref);
       virtual void init(InitStage stage);
       virtual void initz();
       virtual void facLLM(int i=0) { (this->*facLLM_)(i); }
@@ -141,17 +142,17 @@ namespace MBSim {
        * \brief set Kinematic for rotational motion
        * \param fAPK rotational kinematic description
        */
-      void setRotation(Rotation* fAPK_)        { fAPK  = fAPK_;  }
+      void setRotation(Rotation* fAPK_, bool dep_=false) { fAPK  = fAPK_; dep = dep_; }
       /*!
        * \brief get Kinematic for translational motion
        * \return translational kinematic description
        */
-      Translation* getTranslation()            { return fPrPK;   }
+      Translation* getTranslation() { return fPrPK; }
       /*!
        * \brief get Kinematic for rotational motion
        * \return rotational kinematic description
        */
-      Rotation*    getRotation()               { return fAPK;    }
+      Rotation* getRotation() { return fAPK; }
 
       void setMass(double m_) { m = m_; }
       double getMass() const { return m; }
@@ -284,12 +285,9 @@ namespace MBSim {
       /**
        * JACOBIAN of translation, rotation and their derivatives in parent system
        */
-      fmatvec::Mat3xV PJT[2], PJR[2], PdJT, PdJR;
+      fmatvec::Mat3xV PJT[2], PJR[2];
 
-      /**
-       * guiding velocities of translation, rotation and their derivatives in parent system
-       */
-      fmatvec::Vec3 PjT, PjR, PdjT, PdjR;
+      fmatvec::Vec3 PjhT, PjhR, PjbT, PjbR;
 
       /**
        * \brief rotation matrix from kinematic Frame to parent Frame
@@ -357,11 +355,9 @@ namespace MBSim {
       fmatvec::Mat JRel[2];
       fmatvec::Vec jRel;
 
-      fmatvec::VecV qTRel, qRRel, qdTRel, qdRRel;
+      fmatvec::VecV qTRel, qRRel, uTRel, uRRel;
       fmatvec::Mat3xV WJTrel,WJRrel;
       fmatvec::Vec3 WjTrel,WjRrel;
-
-      fmatvec::Mat TRel;
 
       Constraint *constraint;
 
@@ -375,6 +371,8 @@ namespace MBSim {
       Frame *frameForInertiaTensor;
 
       fmatvec::Range<fmatvec::Var,fmatvec::Var> iqT, iqR, iuT, iuR;
+
+      bool dep;
 
     private:
 #ifdef HAVE_OPENMBVCPPINTERFACE

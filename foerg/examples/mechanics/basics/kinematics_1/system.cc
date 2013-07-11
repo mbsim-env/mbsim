@@ -10,44 +10,6 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
 
-// class MyPos : public fmatvec::Function<Vec3(VecV, double)> {
-//   public:
-//     int getArg1Size() {return 0;}
-//     Vec3 operator()(const VecV &q, const double &t) {
-//       Vec3 PrPK;
-//       double om = 1;
-//       PrPK(0) = cos(om*t);
-//       PrPK(1) = sin(om*t);
-//       return PrPK;
-//     }; 
-//     Mat3xV parDer1(const VecV &q, const double &t) {
-//       return Mat3xV();
-//     }
-//     Vec3 parDer2(const VecV &q, const double &t) {
-//       Vec3 j;
-//       double om = 1;
-//       j(0) = -sin(om*t)*om;
-//       j(1) =  cos(om*t)*om;
-//       return j;
-//     }
-//     Mat3xV parDer1ParDer2(const VecV &q, const double &t) {
-//       return Mat3xV();
-//     }
-//     Mat3xV parDer1DirDer1(const VecV &qd, const VecV &q, const double &t) {
-//       return Mat3xV();
-//     }
-//     Vec3 parDer2ParDer2(const VecV &q, const double &t) {
-//       Vec3 dj;
-//       double om = 1;
-//       dj(0) = -cos(om*t)*om*om;
-//       dj(1) =  -sin(om*t)*om*om;
-//       return dj;
-//     }
-//     Vec3 parDer2DirDer1(const VecV &qd, const VecV &q, const double &t) {
-//       return Vec3();
-//     }
-// };
-
 class MyPos : public Translation {
   public:
     int getqSize() const {return 0;}
@@ -56,19 +18,15 @@ class MyPos : public Translation {
       r(0) = cos(om*t);
       r(1) = sin(om*t);
     }; 
-    void updateJacobian(const VecV &q, const double &t) {
-    }
     void updateGuidingVelocity(const VecV &q, const double &t) {
       double om = 1;
-      j(0) = -sin(om*t)*om;
-      j(1) =  cos(om*t)*om;
+      jh(0) = -sin(om*t)*om;
+      jh(1) =  cos(om*t)*om;
     }
-    void updateDerivativeOfJacobian(const VecV &qd, const VecV &q, const double &t) {
-    }
-    void updateDerivativeOfGuidingVelocity(const VecV &qd, const VecV &q, const double &t) {
+    void updateGyroscopicAcceleration(const VecV &u, const VecV &q, const double &t) {
       double om = 1;
-      jd(0) = -cos(om*t)*om*om;
-      jd(1) =  -sin(om*t)*om*om;
+      jb(0) = -cos(om*t)*om*om;
+      jb(1) =  -sin(om*t)*om*om;
     }
 };
 

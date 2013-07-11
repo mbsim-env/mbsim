@@ -39,19 +39,16 @@ namespace MBSim {
   void Translation::init() {
     J.resize(getuSize());
     T.resize(getqSize(),getuSize(),Eye());
-    Jd.resize(getuSize());
   }
 
-  void Translation::updateStateDependentVariables(const VecV &q, const double &t) {
+  void Translation::updateStateDependentVariables(const fmatvec::VecV &u, const fmatvec::VecV &q, const double &t) {
     updatePosition(q,t);
-    updateT(q,t); 
     updateJacobian(q,t);
     updateGuidingVelocity(q,t);
-  }
-
-  void Translation::updateStateDerivativeDependentVariables(const VecV &qd, const VecV &q, const double &t) {
-    updateDerivativeOfJacobian(qd,q,t);
-    updateDerivativeOfGuidingVelocity(qd,q,t);
+    updateT(q,t);
+    updateqd(u);
+    updateVelocity(u,q,t);
+    updateGyroscopicAcceleration(u,q,t);
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Translation, GeneralTranslation, MBSIMNS"GeneralTranslation")
@@ -238,19 +235,16 @@ namespace MBSim {
   void Rotation::init() {
     J.resize(getuSize());
     T.resize(getqSize(),getuSize(),Eye());
-    Jd.resize(getuSize());
   }
 
-  void Rotation::updateStateDependentVariables(const VecV &q, const double &t) {
+  void Rotation::updateStateDependentVariables(const fmatvec::VecV &u, const fmatvec::VecV &q, const double &t) {
     updateOrientation(q,t);
-    updateT(q,t); 
     updateJacobian(q,t);
     updateGuidingVelocity(q,t);
-  }
-
-  void Rotation::updateStateDerivativeDependentVariables(const VecV &qd, const VecV &q, const double &t) {
-    updateDerivativeOfJacobian(qd,q,t);
-    updateDerivativeOfGuidingVelocity(qd,q,t);
+    updateT(q,t);
+    updateqd(u);
+    updateAngularVelocity(u,q,t);
+    updateGyroscopicAcceleration(u,q,t);
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Rotation, RotationAboutXAxis, MBSIMNS"RotationAboutXAxis")
@@ -360,15 +354,12 @@ namespace MBSim {
     J(2,1) = sin(a);
   }
 
-  void RotationAboutAxesXY::updateDerivativeOfJacobian(const VecV &qd, const VecV &q, const double &t) {
+  void RotationAboutAxesXY::updateGyroscopicAcceleration(const VecV &u, const VecV &q, const double &t) {
     double a = q(0);
-    double ad = qd(0);
-    Jd(0,0) = 0;
-    Jd(0,1) = 0;
-    Jd(1,0) = 0;
-    Jd(1,1) = -sin(a)*ad;
-    Jd(2,0) = 0;
-    Jd(2,1) = cos(a)*ad;
+    double ad = u(0);
+    double bd = u(1);
+    jb(1) = -sin(a)*ad*bd;
+    jb(2) = cos(a)*ad*bd;
   }
 
   TiXmlElement* RotationAboutAxesXY::writeXMLFile(TiXmlNode *parent) {
@@ -409,16 +400,13 @@ namespace MBSim {
     J(2,1) = cos(a);
   }
 
-  void RotationAboutAxesXZ::updateDerivativeOfJacobian(const VecV &qd, const VecV &q, const double &t) {
+  void RotationAboutAxesXZ::updateGyroscopicAcceleration(const VecV &u, const VecV &q, const double &t) {
     double a = q(0);
-    double ad = qd(0);
-    Jd(0,0) = 0;
-    Jd(0,1) = 0;
-    Jd(1,0) = 0;
-    Jd(1,1) = -cos(a)*ad;
-    Jd(2,0) = 0;
-    Jd(2,1) = -sin(a)*ad;
-  }
+    double ad = u(0);
+    double bd = u(1);
+    jb(1) = -cos(a)*ad*bd;
+    jb(2) = -sin(a)*ad*bd;
+ }
 
   TiXmlElement* RotationAboutAxesXZ::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"RotationAboutAxesXZ" );
@@ -458,15 +446,12 @@ namespace MBSim {
     J(2,1) = cos(beta);
   }
 
-  void RotationAboutAxesYZ::updateDerivativeOfJacobian(const VecV &qd, const VecV &q, const double &t) {
+  void RotationAboutAxesYZ::updateGyroscopicAcceleration(const VecV &u, const VecV &q, const double &t) {
     double beta = q(0);
-    double betad = qd(0);
-    Jd(0,0) = 0;
-    Jd(0,1) = cos(beta)*betad;
-    Jd(1,0) = 0;
-    Jd(1,1) = 0;
-    Jd(2,0) = 0;
-    Jd(2,1) = -sin(beta)*betad;
+    double betad = u(0);
+    double gammad = u(1);
+    jb(0) = cos(beta)*betad*gammad;
+    jb(2) = -sin(beta)*betad*gammad;
   }
 
   TiXmlElement* RotationAboutAxesYZ::writeXMLFile(TiXmlNode *parent) {
@@ -564,17 +549,17 @@ namespace MBSim {
     return 0;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Rotation, EulerAngles, MBSIMNS"EulerAngles")
-
-  void EulerAngles::init() {
-    Rotation::init();
-    J.init(Eye());
-  }
-
-  TiXmlElement* EulerAngles::writeXMLFile(TiXmlNode *parent) {
-    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"EulerAngles" );
-    parent->LinkEndChild(ele0);
-    return ele0;
-  }
+//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Rotation, EulerAngles, MBSIMNS"EulerAngles")
+//
+//  void EulerAngles::init() {
+//    Rotation::init();
+//    J.init(Eye());
+//  }
+//
+//  TiXmlElement* EulerAngles::writeXMLFile(TiXmlNode *parent) {
+//    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"EulerAngles" );
+//    parent->LinkEndChild(ele0);
+//    return ele0;
+//  }
 
 }
