@@ -26,7 +26,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_, Function1_SS_from_VS, MBSIMNS"Function1_SS_from_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double)>, Function1_SS_from_VS, MBSIMNS"Function1_SS_from_VS")
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_, QuadraticFunction1_VS<Ref>, MBSIMNS"QuadraticFunction1_VS")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_, QuadraticFunction1_VS<Var>, MBSIMNS"QuadraticFunction1_VS")
@@ -36,19 +36,15 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_, SinusFunction1_VS<Var>, MBSIMNS"SinusFunction1_VS")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_, SinusFunction1_VS<Fixed<3> >, MBSIMNS"SinusFunction1_VS")
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_, TabularFunction1_VS<Ref COMMA Ref>, MBSIMNS"TabularFunction1_VS")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_, TabularFunction1_VS<Var COMMA Var>, MBSIMNS"TabularFunction1_VS")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_, TabularFunction1_VS<Var COMMA Fixed<3> >, MBSIMNS"TabularFunction1_VS")
-
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_, Function1_VS_from_SS<Ref>, MBSIMNS"Function1_VS_from_SS")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_, Function1_VS_from_SS<Var>, MBSIMNS"Function1_VS_from_SS")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_, Function1_VS_from_SS<Fixed<3> >, MBSIMNS"Function1_VS_from_SS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec(double)>, Function1_VS_from_SS<Ref>, MBSIMNS"Function1_VS_from_SS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<VecV(double)>, Function1_VS_from_SS<Var>, MBSIMNS"Function1_VS_from_SS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec3(double)>, Function1_VS_from_SS<Fixed<3> >, MBSIMNS"Function1_VS_from_SS")
 
   void Function1_SS_from_VS::initializeUsingXML(TiXmlElement * element) {
-    Function1<double,double>::initializeUsingXML(element);
+    Function<double(double)>::initializeUsingXML(element);
     TiXmlElement * e;
     e=element;
-    Function1<fmatvec::Vec, double> * f=ObjectFactory<Function_>::create<Function1<Vec,double> >(e->FirstChildElement());
+    Function<fmatvec::Vec(double)> * f=ObjectFactory<Function<Vec(double)> >::create<Function<Vec(double)> >(e->FirstChildElement());
     f->initializeUsingXML(e->FirstChildElement());
     setFunction(f);
   }
@@ -91,15 +87,15 @@ namespace MBSim {
   }
 
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_, PeriodicTabularFunction1_VS, MBSIMNS"PeriodicTabularFunction1_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(MBSim::Function<Vec(double)>, PeriodicTabularFunction, MBSIMNS"PeriodicTabularFunction1_VS")
 
-  Vec PeriodicTabularFunction1_VS::operator()(const double& xVal, const void *) {
+  Vec PeriodicTabularFunction::operator()(const double& xVal) {
     double xValTmp=xVal;
     while (xValTmp<xMin)
       xValTmp+=xDelta;
     while (xValTmp>xMax)
       xValTmp-=xDelta;
-    return TabularFunction1_VS<fmatvec::Ref,fmatvec::Ref>::operator()(xValTmp);
+    return TabularFunction<fmatvec::Ref,fmatvec::Ref>::operator()(xValTmp);
   }
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_, SummationFunction1_VS, MBSIMNS"SummationFunction1_VS")
@@ -258,5 +254,13 @@ namespace MBSim {
     return value;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double)>, ConstantFunction<double(double)>, MBSIMNS"ConstantFunction1_SS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec(double)>, ConstantFunction<Vec(double)>, MBSIMNS"ConstantFunction1_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<VecV(double)>, ConstantFunction<VecV(double)>, MBSIMNS"ConstantFunction1_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec3(double)>, ConstantFunction<Vec3(double)>, MBSIMNS"ConstantFunction1_VS")
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec(double)>, TabularFunction<Ref COMMA Ref>, MBSIMNS"TabularFunction1_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<VecV(double)>, TabularFunction<Var COMMA Var>, MBSIMNS"TabularFunction1_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec3(double)>, TabularFunction<Var COMMA Fixed<3> >, MBSIMNS"TabularFunction1_VS")
 
 }

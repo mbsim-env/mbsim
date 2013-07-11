@@ -59,11 +59,11 @@ namespace MBSim {
       virtual void updateV0FromV1(double t);
       virtual void updateM(double t, int i=0) {};
       virtual void updatedhdz(double t);
-      virtual void updatedq(double t, double dt);
-      virtual void updatedu(double t, double dt);
-      virtual void updateud(double t, int i=0);
-      virtual void updateqd(double t);
-      virtual void updatezd(double t);
+      virtual void updatedq(double t, double dt) { qd = T * u * dt; }
+      virtual void updatedu(double t, double dt) { ud[0] = slvLLFac(LLM[0], h[0] * dt + r[0]); }
+      virtual void updateud(double t, int i=0) { ud[i] = slvLLFac(LLM[i], h[i] + r[i]); }
+      virtual void updateqd(double t) { qd = T * u; }
+      virtual void updatezd(double t) { updateqd(t); updateud(t); }
       virtual void sethSize(int hSize_, int i=0);
       virtual int gethSize(int i=0) const { return hSize[i]; }
       virtual int getqSize() const { return qSize; }
@@ -210,7 +210,7 @@ namespace MBSim {
       /**
        * \brief perform Cholesky decomposition of mass martix
        */
-      virtual void facLLM(int i=0);
+      virtual void facLLM(int i=0) { LLM[i] = facLL(M[i]); }
 
       /**
        * \brief checks dependency on other objects.

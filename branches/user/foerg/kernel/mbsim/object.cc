@@ -102,27 +102,6 @@ namespace MBSim {
     h[0] = hEnd;
   }
 
-  void Object::updatedq(double t, double dt) {
-    qd = T * u * dt;
-  }
-
-  void Object::updatedu(double t, double dt) {
-    ud[0] = slvLLFac(LLM[0], h[0] * dt + r[0]);
-  }
-
-  void Object::updateud(double t, int i) {
-    ud[i] = slvLLFac(LLM[i], h[i] + r[i]);
-  }
-
-  void Object::updateqd(double t) {
-    qd = T * u;
-  }
-
-  void Object::updatezd(double t) {
-    updateqd(t);
-    updateud(t);
-  }
-
   void Object::sethSize(int hSize_, int j) {
     hSize[j] = hSize_;
   }
@@ -306,10 +285,6 @@ namespace MBSim {
     H5::SimpleDataSet<vector<double> > uWrite;
     uWrite.open(group, "u0");
     u0.resize() = uWrite.read();
-  }
-
-  void Object::facLLM(int i) {
-    LLM[i] = facLL(M[i]);
   }
 
   void Object::sethInd(int hInd_, int j) {

@@ -14,17 +14,6 @@ using namespace fmatvec;
 using namespace MBSim;
 using namespace MBSimPowertrain;
 
-class Moment : public Function1<fmatvec::Vec, double> {
-  double M0;
-  public:
-    Moment(double M0_) : M0(M0_) {}
-    fmatvec::Vec operator()(const double& tVal, const void * =NULL) {
-      Vec M(1);
-      M(0) = M0;
-      return M;
-    };
-};
-
 Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName) {
 
   Vec grav(3);
@@ -38,7 +27,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   ke = new KineticExcitation("MS");
   addLink(ke);
   ke->connect(static_cast<RigidBody*>(planetaryGear->getObject("Sun"))->getFrame("C"));
-  ke->setMoment("[0;0;1]", new Moment(0.1));
+  ke->setMoment("[0;0;1]", new ConstantFunction<VecV(double)>("[0.1]"));
 
 //  ke = new KineticExcitation("MT");
 //  addLink(ke);

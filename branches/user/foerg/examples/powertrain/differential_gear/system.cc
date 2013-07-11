@@ -16,17 +16,6 @@ using namespace fmatvec;
 using namespace MBSim;
 using namespace MBSimPowertrain;
 
-class Moment : public Function1<fmatvec::Vec, double> {
-  double M0;
-  public:
-    Moment(double M0_) : M0(M0_) {}
-    fmatvec::Vec operator()(const double& tVal, const void * =NULL) {
-      Vec M(1);
-      M(0) = M0;
-      return M;
-    };
-};
-
 Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName) {
   double R1 = 0.02;
   double m1 = 1;
@@ -76,17 +65,17 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   ke = new KineticExcitation("MAn");
   addLink(ke);
   ke->connect(shaft1->getFrame("C"));
-  ke->setMoment("[0;0;1]", new Moment(1.1/100.));
+  ke->setMoment("[0;0;1]", new ConstantFunction<VecV(double)>(VecV(1,INIT,1.1/100.)));
 
   ke = new KineticExcitation("MAbL");
   addLink(ke);
   ke->connect(static_cast<RigidBody*>(differentialGear->getObject("LeftOutputShaft"))->getFrame("C"));
-  ke->setMoment("[0;0;1]", new Moment(0.99/100.));
+  ke->setMoment("[0;0;1]", new ConstantFunction<VecV(double)>(VecV(1,INIT,0.99/100.)));
 
   ke = new KineticExcitation("MAbR");
   addLink(ke);
   ke->connect(static_cast<RigidBody*>(differentialGear->getObject("RightOutputShaft"))->getFrame("C"));
-  ke->setMoment("[0;0;1]", new Moment(1/100.));
+  ke->setMoment("[0;0;1]", new ConstantFunction<VecV(double)>(VecV(1,INIT,1/100.)));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Frustum *cylinder=new OpenMBV::Frustum;

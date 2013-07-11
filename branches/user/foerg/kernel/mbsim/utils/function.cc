@@ -25,11 +25,6 @@ using namespace MBXMLUtils;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_, ConstantFunction1<double COMMA double>, MBSIMNS"ConstantFunction1_SS")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_, ConstantFunction1<Vec COMMA double>, MBSIMNS"ConstantFunction1_VS")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_, ConstantFunction1<VecV COMMA double>, MBSIMNS"ConstantFunction1_VS")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_, ConstantFunction1<Vec3 COMMA double>, MBSIMNS"ConstantFunction1_VS")
-
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_, ConstantFunction2<double COMMA double COMMA double>, MBSIMNS"ConstantFunction2_SSS")
 
 

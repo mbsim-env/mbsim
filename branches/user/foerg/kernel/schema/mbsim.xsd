@@ -989,126 +989,14 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="Rotation" minOccurs="0"/>
+                <xs:element name="isDependent" minOccurs="0">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                    tbd
+                  </xs:documentation></xs:annotation>
+                </xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <!-- BEGIN The following elements are rarly used. That is why they are optional (on top level) -->
-          <xs:element name="jacobianOfTranslation" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Gibt die Vorschrift zur Berechnung der Jacobimatrix der Translation
-                <object class="inlineeqn">\boldsymbol{J}_T=\frac{\partial \boldsymbol{r}_q}{\partial q}(\boldsymbol{q},t)</object>
-                in Abhängigkeit der generalisierten Lagen und der Zeit an.
-                <p>Wenn als Translation <a class="link" href="mbsim:LinearTranslation">LinearTranslation</a> angegeben wurde,
-                  so kann auf die Angabe dieses Elements verzichtet werden, da es automatisch bestimmt wird.</p>
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Jacobian"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="jacobianOfRotation" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Gibt die Vorschrift zur Berechnung der Jacobimatrix der Rotation
-                <object class="inlineeqn">\boldsymbol{J}_R=\frac{\partial \omega}{\partial \dot{\boldsymbol{q}}}(\boldsymbol{q},t)</object> in Abhängigkeit der 
-                generalisierten Lagen und der Zeit an.
-                <p>Wenn als Rotation <a class="link" href="mbsim:RotationAboutFixedAxis">RotationAboutFixedAxis</a> oder
-                  <a class="link" href="mbsim:CardanAngles">CardanAngles</a> angegeben wurde,
-                  so kann auf die Angabe dieses Elements verzichtet werden, da es automatisch bestimmt wird.</p>
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Jacobian"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="derivativeOfJacobianOfTranslation" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Gibt die zeitliche Ableitung der Jacobimatrix der Translation
-                <object class="inlineeqn">\dot{\boldsymbol{J}}_T(\dot{\boldsymbol{q}},\boldsymbol{q},t)</object> in
-                Abhängigkeit der Ableitung der generalisierten Koordinaten, der generalisierten Koordinaten und der Zeit an.
-                <p>Wenn diese Ableitung konstant 0 ist, so kann auf die Angabe dieses Elements verzichtet werden.</p>
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="DerivativeOfJacobian"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="derivativeOfJacobianOfRotation" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Gibt die zeitliche Ableitung der Jacobimatrix der Rotation
-                <object class="inlineeqn">\dot{\boldsymbol{J}}_R(\dot{\boldsymbol{q}},\boldsymbol{q},t)</object> in
-                Abhängigkeit der Ableitung der generalisierten Koordinaten, der generalisierten Koordinaten und der Zeit an.
-                <p>Wenn diese Ableitung konstant 0 ist, so kann auf die Angabe dieses Elements verzichtet werden.</p>
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="DerivativeOfJacobian"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="guidingVelocityOfTranslation" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Gibt die translatorische Führungsgeschwindigkeit
-                <object class="inlineeqn">\boldsymbol{v}_t=\frac{\partial \boldsymbol{r}_q}{\partial t}(t)</object>
-                in Abhängigkeit der Zeit an.<br/>
-                Diese Geschwindigkeit muss im KOS <tt>frameOfReference</tt>
-                dargestellt werden.
-                <p>Wenn diese Geschwindigkeit konstant 0 ist, so kann auf die Angabe dieses Elements verzichtet werden.</p>
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="GuidingVelocity"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="guidingVelocityOfRotation" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Gibt die Führungswinkelgeschwindigkeit
-                <object class="inlineeqn">\boldsymbol{\omega}_t(t)</object>
-                in Abhängigkeit der Zeit an.<br/>
-                Diese Geschwindigkeit muss im KOS <tt>frameOfReference</tt>
-                dargestellt werden.
-                <p>Wenn diese Geschwindigkeit konstant 0 ist, so kann auf die Angabe dieses Elements verzichtet werden.</p>
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="GuidingVelocity"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="derivativeOfGuidingVelocityOfTranslation" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Gibt die Ableitung der translatorischen Führungsgeschwindigkeit
-                <object class="inlineeqn">\boldsymbol{a}_t=\dot{\boldsymbol{v}}_t(t)</object>
-                in Abhängigkeit der Zeit an.<br/>
-                Diese Beschleunigung muss im KOS <tt>frameOfReference</tt>
-                dargestellt werden.
-                <p>Wenn diese Beschleunigung konstant 0 ist, so kann auf die Angabe dieses Elements verzichtet werden.</p>
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="DerivativeOfGuidingVelocity"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="derivativeOfGuidingVelocityOfRotation" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Gibt die Ableitung der Führungswinkelgeschwindigkeit
-                <object class="inlineeqn">\boldsymbol{\alpha}_t=\dot{\boldsymbol{\omega}}_t(t)</object>
-                in Abhängigkeit der Zeit an.<br/>
-                Diese Drehbeschleunigung muss im KOS <tt>frameOfReference</tt>
-                dargestellt werden.
-                <p>Wenn diese Drehbeschleunigung konstant 0 ist, so kann auf die Angabe dieses Elements verzichtet werden.</p>
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="DerivativeOfGuidingVelocity"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <!-- END -->
           <xs:element name="frames">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">

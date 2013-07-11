@@ -10,41 +10,6 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
 
-//class MyPos : public fmatvec::Function<Vec3(VecV, double)> {
-//  public:
-//    int getArg1Size() {return 1;} 
-//    Vec3 operator()(const VecV &q, const double &t) {
-//      Vec3 PrPK;
-//      PrPK(0) = cos(q(0));
-//      PrPK(1) = sin(q(0));
-//      return PrPK;
-//    }; 
-//    Mat3xV parDer1(const VecV &q, const double &t) {
-//      Mat3xV J(1);
-//      J(0,0) = -sin(q(0));
-//      J(1,0) =  cos(q(0));
-//      return J;
-//    }
-//    Vec3 parDer2(const VecV &q, const double &t) {
-//      return Vec3();
-//    }
-//    Mat3xV parDer1ParDer2(const VecV &q, const double &t) {
-//      return Mat3xV(getArg1Size());
-//    }
-//    Mat3xV parDer1DirDer1(const VecV &qd, const VecV &q, const double &t) {
-//      Mat3xV J(1);
-//      J(0,0) = -cos(q(0))*qd(0);
-//      J(1,0) = -sin(q(0))*qd(0);
-//      return J;
-//    }
-//    Vec3 parDer2ParDer2(const VecV &q, const double &t) {
-//      return Vec3();
-//    }
-//    Vec3 parDer2DirDer1(const VecV &qd, const VecV &q, const double &t) {
-//      return Vec3();
-//    }
-//};
-
 class MyPos : public Translation {
   public:
     int getqSize() const {return 1;}
@@ -56,13 +21,9 @@ class MyPos : public Translation {
       J(0,0) = -sin(q(0));
       J(1,0) =  cos(q(0));
     }
-    void updateGuidingVelocity(const VecV &q, const double &t) {
-    }
-    void updateDerivativeOfJacobian(const VecV &qd, const VecV &q, const double &t) {
-      Jd(0,0) = -cos(q(0))*qd(0);
-      Jd(1,0) = -sin(q(0))*qd(0);
-    }
-    void updateDerivativeOfGuidingVelocity(const VecV &qd, const VecV &q, const double &t) {
+    void updateGyroscopicAcceleration(const VecV &u, const VecV &q, const double &t) {
+      jb(0) = -cos(q(0))*u(0)*u(0);
+      jb(1) = -sin(q(0))*u(0)*u(0);
     }
 };
 
