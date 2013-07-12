@@ -214,7 +214,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   
   ConstrainedNode * n0 = new ConstrainedNode("n0");
   addLink(n0);
-  n0->setpFunction(new ConstantFunction1<double, double>(.9e5));
+  n0->setpFunction(new ConstantFunction<double(double)>(.9e5));
   n0->addOutFlow(l04);
 
   EnvironmentNodeMec * n1Inf = new EnvironmentNodeMec("n1Inf");
@@ -230,7 +230,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   n1->enableOpenMBV(.005);
 #endif
   n1->setInitialVolume(V0);
-  n1->setpFunction(new ConstantFunction1<double, double>(pRB));
+  n1->setpFunction(new ConstantFunction<double(double)>(pRB));
   n1->addRotMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(1)))->getFrame("R"), "[0;1;0]", area, traeger->getFrame("C"));
   n1->addRotMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(0)))->getFrame("L"), "[0;-1;0]", area, traeger->getFrame("C"));
 #ifdef HAVE_OPENMBVCPPINTERFACE

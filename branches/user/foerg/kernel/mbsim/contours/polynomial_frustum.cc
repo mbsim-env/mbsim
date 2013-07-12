@@ -379,7 +379,7 @@ namespace MBSim {
     para = para_;
   }
 
-  double ContactPolyfun::operator()(const double & x, const void *) {
+  double ContactPolyfun::operator()(const double & x) {
     int n = para.size();
     double f = 0.;
     for (int i = 0; i < n; i++) {

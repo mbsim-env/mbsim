@@ -24,7 +24,7 @@
 
 namespace MBSim {
 
-  class DampingFunction : public Function2<double, fmatvec::Vec, fmatvec::Vec> {
+  class DampingFunction : public Function<double(fmatvec::Vec,fmatvec::Vec)> {
     public:
     /**
      * \brief constructor
@@ -38,7 +38,7 @@ namespace MBSim {
     }
 
     /* GETTER / SETTER*/
-    void setFunction(Function1<fmatvec::Vec, fmatvec::Vec> * function_) {
+    void setFunction(Function<fmatvec::Vec(fmatvec::Vec)> * function_) {
       function = function_;
     }
     void setCriteriaFunction(CriteriaFunction * criteria_) {
@@ -46,13 +46,13 @@ namespace MBSim {
     }
     /******************/
 
-    virtual double operator ()(const fmatvec::Vec & x, const fmatvec::Vec & dx, const void * = NULL) = 0;
+    virtual double operator ()(const fmatvec::Vec & x, const fmatvec::Vec & dx) = 0;
 
     protected:
     /**
      * \brief function that computes the values
      */
-    Function1<fmatvec::Vec, fmatvec::Vec> *function;
+    Function<fmatvec::Vec(fmatvec::Vec)> *function;
 
     /**
      * \brief criteria that defines if a solution gets better
@@ -75,7 +75,7 @@ namespace MBSim {
       virtual ~StandardDampingFunction() {
       }
 
-      virtual double operator ()(const fmatvec::Vec & x, const fmatvec::Vec & dx, const void * = NULL);
+      virtual double operator ()(const fmatvec::Vec &x, const fmatvec::Vec &dx);
 
     protected:
       /**

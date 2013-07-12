@@ -43,7 +43,7 @@ namespace MBSim {
     dir = dir_;
   }
 
-  Vec edgePolyFrustum::operator ()(const Vec & xin, const void *) {
+  Vec edgePolyFrustum::operator ()(const Vec &xin) {
     Vec result(1, NONINIT);
     const double & t = xin(0);
 
@@ -68,7 +68,7 @@ namespace MBSim {
       tolerance(tolerance_), frustumHeight(-1), criteriaResults(0), ax(0.), dx(0.) {
   }
 
-  int edgePolyFrustumCriteria::operator ()(const Vec & xin, const void *) {
+  int edgePolyFrustumCriteria::operator ()(const Vec &xin) {
     criteriaResults.push_back(nrmInf((*function)(xin)));
 
     if (not inBounds(xin(0)))

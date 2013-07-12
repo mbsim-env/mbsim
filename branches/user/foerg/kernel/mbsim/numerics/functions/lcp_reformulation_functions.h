@@ -26,7 +26,7 @@
 
 namespace MBSim {
 
-  class LCPReformulationFunction : public Function1<fmatvec::Vec, fmatvec::Vec> {
+  class LCPReformulationFunction : public Function<fmatvec::Vec(fmatvec::Vec)> {
     public:
       /*!
        * \brief standard constructor
@@ -50,7 +50,7 @@ namespace MBSim {
        * \param q: solution vector with
        *           first entries: w, last entries: z
        */
-      virtual fmatvec::Vec operator()(const fmatvec::Vec &q, const void * = NULL) = 0;
+      virtual fmatvec::Vec operator()(const fmatvec::Vec &q) = 0;
       /***************************************************/
 
       /**GETTER / SETTER*/
@@ -125,7 +125,7 @@ namespace MBSim {
       virtual ~LCPNewtonReformulationFunction();
 
       /* INHERITED INTERFACE */
-      fmatvec::Vec operator()(const fmatvec::Vec &q, const void * = NULL);
+      fmatvec::Vec operator()(const fmatvec::Vec &q);
       /***************************************************/
 
     protected:
@@ -156,7 +156,7 @@ namespace MBSim {
       virtual ~LCPFixpointReformulationFunction();
 
       /* INHERITED INTERFACE */
-      fmatvec::Vec operator()(const fmatvec::Vec &q, const void * = NULL);
+      fmatvec::Vec operator()(const fmatvec::Vec &q);
       /***************************************************/
   };
 
@@ -172,9 +172,9 @@ namespace MBSim {
        */
       virtual ~LinearComplementarityJacobianFunction();
 
-      virtual fmatvec::SqrMat operator ()(const fmatvec::Vec & x, const void* = NULL);
+      virtual fmatvec::SqrMat operator ()(const fmatvec::Vec & x);
 
-      virtual void setFunction(Function1<fmatvec::Vec, fmatvec::Vec> * function_);
+      virtual void setFunction(Function<fmatvec::Vec(fmatvec::Vec)> *function_);
 
       void updateJacobian(const fmatvec::Vec & x);
 

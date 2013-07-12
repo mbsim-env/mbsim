@@ -45,7 +45,7 @@ using namespace std;
 namespace MBSim {
 
   JointConstraint::Residuum::Residuum(vector<RigidBody*> body1_, vector<RigidBody*> body2_, const Mat3xV &dT_, const Mat3xV &dR_,Frame *frame1_, Frame *frame2_,double t_,vector<Frame*> i1_, vector<Frame*> i2_) : body1(body1_),body2(body2_),dT(dT_),dR(dR_),frame1(frame1_), frame2(frame2_), t(t_), i1(i1_), i2(i2_) {}
-  Vec JointConstraint::Residuum::operator()(const Vec &x, const void *) {
+  Vec JointConstraint::Residuum::operator()(const Vec &x) {
     Vec res(x.size(),NONINIT); 
     int nq = 0;
     for(unsigned int i=0; i<body1.size(); i++) {

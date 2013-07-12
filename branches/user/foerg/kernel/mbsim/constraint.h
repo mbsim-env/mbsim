@@ -213,7 +213,7 @@ namespace MBSim {
       }
 
     private:
-      class Residuum : public Function1<fmatvec::Vec,fmatvec::Vec> {
+      class Residuum : public Function<fmatvec::Vec(fmatvec::Vec)> {
         private:
           std::vector<RigidBody*> body1, body2;
           fmatvec::Mat3xV dT, dR;
@@ -222,7 +222,7 @@ namespace MBSim {
           std::vector<Frame*> i1,i2;
         public:
           Residuum(std::vector<RigidBody*> body1_, std::vector<RigidBody*> body2_, const fmatvec::Mat3xV &dT_, const fmatvec::Mat3xV &dR_,Frame *frame1_, Frame *frame2_,double t_,std::vector<Frame*> i1_, std::vector<Frame*> i2_);
-          fmatvec::Vec operator()(const fmatvec::Vec &x, const void * =NULL);
+          fmatvec::Vec operator()(const fmatvec::Vec &x);
       };
       std::vector<RigidBody*> bd1;
       std::vector<RigidBody*> bd2;

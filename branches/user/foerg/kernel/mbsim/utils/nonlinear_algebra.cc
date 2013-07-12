@@ -29,7 +29,7 @@ using namespace std;
 
 namespace MBSim {
 
-  RegulaFalsi::RegulaFalsi(Function1<double,double> *f) : func(f), itmax(10000), tol(1e-10) {}
+  RegulaFalsi::RegulaFalsi(Function<double(double)> *f) : func(f), itmax(10000), tol(1e-10) {}
 
   double RegulaFalsi::solve(double a, double b) {
 
@@ -63,7 +63,7 @@ namespace MBSim {
     return u;
   }
 
-  MultiDimFixPointIteration::MultiDimFixPointIteration(Function1<Vec, Vec> *function_) :
+  MultiDimFixPointIteration::MultiDimFixPointIteration(Function<Vec(Vec)> *function_) :
     function(function_), tol(1e-10), iter(0), itermax(30000), norms(0), info(1) {
     }
 
@@ -110,7 +110,7 @@ namespace MBSim {
     return currentGuess;
   }
 
-  NewtonMethod::NewtonMethod(Function1<double,double> *fct_, Function1<double,double> *jac_) : fct(fct_), jac(jac_), itmax(300), iter(0), kmax(100), tol(1e-10) {}
+  NewtonMethod::NewtonMethod(Function<double(double)> *fct_, Function<double(double)> *jac_) : fct(fct_), jac(jac_), itmax(300), iter(0), kmax(100), tol(1e-10) {}
 
   double NewtonMethod::solve(const double &x0) {
 
@@ -167,7 +167,7 @@ namespace MBSim {
     return 0;
   }
 
-  MultiDimNewtonMethod::MultiDimNewtonMethod(Function1<Vec,Vec> *fct_, Function1<SqrMat,Vec> *jac_) : fct(fct_), jac(jac_), itmax(300), iter(0), kmax(100), info(1), norms(0), tol(1e-10) {}
+  MultiDimNewtonMethod::MultiDimNewtonMethod(Function<Vec(Vec)> *fct_, Function<SqrMat(Vec)> *jac_) : fct(fct_), jac(jac_), itmax(300), iter(0), kmax(100), info(1), norms(0), tol(1e-10) {}
 
   Vec MultiDimNewtonMethod::solve(const Vec &x0) {
 

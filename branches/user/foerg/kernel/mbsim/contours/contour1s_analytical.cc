@@ -96,10 +96,10 @@ namespace MBSim {
       vector<double> alpha;
       alpha.push_back(as);
       while(alpha.back()<ae) {
-        class PointDistance : public Function1<double, double> {
+        class PointDistance : public Function<double(double)> {
           public:
             PointDistance(Vec3 p1_, ContourFunction1s * f_, double d_) : p1(p1_), f(f_), d(d_) {}
-            double operator()(const double &alpha, const void * = NULL) {
+            double operator()(const double &alpha) {
               return nrm2((*f)(alpha)-p1)-d;
             }
           private:

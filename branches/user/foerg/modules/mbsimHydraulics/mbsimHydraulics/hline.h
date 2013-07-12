@@ -125,7 +125,7 @@ namespace MBSimHydraulics {
       ConstrainedLine(const std::string &name="") : HLine(name), QFun(NULL), Q(1) {}
       virtual std::string getType() const { return "ConstrainedLine"; }
       
-      void setQFunction(MBSim::Function1<double,double> * QFun_) {QFun=QFun_; }
+      void setQFunction(MBSim::Function<double(double)> * QFun_) {QFun=QFun_; }
 
       virtual fmatvec::Vec getQIn() {return Q; }
       virtual fmatvec::Vec getQOut() {return -Q; }
@@ -141,7 +141,7 @@ namespace MBSimHydraulics {
       void init(MBSim::InitStage stage);
       
     private:
-      MBSim::Function1<double,double> * QFun;
+      MBSim::Function<double(double)> * QFun;
       fmatvec::Vec Q;
   };
 

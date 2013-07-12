@@ -31,7 +31,7 @@ namespace MBSim {
   /*!
    * \brief Mother class for different criterias that are fulfilled or not
    */
-  class CriteriaFunction : public Function1<int, fmatvec::Vec> {
+  class CriteriaFunction : public Function<int(fmatvec::Vec)> {
 
     public:
       /**
@@ -45,7 +45,7 @@ namespace MBSim {
       virtual ~CriteriaFunction();
 
       /* GETTER / SETTER*/
-      void setFunction(Function1<fmatvec::Vec, fmatvec::Vec> * function_) {
+      void setFunction(Function<fmatvec::Vec(fmatvec::Vec)> *function_) {
         function = function_;
       }
       /*****************/
@@ -59,7 +59,7 @@ namespace MBSim {
        *   - result =  2: the algorithm has slow convergence and should stop
        *   - result = -1: the algorithm diverges and should stop
        */
-      virtual int operator ()(const fmatvec::Vec & vector, const void * = NULL) = 0;
+      virtual int operator ()(const fmatvec::Vec & vector) = 0;
 
       /*!
        * \brief deletes the list of criteria results
@@ -75,7 +75,7 @@ namespace MBSim {
       /**
        * \brief function that computes the values
        */
-      Function1<fmatvec::Vec, fmatvec::Vec> *function;
+      Function<fmatvec::Vec(fmatvec::Vec)> *function;
 
   };
 
@@ -96,7 +96,7 @@ namespace MBSim {
       virtual ~GlobalCriteriaFunction();
 
       /* INHERITED INTERFACE */
-      virtual int operator ()(const fmatvec::Vec & vector, const void * = NULL);
+      virtual int operator ()(const fmatvec::Vec & vector);
       virtual bool isBetter(const fmatvec::Vec & vector);
       virtual void clear();
       /*END - INHERITED INTERFACE*/
@@ -138,7 +138,7 @@ namespace MBSim {
       virtual ~LocalCriteriaFunction();
 
       /* INHERITED INTERFACE */
-      virtual int operator ()(const fmatvec::Vec & vector, const void * = NULL);
+      virtual int operator ()(const fmatvec::Vec & vector);
       virtual bool isBetter(const fmatvec::Vec & vector);
       virtual void clear();
       /*END - INHERITED INTERFACE*/

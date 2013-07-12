@@ -31,11 +31,11 @@ namespace MBSimControl {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, FunctionSensor, MBSIMCONTROLNS"FunctionSensor")
       
-  FunctionSensor::FunctionSensor(const std::string &name, Function1<fmatvec::Vec, double>* function_) : Sensor(name), function(function_) {
+  FunctionSensor::FunctionSensor(const std::string &name, MBSim::Function<VecV(double)>* function_) : Sensor(name), function(function_) {
     y=(*function)(0);
   }
 
-  void FunctionSensor::setFunction(Function1<fmatvec::Vec, double>* function_) {
+  void FunctionSensor::setFunction(MBSim::Function<fmatvec::VecV(double)>* function_) {
     function=function_; 
     y=(*function)(0); 
   }
@@ -47,7 +47,7 @@ namespace MBSimControl {
   void FunctionSensor::initializeUsingXML(TiXmlElement *element) {
     Sensor::initializeUsingXML(element);
     TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"function");
-    function=MBSim::ObjectFactory<Function>::create<Function1<Vec,double> >(e->FirstChildElement()); 
+    function=MBSim::ObjectFactory<MBSim::Function<VecV(double)> >::create<MBSim::Function<VecV(double)> >(e->FirstChildElement()); 
     function->initializeUsingXML(e->FirstChildElement());
     y=(*function)(0);
   }
@@ -59,7 +59,7 @@ namespace MBSimControl {
     TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
     signalString = e->Attribute("ref");
     e=element->FirstChildElement(MBSIMCONTROLNS"function");
-    fun=MBSim::ObjectFactory<Function>::create<Function1<double,double> >(e->FirstChildElement()); 
+    fun=MBSim::ObjectFactory<MBSim::Function<double(double)> >::create<MBSim::Function<double(double)> >(e->FirstChildElement()); 
     fun->initializeUsingXML(e->FirstChildElement());
   }
 
@@ -90,7 +90,7 @@ namespace MBSimControl {
     e=element->FirstChildElement(MBSIMCONTROLNS"secondInputSignal");
     signal2String = e->Attribute("ref");
     e=element->FirstChildElement(MBSIMCONTROLNS"function");
-    fun=MBSim::ObjectFactory<Function>::create<Function2<double,double,double> >(e->FirstChildElement()); 
+    fun=MBSim::ObjectFactory<MBSim::Function<double(double,double)> >::create<MBSim::Function<double(double,double)> >(e->FirstChildElement()); 
     fun->initializeUsingXML(e->FirstChildElement());
   }
 

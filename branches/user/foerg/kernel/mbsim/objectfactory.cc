@@ -73,8 +73,8 @@ template ObjectFactory<Function<VecV(Vec3,double)>   >& ObjectFactory<Function<V
 template ObjectFactory<Function<Vec3(VecV,double)>   >& ObjectFactory<Function<Vec3(VecV,double)>   >::instance();
 template ObjectFactory<Function<Vec3(Vec3,double)>   >& ObjectFactory<Function<Vec3(Vec3,double)>   >::instance();
 template ObjectFactory<Function<Vec(Vec,Vec)>   >& ObjectFactory<Function<Vec(Vec,Vec)>   >::instance();
+template ObjectFactory<Function<double(Vec2,Vec2)>   >& ObjectFactory<Function<double(Vec2,Vec2)>   >::instance();
 
-template ObjectFactory<Function_            >& ObjectFactory<Function_            >::instance();
 template ObjectFactory<Element             >& ObjectFactory<Element             >::instance();
 template ObjectFactory<Environment         >& ObjectFactory<Environment         >::instance();
 template ObjectFactory<Integrator          >& ObjectFactory<Integrator          >::instance();

@@ -24,6 +24,7 @@
 #include "mbsim/objectfactory.h"
 #include "mbsim/utils/nonsmooth_algebra.h"
 #include "mbsim/utils/utils.h"
+#include "mbsim/utils/function_library.h"
 
 #include <map>
 
@@ -762,7 +763,7 @@ namespace MBSim {
     GeneralizedForceLaw::initializeUsingXML(element);
     TiXmlElement *e;
     e = element->FirstChildElement(MBSIMNS"forceFunction");
-    Function2<double, double, double> *f = ObjectFactory<Function_>::create<Function2<double,double,double> >(e->FirstChildElement());
+    Function<double(double,double)> *f = ObjectFactory<Function<double(double,double)> >::create<Function<double(double,double)> >(e->FirstChildElement());
     setForceFunction(f);
     f->initializeUsingXML(e->FirstChildElement());
   }
@@ -852,7 +853,7 @@ namespace MBSim {
     e = element->FirstChildElement(MBSIMNS"InfluenceFunction");
     while(e) {
       xmlInfo info;
-      info.function = ObjectFactory<Function_>::create<InfluenceFunction>(e->FirstChildElement());
+      info.function = ObjectFactory<Function<double(Vec2,Vec2)> >::create<InfluenceFunction>(e->FirstChildElement());
       info.name1 = e->FirstChildElement()->Attribute("contourName1");
       info.name2 = e->FirstChildElement()->Attribute("contourName2");
 
@@ -994,7 +995,7 @@ void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<
     GeneralizedForceLaw::initializeUsingXML(element);
     TiXmlElement *e;
     e = element->FirstChildElement(MBSIMNS"forceFunction");
-    Function2<double, double, double> *f = ObjectFactory<Function_>::create<Function2<double,double,double> >(e->FirstChildElement());
+    Function<double(double,double)> *f = ObjectFactory<Function<double(double,double)> >::create<Function<double(double,double)> >(e->FirstChildElement());
     setForceFunction(f);
     f->initializeUsingXML(e->FirstChildElement());
   }
@@ -1013,7 +1014,7 @@ void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<
     FrictionForceLaw::initializeUsingXML(element);
     TiXmlElement *e;
     e = element->FirstChildElement(MBSIMNS"frictionForceFunction");
-    Function2<Vec, Vec, double> *f = ObjectFactory<Function_>::create<Function2<Vec,Vec,double> >(e->FirstChildElement());
+    Function<Vec(Vec,double)> *f = ObjectFactory<Function<Vec(Vec,double)> >::create<Function<Vec(Vec,double)> >(e->FirstChildElement());
     setFrictionForceFunction(f);
     f->initializeUsingXML(e->FirstChildElement());
   }
@@ -1024,7 +1025,7 @@ void MaxwellUnilateralConstraint::updatePossibleContactPoints(const std::vector<
     FrictionForceLaw::initializeUsingXML(element);
     TiXmlElement *e;
     e = element->FirstChildElement(MBSIMNS"frictionForceFunction");
-    Function2<Vec, Vec, double> *f = ObjectFactory<Function_>::create<Function2<Vec,Vec,double> >(e->FirstChildElement());
+    Function<Vec(Vec,double)> *f = ObjectFactory<Function<Vec(Vec,double)> >::create<Function<Vec(Vec,double)> >(e->FirstChildElement());
     setFrictionForceFunction(f);
     f->initializeUsingXML(e->FirstChildElement());
   }

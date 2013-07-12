@@ -159,7 +159,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   
   ConstrainedNode * n0 = new ConstrainedNode("n0");
   addLink(n0);
-  n0->setpFunction(new ConstantFunction1<double, double>(1e5));
+  n0->setpFunction(new ConstantFunction<double(double)>(1e5));
   n0->addOutFlow(l04);
 
   EnvironmentNodeMec * n1Inf = new EnvironmentNodeMec("n1Inf");
@@ -169,7 +169,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   ConstrainedNodeMec * n1 = new ConstrainedNodeMec("n_"+getBodyName(0)+"_"+getBodyName(1));
   addLink(n1);
   n1->setInitialVolume(V0);
-  n1->setpFunction(new ConstantFunction1<double, double>(pressure));
+  n1->setpFunction(new ConstantFunction<double(double)>(pressure));
   n1->addTransMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(0)))->getFrame("R"), Vec("[-1; 0; 0]"), area);
   n1->addTransMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(1)))->getFrame("L"), Vec("[1; 0; 0]"), area);
 

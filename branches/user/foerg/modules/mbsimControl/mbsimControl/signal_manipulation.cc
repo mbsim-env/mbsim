@@ -588,7 +588,7 @@ namespace MBSimControl {
     signalString=e->Attribute("ref");
     e=element->FirstChildElement(MBSIMCONTROLNS"function");
     if(e) {
-      Function1<Vec,Vec> *f=ObjectFactory<Function>::create<Function1<Vec,Vec> >(e->FirstChildElement());
+      MBSim::Function<Vec(Vec)> *f=ObjectFactory<MBSim::Function<Vec(Vec)> >::create<MBSim::Function<Vec(Vec)> >(e->FirstChildElement());
       setFunction(f);
       f->initializeUsingXML(e->FirstChildElement());
     }
@@ -619,7 +619,7 @@ namespace MBSimControl {
     signal2String=e->Attribute("ref");
     e=element->FirstChildElement(MBSIMCONTROLNS"function");
     if(e) {
-      Function2<Vec,Vec,Vec> *f=ObjectFactory<Function>::create<Function2<Vec,Vec,Vec> >(e->FirstChildElement());
+      MBSim::Function<Vec(Vec,Vec)> *f=ObjectFactory<MBSim::Function<Vec(Vec,Vec)> >::create<MBSim::Function<Vec(Vec,Vec)> >(e->FirstChildElement());
       setFunction(f);
       f->initializeUsingXML(e->FirstChildElement());
     }

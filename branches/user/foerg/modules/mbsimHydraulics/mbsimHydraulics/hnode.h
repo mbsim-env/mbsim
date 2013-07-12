@@ -111,7 +111,7 @@ namespace MBSimHydraulics {
       ConstrainedNode(const std::string &name="") : HNode(name), pFun(NULL) {}
       virtual std::string getType() const { return "ConstrainedNode"; }
 
-      void setpFunction(MBSim::Function1<double,double> * pFun_) {pFun=pFun_; }
+      void setpFunction(MBSim::Function<double(double)> * pFun_) {pFun=pFun_; }
 
       void updateg(double t);
       void init(MBSim::InitStage stage);
@@ -119,7 +119,7 @@ namespace MBSimHydraulics {
       virtual bool isSingleValued() const {return true;}
 
     private:
-      MBSim::Function1<double,double> * pFun;
+      MBSim::Function<double(double)> * pFun;
   };
 
 
