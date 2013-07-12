@@ -1,0 +1,7 @@
+#ifndef _MBSIMFLEXIBLEBODY_DEFINES_H_
+#define _MBSIMFLEXIBLEBODY_DEFINES_H_
+
+#define MBSIMFLEXIBLEBODYNS_ "http://mbsim.berlios.de/MBSimFlexibleBody"
+#define MBSIMFLEXIBLEBODYNS "{"MBSIMFLEXIBLEBODYNS_"}"
+
+#endif

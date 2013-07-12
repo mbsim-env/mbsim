@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: mbsimElectronics
+Description: mbsimElectronics is an add-on for controlled systems to the mbsim-kernel.
+Requires: mbsim
+Version: @VERSION@
+Libs: -L${libdir} -lmbsimElectronics
+Cflags: -I${includedir}
+
+
