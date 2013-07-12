@@ -127,8 +127,8 @@ namespace MBSim {
   void ContactKinematicsPointPolynomialFrustum::setFrustumOrienationKinematics(const double & x, const double & phi, ContourPointData * cpData) {
     SqrMat3 AWF = frustum->getFrame()->getOrientation();
     cpData[ifrustum].getFrameOfReference().getOrientation().set(0, AWF * frustum->computeNormal(x, phi));
-    cpData[ifrustum].getFrameOfReference().getOrientation().set(1, -AWF * frustum->computeTangentRadial(x, phi));
-    cpData[ifrustum].getFrameOfReference().getOrientation().set(2, AWF * frustum->computeTangentAzimuthal(x, phi));
+    cpData[ifrustum].getFrameOfReference().getOrientation().set(1, signh * AWF * frustum->computeTangentRadial(x, phi));
+    cpData[ifrustum].getFrameOfReference().getOrientation().set(2, signh * -AWF * frustum->computeTangentAzimuthal(x, phi));
   }
 
   void ContactKinematicsPointPolynomialFrustum::updateg(Vec & g, ContourPointData * cpData, int index) {

@@ -108,8 +108,8 @@ namespace MBSim {
 
           //Orientation
           cpData[ifrustum].getFrameOfReference().getOrientation().set(0, AWF * frustum->computeNormal(x(0), phi));
-          cpData[ifrustum].getFrameOfReference().getOrientation().set(1, - AWF * frustum->computeTangentRadial(x(0), phi));
-          cpData[ifrustum].getFrameOfReference().getOrientation().set(2, AWF * frustum->computeTangentAzimuthal(x(0), phi));
+          cpData[ifrustum].getFrameOfReference().getOrientation().set(1, AWF * frustum->computeTangentRadial(x(0), phi));
+          cpData[ifrustum].getFrameOfReference().getOrientation().set(2, - AWF * frustum->computeTangentAzimuthal(x(0), phi));
 
           cpData[isphere].getFrameOfReference().getOrientation().set(0, - cpData[ifrustum].getFrameOfReference().getOrientation().col(0));
           cpData[isphere].getFrameOfReference().getOrientation().set(1, - cpData[ifrustum].getFrameOfReference().getOrientation().col(1));
