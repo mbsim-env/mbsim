@@ -184,7 +184,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // Anregung
   KineticExcitation *MomentAnCrank = new KineticExcitation("MomentAnCrank");
-  MomentAnCrank->setMoment(Mat("[0;0;1]"), new ConstantFunction1<Vec, double>(Vec("[109]")) );
+  MomentAnCrank->setMoment(Mat("[0;0;1]"), new ConstantFunction<VecV(double)>(VecV("[109]")) );
   MomentAnCrank->setFrameOfReference(Crank->getFrameForKinematics());
   MomentAnCrank->connect(Crank->getFrameForKinematics());
 
@@ -359,7 +359,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Sollsignal
   FunctionSensor *VelSoll = new FunctionSensor("VelSoll");
   addLink(VelSoll);
-  VelSoll->setFunction( new ConstantFunction1<Vec, double>(Vec("10") ));
+  VelSoll->setFunction( new ConstantFunction<VecV(double)>(VecV("10") ));
 
   // Signal-Addition
   SignalAddition *Regelfehler = new SignalAddition("Regelfehler");

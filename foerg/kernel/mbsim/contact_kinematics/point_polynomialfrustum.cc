@@ -42,7 +42,7 @@ namespace MBSim {
     phi = phi_;
   }
 
-  Vec projectPointAlongNormal::operator ()(const Vec & xin, const void *) {
+  Vec projectPointAlongNormal::operator ()(const Vec & xin) {
     Vec result(1, NONINIT);
 
     const double & x = xin(0);
@@ -71,7 +71,7 @@ namespace MBSim {
     phi = phi_;
   }
 
-  SqrMat projectPointAlongNormalJacobian::operator ()(const Vec & xin, const void *) {
+  SqrMat projectPointAlongNormalJacobian::operator ()(const Vec & xin) {
     SqrMat Jac(1, NONINIT);
 
     const double & x = xin(0);

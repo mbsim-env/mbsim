@@ -29,7 +29,7 @@ namespace MBSim {
   /*!
    * \brief base class for square Jacobians used for the newton method
    */
-  class NewtonJacobianFunction : public Function1<fmatvec::SqrMat, fmatvec::Vec> {
+  class NewtonJacobianFunction : public Function<fmatvec::SqrMat(fmatvec::Vec)> {
     public:
     /**
      * \brief constructor
@@ -43,17 +43,17 @@ namespace MBSim {
     }
 
     /* GETTER / SETTER*/
-    virtual void setFunction(Function1<fmatvec::Vec, fmatvec::Vec> * function_) {
+    virtual void setFunction(Function<fmatvec::Vec(fmatvec::Vec)> * function_) {
       function = function_;
     }
     /*****************/
 
     /*INHERITED INTERFACE*/
-    virtual fmatvec::SqrMat operator ()(const fmatvec::Vec & x, const void* = NULL) = 0;
+    virtual fmatvec::SqrMat operator ()(const fmatvec::Vec &x) = 0;
     /*********************/
 
     protected:
-    Function1<fmatvec::Vec, fmatvec::Vec> * function;
+    Function<fmatvec::Vec(fmatvec::Vec)> *function;
   };
 
   /*!
@@ -73,9 +73,7 @@ namespace MBSim {
       }
 
       /*INHERITED INTERFACE*/
-      virtual fmatvec::SqrMat operator ()(const fmatvec::Vec & x, const void* = NULL);
-
-
+      virtual fmatvec::SqrMat operator ()(const fmatvec::Vec &x);
   };
 
   /*!
@@ -97,7 +95,7 @@ namespace MBSim {
       }
 
       /*INHERITED INTERFACE*/
-      virtual fmatvec::SqrMat operator ()(const fmatvec::Vec & x, Function1<fmatvec::Vec, fmatvec::Vec> * function);
+      virtual fmatvec::SqrMat operator ()(const fmatvec::Vec &x, Function<fmatvec::Vec(fmatvec::Vec)> *function);
 
   };
 
@@ -120,7 +118,7 @@ namespace MBSim {
       }
 
       /*INHERITED INTERFACE*/
-      virtual fmatvec::SqrMat operator ()(const fmatvec::Vec & x, Function1<fmatvec::Vec, fmatvec::Vec> * function);
+      virtual fmatvec::SqrMat operator ()(const fmatvec::Vec &x, Function<fmatvec::Vec(fmatvec::Vec)> *function);
   };
 }
 #endif // NUMERICSNEWTONMEHTODFUNCTION_H_

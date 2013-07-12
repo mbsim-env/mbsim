@@ -28,7 +28,7 @@ namespace MBSim {
 
   class KinematicExcitation : public LinkMechanics {
     protected:
-      Function2<fmatvec::VecV,fmatvec::VecV,fmatvec::VecV> *func;
+      Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *func;
       RigidBody* body;
       Frame C;
     public:
@@ -48,7 +48,7 @@ namespace MBSim {
       void calcgSize(int j);
       void calcgdSize(int j);
 
-      void setForceFunction(Function2<fmatvec::VecV,fmatvec::VecV,fmatvec::VecV> *func_) { func=func_; }
+      void setForceFunction(Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *func_) { func=func_; }
 
       void plot(double t, double dt=1);
 

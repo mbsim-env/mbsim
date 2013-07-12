@@ -46,7 +46,7 @@ namespace MBSim {
   LCPNewtonReformulationFunction::~LCPNewtonReformulationFunction() {
   }
 
-  Vec LCPNewtonReformulationFunction::operator ()(const Vec &currentSolution, const void *) {
+  Vec LCPNewtonReformulationFunction::operator ()(const Vec &currentSolution) {
 
     //check dimensions
     assert(currentSolution.size() == 2 * NumberOfContacts);
@@ -96,7 +96,7 @@ namespace MBSim {
   LCPFixpointReformulationFunction::~LCPFixpointReformulationFunction() {
   }
 
-  Vec LCPFixpointReformulationFunction::operator ()(const Vec &currentSolution, const void *) {
+  Vec LCPFixpointReformulationFunction::operator ()(const Vec &currentSolution) {
 
     //check dimensions
     assert(currentSolution.size() == 2 * NumberOfContacts);
@@ -141,7 +141,7 @@ namespace MBSim {
   LinearComplementarityJacobianFunction::~LinearComplementarityJacobianFunction() {
   }
 
-  void LinearComplementarityJacobianFunction::setFunction(Function1<Vec, Vec> * function_) {
+  void LinearComplementarityJacobianFunction::setFunction(Function<Vec(Vec)> *function_) {
     if (dynamic_cast<LCPNewtonReformulationFunction*>(function_)) {
       function = function_;
 
@@ -157,7 +157,7 @@ namespace MBSim {
       throw; //TODO: use error message
   }
 
-  SqrMat LinearComplementarityJacobianFunction::operator ()(const Vec & x, const void*) {
+  SqrMat LinearComplementarityJacobianFunction::operator ()(const Vec &x) {
     updateJacobian(x);
 
     return J;

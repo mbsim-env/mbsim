@@ -101,7 +101,7 @@ namespace MBSimHydraulics {
 
   void Leakage0DOF::updateStateDependentVariables(double t) {
     const double dp=nTo->getla()(0)-nFrom->getla()(0);
-    Q(0)=(*lpl)(dp, this);
+    Q(0)=(*lpl)(dp);
   }
 
   void Leakage0DOF::initializeUsingXML(TiXmlElement * element) {
@@ -121,6 +121,7 @@ namespace MBSimHydraulics {
 
   void PlaneLeakage0DOF::setPlaneLeakagePressureLoss(PlaneLeakagePressureLoss * plpl) {
     lpl=plpl;
+    lpl->setLine(this);
   }
 
   void PlaneLeakage0DOF::initializeUsingXML(TiXmlElement * element) {
@@ -130,7 +131,7 @@ namespace MBSimHydraulics {
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"height");
     setGapHeight(getDouble(e));
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"planeLeakagePressureLoss");
-    PlaneLeakagePressureLoss *p=MBSim::ObjectFactory<Function>::create<PlaneLeakagePressureLoss>(e->FirstChildElement());
+    PlaneLeakagePressureLoss *p=MBSim::ObjectFactory<MBSim::Function<double(double)> >::create<PlaneLeakagePressureLoss>(e->FirstChildElement());
     setPlaneLeakagePressureLoss(p);
     p->initializeUsingXML(e->FirstChildElement());
   }
@@ -139,6 +140,7 @@ namespace MBSimHydraulics {
 
   void CircularLeakage0DOF::setCircularLeakagePressureLoss(CircularLeakagePressureLoss * clpl) {
     lpl=clpl;
+    lpl->setLine(this);
   }
 
   void CircularLeakage0DOF::init(InitStage stage) {
@@ -157,7 +159,7 @@ namespace MBSimHydraulics {
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"height");
     setGapHeight(getDouble(e));
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"circularLeakagePressureLoss");
-    CircularLeakagePressureLoss *p=MBSim::ObjectFactory<Function>::create<CircularLeakagePressureLoss>(e->FirstChildElement());
+    CircularLeakagePressureLoss *p=MBSim::ObjectFactory<MBSim::Function<double(double)> >::create<CircularLeakagePressureLoss>(e->FirstChildElement());
     setCircularLeakagePressureLoss(p);
     p->initializeUsingXML(e->FirstChildElement());
   }

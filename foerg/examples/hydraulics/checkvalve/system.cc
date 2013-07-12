@@ -70,13 +70,13 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
     lCV->setMaximalContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(c, d)));
 
   ConstrainedNodeMec * n1 = new ConstrainedNodeMec("n1");
-  n1->setpFunction(new Function1_SS_from_VS(new TabularFunction1_VS<Ref,Ref>(Vec("[0; .9; 1.1; 2.9; 3.1; 5]")*.1, "[4e5; 4e5; 2e5; 2e5; 4e5; 4e5]")));
+  n1->setpFunction(new Function_SS_from_VS(new TabularFunction<Ref,Ref>(Vec("[0; .9; 1.1; 2.9; 3.1; 5]")*.1, "[4e5; 4e5; 2e5; 2e5; 4e5; 4e5]")));
   addLink(n1);
   n1->addOutFlow(lCV->getLine());
 
   ConstrainedNodeMec * n2 = new ConstrainedNodeMec("n2");
   addLink(n2);
-  n2->setpFunction(new ConstantFunction1<double,double>(3e5));
+  n2->setpFunction(new ConstantFunction<double(double)>(3e5));
   n2->addInFlow(lCV->getLine());
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

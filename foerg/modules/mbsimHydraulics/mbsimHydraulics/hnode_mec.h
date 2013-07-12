@@ -118,7 +118,7 @@ namespace MBSimHydraulics {
       ~ConstrainedNodeMec() {};
       virtual std::string getType() const { return "ConstrainedNodeMec"; }
 
-      void setpFunction(MBSim::Function1<double,double> * pFun_) {pFun=pFun_; }
+      void setpFunction(MBSim::Function<double(double)> * pFun_) {pFun=pFun_; }
 
       void init(MBSim::InitStage stage);
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
@@ -128,7 +128,7 @@ namespace MBSimHydraulics {
       virtual bool isSingleValued() const {return true;}
 
     private:
-      MBSim::Function1<double,double> * pFun;
+      MBSim::Function<double(double)> * pFun;
   };
 
 

@@ -37,7 +37,7 @@ namespace MBSim {
    */
   class RelativeRotationalSpringDamper : public LinkMechanics {
     protected:
-      Function2<double,double,double> *func;
+      Function<double(double,double)> *func;
       Frame *refFrame;
       RigidBody *body;
       fmatvec::Vec3 torqueDir, WtorqueDir;
@@ -64,7 +64,7 @@ namespace MBSim {
        * The second input parameter to that function is the relative rotational velocity gd between frame2 and frame1.
        * The return value of that function is used as the torque of the RelativeRotationalSpringDamper.
        */
-      void setForceFunction(Function2<double,double,double> *func_) { func=func_; }
+      void setForceFunction(Function<double(double,double)> *func_) { func=func_; }
 
       /** \brief Set a projection direction for the resulting torque
        * If this function is not set, or frame is NULL, than torque calculated by setForceFunction

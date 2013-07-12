@@ -32,14 +32,14 @@ namespace MBSimControl {
   class FunctionSensor : public Sensor {
     public:
       FunctionSensor(const std::string &name="") : Sensor(name), function(NULL), y() {}
-      FunctionSensor(const std::string &name, MBSim::Function1<fmatvec::Vec, double>* function_);
+      FunctionSensor(const std::string &name, MBSim::Function<fmatvec::VecV(double)>* function_);
       std::string getType() const { return "FunctionSensor"; }
-      void setFunction(MBSim::Function1<fmatvec::Vec, double>* function_);
+      void setFunction(MBSim::Function<fmatvec::VecV(double)>* function_);
       fmatvec::Vec getSignal() {return y.copy(); }
       void updateg(double t);
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     private:
-      MBSim::Function1<fmatvec::Vec, double> * function;
+      MBSim::Function<fmatvec::VecV(double)> * function;
       fmatvec::Vec y;
   };
 
@@ -53,11 +53,11 @@ namespace MBSimControl {
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       void init(MBSim::InitStage stage);
       void setSignal(Signal * s) {signal=s; }
-      void setFunction(MBSim::Function1<double, double>* fun_) {fun=fun_; }
+      void setFunction(MBSim::Function<double(double)>* fun_) {fun=fun_; }
       fmatvec::Vec getSignal();
     private:
       Signal * signal;
-      MBSim::Function1<double, double>* fun;
+      MBSim::Function<double(double)>* fun;
       std::string signalString;
   };
 
@@ -71,12 +71,12 @@ namespace MBSimControl {
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       void init(MBSim::InitStage stage);
       void setSignals(Signal * s1, Signal * s2) {signal1=s1; signal2=s2; }
-      void setFunction(MBSim::Function2<double, double, double>* fun_) {fun=fun_; }
+      void setFunction(MBSim::Function<double(double,double)>* fun_) {fun=fun_; }
       fmatvec::Vec getSignal();
     private:
       Signal * signal1;
       Signal * signal2;
-      MBSim::Function2<double, double, double>* fun;
+      MBSim::Function<double(double,double)>* fun;
       std::string signal1String;
       std::string signal2String;
   };

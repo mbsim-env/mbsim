@@ -233,13 +233,13 @@ namespace MBSim {
    * \para para: coefficient vector of the left side
    */
 
-  class ContactPolyfun : public MBSim::Function1<double, double> {
+  class ContactPolyfun : public MBSim::Function<double(double)> {
     public:
       ContactPolyfun(double, const fmatvec::Vec &);
       virtual ~ContactPolyfun() {
       }
 
-      virtual double operator()(const double & x, const void * = NULL);
+      virtual double operator()(const double &x);
       void initializeUsingXML() {
       }
 

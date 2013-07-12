@@ -25,22 +25,146 @@ using namespace MBXMLUtils;
 using namespace fmatvec;
 
 namespace MBSim {
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double,double)>, LinearSpringDamperForce, MBSIMNS"LinearSpringDamperForce")
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double)>, Function1_SS_from_VS, MBSIMNS"Function1_SS_from_VS")
+  void LinearSpringDamperForce::initializeUsingXML(TiXmlElement *element) {
+    Function<double(double,double)>::initializeUsingXML(element);
+    TiXmlElement *e;
+    e = element->FirstChildElement(MBSIMNS"stiffnessCoefficient");
+    c = Element::getDouble(e);
+    e = element->FirstChildElement(MBSIMNS"dampingCoefficient");
+    d = Element::getDouble(e);
+    e = element->FirstChildElement(MBSIMNS"unloadedLength");
+    l0 = Element::getDouble(e);
+  }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_, QuadraticFunction1_VS<Ref>, MBSIMNS"QuadraticFunction1_VS")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_, QuadraticFunction1_VS<Var>, MBSIMNS"QuadraticFunction1_VS")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_, QuadraticFunction1_VS<Fixed<3> >, MBSIMNS"QuadraticFunction1_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double,double)>, NonlinearSpringDamperForce, MBSIMNS"NonlinearSpringDamperForce")
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_, SinusFunction1_VS<Ref>, MBSIMNS"SinusFunction1_VS")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_, SinusFunction1_VS<Var>, MBSIMNS"SinusFunction1_VS")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_, SinusFunction1_VS<Fixed<3> >, MBSIMNS"SinusFunction1_VS")
+  void NonlinearSpringDamperForce::initializeUsingXML(TiXmlElement *element) {
+    Function<double(double,double)>::initializeUsingXML(element);
+    TiXmlElement *e;
+    e = element->FirstChildElement(MBSIMNS"distanceForce");
+    gForceFun = ObjectFactory<MBSim::Function<Vec(double)> >::create<MBSim::Function<Vec(double)> >(e->FirstChildElement());
+    gForceFun->initializeUsingXML(e->FirstChildElement());
+    e = element->FirstChildElement(MBSIMNS"velocityForce");
+    gdForceFun = ObjectFactory<MBSim::Function<Vec(double)> >::create<MBSim::Function<Vec(double)> >(e->FirstChildElement());
+    gdForceFun->initializeUsingXML(e->FirstChildElement());
+  }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec(double)>, Function1_VS_from_SS<Ref>, MBSIMNS"Function1_VS_from_SS")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<VecV(double)>, Function1_VS_from_SS<Var>, MBSIMNS"Function1_VS_from_SS")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec3(double)>, Function1_VS_from_SS<Fixed<3> >, MBSIMNS"Function1_VS_from_SS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double,double)>, LinearRegularizedUnilateralConstraint, MBSIMNS"LinearRegularizedUnilateralConstraint")
 
-  void Function1_SS_from_VS::initializeUsingXML(TiXmlElement * element) {
+  void LinearRegularizedUnilateralConstraint::initializeUsingXML(TiXmlElement *element) {
+    Function<double(double,double)>::initializeUsingXML(element);
+    TiXmlElement *e;
+    e = element->FirstChildElement(MBSIMNS"stiffnessCoefficient");
+    c = Element::getDouble(e);
+    e = element->FirstChildElement(MBSIMNS"dampingCoefficient");
+    d = Element::getDouble(e);
+  }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double,double)>, LinearRegularizedBilateralConstraint, MBSIMNS"LinearRegularizedBilateralConstraint")
+
+  void LinearRegularizedBilateralConstraint::initializeUsingXML(TiXmlElement *element) {
+    Function<double(double,double)>::initializeUsingXML(element);
+    TiXmlElement *e;
+    e = element->FirstChildElement(MBSIMNS"stiffnessCoefficient");
+    c = Element::getDouble(e);
+    e = element->FirstChildElement(MBSIMNS"dampingCoefficient");
+    d = Element::getDouble(e);
+  }
+
+  TiXmlElement* LinearRegularizedBilateralConstraint::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = Function<double(double,double)>::writeXMLFile(parent);
+    addElementText(ele0, MBSIMNS"stiffnessCoefficient", c);
+    addElementText(ele0, MBSIMNS"dampingCoefficient", d);
+    return ele0;
+  }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec(Vec,double)>, LinearRegularizedCoulombFriction, MBSIMNS"LinearRegularizedCoulombFriction")
+
+  Vec LinearRegularizedCoulombFriction::operator()(const Vec &gd, const double& laN) {
+    int nFric = gd.size();
+    Vec la(nFric, NONINIT);
+    double normgd = nrm2(gd(0, nFric - 1));
+    if (normgd < gdLim)
+      la(0, nFric - 1) = gd(0, nFric - 1) * (-laN * mu / gdLim);
+    else
+      la(0, nFric - 1) = gd(0, nFric - 1) * (-laN * mu / normgd);
+    return la;
+  }
+
+  void LinearRegularizedCoulombFriction::initializeUsingXML(TiXmlElement *element) {
+    Function<Vec(Vec,double)>::initializeUsingXML(element);
+    TiXmlElement *e;
+    e = element->FirstChildElement(MBSIMNS"marginalVelocity");
+    if (e)
+      gdLim = Element::getDouble(e);
+    e = element->FirstChildElement(MBSIMNS"frictionCoefficient");
+    mu = Element::getDouble(e);
+  }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec(Vec,double)>, LinearRegularizedStribeckFriction, MBSIMNS"LinearRegularizedStribeckFriction")
+
+  Vec LinearRegularizedStribeckFriction::operator()(const Vec &gd, const double& laN) {
+    int nFric = gd.size();
+    Vec la(nFric, NONINIT);
+    double normgd = nrm2(gd(0, nFric - 1));
+    if (normgd < gdLim) {
+      double mu0 = (*fmu)(0);
+      la(0, nFric - 1) = gd(0, nFric - 1) * (-laN * mu0 / gdLim);
+    }
+    else {
+      double mu = (*fmu)(nrm2(gd(0, nFric - 1)) - gdLim);
+      la(0, nFric - 1) = gd(0, nFric - 1) * (-laN * mu / normgd);
+    }
+    return la;
+  }
+
+  void LinearRegularizedStribeckFriction::initializeUsingXML(TiXmlElement *element) {
+    Function<Vec(Vec,double)>::initializeUsingXML(element);
+    TiXmlElement *e;
+    e = element->FirstChildElement(MBSIMNS"marginalVelocity");
+    if (e)
+      gdLim = Element::getDouble(e);
+    e = element->FirstChildElement(MBSIMNS"frictionFunction");
+    Function<double(double)> *f = ObjectFactory<Function<double(double)> >::create<Function<double(double)> >(e->FirstChildElement());
+    setFrictionFunction(f);
+    f->initializeUsingXML(e->FirstChildElement());
+  }
+
+  void InfluenceFunction::initializeUsingXML(TiXmlElement *element) {
+    Function<double(Vec2,Vec2)>::initializeUsingXML(element);
+  }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(Vec2,Vec2)>, FlexibilityInfluenceFunction, MBSIMNS"FlexibilityInfluenceFunction")
+
+  void FlexibilityInfluenceFunction::initializeUsingXML(TiXmlElement *element) {
+    InfluenceFunction::initializeUsingXML(element);
+    flexibility = Element::getDouble(element->FirstChildElement(MBSIMNS"Flexibility"));
+  }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(Vec2,Vec2)>, ConstantInfluenceFunction, MBSIMNS"ConstantInfluenceFunction")
+
+  void ConstantInfluenceFunction::initializeUsingXML(TiXmlElement *element) {
+    InfluenceFunction::initializeUsingXML(element);
+    couplingValue = Element::getDouble(element->FirstChildElement(MBSIMNS"CouplingValue"));
+  }
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double)>, Function_SS_from_VS, MBSIMNS"Function1_SS_from_VS")
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec(double)>, QuadraticFunction<Ref>, MBSIMNS"QuadraticFunction1_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<VecV(double)>, QuadraticFunction<Var>, MBSIMNS"QuadraticFunction1_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec3(double)>, QuadraticFunction<Fixed<3> >, MBSIMNS"QuadraticFunction1_VS")
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec(double)>, SinusFunction<Ref>, MBSIMNS"SinusFunction1_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<VecV(double)>, SinusFunction<Var>, MBSIMNS"SinusFunction1_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec3(double)>, SinusFunction<Fixed<3> >, MBSIMNS"SinusFunction1_VS")
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec(double)>, Function_VS_from_SS<Ref>, MBSIMNS"Function1_VS_from_SS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<VecV(double)>, Function_VS_from_SS<Var>, MBSIMNS"Function1_VS_from_SS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec3(double)>, Function_VS_from_SS<Fixed<3> >, MBSIMNS"Function1_VS_from_SS")
+
+  void Function_SS_from_VS::initializeUsingXML(TiXmlElement * element) {
     Function<double(double)>::initializeUsingXML(element);
     TiXmlElement * e;
     e=element;
@@ -49,43 +173,9 @@ namespace MBSim {
     setFunction(f);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_, PositiveSinusFunction1_VS, MBSIMNS"PositiveSinusFunction1_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec(double)>, PositiveSinusFunction<Ref>, MBSIMNS"PositiveSinusFunction1_VS")
 
-  Vec PositiveSinusFunction1_VS::operator()(const double& tVal, const void *) {
-    Vec y=SinusFunction1_VS<fmatvec::Ref>::operator()(tVal);
-    for (int i=0; i<ySize; i++)
-      if (y(i)<0)
-        y(i)=0;
-    return y;
-  }
-
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_, StepFunction1_VS, MBSIMNS"StepFunction1_VS")
-
-  Vec StepFunction1_VS::operator()(const double& tVal, const void *) {
-    Vec y(ySize, INIT, 0);
-    for (int i=0; i<ySize; i++)
-      if (tVal>=stepTime(i))
-        y(i)=stepSize(i);
-    return y;
-  }
-
-
-  void StepFunction1_VS::initializeUsingXML(TiXmlElement * element) {
-    Function1<Vec,double>::initializeUsingXML(element);
-    TiXmlElement *e=element->FirstChildElement(MBSIMNS"time");
-    Vec stepTime_=Element::getVec(e);
-    stepTime=stepTime_;
-    e=element->FirstChildElement(MBSIMNS"size");
-    Vec stepSize_=Element::getVec(e);
-    stepSize=stepSize_;
-    check();
-  }
-
-  void StepFunction1_VS::check() {
-        ySize=stepTime.size();
-        assert(stepSize.size()==ySize);
-  }
-
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec(double)>, StepFunction<Ref>, MBSIMNS"StepFunction1_VS")
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(MBSim::Function<Vec(double)>, PeriodicTabularFunction, MBSIMNS"PeriodicTabularFunction1_VS")
 
@@ -98,33 +188,18 @@ namespace MBSim {
     return TabularFunction<fmatvec::Ref,fmatvec::Ref>::operator()(xValTmp);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_, SummationFunction1_VS, MBSIMNS"SummationFunction1_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec(double)>, SummationFunction, MBSIMNS"SummationFunction1_VS")
 
-  void SummationFunction1_VS::initializeUsingXML(TiXmlElement * element) {
-    Function1<Vec,double>::initializeUsingXML(element);
-    TiXmlElement * e;
-    e=element->FirstChildElement(MBSIMNS"function");
-    while (e && e->ValueStr()==MBSIMNS"function") {
-      TiXmlElement * ee = e->FirstChildElement();
-      Function1<Vec,double> *f=ObjectFactory<Function_>::create<Function1<Vec,double> >(ee);
-      f->initializeUsingXML(ee);
-      ee=e->FirstChildElement(MBSIMNS"factor");
-      double factor=Element::getDouble(ee);
-      addFunction(f, factor);
-      e=e->NextSiblingElement();
-    }
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double,double)>, TabularFunction_SSS, MBSIMNS"TabularFunction2_SSS")
+
+  TabularFunction_SSS::TabularFunction_SSS() : xVec(Vec(0)), yVec(Vec(0)), XY(Mat(0,0)), xSize(0), ySize(0), x0Index(0), x1Index(0), y0Index(0), y1Index(0), func_value(Vec(1,INIT,0)), xy(Vec(4,INIT,1)), XYval(Vec(4,INIT,0)), XYfac(Mat(4,4,INIT,0)) {
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_, TabularFunction2_SSS, MBSIMNS"TabularFunction2_SSS")
-
-  TabularFunction2_SSS::TabularFunction2_SSS() : xVec(Vec(0)), yVec(Vec(0)), XY(Mat(0,0)), xSize(0), ySize(0), x0Index(0), x1Index(0), y0Index(0), y1Index(0), func_value(Vec(1,INIT,0)), xy(Vec(4,INIT,1)), XYval(Vec(4,INIT,0)), XYfac(Mat(4,4,INIT,0)) {
-  }
-
-  void TabularFunction2_SSS::calcIndex(const double * x, Vec X, int * xSize, int * xIndexMinus, int * xIndexPlus) {
+  void TabularFunction_SSS::calcIndex(const double * x, Vec X, int * xSize, int * xIndexMinus, int * xIndexPlus) {
     if (*x<=X(0)) {
       *xIndexPlus=1;
       *xIndexMinus=0;
-      cerr << "TabularFunction2_SSS: Value (" << *x << ") is smaller than the smallest table value(" << X(0) << ")!" << endl;
+      cerr << "TabularFunction_SSS: Value (" << *x << ") is smaller than the smallest table value(" << X(0) << ")!" << endl;
     }
     else if (*x>=X(*xSize-1)) {
       *xIndexPlus=*xSize-1;
@@ -142,7 +217,7 @@ namespace MBSim {
     }
   }
 
-  void TabularFunction2_SSS::setXValues(Vec xVec_) {
+  void TabularFunction_SSS::setXValues(Vec xVec_) {
     xVec << xVec_;
     xSize=xVec.size();
 
@@ -152,7 +227,7 @@ namespace MBSim {
     xSize=xVec.size();
   }
 
-  void TabularFunction2_SSS::setYValues(Vec yVec_) {
+  void TabularFunction_SSS::setYValues(Vec yVec_) {
     yVec << yVec_;
     ySize=yVec.size();
 
@@ -161,7 +236,7 @@ namespace MBSim {
         throw MBSimError("yVec must be strictly monotonic increasing!");
   }
 
-  void TabularFunction2_SSS::setXYMat(Mat XY_) {
+  void TabularFunction_SSS::setXYMat(Mat XY_) {
     XY << XY_;
 
     if(xSize==0)
@@ -176,7 +251,7 @@ namespace MBSim {
     }
   }
 
-  double TabularFunction2_SSS::operator()(const double& x, const double& y, const void * ) {
+  double TabularFunction_SSS::operator()(const double& x, const double& y) {
     calcIndex(&x, xVec, &xSize, &x0Index, &x1Index);
     calcIndex(&y, yVec, &ySize, &y0Index, &y1Index);
 
@@ -212,10 +287,8 @@ namespace MBSim {
     return trans(1./nenner*XYfac*XYval)*xy;
   }
 
-  void TabularFunction2_SSS::initializeUsingXML(TiXmlElement * element) {
-    Function2<double,double,double>::initializeUsingXML(element);
-    TiXmlElement * e;
-    e = element->FirstChildElement(MBSIMNS"xValues");
+  void TabularFunction_SSS::initializeUsingXML(TiXmlElement * element) {
+    TiXmlElement * e = element->FirstChildElement(MBSIMNS"xValues");
     Vec x_=Element::getVec(e);
     setXValues(x_);
     e = element->FirstChildElement(MBSIMNS"yValues");
@@ -226,38 +299,14 @@ namespace MBSim {
     setXYMat(xy_);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function_, Polynom1_SS, MBSIMNS"Polynom1_SS")
-
-  void Polynom1_SS::setCoefficients(Vec a) {
-    for (int i=0; i<a.size(); i++) {
-      addDerivative(new Polynom1_SS::Polynom1_SSEvaluation(a.copy()));
-      Vec b(a.size()-1, INIT, 0);
-      for (int j=0; j<b.size(); j++)
-        b(j)=a(j+1)*(j+1.);
-      a.resize(a.size()-1);
-      a=b.copy();
-    }
-    addDerivative(new Polynom1_SS::Polynom1_SSEvaluation(a.copy()));
-  }
-
-  void Polynom1_SS::initializeUsingXML(TiXmlElement * element) {
-    Function1<double,double>::initializeUsingXML(element);
-    MBSim::DifferentiableFunction1<double>::initializeUsingXML(element);
-    TiXmlElement * e=element->FirstChildElement(MBSIMNS"coefficients");
-    setCoefficients(MBSim::Element::getVec(e));
-  }
-
-  double Polynom1_SS::Polynom1_SSEvaluation::operator()(const double& tVal, const void *) {
-    double value=a(a.size()-1);
-    for (int i=a.size()-2; i>-1; i--)
-      value=value*tVal+a(i);
-    return value;
-  }
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double)>, Polynom, MBSIMNS"Polynom1_SS")
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double)>, ConstantFunction<double(double)>, MBSIMNS"ConstantFunction1_SS")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec(double)>, ConstantFunction<Vec(double)>, MBSIMNS"ConstantFunction1_VS")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<VecV(double)>, ConstantFunction<VecV(double)>, MBSIMNS"ConstantFunction1_VS")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec3(double)>, ConstantFunction<Vec3(double)>, MBSIMNS"ConstantFunction1_VS")
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(MBSim::Function<double(double,double)>, ConstantFunction<double(double,double)>, MBSIMNS"ConstantFunction2_SSS")
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec(double)>, TabularFunction<Ref COMMA Ref>, MBSIMNS"TabularFunction1_VS")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<VecV(double)>, TabularFunction<Var COMMA Var>, MBSIMNS"TabularFunction1_VS")

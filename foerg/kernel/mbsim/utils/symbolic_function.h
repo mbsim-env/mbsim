@@ -313,7 +313,7 @@ template<typename Ret, typename Arg1, typename Arg2>
   };
 
   template <class Ret, class Arg1, class Arg2, class Arg3>
-  class SymbolicFunction3 : public Function3<Ret,Arg1,Arg2,Arg3> {
+  class SymbolicFunction3 : public Function<Ret(Arg1,Arg2,Arg3)> {
     CasADi::SXFunction f;
     public:
     SymbolicFunction3(const CasADi::SXFunction &f_) : f(f_) {

@@ -38,7 +38,7 @@ namespace MBSim {
     protected:
       double dist;
       fmatvec::Vec3 n;
-      Function2<double,double,double> *func;
+      Function<double(double,double)> *func;
       Frame *refFrame;
       fmatvec::Vec3 forceDir, WforceDir;
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -66,7 +66,7 @@ namespace MBSim {
        * The second input parameter to that function is the relative velocity gd between frame2 and frame1.
        * The return value of that function is used as the force of the SpringDamper.
        */
-      void setForceFunction(Function2<double,double,double> *func_) { func=func_; }
+      void setForceFunction(Function<double(double,double)> *func_) { func=func_; }
 
       /** \brief Set a projection direction of the applied force.
        * If this function is not set, or frame is NULL, than force calculated by setForceFunction
