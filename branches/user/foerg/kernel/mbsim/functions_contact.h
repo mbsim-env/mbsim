@@ -40,16 +40,19 @@
 #include "mbsim/contours/compound_contour.h"
 #include "mbsim/utils/function.h"
 #include "mbsim/mbsim_event.h"
+#include <fmatvec/function.h>
 
 namespace MBSim {
+
+  template<typename Sig> class DistanceFunction;
 
   /*! 
    * \brief class for distances and root functions of contact problems
    * \author Roland Zander
    * \date 2009-04-21 some comments (Thorsten Schindler)
    */
-  template<class Ret, class Arg>
-    class DistanceFunction : public Function<Ret(Arg)> {
+  template<typename Ret, typename Arg>
+    class DistanceFunction<Ret(Arg)> : public Function<Ret(Arg)> {
       public:
         /* INTERFACE FOR DERIVED CLASSES */
         /*!
@@ -79,7 +82,7 @@ namespace MBSim {
    * \date 2010-03-25 contour point data saving removed (Thorsten Schindler)
    * \todo improve performance statement TODO
    */
-  class FuncPairContour1sPoint : public DistanceFunction<double,double> {
+  class FuncPairContour1sPoint : public DistanceFunction<double(double)> {
     public:
       /*!
        * \brief constructor
@@ -125,7 +128,7 @@ namespace MBSim {
    * \date 2010-03-25 contour point data saving removed (Thorsten Schindler)
    * \todo improve performance statement TODO
    */
-  class FuncPairContour1sCircleHollow : public DistanceFunction<double,double> {
+  class FuncPairContour1sCircleHollow : public DistanceFunction<double(double)> {
     public:
       /**
        * \brief constructor
@@ -168,7 +171,7 @@ namespace MBSim {
    * \author Roland Zander
    * \date 2009-07-10 some comments (Thorsten Schindler)
    */
-  class FuncPairPointContourInterpolation : public DistanceFunction<fmatvec::VecV,fmatvec::VecV> {
+  class FuncPairPointContourInterpolation : public DistanceFunction<fmatvec::VecV(fmatvec::VecV)> {
     public:
       /**
        * \brief constructor
@@ -204,7 +207,7 @@ namespace MBSim {
    * \author Thorsten Schindler
    * \date 2009-07-10 some comments (Thorsten Schindler)
    */
-  class FuncPairConeSectionCircle : public DistanceFunction<double,double> {
+  class FuncPairConeSectionCircle : public DistanceFunction<double(double)> {
     public:
       /*! 
        * \brief constructor
@@ -423,7 +426,7 @@ namespace MBSim {
    * \date 2009-07-10 some comments (Thorsten Schindler) 
    * \todo change to new kernel_dev
    */
-  class FuncPairContour1sLine : public DistanceFunction<double,double> {
+  class FuncPairContour1sLine : public DistanceFunction<double(double)> {
     public:
       /**
        * \brief constructor
@@ -463,7 +466,7 @@ namespace MBSim {
    * \author Roland Zander
    * \date 2009-04-21 contour point data included (Thorsten Schindler)
    */
-  class FuncPairContour1sCircleSolid : public DistanceFunction<double,double> {
+  class FuncPairContour1sCircleSolid : public DistanceFunction<double(double)> {
     public:
       /**
        * \brief constructor
@@ -527,7 +530,7 @@ namespace MBSim {
        * \default numerical Jacobian evaluation
        * \default only local search
        */
-      Contact1sSearch(DistanceFunction<double,double> *func_) : func(func_), jac(0), s0(0.), searchAll(false) {}
+      Contact1sSearch(DistanceFunction<double(double)> *func_) : func(func_), jac(0), s0(0.), searchAll(false) {}
 
       /*! 
        * \brief constructor 
@@ -535,7 +538,7 @@ namespace MBSim {
        * \param Jacobian evaluation
        * \default only local search
        */
-      Contact1sSearch(DistanceFunction<double,double> *func_,Function<double(double)> *jac_) : func(func_), jac(jac_), s0(0.), searchAll(false) {}
+      Contact1sSearch(DistanceFunction<double(double)> *func_,Function<double(double)> *jac_) : func(func_), jac(jac_), s0(0.), searchAll(false) {}
 
       /* GETTER / SETTER */
       void setInitialValue(const double &s0_ ) { s0=s0_; }
@@ -567,7 +570,7 @@ namespace MBSim {
       /** 
        * \brief distance-function holding all information for contact-search 
        */
-      DistanceFunction<double,double> *func;
+      DistanceFunction<double(double)> *func;
 
       /** 
        * \brief Jacobian of root function part of distance function

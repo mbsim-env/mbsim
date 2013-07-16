@@ -91,7 +91,7 @@ namespace MBSim {
 
 
   ContactKinematicsPointPolynomialFrustum::ContactKinematicsPointPolynomialFrustum() :
-      ContactKinematics(), ipoint(-1), ifrustum(-1), point(0), frustum(0), funcProjectAlongNormal(0), newtonProjectAlongNormal(), jacobianProjectAlongNormal(0), criteriaProjectAlongNormal(), dampingProjectAlongNormal() {
+      ContactKinematics(), ipoint(-1), ifrustum(-1), point(0), frustum(0), signh(1), funcProjectAlongNormal(0), newtonProjectAlongNormal(), jacobianProjectAlongNormal(0), criteriaProjectAlongNormal(), dampingProjectAlongNormal() {
   }
 
   ContactKinematicsPointPolynomialFrustum::~ContactKinematicsPointPolynomialFrustum() {
@@ -100,18 +100,20 @@ namespace MBSim {
   }
 
   void ContactKinematicsPointPolynomialFrustum::assignContours(const vector<Contour*> &contour) {
-    if (dynamic_cast<Rectangle*>(contour[0])) {
+    if (dynamic_cast<Point*>(contour[0])) {
       ipoint = 0;
       ifrustum = 1;
-      point = static_cast<Rectangle*>(contour[0]);
+      point = static_cast<Point*>(contour[0]);
       frustum = static_cast<PolynomialFrustum*>(contour[1]);
     }
     else {
       ipoint = 1;
       ifrustum = 0;
-      point = static_cast<Rectangle*>(contour[1]);
+      point = static_cast<Point*>(contour[1]);
       frustum = static_cast<PolynomialFrustum*>(contour[0]);
     }
+
+    signh = sign(frustum->getHeight());
 
     /*Set Up system for projection of contact point onto frustum surface*/
     funcProjectAlongNormal = new projectPointAlongNormal(frustum);
@@ -125,8 +127,8 @@ namespace MBSim {
   void ContactKinematicsPointPolynomialFrustum::setFrustumOrienationKinematics(const double & x, const double & phi, ContourPointData * cpData) {
     SqrMat3 AWF = frustum->getFrame()->getOrientation();
     cpData[ifrustum].getFrameOfReference().getOrientation().set(0, AWF * frustum->computeNormal(x, phi));
-    cpData[ifrustum].getFrameOfReference().getOrientation().set(1, -AWF * frustum->computeTangentRadial(x, phi));
-    cpData[ifrustum].getFrameOfReference().getOrientation().set(2, AWF * frustum->computeTangentAzimuthal(x, phi));
+    cpData[ifrustum].getFrameOfReference().getOrientation().set(1, signh * AWF * frustum->computeTangentRadial(x, phi));
+    cpData[ifrustum].getFrameOfReference().getOrientation().set(2, signh * -AWF * frustum->computeTangentAzimuthal(x, phi));
   }
 
   void ContactKinematicsPointPolynomialFrustum::updateg(Vec & g, ContourPointData * cpData, int index) {
@@ -134,12 +136,13 @@ namespace MBSim {
     //point in frustum-coordinates
     Vec3 rPoint = frustum->getFrame()->getOrientation().T() * (point->getFrame()->getPosition() - frustum->getFrame()->getPosition());
 
+
     const double & h = rPoint(0);
     //radial position of point
     const double r = sqrt(pow(rPoint(1), 2) + pow(rPoint(2), 2));
     const double R = frustum->getValue(h);
 
-    if(h >= 0 and h <= frustum->getHeight() and r <= R) {
+    if(signh*h >= 0 and signh*h <= signh*frustum->getHeight() and r <= R) {
       double phi = ArcTan(rPoint(1), rPoint(2));
       funcProjectAlongNormal->setUpSystemParamters(rPoint, phi);
       jacobianProjectAlongNormal->setUpSystemParamters(rPoint, phi);

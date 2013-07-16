@@ -63,6 +63,10 @@ template<class Row, class Col>
     public:
       PPolynom() : f(this), fd(this), fdd(this) { }
 
+      fmatvec::Vector<Col,double> operator()(const double &x) { return f(x); }
+      typename fmatvec::Der<fmatvec::Vector<Col,double>, double>::type parDer(const double &x) { return fd(x); }
+      typename fmatvec::Der<typename fmatvec::Der<fmatvec::Vector<Col,double>, double>::type, double>::type parDerParDer(const double &x) { return fdd(x); }
+
       /*! 
        * \brief set interpolation
        * @param x vector of ordered x values
@@ -148,10 +152,6 @@ template<class Row, class Col>
        * the first derivative is weak and the second derivative is zero elsewhere although it should be distributionally at the corners
        */
       void calculatePLinear(const fmatvec::Vector<Row,double> &x, const fmatvec::Matrix<fmatvec::General,Row,Col,double> &f);
-
-      fmatvec::Vector<Col,double> operator()(const double &x) { return f(x); }
-      typename fmatvec::Der<fmatvec::Vector<Col,double>, double>::type parDer(const double &x) { return fd(x); }
-      typename fmatvec::Der<typename fmatvec::Der<fmatvec::Vector<Col,double>, double>::type, double>::type parDerParDer(const double &x) { return fdd(x); }
 
      /**
        * piecewise polynomial interpolation - zeroth derivative
