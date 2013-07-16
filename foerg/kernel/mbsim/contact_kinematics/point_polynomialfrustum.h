@@ -126,12 +126,17 @@ namespace MBSim {
       /**
        * \brief pointer to the contour class for the rectangle
        */
-      Rectangle *point;
+      Point *point;
 
       /*!
        * \brief pointer to the contour class for the polynomial frustum
        */
       PolynomialFrustum *frustum;
+
+      /*!
+       * \brief sign of h-direction of frustum
+       */
+      double signh;
 
       /*!
        * \brief function for intersection point

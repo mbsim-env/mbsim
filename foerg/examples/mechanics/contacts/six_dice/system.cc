@@ -16,9 +16,9 @@
 
 using namespace fmatvec;
 
-class Angle : public  Function1<double,double> {
+class Angle : public MBSim::Function<double(double)> {
   public:
-    double operator()(const double& t, const void*) {
+    double operator()(const double& t) {
       double al;
       if(t <= 0.35)
 	al = 0.0;
@@ -28,19 +28,18 @@ class Angle : public  Function1<double,double> {
 	al = 2*(1.7-0.35);
       return al;
     }
-};
-
-class Omega : public  Function1<Vec3,double> {
-  public:
-    Vec3 operator()(const double& t, const void*) {
-      Vec3 om(3);
+    double parDer(const double& t) {
+      double om;
       if(t <= 0.35)
-	om(1) = 0.0;
+	om = 0.0;
       else if(t <= 1.7)
-	om(1) = 2;
+	om = 2;
       else
-	om(1) = 0;
+	om = 0;
       return om;
+    }
+    double parDerParDer(const double& t) {
+      return 0;
     }
 };
 
@@ -71,7 +70,6 @@ System::System(const string &name) : DynamicSystemSolver(name) {
 
   RigidBody* cup = new RigidBody("Cup");
   cup->setRotation(new TimeDependentRotationAboutFixedAxis(new Angle,"[0;1;0]"));
-  cup->setGuidingVelocityOfRotation(new TimeDependentGuidingVelocity(new Omega));
   SymMat Theta(3);
   Theta(1,1) = 0.5*0.1*0.2*0.2;
   addFrame(new FixedRelativeFrame("Is",rB,SqrMat(3,EYE)));

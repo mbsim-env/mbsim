@@ -32,7 +32,7 @@ namespace MBSimFlexibleBody {
    * \author Kilian Grundl
    * \date 2009-10-06 initial commit (Thorsten Schindler)
    */
-  class FuncPairCircleNurbsDisk2s : public MBSim::DistanceFunction<double,double> {
+  class FuncPairCircleNurbsDisk2s : public MBSim::DistanceFunction<double(double)> {
     public:
       /**
        * \brief constructor
@@ -42,7 +42,7 @@ namespace MBSimFlexibleBody {
       FuncPairCircleNurbsDisk2s(MBSim::Circle* circle_, NurbsDisk2s* nurbsdisk_) : nurbsdisk(nurbsdisk_), circle(circle_) {}
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
-      double operator()(const double &alpha, const void * =NULL) {
+      double operator()(const double &alpha) {
         //Parameters of the AWK of the nurbs disk and the circle
         fmatvec::SqrMat3 AWK_disk   = nurbsdisk->getFrame()->getOrientation();
         fmatvec::SqrMat3 AWK_circle = circle->getFrame()->getOrientation();

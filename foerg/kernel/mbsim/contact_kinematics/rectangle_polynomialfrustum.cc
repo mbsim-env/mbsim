@@ -153,8 +153,8 @@ namespace MBSim {
   void ContactKinematicsRectanglePolynomialFrustum::setFrustumOrienationKinematics(const double & x, const double & phi, ContourPointData * cpData) {
     SqrMat3 AWF = frustum->getFrame()->getOrientation();
     cpData[ifrustum].getFrameOfReference().getOrientation().set(0, AWF * frustum->computeNormal(x, phi));
-    cpData[ifrustum].getFrameOfReference().getOrientation().set(1, signh*-AWF * frustum->computeTangentRadial(x, phi));
-    cpData[ifrustum].getFrameOfReference().getOrientation().set(2, signh*AWF * frustum->computeTangentAzimuthal(x, phi));
+    cpData[ifrustum].getFrameOfReference().getOrientation().set(1, signh*AWF * frustum->computeTangentRadial(x, phi));
+    cpData[ifrustum].getFrameOfReference().getOrientation().set(2, signh*-AWF * frustum->computeTangentAzimuthal(x, phi));
   }
 
   bool ContactKinematicsRectanglePolynomialFrustum::cpLocationInRectangle(Vec & g, ContourPointData * cpData) {
@@ -255,7 +255,6 @@ namespace MBSim {
     double weightsum = 0;
 
     double h = frustum->getHeight();
-    int signh = sign(h);
 
     for (int i = 0; i < 4; i++) {
       cornerPoints[i] = frustum->getFrame()->getOrientation().T() * (rectangle->getFrame()->getPosition() + rectangle->getFrame()->getOrientation() * cornerPoints[i] - frustum->getFrame()->getPosition());

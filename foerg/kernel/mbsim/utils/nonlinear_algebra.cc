@@ -29,7 +29,7 @@ using namespace std;
 
 namespace MBSim {
 
-  RegulaFalsi::RegulaFalsi(Function<double(double)> *f) : func(f), itmax(10000), tol(1e-10) {}
+  RegulaFalsi::RegulaFalsi(Function<double(double)> *f) : func(f), itmax(10000), it(0), info(-1), tol(1e-10) {}
 
   double RegulaFalsi::solve(double a, double b) {
 

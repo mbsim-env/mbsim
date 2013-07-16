@@ -40,7 +40,7 @@ class CountourCouplingCantileverBeam : public InfluenceFunction {
     virtual ~CountourCouplingCantileverBeam() {
     }
 
-    virtual double operator()(const fmatvec::Vec2 &Arg1, const fmatvec::Vec2 &Arg2, const void * = NULL) {
+    virtual double operator()(const fmatvec::Vec2 &Arg1, const fmatvec::Vec2 &Arg2) {
       double i=Arg1(0);  // it is: i < j
       double j=Arg2(0);
       if(i > j)
