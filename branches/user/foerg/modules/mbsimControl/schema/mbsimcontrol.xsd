@@ -348,7 +348,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="mbsim:Function1_VS"/>
+                <xs:element ref="mbsim:Function_VS"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -357,14 +357,14 @@
     </xs:complexContent>
   </xs:complexType>
   
-  <xs:element name="Function1_SSEvaluation" substitutionGroup="Signal" type="Function1_SSEvaluationType">
+  <xs:element name="Function_SSEvaluation" substitutionGroup="Signal" type="Function_SSEvaluationType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Auswertung einer Funktion mit x=SignalWert.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="Function1_SSEvaluationType">
+  <xs:complexType name="Function_SSEvaluationType">
     <xs:complexContent>
       <xs:extension base="SignalType" >
         <xs:sequence>
@@ -386,7 +386,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="mbsim:Function1_SS"/>
+                <xs:element ref="mbsim:Function_SS"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -395,14 +395,14 @@
     </xs:complexContent>
   </xs:complexType>
   
-  <xs:element name="Function2_SSSEvaluation" substitutionGroup="Signal" type="Function2_SSSEvaluationType">
+  <xs:element name="Function_SSSEvaluation" substitutionGroup="Signal" type="Function_SSSEvaluationType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Auswertung einer Funktion mit x=SignalWert.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="Function2_SSSEvaluationType">
+  <xs:complexType name="Function_SSSEvaluationType">
     <xs:complexContent>
       <xs:extension base="SignalType" >
         <xs:sequence>
@@ -434,7 +434,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="mbsim:Function2_SSS"/>
+                <xs:element ref="mbsim:Function_SSS"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -1350,7 +1350,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="mbsim:Function1_VV"/>
+                <xs:element ref="mbsim:Function_VV"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -1386,7 +1386,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="mbsim:Function2_VVV"/>
+                <xs:element ref="mbsim:Function_VVV"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>

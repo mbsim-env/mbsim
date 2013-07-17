@@ -32,16 +32,16 @@
     <FunctionSensor name="DesiredPosition" xmlns="http://mbsim.berlios.de/MBSimControl">
       <function>
         <!--
-        <SinusFunction1_VS xmlns="http://mbsim.berlios.de/MBSim">
+        <SinusFunction_VS xmlns="http://mbsim.berlios.de/MBSim">
           <amplitude>.1</amplitude>
           <frequency>1</frequency>
           <phase>0</phase>
-        </SinusFunction1_VS>
+        </SinusFunction_VS>
         -->
-        <TabularFunction1_VS xmlns="http://mbsim.berlios.de/MBSim">
+        <TabularFunction_VS xmlns="http://mbsim.berlios.de/MBSim">
           <x>[0; .49; .51; .99; 1.01; 1.49; 1.51; 2]/2</x>
           <y>[0;   0;   1;   1;   -1;   -1;    0; 0]*.05</y>
-        </TabularFunction1_VS>
+        </TabularFunction_VS>
       </function>
     </FunctionSensor>
     <SignalAddition name="DifferencePosition" xmlns="http://mbsim.berlios.de/MBSimControl">

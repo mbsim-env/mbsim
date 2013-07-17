@@ -1204,7 +1204,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function1_VS"/>
+                <xs:element ref="Function_VS"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -1214,7 +1214,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function1_VS"/>
+                <xs:element ref="Function_VS"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -1224,7 +1224,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function1_VS"/>
+                <xs:element ref="Function_VS"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -1250,7 +1250,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function1_VV"/>
+                <xs:element ref="Function_VV"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -1260,7 +1260,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function2_VVV"/>
+                <xs:element ref="Function_VVV"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -1521,7 +1521,7 @@
                   </xs:documentation></xs:annotation>
                   <xs:complexType>
                     <xs:sequence>
-                      <xs:element ref="Function1_VS"/>
+                      <xs:element ref="Function_VS"/>
                     </xs:sequence>
                   </xs:complexType>
                 </xs:element>
@@ -1553,7 +1553,7 @@
                   </xs:documentation></xs:annotation>
                   <xs:complexType>
                     <xs:sequence>
-                      <xs:element ref="Function1_VS"/>
+                      <xs:element ref="Function_VS"/>
                     </xs:sequence>
                   </xs:complexType>
                 </xs:element>
@@ -1605,7 +1605,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function2_SSS"/>
+                <xs:element ref="Function_SSS"/>
               </xs:sequence>
             </xs:complexType> 
           </xs:element>
@@ -2679,7 +2679,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function1_VS">
+                <xs:element ref="Function_VS">
                 </xs:element>
               </xs:sequence>
             </xs:complexType>
@@ -2702,7 +2702,7 @@
           <xs:element name="translationFunction">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function2_VVS">
+                <xs:element ref="Function_VVS">
                 </xs:element>
               </xs:sequence>
             </xs:complexType>
@@ -2720,7 +2720,7 @@
           <xs:element name="translationFunction">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function1_VV"/>
+                <xs:element ref="Function_VV"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -2810,7 +2810,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function1_SS">
+                <xs:element ref="Function_SS">
                 </xs:element>
               </xs:sequence>
             </xs:complexType>
@@ -2840,7 +2840,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function1_SV">
+                <xs:element ref="Function_SV">
                 </xs:element>
               </xs:sequence>
             </xs:complexType>
@@ -2927,7 +2927,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function1_VS">
+                <xs:element ref="Function_VS">
                 </xs:element>
               </xs:sequence>
             </xs:complexType>
@@ -2963,7 +2963,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function1_VS">
+                <xs:element ref="Function_VS">
                 </xs:element>
               </xs:sequence>
             </xs:complexType>
@@ -2988,7 +2988,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function1_VS">
+                <xs:element ref="Function_VS">
                 </xs:element>
               </xs:sequence>
             </xs:complexType>
@@ -3085,7 +3085,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function2_SSS"/>
+                <xs:element ref="Function_SSS"/>
               </xs:sequence>
             </xs:complexType> 
           </xs:element>
@@ -3109,7 +3109,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function2_SSS"/>
+                <xs:element ref="Function_SSS"/>
               </xs:sequence>
             </xs:complexType> 
           </xs:element>
@@ -3161,7 +3161,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function2_VVS"/>
+                <xs:element ref="Function_VVS"/>
               </xs:sequence>
             </xs:complexType> 
           </xs:element>
@@ -3185,7 +3185,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function2_VVS"/>
+                <xs:element ref="Function_VVS"/>
               </xs:sequence>
             </xs:complexType> 
           </xs:element>
@@ -3332,25 +3332,25 @@
   </xs:element>
   <xs:complexType name="DerivativeOfGuidingVelocityType"/>
 
-  <xs:element name="Function1_SS" abstract="true" type="Function1_SSType">
+  <xs:element name="Function_SS" abstract="true" type="Function_SSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Abstrakte Klasse von skalarwertigen Funktionen mit einem Parameter <object class="inlineeqn">y=f(x)</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="Function1_SSType"/>
+  <xs:complexType name="Function_SSType"/>
 
-  <xs:element name="ConstantFunction1_SS" substitutionGroup="Function1_SS" type="ConstantFunction1_SSType">
+  <xs:element name="ConstantFunction_SS" substitutionGroup="Function_SS" type="ConstantFunction_SSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Konstanter Funktionswert: <object class="inlineeqn">y=c</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="ConstantFunction1_SSType">
+  <xs:complexType name="ConstantFunction_SSType">
     <xs:complexContent>
-      <xs:extension base="Function1_SSType">
+      <xs:extension base="Function_SSType">
         <xs:sequence>
           <xs:element name="value" type="pv:unknownScalar">
             <xs:annotation>
@@ -3364,7 +3364,7 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="Function1_SS_from_VS" substitutionGroup="Function1_SS" type="Function1_SS_from_VSType">
+  <xs:element name="Function_SS_from_VS" substitutionGroup="Function_SS" type="Function_SS_from_VSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Generiert eine Funktion von Typ <object class="inlineeqn">y=f(x)</object> aus einer Funktion vom Typ <object class="inlineeqn">\boldsymbol{y}=f(x)</object>.<br/>
@@ -3372,41 +3372,17 @@
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="Function1_SS_from_VSType">
+  <xs:complexType name="Function_SS_from_VSType">
     <xs:complexContent>
-      <xs:extension base="Function1_SSType">
+      <xs:extension base="Function_SSType">
         <xs:sequence>
-          <xs:element ref="Function1_VS"/>
+          <xs:element ref="Function_VS"/>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="DifferentiableFunction1_SS" substitutionGroup="Function1_SS" type="DifferentiableFunction1_SSType" abstract="true">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Abstrakte Klasse von stetig differenzierbaren Funktionen.<br/>
-        Durch die Angabe des Ableitungsgrads n liefert der Funktionswert die n-te Ableitung der angegebenen Funktion zurück.
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="DifferentiableFunction1_SSType">
-    <xs:complexContent>
-      <xs:extension base="Function1_SSType">
-        <xs:sequence>
-          <xs:element name="orderOfDerivative" type="xs:nonNegativeInteger" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Grad der Ableitung
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-        </xs:sequence> 
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="SymbolicFunction1_SS" substitutionGroup="Function1_SS" type="SymbolicFunction1_SSType">
+  <xs:element name="SymbolicFunction_SS" substitutionGroup="Function_SS" type="SymbolicFunction_SSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Benutzerdefinierte skalare Funktion in Abhängigkeit eines Skalars.<br/>
@@ -3414,19 +3390,19 @@
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="SymbolicFunction1_SSType" mixed="true">
+  <xs:complexType name="SymbolicFunction_SSType" mixed="true">
     <xs:complexContent>
-      <xs:extension base="Function1_SSType">
+      <xs:extension base="Function_SSType">
         <xs:group ref="pv:symbolicFunctionXMLElement"/>
         <xs:attribute name="arg1name" use="required" type="pv:symbolicFunctionArgNameType"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="SymbolicFunction2_VVS" substitutionGroup="Function2_VVS" type="SymbolicFunction2_VVSType"/>
-  <xs:complexType name="SymbolicFunction2_VVSType" mixed="true">
+  <xs:element name="SymbolicFunction_VVS" substitutionGroup="Function_VVS" type="SymbolicFunction_VVSType"/>
+  <xs:complexType name="SymbolicFunction_VVSType" mixed="true">
     <xs:complexContent>
-      <xs:extension base="Function2_VVSType">
+      <xs:extension base="Function_VVSType">
         <xs:group ref="pv:symbolicFunctionXMLElement"/>
         <xs:attribute name="arg1name" use="required" type="pv:symbolicFunctionArgNameType"/>
         <xs:attribute name="arg1dim" use="required" type="pv:symbolicFunctionArgDimType"/>
@@ -3435,10 +3411,10 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="SymbolicFunction2_VVV" substitutionGroup="Function2_VVV" type="SymbolicFunction2_VVVType"/>
-  <xs:complexType name="SymbolicFunction2_VVVType" mixed="true">
+  <xs:element name="SymbolicFunction_VVV" substitutionGroup="Function_VVV" type="SymbolicFunction_VVVType"/>
+  <xs:complexType name="SymbolicFunction_VVVType" mixed="true">
     <xs:complexContent>
-      <xs:extension base="Function2_VVVType">
+      <xs:extension base="Function_VVVType">
         <xs:group ref="pv:symbolicFunctionXMLElement"/>
         <xs:attribute name="arg1name" use="required" type="pv:symbolicFunctionArgNameType"/>
         <xs:attribute name="arg1dim" use="required" type="pv:symbolicFunctionArgDimType"/>
@@ -3448,10 +3424,10 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="SymbolicFunction1_VV" substitutionGroup="Function1_VV" type="SymbolicFunction1_VVType"/>
-  <xs:complexType name="SymbolicFunction1_VVType" mixed="true">
+  <xs:element name="SymbolicFunction_VV" substitutionGroup="Function_VV" type="SymbolicFunction_VVType"/>
+  <xs:complexType name="SymbolicFunction_VVType" mixed="true">
     <xs:complexContent>
-      <xs:extension base="Function1_VVType">
+      <xs:extension base="Function_VVType">
         <xs:group ref="pv:symbolicFunctionXMLElement"/>
         <xs:attribute name="arg1name" use="required" type="pv:symbolicFunctionArgNameType"/>
         <xs:attribute name="arg1dim" use="required" type="pv:symbolicFunctionArgDimType"/>
@@ -3459,10 +3435,10 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="SymbolicFunction1_SV" substitutionGroup="Function1_SV" type="SymbolicFunction1_SVType"/>
-  <xs:complexType name="SymbolicFunction1_SVType" mixed="true">
+  <xs:element name="SymbolicFunction_SV" substitutionGroup="Function_SV" type="SymbolicFunction_SVType"/>
+  <xs:complexType name="SymbolicFunction_SVType" mixed="true">
     <xs:complexContent>
-      <xs:extension base="Function1_SVType">
+      <xs:extension base="Function_SVType">
         <xs:group ref="pv:symbolicFunctionXMLElement"/>
         <xs:attribute name="arg1name" use="required" type="pv:symbolicFunctionArgNameType"/>
         <xs:attribute name="arg1dim" use="required" type="pv:symbolicFunctionArgDimType"/>
@@ -3470,10 +3446,10 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="SymbolicFunction2_SSS" substitutionGroup="Function2_SSS" type="SymbolicFunction2_SSSType"/>
-  <xs:complexType name="SymbolicFunction2_SSSType" mixed="true">
+  <xs:element name="SymbolicFunction_SSS" substitutionGroup="Function_SSS" type="SymbolicFunction_SSSType"/>
+  <xs:complexType name="SymbolicFunction_SSSType" mixed="true">
     <xs:complexContent>
-      <xs:extension base="Function2_SSSType">
+      <xs:extension base="Function_SSSType">
         <xs:group ref="pv:symbolicFunctionXMLElement"/>
         <xs:attribute name="arg1name" use="required" type="pv:symbolicFunctionArgNameType"/>
         <xs:attribute name="arg2name" use="required" type="pv:symbolicFunctionArgNameType"/>
@@ -3481,16 +3457,16 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="Polynom1_SS" substitutionGroup="DifferentiableFunction1_SS" type="Polynom1_SSType">
+  <xs:element name="Polynom_SS" substitutionGroup="Function_SS" type="Polynom_SSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Polynomfunktion <object class="inlineeqn">y=\sum_{i=0}^n a_i \, x^i</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="Polynom1_SSType">
+  <xs:complexType name="Polynom_SSType">
     <xs:complexContent>
-      <xs:extension base="DifferentiableFunction1_SSType">
+      <xs:extension base="Function_SSType">
      <xs:sequence>
        <xs:element name="coefficients" type="pv:unknownVector">
          <xs:annotation>
@@ -3504,28 +3480,28 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="Function1_VS" abstract="true" type="Function1_VSType">
+  <xs:element name="Function_VS" abstract="true" type="Function_VSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Abstrakte Klasse von vektorwertigen Funktionen mit einem Parameter <object class="inlineeqn">\boldsymbol{y}=\boldsymbol{f}(x)</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="Function1_VSType"/>
+  <xs:complexType name="Function_VSType"/>
 
-  <xs:element name="Function1_VV" abstract="true" type="Function1_VVType"/>
-  <xs:complexType name="Function1_VVType"/>
+  <xs:element name="Function_VV" abstract="true" type="Function_VVType"/>
+  <xs:complexType name="Function_VVType"/>
 
-  <xs:element name="ConstantFunction1_VS" substitutionGroup="Function1_VS" type="ConstantFunction1_VSType">
+  <xs:element name="ConstantFunction_VS" substitutionGroup="Function_VS" type="ConstantFunction_VSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Konstanter Funktionswert: <object class="inlineeqn">\boldsymbol{y}=\boldsymbol{c}</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="ConstantFunction1_VSType">
+  <xs:complexType name="ConstantFunction_VSType">
     <xs:complexContent>
-      <xs:extension base="Function1_VSType">
+      <xs:extension base="Function_VSType">
         <xs:sequence>
           <xs:element name="value" type="pv:unknownVector">
             <xs:annotation>
@@ -3539,16 +3515,16 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="Function1_VS_from_SS" substitutionGroup="Function1_VS" type="Function1_VS_from_SSType">
+  <xs:element name="Function_VS_from_SS" substitutionGroup="Function_VS" type="Function_VS_from_SSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Generiert eine Funktion durch Multiplikation eines skalaren Funktionswertes mit einem normierten Richtungsvektor:  <object class="inlineeqn">\boldsymbol{y}=\boldsymbol{n} \, f(x)</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="Function1_VS_from_SSType">
+  <xs:complexType name="Function_VS_from_SSType">
     <xs:complexContent>
-      <xs:extension base="Function1_VSType">
+      <xs:extension base="Function_VSType">
         <xs:sequence>
           <xs:element name="function">
             <xs:annotation>
@@ -3558,7 +3534,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function1_SS">
+                <xs:element ref="Function_SS">
                 </xs:element>
               </xs:sequence>
             </xs:complexType>
@@ -3575,7 +3551,7 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="PositiveSinusFunction1_VS" substitutionGroup="Function1_VS" type="PositiveSinusFunction1_VSType">
+  <xs:element name="PositiveSinusFunction_VS" substitutionGroup="Function_VS" type="PositiveSinusFunction_VSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Funktion der Gestalt
@@ -3584,9 +3560,9 @@
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="PositiveSinusFunction1_VSType">
+  <xs:complexType name="PositiveSinusFunction_VSType">
     <xs:complexContent>
-      <xs:extension base="Function1_VSType">
+      <xs:extension base="Function_VSType">
         <xs:sequence>
           <xs:element name="amplitude" type="pv:unknownVector">
             <xs:annotation>
@@ -3614,16 +3590,16 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="StepFunction1_VS" substitutionGroup="Function1_VS" type="StepFunction1_VSType">
+  <xs:element name="StepFunction_VS" substitutionGroup="Function_VS" type="StepFunction_VSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Vektorwertige Sprungfunktion <object class="inlineeqn">y_i=\begin{cases}c_i\ \text{bei}\ t\geq t_i\\0\ \text{bei}\ t\leq t_i\end{cases}</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="StepFunction1_VSType">
+  <xs:complexType name="StepFunction_VSType">
     <xs:complexContent>
-      <xs:extension base="Function1_VSType">
+      <xs:extension base="Function_VSType">
         <xs:sequence>
           <xs:element name="time" type="pv:unknownVector">
             <xs:annotation>
@@ -3644,7 +3620,7 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="TabularFunction1_VS" substitutionGroup="Function1_VS" type="TabularFunction1_VSType">
+  <xs:element name="TabularFunction_VS" substitutionGroup="Function_VS" type="TabularFunction_VSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Vektorwertige Funktion generiert aus linearer Interpolation von Tabellenwerten <object class="inlineeqn">\boldsymbol{y}=\begin{cases}\boldsymbol{c_0}\ \text{bei}\ x\leq x_0\\\frac{\boldsymbol{c}_{i+1}-\boldsymbol{c}_{i}}{x_{i+1}-x_i}\left(x-x_i\right)\ \text{bei}\ x_i \leq x\leq x_{i+1}\ \text{und}\ 0\leq i\leq n-1\\\boldsymbol{c_n}\ \text{bei}\ x_n \leq x\end{cases}</object>.<br/>
@@ -3652,9 +3628,9 @@
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="TabularFunction1_VSType">
+  <xs:complexType name="TabularFunction_VSType">
     <xs:complexContent>
-      <xs:extension base="Function1_VSType">
+      <xs:extension base="Function_VSType">
         <xs:sequence>
           <xs:choice>
             <xs:sequence>
@@ -3686,34 +3662,34 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="PeriodicTabularFunction1_VS" substitutionGroup="TabularFunction1_VS" type="PeriodicTabularFunction1_VSType">
+  <xs:element name="PeriodicTabularFunction_VS" substitutionGroup="TabularFunction_VS" type="PeriodicTabularFunction_VSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Periodische Fortsetzung einer <a class="link" href="mbsim:TabularFunction1_VS"><tt>&lt;TabularFunction1_VS&gt;</tt></a>.
+        Periodische Fortsetzung einer <a class="link" href="mbsim:TabularFunction_VS"><tt>&lt;TabularFunction_VS&gt;</tt></a>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="PeriodicTabularFunction1_VSType">
+  <xs:complexType name="PeriodicTabularFunction_VSType">
     <xs:complexContent>
-      <xs:extension base="TabularFunction1_VSType"/>
+      <xs:extension base="TabularFunction_VSType"/>
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="SummationFunction1_VS" substitutionGroup="Function1_VS" type="SummationFunction1_VSType">
+  <xs:element name="SummationFunction_VS" substitutionGroup="Function_VS" type="SummationFunction_VSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Bildet die Summe einer beliebigen Anzahl von Funktionen: <object class="inlineeqn">\mathbf{y} \left(x\right) = \sum_i^n c_i \, \mathbf{y}_i \left(x \right) </object> 
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="SummationFunction1_VSType">
+  <xs:complexType name="SummationFunction_VSType">
     <xs:complexContent>
-      <xs:extension base="Function1_VSType">
+      <xs:extension base="Function_VSType">
         <xs:sequence>
           <xs:element name="function" maxOccurs="unbounded">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="mbsim:Function1_VS"/>
+                <xs:element ref="mbsim:Function_VS"/>
                 <xs:element name="factor" type="pv:nounitScalar">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -3729,31 +3705,7 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="DifferentiableFunction1_VS" substitutionGroup="Function1_VS" type="DifferentiableFunction1_VSType" abstract="true">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Abstrakte Klasse von stetig differenzierbaren Funktionen.<br/>
-        Durch die Angabe des Ableitungsgrads n liefert der Funktionswert die n-te Ableitung der angegebenen Funktion zurück.
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="DifferentiableFunction1_VSType">
-    <xs:complexContent>
-      <xs:extension base="Function1_VSType">
-        <xs:sequence>
-          <xs:element name="orderOfDerivative" type="xs:nonNegativeInteger" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Grad der Ableitung
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-        </xs:sequence> 
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="SymbolicFunction1_VS" substitutionGroup="Function1_VS" type="SymbolicFunction1_VSType">
+  <xs:element name="SymbolicFunction_VS" substitutionGroup="Function_VS" type="SymbolicFunction_VSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Benutzerdefinierte vektorwertige Funktion in Abhängigkeit eines Skalars.<br/>
@@ -3761,25 +3713,25 @@
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="SymbolicFunction1_VSType" mixed="true">
+  <xs:complexType name="SymbolicFunction_VSType" mixed="true">
     <xs:complexContent>
-      <xs:extension base="Function1_VSType">
+      <xs:extension base="Function_VSType">
         <xs:group ref="pv:symbolicFunctionXMLElement"/>
         <xs:attribute name="arg1name" use="required" type="pv:symbolicFunctionArgNameType"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="QuadraticFunction1_VS" substitutionGroup="DifferentiableFunction1_VS" type="QuadraticFunction1_VSType">
+  <xs:element name="QuadraticFunction_VS" substitutionGroup="Function_VS" type="QuadraticFunction_VSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Quadratische Funktion mit <object class="inlineeqn">\boldsymbol{y}= \boldsymbol{a}_{0} + \boldsymbol{a}_{1} \, x + \boldsymbol{a}_{2} \, x^2</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="QuadraticFunction1_VSType">
+  <xs:complexType name="QuadraticFunction_VSType">
     <xs:complexContent>
-      <xs:extension base="DifferentiableFunction1_VSType">
+      <xs:extension base="Function_VSType">
         <xs:sequence>
           <xs:element name="a0" type="pv:unknownVector">
             <xs:annotation>
@@ -3807,16 +3759,16 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="SinusFunction1_VS" substitutionGroup="DifferentiableFunction1_VS" type="SinusFunction1_VSType">
+  <xs:element name="SinusFunction_VS" substitutionGroup="Function_VS" type="SinusFunction_VSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Vektorwertige periodische Funktion mit <object class="inlineeqn">y_i= A_i \, \sin \left( 2 \, \pi \, f_i \, x + \varphi_i \right) + o_i</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="SinusFunction1_VSType">
+  <xs:complexType name="SinusFunction_VSType">
     <xs:complexContent>
-      <xs:extension base="DifferentiableFunction1_VSType">
+      <xs:extension base="Function_VSType">
         <xs:sequence>
           <xs:element name="amplitude" type="pv:unknownVector">
             <xs:annotation>
@@ -3851,7 +3803,7 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="PiecewisePolynom1_VS" substitutionGroup="DifferentiableFunction1_VS" type="PiecewisePolynom1_VSType">
+  <xs:element name="PiecewisePolynom_VS" substitutionGroup="Function_VS" type="PiecewisePolynom_VSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Klasse zur Definition von vektorwertigen, univariaten Funktionen über Spline-Interpolation.<br/>
@@ -3860,9 +3812,9 @@
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="PiecewisePolynom1_VSType">
+  <xs:complexType name="PiecewisePolynom_VSType">
     <xs:complexContent>
-      <xs:extension base="DifferentiableFunction1_VSType">
+      <xs:extension base="Function_VSType">
         <xs:sequence>
           <xs:choice>
             <xs:sequence>
@@ -3917,34 +3869,34 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="Function1_SV" abstract="true" type="Function1_SVType">
+  <xs:element name="Function_SV" abstract="true" type="Function_SVType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Abstrakte Klasse von vektorwertigen Funktionen mit einem Parameter <object class="inlineeqn">\boldsymbol{y}=\boldsymbol{f}(x)</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="Function1_SVType"/>
+  <xs:complexType name="Function_SVType"/>
 
-  <xs:element name="Function2_SSS" abstract="true" type="Function2_SSSType">
+  <xs:element name="Function_SSS" abstract="true" type="Function_SSSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Abstrakte Oberklasse für skalarwertige Funktionen mit zwei skalaren Parametern.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="Function2_SSSType"/>
+  <xs:complexType name="Function_SSSType"/>
 
-  <xs:element name="ConstantFunction2_SSS" substitutionGroup="Function2_SSS" type="ConstantFunction2_SSSType">
+  <xs:element name="ConstantFunction_SSS" substitutionGroup="Function_SSS" type="ConstantFunction_SSSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Konstante skalarwertige Funktion mit zwei skalaren Parametern.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="ConstantFunction2_SSSType">
+  <xs:complexType name="ConstantFunction_SSSType">
     <xs:complexContent>
-      <xs:extension base="Function2_SSSType">
+      <xs:extension base="Function_SSSType">
         <xs:sequence>
           <xs:element name="value" type="pv:unknownScalar"/>
         </xs:sequence> 
@@ -3952,16 +3904,16 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="TabularFunction2_SSS" substitutionGroup="Function2_SSS" type="TabularFunction2_SSSType">
+  <xs:element name="TabularFunction_SSS" substitutionGroup="Function_SSS" type="TabularFunction_SSSType">
     <xs:annotation>
       <xs:documentation xmlns="http://www.w3.org/1999/xhtml"  xml:lang="de">
         Lineare Interpolation einer Funktion <object class="inlineeqn">z=f(x, y)</object>, die als Kennfeld hinterlegt ist.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="TabularFunction2_SSSType">
+  <xs:complexType name="TabularFunction_SSSType">
     <xs:complexContent>
-      <xs:extension base="Function2_SSSType">
+      <xs:extension base="Function_SSSType">
         <xs:sequence>
           <xs:element name="xValues" type="pv:unknownVector">
             <xs:annotation>
@@ -3989,7 +3941,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="LinearSpringDamperForce" substitutionGroup="Function2_SSS" type="LinearSpringDamperForceType">
+  <xs:element name="LinearSpringDamperForce" substitutionGroup="Function_SSS" type="LinearSpringDamperForceType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Lineares funktionelles Feder- / Dämpfergesetz.<br/>
@@ -3999,7 +3951,7 @@
   </xs:element>
   <xs:complexType name="LinearSpringDamperForceType">
     <xs:complexContent>
-      <xs:extension base="Function2_SSSType">
+      <xs:extension base="Function_SSSType">
         <xs:sequence>
           <xs:element name="stiffnessCoefficient" type="pv:stiffnessScalar">
             <xs:annotation>
@@ -4027,7 +3979,7 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="NonlinearSpringDamperForce" substitutionGroup="Function2_SSS" type="NonlinearSpringDamperForceType">
+  <xs:element name="NonlinearSpringDamperForce" substitutionGroup="Function_SSS" type="NonlinearSpringDamperForceType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Nichtlineares funktionelles Feder- / Dämpfergesetz.<br/>
@@ -4037,7 +3989,7 @@
   </xs:element>
   <xs:complexType name="NonlinearSpringDamperForceType">
     <xs:complexContent>
-      <xs:extension base="Function2_SSSType">
+      <xs:extension base="Function_SSSType">
         <xs:sequence>
           <xs:element name="distanceForce">
             <xs:annotation>
@@ -4047,7 +3999,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function1_VS"/>
+                <xs:element ref="Function_VS"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -4059,7 +4011,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function1_VS"/>
+                <xs:element ref="Function_VS"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -4068,7 +4020,7 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="LinearRegularizedUnilateralConstraint" substitutionGroup="Function2_SSS" type="LinearRegularizedUnilateralConstraintType">
+  <xs:element name="LinearRegularizedUnilateralConstraint" substitutionGroup="Function_SSS" type="LinearRegularizedUnilateralConstraintType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Konstitutive Funktion für einseitige Bindungen.<br/>
@@ -4079,7 +4031,7 @@
 
   <xs:complexType name="LinearRegularizedUnilateralConstraintType">
     <xs:complexContent>
-      <xs:extension base="Function2_SSSType">
+      <xs:extension base="Function_SSSType">
         <xs:sequence>
           <xs:element name="stiffnessCoefficient" type="pv:stiffnessScalar">
             <xs:annotation>
@@ -4100,7 +4052,7 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="LinearRegularizedBilateralConstraint" substitutionGroup="Function2_SSS" type="LinearRegularizedBilateralConstraintType">
+  <xs:element name="LinearRegularizedBilateralConstraint" substitutionGroup="Function_SSS" type="LinearRegularizedBilateralConstraintType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Konstitutive Funktion für zweiseitige Bindungen.<br/>
@@ -4110,7 +4062,7 @@
   </xs:element>
   <xs:complexType name="LinearRegularizedBilateralConstraintType">
     <xs:complexContent>
-      <xs:extension base="Function2_SSSType">
+      <xs:extension base="Function_SSSType">
         <xs:sequence>
           <xs:element name="stiffnessCoefficient" type="pv:stiffnessScalar">
             <xs:annotation>
@@ -4131,16 +4083,16 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="Function2_VVS" abstract="true" type="Function2_VVSType">
+  <xs:element name="Function_VVS" abstract="true" type="Function_VVSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Abstrakte Oberklasse für vektorwertige Funktionen mit einem skalaren und vektorwertigen Parameter.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="Function2_VVSType"/>
+  <xs:complexType name="Function_VVSType"/>
 
-  <xs:element name="LinearRegularizedCoulombFriction" substitutionGroup="Function2_VVS" type="LinearRegularizedCoulombFrictionType">
+  <xs:element name="LinearRegularizedCoulombFriction" substitutionGroup="Function_VVS" type="LinearRegularizedCoulombFrictionType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Klasse für Coulomb Reibung, die durch eine lineare Funktion innerhalb von Grenzen um den Haftreibungsbereich regularisiert ist.
@@ -4149,7 +4101,7 @@
   </xs:element>
   <xs:complexType name="LinearRegularizedCoulombFrictionType">
     <xs:complexContent>
-      <xs:extension base="Function2_VVSType">
+      <xs:extension base="Function_VVSType">
         <xs:sequence>
           <xs:element name="marginalVelocity" type="pv:velocityScalar" minOccurs="0">
             <xs:annotation>
@@ -4170,7 +4122,7 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="LinearRegularizedStribeckFriction" substitutionGroup="Function2_VVS" type="LinearRegularizedStribeckFrictionType">
+  <xs:element name="LinearRegularizedStribeckFriction" substitutionGroup="Function_VVS" type="LinearRegularizedStribeckFrictionType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Klasse für Stribeck Reibung, die durch eine lineare Funktion innerhalb von Grenzen um den Haftreibungsbereich regularisiert ist.
@@ -4179,7 +4131,7 @@
   </xs:element>
   <xs:complexType name="LinearRegularizedStribeckFrictionType">
     <xs:complexContent>
-      <xs:extension base="Function2_VVSType">
+      <xs:extension base="Function_VVSType">
         <xs:sequence>
           <xs:element name="marginalVelocity" type="pv:velocityScalar" minOccurs="0">
             <xs:annotation>
@@ -4196,7 +4148,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function1_SS"/>
+                <xs:element ref="Function_SS"/>
               </xs:sequence>
             </xs:complexType> 
           </xs:element>
@@ -4205,14 +4157,14 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="Function2_VVV" abstract="true" type="Function2_VVVType">
+  <xs:element name="Function_VVV" abstract="true" type="Function_VVVType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Abstrakte Oberklasse für vektorwertige Funktionen mit einem skalaren und vektorwertigen Parameter.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="Function2_VVVType"/>
+  <xs:complexType name="Function_VVVType"/>
 
   <xs:element name="FunctionContour" abstract="true" type="FunctionContourType"/>
   <xs:complexType name="FunctionContourType"/>
@@ -4245,11 +4197,11 @@
   </xs:complexType>
   -->
 
-  <xs:element name="Function3_MVVS" abstract="true" type="Function3_MVVSType"/>
-  <xs:complexType name="Function3_MVVSType"/>
+  <xs:element name="Function_MVVS" abstract="true" type="Function_MVVSType"/>
+  <xs:complexType name="Function_MVVSType"/>
   
-  <xs:element name="Function2_SVV" abstract="true" type="Function2_SVVType"/>
-  <xs:complexType name="Function2_SVVType"/>
+  <xs:element name="Function_SVV" abstract="true" type="Function_SVVType"/>
+  <xs:complexType name="Function_SVVType"/>
 
   <xs:element name="InfluenceFunction" abstract="true" type="InfluenceFunctionType">
     <xs:annotation>
@@ -4260,7 +4212,7 @@
   </xs:element> 
   <xs:complexType name="InfluenceFunctionType">
     <xs:complexContent>
-      <xs:extension base="Function2_SVVType">
+      <xs:extension base="Function_SVVType">
         <xs:attribute name="contourName1" type="ContourReferenceType" use="required"/>
         <xs:attribute name="contourName2" type="ContourReferenceType" use="required"/>
       </xs:extension>

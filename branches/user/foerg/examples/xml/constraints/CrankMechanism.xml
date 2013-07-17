@@ -288,10 +288,10 @@
       <moment>
         <directionVectors>[0 0 1]'</directionVectors>
         <function>
-          <TabularFunction1_VS xmlns="http://mbsim.berlios.de/MBSim">
+          <TabularFunction_VS xmlns="http://mbsim.berlios.de/MBSim">
             <x>[0 1  2  100]'</x>
             <y>[0 .2 .1 .1]'</y>
-          </TabularFunction1_VS>
+          </TabularFunction_VS>
         </function>
         <Arrow xmlns="http://openmbv.berlios.de/OpenMBV" name="dummy">
           <staticColor>1</staticColor>

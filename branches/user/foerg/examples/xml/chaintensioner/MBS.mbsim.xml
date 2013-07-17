@@ -19,9 +19,9 @@
       <translation>
         <TimeDependentTranslation>
           <translationFunction>
-            <SymbolicFunction1_VS arg1name="t">
+            <SymbolicFunction_VS arg1name="t">
               [0; 2e-4*sin(2*pi*100*t); 0]
-            </SymbolicFunction1_VS>
+            </SymbolicFunction_VS>
           </translationFunction>
         </TimeDependentTranslation>
       </translation>

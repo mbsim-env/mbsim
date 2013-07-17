@@ -9,12 +9,12 @@
       <diameter>.003</diameter>
       <alpha>.7</alpha>
       <relativeAlphaPA>
-        <Function1_SS_from_VS xmlns="http://mbsim.berlios.de/MBSim">
-          <TabularFunction1_VS>
+        <Function_SS_from_VS xmlns="http://mbsim.berlios.de/MBSim">
+          <TabularFunction_VS>
             <x>[0; .4; .45; 1]</x>
             <y>[1;  1;  0; 0]</y>
-          </TabularFunction1_VS>
-        </Function1_SS_from_VS>
+          </TabularFunction_VS>
+        </Function_SS_from_VS>
       </relativeAlphaPA>
       <minimalRelativeAlpha>.05</minimalRelativeAlpha>
       <bilateralConstrained/>
@@ -104,9 +104,9 @@
     <ConstrainedNode name="sourceP" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
       <outflow ref="../HLine[lineP]"/>
       <function>
-        <ConstantFunction1_SS xmlns="http://mbsim.berlios.de/MBSim">
+        <ConstantFunction_SS xmlns="http://mbsim.berlios.de/MBSim">
           <value>40e5</value>
-        </ConstantFunction1_SS>
+        </ConstantFunction_SS>
       </function>
     </ConstrainedNode>
     <EnvironmentNode name="sourceT" xmlns="http://mbsim.berlios.de/MBSimHydraulics">

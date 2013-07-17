@@ -253,7 +253,7 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="PressureLoss" abstract="true" substitutionGroup="mbsim:Function1_SS" type="PressureLossType">
+  <xs:element name="PressureLoss" abstract="true" substitutionGroup="mbsim:Function_SS" type="PressureLossType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Abstrakte Klasse zur Berechnung von Druckverlusten
@@ -262,7 +262,7 @@
   </xs:element>
   <xs:complexType name="PressureLossType">
     <xs:complexContent>
-      <xs:extension base="mbsim:Function1_SSType"/>
+      <xs:extension base="mbsim:Function_SSType"/>
     </xs:complexContent>
   </xs:complexType>
 
@@ -508,7 +508,7 @@
           <xs:element name="function">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="mbsim:Function1_SS">
+                <xs:element ref="mbsim:Function_SS">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Angabe der Druckverlustwerte.
@@ -1042,7 +1042,7 @@
           <xs:element name="function">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="mbsim:Function1_SS">
+                <xs:element ref="mbsim:Function_SS">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Funktion der Flussrandbedingung
@@ -1631,7 +1631,7 @@
           <xs:element name="function">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="mbsim:Function1_SS">
+                <xs:element ref="mbsim:Function_SS">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Funktion der Druckrandbedingung
@@ -1900,7 +1900,7 @@
           <xs:element name="function">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="mbsim:Function1_SS">
+                <xs:element ref="mbsim:Function_SS">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Funktion der Druckrandbedingung
@@ -2045,7 +2045,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="mbsim:Function1_SS">
+                <xs:element ref="mbsim:Function_SS">
                 </xs:element>
               </xs:sequence>
             </xs:complexType>
@@ -2251,7 +2251,7 @@
                   </xs:annotation>
                   <xs:complexType>
                     <xs:sequence>
-                      <xs:element ref="mbsim:Function2_SSS"/>
+                      <xs:element ref="mbsim:Function_SSS"/>
                     </xs:sequence>
                   </xs:complexType> 
                 </xs:element>

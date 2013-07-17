@@ -39,12 +39,11 @@
         <translation>
           <TimeDependentTranslation xmlns="http://mbsim.berlios.de/MBSim">
             <translationFunction>
-              <PiecewisePolynom1_VS xmlns="http://mbsim.berlios.de/MBSim">
-                <orderOfDerivative>0</orderOfDerivative>
+              <PiecewisePolynom_VS xmlns="http://mbsim.berlios.de/MBSim">
                 <x>xValue(:,1)</x>
                 <y>xValue(:,2:4)</y>
                 <cSplineNatural/>
-              </PiecewisePolynom1_VS>
+              </PiecewisePolynom_VS>
             </translationFunction>
           </TimeDependentTranslation>
         </translation>

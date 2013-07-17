@@ -28,7 +28,7 @@
             <translation>
                 <StateDependentTranslation>
                     <translationFunction>
-                        <SymbolicFunction1_VV arg1name="s" arg1dim="1">[-cos(s/R)*R;-sin(s/R)*R;0]</SymbolicFunction1_VV>
+                        <SymbolicFunction_VV arg1name="s" arg1dim="1">[-cos(s/R)*R;-sin(s/R)*R;0]</SymbolicFunction_VV>
                     </translationFunction>
                 </StateDependentTranslation>
             </translation>
@@ -42,7 +42,7 @@
                         </pv:xmlVector>
                     </axisOfRotation>
                     <rotationalFunction>
-                        <SymbolicFunction1_SV arg1name="s" arg1dim="1">pi/2+s/R</SymbolicFunction1_SV>
+                        <SymbolicFunction_SV arg1name="s" arg1dim="1">pi/2+s/R</SymbolicFunction_SV>
                     </rotationalFunction>
                 </StateDependentRotationAboutFixedAxis>
                 <isDependent>true</isDependent>
