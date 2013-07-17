@@ -28,7 +28,7 @@
             <translation>
                 <StateDependentTranslation>
                     <translationFunction>
-                        <SymbolicFunction1_VV arg1name="x" arg1dim="1">[x;-c*x^2;0]</SymbolicFunction1_VV>
+                        <SymbolicFunction_VV arg1name="x" arg1dim="1">[x;-c*x^2;0]</SymbolicFunction_VV>
                     </translationFunction>
                 </StateDependentTranslation>
             </translation>
@@ -42,7 +42,7 @@
                         </pv:xmlVector>
                     </axisOfRotation>
                     <rotationalFunction>
-                        <SymbolicFunction1_SV arg1name="x" arg1dim="1">atan(-c*2*x)</SymbolicFunction1_SV>
+                        <SymbolicFunction_SV arg1name="x" arg1dim="1">atan(-c*2*x)</SymbolicFunction_SV>
                     </rotationalFunction>
                 </StateDependentRotationAboutFixedAxis>
                 <isDependent>true</isDependent>
@@ -125,7 +125,7 @@
                 </ns_1:Arrow>
             </openMBVConstraintMomentArrow>
             <generalizedVelocityFunction>
-                <SymbolicFunction1_VV arg1name="q" arg1dim="1">v0/sqrt(1+4*c*c*q*q);</SymbolicFunction1_VV>
+                <SymbolicFunction_VV arg1name="q" arg1dim="1">v0/sqrt(1+4*c*c*q*q);</SymbolicFunction_VV>
             </generalizedVelocityFunction>
         </StateDependentKinematicConstraint>
     </objects>

@@ -29,9 +29,9 @@ using namespace std;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<fmatvec::Vec(double)>, PPolynom<Ref COMMA Ref>, MBSIMNS"PiecewisePolynom1_VS")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<fmatvec::VecV(double)>, PPolynom<Var COMMA Var>, MBSIMNS"PiecewisePolynom1_VS")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<fmatvec::Vec3(double)>, PPolynom<Var COMMA Fixed<3> >, MBSIMNS"PiecewisePolynom1_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<fmatvec::Vec(double)>, PPolynom<Ref COMMA Ref>, MBSIMNS"PiecewisePolynom_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<fmatvec::VecV(double)>, PPolynom<Var COMMA Var>, MBSIMNS"PiecewisePolynom_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<fmatvec::Vec3(double)>, PPolynom<Var COMMA Fixed<3> >, MBSIMNS"PiecewisePolynom_VS")
       
 }
 

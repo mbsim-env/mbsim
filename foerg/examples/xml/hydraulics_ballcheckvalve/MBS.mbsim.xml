@@ -24,9 +24,9 @@
       <translation>
         <TimeDependentTranslation>
           <translationFunction>
-          <SymbolicFunction1_VS arg1name="t">
+          <SymbolicFunction_VS arg1name="t">
             [0; A*sin(2*pi*f*t + pi/2); 0]
-          </SymbolicFunction1_VS>
+          </SymbolicFunction_VS>
           </translationFunction>
         </TimeDependentTranslation>
       </translation>

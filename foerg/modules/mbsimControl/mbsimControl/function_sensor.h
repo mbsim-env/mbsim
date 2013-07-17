@@ -44,12 +44,12 @@ namespace MBSimControl {
   };
 
   /*!
-   * \brief Function1_SSEvaluation
+   * \brief Function_SSEvaluation
    * \author Markus Schneider
    */
-  class Function1_SSEvaluation : public Signal {
+  class Function_SSEvaluation : public Signal {
     public:
-      Function1_SSEvaluation(const std::string &name="") : Signal(name), signal(NULL), fun(NULL), signalString("") {}
+      Function_SSEvaluation(const std::string &name="") : Signal(name), signal(NULL), fun(NULL), signalString("") {}
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       void init(MBSim::InitStage stage);
       void setSignal(Signal * s) {signal=s; }
@@ -62,12 +62,12 @@ namespace MBSimControl {
   };
 
   /*!
-   * \brief Function1_SSSEvaluation
+   * \brief Function_SSSEvaluation
    * \author Markus Schneider
    */
-  class Function2_SSSEvaluation : public Signal {
+  class Function_SSSEvaluation : public Signal {
     public:
-      Function2_SSSEvaluation(const std::string &name="") : Signal(name), signal1(NULL), signal2(NULL), fun(NULL), signal1String(""), signal2String("") {}
+      Function_SSSEvaluation(const std::string &name="") : Signal(name), signal1(NULL), signal2(NULL), fun(NULL), signal1String(""), signal2String("") {}
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       void init(MBSim::InitStage stage);
       void setSignals(Signal * s1, Signal * s2) {signal1=s1; signal2=s2; }

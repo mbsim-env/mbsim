@@ -232,9 +232,9 @@
         <size>.001</size>
       </enableOpenMBVArrows>
       <function>
-        <ConstantFunction1_SS xmlns="http://mbsim.berlios.de/MBSim">
+        <ConstantFunction_SS xmlns="http://mbsim.berlios.de/MBSim">
           <value>4e5</value>
-        </ConstantFunction1_SS>
+        </ConstantFunction_SS>
       </function>
     </ConstrainedNodeMec>
     <ElasticNodeMec name="nHPC" xmlns="http://mbsim.berlios.de/MBSimHydraulics">

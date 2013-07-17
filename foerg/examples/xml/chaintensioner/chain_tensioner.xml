@@ -243,9 +243,9 @@
         <h:size>.001</h:size>
       </h:enableOpenMBVArrows>
       <h:function>
-        <ConstantFunction1_SS>
+        <ConstantFunction_SS>
           <value convertUnit="value*1e5">3.0</value>
-        </ConstantFunction1_SS>
+        </ConstantFunction_SS>
       </h:function>
     </h:ConstrainedNodeMec>
     <h:ElasticNodeMec name="HighPressureChamber">

@@ -52,9 +52,9 @@ namespace MBSimControl {
     y=(*function)(0);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Function1_SSEvaluation, MBSIMCONTROLNS"Function1_SSEvaluation")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Function_SSEvaluation, MBSIMCONTROLNS"Function_SSEvaluation")
 
-  void Function1_SSEvaluation::initializeUsingXML(TiXmlElement *element) {
+  void Function_SSEvaluation::initializeUsingXML(TiXmlElement *element) {
     Signal::initializeUsingXML(element);
     TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
     signalString = e->Attribute("ref");
@@ -63,7 +63,7 @@ namespace MBSimControl {
     fun->initializeUsingXML(e->FirstChildElement());
   }
 
-  void Function1_SSEvaluation::init(InitStage stage) {
+  void Function_SSEvaluation::init(InitStage stage) {
     if (stage==MBSim::resolveXMLPath) {
       if (signalString!="")
         setSignal(getByPath<Signal>(process_signal_string(signalString)));
@@ -73,16 +73,16 @@ namespace MBSimControl {
       Signal::init(stage);
   }
 
-  Vec Function1_SSEvaluation::getSignal() {
+  Vec Function_SSEvaluation::getSignal() {
     Vec y=signal->getSignal().copy();
     for (int i=0; i<y.size(); i++)
       y(i)=(*fun)(y(i));
     return y;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Function2_SSSEvaluation, MBSIMCONTROLNS"Function2_SSSEvaluation")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Element, Function_SSSEvaluation, MBSIMCONTROLNS"Function_SSSEvaluation")
 
-  void Function2_SSSEvaluation::initializeUsingXML(TiXmlElement *element) {
+  void Function_SSSEvaluation::initializeUsingXML(TiXmlElement *element) {
     Signal::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMCONTROLNS"firstInputSignal");
@@ -94,7 +94,7 @@ namespace MBSimControl {
     fun->initializeUsingXML(e->FirstChildElement());
   }
 
-  void Function2_SSSEvaluation::init(InitStage stage) {
+  void Function_SSSEvaluation::init(InitStage stage) {
     if (stage==MBSim::resolveXMLPath) {
       if (signal1String!="")
         setSignals(getByPath<Signal>(process_signal_string(signal1String)), getByPath<Signal>(process_signal_string(signal2String)));
@@ -104,7 +104,7 @@ namespace MBSimControl {
       Signal::init(stage);
   }
 
-  Vec Function2_SSSEvaluation::getSignal() {
+  Vec Function_SSSEvaluation::getSignal() {
     return Vec(1, INIT, (*fun)(signal1->getSignal()(0), signal2->getSignal()(0)));
   }
 
