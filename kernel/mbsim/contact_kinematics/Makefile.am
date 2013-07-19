@@ -26,6 +26,7 @@ libcontactkinematics_la_SOURCES = rectangle_polynomialfrustum.cc\
 				  point_line_segment.cc\
 				  sphere_frustum.cc\
 				  sphere_plane.cc\
+				  sphere_rectangle.cc\
 				  sphere_sphere.cc\
 				  sphere_polynomialfrustum.cc			  
 
@@ -61,5 +62,6 @@ contactkinematicsinclude_HEADERS = rectangle_polynomialfrustum.h\
 				   point_line_segment.h\
 				   sphere_frustum.h\
 				   sphere_plane.h\
+				   sphere_rectangle.h\
 				   sphere_sphere.h\
 				   sphere_polynomialfrustum.h	
