@@ -15,6 +15,7 @@ environment.cc\
 frame.cc\
 functions_contact.cc\
 group.cc\
+isotropic_rotational_spring_damper.cc\
 joint.cc\
 gear.cc\
 gearing.cc\
@@ -61,6 +62,7 @@ group.h\
 joint.h\
 gear.h\
 gearing.h\
+isotropic_rotational_spring_damper.h\
 kinematics.h\
 spring_damper.h\
 rotational_spring_damper.h\
