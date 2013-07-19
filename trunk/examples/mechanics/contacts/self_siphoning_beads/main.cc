@@ -14,16 +14,16 @@ int main(int argc, char *argv[]) {
   System *sys;
   LSODEIntegrator *integrator;
 
-  int numEles = 70;
+  int numEles = 150;
 
   //PREINTEGRATION
   {
     integrator = new LSODEIntegrator;
-    double plotStepSize = 1e-4;
+    double plotStepSize = 1e-3;
     double endTime = 0.04;
 
     sys = new System("Metallkette-PreInit", numEles);
-    sys->addTrajectory();
+    sys->addTrajectory(endTime);
 
     sys->initialize();
 
@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
   //MAIN INTEGRATION
   {
     integrator = new LSODEIntegrator;
-    double plotStepSize = 1e-4;
+    double plotStepSize = 1e-3;
     double endTime = 0.1;
 
     sys = new System("Metallkette", numEles);
