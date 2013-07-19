@@ -3,6 +3,7 @@
 
 #include <mbsim/dynamic_system_solver.h>
 
+
 #include <mbsim/rigid_body.h>
 
 #include <fmatvec.h>
@@ -20,14 +21,19 @@ class System : public MBSim::DynamicSystemSolver {
     /*!
      * \brief add Trajectory for the pre-Integration
      */
-    void addTrajectory();
+    void addTrajectory(double tEnd);
 
   protected:
     std::vector<MBSim::RigidBody *> balls;
 
+    int elements;
+
     const static double radius = 1e-3;
-    const static double mass = 1e-3;
+    const static double mass = 2e-3;
     const static double distance = 3e-3;
+
+    const static double stiffness = 1e4;
+    const static double damping = 1;
 
     const static bool ODE = true;
 
