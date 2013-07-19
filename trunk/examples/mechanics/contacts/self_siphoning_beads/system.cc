@@ -43,7 +43,7 @@ System::System(const string &projectName, int elements) :
 
     /*Lower Plane*/
     Vec3 rPlane;
-    rPlane(1) = -5e-2;
+    rPlane(1) = -8e-1;
     FixedRelativeFrame * refUnten = new FixedRelativeFrame("Unten - Referenz", rPlane, BasicRotAIKz(M_PI_2));
     addFrame(refUnten);
     Plane * lowerTable = new Plane("Unten");
@@ -106,7 +106,7 @@ System::System(const string &projectName, int elements) :
 
       if (ele > 1) {
         IsotropicRotationalSpringDamper * iso = new IsotropicRotationalSpringDamper("Iso" + numtostr(ele));
-        iso->setParameters(0, 1e-6, 0);
+        iso->setParameters(0, 1e-7, 0);
         iso->setMomentDirection(Mat("[0,0;1,0;0,1]"));
         iso->connect(balls[ele - 1]->getFrameC(), balls[ele]->getFrameC());
         addLink(iso);
