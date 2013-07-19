@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
   System *sys;
   LSODEIntegrator *integrator;
 
-  int numEles = 150;
+  int numEles = 100;
 
   //PREINTEGRATION
   {
@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
   {
     integrator = new LSODEIntegrator;
     double plotStepSize = 1e-3;
-    double endTime = 0.1;
+    double endTime = 0.3;
 
     sys = new System("Metallkette", numEles);
 
