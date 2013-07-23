@@ -632,23 +632,26 @@ namespace MBSim {
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
   };
 
-//  class EulerAngles : public Rotation {
-//    private:
-//      FRotationAboutAxesZXZ<fmatvec::VecV> fA;
-//      TEulerAngles<fmatvec::VecV> fT;
-//    public:
-//
-//      void init();
-//
-//      int getqSize() const {return 3;}
-//      int getuSize() const {return 3;}
-//
-//      void updateOrientation(const fmatvec::VecV &q, const double &t) { A = fA(q); }
-//      void updateT(const fmatvec::VecV &q, const double &t) { T = fT(q); }
-//
-//      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) { }
-//      MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
-//  };
+  class EulerAngles : public Rotation {
+    private:
+      FRotationAboutAxesZXZ<fmatvec::VecV> fA;
+      Function<fmatvec::MatV(fmatvec::VecV)> *fT;
+    public:
+
+      void init();
+
+      int getqSize() const {return 3;}
+      int getuSize() const {return 3;}
+
+      void updateOrientation(const fmatvec::VecV &q, const double &t) { A = fA(q); }
+      void updateAngularVelocity(const fmatvec::VecV &u, const fmatvec::VecV &q, const double &t) { om = J*u; }
+      void updateT(const fmatvec::VecV &q, const double &t) { T = (*fT)(q); }
+
+      void setKOSY(bool KOSY_) { KOSY = KOSY_; }
+
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) { }
+      MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent);
+  };
 
 }
 

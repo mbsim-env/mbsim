@@ -685,7 +685,7 @@ namespace MBSim {
   class TabularFunction : public Function<fmatvec::Vector<Col,double>(double)> {
     public:
       TabularFunction() : xIndexOld(0) {}
-      TabularFunction(fmatvec::Vector<Row,double> x_, fmatvec::Matrix<fmatvec::General,Row,Col,double> y_) : x(x_), y(y_), xIndexOld(0) {
+      TabularFunction(const fmatvec::Vector<Row,double> &x_, const fmatvec::Matrix<fmatvec::General,Row,Col,double> &y_) : x(x_), y(y_), xIndexOld(0) {
         check();
       }
       fmatvec::Vector<Col,double> operator()(const double& xVal);
@@ -933,7 +933,21 @@ namespace MBSim {
           return 3;
         }
         fmatvec::MatV operator()(const Arg &q) {
-          throw std::runtime_error("TEulerAngles::operator() not yet implemented.");
+          double psi = q(0);
+          double theta = q(1);
+          double cos_theta = cos(theta);
+          double sin_theta = sin(theta);
+          double cos_psi = cos(psi);
+          double sin_psi = sin(psi);
+          double tan_theta = sin_theta/cos_theta;
+
+          T(0,0) = -sin_psi/tan_theta;
+          T(0,1) = cos_psi/tan_theta;
+          T(1,0) = cos_psi;
+          T(1,1) = sin_psi;
+          T(2,0) = sin_psi/sin_theta;
+          T(2,1) = -cos_psi/sin_theta;
+
           return T;
         }
     };
@@ -943,12 +957,26 @@ namespace MBSim {
       private:
         fmatvec::MatV T;
       public:
-        TEulerAngles2() : T(fmatvec::Eye()) { }
+        TEulerAngles2() : T(3,3,fmatvec::Eye()) { }
         typename fmatvec::Size<Arg>::type getArgSize() const {
           return 3;
         }
         fmatvec::MatV operator()(const Arg &q) {
-          throw std::runtime_error("TEulerAngles2::operator() not yet implemented.");
+          double theta = q(1);
+          double phi = q(2);
+          double cos_theta = cos(theta);
+          double sin_theta = sin(theta);
+          double cos_phi = cos(phi);
+          double sin_phi = sin(phi);
+          double tan_theta = sin_theta/cos_theta;
+
+          T(0,0) = sin_phi/sin_theta;
+          T(0,1) = cos_phi/sin_theta;
+          T(1,0) = cos_phi;
+          T(1,1) = -sin_phi;
+          T(2,0) = -sin_phi/tan_theta;
+          T(2,1) = -cos_phi/tan_theta;
+
           return T;
         }
     };

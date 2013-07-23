@@ -67,9 +67,9 @@
       <force>
         <directionVectors>[1;0;0]</directionVectors>
         <function>
-          <ConstantFunction1_VS>
+          <ConstantFunction_VS>
             <value>[10]</value>
-          </ConstantFunction1_VS>
+          </ConstantFunction_VS>
         </function>
         <ombv:Arrow name="dummy">
           <ombv:diameter>0.05</ombv:diameter>
@@ -82,9 +82,9 @@
       <moment>
         <directionVectors>[0;0;1]</directionVectors>
         <function>
-          <ConstantFunction1_VS>
+          <ConstantFunction_VS>
             <value>[10]</value>
-          </ConstantFunction1_VS>
+          </ConstantFunction_VS>
         </function>
         <ombv:Arrow name="dummy">
           <ombv:diameter>0.05</ombv:diameter>

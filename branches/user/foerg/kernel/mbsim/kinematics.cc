@@ -549,17 +549,21 @@ namespace MBSim {
     return 0;
   }
 
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Rotation, EulerAngles, MBSIMNS"EulerAngles")
-//
-//  void EulerAngles::init() {
-//    Rotation::init();
-//    J.init(Eye());
-//  }
-//
-//  TiXmlElement* EulerAngles::writeXMLFile(TiXmlNode *parent) {
-//    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"EulerAngles" );
-//    parent->LinkEndChild(ele0);
-//    return ele0;
-//  }
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Rotation, EulerAngles, MBSIMNS"EulerAngles")
+
+  void EulerAngles::init() {
+    Rotation::init();
+    J.init(Eye());
+    if(KOSY)
+      fT = new TEulerAngles2<VecV>;
+    else
+      fT = new TEulerAngles<VecV>;
+  }
+
+  TiXmlElement* EulerAngles::writeXMLFile(TiXmlNode *parent) {
+    TiXmlElement *ele0 = new TiXmlElement( MBSIMNS"EulerAngles" );
+    parent->LinkEndChild(ele0);
+    return ele0;
+  }
 
 }
