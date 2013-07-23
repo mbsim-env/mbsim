@@ -25,12 +25,45 @@
 #include <H5Cpp.h>
 #include <QLocale>
 
+using namespace std;
+
 int main(int argc, char *argv[]) {
   // environment variables
   // Disalbe COIN VBO per default (see --help)
   char COIN_VBO[strlen("COIN_VBO=0")+1];
   if(getenv("COIN_VBO")==NULL) putenv(strcpy(COIN_VBO, "COIN_VBO=0"));
 
+  QStringList arg;
+  for(int i=1; i<argc; i++)
+    arg << argv[i];
+
+  // help
+  if(arg.contains("-h") || arg.contains("--help")) {
+    cout<<"MBSimGUI - A Graphical User Interface for MBSim"<<endl;
+    cout    <<""<<endl;
+    //cout    <<"Version "SVNVERSION<<endl;
+    //cout    <<""<<endl;
+            // 12345678901234567890123456789012345678901234567890123456789012345678901234567890
+    cout    <<"Copyright (C) 2013 Martin Foerg <martin.o.foerg@googlemail.com"<<endl;
+    cout    <<"This is free software; see the source for copying conditions. There is NO"<<endl;
+    cout    <<"warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."<<endl;
+    cout    <<""<<endl;
+    cout    <<"Licensed under the GNU General Public License (GPL)"<<endl;
+    cout    <<""<<endl;
+    cout    <<"Usage: mbsimgui [-h|--help]"<<endl;
+    cout    <<"                [<dir>] [<mbsimfile>] [<parameterfile>] [<integratorfile>]"<<endl;
+    cout    <<""<<endl;
+    cout    <<"-h|--help          Shows this help"<<endl;
+    cout    <<"<dir>              Load first *.mbsim.xml, *.mbsimparam.xml"<<endl;
+    cout    <<"                   and *.mbsimint.xml file in <dir>."<<endl;
+    cout    <<"<mbsimfile>        Load <mbsimfile>"<<endl;
+    cout    <<"<parameterfile>    Load <parameterfile>"<<endl;
+    cout    <<"<integratorfile>   Load <integratorfile>"<<endl;
+    cout    <<""<<endl;
+    arg.removeAll("-h"); 
+    arg.removeAll("--help"); 
+    return 0;
+  }
   // disalbe HDF5 error message print
   H5::Exception::dontPrint();
 
@@ -38,13 +71,12 @@ int main(int argc, char *argv[]) {
   QApplication app(argc, argv);
   QLocale::setDefault(QLocale::C);
   setlocale(LC_ALL, "C");
-  MainWindow *mainwindow = new MainWindow;
+  MainWindow mainwindow(arg);
   //mainwindow->show();
-  mainwindow->showMaximized();
+  mainwindow.showMaximized();
   //mainwindow->resize(1400, 900);
   //mainwindow->resize(1100, 700);
   int ret=app.exec();
   MBXMLUtils::OctaveEvaluator::terminate();
-  delete mainwindow;
   return ret;
 }

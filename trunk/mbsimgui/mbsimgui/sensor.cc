@@ -106,7 +106,7 @@ TiXmlElement* FunctionSensor::writeXMLFile(TiXmlNode *parent) {
 }
 
 SignalProcessingSystemSensor::SignalProcessingSystemSensor(const string &str, Element *parent) : Sensor(str, parent) {
-  //spsRef.setProperty(new LinkOfReferenceProperty("",this,MBSIMCONTROLNS"signalProcessingSystem"));
+  spsRef.setProperty(new LinkOfReferenceProperty("",this,MBSIMCONTROLNS"signalProcessingSystem"));
 }
 
 void SignalProcessingSystemSensor::initialize() {

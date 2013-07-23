@@ -73,7 +73,7 @@ bool removeDir(const QString &dirName) {
 
 MBXMLUtils::OctaveEvaluator *MainWindow::octEval=NULL;
 
-MainWindow::MainWindow() : inlineOpenMBVMW(0) {
+MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0) {
   mw = this;
 
   QDir dir = QDir::temp();
@@ -243,8 +243,50 @@ MainWindow::MainWindow() : inlineOpenMBVMW(0) {
 
   setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
   
-  selectDOPRI5Integrator();
-  newMBS(false);
+  QStringList::iterator i, i2;
+  QString fileMBS, fileParam, fileInteg;
+  QRegExp filterMBS(".+\\.mbsim\\.xml"), filterParam(".+\\.mbsimparam\\.xml"), filterInteg(".+\\.mbsimint\\.xml");
+  dir.setFilter(QDir::Files);
+  i=arg.begin();
+  while(i!=arg.end()) {
+    dir.setPath(*i);
+    if(dir.exists()) {
+      QStringList file=dir.entryList();
+      for(int j=0; j<file.size(); j++) {
+        if(fileMBS.isEmpty() and filterMBS.exactMatch(file[j]))
+          fileMBS = dir.path()+"/"+file[j];
+        else if(fileParam.isEmpty() and filterParam.exactMatch(file[j]))
+          fileParam = dir.path()+"/"+file[j];
+        else if(fileInteg.isEmpty() and filterInteg.exactMatch(file[j]))
+          fileInteg = dir.path()+"/"+file[j];
+      }
+      i2=i; i++; arg.erase(i2);
+      continue;
+    }
+    if(QFile::exists(*i)) {
+      if(fileMBS.isEmpty() and filterMBS.exactMatch(*i))
+        fileMBS = *i;
+      else if(fileParam.isEmpty() and filterParam.exactMatch(*i))
+        fileParam = *i;
+      else if(fileInteg.isEmpty() and filterInteg.exactMatch(*i))
+        fileInteg = *i;
+      i2=i; i++; arg.erase(i2);
+      continue;
+    }
+    i++;
+  }
+  if(fileMBS.size())
+    loadMBS(fileMBS);
+  else
+    newMBS(false);
+  if(fileParam.size())
+    loadParameterList(fileParam);
+  if(fileInteg.size())
+    loadIntegrator(fileInteg);
+  else
+    selectDOPRI5Integrator();
+
+  setAcceptDrops(true);
 }
 
 void MainWindow::simulationFinished(int exitCode, QProcess::ExitStatus exitStatus) {
@@ -1086,4 +1128,29 @@ void MainWindow::addObserver(Observer *observer) {
   elementList->openEditor();
 }
 
+void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
+  if (event->mimeData()->hasUrls()) {
+    event->acceptProposedAction();
+  }
+}
 
+void MainWindow::dropEvent(QDropEvent *event) {
+  for (int i = 0; i < event->mimeData()->urls().size(); i++) {
+    QString path = event->mimeData()->urls()[i].toLocalFile().toLocal8Bit().data();
+    if(path.endsWith("mbsim.xml")) {
+      QFile Fout(path);
+      if (Fout.exists())
+        loadMBS(Fout.fileName());
+    }
+    else if(path.endsWith("mbsimparam.xml")) {
+      QFile Fout(path);
+      if (Fout.exists())
+        loadParameterList(Fout.fileName());
+    }
+    else if(path.endsWith("mbsimint.xml")) {
+      QFile Fout(path);
+      if (Fout.exists())
+        loadIntegrator(Fout.fileName());
+    }
+  }
+}

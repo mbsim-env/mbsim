@@ -177,6 +177,8 @@ Link* MBSimObjectFactory::createLink(TiXmlElement *element, Element *parent) {
     return new UnarySignalOperation(element->Attribute("name"),parent);
   if(element->ValueStr()==MBSIMCONTROLNS"BinarySignalOperation")
     return new BinarySignalOperation(element->Attribute("name"),parent);
+  if(element->ValueStr()==MBSIMCONTROLNS"LinearTransferSystem")
+    return new LinearTransferSystem(element->Attribute("name"),parent);
   //if(element->ValueStr()==MBSIMNS"ExternGeneralizedIO")
   //  return new ExternGeneralizedIO(element->Attribute("name"));
   return 0;

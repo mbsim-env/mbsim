@@ -62,19 +62,17 @@ class MainWindow : public QMainWindow {
     IntegratorView *integratorView;
     QLineEdit *fileMBS, *fileIntegrator, *fileParameter;
     Process *mbsim;
-    void loadProj(const QString &file);
-    void loadMBS(const QString &file);
-    void loadIntegrator(const QString &file);
-    void loadParameterList(const QString &file);
     OpenMBVGUI::MainWindow *inlineOpenMBVMW;
     void initInlineOpenMBV();
+    void dragEnterEvent(QDragEnterEvent *event);
+    void dropEvent(QDropEvent *event);
     QString uniqueTempDir, absoluteMBSFilePath;
     QAction *actionSaveProj, *actionSaveMBS, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionSaveIntegrator, *actionSaveParameterList, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs;
     std::string currentID;
     QString mPath;
 
   public:
-    MainWindow();
+    MainWindow(QStringList &arg);
     ~MainWindow();
     static MBXMLUtils::OctaveEvaluator *octEval;
     void mbsimxml(int task);
@@ -87,6 +85,10 @@ class MainWindow : public QMainWindow {
     void addObserver(Observer *observer);
     void highlightObject(const std::string &ID);
     const std::string& getHighlightedObject() const {return currentID;}
+    void loadProj(const QString &file);
+    void loadMBS(const QString &file);
+    void loadIntegrator(const QString &file);
+    void loadParameterList(const QString &file);
   public slots:
     void elementListClicked();
     void parameterListClicked();

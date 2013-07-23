@@ -261,6 +261,44 @@ void ObjectOfReferenceProperty::toWidget(QWidget *widget) {
   static_cast<ObjectOfReferenceWidget*>(widget)->updateWidget();
 }
 
+LinkOfReferenceProperty::LinkOfReferenceProperty(const std::string &link_, Element *element_, const std::string &xmlName_) : link(link_), linkPtr(element_->getByPath<Link>(link)), element(element_), xmlName(xmlName_) {
+}
+
+void LinkOfReferenceProperty::initialize() {
+  linkPtr=element->getByPath<Link>(link);
+}
+
+void LinkOfReferenceProperty::setLink(const std::string &str) {
+  link = str;
+  linkPtr=element->getByPath<Link>(link);
+}
+
+std::string LinkOfReferenceProperty::getLink() const {
+  return linkPtr?linkPtr->getXMLPath(element,true):link;
+}
+
+TiXmlElement* LinkOfReferenceProperty::initializeUsingXML(TiXmlElement *parent) {
+  TiXmlElement *e = parent->FirstChildElement(xmlName);
+  if(e) link=e->Attribute("ref");
+  return e;
+}
+
+TiXmlElement* LinkOfReferenceProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele = new TiXmlElement(xmlName);
+  ele->SetAttribute("ref", getLink());
+  parent->LinkEndChild(ele);
+  return 0;
+}
+
+void LinkOfReferenceProperty::fromWidget(QWidget *widget) {
+  setLink(static_cast<LinkOfReferenceWidget*>(widget)->getLink().toStdString());
+}
+
+void LinkOfReferenceProperty::toWidget(QWidget *widget) {
+  static_cast<LinkOfReferenceWidget*>(widget)->setLink(QString::fromStdString(link),linkPtr);
+  static_cast<LinkOfReferenceWidget*>(widget)->updateWidget();
+}
+
 SignalOfReferenceProperty::SignalOfReferenceProperty(const std::string &signal_, Element *element_, const std::string &xmlName_) : signal(signal_), signalPtr(element_->getByPath<Signal>(signal)), element(element_), xmlName(xmlName_) {
 }
 
