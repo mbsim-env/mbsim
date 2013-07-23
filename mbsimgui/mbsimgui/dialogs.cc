@@ -191,6 +191,75 @@ void ObjectBrowser::checkForObject(QTreeWidgetItem* item_,int) {
     okButton->setDisabled(true);
 }
 
+LinkBrowser::LinkBrowser(Element* element_, Link* link, QWidget *parentLink_) : QDialog(parentLink_), selection(link), savedItem(0), element(element_) {
+  QGridLayout* mainLayout=new QGridLayout;
+  setLayout(mainLayout);
+  linkList = new QTreeWidget;
+  linkList->setColumnCount(1);
+  mainLayout->addWidget(linkList,0,0);
+  QObject::connect(linkList, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(checkForLink(QTreeWidgetItem*,int)));
+
+  okButton = new QPushButton("Ok");
+  if(!selection)
+    okButton->setDisabled(true);
+  mainLayout->addWidget(okButton,1,0);
+  connect(okButton, SIGNAL(clicked(bool)), this, SLOT(accept()));
+
+  QPushButton *button = new QPushButton("Cancel");
+  mainLayout->addWidget(button,1,1);
+  connect(button, SIGNAL(clicked(bool)), this, SLOT(reject()));
+
+  setWindowTitle("Link browser");
+}
+
+void LinkBrowser::showEvent(QShowEvent *event) {
+  QDialog::showEvent(event);
+  oldID = mw->getHighlightedObject();
+  if(linkList->currentItem())
+    checkForLink(linkList->currentItem(),0);
+}
+
+void LinkBrowser::hideEvent(QHideEvent *event) {
+  QDialog::hideEvent(event);
+  mw->highlightObject(oldID);
+}
+
+void LinkBrowser::updateWidget(Link *sel) {
+  selection = sel;
+  linkList->clear();
+  savedItem = 0;
+  mbs2LinkTree(element,linkList->invisibleRootItem());
+  linkList->setCurrentItem(savedItem);
+}
+
+void LinkBrowser::mbs2LinkTree(Element* ele, QTreeWidgetItem* parentItem) {
+  if(dynamic_cast<Group*>(ele) || dynamic_cast<Link*>(ele)) {
+
+    ElementItem *item = new ElementItem(ele);
+    item->setText(0,QString::fromStdString(ele->getName()));
+
+    if(ele == selection)
+      savedItem = item;
+
+    parentItem->addChild(item);
+
+    for(int i=0; i<ele->getNumberOfGroups(); i++)
+      mbs2LinkTree(ele->getGroup(i),item);
+    for(int i=0; i<ele->getNumberOfLinks(); i++)
+      mbs2LinkTree(ele->getLink(i),item);
+  }
+}
+
+void LinkBrowser::checkForLink(QTreeWidgetItem* item_,int) {
+  ElementItem* item = static_cast<ElementItem*>(item_);
+  if(dynamic_cast<Link*>(item->getElement())) {
+    mw->highlightObject(static_cast<Link*>(item->getElement())->getID());
+    okButton->setDisabled(false);
+  }
+  else
+    okButton->setDisabled(true);
+}
+
 FrameBrowser::FrameBrowser(Element* element_, Frame* frame, QWidget *parentObject_) : QDialog(parentObject_), selection(frame), savedItem(0), element(element_) {
   QGridLayout* mainLayout=new QGridLayout;
   setLayout(mainLayout);

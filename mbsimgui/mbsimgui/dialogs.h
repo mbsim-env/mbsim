@@ -27,6 +27,7 @@
 
 class Element;
 class Object;
+class Link;
 class RigidBody;
 class Frame;
 class Contour;
@@ -69,6 +70,28 @@ class ObjectBrowser : public QDialog {
     void hideEvent(QHideEvent *event);
   protected slots:
     void checkForObject(QTreeWidgetItem* item_,int);
+};
+
+class LinkBrowser : public QDialog {
+  Q_OBJECT
+
+  public:
+    LinkBrowser(Element* element, Link* selection, QWidget *lnk);
+    ~LinkBrowser() {}
+    QTreeWidget* getLinkList() const {return linkList;}
+    void updateWidget(Link *link);
+  protected:
+    QPushButton *okButton;
+    QTreeWidget *linkList;
+    Link *selection;
+    ElementItem *savedItem;
+    Element* element;
+    std::string oldID;
+    void mbs2LinkTree(Element* item, QTreeWidgetItem* parentItem);
+    void showEvent(QShowEvent *event);
+    void hideEvent(QHideEvent *event);
+  protected slots:
+    void checkForLink(QTreeWidgetItem* item_,int);
 };
 
 class RigidBodyBrowser : public QDialog {

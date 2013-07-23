@@ -28,6 +28,7 @@ class Element;
 class Frame;
 class Contour;
 class Object;
+class Link;
 class RigidBody;
 class Signal;
 
@@ -142,6 +143,24 @@ class ObjectOfReferenceProperty : public Property {
     void toWidget(QWidget *widget);
     void setObject(const std::string &str);
     std::string getObject() const;
+};
+
+class LinkOfReferenceProperty : public Property {
+  protected:
+    std::string link;
+    Link *linkPtr;
+    Element* element;
+    std::string xmlName;
+  public:
+    LinkOfReferenceProperty(const std::string &link_="", Element *element_=0, const std::string &xmlName_=""); 
+    virtual Property* clone() const {return new LinkOfReferenceProperty(*this);}
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
+    void initialize();
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+    void setLink(const std::string &str);
+    std::string getLink() const;
 };
 
 class SignalOfReferenceProperty : public Property {

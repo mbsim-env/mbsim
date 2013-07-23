@@ -26,6 +26,7 @@
 
 class Element;
 class Object;
+class Link;
 class RigidBody;
 class Frame;
 class Contour;
@@ -39,6 +40,7 @@ class FrameBrowser;
 class ContourBrowser;
 class RigidBodyBrowser;
 class ObjectBrowser;
+class LinkBrowser;
 class SignalBrowser;
 class ExtWidget;
 class QLabel;
@@ -193,6 +195,30 @@ class ObjectOfReferenceWidget : public Widget {
 
   signals:
     void objectChanged();
+};
+
+class LinkOfReferenceWidget : public Widget {
+  Q_OBJECT
+
+  public:
+    LinkOfReferenceWidget(Element* element, Link* selectedLink);
+
+    void updateWidget();
+    void setLink(const QString &str, Link *linkPtr);
+    QString getLink() const;
+    Link* getSelectedLink() {return selectedLink;}
+
+  protected:
+    QLineEdit* link;
+    Element* element;
+    LinkBrowser* linkBrowser;
+    Link* selectedLink;
+
+  public slots:
+    void setLink();
+
+  signals:
+    void linkChanged();
 };
 
 class SignalOfReferenceWidget : public Widget {

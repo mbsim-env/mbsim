@@ -340,6 +340,48 @@ QString ObjectOfReferenceWidget::getObject() const {
   return object->text();
 }
 
+LinkOfReferenceWidget::LinkOfReferenceWidget(Element *element_, Link* selectedLink_) : element(element_), selectedLink(selectedLink_) {
+  QHBoxLayout *layout = new QHBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
+  link = new QLineEdit;
+  if(selectedLink)
+    link->setText(QString::fromStdString(selectedLink->getXMLPath(element,true)));
+  linkBrowser = new LinkBrowser(element->getRoot(),0,this);
+  connect(linkBrowser,SIGNAL(accepted()),this,SLOT(setLink()));
+  layout->addWidget(link);
+  QPushButton *button = new QPushButton(tr("Browse"));
+  connect(button,SIGNAL(clicked(bool)),linkBrowser,SLOT(show()));
+  layout->addWidget(button);
+}
+
+void LinkOfReferenceWidget::updateWidget() {
+  linkBrowser->updateWidget(selectedLink); 
+  if(selectedLink) {
+    setLink();
+  }
+}
+
+void LinkOfReferenceWidget::setLink() {
+  if(linkBrowser->getLinkList()->currentItem())
+    selectedLink = static_cast<Link*>(static_cast<ElementItem*>(linkBrowser->getLinkList()->currentItem())->getElement());
+  else
+    selectedLink = 0;
+  link->setText(selectedLink?QString::fromStdString(selectedLink->getXMLPath(element,true)):"");
+  emit linkChanged();
+}
+
+void LinkOfReferenceWidget::setLink(const QString &str, Link *linkPtr) {
+  selectedLink = linkPtr;
+  link->setText(str);
+  emit linkChanged();
+}
+
+QString LinkOfReferenceWidget::getLink() const {
+  return link->text();
+}
+
 SignalOfReferenceWidget::SignalOfReferenceWidget(Element *element_, Signal* selectedSignal_) : element(element_), selectedSignal(selectedSignal_) {
   QHBoxLayout *layout = new QHBoxLayout;
   layout->setMargin(0);
