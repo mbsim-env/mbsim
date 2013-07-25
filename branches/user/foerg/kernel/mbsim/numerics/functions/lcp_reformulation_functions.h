@@ -20,13 +20,13 @@
 #ifndef NUMERICSLCPREFORMULATEDFUNCTION_H_
 #define NUMERICSLCPREFORMULATEDFUNCTION_H_
 
-#include <mbsim/utils/function.h>
+#include <function.h>
 
 #include <mbsim/numerics/functions/newton_method_jacobian_functions.h>
 
 namespace MBSim {
 
-  class LCPReformulationFunction : public Function<fmatvec::Vec(fmatvec::Vec)> {
+  class LCPReformulationFunction : public fmatvec::Function<fmatvec::Vec(fmatvec::Vec)> {
     public:
       /*!
        * \brief standard constructor

@@ -28,8 +28,7 @@
 #include <mbsim/utils/colors.h>
 
 #include <fmatvec.h>
-
-#include <mbsim/utils/function.h>
+#include <function.h>
 
 namespace MBSim {
 
@@ -233,7 +232,7 @@ namespace MBSim {
    * \para para: coefficient vector of the left side
    */
 
-  class ContactPolyfun : public MBSim::Function<double(double)> {
+  class ContactPolyfun : public fmatvec::Function<double(double)> {
     public:
       ContactPolyfun(double, const fmatvec::Vec &);
       virtual ~ContactPolyfun() {

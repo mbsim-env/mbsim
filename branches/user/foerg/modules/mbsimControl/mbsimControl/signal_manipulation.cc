@@ -22,7 +22,7 @@
 #include "mbsimControl/obsolet_hint.h"
 #include "mbsimControl/defines.h"
 #include "mbsim/utils/eps.h"
-#include "mbsim/utils/function.h"
+#include "function.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -588,7 +588,7 @@ namespace MBSimControl {
     signalString=e->Attribute("ref");
     e=element->FirstChildElement(MBSIMCONTROLNS"function");
     if(e) {
-      MBSim::Function<Vec(Vec)> *f=ObjectFactory<MBSim::Function<Vec(Vec)> >::create<MBSim::Function<Vec(Vec)> >(e->FirstChildElement());
+      fmatvec::Function<Vec(Vec)> *f=ObjectFactory<fmatvec::Function<Vec(Vec)> >::create<fmatvec::Function<Vec(Vec)> >(e->FirstChildElement());
       setFunction(f);
       f->initializeUsingXML(e->FirstChildElement());
     }
@@ -619,7 +619,7 @@ namespace MBSimControl {
     signal2String=e->Attribute("ref");
     e=element->FirstChildElement(MBSIMCONTROLNS"function");
     if(e) {
-      MBSim::Function<Vec(Vec,Vec)> *f=ObjectFactory<MBSim::Function<Vec(Vec,Vec)> >::create<MBSim::Function<Vec(Vec,Vec)> >(e->FirstChildElement());
+      fmatvec::Function<Vec(Vec,Vec)> *f=ObjectFactory<fmatvec::Function<Vec(Vec,Vec)> >::create<fmatvec::Function<Vec(Vec,Vec)> >(e->FirstChildElement());
       setFunction(f);
       f->initializeUsingXML(e->FirstChildElement());
     }

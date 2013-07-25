@@ -1,7 +1,7 @@
 #include "system.h"
 #include "mbsimElectronics/simulation_classes.h"
 #include "mbsimControl/signal_.h"
-#include <mbsim/utils/function.h>
+#include <function.h>
 #include "mbsimControl/function_sensor.h"
 #include "mbsimControl/sensor.h"
 
@@ -55,10 +55,10 @@ class SwitchSignal : public MBSimControl::Signal {
     }
 };
 
-class Signal : public Function1<fmatvec::Vec,double> {
+class Signal : public Function<fmatvec::VecV(double)> {
   public:
-    fmatvec::Vec operator()(const double &t, const void * =NULL) {
-      fmatvec::Vec U(1);
+    fmatvec::VecV operator()(const double &t) {
+      fmatvec::VecV U(1);
       U(0) = 35;
       return U;
     }

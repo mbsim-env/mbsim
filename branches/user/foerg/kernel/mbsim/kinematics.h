@@ -39,6 +39,8 @@ namespace MBSim {
       virtual int getqSize() const = 0;
       virtual int getuSize() const { return getqSize(); }
 
+      virtual bool hasVariableJacobian() const { return true; }
+
       const fmatvec::Vec3 getPosition() const {return r;}
       const fmatvec::Vec3 getVelocity() const {return v;}
       const fmatvec::Mat3xV getJacobian() const {return J;}
@@ -84,10 +86,10 @@ namespace MBSim {
 
   class GeneralTranslation : public Translation {
     protected:
-      Function<fmatvec::Vec3(fmatvec::VecV, double)> *fr;
+      fmatvec::Function<fmatvec::Vec3(fmatvec::VecV, double)> *fr;
 
     public:
-      GeneralTranslation(Function<fmatvec::Vec3(fmatvec::VecV, double)> *fr_=0) : fr(fr_) { }
+      GeneralTranslation(fmatvec::Function<fmatvec::Vec3(fmatvec::VecV, double)> *fr_=0) : fr(fr_) { }
 
       ~GeneralTranslation() { delete fr; }
 
@@ -105,10 +107,10 @@ namespace MBSim {
 
   class StateDependentTranslation : public Translation {
     protected:
-      Function<fmatvec::Vec3(fmatvec::VecV)> *fr;
+      fmatvec::Function<fmatvec::Vec3(fmatvec::VecV)> *fr;
 
     public:
-      StateDependentTranslation(Function<fmatvec::Vec3(fmatvec::VecV)> *fr_=0) : fr(fr_) { }
+      StateDependentTranslation(fmatvec::Function<fmatvec::Vec3(fmatvec::VecV)> *fr_=0) : fr(fr_) { }
 
       ~StateDependentTranslation() { delete fr; }
 
@@ -126,10 +128,10 @@ namespace MBSim {
 
   class TimeDependentTranslation : public Translation {
     protected:
-      Function<fmatvec::Vec3(double)> *fr;
+      fmatvec::Function<fmatvec::Vec3(double)> *fr;
 
     public:
-      TimeDependentTranslation(Function<fmatvec::Vec3(double)> *fr_=0) : fr(fr_) { }
+      TimeDependentTranslation(fmatvec::Function<fmatvec::Vec3(double)> *fr_=0) : fr(fr_) { }
 
       ~TimeDependentTranslation() { delete fr; }
 
@@ -256,6 +258,8 @@ namespace MBSim {
 
       int getqSize() const {return D.cols();}
 
+      bool hasVariableJacobian() const { return false; }
+
       void updatePosition(const fmatvec::VecV &q, const double &t) { r = D*q; }
       void updateVelocity(const fmatvec::VecV &u, const fmatvec::VecV &q, const double &t) { v = J*u; }
       void updateqd(const fmatvec::VecV &u) { qd = u; }
@@ -266,12 +270,12 @@ namespace MBSim {
 
   class StateDependentLinearTranslation : public Translation {
     protected:
-      Function<fmatvec::VecV(fmatvec::VecV)> *fq;
+      fmatvec::Function<fmatvec::VecV(fmatvec::VecV)> *fq;
       fmatvec::Mat3xV D;
 
     public:
       StateDependentLinearTranslation() : fq(0) { }
-      StateDependentLinearTranslation(Function<fmatvec::VecV(fmatvec::VecV)> *fq_, const fmatvec::Mat3xV &D_) : fq(fq_), D(D_) { }
+      StateDependentLinearTranslation(fmatvec::Function<fmatvec::VecV(fmatvec::VecV)> *fq_, const fmatvec::Mat3xV &D_) : fq(fq_), D(D_) { }
       ~StateDependentLinearTranslation() { delete fq; }
 
       void init();
@@ -290,12 +294,12 @@ namespace MBSim {
 
   class TimeDependentLinearTranslation : public Translation {
     protected:
-      Function<fmatvec::VecV(double)> *fq;
+      fmatvec::Function<fmatvec::VecV(double)> *fq;
       fmatvec::Mat3xV D;
 
     public:
       TimeDependentLinearTranslation() : fq(0) { }
-      TimeDependentLinearTranslation(Function<fmatvec::VecV(double)> *fq_, const fmatvec::Mat3xV &D_) : fq(fq_), D(D_) { }
+      TimeDependentLinearTranslation(fmatvec::Function<fmatvec::VecV(double)> *fq_, const fmatvec::Mat3xV &D_) : fq(fq_), D(D_) { }
       ~TimeDependentLinearTranslation() { delete fq; }
 
       void init();
@@ -329,6 +333,8 @@ namespace MBSim {
 
       virtual int getqSize() const = 0;
       virtual int getuSize() const { return getqSize(); }
+
+      virtual bool hasVariableJacobian() const { return true; }
 
       const fmatvec::RotMat3 getOrientation() const {return A;}
       const fmatvec::Vec3 getAngularVelocity() const {return om;}
@@ -388,10 +394,10 @@ namespace MBSim {
 
   class GeneralRotation : public Rotation {
     protected:
-      Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fA;
+      fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fA;
 
     public:
-      GeneralRotation(Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fA_=0) : fA(fA_) { }
+      GeneralRotation(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fA_=0) : fA(fA_) { }
 
       ~GeneralRotation() { delete fA; }
 
@@ -406,11 +412,11 @@ namespace MBSim {
 
   class StateDependentRotation : public Rotation {
     protected:
-      Function<fmatvec::RotMat3(fmatvec::VecV)> *fA;
+      fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV)> *fA;
       fmatvec::Mat3xV dAdq, dotdAdq;
 
     public:
-      StateDependentRotation(Function<fmatvec::RotMat3(fmatvec::VecV)> *fA_=0) : fA(fA_) { }
+      StateDependentRotation(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV)> *fA_=0) : fA(fA_) { }
 
       ~StateDependentRotation() { delete fA; }
 
@@ -524,6 +530,8 @@ namespace MBSim {
 
       int getqSize() const {return 1;}
 
+      bool hasVariableJacobian() const { return false; }
+
       void updateOrientation(const fmatvec::VecV &q, const double &t) { A = f(q); }
       void updateAngularVelocity(const fmatvec::VecV &u, const fmatvec::VecV &q, const double &t) { om = J*u; }
       void updateqd(const fmatvec::VecV &u) { qd = u; }
@@ -537,11 +545,11 @@ namespace MBSim {
 
   class StateDependentRotationAboutFixedAxis : public Rotation {
     private:
-      Function<double(fmatvec::VecV)> *falpha;
+      fmatvec::Function<double(fmatvec::VecV)> *falpha;
       FRotationAboutFixedAxis<double> f;
 
     public:
-      StateDependentRotationAboutFixedAxis(Function<double(fmatvec::VecV)> *falpha_=0, const fmatvec::Vec3 &a=fmatvec::Vec3()) : falpha(falpha_), f(a) { }
+      StateDependentRotationAboutFixedAxis(fmatvec::Function<double(fmatvec::VecV)> *falpha_=0, const fmatvec::Vec3 &a=fmatvec::Vec3()) : falpha(falpha_), f(a) { }
 
       ~StateDependentRotationAboutFixedAxis() { delete falpha; }
 
@@ -564,11 +572,11 @@ namespace MBSim {
 
   class TimeDependentRotationAboutFixedAxis : public Rotation {
     protected:
-      Function<double(double)> *falpha;
+      fmatvec::Function<double(double)> *falpha;
       FRotationAboutFixedAxis<double> f;
 
     public:
-      TimeDependentRotationAboutFixedAxis(Function<double(double)> *falpha_=0, const fmatvec::Vec3 &a=fmatvec::Vec3()) : falpha(falpha_), f(a) { }
+      TimeDependentRotationAboutFixedAxis(fmatvec::Function<double(double)> *falpha_=0, const fmatvec::Vec3 &a=fmatvec::Vec3()) : falpha(falpha_), f(a) { }
 
       ~TimeDependentRotationAboutFixedAxis() { delete falpha; }
 
@@ -590,7 +598,7 @@ namespace MBSim {
   class CardanAngles : public Rotation {
     private:
       FRotationAboutAxesXYZ<fmatvec::VecV> fA;
-      Function<fmatvec::MatV(fmatvec::VecV)> *fT;
+      fmatvec::Function<fmatvec::MatV(fmatvec::VecV)> *fT;
     public:
       ~CardanAngles() { delete fT; }
 
@@ -598,6 +606,8 @@ namespace MBSim {
 
       int getqSize() const {return 3;}
       int getuSize() const {return 3;}
+
+      bool hasVariableJacobian() const { return false; }
 
       void updateOrientation(const fmatvec::VecV &q, const double &t) { A = fA(q); }
       void updateAngularVelocity(const fmatvec::VecV &u, const fmatvec::VecV &q, const double &t) { om = J*u; }
@@ -611,12 +621,12 @@ namespace MBSim {
 
   class TimeDependentCardanAngles : public Rotation {
     protected:
-      Function<fmatvec::VecV(double)> *fangles;
+      fmatvec::Function<fmatvec::VecV(double)> *fangles;
       FRotationAboutAxesXYZ<fmatvec::VecV> fA;
       TCardanAngles<fmatvec::VecV> fT;
 
     public:
-      TimeDependentCardanAngles(Function<fmatvec::VecV(double)> *fangles_=0) : fangles(fangles_) { }
+      TimeDependentCardanAngles(fmatvec::Function<fmatvec::VecV(double)> *fangles_=0) : fangles(fangles_) { }
 
       ~TimeDependentCardanAngles() { delete fangles; }
 
@@ -635,7 +645,7 @@ namespace MBSim {
   class EulerAngles : public Rotation {
     private:
       FRotationAboutAxesZXZ<fmatvec::VecV> fA;
-      Function<fmatvec::MatV(fmatvec::VecV)> *fT;
+      fmatvec::Function<fmatvec::MatV(fmatvec::VecV)> *fT;
     public:
 
       void init();

@@ -20,8 +20,10 @@
 #ifndef _FUNCTION_LIBRARY_H_
 #define _FUNCTION_LIBRARY_H_
 
-#include "mbsim/utils/function.h"
+#include "function.h"
 #include "mbsim/objectfactory.h"
+#include "mbsim/element.h"
+#include "mbsim/utils/eps.h"
 
 namespace MBSim {
   /**
@@ -30,7 +32,7 @@ namespace MBSim {
    * \date 2009-08-31 some comments (Thorsten Schindler)
    * \todo put in function_library TODO
    */
-  class LinearSpringDamperForce : public Function<double(double,double)> {
+  class LinearSpringDamperForce : public fmatvec::Function<double(double,double)> {
     public:
       /** 
        * \brief constructor
@@ -67,7 +69,7 @@ namespace MBSim {
    * \date 2009-08-31 some comments (Thorsten Schindler)
    * \todo put in function_library TODO
    */
-  class NonlinearSpringDamperForce : public Function<double(double,double)> {
+  class NonlinearSpringDamperForce : public fmatvec::Function<double(double,double)> {
     public:
       /** 
        * \brief constructor
@@ -108,7 +110,7 @@ namespace MBSim {
    * \date 2009-08-31 some comments (Thorsten Schindler)
    * \todo put in function_library TODO
    */
-  class LinearRegularizedUnilateralConstraint: public Function<double(double,double)> {
+  class LinearRegularizedUnilateralConstraint: public fmatvec::Function<double(double,double)> {
     public:
       /**
        * \brief constructor
@@ -151,7 +153,7 @@ namespace MBSim {
    * \date 2009-08-31 some comments (Thorsten Schindler)
    * \todo put in function_library TODO
    */
-  class LinearRegularizedBilateralConstraint: public Function<double(double,double)> {
+  class LinearRegularizedBilateralConstraint: public fmatvec::Function<double(double,double)> {
     public:
       /**
        * \brief constructor
@@ -193,7 +195,7 @@ namespace MBSim {
    * \date 2010-01-09 beauty correction (Thorsten Schindler)
    * \todo put in function_library TODO
    */
-  class LinearRegularizedCoulombFriction : public Function<fmatvec::Vec(fmatvec::Vec,double)> {
+  class LinearRegularizedCoulombFriction : public fmatvec::Function<fmatvec::Vec(fmatvec::Vec,double)> {
     public:
       /**
        * \brief constructor
@@ -231,7 +233,7 @@ namespace MBSim {
    * \date 2010-01-09 beauty correction (Thorsten Schindler)
    * \todo put in function_library TODO
    */
-  class LinearRegularizedStribeckFriction : public Function<fmatvec::Vec(fmatvec::Vec,double)> {
+  class LinearRegularizedStribeckFriction : public fmatvec::Function<fmatvec::Vec(fmatvec::Vec,double)> {
     public:
       /**
        * \brief constructor
@@ -243,7 +245,7 @@ namespace MBSim {
        * \param function for friction coefficient depending on norm of relative velocity
        * \param border with respect to the relative velocity for the linear regularized increase of the friction force
        */
-      LinearRegularizedStribeckFriction(Function<double(double)> *fmu_, double gdLim_=0.01) : fmu(fmu_), gdLim(gdLim_) {}
+      LinearRegularizedStribeckFriction(fmatvec::Function<double(double)> *fmu_, double gdLim_=0.01) : fmu(fmu_), gdLim(gdLim_) {}
 
       /* INHERITED INTERFACE OF FUNCTION2 */
       virtual fmatvec::Vec operator()(const fmatvec::Vec &gd, const double& laN);
@@ -251,7 +253,7 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setFrictionFunction(Function<double(double)> *fmu_) { fmu=fmu_; }
+      void setFrictionFunction(fmatvec::Function<double(double)> *fmu_) { fmu=fmu_; }
       void setMarginalVelocity(double gdLim_) { gdLim=gdLim_; }
       /***************************************************/
 
@@ -270,7 +272,7 @@ namespace MBSim {
   /**
    * \brief function describing the influence between the deformations on a body
    */
-  class InfluenceFunction : public Function<double(fmatvec::Vec2,fmatvec::Vec2)> {
+  class InfluenceFunction : public fmatvec::Function<double(fmatvec::Vec2,fmatvec::Vec2)> {
     public:
       InfluenceFunction(){}
       /* INHERITED INTERFACE OF FUNCTION2 */
@@ -326,11 +328,11 @@ namespace MBSim {
       double couplingValue;
   };
 
-  class Function_SS_from_VS : public Function<double(double)> {
+  class Function_SS_from_VS : public fmatvec::Function<double(double)> {
     public:
       Function_SS_from_VS() : fun(NULL) {}
-      Function_SS_from_VS(Function<fmatvec::Vec(double)> * fun_) : fun(fun_) {assert((*fun)(0).size()==1); }
-      void setFunction(Function<fmatvec::Vec(double)> * fun_) {fun=fun_; assert((*fun)(0).size()==1); }
+      Function_SS_from_VS(fmatvec::Function<fmatvec::Vec(double)> * fun_) : fun(fun_) {assert((*fun)(0).size()==1); }
+      void setFunction(fmatvec::Function<fmatvec::Vec(double)> * fun_) {fun=fun_; assert((*fun)(0).size()==1); }
       double operator()(const double& x) {return (*fun)(x)(0); }
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     private:
@@ -338,20 +340,20 @@ namespace MBSim {
   };
 
   template<class Col>
-  class Function_VS_from_SS : public Function<fmatvec::Vector<Col,double>(double)> {
+  class Function_VS_from_SS : public fmatvec::Function<fmatvec::Vector<Col,double>(double)> {
     public:
       Function_VS_from_SS() : fun(NULL), vec(0) {}
-      Function_VS_from_SS(Function<double(double)> * fun_, fmatvec::Vector<Col,double> v) : fun(fun_), vec(v) {vec/=nrm2(v); }
-      void setFunction(Function<double(double)> * fun_) {fun=fun_; }
+      Function_VS_from_SS(fmatvec::Function<double(double)> * fun_, fmatvec::Vector<Col,double> v) : fun(fun_), vec(v) {vec/=nrm2(v); }
+      void setFunction(fmatvec::Function<double(double)> * fun_) {fun=fun_; }
       void setVector(fmatvec::Vector<Col,double> v) {vec=v; vec/=nrm2(v); }
       fmatvec::Vector<Col,double> operator()(const double& x) {return (*fun)(x)*vec; }
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     private:
-      Function<double(double)> * fun;
+      fmatvec::Function<double(double)> * fun;
       fmatvec::Vector<Col,double> vec;
   };
 
-  class TabularFunction_SSS: public MBSim::Function<double(double,double)> {
+  class TabularFunction_SSS: public fmatvec::Function<double(double,double)> {
     public:
       TabularFunction_SSS();
       /* INHERITED INTERFACE OF FUNCTION2 */
@@ -386,7 +388,7 @@ namespace MBSim {
   void Function_VS_from_SS<Col>::initializeUsingXML(MBXMLUtils::TiXmlElement * element) {
     MBXMLUtils::TiXmlElement * e;
     e=element->FirstChildElement(MBSIMNS"function");
-    Function<double(double)> * f=ObjectFactory<Function<double(double)> >::create<Function<double(double)> >(e->FirstChildElement());
+    fmatvec::Function<double(double)> * f=ObjectFactory<fmatvec::Function<double(double)> >::create<fmatvec::Function<double(double)> >(e->FirstChildElement());
     f->initializeUsingXML(e->FirstChildElement());
     setFunction(f);
     e=element->FirstChildElement(MBSIMNS"direction");
@@ -441,7 +443,7 @@ namespace MBSim {
   template<typename Sig> class ConstantFunction;
 
   template<typename Ret, typename Arg>
-    class ConstantFunction<Ret(Arg)> : public Function<Ret(Arg)> {
+    class ConstantFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
       protected:
         Ret a;
       public:
@@ -457,7 +459,7 @@ namespace MBSim {
     };
 
   template<typename Ret, typename Arg1, typename Arg2>
-    class ConstantFunction<Ret(Arg1,Arg2)> : public Function<Ret(Arg1,Arg2)> {
+    class ConstantFunction<Ret(Arg1,Arg2)> : public fmatvec::Function<Ret(Arg1,Arg2)> {
       protected:
         Ret a;
       public:
@@ -475,7 +477,7 @@ namespace MBSim {
   template<typename Sig> class LinearFunction;
 
   template<typename Ret, typename Arg>
-    class LinearFunction<Ret(Arg)> : public Function<Ret(Arg)> {
+    class LinearFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
       private:
         typename fmatvec::Der<Ret, Arg>::type A;
         Ret b;
@@ -489,7 +491,7 @@ namespace MBSim {
     };
 
  template<class Col>
-  class QuadraticFunction : public Function<fmatvec::Vector<Col,double>(double)> {
+  class QuadraticFunction : public fmatvec::Function<fmatvec::Vector<Col,double>(double)> {
     private:
        fmatvec::Vector<Col,double> a0, a1, a2;
     public:
@@ -524,7 +526,7 @@ namespace MBSim {
   };
 
   template<class Col>
-  class SinusFunction : public Function<fmatvec::Vector<Col,double>(double)> {
+  class SinusFunction : public fmatvec::Function<fmatvec::Vector<Col,double>(double)> {
     protected:
       fmatvec::Vector<Col,double> A, f, phi0, y0;
     public:
@@ -566,7 +568,7 @@ namespace MBSim {
           y0=fmatvec::Vector<Col,double>(A.size());
       }
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) {
-        MBXMLUtils::TiXmlElement *ele0 = Function<fmatvec::Vector<Col,double>(double)>::writeXMLFile(parent);
+        MBXMLUtils::TiXmlElement *ele0 = fmatvec::Function<fmatvec::Vector<Col,double>(double)>::writeXMLFile(parent);
         addElementText(ele0,MBSIMNS"amplitude",A);
         addElementText(ele0,MBSIMNS"frequency",f);
         addElementText(ele0,MBSIMNS"phase",phi0);
@@ -590,7 +592,7 @@ namespace MBSim {
   };
 
    template<class Col>
-   class StepFunction : public Function<fmatvec::Vector<Col,double>(double)> {
+   class StepFunction : public fmatvec::Function<fmatvec::Vector<Col,double>(double)> {
    private:
       fmatvec::Vector<Col,double> stepTime, stepSize;
     public:
@@ -611,7 +613,7 @@ namespace MBSim {
       }
   };
 
-  class SummationFunction : public Function<fmatvec::Vector<fmatvec::Ref,double>(double)> {
+  class SummationFunction : public fmatvec::Function<fmatvec::Vector<fmatvec::Ref,double>(double)> {
     public:
       SummationFunction() { }
       void addFunction(Function<fmatvec::Vector<fmatvec::Ref,double>(double)> *function, double factor=1.) {
@@ -642,7 +644,7 @@ namespace MBSim {
       std::vector<double> factors;
   };
 
-    class Polynom : public Function<double(double)> {
+    class Polynom : public fmatvec::Function<double(double)> {
       protected:
        std::vector<Function<double(double)>* > derivatives;
        void addDerivative(Function<double(double)>* diff) { derivatives.push_back(diff); }
@@ -682,7 +684,7 @@ namespace MBSim {
     };
 
   template<class Row, class Col>
-  class TabularFunction : public Function<fmatvec::Vector<Col,double>(double)> {
+  class TabularFunction : public fmatvec::Function<fmatvec::Vector<Col,double>(double)> {
     public:
       TabularFunction() : xIndexOld(0) {}
       TabularFunction(const fmatvec::Vector<Row,double> &x_, const fmatvec::Matrix<fmatvec::General,Row,Col,double> &y_) : x(x_), y(y_), xIndexOld(0) {
@@ -719,7 +721,7 @@ namespace MBSim {
   };
 
   template<class Arg> 
-    class FRotationAboutFixedAxis : public Function<fmatvec::RotMat3(Arg)> {
+    class FRotationAboutFixedAxis : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
       private:
         fmatvec::RotMat3 A;
         fmatvec::Vec3 a;
@@ -734,18 +736,18 @@ namespace MBSim {
           const double cosq=cos(alpha);
           const double sinq=sin(alpha);
           const double onemcosq=1-cosq;
-          const double a0a1=a(0)*a(1);
-          const double a0a2=a(0)*a(2);
-          const double a1a2=a(1)*a(2);
-          A.e(0,0) = cosq+onemcosq*a(0)*a(0);
-          A.e(1,0) = onemcosq*a0a1+a(2)*sinq;
-          A.e(2,0) = onemcosq*a0a2-a(1)*sinq;
-          A.e(0,1) = onemcosq*a0a1-a(2)*sinq;
-          A.e(1,1) = cosq+onemcosq*a(1)*a(1);
-          A.e(2,1) = onemcosq*a1a2+a(0)*sinq;
-          A.e(0,2) = onemcosq*a0a2+a(1)*sinq;
-          A.e(1,2) = onemcosq*a1a2-a(0)*sinq;
-          A.e(2,2) = cosq+onemcosq*a(2)*a(2);
+          const double a0a1=a.e(0)*a.e(1);
+          const double a0a2=a.e(0)*a.e(2);
+          const double a1a2=a.e(1)*a.e(2);
+          A.e(0,0) = cosq+onemcosq*a.e(0)*a.e(0);
+          A.e(1,0) = onemcosq*a0a1+a.e(2)*sinq;
+          A.e(2,0) = onemcosq*a0a2-a.e(1)*sinq;
+          A.e(0,1) = onemcosq*a0a1-a.e(2)*sinq;
+          A.e(1,1) = cosq+onemcosq*a.e(1)*a.e(1);
+          A.e(2,1) = onemcosq*a1a2+a.e(0)*sinq;
+          A.e(0,2) = onemcosq*a0a2+a.e(1)*sinq;
+          A.e(1,2) = onemcosq*a1a2-a.e(0)*sinq;
+          A.e(2,2) = cosq+onemcosq*a.e(2)*a.e(2);
           return A;
         }
         typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDer(const Arg &q) {
@@ -759,7 +761,7 @@ namespace MBSim {
     };
 
   template<class Arg> 
-    class FRotationAboutAxesXYZ : public Function<fmatvec::RotMat3(Arg)> {
+    class FRotationAboutAxesXYZ : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
       private:
         fmatvec::RotMat3 A;
         fmatvec::Mat3xV J, Jd;
@@ -829,7 +831,7 @@ namespace MBSim {
     };
   
   template<class Arg> 
-    class FRotationAboutAxesZXZ : public Function<fmatvec::RotMat3(Arg)> {
+    class FRotationAboutAxesZXZ : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
       private:
         fmatvec::RotMat3 A;
         fmatvec::Mat3xV J, Jd;
@@ -870,7 +872,7 @@ namespace MBSim {
     };
 
   template<class Arg> 
-    class TCardanAngles : public Function<fmatvec::MatV(Arg)> {
+    class TCardanAngles : public fmatvec::Function<fmatvec::MatV(Arg)> {
       private:
         fmatvec::MatV T;
       public:
@@ -897,7 +899,7 @@ namespace MBSim {
     };
 
   template<class Arg> 
-    class TCardanAngles2 : public Function<fmatvec::MatV(Arg)> {
+    class TCardanAngles2 : public fmatvec::Function<fmatvec::MatV(Arg)> {
       private:
         fmatvec::MatV T;
       public:
@@ -924,7 +926,7 @@ namespace MBSim {
     };
 
   template<class Arg> 
-    class TEulerAngles : public Function<fmatvec::MatV(Arg)> {
+    class TEulerAngles : public fmatvec::Function<fmatvec::MatV(Arg)> {
       private:
         fmatvec::MatV T;
       public:
@@ -953,7 +955,7 @@ namespace MBSim {
     };
 
   template<class Arg> 
-    class TEulerAngles2 : public Function<fmatvec::MatV(Arg)> {
+    class TEulerAngles2 : public fmatvec::Function<fmatvec::MatV(Arg)> {
       private:
         fmatvec::MatV T;
       public:

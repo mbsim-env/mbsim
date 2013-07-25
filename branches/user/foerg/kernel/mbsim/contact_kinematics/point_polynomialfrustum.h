@@ -31,7 +31,7 @@ namespace MBSim {
   /*!
    * \brief function that is zero for a height-coordinate of the polynomial frustum on which the normal on that point points towards the given outer point
    */
-  class projectPointAlongNormal : public Function<fmatvec::Vec(fmatvec::Vec)> {
+  class projectPointAlongNormal : public fmatvec::Function<fmatvec::Vec(fmatvec::Vec)> {
     public:
       projectPointAlongNormal(PolynomialFrustum * frustum);
 

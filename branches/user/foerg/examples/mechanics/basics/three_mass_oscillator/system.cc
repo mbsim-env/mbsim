@@ -2,7 +2,7 @@
 
 #include "mbsim/rigid_body.h"
 #include "mbsim/utils/utils.h"
-#include "mbsim/utils/function.h"
+#include "function.h"
 #include "mbsim/spring_damper.h"
 #include "mbsim/joint.h"
 #include "mbsim/constitutive_laws.h"

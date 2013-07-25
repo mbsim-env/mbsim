@@ -35,12 +35,14 @@
 
 using namespace fmatvec;
 
+namespace fmatvec {
+  template<typename Sig>
+    class Function;
+}
+
 namespace MBSim {
 
 // forward declaration of all classed uses as BaseType
-template<typename Sig>
-class Function;
-class Function_;
 class Element;
 class Environment;
 class Integrator;

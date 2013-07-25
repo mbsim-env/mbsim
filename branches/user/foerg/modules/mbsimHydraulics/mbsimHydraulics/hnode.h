@@ -21,7 +21,7 @@
 #define  _HNODE_H_
 
 #include "mbsim/link.h"
-#include "mbsim/utils/function.h"
+#include "function.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 namespace OpenMBV {
@@ -111,7 +111,7 @@ namespace MBSimHydraulics {
       ConstrainedNode(const std::string &name="") : HNode(name), pFun(NULL) {}
       virtual std::string getType() const { return "ConstrainedNode"; }
 
-      void setpFunction(MBSim::Function<double(double)> * pFun_) {pFun=pFun_; }
+      void setpFunction(fmatvec::Function<double(double)> * pFun_) {pFun=pFun_; }
 
       void updateg(double t);
       void init(MBSim::InitStage stage);
@@ -119,7 +119,7 @@ namespace MBSimHydraulics {
       virtual bool isSingleValued() const {return true;}
 
     private:
-      MBSim::Function<double(double)> * pFun;
+      fmatvec::Function<double(double)> * pFun;
   };
 
 
