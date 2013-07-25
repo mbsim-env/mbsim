@@ -21,7 +21,8 @@
 #define PPOLYNOM
 
 #include "fmatvec.h"
-#include "mbsim/utils/function.h"
+#include "function.h"
+#include "mbsim/element.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/mbsim_event.h"
@@ -58,7 +59,7 @@ namespace MBSim {
    * in the context of this class the second derivative is defined to be zero everywhere (which is mathematically wrong)
    */
 template<class Row, class Col>
-  class PPolynom : public Function<fmatvec::Vector<Col,double>(double)> {
+  class PPolynom : public fmatvec::Function<fmatvec::Vector<Col,double>(double)> {
 
     public:
       PPolynom() : f(this), fd(this), fdd(this) { }

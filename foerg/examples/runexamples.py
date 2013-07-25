@@ -518,9 +518,10 @@ def runExample(resultQueue, example):
 # execute the source code example in the current directory (write everything to fd executeFD)
 def executeSrcExample(executeFD):
   print("Running commands:", file=executeFD)
-  print("make clean && make && "+pj(os.curdir, "main"), file=executeFD)
+  print("rm -f *.d && make clean && make && "+pj(os.curdir, "main"), file=executeFD)
   print("", file=executeFD)
   executeFD.flush()
+  if subprocess.call(["rm -f *.d"], stderr=subprocess.STDOUT, stdout=executeFD, shell=True)!=0: return 1, 0
   if subprocess.call(["make", "clean"], stderr=subprocess.STDOUT, stdout=executeFD)!=0: return 1, 0
   if subprocess.call(["make"], stderr=subprocess.STDOUT, stdout=executeFD)!=0: return 1, 0
   # append $prefix/lib to LD_LIBRARY_PATH/PATH to find lib by main of the example

@@ -32,7 +32,7 @@ namespace MBSim {
   /*!
    * \brief Function describing the scalar product between normal of frustum point and difference between frustum point and point on line defined by one parameter t
    */
-  class edgePolyFrustum : public Function<fmatvec::Vec(fmatvec::Vec)> {
+  class edgePolyFrustum : public fmatvec::Function<fmatvec::Vec(fmatvec::Vec)> {
     public:
       /*!
        * \brief constructor

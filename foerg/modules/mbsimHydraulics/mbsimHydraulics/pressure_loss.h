@@ -21,7 +21,7 @@
 #define  _PRESSURE_LOSS_H_
 
 #include "mbsim/element.h"
-#include "mbsim/utils/function.h"
+#include "function.h"
 
 namespace MBSim {
   template <class Row, class Col> class TabularFunction;
@@ -37,7 +37,7 @@ namespace MBSimHydraulics {
 //  class PlaneLeakage0DOF;
 
   /*! PressureLoss */
-  class PressureLoss : public MBSim::Function<double(double)> {
+  class PressureLoss : public fmatvec::Function<double(double)> {
     public:
       PressureLoss() : line(0), initialized(false) {}
       virtual void setLine(const HLine *line_) { line = line_; }
@@ -149,11 +149,11 @@ namespace MBSimHydraulics {
   class TabularLinePressureLoss : public LinePressureLoss {
     public:
       TabularLinePressureLoss() : LinePressureLoss(), zetaTabular(NULL) {};
-      void setZetaTabular(MBSim::Function<double(double)> * zetaTabular_) {zetaTabular=zetaTabular_; }
+      void setZetaTabular(fmatvec::Function<double(double)> * zetaTabular_) {zetaTabular=zetaTabular_; }
       double operator()(const double& Q);
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     private:
-      MBSim::Function<double(double)> * zetaTabular;
+      fmatvec::Function<double(double)> * zetaTabular;
   };
 
 

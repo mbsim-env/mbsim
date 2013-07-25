@@ -99,7 +99,7 @@ namespace MBSimHydraulics {
   void Checkvalve::setLineSetValued(bool setValued) {line->setBilateral(setValued); }
   void Checkvalve::setBallMass(double mBall_) {mBall=mBall_; ball->setMass(mBall); }
   void Checkvalve::setBallInitialPosition(double x0) {ball->setInitialGeneralizedPosition(x0); }
-  void Checkvalve::setSpringForceFunction(MBSim::Function<double(double,double)> *func) {spring->setForceFunction(func); }
+  void Checkvalve::setSpringForceFunction(Function<double(double,double)> *func) {spring->setForceFunction(func); }
   void Checkvalve::setSeatContactImpactLaw(GeneralizedImpactLaw * GIL) {seatContact->setContactImpactLaw(GIL); }
   void Checkvalve::setSeatContactForceLaw(GeneralizedForceLaw * GFL) {seatContact->setContactForceLaw(GFL); }
   void Checkvalve::setMaximalContactImpactLaw(GeneralizedImpactLaw * GIL) {maxContact->setContactImpactLaw(GIL); }
@@ -223,7 +223,7 @@ namespace MBSimHydraulics {
     setLineDiameter(getDouble(ee));
     ee = e->FirstChildElement(MBSIMHYDRAULICSNS"checkvalvePressureLoss");
     TiXmlElement * eee = ee->FirstChildElement();
-    CheckvalveClosablePressureLoss * ccpl_=MBSim::ObjectFactory<MBSim::Function<double(double)> >::create<CheckvalveClosablePressureLoss>(eee);
+    CheckvalveClosablePressureLoss * ccpl_=MBSim::ObjectFactory<Function<double(double)> >::create<CheckvalveClosablePressureLoss>(eee);
     ccpl_->initializeUsingXML(eee);
     setLinePressureLoss(ccpl_);
     eee = ee->FirstChildElement(MBSIMHYDRAULICSNS"minimalXOpen");
@@ -239,7 +239,7 @@ namespace MBSimHydraulics {
       setBallInitialPosition(getDouble(ee));
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"Spring");
     ee = e->FirstChildElement(MBSIMHYDRAULICSNS"forceFunction");
-    MBSim::Function<double(double,double)> *f=MBSim::ObjectFactory<MBSim::Function<double(double,double)> >::create<MBSim::Function<double(double,double)> >(ee->FirstChildElement());
+    Function<double(double,double)> *f=MBSim::ObjectFactory<Function<double(double,double)> >::create<Function<double(double,double)> >(ee->FirstChildElement());
     f->initializeUsingXML(ee->FirstChildElement());
     setSpringForceFunction(f);
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"SeatContact");

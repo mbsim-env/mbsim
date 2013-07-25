@@ -36,14 +36,14 @@ double mR = 10;
 double g0 = 9.81;
 double mu = 1.07;
 
-class Fahrwiderstand : public Function1<fmatvec::Vec, double> {
+class Fahrwiderstand : public fmatvec::Function<fmatvec::VecV(double)> {
   private:
     RigidBody *body;
   public:
     Fahrwiderstand(RigidBody *body_) : body(body_) {}
 
-    fmatvec::Vec operator()(const double& tVal, const void * =NULL) {
-      fmatvec::Vec F(1);
+    fmatvec::VecV operator()(const double& t) {
+      fmatvec::VecV F(1);
       double v = abs(body->getu()(0));
       double vkmh = v*3.6;
       if(vkmh<0.1)
@@ -61,7 +61,7 @@ class Fahrwiderstand : public Function1<fmatvec::Vec, double> {
     };
 };
 
-class Moment : public Function1<fmatvec::Vec, double> {
+class Moment : public fmatvec::Function<fmatvec::VecV(double)> {
     RigidBody *shaft,*fzg;
     double P, M_max, Om_eck, Om_max, t0;
     double i, M_An, M_Ab, Om_Ab, Om_An, v_Fzg;
@@ -75,9 +75,9 @@ class Moment : public Function1<fmatvec::Vec, double> {
       M_max = P/Om_eck;
     }
 
-    fmatvec::Vec operator()(const double& tVal, const void * =NULL) {
-      fmatvec::Vec M(1);
-      if(tVal<t0)
+    fmatvec::VecV operator()(const double& t) {
+      fmatvec::VecV M(1);
+      if(t<t0)
 	return M;
 
       Om_Ab = abs(shaft->getuRel()(0));

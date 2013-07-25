@@ -20,7 +20,7 @@
 #define _CONSTRAINT_H
 
 #include "object.h"
-#include "utils/function.h"
+#include "function.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 namespace OpenMBV {
@@ -130,7 +130,7 @@ namespace MBSim {
 
       void calcqSize();
 
-      void setGeneralizedPositionFunction(Function<fmatvec::VecV(double)>* f_) { f = f_;}
+      void setGeneralizedPositionFunction(fmatvec::Function<fmatvec::VecV(double)>* f_) { f = f_;}
 
       void setUpInverseKinetics();
 
@@ -143,7 +143,7 @@ namespace MBSim {
       virtual std::string getType() const { return "TimeDependentKinematicConstraint"; }
 
     private:
-      Function<fmatvec::VecV(double)> *f;
+      fmatvec::Function<fmatvec::VecV(double)> *f;
   };
 
   class StateDependentKinematicConstraint : public KinematicConstraint {
@@ -156,7 +156,7 @@ namespace MBSim {
 
       void calcqSize();
 
-      void setGeneralizedVelocityFunction(Function<fmatvec::VecV(fmatvec::VecV)>* f_) { f = f_;}
+      void setGeneralizedVelocityFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV)>* f_) { f = f_;}
 
       virtual void setUpInverseKinetics();
 
@@ -169,7 +169,7 @@ namespace MBSim {
       virtual std::string getType() const { return "StateDependetKinematicConstraint"; }
 
     private:
-      Function<fmatvec::VecV(fmatvec::VecV)> *f; 
+      fmatvec::Function<fmatvec::VecV(fmatvec::VecV)> *f; 
   };
 
   /** 
@@ -213,7 +213,7 @@ namespace MBSim {
       }
 
     private:
-      class Residuum : public Function<fmatvec::Vec(fmatvec::Vec)> {
+      class Residuum : public fmatvec::Function<fmatvec::Vec(fmatvec::Vec)> {
         private:
           std::vector<RigidBody*> body1, body2;
           fmatvec::Mat3xV dT, dR;

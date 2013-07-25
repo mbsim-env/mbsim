@@ -18,7 +18,6 @@
 #include <mbsim/contours/circle_solid.h>
 #include <mbsim/contact.h>
 #include <mbsim/constitutive_laws.h>
-#include <mbsim/utils/function.h>
 #include <mbsim/utils/rotarymatrices.h>
 #include <mbsim/utils/utils.h>
 #include <mbsim/utils/nonlinear_algebra.h>

@@ -10,7 +10,7 @@ using namespace MBSim;
 using namespace std;
 
 
-class TestFunction : public Function1<fmatvec::Vec, fmatvec::Vec> {
+class TestFunction : public Function<fmatvec::Vec(fmatvec::Vec)> {
 
   public:
     /**
@@ -25,7 +25,7 @@ class TestFunction : public Function1<fmatvec::Vec, fmatvec::Vec> {
     virtual ~TestFunction() {
     }
 
-    virtual fmatvec::Vec operator ()(const fmatvec::Vec & vector, const void * = NULL) {
+    virtual fmatvec::Vec operator ()(const fmatvec::Vec & vector) {
       Vec result(vector.size(), INIT, 0.);
 
       for(int i=0; i< result.size(); i++) {

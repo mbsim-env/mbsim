@@ -20,7 +20,7 @@
 #ifndef SYMBOLIC_FUNCTION_H_
 #define SYMBOLIC_FUNCTION_H_
 
-#include <mbsim/utils/function.h>
+#include <function.h>
 #include <casadi/symbolic/fx/sx_function.hpp>
 #include "casadi/symbolic/matrix/matrix_tools.hpp"
 #include "mbxmlutilstinyxml/casadiXML.h"
@@ -105,7 +105,7 @@ template<typename Sig>
 class SymbolicFunction;
 
 template<typename Ret, typename Arg>
-  class SymbolicFunction<Ret(Arg)> : public Function<Ret(Arg)> {
+  class SymbolicFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
     CasADi::SXFunction f, pd, dd, pddd, pdpd;
     public:
     SymbolicFunction() {}
@@ -189,7 +189,7 @@ template<typename Ret, typename Arg>
   };
 
 template<typename Ret, typename Arg1, typename Arg2>
-  class SymbolicFunction<Ret(Arg1, Arg2)> : public Function<Ret(Arg1, Arg2)> {
+  class SymbolicFunction<Ret(Arg1, Arg2)> : public fmatvec::Function<Ret(Arg1, Arg2)> {
     CasADi::SXFunction f, pd1, pd2, pd1dd1, pd1pd2, pd2dd1, pd2pd2;
     public:
     SymbolicFunction() {}
@@ -313,7 +313,7 @@ template<typename Ret, typename Arg1, typename Arg2>
   };
 
   template <class Ret, class Arg1, class Arg2, class Arg3>
-  class SymbolicFunction3 : public Function<Ret(Arg1,Arg2,Arg3)> {
+  class SymbolicFunction3 : public fmatvec::Function<Ret(Arg1,Arg2,Arg3)> {
     CasADi::SXFunction f;
     public:
     SymbolicFunction3(const CasADi::SXFunction &f_) : f(f_) {

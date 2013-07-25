@@ -141,10 +141,10 @@ void FuncCrPC::enableTabularFit(double tabularFitLength) {
   a.push_back(0);
   while(a.back()<2.*M_PI) {
     Vec p1=operator()(a.back());
-    class PointDistance : public Function1<double, double> {
+    class PointDistance : public fmatvec::Function<double(double)> {
       public:
         PointDistance(Vec p1_, FuncCrPC * f_, double d_) : p1(p1_), f(f_), d(d_) {}
-        double operator()(const double &alpha, const void * = NULL) {
+        double operator()(const double &alpha) {
           Vec p2=(*f)(alpha);
           return nrm2(p2-p1)-d;
         }
@@ -173,11 +173,11 @@ void FuncCrPC::enableTabularFit(double tabularFitLength) {
     N.set(i, this->computeN(alp).T());
     curve(i)=this->computeCurvature(alp);
   }
-  tab_operator = new TabularFunction1_VS<Ref,Ref>(phi, Mat(O));
-  tab_T = new TabularFunction1_VS<Ref,Ref>(phi, Mat(T));
-  tab_B = new TabularFunction1_VS<Ref,Ref>(phi, Mat(B));
-  tab_N = new TabularFunction1_VS<Ref,Ref>(phi, Mat(N));
-  tab_curvature = new TabularFunction1_VS<Ref,Ref>(phi, curve);
+  tab_operator = new TabularFunction<Ref,Ref>(phi, Mat(O));
+  tab_T = new TabularFunction<Ref,Ref>(phi, Mat(T));
+  tab_B = new TabularFunction<Ref,Ref>(phi, Mat(B));
+  tab_N = new TabularFunction<Ref,Ref>(phi, Mat(N));
+  tab_curvature = new TabularFunction<Ref,Ref>(phi, curve);
 
   operator_ = &FuncCrPC::operatorTabular;
   computeT_ = &FuncCrPC::computeTTabular;
@@ -190,8 +190,8 @@ Vec3 FuncCrPC::diff1(const double& alpha) {
   Vec3 f(NONINIT);
   const double alphaLoc=calculateLocalAlpha(alpha);
   f(0) = 0;
-  f(1) = ((pp_y).getDerivative(1))(alphaLoc)(0); 
-  f(2) = ((pp_z).getDerivative(1))(alphaLoc)(0); 
+  f(1) = pp_y.parDer(alphaLoc)(0); 
+  f(2) = pp_z.parDer(alphaLoc)(0); 
   return f;
 }
 
@@ -199,8 +199,8 @@ Vec3 FuncCrPC::diff2(const double& alpha) {
   Vec3 f(NONINIT);
   const double alphaLoc=calculateLocalAlpha(alpha);
   f(0) = 0;
-  f(1) = ((pp_y).getDerivative(2))(alphaLoc)(0); 
-  f(2) = ((pp_z).getDerivative(2))(alphaLoc)(0); 
+  f(1) = pp_y.parDerParDer(alphaLoc)(0); 
+  f(2) = pp_z.parDerParDer(alphaLoc)(0); 
   return f;
 }
 
@@ -208,8 +208,8 @@ Vec3 FuncCrPC::operatorPPolynom(const double& alpha) {
   Vec3 f(NONINIT);
   const double alphaLoc=calculateLocalAlpha(alpha);
   f(0) = 0;
-  f(1) = (pp_y.getDerivative(0))(alphaLoc)(0); 
-  f(2) = (pp_z.getDerivative(0))(alphaLoc)(0); 
+  f(1) = pp_y(alphaLoc)(0); 
+  f(2) = pp_z(alphaLoc)(0); 
   return f;
 } 
 

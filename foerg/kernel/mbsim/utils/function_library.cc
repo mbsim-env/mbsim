@@ -44,10 +44,10 @@ namespace MBSim {
     Function<double(double,double)>::initializeUsingXML(element);
     TiXmlElement *e;
     e = element->FirstChildElement(MBSIMNS"distanceForce");
-    gForceFun = ObjectFactory<MBSim::Function<Vec(double)> >::create<MBSim::Function<Vec(double)> >(e->FirstChildElement());
+    gForceFun = ObjectFactory<Function<Vec(double)> >::create<Function<Vec(double)> >(e->FirstChildElement());
     gForceFun->initializeUsingXML(e->FirstChildElement());
     e = element->FirstChildElement(MBSIMNS"velocityForce");
-    gdForceFun = ObjectFactory<MBSim::Function<Vec(double)> >::create<MBSim::Function<Vec(double)> >(e->FirstChildElement());
+    gdForceFun = ObjectFactory<Function<Vec(double)> >::create<Function<Vec(double)> >(e->FirstChildElement());
     gdForceFun->initializeUsingXML(e->FirstChildElement());
   }
 
@@ -177,7 +177,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec(double)>, StepFunction<Ref>, MBSIMNS"StepFunction_VS")
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(MBSim::Function<Vec(double)>, PeriodicTabularFunction, MBSIMNS"PeriodicTabularFunction_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec(double)>, PeriodicTabularFunction, MBSIMNS"PeriodicTabularFunction_VS")
 
   Vec PeriodicTabularFunction::operator()(const double& xVal) {
     double xValTmp=xVal;
@@ -306,7 +306,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<VecV(double)>, ConstantFunction<VecV(double)>, MBSIMNS"ConstantFunction_VS")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec3(double)>, ConstantFunction<Vec3(double)>, MBSIMNS"ConstantFunction_VS")
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(MBSim::Function<double(double,double)>, ConstantFunction<double(double,double)>, MBSIMNS"ConstantFunction_SSS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double,double)>, ConstantFunction<double(double,double)>, MBSIMNS"ConstantFunction_SSS")
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<Vec(double)>, TabularFunction<Ref COMMA Ref>, MBSIMNS"TabularFunction_VS")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<VecV(double)>, TabularFunction<Var COMMA Var>, MBSIMNS"TabularFunction_VS")

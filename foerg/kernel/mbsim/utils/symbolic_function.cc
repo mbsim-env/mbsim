@@ -20,6 +20,7 @@
 #include <config.h>
 #ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
 #include <mbsim/utils/symbolic_function.h>
+#include <mbsim/element.h>
 using namespace fmatvec;
 #endif
 

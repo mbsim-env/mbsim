@@ -7,7 +7,6 @@ libutils_la_SOURCES = colors.cc\
                       contact_utils.cc\
                       rotarymatrices.cc\
                       utils.cc\
-                      function.cc\
                       symbolic_function.cc\
                       function_library.cc\
                       stopwatch.cc\
@@ -23,7 +22,6 @@ utilsinclude_HEADERS = colors.h\
                        eps.h\
                        nonlinear_algebra.h\
                        nonsmooth_algebra.h\
-                       function.h\
                        symbolic_function.h\
                        function_library.h\
                        ppolynom.h\

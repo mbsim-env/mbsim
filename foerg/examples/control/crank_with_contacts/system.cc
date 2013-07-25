@@ -8,7 +8,7 @@
 #include "mbsim/contact.h"
 #include "mbsim/joint.h"
 #include "mbsim/kinetic_excitation.h"
-#include "mbsim/utils/function.h"
+#include "function.h"
 #include "mbsim/constitutive_laws.h"
 
 #include "mbsimControl/actuator.h"

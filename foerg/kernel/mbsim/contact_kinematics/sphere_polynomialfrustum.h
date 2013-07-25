@@ -28,7 +28,7 @@
 
 namespace MBSim {
 
-  class PolyFurstumSphereContact : public Function<fmatvec::Vec(fmatvec::Vec)> {
+  class PolyFurstumSphereContact : public fmatvec::Function<fmatvec::Vec(fmatvec::Vec)> {
     public:
       PolyFurstumSphereContact(const PolynomialFrustum * frustum) :
         frustum(frustum) {

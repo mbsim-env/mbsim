@@ -1,7 +1,7 @@
 #include "system.h"
 #include "mbsim/contact.h"
 #include "mbsim/rigid_body.h"
-#include "mbsim/utils/function.h"
+#include "function.h"
 #include "mbsim/environment.h"
 #include "mbsim/contours/plane.h"
 #include "mbsim/contours/frustum.h"
@@ -16,7 +16,7 @@
 
 using namespace fmatvec;
 
-class Angle : public MBSim::Function<double(double)> {
+class Angle : public Function<double(double)> {
   public:
     double operator()(const double& t) {
       double al;
