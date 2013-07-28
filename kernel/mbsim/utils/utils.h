@@ -140,19 +140,6 @@ void addElementText(MBXMLUtils::TiXmlElement *parent, std::string name, const T 
   parent->LinkEndChild(new MBXMLUtils::TiXmlElement(name))->LinkEndChild(toXML(value));
 }
 
-class Deprecated {
-  public:
-    /*! register a deprecated feature with name message.
-     * If e is NULL a stack trace is printed if available if e it not NULL MBXMLUtils::TiXml_location is printed. */
-    static void registerMessage(const std::string &message, MBXMLUtils::TiXmlElement *e=NULL);
-  private:
-    static void printAllMessages();
-    static std::set<std::vector<std::string> > allMessages;
-    static bool atExitRegistred;
-};
-
-std::string demangleSymbolName(std::string name);
-
 }
 
 #endif
