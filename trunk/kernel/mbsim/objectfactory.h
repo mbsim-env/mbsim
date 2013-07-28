@@ -24,6 +24,7 @@
 #include <stdexcept>
 #include <typeinfo>
 #include "mbxmlutilstinyxml/tinyxml.h"
+#include "mbxmlutilstinyxml/utils.h"
 #ifdef HAVE_BOOST_TYPE_TRAITS_HPP
 # include <boost/static_assert.hpp>
 # include <boost/type_traits.hpp>
@@ -88,7 +89,7 @@ class ObjectFactory {
       }
       // no matching element found: throw error
       throw std::runtime_error("No class named "+element->ValueStr()+" found which is of type "+
-                               demangleSymbolName(typeid(ContainerType).name())+".");
+                               MBXMLUtils::demangleSymbolName(typeid(ContainerType).name())+".");
     }
 
   private:

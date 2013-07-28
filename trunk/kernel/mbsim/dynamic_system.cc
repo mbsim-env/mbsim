@@ -28,6 +28,7 @@
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/observer.h"
 #include "hdf5serie/fileserie.h"
+#include "mbxmlutilstinyxml/utils.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/group.h"
@@ -42,6 +43,7 @@
 
 using namespace std;
 using namespace fmatvec;
+using namespace MBXMLUtils;
 
 namespace MBSim {
 

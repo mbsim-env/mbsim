@@ -10,7 +10,7 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
 
-class MyRot : public Rotation {
+class MyRot : public MBSim::Rotation {
   public:
     virtual SqrMat3 operator()(const Vec &q, double t) {
       SqrMat3 A;
