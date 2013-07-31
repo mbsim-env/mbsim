@@ -21,7 +21,7 @@
 #include <fmatvec.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/utils/eps.h>
-#include "fortran_wrapper.h"
+#include "fortran/fortran_wrapper.h"
 #include "lsoder_integrator.h"
 
 // TODO wieder entfernen
