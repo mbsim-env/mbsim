@@ -445,7 +445,7 @@ def runExample(resultQueue, example):
     # check for deprecated features
     nrDeprecated=0
     for line in fileinput.FileInput(pj(args.reportOutDir, executeFN)):
-      match=re.search("WARNING: ([0-9]+) deprecated features were called during simulation:", line)
+      match=re.search("WARNING: ([0-9]+) deprecated features were called:", line)
       if match!=None:
         nrDeprecated=match.expand("\\1")
         break
