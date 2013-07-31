@@ -358,6 +358,7 @@ PL_PROG_PERL
 
 LDFLAGS="$LDFLAGS -no-undefined"
 CXXFLAGS="$CXXFLAGS -fpermissive"
+CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)"
 
 dnl removed from list: nurbs++-config (and added nurbs++.pc to use pkg-config)
 

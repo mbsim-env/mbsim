@@ -30,7 +30,7 @@
 #define MBSIMNS_ "http://mbsim.berlios.de/MBSim"
 #define MBSIMNS "{"MBSIMNS_"}"
 
-#include "mbsim/mbsim_event.h"
+#include "mbsim_event.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 namespace OpenMBV {

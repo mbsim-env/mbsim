@@ -21,7 +21,7 @@
 #include <mbsim/dynamic_system_solver.h>
 #include "rksuite_integrator.h"
 #include <mbsim/utils/eps.h>
-#include "fortran_wrapper.h"
+#include "fortran/fortran_wrapper.h"
 
 #include <time.h>
 

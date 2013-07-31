@@ -72,6 +72,7 @@ if test $doxygen = "no" ; then
 fi
 
 LDFLAGS="$LDFLAGS -no-undefined"
+CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)"
 
 AC_CONFIG_FILES([Makefile mbsimHydraulics/Makefile mbsimHydraulics.pc schema/Makefile doc/doxyfile doc/Makefile xmldoc/Makefile])
 

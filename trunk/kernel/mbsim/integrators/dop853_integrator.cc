@@ -22,7 +22,7 @@
 
 #include <config.h>
 #include <mbsim/dynamic_system_solver.h>
-#include "fortran_wrapper.h"
+#include "fortran/fortran_wrapper.h"
 #include "dop853_integrator.h"
 #include <time.h>
 #include <fstream>
