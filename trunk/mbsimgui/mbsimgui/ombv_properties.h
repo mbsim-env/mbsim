@@ -56,13 +56,14 @@ class OMBVFrameProperty : public OMBVObjectProperty {
 class OMBVDynamicColoredObjectProperty : public OMBVObjectProperty {
 
   public:
-    OMBVDynamicColoredObjectProperty(const std::string &name="NOTSET", const std::string &ID_=0);
+    OMBVDynamicColoredObjectProperty(const std::string &name="NOTSET", const std::string &ID_=0, bool readXMLType=false);
     virtual MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
   protected:
-    ExtProperty minimalColorValue, maximalColorValue, staticColor;
+    ExtProperty minimalColorValue, maximalColorValue, diffuseColor, transparency;
+    bool readXMLType;
 };
 
 
@@ -94,7 +95,7 @@ class OMBVCoilSpringProperty : public OMBVObjectProperty {
     ExtProperty type, numberOfCoils, springRadius, crossSectionRadius, nominalLength, scaleFactor;
 };
 
-class OMBVBodyProperty : public OMBVObjectProperty {
+class OMBVBodyProperty : public OMBVDynamicColoredObjectProperty {
 
   public:
     OMBVBodyProperty(const std::string &name="NOTSET", const std::string &ID_=0);
@@ -104,7 +105,7 @@ class OMBVBodyProperty : public OMBVObjectProperty {
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
   protected:
-    ExtProperty trans, rot, color, scale;
+    ExtProperty trans, rot, scale;
 };
 
 class InvisibleBodyProperty : public OMBVBodyProperty {

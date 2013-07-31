@@ -84,7 +84,7 @@ void OMBVFrameProperty::toWidget(QWidget *widget) {
   offset.toWidget(static_cast<OMBVFrameWidget*>(widget)->offset);
 }
 
-OMBVDynamicColoredObjectProperty::OMBVDynamicColoredObjectProperty(const string &name, const std::string &ID) : OMBVObjectProperty(name,ID), minimalColorValue(0,false), maximalColorValue(0,false), staticColor(0,false) {
+OMBVDynamicColoredObjectProperty::OMBVDynamicColoredObjectProperty(const string &name, const std::string &ID, bool readXMLType_) : OMBVObjectProperty(name,ID), minimalColorValue(0,false), maximalColorValue(0,false), diffuseColor(0,false), transparency(0,false), readXMLType(readXMLType_) {
 
   vector<PhysicalVariableProperty> input;
   input.push_back(PhysicalVariableProperty(new ScalarProperty("0"), "-", OPENMBVNS"minimalColorValue"));
@@ -94,17 +94,23 @@ OMBVDynamicColoredObjectProperty::OMBVDynamicColoredObjectProperty(const string 
   input.push_back(PhysicalVariableProperty(new ScalarProperty("1"), "-", OPENMBVNS"maximalColorValue"));
   maximalColorValue.setProperty(new ExtPhysicalVarProperty(input));
 
+  diffuseColor.setProperty(new ColorProperty(OPENMBVNS"diffuseColor"));
+
   input.clear();
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"), "-", OPENMBVNS"staticColor"));
-  staticColor.setProperty(new ExtPhysicalVarProperty(input));
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0.3"), "-", OPENMBVNS"transparency"));
+  transparency.setProperty(new ExtPhysicalVarProperty(input));
 }
 
 TiXmlElement* OMBVDynamicColoredObjectProperty::initializeUsingXML(TiXmlElement *element) {
-  TiXmlElement *e=element->FirstChildElement(OPENMBVNS+getType());
+  cout << element->ValueStr() << endl;
+  cout << OPENMBVNS+getType() << endl;
+  TiXmlElement *e=readXMLType?element->FirstChildElement(OPENMBVNS+getType()):element;
+  cout << e << endl;
   if(e) {
     minimalColorValue.initializeUsingXML(e);
     maximalColorValue.initializeUsingXML(e);
-    staticColor.initializeUsingXML(e);
+    diffuseColor.initializeUsingXML(e);
+    transparency.initializeUsingXML(e);
   }
   return e;
 }
@@ -116,23 +122,27 @@ TiXmlElement* OMBVDynamicColoredObjectProperty::writeXMLFile(TiXmlNode *parent) 
   writeXMLFileID(e);
   minimalColorValue.writeXMLFile(e);
   maximalColorValue.writeXMLFile(e);
-  staticColor.writeXMLFile(e);
+  diffuseColor.writeXMLFile(e);
+  transparency.writeXMLFile(e);
   return e;
 }
 
 void OMBVDynamicColoredObjectProperty::fromWidget(QWidget *widget) {
   minimalColorValue.fromWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->minimalColorValue);
   maximalColorValue.fromWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->maximalColorValue);
-  staticColor.fromWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->staticColor);
+  diffuseColor.fromWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->diffuseColor);
+  transparency.fromWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->transparency);
 }
 
 void OMBVDynamicColoredObjectProperty::toWidget(QWidget *widget) {
   minimalColorValue.toWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->minimalColorValue);
   maximalColorValue.toWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->maximalColorValue);
-  staticColor.toWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->staticColor);
+  diffuseColor.toWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->diffuseColor);
+  transparency.toWidget(static_cast<OMBVDynamicColoredObjectWidget*>(widget)->transparency);
 }
 
 OMBVArrowProperty::OMBVArrowProperty(const string &name, const std::string &ID, bool fromPoint) : OMBVDynamicColoredObjectProperty(name,ID), referencePoint(0,false) {
+  readXMLType = true;
 
   vector<PhysicalVariableProperty> input;
   input.push_back(PhysicalVariableProperty(new ScalarProperty("0.1"), "m", OPENMBVNS"diameter"));
@@ -271,13 +281,11 @@ void OMBVCoilSpringProperty::toWidget(QWidget *widget) {
   scaleFactor.toWidget(static_cast<OMBVCoilSpringWidget*>(widget)->scaleFactor);
 }
 
-OMBVBodyProperty::OMBVBodyProperty(const string &name, const std::string &ID) : OMBVObjectProperty(name,ID) {
+OMBVBodyProperty::OMBVBodyProperty(const string &name, const std::string &ID) : OMBVDynamicColoredObjectProperty(name,ID) {
+
+  transparency.setActive(true);
 
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"), "-", OPENMBVNS"staticColor"));
-  color.setProperty(new ExtPhysicalVarProperty(input));
-
-  input.clear();
   input.push_back(PhysicalVariableProperty(new VecProperty(3), "m", OPENMBVNS"initialTranslation"));
   trans.setProperty(new ExtPhysicalVarProperty(input));
 
@@ -291,19 +299,18 @@ OMBVBodyProperty::OMBVBodyProperty(const string &name, const std::string &ID) : 
 }
 
 TiXmlElement* OMBVBodyProperty::initializeUsingXML(TiXmlElement *element) {
-  color.initializeUsingXML(element);
-  trans.initializeUsingXML(element);
-  rot.initializeUsingXML(element);
-  scale.initializeUsingXML(element);
-  return element;
+  TiXmlElement *e = OMBVDynamicColoredObjectProperty::initializeUsingXML(element);
+  if(e) {
+    trans.initializeUsingXML(e);
+    rot.initializeUsingXML(e);
+    scale.initializeUsingXML(e);
+  }
+  return e;
 }
 
 TiXmlElement* OMBVBodyProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *e=new TiXmlElement(OPENMBVNS+getType());
-  parent->LinkEndChild(e);
-  e->SetAttribute("name", name==""?"NOTSET":name);
+  TiXmlElement *e=OMBVDynamicColoredObjectProperty::writeXMLFile(parent);
   writeXMLFileID(e);
-  color.writeXMLFile(e);
   trans.writeXMLFile(e);
   rot.writeXMLFile(e);
   scale.writeXMLFile(e);
@@ -311,14 +318,14 @@ TiXmlElement* OMBVBodyProperty::writeXMLFile(TiXmlNode *parent) {
 }
 
 void OMBVBodyProperty::fromWidget(QWidget *widget) {
-  color.fromWidget(static_cast<OMBVBodyWidget*>(widget)->color);
+  OMBVDynamicColoredObjectProperty::fromWidget(widget);
   trans.fromWidget(static_cast<OMBVBodyWidget*>(widget)->trans);
   rot.fromWidget(static_cast<OMBVBodyWidget*>(widget)->rot);
   scale.fromWidget(static_cast<OMBVBodyWidget*>(widget)->scale);
 }
 
 void OMBVBodyProperty::toWidget(QWidget *widget) {
-  color.toWidget(static_cast<OMBVBodyWidget*>(widget)->color);
+  OMBVDynamicColoredObjectProperty::toWidget(widget);
   trans.toWidget(static_cast<OMBVBodyWidget*>(widget)->trans);
   rot.toWidget(static_cast<OMBVBodyWidget*>(widget)->rot);
   scale.toWidget(static_cast<OMBVBodyWidget*>(widget)->scale);

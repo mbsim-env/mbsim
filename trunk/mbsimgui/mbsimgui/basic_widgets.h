@@ -43,7 +43,7 @@ class ObjectBrowser;
 class LinkBrowser;
 class SignalBrowser;
 class ExtWidget;
-class QLabel;
+class QPushButton;
 
 class LocalFrameComboBox : public QComboBox {
   Q_OBJECT
@@ -517,6 +517,23 @@ class SignalReferencesWidget : public Widget {
     void addReference();
     void removeReference();
     void openContextMenu(const QPoint &pos);
+};
+
+class ColorWidget : public Widget {
+  Q_OBJECT
+
+  friend class ColorProperty;
+
+  public:
+    ColorWidget();
+    void updateWidget();
+
+  protected:
+    ExtWidget *color;
+    QPushButton *button;
+
+  protected slots:
+    void setColor(); 
 };
 
 #endif
