@@ -102,10 +102,7 @@ OMBVDynamicColoredObjectProperty::OMBVDynamicColoredObjectProperty(const string 
 }
 
 TiXmlElement* OMBVDynamicColoredObjectProperty::initializeUsingXML(TiXmlElement *element) {
-  cout << element->ValueStr() << endl;
-  cout << OPENMBVNS+getType() << endl;
   TiXmlElement *e=readXMLType?element->FirstChildElement(OPENMBVNS+getType()):element;
-  cout << e << endl;
   if(e) {
     minimalColorValue.initializeUsingXML(e);
     maximalColorValue.initializeUsingXML(e);
@@ -118,7 +115,7 @@ TiXmlElement* OMBVDynamicColoredObjectProperty::initializeUsingXML(TiXmlElement 
 TiXmlElement* OMBVDynamicColoredObjectProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *e=new TiXmlElement(OPENMBVNS+getType());
   parent->LinkEndChild(e);
-  e->SetAttribute("name", "dummy");
+  e->SetAttribute("name", name);
   writeXMLFileID(e);
   minimalColorValue.writeXMLFile(e);
   maximalColorValue.writeXMLFile(e);
@@ -310,7 +307,6 @@ TiXmlElement* OMBVBodyProperty::initializeUsingXML(TiXmlElement *element) {
 
 TiXmlElement* OMBVBodyProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *e=OMBVDynamicColoredObjectProperty::writeXMLFile(parent);
-  writeXMLFileID(e);
   trans.writeXMLFile(e);
   rot.writeXMLFile(e);
   scale.writeXMLFile(e);
