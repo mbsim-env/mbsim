@@ -60,10 +60,13 @@ OMBVDynamicColoredObjectWidget::OMBVDynamicColoredObjectWidget(const QString &na
   maximalColorValue = new ExtWidget("Maximal color value",new ExtPhysicalVarWidget(input),true);
   layout->addWidget(maximalColorValue);
 
+  diffuseColor = new ExtWidget("Diffuse color",new ColorWidget,true);
+  layout->addWidget(diffuseColor);
+
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"), noUnitUnits(), 1));
-  staticColor = new ExtWidget("Static color",new ExtPhysicalVarWidget(input),true);
-  layout->addWidget(staticColor);
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0.3"), noUnitUnits(), 1));
+  transparency = new ExtWidget("Transparency",new ExtPhysicalVarWidget(input),true);
+  layout->addWidget(transparency);
 }
 
 OMBVArrowWidget::OMBVArrowWidget(const QString &name, bool fromPoint) : OMBVDynamicColoredObjectWidget(name) {
@@ -147,17 +150,11 @@ OMBVCoilSpringWidget::OMBVCoilSpringWidget(const QString &name) : OMBVObjectWidg
   layout->addWidget(scaleFactor);
 }
 
-OMBVBodyWidget::OMBVBodyWidget(const QString &name) : OMBVObjectWidget(name) {
-  layout = new QVBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
+OMBVBodyWidget::OMBVBodyWidget(const QString &name) : OMBVDynamicColoredObjectWidget(name) {
+
+  transparency->setActive(true);
 
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"), noUnitUnits(), 1));
-  color = new ExtWidget("Static color",new ExtPhysicalVarWidget(input));
-  layout->addWidget(color);
-
-  input.clear();
   input.push_back(new PhysicalVariableWidget(new VecWidget(3,true), lengthUnits(), 4));
   trans = new ExtWidget("Initial translation",new ExtPhysicalVarWidget(input));
   layout->addWidget(trans);
