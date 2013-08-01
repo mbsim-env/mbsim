@@ -67,6 +67,7 @@ namespace MBSim {
       virtual ~SingleContact();
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
+      virtual void updatewb1(double t, int i=0);
       virtual void updatewb(double t, int i=0);
       virtual void updateW(double t, int i=0);
       virtual void updateV(double t, int i=0);

@@ -359,6 +359,8 @@ namespace MBSim {
       virtual void setgInd(int gInd_) { gInd = gInd_; Ig=fmatvec::Index(gInd,gInd+gSize-1); }
       const fmatvec::Vec& getgd() const { return gd; }
       fmatvec::Vec& getgd() { return gd; }
+      const fmatvec::Vec& getwb() const { return wb; }
+      fmatvec::Vec& getwb() { return wb; }
       virtual void setgdInd(int gdInd_) { gdInd = gdInd_; }
       int getgdInd() const { return gdInd; } 
       int getgSize() const { return gSize; } 
