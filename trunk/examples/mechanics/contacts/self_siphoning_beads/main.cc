@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
     double plotStepSize = 1e-3;
     double endTime = 0.04;
 
-    sys = new System("Metallkette-PreInit", numEles);
+    sys = new System("Metallkette_PreInit", numEles);
     sys->addTrajectory(endTime);
 
     sys->initialize();
@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
   {
     integrator = new LSODEIntegrator;
     double plotStepSize = 1e-3;
-    double endTime = 0.3;
+    double endTime = 0.03;
 
     sys = new System("Metallkette", numEles);
 

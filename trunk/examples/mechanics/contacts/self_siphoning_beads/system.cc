@@ -52,7 +52,7 @@ System::System(const string &projectName, int elements) :
     addContour(lowerTable);
 
     /*Prepare Contact*/
-    Contact* ballOben = new Contact("Ball-Boden");
+    Contact* ballOben = new Contact("Ball_Boden");
     if (not ODE) {
       ballOben->setContactForceLaw(new UnilateralConstraint());
       ballOben->setContactImpactLaw(new UnilateralNewtonImpact(0.));
@@ -62,7 +62,7 @@ System::System(const string &projectName, int elements) :
     }
     addLink(ballOben);
 
-    Contact* ballUnten = new Contact("Ball-Unten");
+    Contact* ballUnten = new Contact("Ball_Unten");
     if (not ODE) {
       ballUnten->setContactForceLaw(new UnilateralConstraint());
       ballUnten->setContactImpactLaw(new UnilateralNewtonImpact(0.));
