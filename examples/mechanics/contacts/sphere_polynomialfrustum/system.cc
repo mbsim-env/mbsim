@@ -95,7 +95,7 @@ System::System(const string &projectName) :
     sphereBody->addContour(sphere);
 
     //Add contact between frustum and sphere
-    Contact* contact = new Contact("Frustum-" + name.str());
+    Contact* contact = new Contact("Frustum_" + name.str());
     contact->connect(polyfrustumcontour, sphere);
 
     contact->setPlotFeature(openMBV, enabled);

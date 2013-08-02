@@ -37,7 +37,8 @@ intSchema  =None
 directories=list() # a list of all examples sorted in descending order (filled recursively (using the filter) by by --directories)
 # the following examples will fail: do not report them in the RSS feed as errors
 willFail=set([
-#  pj('xml', 'time_dependent_kinematics')
+# pj('xml', 'time_dependent_kinematics')
+  pj('mechanics', 'flexible_body', 'pearlchain_cosserat_2D_POD')
 ])
 
 # command line option definition
@@ -138,9 +139,9 @@ def main():
   # fix arguments
   args.reportOutDir=os.path.abspath(args.reportOutDir)
   if args.prefixSimulation!=None:
-    args.prefixSimulation=args.prefixSimulation.split(' ');
+    args.prefixSimulation=args.prefixSimulation.split(' ')
   else:
-    args.prefixSimulation=[];
+    args.prefixSimulation=[]
 
   # if no directory is specified use the current dir (all examples) filter by --filter
   if len(args.directories)==0:
@@ -655,7 +656,7 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, label, data
   # create datafile
   nradd=dataArrayRef.shape[0]-dataArrayCur.shape[0]
   add=numpy.empty([abs(nradd), 2])
-  add[:]=float("NaN");
+  add[:]=float("NaN")
   if nradd<0:
     dataArrayRef=numpy.concatenate((dataArrayRef, add), axis=0)
   if nradd>0:
@@ -841,50 +842,63 @@ def compareExample(example, compareFN):
 
 
 
-def loopOverReferenceFiles(msg, srcPrefix, srcPostfix, dstPrefix, dstPostfix, action):
+def loopOverReferenceFiles(msg, srcPostfix, dstPrefix, action):
   curNumber=0
   lenDirs=len(directories)
   for example in directories:
+    # remove dst dir and recreate it empty
+    if os.path.isdir(pj(dstPrefix, example[0], "reference")): shutil.rmtree(pj(dstPrefix, example[0], "reference"))
+    os.makedirs(pj(dstPrefix, example[0], "reference"))
+    # loop over src
     curNumber+=1
     print("%s: Example %03d/%03d; %5.1f%%; %s"%(msg, curNumber, lenDirs, curNumber/lenDirs*100, example[0]))
-    if not os.path.isdir(pj(dstPrefix, example[0], dstPostfix)): os.makedirs(pj(dstPrefix, example[0], dstPostfix))
-    for h5File in glob.glob(pj(srcPrefix, example[0], srcPostfix, "*.h5")):
-      action(h5File, pj(dstPrefix, example[0], dstPostfix, os.path.basename(h5File)))
-    if os.path.isfile(pj(srcPrefix, example[0], srcPostfix, "time.dat")):
-      action(pj(srcPrefix, example[0], srcPostfix, "time.dat"), pj(dstPrefix, example[0], dstPostfix, "time.dat"))
+    if not os.path.isdir(pj(dstPrefix, example[0], "reference")): os.makedirs(pj(dstPrefix, example[0], "reference"))
+    for h5File in glob.glob(pj(example[0], srcPostfix, "*.h5")):
+      action(h5File, pj(dstPrefix, example[0], "reference", os.path.basename(h5File)))
+    if os.path.isfile(pj(example[0], srcPostfix, "time.dat")):
+      action(pj(example[0], srcPostfix, "time.dat"), pj(dstPrefix, example[0], "reference", "time.dat"))
 
 def copyToReference():
-  loopOverReferenceFiles("Copy to reference", ".", ".", ".", "reference", shutil.copyfile)
+  loopOverReferenceFiles("Copy to reference", ".", ".", shutil.copyfile)
 
-def copyAndSHA1(src, dst):
+def copyAndSHA1AndAppendIndex(src, dst):
   # copy src to dst
   shutil.copyfile(src, dst)
   # create sha1 hash of dst (save to <dst>.sha1)
   open(dst+".sha1", "w").write(hashlib.sha1(open(dst, "rb").read()).hexdigest())
+  # add file to index
+  index=open(pj(os.path.dirname(dst), "index.txt"), "a")
+  index.write(os.path.basename(dst)+":")
 def pushReference():
   uploadDir="/media/mbsim-env/MBSimDailyBuild/references"
   print("WARNING! pushReference is a internal action!")
   print("This action should only be used on the official MBSim build system!")
   print("It will fail on all other hosts!")
-  loopOverReferenceFiles("Pushing reference to download dir", ".", "reference", uploadDir, "reference", copyAndSHA1)
+  loopOverReferenceFiles("Pushing reference to download dir", "reference", uploadDir, copyAndSHA1AndAppendIndex)
 
-def downloadFileIfDifferent(src, dst):
-  downloadURL="http://www4.amm.mw.tu-muenchen.de/mbsim-env/MBSimDailyBuild/references/"
+downloadURL="http://www4.amm.mw.tu-muenchen.de/mbsim-env/MBSimDailyBuild/references/"
+def downloadFileIfDifferent(src):
   remoteSHA1Url=downloadURL+myurllib.pathname2url(src+".sha1")
+  remoteSHA1=myurllib.urlopen(remoteSHA1Url).read().decode('utf-8')
   try:
-    remoteSHA1=myurllib.urlopen(remoteSHA1Url).read().decode('utf-8')
     localSHA1=hashlib.sha1(open(src, "rb").read()).hexdigest()
   except IOError: 
-    return
+    localSHA1=""
   if remoteSHA1!=localSHA1:
     remoteUrl=downloadURL+myurllib.pathname2url(src)
     print("  Download "+remoteUrl)
     open(src, "wb").write(myurllib.urlopen(remoteUrl).read())
 def updateReference():
-  print("NOTE: Only files already existing in the corresponding reference directory are updated!")
-  print("Hence you have to run the script with '--action report' and afterwards with '--action copyToReference'")
-  print("to get an up to date reference before updating.")
-  loopOverReferenceFiles("Update reference", ".", "reference", ".", "reference", downloadFileIfDifferent)
+  curNumber=0
+  lenDirs=len(directories)
+  for example in directories:
+    # print message
+    curNumber+=1
+    print("%s: Example %03d/%03d; %5.1f%%; %s"%("Update reference", curNumber, lenDirs, curNumber/lenDirs*100, example[0]))
+    # loop over all file in src/index.txt
+    indexUrl=downloadURL+myurllib.pathname2url(pj(example[0], "reference", "index.txt"))
+    for fileName in myurllib.urlopen(indexUrl).read().decode("utf-8").rstrip(":").split(":"):
+      downloadFileIfDifferent(pj(example[0], "reference", fileName))
 
 
 
