@@ -887,6 +887,7 @@ def downloadFileIfDifferent(src):
   if remoteSHA1!=localSHA1:
     remoteUrl=downloadURL+myurllib.pathname2url(src)
     print("  Download "+remoteUrl)
+    if not os.path.isdir(os.path.dirname(src)): os.makedirs(os.path.dirname(src))
     open(src, "wb").write(myurllib.urlopen(remoteUrl).read())
 def updateReference():
   curNumber=0
