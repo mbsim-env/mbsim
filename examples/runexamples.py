@@ -505,6 +505,8 @@ def runExample(resultQueue, example):
   except:
     fatalScriptErrorFN=pj(example[0], "fatalScriptError.txt")
     fatalScriptErrorFD=open(pj(args.reportOutDir, fatalScriptErrorFN), "w")
+    print("Fatal Script Errors should not happen. So this is a bug in runexamples.py which should be fixed.", file=fatalScriptErrorFD)
+    print("", file=fatalScriptErrorFD)
     print(traceback.format_exc(), file=fatalScriptErrorFD)
     fatalScriptErrorFD.close()
     resultStr='<tr><td>'+example[0]+'</td><td><a href="'+myurllib.pathname2url(fatalScriptErrorFN)+'"><span style="color:red;text-decoration:blink">fatal script error</span></a></td><td>-</td><td>-</td><td>-</td></tr>'
@@ -610,17 +612,27 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, label, data
   print('</html>', file=diffHTMLPlotFD)
   diffHTMLPlotFD.close()
 
-  # check for one horizontal line => gnuplot warning: empty y range and remove this warning by adding a dummy value
-  singleYValue=dataArrayRef[0,1]
-  if numpy.all(singleYValue==dataArrayRef[:,1]) and numpy.all(singleYValue==dataArrayCur[:,1]):
+  # fix if all values are nan to prevent a gnuplot warning
+  if numpy.all(numpy.isnan(dataArrayRef[:,0])) or numpy.all(numpy.isnan(dataArrayRef[:,1])) or \
+     numpy.all(numpy.isnan(dataArrayCur[:,0])) or numpy.all(numpy.isnan(dataArrayCur[:,1])):
     add=numpy.array([
       [float("nan"), float("nan")],
-      [float("nan"), float("nan")],
-      [dataArrayCur[0,0], singleYValue-1],
-      [dataArrayCur[0,0], singleYValue+1]
+      [0, 0],
     ])
     dataArrayCur=numpy.concatenate((dataArrayCur, add), axis=0)
     dataArrayRef=numpy.concatenate((dataArrayRef, add), axis=0)
+
+  # get minimum of all x and y values (and add some space as border)
+  (xmin,ymin)=numpy.minimum(numpy.nanmin(dataArrayRef,0), numpy.nanmin(dataArrayCur,0))
+  (xmax,ymax)=numpy.maximum(numpy.nanmax(dataArrayRef,0), numpy.nanmax(dataArrayCur,0))
+  dx=(xmax-xmin)/50
+  dy=(ymax-ymin)/50
+  if dx==0: dx=1
+  if dy==0: dy=1
+  xmin=xmin-dx
+  ymin=ymin-dy
+  xmax=xmax+dx
+  ymax=ymax+dy
 
   # create gnuplot file
   diffGPFileName=pj(diffDir, "diffplot.gnuplot")
@@ -633,22 +645,23 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, label, data
   print("set title 'Compare'", file=diffGPFD)
   print("set xlabel 'Time'", file=diffGPFD)
   print("set ylabel 'Value'", file=diffGPFD)
-  print("plot \\", file=diffGPFD)
+  print("plot [%g:%g] [%g:%g] \\"%(xmin,xmax, ymin,ymax), file=diffGPFD)
   print("  '"+dataFileName+"' u ($1):($2) binary format='%double%double%double%double' title 'ref' w l lw 2, \\", file=diffGPFD)
   print("  '"+dataFileName+"' u ($3):($4) binary format='%double%double%double%double' title 'cur' w l", file=diffGPFD)
   if dataArrayRef.shape==dataArrayCur.shape:
     print("set title 'Absolute Tolerance'", file=diffGPFD)
     print("set xlabel 'Time'", file=diffGPFD)
     print("set ylabel 'cur-ref'", file=diffGPFD)
-    print("plot [:] [%g:%g] \\"%(-3*args.atol, 3*args.atol), file=diffGPFD)
+    print("plot [%g:%g] [%g:%g] \\"%(xmin,xmax, -3*args.atol, 3*args.atol), file=diffGPFD)
     print("  '"+dataFileName+"' u ($1):($4-$2) binary format='%double%double%double%double' title 'cur-ref' w l, \\", file=diffGPFD)
     print("  %g title 'atol' lt 2 lw 1, \\"%(args.atol), file=diffGPFD)
     print("  %g notitle lt 2 lw 1"%(-args.atol), file=diffGPFD)
     print("set title 'Relative Tolerance'", file=diffGPFD)
     print("set xlabel 'Time'", file=diffGPFD)
     print("set ylabel '(cur-ref)/ref'", file=diffGPFD)
-    print("plot [:] [%g:%g] \\"%(-3*args.rtol, 3*args.rtol), file=diffGPFD)
-    print("  '"+dataFileName+"' u ($1):(($4-$2)/$2) binary format='%double%double%double%double' title '(cur-ref)/ref' w l, \\", file=diffGPFD)
+    print("plot [%g:%g] [%g:%g] \\"%(xmin,xmax, -3*args.rtol, 3*args.rtol), file=diffGPFD)
+    # prevent division by zero: use 1e-30 instead
+    print("  '"+dataFileName+"' u ($1):(($4-$2)/($2==0?1e-30:$2)) binary format='%double%double%double%double' title '(cur-ref)/ref' w l, \\", file=diffGPFD)
     print("  %g title 'rtol' lt 2 lw 1, \\"%(args.rtol), file=diffGPFD)
     print("  %g notitle lt 2 lw 1"%(-args.rtol), file=diffGPFD)
   diffGPFD.close()
@@ -674,6 +687,21 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, label, data
   os.remove(diffGPFileName)
   os.remove(dataFileName)
 
+# return column col from arr as a column Vector if asColumnVector == True or as a row vector
+# arr may be of shape vector or a matrix
+def getColumn(arr, col, asColumnVector=True):
+  if len(arr.shape)==2:
+    if asColumnVector:
+      return arr[:,col]
+    else:
+      return arr[:,col:col+1]
+  elif len(arr.shape)==1 and col==0:
+    if asColumnVector:
+      return arr[:]
+    else:
+      return arr[:][:,None]
+  else:
+    raise IndexError("Only HDF5 datasets of shape vector and matrix can be handled.")
 def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMemberNames, datasetName, refObj):
   import numpy
   import h5py
@@ -693,40 +721,43 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
       nrAll[0]+=1
       nrFailed[0]+=1
       return
+    # get shape
+    refObjCols=refObj.shape[1] if len(refObj.shape)==2 else 1
+    curObjCols=curObj.shape[1] if len(curObj.shape)==2 else 1
     # get labels from reference
     try:
       refLabels=refObj.attrs["Column Label"]
       # append missing dummy labels
-      for x in range(len(refLabels), refObj.shape[1]):
+      for x in range(len(refLabels), refObjCols):
         refLabels=numpy.append(refLabels, bytes('<span style="color:orange">&lt;no label in ref. for col. '+str(x+1)+'&gt;</span>', "ascii"))
     except KeyError:
       refLabels=numpy.array(list(map(
         lambda x: bytes('<span style="color:orange">&lt;no label for col. '+str(x+1)+'&gt;</span>', "ascii"),
-        range(refObj.shape[1]))), dtype=bytes
+        range(refObjCols))), dtype=bytes
       )
     # get labels from current
     try:
       curLabels=curObj.attrs["Column Label"]
       # append missing dummy labels
-      for x in range(len(curLabels), curObj.shape[1]):
+      for x in range(len(curLabels), curObjCols):
         curLabels=numpy.append(curLabels, bytes('<span style="color:orange">&lt;no label in cur. for col. '+str(x+1)+'&gt;</span>', "ascii"))
     except KeyError:
       curLabels=numpy.array(list(map(
         lambda x: bytes('<span style="color:orange">&lt;no label for col. '+str(x+1)+'&gt;</span>', "ascii"),
-        range(refObj.shape[1]))), dtype=bytes
+        range(refObjCols))), dtype=bytes
       )
     # loop over all columns
-    for column in range(refObj.shape[1]):
+    for column in range(refObjCols):
       printLabel=refLabels[column].decode("utf-8")
       diffFilename=pj(h5CurFile.filename, datasetName, str(column), "diffplot.html")
       nrAll[0]+=1
       # if if curObj[:,column] does not exitst
-      if column>=curObj.shape[1]:
+      if column>=curObjCols:
         printLabel='<span style="color:orange">&lt;label '+printLabel+' not in cur.&gt;</span>'
       # compare
       if curObj.shape[0]>0 and curObj.shape[0]>0: # only if curObj and refObj contains data (rows)
-        if refObj[:,column].shape==curObj[:,column].shape:
-          delta=abs(refObj[:,column]-curObj[:,column])
+        if getColumn(refObj,column).shape==getColumn(curObj,column).shape:
+          delta=abs(getColumn(refObj,column)-getColumn(curObj,column))
         else:
           delta=float("inf") # very large => error
       print('<tr>', file=compareFD)
@@ -737,13 +768,23 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
       else:
         print('<td><span style="color:orange">&lt;label for col. '+str(column+1)+' differ&gt;</span></td>', file=compareFD)
       if curObj.shape[0]>0 and curObj.shape[0]>0: # only if curObj and refObj contains data (rows)
-        if numpy.any(numpy.logical_and(delta>args.atol, delta>args.rtol*abs(refObj[:,column]))):
+        #check for NaN/Inf # check for NaN and Inf
+        #check for NaN/Inf if numpy.all(numpy.isfinite(getColumn(curObj,column)))==False:
+        #check for NaN/Inf   print('<td><span style="color:red">cur. contains NaN or +/-Inf</span></td>', file=compareFD)
+        #check for NaN/Inf   nrFailed[0]+=1
+        #check for NaN/Inf if numpy.all(numpy.isfinite(getColumn(refObj,column)))==False:
+        #check for NaN/Inf   print('<td><span style="color:red">ref. contains NaN or +/-Inf</span></td>', file=compareFD)
+        #check for NaN/Inf   nrFailed[0]+=1
+        #check for NaN/Inf use elif instead of if in next line
+        # check for difference
+        if numpy.any(numpy.logical_and(delta>args.atol, delta>args.rtol*abs(getColumn(refObj,column)))):
           print('<td><a href="'+myurllib.pathname2url(diffFilename)+'"><span style="color:red">failed</span></a></td>', file=compareFD)
           nrFailed[0]+=1
-          dataArrayRef=numpy.concatenate((refObj[:, 0:1], refObj[:, column:column+1]), axis=1)
-          dataArrayCur=numpy.concatenate((curObj[:, 0:1], curObj[:, column:column+1]), axis=1)
+          dataArrayRef=numpy.concatenate((getColumn(refObj, 0, False), getColumn(refObj, column, False)), axis=1)
+          dataArrayCur=numpy.concatenate((getColumn(curObj, 0, False), getColumn(curObj, column, False)), axis=1)
           createDiffPlot(pj(args.reportOutDir, example, diffFilename), example, h5CurFile.filename, datasetName,
                          refLabels[column], dataArrayRef, dataArrayCur)
+        # everything OK
         else:
           print('<td><span style="color:green">passed</span></td>', file=compareFD)
       else: # not row in curObj or refObj
@@ -815,8 +856,8 @@ def compareExample(example, compareFN):
       # process h5 file
       refMemberNames=set()
       # bind arguments h5CurFile, compareFD, example, nrAll, nrFailed in order (nrAll, nrFailed as lists to pass by reference)
-      fummyFctPtr = functools.partial(compareDatasetVisitor, h5CurFile, compareFD, example, nrAll, nrFailed, refMemberNames)
-      h5RefFile.visititems(fummyFctPtr) # visit all dataset
+      dummyFctPtr = functools.partial(compareDatasetVisitor, h5CurFile, compareFD, example, nrAll, nrFailed, refMemberNames)
+      h5RefFile.visititems(dummyFctPtr) # visit all dataset
       # check for datasets in current but not in reference
       curMemberNames=set()
       h5CurFile.visititems(functools.partial(appendDatasetName, curMemberNames)) # get all dataset names in cur
