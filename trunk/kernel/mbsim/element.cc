@@ -251,7 +251,6 @@ namespace MBSim {
       TiXml_location(e, "", str.str());
       throw MBSimError("Wrong type"+str.str());
     }
-    return NAN;
   }
 
   int Element::getInt(TiXmlElement *e) {
