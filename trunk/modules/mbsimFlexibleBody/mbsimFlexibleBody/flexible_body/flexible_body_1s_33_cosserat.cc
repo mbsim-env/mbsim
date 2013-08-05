@@ -272,7 +272,11 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33Cosserat::init(InitStage stage) {
-    if (stage == unknownStage) {
+    if (stage == preInit) {
+      FlexibleBodyContinuum<double>::init(stage);
+      l0 = L / Elements;
+    }
+    else if (stage == unknownStage) {
       FlexibleBodyContinuum<double>::init(stage);
 
       initialised = true;
@@ -343,7 +347,6 @@ namespace MBSimFlexibleBody {
       left->setNormalDistance(0.5 * cuboidBreadth);
       right->setNormalDistance(0.5 * cuboidBreadth);
 
-      l0 = L / Elements;
       Vec g = R->getOrientation().T() * MBSimEnvironment::getInstance()->getAccelerationOfGravity();
 
       /* translational elements */
