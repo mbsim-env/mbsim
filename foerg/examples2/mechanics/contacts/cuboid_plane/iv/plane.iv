@@ -1,0 +1,12 @@
+#Inventor V2.0 ascii
+Translation { translation 0 -0.1 0 }
+SoMaterial {
+  ambientColor 0 0 0
+  diffuseColor 0.5 0.5 0.5
+  shininess 0
+}
+Cube {
+  width 10
+  height 0.2 
+  depth 10
+}
