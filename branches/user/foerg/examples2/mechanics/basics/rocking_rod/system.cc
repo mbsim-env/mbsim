@@ -40,8 +40,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setFrameForKinematics(body->getFrame("C"));
   body->setMass(m);
   body->setInertiaTensor(Theta);
-  body->setTranslation(new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
-  body->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  body->setTranslation(new LinearFunction<Vec3(VecV)>("[1, 0; 0, 1; 0, 0]","[0;0;0]"));
+  body->setRotation(new FRotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
 
   // Initial translation and rotation
   Vec q0(3);
