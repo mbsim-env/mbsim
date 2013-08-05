@@ -1,0 +1,14 @@
+# Materials for pendel1.obj.
+# Created by Blender.
+# These files must be in the same directory for the materials to be read correctly.
+
+newmtl Metal_Chrome 
+       Ka 0.0 0.0 0.0 
+       Kd 1.0 1.0 1.0 
+       Ks 0.54887 0.54887 0.54887 
+       illum 1
+newmtl Material.003 
+       Ka 0.0 0.0 0.0 
+       Kd 0.0 1.0 0.0 
+       Ks 1.0 1.0 1.0 
+       illum 1
