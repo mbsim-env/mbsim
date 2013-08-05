@@ -26,6 +26,20 @@
 #include "mbsim/utils/eps.h"
 
 namespace MBSim {
+  template<typename Sig> class StateDependentFunction;
+
+  template<typename Ret, typename Arg>
+    class StateDependentFunction<Ret(Arg,double)> : public fmatvec::Function<Ret(Arg,double)> {
+      private:
+        fmatvec::Function<Ret(Arg)> *f;
+      public:
+        StateDependentFunction(fmatvec::Function<Ret(Arg)> *f_) : f(f_) { }
+        typename fmatvec::Size<Arg>::type getArg1Size() const { return f->getArgSize();}
+        typename fmatvec::Size<double>::type getArg2Size() const { return 0; }
+        Ret operator()(const Arg &arg1, const double &arg2) {return (*f)(arg1); }
+        typename fmatvec::Der<Ret, Arg>::type parDer1(const Arg &arg1, const double &arg2) { return f->parDer(arg1); }
+    };
+
   /**
    * \brief function describing a linear relationship between the input relative distance / velocity and the output for a spring
    * \author Martin Foerg
