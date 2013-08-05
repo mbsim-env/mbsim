@@ -308,7 +308,7 @@ def pkgconfig(module, options):
       raise
     else:
       print("Error: pkg-config module "+module+" not found. Trying to continue.", file=sys.stderr)
-      output=bytes("pkg_config_"+module+"_not_found", "ascii")
+      output=("pkg_config_"+module+"_not_found").encode("ascii")
   return output.rstrip().decode("utf-8")
 
 
@@ -729,10 +729,10 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
       refLabels=refObj.attrs["Column Label"]
       # append missing dummy labels
       for x in range(len(refLabels), refObjCols):
-        refLabels=numpy.append(refLabels, bytes('<span style="color:orange">&lt;no label in ref. for col. '+str(x+1)+'&gt;</span>', "ascii"))
+        refLabels=numpy.append(refLabels, ('<span style="color:orange">&lt;no label in ref. for col. '+str(x+1)+'&gt;</span>').encode("ascii"))
     except KeyError:
       refLabels=numpy.array(list(map(
-        lambda x: bytes('<span style="color:orange">&lt;no label for col. '+str(x+1)+'&gt;</span>', "ascii"),
+        lambda x: ('<span style="color:orange">&lt;no label for col. '+str(x+1)+'&gt;</span>').encode("ascii"),
         range(refObjCols))), dtype=bytes
       )
     # get labels from current
@@ -740,10 +740,10 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
       curLabels=curObj.attrs["Column Label"]
       # append missing dummy labels
       for x in range(len(curLabels), curObjCols):
-        curLabels=numpy.append(curLabels, bytes('<span style="color:orange">&lt;no label in cur. for col. '+str(x+1)+'&gt;</span>', "ascii"))
+        curLabels=numpy.append(curLabels, ('<span style="color:orange">&lt;no label in cur. for col. '+str(x+1)+'&gt;</span>').encode("ascii"))
     except KeyError:
       curLabels=numpy.array(list(map(
-        lambda x: bytes('<span style="color:orange">&lt;no label for col. '+str(x+1)+'&gt;</span>', "ascii"),
+        lambda x: ('<span style="color:orange">&lt;no label for col. '+str(x+1)+'&gt;</span>').encode("ascii"),
         range(refObjCols))), dtype=bytes
       )
     # loop over all columns
