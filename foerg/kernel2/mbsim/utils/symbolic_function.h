@@ -188,6 +188,7 @@ template<typename Ret, typename Arg>
     }
   };
 
+// TODO mit double vorbelegen
 template<typename Ret, typename Arg1, typename Arg2>
   class SymbolicFunction<Ret(Arg1, Arg2)> : public fmatvec::Function<Ret(Arg1, Arg2)> {
     CasADi::SXFunction f, pd1, pd2, pd1dd1, pd1pd2, pd2dd1, pd2pd2;
