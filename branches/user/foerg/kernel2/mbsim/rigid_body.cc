@@ -397,8 +397,9 @@ namespace MBSim {
       PrPK = (*fPrPK)(qTRel,t);
       //if(fPrPK->hasVariableJacobian())
       Mat3xV JT = fPrPK->parDer1(qTRel,t);
+      Vec3 jT = fPrPK->parDer2(qTRel,t);
       PJT[0].set(i02,iuT,JT);
-      WvPKrel = R->getOrientation()*JT*uTRel;
+      WvPKrel = R->getOrientation()*(JT*uTRel + jT);
     }
 
     if(fAPK) {
@@ -407,8 +408,9 @@ namespace MBSim {
       APK = (*fAPK)(qRRel,t);
       //if(fAPK->hasVariableJacobian())
       Mat3xV JR = fAPK->parDer1(qRRel,t);
+      Vec3 jR = fAPK->parDer2(qRRel,t);
       PJR[0].set(i02,iuR,JR);
-      WomPK = frameForJacobianOfRotation->getOrientation()*JR*uRRel;
+      WomPK = frameForJacobianOfRotation->getOrientation()*(JR*uRRel + jR);
     }
 
     K->setOrientation(R->getOrientation()*APK);
@@ -423,6 +425,12 @@ namespace MBSim {
     K->getJacobianOfTranslation().init(0);
     K->getJacobianOfRotation().init(0);
 
+    uTRel = uRel(iuT);
+    uRRel = uRel(iuR);
+    VecV qdTRel = uTRel;
+    VecV qdRRel = uRRel;
+    if(fPrPK) PjbT = (fPrPK->parDer1DirDer1(qdTRel,qTRel,t)+fPrPK->parDer1ParDer2(qTRel,t))*uTRel + fPrPK->parDer2DirDer1(qdTRel,qTRel,t) + fPrPK->parDer2ParDer2(qTRel,t);
+    if(fAPK) PjbR = (fAPK->parDer1DirDer1(qdRRel,qRRel,t)+fAPK->parDer1ParDer2(qRRel,t))*uRRel + fAPK->parDer2DirDer1(qdRRel,qRRel,t) + fAPK->parDer2ParDer2(qRRel,t);
     // TODO
 //    if(fPrPK) PjbT = fPrPK->getGyroscopicAcceleration();
 //    if(fAPK) PjbR = fAPK->getGyroscopicAcceleration();
