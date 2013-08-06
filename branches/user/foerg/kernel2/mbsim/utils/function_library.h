@@ -85,6 +85,7 @@ template <>
        typename fmatvec::Size<Argi>::type getArgSize() const { return fi->getArgSize();}
         Ret operator()(const Argi &arg) {return (*fo)((*fi)(arg));}
         typename fmatvec::Der<Ret, Argi>::type parDer(const Argi &arg) { return fo->parDer((*fi)(arg))*fi->parDer(arg); }
+        typename fmatvec::Der<Ret, Argi>::type parDerDirDer(const Argi &argDir, const Argi &arg) { return fo->parDerDirDer(fi->parDer(arg)*argDir,(*fi)(arg)); }
       private:
         fmatvec::Function<Ret(Argo)> *fo;
         fmatvec::Function<Argo(Argi)> *fi;
