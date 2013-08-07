@@ -48,14 +48,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   fexp[2] = 0; 
   SXFunction foo(t,fexp);
 
-  SymbolicFunction<Vec3(double)> *f = new SymbolicFunction<Vec3(double)>(foo);
-  body1->setTranslation(new TimeDependentTranslation(f));
+  body1->setTranslation(new SymbolicFunction<Vec3(double)>(foo));
 
   SX fexp2 = 5*sin(freq2*t);
   SXFunction foo2(t,fexp2);
 
   SymbolicFunction<double(double)> *f2 = new SymbolicFunction<double(double)>(foo2);
-  body1->setRotation(new TimeDependentRotationAboutFixedAxis(f2,"[0;0;1]"));
+  //body1->setRotation(new TimeDependentRotationAboutFixedAxis(f2,"[0;0;1]"));
+  body1->setRotation(new NestedFunction<RotMat3(double(double))>(new FRotationAboutFixedAxis<double>("[0;0;1]"), f2) ,true);
 
   body1->getFrame("C")->setPlotFeature(globalPosition,enabled);
   body1->getFrame("C")->setPlotFeature(globalVelocity,enabled);
@@ -90,6 +90,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body2->setFrameForKinematics(body2->getFrame("C"));
   body2->setMass(1);
   body2->setInertiaTensor(SymMat3(EYE));
-  body2->setTranslation(new LinearTranslation("[0; 1; 0]"));
+  body2->setTranslation(new LinearFunction<Vec3(VecV)>("[0; 1; 0]","[0;0;0]"));
 
 }
