@@ -46,7 +46,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // Kinematik: Bewegung des Schwerpunktes (Center of Gravity COG) 
   // entlang der y-Richtung ausgehend vom I-System (Ursprung O)
-  box1->setTranslation(new LinearTranslation("[0; 1; 0]"));
+  box1->setTranslation(new LinearFunction<Vec3(VecV)>("[0; 1; 0]"));
   box1->setFrameOfReference(getFrame("I"));
   box1->setFrameForKinematics(box1->getFrame("C"));
 
@@ -61,7 +61,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // Kinematik: Bewegung des Schwerpunktes (Center of Gravity COG) 
   // entlang der y-Richtung ausgehend vom I-System (Ursprung O)
-  box2->setTranslation(new LinearTranslation("[0; 1; 0]"));
+  box2->setTranslation(new LinearFunction<Vec3(VecV)>("[0; 1; 0]"));
   box2->setFrameOfReference(getFrame("I"));
   box2->setFrameForKinematics(box2->getFrame("C"));
 

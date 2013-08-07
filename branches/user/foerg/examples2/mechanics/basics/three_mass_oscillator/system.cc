@@ -43,7 +43,7 @@ System::System(unsigned int type) : Group("System"+numtostr(int(type))) {
   k1->setFrameForKinematics(k1->getFrame("C"));
   k1->setMass(3.*mDisk);
   k1->setInertiaTensor(0.001*SymMat(3,EYE));
-  k1->setTranslation(new LinearTranslation(SqrMat(3,EYE)));
+  k1->setTranslation(new LinearFunction<Vec3(VecV)>(SqrMat(3,EYE)));
   k1->addFrame(new FixedRelativeFrame("fK2", 1.*h0Cylinder*Vec("[0;1;0]"), SqrMat(3,EYE)));
   k1->addFrame(new FixedRelativeFrame("fK3", 2.*h0Cylinder*Vec("[0;1;0]"), SqrMat(3,EYE)));
   k1->addFrame(new FixedRelativeFrame("fTop", .5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE)));
@@ -53,7 +53,7 @@ System::System(unsigned int type) : Group("System"+numtostr(int(type))) {
   k2->setFrameForKinematics(k2->getFrame("C"));
   k2->setMass(5.*mDisk);
   k2->setInertiaTensor(0.001*SymMat(3,EYE));
-  k2->setTranslation(new LinearTranslation(SqrMat(3,EYE)));
+  k2->setTranslation(new LinearFunction<Vec3(VecV)>(SqrMat(3,EYE)));
   k2->addFrame(new FixedRelativeFrame("fK3", 1.*h0Cylinder*Vec("[0;1;0]"), SqrMat(3,EYE)));
   k2->addFrame(new FixedRelativeFrame("fTop", .5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE)));
   k2->addFrame(new FixedRelativeFrame("fBottom", -.5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE)));
@@ -62,7 +62,7 @@ System::System(unsigned int type) : Group("System"+numtostr(int(type))) {
   k3->setFrameForKinematics(k3->getFrame("C"));
   k3->setMass(7.*mDisk);
   k3->setInertiaTensor(0.001*SymMat(3,EYE));
-  k3->setTranslation(new LinearTranslation(SqrMat(3,EYE)));
+  k3->setTranslation(new LinearFunction<Vec3(VecV)>(SqrMat(3,EYE)));
   k3->addFrame(new FixedRelativeFrame("fTop", .5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE)));
   k3->addFrame(new FixedRelativeFrame("fBottom", -.5*hDisk*Vec("[0;1;0]"), SqrMat(3,EYE)));
 

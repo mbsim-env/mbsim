@@ -10,20 +10,26 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
 
-class MyPos : public Translation {
+class MyPos : public Function<Vec3(VecV)> {
   public:
-    int getqSize() const {return 1;}
-    void updatePosition(const VecV &q, const double &t) {
+    int getArgSize() const {return 1;}
+    Vec3 operator()(const VecV &q) {
+      Vec3 r;
       r(0) = cos(q(0));
       r(1) = sin(q(0));
+      return r;
     }; 
-    void updateJacobian(const VecV &q, const double &t) {
+    Mat3xV parDer(const VecV &q) {
+      Mat3xV J(1);
       J(0,0) = -sin(q(0));
       J(1,0) =  cos(q(0));
+      return J;
     }
-    void updateGyroscopicAcceleration(const VecV &u, const VecV &q, const double &t) {
-      jb(0) = -cos(q(0))*u(0)*u(0);
-      jb(1) = -sin(q(0))*u(0)*u(0);
+    Mat3xV parDerDirDer(const VecV &qd, const VecV &q) {
+      Mat3xV Jd(1);
+      Jd(0,0) = -cos(q(0))*qd(0)*qd(0);
+      Jd(1,0) = -sin(q(0))*qd(0)*qd(0);
+      return Jd;
     }
 };
 

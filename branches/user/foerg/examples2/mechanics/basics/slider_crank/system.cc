@@ -48,11 +48,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   this->addObject(piston);
 
   // generalised coordinates
-  crank->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
-  rod->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
-  rod->setTranslation(new LinearTranslation(Mat("[1,0;0,1;0,0]")));
-  piston->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
-  piston->setTranslation(new LinearTranslation(Mat("[1,0;0,1;0,0]")));
+  crank->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
+  rod->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
+  rod->setTranslation(new LinearFunction<Vec3(VecV)>(Mat("[1,0;0,1;0,0]")));
+  piston->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
+  piston->setTranslation(new LinearFunction<Vec3(VecV)>(Mat("[1,0;0,1;0,0]")));
 
   // inertial properties
   double mass_crank = 0.038; // m1

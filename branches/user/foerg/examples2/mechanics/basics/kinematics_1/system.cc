@@ -10,23 +10,29 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
 
-class MyPos : public Translation {
+class MyPos : public Function<Vec3(double)> {
   public:
-    int getqSize() const {return 0;}
-    void updatePosition(const VecV &q, const double &t) {
+    int getArgSize() const {return 0;}
+    Vec3 operator()(const double &t) {
+      Vec3 r;
       double om = 1;
       r(0) = cos(om*t);
       r(1) = sin(om*t);
+      return r;
     }; 
-    void updateGuidingVelocity(const VecV &q, const double &t) {
+    Vec3 parDer(const double &t) {
+      Vec3 jh;
       double om = 1;
       jh(0) = -sin(om*t)*om;
       jh(1) =  cos(om*t)*om;
+      return jh;
     }
-    void updateGyroscopicAcceleration(const VecV &u, const VecV &q, const double &t) {
+    Vec3 parDerParDer(const double &t) {
+      Vec3 jb;
       double om = 1;
       jb(0) = -cos(om*t)*om*om;
       jb(1) =  -sin(om*t)*om*om;
+      return jb;
     }
 };
 
@@ -69,6 +75,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setFrameForKinematics(body->getFrame("C"));
   body->setMass(m);
   body->setInertiaTensor(Theta);
-  body->setTranslation(new LinearTranslation("[0; 1; 0]"));
+  body->setTranslation(new LinearFunction<Vec3(VecV)>("[0; 1; 0]"));
 }
 
