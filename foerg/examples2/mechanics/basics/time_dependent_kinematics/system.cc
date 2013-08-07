@@ -55,7 +55,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   SymbolicFunction<double(double)> *f2 = new SymbolicFunction<double(double)>(foo2);
   //body1->setRotation(new TimeDependentRotationAboutFixedAxis(f2,"[0;0;1]"));
-  body1->setRotation(new NestedFunction<RotMat3(double(double))>(new FRotationAboutFixedAxis<double>("[0;0;1]"), f2) ,true);
+  body1->setRotation(new NestedFunction<RotMat3(double(double))>(new RotationAboutFixedAxis<double>("[0;0;1]"), f2) ,true);
 
   body1->getFrame("C")->setPlotFeature(globalPosition,enabled);
   body1->getFrame("C")->setPlotFeature(globalVelocity,enabled);
@@ -90,6 +90,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body2->setFrameForKinematics(body2->getFrame("C"));
   body2->setMass(1);
   body2->setInertiaTensor(SymMat3(EYE));
-  body2->setTranslation(new LinearFunction<Vec3(VecV)>("[0; 1; 0]","[0;0;0]"));
+  body2->setTranslation(new LinearFunction<Vec3(VecV)>("[0; 1; 0]"));
 
 }

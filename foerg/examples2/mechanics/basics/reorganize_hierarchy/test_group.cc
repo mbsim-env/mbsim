@@ -37,7 +37,7 @@ TestGroup::TestGroup(const string &projectName) : Group(projectName) {
   stab1->setMass(mStab);
   Theta(2,2) = JStab;
   stab1->setInertiaTensor(Theta);
-  stab1->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  stab1->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
 
 #if HAVE_OPENMBVCPPINTERFACE
   OpenMBV::IvBody* obj1=new OpenMBV::IvBody;
@@ -62,7 +62,7 @@ TestGroup::TestGroup(const string &projectName) : Group(projectName) {
   stab2->setMass(mStab);
   Theta(2,2) = JStab;
   stab2->setInertiaTensor(Theta);
-  stab2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  stab2->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   stab2->setInitialGeneralizedPosition(Vec("[-1.6]"));
 
 #if HAVE_OPENMBVCPPINTERFACE

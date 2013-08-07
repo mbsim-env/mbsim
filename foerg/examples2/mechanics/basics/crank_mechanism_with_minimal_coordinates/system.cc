@@ -66,7 +66,7 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   body1->setMass(m1);
   Theta(2,2)=J1;
   body1->setInertiaTensor(Theta);
-  body1->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  body1->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   body1->setInitialGeneralizedPosition(Vec(1,INIT,phi1)); 
 
   Kr(0) = d;
@@ -87,7 +87,7 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   body2->setMass(m2);
   Theta(2,2)=J2;
   body2->setInertiaTensor(Theta);
-  body2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  body2->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
 
   RigidBody* body3 = new RigidBody("body3");
   addObject(body3);
@@ -96,7 +96,7 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   body3->setMass(m3);
   Theta(2,2)=J3;
   body3->setInertiaTensor(Theta);
-  body3->setTranslation(new LinearTranslation(Vec("[1;0;0]")));
+  body3->setTranslation(new LinearFunction<Vec3(VecV)>(Vec("[1;0;0]")));
 
   vector<RigidBody*> bd1; bd1.push_back(body2);
   vector<RigidBody*> bd2; bd2.push_back(body3);

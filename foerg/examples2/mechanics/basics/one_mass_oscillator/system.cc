@@ -30,12 +30,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // attributes
   mass1->setMass(1.);
   mass1->setInertiaTensor(SymMat(3,EYE));
-  mass1->setTranslation(new LinearTranslation("[0.58; 0.58; 0.58]"));
+  mass1->setTranslation(new LinearFunction<Vec3(VecV)>("[0.58; 0.58; 0.58]"));
   mass1->setFrameOfReference(getFrame("L")); 
   mass1->setFrameForKinematics(mass1->getFrame("C"));
   mass2->setMass(2.);
   mass2->setInertiaTensor(SymMat(3,EYE));
-  mass2->setTranslation(new LinearTranslation("[0.58; 0.58; 0.58]"));
+  mass2->setTranslation(new LinearFunction<Vec3(VecV)>("[0.58; 0.58; 0.58]"));
   mass2->setFrameOfReference(mass1->getFrame("C")); 
   mass2->setFrameForKinematics(mass2->getFrame("C"));
   mass2->setInitialGeneralizedPosition(-nrm2(Vec(3,INIT,1)));

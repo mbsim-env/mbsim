@@ -589,10 +589,25 @@ namespace MBSim {
       public:
         LinearFunction() {}
         LinearFunction(const typename fmatvec::Der<Ret, Arg>::type &A_, const Ret &b_) : A(A_), b(b_) {}
+        LinearFunction(const typename fmatvec::Der<Ret, Arg>::type &A_) : A(A_), b(A.rows()) {}
         typename fmatvec::Size<Arg>::type getArgSize() const { return A.cols(); }
         Ret operator()(const Arg &arg) { return A*arg+b; }
         typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &arg) { return A; }
         typename fmatvec::Der<Ret, Arg>::type parDerDirDer(const Arg &arg1Dir, const Arg &arg1) { return typename fmatvec::Der<Ret, Arg>::type(A.rows(),A.cols()); }
+    };
+
+  template<>
+    class LinearFunction<double(double)> : public fmatvec::Function<double(double)> {
+      private:
+        typename fmatvec::Der<double, double>::type A;
+        double b;
+      public:
+        LinearFunction() {}
+        LinearFunction(const typename fmatvec::Der<double, double>::type &A_, const double &b_) : A(A_), b(b_) {}
+        typename fmatvec::Size<double>::type getArgSize() const { return 1; }
+        double operator()(const double &arg) { return A*arg+b; }
+        typename fmatvec::Der<double, double>::type parDer(const double &arg) { return A; }
+        typename fmatvec::Der<double, double>::type parDerDirDer(const double &arg1Dir, const double &arg1) { return 0; }
     };
 
  template<class Col>
@@ -826,13 +841,13 @@ namespace MBSim {
   };
 
   template<class Arg> 
-    class FRotationAboutFixedAxis : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
+    class RotationAboutFixedAxis : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
       private:
         fmatvec::RotMat3 A;
         fmatvec::Vec3 a;
       public:
-        FRotationAboutFixedAxis() { }
-        FRotationAboutFixedAxis(const fmatvec::Vec3 &a_) : a(a_) { }
+        RotationAboutFixedAxis() { }
+        RotationAboutFixedAxis(const fmatvec::Vec3 &a_) : a(a_) { }
         typename fmatvec::Size<Arg>::type getArgSize() const {
           return 1;
         }
@@ -866,12 +881,12 @@ namespace MBSim {
     };
 
   template<class Arg> 
-    class FRotationAboutAxesXYZ : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
+    class RotationAboutAxesXYZ : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
       private:
         fmatvec::RotMat3 A;
         fmatvec::Mat3xV J, Jd;
       public:
-        FRotationAboutAxesXYZ() : J(3), Jd(3) { }
+        RotationAboutAxesXYZ() : J(3), Jd(3) { }
         typename fmatvec::Size<Arg>::type getArgSize() const {
           return 3;
         }
@@ -936,12 +951,12 @@ namespace MBSim {
     };
   
   template<class Arg> 
-    class FRotationAboutAxesZXZ : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
+    class RotationAboutAxesZXZ : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
       private:
         fmatvec::RotMat3 A;
         fmatvec::Mat3xV J, Jd;
       public:
-        FRotationAboutAxesZXZ() : J(3), Jd(3) { }
+        RotationAboutAxesZXZ() : J(3), Jd(3) { }
         typename fmatvec::Size<Arg>::type getArgSize() const {
           return 3;
         }
@@ -967,11 +982,11 @@ namespace MBSim {
           return A;
         }
         typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDer(const Arg &q) {
-          throw std::runtime_error("FRotationAboutAxesZXZ::parDer() not yet implemented.");
+          throw std::runtime_error("RotationAboutAxesZXZ::parDer() not yet implemented.");
           return J;
         }
         typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) {
-          throw std::runtime_error("FRotationAboutAxesZXZ::parDerDirDer() not yet implemented.");
+          throw std::runtime_error("RotationAboutAxesZXZ::parDerDirDer() not yet implemented.");
           return Jd;
         }
     };

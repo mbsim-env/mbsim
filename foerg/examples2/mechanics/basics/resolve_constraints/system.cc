@@ -39,7 +39,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   stab1->setMass(mStab);
   Theta(2,2) = JStab;
   stab1->setInertiaTensor(Theta);
-  stab1->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  stab1->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   Vec q0(1);
   q0(0) = -phi1;
   stab1->setInitialGeneralizedPosition(q0);
@@ -66,7 +66,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   stab2->setMass(mStab);
   Theta(2,2) = JStab;
   stab2->setInertiaTensor(Theta);
-  stab2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  stab2->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   q0(0) = -phi2+phi1;
   stab2->setInitialGeneralizedPosition(q0);
 

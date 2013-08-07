@@ -18,7 +18,6 @@ group.cc\
 joint.cc\
 gear.cc\
 gearing.cc\
-kinematics.cc\
 spring_damper.cc\
 rotational_spring_damper.cc\
 extern_generalized_io.cc\
@@ -61,7 +60,6 @@ group.h\
 joint.h\
 gear.h\
 gearing.h\
-kinematics.h\
 spring_damper.h\
 rotational_spring_damper.h\
 extern_generalized_io.h\
