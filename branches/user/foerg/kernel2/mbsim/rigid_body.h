@@ -139,12 +139,14 @@ namespace MBSim {
        */
       void setTranslation(fmatvec::Function<fmatvec::Vec3(fmatvec::VecV, double)> *fPrPK_) { fPrPK = fPrPK_; }
       void setTranslation(fmatvec::Function<fmatvec::Vec3(fmatvec::VecV)>* fPrPK_) { fPrPK  = new StateDependentFunction<fmatvec::Vec3(fmatvec::VecV,double)>(fPrPK_); }
+      void setTranslation(fmatvec::Function<fmatvec::Vec3(double)>* fPrPK_) { fPrPK  = new TimeDependentFunction<fmatvec::Vec3(fmatvec::VecV,double)>(fPrPK_); }
       /*!
        * \brief set Kinematic for rotational motion
        * \param fAPK rotational kinematic description
        */
       void setRotation(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)>* fAPK_, bool dep_=false) { fAPK  = fAPK_; dep = dep_; }
       void setRotation(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV)>* fAPK_, bool dep_=false) { fAPK  = new StateDependentFunction<fmatvec::RotMat3(fmatvec::VecV,double)>(fAPK_); dep = dep_; }
+      void setRotation(fmatvec::Function<fmatvec::RotMat3(double)>* fAPK_, bool dep_=false) { fAPK  = new TimeDependentFunction<fmatvec::RotMat3(fmatvec::VecV,double)>(fAPK_); dep = dep_; }
       /*!
        * \brief get Kinematic for translational motion
        * \return translational kinematic description

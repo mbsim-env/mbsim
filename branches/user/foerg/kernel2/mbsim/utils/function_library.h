@@ -26,23 +26,10 @@
 #include "mbsim/utils/eps.h"
 
 namespace MBSim {
+
   template<typename Sig> class StateDependentFunction;
 
-//  template<typename Ret, typename Arg>
-//    class StateDependentFunction<Ret(Arg,double)> : public fmatvec::Function<Ret(Arg,double)> {
-//      private:
-//        fmatvec::Function<Ret(Arg)> *f;
-//      public:
-//        StateDependentFunction(fmatvec::Function<Ret(Arg)> *f_) : f(f_) { }
-//        typename fmatvec::Size<Arg>::type getArg1Size() const { return f->getArgSize();}
-//        typename fmatvec::Size<double>::type getArg2Size() const { return 0; }
-//        Ret operator()(const Arg &arg1, const double &arg2) {return (*f)(arg1); }
-//        typename fmatvec::Der<Ret, Arg>::type parDer1(const Arg &arg1, const double &arg2) { return f->parDer(arg1); }
-//        typename fmatvec::Der<Ret, double>::type parDer2(const Arg &arg1, const double &arg2) { return (*f)(arg1)*0.0; }
-//        typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDer2ParDer2(const Arg &arg1, const double &arg2) { (*f)(arg1)*0.0; }
-//    };
-
-template <>
+  template <>
     class StateDependentFunction<fmatvec::Vec3(fmatvec::VecV,double)> : public fmatvec::Function<fmatvec::Vec3(fmatvec::VecV,double)> {
       private:
         fmatvec::Function<fmatvec::Vec3(fmatvec::VecV)> *f;
@@ -59,7 +46,7 @@ template <>
         typename fmatvec::Der<fmatvec::Vec3, fmatvec::VecV>::type parDer1DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return f->parDerDirDer(arg1Dir,arg1); }
     };
 
-template <>
+  template <>
     class StateDependentFunction<fmatvec::RotMat3(fmatvec::VecV,double)> : public fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV,double)> {
       private:
         fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV)> *f;
@@ -76,6 +63,43 @@ template <>
         typename fmatvec::Der<fmatvec::RotMat3, fmatvec::VecV>::type parDer1DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return f->parDerDirDer(arg1Dir,arg1); }
     };
 
+  template<typename Sig> class TimeDependentFunction;
+
+  template <>
+    class TimeDependentFunction<fmatvec::Vec3(fmatvec::VecV,double)> : public fmatvec::Function<fmatvec::Vec3(fmatvec::VecV,double)> {
+      private:
+        fmatvec::Function<fmatvec::Vec3(double)> *f;
+      public:
+        TimeDependentFunction(fmatvec::Function<fmatvec::Vec3(double)> *f_) : f(f_) { }
+        typename fmatvec::Size<fmatvec::VecV>::type getArg1Size() const { return 0;}
+        typename fmatvec::Size<double>::type getArg2Size() const { return 1; }
+        fmatvec::Vec3 operator()(const fmatvec::VecV &arg1, const double &arg2) {return (*f)(arg2); }
+        typename fmatvec::Der<fmatvec::Vec3, fmatvec::VecV>::type parDer1(const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Mat3xV(); }
+        typename fmatvec::Der<fmatvec::Vec3, double>::type parDer2(const fmatvec::VecV &arg1, const double &arg2) {return f->parDer(arg2); }
+        typename fmatvec::Der<typename fmatvec::Der<fmatvec::Vec3, double>::type, double>::type parDer2ParDer2(const fmatvec::VecV &arg1, const double &arg2) { return f->parDerParDer(arg2); }
+        typename fmatvec::Der<fmatvec::Vec3, double>::type parDer2DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Vec3(); }
+        typename fmatvec::Der<typename fmatvec::Der<fmatvec::Vec3, fmatvec::VecV>::type, double>::type parDer1ParDer2(const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Mat3xV(); }
+        typename fmatvec::Der<fmatvec::Vec3, fmatvec::VecV>::type parDer1DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Mat3xV(); }
+    };
+
+  template <>
+    class TimeDependentFunction<fmatvec::RotMat3(fmatvec::VecV,double)> : public fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV,double)> {
+      private:
+        fmatvec::Function<fmatvec::RotMat3(double)> *f;
+      public:
+        TimeDependentFunction(fmatvec::Function<fmatvec::RotMat3(double)> *f_) : f(f_) { }
+        typename fmatvec::Size<fmatvec::VecV>::type getArg1Size() const { return 0;}
+        typename fmatvec::Size<double>::type getArg2Size() const { return 1; }
+        fmatvec::RotMat3 operator()(const fmatvec::VecV &arg1, const double &arg2) {return (*f)(arg2); }
+        typename fmatvec::Der<fmatvec::RotMat3, fmatvec::VecV>::type parDer1(const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Mat3xV(); }
+        typename fmatvec::Der<fmatvec::RotMat3, double>::type parDer2(const fmatvec::VecV &arg1, const double &arg2) {return f->parDer(arg2); }
+        typename fmatvec::Der<typename fmatvec::Der<fmatvec::RotMat3, double>::type, double>::type parDer2ParDer2(const fmatvec::VecV &arg1, const double &arg2) { return f->parDerParDer(arg2); }
+        typename fmatvec::Der<fmatvec::RotMat3, double>::type parDer2DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Vec3(); }
+        typename fmatvec::Der<typename fmatvec::Der<fmatvec::RotMat3, fmatvec::VecV>::type, double>::type parDer1ParDer2(const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Mat3xV(); }
+        typename fmatvec::Der<fmatvec::RotMat3, fmatvec::VecV>::type parDer1DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Mat3xV(); }
+    };
+
+
   template<typename Sig> class NestedFunction; 
 
   template<typename Ret, typename Argo, typename Argi> 
@@ -85,11 +109,27 @@ template <>
        typename fmatvec::Size<Argi>::type getArgSize() const { return fi->getArgSize();}
         Ret operator()(const Argi &arg) {return (*fo)((*fi)(arg));}
         typename fmatvec::Der<Ret, Argi>::type parDer(const Argi &arg) { return fo->parDer((*fi)(arg))*fi->parDer(arg); }
-        typename fmatvec::Der<Ret, Argi>::type parDerDirDer(const Argi &argDir, const Argi &arg) { return fo->parDerDirDer(fi->parDer(arg)*argDir,(*fi)(arg)); }
+        typename fmatvec::Der<Ret, Argi>::type parDerDirDer(const Argi &argDir, const Argi &arg) { return fo->parDerDirDer(fi->parDer(arg)*argDir,(*fi)(arg))*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerDirDer(argDir,arg); }
       private:
         fmatvec::Function<Ret(Argo)> *fo;
         fmatvec::Function<Argo(Argi)> *fi;
     };
+
+  template<typename Ret, typename Argo> 
+    class NestedFunction<Ret(Argo(double))> : public fmatvec::Function<Ret(double)> {
+      public:
+       NestedFunction(fmatvec::Function<Ret(Argo)> *fo_, fmatvec::Function<Argo(double)> *fi_) : fo(fo_), fi(fi_) { }
+       typename fmatvec::Size<double>::type getArgSize() const { return fi->getArgSize();}
+        Ret operator()(const double &arg) {return (*fo)((*fi)(arg));}
+        typename fmatvec::Der<Ret, double>::type parDer(const double &arg) { return fo->parDer((*fi)(arg))*fi->parDer(arg); }
+        typename fmatvec::Der<Ret, double>::type parDerDirDer(const double &argDir, const double &arg) { return fo->parDerDirDer(fi->parDer(arg)*argDir,(*fi)(arg))*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerDirDer(argDir,arg); }
+//        typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &arg) { return fo->parDerParDer((*fi)(arg))*fi->parDer(arg)*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerParDer(arg); }
+        typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &arg) { return fo->parDerDirDer(fi->parDer(arg),(*fi)(arg))*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerParDer(arg); }
+      private:
+        fmatvec::Function<Ret(Argo)> *fo;
+        fmatvec::Function<Argo(double)> *fi;
+    };
+
 
   /**
    * \brief function describing a linear relationship between the input relative distance / velocity and the output for a spring
