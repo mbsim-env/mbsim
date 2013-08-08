@@ -38,8 +38,9 @@ System::System(const string &projectName)  : DynamicSystemSolver(projectName) {
   this->addObject(ball);
   ball->setMass(m);
   ball->setInertiaTensor(Theta);
-  ball->setRotation(new CardanAngles);
-  ball->setTranslation(new LinearTranslation(SqrMat(3,EYE)));
+  ball->setRotation(new RotationAboutAxesXYZ<VecV>);
+  ball->setRotationMapping(new TCardanAngles<VecV>);
+  ball->setTranslation(new LinearFunction<Vec3(VecV)>(SqrMat(3,EYE)));
   ball->setFrameForKinematics(ball->getFrame("C"));
 
   // initial settings

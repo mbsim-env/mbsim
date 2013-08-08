@@ -144,9 +144,11 @@ namespace MBSim {
        * \brief set Kinematic for rotational motion
        * \param fAPK rotational kinematic description
        */
-      void setRotation(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)>* fAPK_, bool dep_=false) { fAPK  = fAPK_; dep = dep_; }
-      void setRotation(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV)>* fAPK_, bool dep_=false) { fAPK  = new StateDependentFunction<fmatvec::RotMat3(fmatvec::VecV,double)>(fAPK_); dep = dep_; }
-      void setRotation(fmatvec::Function<fmatvec::RotMat3(double)>* fAPK_, bool dep_=false) { fAPK  = new TimeDependentFunction<fmatvec::RotMat3(fmatvec::VecV,double)>(fAPK_); dep = dep_; }
+      void setRotation(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV, double)>* fAPK_, bool dep=false) { fAPK  = fAPK_; translationDependentRotation = dep; }
+      void setRotation(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV)>* fAPK_, bool dep=false) { fAPK  = new StateDependentFunction<fmatvec::RotMat3(fmatvec::VecV,double)>(fAPK_); translationDependentRotation = dep; }
+      void setRotation(fmatvec::Function<fmatvec::RotMat3(double)>* fAPK_, bool dep=false) { fAPK  = new TimeDependentFunction<fmatvec::RotMat3(fmatvec::VecV,double)>(fAPK_); translationDependentRotation = dep; }
+
+      void setRotationMapping(fmatvec::Function<fmatvec::MatV(fmatvec::VecV)>* fTR_) { fTR = fTR_; }
       /*!
        * \brief get Kinematic for translational motion
        * \return translational kinematic description
@@ -308,6 +310,8 @@ namespace MBSim {
        */
       fmatvec::Vec3 WvPKrel, WomPK;
 
+      fmatvec::Function<fmatvec::MatV(fmatvec::VecV)> *fTR;
+
       /**
        * \brief translation from parent Frame to kinematic Frame in parent system
        */
@@ -376,7 +380,7 @@ namespace MBSim {
 
       fmatvec::Range<fmatvec::Var,fmatvec::Var> iqT, iqR, iuT, iuR;
 
-      bool dep;
+      bool translationDependentRotation, constantJacobianOfRotation;
 
     private:
 #ifdef HAVE_OPENMBVCPPINTERFACE
