@@ -42,7 +42,7 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   shaft1->setMass(m1);
   Theta(2,2) = J;
   shaft1->setInertiaTensor(Theta);
-  shaft1->setRotation(new RotationAboutZAxis);
+  shaft1->setRotation(new RotationAboutZAxis<VecV>);
 #ifdef HAVE_OPENMBVCPPINTERFACE
   shaft1->getFrame("C")->enableOpenMBV(0.2);
 #endif
@@ -60,7 +60,7 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   shaft2->setMass(m1);
   Theta(2,2) = J;
   shaft2->setInertiaTensor(Theta);
-  shaft2->setRotation(new RotationAboutZAxis);
+  shaft2->setRotation(new RotationAboutZAxis<VecV>);
 #ifdef HAVE_OPENMBVCPPINTERFACE
   shaft2->getFrame("C")->enableOpenMBV(0.2);
 #endif
@@ -75,7 +75,7 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   shaft3->setMass(m1);
   Theta(2,2) = J;
   shaft3->setInertiaTensor(Theta);
-  shaft3->setRotation(new RotationAboutZAxis);
+  shaft3->setRotation(new RotationAboutZAxis<VecV>);
 #ifdef HAVE_OPENMBVCPPINTERFACE
   shaft3->getFrame("C")->enableOpenMBV(0.2);
 #endif

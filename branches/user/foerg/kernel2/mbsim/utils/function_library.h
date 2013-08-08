@@ -841,6 +841,36 @@ namespace MBSim {
   };
 
   template<class Arg> 
+    class RotationAboutZAxis : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
+      private:
+        fmatvec::RotMat3 A;
+        fmatvec::Vec3 a;
+      public:
+        RotationAboutZAxis() { a(2) = 1; A(2,2) = 1; }
+        typename fmatvec::Size<Arg>::type getArgSize() const {
+          return 1;
+        }
+        fmatvec::RotMat3 operator()(const Arg &q) {
+          double alpha = ToDouble<Arg>::cast(q);
+          const double cosq=cos(alpha);
+          const double sinq=sin(alpha);
+          A(0,0) = cosq;
+          A(1,0) = sinq;
+          A(0,1) = -sinq;
+          A(1,1) = cosq;
+          return A;
+        }
+        typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDer(const Arg &q) {
+          return a;
+        }
+        typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) {
+          return typename fmatvec::Der<fmatvec::RotMat3, Arg>::type(1);
+        }
+        const fmatvec::Vec3& getAxisOfRotation() const { return a; }
+        void setAxisOfRotation(const fmatvec::Vec3 &a_) { a = a_; }
+    };
+
+  template<class Arg> 
     class RotationAboutFixedAxis : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
       private:
         fmatvec::RotMat3 A;
