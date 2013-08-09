@@ -110,7 +110,7 @@ fi
 
 AC_SUBST([requires])
 
-LDFLAGS="$LDFLAGS -no-undefined"
+LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
 CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)"
 
 AC_CONFIG_FILES([Makefile mbsimFlexibleBody/Makefile mbsimFlexibleBody/flexible_body/Makefile mbsimFlexibleBody/flexible_body/finite_elements/Makefile mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_rcm/Makefile mbsimFlexibleBody/flexible_body/finite_elements/finite_element_2s_13_mfr_mindlin/Makefile mbsimFlexibleBody/contact_kinematics/Makefile mbsimFlexibleBody/contours/Makefile mbsimFlexibleBody/utils/Makefile mbsimFlexibleBody.pc schema/Makefile xmldoc/Makefile doc/Makefile doc/doxyfile])

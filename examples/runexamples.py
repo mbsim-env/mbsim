@@ -772,7 +772,7 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
         #check for NaN/Inf if numpy.all(numpy.isfinite(getColumn(curObj,column)))==False:
         #check for NaN/Inf   print('<td><span style="color:red">cur. contains NaN or +/-Inf</span></td>', file=compareFD)
         #check for NaN/Inf   nrFailed[0]+=1
-        #check for NaN/Inf if numpy.all(numpy.isfinite(getColumn(refObj,column)))==False:
+        #check for NaN/Inf elif numpy.all(numpy.isfinite(getColumn(refObj,column)))==False:
         #check for NaN/Inf   print('<td><span style="color:red">ref. contains NaN or +/-Inf</span></td>', file=compareFD)
         #check for NaN/Inf   nrFailed[0]+=1
         #check for NaN/Inf use elif instead of if in next line
@@ -788,7 +788,7 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
         else:
           print('<td><span style="color:green">passed</span></td>', file=compareFD)
       else: # not row in curObj or refObj
-        print('<td><span style="color:red">no data row in cur. or ref.</span></td>', file=compareFD)
+        print('<td><span style="color:orange">no data row in cur. or ref.</span></td>', file=compareFD)
       print('</tr>', file=compareFD)
     # check for labels/columns in current but not in reference
     for label in curLabels[len(refLabels):]:

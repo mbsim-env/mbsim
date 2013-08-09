@@ -62,7 +62,7 @@ if test $doxygen = "no" ; then
   AC_MSG_RESULT([can't generate documentation. 'doxygen' required.])
 fi
 
-LDFLAGS="$LDFLAGS -no-undefined"
+LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
 CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)"
 
 AC_CONFIG_FILES([Makefile mbsimPowertrain/Makefile doc/Makefile mbsimPowertrain.pc doc/doxyfile])

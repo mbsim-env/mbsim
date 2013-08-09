@@ -35,7 +35,7 @@ AC_ARG_ENABLE([inlineombv],[  --disable-inlineombv  disable inline openmbv],[inl
   AC_DEFINE([INLINE_OPENMBV],[1],[Use inline openmbv])
 fi
 
-LDFLAGS="$LDFLAGS -no-undefined"
+LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
 CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)"
 
 AC_CONFIG_FILES([Makefile mbsimgui/Makefile])
