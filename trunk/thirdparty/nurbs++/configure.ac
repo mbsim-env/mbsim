@@ -356,7 +356,7 @@ AC_SUBST(CPPUNIT_LIBS)
 
 PL_PROG_PERL
 
-LDFLAGS="$LDFLAGS -no-undefined"
+LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
 CXXFLAGS="$CXXFLAGS -fpermissive"
 CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)"
 
