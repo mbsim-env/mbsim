@@ -32,8 +32,8 @@ libcontactkinematics_la_SOURCES = rectangle_polynomialfrustum.cc\
 
 contactkinematicsincludedir = $(includedir)/mbsim/contact_kinematics
 
-INCLUDES = $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
-LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) 
+libcontactkinematics_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
+libcontactkinematics_la_LIBADD =  $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) 
 
 contactkinematicsinclude_HEADERS = rectangle_polynomialfrustum.h\
 				   circle_frustum.h\
