@@ -40,7 +40,7 @@ else
 fi
 
 dnl check for optional module nurbs
-PKG_CHECK_MODULES([NURBS], [nurbs++ >= 3.0.12], 
+PKG_CHECK_MODULES([NURBS], [nurbs++ >= 3.0.13], 
                   [requires="$requires nurbs++"; nurbs_compilerflag="-DHAVE_NURBS"; AC_DEFINE([HAVE_NURBS],[1],[linking with NURBS])], 
                   [nurbsPKGCONF = "No"; AC_MSG_RESULT([No Nurbs-library found. Some flexible contours not possible.])])
 AM_CONDITIONAL([COND_NURBS], [test _$nurbs_compilerflag = _-DHAVE_NURBS])
@@ -111,7 +111,6 @@ fi
 AC_SUBST([requires])
 
 LDFLAGS="$LDFLAGS -no-undefined -Wl,--no-undefined"
-CPPFLAGS="$CPPFLAGS -I\$(top_srcdir)"
 
 AC_CONFIG_FILES([Makefile mbsimFlexibleBody/Makefile mbsimFlexibleBody/flexible_body/Makefile mbsimFlexibleBody/flexible_body/finite_elements/Makefile mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_rcm/Makefile mbsimFlexibleBody/flexible_body/finite_elements/finite_element_2s_13_mfr_mindlin/Makefile mbsimFlexibleBody/contact_kinematics/Makefile mbsimFlexibleBody/contours/Makefile mbsimFlexibleBody/utils/Makefile mbsimFlexibleBody.pc schema/Makefile xmldoc/Makefile doc/Makefile doc/doxyfile])
 

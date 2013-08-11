@@ -207,6 +207,8 @@ function prototypes
         .
 */
 
+#include "plib.h"
+
 #ifndef fft_SOURCES
 #define fft_SOURCES
 

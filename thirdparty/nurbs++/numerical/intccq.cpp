@@ -23,9 +23,10 @@
 	  Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 =============================================================================*/
 
+#include "plib.h"
+
 #ifndef intccqq_SOURCES
 #define intccqq_SOURCES
-
 
 /*
 Clenshaw-Curtis-Quadrature

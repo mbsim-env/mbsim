@@ -7,7 +7,7 @@ libmbsimPowertrain_la_SOURCES = planetary_gear.cc\
 			    cardan_shaft.cc
 
 libmbsimPowertrain_la_LIBADD = $(DEPS_LIBS)
-INCLUDES = $(DEPS_CFLAGS)
+libmbsimPowertrain_la_CPPFLAGS = $(DEPS_CFLAGS)
 
 mbsimPowertrainincludedir = $(includedir)/mbsimPowertrain
 mbsimPowertraininclude_HEADERS = planetary_gear.h\

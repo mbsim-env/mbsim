@@ -19,9 +19,8 @@ libmbsimHydraulics_la_SOURCES = \
   hydraulic_sensor.cc \
   obsolet_hint.cc
 
-libmbsimHydraulics_la_CPPFLAGS = -DTIXML_USE_STL
+libmbsimHydraulics_la_CPPFLAGS = -I$(top_srcdir) -DTIXML_USE_STL $(DEPS_CFLAGS)
 libmbsimHydraulics_la_LIBADD = $(DEPS_LIBS)
-INCLUDES = $(DEPS_CFLAGS)
 
 mbsimHydraulicsincludedir = $(includedir)/mbsimHydraulics
 mbsimHydraulicsinclude_HEADERS = \

@@ -23,6 +23,7 @@
 	  Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 =============================================================================*/
 
+#include "plib.h"
 #include "image.h"
 #include <stdio.h>
 

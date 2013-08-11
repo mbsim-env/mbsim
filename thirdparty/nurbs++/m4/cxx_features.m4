@@ -123,6 +123,7 @@ AC_LANG_RESTORE
 AC_MSG_RESULT($cxx_have_iso_friend_decl)
 if test "$cxx_have_iso_friend_decl" = yes; then
 AC_DEFINE([HAVE_ISO_FRIEND_DECL],[1],[Have ISO friend declaration])
+plib_compilerflags="$plib_compilerflags -DHAVE_ISO_FRIEND_DECL";
 fi
 ])dnl
 
@@ -159,6 +160,7 @@ AC_LANG_RESTORE
 AC_MSG_RESULT($cxx_have_complex_abs)
 if test "$cxx_have_complex_abs" = yes; then
 AC_DEFINE([HAS_COMPLEX_ABS],[1],[Has complex ABS])
+plib_compilerflags="$plib_compilerflags -DHAS_COMPLEX_ABS";
 fi
 
 AC_MSG_CHECKING(whether ${CXX} defines conj for the Complex type)
@@ -182,6 +184,7 @@ AC_LANG_RESTORE
 AC_MSG_RESULT($cxx_have_complex_conj)
 if test "$cxx_have_complex_conj" = yes; then
 AC_DEFINE([HAS_COMPLEX_CONJ],[1],[Has complex conj function])
+plib_compilerflags="$plib_compilerflags -DHAS_COMPLEX_CONJ";
 fi
 
 
