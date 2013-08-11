@@ -22,6 +22,8 @@
           License along with this library; if not, write to the Free
           Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 =============================================================================*/
+
+#include "plib.h"
 #include <hnurbs.h>
 
 HNurbsCurveNode::HNurbsCurveNode():u0(u0_),u1(u1_){

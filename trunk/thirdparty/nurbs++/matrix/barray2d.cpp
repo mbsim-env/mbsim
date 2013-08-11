@@ -26,6 +26,7 @@
 #ifndef BARRAY2D_SOURCES_
 #define BARRAY2D_SOURCES_
 
+#include "plib.h"
 #include "matrix_global.h"
 #include <new>
 #include "barray2d.h"

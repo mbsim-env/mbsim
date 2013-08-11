@@ -15,12 +15,10 @@ libflexiblebody_la_SOURCES =	flexible_body_1s_cosserat.cc\
 # libflexiblebody_la_SOURCES =	flexible_body_1s_01_torsion.cc\
 # 								flexible_body_1s_21_ancf.cc
 
-libflexiblebody_la_CPPFLAGS = -I.. -Ifinite_elements
-libflexiblebody_la_LIBADD=finite_elements/libfe.la
-flexiblebodyincludedir = $(includedir)/mbsimFlexibleBody/flexible_body
+libflexiblebody_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) $(NURBS_CFLAGS)
+libflexiblebody_la_LIBADD = finite_elements/libfe.la $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) $(NURBS_LIBS)
 
-INCLUDES = $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) $(NURBS_CFLAGS)
-LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) $(NURBS_LIBS)
+flexiblebodyincludedir = $(includedir)/mbsimFlexibleBody/flexible_body
 
 flexiblebodyinclude_HEADERS =	flexible_body_1s_cosserat.h\
 								flexible_body_1s_21_rcm.h\

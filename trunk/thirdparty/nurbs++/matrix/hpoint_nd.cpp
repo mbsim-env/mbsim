@@ -23,8 +23,11 @@
 	  Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 =============================================================================*/
 
+#include "plib.h"
+
 #ifndef HPOINT_SOURCES
 #define HPOINT_SOURCES
+
 
 #include "hpoint_nd.h"
 

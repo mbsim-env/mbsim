@@ -63,6 +63,8 @@ chebexp, chebeval
                              + ... + c[lenc-n]*T_n(t)
 */
 
+#include "plib.h"
+
 #ifndef chebexp_SOURCES
 #define chebexp_SOURCES
 

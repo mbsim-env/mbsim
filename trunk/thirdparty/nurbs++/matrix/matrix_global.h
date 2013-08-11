@@ -26,14 +26,6 @@
 #ifndef _Matrix_Global_h_
 #define _Matrix_Global_h_
 
-#undef PACKAGE
-#undef VERSION
-
-#include "plib.h"
-
-#undef PACKAGE
-#undef VERSION
-
 #include <cmath>
 #include <iostream>
 #include <complex>

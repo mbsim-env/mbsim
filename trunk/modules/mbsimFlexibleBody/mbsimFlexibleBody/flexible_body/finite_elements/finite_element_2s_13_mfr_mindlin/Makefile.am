@@ -14,8 +14,8 @@ libfe2s13mfrmindlin_la_SOURCES = K.cc\
 
 fe2s13mfrmindlinincludedir = $(includedir)/mbsimFlexibleBody/flexible_body/finite_elements/finite_element_2s_13_mfr_mindlin
 
-INCLUDES = $(DEPS_CFLAGS)
-LDADD = $(DEPS_LIBS)
+libfe2s13mfrmindlin_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS)
+libfe2s13mfrmindlin_la_LIBADD = $(DEPS_LIBS)
 
 fe2s13mfrmindlininclude_HEADERS = 
 
