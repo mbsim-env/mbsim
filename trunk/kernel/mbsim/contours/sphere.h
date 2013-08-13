@@ -20,7 +20,7 @@
 #ifndef SPHERE_H_
 #define SPHERE_H_
 
-#include "fmatvec.h"
+#include "fmatvec/fmatvec.h"
 #include "mbsim/contour.h"
 
 namespace MBSim {

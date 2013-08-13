@@ -25,8 +25,6 @@
 #include <mbsim/utils/contact_utils.h>
 #include <mbsim/utils/utils.h>
 
-#include <fmatvec.h>
-
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frustum.h>
 #endif

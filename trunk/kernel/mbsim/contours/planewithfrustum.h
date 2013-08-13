@@ -20,7 +20,7 @@
 #ifndef _PLANEWITHFRUSTUM_H_
 #define _PLANEWITHFRUSTUM_H_
 
-#include "fmatvec.h"
+#include "fmatvec/fmatvec.h"
 #include "mbsim/contour.h"
 
 namespace MBSim {

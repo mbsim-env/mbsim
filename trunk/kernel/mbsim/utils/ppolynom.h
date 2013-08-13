@@ -20,7 +20,7 @@
 #ifndef PPOLYNOM
 #define PPOLYNOM
 
-#include "fmatvec.h"
+#include "fmatvec/fmatvec.h"
 #include "mbsim/utils/function.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"

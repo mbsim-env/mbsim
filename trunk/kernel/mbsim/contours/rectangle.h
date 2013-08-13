@@ -21,9 +21,9 @@
 #define _RECTANGLE_H_
 
 #include "mbsim/contours/plane.h"
-#include "fmatvec.h"
-#include "linear_algebra_double.h"
-#include "linear_algebra.h"
+#include "fmatvec/fmatvec.h"
+#include "fmatvec/linear_algebra_double.h"
+#include "fmatvec/linear_algebra.h"
 
 namespace MBSim {
 

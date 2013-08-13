@@ -21,7 +21,7 @@
 #define NONLINEAR_ALGEBRA_H_
 
 #include "mbsim/utils/function.h"
-#include "fmatvec.h"
+#include "fmatvec/fmatvec.h"
 
 namespace MBSim {
 

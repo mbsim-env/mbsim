@@ -21,7 +21,7 @@
 #define _RIGID_BODY_H_
 
 #include "mbsim/body.h"
-#include "fmatvec.h"
+#include "fmatvec/fmatvec.h"
 #include "mbsim/kinematics.h"
 #include "mbsim/utils/function.h"
 

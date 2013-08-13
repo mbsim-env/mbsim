@@ -1,5 +1,5 @@
 #include "system.h"
-#include <mbsim/integrators/integrators.h>
+#include <mbsimInterface/server_integrator.h>
 
 using namespace std;
 using namespace MBSim;
@@ -12,7 +12,7 @@ int main (int argc, char* argv[])
   // add modules to overall dynamical system 
   sys->initialize();
 
-  ServerIntegrator integrator;
+  MBSimInterface::ServerIntegrator integrator;
   integrator.setEndTime(10.0);
   integrator.setPlotStepSize(1e-3);
 

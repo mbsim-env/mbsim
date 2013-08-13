@@ -19,7 +19,7 @@
 
 #include <config.h>
 
-#include "fmatvec.h"
+#include "fmatvec/fmatvec.h"
 #include "point_polynomialfrustum.h"
 #include "mbsim/utils/nonlinear_algebra.h"
 #include "fmatvec/linear_algebra_double.h"

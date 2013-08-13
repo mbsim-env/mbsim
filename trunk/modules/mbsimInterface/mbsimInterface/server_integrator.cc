@@ -23,7 +23,6 @@
 
 #include <config.h>
 
-#include <fmatvec.h>
 #include <mbsim/dynamic_system_solver.h>
 #include "server_integrator.h"
 #include "server_integrator_messages.h"
@@ -48,16 +47,16 @@ using namespace std;
 using namespace fmatvec;
 using namespace MBXMLUtils;
 
-namespace MBSim {
+namespace MBSimInterface {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Integrator, ServerIntegrator, MBSIMINTNS"ServerIntegrator")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(MBSim::Integrator, ServerIntegrator, MBSIMINTNS"ServerIntegrator")
 
   bool serverExitRequest=false;
 
   void session(ServerIntegrator *si, socket_ptr sock);
   void server(ServerIntegrator *si, boost::asio::io_service& io_service, short port);
 
-  ServerIntegrator::ServerIntegrator(): Integrator(), IP(""), port(""), zSize(0), nsv(0), t(tStart) {
+  ServerIntegrator::ServerIntegrator(): MBSim::Integrator(), IP(""), port(""), zSize(0), nsv(0), t(tStart) {
   }
 
   void ServerIntegrator::initializeUsingXML(TiXmlElement *element) {
@@ -80,7 +79,7 @@ namespace MBSim {
     return ele0;
   }
 
-  void ServerIntegrator::integrate(DynamicSystemSolver& system_) {
+  void ServerIntegrator::integrate(MBSim::DynamicSystemSolver& system_) {
     system = &system_;
 
     zSize=system->getzSize();
@@ -111,6 +110,9 @@ namespace MBSim {
     cout << endl;
   }
 
+  MBSim::DynamicSystemSolver* ServerIntegrator::getDynamicSystemSolver() {
+    return system;
+  }
 
 
 
@@ -190,7 +192,7 @@ namespace MBSim {
             {
               const Vec t=Vec(message.c_str());
               if (t.size()!=1)
-                throw MBSimError("wrong size of given double t!");
+                throw MBSim::MBSimError("wrong size of given double t!");
               si->setTime(t(0));
             }
             break;
@@ -199,7 +201,7 @@ namespace MBSim {
             {
               const Vec z(message.c_str());
               if (z.size()!=(si->getz()).size())
-                throw MBSimError("wrong size of given vector z!");
+                throw MBSim::MBSimError("wrong size of given vector z!");
               si->setz(z);
             }
             break;
