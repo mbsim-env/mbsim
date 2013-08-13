@@ -20,7 +20,7 @@
 #ifndef NUMERICS_LINEAR_COMPLEMENTARITY_PROBLEM_H_
 #define NUMERICS_LINEAR_COMPLEMENTARITY_PROBLEM_H_
 
-#include <fmatvec.h>
+#include <fmatvec/fmatvec.h>
 
 #include <mbsim/numerics/nonlinear_algebra/multi_dimensional_newton_method.h>
 #include <mbsim/numerics/nonlinear_algebra/multi_dimensional_fixpoint_solver.h>

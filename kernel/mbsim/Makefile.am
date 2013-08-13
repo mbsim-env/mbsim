@@ -1,7 +1,7 @@
 SUBDIRS =  numerics utils integrators contact_kinematics contours observers .
  
 lib_LTLIBRARIES = libmbsim.la
-libmbsim_la_LDFLAGS = -version-info @LIBMBSIM_VERSION_INFO@ -lboost_thread -lboost_system
+libmbsim_la_LDFLAGS = -version-info @LIBMBSIM_VERSION_INFO@
 libmbsim_la_SOURCES = \
 body.cc\
 constitutive_laws.cc\

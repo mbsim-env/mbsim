@@ -24,7 +24,7 @@
 #define PVNS "{"PVNS_"}"
 
 #include <string>
-#include "fmatvec.h"
+#include "fmatvec/fmatvec.h"
 #include "mbxmlutilstinyxml/tinyxml.h"
 #include <limits>
 #include <vector>

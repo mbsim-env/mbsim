@@ -22,7 +22,7 @@
 
 #include <mbsim/utils/function.h>
 
-#include <fmatvec.h>
+#include <fmatvec/fmatvec.h>
 
 #include <map>
 

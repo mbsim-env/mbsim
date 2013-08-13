@@ -23,13 +23,13 @@
 #ifndef _SERVER_INTEGRATOR_H_
 #define _SERVER_INTEGRATOR_H_
 
-#include "integrator.h"
+#include <mbsim/integrators/integrator.h>
 
-namespace MBSim {
+namespace MBSimInterface {
 
   /** \brief Dummy-Integrator ServerIntegrator
     This integrator is an interface for other integration tool. */
-  class ServerIntegrator : public Integrator {
+  class ServerIntegrator : public MBSim::Integrator {
 
     protected:
       std::ofstream integPlot;
@@ -39,7 +39,7 @@ namespace MBSim {
       ServerIntegrator();
       ~ServerIntegrator() {}
 
-      void integrate(DynamicSystemSolver& system);
+      void integrate(MBSim::DynamicSystemSolver& system);
 
       virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -49,7 +49,7 @@ namespace MBSim {
       void setIP(std::string IP_) {IP=IP_; }
       void setPort(std::string port_) {port=port_; }
 
-      DynamicSystemSolver* getDynamicSystemSolver() {return system; }
+      MBSim::DynamicSystemSolver* getDynamicSystemSolver();
 
       int* getzSize() {return &zSize; }
       int* getsvSize() {return &nsv; }

@@ -9,10 +9,10 @@ CXX = g++
 libsources = 
 objects = $(sources:.cc=.o) 
 
-CPPFLAGS= -g3 -Wall -Werror -Wno-unknown-pragmas `pkg-config --cflags mbsim` # -I/usr/include/boost 
+CPPFLAGS= -g3 -Wall -Werror -Wno-unknown-pragmas `pkg-config --cflags mbsim mbsimInterface`
 
 $(Target) : $(objects)
-	$(CXX) -o $@ $(objects) `pkg-config --libs mbsim` # -lboost_thread -lboost_system
+	$(CXX) -o $@ $(objects) `pkg-config --libs mbsim mbsimInterface`
 
 %.d: %.cc
 	set -e; $(CXX) -MM $(CPPFLAGS) $< \

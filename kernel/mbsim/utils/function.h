@@ -25,7 +25,7 @@
 #include <mbsim/utils/utils.h>
 #include <mbsim/utils/eps.h>
 
-#include <fmatvec.h>
+#include <fmatvec/fmatvec.h>
 
 namespace MBSim {
 

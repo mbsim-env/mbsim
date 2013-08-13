@@ -21,7 +21,7 @@
 #ifndef _ELEMENT_H_
 #define _ELEMENT_H_
 
-#include "fmatvec.h"
+#include "fmatvec/fmatvec.h"
 #include "mbsim/objectfactory.h"
 #include <string>
 #include <hdf5serie/vectorserie.h>

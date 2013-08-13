@@ -22,7 +22,7 @@
 #ifndef CONTOUR_FUNCTION_1S_H
 #define CONTOUR_FUNCTION_1S_H
 
-#include "fmatvec.h"
+#include "fmatvec/fmatvec.h"
 #include "mbsim/utils/ppolynom.h"
 #include "mbsim/contour_pdata.h"
 

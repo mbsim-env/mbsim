@@ -20,7 +20,7 @@
 #ifndef _CONTACT_KINEMATICS_H_
 #define _CONTACT_KINEMATICS_H_
 
-#include "fmatvec.h"
+#include "fmatvec/fmatvec.h"
 #include "mbsim/mbsim_event.h"
 #include <mbsim/single_contact.h>
 #include <vector>

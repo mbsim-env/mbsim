@@ -20,7 +20,7 @@
 #ifndef CIRCLE_H_
 #define CIRCLE_H_
 
-#include "fmatvec.h"
+#include "fmatvec/fmatvec.h"
 #include "mbsim/contour.h"
 #include "mbsim/utils/eps.h"
 

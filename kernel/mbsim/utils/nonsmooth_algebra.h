@@ -22,7 +22,7 @@
 #ifndef NONSMOOTH_ALGEBRA_H_
 #define NONSMOOTH_ALGEBRA_H_
 
-#include "fmatvec.h"
+#include "fmatvec/fmatvec.h"
 
 namespace MBSim {
 

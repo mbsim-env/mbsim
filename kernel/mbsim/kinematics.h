@@ -20,7 +20,7 @@
 #ifndef _KINEMATICS_H_
 #define _KINEMATICS_H_
 
-#include "fmatvec.h"
+#include "fmatvec/fmatvec.h"
 #include "mbsim/utils/function.h"
 
 namespace MBSim {

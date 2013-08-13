@@ -22,7 +22,7 @@
 #include <mbsim/utils/utils.h>
 
 
-#include <fmatvec.h>
+#include <fmatvec/fmatvec.h>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frustum.h>

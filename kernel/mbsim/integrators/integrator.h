@@ -23,7 +23,7 @@
 #define MBSIMINTNS_ "http://mbsim.berlios.de/MBSimIntegrator"
 #define MBSIMINTNS "{"MBSIMINTNS_"}"
 
-#include<fmatvec.h>
+#include<fmatvec/fmatvec.h>
 #include"mbxmlutilstinyxml/tinyxml.h"
 #include<string>
 #include<iostream>

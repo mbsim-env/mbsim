@@ -21,8 +21,7 @@
 #ifndef _MU_TIME_STEPPING_INTEGRATOR_H_ 
 #define _MU_TIME_STEPPING_INTEGRATOR_H_
 
-#include "fmatvec.h"
-#include "mbsim/integrators/integrator.h"
+#include "integrator.h"
 
 namespace MBSim {
 
