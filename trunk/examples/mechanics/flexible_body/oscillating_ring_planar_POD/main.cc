@@ -4,7 +4,7 @@
 #include <boost/timer.hpp>
 
 #include <hdf5serie/vectorserie.h>
-#include <fmatvec.h>
+#include <fmatvec/fmatvec.h>
 #include <iostream>
 
 using namespace MBSim;

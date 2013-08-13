@@ -1,6 +1,6 @@
 #include "system.h"
 
-#include <fmatvec.h>
+#include <fmatvec/fmatvec.h>
 
 #include <mbsim/environment.h>
 #include <mbsim/rigid_body.h>

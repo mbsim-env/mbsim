@@ -20,7 +20,7 @@
 #ifndef NURBSDISK2S_H_
 #define NURBSDISK2S_H_
 
-#include "fmatvec.h"
+#include "fmatvec/fmatvec.h"
 #include "mbsim/mbsim_event.h"
 #include "mbsim/contours/contour2s.h"
 #include "mbsimFlexibleBody/utils/contact_utils.h"

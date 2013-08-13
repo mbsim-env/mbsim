@@ -6,7 +6,7 @@
 
 #include <mbsim/rigid_body.h>
 
-#include <fmatvec.h>
+#include <fmatvec/fmatvec.h>
 
 class System : public MBSim::DynamicSystemSolver {
 

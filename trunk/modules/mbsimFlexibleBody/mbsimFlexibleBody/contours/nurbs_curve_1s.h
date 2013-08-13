@@ -20,7 +20,7 @@
 #ifndef NURBSCURVE1S_H_
 #define NURBSCURVE1S_H_
 
-#include "fmatvec.h"
+#include "fmatvec/fmatvec.h"
 #include "mbsim/mbsim_event.h"
 #include "mbsim/contours/contour1s.h"
 

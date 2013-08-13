@@ -20,7 +20,7 @@ using namespace std;
 using namespace H5;
 
 #include <hdf5serie/vectorserie.h>
-#include <fmatvec.h>
+#include <fmatvec/fmatvec.h>
 #include <iostream>
 
 Mat read3D(const string SysName) {
