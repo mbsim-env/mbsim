@@ -21,7 +21,7 @@
 #ifndef _FINITE_ELEMENT_1S_21_ANCF_H_
 #define _FINITE_ELEMENT_1S_21_ANCF_H_
 
-#include "fmatvec.h"
+#include "fmatvec/fmatvec.h"
 
 namespace MBSimFlexibleBody {
 

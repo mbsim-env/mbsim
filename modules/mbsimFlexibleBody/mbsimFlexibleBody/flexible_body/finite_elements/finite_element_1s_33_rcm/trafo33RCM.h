@@ -20,7 +20,7 @@
 #ifndef TRAFO33RCM_H_
 #define TRAFO33RCM_H_
 
-#include "fmatvec.h"
+#include "fmatvec/fmatvec.h"
 #include "mbsim/utils/function.h"
 #include "mbsimFlexibleBody/pointer.h"
 

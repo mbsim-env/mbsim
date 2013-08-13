@@ -21,7 +21,7 @@
 #define ANGLES_H_
 
 #include "mbsim/kinematics.h"
-#include "fmatvec.h"
+#include "fmatvec/fmatvec.h"
 
 namespace MBSimFlexibleBody {
 

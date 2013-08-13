@@ -25,7 +25,7 @@
 #include "mbsim/contour_pdata.h"
 #include "mbsimFlexibleBody/pointer.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_rcm/weight33RCM.h"
-#include "fmatvec.h"
+#include "fmatvec/fmatvec.h"
 
 namespace MBSimFlexibleBody {
 

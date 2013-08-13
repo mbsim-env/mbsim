@@ -1,7 +1,7 @@
 #include <mbsim/numerics/nonlinear_algebra/multi_dimensional_newton_method.h>
 #include <mbsim/utils/nonlinear_algebra.h>
 #include <mbsim/utils/stopwatch.h>
-#include <fmatvec.h>
+#include <fmatvec/fmatvec.h>
 
 #include <iostream>
 
