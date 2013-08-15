@@ -47,7 +47,9 @@ cfgOpts.add_argument("--forceBuild", default=list(), type=str, nargs="*",
 
 cfgOpts.add_argument("--disableUpdate", action="store_true", help="Do not update using svn")
 cfgOpts.add_argument("--disableConfigure", action="store_true", help="Do not manually configure. 'make' may still trigger it")
-cfgOpts.add_argument("--disableMake", action="store_true", help="Do not make and make install")
+cfgOpts.add_argument("--disableMakeClean", action="store_true", help="Do not 'make clean'")
+cfgOpts.add_argument("--disableMakeInstall", action="store_true", help="Do not 'make install'")
+cfgOpts.add_argument("--disableMake", action="store_true", help="Do not 'make clean', 'make' and 'make install'")
 cfgOpts.add_argument("--disableDoxygen", action="store_true", help="Do not build the doxygen doc")
 cfgOpts.add_argument("--disableXMLDoc", action="store_true", help="Do not build the XML doc")
 cfgOpts.add_argument("--disableRunExamples", action="store_true", help="Do not execute runexamples.py")
@@ -119,6 +121,9 @@ def main():
         pj('mbsim', 'kernel')
       ])],
     pj('mbsim', 'modules', 'mbsimControl'): [False, set([ # depends on
+        pj('mbsim', 'kernel')
+      ])],
+    pj('mbsim', 'modules', 'mbsimInterface'): [True, set([ # depends on
         pj('mbsim', 'kernel')
       ])],
     pj('mbsim', 'mbsimxml'): [False, set([ # depends on
@@ -531,12 +536,14 @@ def make(tool, mainFD):
   try:
     if not args.disableMake:
       # make
-      print("\n\nRUNNING make clean\n", file=makeFD); makeFD.flush()
-      if subprocess.call(["make", "clean"], stderr=subprocess.STDOUT, stdout=makeFD)!=0: raise RuntimeError("make clean failed")
+      if not args.disableMakeClean:
+        print("\n\nRUNNING make clean\n", file=makeFD); makeFD.flush()
+        if subprocess.call(["make", "clean"], stderr=subprocess.STDOUT, stdout=makeFD)!=0: raise RuntimeError("make clean failed")
       print("\n\nRUNNING make -k\n", file=makeFD); makeFD.flush()
       if subprocess.call(["make", "-k", "-j", str(args.j)], stderr=subprocess.STDOUT, stdout=makeFD)!=0: raise RuntimeError("make failed")
-      print("\n\nRUNNING make install\n", file=makeFD); makeFD.flush()
-      if subprocess.call(["make", "install"], stderr=subprocess.STDOUT, stdout=makeFD)!=0: raise RuntimeError("make install failed")
+      if not args.disableMakeInstall:
+        print("\n\nRUNNING make install\n", file=makeFD); makeFD.flush()
+        if subprocess.call(["make", "install"], stderr=subprocess.STDOUT, stdout=makeFD)!=0: raise RuntimeError("make install failed")
     else:
       print("make disabled", file=makeFD); makeFD.flush()
 
