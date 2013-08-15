@@ -108,6 +108,7 @@ namespace MBSim {
   }
 
   void EulerExplicitIntegrator::integrate(DynamicSystemSolver& system) {
+    debugInit();
     preIntegrate(system);
     subIntegrate(system, tEnd);
     postIntegrate(system);

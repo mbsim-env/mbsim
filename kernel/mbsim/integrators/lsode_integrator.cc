@@ -58,6 +58,7 @@ namespace MBSim {
   }
 
   void LSODEIntegrator::integrate(DynamicSystemSolver& system_) {
+    debugInit();
     system = &system_;
 
     int zSize=system->getzSize();

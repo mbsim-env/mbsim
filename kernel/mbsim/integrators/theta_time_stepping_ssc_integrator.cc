@@ -158,6 +158,7 @@ namespace MBSim {
   }
 
   void ThetaTimeSteppingSSCIntegrator::integrate(DynamicSystemSolver& system) {
+    debugInit();
     preIntegrate(system);
     subIntegrate(system, tEnd);
     postIntegrate(system);

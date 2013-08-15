@@ -115,6 +115,7 @@ namespace MBSim {
 
 
   void TimeSteppingIntegrator::integrate(DynamicSystemSolver& system) {
+    debugInit();
     preIntegrate(system);
     subIntegrate(system, tEnd);
     postIntegrate(system);

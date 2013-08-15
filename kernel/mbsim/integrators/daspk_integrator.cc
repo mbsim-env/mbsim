@@ -60,6 +60,7 @@
 //   }
 // 
 //   void DASPKIntegrator::integrate(DynamicSystemSolver& system_) {
+//     debugInit();
 //     system = &system_;
 // 
 //     zSize=system->getzSize();

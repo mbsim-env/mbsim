@@ -18,6 +18,7 @@
  */
 
 #include <config.h>
+#include <cstdlib>
 #include "integrator.h"
 #include "mbsim/element.h"
 #include "mbsim/utils/utils.h"
@@ -84,5 +85,12 @@ namespace MBSim {
     doc.SaveFile((name.length()>13 && name.substr(name.length()-13,13)==".mbsimint.xml")?name:name+".mbsimint.xml");
   }
 
-}
+  // This function is called first by each implementation of Integrator::integrate.
+  // We modify here some integrator date for debugging (valgrind) purposes.
+  void Integrator::debugInit() {
+    // set a minimal end time: integrate only up to the first plot time (+10%) after the plot at tStart
+    if(getenv("MBSIM_SET_MINIMAL_TEND")!=NULL)
+      setEndTime(getStartTime()+1.1*getPlotStepSize());
+  }
 
+}
