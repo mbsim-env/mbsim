@@ -11,4 +11,4 @@ cd $(dirname $0)
 SCRDIR=$(pwd)
 export PKG_CONFIG_PATH=$SCRDIR/local/lib/pkgconfig
 cd $SCRDIR/mbsim/examples
-./runexamples.py -j 2 --reportOutDir /media/mbsim-env/MBSimDailyBuild/report/runexamples_valgrind_report --url http://www4.amm.mw.tu-muenchen.de/mbsim-env/MBSimDailyBuild/report/runexamples_valgrind_report --prefixSimulation "valgrind --error-exitcode=-30000 --trace-children=yes --num-callers=50" mechanics/basics/hierachical_modelling xmlflat/hierachical_modelling xml/hierachical_modelling mechanics/basics/time_dependent_kinematics xml/time_dependent_kinematics
+MBSIM_SET_MINIMAL_TEND=1 ./runexamples.py -j 2 --reportOutDir /media/mbsim-env/MBSimDailyBuild/report/runexamples_valgrind_report --url http://www4.amm.mw.tu-muenchen.de/mbsim-env/MBSimDailyBuild/report/runexamples_valgrind_report --prefixSimulation "valgrind --error-exitcode=-30000 --trace-children=yes --num-callers=50" --disableCompare --disableValidate
