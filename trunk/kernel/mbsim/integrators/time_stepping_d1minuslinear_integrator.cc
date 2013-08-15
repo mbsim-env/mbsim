@@ -112,6 +112,7 @@ namespace MBSim {
 
 
   void TimeSteppingD1MinusLinearIntegrator::integrate(DynamicSystemSolver& system) {
+    debugInit();
     preIntegrate(system);
     subIntegrate(system, tEnd);
     postIntegrate(system);

@@ -88,6 +88,7 @@ namespace MBSim {
   }
 
   void LSODARIntegrator::integrate(DynamicSystemSolver& system) {
+    debugInit();
     preIntegrate(system);
     subIntegrate(system, tEnd);
     postIntegrate(system);

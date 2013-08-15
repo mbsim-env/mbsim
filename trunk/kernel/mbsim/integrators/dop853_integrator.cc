@@ -68,6 +68,7 @@ namespace MBSim {
   }
 
   void DOP853Integrator::integrate(DynamicSystemSolver& system_) {
+    debugInit();
 
     system = &system_;
     int zSize=system->getzSize();

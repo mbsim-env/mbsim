@@ -127,6 +127,7 @@ namespace MBSim {
   }
 
   void RKSuiteIntegrator::integrate(DynamicSystemSolver& system) {
+    debugInit();
     preIntegrate(system);
     subIntegrate(system, tEnd);
     postIntegrate(system);
