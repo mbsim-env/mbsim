@@ -20,9 +20,10 @@
 #include <openmbvcppinterface/spineextrusion.h>
 #endif
 
-namespace MBSimFlexibleBody {
+#include "mbsimFlexibleBody/contours/nurbs_curve_1s.h"
 
-  class NurbsCurve1s;
+
+namespace MBSimFlexibleBody {
 
   /**
    * \brief finite element for spatial beam using Cosserat model
@@ -232,6 +233,7 @@ namespace MBSimFlexibleBody {
        * \brief contour for state description
        */
       NurbsCurve1s *curve;
+
 
       FlexibleBody1sCosserat(); // standard constructor
       FlexibleBody1sCosserat(const FlexibleBody1sCosserat&); // copy constructor
