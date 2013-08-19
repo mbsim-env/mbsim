@@ -22,7 +22,7 @@ AC_C_CONST
 AC_CHECK_FUNCS([sqrt])
 AC_HEADER_STDBOOL
 
-PKG_CHECK_MODULES(DEPS, mbsim >= 3.0.0)
+PKG_CHECK_MODULES(DEPS, mbsim >= 3.3.1)
 requires="mbsim"
 
 dnl Enable debugging 

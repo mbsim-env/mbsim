@@ -34,8 +34,6 @@
 
 namespace MBSimFlexibleBody {
 
-  class NurbsCurve1s;
-
   /**
    * \brief flexible body for planar beam using Cosserat model
    * \author Thomas Cebulla

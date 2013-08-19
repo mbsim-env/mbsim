@@ -22,10 +22,6 @@
 #include "mbsimFlexibleBody/contours/nurbs_curve_1s.h"
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_cosserat.h"
 
-#ifdef HAVE_NURBS
-using namespace PLib;
-#endif
-
 using namespace std;
 using namespace fmatvec;
 using namespace MBSim;
@@ -33,47 +29,21 @@ using namespace MBSim;
 namespace MBSimFlexibleBody {
 
   NurbsCurve1s::NurbsCurve1s(const std::string &name) :
-      MBSim::Contour1s(name), Elements(0), openStructure(false), L(0.), degU(0) {
-#ifndef HAVE_NURBS
-    throw MBSim::MBSimError("ERROR(NurbsCurve1s::NurbsCurve1s): External NURBS library not implemented!");
-#endif
+      MBSim::Contour1s(name), Elements(0), openStructure(false), L(0.), degU(0), curveTranslations(), curveVelocities(), curveAngularVelocities(), normalRotationGrid() {
   }
 
   NurbsCurve1s::~NurbsCurve1s() {
-#ifdef HAVE_NURBS
-    if (curveTranslations) {
-      delete curveTranslations;
-      curveTranslations = NULL;
-    }
-    if (curveVelocities) {
-      delete curveVelocities;
-      curveVelocities = NULL;
-    }
-    if (uvec) {
-      delete uvec;
-      uvec = NULL;
-    }
-    if (uVec) {
-      delete uVec;
-      uVec = NULL;
-    }
-#endif
   }
 
   void NurbsCurve1s::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) {
-#ifdef HAVE_NURBS
     if (ff == position || ff == position_cosy || ff == all) {
-      Point3Dd Tmppt = curveTranslations->pointAt(cp.getLagrangeParameterPosition()(0));
-      cp.getFrameOfReference().getPosition()(0) = Tmppt.x();
-      cp.getFrameOfReference().getPosition()(1) = Tmppt.y();
-      cp.getFrameOfReference().getPosition()(2) = Tmppt.z();
+      Vec3 Tmppt = curveTranslations.pointAt(cp.getLagrangeParameterPosition()(0));
+      cp.getFrameOfReference().setPosition(Tmppt);
     }
 
     if (ff == velocity || ff == velocity_cosy || ff == velocities || ff == velocities_cosy || ff == all) {
-      Point3Dd Tmpv = curveVelocities->pointAt(cp.getLagrangeParameterPosition()(0));
-      cp.getFrameOfReference().getVelocity()(0) = Tmpv.x();
-      cp.getFrameOfReference().getVelocity()(1) = Tmpv.y();
-      cp.getFrameOfReference().getVelocity()(2) = Tmpv.z();
+      Vec3 Tmpv = curveVelocities.pointAt(cp.getLagrangeParameterPosition()(0));
+      cp.getFrameOfReference().setVelocity(Tmpv);
     }
 
     if (ff == angularVelocity || ff == velocity_cosy || ff == velocities || ff == velocities_cosy || ff == all) {
@@ -83,16 +53,12 @@ namespace MBSimFlexibleBody {
         uStaggered = L - l0 / 2. + uStaggered;
       else
         uStaggered -= l0 / 2.;
-      Point3Dd Tmpav = curveAngularVelocities->pointAt(uStaggered);
-      cp.getFrameOfReference().getAngularAcceleration()(0) = Tmpav.x();
-      cp.getFrameOfReference().getAngularAcceleration()(1) = Tmpav.y();
-      cp.getFrameOfReference().getAngularAcceleration()(2) = Tmpav.z();
+      Vec3 Tmpav = curveAngularVelocities.pointAt(uStaggered);
+      cp.getFrameOfReference().setAngularAcceleration(Tmpav);
     }
-#endif
   }
 
   void NurbsCurve1s::updateJacobiansForFrame(ContourPointData &cp, int j /*=0*/) {
-#ifdef HAVE_NURBS
     cp.getFrameOfReference().getJacobianOfTranslation().resize(qSize);
     cp.getFrameOfReference().getJacobianOfRotation().resize(qSize); // TODO open structure
 
@@ -104,21 +70,15 @@ namespace MBSimFlexibleBody {
       uStaggered -= l0 / 2.;
 
     for (int k = 0; k < qSize; k++) {
-      Point3Dd TmpPtTrans = CurveJacobiansOfTranslation[k].pointAt(cp.getLagrangeParameterPosition()(0));
-      Point3Dd TmpPtRot = CurveJacobiansOfRotation[k].pointAt(uStaggered);
+      Vec3 TmpPtTrans = CurveJacobiansOfTranslation[k].pointAt(cp.getLagrangeParameterPosition()(0));
+      Vec3 TmpPtRot = CurveJacobiansOfRotation[k].pointAt(uStaggered);
 
-      cp.getFrameOfReference().getJacobianOfTranslation()(0, k) = TmpPtTrans.x();
-      cp.getFrameOfReference().getJacobianOfTranslation()(1, k) = TmpPtTrans.y();
-      cp.getFrameOfReference().getJacobianOfTranslation()(2, k) = TmpPtTrans.z();
+      cp.getFrameOfReference().getJacobianOfTranslation().set(k, TmpPtTrans);
 
-      cp.getFrameOfReference().getJacobianOfRotation()(0, k) = TmpPtRot.x();
-      cp.getFrameOfReference().getJacobianOfRotation()(1, k) = TmpPtRot.y();
-      cp.getFrameOfReference().getJacobianOfRotation()(2, k) = TmpPtRot.z();
+      cp.getFrameOfReference().getJacobianOfRotation().set(k, TmpPtRot);
     }
-#endif
   }
 
-#ifdef HAVE_NURBS
   void NurbsCurve1s::initContourFromBody(InitStage stage) {
     if (stage == resize) {
       degU = 3;
@@ -127,14 +87,6 @@ namespace MBSimFlexibleBody {
       openStructure = (static_cast<FlexibleBody1sCosserat*>(parent))->isOpenStructure();
       L = (static_cast<FlexibleBody1sCosserat*>(parent))->getLength();
 
-      if (openStructure)
-        computeUVector(Elements + 1);
-      else
-        computeUVector(Elements + degU);
-
-      curveTranslations = new PlNurbsCurved;
-      curveVelocities = new PlNurbsCurved;
-      curveAngularVelocities = new PlNurbsCurved;
       for (int i = 0; i < Elements; i++) { // TODO openstructure: jacobians of Rotation different
         jacobiansTrans.push_back(ContourPointData(i));
         jacobiansRot.push_back(ContourPointData(i, STAGGEREDNODE)); // jacobians of rotation are on staggered grid
@@ -145,8 +97,8 @@ namespace MBSimFlexibleBody {
       }
 
       for (int k = 0; k < qSize; k++) { // TODO openstructure: jacobians of Rotation different
-        CurveJacobiansOfTranslation.push_back(PlNurbsCurved());
-        CurveJacobiansOfRotation.push_back(PlNurbsCurved());
+        CurveJacobiansOfTranslation.push_back(NurbsCurve());
+        CurveJacobiansOfRotation.push_back(NurbsCurve());
       }
 
       computeCurveTranslations();
@@ -158,155 +110,124 @@ namespace MBSimFlexibleBody {
       R->getPosition() = (static_cast<FlexibleBody1sCosserat*>(parent))->getFrameOfReference()->getPosition();
     }
   }
-#endif
 
-#ifdef HAVE_NURBS
-  void NurbsCurve1s::computeUVector(const int NbPts) {
-    uvec = new PLib::Vector<double>(NbPts);
-    uVec = new PLib::Vector<double>(NbPts + degU + 1);
+  void NurbsCurve1s::computeCurveTranslations(bool update) {
 
-    const double stepU = L / Elements;
+    int nodes = Elements;
+    if (openStructure)
+      nodes++;
 
-    (*uvec)[0] = 0;
-    for (int i = 1; i < uvec->size(); i++) {
-      (*uvec)[i] = (*uvec)[i - 1] + stepU;
+    MatVx3 Nodelist(nodes, NONINIT);
+    for (int i = 0; i < nodes; i++) {
+      ContourPointData cp(i);
+      static_cast<FlexibleBody1sCosserat*>(parent)->updateKinematicsForFrame(cp, position);
+      Nodelist.set(i, trans(cp.getFrameOfReference().getPosition()));
     }
 
-    if (openStructure) {
-      for (int i = degU + 1; i < uVec->size() - (degU + 1); i++) {
-        (*uVec)[i] = (*uvec)[i - (degU - 1)];
-      }
-      for (int i = 0; i < degU + 1; i++) {
-        (*uVec)[i] = 0.;
-        (*uVec)[uVec->size() - i - 1] = L;
-      }
-    }
+    if (update)
+      curveTranslations.update(Nodelist);
     else {
-      (*uVec)[0] = (-degU) * stepU;
-      for (int i = 1; i < uVec->size(); i++) {
-        (*uVec)[i] = (*uVec)[i - 1] + stepU;
+      if (openStructure) {
+        curveTranslations.globalInterp(Nodelist, 0, L, degU, true);
+      }
+      else {
+        curveTranslations.globalInterpClosed(Nodelist, 0, L, degU, true);
       }
     }
   }
-#endif
 
-#ifdef HAVE_NURBS 
-  void NurbsCurve1s::computeCurveTranslations() {
-    if (openStructure) {
-      PLib::Vector<HPoint3Dd> Nodelist(Elements + 1);
-      for (int i = 0; i < Elements + 1; i++) {
-        ContourPointData cp(i);
-        static_cast<FlexibleBody1sCosserat*>(parent)->updateKinematicsForFrame(cp, position);
-        Nodelist[i] = HPoint3Dd(cp.getFrameOfReference().getPosition()(0), cp.getFrameOfReference().getPosition()(1), cp.getFrameOfReference().getPosition()(2), 1);
-      }
-      curveTranslations->globalInterpH(Nodelist, *uvec, *uVec, degU);
+  void NurbsCurve1s::computeCurveVelocities(bool update) {
+    int nodes = Elements;
+    if (openStructure)
+      nodes++;
+
+    MatVx3 Nodelist(nodes, NONINIT);
+    for (int i = 0; i < nodes; i++) {
+      ContourPointData cp(i);
+      static_cast<FlexibleBody1sCosserat*>(parent)->updateKinematicsForFrame(cp, position);
+      Nodelist.set(i, trans(cp.getFrameOfReference().getVelocity()));
     }
+
+    if (update)
+      curveVelocities.update(Nodelist);
     else {
-      PLib::Vector<HPoint3Dd> Nodelist(Elements + degU);
-      for (int i = 0; i < Elements; i++) {
-        ContourPointData cp(i);
-        static_cast<FlexibleBody1sCosserat*>(parent)->updateKinematicsForFrame(cp, position);
-        Nodelist[i] = HPoint3Dd(cp.getFrameOfReference().getPosition()(0), cp.getFrameOfReference().getPosition()(1), cp.getFrameOfReference().getPosition()(2), 1);
+      if (openStructure) {
+        curveVelocities.globalInterp(Nodelist, 0, L, degU, true);
       }
-      for (int i = 0; i < degU; i++) {
-        Nodelist[Elements + i] = Nodelist[i];
+      else {
+        curveVelocities.globalInterpClosed(Nodelist, 0, L, degU, true);
       }
-      curveTranslations->globalInterpClosedH(Nodelist, *uvec, *uVec, degU);
     }
   }
-#endif
 
-#ifdef HAVE_NURBS
-  void NurbsCurve1s::computeCurveVelocities() {
-    if (openStructure) {
-      PLib::Vector<HPoint3Dd> Nodelist(Elements + 1);
-      for (int i = 0; i < Elements + 1; i++) {
-        ContourPointData cp(i);
-        static_cast<FlexibleBody1sCosserat*>(parent)->updateKinematicsForFrame(cp, velocity);
-        Nodelist[i] = HPoint3Dd(cp.getFrameOfReference().getVelocity()(0), cp.getFrameOfReference().getVelocity()(1), cp.getFrameOfReference().getVelocity()(2), 1);
-      }
-      curveVelocities->globalInterpH(Nodelist, *uvec, *uVec, degU);
+  void NurbsCurve1s::computeCurveAngularVelocities(bool update) {
+    int nodes = Elements;
+    if (openStructure)
+      nodes++;
+
+    MatVx3 Nodelist(nodes, NONINIT);
+    for (int i = 0; i < nodes; i++) {
+      ContourPointData cp(i);
+      static_cast<FlexibleBody1sCosserat*>(parent)->updateKinematicsForFrame(cp, position);
+      Nodelist.set(i, trans(cp.getFrameOfReference().getAngularVelocity()));
     }
+
+    if (update)
+      curveAngularVelocities.update(Nodelist);
     else {
-      PLib::Vector<HPoint3Dd> Nodelist(Elements + degU);
-      for (int i = 0; i < Elements; i++) {
-        ContourPointData cp(i);
-        static_cast<FlexibleBody1sCosserat*>(parent)->updateKinematicsForFrame(cp, velocity);
-        Nodelist[i] = HPoint3Dd(cp.getFrameOfReference().getVelocity()(0), cp.getFrameOfReference().getVelocity()(1), cp.getFrameOfReference().getVelocity()(2), 1);
+      if (openStructure) {
+        curveAngularVelocities.globalInterp(Nodelist, 0, L, degU, true);
       }
-      for (int i = 0; i < degU; i++) {
-        Nodelist[Elements + i] = Nodelist[i];
+      else {
+        curveAngularVelocities.globalInterpClosed(Nodelist, 0, L, degU, true);
       }
-      curveVelocities->globalInterpClosedH(Nodelist, *uvec, *uVec, degU);
     }
   }
-#endif
 
-#ifdef HAVE_NURBS
-  void NurbsCurve1s::computeCurveAngularVelocities() {
-    if (openStructure) {
-      PLib::Vector<HPoint3Dd> Nodelist(Elements + 1);
-      for (int i = 0; i < Elements + 1; i++) {
-        ContourPointData cp(i);
-        static_cast<FlexibleBody1sCosserat*>(parent)->updateKinematicsForFrame(cp, angularVelocity);
-        Nodelist[i] = HPoint3Dd(cp.getFrameOfReference().getAngularVelocity()(0), cp.getFrameOfReference().getAngularVelocity()(1), cp.getFrameOfReference().getAngularVelocity()(2), 1);
-      }
-      curveAngularVelocities->globalInterpH(Nodelist, *uvec, *uVec, degU);
+  void NurbsCurve1s::computeCurveJacobians(bool translational, bool rot, bool update) {
+//TODO: All the if's should be unnecessary if every interpolation would be capsulated in two routines
+    int nodes = Elements;
+    if (openStructure)
+      nodes++;
+
+    MatVx3 NodelistTrans(nodes, NONINIT);
+    MatVx3 NodelistRot(nodes, NONINIT);
+
+    for (int i = 0; i < nodes; i++) {
+      if (translational)
+        static_cast<FlexibleBody1sCosserat*>(parent)->updateJacobiansForFrame(jacobiansTrans[i]);
+      if (rot)
+        static_cast<FlexibleBody1sCosserat*>(parent)->updateJacobiansForFrame(jacobiansRot[i]); // jacobians of rotation are on staggered grid
     }
-    else {
-      PLib::Vector<HPoint3Dd> Nodelist(Elements + degU);
-      for (int i = 0; i < Elements; i++) {
-        ContourPointData cp(i);
-        static_cast<FlexibleBody1sCosserat*>(parent)->updateKinematicsForFrame(cp, angularVelocity);
-        Nodelist[i] = HPoint3Dd(cp.getFrameOfReference().getAngularVelocity()(0), cp.getFrameOfReference().getAngularVelocity()(1), cp.getFrameOfReference().getAngularVelocity()(2), 1);
-      }
-      for (int i = 0; i < degU; i++) {
-        Nodelist[Elements + i] = Nodelist[i];
-      }
-      curveAngularVelocities->globalInterpClosedH(Nodelist, *uvec, *uVec, degU);
-    }
-  }
-#endif
 
-#ifdef HAVE_NURBS
-  void NurbsCurve1s::computeCurveJacobians(bool trans, bool rot) {
-    //TODO: All the if's should be unnecessary if every interpolation would be capsulated in two routines
+    for (int k = 0; k < qSize; k++) {
+      for (int i = 0; i < nodes; i++) {
+        if (translational)
+          NodelistTrans.set(i, trans(jacobiansTrans[i].getFrameOfReference().getJacobianOfTranslation(0).col(k)));
 
-    if (openStructure) {
-    } // TODO
-    else {
-      PLib::Vector<HPoint3Dd> NodelistTrans(Elements + degU);
-      PLib::Vector<HPoint3Dd> NodelistRot(Elements + degU);
-
-      for (int i = 0; i < Elements; i++) {
-        if (trans)
-          static_cast<FlexibleBody1sCosserat*>(parent)->updateJacobiansForFrame(jacobiansTrans[i]);
         if (rot)
-          static_cast<FlexibleBody1sCosserat*>(parent)->updateJacobiansForFrame(jacobiansRot[i]); // jacobians of rotation are on staggered grid
+          NodelistRot.set(i, trans(jacobiansRot[i].getFrameOfReference().getJacobianOfRotation(0).col(k)));
+
       }
-      for (int k = 0; k < qSize; k++) {
-        for (int i = 0; i < Elements; i++) {
-          if (trans)
-            NodelistTrans[i] = HPoint3Dd(jacobiansTrans[i].getFrameOfReference().getJacobianOfTranslation()(0, k), jacobiansTrans[i].getFrameOfReference().getJacobianOfTranslation()(1, k), jacobiansTrans[i].getFrameOfReference().getJacobianOfTranslation()(2, k), 1);
 
-          if (rot)
-            NodelistRot[i] = HPoint3Dd(jacobiansRot[i].getFrameOfReference().getJacobianOfRotation()(0, k), jacobiansRot[i].getFrameOfReference().getJacobianOfRotation()(1, k), jacobiansRot[i].getFrameOfReference().getJacobianOfRotation()(2, k), 1);
-        }
-        for (int i = 0; i < degU; i++) {
-          if (trans)
-            NodelistTrans[Elements + i] = NodelistTrans[i];
-          if (rot)
-            NodelistRot[Elements + i] = NodelistRot[i];
-        }
-
-        if (trans)
-          CurveJacobiansOfTranslation[k].globalInterpClosedH(NodelistTrans, *uvec, *uVec, degU);
+      if (update) {
+        if (translational)
+          CurveJacobiansOfTranslation[k].update(NodelistTrans);
         if (rot)
-          CurveJacobiansOfRotation[k].globalInterpClosedH(NodelistRot, *uvec, *uVec, degU);
+          CurveJacobiansOfRotation[k].update(NodelistRot);
+      }
+      else {
+        if (openStructure) {
+        } // TODO
+        else {
+          if (translational)
+            CurveJacobiansOfTranslation[k].globalInterpClosed(NodelistTrans, 0, L, degU, true);
+          if (rot)
+            CurveJacobiansOfRotation[k].globalInterpClosed(NodelistRot, 0, L, degU, true);
+        }
       }
     }
   }
-#endif
 
 }
 
