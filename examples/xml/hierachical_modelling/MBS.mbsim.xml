@@ -12,7 +12,7 @@
   <links/>
   <environments>
     <MBSimEnvironment>
-      <accelerationOfGravity>[0;-9.81*0;0]</accelerationOfGravity>
+      <accelerationOfGravity><pv:fromFile href="gravity.txt"/></accelerationOfGravity>
     </MBSimEnvironment>
   </environments>
 </DynamicSystemSolver>
