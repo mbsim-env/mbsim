@@ -90,6 +90,7 @@ cfgOpts.add_argument("--rtol", default=2e-5, type=float,
 cfgOpts.add_argument("--disableRun", action="store_true", help="disable running the example on action 'report'")
 cfgOpts.add_argument("--disableCompare", action="store_true", help="disable comparing the results on action 'report'")
 cfgOpts.add_argument("--disableValidate", action="store_true", help="disable validating the XML files on action 'report'")
+cfgOpts.add_argument("--printToConsole", action='store_const', const=sys.stdout, help="print all output also to the console")
 cfgOpts.add_argument("--buildType", default="", type=str, help="Description of the build type (e.g: 'Daily Build: ')")
 cfgOpts.add_argument("--prefixSimulation", default=None, type=str,
   help="prefix the simulation command (./main, mbsimflatxml, mbsimxml) with this string: e.g. 'valgrind --tool=callgrind'")
@@ -108,6 +109,31 @@ debugOpts.add_argument("--debugValidateHTMLOutput", action="store_true",
 
 # parse command line options
 args = argparser.parse_args()
+
+# A file object which prints to multiple files
+class MultiFile(object):
+  def __init__(self, file1, second=None):
+    self.filelist=[file1]
+    if second!=None:
+      self.filelist.append(second)
+  def write(self, str):
+    for f in self.filelist:
+      f.write(str)
+  def flush(self):
+    for f in self.filelist:
+      f.flush()
+  def close(self):
+    for f in self.filelist:
+      if f!=sys.stdout and f!=sys.stderr:
+        f.close()
+# subprocess call with MultiFile output
+def subprocessCall(args, f, env=os.environ):
+  proc=subprocess.Popen(args, stderr=subprocess.STDOUT, stdout=subprocess.PIPE, bufsize=-1, env=env)
+  while True:
+    line=proc.stdout.read(100)
+    if line==b'': break
+    print(line.decode("utf-8"), end="", file=f)
+  return proc.wait()
 
 # the main routine being called ones
 def main():
@@ -378,7 +404,7 @@ def runExample(resultQueue, example):
     executeFN=pj(example[0], "execute.txt")
     executeRet=0
     if not args.disableRun:
-      executeFD=open(pj(args.reportOutDir, executeFN), "w")
+      executeFD=MultiFile(open(pj(args.reportOutDir, executeFN), "w"), args.printToConsole)
       dt=0
       if os.path.isfile("Makefile"):
         executeRet, dt=executeSrcExample(executeFD)
@@ -504,7 +530,7 @@ def runExample(resultQueue, example):
 
   except:
     fatalScriptErrorFN=pj(example[0], "fatalScriptError.txt")
-    fatalScriptErrorFD=open(pj(args.reportOutDir, fatalScriptErrorFN), "w")
+    fatalScriptErrorFD=MultiFile(open(pj(args.reportOutDir, fatalScriptErrorFN), "w"), args.printToConsole)
     print("Fatal Script Errors should not happen. So this is a bug in runexamples.py which should be fixed.", file=fatalScriptErrorFD)
     print("", file=fatalScriptErrorFD)
     print(traceback.format_exc(), file=fatalScriptErrorFD)
@@ -524,8 +550,8 @@ def executeSrcExample(executeFD):
   print("make clean && make && "+pj(os.curdir, "main"), file=executeFD)
   print("", file=executeFD)
   executeFD.flush()
-  if subprocess.call(["make", "clean"], stderr=subprocess.STDOUT, stdout=executeFD)!=0: return 1, 0
-  if subprocess.call(["make"], stderr=subprocess.STDOUT, stdout=executeFD)!=0: return 1, 0
+  if subprocessCall(["make", "clean"], executeFD)!=0: return 1, 0
+  if subprocessCall(["make"], executeFD)!=0: return 1, 0
   # append $prefix/lib to LD_LIBRARY_PATH/PATH to find lib by main of the example
   if os.name=="posix":
     NAME="LD_LIBRARY_PATH"
@@ -541,7 +567,7 @@ def executeSrcExample(executeFD):
     mainEnv[NAME]=libDir
   # run main
   t0=datetime.datetime.now()
-  if subprocess.call(args.prefixSimulation+[pj(os.curdir, "main"+args.exeExt)], stderr=subprocess.STDOUT, stdout=executeFD, env=mainEnv)!=0: return 1, 0
+  if subprocessCall(args.prefixSimulation+[pj(os.curdir, "main"+args.exeExt)], executeFD, env=mainEnv)!=0: return 1, 0
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
   return 0, dt
@@ -561,8 +587,8 @@ def executeXMLExample(executeFD):
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  if subprocess.call(args.prefixSimulation+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+parMBSimOption+parIntOption+mpathOption+
-                     ["MBS.mbsim.xml", "Integrator.mbsimint.xml"], stderr=subprocess.STDOUT, stdout=executeFD)!=0: return 1, 0
+  if subprocessCall(args.prefixSimulation+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+parMBSimOption+parIntOption+mpathOption+
+                    ["MBS.mbsim.xml", "Integrator.mbsimint.xml"], executeFD)!=0: return 1, 0
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
   return 0, dt
@@ -576,8 +602,8 @@ def executeFlatXMLExample(executeFD):
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  if subprocess.call(args.prefixSimulation+[pj(mbsimBinDir, "mbsimflatxml"+args.exeExt), "MBS.mbsim.flat.xml", "Integrator.mbsimint.xml"],
-                     stderr=subprocess.STDOUT, stdout=executeFD)!=0: return 1, 0
+  if subprocessCall(args.prefixSimulation+[pj(mbsimBinDir, "mbsimflatxml"+args.exeExt), "MBS.mbsim.flat.xml", "Integrator.mbsimint.xml"],
+                    executeFD)!=0: return 1, 0
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
   return 0, dt
@@ -679,7 +705,7 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, label, data
 
   # run gnuplot
   try:
-    subprocess.call(["gnuplot", diffGPFileName])
+    subprocessCall(["gnuplot", diffGPFileName], sys.stdout)
   except OSError:
     print("gnuplot not found. Hence no compare plot will be generated. Add gnuplot to PATH to enable.")
 
@@ -956,15 +982,15 @@ def validateXML(example, consoleOutput, htmlOutputFD):
     for curType in types:
       for filename in fnmatch.filter(filenames, curType[0]):
         outputFN=pj(example[0], filename+".txt")
-        outputFD=open(pj(args.reportOutDir, outputFN), "w")
+        outputFD=MultiFile(open(pj(args.reportOutDir, outputFN), "w"), args.printToConsole)
         print('<tr>', file=htmlOutputFD)
         print('<td>'+filename+'</td>', file=htmlOutputFD)
         print("Running command:", file=outputFD)
         list(map(lambda x: print(x, end=" ", file=outputFD), [xmllint, "--xinclude", "--noout", "--schema", curType[1], pj(root, filename)]))
         print("\n", file=outputFD)
         outputFD.flush()
-        if subprocess.call([xmllint, "--xinclude", "--noout", "--schema", curType[1], pj(root, filename)],
-                           stderr=subprocess.STDOUT, stdout=outputFD)!=0:
+        if subprocessCall([xmllint, "--xinclude", "--noout", "--schema", curType[1], pj(root, filename)],
+                          outputFD)!=0:
           nrFailed+=1
           print('<td><a href="'+myurllib.pathname2url(filename+".txt")+'"><span style="color:red">failed</span></a></td>', file=htmlOutputFD)
         else:
@@ -1019,8 +1045,8 @@ def validateHTMLOutput():
   for root, _, filenames in os.walk(args.reportOutDir):
     for filename in filenames:
       if os.path.splitext(filename)[1]==".html":
-        subprocess.call([xmllint, "--xinclude", "--noout", "--schema",
-          schema, pj(root, filename)])
+        subprocessCall([xmllint, "--xinclude", "--noout", "--schema",
+          schema, pj(root, filename)], sys.stdout)
 
 
 
