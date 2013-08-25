@@ -334,7 +334,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="orientation" type="pv:nounitMatrix">
+      <xs:element name="orientation" type="pv:rotationMatrix">
         <xs:annotation>
           <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
             Relative Orientierung des Koordinatensystems.<br/>
@@ -377,7 +377,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="orientation" type="pv:nounitMatrix">
+      <xs:element name="orientation" type="pv:rotationMatrix">
         <xs:annotation>
           <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
             Relative Orientierung der Kontur.<br/>
@@ -419,7 +419,7 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="orientation" type="pv:nounitMatrix" minOccurs="0">
+          <xs:element name="orientation" type="pv:rotationMatrix" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Relative Orientierung der Gruppe. Transformationsmatrix vom KOS "I" dieser Gruppe in das KOS <tt>frameOfReference</tt>.
@@ -2194,7 +2194,7 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="relativeOrientation" type="pv:nounitMatrix" minOccurs="0">
+          <xs:element name="relativeOrientation" type="pv:rotationMatrix" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Relative Orientierung des Koordinatensystems.<br/>

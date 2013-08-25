@@ -83,7 +83,13 @@
             <offset>1</offset>
           </enableOpenMBV>
           <relativePosition>[0;-h2/2;0]</relativePosition>
-          <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+          <relativeOrientation>
+            <pv:cardan>
+              <pv:alpha>0</pv:alpha>
+              <pv:beta>0</pv:beta>
+              <pv:gamma>0</pv:gamma>
+            </pv:cardan>
+          </relativeOrientation>
         </FixedRelativeFrame>
       </frames>
       <contours/>
