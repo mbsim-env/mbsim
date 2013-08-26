@@ -1322,6 +1322,13 @@ namespace MBSim {
       return 0;
   }
 
+  int SingleContact::getFrictionDirections() const {
+    if (fdf)
+      return fdf->getFrictionDirections();
+    else
+      return 0;
+  }
+
   void SingleContact::connect(Contour *contour0, Contour* contour1, ContactKinematics* contactKinematics_ /*=0*/) {
     LinkMechanics::connect(contour0);
     LinkMechanics::connect(contour1);
