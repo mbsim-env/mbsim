@@ -21,13 +21,16 @@
       <mass>6e-3</mass>
       <inertiaTensor>[8e-7,0,0 ; 0,7e-7,0 ; 0,0,8e-7]</inertiaTensor>
       <translation>
-        <LinearTranslation>
-          <translationVectors>[1,0,0;0,1,0;0,0,1]</translationVectors>
-        </LinearTranslation>
+        <LinearFunction_VV>
+          <slope>[1,0,0;0,1,0;0,0,1]</slope>
+        </LinearFunction_VV>
       </translation>
       <rotation>
-        <CardanAngles/>
+        <RotationAboutAxesXYZ_V/>
       </rotation>
+      <rotationMapping>
+        <TCardanAngles_V/>
+      </rotationMapping>
       <frames/>
       <contours>
         <contour>

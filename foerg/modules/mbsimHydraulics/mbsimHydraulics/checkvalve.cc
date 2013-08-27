@@ -223,7 +223,7 @@ namespace MBSimHydraulics {
     setLineDiameter(getDouble(ee));
     ee = e->FirstChildElement(MBSIMHYDRAULICSNS"checkvalvePressureLoss");
     TiXmlElement * eee = ee->FirstChildElement();
-    CheckvalveClosablePressureLoss * ccpl_=MBSim::ObjectFactory<Function<double(double)> >::create<CheckvalveClosablePressureLoss>(eee);
+    CheckvalveClosablePressureLoss * ccpl_=MBSim::ObjectFactory<FunctionBase>::create<CheckvalveClosablePressureLoss>(eee);
     ccpl_->initializeUsingXML(eee);
     setLinePressureLoss(ccpl_);
     eee = ee->FirstChildElement(MBSIMHYDRAULICSNS"minimalXOpen");
@@ -239,7 +239,7 @@ namespace MBSimHydraulics {
       setBallInitialPosition(getDouble(ee));
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"Spring");
     ee = e->FirstChildElement(MBSIMHYDRAULICSNS"forceFunction");
-    Function<double(double,double)> *f=MBSim::ObjectFactory<Function<double(double,double)> >::create<Function<double(double,double)> >(ee->FirstChildElement());
+    Function<double(double,double)> *f=MBSim::ObjectFactory<FunctionBase>::create<Function<double(double,double)> >(ee->FirstChildElement());
     f->initializeUsingXML(ee->FirstChildElement());
     setSpringForceFunction(f);
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"SeatContact");

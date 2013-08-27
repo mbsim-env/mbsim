@@ -47,7 +47,7 @@ namespace MBSimControl {
   void FunctionSensor::initializeUsingXML(TiXmlElement *element) {
     Sensor::initializeUsingXML(element);
     TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"function");
-    function=MBSim::ObjectFactory<fmatvec::Function<VecV(double)> >::create<fmatvec::Function<VecV(double)> >(e->FirstChildElement()); 
+    function=MBSim::ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<VecV(double)> >(e->FirstChildElement()); 
     function->initializeUsingXML(e->FirstChildElement());
     y=(*function)(0);
   }
@@ -59,7 +59,7 @@ namespace MBSimControl {
     TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
     signalString = e->Attribute("ref");
     e=element->FirstChildElement(MBSIMCONTROLNS"function");
-    fun=MBSim::ObjectFactory<fmatvec::Function<double(double)> >::create<fmatvec::Function<double(double)> >(e->FirstChildElement()); 
+    fun=MBSim::ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<double(double)> >(e->FirstChildElement()); 
     fun->initializeUsingXML(e->FirstChildElement());
   }
 
@@ -90,7 +90,7 @@ namespace MBSimControl {
     e=element->FirstChildElement(MBSIMCONTROLNS"secondInputSignal");
     signal2String = e->Attribute("ref");
     e=element->FirstChildElement(MBSIMCONTROLNS"function");
-    fun=MBSim::ObjectFactory<fmatvec::Function<double(double,double)> >::create<fmatvec::Function<double(double,double)> >(e->FirstChildElement()); 
+    fun=MBSim::ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<double(double,double)> >(e->FirstChildElement()); 
     fun->initializeUsingXML(e->FirstChildElement());
   }
 

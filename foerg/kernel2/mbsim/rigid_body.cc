@@ -756,21 +756,27 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"inertiaTensor");
     setInertiaTensor(getSymMat3(e));
     e=element->FirstChildElement(MBSIMNS"translation");
-    Function<Vec3(VecV)> *trans=ObjectFactory<Function<Vec3(VecV)> >::create<Function<Vec3(VecV)> >(e->FirstChildElement());
-//    Translation *trans=ObjectFactory<Translation>::create<Translation>(e->FirstChildElement());
+    Function<Vec3(VecV)> *trans=ObjectFactory<FunctionBase>::create<Function<Vec3(VecV)> >(e->FirstChildElement());
     if(trans) {
-      setTranslation(trans);
       trans->initializeUsingXML(e->FirstChildElement());
+      setTranslation(trans);
     }
     e=element->FirstChildElement(MBSIMNS"rotation");
-    Function<RotMat3(VecV)> *rot=ObjectFactory<Function<RotMat3(VecV)> >::create<Function<RotMat3(VecV)> >(e->FirstChildElement());
-    //Rotation *rot=ObjectFactory<Rotation>::create<Rotation>(e->FirstChildElement());
+    Function<RotMat3(VecV)> *rot=ObjectFactory<FunctionBase>::create<Function<RotMat3(VecV)> >(e->FirstChildElement());
     if(rot) {
       rot->initializeUsingXML(e->FirstChildElement());
       TiXmlElement *ee=e->FirstChildElement(MBSIMNS"isDependent");
       bool dep = false;
       if(ee) dep = getBool(ee);
       setRotation(rot,dep);
+    }
+    e=element->FirstChildElement(MBSIMNS"rotationMapping");
+    if(e) {
+      Function<MatV(VecV)> *TR=ObjectFactory<FunctionBase>::create<Function<MatV(VecV)> >(e->FirstChildElement());
+      if(TR) {
+        TR->initializeUsingXML(e->FirstChildElement());
+        setRotationMapping(TR);
+      }
     }
 
     e=element->FirstChildElement(MBSIMNS"isFrameOfBodyForRotation");

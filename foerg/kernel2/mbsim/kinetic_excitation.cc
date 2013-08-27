@@ -157,7 +157,7 @@ namespace MBSim {
       TiXmlElement *ee=e->FirstChildElement();
       Mat dir=getMat(ee,3,0);
       ee=ee->NextSiblingElement();
-      Function<VecV(double)> *func=ObjectFactory<Function<VecV(double)> >::create<Function<VecV(double)> >(ee->FirstChildElement());
+      Function<VecV(double)> *func=ObjectFactory<FunctionBase>::create<Function<VecV(double)> >(ee->FirstChildElement());
       func->initializeUsingXML(ee->FirstChildElement());
       setForce(dir, func);
       ee=ee->NextSiblingElement();
@@ -175,7 +175,7 @@ namespace MBSim {
       TiXmlElement *ee=e->FirstChildElement();
       Mat dir=getMat(ee,3,0);
       ee=ee->NextSiblingElement();
-      Function<VecV(double)> *func=ObjectFactory<Function<VecV(double)> >::create<Function<VecV(double)> >(ee->FirstChildElement());
+      Function<VecV(double)> *func=ObjectFactory<FunctionBase>::create<Function<VecV(double)> >(ee->FirstChildElement());
       func->initializeUsingXML(ee->FirstChildElement());
       setMoment(dir, func);
       ee=ee->NextSiblingElement();
