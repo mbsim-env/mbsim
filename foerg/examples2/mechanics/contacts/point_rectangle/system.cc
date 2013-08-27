@@ -64,7 +64,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     balls[k]->setFrameForKinematics(balls[k]->getFrame("C"));
     balls[k]->setMass(mass);
     balls[k]->setInertiaTensor(Theta);
-    balls[k]->setTranslation(new LinearTranslation(SqrMat(3,EYE))); // only translational dof because of point masses
+    balls[k]->setTranslation(new LinearFunction<Vec3(VecV)>(SqrMat(3,EYE))); // only translational dof because of point masses
     Vec3 u0;
     if(k==0)
       u0(1) = 1;

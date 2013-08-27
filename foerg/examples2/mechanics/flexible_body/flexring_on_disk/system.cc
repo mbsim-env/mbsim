@@ -138,7 +138,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 //    JacTrans(0,0) = 1.;
 //    JacTrans(1,1) = 1.;
 //    disk->setTranslation(new LinearTranslation(JacTrans));
-    disk->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1.0]")));
+    disk->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1.0]")));
 
     CircleSolid *cDisk = new CircleSolid("cDisk");
     cDisk->setRadius(radiiDisks(i));

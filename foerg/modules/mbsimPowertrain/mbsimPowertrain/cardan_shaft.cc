@@ -80,8 +80,8 @@ namespace MBSimPowertrain {
     welle2->setMass(data.massIntermediateShaft);
     welle2->setInertiaTensor(data.inertiaTensorIntermediateShaft);
 
-    welle2->setTranslation(new LinearTranslation("[0;0;1]"));
-    welle2->setRotation(new RotationAboutAxesXY);
+    welle2->setTranslation(new LinearFunction<Vec3(VecV)>("[0;0;1]"));
+    welle2->setRotation(new RotationAboutAxesXY<VecV>);
     welle2->setFrameOfReference(welle1->getFrame("Q"));
     SrSP.init(0);
     SrSP(2) = -data.lengthIntermediateShaft/2;
@@ -100,7 +100,7 @@ namespace MBSimPowertrain {
     SrSP.init(0);
     SrSP(2) = -data.lengthOutputShaft/2;
 
-    welle3->setRotation(new RotationAboutAxesXY);
+    welle3->setRotation(new RotationAboutAxesXY<VecV>);
     welle3->setFrameOfReference(welle2->getFrame("Q"));
     welle3->addFrame("K",SrSP,SqrMat(3,EYE));
     welle3->setFrameForKinematics(welle3->getFrame("K"));

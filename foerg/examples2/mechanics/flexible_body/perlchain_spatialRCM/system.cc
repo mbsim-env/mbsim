@@ -102,8 +102,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     balls.push_back(ball);
     balls[i]->setFrameOfReference(this->getFrame("I"));
     balls[i]->setFrameForKinematics(balls[i]->getFrame("C"));
-    balls[i]->setTranslation(new LinearTranslation("[1,0;0,1;0,0]"));
-    balls[i]->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+    balls[i]->setTranslation(new LinearFunction<Vec3(VecV)>("[1,0;0,1;0,0]"));
+    balls[i]->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
     balls[i]->setMass(mass);
     SymMat Theta(3,INIT,0.);
     Theta(0,0) = 1./6.*mass*b*b;

@@ -38,8 +38,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setFrameForKinematics(body->getFrame("C"));
 
   Mat J("[1,0,0;0,1,0;0,0,1]");
-  body->setTranslation(new LinearTranslation(J));
-  body->setRotation(new CardanAngles);
+  body->setTranslation(new LinearFunction<Vec3(VecV)>(SqrMat3(EYE)));
+  body->setRotation(new RotationAboutAxesXYZ<VecV>);
+  body->setRotationMapping(new TCardanAngles<VecV>);
   double m = 0.1;
   double l,b,h;
   l = 0.01;

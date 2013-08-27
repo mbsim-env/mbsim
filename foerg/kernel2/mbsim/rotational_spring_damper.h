@@ -66,6 +66,8 @@ namespace MBSim {
        */
       void setForceFunction(fmatvec::Function<double(double,double)> *func_) { func=func_; }
 
+      void setTorqueDir(fmatvec::Vec3 &torqueDir_) { torqueDir=torqueDir_; }
+
       /** \brief Set a projection direction for the resulting torque
        * If this function is not set, or frame is NULL, than torque calculated by setForceFunction
        * is applied on the two connected frames in the direction of the two connected frames.

@@ -22,8 +22,8 @@
 
 #include "mbsim/body.h"
 #include "fmatvec.h"
-#include "mbsim/kinematics.h"
 #include "function.h"
+#include "utils/function_library.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 namespace OpenMBV {

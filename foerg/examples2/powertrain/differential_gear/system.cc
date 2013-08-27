@@ -42,7 +42,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   shaft1->setMass(m1);
   Theta(2,2) = J;
   shaft1->setInertiaTensor(Theta);
-  shaft1->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  shaft1->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   r.init(0);
   r(2) = l/2;
   shaft1->addFrame("Q",r,SqrMat(3,EYE));

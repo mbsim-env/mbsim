@@ -98,13 +98,13 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // Generalisierte Koordinaten
 
-  Crank->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  Crank->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
 
-  Rod->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  Rod->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
 
-  Piston->setTranslation(new LinearTranslation("[1,0;0,1;0,0]"));
+  Piston->setTranslation(new LinearFunction<Vec3(VecV)>("[1,0;0,1;0,0]"));
 
-  Block->setTranslation(new LinearTranslation("[1,0;0,1;0,0]"));
+  Block->setTranslation(new LinearFunction<Vec3(VecV)>("[1,0;0,1;0,0]"));
 
   //------------------------------------------------------------------------------
 

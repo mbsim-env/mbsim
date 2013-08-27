@@ -39,8 +39,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setFrameForKinematics(body->getFrame("C"));
   body->setMass(m);
   body->setInertiaTensor(Theta);
-  body->setTranslation(new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
-  body->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  body->setTranslation(new LinearFunction<Vec3(VecV)>("[1, 0; 0, 1; 0, 0]"));
+  body->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
 
   // Fixed cylinder as obstacle 
   RigidBody* body2 = new RigidBody("ObstacleCylinder");
@@ -60,8 +60,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body3->setFrameForKinematics(body3->getFrame("C"));
   body3->setMass(m);
   body3->setInertiaTensor(Theta);
-  body3->setTranslation(new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
-  body3->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  body3->setTranslation(new LinearFunction<Vec3(VecV)>("[1, 0; 0, 1; 0, 0]"));
+  body3->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
 
 
 

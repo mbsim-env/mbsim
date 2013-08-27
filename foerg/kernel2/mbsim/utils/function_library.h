@@ -841,6 +841,36 @@ namespace MBSim {
   };
 
   template<class Arg> 
+    class RotationAboutXAxis : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
+      private:
+        fmatvec::RotMat3 A;
+        fmatvec::Vec3 a;
+      public:
+        RotationAboutXAxis() { a(0) = 1; A(0,0) = 1; }
+        typename fmatvec::Size<Arg>::type getArgSize() const {
+          return 1;
+        }
+        fmatvec::RotMat3 operator()(const Arg &q) {
+          double alpha = ToDouble<Arg>::cast(q);
+          const double cosq=cos(alpha);
+          const double sinq=sin(alpha);
+          A(1,1) = cosq;
+          A(2,1) = sinq;
+          A(1,2) = -sinq;
+          A(2,2) = cosq;
+          return A;
+        }
+        typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDer(const Arg &q) {
+          return a;
+        }
+        typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) {
+          return typename fmatvec::Der<fmatvec::RotMat3, Arg>::type(1);
+        }
+        const fmatvec::Vec3& getAxisOfRotation() const { return a; }
+        void setAxisOfRotation(const fmatvec::Vec3 &a_) { a = a_; }
+    };
+
+  template<class Arg> 
     class RotationAboutZAxis : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
       private:
         fmatvec::RotMat3 A;
@@ -908,6 +938,50 @@ namespace MBSim {
         }
         const fmatvec::Vec3& getAxisOfRotation() const { return a; }
         void setAxisOfRotation(const fmatvec::Vec3 &a_) { a = a_; }
+    };
+
+  template<class Arg> 
+    class RotationAboutAxesXY : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
+      private:
+        fmatvec::RotMat3 A;
+        fmatvec::Mat3xV J, Jd;
+      public:
+        RotationAboutAxesXY() : J(2), Jd(2) { J.e(0,0) = 1; }
+        typename fmatvec::Size<Arg>::type getArgSize() const {
+          return 2;
+        }
+        fmatvec::RotMat3 operator()(const Arg &q) {
+          double a=q(0);
+          double b=q(1);
+          double cosa = cos(a);
+          double sina = sin(a);
+          double cosb = cos(b);
+          double sinb = sin(b);
+
+          A.e(0,0) = cosb;
+          A.e(1,0) = sina*sinb;
+          A.e(2,0) = -cosa*sinb;
+          A.e(1,1) = cosa;
+          A.e(2,1) = sina;
+          A.e(0,2) = sinb;
+          A.e(1,2) = -sina*cosb;
+          A.e(2,2) = cosa*cosb;
+          return A;
+        }
+        typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDer(const Arg &q) {
+          double a = q(0);
+          J.e(1,1) = cos(a);
+          J.e(2,1) = sin(a);
+          return J;
+        }
+        typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) {
+          double a = q(0);
+          double ad = qd(0);
+          double bd = qd(1);
+          Jd.e(1) = -sin(a)*ad*bd;
+          Jd.e(2) = cos(a)*ad*bd;
+          return Jd;
+        }
     };
 
   template<class Arg> 

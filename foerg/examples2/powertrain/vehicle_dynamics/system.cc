@@ -142,8 +142,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   Vec SrSP(3);
 
-  karosserie->setTranslation(new LinearTranslation(SqrMat(3,EYE)));
-  karosserie->setRotation(new CardanAngles);
+  karosserie->setTranslation(new LinearFunction<Vec3(VecV)>(SqrMat(3,EYE)));
+  karosserie->setRotation(new RotationAboutAxesXYZ<VecV>);
+  karosserie->setRotationMapping(new TCardanAngles<VecV>);
   karosserie->setFrameOfReference(getFrame("I"));
   karosserie->setFrameForKinematics(karosserie->getFrame("C"));
   karosserie->setPlotFeature(stateDerivative,enabled);
@@ -183,8 +184,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   vl->setMass(mR);
   vl->setInertiaTensor(ThetaR);
 
-  vl->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
-  vl->setTranslation(new LinearTranslation(Vec("[0;1;0]")));
+  vl->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
+  vl->setTranslation(new LinearFunction<Vec3(VecV)>(Vec("[0;1;0]")));
   vl->setFrameOfReference(karosserie->getFrame("VL"));
   vl->setFrameForKinematics(vl->getFrame("C"));
 
@@ -200,8 +201,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   vr->setMass(mR);
   vr->setInertiaTensor(ThetaR);
 
-  vr->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
-  vr->setTranslation(new LinearTranslation(Vec("[0;1;0]")));
+  vr->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
+  vr->setTranslation(new LinearFunction<Vec3(VecV)>(Vec("[0;1;0]")));
   vr->setFrameOfReference(karosserie->getFrame("VR"));
   vr->setFrameForKinematics(vr->getFrame("C"));
 
@@ -216,8 +217,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   hl->setMass(mR);
   hl->setInertiaTensor(ThetaR);
 
-  hl->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
-  hl->setTranslation(new LinearTranslation(Vec("[0;1;0]")));
+  hl->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
+  hl->setTranslation(new LinearFunction<Vec3(VecV)>(Vec("[0;1;0]")));
   hl->setFrameOfReference(karosserie->getFrame("HL"));
   hl->setFrameForKinematics(hl->getFrame("C"));
 
@@ -232,8 +233,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   hr->setMass(mR);
   hr->setInertiaTensor(ThetaR);
 
-  hr->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
-  hr->setTranslation(new LinearTranslation(Vec("[0;1;0]")));
+  hr->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
+  hr->setTranslation(new LinearFunction<Vec3(VecV)>(Vec("[0;1;0]")));
 
   hr->setFrameOfReference(karosserie->getFrame("HR"));
   hr->setFrameForKinematics(hr->getFrame("C"));
@@ -461,7 +462,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   I(1,1) = m*pow(l,2)/12.0;
   I(2,2) = m*pow(l,2)/2.0;
   shaft1->setInertiaTensor(I);
-  shaft1->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  shaft1->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
   rSD.init(0);
   rSD(2) = l/2;
   shaft1->addFrame("Q",rSD,SqrMat(3,EYE));

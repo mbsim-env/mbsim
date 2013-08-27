@@ -162,7 +162,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
     scheibe->setPlotFeature(stateDerivative, enabled);
     scheibe->setPlotFeature(rightHandSide, enabled);
     if (i>0)
-      scheibe->setRotation(new RotationAboutFixedAxis(Vec("[0; 0; 1]")));
+      scheibe->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0; 0; 1]")));
 #ifdef HAVE_OPENMBVCPPINTERFACE
     OpenMBV::Extrusion * scheibeVisu = new OpenMBV::Extrusion();
     scheibeVisu->setHeight(h);

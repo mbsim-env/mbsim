@@ -89,7 +89,7 @@ namespace MBSimPowertrain {
     housing->addFrame("Q",r,SqrMat(3,EYE));
     shaft2->setFrameOfReference(housing->getFrame("Q"));
     shaft2->setFrameForKinematics(shaft2->getFrame("C"));
-    shaft2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+    shaft2->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
 
     shaft2->setMass(data.massInputShaft);
     shaft2->setInertiaTensor(data.inertiaTensorInputShaft);
@@ -102,7 +102,7 @@ namespace MBSimPowertrain {
     shaft2->addFrame("Q",r,BasicRotAKIy(M_PI/2));
     planet->setFrameOfReference(shaft2->getFrame("Q"));
     planet->setFrameForKinematics(planet->getFrame("C"));
-    planet->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+    planet->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
 
     planet->setMass(data.massPlanet);
     planet->setInertiaTensor(data.inertiaTensorPlanet);
@@ -115,7 +115,7 @@ namespace MBSimPowertrain {
     housing->addFrame("L",r,SqrMat(3,EYE),housing->getFrame("Q"));
     shaft4->setFrameOfReference(housing->getFrame("L"));
     shaft4->setFrameForKinematics(shaft4->getFrame("C"));
-    shaft4->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+    shaft4->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
     r(2) = -data.lengthLeftOutputShaft/2;
     shaft4->addFrame("Q",r,BasicRotAKIy(M_PI));
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -133,7 +133,7 @@ namespace MBSimPowertrain {
     housing->addFrame("R",r,SqrMat(3,EYE),housing->getFrame("Q"));
     shaft5->setFrameOfReference(housing->getFrame("R"));
     shaft5->setFrameForKinematics(shaft5->getFrame("C"));
-    shaft5->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+    shaft5->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
     r(2) = data.lengthRightOutputShaft/2;
     shaft5->addFrame("Q",r,SqrMat(3,EYE));
 #ifdef HAVE_OPENMBVCPPINTERFACE

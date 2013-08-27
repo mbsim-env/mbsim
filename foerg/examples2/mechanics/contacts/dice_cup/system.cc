@@ -38,8 +38,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Theta(1,1)=1./12.*mass*(length*length+length*length);
   Theta(2,2)=1./12.*mass*(length*length+length*length);
   dice->setInertiaTensor(Theta);
-  dice->setRotation(new CardanAngles()); 
-  dice->setTranslation(new LinearTranslation("[1,0,0;0,1,0;0,0,1]"));	
+  dice->setTranslation(new LinearFunction<Vec3(VecV)>(SqrMat3(EYE)));
+  dice->setRotation(new RotationAboutAxesXYZ<VecV>);
+  dice->setRotationMapping(new TCardanAngles<VecV>);
 
   this->addObject(dice);
 

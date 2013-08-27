@@ -21,16 +21,15 @@
 #include "mbsimFlexibleBody/utils/angles.h"
 
 using namespace fmatvec;
-using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  Angles::Angles() : Rotation() {}
+  Angles::Angles() {}
 
   Angles::~Angles() {}
 
-  SqrMat3 Angles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
-    SqrMat3 AWK;
+  RotMat3 Angles::operator()(const fmatvec::VecV &q, const double &t) {
+    RotMat3 AWK;
     AWK.set(0, computet(q));
     AWK.set(1, computen(q));
     AWK.set(2, computeb(q));
