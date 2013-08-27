@@ -43,8 +43,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body1->setFrameForKinematics(body1->getFrame("C"));
   body1->setMass(m);
   body1->setInertiaTensor(Theta);
-  body1->setTranslation(new LinearTranslation(J));
-  body1->setRotation(new CardanAngles);
+  body1->setTranslation(new LinearFunction<Vec3(VecV)>(J));
+  body1->setRotation(new RotationAboutAxesXYZ<VecV>);
+  body1->setRotationMapping(new TCardanAngles<VecV>);
 
   // Second Body
   RigidBody* body2 = new RigidBody("Body2");
@@ -54,8 +55,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body2->setFrameForKinematics(body2->getFrame("C"));
   body2->setMass(m);
   body2->setInertiaTensor(Theta);
-  body2->setTranslation(new LinearTranslation(J));
-  body2->setRotation(new CardanAngles);
+  body2->setTranslation(new LinearFunction<Vec3(VecV)>(J));
+  body2->setRotation(new RotationAboutAxesXYZ<VecV>);
+  body2->setRotationMapping(new TCardanAngles<VecV>);
 
   // Third Body
   RigidBody* body3 = new RigidBody("Body3");
@@ -65,8 +67,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body3->setFrameForKinematics(body3->getFrame("C"));
   body3->setMass(m);
   body3->setInertiaTensor(Theta);
-  body3->setTranslation(new LinearTranslation(J));
-  body3->setRotation(new CardanAngles);
+  body3->setTranslation(new LinearFunction<Vec3(VecV)>(J));
+  body3->setRotation(new RotationAboutAxesXYZ<VecV>);
+  body3->setRotationMapping(new TCardanAngles<VecV>);
 
   // Cup
   RigidBody* cup = new RigidBody("Cup");

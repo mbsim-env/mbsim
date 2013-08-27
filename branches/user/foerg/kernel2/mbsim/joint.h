@@ -22,7 +22,6 @@
 
 #include "mbsim/link_mechanics.h"
 #include "mbsim/frame.h"
-#include "mbsim/kinematics.h"
 
 namespace MBSim {
 

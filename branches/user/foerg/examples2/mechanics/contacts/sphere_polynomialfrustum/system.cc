@@ -36,7 +36,7 @@ System::System(const string &projectName) :
   //BODY
   RigidBody* polyfrustum = new RigidBody("PolynomialFrustum");
 
-  polyfrustum->setRotation(new RotationAboutXAxis); //change from ZAxis, rotation,1 degree of freedom
+  polyfrustum->setRotation(new RotationAboutXAxis<VecV>); //change from ZAxis, rotation,1 degree of freedom
   polyfrustum->setMass(1);
   polyfrustum->setInertiaTensor(SymMat3(EYE));
   FixedRelativeFrame* rotPoly = new FixedRelativeFrame("RotPoly", Vec3(), BasicRotAKIz(M_PI_2));
@@ -76,8 +76,9 @@ System::System(const string &projectName) :
     sphereBody->setFrameOfReference(this->getFrameI());
     sphereBody->setInertiaTensor(SymMat3(EYE));
 
-    sphereBody->setTranslation(new LinearTranslation(Mat3x3(EYE)));
-    sphereBody->setRotation(new CardanAngles);
+    sphereBody->setTranslation(new LinearFunction<Vec3(VecV)>(Mat3x3(EYE)));
+    sphereBody->setRotation(new RotationAboutAxesXYZ<VecV>);
+    sphereBody->setRotationMapping(new TCardanAngles<VecV>);
     //give degrees of freedom
     Vec q0(6, INIT, 0);
     q0(1) = 0.5;

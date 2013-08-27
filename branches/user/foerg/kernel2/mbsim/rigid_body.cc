@@ -235,9 +235,16 @@ namespace MBSim {
       C->getJacobianOfTranslation(1) = PJT[1];
       C->getJacobianOfRotation(1) = PJR[1];
 
+      if(dynamic_cast<TCardanAngles<VecV>*>(fTR))
+        constantJacobianOfRotation = true;
+      else if(dynamic_cast<TCardanAngles2<VecV>*>(fTR)) {
+        constantJacobianOfRotation = true;
+        cb = true;
+      }
+
       if(cb) {
+        frameForJacobianOfRotation = K;
         // TODO
-//        frameForJacobianOfRotation = K;
 //        if(K == C && dynamic_cast<DynamicSystem*>(R->getParent())) {
 //          if(fPrPK) {
 //            fPrPK->updateJacobian(qRel(iqT),0);
@@ -255,12 +262,9 @@ namespace MBSim {
       }
       else
         frameForJacobianOfRotation = R;
-      //frameForJacobianOfRotation = cb?K:R;
 
       T.init(Eye());
 
-       if(dynamic_cast<TCardanAngles<VecV>*>(fTR))
-         constantJacobianOfRotation = true;
       // TODO
 //          if(fPrPK) {
 //            fPrPK->updateJacobian(qRel(iqT),0);
@@ -752,21 +756,22 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"inertiaTensor");
     setInertiaTensor(getSymMat3(e));
     e=element->FirstChildElement(MBSIMNS"translation");
+    Function<Vec3(VecV)> *trans=ObjectFactory<Function<Vec3(VecV)> >::create<Function<Vec3(VecV)> >(e->FirstChildElement());
 //    Translation *trans=ObjectFactory<Translation>::create<Translation>(e->FirstChildElement());
-//    if(trans) {
-//      setTranslation(trans);
-//      trans->initializeUsingXML(e->FirstChildElement());
-//    }
+    if(trans) {
+      setTranslation(trans);
+      trans->initializeUsingXML(e->FirstChildElement());
+    }
     e=element->FirstChildElement(MBSIMNS"rotation");
-    // TODO
-//    Rotation *rot=ObjectFactory<Rotation>::create<Rotation>(e->FirstChildElement());
-//    if(rot) {
-//      rot->initializeUsingXML(e->FirstChildElement());
-//      TiXmlElement *ee=e->FirstChildElement(MBSIMNS"isDependent");
-//      bool dep = false;
-//      if(ee) dep = getBool(ee);
-//      setRotation(rot,dep);
-//    }
+    Function<RotMat3(VecV)> *rot=ObjectFactory<Function<RotMat3(VecV)> >::create<Function<RotMat3(VecV)> >(e->FirstChildElement());
+    //Rotation *rot=ObjectFactory<Rotation>::create<Rotation>(e->FirstChildElement());
+    if(rot) {
+      rot->initializeUsingXML(e->FirstChildElement());
+      TiXmlElement *ee=e->FirstChildElement(MBSIMNS"isDependent");
+      bool dep = false;
+      if(ee) dep = getBool(ee);
+      setRotation(rot,dep);
+    }
 
     e=element->FirstChildElement(MBSIMNS"isFrameOfBodyForRotation");
     if(e) isFrameOfBodyForRotation(getBool(e));

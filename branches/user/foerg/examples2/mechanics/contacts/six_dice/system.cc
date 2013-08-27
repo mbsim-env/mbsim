@@ -69,7 +69,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   rB(2) = 0.6;
 
   RigidBody* cup = new RigidBody("Cup");
-  cup->setRotation(new TimeDependentRotationAboutFixedAxis(new Angle,"[0;1;0]"));
+  cup->setRotation(new NestedFunction<RotMat3(double(double))>(new RotationAboutFixedAxis<double>("[0;1;0]"), new Angle));
   SymMat Theta(3);
   Theta(1,1) = 0.5*0.1*0.2*0.2;
   addFrame(new FixedRelativeFrame("Is",rB,SqrMat(3,EYE)));
@@ -105,8 +105,9 @@ System::System(const string &name) : DynamicSystemSolver(name) {
     cout << nameBody.str()<<endl;
 
     body[i] = new RigidBody(nameBody.str());
-    body[i]->setTranslation(new TranslationInXYZDirection);
-    body[i]->setRotation(new CardanAngles);
+    body[i]->setTranslation(new LinearFunction<Vec3(VecV)>(SqrMat3(EYE)));
+    body[i]->setRotation(new RotationAboutAxesXYZ<VecV>);
+    body[i]->setRotationMapping(new TCardanAngles<VecV>);
     addObject(body[i]);
     body[i]->setMass(m);
     SymMat Theta(3);

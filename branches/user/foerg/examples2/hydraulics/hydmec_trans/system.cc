@@ -84,8 +84,9 @@ System::System(const string &name, bool unilateral) : Group(name) {
   traeger->setFrameForKinematics(traeger->getFrame("C"));
   traeger->setMass(2.);
   traeger->setInertiaTensor(0.001*SymMat(3, EYE));
-  traeger->setTranslation(new LinearTranslation(SqrMat(3, EYE)));
-  traeger->setRotation(new CardanAngles());
+  traeger->setTranslation(new LinearFunction<Vec3(VecV)>(SqrMat(3, EYE)));
+  traeger->setRotation(new RotationAboutAxesXYZ<VecV>);
+  traeger->setRotationMapping(new TCardanAngles<VecV>);
   traeger->setInitialGeneralizedVelocity(Vec("[0.; -0.; 0.; -30; 30; 30]"));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Frustum * traegerVisu = new OpenMBV::Frustum();
@@ -112,7 +113,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
     scheibe->setFrameForKinematics(scheibe->getFrame("C"));
     scheibe->setInertiaTensor(0.001*SymMat(3, EYE));
     if (i>0)
-      scheibe->setTranslation(new LinearTranslation(Vec("[1; 0; 0]")));
+      scheibe->setTranslation(new LinearFunction<Vec3(VecV)>(Vec("[1; 0; 0]")));
 #ifdef HAVE_OPENMBVCPPINTERFACE
     OpenMBV::Frustum * scheibeVisu = new OpenMBV::Frustum();
     scheibeVisu->setBaseRadius(dA/2.);

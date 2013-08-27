@@ -110,11 +110,11 @@ namespace MBSim {
     }
     else {
       //Rotation *rot = body->getRotation();
-      if(dynamic_cast<RotationAboutFixedAxis<VecV>*>(body->getRotation())) {
-        RotationAboutFixedAxis<VecV> *rot = dynamic_cast<RotationAboutFixedAxis<VecV>*>(body->getRotation());
-        assert( rot != NULL );
-        torqueDir = rot->getAxisOfRotation();
-      }
+//      if(dynamic_cast<RotationAboutFixedAxis<VecV>*>(body->getRotation())) {
+//        RotationAboutFixedAxis<VecV> *rot = dynamic_cast<RotationAboutFixedAxis<VecV>*>(body->getRotation());
+//        assert( rot != NULL );
+//        torqueDir = rot->getAxisOfRotation();
+//      }
 //      } else if(dynamic_cast<RotationAboutXAxis<VecV>*>(body->getRotation())) {
 //        torqueDir = Vec("[1;0;0]");
 //      } else if(dynamic_cast<RotationAboutYAxis<VecV>*>(body->getRotation())) {

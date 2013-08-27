@@ -33,7 +33,7 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   Mat JT(3,2);
   JT(0,0) = 1;
   JT(1,1) = 1;
-  Vec JR(3);
+  Vec3 JR;
   JR(2) = 1;
 
   // Stange -------------------------------------
@@ -67,8 +67,8 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   this->addFrame("B",WrOS,SqrMat(3,EYE),this->getFrame("I"));
   muffe->setFrameOfReference(this->getFrame("B"));
   muffe->setFrameForKinematics(muffe->getFrame("C"));
-  muffe->setTranslation(new LinearTranslation(JT));
-  muffe->setRotation(new RotationAboutFixedAxis(JR));
+  muffe->setTranslation(new LinearFunction<Vec3(VecV)>(JT));
+  muffe->setRotation(new RotationAboutFixedAxis<VecV>(JR));
 //  muffe->setRotation(new RotationAboutZAxis());
 
   muffe->setInitialGeneralizedPosition(spiel*Vec("[0.2;0.0;0.0]"));
@@ -122,7 +122,7 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
 
   RigidBody *specht = new RigidBody("Specht");
   specht->setFrameOfReference(muffe->getFrame("Drehpunkt"));
-  specht->setRotation(new RotationAboutFixedAxis(JR));
+  specht->setRotation(new RotationAboutFixedAxis<VecV>(JR));
 //  specht->setRotation(new RotationAboutZAxis());
   this->addObject(specht);
 
@@ -144,6 +144,7 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
 
   RelativeRotationalSpringDamper *feder = new RelativeRotationalSpringDamper("Drehfeder");
   feder->connect(muffe->getFrame("Drehpunkt"),specht->getFrame("D"));
+  feder->setTorqueDir(JR);
   feder->setRelativeBody(specht);
   double cDF = 0.5;
   feder->setForceFunction(new LinearSpringDamperForce(cDF,0.0,0.0));

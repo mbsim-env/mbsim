@@ -113,8 +113,8 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   this->addFrame("B",WrOS,SqrMat(3,EYE),this->getFrame("I"));
   muffe->setFrameOfReference(this->getFrame("B"));
   muffe->setFrameForKinematics(muffe->getFrame("C"));
-  muffe->setTranslation(new LinearTranslation(JT));
-  muffe->setRotation(new RotationAboutFixedAxis(JR));
+  muffe->setTranslation(new LinearFunction<Vec3(VecV)>(JT));
+  muffe->setRotation(new RotationAboutFixedAxis<VecV>(JR));
 //  muffe->setRotation(new RotationAboutZAxis());
 
   muffe->setInitialGeneralizedPosition(spiel*Vec("[0.4;0.0;0.0]"));
@@ -174,7 +174,7 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
 
   RigidBody *specht = new RigidBody("Specht");
   specht->setFrameOfReference(muffe->getFrame("Drehpunkt"));
-  specht->setRotation(new RotationAboutFixedAxis(JR));
+  specht->setRotation(new RotationAboutFixedAxis<VecV>(JR));
 //  specht->setRotation(new RotationAboutZAxis());
   this->addObject(specht);
 

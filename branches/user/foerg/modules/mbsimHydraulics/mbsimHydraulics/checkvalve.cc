@@ -127,7 +127,7 @@ namespace MBSimHydraulics {
       ball->setInertiaTensor(SymMat(3, EYE) * 2./5. * mBall * rBall * rBall);
       ball->setFrameOfReference(ballSeat->getFrame("BallMount"));
       ball->setFrameForKinematics(ball->getFrame("C"));
-      ball->setTranslation(new LinearTranslation("[1;0;0]"));
+      ball->setTranslation(new LinearFunction<Vec3(VecV)>("[1;0;0]"));
       ball->addContour(new CircleSolid("ContourBall", rBall), Vec(3, INIT, 0), SqrMat(3, EYE));
       ball->addFrame("LowPressureSide", rBall*Vec("[-1; 0; 0]"), SqrMat(3, EYE));
       ball->addFrame("HighPressureSide", rBall*Vec("[1; 0; 0]"), SqrMat(3, EYE));

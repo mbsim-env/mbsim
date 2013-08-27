@@ -21,7 +21,6 @@
 #include <mbsim/utils/rotarymatrices.h>
 #include <mbsim/utils/utils.h>
 #include <mbsim/utils/nonlinear_algebra.h>
-#include <mbsim/kinematics.h>
 
 using namespace std;
 using namespace MBSim;
@@ -147,7 +146,7 @@ System::System(const string &projectName, int contactType, int firstBall, int la
     balls[ballIter]->setFrameOfReference(R);
     balls[ballIter]->setMass(1.);
     balls[ballIter]->setInertiaTensor(SymMat(3,EYE));
-    balls[ballIter]->setTranslation(new LinearTranslation(SqrMat(3, EYE)));
+    balls[ballIter]->setTranslation(new LinearFunction<Vec3(VecV)>(SqrMat(3, EYE)));
     balls[ballIter]->setInitialGeneralizedVelocity(Vec("[0;-1;0]"));
 
     this->addObject(balls[ballIter]);

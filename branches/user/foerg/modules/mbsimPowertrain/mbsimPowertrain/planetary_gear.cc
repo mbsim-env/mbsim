@@ -55,7 +55,7 @@ namespace MBSimPowertrain {
 
     sun->setFrameOfReference(housing->getFrame("C"));
     sun->setFrameForKinematics(sun->getFrame("C"));
-    sun->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+    sun->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
 
     sun->setMass(mS);
     Theta(2,2) = JS;
@@ -75,7 +75,7 @@ namespace MBSimPowertrain {
 
     annulus->setFrameOfReference(housing->getFrame("Q"));
     annulus->setFrameForKinematics(annulus->getFrame("C"));
-    annulus->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+    annulus->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
 #ifdef HAVE_OPENMBVCPPINTERFACE
     annulus->getFrame("C")->enableOpenMBV(0.3);
 #endif
@@ -92,7 +92,7 @@ namespace MBSimPowertrain {
     housing->addFrame("R",r,BasicRotAKIy(0));
     carrier->setFrameOfReference(housing->getFrame("R"));
     carrier->setFrameForKinematics(carrier->getFrame("C"));
-    carrier->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+    carrier->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
 #ifdef HAVE_OPENMBVCPPINTERFACE
     carrier->getFrame("C")->enableOpenMBV(0.3);
 #endif
@@ -120,7 +120,7 @@ namespace MBSimPowertrain {
       addObject(planet[i]);
       planet[i]->setFrameOfReference(carrier->getFrame(str.str()));
       planet[i]->setFrameForKinematics(planet[i]->getFrame("C"));
-      planet[i]->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+      planet[i]->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
 #ifdef HAVE_OPENMBVCPPINTERFACE
       planet[i]->getFrame("C")->enableOpenMBV(0.3);
 #endif

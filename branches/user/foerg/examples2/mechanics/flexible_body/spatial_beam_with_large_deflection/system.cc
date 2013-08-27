@@ -87,7 +87,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Theta(1,1) = 2./5.*mass*r*r;
   Theta(2,2) = 2./5.*mass*r*r;
   ball->setInertiaTensor(Theta);
-  ball->setTranslation(new LinearTranslation(Mat(3,3,EYE)));
+  ball->setTranslation(new LinearFunction<Vec3(VecV)>(Mat(3,3,EYE)));
   Point *point = new Point("Point");
   Vec BR(3,INIT,0.); BR(1)=-r;
   ball->addContour(point,BR,SqrMat(3,EYE),ball->getFrame("C"));

@@ -49,7 +49,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   axis->addFrame("R",-KrKS,SqrMat(3,EYE));
   axis->setFrameOfReference(getFrame("R"));
   axis->setFrameForKinematics(axis->getFrame("R"));
-  axis->setRotation(new RotationAboutFixedAxis(JR_axis));
+  axis->setRotation(new RotationAboutFixedAxis<VecV>(JR_axis));
   axis->setMass(m_axis);
   axis->setInertiaTensor(Theta);
   axis->setInitialGeneralizedVelocity(Vec(1,INIT,2.));
@@ -82,7 +82,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   pole->addFrame("R",-KrKS,SqrMat(3,EYE));
   pole->setFrameOfReference(axis->getFrame("P"));
   pole->setFrameForKinematics(pole->getFrame("R"));
-  pole->setRotation(new RotationAboutFixedAxis(JR_pole));
+  pole->setRotation(new RotationAboutFixedAxis<VecV>(JR_pole));
   pole->setMass(m_pole);
   pole->setInertiaTensor(Theta);
 
@@ -105,7 +105,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   muller->addFrame("R",-KrKS,SqrMat(3,EYE));
   muller->setFrameOfReference(pole->getFrame("P"));
   muller->setFrameForKinematics(muller->getFrame("R"));
-  muller->setRotation(new RotationAboutFixedAxis(JR_muller));	
+  muller->setRotation(new RotationAboutFixedAxis<VecV>(JR_muller));	
   muller->setMass(m_muller);
   muller->setInertiaTensor(Theta);
 
