@@ -973,7 +973,7 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Translation" minOccurs="0"/>
+                <xs:element ref="Function_VV" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -988,12 +988,22 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Rotation" minOccurs="0"/>
+                <xs:element ref="Function_MV" minOccurs="0"/>
                 <xs:element name="isDependent" minOccurs="0">
                   <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                     tbd
                   </xs:documentation></xs:annotation>
                 </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="rotationMapping" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function_MV"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -2551,453 +2561,6 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="Translation" abstract="true" type="TranslationType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Abstrakte Oberklasse zur Beschreibung der translatorischen Position eines Starrkörpers.
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="TranslationType"/>
-
-  <xs:element name="RotationIndependentTranslation" substitutionGroup="Translation" type="RotationIndependentTranslationType" abstract="true"/>
-  <xs:complexType name="RotationIndependentTranslationType">
-    <xs:complexContent>
-      <xs:extension base="TranslationType"/>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="TranslationInXDirection" substitutionGroup="RotationIndependentTranslation" type="TranslationInXDirectionType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Definiert eine Translation in Richtung der y-Achse für Starrkörper ausschließlich abhängig von generalisierten Kardan Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="TranslationInXDirectionType">
-    <xs:complexContent>
-      <xs:extension base="RotationIndependentTranslationType"/>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="TranslationInYDirection" substitutionGroup="RotationIndependentTranslation" type="TranslationInYDirectionType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Definiert eine Translation in Richtung der y-Achse für Starrkörper ausschließlich abhängig von generalisierten Kardan Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="TranslationInYDirectionType">
-    <xs:complexContent>
-      <xs:extension base="RotationIndependentTranslationType"/>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="TranslationInZDirection" substitutionGroup="RotationIndependentTranslation" type="TranslationInZDirectionType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Definiert eine Translation in Richtung der y-Achse für Starrkörper ausschließlich abhängig von generalisierten Kardan Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="TranslationInZDirectionType">
-    <xs:complexContent>
-      <xs:extension base="RotationIndependentTranslationType"/>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="TranslationInXYDirection" substitutionGroup="RotationIndependentTranslation" type="TranslationInXYDirectionType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Definiert eine Translation in Richtung der y-Achse für Starrkörper ausschließlich abhängig von generalisierten Kardan Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="TranslationInXYDirectionType">
-    <xs:complexContent>
-      <xs:extension base="RotationIndependentTranslationType"/>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="TranslationInXZDirection" substitutionGroup="RotationIndependentTranslation" type="TranslationInXZDirectionType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Definiert eine Translation in Richtung der y-Achse für Starrkörper ausschließlich abhängig von generalisierten Kardan Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="TranslationInXZDirectionType">
-    <xs:complexContent>
-      <xs:extension base="RotationIndependentTranslationType"/>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="TranslationInYZDirection" substitutionGroup="RotationIndependentTranslation" type="TranslationInYZDirectionType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Definiert eine Translation in Richtung der y-Achse für Starrkörper ausschließlich abhängig von generalisierten Kardan Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="TranslationInYZDirectionType">
-    <xs:complexContent>
-      <xs:extension base="RotationIndependentTranslationType"/>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="TranslationInXYZDirection" substitutionGroup="RotationIndependentTranslation" type="TranslationInXYZDirectionType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Definiert eine Translation in Richtung der y-Achse für Starrkörper ausschließlich abhängig von generalisierten Kardan Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="TranslationInXYZDirectionType">
-    <xs:complexContent>
-      <xs:extension base="RotationIndependentTranslationType"/>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="LinearTranslation" substitutionGroup="RotationIndependentTranslation" type="LinearTranslationType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Definiert eine lineare Translation für Starrkörper ausschließlich abhängig von generalisierten Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="LinearTranslationType">
-    <xs:complexContent>
-      <xs:extension base="RotationIndependentTranslationType">
-        <xs:sequence>
-          <xs:element name="translationVectors" type="pv:nounitMatrix">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert die normierten konstanten Richtungen <object class="inlineeqn">\mathbf{D}_T=\left(\mathbf{d}_{T,1},\ldots\right)</object> der Translation bez. der generalisierten Koordinaten <object class="inlineeqn">\left\{{q}_i\right\}</object>.<br/>
-                Die Position des Starrkörper ergibt sich als Linearkombination <object class="inlineeqn">\sum_i\mathbf{d}_{T,i}{q}_i</object> der konstanten Richtungsvektoren und zugehörigen generalisierten Koordinaten.
-            </xs:documentation></xs:annotation>
-          </xs:element>
-        </xs:sequence> 
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="TimeDependentTranslation" substitutionGroup="RotationIndependentTranslation" type="TimeDependentTranslationType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Parametrisiert eine zeitabhängige Translation <object class="inlineeqn">\mathbf{p}</object> für Starrkörper (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="TimeDependentTranslationType">
-    <xs:complexContent>
-      <xs:extension base="RotationIndependentTranslationType">
-        <xs:sequence>
-          <xs:element name="translationFunction">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert den zeitabhängen vektoriellen Ort <object class="inlineeqn">\mathbf{p}</object>.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function_VS">
-                </xs:element>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence> 
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="GeneralTranslation" substitutionGroup="Translation" type="GeneralTranslationType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-      Definiert eine user definierte Translation abhängig von q und t.
-      Die Ableitungen werden automatisch mittels CasADi berechnet.
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="GeneralTranslationType">
-    <xs:complexContent>
-      <xs:extension base="TranslationType">
-        <xs:sequence>
-          <xs:element name="translationFunction">
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function_VVS">
-                </xs:element>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence> 
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="StateDependentTranslation" substitutionGroup="Translation" type="StateDependentTranslationType"/>
-  <xs:complexType name="StateDependentTranslationType">
-    <xs:complexContent>
-      <xs:extension base="TranslationType">
-        <xs:sequence>
-          <xs:element name="translationFunction">
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function_VV"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence> 
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="Rotation" abstract="true" type="RotationType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Abstrakte Oberklasse zur Beschreibung der rotatorischen Position eines Starrkörpers.
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="RotationType"/>
-
-  <xs:element name="RotationAboutXAxis" substitutionGroup="TranslationIndependentRotation" type="RotationAboutXAxisType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Definiert eine Rotation um die x-Achse für Starrkörper ausschließlich abhängig von generalisierten Kardan Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="RotationAboutXAxisType">
-    <xs:complexContent>
-      <xs:extension base="TranslationIndependentRotationType"/>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="RotationAboutYAxis" substitutionGroup="TranslationIndependentRotation" type="RotationAboutYAxisType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Definiert eine Rotation um die y-Achse für Starrkörper ausschließlich abhängig von generalisierten Kardan Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="RotationAboutYAxisType">
-    <xs:complexContent>
-      <xs:extension base="TranslationIndependentRotationType"/>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="RotationAboutZAxis" substitutionGroup="TranslationIndependentRotation" type="RotationAboutZAxisType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Definiert eine Rotation um die z-Achse für Starrkörper ausschließlich abhängig von generalisierten Kardan Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="RotationAboutZAxisType">
-    <xs:complexContent>
-      <xs:extension base="TranslationIndependentRotationType"/>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="RotationAboutFixedAxis" substitutionGroup="TranslationIndependentRotation" type="RotationAboutFixedAxisType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Definiert eine Rotation um eine feste Achse für Starrkörper ausschließlich abhängig von generalisierten Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="RotationAboutFixedAxisType">
-    <xs:complexContent>
-      <xs:extension base="TranslationIndependentRotationType">
-        <xs:sequence>
-          <xs:element name="axisOfRotation" type="pv:nounitVector">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert die normierte konstante Drehachse.
-            </xs:documentation></xs:annotation>
-          </xs:element>
-        </xs:sequence> 
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="TimeDependentRotationAboutFixedAxis" substitutionGroup="TranslationIndependentRotation" type="TimeDependentRotationAboutFixedAxisType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Parametrisiert eine zeitabhängige Rotation um eine feste Achse für Starrkörper (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="TimeDependentRotationAboutFixedAxisType">
-    <xs:complexContent>
-      <xs:extension base="TranslationIndependentRotationType">
-        <xs:sequence>
-          <xs:element name="axisOfRotation" type="pv:nounitVector">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert die normierte konstante Drehachse.
-            </xs:documentation></xs:annotation>
-          </xs:element>
-          <xs:element name="rotationalFunction">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert den zeitabhängen Winkel um die Drehachse.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function_SS">
-                </xs:element>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence> 
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="StateDependentRotationAboutFixedAxis" substitutionGroup="Rotation" type="StateDependentRotationAboutFixedAxisType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Parametrisiert eine zustandsabhängige Rotation um eine feste Achse für Starrkörper (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="StateDependentRotationAboutFixedAxisType">
-    <xs:complexContent>
-      <xs:extension base="RotationType">
-        <xs:sequence>
-          <xs:element name="axisOfRotation" type="pv:nounitVector">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert die normierte konstante Drehachse.
-            </xs:documentation></xs:annotation>
-          </xs:element>
-          <xs:element name="rotationalFunction">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert den zeitabhängen Winkel um die Drehachse.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function_SV">
-                </xs:element>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence> 
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="RotationAboutAxesXY" substitutionGroup="TranslationIndependentRotation" type="RotationAboutAxesXYType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Definiert eine Rotation um die x- und y-Achse für Starrkörper ausschließlich abhängig von generalisierten Kardan Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="RotationAboutAxesXYType">
-    <xs:complexContent>
-      <xs:extension base="TranslationIndependentRotationType"/>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="RotationAboutAxesXZ" substitutionGroup="TranslationIndependentRotation" type="RotationAboutAxesXZType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Definiert eine Rotation um die x- und z-Achse für Starrkörper ausschließlich abhängig von generalisierten Kardan Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="RotationAboutAxesXZType">
-    <xs:complexContent>
-      <xs:extension base="TranslationIndependentRotationType"/>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="RotationAboutAxesYZ" substitutionGroup="TranslationIndependentRotation" type="RotationAboutAxesYZType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Definiert eine Rotation um die y- und z-Achse für Starrkörper ausschließlich abhängig von generalisierten Kardan Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="RotationAboutAxesYZType">
-    <xs:complexContent>
-      <xs:extension base="TranslationIndependentRotationType"/>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="RotationAboutAxesXYZ" substitutionGroup="TranslationIndependentRotation" type="RotationAboutAxesXYZType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Definiert eine Rotation um die y- und z-Achse für Starrkörper ausschließlich abhängig von generalisierten Kardan Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="RotationAboutAxesXYZType">
-    <xs:complexContent>
-      <xs:extension base="TranslationIndependentRotationType"/>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="TranslationIndependentRotation" substitutionGroup="Rotation" type="TranslationIndependentRotationType" abstract="true"/>
-  <xs:complexType name="TranslationIndependentRotationType">
-    <xs:complexContent>
-      <xs:extension base="RotationType"/>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="CardanAngles" substitutionGroup="TranslationIndependentRotation" type="CardanAnglesType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Definiert eine Rotation für Starrkörper ausschließlich abhängig von generalisierten Kardan Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="CardanAnglesType">
-    <xs:complexContent>
-      <xs:extension base="TranslationIndependentRotationType"/>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="TimeDependentCardanAngles" substitutionGroup="TranslationIndependentRotation" type="TimeDependentCardanAnglesType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Parametrisiert eine zeitabhängige Rotation bez. Kardanwinkeln für Starrkörper (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="TimeDependentCardanAnglesType">
-    <xs:complexContent>
-      <xs:extension base="TranslationIndependentRotationType">
-        <xs:sequence>
-          <xs:element name="rotationalFunction">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert die zeitabhängen Kardan-Winkel.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function_VS">
-                </xs:element>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence> 
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:element name="EulerAngles" substitutionGroup="TranslationIndependentRotation" type="EulerAnglesType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Definiert eine Rotation für Starrkörper ausschließlich abhängig von generalisierten Kardan Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="EulerAnglesType">
-    <xs:complexContent>
-      <xs:extension base="TranslationIndependentRotationType"/>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="TimeDependentGuidingVelocity" substitutionGroup="GuidingVelocity" type="TimeDependentGuidingVelocityType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Parametrisiert eine zeitabhängige Translation <object class="inlineeqn">\mathbf{p}</object> für Starrkörper (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="TimeDependentGuidingVelocityType">
-    <xs:complexContent>
-      <xs:extension base="GuidingVelocityType">
-        <xs:sequence>
-          <xs:element name="guidingVelocityFunction">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert den zeitabhängen vektoriellen Ort <object class="inlineeqn">\mathbf{p}</object>.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function_VS">
-                </xs:element>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence> 
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="TimeDependentDerivativeOfGuidingVelocity" substitutionGroup="DerivativeOfGuidingVelocity" type="TimeDependentDerivativeOfGuidingVelocityType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Parametrisiert eine zeitabhängige Translation <object class="inlineeqn">\mathbf{p}</object> für Starrkörper (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="TimeDependentDerivativeOfGuidingVelocityType">
-    <xs:complexContent>
-      <xs:extension base="DerivativeOfGuidingVelocityType">
-        <xs:sequence>
-          <xs:element name="derivativeOfGuidingVelocityFunction">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert den zeitabhängen vektoriellen Ort <object class="inlineeqn">\mathbf{p}</object>.
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function_VS">
-                </xs:element>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence> 
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>   
-
   <xs:element name="GeneralizedForceLaw" abstract="true" type="GeneralizedForceLawType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -3377,6 +2940,36 @@
       <xs:extension base="Function_SSType">
         <xs:sequence>
           <xs:element ref="Function_VS"/>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="LinearFunction_VV" substitutionGroup="Function_VV" type="LinearFunction_VVType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="LinearFunction_VVType">
+    <xs:complexContent>
+      <xs:extension base="Function_VVType">
+        <xs:sequence>
+          <xs:element name="slope" type="pv:unknownMatrix">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="intercept" type="pv:unknownVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
@@ -4197,6 +3790,58 @@
   </xs:complexType>
   -->
 
+  <xs:element name="Function_MV" abstract="true" type="Function_MVType"/>
+  <xs:complexType name="Function_MVType"/>
+
+  <xs:element name="RotationAboutFixedAxis_V" substitutionGroup="Function_MV" type="RotationAboutFixedAxis_VType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="RotationAboutFixedAxis_VType">
+    <xs:complexContent>
+      <xs:extension base="Function_MVType">
+        <xs:sequence>
+          <xs:element name="axisOfRotation" type="pv:unknownVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+  
+  <xs:element name="RotationAboutAxesXYZ_V" substitutionGroup="Function_MV" type="RotationAboutAxesXYZ_VType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="RotationAboutAxesXYZ_VType">
+    <xs:complexContent>
+      <xs:extension base="Function_MVType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="TCardanAngles_V" substitutionGroup="Function_MV" type="TCardanAngles_VType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="TCardanAngles_VType">
+    <xs:complexContent>
+      <xs:extension base="Function_MVType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+  
   <xs:element name="Function_MVVS" abstract="true" type="Function_MVVSType"/>
   <xs:complexType name="Function_MVVSType"/>
   

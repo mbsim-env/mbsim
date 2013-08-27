@@ -36,7 +36,7 @@ using namespace MBSim;
 
 namespace MBSimHydraulics {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double)>, SerialResistanceLinePressureLoss,  MBSIMHYDRAULICSNS"SerialResistanceLinePressureLoss")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SerialResistanceLinePressureLoss,  MBSIMHYDRAULICSNS"SerialResistanceLinePressureLoss")
 
   double SerialResistanceLinePressureLoss::operator()(const double& Q) {
     double pl=0;
@@ -50,14 +50,14 @@ namespace MBSimHydraulics {
     TiXmlElement * e;
     e=element->FirstChildElement();
     while (e) {
-      LinePressureLoss *p=MBSim::ObjectFactory<Function<double(double)> >::create<LinePressureLoss>(e);
+      LinePressureLoss *p=MBSim::ObjectFactory<FunctionBase>::create<LinePressureLoss>(e);
       addLinePressureLoss(p);
       p->initializeUsingXML(e);
       e=e->NextSiblingElement();
     }
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double)>, ParallelResistanceLinePressureLoss,  MBSIMHYDRAULICSNS"ParallelResistanceLinePressureLoss")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, ParallelResistanceLinePressureLoss,  MBSIMHYDRAULICSNS"ParallelResistanceLinePressureLoss")
 
   double ParallelResistanceLinePressureLoss::operator()(const double& Q) {
     return (*pl)(Q/number);
@@ -69,12 +69,12 @@ namespace MBSimHydraulics {
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"number");
     int n=Element::getInt(e);
     e=e->NextSiblingElement();
-    LinePressureLoss *p=MBSim::ObjectFactory<Function<double(double)> >::create<LinePressureLoss>(e);
+    LinePressureLoss *p=MBSim::ObjectFactory<FunctionBase>::create<LinePressureLoss>(e);
     p->initializeUsingXML(e);
     setLinePressureLoss(p, n);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double)>, ZetaLinePressureLoss,  MBSIMHYDRAULICSNS"ZetaLinePressureLoss")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, ZetaLinePressureLoss,  MBSIMHYDRAULICSNS"ZetaLinePressureLoss")
 
   double ZetaLinePressureLoss::operator()(const double& Q) {
     if (!initialized) {
@@ -94,7 +94,7 @@ namespace MBSimHydraulics {
     setZeta(Element::getDouble(e));
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double)>, ZetaPosNegLinePressureLoss,  MBSIMHYDRAULICSNS"ZetaPosNegLinePressureLoss")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, ZetaPosNegLinePressureLoss,  MBSIMHYDRAULICSNS"ZetaPosNegLinePressureLoss")
 
   double ZetaPosNegLinePressureLoss::operator()(const double& Q) {
     if (!initialized) {
@@ -117,7 +117,7 @@ namespace MBSimHydraulics {
     setZetaNeg(Element::getDouble(e));
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double)>, LaminarTubeFlowLinePressureLoss,  MBSIMHYDRAULICSNS"LaminarTubeFlowLinePressureLoss")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, LaminarTubeFlowLinePressureLoss,  MBSIMHYDRAULICSNS"LaminarTubeFlowLinePressureLoss")
 
   double LaminarTubeFlowLinePressureLoss::operator()(const double& Q) {
     if (!initialized) {
@@ -131,7 +131,7 @@ namespace MBSimHydraulics {
     return c*Q;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double)>, TurbulentTubeFlowLinePressureLoss,  MBSIMHYDRAULICSNS"TurbulentTubeFlowLinePressureLoss")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TurbulentTubeFlowLinePressureLoss,  MBSIMHYDRAULICSNS"TurbulentTubeFlowLinePressureLoss")
 
   void TurbulentTubeFlowLinePressureLoss::setHydraulicDiameter(double dHyd_, double dHydNeg_) {
     assert(dHyd_>=0);
@@ -213,7 +213,7 @@ namespace MBSimHydraulics {
     setSurfaceRoughness(kS);
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double)>, CurveFittedLinePressureLoss,  MBSIMHYDRAULICSNS"CurveFittedLinePressureLoss")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, CurveFittedLinePressureLoss,  MBSIMHYDRAULICSNS"CurveFittedLinePressureLoss")
 
   double CurveFittedLinePressureLoss::operator()(const double &Q) {
     if (!initialized) {
@@ -236,7 +236,7 @@ namespace MBSimHydraulics {
     bNeg=Element::getDouble(element->FirstChildElement(MBSIMHYDRAULICSNS"bNegative"));
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double)>, TabularLinePressureLoss,  MBSIMHYDRAULICSNS"TabularLinePressureLoss")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TabularLinePressureLoss,  MBSIMHYDRAULICSNS"TabularLinePressureLoss")
 
   double TabularLinePressureLoss::operator()(const double& Q) {
     return ((*zetaTabular)(Q));
@@ -246,11 +246,11 @@ namespace MBSimHydraulics {
     LinePressureLoss::initializeUsingXML(element);
     TiXmlElement * e;
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"function");
-    zetaTabular=MBSim::ObjectFactory<Function<double(double)> >::create<Function<double(double)> >(e->FirstChildElement());
+    zetaTabular=MBSim::ObjectFactory<FunctionBase>::create<Function<double(double)> >(e->FirstChildElement());
     zetaTabular->initializeUsingXML(e->FirstChildElement());
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double)>, RelativeAreaZetaClosablePressureLoss,  MBSIMHYDRAULICSNS"RelativeAreaZetaClosablePressureLoss")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RelativeAreaZetaClosablePressureLoss,  MBSIMHYDRAULICSNS"RelativeAreaZetaClosablePressureLoss")
 
   double RelativeAreaZetaClosablePressureLoss::operator()(const double& Q) {
     if (!initialized) {
@@ -281,7 +281,7 @@ namespace MBSimHydraulics {
       setZetaNegative(Element::getDouble(e));
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double)>, GapHeightClosablePressureLoss,  MBSIMHYDRAULICSNS"GapHeightClosablePressureLoss")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, GapHeightClosablePressureLoss,  MBSIMHYDRAULICSNS"GapHeightClosablePressureLoss")
 
   double GapHeightClosablePressureLoss::operator()(const double& Q) {
     if (!initialized) {
@@ -299,7 +299,7 @@ namespace MBSimHydraulics {
     setWidth(Element::getDouble(element->FirstChildElement(MBSIMHYDRAULICSNS"width")));
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double)>, ReynoldsClosablePressureLoss,  MBSIMHYDRAULICSNS"ReynoldsClosablePressureLoss")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, ReynoldsClosablePressureLoss,  MBSIMHYDRAULICSNS"ReynoldsClosablePressureLoss")
 
   double ReynoldsClosablePressureLoss::operator()(const double& Q) {
     if (!initialized) {
@@ -332,7 +332,7 @@ namespace MBSimHydraulics {
     return zetaFactor * lambda/diameter * Q * fabs(Q) / area /area;
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double)>, RelativeAlphaClosablePressureLoss,  MBSIMHYDRAULICSNS"RelativeAlphaClosablePressureLoss")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RelativeAlphaClosablePressureLoss,  MBSIMHYDRAULICSNS"RelativeAlphaClosablePressureLoss")
 
   double RelativeAlphaClosablePressureLoss::operator()(const double& Q) {
     if (!initialized) {
@@ -362,7 +362,7 @@ namespace MBSimHydraulics {
     setBallRadius(Element::getDouble(e));
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double)>, GammaCheckvalveClosablePressureLoss,  MBSIMHYDRAULICSNS"GammaCheckvalveClosablePressureLoss")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, GammaCheckvalveClosablePressureLoss,  MBSIMHYDRAULICSNS"GammaCheckvalveClosablePressureLoss")
 
   double GammaCheckvalveClosablePressureLoss::operator()(const double& Q) {
     if (!initialized) {
@@ -386,7 +386,7 @@ namespace MBSimHydraulics {
     setGamma(Element::getDouble(e));
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double)>, IdelchickCheckvalveClosablePressureLoss,  MBSIMHYDRAULICSNS"IdelchickCheckvalveClosablePressureLoss")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, IdelchickCheckvalveClosablePressureLoss,  MBSIMHYDRAULICSNS"IdelchickCheckvalveClosablePressureLoss")
 
   double IdelchickCheckvalveClosablePressureLoss::operator()(const double& Q) {
     if (!initialized) {
@@ -404,7 +404,7 @@ namespace MBSimHydraulics {
     return c*Q*fabs(Q)*(2.7-beta2+beta3); 
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double)>, ConeCheckvalveClosablePressureLoss,  MBSIMHYDRAULICSNS"ConeCheckvalveClosablePressureLoss")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, ConeCheckvalveClosablePressureLoss,  MBSIMHYDRAULICSNS"ConeCheckvalveClosablePressureLoss")
 
   double ConeCheckvalveClosablePressureLoss::operator()(const double& Q) {
     if (!initialized) {
@@ -433,7 +433,7 @@ namespace MBSimHydraulics {
     setAlpha(Element::getDouble(e));
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double)>, PlaneLeakagePressureLoss,  MBSIMHYDRAULICSNS"PlaneLeakagePressureLoss")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PlaneLeakagePressureLoss,  MBSIMHYDRAULICSNS"PlaneLeakagePressureLoss")
 
   double PlaneLeakagePressureLoss::operator()(const double& pVorQ) {
     if (!initialized) {
@@ -471,7 +471,7 @@ namespace MBSimHydraulics {
     }
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double)>, EccentricCircularLeakagePressureLoss,  MBSIMHYDRAULICSNS"EccentricCircularLeakagePressureLoss")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, EccentricCircularLeakagePressureLoss,  MBSIMHYDRAULICSNS"EccentricCircularLeakagePressureLoss")
 
   double EccentricCircularLeakagePressureLoss::operator()(const double& pVorQ) {
     if (!initialized) {
@@ -520,7 +520,7 @@ namespace MBSimHydraulics {
     setEccentricity(Element::getDouble(e));
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double)>, RealCircularLeakagePressureLoss,  MBSIMHYDRAULICSNS"RealCircularLeakagePressureLoss")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RealCircularLeakagePressureLoss,  MBSIMHYDRAULICSNS"RealCircularLeakagePressureLoss")
 
   double RealCircularLeakagePressureLoss::operator()(const double& pVorQ) {
     if (!initialized) {
@@ -559,7 +559,7 @@ namespace MBSimHydraulics {
     }
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(Function<double(double)>, UnidirectionalZetaPressureLoss,  MBSIMHYDRAULICSNS"UnidirectionalZetaPressureLoss")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, UnidirectionalZetaPressureLoss,  MBSIMHYDRAULICSNS"UnidirectionalZetaPressureLoss")
 
   double UnidirectionalZetaPressureLoss::operator()(const double& Q) {
     if (!initialized) {

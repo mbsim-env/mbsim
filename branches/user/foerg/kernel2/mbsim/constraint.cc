@@ -271,7 +271,7 @@ namespace MBSim {
     KinematicConstraint::initializeUsingXML(element);
     TiXmlElement *e=element->FirstChildElement(MBSIMNS"generalizedPositionFunction");
     if(e) {
-      Function<VecV(double)> *f=ObjectFactory<Function<VecV(double)> >::create<Function<VecV(double)> >(e->FirstChildElement());
+      Function<VecV(double)> *f=ObjectFactory<FunctionBase>::create<Function<VecV(double)> >(e->FirstChildElement());
       setGeneralizedPositionFunction(f);
       f->initializeUsingXML(e->FirstChildElement());
     }
@@ -342,7 +342,7 @@ namespace MBSim {
     saved_DependentBody=e->Attribute("ref");
     e=element->FirstChildElement(MBSIMNS"generalizedVelocityFunction");
     if(e) {
-      Function<VecV(VecV)> *f=ObjectFactory<Function<VecV(VecV)> >::create<Function<VecV(VecV)> >(e->FirstChildElement());
+      Function<VecV(VecV)> *f=ObjectFactory<FunctionBase>::create<Function<VecV(VecV)> >(e->FirstChildElement());
       setGeneralizedVelocityFunction(f);
       f->initializeUsingXML(e->FirstChildElement());
     }

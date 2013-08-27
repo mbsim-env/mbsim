@@ -21,14 +21,14 @@
       <mass>0.5</mass>
       <inertiaTensor>[0,0,0 ; 0,0,0 ; 0,0,0.041666666666666]</inertiaTensor>
       <translation>
-        <LinearTranslation>
-          <translationVectors>[1,0 ; 0,1 ; 0,0]</translationVectors>
-        </LinearTranslation>
+        <LinearFunction_VV>
+          <slope>[1,0 ; 0,1 ; 0,0]</slope>
+        </LinearFunction_VV>
       </translation>
       <rotation>
-        <RotationAboutFixedAxis>
+        <RotationAboutFixedAxis_V>
           <axisOfRotation>[0;0;1]</axisOfRotation>
-        </RotationAboutFixedAxis>
+        </RotationAboutFixedAxis_V>
       </rotation>
       <frames>
         <frame>
@@ -64,14 +64,14 @@
       <mass>0.5</mass>
       <inertiaTensor>[0,0,0 ; 0,0,0 ; 0,0,0.041666666666666]</inertiaTensor>
       <translation>
-        <LinearTranslation>
-          <translationVectors>[1,0 ; 0,1 ; 0,0]</translationVectors>
-        </LinearTranslation>
+        <LinearFunction_VV>
+          <slope>[1,0 ; 0,1 ; 0,0]</slope>
+        </LinearFunction_VV>
       </translation>
       <rotation>
-        <RotationAboutFixedAxis>
+        <RotationAboutFixedAxis_V>
           <axisOfRotation>[0;0;1]</axisOfRotation>
-        </RotationAboutFixedAxis>
+        </RotationAboutFixedAxis_V>
       </rotation>
       <frames>
         <frame>

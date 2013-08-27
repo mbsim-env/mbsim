@@ -493,7 +493,7 @@ namespace MBSim {
   void Function_VS_from_SS<Col>::initializeUsingXML(MBXMLUtils::TiXmlElement * element) {
     MBXMLUtils::TiXmlElement * e;
     e=element->FirstChildElement(MBSIMNS"function");
-    fmatvec::Function<double(double)> * f=ObjectFactory<fmatvec::Function<double(double)> >::create<fmatvec::Function<double(double)> >(e->FirstChildElement());
+    fmatvec::Function<double(double)> * f=ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<double(double)> >(e->FirstChildElement());
     f->initializeUsingXML(e->FirstChildElement());
     setFunction(f);
     e=element->FirstChildElement(MBSIMNS"direction");
@@ -524,8 +524,8 @@ namespace MBSim {
   class FromMatStr {
     public:
       static Ret cast(const char *x) {
-        throw std::runtime_error("FromMatStr::cast not implemented for current type.");
-        return Ret();
+//        throw std::runtime_error("FromMatStr::cast not implemented for current type.");
+        return Ret(x);
       }
   };
 
@@ -534,14 +534,6 @@ namespace MBSim {
     public:
       static double cast(const char *x) {
         return atof(x);
-      }
-  };
-
-  template <class Col>
-  class FromMatStr<fmatvec::Vector<Col,double> > {
-    public:
-      static fmatvec::Vector<Col,double> cast(const char *x) {
-        return fmatvec::Vector<Col,double>(x);
       }
   };
 
@@ -572,8 +564,7 @@ namespace MBSim {
         ConstantFunction(const Ret &a_) : a(a_) {}
         Ret operator()(const Arg1 &arg1, const Arg2 &arg2) { return a; }
         void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-          MBXMLUtils::TiXmlElement *e;
-          e=element->FirstChildElement(MBSIMNS"value");
+          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"value");
           a=FromMatStr<Ret>::cast(e->GetText());
         }
         MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; } 
@@ -587,13 +578,22 @@ namespace MBSim {
         typename fmatvec::Der<Ret, Arg>::type A;
         Ret b;
       public:
-        LinearFunction() {}
+        LinearFunction() { }
         LinearFunction(const typename fmatvec::Der<Ret, Arg>::type &A_, const Ret &b_) : A(A_), b(b_) {}
         LinearFunction(const typename fmatvec::Der<Ret, Arg>::type &A_) : A(A_), b(A.rows()) {}
         typename fmatvec::Size<Arg>::type getArgSize() const { return A.cols(); }
         Ret operator()(const Arg &arg) { return A*arg+b; }
         typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &arg) { return A; }
         typename fmatvec::Der<Ret, Arg>::type parDerDirDer(const Arg &arg1Dir, const Arg &arg1) { return typename fmatvec::Der<Ret, Arg>::type(A.rows(),A.cols()); }
+        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
+          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"slope");
+          A=FromMatStr<typename fmatvec::Der<Ret, Arg>::type>::cast(e->GetText());
+          e=element->FirstChildElement(MBSIMNS"intercept");
+          if(e) b=FromMatStr<Ret>::cast(e->GetText());
+        }
+        MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; } 
+        void setSlope(const typename fmatvec::Der<Ret, Arg>::type &A_) { A = A_; }
+        void setIntercept(const Ret &b_) { b = b_; }
     };
 
   template<>
@@ -608,6 +608,13 @@ namespace MBSim {
         double operator()(const double &arg) { return A*arg+b; }
         typename fmatvec::Der<double, double>::type parDer(const double &arg) { return A; }
         typename fmatvec::Der<double, double>::type parDerDirDer(const double &arg1Dir, const double &arg1) { return 0; }
+        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
+          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"slope");
+          A=Element::getDouble(e);
+          e=element->FirstChildElement(MBSIMNS"intercept");
+          b=Element::getDouble(e);
+        }
+        MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; } 
     };
 
  template<class Col>
@@ -751,7 +758,7 @@ namespace MBSim {
         while (e && e->ValueStr()==MBSIMNS"function") {
           MBXMLUtils::TiXmlElement *ee = e->FirstChildElement();
           typedef Function<fmatvec::Vector<fmatvec::Ref,double>(double)> typevec;
-          Function<fmatvec::Vector<fmatvec::Ref,double>(double)> *f=ObjectFactory<Function<fmatvec::Vector<fmatvec::Ref,double>(double)> >::create<Function<fmatvec::Vector<fmatvec::Ref,double>(double)> >(ee);
+          Function<fmatvec::Vector<fmatvec::Ref,double>(double)> *f=ObjectFactory<fmatvec::FunctionBase>::create<Function<fmatvec::Vector<fmatvec::Ref,double>(double)> >(ee);
           f->initializeUsingXML(ee);
           ee=e->FirstChildElement(MBSIMNS"factor");
           double factor=Element::getDouble(ee);
@@ -938,6 +945,11 @@ namespace MBSim {
         }
         const fmatvec::Vec3& getAxisOfRotation() const { return a; }
         void setAxisOfRotation(const fmatvec::Vec3 &a_) { a = a_; }
+        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
+          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"axisOfRotation");
+          a=FromMatStr<fmatvec::Vec3>::cast(e->GetText());
+        }
+        MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; } 
     };
 
   template<class Arg> 
