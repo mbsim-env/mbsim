@@ -118,7 +118,7 @@ class MultiFile(object):
       self.filelist.append(second)
   def write(self, str):
     for f in self.filelist:
-      f.write(str)
+      f.write(str.encode("utf-8"))
   def flush(self):
     for f in self.filelist:
       f.flush()
