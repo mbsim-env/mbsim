@@ -3,10 +3,9 @@
 function killStoppedProcesses() {
   for CMD in $1; do
     for PID in $(/usr/sbin/pidof -x $CMD); do
-      echo B $[($(date +%s)-$(date -d "$(ps -p $PID -o lstart=)" +%s))/60/60]
       if [ $[($(date +%s)-$(date -d "$(ps -p $PID -o lstart=)" +%s))/60/60] -gt $2 ]; then
-        echo KILL
         ALLPIDS=$(pstree -lAp $PID | sed -re "s/-[\+-]-/\n/g" | sed -re "s/.*\(([0-9]+)\).*/\1/g")
+        echo KILL $ALLPIDS
         kill $ALLPIDS
         sleep 10s
         kill -9 $ALLPIDS
