@@ -756,19 +756,51 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"inertiaTensor");
     setInertiaTensor(getSymMat3(e));
     e=element->FirstChildElement(MBSIMNS"translation");
-    Function<Vec3(VecV)> *trans=ObjectFactory<FunctionBase>::create<Function<Vec3(VecV)> >(e->FirstChildElement());
+    Function<Vec3(VecV,double)> *trans=ObjectFactory<FunctionBase>::create<Function<Vec3(VecV,double)> >(e->FirstChildElement(),false);
     if(trans) {
       trans->initializeUsingXML(e->FirstChildElement());
       setTranslation(trans);
+    } else {
+      Function<Vec3(VecV)> *trans=ObjectFactory<FunctionBase>::create<Function<Vec3(VecV)> >(e->FirstChildElement(),false);
+      if(trans) {
+        trans->initializeUsingXML(e->FirstChildElement());
+        setTranslation(trans);
+      }
+      else {
+        Function<Vec3(double)> *trans=ObjectFactory<FunctionBase>::create<Function<Vec3(double)> >(e->FirstChildElement(),false);
+        if(trans) {
+          trans->initializeUsingXML(e->FirstChildElement());
+          setTranslation(trans);
+        }
+      }
     }
     e=element->FirstChildElement(MBSIMNS"rotation");
-    Function<RotMat3(VecV)> *rot=ObjectFactory<FunctionBase>::create<Function<RotMat3(VecV)> >(e->FirstChildElement());
+    Function<RotMat3(VecV,double)> *rot=ObjectFactory<FunctionBase>::create<Function<RotMat3(VecV,double)> >(e->FirstChildElement(),false);
     if(rot) {
       rot->initializeUsingXML(e->FirstChildElement());
       TiXmlElement *ee=e->FirstChildElement(MBSIMNS"isDependent");
       bool dep = false;
       if(ee) dep = getBool(ee);
       setRotation(rot,dep);
+    } else {
+      Function<RotMat3(VecV)> *rot=ObjectFactory<FunctionBase>::create<Function<RotMat3(VecV)> >(e->FirstChildElement(),false);
+      if(rot) {
+        rot->initializeUsingXML(e->FirstChildElement());
+        TiXmlElement *ee=e->FirstChildElement(MBSIMNS"isDependent");
+        bool dep = false;
+        if(ee) dep = getBool(ee);
+        setRotation(rot,dep);
+      }
+      else {
+        Function<RotMat3(double)> *rot=ObjectFactory<FunctionBase>::create<Function<RotMat3(double)> >(e->FirstChildElement(),false);
+        if(rot) {
+          rot->initializeUsingXML(e->FirstChildElement());
+          TiXmlElement *ee=e->FirstChildElement(MBSIMNS"isDependent");
+          bool dep = false;
+          if(ee) dep = getBool(ee);
+          setRotation(rot,dep);
+        }
+      }
     }
     e=element->FirstChildElement(MBSIMNS"rotationMapping");
     if(e) {

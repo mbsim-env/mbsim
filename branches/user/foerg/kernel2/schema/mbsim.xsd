@@ -973,7 +973,11 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function_VV" minOccurs="0"/>
+                <xs:choice>
+                  <xs:element ref="Function_VVS" minOccurs="0"/>
+                  <xs:element ref="Function_VV" minOccurs="0"/>
+                  <xs:element ref="Function_VS" minOccurs="0"/>
+                </xs:choice>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -988,7 +992,11 @@
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function_MV" minOccurs="0"/>
+                <xs:choice>
+                  <xs:element ref="Function_MVS" minOccurs="0"/>
+                  <xs:element ref="Function_MV" minOccurs="0"/>
+                  <xs:element ref="Function_MS" minOccurs="0"/>
+                </xs:choice>
                 <xs:element name="isDependent" minOccurs="0">
                   <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                     tbd
@@ -3050,6 +3058,66 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="NestedFunction_MSV" substitutionGroup="Function_MV" type="NestedFunction_MVType"/>
+  <xs:complexType name="NestedFunction_MVType" mixed="true">
+    <xs:complexContent>
+      <xs:extension base="Function_MVType">
+        <xs:sequence>
+          <xs:element name="outerFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function_MS" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="innerFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function_SV" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="NestedFunction_MSS" substitutionGroup="Function_MS" type="NestedFunction_MSType"/>
+  <xs:complexType name="NestedFunction_MSType" mixed="true">
+    <xs:complexContent>
+      <xs:extension base="Function_MSType">
+        <xs:sequence>
+          <xs:element name="outerFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function_MS" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="innerFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function_SS" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="Polynom_SS" substitutionGroup="Function_SS" type="Polynom_SSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -3790,8 +3858,14 @@
   </xs:complexType>
   -->
 
+  <xs:element name="Function_MVS" abstract="true" type="Function_MVSType"/>
+  <xs:complexType name="Function_MVSType"/>
+
   <xs:element name="Function_MV" abstract="true" type="Function_MVType"/>
   <xs:complexType name="Function_MVType"/>
+
+  <xs:element name="Function_MS" abstract="true" type="Function_MSType"/>
+  <xs:complexType name="Function_MSType"/>
 
   <xs:element name="RotationAboutFixedAxis_V" substitutionGroup="Function_MV" type="RotationAboutFixedAxis_VType">
     <xs:annotation>
@@ -3804,7 +3878,30 @@
     <xs:complexContent>
       <xs:extension base="Function_MVType">
         <xs:sequence>
-          <xs:element name="axisOfRotation" type="pv:unknownVector">
+          <xs:element name="axisOfRotation" type="pv:nounitVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="RotationAboutFixedAxis_S" substitutionGroup="Function_MS" type="RotationAboutFixedAxis_SType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="RotationAboutFixedAxis_SType">
+    <xs:complexContent>
+      <xs:extension base="Function_MSType">
+        <xs:sequence>
+          <xs:element name="axisOfRotation" type="pv:nounitVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
               tbd

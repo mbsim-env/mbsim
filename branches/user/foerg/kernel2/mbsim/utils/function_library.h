@@ -105,11 +105,20 @@ namespace MBSim {
   template<typename Ret, typename Argo, typename Argi> 
     class NestedFunction<Ret(Argo(Argi))> : public fmatvec::Function<Ret(Argi)> {
       public:
-       NestedFunction(fmatvec::Function<Ret(Argo)> *fo_, fmatvec::Function<Argo(Argi)> *fi_) : fo(fo_), fi(fi_) { }
+       NestedFunction(fmatvec::Function<Ret(Argo)> *fo_=0, fmatvec::Function<Argo(Argi)> *fi_=0) : fo(fo_), fi(fi_) { }
        typename fmatvec::Size<Argi>::type getArgSize() const { return fi->getArgSize();}
         Ret operator()(const Argi &arg) {return (*fo)((*fi)(arg));}
         typename fmatvec::Der<Ret, Argi>::type parDer(const Argi &arg) { return fo->parDer((*fi)(arg))*fi->parDer(arg); }
         typename fmatvec::Der<Ret, Argi>::type parDerDirDer(const Argi &argDir, const Argi &arg) { return fo->parDerDirDer(fi->parDer(arg)*argDir,(*fi)(arg))*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerDirDer(argDir,arg); }
+        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
+          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"outerFunction");
+          fo=ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<Ret(Argo)> >(e->FirstChildElement());
+          fo->initializeUsingXML(e->FirstChildElement());
+          e=element->FirstChildElement(MBSIMNS"innerFunction");
+          fi=ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<Argo(Argi)> >(e->FirstChildElement());
+          fi->initializeUsingXML(e->FirstChildElement());
+        }
+        MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; } 
       private:
         fmatvec::Function<Ret(Argo)> *fo;
         fmatvec::Function<Argo(Argi)> *fi;
@@ -118,13 +127,22 @@ namespace MBSim {
   template<typename Ret, typename Argo> 
     class NestedFunction<Ret(Argo(double))> : public fmatvec::Function<Ret(double)> {
       public:
-       NestedFunction(fmatvec::Function<Ret(Argo)> *fo_, fmatvec::Function<Argo(double)> *fi_) : fo(fo_), fi(fi_) { }
+       NestedFunction(fmatvec::Function<Ret(Argo)> *fo_=0, fmatvec::Function<Argo(double)> *fi_=0) : fo(fo_), fi(fi_) { }
        typename fmatvec::Size<double>::type getArgSize() const { return fi->getArgSize();}
         Ret operator()(const double &arg) {return (*fo)((*fi)(arg));}
         typename fmatvec::Der<Ret, double>::type parDer(const double &arg) { return fo->parDer((*fi)(arg))*fi->parDer(arg); }
         typename fmatvec::Der<Ret, double>::type parDerDirDer(const double &argDir, const double &arg) { return fo->parDerDirDer(fi->parDer(arg)*argDir,(*fi)(arg))*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerDirDer(argDir,arg); }
 //        typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &arg) { return fo->parDerParDer((*fi)(arg))*fi->parDer(arg)*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerParDer(arg); }
         typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &arg) { return fo->parDerDirDer(fi->parDer(arg),(*fi)(arg))*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerParDer(arg); }
+        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
+          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"outerFunction");
+          fo=ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<Ret(Argo)> >(e->FirstChildElement());
+          fo->initializeUsingXML(e->FirstChildElement());
+          e=element->FirstChildElement(MBSIMNS"innerFunction");
+          fi=ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<Argo(double)> >(e->FirstChildElement());
+          fi->initializeUsingXML(e->FirstChildElement());
+        }
+        MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; } 
       private:
         fmatvec::Function<Ret(Argo)> *fo;
         fmatvec::Function<Argo(double)> *fi;
@@ -548,8 +566,7 @@ namespace MBSim {
         ConstantFunction(const Ret &a_) : a(a_) {}
         Ret operator()(const Arg &arg) { return a; }
         void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-          MBXMLUtils::TiXmlElement *e;
-          e=element->FirstChildElement(MBSIMNS"value");
+          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"value");
           a=FromMatStr<Ret>::cast(e->GetText());
         }
         MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; } 

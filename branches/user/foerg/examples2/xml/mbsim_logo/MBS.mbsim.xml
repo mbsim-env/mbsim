@@ -56,14 +56,14 @@
       <mass>pi*r^2*(5*x)*rho</mass>
       <inertiaTensor>[1/2*(pi*r^2*(5*x)*rho)*r^2, 0, 0; 0, 1/4*(pi*r^2*(5*x)*rho)*r^2+1/12*(pi*r^2*(5*x)*rho)*(5*x)^2, 0; 0, 0, 1/4*(pi*r^2*(5*x)*rho)*r^2+1/12*(pi*r^2*(5*x)*rho)*(5*x)^2]</inertiaTensor>
       <translation>
-        <LinearTranslation xmlns="http://mbsim.berlios.de/MBSim">
-          <translationVectors>[1, 0, 0; 0, 1, 0]'</translationVectors>
-        </LinearTranslation>
+        <LinearFunction_VV xmlns="http://mbsim.berlios.de/MBSim">
+          <slope>[1, 0, 0; 0, 1, 0]'</slope>
+        </LinearFunction_VV>
       </translation>
       <rotation>
-        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+        <RotationAboutFixedAxis_V xmlns="http://mbsim.berlios.de/MBSim">
           <axisOfRotation>[0; 0; 1]</axisOfRotation>
-        </RotationAboutFixedAxis>
+        </RotationAboutFixedAxis_V>
       </rotation>
       <frames>
         <frame>

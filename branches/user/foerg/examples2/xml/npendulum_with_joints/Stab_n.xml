@@ -9,14 +9,14 @@
   <mass>5000000</mass>
   <inertiaTensor>[0,0,0 ; 0,0,0 ; 0,0,0.041666666666666]</inertiaTensor>
   <translation>
-    <LinearTranslation>
-      <translationVectors>
+    <LinearFunction_VV>
+      <slope>
         <xi:include href="abc/mat.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
-      </translationVectors>
-    </LinearTranslation>
+      </slope>
+    </LinearFunction_VV>
   </translation>
   <rotation>
-    <RotationAboutFixedAxis>
+    <RotationAboutFixedAxis_V>
       <axisOfRotation>
         <pv:xmlVector>
           <pv:ele>0</pv:ele>
@@ -24,7 +24,7 @@
           <pv:ele>1</pv:ele>
         </pv:xmlVector>
       </axisOfRotation>
-    </RotationAboutFixedAxis>
+    </RotationAboutFixedAxis_V>
   </rotation>
   <frames>
     <frame>
