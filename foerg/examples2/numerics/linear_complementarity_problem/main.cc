@@ -1,5 +1,5 @@
 #include <mbsim/numerics/linear_complementarity_problem/linear_complementarity_problem.h>
-#include <fmatvec.h>
+#include <fmatvec/fmatvec.h>
 
 #include <iostream>
 

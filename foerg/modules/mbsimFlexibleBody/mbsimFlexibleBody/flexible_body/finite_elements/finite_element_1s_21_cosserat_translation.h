@@ -24,7 +24,7 @@
 #include "mbsim/mbsim_event.h"
 #include "mbsim/contour_pdata.h"
 #include "mbsimFlexibleBody/pointer.h"
-#include "fmatvec.h"
+#include "fmatvec/fmatvec.h"
 
 namespace MBSimFlexibleBody {
 

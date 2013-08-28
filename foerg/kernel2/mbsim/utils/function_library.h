@@ -20,7 +20,7 @@
 #ifndef _FUNCTION_LIBRARY_H_
 #define _FUNCTION_LIBRARY_H_
 
-#include "function.h"
+#include "fmatvec/function.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/element.h"
 #include "mbsim/utils/eps.h"
@@ -1009,6 +1009,50 @@ namespace MBSim {
           double bd = qd(1);
           Jd.e(1) = -sin(a)*ad*bd;
           Jd.e(2) = cos(a)*ad*bd;
+          return Jd;
+        }
+    };
+
+  template<class Arg> 
+    class RotationAboutAxesYZ : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
+      private:
+        fmatvec::RotMat3 A;
+        fmatvec::Mat3xV J, Jd;
+      public:
+        RotationAboutAxesYZ() : J(2), Jd(2) { J.e(1,0) = 1; }
+        typename fmatvec::Size<Arg>::type getArgSize() const {
+          return 2;
+        }
+        fmatvec::RotMat3 operator()(const Arg &q) {
+          double b=q(0);
+          double g=q(1);
+          double cosb = cos(b);
+          double sinb = sin(b);
+          double cosg = cos(g);
+          double sing = sin(g);
+
+          A.e(0,0) = cosb*cosg;
+          A.e(1,0) = sing;
+          A.e(2,0) = -sinb*cosg;
+          A.e(0,1) = -cosb*sing;
+          A.e(1,1) = cosg;
+          A.e(2,1) = sinb*sing;
+          A.e(0,2) = sinb;
+          A.e(2,2) = cosb;
+          return A;
+        }
+        typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDer(const Arg &q) {
+          double beta = q(0);
+          J.e(0,1) = sin(beta);
+          J.e(2,1) = cos(beta);
+          return J;
+        }
+        typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) {
+          double beta = q(0);
+          double betad = qd(0);
+          double gammad = qd(1);
+          Jd.e(0,1) = cos(beta)*betad*gammad;
+          Jd.e(2,1) = -sin(beta)*betad*gammad;
           return Jd;
         }
     };

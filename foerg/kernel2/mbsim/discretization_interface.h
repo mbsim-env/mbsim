@@ -21,7 +21,7 @@
 #ifndef _DISCRETIZATION_INTERFACE_H_
 #define _DISCRETIZATION_INTERFACE_H_
 
-#include <fmatvec.h>
+#include <fmatvec/fmatvec.h>
 
 namespace MBSim {
 

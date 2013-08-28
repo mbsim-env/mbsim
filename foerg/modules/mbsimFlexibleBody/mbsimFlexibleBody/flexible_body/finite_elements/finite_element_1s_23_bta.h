@@ -24,7 +24,7 @@
 #include "mbsim/discretization_interface.h"
 #include "mbsim/contour_pdata.h"
 #include "mbsim/mbsim_event.h"
-#include "fmatvec.h"
+#include "fmatvec/fmatvec.h"
 
 namespace MBSimFlexibleBody {
 

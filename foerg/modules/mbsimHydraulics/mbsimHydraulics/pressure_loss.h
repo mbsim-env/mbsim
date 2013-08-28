@@ -21,7 +21,7 @@
 #define  _PRESSURE_LOSS_H_
 
 #include "mbsim/element.h"
-#include "function.h"
+#include <fmatvec/function.h>
 
 namespace MBSim {
   template <class Row, class Col> class TabularFunction;

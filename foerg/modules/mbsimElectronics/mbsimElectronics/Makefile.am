@@ -6,7 +6,7 @@ libmbsimElectronics_la_SOURCES = simulation_classes.cc\
 			    modelling_classes.cc
 
 libmbsimElectronics_la_LIBADD = $(DEPS_LIBS)
-INCLUDES = $(DEPS_CFLAGS)
+libmbsimElectronics_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS)
 
 mbsimElectronicsincludedir = $(includedir)/mbsimElectronics
 mbsimElectronicsinclude_HEADERS = simulation_classes.h\

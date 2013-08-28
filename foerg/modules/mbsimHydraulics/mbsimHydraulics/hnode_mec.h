@@ -21,7 +21,7 @@
 #define  _HNODE_MEC_H_
 
 #include "hnode.h"
-#include "function.h"
+#include <fmatvec/function.h>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 namespace OpenMBV {

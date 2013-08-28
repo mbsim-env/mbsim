@@ -1,7 +1,6 @@
 #include "system.h"
 #include "mbsimElectronics/simulation_classes.h"
 #include "mbsimControl/signal_.h"
-#include <function.h>
 #include "mbsimControl/function_sensor.h"
 #include "mbsimControl/sensor.h"
 

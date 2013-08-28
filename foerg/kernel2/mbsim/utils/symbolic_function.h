@@ -20,7 +20,7 @@
 #ifndef SYMBOLIC_FUNCTION_H_
 #define SYMBOLIC_FUNCTION_H_
 
-#include <function.h>
+#include <fmatvec/function.h>
 #include <casadi/symbolic/fx/sx_function.hpp>
 #include "casadi/symbolic/matrix/matrix_tools.hpp"
 #include "mbxmlutilstinyxml/casadiXML.h"

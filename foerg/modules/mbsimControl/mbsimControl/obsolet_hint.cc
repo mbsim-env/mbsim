@@ -20,6 +20,7 @@
 #include <config.h>
 #include "mbsimControl/obsolet_hint.h"
 #include "mbsim/utils/utils.h"
+#include "mbxmlutilstinyxml/utils.h"
 #include <string>
 #include <iostream>
 
@@ -30,7 +31,7 @@ namespace MBSimControl {
   string process_signal_string(string path) {
     if (path.find("Signal[")!=string::npos) {
       const size_t pos=path.find("Signal[");
-      MBSim::Deprecated::registerMessage("Signal-Container is obsolete, use Link-Container instead! (" + path + ")");
+      MBXMLUtils::Deprecated::registerMessage("Signal-Container is obsolete, use Link-Container instead! (" + path + ")");
       path.erase(pos, 7);
       path.insert(pos, "Link[");
     }

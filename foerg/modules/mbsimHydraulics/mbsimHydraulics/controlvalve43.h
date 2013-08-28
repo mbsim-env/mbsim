@@ -21,7 +21,7 @@
 #define  _CONTROLVALVE43_H_
 
 #include "mbsim/group.h"
-#include "function.h"
+#include <fmatvec/function.h>
 
 namespace MBSimControl {
   class Signal;

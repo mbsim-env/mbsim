@@ -20,7 +20,7 @@
 #ifndef NUMERICS_NUMERICSMULTIDIMENSIONALNEWTONMETHOD_H_
 #define NUMERICS_NUMERICSMULTIDIMENSIONALNEWTONMETHOD_H_
 
-#include <fmatvec.h>
+#include <fmatvec/fmatvec.h>
 
 #include <map>
 

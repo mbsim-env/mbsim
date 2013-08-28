@@ -21,7 +21,7 @@
 #define _SIGNAL_MANIPULATION_H_
 
 #include "mbsimControl/signal_.h"
-#include "function.h"
+#include <fmatvec/function.h>
 
 namespace MBSimControl {
 

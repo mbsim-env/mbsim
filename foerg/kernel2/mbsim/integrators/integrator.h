@@ -23,7 +23,7 @@
 #define MBSIMINTNS_ "http://mbsim.berlios.de/MBSimIntegrator"
 #define MBSIMINTNS "{"MBSIMINTNS_"}"
 
-#include<fmatvec.h>
+#include<fmatvec/fmatvec.h>
 #include"mbxmlutilstinyxml/tinyxml.h"
 #include<string>
 #include<iostream>
@@ -68,8 +68,16 @@ namespace MBSim {
       /*! 
        * \brief start the integration
        * \param dynamic system to be integrated
+       * Each class implemeting this function should call debugInit first.
        */
       virtual void integrate(DynamicSystemSolver& system) = 0;
+
+      /*! Each class implemeting the Integrator::integrate function should call this function first.
+       * This function does currently only some minor modification of the integrator data (like
+       * end time) dependent on environment variables. This is used mainly for debugging purposes like
+       * automatic valgrind runs with a very small tEnd time.
+       */
+      void debugInit();
 
       virtual void preIntegrate(DynamicSystemSolver& system) { std::cerr<<"preIntegrate is not defined\n"<<std::endl; }
       virtual void subIntegrate(DynamicSystemSolver& system, double tStop) { std::cerr<<"subIntegrate is not defined\n"<<std::endl; }

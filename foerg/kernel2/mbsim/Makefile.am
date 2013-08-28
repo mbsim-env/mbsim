@@ -15,6 +15,7 @@ environment.cc\
 frame.cc\
 functions_contact.cc\
 group.cc\
+isotropic_rotational_spring_damper.cc\
 joint.cc\
 gear.cc\
 gearing.cc\
@@ -34,12 +35,15 @@ graph.cc\
 constraint.cc \
 observer.cc
 
-libmbsim_la_LIBADD = integrators/libintegrators.la utils/libutils.la contact_kinematics/libcontactkinematics.la contours/libcontour.la numerics/libnumerics.la observers/libobserver.la -lgfortran
+libmbsim_la_LIBADD = integrators/libintegrators.la
+libmbsim_la_LIBADD += utils/libutils.la 
+libmbsim_la_LIBADD += contact_kinematics/libcontactkinematics.la 
+libmbsim_la_LIBADD += contours/libcontour.la 
+libmbsim_la_LIBADD += numerics/libnumerics.la 
+libmbsim_la_LIBADD += observers/libobserver.la 
+libmbsim_la_LIBADD += -lgfortran $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 
-libmbsim_la_CPPFLAGS = -DTIXML_USE_STL
-
-INCLUDES = $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) $(MBSIMNUMERICS_CFLAGS)
-LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) $(MBSIMNUMERICS_LIBS)
+libmbsim_la_CPPFLAGS = -I$(top_srcdir) -DTIXML_USE_STL $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
 
 mbsimincludedir = $(includedir)/mbsim
 mbsiminclude_HEADERS = \
@@ -60,6 +64,7 @@ group.h\
 joint.h\
 gear.h\
 gearing.h\
+isotropic_rotational_spring_damper.h\
 spring_damper.h\
 rotational_spring_damper.h\
 extern_generalized_io.h\

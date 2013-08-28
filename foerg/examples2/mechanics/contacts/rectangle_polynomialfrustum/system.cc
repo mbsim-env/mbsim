@@ -9,7 +9,7 @@
 
 #include <mbsim/utils/colors.h>
 
-#include <fmatvec.h>
+#include <fmatvec/fmatvec.h>
 
 #include <mbsim/frame.h>
 
@@ -49,13 +49,13 @@ System::System(const string &projectName) :
   this->addObject(polyfrustum);
 
   //CONTOUR
-  Vec polynomialparameters("[1;2;-1]");  //polynomial y=-x^2+2x+1
-  PolynomialFrustum* polyfrustumcontour = new PolynomialFrustum("PolyFrustumContour", polynomialparameters);
-  polyfrustumcontour->setHeight(1);
+  Vec polynomialparameters("[1;-2;-1]");  //polynomial y=-x^2+2x+1
+  PolynomialFrustum* polyfrustumcontour = new PolynomialFrustum("PolyFrustumContour" + name, polynomialparameters);
+  polyfrustumcontour->setHeight(-1);
 
   polyfrustumcontour->enableOpenMBV();
 
-  FixedRelativeFrame * polyFrustumFrame = new FixedRelativeFrame("RelPolyFrame", Vec3(), BasicRotAKIy(0));
+  FixedRelativeFrame * polyFrustumFrame = new FixedRelativeFrame("RelPolyFrame", Vec3(), BasicRotAKIz(M_PI));
   polyfrustum->addFrame(polyFrustumFrame);
   polyfrustumcontour->setFrameOfReference(polyFrustumFrame);
   polyfrustum->addContour(polyfrustumcontour);
@@ -91,7 +91,7 @@ System::System(const string &projectName) :
 
     //Add contact between frustum and rectangle
     Contact* contact = new Contact("FrustumRectangle1");
-    contact->connect(rectangle, polyfrustumcontour);
+    contact->connect(polyfrustumcontour, rectangle);
 
     contact->setPlotFeature(openMBV, enabled);
     contact->enableOpenMBVContactPoints();
@@ -131,7 +131,7 @@ System::System(const string &projectName) :
 
     //Add contact between frustum and rectangle
     Contact* contact = new Contact("FrustumRectangle2");
-    contact->connect(rectangle, polyfrustumcontour);
+    contact->connect(polyfrustumcontour, rectangle);
 
     contact->setPlotFeature(openMBV, enabled);
     contact->enableOpenMBVContactPoints();
@@ -174,7 +174,7 @@ System::System(const string &projectName) :
 
     //Add contact between frustum and rectangle
     Contact* contact = new Contact("FrustumRectangle3");
-    contact->connect(rectangle, polyfrustumcontour);
+    contact->connect(polyfrustumcontour, rectangle);
 
     contact->setPlotFeature(openMBV, enabled);
     contact->enableOpenMBVContactPoints();

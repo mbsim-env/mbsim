@@ -19,7 +19,7 @@
 #ifndef _CONTOUR_PDATA_H_
 #define _CONTOUR_PDATA_H_
 
-#include "fmatvec.h"
+#include "fmatvec/fmatvec.h"
 #include "mbsim/frame.h"
 #include <vector>
 

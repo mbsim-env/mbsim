@@ -22,7 +22,7 @@
 #include <mbsim/utils/utils.h>
 
 
-#include <fmatvec.h>
+#include <fmatvec/fmatvec.h>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frustum.h>
@@ -80,7 +80,7 @@ namespace MBSim {
   void Frustum::enableOpenMBV(bool enable) {
     if(enable) {
       openMBVRigidBody=new OpenMBV::Frustum;
-      ((OpenMBV::Frustum*)openMBVRigidBody)->setStaticColor(0.5);
+      ((OpenMBV::Frustum*)openMBVRigidBody)->setDiffuseColor(0.5,0,0);
       ((OpenMBV::Frustum*)openMBVRigidBody)->setInitialRotation(-M_PI*0.5,0.,0.);
     }
     else openMBVRigidBody=0;

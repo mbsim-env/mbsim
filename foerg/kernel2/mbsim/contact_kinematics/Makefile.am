@@ -26,13 +26,14 @@ libcontactkinematics_la_SOURCES = rectangle_polynomialfrustum.cc\
 				  point_line_segment.cc\
 				  sphere_frustum.cc\
 				  sphere_plane.cc\
+				  sphere_rectangle.cc\
 				  sphere_sphere.cc\
 				  sphere_polynomialfrustum.cc			  
 
 contactkinematicsincludedir = $(includedir)/mbsim/contact_kinematics
 
-INCLUDES = $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
-LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) 
+libcontactkinematics_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
+libcontactkinematics_la_LIBADD =  $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) 
 
 contactkinematicsinclude_HEADERS = rectangle_polynomialfrustum.h\
 				   circle_frustum.h\
@@ -61,5 +62,6 @@ contactkinematicsinclude_HEADERS = rectangle_polynomialfrustum.h\
 				   point_line_segment.h\
 				   sphere_frustum.h\
 				   sphere_plane.h\
+				   sphere_rectangle.h\
 				   sphere_sphere.h\
 				   sphere_polynomialfrustum.h	

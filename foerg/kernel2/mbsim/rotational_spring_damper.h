@@ -20,7 +20,7 @@
 #define _ROTATIONALSPRINGDAMPER_H_
 
 #include "mbsim/link_mechanics.h"
-#include "function.h"
+#include <fmatvec/function.h>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 namespace OpenMBV {

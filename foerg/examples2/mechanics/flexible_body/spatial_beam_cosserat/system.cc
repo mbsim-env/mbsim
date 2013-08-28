@@ -28,7 +28,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
   double l0 = 5.; // length
-  double b0 = 0.1; // width
+  double b0 = 0.05; // width
   double E = 5.e7; // E-Modul
   double mu = 0.3; // Poisson ratio
   double G = E/(2*(1+mu)); // shear modulus
@@ -96,7 +96,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Beginning Contact ---------------------------------------------------
 
   double mass = 5.; // mass of ball
-  double r = 1.e-2; // radius of ball
+  double r = 2.e-2; // radius of ball
 
   RigidBody *ball = new RigidBody("Ball");
   Vec WrOS0B(3,INIT,0.);
@@ -111,7 +111,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Theta(2,2) = 2./5.*mass*r*r;
   ball->setInertiaTensor(Theta);
   ball->setTranslation(new LinearFunction<Vec3(VecV)>(Mat(3,3,EYE)));
-  Point *point = new Point("Point");
+
+  Vec3 u0;
+  u0(1) = -10;
+  ball->setInitialGeneralizedVelocity(u0);
+
+  MBSim::Point *point = new MBSim::Point("Point");
   Vec BR(3,INIT,0.); BR(1)=-r;
   ball->addContour(point,BR,SqrMat(3,EYE),ball->getFrame("C"));
   this->addObject(ball);
@@ -126,7 +131,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Contact *contact = new Contact("Contact");
   contact->setContactForceLaw(new UnilateralConstraint);
   contact->setContactImpactLaw(new UnilateralNewtonImpact(1.0));
-  contact->connect(ball->getContour("Point"),rod->getContour("Bottom"));
+  contact->connect(ball->getContour("Point"),rod->getContour("Top"));
   OpenMBV::Arrow *a_n = new OpenMBV::Arrow;
   //a_n->setHeadDiameter(tP*0.05);
   //a_n->setHeadLength(tP*0.07);

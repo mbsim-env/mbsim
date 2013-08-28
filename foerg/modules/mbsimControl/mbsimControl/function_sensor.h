@@ -21,7 +21,7 @@
 #define _FUNCTION_SENSOR_H_
 
 #include "mbsimControl/sensor.h"
-#include "function.h"
+#include <fmatvec/function.h>
 
 namespace MBSimControl {
 

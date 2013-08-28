@@ -19,7 +19,7 @@
 #ifndef  _ANSATZ_FUNCTIONS_H_
 #define  _ANSATZ_FUNCTIONS_H_
 
-#include "fmatvec.h"
+#include "fmatvec/fmatvec.h"
 
   /**
    * \brief a class of ansatz-functions for approximations with Galerkin-Method

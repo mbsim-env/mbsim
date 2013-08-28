@@ -22,7 +22,7 @@
 
 #include <config.h>
 #include <mbsim/dynamic_system_solver.h>
-#include "fortran_wrapper.h"
+#include "fortran/fortran_wrapper.h"
 #include "radau5_integrator.h"
 #include <time.h>
 #include <fstream>
@@ -74,6 +74,7 @@ namespace MBSim {
   }
 
   void RADAU5Integrator::integrate(DynamicSystemSolver& system_) {
+    debugInit();
 
     system = &system_;
     int zSize=system->getzSize();

@@ -27,8 +27,8 @@
 
 #include <mbsim/utils/colors.h>
 
-#include <fmatvec.h>
-#include <function.h>
+#include <fmatvec/fmatvec.h>
+#include <fmatvec/function.h>
 
 namespace MBSim {
 

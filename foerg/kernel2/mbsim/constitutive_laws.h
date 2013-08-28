@@ -22,12 +22,10 @@
 
 #include <map>
 
-#include "fmatvec.h"
-
 #include <mbsim/numerics/linear_complementarity_problem/linear_complementarity_problem.h>
 #include <mbsim/contour.h>
 #include <mbsim/contact.h>
-#include "function.h"
+#include <fmatvec/function.h>
 
 namespace MBSim {
 

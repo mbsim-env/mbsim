@@ -21,7 +21,7 @@
 #ifndef _SUPERELEMENT_LINEAR_EXTERNAL_H_
 #define _SUPERELEMENT_LINEAR_EXTERNAL_H_
 
-#include "fmatvec.h"
+#include "fmatvec/fmatvec.h"
 #include "mbsim/discretization_interface.h"
 #include "mbsim/mbsim_event.h"
 #include "mbsim/contour_pdata.h"

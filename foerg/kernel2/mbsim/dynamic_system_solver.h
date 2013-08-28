@@ -22,7 +22,7 @@
 #define _DYNAMIC_SYSTEM_SOLVER_H_
 
 #include "mbsim/group.h"
-#include "sparse_matrix.h"
+#include "fmatvec/sparse_matrix.h"
 
 namespace MBSim {
 

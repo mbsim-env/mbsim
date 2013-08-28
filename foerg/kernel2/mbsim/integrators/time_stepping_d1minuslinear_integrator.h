@@ -20,7 +20,6 @@
 #ifndef _D1MINUSLINEAR_H_ 
 #define _D1MINUSLINEAR_H_
 
-#include<fmatvec.h>
 #include "integrator.h"
 
 namespace MBSim {

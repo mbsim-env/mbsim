@@ -17,52 +17,25 @@
  * Contact: thorsten.schindler@mytum.de
  */
 
-#ifndef NURBSCURVE1S_H_
-#define NURBSCURVE1S_H_
+#ifndef NurbsCurve1s_H_
+#define NurbsCurve1s_H_
 
-#include "fmatvec.h"
+#include "fmatvec/fmatvec.h"
 #include "mbsim/mbsim_event.h"
 #include "mbsim/contours/contour1s.h"
 
-#ifdef HAVE_NURBS
-#define MY_PACKAGE_BUGREPORT PACKAGE_BUGREPORT
-#define MY_PACKAGE_NAME PACKAGE_NAME
-#define MY_PACKAGE_VERSION PACKAGE_VERSION
-#define MY_PACKAGE_TARNAME PACKAGE_TARNAME
-#define MY_PACKAGE_STRING PACKAGE_STRING
-#undef PACKAGE_BUGREPORT
-#undef PACKAGE_NAME
-#undef PACKAGE_VERSION
-#undef PACKAGE_TARNAME
-#undef PACKAGE_STRING
-#include "nurbs++/nurbs.h"
-#undef PACKAGE_BUGREPORT
-#undef PACKAGE_NAME
-#undef PACKAGE_VERSION
-#undef PACKAGE_TARNAME
-#undef PACKAGE_STRING
-#include "nurbs++/nurbsS.h"
-#undef PACKAGE_BUGREPORT
-#undef PACKAGE_NAME
-#undef PACKAGE_VERSION
-#undef PACKAGE_TARNAME
-#undef PACKAGE_STRING
-#include "nurbs++/vector.h"
-#define PACKAGE_BUGREPORT MY_PACKAGE_BUGREPORT
-#define PACKAGE_NAME MY_PACKAGE_NAME
-#define PACKAGE_VERSION MY_PACKAGE_VERSION
-#define PACKAGE_TARNAME MY_PACKAGE_TARNAME
-#define PACKAGE_STRING MY_PACKAGE_STRING
-#endif
+#include <mbsim/numerics/nurbs/nurbs_curve.h>
 
 namespace MBSimFlexibleBody {
 
   /*!  
    * \brief contour 1s flexible with NURBS parametrization
    * \author Thorsten Schindler
+   * \author Kilian Grundl
    * \date 2011-10-16 initial commit (Thorsten Schindler)
    * \date 2012-03-15 updateKinematicsForFrame and contact Jacobians (Cebulla / Schindler)
    * \date 2013-02-04 contour now for 2D and 3D Cosserat beam (Zitzewitz / Cebulla / Schindler)
+   * \date 2013-08-19 using self implemented nurbs-curve
    */
   class NurbsCurve1s : public MBSim::Contour1s {
     public:
@@ -75,77 +48,70 @@ namespace MBSimFlexibleBody {
       /**
        * \brief destructor
        */
-      virtual ~NurbsCurve1s();  
+      virtual ~NurbsCurve1s();
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const { return "NurbsCurve1s"; }
+      virtual std::string getType() const {
+        return "NurbsCurve1s";
+      }
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOURCONTINUUM */
-      virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) { throw MBSim::MBSimError("ERROR(NurbsCurve1s::computeRootFunctionPosition): Not implemented!"); }
-      virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) { throw MBSim::MBSimError("ERROR(NurbsCurve1s::computeRootFunctionFirstTangent): Not implemented!"); }
-      virtual void computeRootFunctionNormal(MBSim::ContourPointData &cp) { throw MBSim::MBSimError("ERROR(NurbsCurve1s::computeRootFunctionNormal): Not implemented!"); }
-      virtual void computeRootFunctionSecondTangent(MBSim::ContourPointData &cp) { throw MBSim::MBSimError("ERROR(NurbsCurve1s::computeRootFunctionSecondTangent): Not implemented!"); }
+      virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) {
+        throw MBSim::MBSimError("ERROR(NurbsCurve1s::computeRootFunctionPosition): Not implemented!");
+      }
+      virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) {
+        throw MBSim::MBSimError("ERROR(NurbsCurve1s::computeRootFunctionFirstTangent): Not implemented!");
+      }
+      virtual void computeRootFunctionNormal(MBSim::ContourPointData &cp) {
+        throw MBSim::MBSimError("ERROR(NurbsCurve1s::computeRootFunctionNormal): Not implemented!");
+      }
+      virtual void computeRootFunctionSecondTangent(MBSim::ContourPointData &cp) {
+        throw MBSim::MBSimError("ERROR(NurbsCurve1s::computeRootFunctionSecondTangent): Not implemented!");
+      }
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
       virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff);
-      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j=0);
-      virtual MBSim::ContactKinematics *findContactPairingWith(std::string type0, std::string type1) { throw MBSim::MBSimError("ERROR(NurbsCurve1s::findContactPairingWith): Not implemented!"); }
+      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
+      virtual MBSim::ContactKinematics *findContactPairingWith(std::string type0, std::string type1) {
+        throw MBSim::MBSimError("ERROR(NurbsCurve1s::findContactPairingWith): Not implemented!");
+      }
       /***************************************************/
 
       /* GETTER / SETTER */
-#ifdef HAVE_NURBS
-      void setNormalRotationGrid(fmatvec::Vec normal_) { normalRotationGrid.x() = normal_(0), normalRotationGrid.y() = normal_(1),normalRotationGrid.z() = normal_(2); }
-#endif
+      void setNormalRotationGrid(fmatvec::Vec normal_) {
+        normalRotationGrid = normal_(0,2);
+      }
       /***************************************************/
 
-#ifdef HAVE_NURBS
       /**
        * \brief initialize NURBS curve 
        * \param stage of initialisation
        */
       void initContourFromBody(MBSim::InitStage stage);
-#endif
 
-
-#ifdef HAVE_NURBS
-      /*! 
-       * \brief computes the U-Vector
-       * \param number of points
-       */
-      void computeUVector(const int NbPts); 
-#endif
-
-#ifdef HAVE_NURBS
       /*! 
        * \brief interpolates the translations with node-data from body
        */
-      void computeCurveTranslations();
-#endif
+      void computeCurveTranslations(bool update = false);
 
-#ifdef HAVE_NURBS
       /*!
        * \brief interpolates the velocities with the node-data from the body
        */
-      void computeCurveVelocities();
-#endif
+      void computeCurveVelocities(bool update = false);
 
-#ifdef HAVE_NURBS
       /*!
        * \brief interpolates the angular velocities with the node-data from the body
        */
-      void computeCurveAngularVelocities();
-#endif
+      void computeCurveAngularVelocities(bool update = false);
 
-#ifdef HAVE_NURBS
       /*!
        * \brief interpolates the Jacobians of translation with the node-data from the body
        * \param interpolate translational jacobian
        * \param interpolate rotational jacobian
        */
-      void computeCurveJacobians(bool trans = true, bool rot = true);
-#endif
+      void computeCurveJacobians(bool trans = true, bool rot = true, bool update = false);
 
     protected:
       /**
@@ -173,26 +139,25 @@ namespace MBSimFlexibleBody {
        */
       int degU;
 
-#ifdef HAVE_NURBS
       /** 
        * \brief interpolated translations of the contour
        */
-      PlNurbsCurved *curveTranslations;
+      MBSim::NurbsCurve curveTranslations;
 
       /** 
        * \brief interpolated velocities of the contour
        */
-      PlNurbsCurved *curveVelocities;
+      MBSim::NurbsCurve curveVelocities;
 
       /**
        * \brief interpolated angular velocities of the contour
        */
-      PlNurbsCurved *curveAngularVelocities;
+      MBSim::NurbsCurve curveAngularVelocities;
 
       /**
        * \brief closest normal on rotation grid to update direction of normal of nurbs-curve and to avoid jumping
        */
-      PLib::Point3Dd normalRotationGrid;
+      fmatvec::Vec3 normalRotationGrid;
 
       /**
        * \brief Jacobians of Translation of finite element nodes
@@ -207,22 +172,16 @@ namespace MBSimFlexibleBody {
       /**
        * \brief interpolated Jacobians of Translation of the contour
        */
-      std::vector<PlNurbsCurved> CurveJacobiansOfTranslation; // size = number of generalized coordinates
+      std::vector<MBSim::NurbsCurve> CurveJacobiansOfTranslation; // size = number of generalized coordinates
 
       /**
        * \brief interpolated Jacobians of Rotation on the contour
        */
-      std::vector<PlNurbsCurved> CurveJacobiansOfRotation; // size = number of generalized coordinates
+      std::vector<MBSim::NurbsCurve> CurveJacobiansOfRotation; // size = number of generalized coordinates
 
-      /**
-       * \brief knot vector
-       */
-      PLib::Vector<double> *uvec; // nurbs++ needs this vector
-      PLib::Vector<double> *uVec; // knot-vector
-#endif
   };
 
 }
 
-#endif /* NURBSCURVE1S_H_ */
+#endif /* NurbsCurve1s_H_ */
 

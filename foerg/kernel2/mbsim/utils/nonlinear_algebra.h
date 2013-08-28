@@ -20,8 +20,8 @@
 #ifndef NONLINEAR_ALGEBRA_H_
 #define NONLINEAR_ALGEBRA_H_
 
-#include "fmatvec.h"
-#include "function.h"
+#include "fmatvec/fmatvec.h"
+#include "fmatvec/function.h"
 
 namespace MBSim {
 
