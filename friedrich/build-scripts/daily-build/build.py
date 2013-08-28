@@ -290,7 +290,7 @@ def main():
   print('</tt><br/>', file=mainFD)
   print('   <b>RSS Feed:</b> Use the feed "auto-discovery" of this page or click <a href="result.rss.xml">here</a><br/>', file=mainFD)
   print('   <b>Start time:</b> '+str(datetime.datetime.now())+'<br/>', file=mainFD)
-  print('   <b>End time:</b> @STILL_RUNNING_OR_ABORTED@<br/>', file=mainFD)
+  print('   <b>End time:</b> <span id="STILLRUNNINGORABORTED" style="color:red"><b>still running or aborted</b></span><br/>', file=mainFD)
   print('</p>', file=mainFD)
 
   print('<p>Failures in the following table should be fixed from top to bottom since a error in one tool may cause errors on dependent tools.</p>', file=mainFD)
@@ -333,9 +333,9 @@ def main():
   print('</html>', file=mainFD)
 
   mainFD.close()
-  # relace @STILL_RUNNING_OR_ABORTED@ in index.html
+  # replace <span id="STILLRUNNINGORABORTED"...</span> in index.html
   for line in fileinput.FileInput(pj(args.reportOutDir, "index.html"),inplace=1):
-    line = line.replace("@STILL_RUNNING_OR_ABORTED@", str(datetime.datetime.now()))
+    line=re.sub('<span id="STILLRUNNINGORABORTED".*?</span>', str(datetime.datetime.now()), line)
     print(line)
 
   # write RSS feed
