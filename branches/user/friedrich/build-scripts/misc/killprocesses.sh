@@ -2,11 +2,14 @@
 
 function killStoppedProcesses() {
   for CMD in $1; do
-    for PID in $(pidof $CMD); do
+    for PID in $(/usr/sbin/pidof -x $CMD); do
+      echo B $[($(date +%s)-$(date -d "$(ps -p $PID -o lstart=)" +%s))/60/60]
       if [ $[($(date +%s)-$(date -d "$(ps -p $PID -o lstart=)" +%s))/60/60] -gt $2 ]; then
-        echo kill $PID
+        echo KILL
+        ALLPIDS=$(pstree -lAp $PID | sed -re "s/-[\+-]-/\n/g" | sed -re "s/.*\(([0-9]+)\).*/\1/g")
+        kill $ALLPIDS
         sleep 10s
-        echo kill -9 $PID
+        kill -9 $ALLPIDS
       fi
     done
   done
