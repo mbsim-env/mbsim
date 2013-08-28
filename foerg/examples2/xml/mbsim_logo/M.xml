@@ -15,9 +15,9 @@
       <translation>
       </translation>
       <rotation>
-        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+        <RotationAboutFixedAxis_V xmlns="http://mbsim.berlios.de/MBSim">
           <axisOfRotation>[0; 0; 1]</axisOfRotation>
-        </RotationAboutFixedAxis>
+        </RotationAboutFixedAxis_V>
       </rotation>
       <frames>
         <frame>
@@ -72,9 +72,9 @@
       <translation>
       </translation>
       <rotation>
-        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+        <RotationAboutFixedAxis_V xmlns="http://mbsim.berlios.de/MBSim">
           <axisOfRotation>[0; 0; 1]</axisOfRotation>
-        </RotationAboutFixedAxis>
+        </RotationAboutFixedAxis_V>
       </rotation>
       <frames>
         <frame>
@@ -129,9 +129,9 @@
       <translation>
       </translation>
       <rotation>
-        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+        <RotationAboutFixedAxis_V xmlns="http://mbsim.berlios.de/MBSim">
           <axisOfRotation>[0; 0; 1]</axisOfRotation>
-        </RotationAboutFixedAxis>
+        </RotationAboutFixedAxis_V>
       </rotation>
       <frames>
         <frame>
@@ -186,9 +186,9 @@
       <translation>
       </translation>
       <rotation>
-        <RotationAboutFixedAxis xmlns="http://mbsim.berlios.de/MBSim">
+        <RotationAboutFixedAxis_V xmlns="http://mbsim.berlios.de/MBSim">
           <axisOfRotation>[0; 0; 1]</axisOfRotation>
-        </RotationAboutFixedAxis>
+        </RotationAboutFixedAxis_V>
       </rotation>
       <frames>
         <frame>

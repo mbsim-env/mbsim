@@ -26,26 +26,26 @@
                 </pv:xmlMatrix>
             </inertiaTensor>
             <translation>
-                <StateDependentTranslation>
-                    <translationFunction>
-                        <SymbolicFunction_VV arg1name="s" arg1dim="1">[-cos(s/R)*R;-sin(s/R)*R;0]</SymbolicFunction_VV>
-                    </translationFunction>
-                </StateDependentTranslation>
+              <SymbolicFunction_VV arg1name="s" arg1dim="1">[-cos(s/R)*R;-sin(s/R)*R;0]</SymbolicFunction_VV>
             </translation>
             <rotation>
-                <StateDependentRotationAboutFixedAxis>
+              <NestedFunction_MSV>
+                <outerFunction>
+                  <RotationAboutFixedAxis_S>
                     <axisOfRotation unit="-">
-                        <pv:xmlVector>
-                            <pv:ele>0</pv:ele>
-                            <pv:ele>0</pv:ele>
-                            <pv:ele>1</pv:ele>
-                        </pv:xmlVector>
+                      <pv:xmlVector>
+                        <pv:ele>0</pv:ele>
+                        <pv:ele>0</pv:ele>
+                        <pv:ele>1</pv:ele>
+                      </pv:xmlVector>
                     </axisOfRotation>
-                    <rotationalFunction>
-                        <SymbolicFunction_SV arg1name="s" arg1dim="1">pi/2+s/R</SymbolicFunction_SV>
-                    </rotationalFunction>
-                </StateDependentRotationAboutFixedAxis>
-                <isDependent>true</isDependent>
+                  </RotationAboutFixedAxis_S>
+                </outerFunction>
+                <innerFunction>
+                  <SymbolicFunction_SV arg1name="s" arg1dim="1">pi/2+s/R</SymbolicFunction_SV>
+                </innerFunction>
+              </NestedFunction_MSV>
+              <isDependent>true</isDependent>
             </rotation>
             <frames />
             <contours />

@@ -62,7 +62,7 @@ class ObjectFactory {
      * Throws if the created object is not of type ContainerType.
      * This function returns a new object or a singleton object dependent on the registration of the created object. */
     template<class ContainerType>
-    static ContainerType* create(const MBXMLUtils::TiXmlElement *element) {
+    static ContainerType* create(const MBXMLUtils::TiXmlElement *element, bool flag=true) {
 #ifdef HAVE_BOOST_TYPE_TRAITS_HPP
       // just check if ContainerType is derived from BaseType if not throw a compile error if boost is avaliable
       // if boost is not avaliable a runtime error will occure later. (so it does not care if boost is not available)
@@ -86,9 +86,12 @@ class ObjectFactory {
         else
           it->second.second(ele);
       }
-      // no matching element found: throw error
-      throw std::runtime_error("No class named "+element->ValueStr()+" found which is of type "+
-                               demangleSymbolName(typeid(ContainerType).name())+".");
+      if(flag)
+        // no matching element found: throw error
+        throw std::runtime_error("No class named "+element->ValueStr()+" found which is of type "+
+            demangleSymbolName(typeid(ContainerType).name())+".");
+      else
+        return NULL;
     }
 
   private:
