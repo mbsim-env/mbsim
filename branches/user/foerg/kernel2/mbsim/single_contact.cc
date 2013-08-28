@@ -25,7 +25,7 @@
 #include <mbsim/constitutive_laws.h>
 #include <mbsim/contact_kinematics/contact_kinematics.h>
 #include <mbsim/utils/contact_utils.h>
-#include <function.h>
+#include <fmatvec/function.h>
 #include <mbsim/utils/utils.h>
 #include <mbsim/objectfactory.h>
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -77,13 +77,16 @@ namespace MBSim {
       delete[] gddActive;
   }
 
-  void SingleContact::updatewb(double t, int j) {
-    if (gdActive[j]) {
+  void SingleContact::updatewb1(double t, int j) {
+    if(gdActive[0])
       for (unsigned i = 0; i < 2; ++i) //TODO: only two contours are interacting
         wb += fF[i](Range<Fixed<0>,Fixed<2> >(), Range<Var,Var>(0,laSize-1)).T() * cpData[i].getFrameOfReference().getGyroscopicAccelerationOfTranslation(j);
+  }
 
+  void SingleContact::updatewb(double t, int j) {
+    updatewb1(t,j);
+    if(gdActive[0])
       contactKinematics->updatewb(wb, g, cpData);
-    }
   }
 
   void SingleContact::updateW(double t, int j) {
@@ -406,17 +409,20 @@ namespace MBSim {
 
   void SingleContact::calcrFactorSize(int j) {
     LinkMechanics::calcrFactorSize(j);
+    int addition = 0;
+    if(fcl->isSetValued())
+      addition += 1;
     if (j == 0) { // IA
-      rFactorSize = 1 + min(getFrictionDirections(), 1);
+      rFactorSize = addition + min(getFrictionDirections(), 1);
     }
     else if (j == 1) { // IG
-      rFactorSize = gActive * (1 + min(getFrictionDirections(), 1));
+      rFactorSize = gActive * (addition + min(getFrictionDirections(), 1));
     }
     else if (j == 2) { // IB
-      rFactorSize = gActive * gdActive[0] * (1 + min(getFrictionDirections(), 1));
+      rFactorSize = gActive * gdActive[0] * (addition + min(getFrictionDirections(), 1));
     }
     else if (j == 3) { // IB
-      rFactorSize = gActive * gdActive[0] * (1 + gdActive[1] * min(getFrictionDirections(), 1));
+      rFactorSize = gActive * gdActive[0] * (addition + gdActive[1] * min(getFrictionDirections(), 1));
     }
   }
 
@@ -782,7 +788,7 @@ namespace MBSim {
         }
 
         //            if (ftil) //There must be a ftil coming with a setValued fdf
-        laT = ftil->project(laT, gdnT, gdT, laN(0) * scaleFactorN, rFactor(1));
+        laT = ftil->project(laT, gdnT, gdT, laN(0) * scaleFactorN, rFactor(addIndexNormal));
       }
     }
   }
@@ -814,7 +820,7 @@ namespace MBSim {
               gddT(i) += a[j] * laMBS(ja[j]);
           }
 
-          laT = fdf->project(laT, gddT, laN(0), rFactor(1));
+          laT = fdf->project(laT, gddT, laN(0), rFactor(addIndexnormal));
         }
       }
     }
@@ -919,7 +925,7 @@ namespace MBSim {
             gdnT(i) += a[j] * laMBS(ja[j]);
         }
         //            if (ftil) There must be a frictional impact law if fdf is set valued!
-        res(addIndexnormal, addIndexnormal + getFrictionDirections() - 1) = laT - ftil->project(laT, gdnT, gdT, laN(0), rFactor(1));
+        res(addIndexnormal, addIndexnormal + getFrictionDirections() - 1) = laT - ftil->project(laT, gdnT, gdT, laN(0), rFactor(addIndexnormal));
       }
     }
   }
@@ -953,7 +959,7 @@ namespace MBSim {
               gdnT(i) += a[j] * laMBS(ja[j]);
           }
           //            if (ftil) There must be a frictional impact law if fdf is set valued!
-          res(addIndexnormal, addIndexnormal + getFrictionDirections() - 1) = laT - fdf->project(laT, gddT, laN(0), rFactor(1));
+          res(addIndexnormal, addIndexnormal + getFrictionDirections() - 1) = laT - fdf->project(laT, gddT, laN(0), rFactor(addIndexnormal));
         }
       }
     }
@@ -982,7 +988,7 @@ namespace MBSim {
       }
 
       if (getFrictionDirections() == 1) {
-        Mat diff = fdf->diff(laT, gddT(0, 0), laN(0), rFactor(1));
+        Mat diff = fdf->diff(laT, gddT(0, 0), laN(0), rFactor(addIndexNormal));
         RowVec jp2 = Jprox.row(laInd + addIndexNormal);
         RowVec e2(jp2.size());
         e2(laInd + 1) = 1;
@@ -996,7 +1002,7 @@ namespace MBSim {
 
       }
       else if (getFrictionDirections() == 2) {
-        Mat diff = ftil->diff(laT, gddT, gdT, laN(0), rFactor(1));
+        Mat diff = ftil->diff(laT, gddT, gdT, laN(0), rFactor(addIndexNormal));
         Mat jp2 = Jprox(Index(laInd + addIndexNormal, laInd + addIndexNormal + 1), Index(0, Jprox.cols() - 1));
         Mat e2(2, jp2.cols());
         e2(0, laInd + addIndexNormal) = 1;
@@ -1032,7 +1038,7 @@ namespace MBSim {
       }
 
       if (getFrictionDirections() == 1) {
-        Mat diff = ftil->diff(laT, gdnT, gdT, laN(0), rFactor(1));
+        Mat diff = ftil->diff(laT, gdnT, gdT, laN(0), rFactor(addIndexNormal));
         RowVec jp2 = Jprox.row(laInd + addIndexNormal);
         RowVec e2(jp2.size());
         e2(laInd + addIndexNormal) = 1;
@@ -1046,7 +1052,7 @@ namespace MBSim {
 
       }
       else if (getFrictionDirections() == 2) {
-        Mat diff = ftil->diff(laT, gdnT, gdT, laN(0), rFactor(1));
+        Mat diff = ftil->diff(laT, gdnT, gdT, laN(0), rFactor(addIndexNormal));
         Mat jp2 = Jprox(Index(laInd + addIndexNormal, laInd + addIndexNormal + 1), Index(0, Jprox.cols() - 1));
         Mat e2(2, jp2.cols());
         e2(0, laInd + addIndexNormal) = 1;
@@ -1093,12 +1099,12 @@ namespace MBSim {
               sumT1 += fabs(a[j]);
             aT1 = a[ia[laInd + addIndexnormal]];
             if (aT1 > sumT1) {
-              rFactorUnsure(1) = 0;
-              rFactor(1) = 1.0 / aT1;
+              rFactorUnsure(addIndexnormal) = 0;
+              rFactor(addIndexnormal) = 1.0 / aT1;
             }
             else {
-              rFactorUnsure(1) = 1;
-              rFactor(1) = rMax / aT1;
+              rFactorUnsure(addIndexnormal) = 1;
+              rFactor(addIndexnormal) = rMax / aT1;
             }
           }
           else if (getFrictionDirections() == 2) {
@@ -1112,13 +1118,13 @@ namespace MBSim {
             // TODO rFactorUnsure
             if (aT1 - sumT1 >= aT2 - sumT2)
               if (aT1 + sumT1 >= aT2 + sumT2)
-                rFactor(1) = 2.0 / (aT1 + aT2 + sumT1 - sumT2);
+                rFactor(addIndexnormal) = 2.0 / (aT1 + aT2 + sumT1 - sumT2);
               else
-                rFactor(1) = 1.0 / aT2;
+                rFactor(addIndexnormal) = 1.0 / aT2;
             else if (aT1 + sumT1 < aT2 + sumT2)
-              rFactor(1) = 2.0 / (aT1 + aT2 - sumT1 + sumT2);
+              rFactor(addIndexnormal) = 2.0 / (aT1 + aT2 - sumT1 + sumT2);
             else
-              rFactor(1) = 1.0 / aT1;
+              rFactor(addIndexnormal) = 1.0 / aT1;
           }
         }
       }
@@ -1310,6 +1316,13 @@ namespace MBSim {
   }
 
   int SingleContact::getFrictionDirections() {
+    if (fdf)
+      return fdf->getFrictionDirections();
+    else
+      return 0;
+  }
+
+  int SingleContact::getFrictionDirections() const {
     if (fdf)
       return fdf->getFrictionDirections();
     else

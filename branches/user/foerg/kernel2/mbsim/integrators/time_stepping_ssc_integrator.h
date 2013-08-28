@@ -21,7 +21,6 @@
 #ifndef _TIME_STEPPING_SSC_INTEGRATOR_H_ 
 #define _TIME_STEPPING_SSC_INTEGRATOR_H_
 
-#include<fmatvec.h>
 #include "integrator.h"
 #include "mbsim/utils/stopwatch.h"
 

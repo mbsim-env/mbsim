@@ -1,7 +1,6 @@
 #include "system.h"
 
 #include "mbsim/rigid_body.h"
-#include "mbsim/kinematics.h"
 #include "mbsim/contact.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/contours/circle_solid.h"
@@ -134,7 +133,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   cam->setFrameForKinematics(cam->getFrame("C"));
   cam->setMass(m1);
   cam->setInertiaTensor(10000.*Theta);
-  cam->setRotation(new RotationAboutFixedAxis("[0;0;1]"));
+  cam->setRotation(new RotationAboutFixedAxis<VecV>("[0;0;1]"));
   cam->setInitialGeneralizedPosition(.5*M_PI);
   cam->setInitialGeneralizedVelocity(100.*M_PI/30.);
   this->addObject(cam);
@@ -154,7 +153,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   rocker->setFrameForKinematics(rocker->getFrame("Joint"));
   rocker->setMass(m1*10);
   rocker->setInertiaTensor(Theta);
-  rocker->setRotation(new RotationAboutFixedAxis("[0;0;1]"));
+  rocker->setRotation(new RotationAboutFixedAxis<VecV>("[0;0;1]"));
   this->addObject(rocker);
 
   CircleSolid * rockerContour = new CircleSolid("Contour");

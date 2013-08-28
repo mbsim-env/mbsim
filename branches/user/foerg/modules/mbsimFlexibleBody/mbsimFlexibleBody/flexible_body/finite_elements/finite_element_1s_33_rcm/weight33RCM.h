@@ -20,7 +20,7 @@
 #ifndef WEIGHT33RCM_H_
 #define WEIGHT33RCM_H_
 
-#include "fmatvec.h"
+#include "fmatvec/fmatvec.h"
 #include "mbsimFlexibleBody/pointer.h"
 
 namespace MBSimFlexibleBody {

@@ -22,7 +22,7 @@
 
 #include <mbsim/link_mechanics.h>
 #include <mbsim/frame.h>
-#include <function.h>
+#include <fmatvec/function.h>
 
 namespace MBSim {
 

@@ -5,7 +5,7 @@
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_21_cosserat.h"
 #include "mbsim/rigid_body.h"
 #include <string>
-#include <fmatvec.h>
+#include <fmatvec/fmatvec.h>
 
 class System : public MBSim::DynamicSystemSolver {
   public:

@@ -20,8 +20,7 @@
 #ifndef _THETA_TIME_STEPPING_SSC_INTEGRATOR_H_ 
 #define _THETA_TIME_STEPPING_SSC_INTEGRATOR_H_
 
-#include "fmatvec.h"
-#include "mbsim/integrators/integrator.h"
+#include "integrator.h"
 
 namespace MBSim {
 

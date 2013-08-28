@@ -9,7 +9,7 @@
 
 #include <mbsim/utils/colors.h>
 
-#include <fmatvec.h>
+#include <fmatvec/fmatvec.h>
 
 #include <mbsim/frame.h>
 
@@ -96,8 +96,8 @@ System::System(const string &projectName) :
     sphereBody->addContour(sphere);
 
     //Add contact between frustum and sphere
-    Contact* contact = new Contact("Frustum-" + name.str());
-    contact->connect(sphere, polyfrustumcontour);
+    Contact* contact = new Contact("Frustum_" + name.str());
+    contact->connect(polyfrustumcontour, sphere);
 
     contact->setPlotFeature(openMBV, enabled);
 #ifdef HAVE_OPENMBVCPPINTERFACE

@@ -21,7 +21,7 @@
  */
 
 // #include <config.h>
-// #include <fmatvec.h>
+// #include <fmatvec/fmatvec.h>
 // #include <mbsim/dynamic_system_solver.h>
 // #include <mbsim/utils/eps.h>
 // #include "fortran_wrapper.h"
@@ -60,6 +60,7 @@
 //   }
 // 
 //   void DASPKIntegrator::integrate(DynamicSystemSolver& system_) {
+//     debugInit();
 //     system = &system_;
 // 
 //     zSize=system->getzSize();

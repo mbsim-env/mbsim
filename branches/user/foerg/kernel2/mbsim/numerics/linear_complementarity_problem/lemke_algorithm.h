@@ -20,7 +20,7 @@
 #ifndef NUMERICS_LEMKE_ALGORITHM_H_
 #define NUMERICS_LEMKE_ALGORITHM_H_
 
-#include <fmatvec.h>
+#include <fmatvec/fmatvec.h>
 
 namespace MBSim {
 

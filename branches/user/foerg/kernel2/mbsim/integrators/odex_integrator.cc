@@ -22,7 +22,7 @@
 
 #include <config.h>
 #include <mbsim/dynamic_system_solver.h>
-#include "fortran_wrapper.h"
+#include "fortran/fortran_wrapper.h"
 #include "odex_integrator.h"
 #include <time.h>
 #include <fstream>
@@ -71,6 +71,7 @@ namespace MBSim {
   }
 
   void ODEXIntegrator::integrate(DynamicSystemSolver& system_) {
+    debugInit();
 
     system = &system_;
     int zSize=system->getzSize();

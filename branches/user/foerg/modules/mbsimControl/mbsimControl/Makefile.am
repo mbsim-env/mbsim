@@ -17,9 +17,8 @@ libmbsimControl_la_SOURCES = \
   obsolet_hint.cc
 
 
-libmbsimControl_la_CPPFLAGS = -DTIXML_USE_STL
+libmbsimControl_la_CPPFLAGS = -I$(top_srcdir) -DTIXML_USE_STL $(DEPS_CFLAGS)
 libmbsimControl_la_LIBADD = $(DEPS_LIBS)
-INCLUDES = $(DEPS_CFLAGS)
 
 mbsimControlincludedir = $(includedir)/mbsimControl
 mbsimControlinclude_HEADERS = \

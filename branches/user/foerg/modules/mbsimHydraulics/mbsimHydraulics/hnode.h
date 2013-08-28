@@ -21,7 +21,7 @@
 #define  _HNODE_H_
 
 #include "mbsim/link.h"
-#include "function.h"
+#include <fmatvec/function.h>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 namespace OpenMBV {

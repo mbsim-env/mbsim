@@ -20,7 +20,6 @@
 #ifndef _TIME_STEPPING_INTEGRATOR_H_ 
 #define _TIME_STEPPING_INTEGRATOR_H_
 
-#include<fmatvec.h>
 #include "integrator.h"
 
 namespace MBSim {

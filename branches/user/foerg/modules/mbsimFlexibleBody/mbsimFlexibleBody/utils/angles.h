@@ -20,8 +20,7 @@
 #ifndef ANGLES_H_
 #define ANGLES_H_
 
-#include "fmatvec.h"
-#include "function.h"
+#include <fmatvec/function.h>
 
 namespace MBSimFlexibleBody {
 

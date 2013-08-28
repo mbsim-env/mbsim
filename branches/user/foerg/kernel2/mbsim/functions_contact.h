@@ -39,7 +39,7 @@
 #include "mbsim/contours/cuboid.h"
 #include "mbsim/contours/compound_contour.h"
 #include "mbsim/mbsim_event.h"
-#include <function.h>
+#include <fmatvec/function.h>
 
 namespace MBSim {
 

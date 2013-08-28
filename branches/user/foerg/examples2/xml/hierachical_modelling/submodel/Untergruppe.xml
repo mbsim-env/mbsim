@@ -53,6 +53,8 @@
       <contours/>
       <openMBVRigidBody>
         <ombv:Cuboid name="dummy">
+          <ombv:diffuseColor>[0;1;1]</ombv:diffuseColor>
+          <ombv:transparency>0.2</ombv:transparency>
           <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
           <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
           <ombv:scaleFactor>1</ombv:scaleFactor>
@@ -81,12 +83,19 @@
             <offset>1</offset>
           </enableOpenMBV>
           <relativePosition>[0;-h2/2;0]</relativePosition>
-          <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+          <relativeOrientation>
+            <pv:cardan>
+              <pv:alpha>0</pv:alpha>
+              <pv:beta>0</pv:beta>
+              <pv:gamma>0</pv:gamma>
+            </pv:cardan>
+          </relativeOrientation>
         </FixedRelativeFrame>
       </frames>
       <contours/>
       <openMBVRigidBody>
         <IvBody name="dummy" xmlns="http://openmbv.berlios.de/OpenMBV">
+          <staticColor>[0.5]</staticColor>
           <initialTranslation>[0;0;0]</initialTranslation>
           <initialRotation>[0;0;0]</initialRotation>
           <scaleFactor>1</scaleFactor>

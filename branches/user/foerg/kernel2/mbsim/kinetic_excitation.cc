@@ -20,7 +20,7 @@
 #include <config.h>
 #include "mbsim/kinetic_excitation.h"
 #include "mbsim/objectfactory.h"
-#include <function.h>
+#include <fmatvec/function.h>
 #include <mbsim/dynamic_system_solver.h>
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/objectfactory.h"

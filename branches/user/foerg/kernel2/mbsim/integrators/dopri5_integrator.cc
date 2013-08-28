@@ -23,7 +23,7 @@
 #include <config.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/utils/utils.h>
-#include "fortran_wrapper.h"
+#include "fortran/fortran_wrapper.h"
 #include "dopri5_integrator.h"
 #include <fstream>
 #include <time.h>
@@ -76,6 +76,7 @@ namespace MBSim {
   }
 
   void DOPRI5Integrator::integrate(DynamicSystemSolver& system_) {
+    debugInit();
 
     system = &system_;
     int zSize=system->getzSize();

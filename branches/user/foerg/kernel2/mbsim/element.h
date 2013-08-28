@@ -21,7 +21,7 @@
 #ifndef _ELEMENT_H_
 #define _ELEMENT_H_
 
-#include "fmatvec.h"
+#include "fmatvec/fmatvec.h"
 #include "mbsim/objectfactory.h"
 #include <string>
 #include <hdf5serie/vectorserie.h>
@@ -30,7 +30,7 @@
 #define MBSIMNS_ "http://mbsim.berlios.de/MBSim"
 #define MBSIMNS "{"MBSIMNS_"}"
 
-#include "mbsim/mbsim_event.h"
+#include "mbsim_event.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 namespace OpenMBV {

@@ -20,7 +20,7 @@
 #ifndef NUMERICS_MULTI_DIMENSIONAL_FIXPOINT_SOLVER_H_
 #define NUMERICS_MULTI_DIMENSIONAL_FIXPOINT_SOLVER_H_
 
-#include <fmatvec.h>
+#include <fmatvec/fmatvec.h>
 
 #include <mbsim/numerics/functions/criteria_functions.h>
 

@@ -20,7 +20,7 @@
 #ifndef NUMERICS_NONSMOOTH_ALGEBRA_H_
 #define NUMERICS_NONSMOOTH_ALGEBRA_H_
 
-#include <fmatvec.h>
+#include <fmatvec/fmatvec.h>
 
 namespace MBSim {
 

@@ -21,7 +21,7 @@
 #define  _HLINE_H_
 
 #include "mbsim/object.h"
-#include "function.h"
+#include <fmatvec/function.h>
 
 namespace MBSim {
   class Frame;

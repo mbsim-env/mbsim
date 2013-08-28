@@ -4,7 +4,7 @@
 #include "mbsimHydraulics/hnode.h"
 #include "mbsimHydraulics/hnode_mec.h"
 #include "mbsimHydraulics/pressure_loss.h"
-#include "function.h"
+#include "fmatvec/function.h"
 
 #include "mbsim/rigid_body.h"
 #include "mbsim/spring_damper.h"

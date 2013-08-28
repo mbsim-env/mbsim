@@ -67,6 +67,7 @@ namespace MBSim {
       virtual ~SingleContact();
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
+      virtual void updatewb1(double t, int i=0);
       virtual void updatewb(double t, int i=0);
       virtual void updateW(double t, int i=0);
       virtual void updateV(double t, int i=0);
@@ -157,16 +158,22 @@ namespace MBSim {
       void setContactKinematics(ContactKinematics* ck) { contactKinematics = ck; }
       ContactKinematics* getContactKinematics() const { return contactKinematics; }
       ContourPointData* & getcpData() { return cpData; }
+      ContourPointData* getcpData() const { return cpData; }
       fmatvec::Vec & getlaN() { return laN; }
+      fmatvec::Vec getlaN() const { return laN; }
       fmatvec::Vec & getlaT() { return laT; }
+      fmatvec::Vec getlaT() const { return laT; }
       fmatvec::Vec & getgdN() { return gdN; }
+      fmatvec::Vec getgdN() const { return gdN; }
       fmatvec::Vec & getgdT() { return gdT; }
+      fmatvec::Vec getgdT() const { return gdT; }
       /***************************************************/
 
       /**
        * \return number of considered friction directions
        */
       virtual int getFrictionDirections();
+      virtual int getFrictionDirections() const;
 
       /*! connect two contours
        * \param first contour

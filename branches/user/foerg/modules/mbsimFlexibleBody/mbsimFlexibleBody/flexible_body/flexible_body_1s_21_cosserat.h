@@ -20,7 +20,7 @@
 #ifndef _FLEXIBLE_BODY_1S_21_COSSERAT_H_
 #define _FLEXIBLE_BODY_1S_21_COSSERAT_H_
 
-#include <fmatvec.h>
+#include <fmatvec/fmatvec.h>
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_cosserat.h"
 #include "mbsimFlexibleBody/flexible_body.h"
 #include "mbsimFlexibleBody/pointer.h"
@@ -33,8 +33,6 @@
 #endif
 
 namespace MBSimFlexibleBody {
-
-  class NurbsCurve1s;
 
   /**
    * \brief flexible body for planar beam using Cosserat model

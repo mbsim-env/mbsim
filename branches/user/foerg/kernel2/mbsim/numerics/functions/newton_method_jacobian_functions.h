@@ -20,8 +20,8 @@
 #ifndef NUMERICSNEWTONMEHTODFUNCTION_H_
 #define NUMERICSNEWTONMEHTODFUNCTION_H_
 
-#include <fmatvec.h>
-#include <function.h>
+#include <fmatvec/fmatvec.h>
+#include <fmatvec/function.h>
 
 namespace MBSim {
 

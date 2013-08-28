@@ -1,7 +1,7 @@
 #ifndef _STRIBECK_FRICTION_H
 #define _STRIBECK_FRICTION_H
 
-#include "function.h"
+#include "fmatvec/function.h"
 
 class Friction : public fmatvec::Function<double(double)> {
   public:

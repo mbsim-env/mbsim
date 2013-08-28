@@ -23,7 +23,7 @@
 #include <mbsim/dynamic_system.h>
 #include <mbsim/frame.h>
 #include <mbsim/contour.h>
-#include <function.h>
+#include <fmatvec/function.h>
 #include <mbsim/mbsim_event.h>
 #include <mbsim/contour_pdata.h>
 #include <mbsim/discretization_interface.h>

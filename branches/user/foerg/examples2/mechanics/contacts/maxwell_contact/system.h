@@ -3,7 +3,7 @@
 
 #include <mbsim/dynamic_system_solver.h>
 
-#include <fmatvec.h>
+#include <fmatvec/fmatvec.h>
 
 class System: public MBSim::DynamicSystemSolver {
   public:

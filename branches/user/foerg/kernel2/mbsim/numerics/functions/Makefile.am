@@ -6,11 +6,8 @@ libfunctions_la_SOURCES = criteria_functions.cc\
 
 functionsincludedir = $(includedir)/mbsim/numerics/functions
 
-INCLUDES = $(FMATVEC_CFLAGS)
-LDADD = $(FMATVEC_LIBS)
-
-libfunctions_la_CPPFLAGS = -I.. -DTIXML_USE_STL $(DEPS_CFLAGS)
-libfunctions_la_LIBADD = $(DEPS_LIBS)
+libfunctions_la_CPPFLAGS = -I$(top_srcdir) -DTIXML_USE_STL $(DEPS_CFLAGS) $(FMATVEC_CFLAGS)
+libfunctions_la_LIBADD = $(DEPS_LIBS) $(FMATVEC_LIBS)
 
 functionsinclude_HEADERS = criteria_functions.h\
                            damping_functions.h\

@@ -20,40 +20,15 @@
 #ifndef NURBSDISK2S_H_
 #define NURBSDISK2S_H_
 
-#include "fmatvec.h"
+#include "fmatvec/fmatvec.h"
 #include "mbsim/mbsim_event.h"
 #include "mbsim/contours/contour2s.h"
 #include "mbsimFlexibleBody/utils/contact_utils.h"
 
 #ifdef HAVE_NURBS
-#define MY_PACKAGE_BUGREPORT PACKAGE_BUGREPORT
-#define MY_PACKAGE_NAME PACKAGE_NAME
-#define MY_PACKAGE_VERSION PACKAGE_VERSION
-#define MY_PACKAGE_TARNAME PACKAGE_TARNAME
-#define MY_PACKAGE_STRING PACKAGE_STRING
-#undef PACKAGE_BUGREPORT
-#undef PACKAGE_NAME
-#undef PACKAGE_VERSION
-#undef PACKAGE_TARNAME
-#undef PACKAGE_STRING
 #include "nurbs++/nurbs.h"
-#undef PACKAGE_BUGREPORT
-#undef PACKAGE_NAME
-#undef PACKAGE_VERSION
-#undef PACKAGE_TARNAME
-#undef PACKAGE_STRING
 #include "nurbs++/nurbsS.h"
-#undef PACKAGE_BUGREPORT
-#undef PACKAGE_NAME
-#undef PACKAGE_VERSION
-#undef PACKAGE_TARNAME
-#undef PACKAGE_STRING
 #include "nurbs++/vector.h"
-#define PACKAGE_BUGREPORT MY_PACKAGE_BUGREPORT
-#define PACKAGE_NAME MY_PACKAGE_NAME
-#define PACKAGE_VERSION MY_PACKAGE_VERSION
-#define PACKAGE_TARNAME MY_PACKAGE_TARNAME
-#define PACKAGE_STRING MY_PACKAGE_STRING
 #endif
 
 namespace MBSimFlexibleBody {

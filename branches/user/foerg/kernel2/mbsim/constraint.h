@@ -20,7 +20,7 @@
 #define _CONSTRAINT_H
 
 #include "object.h"
-#include "function.h"
+#include <fmatvec/function.h>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 namespace OpenMBV {

@@ -20,7 +20,7 @@
 #ifndef _CONTACT_KINEMATICS_H_
 #define _CONTACT_KINEMATICS_H_
 
-#include "fmatvec.h"
+#include "fmatvec/fmatvec.h"
 #include "mbsim/mbsim_event.h"
 #include <mbsim/single_contact.h>
 #include <vector>
@@ -78,13 +78,6 @@ namespace MBSim {
        */
       virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData* cpData) = 0;
       
-      /**
-       * \brief compute normal distance, possible contact point positions and orientation for several possible contact points
-       * \param normal distance
-       * \param contact point parametrisation
-       */
-      virtual void updateg(std::vector<fmatvec::Vec>::iterator ig, std::vector<ContourPointData*>::iterator icpData) { if((*ig).size()) updateg(*ig,*icpData); }
-      
       /*!
        * \brief compute normal distance, possible contact point positions and orientation for several possible contact points
        * \param vector of single contacts used in the contact kinematics
@@ -93,14 +86,7 @@ namespace MBSim {
        */
       virtual void updateg(std::vector<SingleContact> & contact) {if(contact[0].getg().size()) updateg(contact[0].getg(), contact[0].getcpData());}
 
-      /**
-       * \brief compute acceleration in terms of contour parameters for event driven integration and several contact points
-       * \param acceleration in terms of contour parameters
-       * \param normal distance
-       * \param contact point parametrisation
-       */
-      virtual void updatewb(std::vector<fmatvec::Vec>::iterator iwb, std::vector<fmatvec::Vec>::iterator ig, std::vector<ContourPointData*>::iterator icpData) { if((*iwb).size()) updatewb(*iwb,*ig,*icpData); }
-      /*******************************************************/ 
+      virtual void updatewb(std::vector<SingleContact> & contact) {if(contact[0].getwb().size()) updatewb(contact[0].getwb(), contact[0].getg(), contact[0].getcpData());}
 
       /** 
        * \brief treats ordering of contours

@@ -1,6 +1,5 @@
 #include "system.h"
 #include "mbsimElectronics/simulation_classes.h"
-#include <function.h>
 #include "mbsimControl/function_sensor.h"
 
 using namespace std;

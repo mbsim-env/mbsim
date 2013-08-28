@@ -20,12 +20,6 @@
 #include "config.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
-#if defined HAVE_LIBUNWIND_H && defined HAVE_LIBUNWIND_X86_64
-#  include <libunwind.h>
-#endif
-#if defined HAVE_CXXABI_H
-#  include <cxxabi.h>
-#endif
 #include "mbxmlutilstinyxml/tinynamespace.h"
 
 using namespace std;
@@ -75,75 +69,6 @@ namespace MBSim {
     if (phi < -MBSim::macheps())
       phi += 2 * M_PI;
     return phi;
-  }
-
-
-  set<vector<string> > Deprecated::allMessages;
-  bool Deprecated::atExitRegistred=false;
-
-  void Deprecated::registerMessage(const std::string &message, TiXmlElement *e) {
-    if(!atExitRegistred) {
-      atexit(&Deprecated::printAllMessages);
-      atExitRegistred=true;
-    }
-
-    vector<string> stack;
-    stack.push_back(message);
-    if(e) {
-      vector<string> out=TiXml_location_vec(e, "at ", "");
-      stack.insert(stack.end(), out.begin(), out.end());
-    }
-    else {
-#if defined HAVE_LIBUNWIND_H && defined HAVE_LIBUNWIND_X86_64
-      unw_context_t context;
-      unw_getcontext(&context);
-      unw_cursor_t cp;
-      unw_init_local(&cp, &context);
-      unw_step(&cp);
-      unw_word_t offp;
-      char name[102400];
-      int nr=0;
-      do {
-        unw_get_proc_name(&cp, name, 102400, &offp);
-        stack.push_back((nr==0?"at ":"by ")+demangleSymbolName(name));
-        nr++;
-      }
-      while(unw_step(&cp)>0 && string(name)!="main");
-#else
-      stack.push_back("(no stack trace available)");
-#endif
-    }
-    allMessages.insert(stack);
-  }
-
-  void Deprecated::printAllMessages() {
-    cerr<<endl;
-    cerr<<"WARNING: "<<allMessages.size()<<" deprecated features were called during simulation:"<<endl;
-    set<vector<string> >::const_iterator it;
-    int nr=0;
-    for(it=allMessages.begin(); it!=allMessages.end(); it++) {
-      nr++;
-      cerr<<"* "<<"("<<nr<<"/"<<allMessages.size()<<") "<<(*it)[0]<<endl;
-      vector<string>::const_iterator it2=it->begin();
-      it2++;
-      for(; it2!=it->end(); it2++)
-        cerr<<"  "<<*it2<<endl;
-    }
-  }
-
-  std::string demangleSymbolName(std::string name) {
-#if defined HAVE_CXXABI_H
-    std::string ret=name;
-    int status=1;
-    char *demangledName=NULL;
-    demangledName=abi::__cxa_demangle(name.c_str(), NULL, NULL, &status);
-    if(status==0)
-      ret=demangledName;
-    free(demangledName);
-    return ret;
-#else
-    return name;
-#endif
   }
 
 }

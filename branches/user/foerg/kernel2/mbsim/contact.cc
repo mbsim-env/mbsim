@@ -26,7 +26,7 @@
 #include <mbsim/constitutive_laws.h>
 #include <mbsim/contact_kinematics/contact_kinematics.h>
 #include <mbsim/utils/contact_utils.h>
-#include <function.h>
+#include <fmatvec/function.h>
 #include <mbsim/utils/utils.h>
 #include <mbsim/objectfactory.h>
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -80,10 +80,12 @@ namespace MBSim {
 #endif
 
   void Contact::updatewb(double t, int j) {
-    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updatewb(t, j);  //TODO: contact kinematics in sub-contact!!
-    }
+        jter->updatewb1(t,j);
+
+    for (size_t cK = 0; cK < contactKinematics.size(); cK++)
+      contactKinematics[cK]->updatewb(contacts[cK]);
   }
 
   void Contact::updateW(double t, int j) {

@@ -20,7 +20,7 @@
 #ifndef NUMERICSLCPREFORMULATEDFUNCTION_H_
 #define NUMERICSLCPREFORMULATEDFUNCTION_H_
 
-#include <function.h>
+#include <fmatvec/function.h>
 
 #include <mbsim/numerics/functions/newton_method_jacobian_functions.h>
 

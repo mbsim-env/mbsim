@@ -21,7 +21,7 @@
 #define  _CHECKVALVE_H_
 
 #include "mbsim/group.h"
-#include "function.h"
+#include <fmatvec/function.h>
 
 namespace MBSim {
   class Frame;

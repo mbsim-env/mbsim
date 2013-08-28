@@ -1,7 +1,7 @@
 #include "system.h"
 #include "mbsim/contact.h"
 #include "mbsim/rigid_body.h"
-#include "function.h"
+#include "fmatvec/function.h"
 #include "mbsim/environment.h"
 #include "mbsim/contours/plane.h"
 #include "mbsim/contours/frustum.h"

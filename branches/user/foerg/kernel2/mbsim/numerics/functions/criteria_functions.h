@@ -20,8 +20,8 @@
 #ifndef NUMERICSCRITERIAFUNCTIONS_H_
 #define NUMERICSCRITERIAFUNCTIONS_H_
 
-#include <fmatvec.h>
-#include <function.h>
+#include <fmatvec/fmatvec.h>
+#include <fmatvec/function.h>
 
 #include <map>
 

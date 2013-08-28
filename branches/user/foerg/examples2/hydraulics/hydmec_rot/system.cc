@@ -9,7 +9,7 @@
 //#include "mbsim/tree.h"
 #include "mbsim/spring_damper.h"
 #include "mbsim/utils/rotarymatrices.h"
-#include "function.h"
+#include "fmatvec/function.h"
 #include "mbsim/utils/utils.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
