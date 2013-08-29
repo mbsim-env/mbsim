@@ -47,8 +47,8 @@ class FuncCrPC : public MBSim::ContourFunction1s {
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
   private:
     fmatvec::Vec3 Cb;
-    MBSim::PPolynom<fmatvec::Ref,fmatvec::Ref> pp_y;
-    MBSim::PPolynom<fmatvec::Ref,fmatvec::Ref> pp_z;
+    MBSim::PPolynom<fmatvec::VecV> pp_y;
+    MBSim::PPolynom<fmatvec::VecV> pp_z;
     MBSim::TabularFunction<fmatvec::Vec3> * tab_operator;
     MBSim::TabularFunction<fmatvec::Vec3> * tab_T;
     MBSim::TabularFunction<fmatvec::Vec3> * tab_B;
@@ -95,7 +95,7 @@ class FuncCrPC_PlanePolar : public MBSim::ContourFunction1s {
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
   private:
     const fmatvec::Vec3 Cb;
-    MBSim::PPolynom<fmatvec::Ref,fmatvec::Ref> * pp_r;
+    MBSim::PPolynom<fmatvec::VecV> * pp_r;
 
     double alphaSave, salphaSave, calphaSave, rSave, drdalphaSave, d2rdalpha2Save;
     

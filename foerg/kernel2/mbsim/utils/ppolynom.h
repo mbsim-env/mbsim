@@ -58,15 +58,35 @@ namespace MBSim {
    * (xi,fi) i=1..N is being interpolated by N-1 piecewise polynomials Si of degree 1 yielding a globally weak differentiable curve
    * in the context of this class the second derivative is defined to be zero everywhere (which is mathematically wrong)
    */
-template<class Row, class Col>
-  class PPolynom : public fmatvec::Function<fmatvec::Vector<Col,double>(double)> {
+template<class Ret>
+  class PPolynom : public fmatvec::Function<Ret(double)> {
+
+    template<typename Dep>
+      struct Row {
+        typedef fmatvec::ErrorType type;
+      };
+
+    template<typename DepVecShape>
+      struct Row<fmatvec::Vector<DepVecShape, double> > {
+        typedef fmatvec::RowVector<DepVecShape, double> type;
+      };
+
+    template<typename Dep>
+      struct Tab {
+        typedef fmatvec::ErrorType type;
+      };
+
+    template<typename DepVecShape>
+      struct Tab<fmatvec::Vector<DepVecShape, double> > {
+        typedef fmatvec::Matrix<fmatvec::General, fmatvec::Var, DepVecShape, double> type;
+      };
 
     public:
       PPolynom() : f(this), fd(this), fdd(this) { }
 
-      fmatvec::Vector<Col,double> operator()(const double &x) { return f(x); }
-      typename fmatvec::Der<fmatvec::Vector<Col,double>, double>::type parDer(const double &x) { return fd(x); }
-      typename fmatvec::Der<typename fmatvec::Der<fmatvec::Vector<Col,double>, double>::type, double>::type parDerParDer(const double &x) { return fdd(x); }
+      Ret operator()(const double &x) { return f(x); }
+      typename fmatvec::Der<Ret, double>::type parDer(const double &x) { return fd(x); }
+      typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) { return fdd(x); }
 
       /*! 
        * \brief set interpolation
@@ -80,24 +100,47 @@ template<class Row, class Col>
        *                                                                                        S''(x1) = S''(xN) = 0
        *                                'plinear'    -> piecewise linear function (weak differentiable)
        */
-      void setXF(const fmatvec::Vector<Row,double> &x, const fmatvec::Matrix<fmatvec::General,Row,Col,double> &f, std::string InterpolationMethod);
+      void setXF(const fmatvec::VecV &x, const typename Tab<Ret>::type &f, std::string InterpolationMethod) {
+        assert(x.size() == f.rows());
+
+        if(InterpolationMethod == "csplinePer") {
+          calculateSplinePeriodic(x,f);   
+        }
+        else if(InterpolationMethod == "csplineNat") { 
+          calculateSplineNatural(x,f);   
+        }
+        else if(InterpolationMethod == "plinear") {
+          calculatePLinear(x,f);
+        }
+        else throw MBSimError("ERROR (PPolynom::setXF): No valid method to calculate pp-form");
+
+        index = 0;
+        nPoly = x.size()-1;
+        order = coefs.size()-1;
+      }
 
       /*! 
        * \return polynomial coefficients
        */
-      std::vector<fmatvec::Matrix<fmatvec::General,Row,Col,double> > getCoefs();
+      std::vector<typename Tab<Ret>::type> getCoefs() { return coefs; }
 
       /*! 
        * \return interval boundaries
        */
-      fmatvec::Vector<Row,double> getBreaks();
+      fmatvec::VecV getBreaks() { return breaks; }
 
       /*!
        * \brief set piecewise polynomial
        * \param polynomial coefficients
        * \param interval boundaries
        */
-      void setPP(const std::vector<fmatvec::Matrix<fmatvec::General,Row,Col,double> > &coefs_u, const fmatvec::Vec &breaks_u);
+      void setPP(const std::vector<typename Tab<Ret>::type> &coefs_u, const fmatvec::Vec &breaks_u) {
+        coefs = coefs_u; 
+        breaks = breaks_u;
+        index = 0;
+        nPoly = (coefs[0]).rows();
+        order = coefs.size()-1;
+      }
         
       /**
        * \brief initialize function with XML code
@@ -109,7 +152,7 @@ template<class Row, class Col>
       /** 
        * \brief vector of polynomial coefficents
        */
-      std::vector<fmatvec::Matrix<fmatvec::General,Row,Col,double> > coefs;
+      std::vector<typename Tab<Ret>::type> coefs;
 
       /**
        * \brief vector of breaks (interval boundaries)
@@ -136,14 +179,14 @@ template<class Row, class Col>
        * \param interpolated arguments
        * \param interpolated function values
        */  
-      void calculateSplinePeriodic(const fmatvec::Vector<Row,double> &x, const fmatvec::Matrix<fmatvec::General,Row,Col,double> &f);
+      void calculateSplinePeriodic(const fmatvec::VecV &x, const typename Tab<Ret>::type &f);
 
       /*! 
        * \brief calculation of natural spline by interpolation
        * \param interpolated arguments
        * \param interpolated function values
        */  
-      void calculateSplineNatural(const fmatvec::Vector<Row,double> &x, const fmatvec::Matrix<fmatvec::General,Row,Col,double> &f);
+      void calculateSplineNatural(const fmatvec::VecV &x, const typename Tab<Ret>::type &f);
 
       /* 
        * \brief calculation of piecewise linear interpolation
@@ -152,24 +195,24 @@ template<class Row, class Col>
        *
        * the first derivative is weak and the second derivative is zero elsewhere although it should be distributionally at the corners
        */
-      void calculatePLinear(const fmatvec::Vector<Row,double> &x, const fmatvec::Matrix<fmatvec::General,Row,Col,double> &f);
+      void calculatePLinear(const fmatvec::VecV &x, const typename Tab<Ret>::type &f);
 
      /**
        * piecewise polynomial interpolation - zeroth derivative
        */
       class ZerothDerivative {
         public:
-          ZerothDerivative(PPolynom<Row,Col> *polynom) : parent(polynom), xSave(0), ySave(), firstCall(true) {}
+          ZerothDerivative(PPolynom<Ret> *polynom) : parent(polynom), xSave(0), ySave(), firstCall(true) {}
           virtual ~ZerothDerivative() {}
 
           /* INHERITED INTERFACE OF FUNCTION */
-          fmatvec::Vector<Col,double> operator()(const double &x);
+          Ret operator()(const double &x);
           /***************************************************/
 
         private:
-          PPolynom<Row,Col> *parent;
+          PPolynom<Ret> *parent;
           double xSave;
-          fmatvec::Vector<Col,double> ySave;
+          Ret ySave;
           bool firstCall;
       };
 
@@ -178,17 +221,17 @@ template<class Row, class Col>
        */
       class FirstDerivative {
         public:
-          FirstDerivative(PPolynom<Row,Col> *polynom) : parent(polynom), xSave(0), ySave(), firstCall(true) {}
+          FirstDerivative(PPolynom<Ret> *polynom) : parent(polynom), xSave(0), ySave(), firstCall(true) {}
           virtual ~FirstDerivative() {}
 
           /* INHERITED INTERFACE OF FUNCTION */
-          fmatvec::Vector<Col,double> operator()(const double& x);
+          Ret operator()(const double& x);
           /***************************************************/
 
         private:
-          PPolynom<Row,Col> *parent;
+          PPolynom<Ret> *parent;
           double xSave;
-          fmatvec::Vector<Col,double> ySave;
+          Ret ySave;
           bool firstCall;
       };
 
@@ -197,17 +240,17 @@ template<class Row, class Col>
        */
       class SecondDerivative {
         public:
-          SecondDerivative(PPolynom<Row,Col> *polynom) : parent(polynom), xSave(0), ySave(), firstCall(true) {}
+          SecondDerivative(PPolynom<Ret> *polynom) : parent(polynom), xSave(0), ySave(), firstCall(true) {}
           virtual ~SecondDerivative() {}
 
           /* INHERITED INTERFACE OF FUNCTION */
-          fmatvec::Vector<Col,double> operator()(const double& x);
+          Ret operator()(const double& x);
           /***************************************************/
 
         private:
-          PPolynom<Row,Col> *parent;
+          PPolynom<Ret> *parent;
           double xSave;
-          fmatvec::Vector<Col,double> ySave;
+          Ret ySave;
           bool firstCall;
       };
 
@@ -217,41 +260,8 @@ template<class Row, class Col>
       SecondDerivative fdd;
   };
 
-  template<class Row, class Col>
-  inline std::vector<fmatvec::Matrix<fmatvec::General,Row,Col,double> > PPolynom<Row,Col>::getCoefs() { return coefs; }
-  template<class Row, class Col>
-  inline fmatvec::Vector<Row,double> PPolynom<Row,Col>::getBreaks() { return breaks; }
-  template<class Row, class Col>
-  inline void PPolynom<Row,Col>::setPP(const std::vector<fmatvec::Matrix<fmatvec::General,Row,Col,double> > &coefs_u, const fmatvec::Vec &breaks_u) {
-    coefs = coefs_u; 
-    breaks = breaks_u;
-    index = 0;
-    nPoly = (coefs[0]).rows();
-    order = coefs.size()-1;
-  }
-
-  template<class Row, class Col>
-  void PPolynom<Row,Col>::setXF(const fmatvec::Vector<Row,double> &x, const fmatvec::Matrix<fmatvec::General,Row,Col,double> &f, std::string InterpolationMethod) {
-    assert(x.size() == f.rows());
-
-    if(InterpolationMethod == "csplinePer") {
-      calculateSplinePeriodic(x,f);   
-    }
-    else if(InterpolationMethod == "csplineNat") { 
-      calculateSplineNatural(x,f);   
-    }
-    else if(InterpolationMethod == "plinear") {
-      calculatePLinear(x,f);
-    }
-    else throw MBSimError("ERROR (PPolynom::setXF): No valid method to calculate pp-form");
-
-    index = 0;
-    nPoly = x.size()-1;
-    order = coefs.size()-1;
-  }
-
-  template<class Row, class Col>
-  void PPolynom<Row,Col>::calculateSplinePeriodic(const fmatvec::Vector<Row,double> &x, const fmatvec::Matrix<fmatvec::General,Row,Col,double> &f) {
+  template<class Ret>
+  void PPolynom<Ret>::calculateSplinePeriodic(const fmatvec::VecV &x, const typename Tab<Ret>::type &f) {
     double hi, hii;
     int N = x.size();
     if(nrm2(f.row(0)-f.row(f.rows()-1))>epsroot()) throw MBSimError("ERROR (PPolynom::calculateSplinePeriodic): f(0)= "+numtostr(f.row(0))+"!="+numtostr(f.row(f.rows()-1))+" =f(end)");
@@ -310,8 +320,8 @@ template<class Row, class Col>
     coefs.push_back(a);
   }
 
-  template<class Row, class Col>
-  void PPolynom<Row,Col>::calculateSplineNatural(const fmatvec::Vector<Row,double> &x, const fmatvec::Matrix<fmatvec::General,Row,Col,double> &f) {
+  template<class Ret>
+  void PPolynom<Ret>::calculateSplineNatural(const fmatvec::VecV &x, const typename Tab<Ret>::type &f) {
     // first row
     int i=0;
     int N = x.size();
@@ -349,7 +359,7 @@ template<class Row, class Col>
     fmatvec::Mat C1 = C_rs(0,0,N-3,N-3);
     fmatvec::Mat c(N-2,f.cols(),fmatvec::INIT,0.0);
     for(i=N-3;i>=0 ;i--) { // backward substitution
-      fmatvec::RowVector<Col,double> sum_ciCi(f.cols(),fmatvec::NONINIT); 
+      typename Row<Ret>::type sum_ciCi(f.cols(),fmatvec::NONINIT); 
       sum_ciCi.init(0.);
       for(int ii=i+1; ii<=N-3; ii++) sum_ciCi = sum_ciCi + C1(i,ii)*c.row(ii);
       c.row(i)= (rs1.row(i) - sum_ciCi)/C1(i,i);
@@ -377,8 +387,8 @@ template<class Row, class Col>
     coefs.push_back(a);
   }
 
-  template<class Row, class Col>
-  void PPolynom<Row,Col>::calculatePLinear(const fmatvec::Vector<Row,double> &x, const fmatvec::Matrix<fmatvec::General,Row,Col,double> &f) {
+  template<class Ret>
+  void PPolynom<Ret>::calculatePLinear(const fmatvec::VecV &x, const typename Tab<Ret>::type &f) {
     int N = x.size(); // number of supporting points
 
     breaks.resize(N);
@@ -394,8 +404,8 @@ template<class Row, class Col>
     coefs.push_back(a);
   }
           
-  template<class Row, class Col>
-  fmatvec::Vector<Col,double> PPolynom<Row,Col>::ZerothDerivative::operator()(const double& x) {
+  template<class Ret>
+  Ret PPolynom<Ret>::ZerothDerivative::operator()(const double& x) {
     if(x>(parent->breaks)(parent->nPoly)) 
       throw MBSimError("ERROR (PPolynom::operator()): x out of range! x= "+numtostr(x)+", upper bound= "+numtostr((parent->breaks)(parent->nPoly)));
     if(x<(parent->breaks)(0)) 
@@ -415,7 +425,7 @@ template<class Row, class Col>
       }
 
       const double dx = x - (parent->breaks)(parent->index); // local coordinate
-      fmatvec::Vector<Row,double> yi = trans(((parent->coefs)[0]).row(parent->index));
+      fmatvec::VecV yi = trans(((parent->coefs)[0]).row(parent->index));
       for(int i=1;i<=(parent->order);i++) // Horner scheme
         yi = yi*dx+trans(((parent->coefs)[i]).row(parent->index));
       xSave=x;
@@ -424,8 +434,8 @@ template<class Row, class Col>
     }
   }
 
-  template<class Row, class Col>
-  fmatvec::Vector<Col,double> PPolynom<Row,Col>::FirstDerivative::operator()(const double& x) {
+  template<class Ret>
+  Ret PPolynom<Ret>::FirstDerivative::operator()(const double& x) {
     if(x>(parent->breaks)(parent->nPoly)) throw MBSimError("ERROR (PPolynom::diff1): x out of range! x= "+numtostr(x)+", upper bound= "+numtostr((parent->breaks)(parent->nPoly)));
     if(x<(parent->breaks)(0)) throw MBSimError("ERROR (PPolynom::diff1): x out of range!   x= "+numtostr(x)+" lower bound= "+numtostr((parent->breaks)(0)));
 
@@ -443,7 +453,7 @@ template<class Row, class Col>
       }
 
       double dx = x - (parent->breaks)(parent->index);
-      fmatvec::Vector<Row,double> yi = trans(((parent->coefs)[0]).row(parent->index))*double(parent->order);
+      fmatvec::VecV yi = trans(((parent->coefs)[0]).row(parent->index))*double(parent->order);
       for(int i=1;i<parent->order;i++)
         yi = yi*dx+trans(((parent->coefs)[i]).row(parent->index))*double((parent->order)-i);
       xSave=x;
@@ -452,8 +462,8 @@ template<class Row, class Col>
     }
   }
 
-  template<class Row, class Col>
-  fmatvec::Vector<Col,double> PPolynom<Row,Col>::SecondDerivative::operator()(const double& x) {
+  template<class Ret>
+  Ret PPolynom<Ret>::SecondDerivative::operator()(const double& x) {
     if(x>(parent->breaks)(parent->nPoly)) throw MBSimError("ERROR (PPolynom::diff2): x out of range!   x= "+numtostr(x)+" upper bound= "+numtostr((parent->breaks)(parent->nPoly)));
     if(x<(parent->breaks)(0)) throw MBSimError("ERROR (PPolynom::diff2): x out of range!   x= "+numtostr(x)+" lower bound= "+numtostr((parent->breaks)(0)));
 
@@ -471,7 +481,7 @@ template<class Row, class Col>
       }
 
       double dx = x - (parent->breaks)(parent->index);
-      fmatvec::Vector<Row,double> yi = trans(((parent->coefs)[0]).row(parent->index))*double(parent->order)*double((parent->order)-1);
+      fmatvec::VecV yi = trans(((parent->coefs)[0]).row(parent->index))*double(parent->order)*double((parent->order)-1);
       for(int i=1;i<=((parent->order)-2);i++)
         yi = yi*dx+trans(((parent->coefs)[i]).row(parent->index))*double((parent->order)-i)*double((parent->order)-i-1);
       xSave=x;
@@ -480,11 +490,11 @@ template<class Row, class Col>
     }
   }
 
-  template<class Row, class Col>
-  void PPolynom<Row,Col>::initializeUsingXML(MBXMLUtils::TiXmlElement * element) {
+  template<class Ret>
+  void PPolynom<Ret>::initializeUsingXML(MBXMLUtils::TiXmlElement * element) {
     MBXMLUtils::TiXmlElement *e;
-    fmatvec::Vector<Row,double> x;
-    fmatvec::Matrix<fmatvec::General,Row,Col,double> y;
+    fmatvec::VecV x;
+    typename Tab<Ret>::type y;
     e=element->FirstChildElement(MBSIMNS"x");
     if (e) {
       x=Element::getVec(e);
@@ -493,7 +503,7 @@ template<class Row, class Col>
     }
     else {
       e=element->FirstChildElement(MBSIMNS"xy");
-      fmatvec::Matrix<fmatvec::General,Row,Col,double> xy=Element::getMat(e);
+      typename Tab<Ret>::type xy=Element::getMat(e);
       assert(xy.cols()>1);
       x=xy.col(0);
       y=xy(fmatvec::Index(0, xy.rows()-1), fmatvec::Index(1, xy.cols()-1));

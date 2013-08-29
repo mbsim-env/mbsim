@@ -801,7 +801,7 @@ namespace MBSim {
 
     template<typename DepVecShape>
       struct Tab<fmatvec::Vector<DepVecShape, double> > {
-        typedef fmatvec::Matrix<fmatvec::General, DepVecShape, fmatvec::Var, double> type;
+        typedef fmatvec::Matrix<fmatvec::General, fmatvec::Var, DepVecShape, double> type;
       };
 
     public:
