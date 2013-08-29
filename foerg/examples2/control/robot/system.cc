@@ -108,7 +108,7 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   basePosition->setIndex(0);
 
   Mat bPT(FileTofmatvecString("./Soll_Basis.tab").c_str());
-  TabularFunction<Var,Var> * basePositionSollFunction = new TabularFunction<Var,Var>(bPT.col(0), bPT.col(1));
+  TabularFunction<VecV> * basePositionSollFunction = new TabularFunction<VecV>(bPT.col(0), bPT.col(1));
   FunctionSensor * basePositionSoll = new FunctionSensor("BasePositionSoll");
   addLink(basePositionSoll);
   basePositionSoll->setFunction(basePositionSollFunction);
@@ -149,7 +149,7 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   armPosition->setIndex(0);
 
   Mat aPT(FileTofmatvecString("./Soll_Arm.tab").c_str());
-  TabularFunction<Var,Var> * armPositionSollFunction = new TabularFunction<Var,Var>(aPT.col(0), aPT.col(1));
+  TabularFunction<VecV> * armPositionSollFunction = new TabularFunction<VecV>(aPT.col(0), aPT.col(1));
   FunctionSensor * armPositionSoll = new FunctionSensor("ArmPositionSoll");
   addLink(armPositionSoll);
   armPositionSoll->setFunction(armPositionSollFunction);
@@ -190,7 +190,7 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   spitzePosition->setIndex(0);
 
   Mat sPT(FileTofmatvecString("./Soll_Spitze.tab").c_str());
-  TabularFunction<Var,Var> * spitzePositionSollFunction = new TabularFunction<Var,Var>(sPT.col(0), sPT.col(1));
+  TabularFunction<VecV> * spitzePositionSollFunction = new TabularFunction<VecV>(sPT.col(0), sPT.col(1));
   FunctionSensor * spitzePositionSoll = new FunctionSensor("SpitzePositionSoll");
   addLink(spitzePositionSoll);
   spitzePositionSoll->setFunction(spitzePositionSollFunction);

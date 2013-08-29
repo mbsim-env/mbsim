@@ -173,11 +173,11 @@ void FuncCrPC::enableTabularFit(double tabularFitLength) {
     N.set(i, this->computeN(alp).T());
     curve(i)=this->computeCurvature(alp);
   }
-  tab_operator = new TabularFunction<Ref,Ref>(phi, Mat(O));
-  tab_T = new TabularFunction<Ref,Ref>(phi, Mat(T));
-  tab_B = new TabularFunction<Ref,Ref>(phi, Mat(B));
-  tab_N = new TabularFunction<Ref,Ref>(phi, Mat(N));
-  tab_curvature = new TabularFunction<Ref,Ref>(phi, curve);
+  tab_operator = new TabularFunction<Vec3>(phi, Mat(O));
+  tab_T = new TabularFunction<Vec3>(phi, Mat(T));
+  tab_B = new TabularFunction<Vec3>(phi, Mat(B));
+  tab_N = new TabularFunction<Vec3>(phi, Mat(N));
+  tab_curvature = new TabularFunction<Vec3>(phi, curve);
 
   operator_ = &FuncCrPC::operatorTabular;
   computeT_ = &FuncCrPC::computeTTabular;

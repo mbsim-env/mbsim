@@ -238,19 +238,17 @@
     <Function_SSEvaluation name="ExcitationTorque" xmlns="http://mbsim.berlios.de/MBSimControl">
       <inputSignal ref="../Link[AngularSensor]"/>
       <function>
-        <Function_SS_from_VS xmlns="http://mbsim.berlios.de/MBSim">
-          <TabularFunction_VS xmlns="http://mbsim.berlios.de/MBSim">
-            <xy>
-              <![CDATA[
-              x=[-100 -.01 0 .01 1000];
-              y=[0 0 .04 0 0];
-              xx=[linspace(-100, -.03, 10) linspace(-.02, .02, 100) linspace(.03, 100, 10)];
-              yy=interp1(x, y, xx, 'pchip');
-              ret=[xx' yy'];
-              ]]>
-            </xy>
-          </TabularFunction_VS>
-        </Function_SS_from_VS>
+        <TabularFunction_SS xmlns="http://mbsim.berlios.de/MBSim">
+          <xy>
+            <![CDATA[
+            x=[-100 -.01 0 .01 1000];
+            y=[0 0 .04 0 0];
+            xx=[linspace(-100, -.03, 10) linspace(-.02, .02, 100) linspace(.03, 100, 10)];
+            yy=interp1(x, y, xx, 'pchip');
+            ret=[xx' yy'];
+            ]]>
+          </xy>
+        </TabularFunction_SS>
       </function>
     </Function_SSEvaluation>
     <SignalMultiplication name="Excitation" xmlns="http://mbsim.berlios.de/MBSimControl">

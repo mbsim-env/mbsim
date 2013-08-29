@@ -179,7 +179,7 @@ namespace MBSimHydraulics {
         ReValues(i)=re[i];
         lambdaValues(i)=la[i];
       }
-      lambdaTabular = new TabularFunction<Ref,Ref>(ReValues, lambdaValues);
+      lambdaTabular = new TabularFunction<double>(ReValues, lambdaValues);
       initialized=true;
     }
     const double Re=Q*((Q>0)?ReynoldsFactor:ReynoldsFactorNeg);
@@ -188,9 +188,9 @@ namespace MBSimHydraulics {
     else {
       double lambda;
       if (Re<2320.) // transition
-        lambda=64./Re+((*lambdaTabular)(2320.)(0)-64./Re)/(2320.-1404.)*(Re-1404.);
+        lambda=64./Re+((*lambdaTabular)(2320.)-64./Re)/(2320.-1404.)*(Re-1404.);
       else // turbulent
-        lambda=(*lambdaTabular)(Re)(0);
+        lambda=(*lambdaTabular)(Re);
       return lambda*c*fabs(Q)*Q;
     }
   }

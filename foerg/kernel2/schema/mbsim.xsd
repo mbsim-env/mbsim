@@ -2935,24 +2935,6 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="Function_SS_from_VS" substitutionGroup="Function_SS" type="Function_SS_from_VSType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Generiert eine Funktion von Typ <object class="inlineeqn">y=f(x)</object> aus einer Funktion vom Typ <object class="inlineeqn">\boldsymbol{y}=f(x)</object>.<br/>
-        Es wird immer der erste Index weitergereicht: <object class="inlineeqn">y=\boldsymbol{y}_1</object>
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="Function_SS_from_VSType">
-    <xs:complexContent>
-      <xs:extension base="Function_SSType">
-        <xs:sequence>
-          <xs:element ref="Function_VS"/>
-        </xs:sequence> 
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>   
-
   <xs:element name="LinearFunction_VV" substitutionGroup="Function_VV" type="LinearFunction_VVType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -3176,42 +3158,6 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="Function_VS_from_SS" substitutionGroup="Function_VS" type="Function_VS_from_SSType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Generiert eine Funktion durch Multiplikation eines skalaren Funktionswertes mit einem normierten Richtungsvektor:  <object class="inlineeqn">\boldsymbol{y}=\boldsymbol{n} \, f(x)</object>.
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="Function_VS_from_SSType">
-    <xs:complexContent>
-      <xs:extension base="Function_VSType">
-        <xs:sequence>
-          <xs:element name="function">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Funktion vom Typ  <object class="inlineeqn">y=f(x)</object>.
-              </xs:documentation>
-            </xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function_SS">
-                </xs:element>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="direction" type="pv:nounitVector">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Richtungsvektor.
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-        </xs:sequence> 
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>   
-
   <xs:element name="PositiveSinusFunction_VS" substitutionGroup="Function_VS" type="PositiveSinusFunction_VSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -3276,6 +3222,48 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="TabularFunction_SS" substitutionGroup="Function_SS" type="TabularFunction_SSType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Vektorwertige Funktion generiert aus linearer Interpolation von Tabellenwerten <object class="inlineeqn">\boldsymbol{y}=\begin{cases}\boldsymbol{c_0}\ \text{bei}\ x\leq x_0\\\frac{\boldsymbol{c}_{i+1}-\boldsymbol{c}_{i}}{x_{i+1}-x_i}\left(x-x_i\right)\ \text{bei}\ x_i \leq x\leq x_{i+1}\ \text{und}\ 0\leq i\leq n-1\\\boldsymbol{c_n}\ \text{bei}\ x_n \leq x\end{cases}</object>.<br/>
+        Zum einen ist es möglich, die Parameter <object class="inlineeqn">\mathbf{x}</object> als (Spalten-)Vektor und die Punkte <object class="inlineeqn">\mathbf{c}</object> -zeilenweise in einer Matrix angeordnet- in getrennten Matrizen vorzugeben, zum anderen ist deren Angabe auch in einer Matrix möglich.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="TabularFunction_SSType">
+    <xs:complexContent>
+      <xs:extension base="Function_SSType">
+        <xs:sequence>
+          <xs:choice>
+            <xs:sequence>
+              <xs:element name="x" type="pv:unknownVector">
+                <xs:annotation>
+                  <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                    Parameter-(Spalten-)vektor der zu interpolierenden Punkte.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="y" type="pv:unknownVector">
+                <xs:annotation>
+                  <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                    Zeilenweises Arrangement der zu interpolierenden Punkte in einer Matrix.
+                  </xs:documentation>
+                </xs:annotation>
+              </xs:element>
+            </xs:sequence>
+            <xs:element name="xy" type="pv:unknownMatrix">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Parameter-(Spalten-)vektor und die zu interpolierenden Punkte sind in einer Matrix zusammengefasst.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:choice>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
