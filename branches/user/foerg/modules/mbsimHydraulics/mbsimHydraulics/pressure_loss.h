@@ -24,8 +24,7 @@
 #include <fmatvec/function.h>
 
 namespace MBSim {
-  template <class Row, class Col> class TabularFunction;
-  class Function1_SS;
+  template <class Ret> class TabularFunction;
 }
 
 namespace MBSimHydraulics {
@@ -127,7 +126,7 @@ namespace MBSimHydraulics {
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     private:
       double c, dRef, dHyd, dHydNeg, k, ReynoldsFactor, ReynoldsFactorNeg;
-      MBSim::TabularFunction<fmatvec::Ref,fmatvec::Ref> * lambdaTabular;
+      MBSim::TabularFunction<double> * lambdaTabular;
   };
 
 

@@ -451,31 +451,6 @@ namespace MBSim {
       double couplingValue;
   };
 
-  class Function_SS_from_VS : public fmatvec::Function<double(double)> {
-    public:
-      Function_SS_from_VS() : fun(NULL) {}
-      Function_SS_from_VS(fmatvec::Function<fmatvec::Vec(double)> * fun_) : fun(fun_) {assert((*fun)(0).size()==1); }
-      void setFunction(fmatvec::Function<fmatvec::Vec(double)> * fun_) {fun=fun_; assert((*fun)(0).size()==1); }
-      double operator()(const double& x) {return (*fun)(x)(0); }
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    private:
-      Function<fmatvec::Vec(double)> * fun;
-  };
-
-  template<class Col>
-  class Function_VS_from_SS : public fmatvec::Function<fmatvec::Vector<Col,double>(double)> {
-    public:
-      Function_VS_from_SS() : fun(NULL), vec(0) {}
-      Function_VS_from_SS(fmatvec::Function<double(double)> * fun_, fmatvec::Vector<Col,double> v) : fun(fun_), vec(v) {vec/=nrm2(v); }
-      void setFunction(fmatvec::Function<double(double)> * fun_) {fun=fun_; }
-      void setVector(fmatvec::Vector<Col,double> v) {vec=v; vec/=nrm2(v); }
-      fmatvec::Vector<Col,double> operator()(const double& x) {return (*fun)(x)*vec; }
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    private:
-      fmatvec::Function<double(double)> * fun;
-      fmatvec::Vector<Col,double> vec;
-  };
-
   class TabularFunction_SSS: public fmatvec::Function<double(double,double)> {
     public:
       TabularFunction_SSS();
@@ -506,17 +481,6 @@ namespace MBSim {
 
       void calcIndex(const double * x, fmatvec::Vec X, int * xSize, int * xIndexMinus, int * xIndexPlus);
   };
-
-  template<class Col>
-  void Function_VS_from_SS<Col>::initializeUsingXML(MBXMLUtils::TiXmlElement * element) {
-    MBXMLUtils::TiXmlElement * e;
-    e=element->FirstChildElement(MBSIMNS"function");
-    fmatvec::Function<double(double)> * f=ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<double(double)> >(e->FirstChildElement());
-    f->initializeUsingXML(e->FirstChildElement());
-    setFunction(f);
-    e=element->FirstChildElement(MBSIMNS"direction");
-    setVector(Element::getVec(e));
-  }
 
   template <class Arg>
     class ToDouble {
@@ -827,42 +791,159 @@ namespace MBSim {
         }
     };
 
-  template<class Row, class Col>
-  class TabularFunction : public fmatvec::Function<fmatvec::Vector<Col,double>(double)> {
+  template<class Ret>
+  class TabularFunction : public fmatvec::Function<Ret(double)> {
+
+    template<typename Dep>
+      struct Tab {
+        typedef fmatvec::ErrorType type;
+      };
+
+    template<typename DepVecShape>
+      struct Tab<fmatvec::Vector<DepVecShape, double> > {
+        typedef fmatvec::Matrix<fmatvec::General, DepVecShape, fmatvec::Var, double> type;
+      };
+
     public:
       TabularFunction() : xIndexOld(0) {}
-      TabularFunction(const fmatvec::Vector<Row,double> &x_, const fmatvec::Matrix<fmatvec::General,Row,Col,double> &y_) : x(x_), y(y_), xIndexOld(0) {
+      TabularFunction(const fmatvec::VecV &x_, const typename Tab<Ret>::type &y_) : x(x_), y(y_), xIndexOld(0) {
         check();
       }
-      fmatvec::Vector<Col,double> operator()(const double& xVal);
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+      Ret operator()(const double& xVal) {
+        int i=xIndexOld;
+        if (xVal<=x(0)) {
+          xIndexOld=0;
+          return trans(y.row(0));
+        }
+        else if (xVal>=x(xSize-1)) {
+          xIndexOld=xSize-1;
+          return trans(y.row(xSize-1));
+        }
+        else if (xVal<=x(i)) {
+          while (xVal<x(i))
+            i--;
+        }
+        else {
+          do
+            i++;
+          while (xVal>x(i));
+          i--;
+        }
+        xIndexOld=i;
+        return trans(y.row(i)+(xVal-x(i))*(y.row(i+1)-y.row(i))/(x(i+1)-x(i)));
+      }
+      void initializeUsingXML(MBXMLUtils::TiXmlElement * element) {
+        MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"x");
+        if (e) {
+          fmatvec::VecV x_=Element::getVec(e);
+          x=x_;
+          e=element->FirstChildElement(MBSIMNS"y");
+          typename Tab<Ret>::type y_=Element::getMat(e, x.size(), 0);
+          y=y_;
+        }
+        e=element->FirstChildElement(MBSIMNS"xy");
+        if (e) {
+          fmatvec::MatV xy=Element::getMat(e);
+          assert(xy.cols()>1);
+          x=xy.col(0);
+          y=xy(fmatvec::Range<fmatvec::Var,fmatvec::Var>(0, xy.rows()-1), fmatvec::Range<fmatvec::Var,fmatvec::Var>(1, xy.cols()-1));
+        }
+        check();
+      }
     protected:
-      fmatvec::Vector<Row,double> x;
-      fmatvec::Matrix<fmatvec::General,Row,Col,double> y;
+      fmatvec::VecV x;
+      typename Tab<Ret>::type y;
     private:
       int xIndexOld, xSize;
-      void check();
+      void check() {
+        for (int i=1; i<x.size(); i++)
+          assert(x(i)>x(i-1));
+        assert(x.size()==y.rows());
+        xSize=x.size();
+      }
   };
 
-  class PeriodicTabularFunction : public TabularFunction<fmatvec::Ref,fmatvec::Ref> {
+  template<>
+  class TabularFunction<double> : public fmatvec::Function<double(double)> {
+
     public:
-      PeriodicTabularFunction() {}
-      PeriodicTabularFunction(fmatvec::Vec x_, fmatvec::Mat y_) : TabularFunction<fmatvec::Ref,fmatvec::Ref>(x_, y_) {
+      TabularFunction() : xIndexOld(0) {}
+      TabularFunction(const fmatvec::VecV &x_, const fmatvec::VecV &y_) : x(x_), y(y_), xIndexOld(0) {
         check();
       }
-      fmatvec::Vec operator()(const double& xVal);
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-        TabularFunction<fmatvec::Ref,fmatvec::Ref>::initializeUsingXML(element);
+      double operator()(const double& xVal) {
+        int i=xIndexOld;
+        if (xVal<=x(0)) {
+          xIndexOld=0;
+          return y(0);
+        }
+        else if (xVal>=x(xSize-1)) {
+          xIndexOld=xSize-1;
+          return y(xSize-1);
+        }
+        else if (xVal<=x(i)) {
+          while (xVal<x(i))
+            i--;
+        }
+        else {
+          do
+            i++;
+          while (xVal>x(i));
+          i--;
+        }
+        xIndexOld=i;
+        return y(i)+(xVal-x(i))*(y(i+1)-y(i))/(x(i+1)-x(i));
+      }
+      void initializeUsingXML(MBXMLUtils::TiXmlElement * element) {
+        MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"x");
+        if (e) {
+          fmatvec::VecV x_=Element::getVec(e);
+          x=x_;
+          e=element->FirstChildElement(MBSIMNS"y");
+          fmatvec::VecV y_=Element::getVec(e, x.size());
+          y=y_;
+        }
+        e=element->FirstChildElement(MBSIMNS"xy");
+        if (e) {
+          fmatvec::MatV xy=Element::getMat(e);
+          assert(xy.cols()>1);
+          x=xy.col(0);
+          y=xy.col(1);
+        }
         check();
       }
+    protected:
+      fmatvec::VecV x;
+      fmatvec::VecV y;
     private:
-      double xMin, xMax, xDelta;
+      int xIndexOld, xSize;
       void check() {
-        xMin=x(0);
-        xMax=x(x.size()-1);
-        xDelta=xMax-xMin;
+        for (int i=1; i<x.size(); i++)
+          assert(x(i)>x(i-1));
+        assert(x.size()==y.rows());
+        xSize=x.size();
       }
   };
+
+//  class PeriodicTabularFunction : public TabularFunction<fmatvec::Ref,fmatvec::Ref> {
+//    public:
+//      PeriodicTabularFunction() {}
+//      PeriodicTabularFunction(fmatvec::Vec x_, fmatvec::Mat y_) : TabularFunction<fmatvec::Ref,fmatvec::Ref>(x_, y_) {
+//        check();
+//      }
+//      fmatvec::Vec operator()(const double& xVal);
+//      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
+//        TabularFunction<fmatvec::Ref,fmatvec::Ref>::initializeUsingXML(element);
+//        check();
+//      }
+//    private:
+//      double xMin, xMax, xDelta;
+//      void check() {
+//        xMin=x(0);
+//        xMax=x(x.size()-1);
+//        xDelta=xMax-xMin;
+//      }
+//  };
 
   template<class Arg> 
     class RotationAboutXAxis : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
@@ -1280,59 +1361,6 @@ namespace MBSim {
         }
     };
 
-  template<class Row, class Col>
-    void TabularFunction<Row,Col>::initializeUsingXML(MBXMLUtils::TiXmlElement * element) {
-      MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"x");
-      if (e) {
-        fmatvec::Vector<Row,double> x_=Element::getVec(e);
-        x=x_;
-        e=element->FirstChildElement(MBSIMNS"y");
-        fmatvec::Matrix<fmatvec::General,Row,Col,double> y_=Element::getMat(e, x.size(), 0);
-        y=y_;
-      }
-      e=element->FirstChildElement(MBSIMNS"xy");
-      if (e) {
-        fmatvec::MatV xy=Element::getMat(e);
-        assert(xy.cols()>1);
-        x=xy.col(0);
-        y=xy(fmatvec::Range<fmatvec::Var,fmatvec::Var>(0, xy.rows()-1), fmatvec::Range<fmatvec::Var,fmatvec::Var>(1, xy.cols()-1));
-      }
-      check();
-    }
-
-  template<class Row, class Col>
-    fmatvec::Vector<Col,double> TabularFunction<Row,Col>::operator()(const double& xVal) {
-      int i=xIndexOld;
-      if (xVal<=x(0)) {
-        xIndexOld=0;
-        return trans(y.row(0));
-      }
-      else if (xVal>=x(xSize-1)) {
-        xIndexOld=xSize-1;
-        return trans(y.row(xSize-1));
-      }
-      else if (xVal<=x(i)) {
-        while (xVal<x(i))
-          i--;
-      }
-      else {
-        do
-          i++;
-        while (xVal>x(i));
-        i--;
-      }
-      xIndexOld=i;
-      fmatvec::RowVector<Col,double> m=(y.row(i+1)-y.row(i))/(x(i+1)-x(i));
-      return trans(y.row(i)+(xVal-x(i))*m);
-    }
-
-  template<class Row, class Col>
-    void TabularFunction<Row,Col>::check() {
-      for (int i=1; i<x.size(); i++)
-        assert(x(i)>x(i-1));
-      assert(x.size()==y.rows());
-      xSize=x.size();
-    }
 
 }
 
