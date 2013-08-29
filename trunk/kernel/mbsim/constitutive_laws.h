@@ -771,7 +771,7 @@ namespace MBSim {
         DEBUGLEVEL = debuglevel;
       }
       void setLCPSolvingStrategy(LCPSolvingStrategy strategy) {
-        lcpSolvingStrategy = strategy;
+        LCP.setStrategy(strategy);
       }
       /*****************/
 
@@ -833,6 +833,11 @@ namespace MBSim {
        */
       std::vector<std::pair<int, int> > possibleContactPoints;
 
+      /*!
+       * \brief variable for the LCP
+       */
+      LinearComplementarityProblem LCP;
+
       /**
        * \brief Influence matrix between contact points
        */
@@ -847,11 +852,6 @@ namespace MBSim {
        * \brief saves the influence functions for a pair of contours. The key is the pair of contour names
        */
       std::map<std::pair<Contour*, Contour*>, InfluenceFunction*> influenceFunctions;
-
-      /**
-       * \brief strategy for solving the LCP
-       */
-      LCPSolvingStrategy lcpSolvingStrategy;
 
       /**
        * \brief Solution of the last time, where contact has to be solved (can be used as starting guess for the next algorithm)

@@ -778,7 +778,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedForceLaw, MaxwellUnilateralConstraint, MBSIMNS"MaxwellUnilateralConstraint")
 
   MaxwellUnilateralConstraint::MaxwellUnilateralConstraint(const double & damping, const double & gapLimit) :
-      lcpSolvingStrategy(Standard), dampingCoefficient(damping), gLim(gapLimit), matConst(0), matConstSetted(false), DEBUGLEVEL(0) {
+      LCP(SymMat(0,NONINIT), Vec(0,NONINIT)), dampingCoefficient(damping), gLim(gapLimit), matConst(0), matConstSetted(false), DEBUGLEVEL(0) {
 
   }
 
@@ -822,7 +822,7 @@ namespace MBSim {
       updateInfluenceMatrix(contacts);
       updateRigidBodyGap(contacts);
 
-      LinearComplementarityProblem LCP(C, rigidBodyGap, lcpSolvingStrategy);
+      LCP.setSystem(C, rigidBodyGap);
 
       map<Index, double> tolerances;
       tolerances.insert(pair<Index, double>(Index(0, possibleContactPoints.size() - 1), 1e-8)); //tolerances for distances
