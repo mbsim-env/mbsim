@@ -51,7 +51,7 @@ namespace MBSim {
       case ReformulatedStandard:
         return o << "ReformulatedStandard";
       case ReformulatedFixpointOnly:
-        return o <<"ReformulatedFixpointOnly";
+        return o << "ReformulatedFixpointOnly";
       case ReformulatedNewtonOnly:
         return o << "ReformulatedNewtonOnly";
       case LemkeOnly:
@@ -95,37 +95,51 @@ namespace MBSim {
   }
 
   void LinearComplementarityProblem::setSystem(const SymMat & M_, const Vec & q_) {
-    q = q_;
-    M = Sym2Sqr(M_);
+    q.resize() = q_;
+    M.resize() = Sym2Sqr(M_);
 
     /*set different solvers*/
     //Lemke
     lemkeSolver.setSystem(M, q);
 
     //Newton
-    if (jacobianType == LCPSpecial)
-      jacobianFunction = new LinearComplementarityJacobianFunction();
-    else
-      jacobianFunction = new NumericalNewtonJacobianFunction();
+    if (!jacobianFunction) {
+      if (jacobianType == LCPSpecial)
+        jacobianFunction = new LinearComplementarityJacobianFunction();
+      else
+        jacobianFunction = new NumericalNewtonJacobianFunction();
+    }
 
     newtonSolver->setJacobianFunction(jacobianFunction);
 
-    newtonFunction = new LCPNewtonReformulationFunction();
+    if (!newtonFunction) {
+      newtonFunction = new LCPNewtonReformulationFunction();
+
+      newtonSolver->setFunction(newtonFunction);
+
+      if (!criteriaNewton) {
+        criteriaNewton = new GlobalResidualCriteriaFunction();
+
+        newtonSolver->setCriteriaFunction(criteriaNewton);
+      }
+    }
+
     newtonFunction->setSystem(M, q);
-    newtonSolver->setFunction(newtonFunction);
-
-    criteriaNewton = new GlobalResidualCriteriaFunction();
-
-    newtonSolver->setCriteriaFunction(criteriaNewton);
 
     //Fixpoint
-    fixpointFunction = new LCPFixpointReformulationFunction();
+    if (!fixpointFunction) {
+      fixpointFunction = new LCPFixpointReformulationFunction();
+
+      fixpointSolver->setFunction(fixpointFunction);
+
+      if (!criteriaFixedpoint) {
+        criteriaFixedpoint = new GlobalShiftCriteriaFunction();
+
+        fixpointSolver->setCriteriaFunction(criteriaFixedpoint);
+      }
+    }
+
     fixpointFunction->setSystem(M, q);
-    fixpointSolver->setFunction(fixpointFunction);
-
-    criteriaFixedpoint = new GlobalShiftCriteriaFunction();
-
-    fixpointSolver->setCriteriaFunction(criteriaFixedpoint);
 
   }
 
@@ -194,7 +208,7 @@ namespace MBSim {
 
       /*Get initial solution for the reformulated system to apply recursive schemes*/
       if (not solved) {
-        if (initialSolution.size() != 2*dimension)
+        if (initialSolution.size() != 2 * dimension)
           solution = createInitialSolution(M, q);
         else {
           solution = initialSolution;
@@ -203,7 +217,7 @@ namespace MBSim {
 
       /*Try to solve the reformulated system with iterative schemes*/
       for (int loop = 0; loop < 5 and not solved; loop++) {
-        if(strategy == ReformulatedNewtonOnly) {
+        if (strategy == ReformulatedNewtonOnly) {
           useNewton(solution, solved);
         }
         else if (strategy == ReformulatedFixpointOnly) {
@@ -215,7 +229,7 @@ namespace MBSim {
           switch (newtonSolver->getInfo()) {
             case 0:
 
-              break;
+            break;
             case -1: {
               useFixpoint(solution, solved);
               break;
@@ -230,6 +244,18 @@ namespace MBSim {
           cout << "No convergence during calculation of contact forces with reformulated system scheme!" << endl;
           cout << "Using Lemke Algorithm with maximal number of steps as fallback." << endl;
         }
+
+        if (strategy == ReformulatedFixpointOnly or strategy == ReformulatedNewtonOnly or strategy == ReformulatedStandard) {
+          // If reformulated routines fails: assume that they will fail in the future and switch back to standard solution
+          strategy = Standard;
+          if (DEBUGLEVEL >= 1) {
+            cout << "Switching back to standard solution strategy!" << endl;
+          }
+        }
+      }
+      else if(lemkeSolver.getInfo() != 0) {
+        //Switch back strategy in case shortened Lemke has failed but reformulated were succesfull
+        strategy = oldStrategy;
       }
     }
 
@@ -270,12 +296,11 @@ namespace MBSim {
 
   double LinearComplementarityProblem::computeMediumEigVal(const SqrMat & M) {
     /*update Material constant*/
-    Vector<Ref,complex<double> > Eigvals = eigval(M);
     double eigvalSum = 0;
-    for (int i = 0; i < Eigvals.size(); i++) {
-      eigvalSum += Eigvals(i).real(); //TODO: handle complex values
+    for (int i = 0; i < M.size(); i++) {
+      eigvalSum += M(i, i);
     }
-    return eigvalSum / Eigvals.size();
+    return eigvalSum / M.size();
   }
 
   Vec LinearComplementarityProblem::createInitialSolution(const SymMat & M, const Vec & q, double mediumEigVal /*= 0*/) {
@@ -335,7 +360,7 @@ namespace MBSim {
       }
     }
 
-    if(newtonSolver->getInfo() == 0) {
+    if (newtonSolver->getInfo() == 0) {
       solved = true;
 
       if (DEBUGLEVEL >= 1) {

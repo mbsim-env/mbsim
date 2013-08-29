@@ -77,6 +77,7 @@ namespace MBSim {
       void setSystem(const fmatvec::SymMat & M_, const fmatvec::Vec & q_);
       void setStrategy(const LCPSolvingStrategy & strategy_) {
         strategy = strategy_;
+        oldStrategy = strategy_;
       }
       void setJacobianType(const JacobianType & jacobianType_) {
         jacobianType = jacobianType_;
@@ -134,6 +135,11 @@ namespace MBSim {
        * \brief algorithm strategy to solve the LCP
        */
       LCPSolvingStrategy strategy;
+
+      /*!
+       * \brief save old Strategy for switching...
+       */
+      LCPSolvingStrategy oldStrategy;
 
       /**
        * \brief parameter for finding the start solution for the reformulated system
