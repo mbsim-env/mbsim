@@ -162,17 +162,6 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, StepFunction<Ref>, MBSIMNS"StepFunction_VS")
 
-//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PeriodicTabularFunction, MBSIMNS"PeriodicTabularFunction_VS")
-
-//  Vec PeriodicTabularFunction::operator()(const double& xVal) {
-//    double xValTmp=xVal;
-//    while (xValTmp<xMin)
-//      xValTmp+=xDelta;
-//    while (xValTmp>xMax)
-//      xValTmp-=xDelta;
-//    return TabularFunction<fmatvec::Ref,fmatvec::Ref>::operator()(xValTmp);
-//  }
-
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SummationFunction, MBSIMNS"SummationFunction_VS")
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TabularFunction_SSS, MBSIMNS"TabularFunction_SSS")
@@ -300,6 +289,56 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TabularFunction<Vec3>, MBSIMNS"TabularFunction_VS")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TabularFunction<double>, MBSIMNS"TabularFunction_SS")
 
+  template<>
+  double TabularFunction<double>::operator()(const double& xVal) {
+    int i=xIndexOld;
+    if (xVal<=x(0)) {
+      xIndexOld=0;
+      return y(0);
+    }
+    else if (xVal>=x(xSize-1)) {
+      xIndexOld=xSize-1;
+      return y(xSize-1);
+    }
+    else if (xVal<=x(i)) {
+      while (xVal<x(i))
+        i--;
+    }
+    else {
+      do
+        i++;
+      while (xVal>x(i));
+      i--;
+    }
+    xIndexOld=i;
+    return y(i)+(xVal-x(i))*(y(i+1)-y(i))/(x(i+1)-x(i));
+  }
+
+  template<>
+    void TabularFunction<double>::initializeUsingXML(MBXMLUtils::TiXmlElement * element) {
+      MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"x");
+      if (e) {
+        fmatvec::VecV x_=Element::getVec(e);
+        x=x_;
+        e=element->FirstChildElement(MBSIMNS"y");
+        fmatvec::VecV y_=Element::getVec(e, x.size());
+        y=y_;
+      }
+      e=element->FirstChildElement(MBSIMNS"xy");
+      if (e) {
+        fmatvec::MatV xy=Element::getMat(e);
+        assert(xy.cols()>1);
+        x=xy.col(0);
+        y=xy.col(1);
+      }
+      check();
+    }
+
+
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PeriodicTabularFunction<VecV>, MBSIMNS"PeriodicTabularFunction_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PeriodicTabularFunction<Vec3>, MBSIMNS"PeriodicTabularFunction_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PeriodicTabularFunction<double>, MBSIMNS"PeriodicTabularFunction_SS")
+
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutFixedAxis<VecV>, MBSIMNS"RotationAboutFixedAxis_V")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutFixedAxis<double>, MBSIMNS"RotationAboutFixedAxis_S")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutAxesXYZ<VecV>, MBSIMNS"RotationAboutAxesXYZ_V")
@@ -307,4 +346,5 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<RotMat3(double(VecV))>, MBSIMNS"NestedFunction_MSV")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<RotMat3(double(double))>, MBSIMNS"NestedFunction_MSS")
+
 }

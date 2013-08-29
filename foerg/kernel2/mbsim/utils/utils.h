@@ -24,7 +24,7 @@
 #define PVNS "{"PVNS_"}"
 
 #include <string>
-#include "fmatvec/fmatvec.h"
+#include "fmatvec/function.h"
 #include "mbxmlutilstinyxml/tinyxml.h"
 #include <limits>
 #include <vector>
@@ -139,6 +139,68 @@ namespace MBSim {
     void addElementText(MBXMLUtils::TiXmlElement *parent, std::string name, const T &value) {
       parent->LinkEndChild(new MBXMLUtils::TiXmlElement(name))->LinkEndChild(toXML(value));
     }
+
+  template <class Arg>
+    class ToDouble {
+    };
+
+  template <>
+    class ToDouble<double> {
+      public:
+        static double cast(const double &x) {
+          return x;
+        }
+    };
+
+  template <class Col>
+    class ToDouble<fmatvec::Vector<Col,double> > {
+      public:
+        static double cast(const fmatvec::Vector<Col,double> &x) {
+          return x.e(0); 
+        }
+    };
+
+  template <class Ret>
+  class FromMatStr {
+    public:
+      static Ret cast(const char *x) {
+//        throw std::runtime_error("FromMatStr::cast not implemented for current type.");
+        return Ret(x);
+      }
+  };
+
+  template <>
+  class FromMatStr<double> {
+    public:
+      static double cast(const char *x) {
+        return atof(x);
+      }
+  };
+
+  template<typename Dep>
+    struct Row {
+      typedef fmatvec::ErrorType type;
+    };
+
+  template<typename DepVecShape>
+    struct Row<fmatvec::Vector<DepVecShape, double> > {
+      typedef fmatvec::RowVector<DepVecShape, double> type;
+    };
+
+  template<typename Dep>
+    struct Tab {
+      typedef fmatvec::ErrorType type;
+    };
+
+  template<>
+    struct Tab<double> {
+      typedef fmatvec::Vector<fmatvec::Var, double> type;
+    };
+
+  template<typename DepVecShape>
+    struct Tab<fmatvec::Vector<DepVecShape, double> > {
+      typedef fmatvec::Matrix<fmatvec::General, fmatvec::Var, DepVecShape, double> type;
+    };
 
 }
 

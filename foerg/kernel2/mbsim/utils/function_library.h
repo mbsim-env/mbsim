@@ -24,81 +24,47 @@
 #include "mbsim/objectfactory.h"
 #include "mbsim/element.h"
 #include "mbsim/utils/eps.h"
+#include "mbsim/utils/utils.h"
 
 namespace MBSim {
 
   template<typename Sig> class StateDependentFunction;
 
-  template <>
-    class StateDependentFunction<fmatvec::Vec3(fmatvec::VecV,double)> : public fmatvec::Function<fmatvec::Vec3(fmatvec::VecV,double)> {
+  template <class Ret>
+    class StateDependentFunction<Ret(fmatvec::VecV,double)> : public fmatvec::Function<Ret(fmatvec::VecV,double)> {
       private:
-        fmatvec::Function<fmatvec::Vec3(fmatvec::VecV)> *f;
+        fmatvec::Function<Ret(fmatvec::VecV)> *f;
       public:
-        StateDependentFunction(fmatvec::Function<fmatvec::Vec3(fmatvec::VecV)> *f_) : f(f_) { }
+        StateDependentFunction(fmatvec::Function<Ret(fmatvec::VecV)> *f_) : f(f_) { }
         typename fmatvec::Size<fmatvec::VecV>::type getArg1Size() const { return f->getArgSize();}
         typename fmatvec::Size<double>::type getArg2Size() const { return 0; }
-        fmatvec::Vec3 operator()(const fmatvec::VecV &arg1, const double &arg2) {return (*f)(arg1); }
-        typename fmatvec::Der<fmatvec::Vec3, fmatvec::VecV>::type parDer1(const fmatvec::VecV &arg1, const double &arg2) { return f->parDer(arg1); }
-        typename fmatvec::Der<fmatvec::Vec3, double>::type parDer2(const fmatvec::VecV &arg1, const double &arg2) {return fmatvec::Vec3(); }
-        typename fmatvec::Der<typename fmatvec::Der<fmatvec::Vec3, double>::type, double>::type parDer2ParDer2(const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Vec3(); }
-        typename fmatvec::Der<fmatvec::Vec3, double>::type parDer2DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Vec3(); }
-        typename fmatvec::Der<typename fmatvec::Der<fmatvec::Vec3, fmatvec::VecV>::type, double>::type parDer1ParDer2(const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Mat3xV(getArg1Size()); }
-        typename fmatvec::Der<fmatvec::Vec3, fmatvec::VecV>::type parDer1DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return f->parDerDirDer(arg1Dir,arg1); }
-    };
-
-  template <>
-    class StateDependentFunction<fmatvec::RotMat3(fmatvec::VecV,double)> : public fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV,double)> {
-      private:
-        fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV)> *f;
-      public:
-        StateDependentFunction(fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV)> *f_) : f(f_) { }
-        typename fmatvec::Size<fmatvec::VecV>::type getArg1Size() const { return f->getArgSize();}
-        typename fmatvec::Size<double>::type getArg2Size() const { return 0; }
-        fmatvec::RotMat3 operator()(const fmatvec::VecV &arg1, const double &arg2) {return (*f)(arg1); }
-        typename fmatvec::Der<fmatvec::RotMat3, fmatvec::VecV>::type parDer1(const fmatvec::VecV &arg1, const double &arg2) { return f->parDer(arg1); }
-        typename fmatvec::Der<fmatvec::RotMat3, double>::type parDer2(const fmatvec::VecV &arg1, const double &arg2) {return fmatvec::Vec3(); }
-        typename fmatvec::Der<typename fmatvec::Der<fmatvec::RotMat3, double>::type, double>::type parDer2ParDer2(const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Vec3(); }
-        typename fmatvec::Der<fmatvec::RotMat3, double>::type parDer2DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Vec3(); }
-        typename fmatvec::Der<typename fmatvec::Der<fmatvec::RotMat3, fmatvec::VecV>::type, double>::type parDer1ParDer2(const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Mat3xV(getArg1Size()); }
-        typename fmatvec::Der<fmatvec::RotMat3, fmatvec::VecV>::type parDer1DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return f->parDerDirDer(arg1Dir,arg1); }
+        Ret operator()(const fmatvec::VecV &arg1, const double &arg2) {return (*f)(arg1); }
+        typename fmatvec::Der<Ret, fmatvec::VecV>::type parDer1(const fmatvec::VecV &arg1, const double &arg2) { return f->parDer(arg1); }
+        typename fmatvec::Der<Ret, double>::type parDer2(const fmatvec::VecV &arg1, const double &arg2) {return fmatvec::Vec3(); }
+        typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDer2ParDer2(const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Vec3(); }
+        typename fmatvec::Der<Ret, double>::type parDer2DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Vec3(); }
+        typename fmatvec::Der<typename fmatvec::Der<Ret, fmatvec::VecV>::type, double>::type parDer1ParDer2(const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Mat3xV(getArg1Size()); }
+        typename fmatvec::Der<Ret, fmatvec::VecV>::type parDer1DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return f->parDerDirDer(arg1Dir,arg1); }
     };
 
   template<typename Sig> class TimeDependentFunction;
 
-  template <>
-    class TimeDependentFunction<fmatvec::Vec3(fmatvec::VecV,double)> : public fmatvec::Function<fmatvec::Vec3(fmatvec::VecV,double)> {
+  template <class Ret>
+    class TimeDependentFunction<Ret(fmatvec::VecV,double)> : public fmatvec::Function<Ret(fmatvec::VecV,double)> {
       private:
-        fmatvec::Function<fmatvec::Vec3(double)> *f;
+        fmatvec::Function<Ret(double)> *f;
       public:
-        TimeDependentFunction(fmatvec::Function<fmatvec::Vec3(double)> *f_) : f(f_) { }
+        TimeDependentFunction(fmatvec::Function<Ret(double)> *f_) : f(f_) { }
         typename fmatvec::Size<fmatvec::VecV>::type getArg1Size() const { return 0;}
         typename fmatvec::Size<double>::type getArg2Size() const { return 1; }
-        fmatvec::Vec3 operator()(const fmatvec::VecV &arg1, const double &arg2) {return (*f)(arg2); }
-        typename fmatvec::Der<fmatvec::Vec3, fmatvec::VecV>::type parDer1(const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Mat3xV(); }
-        typename fmatvec::Der<fmatvec::Vec3, double>::type parDer2(const fmatvec::VecV &arg1, const double &arg2) {return f->parDer(arg2); }
-        typename fmatvec::Der<typename fmatvec::Der<fmatvec::Vec3, double>::type, double>::type parDer2ParDer2(const fmatvec::VecV &arg1, const double &arg2) { return f->parDerParDer(arg2); }
-        typename fmatvec::Der<fmatvec::Vec3, double>::type parDer2DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Vec3(); }
-        typename fmatvec::Der<typename fmatvec::Der<fmatvec::Vec3, fmatvec::VecV>::type, double>::type parDer1ParDer2(const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Mat3xV(); }
-        typename fmatvec::Der<fmatvec::Vec3, fmatvec::VecV>::type parDer1DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Mat3xV(); }
+        Ret operator()(const fmatvec::VecV &arg1, const double &arg2) {return (*f)(arg2); }
+        typename fmatvec::Der<Ret, fmatvec::VecV>::type parDer1(const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Mat3xV(); }
+        typename fmatvec::Der<Ret, double>::type parDer2(const fmatvec::VecV &arg1, const double &arg2) {return f->parDer(arg2); }
+        typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDer2ParDer2(const fmatvec::VecV &arg1, const double &arg2) { return f->parDerParDer(arg2); }
+        typename fmatvec::Der<Ret, double>::type parDer2DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Vec3(); }
+        typename fmatvec::Der<typename fmatvec::Der<Ret, fmatvec::VecV>::type, double>::type parDer1ParDer2(const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Mat3xV(); }
+        typename fmatvec::Der<Ret, fmatvec::VecV>::type parDer1DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Mat3xV(); }
     };
-
-  template <>
-    class TimeDependentFunction<fmatvec::RotMat3(fmatvec::VecV,double)> : public fmatvec::Function<fmatvec::RotMat3(fmatvec::VecV,double)> {
-      private:
-        fmatvec::Function<fmatvec::RotMat3(double)> *f;
-      public:
-        TimeDependentFunction(fmatvec::Function<fmatvec::RotMat3(double)> *f_) : f(f_) { }
-        typename fmatvec::Size<fmatvec::VecV>::type getArg1Size() const { return 0;}
-        typename fmatvec::Size<double>::type getArg2Size() const { return 1; }
-        fmatvec::RotMat3 operator()(const fmatvec::VecV &arg1, const double &arg2) {return (*f)(arg2); }
-        typename fmatvec::Der<fmatvec::RotMat3, fmatvec::VecV>::type parDer1(const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Mat3xV(); }
-        typename fmatvec::Der<fmatvec::RotMat3, double>::type parDer2(const fmatvec::VecV &arg1, const double &arg2) {return f->parDer(arg2); }
-        typename fmatvec::Der<typename fmatvec::Der<fmatvec::RotMat3, double>::type, double>::type parDer2ParDer2(const fmatvec::VecV &arg1, const double &arg2) { return f->parDerParDer(arg2); }
-        typename fmatvec::Der<fmatvec::RotMat3, double>::type parDer2DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Vec3(); }
-        typename fmatvec::Der<typename fmatvec::Der<fmatvec::RotMat3, fmatvec::VecV>::type, double>::type parDer1ParDer2(const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Mat3xV(); }
-        typename fmatvec::Der<fmatvec::RotMat3, fmatvec::VecV>::type parDer1DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Mat3xV(); }
-    };
-
 
   template<typename Sig> class NestedFunction; 
 
@@ -110,6 +76,7 @@ namespace MBSim {
         Ret operator()(const Argi &arg) {return (*fo)((*fi)(arg));}
         typename fmatvec::Der<Ret, Argi>::type parDer(const Argi &arg) { return fo->parDer((*fi)(arg))*fi->parDer(arg); }
         typename fmatvec::Der<Ret, Argi>::type parDerDirDer(const Argi &argDir, const Argi &arg) { return fo->parDerDirDer(fi->parDer(arg)*argDir,(*fi)(arg))*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerDirDer(argDir,arg); }
+        typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &arg) { return fo->parDerDirDer(fi->parDer(arg),(*fi)(arg))*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerParDer(arg); }
         void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
           MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"outerFunction");
           fo=ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<Ret(Argo)> >(e->FirstChildElement());
@@ -123,31 +90,6 @@ namespace MBSim {
         fmatvec::Function<Ret(Argo)> *fo;
         fmatvec::Function<Argo(Argi)> *fi;
     };
-
-  template<typename Ret, typename Argo> 
-    class NestedFunction<Ret(Argo(double))> : public fmatvec::Function<Ret(double)> {
-      public:
-       NestedFunction(fmatvec::Function<Ret(Argo)> *fo_=0, fmatvec::Function<Argo(double)> *fi_=0) : fo(fo_), fi(fi_) { }
-       typename fmatvec::Size<double>::type getArgSize() const { return fi->getArgSize();}
-        Ret operator()(const double &arg) {return (*fo)((*fi)(arg));}
-        typename fmatvec::Der<Ret, double>::type parDer(const double &arg) { return fo->parDer((*fi)(arg))*fi->parDer(arg); }
-        typename fmatvec::Der<Ret, double>::type parDerDirDer(const double &argDir, const double &arg) { return fo->parDerDirDer(fi->parDer(arg)*argDir,(*fi)(arg))*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerDirDer(argDir,arg); }
-//        typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &arg) { return fo->parDerParDer((*fi)(arg))*fi->parDer(arg)*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerParDer(arg); }
-        typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &arg) { return fo->parDerDirDer(fi->parDer(arg),(*fi)(arg))*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerParDer(arg); }
-        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"outerFunction");
-          fo=ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<Ret(Argo)> >(e->FirstChildElement());
-          fo->initializeUsingXML(e->FirstChildElement());
-          e=element->FirstChildElement(MBSIMNS"innerFunction");
-          fi=ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<Argo(double)> >(e->FirstChildElement());
-          fi->initializeUsingXML(e->FirstChildElement());
-        }
-        MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; } 
-      private:
-        fmatvec::Function<Ret(Argo)> *fo;
-        fmatvec::Function<Argo(double)> *fi;
-    };
-
 
   /**
    * \brief function describing a linear relationship between the input relative distance / velocity and the output for a spring
@@ -482,43 +424,6 @@ namespace MBSim {
       void calcIndex(const double * x, fmatvec::Vec X, int * xSize, int * xIndexMinus, int * xIndexPlus);
   };
 
-  template <class Arg>
-    class ToDouble {
-    };
-
-  template <>
-    class ToDouble<double> {
-      public:
-        static double cast(const double &x) {
-          return x;
-        }
-    };
-
-  template <class Col>
-    class ToDouble<fmatvec::Vector<Col,double> > {
-      public:
-        static double cast(const fmatvec::Vector<Col,double> &x) {
-          return x.e(0); 
-        }
-    };
-
-  template <class Ret>
-  class FromMatStr {
-    public:
-      static Ret cast(const char *x) {
-//        throw std::runtime_error("FromMatStr::cast not implemented for current type.");
-        return Ret(x);
-      }
-  };
-
-  template <>
-  class FromMatStr<double> {
-    public:
-      static double cast(const char *x) {
-        return atof(x);
-      }
-  };
-
   template<typename Sig> class ConstantFunction;
 
   template<typename Ret, typename Arg>
@@ -578,25 +483,11 @@ namespace MBSim {
     };
 
   template<>
-    class LinearFunction<double(double)> : public fmatvec::Function<double(double)> {
-      private:
-        typename fmatvec::Der<double, double>::type A;
-        double b;
-      public:
-        LinearFunction() {}
-        LinearFunction(const typename fmatvec::Der<double, double>::type &A_, const double &b_) : A(A_), b(b_) {}
-        typename fmatvec::Size<double>::type getArgSize() const { return 1; }
-        double operator()(const double &arg) { return A*arg+b; }
-        typename fmatvec::Der<double, double>::type parDer(const double &arg) { return A; }
-        typename fmatvec::Der<double, double>::type parDerDirDer(const double &arg1Dir, const double &arg1) { return 0; }
-        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"slope");
-          A=Element::getDouble(e);
-          e=element->FirstChildElement(MBSIMNS"intercept");
-          b=Element::getDouble(e);
-        }
-        MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; } 
-    };
+    inline LinearFunction<double(double)>::LinearFunction(const double &A_) : A(A_), b(0) {}
+  template<>
+    inline typename fmatvec::Size<double>::type LinearFunction<double(double)>::getArgSize() const { return 1; }
+  template<>
+    inline double LinearFunction<double(double)>::parDerDirDer(const double &arg1Dir, const double &arg1) { return 0; }
 
  template<class Col>
   class QuadraticFunction : public fmatvec::Function<fmatvec::Vector<Col,double>(double)> {
@@ -794,16 +685,6 @@ namespace MBSim {
   template<class Ret>
   class TabularFunction : public fmatvec::Function<Ret(double)> {
 
-    template<typename Dep>
-      struct Tab {
-        typedef fmatvec::ErrorType type;
-      };
-
-    template<typename DepVecShape>
-      struct Tab<fmatvec::Vector<DepVecShape, double> > {
-        typedef fmatvec::Matrix<fmatvec::General, fmatvec::Var, DepVecShape, double> type;
-      };
-
     public:
       TabularFunction() : xIndexOld(0) {}
       TabularFunction(const fmatvec::VecV &x_, const typename Tab<Ret>::type &y_) : x(x_), y(y_), xIndexOld(0) {
@@ -864,86 +745,37 @@ namespace MBSim {
   };
 
   template<>
-  class TabularFunction<double> : public fmatvec::Function<double(double)> {
+  double TabularFunction<double>::operator()(const double& xVal);
+  template<>
+  void TabularFunction<double>::initializeUsingXML(MBXMLUtils::TiXmlElement * element);
 
+  template<class Ret>
+  class PeriodicTabularFunction : public TabularFunction<Ret> {
     public:
-      TabularFunction() : xIndexOld(0) {}
-      TabularFunction(const fmatvec::VecV &x_, const fmatvec::VecV &y_) : x(x_), y(y_), xIndexOld(0) {
+      PeriodicTabularFunction() {}
+      PeriodicTabularFunction(const fmatvec::VecV &x_, const typename Tab<Ret>::type &y_) : TabularFunction<Ret>(x_, y_) {
         check();
       }
-      double operator()(const double& xVal) {
-        int i=xIndexOld;
-        if (xVal<=x(0)) {
-          xIndexOld=0;
-          return y(0);
-        }
-        else if (xVal>=x(xSize-1)) {
-          xIndexOld=xSize-1;
-          return y(xSize-1);
-        }
-        else if (xVal<=x(i)) {
-          while (xVal<x(i))
-            i--;
-        }
-        else {
-          do
-            i++;
-          while (xVal>x(i));
-          i--;
-        }
-        xIndexOld=i;
-        return y(i)+(xVal-x(i))*(y(i+1)-y(i))/(x(i+1)-x(i));
+      Ret operator()(const double& xVal) {
+        double xValTmp=xVal;
+        while (xValTmp<xMin)
+          xValTmp+=xDelta;
+        while (xValTmp>xMax)
+          xValTmp-=xDelta;
+        return TabularFunction<Ret>::operator()(xValTmp);
       }
-      void initializeUsingXML(MBXMLUtils::TiXmlElement * element) {
-        MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"x");
-        if (e) {
-          fmatvec::VecV x_=Element::getVec(e);
-          x=x_;
-          e=element->FirstChildElement(MBSIMNS"y");
-          fmatvec::VecV y_=Element::getVec(e, x.size());
-          y=y_;
-        }
-        e=element->FirstChildElement(MBSIMNS"xy");
-        if (e) {
-          fmatvec::MatV xy=Element::getMat(e);
-          assert(xy.cols()>1);
-          x=xy.col(0);
-          y=xy.col(1);
-        }
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
+        TabularFunction<Ret>::initializeUsingXML(element);
         check();
       }
-    protected:
-      fmatvec::VecV x;
-      fmatvec::VecV y;
     private:
-      int xIndexOld, xSize;
+      double xMin, xMax, xDelta;
       void check() {
-        for (int i=1; i<x.size(); i++)
-          assert(x(i)>x(i-1));
-        assert(x.size()==y.rows());
-        xSize=x.size();
+        xMin=TabularFunction<Ret>::x(0);
+        xMax=x(TabularFunction<Ret>::x.size()-1);
+        xDelta=xMax-xMin;
       }
   };
-
-//  class PeriodicTabularFunction : public TabularFunction<fmatvec::Ref,fmatvec::Ref> {
-//    public:
-//      PeriodicTabularFunction() {}
-//      PeriodicTabularFunction(fmatvec::Vec x_, fmatvec::Mat y_) : TabularFunction<fmatvec::Ref,fmatvec::Ref>(x_, y_) {
-//        check();
-//      }
-//      fmatvec::Vec operator()(const double& xVal);
-//      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-//        TabularFunction<fmatvec::Ref,fmatvec::Ref>::initializeUsingXML(element);
-//        check();
-//      }
-//    private:
-//      double xMin, xMax, xDelta;
-//      void check() {
-//        xMin=x(0);
-//        xMax=x(x.size()-1);
-//        xDelta=xMax-xMin;
-//      }
-//  };
 
   template<class Arg> 
     class RotationAboutXAxis : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
