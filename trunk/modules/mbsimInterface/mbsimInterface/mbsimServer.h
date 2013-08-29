@@ -20,26 +20,38 @@
  *
  */
 
-#ifndef _SERVER_INTEGRATOR_MESSAGES_H_
-#define _SERVER_INTEGRATOR_MESSAGES_H_
+#ifndef _MBSIMSERVER_H_
+#define _MBSIMSERVER_H_
 
-#define _SI_getTime_SI_ 11
+namespace MBSimInterface {
 
-#define _SI_getzSize_SI_ 12
-#define _SI_getz_SI_ 13
-#define _SI_getzdot_SI_ 14
+  class InterfaceIntegrator;
 
-#define _SI_getsvSize_SI_ 15
-#define _SI_getsv_SI_ 16
+  class MBSimServer {
+    public:
+      MBSimServer() {}
+      MBSimServer(InterfaceIntegrator* ii_) {ii=ii_; }
+      virtual void start() {};
+    protected:
+      InterfaceIntegrator* ii;
+  };
 
-#define _SI_setTime_SI_ 17
-#define _SI_setz_SI_ 18
+  class MBSimTcpServer : public MBSimServer  {
+    public:
+      MBSimTcpServer(InterfaceIntegrator *ii, unsigned short port);
+      void start();
+    private:
+      unsigned int port;
+  };
 
-#define _SI_plot_SI_ 19
+  class MBSimUdpServer : public MBSimServer  {
+    public:
+      MBSimUdpServer(InterfaceIntegrator *ii, unsigned short port);
+      void start();
+    private:
+      unsigned int port;
+  };
 
-#define _SI_shift_SI_ 20
-
-#define _SI_exitRequest_SI_ 99
+}
 
 #endif
-

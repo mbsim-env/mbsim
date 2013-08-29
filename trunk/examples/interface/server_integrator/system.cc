@@ -33,12 +33,15 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   mass1->setTranslation(new LinearTranslation("[0.58; 0.58; 0.58]"));
   mass1->setFrameOfReference(getFrame("L")); 
   mass1->setFrameForKinematics(mass1->getFrame("C"));
+  mass1->setInitialGeneralizedPosition(1.23e-4);
+  mass1->setInitialGeneralizedVelocity(4.56e-5);
   mass2->setMass(2.);
   mass2->setInertiaTensor(SymMat(3,EYE));
   mass2->setTranslation(new LinearTranslation("[0.58; 0.58; 0.58]"));
   mass2->setFrameOfReference(mass1->getFrame("C")); 
   mass2->setFrameForKinematics(mass2->getFrame("C"));
   mass2->setInitialGeneralizedPosition(-nrm2(Vec(3,INIT,1)));
+  mass2->setInitialGeneralizedVelocity(-0.01);
 
   // add body to dynamical system
   this->addObject(mass1);	
@@ -89,5 +92,29 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   openMBVspring2->setNumberOfCoils(5);
   spring2->setOpenMBVSpring(openMBVspring2);
 #endif
+
+  const int nBody=1;
+  RigidBody* m[nBody];
+  for (int i=0; i<nBody; i++)
+  {
+    ostringstream name;
+    name << "Mass_" << i;
+  m[i] = new RigidBody(name.str());
+
+  // attributes
+  m[i]->setMass(1.);
+  m[i]->setInertiaTensor(SymMat(3,EYE));
+  m[i]->setTranslation(new LinearTranslation("[0.58, 1, 2; 0.58, 3, -1; 0.58, 4, 3]"));
+  m[i]->setFrameOfReference(getFrame("L")); 
+  m[i]->setFrameForKinematics(m[i]->getFrame("C"));
+  Vec pos(3, INIT, 0);
+  pos(0)=1.23e-3*double(i);
+  pos(1)=-pos(0)*double(i);
+  pos(2)=pos(1)+1e-5;
+  m[i]->setInitialGeneralizedPosition(pos);
+  m[i]->setInitialGeneralizedVelocity(-3.234e7*pos);
+
+  addObject(m[i]);
+  }
 }
 
