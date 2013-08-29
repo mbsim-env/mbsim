@@ -23,9 +23,6 @@ AC_CHECK_FUNCS([sqrt])
 AC_HEADER_STDBOOL
 
 dnl Check for optional boost type_trains and static_assert
-AC_CHECK_HEADERS([boost/bind.hpp])
-AC_CHECK_HEADERS([boost/thread.hpp])
-AC_CHECK_HEADERS([boost/smart_ptr.hpp])
 AC_CHECK_HEADERS([boost/asio.hpp])
 
 

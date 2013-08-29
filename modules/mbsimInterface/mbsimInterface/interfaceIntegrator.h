@@ -20,52 +20,61 @@
  *
  */
 
-#ifndef _SERVER_INTEGRATOR_H_
-#define _SERVER_INTEGRATOR_H_
+#ifndef _INTERFACE_INTEGRATOR_H_
+#define _INTERFACE_INTEGRATOR_H_
 
 #include <mbsim/integrators/integrator.h>
 
 namespace MBSimInterface {
 
-  /** \brief Dummy-Integrator ServerIntegrator
+  /** \brief Dummy-Integrator InterfaceIntegrator
     This integrator is an interface for other integration tool. */
-  class ServerIntegrator : public MBSim::Integrator {
+  class InterfaceIntegrator : public MBSim::Integrator {
 
     protected:
       std::ofstream integPlot;
 
     public:
 
-      ServerIntegrator();
-      ~ServerIntegrator() {}
+      InterfaceIntegrator();
+      ~InterfaceIntegrator() {}
 
       void integrate(MBSim::DynamicSystemSolver& system);
 
       virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
 
-      virtual std::string getType() const { return "ServerIntegrator"; }
+      virtual std::string getType() const { return "InterfaceIntegrator"; }
 
       void setIP(std::string IP_) {IP=IP_; }
       void setPort(std::string port_) {port=port_; }
-
-      MBSim::DynamicSystemSolver* getDynamicSystemSolver();
-
-      int* getzSize() {return &zSize; }
-      int* getsvSize() {return &nsv; }
-      double* getTime() {return &t; }
-      void setTime(double t_) {t=t_; }
-      fmatvec::Vec& getz() {return z; }
-      void setz(const fmatvec::Vec& z_) {z << z_; }
-      fmatvec::VecInt& getjsv() {return jsv; }
-      void setjsv(const fmatvec::VecInt& jsv_) {jsv << jsv_; }
+      
+      void integratorCommunication(const char* requestIdentifier, const char* interface2mbsim, unsigned int interface2mbsimLength, std::ostringstream* mbsim2interface);
+      bool getExitRequest() {return exitRequest; }
 
     private:
+      // get values
+      void getz(double** z_);
+      void getzdot(double** zdot_);
+      void getsv(double** sv_);
+
+      // set values
+      void setTime(double t_) {t=t_; }
+      void setz(const fmatvec::Vec& z_) {z << z_; }
+
+      // internal routines
       std::string IP, port;
-      int zSize, nsv;
+      int zSize, svSize;
       double t;
-      fmatvec::Vec z;
+      fmatvec::Vec z, zd, sv;
       fmatvec::VecInt jsv;
+
+      bool printCommunication;
+
+      void dumpMemory(std::ostringstream *out, void *p, unsigned int N);
+      void double2str(std::ostringstream *out, double *p, unsigned int N);
+
+      bool exitRequest;
   };
 }
 
