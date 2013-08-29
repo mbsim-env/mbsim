@@ -217,7 +217,7 @@ namespace MBSim {
 
   void NurbsCurve::knotAveraging(const vector<double>& uk, int deg) {
     int j;
-    for (j = 1; j < uk.size() - deg; ++j) {
+    for (j = 1; j < int(uk.size() - deg); ++j) {
       U(j + deg) = 0.0;
       for (int i = j; i < j + deg; ++i)
         U(j + deg) += uk[i];
