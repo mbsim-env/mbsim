@@ -61,26 +61,6 @@ namespace MBSim {
 template<class Ret>
   class PPolynom : public fmatvec::Function<Ret(double)> {
 
-    template<typename Dep>
-      struct Row {
-        typedef fmatvec::ErrorType type;
-      };
-
-    template<typename DepVecShape>
-      struct Row<fmatvec::Vector<DepVecShape, double> > {
-        typedef fmatvec::RowVector<DepVecShape, double> type;
-      };
-
-    template<typename Dep>
-      struct Tab {
-        typedef fmatvec::ErrorType type;
-      };
-
-    template<typename DepVecShape>
-      struct Tab<fmatvec::Vector<DepVecShape, double> > {
-        typedef fmatvec::Matrix<fmatvec::General, fmatvec::Var, DepVecShape, double> type;
-      };
-
     public:
       PPolynom() : f(this), fd(this), fdd(this) { }
 
