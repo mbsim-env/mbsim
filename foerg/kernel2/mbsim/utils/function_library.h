@@ -433,13 +433,29 @@ namespace MBSim {
       public:
         ConstantFunction() {}
         ConstantFunction(const Ret &a_) : a(a_) {}
+        typename fmatvec::Size<Arg>::type getArgSize() const { throw std::runtime_error("getArgSize is not available for given template parameters."); }
         Ret operator()(const Arg &arg) { return a; }
+        typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &arg) { throw std::runtime_error("parDer is not available for given template parameters."); }
+        typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &arg) { throw std::runtime_error("parDerParDer is not available for given template parameters."); }
         void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
           MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"value");
           a=FromMatStr<Ret>::cast(e->GetText());
         }
         MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; } 
     };
+
+  template<>
+    inline typename fmatvec::Size<double>::type ConstantFunction<double(double)>::getArgSize() const { return 1; }
+  template<>
+    inline typename fmatvec::Size<double>::type ConstantFunction<fmatvec::Vec3(double)>::getArgSize() const { return 1; }
+  template<>
+    inline double ConstantFunction<double(double)>::parDer(const double &arg) { return 0; }
+  template<>
+    inline fmatvec::Vec3 ConstantFunction<fmatvec::Vec3(double)>::parDer(const double &arg) { return fmatvec::Vec3(); }
+  template<>
+    inline double ConstantFunction<double(double)>::parDerParDer(const double &arg) { return 0; }
+  template<>
+    inline fmatvec::Vec3 ConstantFunction<fmatvec::Vec3(double)>::parDerParDer(const double &arg) { return fmatvec::Vec3(); }
 
   template<typename Ret, typename Arg1, typename Arg2>
     class ConstantFunction<Ret(Arg1,Arg2)> : public fmatvec::Function<Ret(Arg1,Arg2)> {
