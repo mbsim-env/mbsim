@@ -284,6 +284,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, ConstantFunction<double(double,double)>, MBSIMNS"ConstantFunction_SSS")
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, LinearFunction<Vec3(VecV)>, MBSIMNS"LinearFunction_VV")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, LinearFunction<Vec3(double)>, MBSIMNS"LinearFunction_VS")
 
   //MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TabularFunction<Vec>, MBSIMNS"TabularFunction_VS")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TabularFunction<VecV>, MBSIMNS"TabularFunction_VS")
