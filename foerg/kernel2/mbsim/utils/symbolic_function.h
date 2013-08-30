@@ -134,7 +134,12 @@ template<typename Ret, typename Arg>
       input2[1] = f.inputExpr(0);
       dd = CasADi::SXFunction(input2,f.jac().mul(sqd));
       dd.init();
-      pddd = CasADi::SXFunction(input2,pd.jac().mul(sqd));
+      int n = f.outputExpr(0).size();
+      CasADi::SXMatrix Jd(n,nq);
+      for(int j=0; j<nq; j++) {
+        Jd(CasADi::Slice(0,n),CasADi::Slice(j,j+1)) = pd.jac(0)(CasADi::Slice(j,nq*n,nq),CasADi::Slice(0,nq)).mul(sqd);
+      }
+      pddd = CasADi::SXFunction(input2,Jd);
       pddd.init();
       pdpd = CasADi::SXFunction(f.inputExpr(),pd.jac());
       pdpd.init();

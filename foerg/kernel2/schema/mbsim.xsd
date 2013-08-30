@@ -2935,6 +2935,36 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="LinearFunction_VS" substitutionGroup="Function_VS" type="LinearFunction_VSType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="LinearFunction_VSType">
+    <xs:complexContent>
+      <xs:extension base="Function_VSType">
+        <xs:sequence>
+          <xs:element name="slope" type="pv:unknownVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="intercept" type="pv:unknownVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="LinearFunction_VV" substitutionGroup="Function_VV" type="LinearFunction_VVType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
