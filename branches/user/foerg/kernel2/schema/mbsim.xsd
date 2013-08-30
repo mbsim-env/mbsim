@@ -3158,6 +3158,29 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="ConstantFunction_VV" substitutionGroup="Function_VV" type="ConstantFunction_VVType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Konstanter Funktionswert: <object class="inlineeqn">\boldsymbol{y}=\boldsymbol{c}</object>.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ConstantFunction_VVType">
+    <xs:complexContent>
+      <xs:extension base="Function_VVType">
+        <xs:sequence>
+          <xs:element name="value" type="pv:unknownVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Konstanter Funktionswert: <object class="inlineeqn">\boldsymbol{y}=\boldsymbol{c}</object>.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="PositiveSinusFunction_VS" substitutionGroup="Function_VS" type="PositiveSinusFunction_VSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
