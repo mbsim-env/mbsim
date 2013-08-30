@@ -471,6 +471,7 @@ namespace MBSim {
         Ret operator()(const Arg &arg) { return A*arg+b; }
         typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &arg) { return A; }
         typename fmatvec::Der<Ret, Arg>::type parDerDirDer(const Arg &arg1Dir, const Arg &arg1) { return typename fmatvec::Der<Ret, Arg>::type(A.rows(),A.cols()); }
+        typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &arg) { throw std::runtime_error("parDerParDer is not available for given template parameters."); }
         void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
           MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"slope");
           A=FromMatStr<typename fmatvec::Der<Ret, Arg>::type>::cast(e->GetText());
@@ -488,6 +489,10 @@ namespace MBSim {
     inline typename fmatvec::Size<double>::type LinearFunction<double(double)>::getArgSize() const { return 1; }
   template<>
     inline double LinearFunction<double(double)>::parDerDirDer(const double &arg1Dir, const double &arg1) { return 0; }
+  template<>
+    inline fmatvec::Vec3 LinearFunction<fmatvec::Vec3(double)>::parDerDirDer(const double &arg1Dir, const double &arg1) { return fmatvec::Vec3(); }
+  template<>
+    inline fmatvec::Vec3 LinearFunction<fmatvec::Vec3(double)>::parDerParDer(const double &arg) { return fmatvec::Vec3(); }
 
  template<class Col>
   class QuadraticFunction : public fmatvec::Function<fmatvec::Vector<Col,double>(double)> {

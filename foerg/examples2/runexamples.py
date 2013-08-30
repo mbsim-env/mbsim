@@ -37,7 +37,8 @@ intSchema  =None
 directories=list() # a list of all examples sorted in descending order (filled recursively (using the filter) by by --directories)
 # the following examples will fail: do not report them in the RSS feed as errors
 willFail=set([
-#  pj('xml', 'time_dependent_kinematics')
+# pj('xml', 'time_dependent_kinematics')
+  pj('mechanics', 'flexible_body', 'pearlchain_cosserat_2D_POD')
 ])
 
 # command line option definition
@@ -89,6 +90,7 @@ cfgOpts.add_argument("--rtol", default=2e-5, type=float,
 cfgOpts.add_argument("--disableRun", action="store_true", help="disable running the example on action 'report'")
 cfgOpts.add_argument("--disableCompare", action="store_true", help="disable comparing the results on action 'report'")
 cfgOpts.add_argument("--disableValidate", action="store_true", help="disable validating the XML files on action 'report'")
+cfgOpts.add_argument("--printToConsole", action='store_const', const=sys.stdout, help="print all output also to the console")
 cfgOpts.add_argument("--buildType", default="", type=str, help="Description of the build type (e.g: 'Daily Build: ')")
 cfgOpts.add_argument("--prefixSimulation", default=None, type=str,
   help="prefix the simulation command (./main, mbsimflatxml, mbsimxml) with this string: e.g. 'valgrind --tool=callgrind'")
@@ -107,6 +109,31 @@ debugOpts.add_argument("--debugValidateHTMLOutput", action="store_true",
 
 # parse command line options
 args = argparser.parse_args()
+
+# A file object which prints to multiple files
+class MultiFile(object):
+  def __init__(self, file1, second=None):
+    self.filelist=[file1]
+    if second!=None:
+      self.filelist.append(second)
+  def write(self, str):
+    for f in self.filelist:
+      f.write(str.encode("utf-8"))
+  def flush(self):
+    for f in self.filelist:
+      f.flush()
+  def close(self):
+    for f in self.filelist:
+      if f!=sys.stdout and f!=sys.stderr:
+        f.close()
+# subprocess call with MultiFile output
+def subprocessCall(args, f, env=os.environ):
+  proc=subprocess.Popen(args, stderr=subprocess.STDOUT, stdout=subprocess.PIPE, bufsize=-1, env=env)
+  while True:
+    line=proc.stdout.read(100)
+    if line==b'': break
+    print(line.decode("utf-8"), end="", file=f)
+  return proc.wait()
 
 # the main routine being called ones
 def main():
@@ -138,9 +165,9 @@ def main():
   # fix arguments
   args.reportOutDir=os.path.abspath(args.reportOutDir)
   if args.prefixSimulation!=None:
-    args.prefixSimulation=args.prefixSimulation.split(' ');
+    args.prefixSimulation=args.prefixSimulation.split(' ')
   else:
-    args.prefixSimulation=[];
+    args.prefixSimulation=[]
 
   # if no directory is specified use the current dir (all examples) filter by --filter
   if len(args.directories)==0:
@@ -203,7 +230,7 @@ def main():
   print('</tt><br/>', file=mainFD)
   print('   <b>RSS Feed:</b> Use the feed "auto-discovery" of this page or click <a href="result.rss.xml">here</a><br/>', file=mainFD)
   print('   <b>Start time:</b> '+str(datetime.datetime.now())+'<br/>', file=mainFD)
-  print('   <b>End time:</b> @STILL_RUNNING_OR_ABORTED@<br/>', file=mainFD)
+  print('   <b>End time:</b> <span id="STILLRUNNINGORABORTED" style="color:red"><b>still running or aborted</b></span><br/>', file=mainFD)
   print('</p>', file=mainFD)
   print('<p>A example name in gray color is a example which may fail and is therefore not reported as an error in the RSS feed.</p>', file=mainFD)
 
@@ -270,9 +297,9 @@ def main():
   print('</html>', file=mainFD)
 
   mainFD.close()
-  # relace @STILL_RUNNING_OR_ABORTED@ in index.html
+  # replace <span id="STILLRUNNINGORABORTED"...</span> in index.html
   for line in fileinput.FileInput(pj(args.reportOutDir, "index.html"),inplace=1):
-    line = line.replace("@STILL_RUNNING_OR_ABORTED@", str(datetime.datetime.now()))
+    line=re.sub('<span id="STILLRUNNINGORABORTED".*?</span>', str(datetime.datetime.now()), line)
     print(line)
 
   # write RSS feed
@@ -307,7 +334,7 @@ def pkgconfig(module, options):
       raise
     else:
       print("Error: pkg-config module "+module+" not found. Trying to continue.", file=sys.stderr)
-      output=bytes("pkg_config_"+module+"_not_found", "ascii")
+      output=("pkg_config_"+module+"_not_found").encode("ascii")
   return output.rstrip().decode("utf-8")
 
 
@@ -377,7 +404,7 @@ def runExample(resultQueue, example):
     executeFN=pj(example[0], "execute.txt")
     executeRet=0
     if not args.disableRun:
-      executeFD=open(pj(args.reportOutDir, executeFN), "w")
+      executeFD=MultiFile(open(pj(args.reportOutDir, executeFN), "w"), args.printToConsole)
       dt=0
       if os.path.isfile("Makefile"):
         executeRet, dt=executeSrcExample(executeFD)
@@ -445,7 +472,7 @@ def runExample(resultQueue, example):
     # check for deprecated features
     nrDeprecated=0
     for line in fileinput.FileInput(pj(args.reportOutDir, executeFN)):
-      match=re.search("WARNING: ([0-9]+) deprecated features were called during simulation:", line)
+      match=re.search("WARNING: ([0-9]+) deprecated features were called:", line)
       if match!=None:
         nrDeprecated=match.expand("\\1")
         break
@@ -503,7 +530,9 @@ def runExample(resultQueue, example):
 
   except:
     fatalScriptErrorFN=pj(example[0], "fatalScriptError.txt")
-    fatalScriptErrorFD=open(pj(args.reportOutDir, fatalScriptErrorFN), "w")
+    fatalScriptErrorFD=MultiFile(open(pj(args.reportOutDir, fatalScriptErrorFN), "w"), args.printToConsole)
+    print("Fatal Script Errors should not happen. So this is a bug in runexamples.py which should be fixed.", file=fatalScriptErrorFD)
+    print("", file=fatalScriptErrorFD)
     print(traceback.format_exc(), file=fatalScriptErrorFD)
     fatalScriptErrorFD.close()
     resultStr='<tr><td>'+example[0]+'</td><td><a href="'+myurllib.pathname2url(fatalScriptErrorFN)+'"><span style="color:red;text-decoration:blink">fatal script error</span></a></td><td>-</td><td>-</td><td>-</td></tr>'
@@ -518,12 +547,11 @@ def runExample(resultQueue, example):
 # execute the source code example in the current directory (write everything to fd executeFD)
 def executeSrcExample(executeFD):
   print("Running commands:", file=executeFD)
-  print("rm -f *.d && make clean && make && "+pj(os.curdir, "main"), file=executeFD)
+  print("make clean && make && "+pj(os.curdir, "main"), file=executeFD)
   print("", file=executeFD)
   executeFD.flush()
-  if subprocess.call(["rm -f *.d"], stderr=subprocess.STDOUT, stdout=executeFD, shell=True)!=0: return 1, 0
-  if subprocess.call(["make", "clean"], stderr=subprocess.STDOUT, stdout=executeFD)!=0: return 1, 0
-  if subprocess.call(["make"], stderr=subprocess.STDOUT, stdout=executeFD)!=0: return 1, 0
+  if subprocessCall(["make", "clean"], executeFD)!=0: return 1, 0
+  if subprocessCall(["make"], executeFD)!=0: return 1, 0
   # append $prefix/lib to LD_LIBRARY_PATH/PATH to find lib by main of the example
   if os.name=="posix":
     NAME="LD_LIBRARY_PATH"
@@ -539,7 +567,7 @@ def executeSrcExample(executeFD):
     mainEnv[NAME]=libDir
   # run main
   t0=datetime.datetime.now()
-  if subprocess.call(args.prefixSimulation+[pj(os.curdir, "main"+args.exeExt)], stderr=subprocess.STDOUT, stdout=executeFD, env=mainEnv)!=0: return 1, 0
+  if subprocessCall(args.prefixSimulation+[pj(os.curdir, "main"+args.exeExt)], executeFD, env=mainEnv)!=0: return 1, 0
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
   return 0, dt
@@ -559,8 +587,8 @@ def executeXMLExample(executeFD):
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  if subprocess.call(args.prefixSimulation+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+parMBSimOption+parIntOption+mpathOption+
-                     ["MBS.mbsim.xml", "Integrator.mbsimint.xml"], stderr=subprocess.STDOUT, stdout=executeFD)!=0: return 1, 0
+  if subprocessCall(args.prefixSimulation+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+parMBSimOption+parIntOption+mpathOption+
+                    ["MBS.mbsim.xml", "Integrator.mbsimint.xml"], executeFD)!=0: return 1, 0
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
   return 0, dt
@@ -574,8 +602,8 @@ def executeFlatXMLExample(executeFD):
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  if subprocess.call(args.prefixSimulation+[pj(mbsimBinDir, "mbsimflatxml"+args.exeExt), "MBS.mbsim.flat.xml", "Integrator.mbsimint.xml"],
-                     stderr=subprocess.STDOUT, stdout=executeFD)!=0: return 1, 0
+  if subprocessCall(args.prefixSimulation+[pj(mbsimBinDir, "mbsimflatxml"+args.exeExt), "MBS.mbsim.flat.xml", "Integrator.mbsimint.xml"],
+                    executeFD)!=0: return 1, 0
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
   return 0, dt
@@ -610,17 +638,27 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, label, data
   print('</html>', file=diffHTMLPlotFD)
   diffHTMLPlotFD.close()
 
-  # check for one horizontal line => gnuplot warning: empty y range and remove this warning by adding a dummy value
-  singleYValue=dataArrayRef[0,1]
-  if numpy.all(singleYValue==dataArrayRef[:,1]) and numpy.all(singleYValue==dataArrayCur[:,1]):
+  # fix if all values are nan to prevent a gnuplot warning
+  if numpy.all(numpy.isnan(dataArrayRef[:,0])) or numpy.all(numpy.isnan(dataArrayRef[:,1])) or \
+     numpy.all(numpy.isnan(dataArrayCur[:,0])) or numpy.all(numpy.isnan(dataArrayCur[:,1])):
     add=numpy.array([
       [float("nan"), float("nan")],
-      [float("nan"), float("nan")],
-      [dataArrayCur[0,0], singleYValue-1],
-      [dataArrayCur[0,0], singleYValue+1]
+      [0, 0],
     ])
     dataArrayCur=numpy.concatenate((dataArrayCur, add), axis=0)
     dataArrayRef=numpy.concatenate((dataArrayRef, add), axis=0)
+
+  # get minimum of all x and y values (and add some space as border)
+  (xmin,ymin)=numpy.minimum(numpy.nanmin(dataArrayRef,0), numpy.nanmin(dataArrayCur,0))
+  (xmax,ymax)=numpy.maximum(numpy.nanmax(dataArrayRef,0), numpy.nanmax(dataArrayCur,0))
+  dx=(xmax-xmin)/50
+  dy=(ymax-ymin)/50
+  if dx==0: dx=1
+  if dy==0: dy=1
+  xmin=xmin-dx
+  ymin=ymin-dy
+  xmax=xmax+dx
+  ymax=ymax+dy
 
   # create gnuplot file
   diffGPFileName=pj(diffDir, "diffplot.gnuplot")
@@ -633,22 +671,23 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, label, data
   print("set title 'Compare'", file=diffGPFD)
   print("set xlabel 'Time'", file=diffGPFD)
   print("set ylabel 'Value'", file=diffGPFD)
-  print("plot \\", file=diffGPFD)
+  print("plot [%g:%g] [%g:%g] \\"%(xmin,xmax, ymin,ymax), file=diffGPFD)
   print("  '"+dataFileName+"' u ($1):($2) binary format='%double%double%double%double' title 'ref' w l lw 2, \\", file=diffGPFD)
   print("  '"+dataFileName+"' u ($3):($4) binary format='%double%double%double%double' title 'cur' w l", file=diffGPFD)
   if dataArrayRef.shape==dataArrayCur.shape:
     print("set title 'Absolute Tolerance'", file=diffGPFD)
     print("set xlabel 'Time'", file=diffGPFD)
     print("set ylabel 'cur-ref'", file=diffGPFD)
-    print("plot [:] [%g:%g] \\"%(-3*args.atol, 3*args.atol), file=diffGPFD)
+    print("plot [%g:%g] [%g:%g] \\"%(xmin,xmax, -3*args.atol, 3*args.atol), file=diffGPFD)
     print("  '"+dataFileName+"' u ($1):($4-$2) binary format='%double%double%double%double' title 'cur-ref' w l, \\", file=diffGPFD)
     print("  %g title 'atol' lt 2 lw 1, \\"%(args.atol), file=diffGPFD)
     print("  %g notitle lt 2 lw 1"%(-args.atol), file=diffGPFD)
     print("set title 'Relative Tolerance'", file=diffGPFD)
     print("set xlabel 'Time'", file=diffGPFD)
     print("set ylabel '(cur-ref)/ref'", file=diffGPFD)
-    print("plot [:] [%g:%g] \\"%(-3*args.rtol, 3*args.rtol), file=diffGPFD)
-    print("  '"+dataFileName+"' u ($1):(($4-$2)/$2) binary format='%double%double%double%double' title '(cur-ref)/ref' w l, \\", file=diffGPFD)
+    print("plot [%g:%g] [%g:%g] \\"%(xmin,xmax, -3*args.rtol, 3*args.rtol), file=diffGPFD)
+    # prevent division by zero: use 1e-30 instead
+    print("  '"+dataFileName+"' u ($1):(($4-$2)/($2==0?1e-30:$2)) binary format='%double%double%double%double' title '(cur-ref)/ref' w l, \\", file=diffGPFD)
     print("  %g title 'rtol' lt 2 lw 1, \\"%(args.rtol), file=diffGPFD)
     print("  %g notitle lt 2 lw 1"%(-args.rtol), file=diffGPFD)
   diffGPFD.close()
@@ -656,7 +695,7 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, label, data
   # create datafile
   nradd=dataArrayRef.shape[0]-dataArrayCur.shape[0]
   add=numpy.empty([abs(nradd), 2])
-  add[:]=float("NaN");
+  add[:]=float("NaN")
   if nradd<0:
     dataArrayRef=numpy.concatenate((dataArrayRef, add), axis=0)
   if nradd>0:
@@ -666,7 +705,7 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, label, data
 
   # run gnuplot
   try:
-    subprocess.call(["gnuplot", diffGPFileName])
+    subprocessCall(["gnuplot", diffGPFileName], sys.stdout)
   except OSError:
     print("gnuplot not found. Hence no compare plot will be generated. Add gnuplot to PATH to enable.")
 
@@ -674,6 +713,21 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, label, data
   os.remove(diffGPFileName)
   os.remove(dataFileName)
 
+# return column col from arr as a column Vector if asColumnVector == True or as a row vector
+# arr may be of shape vector or a matrix
+def getColumn(arr, col, asColumnVector=True):
+  if len(arr.shape)==2:
+    if asColumnVector:
+      return arr[:,col]
+    else:
+      return arr[:,col:col+1]
+  elif len(arr.shape)==1 and col==0:
+    if asColumnVector:
+      return arr[:]
+    else:
+      return arr[:][:,None]
+  else:
+    raise IndexError("Only HDF5 datasets of shape vector and matrix can be handled.")
 def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMemberNames, datasetName, refObj):
   import numpy
   import h5py
@@ -693,40 +747,43 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
       nrAll[0]+=1
       nrFailed[0]+=1
       return
+    # get shape
+    refObjCols=refObj.shape[1] if len(refObj.shape)==2 else 1
+    curObjCols=curObj.shape[1] if len(curObj.shape)==2 else 1
     # get labels from reference
     try:
       refLabels=refObj.attrs["Column Label"]
       # append missing dummy labels
-      for x in range(len(refLabels), refObj.shape[1]):
-        refLabels=numpy.append(refLabels, bytes('<span style="color:orange">&lt;no label in ref. for col. '+str(x+1)+'&gt;</span>', "ascii"))
+      for x in range(len(refLabels), refObjCols):
+        refLabels=numpy.append(refLabels, ('<span style="color:orange">&lt;no label in ref. for col. '+str(x+1)+'&gt;</span>').encode("ascii"))
     except KeyError:
       refLabels=numpy.array(list(map(
-        lambda x: bytes('<span style="color:orange">&lt;no label for col. '+str(x+1)+'&gt;</span>', "ascii"),
-        range(refObj.shape[1]))), dtype=bytes
+        lambda x: ('<span style="color:orange">&lt;no label for col. '+str(x+1)+'&gt;</span>').encode("ascii"),
+        range(refObjCols))), dtype=bytes
       )
     # get labels from current
     try:
       curLabels=curObj.attrs["Column Label"]
       # append missing dummy labels
-      for x in range(len(curLabels), curObj.shape[1]):
-        curLabels=numpy.append(curLabels, bytes('<span style="color:orange">&lt;no label in cur. for col. '+str(x+1)+'&gt;</span>', "ascii"))
+      for x in range(len(curLabels), curObjCols):
+        curLabels=numpy.append(curLabels, ('<span style="color:orange">&lt;no label in cur. for col. '+str(x+1)+'&gt;</span>').encode("ascii"))
     except KeyError:
       curLabels=numpy.array(list(map(
-        lambda x: bytes('<span style="color:orange">&lt;no label for col. '+str(x+1)+'&gt;</span>', "ascii"),
-        range(refObj.shape[1]))), dtype=bytes
+        lambda x: ('<span style="color:orange">&lt;no label for col. '+str(x+1)+'&gt;</span>').encode("ascii"),
+        range(refObjCols))), dtype=bytes
       )
     # loop over all columns
-    for column in range(refObj.shape[1]):
+    for column in range(refObjCols):
       printLabel=refLabels[column].decode("utf-8")
       diffFilename=pj(h5CurFile.filename, datasetName, str(column), "diffplot.html")
       nrAll[0]+=1
       # if if curObj[:,column] does not exitst
-      if column>=curObj.shape[1]:
+      if column>=curObjCols:
         printLabel='<span style="color:orange">&lt;label '+printLabel+' not in cur.&gt;</span>'
       # compare
       if curObj.shape[0]>0 and curObj.shape[0]>0: # only if curObj and refObj contains data (rows)
-        if refObj[:,column].shape==curObj[:,column].shape:
-          delta=abs(refObj[:,column]-curObj[:,column])
+        if getColumn(refObj,column).shape==getColumn(curObj,column).shape:
+          delta=abs(getColumn(refObj,column)-getColumn(curObj,column))
         else:
           delta=float("inf") # very large => error
       print('<tr>', file=compareFD)
@@ -737,17 +794,27 @@ def compareDatasetVisitor(h5CurFile, compareFD, example, nrAll, nrFailed, refMem
       else:
         print('<td><span style="color:orange">&lt;label for col. '+str(column+1)+' differ&gt;</span></td>', file=compareFD)
       if curObj.shape[0]>0 and curObj.shape[0]>0: # only if curObj and refObj contains data (rows)
-        if numpy.any(numpy.logical_and(delta>args.atol, delta>args.rtol*abs(refObj[:,column]))):
+        #check for NaN/Inf # check for NaN and Inf
+        #check for NaN/Inf if numpy.all(numpy.isfinite(getColumn(curObj,column)))==False:
+        #check for NaN/Inf   print('<td><span style="color:red">cur. contains NaN or +/-Inf</span></td>', file=compareFD)
+        #check for NaN/Inf   nrFailed[0]+=1
+        #check for NaN/Inf elif numpy.all(numpy.isfinite(getColumn(refObj,column)))==False:
+        #check for NaN/Inf   print('<td><span style="color:red">ref. contains NaN or +/-Inf</span></td>', file=compareFD)
+        #check for NaN/Inf   nrFailed[0]+=1
+        #check for NaN/Inf use elif instead of if in next line
+        # check for difference
+        if numpy.any(numpy.logical_and(delta>args.atol, delta>args.rtol*abs(getColumn(refObj,column)))):
           print('<td><a href="'+myurllib.pathname2url(diffFilename)+'"><span style="color:red">failed</span></a></td>', file=compareFD)
           nrFailed[0]+=1
-          dataArrayRef=numpy.concatenate((refObj[:, 0:1], refObj[:, column:column+1]), axis=1)
-          dataArrayCur=numpy.concatenate((curObj[:, 0:1], curObj[:, column:column+1]), axis=1)
+          dataArrayRef=numpy.concatenate((getColumn(refObj, 0, False), getColumn(refObj, column, False)), axis=1)
+          dataArrayCur=numpy.concatenate((getColumn(curObj, 0, False), getColumn(curObj, column, False)), axis=1)
           createDiffPlot(pj(args.reportOutDir, example, diffFilename), example, h5CurFile.filename, datasetName,
                          refLabels[column], dataArrayRef, dataArrayCur)
+        # everything OK
         else:
           print('<td><span style="color:green">passed</span></td>', file=compareFD)
       else: # not row in curObj or refObj
-        print('<td><span style="color:red">no data row in cur. or ref.</span></td>', file=compareFD)
+        print('<td><span style="color:orange">no data row in cur. or ref.</span></td>', file=compareFD)
       print('</tr>', file=compareFD)
     # check for labels/columns in current but not in reference
     for label in curLabels[len(refLabels):]:
@@ -815,8 +882,8 @@ def compareExample(example, compareFN):
       # process h5 file
       refMemberNames=set()
       # bind arguments h5CurFile, compareFD, example, nrAll, nrFailed in order (nrAll, nrFailed as lists to pass by reference)
-      fummyFctPtr = functools.partial(compareDatasetVisitor, h5CurFile, compareFD, example, nrAll, nrFailed, refMemberNames)
-      h5RefFile.visititems(fummyFctPtr) # visit all dataset
+      dummyFctPtr = functools.partial(compareDatasetVisitor, h5CurFile, compareFD, example, nrAll, nrFailed, refMemberNames)
+      h5RefFile.visititems(dummyFctPtr) # visit all dataset
       # check for datasets in current but not in reference
       curMemberNames=set()
       h5CurFile.visititems(functools.partial(appendDatasetName, curMemberNames)) # get all dataset names in cur
@@ -842,50 +909,64 @@ def compareExample(example, compareFN):
 
 
 
-def loopOverReferenceFiles(msg, srcPrefix, srcPostfix, dstPrefix, dstPostfix, action):
+def loopOverReferenceFiles(msg, srcPostfix, dstPrefix, action):
   curNumber=0
   lenDirs=len(directories)
   for example in directories:
+    # remove dst dir and recreate it empty
+    if os.path.isdir(pj(dstPrefix, example[0], "reference")): shutil.rmtree(pj(dstPrefix, example[0], "reference"))
+    os.makedirs(pj(dstPrefix, example[0], "reference"))
+    # loop over src
     curNumber+=1
     print("%s: Example %03d/%03d; %5.1f%%; %s"%(msg, curNumber, lenDirs, curNumber/lenDirs*100, example[0]))
-    if not os.path.isdir(pj(dstPrefix, example[0], dstPostfix)): os.makedirs(pj(dstPrefix, example[0], dstPostfix))
-    for h5File in glob.glob(pj(srcPrefix, example[0], srcPostfix, "*.h5")):
-      action(h5File, pj(dstPrefix, example[0], dstPostfix, os.path.basename(h5File)))
-    if os.path.isfile(pj(srcPrefix, example[0], srcPostfix, "time.dat")):
-      action(pj(srcPrefix, example[0], srcPostfix, "time.dat"), pj(dstPrefix, example[0], dstPostfix, "time.dat"))
+    if not os.path.isdir(pj(dstPrefix, example[0], "reference")): os.makedirs(pj(dstPrefix, example[0], "reference"))
+    for h5File in glob.glob(pj(example[0], srcPostfix, "*.h5")):
+      action(h5File, pj(dstPrefix, example[0], "reference", os.path.basename(h5File)))
+    if os.path.isfile(pj(example[0], srcPostfix, "time.dat")):
+      action(pj(example[0], srcPostfix, "time.dat"), pj(dstPrefix, example[0], "reference", "time.dat"))
 
 def copyToReference():
-  loopOverReferenceFiles("Copy to reference", ".", ".", ".", "reference", shutil.copyfile)
+  loopOverReferenceFiles("Copy to reference", ".", ".", shutil.copyfile)
 
-def copyAndSHA1(src, dst):
+def copyAndSHA1AndAppendIndex(src, dst):
   # copy src to dst
   shutil.copyfile(src, dst)
   # create sha1 hash of dst (save to <dst>.sha1)
   open(dst+".sha1", "w").write(hashlib.sha1(open(dst, "rb").read()).hexdigest())
+  # add file to index
+  index=open(pj(os.path.dirname(dst), "index.txt"), "a")
+  index.write(os.path.basename(dst)+":")
 def pushReference():
   uploadDir="/media/mbsim-env/MBSimDailyBuild/references"
   print("WARNING! pushReference is a internal action!")
   print("This action should only be used on the official MBSim build system!")
   print("It will fail on all other hosts!")
-  loopOverReferenceFiles("Pushing reference to download dir", ".", "reference", uploadDir, "reference", copyAndSHA1)
+  loopOverReferenceFiles("Pushing reference to download dir", "reference", uploadDir, copyAndSHA1AndAppendIndex)
 
-def downloadFileIfDifferent(src, dst):
-  downloadURL="http://www4.amm.mw.tu-muenchen.de/mbsim-env/MBSimDailyBuild/references/"
+downloadURL="http://www4.amm.mw.tu-muenchen.de/mbsim-env/MBSimDailyBuild/references/"
+def downloadFileIfDifferent(src):
   remoteSHA1Url=downloadURL+myurllib.pathname2url(src+".sha1")
+  remoteSHA1=myurllib.urlopen(remoteSHA1Url).read().decode('utf-8')
   try:
-    remoteSHA1=myurllib.urlopen(remoteSHA1Url).read().decode('utf-8')
     localSHA1=hashlib.sha1(open(src, "rb").read()).hexdigest()
   except IOError: 
-    return
+    localSHA1=""
   if remoteSHA1!=localSHA1:
     remoteUrl=downloadURL+myurllib.pathname2url(src)
     print("  Download "+remoteUrl)
+    if not os.path.isdir(os.path.dirname(src)): os.makedirs(os.path.dirname(src))
     open(src, "wb").write(myurllib.urlopen(remoteUrl).read())
 def updateReference():
-  print("NOTE: Only files already existing in the corresponding reference directory are updated!")
-  print("Hence you have to run the script with '--action report' and afterwards with '--action copyToReference'")
-  print("to get an up to date reference before updating.")
-  loopOverReferenceFiles("Update reference", ".", "reference", ".", "reference", downloadFileIfDifferent)
+  curNumber=0
+  lenDirs=len(directories)
+  for example in directories:
+    # print message
+    curNumber+=1
+    print("%s: Example %03d/%03d; %5.1f%%; %s"%("Update reference", curNumber, lenDirs, curNumber/lenDirs*100, example[0]))
+    # loop over all file in src/index.txt
+    indexUrl=downloadURL+myurllib.pathname2url(pj(example[0], "reference", "index.txt"))
+    for fileName in myurllib.urlopen(indexUrl).read().decode("utf-8").rstrip(":").split(":"):
+      downloadFileIfDifferent(pj(example[0], "reference", fileName))
 
 
 
@@ -901,15 +982,15 @@ def validateXML(example, consoleOutput, htmlOutputFD):
     for curType in types:
       for filename in fnmatch.filter(filenames, curType[0]):
         outputFN=pj(example[0], filename+".txt")
-        outputFD=open(pj(args.reportOutDir, outputFN), "w")
+        outputFD=MultiFile(open(pj(args.reportOutDir, outputFN), "w"), args.printToConsole)
         print('<tr>', file=htmlOutputFD)
         print('<td>'+filename+'</td>', file=htmlOutputFD)
         print("Running command:", file=outputFD)
         list(map(lambda x: print(x, end=" ", file=outputFD), [xmllint, "--xinclude", "--noout", "--schema", curType[1], pj(root, filename)]))
         print("\n", file=outputFD)
         outputFD.flush()
-        if subprocess.call([xmllint, "--xinclude", "--noout", "--schema", curType[1], pj(root, filename)],
-                           stderr=subprocess.STDOUT, stdout=outputFD)!=0:
+        if subprocessCall([xmllint, "--xinclude", "--noout", "--schema", curType[1], pj(root, filename)],
+                          outputFD)!=0:
           nrFailed+=1
           print('<td><a href="'+myurllib.pathname2url(filename+".txt")+'"><span style="color:red">failed</span></a></td>', file=htmlOutputFD)
         else:
@@ -964,8 +1045,8 @@ def validateHTMLOutput():
   for root, _, filenames in os.walk(args.reportOutDir):
     for filename in filenames:
       if os.path.splitext(filename)[1]==".html":
-        subprocess.call([xmllint, "--xinclude", "--noout", "--schema",
-          schema, pj(root, filename)])
+        subprocessCall([xmllint, "--xinclude", "--noout", "--schema",
+          schema, pj(root, filename)], sys.stdout)
 
 
 
