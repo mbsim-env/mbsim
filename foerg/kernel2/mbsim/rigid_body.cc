@@ -137,8 +137,8 @@ namespace MBSim {
       }
 
       if(translationDependentRotation) {
-        assert(nqT = nqR);
-        assert(nuT = nuR);
+        assert(nqT == nqR);
+        assert(nuT == nuR);
         nq = nqT;
         nu[0] = nuT;
         iqT = Range<Var,Var>(0,nq-1);
