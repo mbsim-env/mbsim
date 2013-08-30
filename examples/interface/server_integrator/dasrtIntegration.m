@@ -6,8 +6,12 @@
 % loading the package
 pkg load sockets
 
-% the defined IPC messages, cp [...]/mbsim-env/kernel/mbsim/integrators/server_integrator_messages.h
-addpath('/home/markus/src/mbsim-env/modules/mbsimInterface/mbsimInterface')
+% the defined IPC messages
+[~,myAddPath]=system("pkg-config --cflags mbsimInterface | sed -e 's/^.*-I//g; s/ //g'");
+myAddPath=myAddPath(1:(length(myAddPath)-1));
+myAddPath=sprintf('%s/mbsimInterface/', myAddPath);
+fprintf('Fuege Pfad >>>%s<<< hinzu!\n', myAddPath)
+addpath(myAddPath);
 interfaceMessages
 
 client = socket(AF_INET, SOCK_STREAM, 0);
@@ -22,7 +26,7 @@ function ret=myCom(client, msg)
   end
   
   % Receive message from server
-  [msg_c, len_c] = recv(client, 1024);
+  [msg_c, len_c] = recv(client, 1024*1024);
 
   % if a message was received, convert it to numbers
   ret=NaN;
@@ -42,10 +46,14 @@ endfunction
 
 stopVector=@(x, t) fStopVector(x, t, client, IPC);
 function sv=fStopVector(x, t, client, IPC)
-  tmp=myCom(client, sprintf('%s%s', IPC._SI_setTime_asciiString_SI_, mat2str(t)));
-  tmp=myCom(client, sprintf('%s%s', IPC._SI_setStateVector_asciiString_SI_, mat2str(x)));
+  myCom(client, sprintf('%s%s', IPC._SI_setTime_asciiString_SI_, mat2str(t)));
+  myCom(client, sprintf('%s%s', IPC._SI_setStateVector_asciiString_SI_, mat2str(x)));
 
   sv=myCom(client, sprintf('%s', IPC._SI_getStopVector_asciiString_SI_));
+
+  %myCom(client, IPC._SI_doPrintCommunication_SI_);
+  %myCom(client, sprintf('%s', IPC._SI_getTime_asciiString_SI_));
+  %myCom(client, IPC._SI_donotPrintCommunication_SI_);
 endfunction
 
 plotFunction=@(x, t) fPlotFunction(x, t, client, IPC);
@@ -57,13 +65,15 @@ endfunction
 
 % integration and plot sizes
 tEnd=1;
-dtPlot=1e-3;
+dtPlot=1e-2;
 
 % options for dasrt
-dasrt_options('absolute tolerance', 1e-3)
-dasrt_options('relative tolerance', 1e-3)
+dasrt_options('absolute tolerance', 1e-4)
+dasrt_options('relative tolerance', 1e-4)
 dasrt_options('initial step size', sqrt(eps))
-dasrt_options('maximum step size', 1e-2)
+dasrt_options('maximum step size', 1e-1)
+
+myCom(client, sprintf('%s18', IPC._SI_setAsciiPrecision_asciiString_SI_))
 
 % get first initial conditions from system
 t0=myCom(client, IPC._SI_getTime_asciiString_SI_);
