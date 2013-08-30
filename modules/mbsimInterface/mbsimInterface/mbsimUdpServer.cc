@@ -33,7 +33,7 @@
 
 using namespace std;
 
-const int max_length = 1024;
+const int max_length = 1048576;
 
 
 namespace MBSimInterface {
@@ -51,13 +51,17 @@ namespace MBSimInterface {
 
     boost::asio::ip::udp::socket sock(io_service, boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), port));
 
+    ostringstream mbsim2interface;
+    mbsim2interface.precision(18);
+    mbsim2interface.setf( std::ios::scientific );
+
     do
     {
       boost::asio::ip::udp::endpoint sender_endpoint;
       size_t length = sock.receive_from(boost::asio::buffer(data, max_length), sender_endpoint);
 
       data[length]='\0'; // set fix message end
-      ostringstream mbsim2interface;
+      mbsim2interface.str(std::string());
       ii->integratorCommunication(requestIdentifier, interface2mbsim, length-1, &mbsim2interface);
 
       sock.send_to(boost::asio::buffer(mbsim2interface.str().c_str(), mbsim2interface.str().length()), sender_endpoint);

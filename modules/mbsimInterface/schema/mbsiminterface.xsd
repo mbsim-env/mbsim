@@ -3,7 +3,8 @@
   elementFormDefault="qualified"
   attributeFormDefault="unqualified"
   xmlns="http://mbsim.berlios.de/MBSimInterface"
-  xmlns:mbsim="http://mbsim.berlios.de/MBSim"
+  xmlns:integrator="http://mbsim.berlios.de/MBSimIntegrator"
+  xmlns:control="http://mbsim.berlios.de/MBSimControl"
   xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
@@ -13,7 +14,103 @@
     </xs:documentation>
   </xs:annotation>
 
+  <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
+    schemaLocation="../http___openmbv_berlios_de_MBXMLUtils/physicalvariable.xsd"/>
+
   <xs:import namespace="http://mbsim.berlios.de/MBSimIntegrator"
-    schemaLocation="../http___mbsim_berlios_de_MBSim/mbsim.xsd"/>
+    schemaLocation="../http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd"/>
+
+  <xs:import namespace="http://mbsim.berlios.de/MBSimControl"
+    schemaLocation="../http___mbsim_berlios_de_MBSimControl/mbsimcontrol.xsd"/>
+
+  <xs:element name="InterfaceIntegrator" substitutionGroup="integrator:Integrator" type="InterfaceIntegratorType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Der InterfaceIntegrator stellt eine Schnittstelle zur MKS-Berechnung von MBSim dar.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="InterfaceIntegratorType">
+    <xs:complexContent>
+      <xs:extension base="integrator:IntegratorType">
+        <xs:sequence>
+          <xs:element name="abc"  type="pv:timeScalar"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+          <!--
+          <xs:element name="outputSignals">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Sensorwerte, die mittels der IPC an das angeschlossene Programm weitergereicht werden.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence maxOccurs="unbounded">
+                <xs:element name="signal">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Signal.
+                    </xs:documentation>
+                  </xs:annotation>
+                  <xs:complexType>
+                    <xs:attribute name="ref" type="control:SignalReferenceType" use="required"/>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="inputSignals">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Sensorwerte, die vom angeschlossenen Programm mittels der IPC als Eingangswerte in der MBSim-Berechnung dienen.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence maxOccurs="unbounded">
+                <xs:element name="signal">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Signal.
+                    </xs:documentation>
+                  </xs:annotation>
+                  <xs:complexType>
+                    <xs:attribute name="ref" type="control:SignalReferenceType" use="required"/>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element ref="MBSimServer">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Auswahl einer Methode zur Interprozesskommunikation.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+-->
+
+  <xs:element name="MBSimServer" abstract="true" type="MBSimServerType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Schnittstelle zur Kommunikation mit dem Interface-Integrator.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="MBSimServerType"/>
+
+  <xs:element name="MBSimTcpServer" type="MBSimTcpServerType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        TcpServer.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="MBSimTcpServerType">
+    <xs:complexContent>
+      <xs:extension base="MBSimServerType">
+        <xs:sequence>
+          <xs:element name="port" type="pv:nounitVector">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Sensorwerte, die an den Server weitergereicht werden.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
 </xs:schema>

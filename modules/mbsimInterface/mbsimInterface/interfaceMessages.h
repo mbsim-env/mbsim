@@ -23,8 +23,6 @@
 #ifndef _SERVER_INTEGRATOR_MESSAGES_H_
 #define _SERVER_INTEGRATOR_MESSAGES_H_
 
-#define _SI_DEBUG_SI_ 0
-
 // getSizeOf<differentTypes>
 #define _SI_getSizeOfDoubleMemory_asciiString_SI_ 'A'
 #define _SI_getSizeOfIntegerMemory_asciiString_SI_ 'B'
@@ -69,6 +67,7 @@
 // usefull stuff
 #define _SI_doPrintCommunication_SI_ 'z'
 #define _SI_donotPrintCommunication_SI_ 'y'
+#define _SI_setAsciiPrecision_asciiString_SI_ '1'
 
 #endif
 

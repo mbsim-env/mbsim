@@ -14,5 +14,6 @@ libmbsimInterface_la_LIBADD = $(DEPS_LIBS)
 mbsimInterfaceincludedir = $(includedir)/mbsimInterface
 mbsimInterfaceinclude_HEADERS = \
   interfaceMessages.h \
+  interfaceMessages.m \
   interfaceIntegrator.h \
   mbsimServer.h
