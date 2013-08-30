@@ -102,7 +102,7 @@ namespace MBSimInterface {
         mbsimServer=new MBSimUdpServer(this, 4567);
         break;
       default:
-        cout << "No IPC Methods was defined" << endl;
+        cout << "No IPC Methods was defined!" << endl;
       }
 
       if (mbsimServer!=NULL)
@@ -149,16 +149,14 @@ namespace MBSimInterface {
           rIS << "UNKNOWN IPC MESSAGE";
           break;
       }
-      cout << "interface2mbsim" << endl;
-      cout << "  requestIdentifier: " << rIS.str() << endl;
-      cout << "  message: >>>";
-      if (interface2mbsimLength>0) {
-        cout << interface2mbsim;
-      }
-      else {
-        cout << " >>>NO-FURTHER-MESSAGE<<< ";
-      }
-      cout << "<<<" << endl;
+      integPlot << "interface2mbsim" << endl;
+      integPlot << "  requestIdentifier: " << rIS.str() << endl;
+      integPlot << "  message: >>>";
+      if (interface2mbsimLength>0)
+        integPlot << interface2mbsim;
+      else
+        integPlot << " >>>NO-FURTHER-MESSAGE<<< ";
+      integPlot << "<<<" << endl;
     }
 
     switch (*requestIdentifier) {
@@ -310,7 +308,17 @@ namespace MBSimInterface {
       case _SI_donotPrintCommunication_SI_:
         printCommunication=false;
         break;
-
+      case _SI_setAsciiPrecision_asciiString_SI_:
+        {
+          const Vec p=Vec(interface2mbsim);
+          if (p.size()!=1)
+            throw MBSim::MBSimError("wrong size of given value!");
+          int i=round(p(0));
+          if (i<6)
+            i=6;
+          (*mbsim2interface).precision(i);
+        }
+        break;
       default:
         cerr << "Unknown IPC message!!!" << endl;
     }
@@ -318,10 +326,10 @@ namespace MBSimInterface {
     (*mbsim2interface) << ends; // the sign '\0' is used for signalizing the end of message transfer
     if (printCommunication)
     {
-      cout << "mbsim2interface:" << endl;
-      cout << "  length of message: " << (*mbsim2interface).str().length() << " chars." << endl;
-      cout << "  message: >>>" << (*mbsim2interface).str() << "<<<" << endl;
-      cout << "\n" << endl;
+      integPlot << "mbsim2interface:" << endl;
+      integPlot << "  length of message: " << (*mbsim2interface).str().length() << " chars." << endl;
+      integPlot << "  message: >>>" << (*mbsim2interface).str() << "<<<" << endl;
+      integPlot << "\n" << endl;
     }
 
   }

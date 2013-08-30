@@ -33,7 +33,7 @@
 
 using namespace std;
 
-const int max_length = 1024;
+const int max_length = 1048576;
 
 
 namespace MBSimInterface {
@@ -53,6 +53,10 @@ namespace MBSimInterface {
     boost::asio::ip::tcp::socket socket(io_service);
     tcp_acceptor.accept(socket);
 
+    ostringstream mbsim2interface;
+    mbsim2interface.precision(18);
+    mbsim2interface.setf( std::ios::scientific );
+
     do
     {
       boost::system::error_code error;
@@ -63,7 +67,7 @@ namespace MBSimInterface {
         throw boost::system::system_error(error); // Some other error.
 
       data[length]='\0'; // set fix message end
-      ostringstream mbsim2interface;
+      mbsim2interface.str(std::string());
       ii->integratorCommunication(requestIdentifier, interface2mbsim, length-1, &mbsim2interface);
 
       boost::asio::write(socket, boost::asio::buffer(mbsim2interface.str().c_str(), mbsim2interface.str().length()));
