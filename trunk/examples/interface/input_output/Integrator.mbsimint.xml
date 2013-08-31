@@ -1,10 +1,12 @@
 <?xml version="1.0"?>
+<!--
 <TimeSteppingIntegrator xmlns="http://mbsim.berlios.de/MBSimIntegrator">
   <startTime>0</startTime>
   <endTime>10</endTime>
   <plotStepSize>5e-3</plotStepSize>
   <stepSize>1e-4</stepSize>
 </TimeSteppingIntegrator>
+-->
 <!--
 <LSODEIntegrator xmlns="http://mbsim.berlios.de/MBSimIntegrator">
   <startTime>0</startTime>
@@ -31,7 +33,6 @@
   <plotOnRoot>1</plotOnRoot>
 </LSODARIntegrator>
 -->
-<!--
 <InterfaceIntegrator xmlns="http://mbsim.berlios.de/MBSimInterface">
   <startTime xmlns="http://mbsim.berlios.de/MBSimIntegrator">0</startTime>
   <endTime xmlns="http://mbsim.berlios.de/MBSimIntegrator">0</endTime>
@@ -42,4 +43,3 @@
     <port>4567</port>
   </MBSimTcpServer>
 </InterfaceIntegrator>
--->
