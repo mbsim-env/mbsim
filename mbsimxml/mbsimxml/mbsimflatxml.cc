@@ -66,6 +66,8 @@ int MBSimXML::preInitDynamicSystemSolver(int argc, char *argv[], DynamicSystemSo
 
   // create object for root element and check correct type
   dss=ObjectFactory<Element>::create<DynamicSystemSolver>(e);
+  if(dss==0)
+    throw MBSimError("ERROR! The root element of the MBSim model file must be of type '{"MBSIMNS"}DynamicSystemSolver'");
 
   // If enviornment variable MBSIMREORGANIZEHIERARCHY=false then do NOT reorganize.
   // In this case it is not possible to simulate a relativ kinematics (tree structures).
@@ -75,8 +77,6 @@ int MBSimXML::preInitDynamicSystemSolver(int argc, char *argv[], DynamicSystemSo
   else
     dss->setReorganizeHierarchy(true);
 
-  if(dss==0)
-    throw MBSimError("ERROR! The root element of the MBSim main file must be of type 'DynamicSystemSolver'");
   dss->initializeUsingXML(e);
   delete doc;
 
@@ -121,7 +121,7 @@ void MBSimXML::initIntegrator(int argc, char *argv[], Integrator *&integrator) {
   // create integrator
   integrator=ObjectFactory<Integrator>::create<Integrator>(e);
   if(integrator==0)
-    throw MBSimError("ERROR! Cannot create the integrator object!");
+    throw MBSimError("ERROR! The root element of the MBSim integrator file must be of type '{"MBSIMINTNS"}Integrator'");
   integrator->initializeUsingXML(e);
   delete doc;
 }

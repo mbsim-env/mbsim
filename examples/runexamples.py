@@ -118,7 +118,7 @@ class MultiFile(object):
       self.filelist.append(second)
   def write(self, str):
     for f in self.filelist:
-      f.write(str.encode("utf-8"))
+      f.write(str.encode("utf-8").decode("utf-8"))
   def flush(self):
     for f in self.filelist:
       f.flush()
@@ -396,6 +396,7 @@ def addExamplesByFilter(baseDir, directoriesSet):
 def runExample(resultQueue, example):
   savedDir=os.getcwd()
   try:
+    resultStr=""
     os.chdir(example[0])
 
     runExampleRet=0 # run ok
@@ -421,7 +422,6 @@ def runExample(resultQueue, example):
     # get reference time
     refTime=example[1]
     # print result to resultStr
-    resultStr=""
     resultStr+='<tr>'
     if not example[0] in willFail:
       resultStr+='<td>'+example[0]+'</td>'

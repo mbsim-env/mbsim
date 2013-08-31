@@ -220,6 +220,10 @@ int main(int argc, char *argv[]) {
       unlink(ERRFILE.c_str());
   
       // run preprocessor
+      // NOTE: we validate both, the model and integrator file, with mbsimxml.xsd to enable
+      // integrators as mbsim modules.
+      // mbsimflatxml checks explicity for a correct root element of both files, so validating both
+      // with mbsimxml.xsd is no problem.
       vector<string> command;
       command.push_back(MBXMLUTILSBIN+"/mbxmlutilspp"+EXEEXT);
       command.insert(command.end(), AUTORELOAD.begin(), AUTORELOAD.end());
@@ -229,7 +233,7 @@ int main(int argc, char *argv[]) {
       command.push_back(MBXMLUTILSSCHEMA+"/http___mbsim_berlios_de_MBSimXML/mbsimxml.xsd");
       command.push_back(PARAMINT);
       command.push_back(MBSIMINT);
-      command.push_back(MBXMLUTILSSCHEMA+"/http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd");
+      command.push_back(MBXMLUTILSSCHEMA+"/http___mbsim_berlios_de_MBSimXML/mbsimxml.xsd");
       ret=runProgram(command);
   
       if(!ONLYPP && ret==0) {
