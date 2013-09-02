@@ -42,6 +42,8 @@ class FunctionWidget : public Widget {
     QString ext;
   public slots:
     virtual void resize_(int m, int n) {}
+  signals:
+    void arg1SizeChanged(int);
 };
 
 //class Function2Widget : public Widget {
@@ -58,7 +60,7 @@ class SymbolicFunction1Widget : public FunctionWidget {
   friend class SymbolicFunction1Property;
 
   public:
-    SymbolicFunction1Widget(const QString &var, int max=99);
+    SymbolicFunction1Widget(const QString &ext, const QString &var, int max=99);
     int getArg1Size() const;
   protected:
     ExtWidget *f;
@@ -174,7 +176,7 @@ class SymbolicFunction2Widget : public FunctionWidget {
   friend class SymbolicFunction2Property;
 
   public:
-    SymbolicFunction2Widget(const QStringList &var, int max=99);
+    SymbolicFunction2Widget(const QString &ext, const QStringList &var, int max=99);
     int getArg1Size() const;
     int getArg2Size() const;
   protected:

@@ -338,23 +338,23 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   widget.push_back(new ConstantFunction1Widget("VS",3));
   name.push_back("Constant r=const.");
   widget.push_back(new LinearFunction1Widget("VV",3,1));
+  connect(widget[widget.size()-1],SIGNAL(arg1SizeChanged(int)),this,SLOT(resizeVariables()));
   name.push_back("Linear r=r(q)");
   widget.push_back(new LinearFunction1Widget("VS",3,1));
   name.push_back("Linear r=r(t)");
   QStringList var;
   var << "q" << "t";
-  widget.push_back(new SymbolicFunction2Widget(var));
+  widget.push_back(new SymbolicFunction2Widget("VVS",var));
+  connect(widget[widget.size()-1],SIGNAL(arg1SizeChanged(int)),this,SLOT(resizeVariables()));
   name.push_back("Symbolic r=r(q,t)");
-  widget.push_back(new SymbolicFunction1Widget("q"));
+  widget.push_back(new SymbolicFunction1Widget("VV","q"));
+  connect(widget[widget.size()-1],SIGNAL(arg1SizeChanged(int)),this,SLOT(resizeVariables()));
   name.push_back("Symbolic r=r(q)");
-  widget.push_back(new SymbolicFunction1Widget("t"));
+  widget.push_back(new SymbolicFunction1Widget("VS","t"));
   name.push_back("Symbolic r=r(t)");
   translation = new ExtWidget("Translation",new ChoiceWidget(widget,name),true);
-//  TranslationChoiceWidget *translation_ = new TranslationChoiceWidget;
-//  translation = new ExtWidget("Translation",translation_,true);
   addToTab("Kinematics", translation);
-//  connect(translation_,SIGNAL(translationChanged()),this,SLOT(resizeVariables()));
-//  connect(translation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
+  connect(translation->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
 
   widget.clear();
   name.clear();
@@ -535,7 +535,7 @@ TimeDependentKinematicConstraintPropertyDialog::TimeDependentKinematicConstraint
 
   vector<QWidget*> widget;
   vector<QString> name;
-  widget.push_back(new SymbolicFunction1Widget("t"));
+  widget.push_back(new SymbolicFunction1Widget("VS","t"));
   name.push_back("Symbolic function");
   generalizedPositionFunction = new ExtWidget("Generalized position function",new ChoiceWidget(widget,name));
   addToTab("General", generalizedPositionFunction);
@@ -563,7 +563,7 @@ StateDependentKinematicConstraintPropertyDialog::StateDependentKinematicConstrai
 
   vector<QWidget*> widget;
   vector<QString> name;
-  widget.push_back(new SymbolicFunction1Widget("q"));
+  widget.push_back(new SymbolicFunction1Widget("VV","q"));
   name.push_back("Symbolic function");
   generalizedVelocityFunction = new ExtWidget("Generalized velocity function",new ChoiceWidget(widget,name));
   addToTab("General", generalizedVelocityFunction);
@@ -853,7 +853,7 @@ SpringDamperPropertyDialog::SpringDamperPropertyDialog(SpringDamper *springDampe
   name.push_back("Linear spring damper force");
   QStringList var;
   var << "g" << "gd";
-  widget.push_back(new SymbolicFunction2Widget(var,1));
+  widget.push_back(new SymbolicFunction2Widget("SSS",var,1));
   name.push_back("Symbolic function");
   forceFunction = new ExtWidget("Force function",new ChoiceWidget(widget,name));
   addToTab("Kinetics", forceFunction);
@@ -1203,7 +1203,7 @@ FunctionSensorPropertyDialog::FunctionSensorPropertyDialog(FunctionSensor *senso
   name.push_back("Tabular function");
   widget.push_back(new SummationFunction1Widget(1));
   name.push_back("Summation function");
-  widget.push_back(new SymbolicFunction1Widget("t"));
+  widget.push_back(new SymbolicFunction1Widget("VS","t"));
   name.push_back("Symbolic function");
   function = new ExtWidget("Function",new ChoiceWidget(widget,name));
   addToTab("General", function);
@@ -1295,7 +1295,7 @@ UnarySignalOperationPropertyDialog::UnarySignalOperationPropertyDialog(UnarySign
 
   vector<QWidget*> widget;
   vector<QString> name;
-  widget.push_back(new SymbolicFunction1Widget("x"));
+  widget.push_back(new SymbolicFunction1Widget("VV","x"));
   name.push_back("Symbolic function");
   f = new ExtWidget("Function",new ChoiceWidget(widget,name));
   addToTab("General", f);
@@ -1325,7 +1325,7 @@ BinarySignalOperationPropertyDialog::BinarySignalOperationPropertyDialog(BinaryS
   vector<QString> name;
   QStringList var;
   var << "x1" << "x2";
-  widget.push_back(new SymbolicFunction2Widget(var));
+  widget.push_back(new SymbolicFunction2Widget("VVV",var));
   name.push_back("Symbolic function");
   f = new ExtWidget("Function",new ChoiceWidget(widget,name));
   addToTab("General", f);

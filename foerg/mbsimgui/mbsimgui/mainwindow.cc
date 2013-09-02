@@ -242,13 +242,19 @@ MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0) {
   connect(mbsim->getProcess(),SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(simulationFinished(int,QProcess::ExitStatus)));
 
   setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
-  
+
   QStringList::iterator i, i2;
+  
+  if((i=std::find(arg.begin(), arg.end(), "--maximized"))!=arg.end()) {
+    showMaximized();
+    arg.erase(i);
+  }
+
   QString fileMBS, fileParam, fileInteg;
   QRegExp filterMBS(".+\\.mbsim\\.xml"), filterParam(".+\\.mbsimparam\\.xml"), filterInteg(".+\\.mbsimint\\.xml");
   dir.setFilter(QDir::Files);
   i=arg.begin();
-  while(i!=arg.end()) {
+  while(i!=arg.end() and (*i)[0]!='-') {
     dir.setPath(*i);
     if(dir.exists()) {
       QStringList file=dir.entryList();
