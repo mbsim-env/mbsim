@@ -463,6 +463,7 @@ SpinBoxWidget::SpinBoxWidget(int val, int min, int max) {
   value->setMinimum(min);
   value->setMaximum(max);
   layout->addWidget(value);
+  connect(value,SIGNAL(valueChanged(int)),this,SIGNAL(valueChanged(int)));
 }
 
 TextWidget::TextWidget(const QString &text_, bool readOnly) {

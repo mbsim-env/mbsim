@@ -318,7 +318,7 @@ ForceChoiceWidget::ForceChoiceWidget() {
   name.push_back("Tabular function");
   widget.push_back(new SummationFunction1Widget(1));
   name.push_back("Summation function");
-  widget.push_back(new SymbolicFunction1Widget("t"));
+  widget.push_back(new SymbolicFunction1Widget("VS","t"));
   name.push_back("Symbolic function");
   forceLaw = new ExtWidget("Function",new ChoiceWidget(widget,name));
   layout->addWidget(forceLaw);

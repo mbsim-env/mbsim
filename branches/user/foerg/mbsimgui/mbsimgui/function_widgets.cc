@@ -28,7 +28,7 @@
 
 using namespace std;
 
-SymbolicFunction1Widget::SymbolicFunction1Widget(const QString &var, int max) : FunctionWidget() {
+SymbolicFunction1Widget::SymbolicFunction1Widget(const QString &ext, const QString &var, int max) : FunctionWidget(ext) {
   QGridLayout *layout = new QGridLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -36,14 +36,16 @@ SymbolicFunction1Widget::SymbolicFunction1Widget(const QString &var, int max) : 
   layout->addWidget(argname[0],0,0);
 
   argdim.push_back(new ExtWidget("Dimension of argument",new SpinBoxWidget(1,1,max)));
-  if(var!="t")
+  if(var!="t") {
     layout->addWidget(argdim[0],0,1);
+    connect(argdim[0]->getWidget(),SIGNAL(valueChanged(int)),this,SIGNAL(arg1SizeChanged(int)));
+  }
   f = new ExtWidget("Function",new OctaveExpressionWidget);
   layout->addWidget(f,var.size(),0,1,2);
 }
 
 int SymbolicFunction1Widget::getArg1Size() const {
-  return static_cast<SpinBoxWidget*>(argdim[0]->getWidget())->getValue();
+  return (ext[1]=='V')?static_cast<SpinBoxWidget*>(argdim[0]->getWidget())->getValue():0;
 }
 
 ConstantFunction1Widget::ConstantFunction1Widget(const QString &ext, int m) : FunctionWidget() {
@@ -115,8 +117,11 @@ LinearFunction1Widget::LinearFunction1Widget(const QString &ext, int m, int n) :
   layout->setMargin(0);
   setLayout(layout);
   vector<PhysicalVariableWidget*> input;
-  if(ext[0]=='V' and ext[1]=='V')
-    input.push_back(new PhysicalVariableWidget(new MatColsVarWidget(m,1,1,3),QStringList(),0));
+  if(ext[0]=='V' and ext[1]=='V') {
+    MatColsVarWidget *a_ = new MatColsVarWidget(m,1,1,3);
+    input.push_back(new PhysicalVariableWidget(a_,QStringList(),0));
+    connect(a_,SIGNAL(sizeChanged(int)),this,SIGNAL(arg1SizeChanged(int)));
+  }
   else if(ext[0]=='V' and ext[1]=='S')
     input.push_back(new PhysicalVariableWidget(new VecWidget(m),QStringList(),0));
   else
@@ -317,7 +322,7 @@ void SummationFunction1Widget::addFunction() {
   name.push_back("Tabular function");
   widget.push_back(new SummationFunction1Widget(n));
   name.push_back("Summation function");
-  widget.push_back(new SymbolicFunction1Widget("t"));
+  widget.push_back(new SymbolicFunction1Widget("VS","t"));
   name.push_back("Symbolic function");
   widgetContainer->addWidget(new ChoiceWidget(widget,name));
 
@@ -348,7 +353,7 @@ void SummationFunction1Widget::removeFunction() {
   delete functionList->takeItem(i);
 }
 
-SymbolicFunction2Widget::SymbolicFunction2Widget(const QStringList &var, int max) : FunctionWidget() {
+SymbolicFunction2Widget::SymbolicFunction2Widget(const QString &ext, const QStringList &var, int max) : FunctionWidget(ext) {
   QGridLayout *layout = new QGridLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -365,11 +370,11 @@ SymbolicFunction2Widget::SymbolicFunction2Widget(const QStringList &var, int max
 }
 
 int SymbolicFunction2Widget::getArg1Size() const {
-  return static_cast<SpinBoxWidget*>(argdim[0]->getWidget())->getValue();
+  return (ext[1]=='V')?static_cast<SpinBoxWidget*>(argdim[0]->getWidget())->getValue():0;
 }
 
 int SymbolicFunction2Widget::getArg2Size() const {
-  return static_cast<SpinBoxWidget*>(argdim[1]->getWidget())->getValue();
+  return (ext[2]=='V')?static_cast<SpinBoxWidget*>(argdim[1]->getWidget())->getValue():0;
 }
 
 LinearSpringDamperForceWidget::LinearSpringDamperForceWidget() {

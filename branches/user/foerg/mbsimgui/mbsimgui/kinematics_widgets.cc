@@ -51,7 +51,7 @@ int LinearTranslationWidget::getqTSize() const {
 TimeDependentTranslationWidget::TimeDependentTranslationWidget() {
   vector<QWidget*> widget;
   vector<QString> name;
-  widget.push_back(new SymbolicFunction1Widget("t"));
+  widget.push_back(new SymbolicFunction1Widget("VS","t"));
   name.push_back("Symbolic function");
   function = new ExtWidget("Translation function",new ChoiceWidget(widget,name));
 
@@ -64,7 +64,7 @@ TimeDependentTranslationWidget::TimeDependentTranslationWidget() {
 StateDependentTranslationWidget::StateDependentTranslationWidget() {
   vector<QWidget*> widget;
   vector<QString> name;
-  widget.push_back(new SymbolicFunction1Widget("q"));
+  widget.push_back(new SymbolicFunction1Widget("VV","q"));
   name.push_back("Symbolic function");
   function = new ExtWidget("Translation function",new ChoiceWidget(widget,name));
 
@@ -85,7 +85,7 @@ GeneralTranslationWidget::GeneralTranslationWidget() {
   vector<QString> name;
   QStringList var;
   var << "q" << "t";
-  widget.push_back(new SymbolicFunction2Widget(var));
+  widget.push_back(new SymbolicFunction2Widget("VVS",var));
   name.push_back("Symbolic function");
   function = new ExtWidget("Translation function",new ChoiceWidget(widget,name));
 
@@ -202,7 +202,7 @@ TimeDependentRotationAboutFixedAxisWidget::TimeDependentRotationAboutFixedAxisWi
 
   vector<QWidget*> widget;
   vector<QString> name;
-  widget.push_back(new SymbolicFunction1Widget("t"));
+  widget.push_back(new SymbolicFunction1Widget("VS","t"));
   name.push_back("Symbolic function");
   function = new ExtWidget("Rotational function",new ChoiceWidget(widget,name));
   layout->addWidget(function);
@@ -221,7 +221,7 @@ StateDependentRotationAboutFixedAxisWidget::StateDependentRotationAboutFixedAxis
 
   vector<QWidget*> widget;
   vector<QString> name;
-  widget.push_back(new SymbolicFunction1Widget("q"));
+  widget.push_back(new SymbolicFunction1Widget("VV","q"));
   name.push_back("Symbolic function");
   function = new ExtWidget("Translation function",new ChoiceWidget(widget,name));
 

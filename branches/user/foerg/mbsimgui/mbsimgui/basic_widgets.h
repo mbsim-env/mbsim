@@ -273,6 +273,7 @@ class IntegerWidget : public Widget {
 };
 
 class SpinBoxWidget : public IntegerWidget {
+  Q_OBJECT
 
   public:
     SpinBoxWidget(int val=0, int min=0, int max=99);
@@ -281,6 +282,8 @@ class SpinBoxWidget : public IntegerWidget {
 
   protected:
     QSpinBox *value;
+  signals:
+    void valueChanged(int);
 };
 
 class BasicTextWidget : public Widget {
