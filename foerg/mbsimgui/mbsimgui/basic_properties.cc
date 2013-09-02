@@ -961,3 +961,33 @@ void SignalReferencesProperty::toWidget(QWidget *widget) {
   static_cast<SignalReferencesWidget*>(widget)->updateWidget();
 }
 
+ColorProperty::ColorProperty(const std::string &xmlName_) : xmlName(xmlName_) {
+  vector<PhysicalVariableProperty> input;
+  vector<string> vec(3);
+  vec[0] = "0.666667"; vec[1] = "1"; vec[2] = "1";
+  input.push_back(PhysicalVariableProperty(new VecProperty(vec), "", ""));
+  color.setProperty(new ExtPhysicalVarProperty(input));
+}
+
+TiXmlElement* ColorProperty::initializeUsingXML(TiXmlElement *parent) {
+  TiXmlElement *e = parent->FirstChildElement(xmlName);
+  color.initializeUsingXML(e);
+  return e;
+}
+
+TiXmlElement* ColorProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele = new TiXmlElement(xmlName);
+  color.writeXMLFile(ele);
+  parent->LinkEndChild(ele);
+  return 0;
+}
+
+void ColorProperty::fromWidget(QWidget *widget) {
+  color.fromWidget(static_cast<ColorWidget*>(widget)->color);
+}
+
+void ColorProperty::toWidget(QWidget *widget) {
+  color.toWidget(static_cast<ColorWidget*>(widget)->color);
+  static_cast<ColorWidget*>(widget)->updateWidget();
+}
+

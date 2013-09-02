@@ -27,7 +27,7 @@
 using namespace std;
 using namespace MBXMLUtils;
 
-GeneralizedForceLawProperty::GeneralizedForceLawProperty(const GeneralizedForceLawProperty &p) : forceFunc(static_cast<Function2Property*>(p.forceFunc->clone())) {
+GeneralizedForceLawProperty::GeneralizedForceLawProperty(const GeneralizedForceLawProperty &p) : forceFunc(static_cast<FunctionProperty*>(p.forceFunc->clone())) {
 }
     
 GeneralizedForceLawProperty::~GeneralizedForceLawProperty() {
@@ -36,7 +36,7 @@ GeneralizedForceLawProperty::~GeneralizedForceLawProperty() {
 
 GeneralizedForceLawProperty& GeneralizedForceLawProperty::operator=(const GeneralizedForceLawProperty &p) {
   delete forceFunc;
-  forceFunc=static_cast<Function2Property*>(p.forceFunc->clone());
+  forceFunc=static_cast<FunctionProperty*>(p.forceFunc->clone());
 }
 
 TiXmlElement* GeneralizedForceLawProperty::writeXMLFile(TiXmlNode *parent) {
@@ -145,7 +145,7 @@ void UnilateralNewtonImpactProperty::toWidget(QWidget *widget) {
   restitutionCoefficient.toWidget(static_cast<UnilateralNewtonImpactWidget*>(widget)->restitutionCoefficient);
 }
 
-FrictionForceLawProperty::FrictionForceLawProperty(const FrictionForceLawProperty &p) : frictionForceFunc(static_cast<Function2Property*>(p.frictionForceFunc->clone())) {
+FrictionForceLawProperty::FrictionForceLawProperty(const FrictionForceLawProperty &p) : frictionForceFunc(static_cast<FunctionProperty*>(p.frictionForceFunc->clone())) {
 }
 
 FrictionForceLawProperty::~FrictionForceLawProperty() {
@@ -154,7 +154,7 @@ FrictionForceLawProperty::~FrictionForceLawProperty() {
 
 FrictionForceLawProperty& FrictionForceLawProperty::operator=(const FrictionForceLawProperty &p) {
   delete frictionForceFunc; 
-  frictionForceFunc=static_cast<Function2Property*>(p.frictionForceFunc->clone());
+  frictionForceFunc=static_cast<FunctionProperty*>(p.frictionForceFunc->clone());
 }
 
 TiXmlElement* FrictionForceLawProperty::writeXMLFile(TiXmlNode *parent) {

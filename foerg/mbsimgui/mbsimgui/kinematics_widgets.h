@@ -187,16 +187,16 @@ class RotationAboutZAxisWidget : public TranslationIndependentRotationWidget {
     virtual int getqRSize() const {return 1;}
 };
 
-class RotationAboutFixedAxisWidget : public TranslationIndependentRotationWidget {
-
-  friend class RotationAboutFixedAxisProperty;
-
-  public:
-    RotationAboutFixedAxisWidget();
-    virtual int getqRSize() const {return 1;}
-  protected:
-    ExtWidget *vec;
-};
+//class RotationAboutFixedAxisWidget : public TranslationIndependentRotationWidget {
+//
+//  friend class RotationAboutFixedAxisProperty;
+//
+//  public:
+//    RotationAboutFixedAxisWidget();
+//    virtual int getqRSize() const {return 1;}
+//  protected:
+//    ExtWidget *vec;
+//};
 
 class RotationAboutAxesXYWidget : public TranslationIndependentRotationWidget {
 

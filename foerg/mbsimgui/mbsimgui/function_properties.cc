@@ -25,28 +25,33 @@
 #include "basic_widgets.h"
 #include "extended_widgets.h"
 #include "utils.h"
+#include "octaveutils.h"
 #include <QSpinBox>
 #include <QStackedWidget>
 
 using namespace std;
 using namespace MBXMLUtils;
 
-TiXmlElement* Function1Property::writeXMLFile(TiXmlNode *parent) {
+TiXmlElement* FunctionProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
   parent->LinkEndChild(ele0);
   return ele0;
 }
 
-TiXmlElement* Function2Property::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
-  parent->LinkEndChild(ele0);
-  return ele0;
-}
+//TiXmlElement* Function2Property::writeXMLFile(TiXmlNode *parent) {
+//  TiXmlElement *ele0=new TiXmlElement(MBSIMNS+getType());
+//  parent->LinkEndChild(ele0);
+//  return ele0;
+//}
 
-SymbolicFunction1Property::SymbolicFunction1Property(const string &ext, const string &var) : Function1Property(ext), argname(1), argdim(ext.size()-1) {
+SymbolicFunction1Property::SymbolicFunction1Property(const string &ext, const string &var) : FunctionProperty(ext), argname(1), argdim(ext.size()-1) {
   argname[0].setProperty(new TextProperty(var,""));
   argdim[0].setProperty(new IntegerProperty(1,""));
   f.setProperty(new OctaveExpressionProperty);
+}
+
+int SymbolicFunction1Property::getArg1Size() const {
+  return static_cast<const IntegerProperty*>(argdim[0].getProperty())->getValue();
 }
 
 TiXmlElement* SymbolicFunction1Property::initializeUsingXML(TiXmlElement *element) {
@@ -61,7 +66,7 @@ TiXmlElement* SymbolicFunction1Property::initializeUsingXML(TiXmlElement *elemen
 }
 
 TiXmlElement* SymbolicFunction1Property::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Function1Property::writeXMLFile(parent);
+  TiXmlElement *ele0 = FunctionProperty::writeXMLFile(parent);
   ele0->SetAttribute("arg1name", static_cast<TextProperty*>(argname[0].getProperty())->getText());
   if(ext[1]=='V')
     ele0->SetAttribute("arg1dim",static_cast<IntegerProperty*>(argdim[0].getProperty())->getValue());
@@ -85,33 +90,10 @@ int SymbolicFunction1Property::getArgDim() const {
   return static_cast<const IntegerProperty*>(argdim[0].getProperty())->getValue();
 }
 
-DifferentiableFunction1Property::DifferentiableFunction1Property(const DifferentiableFunction1Property &p) : order(p.order) {
-  for(unsigned int i=0; i<p.derivatives.size(); i++)
-    derivatives.push_back(static_cast<Function1Property*>(p.derivatives[i]->clone()));
-}
-
-DifferentiableFunction1Property::~DifferentiableFunction1Property() {
-  for(unsigned int i=0; i<derivatives.size(); i++)
-    delete derivatives[i];
-}
-
-DifferentiableFunction1Property& DifferentiableFunction1Property::operator=(const DifferentiableFunction1Property &p) {
-  for(unsigned int i=0; i<derivatives.size(); i++)
-    delete derivatives[i];
-  order=p.order;
-  for(unsigned int i=0; i<p.derivatives.size(); i++)
-    derivatives.push_back(static_cast<Function1Property*>(p.derivatives[i]->clone()));
-}
-
-void DifferentiableFunction1Property::setDerivative(Function1Property *diff,size_t degree) { 
-  derivatives.resize(max(derivatives.size(),degree+1)); 
-  derivatives[degree]=diff; 
-}
-
-ConstantFunction1Property::ConstantFunction1Property(const string &ext) : Function1Property(ext) {
+ConstantFunction1Property::ConstantFunction1Property(const string &ext, int m) : FunctionProperty(ext) {
   vector<PhysicalVariableProperty> input;
   if(ext[0]=='V')
-    input.push_back(PhysicalVariableProperty(new VecProperty(1),"",MBSIMNS"value"));
+    input.push_back(PhysicalVariableProperty(new VecProperty(m),"",MBSIMNS"value"));
   else
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"value"));
   c.setProperty(new ExtPhysicalVarProperty(input));
@@ -123,7 +105,7 @@ TiXmlElement* ConstantFunction1Property::initializeUsingXML(TiXmlElement *elemen
 }
 
 TiXmlElement* ConstantFunction1Property::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Function1Property::writeXMLFile(parent);
+  TiXmlElement *ele0 = FunctionProperty::writeXMLFile(parent);
   c.writeXMLFile(ele0);
   return ele0;
 } 
@@ -134,6 +116,136 @@ void ConstantFunction1Property::fromWidget(QWidget *widget) {
 
 void ConstantFunction1Property::toWidget(QWidget *widget) {
   c.toWidget(static_cast<ConstantFunction1Widget*>(widget)->c);
+}
+
+LinearFunctionTestProperty::LinearFunctionTestProperty(const string &ext, int m, int n) : FunctionProperty(ext), b(0,false) {
+
+  vector<Property*> property;
+
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new MatProperty(m,n),"",MBSIMNS"slope"));
+  property.push_back(new ExtPhysicalVarProperty(input));
+
+  input.clear();
+  input.push_back(PhysicalVariableProperty(new VecProperty(m),"",MBSIMNS"slope"));
+  property.push_back(new ExtPhysicalVarProperty(input));
+
+  choice.setProperty(new ChoiceProperty("",property));
+
+  input.clear();
+//  if(ext[0]=='V' and ext[1]=='V')
+    input.push_back(PhysicalVariableProperty(new MatProperty(m,n),"",MBSIMNS"slope"));
+//  else
+//    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"value"));
+  a.setProperty(new ExtPhysicalVarProperty(input));
+//  if(ext[0]=='V' and ext[1]=='V')
+   input.clear();
+    input.push_back(PhysicalVariableProperty(new VecProperty(m),"",MBSIMNS"intercept"));
+//  else
+//    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"value"));
+  b.setProperty(new ExtPhysicalVarProperty(input));
+}
+
+int LinearFunction1Property::getArg1Size() const {
+  if(ext[0]=='V' and ext[1]=='V') {
+    string str = evalOctaveExpression(static_cast<const ExtPhysicalVarProperty*>(a.getProperty())->getCurrentPhysicalVariableProperty().getValue());
+    vector<vector<string> > A = strToMat(str);
+    return A.size()?A[0].size():0;
+  }
+  return 0;
+}
+
+TiXmlElement* LinearFunctionTestProperty::initializeUsingXML(TiXmlElement *element) {
+  choice.initializeUsingXML(element);
+  a.initializeUsingXML(element);
+  b.initializeUsingXML(element);
+  return element;
+}
+
+TiXmlElement* LinearFunctionTestProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  choice.writeXMLFile(ele0);
+  a.writeXMLFile(ele0);
+  b.writeXMLFile(ele0);
+  return ele0;
+} 
+
+void LinearFunctionTestProperty::fromWidget(QWidget *widget) {
+  choice.fromWidget(static_cast<LinearFunctionTestWidget*>(widget)->choice);
+  a.fromWidget(static_cast<LinearFunctionTestWidget*>(widget)->a);
+  b.fromWidget(static_cast<LinearFunctionTestWidget*>(widget)->b);
+}
+
+void LinearFunctionTestProperty::toWidget(QWidget *widget) {
+  choice.toWidget(static_cast<LinearFunctionTestWidget*>(widget)->choice);
+  a.toWidget(static_cast<LinearFunctionTestWidget*>(widget)->a);
+  b.toWidget(static_cast<LinearFunctionTestWidget*>(widget)->b);
+}
+
+LinearFunction1Property::LinearFunction1Property(const string &ext, int m, int n) : FunctionProperty(ext), b(0,false) {
+  vector<PhysicalVariableProperty> input;
+  if(ext[0]=='V' and ext[1]=='V')
+    input.push_back(PhysicalVariableProperty(new MatProperty(m,n),"",MBSIMNS"slope"));
+  else if(ext[0]=='V' and ext[1]=='S')
+    input.push_back(PhysicalVariableProperty(new VecProperty(m),"",MBSIMNS"slope"));
+  else
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("1"),"",MBSIMNS"slope"));
+  a.setProperty(new ExtPhysicalVarProperty(input));
+
+  input.clear();
+  if(ext[0]=='V')
+    input.push_back(PhysicalVariableProperty(new VecProperty(m),"",MBSIMNS"intercept"));
+  else
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"intercept"));
+  b.setProperty(new ExtPhysicalVarProperty(input));
+}
+
+TiXmlElement* LinearFunction1Property::initializeUsingXML(TiXmlElement *element) {
+  a.initializeUsingXML(element);
+  b.initializeUsingXML(element);
+  return element;
+}
+
+TiXmlElement* LinearFunction1Property::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  a.writeXMLFile(ele0);
+  b.writeXMLFile(ele0);
+  return ele0;
+} 
+
+void LinearFunction1Property::fromWidget(QWidget *widget) {
+  a.fromWidget(static_cast<LinearFunction1Widget*>(widget)->a);
+  b.fromWidget(static_cast<LinearFunction1Widget*>(widget)->b);
+}
+
+void LinearFunction1Property::toWidget(QWidget *widget) {
+  a.toWidget(static_cast<LinearFunction1Widget*>(widget)->a);
+  b.toWidget(static_cast<LinearFunction1Widget*>(widget)->b);
+}
+
+RotationAboutFixedAxisProperty::RotationAboutFixedAxisProperty(const string &ext) : FunctionProperty(ext) {
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new VecProperty(3),"",MBSIMNS"axisOfRotation"));
+  a.setProperty(new ExtPhysicalVarProperty(input));
+}
+
+TiXmlElement* RotationAboutFixedAxisProperty::initializeUsingXML(TiXmlElement *element) {
+  a.initializeUsingXML(element);
+  return element;
+}
+
+TiXmlElement* RotationAboutFixedAxisProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  a.writeXMLFile(ele0);
+  return ele0;
+} 
+
+void RotationAboutFixedAxisProperty::fromWidget(QWidget *widget) {
+  a.fromWidget(static_cast<RotationAboutFixedAxisWidget*>(widget)->a);
+}
+
+void RotationAboutFixedAxisProperty::toWidget(QWidget *widget) {
+  a.toWidget(static_cast<RotationAboutFixedAxisWidget*>(widget)->a);
 }
 
 QuadraticFunction1Property::QuadraticFunction1Property() {
@@ -159,7 +271,7 @@ TiXmlElement* QuadraticFunction1Property::initializeUsingXML(TiXmlElement *eleme
 }
 
 TiXmlElement* QuadraticFunction1Property::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = DifferentiableFunction1Property::writeXMLFile(parent);
+  TiXmlElement *ele0 = FunctionProperty::writeXMLFile(parent);
   a0.writeXMLFile(ele0);
   a1.writeXMLFile(ele0);
   a2.writeXMLFile(ele0);
@@ -206,7 +318,7 @@ TiXmlElement* SinusFunction1Property::initializeUsingXML(TiXmlElement *element) 
 }
 
 TiXmlElement* SinusFunction1Property::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Function1Property::writeXMLFile(parent);
+  TiXmlElement *ele0 = FunctionProperty::writeXMLFile(parent);
   a.writeXMLFile(ele0);
   f.writeXMLFile(ele0);
   p.writeXMLFile(ele0);
@@ -256,7 +368,7 @@ TiXmlElement* TabularFunction1Property::initializeUsingXML(TiXmlElement *element
 }
 
 TiXmlElement* TabularFunction1Property::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Function1Property::writeXMLFile(parent);
+  TiXmlElement *ele0 = FunctionProperty::writeXMLFile(parent);
   choice.writeXMLFile(ele0);
   return ele0;
 } 
@@ -297,7 +409,7 @@ TiXmlElement* SummationFunction1Property::initializeUsingXML(TiXmlElement *eleme
 }
 
 TiXmlElement* SummationFunction1Property::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Function1Property::writeXMLFile(parent);
+  TiXmlElement *ele0 = FunctionProperty::writeXMLFile(parent);
   for(int i=0; i<function.size(); i++) {
     TiXmlElement *ele1 = new TiXmlElement(MBSIMNS"function");
     function[i].writeXMLFile(ele1);
@@ -337,7 +449,7 @@ void SummationFunction1Property::toWidget(QWidget *widget) {
   }
 }
 
-SymbolicFunction2Property::SymbolicFunction2Property(const string &ext, const vector<string> &var) : Function2Property(ext), argname(ext.size()-1), argdim(ext.size()-1) {
+SymbolicFunction2Property::SymbolicFunction2Property(const string &ext, const vector<string> &var) : FunctionProperty(ext), argname(ext.size()-1), argdim(ext.size()-1) {
   for(int i=1; i<ext.size(); i++) {
      argname[i-1].setProperty(new TextProperty(var[i-1],""));
      argdim[i-1].setProperty(new IntegerProperty(1,""));
@@ -359,7 +471,7 @@ TiXmlElement* SymbolicFunction2Property::initializeUsingXML(TiXmlElement *elemen
 }
 
 TiXmlElement* SymbolicFunction2Property::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Function2Property::writeXMLFile(parent);
+  TiXmlElement *ele0 = FunctionProperty::writeXMLFile(parent);
   for(int i=1; i<ext.size(); i++) {
     string istr = ext.size()>2?toStr(i):"";
     ele0->SetAttribute("arg"+istr+"name", static_cast<TextProperty*>(argname[i-1].getProperty())->getText());
@@ -386,8 +498,12 @@ void SymbolicFunction2Property::toWidget(QWidget *widget) {
   f.toWidget(static_cast<SymbolicFunction2Widget*>(widget)->f);
 }
 
-int SymbolicFunction2Property::getArgDim(int i) const {
-  return static_cast<const IntegerProperty*>(argdim[i].getProperty())->getValue();
+int SymbolicFunction2Property::getArg1Size() const {
+  return static_cast<const IntegerProperty*>(argdim[0].getProperty())->getValue();
+}
+
+int SymbolicFunction2Property::getArg2Size() const {
+  return static_cast<const IntegerProperty*>(argdim[1].getProperty())->getValue();
 }
 
 LinearSpringDamperForceProperty::LinearSpringDamperForceProperty() {
@@ -413,7 +529,7 @@ TiXmlElement* LinearSpringDamperForceProperty::initializeUsingXML(TiXmlElement *
 }
 
 TiXmlElement* LinearSpringDamperForceProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Function2Property::writeXMLFile(parent);
+  TiXmlElement *ele0 = FunctionProperty::writeXMLFile(parent);
   c.writeXMLFile(ele0);
   d.writeXMLFile(ele0);
   l0.writeXMLFile(ele0);
@@ -450,7 +566,7 @@ TiXmlElement* LinearRegularizedBilateralConstraintProperty::initializeUsingXML(T
 }
 
 TiXmlElement* LinearRegularizedBilateralConstraintProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Function2Property::writeXMLFile(parent);
+  TiXmlElement *ele0 = FunctionProperty::writeXMLFile(parent);
   c.writeXMLFile(ele0);
   d.writeXMLFile(ele0);
   return ele0;
@@ -484,7 +600,7 @@ TiXmlElement* LinearRegularizedUnilateralConstraintProperty::initializeUsingXML(
 }
 
 TiXmlElement* LinearRegularizedUnilateralConstraintProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Function2Property::writeXMLFile(parent);
+  TiXmlElement *ele0 = FunctionProperty::writeXMLFile(parent);
   c.writeXMLFile(ele0);
   d.writeXMLFile(ele0);
   return ele0;
@@ -518,7 +634,7 @@ TiXmlElement* LinearRegularizedCoulombFrictionProperty::initializeUsingXML(TiXml
 }
 
 TiXmlElement* LinearRegularizedCoulombFrictionProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = Function2Property::writeXMLFile(parent);
+  TiXmlElement *ele0 = FunctionProperty::writeXMLFile(parent);
   gd.writeXMLFile(ele0);
   mu.writeXMLFile(ele0);
   return ele0;
