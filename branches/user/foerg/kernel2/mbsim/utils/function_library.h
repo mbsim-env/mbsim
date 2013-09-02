@@ -894,6 +894,7 @@ namespace MBSim {
         typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) {
           return typename fmatvec::Der<fmatvec::RotMat3, Arg>::type(1);
         }
+        typename fmatvec::Der<typename fmatvec::Der<fmatvec::RotMat3, Arg>::type, Arg>::type parDerParDer(const Arg &arg) { throw std::runtime_error("parDerParDer is not available for given template parameters."); }
         const fmatvec::Vec3& getAxisOfRotation() const { return a; }
         void setAxisOfRotation(const fmatvec::Vec3 &a_) { a = a_; }
         void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
@@ -902,6 +903,9 @@ namespace MBSim {
         }
         MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; } 
     };
+
+  template<>
+  inline fmatvec::Vec3 RotationAboutFixedAxis<double>::parDerParDer(const double &arg) { return fmatvec::Vec3(); }
 
   template<class Arg> 
     class RotationAboutAxesXY : public fmatvec::Function<fmatvec::RotMat3(Arg)> {

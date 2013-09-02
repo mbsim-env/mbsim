@@ -26,6 +26,7 @@
 #include "basic_properties.h"
 #include "kinematics_properties.h"
 #include "ombv_properties.h"
+#include "function_properties.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -44,11 +45,24 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   input.push_back(PhysicalVariableProperty(new MatProperty(getEye<string>(3,3,"0.01","0")),"kg*m^2",MBSIMNS"inertiaTensor"));
   inertia.setProperty(new ExtPhysicalVarProperty(input));
 
-  translation.setProperty(new TranslationChoiceProperty(0,""));
   translation.setXMLName(MBSIMNS"translation");
+  vector<Property*> property;
+  property.push_back(new ConstantFunction1Property("VS",3));
+  property.push_back(new LinearFunction1Property("VV",3,1));
+  property.push_back(new LinearFunction1Property("VS",3,1));
+  vector<string> var;
+  var.push_back("q");
+  var.push_back("t");
+  property.push_back(new SymbolicFunction2Property("VVS",var));
+  property.push_back(new SymbolicFunction1Property("VV","q"));
+  property.push_back(new SymbolicFunction1Property("VS","t"));
+  translation.setProperty(new ChoiceProperty("",property));
 
-  rotation.setProperty(new RotationChoiceProperty(2,""));
   rotation.setXMLName(MBSIMNS"rotation");
+  property.clear();
+  property.push_back(new RotationAboutFixedAxisProperty("V"));
+  property.push_back(new RotationAboutFixedAxisProperty("S"));
+  rotation.setProperty(new ChoiceProperty("",property));
 
   ombvEditor.setProperty(new OMBVBodySelectionProperty(this));
 
@@ -67,45 +81,21 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
 }
 
 int RigidBody::getqRelSize() const {
-  int nq=0, nqT=0, nqR=0;
+  int nqT=0, nqR=0;
   if(translation.isActive()) {
-    const TranslationChoiceProperty *trans = static_cast<const TranslationChoiceProperty*>(translation.getProperty());
-    if(trans->isIndependent())
-      nqT = trans->getqTSize();
-    else
-      nq = trans->getqSize();
+    const ChoiceProperty *trans = static_cast<const ChoiceProperty*>(translation.getProperty());
+    nqT = static_cast<FunctionProperty*>(trans->getProperty())->getArg1Size();
   }
   if(rotation.isActive()) {
-    const RotationChoiceProperty *rot = static_cast<const RotationChoiceProperty*>(rotation.getProperty());
-    if(rot->isIndependent())
-      nqR = rot->getqRSize();
-    else
-      nq = rot->getqSize();
+    const ChoiceProperty *rot = static_cast<const ChoiceProperty*>(rotation.getProperty());
+    nqR = static_cast<FunctionProperty*>(rot->getProperty())->getArg1Size();
   }
-  if(nq == 0)
-    nq = nqT + nqR;
+  int nq = nqT + nqR;
   return nq;
 }
 
 int RigidBody::getuRelSize() const {
-  int nu=0, nuT=0, nuR=0;
-  if(translation.isActive()) {
-    const TranslationChoiceProperty *trans = static_cast<const TranslationChoiceProperty*>(translation.getProperty());
-    if(trans->isIndependent())
-      nuT = trans->getuTSize();
-    else
-      nu = trans->getuSize();
-  }
-  if(rotation.isActive()) {
-    const RotationChoiceProperty *rot = static_cast<const RotationChoiceProperty*>(rotation.getProperty());
-    if(rot->isIndependent())
-      nuR = rot->getuRSize();
-    else
-      nu = rot->getuSize();
-  }
-  if(nu == 0)
-    nu = nuT + nuR;
-  return nu;
+  return getqRelSize();
 }
 
 void RigidBody::initialize() {

@@ -76,7 +76,7 @@ StateDependentTranslationWidget::StateDependentTranslationWidget() {
 
 int StateDependentTranslationWidget::getqSize() const {
   SymbolicFunction1Widget *func = static_cast<SymbolicFunction1Widget*>(static_cast<ChoiceWidget*>(function->getWidget())->getWidget());
-  return func->getArgDim();
+  return func->getArg1Size();
   return 0;
 }
 
@@ -97,7 +97,7 @@ GeneralTranslationWidget::GeneralTranslationWidget() {
 
 int GeneralTranslationWidget::getqSize() const {
   SymbolicFunction2Widget *func = static_cast<SymbolicFunction2Widget*>(static_cast<ChoiceWidget*>(function->getWidget())->getWidget());
-  return func->getArgDim(0);
+  return func->getArg1Size();
   return 0;
 }
 
@@ -177,17 +177,17 @@ void TranslationChoiceWidget::defineTranslation(int index) {
   emit translationChanged();
 }
 
-RotationAboutFixedAxisWidget::RotationAboutFixedAxisWidget() {
-  QVBoxLayout *layout = new QVBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
-
-  vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new VecWidget(3),noUnitUnits(),1));
-  ExtPhysicalVarWidget *vec_ = new ExtPhysicalVarWidget(input);
-  vec = new ExtWidget("Axis of rotation",vec_);
-  layout->addWidget(vec);
-}
+//RotationAboutFixedAxisWidget::RotationAboutFixedAxisWidget() {
+//  QVBoxLayout *layout = new QVBoxLayout;
+//  layout->setMargin(0);
+//  setLayout(layout);
+//
+//  vector<PhysicalVariableWidget*> input;
+//  input.push_back(new PhysicalVariableWidget(new VecWidget(3),noUnitUnits(),1));
+//  ExtPhysicalVarWidget *vec_ = new ExtPhysicalVarWidget(input);
+//  vec = new ExtWidget("Axis of rotation",vec_);
+//  layout->addWidget(vec);
+//}
 
 TimeDependentRotationAboutFixedAxisWidget::TimeDependentRotationAboutFixedAxisWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
@@ -231,7 +231,7 @@ StateDependentRotationAboutFixedAxisWidget::StateDependentRotationAboutFixedAxis
 
 int StateDependentRotationAboutFixedAxisWidget::getqSize() const {
   SymbolicFunction1Widget *func = static_cast<SymbolicFunction1Widget*>(static_cast<ChoiceWidget*>(function->getWidget())->getWidget());
-  return func->getArgDim();
+  return func->getArg1Size();
   return 0;
 }
 
@@ -264,9 +264,9 @@ RotationChoiceWidget::RotationChoiceWidget() {
   rotation = new RotationAboutZAxisWidget;  
   rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
   stackedWidget->addWidget(rotation);
-  rotation = new RotationAboutFixedAxisWidget;  
-  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-  stackedWidget->addWidget(rotation);
+//  rotation = new RotationAboutFixedAxisWidget;  
+//  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+//  stackedWidget->addWidget(rotation);
   rotation = new RotationAboutAxesXYWidget;  
   rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
   stackedWidget->addWidget(rotation);

@@ -23,8 +23,7 @@
 #include "basic_properties.h"
 #include <QComboBox>
 
-class Function2Property;
-class Function1ChoiceProperty;
+class FunctionProperty;
 
 class GeneralizedForceLawProperty : public Property {
 
@@ -36,7 +35,7 @@ class GeneralizedForceLawProperty : public Property {
     virtual std::string getType() const { return "GeneralizedForceLaw"; }
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
    protected:
-    Function2Property *forceFunc;
+    FunctionProperty *forceFunc;
 };
 
 class BilateralConstraintProperty : public GeneralizedForceLawProperty {
@@ -128,7 +127,7 @@ class FrictionForceLawProperty : public Property {
     virtual std::string getType() const { return "FrictionForceLaw"; }
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
    protected:
-    Function2Property *frictionForceFunc;
+    FunctionProperty *frictionForceFunc;
 };
 
 class PlanarCoulombFrictionProperty : public FrictionForceLawProperty {

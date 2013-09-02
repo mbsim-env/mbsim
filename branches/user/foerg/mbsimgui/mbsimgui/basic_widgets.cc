@@ -906,4 +906,41 @@ void SignalReferencesWidget::removeReference() {
   updateList();
 }
 
+ColorWidget::ColorWidget() {
+  QHBoxLayout *layout = new QHBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
 
+  vector<PhysicalVariableWidget*> input;
+  vector<QString> vec(3);
+  vec[0] = "0.666667"; vec[1] = "1"; vec[2] = "1";
+  input.push_back(new PhysicalVariableWidget(new VecWidget(vec,true), QStringList(), 1));
+  color = new ExtWidget("HSV",new ExtPhysicalVarWidget(input));
+  layout->addWidget(color);
+
+  button = new QPushButton(tr("Select"));
+  connect(button,SIGNAL(clicked(bool)),this,SLOT(setColor()));
+  layout->addWidget(button);
+  updateWidget();
+}
+
+void ColorWidget::updateWidget() { 
+  QString val = static_cast<ExtPhysicalVarWidget*>(color->getWidget())->getValue();
+  vector<QString> vec = strToVec(val);
+  button->setPalette(QPalette(QColor::fromHsvF(vec[0].toDouble(),vec[1].toDouble(),vec[2].toDouble())));
+}
+
+void ColorWidget::setColor() { 
+  QString val = static_cast<ExtPhysicalVarWidget*>(color->getWidget())->getValue();
+  vector<QString> vec = strToVec(val);
+  QColor col;
+  if(vec.size()==3)
+    col = QColorDialog::getColor(QColor::fromHsvF(vec[0].toDouble(),vec[1].toDouble(),vec[2].toDouble()));
+  else
+    col = QColorDialog::getColor(Qt::blue);
+  if(col.isValid()) {
+    QString str = "[" + QString::number(col.hueF()) + ";" + QString::number(col.saturationF()) + ";" + QString::number(col.valueF()) + "]";
+    static_cast<ExtPhysicalVarWidget*>(color->getWidget())->setValue(str);
+    updateWidget();
+  }
+}

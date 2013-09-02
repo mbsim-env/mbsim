@@ -31,65 +31,86 @@ class QStackedWidget;
 class QListWidget;
 class QSpinBox;
 
-class Function1Widget : public Widget {
+class FunctionWidget : public Widget {
   Q_OBJECT
   public:
-    Function1Widget() {}
-    virtual ~Function1Widget() {}
+    FunctionWidget(const QString &ext_="") : ext(ext_) {}
+    virtual ~FunctionWidget() {}
+    virtual int getArg1Size() const {return 0;}
+    virtual int getArg2Size() const {return 0;}
+  protected:
+    QString ext;
   public slots:
     virtual void resize_(int m, int n) {}
 };
 
-class Function2Widget : public Widget {
-  Q_OBJECT
-  public:
-    Function2Widget() {}
-    virtual ~Function2Widget() {}
-  public slots:
-    virtual void resize_(int m, int n) {}
-};
+//class Function2Widget : public Widget {
+//  Q_OBJECT
+//  public:
+//    Function2Widget() {}
+//    virtual ~Function2Widget() {}
+//  public slots:
+//    virtual void resize_(int m, int n) {}
+//};
 
-class SymbolicFunction1Widget : public Function1Widget {
+class SymbolicFunction1Widget : public FunctionWidget {
 
   friend class SymbolicFunction1Property;
 
   public:
     SymbolicFunction1Widget(const QString &var, int max=99);
-    int getArgDim() const;
+    int getArg1Size() const;
   protected:
     ExtWidget *f;
     std::vector<ExtWidget*> argname, argdim;
 };
 
-class DifferentiableFunction1Widget : public Function1Widget {
-  public:
-    DifferentiableFunction1Widget() : Function1Widget(), order(0) {}
-    //virtual ~DifferentiableFunction1() { delete derivatives[0]; derivatives.erase(derivatives.begin()); }
-    const Function1Widget& getDerivative(int degree) const { return *(derivatives[degree]); }
-    Function1Widget& getDerivative(int degree) { return *(derivatives[degree]); }
-    void addDerivative(Function1Widget *diff) { derivatives.push_back(diff); }
-    void setDerivative(Function1Widget *diff,size_t degree);
-
-    void setOrderOfDerivative(int i) { order=i; }
-
-
-  protected:
-    std::vector<Function1Widget*> derivatives;
-    int order;
-};
-
-class ConstantFunction1Widget : public Function1Widget {
+class ConstantFunction1Widget : public FunctionWidget {
 
   friend class ConstantFunction1Property;
 
   public:
-    ConstantFunction1Widget(bool vec, int n);
+    ConstantFunction1Widget(const QString &ext, int m);
     void resize_(int m, int n);
   protected:
     ExtWidget *c;
 };
 
-class QuadraticFunction1Widget : public DifferentiableFunction1Widget {
+class LinearFunctionTestWidget : public FunctionWidget {
+
+  friend class LinearFunctionTestProperty;
+
+  public:
+    LinearFunctionTestWidget(bool vec, int n);
+  protected:
+    ExtWidget *choice;
+    ExtWidget *a, *b;
+};
+
+class LinearFunction1Widget : public FunctionWidget {
+
+  friend class LinearFunction1Property;
+
+  public:
+    LinearFunction1Widget(const QString &ext, int m, int n);
+    int getArg1Size() const;
+    void resize_(int m, int n);
+  protected:
+    ExtWidget *a, *b;
+};
+
+class RotationAboutFixedAxisWidget : public FunctionWidget {
+
+  friend class RotationAboutFixedAxisProperty;
+
+  public:
+    RotationAboutFixedAxisWidget(const QString &ext);
+    int getArg1Size() const {return ext[0]=='V'?1:0;}
+  protected:
+    ExtWidget *a;
+};
+
+class QuadraticFunction1Widget : public FunctionWidget {
 
   friend class QuadraticFunction1Property;
 
@@ -101,7 +122,7 @@ class QuadraticFunction1Widget : public DifferentiableFunction1Widget {
     ExtWidget *a0, *a1, *a2;
 };
 
-class SinusFunction1Widget : public DifferentiableFunction1Widget {
+class SinusFunction1Widget : public FunctionWidget {
 
   friend class SinusFunction1Property;
 
@@ -113,7 +134,7 @@ class SinusFunction1Widget : public DifferentiableFunction1Widget {
     ExtWidget *a, *f, *p, *o;
 };
 
-class TabularFunction1Widget : public Function1Widget {
+class TabularFunction1Widget : public FunctionWidget {
 
   friend class TabularFunction1Property;
 
@@ -124,7 +145,7 @@ class TabularFunction1Widget : public Function1Widget {
     ChoiceWidget* choice;
 };
 
-class SummationFunction1Widget : public Function1Widget {
+class SummationFunction1Widget : public FunctionWidget {
   Q_OBJECT
 
   friend class SummationFunction1Property;
@@ -148,19 +169,20 @@ class SummationFunction1Widget : public Function1Widget {
     void resize_();
 };
 
-class SymbolicFunction2Widget : public Function2Widget {
+class SymbolicFunction2Widget : public FunctionWidget {
 
   friend class SymbolicFunction2Property;
 
   public:
     SymbolicFunction2Widget(const QStringList &var, int max=99);
-    int getArgDim(int i) const;
+    int getArg1Size() const;
+    int getArg2Size() const;
   protected:
     ExtWidget *f;
     std::vector<ExtWidget*> argname, argdim;
 };
 
-class LinearSpringDamperForceWidget : public Function2Widget {
+class LinearSpringDamperForceWidget : public FunctionWidget {
 
   friend class LinearSpringDamperForceProperty;
 
@@ -170,7 +192,7 @@ class LinearSpringDamperForceWidget : public Function2Widget {
     ExtWidget *c, *d, *l0;
 };
 
-class LinearRegularizedBilateralConstraintWidget: public Function2Widget {
+class LinearRegularizedBilateralConstraintWidget: public FunctionWidget {
 
   friend class LinearRegularizedBilateralConstraintProperty;
 
@@ -182,7 +204,7 @@ class LinearRegularizedBilateralConstraintWidget: public Function2Widget {
     ExtWidget *c, *d;
 };
 
-class LinearRegularizedUnilateralConstraintWidget: public Function2Widget {
+class LinearRegularizedUnilateralConstraintWidget: public FunctionWidget {
 
   friend class LinearRegularizedUnilateralConstraintProperty;
 
@@ -194,7 +216,7 @@ class LinearRegularizedUnilateralConstraintWidget: public Function2Widget {
     ExtWidget *c, *d;
 };
 
-class LinearRegularizedCoulombFrictionWidget: public Function2Widget {
+class LinearRegularizedCoulombFrictionWidget: public FunctionWidget {
 
   friend class LinearRegularizedCoulombFrictionProperty;
 

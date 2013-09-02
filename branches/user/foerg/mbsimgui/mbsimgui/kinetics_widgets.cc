@@ -308,7 +308,7 @@ ForceChoiceWidget::ForceChoiceWidget() {
 
   vector<QWidget*> widget;
   vector<QString> name;
-  widget.push_back(new ConstantFunction1Widget(true,1));
+  widget.push_back(new ConstantFunction1Widget("VS",1));
   name.push_back("Constant function");
   widget.push_back(new QuadraticFunction1Widget(1));
   name.push_back("Quadratic function");

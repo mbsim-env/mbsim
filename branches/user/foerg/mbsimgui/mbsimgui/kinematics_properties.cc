@@ -176,7 +176,7 @@ GeneralTranslationProperty::GeneralTranslationProperty() {
 
 int GeneralTranslationProperty::getqSize() const {
   SymbolicFunction2Property *func = static_cast<SymbolicFunction2Property*>(static_cast<const ChoiceProperty*>(function.getProperty())->getProperty());
-  return func->getArgDim(0);
+  return func->getArg1Size();
   return 0;
 }
 
@@ -313,30 +313,30 @@ TiXmlElement* RotationAboutZAxisProperty::writeXMLFile(TiXmlNode *parent) {
   return ele2;
 }
 
-RotationAboutFixedAxisProperty::RotationAboutFixedAxisProperty() {
-  vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new VecProperty(3),"-",MBSIMNS"axisOfRotation"));
-  vec.setProperty(new ExtPhysicalVarProperty(input));  
-}
-
-TiXmlElement* RotationAboutFixedAxisProperty::initializeUsingXML(TiXmlElement *element) {
-  return vec.initializeUsingXML(element);
-}
-
-TiXmlElement* RotationAboutFixedAxisProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"RotationAboutFixedAxis" );
-  vec.writeXMLFile(ele2);
-  parent->LinkEndChild(ele2);
-  return ele2;
-}
-
-void RotationAboutFixedAxisProperty::fromWidget(QWidget *widget) {
-  vec.fromWidget(static_cast<RotationAboutFixedAxisWidget*>(widget)->vec);
-}
-
-void RotationAboutFixedAxisProperty::toWidget(QWidget *widget) {
-  vec.toWidget(static_cast<RotationAboutFixedAxisWidget*>(widget)->vec);
-}
+//RotationAboutFixedAxisProperty::RotationAboutFixedAxisProperty() {
+//  vector<PhysicalVariableProperty> input;
+//  input.push_back(PhysicalVariableProperty(new VecProperty(3),"-",MBSIMNS"axisOfRotation"));
+//  vec.setProperty(new ExtPhysicalVarProperty(input));  
+//}
+//
+//TiXmlElement* RotationAboutFixedAxisProperty::initializeUsingXML(TiXmlElement *element) {
+//  return vec.initializeUsingXML(element);
+//}
+//
+//TiXmlElement* RotationAboutFixedAxisProperty::writeXMLFile(TiXmlNode *parent) {
+//  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"RotationAboutFixedAxis" );
+//  vec.writeXMLFile(ele2);
+//  parent->LinkEndChild(ele2);
+//  return ele2;
+//}
+//
+//void RotationAboutFixedAxisProperty::fromWidget(QWidget *widget) {
+//  vec.fromWidget(static_cast<RotationAboutFixedAxisWidget*>(widget)->vec);
+//}
+//
+//void RotationAboutFixedAxisProperty::toWidget(QWidget *widget) {
+//  vec.toWidget(static_cast<RotationAboutFixedAxisWidget*>(widget)->vec);
+//}
 
 TiXmlElement* RotationAboutAxesXYProperty::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"RotationAboutAxesXY" );
@@ -450,7 +450,7 @@ RotationChoiceProperty::RotationChoiceProperty(int index, const std::string &xml
   rotation.push_back(new RotationAboutXAxisProperty);
   rotation.push_back(new RotationAboutYAxisProperty);  
   rotation.push_back(new RotationAboutZAxisProperty);  
-  rotation.push_back(new RotationAboutFixedAxisProperty);  
+//  rotation.push_back(new RotationAboutFixedAxisProperty);  
   rotation.push_back(new RotationAboutAxesXYProperty);
   rotation.push_back(new RotationAboutAxesXZProperty);  
   rotation.push_back(new RotationAboutAxesYZProperty);  

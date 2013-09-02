@@ -100,12 +100,12 @@ TiXmlElement* ChoiceProperty::initializeUsingXML(TiXmlElement *element) {
         for(int i=0; i<property.size(); i++)
           if(ee->ValueStr() == xmlBase+property[i]->getType()) {
             index = i;
+            return property[index]->initializeUsingXML(ee);
             break;
           }
-        property[index]->initializeUsingXML(ee);
       }
     }
-    return e;
+    return 0;
   }
   else {
     if(xmlName!="") {

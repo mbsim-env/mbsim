@@ -225,19 +225,19 @@ class RotationAboutZAxisProperty : public TranslationIndependentRotationProperty
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
 };
 
-class RotationAboutFixedAxisProperty : public TranslationIndependentRotationProperty {
-
-  public:
-    RotationAboutFixedAxisProperty();
-    virtual Property* clone() const {return new RotationAboutFixedAxisProperty(*this);}
-    int getqRSize() const {return 1;}
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    void fromWidget(QWidget *widget); 
-    void toWidget(QWidget *widget); 
-   protected:
-    ExtProperty vec;
-};
+//class RotationAboutFixedAxisProperty : public TranslationIndependentRotationProperty {
+//
+//  public:
+//    RotationAboutFixedAxisProperty();
+//    virtual Property* clone() const {return new RotationAboutFixedAxisProperty(*this);}
+//    int getqRSize() const {return 1;}
+//    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+//    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+//    void fromWidget(QWidget *widget); 
+//    void toWidget(QWidget *widget); 
+//   protected:
+//    ExtProperty vec;
+//};
 
 class RotationAboutAxesXYProperty : public TranslationIndependentRotationProperty {
 

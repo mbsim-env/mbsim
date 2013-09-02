@@ -425,5 +425,18 @@ class SignalReferencesProperty : public Property {
     void addReference();
 };
 
+class ColorProperty : public Property {
+  protected:
+    ExtProperty color;
+    std::string xmlName;
+  public:
+    ColorProperty(const std::string &xmlName=""); 
+    virtual Property* clone() const {return new ColorProperty(*this);}
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element); 
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+};
+
 #endif
 

@@ -28,12 +28,7 @@
 
 using namespace std;
 
-void DifferentiableFunction1Widget::setDerivative(Function1Widget *diff,size_t degree) { 
-  derivatives.resize(max(derivatives.size(),degree+1)); 
-  derivatives[degree]=diff; 
-}
-
-SymbolicFunction1Widget::SymbolicFunction1Widget(const QString &var, int max) : Function1Widget() {
+SymbolicFunction1Widget::SymbolicFunction1Widget(const QString &var, int max) : FunctionWidget() {
   QGridLayout *layout = new QGridLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -47,17 +42,17 @@ SymbolicFunction1Widget::SymbolicFunction1Widget(const QString &var, int max) : 
   layout->addWidget(f,var.size(),0,1,2);
 }
 
-int SymbolicFunction1Widget::getArgDim() const {
+int SymbolicFunction1Widget::getArg1Size() const {
   return static_cast<SpinBoxWidget*>(argdim[0]->getWidget())->getValue();
 }
 
-ConstantFunction1Widget::ConstantFunction1Widget(bool vec, int n) : Function1Widget() {
+ConstantFunction1Widget::ConstantFunction1Widget(const QString &ext, int m) : FunctionWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
   vector<PhysicalVariableWidget*> input;
-  if(vec)
-    input.push_back(new PhysicalVariableWidget(new VecWidget(n,true),QStringList(),0));
+  if(ext[0]=='V')
+    input.push_back(new PhysicalVariableWidget(new VecWidget(m),QStringList(),0));
   else
     input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
   c = new ExtWidget("Value",new ExtPhysicalVarWidget(input));
@@ -67,6 +62,100 @@ ConstantFunction1Widget::ConstantFunction1Widget(bool vec, int n) : Function1Wid
 void ConstantFunction1Widget::resize_(int m, int n) {
   if(((VecWidget*)static_cast<ExtPhysicalVarWidget*>(c->getWidget())->getPhysicalVariableWidget(0)->getWidget())->size() != m)
     ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(c->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
+}
+
+LinearFunctionTestWidget::LinearFunctionTestWidget(bool vec, int n) : FunctionWidget() {
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
+  vector<QWidget*> widget;
+  vector<QString> name;
+
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new MatColsVarWidget(n,1,1,3),QStringList(),0));
+  widget.push_back(new ExtWidget("Slope",new ExtPhysicalVarWidget(input)));
+  name.push_back("State");
+
+  input.clear();
+  input.push_back(new PhysicalVariableWidget(new VecWidget(n),QStringList(),0));
+  widget.push_back(new ExtWidget("Slope",new ExtPhysicalVarWidget(input)));
+  name.push_back("Time");
+
+  choice = new ExtWidget("Choice",new ChoiceWidget(widget,name),true);
+//  choice = new ChoiceWidget(widget,name);
+  layout->addWidget(choice);
+
+  input.clear();
+//  if(vec)
+    input.push_back(new PhysicalVariableWidget(new MatColsVarWidget(n,1,1,3),QStringList(),0));
+//  else
+//    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
+  a = new ExtWidget("Slope",new ExtPhysicalVarWidget(input));
+  layout->addWidget(a);
+  input.clear();
+//  if(vec)
+    input.push_back(new PhysicalVariableWidget(new VecWidget(n),QStringList(),0));
+//  else
+//    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
+  b = new ExtWidget("Intercept",new ExtPhysicalVarWidget(input),true);
+  layout->addWidget(b);
+}
+
+LinearFunction1Widget::LinearFunction1Widget(const QString &ext, int m, int n) : FunctionWidget(ext) {
+//  MatColsVarWidget* m = new MatColsVarWidget(3,1,1,3);
+//  input.push_back(new PhysicalVariableWidget(m,noUnitUnits(),1));
+//  ExtPhysicalVarWidget *mat_ = new ExtPhysicalVarWidget(input);
+//  mat = new ExtWidget("Translation vectors",mat_);
+//  layout->addWidget(mat);
+//  QObject::connect(m, SIGNAL(sizeChanged(int)), this, SIGNAL(translationChanged()));
+//  QObject::connect(mat_, SIGNAL(inputDialogChanged(int)), this, SIGNAL(translationChanged()));
+
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+  vector<PhysicalVariableWidget*> input;
+  if(ext[0]=='V' and ext[1]=='V')
+    input.push_back(new PhysicalVariableWidget(new MatColsVarWidget(m,1,1,3),QStringList(),0));
+  else if(ext[0]=='V' and ext[1]=='S')
+    input.push_back(new PhysicalVariableWidget(new VecWidget(m),QStringList(),0));
+  else
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),QStringList(),0));
+  a = new ExtWidget("Slope",new ExtPhysicalVarWidget(input));
+  layout->addWidget(a);
+
+  input.clear();
+  if(ext[0]=='V')
+    input.push_back(new PhysicalVariableWidget(new VecWidget(m),QStringList(),0));
+  else
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
+  b = new ExtWidget("Intercept",new ExtPhysicalVarWidget(input),true);
+  layout->addWidget(b);
+}
+
+int LinearFunction1Widget::getArg1Size() const {
+  if(ext[0]=='V' and ext[1]=='V') {
+    string str = evalOctaveExpression(static_cast<ExtPhysicalVarWidget*>(a->getWidget())->getCurrentPhysicalVariableWidget()->getValue().toStdString());
+    vector<vector<string> > A = strToMat(str);
+    return A.size()?A[0].size():0;
+  }
+  return 0;
+}
+
+void LinearFunction1Widget::resize_(int m, int n) {
+//  if(((VecWidget*)static_cast<ExtPhysicalVarWidget*>(c->getWidget())->getPhysicalVariableWidget(0)->getWidget())->size() != m)
+//    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(c->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
+}
+
+RotationAboutFixedAxisWidget::RotationAboutFixedAxisWidget(const QString &ext) : FunctionWidget(ext) {
+
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new VecWidget(3),QStringList(),0));
+  a = new ExtWidget("Axis of rotation",new ExtPhysicalVarWidget(input));
+  layout->addWidget(a);
 }
 
 QuadraticFunction1Widget::QuadraticFunction1Widget(int n) {
@@ -218,7 +307,7 @@ void SummationFunction1Widget::addFunction() {
   ContainerWidget *widgetContainer = new ContainerWidget;
   vector<QWidget*> widget;
   vector<QString> name;
-  widget.push_back(new ConstantFunction1Widget(true,n));
+  widget.push_back(new ConstantFunction1Widget("VS",n));
   name.push_back("Constant function");
   widget.push_back(new QuadraticFunction1Widget(n));
   name.push_back("Quadratic function");
@@ -259,7 +348,7 @@ void SummationFunction1Widget::removeFunction() {
   delete functionList->takeItem(i);
 }
 
-SymbolicFunction2Widget::SymbolicFunction2Widget(const QStringList &var, int max) : Function2Widget() {
+SymbolicFunction2Widget::SymbolicFunction2Widget(const QStringList &var, int max) : FunctionWidget() {
   QGridLayout *layout = new QGridLayout;
   layout->setMargin(0);
   setLayout(layout);
@@ -275,8 +364,12 @@ SymbolicFunction2Widget::SymbolicFunction2Widget(const QStringList &var, int max
   layout->addWidget(f,var.size(),0,1,2);
 }
 
-int SymbolicFunction2Widget::getArgDim(int i) const {
-  return static_cast<SpinBoxWidget*>(argdim[i]->getWidget())->getValue();
+int SymbolicFunction2Widget::getArg1Size() const {
+  return static_cast<SpinBoxWidget*>(argdim[0]->getWidget())->getValue();
+}
+
+int SymbolicFunction2Widget::getArg2Size() const {
+  return static_cast<SpinBoxWidget*>(argdim[1]->getWidget())->getValue();
 }
 
 LinearSpringDamperForceWidget::LinearSpringDamperForceWidget() {

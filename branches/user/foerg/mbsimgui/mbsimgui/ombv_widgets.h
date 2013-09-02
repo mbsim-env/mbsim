@@ -57,7 +57,7 @@ class OMBVDynamicColoredObjectWidget : public OMBVObjectWidget {
     OMBVDynamicColoredObjectWidget(const QString &name="NOTSET");
   protected:
     QVBoxLayout *layout;
-    ExtWidget *minimalColorValue, *maximalColorValue, *staticColor;
+    ExtWidget *minimalColorValue, *maximalColorValue, *diffuseColor, *transparency;
 };
 
 
@@ -81,15 +81,14 @@ class OMBVCoilSpringWidget : public OMBVObjectWidget {
     ExtWidget *type, *numberOfCoils, *springRadius, *crossSectionRadius, *nominalLength, *scaleFactor;
 };
 
-class OMBVBodyWidget : public OMBVObjectWidget {
+class OMBVBodyWidget : public OMBVDynamicColoredObjectWidget {
 
   friend class OMBVBodyProperty;
 
   public:
     OMBVBodyWidget(const QString &name="NOTSET");
   protected:
-    QVBoxLayout *layout;
-    ExtWidget *trans, *rot, *color, *scale;
+    ExtWidget *trans, *rot, *scale;
 };
 
 class InvisibleBodyWidget : public OMBVBodyWidget {

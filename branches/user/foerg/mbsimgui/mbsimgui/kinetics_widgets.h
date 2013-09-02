@@ -24,7 +24,7 @@
 #include "basic_widgets.h"
 #include <QComboBox>
 
-class Function2Widget;
+class FunctionWidget;
 class QVBoxLayout;
 class ExtWidget;
 class ExtPhysicalVarWidget;
@@ -37,7 +37,7 @@ class GeneralizedForceLawWidget : public Widget {
     GeneralizedForceLawWidget() : forceFunc(0) {}
     virtual QString getType() const { return "GeneralizedForceLaw"; }
    protected:
-    Function2Widget *forceFunc;
+    FunctionWidget *forceFunc;
 };
 
 class BilateralConstraintWidget : public GeneralizedForceLawWidget {
@@ -115,7 +115,7 @@ class FrictionForceLawWidget : public Widget {
     FrictionForceLawWidget() : frictionForceFunc(0) {}
     virtual QString getType() const { return "FrictionForceLaw"; }
    protected:
-    Function2Widget *frictionForceFunc;
+    FunctionWidget *frictionForceFunc;
 };
 
 class PlanarCoulombFrictionWidget : public FrictionForceLawWidget {

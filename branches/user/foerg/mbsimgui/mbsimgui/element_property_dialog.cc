@@ -333,17 +333,49 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   inertia = new ExtWidget("Inertia tensor",new ExtPhysicalVarWidget(input));
   addToTab("General", inertia);
 
-  TranslationChoiceWidget *translation_ = new TranslationChoiceWidget;
-  translation = new ExtWidget("Translation",translation_,true);
+  vector<QWidget*> widget;
+  vector<QString> name;
+  widget.push_back(new ConstantFunction1Widget("VS",3));
+  name.push_back("Constant r=const.");
+  widget.push_back(new LinearFunction1Widget("VV",3,1));
+  name.push_back("Linear r=r(q)");
+  widget.push_back(new LinearFunction1Widget("VS",3,1));
+  name.push_back("Linear r=r(t)");
+  QStringList var;
+  var << "q" << "t";
+  widget.push_back(new SymbolicFunction2Widget(var));
+  name.push_back("Symbolic r=r(q,t)");
+  widget.push_back(new SymbolicFunction1Widget("q"));
+  name.push_back("Symbolic r=r(q)");
+  widget.push_back(new SymbolicFunction1Widget("t"));
+  name.push_back("Symbolic r=r(t)");
+  translation = new ExtWidget("Translation",new ChoiceWidget(widget,name),true);
+//  TranslationChoiceWidget *translation_ = new TranslationChoiceWidget;
+//  translation = new ExtWidget("Translation",translation_,true);
   addToTab("Kinematics", translation);
-  connect(translation_,SIGNAL(translationChanged()),this,SLOT(resizeVariables()));
-  connect(translation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
+//  connect(translation_,SIGNAL(translationChanged()),this,SLOT(resizeVariables()));
+//  connect(translation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
-  RotationChoiceWidget *rotation_ = new RotationChoiceWidget;
-  rotation = new ExtWidget("Rotation",rotation_,true);
+  widget.clear();
+  name.clear();
+  widget.push_back(new RotationAboutFixedAxisWidget("V"));
+  name.push_back("Rotation about fixes axis A=A(q)");
+  widget.push_back(new RotationAboutFixedAxisWidget("S"));
+  name.push_back("Rotation about fixes axis A=A(t)");
+//  QStringList var;
+//  var << "q" << "t";
+//  widget.push_back(new SymbolicFunction2Widget(var));
+//  name.push_back("Symbolic r=r(q,t)");
+//  widget.push_back(new SymbolicFunction1Widget("q"));
+//  name.push_back("Symbolic r=r(q)");
+//  widget.push_back(new SymbolicFunction1Widget("t"));
+//  name.push_back("Symbolic r=r(t)");
+  rotation = new ExtWidget("Rotation",new ChoiceWidget(widget,name),true);
+//  RotationChoiceWidget *rotation_ = new RotationChoiceWidget;
+//  rotation = new ExtWidget("Rotation",rotation_,true);
+//  connect(rotation_,SIGNAL(rotationChanged()),this,SLOT(resizeVariables()));
+//  connect(rotation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
   addToTab("Kinematics", rotation);
-  connect(rotation_,SIGNAL(rotationChanged()),this,SLOT(resizeVariables()));
-  connect(rotation,SIGNAL(resize_()),this,SLOT(resizeVariables()));
 
   ombvEditor = new ExtWidget("OpenMBV body",new OMBVBodySelectionWidget(body),true);
   addToTab("Visualisation", ombvEditor);
@@ -393,51 +425,21 @@ void RigidBodyPropertyDialog::fromWidget(Element *element) {
 }
 
 int RigidBodyPropertyDialog::getqRelSize() const {
-  int nq=0, nqT=0, nqR=0;
+  int nqT=0, nqR=0;
   if(translation->isActive()) {
-    TranslationChoiceWidget *trans = static_cast<TranslationChoiceWidget*>(translation->getWidget());
-    if(trans->isIndependent())
-      nqT = trans->getqTSize();
-    else
-      nq = trans->getqSize();
+    ChoiceWidget *trans = static_cast<ChoiceWidget*>(translation->getWidget());
+    nqT = static_cast<FunctionWidget*>(trans->getWidget())->getArg1Size();
   }
   if(rotation->isActive()) {
-    RotationChoiceWidget *rot = static_cast<RotationChoiceWidget*>(rotation->getWidget());
-    if(rot->isIndependent())
-      nqR = rot->getqRSize();
-    else {
-      int nqtmp = rot->getqSize();
-      if(nq) assert(nq==nqtmp);
-      nq = nqtmp;
-    }
+    ChoiceWidget *rot = static_cast<ChoiceWidget*>(rotation->getWidget());
+    nqR = static_cast<FunctionWidget*>(rot->getWidget())->getArg1Size();
   }
-  if(nq == 0)
-    nq = nqT + nqR;
+  int nq = nqT + nqR;
   return nq;
 }
 
 int RigidBodyPropertyDialog::getuRelSize() const {
-  int nu=0, nuT=0, nuR=0;
-  if(translation->isActive()) {
-    TranslationChoiceWidget *trans = static_cast<TranslationChoiceWidget*>(translation->getWidget());
-    if(trans->isIndependent())
-      nuT = trans->getuTSize();
-    else
-      nu = trans->getuSize();
-  }
-  if(rotation->isActive()) {
-    RotationChoiceWidget *rot = static_cast<RotationChoiceWidget*>(rotation->getWidget());
-    if(rot->isIndependent())
-      nuR = rot->getuRSize();
-    else {
-      int nutmp = rot->getuSize();
-      if(nu) assert(nu==nutmp);
-      nu = nutmp;
-    }
-  }
-  if(nu == 0)
-    nu = nuT + nuR;
-  return nu;
+  return getqRelSize();
 }
 
 void RigidBodyPropertyDialog::resizeGeneralizedPosition() {
@@ -1191,7 +1193,7 @@ AbsoluteVelocitySensorPropertyDialog::AbsoluteVelocitySensorPropertyDialog(Absol
 FunctionSensorPropertyDialog::FunctionSensorPropertyDialog(FunctionSensor *sensor, QWidget * parent, Qt::WindowFlags f) : SensorPropertyDialog(sensor,parent,f) {
   vector<QWidget*> widget;
   vector<QString> name;
-  widget.push_back(new ConstantFunction1Widget(true,1));
+  widget.push_back(new ConstantFunction1Widget("VS",1));
   name.push_back("Constant function");
   widget.push_back(new QuadraticFunction1Widget(1));
   name.push_back("Quadratic function");

@@ -711,7 +711,7 @@ void MainWindow::loadParameterList(const QString &file) {
 }
 
 void MainWindow::loadParameterList() {
-  QString file=QFileDialog::getOpenFileName(0, "MBSim parameter files", ".", "XML files (*.mbsimparam.xml)");
+  QString file=QFileDialog::getOpenFileName(0, "MBSim parameter files", ".", "XML files (*.mbsimparam.xml parameter.mbsim.xml)");
   if(file!="") {
     loadParameterList(file);
   }
