@@ -163,14 +163,20 @@ NestedFunctionWidget::NestedFunctionWidget(const QString &ext, const vector<QWid
   vector<QWidget*> widget;
   vector<QString> name;
   QStringList var;
-  var << "q";
-  widget.push_back(new SymbolicFunctionWidget("SV",var)); name.push_back("Symbolic function f=f(q)");
+  if(ext[2]=='V') {
+    var << "q";
+    widget.push_back(new SymbolicFunctionWidget("SV",var)); name.push_back("Symbolic function f=f(q)");
+  }
+  else {
+    var << "t";
+    widget.push_back(new SymbolicFunctionWidget("SS",var)); name.push_back("Symbolic function f=f(t)");
+  }
   fi = new ExtWidget("Inner function",new ChoiceWidget(widget,name));
   layout->addWidget(fi);
 }
 
 int NestedFunctionWidget::getArg1Size() const {
-  return 0;
+  return ext[2]=='V'?static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(fi->getWidget())->getWidget())->getArg1Size():0;
 }
 
 RotationAboutFixedAxisWidget::RotationAboutFixedAxisWidget(const QString &ext) : FunctionWidget(ext) {

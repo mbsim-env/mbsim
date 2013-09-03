@@ -31,7 +31,7 @@
 using namespace std;
 using namespace MBXMLUtils;
 
-RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), constrained(false), K(0,false), translation(0,false), rotation(0,false), ombvEditor(0,true), weightArrow(0,false), jointForceArrow(0,false), jointMomentArrow(0,false), isFrameOfBodyForRotation(0,false) {
+RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), constrained(false), K(0,false), translation(0,false), rotation(0,false), rotationMapping(0,false), ombvEditor(0,true), weightArrow(0,false), jointForceArrow(0,false), jointMomentArrow(0,false), isFrameOfBodyForRotation(0,false) {
   Frame *C = new Frame("C",this);
   addFrame(C);
 
@@ -45,18 +45,29 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   input.push_back(PhysicalVariableProperty(new MatProperty(getEye<string>(3,3,"0.01","0")),"kg*m^2",MBSIMNS"inertiaTensor"));
   inertia.setProperty(new ExtPhysicalVarProperty(input));
 
-  vector<Property*> property_;
-  property_.push_back(new TranslationAlongXAxisProperty("S"));
-  property_.push_back(new TranslationAlongYAxisProperty("S"));
-  property_.push_back(new TranslationAlongZAxisProperty("S"));
-
   translation.setXMLName(MBSIMNS"translation");
   vector<Property*> property;
   property.push_back(new TranslationAlongXAxisProperty("V"));
   property.push_back(new TranslationAlongYAxisProperty("V"));
   property.push_back(new TranslationAlongZAxisProperty("V"));
+  property.push_back(new TranslationAlongAxesXYProperty("V"));
+  property.push_back(new TranslationAlongAxesYZProperty("V"));
+  property.push_back(new TranslationAlongAxesXZProperty("V"));
+  property.push_back(new TranslationAlongAxesXYZProperty("V"));
   property.push_back(new LinearFunctionProperty("VV",3,1));
+
+  vector<Property*> property_;
+  property_.push_back(new TranslationAlongXAxisProperty("S"));
+  property_.push_back(new TranslationAlongYAxisProperty("S"));
+  property_.push_back(new TranslationAlongZAxisProperty("S"));
   property.push_back(new NestedFunctionProperty("VSV",property_));
+
+  property_.clear();
+  property_.push_back(new TranslationAlongXAxisProperty("S"));
+  property_.push_back(new TranslationAlongYAxisProperty("S"));
+  property_.push_back(new TranslationAlongZAxisProperty("S"));
+  property.push_back(new NestedFunctionProperty("VSS",property_));
+
   vector<string> var;
   var.push_back("q");
   property.push_back(new SymbolicFunctionProperty("VV",var));
@@ -83,6 +94,10 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   property.push_back(new RotationAboutXAxisProperty("V"));
   property.push_back(new RotationAboutYAxisProperty("V"));
   property.push_back(new RotationAboutZAxisProperty("V"));
+  property.push_back(new RotationAboutAxesXYProperty("V"));
+  property.push_back(new RotationAboutAxesYZProperty("V"));
+  property.push_back(new RotationAboutAxesXZProperty("V"));
+  property.push_back(new RotationAboutAxesXYZProperty("V"));
   property.push_back(new RotationAboutFixedAxisProperty("V"));
   property.push_back(new NestedFunctionProperty("MSV",property_));
   property.push_back(new RotationAboutFixedAxisProperty("S"));
@@ -92,7 +107,11 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"isDependent"));
   propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input),false)); 
   rotation.setProperty(propertyContainer);
-//  rotation.setProperty(new ChoiceProperty("",property));
+
+  rotationMapping.setXMLName(MBSIMNS"rotationMapping",false);
+  property.clear();
+  property.push_back(new TCardanAnglesProperty("V"));
+  rotationMapping.setProperty(new ChoiceProperty("",property));
 
   ombvEditor.setProperty(new OMBVBodySelectionProperty(this));
 
@@ -229,6 +248,7 @@ void RigidBody::initializeUsingXML(TiXmlElement *element) {
 
   translation.initializeUsingXML(element);
   rotation.initializeUsingXML(element);
+  rotationMapping.initializeUsingXML(element);
 
   isFrameOfBodyForRotation.initializeUsingXML(element);
 
@@ -260,6 +280,7 @@ TiXmlElement* RigidBody::writeXMLFile(TiXmlNode *parent) {
 
   translation.writeXMLFile(ele0);
   rotation.writeXMLFile(ele0);
+  rotationMapping.writeXMLFile(ele0);
 
   ele1 = new TiXmlElement( MBSIMNS"frames" );
   for(int i=1; i<frame.size(); i++)

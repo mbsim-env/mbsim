@@ -146,6 +146,38 @@ class TranslationAlongZAxisProperty: public FunctionProperty {
     inline std::string getType() const { return "TranslationAlongZAxis_"+ext; }
 };
 
+class TranslationAlongAxesXYProperty: public FunctionProperty {
+  public:
+    TranslationAlongAxesXYProperty(const std::string &ext) : FunctionProperty(ext) { }
+    virtual Property* clone() const {return new TranslationAlongAxesXYProperty(*this);}
+    int getArg1Size() const {return ext[0]=='V'?2:0;}
+    inline std::string getType() const { return "TranslationAlongAxesXY_"+ext; }
+};
+
+class TranslationAlongAxesYZProperty: public FunctionProperty {
+  public:
+    TranslationAlongAxesYZProperty(const std::string &ext) : FunctionProperty(ext) { }
+    virtual Property* clone() const {return new TranslationAlongAxesYZProperty(*this);}
+    int getArg1Size() const {return ext[0]=='V'?2:0;}
+    inline std::string getType() const { return "TranslationAlongAxesYZ_"+ext; }
+};
+
+class TranslationAlongAxesXZProperty: public FunctionProperty {
+  public:
+    TranslationAlongAxesXZProperty(const std::string &ext) : FunctionProperty(ext) { }
+    virtual Property* clone() const {return new TranslationAlongAxesXZProperty(*this);}
+    int getArg1Size() const {return ext[0]=='V'?2:0;}
+    inline std::string getType() const { return "TranslationAlongAxesXZ_"+ext; }
+};
+
+class TranslationAlongAxesXYZProperty: public FunctionProperty {
+  public:
+    TranslationAlongAxesXYZProperty(const std::string &ext) : FunctionProperty(ext) { }
+    virtual Property* clone() const {return new TranslationAlongAxesXYZProperty(*this);}
+    int getArg1Size() const {return ext[0]=='V'?3:0;}
+    inline std::string getType() const { return "TranslationAlongAxesXYZ_"+ext; }
+};
+
 class RotationAboutXAxisProperty : public FunctionProperty {
   public:
     RotationAboutXAxisProperty(const std::string &ext) : FunctionProperty(ext) { }
@@ -170,6 +202,38 @@ class RotationAboutZAxisProperty : public FunctionProperty {
     inline std::string getType() const { return "RotationAboutZAxis_"+ext; }
 };
 
+class RotationAboutAxesXYProperty : public FunctionProperty {
+  public:
+    RotationAboutAxesXYProperty(const std::string &ext) : FunctionProperty(ext) { }
+    virtual Property* clone() const {return new RotationAboutAxesXYProperty(*this);}
+    int getArg1Size() const {return ext[0]=='V'?2:0;}
+    inline std::string getType() const { return "RotationAboutAxesXY_"+ext; }
+};
+
+class RotationAboutAxesYZProperty : public FunctionProperty {
+  public:
+    RotationAboutAxesYZProperty(const std::string &ext) : FunctionProperty(ext) { }
+    virtual Property* clone() const {return new RotationAboutAxesYZProperty(*this);}
+    int getArg1Size() const {return ext[0]=='V'?2:0;}
+    inline std::string getType() const { return "RotationAboutAxesYZ_"+ext; }
+};
+
+class RotationAboutAxesXZProperty : public FunctionProperty {
+  public:
+    RotationAboutAxesXZProperty(const std::string &ext) : FunctionProperty(ext) { }
+    virtual Property* clone() const {return new RotationAboutAxesXZProperty(*this);}
+    int getArg1Size() const {return ext[0]=='V'?2:0;}
+    inline std::string getType() const { return "RotationAboutAxesXZ_"+ext; }
+};
+
+class RotationAboutAxesXYZProperty : public FunctionProperty {
+  public:
+    RotationAboutAxesXYZProperty(const std::string &ext) : FunctionProperty(ext) { }
+    virtual Property* clone() const {return new RotationAboutAxesXYZProperty(*this);}
+    int getArg1Size() const {return ext[0]=='V'?3:0;}
+    inline std::string getType() const { return "RotationAboutAxesXYZ_"+ext; }
+};
+
 class RotationAboutFixedAxisProperty : public FunctionProperty {
   public:
     RotationAboutFixedAxisProperty(const std::string &ext);
@@ -182,6 +246,14 @@ class RotationAboutFixedAxisProperty : public FunctionProperty {
     void toWidget(QWidget *widget);
   protected:
     ExtProperty a;
+};
+
+class TCardanAnglesProperty : public FunctionProperty {
+  public:
+    TCardanAnglesProperty(const std::string &ext) : FunctionProperty(ext) { }
+    virtual Property* clone() const {return new TCardanAnglesProperty(*this);}
+    int getArg1Size() const {return ext[0]=='V'?3:0;}
+    inline std::string getType() const { return "TCardanAngles_"+ext; }
 };
 
 class QuadraticFunctionProperty : public FunctionProperty {

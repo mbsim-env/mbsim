@@ -229,13 +229,19 @@ NestedFunctionProperty::NestedFunctionProperty(const string &ext, const vector<P
 
   vector<Property*> property;
   vector<string> var;
-  var.push_back("q");
-  property.push_back(new SymbolicFunctionProperty("SV",var));
+  if(ext[2]=='V') {
+    var.push_back("q");
+    property.push_back(new SymbolicFunctionProperty("SV",var));
+  }
+  else {
+    var.push_back("t");
+    property.push_back(new SymbolicFunctionProperty("SS",var));
+  }
   fi.setProperty(new ChoiceProperty(MBSIMNS"innerFunction",property));
 }
 
 int NestedFunctionProperty::getArg1Size() const {
-  return 0;
+  return ext[2]=='V'?static_cast<const FunctionProperty*>(static_cast<const ChoiceProperty*>(fi.getProperty())->getProperty())->getArg1Size():0;
 }
 
 TiXmlElement* NestedFunctionProperty::initializeUsingXML(TiXmlElement *element) {
