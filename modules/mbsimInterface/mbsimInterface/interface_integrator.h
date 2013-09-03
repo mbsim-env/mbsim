@@ -25,7 +25,14 @@
 
 #include <mbsim/integrators/integrator.h>
 
+namespace MBSimControl {
+  class Signal;
+  class ExternSignalSource;
+}
+
 namespace MBSimInterface {
+
+  class MBSimServer;
 
   /** \brief Dummy-Integrator InterfaceIntegrator
     This integrator is an interface for other integration tool. */
@@ -39,6 +46,8 @@ namespace MBSimInterface {
       InterfaceIntegrator();
       ~InterfaceIntegrator() {}
 
+      void setMBSimServer(MBSimServer* m_) {mbsimServer=m_; }
+
       void integrate(MBSim::DynamicSystemSolver& system);
 
       virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
@@ -46,9 +55,6 @@ namespace MBSimInterface {
 
       virtual std::string getType() const { return "InterfaceIntegrator"; }
 
-      void setIP(std::string IP_) {IP=IP_; }
-      void setPort(std::string port_) {port=port_; }
-      
       void integratorCommunication(const char* requestIdentifier, const char* interface2mbsim, unsigned int interface2mbsimLength, std::ostringstream* mbsim2interface);
       bool getExitRequest() {return exitRequest; }
 
@@ -63,7 +69,6 @@ namespace MBSimInterface {
       void setz(const fmatvec::Vec& z_) {z << z_; }
 
       // internal routines
-      std::string IP, port;
       int zSize, svSize;
       double t;
       fmatvec::Vec z, zd, sv;
@@ -73,8 +78,17 @@ namespace MBSimInterface {
 
       void dumpMemory(std::ostringstream *out, void *p, unsigned int N);
       void double2str(std::ostringstream *out, double *p, unsigned int N);
+      void int2str(std::ostringstream *out, int *p, unsigned int N);
 
       bool exitRequest;
+
+      MBSimServer* mbsimServer;
+      std::vector<std::string> outputSignalRef, inputSignalRef, outputSignalName, inputSignalName;
+      std::vector<MBSimControl::Signal*> outputSignal;
+      std::vector<MBSimControl::ExternSignalSource*> inputSignal;
+      fmatvec::VecInt outputSignalSize, inputSignalSize;
+      void resolveInputOutputNames();
+      fmatvec::Vec outputVector, inputVector;
   };
 }
 

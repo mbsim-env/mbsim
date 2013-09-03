@@ -23,14 +23,20 @@
 #ifndef _MBSIMSERVER_H_
 #define _MBSIMSERVER_H_
 
+namespace MBXMLUtils {
+  class TiXmlElement;
+}
+
 namespace MBSimInterface {
 
   class InterfaceIntegrator;
 
   class MBSimServer {
     public:
-      MBSimServer() {}
       MBSimServer(InterfaceIntegrator* ii_) {ii=ii_; }
+
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {};
+
       virtual void start() {};
     protected:
       InterfaceIntegrator* ii;
@@ -38,15 +44,21 @@ namespace MBSimInterface {
 
   class MBSimTcpServer : public MBSimServer  {
     public:
-      MBSimTcpServer(InterfaceIntegrator *ii, unsigned short port);
+      MBSimTcpServer(InterfaceIntegrator *ii);
+      void setPort(unsigned short port_) {port=port_; }
+      void setOutputPrecision(unsigned int p) {outputPrecision=p; }
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       void start();
     private:
       unsigned int port;
+      unsigned int outputPrecision;
   };
 
   class MBSimUdpServer : public MBSimServer  {
     public:
-      MBSimUdpServer(InterfaceIntegrator *ii, unsigned short port);
+      MBSimUdpServer(InterfaceIntegrator *ii);
+      void setPort(unsigned short port_) {port=port_; }
+      virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
       void start();
     private:
       unsigned int port;
