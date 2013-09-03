@@ -428,7 +428,6 @@ void Group::initializeUsingXML(TiXmlElement *element) {
   E=element->FirstChildElement(MBSIMNS"objects")->FirstChildElement();
   Object *o;
   while(E) {
-    cout << E->ValueStr() << endl;
     if(E->ValueStr()==PVNS"embed") {
       TiXmlElement *EE = 0;
       if(E->Attribute("href"))
@@ -453,8 +452,6 @@ void Group::initializeUsingXML(TiXmlElement *element) {
         o->initializeUsingXML(E);
       }
     }
-    cout << object.size() << endl;
-    cout << object[object.size()-1] << endl;
     E=E->NextSiblingElement();
   }
 

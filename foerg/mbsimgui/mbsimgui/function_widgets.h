@@ -133,6 +133,34 @@ class TranslationAlongZAxisWidget : public FunctionWidget {
     int getArg1Size() const {return ext[0]=='V'?1:0;}
 };
 
+class TranslationAlongAxesXYWidget : public FunctionWidget {
+
+  public:
+    TranslationAlongAxesXYWidget(const QString &ext) : FunctionWidget(ext) { }
+    int getArg1Size() const {return ext[0]=='V'?2:0;}
+};
+
+class TranslationAlongAxesYZWidget : public FunctionWidget {
+
+  public:
+    TranslationAlongAxesYZWidget(const QString &ext) : FunctionWidget(ext) { }
+    int getArg1Size() const {return ext[0]=='V'?2:0;}
+};
+
+class TranslationAlongAxesXZWidget : public FunctionWidget {
+
+  public:
+    TranslationAlongAxesXZWidget(const QString &ext) : FunctionWidget(ext) { }
+    int getArg1Size() const {return ext[0]=='V'?2:0;}
+};
+
+class TranslationAlongAxesXYZWidget : public FunctionWidget {
+
+  public:
+    TranslationAlongAxesXYZWidget(const QString &ext) : FunctionWidget(ext) { }
+    int getArg1Size() const {return ext[0]=='V'?3:0;}
+};
+
 class RotationAboutXAxisWidget : public FunctionWidget {
 
   public:
@@ -154,6 +182,34 @@ class RotationAboutZAxisWidget : public FunctionWidget {
     int getArg1Size() const {return ext[0]=='V'?1:0;}
 };
 
+class RotationAboutAxesXYWidget : public FunctionWidget {
+
+  public:
+    RotationAboutAxesXYWidget(const QString &ext) : FunctionWidget(ext) { }
+    int getArg1Size() const {return ext[0]=='V'?2:0;}
+};
+
+class RotationAboutAxesYZWidget : public FunctionWidget {
+
+  public:
+    RotationAboutAxesYZWidget(const QString &ext) : FunctionWidget(ext) { }
+    int getArg1Size() const {return ext[0]=='V'?2:0;}
+};
+
+class RotationAboutAxesXZWidget : public FunctionWidget {
+
+  public:
+    RotationAboutAxesXZWidget(const QString &ext) : FunctionWidget(ext) { }
+    int getArg1Size() const {return ext[0]=='V'?2:0;}
+};
+
+class RotationAboutAxesXYZWidget : public FunctionWidget {
+
+  public:
+    RotationAboutAxesXYZWidget(const QString &ext) : FunctionWidget(ext) { }
+    int getArg1Size() const {return ext[0]=='V'?3:0;}
+};
+
 class RotationAboutFixedAxisWidget : public FunctionWidget {
 
   friend class RotationAboutFixedAxisProperty;
@@ -163,6 +219,13 @@ class RotationAboutFixedAxisWidget : public FunctionWidget {
     int getArg1Size() const {return ext[0]=='V'?1:0;}
   protected:
     ExtWidget *a;
+};
+
+class TCardanAnglesWidget : public FunctionWidget {
+
+  public:
+    TCardanAnglesWidget(const QString &ext) : FunctionWidget(ext) { }
+    int getArg1Size() const {return ext[0]=='V'?3:0;}
 };
 
 class QuadraticFunctionWidget : public FunctionWidget {

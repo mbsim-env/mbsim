@@ -333,20 +333,32 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   inertia = new ExtWidget("Inertia tensor",new ExtPhysicalVarWidget(input));
   addToTab("General", inertia);
 
-  vector<QWidget*> widget_;
-  vector<QString> name_;
-  widget_.push_back(new TranslationAlongXAxisWidget("S")); name_.push_back("Translation along x axis r=r(f)");
-  widget_.push_back(new TranslationAlongYAxisWidget("S")); name_.push_back("Translation along y axis r=r(f)");
-  widget_.push_back(new TranslationAlongZAxisWidget("S")); name_.push_back("Translation along z axis r=r(f)");
-
   vector<QWidget*> widget;
   vector<QString> name;
   widget.push_back(new TranslationAlongXAxisWidget("V")); name.push_back("Translation along x axis r=r(q)");
   widget.push_back(new TranslationAlongYAxisWidget("V")); name.push_back("Translation along y axis r=r(q)");
   widget.push_back(new TranslationAlongZAxisWidget("V")); name.push_back("Translation along z axis r=r(q)");
+  widget.push_back(new TranslationAlongAxesXYWidget("V")); name.push_back("Translation along axes x and y r=r(q)");
+  widget.push_back(new TranslationAlongAxesYZWidget("V")); name.push_back("Translation along axes y and z r=r(q)");
+  widget.push_back(new TranslationAlongAxesXZWidget("V")); name.push_back("Translation along axes x and z r=r(q)");
+  widget.push_back(new TranslationAlongAxesXYZWidget("V")); name.push_back("Translation along axes x,y and z r=r(q)");
   widget.push_back(new LinearFunctionWidget("VV",3,1)); name.push_back("Linear function r=r(q)");
   connect(widget[widget.size()-1],SIGNAL(arg1SizeChanged(int)),this,SLOT(resizeVariables()));
+
+  vector<QWidget*> widget_;
+  vector<QString> name_;
+  widget_.push_back(new TranslationAlongXAxisWidget("S")); name_.push_back("Translation along x axis r=r(f)");
+  widget_.push_back(new TranslationAlongYAxisWidget("S")); name_.push_back("Translation along y axis r=r(f)");
+  widget_.push_back(new TranslationAlongZAxisWidget("S")); name_.push_back("Translation along z axis r=r(f)");
   widget.push_back(new NestedFunctionWidget("VSV",widget_,name_)); name.push_back("Nested function r=r(f(q))");
+
+  widget_.clear();
+  name_.clear();
+  widget_.push_back(new TranslationAlongXAxisWidget("S")); name_.push_back("Translation along x axis r=r(f)");
+  widget_.push_back(new TranslationAlongYAxisWidget("S")); name_.push_back("Translation along y axis r=r(f)");
+  widget_.push_back(new TranslationAlongZAxisWidget("S")); name_.push_back("Translation along z axis r=r(f)");
+  widget.push_back(new NestedFunctionWidget("VSS",widget_,name_)); name.push_back("Nested function r=r(f(t))");
+
   QStringList var;
   var << "q";
   widget.push_back(new SymbolicFunctionWidget("VV",var)); name.push_back("Symbolic function r=r(q)");
@@ -377,6 +389,10 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   widget.push_back(new RotationAboutXAxisWidget("V")); name.push_back("Rotation about x axis A=A(q)");
   widget.push_back(new RotationAboutYAxisWidget("V")); name.push_back("Rotation about y axis A=A(q)");
   widget.push_back(new RotationAboutZAxisWidget("V")); name.push_back("Rotation about z axis A=A(q)");
+  widget.push_back(new RotationAboutAxesXYWidget("V")); name.push_back("Rotation about axes x and y A=A(q)");
+  widget.push_back(new RotationAboutAxesYZWidget("V")); name.push_back("Rotation about axes y and z A=A(q)");
+  widget.push_back(new RotationAboutAxesXZWidget("V")); name.push_back("Rotation about axes x and z A=A(q)");
+  widget.push_back(new RotationAboutAxesXYZWidget("V")); name.push_back("Rotation about axes x,y and z A=A(q)");
   widget.push_back(new RotationAboutFixedAxisWidget("V")); name.push_back("Rotation about fixed axis A=A(q)");
   widget.push_back(new NestedFunctionWidget("MSV",widget_,name_)); name.push_back("Nested function A=A(f(q))");
   widget.push_back(new RotationAboutFixedAxisWidget("S")); name.push_back("Rotation about fixed axis A=A(t)");
@@ -386,8 +402,13 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   input.push_back(new PhysicalVariableWidget(new BoolWidget("0"),QStringList(),1));
   widgetContainer->addWidget(new ExtWidget("Translation dependent rotation",new ExtPhysicalVarWidget(input),true)); 
   rotation = new ExtWidget("Rotation",widgetContainer,true);
-  //rotation = new ExtWidget("Rotation",new ChoiceWidget(widget,name),true);
   addToTab("Kinematics", rotation);
+
+  widget.clear();
+  name.clear();
+  widget.push_back(new TCardanAnglesWidget("V")); name.push_back("Cardan angles T=T(q)");
+  rotationMapping = new ExtWidget("Rotation mapping",new ChoiceWidget(widget,name),true);
+  addToTab("Kinematics", rotationMapping);
 
   ombvEditor = new ExtWidget("OpenMBV body",new OMBVBodySelectionWidget(body),true);
   addToTab("Visualisation", ombvEditor);
@@ -414,6 +435,7 @@ void RigidBodyPropertyDialog::toWidget(Element *element) {
   static_cast<RigidBody*>(element)->inertia.toWidget(inertia);
   static_cast<RigidBody*>(element)->translation.toWidget(translation);
   static_cast<RigidBody*>(element)->rotation.toWidget(rotation);
+  static_cast<RigidBody*>(element)->rotationMapping.toWidget(rotationMapping);
   static_cast<RigidBody*>(element)->ombvEditor.toWidget(ombvEditor);
   static_cast<RigidBody*>(element)->weightArrow.toWidget(weightArrow);
   static_cast<RigidBody*>(element)->jointForceArrow.toWidget(jointForceArrow);
@@ -429,6 +451,7 @@ void RigidBodyPropertyDialog::fromWidget(Element *element) {
   static_cast<RigidBody*>(element)->inertia.fromWidget(inertia);
   static_cast<RigidBody*>(element)->translation.fromWidget(translation);
   static_cast<RigidBody*>(element)->rotation.fromWidget(rotation);
+  static_cast<RigidBody*>(element)->rotationMapping.fromWidget(rotationMapping);
   static_cast<RigidBody*>(element)->ombvEditor.fromWidget(ombvEditor);
   static_cast<RigidBody*>(element)->weightArrow.fromWidget(weightArrow);
   static_cast<RigidBody*>(element)->jointForceArrow.fromWidget(jointForceArrow);
