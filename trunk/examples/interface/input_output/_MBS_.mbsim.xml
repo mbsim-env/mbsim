@@ -303,6 +303,24 @@
       </moment>
       <connect ref1="../Object[K1]/Frame[fA]" ref2="../Object[K2]/Frame[fA]"/>
     </Joint>
+    <AbsolutePositionSensor xmlns="http://mbsim.berlios.de/MBSimControl" name="K1pxy">
+      <frame ref="../Object[K1]/Frame[C]"/>
+      <direction>[1 0 0; 0 1 0]'</direction>
+    </AbsolutePositionSensor>
+    <AbsoluteVelocitySensor xmlns="http://mbsim.berlios.de/MBSimControl" name="K1vxy">
+      <frame ref="../Object[K1]/Frame[C]"/>
+      <direction>[1 0 0; 0 1 0; 0 0 1]'</direction>
+    </AbsoluteVelocitySensor>
+    <AbsolutePositionSensor xmlns="http://mbsim.berlios.de/MBSimControl" name="K2pxy">
+      <frame ref="../Object[K2]/Frame[C]"/>
+      <direction>[1 0 0; 0 1 0]'</direction>
+    </AbsolutePositionSensor>
+    <ExternSignalSource xmlns="http://mbsim.berlios.de/MBSimControl" name="Ext1">
+      <sourceSize>1</sourceSize>
+    </ExternSignalSource>
+    <ExternSignalSource xmlns="http://mbsim.berlios.de/MBSimControl" name="Ext2">
+      <sourceSize>2</sourceSize>
+    </ExternSignalSource>
   </links>
   <observers>
   </observers>
