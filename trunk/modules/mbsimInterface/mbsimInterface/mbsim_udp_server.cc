@@ -24,8 +24,10 @@
 
 #include <config.h>
 
-#include "mbsimServer.h"
-#include "interfaceIntegrator.h"
+#include "mbsim_server.h"
+#include "defines.h"
+#include "interface_integrator.h"
+#include "mbsim/element.h"
 #include <sstream>
 #ifdef HAVE_BOOST_ASIO_HPP
 #include <boost/asio.hpp>
@@ -38,7 +40,7 @@ const int max_length = 1048576;
 
 namespace MBSimInterface {
 
-  MBSimUdpServer::MBSimUdpServer(InterfaceIntegrator *ii_, unsigned short port_) : MBSimServer(ii_), port(port_) 
+  MBSimUdpServer::MBSimUdpServer(InterfaceIntegrator *ii_) : MBSimServer(ii_), port(0) 
   {
   }
 
@@ -68,5 +70,10 @@ namespace MBSimInterface {
     } while(!ii->getExitRequest());
 #endif
   }
+
+  void MBSimUdpServer::initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
+    port=MBSim::Element::getInt(element->FirstChildElement(MBSIMINTERFACENS"port"));
+  }
+
 }
 

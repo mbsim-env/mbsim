@@ -23,16 +23,19 @@
 #include <config.h>
 
 #include <mbsim/dynamic_system_solver.h>
-#include "interfaceIntegrator.h"
-#include "interfaceMessages.h"
+#include "interface_integrator.h"
+#include "interface_messages.h"
+#include "mbsim_server.h"
+#include "defines.h"
 #include <fstream>
+#include "mbsimControl/defines.h"
+#include "mbsimControl/signal_.h"
+#include "mbsimControl/extern_signal_source.h"
 
 #ifndef NO_ISO_14882
 using namespace std;
 #endif
 
-
-#include "mbsimServer.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -46,27 +49,44 @@ enum IPCmethods {
 
 namespace MBSimInterface {
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(MBSim::Integrator, InterfaceIntegrator, MBSIMINTNS"InterfaceIntegrator")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(MBSim::Integrator, InterfaceIntegrator, MBSIMINTERFACENS"InterfaceIntegrator")
 
-  InterfaceIntegrator::InterfaceIntegrator(): MBSim::Integrator(), IP(""), port(""), zSize(0), svSize(0), t(tStart), printCommunication(true), exitRequest(false) {
-  }
+    InterfaceIntegrator::InterfaceIntegrator(): MBSim::Integrator(), zSize(0), svSize(0), t(tStart), printCommunication(true), exitRequest(false), mbsimServer(NULL) {
+    }
 
   void InterfaceIntegrator::initializeUsingXML(TiXmlElement *element) {
-    /* TODO
-       Integrator::initializeUsingXML(element);
-       TiXmlElement *e;
-       e=element->FirstChildElement(MBSIMINTNS"IP");
-       if(e) setIP(e->ValueStr()); //Element::getString(e));
-       e=element->FirstChildElement(MBSIMINTNS"port");
-       if(e) setPort(e->ValueStr()); //Element::getString(e));
-       */
+    Integrator::initializeUsingXML(element);
+    TiXmlElement *e, *ee;
+    e=element->FirstChildElement(MBSIMINTERFACENS"outputSignals");
+    ee=e->FirstChildElement(MBSIMINTERFACENS"signal");
+    if(ee) {
+      while (ee) {
+        outputSignalRef.push_back(ee->Attribute("ref"));
+        ee=ee->NextSiblingElement();
+      }
+    }
+    e=element->FirstChildElement(MBSIMINTERFACENS"inputSignals");
+    ee=e->FirstChildElement(MBSIMINTERFACENS"signal");
+    if(ee) {
+      while (ee) {
+        inputSignalRef.push_back(ee->Attribute("ref"));
+        ee=ee->NextSiblingElement();
+      }
+    }
+    e=element->FirstChildElement(MBSIMINTERFACENS"methodForIPC");
+    ee=e->FirstChildElement();
+    if (ee->ValueStr()==MBSIMINTERFACENS"MBSimTcpServer")
+      setMBSimServer(new MBSimTcpServer(this));
+    else if (ee->ValueStr()==MBSIMINTERFACENS"MBSimUdpServer")
+      setMBSimServer(new MBSimUdpServer(this));
+    mbsimServer->initializeUsingXML(ee);
   }
 
   TiXmlElement* InterfaceIntegrator::writeXMLFile(TiXmlNode *parent) {
     TiXmlElement *ele0 = Integrator::writeXMLFile(parent);
     /* TODO
-       addElementText(ele0,MBSIMINTNS"IP",IP);
-       addElementText(ele0,MBSIMINTNS"port",port);
+       addElementText(ele0,MBSIMINTERFACENS"IP",IP);
+       addElementText(ele0,MBSIMINTERFACENS"port",port);
        */
     return ele0;
   }
@@ -88,25 +108,10 @@ namespace MBSimInterface {
     integPlot.open((name + ".plt").c_str());
     cout.setf(ios::scientific, ios::floatfield);
 
+    resolveInputOutputNames();
+
     try {
-      MBSimServer* mbsimServer=NULL;
-
-      IPCmethods ipcmethod=NOMETHOD;
-      ipcmethod=TCP;
-      switch (ipcmethod)
-      {
-      case TCP:
-        mbsimServer=new MBSimTcpServer(this, 4567);
-        break;
-      case UDP:
-        mbsimServer=new MBSimUdpServer(this, 4567);
-        break;
-      default:
-        cout << "No IPC Methods was defined!" << endl;
-      }
-
-      if (mbsimServer!=NULL)
-        mbsimServer->start();
+      mbsimServer->start();
     }
     catch (std::exception& e) {
       std::cerr << "Exception: " << e.what() << "\n";
@@ -138,13 +143,115 @@ namespace MBSimInterface {
       jsv(i)=round(sv(i));
   }
 
+  void InterfaceIntegrator::resolveInputOutputNames() {
+
+    std::vector<string> toErase;
+    toErase.push_back("ExternSignalSource");
+    toErase.push_back("Group");
+    toErase.push_back("[");
+    toErase.push_back("]");
+    toErase.push_back("Signal");
+
+    for (unsigned int i=0; i<outputSignalRef.size(); i++) {
+      string lstr=outputSignalRef[i];
+      size_t pos;
+      for (unsigned int j=0; j<toErase.size(); j++) {
+        size_t len=toErase[j].length();
+        pos=lstr.find(toErase[j]);
+        while (pos!=string::npos) {
+          lstr.erase(pos, len);
+          pos=lstr.find(toErase[j]);
+        }
+      }
+      lstr.erase(0, 1);
+      outputSignalRef[i]=lstr;
+    }
+    for (unsigned int i=0; i<inputSignalRef.size(); i++) {
+      string lstr=inputSignalRef[i];
+      size_t pos;
+      for (unsigned int j=0; j<toErase.size(); j++) {
+        size_t len=toErase[j].length();
+        pos=lstr.find(toErase[j]);
+        while (pos!=string::npos) {
+          lstr.erase(pos, len);
+          pos=lstr.find(toErase[j]);
+        }
+      }
+      lstr.erase(0, 1);
+      inputSignalRef[i]=lstr;
+    }
+
+    std::vector<MBSim::Link*> mbsLinks=system->getLinks();
+    for (unsigned int i=0; i<outputSignalRef.size(); i++) {
+      MBSim::Link *ll=NULL;
+      unsigned int iL=0;
+      do {
+        if (mbsLinks[iL]->getName() == outputSignalRef[i])
+          ll=mbsLinks[iL];
+        iL++;
+        if (iL==mbsLinks.size())
+          break;
+      } while (ll==NULL);
+      if (ll==NULL)
+        cerr << "Could not find Signal >>" << outputSignalRef[i] << "<<" << endl;
+      else
+        if (dynamic_cast<MBSimControl::Signal*>(ll)) {
+          outputSignal.push_back((MBSimControl::Signal*)ll);
+          outputSignalName.push_back(outputSignal.back()->getName());
+        }
+        else
+          cerr << "Link >>" << outputSignalRef[i] << "<< is not of MBSimControl::Signal-Type." << endl;
+    }
+    for (unsigned int i=0; i<inputSignalRef.size(); i++) {
+      MBSim::Link *ll=NULL;
+      unsigned int iL=0;
+      do {
+        if (mbsLinks[iL]->getName() == inputSignalRef[i])
+          ll=mbsLinks[iL];
+        iL++;
+        if (iL==mbsLinks.size())
+          break;
+      } while (ll==NULL);
+      if (ll==NULL)
+        cerr << "Could not find ExternSignalSource >>" << inputSignalRef[i] << "<<" << endl;
+      else
+        if (dynamic_cast<MBSimControl::ExternSignalSource*>(ll)) {
+          inputSignal.push_back((MBSimControl::ExternSignalSource*)ll);
+          inputSignalName.push_back(inputSignal.back()->getName());
+        }
+        else
+          cerr << "Link >>" << inputSignalRef[i] << "<< is not of MBSimControl::ExternSignalSource-Type." << endl;
+    }
+
+    cout << "interfaceIntegrator: " << endl;
+    cout << "  output signals: " << endl;
+    int outDim=0, inDim=0;
+    outputSignalSize.resize(outputSignal.size(), NONINIT);
+    for (unsigned int i=0; i<outputSignal.size(); i++) {
+      outputSignalSize(i)=(outputSignal[i]->getSignal()).size();
+      outDim+=outputSignalSize(i);
+      cout << "    " << i << ": " << outputSignalName[i] << " with size " << outputSignalSize(i) << endl;
+    }
+    cout << "  -> total size of output: " << outDim << endl;
+    cout << "  input signals: " << endl;
+    outputVector.resize(outDim, NONINIT);
+    inputSignalSize.resize(inputSignal.size(), NONINIT);
+    for (unsigned int i=0; i<inputSignal.size(); i++) {
+      inputSignalSize(i)=(inputSignal[i]->getSignal()).size();
+      inDim+=inputSignalSize(i);
+      cout << "    " << i << ": " << inputSignalName[i] << " with size " << inputSignalSize(i) << endl;
+    }
+    cout << "  -> total size of input: " << inDim << endl;
+    inputVector.resize(inDim, NONINIT);
+  }
+
   void InterfaceIntegrator::integratorCommunication(const char* requestIdentifier, const char* interface2mbsim, unsigned int interface2mbsimLength, std::ostringstream* mbsim2interface) {
     if (printCommunication)
     {
       ostringstream rIS;
       switch (*requestIdentifier)
       {
-#include "interfaceMessages.cc"
+#include "interface_messages.cc"
         default:
           rIS << "UNKNOWN IPC MESSAGE";
           break;
@@ -164,6 +271,9 @@ namespace MBSimInterface {
       case _SI_getSizeOfDoubleMemory_asciiString_SI_:
         (*mbsim2interface) << sizeof(double);
         break;
+      case _SI_getSizeOfFloatMemory_asciiString_SI_:
+        (*mbsim2interface) << sizeof(float);
+        break;
       case _SI_getSizeOfIntegerMemory_asciiString_SI_:
         (*mbsim2interface) << sizeof(int);
         break;
@@ -173,7 +283,7 @@ namespace MBSimInterface {
 
         // getTime
       case _SI_getTime_asciiString_SI_:
-          double2str(mbsim2interface, &t, 1);
+        double2str(mbsim2interface, &t, 1);
         break;
       case _SI_getTime_memoryDump_SI_:
         dumpMemory(mbsim2interface, &t, sizeof(double));
@@ -301,6 +411,56 @@ namespace MBSimInterface {
         exitRequest=true;
         break;
 
+        // outputSignals and inputSignals
+      case _SI_getOutputSignalsSize_asciiString_SI_:
+        int2str(mbsim2interface, &outputSignalSize(0), outputSignalSize.size());
+        break;
+      case _SI_getOutputSignals_asciiString_SI_:
+        {
+          int index0=0, index1=0;
+          for (unsigned int i=0; i<outputSignal.size(); i++) {
+            index1=index0+outputSignalSize(i);
+            outputVector(Index(index0, index1))=outputSignal[i]->getSignal();
+            index0=index1+1;
+          }
+          double2str(mbsim2interface, &outputVector(0), outputVector.size());
+        }
+        break;
+      case _SI_getOutputSignals_memoryDump_SI_:
+        //TODO
+        break;
+      case _SI_getOutputSignals_memoryAdress_SI_:
+        //TODO
+        break;
+      case _SI_getInputSignalsSize_asciiString_SI_:
+        int2str(mbsim2interface, &inputSignalSize(0), inputSignalSize.size());
+        break;
+      case _SI_setInputSignals_asciiString_SI_:
+        {
+          const Vec z_(interface2mbsim);
+          if (z_.size()!=inputVector.size())
+          {
+            cerr << "==== wrong size of given vector z! ===" << endl;
+            cout << "  interface2mbsim: " << interface2mbsim << endl;
+            cout << "  z_: " << z_ << endl;
+            cout << "  z_.size(): " << z_.size() << endl;
+            cout << "  zSize: " << zSize << endl;
+            throw MBSim::MBSimError("wrong size of given vector z!");
+          }
+          inputVector=z_;
+          int index0=0, index1=0;
+          for (unsigned int i=0; i<inputSignal.size(); i++) {
+            index1=index0+inputSignalSize(i);
+            inputSignal[i]->setSignal(inputVector(Index(index0, index1)));
+            index0=index1+1;
+          }
+        }
+        break;
+      case _SI_setInputSignals_memoryDump_SI_:
+        break;
+      case _SI_setInputSignals_memoryAdress_SI_:
+        break;
+
         // usefull stuff
       case _SI_doPrintCommunication_SI_:
         printCommunication=true;
@@ -335,22 +495,28 @@ namespace MBSimInterface {
   }
 
 
-  void InterfaceIntegrator::dumpMemory(ostringstream *out, void *p, unsigned int N) 
-  {
+  void InterfaceIntegrator::dumpMemory(ostringstream *out, void *p, unsigned int N) {
     char *c=(char*)p;
-    for (unsigned int i=0; i<N; i++)
-    {
+    for (unsigned int i=0; i<N; i++) {
       (*out) << *c;
       c++;
     }
   }
 
-  void InterfaceIntegrator::double2str(std::ostringstream *out, double *p, unsigned int N)
-  {
+  void InterfaceIntegrator::double2str(std::ostringstream *out, double *p, unsigned int N) {
     double *d=p;
     (*out) << "[";
-    for (unsigned int i=0; i<(N-1); i++)
-    {
+    for (unsigned int i=0; i<(N-1); i++) {
+      (*out) << *d << ";";
+      d++;
+    }
+    (*out) << *d << "]";
+  }
+
+  void InterfaceIntegrator::int2str(std::ostringstream *out, int *p, unsigned int N) {
+    int *d=p;
+    (*out) << "[";
+    for (unsigned int i=0; i<(N-1); i++) {
       (*out) << *d << ";";
       d++;
     }

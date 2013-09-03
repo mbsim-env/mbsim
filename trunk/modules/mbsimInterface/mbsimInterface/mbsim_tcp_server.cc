@@ -24,8 +24,10 @@
 
 #include <config.h>
 
-#include "mbsimServer.h"
-#include "interfaceIntegrator.h"
+#include "mbsim_server.h"
+#include "defines.h"
+#include "interface_integrator.h"
+#include "mbsim/element.h"
 #include <sstream>
 #ifdef HAVE_BOOST_ASIO_HPP
 #include <boost/asio.hpp>
@@ -35,10 +37,9 @@ using namespace std;
 
 const int max_length = 1048576;
 
-
 namespace MBSimInterface {
 
-  MBSimTcpServer::MBSimTcpServer(InterfaceIntegrator *ii_, unsigned short port_) : MBSimServer(ii_), port(port_) 
+  MBSimTcpServer::MBSimTcpServer(InterfaceIntegrator *ii_) : MBSimServer(ii_), port(0), outputPrecision(18) 
   {
   }
 
@@ -54,7 +55,7 @@ namespace MBSimInterface {
     tcp_acceptor.accept(socket);
 
     ostringstream mbsim2interface;
-    mbsim2interface.precision(18);
+    mbsim2interface.precision(outputPrecision);
     mbsim2interface.setf( std::ios::scientific );
 
     do
@@ -74,5 +75,15 @@ namespace MBSimInterface {
     } while(!ii->getExitRequest());
 #endif
   }
+
+  void MBSimTcpServer::initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
+    MBXMLUtils::TiXmlElement* e;
+    e=element->FirstChildElement(MBSIMINTERFACENS"port");
+    setPort(MBSim::Element::getInt(e));
+    e=element->FirstChildElement(MBSIMINTERFACENS"outputPrecision");
+    if (e)
+      setOutputPrecision(MBSim::Element::getInt(e));
+  }
+
 }
 
