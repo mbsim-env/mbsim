@@ -347,6 +347,10 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TranslationAlongYAxis<double>, MBSIMNS"TranslationAlongYAxis_S")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TranslationAlongZAxis<VecV>, MBSIMNS"TranslationAlongZAxis_V")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TranslationAlongZAxis<double>, MBSIMNS"TranslationAlongZAxis_S")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TranslationAlongAxesXY<VecV>, MBSIMNS"TranslationAlongAxesXY_V")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TranslationAlongAxesYZ<VecV>, MBSIMNS"TranslationAlongAxesYZ_V")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TranslationAlongAxesXZ<VecV>, MBSIMNS"TranslationAlongAxesXZ_V")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TranslationAlongAxesXYZ<VecV>, MBSIMNS"TranslationAlongAxesXYZ_V")
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutXAxis<VecV>, MBSIMNS"RotationAboutXAxis_V")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutXAxis<double>, MBSIMNS"RotationAboutXAxis_S")
@@ -356,6 +360,9 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutZAxis<double>, MBSIMNS"RotationAboutZAxis_S")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutFixedAxis<VecV>, MBSIMNS"RotationAboutFixedAxis_V")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutFixedAxis<double>, MBSIMNS"RotationAboutFixedAxis_S")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutAxesXY<VecV>, MBSIMNS"RotationAboutAxesXY_V")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutAxesYZ<VecV>, MBSIMNS"RotationAboutAxesYZ_V")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutAxesXZ<VecV>, MBSIMNS"RotationAboutAxesXZ_V")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutAxesXYZ<VecV>, MBSIMNS"RotationAboutAxesXYZ_V")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TCardanAngles<VecV>, MBSIMNS"TCardanAngles_V")
 

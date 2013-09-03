@@ -854,6 +854,79 @@ namespace MBSim {
         bool constParDer() const { return true; }
     };
 
+  template<typename Arg>
+    class TranslationAlongAxesXY : public fmatvec::Function<fmatvec::Vec3(Arg)> {
+      private:
+        fmatvec::Vec3 r;
+        fmatvec::Mat3xV A;
+      public:
+        TranslationAlongAxesXY() : A(2) { A.e(0,0) = 1; A.e(1,1) = 1; }
+        typename fmatvec::Size<Arg>::type getArgSize() const { return 2; }
+        fmatvec::Vec3 operator()(const Arg &q) { 
+          r.e(0) = q.e(0);
+          r.e(1) = q.e(1);
+          return r; 
+        }
+        typename fmatvec::Der<fmatvec::Vec3, Arg>::type parDer(const Arg &arg) { return A; }
+        typename fmatvec::Der<fmatvec::Vec3, Arg>::type parDerDirDer(const Arg &arg1Dir, const Arg &arg1) { return typename fmatvec::Der<fmatvec::Vec3, Arg>::type(2); }
+        bool constParDer() const { return true; }
+    };
+
+  template<typename Arg>
+    class TranslationAlongAxesYZ : public fmatvec::Function<fmatvec::Vec3(Arg)> {
+      private:
+        fmatvec::Vec3 r;
+        fmatvec::Mat3xV A;
+      public:
+        TranslationAlongAxesYZ() : A(2) { A.e(1,1) = 1; A.e(2,2) = 1; }
+        typename fmatvec::Size<Arg>::type getArgSize() const { return 2; }
+        fmatvec::Vec3 operator()(const Arg &q) { 
+          r.e(1) = q.e(0);
+          r.e(2) = q.e(1);
+          return r; 
+        }
+        typename fmatvec::Der<fmatvec::Vec3, Arg>::type parDer(const Arg &arg) { return A; }
+        typename fmatvec::Der<fmatvec::Vec3, Arg>::type parDerDirDer(const Arg &arg1Dir, const Arg &arg1) { return typename fmatvec::Der<fmatvec::Vec3, Arg>::type(2); }
+        bool constParDer() const { return true; }
+    };
+
+  template<typename Arg>
+    class TranslationAlongAxesXZ : public fmatvec::Function<fmatvec::Vec3(Arg)> {
+      private:
+        fmatvec::Vec3 r;
+        fmatvec::Mat3xV A;
+      public:
+        TranslationAlongAxesXZ() : A(2) { A.e(0,0) = 1; A.e(2,2) = 1; }
+        typename fmatvec::Size<Arg>::type getArgSize() const { return 2; }
+        fmatvec::Vec3 operator()(const Arg &q) { 
+          r.e(0) = q.e(0);
+          r.e(2) = q.e(1);
+          return r; 
+        }
+        typename fmatvec::Der<fmatvec::Vec3, Arg>::type parDer(const Arg &arg) { return A; }
+        typename fmatvec::Der<fmatvec::Vec3, Arg>::type parDerDirDer(const Arg &arg1Dir, const Arg &arg1) { return typename fmatvec::Der<fmatvec::Vec3, Arg>::type(2); }
+        bool constParDer() const { return true; }
+    };
+
+  template<typename Arg>
+    class TranslationAlongAxesXYZ : public fmatvec::Function<fmatvec::Vec3(Arg)> {
+      private:
+        fmatvec::Vec3 r;
+        fmatvec::Mat3xV A;
+      public:
+        TranslationAlongAxesXYZ() : A(3) { A.e(0,0) = 1; A.e(1,1) = 1; A.e(2,2) = 1; }
+        typename fmatvec::Size<Arg>::type getArgSize() const { return 3; }
+        fmatvec::Vec3 operator()(const Arg &q) { 
+          r.e(0) = q.e(0);
+          r.e(1) = q.e(1);
+          r.e(2) = q.e(2);
+          return r; 
+        }
+        typename fmatvec::Der<fmatvec::Vec3, Arg>::type parDer(const Arg &arg) { return A; }
+        typename fmatvec::Der<fmatvec::Vec3, Arg>::type parDerDirDer(const Arg &arg1Dir, const Arg &arg1) { return typename fmatvec::Der<fmatvec::Vec3, Arg>::type(3); }
+        bool constParDer() const { return true; }
+    };
+
   template<class Arg> 
     class RotationAboutXAxis : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
       private:
@@ -976,8 +1049,8 @@ namespace MBSim {
         RotationAboutAxesXY() : J(2), Jd(2) { J.e(0,0) = 1; }
         typename fmatvec::Size<Arg>::type getArgSize() const { return 2; }
         fmatvec::RotMat3 operator()(const Arg &q) {
-          double a=q(0);
-          double b=q(1);
+          double a=q.e(0);
+          double b=q.e(1);
           double cosa = cos(a);
           double sina = sin(a);
           double cosb = cos(b);
@@ -994,17 +1067,17 @@ namespace MBSim {
           return A;
         }
         typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDer(const Arg &q) {
-          double a = q(0);
+          double a = q.e(0);
           J.e(1,1) = cos(a);
           J.e(2,1) = sin(a);
           return J;
         }
         typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) {
-          double a = q(0);
-          double ad = qd(0);
-          double bd = qd(1);
-          Jd.e(1) = -sin(a)*ad*bd;
-          Jd.e(2) = cos(a)*ad*bd;
+          double a = q.e(0);
+          double ad = qd.e(0);
+          double bd = qd.e(1);
+          Jd.e(1,1) = -sin(a)*ad*bd;
+          Jd.e(2,1) = cos(a)*ad*bd;
           return Jd;
         }
     };
@@ -1018,8 +1091,8 @@ namespace MBSim {
         RotationAboutAxesYZ() : J(2), Jd(2) { J.e(1,0) = 1; }
         typename fmatvec::Size<Arg>::type getArgSize() const { return 2; }
         fmatvec::RotMat3 operator()(const Arg &q) {
-          double b=q(0);
-          double g=q(1);
+          double b=q.e(0);
+          double g=q.e(1);
           double cosb = cos(b);
           double sinb = sin(b);
           double cosg = cos(g);
@@ -1036,17 +1109,60 @@ namespace MBSim {
           return A;
         }
         typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDer(const Arg &q) {
-          double beta = q(0);
+          double beta = q.e(0);
           J.e(0,1) = sin(beta);
           J.e(2,1) = cos(beta);
           return J;
         }
         typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) {
-          double beta = q(0);
-          double betad = qd(0);
-          double gammad = qd(1);
+          double beta = q.e(0);
+          double betad = qd.e(0);
+          double gammad = qd.e(1);
           Jd.e(0,1) = cos(beta)*betad*gammad;
           Jd.e(2,1) = -sin(beta)*betad*gammad;
+          return Jd;
+        }
+    };
+
+  template<class Arg> 
+    class RotationAboutAxesXZ : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
+      private:
+        fmatvec::RotMat3 A;
+        fmatvec::Mat3xV J, Jd;
+      public:
+        RotationAboutAxesXZ() : J(2), Jd(2) { J.e(0,0) = 1; }
+        typename fmatvec::Size<Arg>::type getArgSize() const { return 2; }
+        fmatvec::RotMat3 operator()(const Arg &q) {
+          double a=q.e(0);
+          double b=q.e(1);
+          double cosa = cos(a);
+          double sina = sin(a);
+          double cosb = cos(b);
+          double sinb = sin(b);
+
+          A.e(0,0) = cosb;
+          A.e(1,0) = cosa*sinb;
+          A.e(2,0) = sina*sinb;
+          A.e(0,1) = -sinb;
+          A.e(1,1) = cosa*cosb;
+          A.e(2,1) = sina*cosb;
+          A.e(1,2) = -sina;
+          A.e(2,2) = cosa;
+
+          return A;
+        }
+        typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDer(const Arg &q) {
+          double a = q.e(0);
+          J.e(1,1) = -sin(a);
+          J.e(2,1) = cos(a);
+          return J;
+        }
+        typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) {
+          double a = q.e(0);
+          double ad = qd.e(0);
+          double bd = qd.e(1);
+          Jd.e(1,1) = -cos(a)*ad*bd;
+          Jd.e(2,1) = -sin(a)*ad*bd;
           return Jd;
         }
     };
