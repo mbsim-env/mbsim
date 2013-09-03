@@ -308,17 +308,17 @@ ForceChoiceWidget::ForceChoiceWidget() {
 
   vector<QWidget*> widget;
   vector<QString> name;
-  widget.push_back(new ConstantFunction1Widget("VS",1));
+  widget.push_back(new ConstantFunctionWidget("VS",1));
   name.push_back("Constant function");
-  widget.push_back(new QuadraticFunction1Widget(1));
+  widget.push_back(new QuadraticFunctionWidget(1));
   name.push_back("Quadratic function");
-  widget.push_back(new SinusFunction1Widget(1));
+  widget.push_back(new SinusFunctionWidget("V",1));
   name.push_back("Sinus function");
-  widget.push_back(new TabularFunction1Widget(1));
+  widget.push_back(new TabularFunctionWidget(1));
   name.push_back("Tabular function");
-  widget.push_back(new SummationFunction1Widget(1));
+  widget.push_back(new SummationFunctionWidget(1));
   name.push_back("Summation function");
-  widget.push_back(new SymbolicFunction1Widget("VS","t"));
+  widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t")));
   name.push_back("Symbolic function");
   forceLaw = new ExtWidget("Function",new ChoiceWidget(widget,name));
   layout->addWidget(forceLaw);

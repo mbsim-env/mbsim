@@ -85,12 +85,14 @@ TiXmlElement* AbsoluteCoordinateSensor::writeXMLFile(TiXmlNode *parent) {
 
 FunctionSensor::FunctionSensor(const string &str, Element *parent) : Sensor(str, parent) {
   vector<Property*> property;
-  property.push_back(new ConstantFunction1Property("VS"));
-  property.push_back(new QuadraticFunction1Property);
-  property.push_back(new SinusFunction1Property);
-  property.push_back(new TabularFunction1Property);
-  property.push_back(new SummationFunction1Property);
-  property.push_back(new SymbolicFunction1Property("VS","t"));
+  property.push_back(new ConstantFunctionProperty("VS"));
+  property.push_back(new QuadraticFunctionProperty);
+  property.push_back(new SinusFunctionProperty("V"));
+  property.push_back(new TabularFunctionProperty);
+  property.push_back(new SummationFunctionProperty);
+  vector<string> var;
+  var.push_back("t");
+  property.push_back(new SymbolicFunctionProperty("VS",var));
   function.setProperty(new ChoiceProperty(MBSIMCONTROLNS"function",property));
 }
 

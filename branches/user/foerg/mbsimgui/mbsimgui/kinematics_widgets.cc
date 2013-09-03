@@ -51,7 +51,7 @@ int LinearTranslationWidget::getqTSize() const {
 TimeDependentTranslationWidget::TimeDependentTranslationWidget() {
   vector<QWidget*> widget;
   vector<QString> name;
-  widget.push_back(new SymbolicFunction1Widget("VS","t"));
+  widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t")));
   name.push_back("Symbolic function");
   function = new ExtWidget("Translation function",new ChoiceWidget(widget,name));
 
@@ -64,7 +64,7 @@ TimeDependentTranslationWidget::TimeDependentTranslationWidget() {
 StateDependentTranslationWidget::StateDependentTranslationWidget() {
   vector<QWidget*> widget;
   vector<QString> name;
-  widget.push_back(new SymbolicFunction1Widget("VV","q"));
+  widget.push_back(new SymbolicFunctionWidget("VV",QStringList("q")));
   name.push_back("Symbolic function");
   function = new ExtWidget("Translation function",new ChoiceWidget(widget,name));
 
@@ -75,9 +75,8 @@ StateDependentTranslationWidget::StateDependentTranslationWidget() {
 }
 
 int StateDependentTranslationWidget::getqSize() const {
-  SymbolicFunction1Widget *func = static_cast<SymbolicFunction1Widget*>(static_cast<ChoiceWidget*>(function->getWidget())->getWidget());
+  SymbolicFunctionWidget *func = static_cast<SymbolicFunctionWidget*>(static_cast<ChoiceWidget*>(function->getWidget())->getWidget());
   return func->getArg1Size();
-  return 0;
 }
 
 GeneralTranslationWidget::GeneralTranslationWidget() {
@@ -85,7 +84,7 @@ GeneralTranslationWidget::GeneralTranslationWidget() {
   vector<QString> name;
   QStringList var;
   var << "q" << "t";
-  widget.push_back(new SymbolicFunction2Widget("VVS",var));
+  widget.push_back(new SymbolicFunctionWidget("VVS",var));
   name.push_back("Symbolic function");
   function = new ExtWidget("Translation function",new ChoiceWidget(widget,name));
 
@@ -96,7 +95,7 @@ GeneralTranslationWidget::GeneralTranslationWidget() {
 }
 
 int GeneralTranslationWidget::getqSize() const {
-  SymbolicFunction2Widget *func = static_cast<SymbolicFunction2Widget*>(static_cast<ChoiceWidget*>(function->getWidget())->getWidget());
+  SymbolicFunctionWidget *func = static_cast<SymbolicFunctionWidget*>(static_cast<ChoiceWidget*>(function->getWidget())->getWidget());
   return func->getArg1Size();
   return 0;
 }
@@ -202,7 +201,7 @@ TimeDependentRotationAboutFixedAxisWidget::TimeDependentRotationAboutFixedAxisWi
 
   vector<QWidget*> widget;
   vector<QString> name;
-  widget.push_back(new SymbolicFunction1Widget("VS","t"));
+  widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t")));
   name.push_back("Symbolic function");
   function = new ExtWidget("Rotational function",new ChoiceWidget(widget,name));
   layout->addWidget(function);
@@ -221,7 +220,7 @@ StateDependentRotationAboutFixedAxisWidget::StateDependentRotationAboutFixedAxis
 
   vector<QWidget*> widget;
   vector<QString> name;
-  widget.push_back(new SymbolicFunction1Widget("VV","q"));
+  widget.push_back(new SymbolicFunctionWidget("VV",QStringList("q")));
   name.push_back("Symbolic function");
   function = new ExtWidget("Translation function",new ChoiceWidget(widget,name));
 
@@ -230,69 +229,68 @@ StateDependentRotationAboutFixedAxisWidget::StateDependentRotationAboutFixedAxis
 }
 
 int StateDependentRotationAboutFixedAxisWidget::getqSize() const {
-  SymbolicFunction1Widget *func = static_cast<SymbolicFunction1Widget*>(static_cast<ChoiceWidget*>(function->getWidget())->getWidget());
+  SymbolicFunctionWidget *func = static_cast<SymbolicFunctionWidget*>(static_cast<ChoiceWidget*>(function->getWidget())->getWidget());
   return func->getArg1Size();
-  return 0;
 }
 
 RotationChoiceWidget::RotationChoiceWidget() {
-  QVBoxLayout *layout = new QVBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
-
-  comboBox = new QComboBox;
-  comboBox->addItem(tr("Rotation about x-axis"));
-  comboBox->addItem(tr("Rotation about y-axis"));
-  comboBox->addItem(tr("Rotation about z-axis"));
-  comboBox->addItem(tr("Rotation about fixed axis"));
-  comboBox->addItem(tr("Rotation about x- and y-axis"));
-  comboBox->addItem(tr("Rotation about x- and z-axis"));
-  comboBox->addItem(tr("Rotation about y- and z-axis"));
-  comboBox->addItem(tr("Cardan angles"));
-  comboBox->addItem(tr("Euler angles"));
-  comboBox->addItem(tr("Rotation about x-, y- and z-axis"));
-  comboBox->addItem(tr("Time dependent rotation about fixed axis"));
-  comboBox->addItem(tr("State dependent rotation about fixed axis"));
-  layout->addWidget(comboBox);
-  stackedWidget = new QStackedWidget;
-  RotationWidget *rotation;
-  rotation = new RotationAboutXAxisWidget;  
-  stackedWidget->addWidget(rotation);
-  rotation = new RotationAboutYAxisWidget;  
-  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-  stackedWidget->addWidget(rotation);
-  rotation = new RotationAboutZAxisWidget;  
-  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-  stackedWidget->addWidget(rotation);
-//  rotation = new RotationAboutFixedAxisWidget;  
+//  QVBoxLayout *layout = new QVBoxLayout;
+//  layout->setMargin(0);
+//  setLayout(layout);
+//
+//  comboBox = new QComboBox;
+//  comboBox->addItem(tr("Rotation about x-axis"));
+//  comboBox->addItem(tr("Rotation about y-axis"));
+//  comboBox->addItem(tr("Rotation about z-axis"));
+//  comboBox->addItem(tr("Rotation about fixed axis"));
+//  comboBox->addItem(tr("Rotation about x- and y-axis"));
+//  comboBox->addItem(tr("Rotation about x- and z-axis"));
+//  comboBox->addItem(tr("Rotation about y- and z-axis"));
+//  comboBox->addItem(tr("Cardan angles"));
+//  comboBox->addItem(tr("Euler angles"));
+//  comboBox->addItem(tr("Rotation about x-, y- and z-axis"));
+//  comboBox->addItem(tr("Time dependent rotation about fixed axis"));
+//  comboBox->addItem(tr("State dependent rotation about fixed axis"));
+//  layout->addWidget(comboBox);
+//  stackedWidget = new QStackedWidget;
+//  RotationWidget *rotation;
+//  rotation = new RotationAboutXAxisWidget;  
+//  stackedWidget->addWidget(rotation);
+//  rotation = new RotationAboutYAxisWidget;  
 //  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 //  stackedWidget->addWidget(rotation);
-  rotation = new RotationAboutAxesXYWidget;  
-  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-  stackedWidget->addWidget(rotation);
-  rotation = new RotationAboutAxesXZWidget;  
-  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-  stackedWidget->addWidget(rotation);
-  rotation = new RotationAboutAxesYZWidget;  
-  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-  stackedWidget->addWidget(rotation);
-  rotation = new CardanAnglesWidget;  
-  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-  stackedWidget->addWidget(rotation);
-  rotation = new EulerAnglesWidget;  
-  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-  stackedWidget->addWidget(rotation);
-  rotation = new RotationAboutAxesXYZWidget;  
-  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-  stackedWidget->addWidget(rotation);
-  rotation = new TimeDependentRotationAboutFixedAxisWidget;  
-  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-  stackedWidget->addWidget(rotation);
-  rotation = new StateDependentRotationAboutFixedAxisWidget;  
-  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-  stackedWidget->addWidget(rotation);
-  layout->addWidget(stackedWidget);
-  connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(defineRotation(int)));
+//  rotation = new RotationAboutZAxisWidget;  
+//  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+//  stackedWidget->addWidget(rotation);
+////  rotation = new RotationAboutFixedAxisWidget;  
+////  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+////  stackedWidget->addWidget(rotation);
+//  rotation = new RotationAboutAxesXYWidget;  
+//  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+//  stackedWidget->addWidget(rotation);
+//  rotation = new RotationAboutAxesXZWidget;  
+//  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+//  stackedWidget->addWidget(rotation);
+//  rotation = new RotationAboutAxesYZWidget;  
+//  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+//  stackedWidget->addWidget(rotation);
+//  rotation = new CardanAnglesWidget;  
+//  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+//  stackedWidget->addWidget(rotation);
+//  rotation = new EulerAnglesWidget;  
+//  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+//  stackedWidget->addWidget(rotation);
+//  rotation = new RotationAboutAxesXYZWidget;  
+//  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+//  stackedWidget->addWidget(rotation);
+//  rotation = new TimeDependentRotationAboutFixedAxisWidget;  
+//  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+//  stackedWidget->addWidget(rotation);
+//  rotation = new StateDependentRotationAboutFixedAxisWidget;  
+//  rotation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+//  stackedWidget->addWidget(rotation);
+//  layout->addWidget(stackedWidget);
+//  connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(defineRotation(int)));
 }
 
 RotationWidget* RotationChoiceWidget::getRotation() const {

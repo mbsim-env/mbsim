@@ -34,6 +34,7 @@ class GearConstraint : public Constraint {
   friend class GearConstraintPropertyDialog;
   public:
     GearConstraint(const std::string &str, Element *parent);
+    virtual Element* clone() const {return new GearConstraint(*this);}
     std::string getType() const { return "GearConstraint"; }
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -62,6 +63,7 @@ class TimeDependentKinematicConstraint : public KinematicConstraint {
   friend class TimeDependentKinematicConstraintPropertyDialog;
   public:
     TimeDependentKinematicConstraint(const std::string &str, Element *parent);
+    virtual Element* clone() const {return new TimeDependentKinematicConstraint(*this);}
     std::string getType() const { return "TimeDependentKinematicConstraint"; }
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -74,6 +76,7 @@ class StateDependentKinematicConstraint : public KinematicConstraint {
   friend class StateDependentKinematicConstraintPropertyDialog;
   public:
     StateDependentKinematicConstraint(const std::string &str, Element *parent);
+    virtual Element* clone() const {return new StateDependentKinematicConstraint(*this);}
     std::string getType() const { return "StateDependentKinematicConstraint"; }
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -86,6 +89,7 @@ class JointConstraint : public Constraint {
   friend class JointConstraintPropertyDialog;
   public:
     JointConstraint(const std::string &str, Element *parent);
+    virtual Element* clone() const {return new JointConstraint(*this);}
     std::string getType() const { return "JointConstraint"; }
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);

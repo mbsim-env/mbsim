@@ -201,29 +201,29 @@ class RotationProperty : public Property {
 class TranslationIndependentRotationProperty: public RotationProperty {
 };
 
-class RotationAboutXAxisProperty : public TranslationIndependentRotationProperty {
-
-  public:
-    virtual Property* clone() const {return new RotationAboutXAxisProperty(*this);}
-    int getqRSize() const {return 1;}
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-};
-
-class RotationAboutYAxisProperty : public TranslationIndependentRotationProperty {
-
-  public:
-    virtual Property* clone() const {return new RotationAboutYAxisProperty(*this);}
-    int getqRSize() const {return 1;}
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-};
-
-class RotationAboutZAxisProperty : public TranslationIndependentRotationProperty {
-
-  public:
-    virtual Property* clone() const {return new RotationAboutZAxisProperty(*this);}
-    int getqRSize() const {return 1;}
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-};
+//class RotationAboutXAxisProperty : public TranslationIndependentRotationProperty {
+//
+//  public:
+//    virtual Property* clone() const {return new RotationAboutXAxisProperty(*this);}
+//    int getqRSize() const {return 1;}
+//    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+//};
+//
+//class RotationAboutYAxisProperty : public TranslationIndependentRotationProperty {
+//
+//  public:
+//    virtual Property* clone() const {return new RotationAboutYAxisProperty(*this);}
+//    int getqRSize() const {return 1;}
+//    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+//};
+//
+//class RotationAboutZAxisProperty : public TranslationIndependentRotationProperty {
+//
+//  public:
+//    virtual Property* clone() const {return new RotationAboutZAxisProperty(*this);}
+//    int getqRSize() const {return 1;}
+//    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+//};
 
 //class RotationAboutFixedAxisProperty : public TranslationIndependentRotationProperty {
 //

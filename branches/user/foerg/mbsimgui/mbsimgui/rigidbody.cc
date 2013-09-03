@@ -45,24 +45,54 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   input.push_back(PhysicalVariableProperty(new MatProperty(getEye<string>(3,3,"0.01","0")),"kg*m^2",MBSIMNS"inertiaTensor"));
   inertia.setProperty(new ExtPhysicalVarProperty(input));
 
+  vector<Property*> property_;
+  property_.push_back(new TranslationAlongXAxisProperty("S"));
+  property_.push_back(new TranslationAlongYAxisProperty("S"));
+  property_.push_back(new TranslationAlongZAxisProperty("S"));
+
   translation.setXMLName(MBSIMNS"translation");
   vector<Property*> property;
-  property.push_back(new ConstantFunction1Property("VS",3));
-  property.push_back(new LinearFunction1Property("VV",3,1));
-  property.push_back(new LinearFunction1Property("VS",3,1));
+  property.push_back(new TranslationAlongXAxisProperty("V"));
+  property.push_back(new TranslationAlongYAxisProperty("V"));
+  property.push_back(new TranslationAlongZAxisProperty("V"));
+  property.push_back(new LinearFunctionProperty("VV",3,1));
+  property.push_back(new NestedFunctionProperty("VSV",property_));
   vector<string> var;
   var.push_back("q");
+  property.push_back(new SymbolicFunctionProperty("VV",var));
+  property.push_back(new ConstantFunctionProperty("VS",3));
+  property.push_back(new LinearFunctionProperty("VS",3,1));
+  property.push_back(new SinusFunctionProperty("V"));
+  var.clear();
   var.push_back("t");
-  property.push_back(new SymbolicFunction2Property("VVS",var));
-  property.push_back(new SymbolicFunction1Property("VV","q"));
-  property.push_back(new SymbolicFunction1Property("VS","t"));
+  property.push_back(new SymbolicFunctionProperty("VS",var));
+  var.clear();
+  var.push_back("q");
+  var.push_back("t");
+  property.push_back(new SymbolicFunctionProperty("VVS",var));
   translation.setProperty(new ChoiceProperty("",property));
+
+  property_.clear();
+  property_.push_back(new RotationAboutXAxisProperty("S"));
+  property_.push_back(new RotationAboutYAxisProperty("S"));
+  property_.push_back(new RotationAboutZAxisProperty("S"));
+  property_.push_back(new RotationAboutFixedAxisProperty("S"));
 
   rotation.setXMLName(MBSIMNS"rotation");
   property.clear();
+  property.push_back(new RotationAboutXAxisProperty("V"));
+  property.push_back(new RotationAboutYAxisProperty("V"));
+  property.push_back(new RotationAboutZAxisProperty("V"));
   property.push_back(new RotationAboutFixedAxisProperty("V"));
+  property.push_back(new NestedFunctionProperty("MSV",property_));
   property.push_back(new RotationAboutFixedAxisProperty("S"));
-  rotation.setProperty(new ChoiceProperty("",property));
+  ContainerProperty *propertyContainer = new ContainerProperty;
+  propertyContainer->addProperty(new ChoiceProperty("",property));
+  input.clear();
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"isDependent"));
+  propertyContainer->addProperty(new ExtProperty(new ExtPhysicalVarProperty(input),false)); 
+  rotation.setProperty(propertyContainer);
+//  rotation.setProperty(new ChoiceProperty("",property));
 
   ombvEditor.setProperty(new OMBVBodySelectionProperty(this));
 
@@ -87,7 +117,7 @@ int RigidBody::getqRelSize() const {
     nqT = static_cast<FunctionProperty*>(trans->getProperty())->getArg1Size();
   }
   if(rotation.isActive()) {
-    const ChoiceProperty *rot = static_cast<const ChoiceProperty*>(rotation.getProperty());
+    const ChoiceProperty *rot = static_cast<const ChoiceProperty*>(static_cast<const ContainerProperty*>(rotation.getProperty())->getProperty(0));
     nqR = static_cast<FunctionProperty*>(rot->getProperty())->getArg1Size();
   }
   int nq = nqT + nqR;

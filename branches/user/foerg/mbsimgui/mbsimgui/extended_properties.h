@@ -45,7 +45,7 @@ class ExtPhysicalVarProperty : public Property {
 
 class ExtProperty : public Property {
   public:
-    ExtProperty(Property *property_=0, bool active_=true, const std::string &xmlName_="", bool flag=true) : property(property_), active(active_), xmlName(xmlName_), alwaysWriteXMLName(flag) {}
+    ExtProperty(Property *property_=0, bool active_=true, const std::string &xmlName_="", bool alwaysWriteXMLName_=true) : property(property_), active(active_), xmlName(xmlName_), alwaysWriteXMLName(alwaysWriteXMLName_) {}
     ExtProperty(const ExtProperty &p) : property(p.property?p.property->clone():0), xmlName(p.xmlName), active(p.active), alwaysWriteXMLName(p.alwaysWriteXMLName) {}
     ~ExtProperty() {delete property;}
     ExtProperty& operator=(const ExtProperty &p) {delete property; property=p.property?p.property->clone():0; xmlName=p.xmlName; active=p.active; alwaysWriteXMLName=p.alwaysWriteXMLName;}
@@ -53,8 +53,7 @@ class ExtProperty : public Property {
     Property* getProperty() {return property;}
     const Property* getProperty() const {return property;}
     void setProperty(Property *property_) {property = property_;}
-    void setXMLName(const std::string &xmlName_, bool flag=true) {xmlName = xmlName_; alwaysWriteXMLName=flag;}
-
+    void setXMLName(const std::string &xmlName_, bool alwaysWriteXMLName_=true) {xmlName = xmlName_; alwaysWriteXMLName=alwaysWriteXMLName_;}
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
@@ -104,6 +103,7 @@ class ContainerProperty : public Property {
 
     void initialize();
     void addProperty(Property *property_) {property.push_back(property_);}
+    Property* getProperty(int i) const { return property[i]; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
