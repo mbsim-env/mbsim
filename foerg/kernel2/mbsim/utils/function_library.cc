@@ -341,6 +341,12 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PeriodicTabularFunction<Vec3>, MBSIMNS"PeriodicTabularFunction_VS")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PeriodicTabularFunction<double>, MBSIMNS"PeriodicTabularFunction_SS")
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutXAxis<VecV>, MBSIMNS"RotationAboutXAxis_V")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutXAxis<double>, MBSIMNS"RotationAboutXAxis_S")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutYAxis<VecV>, MBSIMNS"RotationAboutYAxis_V")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutYAxis<double>, MBSIMNS"RotationAboutYAxis_S")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutZAxis<VecV>, MBSIMNS"RotationAboutZAxis_V")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutZAxis<double>, MBSIMNS"RotationAboutZAxis_S")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutFixedAxis<VecV>, MBSIMNS"RotationAboutFixedAxis_V")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutFixedAxis<double>, MBSIMNS"RotationAboutFixedAxis_S")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, RotationAboutAxesXYZ<VecV>, MBSIMNS"RotationAboutAxesXYZ_V")
