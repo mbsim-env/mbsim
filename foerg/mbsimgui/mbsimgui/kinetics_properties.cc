@@ -609,13 +609,16 @@ ForceChoiceProperty::ForceChoiceProperty(ExtProperty &arrow_, const std::string 
   mat.setProperty(new ExtPhysicalVarProperty(input));
 
   vector<Property*> property;
-  property.push_back(new ConstantFunction1Property("VS"));
-  property.push_back(new QuadraticFunction1Property);
-  property.push_back(new SinusFunction1Property);
-  property.push_back(new TabularFunction1Property);
-  property.push_back(new SummationFunction1Property);
-  property.push_back(new SymbolicFunction1Property("VS","t"));
-  forceLaw.setProperty(new ChoiceProperty(MBSIMNS"function",property));
+  property.push_back(new ConstantFunctionProperty("VS"));
+  property.push_back(new QuadraticFunctionProperty);
+  property.push_back(new SinusFunctionProperty("V"));
+  property.push_back(new TabularFunctionProperty);
+  property.push_back(new SummationFunctionProperty);
+  vector<string> var;
+  var.push_back("t");
+  property.push_back(new SymbolicFunctionProperty("VS",var));
+  forceLaw.setProperty(new ChoiceProperty("",property));
+  forceLaw.setXMLName(MBSIMNS"function",true);
 }
 
 TiXmlElement* ForceChoiceProperty::initializeUsingXML(TiXmlElement *element) {

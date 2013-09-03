@@ -126,7 +126,9 @@ TiXmlElement* KinematicConstraint::writeXMLFile(TiXmlNode *parent) {
 TimeDependentKinematicConstraint::TimeDependentKinematicConstraint(const string &str, Element *parent) : KinematicConstraint(str, parent), generalizedPositionFunction(0,false) {
 
   vector<Property*> property;
-  property.push_back(new SymbolicFunction1Property("VS","t"));
+  vector<string> var;
+  var.push_back("t");
+  property.push_back(new SymbolicFunctionProperty("VS",var));
   generalizedPositionFunction.setProperty(new ChoiceProperty(MBSIMNS"generalizedPositionFunction",property));
 }
 
@@ -147,7 +149,9 @@ TiXmlElement* TimeDependentKinematicConstraint::writeXMLFile(TiXmlNode *parent) 
 StateDependentKinematicConstraint::StateDependentKinematicConstraint(const string &str, Element *parent) : KinematicConstraint(str, parent), generalizedVelocityFunction(0,false) {
 
   vector<Property*> property;
-  property.push_back(new SymbolicFunction1Property("VV","q"));
+  vector<string> var;
+  var.push_back("q");
+  property.push_back(new SymbolicFunctionProperty("VV",var));
   generalizedVelocityFunction.setProperty(new ChoiceProperty(MBSIMNS"generalizedVelocityFunction",property));
 }
 

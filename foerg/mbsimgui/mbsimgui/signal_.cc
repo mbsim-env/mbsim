@@ -103,7 +103,9 @@ UnarySignalOperation::UnarySignalOperation(const string &str, Element *parent) :
   sRef.setProperty(new SignalOfReferenceProperty("",this, MBSIMCONTROLNS"inputSignal"));
 
   vector<Property*> property;
-  property.push_back(new SymbolicFunction1Property("VV","x"));
+  vector<string> var;
+  var.push_back("x");
+  property.push_back(new SymbolicFunctionProperty("VV",var));
   f.setProperty(new ChoiceProperty(MBSIMCONTROLNS"function",property));
 }
 
@@ -133,7 +135,7 @@ BinarySignalOperation::BinarySignalOperation(const string &str, Element *parent)
   vector<string> var;
   var.push_back("x1");
   var.push_back("x2");
-  property.push_back(new SymbolicFunction2Property("VVV",var));
+  property.push_back(new SymbolicFunctionProperty("VVV",var));
   f.setProperty(new ChoiceProperty(MBSIMCONTROLNS"function",property));
 }
 

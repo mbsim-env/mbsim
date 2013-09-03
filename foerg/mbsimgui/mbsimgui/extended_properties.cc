@@ -97,12 +97,12 @@ TiXmlElement* ChoiceProperty::initializeUsingXML(TiXmlElement *element) {
     if(e) {
       TiXmlElement* ee=(mode==0)?e->FirstChildElement():e;
       if(ee) {
-        for(int i=0; i<property.size(); i++)
+        for(int i=0; i<property.size(); i++) {
           if(ee->ValueStr() == xmlBase+property[i]->getType()) {
             index = i;
             return property[index]->initializeUsingXML(ee);
-            break;
           }
+        }
       }
     }
     return 0;
@@ -225,19 +225,21 @@ void ContainerProperty::initialize() {
 }
 
 TiXmlElement* ContainerProperty::initializeUsingXML(TiXmlElement *element) {
+  bool flag = false;
   if(xmlName!="") {
     TiXmlElement *e=element->FirstChildElement(xmlName);
-    if(e)
+    if(e) {
       for(unsigned int i=0; i<property.size(); i++)
-        if(!property[i]->initializeUsingXML(e))
-          return 0;
-    return e;
+        if(property[i]->initializeUsingXML(e))
+          flag = true;
+    }
+    return flag?e:0;
   }
   else {
     for(unsigned int i=0; i<property.size(); i++)
-      if(!property[i]->initializeUsingXML(element))
-        return 0;
-    return element;
+      if(property[i]->initializeUsingXML(element))
+        flag = true;
+    return flag?element:0;
   }
 }
 

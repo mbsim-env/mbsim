@@ -546,11 +546,12 @@ void MainWindow::saveMBS() {
   QString file = fileMBS->text();
   mbsDir = QFileInfo(file).absolutePath();
   solver->writeXMLFile(file.toStdString());
-  Solver solver2(*solver);
-  solver2.writeXMLFile("SolverTestFile.mbsim.xml");
-  Solver solver3("Name",0);
-  solver3 = solver2;
-  solver3.writeXMLFile("SolverTestFile2.mbsim.xml");
+  // Test cloning 
+//  Solver solver2(*solver);
+//  solver2.writeXMLFile("SolverTestFile.mbsim.xml");
+//  Solver solver3("Name",0);
+//  solver3 = solver2;
+//  solver3.writeXMLFile("SolverTestFile2.mbsim.xml");
 }
 
 void MainWindow::selectIntegrator() {

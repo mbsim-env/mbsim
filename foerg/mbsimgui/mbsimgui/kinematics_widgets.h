@@ -169,23 +169,23 @@ class RotationWidget : public Widget {
 class TranslationIndependentRotationWidget : public RotationWidget  {
 };
 
-class RotationAboutXAxisWidget : public TranslationIndependentRotationWidget {
-
-  public:
-    virtual int getqRSize() const {return 1;}
-};
-
-class RotationAboutYAxisWidget : public TranslationIndependentRotationWidget {
-
-  public:
-    virtual int getqRSize() const {return 1;}
-};
-
-class RotationAboutZAxisWidget : public TranslationIndependentRotationWidget {
-
-  public:
-    virtual int getqRSize() const {return 1;}
-};
+//class RotationAboutXAxisWidget : public TranslationIndependentRotationWidget {
+//
+//  public:
+//    virtual int getqRSize() const {return 1;}
+//};
+//
+//class RotationAboutYAxisWidget : public TranslationIndependentRotationWidget {
+//
+//  public:
+//    virtual int getqRSize() const {return 1;}
+//};
+//
+//class RotationAboutZAxisWidget : public TranslationIndependentRotationWidget {
+//
+//  public:
+//    virtual int getqRSize() const {return 1;}
+//};
 
 //class RotationAboutFixedAxisWidget : public TranslationIndependentRotationWidget {
 //

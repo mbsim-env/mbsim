@@ -109,7 +109,9 @@ void LinearTranslationProperty::toWidget(QWidget *widget) {
 
 TimeDependentTranslationProperty::TimeDependentTranslationProperty() {
   vector<Property*> property;
-  property.push_back(new SymbolicFunction1Property("VS","t"));
+  vector<string> var;
+  var.push_back("t");
+  property.push_back(new SymbolicFunctionProperty("VS",var));
   function.setProperty(new ChoiceProperty(MBSIMNS"translationFunction",property));
 }
 
@@ -135,14 +137,15 @@ void TimeDependentTranslationProperty::toWidget(QWidget *widget) {
 StateDependentTranslationProperty::StateDependentTranslationProperty() {
   //function.setProperty(new Function1ChoiceProperty(MBSIMNS"translationFunction",false,"VV"));
   vector<Property*> property;
-  property.push_back(new SymbolicFunction1Property("VV","q"));
+  vector<string> var;
+  var.push_back("q");
+  property.push_back(new SymbolicFunctionProperty("VV",var));
   function.setProperty(new ChoiceProperty(MBSIMNS"translationFunction",property));
 }
 
 int StateDependentTranslationProperty::getqSize() const {
-  SymbolicFunction1Property *func = static_cast<SymbolicFunction1Property*>(static_cast<const ChoiceProperty*>(function.getProperty())->getProperty());
-  return func->getArgDim();
-  return 0;
+  SymbolicFunctionProperty *func = static_cast<SymbolicFunctionProperty*>(static_cast<const ChoiceProperty*>(function.getProperty())->getProperty());
+  return func->getArg1Size();
 }
 
 TiXmlElement* StateDependentTranslationProperty::initializeUsingXML(TiXmlElement *element) {
@@ -170,12 +173,12 @@ GeneralTranslationProperty::GeneralTranslationProperty() {
   vector<string> var;
   var.push_back("q");
   var.push_back("t");
-  property.push_back(new SymbolicFunction2Property("VVS",var));
+  property.push_back(new SymbolicFunctionProperty("VVS",var));
   function.setProperty(new ChoiceProperty(MBSIMNS"translationFunction",property));
 }
 
 int GeneralTranslationProperty::getqSize() const {
-  SymbolicFunction2Property *func = static_cast<SymbolicFunction2Property*>(static_cast<const ChoiceProperty*>(function.getProperty())->getProperty());
+  SymbolicFunctionProperty *func = static_cast<SymbolicFunctionProperty*>(static_cast<const ChoiceProperty*>(function.getProperty())->getProperty());
   return func->getArg1Size();
   return 0;
 }
@@ -295,23 +298,23 @@ void TranslationChoiceProperty::toWidget(QWidget *widget) {
   translation[index]->toWidget(static_cast<TranslationChoiceWidget*>(widget)->getTranslation());
 }
 
-TiXmlElement* RotationAboutXAxisProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"RotationAboutXAxis" );
-  parent->LinkEndChild(ele2);
-  return ele2;
-}
-
-TiXmlElement* RotationAboutYAxisProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"RotationAboutYAxis" );
-  parent->LinkEndChild(ele2);
-  return ele2;
-}
-
-TiXmlElement* RotationAboutZAxisProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"RotationAboutZAxis" );
-  parent->LinkEndChild(ele2);
-  return ele2;
-}
+//TiXmlElement* RotationAboutXAxisProperty::writeXMLFile(TiXmlNode *parent) {
+//  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"RotationAboutXAxis" );
+//  parent->LinkEndChild(ele2);
+//  return ele2;
+//}
+//
+//TiXmlElement* RotationAboutYAxisProperty::writeXMLFile(TiXmlNode *parent) {
+//  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"RotationAboutYAxis" );
+//  parent->LinkEndChild(ele2);
+//  return ele2;
+//}
+//
+//TiXmlElement* RotationAboutZAxisProperty::writeXMLFile(TiXmlNode *parent) {
+//  TiXmlElement *ele2 = new TiXmlElement( MBSIMNS"RotationAboutZAxis" );
+//  parent->LinkEndChild(ele2);
+//  return ele2;
+//}
 
 //RotationAboutFixedAxisProperty::RotationAboutFixedAxisProperty() {
 //  vector<PhysicalVariableProperty> input;
@@ -380,7 +383,9 @@ TimeDependentRotationAboutFixedAxisProperty::TimeDependentRotationAboutFixedAxis
   vec.setProperty(new ExtPhysicalVarProperty(input));  
 
   vector<Property*> property;
-  property.push_back(new SymbolicFunction1Property("SS","t"));
+  vector<string> var;
+  var.push_back("t");
+  property.push_back(new SymbolicFunctionProperty("SS",var));
   function.setProperty(new ChoiceProperty(MBSIMNS"rotationalFunction",property));
 }
 
@@ -413,14 +418,15 @@ StateDependentRotationAboutFixedAxisProperty::StateDependentRotationAboutFixedAx
   vec.setProperty(new ExtPhysicalVarProperty(input));  
 
   vector<Property*> property;
-  property.push_back(new SymbolicFunction1Property("SV","q"));
+  vector<string> var;
+  var.push_back("q");
+  property.push_back(new SymbolicFunctionProperty("SV",var));
   function.setProperty(new ChoiceProperty(MBSIMNS"rotationalFunction",property));
 }
 
 int StateDependentRotationAboutFixedAxisProperty::getqSize() const {
-  SymbolicFunction1Property *func = static_cast<SymbolicFunction1Property*>(static_cast<const ChoiceProperty*>(function.getProperty())->getProperty());
-  return func->getArgDim();
-  return 0;
+  SymbolicFunctionProperty *func = static_cast<SymbolicFunctionProperty*>(static_cast<const ChoiceProperty*>(function.getProperty())->getProperty());
+  return func->getArg1Size();
 }
 
 TiXmlElement* StateDependentRotationAboutFixedAxisProperty::initializeUsingXML(TiXmlElement *element) {
@@ -447,18 +453,18 @@ void StateDependentRotationAboutFixedAxisProperty::toWidget(QWidget *widget) {
 }
 
 RotationChoiceProperty::RotationChoiceProperty(int index, const std::string &xmlName_): xmlName(xmlName_), index(0) {
-  rotation.push_back(new RotationAboutXAxisProperty);
-  rotation.push_back(new RotationAboutYAxisProperty);  
-  rotation.push_back(new RotationAboutZAxisProperty);  
-//  rotation.push_back(new RotationAboutFixedAxisProperty);  
-  rotation.push_back(new RotationAboutAxesXYProperty);
-  rotation.push_back(new RotationAboutAxesXZProperty);  
-  rotation.push_back(new RotationAboutAxesYZProperty);  
-  rotation.push_back(new CardanAnglesProperty);
-  rotation.push_back(new EulerAnglesProperty);
-  rotation.push_back(new RotationAboutAxesXYZProperty);  
-  rotation.push_back(new TimeDependentRotationAboutFixedAxisProperty);  
-  rotation.push_back(new StateDependentRotationAboutFixedAxisProperty);  
+//  rotation.push_back(new RotationAboutXAxisProperty);
+//  rotation.push_back(new RotationAboutYAxisProperty);  
+//  rotation.push_back(new RotationAboutZAxisProperty);  
+////  rotation.push_back(new RotationAboutFixedAxisProperty);  
+//  rotation.push_back(new RotationAboutAxesXYProperty);
+//  rotation.push_back(new RotationAboutAxesXZProperty);  
+//  rotation.push_back(new RotationAboutAxesYZProperty);  
+//  rotation.push_back(new CardanAnglesProperty);
+//  rotation.push_back(new EulerAnglesProperty);
+//  rotation.push_back(new RotationAboutAxesXYZProperty);  
+//  rotation.push_back(new TimeDependentRotationAboutFixedAxisProperty);  
+//  rotation.push_back(new StateDependentRotationAboutFixedAxisProperty);  
 }
 
 RotationChoiceProperty::RotationChoiceProperty(const RotationChoiceProperty &p) : xmlName(p.xmlName), index(p.index) {
