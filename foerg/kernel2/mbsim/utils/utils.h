@@ -164,7 +164,6 @@ namespace MBSim {
   class FromMatStr {
     public:
       static Ret cast(const char *x) {
-//        throw std::runtime_error("FromMatStr::cast not implemented for current type.");
         return Ret(x);
       }
   };

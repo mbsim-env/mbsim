@@ -4037,6 +4037,58 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="TranslationAlongAxesXY_V" substitutionGroup="Function_VV" type="TranslationAlongAxesXY_VType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="TranslationAlongAxesXY_VType">
+    <xs:complexContent>
+      <xs:extension base="Function_VVType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="TranslationAlongAxesYZ_V" substitutionGroup="Function_VV" type="TranslationAlongAxesYZ_VType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="TranslationAlongAxesYZ_VType">
+    <xs:complexContent>
+      <xs:extension base="Function_VVType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="TranslationAlongAxesXZ_V" substitutionGroup="Function_VV" type="TranslationAlongAxesXZ_VType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="TranslationAlongAxesXZ_VType">
+    <xs:complexContent>
+      <xs:extension base="Function_VVType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="TranslationAlongAxesXYZ_V" substitutionGroup="Function_VV" type="TranslationAlongAxesXYZ_VType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="TranslationAlongAxesXYZ_VType">
+    <xs:complexContent>
+      <xs:extension base="Function_VVType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="Function_MVS" abstract="true" type="Function_MVSType"/>
   <xs:complexType name="Function_MVSType"/>
 
@@ -4170,6 +4222,45 @@
     </xs:complexContent>
   </xs:complexType>   
   
+  <xs:element name="RotationAboutAxesXY_V" substitutionGroup="Function_MV" type="RotationAboutAxesXY_VType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="RotationAboutAxesXY_VType">
+    <xs:complexContent>
+      <xs:extension base="Function_MVType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="RotationAboutAxesYZ_V" substitutionGroup="Function_MV" type="RotationAboutAxesYZ_VType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="RotationAboutAxesYZ_VType">
+    <xs:complexContent>
+      <xs:extension base="Function_MVType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="RotationAboutAxesXZ_V" substitutionGroup="Function_MV" type="RotationAboutAxesXZ_VType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="RotationAboutAxesXZ_VType">
+    <xs:complexContent>
+      <xs:extension base="Function_MVType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="RotationAboutAxesXYZ_V" substitutionGroup="Function_MV" type="RotationAboutAxesXYZ_VType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
