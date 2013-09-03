@@ -45,6 +45,8 @@ namespace MBSim {
         typename fmatvec::Der<Ret, double>::type parDer2DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Vec3(); }
         typename fmatvec::Der<typename fmatvec::Der<Ret, fmatvec::VecV>::type, double>::type parDer1ParDer2(const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Mat3xV(getArg1Size()); }
         typename fmatvec::Der<Ret, fmatvec::VecV>::type parDer1DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return f->parDerDirDer(arg1Dir,arg1); }
+        bool constParDer1() const { return f->constParDer(); }
+        bool constParDer2() const { return true; }
     };
 
   template<typename Sig> class TimeDependentFunction;
@@ -64,6 +66,8 @@ namespace MBSim {
         typename fmatvec::Der<Ret, double>::type parDer2DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Vec3(); }
         typename fmatvec::Der<typename fmatvec::Der<Ret, fmatvec::VecV>::type, double>::type parDer1ParDer2(const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Mat3xV(); }
         typename fmatvec::Der<Ret, fmatvec::VecV>::type parDer1DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) { return fmatvec::Mat3xV(); }
+        bool constParDer1() const { return true; }
+        bool constParDer2() const { return f->constParDer(); }
     };
 
   template<typename Sig> class NestedFunction; 
@@ -469,6 +473,7 @@ namespace MBSim {
           MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"value");
           a=FromMatStr<Ret>::cast(e->GetText());
         }
+        bool constParDer() const { return true; }
         MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; } 
     };
 
@@ -488,6 +493,7 @@ namespace MBSim {
         typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &arg) { return A; }
         typename fmatvec::Der<Ret, Arg>::type parDerDirDer(const Arg &arg1Dir, const Arg &arg1) { return typename fmatvec::Der<Ret, Arg>::type(A.rows(),A.cols()); }
         typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &arg) { throw std::runtime_error("parDerParDer is not available for given template parameters."); }
+        bool constParDer() const { return true; }
         void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
           MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"slope");
           A=FromMatStr<typename fmatvec::Der<Ret, Arg>::type>::cast(e->GetText());
@@ -824,6 +830,38 @@ namespace MBSim {
         typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) {
           return typename fmatvec::Der<fmatvec::RotMat3, Arg>::type(1);
         }
+        bool constParDer() const { return true; }
+        const fmatvec::Vec3& getAxisOfRotation() const { return a; }
+        void setAxisOfRotation(const fmatvec::Vec3 &a_) { a = a_; }
+    };
+
+  template<class Arg> 
+    class RotationAboutYAxis : public fmatvec::Function<fmatvec::RotMat3(Arg)> {
+      private:
+        fmatvec::RotMat3 A;
+        fmatvec::Vec3 a;
+      public:
+        RotationAboutYAxis() { a(1) = 1; A(1,1) = 1; }
+        typename fmatvec::Size<Arg>::type getArgSize() const {
+          return 1;
+        }
+        fmatvec::RotMat3 operator()(const Arg &q) {
+          double alpha = ToDouble<Arg>::cast(q);
+          const double cosq=cos(alpha);
+          const double sinq=sin(alpha);
+          A(0,0) = cosq;
+          A(2,0) = -sinq;
+          A(0,2) = sinq;
+          A(2,2) = cosq;
+          return A;
+        }
+        typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDer(const Arg &q) {
+          return a;
+        }
+        typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) {
+          return typename fmatvec::Der<fmatvec::RotMat3, Arg>::type(1);
+        }
+        bool constParDer() const { return true; }
         const fmatvec::Vec3& getAxisOfRotation() const { return a; }
         void setAxisOfRotation(const fmatvec::Vec3 &a_) { a = a_; }
     };
@@ -854,6 +892,7 @@ namespace MBSim {
         typename fmatvec::Der<fmatvec::RotMat3, Arg>::type parDerDirDer(const Arg &qd, const Arg &q) {
           return typename fmatvec::Der<fmatvec::RotMat3, Arg>::type(1);
         }
+        bool constParDer() const { return true; }
         const fmatvec::Vec3& getAxisOfRotation() const { return a; }
         void setAxisOfRotation(const fmatvec::Vec3 &a_) { a = a_; }
     };
@@ -895,6 +934,7 @@ namespace MBSim {
           return typename fmatvec::Der<fmatvec::RotMat3, Arg>::type(1);
         }
         typename fmatvec::Der<typename fmatvec::Der<fmatvec::RotMat3, Arg>::type, Arg>::type parDerParDer(const Arg &arg) { throw std::runtime_error("parDerParDer is not available for given template parameters."); }
+        bool constParDer() const { return true; }
         const fmatvec::Vec3& getAxisOfRotation() const { return a; }
         void setAxisOfRotation(const fmatvec::Vec3 &a_) { a = a_; }
         void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {

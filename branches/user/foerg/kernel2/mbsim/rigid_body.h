@@ -364,8 +364,7 @@ namespace MBSim {
       fmatvec::Vec jRel;
 
       fmatvec::VecV qTRel, qRRel, uTRel, uRRel;
-      fmatvec::Mat3xV WJTrel,WJRrel;
-      fmatvec::Vec3 WjTrel,WjRrel;
+      fmatvec::Mat3xV WJTrel, WJRrel, PJTT, PJRR;
 
       Constraint *constraint;
 
@@ -380,7 +379,7 @@ namespace MBSim {
 
       fmatvec::Range<fmatvec::Var,fmatvec::Var> iqT, iqR, iuT, iuR;
 
-      bool translationDependentRotation, constantJacobianOfRotation;
+      bool translationDependentRotation, constJT, constJR, constjT, constjR;
 
     private:
 #ifdef HAVE_OPENMBVCPPINTERFACE

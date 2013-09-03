@@ -3908,6 +3908,84 @@
   <xs:element name="Function_MS" abstract="true" type="Function_MSType"/>
   <xs:complexType name="Function_MSType"/>
 
+  <xs:element name="RotationAboutXAxis_V" substitutionGroup="Function_MV" type="RotationAboutXAxis_VType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="RotationAboutXAxis_VType">
+    <xs:complexContent>
+      <xs:extension base="Function_MVType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="RotationAboutXAxis_S" substitutionGroup="Function_MS" type="RotationAboutXAxis_SType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="RotationAboutXAxis_SType">
+    <xs:complexContent>
+      <xs:extension base="Function_MSType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="RotationAboutYAxis_V" substitutionGroup="Function_MV" type="RotationAboutYAxis_VType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="RotationAboutYAxis_VType">
+    <xs:complexContent>
+      <xs:extension base="Function_MVType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="RotationAboutYAxis_S" substitutionGroup="Function_MS" type="RotationAboutYAxis_SType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="RotationAboutYAxis_SType">
+    <xs:complexContent>
+      <xs:extension base="Function_MSType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="RotationAboutZAxis_V" substitutionGroup="Function_MV" type="RotationAboutZAxis_VType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="RotationAboutZAxis_VType">
+    <xs:complexContent>
+      <xs:extension base="Function_MVType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="RotationAboutZAxis_S" substitutionGroup="Function_MS" type="RotationAboutZAxis_SType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="RotationAboutZAxis_SType">
+    <xs:complexContent>
+      <xs:extension base="Function_MSType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="RotationAboutFixedAxis_V" substitutionGroup="Function_MV" type="RotationAboutFixedAxis_VType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
