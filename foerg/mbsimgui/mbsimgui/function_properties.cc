@@ -236,6 +236,8 @@ NestedFunctionProperty::NestedFunctionProperty(const string &ext, const vector<P
   else {
     var.push_back("t");
     property.push_back(new SymbolicFunctionProperty("SS",var));
+    property.push_back(new QuadraticFunctionProperty("S"));
+    property.push_back(new SinusFunctionProperty("S"));
   }
   fi.setProperty(new ChoiceProperty(MBSIMNS"innerFunction",property));
 }
@@ -292,18 +294,27 @@ void RotationAboutFixedAxisProperty::toWidget(QWidget *widget) {
   a.toWidget(static_cast<RotationAboutFixedAxisWidget*>(widget)->a);
 }
 
-QuadraticFunctionProperty::QuadraticFunctionProperty() {
+QuadraticFunctionProperty::QuadraticFunctionProperty(const string &ext, int m) : FunctionProperty(ext) {
 
   vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new VecProperty(1),"",MBSIMNS"a0"));
+  if(ext[0]=='V')
+    input.push_back(PhysicalVariableProperty(new VecProperty(m),"",MBSIMNS"a0"));
+  else
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"a0"));
   a0.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new VecProperty(1),"",MBSIMNS"a1"));
+  if(ext[0]=='V')
+    input.push_back(PhysicalVariableProperty(new VecProperty(m),"",MBSIMNS"a1"));
+  else
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"a1"));
   a1.setProperty(new ExtPhysicalVarProperty(input));
 
   input.clear();
-  input.push_back(PhysicalVariableProperty(new VecProperty(1),"",MBSIMNS"a2"));
+  if(ext[0]=='V')
+    input.push_back(PhysicalVariableProperty(new VecProperty(m),"",MBSIMNS"a2"));
+  else
+    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"a2"));
   a2.setProperty(new ExtPhysicalVarProperty(input));
 }
 
@@ -445,7 +456,7 @@ TiXmlElement* SummationFunctionProperty::initializeUsingXML(TiXmlElement *elemen
     function.push_back(ContainerProperty());
     vector<Property*> property;
     property.push_back(new ConstantFunctionProperty("VS"));
-    property.push_back(new QuadraticFunctionProperty);
+    property.push_back(new QuadraticFunctionProperty("V"));
     property.push_back(new SinusFunctionProperty("V"));
     property.push_back(new TabularFunctionProperty);
     property.push_back(new SummationFunctionProperty);
@@ -483,7 +494,7 @@ void SummationFunctionProperty::fromWidget(QWidget *widget) {
 
     vector<Property*> property;
     property.push_back(new ConstantFunctionProperty("VS"));
-    property.push_back(new QuadraticFunctionProperty);
+    property.push_back(new QuadraticFunctionProperty("V"));
     property.push_back(new SinusFunctionProperty("V"));
     property.push_back(new TabularFunctionProperty);
     property.push_back(new SummationFunctionProperty);

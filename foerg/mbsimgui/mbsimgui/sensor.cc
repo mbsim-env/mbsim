@@ -86,7 +86,7 @@ TiXmlElement* AbsoluteCoordinateSensor::writeXMLFile(TiXmlNode *parent) {
 FunctionSensor::FunctionSensor(const string &str, Element *parent) : Sensor(str, parent) {
   vector<Property*> property;
   property.push_back(new ConstantFunctionProperty("VS"));
-  property.push_back(new QuadraticFunctionProperty);
+  property.push_back(new QuadraticFunctionProperty("V"));
   property.push_back(new SinusFunctionProperty("V"));
   property.push_back(new TabularFunctionProperty);
   property.push_back(new SummationFunctionProperty);

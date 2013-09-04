@@ -233,7 +233,7 @@ class QuadraticFunctionWidget : public FunctionWidget {
   friend class QuadraticFunctionProperty;
 
   public:
-    QuadraticFunctionWidget(int n);
+    QuadraticFunctionWidget(const QString &ext, int m=3);
     void resize_(int m, int n);
 
   protected:

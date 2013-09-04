@@ -170,6 +170,8 @@ NestedFunctionWidget::NestedFunctionWidget(const QString &ext, const vector<QWid
   else {
     var << "t";
     widget.push_back(new SymbolicFunctionWidget("SS",var)); name.push_back("Symbolic function f=f(t)");
+    widget.push_back(new QuadraticFunctionWidget("S")); name.push_back("Quadratic function f=f(t)");
+    widget.push_back(new SinusFunctionWidget("S")); name.push_back("Sinus function f=f(t)");
   }
   fi = new ExtWidget("Inner function",new ChoiceWidget(widget,name));
   layout->addWidget(fi);
@@ -190,23 +192,32 @@ RotationAboutFixedAxisWidget::RotationAboutFixedAxisWidget(const QString &ext) :
   layout->addWidget(a);
 }
 
-QuadraticFunctionWidget::QuadraticFunctionWidget(int n) {
+QuadraticFunctionWidget::QuadraticFunctionWidget(const QString &ext, int m) : FunctionWidget(ext) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
 
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new VecWidget(n,true),QStringList(),0));
+  if(ext[0]=='V')
+    input.push_back(new PhysicalVariableWidget(new VecWidget(m,true),QStringList(),0));
+  else
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
   a0 = new ExtWidget("a0",new ExtPhysicalVarWidget(input));
   layout->addWidget(a0);
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new VecWidget(n,true),QStringList(),0));
+  if(ext[0]=='V')
+    input.push_back(new PhysicalVariableWidget(new VecWidget(m,true),QStringList(),0));
+  else
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
   a1 = new ExtWidget("a1",new ExtPhysicalVarWidget(input));
   layout->addWidget(a1);
 
   input.clear();
-  input.push_back(new PhysicalVariableWidget(new VecWidget(n,true),QStringList(),0));
+  if(ext[0]=='V')
+    input.push_back(new PhysicalVariableWidget(new VecWidget(m,true),QStringList(),0));
+  else
+    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
   a2 = new ExtWidget("a2",new ExtPhysicalVarWidget(input));
   layout->addWidget(a2);
 }
@@ -353,7 +364,7 @@ void SummationFunctionWidget::addFunction() {
   vector<QString> name;
   widget.push_back(new ConstantFunctionWidget("VS",n));
   name.push_back("Constant function");
-  widget.push_back(new QuadraticFunctionWidget(n));
+  widget.push_back(new QuadraticFunctionWidget("V",n));
   name.push_back("Quadratic function");
   widget.push_back(new SinusFunctionWidget("V",n));
   name.push_back("Sinus function");
