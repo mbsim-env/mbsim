@@ -310,6 +310,7 @@ namespace MBSim {
       /*****************************************************/
 
       const std::vector<Object*>& getObjects() const { return object; }
+      const std::vector<Link*>& getLinks() const { return link; }
       const std::vector<DynamicSystem*>& getDynamicSystems() const { return dynamicsystem; }
       const std::vector<Frame*>& getFrames() const { return frame; }
       const std::vector<Contour*>& getContours() const { return contour; }
