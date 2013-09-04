@@ -46,47 +46,15 @@ class FunctionWidget : public Widget {
     void arg1SizeChanged(int);
 };
 
-//class Function2Widget : public Widget {
-//  Q_OBJECT
-//  public:
-//    Function2Widget() {}
-//    virtual ~Function2Widget() {}
-//  public slots:
-//    virtual void resize_(int m, int n) {}
-//};
-
-//class SymbolicFunction1Widget : public FunctionWidget {
-//
-//  friend class SymbolicFunctionProperty;
-//
-//  public:
-//    SymbolicFunction1Widget(const QString &ext, const QString &var, int max=99);
-//    int getArg1Size() const;
-//  protected:
-//    ExtWidget *f;
-//    std::vector<ExtWidget*> argname, argdim;
-//};
-
 class ConstantFunctionWidget : public FunctionWidget {
 
   friend class ConstantFunctionProperty;
 
   public:
-    ConstantFunctionWidget(const QString &ext, int m);
+    ConstantFunctionWidget(const QString &ext, int m=1);
     void resize_(int m, int n);
   protected:
     ExtWidget *c;
-};
-
-class LinearFunctionTestWidget : public FunctionWidget {
-
-  friend class LinearFunctionTestProperty;
-
-  public:
-    LinearFunctionTestWidget(bool vec, int n);
-  protected:
-    ExtWidget *choice;
-    ExtWidget *a, *b;
 };
 
 class LinearFunctionWidget : public FunctionWidget {
@@ -94,7 +62,7 @@ class LinearFunctionWidget : public FunctionWidget {
   friend class LinearFunctionProperty;
 
   public:
-    LinearFunctionWidget(const QString &ext, int m, int n);
+    LinearFunctionWidget(const QString &ext, int m=1, int n=1);
     int getArg1Size() const;
     void resize_(int m, int n);
   protected:
@@ -233,7 +201,7 @@ class QuadraticFunctionWidget : public FunctionWidget {
   friend class QuadraticFunctionProperty;
 
   public:
-    QuadraticFunctionWidget(const QString &ext, int m=3);
+    QuadraticFunctionWidget(const QString &ext, int m=1);
     void resize_(int m, int n);
 
   protected:
@@ -245,7 +213,7 @@ class SinusFunctionWidget : public FunctionWidget {
   friend class SinusFunctionProperty;
 
   public:
-    SinusFunctionWidget(const QString &ext, int m=3);
+    SinusFunctionWidget(const QString &ext, int m=1);
     void resize_(int m, int n);
 
   protected:
