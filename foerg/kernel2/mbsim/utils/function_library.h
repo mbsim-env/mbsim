@@ -657,15 +657,15 @@ namespace MBSim {
       }
   };
 
-   template<class Col>
-   class StepFunction : public fmatvec::Function<fmatvec::Vector<Col,double>(double)> {
+   template<class Ret>
+   class StepFunction : public fmatvec::Function<Ret(double)> {
    private:
-      fmatvec::Vector<Col,double> stepTime, stepSize;
+      Ret stepTime, stepSize;
     public:
       StepFunction() {}
-      StepFunction(const fmatvec::Vector<Col,double> &stepTime_, const fmatvec::Vector<Col,double> &stepSize_) : stepTime(stepTime_), stepSize(stepSize_) { }
-      fmatvec::Vector<Col,double> operator()(const double &x) {
-        fmatvec::Vector<Col,double> y(stepTime.size());
+      StepFunction(const Ret &stepTime_, const Ret &stepSize_) : stepTime(stepTime_), stepSize(stepSize_) { }
+      Ret operator()(const double &x) {
+        Ret y(stepTime.size());
         for (int i=0; i<y.size(); i++)
           if (x>=stepTime(i))
             y(i)=stepSize(i);
@@ -673,31 +673,43 @@ namespace MBSim {
       }
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
         MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"time");
-        stepTime=Element::getVec(e);
+        stepTime=FromMatStr<Ret>::cast(e->GetText());
         e=element->FirstChildElement(MBSIMNS"size");
-        stepSize=Element::getVec(e);
+        stepSize=FromMatStr<Ret>::cast(e->GetText());
       }
   };
 
-  class SummationFunction : public fmatvec::Function<fmatvec::Vector<fmatvec::Ref,double>(double)> {
+  template<>
+    inline double StepFunction<double>::operator()(const double &x) {  
+      return (x>=stepTime)?stepSize:0;
+    }
+
+  template<typename Sig> class SummationFunction;
+
+  template<class Ret, class Arg>
+    class SummationFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
     public:
       SummationFunction() { }
-      void addFunction(Function<fmatvec::Vector<fmatvec::Ref,double>(double)> *function, double factor=1.) {
+      void addFunction(fmatvec::Function<Ret(Arg)> *function, double factor=1.) {
         functions.push_back(function);
         factors.push_back(factor);
       }
-      fmatvec::Vector<fmatvec::Ref,double> operator()(const double &x) {
-        fmatvec::Vec y=factors[0]*(*(functions[0]))(x);
+      Ret operator()(const Arg &x) {
+        Ret y=factors[0]*(*(functions[0]))(x);
         for (unsigned int i=1; i<functions.size(); i++)
           y+=factors[i]*(*(functions[i]))(x);
         return y;
       }
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
+//          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"outerFunction");
+//          fo=ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<Ret(Argo)> >(e->FirstChildElement());
+//          fo->initializeUsingXML(e->FirstChildElement());
         MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"function");
         while (e && e->ValueStr()==MBSIMNS"function") {
           MBXMLUtils::TiXmlElement *ee = e->FirstChildElement();
-          typedef Function<fmatvec::Vector<fmatvec::Ref,double>(double)> typevec;
-          Function<fmatvec::Vector<fmatvec::Ref,double>(double)> *f=ObjectFactory<fmatvec::FunctionBase>::create<Function<fmatvec::Vector<fmatvec::Ref,double>(double)> >(ee);
+          //typedef Function<fmatvec::Vector<fmatvec::Ref,double>(double)> typevec;
+          //Function<fmatvec::Vector<fmatvec::Ref,double>(double)> *f=ObjectFactory<fmatvec::FunctionBase>::create<Function<fmatvec::Vector<fmatvec::Ref,double>(double)> >(ee);
+          fmatvec::Function<Ret(Arg)> *f=ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<Ret(Arg)> >(ee);
           f->initializeUsingXML(ee);
           ee=e->FirstChildElement(MBSIMNS"factor");
           double factor=Element::getDouble(ee);
@@ -706,7 +718,7 @@ namespace MBSim {
         }
       }
     private:
-      std::vector<Function<fmatvec::Vector<fmatvec::Ref,double>(double)> *> functions;
+      std::vector<fmatvec::Function<Ret(Arg)> *> functions;
       std::vector<double> factors;
   };
 

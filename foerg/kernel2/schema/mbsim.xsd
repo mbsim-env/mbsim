@@ -3310,6 +3310,36 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="StepFunction_S" substitutionGroup="Function_SS" type="StepFunction_SType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Vektorwertige Sprungfunktion <object class="inlineeqn">y_i=\begin{cases}c_i\ \text{bei}\ t\geq t_i\\0\ \text{bei}\ t\leq t_i\end{cases}</object>.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="StepFunction_SType">
+    <xs:complexContent>
+      <xs:extension base="Function_SSType">
+        <xs:sequence>
+          <xs:element name="time" type="pv:unknownScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Sprungzeitpunkt <object class="inlineeqn">t</object>.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="size" type="pv:unknownScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Zugehöriger Funktionswert <object class="inlineeqn">c</object>.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="StepFunction_V" substitutionGroup="Function_VS" type="StepFunction_VType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -3437,6 +3467,36 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="SummationFunction_SS" substitutionGroup="Function_SS" type="SummationFunction_SSType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Bildet die Summe einer beliebigen Anzahl von Funktionen: <object class="inlineeqn">\mathbf{y} \left(x\right) = \sum_i^n c_i \, \mathbf{y}_i \left(x \right) </object> 
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="SummationFunction_SSType">
+    <xs:complexContent>
+      <xs:extension base="Function_SSType">
+        <xs:sequence>
+          <xs:element name="function" maxOccurs="unbounded">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function_SS"/>
+                <xs:element name="factor" type="pv:nounitScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Factor <object class="inlineeqn">c_i</object> 
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="SummationFunction_VS" substitutionGroup="Function_VS" type="SummationFunction_VSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -3452,6 +3512,36 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="mbsim:Function_VS"/>
+                <xs:element name="factor" type="pv:nounitScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Factor <object class="inlineeqn">c_i</object> 
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="SummationFunction_VV" substitutionGroup="Function_VV" type="SummationFunction_VVType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Bildet die Summe einer beliebigen Anzahl von Funktionen: <object class="inlineeqn">\mathbf{y} \left(x\right) = \sum_i^n c_i \, \mathbf{y}_i \left(x \right) </object> 
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="SummationFunction_VVType">
+    <xs:complexContent>
+      <xs:extension base="Function_VVType">
+        <xs:sequence>
+          <xs:element name="function" maxOccurs="unbounded">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function_VV"/>
                 <xs:element name="factor" type="pv:nounitScalar">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -3498,21 +3588,21 @@
           <xs:element name="a0" type="pv:unknownScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Faktor <object class="inlineeqn">\boldsymbol{a}_0</object>.
+                Faktor <object class="inlineeqn">a_0</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="a1" type="pv:unknownScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Faktor <object class="inlineeqn">\boldsymbol{a}_1</object>.
+                Faktor <object class="inlineeqn">a_1</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="a2" type="pv:unknownScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Faktor <object class="inlineeqn">\boldsymbol{a}_2</object>.
+                Faktor <object class="inlineeqn">a_2</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -3572,28 +3662,28 @@
           <xs:element name="amplitude" type="pv:unknownScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Amplitudenvektor <object class="inlineeqn">\boldsymbol{A}</object>.
+                Amplitude <object class="inlineeqn">A</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="frequency" type="pv:unknownScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Frequenzvektor <object class="inlineeqn">\boldsymbol{f}</object>.
+                Frequenz <object class="inlineeqn">f</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="phase" type="pv:angleScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Phasenversatzvektor <object class="inlineeqn">\boldsymbol{\varphi}</object>.
+                Phasenversatz <object class="inlineeqn">\varphi</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="offset" type="pv:unknownScalar" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Offsetvektor <object class="inlineeqn">\boldsymbol{o}</object>.
+                Offset <object class="inlineeqn">o</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>

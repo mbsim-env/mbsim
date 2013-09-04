@@ -163,9 +163,15 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PositiveSinusFunction<VecV>, MBSIMNS"PositiveSinusFunction_V")
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, StepFunction<Ref>, MBSIMNS"StepFunction_V")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, StepFunction<VecV>, MBSIMNS"StepFunction_V")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, StepFunction<Vec3>, MBSIMNS"StepFunction_V")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, StepFunction<double>, MBSIMNS"StepFunction_S")
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SummationFunction, MBSIMNS"SummationFunction_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SummationFunction<VecV(VecV)>, MBSIMNS"SummationFunction_VV")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SummationFunction<Vec3(VecV)>, MBSIMNS"SummationFunction_VV")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SummationFunction<VecV(double)>, MBSIMNS"SummationFunction_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SummationFunction<Vec3(double)>, MBSIMNS"SummationFunction_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SummationFunction<double(double)>, MBSIMNS"SummationFunction_SS")
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TabularFunction_SSS, MBSIMNS"TabularFunction_SSS")
 
