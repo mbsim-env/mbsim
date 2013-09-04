@@ -28,6 +28,17 @@
 
 namespace MBSim {
 
+  template <class Ret> Ret zero(const Ret &x);
+  template <> inline fmatvec::VecV zero<fmatvec::VecV>(const fmatvec::VecV &x) {
+    return fmatvec::VecV(x.size());
+  }
+  template <> inline fmatvec::Vec3 zero<fmatvec::Vec3>(const fmatvec::Vec3 &x) {
+    return fmatvec::Vec3(x.size());
+  }
+  template <> inline double zero<double>(const double &x) {
+    return 0;
+  }
+
   template<typename Sig> class StateDependentFunction;
 
   template <class Ret>
@@ -516,64 +527,79 @@ namespace MBSim {
   template<>
     inline fmatvec::Vec3 LinearFunction<fmatvec::Vec3(double)>::parDerParDer(const double &arg) { return fmatvec::Vec3(); }
 
- template<class Col>
-  class QuadraticFunction : public fmatvec::Function<fmatvec::Vector<Col,double>(double)> {
+ template<class Ret>
+  class QuadraticFunction : public fmatvec::Function<Ret(double)> {
     private:
-       fmatvec::Vector<Col,double> a0, a1, a2;
+       Ret a0, a1, a2;
     public:
       QuadraticFunction() { }
-      QuadraticFunction(const fmatvec::Vector<Col,double> &a0_, const fmatvec::Vector<Col,double> &a1_, const fmatvec::Vector<Col,double> &a2_) : a0(a0_), a1(a1_), a2(a2_) { }
-      fmatvec::Vector<Col,double> operator()(const double &x) {  
-        fmatvec::Vector<Col,double> y(a0.size(), fmatvec::NONINIT);
+      QuadraticFunction(const Ret &a0_, const Ret &a1_, const Ret &a2_) : a0(a0_), a1(a1_), a2(a2_) { }
+      Ret operator()(const double &x) {  
+        Ret y(a0.size(), fmatvec::NONINIT);
         for (int i=0; i<y.size(); i++)
           y(i)=a0(i)+(a1(i)+a2(i)*x)*x;
         return y;
       }
-      fmatvec::Vector<Col,double> parDer(const double &x) {  
-        fmatvec::Vector<Col,double> y(a0.size(), fmatvec::NONINIT);
+      typename fmatvec::Der<Ret, double>::type parDer(const double &x) {  
+        typename fmatvec::Der<Ret, double>::type y(a0.size(), fmatvec::NONINIT);
         for (int i=0; i<y.size(); i++)
           y(i)=a1(i)+2.*a2(i)*x;
         return y;
       }
-      fmatvec::Vector<Col,double> parDerParDer(const double &x) {  
-        fmatvec::Vector<Col,double> y(a0.size(), fmatvec::NONINIT);
+      typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) {  
+        typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type y(a0.size(), fmatvec::NONINIT);
         for (int i=0; i<y.size(); i++)
           y(i)=2.*a2(i);
         return y;
       }
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
         MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"a0");
-        a0=Element::getVec(e);
+        a0=FromMatStr<Ret>::cast(e->GetText());
         e=element->FirstChildElement(MBSIMNS"a1");
-        a1=Element::getVec(e, a0.size());
+        a1=FromMatStr<Ret>::cast(e->GetText());
         e=element->FirstChildElement(MBSIMNS"a2");
-        a2=Element::getVec(e, a0.size());
+        a2=FromMatStr<Ret>::cast(e->GetText());
       }
   };
 
-  template<class Col>
-  class SinusFunction : public fmatvec::Function<fmatvec::Vector<Col,double>(double)> {
+ template<>
+   inline double QuadraticFunction<double>::operator()(const double &x) {  
+     return a0+(a1+a2*x)*x;
+   }
+
+ template<>
+   inline double QuadraticFunction<double>::parDer(const double &x) {  
+     return a1+2.*a2*x;
+   }
+
+ template<>
+   inline double QuadraticFunction<double>::parDerParDer(const double &x) {  
+     return 2.*a2;
+   }
+
+  template<class Ret>
+  class SinusFunction : public fmatvec::Function<Ret(double)> {
     protected:
-      fmatvec::Vector<Col,double> A, f, phi0, y0;
+      Ret A, f, phi0, y0;
     public:
       SinusFunction() { }
-      SinusFunction(const fmatvec::Vector<Col,double> &A_, const fmatvec::Vector<Col,double> &f_, const fmatvec::Vector<Col,double> &phi0_, const fmatvec::Vector<Col,double> &y0_) : A(A_), f(f_), phi0(phi0_), y0(y0_) { }
-      fmatvec::Vector<Col,double> operator()(const double &x) {  
-        fmatvec::Vector<Col,double> y(A.size(), fmatvec::NONINIT);
+      SinusFunction(const Ret &A_, const Ret &f_, const Ret &phi0_, const Ret &y0_) : A(A_), f(f_), phi0(phi0_), y0(y0_) { }
+      Ret operator()(const double &x) {  
+        Ret y(A.size(), fmatvec::NONINIT);
         for (int i=0; i<y.size(); i++)
           y(i)=y0(i)+A(i)*sin(2.*M_PI*f(i)*x+phi0(i));
         return y;
       }
-      fmatvec::Vector<Col,double> parDer(const double &x) {  
-        fmatvec::Vector<Col,double> y(A.size(), fmatvec::NONINIT);
+      typename fmatvec::Der<Ret, double>::type parDer(const double &x) {  
+        typename fmatvec::Der<Ret, double>::type y(A.size(), fmatvec::NONINIT);
         for (int i=0; i<y.size(); i++) {
           double om = 2.*M_PI*f(i);
           y(i)=A(i)*om*cos(om*x+phi0(i));
         }
         return y;
       }
-      fmatvec::Vector<Col,double> parDerParDer(const double &x) {  
-        fmatvec::Vector<Col,double> y(A.size(), fmatvec::NONINIT);
+      typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) {  
+        typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type y(A.size(), fmatvec::NONINIT);
         for (int i=0; i<y.size(); i++) {
           double om = 2.*M_PI*f(i);
           y(i)=-A(i)*om*om*sin(om*x+phi0(i));
@@ -582,19 +608,16 @@ namespace MBSim {
       }
       void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
         MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"amplitude");
-        A=Element::getVec(e);
+        A=FromMatStr<Ret>::cast(e->GetText());
         e=element->FirstChildElement(MBSIMNS"frequency");
-        f=Element::getVec(e, A.size());
+        f=FromMatStr<Ret>::cast(e->GetText());
         e=element->FirstChildElement(MBSIMNS"phase");
-        phi0=Element::getVec(e, A.size());
+        phi0=FromMatStr<Ret>::cast(e->GetText());
         e=element->FirstChildElement(MBSIMNS"offset");
-        if (e)
-          y0=Element::getVec(e, A.size());
-        else
-          y0=fmatvec::Vector<Col,double>(A.size());
+        y0=e?FromMatStr<Ret>::cast(e->GetText()):zero<Ret>(A);
       }
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) {
-        MBXMLUtils::TiXmlElement *ele0 = fmatvec::Function<fmatvec::Vector<Col,double>(double)>::writeXMLFile(parent);
+        MBXMLUtils::TiXmlElement *ele0 = fmatvec::Function<Ret(double)>::writeXMLFile(parent);
         addElementText(ele0,MBSIMNS"amplitude",A);
         addElementText(ele0,MBSIMNS"frequency",f);
         addElementText(ele0,MBSIMNS"phase",phi0);
@@ -603,14 +626,31 @@ namespace MBSim {
       }
   };
 
-  template<class Col>
-  class PositiveSinusFunction : public SinusFunction<Col> {
+  template<>
+    inline double SinusFunction<double>::operator()(const double &x) {  
+      return y0+A*sin(2.*M_PI*f*x+phi0);
+    }
+
+  template<>
+    inline double SinusFunction<double>::parDer(const double &x) {  
+      double om = 2.*M_PI*f;
+      return A*om*cos(om*x+phi0);
+    }
+
+  template<>
+    inline double SinusFunction<double>::parDerParDer(const double &x) {  
+      double om = 2.*M_PI*f;
+      return -A*om*om*sin(om*x+phi0);
+    }
+
+  template<class Ret>
+  class PositiveSinusFunction : public SinusFunction<Ret> {
     public:
       PositiveSinusFunction() { }
-      PositiveSinusFunction(const fmatvec::Vector<Col,double> &A, const fmatvec::Vector<Col,double> &f, const fmatvec::Vector<Col,double> &phi0, const fmatvec::Vector<Col,double> &y0) : SinusFunction<Col>(A, f, phi0, y0) { }
-      fmatvec::Vector<Col,double> operator()(const double &x) {
-        fmatvec::Vector<Col,double> y=SinusFunction<Col>::operator()(x);
-        for (int i=0; i<SinusFunction<Col>::A.size(); i++)
+      PositiveSinusFunction(const Ret &A, const Ret &f, const Ret &phi0, const Ret &y0) : SinusFunction<Ret>(A, f, phi0, y0) { }
+      Ret operator()(const double &x) {
+        Ret y=SinusFunction<Ret>::operator()(x);
+        for (int i=0; i<SinusFunction<Ret>::A.size(); i++)
           if (y(i)<0)
             y(i)=0;
         return y;
@@ -803,8 +843,6 @@ namespace MBSim {
         xDelta=xMax-xMin;
       }
   };
-
-  template<typename Sig> class LinearFunction;
 
   template<typename Arg>
     class TranslationAlongXAxis : public fmatvec::Function<fmatvec::Vec3(Arg)> {

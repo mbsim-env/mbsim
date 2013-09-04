@@ -25,6 +25,7 @@ using namespace MBXMLUtils;
 using namespace fmatvec;
 
 namespace MBSim {
+
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, LinearSpringDamperForce, MBSIMNS"LinearSpringDamperForce")
 
   void LinearSpringDamperForce::initializeUsingXML(TiXmlElement *element) {
@@ -150,15 +151,17 @@ namespace MBSim {
     couplingValue = Element::getDouble(element->FirstChildElement(MBSIMNS"CouplingValue"));
   }
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, QuadraticFunction<Ref>, MBSIMNS"QuadraticFunction_V")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, QuadraticFunction<Var>, MBSIMNS"QuadraticFunction_V")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, QuadraticFunction<Fixed<3> >, MBSIMNS"QuadraticFunction_V")
+//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, QuadraticFunction<Ref>, MBSIMNS"QuadraticFunction_V")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, QuadraticFunction<VecV>, MBSIMNS"QuadraticFunction_V")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, QuadraticFunction<Vec3>, MBSIMNS"QuadraticFunction_V")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, QuadraticFunction<double>, MBSIMNS"QuadraticFunction_S")
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SinusFunction<Ref>, MBSIMNS"SinusFunction_V")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SinusFunction<Var>, MBSIMNS"SinusFunction_V")
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SinusFunction<Fixed<3> >, MBSIMNS"SinusFunction_V")
+//  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SinusFunction<Ref>, MBSIMNS"SinusFunction_V")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SinusFunction<VecV>, MBSIMNS"SinusFunction_V")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SinusFunction<Vec3>, MBSIMNS"SinusFunction_V")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SinusFunction<double>, MBSIMNS"SinusFunction_S")
 
-  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PositiveSinusFunction<Ref>, MBSIMNS"PositiveSinusFunction_V")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, PositiveSinusFunction<VecV>, MBSIMNS"PositiveSinusFunction_V")
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, StepFunction<Ref>, MBSIMNS"StepFunction_V")
 
