@@ -365,8 +365,8 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   connect(widget[widget.size()-1],SIGNAL(arg1SizeChanged(int)),this,SLOT(resizeVariables()));
   widget.push_back(new ConstantFunctionWidget("VS",3)); name.push_back("Constant function r=const.");
   widget.push_back(new LinearFunctionWidget("VS",3,1)); name.push_back("Linear function r=r(t)");
-  widget.push_back(new QuadraticFunctionWidget("V")); name.push_back("Quadratic function r=r(t)");
-  widget.push_back(new SinusFunctionWidget("V")); name.push_back("Sinus function r=r(t)");
+  widget.push_back(new QuadraticFunctionWidget("V",3)); name.push_back("Quadratic function r=r(t)");
+  widget.push_back(new SinusFunctionWidget("V",3)); name.push_back("Sinus function r=r(t)");
   var.clear();
   var << "t";
   widget.push_back(new SymbolicFunctionWidget("VS",var)); name.push_back("Symbolic function r=r(t)");
@@ -378,13 +378,6 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   addToTab("Kinematics", translation);
   connect(translation->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
 
-  widget_.clear();
-  name_.clear();
-  widget_.push_back(new RotationAboutXAxisWidget("S")); name_.push_back("Rotation about x axis A=A(f)");
-  widget_.push_back(new RotationAboutYAxisWidget("S")); name_.push_back("Rotation about y axis A=A(f)");
-  widget_.push_back(new RotationAboutZAxisWidget("S")); name_.push_back("Rotation about z axis A=A(f)");
-  widget_.push_back(new RotationAboutFixedAxisWidget("S")); name_.push_back("Rotation about fixed axis A=A(f)");
-
   widget.clear();
   name.clear();
   widget.push_back(new RotationAboutXAxisWidget("V")); name.push_back("Rotation about x axis A=A(q)");
@@ -395,8 +388,25 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   widget.push_back(new RotationAboutAxesXZWidget("V")); name.push_back("Rotation about axes x and z A=A(q)");
   widget.push_back(new RotationAboutAxesXYZWidget("V")); name.push_back("Rotation about axes x,y and z A=A(q)");
   widget.push_back(new RotationAboutFixedAxisWidget("V")); name.push_back("Rotation about fixed axis A=A(q)");
+
+  widget_.clear();
+  name_.clear();
+  widget_.push_back(new RotationAboutXAxisWidget("S")); name_.push_back("Rotation about x axis A=A(f)");
+  widget_.push_back(new RotationAboutYAxisWidget("S")); name_.push_back("Rotation about y axis A=A(f)");
+  widget_.push_back(new RotationAboutZAxisWidget("S")); name_.push_back("Rotation about z axis A=A(f)");
+  widget_.push_back(new RotationAboutFixedAxisWidget("S")); name_.push_back("Rotation about fixed axis A=A(f)");
   widget.push_back(new NestedFunctionWidget("MSV",widget_,name_)); name.push_back("Nested function A=A(f(q))");
+
   widget.push_back(new RotationAboutFixedAxisWidget("S")); name.push_back("Rotation about fixed axis A=A(t)");
+
+  widget_.clear();
+  name_.clear();
+  widget_.push_back(new RotationAboutXAxisWidget("S")); name_.push_back("Rotation about x axis A=A(f)");
+  widget_.push_back(new RotationAboutYAxisWidget("S")); name_.push_back("Rotation about y axis A=A(f)");
+  widget_.push_back(new RotationAboutZAxisWidget("S")); name_.push_back("Rotation about z axis A=A(f)");
+  widget_.push_back(new RotationAboutFixedAxisWidget("S")); name_.push_back("Rotation about fixed axis A=A(f)");
+  widget.push_back(new NestedFunctionWidget("MSS",widget_,name_)); name.push_back("Nested function A=A(f(t))");
+
   ContainerWidget *widgetContainer = new ContainerWidget;
   widgetContainer->addWidget(new ChoiceWidget(widget,name));
   input.clear();

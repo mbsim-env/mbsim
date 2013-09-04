@@ -80,23 +80,9 @@ class ConstantFunctionProperty : public FunctionProperty {
     ExtProperty c;
 };
 
-class LinearFunctionTestProperty : public FunctionProperty {
-  public:
-    LinearFunctionTestProperty(const std::string &ext, int m=0, int n=0);
-    virtual Property* clone() const {return new LinearFunctionTestProperty(*this);}
-    inline std::string getType() const { return "LinearFunction_"+ext; }
-    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
-    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    void fromWidget(QWidget *widget);
-    void toWidget(QWidget *widget);
-  protected:
-    ExtProperty choice;
-    ExtProperty a, b;
-};
-
 class LinearFunctionProperty : public FunctionProperty {
   public:
-    LinearFunctionProperty(const std::string &ext, int m=0, int n=0);
+    LinearFunctionProperty(const std::string &ext, int m=1, int n=1);
     virtual Property* clone() const {return new LinearFunctionProperty(*this);}
     int getArg1Size() const;
     inline std::string getType() const { return "LinearFunction_"+ext; }

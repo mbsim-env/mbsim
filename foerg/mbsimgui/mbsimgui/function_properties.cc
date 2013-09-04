@@ -118,61 +118,6 @@ void ConstantFunctionProperty::toWidget(QWidget *widget) {
   c.toWidget(static_cast<ConstantFunctionWidget*>(widget)->c);
 }
 
-LinearFunctionTestProperty::LinearFunctionTestProperty(const string &ext, int m, int n) : FunctionProperty(ext), b(0,false) {
-
-  vector<Property*> property;
-
-  vector<PhysicalVariableProperty> input;
-  input.push_back(PhysicalVariableProperty(new MatProperty(m,n),"",MBSIMNS"slope"));
-  property.push_back(new ExtPhysicalVarProperty(input));
-
-  input.clear();
-  input.push_back(PhysicalVariableProperty(new VecProperty(m),"",MBSIMNS"slope"));
-  property.push_back(new ExtPhysicalVarProperty(input));
-
-  choice.setProperty(new ChoiceProperty("",property));
-
-  input.clear();
-//  if(ext[0]=='V' and ext[1]=='V')
-    input.push_back(PhysicalVariableProperty(new MatProperty(m,n),"",MBSIMNS"slope"));
-//  else
-//    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"value"));
-  a.setProperty(new ExtPhysicalVarProperty(input));
-//  if(ext[0]=='V' and ext[1]=='V')
-   input.clear();
-    input.push_back(PhysicalVariableProperty(new VecProperty(m),"",MBSIMNS"intercept"));
-//  else
-//    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"value"));
-  b.setProperty(new ExtPhysicalVarProperty(input));
-}
-
-TiXmlElement* LinearFunctionTestProperty::initializeUsingXML(TiXmlElement *element) {
-  choice.initializeUsingXML(element);
-  a.initializeUsingXML(element);
-  b.initializeUsingXML(element);
-  return element;
-}
-
-TiXmlElement* LinearFunctionTestProperty::writeXMLFile(TiXmlNode *parent) {
-  TiXmlElement *ele0 = FunctionProperty::writeXMLFile(parent);
-  choice.writeXMLFile(ele0);
-  a.writeXMLFile(ele0);
-  b.writeXMLFile(ele0);
-  return ele0;
-} 
-
-void LinearFunctionTestProperty::fromWidget(QWidget *widget) {
-  choice.fromWidget(static_cast<LinearFunctionTestWidget*>(widget)->choice);
-  a.fromWidget(static_cast<LinearFunctionTestWidget*>(widget)->a);
-  b.fromWidget(static_cast<LinearFunctionTestWidget*>(widget)->b);
-}
-
-void LinearFunctionTestProperty::toWidget(QWidget *widget) {
-  choice.toWidget(static_cast<LinearFunctionTestWidget*>(widget)->choice);
-  a.toWidget(static_cast<LinearFunctionTestWidget*>(widget)->a);
-  b.toWidget(static_cast<LinearFunctionTestWidget*>(widget)->b);
-}
-
 LinearFunctionProperty::LinearFunctionProperty(const string &ext, int m, int n) : FunctionProperty(ext), b(0,false) {
   vector<PhysicalVariableProperty> input;
   if(ext[0]=='V' and ext[1]=='V')
@@ -236,6 +181,7 @@ NestedFunctionProperty::NestedFunctionProperty(const string &ext, const vector<P
   else {
     var.push_back("t");
     property.push_back(new SymbolicFunctionProperty("SS",var));
+    property.push_back(new LinearFunctionProperty("SS"));
     property.push_back(new QuadraticFunctionProperty("S"));
     property.push_back(new SinusFunctionProperty("S"));
   }

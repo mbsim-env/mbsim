@@ -66,44 +66,6 @@ void ConstantFunctionWidget::resize_(int m, int n) {
     ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(c->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
 }
 
-LinearFunctionTestWidget::LinearFunctionTestWidget(bool vec, int n) : FunctionWidget() {
-  QVBoxLayout *layout = new QVBoxLayout;
-  layout->setMargin(0);
-  setLayout(layout);
-
-  vector<QWidget*> widget;
-  vector<QString> name;
-
-  vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new MatColsVarWidget(n,1,1,3),QStringList(),0));
-  widget.push_back(new ExtWidget("Slope",new ExtPhysicalVarWidget(input)));
-  name.push_back("State");
-
-  input.clear();
-  input.push_back(new PhysicalVariableWidget(new VecWidget(n),QStringList(),0));
-  widget.push_back(new ExtWidget("Slope",new ExtPhysicalVarWidget(input)));
-  name.push_back("Time");
-
-  choice = new ExtWidget("Choice",new ChoiceWidget(widget,name),true);
-//  choice = new ChoiceWidget(widget,name);
-  layout->addWidget(choice);
-
-  input.clear();
-//  if(vec)
-    input.push_back(new PhysicalVariableWidget(new MatColsVarWidget(n,1,1,3),QStringList(),0));
-//  else
-//    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
-  a = new ExtWidget("Slope",new ExtPhysicalVarWidget(input));
-  layout->addWidget(a);
-  input.clear();
-//  if(vec)
-    input.push_back(new PhysicalVariableWidget(new VecWidget(n),QStringList(),0));
-//  else
-//    input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
-  b = new ExtWidget("Intercept",new ExtPhysicalVarWidget(input),true);
-  layout->addWidget(b);
-}
-
 LinearFunctionWidget::LinearFunctionWidget(const QString &ext, int m, int n) : FunctionWidget(ext) {
 //  MatColsVarWidget* m = new MatColsVarWidget(3,1,1,3);
 //  input.push_back(new PhysicalVariableWidget(m,noUnitUnits(),1));
@@ -170,6 +132,7 @@ NestedFunctionWidget::NestedFunctionWidget(const QString &ext, const vector<QWid
   else {
     var << "t";
     widget.push_back(new SymbolicFunctionWidget("SS",var)); name.push_back("Symbolic function f=f(t)");
+    widget.push_back(new LinearFunctionWidget("SS")); name.push_back("Linear function f=f(t)");
     widget.push_back(new QuadraticFunctionWidget("S")); name.push_back("Quadratic function f=f(t)");
     widget.push_back(new SinusFunctionWidget("S")); name.push_back("Sinus function f=f(t)");
   }

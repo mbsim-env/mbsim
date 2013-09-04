@@ -73,8 +73,8 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   property.push_back(new SymbolicFunctionProperty("VV",var));
   property.push_back(new ConstantFunctionProperty("VS",3));
   property.push_back(new LinearFunctionProperty("VS",3,1));
-  property.push_back(new QuadraticFunctionProperty("V"));
-  property.push_back(new SinusFunctionProperty("V"));
+  property.push_back(new QuadraticFunctionProperty("V",3));
+  property.push_back(new SinusFunctionProperty("V",3));
   var.clear();
   var.push_back("t");
   property.push_back(new SymbolicFunctionProperty("VS",var));
@@ -83,12 +83,6 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   var.push_back("t");
   property.push_back(new SymbolicFunctionProperty("VVS",var));
   translation.setProperty(new ChoiceProperty("",property));
-
-  property_.clear();
-  property_.push_back(new RotationAboutXAxisProperty("S"));
-  property_.push_back(new RotationAboutYAxisProperty("S"));
-  property_.push_back(new RotationAboutZAxisProperty("S"));
-  property_.push_back(new RotationAboutFixedAxisProperty("S"));
 
   rotation.setXMLName(MBSIMNS"rotation");
   property.clear();
@@ -100,8 +94,23 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   property.push_back(new RotationAboutAxesXZProperty("V"));
   property.push_back(new RotationAboutAxesXYZProperty("V"));
   property.push_back(new RotationAboutFixedAxisProperty("V"));
+
+  property_.clear();
+  property_.push_back(new RotationAboutXAxisProperty("S"));
+  property_.push_back(new RotationAboutYAxisProperty("S"));
+  property_.push_back(new RotationAboutZAxisProperty("S"));
+  property_.push_back(new RotationAboutFixedAxisProperty("S"));
   property.push_back(new NestedFunctionProperty("MSV",property_));
+
   property.push_back(new RotationAboutFixedAxisProperty("S"));
+
+  property_.clear();
+  property_.push_back(new RotationAboutXAxisProperty("S"));
+  property_.push_back(new RotationAboutYAxisProperty("S"));
+  property_.push_back(new RotationAboutZAxisProperty("S"));
+  property_.push_back(new RotationAboutFixedAxisProperty("S"));
+  property.push_back(new NestedFunctionProperty("MSS",property_));
+
   ContainerProperty *propertyContainer = new ContainerProperty;
   propertyContainer->addProperty(new ChoiceProperty("",property));
   input.clear();

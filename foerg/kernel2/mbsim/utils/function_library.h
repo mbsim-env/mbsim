@@ -28,17 +28,6 @@
 
 namespace MBSim {
 
-  template <class Ret> Ret zero(const Ret &x);
-  template <> inline fmatvec::VecV zero<fmatvec::VecV>(const fmatvec::VecV &x) {
-    return fmatvec::VecV(x.size());
-  }
-  template <> inline fmatvec::Vec3 zero<fmatvec::Vec3>(const fmatvec::Vec3 &x) {
-    return fmatvec::Vec3(x.size());
-  }
-  template <> inline double zero<double>(const double &x) {
-    return 0;
-  }
-
   template<typename Sig> class StateDependentFunction;
 
   template <class Ret>
@@ -495,6 +484,7 @@ namespace MBSim {
       private:
         typename fmatvec::Der<Ret, Arg>::type A;
         Ret b;
+        Ret zeros(const typename fmatvec::Der<Ret, Arg>::type &x) { return Ret(x.rows()); }
       public:
         LinearFunction() { }
         LinearFunction(const typename fmatvec::Der<Ret, Arg>::type &A_, const Ret &b_) : A(A_), b(b_) {}
@@ -509,7 +499,7 @@ namespace MBSim {
           MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"slope");
           A=FromMatStr<typename fmatvec::Der<Ret, Arg>::type>::cast(e->GetText());
           e=element->FirstChildElement(MBSIMNS"intercept");
-          if(e) b=FromMatStr<Ret>::cast(e->GetText());
+          b=e?FromMatStr<Ret>::cast(e->GetText()):zeros(A);
         }
         MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; } 
         void setSlope(const typename fmatvec::Der<Ret, Arg>::type &A_) { A = A_; }
@@ -526,6 +516,10 @@ namespace MBSim {
     inline fmatvec::Vec3 LinearFunction<fmatvec::Vec3(double)>::parDerDirDer(const double &arg1Dir, const double &arg1) { return fmatvec::Vec3(); }
   template<>
     inline fmatvec::Vec3 LinearFunction<fmatvec::Vec3(double)>::parDerParDer(const double &arg) { return fmatvec::Vec3(); }
+  template<>
+    inline double LinearFunction<double(double)>::parDerParDer(const double &arg) { return 0; }
+  template<>
+    inline double LinearFunction<double(double)>::zeros(const double &arg) { return 0; } 
 
  template<class Ret>
   class QuadraticFunction : public fmatvec::Function<Ret(double)> {
@@ -581,6 +575,7 @@ namespace MBSim {
   class SinusFunction : public fmatvec::Function<Ret(double)> {
     protected:
       Ret A, f, phi0, y0;
+      Ret zeros(const Ret &x) { return Ret(x.size()); }
     public:
       SinusFunction() { }
       SinusFunction(const Ret &A_, const Ret &f_, const Ret &phi0_, const Ret &y0_) : A(A_), f(f_), phi0(phi0_), y0(y0_) { }
@@ -614,7 +609,7 @@ namespace MBSim {
         e=element->FirstChildElement(MBSIMNS"phase");
         phi0=FromMatStr<Ret>::cast(e->GetText());
         e=element->FirstChildElement(MBSIMNS"offset");
-        y0=e?FromMatStr<Ret>::cast(e->GetText()):zero<Ret>(A);
+        y0=e?FromMatStr<Ret>::cast(e->GetText()):zeros(A);
       }
       MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) {
         MBXMLUtils::TiXmlElement *ele0 = fmatvec::Function<Ret(double)>::writeXMLFile(parent);
@@ -643,6 +638,9 @@ namespace MBSim {
       return -A*om*om*sin(om*x+phi0);
     }
 
+  template<>
+    inline double SinusFunction<double>::zeros(const double &x) { return 0; } 
+
   template<class Ret>
   class PositiveSinusFunction : public SinusFunction<Ret> {
     public:
@@ -657,9 +655,9 @@ namespace MBSim {
       }
   };
 
-   template<class Ret>
-   class StepFunction : public fmatvec::Function<Ret(double)> {
-   private:
+  template<class Ret>
+  class StepFunction : public fmatvec::Function<Ret(double)> {
+    private:
       Ret stepTime, stepSize;
     public:
       StepFunction() {}
@@ -688,78 +686,111 @@ namespace MBSim {
 
   template<class Ret, class Arg>
     class SummationFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
-    public:
-      SummationFunction() { }
-      void addFunction(fmatvec::Function<Ret(Arg)> *function, double factor=1.) {
-        functions.push_back(function);
-        factors.push_back(factor);
-      }
-      Ret operator()(const Arg &x) {
-        Ret y=factors[0]*(*(functions[0]))(x);
-        for (unsigned int i=1; i<functions.size(); i++)
-          y+=factors[i]*(*(functions[i]))(x);
-        return y;
-      }
-      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-//          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"outerFunction");
-//          fo=ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<Ret(Argo)> >(e->FirstChildElement());
-//          fo->initializeUsingXML(e->FirstChildElement());
-        MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"function");
-        while (e && e->ValueStr()==MBSIMNS"function") {
-          MBXMLUtils::TiXmlElement *ee = e->FirstChildElement();
-          //typedef Function<fmatvec::Vector<fmatvec::Ref,double>(double)> typevec;
-          //Function<fmatvec::Vector<fmatvec::Ref,double>(double)> *f=ObjectFactory<fmatvec::FunctionBase>::create<Function<fmatvec::Vector<fmatvec::Ref,double>(double)> >(ee);
-          fmatvec::Function<Ret(Arg)> *f=ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<Ret(Arg)> >(ee);
-          f->initializeUsingXML(ee);
-          ee=e->FirstChildElement(MBSIMNS"factor");
-          double factor=Element::getDouble(ee);
-          addFunction(f, factor);
-          e=e->NextSiblingElement();
-        }
-      }
-    private:
-      std::vector<fmatvec::Function<Ret(Arg)> *> functions;
-      std::vector<double> factors;
-  };
-
-    class Polynom : public fmatvec::Function<double(double)> {
-      protected:
-       std::vector<Function<double(double)>* > derivatives;
-       void addDerivative(Function<double(double)>* diff) { derivatives.push_back(diff); }
       public:
-        Polynom() { }
-
-        double operator()(const double &x) { return (*derivatives[0])(x); }
-        class Polynom_Evaluation : public Function<double(double)> {
-          public:
-            Polynom_Evaluation(const fmatvec::Vec &a_) : a(a_) {}
-            double operator()(const double &x) {
-              double value=a(a.size()-1);
-              for (int i=a.size()-2; i>-1; i--)
-                value=value*x+a(i);
-              return value;
-            }
-        private:
-            fmatvec::Vec a;
-        };
-
-        void setCoefficients(fmatvec::Vec a) {
-          for (int i=0; i<a.size(); i++) {
-            addDerivative(new Polynom::Polynom_Evaluation(a.copy()));
-            fmatvec::Vec b(a.size()-1);
-            for (int j=0; j<b.size(); j++)
-              b(j)=a(j+1)*(j+1.);
-            a.resize(a.size()-1);
-            a=b;
+        SummationFunction() { }
+        void addFunction(fmatvec::Function<Ret(Arg)> *function, double factor=1.) {
+          functions.push_back(function);
+          factors.push_back(factor);
+        }
+        Ret operator()(const Arg &x) {
+          Ret y=factors[0]*(*(functions[0]))(x);
+          for (unsigned int i=1; i<functions.size(); i++)
+            y+=factors[i]*(*(functions[i]))(x);
+          return y;
+        }
+        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
+          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"function");
+          while (e && e->ValueStr()==MBSIMNS"function") {
+            MBXMLUtils::TiXmlElement *ee = e->FirstChildElement();
+            fmatvec::Function<Ret(Arg)> *f=ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<Ret(Arg)> >(ee);
+            f->initializeUsingXML(ee);
+            ee=e->FirstChildElement(MBSIMNS"factor");
+            double factor=Element::getDouble(ee);
+            addFunction(f, factor);
+            e=e->NextSiblingElement();
           }
-          addDerivative(new Polynom::Polynom_Evaluation(a.copy()));
+        }
+      private:
+        std::vector<fmatvec::Function<Ret(Arg)> *> functions;
+        std::vector<double> factors;
+    };
+
+  template<class Ret>
+    class VectorValuedFunction : public fmatvec::Function<Ret(double)> {
+      public:
+        VectorValuedFunction(int m_=0, int n_=0) : m(m_), n(n_) { }
+        Ret operator()(const double &x) {
+          Ret y(functions.size(),fmatvec::NONINIT);
+          for (unsigned int i=0; i<functions.size(); i++)
+            y(i)=(*functions[i])(x);
+          return y;
+        }
+        typename fmatvec::Der<Ret, double>::type parDer(const double &x) {  
+          typename fmatvec::Der<Ret, double>::type y(functions.size(),fmatvec::NONINIT);
+          for (unsigned int i=0; i<functions.size(); i++)
+            y(i)=functions[i]->parDer(x);
+          return y;
+        }
+        typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) {  
+          typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type y(functions.size(),fmatvec::NONINIT);
+          for (unsigned int i=0; i<functions.size(); i++)
+            y(i)=functions[i]->parDerParDer(x);
+          return y;
         }
 
         void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"coefficients");
-          setCoefficients(MBSim::Element::getVec(e));
+          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"function");
+          while (e && e->ValueStr()==MBSIMNS"function") {
+            MBXMLUtils::TiXmlElement *ee = e->FirstChildElement();
+            fmatvec::Function<double(double)> *f=ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<double(double)> >(ee);
+            f->initializeUsingXML(ee);
+            functions.push_back(f);
+            e=e->NextSiblingElement();
+          }
         }
+      private:
+        int m, n;
+        std::vector<fmatvec::Function<double(double)> *> functions;
     };
+
+  class Polynom : public fmatvec::Function<double(double)> {
+    protected:
+      std::vector<Function<double(double)>* > derivatives;
+      void addDerivative(Function<double(double)>* diff) { derivatives.push_back(diff); }
+    public:
+      Polynom() { }
+
+      double operator()(const double &x) { return (*derivatives[0])(x); }
+      class Polynom_Evaluation : public Function<double(double)> {
+        public:
+          Polynom_Evaluation(const fmatvec::Vec &a_) : a(a_) {}
+          double operator()(const double &x) {
+            double value=a(a.size()-1);
+            for (int i=a.size()-2; i>-1; i--)
+              value=value*x+a(i);
+            return value;
+          }
+        private:
+          fmatvec::Vec a;
+      };
+
+      void setCoefficients(fmatvec::Vec a) {
+        for (int i=0; i<a.size(); i++) {
+          addDerivative(new Polynom::Polynom_Evaluation(a.copy()));
+          fmatvec::Vec b(a.size()-1);
+          for (int j=0; j<b.size(); j++)
+            b(j)=a(j+1)*(j+1.);
+          a.resize(a.size()-1);
+          a=b;
+        }
+        addDerivative(new Polynom::Polynom_Evaluation(a.copy()));
+      }
+
+      void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
+        MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"coefficients");
+        setCoefficients(MBSim::Element::getVec(e));
+      }
+  };
 
   template<class Ret>
   class TabularFunction : public fmatvec::Function<Ret(double)> {

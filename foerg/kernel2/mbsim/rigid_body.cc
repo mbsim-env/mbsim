@@ -28,9 +28,6 @@
 #include "mbsim/environment.h"
 #include "mbsim/constraint.h"
 #include "mbsim/utils/utils.h"
-#ifdef HAVE_CASADI_SYMBOLIC_SX_SX_HPP
-//#include "mbsim/utils/symbolic_function.h"
-#endif
 #include "mbsim/contours/compound_contour.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/rigidbody.h>

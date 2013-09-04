@@ -173,6 +173,9 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SummationFunction<Vec3(double)>, MBSIMNS"SummationFunction_VS")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SummationFunction<double(double)>, MBSIMNS"SummationFunction_SS")
 
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, VectorValuedFunction<VecV>, MBSIMNS"VectorValuedFunction_V")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, VectorValuedFunction<Vec3>, MBSIMNS"VectorValuedFunction_V")
+
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TabularFunction_SSS, MBSIMNS"TabularFunction_SSS")
 
   TabularFunction_SSS::TabularFunction_SSS() : xVec(Vec(0)), yVec(Vec(0)), XY(Mat(0,0)), xSize(0), ySize(0), x0Index(0), x1Index(0), y0Index(0), y1Index(0), func_value(Vec(1,INIT,0)), xy(Vec(4,INIT,1)), XYval(Vec(4,INIT,0)), XYfac(Mat(4,4,INIT,0)) {
@@ -294,6 +297,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, LinearFunction<Vec3(VecV)>, MBSIMNS"LinearFunction_VV")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, LinearFunction<Vec3(double)>, MBSIMNS"LinearFunction_VS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, LinearFunction<double(double)>, MBSIMNS"LinearFunction_SS")
 
   //MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TabularFunction<Vec>, MBSIMNS"TabularFunction_V")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TabularFunction<VecV>, MBSIMNS"TabularFunction_V")

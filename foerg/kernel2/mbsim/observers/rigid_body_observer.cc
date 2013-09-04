@@ -23,6 +23,7 @@
 #include "mbsim/frame.h"
 #include "mbsim/environment.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/utils/eps.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frame.h>
 #endif
