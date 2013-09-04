@@ -310,7 +310,7 @@ ForceChoiceWidget::ForceChoiceWidget() {
   vector<QString> name;
   widget.push_back(new ConstantFunctionWidget("VS",1));
   name.push_back("Constant function");
-  widget.push_back(new QuadraticFunctionWidget(1));
+  widget.push_back(new QuadraticFunctionWidget("V",1));
   name.push_back("Quadratic function");
   widget.push_back(new SinusFunctionWidget("V",1));
   name.push_back("Sinus function");

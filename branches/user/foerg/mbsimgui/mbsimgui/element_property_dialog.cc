@@ -365,6 +365,7 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   connect(widget[widget.size()-1],SIGNAL(arg1SizeChanged(int)),this,SLOT(resizeVariables()));
   widget.push_back(new ConstantFunctionWidget("VS",3)); name.push_back("Constant function r=const.");
   widget.push_back(new LinearFunctionWidget("VS",3,1)); name.push_back("Linear function r=r(t)");
+  widget.push_back(new QuadraticFunctionWidget("V")); name.push_back("Quadratic function r=r(t)");
   widget.push_back(new SinusFunctionWidget("V")); name.push_back("Sinus function r=r(t)");
   var.clear();
   var << "t";
@@ -1230,7 +1231,7 @@ FunctionSensorPropertyDialog::FunctionSensorPropertyDialog(FunctionSensor *senso
   vector<QString> name;
   widget.push_back(new ConstantFunctionWidget("VS",1));
   name.push_back("Constant function");
-  widget.push_back(new QuadraticFunctionWidget(1));
+  widget.push_back(new QuadraticFunctionWidget("V",1));
   name.push_back("Quadratic function");
   widget.push_back(new SinusFunctionWidget("V",1));
   name.push_back("Sinus function");

@@ -258,9 +258,9 @@ class TCardanAnglesProperty : public FunctionProperty {
 
 class QuadraticFunctionProperty : public FunctionProperty {
   public:
-    QuadraticFunctionProperty();
+    QuadraticFunctionProperty(const std::string &ext, int m=1);
     virtual Property* clone() const {return new QuadraticFunctionProperty(*this);}
-    inline std::string getType() const { return "QuadraticFunction_V"; }
+    inline std::string getType() const { return "QuadraticFunction_"+ext; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
     void fromWidget(QWidget *widget);
