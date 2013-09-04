@@ -3484,6 +3484,43 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="QuadraticFunction_S" substitutionGroup="Function_SS" type="QuadraticFunction_SType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Quadratische Funktion mit <object class="inlineeqn">\boldsymbol{y}= \boldsymbol{a}_{0} + \boldsymbol{a}_{1} \, x + \boldsymbol{a}_{2} \, x^2</object>.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="QuadraticFunction_SType">
+    <xs:complexContent>
+      <xs:extension base="Function_SSType">
+        <xs:sequence>
+          <xs:element name="a0" type="pv:unknownScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Faktor <object class="inlineeqn">\boldsymbol{a}_0</object>.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="a1" type="pv:unknownScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Faktor <object class="inlineeqn">\boldsymbol{a}_1</object>.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="a2" type="pv:unknownScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Faktor <object class="inlineeqn">\boldsymbol{a}_2</object>.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="QuadraticFunction_V" substitutionGroup="Function_VS" type="QuadraticFunction_VType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -3513,6 +3550,50 @@
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Faktor <object class="inlineeqn">\boldsymbol{a}_2</object>.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="SinusFunction_S" substitutionGroup="Function_SS" type="SinusFunction_SType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Vektorwertige periodische Funktion mit <object class="inlineeqn">y_i= A_i \, \sin \left( 2 \, \pi \, f_i \, x + \varphi_i \right) + o_i</object>.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="SinusFunction_SType">
+    <xs:complexContent>
+      <xs:extension base="Function_SSType">
+        <xs:sequence>
+          <xs:element name="amplitude" type="pv:unknownScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Amplitudenvektor <object class="inlineeqn">\boldsymbol{A}</object>.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="frequency" type="pv:unknownScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Frequenzvektor <object class="inlineeqn">\boldsymbol{f}</object>.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="phase" type="pv:angleScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Phasenversatzvektor <object class="inlineeqn">\boldsymbol{\varphi}</object>.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="offset" type="pv:unknownScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Offsetvektor <object class="inlineeqn">\boldsymbol{o}</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
