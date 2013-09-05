@@ -144,6 +144,120 @@ int NestedFunctionWidget::getArg1Size() const {
   return ext[2]=='V'?static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(fi->getWidget())->getWidget())->getArg1Size():0;
 }
 
+VectorValuedFunctionWidget::VectorValuedFunctionWidget(const QString &ext, int m) : FunctionWidget(ext), f(m) {
+
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+  for(int i=0; i<f.size(); i++) {
+    vector<QWidget*> widget;
+    vector<QString> name;
+    QStringList var;
+    var << "t";
+    widget.push_back(new ConstantFunctionWidget("SS")); name.push_back("Constant function f=f(t)");
+    widget.push_back(new LinearFunctionWidget("SS")); name.push_back("Linear function f=f(t)");
+    widget.push_back(new QuadraticFunctionWidget("S")); name.push_back("Quadratic function f=f(t)");
+    widget.push_back(new SinusFunctionWidget("S")); name.push_back("Sinus function f=f(t)");
+    widget.push_back(new SymbolicFunctionWidget("SS",var)); name.push_back("Symbolic function f=f(t)");
+    f[i] = new ExtWidget(QString("f(")+QString::number(i+1)+")",new ChoiceWidget(widget,name));
+    layout->addWidget(f[i]);
+  }
+}
+
+PiecewiseDefinedFunctionWidget::PiecewiseDefinedFunctionWidget(int n_) : n(n_) {
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+
+  functionList = new QListWidget;
+  functionList->setContextMenuPolicy (Qt::CustomContextMenu);
+  functionList->setMinimumWidth(functionList->sizeHint().width()/3);
+  functionList->setMaximumWidth(functionList->sizeHint().width()/3);
+  layout->addWidget(functionList);
+  stackedWidget = new QStackedWidget;
+  connect(functionList,SIGNAL(currentRowChanged(int)),this,SLOT(changeCurrent(int)));
+  connect(functionList,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(openContextMenu(const QPoint &)));
+  layout->addWidget(stackedWidget,0,Qt::AlignTop);
+}
+
+void PiecewiseDefinedFunctionWidget::changeCurrent(int idx) {
+  if (stackedWidget->currentWidget() !=0)
+    stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+  stackedWidget->setCurrentIndex(idx);
+  stackedWidget->currentWidget()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  adjustSize();
+}
+
+void PiecewiseDefinedFunctionWidget::openContextMenu(const QPoint &pos) {
+  if(functionList->itemAt(pos)) {
+    QMenu menu(this);
+    QAction *add = new QAction(tr("Remove"), this);
+    connect(add, SIGNAL(triggered()), this, SLOT(removeFunction()));
+    menu.addAction(add);
+    menu.exec(QCursor::pos());
+  }
+  else {
+    QMenu menu(this);
+    QAction *add = new QAction(tr("Add"), this);
+    connect(add, SIGNAL(triggered()), this, SLOT(addFunction()));
+    menu.addAction(add);
+    menu.exec(QCursor::pos());
+  }
+}
+
+void PiecewiseDefinedFunctionWidget::resize_(int m, int n) {
+  for(int i=0; i<stackedWidget->count(); i++)
+   static_cast<Widget*>(static_cast<ContainerWidget*>(stackedWidget->widget(i))->getWidget(0))->resize_(m,n);
+}
+
+void PiecewiseDefinedFunctionWidget::updateList() {
+  for(int i=0; i<functionList->count(); i++)
+    functionList->item(i)->setText(static_cast<ChoiceWidget*>(static_cast<ContainerWidget*>(stackedWidget->widget(i))->getWidget(0))->getName());
+}
+
+void PiecewiseDefinedFunctionWidget::addFunction() {
+  int i = stackedWidget->count();
+
+  ContainerWidget *widgetContainer = new ContainerWidget;
+  vector<QWidget*> widget;
+  vector<QString> name;
+  widget.push_back(new ConstantFunctionWidget("VS",n));
+  name.push_back("Constant function");
+  widget.push_back(new QuadraticFunctionWidget("V",n));
+  name.push_back("Quadratic function");
+  widget.push_back(new SinusFunctionWidget("V",n));
+  name.push_back("Sinus function");
+  widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t")));
+  name.push_back("Symbolic function");
+  widgetContainer->addWidget(new ChoiceWidget(widget,name));
+
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  widgetContainer->addWidget(new ExtWidget("Interval",new ExtPhysicalVarWidget(input)));
+
+  functionList->addItem("Undefined");
+
+  stackedWidget->addWidget(widgetContainer);
+  if(i>0)
+    widgetContainer->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+
+  connect(static_cast<ChoiceWidget*>(static_cast<ContainerWidget*>(stackedWidget->widget(i))->getWidget(0)),SIGNAL(widgetChanged()),this,SLOT(updateList()));
+  connect(static_cast<ChoiceWidget*>(static_cast<ContainerWidget*>(stackedWidget->widget(i))->getWidget(0)),SIGNAL(resize_()),this,SIGNAL(resize_()));
+
+  emit resize_();
+  emit updateList();
+}
+
+void PiecewiseDefinedFunctionWidget::removeFunction() {
+  int i = functionList->currentRow();
+  delete stackedWidget->widget(i);
+  stackedWidget->removeWidget(stackedWidget->widget(i));
+  //functionChoice.erase(functionChoice.begin()+i);
+  //delete factor[i];
+  //factor.erase(factor.begin()+i);
+  delete functionList->takeItem(i);
+}
+
 RotationAboutFixedAxisWidget::RotationAboutFixedAxisWidget(const QString &ext) : FunctionWidget(ext) {
 
   QVBoxLayout *layout = new QVBoxLayout;

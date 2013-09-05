@@ -108,6 +108,34 @@ class NestedFunctionProperty : public FunctionProperty {
     ExtProperty fo, fi;
 };
 
+class VectorValuedFunctionProperty : public FunctionProperty {
+  public:
+    VectorValuedFunctionProperty(const std::string &ext, int m=0);
+    virtual Property* clone() const {return new VectorValuedFunctionProperty(*this);}
+    inline std::string getType() const { return "VectorValuedFunction_"+ext; }
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+  protected:
+    std::vector<ExtProperty> f;
+};
+
+class PiecewiseDefinedFunctionProperty : public FunctionProperty {
+  public:
+    PiecewiseDefinedFunctionProperty(const std::string &ext) : FunctionProperty(ext) {}
+    virtual Property* clone() const {return new PiecewiseDefinedFunctionProperty(*this);}
+    inline std::string getType() const { return "PiecewiseDefinedFunction_"+ext; }
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+  protected:
+    //std::vector<ExtProperty> f;
+    //std::vector<ExtProperty> a;
+    std::vector<ContainerProperty> function;
+};
+
 class TranslationAlongXAxisProperty: public FunctionProperty {
   public:
     TranslationAlongXAxisProperty(const std::string &ext) : FunctionProperty(ext) { }

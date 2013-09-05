@@ -38,6 +38,7 @@
 #include <mbxmlutils/utils.h>
 #include <mbxmlutilstinyxml/getinstallpath.h>
 #include <openmbv/mainwindow.h>
+#include <utime.h>
 #include <QtGui>
 
 using namespace std;
@@ -293,6 +294,28 @@ MainWindow::MainWindow(QStringList &arg) : inlineOpenMBVMW(0) {
     selectDOPRI5Integrator();
 
   setAcceptDrops(true);
+
+  QTimer *timer = new QTimer(this);
+  timer->setSingleShot(true);
+  connect(timer, SIGNAL(timeout()), this, SLOT(timeout()));
+  timer->start(1000);
+
+//  timer = new QTimer(this);
+//  timer->setSingleShot(true);
+//  connect(timer, SIGNAL(timeout()), this, SLOT(timeout2()));
+//  timer->start(1300);
+}
+
+void MainWindow::timeout() {
+  cout << "utime" << endl;
+  QString str = uniqueTempDir+"/out1.ombv.xml";
+  utime(str.toStdString().c_str(),0);
+  str = uniqueTempDir+"/out1.ombv.h5";
+  utime(str.toStdString().c_str(),0);
+}
+void MainWindow::timeout2() {
+//  cout << "view top" << endl;
+//  inlineOpenMBVMW->viewTopSlot();
 }
 
 void MainWindow::simulationFinished(int exitCode, QProcess::ExitStatus exitStatus) {
