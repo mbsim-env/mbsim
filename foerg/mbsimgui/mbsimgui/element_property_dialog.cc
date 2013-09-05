@@ -363,6 +363,7 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   var << "q";
   widget.push_back(new SymbolicFunctionWidget("VV",var)); name.push_back("Symbolic function r=r(q)");
   connect(widget[widget.size()-1],SIGNAL(arg1SizeChanged(int)),this,SLOT(resizeVariables()));
+
   widget.push_back(new ConstantFunctionWidget("VS",3)); name.push_back("Constant function r=const.");
   widget.push_back(new LinearFunctionWidget("VS",3,1)); name.push_back("Linear function r=r(t)");
   widget.push_back(new QuadraticFunctionWidget("V",3)); name.push_back("Quadratic function r=r(t)");
@@ -370,6 +371,8 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   var.clear();
   var << "t";
   widget.push_back(new SymbolicFunctionWidget("VS",var)); name.push_back("Symbolic function r=r(t)");
+  widget.push_back(new VectorValuedFunctionWidget("V",3)); name.push_back("Vector valued function r=r(t)");
+
   var.clear();
   var << "q" << "t";
   widget.push_back(new SymbolicFunctionWidget("VVS",var)); name.push_back("Symbolic function r=r(q,t)");

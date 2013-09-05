@@ -71,6 +71,7 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   vector<string> var;
   var.push_back("q");
   property.push_back(new SymbolicFunctionProperty("VV",var));
+
   property.push_back(new ConstantFunctionProperty("VS",3));
   property.push_back(new LinearFunctionProperty("VS",3,1));
   property.push_back(new QuadraticFunctionProperty("V",3));
@@ -78,6 +79,8 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   var.clear();
   var.push_back("t");
   property.push_back(new SymbolicFunctionProperty("VS",var));
+  property.push_back(new VectorValuedFunctionProperty("V",3));
+
   var.clear();
   var.push_back("q");
   var.push_back("t");

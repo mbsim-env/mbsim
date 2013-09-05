@@ -80,6 +80,40 @@ class NestedFunctionWidget : public FunctionWidget {
     ExtWidget *fo, *fi;
 };
 
+class VectorValuedFunctionWidget : public FunctionWidget {
+
+  friend class VectorValuedFunctionProperty;
+
+  public:
+    VectorValuedFunctionWidget(const QString &ext, int m);
+  protected:
+    std::vector<ExtWidget*> f;
+};
+
+class PiecewiseDefinedFunctionWidget : public FunctionWidget {
+  Q_OBJECT
+
+  friend class PiecewiseDefinedFunctionProperty;
+
+  public:
+    PiecewiseDefinedFunctionWidget(int n);
+    void resize_(int m, int n);
+
+  protected:
+    QStackedWidget *stackedWidget; 
+    QListWidget *functionList; 
+    int n;
+
+  protected slots:
+    void updateList();
+    void addFunction();
+    void removeFunction();
+    void openContextMenu(const QPoint &pos);
+    void changeCurrent(int idx);
+  signals:
+    void resize_();
+};
+
 class TranslationAlongXAxisWidget : public FunctionWidget {
 
   public:

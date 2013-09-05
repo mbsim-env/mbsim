@@ -139,6 +139,8 @@ class MainWindow : public QMainWindow {
     void selectionChanged();
     void openPropertyDialog();
     void simulationFinished(int exitCode, QProcess::ExitStatus exitStatus);
+    void timeout();
+    void timeout2();
   protected:
     void closeEvent ( QCloseEvent * event );
 };

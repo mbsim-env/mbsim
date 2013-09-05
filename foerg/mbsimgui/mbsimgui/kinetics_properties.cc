@@ -614,6 +614,7 @@ ForceChoiceProperty::ForceChoiceProperty(ExtProperty &arrow_, const std::string 
   property.push_back(new SinusFunctionProperty("V"));
   property.push_back(new TabularFunctionProperty);
   property.push_back(new SummationFunctionProperty);
+  property.push_back(new PiecewiseDefinedFunctionProperty("V"));
   vector<string> var;
   var.push_back("t");
   property.push_back(new SymbolicFunctionProperty("VS",var));
