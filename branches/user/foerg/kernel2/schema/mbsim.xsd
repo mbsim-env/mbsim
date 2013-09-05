@@ -3610,6 +3610,54 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="PiecewiseDefinedFunction_V" substitutionGroup="Function_VS" type="PiecewiseDefinedFunction_VType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="PiecewiseDefinedFunction_VType">
+    <xs:complexContent>
+      <xs:extension base="Function_VSType">
+        <xs:sequence>
+          <xs:element name="function" maxOccurs="unbounded">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function_VS"/>
+                <xs:element name="interval" type="pv:nounitScalar"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="PiecewiseDefinedFunction_S" substitutionGroup="Function_SS" type="PiecewiseDefinedFunction_SType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="PiecewiseDefinedFunction_SType">
+    <xs:complexContent>
+      <xs:extension base="Function_SSType">
+        <xs:sequence>
+          <xs:element name="function" maxOccurs="unbounded">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function_SS"/>
+                <xs:element name="interval" type="pv:nounitScalar"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="SymbolicFunction_VS" substitutionGroup="Function_VS" type="SymbolicFunction_VSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">

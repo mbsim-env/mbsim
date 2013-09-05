@@ -718,7 +718,8 @@ namespace MBSim {
   template<class Ret>
     class VectorValuedFunction : public fmatvec::Function<Ret(double)> {
       public:
-        VectorValuedFunction(int m_=0, int n_=0) : m(m_), n(n_) { }
+        VectorValuedFunction() { }
+        VectorValuedFunction(const std::vector<fmatvec::Function<double(double)> *> functions_) : functions(functions_) { }
         Ret operator()(const double &x) {
           Ret y(functions.size(),fmatvec::NONINIT);
           for (unsigned int i=0; i<functions.size(); i++)
@@ -749,8 +750,49 @@ namespace MBSim {
           }
         }
       private:
-        int m, n;
         std::vector<fmatvec::Function<double(double)> *> functions;
+    };
+
+  template<class Ret>
+    class PiecewiseDefinedFunction : public fmatvec::Function<Ret(double)> {
+      public:
+        PiecewiseDefinedFunction() { }
+        PiecewiseDefinedFunction(const std::vector<fmatvec::Function<Ret(double)> *> &functions_, const std::vector<double> &a_) : functions(functions_), a(a_) { }
+        Ret operator()(const double &x) {
+          for(unsigned int i=1; i<a.size(); i++)
+            if(x<=a[i])
+              return (*functions[i-1])(x);
+          return (*functions[functions.size()-1])(x);
+        }
+        typename fmatvec::Der<Ret, double>::type parDer(const double &x) {  
+          for(unsigned int i=1; i<a.size(); i++)
+            if(x<=a[i])
+              return functions[i-1]->parDer(x);
+          return functions[functions.size()-1]->parDer(x);
+        }
+        typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) {  
+          for(unsigned int i=1; i<a.size(); i++)
+            if(x<=a[i])
+              return functions[i-1]->parDerParDer(x);
+          return functions[functions.size()-1]->parDerParDer(x);
+        }
+
+        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
+          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"function");
+          while (e && e->ValueStr()==MBSIMNS"function") {
+            MBXMLUtils::TiXmlElement *ee = e->FirstChildElement();
+            fmatvec::Function<Ret(double)> *f=ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<Ret(double)> >(ee);
+            f->initializeUsingXML(ee);
+            functions.push_back(f);
+            ee=e->FirstChildElement(MBSIMNS"interval");
+            double interval=Element::getDouble(ee);
+            a.push_back(interval);
+            e=e->NextSiblingElement();
+          }
+        }
+      private:
+        std::vector<fmatvec::Function<Ret(double)> *> functions;
+        std::vector<double> a;
     };
 
   class Polynom : public fmatvec::Function<double(double)> {
