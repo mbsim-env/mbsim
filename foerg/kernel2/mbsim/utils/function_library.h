@@ -755,26 +755,28 @@ namespace MBSim {
 
   template<class Ret>
     class PiecewiseDefinedFunction : public fmatvec::Function<Ret(double)> {
+      Ret yEnd;
       public:
         PiecewiseDefinedFunction() { }
-        PiecewiseDefinedFunction(const std::vector<fmatvec::Function<Ret(double)> *> &functions_, const std::vector<double> &a_) : functions(functions_), a(a_) { }
+        PiecewiseDefinedFunction(const std::vector<fmatvec::Function<Ret(double)> *> &functions_, const std::vector<double> &a_) : functions(functions_), a(a_) { yEnd = (*functions[functions.size()-1])(a[a.size()-1]); }
+        Ret zeros(const Ret &x) { return Ret(x.size()); }
         Ret operator()(const double &x) {
-          for(unsigned int i=1; i<a.size(); i++)
+          for(unsigned int i=0; i<a.size(); i++)
             if(x<=a[i])
-              return (*functions[i-1])(x);
-          return (*functions[functions.size()-1])(x);
+              return (*functions[i])(x);
+          return yEnd;
         }
         typename fmatvec::Der<Ret, double>::type parDer(const double &x) {  
-          for(unsigned int i=1; i<a.size(); i++)
+          for(unsigned int i=0; i<a.size(); i++)
             if(x<=a[i])
-              return functions[i-1]->parDer(x);
-          return functions[functions.size()-1]->parDer(x);
+              return functions[i]->parDer(x);
+          return zeros(yEnd);
         }
         typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) {  
-          for(unsigned int i=1; i<a.size(); i++)
+          for(unsigned int i=0; i<a.size(); i++)
             if(x<=a[i])
-              return functions[i-1]->parDerParDer(x);
-          return functions[functions.size()-1]->parDerParDer(x);
+              return functions[i]->parDerParDer(x);
+          return zeros(yEnd);
         }
 
         void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
@@ -789,11 +791,15 @@ namespace MBSim {
             a.push_back(interval);
             e=e->NextSiblingElement();
           }
+          yEnd = (*functions[functions.size()-1])(a[a.size()-1]);
         }
       private:
         std::vector<fmatvec::Function<Ret(double)> *> functions;
         std::vector<double> a;
     };
+
+  template<>
+    inline double PiecewiseDefinedFunction<double>::zeros(const double &x) { return 0; } 
 
   class Polynom : public fmatvec::Function<double(double)> {
     protected:
