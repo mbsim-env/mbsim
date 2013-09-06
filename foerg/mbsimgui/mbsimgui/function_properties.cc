@@ -258,19 +258,25 @@ void VectorValuedFunctionProperty::toWidget(QWidget *widget) {
     f[i].toWidget(static_cast<VectorValuedFunctionWidget*>(widget)->f[i]);
 }
 
+PiecewiseDefinedFunctionProperty::PiecewiseDefinedFunctionProperty(const std::string &ext) : FunctionProperty(ext), contDiff(0,false) {
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMNS"continouslyDifferentiable"));
+  contDiff.setProperty(new ExtPhysicalVarProperty(input));
+}
+
 TiXmlElement* PiecewiseDefinedFunctionProperty::initializeUsingXML(TiXmlElement *element) {
   
   function.clear();
   TiXmlElement *e = element->FirstChildElement(MBSIMNS"function");
-  while(e) {
+  while(e and e->ValueStr()==MBSIMNS"function") {
     function.push_back(ContainerProperty());
     vector<Property*> property;
-    property.push_back(new ConstantFunctionProperty("VS"));
-    property.push_back(new QuadraticFunctionProperty("V"));
-    property.push_back(new SinusFunctionProperty("V"));
+    property.push_back(new ConstantFunctionProperty(ext+"S"));
+    property.push_back(new QuadraticFunctionProperty(ext));
+    property.push_back(new SinusFunctionProperty(ext));
     vector<string> var;
     var.push_back("t");
-    property.push_back(new SymbolicFunctionProperty("VS",var));
+    property.push_back(new SymbolicFunctionProperty(ext+"S",var));
     function[function.size()-1].addProperty(new ChoiceProperty("",property));
 
     vector<PhysicalVariableProperty> input;
@@ -281,6 +287,7 @@ TiXmlElement* PiecewiseDefinedFunctionProperty::initializeUsingXML(TiXmlElement 
 
     e=e->NextSiblingElement();
   }
+  contDiff.initializeUsingXML(element);
 
   return element;
 }
@@ -292,6 +299,7 @@ TiXmlElement* PiecewiseDefinedFunctionProperty::writeXMLFile(TiXmlNode *parent) 
     function[i].writeXMLFile(ele1);
     ele0->LinkEndChild(ele1);
   }
+  contDiff.writeXMLFile(ele0);
   return ele0;
 }
 
@@ -301,12 +309,12 @@ void PiecewiseDefinedFunctionProperty::fromWidget(QWidget *widget) {
     function.push_back(ContainerProperty());
 
     vector<Property*> property;
-    property.push_back(new ConstantFunctionProperty("VS"));
-    property.push_back(new QuadraticFunctionProperty("V"));
-    property.push_back(new SinusFunctionProperty("V"));
+    property.push_back(new ConstantFunctionProperty(ext+"S"));
+    property.push_back(new QuadraticFunctionProperty(ext));
+    property.push_back(new SinusFunctionProperty(ext));
     vector<string> var;
     var.push_back("t");
-    property.push_back(new SymbolicFunctionProperty("VS",var));
+    property.push_back(new SymbolicFunctionProperty(ext+"S",var));
     function[function.size()-1].addProperty(new ChoiceProperty("",property));
 
     vector<PhysicalVariableProperty> input;
@@ -315,6 +323,7 @@ void PiecewiseDefinedFunctionProperty::fromWidget(QWidget *widget) {
 
     function[i].fromWidget(static_cast<PiecewiseDefinedFunctionWidget*>(widget)->stackedWidget->widget(i));
   }
+  contDiff.fromWidget(static_cast<PiecewiseDefinedFunctionWidget*>(widget)->contDiff);
 }
 
 void PiecewiseDefinedFunctionProperty::toWidget(QWidget *widget) {
@@ -324,6 +333,7 @@ void PiecewiseDefinedFunctionProperty::toWidget(QWidget *widget) {
     static_cast<PiecewiseDefinedFunctionWidget*>(widget)->blockSignals(false);
     function[i].toWidget(static_cast<PiecewiseDefinedFunctionWidget*>(widget)->stackedWidget->widget(i));
   }
+  contDiff.toWidget(static_cast<PiecewiseDefinedFunctionWidget*>(widget)->contDiff);
 }
 
 RotationAboutFixedAxisProperty::RotationAboutFixedAxisProperty(const string &ext) : FunctionProperty(ext) {

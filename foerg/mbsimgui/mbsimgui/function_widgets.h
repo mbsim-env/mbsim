@@ -96,13 +96,14 @@ class PiecewiseDefinedFunctionWidget : public FunctionWidget {
   friend class PiecewiseDefinedFunctionProperty;
 
   public:
-    PiecewiseDefinedFunctionWidget(int n);
+    PiecewiseDefinedFunctionWidget(const QString &ext, int n);
     void resize_(int m, int n);
 
   protected:
     QStackedWidget *stackedWidget; 
     QListWidget *functionList; 
     int n;
+    ExtWidget *contDiff;
 
   protected slots:
     void updateList();

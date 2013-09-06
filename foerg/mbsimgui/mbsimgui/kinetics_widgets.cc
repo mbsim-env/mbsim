@@ -318,7 +318,7 @@ ForceChoiceWidget::ForceChoiceWidget() {
   name.push_back("Tabular function");
   widget.push_back(new SummationFunctionWidget(1));
   name.push_back("Summation function");
-  widget.push_back(new PiecewiseDefinedFunctionWidget(1));
+  widget.push_back(new PiecewiseDefinedFunctionWidget("V",1));
   name.push_back("Piecewise defined function");
   widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t")));
   name.push_back("Symbolic function");

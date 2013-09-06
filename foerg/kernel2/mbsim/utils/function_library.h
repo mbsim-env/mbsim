@@ -755,28 +755,49 @@ namespace MBSim {
 
   template<class Ret>
     class PiecewiseDefinedFunction : public fmatvec::Function<Ret(double)> {
-      Ret yEnd;
       public:
-        PiecewiseDefinedFunction() { }
-        PiecewiseDefinedFunction(const std::vector<fmatvec::Function<Ret(double)> *> &functions_, const std::vector<double> &a_) : functions(functions_), a(a_) { yEnd = (*functions[functions.size()-1])(a[a.size()-1]); }
+        PiecewiseDefinedFunction() : contDiff(0) { }
+        PiecewiseDefinedFunction(const std::vector<fmatvec::Function<Ret(double)> *> &functions_, const std::vector<double> &a_, int contDiff_=0) : functions(functions_), a(a_), contDiff(contDiff_) { 
+          yEnd = (*functions[functions.size()-1])(a[a.size()-1]); 
+          if(contDiff>0) {
+            ysEnd = functions[functions.size()-1]->parDer(a[a.size()-1]); 
+            if(contDiff>1)
+              yssEnd = functions[functions.size()-1]->parDerParDer(a[a.size()-1]); 
+          }
+        }
         Ret zeros(const Ret &x) { return Ret(x.size()); }
         Ret operator()(const double &x) {
           for(unsigned int i=0; i<a.size(); i++)
             if(x<=a[i])
               return (*functions[i])(x);
-          return yEnd;
+          if(contDiff==0)
+            return yEnd;
+          else if(contDiff==1)
+            return yEnd+ysEnd*(x-a[a.size()-1]);
+          else 
+            return yEnd+(ysEnd+0.5*yssEnd*(x-a[a.size()-1]))*(x-a[a.size()-1]);
         }
         typename fmatvec::Der<Ret, double>::type parDer(const double &x) {  
           for(unsigned int i=0; i<a.size(); i++)
             if(x<=a[i])
               return functions[i]->parDer(x);
-          return zeros(yEnd);
+          if(contDiff==0)
+            return zeros(yEnd);
+          else if(contDiff==1)
+            return ysEnd;
+          else 
+            return ysEnd+yssEnd*(x-a[a.size()-1]);
         }
         typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &x) {  
           for(unsigned int i=0; i<a.size(); i++)
             if(x<=a[i])
               return functions[i]->parDerParDer(x);
-          return zeros(yEnd);
+          if(contDiff==0)
+            return zeros(yEnd);
+          else if(contDiff==1)
+            return zeros(yEnd);
+          else 
+            return yssEnd;
         }
 
         void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
@@ -787,15 +808,23 @@ namespace MBSim {
             f->initializeUsingXML(ee);
             functions.push_back(f);
             ee=e->FirstChildElement(MBSIMNS"interval");
-            double interval=Element::getDouble(ee);
-            a.push_back(interval);
+            a.push_back(Element::getDouble(ee));
             e=e->NextSiblingElement();
           }
-          yEnd = (*functions[functions.size()-1])(a[a.size()-1]);
+          e=element->FirstChildElement(MBSIMNS"continouslyDifferentiable");
+          if(e) contDiff=Element::getDouble(e);
+          yEnd = (*functions[functions.size()-1])(a[a.size()-1]); 
+          if(contDiff>0) {
+            ysEnd = functions[functions.size()-1]->parDer(a[a.size()-1]); 
+            if(contDiff>1)
+              yssEnd = functions[functions.size()-1]->parDerParDer(a[a.size()-1]); 
+          }
         }
       private:
         std::vector<fmatvec::Function<Ret(double)> *> functions;
         std::vector<double> a;
+        int contDiff;
+        Ret yEnd, ysEnd, yssEnd;
     };
 
   template<>

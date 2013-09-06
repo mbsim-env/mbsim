@@ -123,7 +123,7 @@ class VectorValuedFunctionProperty : public FunctionProperty {
 
 class PiecewiseDefinedFunctionProperty : public FunctionProperty {
   public:
-    PiecewiseDefinedFunctionProperty(const std::string &ext) : FunctionProperty(ext) {}
+    PiecewiseDefinedFunctionProperty(const std::string &ext);
     virtual Property* clone() const {return new PiecewiseDefinedFunctionProperty(*this);}
     inline std::string getType() const { return "PiecewiseDefinedFunction_"+ext; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
@@ -131,9 +131,8 @@ class PiecewiseDefinedFunctionProperty : public FunctionProperty {
     void fromWidget(QWidget *widget);
     void toWidget(QWidget *widget);
   protected:
-    //std::vector<ExtProperty> f;
-    //std::vector<ExtProperty> a;
     std::vector<ContainerProperty> function;
+    ExtProperty contDiff;
 };
 
 class TranslationAlongXAxisProperty: public FunctionProperty {

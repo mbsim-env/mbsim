@@ -164,10 +164,15 @@ VectorValuedFunctionWidget::VectorValuedFunctionWidget(const QString &ext, int m
   }
 }
 
-PiecewiseDefinedFunctionWidget::PiecewiseDefinedFunctionWidget(int n_) : n(n_) {
+PiecewiseDefinedFunctionWidget::PiecewiseDefinedFunctionWidget(const QString &ext, int n_) : FunctionWidget(ext), n(n_) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
+
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
+  contDiff = new ExtWidget("Continously differentiable",new ExtPhysicalVarWidget(input),true);
+  layout->addWidget(contDiff);
 
   functionList = new QListWidget;
   functionList->setContextMenuPolicy (Qt::CustomContextMenu);
@@ -221,13 +226,13 @@ void PiecewiseDefinedFunctionWidget::addFunction() {
   ContainerWidget *widgetContainer = new ContainerWidget;
   vector<QWidget*> widget;
   vector<QString> name;
-  widget.push_back(new ConstantFunctionWidget("VS",n));
+  widget.push_back(new ConstantFunctionWidget(ext+"S",n));
   name.push_back("Constant function");
-  widget.push_back(new QuadraticFunctionWidget("V",n));
+  widget.push_back(new QuadraticFunctionWidget(ext,n));
   name.push_back("Quadratic function");
-  widget.push_back(new SinusFunctionWidget("V",n));
+  widget.push_back(new SinusFunctionWidget(ext,n));
   name.push_back("Sinus function");
-  widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t")));
+  widget.push_back(new SymbolicFunctionWidget(ext+"S",QStringList("t")));
   name.push_back("Symbolic function");
   widgetContainer->addWidget(new ChoiceWidget(widget,name));
 
