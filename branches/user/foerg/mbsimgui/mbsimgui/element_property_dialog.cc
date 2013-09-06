@@ -372,6 +372,7 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   var << "t";
   widget.push_back(new SymbolicFunctionWidget("VS",var)); name.push_back("Symbolic function r=r(t)");
   widget.push_back(new VectorValuedFunctionWidget("V",3)); name.push_back("Vector valued function r=r(t)");
+  widget.push_back(new PiecewiseDefinedFunctionWidget("V",3)); name.push_back("Piecewise defined function r=r(t)");
 
   var.clear();
   var << "q" << "t";

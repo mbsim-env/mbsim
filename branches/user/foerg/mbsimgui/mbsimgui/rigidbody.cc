@@ -80,6 +80,7 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   var.push_back("t");
   property.push_back(new SymbolicFunctionProperty("VS",var));
   property.push_back(new VectorValuedFunctionProperty("V",3));
+  property.push_back(new PiecewiseDefinedFunctionProperty("V"));
 
   var.clear();
   var.push_back("q");
