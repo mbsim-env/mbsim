@@ -26,11 +26,12 @@ namespace MBSim {
 
   class LemkeAlgorithm {
     public:
-      LemkeAlgorithm(const bool & DEBUGLEVEL_ = 0): DEBUGLEVEL(DEBUGLEVEL_) {
+      LemkeAlgorithm(const bool & DEBUGLEVEL_ = 0) :
+          M(), q(), steps(0), DEBUGLEVEL(DEBUGLEVEL_), info(-1) {
       }
 
       LemkeAlgorithm(const fmatvec::SqrMat & M_, const fmatvec::Vec & q_, const bool & DEBUGLEVEL_ = 0) :
-          M(M_), q(q_), DEBUGLEVEL(DEBUGLEVEL_) {
+          M(M_), q(q_), steps(0), DEBUGLEVEL(DEBUGLEVEL_), info(-1) {
         assert(M_.rows() == q.size());
         assert(M_.cols() == q.size());
       }
@@ -70,8 +71,8 @@ namespace MBSim {
        */
       void setSystem(const fmatvec::SymMat & M_, const fmatvec::Vec & q_) {
         M = fmatvec::SqrMat(M_.size(), fmatvec::NONINIT);
-        for(int i = 0; i < M.size(); i++)
-          for(int j = 0; j < M.size(); j++)
+        for (int i = 0; i < M.size(); i++)
+          for (int j = 0; j < M.size(); j++)
             M(i, j) = M_(i, j);
         q = q_;
       }
