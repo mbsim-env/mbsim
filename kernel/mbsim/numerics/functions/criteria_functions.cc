@@ -70,8 +70,9 @@ namespace MBSim {
       //TODO: somehow add the -1 case ...
       if (criteriaResults.back()[i] > iter->second)
         return 1;
-      else if (isnan(criteriaResults.back()[i]))
+      else if (isnan(criteriaResults.back()[i])) {
         return -1;
+      }
       i++;
     }
 

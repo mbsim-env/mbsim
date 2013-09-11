@@ -100,7 +100,7 @@ namespace MBSim {
   }
 
   ContactKinematicsRectanglePolynomialFrustum::ContactKinematicsRectanglePolynomialFrustum() :
-      ContactKinematics(), irectangle(-1), ifrustum(-1), rectangle(0), frustum(0), x1(-1), x2(-1), funcProjectAlongNormal(0), newtonProjectAlongNormal(), jacobianProjectAlongNormal(0), criteriaProjectAlongNormal(), dampingProjectAlongNormal(),  funcEdge(0), newtonEdge(), jacobianEdge(), criteriaEdge(), dampingEdge(), ilast(-1), xi(1, INIT, 0.5) {
+      ContactKinematics(), irectangle(-1), ifrustum(-1), rectangle(0), frustum(0), signh(1.), x1(-1), x2(-1), funcProjectAlongNormal(0), newtonProjectAlongNormal(), jacobianProjectAlongNormal(0), criteriaProjectAlongNormal(), dampingProjectAlongNormal(),  funcEdge(0), newtonEdge(), jacobianEdge(), criteriaEdge(), dampingEdge(), ilast(-1), xi(1, INIT, 0.5) {
   }
 
   ContactKinematicsRectanglePolynomialFrustum::~ContactKinematicsRectanglePolynomialFrustum() {
@@ -167,32 +167,24 @@ namespace MBSim {
 
 
     //right sides of the two equations
-    rhs = signh * sqrt(v(0) * v(0) / (v(1) * v(1) + v(2) * v(2)));
+    rhs = signh * v(0) * v(0) / (v(1) * v(1) + v(2) * v(2));
     //rhs2 = -rhs;
 
-    const Vec & para = frustum->getPolynomialParameters(); //para = (a0,a1 ... an)
-
-    Vec para1d(para.size(), NONINIT); //coefficient vector of 1st derivative of the polynomial,para1d=(a1,2*a2,3*a3...n*an,0)
-    for (int i = 0; i < para.size() - 1; i++) {
-      para1d(i) = (i + 1) * (para(i + 1));
-    }
-    para1d(para.size() - 1) = 0;
-
-    ContactPolyfun *Polyfun1 = new ContactPolyfun(rhs, para1d);
+    ContactPolyfun Polyfun1(rhs, frustum);
     //ContactPolyfun *Polyfun2 = new ContactPolyfun(rhs2, para1d);
 
     //Use newton method to solve 2 equations
-    NewtonMethod *solver1 = new NewtonMethod(Polyfun1);
+    NewtonMethod solver1(&Polyfun1);
     //NewtonMethod *solver2 = new NewtonMethod(Polyfun2);
 
     int itmax = 200, kmax = 200; //maximum iteration, maximum damping steps, information of success
     double tol = 1e-10;
 
-    solver1->setMaximumNumberOfIterations(itmax);
-    solver1->setMaximumDampingSteps(kmax);
-    solver1->setTolerance(tol);
+    solver1.setMaximumNumberOfIterations(itmax);
+    solver1.setMaximumDampingSteps(kmax);
+    solver1.setTolerance(tol);
     //x (=height-direction of frustum) -coordinate in equation one
-    x1 = solver1->solve(x1); //initial guess x=height/2
+    x1 = solver1.solve(x1); //initial guess x=height/2
 
 //    solver2->setMaximumNumberOfIterations(itmax);
 //    solver2->setMaximumDampingSteps(kmax);
@@ -206,7 +198,7 @@ namespace MBSim {
     //2.Check if the corresponding point is within the rectangle
     //3.Find the corresponding point on the plane, check if it is in the
     //rectangle
-    if ((solver1->getInfo() == 0) && signh*x1 >= 0 && signh*x1 <= signh*frustum->getHeight())
+    if ((solver1.getInfo() == 0) && signh*x1 >= 0 && signh*x1 <= signh*frustum->getHeight())
       status = checkPossibleContactPoint(x1, v);
 
     //same thing with the other solution x2
@@ -434,7 +426,7 @@ namespace MBSim {
   }
 
   Vec3 ContactKinematicsRectanglePolynomialFrustum::computeContourPoint(const double & x, const Vec3 & n) {
-    return frustum-> getReferenceOrientation() * computeContourPointFrustum(x,n);
+    return frustum->getReferencePosition() +  frustum->getReferenceOrientation() * computeContourPointFrustum(x,n);
   }
 
   int ContactKinematicsRectanglePolynomialFrustum::checkPossibleContactPoint(const double & x, const Vec3 & n) {

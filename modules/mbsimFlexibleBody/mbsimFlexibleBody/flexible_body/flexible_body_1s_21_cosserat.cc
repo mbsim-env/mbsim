@@ -178,13 +178,13 @@ namespace MBSimFlexibleBody {
       int node = cp.getNodeNumber();
       /* 2D -> 3D mapping */
       Vec qTmpNODE(3, INIT, 0.);
-      qTmpNODE(0, 1) = q(3 * node + 0, 3 * node + 1);
+      qTmpNODE(0, 1) = qFull(3 * node + 0, 3 * node + 1);
       Vec qTmpANGLE(3, INIT, 0.);
-      qTmpANGLE(2) = q(3 * node + 2);
+      qTmpANGLE(2) = qFull(3 * node + 2);
       Vec uTmp(3, INIT, 0.);
-      uTmp(0, 1) = u(3 * node + 0, 3 * node + 1);
+      uTmp(0, 1) = uFull(3 * node + 0, 3 * node + 1);
       Vec uTmpANGLE(3, INIT, 0.);
-      uTmpANGLE(2) = u(3 * node + 2);
+      uTmpANGLE(2) = uFull(3 * node + 2);
 
       if (ff == position || ff == position_cosy || ff == all)
         cp.getFrameOfReference().setPosition(R->getPosition() + R->getOrientation() * qTmpNODE);
