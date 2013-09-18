@@ -24,7 +24,7 @@ int main (int argc, char* argv[]) {
   double dtRed = 1.e1*dtFull;
   double dtPlot = 1*dtRed;
 
-  if(0){
+  {
     //Run Full Simulation
     sys = new System(nameFullSystem);
     sys->setStopIfNoConvergence(true,true);
@@ -52,7 +52,7 @@ int main (int argc, char* argv[]) {
   {
     //Run Reduced Simulation
     sys = new System(nameReducedSystem);
-//    sys->readz0("z0.h5");
+    sys->readz0("z0.h5");
     sys->reduce(nameFullSystem + ".mbsim.h5");
     sys->setMaxIter(100000);
     sys->setStopIfNoConvergence(true,true);
