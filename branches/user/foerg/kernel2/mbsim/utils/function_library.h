@@ -428,19 +428,18 @@ namespace MBSim {
       void calcIndex(const double * x, fmatvec::Vec X, int * xSize, int * xIndexMinus, int * xIndexPlus);
   };
 
-  template<typename Sig> class ConstantFunction;
-
-  template<typename Ret, typename Arg>
-    class ConstantFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
+  template<typename Ret>
+    class ConstantFunction : public fmatvec::Function<Ret(double)> {
       protected:
         Ret a;
+        Ret zeros(const Ret &x) { return Ret(x.size()); }
       public:
         ConstantFunction() {}
         ConstantFunction(const Ret &a_) : a(a_) {}
-        typename fmatvec::Size<Arg>::type getArgSize() const { throw std::runtime_error("getArgSize is not available for given template parameters."); }
-        Ret operator()(const Arg &arg) { return a; }
-        typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &arg) { throw std::runtime_error("parDer is not available for given template parameters."); }
-        typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &arg) { throw std::runtime_error("parDerParDer is not available for given template parameters."); }
+        typename fmatvec::Size<double>::type getArgSize() const { return 1; }
+        Ret operator()(const double &arg) { return a; }
+        typename fmatvec::Der<Ret, double>::type parDer(const double &arg) { return zeros(a); }
+        typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &arg) { return zeros(a); }
         void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
           MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"value");
           a=FromMatStr<Ret>::cast(e->GetText());
@@ -449,77 +448,35 @@ namespace MBSim {
     };
 
   template<>
-    inline typename fmatvec::Size<double>::type ConstantFunction<double(double)>::getArgSize() const { return 1; }
-  template<>
-    inline typename fmatvec::Size<double>::type ConstantFunction<fmatvec::Vec3(double)>::getArgSize() const { return 1; }
-  template<>
-    inline double ConstantFunction<double(double)>::parDer(const double &arg) { return 0; }
-  template<>
-    inline fmatvec::Vec3 ConstantFunction<fmatvec::Vec3(double)>::parDer(const double &arg) { return fmatvec::Vec3(); }
-  template<>
-    inline double ConstantFunction<double(double)>::parDerParDer(const double &arg) { return 0; }
-  template<>
-    inline fmatvec::Vec3 ConstantFunction<fmatvec::Vec3(double)>::parDerParDer(const double &arg) { return fmatvec::Vec3(); }
+    inline double ConstantFunction<double>::zeros(const double &x) { return 0; } 
 
-  template<typename Ret, typename Arg1, typename Arg2>
-    class ConstantFunction<Ret(Arg1,Arg2)> : public fmatvec::Function<Ret(Arg1,Arg2)> {
-      protected:
-        Ret a;
-      public:
-        ConstantFunction() {}
-        ConstantFunction(const Ret &a_) : a(a_) {}
-        Ret operator()(const Arg1 &arg1, const Arg2 &arg2) { return a; }
-        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
-          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"value");
-          a=FromMatStr<Ret>::cast(e->GetText());
-        }
-        bool constParDer() const { return true; }
-        MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; } 
-    };
-
-  template<typename Sig> class LinearFunction;
-
-  template<typename Ret, typename Arg>
-    class LinearFunction<Ret(Arg)> : public fmatvec::Function<Ret(Arg)> {
+  template<typename Ret>
+    class LinearFunction : public fmatvec::Function<Ret(double)> {
       private:
-        typename fmatvec::Der<Ret, Arg>::type A;
+        typename fmatvec::Der<Ret, double>::type A;
         Ret b;
-        Ret zeros(const typename fmatvec::Der<Ret, Arg>::type &x) { return Ret(x.rows()); }
+        Ret zeros(const typename fmatvec::Der<Ret, double>::type &x) { return Ret(x.rows()); }
       public:
         LinearFunction() { }
-        LinearFunction(const typename fmatvec::Der<Ret, Arg>::type &A_, const Ret &b_) : A(A_), b(b_) {}
-        LinearFunction(const typename fmatvec::Der<Ret, Arg>::type &A_) : A(A_), b(A.rows()) {}
-        typename fmatvec::Size<Arg>::type getArgSize() const { return A.cols(); }
-        Ret operator()(const Arg &arg) { return A*arg+b; }
-        typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &arg) { return A; }
-        typename fmatvec::Der<Ret, Arg>::type parDerDirDer(const Arg &arg1Dir, const Arg &arg1) { return typename fmatvec::Der<Ret, Arg>::type(A.rows(),A.cols()); }
-        typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &arg) { throw std::runtime_error("parDerParDer is not available for given template parameters."); }
-        bool constParDer() const { return true; }
+        LinearFunction(const typename fmatvec::Der<Ret, double>::type &A_, const Ret &b_) : A(A_), b(b_) {}
+        LinearFunction(const typename fmatvec::Der<Ret, double>::type &A_) : A(A_), b(zeros(A)) {}
+        typename fmatvec::Size<double>::type getArgSize() const { return 1; }
+        Ret operator()(const double &arg) { return A*arg+b; }
+        typename fmatvec::Der<Ret, double>::type parDer(const double &arg) { return A; }
+        typename fmatvec::Der<typename fmatvec::Der<Ret, double>::type, double>::type parDerParDer(const double &arg) { return zeros(A); }
         void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
           MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"slope");
-          A=FromMatStr<typename fmatvec::Der<Ret, Arg>::type>::cast(e->GetText());
+          A=FromMatStr<typename fmatvec::Der<Ret, double>::type>::cast(e->GetText());
           e=element->FirstChildElement(MBSIMNS"intercept");
           b=e?FromMatStr<Ret>::cast(e->GetText()):zeros(A);
         }
         MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; } 
-        void setSlope(const typename fmatvec::Der<Ret, Arg>::type &A_) { A = A_; }
+        void setSlope(const typename fmatvec::Der<Ret, double>::type &A_) { A = A_; }
         void setIntercept(const Ret &b_) { b = b_; }
     };
 
   template<>
-    inline LinearFunction<double(double)>::LinearFunction(const double &A_) : A(A_), b(0) {}
-  template<>
-    inline typename fmatvec::Size<double>::type LinearFunction<double(double)>::getArgSize() const { return 1; }
-  template<>
-    inline double LinearFunction<double(double)>::parDerDirDer(const double &arg1Dir, const double &arg1) { return 0; }
-  template<>
-    inline fmatvec::Vec3 LinearFunction<fmatvec::Vec3(double)>::parDerDirDer(const double &arg1Dir, const double &arg1) { return fmatvec::Vec3(); }
-  template<>
-    inline fmatvec::Vec3 LinearFunction<fmatvec::Vec3(double)>::parDerParDer(const double &arg) { return fmatvec::Vec3(); }
-  template<>
-    inline double LinearFunction<double(double)>::parDerParDer(const double &arg) { return 0; }
-  template<>
-    inline double LinearFunction<double(double)>::zeros(const double &arg) { return 0; } 
+    inline double LinearFunction<double>::zeros(const double &arg) { return 0; } 
 
  template<class Ret>
   class QuadraticFunction : public fmatvec::Function<Ret(double)> {
@@ -1084,6 +1041,38 @@ namespace MBSim {
         typename fmatvec::Der<fmatvec::Vec3, Arg>::type parDerDirDer(const Arg &arg1Dir, const Arg &arg1) { return typename fmatvec::Der<fmatvec::Vec3, Arg>::type(3); }
         bool constParDer() const { return true; }
     };
+
+  template<class Arg>
+    class LinearTranslation : public fmatvec::Function<fmatvec::Vec3(Arg)> {
+      private:
+        typename fmatvec::Der<fmatvec::Vec3, Arg>::type A;
+        fmatvec::Vec3 b;
+        fmatvec::Vec3 zeros(const typename fmatvec::Der<fmatvec::Vec3, Arg>::type &x) { return fmatvec::Vec3(x.rows()); }
+      public:
+        LinearTranslation() { }
+        LinearTranslation(const typename fmatvec::Der<fmatvec::Vec3, Arg>::type &A_) : A(A_) {}
+        LinearTranslation(const typename fmatvec::Der<fmatvec::Vec3, Arg>::type &A_, const fmatvec::Vec3 &b_) : A(A_), b(b_) {}
+        typename fmatvec::Size<Arg>::type getArgSize() const { return A.cols(); }
+        fmatvec::Vec3 operator()(const Arg &arg) { return A*arg+b; }
+        typename fmatvec::Der<fmatvec::Vec3, Arg>::type parDer(const Arg &arg) { return A; }
+        typename fmatvec::Der<fmatvec::Vec3, Arg>::type parDerDirDer(const Arg &arg1Dir, const Arg &arg1) { return typename fmatvec::Der<fmatvec::Vec3, Arg>::type(A.rows(),A.cols()); }
+        typename fmatvec::Der<typename fmatvec::Der<fmatvec::Vec3, double>::type, double>::type parDerParDer(const double &arg) { throw std::runtime_error("parDerParDer is not available for given template parameters."); }
+        bool constParDer() const { return true; }
+        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
+          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"translationVectors");
+          A=FromMatStr<typename fmatvec::Der<fmatvec::Vec3, Arg>::type>::cast(e->GetText());
+          e=element->FirstChildElement(MBSIMNS"offset");
+          b=e?FromMatStr<fmatvec::Vec3>::cast(e->GetText()):zeros(A);
+        }
+        MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; } 
+        void setSlope(const typename fmatvec::Der<fmatvec::Vec3, Arg>::type &A_) { A = A_; }
+        void setIntercept(const fmatvec::Vec3 &b_) { b = b_; }
+    };
+
+  template<>
+    inline fmatvec::Vec3 LinearTranslation<double>::parDerDirDer(const double &arg1Dir, const double &arg1) { return fmatvec::Vec3(); }
+  template<>
+    inline fmatvec::Vec3 LinearTranslation<double>::parDerParDer(const double &arg) { return fmatvec::Vec3(); }
 
   template<class Arg> 
     class RotationAboutXAxis : public fmatvec::Function<fmatvec::RotMat3(Arg)> {

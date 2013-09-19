@@ -96,7 +96,7 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   body3->setMass(m3);
   Theta(2,2)=J3;
   body3->setInertiaTensor(Theta);
-  body3->setTranslation(new LinearFunction<Vec3(VecV)>(Vec("[1;0;0]")));
+  body3->setTranslation(new TranslationAlongXAxis<VecV>);
 
   vector<RigidBody*> bd1; bd1.push_back(body2);
   vector<RigidBody*> bd2; bd2.push_back(body3);

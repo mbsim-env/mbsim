@@ -41,8 +41,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   double JStab = 1./12. * mStab * lStab * lStab; 
   Theta(2,2) = JStab;
   stab->setInertiaTensor(Theta);
-  stab->setTranslation(new LinearFunction<Vec3(VecV)>("[1,0; 0,1; 0,0]"));
-  stab->setRotation(new RotationAboutFixedAxis<VecV>("[0; 0; 1]"));
+  stab->setTranslation(new TranslationAlongAxesXY<VecV>);
+  stab->setRotation(new RotationAboutZAxis<VecV>);
   
   Vec q0Stab(3);
   q0Stab(2) = alpha0;

@@ -40,7 +40,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setFrameForKinematics(body->getFrame("C"));
 
   Mat J("[1,0,0;0,1,0;0,0,1]");
-  body->setTranslation(new LinearFunction<Vec3(VecV)>(J));
+  body->setTranslation(new TranslationAlongAxesXYZ<VecV>);
   body->setRotation(new RotationAboutAxesXYZ<VecV>);
   body->setRotationMapping(new TCardanAngles<VecV>);
   double m = 6e-3;

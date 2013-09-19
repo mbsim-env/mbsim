@@ -63,8 +63,8 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   roll->setFrameForKinematics(roll->getFrame("C"));
   roll->setMass(m1);
   roll->setInertiaTensor(Theta);
-  roll->setRotation(new RotationAboutFixedAxis<VecV>("[0;0;1]"));
-  roll->setTranslation(new LinearFunction<Vec3(VecV)>("[0;1;0]"));
+  roll->setRotation(new RotationAboutZAxis<VecV>);
+  roll->setTranslation(new TranslationAlongYAxis<VecV>);
   roll->setInitialGeneralizedVelocity("[0;1.0]");
   this->addObject(roll);
 

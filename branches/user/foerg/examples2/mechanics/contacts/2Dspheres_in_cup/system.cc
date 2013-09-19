@@ -39,8 +39,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body1->setFrameForKinematics(body1->getFrame("C"));
   body1->setMass(m);
   body1->setInertiaTensor(Theta);
-  body1->setTranslation(new LinearFunction<Vec3(VecV)>("[1, 0; 0, 1; 0, 0]"));
-  body1->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
+  body1->setTranslation(new TranslationAlongAxesXY<VecV>);
+  body1->setRotation(new RotationAboutZAxis<VecV>);
 
   // Second Body
   RigidBody* body2 = new RigidBody("Body2");
@@ -50,8 +50,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body2->setFrameForKinematics(body2->getFrame("C"));
   body2->setMass(m);
   body2->setInertiaTensor(Theta);
-  body2->setTranslation(new LinearFunction<Vec3(VecV)>("[1, 0; 0, 1; 0, 0]"));
-  body2->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
+  body2->setTranslation(new TranslationAlongAxesXY<VecV>);
+  body2->setRotation(new RotationAboutZAxis<VecV>);
 
   // Third Body
   RigidBody* body3 = new RigidBody("Body3");
@@ -61,8 +61,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body3->setFrameForKinematics(body3->getFrame("C"));
   body3->setMass(m);
   body3->setInertiaTensor(Theta);
-  body3->setTranslation(new LinearFunction<Vec3(VecV)>("[1, 0; 0, 1; 0, 0]"));
-  body3->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
+  body3->setTranslation(new TranslationAlongAxesXY<VecV>);
+  body3->setRotation(new RotationAboutZAxis<VecV>);
 
   // Fourth Body
   RigidBody* body4 = new RigidBody("Body4");
@@ -72,8 +72,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body4->setFrameForKinematics(body4->getFrame("C"));
   body4->setMass(m);
   body4->setInertiaTensor(Theta);
-  body4->setTranslation(new LinearFunction<Vec3(VecV)>("[1, 0; 0, 1; 0, 0]"));
-  body4->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
+  body4->setTranslation(new TranslationAlongAxesXY<VecV>);
+  body4->setRotation(new RotationAboutZAxis<VecV>);
 
   // Cup
   RigidBody* cup = new RigidBody("Cup");

@@ -118,11 +118,9 @@ void ConstantFunctionProperty::toWidget(QWidget *widget) {
   c.toWidget(static_cast<ConstantFunctionWidget*>(widget)->c);
 }
 
-LinearFunctionProperty::LinearFunctionProperty(const string &ext, int m, int n) : FunctionProperty(ext), b(0,false) {
+LinearFunctionProperty::LinearFunctionProperty(const string &ext, int m) : FunctionProperty(ext), b(0,false) {
   vector<PhysicalVariableProperty> input;
-  if(ext[0]=='V' and ext[1]=='V')
-    input.push_back(PhysicalVariableProperty(new MatProperty(m,n),"",MBSIMNS"slope"));
-  else if(ext[0]=='V' and ext[1]=='S')
+  if(ext[0]=='V')
     input.push_back(PhysicalVariableProperty(new VecProperty(m),"",MBSIMNS"slope"));
   else
     input.push_back(PhysicalVariableProperty(new ScalarProperty("1"),"",MBSIMNS"slope"));
@@ -134,15 +132,6 @@ LinearFunctionProperty::LinearFunctionProperty(const string &ext, int m, int n) 
   else
     input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"",MBSIMNS"intercept"));
   b.setProperty(new ExtPhysicalVarProperty(input));
-}
-
-int LinearFunctionProperty::getArg1Size() const {
-  if(ext[0]=='V' and ext[1]=='V') {
-    string str = evalOctaveExpression(static_cast<const ExtPhysicalVarProperty*>(a.getProperty())->getCurrentPhysicalVariableProperty().getValue());
-    vector<vector<string> > A = strToMat(str);
-    return A.size()?A[0].size():0;
-  }
-  return 0;
 }
 
 TiXmlElement* LinearFunctionProperty::initializeUsingXML(TiXmlElement *element) {
@@ -181,7 +170,7 @@ NestedFunctionProperty::NestedFunctionProperty(const string &ext, const vector<P
   else {
     var.push_back("t");
     property.push_back(new SymbolicFunctionProperty("SS",var));
-    property.push_back(new LinearFunctionProperty("SS"));
+    property.push_back(new LinearFunctionProperty("S"));
     property.push_back(new QuadraticFunctionProperty("S"));
     property.push_back(new SinusFunctionProperty("S"));
   }
@@ -220,8 +209,8 @@ VectorValuedFunctionProperty::VectorValuedFunctionProperty(const string &ext, in
     vector<Property*> property;
     vector<string> var;
     var.push_back("t");
-    property.push_back(new ConstantFunctionProperty("SS"));
-    property.push_back(new LinearFunctionProperty("SS"));
+    property.push_back(new ConstantFunctionProperty("S"));
+    property.push_back(new LinearFunctionProperty("S"));
     property.push_back(new QuadraticFunctionProperty("S"));
     property.push_back(new SinusFunctionProperty("S"));
     property.push_back(new SymbolicFunctionProperty("SS",var));
@@ -271,7 +260,7 @@ TiXmlElement* PiecewiseDefinedFunctionProperty::initializeUsingXML(TiXmlElement 
   while(e and e->ValueStr()==MBSIMNS"function") {
     function.push_back(ContainerProperty());
     vector<Property*> property;
-    property.push_back(new ConstantFunctionProperty(ext+"S"));
+    property.push_back(new ConstantFunctionProperty(ext));
     property.push_back(new QuadraticFunctionProperty(ext));
     property.push_back(new SinusFunctionProperty(ext));
     vector<string> var;
@@ -309,7 +298,7 @@ void PiecewiseDefinedFunctionProperty::fromWidget(QWidget *widget) {
     function.push_back(ContainerProperty());
 
     vector<Property*> property;
-    property.push_back(new ConstantFunctionProperty(ext+"S"));
+    property.push_back(new ConstantFunctionProperty(ext));
     property.push_back(new QuadraticFunctionProperty(ext));
     property.push_back(new SinusFunctionProperty(ext));
     vector<string> var;
@@ -334,6 +323,51 @@ void PiecewiseDefinedFunctionProperty::toWidget(QWidget *widget) {
     function[i].toWidget(static_cast<PiecewiseDefinedFunctionWidget*>(widget)->stackedWidget->widget(i));
   }
   contDiff.toWidget(static_cast<PiecewiseDefinedFunctionWidget*>(widget)->contDiff);
+}
+
+LinearTranslationProperty::LinearTranslationProperty(const string &ext, int m, int n) : FunctionProperty(ext), b(0,false) {
+  vector<PhysicalVariableProperty> input;
+  if(ext[0]=='V')
+    input.push_back(PhysicalVariableProperty(new MatProperty(m,n),"",MBSIMNS"translationVectors"));
+  else
+    input.push_back(PhysicalVariableProperty(new VecProperty(m),"",MBSIMNS"translationVectors"));
+  A.setProperty(new ExtPhysicalVarProperty(input));
+
+  input.clear();
+  input.push_back(PhysicalVariableProperty(new VecProperty(m),"",MBSIMNS"offset"));
+  b.setProperty(new ExtPhysicalVarProperty(input));
+}
+
+int LinearTranslationProperty::getArg1Size() const {
+  if(ext[0]=='V') {
+    string str = evalOctaveExpression(static_cast<const ExtPhysicalVarProperty*>(A.getProperty())->getCurrentPhysicalVariableProperty().getValue());
+    vector<vector<string> > A = strToMat(str);
+    return A.size()?A[0].size():0;
+  }
+  return 0;
+}
+
+TiXmlElement* LinearTranslationProperty::initializeUsingXML(TiXmlElement *element) {
+  A.initializeUsingXML(element);
+  b.initializeUsingXML(element);
+  return element;
+}
+
+TiXmlElement* LinearTranslationProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  A.writeXMLFile(ele0);
+  b.writeXMLFile(ele0);
+  return ele0;
+} 
+
+void LinearTranslationProperty::fromWidget(QWidget *widget) {
+  A.fromWidget(static_cast<LinearTranslationWidget*>(widget)->A);
+  b.fromWidget(static_cast<LinearTranslationWidget*>(widget)->b);
+}
+
+void LinearTranslationProperty::toWidget(QWidget *widget) {
+  A.toWidget(static_cast<LinearTranslationWidget*>(widget)->A);
+  b.toWidget(static_cast<LinearTranslationWidget*>(widget)->b);
 }
 
 RotationAboutFixedAxisProperty::RotationAboutFixedAxisProperty(const string &ext) : FunctionProperty(ext) {
@@ -522,7 +556,7 @@ TiXmlElement* SummationFunctionProperty::initializeUsingXML(TiXmlElement *elemen
   while(e) {
     function.push_back(ContainerProperty());
     vector<Property*> property;
-    property.push_back(new ConstantFunctionProperty("VS"));
+    property.push_back(new ConstantFunctionProperty("V"));
     property.push_back(new QuadraticFunctionProperty("V"));
     property.push_back(new SinusFunctionProperty("V"));
     property.push_back(new TabularFunctionProperty);
@@ -560,7 +594,7 @@ void SummationFunctionProperty::fromWidget(QWidget *widget) {
     function.push_back(ContainerProperty());
 
     vector<Property*> property;
-    property.push_back(new ConstantFunctionProperty("VS"));
+    property.push_back(new ConstantFunctionProperty("V"));
     property.push_back(new QuadraticFunctionProperty("V"));
     property.push_back(new SinusFunctionProperty("V"));
     property.push_back(new TabularFunctionProperty);

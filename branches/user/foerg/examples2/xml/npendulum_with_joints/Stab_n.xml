@@ -9,11 +9,11 @@
   <mass>5000000</mass>
   <inertiaTensor>[0,0,0 ; 0,0,0 ; 0,0,0.041666666666666]</inertiaTensor>
   <translation>
-    <LinearFunction_VV>
-      <slope>
+    <LinearTranslation_V>
+      <translationVectors>
         <xi:include href="abc/mat.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
-      </slope>
-    </LinearFunction_VV>
+      </translationVectors>
+    </LinearTranslation_V>
   </translation>
   <rotation>
     <RotationAboutFixedAxis_V>

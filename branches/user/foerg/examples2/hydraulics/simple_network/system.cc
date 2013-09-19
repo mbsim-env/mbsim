@@ -117,7 +117,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
   n2->enableOpenMBV(.025, 0, 10e5, "[-.05; .1; 0]");
 #endif
-  n2->setpFunction(new ConstantFunction<double(double)>(5e5));
+  n2->setpFunction(new ConstantFunction<double>(5e5));
   n2->addInFlow(l12a);
   n2->addInFlow(l12b);
   n2->addOutFlow(l23);

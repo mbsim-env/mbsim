@@ -106,7 +106,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   this->addFrame("ScheibeS",Wr0_S,SqrMat(3,EYE));
   ScheibeS->setFrameForKinematics(ScheibeS->getFrame("C"));
   ScheibeS->setFrameOfReference(this->getFrame("ScheibeS")); 
-  ScheibeS->setTranslation(new LinearFunction<Vec3(VecV)>(Mat(3,3,EYE)));
+  ScheibeS->setTranslation(new TranslationAlongAxesXYZ<VecV>);
   ScheibeS->setRotation(new RotationAboutAxesXYZ<VecV>);
   ScheibeS->setRotationMapping(new TCardanAngles<VecV>);
   ScheibeS->setMass(mScheibeS);
@@ -131,7 +131,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   RigidBody *ScheibeGLS = new RigidBody("Gleitlagerscheibe"); 
   ScheibeGLS->setFrameForKinematics(ScheibeGLS->getFrame("C"));
   ScheibeGLS->setFrameOfReference(this->getFrame("I")); 
-  ScheibeGLS->setTranslation(new LinearFunction<Vec3(VecV)>(Mat(3,3,EYE)));
+  ScheibeGLS->setTranslation(new TranslationAlongAxesXYZ<VecV>);
   ScheibeGLS->setRotation(new RotationAboutAxesXYZ<VecV>);
   ScheibeGLS->setRotationMapping(new TCardanAngles<VecV>);
   ScheibeGLS->setMass(mScheibeGLS);
@@ -153,7 +153,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   RigidBody *Gleitlager = new RigidBody("Gleitlager");
   Gleitlager->setFrameForKinematics(Gleitlager->getFrame("C")); 
   Gleitlager->setFrameOfReference(this->getFrame("I")); 
-  Gleitlager->setTranslation(new LinearFunction<Vec3(VecV)>(Mat(3,3,EYE)));
+  Gleitlager->setTranslation(new TranslationAlongAxesXYZ<VecV>);
   Gleitlager->setRotation(new RotationAboutAxesXYZ<VecV>);
   Gleitlager->setRotationMapping(new TCardanAngles<VecV>);
   Gleitlager->setMass(m_GL);

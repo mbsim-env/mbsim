@@ -35,7 +35,7 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
   b->setFrameOfReference(getFrame("ref"));
   b->addFrame("ref", Vec("[.01; .02; .00]"), BasicRotAIKy(-2.)*BasicRotAIKz(-1.));
   b->setFrameForKinematics(b->getFrame("C"));
-  b->setTranslation(new LinearFunction<Vec3(VecV)>("[1; 0; 0]"));
+  b->setTranslation(new TranslationAlongXAxis<VecV>);
   b->setInitialGeneralizedVelocity(.1);
 
   Checkvalve * lCV = new Checkvalve("lCV");
@@ -76,7 +76,7 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
 
   ConstrainedNodeMec * n2 = new ConstrainedNodeMec("n2");
   addLink(n2);
-  n2->setpFunction(new ConstantFunction<double(double)>(3e5));
+  n2->setpFunction(new ConstantFunction<double>(3e5));
   n2->addInFlow(lCV->getLine());
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

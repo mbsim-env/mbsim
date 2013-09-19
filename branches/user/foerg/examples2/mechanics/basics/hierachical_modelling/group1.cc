@@ -38,7 +38,7 @@ Group1::Group1(const string &name) : Group(name) {
 
   // Kinematik: Bewegung des Schwerpunktes (Center of Gravity C) 
   // entlang der y-Richtung ausgehend vom I-System (Ursprung O)
-  box1->setTranslation(new LinearFunction<Vec3(VecV)>("[0; 1; 0]"));
+  box1->setTranslation(new LinearTranslation<VecV>("[0; 1; 0]"));
   box1->setFrameOfReference(getFrame("I"));
   box1->setFrameForKinematics(box1->getFrame("C"));
   box1->setFrameOfReference(getFrame("I"));
@@ -56,7 +56,7 @@ Group1::Group1(const string &name) : Group(name) {
 
   // Kinematik: Bewegung des Schwerpunktes (Center of Gravity C) 
   // entlang der y-Richtung ausgehend vom I-System (Ursprung O)
-  box2->setTranslation(new LinearFunction<Vec3(VecV)>("[0; 1; 0]"));
+  box2->setTranslation(new LinearTranslation<VecV>("[0; 1; 0]"));
   box2->setFrameOfReference(getFrame("I"));
   box2->setFrameForKinematics(box2->getFrame("C"));
 

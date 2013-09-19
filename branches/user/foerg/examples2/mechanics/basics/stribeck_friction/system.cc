@@ -40,7 +40,7 @@ System::System(const string &projectName)  : DynamicSystemSolver(projectName) {
   ball->setInertiaTensor(Theta);
   ball->setRotation(new RotationAboutAxesXYZ<VecV>);
   ball->setRotationMapping(new TCardanAngles<VecV>);
-  ball->setTranslation(new LinearFunction<Vec3(VecV)>(SqrMat(3,EYE)));
+  ball->setTranslation(new TranslationAlongAxesXYZ<VecV>);
   ball->setFrameForKinematics(ball->getFrame("C"));
 
   // initial settings

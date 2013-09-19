@@ -30,11 +30,11 @@
       </mass>
       <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
       <translation>
-        <LinearFunction_VV>
-          <slope>
+        <LinearTranslation_V>
+          <translationVectors>
             [0; myMFunction(1); 0]
-          </slope>
-        </LinearFunction_VV>
+          </translationVectors>
+        </LinearTranslation_V>
       </translation>
       <rotation/>
       <frames>
@@ -71,9 +71,7 @@
       <mass>m2</mass>
       <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
       <translation>
-        <LinearFunction_VV>
-          <slope>[0; 1; 0]</slope>
-        </LinearFunction_VV>
+        <TranslationAlongYAxis_V/>
       </translation>
       <rotation/>
       <frames>

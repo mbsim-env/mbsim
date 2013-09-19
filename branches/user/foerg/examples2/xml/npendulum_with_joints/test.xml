@@ -7,9 +7,7 @@
       <mass>0.5</mass>
       <inertiaTensor>[0,0,0 ; 0,0,0 ; 0,0,0.041666666666666]</inertiaTensor>
       <translation>
-        <LinearFunction_VV>
-          <slope>[1,0 ; 0,1 ; 0,0]</slope>
-        </LinearFunction_VV>
+        <TranslationAlongAxesXY_V/>
       </translation>
       <rotation>
         <RotationAboutFixedAxis_V>

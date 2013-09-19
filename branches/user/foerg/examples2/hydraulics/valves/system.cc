@@ -91,7 +91,7 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
   n3->addOutFlow(l34);
 
   ConstrainedNode * n4 = new ConstrainedNode("n4");
-  n4->setpFunction(new ConstantFunction<double(double)>(2.5e5));
+  n4->setpFunction(new ConstantFunction<double>(2.5e5));
   addLink(n4);
   n4->addInFlow(l34);
 

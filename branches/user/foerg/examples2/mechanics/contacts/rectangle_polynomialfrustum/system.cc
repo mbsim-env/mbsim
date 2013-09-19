@@ -75,7 +75,7 @@ System::System(const string &projectName) :
     rectangleBody->setFrameOfReference(this->getFrameI());
     rectangleBody->setInertiaTensor(SymMat3(EYE));
 
-    rectangleBody->setTranslation(new LinearFunction<Vec3(VecV)>(Mat3x3(EYE)));
+    rectangleBody->setTranslation(new TranslationAlongAxesXYZ<VecV>);
     rectangleBody->setRotation(new RotationAboutAxesXYZ<VecV>);
     rectangleBody->setRotationMapping(new TCardanAngles<VecV>);
     //give degrees of freedom
@@ -117,7 +117,7 @@ System::System(const string &projectName) :
     rectangleBody->setFrameOfReference(this->getFrameI());
     rectangleBody->setInertiaTensor(SymMat3(EYE));
 
-    rectangleBody->setTranslation(new LinearFunction<Vec3(VecV)>(Mat3x3(EYE)));
+    rectangleBody->setTranslation(new TranslationAlongAxesXYZ<VecV>);
     //give degrees of freedom
     rectangleBody->setInitialGeneralizedPosition(Vec("[1.5;0.8;0;0;0;0]"));
     rectangleBody->setInitialGeneralizedVelocity(Vec("[0;0;0;0;0;0]"));
@@ -158,7 +158,7 @@ System::System(const string &projectName) :
     rectangleBody->setFrameOfReference(this->getFrameI());
     rectangleBody->setInertiaTensor(SymMat3(EYE));
 
-    rectangleBody->setTranslation(new LinearFunction<Vec3(VecV)>(Mat3x3(EYE)));
+    rectangleBody->setTranslation(new TranslationAlongAxesXYZ<VecV>);
     rectangleBody->setRotation(new RotationAboutAxesXYZ<VecV>);
     rectangleBody->setRotationMapping(new TCardanAngles<VecV>);
     //give degrees of freedom

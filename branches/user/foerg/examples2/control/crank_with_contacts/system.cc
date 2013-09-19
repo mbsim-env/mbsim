@@ -98,13 +98,13 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // Generalisierte Koordinaten
 
-  Crank->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
+  Crank->setRotation(new RotationAboutZAxis<VecV>);
 
-  Rod->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
+  Rod->setRotation(new RotationAboutZAxis<VecV>);
 
-  Piston->setTranslation(new LinearFunction<Vec3(VecV)>("[1,0;0,1;0,0]"));
+  Piston->setTranslation(new TranslationAlongAxesXY<VecV>);
 
-  Block->setTranslation(new LinearFunction<Vec3(VecV)>("[1,0;0,1;0,0]"));
+  Block->setTranslation(new TranslationAlongAxesXY<VecV>);
 
   //------------------------------------------------------------------------------
 
@@ -184,7 +184,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // Anregung
   KineticExcitation *MomentAnCrank = new KineticExcitation("MomentAnCrank");
-  MomentAnCrank->setMoment(Mat("[0;0;1]"), new ConstantFunction<VecV(double)>(VecV("[109]")) );
+  MomentAnCrank->setMoment("[0;0;1]", new ConstantFunction<VecV>("[109]"));
   MomentAnCrank->setFrameOfReference(Crank->getFrameForKinematics());
   MomentAnCrank->connect(Crank->getFrameForKinematics());
 
@@ -359,7 +359,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Sollsignal
   FunctionSensor *VelSoll = new FunctionSensor("VelSoll");
   addLink(VelSoll);
-  VelSoll->setFunction( new ConstantFunction<VecV(double)>(VecV("10") ));
+  VelSoll->setFunction(new ConstantFunction<VecV>("10"));
 
   // Signal-Addition
   SignalAddition *Regelfehler = new SignalAddition("Regelfehler");

@@ -149,7 +149,7 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
     balls[k]->setFrameForKinematics(balls[k]->getFrame("C"));
     balls[k]->setMass(mass);
     balls[k]->setInertiaTensor(Theta);
-    balls[k]->setTranslation(new LinearFunction<Vec3(VecV)>(SqrMat(3,EYE))); // only translational dof because of point masses
+    balls[k]->setTranslation(new TranslationAlongAxesXYZ<VecV>); // only translational dof because of point masses
 
     Vec u0(3,INIT,0);
     u0(1) = -1;

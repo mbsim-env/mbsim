@@ -113,7 +113,7 @@ System::System(const string &projectName, int elements) :
 
     }
 
-    balls[0]->setTranslation(new LinearFunction<Vec3(VecV)>(Mat3x3(EYE)));
+    balls[0]->setTranslation(new TranslationAlongAxesXYZ<VecV>);
     balls[0]->setFrameOfReference(getFrameI());
 
     for (int i = 1; i < elements; i++) {

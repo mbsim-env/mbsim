@@ -142,7 +142,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   Vec SrSP(3);
 
-  karosserie->setTranslation(new LinearFunction<Vec3(VecV)>(SqrMat(3,EYE)));
+  karosserie->setTranslation(new TranslationAlongAxesXYZ<VecV>);
   karosserie->setRotation(new RotationAboutAxesXYZ<VecV>);
   karosserie->setRotationMapping(new TCardanAngles<VecV>);
   karosserie->setFrameOfReference(getFrame("I"));
@@ -184,8 +184,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   vl->setMass(mR);
   vl->setInertiaTensor(ThetaR);
 
-  vl->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
-  vl->setTranslation(new LinearFunction<Vec3(VecV)>(Vec("[0;1;0]")));
+  vl->setRotation(new RotationAboutZAxis<VecV>);
+  vl->setTranslation(new TranslationAlongYAxis<VecV>);
   vl->setFrameOfReference(karosserie->getFrame("VL"));
   vl->setFrameForKinematics(vl->getFrame("C"));
 
@@ -201,8 +201,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   vr->setMass(mR);
   vr->setInertiaTensor(ThetaR);
 
-  vr->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
-  vr->setTranslation(new LinearFunction<Vec3(VecV)>(Vec("[0;1;0]")));
+  vr->setRotation(new RotationAboutZAxis<VecV>);
+  vr->setTranslation(new TranslationAlongYAxis<VecV>);
   vr->setFrameOfReference(karosserie->getFrame("VR"));
   vr->setFrameForKinematics(vr->getFrame("C"));
 
@@ -217,8 +217,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   hl->setMass(mR);
   hl->setInertiaTensor(ThetaR);
 
-  hl->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
-  hl->setTranslation(new LinearFunction<Vec3(VecV)>(Vec("[0;1;0]")));
+  hl->setRotation(new RotationAboutZAxis<VecV>);
+  hl->setTranslation(new TranslationAlongYAxis<VecV>);
   hl->setFrameOfReference(karosserie->getFrame("HL"));
   hl->setFrameForKinematics(hl->getFrame("C"));
 
@@ -233,9 +233,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   hr->setMass(mR);
   hr->setInertiaTensor(ThetaR);
 
-  hr->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
-  hr->setTranslation(new LinearFunction<Vec3(VecV)>(Vec("[0;1;0]")));
-
+  hr->setRotation(new RotationAboutZAxis<VecV>);
+  hr->setTranslation(new TranslationAlongYAxis<VecV>);
   hr->setFrameOfReference(karosserie->getFrame("HR"));
   hr->setFrameForKinematics(hr->getFrame("C"));
 
