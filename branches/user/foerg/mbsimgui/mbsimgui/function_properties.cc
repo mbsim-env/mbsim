@@ -163,11 +163,18 @@ NestedFunctionProperty::NestedFunctionProperty(const string &ext, const vector<P
 
   vector<Property*> property;
   vector<string> var;
-  if(ext[2]=='V') {
+  if(ext[1]=='V' and ext[2]=='S') {
+    var.push_back("t");
+    property.push_back(new SymbolicFunctionProperty("VS",var));
+    property.push_back(new LinearFunctionProperty("V"));
+    property.push_back(new QuadraticFunctionProperty("V"));
+    property.push_back(new SinusFunctionProperty("V"));
+  }
+  else if(ext[1]=='S' and ext[2]=='V') {
     var.push_back("q");
     property.push_back(new SymbolicFunctionProperty("SV",var));
   }
-  else {
+  else if(ext[1]=='S' and ext[2]=='S') {
     var.push_back("t");
     property.push_back(new SymbolicFunctionProperty("SS",var));
     property.push_back(new LinearFunctionProperty("S"));
