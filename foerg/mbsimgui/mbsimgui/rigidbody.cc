@@ -68,6 +68,10 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   property_.push_back(new TranslationAlongZAxisProperty("S"));
   property.push_back(new NestedFunctionProperty("VSS",property_));
 
+  property_.clear();
+  property_.push_back(new TranslationAlongAxesXYZProperty("V"));
+  property.push_back(new NestedFunctionProperty("VVS",property_));
+
   vector<string> var;
   var.push_back("q");
   property.push_back(new SymbolicFunctionProperty("VV",var));
@@ -114,6 +118,10 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   property_.push_back(new RotationAboutZAxisProperty("S"));
   property_.push_back(new RotationAboutFixedAxisProperty("S"));
   property.push_back(new NestedFunctionProperty("MSS",property_));
+
+  property_.clear();
+  property_.push_back(new RotationAboutAxesXYZProperty("V"));
+  property.push_back(new NestedFunctionProperty("MVS",property_));
 
   ContainerProperty *propertyContainer = new ContainerProperty;
   propertyContainer->addProperty(new ChoiceProperty("",property));

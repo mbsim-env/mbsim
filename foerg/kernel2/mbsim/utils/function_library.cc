@@ -257,8 +257,10 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<Vec3(double(VecV))>, MBSIMNS"NestedFunction_VSV")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<Vec3(double(double))>, MBSIMNS"NestedFunction_VSS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<Vec3(VecV(double))>, MBSIMNS"NestedFunction_VVS")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<RotMat3(double(VecV))>, MBSIMNS"NestedFunction_MSV")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<RotMat3(double(double))>, MBSIMNS"NestedFunction_MSS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<RotMat3(VecV(double))>, MBSIMNS"NestedFunction_MVS")
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SummationFunction<VecV(VecV)>, MBSIMNS"SummationFunction_VV")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SummationFunction<Vec3(VecV)>, MBSIMNS"SummationFunction_VV")

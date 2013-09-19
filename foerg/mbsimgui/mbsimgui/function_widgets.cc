@@ -103,11 +103,18 @@ NestedFunctionWidget::NestedFunctionWidget(const QString &ext, const vector<QWid
   vector<QWidget*> widget;
   vector<QString> name;
   QStringList var;
-  if(ext[2]=='V') {
+  if(ext[1]=='V' and ext[2]=='S') {
+    var << "t";
+    widget.push_back(new SymbolicFunctionWidget("VS",var)); name.push_back("Symbolic function f=f(t)");
+    widget.push_back(new LinearFunctionWidget("V")); name.push_back("Linear function f=f(t)");
+    widget.push_back(new QuadraticFunctionWidget("V")); name.push_back("Quadratic function f=f(t)");
+    widget.push_back(new SinusFunctionWidget("V")); name.push_back("Sinus function f=f(t)");
+  }
+  else if(ext[1]=='S' and ext[2]=='V') {
     var << "q";
     widget.push_back(new SymbolicFunctionWidget("SV",var)); name.push_back("Symbolic function f=f(q)");
   }
-  else {
+  else if(ext[1]=='S' and ext[2]=='S') {
     var << "t";
     widget.push_back(new SymbolicFunctionWidget("SS",var)); name.push_back("Symbolic function f=f(t)");
     widget.push_back(new LinearFunctionWidget("S")); name.push_back("Linear function f=f(t)");
