@@ -88,7 +88,7 @@ System::System(const string &projectName, bool setValued) : DynamicSystemSolver(
   b->addFrame("Top4", SysBar_r_cog_Top+rBar*(-1.)*Vec("[0;0;1]"), SqrMat(3, EYE));
   b->setMass(mBar);
   b->setInertiaTensor(inertiaBar);
-  b->setTranslation(new LinearFunction<Vec3(VecV)>("[1, 0, 0; 0, 1, 0; 0, 0, 1]"));
+  b->setTranslation(new TranslationAlongAxesXYZ<VecV>);
   if (considerRotation) {
     b->setRotation(new RotationAboutAxesXYZ<VecV>);
     b->setRotationMapping(new TCardanAngles<VecV>);

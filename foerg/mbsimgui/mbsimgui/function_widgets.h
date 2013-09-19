@@ -62,8 +62,7 @@ class LinearFunctionWidget : public FunctionWidget {
   friend class LinearFunctionProperty;
 
   public:
-    LinearFunctionWidget(const QString &ext, int m=1, int n=1);
-    int getArg1Size() const;
+    LinearFunctionWidget(const QString &ext, int m=1);
     void resize_(int m, int n);
   protected:
     ExtWidget *a, *b;
@@ -162,6 +161,18 @@ class TranslationAlongAxesXYZWidget : public FunctionWidget {
   public:
     TranslationAlongAxesXYZWidget(const QString &ext) : FunctionWidget(ext) { }
     int getArg1Size() const {return ext[0]=='V'?3:0;}
+};
+
+class LinearTranslationWidget : public FunctionWidget {
+
+  friend class LinearTranslationProperty;
+
+  public:
+    LinearTranslationWidget(const QString &ext, int m=1, int n=1);
+    int getArg1Size() const;
+    void resize_(int m, int n);
+  protected:
+    ExtWidget *A, *b;
 };
 
 class RotationAboutXAxisWidget : public FunctionWidget {

@@ -36,9 +36,9 @@
       <mass>1</mass>
       <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
       <translation>
-        <LinearFunction_VV>
-          <slope>[1,0 ; 0,1 ; 0,0]</slope>
-        </LinearFunction_VV>
+        <LinearTranslation_V>
+          <translationVectors>[1,0 ; 0,1 ; 0,0]</translationVectors>
+        </LinearTranslation_V>
       </translation>
       <rotation>
         <RotationAboutFixedAxis_V>
@@ -67,9 +67,9 @@
       <force>
         <directionVectors>[1;0;0]</directionVectors>
         <function>
-          <ConstantFunction_VS>
+          <ConstantFunction_V>
             <value>[10]</value>
-          </ConstantFunction_VS>
+          </ConstantFunction_V>
         </function>
         <ombv:Arrow name="dummy">
           <ombv:diameter>0.05</ombv:diameter>
@@ -82,9 +82,9 @@
       <moment>
         <directionVectors>[0;0;1]</directionVectors>
         <function>
-          <ConstantFunction_VS>
+          <ConstantFunction_V>
             <value>[10]</value>
-          </ConstantFunction_VS>
+          </ConstantFunction_V>
         </function>
         <ombv:Arrow name="dummy">
           <ombv:diameter>0.05</ombv:diameter>

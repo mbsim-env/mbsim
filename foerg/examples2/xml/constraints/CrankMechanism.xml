@@ -13,9 +13,9 @@
       <mass>carrier_Mass</mass>
       <inertiaTensor>carrier_Inertia*eye(3)</inertiaTensor>
       <translation>
-        <LinearFunction_VV xmlns="http://mbsim.berlios.de/MBSim">
-          <slope>[1 0 0; 0 1 0]'</slope>
-        </LinearFunction_VV>
+        <LinearTranslation_V xmlns="http://mbsim.berlios.de/MBSim">
+          <translationVectors>[1 0 0; 0 1 0]'</translationVectors>
+        </LinearTranslation_V>
       </translation>
       <rotation/>
       <frames>
@@ -222,9 +222,9 @@
       <mass>piston_Mass</mass>
       <inertiaTensor>piston_Inertia*eye(3)</inertiaTensor>
       <translation>
-        <LinearFunction_VV xmlns="http://mbsim.berlios.de/MBSim">
-          <slope>[1 0 0]'</slope>
-        </LinearFunction_VV>
+        <LinearTranslation_V xmlns="http://mbsim.berlios.de/MBSim">
+          <translationVectors>[1 0 0]'</translationVectors>
+        </LinearTranslation_V>
       </translation>
       <rotation/>
       <frames>
@@ -288,10 +288,10 @@
       <moment>
         <directionVectors>[0 0 1]'</directionVectors>
         <function>
-          <TabularFunction_VS xmlns="http://mbsim.berlios.de/MBSim">
+          <TabularFunction_V xmlns="http://mbsim.berlios.de/MBSim">
             <x>[0 1  2  100]'</x>
             <y>[0 .2 .1 .1]'</y>
-          </TabularFunction_VS>
+          </TabularFunction_V>
         </function>
         <Arrow xmlns="http://openmbv.berlios.de/OpenMBV" name="dummy">
           <staticColor>1</staticColor>

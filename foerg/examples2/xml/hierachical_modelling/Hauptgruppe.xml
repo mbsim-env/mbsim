@@ -25,9 +25,7 @@
       <mass>m</mass>
       <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
       <translation>
-        <LinearFunction_VV>
-          <slope>[0; 1; 0]</slope>
-        </LinearFunction_VV>
+        <TranslationAlongYAxis_V/>
       </translation>
       <rotation/>
       <frames/>

@@ -76,7 +76,7 @@ System::System(const string &projectName) :
     sphereBody->setFrameOfReference(this->getFrameI());
     sphereBody->setInertiaTensor(SymMat3(EYE));
 
-    sphereBody->setTranslation(new LinearFunction<Vec3(VecV)>(Mat3x3(EYE)));
+    sphereBody->setTranslation(new TranslationAlongAxesXYZ<VecV>);
     sphereBody->setRotation(new RotationAboutAxesXYZ<VecV>);
     sphereBody->setRotationMapping(new TCardanAngles<VecV>);
     //give degrees of freedom

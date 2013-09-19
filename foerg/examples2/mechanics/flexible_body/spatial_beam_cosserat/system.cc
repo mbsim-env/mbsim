@@ -110,7 +110,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Theta(1,1) = 2./5.*mass*r*r;
   Theta(2,2) = 2./5.*mass*r*r;
   ball->setInertiaTensor(Theta);
-  ball->setTranslation(new LinearFunction<Vec3(VecV)>(Mat(3,3,EYE)));
+  ball->setTranslation(new TranslationAlongAxesXYZ<VecV>);
 
   Vec3 u0;
   u0(1) = -10;

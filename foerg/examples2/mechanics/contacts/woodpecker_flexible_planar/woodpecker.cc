@@ -113,7 +113,7 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   this->addFrame("B",WrOS,SqrMat(3,EYE),this->getFrame("I"));
   muffe->setFrameOfReference(this->getFrame("B"));
   muffe->setFrameForKinematics(muffe->getFrame("C"));
-  muffe->setTranslation(new LinearFunction<Vec3(VecV)>(JT));
+  muffe->setTranslation(new LinearTranslation<VecV>(JT));
   muffe->setRotation(new RotationAboutFixedAxis<VecV>(JR));
 //  muffe->setRotation(new RotationAboutZAxis());
 

@@ -68,12 +68,12 @@ argparser = argparse.ArgumentParser(
 
 mainOpts=argparser.add_argument_group('Main Options')
 mainOpts.add_argument("directories", nargs="*", default=os.curdir, help="A directory to run (recursively). If prefixed with '^' remove the directory form the current list")
-mainOpts.add_argument("--action", default="report",
-  choices=["report",
-           "copyToReference",
-           "pushReference",
-           "updateReference"],
-  help="The action of this script (pushReference is a internal action)")
+mainOpts.add_argument("--action", default="report", type=str,
+  help='''The action of this script:
+          'report': run examples and report results (default);
+          'copyToReference': copy current results to reference directory;
+          'updateReference[=URL|DIR]': update references from URL or DIR, use the build system if not given;
+          'pushReference=DIR': push references to DIR;''')
 mainOpts.add_argument("-j", default=1, type=int, help="Number of jobs to run in parallel (applies only to the action 'report')")
 mainOpts.add_argument("--filter", default="all",
   choices=["all",
@@ -118,7 +118,7 @@ class MultiFile(object):
       self.filelist.append(second)
   def write(self, str):
     for f in self.filelist:
-      f.write(str.encode("utf-8"))
+      f.write(str.encode("utf-8").decode("utf-8"))
   def flush(self):
     for f in self.filelist:
       f.flush()
@@ -137,6 +137,25 @@ def subprocessCall(args, f, env=os.environ):
 
 # the main routine being called ones
 def main():
+  # check arguments
+  if not (args.action=="report" or args.action=="copyToReference" or
+          args.action=="updateReference" or args.action.startswith("updateReference=") or
+          args.action.startswith("pushReference=")):
+    argparser.print_usage()
+    print("error: unknown argument --action "+args.action+" (see -h)")
+    return 1
+  args.updateURL="http://www4.amm.mw.tu-muenchen.de/mbsim-env/MBSimDailyBuild/references" # default value
+  args.pushDIR=None # no default value (use /media/mbsim-env/MBSimDailyBuild/references for the build system)
+  if args.action.startswith("updateReference="):
+    if os.path.isdir(args.action[16:]):
+      args.updateURL="file://"+myurllib.pathname2url(os.path.abspath(args.action[16:]))
+    else:
+      args.updateURL=args.action[16:]
+    args.action="updateReference"
+  if args.action.startswith("pushReference="):
+    args.pushDIR=args.action[14:]
+    args.action="pushReference"
+
   # check if the numpy and h5py modules exists. If not disable compare
   try: 
     import numpy
@@ -396,6 +415,7 @@ def addExamplesByFilter(baseDir, directoriesSet):
 def runExample(resultQueue, example):
   savedDir=os.getcwd()
   try:
+    resultStr=""
     os.chdir(example[0])
 
     runExampleRet=0 # run ok
@@ -421,7 +441,6 @@ def runExample(resultQueue, example):
     # get reference time
     refTime=example[1]
     # print result to resultStr
-    resultStr=""
     resultStr+='<tr>'
     if not example[0] in willFail:
       resultStr+='<td>'+example[0]+'</td>'
@@ -937,22 +956,20 @@ def copyAndSHA1AndAppendIndex(src, dst):
   index=open(pj(os.path.dirname(dst), "index.txt"), "a")
   index.write(os.path.basename(dst)+":")
 def pushReference():
-  uploadDir="/media/mbsim-env/MBSimDailyBuild/references"
   print("WARNING! pushReference is a internal action!")
   print("This action should only be used on the official MBSim build system!")
   print("It will fail on all other hosts!")
-  loopOverReferenceFiles("Pushing reference to download dir", "reference", uploadDir, copyAndSHA1AndAppendIndex)
+  loopOverReferenceFiles("Pushing reference to download dir", "reference", args.pushDIR, copyAndSHA1AndAppendIndex)
 
-downloadURL="http://www4.amm.mw.tu-muenchen.de/mbsim-env/MBSimDailyBuild/references/"
 def downloadFileIfDifferent(src):
-  remoteSHA1Url=downloadURL+myurllib.pathname2url(src+".sha1")
+  remoteSHA1Url=args.updateURL+"/"+myurllib.pathname2url(src+".sha1")
   remoteSHA1=myurllib.urlopen(remoteSHA1Url).read().decode('utf-8')
   try:
     localSHA1=hashlib.sha1(open(src, "rb").read()).hexdigest()
   except IOError: 
     localSHA1=""
   if remoteSHA1!=localSHA1:
-    remoteUrl=downloadURL+myurllib.pathname2url(src)
+    remoteUrl=args.updateURL+"/"+myurllib.pathname2url(src)
     print("  Download "+remoteUrl)
     if not os.path.isdir(os.path.dirname(src)): os.makedirs(os.path.dirname(src))
     open(src, "wb").write(myurllib.urlopen(remoteUrl).read())
@@ -964,9 +981,12 @@ def updateReference():
     curNumber+=1
     print("%s: Example %03d/%03d; %5.1f%%; %s"%("Update reference", curNumber, lenDirs, curNumber/lenDirs*100, example[0]))
     # loop over all file in src/index.txt
-    indexUrl=downloadURL+myurllib.pathname2url(pj(example[0], "reference", "index.txt"))
-    for fileName in myurllib.urlopen(indexUrl).read().decode("utf-8").rstrip(":").split(":"):
-      downloadFileIfDifferent(pj(example[0], "reference", fileName))
+    indexUrl=args.updateURL+"/"+myurllib.pathname2url(pj(example[0], "reference", "index.txt"))
+    try:
+      for fileName in myurllib.urlopen(indexUrl).read().decode("utf-8").rstrip(":").split(":"):
+        downloadFileIfDifferent(pj(example[0], "reference", fileName))
+    except (myurllib.HTTPError, myurllib.URLError):
+      pass
 
 
 

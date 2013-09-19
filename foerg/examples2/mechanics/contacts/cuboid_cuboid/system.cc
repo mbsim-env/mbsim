@@ -47,7 +47,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
     cout << nameBody.str()<<endl;
 
     body[i] = new RigidBody(nameBody.str());
-    body[i]->setTranslation(new LinearFunction<Vec3(VecV)>(SqrMat3(EYE)));
+    body[i]->setTranslation(new TranslationAlongAxesXYZ<VecV>);
     body[i]->setRotation(new RotationAboutAxesXYZ<VecV>);
     body[i]->setRotationMapping(new TCardanAngles<VecV>);
     addObject(body[i]);

@@ -23,9 +23,9 @@
     </GeneralizedVelocitySensor>
     <FunctionSensor name="crankReferenceSpeed" xmlns="http://mbsim.berlios.de/MBSimControl">
       <function>
-        <ConstantFunction_VS xmlns="http://mbsim.berlios.de/MBSim">
+        <ConstantFunction_V xmlns="http://mbsim.berlios.de/MBSim">
           <value>ReferenceSpeed</value>
-        </ConstantFunction_VS>
+        </ConstantFunction_V>
       </function>
     </FunctionSensor>
     <SignalAddition name="speedDeviation" xmlns="http://mbsim.berlios.de/MBSimControl">

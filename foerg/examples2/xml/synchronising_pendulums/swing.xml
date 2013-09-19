@@ -43,9 +43,9 @@
       <mass>swingMass</mass>
       <inertiaTensor>swingTheta</inertiaTensor>
       <translation>
-        <LinearFunction_VV xmlns="http://mbsim.berlios.de/MBSim">
-          <slope>[1 0 0; 0 1 0]'</slope>
-        </LinearFunction_VV>
+        <LinearTranslation_V xmlns="http://mbsim.berlios.de/MBSim">
+          <translationVectors>[1 0 0; 0 1 0]'</translationVectors>
+        </LinearTranslation_V>
       </translation>
       <rotation>
       </rotation>

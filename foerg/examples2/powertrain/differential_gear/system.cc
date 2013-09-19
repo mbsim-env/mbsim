@@ -65,17 +65,17 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   ke = new KineticExcitation("MAn");
   addLink(ke);
   ke->connect(shaft1->getFrame("C"));
-  ke->setMoment("[0;0;1]", new ConstantFunction<VecV(double)>(VecV(1,INIT,1.1/100.)));
+  ke->setMoment("[0;0;1]", new ConstantFunction<VecV>(VecV(1,INIT,1.1/100.)));
 
   ke = new KineticExcitation("MAbL");
   addLink(ke);
   ke->connect(static_cast<RigidBody*>(differentialGear->getObject("LeftOutputShaft"))->getFrame("C"));
-  ke->setMoment("[0;0;1]", new ConstantFunction<VecV(double)>(VecV(1,INIT,0.99/100.)));
+  ke->setMoment("[0;0;1]", new ConstantFunction<VecV>(VecV(1,INIT,0.99/100.)));
 
   ke = new KineticExcitation("MAbR");
   addLink(ke);
   ke->connect(static_cast<RigidBody*>(differentialGear->getObject("RightOutputShaft"))->getFrame("C"));
-  ke->setMoment("[0;0;1]", new ConstantFunction<VecV(double)>(VecV(1,INIT,1/100.)));
+  ke->setMoment("[0;0;1]", new ConstantFunction<VecV>(VecV(1,INIT,1/100.)));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Frustum *cylinder=new OpenMBV::Frustum;

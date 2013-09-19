@@ -27,7 +27,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   ke = new KineticExcitation("MS");
   addLink(ke);
   ke->connect(static_cast<RigidBody*>(planetaryGear->getObject("Sun"))->getFrame("C"));
-  ke->setMoment("[0;0;1]", new ConstantFunction<VecV(double)>("[0.1]"));
+  ke->setMoment("[0;0;1]", new ConstantFunction<VecV>("[0.1]"));
 
 //  ke = new KineticExcitation("MT");
 //  addLink(ke);

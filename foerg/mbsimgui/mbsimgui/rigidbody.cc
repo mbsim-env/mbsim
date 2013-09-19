@@ -54,7 +54,7 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   property.push_back(new TranslationAlongAxesYZProperty("V"));
   property.push_back(new TranslationAlongAxesXZProperty("V"));
   property.push_back(new TranslationAlongAxesXYZProperty("V"));
-  property.push_back(new LinearFunctionProperty("VV",3,1));
+  property.push_back(new LinearTranslationProperty("V",3,1));
 
   vector<Property*> property_;
   property_.push_back(new TranslationAlongXAxisProperty("S"));
@@ -72,8 +72,8 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   var.push_back("q");
   property.push_back(new SymbolicFunctionProperty("VV",var));
 
-  property.push_back(new ConstantFunctionProperty("VS",3));
-  property.push_back(new LinearFunctionProperty("VS",3,1));
+  property.push_back(new ConstantFunctionProperty("V",3));
+  property.push_back(new LinearFunctionProperty("V",3));
   property.push_back(new QuadraticFunctionProperty("V",3));
   property.push_back(new SinusFunctionProperty("V",3));
   var.clear();

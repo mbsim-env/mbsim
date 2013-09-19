@@ -2912,14 +2912,14 @@
   </xs:element>
   <xs:complexType name="Function_SSType"/>
 
-  <xs:element name="ConstantFunction_SS" substitutionGroup="Function_SS" type="ConstantFunction_SSType">
+  <xs:element name="ConstantFunction_S" substitutionGroup="Function_SS" type="ConstantFunction_SType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Konstanter Funktionswert: <object class="inlineeqn">y=c</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="ConstantFunction_SSType">
+  <xs:complexType name="ConstantFunction_SType">
     <xs:complexContent>
       <xs:extension base="Function_SSType">
         <xs:sequence>
@@ -2935,14 +2935,14 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="LinearFunction_SS" substitutionGroup="Function_SS" type="LinearFunction_SSType">
+  <xs:element name="LinearFunction_S" substitutionGroup="Function_SS" type="LinearFunction_SType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
       tbd
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="LinearFunction_SSType">
+  <xs:complexType name="LinearFunction_SType">
     <xs:complexContent>
       <xs:extension base="Function_SSType">
         <xs:sequence>
@@ -2965,48 +2965,18 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="LinearFunction_VS" substitutionGroup="Function_VS" type="LinearFunction_VSType">
+  <xs:element name="LinearFunction_V" substitutionGroup="Function_VS" type="LinearFunction_VType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
       tbd
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="LinearFunction_VSType">
+  <xs:complexType name="LinearFunction_VType">
     <xs:complexContent>
       <xs:extension base="Function_VSType">
         <xs:sequence>
           <xs:element name="slope" type="pv:unknownVector">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              tbd
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element name="intercept" type="pv:unknownVector" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              tbd
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-        </xs:sequence> 
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="LinearFunction_VV" substitutionGroup="Function_VV" type="LinearFunction_VVType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-      tbd
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="LinearFunction_VVType">
-    <xs:complexContent>
-      <xs:extension base="Function_VVType">
-        <xs:sequence>
-          <xs:element name="slope" type="pv:unknownMatrix">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
               tbd
@@ -3255,39 +3225,16 @@
   <xs:element name="Function_VV" abstract="true" type="Function_VVType"/>
   <xs:complexType name="Function_VVType"/>
 
-  <xs:element name="ConstantFunction_VS" substitutionGroup="Function_VS" type="ConstantFunction_VSType">
+  <xs:element name="ConstantFunction_V" substitutionGroup="Function_VS" type="ConstantFunction_VType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Konstanter Funktionswert: <object class="inlineeqn">\boldsymbol{y}=\boldsymbol{c}</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="ConstantFunction_VSType">
+  <xs:complexType name="ConstantFunction_VType">
     <xs:complexContent>
       <xs:extension base="Function_VSType">
-        <xs:sequence>
-          <xs:element name="value" type="pv:unknownVector">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Konstanter Funktionswert: <object class="inlineeqn">\boldsymbol{y}=\boldsymbol{c}</object>.
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-        </xs:sequence> 
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="ConstantFunction_VV" substitutionGroup="Function_VV" type="ConstantFunction_VVType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Konstanter Funktionswert: <object class="inlineeqn">\boldsymbol{y}=\boldsymbol{c}</object>.
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="ConstantFunction_VVType">
-    <xs:complexContent>
-      <xs:extension base="Function_VVType">
         <xs:sequence>
           <xs:element name="value" type="pv:unknownVector">
             <xs:annotation>
@@ -3922,23 +3869,6 @@
   </xs:element>
   <xs:complexType name="Function_SSSType"/>
 
-  <xs:element name="ConstantFunction_SSS" substitutionGroup="Function_SSS" type="ConstantFunction_SSSType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Konstante skalarwertige Funktion mit zwei skalaren Parametern.
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="ConstantFunction_SSSType">
-    <xs:complexContent>
-      <xs:extension base="Function_SSSType">
-        <xs:sequence>
-          <xs:element name="value" type="pv:unknownScalar"/>
-        </xs:sequence> 
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>   
-
   <xs:element name="TabularFunction_SSS" substitutionGroup="Function_SSS" type="TabularFunction_SSSType">
     <xs:annotation>
       <xs:documentation xmlns="http://www.w3.org/1999/xhtml"  xml:lang="de">
@@ -4359,6 +4289,66 @@
   <xs:complexType name="TranslationAlongAxesXYZ_VType">
     <xs:complexContent>
       <xs:extension base="Function_VVType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="LinearTranslation_V" substitutionGroup="Function_VV" type="LinearTranslation_VType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="LinearTranslation_VType">
+    <xs:complexContent>
+      <xs:extension base="Function_VVType">
+        <xs:sequence>
+          <xs:element name="translationVectors" type="pv:unknownMatrix">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="offset" type="pv:unknownVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="LinearTranslation_S" substitutionGroup="Function_VS" type="LinearTranslation_SType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="LinearTranslation_SType">
+    <xs:complexContent>
+      <xs:extension base="Function_VSType">
+        <xs:sequence>
+          <xs:element name="translationVectors" type="pv:unknownVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="offset" type="pv:unknownVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
 

@@ -67,8 +67,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     body->setFrameForKinematics(body->getFrame("C"));
     body->setMass(m);
     body->setInertiaTensor(Theta);
-    body->setTranslation(new LinearFunction<Vec3(VecV)>("[1, 0; 0, 1; 0, 0]"));
-    body->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
+    body->setTranslation(new LinearTranslation<VecV>("[1, 0; 0, 1; 0, 0]"));
+    body->setRotation(new RotationAboutFixedAxis<VecV>("[0;0;1]"));
 
     body->setPlotFeature(energy, enabled);
 
@@ -82,8 +82,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     Theta(1,1) = m*d*d;
     Theta(2,2) = Theta(1,1);
     body2->setInertiaTensor(Theta);
-    body2->setTranslation(new LinearFunction<Vec3(VecV)>("[1, 0; 0, 1; 0, 0]"));
-    body2->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
+    body2->setTranslation(new LinearTranslation<VecV>("[1, 0; 0, 1; 0, 0]"));
+    body2->setRotation(new RotationAboutFixedAxis<VecV>("[0;0;1]"));
 
     body2->setPlotFeature(energy, enabled);
 
@@ -97,8 +97,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     Theta(1,1) = 2/5.0*m*d*d;
     Theta(2,2) = Theta(1,1);
     body3->setInertiaTensor(Theta);
-    body3->setTranslation(new LinearFunction<Vec3(VecV)>("[1, 0; 0, 1; 0, 0]"));
-    body3->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
+    body3->setTranslation(new LinearTranslation<VecV>("[1, 0; 0, 1; 0, 0]"));
+    body3->setRotation(new RotationAboutFixedAxis<VecV>("[0;0;1]"));
 
     body3->setPlotFeature(energy, enabled);
 
@@ -111,7 +111,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body4->setFrameForKinematics(body4->getFrame("C"));
   body4->setMass(m/100.);
   body4->setInertiaTensor(Theta);
-  body4->setTranslation(new LinearFunction<Vec3(VecV)>("[1,0;0,1;0,0]"));
+  body4->setTranslation(new LinearTranslation<VecV>("[1, 0; 0, 1; 0, 0]"));
  
 
   // Spring 

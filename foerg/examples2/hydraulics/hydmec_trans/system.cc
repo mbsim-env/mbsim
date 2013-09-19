@@ -84,7 +84,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   traeger->setFrameForKinematics(traeger->getFrame("C"));
   traeger->setMass(2.);
   traeger->setInertiaTensor(0.001*SymMat(3, EYE));
-  traeger->setTranslation(new LinearFunction<Vec3(VecV)>(SqrMat(3, EYE)));
+  traeger->setTranslation(new TranslationAlongAxesXYZ<VecV>);
   traeger->setRotation(new RotationAboutAxesXYZ<VecV>);
   traeger->setRotationMapping(new TCardanAngles<VecV>);
   traeger->setInitialGeneralizedVelocity(Vec("[0.; -0.; 0.; -30; 30; 30]"));
@@ -113,7 +113,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
     scheibe->setFrameForKinematics(scheibe->getFrame("C"));
     scheibe->setInertiaTensor(0.001*SymMat(3, EYE));
     if (i>0)
-      scheibe->setTranslation(new LinearFunction<Vec3(VecV)>(Vec("[1; 0; 0]")));
+      scheibe->setTranslation(new TranslationAlongXAxis<VecV>);
 #ifdef HAVE_OPENMBVCPPINTERFACE
     OpenMBV::Frustum * scheibeVisu = new OpenMBV::Frustum();
     scheibeVisu->setBaseRadius(dA/2.);
@@ -160,7 +160,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   
   ConstrainedNode * n0 = new ConstrainedNode("n0");
   addLink(n0);
-  n0->setpFunction(new ConstantFunction<double(double)>(1e5));
+  n0->setpFunction(new ConstantFunction<double>(1e5));
   n0->addOutFlow(l04);
 
   EnvironmentNodeMec * n1Inf = new EnvironmentNodeMec("n1Inf");
@@ -170,7 +170,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   ConstrainedNodeMec * n1 = new ConstrainedNodeMec("n_"+getBodyName(0)+"_"+getBodyName(1));
   addLink(n1);
   n1->setInitialVolume(V0);
-  n1->setpFunction(new ConstantFunction<double(double)>(pressure));
+  n1->setpFunction(new ConstantFunction<double>(pressure));
   n1->addTransMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(0)))->getFrame("R"), Vec("[-1; 0; 0]"), area);
   n1->addTransMecArea(dynamic_cast<RigidBody*>(getObject("Scheibe_"+getBodyName(1)))->getFrame("L"), Vec("[1; 0; 0]"), area);
 

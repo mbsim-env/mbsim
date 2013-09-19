@@ -89,9 +89,7 @@
       <mass>pistonMass</mass>
       <inertiaTensor>eye(3)</inertiaTensor>
       <translation>
-        <LinearFunction_VV>
-          <slope>[0;1;0]</slope>
-        </LinearFunction_VV>
+        <TranslationAlongYAxis_V/>
       </translation>
       <rotation/>
       <frames>
@@ -232,9 +230,9 @@
         <size>.001</size>
       </enableOpenMBVArrows>
       <function>
-        <ConstantFunction_SS xmlns="http://mbsim.berlios.de/MBSim">
+        <ConstantFunction_S xmlns="http://mbsim.berlios.de/MBSim">
           <value>4e5</value>
-        </ConstantFunction_SS>
+        </ConstantFunction_S>
       </function>
     </ConstrainedNodeMec>
     <ElasticNodeMec name="nHPC" xmlns="http://mbsim.berlios.de/MBSimHydraulics">

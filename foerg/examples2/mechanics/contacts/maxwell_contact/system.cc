@@ -146,7 +146,7 @@ System::System(const string &projectName, int contactType, int firstBall, int la
     balls[ballIter]->setFrameOfReference(R);
     balls[ballIter]->setMass(1.);
     balls[ballIter]->setInertiaTensor(SymMat(3,EYE));
-    balls[ballIter]->setTranslation(new LinearFunction<Vec3(VecV)>(SqrMat(3, EYE)));
+    balls[ballIter]->setTranslation(new TranslationAlongAxesXYZ<VecV>);
     balls[ballIter]->setInitialGeneralizedVelocity(Vec("[0;-1;0]"));
 
     this->addObject(balls[ballIter]);

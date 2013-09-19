@@ -75,6 +75,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setFrameForKinematics(body->getFrame("C"));
   body->setMass(m);
   body->setInertiaTensor(Theta);
-  body->setTranslation(new LinearFunction<Vec3(VecV)>("[0; 1; 0]"));
+  body->setTranslation(new LinearTranslation<VecV>("[0; 1; 0]"));
 }
 

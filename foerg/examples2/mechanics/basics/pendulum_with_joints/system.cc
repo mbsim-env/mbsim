@@ -43,8 +43,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   KrSP(1) = a1;
   box1->addFrame(new FixedRelativeFrame("PunktO",KrSP,E));
 
-  box1->setTranslation( new LinearFunction<Vec3(VecV)>("[1, 0; 0, 1; 0, 0]"));
-  box1->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
+  box1->setTranslation(new TranslationAlongAxesXY<VecV>);
+  box1->setRotation(new RotationAboutZAxis<VecV>);
 
   box1->setFrameOfReference(getFrame("I"));
   box1->setFrameForKinematics(box1->getFrame("C"));
@@ -64,8 +64,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   KrSP(1) = a2;
   box2->addFrame(new FixedRelativeFrame("Punkt",KrSP,E));
-  box2->setTranslation( new LinearFunction<Vec3(VecV)>("[1, 0; 0, 1; 0, 0]"));
-  box2->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
+  box2->setTranslation(new TranslationAlongAxesXY<VecV>);
+  box2->setRotation(new RotationAboutZAxis<VecV>);
 
   SqrMat A1(3);
   A1(0,0) = cos(phi1);

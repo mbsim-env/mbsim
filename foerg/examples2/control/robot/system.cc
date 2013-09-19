@@ -56,7 +56,7 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
 
   Vec KrKS(3);
   KrKS(1) = hB/2;
-  basis->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;1;0]")));
+  basis->setRotation(new RotationAboutYAxis<VecV>);
   Vec KrSP(3);
   KrSP(1) = hB/2;
   basis->addFrame("R",-KrKS,A);
@@ -79,7 +79,7 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   Theta(1,1) = 1./2.*mA*rA*rA;
   Theta(2,2) = mA*rA*rA;
   arm->setInertiaTensor(Theta);
-  arm->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));
+  arm->setRotation(new RotationAboutZAxis<VecV>);
   KrSP(1) = -lA/2;
   KrSP(1) = lA/2;
 
@@ -92,7 +92,7 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   PrPK0(1) = lA;
   arm->addFrame("Q",PrPK0,SqrMat(3,EYE),arm->getFrame("R"));
   spitze->setInertiaTensor(Theta);
-  spitze->setTranslation(new LinearFunction<Vec3(VecV)>(Vec("[0;1;0]")));
+  spitze->setTranslation(new TranslationAlongYAxis<VecV>);
   spitze->setFrameOfReference(arm->getFrame("Q"));
   spitze->setFrameForKinematics(spitze->getFrame("C"));
 

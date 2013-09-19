@@ -342,7 +342,7 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   widget.push_back(new TranslationAlongAxesYZWidget("V")); name.push_back("Translation along axes y and z r=r(q)");
   widget.push_back(new TranslationAlongAxesXZWidget("V")); name.push_back("Translation along axes x and z r=r(q)");
   widget.push_back(new TranslationAlongAxesXYZWidget("V")); name.push_back("Translation along axes x,y and z r=r(q)");
-  widget.push_back(new LinearFunctionWidget("VV",3,1)); name.push_back("Linear function r=r(q)");
+  widget.push_back(new LinearTranslationWidget("V",3,1)); name.push_back("Linear translation r=r(q)");
   connect(widget[widget.size()-1],SIGNAL(arg1SizeChanged(int)),this,SLOT(resizeVariables()));
 
   vector<QWidget*> widget_;
@@ -364,8 +364,8 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   widget.push_back(new SymbolicFunctionWidget("VV",var)); name.push_back("Symbolic function r=r(q)");
   connect(widget[widget.size()-1],SIGNAL(arg1SizeChanged(int)),this,SLOT(resizeVariables()));
 
-  widget.push_back(new ConstantFunctionWidget("VS",3)); name.push_back("Constant function r=const.");
-  widget.push_back(new LinearFunctionWidget("VS",3,1)); name.push_back("Linear function r=r(t)");
+  widget.push_back(new ConstantFunctionWidget("V",3)); name.push_back("Constant function r=const.");
+  widget.push_back(new LinearFunctionWidget("V",3)); name.push_back("Linear function r=r(t)");
   widget.push_back(new QuadraticFunctionWidget("V",3)); name.push_back("Quadratic function r=r(t)");
   widget.push_back(new SinusFunctionWidget("V",3)); name.push_back("Sinus function r=r(t)");
   var.clear();
@@ -1243,7 +1243,7 @@ AbsoluteVelocitySensorPropertyDialog::AbsoluteVelocitySensorPropertyDialog(Absol
 FunctionSensorPropertyDialog::FunctionSensorPropertyDialog(FunctionSensor *sensor, QWidget * parent, Qt::WindowFlags f) : SensorPropertyDialog(sensor,parent,f) {
   vector<QWidget*> widget;
   vector<QString> name;
-  widget.push_back(new ConstantFunctionWidget("VS",1));
+  widget.push_back(new ConstantFunctionWidget("V",1));
   name.push_back("Constant function");
   widget.push_back(new QuadraticFunctionWidget("V",1));
   name.push_back("Quadratic function");

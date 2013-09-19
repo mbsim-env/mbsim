@@ -90,6 +90,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body2->setFrameForKinematics(body2->getFrame("C"));
   body2->setMass(1);
   body2->setInertiaTensor(SymMat3(EYE));
-  body2->setTranslation(new LinearFunction<Vec3(VecV)>("[0; 1; 0]"));
+  body2->setTranslation(new LinearTranslation<VecV>("[0; 1; 0]"));
 
 }

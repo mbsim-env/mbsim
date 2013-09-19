@@ -82,9 +82,8 @@ class ConstantFunctionProperty : public FunctionProperty {
 
 class LinearFunctionProperty : public FunctionProperty {
   public:
-    LinearFunctionProperty(const std::string &ext, int m=1, int n=1);
+    LinearFunctionProperty(const std::string &ext, int m=1);
     virtual Property* clone() const {return new LinearFunctionProperty(*this);}
-    int getArg1Size() const;
     inline std::string getType() const { return "LinearFunction_"+ext; }
     MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
@@ -189,6 +188,20 @@ class TranslationAlongAxesXYZProperty: public FunctionProperty {
     virtual Property* clone() const {return new TranslationAlongAxesXYZProperty(*this);}
     int getArg1Size() const {return ext[0]=='V'?3:0;}
     inline std::string getType() const { return "TranslationAlongAxesXYZ_"+ext; }
+};
+
+class LinearTranslationProperty : public FunctionProperty {
+  public:
+    LinearTranslationProperty(const std::string &ext, int m=1, int n=1);
+    virtual Property* clone() const {return new LinearTranslationProperty(*this);}
+    int getArg1Size() const;
+    inline std::string getType() const { return "LinearTranslation_"+ext; }
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+  protected:
+    ExtProperty A, b;
 };
 
 class RotationAboutXAxisProperty : public FunctionProperty {

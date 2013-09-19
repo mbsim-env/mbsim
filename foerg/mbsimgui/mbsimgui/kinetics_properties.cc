@@ -609,7 +609,7 @@ ForceChoiceProperty::ForceChoiceProperty(ExtProperty &arrow_, const std::string 
   mat.setProperty(new ExtPhysicalVarProperty(input));
 
   vector<Property*> property;
-  property.push_back(new ConstantFunctionProperty("VS"));
+  property.push_back(new ConstantFunctionProperty("V"));
   property.push_back(new QuadraticFunctionProperty("V"));
   property.push_back(new SinusFunctionProperty("V"));
   property.push_back(new TabularFunctionProperty);

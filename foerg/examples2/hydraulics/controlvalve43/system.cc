@@ -62,22 +62,22 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
   cv->setRelativePositionSignal(cvs);
 
   ConstrainedNode * nP = new ConstrainedNode("n_source_P");
-  nP->setpFunction(new ConstantFunction<double(double)>(5e5));
+  nP->setpFunction(new ConstantFunction<double>(5e5));
   addLink(nP);
   nP->addOutFlow(lp);
 
   ConstrainedNode * nA = new ConstrainedNode("n_source_A");
-  nA->setpFunction(new ConstantFunction<double(double)>(3e5));
+  nA->setpFunction(new ConstantFunction<double>(3e5));
   addLink(nA);
   nA->addInFlow(la);
 
   ConstrainedNode * nB = new ConstrainedNode("n_source_B");
-  nB->setpFunction(new ConstantFunction<double(double)>(2e5));
+  nB->setpFunction(new ConstantFunction<double>(2e5));
   addLink(nB);
   nB->addInFlow(lb);
 
   ConstrainedNode * nT = new ConstrainedNode("n_source_T");
-  nT->setpFunction(new ConstantFunction<double(double)>(1e5));
+  nT->setpFunction(new ConstantFunction<double>(1e5));
   addLink(nT);
   nT->addInFlow(lt);
 
