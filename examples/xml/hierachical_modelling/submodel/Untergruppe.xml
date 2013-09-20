@@ -85,8 +85,8 @@
           <relativePosition>[0;-h2/2;0]</relativePosition>
           <relativeOrientation>
             <pv:cardan>
-              <pv:alpha>0</pv:alpha>
-              <pv:beta>0</pv:beta>
+              <pv:alpha unit="degree">0</pv:alpha>
+              <pv:beta>a=9;ret=0</pv:beta>
               <pv:gamma>0</pv:gamma>
             </pv:cardan>
           </relativeOrientation>

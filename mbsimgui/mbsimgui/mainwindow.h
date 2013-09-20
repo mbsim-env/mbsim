@@ -141,6 +141,7 @@ class MainWindow : public QMainWindow {
     void simulationFinished(int exitCode, QProcess::ExitStatus exitStatus);
   protected:
     void closeEvent ( QCloseEvent * event );
+    MBXMLUtils::TiXmlElement* writeParameterList();
 };
 
 class Process : public QTabWidget {

@@ -6,7 +6,7 @@
   <plotFeatureRecursive feature="+stateDerivative"/>
   <plotFeature feature="+separateFilePerGroup"/>
   <position>[rHG(numHG);0;0]</position>
-  <orientation><pv:aboutZ>-alphaHG(numHG)</pv:aboutZ></orientation>
+  <orientation><pv:aboutZ unit="degree">-alphaHG(numHG)*180/pi</pv:aboutZ></orientation>
   <frames/>
   <contours/>
   <groups>
@@ -62,7 +62,7 @@
       </openMBVRigidBody>
       <enableOpenMBVFrameC>
         <size>2*h</size>
-        <offset>1</offset>
+        <offset>dummyvar=4;ret=1</offset>
       </enableOpenMBVFrameC>
     </RigidBody>
   </objects>

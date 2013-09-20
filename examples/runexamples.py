@@ -369,7 +369,8 @@ def printFinishedMessage(missingDirectories, result):
     etaStr=datetime.timedelta(0, round(eta/min(args.j, multiprocessing.cpu_count())))
   else:
     etaStr="unknown"
-  print("Finished example %03d/%03d; %5.1f%%; ETA %s; %s"%(curNumber, lenDirs, curNumber/lenDirs*100, etaStr, result[0][0]))
+  print("Finished example %03d/%03d; %5.1f%%; ETA %s; %s; %s"%(curNumber, lenDirs, curNumber/lenDirs*100,
+    etaStr, result[0][0], "passed" if result[2]==0 else "FAILED!!!"))
 
 
 
@@ -558,7 +559,7 @@ def runExample(resultQueue, example):
     runExampleRet=1
   finally:
     os.chdir(savedDir)
-    resultQueue.put([example, resultStr])
+    resultQueue.put([example, resultStr, runExampleRet])
     return runExampleRet
 
 
