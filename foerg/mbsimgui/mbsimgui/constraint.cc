@@ -123,48 +123,71 @@ TiXmlElement* KinematicConstraint::writeXMLFile(TiXmlNode *parent) {
   return ele0;
 }
 
-TimeDependentKinematicConstraint::TimeDependentKinematicConstraint(const string &str, Element *parent) : KinematicConstraint(str, parent), generalizedPositionFunction(0,false) {
+GeneralizedPositionConstraint::GeneralizedPositionConstraint(const string &str, Element *parent) : KinematicConstraint(str, parent), constraintFunction(0,false) {
 
   vector<Property*> property;
   vector<string> var;
   var.push_back("t");
   property.push_back(new SymbolicFunctionProperty("VS",var));
-  generalizedPositionFunction.setProperty(new ChoiceProperty(MBSIMNS"generalizedPositionFunction",property));
+  constraintFunction.setProperty(new ChoiceProperty(MBSIMNS"constraintFunction",property));
 }
 
-void TimeDependentKinematicConstraint::initializeUsingXML(TiXmlElement *element) {
+void GeneralizedPositionConstraint::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e, *ee;
   KinematicConstraint::initializeUsingXML(element);
-  generalizedPositionFunction.initializeUsingXML(element);
+  constraintFunction.initializeUsingXML(element);
 }
 
-TiXmlElement* TimeDependentKinematicConstraint::writeXMLFile(TiXmlNode *parent) {
+TiXmlElement* GeneralizedPositionConstraint::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = KinematicConstraint::writeXMLFile(parent);
 
-  generalizedPositionFunction.writeXMLFile(ele0);
+  constraintFunction.writeXMLFile(ele0);
 
   return ele0;
 }
 
-StateDependentKinematicConstraint::StateDependentKinematicConstraint(const string &str, Element *parent) : KinematicConstraint(str, parent), generalizedVelocityFunction(0,false) {
+GeneralizedVelocityConstraint::GeneralizedVelocityConstraint(const string &str, Element *parent) : KinematicConstraint(str, parent), constraintFunction(0,false) {
 
   vector<Property*> property;
   vector<string> var;
   var.push_back("q");
   property.push_back(new SymbolicFunctionProperty("VV",var));
-  generalizedVelocityFunction.setProperty(new ChoiceProperty(MBSIMNS"generalizedVelocityFunction",property));
+  constraintFunction.setProperty(new ChoiceProperty(MBSIMNS"constraintFunction",property));
 }
 
-void StateDependentKinematicConstraint::initializeUsingXML(TiXmlElement *element) {
+void GeneralizedVelocityConstraint::initializeUsingXML(TiXmlElement *element) {
   TiXmlElement *e, *ee;
   KinematicConstraint::initializeUsingXML(element);
-  generalizedVelocityFunction.initializeUsingXML(element);
+  constraintFunction.initializeUsingXML(element);
 }
 
-TiXmlElement* StateDependentKinematicConstraint::writeXMLFile(TiXmlNode *parent) {
+TiXmlElement* GeneralizedVelocityConstraint::writeXMLFile(TiXmlNode *parent) {
   TiXmlElement *ele0 = KinematicConstraint::writeXMLFile(parent);
 
-  generalizedVelocityFunction.writeXMLFile(ele0);
+  constraintFunction.writeXMLFile(ele0);
+
+  return ele0;
+}
+
+GeneralizedAccelerationConstraint::GeneralizedAccelerationConstraint(const string &str, Element *parent) : KinematicConstraint(str, parent), constraintFunction(0,false) {
+
+  vector<Property*> property;
+  vector<string> var;
+  var.push_back("q");
+  property.push_back(new SymbolicFunctionProperty("VV",var));
+  constraintFunction.setProperty(new ChoiceProperty(MBSIMNS"constraintFunction",property));
+}
+
+void GeneralizedAccelerationConstraint::initializeUsingXML(TiXmlElement *element) {
+  TiXmlElement *e, *ee;
+  KinematicConstraint::initializeUsingXML(element);
+  constraintFunction.initializeUsingXML(element);
+}
+
+TiXmlElement* GeneralizedAccelerationConstraint::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = KinematicConstraint::writeXMLFile(parent);
+
+  constraintFunction.writeXMLFile(ele0);
 
   return ele0;
 }

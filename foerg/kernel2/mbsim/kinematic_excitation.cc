@@ -188,45 +188,67 @@ namespace MBSim {
     }
   }
 
-  void TimeDependentKinematicExcitation::calcxSize() {
+  void GeneralizedPositionExcitation::calcxSize() {
     if(!f) xSize = body->getqRelSize();
   }
 
-  void TimeDependentKinematicExcitation::updatexd(double t) {
+  void GeneralizedPositionExcitation::updatexd(double t) {
     //if(!f && fd) xd = (*fd)(t);
   }
 
-  void TimeDependentKinematicExcitation::updateg(double t) {
+  void GeneralizedPositionExcitation::updateg(double t) {
     if(g.size()) g=body->getqRel()-(*f)(t);
   } 
 
-  void TimeDependentKinematicExcitation::updategd(double t) {
+  void GeneralizedPositionExcitation::updategd(double t) {
     if(gd.size()) gd=body->getuRel()-f->parDer(t);
   }
 
-  void TimeDependentKinematicExcitation::updatewb(double t, int j) {
+  void GeneralizedPositionExcitation::updatewb(double t, int j) {
     wb += body->getjRel()-f->parDerParDer(t);
   }
 
-  void StateDependentKinematicExcitation::calcxSize() {
+  void GeneralizedVelocityExcitation::calcxSize() {
     xSize = body->getqRelSize();
   }
 
-  void StateDependentKinematicExcitation::updatexd(double t) {
-    if(f) xd = (*f)(x);
+  void GeneralizedVelocityExcitation::updatexd(double t) {
+    if(f) xd = (*f)(x,t);
   }
 
-  void StateDependentKinematicExcitation::updateg(double t) {
+  void GeneralizedVelocityExcitation::updateg(double t) {
     if(g.size()) g=body->getqRel()-x;
   } 
 
-  void StateDependentKinematicExcitation::updategd(double t) {
-    if(gd.size()) gd=body->getuRel()-(*f)(x);
+  void GeneralizedVelocityExcitation::updategd(double t) {
+    if(gd.size()) gd=body->getuRel()-(*f)(x,t);
   }
 
-  void StateDependentKinematicExcitation::updatewb(double t, int j) {
-    wb += body->getjRel()-f->dirDer(xd,x);
+  void GeneralizedVelocityExcitation::updatewb(double t, int j) {
+    wb += body->getjRel()-(f->parDer1(x,t)*xd + f->parDer2(x,t));
   }
+
+  void GeneralizedAccelerationExcitation::calcxSize() {
+    xSize = body->getqRelSize()+body->getuRelSize();
+  }
+
+  void GeneralizedAccelerationExcitation::updatexd(double t) {
+    xd(0,body->getqRelSize()-1) = x(body->getqRelSize(),body->getqRelSize()+body->getuRelSize()-1);
+    xd(body->getqRelSize(),body->getqRelSize()+body->getuRelSize()-1) = (*f)(x,t);
+  }
+
+  void GeneralizedAccelerationExcitation::updateg(double t) {
+    if(g.size()) g=body->getqRel()-x(0,body->getqRelSize()-1);
+  } 
+
+  void GeneralizedAccelerationExcitation::updategd(double t) {
+    if(gd.size()) gd=body->getuRel()-x(body->getqRelSize(),body->getqRelSize()+body->getuRelSize()-1);
+  }
+
+  void GeneralizedAccelerationExcitation::updatewb(double t, int j) {
+    wb += (*f)(x,t);
+  }
+
 
 }
 

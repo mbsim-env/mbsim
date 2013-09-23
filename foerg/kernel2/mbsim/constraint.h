@@ -21,6 +21,7 @@
 
 #include "object.h"
 #include <fmatvec/function.h>
+#include "utils/function_library.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 namespace OpenMBV {
@@ -120,43 +121,42 @@ namespace MBSim {
 #endif
   };
 
-  class TimeDependentKinematicConstraint : public KinematicConstraint {
+  class GeneralizedPositionConstraint : public KinematicConstraint {
 
     public:
-      TimeDependentKinematicConstraint(const std::string &name, RigidBody* body) : KinematicConstraint(name,body) {}
-      TimeDependentKinematicConstraint(const std::string &name="") : KinematicConstraint(name) {}
+      GeneralizedPositionConstraint(const std::string &name, RigidBody* body) : KinematicConstraint(name,body) {}
+      GeneralizedPositionConstraint(const std::string &name="") : KinematicConstraint(name) {}
 
       void init(InitStage stage);
 
-      void calcqSize();
-
-      void setGeneralizedPositionFunction(fmatvec::Function<fmatvec::VecV(double)>* f_) { f = f_;}
+      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(double)>* f_) { f = f_;}
 
       void setUpInverseKinetics();
 
-      void updateqd(double t);
       void updateStateDependentVariables(double t);
       void updateJacobians(double t, int j=0);
 
       void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
 
-      virtual std::string getType() const { return "TimeDependentKinematicConstraint"; }
+      virtual std::string getType() const { return "GeneralizedPositionConstraint"; }
 
     private:
       fmatvec::Function<fmatvec::VecV(double)> *f;
   };
 
-  class StateDependentKinematicConstraint : public KinematicConstraint {
+  class GeneralizedVelocityConstraint : public KinematicConstraint {
 
     public:
-      StateDependentKinematicConstraint(const std::string &name, RigidBody* body) : KinematicConstraint(name,body) {}
-      StateDependentKinematicConstraint(const std::string &name="") : KinematicConstraint(name) {}
+      GeneralizedVelocityConstraint(const std::string &name, RigidBody* body) : KinematicConstraint(name,body) {}
+      GeneralizedVelocityConstraint(const std::string &name="") : KinematicConstraint(name) {}
 
       void init(InitStage stage);
 
       void calcqSize();
 
-      void setGeneralizedVelocityFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV)>* f_) { f = f_;}
+      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) { f = f_;}
+      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV)>* f_) { f = new StateDependentFunction<fmatvec::VecV(fmatvec::VecV,double)>(f_);}
+      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(double)>* f_) { f = new TimeDependentFunction<fmatvec::VecV(fmatvec::VecV,double)>(f_);}
 
       virtual void setUpInverseKinetics();
 
@@ -166,10 +166,42 @@ namespace MBSim {
 
       void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
 
-      virtual std::string getType() const { return "StateDependetKinematicConstraint"; }
+      virtual std::string getType() const { return "GeneralizedVelocityConstraint"; }
 
     private:
-      fmatvec::Function<fmatvec::VecV(fmatvec::VecV)> *f; 
+      fmatvec::Function<fmatvec::VecV(fmatvec::VecV,double)> *f; 
+  };
+
+  class GeneralizedAccelerationConstraint : public KinematicConstraint {
+
+    public:
+      GeneralizedAccelerationConstraint(const std::string &name, RigidBody* body) : KinematicConstraint(name,body) {}
+      GeneralizedAccelerationConstraint(const std::string &name="") : KinematicConstraint(name) {}
+
+      void init(InitStage stage);
+
+//      int getuSize(int j=0) const {return 0;}
+
+      void calcqSize();
+//      void calcuSize(int j);
+
+      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) { f = f_;}
+      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV)>* f_) { f = new StateDependentFunction<fmatvec::VecV(fmatvec::VecV,double)>(f_);}
+      void setConstraintFunction(fmatvec::Function<fmatvec::VecV(double)>* f_) { f = new TimeDependentFunction<fmatvec::VecV(fmatvec::VecV,double)>(f_);}
+
+      virtual void setUpInverseKinetics();
+
+      void updateqd(double t);
+//      void updateud(double t, int i=0);
+      void updateStateDependentVariables(double t);
+      void updateJacobians(double t, int j=0);
+
+      void initializeUsingXML(MBXMLUtils::TiXmlElement * element);
+
+      virtual std::string getType() const { return "GeneralizedAccelerationConstraint"; }
+
+    private:
+      fmatvec::Function<fmatvec::VecV(fmatvec::VecV,double)> *f; 
   };
 
   /** 

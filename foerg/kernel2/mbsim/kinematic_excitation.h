@@ -67,11 +67,11 @@ namespace MBSim {
 
   };
 
-  class TimeDependentKinematicExcitation : public KinematicExcitation {
+  class GeneralizedPositionExcitation : public KinematicExcitation {
     protected:
       fmatvec::Function<fmatvec::VecV(double)> *f;
     public:
-      TimeDependentKinematicExcitation(const std::string &name) : KinematicExcitation(name) {}
+      GeneralizedPositionExcitation(const std::string &name) : KinematicExcitation(name) {}
 
       void calcxSize();
 
@@ -80,16 +80,16 @@ namespace MBSim {
       void updategd(double t);
       void updatewb(double t, int i=0);
 
-      std::string getType() const { return "TimeDependentKinematicExcitation"; }
+      std::string getType() const { return "GeneralizedPositionExcitation"; }
 
-      void setGeneralizedPositionFunction(fmatvec::Function<fmatvec::VecV(double)>* f_) { f = f_;}
+      void setExcitationFunction(fmatvec::Function<fmatvec::VecV(double)>* f_) { f = f_;}
   };
 
-  class StateDependentKinematicExcitation : public KinematicExcitation {
+  class GeneralizedVelocityExcitation : public KinematicExcitation {
     protected:
-      fmatvec::Function<fmatvec::VecV(fmatvec::VecV)> *f;
+      fmatvec::Function<fmatvec::VecV(fmatvec::VecV,double)> *f;
     public:
-      StateDependentKinematicExcitation(const std::string &name) : KinematicExcitation(name) {}
+      GeneralizedVelocityExcitation(const std::string &name) : KinematicExcitation(name) {}
 
       void calcxSize();
 
@@ -98,9 +98,31 @@ namespace MBSim {
       void updategd(double t);
       void updatewb(double t, int i=0);
 
-      std::string getType() const { return "StateDependentKinematicExcitation"; }
+      std::string getType() const { return "GeneralizedVelocityExcitation"; }
 
-      void setGeneralizedVelocityFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV)>* f_) { f = f_;}
+      void setExcitationFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) { f = f_;}
+      void setExcitationFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV)>* f_) { f = new StateDependentFunction<fmatvec::VecV(fmatvec::VecV,double)>(f_);}
+      void setExcitationFunction(fmatvec::Function<fmatvec::VecV(double)>* f_) { f = new TimeDependentFunction<fmatvec::VecV(fmatvec::VecV,double)>(f_);}
+  };
+
+  class GeneralizedAccelerationExcitation : public KinematicExcitation {
+    protected:
+      fmatvec::Function<fmatvec::VecV(fmatvec::VecV,double)> *f;
+    public:
+      GeneralizedAccelerationExcitation(const std::string &name) : KinematicExcitation(name) {}
+
+      void calcxSize();
+
+      void updatexd(double t);
+      void updateg(double t);
+      void updategd(double t);
+      void updatewb(double t, int i=0);
+
+      std::string getType() const { return "GeneralizedAccelerationExcitation"; }
+
+      void setExcitationFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) { f = f_;}
+      void setExcitationFunction(fmatvec::Function<fmatvec::VecV(fmatvec::VecV)>* f_) { f = new StateDependentFunction<fmatvec::VecV(fmatvec::VecV,double)>(f_);}
+      void setExcitationFunction(fmatvec::Function<fmatvec::VecV(double)>* f_) { f = new TimeDependentFunction<fmatvec::VecV(fmatvec::VecV,double)>(f_);}
   };
 
 }

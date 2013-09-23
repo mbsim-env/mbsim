@@ -220,11 +220,14 @@ void BodyContextContextMenu::addRigidBody() {
 }
 
 ConstraintContextContextMenu::ConstraintContextContextMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
-  QAction *action = new QAction("Add time dependent kinematic constraint", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(addTimeDependentKinematicConstraint()));
+  QAction *action = new QAction("Add generalized position constraint", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedPositionConstraint()));
   addAction(action);
-  action = new QAction("Add state dependent kinematic constraint", this);
-  connect(action,SIGNAL(triggered()),this,SLOT(addStateDependentKinematicConstraint()));
+  action = new QAction("Add generalized velocity constraint", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedVelocityConstraint()));
+  addAction(action);
+  action = new QAction("Add generalized acceleration constraint", this);
+  connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedAccelerationConstraint()));
   addAction(action);
   action = new QAction("Add gear constraint", this);
   connect(action,SIGNAL(triggered()),this,SLOT(addGearConstraint()));
@@ -238,12 +241,16 @@ void ConstraintContextContextMenu::addGearConstraint() {
   mw->addObject(new GearConstraint("GearConstraint",element));
 }
 
-void ConstraintContextContextMenu::addTimeDependentKinematicConstraint() {
-  mw->addObject(new TimeDependentKinematicConstraint("KinematicConstraint",element));
+void ConstraintContextContextMenu::addGeneralizedPositionConstraint() {
+  mw->addObject(new GeneralizedPositionConstraint("GeneralizedPositionConstraint",element));
 }
 
-void ConstraintContextContextMenu::addStateDependentKinematicConstraint() {
-  mw->addObject(new StateDependentKinematicConstraint("KinematicConstraint",element));
+void ConstraintContextContextMenu::addGeneralizedVelocityConstraint() {
+  mw->addObject(new GeneralizedVelocityConstraint("GeneralizedVelocityConstraint",element));
+}
+
+void ConstraintContextContextMenu::addGeneralizedAccelerationConstraint() {
+  mw->addObject(new GeneralizedAccelerationConstraint("GeneralizedAccelerationConstraint",element));
 }
 
 void ConstraintContextContextMenu::addJointConstraint() {

@@ -59,30 +59,43 @@ class KinematicConstraint : public Constraint {
     ExtProperty dependentBody, constraintForceArrow, constraintMomentArrow;
 };
 
-class TimeDependentKinematicConstraint : public KinematicConstraint {
-  friend class TimeDependentKinematicConstraintPropertyDialog;
+class GeneralizedPositionConstraint : public KinematicConstraint {
+  friend class GeneralizedPositionConstraintPropertyDialog;
   public:
-    TimeDependentKinematicConstraint(const std::string &str, Element *parent);
-    virtual Element* clone() const {return new TimeDependentKinematicConstraint(*this);}
-    std::string getType() const { return "TimeDependentKinematicConstraint"; }
+    GeneralizedPositionConstraint(const std::string &str, Element *parent);
+    virtual Element* clone() const {return new GeneralizedPositionConstraint(*this);}
+    std::string getType() const { return "GeneralizedPositionConstraint"; }
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    ElementPropertyDialog* createPropertyDialog() {return new TimeDependentKinematicConstraintPropertyDialog(this);}
+    ElementPropertyDialog* createPropertyDialog() {return new GeneralizedPositionConstraintPropertyDialog(this);}
   protected:
-    ExtProperty generalizedPositionFunction;
+    ExtProperty constraintFunction;
 };
 
-class StateDependentKinematicConstraint : public KinematicConstraint {
-  friend class StateDependentKinematicConstraintPropertyDialog;
+class GeneralizedVelocityConstraint : public KinematicConstraint {
+  friend class GeneralizedVelocityConstraintPropertyDialog;
   public:
-    StateDependentKinematicConstraint(const std::string &str, Element *parent);
-    virtual Element* clone() const {return new StateDependentKinematicConstraint(*this);}
-    std::string getType() const { return "StateDependentKinematicConstraint"; }
+    GeneralizedVelocityConstraint(const std::string &str, Element *parent);
+    virtual Element* clone() const {return new GeneralizedVelocityConstraint(*this);}
+    std::string getType() const { return "GeneralizedVelocityConstraint"; }
     virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
     virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
-    ElementPropertyDialog* createPropertyDialog() {return new StateDependentKinematicConstraintPropertyDialog(this);}
+    ElementPropertyDialog* createPropertyDialog() {return new GeneralizedVelocityConstraintPropertyDialog(this);}
   protected:
-    ExtProperty generalizedVelocityFunction;
+    ExtProperty constraintFunction;
+};
+
+class GeneralizedAccelerationConstraint : public KinematicConstraint {
+  friend class GeneralizedAccelerationConstraintPropertyDialog;
+  public:
+    GeneralizedAccelerationConstraint(const std::string &str, Element *parent);
+    virtual Element* clone() const {return new GeneralizedAccelerationConstraint(*this);}
+    std::string getType() const { return "GeneralizedAccelerationConstraint"; }
+    virtual void initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    virtual MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    ElementPropertyDialog* createPropertyDialog() {return new GeneralizedAccelerationConstraintPropertyDialog(this);}
+  protected:
+    ExtProperty constraintFunction;
 };
 
 class JointConstraint : public Constraint {
