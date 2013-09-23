@@ -1043,6 +1043,30 @@ namespace MBSim {
     };
 
   template<class Arg>
+    class TranslationAlongFixedAxis : public fmatvec::Function<fmatvec::Vec3(Arg)> {
+      private:
+        fmatvec::Vec3 a;
+        fmatvec::Vec3 zeros(const typename fmatvec::Der<fmatvec::Vec3, Arg>::type &x) { return fmatvec::Vec3(x.rows()); }
+      public:
+        TranslationAlongFixedAxis() { }
+        TranslationAlongFixedAxis(const fmatvec::Vec3 &a_) : a(a_) { }
+        typename fmatvec::Size<Arg>::type getArgSize() const { return 1; }
+        fmatvec::Vec3 operator()(const Arg &arg) { return a*arg; }
+        typename fmatvec::Der<fmatvec::Vec3, Arg>::type parDer(const Arg &arg) { return a; }
+        typename fmatvec::Der<fmatvec::Vec3, Arg>::type parDerDirDer(const Arg &arg1Dir, const Arg &arg1) { return typename fmatvec::Der<fmatvec::Vec3, Arg>::type(1); }
+        typename fmatvec::Der<typename fmatvec::Der<fmatvec::Vec3, double>::type, double>::type parDerParDer(const double &arg) { throw std::runtime_error("parDerParDer is not available for given template parameters."); }
+        bool constParDer() const { return true; }
+        void initializeUsingXML(MBXMLUtils::TiXmlElement *element) {
+          MBXMLUtils::TiXmlElement *e=element->FirstChildElement(MBSIMNS"axisOfTranslation");
+          a=FromMatStr<fmatvec::Vec3>::cast(e->GetText());
+        }
+        MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *parent) { return 0; } 
+    };
+
+  template<>
+  inline fmatvec::Vec3 TranslationAlongFixedAxis<double>::parDerParDer(const double &arg) { return fmatvec::Vec3(); }
+
+  template<class Arg>
     class LinearTranslation : public fmatvec::Function<fmatvec::Vec3(Arg)> {
       private:
         typename fmatvec::Der<fmatvec::Vec3, Arg>::type A;
@@ -1050,8 +1074,8 @@ namespace MBSim {
         fmatvec::Vec3 zeros(const typename fmatvec::Der<fmatvec::Vec3, Arg>::type &x) { return fmatvec::Vec3(x.rows()); }
       public:
         LinearTranslation() { }
-        LinearTranslation(const typename fmatvec::Der<fmatvec::Vec3, Arg>::type &A_) : A(A_) {}
-        LinearTranslation(const typename fmatvec::Der<fmatvec::Vec3, Arg>::type &A_, const fmatvec::Vec3 &b_) : A(A_), b(b_) {}
+        LinearTranslation(const typename fmatvec::Der<fmatvec::Vec3, Arg>::type &A_) : A(A_) { }
+        LinearTranslation(const typename fmatvec::Der<fmatvec::Vec3, Arg>::type &A_, const fmatvec::Vec3 &b_) : A(A_), b(b_) { }
         typename fmatvec::Size<Arg>::type getArgSize() const { return A.cols(); }
         fmatvec::Vec3 operator()(const Arg &arg) { return A*arg+b; }
         typename fmatvec::Der<fmatvec::Vec3, Arg>::type parDer(const Arg &arg) { return A; }

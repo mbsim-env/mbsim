@@ -237,6 +237,8 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TranslationAlongAxesYZ<VecV>, MBSIMNS"TranslationAlongAxesYZ_V")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TranslationAlongAxesXZ<VecV>, MBSIMNS"TranslationAlongAxesXZ_V")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TranslationAlongAxesXYZ<VecV>, MBSIMNS"TranslationAlongAxesXYZ_V")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TranslationAlongFixedAxis<VecV>, MBSIMNS"TranslationAlongFixedAxis_V")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, TranslationAlongFixedAxis<double>, MBSIMNS"TranslationAlongFixedAxis_S")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, LinearTranslation<VecV>, MBSIMNS"LinearTranslation_V")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, LinearTranslation<double>, MBSIMNS"LinearTranslation_S")
 
@@ -258,9 +260,11 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<Vec3(double(VecV))>, MBSIMNS"NestedFunction_VSV")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<Vec3(double(double))>, MBSIMNS"NestedFunction_VSS")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<Vec3(VecV(double))>, MBSIMNS"NestedFunction_VVS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<Vec3(VecV(VecV))>, MBSIMNS"NestedFunction_VVV")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<RotMat3(double(VecV))>, MBSIMNS"NestedFunction_MSV")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<RotMat3(double(double))>, MBSIMNS"NestedFunction_MSS")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<RotMat3(VecV(double))>, MBSIMNS"NestedFunction_MVS")
+  MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, NestedFunction<RotMat3(VecV(VecV))>, MBSIMNS"NestedFunction_MVV")
 
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SummationFunction<VecV(VecV)>, MBSIMNS"SummationFunction_VV")
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(FunctionBase, SummationFunction<Vec3(VecV)>, MBSIMNS"SummationFunction_VV")

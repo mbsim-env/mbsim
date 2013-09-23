@@ -163,7 +163,11 @@ NestedFunctionProperty::NestedFunctionProperty(const string &ext, const vector<P
 
   vector<Property*> property;
   vector<string> var;
-  if(ext[1]=='V' and ext[2]=='S') {
+  if(ext[1]=='V' and ext[2]=='V') {
+    var.push_back("q");
+    property.push_back(new SymbolicFunctionProperty("VV",var));
+  }
+  else if(ext[1]=='V' and ext[2]=='S') {
     var.push_back("t");
     property.push_back(new SymbolicFunctionProperty("VS",var));
     property.push_back(new ConstantFunctionProperty("V"));
@@ -331,6 +335,31 @@ void PiecewiseDefinedFunctionProperty::toWidget(QWidget *widget) {
     function[i].toWidget(static_cast<PiecewiseDefinedFunctionWidget*>(widget)->stackedWidget->widget(i));
   }
   contDiff.toWidget(static_cast<PiecewiseDefinedFunctionWidget*>(widget)->contDiff);
+}
+
+TranslationAlongFixedAxisProperty::TranslationAlongFixedAxisProperty(const string &ext) : FunctionProperty(ext) {
+  vector<PhysicalVariableProperty> input;
+  input.push_back(PhysicalVariableProperty(new VecProperty(3),"",MBSIMNS"axisOfTranslation"));
+  a.setProperty(new ExtPhysicalVarProperty(input));
+}
+
+TiXmlElement* TranslationAlongFixedAxisProperty::initializeUsingXML(TiXmlElement *element) {
+  a.initializeUsingXML(element);
+  return element;
+}
+
+TiXmlElement* TranslationAlongFixedAxisProperty::writeXMLFile(TiXmlNode *parent) {
+  TiXmlElement *ele0 = FunctionProperty::writeXMLFile(parent);
+  a.writeXMLFile(ele0);
+  return ele0;
+} 
+
+void TranslationAlongFixedAxisProperty::fromWidget(QWidget *widget) {
+  a.fromWidget(static_cast<TranslationAlongFixedAxisWidget*>(widget)->a);
+}
+
+void TranslationAlongFixedAxisProperty::toWidget(QWidget *widget) {
+  a.toWidget(static_cast<TranslationAlongFixedAxisWidget*>(widget)->a);
 }
 
 LinearTranslationProperty::LinearTranslationProperty(const string &ext, int m, int n) : FunctionProperty(ext), b(0,false) {

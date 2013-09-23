@@ -190,6 +190,20 @@ class TranslationAlongAxesXYZProperty: public FunctionProperty {
     inline std::string getType() const { return "TranslationAlongAxesXYZ_"+ext; }
 };
 
+class TranslationAlongFixedAxisProperty : public FunctionProperty {
+  public:
+    TranslationAlongFixedAxisProperty(const std::string &ext);
+    virtual Property* clone() const {return new TranslationAlongFixedAxisProperty(*this);}
+    int getArg1Size() const {return ext[0]=='V'?1:0;}
+    inline std::string getType() const { return "TranslationAlongFixedAxis_"+ext; }
+    MBXMLUtils::TiXmlElement* initializeUsingXML(MBXMLUtils::TiXmlElement *element);
+    MBXMLUtils::TiXmlElement* writeXMLFile(MBXMLUtils::TiXmlNode *element);
+    void fromWidget(QWidget *widget);
+    void toWidget(QWidget *widget);
+  protected:
+    ExtProperty a;
+};
+
 class LinearTranslationProperty : public FunctionProperty {
   public:
     LinearTranslationProperty(const std::string &ext, int m=1, int n=1);

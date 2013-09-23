@@ -152,6 +152,10 @@ GeneralizedVelocityConstraint::GeneralizedVelocityConstraint(const string &str, 
   vector<string> var;
   var.push_back("q");
   property.push_back(new SymbolicFunctionProperty("VV",var));
+  var.clear();
+  var.push_back("t");
+  property.push_back(new SymbolicFunctionProperty("VS",var));
+
   constraintFunction.setProperty(new ChoiceProperty(MBSIMNS"constraintFunction",property));
 }
 
@@ -175,6 +179,10 @@ GeneralizedAccelerationConstraint::GeneralizedAccelerationConstraint(const strin
   vector<string> var;
   var.push_back("q");
   property.push_back(new SymbolicFunctionProperty("VV",var));
+  var.clear();
+  var.push_back("t");
+  property.push_back(new SymbolicFunctionProperty("VS",var));
+
   constraintFunction.setProperty(new ChoiceProperty(MBSIMNS"constraintFunction",property));
 }
 
