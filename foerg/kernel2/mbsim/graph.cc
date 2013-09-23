@@ -62,11 +62,7 @@ namespace MBSim {
   void Graph::updatezd(double t) {
     for(vector<Object*>::iterator i = object.begin(); i!= object.end(); ++i) 
       (**i).updateqd(t);
-    //qd = T*u;
     ud[0] = slvLLFac(LLM[0], h[0]+r[0]);
-
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updatexd(t);
   }
 
   void Graph::sethSize0(int hSize_) {

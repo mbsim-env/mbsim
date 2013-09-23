@@ -3074,6 +3074,36 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="NestedFunction_VVV" substitutionGroup="Function_VV" type="NestedFunction_VVVType"/>
+  <xs:complexType name="NestedFunction_VVVType" mixed="true">
+    <xs:complexContent>
+      <xs:extension base="Function_VVType">
+        <xs:sequence>
+          <xs:element name="outerFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function_VV" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="innerFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function_VV" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="NestedFunction_VSV" substitutionGroup="Function_VV" type="NestedFunction_VSVType"/>
   <xs:complexType name="NestedFunction_VSVType" mixed="true">
     <xs:complexContent>
@@ -3156,6 +3186,36 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="Function_VS" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="NestedFunction_MVV" substitutionGroup="Function_MV" type="NestedFunction_MVVType"/>
+  <xs:complexType name="NestedFunction_MVVType" mixed="true">
+    <xs:complexContent>
+      <xs:extension base="Function_MVType">
+        <xs:sequence>
+          <xs:element name="outerFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function_MV" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="innerFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function_VV" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -4354,6 +4414,52 @@
   <xs:complexType name="TranslationAlongAxesXYZ_VType">
     <xs:complexContent>
       <xs:extension base="Function_VVType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="TranslationAlongFixedAxis_V" substitutionGroup="Function_VV" type="TranslationAlongFixedAxis_VType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="TranslationAlongFixedAxis_VType">
+    <xs:complexContent>
+      <xs:extension base="Function_VVType">
+        <xs:sequence>
+          <xs:element name="axisOfTranslation" type="pv:nounitVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="TranslationAlongFixedAxis_S" substitutionGroup="Function_VS" type="TranslationAlongFixedAxis_SType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="TranslationAlongFixedAxis_SType">
+    <xs:complexContent>
+      <xs:extension base="Function_VSType">
+        <xs:sequence>
+          <xs:element name="axisOfTranslation" type="pv:nounitVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              tbd
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
 

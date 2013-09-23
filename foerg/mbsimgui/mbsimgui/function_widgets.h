@@ -166,6 +166,17 @@ class TranslationAlongAxesXYZWidget : public FunctionWidget {
     int getArg1Size() const {return ext[0]=='V'?3:0;}
 };
 
+class TranslationAlongFixedAxisWidget : public FunctionWidget {
+
+  friend class TranslationAlongFixedAxisProperty;
+
+  public:
+    TranslationAlongFixedAxisWidget(const QString &ext);
+    int getArg1Size() const {return ext[0]=='V'?1:0;}
+  protected:
+    ExtWidget *a;
+};
+
 class LinearTranslationWidget : public FunctionWidget {
 
   friend class LinearTranslationProperty;

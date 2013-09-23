@@ -342,22 +342,26 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   widget.push_back(new TranslationAlongAxesYZWidget("V")); name.push_back("Translation along axes y and z r=r(q)");
   widget.push_back(new TranslationAlongAxesXZWidget("V")); name.push_back("Translation along axes x and z r=r(q)");
   widget.push_back(new TranslationAlongAxesXYZWidget("V")); name.push_back("Translation along axes x,y and z r=r(q)");
+  widget.push_back(new TranslationAlongFixedAxisWidget("V")); name.push_back("Translation along fixed axis r=r(q)");
   widget.push_back(new LinearTranslationWidget("V",3,1)); name.push_back("Linear translation r=r(q)");
   connect(widget[widget.size()-1],SIGNAL(arg1SizeChanged(int)),this,SLOT(resizeVariables()));
 
   vector<QWidget*> widget_;
   vector<QString> name_;
-  widget_.push_back(new TranslationAlongXAxisWidget("S")); name_.push_back("Translation along x axis r(s)");
-  widget_.push_back(new TranslationAlongYAxisWidget("S")); name_.push_back("Translation along y axis r(s)");
-  widget_.push_back(new TranslationAlongZAxisWidget("S")); name_.push_back("Translation along z axis r(s)");
-  widget.push_back(new NestedFunctionWidget("VSV",widget_,name_)); name.push_back("Nested function r(s(q))");
+  widget_.push_back(new TranslationAlongXAxisWidget("V")); name_.push_back("Translation along x axis r=r(v)");
+  widget_.push_back(new TranslationAlongYAxisWidget("V")); name_.push_back("Translation along y axis r=r(v)");
+  widget_.push_back(new TranslationAlongZAxisWidget("V")); name_.push_back("Translation along z axis r=r(v)");
+  widget_.push_back(new TranslationAlongAxesXYZWidget("V")); name_.push_back("Translation along axes x,y and z r=r(v)");
+  widget_.push_back(new TranslationAlongFixedAxisWidget("V")); name_.push_back("Translation along fixed axis r=r(q)");
+  widget.push_back(new NestedFunctionWidget("VVV",widget_,name_)); name.push_back("Nested function r(v(q))");
 
   widget_.clear();
   name_.clear();
-  widget_.push_back(new TranslationAlongXAxisWidget("S")); name_.push_back("Translation along x axis r=r(s)");
-  widget_.push_back(new TranslationAlongYAxisWidget("S")); name_.push_back("Translation along y axis r=r(s)");
-  widget_.push_back(new TranslationAlongZAxisWidget("S")); name_.push_back("Translation along z axis r=r(s)");
-  widget.push_back(new NestedFunctionWidget("VSS",widget_,name_)); name.push_back("Nested function r(s(t))");
+  widget_.push_back(new TranslationAlongXAxisWidget("S")); name_.push_back("Translation along x axis r(s)");
+  widget_.push_back(new TranslationAlongYAxisWidget("S")); name_.push_back("Translation along y axis r(s)");
+  widget_.push_back(new TranslationAlongZAxisWidget("S")); name_.push_back("Translation along z axis r(s)");
+  widget_.push_back(new TranslationAlongFixedAxisWidget("S")); name_.push_back("Translation along fixed axis r=r(q)");
+  widget.push_back(new NestedFunctionWidget("VSV",widget_,name_)); name.push_back("Nested function r(s(q))");
 
   widget_.clear();
   name_.clear();
@@ -365,7 +369,16 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   widget_.push_back(new TranslationAlongYAxisWidget("V")); name_.push_back("Translation along y axis r=r(v)");
   widget_.push_back(new TranslationAlongZAxisWidget("V")); name_.push_back("Translation along z axis r=r(v)");
   widget_.push_back(new TranslationAlongAxesXYZWidget("V")); name_.push_back("Translation along axes x,y and z r=r(v)");
+  widget_.push_back(new TranslationAlongFixedAxisWidget("V")); name_.push_back("Translation along fixed axis r=r(q)");
   widget.push_back(new NestedFunctionWidget("VVS",widget_,name_)); name.push_back("Nested function r(v(t))");
+
+  widget_.clear();
+  name_.clear();
+  widget_.push_back(new TranslationAlongXAxisWidget("S")); name_.push_back("Translation along x axis r=r(s)");
+  widget_.push_back(new TranslationAlongYAxisWidget("S")); name_.push_back("Translation along y axis r=r(s)");
+  widget_.push_back(new TranslationAlongZAxisWidget("S")); name_.push_back("Translation along z axis r=r(s)");
+  widget_.push_back(new TranslationAlongFixedAxisWidget("S")); name_.push_back("Translation along fixed axis r=r(q)");
+  widget.push_back(new NestedFunctionWidget("VSS",widget_,name_)); name.push_back("Nested function r(s(t))");
 
   QStringList var;
   var << "q";
@@ -403,13 +416,31 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
 
   widget_.clear();
   name_.clear();
+  widget_.push_back(new RotationAboutXAxisWidget("V")); name_.push_back("Rotation about x axis A=A(v)");
+  widget_.push_back(new RotationAboutYAxisWidget("V")); name_.push_back("Rotation about y axis A=A(v)");
+  widget_.push_back(new RotationAboutZAxisWidget("V")); name_.push_back("Rotation about z axis A=A(v)");
+  widget_.push_back(new RotationAboutAxesXYZWidget("V")); name_.push_back("Rotation about axes x,y and z | A=A(v)");
+  widget_.push_back(new RotationAboutFixedAxisWidget("V")); name_.push_back("Rotation about fixed axis A=A(v)");
+  widget.push_back(new NestedFunctionWidget("MVV",widget_,name_)); name.push_back("Nested function A=A(v(q))");
+
+  widget_.clear();
+  name_.clear();
   widget_.push_back(new RotationAboutXAxisWidget("S")); name_.push_back("Rotation about x axis A=A(s)");
   widget_.push_back(new RotationAboutYAxisWidget("S")); name_.push_back("Rotation about y axis A=A(s)");
   widget_.push_back(new RotationAboutZAxisWidget("S")); name_.push_back("Rotation about z axis A=A(s)");
   widget_.push_back(new RotationAboutFixedAxisWidget("S")); name_.push_back("Rotation about fixed axis A=A(s)");
   widget.push_back(new NestedFunctionWidget("MSV",widget_,name_)); name.push_back("Nested function A=A(s(q))");
 
-  widget.push_back(new RotationAboutFixedAxisWidget("S")); name.push_back("Rotation about fixed axis A=A(t)");
+//  widget.push_back(new RotationAboutFixedAxisWidget("S")); name.push_back("Rotation about fixed axis A=A(t)");
+
+  widget_.clear();
+  name_.clear();
+  widget_.push_back(new RotationAboutXAxisWidget("V")); name_.push_back("Rotation about x axis A=A(v)");
+  widget_.push_back(new RotationAboutYAxisWidget("V")); name_.push_back("Rotation about y axis A=A(v)");
+  widget_.push_back(new RotationAboutZAxisWidget("V")); name_.push_back("Rotation about z axis A=A(v)");
+  widget_.push_back(new RotationAboutAxesXYZWidget("V")); name_.push_back("Rotation about axes x,y and z | A=A(v)");
+  widget_.push_back(new RotationAboutFixedAxisWidget("V")); name_.push_back("Rotation about fixed axis | A=A(v)");
+  widget.push_back(new NestedFunctionWidget("MVS",widget_,name_)); name.push_back("Nested function | A=A(v(t))");
 
   widget_.clear();
   name_.clear();
@@ -418,15 +449,6 @@ RigidBodyPropertyDialog::RigidBodyPropertyDialog(RigidBody *body_, QWidget *pare
   widget_.push_back(new RotationAboutZAxisWidget("S")); name_.push_back("Rotation about z axis A=A(f)");
   widget_.push_back(new RotationAboutFixedAxisWidget("S")); name_.push_back("Rotation about fixed axis A=A(f)");
   widget.push_back(new NestedFunctionWidget("MSS",widget_,name_)); name.push_back("Nested function A=A(s(t))");
-
-  widget_.clear();
-  name_.clear();
-  widget_.push_back(new RotationAboutXAxisWidget("V")); name_.push_back("Rotation about x axis A=A(v)");
-  widget_.push_back(new RotationAboutYAxisWidget("V")); name_.push_back("Rotation about y axis A=A(v)");
-  widget_.push_back(new RotationAboutZAxisWidget("V")); name_.push_back("Rotation about z axis A=A(v)");
-  widget_.push_back(new RotationAboutFixedAxisWidget("V")); name_.push_back("Rotation about fixed axis | A=A(v)");
-  widget_.push_back(new RotationAboutAxesXYZWidget("V")); name_.push_back("Rotation about axes x,y and z | A=A(v)");
-  widget.push_back(new NestedFunctionWidget("MVS",widget_,name_)); name.push_back("Nested function | A=A(v(t))");
 
   ContainerWidget *widgetContainer = new ContainerWidget;
   widgetContainer->addWidget(new ChoiceWidget(widget,name));
@@ -630,8 +652,9 @@ GeneralizedVelocityConstraintPropertyDialog::GeneralizedVelocityConstraintProper
 
   vector<QWidget*> widget;
   vector<QString> name;
-  widget.push_back(new SymbolicFunctionWidget("VV",QStringList("q")));
-  name.push_back("Symbolic function");
+  widget.push_back(new SymbolicFunctionWidget("VV",QStringList("q"))); name.push_back("Symbolic function f(q)");
+  widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t"))); name.push_back("Symbolic function f(t)");
+
   constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget(widget,name));
   addToTab("General", constraintFunction);
   connect((ChoiceWidget*)constraintFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
@@ -664,8 +687,9 @@ GeneralizedAccelerationConstraintPropertyDialog::GeneralizedAccelerationConstrai
 
   vector<QWidget*> widget;
   vector<QString> name;
-  widget.push_back(new SymbolicFunctionWidget("VV",QStringList("q")));
-  name.push_back("Symbolic function");
+  widget.push_back(new SymbolicFunctionWidget("VV",QStringList("q"))); name.push_back("Symbolic function f(q)");
+  widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t"))); name.push_back("Symbolic function f(t)");
+
   constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget(widget,name));
   addToTab("General", constraintFunction);
   connect((ChoiceWidget*)constraintFunction->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));

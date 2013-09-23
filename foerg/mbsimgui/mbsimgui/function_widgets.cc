@@ -45,8 +45,10 @@ ConstantFunctionWidget::ConstantFunctionWidget(const QString &ext, int m) : Func
 }
 
 void ConstantFunctionWidget::resize_(int m, int n) {
-  if(((VecWidget*)static_cast<ExtPhysicalVarWidget*>(c->getWidget())->getPhysicalVariableWidget(0)->getWidget())->size() != m)
-    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(c->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
+  if(ext[0]=='V') {
+    if(((VecWidget*)static_cast<ExtPhysicalVarWidget*>(c->getWidget())->getPhysicalVariableWidget(0)->getWidget())->size() != m)
+      ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(c->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
+  }
 }
 
 LinearFunctionWidget::LinearFunctionWidget(const QString &ext, int m) : FunctionWidget(ext) {
@@ -71,9 +73,11 @@ LinearFunctionWidget::LinearFunctionWidget(const QString &ext, int m) : Function
 }
 
 void LinearFunctionWidget::resize_(int m, int n) {
-  if(((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a->getWidget())->getPhysicalVariableWidget(0)->getWidget())->size() != m) {
-    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
-    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(b->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
+  if(ext[0]=='V') {
+    if(((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a->getWidget())->getPhysicalVariableWidget(0)->getWidget())->size() != m) {
+      ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
+      ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(b->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
+    }
   }
 }
 
@@ -89,7 +93,11 @@ NestedFunctionWidget::NestedFunctionWidget(const QString &ext, const vector<QWid
   vector<QWidget*> widget;
   vector<QString> name;
   QStringList var;
-  if(ext[1]=='V' and ext[2]=='S') {
+  if(ext[1]=='V' and ext[2]=='V') {
+    var << "q";
+    widget.push_back(new SymbolicFunctionWidget("VV",var)); name.push_back("Symbolic function v(q)");
+  }
+  else if(ext[1]=='V' and ext[2]=='S') {
     var << "t";
     widget.push_back(new SymbolicFunctionWidget("VS",var)); name.push_back("Symbolic function v(t)");
     widget.push_back(new ConstantFunctionWidget("V")); name.push_back("Constant function v(t)");
@@ -99,7 +107,7 @@ NestedFunctionWidget::NestedFunctionWidget(const QString &ext, const vector<QWid
   }
   else if(ext[1]=='S' and ext[2]=='V') {
     var << "q";
-    widget.push_back(new SymbolicFunctionWidget("SV",var)); name.push_back("Symbolic function f(q)");
+    widget.push_back(new SymbolicFunctionWidget("SV",var)); name.push_back("Symbolic function v(q)");
   }
   else if(ext[1]=='S' and ext[2]=='S') {
     var << "t";
@@ -241,6 +249,17 @@ void PiecewiseDefinedFunctionWidget::removeFunction() {
   delete functionList->takeItem(i);
 }
 
+TranslationAlongFixedAxisWidget::TranslationAlongFixedAxisWidget(const QString &ext) : FunctionWidget(ext) {
+
+  QVBoxLayout *layout = new QVBoxLayout;
+  layout->setMargin(0);
+  setLayout(layout);
+  vector<PhysicalVariableWidget*> input;
+  input.push_back(new PhysicalVariableWidget(new VecWidget(3),QStringList(),0));
+  a = new ExtWidget("Axis of translation",new ExtPhysicalVarWidget(input));
+  layout->addWidget(a);
+}
+
 LinearTranslationWidget::LinearTranslationWidget(const QString &ext, int m, int n) : FunctionWidget(ext) {
 //  MatColsVarWidget* m = new MatColsVarWidget(3,1,1,3);
 //  input.push_back(new PhysicalVariableWidget(m,noUnitUnits(),1));
@@ -326,10 +345,12 @@ QuadraticFunctionWidget::QuadraticFunctionWidget(const QString &ext, int m) : Fu
 }
 
 void QuadraticFunctionWidget::resize_(int m, int n) {
-  if(((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a0->getWidget())->getPhysicalVariableWidget(0)->getWidget())->size() != m) {
-    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a0->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
-    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a1->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
-    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a2->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
+  if(ext[0]=='V') {
+    if(((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a0->getWidget())->getPhysicalVariableWidget(0)->getWidget())->size() != m) {
+      ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a0->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
+      ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a1->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
+      ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a2->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
+    }
   }
 }
 
@@ -372,11 +393,13 @@ SinusFunctionWidget::SinusFunctionWidget(const QString &ext, int m) : FunctionWi
 }
 
 void SinusFunctionWidget::resize_(int m, int n) {
-  if(((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a->getWidget())->getPhysicalVariableWidget(0)->getWidget())->size() != m) {
-    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
-    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(f->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
-    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(p->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
-    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(o->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
+  if(ext[0]=='V') {
+    if(((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a->getWidget())->getPhysicalVariableWidget(0)->getWidget())->size() != m) {
+      ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
+      ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(f->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
+      ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(p->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
+      ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(o->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
+    }
   }
 }
 
