@@ -97,7 +97,7 @@
                 </ns_1:Arrow>
             </openMBVJointForceArrow>
         </RigidBody>
-        <StateDependentKinematicConstraint name="KinematicConstraint2">
+        <GeneralizedVelocityConstraint name="KinematicConstraint2">
             <initialGeneralizedPosition>
                 <pv:xmlVector>
                     <pv:ele>-l/2</pv:ele>
@@ -124,10 +124,10 @@
                     <ns_1:scaleLength unit="-">1</ns_1:scaleLength>
                 </ns_1:Arrow>
             </openMBVConstraintMomentArrow>
-            <generalizedVelocityFunction>
+            <constraintFunction>
                 <SymbolicFunction_VV arg1name="q" arg1dim="1">v0/sqrt(1+4*c*c*q*q);</SymbolicFunction_VV>
-            </generalizedVelocityFunction>
-        </StateDependentKinematicConstraint>
+            </constraintFunction>
+        </GeneralizedVelocityConstraint>
     </objects>
     <links />
     <observers>

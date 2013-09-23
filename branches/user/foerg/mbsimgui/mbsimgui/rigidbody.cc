@@ -69,6 +69,9 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   property.push_back(new NestedFunctionProperty("VSS",property_));
 
   property_.clear();
+  property_.push_back(new TranslationAlongXAxisProperty("V"));
+  property_.push_back(new TranslationAlongYAxisProperty("V"));
+  property_.push_back(new TranslationAlongZAxisProperty("V"));
   property_.push_back(new TranslationAlongAxesXYZProperty("V"));
   property.push_back(new NestedFunctionProperty("VVS",property_));
 
@@ -120,6 +123,10 @@ RigidBody::RigidBody(const string &str, Element *parent) : Body(str,parent), con
   property.push_back(new NestedFunctionProperty("MSS",property_));
 
   property_.clear();
+  property_.push_back(new RotationAboutXAxisProperty("V"));
+  property_.push_back(new RotationAboutYAxisProperty("V"));
+  property_.push_back(new RotationAboutZAxisProperty("V"));
+  property_.push_back(new RotationAboutFixedAxisProperty("V"));
   property_.push_back(new RotationAboutAxesXYZProperty("V"));
   property.push_back(new NestedFunctionProperty("MVS",property_));
 

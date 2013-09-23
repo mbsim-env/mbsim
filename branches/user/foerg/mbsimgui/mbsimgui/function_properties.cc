@@ -166,6 +166,7 @@ NestedFunctionProperty::NestedFunctionProperty(const string &ext, const vector<P
   if(ext[1]=='V' and ext[2]=='S') {
     var.push_back("t");
     property.push_back(new SymbolicFunctionProperty("VS",var));
+    property.push_back(new ConstantFunctionProperty("V"));
     property.push_back(new LinearFunctionProperty("V"));
     property.push_back(new QuadraticFunctionProperty("V"));
     property.push_back(new SinusFunctionProperty("V"));
@@ -276,7 +277,7 @@ TiXmlElement* PiecewiseDefinedFunctionProperty::initializeUsingXML(TiXmlElement 
     function[function.size()-1].addProperty(new ChoiceProperty("",property));
 
     vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMNS"interval"));
+    input.push_back(PhysicalVariableProperty(new VecProperty(2),"-",MBSIMNS"limit"));
     function[function.size()-1].addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
     function[function.size()-1].initializeUsingXML(e);
@@ -314,7 +315,7 @@ void PiecewiseDefinedFunctionProperty::fromWidget(QWidget *widget) {
     function[function.size()-1].addProperty(new ChoiceProperty("",property));
 
     vector<PhysicalVariableProperty> input;
-    input.push_back(PhysicalVariableProperty(new ScalarProperty("0"),"-",MBSIMNS"interval"));
+    input.push_back(PhysicalVariableProperty(new VecProperty(2),"-",MBSIMNS"limit"));
     function[function.size()-1].addProperty(new ExtProperty(new ExtPhysicalVarProperty(input)));
 
     function[i].fromWidget(static_cast<PiecewiseDefinedFunctionWidget*>(widget)->stackedWidget->widget(i));

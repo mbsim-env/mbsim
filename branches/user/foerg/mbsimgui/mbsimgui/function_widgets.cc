@@ -28,36 +28,19 @@
 
 using namespace std;
 
-//SymbolicFunction1Widget::SymbolicFunction1Widget(const QString &ext, const QString &var, int max) : FunctionWidget(ext) {
-//  QGridLayout *layout = new QGridLayout;
-//  layout->setMargin(0);
-//  setLayout(layout);
-//  argname.push_back(new ExtWidget("Name of argument",new TextWidget(var)));
-//  layout->addWidget(argname[0],0,0);
-//
-//  argdim.push_back(new ExtWidget("Dimension of argument",new SpinBoxWidget(1,1,max)));
-//  if(var!="t") {
-//    layout->addWidget(argdim[0],0,1);
-//    connect(argdim[0]->getWidget(),SIGNAL(valueChanged(int)),this,SIGNAL(arg1SizeChanged(int)));
-//  }
-//  f = new ExtWidget("Function",new OctaveExpressionWidget);
-//  layout->addWidget(f,var.size(),0,1,2);
-//}
-//
-//int SymbolicFunction1Widget::getArg1Size() const {
-//  return (ext[1]=='V')?static_cast<SpinBoxWidget*>(argdim[0]->getWidget())->getValue():0;
-//}
-
 ConstantFunctionWidget::ConstantFunctionWidget(const QString &ext, int m) : FunctionWidget() {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->setMargin(0);
   setLayout(layout);
   vector<PhysicalVariableWidget*> input;
-  if(ext[0]=='V')
-    input.push_back(new PhysicalVariableWidget(new VecWidget(m),QStringList(),0));
-  else
+  if(ext[0]=='V') {
+    input.push_back(new PhysicalVariableWidget(new VecWidget(m,true),QStringList(),0));
+    c = new ExtWidget("Value (transposed)",new ExtPhysicalVarWidget(input));
+  }
+  else {
     input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
-  c = new ExtWidget("Value",new ExtPhysicalVarWidget(input));
+    c = new ExtWidget("Value",new ExtPhysicalVarWidget(input));
+  }
   layout->addWidget(c);
 }
 
@@ -72,7 +55,7 @@ LinearFunctionWidget::LinearFunctionWidget(const QString &ext, int m) : Function
   setLayout(layout);
   vector<PhysicalVariableWidget*> input;
   if(ext[0]=='V')
-    input.push_back(new PhysicalVariableWidget(new VecWidget(m),QStringList(),0));
+    input.push_back(new PhysicalVariableWidget(new VecWidget(m,true),QStringList(),0));
   else
     input.push_back(new PhysicalVariableWidget(new ScalarWidget("1"),QStringList(),0));
   a = new ExtWidget("Slope",new ExtPhysicalVarWidget(input));
@@ -80,7 +63,7 @@ LinearFunctionWidget::LinearFunctionWidget(const QString &ext, int m) : Function
 
   input.clear();
   if(ext[0]=='V')
-    input.push_back(new PhysicalVariableWidget(new VecWidget(m),QStringList(),0));
+    input.push_back(new PhysicalVariableWidget(new VecWidget(m,true),QStringList(),0));
   else
     input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),QStringList(),0));
   b = new ExtWidget("Intercept",new ExtPhysicalVarWidget(input),true);
@@ -88,8 +71,10 @@ LinearFunctionWidget::LinearFunctionWidget(const QString &ext, int m) : Function
 }
 
 void LinearFunctionWidget::resize_(int m, int n) {
-//  if(((VecWidget*)static_cast<ExtPhysicalVarWidget*>(c->getWidget())->getPhysicalVariableWidget(0)->getWidget())->size() != m)
-//    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(c->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
+  if(((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a->getWidget())->getPhysicalVariableWidget(0)->getWidget())->size() != m) {
+    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(a->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
+    ((VecWidget*)static_cast<ExtPhysicalVarWidget*>(b->getWidget())->getPhysicalVariableWidget(0)->getWidget())->resize_(m);
+  }
 }
 
 NestedFunctionWidget::NestedFunctionWidget(const QString &ext, const vector<QWidget*> &widget_, const vector<QString> &name_) : FunctionWidget(ext) {
@@ -99,34 +84,42 @@ NestedFunctionWidget::NestedFunctionWidget(const QString &ext, const vector<QWid
   setLayout(layout);
   fo = new ExtWidget("Outer function",new ChoiceWidget(widget_,name_));
   layout->addWidget(fo);
+  connect(fo->getWidget(),SIGNAL(widgetChanged()),this,SLOT(resizeVariables()));
 
   vector<QWidget*> widget;
   vector<QString> name;
   QStringList var;
   if(ext[1]=='V' and ext[2]=='S') {
     var << "t";
-    widget.push_back(new SymbolicFunctionWidget("VS",var)); name.push_back("Symbolic function f=f(t)");
-    widget.push_back(new LinearFunctionWidget("V")); name.push_back("Linear function f=f(t)");
-    widget.push_back(new QuadraticFunctionWidget("V")); name.push_back("Quadratic function f=f(t)");
-    widget.push_back(new SinusFunctionWidget("V")); name.push_back("Sinus function f=f(t)");
+    widget.push_back(new SymbolicFunctionWidget("VS",var)); name.push_back("Symbolic function v(t)");
+    widget.push_back(new ConstantFunctionWidget("V")); name.push_back("Constant function v(t)");
+    widget.push_back(new LinearFunctionWidget("V")); name.push_back("Linear function v(t)");
+    widget.push_back(new QuadraticFunctionWidget("V")); name.push_back("Quadratic function v(t)");
+    widget.push_back(new SinusFunctionWidget("V")); name.push_back("Sinus function v(t)");
   }
   else if(ext[1]=='S' and ext[2]=='V') {
     var << "q";
-    widget.push_back(new SymbolicFunctionWidget("SV",var)); name.push_back("Symbolic function f=f(q)");
+    widget.push_back(new SymbolicFunctionWidget("SV",var)); name.push_back("Symbolic function f(q)");
   }
   else if(ext[1]=='S' and ext[2]=='S') {
     var << "t";
-    widget.push_back(new SymbolicFunctionWidget("SS",var)); name.push_back("Symbolic function f=f(t)");
-    widget.push_back(new LinearFunctionWidget("S")); name.push_back("Linear function f=f(t)");
-    widget.push_back(new QuadraticFunctionWidget("S")); name.push_back("Quadratic function f=f(t)");
-    widget.push_back(new SinusFunctionWidget("S")); name.push_back("Sinus function f=f(t)");
+    widget.push_back(new SymbolicFunctionWidget("SS",var)); name.push_back("Symbolic function s(t)");
+    widget.push_back(new LinearFunctionWidget("S")); name.push_back("Linear function s(t)");
+    widget.push_back(new QuadraticFunctionWidget("S")); name.push_back("Quadratic function s(t)");
+    widget.push_back(new SinusFunctionWidget("S")); name.push_back("Sinus function s(t)");
   }
   fi = new ExtWidget("Inner function",new ChoiceWidget(widget,name));
   layout->addWidget(fi);
+  connect((ChoiceWidget*)fi->getWidget(),SIGNAL(resize_()),this,SLOT(resizeVariables()));
 }
 
 int NestedFunctionWidget::getArg1Size() const {
   return ext[2]=='V'?static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(fi->getWidget())->getWidget())->getArg1Size():0;
+}
+
+void NestedFunctionWidget::resizeVariables() {
+  int size = static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(fo->getWidget())->getWidget())->getArg1Size();
+  static_cast<ChoiceWidget*>(fi->getWidget())->resize_(size,1);
 }
 
 VectorValuedFunctionWidget::VectorValuedFunctionWidget(const QString &ext, int m) : FunctionWidget(ext), f(m) {
@@ -222,8 +215,8 @@ void PiecewiseDefinedFunctionWidget::addFunction() {
   widgetContainer->addWidget(new ChoiceWidget(widget,name));
 
   vector<PhysicalVariableWidget*> input;
-  input.push_back(new PhysicalVariableWidget(new ScalarWidget("0"),noUnitUnits(),1));
-  widgetContainer->addWidget(new ExtWidget("Interval",new ExtPhysicalVarWidget(input)));
+  input.push_back(new PhysicalVariableWidget(new VecWidget(2),noUnitUnits(),1));
+  widgetContainer->addWidget(new ExtWidget("Limit",new ExtPhysicalVarWidget(input)));
 
   functionList->addItem("Undefined");
 

@@ -1205,38 +1205,18 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="TimeDependentKinematicConstraint" substitutionGroup="KinematicConstraint" type="TimeDependentKinematicConstraintType">
+  <xs:element name="GeneralizedPositionConstraint" substitutionGroup="KinematicConstraint" type="GeneralizedPositionConstraintType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         TODO <br/>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="TimeDependentKinematicConstraintType">
+  <xs:complexType name="GeneralizedPositionConstraintType">
     <xs:complexContent>
       <xs:extension base="KinematicConstraintType">
         <xs:sequence>
-          <xs:element name="generalizedPositionFunction" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              TODO
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function_VS"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="firstDerivativeOfGeneralizedPositionFunction" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              TODO
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function_VS"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="secondDerivativeOfGeneralizedPositionFunction" minOccurs="0">
+          <xs:element name="constraintFunction">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
               TODO
             </xs:documentation></xs:annotation>
@@ -1251,34 +1231,58 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="StateDependentKinematicConstraint" substitutionGroup="KinematicConstraint" type="StateDependentKinematicConstraintType">
+  <xs:element name="GeneralizedVelocityConstraint" substitutionGroup="KinematicConstraint" type="GeneralizedVelocityConstraintType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         TODO <br/>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="StateDependentKinematicConstraintType">
+  <xs:complexType name="GeneralizedVelocityConstraintType">
     <xs:complexContent>
       <xs:extension base="KinematicConstraintType">
         <xs:sequence>
-          <xs:element name="generalizedVelocityFunction" minOccurs="0">
+          <xs:element name="constraintFunction">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
               TODO
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function_VV"/>
+                <xs:choice>
+                  <xs:element ref="Function_VVS"/>
+                  <xs:element ref="Function_VV"/>
+                  <xs:element ref="Function_VS"/>
+                </xs:choice>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="firstDerivativeOfGeneralizedVelocityFunction" minOccurs="0">
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="GeneralizedAccelerationConstraint" substitutionGroup="KinematicConstraint" type="GeneralizedAccelerationConstraintType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        TODO <br/>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="GeneralizedAccelerationConstraintType">
+    <xs:complexContent>
+      <xs:extension base="KinematicConstraintType">
+        <xs:sequence>
+          <xs:element name="constraintFunction">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
               TODO
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function_VVV"/>
+                <xs:choice>
+                  <xs:element ref="Function_VVS"/>
+                  <xs:element ref="Function_VV"/>
+                  <xs:element ref="Function_VS"/>
+                </xs:choice>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -3633,7 +3637,7 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="mbsim:Function_VS"/>
-                <xs:element name="interval" type="pv:nounitScalar"/>
+                <xs:element name="limit" type="pv:nounitScalar"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -3658,7 +3662,7 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="mbsim:Function_SS"/>
-                <xs:element name="interval" type="pv:nounitScalar"/>
+                <xs:element name="limit" type="pv:nounitScalar"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>

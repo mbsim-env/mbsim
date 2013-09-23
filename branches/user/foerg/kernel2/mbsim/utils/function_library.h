@@ -764,7 +764,7 @@ namespace MBSim {
             fmatvec::Function<Ret(double)> *f=ObjectFactory<fmatvec::FunctionBase>::create<fmatvec::Function<Ret(double)> >(ee);
             f->initializeUsingXML(ee);
             functions.push_back(f);
-            ee=e->FirstChildElement(MBSIMNS"interval");
+            ee=e->FirstChildElement(MBSIMNS"limit");
             a.push_back(Element::getDouble(ee));
             e=e->NextSiblingElement();
           }

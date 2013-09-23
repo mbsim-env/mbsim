@@ -37,8 +37,9 @@ class RigidBody;
 class Constraint;
 class GearConstraint;
 class KinematicConstraint;
-class TimeDependentKinematicConstraint;
-class StateDependentKinematicConstraint;
+class GeneralizedPositionConstraint;
+class GeneralizedVelocityConstraint;
+class GeneralizedAccelerationConstraint;
 class JointConstraint;
 class SignalProcessingSystem;
 class LinearTransferSystem;
@@ -238,29 +239,43 @@ class KinematicConstraintPropertyDialog : public ConstraintPropertyDialog {
     RigidBody *refBody;
 };
 
-class TimeDependentKinematicConstraintPropertyDialog : public KinematicConstraintPropertyDialog {
+class GeneralizedPositionConstraintPropertyDialog : public KinematicConstraintPropertyDialog {
   Q_OBJECT
 
   public:
-    TimeDependentKinematicConstraintPropertyDialog(TimeDependentKinematicConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    GeneralizedPositionConstraintPropertyDialog(GeneralizedPositionConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
     void toWidget(Element *element);
     void fromWidget(Element *element);
   protected:
-    ExtWidget *generalizedPositionFunction;
+    ExtWidget *constraintFunction;
   protected slots:
     void resizeVariables();
 };
 
-class StateDependentKinematicConstraintPropertyDialog : public KinematicConstraintPropertyDialog {
+class GeneralizedVelocityConstraintPropertyDialog : public KinematicConstraintPropertyDialog {
   Q_OBJECT
 
   public:
-    StateDependentKinematicConstraintPropertyDialog(StateDependentKinematicConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    GeneralizedVelocityConstraintPropertyDialog(GeneralizedVelocityConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
     void toWidget(Element *element);
     void fromWidget(Element *element);
     void resizeGeneralizedPosition();
   protected:
-    ExtWidget *generalizedVelocityFunction;
+    ExtWidget *constraintFunction;
+  protected slots:
+    void resizeVariables();
+};
+
+class GeneralizedAccelerationConstraintPropertyDialog : public KinematicConstraintPropertyDialog {
+  Q_OBJECT
+
+  public:
+    GeneralizedAccelerationConstraintPropertyDialog(GeneralizedAccelerationConstraint *constraint, QWidget * parent = 0, Qt::WindowFlags f = 0);
+    void toWidget(Element *element);
+    void fromWidget(Element *element);
+    void resizeGeneralizedPosition();
+  protected:
+    ExtWidget *constraintFunction;
   protected slots:
     void resizeVariables();
 };

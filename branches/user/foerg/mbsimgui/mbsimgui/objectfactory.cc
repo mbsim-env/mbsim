@@ -130,10 +130,12 @@ Object* MBSimObjectFactory::createObject(TiXmlElement *element, Element *parent)
     return new RigidBody(element->Attribute("name"),parent);
   else if(element->ValueStr()==MBSIMNS"GearConstraint")
     return new GearConstraint(element->Attribute("name"),parent);
-  else if(element->ValueStr()==MBSIMNS"TimeDependentKinematicConstraint")
-    return new TimeDependentKinematicConstraint(element->Attribute("name"),parent);
-  else if(element->ValueStr()==MBSIMNS"StateDependentKinematicConstraint")
-    return new StateDependentKinematicConstraint(element->Attribute("name"),parent);
+  else if(element->ValueStr()==MBSIMNS"GeneralizedPositionConstraint")
+    return new GeneralizedPositionConstraint(element->Attribute("name"),parent);
+  else if(element->ValueStr()==MBSIMNS"GeneralizedVelocityConstraint")
+    return new GeneralizedVelocityConstraint(element->Attribute("name"),parent);
+  else if(element->ValueStr()==MBSIMNS"GeneralizedAccelerationConstraint")
+    return new GeneralizedAccelerationConstraint(element->Attribute("name"),parent);
   else if(element->ValueStr()==MBSIMNS"JointConstraint")
     return new JointConstraint(element->Attribute("name"),parent);
   return 0;

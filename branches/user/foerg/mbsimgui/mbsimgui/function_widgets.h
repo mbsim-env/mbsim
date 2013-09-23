@@ -69,6 +69,7 @@ class LinearFunctionWidget : public FunctionWidget {
 };
 
 class NestedFunctionWidget : public FunctionWidget {
+  Q_OBJECT
 
   friend class NestedFunctionProperty;
 
@@ -77,6 +78,8 @@ class NestedFunctionWidget : public FunctionWidget {
     int getArg1Size() const;
   protected:
     ExtWidget *fo, *fi;
+  public slots:
+    void resizeVariables();
 };
 
 class VectorValuedFunctionWidget : public FunctionWidget {

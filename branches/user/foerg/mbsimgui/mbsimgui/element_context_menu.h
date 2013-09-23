@@ -125,8 +125,9 @@ class ConstraintContextContextMenu : public QMenu {
 
   protected slots:
     void addGearConstraint();
-    void addTimeDependentKinematicConstraint();
-    void addStateDependentKinematicConstraint();
+    void addGeneralizedPositionConstraint();
+    void addGeneralizedVelocityConstraint();
+    void addGeneralizedAccelerationConstraint();
     void addJointConstraint();
 
   protected:
