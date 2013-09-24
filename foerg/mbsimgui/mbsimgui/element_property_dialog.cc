@@ -664,8 +664,8 @@ GeneralizedVelocityConstraintPropertyDialog::GeneralizedVelocityConstraintProper
 
   vector<QWidget*> widget;
   vector<QString> name;
-  widget.push_back(new SymbolicFunctionWidget("VV",QStringList("q"))); name.push_back("Symbolic function f(q)");
-  widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t"))); name.push_back("Symbolic function f(t)");
+  widget.push_back(new SymbolicFunctionWidget("VV",QStringList("q"))); name.push_back("u=u(q), Symbolic function");
+  widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t"))); name.push_back("u=u(t), Symbolic function");
 
   constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget(widget,name));
   addToTab("General", constraintFunction);
@@ -699,8 +699,8 @@ GeneralizedAccelerationConstraintPropertyDialog::GeneralizedAccelerationConstrai
 
   vector<QWidget*> widget;
   vector<QString> name;
-  widget.push_back(new SymbolicFunctionWidget("VV",QStringList("q"))); name.push_back("Symbolic function f(q)");
-  widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t"))); name.push_back("Symbolic function f(t)");
+  widget.push_back(new SymbolicFunctionWidget("VV",QStringList("q"))); name.push_back("ud=ud(q), ud=ud(u), Symbolic function");
+  widget.push_back(new SymbolicFunctionWidget("VS",QStringList("t"))); name.push_back("ud=ud(t), Symbolic function");
 
   constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget(widget,name));
   addToTab("General", constraintFunction);

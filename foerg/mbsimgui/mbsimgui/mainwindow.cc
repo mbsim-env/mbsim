@@ -758,38 +758,62 @@ void MainWindow::saveParameterListAs() {
   }
 }
 
-void MainWindow::saveParameterList(const QString &fileName) {
+// write model paramters to XML structure
+// The resource owner of the returned TiXmlElement is the caller!
+TiXmlElement* MainWindow::writeParameterList() {
+  TiXmlElement *ele0=new TiXmlElement(PARAMNS+string("parameter"));
   ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
   QModelIndex index = model->index(0,0);
+  for(int i=0; i<model->rowCount(QModelIndex()); i++)
+    static_cast<Parameter*>(model->getItem(index.sibling(i,0))->getItemData())->writeXMLFile(ele0);
+  return ele0;
+}
 
+// write model parameters to file (using writeParameterList)
+void MainWindow::saveParameterList(const QString &fileName) {
   TiXmlDocument doc;
   TiXmlDeclaration *decl = new TiXmlDeclaration("1.0","UTF-8","");
   doc.LinkEndChild( decl );
-  TiXmlElement *ele0=new TiXmlElement(PARAMNS+string("parameter"));
-  for(int i=0; i<model->rowCount(QModelIndex()); i++)
-    static_cast<Parameter*>(model->getItem(index.sibling(i,0))->getItemData())->writeXMLFile(ele0);
+  TiXmlElement *ele0=NULL;
+  ele0=writeParameterList();
   doc.LinkEndChild(ele0);
   unIncorporateNamespace(doc.FirstChildElement(), Utils::getMBSimNamespacePrefixMapping());  
   QString file = fileParameter->text();
   doc.SaveFile(fileName.isEmpty()?file.toAscii().data():fileName.toStdString());
 }
 
+// update model parameters including additional paramters from paramList
 void MainWindow::updateOctaveParameters(const ParameterList &paramList) {
-  vector<MBXMLUtils::OctaveEvaluator::Param> param;
-  ParameterListModel *model = static_cast<ParameterListModel*>(parameterList->model());
-  QModelIndex index = model->index(0,0);
-  for(int i=0; i<model->rowCount(QModelIndex()); i++) {
-    Parameter *p=static_cast<Parameter*>(model->getItem(index.sibling(i,0))->getItemData());
-    param.push_back(MBXMLUtils::OctaveEvaluator::Param(p->getName(), toStr(p->getValue()), 0));
+  // write model paramters to XML structure
+  TiXmlElement *ele0=NULL;
+  ele0=writeParameterList();
+
+  // write/append additional paramters from paramList to XML structure
+  for(int i=0; i<paramList.getSize(); i++) {
+    //NOTE: we should NOT use <matrixParameter> here but the correct one. However in paramList the type of the
+    //      parameter is unknown and matrixParameter works for all except strings!!!!
+    //      (maybe it works also for strings due to an hidden (but unwanted) feature, so we should add the
+    //       parameter type to ParameterList)
+    //      Maybe the best would be to have a "TiXmlElement* writeXMLFile(TiXmlElement *parent)" function in ParameterList)
+    TiXmlElement *p=new TiXmlElement(PARAMNS"matrixParameter");
+    ele0->LinkEndChild(p);
+    p->SetAttribute("name", paramList.getParameterName(i));
+    TiXmlText *t=new TiXmlText(paramList.getParameterValue(i));
+    p->LinkEndChild(t);
   }
-  for(int i=0; i<paramList.getSize(); i++)
-    param.push_back(MBXMLUtils::OctaveEvaluator::Param(paramList.getParameterName(i), paramList.getParameterValue(i), 0));
+
   try {
     octEval->saveAndClearCurrentParam();
-    octEval->fillParam(param, false);
+    octEval->fillParam(ele0, false);
+    delete ele0;
   }
   catch(string e) {
     cout << "An exception occurred in updateOctaveParameters: " << e << endl;
+    delete ele0;
+  }
+  catch(...) {
+    cout << "An unknown exception occurred in updateOctaveParameters." << endl;
+    delete ele0;
   }
 }
 
