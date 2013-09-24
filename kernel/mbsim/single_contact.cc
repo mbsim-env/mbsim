@@ -77,16 +77,13 @@ namespace MBSim {
       delete[] gddActive;
   }
 
-  void SingleContact::updatewb1(double t, int j) {
-    if(gdActive[0])
+  void SingleContact::updatewb(double t, int j) {
+    if(gdActive[0]) {
       for (unsigned i = 0; i < 2; ++i) //TODO: only two contours are interacting
         wb += fF[i](Range<Fixed<0>,Fixed<2> >(), Range<Var,Var>(0,laSize-1)).T() * cpData[i].getFrameOfReference().getGyroscopicAccelerationOfTranslation(j);
-  }
 
-  void SingleContact::updatewb(double t, int j) {
-    updatewb1(t,j);
-    if(gdActive[0])
       contactKinematics->updatewb(wb, g, cpData);
+    }
   }
 
   void SingleContact::updateW(double t, int j) {
@@ -132,9 +129,8 @@ namespace MBSim {
   }
 
   void SingleContact::updateg(double t) {
-	  if (g.size())
-	    contactKinematics->updateg(g, cpData);
-
+    if (g.size())
+      contactKinematics->updateg(g, cpData);
   }
 
   void SingleContact::updategd(double t) {
@@ -509,9 +505,6 @@ namespace MBSim {
     }
     else if (stage == preInit) {
       LinkMechanics::init(stage);
-
-      /*Set the sizes of the different vectors*/
-      contactKinematics->assignContours(contour[0], contour[1]);
 
       gActive = 1;
       gActive0 = 1;

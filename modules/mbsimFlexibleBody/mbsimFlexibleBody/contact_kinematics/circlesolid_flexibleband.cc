@@ -33,6 +33,135 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody { 
 
+  class ContactKinematicsCircleSolidNode : public MBSim::ContactKinematics {
+    public:
+      ContactKinematicsCircleSolidNode(double rCircle_, double wBand_, double node_) : rCircle(rCircle_), wBand(wBand_), node(node_), circle(0), band(0) { }
+      virtual void assignContours(const std::vector<Contour*> &contour);
+      virtual void updateg(fmatvec::Vec &g, MBSim::ContourPointData *cpData, int index = 0); 
+      virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData* cpData) { throw MBSimError("not implemented"); }
+    private:
+      double rCircle, wBand, node;
+      int icircle, inode;
+      MBSim::CircleSolid *circle;
+      FlexibleBand *band;
+  };
+
+ void ContactKinematicsCircleSolidNode::assignContours(const vector<Contour*>& contour) {	
+    if(dynamic_cast<CircleSolid*>(contour[0])) {
+      icircle = 0;
+      inode = 1;
+      circle = static_cast<CircleSolid*>(contour[0]);
+      band = static_cast<FlexibleBand*>(contour[1]);
+    }
+    else {
+      icircle = 1;
+      inode = 0;
+      circle = static_cast<CircleSolid*>(contour[1]);
+      band = static_cast<FlexibleBand*>(contour[0]);
+    }
+ }
+
+  void ContactKinematicsCircleSolidNode::updateg(fmatvec::Vec &g, MBSim::ContourPointData *cpData, int index) { 
+ // set lagrange parateter position of current node
+      if(cpData[inode].getLagrangeParameterPosition().size() != 2)
+        cpData[inode].getLagrangeParameterPosition().resize() << VecV(2);
+      cpData[inode].getLagrangeParameterPosition()(0) = node;
+      cpData[inode].getLagrangeParameterPosition()(1) = 0.0;
+
+
+      if(cpData[inode].getLagrangeParameterPosition()(0) < band->getAlphaStart() || cpData[inode].getLagrangeParameterPosition()(0) > band->getAlphaEnd())
+        g(0) = 1.0;
+      else {
+        band->updateKinematicsForFrame(cpData[inode],position_cosy);
+        Vec Wd = circle->getFrame()->getPosition() - cpData[inode].getFrameOfReference().getPosition();
+        g(0) = nrm2(Wd) - rCircle;
+
+        Vec Wb = cpData[inode].getFrameOfReference().getOrientation().col(2);
+        cpData[inode].getLagrangeParameterPosition()(1) = trans(Wb)*Wd; // get contact parameter of second tangential direction
+
+        if(fabs(cpData[inode].getLagrangeParameterPosition()(1)) > 0.5*wBand)
+          g(0) = 1.0;
+        else { // calculate the normal distance
+          cpData[inode].getFrameOfReference().getPosition()           += cpData[inode].getLagrangeParameterPosition()(1)*Wb;
+          cpData[icircle] .getFrameOfReference().getOrientation().set(0, -cpData[inode].getFrameOfReference().getOrientation().col(0));
+          cpData[icircle] .getFrameOfReference().getOrientation().set(1, -cpData[inode].getFrameOfReference().getOrientation().col(1));
+          cpData[icircle] .getFrameOfReference().getOrientation().set(2,  cpData[inode].getFrameOfReference().getOrientation().col(2));
+          //cpData[icircle] .getFrameOfReference().getPosition()            =  circle->getFrame()->getPosition() + cpData[icircle].getFrameOfReference().getOrientation().col(0)*rCircle;
+          cpData[icircle] .getFrameOfReference().getPosition()            =  circle->getFrame()->getPosition() - rCircle*Wd/nrm2(Wd);
+
+        }
+      }
+  }
+
+  class ContactKinematicsCircleSolidNodeInterpolation : public MBSim::ContactKinematics {
+    public:
+      ContactKinematicsCircleSolidNodeInterpolation(double rCircle_, double wBand_, Vec nodes_) : rCircle(rCircle_), wBand(wBand_), nodes(nodes_), circle(0), band(0) { }
+      virtual void assignContours(const std::vector<Contour*> &contour);
+      virtual void updateg(fmatvec::Vec &g, MBSim::ContourPointData *cpData, int index = 0); 
+      virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData* cpData) { throw MBSimError("not implemented"); }
+    private:
+      double rCircle, wBand;
+      Vec nodes;
+      int icircle, inode;
+      MBSim::CircleSolid *circle;
+      FlexibleBand *band;
+  };
+
+ void ContactKinematicsCircleSolidNodeInterpolation::assignContours(const vector<Contour*>& contour) {	
+    if(dynamic_cast<CircleSolid*>(contour[0])) {
+      icircle = 0;
+      inode = 1;
+      circle = static_cast<CircleSolid*>(contour[0]);
+      band = static_cast<FlexibleBand*>(contour[1]);
+    }
+    else {
+      icircle = 1;
+      inode = 0;
+      circle = static_cast<CircleSolid*>(contour[1]);
+      band = static_cast<FlexibleBand*>(contour[0]);
+    }
+ }
+
+  void ContactKinematicsCircleSolidNodeInterpolation::updateg(fmatvec::Vec &gNri, MBSim::ContourPointData *cpData, int index) { 
+    FuncPairContour1sCircleSolid *func= new FuncPairContour1sCircleSolid(circle,band); // root function for searching contact parameters
+    Contact1sSearch search(func);
+
+    search.setNodes(nodes); // defining search areas for contacts
+    Mat result = search.slvAll();
+    delete func;
+
+    if(result.rows()) {
+
+      if(cpData[inode].getLagrangeParameterPosition().size() != 2)
+        cpData[inode].getLagrangeParameterPosition().resize() << VecV(2);
+      cpData[inode].getLagrangeParameterPosition()(0) = result(0,0);
+      cpData[inode].getLagrangeParameterPosition()(1) = 0.0;
+
+      if(cpData[inode].getLagrangeParameterPosition()(0) < band->getAlphaStart() || cpData[inode].getLagrangeParameterPosition()(0) > band->getAlphaEnd())
+        gNri(0) = 1.0;
+      else {
+          band->updateKinematicsForFrame(cpData[inode],position_cosy);
+          Vec Wd = circle->getFrame()->getPosition() - cpData[inode].getFrameOfReference().getPosition();
+          gNri(0) = nrm2(Wd) - rCircle;
+
+          {
+            Vec Wb = cpData[inode].getFrameOfReference().getOrientation().col(2);
+            cpData[inode].getLagrangeParameterPosition()(1) = trans(Wb)*Wd; // get contact parameter of second tangential direction
+
+            if(fabs(cpData[inode].getLagrangeParameterPosition()(1)) > 0.5*wBand)
+              ;
+            else { // calculate the normal distance
+              cpData[inode].getFrameOfReference().getPosition()           += cpData[inode].getLagrangeParameterPosition()(1)*Wb;
+              cpData[icircle] .getFrameOfReference().getOrientation().set(0, -cpData[inode].getFrameOfReference().getOrientation().col(0));
+              cpData[icircle] .getFrameOfReference().getOrientation().set(1, -cpData[inode].getFrameOfReference().getOrientation().col(1));
+              cpData[icircle] .getFrameOfReference().getOrientation().set(2,  cpData[inode].getFrameOfReference().getOrientation().col(2));
+              cpData[icircle] .getFrameOfReference().getPosition()            =  circle->getFrame()->getPosition() + cpData[icircle].getFrameOfReference().getOrientation().col(0)*rCircle;
+            }
+          }
+      }
+    }
+  }
+
   ContactKinematicsCircleSolidFlexibleBand::ContactKinematicsCircleSolidFlexibleBand() : ContactKinematics(),icircle(0),icontour(0),possibleContactsPerNode(1),circle(0),band(0) {}
   ContactKinematicsCircleSolidFlexibleBand::~ContactKinematicsCircleSolidFlexibleBand() {}
 
@@ -58,333 +187,19 @@ namespace MBSimFlexibleBody {
     l0     = 1.0   * fabs(band->getAlphaEnd()-band->getAlphaStart())/staticNodes.size(); /* bandwidth of mesh deformer: higher values leads to stronger attraction of last contact points */
     epsTol = 5.e-2 * l0; /* distance, when two contact points should be treated as one */
 
-  }
-
-  //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  void ContactKinematicsCircleSolidFlexibleBand::updateg(std::vector<SingleContact> & contacts) {
-    //Vector of lagrange parameters for contact positions
-    Vec contactPositions(numberOfPotentialContactPoints,NONINIT);
-    int inContact = 0;
-
-
-    Vec nodes    = staticNodes.copy();
-    int nrNodes = nodes.size();
-
-    // always use nodes for contact kinematics
-    for(int i=0;i<nrNodes;i++) {
-      ContourPointData* cpData = contacts[i].getcpData();
-      Vec & g = contacts[i].getg();
-
-      // set lagrange parateter position of current node
-      if(cpData[icontour].getLagrangeParameterPosition().size() != 2)
-        cpData[icontour].getLagrangeParameterPosition().resize() << VecV(2);
-      cpData[icontour].getLagrangeParameterPosition()(0) = nodes(i);
-      cpData[icontour].getLagrangeParameterPosition()(1) = 0.0;
-
-
-      if(cpData[icontour].getLagrangeParameterPosition()(0) < band->getAlphaStart() || cpData[icontour].getLagrangeParameterPosition()(0) > band->getAlphaEnd())
-        g(0) = 1.0;
-      else {
-        band->updateKinematicsForFrame(cpData[icontour],position_cosy);
-        Vec Wd = circle->getFrame()->getPosition() - cpData[icontour].getFrameOfReference().getPosition();
-        g(0) = nrm2(Wd) - rCircle;
-
-        if(g(0) <= 0.0) {
-          contactPositions(inContact) = cpData[icontour].getLagrangeParameterPosition()(0);
-          inContact ++;
-        }
-
-        {
-
-          Vec Wb = cpData[icontour].getFrameOfReference().getOrientation().col(2);
-          cpData[icontour].getLagrangeParameterPosition()(1) = trans(Wb)*Wd; // get contact parameter of second tangential direction
-
-          if(fabs(cpData[icontour].getLagrangeParameterPosition()(1)) > 0.5*wBand)
-            g(0) = 1.0;
-          else { // calculate the normal distance
-            cpData[icontour].getFrameOfReference().getPosition()           += cpData[icontour].getLagrangeParameterPosition()(1)*Wb;
-            cpData[icircle] .getFrameOfReference().getOrientation().set(0, -cpData[icontour].getFrameOfReference().getOrientation().col(0));
-            cpData[icircle] .getFrameOfReference().getOrientation().set(1, -cpData[icontour].getFrameOfReference().getOrientation().col(1));
-            cpData[icircle] .getFrameOfReference().getOrientation().set(2,  cpData[icontour].getFrameOfReference().getOrientation().col(2));
-            //cpData[icircle] .getFrameOfReference().getPosition()            =  circle->getFrame()->getPosition() + cpData[icircle].getFrameOfReference().getOrientation().col(0)*rCircle;
-            cpData[icircle] .getFrameOfReference().getPosition()            =  circle->getFrame()->getPosition() - rCircle*Wd/nrm2(Wd);
-
-          }
-        }
-      }
+    cout << numberOfPotentialContactPoints << endl;
+    cout << possibleContactsPerNode << endl;
+    cout << staticNodes.size() << endl;
+    for(int i=0; i<staticNodes.size(); i++) {
+      ContactKinematicsCircleSolidNode *ck = new ContactKinematicsCircleSolidNode(rCircle,wBand,staticNodes(i));
+      ck->assignContours(contour);
+      contactKinematics.push_back(ck);
     }
-
-    FuncPairContour1sCircleSolid *func= new FuncPairContour1sCircleSolid(circle,band); // root function for searching contact parameters
-    Contact1sSearch search(func);
-
-#if 0
-    // deform mesh
-    for(int i=0;i<nodes.size();i++) {
-      double node_i = nodes(i);
-      for(int j=0;j<lastContactPositions.size();j++) {
-        nodes(i) += (lastContactPositions(j)-node_i) * exp( - fabs((lastContactPositions(j)-node_i)/ l0));
-      }
+    for(int i=0; i<numberOfPotentialContactPoints-staticNodes.size(); i++) {
+      ContactKinematicsCircleSolidNodeInterpolation *ck = new ContactKinematicsCircleSolidNodeInterpolation(rCircle,wBand,staticNodes(i,i+1));
+      ck->assignContours(contour);
+      contactKinematics.push_back(ck);
     }
-    if(result.rows()>0) {
-      cout << endl <<endl<< "----------------------------------------------\nlast hits: "<< trans(lastContactPositions) << endl;
-      Vec tempVec = staticNodes;
-      cout << "original Nodes" << endl << trans( tempVec ) << endl;
-      cout << "modified Nodes" << endl << trans( nodes   ) << endl;
-      cout << trans(result) << endl;
-    }
-    if ( lastContactPositions.size() ) throw 1;
-#endif
-
-    search.setNodes(nodes); // defining search areas for contacts
-    Mat result = search.slvAll();
-    delete func;
-
-    for(int i=0;i<result.rows();i++) {
-      ContourPointData* cpData = contacts[nrNodes + i].getcpData();
-      Vec & gi = contacts[i].getg();
-      Vec & gNri = contacts[nrNodes + i].getg();
-
-      if(cpData[icontour].getLagrangeParameterPosition().size() != 2)
-        cpData[icontour].getLagrangeParameterPosition().resize() << VecV(2);
-      cpData[icontour].getLagrangeParameterPosition()(0) = result(i,0);
-      cpData[icontour].getLagrangeParameterPosition()(1) = 0.0;
-
-      if(cpData[icontour].getLagrangeParameterPosition()(0) < band->getAlphaStart() || cpData[icontour].getLagrangeParameterPosition()(0) > band->getAlphaEnd())
-        gNri(0) = 1.0;
-      else {
-        bool doubledNode = false;
-        for(int j=0;j<staticNodes.size();j++)
-          if(fabs(cpData[icontour].getLagrangeParameterPosition()(0)-staticNodes(j))<epsTol)
-            doubledNode = true;
-
-        if(doubledNode)
-          gNri(0) = 1.0;
-        else {
-          band->updateKinematicsForFrame(cpData[icontour],position_cosy);
-          Vec Wd = circle->getFrame()->getPosition() - cpData[icontour].getFrameOfReference().getPosition();
-          gNri(0) = nrm2(Wd) - rCircle;
-
-          if(gi(0) <= 0.0) {
-            contactPositions(inContact) = cpData[icontour].getLagrangeParameterPosition()(0);
-            inContact ++;
-          }
-
-          {
-            Vec Wb = cpData[icontour].getFrameOfReference().getOrientation().col(2);
-            cpData[icontour].getLagrangeParameterPosition()(1) = trans(Wb)*Wd; // get contact parameter of second tangential direction
-
-            if(fabs(cpData[icontour].getLagrangeParameterPosition()(1)) > 0.5*wBand)
-              gi(0) = 1.0;
-            else { // calculate the normal distance
-              cpData[icontour].getFrameOfReference().getPosition()           += cpData[icontour].getLagrangeParameterPosition()(1)*Wb;
-              cpData[icircle] .getFrameOfReference().getOrientation().set(0, -cpData[icontour].getFrameOfReference().getOrientation().col(0));
-              cpData[icircle] .getFrameOfReference().getOrientation().set(1, -cpData[icontour].getFrameOfReference().getOrientation().col(1));
-              cpData[icircle] .getFrameOfReference().getOrientation().set(2,  cpData[icontour].getFrameOfReference().getOrientation().col(2));
-              cpData[icircle] .getFrameOfReference().getPosition()            =  circle->getFrame()->getPosition() + cpData[icircle].getFrameOfReference().getOrientation().col(0)*rCircle;
-
-#if 0
-              if(false && (ig[i])(0) < 0.)//1.0e-4)
-              {
-                cout << endl;
-                cout << " g(0)  = " << (ig[i])(0) << "\n------------------------------------------\n" << endl;
-                cout << " " << i << " - alpha = " << cpData[icontour].getLagrangeParameterPosition()(0) << endl;
-                cout << "     Wb = " << trans(Wb) << "\n Wd = " << trans(Wd) << endl;
-                cout << "     rCircle  = " << rCircle << endl;
-                cout << " cpData[icontour].r = \n" << trans(cpData[icontour].getFrameOfReference().getPosition()   ) << endl;
-                cout << " cpData[icontour].A = \n" <<       cpData[icontour].getFrameOfReference().getOrientation()  << endl;
-                cout << " cpData[icircle].r  = \n" << trans(cpData[icircle] .getFrameOfReference().getPosition()   ) << endl;
-                cout << " cpData[icircle].A  = \n" <<       cpData[icircle] .getFrameOfReference().getOrientation()  << endl;
-                cpData[icontour].getLagrangeParameterPosition()(0) = 0.0;
-                band->updateKinematicsForFrame(cpData[icontour],position_cosy);
-                cout << " cpData(alpha=0).r = \n" << trans(cpData[icontour].getFrameOfReference().getPosition()   ) << endl;
-                cout << " cpData(alpha=0).A = \n" <<       cpData[icontour].getFrameOfReference().getOrientation()  << endl;
-                throw 1;
-              }
-#endif
-            }
-          }
-        }
-      }
-    }
-    lastContactPositions.resize() = contactPositions(Index(0,inContact-1));
-
-    // flush data not being necessary
-    for(int i=nrNodes + result.rows();i<numberOfPotentialContactPoints;i++)
-    {
-      ContourPointData* cpData = contacts[i].getcpData();
-
-      // positions -> dummy and centerOfCircle
-      if(cpData[icontour].getLagrangeParameterPosition().size() != 2)
-        cpData[icontour].getLagrangeParameterPosition().resize() << VecV(2);
-      cpData[icontour].getLagrangeParameterPosition()(0) = 0.0;
-
-      cpData[icontour].getFrameOfReference().setPosition(nodes(nodes.size()-1)*Vec("[1.0;0.0;0.0]"));//Vec(3,INIT,0.0));//
-      cpData[icircle ].getFrameOfReference().setPosition(nodes(nodes.size()-1)*Vec("[1.0;0.0;0.0]"));//Vec(3,INIT,0.0));//
-      cpData[icontour].getFrameOfReference().getOrientation() = -SqrMat(3,EYE);
-      cpData[icircle ].getFrameOfReference().getOrientation() = -SqrMat(3,EYE);
-      Vec & gi = contacts[i].getg();
-      gi(0) = 1.0;
-    }
-
-  }
-
-  void ContactKinematicsCircleSolidFlexibleBand::updateg(std::vector<fmatvec::Vec>::iterator ig, std::vector<ContourPointData*>::iterator icpData) {
-    Vec contactPositions(numberOfPotentialContactPoints,NONINIT);
-    int inContact = 0;
-
-    Vec nodes    = staticNodes.copy();
-    int nrNodes = nodes.size();
-
-    // always use nodes for contact kinematics
-    for(int i=0;i<nrNodes;i++) {
-      ContourPointData* cpData = icpData[i];
-
-      if(cpData[icontour].getLagrangeParameterPosition().size() != 2)
-        cpData[icontour].getLagrangeParameterPosition().resize() = Vec(2,NONINIT);
-      cpData[icontour].getLagrangeParameterPosition()(0) = nodes(i);
-      cpData[icontour].getLagrangeParameterPosition()(1) = 0.0;
-
-      if(cpData[icontour].getLagrangeParameterPosition()(0) < band->getAlphaStart() || cpData[icontour].getLagrangeParameterPosition()(0) > band->getAlphaEnd())
-        (ig[i])(0) = 1.0;
-      else {
-        band->updateKinematicsForFrame(cpData[icontour],position_cosy);
-        Vec Wd = circle->getFrame()->getPosition() - cpData[icontour].getFrameOfReference().getPosition();
-        (ig[i])(0) = nrm2(Wd) - rCircle;
-
-        if((ig[i])(0) <= 0.0) {
-          contactPositions(inContact) = cpData[icontour].getLagrangeParameterPosition()(0);
-          inContact ++;
-        }
-
-        {
-
-          Vec Wb = cpData[icontour].getFrameOfReference().getOrientation().col(2);
-          cpData[icontour].getLagrangeParameterPosition()(1) = trans(Wb)*Wd; // get contact parameter of second tangential direction
-
-          if(fabs(cpData[icontour].getLagrangeParameterPosition()(1)) > 0.5*wBand)
-            (ig[i])(0) = 1.0;
-          else { // calculate the normal distance
-            cpData[icontour].getFrameOfReference().getPosition()           += cpData[icontour].getLagrangeParameterPosition()(1)*Wb;
-            cpData[icircle] .getFrameOfReference().getOrientation().set(0, -cpData[icontour].getFrameOfReference().getOrientation().col(0));
-            cpData[icircle] .getFrameOfReference().getOrientation().set(1, -cpData[icontour].getFrameOfReference().getOrientation().col(1));
-            cpData[icircle] .getFrameOfReference().getOrientation().set(2,  cpData[icontour].getFrameOfReference().getOrientation().col(2));
-            //cpData[icircle] .getFrameOfReference().getPosition()            =  circle->getFrame()->getPosition() + cpData[icircle].getFrameOfReference().getOrientation().col(0)*rCircle;
-            cpData[icircle] .getFrameOfReference().getPosition()            =  circle->getFrame()->getPosition() - rCircle*Wd/nrm2(Wd);
-
-          }
-        }
-      }
-    }
-
-    FuncPairContour1sCircleSolid *func= new FuncPairContour1sCircleSolid(circle,band); // root function for searching contact parameters
-    Contact1sSearch search(func);
-
-#if 0
-    // deform mesh
-    for(int i=0;i<nodes.size();i++) {
-      double node_i = nodes(i);
-      for(int j=0;j<lastContactPositions.size();j++) {
-        nodes(i) += (lastContactPositions(j)-node_i) * exp( - fabs((lastContactPositions(j)-node_i)/ l0));
-      }
-    }
-    if(result.rows()>0) {
-      cout << endl <<endl<< "----------------------------------------------\nlast hits: "<< trans(lastContactPositions) << endl;
-      Vec tempVec = staticNodes;
-      cout << "original Nodes" << endl << trans( tempVec ) << endl;
-      cout << "modified Nodes" << endl << trans( nodes   ) << endl;
-      cout << trans(result) << endl;
-    }
-    if ( lastContactPositions.size() ) throw 1;
-#endif
-
-    search.setNodes(nodes); // defining search areas for contacts
-    Mat result = search.slvAll();
-    delete func;
-
-    for(int i=0;i<result.rows();i++) {
-      ContourPointData* cpData = icpData[nrNodes + i];
-
-      if(cpData[icontour].getLagrangeParameterPosition().size() != 2)
-        cpData[icontour].getLagrangeParameterPosition().resize() = Vec(2,NONINIT);
-      cpData[icontour].getLagrangeParameterPosition()(0) = result(i,0);
-      cpData[icontour].getLagrangeParameterPosition()(1) = 0.0;
-
-      if(cpData[icontour].getLagrangeParameterPosition()(0) < band->getAlphaStart() || cpData[icontour].getLagrangeParameterPosition()(0) > band->getAlphaEnd())
-        (ig[nrNodes + i])(0) = 1.0;
-      else {
-        bool doubledNode = false;
-        for(int j=0;j<staticNodes.size();j++)
-          if(fabs(cpData[icontour].getLagrangeParameterPosition()(0)-staticNodes(j))<epsTol)
-            doubledNode = true;
-
-        if(doubledNode)
-          (ig[nrNodes + i])(0) = 1.0;
-        else {
-          band->updateKinematicsForFrame(cpData[icontour],position_cosy);
-          Vec Wd = circle->getFrame()->getPosition() - cpData[icontour].getFrameOfReference().getPosition();
-          (ig[nrNodes + i])(0) = nrm2(Wd) - rCircle;
-
-          if((ig[i])(0) <= 0.0) {
-            contactPositions(inContact) = cpData[icontour].getLagrangeParameterPosition()(0);
-            inContact ++;
-          }
-
-          {
-            Vec Wb = cpData[icontour].getFrameOfReference().getOrientation().col(2);
-            cpData[icontour].getLagrangeParameterPosition()(1) = trans(Wb)*Wd; // get contact parameter of second tangential direction
-
-            if(fabs(cpData[icontour].getLagrangeParameterPosition()(1)) > 0.5*wBand)
-              (ig[i])(0) = 1.0;
-            else { // calculate the normal distance
-              cpData[icontour].getFrameOfReference().getPosition()           += cpData[icontour].getLagrangeParameterPosition()(1)*Wb;
-              cpData[icircle] .getFrameOfReference().getOrientation().set(0, -cpData[icontour].getFrameOfReference().getOrientation().col(0));
-              cpData[icircle] .getFrameOfReference().getOrientation().set(1, -cpData[icontour].getFrameOfReference().getOrientation().col(1));
-              cpData[icircle] .getFrameOfReference().getOrientation().set(2,  cpData[icontour].getFrameOfReference().getOrientation().col(2));
-              cpData[icircle] .getFrameOfReference().getPosition()            =  circle->getFrame()->getPosition() + cpData[icircle].getFrameOfReference().getOrientation().col(0)*rCircle;
-
-#if 0
-              if(false && (ig[i])(0) < 0.)//1.0e-4)
-              {
-                cout << endl;
-                cout << " g(0)  = " << (ig[i])(0) << "\n------------------------------------------\n" << endl;
-                cout << " " << i << " - alpha = " << cpData[icontour].getLagrangeParameterPosition()(0) << endl;
-                cout << "     Wb = " << trans(Wb) << "\n Wd = " << trans(Wd) << endl;
-                cout << "     rCircle  = " << rCircle << endl;
-                cout << " cpData[icontour].r = \n" << trans(cpData[icontour].getFrameOfReference().getPosition()   ) << endl;
-                cout << " cpData[icontour].A = \n" <<       cpData[icontour].getFrameOfReference().getOrientation()  << endl;
-                cout << " cpData[icircle].r  = \n" << trans(cpData[icircle] .getFrameOfReference().getPosition()   ) << endl;
-                cout << " cpData[icircle].A  = \n" <<       cpData[icircle] .getFrameOfReference().getOrientation()  << endl;
-                cpData[icontour].getLagrangeParameterPosition()(0) = 0.0;
-                band->updateKinematicsForFrame(cpData[icontour],position_cosy);
-                cout << " cpData(alpha=0).r = \n" << trans(cpData[icontour].getFrameOfReference().getPosition()   ) << endl;
-                cout << " cpData(alpha=0).A = \n" <<       cpData[icontour].getFrameOfReference().getOrientation()  << endl;
-                throw 1;
-              }
-#endif
-            }
-          }
-        }
-      }
-    }
-    lastContactPositions.resize() = contactPositions(Index(0,inContact-1));
-
-    // flush data not being necessary
-    for(int i=nrNodes + result.rows();i<numberOfPotentialContactPoints;i++)
-    {
-      ContourPointData* cpData = icpData[i];
-
-      // positions -> dummy and centerOfCircle
-      if(cpData[icontour].getLagrangeParameterPosition().size() != 2)
-        cpData[icontour].getLagrangeParameterPosition().resize() = Vec(2,INIT,0.0);
-      cpData[icontour].getLagrangeParameterPosition()(0) = 0.0;
-
-      cpData[icontour].getFrameOfReference().setPosition(nodes(nodes.size()-1)*Vec("[1.0;0.0;0.0]"));//Vec(3,INIT,0.0));//
-      cpData[icircle ].getFrameOfReference().setPosition(nodes(nodes.size()-1)*Vec("[1.0;0.0;0.0]"));//Vec(3,INIT,0.0));//
-      cpData[icontour].getFrameOfReference().getOrientation() = -SqrMat(3,EYE);
-      cpData[icircle ].getFrameOfReference().getOrientation() = -SqrMat(3,EYE);
-      (ig[i])(0) = 1.0;
-    }
-
   }
 
 }

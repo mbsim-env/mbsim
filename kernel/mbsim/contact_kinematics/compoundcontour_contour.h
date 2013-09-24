@@ -36,10 +36,11 @@ namespace MBSim {
     public:
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
-      virtual void updateg(fmatvec::Vec &g, ContourPointData *cpData, int index = 0);
-      virtual void updateg(std::vector<SingleContact> & contact);
-      virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData* cpData) { throw MBSimError("ERROR (ContactKinematicsCompoundContourContour::updatewb): Not implemented!"); };
-      virtual void updatewb(std::vector<SingleContact> & contact);
+
+      void updateg(fmatvec::Vec &g, ContourPointData *cpData, int index = 0) { }
+      void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData* cpData) { }
+
+      ContactKinematics* getContactKinematics(int i=0) const { return contactKinematics[i]; }
       /***************************************************/
 
     private:

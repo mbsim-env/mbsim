@@ -82,10 +82,7 @@ namespace MBSim {
   void Contact::updatewb(double t, int j) {
     for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
-        jter->updatewb1(t,j);
-
-    for (size_t cK = 0; cK < contactKinematics.size(); cK++)
-      contactKinematics[cK]->updatewb(contacts[cK]);
+        jter->updatewb(t,j);
   }
 
   void Contact::updateW(double t, int j) {
@@ -116,8 +113,9 @@ namespace MBSim {
   }
 
   void Contact::updateg(double t) {
-    for (size_t cK = 0; cK < contactKinematics.size(); cK++) {
-      contactKinematics[cK]->updateg(contacts[cK]);
+    for (std::vector<std::vector<SingleContact> >::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
+      for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
+        jter->updateg(t);
     }
   }
 
@@ -355,7 +353,7 @@ namespace MBSim {
           if (contactKinematics[cK]->getNumberOfPotentialContactPoints() > 1)
             contactName << "_" << k;
           contacts[cK].push_back(SingleContact(contactName.str()));
-          contacts[cK][k].setContactKinematics(contactKinematics[cK]);
+          contacts[cK][k].setContactKinematics(contactKinematics[cK]->getContactKinematics(k)?contactKinematics[cK]->getContactKinematics(k):contactKinematics[cK]);
           contacts[cK][k].connect(contour0);
           contacts[cK][k].connect(contour1);
           //Applies the plot feature to all children (make it possible to set only some children...)
