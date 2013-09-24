@@ -52,14 +52,5 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsCompoundContourCompoundContour::updateg(std::vector<SingleContact> & contact) {
-    for(size_t i = 0; i < contact.size(); i++)
-      contactKinematics[i]->updateg(contact[i].getg(), contact[i].getcpData());
-  }
-
-  void ContactKinematicsCompoundContourCompoundContour::updatewb(std::vector<SingleContact> & contact) {
-    for(size_t i = 0; i < contact.size(); i++)
-      contactKinematics[i]->updatewb(contact[i].getwb(), contact[i].getg(), contact[i].getcpData());
-  }
 }
 

@@ -23,13 +23,31 @@ AC_CHECK_FUNCS([sqrt])
 AC_HEADER_STDBOOL
 
 dnl Check for optional boost type_trains and static_assert
-AC_CHECK_HEADERS([boost/bind.hpp])
-AC_CHECK_HEADERS([boost/thread.hpp])
-AC_CHECK_HEADERS([boost/smart_ptr.hpp])
-AC_CHECK_HEADERS([boost/asio.hpp])
+AC_CHECK_HEADERS([boost/asio.hpp], [], [])
 
+AC_ARG_WITH([boost-system-lib],
+  [  --with-boost-system-lib=LIBNAME  The library name of boost system excluding prefix/suffix (Default: boost_system).],
+  [BOOST_SYSTEM_LIB="$withval"], [BOOST_SYSTEM_LIB="boost_system"])
+AC_SUBST([BOOST_SYSTEM_LIB])
 
-PKG_CHECK_MODULES(DEPS, mbsim >= 3.0.0)
+PKG_CHECK_MODULES(DEPS, mbsim >= 3.0.0 mbsimControl mbxmlutils)
+
+dnl process _SI_interfaceMessages_SI_
+AS_IF([test "1==1"], [
+dnl    # get mkoctfile program
+dnl    if test "$mkoctfile" == "no"; then
+dnl      AC_PATH_PROG([mkoctfile],[mkoctfile],[no],[$prefix/bin:$PATH])
+dnl    fi
+dnl    test $mkoctfile = "no" && AC_MSG_ERROR([mkoctfile not found])
+dnl    AC_SUBST([MKOCTFILE],[$mkoctfile])
+    AS_ECHO("==== create interface_messages.cc ====")
+    sed -e '/#define\ _SI_/!d; s/#define\ //g; s/\ .*//g; s/^.*$/case \0:\n  rIS << "\0";\n  break;/g' ./mbsimInterface/interface_messages.h > ./mbsimInterface/interface_messages.cc
+    AS_ECHO("==== create interface_messages.m ====")
+    echo "clear('IPC');" > ./mbsimInterface/interface_messages.m
+    sed -e '/#define\ _SI_/!d; s/#define\ /IPC\./g; s/\ /=/g; s/$/;/g' ./mbsimInterface/interface_messages.h >> ./mbsimInterface/interface_messages.m
+    ], 
+    [ ]
+)
 
 dnl Enable debugging 
 AC_ARG_ENABLE([debug],[  --enable-debug  Enable debuggig],[debug="yes"],[debug="no"])

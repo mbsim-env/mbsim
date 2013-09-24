@@ -277,7 +277,7 @@ namespace MBSim {
   Mat PlanarCoulombFriction::diff(const Vec& la, const Vec& gdn, double laN, double r) {
     double argT = la(0) - r * gdn(0);
     Mat d(1, 3, NONINIT);
-    if (abs(argT) < mu * fabs(laN)) {
+    if (fabs(argT) < mu * fabs(laN)) {
       //d_dargT = Mat(2,2,EYE);
       d(0, 0) = 1;
       d(0, 1) = -r;
@@ -471,7 +471,7 @@ namespace MBSim {
   Mat PlanarStribeckFriction::diff(const Vec& la, const Vec& gdn, double laN, double r) {
     double argT = la(0) - r * gdn(0);
     Mat d(1, 3, NONINIT);
-    if (abs(argT) < (*fmu)(0) * fabs(laN)) {
+    if (fabs(argT) < (*fmu)(0) * fabs(laN)) {
       d(0, 0) = 1;
       d(0, 1) = -r;
       d(0, 2) = 0;
@@ -560,7 +560,7 @@ namespace MBSim {
   Mat PlanarCoulombImpact::diff(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
     double argT = la(0) - r * gdn(0);
     Mat d(1, 3, NONINIT);
-    if (abs(argT) < mu * fabs(laN)) {
+    if (fabs(argT) < mu * fabs(laN)) {
       //d_dargT = Mat(2,2,EYE);
       d(0, 0) = 1;
       d(0, 1) = -r;
@@ -677,7 +677,7 @@ namespace MBSim {
   Mat PlanarStribeckImpact::diff(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
     double argT = la(0) - r * gdn(0);
     Mat d(1, 3, NONINIT);
-    if (abs(argT) < (*fmu)(fabs(gdn(0))) * fabs(laN)) {
+    if (fabs(argT) < (*fmu)(fabs(gdn(0))) * fabs(laN)) {
       d(0, 0) = 1;
       d(0, 1) = -r;
       d(0, 2) = 0;
@@ -779,7 +779,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERXMLNAME(GeneralizedForceLaw, MaxwellUnilateralConstraint, MBSIMNS"MaxwellUnilateralConstraint")
 
   MaxwellUnilateralConstraint::MaxwellUnilateralConstraint(const double & damping, const double & gapLimit) :
-      lcpSolvingStrategy(Standard), dampingCoefficient(damping), gLim(gapLimit), matConst(0), matConstSetted(false), DEBUGLEVEL(0) {
+      LCP(SymMat(0,NONINIT), Vec(0,NONINIT)), dampingCoefficient(damping), gLim(gapLimit), matConst(0), matConstSetted(false), DEBUGLEVEL(0) {
 
   }
 
@@ -823,7 +823,7 @@ namespace MBSim {
       updateInfluenceMatrix(contacts);
       updateRigidBodyGap(contacts);
 
-      LinearComplementarityProblem LCP(C, rigidBodyGap, lcpSolvingStrategy);
+      LCP.setSystem(C, rigidBodyGap);
 
       map<Index, double> tolerances;
       tolerances.insert(pair<Index, double>(Index(0, possibleContactPoints.size() - 1), 1e-8)); //tolerances for distances

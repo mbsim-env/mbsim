@@ -262,8 +262,8 @@ namespace MBSim {
           c2 = eF2; // semi-minor axis
           double c2_star_nrm2=0;
 
-          if(abs(q) <= 1.) { // ellipse and parabola
-            c2_star_nrm2 = abs(p)/sqrt(abs(1. - q*q));
+          if(fabs(q) <= 1.) { // ellipse and parabola
+            c2_star_nrm2 = fabs(p)/sqrt(fabs(1. - q*q));
             if(DEBUG) {
               cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): Ellipse Contact!" << endl;
             }
@@ -279,8 +279,8 @@ namespace MBSim {
             jacRho = new JacobianPairEllipseCircle(c1_star_nrm2,c2_star_nrm2);
           }
           /********************************/
-          else if(abs(q) > 1.) { // hyperbola
-            c2_star_nrm2 = abs(p)/sqrt(abs(1. - q*q));
+          else if(fabs(q) > 1.) { // hyperbola
+            c2_star_nrm2 = fabs(p)/sqrt(fabs(1. - q*q));
             // c2_star_nrm2 = abs(p)/sqrt(2.*abs(1.+q)+(1.+q)*(1.+q));
             if(DEBUG) {
               cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): Hyperbola Contact!" << endl;
